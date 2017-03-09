@@ -39,6 +39,12 @@ namespace Fusion.Engine.Graphics {
 		internal FormattedBuffer  IndexDataGpu { get { return indexData; } }
 
 
+		static float GetGridSlice ( float z )
+		{
+			return 1 - (float)Math.Exp( 0.03f * ( z ) );
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -119,6 +125,7 @@ namespace Fusion.Engine.Graphics {
 			var proj = camera.GetProjectionMatrix( stereoEye );
 
 			UpdateOmniLightExtentsAndVisibility( view, proj, lightSet );
+			UpdateDecalExtentsAndVisibility( view, proj, lightSet );
 			ClusterizeOmniLights( view, proj, lightSet );
 		}
 
@@ -141,8 +148,8 @@ namespace Fusion.Engine.Graphics {
 
 				if ( Extents.GetSphereExtent( view, proj, ol.Position, vp, ol.RadiusOuter, false, out min, out max ) ) {
 
-					min.Z	=	( 1 - (float)Math.Exp( 0.03f * ( min.Z ) ) );
-					max.Z	=	( 1 - (float)Math.Exp( 0.03f * ( max.Z ) ) );
+					min.Z	=	GetGridSlice( min.Z );
+					max.Z	=	GetGridSlice( max.Z );
 
 					ol.Visible		=	true;
 
@@ -162,16 +169,51 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="view"></param>
+		/// <param name="proj"></param>
+		/// <param name="lightSet"></param>
+		void UpdateDecalExtentsAndVisibility ( Matrix view, Matrix proj, LightSet lightSet )
+		{
+			var vp = new Rectangle(0,0,1,1);
+
+			foreach ( var dcl in lightSet.Decals ) {
+
+				Vector4 min, max;
+				dcl.Visible	=	false;
+
+				if ( Extents.GetBasisExtent( view, proj, vp, dcl.DecalMatrix, false, out min, out max ) ) {
+
+					min.Z	=	GetGridSlice( min.Z );
+					max.Z	=	GetGridSlice( max.Z );
+
+					dcl.Visible		=	true;
+
+					dcl.MaxExtent.X	=	Math.Min( Width,  (int)Math.Ceiling( max.X * Width  ) );
+					dcl.MaxExtent.Y	=	Math.Min( Height, (int)Math.Ceiling( max.Y * Height ) );
+					dcl.MaxExtent.Z	=	Math.Min( Depth,  (int)Math.Ceiling( max.Z * Depth  ) );
+
+					dcl.MinExtent.X	=	Math.Max( 0, (int)Math.Floor( min.X * Width  ) );
+					dcl.MinExtent.Y	=	Math.Max( 0, (int)Math.Floor( min.Y * Height ) );
+					dcl.MinExtent.Z	=	Math.Max( 0, (int)Math.Floor( min.Z * Depth  ) );
+				}
+			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="lightSet"></param>
 		void ClusterizeOmniLights ( Matrix view, Matrix proj, LightSet lightSet )
 		{
 			var vp = new Rectangle(0,0,1,1);
 
 			var lightGrid	=	new SceneRenderer.LIGHTINDEX[GridLinearSize];
-
 			var lightData	=	new SceneRenderer.LIGHT[MaxLights];
+			var decalData	=	new SceneRenderer.DECAL[MaxDecals];
 
-
+			#region	Compute light and decal count
 			foreach ( var ol in lightSet.OmniLights ) {
 				if (ol.Visible) {
 					for (int i=ol.MinExtent.X; i<ol.MaxExtent.X; i++)
@@ -182,6 +224,19 @@ namespace Fusion.Engine.Graphics {
 					}
 				}
 			}
+
+			foreach ( var dcl in lightSet.Decals ) {
+				if (dcl.Visible) {
+					for (int i=dcl.MinExtent.X; i<dcl.MaxExtent.X; i++)
+					for (int j=dcl.MinExtent.Y; j<dcl.MaxExtent.Y; j++)
+					//for (int k=dcl.MinExtent.Z; k<dcl.MaxExtent.Z; k++) {
+					for (int k=0; k<Depth; k++) {
+						int a = ComputeAddress(i,j,k);
+						lightGrid[a].AddDecal();
+					}
+				}
+			}
+			#endregion
 
 
 
@@ -206,13 +261,28 @@ namespace Fusion.Engine.Graphics {
 					for (int j=ol.MinExtent.Y; j<ol.MaxExtent.Y; j++)
 					for (int k=ol.MinExtent.Z; k<ol.MaxExtent.Z; k++) {
 						int a = ComputeAddress(i,j,k);
-						indexData[ lightGrid[a].Offset + lightGrid[a].LightCount ] = index;
+						indexData[ lightGrid[a].Offset + lightGrid[a].TotalCount ] = index;
 						lightGrid[a].AddLight();
 					}
 
-					lightData[index].LightType		=	SceneRenderer.LightTypeOmni;
-					lightData[index].PositionRadius	=	new Vector4( ol.Position, ol.RadiusOuter );
-					lightData[index].IntensityFar	=	new Vector4( ol.Intensity.Red, ol.Intensity.Green, ol.Intensity.Blue, 0 );
+					lightData[index].FromOmniLight( ol );
+
+					index++;
+				}
+			}
+
+			foreach ( var dcl in lightSet.Decals ) {
+				if (dcl.Visible) {
+					for (int i=dcl.MinExtent.X; i<dcl.MaxExtent.X; i++)
+					for (int j=dcl.MinExtent.Y; j<dcl.MaxExtent.Y; j++)
+					//for (int k=dcl.MinExtent.Z; k<dcl.MaxExtent.Z; k++) {
+					for (int k=0; k<Depth; k++) {
+						int a = ComputeAddress(i,j,k);
+						indexData[ lightGrid[a].Offset + lightGrid[a].TotalCount ] = index;
+						lightGrid[a].AddDecal();
+					}
+
+					decalData[index].FromDecal( dcl );
 
 					index++;
 				}
@@ -221,6 +291,7 @@ namespace Fusion.Engine.Graphics {
 
 			using ( new PixEvent( "Update cluster structures" ) ) {
 				LightDataGpu.SetData( lightData );
+				DecalDataGpu.SetData( decalData );
 				IndexDataGpu.SetData( indexData );
 				gridTexture.SetData( lightGrid );
 			}

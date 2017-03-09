@@ -132,8 +132,8 @@
     <MapNode xsi:type="MapDecal">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-17" Y="0" Z="0" />
-      <Rotation X="0.707106769" Y="0" Z="0" W="-0.707106769" />
+      <Position X="-17.25" Y="0" Z="1.75" />
+      <Rotation X="0.270598" Y="0.65328145" Z="0.65328145" W="-0.270598" />
       <Scaling>1</Scaling>
       <ImageName>blood1</ImageName>
       <Width>3</Width>
@@ -241,7 +241,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-21" Y="1" Z="2" />
+      <Position X="-30.875" Y="1" Z="2" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -251,7 +251,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-22" Y="1" Z="2" />
+      <Position X="-31.875" Y="1" Z="2" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -261,7 +261,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-23" Y="1" Z="2" />
+      <Position X="-32.875" Y="1" Z="2" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -281,7 +281,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-21" Y="1" Z="3" />
+      <Position X="-30.875" Y="1" Z="3" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -291,7 +291,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-22" Y="1" Z="3" />
+      <Position X="-31.875" Y="1" Z="3" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -301,7 +301,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-23" Y="1" Z="3" />
+      <Position X="-32.875" Y="1" Z="3" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -331,7 +331,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-22" Y="1" Z="4" />
+      <Position X="-31.875" Y="1" Z="4" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -341,7 +341,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-23" Y="1" Z="4" />
+      <Position X="-32.875" Y="1" Z="4" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -371,7 +371,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-22" Y="1" Z="5" />
+      <Position X="-31.875" Y="1" Z="5" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -381,7 +381,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-23" Y="1" Z="5" />
+      <Position X="-32.875" Y="1" Z="5" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -391,7 +391,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-20" Y="2" Z="2" />
+      <Position X="-29.875" Y="2" Z="2" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -401,7 +401,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-21" Y="2" Z="2" />
+      <Position X="-30.875" Y="2" Z="2" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -411,7 +411,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-22" Y="2" Z="2" />
+      <Position X="-31.875" Y="2" Z="2" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -421,7 +421,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-23" Y="2" Z="2" />
+      <Position X="-32.875" Y="2" Z="2" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -441,7 +441,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-21" Y="2" Z="3" />
+      <Position X="-30.875" Y="2" Z="3" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -451,7 +451,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-22" Y="2" Z="3" />
+      <Position X="-31.875" Y="2" Z="3" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -461,7 +461,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-23" Y="2" Z="3" />
+      <Position X="-32.875" Y="2" Z="3" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -481,7 +481,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-21" Y="2" Z="4" />
+      <Position X="-30.875" Y="2" Z="4" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -491,7 +491,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-22" Y="2" Z="4" />
+      <Position X="-31.875" Y="2" Z="4" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -501,7 +501,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-23" Y="2" Z="4" />
+      <Position X="-32.875" Y="2" Z="4" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -521,7 +521,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-21" Y="2" Z="5" />
+      <Position X="-30.875" Y="2" Z="5" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -531,7 +531,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-22" Y="2" Z="5" />
+      <Position X="-31.875" Y="2" Z="5" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -541,7 +541,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-23" Y="2" Z="5" />
+      <Position X="-32.875" Y="2" Z="5" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -551,7 +551,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-20" Y="3" Z="2" />
+      <Position X="-29.875" Y="3" Z="2" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -561,7 +561,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-21" Y="3" Z="2" />
+      <Position X="-30.875" Y="3" Z="2" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -571,7 +571,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-22" Y="3" Z="2" />
+      <Position X="-31.875" Y="3" Z="2" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -581,7 +581,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-23" Y="3" Z="2" />
+      <Position X="-32.875" Y="3" Z="2" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -591,7 +591,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-20" Y="3" Z="3" />
+      <Position X="-29.875" Y="3" Z="3" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -601,7 +601,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-21" Y="3" Z="3" />
+      <Position X="-30.875" Y="3" Z="3" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -611,7 +611,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-22" Y="3" Z="3" />
+      <Position X="-31.875" Y="3" Z="3" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -621,7 +621,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-23" Y="3" Z="3" />
+      <Position X="-32.875" Y="3" Z="3" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -631,7 +631,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-20" Y="3" Z="4" />
+      <Position X="-29.875" Y="3" Z="4" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -641,7 +641,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-21" Y="3" Z="4" />
+      <Position X="-30.875" Y="3" Z="4" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -651,7 +651,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-22" Y="3" Z="4" />
+      <Position X="-31.875" Y="3" Z="4" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -661,7 +661,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-23" Y="3" Z="4" />
+      <Position X="-32.875" Y="3" Z="4" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -671,7 +671,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-20" Y="3" Z="5" />
+      <Position X="-29.875" Y="3" Z="5" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -681,7 +681,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-21" Y="3" Z="5" />
+      <Position X="-30.875" Y="3" Z="5" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -691,7 +691,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-22" Y="3" Z="5" />
+      <Position X="-31.875" Y="3" Z="5" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -701,7 +701,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-23" Y="3" Z="5" />
+      <Position X="-32.875" Y="3" Z="5" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -711,7 +711,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-20" Y="4" Z="2" />
+      <Position X="-29.875" Y="4" Z="2" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -721,7 +721,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-21" Y="4" Z="2" />
+      <Position X="-30.875" Y="4" Z="2" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -731,7 +731,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-22" Y="4" Z="2" />
+      <Position X="-31.875" Y="4" Z="2" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -751,7 +751,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-20" Y="4" Z="3" />
+      <Position X="-29.875" Y="4" Z="3" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -761,7 +761,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-21" Y="4" Z="3" />
+      <Position X="-30.875" Y="4" Z="3" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -771,7 +771,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-22" Y="4" Z="3" />
+      <Position X="-31.875" Y="4" Z="3" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -791,7 +791,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-20" Y="4" Z="4" />
+      <Position X="-29.875" Y="4" Z="4" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -801,7 +801,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-21" Y="4" Z="4" />
+      <Position X="-30.875" Y="4" Z="4" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -811,7 +811,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-22" Y="4" Z="4" />
+      <Position X="-31.875" Y="4" Z="4" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -821,7 +821,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-23" Y="4" Z="4" />
+      <Position X="-32.875" Y="4" Z="4" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -831,7 +831,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-20" Y="4" Z="5" />
+      <Position X="-29.875" Y="4" Z="5" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -841,7 +841,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-21" Y="4" Z="5" />
+      <Position X="-30.875" Y="4" Z="5" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -851,7 +851,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-22" Y="4" Z="5" />
+      <Position X="-31.875" Y="4" Z="5" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -861,7 +861,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-23" Y="4" Z="5" />
+      <Position X="-32.875" Y="4" Z="5" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -971,7 +971,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-18" Y="2" Z="4" />
+      <Position X="-18.375" Y="2" Z="4" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -981,7 +981,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-24" Y="2" Z="4" />
+      <Position X="-33.875" Y="2" Z="4" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>

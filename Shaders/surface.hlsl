@@ -43,6 +43,8 @@ Texture2D			Textures[4]			: 	register(t0);
 Texture3D<uint2>	ClusterTable		: 	register(t4);
 Buffer<uint>		LightIndexTable		: 	register(t5);
 StructuredBuffer<LIGHT>	LightDataTable	:	register(t6);
+StructuredBuffer<DECAL>	DecalDataTable	:	register(t7);
+Texture2D			DecalImages			:	register(t8);
 
 #ifdef _UBERSHADER
 $ubershader FORWARD RIGID|SKINNED
@@ -242,24 +244,18 @@ GBuffer PSMain( PSInput input )
 	}
 
 	//---------------------------------
-	//	G-buffer output stuff :
+	//	Prepare output values :
 	//---------------------------------
 	//	NB: Multiply normal length by local normal projection on surface normal.
 	//	Shortened normal will be used as Fresnel decay (self occlusion) factor.
 	float3 worldNormal 	= 	normalize( mul( localNormal, tbnToWorld ).xyz );
 	
-	//roughness = 0.5f;
 	float3 entityColor	=	input.Color.rgb;
 	
 	float3 lighting		=	ComputeClusteredLighting( input, ClusterTable, Batch.ViewBounds.xy, baseColor, worldNormal, roughness, metallic );
 	
-	//	Use sRGB texture for better color intensity distribution
-	output.hdr			=	float4( emission * entityColor + lighting, 0 );		// <-- Multiply on entity color!!!
-	// output.gbuffer0	=	float4( baseColor, roughness );
-	// output.gbuffer1 	=	float4( worldNormal * 0.5f + 0.5f, metallic );
+	output.hdr			=	float4( emission * entityColor + lighting, 0 );
 	output.feedback		=	feedback;
-	
-	output.hdr.rgb += baseColor;
 	
 	return output;
 }

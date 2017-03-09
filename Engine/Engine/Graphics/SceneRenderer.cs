@@ -192,6 +192,8 @@ namespace Fusion.Engine.Graphics {
 					device.PixelShaderResources[4]	= rs.LightManager.LightGrid.GridTexture;
 					device.PixelShaderResources[5]	= rs.LightManager.LightGrid.IndexDataGpu;
 					device.PixelShaderResources[6]	= rs.LightManager.LightGrid.LightDataGpu;
+					device.PixelShaderResources[7]	= rs.LightManager.LightGrid.DecalDataGpu;
+					device.PixelShaderResources[8]	= rs.RenderWorld.LightSet?.DecalAtlas?.Texture?.Srv;
 				}
 
 				//#warning INSTANSING!
@@ -212,6 +214,7 @@ namespace Fusion.Engine.Graphics {
 					cbData.Color			=	instance.Color;
 					cbData.ViewBounds		=	new Vector4( hdr.Width, hdr.Height, hdr.Width, hdr.Height );
 					cbData.VTPageScaleRCP	=	rs.VTSystem.PageScaleRCP;
+					cbData.AssignmentGroup	=	instance.Static ? 0 : 1;
 
 					constBuffer.SetData( cbData );
 

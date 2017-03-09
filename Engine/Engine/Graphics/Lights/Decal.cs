@@ -65,6 +65,10 @@ namespace Fusion.Engine.Graphics {
 		public float FalloffFactor = 0.0f;
 
 
+		internal bool	Visible;
+		internal Int3	MinExtent;
+		internal Int3	MaxExtent;
+
 
 		public Vector4 GetScaleOffset ()
 		{

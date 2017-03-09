@@ -108,6 +108,19 @@ namespace Fusion.Engine.Graphics.Lights {
 
 
 
+		static Vector3 ProjectPoint ( ref Vector3 point, ref Matrix proj, bool skipZ )
+		{
+			var pp = Vector3.TransformCoordinate( point, proj );
+
+			if (skipZ) {
+				return new Vector3( pp.X, pp.Y, point.Z );
+			} else {
+				return pp;
+			}
+		}
+
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -117,7 +130,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// <param name="min"></param>
 		/// <param name="max"></param>
 		/// <returns></returns>
-		public static bool GetBasisExtent ( Matrix view, Matrix projection, Rectangle viewport, Matrix basis, out Vector4 min, out Vector4 max )
+		public static bool GetBasisExtent ( Matrix view, Matrix projection, Rectangle viewport, Matrix basis, bool projectZ, out Vector4 min, out Vector4 max )
 		{
 			min = max	=	Vector4.Zero;
 
@@ -165,8 +178,8 @@ namespace Fusion.Engine.Graphics.Lights {
 			var projPoints = new List<Vector3>();
 			
 			foreach ( var line in lines ) {
-				projPoints.Add( Vector3.TransformCoordinate( line.A, projection ) );
-				projPoints.Add( Vector3.TransformCoordinate( line.B, projection ) );
+				projPoints.Add( ProjectPoint( ref line.A, ref projection, !projectZ ) );
+				projPoints.Add( ProjectPoint( ref line.B, ref projection, !projectZ ) );
 			}
 
 			min.X	=	projPoints.Min( p => p.X );

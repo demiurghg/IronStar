@@ -45,6 +45,7 @@ namespace Fusion.Engine.Graphics {
 			[FieldOffset(224)] public Color4	Color;
 			[FieldOffset(240)] public Vector4	ViewBounds;
 			[FieldOffset(256)] public float		VTPageScaleRCP;
+			[FieldOffset(260)] public int		AssignmentGroup;
 		}
 
 
@@ -106,32 +107,65 @@ namespace Fusion.Engine.Graphics {
 
 
 		[ShaderStructure]
-		[StructLayout(LayoutKind.Sequential, Size=64)]
+		[StructLayout(LayoutKind.Sequential)]
 		public struct LIGHT {	
-			/*public Matrix	WorldMatrix;
-			public Matrix	ViewProjection;*/
+			public Matrix	WorldMatrix;
+			public Matrix	ViewProjection;
 			public Vector4	PositionRadius;
 			public Vector4	IntensityFar;
-			/*public Vector4	MaskScaleOffset;
-			public Vector4	ShadowScaleOffset;*/
+			public Vector4	MaskScaleOffset;
+			public Vector4	ShadowScaleOffset;
 			public int		LightType;
+
+			public void FromOmniLight ( OmniLight light ) 
+			{
+				#region Update structure fields from OmniLight object
+				LightType		=	SceneRenderer.LightTypeOmni;
+				PositionRadius	=	new Vector4( light.Position, light.RadiusOuter );
+				IntensityFar	=	new Vector4( light.Intensity.Red, light.Intensity.Green, light.Intensity.Blue, 0 );
+				#endregion
+			}
 		}
 
 
 
 		[ShaderStructure]
+		[StructLayout(LayoutKind.Sequential)]
 		public struct DECAL {
 			public Matrix	DecalMatrixInv;
 			public Vector4 	BasisX;
 			public Vector4 	BasisY;
 			public Vector4 	BasisZ;
 			public Vector4 	EmissionRoughness;
-			public Vector4	BaseColorMetallic;
 			public Vector4	ImageScaleOffset;
+			public Vector4	BaseColorMetallic;
 			public float	ColorFactor;
 			public float	SpecularFactor;
 			public float	NormalMapFactor;
 			public float	FalloffFactor;
+			public int		AssignmentGroup;
+
+			public void FromDecal ( Decal decal )
+			{
+				#region Update structure fields from Decal object
+				DecalMatrixInv		=	decal.DecalMatrixInverse;
+				BasisX				=	new Vector4(decal.DecalMatrix.Right.Normalized(),	0);
+				BasisY				=	new Vector4(decal.DecalMatrix.Up.Normalized(),		0);
+				BasisZ				=	new Vector4(decal.DecalMatrix.Backward.Normalized(),0);
+				BaseColorMetallic	=	new Vector4( decal.BaseColor.Red, decal.BaseColor.Green, decal.BaseColor.Blue, decal.Metallic );
+				EmissionRoughness	=	new Vector4( decal.Emission.Red, decal.Emission.Green, decal.Emission.Blue, decal.Roughness );
+				ColorFactor			=	decal.ColorFactor;
+				SpecularFactor		=	decal.SpecularFactor;
+				NormalMapFactor		=	decal.NormalMapFactor;
+				FalloffFactor		=	decal.FalloffFactor;
+				ImageScaleOffset	=	decal.GetScaleOffset();
+				AssignmentGroup		=	0;
+
+				BaseColorMetallic.X	=	(float)Math.Pow( BaseColorMetallic.X, 2.2f );
+				BaseColorMetallic.Y	=	(float)Math.Pow( BaseColorMetallic.Y, 2.2f );
+				BaseColorMetallic.Z	=	(float)Math.Pow( BaseColorMetallic.Z, 2.2f );
+				#endregion
+			}
 		}
 	}
 }

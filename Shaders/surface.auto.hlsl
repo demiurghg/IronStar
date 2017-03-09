@@ -16,6 +16,7 @@ struct BATCH {
 	float4     Color;                         // offset:  224
 	float4     ViewBounds;                    // offset:  240
 	float      VTPageScaleRCP;                // offset:  256
+	int        AssignmentGroup;               // offset:  260
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+SUBSET
@@ -40,26 +41,31 @@ struct LIGHTINDEX {
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHT
-// Marshal.SizeOf = 64
+// Marshal.SizeOf = 196
 struct LIGHT {
-	float4     PositionRadius;                // offset:    0
-	float4     IntensityFar;                  // offset:   16
-	int        LightType;                     // offset:   32
+	float4x4   WorldMatrix;                   // offset:    0
+	float4x4   ViewProjection;                // offset:   64
+	float4     PositionRadius;                // offset:  128
+	float4     IntensityFar;                  // offset:  144
+	float4     MaskScaleOffset;               // offset:  160
+	float4     ShadowScaleOffset;             // offset:  176
+	int        LightType;                     // offset:  192
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+DECAL
-// Marshal.SizeOf = 176
+// Marshal.SizeOf = 180
 struct DECAL {
 	float4x4   DecalMatrixInv;                // offset:    0
 	float4     BasisX;                        // offset:   64
 	float4     BasisY;                        // offset:   80
 	float4     BasisZ;                        // offset:   96
 	float4     EmissionRoughness;             // offset:  112
-	float4     BaseColorMetallic;             // offset:  128
-	float4     ImageScaleOffset;              // offset:  144
+	float4     ImageScaleOffset;              // offset:  128
+	float4     BaseColorMetallic;             // offset:  144
 	float      ColorFactor;                   // offset:  160
 	float      SpecularFactor;                // offset:  164
 	float      NormalMapFactor;               // offset:  168
 	float      FalloffFactor;                 // offset:  172
+	int        AssignmentGroup;               // offset:  176
 };
 

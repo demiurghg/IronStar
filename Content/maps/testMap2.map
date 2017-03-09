@@ -1118,5 +1118,82 @@
       <Radius>5</Radius>
       <LightPreset>IncandescentStandard</LightPreset>
     </MapNode>
+    <MapNode xsi:type="MapDecal">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-1.625" Y="0" Z="-2.75" />
+      <Rotation X="-5.96046448E-08" Y="0.7071067" Z="0.7071067" W="5.96046448E-08" />
+      <Scaling>1</Scaling>
+      <ImageName>blood1</ImageName>
+      <Width>3</Width>
+      <Height>3</Height>
+      <Depth>0.25</Depth>
+      <Emission Red="0" Green="0" Blue="0" Alpha="0" />
+      <BaseColor R="98" G="16" B="4" A="255" />
+      <Roughness>0.05</Roughness>
+      <Metallic>0.5</Metallic>
+      <ColorFactor>1</ColorFactor>
+      <SpecularFactor>1</SpecularFactor>
+      <NormalMapFactor>0</NormalMapFactor>
+      <FalloffFactor>10</FalloffFactor>
+    </MapNode>
+    <MapNode xsi:type="MapDecal">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-4.375" Y="0" Z="-1.5" />
+      <Rotation X="0.353553355" Y="0.6123724" Z="0.6123724" W="-0.353553355" />
+      <Scaling>1</Scaling>
+      <ImageName>blood1</ImageName>
+      <Width>3</Width>
+      <Height>3</Height>
+      <Depth>0.25</Depth>
+      <Emission Red="0" Green="0" Blue="0" Alpha="0" />
+      <BaseColor R="98" G="16" B="4" A="255" />
+      <Roughness>0.05</Roughness>
+      <Metallic>0.5</Metallic>
+      <ColorFactor>1</ColorFactor>
+      <SpecularFactor>1</SpecularFactor>
+      <NormalMapFactor>0</NormalMapFactor>
+      <FalloffFactor>10</FalloffFactor>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-3.5" Y="0.25" Z="-4.375" />
+      <Rotation X="1.1457967E-05" Y="-0.524464846" Z="-1.87389614E-05" W="-0.8514321" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="ProxyFactory">
+        <Classname>box</Classname>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapDecal">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-3.375" Y="0" Z="-4.5" />
+      <Rotation X="0.7010573" Y="0.09229596" Z="0.09229596" W="-0.7010573" />
+      <Scaling>1</Scaling>
+      <ImageName>blood3</ImageName>
+      <Width>3</Width>
+      <Height>3</Height>
+      <Depth>0.25</Depth>
+      <Emission Red="0" Green="0" Blue="0" Alpha="0" />
+      <BaseColor R="98" G="16" B="4" A="255" />
+      <Roughness>0.05</Roughness>
+      <Metallic>0.5</Metallic>
+      <ColorFactor>1</ColorFactor>
+      <SpecularFactor>1</SpecularFactor>
+      <NormalMapFactor>0</NormalMapFactor>
+      <FalloffFactor>10</FalloffFactor>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-3.5" Y="0.25" Z="-4.375" />
+      <Rotation X="1.1457967E-05" Y="-0.524464846" Z="-1.87389614E-05" W="-0.8514321" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="ProxyFactory">
+        <Classname>box</Classname>
+      </Factory>
+    </MapNode>
   </Nodes>
 </Map>

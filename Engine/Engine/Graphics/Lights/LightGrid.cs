@@ -183,8 +183,8 @@ namespace Fusion.Engine.Graphics {
 
 				if ( Extents.GetBasisExtent( view, proj, vp, dcl.DecalMatrix, false, out min, out max ) ) {
 
-					min.Z	=	GetGridSlice( min.Z );
-					max.Z	=	GetGridSlice( max.Z );
+					min.Z	=	GetGridSlice( -min.Z );
+					max.Z	=	GetGridSlice( -max.Z );
 
 					dcl.Visible		=	true;
 
@@ -229,8 +229,7 @@ namespace Fusion.Engine.Graphics {
 				if (dcl.Visible) {
 					for (int i=dcl.MinExtent.X; i<dcl.MaxExtent.X; i++)
 					for (int j=dcl.MinExtent.Y; j<dcl.MaxExtent.Y; j++)
-					//for (int k=dcl.MinExtent.Z; k<dcl.MaxExtent.Z; k++) {
-					for (int k=0; k<Depth; k++) {
+					for (int k=dcl.MinExtent.Z; k<dcl.MaxExtent.Z; k++) {
 						int a = ComputeAddress(i,j,k);
 						lightGrid[a].AddDecal();
 					}
@@ -275,8 +274,7 @@ namespace Fusion.Engine.Graphics {
 				if (dcl.Visible) {
 					for (int i=dcl.MinExtent.X; i<dcl.MaxExtent.X; i++)
 					for (int j=dcl.MinExtent.Y; j<dcl.MaxExtent.Y; j++)
-					//for (int k=dcl.MinExtent.Z; k<dcl.MaxExtent.Z; k++) {
-					for (int k=0; k<Depth; k++) {
+					for (int k=dcl.MinExtent.Z; k<dcl.MaxExtent.Z; k++) {
 						int a = ComputeAddress(i,j,k);
 						indexData[ lightGrid[a].Offset + lightGrid[a].TotalCount ] = index;
 						lightGrid[a].AddDecal();

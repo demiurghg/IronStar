@@ -10,9 +10,16 @@ namespace Fusion.Engine.Graphics.Lights {
 	public static class Extents {
 
 		class Line {
-			public Line ( Vector3 a, Vector3 b ) { A = a; B = b; }
-			public Vector3 A;
-			public Vector3 B;
+			public Line ( Vector3 a, Vector3 b ) { 
+				A = new Vector4( a, 1 ); 
+				B = new Vector4( b, 1 ); 
+			}
+			public Line ( Vector4 a, Vector4 b ) { 
+				A = a; 
+				B = b; 
+			}
+			public Vector4 A;
+			public Vector4 B;
 			
 			/// <summary>
 			/// Returns true if line is visible
@@ -29,7 +36,7 @@ namespace Fusion.Engine.Graphics.Lights {
 				}
 
 				var factor	=	( znear - A.Z ) / ( B.Z - A.Z );
-				var point	=	Vector3.Lerp( A, B, factor );
+				var point	=	Vector4.Lerp( A, B, factor );
 				
 				if ( A.Z > znear ) A = point;
 				if ( B.Z > znear ) B = point;
@@ -82,11 +89,11 @@ namespace Fusion.Engine.Graphics.Lights {
 				return false;
 			}
 
-			var projPoints = new List<Vector3>();
+			var projPoints = new List<Vector4>();
 			
 			foreach ( var line in lines ) {
-				projPoints.Add( Vector3.TransformCoordinate( line.A, projection ) );
-				projPoints.Add( Vector3.TransformCoordinate( line.B, projection ) );
+				projPoints.Add( Vector4.Transform( line.A, projection ).MakePoint() );
+				projPoints.Add( Vector4.Transform( line.B, projection ).MakePoint() );
 			}
 
 			min.X	=	projPoints.Min( p => p.X );
@@ -113,7 +120,7 @@ namespace Fusion.Engine.Graphics.Lights {
 			var pp = Vector3.TransformCoordinate( point, proj );
 
 			if (skipZ) {
-				return new Vector3( pp.X, pp.Y, point.Z );
+				return new Vector3( pp.X, pp.Y, -point.Z );
 			} else {
 				return pp;
 			}
@@ -136,20 +143,20 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			var znear	=	projection.M34 * projection.M43 / projection.M33;
 			
-			var viewPoints = new Vector3[8];
+			var viewPoints = new Vector4[8];
 
-			viewPoints[0]	=	basis.TranslationVector + basis.Right + basis.Up + basis.Backward;
-			viewPoints[1]	=	basis.TranslationVector - basis.Right + basis.Up + basis.Backward;
-			viewPoints[2]	=	basis.TranslationVector - basis.Right - basis.Up + basis.Backward;
-			viewPoints[3]	=	basis.TranslationVector + basis.Right - basis.Up + basis.Backward;
+			viewPoints[0]	=	new Vector4( basis.TranslationVector + basis.Right + basis.Up + basis.Backward, 1 );
+			viewPoints[1]	=	new Vector4( basis.TranslationVector - basis.Right + basis.Up + basis.Backward, 1 );
+			viewPoints[2]	=	new Vector4( basis.TranslationVector - basis.Right - basis.Up + basis.Backward, 1 );
+			viewPoints[3]	=	new Vector4( basis.TranslationVector + basis.Right - basis.Up + basis.Backward, 1 );
 
-			viewPoints[4]	=	basis.TranslationVector + basis.Right + basis.Up - basis.Backward;
-			viewPoints[5]	=	basis.TranslationVector - basis.Right + basis.Up - basis.Backward;
-			viewPoints[6]	=	basis.TranslationVector - basis.Right - basis.Up - basis.Backward;
-			viewPoints[7]	=	basis.TranslationVector + basis.Right - basis.Up - basis.Backward;
+			viewPoints[4]	=	new Vector4( basis.TranslationVector + basis.Right + basis.Up - basis.Backward, 1 );
+			viewPoints[5]	=	new Vector4( basis.TranslationVector - basis.Right + basis.Up - basis.Backward, 1 );
+			viewPoints[6]	=	new Vector4( basis.TranslationVector - basis.Right - basis.Up - basis.Backward, 1 );
+			viewPoints[7]	=	new Vector4( basis.TranslationVector + basis.Right - basis.Up - basis.Backward, 1 );
 
 			for (int i=0; i<viewPoints.Length; i++) {
-				viewPoints[i] = Vector3.TransformCoordinate( viewPoints[i], view );
+				viewPoints[i] = Vector4.Transform( viewPoints[i], view );
 			}
 
 			var lines = new[]{
@@ -175,20 +182,30 @@ namespace Fusion.Engine.Graphics.Lights {
 				return false;
 			}
 
-			var projPoints = new List<Vector3>();
+			var projPoints = new List<Vector4>();
 			
 			foreach ( var line in lines ) {
-				projPoints.Add( ProjectPoint( ref line.A, ref projection, !projectZ ) );
-				projPoints.Add( ProjectPoint( ref line.B, ref projection, !projectZ ) );
+				projPoints.Add( Vector4.Transform( line.A, projection ) );
+				projPoints.Add( Vector4.Transform( line.A, projection ) );
 			}
 
-			min.X	=	projPoints.Min( p => p.X );
-			min.Y	=	projPoints.Max( p => p.Y );
-			min.Z	=	projPoints.Min( p => p.Z );
+			if (projectZ) {
+				min.X	=	projPoints.Min( p => p.X / p.W );
+				min.Y	=	projPoints.Max( p => p.Y / p.W );
+				min.Z	=	projPoints.Min( p => p.Z / p.W );
 
-			max.X	=	projPoints.Max( p => p.X );
-			max.Y	=	projPoints.Min( p => p.Y );
-			max.Z	=	projPoints.Max( p => p.Z );
+				max.X	=	projPoints.Max( p => p.X / p.W );
+				max.Y	=	projPoints.Min( p => p.Y / p.W );
+				max.Z	=	projPoints.Max( p => p.Z / p.W );
+			} else {
+				min.X	=	projPoints.Min( p => p.X / p.W );
+				min.Y	=	projPoints.Max( p => p.Y / p.W );
+				min.Z	=	projPoints.Min( p => p.W );
+
+				max.X	=	projPoints.Max( p => p.X / p.W );
+				max.Y	=	projPoints.Min( p => p.Y / p.W );
+				max.Z	=	projPoints.Max( p => p.W );
+			}
 
 			min.X	=	( min.X *  0.5f + 0.5f ) * viewport.Width;
 			min.Y	=	( min.Y * -0.5f + 0.5f ) * viewport.Height;

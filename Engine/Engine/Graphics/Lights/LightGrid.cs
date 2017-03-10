@@ -207,6 +207,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="lightSet"></param>
 		void ClusterizeOmniLights ( Matrix view, Matrix proj, LightSet lightSet )
 		{
+			var screen = rs.DisplayBounds;
 			var vp = new Rectangle(0,0,1,1);
 
 			var lightGrid	=	new SceneRenderer.LIGHTINDEX[GridLinearSize];
@@ -280,7 +281,7 @@ namespace Fusion.Engine.Graphics {
 						lightGrid[a].AddDecal();
 					}
 
-					decalData[index].FromDecal( dcl );
+					decalData[index].FromDecal( dcl, proj.M22, ref screen );
 
 					index++;
 				}

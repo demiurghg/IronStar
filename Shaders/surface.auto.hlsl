@@ -53,7 +53,7 @@ struct LIGHT {
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+DECAL
-// Marshal.SizeOf = 180
+// Marshal.SizeOf = 184
 struct DECAL {
 	float4x4   DecalMatrixInv;                // offset:    0
 	float4     BasisX;                        // offset:   64
@@ -67,5 +67,6 @@ struct DECAL {
 	float      NormalMapFactor;               // offset:  168
 	float      FalloffFactor;                 // offset:  172
 	int        AssignmentGroup;               // offset:  176
+	float      MipBias;                       // offset:  180
 };
 

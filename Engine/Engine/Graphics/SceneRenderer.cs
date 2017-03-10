@@ -181,6 +181,7 @@ namespace Fusion.Engine.Graphics {
 				device.PixelShaderSamplers[0]	= SamplerState.LinearPointClamp ;
 				device.PixelShaderSamplers[1]	= SamplerState.PointClamp;
 				device.PixelShaderSamplers[2]	= SamplerState.AnisotropicClamp;
+				device.PixelShaderSamplers[3]	= SamplerState.LinearClamp4Mips;
 
 				var instances	=	rw.Instances;
 

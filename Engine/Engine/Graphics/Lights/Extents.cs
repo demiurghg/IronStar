@@ -186,7 +186,7 @@ namespace Fusion.Engine.Graphics.Lights {
 			
 			foreach ( var line in lines ) {
 				projPoints.Add( Vector4.Transform( line.A, projection ) );
-				projPoints.Add( Vector4.Transform( line.A, projection ) );
+				projPoints.Add( Vector4.Transform( line.B, projection ) );
 			}
 
 			if (projectZ) {

@@ -85,6 +85,7 @@ namespace Fusion.Drivers.Graphics {
 			LinearPointWrap		=	Create( Filter.MinMagLinearMipPoint, AddressMode.Wrap,  new Color4(0f) );
 			PointBorder1		=	Create( Filter.MinMagMipPoint, AddressMode.Border, new Color4(1f) );
 
+			//LinearClamp4Mips	=	Create( Filter.MinMagMipPoint, AddressMode.Clamp, new Color4(1f), ComparisonFunc.Always, 4 );
 			LinearClamp4Mips	=	Create( Filter.MinMagMipLinear, AddressMode.Clamp, new Color4(1f), ComparisonFunc.Always, 4 );
 		}
 

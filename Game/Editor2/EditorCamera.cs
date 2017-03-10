@@ -21,7 +21,7 @@ namespace IronStar.Editor2 {
 		public float	Distance	=	30;
 		public float	Yaw			=	45;
 		public float	Pitch		=	-30;
-		public float	Fov			=	60;
+		public float	Fov			=	90;
 
 		Manipulation	manipulation	=	Manipulation.None;
 		Point			startPoint;

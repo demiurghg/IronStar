@@ -25,6 +25,11 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		static float log2( float x ) {
+			return (float)Math.Log( x, 2 );
+		}
+
+
 		[ShaderDefine]	public const int VTVirtualPageCount	=	VTConfig.VirtualPageCount;
 		[ShaderDefine]	public const int VTPageSize			=	VTConfig.PageSize;
 		[ShaderDefine]	public const int VTMaxMip				=	VTConfig.MaxMipLevel;
@@ -144,8 +149,9 @@ namespace Fusion.Engine.Graphics {
 			public float	NormalMapFactor;
 			public float	FalloffFactor;
 			public int		AssignmentGroup;
+			public float	MipBias;
 
-			public void FromDecal ( Decal decal )
+			public void FromDecal ( Decal decal, float projM22, ref Rectangle screenSize )
 			{
 				#region Update structure fields from Decal object
 				DecalMatrixInv		=	decal.DecalMatrixInverse;
@@ -160,6 +166,14 @@ namespace Fusion.Engine.Graphics {
 				FalloffFactor		=	decal.FalloffFactor;
 				ImageScaleOffset	=	decal.GetScaleOffset();
 				AssignmentGroup		=	0;
+
+				var widthScaling	=	decal.DecalMatrix.Right.Length() + float.Epsilon;
+				var heightScaling	=	decal.DecalMatrix.Right.Length() + float.Epsilon;
+
+				var minRelativeSize	=	Math.Min( decal.ImageSize.Width / widthScaling, decal.ImageSize.Height / heightScaling );
+				var projScaling		=	1;//projM22;
+
+				MipBias					=	log2( minRelativeSize / screenSize.Height * projScaling );
 
 				BaseColorMetallic.X	=	(float)Math.Pow( BaseColorMetallic.X, 2.2f );
 				BaseColorMetallic.Y	=	(float)Math.Pow( BaseColorMetallic.Y, 2.2f );

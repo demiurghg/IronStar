@@ -25,6 +25,11 @@ namespace Fusion.Engine.Graphics {
 		public RectangleF ImageRectangle;
 
 		/// <summary>
+		/// Image index in decal atlas
+		/// </summary>
+		public Size2 ImageSize;
+
+		/// <summary>
 		/// Decal emission intensity
 		/// </summary>
 		public Color4 Emission = Color4.Zero;

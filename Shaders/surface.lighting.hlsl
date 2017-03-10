@@ -29,6 +29,9 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	float	viewDistance=	length( viewDir );
 	float3	viewDirN	=	normalize( viewDir );
 
+	float	decalSlope		=	dot( viewDirN, normal );
+	float	decalBaseMip	=	log2( input.ProjPos.w / decalSlope );
+
 	//----------------------------------------------------------------------------------------------
 	
 	[loop]
@@ -44,6 +47,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		float3	 decalM			=	decal.BaseColorMetallic.a;
 		float4	 scaleOffset	=	decal.ImageScaleOffset;
 		float	 falloff		=	decal.FalloffFactor;
+		float 	 mipDecalBias	=	decal.MipBias;
 		
 		float4 decalPos	=	mul(float4(worldPos,1), decalMatrixI);
 		
@@ -52,7 +56,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 			//float2 uv			=	mad(mad(decalPos.xy, float2(-0.5,0.5), float2(0.5,0.5), offsetScale.zw, offsetScale.xy); 
 			float2 uv			=	mad(decalPos.xy, scaleOffset.xy, scaleOffset.zw); 
 		
-			float4 decalImage	= 	DecalImages.SampleLevel( SamplerLinear, uv, 0 );
+			float4 decalImage	= 	DecalImages.SampleLevel( DecalSampler, uv, decalBaseMip + mipDecalBias );
 			float3 localNormal  = 	decalImage.xyz * 2 - 1;
 			float3 decalNormal	=	localNormal.x * decal.BasisX + localNormal.y * decal.BasisY - localNormal.z * decal.BasisZ;
 			float factor		=	decalImage.a * saturate(falloff - abs(decalPos.z)*falloff);
@@ -62,9 +66,9 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 			baseColor 	= lerp( baseColor.rgb, decalColor, decal.ColorFactor * factor );
 			roughness 	= lerp( roughness, decalR, decal.SpecularFactor * factor );
 			metallic 	= lerp( metallic,  decalM, decal.SpecularFactor * factor );
-			//normal		= lerp( normal, decalNormal, decal.NormalMapFactor * factor );
+			///normal		= lerp( normal, decalNormal, decal.NormalMapFactor * factor );
 
-			normal		= normal + decalNormal * decal.NormalMapFactor * factor;
+			normal		= localNormal;
 		}
 	}
 	

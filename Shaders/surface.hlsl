@@ -39,6 +39,7 @@ cbuffer				CBLightData			: 	register(b4) { LIGHTDATA	LightData	: packoffset( c0 
 SamplerState		SamplerLinear		: 	register(s0);
 SamplerState		SamplerPoint		: 	register(s1);
 SamplerState		SamplerAnisotropic	: 	register(s2);
+SamplerState		DecalSampler		: 	register(s3);
 Texture2D			Textures[4]			: 	register(t0);
 Texture3D<uint2>	ClusterTable		: 	register(t4);
 Buffer<uint>		LightIndexTable		: 	register(t5);

@@ -29,7 +29,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	float	viewDistance=	length( viewDir );
 	float3	viewDirN	=	normalize( viewDir );
 
-	float	decalSlope		=	dot( viewDirN, normal );
+	float	decalSlope		=	dot( viewDirN, normalize(input.Normal) );
 	float	decalBaseMip	=	log2( input.ProjPos.w / decalSlope );
 
 	//----------------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		
 			float4 decalImage	= 	DecalImages.SampleLevel( DecalSampler, uv, decalBaseMip + mipDecalBias );
 			float3 localNormal  = 	decalImage.xyz * 2 - 1;
-			float3 decalNormal	=	localNormal.x * decal.BasisX + localNormal.y * decal.BasisY - localNormal.z * decal.BasisZ;
+			float3 decalNormal	=	localNormal.x * decal.BasisX + localNormal.y * decal.BasisY + localNormal.z * decal.BasisZ;
 			float factor		=	decalImage.a * saturate(falloff - abs(decalPos.z)*falloff);
 			
 			totalLight.rgb		+=	 glowColor * factor;
@@ -68,12 +68,14 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 			metallic 	= lerp( metallic,  decalM, decal.SpecularFactor * factor );
 			///normal		= lerp( normal, decalNormal, decal.NormalMapFactor * factor );
 
-			normal		= localNormal;
+			normal		= normal + decalNormal * decal.NormalMapFactor * factor;
 		}
 	}
 	
+	
 	//----------------------------------------------------------------------------------------------
 
+			normal 		= 	normalize(normal);
 	float3	diffuse 	=	lerp( baseColor, float3(0,0,0), metallic );
 	float3	specular  	=	lerp( float3(0.04f,0.04f,0.04f), baseColor, metallic );
 

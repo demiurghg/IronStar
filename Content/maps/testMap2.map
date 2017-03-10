@@ -1188,7 +1188,7 @@
       <Depth>0.25</Depth>
       <Emission Red="0" Green="0" Blue="0" Alpha="0" />
       <BaseColor R="98" G="16" B="4" A="255" />
-      <Roughness>0.05</Roughness>
+      <Roughness>0.01</Roughness>
       <Metallic>0.5</Metallic>
       <ColorFactor>1</ColorFactor>
       <SpecularFactor>1</SpecularFactor>
@@ -1211,14 +1211,14 @@
       <Metallic>0.5</Metallic>
       <ColorFactor>1</ColorFactor>
       <SpecularFactor>1</SpecularFactor>
-      <NormalMapFactor>0</NormalMapFactor>
+      <NormalMapFactor>1</NormalMapFactor>
       <FalloffFactor>10</FalloffFactor>
     </MapNode>
     <MapNode xsi:type="MapDecal">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-0.75" Y="0" Z="-4.125" />
-      <Rotation X="-0.707106769" Y="0" Z="0" W="0.707106769" />
+      <Position X="-2" Y="0" Z="-4" />
+      <Rotation X="-0.49999997" Y="0.49999997" Z="0.49999997" W="0.49999997" />
       <Scaling>1</Scaling>
       <ImageName>mipTest</ImageName>
       <Width>2</Width>
@@ -1227,9 +1227,9 @@
       <Emission Red="0" Green="0" Blue="0" Alpha="0" />
       <BaseColor R="98" G="16" B="4" A="255" />
       <Roughness>0.1</Roughness>
-      <Metallic>1</Metallic>
-      <ColorFactor>1</ColorFactor>
-      <SpecularFactor>0</SpecularFactor>
+      <Metallic>0</Metallic>
+      <ColorFactor>0</ColorFactor>
+      <SpecularFactor>1</SpecularFactor>
       <NormalMapFactor>0.5</NormalMapFactor>
       <FalloffFactor>10</FalloffFactor>
     </MapNode>

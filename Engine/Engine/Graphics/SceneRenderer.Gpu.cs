@@ -168,10 +168,10 @@ namespace Fusion.Engine.Graphics {
 				AssignmentGroup		=	0;
 
 				var widthScaling	=	decal.DecalMatrix.Right.Length() + float.Epsilon;
-				var heightScaling	=	decal.DecalMatrix.Right.Length() + float.Epsilon;
+				var heightScaling	=	decal.DecalMatrix.Up.Length() + float.Epsilon;
 
 				var minRelativeSize	=	Math.Min( decal.ImageSize.Width / widthScaling, decal.ImageSize.Height / heightScaling );
-				var projScaling		=	1;//projM22;
+				var projScaling		=	1 / projM22;
 
 				MipBias					=	log2( minRelativeSize / screenSize.Height * projScaling );
 

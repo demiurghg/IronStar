@@ -24,6 +24,12 @@ namespace Fusion.Engine.Graphics {
 		public LightGrid lightGrid;
 
 
+		public ShadowMap ShadowMap {
+			get { return shadowMap; }
+		}
+		public ShadowMap shadowMap;
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -40,6 +46,8 @@ namespace Fusion.Engine.Graphics {
 		public override void Initialize()
 		{
 			lightGrid	=	new LightGrid( rs, 16, 8, 24 );
+
+			shadowMap	=	new ShadowMap( rs, rs.ShadowQuality );
 		}
 
 

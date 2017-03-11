@@ -182,6 +182,7 @@ namespace Fusion.Engine.Graphics {
 				device.PixelShaderSamplers[1]	= SamplerState.PointClamp;
 				device.PixelShaderSamplers[2]	= SamplerState.AnisotropicClamp;
 				device.PixelShaderSamplers[3]	= SamplerState.LinearClamp4Mips;
+				device.PixelShaderSamplers[4]	= SamplerState.ShadowSampler;
 
 				var instances	=	rw.Instances;
 
@@ -195,6 +196,8 @@ namespace Fusion.Engine.Graphics {
 					device.PixelShaderResources[6]	= rs.LightManager.LightGrid.LightDataGpu;
 					device.PixelShaderResources[7]	= rs.LightManager.LightGrid.DecalDataGpu;
 					device.PixelShaderResources[8]	= rs.RenderWorld.LightSet?.DecalAtlas?.Texture?.Srv;
+					device.PixelShaderResources[9]	= rs.LightManager.ShadowMap.ColorBuffer;
+					device.PixelShaderResources[10]	= rs.LightManager.ShadowMap.ParticleShadow;
 				}
 
 				//#warning INSTANSING!

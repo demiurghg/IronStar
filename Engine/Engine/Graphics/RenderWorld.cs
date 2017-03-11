@@ -407,7 +407,7 @@ namespace Fusion.Engine.Graphics {
 				rs.LightManager.LightGrid.ClusterizeLightSet( stereoEye, Camera, LightSet );
 				//	render shadows :
 				#warning SHADOWS
-				//rs.LightRenderer.RenderShadows( this, this.LightSet );
+				rs.LightManager.ShadowMap.RenderShadowMaps( rs, this, LightSet );
 			}
 
 
@@ -424,8 +424,8 @@ namespace Fusion.Engine.Graphics {
 				case 4 : rs.Filter.CopyAlpha( targetSurface, viewHdrFrame.GBuffer1 ); return;
 				case 5 : rs.Filter.CopyColor( targetSurface, viewHdrFrame.HdrBuffer ); return;
 				case 6 : rs.Filter.Copy( targetSurface, rs.SsaoFilter.OcclusionMap ); return;
-				//case 7 : rs.Filter.StretchRect( targetSurface, rs.LightRenderer.CascadedShadowMap.ParticleShadow ); return;
-				//case 8 : rs.Filter.StretchRect( targetSurface, rs.LightRenderer.CascadedShadowMap.ColorBuffer ); return;
+				case 7 : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ParticleShadow ); return;
+				case 8 : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ColorBuffer ); return;
 				case 9 : rs.Filter.StretchRect( targetSurface, viewHdrFrame.FeedbackBufferRB, SamplerState.PointClamp ); return;
 			}
 

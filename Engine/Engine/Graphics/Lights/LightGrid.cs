@@ -123,8 +123,10 @@ namespace Fusion.Engine.Graphics {
 		{
 			var view = camera.GetViewMatrix( stereoEye );
 			var proj = camera.GetProjectionMatrix( stereoEye );
+			var vpos = camera.GetCameraMatrix( StereoEye.Mono ).TranslationVector;
 
 			UpdateOmniLightExtentsAndVisibility( view, proj, lightSet );
+			UpdateSpotLightExtentsAndVisibility( view, proj, lightSet, vpos );
 			UpdateDecalExtentsAndVisibility( view, proj, lightSet );
 			ClusterizeOmniLights( view, proj, lightSet );
 		}
@@ -160,6 +162,52 @@ namespace Fusion.Engine.Graphics {
 					ol.MinExtent.X	=	Math.Max( 0, (int)Math.Floor( min.X * Width  ) );
 					ol.MinExtent.Y	=	Math.Max( 0, (int)Math.Floor( min.Y * Height ) );
 					ol.MinExtent.Z	=	Math.Max( 0, (int)Math.Floor( min.Z * Depth  ) );
+				}
+			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="view"></param>
+		/// <param name="proj"></param>
+		/// <param name="lightSet"></param>
+		void UpdateSpotLightExtentsAndVisibility ( Matrix view, Matrix proj, LightSet lightSet, Vector3 viewPosition )
+		{
+			var vp = new Rectangle(0,0,1,1);
+
+			foreach ( var sl in lightSet.SpotLights ) {
+
+				Vector4 min, max;
+				sl.Visible	=	false;
+
+				var frustum	=	new BoundingFrustum( sl.SpotView * sl.Projection );
+
+				if ( Extents.GetSphereExtent( view, proj, sl.Position, vp, sl.RadiusOuter, false, out min, out max ) ) {
+
+					min.Z	=	GetGridSlice( min.Z );
+					max.Z	=	GetGridSlice( max.Z );
+
+					sl.Visible		=	true;
+
+					if (frustum.Contains( viewPosition )==ContainmentType.Contains) {
+						sl.DetailLevel = 0;
+					} else {
+						#warning use center of mass of the frustum
+						#warning use max(width,height) of the frustum
+						var dist		=	Vector3.Distance( sl.Position, viewPosition );
+						sl.DetailLevel	=	(int)Math.Log( dist / sl.RadiusOuter, 2 );
+					}
+
+					sl.MaxExtent.X	=	Math.Min( Width,  (int)Math.Ceiling( max.X * Width  ) );
+					sl.MaxExtent.Y	=	Math.Min( Height, (int)Math.Ceiling( max.Y * Height ) );
+					sl.MaxExtent.Z	=	Math.Min( Depth,  (int)Math.Ceiling( max.Z * Depth  ) );
+
+					sl.MinExtent.X	=	Math.Max( 0, (int)Math.Floor( min.X * Width  ) );
+					sl.MinExtent.Y	=	Math.Max( 0, (int)Math.Floor( min.Y * Height ) );
+					sl.MinExtent.Z	=	Math.Max( 0, (int)Math.Floor( min.Z * Depth  ) );
 				}
 			}
 		}
@@ -215,7 +263,7 @@ namespace Fusion.Engine.Graphics {
 			var decalData	=	new SceneRenderer.DECAL[MaxDecals];
 
 			#region	Compute light and decal count
-			foreach ( var ol in lightSet.OmniLights ) {
+			foreach ( OmniLight ol in lightSet.OmniLights ) {
 				if (ol.Visible) {
 					for (int i=ol.MinExtent.X; i<ol.MaxExtent.X; i++)
 					for (int j=ol.MinExtent.Y; j<ol.MaxExtent.Y; j++)
@@ -226,7 +274,18 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 
-			foreach ( var dcl in lightSet.Decals ) {
+			foreach ( SpotLight sl in lightSet.SpotLights ) {
+				if (sl.Visible) {
+					for (int i=sl.MinExtent.X; i<sl.MaxExtent.X; i++)
+					for (int j=sl.MinExtent.Y; j<sl.MaxExtent.Y; j++)
+					for (int k=sl.MinExtent.Z; k<sl.MaxExtent.Z; k++) {
+						int a = ComputeAddress(i,j,k);
+						lightGrid[a].AddLight();
+					}
+				}
+			}
+
+			foreach ( Decal dcl in lightSet.Decals ) {
 				if (dcl.Visible) {
 					for (int i=dcl.MinExtent.X; i<dcl.MaxExtent.X; i++)
 					for (int j=dcl.MinExtent.Y; j<dcl.MaxExtent.Y; j++)
@@ -266,6 +325,22 @@ namespace Fusion.Engine.Graphics {
 					}
 
 					lightData[index].FromOmniLight( ol );
+
+					index++;
+				}
+			}
+
+			foreach ( var sl in lightSet.SpotLights ) {
+				if (sl.Visible) {
+					for (int i=sl.MinExtent.X; i<sl.MaxExtent.X; i++)
+					for (int j=sl.MinExtent.Y; j<sl.MaxExtent.Y; j++)
+					for (int k=sl.MinExtent.Z; k<sl.MaxExtent.Z; k++) {
+						int a = ComputeAddress(i,j,k);
+						indexData[ lightGrid[a].Offset + lightGrid[a].TotalCount ] = index;
+						lightGrid[a].AddLight();
+					}
+
+					lightData[index].FromSpotLight( sl );
 
 					index++;
 				}

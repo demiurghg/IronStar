@@ -63,8 +63,8 @@ namespace IronStar.Mapping {
 			get {
 				float n		=	NearPlane;
 				float f		=	FarPlane;
-				float w		=	(float)Math.Tan( MathUtil.DegreesToRadians( FovHorizontal/2 ) ) * NearPlane;
-				float h		=	(float)Math.Tan( MathUtil.DegreesToRadians( FovVertical/2   ) ) * NearPlane;
+				float w		=	(float)Math.Tan( MathUtil.DegreesToRadians( FovHorizontal/2 ) ) * NearPlane * 2;
+				float h		=	(float)Math.Tan( MathUtil.DegreesToRadians( FovVertical/2   ) ) * NearPlane * 2;
 				return	Matrix.PerspectiveRH( w, h, n, f );
 			}
 		}
@@ -97,13 +97,9 @@ namespace IronStar.Mapping {
 
 			light		=	new SpotLight();
 
-			float n		=	NearPlane;
-			float f		=	FarPlane;
-			float w		=	(float)Math.Tan( MathUtil.DegreesToRadians( FovHorizontal/2 ) ) * Radius / 32.0f;
-			float h		=	(float)Math.Tan( MathUtil.DegreesToRadians( FovVertical/2   ) ) * Radius / 32.0f;
-
 			light.Intensity		=	LightPresetColor.GetColor( LightPreset, Intensity );;
 			light.SpotView		=	SpotView;
+			light.Position		=	Position;
 			light.Projection	=	SpotProjection;
 			light.RadiusOuter	=	Radius;
 			light.RadiusInner	=	0;
@@ -170,6 +166,7 @@ namespace IronStar.Mapping {
 
 		public override void ResetNode( GameWorld world )
 		{
+			light.Position		=	Position;
 			light.SpotView		=	SpotView;
 			light.Projection	=	SpotProjection;
 		}

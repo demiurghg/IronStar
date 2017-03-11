@@ -9,6 +9,7 @@ using Fusion.Core.Configuration;
 using Fusion.Engine.Common;
 using Fusion.Drivers.Graphics;
 using System.Runtime.InteropServices;
+using Fusion.Build.Mapping;
 
 
 namespace Fusion.Engine.Graphics {
@@ -16,8 +17,11 @@ namespace Fusion.Engine.Graphics {
 	class ShadowMap : DisposableBase {
 
 		readonly GraphicsDevice device;
-
 		public const int MaxShadowmapSize	= 8192;
+		public readonly QualityLevel ShadowQuality; 
+
+		Allocator2D allocator;
+
 		
 
 		/// <summary>
@@ -26,7 +30,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public RenderTarget2D ColorBuffer {
 			get {
-				return csmColor;
+				return colorBuffer;
 			}
 		}
 
@@ -49,14 +53,16 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public DepthStencil2D DepthBuffer {
 			get {
-				return csmDepth;
+				return depthBuffer;
 			}
 		}
 
 
-		readonly int	shadowmapSize;
-		DepthStencil2D	csmDepth;
-		RenderTarget2D	csmColor;
+		readonly int	shadowMapSize;
+		readonly int	maxRegionSize;
+		readonly int	minRegionSize;
+		DepthStencil2D	depthBuffer;
+		RenderTarget2D	colorBuffer;
 		RenderTarget2D	prtShadow;
 
 
@@ -66,22 +72,28 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="singleShadowMapSize"></param>
 		/// <param name="splitCount"></param>
-		public ShadowMap ( GraphicsDevice device, int size )
+		public ShadowMap ( RenderSystem rs, QualityLevel shadowQuality )
 		{
-			this.device			=	device;
-			this.shadowmapSize	=	size;
+			this.ShadowQuality	=	shadowQuality;
+			this.device			=	rs.Device;
 
-			if (size<64 || size > MaxShadowmapSize) {
-				throw new ArgumentOutOfRangeException("cascadeSize must be within range 64.." + MaxShadowmapSize.ToString());
+			switch ( shadowQuality ) {
+				case QualityLevel.None:		shadowMapSize	=	1024; break;
+				case QualityLevel.Low:		shadowMapSize	=	1024; break;
+				case QualityLevel.Medium:	shadowMapSize	=	2048; break;
+				case QualityLevel.High:		shadowMapSize	=	4096; break;
+				case QualityLevel.Ultra:	shadowMapSize	=	8192; break;
+				default: throw new ArgumentOutOfRangeException("shadowQuality", "Bad shadow quality");
 			}
 
-			if (!MathUtil.IsPowerOfTwo( shadowmapSize )) {
-				Log.Warning("CascadedShadowMap : splitSize is not power of 2");
-			}
+			maxRegionSize	=	shadowMapSize / 4;
+			minRegionSize	=	16;
 
-			csmColor	=	new RenderTarget2D( device, ColorFormat.R32F,		shadowmapSize, shadowmapSize );
-			csmDepth	=	new DepthStencil2D( device, DepthFormat.D24S8,		shadowmapSize, shadowmapSize );
-			prtShadow	=	new RenderTarget2D( device, ColorFormat.Rgba8_sRGB,	shadowmapSize, shadowmapSize );
+			allocator	=	new Allocator2D(shadowMapSize);
+
+			colorBuffer	=	new RenderTarget2D( device, ColorFormat.R32F,		shadowMapSize, shadowMapSize );
+			depthBuffer	=	new DepthStencil2D( device, DepthFormat.D24S8,		shadowMapSize, shadowMapSize );
+			prtShadow	=	new RenderTarget2D( device, ColorFormat.Rgba8_sRGB,	shadowMapSize, shadowMapSize );
 		}
 
 
@@ -93,8 +105,8 @@ namespace Fusion.Engine.Graphics {
 		protected override void Dispose ( bool disposing )
 		{
 			if (disposing) {
-				SafeDispose( ref csmColor );
-				SafeDispose( ref csmDepth );
+				SafeDispose( ref colorBuffer );
+				SafeDispose( ref depthBuffer );
 				SafeDispose( ref prtShadow );
 			}
 
@@ -102,15 +114,96 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		
+
 		/// <summary>
 		/// 
 		/// </summary>
 		public void Clear ()
 		{
-			device.Clear( csmDepth.Surface, 1, 0 );
-			device.Clear( csmColor.Surface, Color4.White );
+			device.Clear( depthBuffer.Surface, 1, 0 );
+			device.Clear( colorBuffer.Surface, Color4.White );
 			device.Clear( prtShadow.Surface, Color4.White );
+		}
+
+
+		public Vector4 GetScaleOffset ( Rectangle rect )
+		{
+			float size = shadowMapSize;
+			float ax = rect.Width  / size;
+			float ay = rect.Height / size;
+			float bx = rect.Left   / size;
+			float by = rect.Top    / size;
+
+			float x		=	0.5f * ax;
+			float y		=  -0.5f * ay;
+			float z		=   0.5f * ax + bx;
+			float w		=	0.5f * ay + by;
+
+			return new Vector4(x,y,z,w);
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="lightSet"></param>
+		public void RenderShadowMaps ( RenderSystem rs, RenderWorld renderWorld, LightSet lightSet )
+		{
+			//
+			//	Allocate shadow map regions :
+			//
+			allocator.FreeAll();
+
+			var lights = lightSet
+					.SpotLights
+					.Where ( light0 => light0.Visible )
+					.OrderBy( light1 => light1.DetailLevel )
+					.ToArray();
+
+			int fallbackBias = 0;
+
+			foreach ( var light in lights ) {
+
+				#warning Fallback on 
+				var size	=	MathUtil.Clamp( maxRegionSize >> (light.DetailLevel+fallbackBias), minRegionSize, maxRegionSize );
+				var addr	=	allocator.Alloc( size, "" );
+				var rect	=	new Rectangle( addr.X, addr.Y, size, size );
+
+				light.ShadowRegion			=	rect;
+				light.ShadowScaleOffset		=	GetScaleOffset( rect );
+			}
+
+
+			//
+			//	Render shadow maps regions :
+			//
+			var instances = renderWorld.Instances;
+
+			using (new PixEvent("Spotlight Shadow Maps")) {
+
+				device.Clear( depthBuffer.Surface, 1, 0 );
+				device.Clear( colorBuffer.Surface, Color4.White );
+
+				foreach ( var spot in lights ) {
+
+					var context = new ShadowContext();
+					var far		= spot.Projection.GetFarPlaneDistance();
+
+					var vp		= new Viewport( spot.ShadowRegion );
+
+					context.ShadowView			=	spot.SpotView;
+					context.ShadowProjection	=	spot.Projection;
+					context.ShadowViewport		=	vp;
+					context.FarDistance			=	far;
+					context.SlopeBias			=	spot.SlopeBias;
+					context.DepthBias			=	spot.DepthBias;
+					context.ColorBuffer			=	colorBuffer.Surface;
+					context.DepthBuffer			=	depthBuffer.Surface;
+
+					rs.SceneRenderer.RenderShadowMapCascade( context, instances );
+				}
+			}
 		}
 	}
 }

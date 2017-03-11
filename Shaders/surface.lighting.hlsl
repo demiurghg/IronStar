@@ -17,9 +17,9 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	
 	uint2	data		=	clusterTable.Load( int4(loadUVW,0) ).rg;
 	uint	index		=	data.r;
-	uint 	lightCount	=	data.g & 0xFFFF;
-	uint 	decalCount	=	data.g >> 16;
-	
+	uint 	decalCount	=	(data.g & 0xFFF000) >> 12;
+	uint 	lightCount	=	(data.g & 0x000FFF) >> 0;
+
 	float3 totalLight	=	0;
 
 	float3 	worldPos	= 	input.WorldPos.xyz;
@@ -83,17 +83,55 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 
 	[loop]
 	for (i=0; i<lightCount; i++) {
-		uint idx = LightIndexTable.Load( index + i );
-		float3 position		=	LightDataTable[idx].PositionRadius.xyz;
-		float  radius		=	LightDataTable[idx].PositionRadius.w;
-		float3 intensity	=	LightDataTable[idx].IntensityFar.rgb;
+		uint idx  = LightIndexTable.Load( index + i );
+		uint type = LightDataTable[idx].LightType;
 		
-		float3 lightDir		= 	position - worldPos.xyz;
-		float  falloff		= 	LinearFalloff( length(lightDir), radius );
-		float  nDotL		= 	saturate( dot(normal, normalize(lightDir)) );
-		
-		totalLight.rgb 		+= 	falloff * Lambert ( normal.xyz,  lightDir, intensity, diffuse );
-		totalLight.rgb 		+= 	falloff * nDotL * CookTorrance( normal.xyz, viewDirN, lightDir, intensity, specular, roughness );
+		if (type==LightTypeOmni) {
+			
+			float3 position		=	LightDataTable[idx].PositionRadius.xyz;
+			float  radius		=	LightDataTable[idx].PositionRadius.w;
+			float3 intensity	=	LightDataTable[idx].IntensityFar.rgb;
+			
+			float3 lightDir		= 	position - worldPos.xyz;
+			float  falloff		= 	LinearFalloff( length(lightDir), radius );
+			float  nDotL		= 	saturate( dot(normal, normalize(lightDir)) );
+			
+			totalLight.rgb 		+= 	falloff * Lambert ( normal.xyz,  lightDir, intensity, diffuse );
+			totalLight.rgb 		+= 	falloff * nDotL * CookTorrance( normal.xyz, viewDirN, lightDir, intensity, specular, roughness );
+			
+		} else if (type==LightTypeSpotShadow) {
+			
+			float4 lsPos		=	mul(float4(worldPos + input.Normal.xyz*0.0,1), LightDataTable[idx].ViewProjection);
+			float  shadowDepth	=	lsPos.z / LightDataTable[idx].IntensityFar.w;
+				   lsPos.xyz	= 	lsPos.xyz / lsPos.w;
+				   
+			if ( abs(lsPos.x)<1 && abs(lsPos.y)<1 && abs(lsPos.z)<1 ) {
+				float3 	position	=	LightDataTable[idx].PositionRadius.xyz;
+				float  	radius		=	LightDataTable[idx].PositionRadius.w;
+				float3 	intensity	=	LightDataTable[idx].IntensityFar.rgb;
+				float4 	scaleOffset	=	LightDataTable[idx].ShadowScaleOffset;
+				
+						lsPos.xy	=	mad( lsPos.xy, scaleOffset.xy, scaleOffset.zw );
+						
+				float	accumulatedShadow	=	0;
+						
+				for( float row = -3; row <= 3; row += 1 ) {
+					[unroll]for( float col = -3; col <= 3; col += 1 ) {
+						float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, lsPos.xy + float2(col,row)*0.001f, shadowDepth );
+						accumulatedShadow += shadow;
+					}
+				}
+				accumulatedShadow /= 49.0f;
+						
+				
+				float3 	lightDir	= 	position - worldPos.xyz;
+				float  	falloff		= 	LinearFalloff( length(lightDir), radius ) * accumulatedShadow;
+				float  	nDotL		= 	saturate( dot(normal, normalize(lightDir)) );
+				
+				totalLight.rgb 		+= 	falloff * Lambert ( normal.xyz,  lightDir, intensity, diffuse );
+				totalLight.rgb 		+= 	falloff * nDotL * CookTorrance( normal.xyz, viewDirN, lightDir, intensity, specular, roughness );
+			}
+		}
 	}
 	
 	return totalLight;

@@ -32,20 +32,23 @@ struct GBuffer {
 
 #include "surface.auto.hlsl"
 
-cbuffer 			CBBatch 			: 	register(b0) { BATCH    	Batch     	: packoffset( c0 ); }	
-cbuffer 			CBLayer 			: 	register(b1) { SUBSET		Subset    	: packoffset( c0 ); }	
-cbuffer 			CBBatch 			: 	register(b3) { float4x4 	Bones[128]	: packoffset( c0 ); }	
-cbuffer				CBLightData			: 	register(b4) { LIGHTDATA	LightData	: packoffset( c0 ); }		
-SamplerState		SamplerLinear		: 	register(s0);
-SamplerState		SamplerPoint		: 	register(s1);
-SamplerState		SamplerAnisotropic	: 	register(s2);
-SamplerState		DecalSampler		: 	register(s3);
-Texture2D			Textures[4]			: 	register(t0);
-Texture3D<uint2>	ClusterTable		: 	register(t4);
-Buffer<uint>		LightIndexTable		: 	register(t5);
-StructuredBuffer<LIGHT>	LightDataTable	:	register(t6);
-StructuredBuffer<DECAL>	DecalDataTable	:	register(t7);
-Texture2D			DecalImages			:	register(t8);
+cbuffer 				CBBatch 			: 	register(b0) { BATCH    	Batch     	: packoffset( c0 ); }	
+cbuffer 				CBLayer 			: 	register(b1) { SUBSET		Subset    	: packoffset( c0 ); }	
+cbuffer 				CBBatch 			: 	register(b3) { float4x4 	Bones[128]	: packoffset( c0 ); }	
+cbuffer					CBLightData			: 	register(b4) { LIGHTDATA	LightData	: packoffset( c0 ); }		
+SamplerState			SamplerLinear		: 	register(s0);
+SamplerState			SamplerPoint		: 	register(s1);
+SamplerState			SamplerAnisotropic	: 	register(s2);
+SamplerState			DecalSampler		: 	register(s3);
+SamplerComparisonState	ShadowSampler		: 	register(s4);
+Texture2D				Textures[4]			: 	register(t0);
+Texture3D<uint2>		ClusterTable		: 	register(t4);
+Buffer<uint>			LightIndexTable		: 	register(t5);
+StructuredBuffer<LIGHT>	LightDataTable		:	register(t6);
+StructuredBuffer<DECAL>	DecalDataTable		:	register(t7);
+Texture2D				DecalImages			:	register(t8);
+Texture2D				ShadowMap			:	register(t9);
+Texture2D				ShadowMapParticles	:	register(t10);
 
 #ifdef _UBERSHADER
 $ubershader FORWARD RIGID|SKINNED

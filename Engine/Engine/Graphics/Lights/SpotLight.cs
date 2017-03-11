@@ -22,6 +22,11 @@ namespace Fusion.Engine.Graphics {
 		public Matrix	Projection;
 
 		/// <summary>
+		/// Spot-light position
+		/// </summary>
+		public Vector3	Position;
+
+		/// <summary>
 		/// Spot-light intensity.
 		/// </summary>
 		public Color4	Intensity;
@@ -50,5 +55,13 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		public float	DepthBias = 1f / 1024f;
+
+
+		internal bool		Visible = true;
+		internal int		DetailLevel;   
+		internal Rectangle	ShadowRegion;
+		internal Vector4	ShadowScaleOffset;
+		internal Int3		MinExtent;
+		internal Int3		MaxExtent;
 	}
 }

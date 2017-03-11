@@ -97,14 +97,14 @@ namespace Fusion.Engine.Graphics {
 			[FieldOffset( 4)]	public uint		Count;		/// [Spot count][Omni count]
 															
 			public void AddDecal () {
-				Count += (1<<16);
+				Count += (1<<12);
 			}
 			public void AddLight () {
 				Count += (1<<0);
 			}
 
-			public ushort DecalCount { get { return (ushort)(Count >> 16); } }
-			public ushort LightCount { get { return (ushort)(Count &  0xFFFF); } }
+			public ushort DecalCount { get { return (ushort)( (Count & 0xFFF000) >> 12 ); } }
+			public ushort LightCount { get { return (ushort)( (Count & 0x000FFF) >> 0  ); } }
 
 			public ushort TotalCount { get { return (ushort)(DecalCount + LightCount); } }
 		}
@@ -114,7 +114,7 @@ namespace Fusion.Engine.Graphics {
 		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential)]
 		public struct LIGHT {	
-			public Matrix	WorldMatrix;
+			//public Matrix	WorldMatrix;
 			public Matrix	ViewProjection;
 			public Vector4	PositionRadius;
 			public Vector4	IntensityFar;
@@ -128,6 +128,17 @@ namespace Fusion.Engine.Graphics {
 				LightType		=	SceneRenderer.LightTypeOmni;
 				PositionRadius	=	new Vector4( light.Position, light.RadiusOuter );
 				IntensityFar	=	new Vector4( light.Intensity.Red, light.Intensity.Green, light.Intensity.Blue, 0 );
+				#endregion
+			}
+
+			public void FromSpotLight ( SpotLight light ) 
+			{
+				#region Update structure fields from SpotLight object
+				LightType			=	SceneRenderer.LightTypeSpotShadow;
+				PositionRadius		=	new Vector4( light.Position, light.RadiusOuter );
+				IntensityFar		=	new Vector4( light.Intensity.Red, light.Intensity.Green, light.Intensity.Blue, light.Projection.GetFarPlaneDistance() );
+				ViewProjection		=	light.SpotView * light.Projection;
+				ShadowScaleOffset	=	light.ShadowScaleOffset;
 				#endregion
 			}
 		}
@@ -173,7 +184,7 @@ namespace Fusion.Engine.Graphics {
 				var minRelativeSize	=	Math.Min( decal.ImageSize.Width / widthScaling, decal.ImageSize.Height / heightScaling );
 				var projScaling		=	1 / projM22;
 
-				MipBias					=	log2( minRelativeSize / screenSize.Height * projScaling );
+				MipBias				=	log2( minRelativeSize / screenSize.Height * projScaling );
 
 				BaseColorMetallic.X	=	(float)Math.Pow( BaseColorMetallic.X, 2.2f );
 				BaseColorMetallic.Y	=	(float)Math.Pow( BaseColorMetallic.Y, 2.2f );

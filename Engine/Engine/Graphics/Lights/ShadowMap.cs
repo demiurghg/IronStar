@@ -143,6 +143,50 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		int SignedShift ( int value, int shift, int min, int max )
+		{
+			int result;
+			if (shift<0) {
+				result	=	value << (-shift);
+			} else {
+				result	=	value >> (shift);
+			}
+			return MathUtil.Clamp( result, min, max );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="allocator"></param>
+		/// <param name="visibleSpotLights"></param>
+		/// <returns></returns>
+		bool AllocateShadowMapRegions ( Allocator2D allocator, int detailBias, IEnumerable<SpotLight> visibleSpotLights )
+		{
+			foreach ( var light in visibleSpotLights ) {
+				Int2 address;
+
+				var size	=	SignedShift( maxRegionSize, light.DetailLevel+detailBias, minRegionSize, maxRegionSize );
+
+				if (allocator.TryAlloc( size, "", out address )) {
+
+					var rect	=	new Rectangle( address.X, address.Y, size, size );
+					light.ShadowRegion			=	rect;
+					light.ShadowScaleOffset		=	GetScaleOffset( rect );
+					
+				} else {
+
+					allocator.FreeAll();
+
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+
 
 		/// <summary>
 		/// 
@@ -161,17 +205,16 @@ namespace Fusion.Engine.Graphics {
 					.OrderBy( light1 => light1.DetailLevel )
 					.ToArray();
 
-			int fallbackBias = 0;
+			int detailBias = 0;
 
-			foreach ( var light in lights ) {
+			while (true) {
 
-				#warning Fallback on 
-				var size	=	MathUtil.Clamp( maxRegionSize >> (light.DetailLevel+fallbackBias), minRegionSize, maxRegionSize );
-				var addr	=	allocator.Alloc( size, "" );
-				var rect	=	new Rectangle( addr.X, addr.Y, size, size );
-
-				light.ShadowRegion			=	rect;
-				light.ShadowScaleOffset		=	GetScaleOffset( rect );
+				if (AllocateShadowMapRegions( allocator, detailBias, lights )) {
+					break;
+				} else {
+					Log.Warning("Failed to allocate to much shadow maps. Detail bias {0}. Reallocating.", detailBias);
+					detailBias++;
+				}
 			}
 
 

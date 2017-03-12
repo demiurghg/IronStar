@@ -23,7 +23,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	float3 totalLight	=	0;
 
 	float3 	worldPos	= 	input.WorldPos.xyz;
-	float3 	normal 		=	normalize( worldNormal );
+	float3 	normal 		=	worldNormal;
 	
 	float3	viewDir		=	Batch.ViewPos.xyz - worldPos.xyz;
 	float	viewDistance=	length( viewDir );
@@ -86,22 +86,24 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		uint idx  = LightIndexTable.Load( index + i );
 		uint type = LightDataTable[idx].LightType;
 		
+		float3 position		=	LightDataTable[idx].PositionRadius.xyz;
+		float  radius		=	LightDataTable[idx].PositionRadius.w;
+		float3 intensity	=	LightDataTable[idx].IntensityFar.rgb;
+		
+		[branch]
 		if (type==LightTypeOmni) {
 			
-			float3 position		=	LightDataTable[idx].PositionRadius.xyz;
-			float  radius		=	LightDataTable[idx].PositionRadius.w;
-			float3 intensity	=	LightDataTable[idx].IntensityFar.rgb;
-			
 			float3 lightDir		= 	position - worldPos.xyz;
+			float3 lightDirN	=	normalize(lightDir);
 			float  falloff		= 	LinearFalloff( length(lightDir), radius );
-			float  nDotL		= 	saturate( dot(normal, normalize(lightDir)) );
+			float  nDotL		= 	max( 0, dot(normal, lightDirN) );
 			
-			totalLight.rgb 		+= 	falloff * Lambert ( normal.xyz,  lightDir, intensity, diffuse );
-			totalLight.rgb 		+= 	falloff * nDotL * CookTorrance( normal.xyz, viewDirN, lightDir, intensity, specular, roughness );
+			totalLight.rgb 		+= 	falloff * Lambert ( normal.xyz,  lightDirN, intensity, diffuse );
+			totalLight.rgb 		+= 	falloff * nDotL * CookTorrance( normal.xyz, viewDirN, lightDirN, intensity, specular, roughness );
 			
 		} else if (type==LightTypeSpotShadow) {
 			
-			float4 lsPos		=	mul(float4(worldPos + input.Normal.xyz*0.0,1), LightDataTable[idx].ViewProjection);
+			float4 lsPos		=	mul(float4(worldPos,1), LightDataTable[idx].ViewProjection);
 			float  shadowDepth	=	lsPos.z / LightDataTable[idx].IntensityFar.w;
 				   lsPos.xyz	= 	lsPos.xyz / lsPos.w;
 				   
@@ -115,9 +117,9 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 						
 				float	accumulatedShadow	=	0;
 						
-				for( float row = -3; row <= 3; row += 1 ) {
+				[loop]for( float row = -3; row <= 3; row += 1 ) {
 					[unroll]for( float col = -3; col <= 3; col += 1 ) {
-						float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, lsPos.xy + float2(col,row)*0.001f, shadowDepth );
+						float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, mad(float2(col,row), 1/1024.0f, lsPos.xy), shadowDepth );
 						accumulatedShadow += shadow;
 					}
 				}
@@ -126,7 +128,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 				
 				float3 	lightDir	= 	position - worldPos.xyz;
 				float  	falloff		= 	LinearFalloff( length(lightDir), radius ) * accumulatedShadow;
-				float  	nDotL		= 	saturate( dot(normal, normalize(lightDir)) );
+				float  	nDotL		= 	max( 0, dot(normal, normalize(lightDir)) );
 				
 				totalLight.rgb 		+= 	falloff * Lambert ( normal.xyz,  lightDir, intensity, diffuse );
 				totalLight.rgb 		+= 	falloff * nDotL * CookTorrance( normal.xyz, viewDirN, lightDir, intensity, specular, roughness );

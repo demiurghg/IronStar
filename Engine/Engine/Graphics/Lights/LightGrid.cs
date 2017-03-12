@@ -116,6 +116,25 @@ namespace Fusion.Engine.Graphics {
 
 
 		/// <summary>
+		/// Call this method before building shadows!
+		/// </summary>
+		/// <param name="stereoEye"></param>
+		/// <param name="camera"></param>
+		/// <param name="lightSet"></param>
+		public void UpdateLightSetVisibility ( StereoEye stereoEye, Camera camera, LightSet lightSet )
+		{
+			var view = camera.GetViewMatrix( stereoEye );
+			var proj = camera.GetProjectionMatrix( stereoEye );
+			var vpos = camera.GetCameraMatrix( StereoEye.Mono ).TranslationVector;
+
+			UpdateOmniLightExtentsAndVisibility( view, proj, lightSet );
+			UpdateSpotLightExtentsAndVisibility( view, proj, lightSet, vpos );
+			UpdateDecalExtentsAndVisibility( view, proj, lightSet );
+		}
+
+
+
+		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="lightSet"></param>
@@ -125,9 +144,6 @@ namespace Fusion.Engine.Graphics {
 			var proj = camera.GetProjectionMatrix( stereoEye );
 			var vpos = camera.GetCameraMatrix( StereoEye.Mono ).TranslationVector;
 
-			UpdateOmniLightExtentsAndVisibility( view, proj, lightSet );
-			UpdateSpotLightExtentsAndVisibility( view, proj, lightSet, vpos );
-			UpdateDecalExtentsAndVisibility( view, proj, lightSet );
 			ClusterizeOmniLights( view, proj, lightSet );
 		}
 

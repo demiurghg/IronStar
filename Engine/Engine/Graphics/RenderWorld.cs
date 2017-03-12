@@ -404,10 +404,14 @@ namespace Fusion.Engine.Graphics {
 				//	get simulated particles for shadows.
 				ParticleSystem.Simulate( gameTime, Camera );
 
-				rs.LightManager.LightGrid.ClusterizeLightSet( stereoEye, Camera, LightSet );
-				//	render shadows :
-				#warning SHADOWS
+				//	prepare light set for shadow rendering :
+				rs.LightManager.LightGrid.UpdateLightSetVisibility( stereoEye, Camera, LightSet );
+
+				//	allocated and render shadows :
 				rs.LightManager.ShadowMap.RenderShadowMaps( rs, this, LightSet );
+
+				//	clusterize light set :
+				rs.LightManager.LightGrid.ClusterizeLightSet( stereoEye, Camera, LightSet );
 			}
 
 

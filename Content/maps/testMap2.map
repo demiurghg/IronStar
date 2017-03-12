@@ -377,7 +377,7 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="4.933371" Y="0.239535466" Z="-1.89676452" />
+      <Position X="7.5" Y="1.5" Z="-7.5" />
       <Rotation X="0.0002601187" Y="-0.89446497" Z="0.000429152249" W="0.447137773" />
       <Scaling>1</Scaling>
       <TargetName>box1</TargetName>
@@ -609,7 +609,7 @@
     <MapNode xsi:type="MapSpotLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-11.5" Y="0.5" Z="-6" />
+      <Position X="7" Y="1.5" Z="-6" />
       <Rotation X="0" Y="0" Z="1" W="-4.371139E-08" />
       <Scaling>1</Scaling>
       <SpotMaskName>grid</SpotMaskName>
@@ -626,7 +626,7 @@
     <MapNode xsi:type="MapSpotLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-11.5" Y="0.5" Z="-6" />
+      <Position X="7" Y="1.5" Z="-6" />
       <Rotation X="-0.707106769" Y="-3.090862E-08" Z="0.707106769" W="-3.090862E-08" />
       <Scaling>1</Scaling>
       <SpotMaskName>grid</SpotMaskName>

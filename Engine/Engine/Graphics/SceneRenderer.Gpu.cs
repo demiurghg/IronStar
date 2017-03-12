@@ -119,7 +119,6 @@ namespace Fusion.Engine.Graphics {
 			public Matrix	ViewProjection;
 			public Vector4	PositionRadius;
 			public Vector4	IntensityFar;
-			public Vector4	MaskScaleOffset;
 			public Vector4	ShadowScaleOffset;
 			public int		LightType;
 
@@ -148,6 +147,7 @@ namespace Fusion.Engine.Graphics {
 
 		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential)]
+		#warning Reduce DECAL structure size to 128 byte
 		public struct DECAL {
 			public Matrix	DecalMatrixInv;
 			public Vector4 	BasisX;

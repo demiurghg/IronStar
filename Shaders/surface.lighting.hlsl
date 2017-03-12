@@ -119,13 +119,17 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 						
 				//	TODO : num taps <--> shadow quality
 				//	TODO : kernel size <--> shadow region size
+				#if 0
+				accumulatedShadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, lsPos.xy, shadowDepth ).r;
+				#else
 				for( float row = -3; row <= 3; row += 1 ) {
 					[unroll]for( float col = -3; col <= 3; col += 1 ) {
-						float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, mad(float2(col,row), 1/2048.0f, lsPos.xy), shadowDepth );
+						float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, mad(float2(col,row), 1/2048.0f, lsPos.xy), shadowDepth ).r;
 						accumulatedShadow += shadow;
 					}
 				}
 				accumulatedShadow /= 49.0f;
+				#endif
 						
 				
 				float3 	lightDir	= 	position - worldPos.xyz;

@@ -41,14 +41,13 @@ struct LIGHTINDEX {
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHT
-// Marshal.SizeOf = 132
+// Marshal.SizeOf = 116
 struct LIGHT {
 	float4x4   ViewProjection;                // offset:    0
 	float4     PositionRadius;                // offset:   64
 	float4     IntensityFar;                  // offset:   80
-	float4     MaskScaleOffset;               // offset:   96
-	float4     ShadowScaleOffset;             // offset:  112
-	int        LightType;                     // offset:  128
+	float4     ShadowScaleOffset;             // offset:   96
+	int        LightType;                     // offset:  112
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+DECAL

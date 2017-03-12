@@ -51,6 +51,15 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		public void Update ()
+		{
+			if (shadowMap.ShadowQuality!=rs.ShadowQuality) {
+				SafeDispose( ref shadowMap );
+				shadowMap	=	new ShadowMap( rs, rs.ShadowQuality );
+			}
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>

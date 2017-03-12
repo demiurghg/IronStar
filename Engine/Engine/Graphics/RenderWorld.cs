@@ -404,7 +404,9 @@ namespace Fusion.Engine.Graphics {
 				//	get simulated particles for shadows.
 				ParticleSystem.Simulate( gameTime, Camera );
 
+
 				//	prepare light set for shadow rendering :
+				rs.LightManager.Update();
 				rs.LightManager.LightGrid.UpdateLightSetVisibility( stereoEye, Camera, LightSet );
 
 				//	allocated and render shadows :
@@ -416,6 +418,7 @@ namespace Fusion.Engine.Graphics {
 
 
 			//	render g-buffer :
+			rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
 			rs.SceneRenderer.RenderForward( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
 
 			//	render ssao :

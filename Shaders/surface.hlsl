@@ -53,6 +53,7 @@ Texture2D				ShadowMapParticles	:	register(t10);
 #ifdef _UBERSHADER
 $ubershader FORWARD RIGID|SKINNED
 $ubershader SHADOW RIGID|SKINNED
+$ubershader ZPASS RIGID|SKINNED
 #endif
 
 #include "surface.lighting.hlsl"
@@ -184,6 +185,12 @@ float MipLevel( float2 uv )
 }
 
 
+#ifdef ZPASS
+float4 PSMain( PSInput input ) : SV_TARGET0
+{
+	return float4(0,0,0,0);
+}
+#endif
 
 #ifdef FORWARD
 GBuffer PSMain( PSInput input )

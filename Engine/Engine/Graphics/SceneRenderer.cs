@@ -273,6 +273,100 @@ namespace Fusion.Engine.Graphics {
 
 
 
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="camera"></param>
+		/// <param name="depthBuffer"></param>
+		/// <param name="hdrTarget"></param>
+		/// <param name="diffuse"></param>
+		/// <param name="specular"></param>
+		/// <param name="normals"></param>
+		internal void RenderZPass ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderWorld rw, bool staticOnly )
+		{		
+			using ( new PixEvent("RenderZPass") ) {
+
+				if (surfaceShader==null) {	
+					return;
+				}
+
+				if (rs.SkipSceneRendering) {
+					return;
+				}
+
+				var device		=	Game.GraphicsDevice;
+
+				var view			=	camera.GetViewMatrix( stereoEye );
+				var projection		=	camera.GetProjectionMatrix( stereoEye );
+				var viewPosition	=	camera.GetCameraPosition4( stereoEye );
+
+				var cbData			=	new BATCH();
+				var cbDataSubset	=	new SUBSET();
+
+				var hdr			=	frame.HdrBuffer.Surface;
+				var depth		=	frame.DepthBuffer.Surface;
+				var feedback	=	frame.FeedbackBuffer.Surface;
+
+				device.ResetStates();
+
+				device.SetTargets( depth );
+
+				var instances	=	rw.Instances;
+
+
+				//#warning INSTANSING!
+				foreach ( var instance in instances ) {
+
+					if (!instance.Visible) {
+						continue;
+					}
+
+					if ( staticOnly && !instance.Static ) {
+						continue;
+					}
+
+					cbData.View				=	view;
+					cbData.Projection		=	projection;
+					cbData.World			=	instance.World;
+					cbData.ViewPos			=	viewPosition;
+					cbData.Color			=	instance.Color;
+					cbData.ViewBounds		=	new Vector4( hdr.Width, hdr.Height, hdr.Width, hdr.Height );
+					cbData.VTPageScaleRCP	=	rs.VTSystem.PageScaleRCP;
+					cbData.AssignmentGroup	=	instance.Static ? 0 : 1;
+
+					constBuffer.SetData( cbData );
+
+					device.PixelShaderConstants[0]	=	constBuffer ;
+					device.VertexShaderConstants[0]	=	constBuffer ;
+					device.PixelShaderConstants[1]	=	constBufferSubset;
+
+					device.SetupVertexInput( instance.vb, instance.ib );
+
+					if (instance.IsSkinned) {
+						constBufferBones.SetData( instance.BoneTransforms );
+						device.VertexShaderConstants[3]	= constBufferBones ;
+					}
+
+					try {
+
+						device.PipelineState	=	factory[ (int)( SurfaceFlags.ZPASS | SurfaceFlags.RIGID ) ];
+
+						foreach ( var subset in instance.Subsets ) {
+							device.DrawIndexed( subset.PrimitiveCount*3, subset.StartPrimitive*3, 0 );
+						}
+
+						rs.Counters.SceneDIPs++;
+						
+					} catch ( UbershaderException e ) {
+						Log.Warning( e.Message );					
+						ExceptionDialog.Show( e );
+					}
+				}
+			}
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>

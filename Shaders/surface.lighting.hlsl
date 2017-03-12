@@ -117,9 +117,11 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 						
 				float	accumulatedShadow	=	0;
 						
-				[loop]for( float row = -3; row <= 3; row += 1 ) {
+				//	TODO : num taps <--> shadow quality
+				//	TODO : kernel size <--> shadow region size
+				for( float row = -3; row <= 3; row += 1 ) {
 					[unroll]for( float col = -3; col <= 3; col += 1 ) {
-						float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, mad(float2(col,row), 1/1024.0f, lsPos.xy), shadowDepth );
+						float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, mad(float2(col,row), 1/2048.0f, lsPos.xy), shadowDepth );
 						accumulatedShadow += shadow;
 					}
 				}

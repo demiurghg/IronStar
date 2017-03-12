@@ -22,6 +22,7 @@ namespace Fusion.Engine.Graphics {
 			SHADOW	=	1 << 1,
 			RIGID	=	1 << 4,
 			SKINNED	=	1 << 5,
+			ZPASS	=	1 << 6,
 		}
 
 

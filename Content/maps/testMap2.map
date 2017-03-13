@@ -141,7 +141,7 @@
       <Depth>0.25</Depth>
       <Emission Red="0" Green="0" Blue="0" Alpha="0" />
       <BaseColor R="98" G="16" B="4" A="255" />
-      <Roughness>0.05</Roughness>
+      <Roughness>0.02</Roughness>
       <Metallic>0.5</Metallic>
       <ColorFactor>1</ColorFactor>
       <SpecularFactor>1</SpecularFactor>
@@ -179,7 +179,7 @@
       <Depth>0.25</Depth>
       <Emission Red="0" Green="0" Blue="0" Alpha="0" />
       <BaseColor R="98" G="16" B="4" A="255" />
-      <Roughness>0.05</Roughness>
+      <Roughness>0.02</Roughness>
       <Metallic>0.5</Metallic>
       <ColorFactor>1</ColorFactor>
       <SpecularFactor>1</SpecularFactor>
@@ -199,7 +199,7 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-8" Y="0" Z="0" />
+      <Position X="-8.5" Y="0" Z="0" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Factory xsi:type="FuncDoorFactory">
@@ -390,106 +390,18 @@
     <MapNode xsi:type="MapSpotLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-18" Y="3.5" Z="6.5" />
-      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Position X="-25.5" Y="8" Z="-0.5" />
+      <Rotation X="0.612372458" Y="-0.353553355" Z="-0.612372339" W="-0.3535533" />
       <Scaling>1</Scaling>
       <SpotMaskName>quad</SpotMaskName>
-      <Intensity>500</Intensity>
-      <Radius>10</Radius>
+      <Intensity>100</Intensity>
+      <Radius>15</Radius>
       <NearPlane>0.125</NearPlane>
-      <FarPlane>10</FarPlane>
-      <FovVertical>90</FovVertical>
+      <FarPlane>15</FarPlane>
+      <FovVertical>60</FovVertical>
       <FovHorizontal>90</FovHorizontal>
-      <LightPreset>FluorescentTubular</LightPreset>
-      <LightStyle>Flourescent1</LightStyle>
-      <DepthBias>0.0009765625</DepthBias>
-      <SlopeBias>2</SlopeBias>
-    </MapNode>
-    <MapNode xsi:type="MapSpotLight">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-18" Y="3.5" Z="6.5" />
-      <Rotation X="0" Y="0.707106769" Z="0" W="0.707106769" />
-      <Scaling>1</Scaling>
-      <SpotMaskName>quad</SpotMaskName>
-      <Intensity>500</Intensity>
-      <Radius>10</Radius>
-      <NearPlane>0.125</NearPlane>
-      <FarPlane>10</FarPlane>
-      <FovVertical>90</FovVertical>
-      <FovHorizontal>90</FovHorizontal>
-      <LightPreset>FluorescentTubular</LightPreset>
-      <LightStyle>Flourescent1</LightStyle>
-      <DepthBias>0.0009765625</DepthBias>
-      <SlopeBias>2</SlopeBias>
-    </MapNode>
-    <MapNode xsi:type="MapSpotLight">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-18" Y="3.5" Z="6.5" />
-      <Rotation X="0" Y="0.99999994" Z="0" W="0" />
-      <Scaling>1</Scaling>
-      <SpotMaskName>quad</SpotMaskName>
-      <Intensity>500</Intensity>
-      <Radius>10</Radius>
-      <NearPlane>0.125</NearPlane>
-      <FarPlane>10</FarPlane>
-      <FovVertical>90</FovVertical>
-      <FovHorizontal>90</FovHorizontal>
-      <LightPreset>FluorescentTubular</LightPreset>
-      <LightStyle>Flourescent1</LightStyle>
-      <DepthBias>0.0009765625</DepthBias>
-      <SlopeBias>2</SlopeBias>
-    </MapNode>
-    <MapNode xsi:type="MapSpotLight">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-18" Y="3.5" Z="6.5" />
-      <Rotation X="0" Y="0.7071067" Z="0" W="-0.7071067" />
-      <Scaling>1</Scaling>
-      <SpotMaskName>quad</SpotMaskName>
-      <Intensity>500</Intensity>
-      <Radius>10</Radius>
-      <NearPlane>0.125</NearPlane>
-      <FarPlane>10</FarPlane>
-      <FovVertical>90</FovVertical>
-      <FovHorizontal>90</FovHorizontal>
-      <LightPreset>FluorescentTubular</LightPreset>
-      <LightStyle>Flourescent1</LightStyle>
-      <DepthBias>0.0009765625</DepthBias>
-      <SlopeBias>2</SlopeBias>
-    </MapNode>
-    <MapNode xsi:type="MapSpotLight">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-18" Y="3.5" Z="6.5" />
-      <Rotation X="-0.4304593" Y="0.560985446" Z="-0.4304593" W="-0.560985446" />
-      <Scaling>1</Scaling>
-      <SpotMaskName>quad</SpotMaskName>
-      <Intensity>500</Intensity>
-      <Radius>10</Radius>
-      <NearPlane>0.125</NearPlane>
-      <FarPlane>10</FarPlane>
-      <FovVertical>90</FovVertical>
-      <FovHorizontal>90</FovHorizontal>
-      <LightPreset>FluorescentTubular</LightPreset>
-      <LightStyle>Flourescent1</LightStyle>
-      <DepthBias>0.0009765625</DepthBias>
-      <SlopeBias>2</SlopeBias>
-    </MapNode>
-    <MapNode xsi:type="MapSpotLight">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-18" Y="3.5" Z="6.5" />
-      <Rotation X="0.49999994" Y="0.4999999" Z="0.49999994" W="-0.4999999" />
-      <Scaling>1</Scaling>
-      <SpotMaskName>quad</SpotMaskName>
-      <Intensity>500</Intensity>
-      <Radius>10</Radius>
-      <NearPlane>0.125</NearPlane>
-      <FarPlane>10</FarPlane>
-      <FovVertical>90</FovVertical>
-      <FovHorizontal>90</FovHorizontal>
+      <SpotShape>Square</SpotShape>
+      <PenumbraAngle>10</PenumbraAngle>
       <LightPreset>FluorescentTubular</LightPreset>
       <LightStyle>Flourescent1</LightStyle>
       <DepthBias>0.0009765625</DepthBias>
@@ -506,8 +418,10 @@
       <Radius>5</Radius>
       <NearPlane>0.125</NearPlane>
       <FarPlane>3</FarPlane>
-      <FovVertical>90</FovVertical>
-      <FovHorizontal>90</FovHorizontal>
+      <FovVertical>60</FovVertical>
+      <FovHorizontal>60</FovHorizontal>
+      <SpotShape>Square</SpotShape>
+      <PenumbraAngle>10</PenumbraAngle>
       <LightPreset>CRTScreenSRGB</LightPreset>
       <LightStyle>Default</LightStyle>
       <DepthBias>0.0009765625</DepthBias>
@@ -524,62 +438,10 @@
       <Radius>5</Radius>
       <NearPlane>0.125</NearPlane>
       <FarPlane>3</FarPlane>
-      <FovVertical>90</FovVertical>
-      <FovHorizontal>90</FovHorizontal>
-      <LightPreset>CRTScreenSRGB</LightPreset>
-      <LightStyle>Default</LightStyle>
-      <DepthBias>0.0009765625</DepthBias>
-      <SlopeBias>2</SlopeBias>
-    </MapNode>
-    <MapNode xsi:type="MapSpotLight">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-11.5" Y="0.5" Z="-2.5" />
-      <Rotation X="-0.707106769" Y="-3.090862E-08" Z="0.707106769" W="-3.090862E-08" />
-      <Scaling>1</Scaling>
-      <SpotMaskName>grid</SpotMaskName>
-      <Intensity>500</Intensity>
-      <Radius>5</Radius>
-      <NearPlane>0.125</NearPlane>
-      <FarPlane>3</FarPlane>
-      <FovVertical>90</FovVertical>
-      <FovHorizontal>90</FovHorizontal>
-      <LightPreset>CRTScreenSRGB</LightPreset>
-      <LightStyle>Default</LightStyle>
-      <DepthBias>0.0009765625</DepthBias>
-      <SlopeBias>2</SlopeBias>
-    </MapNode>
-    <MapNode xsi:type="MapSpotLight">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-11.5" Y="0.5" Z="1" />
-      <Rotation X="-0.707106769" Y="-3.090862E-08" Z="0.707106769" W="-3.090862E-08" />
-      <Scaling>1</Scaling>
-      <SpotMaskName>grid</SpotMaskName>
-      <Intensity>500</Intensity>
-      <Radius>5</Radius>
-      <NearPlane>0.125</NearPlane>
-      <FarPlane>3</FarPlane>
-      <FovVertical>90</FovVertical>
-      <FovHorizontal>90</FovHorizontal>
-      <LightPreset>CRTScreenSRGB</LightPreset>
-      <LightStyle>Default</LightStyle>
-      <DepthBias>0.0009765625</DepthBias>
-      <SlopeBias>2</SlopeBias>
-    </MapNode>
-    <MapNode xsi:type="MapSpotLight">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-11.5" Y="0.5" Z="4.5" />
-      <Rotation X="-0.707106769" Y="-3.090862E-08" Z="0.707106769" W="-3.090862E-08" />
-      <Scaling>1</Scaling>
-      <SpotMaskName>grid</SpotMaskName>
-      <Intensity>500</Intensity>
-      <Radius>5</Radius>
-      <NearPlane>0.125</NearPlane>
-      <FarPlane>3</FarPlane>
-      <FovVertical>90</FovVertical>
-      <FovHorizontal>90</FovHorizontal>
+      <FovVertical>60</FovVertical>
+      <FovHorizontal>60</FovHorizontal>
+      <SpotShape>Square</SpotShape>
+      <PenumbraAngle>10</PenumbraAngle>
       <LightPreset>CRTScreenSRGB</LightPreset>
       <LightStyle>Default</LightStyle>
       <DepthBias>0.0009765625</DepthBias>
@@ -588,13 +450,13 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-17" Y="2.5" Z="-7.5" />
+      <Position X="-18" Y="7.5" Z="0.5" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
-      <Intensity>50</Intensity>
-      <Radius>3</Radius>
-      <LightPreset>CandleFlame</LightPreset>
-      <LightStyle>Candle1</LightStyle>
+      <Intensity>2</Intensity>
+      <Radius>15</Radius>
+      <LightPreset>DaylightOvercast</LightPreset>
+      <LightStyle>Default</LightStyle>
     </MapNode>
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
@@ -627,7 +489,205 @@
       <Intensity>50</Intensity>
       <Radius>3</Radius>
       <LightPreset>CandleFlame</LightPreset>
+      <LightStyle>Fire3</LightStyle>
+    </MapNode>
+    <MapNode xsi:type="MapOmniLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-17" Y="1" Z="-5" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Intensity>50</Intensity>
+      <Radius>3</Radius>
+      <LightPreset>CandleFlame</LightPreset>
       <LightStyle>Candle1</LightStyle>
+    </MapNode>
+    <MapNode xsi:type="MapOmniLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-19.5" Y="1" Z="-5" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Intensity>50</Intensity>
+      <Radius>3</Radius>
+      <LightPreset>CandleFlame</LightPreset>
+      <LightStyle>Fire2</LightStyle>
+    </MapNode>
+    <MapNode xsi:type="MapOmniLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-22" Y="1" Z="-5" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Intensity>50</Intensity>
+      <Radius>3</Radius>
+      <LightPreset>CandleFlame</LightPreset>
+      <LightStyle>Fire3</LightStyle>
+    </MapNode>
+    <MapNode xsi:type="MapOmniLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-24.5" Y="1" Z="-5" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Intensity>50</Intensity>
+      <Radius>3</Radius>
+      <LightPreset>CandleFlame</LightPreset>
+      <LightStyle>Candle1</LightStyle>
+    </MapNode>
+    <MapNode xsi:type="MapOmniLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-17" Y="1" Z="-2" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Intensity>50</Intensity>
+      <Radius>3</Radius>
+      <LightPreset>CandleFlame</LightPreset>
+      <LightStyle>Fire2</LightStyle>
+    </MapNode>
+    <MapNode xsi:type="MapOmniLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-19.5" Y="1" Z="-2" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Intensity>50</Intensity>
+      <Radius>3</Radius>
+      <LightPreset>CandleFlame</LightPreset>
+      <LightStyle>Candle2</LightStyle>
+    </MapNode>
+    <MapNode xsi:type="MapOmniLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-22" Y="1" Z="-2" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Intensity>50</Intensity>
+      <Radius>3</Radius>
+      <LightPreset>CandleFlame</LightPreset>
+      <LightStyle>Candle3</LightStyle>
+    </MapNode>
+    <MapNode xsi:type="MapOmniLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-24.5" Y="1" Z="-2" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Intensity>50</Intensity>
+      <Radius>3</Radius>
+      <LightPreset>CandleFlame</LightPreset>
+      <LightStyle>Fire3</LightStyle>
+    </MapNode>
+    <MapNode xsi:type="MapDecal">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-17" Y="0" Z="-0.5" />
+      <Rotation X="0.270598" Y="0.65328145" Z="0.65328145" W="-0.270598" />
+      <Scaling>1</Scaling>
+      <ImageName>blood1</ImageName>
+      <Width>3</Width>
+      <Height>3</Height>
+      <Depth>0.25</Depth>
+      <Emission Red="0" Green="0" Blue="0" Alpha="0" />
+      <BaseColor R="98" G="16" B="4" A="255" />
+      <Roughness>0.02</Roughness>
+      <Metallic>0.5</Metallic>
+      <ColorFactor>1</ColorFactor>
+      <SpecularFactor>1</SpecularFactor>
+      <NormalMapFactor>0</NormalMapFactor>
+      <FalloffFactor>10</FalloffFactor>
+    </MapNode>
+    <MapNode xsi:type="MapSpotLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-12" Y="8" Z="-0.5" />
+      <Rotation X="0.353553385" Y="-0.6123724" Z="-0.3535533" W="-0.6123723" />
+      <Scaling>1</Scaling>
+      <SpotMaskName>quad</SpotMaskName>
+      <Intensity>100</Intensity>
+      <Radius>15</Radius>
+      <NearPlane>0.125</NearPlane>
+      <FarPlane>15</FarPlane>
+      <FovVertical>45</FovVertical>
+      <FovHorizontal>90</FovHorizontal>
+      <SpotShape>Square</SpotShape>
+      <PenumbraAngle>10</PenumbraAngle>
+      <LightPreset>FluorescentTubular</LightPreset>
+      <LightStyle>Bulb1</LightStyle>
+      <DepthBias>0.0009765625</DepthBias>
+      <SlopeBias>2</SlopeBias>
+    </MapNode>
+    <MapNode xsi:type="MapSpotLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="7" Y="7.5" Z="-0.5" />
+      <Rotation X="0.353553385" Y="-0.6123724" Z="-0.3535533" W="-0.6123723" />
+      <Scaling>1</Scaling>
+      <SpotMaskName>quad</SpotMaskName>
+      <Intensity>100</Intensity>
+      <Radius>15</Radius>
+      <NearPlane>0.125</NearPlane>
+      <FarPlane>15</FarPlane>
+      <FovVertical>45</FovVertical>
+      <FovHorizontal>90</FovHorizontal>
+      <SpotShape>Square</SpotShape>
+      <PenumbraAngle>10</PenumbraAngle>
+      <LightPreset>FluorescentTubular</LightPreset>
+      <LightStyle>Bulb1</LightStyle>
+      <DepthBias>0.0009765625</DepthBias>
+      <SlopeBias>2</SlopeBias>
+    </MapNode>
+    <MapNode xsi:type="MapSpotLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="0.5" Y="7.5" Z="-0.5" />
+      <Rotation X="0.353553385" Y="-0.6123724" Z="-0.3535533" W="-0.6123723" />
+      <Scaling>1</Scaling>
+      <SpotMaskName>quad</SpotMaskName>
+      <Intensity>100</Intensity>
+      <Radius>15</Radius>
+      <NearPlane>0.125</NearPlane>
+      <FarPlane>15</FarPlane>
+      <FovVertical>45</FovVertical>
+      <FovHorizontal>90</FovHorizontal>
+      <SpotShape>Square</SpotShape>
+      <PenumbraAngle>10</PenumbraAngle>
+      <LightPreset>FluorescentTubular</LightPreset>
+      <LightStyle>Bulb1</LightStyle>
+      <DepthBias>0.0009765625</DepthBias>
+      <SlopeBias>2</SlopeBias>
+    </MapNode>
+    <MapNode xsi:type="MapSpotLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-4.5" Y="7.5" Z="-0.5" />
+      <Rotation X="0.353553385" Y="-0.6123724" Z="-0.3535533" W="-0.6123723" />
+      <Scaling>1</Scaling>
+      <SpotMaskName>quad</SpotMaskName>
+      <Intensity>100</Intensity>
+      <Radius>15</Radius>
+      <NearPlane>0.125</NearPlane>
+      <FarPlane>15</FarPlane>
+      <FovVertical>45</FovVertical>
+      <FovHorizontal>90</FovHorizontal>
+      <SpotShape>Square</SpotShape>
+      <PenumbraAngle>10</PenumbraAngle>
+      <LightPreset>FluorescentTubular</LightPreset>
+      <LightStyle>Bulb1</LightStyle>
+      <DepthBias>0.0009765625</DepthBias>
+      <SlopeBias>2</SlopeBias>
+    </MapNode>
+    <MapNode xsi:type="MapOmniLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-0" Y="7.5" Z="0.5" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Intensity>2</Intensity>
+      <Radius>15</Radius>
+      <LightPreset>DaylightOvercast</LightPreset>
+      <LightStyle>Default</LightStyle>
     </MapNode>
   </Nodes>
 </Map>

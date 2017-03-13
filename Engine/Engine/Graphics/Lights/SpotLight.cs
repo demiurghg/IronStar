@@ -10,6 +10,12 @@ using Fusion.Engine.Common;
 
 namespace Fusion.Engine.Graphics {
 
+	public enum SpotShape {
+		Round,
+		Square,
+	}
+
+
 	public class SpotLight {
 		
 		internal uint Timer = 0;
@@ -42,7 +48,12 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Spot-light mask texture index.
 		/// </summary>
-		public int		TextureIndex;
+		public float	PenumbraFactor;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public SpotShape	SpotShape;
 
 		/// <summary>
 		/// Spot-light inner radius.

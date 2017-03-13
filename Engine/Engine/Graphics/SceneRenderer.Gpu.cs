@@ -38,6 +38,8 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine]	public const int LightTypeOmni			=	1;
 		[ShaderDefine]	public const int LightTypeOmniShadow	=	2;
 		[ShaderDefine]	public const int LightTypeSpotShadow	=	3;
+		[ShaderDefine]	public const int LightSpotShapeSquare	=	0x00010000;
+		[ShaderDefine]	public const int LightSpotShapeRound	=	0x00020000;
 
 
 		[ShaderStructure]
@@ -125,7 +127,7 @@ namespace Fusion.Engine.Graphics {
 			public void FromOmniLight ( OmniLight light ) 
 			{
 				#region Update structure fields from OmniLight object
-				LightType		=	SceneRenderer.LightTypeOmni;
+				LightType		=	LightTypeOmni;
 				PositionRadius	=	new Vector4( light.Position, light.RadiusOuter );
 				IntensityFar	=	new Vector4( light.Intensity2.Red, light.Intensity2.Green, light.Intensity2.Blue, 0 );
 				#endregion
@@ -134,7 +136,14 @@ namespace Fusion.Engine.Graphics {
 			public void FromSpotLight ( SpotLight light ) 
 			{
 				#region Update structure fields from SpotLight object
-				LightType			=	SceneRenderer.LightTypeSpotShadow;
+				var shape = 0;
+
+				switch (light.SpotShape) {
+					case SpotShape.Round	: shape = LightSpotShapeRound; break;
+					case SpotShape.Square	: shape = LightSpotShapeSquare; break;
+				}
+
+				LightType			=	LightTypeSpotShadow | shape;
 				PositionRadius		=	new Vector4( light.Position, light.RadiusOuter );
 				IntensityFar		=	new Vector4( light.Intensity2.Red, light.Intensity2.Green, light.Intensity2.Blue, light.Projection.GetFarPlaneDistance() );
 				ViewProjection		=	light.SpotView * light.Projection;

@@ -83,8 +83,9 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 
 	[loop]
 	for (i=0; i<lightCount; i++) {
-		uint idx  = LightIndexTable.Load( index + i );
-		uint type = LightDataTable[idx].LightType;
+		uint idx  	= LightIndexTable.Load( index + i );
+		uint type 	= LightDataTable[idx].LightType & 0x0000FFFF;
+		uint shape	= LightDataTable[idx].LightType & 0xFFFF0000;	
 		
 		float3 position		=	LightDataTable[idx].PositionRadius.xyz;
 		float  radius		=	LightDataTable[idx].PositionRadius.w;
@@ -113,7 +114,19 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 				float3 	intensity	=	LightDataTable[idx].IntensityFar.rgb;
 				float4 	scaleOffset	=	LightDataTable[idx].ShadowScaleOffset;
 				
-						lsPos.xy	=	mad( lsPos.xy, scaleOffset.xy, scaleOffset.zw );
+				float	penumbra	=	1;
+				if (shape==LightSpotShapeRound) {
+					penumbra 	=	max(0, 1 - length(lsPos.xy));
+					penumbra	=	min(1, penumbra * 2 );				
+					penumbra	*=	penumbra;
+				}
+				if (shape==LightSpotShapeSquare) {
+					penumbra 	= 	max(0, 1 - length(max(abs(lsPos.x), abs(lsPos.y))));
+					penumbra	=	min(1, penumbra * 2 );				
+					penumbra	*=	penumbra;
+				}
+				
+				lsPos.xy		=	mad( lsPos.xy, scaleOffset.xy, scaleOffset.zw );
 						
 				float	accumulatedShadow	=	0;
 						
@@ -133,7 +146,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 						
 				
 				float3 	lightDir	= 	position - worldPos.xyz;
-				float  	falloff		= 	LinearFalloff( length(lightDir), radius ) * accumulatedShadow;
+				float  	falloff		= 	LinearFalloff( length(lightDir), radius ) * accumulatedShadow * penumbra;
 				float  	nDotL		= 	max( 0, dot(normal, normalize(lightDir)) );
 				
 				totalLight.rgb 		+= 	falloff * Lambert ( normal.xyz,  lightDir, intensity, diffuse );

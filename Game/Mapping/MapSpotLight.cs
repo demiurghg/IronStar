@@ -35,10 +35,16 @@ namespace IronStar.Mapping {
 		public float FarPlane { get; set; } = 5;
 		
 		[Category("Spot-light")]
-		public float FovVertical { get; set; } = 30;
+		public float FovVertical { get; set; } = 60;
 		
 		[Category("Spot-light")]
-		public float FovHorizontal { get; set; } = 30;
+		public float FovHorizontal { get; set; } = 60;
+		
+		[Category("Spot-light")]
+		public SpotShape SpotShape { get; set; } = SpotShape.Square;
+		
+		[Category("Spot-light")]
+		public float PenumbraAngle { get; set; } = 10;
 
 		[Category("Spot-light")]
 		public LightPreset LightPreset { get; set; } = LightPreset.IncandescentStandard;
@@ -67,7 +73,7 @@ namespace IronStar.Mapping {
 				float n		=	NearPlane;
 				float f		=	FarPlane;
 				float w		=	(float)Math.Tan( MathUtil.DegreesToRadians( FovHorizontal/2 ) ) * NearPlane * 2;
-				float h		=	(float)Math.Tan( MathUtil.DegreesToRadians( FovVertical/2   ) ) * NearPlane * 2;
+				float h		=	(float)Math.Tan( MathUtil.DegreesToRadians( FovVertical/2	) ) * NearPlane * 2;
 				return	Matrix.PerspectiveRH( w, h, n, f );
 			}
 		}
@@ -106,7 +112,8 @@ namespace IronStar.Mapping {
 			light.Projection	=	SpotProjection;
 			light.RadiusOuter	=	Radius;
 			light.RadiusInner	=	0;
-			light.TextureIndex	=	index;
+
+			light.SpotShape		=	SpotShape;
 
 			light.DepthBias		=	DepthBias;
 			light.SlopeBias		=	SlopeBias;

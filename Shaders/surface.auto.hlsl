@@ -4,6 +4,8 @@ static const int VTMaxMip = 5;
 static const int LightTypeOmni = 1;
 static const int LightTypeOmniShadow = 2;
 static const int LightTypeSpotShadow = 3;
+static const int LightSpotShapeSquare = 65536;
+static const int LightSpotShapeRound = 131072;
 
 // Fusion.Engine.Graphics.SceneRenderer+BATCH
 // Marshal.SizeOf = 320

@@ -51,11 +51,22 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		public void Update ()
+		public void Update ( GameTime gameTime, LightSet lightSet )
 		{
 			if (shadowMap.ShadowQuality!=rs.ShadowQuality) {
 				SafeDispose( ref shadowMap );
 				shadowMap	=	new ShadowMap( rs, rs.ShadowQuality );
+			}
+
+
+			foreach ( var omni in lightSet.OmniLights ) {
+				omni.Timer += (uint)gameTime.Elapsed.TotalMilliseconds;
+				if (omni.Timer<0) omni.Timer = 0;
+			}
+
+			foreach ( var spot in lightSet.SpotLights ) {
+				spot.Timer += (uint)gameTime.Elapsed.TotalMilliseconds;
+				if (spot.Timer<0) spot.Timer = 0;
 			}
 		}
 

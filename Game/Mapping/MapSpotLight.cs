@@ -43,6 +43,9 @@ namespace IronStar.Mapping {
 		[Category("Spot-light")]
 		public LightPreset LightPreset { get; set; } = LightPreset.IncandescentStandard;
 
+		[Category("Spot-light")]
+		public LightStyle LightStyle { get; set; } = LightStyle.Default;
+
 		[Category("Depth biasing")]
 		public float DepthBias { get; set; } = 1f / 1024f;
 
@@ -107,6 +110,8 @@ namespace IronStar.Mapping {
 
 			light.DepthBias		=	DepthBias;
 			light.SlopeBias		=	SlopeBias;
+
+			light.LightStyle	=	LightStyle;
 
 			world.Game.RenderSystem.RenderWorld.LightSet.SpotLights.Add( light );
 		}

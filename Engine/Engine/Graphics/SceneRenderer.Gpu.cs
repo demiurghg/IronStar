@@ -127,7 +127,7 @@ namespace Fusion.Engine.Graphics {
 				#region Update structure fields from OmniLight object
 				LightType		=	SceneRenderer.LightTypeOmni;
 				PositionRadius	=	new Vector4( light.Position, light.RadiusOuter );
-				IntensityFar	=	new Vector4( light.Intensity.Red, light.Intensity.Green, light.Intensity.Blue, 0 );
+				IntensityFar	=	new Vector4( light.Intensity2.Red, light.Intensity2.Green, light.Intensity2.Blue, 0 );
 				#endregion
 			}
 
@@ -136,7 +136,7 @@ namespace Fusion.Engine.Graphics {
 				#region Update structure fields from SpotLight object
 				LightType			=	SceneRenderer.LightTypeSpotShadow;
 				PositionRadius		=	new Vector4( light.Position, light.RadiusOuter );
-				IntensityFar		=	new Vector4( light.Intensity.Red, light.Intensity.Green, light.Intensity.Blue, light.Projection.GetFarPlaneDistance() );
+				IntensityFar		=	new Vector4( light.Intensity2.Red, light.Intensity2.Green, light.Intensity2.Blue, light.Projection.GetFarPlaneDistance() );
 				ViewProjection		=	light.SpotView * light.Projection;
 				ShadowScaleOffset	=	light.ShadowScaleOffset;
 				#endregion

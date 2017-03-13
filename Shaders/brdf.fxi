@@ -15,7 +15,7 @@ float	LinearFalloff( float dist, float max_range )
 	float fade = 0;
 	fade = saturate(1 - (dist / max_range));
 	fade *= fade;
-	return saturate(fade);
+	return fade;
 }
 
 

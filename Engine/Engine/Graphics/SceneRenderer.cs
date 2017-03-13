@@ -24,11 +24,6 @@ namespace Fusion.Engine.Graphics {
 		Ubershader		surfaceShader;
 		StateFactory	factory;
 
-		Texture2D		defaultDiffuse	;
-		Texture2D		defaultSpecular	;
-		Texture2D		defaultNormalMap;
-		Texture2D		defaultEmission	;
-
 		/// <summary>
 		/// Gets pipeline state factory
 		/// </summary>
@@ -60,21 +55,6 @@ namespace Fusion.Engine.Graphics {
 			constBuffer			=	new ConstantBuffer( Game.GraphicsDevice, typeof(BATCH) );
 			constBufferBones	=	new ConstantBuffer( Game.GraphicsDevice, typeof(Matrix), MaxBones );
 			constBufferSubset	=	new ConstantBuffer( Game.GraphicsDevice, typeof(SUBSET) );
-
-
-			defaultDiffuse	=	new Texture2D( Game.GraphicsDevice, 4,4, ColorFormat.Rgba8, false );
-			defaultDiffuse.SetData( Enumerable.Range(0,16).Select( i => Color.Gray ).ToArray() );
-
-			defaultSpecular	=	new Texture2D( Game.GraphicsDevice, 4,4, ColorFormat.Rgba8, false );
-			defaultSpecular.SetData( Enumerable.Range(0,16).Select( i => new Color(0,128,0,255) ).ToArray() );
-
-			defaultNormalMap	=	new Texture2D( Game.GraphicsDevice, 4,4, ColorFormat.Rgba8, false );
-			defaultNormalMap.SetData( Enumerable.Range(0,16).Select( i => new Color(128,128,255,255) ).ToArray() );
-
-			defaultEmission	=	new Texture2D( Game.GraphicsDevice, 4,4, ColorFormat.Rgba8, false );
-			defaultEmission.SetData( Enumerable.Range(0,16).Select( i => Color.Black ).ToArray() );
-
-			//Ubershader.AddEnumerator( "SceneRenderer", (t
 
 			Game.Reloading += (s,e) => LoadContent();
 		}
@@ -129,11 +109,6 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref constBuffer );
 				SafeDispose( ref constBufferBones );
 				SafeDispose( ref constBufferSubset );
-
-				SafeDispose( ref defaultDiffuse		);
-				SafeDispose( ref defaultSpecular	);
-				SafeDispose( ref defaultNormalMap	);
-				SafeDispose( ref defaultEmission	);
 			}
 
 			base.Dispose( disposing );

@@ -11,6 +11,9 @@ using Fusion.Engine.Common;
 namespace Fusion.Engine.Graphics {
 
 	public class SpotLight {
+		
+		internal uint Timer = 0;
+
 		/// <summary>
 		/// Spot-light view matrix.
 		/// </summary>
@@ -30,6 +33,11 @@ namespace Fusion.Engine.Graphics {
 		/// Spot-light intensity.
 		/// </summary>
 		public Color4	Intensity;
+
+		/// <summary>
+		/// Spot-light intensity.
+		/// </summary>
+		public Color4	Intensity2 { get { return Intensity * LightStyleController.RunLightStyle((int)Timer, LightStyle); } }
 
 		/// <summary>
 		/// Spot-light mask texture index.
@@ -55,6 +63,11 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		public float	DepthBias = 1f / 1024f;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public LightStyle LightStyle;
 
 
 		internal bool		Visible = true;

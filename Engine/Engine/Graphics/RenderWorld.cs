@@ -406,7 +406,7 @@ namespace Fusion.Engine.Graphics {
 
 
 				//	prepare light set for shadow rendering :
-				rs.LightManager.Update();
+				rs.LightManager.Update( gameTime, LightSet );
 				rs.LightManager.LightGrid.UpdateLightSetVisibility( stereoEye, Camera, LightSet );
 
 				//	allocated and render shadows :

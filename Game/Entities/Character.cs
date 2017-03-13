@@ -56,14 +56,16 @@ namespace IronStar.Entities {
 
 			controller = new CharacterController( pos, 
 					factory.Height				, 
-					factory.CrouchingHeight		, 
-					factory.Radius				, 
+					factory.CrouchingHeight		,
+					0.35f, // prone height
+					factory.Radius				,
 					factory.Margin				, 
 					factory.Mass				,
 					factory.MaximumTractionSlope, 
 					factory.MaximumSupportSlope	, 
 					factory.StandingSpeed		,
 					factory.CrouchingSpeed		,
+					1.0f, // prone speed
 					factory.TractionForce		, 
 					factory.SlidingSpeed		,
 					factory.SlidingForce		,

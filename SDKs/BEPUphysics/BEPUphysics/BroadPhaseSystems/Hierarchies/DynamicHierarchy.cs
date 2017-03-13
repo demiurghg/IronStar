@@ -81,7 +81,7 @@ namespace BEPUphysics.BroadPhaseSystems.Hierarchies
 
         #region Multithreading
 
-        private void MultithreadedRefitPhase(int splitDepth)
+        public void MultithreadedRefitPhase(int splitDepth)
         {
             if (splitDepth > 0)
             {
@@ -100,7 +100,7 @@ namespace BEPUphysics.BroadPhaseSystems.Hierarchies
             }
         }
 
-        private void MultithreadedOverlapPhase(int splitDepth)
+        public void MultithreadedOverlapPhase(int splitDepth)
         {
             if (splitDepth > 0)
             {
@@ -119,6 +119,19 @@ namespace BEPUphysics.BroadPhaseSystems.Hierarchies
             }
         }
 
+        public int GetSplitDepth()
+        {
+            //To multithread the tree traversals, we have to do a little single threaded work.
+            //Dive down into the tree far enough that there are enough nodes to split amongst all the threads in the thread manager.
+            //The depth to which we dive is offset by some precomputed values (when available) or a guess based on whether or not the 
+            //thread count is a power of 2.  Thread counts which are a power of 2 match well to the binary tree, while other thread counts
+            //require going deeper for better distributions.
+            int offset = ParallelLooper.ThreadCount <= threadSplitOffsets.Length
+                             ? threadSplitOffsets[ParallelLooper.ThreadCount - 1]
+                             : (ParallelLooper.ThreadCount & (ParallelLooper.ThreadCount - 1)) == 0 ? 0 : 2;
+            return offset + (int)Math.Ceiling(Math.Log(ParallelLooper.ThreadCount, 2));
+        }
+
         protected override void UpdateMultithreaded()
         {
             lock (Locker)
@@ -126,15 +139,7 @@ namespace BEPUphysics.BroadPhaseSystems.Hierarchies
                 Overlaps.Clear();
                 if (root != null)
                 {
-                    //To multithread the tree traversals, we have to do a little single threaded work.
-                    //Dive down into the tree far enough that there are enough nodes to split amongst all the threads in the thread manager.
-                    //The depth to which we dive is offset by some precomputed values (when available) or a guess based on whether or not the 
-                    //thread count is a power of 2.  Thread counts which are a power of 2 match well to the binary tree, while other thread counts
-                    //require going deeper for better distributions.
-                    int offset = ParallelLooper.ThreadCount <= threadSplitOffsets.Length
-                                     ? threadSplitOffsets[ParallelLooper.ThreadCount - 1]
-                                     : (ParallelLooper.ThreadCount & (ParallelLooper.ThreadCount - 1)) == 0 ? 0 : 2;
-                    int splitDepth = offset + (int)Math.Ceiling(Math.Log(ParallelLooper.ThreadCount, 2));
+                    var splitDepth = GetSplitDepth();
 #if PROFILE
                     startRefit = Stopwatch.GetTimestamp();
 #endif
@@ -175,12 +180,12 @@ namespace BEPUphysics.BroadPhaseSystems.Hierarchies
 
         #endregion
 
-        private void SingleThreadedRefitPhase()
+        public void SingleThreadedRefitPhase()
         {
             root.Refit();
         }
 
-        private void SingleThreadedOverlapPhase()
+        public void SingleThreadedOverlapPhase()
         {
             if (!root.IsLeaf) //If the root is a leaf, it's alone- nothing to collide against! This test is required by the assumptions of the leaf-leaf test.
                 root.GetOverlaps(root, this);
@@ -302,9 +307,36 @@ namespace BEPUphysics.BroadPhaseSystems.Hierarchies
             root.Analyze(depths, 0, ref nodeCount);
         }
 
-        internal void ForceRevalidation()
+        /// <summary>
+        /// Forces a full rebuild of the tree. Useful to return the tree to a decent level of quality if the tree has gotten horribly messed up.
+        /// Watch out, this is a slow operation. Expect to drop frames.
+        /// </summary>
+        public void ForceRebuild()
         {
-            ((InternalNode)root).Revalidate();
+            if (root != null && !root.IsLeaf)
+            {
+                ((InternalNode)root).Revalidate();
+            }
+        }
+
+
+        /// <summary>
+        /// Measures the cost of the tree, based on the volume of the tree's nodes.
+        /// Approximates the expected cost of volume-based queries against the tree. 
+        /// Useful for comparing against other trees.
+        /// </summary>
+        /// <returns>Cost of the tree.</returns>
+        public float MeasureCostMetric()
+        {
+            if (root != null)
+            {
+                var offset = root.BoundingBox.Max - root.BoundingBox.Min;
+                var volume = offset.X * offset.Y * offset.Z;
+                if (volume < 1e-9f)
+                    return 0;
+                return root.MeasureSubtreeCost() / volume;
+            }
+            return 0;
         }
         #endregion
     }

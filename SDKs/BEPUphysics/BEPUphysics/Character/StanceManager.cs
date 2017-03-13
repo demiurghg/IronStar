@@ -22,6 +22,7 @@ namespace BEPUphysics.Character
 
         ConvexCollidable<CylinderShape> standingQueryObject;
         ConvexCollidable<CylinderShape> crouchingQueryObject;
+        ConvexCollidable<CylinderShape> proneQueryObject;
         ConvexCollidable<CylinderShape> currentQueryObject;
 
         /// <summary>
@@ -31,8 +32,13 @@ namespace BEPUphysics.Character
         {
             standingQueryObject.Shape.Radius = characterBody.Radius;
             standingQueryObject.Shape.Height = StandingHeight;
+            standingQueryObject.Shape.CollisionMargin = characterBody.CollisionInformation.Shape.CollisionMargin;
             crouchingQueryObject.Shape.Radius = characterBody.Radius;
             crouchingQueryObject.Shape.Height = CrouchingHeight;
+            crouchingQueryObject.Shape.CollisionMargin = characterBody.CollisionInformation.Shape.CollisionMargin;
+            proneQueryObject.Shape.Radius = characterBody.Radius;
+            proneQueryObject.Shape.Height = ProneHeight;
+            proneQueryObject.Shape.CollisionMargin = characterBody.CollisionInformation.Shape.CollisionMargin;
         }
 
         private float standingHeight;
@@ -80,6 +86,29 @@ namespace BEPUphysics.Character
             }
         }
 
+        private float proneHeight;
+        /// <summary>
+        /// Gets or sets the height of the character while prone.  Must be less than the standing height.  To avoid resizing-related problems, use this only when the character is not being actively simulated or is not currently prone.
+        /// </summary>
+        public float ProneHeight
+        {
+            get { return proneHeight; }
+            set
+            {
+                if (value <= 0 || value > CrouchingHeight)
+                    throw new ArgumentException("Crouching height must be positive and less than the crouching height.");
+                proneHeight = value;
+                UpdateQueryShapes();
+
+                if (CurrentStance == Stance.Prone)
+                {
+                    //If we're currently crouching, then the current shape must be modified as well.
+                    //This isn't entirely safe, but dynamic resizing generally isn't.
+                    characterBody.Height = proneHeight;
+                }
+            }
+        }
+
         /// <summary>
         /// Gets the current stance of the character.
         /// </summary>
@@ -106,27 +135,34 @@ namespace BEPUphysics.Character
         /// </summary>
         /// <param name="characterBody">The character's body entity.</param>
         /// <param name="crouchingHeight">Crouching height of the character.</param>
+        /// <param name="proneHeight">Prone height of the character.</param>
         /// <param name="queryManager">Provider of queries used by the stance manager to test if it is okay to change stances.</param>
         /// <param name="supportFinder">Support finder used by the character.</param>
-        public StanceManager(Cylinder characterBody, float crouchingHeight, QueryManager queryManager, SupportFinder supportFinder)
+        public StanceManager(Cylinder characterBody, float crouchingHeight, float proneHeight, QueryManager queryManager, SupportFinder supportFinder)
         {
             this.QueryManager = queryManager;
             this.SupportFinder = supportFinder;
             this.characterBody = characterBody;
             standingHeight = characterBody.Height;
             if (crouchingHeight < standingHeight)
-                this.crouchingHeight = crouchingHeight;//StandingHeight * .7f;
+                this.crouchingHeight = crouchingHeight;
             else
                 throw new ArgumentException("Crouching height must be less than standing height.");
+            if (proneHeight < crouchingHeight)
+                this.proneHeight = proneHeight;
+            else
+                throw new ArgumentException("Prone height must be less than crouching height.");
 
             //We can share the real shape with the query objects.
             currentQueryObject = new ConvexCollidable<CylinderShape>(characterBody.CollisionInformation.Shape);
-            standingQueryObject = new ConvexCollidable<CylinderShape>(new CylinderShape(StandingHeight, characterBody.Radius));
-            crouchingQueryObject = new ConvexCollidable<CylinderShape>(new CylinderShape(CrouchingHeight, characterBody.Radius));
+            standingQueryObject = new ConvexCollidable<CylinderShape>(new CylinderShape(StandingHeight, characterBody.Radius) { CollisionMargin = currentQueryObject.Shape.CollisionMargin });
+            crouchingQueryObject = new ConvexCollidable<CylinderShape>(new CylinderShape(CrouchingHeight, characterBody.Radius) { CollisionMargin = currentQueryObject.Shape.CollisionMargin });
+            proneQueryObject = new ConvexCollidable<CylinderShape>(new CylinderShape(proneHeight, characterBody.Radius) { CollisionMargin = currentQueryObject.Shape.CollisionMargin });
             //Share the collision rules between the main body and its query objects.  That way, the character's queries return valid results.
             currentQueryObject.CollisionRules = characterBody.CollisionInformation.CollisionRules;
             standingQueryObject.CollisionRules = characterBody.CollisionInformation.CollisionRules;
             crouchingQueryObject.CollisionRules = characterBody.CollisionInformation.CollisionRules;
+            proneQueryObject.CollisionRules = characterBody.CollisionInformation.CollisionRules;
         }
 
         private void PrepareQueryObject(EntityCollidable queryObject, ref Vector3 position)
@@ -138,130 +174,223 @@ namespace BEPUphysics.Character
         }
 
         /// <summary>
+        /// Checks if a transition from the current stance to the target stance is possible given the current environment.
+        /// </summary>
+        /// <param name="targetStance">Stance to check for transition safety.</param>
+        /// <param name="newHeight">If the transition is safe, the new height of the character. Zero otherwise.</param>
+        /// <param name="newPosition">If the transition is safe, the new location of the character body if the transition occurred. Zero vector otherwise.</param>
+        /// <returns>True if the target stance is different than the current stance and the transition is valid, false otherwise.</returns>
+        public bool CheckTransition(Stance targetStance, out float newHeight, out Vector3 newPosition)
+        {
+            var currentPosition = characterBody.position;
+            var down = characterBody.orientationMatrix.Down;
+            newPosition = new Vector3();
+            newHeight = 0;
+
+            if (CurrentStance != targetStance)
+            {
+
+                float currentHeight;
+                switch (CurrentStance)
+                {
+                    case Stance.Prone:
+                        currentHeight = proneHeight;
+                        break;
+                    case Stance.Crouching:
+                        currentHeight = crouchingHeight;
+                        break;
+                    default:
+                        currentHeight = standingHeight;
+                        break;
+                }
+                float targetHeight;
+                switch (targetStance)
+                {
+                    case Stance.Prone:
+                        targetHeight = proneHeight;
+                        break;
+                    case Stance.Crouching:
+                        targetHeight = crouchingHeight;
+                        break;
+                    default:
+                        targetHeight = standingHeight;
+                        break;
+                }
+
+
+                if (currentHeight >= targetHeight)
+                {
+                    //The character is getting smaller, so no validation queries are required.
+                    if (SupportFinder.HasSupport)
+                    {
+                        //On the ground, so need to move the position down.
+                        newPosition = currentPosition + down * ((currentHeight - targetHeight) * 0.5f);
+                    }
+                    else
+                    {
+                        //We're in the air, so we don't have to change the position at all- just change the height.
+                        newPosition = currentPosition;
+                    }
+                    newHeight = targetHeight;
+                    return true;
+                }
+                //The character is getting bigger, so validation is required.
+                ConvexCollidable<CylinderShape> queryObject;
+                switch (targetStance)
+                {
+                    case Stance.Prone:
+                        queryObject = proneQueryObject;
+                        break;
+                    case Stance.Crouching:
+                        queryObject = crouchingQueryObject;
+                        break;
+                    default:
+                        queryObject = standingQueryObject;
+                        break;
+                }
+
+                var tractionContacts = new QuickList<CharacterContact>(BufferPools<CharacterContact>.Thread);
+                var supportContacts = new QuickList<CharacterContact>(BufferPools<CharacterContact>.Thread);
+                var sideContacts = new QuickList<CharacterContact>(BufferPools<CharacterContact>.Thread);
+                var headContacts = new QuickList<CharacterContact>(BufferPools<CharacterContact>.Thread);
+                try
+                {
+                    if (SupportFinder.HasSupport)
+                    {
+                        //Increasing in size requires a query to verify that the new state is safe.
+                        //TODO: State queries can be expensive if the character is crouching beneath something really detailed.
+                        //There are some situations where you may want to do an upwards-pointing ray cast first.  If it hits something,
+                        //there's no need to do the full query.
+                        newPosition = currentPosition - down * ((targetHeight - currentHeight) * .5f);
+                        PrepareQueryObject(queryObject, ref newPosition);
+                        QueryManager.QueryContacts(queryObject, ref tractionContacts, ref supportContacts, ref sideContacts, ref headContacts, true);
+                        if (IsObstructed(ref supportContacts, ref sideContacts, ref headContacts))
+                        {
+                            //Can't stand up if something is in the way!
+                            return false;
+                        }
+                        newHeight = targetHeight;
+                        return true;
+                    }
+                    else
+                    {
+                        //This is a complicated case.  We must perform a semi-downstep query.
+                        //It's different than a downstep because the head may be obstructed as well. Also, in downstepping, the character always goes *down*.
+                        //In this, while the bottom of the character is extending downward, the character position actually either stays the same or goes up. 
+                        //(We arbitrarily ignore the case where the character could push off a ceiling.)
+                        //The goal is to put the feet of the character on any support that can be found, and then verify that the rest of its body fits in that location.
+                        float lowestBound = 0;
+                        float originalHighestBound = (targetHeight - currentHeight) * -.5f;
+                        float highestBound = originalHighestBound;
+                        float currentOffset = 0;
+
+                        int attempts = 0;
+                        //Don't keep querying indefinitely.  If we fail to reach it in a few informed steps, it's probably not worth continuing.
+                        //The bound size check prevents the system from continuing to search a meaninglessly tiny interval.
+                        var lastState = CharacterContactPositionState.Accepted;
+                        while (attempts++ < 5 && lowestBound - highestBound > Toolbox.BigEpsilon)
+                        {
+                            Vector3 candidatePosition = currentPosition + currentOffset * down;
+                            float hintOffset;
+                            switch (lastState = TrySupportLocation(queryObject, ref candidatePosition, out hintOffset, ref tractionContacts, ref supportContacts, ref sideContacts, ref headContacts))
+                            {
+                                case CharacterContactPositionState.Accepted:
+                                    currentOffset += hintOffset;
+                                    //Only use the new position location if the movement distance was the right size.
+                                    if (currentOffset <= 0 && currentOffset >= originalHighestBound)
+                                    {
+                                        newPosition = currentPosition + currentOffset * down;
+                                        newHeight = targetHeight;
+                                        return true;
+                                    }
+                                    else
+                                    {
+                                        return false;
+                                    }
+                                case CharacterContactPositionState.NoHit:
+                                    highestBound = currentOffset + hintOffset;
+                                    currentOffset = (lowestBound + highestBound) * .5f;
+                                    break;
+                                case CharacterContactPositionState.Obstructed:
+                                    lowestBound = currentOffset;
+                                    currentOffset = (highestBound + lowestBound) * .5f;
+                                    break;
+                                case CharacterContactPositionState.TooDeep:
+                                    currentOffset += hintOffset;
+                                    lowestBound = currentOffset;
+                                    break;
+                            }
+                        }
+                        //If it terminated in a safe state, it can increase in size.
+                        //TODO: You could handle this more efficiently by early terminating the above loop once obstruction is clearly unavoidable.
+                        //(Not messing with it right now because this is likely going to change completely.)
+                        if (lastState == CharacterContactPositionState.Accepted || lastState == CharacterContactPositionState.NoHit)
+                        {
+                            newPosition = currentPosition;
+                            newHeight = targetHeight;
+                            return true;
+                        }
+                        return false;
+                    }
+                }
+                finally
+                {
+                    tractionContacts.Dispose();
+                    supportContacts.Dispose();
+                    sideContacts.Dispose();
+                    headContacts.Dispose();
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Attempts to change the stance of the character if possible.
         /// </summary>
         /// <returns>Whether or not the character was able to change its stance.</returns>
         public bool UpdateStance(out Vector3 newPosition)
         {
-            var currentPosition = characterBody.position;
-            var down = characterBody.orientationMatrix.Down;
-            newPosition = new Vector3();
-            if (CurrentStance != DesiredStance)
+            float newHeight;
+            if (CheckTransition(DesiredStance, out newHeight, out newPosition))
             {
-                if (CurrentStance == Stance.Standing && DesiredStance == Stance.Crouching)
-                {
-                    //Crouch.  There's no complicated logic to crouching; you don't need to validate
-                    //a crouch before doing it.
-                    //You do, however, do a different kind of crouch if you're airborne.
-                    if (SupportFinder.HasSupport)
-                    {
-                        //Move the character towards the ground.
-                        newPosition = currentPosition + down * ((StandingHeight - CrouchingHeight) * .5f);
-                        characterBody.Height = CrouchingHeight;
-                        CurrentStance = Stance.Crouching;
-                    }
-                    else
-                    {
-                        //We're in the air, so we don't have to change the position at all- just change the height.
-                        //No queries needed since we're only shrinking.
-                        newPosition = currentPosition;
-                        characterBody.Height = CrouchingHeight;
-                        CurrentStance = Stance.Crouching;
-                    }
-                    return true;
-                }
-                else if (CurrentStance == Stance.Crouching && DesiredStance == Stance.Standing)
-                {
-                    var tractionContacts = new QuickList<CharacterContact>(BufferPools<CharacterContact>.Thread);
-                    var supportContacts = new QuickList<CharacterContact>(BufferPools<CharacterContact>.Thread);
-                    var sideContacts = new QuickList<CharacterContact>(BufferPools<CharacterContact>.Thread);
-                    var headContacts = new QuickList<CharacterContact>(BufferPools<CharacterContact>.Thread);
-                    try
-                    {
-                        //Attempt to stand.
-                        if (SupportFinder.HasSupport)
-                        {
-                            //Standing requires a query to verify that the new state is safe.
-                            //TODO: State queries can be expensive if the character is crouching beneath something really detailed.
-                            //There are some situations where you may want to do an upwards-pointing ray cast first.  If it hits something,
-                            //there's no need to do the full query.
-                            newPosition = currentPosition - down * ((StandingHeight - CrouchingHeight) * .5f);
-                            PrepareQueryObject(standingQueryObject, ref newPosition);
-                            QueryManager.QueryContacts(standingQueryObject, ref tractionContacts, ref supportContacts, ref sideContacts, ref headContacts);
-                            if (IsObstructed(ref sideContacts, ref headContacts))
-                            {
-                                //Can't stand up if something is in the way!
-                                return false;
-                            }
-                            characterBody.Height = StandingHeight;
-                            CurrentStance = Stance.Standing;
-                            return true;
-                        }
-                        else
-                        {
-                            //This is a complicated case.  We must perform a semi-downstep query.
-                            //It's different than a downstep because the head may be obstructed as well.
-
-                            float highestBound = 0;
-                            float lowestBound = (StandingHeight - CrouchingHeight) * .5f;
-                            float currentOffset = lowestBound;
-                            float maximum = lowestBound;
-
-                            int attempts = 0;
-                            //Don't keep querying indefinitely.  If we fail to reach it in a few informed steps, it's probably not worth continuing.
-                            //The bound size check prevents the system from continuing to search a meaninglessly tiny interval.
-                            while (attempts++ < 5 && lowestBound - highestBound > Toolbox.BigEpsilon)
-                            {
-                                Vector3 candidatePosition = currentPosition + currentOffset * down;
-                                float hintOffset;
-                                switch (TrySupportLocation(ref candidatePosition, out hintOffset, ref tractionContacts, ref supportContacts, ref sideContacts, ref headContacts))
-                                {
-                                    case CharacterContactPositionState.Accepted:
-                                        currentOffset += hintOffset;
-                                        //Only use the new position location if the movement distance was the right size.
-                                        if (currentOffset > 0 && currentOffset < maximum)
-                                        {
-                                            newPosition = currentPosition + currentOffset * down;
-                                            characterBody.Height = StandingHeight;
-                                            CurrentStance = Stance.Standing;
-                                            return true;
-                                        }
-                                        else
-                                        {
-                                            return false;
-                                        }
-                                    case CharacterContactPositionState.NoHit:
-                                        highestBound = currentOffset + hintOffset;
-                                        currentOffset = (lowestBound + highestBound) * .5f;
-                                        break;
-                                    case CharacterContactPositionState.Obstructed:
-                                        lowestBound = currentOffset;
-                                        currentOffset = (highestBound + lowestBound) * .5f;
-                                        break;
-                                    case CharacterContactPositionState.TooDeep:
-                                        currentOffset += hintOffset;
-                                        lowestBound = currentOffset;
-                                        break;
-                                }
-                            }
-                            //Couldn't find a hit.  Go ahead and stand!
-                            newPosition = currentPosition;
-                            characterBody.Height = StandingHeight;
-                            CurrentStance = Stance.Standing;
-                            return true;
-                        }
-                    }
-                    finally
-                    {
-                        tractionContacts.Dispose();
-                        supportContacts.Dispose();
-                        sideContacts.Dispose();
-                        headContacts.Dispose();
-                    }
-                }
+                CurrentStance = DesiredStance;
+                characterBody.Height = newHeight;
+                return true;
             }
-
             return false;
+        }
+
+        bool IsObstructed(ref QuickList<CharacterContact> supportContacts, ref QuickList<CharacterContact> sideContacts, ref QuickList<CharacterContact> headContacts)
+        {
+            if (IsObstructed(ref sideContacts, ref headContacts))
+                return true;
+
+            for (int i = 0; i < supportContacts.Count; ++i)
+            {
+                if (IsSupportContactObstructive(ref supportContacts.Elements[i].Contact))
+                    return true;
+            }
+            return false;
+        }
+
+        bool IsSupportContactObstructive(ref ContactData contact)
+        {
+            //If the contact has less than the allowed penetration depth, allow it.
+            if (contact.PenetrationDepth <= CollisionDetectionSettings.AllowedPenetration)
+            {
+                return false;
+            }
+            //If there is already a contact that is deeper than the new contact, then allow it. It won't make things worse.
+            foreach (var c in SupportFinder.Supports)
+            {
+                //An existing contact is considered 'deeper' if its normal-adjusted depth is greater than the new contact.
+                float dot = Vector3.Dot(contact.Normal, c.Contact.Normal);
+                float depth = dot * c.Contact.PenetrationDepth + Toolbox.BigEpsilon;
+                if (depth >= contact.PenetrationDepth)
+                    return false;
+            }
+            return true;
         }
 
         bool IsObstructed(ref QuickList<CharacterContact> sideContacts, ref QuickList<CharacterContact> headContacts)
@@ -272,40 +401,19 @@ namespace BEPUphysics.Character
             //A contact is considered obstructive if its projected depth is deeper than any existing contact along the existing contacts' normals.
             for (int i = 0; i < sideContacts.Count; i++)
             {
-                if (IsObstructive(ref sideContacts.Elements[i].Contact))
+                if (SupportFinder.IsSideContactObstructive(ref sideContacts.Elements[i].Contact))
                     return true;
             }
             return false;
         }
 
-        bool IsObstructive(ref ContactData contact)
-        {
-            //Can't stand up if there are new side contacts that are too deep.
-            if (SupportFinder.SideContacts.Count == 0 && contact.PenetrationDepth > CollisionDetectionSettings.AllowedPenetration)
-            {
-                return true;
-            }
 
-            //Go through side-facing contact and check to see if the new contact is deeper than any existing contact in the direction of the existing contact.
-            //This is equivalent to considering the existing contacts to define planes and then comparing the new contact against those planes.
-            //Since we already have the penetration depths, we don't need to use the positions of the contacts.
-            foreach (var c in SupportFinder.SideContacts)
-            {
-                float dot = Vector3.Dot(contact.Normal, c.Contact.Normal);
-                float depth = dot * c.Contact.PenetrationDepth;
-                if (depth > Math.Max(c.Contact.PenetrationDepth, CollisionDetectionSettings.AllowedPenetration))
-                    return true;
-
-            }
-            return false;
-        }
-
-        CharacterContactPositionState TrySupportLocation(ref Vector3 position, out float hintOffset,
+        CharacterContactPositionState TrySupportLocation(ConvexCollidable<CylinderShape> queryObject, ref Vector3 position, out float hintOffset,
             ref QuickList<CharacterContact> tractionContacts, ref QuickList<CharacterContact> supportContacts, ref QuickList<CharacterContact> sideContacts, ref QuickList<CharacterContact> headContacts)
         {
             hintOffset = 0;
-            PrepareQueryObject(standingQueryObject, ref position);
-            QueryManager.QueryContacts(standingQueryObject, ref tractionContacts, ref supportContacts, ref sideContacts, ref headContacts);
+            PrepareQueryObject(queryObject, ref position);
+            QueryManager.QueryContacts(queryObject, ref tractionContacts, ref supportContacts, ref sideContacts, ref headContacts, true);
 
             bool obstructed = IsObstructed(ref sideContacts, ref headContacts);
             if (obstructed)
@@ -359,7 +467,17 @@ namespace BEPUphysics.Character
     /// </summary>
     public enum Stance
     {
+        /// <summary>
+        /// Tallest stance.
+        /// </summary>
         Standing,
-        Crouching
+        /// <summary>
+        /// Middle-height stance; must be taller than prone and shorter than standing.
+        /// </summary>
+        Crouching,
+        /// <summary>
+        /// The shortest stance; the character is essentially on the ground. Note that the width and length of the character do not change while prone.
+        /// </summary>
+        Prone
     }
 }

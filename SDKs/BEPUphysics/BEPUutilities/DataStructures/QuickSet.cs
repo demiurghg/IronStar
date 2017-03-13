@@ -96,6 +96,8 @@ namespace BEPUutilities.DataStructures
             tablePoolIndex = initialElementPoolIndex + tableSizePower;
             Elements = elementPool.TakeFromPoolIndex(elementPoolIndex);
             table = tablePool.TakeFromPoolIndex(tablePoolIndex);
+            //Correctness requires a clean table. '0' means 'not taken'.
+            Array.Clear(table, 0, table.Length);
             count = 0;
             tableMask = table.Length - 1;
 
@@ -118,7 +120,7 @@ namespace BEPUutilities.DataStructures
         /// </summary>
         /// <param name="element">Element to look up.</param>
         /// <param name="tableIndex">Index of the element in the redirect table, or if it is not present, the index of where it would be added.</param>
-        /// <param name="elementIndex">The index of the element in the list, if it exists; -1 otherwise.</param>
+        /// <param name="elementIndex">The index of the element in the elements array, if it exists; -1 otherwise.</param>
         /// <returns>True if the element is present in the set, false if it is not.</returns>
 #if FORCEINLINE
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -326,6 +328,15 @@ namespace BEPUutilities.DataStructures
             count = 0;
         }
 
+        /// <summary>
+        /// Removes all elements from the set without modifying the contents of the elements array. Be careful about using this with reference types.
+        /// </summary>
+        public void FastClear()
+        {
+            Array.Clear(table, 0, table.Length);
+            count = 0;
+        }
+
         public Enumerator GetEnumerator()
         {
             Validate();
@@ -392,9 +403,13 @@ namespace BEPUutilities.DataStructures
         /// </summary>
         public void Dispose()
         {
-            //We must clean out the table before returning it to the pool.
-
-            Clear();
+            //We must clean out the table before returning it to the pool in case the array contains reference types which would otherwise leak.
+            //The user may have already manually cleared it. To avoid doing redundant work, check the count first.
+            //The user may have chosen to leave reference types in the list if they did a fast clear, but that's not for us to worry about.
+            if (count > 0)
+            {
+                Clear();
+            }
 
             tablePool.GiveBack(table, tablePoolIndex);
             elementPool.GiveBack(Elements, elementPoolIndex);

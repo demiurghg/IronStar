@@ -106,7 +106,7 @@ namespace IronStar.Mapping {
 
 			light		=	new SpotLight();
 
-			light.Intensity		=	LightPresetColor.GetColor( LightPreset, Intensity );;
+			light.Intensity		=	LightPresetColor.GetColor( LightPreset, Intensity );
 			light.SpotView		=	SpotView;
 			light.Position		=	Position;
 			light.Projection	=	SpotProjection;

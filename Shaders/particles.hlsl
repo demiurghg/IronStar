@@ -1,9 +1,9 @@
 
 #if 0
-$ubershader INITIALIZE|INJECTION|SIMULATION|DRAW|DRAW_SHADOW
+$ubershader INITIALIZE|INJECTION|SIMULATION|DRAW|DRAW_SHADOW|RENDER_LIGHTMAP|ALLOC_LIGHTMAP
 #endif
 
-#include "particles.fxi"
+#include "particles.auto.hlsl"
 
 cbuffer CB1 : register(b0) { 
 	PARAMS Params; 
@@ -23,8 +23,8 @@ SamplerState	Sampler	 : 	register(s0);
 //	SRVs :
 //-----------------------------------------------
 Texture2D						Texture 				: 	register(t0);
-StructuredBuffer<PARTICLE>		injectionBuffer			:	register(t1);
-StructuredBuffer<PARTICLE>		particleBufferGS		:	register(t2);
+StructuredBuffer<Particle>		injectionBuffer			:	register(t1);
+StructuredBuffer<Particle>		particleBufferGS		:	register(t2);
 StructuredBuffer<float2>		sortParticleBufferGS	:	register(t3);
 StructuredBuffer<float4>		particleLighting		:	register(t4);
 Texture2D						DepthValues				: 	register(t5);
@@ -32,7 +32,7 @@ Texture2D						DepthValues				: 	register(t5);
 //-----------------------------------------------
 //	UAVs :
 //-----------------------------------------------
-RWStructuredBuffer<PARTICLE>	particleBuffer		: 	register(u0);
+RWStructuredBuffer<Particle>	particleBuffer		: 	register(u0);
 
 #ifdef INJECTION
 ConsumeStructuredBuffer<uint>	deadParticleIndices	: 	register(u1);
@@ -46,7 +46,7 @@ RWStructuredBuffer<float2>		sortParticleBuffer	: 	register(u2);
 /*-----------------------------------------------------------------------------
 	Simulation :
 -----------------------------------------------------------------------------*/
-#if (defined INJECTION) || (defined SIMULATION) || (defined INITIALIZE)
+#if (defined INJECTION) || (defined SIMULATION) || (defined INITIALIZE) || (defined ALLOC_LIGHTMAP)
 [numthreads( BLOCK_SIZE, 1, 1 )]
 void CSMain( 
 	uint3 groupID			: SV_GroupID,
@@ -65,7 +65,7 @@ void CSMain(
 	//	id must be less than max injected particles.
 	//	dead list must contain at leas MAX_INJECTED indices to prevent underflow.
 	if (id < Params.MaxParticles && Params.DeadListSize > MAX_INJECTED ) {
-		PARTICLE p = injectionBuffer[ id ];
+		Particle p = injectionBuffer[ id ];
 		
 		uint newIndex = deadParticleIndices.Consume();
 		
@@ -75,11 +75,11 @@ void CSMain(
 
 #ifdef SIMULATION
 	if (id < Params.MaxParticles) {
-		PARTICLE p = particleBuffer[ id ];
+		Particle p = particleBuffer[ id ];
 		
 		if (p.LifeTime>0) {
-			if (p.Time < p.LifeTime) {
-				p.Time += Params.DeltaTime;
+			if (p.TimeLag < p.LifeTime) {
+				p.TimeLag += Params.DeltaTime;
 			} else {
 				p.LifeTime = -1;
 				deadParticleIndices.Append( id );
@@ -88,8 +88,8 @@ void CSMain(
 
 		particleBuffer[ id ] = p;
 
-		//	meausure distance :
-		float  time		=	p.Time;
+		//	Measure distance :
+		float  time		=	p.TimeLag;
 		
 		particleBuffer[ id ].Velocity	=	p.Velocity + p.Acceleration * Params.DeltaTime;	
 		particleBuffer[ id ].Position	=	p.Position + p.Velocity     * Params.DeltaTime;	
@@ -97,6 +97,20 @@ void CSMain(
 		float4 ppPos	=	mul( mul( float4(particleBuffer[ id ].Position,1), Params.View ), Params.Projection );
 
 		sortParticleBuffer[ id ] = float2( -abs(ppPos.z / ppPos.w), id );
+	}
+#endif
+
+#ifdef ALLOC_LIGHTMAP
+	if (id < Params.MaxParticles) {
+		Particle p = particleBuffer[ id ];
+
+		//	Measure distance :
+		float  time		=	p.TimeLag;
+		
+		particleBuffer[ id ].Velocity	=	p.Velocity + p.Acceleration * Params.DeltaTime;	
+		particleBuffer[ id ].Position	=	p.Position + p.Velocity     * Params.DeltaTime;	
+		
+		particleBuffer[ id ] = p;
 	}
 #endif
 }
@@ -119,7 +133,7 @@ struct GSOutput {
 };
 
 
-#if (defined DRAW) || (defined DRAW_SHADOW)
+#if (defined DRAW) || (defined DRAW_SHADOW) || (defined RENDER_LIGHTMAP)
 VSOutput VSMain( uint vertexID : SV_VertexID )
 {
 	VSOutput output;
@@ -153,24 +167,24 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	uint prtId = (uint)( sortParticleBufferGS[ inputPoint[0].vertexID ].y );
 	//uint prtId = inputPoint[0].vertexID;
 	
-	PARTICLE prt = particleBufferGS[ prtId ];
+	Particle prt = particleBufferGS[ prtId ];
 	
-	if (prt.Time<0) {
+	if (prt.TimeLag<0) {
 		return;
 	}
 	
-	if (prt.Time >= prt.LifeTime ) {
+	if (prt.TimeLag >= prt.LifeTime ) {
 		return;
 	}
 	
-	float time		=	prt.Time;
-	float factor	=	saturate(prt.Time / prt.LifeTime);
+	float time		=	prt.TimeLag;
+	float factor	=	saturate(prt.TimeLag / prt.LifeTime);
 	
 	float  sz 		=   lerp( prt.Size0, prt.Size1, factor )/2;
 	float4 color	=	lerp( prt.Color0, prt.Color1, Ramp( prt.FadeIn, prt.FadeOut, factor ) );
 	float3 position	=	prt.Position    ;// + prt.Velocity * time + accel * time * time / 2;
 	float3 tailpos	=	prt.TailPosition;// + prt.Velocity * time + accel * time * time / 2;
-	float  a		=	lerp( prt.Angle0, prt.Angle1, factor );	
+	float  a		=	lerp( prt.Rotation0, prt.Rotation1, factor );	
 
 	float2x2	m	=	float2x2( cos(a), sin(a), -sin(a), cos(a) );
 	
@@ -257,7 +271,7 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 		
 		float  prtZ		= abs(input.ViewPosSZ.z);
 
-		// - profile!
+		// TODO : profile soft particles clipping!
 		// if (depth < vpos.z) {
 		// clip(-1);
 		// }
@@ -270,6 +284,14 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 	#endif
 	
 	#ifdef DRAW_SHADOW
+		float4 textureColor	=	Texture.Sample( Sampler, input.TexCoord );
+		float4 vertexColor  =  	input.Color;
+		float4 color		=	1 - vertexColor.a * textureColor.a;
+		
+		return color;
+	#endif
+	
+	#ifdef RENDER_LIGHTMAP
 		float4 textureColor	=	Texture.Sample( Sampler, input.TexCoord );
 		float4 vertexColor  =  	input.Color;
 		float4 color		=	1 - vertexColor.a * textureColor.a;

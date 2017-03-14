@@ -41,6 +41,7 @@ SamplerState			SamplerPoint		: 	register(s1);
 SamplerState			SamplerAnisotropic	: 	register(s2);
 SamplerState			DecalSampler		: 	register(s3);
 SamplerComparisonState	ShadowSampler		: 	register(s4);
+SamplerState			ParticleSampler		: 	register(s5);
 Texture2D				Textures[4]			: 	register(t0);
 Texture3D<uint2>		ClusterTable		: 	register(t4);
 Buffer<uint>			LightIndexTable		: 	register(t5);

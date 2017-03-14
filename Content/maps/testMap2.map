@@ -390,8 +390,8 @@
     <MapNode xsi:type="MapSpotLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-25.5" Y="8" Z="-0.5" />
-      <Rotation X="0.612372458" Y="-0.353553355" Z="-0.612372339" W="-0.3535533" />
+      <Position X="-24.5" Y="6.625" Z="-0.5" />
+      <Rotation X="0.560985565" Y="-0.430459321" Z="-0.5609855" W="-0.430459231" />
       <Scaling>1</Scaling>
       <SpotMaskName>quad</SpotMaskName>
       <Intensity>100</Intensity>
@@ -403,46 +403,6 @@
       <SpotShape>Square</SpotShape>
       <PenumbraAngle>10</PenumbraAngle>
       <LightPreset>FluorescentTubular</LightPreset>
-      <LightStyle>Flourescent1</LightStyle>
-      <DepthBias>0.0009765625</DepthBias>
-      <SlopeBias>2</SlopeBias>
-    </MapNode>
-    <MapNode xsi:type="MapSpotLight">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="7" Y="1.5" Z="-6" />
-      <Rotation X="0" Y="0" Z="1" W="-4.371139E-08" />
-      <Scaling>1</Scaling>
-      <SpotMaskName>grid</SpotMaskName>
-      <Intensity>500</Intensity>
-      <Radius>5</Radius>
-      <NearPlane>0.125</NearPlane>
-      <FarPlane>3</FarPlane>
-      <FovVertical>60</FovVertical>
-      <FovHorizontal>60</FovHorizontal>
-      <SpotShape>Square</SpotShape>
-      <PenumbraAngle>10</PenumbraAngle>
-      <LightPreset>CRTScreenSRGB</LightPreset>
-      <LightStyle>Default</LightStyle>
-      <DepthBias>0.0009765625</DepthBias>
-      <SlopeBias>2</SlopeBias>
-    </MapNode>
-    <MapNode xsi:type="MapSpotLight">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="7" Y="1.5" Z="-6" />
-      <Rotation X="-0.707106769" Y="-3.090862E-08" Z="0.707106769" W="-3.090862E-08" />
-      <Scaling>1</Scaling>
-      <SpotMaskName>grid</SpotMaskName>
-      <Intensity>500</Intensity>
-      <Radius>5</Radius>
-      <NearPlane>0.125</NearPlane>
-      <FarPlane>3</FarPlane>
-      <FovVertical>60</FovVertical>
-      <FovHorizontal>60</FovHorizontal>
-      <SpotShape>Square</SpotShape>
-      <PenumbraAngle>10</PenumbraAngle>
-      <LightPreset>CRTScreenSRGB</LightPreset>
       <LightStyle>Default</LightStyle>
       <DepthBias>0.0009765625</DepthBias>
       <SlopeBias>2</SlopeBias>
@@ -601,20 +561,20 @@
     <MapNode xsi:type="MapSpotLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-12" Y="8" Z="-0.5" />
-      <Rotation X="0.353553385" Y="-0.6123724" Z="-0.3535533" W="-0.6123723" />
+      <Position X="-10.25" Y="5.125" Z="-0.5" />
+      <Rotation X="0.353553355" Y="-0.6123724" Z="-0.353553265" W="-0.6123723" />
       <Scaling>1</Scaling>
       <SpotMaskName>quad</SpotMaskName>
       <Intensity>100</Intensity>
       <Radius>15</Radius>
       <NearPlane>0.125</NearPlane>
-      <FarPlane>15</FarPlane>
+      <FarPlane>10</FarPlane>
       <FovVertical>45</FovVertical>
       <FovHorizontal>90</FovHorizontal>
       <SpotShape>Square</SpotShape>
       <PenumbraAngle>10</PenumbraAngle>
       <LightPreset>FluorescentTubular</LightPreset>
-      <LightStyle>Bulb1</LightStyle>
+      <LightStyle>Default</LightStyle>
       <DepthBias>0.0009765625</DepthBias>
       <SlopeBias>2</SlopeBias>
     </MapNode>
@@ -631,10 +591,10 @@
       <FarPlane>15</FarPlane>
       <FovVertical>45</FovVertical>
       <FovHorizontal>90</FovHorizontal>
-      <SpotShape>Square</SpotShape>
+      <SpotShape>Round</SpotShape>
       <PenumbraAngle>10</PenumbraAngle>
       <LightPreset>FluorescentTubular</LightPreset>
-      <LightStyle>Bulb1</LightStyle>
+      <LightStyle>Default</LightStyle>
       <DepthBias>0.0009765625</DepthBias>
       <SlopeBias>2</SlopeBias>
     </MapNode>
@@ -654,14 +614,14 @@
       <SpotShape>Square</SpotShape>
       <PenumbraAngle>10</PenumbraAngle>
       <LightPreset>FluorescentTubular</LightPreset>
-      <LightStyle>Bulb1</LightStyle>
+      <LightStyle>Default</LightStyle>
       <DepthBias>0.0009765625</DepthBias>
       <SlopeBias>2</SlopeBias>
     </MapNode>
     <MapNode xsi:type="MapSpotLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-4.5" Y="7.5" Z="-0.5" />
+      <Position X="0.875" Y="7.5" Z="-0.5" />
       <Rotation X="0.353553385" Y="-0.6123724" Z="-0.3535533" W="-0.6123723" />
       <Scaling>1</Scaling>
       <SpotMaskName>quad</SpotMaskName>

@@ -141,12 +141,13 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 						accumulatedShadow += shadow;
 					}
 				}
-				accumulatedShadow /= 49.0f;
+				accumulatedShadow 	/= 	49.0f;
 				#endif
 						
+				float3	prtShadow	=	ShadowMapParticles.SampleLevel( ParticleSampler, lsPos.xy, 0 ).rgb;
 				
 				float3 	lightDir	= 	position - worldPos.xyz;
-				float  	falloff		= 	LinearFalloff( length(lightDir), radius ) * accumulatedShadow * penumbra;
+				float3 	falloff		= 	LinearFalloff( length(lightDir), radius ) * accumulatedShadow * penumbra * prtShadow;
 				float  	nDotL		= 	max( 0, dot(normal, normalize(lightDir)) );
 				
 				totalLight.rgb 		+= 	falloff * Lambert ( normal.xyz,  lightDir, intensity, diffuse );

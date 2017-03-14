@@ -192,7 +192,7 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="lightSet"></param>
-		public void RenderShadowMaps ( RenderSystem rs, RenderWorld renderWorld, LightSet lightSet )
+		public void RenderShadowMaps ( GameTime gameTime, RenderSystem rs, RenderWorld renderWorld, LightSet lightSet )
 		{
 			//
 			//	Allocate shadow map regions :
@@ -223,7 +223,7 @@ namespace Fusion.Engine.Graphics {
 			//
 			var instances = renderWorld.Instances;
 
-			using (new PixEvent("Spotlight Shadow Maps")) {
+			using (new PixEvent("Shadow Maps")) {
 
 				device.Clear( depthBuffer.Surface, 1, 0 );
 				device.Clear( colorBuffer.Surface, Color4.White );
@@ -245,6 +245,22 @@ namespace Fusion.Engine.Graphics {
 					context.DepthBuffer			=	depthBuffer.Surface;
 
 					rs.SceneRenderer.RenderShadowMapCascade( context, instances );
+				}
+			}
+
+
+			using ( new PixEvent( "Particle Shadows" ) ) {
+
+				device.Clear( prtShadow.Surface, Color4.White );
+
+				foreach ( var spot in lights ) {
+
+					var context = new ShadowContext();
+					var far		= spot.Projection.GetFarPlaneDistance();
+
+					var vp		= new Viewport( spot.ShadowRegion );
+
+					rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, spot.SpotView, spot.Projection, prtShadow.Surface, depthBuffer.Surface );
 				}
 			}
 		}

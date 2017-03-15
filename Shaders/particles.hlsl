@@ -1,6 +1,6 @@
 
 #if 0
-$ubershader INITIALIZE|INJECTION|SIMULATION|DRAW|DRAW_SHADOW|RENDER_LIGHTMAP|ALLOC_LIGHTMAP
+$ubershader INITIALIZE|INJECTION|SIMULATION|DRAW|DRAW_SHADOW|DRAW_LIGHT|ALLOC_LIGHTMAP
 #endif
 
 #include "particles.auto.hlsl"
@@ -17,17 +17,26 @@ cbuffer CB2 : register(b1) {
 //-----------------------------------------------
 //	States :
 //-----------------------------------------------
-SamplerState	Sampler	 : 	register(s0);
+SamplerState			Sampler			: 	register(s0);
+SamplerComparisonState	ShadowSampler	: 	register(s1);
 
 //-----------------------------------------------
 //	SRVs :
 //-----------------------------------------------
-Texture2D						Texture 				: 	register(t0);
-StructuredBuffer<Particle>		injectionBuffer			:	register(t1);
-StructuredBuffer<Particle>		particleBufferGS		:	register(t2);
-StructuredBuffer<float2>		sortParticleBufferGS	:	register(t3);
-StructuredBuffer<float4>		particleLighting		:	register(t4);
-Texture2D						DepthValues				: 	register(t5);
+Texture2D					Texture 			: 	register(t0);
+StructuredBuffer<Particle>	injectionBuffer		:	register(t1);
+StructuredBuffer<Particle>	particleBufferGS	:	register(t2);
+StructuredBuffer<float2>	sortParticleBufferGS:	register(t3);
+StructuredBuffer<float4>	particleLighting	:	register(t4);
+Texture2D					DepthValues			: 	register(t5);
+
+Texture3D<uint2>			ClusterTable		: 	register(t7);
+Buffer<uint>				LightIndexTable		: 	register(t8);
+StructuredBuffer<LIGHT>		LightDataTable		:	register(t9);
+Texture2D					ShadowMap			:	register(t10);
+Texture2D					LightMap			:	register(t11);
+
+#include "particles.lighting.hlsl"
 
 //-----------------------------------------------
 //	UAVs :
@@ -104,11 +113,12 @@ void CSMain(
 	if (id < Params.MaxParticles) {
 		Particle p = particleBuffer[ id ];
 
-		//	Measure distance :
-		float  time		=	p.TimeLag;
-		
-		particleBuffer[ id ].Velocity	=	p.Velocity + p.Acceleration * Params.DeltaTime;	
-		particleBuffer[ id ].Position	=	p.Position + p.Velocity     * Params.DeltaTime;	
+		float x0 = ( 8*(id % 256) + 0 ) / 2048.0f;
+		float y0 = ( 8*(id / 256) + 0 ) / 2048.0f;
+		float x1 = ( 8*(id % 256) + 8 ) / 2048.0f;
+		float y1 = ( 8*(id / 256) + 8 ) / 2048.0f;
+
+		p.LightmapRegion = float4( x0,y0,x1,y1 );
 		
 		particleBuffer[ id ] = p;
 	}
@@ -128,12 +138,13 @@ struct VSOutput {
 struct GSOutput {
 	float4	Position  : SV_Position;
 	float2	TexCoord  : TEXCOORD0;
-	float4  ViewPosSZ : TEXCOORD1;
+	float2	LMCoord	  : TEXCOORD1;
+	float4  ViewPosSZ : TEXCOORD2;
 	float4	Color     : COLOR0;
 };
 
 
-#if (defined DRAW) || (defined DRAW_SHADOW) || (defined RENDER_LIGHTMAP)
+#if (defined DRAW) || (defined DRAW_SHADOW) || (defined DRAW_LIGHT)
 VSOutput VSMain( uint vertexID : SV_VertexID )
 {
 	VSOutput output;
@@ -193,10 +204,15 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	
 	float4		image	=	Images[prt.ImageIndex ];
 	
-	float4 pos0	=	mul( float4( position + rt + up, 1 ), Params.View );
-	float4 pos1	=	mul( float4( position - rt + up, 1 ), Params.View );
-	float4 pos2	=	mul( float4( position - rt - up, 1 ), Params.View );
-	float4 pos3	=	mul( float4( position + rt - up, 1 ), Params.View );
+	float4 wpos0	=	float4( position + rt + up, 1 );
+	float4 wpos1	=	float4( position - rt + up, 1 );
+	float4 wpos2	=	float4( position - rt - up, 1 );
+	float4 wpos3	=	float4( position + rt - up, 1 );
+	
+	float4 pos0		=	mul( wpos0, Params.View );
+	float4 pos1		=	mul( wpos1, Params.View );
+	float4 pos2		=	mul( wpos2, Params.View );
+	float4 pos3		=	mul( wpos3, Params.View );
 	
 	if (prt.Effects==ParticleFX_Beam) {
 		float3 dir	=	normalize(position - tailpos);
@@ -209,35 +225,31 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	}
 	
 	p0.Position	 = mul( pos0, Params.Projection );
-	p0.TexCoord	 = float2(image.z, image.y);
+	p0.TexCoord	 = image.zy;
+	p0.LMCoord	 = prt.LightmapRegion.zy;
 	p0.ViewPosSZ = float4( pos0.xyz, 1/sz );
 	p0.Color 	 = color;
 	
 	p1.Position	 = mul( pos1, Params.Projection );
-	p1.TexCoord	 = float2(image.x, image.y);
+	p1.TexCoord	 = image.xy;
+	p1.LMCoord	 = prt.LightmapRegion.xy;
 	p1.ViewPosSZ = float4( pos1.xyz, 1/sz );
 	p1.Color 	 = color;
 	
 	p2.Position	 = mul( pos2, Params.Projection );
-	p2.TexCoord	 = float2(image.x, image.w);
+	p2.TexCoord	 = image.xw;
+	p2.LMCoord	 = prt.LightmapRegion.xw;
 	p2.ViewPosSZ = float4( pos2.xyz, 1/sz );
 	p2.Color 	 = color;
 	
 	p3.Position	 = mul( pos3, Params.Projection );
-	p3.TexCoord	 = float2(image.z, image.w);
+	p3.TexCoord	 = image.zw;
+	p3.LMCoord	 = prt.LightmapRegion.zw;
 	p3.ViewPosSZ = float4( pos3.xyz, 1/sz );
 	p3.Color 	 = color;
 	
 	#ifdef DRAW
 	if (prt.Effects==ParticleFX_Lit || prt.Effects==ParticleFX_LitShadow) {
-		p0.Color.rgba	*= ( particleLighting[ prtId ].rgba );
-		p1.Color.rgba	*= ( particleLighting[ prtId ].rgba );
-		p2.Color.rgba	*= ( particleLighting[ prtId ].rgba );
-		p3.Color.rgba	*= ( particleLighting[ prtId ].rgba );
-		p0.Color.rgb 	*= ( particleLighting[ prtId ].a );
-		p1.Color.rgb 	*= ( particleLighting[ prtId ].a );
-		p2.Color.rgb 	*= ( particleLighting[ prtId ].a );
-		p3.Color.rgb 	*= ( particleLighting[ prtId ].a );
 	}//*/
 	#endif
 	
@@ -245,6 +257,17 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	if (prt.Effects!=ParticleFX_LitShadow && prt.Effects!=ParticleFX_Shadow) {
 		return;
 	}
+	#endif
+	
+	#ifdef DRAW_LIGHT
+		p0.Position	 = float4( float2(1,-1) * (p0.LMCoord.xy * 2 - 1), 0, 1 );
+		p1.Position	 = float4( float2(1,-1) * (p1.LMCoord.xy * 2 - 1), 0, 1 );
+		p2.Position	 = float4( float2(1,-1) * (p2.LMCoord.xy * 2 - 1), 0, 1 );
+		p3.Position	 = float4( float2(1,-1) * (p3.LMCoord.xy * 2 - 1), 0, 1 );
+		p0.ViewPosSZ = wpos0;
+		p1.ViewPosSZ = wpos1;
+		p2.ViewPosSZ = wpos2;
+		p3.ViewPosSZ = wpos3;
 	#endif
 	
 	outputStream.Append(p0);
@@ -272,13 +295,16 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 		float  prtZ		= abs(input.ViewPosSZ.z);
 
 		// TODO : profile soft particles clipping!
+		//	May be using depth buffer instead? (copy required)
 		// if (depth < vpos.z) {
 		// clip(-1);
 		// }
+		float3 light	=	LightMap.Sample( Sampler, input.LMCoord );
 		
 		float softFactor	=	saturate( (sceneZ - prtZ) * input.ViewPosSZ.w );
 
 		color.rgba *= softFactor;
+		color.rgb  *= light.rgb;
 		
 		return color;
 	#endif
@@ -291,12 +317,10 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 		return color;
 	#endif
 	
-	#ifdef RENDER_LIGHTMAP
-		float4 textureColor	=	Texture.Sample( Sampler, input.TexCoord );
-		float4 vertexColor  =  	input.Color;
-		float4 color		=	1 - vertexColor.a * textureColor.a;
-		
-		return color;
+	#ifdef DRAW_LIGHT
+		float3 lighting = ComputeClusteredLighting( input.ViewPosSZ.xyz );
+
+		return float4(lighting,1);
 	#endif
 	
 }

@@ -20,7 +20,7 @@ namespace Fusion.Engine.Graphics {
 	/// 2. Gareth Thomas Compute-based GPU Particle
 	/// </summary>
 	[RequireShader("particles", true)]
-	[ShaderSharedStructure(typeof(Particle))]
+	[ShaderSharedStructure(typeof(Particle), typeof(SceneRenderer.LIGHT), typeof(SceneRenderer.LIGHTINDEX))]
 	public class ParticleSystem : DisposableBase {
 
 		readonly Game Game;
@@ -37,6 +37,11 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine]	public const int ParticleFX_Lit			=	(int)ParticleFX.Lit			;
 		[ShaderDefine]	public const int ParticleFX_LitShadow	=	(int)ParticleFX.LitShadow	;
 		[ShaderDefine]	public const int ParticleFX_Shadow		=	(int)ParticleFX.Shadow		;
+
+		[ShaderDefine]	public const int LightTypeOmni			=	SceneRenderer.LightTypeOmni;
+		[ShaderDefine]	public const int LightTypeSpotShadow	=	SceneRenderer.LightTypeSpotShadow;
+		[ShaderDefine]	public const int LightSpotShapeRound	=	SceneRenderer.LightSpotShapeRound;
+		[ShaderDefine]	public const int LightSpotShapeSquare	=	SceneRenderer.LightSpotShapeSquare;
 
 		bool toMuchInjectedParticles = false;
 
@@ -67,6 +72,13 @@ namespace Fusion.Engine.Graphics {
 
 
 		/// <summary>
+		/// Gets particle lightmap
+		/// </summary>
+		internal RenderTarget2D Lightmap {
+			get { return lightmap; }
+		}
+
+		/// <summary>
 		/// Gets structured buffer of simulated particles.
 		/// </summary>
 		internal StructuredBuffer SimulatedParticles {
@@ -74,7 +86,6 @@ namespace Fusion.Engine.Graphics {
 				return simulationBuffer;
 			}
 		}
-
 
 		/// <summary>
 		/// Gets structured buffer of simulated particles.
@@ -91,7 +102,7 @@ namespace Fusion.Engine.Graphics {
 			DRAW			=	0x04,
 			INITIALIZE		=	0x08,
 			DRAW_SHADOW		=	0x10,
-			RENDER_LIGHTMAP	=	0x20,
+			DRAW_LIGHT		=	0x20,
 			ALLOC_LIGHTMAP	=	0x40,
 		}
 
@@ -238,9 +249,12 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="flag"></param>
 		void EnumAction ( PipelineState ps, Flags flag )
 		{
-			ps.BlendState			=	BlendState.AlphaBlendPremul;
-			ps.DepthStencilState	=	DepthStencilState.Readonly;
-			ps.Primitive			=	Primitive.PointList;
+			if (flag==Flags.DRAW) {
+				ps.BlendState			=	BlendState.AlphaBlend;
+				ps.DepthStencilState	=	DepthStencilState.None;
+				ps.Primitive			=	Primitive.PointList;
+				ps.RasterizerState		=	RasterizerState.CullNone;
+			}
 
 			if (flag==Flags.DRAW_SHADOW) {
 
@@ -253,6 +267,15 @@ namespace Fusion.Engine.Graphics {
 
 				ps.BlendState			=	bs;
 				ps.DepthStencilState	=	DepthStencilState.Readonly;
+				ps.Primitive			=	Primitive.PointList;
+				ps.RasterizerState		=	RasterizerState.CullNone;
+			}
+
+			if (flag==Flags.DRAW_LIGHT) {
+				ps.BlendState			=	BlendState.Opaque;
+				ps.DepthStencilState	=	DepthStencilState.None;
+				ps.Primitive			=	Primitive.PointList;
+				ps.RasterizerState		=	RasterizerState.CullNone;
 			}
 		}
 
@@ -459,7 +482,7 @@ namespace Fusion.Engine.Graphics {
 						device.SetCSRWBuffer( 1, deadParticlesIndices, -1 );
 						device.SetCSRWBuffer( 2, sortParticlesBuffer, 0 );
 
-						SetupGPUParameters( 0, renderWorld, view, projection, Flags.SIMULATION);
+						SetupGPUParameters( 0, renderWorld, view, projection, Flags.ALLOC_LIGHTMAP );
 						device.ComputeShaderConstants[0] = paramsCB ;
 
 						device.PipelineState	=	factory[ (int)Flags.ALLOC_LIGHTMAP ];
@@ -468,10 +491,11 @@ namespace Fusion.Engine.Graphics {
 					}
 				}
 
+
 				//
 				//	Sort :
 				//
-				using (new PixEvent("Sort")) {
+				using ( new PixEvent( "Sort" ) ) {
 					rs.BitonicSort.Sort( sortParticlesBuffer );
 				}
 
@@ -536,6 +560,19 @@ namespace Fusion.Engine.Graphics {
 					device.GeometryShaderResources[3]	=	sortParticlesBuffer;
 					device.GeometryShaderResources[4]	=	particleLighting;
 
+					if (flags==Flags.DRAW_LIGHT) {
+						device.PixelShaderResources[7]		=	rs.LightManager.LightGrid.GridTexture;
+						device.PixelShaderResources[8]		=	rs.LightManager.LightGrid.IndexDataGpu;
+						device.PixelShaderResources[9]		=	rs.LightManager.LightGrid.LightDataGpu;
+						device.PixelShaderResources[10]		=	rs.LightManager.ShadowMap.ColorBuffer;
+
+						device.PixelShaderSamplers[1]		=	SamplerState.ShadowSampler ;
+					}
+
+					if (flags==Flags.DRAW) {
+						device.PixelShaderResources[11]		=	Lightmap;
+					}
+
 					//	setup PS :
 					device.PipelineState	=	factory[ (int)flags ];
 
@@ -567,6 +604,31 @@ namespace Fusion.Engine.Graphics {
 			var viewport	=	new Viewport( 0, 0, colorTarget.Width, colorTarget.Height );
 
 			RenderGeneric( "Particles", gameTime, camera, viewport, view, projection, colorTarget, null, viewFrame.DepthBuffer, Flags.DRAW );
+		}
+
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="gameTime"></param>
+		internal void RenderLight ( GameTime gameTime, Camera camera )
+		{
+			if (rs.SkipParticles) {
+				return;
+			}
+
+			rs.Device.Clear( lightmap.Surface, Color4.Black );
+
+			var view		=	camera.GetViewMatrix( StereoEye.Mono ) * camera.GetProjectionMatrix( StereoEye.Mono );
+			var projection	=	Matrix.OrthoOffCenterRH( 0, lightmap.Width, 0, lightmap.Height, -1, 1 );
+
+			var colorTarget	=	lightmap.Surface;
+
+			var viewport	=	new Viewport( 0, 0, lightmap.Width, lightmap.Height );
+
+			RenderGeneric( "Particles Light", gameTime, camera, viewport, view, projection, colorTarget, null, null, Flags.DRAW_LIGHT );
 		}
 
 

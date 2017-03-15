@@ -404,7 +404,6 @@ namespace Fusion.Engine.Graphics {
 				//	get simulated particles for shadows.
 				ParticleSystem.Simulate( gameTime, Camera );
 
-
 				//	prepare light set for shadow rendering :
 				rs.LightManager.Update( gameTime, LightSet );
 				rs.LightManager.LightGrid.UpdateLightSetVisibility( stereoEye, Camera, LightSet );
@@ -414,6 +413,9 @@ namespace Fusion.Engine.Graphics {
 
 				//	clusterize light set :
 				rs.LightManager.LightGrid.ClusterizeLightSet( stereoEye, Camera, LightSet );
+
+				//	render particle lighting :
+				ParticleSystem.RenderLight( gameTime, Camera );
 			}
 
 
@@ -425,15 +427,16 @@ namespace Fusion.Engine.Graphics {
 			rs.SsaoFilter.Render( stereoEye, Camera, viewHdrFrame.DepthBuffer, viewHdrFrame.GBuffer1 );
 
 			switch (rs.ShowGBuffer) {
-				case 1 : rs.Filter.CopyColor( targetSurface, viewHdrFrame.GBuffer0 ); return;
-				case 2 : rs.Filter.CopyAlpha( targetSurface, viewHdrFrame.GBuffer0 ); return;
-				case 3 : rs.Filter.CopyColor( targetSurface, viewHdrFrame.GBuffer1 ); return;
-				case 4 : rs.Filter.CopyAlpha( targetSurface, viewHdrFrame.GBuffer1 ); return;
-				case 5 : rs.Filter.CopyColor( targetSurface, viewHdrFrame.HdrBuffer ); return;
-				case 6 : rs.Filter.Copy( targetSurface, rs.SsaoFilter.OcclusionMap ); return;
-				case 7 : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ParticleShadow ); return;
-				case 8 : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ColorBuffer ); return;
-				case 9 : rs.Filter.StretchRect( targetSurface, viewHdrFrame.FeedbackBufferRB, SamplerState.PointClamp ); return;
+				case 1  : rs.Filter.CopyColor( targetSurface, viewHdrFrame.GBuffer0 ); return;
+				case 2  : rs.Filter.CopyAlpha( targetSurface, viewHdrFrame.GBuffer0 ); return;
+				case 3  : rs.Filter.CopyColor( targetSurface, viewHdrFrame.GBuffer1 ); return;
+				case 4  : rs.Filter.CopyAlpha( targetSurface, viewHdrFrame.GBuffer1 ); return;
+				case 5  : rs.Filter.CopyColor( targetSurface, viewHdrFrame.HdrBuffer ); return;
+				case 6  : rs.Filter.Copy( targetSurface, rs.SsaoFilter.OcclusionMap ); return;
+				case 7  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ParticleShadow ); return;
+				case 8  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ColorBuffer ); return;
+				case 9  : rs.Filter.StretchRect( targetSurface, ParticleSystem.Lightmap ); return;
+				case 10 : rs.Filter.StretchRect( targetSurface, viewHdrFrame.FeedbackBufferRB, SamplerState.PointClamp ); return;
 			}
 
 			if (rs.VTSystem.ShowPhysicalTextures) {

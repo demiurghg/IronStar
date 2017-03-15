@@ -187,10 +187,10 @@ float MipLevel( float2 uv )
 
 
 #ifdef ZPASS
-float4 PSMain( PSInput input ) : SV_TARGET0
-{
-	return float4(0,0,0,0);
-}
+// float4 PSMain( PSInput input ) : SV_TARGET0
+// {
+	// return float4(0,0,0,0);
+// }
 #endif
 
 #ifdef FORWARD

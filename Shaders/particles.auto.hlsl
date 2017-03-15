@@ -6,6 +6,10 @@ static const int ParticleFX_Beam = 1;
 static const int ParticleFX_Lit = 2;
 static const int ParticleFX_LitShadow = 3;
 static const int ParticleFX_Shadow = 4;
+static const int LightTypeOmni = 1;
+static const int LightTypeSpotShadow = 3;
+static const int LightSpotShapeRound = 131072;
+static const int LightSpotShapeSquare = 65536;
 
 // Fusion.Engine.Graphics.Particle
 // Marshal.SizeOf = 144
@@ -29,6 +33,23 @@ struct Particle {
 	float      FadeOut;                       // offset:  132
 	int        ImageIndex;                    // offset:  136
 	uint       Effects;                       // offset:  140
+};
+
+// Fusion.Engine.Graphics.SceneRenderer+LIGHT
+// Marshal.SizeOf = 116
+struct LIGHT {
+	float4x4   ViewProjection;                // offset:    0
+	float4     PositionRadius;                // offset:   64
+	float4     IntensityFar;                  // offset:   80
+	float4     ShadowScaleOffset;             // offset:   96
+	int        LightType;                     // offset:  112
+};
+
+// Fusion.Engine.Graphics.SceneRenderer+LIGHTINDEX
+// Marshal.SizeOf = 8
+struct LIGHTINDEX {
+	uint       Offset;                        // offset:    0
+	uint       Count;                         // offset:    4
 };
 
 // Fusion.Engine.Graphics.ParticleSystem+PARAMS

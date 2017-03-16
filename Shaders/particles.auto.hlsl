@@ -53,21 +53,23 @@ struct LIGHTINDEX {
 };
 
 // Fusion.Engine.Graphics.ParticleSystem+PARAMS
-// Marshal.SizeOf = 256
+// Marshal.SizeOf = 320
 struct PARAMS {
 	float4x4   View;                          // offset:    0
 	float4x4   Projection;                    // offset:   64
-	float4     CameraForward;                 // offset:  128
-	float4     CameraRight;                   // offset:  144
-	float4     CameraUp;                      // offset:  160
-	float4     CameraPosition;                // offset:  176
-	float4     Gravity;                       // offset:  192
-	float      LinearizeDepthA;               // offset:  208
-	float      LinearizeDepthB;               // offset:  212
-	int        MaxParticles;                  // offset:  216
-	float      DeltaTime;                     // offset:  220
-	uint       DeadListSize;                  // offset:  224
-	float      CocScale;                      // offset:  228
-	float      CocBias;                       // offset:  232
+	float4x4   ViewProjection;                // offset:  128
+	float4     CameraForward;                 // offset:  192
+	float4     CameraRight;                   // offset:  208
+	float4     CameraUp;                      // offset:  224
+	float4     CameraPosition;                // offset:  240
+	float4     Gravity;                       // offset:  256
+	float4     LightMapSize;                  // offset:  272
+	float      LinearizeDepthA;               // offset:  288
+	float      LinearizeDepthB;               // offset:  292
+	int        MaxParticles;                  // offset:  296
+	float      DeltaTime;                     // offset:  300
+	uint       DeadListSize;                  // offset:  304
+	float      CocScale;                      // offset:  308
+	float      CocBias;                       // offset:  312
 };
 

@@ -409,11 +409,11 @@
     <MapNode xsi:type="MapSpotLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="7" Y="7.5" Z="-0.5" />
-      <Rotation X="0.353553385" Y="-0.6123724" Z="-0.3535533" W="-0.6123723" />
+      <Position X="-4.625" Y="7.5" Z="-0.5" />
+      <Rotation X="0.6123724" Y="-0.353553355" Z="-0.6123723" W="-0.3535533" />
       <Scaling>1</Scaling>
       <SpotMaskName>quad</SpotMaskName>
-      <Intensity>100</Intensity>
+      <Intensity>5</Intensity>
       <Radius>15</Radius>
       <NearPlane>0.125</NearPlane>
       <FarPlane>15</FarPlane>
@@ -429,8 +429,8 @@
     <MapNode xsi:type="MapSpotLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="0.5" Y="7.5" Z="-0.5" />
-      <Rotation X="0.430459321" Y="-0.5609855" Z="-0.430459231" W="-0.560985446" />
+      <Position X="-3" Y="2.875" Z="1" />
+      <Rotation X="0.7010573" Y="-0.0922959745" Z="-0.7010572" W="-0.0922959745" />
       <Scaling>1</Scaling>
       <SpotMaskName>quad</SpotMaskName>
       <Intensity>100</Intensity>
@@ -533,7 +533,7 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="4.875" Y="0.375" Z="-2.625" />
+      <Position X="-0.75" Y="1.375" Z="1.25" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Factory xsi:type="FuncFXFactory">
@@ -548,10 +548,10 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-23.125" Y="1.375" Z="5.875" />
+      <Position X="-24.375" Y="1.375" Z="3.625" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
-      <Intensity>750</Intensity>
+      <Intensity>50</Intensity>
       <Radius>2</Radius>
       <LightPreset>IncandescentStandard</LightPreset>
       <LightStyle>Default</LightStyle>
@@ -734,16 +734,16 @@
     <MapNode xsi:type="MapSpotLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-19.75" Y="1.625" Z="-1.625" />
+      <Position X="-23.25" Y="3.25" Z="-2.625" />
       <Rotation X="0.6988198" Y="-0.6949086" Z="-0.138816774" W="-0.09737778" />
       <Scaling>1</Scaling>
       <SpotMaskName>quad</SpotMaskName>
-      <Intensity>2000</Intensity>
+      <Intensity>100</Intensity>
       <Radius>50</Radius>
       <NearPlane>0.125</NearPlane>
       <FarPlane>25</FarPlane>
-      <FovVertical>5</FovVertical>
-      <FovHorizontal>5</FovHorizontal>
+      <FovVertical>15</FovVertical>
+      <FovHorizontal>1</FovHorizontal>
       <SpotShape>Round</SpotShape>
       <PenumbraAngle>10</PenumbraAngle>
       <LightPreset>Red</LightPreset>
@@ -761,6 +761,36 @@
       <Radius>15</Radius>
       <LightPreset>Moonlight</LightPreset>
       <LightStyle>Default</LightStyle>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-21.75" Y="0.75" Z="5" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>smoke</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>false</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-24" Y="0.75" Z="5" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>smoke</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>false</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
     </MapNode>
   </Nodes>
 </Map>

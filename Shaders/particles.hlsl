@@ -112,11 +112,11 @@ void CSMain(
 #ifdef ALLOC_LIGHTMAP
 	if (id < Params.MaxParticles) {
 		Particle p = particleBuffer[ id ];
-
-		float x0 = ( 8*(id % 256) + 0 ) / 2048.0f;
-		float y0 = ( 8*(id / 256) + 0 ) / 2048.0f;
-		float x1 = ( 8*(id % 256) + 8 ) / 2048.0f;
-		float y1 = ( 8*(id / 256) + 8 ) / 2048.0f;
+		
+		float x0 = ( 8*(id % 256) + 0 )  * Params.LightMapSize.z;
+		float y0 = ( 8*(id / 256) + 0 )  * Params.LightMapSize.w;
+		float x1 = ( 8*(id % 256) + 8 )  * Params.LightMapSize.z;
+		float y1 = ( 8*(id / 256) + 8 )  * Params.LightMapSize.w;
 
 		p.LightmapRegion = float4( x0,y0,x1,y1 );
 		
@@ -141,6 +141,7 @@ struct GSOutput {
 	float2	LMCoord	  : TEXCOORD1;
 	float4  ViewPosSZ : TEXCOORD2;
 	float4	Color     : COLOR0;
+	float	LMFactor  : TEXCOORD3;
 };
 
 
@@ -229,27 +230,35 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p0.LMCoord	 = prt.LightmapRegion.zy;
 	p0.ViewPosSZ = float4( pos0.xyz, 1/sz );
 	p0.Color 	 = color;
+	p0.LMFactor	 = 0;
 	
 	p1.Position	 = mul( pos1, Params.Projection );
 	p1.TexCoord	 = image.xy;
 	p1.LMCoord	 = prt.LightmapRegion.xy;
 	p1.ViewPosSZ = float4( pos1.xyz, 1/sz );
 	p1.Color 	 = color;
+	p1.LMFactor	 = 0;
 	
 	p2.Position	 = mul( pos2, Params.Projection );
 	p2.TexCoord	 = image.xw;
 	p2.LMCoord	 = prt.LightmapRegion.xw;
 	p2.ViewPosSZ = float4( pos2.xyz, 1/sz );
 	p2.Color 	 = color;
+	p2.LMFactor	 = 0;
 	
 	p3.Position	 = mul( pos3, Params.Projection );
 	p3.TexCoord	 = image.zw;
 	p3.LMCoord	 = prt.LightmapRegion.zw;
 	p3.ViewPosSZ = float4( pos3.xyz, 1/sz );
 	p3.Color 	 = color;
+	p3.LMFactor	 = 0;
 	
 	#ifdef DRAW
 	if (prt.Effects==ParticleFX_Lit || prt.Effects==ParticleFX_LitShadow) {
+		p0.LMFactor	 = 1;
+		p1.LMFactor	 = 1;
+		p2.LMFactor	 = 1;
+		p3.LMFactor	 = 1;
 	}//*/
 	#endif
 	
@@ -285,21 +294,21 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 	#ifdef DRAW
 		float4 color	=	Texture.Sample( Sampler, input.TexCoord ) * input.Color;
 		//	saves about 5%-10% of rasterizer time:
-		clip( color.a < 0.001f ? -1:1 );
+		//clip( color.a < 0.001f ? -1:1 );
 		
-		float  depth 	= DepthValues.Load( int3(vpos.xy,0) ).r;
-		float  a 		= Params.LinearizeDepthA;
-		float  b        = Params.LinearizeDepthB;
-		float  sceneZ   = 1 / (depth * a + b);
+		float  depth 	= 	DepthValues.Load( int3(vpos.xy,0) ).r;
+		float  a 		= 	Params.LinearizeDepthA;
+		float  b        = 	Params.LinearizeDepthB;
+		float  sceneZ   = 	1 / (depth * a + b);
 		
-		float  prtZ		= abs(input.ViewPosSZ.z);
+		float  prtZ		= 	abs(input.ViewPosSZ.z);
 
 		// TODO : profile soft particles clipping!
 		//	May be using depth buffer instead? (copy required)
 		// if (depth < vpos.z) {
 		// clip(-1);
 		// }
-		float3 light	=	LightMap.Sample( Sampler, input.LMCoord );
+		float3 light		=	(input.LMFactor > 0.5f) ? LightMap.Sample( Sampler, input.LMCoord ) : 1;
 		
 		float softFactor	=	saturate( (sceneZ - prtZ) * input.ViewPosSZ.w );
 
@@ -319,7 +328,6 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 	
 	#ifdef DRAW_LIGHT
 		float3 lighting = ComputeClusteredLighting( input.ViewPosSZ.xyz );
-
 		return float4(lighting,1);
 	#endif
 	

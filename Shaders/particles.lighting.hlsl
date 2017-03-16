@@ -11,10 +11,10 @@
 float3 ComputeClusteredLighting ( float3 worldPos )
 {
 	uint i,j,k;
-	float4 projPos		=	mul( float4(worldPos,1), Params.View ); // HACK: for this pass View = View * Projection
+	float4 projPos		=	mul( float4(worldPos,1), Params.ViewProjection );
 	float3 result		=	float3(0,0,0);
 	float slice			= 	1 - exp(-projPos.w*0.03);
-	float2 vpos			=	(projPos.xy/projPos.w)*0.5+0.5;
+	float2 vpos			=	(projPos.xy/projPos.w)*float2(0.5,-0.5)+0.5;
 	int3 loadUVW		=	int3( vpos*float2(16,8), slice * 24 );
 	
 	uint2	data		=	ClusterTable.Load( int4(loadUVW,0) ).rg;

@@ -119,23 +119,25 @@ namespace Fusion.Engine.Graphics {
 //       int MaxParticles;              // Offset:  216
 //       float DeltaTime;               // Offset:  220
 //       uint DeadListSize;             // Offset:  224
-		[StructLayout(LayoutKind.Explicit, Size=256)]
+		[StructLayout(LayoutKind.Sequential, Size=320)]
 		[ShaderStructure]
 		struct PARAMS {
-			[FieldOffset(  0)] public Matrix	View;
-			[FieldOffset( 64)] public Matrix	Projection;
-			[FieldOffset(128)] public Vector4	CameraForward;
-			[FieldOffset(144)] public Vector4	CameraRight;
-			[FieldOffset(160)] public Vector4	CameraUp;
-			[FieldOffset(176)] public Vector4	CameraPosition;
-			[FieldOffset(192)] public Vector4	Gravity;
-			[FieldOffset(208)] public float		LinearizeDepthA;
-			[FieldOffset(212)] public float		LinearizeDepthB;
-			[FieldOffset(216)] public int		MaxParticles;
-			[FieldOffset(220)] public float		DeltaTime;
-			[FieldOffset(224)] public uint		DeadListSize;
-			[FieldOffset(228)] public float		CocScale;
-			[FieldOffset(232)] public float		CocBias;
+			public Matrix	View;
+			public Matrix	Projection;
+			public Matrix	ViewProjection;
+			public Vector4	CameraForward;
+			public Vector4	CameraRight;
+			public Vector4	CameraUp;
+			public Vector4	CameraPosition;
+			public Vector4	Gravity;
+			public Vector4	LightMapSize;
+			public float	LinearizeDepthA;
+			public float	LinearizeDepthB;
+			public int		MaxParticles;
+			public float	DeltaTime;
+			public uint		DeadListSize;
+			public float	CocScale;
+			public float	CocBias;
 		} 
 
 		Random rand = new Random();
@@ -367,7 +369,8 @@ namespace Fusion.Engine.Graphics {
 			PARAMS param		=	new PARAMS();
 
 			param.View				=	view;
-			param.Projection		=	projection;
+			param.Projection        =   projection;
+			param.ViewProjection	=	view * projection;
 			param.MaxParticles		=	0;
 			param.DeltaTime			=	deltaTime;
 			param.CameraForward		=	new Vector4( cameraMatrix.Forward	, 0 );
@@ -375,6 +378,7 @@ namespace Fusion.Engine.Graphics {
 			param.CameraUp			=	new Vector4( cameraMatrix.Up		, 0 );
 			param.CameraPosition	=	new Vector4( cameraMatrix.TranslationVector	, 1 );
 			param.Gravity			=	new Vector4( this.Gravity, 0 );
+			param.LightMapSize		=	new Vector4( Lightmap.Width, Lightmap.Height, 1.0f/Lightmap.Width, 1.0f/Lightmap.Height );
 			param.MaxParticles		=	MAX_PARTICLES;
 			param.LinearizeDepthA	=	camera.LinearizeDepthScale;
 			param.LinearizeDepthB	=	camera.LinearizeDepthBias;
@@ -621,8 +625,8 @@ namespace Fusion.Engine.Graphics {
 
 			rs.Device.Clear( lightmap.Surface, Color4.Black );
 
-			var view		=	camera.GetViewMatrix( StereoEye.Mono ) * camera.GetProjectionMatrix( StereoEye.Mono );
-			var projection	=	Matrix.OrthoOffCenterRH( 0, lightmap.Width, 0, lightmap.Height, -1, 1 );
+			var view		=	camera.GetViewMatrix( StereoEye.Mono );
+			var projection	=	camera.GetProjectionMatrix( StereoEye.Mono );
 
 			var colorTarget	=	lightmap.Surface;
 

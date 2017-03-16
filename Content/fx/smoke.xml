@@ -9,12 +9,12 @@
   <ParticleStage1>
     <Enabled>true</Enabled>
     <Sprite>smoke</Sprite>
-    <Effect>Shadow</Effect>
+    <Effect>LitShadow</Effect>
     <Count>45</Count>
     <Period>1</Period>
     <Timing Delay="0" Bunch="1" FadeIn="0.5" FadeOut="0.5" />
     <Color0 Red="1" Green="1" Blue="1" Alpha="0" />
-    <Color1 Red="1" Green="1" Blue="1" Alpha="0.15" />
+    <Color1 Red="1" Green="1" Blue="1" Alpha="0.25" />
     <Lifetime Distribution="Uniform" MinLifetime="4" MaxLifetime="5" />
     <Shape Size0="1" Size1="2" EnableRotation="true" InitialAngle="360" MinAngularVelocity="2" MaxAngularVelocity="3" />
     <Position OffsetDirection="None" OffsetFactor="0" Distribution="UniformRadial" MinSize="0" MaxSize="1" />

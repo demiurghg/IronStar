@@ -8,17 +8,17 @@
   <CameraShake Enabled="false" />
   <ParticleStage1>
     <Enabled>true</Enabled>
-    <Sprite>smoke</Sprite>
-    <Effect>Shadow</Effect>
+    <Sprite>spark</Sprite>
+    <Effect>LitShadow</Effect>
     <Count>25</Count>
     <Period>1</Period>
     <Timing Delay="0" Bunch="1" FadeIn="0.5" FadeOut="0.5" />
-    <Color0 Red="0" Green="0" Blue="0" Alpha="0" />
-    <Color1 Red="0.5" Green="0.5" Blue="0.5" Alpha="0.25" />
+    <Color0 Red="1" Green="1" Blue="1" Alpha="0" />
+    <Color1 Red="1" Green="1" Blue="1" Alpha="0.25" />
     <Lifetime Distribution="Uniform" MinLifetime="4" MaxLifetime="5" />
     <Shape Size0="4" Size1="5" EnableRotation="true" InitialAngle="360" MinAngularVelocity="5" MaxAngularVelocity="5" />
     <Position OffsetDirection="None" OffsetFactor="0" Distribution="UniformRadial" MinSize="0" MaxSize="7" />
-    <Velocity Direction="None" LinearDistribution="Uniform" LinearVelocityMin="0" LinearVelocityMax="0" RadialDistribution="GaussRadial" RadialVelocityMin="0" RadialVelocityMax="0.25" Advection="-1" />
+    <Velocity Direction="None" LinearDistribution="Uniform" LinearVelocityMin="0" LinearVelocityMax="0" RadialDistribution="GaussRadial" RadialVelocityMin="0" RadialVelocityMax="0.25" Advection="0" />
     <Acceleration GravityFactor="0" Damping="1" DragForce="0" Turbulence="0" />
   </ParticleStage1>
   <ParticleStage2>

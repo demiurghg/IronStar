@@ -2,14 +2,17 @@ static const int BLOCK_SIZE = 256;
 static const int MAX_INJECTED = 4096;
 static const int MAX_PARTICLES = 65536;
 static const int MAX_IMAGES = 512;
-static const int ParticleFX_Beam = 1;
-static const int ParticleFX_Lit = 2;
-static const int ParticleFX_LitShadow = 3;
-static const int ParticleFX_Shadow = 4;
-static const int LightTypeOmni = 1;
-static const int LightTypeSpotShadow = 3;
-static const int LightSpotShapeRound = 131072;
-static const int LightSpotShapeSquare = 65536;
+static const uint ParticleFX_Beam = 1;
+static const uint ParticleFX_Lit = 2;
+static const uint ParticleFX_LitShadow = 3;
+static const uint ParticleFX_Shadow = 4;
+static const uint LightmapRegionSize = 1024;
+static const uint LightmapWidth = 4096;
+static const uint LightmapHeight = 2048;
+static const uint LightTypeOmni = 1;
+static const uint LightTypeSpotShadow = 3;
+static const uint LightSpotShapeRound = 131072;
+static const uint LightSpotShapeSquare = 65536;
 
 // Fusion.Engine.Graphics.Particle
 // Marshal.SizeOf = 144

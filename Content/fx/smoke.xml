@@ -10,7 +10,7 @@
     <Enabled>true</Enabled>
     <Sprite>smoke</Sprite>
     <Effect>LitShadow</Effect>
-    <Count>45</Count>
+    <Count>15</Count>
     <Period>1</Period>
     <Timing Delay="0" Bunch="1" FadeIn="0.5" FadeOut="0.5" />
     <Color0 Red="1" Green="1" Blue="1" Alpha="0" />

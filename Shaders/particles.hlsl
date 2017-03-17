@@ -55,7 +55,7 @@ RWStructuredBuffer<float2>		sortParticleBuffer	: 	register(u2);
 /*-----------------------------------------------------------------------------
 	Simulation :
 -----------------------------------------------------------------------------*/
-#if (defined INJECTION) || (defined SIMULATION) || (defined INITIALIZE) || (defined ALLOC_LIGHTMAP)
+#if (defined INJECTION) || (defined SIMULATION) || (defined INITIALIZE)
 [numthreads( BLOCK_SIZE, 1, 1 )]
 void CSMain( 
 	uint3 groupID			: SV_GroupID,
@@ -64,7 +64,7 @@ void CSMain(
 	uint  groupIndex 		: SV_GroupIndex
 )
 {
-	int id = dispatchThreadID.x;
+	uint id = dispatchThreadID.x;
 	
 #ifdef INITIALIZE
 	deadParticleIndices.Append(id);
@@ -73,7 +73,7 @@ void CSMain(
 #ifdef INJECTION
 	//	id must be less than max injected particles.
 	//	dead list must contain at leas MAX_INJECTED indices to prevent underflow.
-	if (id < Params.MaxParticles && Params.DeadListSize > MAX_INJECTED ) {
+	if (id < (uint)Params.MaxParticles && Params.DeadListSize > (uint)MAX_INJECTED ) {
 		Particle p = injectionBuffer[ id ];
 		
 		uint newIndex = deadParticleIndices.Consume();
@@ -83,7 +83,7 @@ void CSMain(
 #endif
 
 #ifdef SIMULATION
-	if (id < Params.MaxParticles) {
+	if (id < (uint)Params.MaxParticles) {
 		Particle p = particleBuffer[ id ];
 		
 		if (p.LifeTime>0) {
@@ -108,22 +108,68 @@ void CSMain(
 		sortParticleBuffer[ id ] = float2( -abs(ppPos.z / ppPos.w), id );
 	}
 #endif
+}
+#endif
+
+
 
 #ifdef ALLOC_LIGHTMAP
-	if (id < Params.MaxParticles) {
-		Particle p = particleBuffer[ id ];
-		
-		float x0 = ( 8*(id % 256) + 0 )  * Params.LightMapSize.z;
-		float y0 = ( 8*(id / 256) + 0 )  * Params.LightMapSize.w;
-		float x1 = ( 8*(id % 256) + 8 )  * Params.LightMapSize.z;
-		float y1 = ( 8*(id / 256) + 8 )  * Params.LightMapSize.w;
+groupshared uint lmIndices[8] = {0,0,0,0, 0,0,0,0}; 
 
-		p.LightmapRegion = float4( x0,y0,x1,y1 );
-		
-		particleBuffer[ id ] = p;
+[numthreads( 1024, 1, 1 )]
+void CSMain( 
+	uint3 groupID			: SV_GroupID,
+	uint3 groupThreadID 	: SV_GroupThreadID, 
+	uint3 dispatchThreadID 	: SV_DispatchThreadID,
+	uint  groupIndex 		: SV_GroupIndex
+)
+{
+	for (uint base=0; base<64; base++) {
+		int id = dispatchThreadID.x + base*1024;
+
+		if (id < Params.MaxParticles) {
+			Particle p = particleBuffer[ id ];
+
+			p.LightmapRegion = 	0;
+			
+			float 	factor	=	saturate(p.TimeLag / p.LifeTime);
+			float4 	projPos	=	mul( float4(p.Position.xyz,1), Params.ViewProjection );
+			float  	size	=   lerp( p.Size0, p.Size1, factor ) / abs(projPos.w);
+			uint	offset;
+			uint 	bank;
+
+			particleBuffer[ id ] = p;
+			
+			if ( p.TimeLag < 0 )			{ continue; }
+			if ( p.TimeLag >= p.LifeTime ) 	{ continue; }
+	
+			for (int i=0; i<8; i++) {
+				float minSize = /*(i==0)?     0 :*/ 4*exp2(i-8);
+				float maxSize = /*(i==7)? 99999 :*/ 4*exp2(i-8+1);
+				
+				if ( size > minSize && size <= maxSize ) {
+					InterlockedAdd( lmIndices[i], 1, offset );
+					bank = i;
+				}
+			}
+			
+			uint 	regSize = min(32,1 << bank);
+			uint 	count	= LightmapRegionSize / regSize;
+			
+			uint	baseX	= (bank % 4)*LightmapRegionSize;
+			uint	baseY	= (bank / 4)*LightmapRegionSize;
+			
+			float x0 = ( baseX + regSize*(offset % count) + 0 )  * Params.LightMapSize.z;
+			float y0 = ( baseY + regSize*(offset / count) + 0 )  * Params.LightMapSize.w;
+			float x1 = ( baseX + regSize*(offset % count) + regSize )  * Params.LightMapSize.z;
+			float y1 = ( baseY + regSize*(offset / count) + regSize )  * Params.LightMapSize.w;
+
+			p.LightmapRegion = float4( x0,y0,x1,y1 );
+			
+			particleBuffer[ id ] = p;
+		}
 	}
-#endif
-}
+}	
 #endif
 
 
@@ -308,7 +354,7 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 		// if (depth < vpos.z) {
 		// clip(-1);
 		// }
-		float3 light		=	(input.LMFactor > 0.5f) ? LightMap.Sample( Sampler, input.LMCoord ) : 1;
+		float3 light		=	(input.LMFactor > 0.5f) ? LightMap.Sample( Sampler, input.LMCoord ).rgb : 1;
 		
 		float softFactor	=	saturate( (sceneZ - prtZ) * input.ViewPosSZ.w );
 

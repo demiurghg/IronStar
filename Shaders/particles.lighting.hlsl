@@ -71,14 +71,21 @@ float3 ComputeClusteredLighting ( float3 worldPos )
 						
 				//	TODO : num taps <--> shadow quality
 				//	TODO : kernel size <--> shadow region size
-				#if 1
-				float shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, lsPos.xy, shadowDepth ).r;
+				#if 0
+				float accumulatedShadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, lsPos.xy, shadowDepth ).r;
 				#else
-				float shadow	=	1;
+				float accumulatedShadow = 	0;
+				for( float row = -3; row <= 3; row += 1 ) {
+					[unroll]for( float col = -3; col <= 3; col += 1 ) {
+						float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, mad(float2(col,row), 1/2048.0f, lsPos.xy), shadowDepth ).r;
+						accumulatedShadow += shadow;
+					}
+				}
+				accumulatedShadow /= 49.0f;
 				#endif
 						
 				float3 	lightDir	= 	position - worldPos.xyz;
-				float3 	falloff		= 	LinearFalloff( length(lightDir), radius ) * shadow * penumbra;
+				float3 	falloff		= 	LinearFalloff( length(lightDir), radius ) * accumulatedShadow * penumbra;
 				
 				totalLight.rgb 		+= 	falloff * intensity;
 			}

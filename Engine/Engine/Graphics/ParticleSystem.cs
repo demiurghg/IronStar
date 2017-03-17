@@ -29,19 +29,22 @@ namespace Fusion.Engine.Graphics {
 		StateFactory	factory;
 		RenderWorld	renderWorld;
 
-		[ShaderDefine]	public const int BLOCK_SIZE		=	256;
-		[ShaderDefine]	public const int MAX_INJECTED	=	4096;
-		[ShaderDefine]	public const int MAX_PARTICLES	=	256 * 256;
-		[ShaderDefine]	public const int MAX_IMAGES		=	512;
-		[ShaderDefine]	public const int ParticleFX_Beam		=	(int)ParticleFX.Beam		;
-		[ShaderDefine]	public const int ParticleFX_Lit			=	(int)ParticleFX.Lit			;
-		[ShaderDefine]	public const int ParticleFX_LitShadow	=	(int)ParticleFX.LitShadow	;
-		[ShaderDefine]	public const int ParticleFX_Shadow		=	(int)ParticleFX.Shadow		;
+		[ShaderDefine]	public const int  BLOCK_SIZE			=	256;
+		[ShaderDefine]	public const int  MAX_INJECTED			=	4096;
+		[ShaderDefine]	public const int  MAX_PARTICLES			=	256 * 256;
+		[ShaderDefine]	public const int  MAX_IMAGES			=	512;
+		[ShaderDefine]	public const uint ParticleFX_Beam		=	(uint)ParticleFX.Beam		;
+		[ShaderDefine]	public const uint ParticleFX_Lit		=	(uint)ParticleFX.Lit			;
+		[ShaderDefine]	public const uint ParticleFX_LitShadow	=	(uint)ParticleFX.LitShadow	;
+		[ShaderDefine]	public const uint ParticleFX_Shadow		=	(uint)ParticleFX.Shadow		;
+		[ShaderDefine]	public const uint LightmapRegionSize	=	1024;
+		[ShaderDefine]	public const uint LightmapWidth			=	LightmapRegionSize * 4;
+		[ShaderDefine]	public const uint LightmapHeight		=	LightmapRegionSize * 2;
 
-		[ShaderDefine]	public const int LightTypeOmni			=	SceneRenderer.LightTypeOmni;
-		[ShaderDefine]	public const int LightTypeSpotShadow	=	SceneRenderer.LightTypeSpotShadow;
-		[ShaderDefine]	public const int LightSpotShapeRound	=	SceneRenderer.LightSpotShapeRound;
-		[ShaderDefine]	public const int LightSpotShapeSquare	=	SceneRenderer.LightSpotShapeSquare;
+		[ShaderDefine]	public const uint LightTypeOmni			=	SceneRenderer.LightTypeOmni;
+		[ShaderDefine]	public const uint LightTypeSpotShadow	=	SceneRenderer.LightTypeSpotShadow;
+		[ShaderDefine]	public const uint LightSpotShapeRound	=	SceneRenderer.LightSpotShapeRound;
+		[ShaderDefine]	public const uint LightSpotShapeSquare	=	SceneRenderer.LightSpotShapeSquare;
 
 		bool toMuchInjectedParticles = false;
 
@@ -192,7 +195,7 @@ namespace Fusion.Engine.Graphics {
 			sortParticlesBuffer		=	new StructuredBuffer( Game.GraphicsDevice, typeof(Vector2),		MAX_PARTICLES, StructuredBufferFlags.None );
 			deadParticlesIndices	=	new StructuredBuffer( Game.GraphicsDevice, typeof(uint),		MAX_PARTICLES, StructuredBufferFlags.Append );
 
-			lightmap				=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.Rgba16F,	2048, 2048, false );
+			lightmap				=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.Rgba16F,	(int)LightmapWidth, (int)LightmapHeight, false );
 
 			rs.Game.Reloading += LoadContent;
 			LoadContent(this, EventArgs.Empty);
@@ -491,7 +494,7 @@ namespace Fusion.Engine.Graphics {
 
 						device.PipelineState	=	factory[ (int)Flags.ALLOC_LIGHTMAP ];
 	
-						device.Dispatch( MathUtil.IntDivUp( MAX_PARTICLES, BLOCK_SIZE ) );//*/
+						device.Dispatch( 1, 1, 1 );//*/
 					}
 				}
 

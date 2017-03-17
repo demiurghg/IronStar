@@ -144,8 +144,8 @@ void CSMain(
 			if ( p.TimeLag >= p.LifeTime ) 	{ continue; }
 	
 			for (int i=0; i<8; i++) {
-				float minSize = /*(i==0)?     0 :*/ 4*exp2(i-8);
-				float maxSize = /*(i==7)? 99999 :*/ 4*exp2(i-8+1);
+				float minSize = (i==0)?     0 : 4*exp2(i-8);
+				float maxSize = (i==7)? 99999 : 4*exp2(i-8+1);
 				
 				if ( size > minSize && size <= maxSize ) {
 					InterlockedAdd( lmIndices[i], 1, offset );
@@ -271,30 +271,33 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	    pos3		=	mul( float4( tailpos  - side * sz, 1 ), Params.View );
 	}
 	
+	float2 lmszA	 = Params.LightMapSize.zw * 0.0f;
+	float2 lmszB	 = Params.LightMapSize.zw * float2(0.5f,-0.5f);
+	
 	p0.Position	 = mul( pos0, Params.Projection );
 	p0.TexCoord	 = image.zy;
-	p0.LMCoord	 = prt.LightmapRegion.zy;
+	p0.LMCoord	 = prt.LightmapRegion.zy + lmszA;
 	p0.ViewPosSZ = float4( pos0.xyz, 1/sz );
 	p0.Color 	 = color;
 	p0.LMFactor	 = 0;
 	
 	p1.Position	 = mul( pos1, Params.Projection );
 	p1.TexCoord	 = image.xy;
-	p1.LMCoord	 = prt.LightmapRegion.xy;
+	p1.LMCoord	 = prt.LightmapRegion.xy + lmszA;
 	p1.ViewPosSZ = float4( pos1.xyz, 1/sz );
 	p1.Color 	 = color;
 	p1.LMFactor	 = 0;
 	
 	p2.Position	 = mul( pos2, Params.Projection );
 	p2.TexCoord	 = image.xw;
-	p2.LMCoord	 = prt.LightmapRegion.xw;
+	p2.LMCoord	 = prt.LightmapRegion.xw + lmszA;
 	p2.ViewPosSZ = float4( pos2.xyz, 1/sz );
 	p2.Color 	 = color;
 	p2.LMFactor	 = 0;
 	
 	p3.Position	 = mul( pos3, Params.Projection );
 	p3.TexCoord	 = image.zw;
-	p3.LMCoord	 = prt.LightmapRegion.zw;
+	p3.LMCoord	 = prt.LightmapRegion.zw + lmszA;
 	p3.ViewPosSZ = float4( pos3.xyz, 1/sz );
 	p3.Color 	 = color;
 	p3.LMFactor	 = 0;

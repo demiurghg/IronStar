@@ -208,14 +208,7 @@ namespace Fusion.Engine.Graphics {
 
 					sl.Visible		=	true;
 
-					if (frustum.Contains( viewPosition )==ContainmentType.Contains) {
-						sl.DetailLevel = 0;
-					} else {
-						#warning use center of mass of the frustum
-						#warning use max(width,height) of the frustum
-						var dist		=	Vector3.Distance( sl.Position, viewPosition );
-						sl.DetailLevel	=	(int)Math.Log( dist / sl.RadiusOuter, 2 );
-					}
+					sl.DetailLevel	=	GetSpotLightLOD( sl, frustum, viewPosition );
 
 					sl.MaxExtent.X	=	Math.Min( Width,  (int)Math.Ceiling( max.X * Width  ) );
 					sl.MaxExtent.Y	=	Math.Min( Height, (int)Math.Ceiling( max.Y * Height ) );
@@ -227,6 +220,43 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 		}
+				  
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="spotLight"></param>
+		/// <param name="viewPosition"></param>
+		/// <returns></returns>
+		int GetSpotLightLOD ( SpotLight spotLight, BoundingFrustum frustum, Vector3 viewPosition )
+		{
+			if (frustum.Contains( viewPosition )==ContainmentType.Contains) {
+				return 0;
+			}
+
+			var corners		=	frustum.GetCorners();
+
+			//	get frustum center of mass
+			var centerMass	= 	( spotLight.Position + corners[4] + corners[5] + corners[6] + corners[7] ) / 5.0f;
+
+			//	get size of light spot
+			var spotSize	=	Vector3.Distance( corners[4], corners[6] ) + 0.01f;
+
+			//	get distance between viewing point and spot light
+			var	distance	=	Vector3.Distance( viewPosition, centerMass );
+
+			//	push distance
+			distance		=	Math.Max( 0, distance + spotSize );
+
+			//	compute LOD :
+			var lod			=	(int)Math.Log( distance / spotSize, 2 );
+
+			//Log.Message("LOD : {0} - {1}/{2}", lod, distance, spotSize );
+
+			return Math.Max(0, lod + spotLight.LodBias);
+		}
+
 
 
 

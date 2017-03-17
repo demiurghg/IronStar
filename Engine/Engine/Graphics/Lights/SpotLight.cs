@@ -56,6 +56,11 @@ namespace Fusion.Engine.Graphics {
 		public SpotShape	SpotShape;
 
 		/// <summary>
+		/// 
+		/// </summary>
+		public int	LodBias;
+
+		/// <summary>
 		/// Spot-light inner radius.
 		/// </summary>
 		public float	RadiusInner;

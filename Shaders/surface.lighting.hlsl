@@ -29,7 +29,8 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	float	viewDistance=	length( viewDir );
 	float3	viewDirN	=	normalize( viewDir );
 
-	float	decalSlope		=	dot( viewDirN, normalize(input.Normal) );
+	float3	geometryNormal	=	normalize(input.Normal);
+	float	decalSlope		=	dot( viewDirN, geometryNormal );
 	float	decalBaseMip	=	log2( input.ProjPos.w / decalSlope );
 
 	//----------------------------------------------------------------------------------------------
@@ -104,7 +105,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 			
 		} else if (type==LightTypeSpotShadow) {
 			
-			float4 lsPos		=	mul(float4(worldPos,1), LightDataTable[idx].ViewProjection);
+			float4 lsPos		=	mul(float4(worldPos+geometryNormal * 0.1,1), LightDataTable[idx].ViewProjection);
 			float  shadowDepth	=	lsPos.z / LightDataTable[idx].IntensityFar.w;
 				   lsPos.xyz	= 	lsPos.xyz / lsPos.w;
 				   
@@ -137,7 +138,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 				#else
 				for( float row = -3; row <= 3; row += 1 ) {
 					[unroll]for( float col = -3; col <= 3; col += 1 ) {
-						float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, mad(float2(col,row), 1/1024.0f, lsPos.xy), shadowDepth ).r;
+						float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, mad(float2(col,row), 1/2048.0f, lsPos.xy), shadowDepth ).r;
 						accumulatedShadow += shadow;
 					}
 				}

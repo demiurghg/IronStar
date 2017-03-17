@@ -44,6 +44,9 @@ namespace IronStar.Mapping {
 		public SpotShape SpotShape { get; set; } = SpotShape.Square;
 		
 		[Category("Spot-light")]
+		public int LodBias { get; set; } = 0;
+		
+		[Category("Spot-light")]
 		public float PenumbraAngle { get; set; } = 10;
 
 		[Category("Spot-light")]
@@ -114,6 +117,8 @@ namespace IronStar.Mapping {
 			light.RadiusInner	=	0;
 
 			light.SpotShape		=	SpotShape;
+
+			light.LodBias		=	LodBias;
 
 			light.DepthBias		=	DepthBias;
 			light.SlopeBias		=	SlopeBias;

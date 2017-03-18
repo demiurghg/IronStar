@@ -19,7 +19,8 @@ namespace Fusion.Engine.Graphics {
 	/// 1. http://www.gdcvault.com/play/1014347/HALO-REACH-Effects
 	/// 2. Gareth Thomas Compute-based GPU Particle
 	/// </summary>
-	[RequireShader("particles")]
+	[RequireShader("particles", true)]
+	[ShaderSharedStructure(typeof(Particle), typeof(SceneRenderer.LIGHT), typeof(SceneRenderer.LIGHTINDEX))]
 	public class ParticleSystem : DisposableBase {
 
 		readonly Game Game;
@@ -28,15 +29,27 @@ namespace Fusion.Engine.Graphics {
 		StateFactory	factory;
 		RenderWorld	renderWorld;
 
-		public const int BlockSize				=	256;
-		public const int MaxInjectingParticles	=	4096;
-		public const int MaxSimulatedParticles =	256 * 256;
-		public const int MaxImages				=	512;
+		[ShaderDefine]	public const int  BLOCK_SIZE			=	256;
+		[ShaderDefine]	public const int  MAX_INJECTED			=	4096;
+		[ShaderDefine]	public const int  MAX_PARTICLES			=	256 * 256;
+		[ShaderDefine]	public const int  MAX_IMAGES			=	512;
+		[ShaderDefine]	public const uint ParticleFX_Beam		=	(uint)ParticleFX.Beam		;
+		[ShaderDefine]	public const uint ParticleFX_Lit		=	(uint)ParticleFX.Lit			;
+		[ShaderDefine]	public const uint ParticleFX_LitShadow	=	(uint)ParticleFX.LitShadow	;
+		[ShaderDefine]	public const uint ParticleFX_Shadow		=	(uint)ParticleFX.Shadow		;
+		[ShaderDefine]	public const uint LightmapRegionSize	=	1024;
+		[ShaderDefine]	public const uint LightmapWidth			=	LightmapRegionSize * 4;
+		[ShaderDefine]	public const uint LightmapHeight		=	LightmapRegionSize * 2;
+
+		[ShaderDefine]	public const uint LightTypeOmni			=	SceneRenderer.LightTypeOmni;
+		[ShaderDefine]	public const uint LightTypeSpotShadow	=	SceneRenderer.LightTypeSpotShadow;
+		[ShaderDefine]	public const uint LightSpotShapeRound	=	SceneRenderer.LightSpotShapeRound;
+		[ShaderDefine]	public const uint LightSpotShapeSquare	=	SceneRenderer.LightSpotShapeSquare;
 
 		bool toMuchInjectedParticles = false;
 
 		int					injectionCount = 0;
-		Particle[]			injectionBufferCPU = new Particle[MaxInjectingParticles];
+		Particle[]			injectionBufferCPU = new Particle[MAX_INJECTED];
 		StructuredBuffer	injectionBuffer;
 		StructuredBuffer	simulationBuffer;
 		StructuredBuffer	deadParticlesIndices;
@@ -44,6 +57,7 @@ namespace Fusion.Engine.Graphics {
 		StructuredBuffer	particleLighting;
 		ConstantBuffer		paramsCB;
 		ConstantBuffer		imagesCB;
+		RenderTarget2D		lightmap;
 
 		[Config]
 		public float SimulationStepTime {
@@ -61,6 +75,13 @@ namespace Fusion.Engine.Graphics {
 
 
 		/// <summary>
+		/// Gets particle lightmap
+		/// </summary>
+		internal RenderTarget2D Lightmap {
+			get { return lightmap; }
+		}
+
+		/// <summary>
 		/// Gets structured buffer of simulated particles.
 		/// </summary>
 		internal StructuredBuffer SimulatedParticles {
@@ -68,7 +89,6 @@ namespace Fusion.Engine.Graphics {
 				return simulationBuffer;
 			}
 		}
-
 
 		/// <summary>
 		/// Gets structured buffer of simulated particles.
@@ -85,6 +105,8 @@ namespace Fusion.Engine.Graphics {
 			DRAW			=	0x04,
 			INITIALIZE		=	0x08,
 			DRAW_SHADOW		=	0x10,
+			DRAW_LIGHT		=	0x20,
+			ALLOC_LIGHTMAP	=	0x40,
 		}
 
 
@@ -100,22 +122,25 @@ namespace Fusion.Engine.Graphics {
 //       int MaxParticles;              // Offset:  216
 //       float DeltaTime;               // Offset:  220
 //       uint DeadListSize;             // Offset:  224
-		[StructLayout(LayoutKind.Explicit, Size=256)]
-		struct PrtParams {
-			[FieldOffset(  0)] public Matrix	View;
-			[FieldOffset( 64)] public Matrix	Projection;
-			[FieldOffset(128)] public Vector4	CameraForward;
-			[FieldOffset(144)] public Vector4	CameraRight;
-			[FieldOffset(160)] public Vector4	CameraUp;
-			[FieldOffset(176)] public Vector4	CameraPosition;
-			[FieldOffset(192)] public Vector4	Gravity;
-			[FieldOffset(208)] public float		LinearizeDepthA;
-			[FieldOffset(212)] public float		LinearizeDepthB;
-			[FieldOffset(216)] public int		MaxParticles;
-			[FieldOffset(220)] public float		DeltaTime;
-			[FieldOffset(224)] public uint		DeadListSize;
-			[FieldOffset(228)] public float		CocScale;
-			[FieldOffset(232)] public float		CocBias;
+		[StructLayout(LayoutKind.Sequential, Size=320)]
+		[ShaderStructure]
+		struct PARAMS {
+			public Matrix	View;
+			public Matrix	Projection;
+			public Matrix	ViewProjection;
+			public Vector4	CameraForward;
+			public Vector4	CameraRight;
+			public Vector4	CameraUp;
+			public Vector4	CameraPosition;
+			public Vector4	Gravity;
+			public Vector4	LightMapSize;
+			public float	LinearizeDepthA;
+			public float	LinearizeDepthB;
+			public int		MaxParticles;
+			public float	DeltaTime;
+			public uint		DeadListSize;
+			public float	CocScale;
+			public float	CocBias;
 		} 
 
 		Random rand = new Random();
@@ -139,8 +164,8 @@ namespace Fusion.Engine.Graphics {
 				return images;
 			}
 			set {
-				if (value!=null && value.Count>MaxImages) {
-					throw new ArgumentOutOfRangeException("Number of subimages in texture atlas is greater than " + MaxImages.ToString() );
+				if (value!=null && value.Count>MAX_IMAGES) {
+					throw new ArgumentOutOfRangeException("Number of subimages in texture atlas is greater than " + MAX_IMAGES.ToString() );
 				}
 				images = value;
 			}
@@ -161,14 +186,16 @@ namespace Fusion.Engine.Graphics {
 
 			Gravity	=	Vector3.Down * 9.80665f;
 
-			paramsCB		=	new ConstantBuffer( Game.GraphicsDevice, typeof(PrtParams) );
-			imagesCB		=	new ConstantBuffer( Game.GraphicsDevice, typeof(Vector4), MaxImages );
+			paramsCB		=	new ConstantBuffer( Game.GraphicsDevice, typeof(PARAMS) );
+			imagesCB		=	new ConstantBuffer( Game.GraphicsDevice, typeof(Vector4), MAX_IMAGES );
 
-			injectionBuffer			=	new StructuredBuffer( Game.GraphicsDevice, typeof(Particle),	MaxInjectingParticles, StructuredBufferFlags.None );
-			simulationBuffer		=	new StructuredBuffer( Game.GraphicsDevice, typeof(Particle),	MaxSimulatedParticles, StructuredBufferFlags.None );
-			particleLighting		=	new StructuredBuffer( Game.GraphicsDevice, typeof(Vector4),		MaxSimulatedParticles, StructuredBufferFlags.None );
-			sortParticlesBuffer		=	new StructuredBuffer( Game.GraphicsDevice, typeof(Vector2),		MaxSimulatedParticles, StructuredBufferFlags.None );
-			deadParticlesIndices	=	new StructuredBuffer( Game.GraphicsDevice, typeof(uint),		MaxSimulatedParticles, StructuredBufferFlags.Append );
+			injectionBuffer			=	new StructuredBuffer( Game.GraphicsDevice, typeof(Particle),	MAX_INJECTED, StructuredBufferFlags.None );
+			simulationBuffer		=	new StructuredBuffer( Game.GraphicsDevice, typeof(Particle),	MAX_PARTICLES, StructuredBufferFlags.None );
+			particleLighting		=	new StructuredBuffer( Game.GraphicsDevice, typeof(Vector4),		MAX_PARTICLES, StructuredBufferFlags.None );
+			sortParticlesBuffer		=	new StructuredBuffer( Game.GraphicsDevice, typeof(Vector2),		MAX_PARTICLES, StructuredBufferFlags.None );
+			deadParticlesIndices	=	new StructuredBuffer( Game.GraphicsDevice, typeof(uint),		MAX_PARTICLES, StructuredBufferFlags.Append );
+
+			lightmap				=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.Rgba16F,	(int)LightmapWidth, (int)LightmapHeight, false );
 
 			rs.Game.Reloading += LoadContent;
 			LoadContent(this, EventArgs.Empty);
@@ -178,7 +205,7 @@ namespace Fusion.Engine.Graphics {
 
 			device.SetCSRWBuffer( 1, deadParticlesIndices, 0 );
 			device.PipelineState	=	factory[ (int)Flags.INITIALIZE ];
-			device.Dispatch( MathUtil.IntDivUp( MaxSimulatedParticles, BlockSize ) );
+			device.Dispatch( MathUtil.IntDivUp( MAX_PARTICLES, BLOCK_SIZE ) );
 		}
 
 
@@ -207,6 +234,8 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref paramsCB );
 				SafeDispose( ref imagesCB );
 
+				SafeDispose( ref lightmap );
+
 				SafeDispose( ref injectionBuffer );
 				SafeDispose( ref simulationBuffer );
 				SafeDispose( ref particleLighting );
@@ -225,9 +254,12 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="flag"></param>
 		void EnumAction ( PipelineState ps, Flags flag )
 		{
-			ps.BlendState			=	BlendState.AlphaBlendPremul;
-			ps.DepthStencilState	=	DepthStencilState.Readonly;
-			ps.Primitive			=	Primitive.PointList;
+			if (flag==Flags.DRAW) {
+				ps.BlendState			=	BlendState.AlphaBlend;
+				ps.DepthStencilState	=	DepthStencilState.None;
+				ps.Primitive			=	Primitive.PointList;
+				ps.RasterizerState		=	RasterizerState.CullNone;
+			}
 
 			if (flag==Flags.DRAW_SHADOW) {
 
@@ -240,6 +272,15 @@ namespace Fusion.Engine.Graphics {
 
 				ps.BlendState			=	bs;
 				ps.DepthStencilState	=	DepthStencilState.Readonly;
+				ps.Primitive			=	Primitive.PointList;
+				ps.RasterizerState		=	RasterizerState.CullNone;
+			}
+
+			if (flag==Flags.DRAW_LIGHT) {
+				ps.BlendState			=	BlendState.Opaque;
+				ps.DepthStencilState	=	DepthStencilState.None;
+				ps.Primitive			=	Primitive.PointList;
+				ps.RasterizerState		=	RasterizerState.CullNone;
 			}
 		}
 
@@ -267,7 +308,7 @@ namespace Fusion.Engine.Graphics {
 				throw new InvalidOperationException("Images must be set");
 			}
 
-			if (injectionCount>=MaxInjectingParticles) {
+			if (injectionCount>=MAX_INJECTED) {
 				toMuchInjectedParticles = true;
 				return;
 			}
@@ -328,10 +369,11 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			//	fill constant data :
-			PrtParams param		=	new PrtParams();
+			PARAMS param		=	new PARAMS();
 
 			param.View				=	view;
-			param.Projection		=	projection;
+			param.Projection        =   projection;
+			param.ViewProjection	=	view * projection;
 			param.MaxParticles		=	0;
 			param.DeltaTime			=	deltaTime;
 			param.CameraForward		=	new Vector4( cameraMatrix.Forward	, 0 );
@@ -339,7 +381,8 @@ namespace Fusion.Engine.Graphics {
 			param.CameraUp			=	new Vector4( cameraMatrix.Up		, 0 );
 			param.CameraPosition	=	new Vector4( cameraMatrix.TranslationVector	, 1 );
 			param.Gravity			=	new Vector4( this.Gravity, 0 );
-			param.MaxParticles		=	MaxSimulatedParticles;
+			param.LightMapSize		=	new Vector4( Lightmap.Width, Lightmap.Height, 1.0f/Lightmap.Width, 1.0f/Lightmap.Height );
+			param.MaxParticles		=	MAX_PARTICLES;
 			param.LinearizeDepthA	=	camera.LinearizeDepthScale;
 			param.LinearizeDepthB	=	camera.LinearizeDepthBias;
 			param.CocBias			=	renderWorld.DofSettings.CocBias;
@@ -354,7 +397,7 @@ namespace Fusion.Engine.Graphics {
 
 			//	set DeadListSize to prevent underflow:
 			if (flags==Flags.INJECTION) {
-				deadParticlesIndices.CopyStructureCount( paramsCB, Marshal.OffsetOf( typeof(PrtParams), "DeadListSize").ToInt32() );
+				deadParticlesIndices.CopyStructureCount( paramsCB, Marshal.OffsetOf( typeof(PARAMS), "DeadListSize").ToInt32() );
 			}
 		}
 
@@ -400,7 +443,7 @@ namespace Fusion.Engine.Graphics {
 					device.PipelineState	=	factory[ (int)Flags.INJECTION ];
 			
 					//	GPU time ???? -> 0.0046
-					device.Dispatch( MathUtil.IntDivUp( MaxInjectingParticles, BlockSize ) );
+					device.Dispatch( MathUtil.IntDivUp( MAX_INJECTED, BLOCK_SIZE ) );
 
 					ClearParticleBuffer();
 				}
@@ -427,17 +470,39 @@ namespace Fusion.Engine.Graphics {
 							device.PipelineState	=	factory[ (int)Flags.SIMULATION ];
 	
 							/// GPU time : 1.665 ms	 --> 0.38 ms
-							device.Dispatch( MathUtil.IntDivUp( MaxSimulatedParticles, BlockSize ) );//*/
+							device.Dispatch( MathUtil.IntDivUp( MAX_PARTICLES, BLOCK_SIZE ) );//*/
 
 							timeAccumulator -= stepTime;
 						}
 					}
 				}
 
+
+				//
+				//	Alloc Lightmap :
+				//
+				using (new PixEvent("Alloc LightMap")) {
+
+					if (!renderWorld.IsPaused && !rs.SkipParticlesSimulation) {
+	
+						device.SetCSRWBuffer( 0, simulationBuffer,		0 );
+						device.SetCSRWBuffer( 1, deadParticlesIndices, -1 );
+						device.SetCSRWBuffer( 2, sortParticlesBuffer, 0 );
+
+						SetupGPUParameters( 0, renderWorld, view, projection, Flags.ALLOC_LIGHTMAP );
+						device.ComputeShaderConstants[0] = paramsCB ;
+
+						device.PipelineState	=	factory[ (int)Flags.ALLOC_LIGHTMAP ];
+	
+						device.Dispatch( 1, 1, 1 );//*/
+					}
+				}
+
+
 				//
 				//	Sort :
 				//
-				using (new PixEvent("Sort")) {
+				using ( new PixEvent( "Sort" ) ) {
 					rs.BitonicSort.Sort( sortParticlesBuffer );
 				}
 
@@ -465,7 +530,7 @@ namespace Fusion.Engine.Graphics {
 				//	Setup images :
 				//
 				if (Images!=null && !Images.IsDisposed) {
-					imagesCB.SetData( Images.GetNormalizedRectangles( MaxImages ) );
+					imagesCB.SetData( Images.GetNormalizedRectangles( MAX_IMAGES ) );
 				}
 
 				SetupGPUParameters( 0, renderWorld, view, projection, flags );
@@ -502,11 +567,24 @@ namespace Fusion.Engine.Graphics {
 					device.GeometryShaderResources[3]	=	sortParticlesBuffer;
 					device.GeometryShaderResources[4]	=	particleLighting;
 
+					if (flags==Flags.DRAW_LIGHT) {
+						device.PixelShaderResources[7]		=	rs.LightManager.LightGrid.GridTexture;
+						device.PixelShaderResources[8]		=	rs.LightManager.LightGrid.IndexDataGpu;
+						device.PixelShaderResources[9]		=	rs.LightManager.LightGrid.LightDataGpu;
+						device.PixelShaderResources[10]		=	rs.LightManager.ShadowMap.ColorBuffer;
+
+						device.PixelShaderSamplers[1]		=	SamplerState.ShadowSampler ;
+					}
+
+					if (flags==Flags.DRAW) {
+						device.PixelShaderResources[11]		=	Lightmap;
+					}
+
 					//	setup PS :
 					device.PipelineState	=	factory[ (int)flags ];
 
 					//	GPU time : 0.81 ms	-> 0.91 ms
-					device.Draw( MaxSimulatedParticles, 0 );
+					device.Draw( MAX_PARTICLES, 0 );
 				}
 			}
 		}
@@ -533,6 +611,31 @@ namespace Fusion.Engine.Graphics {
 			var viewport	=	new Viewport( 0, 0, colorTarget.Width, colorTarget.Height );
 
 			RenderGeneric( "Particles", gameTime, camera, viewport, view, projection, colorTarget, null, viewFrame.DepthBuffer, Flags.DRAW );
+		}
+
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="gameTime"></param>
+		internal void RenderLight ( GameTime gameTime, Camera camera )
+		{
+			if (rs.SkipParticles) {
+				return;
+			}
+
+			rs.Device.Clear( lightmap.Surface, Color4.Black );
+
+			var view		=	camera.GetViewMatrix( StereoEye.Mono );
+			var projection	=	camera.GetProjectionMatrix( StereoEye.Mono );
+
+			var colorTarget	=	lightmap.Surface;
+
+			var viewport	=	new Viewport( 0, 0, lightmap.Width, lightmap.Height );
+
+			RenderGeneric( "Particles Light", gameTime, camera, viewport, view, projection, colorTarget, null, null, Flags.DRAW_LIGHT );
 		}
 
 

@@ -44,6 +44,21 @@ namespace Fusion.Build.Mapping {
 		/// <returns></returns>
 		public Int2 Alloc ( int size, string tag )
 		{
+			Int2 address;
+
+			if (!TryAlloc(size, tag, out address)) {
+				throw new OutOfMemoryException(string.Format("No enough space in 2D allocator (size={0})", size));
+			} else {
+				return address;
+			}
+		}
+
+
+
+		public bool TryAlloc ( int size, string tag, out Int2 address )
+		{
+			address = new Int2(0,0);
+
 			if (tag==null) {
 				throw new ArgumentNullException("tag");
 			}
@@ -51,14 +66,28 @@ namespace Fusion.Build.Mapping {
 				throw new ArgumentOutOfRangeException("size");
 			}
 
-			size	=	MathUtil.RoundUpNextPowerOf2( size );
+			size		=	MathUtil.RoundUpNextPowerOf2( size );
+			var block	=	GetFreeBlock( size );
 
-			var block = GetFreeBlock( size );
-			block.Tag = tag;
+			if (block==null) {
+				return false;
+			}
 
-			return block.Address;
+			block.Tag	=	tag;
+			address		=	block.Address;
+
+			return true;
 		}
 
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void FreeAll ()
+		{
+			rootBlock	=	new Block( new Int2(0,0), Size, null, null );
+		}
 
 
 		/// <summary>
@@ -106,7 +135,7 @@ namespace Fusion.Build.Mapping {
 				}
 			}
 
-			throw new OutOfMemoryException(string.Format("No enough space in 2D allocator (size={0})", size));
+			return null;
 		}
 
 

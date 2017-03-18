@@ -145,6 +145,11 @@ namespace Fusion.Engine.Graphics {
 		[Config]
 		public bool SkipDebugRendering { get; set; }
 
+		/// <summary>
+		/// Shows particles statistics.
+		/// </summary>
+		[Config]
+		public QualityLevel ShadowQuality { get; set; }	= QualityLevel.Medium;
 
 		/// <summary>
 		/// Shows particles statistics.
@@ -164,7 +169,6 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		[Config]
 		public bool ShowLightCounters { get; set; }
-
 
 		/// <summary>
 		/// 

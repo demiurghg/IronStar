@@ -283,6 +283,15 @@ namespace Fusion.Core.Mathematics
             }
         }
 
+		/// <summary>
+		/// Devides XYZ by W
+		/// </summary>
+		/// <returns></returns>
+		public Vector4 MakePoint ()
+		{
+			return new Vector4( X / W, Y / W, Z / W, 1 );
+		}
+
         /// <summary>
         /// Creates an array containing the elements of the vector.
         /// </summary>

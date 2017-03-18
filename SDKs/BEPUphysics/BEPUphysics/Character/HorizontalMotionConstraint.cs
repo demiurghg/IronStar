@@ -58,7 +58,13 @@ namespace BEPUphysics.Character
         /// Gets or sets the maximum force the character can apply to move horizontally in its current state.
         /// </summary>
         public float MaximumForce { get; set; }
-        float maxForce;
+        /// <summary>
+        /// Gets or sets the maximum force the character can apply to accelerate. 
+        /// This will not let the character apply more force than the MaximumForce; the actual applied force is constrained by both this and the MaximumForce property.
+        /// </summary>
+        public float MaximumAccelerationForce { get; set; }
+        float maxForceDt;
+        float maxAccelerationForceDt;
 
         private float timeUntilPositionAnchor = .2f;
 
@@ -247,6 +253,7 @@ namespace BEPUphysics.Character
         bool hadTraction;
         Entity previousSupportEntity;
         float timeSinceTransition;
+        bool isTryingToMove;
 
         /// <summary>
         /// Constructs a new horizontal motion constraint.
@@ -258,6 +265,7 @@ namespace BEPUphysics.Character
             this.characterBody = characterBody;
             this.supportFinder = supportFinder;
             CollectInvolvedEntities();
+            MaximumAccelerationForce = float.MaxValue;
         }
 
 
@@ -279,11 +287,10 @@ namespace BEPUphysics.Character
         public override void Update(float dt)
         {
 
-            bool isTryingToMove = movementDirection3d.LengthSquared() > 0;
-            if (!isTryingToMove)
-                TargetSpeed = 0;
+            isTryingToMove = movementDirection3d.LengthSquared() > 0;
 
-            maxForce = MaximumForce * dt;
+            maxForceDt = MaximumForce * dt;
+            maxAccelerationForceDt = MaximumAccelerationForce * dt;
 
 
             //Compute the jacobians.  This is basically a PointOnLineJoint with motorized degrees of freedom.
@@ -388,7 +395,7 @@ namespace BEPUphysics.Character
 
 
             //Compute the target velocity (in constraint space) for this frame.  The hard work has already been done.
-            targetVelocity.X = TargetSpeed;
+            targetVelocity.X = isTryingToMove ? TargetSpeed : 0;
             targetVelocity.Y = 0;
 
             //Compute the effective mass matrix.
@@ -564,16 +571,21 @@ namespace BEPUphysics.Character
                 //The constraint is not permitted to slow down the character; only speed it up.
                 //This offers a hole for an exploit; by jumping and curving just right,
                 //the character can accelerate beyond its maximum speed.  A bit like an HL2 speed run.
-                accumulatedImpulse.X = MathHelper.Clamp(accumulatedImpulse.X + lambda.X, 0, maxForce);
+                accumulatedImpulse.X = MathHelper.Clamp(accumulatedImpulse.X + lambda.X, 0, maxForceDt);
                 accumulatedImpulse.Y = 0;
             }
             else
             {
+
                 Vector2.Add(ref lambda, ref accumulatedImpulse, out accumulatedImpulse);
                 float length = accumulatedImpulse.LengthSquared();
-                if (length > maxForce * maxForce)
+                if (length > maxForceDt * maxForceDt)
                 {
-                    Vector2.Multiply(ref accumulatedImpulse, maxForce / (float)Math.Sqrt(length), out accumulatedImpulse);
+                    Vector2.Multiply(ref accumulatedImpulse, maxForceDt / (float)Math.Sqrt(length), out accumulatedImpulse);
+                }
+                if (isTryingToMove && accumulatedImpulse.X > maxAccelerationForceDt)
+                {
+                    accumulatedImpulse.X = maxAccelerationForceDt;
                 }
             }
             Vector2.Subtract(ref accumulatedImpulse, ref previousAccumulatedImpulse, out lambda);
@@ -667,6 +679,17 @@ namespace BEPUphysics.Character
             }
         }
 
+        /// <summary>
+        /// Gets the velocity of the support at the support point.
+        /// </summary>
+        public Vector3 SupportVelocity
+        {
+            get
+            {
+                return supportEntity == null ? new Vector3() : Toolbox.GetVelocityOfPoint(supportData.Position, supportEntity.Position, supportEntity.LinearVelocity, supportEntity.AngularVelocity);
+            }
+        }
+
 
         /// <summary>
         /// Gets the accumulated impulse in world space applied to the character.
@@ -681,6 +704,19 @@ namespace BEPUphysics.Character
                 impulse.Y = accumulatedImpulse.X * linearJacobianA1.Y + accumulatedImpulse.Y * linearJacobianA2.Y;
                 impulse.Z = accumulatedImpulse.X * linearJacobianA1.Z + accumulatedImpulse.Y * linearJacobianA2.Z;
                 return impulse;
+            }
+        }
+
+        /// <summary>
+        /// Gets the accumulated impulse in constraint space.
+        /// The X component corresponds to impulse along the movement direction.
+        /// The Y component corresponds to impulse perpendicular to the movement direction and support normal.
+        /// </summary>
+        public Vector2 AccumulatedImpulse
+        {
+            get
+            {
+                return accumulatedImpulse;
             }
         }
 

@@ -21,7 +21,7 @@ namespace IronStar.Editor2 {
 		public float	Distance	=	30;
 		public float	Yaw			=	45;
 		public float	Pitch		=	-30;
-		public float	Fov			=	60;
+		public float	Fov			=	90;
 
 		Manipulation	manipulation	=	Manipulation.None;
 		Point			startPoint;
@@ -56,7 +56,7 @@ namespace IronStar.Editor2 {
 			var fovTan	=	(float)Math.Tan(MathUtil.DegreesToRadians(Fov/2));
 			var vp		=	rs.DisplayBounds;
 
-			return 2 * pixelSize / vp.Height * fovTan * Math.Abs(tpoint.Z);
+			return 2 * pixelSize / vp.Width * fovTan * Math.Abs(tpoint.Z);
 		}
 
 

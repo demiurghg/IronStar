@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 
 namespace Fusion.Engine.Graphics {
 
+	public enum QualityLevel {
+		None, 
+		Low,
+		Medium,
+		High,
+		Ultra,
+	}
+
 
 	public enum VertexFormat {
 		Sprite,

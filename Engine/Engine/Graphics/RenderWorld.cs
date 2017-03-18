@@ -404,27 +404,39 @@ namespace Fusion.Engine.Graphics {
 				//	get simulated particles for shadows.
 				ParticleSystem.Simulate( gameTime, Camera );
 
-				//	render shadows :
-				rs.LightRenderer.RenderShadows( this, this.LightSet );
+				//	prepare light set for shadow rendering :
+				rs.LightManager.Update( gameTime, LightSet );
+				rs.LightManager.LightGrid.UpdateLightSetVisibility( stereoEye, Camera, LightSet );
+
+				//	allocated and render shadows :
+				rs.LightManager.ShadowMap.RenderShadowMaps( gameTime, rs, this, LightSet );
+
+				//	clusterize light set :
+				rs.LightManager.LightGrid.ClusterizeLightSet( stereoEye, Camera, LightSet );
+
+				//	render particle lighting :
+				ParticleSystem.RenderLight( gameTime, Camera );
 			}
 
 
 			//	render g-buffer :
-			rs.SceneRenderer.RenderGBuffer( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
+			rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
+			rs.SceneRenderer.RenderForward( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
 
 			//	render ssao :
 			rs.SsaoFilter.Render( stereoEye, Camera, viewHdrFrame.DepthBuffer, viewHdrFrame.GBuffer1 );
 
 			switch (rs.ShowGBuffer) {
-				case 1 : rs.Filter.CopyColor( targetSurface, viewHdrFrame.GBuffer0 ); return;
-				case 2 : rs.Filter.CopyAlpha( targetSurface, viewHdrFrame.GBuffer0 ); return;
-				case 3 : rs.Filter.CopyColor( targetSurface, viewHdrFrame.GBuffer1 ); return;
-				case 4 : rs.Filter.CopyAlpha( targetSurface, viewHdrFrame.GBuffer1 ); return;
-				case 5 : rs.Filter.CopyColor( targetSurface, viewHdrFrame.HdrBuffer ); return;
-				case 6 : rs.Filter.Copy( targetSurface, rs.SsaoFilter.OcclusionMap ); return;
-				case 7 : rs.Filter.StretchRect( targetSurface, rs.LightRenderer.CascadedShadowMap.ParticleShadow ); return;
-				case 8 : rs.Filter.StretchRect( targetSurface, rs.LightRenderer.CascadedShadowMap.ColorBuffer ); return;
-				case 9 : rs.Filter.StretchRect( targetSurface, viewHdrFrame.FeedbackBufferRB, SamplerState.PointClamp ); return;
+				case 1  : rs.Filter.CopyColor( targetSurface, viewHdrFrame.GBuffer0 ); return;
+				case 2  : rs.Filter.CopyAlpha( targetSurface, viewHdrFrame.GBuffer0 ); return;
+				case 3  : rs.Filter.CopyColor( targetSurface, viewHdrFrame.GBuffer1 ); return;
+				case 4  : rs.Filter.CopyAlpha( targetSurface, viewHdrFrame.GBuffer1 ); return;
+				case 5  : rs.Filter.CopyColor( targetSurface, viewHdrFrame.HdrBuffer ); return;
+				case 6  : rs.Filter.Copy( targetSurface, rs.SsaoFilter.OcclusionMap ); return;
+				case 7  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ParticleShadow ); return;
+				case 8  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ColorBuffer ); return;
+				case 9  : rs.Filter.StretchRect( targetSurface, ParticleSystem.Lightmap ); return;
+				case 10 : rs.Filter.StretchRect( targetSurface, viewHdrFrame.FeedbackBufferRB, SamplerState.PointClamp ); return;
 			}
 
 			if (rs.VTSystem.ShowPhysicalTextures) {
@@ -441,7 +453,7 @@ namespace Fusion.Engine.Graphics {
 			rs.Sky.RenderFogTable( SkySettings );
 
 			//	render lights :
-			rs.LightRenderer.RenderLighting( stereoEye, Camera, viewHdrFrame, this, Radiance );
+			//rs.LightRenderer.RenderLighting( stereoEye, Camera, viewHdrFrame, this, Radiance );
 
 			//	render "solid" DOF :
 			rs.DofFilter.Render( gameTime, viewHdrFrame.LightAccumulator, viewHdrFrame.HdrBuffer, viewHdrFrame.DepthBuffer, this );
@@ -473,6 +485,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="gameTime"></param>
 		public void RenderRadiance ()
 		{
+			#if false
 			var sw = new Stopwatch();
 
 			Log.Message("Radiance capture...");
@@ -495,13 +508,13 @@ namespace Fusion.Engine.Graphics {
 						camera.SetupCameraCubeFace( envLight.Position, (CubeFace)i, 0.125f, 5000 );
 
 						//	render g-buffer :
-						rs.SceneRenderer.RenderGBuffer( new GameTime(0,0,0), StereoEye.Mono, camera, radianceFrame, this, true );
+						rs.SceneRenderer.RenderForward( new GameTime(0,0,0), StereoEye.Mono, camera, radianceFrame, this, true );
 
 						//	render sky :
 						rs.Sky.Render( camera, StereoEye.Mono, radianceFrame, SkySettings );
 
 						//	render lights :
-						rs.LightRenderer.RenderLighting( StereoEye.Mono, camera, radianceFrame, this, rs.Sky.SkyCube );
+						rs.LightManager.RenderLighting( StereoEye.Mono, camera, radianceFrame, this, rs.Sky.SkyCube );
 
 						//	downsample captured frame to cube face.
 						rs.Filter.StretchRect4x4( Radiance.GetSurface( 0, (CubeFace)i ), radianceFrame.HdrBuffer, SamplerState.LinearClamp, true );
@@ -519,6 +532,7 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			Log.Message("{0} light probes - {1} ms", LightSet.EnvLights.Count, sw.ElapsedMilliseconds);
+			#endif
 		}
 
 

@@ -123,6 +123,7 @@ namespace IronStar.Mapping {
 			decal.Metallic			=	Metallic;
 			decal.Roughness			=	Roughness;
 			decal.ImageRectangle	=	ls.DecalAtlas.GetNormalizedRectangleByName( ImageName );
+			decal.ImageSize			=	ls.DecalAtlas.GetAbsoluteRectangleByName( ImageName ).Size;
 
 			decal.ColorFactor		=	ColorFactor;
 			decal.SpecularFactor	=	SpecularFactor;

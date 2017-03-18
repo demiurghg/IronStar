@@ -207,6 +207,24 @@ namespace Fusion.Engine.Graphics {
 
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public Rectangle GetAbsoluteRectangleByName ( string name )
+		{
+			Element e;
+			if (dictionary.TryGetValue( name, out e )) {
+				return e.GetRect();
+			} else {
+				Log.Warning("Missing atlas entry: {0}", name);
+				return new Rectangle(0,0,0,0);
+			}
+		}
+
+
+
+		/// <summary>
 		/// Gets float rectangles of all subimages in normalized texture coordibates
 		/// </summary>
 		/// <param name="maxCount">Maximum number of recatangles. 

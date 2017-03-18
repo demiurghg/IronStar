@@ -25,6 +25,11 @@ namespace Fusion.Engine.Graphics {
 		public RectangleF ImageRectangle;
 
 		/// <summary>
+		/// Image index in decal atlas
+		/// </summary>
+		public Size2 ImageSize;
+
+		/// <summary>
 		/// Decal emission intensity
 		/// </summary>
 		public Color4 Emission = Color4.Zero;
@@ -64,6 +69,10 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public float FalloffFactor = 0.0f;
 
+
+		internal bool	Visible;
+		internal Int3	MinExtent;
+		internal Int3	MaxExtent;
 
 
 		public Vector4 GetScaleOffset ()

@@ -10,7 +10,16 @@ using Fusion.Engine.Common;
 
 namespace Fusion.Engine.Graphics {
 
+	public enum SpotShape {
+		Round,
+		Square,
+	}
+
+
 	public class SpotLight {
+		
+		internal uint Timer = 0;
+
 		/// <summary>
 		/// Spot-light view matrix.
 		/// </summary>
@@ -22,14 +31,34 @@ namespace Fusion.Engine.Graphics {
 		public Matrix	Projection;
 
 		/// <summary>
+		/// Spot-light position
+		/// </summary>
+		public Vector3	Position;
+
+		/// <summary>
 		/// Spot-light intensity.
 		/// </summary>
 		public Color4	Intensity;
 
 		/// <summary>
+		/// Spot-light intensity.
+		/// </summary>
+		public Color4	Intensity2 { get { return Intensity * LightStyleController.RunLightStyle((int)Timer, LightStyle); } }
+
+		/// <summary>
 		/// Spot-light mask texture index.
 		/// </summary>
-		public int		TextureIndex;
+		public float	PenumbraFactor;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public SpotShape	SpotShape;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public int	LodBias;
 
 		/// <summary>
 		/// Spot-light inner radius.
@@ -50,5 +79,18 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		public float	DepthBias = 1f / 1024f;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public LightStyle LightStyle;
+
+
+		internal bool		Visible = true;
+		internal int		DetailLevel;   
+		internal Rectangle	ShadowRegion;
+		internal Vector4	ShadowScaleOffset;
+		internal Int3		MinExtent;
+		internal Int3		MaxExtent;
 	}
 }

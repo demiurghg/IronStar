@@ -751,9 +751,9 @@ namespace BEPUutilities
             float vX = v.X;
             float vY = v.Y;
             float vZ = v.Z;
-            result.X = vX * matrix.M11 + vY * matrix.M21 + vZ * matrix.M31 + matrix.M41;
-            result.Y = vX * matrix.M12 + vY * matrix.M22 + vZ * matrix.M32 + matrix.M42;
-            result.Z = vX * matrix.M13 + vY * matrix.M23 + vZ * matrix.M33 + matrix.M43;
+            result.X = vX * matrix.M11 + vY * matrix.M21 + vZ * matrix.M31;
+            result.Y = vX * matrix.M12 + vY * matrix.M22 + vZ * matrix.M32;
+            result.Z = vX * matrix.M13 + vY * matrix.M23 + vZ * matrix.M33;
         }
 
         /// <summary>
@@ -765,7 +765,7 @@ namespace BEPUutilities
         public static Vector3 TransformNormal(Vector3 v, Matrix matrix)
         {
             Vector3 toReturn;
-            Transform(ref v, ref matrix, out toReturn);
+            TransformNormal(ref v, ref matrix, out toReturn);
             return toReturn;
         }
 
@@ -780,9 +780,9 @@ namespace BEPUutilities
             float vX = v.X;
             float vY = v.Y;
             float vZ = v.Z;
-            result.X = vX * matrix.M11 + vY * matrix.M12 + vZ * matrix.M13 + matrix.M14;
-            result.Y = vX * matrix.M21 + vY * matrix.M22 + vZ * matrix.M23 + matrix.M24;
-            result.Z = vX * matrix.M31 + vY * matrix.M32 + vZ * matrix.M33 + matrix.M34;
+            result.X = vX * matrix.M11 + vY * matrix.M12 + vZ * matrix.M13;
+            result.Y = vX * matrix.M21 + vY * matrix.M22 + vZ * matrix.M23;
+            result.Z = vX * matrix.M31 + vY * matrix.M32 + vZ * matrix.M33;
         }
 
         /// <summary>
@@ -794,7 +794,7 @@ namespace BEPUutilities
         public static Vector3 TransformNormalTranspose(Vector3 v, Matrix matrix)
         {
             Vector3 toReturn;
-            TransformTranspose(ref v, ref matrix, out toReturn);
+            TransformNormalTranspose(ref v, ref matrix, out toReturn);
             return toReturn;
         }
 
@@ -1173,7 +1173,7 @@ namespace BEPUutilities
 
 
         /// <summary>
-        /// Creates a view matrix pointing looking in a direction with a given up vector.
+        /// Creates a view matrix pointing in a direction with a given up vector.
         /// </summary>
         /// <param name="position">Position of the camera.</param>
         /// <param name="forward">Forward direction of the camera.</param>

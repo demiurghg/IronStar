@@ -31,6 +31,9 @@ namespace IronStar.Mapping {
 		[Category("Omni-light")]
 		public LightPreset LightPreset { get; set; } = LightPreset.IncandescentStandard;
 
+		[Category("Omni-light")]
+		public LightStyle LightStyle { get; set; } = LightStyle.Default;
+
 		OmniLight	light;
 
 
@@ -55,6 +58,7 @@ namespace IronStar.Mapping {
 			light.Position		=	WorldMatrix.TranslationVector;
 			light.RadiusOuter	=	Radius;
 			light.RadiusInner	=	0;
+			light.LightStyle	=	LightStyle;
 
 			world.Game.RenderSystem.RenderWorld.LightSet.OmniLights.Add( light );
 		}

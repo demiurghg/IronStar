@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using ConversionHelper;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Matrix = BEPUutilities.Matrix;
 
@@ -30,13 +29,7 @@ namespace BEPUphysicsDrawer.Models
         public InstancedModelDrawer(Game game)
             : base(game)
         {
-            var resourceContentManager = new ResourceContentManager(game.Services, DrawerResource.ResourceManager);
-#if WINDOWS
-            instancingEffect = resourceContentManager.Load<Effect>("InstancedEffect");
-#else
-            instancingEffect = resourceContentManager.Load<Effect>("InstancedEffectXbox");
-#endif
-            //instancingEffect = game.Content.Load<Effect>("InstancedEffect");
+            instancingEffect = game.Content.Load<Effect>("InstancedEffect");
 
             worldTransformsParameter = instancingEffect.Parameters["WorldTransforms"];
             textureIndicesParameter = instancingEffect.Parameters["TextureIndices"];
@@ -80,14 +73,14 @@ namespace BEPUphysicsDrawer.Models
         {
             ModelDisplayObjectBatch batch = displayObject.BatchInformation.Batch;
             batch.Remove(displayObject, this);
-            //If it's an empty batch, just throw it away.
-            if (batch.DisplayObjects.Count == 0)
-                batches.Remove(batch);
         }
 
         protected override void ClearManagedModels()
         {
-            batches.Clear();
+            foreach (var batch in batches)
+            {
+                batch.Clear();
+            }
         }
 
         //This drawer isn't really optimized for the frequent addition and removal of objects.
@@ -122,6 +115,15 @@ namespace BEPUphysicsDrawer.Models
                     batch.Draw(instancingEffect, worldTransformsParameter, textureIndicesParameter, instancingEffect.CurrentTechnique.Passes[i]);
                 }
             }
+        }
+
+        protected override void OnDisposed()
+        {
+            foreach (var batch in batches)
+            {
+                batch.Dispose();
+            }
+            instancingEffect.Dispose();
         }
     }
 }

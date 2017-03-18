@@ -79,7 +79,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// "Faded-in" color of the particle.
 		/// </summary>
-		[FieldOffset( 80)] public Color4	LightLevel;                
+		[FieldOffset( 80)] public Vector4	LightmapRegion;                
 
 		/// <summary>
 		/// Gravity influence.

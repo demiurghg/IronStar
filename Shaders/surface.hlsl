@@ -1,24 +1,5 @@
 
 
-#include "surface.auto.hlsl"
-
-struct BATCH {
-	float4x4	Projection		;
-	float4x4	View			;
-	float4x4	World			;
-	float4		ViewPos			;
-	float4		BiasSlopeFar	;
-	float4		Color;
-	float4		ViewBounds		;
-	float		VTPageScaleRCP	;
-};
-
-
-struct SUBSET {
-	float4	Rectangle;
-};
-
-
 
 struct VSInput {
 	float3 Position : POSITION;
@@ -46,24 +27,37 @@ struct PSInput {
 
 struct GBuffer {
 	float4	hdr		 	: SV_Target0;
-	float4	gbuffer0 	: SV_Target1;
-	float4	gbuffer1 	: SV_Target2;
-	float4	feedback	: SV_Target3;
+	float4	feedback	: SV_Target1;
 };
 
-cbuffer 		CBBatch 			: 	register(b0) { BATCH    Batch      : packoffset( c0 ); }	
-cbuffer 		CBLayer 			: 	register(b1) { SUBSET	Subset     : packoffset( c0 ); }	
-cbuffer 		CBBatch 			: 	register(b3) { float4x4 Bones[128] : packoffset( c0 ); }	
-SamplerState	SamplerLinear		: 	register(s0);
-SamplerState	SamplerPoint		: 	register(s1);
-SamplerState	SamplerAnisotropic	: 	register(s2);
-Texture2D		Textures[6]			: 	register(t0);
+#include "surface.auto.hlsl"
+
+cbuffer 				CBBatch 			: 	register(b0) { BATCH    	Batch     	: packoffset( c0 ); }	
+cbuffer 				CBLayer 			: 	register(b1) { SUBSET		Subset    	: packoffset( c0 ); }	
+cbuffer 				CBBatch 			: 	register(b3) { float4x4 	Bones[128]	: packoffset( c0 ); }	
+cbuffer					CBLightData			: 	register(b4) { LIGHTDATA	LightData	: packoffset( c0 ); }		
+SamplerState			SamplerLinear		: 	register(s0);
+SamplerState			SamplerPoint		: 	register(s1);
+SamplerState			SamplerAnisotropic	: 	register(s2);
+SamplerState			DecalSampler		: 	register(s3);
+SamplerComparisonState	ShadowSampler		: 	register(s4);
+SamplerState			ParticleSampler		: 	register(s5);
+Texture2D				Textures[4]			: 	register(t0);
+Texture3D<uint2>		ClusterTable		: 	register(t4);
+Buffer<uint>			LightIndexTable		: 	register(t5);
+StructuredBuffer<LIGHT>	LightDataTable		:	register(t6);
+StructuredBuffer<DECAL>	DecalDataTable		:	register(t7);
+Texture2D				DecalImages			:	register(t8);
+Texture2D				ShadowMap			:	register(t9);
+Texture2D				ShadowMapParticles	:	register(t10);
 
 #ifdef _UBERSHADER
-$ubershader GBUFFER RIGID|SKINNED
+$ubershader FORWARD RIGID|SKINNED
 $ubershader SHADOW RIGID|SKINNED
+$ubershader ZPASS RIGID|SKINNED
 #endif
 
+#include "surface.lighting.hlsl"
 
  
 /*-----------------------------------------------------------------------------
@@ -192,8 +186,14 @@ float MipLevel( float2 uv )
 }
 
 
+#ifdef ZPASS
+// float4 PSMain( PSInput input ) : SV_TARGET0
+// {
+	// return float4(0,0,0,0);
+// }
+#endif
 
-#ifdef GBUFFER
+#ifdef FORWARD
 GBuffer PSMain( PSInput input )
 {
 	GBuffer output;
@@ -228,14 +228,9 @@ GBuffer PSMain( PSInput input )
 	//	Virtual texturing stuff :
 	//---------------------------------
 	float2 vtexTC		=	saturate(input.TexCoord);
-	//float2 atiHack		=	float2(-0.25f/131072, -0.25f/131072) * scale; // <-- float2(0,0) for NVIdia
-	float2 atiHack		=	float2(0,0); // <-- float2(0,0) for NVIdia
-	
 	float4 fallback		=	float4( 0.5f, 0.5, 0.5f, 1.0f );
-	//float4 physPageTC	=	Textures[1].SampleLevel( SamplerPoint, input.TexCoord + atiHack, (int)(mip) ).xyzw;
-
-	int2 indexXY 		=	(int2)floor((input.TexCoord + atiHack) * VTVirtualPageCount / scale);
-	float4 physPageTC	=	Textures[1].Load( int3(indexXY, (int)(mip)) ).xyzw;
+	int2 indexXY 		=	(int2)floor(input.TexCoord * VTVirtualPageCount / scale);
+	float4 physPageTC	=	Textures[0].Load( int3(indexXY, (int)(mip)) ).xyzw;
 	
 	if (physPageTC.w>0) {
 		float2 	withinPageTC	=	vtexTC * VTVirtualPageCount / exp2(physPageTC.z);
@@ -244,20 +239,16 @@ GBuffer PSMain( PSInput input )
 		
 		float2	finalTC			=	physPageTC.xy + withinPageTC;
 		
-		baseColor	=	Textures[2].Sample( SamplerLinear, finalTC ).rgb;
-		localNormal	=	Textures[3].Sample( SamplerLinear, finalTC ).rgb * 2 - 1;
-		roughness	=	Textures[4].Sample( SamplerLinear, finalTC ).r;
-		metallic	=	Textures[4].Sample( SamplerLinear, finalTC ).g;
-		emission	=	Textures[4].Sample( SamplerLinear, finalTC ).b;
-		/*baseColor	=	Textures[2].Sample( SamplerPoint, finalTC ).rgb;
-		localNormal	=	Textures[3].Sample( SamplerPoint, finalTC ).rgb * 2 - 1;
-		roughness	=	Textures[4].Sample( SamplerPoint, finalTC ).r;
-		metallic	=	Textures[4].Sample( SamplerPoint, finalTC ).g;
-		emission	=	Textures[4].Sample( SamplerPoint, finalTC ).b;//*/
+		baseColor	=	Textures[1].Sample( SamplerLinear, finalTC ).rgb;
+		localNormal	=	Textures[2].Sample( SamplerLinear, finalTC ).rgb * 2 - 1;
+		roughness	=	Textures[3].Sample( SamplerLinear, finalTC ).r;
+		metallic	=	Textures[3].Sample( SamplerLinear, finalTC ).g;
+		emission	=	Textures[3].Sample( SamplerLinear, finalTC ).b;
 	}
 
 	if ( Subset.Rectangle.z==Subset.Rectangle.w && Subset.Rectangle.z==0 ) {
-		baseColor	=	0.25f;
+		float3	checker	=	floor(input.WorldPos.xyz-0.5f)/2;
+		baseColor	=	0.2*frac(checker.x + checker.y + checker.z)+0.3;
 		localNormal	=	float3(0,0,1);
 		roughness	=	0.5;
 		metallic	=	0;
@@ -265,19 +256,17 @@ GBuffer PSMain( PSInput input )
 	}
 
 	//---------------------------------
-	//	G-buffer output stuff :
+	//	Prepare output values :
 	//---------------------------------
 	//	NB: Multiply normal length by local normal projection on surface normal.
 	//	Shortened normal will be used as Fresnel decay (self occlusion) factor.
 	float3 worldNormal 	= 	normalize( mul( localNormal, tbnToWorld ).xyz );
 	
-	//roughness = 0.5f;
 	float3 entityColor	=	input.Color.rgb;
 	
-	//	Use sRGB texture for better color intensity distribution
-	output.hdr			=	float4( emission * entityColor, 0 );		// <-- Multiply on entity color!!!
-	output.gbuffer0		=	float4( baseColor, roughness );
-	output.gbuffer1 	=	float4( worldNormal * 0.5f + 0.5f, metallic );
+	float3 lighting		=	ComputeClusteredLighting( input, ClusterTable, Batch.ViewBounds.xy, baseColor, worldNormal, roughness, metallic );
+	
+	output.hdr			=	float4( emission * entityColor + lighting, 0 );
 	output.feedback		=	feedback;
 	
 	return output;

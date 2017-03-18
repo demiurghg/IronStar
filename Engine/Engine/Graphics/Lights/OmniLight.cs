@@ -9,7 +9,11 @@ using Fusion.Drivers.Graphics;
 using Fusion.Engine.Common;
 
 namespace Fusion.Engine.Graphics {
+
 	public class OmniLight {
+
+		internal uint Timer = 0;
+		
 		/// <summary>
 		/// Omni-light position
 		/// </summary>
@@ -21,6 +25,11 @@ namespace Fusion.Engine.Graphics {
 		public Color4	Intensity;
 
 		/// <summary>
+		/// Spot-light intensity.
+		/// </summary>
+		public Color4	Intensity2 { get { return Intensity * LightStyleController.RunLightStyle((int)Timer, LightStyle); } }
+
+		/// <summary>
 		/// Omni-light inner radius.
 		/// </summary>
 		public float	RadiusInner;
@@ -29,6 +38,16 @@ namespace Fusion.Engine.Graphics {
 		/// Omni-light outer radius.
 		/// </summary>
 		public float	RadiusOuter;
+
+		/// <summary>
+		/// Omni-light outer radius.
+		/// </summary>
+		public LightStyle	LightStyle;
+
+
+		internal bool	Visible;
+		internal Int3	MinExtent;
+		internal Int3	MaxExtent;
 
 
 		/// <summary>

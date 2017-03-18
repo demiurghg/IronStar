@@ -12,8 +12,9 @@ namespace IronStar.UI.Attributes
     public class BackgroundAttribute : ControlAttribute
     {
         public string ImageName { get; private set; }
-        public BackgroundAttribute(int order, string imageName)
+        public BackgroundAttribute(int order, string name, string imageName)
         {
+            this.Name = name;
             this.Order = order;
             this.ImageName = imageName;
         }

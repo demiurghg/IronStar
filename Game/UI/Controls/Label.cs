@@ -28,18 +28,5 @@ namespace IronStar.UI.Controls
         {
 
         }
-
-        protected override void Update(GameTime gameTime)
-        {
-            //TODO : remove
-            if (ForeColor.A == 255)
-            {
-                RunTransition("ForeColor", new Color(0, 0, 0, 160), 0, 900);
-            } else if (ForeColor.A == 160)
-            {
-                RunTransition("ForeColor", new Color(255, 255, 255, 255), 0, 900);
-            }
-            base.Update(gameTime);
-        }
     }
 }

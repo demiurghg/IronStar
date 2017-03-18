@@ -16,6 +16,7 @@ using Fusion.Engine.Server;
 using IronStar.UI.Controls;
 using IronStar.UI.Generators;
 using IronStar.UI.Pages;
+using IronStar.UI;
 
 namespace IronStar {
 
@@ -24,13 +25,45 @@ namespace IronStar {
 		readonly Game Game;
         readonly IMenuGenerator menuGenerator;
 
-        DiscTexture	background;
-		SpriteLayer uiLayer;
-		SpriteFont	headerFont;
-		SpriteFont	textFont;
-		SpriteFont	titleFont;
 
-        Page StartMenu;
+        public Dictionary<string, Page> Menus { get; set; } = new Dictionary<string, Page>();
+        public Page ActiveMenu
+        {
+            get
+            {
+                return activeMenu;
+            }
+            set
+            {
+                if (activeMenu != null)
+                {
+                    activeMenu.Visible = false;
+                    activeMenu.Enabled = false;
+
+                }
+                activeMenu = value;
+                if (activeMenu != null)
+                {
+                    activeMenu.Visible = true;
+                    activeMenu.Enabled = true;
+                }
+            }
+        }
+
+
+        private Page activeMenu;
+
+        private Dictionary<string, Type> requiredMenus = new Dictionary<string, Type>()
+        {
+            { "StartMenu",  typeof(StartPageOptions)},
+            { "MainMenu",  typeof(MainPageOptions)},
+            { "SettingsMenu",  typeof(SettingsPageOptions)},
+            { "AudioSettingsMenu",  typeof(AudioSettingsPageOptions)},
+        };
+
+
+        SpriteLayer uiLayer;
+
         /// <summary>
         /// Creates instance of ShooterDemoUserInterface
         /// </summary>
@@ -61,20 +94,50 @@ namespace IronStar {
 
 			Game.GameClient.ClientStateChanged += GameClient_ClientStateChanged;
 
-            Game.Frames.DefaultFont = Game.Content.Load<SpriteFont>(@"fonts\armata");
+            Game.Frames.DefaultFont = Game.Content.Load<SpriteFont>
+                ($@"fonts\\{MenuGenerator.MainFont}{MenuGenerator.GetMainFontSize(Game.RenderSystem.DisplayBounds.Width,
+                                                                                  Game.RenderSystem.DisplayBounds.Height)}");
 
-            StartMenu = menuGenerator.CreateMenu("startMenu", new StartPageOptions(Game));
-            Game.Frames.RootFrame.Add(StartMenu);
+            InitializeMenus();
+            ActiveMenu = Menus["StartMenu"];
 
             Game.Frames.RootFrame.Resize += (s, e) =>
             {
-                Game.Frames.RootFrame.Remove(StartMenu);
-                StartMenu = menuGenerator.CreateMenu("startMenu", new StartPageOptions(Game));
-                Game.Frames.RootFrame.Add(StartMenu);
+                Game.Frames.DefaultFont = Game.Content.Load<SpriteFont>
+                ($@"fonts\\{MenuGenerator.MainFont}{MenuGenerator.GetMainFontSize(Game.RenderSystem.DisplayBounds.Width,
+                                                                                  Game.RenderSystem.DisplayBounds.Height)}");
+                foreach (var menu in Menus.Values)
+                {
+                    Game.Frames.RootFrame.Remove(menu);
+                }
+                Menus.Clear();
+                InitializeMenus();
             };
 		}
 
+
+
+        private void InitializeMenus()
+        {
+            foreach (var menuName in requiredMenus.Keys)
+            {
+                var menu = menuGenerator.CreateMenu(menuName, (IPageOption)Activator.CreateInstance(requiredMenus[menuName], new object[] { Game }));
+                menu.Visible = false;
+                Menus[menuName] = menu;
+                Game.Frames.RootFrame.Add(menu);
+            }
+
+            if (ActiveMenu != null)
+            {
+                ActiveMenu = Menus[ActiveMenu.Name];
+            }
+        }
 		
+        public void SetActiveMenu(string name)
+        {
+            ActiveMenu = Menus[name];
+        }
+
 		
 		void GameClient_ClientStateChanged ( object sender, GameClient.ClientEventArgs e )
 		{
@@ -85,10 +148,6 @@ namespace IronStar {
 
 		void LoadContent ()
 		{
-			background	=	Game.Content.Load<DiscTexture>(@"ui\background");
-			headerFont	=	Game.Content.Load<SpriteFont>(@"fonts\headerFont");
-			titleFont	=	Game.Content.Load<SpriteFont>(@"fonts\titleFont");
-			textFont	=	Game.Content.Load<SpriteFont>(@"fonts\textFont");
 		}
 
 
@@ -126,8 +185,14 @@ namespace IronStar {
 			uiLayer.Clear();
 
 
-			if (Game.GameEditor.Instance!=null) {
-                StartMenu.Visible = false;
+         
+
+
+            if (Game.GameEditor.Instance != null) {
+                foreach (var menu in Menus.Values)
+                {
+                    menu.Visible = false;
+                }
 				return;
 			}
 
@@ -153,13 +218,25 @@ namespace IronStar {
 
 			if (ShowMenu) {
 
-				Game.Keyboard.ScanKeyboard	=	false;
-				Game.Mouse.IsMouseCentered	=	false;
+                if (activeMenu != null && activeMenu.Name.Equals("StartMenu"))
+                {
+                    if (Game.Keyboard.IsKeyDown(Keys.Enter))
+                    {
+                        ActiveMenu = Menus["MainMenu"];
+                    }
+                }
+
+                if (Game.Keyboard.IsKeyDown(Keys.Escape))
+                {
+                    ActiveMenu = Menus["MainMenu"];
+                }
+
+                Game.Mouse.IsMouseCentered	=	false;
 				Game.Mouse.IsMouseClipped	=	false;
 				Game.Mouse.IsMouseHidden	=	false;
 
 			} else {
-                StartMenu.Visible = false;
+                ActiveMenu = null;
 				if (!Game.Console.IsShown) {
 					Game.Keyboard.ScanKeyboard	=	true;
 					Game.Mouse.IsMouseCentered	=	true;
@@ -180,11 +257,11 @@ namespace IronStar {
 		/// Draw loading screen
 		/// </summary>
 		/// <param name="message"></param>
+        /// 
+
+        /*
 		void DrawLoadingScreen ( string message )
 		{
-			var vp = Game.RenderSystem.DisplayBounds;
-
-			uiLayer.Draw( background, 0,0, vp.Width, vp.Height, Color.White );
 
 			uiLayer.Draw( null, 0,vp.Height/4, vp.Width, vp.Height/2, new Color(0,0,0,192) );
 
@@ -192,12 +269,15 @@ namespace IronStar {
 
 			//titleFont.DrawString( uiLayer, message, 100,vp.Height/2 - h*2, new Color(242,242,242) );
 			textFont.DrawString( uiLayer, message, 100,vp.Height/2 - h, new Color(220,20,60) );
-		}
+		}*/
 
 
 		/// <summary>
 		/// Draws stand-by screen
 		/// </summary>
+        /// 
+        
+        /*
 		void DrawStandByScreen ()
 		{
 			var vp = Game.RenderSystem.DisplayBounds;
@@ -216,7 +296,7 @@ namespace IronStar {
 			textFont.DrawString( uiLayer, "   - Enter \"map base1\" to start the game.", 100,vp.Height/2 + h*2, new Color(242,242,242) );
 			textFont.DrawString( uiLayer, "   - Enter \"killserver\" to stop the game.", 100,vp.Height/2 + h*3, new Color(242,242,242) );
 			textFont.DrawString( uiLayer, "   - Enter \"connect <IP:port>\" to connect to the remote game.", 100,vp.Height/2 + h*4, new Color(242,242,242) );
-		}
+		}*/
 
 
 

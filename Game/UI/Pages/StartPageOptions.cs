@@ -18,13 +18,13 @@ namespace IronStar.UI.Pages
             this.game = game;
         }
 
-        [Background(0, @"ui\background")]
+        [Background(0, "Background", @"ui\background")]
         public void Background() { }
 
-        [Logo(1, @"ui\logo")]
+        [Logo(1,"Logo", @"ui\logo")]
         public void Logo() { }
 
-        [Label(2, "Press any key")]
+        [StartLabel(2,"Label", "Press any key")]
         public string Label;
 
     }

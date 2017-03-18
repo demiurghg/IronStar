@@ -9,15 +9,14 @@ using System.Threading.Tasks;
 
 namespace IronStar.UI.Attributes
 {
-    public class ImageAttribute : ControlAttribute
+    public class NavigationButtonAttribute : ControlAttribute
     {
-        public string ImageName { get; private set; }
-
-        public ImageAttribute(int order, string name, string imageName)
+        public string Text { get; private set; }
+        public NavigationButtonAttribute(int order, string name, string text)
         {
-            this.Name = name;
             this.Order = order;
-            this.ImageName = imageName;
+            this.Text = text;
+            this.Name = name;
         }
     }
 }

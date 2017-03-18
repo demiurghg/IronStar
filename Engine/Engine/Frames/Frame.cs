@@ -126,12 +126,12 @@ namespace Fusion.Engine.Frames {
 		/// <summary>
 		///	Width of the frame
 		/// </summary>
-		public	int			Width				{ get; set; }
+		public virtual int	Width				{ get; set; }
 
 		/// <summary>
 		///	Height of the frame
 		/// </summary>
-		public	int			Height				{ get; set; }
+		public virtual int	Height				{ get; set; }
 
 		/// <summary>
 		/// Left gap between frame and its content

@@ -10,9 +10,10 @@ namespace IronStar.UI.Attributes
     {
         public string ImageName { get; private set; }
 
-        public LogoAttribute(int order, string name)
+        public LogoAttribute(int order,string name, string ImageName)
         {
             this.Order = order;
+            this.Name = name;
             this.ImageName = name;
         }
     }

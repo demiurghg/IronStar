@@ -23,20 +23,10 @@ namespace IronStar.Core {
 
 		Use				=	1 << 8,
 
-		/// <summary>
-		/// To clear weapon activation request.
-		/// </summary>
-		AllWeapon		=	0x7FFF0000,
-
-		Machinegun		=	1 << 16,
-		Shotgun			=	1 << 17,
-		SuperShotgun	=	1 << 18,
-		GrenadeLauncher	=	1 << 19,
-		RocketLauncher	=	1 << 20,
-		HyperBlaster	=	1 << 21,
-		Chaingun		=	1 << 22,
-		Railgun			=	1 << 23,
-		BFG				=	1 << 24,
+		SwitchWeapon	=	1 << 16,
+		ReloadWeapon	=	1 << 17,
+		ThrowGrenade	=	1 << 18,
+		MeleeAtack		=	1 << 19,
 	}	
 
 
@@ -48,6 +38,19 @@ namespace IronStar.Core {
 		CameraEntity		=	0x0002,
 		UseInlineModel		=	0x0004,
 		Crouching			=	0x0008,
+		PrimaryWeapon		=	0x0010,
+		SecondaryWeapon		=	0x0020,
+	}
+
+
+
+	public enum WeaponType : byte {
+		None,
+		Machinegun,
+		Shotgun,
+		Plasmagun,
+		RocketLauncher,
+		GaussRifle,
 	}
 
 

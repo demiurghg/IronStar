@@ -289,7 +289,7 @@ namespace IronStar.UI.Generators
             var frame = ((ISettingsControlAttribute)context.ControlAttribute).GetFrame(fp, context.ControlAttribute.Name, font);
             frame.Width = ParseBounds(SettingsMenuInfo.Width, page.Width);
             frame.Height = ParseBounds(SettingsMenuInfo.Height, page.Height);
-            Console.WriteLine($"Height{frame.Height}");
+            //Console.WriteLine($"Height{frame.Height}");
 
             frame.X = ParseLocation(SettingsMenuInfo.LeftOffset, page.Width, frame.Width);
             frame.Y = (int)(SettingsMenuInfo.currentPosition + ParseLocation(SettingsMenuInfo.TopOffset, page.Height, frame.Height));

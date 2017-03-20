@@ -24,6 +24,68 @@ namespace IronStar.Entities {
 
 		Random rand = new Random();
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		bool TryConsume ( ref short source, short count )
+		{
+			if (source - count < 0) {
+				return false;
+			} else {
+				source -= count;
+				return true;
+			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		bool TryConsumeAmmo ( Entity entity, short count )
+		{
+			if (entity.State.HasFlag( EntityState.PrimaryWeapon )) {
+				return TryConsume( ref entity.WeaponAmmo1, count );
+			}
+			if (entity.State.HasFlag( EntityState.SecondaryWeapon )) {
+				return TryConsume( ref entity.WeaponAmmo2, count );
+			}
+			return false;
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void SwitchWeapon ()
+		{
+			if (Entity.State.HasFlag( EntityState.PrimaryWeapon )) {
+
+				Entity.State &= ~EntityState.PrimaryWeapon;
+				Entity.State |= EntityState.SecondaryWeapon;
+				Log.Verbose("...switched to secondary weapon");
+
+			} else if (Entity.State.HasFlag( EntityState.SecondaryWeapon )) {
+
+				Entity.State &= ~EntityState.SecondaryWeapon;
+				Entity.State |= EntityState.PrimaryWeapon;
+				Log.Verbose("...switched to primary weapon");
+
+			} else {
+				Log.Verbose("...no weapon");
+			}
+		}
+
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -32,42 +94,32 @@ namespace IronStar.Entities {
 		void UpdateWeaponState ( Entity entity, short deltaTime )
 		{
 			var attack		=	entity.UserCtrlFlags.HasFlag( UserCtrlFlags.Attack );
-			var cooldown	=	entity.GetItemCount( Inventory.WeaponCooldown );
-
-			cooldown		=   (short)Math.Max( 0, cooldown - deltaTime );
-
-			entity.SetItemCount( Inventory.WeaponCooldown, cooldown );
 
 			//	weapon is too hot :
-			if (cooldown>0) {
+			if (entity.WeaponCooldown>0) {
+				entity.WeaponCooldown -= deltaTime;
 				return;
 			}
 
-			if (entity.UserCtrlFlags.HasFlag(UserCtrlFlags.Machinegun		)) entity.ActiveItem = Inventory.Machinegun		;
-			if (entity.UserCtrlFlags.HasFlag(UserCtrlFlags.Shotgun			)) entity.ActiveItem = Inventory.Shotgun		;
-			if (entity.UserCtrlFlags.HasFlag(UserCtrlFlags.SuperShotgun		)) entity.ActiveItem = Inventory.SuperShotgun	;
-			if (entity.UserCtrlFlags.HasFlag(UserCtrlFlags.GrenadeLauncher	)) entity.ActiveItem = Inventory.GrenadeLauncher;
-			if (entity.UserCtrlFlags.HasFlag(UserCtrlFlags.RocketLauncher	)) entity.ActiveItem = Inventory.RocketLauncher	;
-			if (entity.UserCtrlFlags.HasFlag(UserCtrlFlags.HyperBlaster		)) entity.ActiveItem = Inventory.HyperBlaster	;
-			if (entity.UserCtrlFlags.HasFlag(UserCtrlFlags.Chaingun			)) entity.ActiveItem = Inventory.Chaingun		;
-			if (entity.UserCtrlFlags.HasFlag(UserCtrlFlags.Railgun			)) entity.ActiveItem = Inventory.Railgun		;
-			if (entity.UserCtrlFlags.HasFlag(UserCtrlFlags.BFG				)) entity.ActiveItem = Inventory.BFG			;
-
 			var world = World;
 
+
+			var weapon	= WeaponType.None;
+
+			if ( entity.State.HasFlag( EntityState.PrimaryWeapon ) ) {
+				weapon = entity.Weapon1; 
+			} else if ( entity.State.HasFlag( EntityState.SecondaryWeapon ) ) {
+				weapon = entity.Weapon2;
+			}
+
 			if (attack) {
-				switch (entity.ActiveItem) {
-					case Inventory.Machinegun		:	FireBullet(world, entity, 5, 5, 100, 0.03f); break;
-					case Inventory.Shotgun			:	FireShot( world, entity, 10,10, 5.0f, 1000, 0.12f); break;
-					case Inventory.SuperShotgun		:	break;
-					case Inventory.GrenadeLauncher	:	break;
-					case Inventory.RocketLauncher	:	FireRocket(world, entity, 800); break;
-					case Inventory.HyperBlaster		:	FirePlasma(world, entity, 100); break;
-					case Inventory.Chaingun			:	break;
-					case Inventory.Railgun			:	FireRail(world, entity, 80, 100, 1500 ); break;
-					case Inventory.BFG				:	break;
+				switch (weapon) {
+					case WeaponType.Machinegun		:	FireBullet( world, entity, 5, 5, 100, 0.03f ); break;
+					case WeaponType.Shotgun			:	FireShot( world, entity, 10,10, 5.0f, 1000, 0.12f); break;
+					case WeaponType.Plasmagun		:	FirePlasma(world, entity, 100); break;
+					case WeaponType.RocketLauncher	:	FireRocket(world, entity, 800); break;
+					case WeaponType.GaussRifle		:	FirePlasma(world, entity, 100); break;
 					default: 
-						entity.ActiveItem = Inventory.Machinegun;
 						break;
 				}
 			}
@@ -91,7 +143,7 @@ namespace IronStar.Entities {
 		/// <param name="cooldown"></param>
 		void FirePlasma( GameWorld world, Entity attacker, short cooldown )
 		{
-			if (!attacker.ConsumeItem( Inventory.Cells, 1 )) {
+			if (!TryConsumeAmmo( attacker, 1 )) {
 				return;
 			}
 
@@ -101,7 +153,7 @@ namespace IronStar.Entities {
 
 			world.SpawnFX( "MZBlaster",	attacker.ID, origin );
 
-			attacker.SetItemCount( Inventory.WeaponCooldown, cooldown );
+			attacker.WeaponCooldown += cooldown;
 		}
 
 
@@ -113,7 +165,7 @@ namespace IronStar.Entities {
 		/// <param name="cooldown"></param>
 		void FireRocket( GameWorld world, Entity attacker, short cooldown )
 		{
-			if (!attacker.ConsumeItem( Inventory.Rockets, 1 )) {
+			if (!TryConsumeAmmo( attacker, 1 )) {
 				return;
 			}
 
@@ -123,7 +175,7 @@ namespace IronStar.Entities {
 
 			world.SpawnFX( "MZRocketLauncher",	attacker.ID, origin );
 
-			attacker.SetItemCount( Inventory.WeaponCooldown, cooldown );
+			attacker.WeaponCooldown += cooldown;
 		}
 
 
@@ -135,7 +187,7 @@ namespace IronStar.Entities {
 		/// <param name="damage"></param>
 		void FireBullet ( GameWorld world, Entity attacker, int damage, float impulse, short cooldown, float spread )
 		{
-			if (!attacker.ConsumeItem( Inventory.Bullets, 1 )) {
+			if (!TryConsumeAmmo( attacker, 1 )) {
 				return;
 			}
 
@@ -157,7 +209,7 @@ namespace IronStar.Entities {
 				world.SpawnFX( "MZMachinegun",	0, origin, n );
 			}
 
-			attacker.SetItemCount( Inventory.WeaponCooldown, cooldown );
+			attacker.WeaponCooldown += cooldown;
 		}
 
 
@@ -169,7 +221,7 @@ namespace IronStar.Entities {
 		/// <param name="damage"></param>
 		void FireShot ( GameWorld world, Entity attacker, int damage, int count, float impulse, short cooldown, float spread )
 		{
-			if (!attacker.ConsumeItem( Inventory.Bullets, 1 )) {
+			if (!TryConsumeAmmo( attacker, 1 )) {
 				return;
 			}
 
@@ -194,7 +246,7 @@ namespace IronStar.Entities {
 				} 
 			}
 
-			attacker.SetItemCount( Inventory.WeaponCooldown, cooldown );
+			attacker.WeaponCooldown += cooldown;
 		}
 
 
@@ -206,7 +258,7 @@ namespace IronStar.Entities {
 		/// <param name="damage"></param>
 		void FireRail ( GameWorld world, Entity attacker, int damage, float impulse, short cooldown )
 		{
-			if (!attacker.ConsumeItem( Inventory.Slugs, 1 )) {
+			if (!TryConsumeAmmo( attacker, 1 )) {
 				return;
 			}
 
@@ -231,7 +283,7 @@ namespace IronStar.Entities {
 				world.SpawnFX( "RailTrail",		attacker.ID, origin, direction * 200, attacker.Rotation );
 			}
 
-			attacker.SetItemCount( Inventory.WeaponCooldown, cooldown );
+			attacker.WeaponCooldown += cooldown;
 		}
 
 

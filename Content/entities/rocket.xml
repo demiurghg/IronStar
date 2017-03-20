@@ -5,6 +5,6 @@
   <Damage>100</Damage>
   <LifeTime>10</LifeTime>
   <Radius>5</Radius>
-  <ExplosionFX>Explosion</ExplosionFX>
-  <TrailFX>RocketTrail</TrailFX>
+  <ExplosionFX>rocket_explosion</ExplosionFX>
+  <TrailFX>rocket_trail</TrailFX>
 </EntityFactory>

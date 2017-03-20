@@ -92,19 +92,19 @@ namespace IronStar.Core {
 		public Vector3 AngularVelocity;
 
 		/// <summary>
-		/// Animation frame multiplied by 8.
+		/// Animation frame
 		/// </summary>
 		public float AnimFrame;
 
-		/// <summary>
-		/// Inventory
-		/// </summary>
-		readonly short[] inventory = new short[(byte)Inventory.Max];
-
-		/// <summary>
-		/// Currently active item.
-		/// </summary>
-		public Inventory ActiveItem;
+		//	Inventory
+		public WeaponType Weapon1	=	WeaponType.None;
+		public WeaponType Weapon2	=	WeaponType.None;
+		public short Health			=	100;
+		public short Armor			=	0;
+		public short WeaponCooldown	=	0;
+		public short WeaponAmmo1	=	0;
+		public short WeaponAmmo2	=	0;
+		public short Grenades		=	0;
 
 
 		/// <summary>
@@ -237,53 +237,6 @@ namespace IronStar.Core {
 
 
 
-		/// <summary>
-		/// sets item count 
-		/// </summary>
-		/// <param name="item"></param>
-		/// <param name="count"></param>
-		public void SetItemCount ( Inventory item, short count ) 
-		{
-			if (count<0 && item!=Inventory.Health) {
-				//	only health could be negative
-				Log.Warning("SetItemCount: count of {0} < 0. Forced zero.", item);
-				count = 0;
-			}
-			inventory[(byte)item] = count;
-		}
-
-
-		/// <summary>
-		/// Gets item count
-		/// </summary>
-		/// <param name="item"></param>
-		/// <returns></returns>
-		public short GetItemCount ( Inventory item ) 
-		{
-			return inventory[(byte)item];
-		}
-
-
-		/// <summary>
-		/// Consumes specified amount of items if inventory containg enough.
-		/// Returns True if consumption was successfull. False otherwice.
-		/// </summary>
-		/// <param name="item"></param>
-		/// <param name="amount"></param>
-		/// <returns></returns>
-		public bool ConsumeItem ( Inventory item, short amount )
-		{
-			if (inventory[(byte)item] >= amount) {
-				inventory[(byte)item] -= amount;
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-
-
-
 
 		/// <summary>
 		/// Immediatly put entity in given position without interpolation :
@@ -337,14 +290,16 @@ namespace IronStar.Core {
 			writer.Write( LinearVelocity );
 			writer.Write( AngularVelocity );
 
+			writer.Write( (byte)Weapon1		);
+			writer.Write( (byte)Weapon2		);
+			writer.Write( Health			);
+			writer.Write( Armor				);
+			writer.Write( WeaponAmmo1		);
+			writer.Write( WeaponAmmo2		);
+			writer.Write( WeaponCooldown	);
+			writer.Write( Grenades			);
+
 			writer.Write( AnimFrame );
-
-			for (int i=0; i<inventory.Length; i++) {
-				writer.Write( inventory[i] );
-			}
-
-			writer.Write( (byte)ActiveItem );
-
 			writer.Write( Model );
 			writer.Write( Sfx );
 		}
@@ -379,16 +334,18 @@ namespace IronStar.Core {
 			LinearVelocity	=	reader.Read<Vector3>();
 			AngularVelocity	=	reader.Read<Vector3>();	
 
+			Weapon1			=	(WeaponType)reader.ReadByte();	
+			Weapon2			=	(WeaponType)reader.ReadByte();
+			Health			=	reader.ReadInt16();
+			Armor			=	reader.ReadInt16();	
+			WeaponAmmo1		=	reader.ReadInt16();
+			WeaponAmmo2		=	reader.ReadInt16();
+			WeaponCooldown	=	reader.ReadInt16();
+			Grenades		=	reader.ReadInt16();
+
 			AnimFrame		=	reader.ReadSingle();
-
-			for (int i=0; i<inventory.Length; i++) {
-				inventory[i]	=	reader.ReadInt16();
-			}
-
-			ActiveItem	=	(Inventory)reader.ReadByte();
-
-			Model		=	reader.ReadInt16();
-			Sfx			=	reader.ReadInt16();
+			Model			=	reader.ReadInt16();
+			Sfx				=	reader.ReadInt16();
 
 			//	entity teleported - reset position and rotation :
 			if (oldTeleport!=TeleportCount) {

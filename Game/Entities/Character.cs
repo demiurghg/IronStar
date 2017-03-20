@@ -82,23 +82,12 @@ namespace IronStar.Entities {
 
 			space.Add( controller );
 
+			entity.State		|=	EntityState.PrimaryWeapon;
 
-			entity.ActiveItem	=	Inventory.Machinegun;
-
-			entity.SetItemCount( Inventory.Health			,	100	);
-			entity.SetItemCount( Inventory.Armor			,	0	);
-
-			entity.SetItemCount( Inventory.Bullets			,	999	);
-			entity.SetItemCount( Inventory.Machinegun		,	1	);
-
-			entity.SetItemCount( Inventory.Rockets			,	150	);
-			entity.SetItemCount( Inventory.RocketLauncher	,	1	);
-
-			entity.SetItemCount( Inventory.Slugs			,	150	);
-			entity.SetItemCount( Inventory.Railgun			,	1	);
-
-			entity.SetItemCount( Inventory.Cells			,	999	);
-			entity.SetItemCount( Inventory.HyperBlaster		,	1	);
+			entity.Weapon1		=	WeaponType.Machinegun;
+			entity.Weapon2		=	WeaponType.Plasmagun;
+			entity.WeaponAmmo1	=	30000;
+			entity.WeaponAmmo2	=	30000;
 		}
 
 
@@ -166,7 +155,7 @@ namespace IronStar.Entities {
 			//
 			//	calc health :
 			//
-			var health	=	e.GetItemCount( Inventory.Health );
+			var health	=	Entity.Health;
 			health -= damage;
 
 			var dir = kickImpulse.Normalized();
@@ -193,8 +182,6 @@ namespace IronStar.Entities {
 				World.Kill( targetID );
 				return true;
 			}
-
-			e.SetItemCount( Inventory.Health, health );
 
 			return false;
 		}

@@ -44,18 +44,12 @@ namespace IronStar.Client {
 
 		[Config] public Keys Attack			{ get; set; }
 		[Config] public Keys Zoom			{ get; set; }
-		[Config] public Keys ThrowGrenade	{ get; set; }
 		[Config] public Keys Use			{ get; set; }
 
-		[Config] public Keys UseWeapon1		{ get; set; }
-		[Config] public Keys UseWeapon2		{ get; set; }
-		[Config] public Keys UseWeapon3		{ get; set; }
-		[Config] public Keys UseWeapon4		{ get; set; }
-		[Config] public Keys UseWeapon5		{ get; set; }
-		[Config] public Keys UseWeapon6		{ get; set; }
-		[Config] public Keys UseWeapon7		{ get; set; }
-		[Config] public Keys UseWeapon8		{ get; set; }
-		[Config] public Keys UseWeapon9		{ get; set; }
+		[Config] public Keys MeleeAttack	{ get; set; }
+		[Config] public Keys SwitchWeapon	{ get; set; }
+		[Config] public Keys ReloadWeapon	{ get; set; }
+		[Config] public Keys ThrowGrenade	{ get; set; }
 
 
 		/// <summary>
@@ -89,19 +83,12 @@ namespace IronStar.Client {
 							
 			Attack			=	Keys.LeftButton;
 			Zoom			=	Keys.D;
-			ThrowGrenade	=	Keys.G;
 
 			Use				=	Keys.LeftControl;
 								
-			UseWeapon1		=	Keys.D1;
-			UseWeapon2		=	Keys.D2;
-			UseWeapon3		=	Keys.D3;
-			UseWeapon4		=	Keys.D4;
-			UseWeapon5		=	Keys.D5;
-			UseWeapon6		=	Keys.D6;
-			UseWeapon7		=	Keys.D7;
-			UseWeapon8		=	Keys.D8;
-			UseWeapon9		=	Keys.D9;
+			SwitchWeapon	=	Keys.Q;
+			ReloadWeapon	=	Keys.R;
+			ThrowGrenade	=	Keys.G;
 		}
 
 
@@ -136,42 +123,6 @@ namespace IronStar.Client {
 		/// <param name="e"></param>
 		void Keyboard_KeyDown ( object sender, KeyEventArgs e )
 		{
-			if (e.Key==UseWeapon1) {	
-				weaponControl &= ~UserCtrlFlags.AllWeapon;
-				weaponControl |= UserCtrlFlags.Machinegun;
-			}
-			if (e.Key==UseWeapon2) {	
-				weaponControl &= ~UserCtrlFlags.AllWeapon;
-				weaponControl |= UserCtrlFlags.Shotgun;
-			}
-			if (e.Key==UseWeapon3) {	
-				weaponControl &= ~UserCtrlFlags.AllWeapon;
-				weaponControl |= UserCtrlFlags.SuperShotgun;
-			}
-			if (e.Key==UseWeapon4) {	
-				weaponControl &= ~UserCtrlFlags.AllWeapon;
-				weaponControl |= UserCtrlFlags.GrenadeLauncher;
-			}
-			if (e.Key==UseWeapon5) {	
-				weaponControl &= ~UserCtrlFlags.AllWeapon;
-				weaponControl |= UserCtrlFlags.RocketLauncher;
-			}
-			if (e.Key==UseWeapon6) {	
-				weaponControl &= ~UserCtrlFlags.AllWeapon;
-				weaponControl |= UserCtrlFlags.Chaingun;
-			}
-			if (e.Key==UseWeapon7) {	
-				weaponControl &= ~UserCtrlFlags.AllWeapon;
-				weaponControl |= UserCtrlFlags.Railgun;
-			}
-			if (e.Key==UseWeapon8) {	
-				weaponControl &= ~UserCtrlFlags.AllWeapon;
-				weaponControl |= UserCtrlFlags.HyperBlaster;
-			}
-			if (e.Key==UseWeapon9) {	
-				weaponControl &= ~UserCtrlFlags.AllWeapon;
-				weaponControl |= UserCtrlFlags.BFG;
-			}
 		}
 
 
@@ -195,6 +146,10 @@ namespace IronStar.Client {
 			if (Game.Keyboard.IsKeyDown( Attack			)) flags |= UserCtrlFlags.Attack;
 			if (Game.Keyboard.IsKeyDown( Use			)) flags |= UserCtrlFlags.Use;
 
+			if (Game.Keyboard.IsKeyDown( SwitchWeapon	)) flags |= UserCtrlFlags.SwitchWeapon;
+			if (Game.Keyboard.IsKeyDown( ThrowGrenade	)) flags |= UserCtrlFlags.ThrowGrenade;
+			if (Game.Keyboard.IsKeyDown( MeleeAttack	)) flags |= UserCtrlFlags.MeleeAtack;
+			if (Game.Keyboard.IsKeyDown( ReloadWeapon	)) flags |= UserCtrlFlags.ReloadWeapon;
 
 			//	http://eliteownage.com/mousesensitivity.html 
 			//	Q3A: 16200 dot per 360 turn:

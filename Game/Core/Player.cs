@@ -92,11 +92,21 @@ namespace IronStar {
 
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="world"></param>
+		/// <param name="ctrlFlag"></param>
 		void ControlEventAction ( GameWorld world, UserCtrlFlags ctrlFlag )
 		{
+			var player = world.GetEntityOrNull( "player", e => e.UserGuid==Guid );
+
 			if (ctrlFlag.HasFlag(UserCtrlFlags.Use)) {
-				var player = world.GetEntityOrNull( "player", e => e.UserGuid==Guid );
 				world.TryUse( player );
+			}
+
+			if (ctrlFlag.HasFlag(UserCtrlFlags.SwitchWeapon)) {
+				(player.Controller as Character).SwitchWeapon();
 			}
 		}
 

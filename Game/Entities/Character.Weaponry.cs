@@ -173,7 +173,7 @@ namespace IronStar.Entities {
 
 			var e = world.Spawn( "rocket", attacker.ID, origin, attacker.Rotation );
 
-			world.SpawnFX( "MZRocketLauncher",	attacker.ID, origin );
+			world.SpawnFX( "rocket_muzzle",	attacker.ID, origin );
 
 			attacker.WeaponCooldown += cooldown;
 		}

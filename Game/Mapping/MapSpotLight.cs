@@ -18,11 +18,6 @@ namespace IronStar.Mapping {
 	public class MapSpotLight : MapNode {
 
 		[Category("Spot-light")]
-		[Editor( typeof( SpotFileLocationEditor ), typeof( UITypeEditor ) )]
-		public string SpotMaskName { get; set; } = "";
-		
-		
-		[Category("Spot-light")]
 		public float Intensity { get; set; } = 500;
 		
 		[Category("Spot-light")]
@@ -99,13 +94,6 @@ namespace IronStar.Mapping {
 			}
 
 			var lightSet	=	world.Game.RenderSystem.RenderWorld.LightSet;
-
-			var index		=	lightSet.SpotAtlas.IndexOf( SpotMaskName );
-
-			if (index<0) {
-				Log.Warning("Can not spawn spot light with spot mask : {0}", SpotMaskName );
-				return;
-			}
 
 			light		=	new SpotLight();
 

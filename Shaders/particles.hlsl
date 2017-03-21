@@ -100,8 +100,11 @@ void CSMain(
 		//	Measure distance :
 		float  time		=	p.TimeLag;
 		
-		particleBuffer[ id ].Velocity	=	p.Velocity + p.Acceleration * Params.DeltaTime;	
-		particleBuffer[ id ].Position	=	p.Position + p.Velocity     * Params.DeltaTime;	
+		float3 velocity		=	p.Velocity;
+		float3 acceleration	=	p.Acceleration - velocity * length(velocity) * p.Damping;
+		
+		particleBuffer[ id ].Velocity	=	p.Velocity + acceleration * Params.DeltaTime;	
+		particleBuffer[ id ].Position	=	p.Position + velocity     * Params.DeltaTime;	
 		
 		float4 ppPos	=	mul( mul( float4(particleBuffer[ id ].Position,1), Params.View ), Params.Projection );
 

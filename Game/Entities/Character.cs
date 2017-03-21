@@ -84,8 +84,8 @@ namespace IronStar.Entities {
 
 			entity.State		|=	EntityState.PrimaryWeapon;
 
-			entity.Weapon1		=	WeaponType.Machinegun;
-			entity.Weapon2		=	WeaponType.Plasmagun;
+			entity.Weapon1		=	WeaponType.RocketLauncher;
+			entity.Weapon2		=	WeaponType.GaussRifle;
 			entity.WeaponAmmo1	=	30000;
 			entity.WeaponAmmo2	=	30000;
 		}

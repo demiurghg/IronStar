@@ -2,7 +2,7 @@
 <FXFactory xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Period>1</Period>
   <SoundStage Enabled="true" Sound="sound\weapon\plasmaHit.wav" Attenuation="Distant" />
-  <LightStage Enabled="true" Period="0.1" InnerRadius="0" OuterRadius="1" PulseString="m" LightStyle="Const" LightType="Omni" SpotAngleX="60" SpotAngleY="60" LightMask="" OffsetDirection="LocalForward" OffsetFactor="0.15">
+  <LightStage Enabled="true" Period="0.2" InnerRadius="0" OuterRadius="1" PulseString="afmfa" LightStyle="Saw" LightType="Omni" SpotAngleX="60" SpotAngleY="60" LightMask="" OffsetDirection="LocalForward" OffsetFactor="0.15">
     <Intensity Red="2" Green="10" Blue="20" Alpha="1" />
   </LightStage>
   <CameraShake Enabled="false" />
@@ -31,7 +31,7 @@
     <Color0 Red="0" Green="0" Blue="0" Alpha="0" />
     <Color1 Red="100" Green="400" Blue="800" Alpha="1" />
     <Lifetime Distribution="Uniform" MinLifetime="0.1" MaxLifetime="0.1" />
-    <Shape Size0="0" Size1="1" EnableRotation="true" InitialAngle="360" MinAngularVelocity="720" MaxAngularVelocity="720" />
+    <Shape Size0="0" Size1="1.2" EnableRotation="true" InitialAngle="360" MinAngularVelocity="720" MaxAngularVelocity="720" />
     <Position OffsetDirection="LocalForward" OffsetFactor="0.15" Distribution="UniformRadial" MinSize="0" MaxSize="0" />
     <Velocity Direction="None" LinearDistribution="Uniform" LinearVelocityMin="0" LinearVelocityMax="1" RadialDistribution="UniformRadial" RadialVelocityMin="0" RadialVelocityMax="1" Advection="0" />
     <Acceleration GravityFactor="0" Damping="0" DragForce="0" Turbulence="0" />

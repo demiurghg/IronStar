@@ -151,7 +151,7 @@ namespace IronStar.Entities {
 
 			var e = world.Spawn( "plasma", attacker.ID, origin, attacker.Rotation );
 
-			world.SpawnFX( "MZBlaster",	attacker.ID, origin );
+			world.SpawnFX( "plasma_muzzle",	attacker.ID, origin );
 
 			attacker.WeaponCooldown += cooldown;
 		}

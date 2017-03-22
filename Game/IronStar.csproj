@@ -125,7 +125,9 @@
     <Compile Include="Entities\FuncMotor.cs" />
     <Compile Include="Entities\FuncDoor.cs" />
     <Compile Include="Entities\FuncFX.cs" />
+    <Compile Include="Entities\GrenadeFactory.cs" />
     <Compile Include="Entities\NullFactory.cs" />
+    <Compile Include="Entities\Grenade.cs" />
     <Compile Include="Entities\ProjectileFactory.cs" />
     <Compile Include="Entities\Projectile.cs" />
     <Compile Include="Core\EntityController.cs" />

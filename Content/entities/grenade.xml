@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-16"?>
+<EntityFactory xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="GrenadeFactory">
+  <Velocity>20</Velocity>
+  <ShapeLength>0.3</ShapeLength>
+  <ShapeRadius>0.1</ShapeRadius>
+  <Mass>1</Mass>
+  <ExplosionImpulse>25</ExplosionImpulse>
+  <ExplosionDamage>100</ExplosionDamage>
+  <DetonationTime>4</DetonationTime>
+  <ExplosionRadius>5</ExplosionRadius>
+  <Model>grenade</Model>
+  <ExplosionFX>grenade_explosion</ExplosionFX>
+  <TrailFX>grenade_trail</TrailFX>
+</EntityFactory>

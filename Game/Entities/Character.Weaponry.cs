@@ -94,6 +94,7 @@ namespace IronStar.Entities {
 		void UpdateWeaponState ( Entity entity, short deltaTime )
 		{
 			var attack		=	entity.UserCtrlFlags.HasFlag( UserCtrlFlags.Attack );
+			var grenade		=	entity.UserCtrlFlags.HasFlag( UserCtrlFlags.ThrowGrenade );
 
 			//	weapon is too hot :
 			if (entity.WeaponCooldown>0) {
@@ -112,6 +113,13 @@ namespace IronStar.Entities {
 				weapon = entity.Weapon2;
 			}
 
+
+			if (grenade) {
+				FireGrenade( world, entity, 500 );
+				return;
+			}
+
+
 			if (attack) {
 				switch (weapon) {
 					case WeaponType.Machinegun		:	FireBullet( world, entity, 5, 5, 100, 0.03f ); break;
@@ -122,6 +130,7 @@ namespace IronStar.Entities {
 					default: 
 						break;
 				}
+				return;
 			}
 		}
 
@@ -174,6 +183,29 @@ namespace IronStar.Entities {
 			var e = world.Spawn( "rocket", attacker.ID, origin, attacker.Rotation );
 
 			world.SpawnFX( "rocket_muzzle",	attacker.ID, origin );
+
+			attacker.WeaponCooldown += cooldown;
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="world"></param>
+		/// <param name="attacker"></param>
+		/// <param name="cooldown"></param>
+		void FireGrenade( GameWorld world, Entity attacker, short cooldown )
+		{
+			if (!TryConsumeAmmo( attacker, 1 )) {
+				return;
+			}
+
+			var origin = AttackPos(attacker);
+
+			var e = world.Spawn( "grenade", attacker.ID, origin, attacker.Rotation );
+
+			world.SpawnFX( "grenade_muzzle",	attacker.ID, origin );
 
 			attacker.WeaponCooldown += cooldown;
 		}

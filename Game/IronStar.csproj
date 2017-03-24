@@ -206,8 +206,12 @@
     <Compile Include="UI\Generators\IMenuGenerator.cs" />
     <Compile Include="UI\IPageOption.cs" />
     <Compile Include="UI\Pages\AudioSettingsPageOptions.cs" />
+    <Compile Include="UI\Pages\AwaitingPageOptions.cs" />
+    <Compile Include="UI\Pages\ConnectingPageOptions.cs" />
+    <Compile Include="UI\Pages\GameMenuPageOptions.cs" />
     <Compile Include="UI\Pages\SettingsPageOptions.cs" />
     <Compile Include="UI\Pages\MainPageOptions.cs" />
+    <Compile Include="UI\Pages\LoadingPageOptions.cs" />
     <Compile Include="UI\Pages\StartPageOptions.cs" />
     <Compile Include="UI\Generators\Generator.cs" />
     <Compile Include="UserCommand.cs" />

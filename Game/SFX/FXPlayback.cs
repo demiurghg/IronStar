@@ -18,7 +18,7 @@ using Fusion.Engine.Audio;
 
 
 namespace IronStar.SFX {
-	public class FXPlayback : DisposableBase {
+	public partial class FXPlayback : DisposableBase {
 
 		TextureAtlas spriteSheet;
 
@@ -160,6 +160,11 @@ namespace IronStar.SFX {
 			}
 
 			var className = world.Atoms[ fxAtomID ];
+
+			if (className=="*rail_trail") {
+				RunRailTrailFX( fxEvent );
+				return null;
+			}
 
 			if (className==null) {
 				Log.Warning("RunFX: bad atom ID");

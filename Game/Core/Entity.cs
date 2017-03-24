@@ -96,16 +96,6 @@ namespace IronStar.Core {
 		/// </summary>
 		public float AnimFrame;
 
-		//	Inventory
-		public WeaponType Weapon1	=	WeaponType.None;
-		public WeaponType Weapon2	=	WeaponType.None;
-		public short Health			=	100;
-		public short Armor			=	0;
-		public short WeaponCooldown	=	0;
-		public short WeaponAmmo1	=	0;
-		public short WeaponAmmo2	=	0;
-		public short Grenades		=	0;
-
 
 		/// <summary>
 		/// Visible model
@@ -290,14 +280,14 @@ namespace IronStar.Core {
 			writer.Write( LinearVelocity );
 			writer.Write( AngularVelocity );
 
-			writer.Write( (byte)Weapon1		);
-			writer.Write( (byte)Weapon2		);
-			writer.Write( Health			);
-			writer.Write( Armor				);
-			writer.Write( WeaponAmmo1		);
-			writer.Write( WeaponAmmo2		);
-			writer.Write( WeaponCooldown	);
-			writer.Write( Grenades			);
+			//writer.Write( (byte)Weapon1		);
+			//writer.Write( (byte)Weapon2		);
+			//writer.Write( Health			);
+			//writer.Write( Armor				);
+			//writer.Write( WeaponAmmo1		);
+			//writer.Write( WeaponAmmo2		);
+			//writer.Write( WeaponCooldown	);
+			//writer.Write( Grenades			);
 
 			writer.Write( AnimFrame );
 			writer.Write( Model );
@@ -334,14 +324,14 @@ namespace IronStar.Core {
 			LinearVelocity	=	reader.Read<Vector3>();
 			AngularVelocity	=	reader.Read<Vector3>();	
 
-			Weapon1			=	(WeaponType)reader.ReadByte();	
-			Weapon2			=	(WeaponType)reader.ReadByte();
-			Health			=	reader.ReadInt16();
-			Armor			=	reader.ReadInt16();	
-			WeaponAmmo1		=	reader.ReadInt16();
-			WeaponAmmo2		=	reader.ReadInt16();
-			WeaponCooldown	=	reader.ReadInt16();
-			Grenades		=	reader.ReadInt16();
+			//Weapon1			=	(WeaponType)reader.ReadByte();	
+			//Weapon2			=	(WeaponType)reader.ReadByte();
+			//Health			=	reader.ReadInt16();
+			//Armor			=	reader.ReadInt16();	
+			//WeaponAmmo1		=	reader.ReadInt16();
+			//WeaponAmmo2		=	reader.ReadInt16();
+			//WeaponCooldown	=	reader.ReadInt16();
+			//Grenades		=	reader.ReadInt16();
 
 			AnimFrame		=	reader.ReadSingle();
 			Model			=	reader.ReadInt16();

@@ -24,6 +24,16 @@ namespace IronStar.Entities {
 
 		Random rand = new Random();
 
+		//	Inventory
+		public WeaponType Weapon1	=	WeaponType.None;
+		public WeaponType Weapon2	=	WeaponType.None;
+		public short Health			=	100;
+		public short Armor			=	0;
+		public short WeaponCooldown	=	0;
+		public short WeaponAmmo1	=	0;
+		public short WeaponAmmo2	=	0;
+		public short Grenades		=	0;
+
 
 		/// <summary>
 		/// 
@@ -52,10 +62,10 @@ namespace IronStar.Entities {
 		bool TryConsumeAmmo ( Entity entity, short count )
 		{
 			if (entity.State.HasFlag( EntityState.PrimaryWeapon )) {
-				return TryConsume( ref entity.WeaponAmmo1, count );
+				return TryConsume( ref WeaponAmmo1, count );
 			}
 			if (entity.State.HasFlag( EntityState.SecondaryWeapon )) {
-				return TryConsume( ref entity.WeaponAmmo2, count );
+				return TryConsume( ref WeaponAmmo2, count );
 			}
 			return false;
 		}
@@ -97,8 +107,8 @@ namespace IronStar.Entities {
 			var grenade		=	entity.UserCtrlFlags.HasFlag( UserCtrlFlags.ThrowGrenade );
 
 			//	weapon is too hot :
-			if (entity.WeaponCooldown>0) {
-				entity.WeaponCooldown -= deltaTime;
+			if (WeaponCooldown>0) {
+				WeaponCooldown -= deltaTime;
 				return;
 			}
 
@@ -108,9 +118,9 @@ namespace IronStar.Entities {
 			var weapon	= WeaponType.None;
 
 			if ( entity.State.HasFlag( EntityState.PrimaryWeapon ) ) {
-				weapon = entity.Weapon1; 
+				weapon = Weapon1; 
 			} else if ( entity.State.HasFlag( EntityState.SecondaryWeapon ) ) {
-				weapon = entity.Weapon2;
+				weapon = Weapon2;
 			}
 
 
@@ -126,7 +136,7 @@ namespace IronStar.Entities {
 					case WeaponType.Shotgun			:	FireShot( world, entity, 10,10, 5.0f, 1000, 0.12f); break;
 					case WeaponType.Plasmagun		:	FirePlasma(world, entity, 100); break;
 					case WeaponType.RocketLauncher	:	FireRocket(world, entity, 800); break;
-					case WeaponType.GaussRifle		:	FirePlasma(world, entity, 100); break;
+					case WeaponType.GaussRifle		:	FireRail(world, entity, 100, 100, 1500); break;
 					default: 
 						break;
 				}
@@ -162,7 +172,7 @@ namespace IronStar.Entities {
 
 			world.SpawnFX( "plasma_muzzle",	attacker.ID, origin );
 
-			attacker.WeaponCooldown += cooldown;
+			WeaponCooldown += cooldown;
 		}
 
 
@@ -184,7 +194,7 @@ namespace IronStar.Entities {
 
 			world.SpawnFX( "rocket_muzzle",	attacker.ID, origin );
 
-			attacker.WeaponCooldown += cooldown;
+			WeaponCooldown += cooldown;
 		}
 
 
@@ -207,7 +217,7 @@ namespace IronStar.Entities {
 
 			world.SpawnFX( "grenade_muzzle",	attacker.ID, origin );
 
-			attacker.WeaponCooldown += cooldown;
+			WeaponCooldown += cooldown;
 		}
 
 
@@ -241,7 +251,7 @@ namespace IronStar.Entities {
 				world.SpawnFX( "MZMachinegun",	0, origin, n );
 			}
 
-			attacker.WeaponCooldown += cooldown;
+			WeaponCooldown += cooldown;
 		}
 
 
@@ -278,7 +288,7 @@ namespace IronStar.Entities {
 				} 
 			}
 
-			attacker.WeaponCooldown += cooldown;
+			WeaponCooldown += cooldown;
 		}
 
 
@@ -301,23 +311,24 @@ namespace IronStar.Entities {
 			var direction	=	view.Forward;
 			var origin		=	AttackPos( attacker );
 
+			this.controller.Body.ApplyImpulse( controller.Body.Position, MathConverter.Convert( view.Backward * impulse / 2 ) );
+
 			if (world.RayCastAgainstAll( origin, origin + direction * 200, out n, out p, out e, attacker )) {
 
 				//world.SpawnFX( "PlayerDeathMeat", attacker.ID, p, n );
-				world.SpawnFX( "RailHit",		0,					p, n );
-				world.SpawnFX( "RailMuzzle",	attacker.ID, origin, n );
-				world.SpawnFX( "RailTrail",		attacker.ID, origin, p - origin, attacker.Rotation );
+				world.SpawnFX( "rail_hit",		0,					p, n );
+				world.SpawnFX( "rail_muzzle",	attacker.ID, origin, n );
+				world.SpawnFX( "rail_trail",	attacker.ID, origin, p - origin, attacker.Rotation );
 
 				world.InflictDamage( e, attacker.ID, (short)damage, view.Forward * impulse, p, DamageType.RailHit );
 
 			} else {
-				world.SpawnFX( "RailMuzzle",	attacker.ID, origin, n );
-				world.SpawnFX( "RailTrail",		attacker.ID, origin, direction * 200, attacker.Rotation );
+				world.SpawnFX( "rail_muzzle",	attacker.ID, origin, n );
+				world.SpawnFX( "rail_trail",	attacker.ID, origin, direction * 200, attacker.Rotation );
 			}
 
-			attacker.WeaponCooldown += cooldown;
+			WeaponCooldown += cooldown;
 		}
-
 
 	}
 }

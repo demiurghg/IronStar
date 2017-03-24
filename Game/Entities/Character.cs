@@ -84,10 +84,10 @@ namespace IronStar.Entities {
 
 			entity.State		|=	EntityState.PrimaryWeapon;
 
-			entity.Weapon1		=	WeaponType.RocketLauncher;
-			entity.Weapon2		=	WeaponType.GaussRifle;
-			entity.WeaponAmmo1	=	30000;
-			entity.WeaponAmmo2	=	30000;
+			Weapon1		=	WeaponType.Plasmagun;
+			Weapon2		=	WeaponType.GaussRifle;
+			WeaponAmmo1	=	30000;
+			WeaponAmmo2	=	30000;
 		}
 
 
@@ -155,7 +155,7 @@ namespace IronStar.Entities {
 			//
 			//	calc health :
 			//
-			var health	=	Entity.Health;
+			var health	=	Health;
 			health -= damage;
 
 			var dir = kickImpulse.Normalized();

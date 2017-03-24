@@ -109,6 +109,8 @@ namespace IronStar.Core {
 
 			var atoms = new List<string>();
 
+			atoms.Add("*rail_trail");
+
 			atoms.AddRange( Content.EnumerateAssets( "fx" ) );
 			atoms.AddRange( Content.EnumerateAssets( "entities" ) );
 			atoms.AddRange( Content.EnumerateAssets( "models" ) );

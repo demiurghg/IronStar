@@ -53,14 +53,9 @@ namespace IronStar {
 
         private Page activeMenu;
 
-        private Dictionary<string, Type> requiredMenus = new Dictionary<string, Type>()
-        {
-            { "StartMenu",  typeof(StartPageOptions)},
-            { "MainMenu",  typeof(MainPageOptions)},
-            { "SettingsMenu",  typeof(SettingsPageOptions)},
-            { "AudioSettingsMenu",  typeof(AudioSettingsPageOptions)},
-        };
-
+        private Dictionary<string, IPageOption> requiredMenus;
+        private ClientState previousClientState;
+        private bool firstStart = true;
 
         SpriteLayer uiLayer;
 
@@ -94,6 +89,19 @@ namespace IronStar {
 
 			Game.GameClient.ClientStateChanged += GameClient_ClientStateChanged;
 
+            requiredMenus  = new Dictionary<string, IPageOption>()
+            {
+                { "StartMenu",  new StartPageOptions(Game)},
+                { "MainMenu",  new MainPageOptions(Game)},
+                { "SettingsMenu",  new SettingsPageOptions(Game)},
+                { "AudioSettingsMenu",  new AudioSettingsPageOptions(Game)},
+                { "LoadingMenu",  new LoadingPageOptions(Game)},
+                { "ConnectingMenu",  new ConnectingPageOptions(Game)},
+                { "AwaitingMenu",  new AwaitingPageOptions(Game)},
+                { "GameMenu",  new GameMenuPageOptions(Game)},
+            };
+
+
             Game.Frames.DefaultFont = Game.Content.Load<SpriteFont>
                 ($@"fonts\\{MenuGenerator.MainFont}{MenuGenerator.GetMainFontSize(Game.RenderSystem.DisplayBounds.Width,
                                                                                   Game.RenderSystem.DisplayBounds.Height)}");
@@ -121,7 +129,7 @@ namespace IronStar {
         {
             foreach (var menuName in requiredMenus.Keys)
             {
-                var menu = menuGenerator.CreateMenu(menuName, (IPageOption)Activator.CreateInstance(requiredMenus[menuName], new object[] { Game }));
+                var menu = menuGenerator.CreateMenu(menuName, requiredMenus[menuName]);
                 menu.Visible = false;
                 Menus[menuName] = menu;
                 Game.Frames.RootFrame.Add(menu);
@@ -198,45 +206,88 @@ namespace IronStar {
 
 			var clientState	=	Game.GameClient.ClientState;
 
-			dofFactor	=	MathUtil.Lerp( (float)dofFactor, Game.Keyboard.IsKeyDown(Keys.Q) ? 1.0f : 0.0f, 0.1f );
+            #region RStoMENU
+            dofFactor	=	MathUtil.Lerp( (float)dofFactor, Game.Keyboard.IsKeyDown(Keys.Q) ? 1.0f : 0.0f, 0.1f );
 
 			Game.RenderSystem.RenderWorld.DofSettings.PlaneInFocus	=	7;
 			Game.RenderSystem.RenderWorld.DofSettings.FocalLength	=	0.1f;
 			Game.RenderSystem.RenderWorld.DofSettings.Enabled		=	dofFactor > 0.01f;
 			Game.RenderSystem.RenderWorld.DofSettings.Aperture		=	dofFactor * 20;
+            #endregion
 
+            
 
+            switch (clientState) {
+				case ClientState.StandBy:
 
-			/*switch (clientState) {
-				case ClientState.StandBy		: DrawStandByScreen(); break;
-				case ClientState.Connecting		: DrawLoadingScreen("Connecting..."); break;
-				case ClientState.Loading		: DrawLoadingScreen("Loading..."); break;
-				case ClientState.Awaiting		: DrawLoadingScreen("Awaiting snapshot..."); break;
-				case ClientState.Disconnected	: DrawLoadingScreen("Disconnected."); break;
-				case ClientState.Active			: break;
-			}*/
+                    if (firstStart)
+                    {
+                        if (previousClientState != ClientState.StandBy)
+                        {
+                            SetActiveMenu("StartMenu");
+                        }
+                        if (Game.Keyboard.IsKeyDown(Keys.Enter))
+                        {
+                            firstStart = false;
+                            SetActiveMenu("MainMenu");
+                        }
+                        break;
+                    }
 
-			if (ShowMenu) {
+                    if (previousClientState != ClientState.StandBy)
+                    {
+                        SetActiveMenu("MainMenu");
+                    } 
 
-                if (activeMenu != null && activeMenu.Name.Equals("StartMenu"))
-                {
-                    if (Game.Keyboard.IsKeyDown(Keys.Enter))
+                    if (Game.Keyboard.IsKeyDown(Keys.Escape))
                     {
                         ActiveMenu = Menus["MainMenu"];
                     }
-                }
+                    break;
+				case ClientState.Connecting:
+                    if (previousClientState != ClientState.Connecting)
+                    {
+                        SetActiveMenu("ConnectingMenu");
+                    }
+                    break;
+				case ClientState.Loading:
+                    if (previousClientState != ClientState.Loading)
+                    {
+                        SetActiveMenu("LoadingMenu");
+                    }
+                    break;
+				case ClientState.Awaiting:
+                    if (previousClientState != ClientState.Loading)
+                    {
+                        SetActiveMenu("AwaitingMenu");
+                    }
+                    break;
+				case ClientState.Disconnected:
+                    if (previousClientState != ClientState.Loading)
+                    {
+                        SetActiveMenu("LoadingMenu");
+                    }
+                    break;
+				case ClientState.Active:
+                    if (!ShowMenu)
+                    {
+                        ActiveMenu = null;
+                    }
 
-                if (Game.Keyboard.IsKeyDown(Keys.Escape))
-                {
-                    ActiveMenu = Menus["MainMenu"];
-                }
+                    if (Game.Keyboard.IsKeyDown(Keys.Escape))
+                    {
+                        SetActiveMenu("GameMenu");
+                        ShowMenu = true;
+                    }
+                    break;
+			}
 
+			if (ShowMenu) { 
                 Game.Mouse.IsMouseCentered	=	false;
 				Game.Mouse.IsMouseClipped	=	false;
 				Game.Mouse.IsMouseHidden	=	false;
 
 			} else {
-                ActiveMenu = null;
 				if (!Game.Console.IsShown) {
 					Game.Keyboard.ScanKeyboard	=	true;
 					Game.Mouse.IsMouseCentered	=	true;
@@ -249,7 +300,10 @@ namespace IronStar {
 					Game.Mouse.IsMouseHidden	=	false;
 				}
 			}
-		}
+
+            previousClientState = clientState;
+
+        }
 
 
 

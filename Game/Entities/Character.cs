@@ -198,6 +198,7 @@ namespace IronStar.Entities {
 			var e = Entity;
 
 			UpdateWeaponState( Entity, (short)(elapsedTime*1000) );
+			UpdatePlayerState();
 
 			Move();
 

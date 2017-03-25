@@ -63,8 +63,12 @@
   <ItemGroup>
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Client\GameInput.cs" />
+    <Compile Include="Client\Hud.cs" />
     <Compile Include="Commands\ShowWorldState.cs" />
+    <Compile Include="Core\GameWorld.Atoms.cs" />
     <Compile Include="Core\GameWorld.AI.cs" />
+    <Compile Include="Core\IStorable.cs" />
+    <Compile Include="Core\PlayerState.cs" />
     <Compile Include="Editor2\EditorConfig.cs" />
     <Compile Include="Editor2\EditorHud.cs" />
     <Compile Include="Editor2\MapEditor.Selection.cs" />
@@ -119,6 +123,7 @@
     <Compile Include="Editors\SceneImportDialog.Designer.cs">
       <DependentUpon>SceneImportDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entities\Character.Player.cs" />
     <Compile Include="Entities\Character.Weaponry.cs" />
     <Compile Include="Entities\Character.cs" />
     <Compile Include="Entities\CharacterFactory.cs" />

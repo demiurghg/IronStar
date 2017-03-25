@@ -19,22 +19,35 @@ using BEPUphysics.Character;
 
 
 namespace IronStar.Views {
-	public class Hud : WorldView {
+	public class Hud : GameComponent {
+
+		readonly GameWorld	world;
 
 		DiscTexture	crosshair;
 		SpriteFont	hudFont;
 		SpriteFont	hudFontSmall;
 		SpriteFont	hudFontMicro;
 
+		SpriteLayer	hudLayer;
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
 		/// <param name="space"></param>
-		public Hud ( GameWorld world ) : base(world)
+		public Hud ( GameWorld world ) : base( world.Game )
+		{
+			this.world	=	world;
+		}
+
+
+		public override void Initialize()
 		{
 			LoadContent();
 			Game.Reloading += (s,e) => LoadContent();
+
+			hudLayer	=	new SpriteLayer( Game.RenderSystem, 1024 );
+			Game.RenderSystem.SpriteLayers.Add( hudLayer );
 		}
 
 
@@ -50,26 +63,33 @@ namespace IronStar.Views {
 		}
 
 
+		protected override void Dispose( bool disposing )
+		{
+			Game.RenderSystem.SpriteLayers.Remove( hudLayer );
+
+			if (disposing) {
+				SafeDispose( ref hudLayer );
+			}
+			base.Dispose( disposing );
+		}
+
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public override void Update ( float elapsedTime, float lerpFactor )
+		public void Update ( float elapsedTime, float lerpFactor )
 		{
-			var hudLayer	=	World.HudLayer;
 			hudLayer.Clear();
 
 			var rw	= Game.RenderSystem.RenderWorld;
 			var vp	= Game.RenderSystem.DisplayBounds;
 
-			var player	=	World.GetEntityOrNull("player", e => e.UserGuid == World.UserGuid );
+			var player	=	world.PlayerState;
 
 			if (player==null) {
 				return;
 			}
-
-
 
 			//hudLayer.SetSpriteFrame( 0, new Rectangle(10,10,vp.Width-20, vp.Height-20), Color.Red );
 
@@ -84,15 +104,17 @@ namespace IronStar.Views {
 			var dimText		=	new Color(255,255,255,128);
 			var fullText	=	new Color(255,255,255,224);
 
-			short	ammo	=	player.GetItemCount( Inventory.Bullets );
-			short	health	=	player.GetItemCount( Inventory.Health );
-			short	armor	=	player.GetItemCount( Inventory.Armor );
-			var		wpn		=	player.ActiveItem.ToString().ToUpper();
+			short	health	=	player.Health;
+			short	armor	=	player.Armor;
+			var		wpn1	=	player.Weapon1;
+			var		wpn2	=	player.Weapon2;
+			short	ammo1	=	player.WeaponAmmo1;
+			short	ammo2	=	player.WeaponAmmo2;
 
 			
 			SmallTextRJ	( hudLayer, "BULLETS",			center - 4, baseLine2, dimText );
-			MicroTextRJ	( hudLayer, wpn,				center - 4, baseLine,  dimText );
-			BigTextLJ	( hudLayer, ammo.ToString(),	center + 4, baseLine,  fullText );
+			MicroTextRJ	( hudLayer, wpn1.ToString(),	center - 4, baseLine,  dimText );
+			BigTextLJ	( hudLayer, ammo1.ToString(),	center + 4, baseLine,  fullText );
 
 
 			SmallTextRJ	( hudLayer, "HEALTH",			center - 4 - 200, baseLine2, dimText );

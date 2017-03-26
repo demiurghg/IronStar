@@ -18,7 +18,7 @@
     <Lifetime Distribution="Uniform" MinLifetime="1" MaxLifetime="1" />
     <Shape Size0="0.2" Size1="0.5" EnableRotation="true" InitialAngle="360" MinAngularVelocity="0" MaxAngularVelocity="0" />
     <Position OffsetDirection="LocalDown" OffsetFactor="0.15" Distribution="UniformRadial" MinSize="0" MaxSize="0" />
-    <Velocity Direction="LocalDown" LinearDistribution="Gauss" LinearVelocityMin="0" LinearVelocityMax="5" RadialDistribution="GaussRadial" RadialVelocityMin="0" RadialVelocityMax="1" Advection="0" />
+    <Velocity Direction="LocalDown" LinearDistribution="Gauss" LinearVelocityMin="0" LinearVelocityMax="5" RadialDistribution="GaussRadial" RadialVelocityMin="0" RadialVelocityMax="1" Advection="1" />
     <Acceleration GravityFactor="0" Damping="2" DragForce="0" Turbulence="0" />
   </ParticleStage1>
   <ParticleStage2>

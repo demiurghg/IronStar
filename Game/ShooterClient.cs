@@ -63,10 +63,10 @@ namespace IronStar {
 			gameInput.Update( gameTime, ref userCommand );
 
 			camera.Update( gameTime.ElapsedSec, 1 );
-
+			
 			hud.Update( gameTime.ElapsedSec, 1 );
 
-			world.PresentWorld( gameTime.ElapsedSec, 1 );
+			world.PresentWorld( gameTime.ElapsedSec, 1, camera );
 
 			return UserCommand.GetBytes( userCommand );
 		}

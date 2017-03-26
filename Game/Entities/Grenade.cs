@@ -77,7 +77,7 @@ namespace IronStar.Entities {
 			//capsule				=	new Capsule( p1, p2, factory.ShapeRadius, factory.Mass );
 			capsule				=	new Cylinder( pos, factory.ShapeLength, factory.ShapeRadius, factory.Mass );
 			
-			capsule.LinearVelocity		=	dir * factory.Velocity + BEPUutilities.Vector3.Up * factory.Velocity * 0.5f;
+			capsule.LinearVelocity		=	dir * factory.Velocity + BEPUutilities.Vector3.Up * factory.Velocity * 0.2f;
 			capsule.AngularVelocity		=	new BEPUutilities.Vector3(1,2,3);
 			capsule.PositionUpdateMode	=	PositionUpdateMode.Continuous;
 			capsule.Tag			=	entity;

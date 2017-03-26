@@ -15,6 +15,8 @@ using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
 using IronStar.Core;
 using Fusion.Engine.Audio;
+using IronStar.Views;
+using IronStar.Views;
 
 namespace IronStar.SFX {
 	public class ModelInstance {
@@ -24,6 +26,9 @@ namespace IronStar.SFX {
 		readonly ModelManager modelManager;
 		readonly Entity entity;
 		readonly Scene scene;
+		readonly bool useAnimation;
+		readonly Vector3 fpvTranslation;
+		readonly bool fpvEnabled;
 
 		Matrix[] globalTransforms;
 		Matrix[] animSnapshot;
@@ -51,6 +56,10 @@ namespace IronStar.SFX {
 			this.scene			=   scene;
 			this.entity			=	entity;
 			this.color			=	descriptor.Color;
+			this.useAnimation	=	descriptor.UseAnimation;
+
+			this.fpvEnabled		=	descriptor.FPVEnable;
+			this.fpvTranslation	=	descriptor.FPVTranslation;
 
 			nodeCount			=	scene.Nodes.Count;
 
@@ -82,23 +91,44 @@ namespace IronStar.SFX {
 		/// <param name="lerpFactor"></param>
 		public void Update ( float dt, float lerpFactor )
 		{
-			var worldMatrix = entity.GetWorldMatrix( lerpFactor );
+			Matrix worldMatrix;
+
+			if (fpvEnabled) {
+
+				var rw = modelManager.rw;
+
+				var camMatrix	=	rw.Camera.GetCameraMatrix(Fusion.Drivers.Graphics.StereoEye.Mono);
+				var fpvMatrix	=	Matrix.Translation( fpvTranslation );
+				
+				worldMatrix		=	fpvMatrix * camMatrix;
+
+			} else {
+				worldMatrix = entity.GetWorldMatrix( lerpFactor );
+			}
 
 			//
 			//	do animation stuff :
 			//
-			var animFrame = entity.AnimFrame;
+			if (useAnimation) {
 
-			if (animFrame>scene.LastFrame) {
-				Log.Warning("Anim frame: {0} > {1}", animFrame, scene.LastFrame);
-			}
-			if (animFrame<scene.FirstFrame) {
-				Log.Warning("Anim frame: {0} < {1}", animFrame, scene.FirstFrame);
-			}
-			animFrame = MathUtil.Clamp( animFrame, scene.FirstFrame, scene.LastFrame );
+				var animFrame = entity.AnimFrame;
 
-			scene.GetAnimSnapshot( animFrame, scene.FirstFrame, scene.LastFrame, AnimationMode.Clamp, animSnapshot );
-			scene.ComputeAbsoluteTransforms( animSnapshot, animSnapshot );
+				if (animFrame>scene.LastFrame) {
+					Log.Warning("Anim frame: {0} > {1}", animFrame, scene.LastFrame);
+				}
+				if (animFrame<scene.FirstFrame) {
+					Log.Warning("Anim frame: {0} < {1}", animFrame, scene.FirstFrame);
+				}
+				animFrame = MathUtil.Clamp( animFrame, scene.FirstFrame, scene.LastFrame );
+
+				scene.GetAnimSnapshot( animFrame, scene.FirstFrame, scene.LastFrame, AnimationMode.Clamp, animSnapshot );
+				scene.ComputeAbsoluteTransforms( animSnapshot, animSnapshot );
+
+			} else {
+
+				scene.ComputeAbsoluteTransforms( animSnapshot );
+
+			}
 
 			
 			//

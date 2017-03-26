@@ -103,7 +103,7 @@ namespace IronStar.Editor2 {
 
 			map.ActivateMap( world, true );
 			world.SimulateWorld( 0 );
-			world.PresentWorld( 0.016f, 1 );
+			world.PresentWorld( 0.016f, 1, null );
 		}
 
 
@@ -329,7 +329,7 @@ namespace IronStar.Editor2 {
 			if (EnableSimulation) {
 				world.SimulateWorld( gameTime.ElapsedSec );
 			}
-			world.PresentWorld( gameTime.ElapsedSec, 1 );
+			world.PresentWorld( gameTime.ElapsedSec, 1, null );
 
 			rs.RenderWorld.Debug.DrawGrid( 10 );
 

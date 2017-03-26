@@ -15,6 +15,7 @@ using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
 using IronStar.Core;
 using IronStar.Entities;
+using IronStar.SFX;
 
 namespace IronStar {
 
@@ -25,14 +26,41 @@ namespace IronStar {
 		public short		Health		;
 		public short		Armor		;
 
-		public short		ViewModel	;
-
 		public WeaponType	Weapon1		;
 		public WeaponType	Weapon2		;
 
 		public short		WeaponAmmo1	;
 		public short		WeaponAmmo2	;
 
+
+		/// <summary>
+		/// View space model
+		/// </summary>
+		public short ViewModel {
+			get { return model; }
+			set { 
+				modelDirty = model != value; 
+				model = value; 
+			}
+		}
+		private short model = -1;
+		private bool modelDirty = true;
+
+		/// <summary>
+		/// View space special effect
+		/// </summary>
+		public short ViewSfx {
+			get { return sfx; }
+			set { 
+				sfxDirty = sfx != value; 
+				sfx = value; 
+			}
+		}
+		private short sfx = -1;
+		private bool sfxDirty = true;
+
+		public FXInstance FXInstance { get; private set; }
+		public ModelInstance ModelInstance { get; private set; }
 
 
 		/// <summary>
@@ -48,6 +76,8 @@ namespace IronStar {
 			writer.Write( (byte)Weapon2	);
 			writer.Write( WeaponAmmo1	);
 			writer.Write( WeaponAmmo2	);
+			writer.Write( ViewModel	);
+			writer.Write( ViewSfx	);
 		}
 
 
@@ -65,9 +95,41 @@ namespace IronStar {
 			Weapon2		=	(WeaponType)reader.ReadByte();
 			WeaponAmmo1	=	reader.ReadInt16();
 			WeaponAmmo2	=	reader.ReadInt16();
+			ViewModel	=	reader.ReadInt16();
+			ViewSfx		=	reader.ReadInt16();
 		}
 
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="fxPlayback"></param>
+		public void UpdateRenderState ( Entity playerEntity, FXPlayback fxPlayback, ModelManager modelManager )
+		{
+			/*if (sfxDirty) {
+				sfxDirty = false;
+
+				FXInstance?.Kill();
+				FXInstance = null;
+
+				if (sfx>0) {
+					var fxe = new FXEvent( sfx, ID, Position, LinearVelocity, Rotation );
+					FXInstance = fxPlayback.RunFX( fxe, true );
+				}
+			}
+
+			if (modelDirty) {
+				modelDirty = false;
+
+				ModelInstance?.Kill();
+				ModelInstance	=	null;
+
+				if (model>0) {
+					ModelInstance	=	modelManager.AddModel( model, playerEntity );
+				}
+			} */
+		}
 		
 	}
 }

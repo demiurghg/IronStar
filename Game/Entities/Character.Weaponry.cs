@@ -124,6 +124,16 @@ namespace IronStar.Entities {
 			}
 
 
+			switch (weapon) {
+				case WeaponType.Machinegun:		Entity.Model2 = world.Atoms["weapon_fp_machinegun"]; break;
+				case WeaponType.Plasmagun:		Entity.Model2 = world.Atoms["weapon_fp_machinegun"]; break;
+				case WeaponType.RocketLauncher: Entity.Model2 = world.Atoms["weapon_fp_machinegun"]; break;
+				case WeaponType.Shotgun:		Entity.Model2 = world.Atoms["weapon_fp_machinegun"]; break;
+				case WeaponType.GaussRifle:		Entity.Model2 = world.Atoms["weapon_fp_machinegun"]; break;
+				default: Log.Warning("Bad weapon {0}", weapon); break;
+			}
+
+
 			if (grenade) {
 				FireGrenade( world, entity, 500 );
 				return;

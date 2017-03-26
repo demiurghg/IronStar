@@ -27,7 +27,7 @@
     <Effect>None</Effect>
     <Count>15</Count>
     <Period>0.2</Period>
-    <Timing Delay="0.1" Bunch="1" FadeIn="0.1" FadeOut="0.1" />
+    <Timing Delay="0.2" Bunch="1" FadeIn="0.1" FadeOut="0.1" />
     <Color0 Red="150" Green="250" Blue="500" Alpha="0" />
     <Color1 Red="150" Green="250" Blue="500" Alpha="1" />
     <Lifetime Distribution="Gauss" MinLifetime="0.5" MaxLifetime="0.5" />
@@ -39,10 +39,10 @@
   <ParticleStage3>
     <Enabled>true</Enabled>
     <Sprite>railDot</Sprite>
-    <Effect>LitShadow</Effect>
+    <Effect>None</Effect>
     <Count>50</Count>
     <Period>1</Period>
-    <Timing Delay="0.1" Bunch="0" FadeIn="0.1" FadeOut="0.1" />
+    <Timing Delay="0" Bunch="0" FadeIn="0.1" FadeOut="0.1" />
     <Color0 Red="150" Green="250" Blue="500" Alpha="0" />
     <Color1 Red="150" Green="250" Blue="500" Alpha="1" />
     <Lifetime Distribution="Uniform" MinLifetime="0.2" MaxLifetime="0.4" />

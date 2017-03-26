@@ -18,6 +18,7 @@ using IronStar.Mapping;
 using Fusion.Core;
 using IronStar.Physics;
 using IronStar.Entities;
+using IronStar.Views;
 
 namespace IronStar.Core {
 
@@ -170,7 +171,7 @@ namespace IronStar.Core {
 		/// Updates visual and audial stuff
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void PresentWorld ( float deltaTime, float lerpFactor )
+		public void PresentWorld ( float deltaTime, float lerpFactor, GameCamera gameCamera )
 		{
 			var dr = Game.RenderSystem.RenderWorld.Debug;
 			var rw = Game.RenderSystem.RenderWorld;
@@ -181,8 +182,15 @@ namespace IronStar.Core {
 			//	draw all entities :
 			//
 			foreach ( var entity in visibleEntities ) {
-				entity.UpdateRenderState( fxPlayback, modelManager );
+				entity.UpdateRenderState( fxPlayback, modelManager, gameCamera );
 			}
+
+			//
+			//	update view models :
+			//
+			var playerEntity = GetPlayerEntity( this.UserGuid );
+			playerState.UpdateRenderState( playerEntity, FXPlayback, modelManager );
+
 
 			//
 			//	updare effects :
@@ -194,7 +202,7 @@ namespace IronStar.Core {
 
 
 			fxPlayback.Update( deltaTime, lerpFactor );
-			modelManager.Update( deltaTime, lerpFactor );
+			modelManager.Update( deltaTime, lerpFactor, gameCamera );
 
 			//
 			//	update environment :

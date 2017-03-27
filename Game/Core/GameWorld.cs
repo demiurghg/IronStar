@@ -17,6 +17,8 @@ using Fusion.Engine.Graphics;
 using IronStar.Mapping;
 using Fusion.Core;
 using IronStar.Physics;
+using IronStar.Entities;
+using IronStar.Views;
 
 namespace IronStar.Core {
 
@@ -56,6 +58,9 @@ namespace IronStar.Core {
 		public SFX.ModelManager	ModelManager { get { return modelManager; } }
 		public SFX.FXPlayback	FXPlayback   { get { return fxPlayback; } }
 		public PhysicsManager	Physics		{ get { return physics; } }
+
+		readonly PlayerState playerState = new PlayerState();
+		public PlayerState PlayerState { get { return playerState; } }
 
 
 		public struct Environment {
@@ -100,21 +105,6 @@ namespace IronStar.Core {
 				rw.LightSet.SpotAtlas		=	Content.Load<TextureAtlas>(@"spots\spots");
 				rw.LightSet.DecalAtlas		=	Content.Load<TextureAtlas>(@"decals\decals");
 			}
-		}
-
-
-		public void InitServerAtoms ()
-		{
-			Atoms = new AtomCollection();
-
-			var atoms = new List<string>();
-
-			atoms.AddRange( Content.EnumerateAssets( "fx" ) );
-			atoms.AddRange( Content.EnumerateAssets( "entities" ) );
-			atoms.AddRange( Content.EnumerateAssets( "models" ) );
-			atoms.AddRange( Content.EnumerateAssets( "decals" ) );
-
-			Atoms.AddRange( atoms );
 		}
 
 
@@ -181,7 +171,7 @@ namespace IronStar.Core {
 		/// Updates visual and audial stuff
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void PresentWorld ( float deltaTime, float lerpFactor )
+		public void PresentWorld ( float deltaTime, float lerpFactor, GameCamera gameCamera )
 		{
 			var dr = Game.RenderSystem.RenderWorld.Debug;
 			var rw = Game.RenderSystem.RenderWorld;
@@ -192,8 +182,15 @@ namespace IronStar.Core {
 			//	draw all entities :
 			//
 			foreach ( var entity in visibleEntities ) {
-				entity.UpdateRenderState( fxPlayback, modelManager );
+				entity.UpdateRenderState( fxPlayback, modelManager, gameCamera );
 			}
+
+			//
+			//	update view models :
+			//
+			var playerEntity = GetPlayerEntity( this.UserGuid );
+			playerState.UpdateRenderState( playerEntity, FXPlayback, modelManager );
+
 
 			//
 			//	updare effects :
@@ -205,7 +202,7 @@ namespace IronStar.Core {
 
 
 			fxPlayback.Update( deltaTime, lerpFactor );
-			modelManager.Update( deltaTime, lerpFactor );
+			modelManager.Update( deltaTime, lerpFactor, gameCamera );
 
 			//
 			//	update environment :
@@ -489,9 +486,17 @@ namespace IronStar.Core {
 		/// Writes world state to stream writer.
 		/// </summary>
 		/// <param name="writer"></param>
-		public virtual void WriteToSnapshot ( Stream stream )
+		public virtual void WriteToSnapshot ( Guid clientGuid, Stream stream )
 		{
-			snapshotWriter.Write( stream, ref environment, entities, fxEvents );
+			var playerState = GetEntities()
+				.Where( e1 => e1.UserGuid==clientGuid )
+				.Where( e2 => e2.Controller is Character )
+				.Select( e3 => (e3.Controller as Character).PlayerState )
+				.FirstOrDefault();	
+
+			playerState = playerState ?? PlayerState.NullState;
+
+			snapshotWriter.Write( stream, ref environment, playerState, entities, fxEvents );
 		}
 
 
@@ -502,7 +507,7 @@ namespace IronStar.Core {
 		/// <param name="writer"></param>
 		public virtual void ReadFromSnapshot ( Stream stream, float lerpFactor )
 		{
-			snapshotReader.Read( stream, ref environment, entities, fxe=>fxPlayback?.RunFX(fxe,false), null, id=>KillImmediatly(id) );
+			snapshotReader.Read( stream, ref environment, playerState, entities, fxe=>fxPlayback?.RunFX(fxe,false), null, id=>KillImmediatly(id) );
 		}
 
 

@@ -13,6 +13,7 @@ using IronStar.SFX;
 using Fusion.Engine.Graphics;
 using Fusion.Core.Content;
 using Fusion.Engine.Common;
+using IronStar.Views;
 
 namespace IronStar.Core {
 	public class Entity {
@@ -96,16 +97,6 @@ namespace IronStar.Core {
 		/// </summary>
 		public float AnimFrame;
 
-		//	Inventory
-		public WeaponType Weapon1	=	WeaponType.None;
-		public WeaponType Weapon2	=	WeaponType.None;
-		public short Health			=	100;
-		public short Armor			=	0;
-		public short WeaponCooldown	=	0;
-		public short WeaponAmmo1	=	0;
-		public short WeaponAmmo2	=	0;
-		public short Grenades		=	0;
-
 
 		/// <summary>
 		/// Visible model
@@ -113,7 +104,7 @@ namespace IronStar.Core {
 		public short Model {
 			get { return model; }
 			set { 
-				modelDirty = model != value; 
+				modelDirty |= (model != value); 
 				model = value; 
 			}
 		}
@@ -121,12 +112,25 @@ namespace IronStar.Core {
 		private bool modelDirty = true;
 
 		/// <summary>
+		/// Visible model
+		/// </summary>
+		public short Model2 {
+			get { return model2; }
+			set { 
+				model2Dirty |= (model2 != value); 
+				model2 = value; 
+			}
+		}
+		private short model2 = -1;
+		private bool model2Dirty = true;
+
+		/// <summary>
 		/// Visible special effect
 		/// </summary>
 		public short Sfx {
 			get { return sfx; }
 			set { 
-				sfxDirty = sfx != value; 
+				sfxDirty |= (sfx != value); 
 				sfx = value; 
 			}
 		}
@@ -135,15 +139,9 @@ namespace IronStar.Core {
 
 
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public FXInstance FXInstance { get; private set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
 		public ModelInstance ModelInstance { get; private set; }
+		public ModelInstance ModelInstance2 { get; private set; }
 
 
 		/// <summary>
@@ -190,7 +188,7 @@ namespace IronStar.Core {
 		/// 
 		/// </summary>
 		/// <param name="fxPlayback"></param>
-		public void UpdateRenderState ( FXPlayback fxPlayback, ModelManager modelManager )
+		public void UpdateRenderState ( FXPlayback fxPlayback, ModelManager modelManager, GameCamera gameCamera )
 		{
 			if (sfxDirty) {
 				sfxDirty = false;
@@ -214,6 +212,17 @@ namespace IronStar.Core {
 					ModelInstance	=	modelManager.AddModel( model, this );
 				}
 			}
+
+			if (model2Dirty) {
+				model2Dirty = false;
+
+				ModelInstance2?.Kill();
+				ModelInstance2	=	null;
+
+				if (model2>0) {
+					ModelInstance2	=	modelManager.AddModel( model2, this );
+				}
+			}
 		}
 
 
@@ -222,6 +231,7 @@ namespace IronStar.Core {
 		{
 			sfxDirty	=	true;
 			modelDirty	=	true;
+			model2Dirty	=	true;
 		}
 
 
@@ -233,6 +243,9 @@ namespace IronStar.Core {
 
 			ModelInstance?.Kill();
 			ModelInstance	=	null;
+
+			ModelInstance2?.Kill();
+			ModelInstance2	=	null;
 		}
 
 
@@ -290,17 +303,9 @@ namespace IronStar.Core {
 			writer.Write( LinearVelocity );
 			writer.Write( AngularVelocity );
 
-			writer.Write( (byte)Weapon1		);
-			writer.Write( (byte)Weapon2		);
-			writer.Write( Health			);
-			writer.Write( Armor				);
-			writer.Write( WeaponAmmo1		);
-			writer.Write( WeaponAmmo2		);
-			writer.Write( WeaponCooldown	);
-			writer.Write( Grenades			);
-
 			writer.Write( AnimFrame );
 			writer.Write( Model );
+			writer.Write( Model2 );
 			writer.Write( Sfx );
 		}
 
@@ -334,17 +339,9 @@ namespace IronStar.Core {
 			LinearVelocity	=	reader.Read<Vector3>();
 			AngularVelocity	=	reader.Read<Vector3>();	
 
-			Weapon1			=	(WeaponType)reader.ReadByte();	
-			Weapon2			=	(WeaponType)reader.ReadByte();
-			Health			=	reader.ReadInt16();
-			Armor			=	reader.ReadInt16();	
-			WeaponAmmo1		=	reader.ReadInt16();
-			WeaponAmmo2		=	reader.ReadInt16();
-			WeaponCooldown	=	reader.ReadInt16();
-			Grenades		=	reader.ReadInt16();
-
 			AnimFrame		=	reader.ReadSingle();
 			Model			=	reader.ReadInt16();
+			Model2			=	reader.ReadInt16();
 			Sfx				=	reader.ReadInt16();
 
 			//	entity teleported - reset position and rotation :

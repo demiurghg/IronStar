@@ -2,8 +2,8 @@
 <FXFactory xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Period>1</Period>
   <SoundStage Enabled="true" Sound="sound\weapon\plasmaHit.wav" Attenuation="Distant" />
-  <LightStage Enabled="true" Period="0.2" InnerRadius="0" OuterRadius="1" PulseString="afmfa" LightStyle="Saw" LightType="Omni" SpotAngleX="60" SpotAngleY="60" LightMask="" OffsetDirection="LocalForward" OffsetFactor="0.15">
-    <Intensity Red="2" Green="10" Blue="20" Alpha="1" />
+  <LightStage Enabled="true" Period="0.2" InnerRadius="0" OuterRadius="2" PulseString="afmfa" LightStyle="Saw" LightType="Omni" SpotAngleX="60" SpotAngleY="60" LightMask="" OffsetDirection="LocalForward" OffsetFactor="0.2">
+    <Intensity Red="10" Green="40" Blue="80" Alpha="1" />
   </LightStage>
   <CameraShake Enabled="false" />
   <ParticleStage1>

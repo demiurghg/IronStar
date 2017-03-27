@@ -42,6 +42,7 @@ using System;
 using SharpDX.XAudio2;
 using SharpDX.X3DAudio;
 using SharpDX.Multimedia;
+using SharpDX.XAPO;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 
@@ -57,6 +58,8 @@ namespace Fusion.Engine.Audio
 
         private bool _paused;
         private bool _loop;
+
+		
 
 
 

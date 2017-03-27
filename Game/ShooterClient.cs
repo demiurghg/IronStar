@@ -26,6 +26,7 @@ namespace IronStar {
 		GameWorld world;
 		UserCommand userCommand;
 		GameInput gameInput;
+		Hud hud;
 		GameCamera camera;
 		readonly Guid userGuid;
 		Map map;
@@ -43,12 +44,14 @@ namespace IronStar {
 			gameInput		=	new GameInput( client.Game );
 			userCommand		=	new UserCommand();
 			camera			=	new GameCamera( world, this );
+			hud				=	new Hud( world );
 
 			(game.UserInterface.Instance as ShooterInterface).ShowMenu = false;
 		}
 
 		public void Initialize( string serverInfo )
 		{
+			hud.Initialize();
 			map		=   world.Content.Load<Map>( @"maps\" + serverInfo );
 			world.InitServerAtoms();
 			map.ActivateMap( world, false );
@@ -60,8 +63,10 @@ namespace IronStar {
 			gameInput.Update( gameTime, ref userCommand );
 
 			camera.Update( gameTime.ElapsedSec, 1 );
+			
+			hud.Update( gameTime.ElapsedSec, 1 );
 
-			world.PresentWorld( gameTime.ElapsedSec, 1 );
+			world.PresentWorld( gameTime.ElapsedSec, 1, camera );
 
 			game.RenderSystem.RenderWorld.Debug.DrawLine( new Vector3(10,2,10), new Vector3(-10,2,-10), Color.Red, Color.Blue, 4, 8 );
 
@@ -110,6 +115,7 @@ namespace IronStar {
 				if ( disposing ) {
 					(game.UserInterface.Instance as ShooterInterface).ShowMenu = true;
 					world?.Dispose();
+					hud?.Dispose();
 				}
 
 				// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.

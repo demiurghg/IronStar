@@ -68,7 +68,7 @@ namespace IronStar {
 		{
 			//	write world to stream :
 			using ( var ms = new MemoryStream() ) {
-				world.WriteToSnapshot( ms );
+				world.WriteToSnapshot( clientGuid, ms );
 				return ms.GetBuffer();
 			}
 		}

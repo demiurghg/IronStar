@@ -17,6 +17,7 @@ using Fusion.Engine.Graphics;
 using IronStar.Core;
 using Fusion.Engine.Audio;
 using BEPUphysics.BroadPhaseEntries;
+using IronStar.Views;
 
 namespace IronStar.SFX {
 	public class ModelManager : DisposableBase {
@@ -28,6 +29,9 @@ namespace IronStar.SFX {
 		public readonly RenderWorld	rw;
 		public readonly SoundWorld	sw;
 		public readonly GameWorld world;
+
+		public Matrix ViewMatrix;
+		public Matrix ProjectionMatrix;
 
 		public ModelManager ( GameWorld world )
 		{
@@ -123,7 +127,7 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="elapsedTime"></param>
 		/// <param name="lerpFactor"></param>
-		public void Update ( float elapsedTime, float lerpFactor )
+		public void Update ( float elapsedTime, float lerpFactor, GameCamera gameCamera )
 		{	
 			models.RemoveAll( m => m.Killed );
 

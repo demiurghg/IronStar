@@ -63,8 +63,13 @@
   <ItemGroup>
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Client\GameInput.cs" />
+    <Compile Include="Client\FPView.cs" />
+    <Compile Include="Client\Hud.cs" />
     <Compile Include="Commands\ShowWorldState.cs" />
+    <Compile Include="Core\GameWorld.Atoms.cs" />
     <Compile Include="Core\GameWorld.AI.cs" />
+    <Compile Include="Core\IStorable.cs" />
+    <Compile Include="Core\PlayerState.cs" />
     <Compile Include="Editor2\EditorConfig.cs" />
     <Compile Include="Editor2\EditorHud.cs" />
     <Compile Include="Editor2\MapEditor.Selection.cs" />
@@ -119,6 +124,7 @@
     <Compile Include="Editors\SceneImportDialog.Designer.cs">
       <DependentUpon>SceneImportDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entities\Character.Player.cs" />
     <Compile Include="Entities\Character.Weaponry.cs" />
     <Compile Include="Entities\Character.cs" />
     <Compile Include="Entities\CharacterFactory.cs" />
@@ -154,6 +160,7 @@
     <Compile Include="Physics\PhysicsManager.cs" />
     <Compile Include="SFX\FXFactory.Utils.cs" />
     <Compile Include="SFX\FXFactory.cs" />
+    <Compile Include="SFX\FXPlayback.Rail.cs" />
     <Compile Include="SFX\ModelInstance.cs" />
     <Compile Include="SFX\ModelDescriptor.cs" />
     <Compile Include="SFX\ModelManager.cs" />
@@ -205,8 +212,12 @@
     <Compile Include="UI\Generators\IMenuGenerator.cs" />
     <Compile Include="UI\IPageOption.cs" />
     <Compile Include="UI\Pages\AudioSettingsPageOptions.cs" />
+    <Compile Include="UI\Pages\AwaitingPageOptions.cs" />
+    <Compile Include="UI\Pages\ConnectingPageOptions.cs" />
+    <Compile Include="UI\Pages\GameMenuPageOptions.cs" />
     <Compile Include="UI\Pages\SettingsPageOptions.cs" />
     <Compile Include="UI\Pages\MainPageOptions.cs" />
+    <Compile Include="UI\Pages\LoadingPageOptions.cs" />
     <Compile Include="UI\Pages\StartPageOptions.cs" />
     <Compile Include="UI\Generators\Generator.cs" />
     <Compile Include="UserCommand.cs" />

@@ -30,8 +30,18 @@ namespace IronStar.SFX {
 		public float Scale { get; set; } = 1;
 
 		[Category( "Appearance" )]
+		[Description( "Indicated whether animation enabled" )]
+		public bool UseAnimation { get; set; } = false;
+
+		[Category( "Appearance" )]
 		[Description( "Model glow color multiplier" )]
 		public Color4 Color { get; set; } = new Color4( 10, 10, 10, 1 );
+
+		[Category( "First Person View" )]
+		public bool FPVEnable { get; set; } = false;
+
+		[Category( "First Person View" )]
+		public Vector3 FPVTranslation { get; set; } = Vector3.Zero;
 
 
 

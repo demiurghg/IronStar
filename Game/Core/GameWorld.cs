@@ -421,14 +421,13 @@ namespace IronStar.Core {
 		/// </summary>
 		void CommitKilledEntities ()
 		{
-			foreach ( var id in entityToKill ) {
+            foreach ( var id in entityToKill ) {
 				KillImmediatly( id );
 			}
 			
 			entityToKill.Clear();			
 		}
-
-
+        
 
 		/// <summary>
 		/// 

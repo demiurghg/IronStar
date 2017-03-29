@@ -55,7 +55,7 @@ namespace IronStar {
 			map		=   world.Content.Load<Map>( @"maps\" + serverInfo );
 			world.InitServerAtoms();
 			map.ActivateMap( world, false );
-		}
+        }
 
 
 		public byte[] Update( GameTime gameTime, uint sentCommandID )
@@ -68,11 +68,8 @@ namespace IronStar {
 
 			world.PresentWorld( gameTime.ElapsedSec, 1, camera );
 
-			game.RenderSystem.RenderWorld.Debug.DrawLine( new Vector3(10,2,10), new Vector3(-10,2,-10), Color.Red, Color.Blue, 4, 8 );
-
-			return UserCommand.GetBytes( userCommand );
+            return UserCommand.GetBytes( userCommand );
 		}
-
 
 		public IContentPrecacher CreatePrecacher( string serverInfo )
 		{

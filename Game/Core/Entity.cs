@@ -34,6 +34,9 @@ namespace IronStar.Core {
 		/// </summary>
 		public Guid UserGuid;// { get; private set; }
 
+		public bool SendOwnerUser = false;
+		public bool DontSendOwnerUser = false;
+
 		/// <summary>
 		/// Gets entity state
 		/// </summary>
@@ -96,6 +99,11 @@ namespace IronStar.Core {
 		/// Animation frame
 		/// </summary>
 		public float AnimFrame;
+
+		/// <summary>
+		/// Animation frame
+		/// </summary>
+		public float AnimFrame2;
 
 
 		/// <summary>

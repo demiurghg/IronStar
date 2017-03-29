@@ -186,13 +186,6 @@ namespace IronStar.Core {
 			}
 
 			//
-			//	update view models :
-			//
-			var playerEntity = GetPlayerEntity( this.UserGuid );
-			playerState.UpdateRenderState( playerEntity, FXPlayback, modelManager );
-
-
-			//
 			//	updare effects :
 			//	
 			foreach ( var fxe in fxEvents ) {

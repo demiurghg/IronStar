@@ -19,6 +19,10 @@ using BEPUphysics.Character;
 
 
 namespace IronStar.Views {
+
+	/// <summary>
+	/// Class that responce for all first-person view stuff, like weapons etc.
+	/// </summary>
 	public class FPView : GameComponent {
 
 		readonly GameWorld	world;
@@ -64,7 +68,5 @@ namespace IronStar.Views {
 			}
 
 		}
-
-
 	}
 }

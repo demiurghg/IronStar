@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-16"?>
 <ModelDescriptor xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <ScenePath>scenes\weapon\assault_rifle.fbx</ScenePath>
-  <Scale>0.01</Scale>
+  <Scale>0.005</Scale>
   <UseAnimation>false</UseAnimation>
   <Color Red="10" Green="10" Blue="10" Alpha="1" />
   <FPVEnable>true</FPVEnable>
-  <FPVTranslation X="0.2" Y="-0.7" Z="-0.3" />
+  <FPVTranslation X="0.1" Y="-0.35" Z="-0.15" />
 </ModelDescriptor>

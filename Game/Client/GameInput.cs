@@ -51,12 +51,13 @@ namespace IronStar.Client {
 		[Config] public Keys ReloadWeapon	{ get; set; }
 		[Config] public Keys ThrowGrenade	{ get; set; }
 
+        [Config] public Keys DrawDebugGrid { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="cl"></param>
-		public GameInput (Game game) : base(game)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cl"></param>
+        public GameInput (Game game) : base(game)
 		{	
 			Sensitivity	=	5;
 			InvertMouse	=	true;
@@ -89,7 +90,9 @@ namespace IronStar.Client {
 			SwitchWeapon	=	Keys.Q;
 			ReloadWeapon	=	Keys.R;
 			ThrowGrenade	=	Keys.G;
-		}
+
+            DrawDebugGrid   =   Keys.M;
+        }
 
 
 
@@ -151,9 +154,11 @@ namespace IronStar.Client {
 			if (Game.Keyboard.IsKeyDown( MeleeAttack	)) flags |= UserCtrlFlags.MeleeAtack;
 			if (Game.Keyboard.IsKeyDown( ReloadWeapon	)) flags |= UserCtrlFlags.ReloadWeapon;
 
-			//	http://eliteownage.com/mousesensitivity.html 
-			//	Q3A: 16200 dot per 360 turn:
-			var vp		=	Game.RenderSystem.DisplayBounds;
+            if (Game.Keyboard.IsKeyDown(DrawDebugGrid)) flags |= UserCtrlFlags.DrawDebugGrid;
+            
+            //	http://eliteownage.com/mousesensitivity.html 
+            //	Q3A: 16200 dot per 360 turn:
+            var vp		=	Game.RenderSystem.DisplayBounds;
 			var ui		=	Game.UserInterface.Instance as ShooterInterface;
 			//var cam		=	World.GetView<CameraView>();
 

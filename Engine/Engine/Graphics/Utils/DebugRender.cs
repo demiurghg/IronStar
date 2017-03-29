@@ -181,9 +181,20 @@ namespace Fusion.Engine.Graphics {
 		{
 			DrawTracers();
 
-			if (!vertexDataAccum.Any()) {
-				return;
-			}
+            //!vertexDataAccum.Any() падает при рендере сетки с ошибкой "collection was modified enumeration"
+            //костыль временно решает эту проблему, надо придумать способ поумнее
+            //if (!vertexDataAccum.Any()) {
+            //	return;
+            //}
+
+            try
+            {
+                var test = vertexDataAccum[0];
+            }
+            catch
+            {
+                return;
+            }
 
 			if (Game.RenderSystem.SkipDebugRendering) {
 				vertexDataAccum.Clear();	

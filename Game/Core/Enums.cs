@@ -27,6 +27,8 @@ namespace IronStar.Core {
 		ReloadWeapon	=	1 << 17,
 		ThrowGrenade	=	1 << 18,
 		MeleeAtack		=	1 << 19,
+
+        DrawDebugGrid   =   1 << 20
 	}	
 
 

@@ -97,11 +97,10 @@ namespace IronStar.Core {
 		/// </summary>
 		public float AnimFrame;
 
-
-		/// <summary>
-		/// Visible model
-		/// </summary>
-		public short Model {
+        /// <summary>
+        /// Visible model
+        /// </summary>
+        public short Model {
 			get { return model; }
 			set { 
 				modelDirty |= (model != value); 

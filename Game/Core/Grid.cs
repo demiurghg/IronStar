@@ -7,7 +7,7 @@ namespace IronStar.Core
         public Vector3 Vector { get; set; }
         public int Value { get; set; }
         public Color Color {
-            get { return Grid.FromIntToColor(Value); }
+            get { return GridHelper.FromIntToColor(Value); }
         }
     }
 
@@ -17,7 +17,7 @@ namespace IronStar.Core
         public GridVertex End { get; set; }
     }
 
-    public static class Grid
+    public static class GridHelper
     {
         public static Color FromIntToColor(int value)
         {

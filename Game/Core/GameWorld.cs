@@ -69,12 +69,28 @@ namespace IronStar.Core {
 
 		public readonly bool IsPresentationEnabled;
 
+        bool debugGridOff = false;
+        bool debugGridOn = false;
+        Fusion.Engine.Input.Keys GridKey = Fusion.Engine.Input.Keys.M;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="game"></param>
-		public GameWorld( Game game, bool enablePresentation, Guid userGuid )
+        List<GridVertex> vertices;
+        List<GridEdge> edges;
+
+        int width = 48 / 4;
+        int height = 24 / 4;
+        int large = 48 / 4;
+
+        int offsetZ = -20;
+        int offsetY = -1;
+        int offsetX = -20;
+
+        GridVertex[,,] gridArray;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="game"></param>
+        public GameWorld( Game game, bool enablePresentation, Guid userGuid )
 		{
 			IsPresentationEnabled	=	enablePresentation;
 
@@ -99,6 +115,8 @@ namespace IronStar.Core {
 				rw.LightSet.DecalAtlas		=	Content.Load<TextureAtlas>(@"decals\decals");
 			}
 
+            
+            gridArray = new GridVertex[large, height, width];
             GridUpdate();
 		}
 
@@ -534,21 +552,6 @@ namespace IronStar.Core {
 			Log.Message("");
 		}
 
-        bool debugGridOff = false;
-        bool debugGridOn = false;
-        Fusion.Engine.Input.Keys GridKey = Fusion.Engine.Input.Keys.M;
-
-        List<GridVertex> vertices;
-        List<GridEdge> edges;
-
-        int width = 48;
-        int height = 24;
-        int large = 48;
-        
-        int offsetZ = -20;
-        int offsetY = -1;
-        int offsetX = -20;
-        
         void DrawDebugGrid()
         {
             if (Game.Keyboard.IsKeyDown(GridKey) && debugGridOff)
@@ -584,47 +587,68 @@ namespace IronStar.Core {
 
         void GridUpdate()
         {
+            //large, height, width
             vertices = new List<GridVertex>();
-            for (var n = offsetZ; n < width + offsetZ; n += 4)
+            var coordinateX = offsetX;
+            var coordinateY = offsetY;
+            var coordinateZ = offsetZ;
+            for (var index0 = 0; index0 < large; index0++)
             {
-                for (var k = offsetY; k < height + offsetY; k += 4)
+                coordinateY = offsetY;
+                for (var index1 = 0; index1 < height; index1++)
                 {
-                    for (int i = offsetX; i < large + offsetX; i += 4)
+                    coordinateX = offsetX;
+                    for (var index2 = 0; index2 < width; index2++)
                     {
-                        vertices.Add(new GridVertex() { Vector = new Vector3(i, k, n), Value = i + k + n });
+                        gridArray[index0, index1, index2] 
+                            = new GridVertex() { Vector = new Vector3(coordinateX, coordinateY, coordinateZ), Value = coordinateX + coordinateY + coordinateZ };
+                        vertices.Add(new GridVertex() { Vector = new Vector3(coordinateX, coordinateY, coordinateZ), Value = coordinateX + coordinateY + coordinateZ });
+                        coordinateX += 4;
                     }
+                    coordinateY += 4;
                 }
+                coordinateZ += 4;
             }
 
-            GenerateGritEdges(vertices);
+            GenerateGritEdges();
         }
 
-        void GenerateGritEdges(List<GridVertex> vertices)
+        void GenerateGritEdges()
         {
+            //large, height, width
             edges = new List<GridEdge>();
-            foreach (var item in vertices)
+            var coordinateX = offsetX;
+            var coordinateY = offsetY;
+            var coordinateZ = offsetZ;
+            for (var index0 = 0; index0 < large; index0++)
             {
-                var x = item.Vector.X;
-                var y = item.Vector.Y;
-                var z = item.Vector.Z;
-                if (x + 4 > offsetX && x + 4 < large + offsetX)
+                coordinateY = offsetY;
+                for (var index1 = 0; index1 < height; index1++)
                 {
-                    var endVertex = vertices.FirstOrDefault(f => f.Vector.X == x + 4 && f.Vector.Y == y && f.Vector.Z == z); // Оптимизировать через хэши
-                    if (endVertex != null)
-                        edges.Add(new GridEdge() { Start = item, End = endVertex });
+                    coordinateX = offsetX;
+                    for (var index2 = 0; index2 < width; index2++)
+                    {
+                        var item = gridArray[index0, index1, index2];
+                        var x = item.Vector.X;
+                        var y = item.Vector.Y;
+                        var z = item.Vector.Z;
+                        if (index0 + 1 < large)
+                        {
+                            edges.Add(new GridEdge() { Start = item, End = gridArray[index0 + 1, index1, index2] });
+                        }
+                        if (index1 + 1 < height)
+                        {
+                            edges.Add(new GridEdge() { Start = item, End = gridArray[index0, index1 + 1, index2] });
+                        }
+                        if (index2 + 1 < width)
+                        {
+                            edges.Add(new GridEdge() { Start = item, End = gridArray[index0, index1, index2 + 1] });
+                        }
+                        coordinateX += 4;
+                    }
+                    coordinateY += 4;
                 }
-                if (y + 4 > offsetY && y + 4 < height + offsetY)
-                {
-                    var endVertex = vertices.FirstOrDefault(f => f.Vector.X == x && f.Vector.Y == y + 4 && f.Vector.Z == z); // Оптимизировать
-                    if (endVertex != null)
-                        edges.Add(new GridEdge() { Start = item, End = endVertex });
-                }
-                if (z + 4 > offsetZ && z + 4 < width + offsetZ)
-                {
-                    var endVertex = vertices.FirstOrDefault(f => f.Vector.X == x && f.Vector.Y == y && f.Vector.Z == z + 4); // Оптимизировать
-                    if (endVertex != null)
-                        edges.Add(new GridEdge() { Start = item, End = endVertex });
-                }
+                coordinateZ += 4;
             }
         }
 

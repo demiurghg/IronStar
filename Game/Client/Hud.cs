@@ -85,7 +85,7 @@ namespace IronStar.Views {
 			var rw	= Game.RenderSystem.RenderWorld;
 			var vp	= Game.RenderSystem.DisplayBounds;
 
-			var player	=	world.PlayerState;
+			var player	=	world.PlayerView;
 
 			if (player==null) {
 				return;

@@ -34,9 +34,6 @@ namespace IronStar.Core {
 		/// </summary>
 		public Guid UserGuid;// { get; private set; }
 
-		public bool SendOwnerUser = false;
-		public bool DontSendOwnerUser = false;
-
 		/// <summary>
 		/// Gets entity state
 		/// </summary>
@@ -78,11 +75,6 @@ namespace IronStar.Core {
 		/// Entity's angle
 		/// </summary>
 		public Quaternion RotationOld;
-
-		/// <summary>
-		/// Control flags.
-		/// </summary>
-		public UserCtrlFlags UserCtrlFlags;
 
 		/// <summary>
 		/// Linear object velocity.
@@ -185,7 +177,6 @@ namespace IronStar.Core {
 			ParentID		=	parentId;
 
 			Rotation		=	rotation;
-			UserCtrlFlags	=	UserCtrlFlags.None;
 			Position		=	position;
 			PositionOld		=	position;
 		}
@@ -307,7 +298,6 @@ namespace IronStar.Core {
 
 			writer.Write( Position );
 			writer.Write( Rotation );
-			writer.Write( (int)UserCtrlFlags );
 			writer.Write( LinearVelocity );
 			writer.Write( AngularVelocity );
 
@@ -343,7 +333,6 @@ namespace IronStar.Core {
 
 			Position		=	reader.Read<Vector3>();	
 			Rotation		=	reader.Read<Quaternion>();	
-			UserCtrlFlags	=	(UserCtrlFlags)reader.ReadInt32();
 			LinearVelocity	=	reader.Read<Vector3>();
 			AngularVelocity	=	reader.Read<Vector3>();	
 

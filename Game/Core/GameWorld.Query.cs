@@ -86,6 +86,11 @@ namespace IronStar.Core {
 
 
 
+		/// <summary>
+		/// Attempts to use something by user-entity
+		/// </summary>
+		/// <param name="user"></param>
+		/// <returns></returns>
 		public bool TryUse ( Entity user )
 		{
 			var character = user.Controller as Character;

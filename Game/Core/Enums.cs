@@ -8,25 +8,17 @@ namespace IronStar.Core {
 
 
 	[Flags]
-	public enum UserCtrlFlags : int {
+	public enum UserAction : byte {
 
-		None			=	0,
-
-		Forward			=	1 << 0,
-		Backward		=	1 << 1,
-		StrafeLeft		=	1 << 2,
-		StrafeRight		=	1 << 3,
-		Crouch			=	1 << 4,
-		Jump			=	1 << 5,
-		Zoom			=	1 << 6,
-		Attack			=	1 << 7,
-
-		Use				=	1 << 8,
-
-		SwitchWeapon	=	1 << 16,
-		ReloadWeapon	=	1 << 17,
-		ThrowGrenade	=	1 << 18,
-		MeleeAtack		=	1 << 19,
+		None			=	0x00,
+		Zoom			=	0x01,
+		Attack			=	0x02,
+		Use				=	0x04,
+		SwitchWeapon	=	0x08,
+		ReloadWeapon	=	0x10,
+		ThrowGrenade	=	0x20,
+		MeleeAtack		=	0x40,
+		Jump			=	0x80,
 	}	
 
 

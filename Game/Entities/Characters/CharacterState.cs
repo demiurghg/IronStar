@@ -19,27 +19,13 @@ using BEPUphysics.Character;
 using Fusion.Core.IniParser.Model;
 
 
+
 namespace IronStar.Entities {
-	public partial class Character : EntityController {
+	public class CharacterState {
 
-		readonly PlayerState playerState = new PlayerState();
+		public virtual bool Damage ( int damage ) { return false; }
+		public virtual void Move ( short forward, short right, short up ) { }
+		public virtual void Action ( UserAction action ) {} 
 
-		public PlayerState PlayerState {
-			get {
-				return playerState;
-			}
-		}
-
-
-
-		void UpdatePlayerState ()
-		{
-			playerState.Health		=	Health;
-			playerState.Armor		=	Armor;
-			playerState.Weapon1		=	Weapon1;
-			playerState.Weapon2		=	Weapon2;
-			playerState.WeaponAmmo1	=	WeaponAmmo1;
-			playerState.WeaponAmmo2	=	WeaponAmmo2;
-		}
 	}
 }

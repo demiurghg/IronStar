@@ -40,6 +40,26 @@ namespace IronStar.Core {
 		}
 
 
+		/// <summary>
+		/// Called when user try to do action
+		/// </summary>
+		/// <param name="action"></param>
+		public virtual void Action ( UserAction action )
+		{
+		}
+
+
+
+		/// <summary>
+		/// Called when user moves
+		/// </summary>
+		/// <param name="forward"></param>
+		/// <param name="right"></param>
+		/// <param name="up"></param>
+		public virtual void Move ( float forward, float right, float up )
+		{
+		}
+
 
 		/// <summary>
 		/// 

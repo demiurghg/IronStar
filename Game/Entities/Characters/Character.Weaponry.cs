@@ -103,8 +103,8 @@ namespace IronStar.Entities {
 		/// <param name="deltaTime"></param>
 		void UpdateWeaponState ( Entity entity, short deltaTime )
 		{
-			var attack		=	entity.UserCtrlFlags.HasFlag( UserCtrlFlags.Attack );
-			var grenade		=	entity.UserCtrlFlags.HasFlag( UserCtrlFlags.ThrowGrenade );
+			var attack		=	false;
+			var grenade		=	false;
 
 			//	weapon is too hot :
 			if (WeaponCooldown>0) {

@@ -114,7 +114,7 @@ namespace IronStar.Client {
 
 
 
-		UserCtrlFlags weaponControl;
+		UserAction weaponControl;
 
 		/// <summary>
 		/// 
@@ -134,22 +134,27 @@ namespace IronStar.Client {
 		/// <param name="userCommand"></param>
 		public void Update ( GameTime gameTime, ref UserCommand userCommand )
 		{
-			var flags = UserCtrlFlags.None;
+			var flags = UserAction.None;
 			
-			if (Game.Keyboard.IsKeyDown( MoveForward	)) flags |= UserCtrlFlags.Forward;
-			if (Game.Keyboard.IsKeyDown( MoveBackward	)) flags |= UserCtrlFlags.Backward;
-			if (Game.Keyboard.IsKeyDown( StrafeLeft		)) flags |= UserCtrlFlags.StrafeLeft;
-			if (Game.Keyboard.IsKeyDown( StrafeRight	)) flags |= UserCtrlFlags.StrafeRight;
-			if (Game.Keyboard.IsKeyDown( Jump			)) flags |= UserCtrlFlags.Jump;
-			if (Game.Keyboard.IsKeyDown( Crouch			)) flags |= UserCtrlFlags.Crouch;
-			if (Game.Keyboard.IsKeyDown( Zoom			)) flags |= UserCtrlFlags.Zoom;
-			if (Game.Keyboard.IsKeyDown( Attack			)) flags |= UserCtrlFlags.Attack;
-			if (Game.Keyboard.IsKeyDown( Use			)) flags |= UserCtrlFlags.Use;
+			userCommand.MoveForward	=	0;
+			userCommand.MoveRight	=	0;
+			userCommand.MoveUp		=	0;
+			
+			if (Game.Keyboard.IsKeyDown( MoveForward	)) userCommand.MoveForward++;
+			if (Game.Keyboard.IsKeyDown( MoveBackward	)) userCommand.MoveForward--;
+			if (Game.Keyboard.IsKeyDown( StrafeRight	)) userCommand.MoveRight++;
+			if (Game.Keyboard.IsKeyDown( StrafeLeft		)) userCommand.MoveRight--;
+			if (Game.Keyboard.IsKeyDown( Jump			)) userCommand.MoveUp++;
+			if (Game.Keyboard.IsKeyDown( Crouch			)) userCommand.MoveUp--;
 
-			if (Game.Keyboard.IsKeyDown( SwitchWeapon	)) flags |= UserCtrlFlags.SwitchWeapon;
-			if (Game.Keyboard.IsKeyDown( ThrowGrenade	)) flags |= UserCtrlFlags.ThrowGrenade;
-			if (Game.Keyboard.IsKeyDown( MeleeAttack	)) flags |= UserCtrlFlags.MeleeAtack;
-			if (Game.Keyboard.IsKeyDown( ReloadWeapon	)) flags |= UserCtrlFlags.ReloadWeapon;
+			if (Game.Keyboard.IsKeyDown( Attack			)) flags |= UserAction.Attack;
+			if (Game.Keyboard.IsKeyDown( Zoom			)) flags |= UserAction.Zoom;
+			if (Game.Keyboard.IsKeyDown( Use			)) flags |= UserAction.Use;
+
+			if (Game.Keyboard.IsKeyDown( SwitchWeapon	)) flags |= UserAction.SwitchWeapon;
+			if (Game.Keyboard.IsKeyDown( ThrowGrenade	)) flags |= UserAction.ThrowGrenade;
+			if (Game.Keyboard.IsKeyDown( MeleeAttack	)) flags |= UserAction.MeleeAtack;
+			if (Game.Keyboard.IsKeyDown( ReloadWeapon	)) flags |= UserAction.ReloadWeapon;
 
 			//	http://eliteownage.com/mousesensitivity.html 
 			//	Q3A: 16200 dot per 360 turn:
@@ -158,7 +163,7 @@ namespace IronStar.Client {
 			//var cam		=	World.GetView<CameraView>();
 
 			if (!Game.Console.IsShown) {
-				userCommand.CtrlFlags	=	flags | weaponControl;
+				userCommand.Action	=	flags | weaponControl;
 				userCommand.Yaw         -=  2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.X / 16200.0f;
 				userCommand.Pitch       -=  2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.Y / 16200.0f * ( InvertMouse ? -1 : 1 );
 				//UserCommand.Yaw         -=  2 * MathUtil.Pi * cam.Sensitivity * Game.Mouse.PositionDelta.X / 16200.0f;

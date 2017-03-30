@@ -59,8 +59,8 @@ namespace IronStar.Core {
 		public SFX.FXPlayback	FXPlayback   { get { return fxPlayback; } }
 		public PhysicsManager	Physics		{ get { return physics; } }
 
-		readonly PlayerState playerState = new PlayerState();
-		public PlayerState PlayerState { get { return playerState; } }
+		readonly PlayerView playerView = new PlayerView();
+		public PlayerView PlayerView { get { return playerView; } }
 
 
 		public struct Environment {
@@ -487,7 +487,7 @@ namespace IronStar.Core {
 				.Select( e3 => (e3.Controller as Character).PlayerState )
 				.FirstOrDefault();	
 
-			playerState = playerState ?? PlayerState.NullState;
+			playerState = playerState ?? PlayerView.NullState;
 
 			snapshotWriter.Write( stream, ref environment, playerState, entities, fxEvents );
 		}
@@ -500,7 +500,12 @@ namespace IronStar.Core {
 		/// <param name="writer"></param>
 		public virtual void ReadFromSnapshot ( Stream stream, float lerpFactor )
 		{
-			snapshotReader.Read( stream, ref environment, playerState, entities, fxe=>fxPlayback?.RunFX(fxe,false), null, id=>KillImmediatly(id) );
+			snapshotReader.Read( 
+				stream, ref environment, playerView, entities, 
+				fxe => fxPlayback?.RunFX(fxe,false), 
+				ent => EntitySpawned?.Invoke( this, new EntityEventArgs(ent)),
+				id  => KillImmediatly(id) 
+			);
 		}
 
 

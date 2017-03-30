@@ -31,9 +31,12 @@ namespace IronStar {
 		readonly Guid userGuid;
 		Map map;
 
+
+
 		public UserCommand UserCommand {
 			get { return userCommand; }
 		}
+
 
 
 		public ShooterClient ( GameClient client, Guid userGuid )
@@ -49,13 +52,27 @@ namespace IronStar {
 			(game.UserInterface.Instance as ShooterInterface).ShowMenu = false;
 		}
 
+
+
 		public void Initialize( string serverInfo )
 		{
 			hud.Initialize();
 			map		=   world.Content.Load<Map>( @"maps\" + serverInfo );
 			world.InitServerAtoms();
 			map.ActivateMap( world, false );
+
+			world.EntitySpawned +=World_EntitySpawned;
 		}
+
+		
+		
+		private void World_EntitySpawned( object sender, EntityEventArgs e )
+		{
+			if (e.Entity.UserGuid==userGuid) {
+				userCommand.SetAnglesFromQuaternion( e.Entity.Rotation );
+			}
+		}
+
 
 
 		public byte[] Update( GameTime gameTime, uint sentCommandID )
@@ -74,10 +91,12 @@ namespace IronStar {
 		}
 
 
+
 		public IContentPrecacher CreatePrecacher( string serverInfo )
 		{
 			return new GameWorld.Precacher( world.Content, serverInfo );
 		}
+
 
 
 		public void FeedAtoms( AtomCollection atoms )
@@ -86,10 +105,12 @@ namespace IronStar {
 		}
 
 
+
 		public void FeedNotification( string message )
 		{
 			Log.Message("NOTIFICATION : {0}", message );
 		}
+
 
 
 		public void FeedSnapshot( GameTime serverTime, byte[] snapshot, uint ackCommandID )
@@ -100,10 +121,12 @@ namespace IronStar {
 		}
 
 
+
 		public string UserInfo()
 		{
 			return "Bob" + System.Diagnostics.Process.GetCurrentProcess().Id.ToString();
 		}
+
 
 
 		#region IDisposable Support

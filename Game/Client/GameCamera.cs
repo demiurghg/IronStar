@@ -105,7 +105,7 @@ namespace IronStar.Views {
 			var up	=	m.Up;
 
 
-			var targetFov	=	MathUtil.Clamp( uc.CtrlFlags.HasFlag( UserCtrlFlags.Zoom ) ? 30 : 110, 10, 140 );
+			var targetFov	=	MathUtil.Clamp( uc.Action.HasFlag( UserAction.Zoom ) ? 30 : 110, 10, 140 );
 
 			currentFov		=	MathUtil.Drift( currentFov, targetFov, 360*elapsedTime, 360*elapsedTime );
 
@@ -161,15 +161,15 @@ namespace IronStar.Views {
 		/// <returns></returns>
 		void CalcBobbing ( Entity player, float elapsedTime )
 		{	
-			bool hasTraction	=	player.State.HasFlag(EntityState.HasTraction);	
+			/*bool hasTraction	=	player.State.HasFlag(EntityState.HasTraction);	
 
 			var rollPull = 0.0f;
 
 			if (hasTraction) {
-				if (player.UserCtrlFlags.HasFlag(UserCtrlFlags.StrafeRight)) {
+				if (player.UserCtrlFlags.HasFlag(UserAction.StrafeRight)) {
 					rollPull	-=	BobStrafe;
 				} 
-				if (player.UserCtrlFlags.HasFlag(UserCtrlFlags.StrafeLeft)) {
+				if (player.UserCtrlFlags.HasFlag(UserAction.StrafeLeft)) {
 					rollPull	+=	BobStrafe;
 				} 
 			}
@@ -179,7 +179,7 @@ namespace IronStar.Views {
 
 			bobRoll.Update( elapsedTime );
 			bobPitch.Update( elapsedTime );
-			bobYaw.Update( elapsedTime );
+			bobYaw.Update( elapsedTime );*/
 		}
 	}
 }

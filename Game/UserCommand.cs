@@ -16,25 +16,22 @@ namespace IronStar {
 	/// </summary>
 	public struct UserCommand {
 
-		/// <summary>
-		/// Current user yaw.
-		/// </summary>
 		public float Yaw;
-
-		/// <summary>
-		/// Current user pitch.
-		/// </summary>
 		public float Pitch;
-
-		/// <summary>
-		/// Current user roll.
-		/// </summary>
 		public float Roll;
 
-		/// <summary>
-		/// Set of user control flags.
-		/// </summary>
-		public UserCtrlFlags CtrlFlags;
+		public float MoveForward;
+		public float MoveRight;
+		public float MoveUp;
+
+		public UserAction Action;
+
+
+
+		public void SetAnglesFromQuaternion ( Quaternion q )
+		{
+			Matrix.RotationQuaternion( q ).ToAngles( out Yaw, out Pitch, out Roll );
+		}
 
 		
 		/// <summary>
@@ -77,12 +74,12 @@ namespace IronStar {
 
 
 
-		public static void FireUserCommandAction ( UserCommand oldCmd, UserCommand newCmd, Action<UserCtrlFlags> ctrlAction )
+		public static void FireUserCommandAction ( UserCommand oldCmd, UserCommand newCmd, Action<UserAction> ctrlAction )
 		{
-			var values = Enum.GetValues( typeof(UserCtrlFlags) ).Cast<UserCtrlFlags>().ToArray();
+			var values = Enum.GetValues( typeof(UserAction) ).Cast<UserAction>().ToArray();
 
 			foreach ( var flag in values ) {
-				if ( newCmd.CtrlFlags.HasFlag(flag) && !oldCmd.CtrlFlags.HasFlag(flag) ) {
+				if ( newCmd.Action.HasFlag(flag) && !oldCmd.Action.HasFlag(flag) ) {
 					ctrlAction(flag);
 				}
 			}
@@ -92,7 +89,7 @@ namespace IronStar {
 
 		public override string ToString ()
 		{
-			return string.Format("Angles:[{0} {1} {2}] Ctrl:[{3}]", Yaw, Pitch, Roll, CtrlFlags );
+			return string.Format("Angles:[{0} {1} {2}] Ctrl:[{3}]", Yaw, Pitch, Roll, Action );
 		}
 	}
 }

@@ -84,29 +84,39 @@ namespace IronStar {
 		/// <param name="cmdData"></param>
 		public void FeedCommand ( GameWorld world, byte[] cmdData )
 		{
-			var oldCmd	=	UserCmd;
-			UserCmd		=	UserCommand.FromBytes( cmdData );
+			var player		=	world.GetPlayerEntity(Guid);
+			var oldCmd		=	UserCmd;
+			UserCmd			=	UserCommand.FromBytes( cmdData );
 
-			UserCommand.FireUserCommandAction( oldCmd, UserCmd, (f) => ControlEventAction(world,f) );
+			player?.Controller?.Move( UserCmd.MoveForward, UserCmd.MoveRight, UserCmd.MoveUp );
+			UserCommand.FireUserCommandAction( oldCmd, UserCmd, userAction => ControlEventAction(player, userAction) );
 		}
 
 
 
 		/// <summary>
-		/// 
+		/// Handle user button events (actions)
 		/// </summary>
 		/// <param name="world"></param>
 		/// <param name="ctrlFlag"></param>
-		void ControlEventAction ( GameWorld world, UserCtrlFlags ctrlFlag )
+		void ControlEventAction ( Entity player, UserAction userAction )
 		{
-			var player = world.GetEntityOrNull( "player", e => e.UserGuid==Guid );
-
-			if (ctrlFlag.HasFlag(UserCtrlFlags.Use)) {
-				world.TryUse( player );
+			if (player!=null) {
+				var controller	= player.Controller;
+				controller?.Action( userAction ); 
+			} else {
+				if (userAction==UserAction.Attack) {
+					ForceRespawn();
+				}
 			}
+		}
 
-			if (ctrlFlag.HasFlag(UserCtrlFlags.SwitchWeapon)) {
-				(player.Controller as Character).SwitchWeapon();
+
+
+		void ForceRespawn ()
+		{
+			if (respawnTime>1) {
+				respawnTime = 9999;
 			}
 		}
 
@@ -130,12 +140,11 @@ namespace IronStar {
 			var player = world.GetEntityOrNull( "player", e => e.UserGuid==Guid );
 
 			if (player!=null) {
-				player.Rotation			=	Quaternion.RotationYawPitchRoll( UserCmd.Yaw, UserCmd.Pitch, UserCmd.Roll );
-				player.UserCtrlFlags	=	UserCmd.CtrlFlags;
+				player.Rotation		=	Quaternion.RotationYawPitchRoll( UserCmd.Yaw, UserCmd.Pitch, UserCmd.Roll );
 			}
 
 			if (player==null) {
-				if ( UserCmd.CtrlFlags.HasFlag(UserCtrlFlags.Attack) && respawnTime>1 || respawnTime>3 ) {
+				if ( UserCmd.Action.HasFlag(UserAction.Attack) && respawnTime>1 || respawnTime>3 ) {
 					player	=	Respawn(world);
 				}
 			}

@@ -200,8 +200,6 @@ namespace IronStar.Entities {
 			UpdateWeaponState( Entity, (short)(elapsedTime*1000) );
 			UpdatePlayerState();
 
-			Move();
-
 			e.Position			=	MathConverter.Convert( c.Body.Position ) - GetPovOffset(); 
 			e.LinearVelocity	=	MathConverter.Convert( c.Body.LinearVelocity );
 			e.AngularVelocity	=	MathConverter.Convert( c.Body.AngularVelocity );
@@ -221,54 +219,55 @@ namespace IronStar.Entities {
 
 			UpdateWalkSFX( e, elapsedTime );
 			UpdateFallSFX( e, elapsedTime );
+			//UpdateJumpSFX( e, elapsedTime );
 		}
 
 
 
 		void UpdateWalkSFX ( Entity e, float elapsedTime )
 		{					
-			stepCounter -= elapsedTime;
-			if (stepCounter<=0) {
-				stepCounter = StepRate;
-				rlStep = !rlStep;
+			//stepCounter -= elapsedTime;
+			//if (stepCounter<=0) {
+			//	stepCounter = StepRate;
+			//	rlStep = !rlStep;
 
-				bool step	=	e.UserCtrlFlags.HasFlag( UserCtrlFlags.Forward )
-							|	e.UserCtrlFlags.HasFlag( UserCtrlFlags.Backward )
-							|	e.UserCtrlFlags.HasFlag( UserCtrlFlags.StrafeLeft )
-							|	e.UserCtrlFlags.HasFlag( UserCtrlFlags.StrafeRight );
+			//	bool step	=	e.UserCtrlFlags.HasFlag( UserCtrlFlags.Forward )
+			//				|	e.UserCtrlFlags.HasFlag( UserCtrlFlags.Backward )
+			//				|	e.UserCtrlFlags.HasFlag( UserCtrlFlags.StrafeLeft )
+			//				|	e.UserCtrlFlags.HasFlag( UserCtrlFlags.StrafeRight );
 
-				if (step && controller.SupportFinder.HasTraction) {
-					if (rlStep) {
-						World.SpawnFX("PlayerFootStepR", e.ID, e.Position );
-					} else {
-						World.SpawnFX("PlayerFootStepL", e.ID, e.Position );
-					}
-				}
-			}
+			//	if (step && controller.SupportFinder.HasTraction) {
+			//		if (rlStep) {
+			//			World.SpawnFX("PlayerFootStepR", e.ID, e.Position );
+			//		} else {
+			//			World.SpawnFX("PlayerFootStepL", e.ID, e.Position );
+			//		}
+			//	}
+			//}
 		}
 
 
 
 		void UpdateFallSFX ( Entity e, float elapsedTime )
 		{
-			bool newTraction = controller.SupportFinder.HasTraction;
+			//bool newTraction = controller.SupportFinder.HasTraction;
 			
-			if (oldTraction!=newTraction && newTraction) {
-				//if (((ShooterServer)World.GameServer).ShowFallings) {
-				//	Log.Verbose("{0} falls : {1}", e.ID, oldVelocity.Y );
-				//}
+			//if (oldTraction!=newTraction && newTraction) {
+			//	//if (((ShooterServer)World.GameServer).ShowFallings) {
+			//	//	Log.Verbose("{0} falls : {1}", e.ID, oldVelocity.Y );
+			//	//}
 
-				if (oldVelocity.Y<-10) {
-					//	medium landing :
-					World.SpawnFX( "PlayerLanding", e.ID, e.Position, oldVelocity, Quaternion.Identity );
-				} else {
-					//	light landing :
-					World.SpawnFX( "PlayerFootStepL", e.ID, e.Position );
-				}
-			}
+			//	if (oldVelocity.Y<-10) {
+			//		//	medium landing :
+			//		World.SpawnFX( "PlayerLanding", e.ID, e.Position, oldVelocity, Quaternion.Identity );
+			//	} else {
+			//		//	light landing :
+			//		World.SpawnFX( "PlayerFootStepL", e.ID, e.Position );
+			//	}
+			//}
 
-			oldTraction = newTraction;
-			oldVelocity = MathConverter.Convert(controller.Body.LinearVelocity);
+			//oldTraction = newTraction;
+			//oldVelocity = MathConverter.Convert(controller.Body.LinearVelocity);
 		}
 
 
@@ -287,22 +286,32 @@ namespace IronStar.Entities {
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="action"></param>
+		public override void Action( UserAction action )
+		{
+			switch (action) {
+				case UserAction.Attack: break;
+			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="id"></param>
 		/// <param name="moveVector"></param>
-		void Move ()
+		public override void Move( float forward, float right, float up )
 		{
-			var ent	=	Entity;
-			var m	=	Matrix.RotationQuaternion( ent.Rotation );
+			var ent		=	Entity;
+			var m		=	Matrix.RotationQuaternion( ent.Rotation );
 
-			var move = Vector3.Zero;
-			var jump = false;
-			var crouch = false;
-			if (ent.UserCtrlFlags.HasFlag( UserCtrlFlags.Forward )) move += m.Forward;
-			if (ent.UserCtrlFlags.HasFlag( UserCtrlFlags.Backward )) move += m.Backward;
-			if (ent.UserCtrlFlags.HasFlag( UserCtrlFlags.StrafeLeft )) move += m.Left;
-			if (ent.UserCtrlFlags.HasFlag( UserCtrlFlags.StrafeRight )) move += m.Right;
-			if (ent.UserCtrlFlags.HasFlag( UserCtrlFlags.Jump )) jump = true;
-			if (ent.UserCtrlFlags.HasFlag( UserCtrlFlags.Crouch )) crouch = true;
+			var move	=	Vector3.Zero;
+			var jump	=	up >  0.5f;
+			var crouch	=	up < -0.5f;
+
+			move		+=	m.Forward * forward;
+			move		+=	m.Right * right;
 
 			if (controller==null) {
 				return;
@@ -314,15 +323,6 @@ namespace IronStar.Entities {
 			controller.StanceManager.DesiredStance	=	crouch ? Stance.Crouching : Stance.Standing;
 
 			controller.TryToJump = jump;
-			
-			if (jump && controller.StanceManager.CurrentStance!=Stance.Crouching) {
-				if (controller.SupportFinder.HasSupport || controller.SupportFinder.HasTraction) {
-					World.SpawnFX( "PlayerJump", ent.ID, ent.Position );
-				}
-			}
-			/*if (jump) {
-				controller.Jump();
-			} */
 		}
 	}
 }

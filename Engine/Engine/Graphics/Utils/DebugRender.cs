@@ -172,12 +172,16 @@ namespace Fusion.Engine.Graphics {
 			//DrawLine( p0, p1, color, Matrix.Identity );
 		}
 
+        public void DrawLine(Vector3 p0, Vector3 p1, Color color0, float width0)
+        {
+            vertexDataAccum.Add(new LineVertex() { Pos = new Vector4(p0, width0), Color = color0.ToVector4() });
+        }
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		internal void Render ( RenderTargetSurface colorBuffer, DepthStencilSurface depthBuffer, Camera camera )
+        /// <summary>
+        /// 
+        /// </summary>
+        internal void Render ( RenderTargetSurface colorBuffer, DepthStencilSurface depthBuffer, Camera camera )
 		{
 			DrawTracers();
 

@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using Fusion;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Common;
 using Fusion.Core.Content;
-using Fusion.Engine.Server;
-using Fusion.Engine.Client;
-using Fusion.Core.Extensions;
 using IronStar.SFX;
-using Fusion.Core.IniParser.Model;
 using Fusion.Engine.Graphics;
-using IronStar.Mapping;
 using Fusion.Core;
 using IronStar.Physics;
 using IronStar.Entities;
@@ -105,6 +98,8 @@ namespace IronStar.Core {
 				rw.LightSet.SpotAtlas		=	Content.Load<TextureAtlas>(@"spots\spots");
 				rw.LightSet.DecalAtlas		=	Content.Load<TextureAtlas>(@"decals\decals");
 			}
+
+            GridUpdate();
 		}
 
 
@@ -163,7 +158,10 @@ namespace IronStar.Core {
 			//	Kill entities :
 			//
 			CommitKilledEntities();
-		}
+            
+            DrawDebugGrid();
+
+        }
 
 
 
@@ -535,5 +533,100 @@ namespace IronStar.Core {
 			Log.Message("----------------" );
 			Log.Message("");
 		}
-	}
+
+        bool debugGridOff = false;
+        bool debugGridOn = false;
+        Fusion.Engine.Input.Keys GridKey = Fusion.Engine.Input.Keys.M;
+
+        List<GridVertex> vertices;
+        List<GridEdge> edges;
+
+        int width = 48;
+        int height = 24;
+        int large = 48;
+        
+        int offsetZ = -20;
+        int offsetY = -1;
+        int offsetX = -20;
+        
+        void DrawDebugGrid()
+        {
+            if (Game.Keyboard.IsKeyDown(GridKey) && debugGridOff)
+            {
+                debugGridOn = false;
+                Log.Warning($"Grid status was changed {debugGridOn}");
+            }
+            if (Game.Keyboard.IsKeyDown(GridKey) && !debugGridOff)
+            {
+                debugGridOn = true;
+                Log.Warning($"Grid status was changed {debugGridOn}");
+            }
+
+            if (Game.Keyboard.IsKeyUp(GridKey))
+            {
+                if (debugGridOn)
+                {
+                    foreach (var vertex in vertices)
+                    {
+                        Game.RenderSystem.RenderWorld.Debug.DrawPoint(vertex.Vector, 1, vertex.Color, 5);
+                    }
+
+                    foreach (var edge in edges)
+                    {
+                        Game.RenderSystem.RenderWorld.Debug.DrawLine(edge.Start.Vector, edge.End.Vector, edge.Start.Color, edge.End.Color, 5, 5);
+                    }
+
+                    debugGridOff = true;
+                }
+                else debugGridOff = false;
+            }
+        }
+
+        void GridUpdate()
+        {
+            vertices = new List<GridVertex>();
+            for (var n = offsetZ; n < width + offsetZ; n += 4)
+            {
+                for (var k = offsetY; k < height + offsetY; k += 4)
+                {
+                    for (int i = offsetX; i < large + offsetX; i += 4)
+                    {
+                        vertices.Add(new GridVertex() { Vector = new Vector3(i, k, n), Value = i + k + n });
+                    }
+                }
+            }
+
+            GenerateGritEdges(vertices);
+        }
+
+        void GenerateGritEdges(List<GridVertex> vertices)
+        {
+            edges = new List<GridEdge>();
+            foreach (var item in vertices)
+            {
+                var x = item.Vector.X;
+                var y = item.Vector.Y;
+                var z = item.Vector.Z;
+                if (x + 4 > offsetX && x + 4 < large + offsetX)
+                {
+                    var endVertex = vertices.FirstOrDefault(f => f.Vector.X == x + 4 && f.Vector.Y == y && f.Vector.Z == z); // Оптимизировать через хэши
+                    if (endVertex != null)
+                        edges.Add(new GridEdge() { Start = item, End = endVertex });
+                }
+                if (y + 4 > offsetY && y + 4 < height + offsetY)
+                {
+                    var endVertex = vertices.FirstOrDefault(f => f.Vector.X == x && f.Vector.Y == y + 4 && f.Vector.Z == z); // Оптимизировать
+                    if (endVertex != null)
+                        edges.Add(new GridEdge() { Start = item, End = endVertex });
+                }
+                if (z + 4 > offsetZ && z + 4 < width + offsetZ)
+                {
+                    var endVertex = vertices.FirstOrDefault(f => f.Vector.X == x && f.Vector.Y == y && f.Vector.Z == z + 4); // Оптимизировать
+                    if (endVertex != null)
+                        edges.Add(new GridEdge() { Start = item, End = endVertex });
+                }
+            }
+        }
+
+    }
 }

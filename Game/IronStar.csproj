@@ -68,6 +68,7 @@
     <Compile Include="Commands\ShowWorldState.cs" />
     <Compile Include="Core\GameWorld.Atoms.cs" />
     <Compile Include="Core\GameWorld.AI.cs" />
+    <Compile Include="Core\Grid.cs" />
     <Compile Include="Core\IStorable.cs" />
     <Compile Include="Core\PlayerState.cs" />
     <Compile Include="Editor2\EditorConfig.cs" />

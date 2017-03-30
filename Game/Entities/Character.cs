@@ -88,9 +88,6 @@ namespace IronStar.Entities {
 			Weapon2		=	WeaponType.GaussRifle;
 			WeaponAmmo1	=	30000;
 			WeaponAmmo2	=	30000;
-
-            entity.DebugGridOff = true;
-            entity.DebugGridOn = !entity.DebugGridOff;
 		}
 
 
@@ -224,9 +221,6 @@ namespace IronStar.Entities {
 
 			UpdateWalkSFX( e, elapsedTime );
 			UpdateFallSFX( e, elapsedTime );
-
-            DrawDebugGrid(e, elapsedTime);
-
         }
 
 
@@ -252,45 +246,7 @@ namespace IronStar.Entities {
 				}
 			}
 		}
-
-        void DrawDebugGrid(Entity e, float elapsedTime)
-        {
-            if (e.UserCtrlFlags.HasFlag(UserCtrlFlags.DrawDebugGrid) && e.DebugGridOff)
-            {
-                e.DebugGridOn = false;
-                Log.Warning($"Grid status was changed {e.DebugGridOn}");
-            }
-            if (e.UserCtrlFlags.HasFlag(UserCtrlFlags.DrawDebugGrid) && !e.DebugGridOff)
-            {
-                e.DebugGridOn = true;
-                Log.Warning($"Grid status was changed {e.DebugGridOn}");
-            }
-            if (!e.UserCtrlFlags.HasFlag(UserCtrlFlags.DrawDebugGrid))
-            {
-                if (e.DebugGridOn)
-                {
-                    var offsetZ = -20;
-                    for (var n = offsetZ; n < offsetZ + 38; n++)
-                    {
-                        var offsetY = 0;
-                    for (var k = offsetY; k < offsetY + 24; k++)
-                    {
-                            var offsetX = -25;
-                            for (int i = offsetX; i < offsetX + 47; i++)
-                            {
-                                Game.RenderSystem.RenderWorld.Debug.DrawLine(new Vector3(i, k, n), new Vector3(i + 1, k, n), Color.Aqua, Color.Aqua, 5, 5);
-                                Game.RenderSystem.RenderWorld.Debug.DrawLine(new Vector3(i + 1, k, n), new Vector3(i + 2, k, n), Color.Red, Color.Red, 5, 5);
-                                Game.RenderSystem.RenderWorld.Debug.DrawPoint(new Vector3(i + 1, k, n), 1, Color.Black, 5);
-                            }
-                        }
-                    }
-
-                    e.DebugGridOff = true;
-                }
-                else e.DebugGridOff = false;
-            }
-        }
-
+        
         void UpdateFallSFX ( Entity e, float elapsedTime )
 		{
 			bool newTraction = controller.SupportFinder.HasTraction;

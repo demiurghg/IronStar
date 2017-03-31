@@ -69,7 +69,6 @@
     <Compile Include="Core\GameWorld.Atoms.cs" />
     <Compile Include="Core\GameWorld.AI.cs" />
     <Compile Include="Core\IStorable.cs" />
-    <Compile Include="Core\PlayerView.cs" />
     <Compile Include="Core\WeaponFactory.cs" />
     <Compile Include="Editor2\EditorConfig.cs" />
     <Compile Include="Editor2\EditorHud.cs" />
@@ -125,10 +124,11 @@
     <Compile Include="Editors\SceneImportDialog.Designer.cs">
       <DependentUpon>SceneImportDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Entities\Characters\CharacterController.cs" />
+    <Compile Include="Entities\Characters\CharacterHealth.cs" />
     <Compile Include="Entities\Characters\CharacterArmor.cs" />
     <Compile Include="Entities\Characters\CharacterInventory.cs" />
     <Compile Include="Entities\Characters\CharacterState.cs" />
-    <Compile Include="Entities\Characters\Character.Player.cs" />
     <Compile Include="Entities\Characters\Character.Weaponry.cs" />
     <Compile Include="Entities\Characters\Character.cs" />
     <Compile Include="Entities\Characters\CharacterFactory.cs" />

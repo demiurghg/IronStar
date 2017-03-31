@@ -31,6 +31,7 @@ namespace IronStar {
 		readonly Guid userGuid;
 		Map map;
 
+		public Guid UserGuid { get { return userGuid; } }
 
 
 		public UserCommand UserCommand {

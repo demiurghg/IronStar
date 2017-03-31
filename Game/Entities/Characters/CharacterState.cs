@@ -22,10 +22,33 @@ using Fusion.Core.IniParser.Model;
 
 namespace IronStar.Entities {
 	public class CharacterState {
-
 		public virtual bool Damage ( int damage ) { return false; }
 		public virtual void Move ( short forward, short right, short up ) { }
 		public virtual void Action ( UserAction action ) {} 
+	}
 
+
+	public class Dead : CharacterState {
+	}
+
+	public class Stunned : CharacterState {
+	}
+
+	public class Panic : CharacterState {
+	}
+
+	public class Idle : CharacterState {
+	}
+
+	public class Attacking : CharacterState {
+	}
+
+	public class Throwing : CharacterState {
+	}
+
+	public class Switching : CharacterState {
+	}
+
+	public class Dropping : CharacterState {
 	}
 }

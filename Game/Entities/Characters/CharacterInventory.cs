@@ -22,6 +22,13 @@ using Fusion.Core.IniParser.Model;
 namespace IronStar.Entities {
 	public class CharacterInventory {
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="factory"></param>
+		public CharacterInventory ( CharacterFactory factory )
+		{
+		}
 
 	}
 }

@@ -45,13 +45,13 @@ namespace Fusion.Drivers.Graphics.Display {
 				window = CreateForm(parameters, null, false);
 			}
 
-			try {
+			/*try {
 				NvApi.Initialize();
 				NvApi.Stereo_Disable();
 			}
 			catch (NVException nvex) {
 				Log.Debug(nvex.Message);
-			}
+			}// */
 
 			var deviceFlags			=	DeviceCreationFlags.BgraSupport;
 				//deviceFlags			|=	DeviceCreationFlags.SingleThreaded;

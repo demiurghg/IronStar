@@ -85,12 +85,6 @@ namespace IronStar.Views {
 			var rw	= Game.RenderSystem.RenderWorld;
 			var vp	= Game.RenderSystem.DisplayBounds;
 
-			var player	=	world.PlayerView;
-
-			if (player==null) {
-				return;
-			}
-
 			//hudLayer.SetSpriteFrame( 0, new Rectangle(10,10,vp.Width-20, vp.Height-20), Color.Red );
 
 			hudLayer.DrawSprite( crosshair, vp.Width/2, vp.Height/2, crosshair.Width, 0, Color.White ); 
@@ -104,12 +98,12 @@ namespace IronStar.Views {
 			var dimText		=	new Color(255,255,255,128);
 			var fullText	=	new Color(255,255,255,224);
 
-			short	health	=	player.Health;
-			short	armor	=	player.Armor;
-			var		wpn1	=	player.Weapon1;
-			var		wpn2	=	player.Weapon2;
-			short	ammo1	=	player.WeaponAmmo1;
-			short	ammo2	=	player.WeaponAmmo2;
+			short	health	=	100;
+			short	armor	=	100;
+			var		wpn1	=	"Weapon1";
+			var		wpn2	=	"Weapon1";
+			short	ammo1	=	9999;
+			short	ammo2	=	9999;
 
 			
 			SmallTextRJ	( hudLayer, "BULLETS",			center - 4, baseLine2, dimText );

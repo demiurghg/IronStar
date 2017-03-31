@@ -15,27 +15,17 @@ using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
 using IronStar.Core;
 using BEPUphysics;
-using BEPUphysics.Character;
 using Fusion.Core.IniParser.Model;
 
 
 namespace IronStar.Entities {
 	public partial class Character : EntityController {
 
-		readonly Space space;
+		readonly CharacterController	controller;
+		readonly CharacterHealth		health;
+		readonly CharacterArmor			armor;
+		readonly CharacterInventory		inventory;
 
-		const float StepRate = 0.3f;
-
-
-		CharacterController controller;
-		float		stepCounter = 0;
-		bool		rlStep		= false;
-		bool		oldTraction = true;
-		Vector3		oldVelocity = Vector3.Zero;
-		readonly	float heightStanding;
-		readonly	float heightCrouch;
-		readonly	Vector3 offsetCrouch;
-		readonly	Vector3 offsetStanding;
 
 		/// <summary>
 		/// 
@@ -44,45 +34,12 @@ namespace IronStar.Entities {
 		/// <param name="space"></param>
 		public Character ( Entity entity, GameWorld world, CharacterFactory factory ) : base(entity,world)
 		{
-			this.space	=	world.PhysSpace;
+			controller	=	new CharacterController( entity, world, factory );
+			health		=	new CharacterHealth( factory );
+			armor		=	new CharacterArmor( factory );
+			inventory	=	new CharacterInventory( factory );
 
-			heightCrouch	=	factory.CrouchingHeight;
-			heightStanding	=	factory.Height;
-			offsetCrouch	=	Vector3.Up * heightCrouch / 2;
-			offsetStanding	=	Vector3.Up * heightStanding / 2;
-
-
-			var pos = MathConverter.Convert( entity.Position + offsetStanding );
-
-			controller = new CharacterController( pos, 
-					factory.Height				, 
-					factory.CrouchingHeight		,
-					0.35f, // prone height
-					factory.Radius				,
-					factory.Margin				, 
-					factory.Mass				,
-					factory.MaximumTractionSlope, 
-					factory.MaximumSupportSlope	, 
-					factory.StandingSpeed		,
-					factory.CrouchingSpeed		,
-					1.0f, // prone speed
-					factory.TractionForce		, 
-					factory.SlidingSpeed		,
-					factory.SlidingForce		,
-					factory.AirSpeed			,
-					factory.AirForce			, 
-					factory.JumpSpeed			, 
-					factory.SlidingJumpSpeed	,
-					factory.MaximumGlueForce	);
-
-
-			controller.StepManager.MaximumStepHeight	=	factory.MaxStepHeight;
-			controller.Body.Tag	=	entity;
-			controller.Tag		=	entity;
-
-			space.Add( controller );
-
-			entity.State		|=	EntityState.PrimaryWeapon;
+			entity.State	|=	EntityState.PrimaryWeapon;
 
 			Weapon1		=	WeaponType.Plasmagun;
 			Weapon2		=	WeaponType.GaussRifle;
@@ -90,31 +47,6 @@ namespace IronStar.Entities {
 			WeaponAmmo2	=	30000;
 		}
 
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public virtual Vector3 GetPOV ()
-		{
-			return Entity.Position + Vector3.Up * (IsCrouching ? 0.8f : 1.8f);
-		}
-
-
-
-		bool IsCrouching {
-			get {
-				return controller.StanceManager.CurrentStance == Stance.Crouching;
-			}
-		}
-
-
-
-		Vector3 GetPovOffset ()
-		{
-			return IsCrouching ? offsetCrouch : offsetStanding;
-		}
 
 
 		/// <summary>
@@ -128,60 +60,14 @@ namespace IronStar.Entities {
 		/// <param name="damageType"></param>
 		public override bool Damage ( uint targetID, uint attackerID, short damage, Vector3 kickImpulse, Vector3 kickPoint, DamageType damageType )
 		{
-			if (damage<=0) {
-				return false;
-			}
-
 			var c = controller;
 			var e = Entity;
 
-			c.SupportFinder.ClearSupportData();
-			var i = MathConverter.Convert( kickImpulse );
-			var p = MathConverter.Convert( kickPoint );
-			c.Body.ApplyImpulse( p, i );
+			int penetration;
 
-			/**************************************************
-			 * 
-			 *	1. Accumulate damage and emit FX according to 
-			 *	maximum inflicted damage.
-			 *	Probably we have to add new controller stage 
-			 *	for FX processing (e.g. Update and UpdateFX).
-			 *	
-			 *	2. Do not scream at each damage. 
-			 *	Screams should not overlap!
-			 * 
-			**************************************************/
-
-			//
-			//	calc health :
-			//
-			var health	=	Health;
-			health -= damage;
-
-			var dir = kickImpulse.Normalized();
-
-			if (health>75) {
-				World.SpawnFX("PlayerPain25", targetID, kickPoint, dir );
-			} else
-			if (health>50) {
-				World.SpawnFX("PlayerPain50", targetID, kickPoint, dir );
-			} else
-			if (health>25) {
-				World.SpawnFX("PlayerPain75", targetID, kickPoint, dir );
-			} else
-			if (health>0) {
-				World.SpawnFX("PlayerPain100", targetID, kickPoint, dir );
-			} else
-			if (health>-25) {
-				World.SpawnFX("PlayerDeath", targetID, e.Position, dir );
-			} else {
-				World.SpawnFX("PlayerDeathMeat", targetID, e.Position, kickImpulse, dir );
-			}
-
-			if (health<=0) {
-				World.Kill( targetID );
-				return true;
-			}
+			controller.Damage( kickImpulse, kickPoint );
+			armor.Damage( damage, out penetration );
+			health.Damage( penetration );
 
 			return false;
 		}
@@ -194,80 +80,11 @@ namespace IronStar.Entities {
 		/// <param name="gameTime"></param>
 		public override void Update ( float elapsedTime )
 		{
-			var c = controller;
-			var e = Entity;
+			controller.Update( elapsedTime );
+			armor.Update( elapsedTime );
+			health.Update( elapsedTime );
 
 			UpdateWeaponState( Entity, (short)(elapsedTime*1000) );
-			UpdatePlayerState();
-
-			e.Position			=	MathConverter.Convert( c.Body.Position ) - GetPovOffset(); 
-			e.LinearVelocity	=	MathConverter.Convert( c.Body.LinearVelocity );
-			e.AngularVelocity	=	MathConverter.Convert( c.Body.AngularVelocity );
-
-			if (c.SupportFinder.HasTraction) {
-				e.State |= EntityState.HasTraction;
-			} else {
-				e.State &= ~EntityState.HasTraction;
-			}
-
-			if (c.StanceManager.CurrentStance==Stance.Crouching) {
-				e.State |= EntityState.Crouching;
-			} else {
-				e.State &= ~EntityState.Crouching;
-			}
-
-
-			UpdateWalkSFX( e, elapsedTime );
-			UpdateFallSFX( e, elapsedTime );
-			//UpdateJumpSFX( e, elapsedTime );
-		}
-
-
-
-		void UpdateWalkSFX ( Entity e, float elapsedTime )
-		{					
-			//stepCounter -= elapsedTime;
-			//if (stepCounter<=0) {
-			//	stepCounter = StepRate;
-			//	rlStep = !rlStep;
-
-			//	bool step	=	e.UserCtrlFlags.HasFlag( UserCtrlFlags.Forward )
-			//				|	e.UserCtrlFlags.HasFlag( UserCtrlFlags.Backward )
-			//				|	e.UserCtrlFlags.HasFlag( UserCtrlFlags.StrafeLeft )
-			//				|	e.UserCtrlFlags.HasFlag( UserCtrlFlags.StrafeRight );
-
-			//	if (step && controller.SupportFinder.HasTraction) {
-			//		if (rlStep) {
-			//			World.SpawnFX("PlayerFootStepR", e.ID, e.Position );
-			//		} else {
-			//			World.SpawnFX("PlayerFootStepL", e.ID, e.Position );
-			//		}
-			//	}
-			//}
-		}
-
-
-
-		void UpdateFallSFX ( Entity e, float elapsedTime )
-		{
-			//bool newTraction = controller.SupportFinder.HasTraction;
-			
-			//if (oldTraction!=newTraction && newTraction) {
-			//	//if (((ShooterServer)World.GameServer).ShowFallings) {
-			//	//	Log.Verbose("{0} falls : {1}", e.ID, oldVelocity.Y );
-			//	//}
-
-			//	if (oldVelocity.Y<-10) {
-			//		//	medium landing :
-			//		World.SpawnFX( "PlayerLanding", e.ID, e.Position, oldVelocity, Quaternion.Identity );
-			//	} else {
-			//		//	light landing :
-			//		World.SpawnFX( "PlayerFootStepL", e.ID, e.Position );
-			//	}
-			//}
-
-			//oldTraction = newTraction;
-			//oldVelocity = MathConverter.Convert(controller.Body.LinearVelocity);
 		}
 
 
@@ -278,7 +95,7 @@ namespace IronStar.Entities {
 		/// <param name="id"></param>
 		public override void Killed ()
 		{
-			space.Remove( controller );
+			controller.Killed();
 		}
 
 
@@ -303,26 +120,7 @@ namespace IronStar.Entities {
 		/// <param name="moveVector"></param>
 		public override void Move( float forward, float right, float up )
 		{
-			var ent		=	Entity;
-			var m		=	Matrix.RotationQuaternion( ent.Rotation );
-
-			var move	=	Vector3.Zero;
-			var jump	=	up >  0.5f;
-			var crouch	=	up < -0.5f;
-
-			move		+=	m.Forward * forward;
-			move		+=	m.Right * right;
-
-			if (controller==null) {
-				return;
-			}
-
-			controller.HorizontalMotionConstraint.MovementDirection = new BEPUutilities.Vector2( move.X, -move.Z );
-			controller.HorizontalMotionConstraint.TargetSpeed	=	8.0f;
-
-			controller.StanceManager.DesiredStance	=	crouch ? Stance.Crouching : Stance.Standing;
-
-			controller.TryToJump = jump;
+			controller.Move( forward, right, up );
 		}
 	}
 }

@@ -43,7 +43,7 @@ namespace IronStar {
 		public bool Ready;
 
 
-		float respawnTime = 9999;
+		float respawnTime = 0;
 
 
 		public Entity PlayerEntity { get; private set; }

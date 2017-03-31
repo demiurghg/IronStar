@@ -20,17 +20,29 @@ using Fusion.Core.IniParser.Model;
 
 
 namespace IronStar.Entities {
-	public class CharacterArmor {
+
+	public enum PainLevel {
+		NoPain,
+		LightPain,
+		MediumPain,
+		SeverePain,
+		Death,
+		Shreds,
+	}
+
+
+
+	public class CharacterHealth {
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public int Armor { get; private set; }
+		public int Health { get; private set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public int MaxArmor { get; private set; }
+		public int MaxHealth { get; private set; }
 
 
 		/// <summary>
@@ -38,10 +50,10 @@ namespace IronStar.Entities {
 		/// </summary>
 		/// <param name="initialHealth"></param>
 		/// <param name="maxHealth"></param>
-		public CharacterArmor ( CharacterFactory factory )
+		public CharacterHealth ( CharacterFactory factory )
 		{
-			this.Armor		=	factory.MaxArmor;
-			this.MaxArmor	=	factory.MaxArmor;
+			this.Health		=	factory.MaxHealth;
+			this.MaxHealth	=	factory.MaxHealth;
 		}
 
 
@@ -49,9 +61,9 @@ namespace IronStar.Entities {
 		/// 
 		/// </summary>
 		/// <param name="damage"></param>
-		public void Damage ( int damage, out int armorPenetrationDamage )
+		public PainLevel Damage ( int damage )
 		{
-			armorPenetrationDamage = 0;
+			return PainLevel.NoPain;
 		}
 
 

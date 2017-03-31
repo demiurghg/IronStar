@@ -59,9 +59,6 @@ namespace IronStar.Core {
 		public SFX.FXPlayback	FXPlayback   { get { return fxPlayback; } }
 		public PhysicsManager	Physics		{ get { return physics; } }
 
-		readonly PlayerView playerView = new PlayerView();
-		public PlayerView PlayerView { get { return playerView; } }
-
 
 		public struct Environment {
 			public Vector3 SunDirection;
@@ -481,15 +478,7 @@ namespace IronStar.Core {
 		/// <param name="writer"></param>
 		public virtual void WriteToSnapshot ( Guid clientGuid, Stream stream )
 		{
-			var playerState = GetEntities()
-				.Where( e1 => e1.UserGuid==clientGuid )
-				.Where( e2 => e2.Controller is Character )
-				.Select( e3 => (e3.Controller as Character).PlayerState )
-				.FirstOrDefault();	
-
-			playerState = playerState ?? PlayerView.NullState;
-
-			snapshotWriter.Write( stream, ref environment, playerState, entities, fxEvents );
+			snapshotWriter.Write( stream, ref environment, entities, fxEvents );
 		}
 
 
@@ -501,7 +490,7 @@ namespace IronStar.Core {
 		public virtual void ReadFromSnapshot ( Stream stream, float lerpFactor )
 		{
 			snapshotReader.Read( 
-				stream, ref environment, playerView, entities, 
+				stream, ref environment, entities, 
 				fxe => fxPlayback?.RunFX(fxe,false), 
 				ent => EntitySpawned?.Invoke( this, new EntityEventArgs(ent)),
 				id  => KillImmediatly(id) 

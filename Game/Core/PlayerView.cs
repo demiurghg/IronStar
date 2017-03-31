@@ -8,6 +8,7 @@ using Fusion;
 using Fusion.Core;
 using Fusion.Core.Content;
 using Fusion.Core.Mathematics;
+using Fusion.Core.Extensions;
 using Fusion.Engine.Common;
 using Fusion.Engine.Input;
 using Fusion.Engine.Client;
@@ -22,10 +23,6 @@ namespace IronStar {
 	public class PlayerView : IStorable{
 
 		public readonly static PlayerView NullState = new PlayerView();
-
-		public float		Yaw;
-		public float		Pitch;
-		public float		Roll;
 
 		public short		Health		;
 		public short		Armor		;
@@ -73,9 +70,6 @@ namespace IronStar {
 		/// <param name="writer"></param>
 		public void Write ( BinaryWriter writer )
 		{
-			writer.Write( Yaw );
-			writer.Write( Pitch );
-			writer.Write( Roll );
 			writer.Write( Health		);
 			writer.Write( Armor			);
 			writer.Write( ViewModel		);
@@ -95,9 +89,6 @@ namespace IronStar {
 		/// <param name="writer"></param>
 		public void Read ( BinaryReader reader, float lerpFactor )
 		{
-			Yaw			=	reader.ReadSingle();
-			Pitch		=	reader.ReadSingle();
-			Roll		=	reader.ReadSingle();
 			Health		=	reader.ReadInt16();
 			Armor		=	reader.ReadInt16();
 			ViewModel	=	reader.ReadInt16();

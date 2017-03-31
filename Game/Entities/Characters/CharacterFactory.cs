@@ -31,6 +31,9 @@ namespace IronStar.Entities {
 		[Category("General")]
 		public int MaxHealth { get; set; } = 100;
 
+		[Category("General")]
+		public int MaxArmor { get; set; } = 100;
+
 
 		[Category("Character Controller")]
 		public float Height					{ get; set; } = 1.70f	;

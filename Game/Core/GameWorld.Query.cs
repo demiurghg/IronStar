@@ -104,7 +104,7 @@ namespace IronStar.Core {
 
 			foreach ( var ent in GetEntities().Where( e=>e.Controller.AllowUse ) ) {
 				
-				var from	=	character.GetPOV();
+				var from	=	user.PointOfView;
 				var dir		=	Matrix.RotationQuaternion( user.Rotation ).Forward;
 				var to		=	from + dir * 2.0f;
 

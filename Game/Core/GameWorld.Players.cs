@@ -43,8 +43,7 @@ namespace IronStar.Core {
 		{
 			return GetEntities()
 				.Where( e1 => e1.UserGuid==guid )
-				.Where( e2 => e2.Controller is Character )
-				.SingleOrDefault();
+				.LastOrDefault();
 		}
 
 

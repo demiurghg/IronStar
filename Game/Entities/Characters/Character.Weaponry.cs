@@ -160,7 +160,7 @@ namespace IronStar.Entities {
 		{
 			var c = e.Controller as Character;
 			var m = Matrix.RotationQuaternion(e.Rotation);
-			return c.GetPOV() + m.Right * 0.1f + m.Down * 0.1f + m.Forward * 0.3f;
+			return e.PointOfView + m.Right * 0.1f + m.Down * 0.1f + m.Forward * 0.3f;
 		}
 
 
@@ -321,7 +321,7 @@ namespace IronStar.Entities {
 			var direction	=	view.Forward;
 			var origin		=	AttackPos( attacker );
 
-			this.controller.Body.ApplyImpulse( controller.Body.Position, MathConverter.Convert( view.Backward * impulse / 2 ) );
+			world.InflictDamage( attacker, 0, 0, view.Backward * impulse, origin, DamageType.RailHit );
 
 			if (world.RayCastAgainstAll( origin, origin + direction * 200, out n, out p, out e, attacker )) {
 

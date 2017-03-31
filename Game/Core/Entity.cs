@@ -57,6 +57,11 @@ namespace IronStar.Core {
 		public byte TeleportCount;
 
 		/// <summary>
+		/// Point-of-view vertical offset
+		/// </summary>
+		public float PovHeight = 0;
+
+		/// <summary>
 		/// Entity position
 		/// </summary>
 		public Vector3 Position;
@@ -300,6 +305,7 @@ namespace IronStar.Core {
 			writer.Write( Rotation );
 			writer.Write( LinearVelocity );
 			writer.Write( AngularVelocity );
+			writer.Write( PovHeight );
 
 			writer.Write( AnimFrame );
 			writer.Write( Model );
@@ -335,6 +341,7 @@ namespace IronStar.Core {
 			Rotation		=	reader.Read<Quaternion>();	
 			LinearVelocity	=	reader.Read<Vector3>();
 			AngularVelocity	=	reader.Read<Vector3>();	
+			PovHeight		=	reader.Read<float>();
 
 			AnimFrame		=	reader.ReadSingle();
 			Model			=	reader.ReadInt16();
@@ -384,6 +391,24 @@ namespace IronStar.Core {
 		{
 			//return Position;
 			return Vector3.Lerp( PositionOld, Position, MathUtil.Clamp(lerpFactor,0,2f) );
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="lerpFactor"></param>
+		/// <returns></returns>
+		public Vector3 GetPOV ( float lerpFactor )
+		{
+			return	LerpPosition( lerpFactor ) + Vector3.Up * PovHeight;
+		}
+
+
+		public Vector3 PointOfView {
+			get {
+				return	Position + Vector3.Up * PovHeight;
+			}
 		}
 
 

@@ -136,6 +136,8 @@
     <Compile Include="Entities\FuncDoor.cs" />
     <Compile Include="Entities\FuncFX.cs" />
     <Compile Include="Entities\GrenadeFactory.cs" />
+    <Compile Include="Entities\ItemFactory.cs" />
+    <Compile Include="Entities\Item.cs" />
     <Compile Include="Entities\NullFactory.cs" />
     <Compile Include="Entities\Grenade.cs" />
     <Compile Include="Entities\ProjectileFactory.cs" />

@@ -9,12 +9,12 @@ FBXHeaderExtension:  {
 	CreationTimeStamp:  {
 		Version: 1000
 		Year: 2017
-		Month: 3
-		Day: 18
-		Hour: 12
-		Minute: 22
-		Second: 43
-		Millisecond: 424
+		Month: 4
+		Day: 1
+		Hour: 16
+		Minute: 58
+		Second: 26
+		Millisecond: 874
 	}
 	Creator: "FBX SDK/FBX Plugins version 2017.1"
 	SceneInfo: "SceneInfo::GlobalInfo", "UserData" {
@@ -36,13 +36,13 @@ FBXHeaderExtension:  {
 			P: "Original|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "Original|ApplicationName", "KString", "", "", "Maya LT"
 			P: "Original|ApplicationVersion", "KString", "", "", "2017"
-			P: "Original|DateTime_GMT", "DateTime", "", "", "18/03/2017 09:22:43.421"
+			P: "Original|DateTime_GMT", "DateTime", "", "", "01/04/2017 13:58:26.873"
 			P: "Original|FileName", "KString", "", "", "E:\GITHUB\IronStar\Content\scenes\q3t5.fbx"
 			P: "LastSaved", "Compound", "", ""
 			P: "LastSaved|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "LastSaved|ApplicationName", "KString", "", "", "Maya LT"
 			P: "LastSaved|ApplicationVersion", "KString", "", "", "2017"
-			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "18/03/2017 09:22:43.421"
+			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "01/04/2017 13:58:26.873"
 			P: "Original|ApplicationActiveProject", "KString", "", "", "E:\GITHUB\IronStar\Content\scenes"
 			P: "Original|ApplicationNativeFile", "KString", "", "", "E:\GITHUB\IronStar\Content\scenes\q3t5.mlt"
 		}
@@ -79,7 +79,7 @@ GlobalSettings:  {
 
 Documents:  {
 	Count: 1
-	Document: 219872623856, "", "Scene" {
+	Document: 161158708976, "", "Scene" {
 		Properties70:  {
 			P: "SourceObject", "object", "", ""
 			P: "ActiveAnimStackName", "KString", "", "", "Take 001"
@@ -99,7 +99,7 @@ References:  {
 
 Definitions:  {
 	Version: 100
-	Count: 44
+	Count: 41
 	ObjectType: "GlobalSettings" {
 		Count: 1
 	}
@@ -145,7 +145,7 @@ Definitions:  {
 		}
 	}
 	ObjectType: "Material" {
-		Count: 3
+		Count: 2
 		PropertyTemplate: "FbxSurfacePhong" {
 			Properties70:  {
 				P: "ShadingModel", "KString", "", "", "Phong"
@@ -170,29 +170,6 @@ Definitions:  {
 				P: "ShininessExponent", "Number", "", "A",20
 				P: "ReflectionColor", "Color", "", "A",0,0,0
 				P: "ReflectionFactor", "Number", "", "A",1
-			}
-		}
-	}
-	ObjectType: "Texture" {
-		Count: 1
-		PropertyTemplate: "FbxFileTexture" {
-			Properties70:  {
-				P: "TextureTypeUse", "enum", "", "",0
-				P: "Texture alpha", "Number", "", "A",1
-				P: "CurrentMappingType", "enum", "", "",0
-				P: "WrapModeU", "enum", "", "",0
-				P: "WrapModeV", "enum", "", "",0
-				P: "UVSwap", "bool", "", "",0
-				P: "PremultiplyAlpha", "bool", "", "",1
-				P: "Translation", "Vector", "", "A",0,0,0
-				P: "Rotation", "Vector", "", "A",0,0,0
-				P: "Scaling", "Vector", "", "A",1,1,1
-				P: "TextureRotationPivot", "Vector3D", "Vector", "",0,0,0
-				P: "TextureScalingPivot", "Vector3D", "Vector", "",0,0,0
-				P: "CurrentTextureBlendMode", "enum", "", "",1
-				P: "UVSet", "KString", "", "", "default"
-				P: "UseMaterial", "bool", "", "",0
-				P: "UseMipMap", "bool", "", "",0
 			}
 		}
 	}
@@ -295,35 +272,13 @@ Definitions:  {
 			}
 		}
 	}
-	ObjectType: "Video" {
-		Count: 1
-		PropertyTemplate: "FbxVideo" {
-			Properties70:  {
-				P: "ImageSequence", "bool", "", "",0
-				P: "ImageSequenceOffset", "int", "Integer", "",0
-				P: "FrameRate", "double", "Number", "",0
-				P: "LastFrame", "int", "Integer", "",0
-				P: "Width", "int", "Integer", "",0
-				P: "Height", "int", "Integer", "",0
-				P: "Path", "KString", "XRefUrl", "", ""
-				P: "StartFrame", "int", "Integer", "",0
-				P: "StopFrame", "int", "Integer", "",0
-				P: "PlaySpeed", "double", "Number", "",0
-				P: "Offset", "KTime", "Time", "",0
-				P: "InterlaceMode", "enum", "", "",0
-				P: "FreeRunning", "bool", "", "",0
-				P: "Loop", "bool", "", "",0
-				P: "AccessMode", "enum", "", "",0
-			}
-		}
-	}
 }
 
 ; Object properties
 ;------------------------------------------------------------------
 
 Objects:  {
-	Geometry: 219739011216, "Geometry::", "Mesh" {
+	Geometry: 161100524176, "Geometry::", "Mesh" {
 		Vertices: *414 {
 			a: 22,4.44089209850063e-015,-20,-5,4.44089209850063e-015,-20,-5,0,-15.9999990463257,-20,2,-16,22,-1.18896913663255e-015,6,18,0,6,-20,-1.68156157062476e-015,4,-13,-4.44089209850063e-015,20,-13,0,4,-5,4,-20,22,4,-20,-5,4,-15.9999990463257,-20,4,-16,22,4,6,18,4,6,18,4,20,-20,4,4,-13,4,20,-13,4,4,-7,4,-22,24,4,-22,-7,4,-18,-22,4,-18,24,4,8,20,4,8,20,4,22,-22,4,6,-15,4,22,-15,4,6,-7,0,-22,24,0,-22,-7,0,-18,-22,0,-18,24,0,8,20,0,8,20,0,22,-22,0,6,-15,0,22,-15,0,6,-5,8,-20,22,8,-20,24,8,-22,-7,8,-22,-5,8,-15.9999990463257,-7,8,-18,-20,8,-16,-22,8,-18,22,8,6,24,8,8,18,8,6,20,8,8,18,8,20,20,8,22,-20,8,4,-22,8,6,-13,8,20,-15,8,22,-13,8,4,-15,8,6,-20,6.98409052318153e-016,-6,-5,0,-12,-16,0,-12,-16,-1.4791141972894e-031,-6,-16,2,-16,-10,4,-16,-10,0,-12,-20,2,-12,-20,4,-6,-10,4,-12,-5,4,-12,-16,2,-12,-10,8,-15.9999990463257,-10,8,-18,-10,4,-18,-10,0,-18,-16,8,-18,-16,8,-15.9999990463257,-16,4,-16,-20,8,-12,-20,4,-12,-22,8,-6,-20,8,-6,-22,8,-12,-22,4,-12,-22,0,-12,-22,4,-6,-22,0,-6,14,0,6,10,8,22,14,8,22,10,8,20,14,8,20,10,4,20,14,4,20,10,-4.44089209850063e-015,20,14,-3.11369142004091e-015,16,10,0,16,14,4,22,14,0,22,10,4,22,10,0,22,14,4,6,20,0,16,20,4,16,20,8,16,18,8,16,18,4,16,14,4,16,10,4,16,24,0,-16,24,4,-16,24,8,-16,22,8,-16,22,4,-16,22,3.10812387247861e-015,-16,22,2.15011690363979e-015,-12,22,4,-12,22,8,-12,24,8,-12,24,4,-12,24,0,-12,18,2.57770082947965e-015,-16,18,1.78102992017025e-015,-12,6,1.57824642094931e-015,-16,6,1.03863614096708e-015,-12,14,1.54582252912401e-015,-12,14,2.24458055901643e-015,-16,18,1.05098926946983e-015,-3,14,8.41278364229332e-016,-3,6,4,-16,6,4,-12,14,4,-12,14,4,-16,18,4,-12,18,4,-16,14,4,-3,18,4,-3,1.5504355430603,0,5.07781028747559
 		} 
@@ -372,10 +327,10 @@ Objects:  {
 		LayerElementMaterial: 0 {
 			Version: 101
 			Name: ""
-			MappingInformationType: "ByPolygon"
+			MappingInformationType: "AllSame"
 			ReferenceInformationType: "IndexToDirect"
-			Materials: *191 {
-				a: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1
+			Materials: *1 {
+				a: 0
 			} 
 		}
 		Layer: 0 {
@@ -394,7 +349,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 219739006608, "Geometry::", "Mesh" {
+	Geometry: 161100518544, "Geometry::", "Mesh" {
 		Vertices: *60 {
 			a: -1,-4,1,1,-4,1,-1,4,1,1,4,1,-1,4,-1,1,4,-1,-1,-4,-1,1,-4,-1,-1,-4,5,1,-4,5,1,4,5,-1,4,5,5,-4,-1,5,-4,1,5,4,-1,5,4,1,-1,8,1,1,8,1,1,8,-1,-1,8,-1
 		} 
@@ -455,7 +410,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 219739012752, "Geometry::", "Mesh" {
+	Geometry: 161100521616, "Geometry::", "Mesh" {
 		Vertices: *60 {
 			a: -1,-4,1,1,-4,1,-1,4,1,1,4,1,-1,4,-1,1,4,-1,-1,-4,-1,1,-4,-1,-1,-4,5,1,-4,5,1,4,5,-1,4,5,5,-4,-1,5,-4,1,5,4,-1,5,4,1,-1,8,1,1,8,1,1,8,-1,-1,8,-1
 		} 
@@ -516,7 +471,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 219739030672, "Geometry::", "Mesh" {
+	Geometry: 161100517520, "Geometry::", "Mesh" {
 		Vertices: *60 {
 			a: -1,-4,1,1,-4,1,-1,4,1,1,4,1,-1,4,-1,1,4,-1,-1,-4,-1,1,-4,-1,-1,-4,5,1,-4,5,1,4,5,-1,4,5,5,-4,-1,5,-4,1,5,4,-1,5,4,1,-1,8,1,1,8,1,1,8,-1,-1,8,-1
 		} 
@@ -577,7 +532,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 219739023504, "Geometry::", "Mesh" {
+	Geometry: 161100518032, "Geometry::", "Mesh" {
 		Vertices: *60 {
 			a: -1,-4,1,1,-4,1,-1,4,1,1,4,1,-1,4,-1,1,4,-1,-1,-4,-1,1,-4,-1,-1,-4,5,1,-4,5,1,4,5,-1,4,5,5,-4,-1,5,-4,1,5,4,-1,5,4,1,-1,8,1,1,8,1,1,8,-1,-1,8,-1
 		} 
@@ -638,22 +593,22 @@ Objects:  {
 			}
 		}
 	}
-	NodeAttribute: 219197493120, "NodeAttribute::", "Null" {
+	NodeAttribute: 166990849136, "NodeAttribute::", "Null" {
 		TypeFlags: "Null"
 	}
-	NodeAttribute: 219197402832, "NodeAttribute::", "Null" {
+	NodeAttribute: 166990850368, "NodeAttribute::", "Null" {
 		TypeFlags: "Null"
 	}
-	NodeAttribute: 219197404944, "NodeAttribute::", "Null" {
+	NodeAttribute: 166990852128, "NodeAttribute::", "Null" {
 		TypeFlags: "Null"
 	}
-	NodeAttribute: 219197430112, "NodeAttribute::", "Null" {
+	NodeAttribute: 166990848256, "NodeAttribute::", "Null" {
 		TypeFlags: "Null"
 	}
-	NodeAttribute: 219197424128, "NodeAttribute::", "Null" {
+	NodeAttribute: 166990846320, "NodeAttribute::", "Null" {
 		TypeFlags: "Null"
 	}
-	Geometry: 219739029648, "Geometry::", "Mesh" {
+	Geometry: 161102107392, "Geometry::", "Mesh" {
 		Vertices: *24 {
 			a: -5.5,-0.25,1.5,5.5,-0.25,1.5,-5.5,0.25,1.5,5.5,0.25,1.5,-5.5,0.25,-1.5,5.5,0.25,-1.5,-5.5,-0.25,-1.5,5.5,-0.25,-1.5
 		} 
@@ -713,7 +668,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 219739027600, "Geometry::", "Mesh" {
+	Geometry: 161102106368, "Geometry::", "Mesh" {
 		Vertices: *24 {
 			a: -4.5,-0.25,1.5,4.5,-0.25,1.5,-4.5,0.25,1.5,4.5,0.25,1.5,-4.5,0.25,-1.5,4.5,0.25,-1.5,-4.5,-0.25,-1.5,4.5,-0.25,-1.5
 		} 
@@ -773,7 +728,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 219739025552, "Geometry::", "Mesh" {
+	Geometry: 161102105856, "Geometry::", "Mesh" {
 		Vertices: *24 {
 			a: -8.5,-0.5,8.5,8.5,-0.5,8.5,-7.5,0.5,7.5,7.5,0.5,7.5,-7.5,0.5,-7.5,7.5,0.5,-7.5,-8.5,-0.5,-8.5,8.5,-0.5,-8.5
 		} 
@@ -833,7 +788,7 @@ Objects:  {
 			}
 		}
 	}
-	NodeAttribute: 219879676720, "NodeAttribute::camera1", "Camera" {
+	NodeAttribute: 162278728240, "NodeAttribute::camera1", "Camera" {
 		Properties70:  {
 			P: "Position", "Vector", "", "A",22.0169677734375,18.7546100616455,-20.3608303070068
 			P: "UpVector", "Vector", "", "A",-0.445982197991312,0.770513242775924,0.455422026017372
@@ -862,7 +817,7 @@ Objects:  {
 		AudioColor: 0,1,0
 		CameraOrthoZoom: 1
 	}
-	Geometry: 219739014800, "Geometry::", "Mesh" {
+	Geometry: 161102107904, "Geometry::", "Mesh" {
 		Vertices: *126 {
 			a: 0.285317152738571,-0.899999976158142,-0.0927051603794098,0.242705270648003,-0.899999976158142,-0.176335692405701,0.176335692405701,-0.899999976158142,-0.242705255746841,0.0927051454782486,-0.899999976158142,-0.285317122936249,0,-0.899999976158142,-0.300000160932541,-0.0927051454782486,-0.899999976158142,-0.285317093133926,-0.176335647702217,-0.899999976158142,-0.242705196142197,-0.242705181241035,-0.899999976158142,-0.176335632801056,-0.285317033529282,-0.899999976158142,-0.0927051231265068,-0.300000071525574,-0.899999976158142,0,-0.285317033529282,-0.899999976158142,0.0927051231265068,-0.242705166339874,-0.899999976158142,0.176335617899895,-0.176335617899895,-0.899999976158142,0.242705151438713,-0.0927051231265068,-0.899999976158142,0.285317003726959,-8.94069707157996e-009,-0.899999976158142,0.300000041723251,0.0927050933241844,-0.899999976158142,0.285317003726959,0.176335573196411,-0.899999976158142,0.242705121636391,0.242705106735229,-0.899999976158142,0.176335602998734,0.285316973924637,-0.899999976158142,0.092705100774765,0.300000011920929,-0.899999976158142,0,0.285317152738571,0.899999976158142,-0.0927051603794098,0.242705270648003,0.899999976158142,-0.176335692405701,0.176335692405701,0.899999976158142,-0.242705255746841,0.0927051454782486,0.899999976158142,-0.285317122936249,0,0.899999976158142,-0.300000160932541,-0.0927051454782486,0.899999976158142,-0.285317093133926,-0.176335647702217,0.899999976158142,-0.242705196142197,-0.242705181241035,0.899999976158142,-0.176335632801056,-0.285317033529282,0.899999976158142,-0.0927051231265068,-0.300000071525574,0.899999976158142,0,-0.285317033529282,0.899999976158142,0.0927051231265068,-0.242705166339874,0.899999976158142,0.176335617899895,-0.176335617899895,0.899999976158142,0.242705151438713,-0.0927051231265068,0.899999976158142,0.285317003726959,-8.94069707157996e-009,0.899999976158142,0.300000041723251,0.0927050933241844,0.899999976158142,0.285317003726959,0.176335573196411,0.899999976158142,0.242705121636391,0.242705106735229,0.899999976158142,0.176335602998734,
 0.285316973924637,0.899999976158142,0.092705100774765,0.300000011920929,0.899999976158142,0,0,-0.899999976158142,0,0,0.899999976158142,0
@@ -926,7 +881,7 @@ Objects:  {
 			}
 		}
 	}
-	NodeAttribute: 219879663168, "NodeAttribute::camera2", "Camera" {
+	NodeAttribute: 162278722432, "NodeAttribute::camera2", "Camera" {
 		Properties70:  {
 			P: "Position", "Vector", "", "A",-19,2.82756802485583,-10.3051738869407
 			P: "InterestPosition", "Vector", "", "A",-13.0941745689736,2.82756802485583,-8.45552492442996
@@ -954,7 +909,7 @@ Objects:  {
 		AudioColor: 0,1,0
 		CameraOrthoZoom: 1
 	}
-	Geometry: 219739032208, "Geometry::", "Mesh" {
+	Geometry: 161102103808, "Geometry::", "Mesh" {
 		Vertices: *24 {
 			a: -22,-24,22,24,-24,22,-22,24,22,24,24,22,-22,24,-22,24,24,-22,-22,-24,-22,24,-24,-22
 		} 
@@ -1014,7 +969,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 219917262320, "Model::theFailure:pPlane1", "Mesh" {
+	Model: 167330785936, "Model::theFailure:pPlane1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -1026,7 +981,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 219917257680, "Model::theFailure:pCube1", "Mesh" {
+	Model: 167330772016, "Model::theFailure:pCube1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -1039,7 +994,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 219917264640, "Model::theFailure:pCube2", "Mesh" {
+	Model: 167330781296, "Model::theFailure:pCube2", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -1053,7 +1008,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 219917250720, "Model::theFailure:pCube3", "Mesh" {
+	Model: 167330792896, "Model::theFailure:pCube3", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -1067,7 +1022,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 219917266960, "Model::theFailure:pCube4", "Mesh" {
+	Model: 167330790576, "Model::theFailure:pCube4", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -1081,7 +1036,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 219917253040, "Model::startPoint", "Null" {
+	Model: 167330795216, "Model::startPoint", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -1094,7 +1049,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 219917271600, "Model::startPoint1", "Null" {
+	Model: 167330799856, "Model::startPoint1", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -1106,7 +1061,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 219917283200, "Model::startPoint2", "Null" {
+	Model: 167330797536, "Model::startPoint2", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -1118,7 +1073,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 219917273920, "Model::startPoint3", "Null" {
+	Model: 167330788256, "Model::startPoint3", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -1130,7 +1085,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 219917276240, "Model::startPoint4", "Null" {
+	Model: 167330809136, "Model::startPoint4", "Null" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -1142,7 +1097,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 219917278560, "Model::theFailure:pCube6", "Mesh" {
+	Model: 167330802176, "Model::theFailure:pCube6", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -1155,7 +1110,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 219917269280, "Model::theFailure:pCube7", "Mesh" {
+	Model: 167330811456, "Model::theFailure:pCube7", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -1169,7 +1124,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 219917287840, "Model::theFailure:pCube8", "Mesh" {
+	Model: 167330804496, "Model::theFailure:pCube8", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -1182,7 +1137,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 219917292480, "Model::camera1", "Camera" {
+	Model: 167330806816, "Model::camera1", "Camera" {
 		Version: 232
 		Properties70:  {
 			P: "PostRotation", "Vector3D", "Vector", "",0,-90,0
@@ -1196,7 +1151,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 219917280880, "Model::pCylinder1", "Mesh" {
+	Model: 166989628096, "Model::pCylinder1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -1209,7 +1164,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 219917297120, "Model::camera2", "Camera" {
+	Model: 166989632736, "Model::camera2", "Camera" {
 		Version: 232
 		Properties70:  {
 			P: "RotationPivot", "Vector3D", "Vector", "",0,4.44089209850063e-016,0
@@ -1227,7 +1182,7 @@ Objects:  {
 		Shading: Y
 		Culling: "CullingOff"
 	}
-	Model: 219917299440, "Model::pCube1", "Mesh" {
+	Model: 166989648976, "Model::pCube1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationActive", "bool", "", "",1
@@ -1241,7 +1196,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Material: 219635182352, "Material::phong2", "" {
+	Material: 161107592304, "Material::phong1", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -1261,27 +1216,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 219635181872, "Material::phong3", "" {
-		Version: 102
-		ShadingModel: "phong"
-		MultiLayer: 0
-		Properties70:  {
-			P: "AmbientColor", "Color", "", "A",0,0,0
-			P: "DiffuseColor", "Color", "", "A",1,1,1
-			P: "DiffuseFactor", "Number", "", "A",0.800000011920929
-			P: "TransparencyFactor", "Number", "", "A",1
-			P: "SpecularColor", "Color", "", "A",0,0,0
-			P: "ReflectionFactor", "Number", "", "A",0.5
-			P: "Emissive", "Vector3D", "Vector", "",0,0,0
-			P: "Ambient", "Vector3D", "Vector", "",0,0,0
-			P: "Diffuse", "Vector3D", "Vector", "",0.800000011920929,0.800000011920929,0.800000011920929
-			P: "Specular", "Vector3D", "Vector", "",0,0,0
-			P: "Shininess", "double", "Number", "",20
-			P: "Opacity", "double", "Number", "",1
-			P: "Reflectivity", "double", "Number", "",0
-		}
-	}
-	Material: 219635180432, "Material::phong1", "" {
+	Material: 161107597584, "Material::phong2", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -1301,33 +1236,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Video: 219633666192, "Video::file1", "Clip" {
-		Type: "Clip"
-		Properties70:  {
-			P: "Path", "KString", "XRefUrl", "", "C:\GITHUB\ShooterDemo\Content\scenes\textures\floorHeavyA.tga"
-		}
-		UseMipMap: 0
-		Filename: "C:\GITHUB\ShooterDemo\Content\scenes\textures\floorHeavyA.tga"
-		RelativeFilename: "C:\GITHUB\ShooterDemo\Content\scenes\textures\floorHeavyA.tga"
-	}
-	Texture: 219635184272, "Texture::file1", "" {
-		Type: "TextureVideoClip"
-		Version: 202
-		TextureName: "Texture::file1"
-		Properties70:  {
-			P: "CurrentTextureBlendMode", "enum", "", "",0
-			P: "UVSet", "KString", "", "", "map1"
-			P: "UseMaterial", "bool", "", "",1
-		}
-		Media: "Video::file1"
-		FileName: "C:\GITHUB\ShooterDemo\Content\scenes\textures\floorHeavyA.tga"
-		RelativeFilename: "C:\GITHUB\ShooterDemo\Content\scenes\textures\floorHeavyA.tga"
-		ModelUVTranslation: 0,0
-		ModelUVScaling: 1,1
-		Texture_Alpha_Source: "None"
-		Cropping: 0,0,0,0
-	}
-	AnimationStack: 219744451408, "AnimStack::Take 001", "" {
+	AnimationStack: 167286778000, "AnimStack::Take 001", "" {
 		Properties70:  {
 			P: "LocalStart", "KTime", "Time", "",1539538600
 			P: "LocalStop", "KTime", "Time", "",46186158000
@@ -1335,14 +1244,14 @@ Objects:  {
 			P: "ReferenceStop", "KTime", "Time", "",46186158000
 		}
 	}
-	AnimationLayer: 219748009104, "AnimLayer::BaseLayer", "" {
+	AnimationLayer: 167165743888, "AnimLayer::BaseLayer", "" {
 	}
-	CollectionExclusive: 219738624096, "DisplayLayer::layer1", "DisplayLayer" {
+	CollectionExclusive: 167286070656, "DisplayLayer::layer1", "DisplayLayer" {
 		Properties70:  {
 			P: "Freeze", "bool", "", "",1
 		}
 	}
-	CollectionExclusive: 219738620640, "DisplayLayer::roomBounds", "DisplayLayer" {
+	CollectionExclusive: 167286069504, "DisplayLayer::roomBounds", "DisplayLayer" {
 		Properties70:  {
 			P: "Freeze", "bool", "", "",1
 		}
@@ -1355,154 +1264,145 @@ Objects:  {
 Connections:  {
 	
 	;Model::theFailure:pPlane1, Model::RootNode
-	C: "OO",219917262320,0
+	C: "OO",167330785936,0
 	
 	;Model::theFailure:pCube1, Model::RootNode
-	C: "OO",219917257680,0
+	C: "OO",167330772016,0
 	
 	;Model::theFailure:pCube2, Model::RootNode
-	C: "OO",219917264640,0
+	C: "OO",167330781296,0
 	
 	;Model::theFailure:pCube3, Model::RootNode
-	C: "OO",219917250720,0
+	C: "OO",167330792896,0
 	
 	;Model::theFailure:pCube4, Model::RootNode
-	C: "OO",219917266960,0
+	C: "OO",167330790576,0
 	
 	;Model::startPoint, Model::RootNode
-	C: "OO",219917253040,0
+	C: "OO",167330795216,0
 	
 	;Model::startPoint1, Model::RootNode
-	C: "OO",219917271600,0
+	C: "OO",167330799856,0
 	
 	;Model::startPoint2, Model::RootNode
-	C: "OO",219917283200,0
+	C: "OO",167330797536,0
 	
 	;Model::startPoint3, Model::RootNode
-	C: "OO",219917273920,0
+	C: "OO",167330788256,0
 	
 	;Model::startPoint4, Model::RootNode
-	C: "OO",219917276240,0
+	C: "OO",167330809136,0
 	
 	;Model::theFailure:pCube6, Model::RootNode
-	C: "OO",219917278560,0
+	C: "OO",167330802176,0
 	
 	;Model::theFailure:pCube7, Model::RootNode
-	C: "OO",219917269280,0
+	C: "OO",167330811456,0
 	
 	;Model::theFailure:pCube8, Model::RootNode
-	C: "OO",219917287840,0
+	C: "OO",167330804496,0
 	
 	;Model::camera1, Model::RootNode
-	C: "OO",219917292480,0
+	C: "OO",167330806816,0
 	
 	;Model::pCylinder1, Model::RootNode
-	C: "OO",219917280880,0
+	C: "OO",166989628096,0
 	
 	;Model::camera2, Model::RootNode
-	C: "OO",219917297120,0
+	C: "OO",166989632736,0
 	
 	;Model::pCube1, Model::RootNode
-	C: "OO",219917299440,0
+	C: "OO",166989648976,0
 	
 	;AnimLayer::BaseLayer, AnimStack::Take 001
-	C: "OO",219748009104,219744451408
-	
-	;Texture::file1, Material::phong3
-	C: "OP",219635184272,219635181872, "DiffuseColor"
-	
-	;Video::file1, Texture::file1
-	C: "OO",219633666192,219635184272
+	C: "OO",167165743888,167286778000
 	
 	;Geometry::, Model::theFailure:pPlane1
-	C: "OO",219739011216,219917262320
+	C: "OO",161100524176,167330785936
 	
-	;Material::phong2, Model::theFailure:pPlane1
-	C: "OO",219635182352,219917262320
-	
-	;Material::phong3, Model::theFailure:pPlane1
-	C: "OO",219635181872,219917262320
+	;Material::phong1, Model::theFailure:pPlane1
+	C: "OO",161107592304,167330785936
 	
 	;Geometry::, Model::theFailure:pCube1
-	C: "OO",219739006608,219917257680
+	C: "OO",161100518544,167330772016
 	
 	;Material::phong2, Model::theFailure:pCube1
-	C: "OO",219635182352,219917257680
+	C: "OO",161107597584,167330772016
 	
 	;Geometry::, Model::theFailure:pCube2
-	C: "OO",219739012752,219917264640
+	C: "OO",161100521616,167330781296
 	
 	;Material::phong2, Model::theFailure:pCube2
-	C: "OO",219635182352,219917264640
+	C: "OO",161107597584,167330781296
 	
 	;Geometry::, Model::theFailure:pCube3
-	C: "OO",219739030672,219917250720
+	C: "OO",161100517520,167330792896
 	
 	;Material::phong2, Model::theFailure:pCube3
-	C: "OO",219635182352,219917250720
+	C: "OO",161107597584,167330792896
 	
 	;Geometry::, Model::theFailure:pCube4
-	C: "OO",219739023504,219917266960
+	C: "OO",161100518032,167330790576
 	
 	;Material::phong2, Model::theFailure:pCube4
-	C: "OO",219635182352,219917266960
+	C: "OO",161107597584,167330790576
 	
 	;NodeAttribute::, Model::startPoint
-	C: "OO",219197493120,219917253040
+	C: "OO",166990849136,167330795216
 	
 	;NodeAttribute::, Model::startPoint1
-	C: "OO",219197402832,219917271600
+	C: "OO",166990850368,167330799856
 	
 	;NodeAttribute::, Model::startPoint2
-	C: "OO",219197404944,219917283200
+	C: "OO",166990852128,167330797536
 	
 	;NodeAttribute::, Model::startPoint3
-	C: "OO",219197430112,219917273920
+	C: "OO",166990848256,167330788256
 	
 	;NodeAttribute::, Model::startPoint4
-	C: "OO",219197424128,219917276240
+	C: "OO",166990846320,167330809136
 	
 	;Geometry::, Model::theFailure:pCube6
-	C: "OO",219739029648,219917278560
+	C: "OO",161102107392,167330802176
 	
 	;Material::phong2, Model::theFailure:pCube6
-	C: "OO",219635182352,219917278560
+	C: "OO",161107597584,167330802176
 	
 	;Geometry::, Model::theFailure:pCube7
-	C: "OO",219739027600,219917269280
+	C: "OO",161102106368,167330811456
 	
 	;Material::phong2, Model::theFailure:pCube7
-	C: "OO",219635182352,219917269280
+	C: "OO",161107597584,167330811456
 	
 	;Geometry::, Model::theFailure:pCube8
-	C: "OO",219739025552,219917287840
+	C: "OO",161102105856,167330804496
 	
 	;Material::phong2, Model::theFailure:pCube8
-	C: "OO",219635182352,219917287840
+	C: "OO",161107597584,167330804496
 	
 	;NodeAttribute::camera1, Model::camera1
-	C: "OO",219879676720,219917292480
+	C: "OO",162278728240,167330806816
 	
 	;Geometry::, Model::pCylinder1
-	C: "OO",219739014800,219917280880
+	C: "OO",161102107904,166989628096
 	
 	;Material::phong1, Model::pCylinder1
-	C: "OO",219635180432,219917280880
+	C: "OO",161107592304,166989628096
 	
 	;NodeAttribute::camera2, Model::camera2
-	C: "OO",219879663168,219917297120
+	C: "OO",162278722432,166989632736
 	
 	;Geometry::, Model::pCube1
-	C: "OO",219739032208,219917299440
+	C: "OO",161102103808,166989648976
 	
 	;Material::phong1, Model::pCube1
-	C: "OO",219635180432,219917299440
+	C: "OO",161107592304,166989648976
 	
 	;Model::camera2, DisplayLayer::layer1
-	C: "OO",219917297120,219738624096
+	C: "OO",166989632736,167286070656
 	
 	;Model::pCube1, DisplayLayer::roomBounds
-	C: "OO",219917299440,219738620640
+	C: "OO",166989648976,167286069504
 }
 ;Takes section
 ;----------------------------------------------------

@@ -194,6 +194,9 @@ namespace Fusion.Drivers.Graphics {
 				var pageY		=	(short)vaRaw.Y; 
 				var mipLevel	=	(short)vaRaw.Z; 
 				
+				if (mipLevel>=VTConfig.MipCount) {
+					continue;
+				}
 				feedbackData[i]	=	new VTAddress( pageX, pageY, mipLevel );
 
 			}

@@ -46,6 +46,30 @@ namespace IronStar.Core {
 	}
 
 
+	public enum ItemType : byte {
+		None,
+		
+		Health25,
+		Health50,
+		
+		Armor25,
+		Armor50,
+
+		AmmoMachingun,
+		AmmoShotgun,
+		AmmoPlasmagun,
+		AmmoGaussRifle,
+		AmmoRockets,
+		AmmoGrenades,
+
+		Machinegun,
+		Shotgun,
+		Plasmagun,
+		RocketLauncher,
+		GaussRifle,
+	}
+
+
 
 	public enum Inventory : byte {
 

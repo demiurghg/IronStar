@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ModelDescriptor xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ScenePath>scenes\ammo\ammoMachinegun.fbx</ScenePath>
+  <Scale>0.5</Scale>
+  <UseAnimation>false</UseAnimation>
+  <Color Red="10" Green="10" Blue="10" Alpha="1" />
+  <FPVEnable>false</FPVEnable>
+  <FPVTranslation X="0" Y="0" Z="0" />
+</ModelDescriptor>

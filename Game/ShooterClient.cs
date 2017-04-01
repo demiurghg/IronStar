@@ -86,8 +86,6 @@ namespace IronStar {
 
 			world.PresentWorld( gameTime.ElapsedSec, 1, camera );
 
-			game.RenderSystem.RenderWorld.Debug.DrawLine( new Vector3(10,2,10), new Vector3(-10,2,-10), Color.Red, Color.Blue, 4, 8 );
-
 			return UserCommand.GetBytes( userCommand );
 		}
 

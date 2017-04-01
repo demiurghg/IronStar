@@ -22,6 +22,15 @@ using Fusion.Core.IniParser.Model;
 namespace IronStar.Entities {
 	public class CharacterInventory {
 
+		public int Grenades { get; private set; }
+		public int Ammo1 { get; private set; }
+		public int Ammo2 { get; private set; }
+
+		public WeaponType Weapon1 { get; private set; }
+		public WeaponType Weapon2 { get; private set; }
+
+
+
 		/// <summary>
 		/// 
 		/// </summary>

@@ -69,7 +69,6 @@
     <Compile Include="Core\GameWorld.Atoms.cs" />
     <Compile Include="Core\GameWorld.AI.cs" />
     <Compile Include="Core\IStorable.cs" />
-    <Compile Include="Core\WeaponFactory.cs" />
     <Compile Include="Editor2\EditorConfig.cs" />
     <Compile Include="Editor2\EditorHud.cs" />
     <Compile Include="Editor2\MapEditor.Selection.cs" />
@@ -136,8 +135,6 @@
     <Compile Include="Entities\FuncDoor.cs" />
     <Compile Include="Entities\FuncFX.cs" />
     <Compile Include="Entities\GrenadeFactory.cs" />
-    <Compile Include="Entities\ItemFactory.cs" />
-    <Compile Include="Entities\Item.cs" />
     <Compile Include="Entities\NullFactory.cs" />
     <Compile Include="Entities\Grenade.cs" />
     <Compile Include="Entities\ProjectileFactory.cs" />
@@ -146,6 +143,8 @@
     <Compile Include="Entities\RigidBodyFactory.cs" />
     <Compile Include="Entities\ProxyFactory.cs" />
     <Compile Include="Entities\StartPoint.cs" />
+    <Compile Include="Items\WeaponFactory.cs" />
+    <Compile Include="Items\ItemFactory.cs" />
     <Compile Include="Mapping\LightPreset.cs" />
     <Compile Include="Mapping\Map.Build.cs" />
     <Compile Include="Mapping\MapDecal.cs" />

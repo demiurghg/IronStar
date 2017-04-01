@@ -74,5 +74,27 @@ namespace IronStar.Entities {
 		public void Update ( float elapsedTime )
 		{
 		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="amount"></param>
+		/// <param name="overflow"></param>
+		/// <returns></returns>
+		public bool GiveHealth ( int amount, bool overflow )
+		{
+			if (Health>=MaxHealth) {
+				return false;
+			}
+
+			Health += amount;
+
+			if (!overflow) {
+				Health = Math.Min( MaxHealth, Health );
+			}
+
+			return true;
+		}
 	}
 }

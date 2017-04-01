@@ -780,35 +780,5 @@
         <MaxInterval>1</MaxInterval>
       </Factory>
     </MapNode>
-    <MapNode xsi:type="MapEntity">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="12.5174494" Y="0.239385143" Z="-0.00132927089" />
-      <Rotation X="0.2763125" Y="-0.276310951" Z="0.6508866" W="-0.6508842" />
-      <Scaling>1</Scaling>
-      <Factory xsi:type="ProxyFactory">
-        <Classname>ammo_machinegun</Classname>
-      </Factory>
-    </MapNode>
-    <MapNode xsi:type="MapEntity">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="12.4939461" Y="0.239576548" Z="0.7598488" />
-      <Rotation X="0.504344642" Y="-0.5038516" Z="0.496126652" W="-0.495609045" />
-      <Scaling>1</Scaling>
-      <Factory xsi:type="ProxyFactory">
-        <Classname>ammo_machinegun</Classname>
-      </Factory>
-    </MapNode>
-    <MapNode xsi:type="MapEntity">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="13.4837914" Y="0.239384726" Z="0.9907995" />
-      <Rotation X="0.564754963" Y="-0.564754546" Z="0.425502151" W="-0.425502121" />
-      <Scaling>1</Scaling>
-      <Factory xsi:type="ProxyFactory">
-        <Classname>ammo_machinegun</Classname>
-      </Factory>
-    </MapNode>
   </Nodes>
 </Map>

@@ -17,6 +17,7 @@ using Fusion.Core.Extensions;
 using IronStar.Editors;
 using IronStar.Core;
 using Fusion.Build.Mapping;
+using IronStar.Items;
 
 namespace IronStar.Editors {
 	public partial class EditorForm : Form {
@@ -26,9 +27,10 @@ namespace IronStar.Editors {
 		ConfigEditorControl configEditor;
 		ObjectEditorControl	modelEditor;
 		ObjectEditorControl	entityEditor;
+		ObjectEditorControl	weaponEditor;
+		ObjectEditorControl	itemEditor;
 		ObjectEditorControl	fxEditor;
-		//ObjectEditorControl	decalEditor;
-		MapEditorControl		mapEditor;
+		MapEditorControl	mapEditor;
 		//VTEditor		vtEditor;
 		ObjectEditorControl	vtEditor;
 
@@ -43,21 +45,21 @@ namespace IronStar.Editors {
 			InitializeComponent();
 
 			configEditor	=	new ConfigEditorControl( game ) { Dock = DockStyle.Fill };
-			modelEditor		=	new ObjectEditorControl( game, "models", typeof(ModelDescriptor), "Model"  ) { Dock = DockStyle.Fill };
-			entityEditor	=	new ObjectEditorControl( game, "entities", typeof(EntityFactory), "Entity" ) { Dock = DockStyle.Fill };
-			fxEditor		=	new ObjectEditorControl( game, "fx", typeof(FXFactory), "FX" ) { Dock = DockStyle.Fill };
-			//decalEditor		=	new ObjectEditorControl( game, "decals", typeof(DecalFactory), "Decals" ) { Dock = DockStyle.Fill };
+			modelEditor		=	new ObjectEditorControl( game, "models",	typeof(ModelDescriptor), "Model"  ) { Dock = DockStyle.Fill };
+			entityEditor	=	new ObjectEditorControl( game, "entities",	typeof(EntityFactory), "Entity" ) { Dock = DockStyle.Fill };
+			weaponEditor	=	new ObjectEditorControl( game, "weapon",	typeof(WeaponFactory), "Weapon" ) { Dock = DockStyle.Fill };
+			itemEditor		=	new ObjectEditorControl( game, "items",		typeof(ItemFactory), "Items" ) { Dock = DockStyle.Fill };
+			fxEditor		=	new ObjectEditorControl( game, "fx",		typeof(FXFactory), "FX" ) { Dock = DockStyle.Fill };
 			mapEditor		=	new MapEditorControl( game ) { Dock = DockStyle.Fill };
-			//vtEditor		=	new VTEditor("megatexture.ini") { Dock = DockStyle.Fill };
-			vtEditor		=	new ObjectEditorControl( game, "vt", typeof(VTTextureContent), "Megatexture" ) { Dock = DockStyle.Fill };
-			//vtEditor.AddEditAction("QQQQQ", (list) => for
+			vtEditor		=	new ObjectEditorControl( game, "vt",		typeof(VTTextureContent), "Megatexture" ) { Dock = DockStyle.Fill };
 
 			mainTabs.TabPages["tabConfig"].Controls.Add( configEditor );
 			mainTabs.TabPages["tabModels"].Controls.Add( modelEditor );
 			mainTabs.TabPages["tabEntities"].Controls.Add( entityEditor );
+			mainTabs.TabPages["tabWeapon"].Controls.Add( weaponEditor );
+			mainTabs.TabPages["tabItems"].Controls.Add( itemEditor );
 			mainTabs.TabPages["tabMap"].Controls.Add( mapEditor );
 			mainTabs.TabPages["tabFX"].Controls.Add( fxEditor );
-			//mainTabs.TabPages["tabDecals"].Controls.Add( decalEditor );
 			mainTabs.TabPages["tabMegatexture"].Controls.Add( vtEditor );
 
 			Log.Message("Editor initialized");

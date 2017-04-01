@@ -101,9 +101,7 @@ namespace IronStar.Views {
 			short	health	=	100;
 			short	armor	=	100;
 			var		wpn1	=	"Weapon1";
-			var		wpn2	=	"Weapon1";
 			short	ammo1	=	9999;
-			short	ammo2	=	9999;
 
 			
 			SmallTextRJ	( hudLayer, "BULLETS",			center - 4, baseLine2, dimText );
@@ -117,7 +115,7 @@ namespace IronStar.Views {
 
 			SmallTextRJ	( hudLayer, "ARMOR",			center - 4 + 200, baseLine2, dimText );
 			MicroTextRJ	( hudLayer, "HEAVY",			center - 4 + 200, baseLine,  dimText );
-			BigTextLJ	( hudLayer, health.ToString(),	center + 4 + 200, baseLine,  fullText );
+			BigTextLJ	( hudLayer, armor.ToString(),	center + 4 + 200, baseLine,  fullText );
 			/*hudFontSmall.DrawString( hudLayer, "Bullets", vp.Width / 2 - 64, baseLine, Color.Gray, -2 );
 			hudFont.DrawString( hudLayer, player.Bullets.ToString(), vp.Width / 2 + 16, baseLine, Color.White, -4 );
 

@@ -27,9 +27,9 @@ namespace IronStar.Entities {
 		readonly Entity entity;
 
 		BEPUCharacterController controller;
-		float		stepCounter = 0;
-		bool		rlStep		= false;
-		bool		oldTraction = true;
+		//float		stepCounter = 0;
+		//bool		rlStep		= false;
+		//bool		oldTraction = true;
 		Vector3		oldVelocity = Vector3.Zero;
 		readonly	float heightStanding;
 		readonly	float heightCrouch;

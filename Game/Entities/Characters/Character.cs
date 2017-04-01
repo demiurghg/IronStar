@@ -26,6 +26,10 @@ namespace IronStar.Entities {
 		readonly CharacterArmor			armor;
 		readonly CharacterInventory		inventory;
 
+		public CharacterController	Controller	{ get { return controller	; } }
+		public CharacterHealth		Health		{ get { return health		; } }
+		public CharacterArmor		Armor		{ get { return armor		; } }
+		public CharacterInventory	Inventory	{ get { return inventory	; } }
 
 		/// <summary>
 		/// 
@@ -37,14 +41,7 @@ namespace IronStar.Entities {
 			controller	=	new CharacterController( entity, world, factory );
 			health		=	new CharacterHealth( factory );
 			armor		=	new CharacterArmor( factory );
-			inventory	=	new CharacterInventory( factory );
-
-			entity.State	|=	EntityState.PrimaryWeapon;
-
-			Weapon1		=	WeaponType.Plasmagun;
-			Weapon2		=	WeaponType.GaussRifle;
-			WeaponAmmo1	=	30000;
-			WeaponAmmo2	=	30000;
+			inventory	=	new CharacterInventory( world, factory );
 		}
 
 
@@ -83,8 +80,6 @@ namespace IronStar.Entities {
 			controller.Update( elapsedTime );
 			armor.Update( elapsedTime );
 			health.Update( elapsedTime );
-
-			UpdateWeaponState( Entity, (short)(elapsedTime*1000) );
 		}
 
 

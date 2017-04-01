@@ -5,34 +5,32 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion;
 using Fusion.Core;
-using Fusion.Core.Utils;
-using Fusion.Core.Mathematics;
-using Fusion.Core.Extensions;
-using System.IO;
-using IronStar.SFX;
-using Fusion.Engine.Graphics;
 using Fusion.Core.Content;
+using Fusion.Core.Mathematics;
 using Fusion.Engine.Common;
+using Fusion.Engine.Input;
+using Fusion.Engine.Client;
+using Fusion.Engine.Server;
+using Fusion.Engine.Graphics;
+using Fusion.Core.Extensions;
+using IronStar.Core;
 using Fusion.Engine.Storage;
+using System.IO;
+using BEPUphysics;
+using BEPUphysics.Entities.Prefabs;
+using BEPUphysics.EntityStateManagement;
+using BEPUphysics.PositionUpdating;
+using Fusion.Core.IniParser.Model;
 using System.ComponentModel;
-using System.Xml.Serialization;
-using IronStar.Editor2;
 
-
-namespace IronStar.Core {
-
+namespace IronStar.Items {
 	public class WeaponFactory {
 
-		public string Projectile { get; set; }	
+		public int Damage { get; set; }
 
-		public short Damage;
-
-		//public float 
-
+		//public int 
 
 	}
-
-
 
 
 	[ContentLoader( typeof( WeaponFactory ) )]

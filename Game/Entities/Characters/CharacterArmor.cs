@@ -62,5 +62,27 @@ namespace IronStar.Entities {
 		public void Update ( float elapsedTime )
 		{
 		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="amount"></param>
+		/// <param name="overflow"></param>
+		/// <returns></returns>
+		public bool GiveArmor ( int amount, bool overflow )
+		{
+			if (Armor>=MaxArmor) {
+				return false;
+			}
+
+			Armor += amount;
+
+			if (!overflow) {
+				Armor = Math.Min( MaxArmor, Armor );
+			}
+
+			return true;
+		}
 	}
 }

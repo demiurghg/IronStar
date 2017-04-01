@@ -17,9 +17,6 @@ namespace Fusion.Engine.Client {
 		public readonly NetClient NetClient;
 		public readonly Guid Guid;
 
-		public float Ping;
-
-
 		/// <summary>
 		/// 
 		/// </summary>

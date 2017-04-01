@@ -13,7 +13,6 @@ using Fusion.Engine.Input;
 using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
-using Fusion.Core.Mathematics;
 using IronStar.Core;
 using Fusion.Engine.Audio;
 

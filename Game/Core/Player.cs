@@ -137,14 +137,14 @@ namespace IronStar {
 				respawnTime += dt;
 			}
 
-			var player = world.GetEntityOrNull( "player", e => e.UserGuid==Guid );
+			var player = world.GetPlayerEntity( Guid );
 
 			if (player!=null) {
 				player.Rotation		=	Quaternion.RotationYawPitchRoll( UserCmd.Yaw, UserCmd.Pitch, UserCmd.Roll );
 			}
 
 			if (player==null) {
-				if ( UserCmd.Action.HasFlag(UserAction.Attack) && respawnTime>1 || respawnTime>3 ) {
+				if ( respawnTime>3 ) {
 					player	=	Respawn(world);
 				}
 			}

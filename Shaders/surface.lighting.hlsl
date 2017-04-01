@@ -138,11 +138,12 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 				#else
 				for( float row = -3; row <= 3; row += 1 ) {
 					[unroll]for( float col = -3; col <= 3; col += 1 ) {
-						float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, mad(float2(col,row), 1/2048.0f, lsPos.xy), shadowDepth ).r;
+						float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, mad(float2(col,row), 0.5/1024.0f, lsPos.xy), shadowDepth ).r;
 						accumulatedShadow += shadow;
 					}
 				}
-				accumulatedShadow 	/= 	49.0f;
+				//accumulatedShadow 	/= 	49.0f;
+				accumulatedShadow	=	max(0,mad(accumulatedShadow, 1/49.0f*2.0f, -0.5));
 				#endif
 						
 				float3	prtShadow	=	ShadowMapParticles.SampleLevel( ParticleSampler, lsPos.xy, 0 ).rgb;

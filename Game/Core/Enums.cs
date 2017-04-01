@@ -36,66 +36,27 @@ namespace IronStar.Core {
 
 
 
-	public enum WeaponType : byte {
-		None,
-		Machinegun,
-		Shotgun,
-		Plasmagun,
-		RocketLauncher,
-		GaussRifle,
-	}
-
-
-	public enum ItemType : byte {
-		None,
-		
-		Health25,
-		Health50,
-		
-		Armor25,
-		Armor50,
-
-		AmmoMachingun,
-		AmmoShotgun,
-		AmmoPlasmagun,
-		AmmoGaussRifle,
-		AmmoRockets,
-		AmmoGrenades,
-
-		Machinegun,
-		Shotgun,
-		Plasmagun,
-		RocketLauncher,
-		GaussRifle,
-	}
-
-
-
 	public enum Inventory : byte {
 
 		Health,
 		Armor,
-		Countdown,
 
-		Machinegun,
-		Shotgun,
-		SuperShotgun,
-		GrenadeLauncher,
-		RocketLauncher,
-		HyperBlaster,
-		Chaingun,
-		Railgun,
-		BFG,
-		
-		Bullets,
-		Shells,
-		Grenades,
-		Rockets,
-		Cells,
-		Slugs,
+		Weapon_Machinegun,
+		Weapon_Shotgun,
+		Weapon_GaussRifle,
+		Weapon_RocketLauncher,
+		Weapon_Plasamgun,
 
-		WeaponCooldown,
-		QuadDamage,
+		Ammo_Bullets,
+		Ammo_Shells,
+		Ammo_Slugs,
+		Ammo_Rockets,
+		Ammo_Cells,
+
+		Ammo_Grenades,
+
+		Key_XXX,
+		Powerup_XXX,
 
 		Max,
 	}

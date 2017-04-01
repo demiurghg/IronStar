@@ -209,6 +209,9 @@ GBuffer PSMain( PSInput input )
 	float3	localNormal			=	float3(0,0,1);
 	float	emission			=	0;
 	float 	metallic			=	0;
+	
+	input.TexCoord.x	=	frac(input.TexCoord.x);
+	input.TexCoord.y	=	frac(input.TexCoord.y);
 
 	input.TexCoord.x	=	mad( input.TexCoord.x, Subset.Rectangle.z, Subset.Rectangle.x );
 	input.TexCoord.y	=	mad( input.TexCoord.y, Subset.Rectangle.w, Subset.Rectangle.y );
@@ -254,6 +257,10 @@ GBuffer PSMain( PSInput input )
 		metallic	=	0;
 		emission	=	0;
 	}
+	
+	// output.hdr			=	float4( baseColor, 1 );
+	// output.feedback		=	feedback;
+	// return output;
 
 	//---------------------------------
 	//	Prepare output values :

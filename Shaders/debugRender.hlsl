@@ -72,9 +72,9 @@ void GSMain( line GS_IN inputPoint[2], inout TriangleStream<PS_IN> outputStream 
 	float4 vpos0	=	mul( float4(inputPoint[0].pos.xyz,1), Batch.View );
 	float4 vpos1	=	mul( float4(inputPoint[1].pos.xyz,1), Batch.View );
 	
-	if (vpos1.z * vpos0.z < 0) {
-		ClipLine( 0, vpos0.xyz, vpos1.xyz );
-	}
+	float  near		=	Batch.Projection._43 / Batch.Projection._33;
+	
+	ClipLine( near, vpos0.xyz, vpos1.xyz );
 
 	float4 ppos0  	=	mul( vpos0, Batch.Projection );
 	float4 ppos1  	=	mul( vpos1, Batch.Projection );

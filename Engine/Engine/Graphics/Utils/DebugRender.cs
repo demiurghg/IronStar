@@ -133,9 +133,7 @@ namespace Fusion.Engine.Graphics {
 			vertexDataAccum.Add(new LineVertex() { Pos = new Vector4(p1,0), Color = color.ToVector4() });
 			//DrawLine( p0, p1, color, Matrix.Identity );
 		}
-
-
-
+        
 		/// <summary>
 		/// Draws line between p0 and p1
 		/// </summary>
@@ -149,8 +147,6 @@ namespace Fusion.Engine.Graphics {
 			//DrawLine( p0, p1, color, Matrix.Identity );
 		}
 
-
-
 		/// <summary>
 		/// Draws line between p0 and p1
 		/// </summary>
@@ -163,8 +159,7 @@ namespace Fusion.Engine.Graphics {
 			vertexDataAccum.Add(new LineVertex() { Pos = new Vector4(p1,0), Color = color1.ToVector4() });
 			//DrawLine( p0, p1, color, Matrix.Identity );
 		}
-
-
+        
 		public void DrawLine(Vector3 p0, Vector3 p1, Color color0, Color color1, float width0, float width1)
 		{
 			vertexDataAccum.Add(new LineVertex() { Pos = new Vector4(p0,width0), Color = color0.ToVector4() });
@@ -227,7 +222,7 @@ namespace Fusion.Engine.Graphics {
 			dev.PixelShaderConstants[0]		=	constBuffer ;
 			dev.GeometryShaderConstants[0]	=	constBuffer ;
 
-			var flags = new[]{ RenderFlags.SOLID, RenderFlags.GHOST };
+			var flags = new[]{ RenderFlags.SOLID };
 
 	
 			foreach ( var flag in flags ) {

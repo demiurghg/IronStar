@@ -114,19 +114,53 @@ namespace IronStar.Core {
 			return true;
 		}
 
-
-
-
-
-		/// <summary>
-		/// Returns the list of ConvexCollidable's and Entities inside or touching the specified sphere.
-		/// Result does not include static geometry and non-entity physical objects.
+        /// <summary>
+		/// 
 		/// </summary>
-		/// <param name="world"></param>
-		/// <param name="origin"></param>
-		/// <param name="radius"></param>
+		/// <param name="from"></param>
+		/// <param name="to"></param>
+		/// <param name="normal"></param>
+		/// <param name="pos"></param>
 		/// <returns></returns>
-		public List<Entity> WeaponOverlap ( Vector3 origin, float radius, Entity entToSkip )
+		public bool RayCastAgainstStatic(Vector3 from, Vector3 to, out Vector3 normal)
+        {
+            var dir = to - from;
+            var dist = dir.Length();
+            var ndir = dir.Normalized();
+            Ray ray = new Ray(from, ndir);
+
+            normal = Vector3.Zero;
+
+            Func<BroadPhaseEntry, bool> filterFunc = delegate (BroadPhaseEntry bpe)
+            {
+                return !(bpe is ConvexCollidable);
+            };
+
+            var rcr = new RayCastResult();
+            var bRay = MathConverter.Convert(ray);
+
+            bool result = PhysSpace.RayCast(bRay, dist, filterFunc, out rcr);
+
+            if (!result)
+            {
+                return false;
+            }
+
+            var convex = rcr.HitObject as ConvexCollidable;
+            normal = MathConverter.Convert(rcr.HitData.Normal).Normalized();
+            
+            return true;
+        }
+
+        /// <summary>
+        /// Returns the list of ConvexCollidable's and Entities inside or touching the specified sphere.
+        /// Result does not include static geometry and non-entity physical objects.
+        /// </summary>
+        /// <param name="world"></param>
+        /// <param name="origin"></param>
+        /// <param name="radius"></param>
+        /// <returns></returns>
+        public List<Entity> WeaponOverlap ( Vector3 origin, float radius, Entity entToSkip )
 		{
 			BU.BoundingSphere	sphere		= new BU.BoundingSphere(MathConverter.Convert(origin), radius);
 			SphereShape			sphereShape = new SphereShape(radius);

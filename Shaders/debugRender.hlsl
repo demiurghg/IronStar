@@ -135,8 +135,9 @@ float4 PSMain( PS_IN input, float4 vpos : SV_Position ) : SV_Target
 	return float4(input.col.rgb,1);
 	#endif
 	#ifdef GHOST
-		clip((vpos.x+vpos.y)%2-1);
-		return float4(input.col.rgb,1);
+		//clip((vpos.x+vpos.y)%2-1);
+		clip(0);
+		return float4(0,0,0,1);
 	#endif
 }
 

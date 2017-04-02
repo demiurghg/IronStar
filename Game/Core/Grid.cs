@@ -5,16 +5,36 @@ namespace IronStar.Core
     public class GridVertex
     {
         public Vector3 Vector { get; set; }
-        public int Value { get; set; }
+        public int OldValue { get; set; }
+        public int NewValue { get; set; }
         public Color Color {
-            get { return GridHelper.FromIntToColor(Value); }
+            get { return GridHelper.FromIntToColor(OldValue); }
+        }
+        public void SetOldValue()
+        {
+            OldValue = NewValue;
+            NewValue = 0;
         }
     }
 
     public class GridEdge
     {
-        public GridVertex Start { get; set; }
-        public GridVertex End { get; set; }
+        public VertexIndexes Start { get; set; }
+        public VertexIndexes End { get; set; }
+    }
+
+    public class VertexIndexes
+    {
+        public VertexIndexes(int x, int y, int z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Z { get; set; }
     }
 
     public static class GridHelper

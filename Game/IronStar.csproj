@@ -128,7 +128,7 @@
     <Compile Include="Entities\Characters\CharacterArmor.cs" />
     <Compile Include="Entities\Characters\CharacterInventory.cs" />
     <Compile Include="Entities\Characters\CharacterState.cs" />
-    <Compile Include="Entities\Characters\Character.Weaponry.cs" />
+    <Compile Include="Entities\Characters\CharacterWeaponry.cs" />
     <Compile Include="Entities\Characters\Character.cs" />
     <Compile Include="Entities\Characters\CharacterFactory.cs" />
     <Compile Include="Entities\FuncMotor.cs" />
@@ -137,9 +137,11 @@
     <Compile Include="Entities\GrenadeFactory.cs" />
     <Compile Include="Entities\NullFactory.cs" />
     <Compile Include="Entities\Grenade.cs" />
+    <Compile Include="Entities\PickableItemFactory.cs" />
     <Compile Include="Entities\ProjectileFactory.cs" />
     <Compile Include="Entities\Projectile.cs" />
     <Compile Include="Core\EntityController.cs" />
+    <Compile Include="Entities\PickableItem.cs" />
     <Compile Include="Entities\RigidBodyFactory.cs" />
     <Compile Include="Entities\ProxyFactory.cs" />
     <Compile Include="Entities\StartPoint.cs" />

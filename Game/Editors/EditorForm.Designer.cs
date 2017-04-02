@@ -37,12 +37,11 @@
 			this.tabConfig = new System.Windows.Forms.TabPage();
 			this.tabModels = new System.Windows.Forms.TabPage();
 			this.tabEntities = new System.Windows.Forms.TabPage();
+			this.tabItems = new System.Windows.Forms.TabPage();
 			this.tabFX = new System.Windows.Forms.TabPage();
 			this.tabDecals = new System.Windows.Forms.TabPage();
 			this.tabMegatexture = new System.Windows.Forms.TabPage();
 			this.tabMap = new System.Windows.Forms.TabPage();
-			this.tabItems = new System.Windows.Forms.TabPage();
-			this.tabWeapon = new System.Windows.Forms.TabPage();
 			this.menuStrip1.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.mainTabs.SuspendLayout();
@@ -128,7 +127,6 @@
 			this.mainTabs.Controls.Add(this.tabConfig);
 			this.mainTabs.Controls.Add(this.tabModels);
 			this.mainTabs.Controls.Add(this.tabEntities);
-			this.mainTabs.Controls.Add(this.tabWeapon);
 			this.mainTabs.Controls.Add(this.tabItems);
 			this.mainTabs.Controls.Add(this.tabFX);
 			this.mainTabs.Controls.Add(this.tabDecals);
@@ -171,6 +169,16 @@
 			this.tabEntities.Text = "Entities";
 			this.tabEntities.UseVisualStyleBackColor = true;
 			// 
+			// tabItems
+			// 
+			this.tabItems.Location = new System.Drawing.Point(4, 22);
+			this.tabItems.Name = "tabItems";
+			this.tabItems.Padding = new System.Windows.Forms.Padding(3);
+			this.tabItems.Size = new System.Drawing.Size(556, 467);
+			this.tabItems.TabIndex = 7;
+			this.tabItems.Text = "Items";
+			this.tabItems.UseVisualStyleBackColor = true;
+			// 
 			// tabFX
 			// 
 			this.tabFX.Location = new System.Drawing.Point(4, 22);
@@ -210,25 +218,6 @@
 			this.tabMap.TabIndex = 2;
 			this.tabMap.Text = "Map Editor";
 			this.tabMap.UseVisualStyleBackColor = true;
-			// 
-			// tabItems
-			// 
-			this.tabItems.Location = new System.Drawing.Point(4, 22);
-			this.tabItems.Name = "tabItems";
-			this.tabItems.Padding = new System.Windows.Forms.Padding(3);
-			this.tabItems.Size = new System.Drawing.Size(556, 467);
-			this.tabItems.TabIndex = 7;
-			this.tabItems.Text = "Items";
-			this.tabItems.UseVisualStyleBackColor = true;
-			// 
-			// tabWeapon
-			// 
-			this.tabWeapon.Location = new System.Drawing.Point(4, 22);
-			this.tabWeapon.Name = "tabWeapon";
-			this.tabWeapon.Size = new System.Drawing.Size(556, 467);
-			this.tabWeapon.TabIndex = 8;
-			this.tabWeapon.Text = "Weapon";
-			this.tabWeapon.UseVisualStyleBackColor = true;
 			// 
 			// EditorForm
 			// 
@@ -271,6 +260,5 @@
 		private System.Windows.Forms.TabPage tabConfig;
 		private System.Windows.Forms.TabPage tabDecals;
 		private System.Windows.Forms.TabPage tabItems;
-		private System.Windows.Forms.TabPage tabWeapon;
 	}
 }

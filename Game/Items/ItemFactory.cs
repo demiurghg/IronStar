@@ -63,23 +63,41 @@ namespace IronStar.Items {
 		
 
 
-		[Category("Gameplay")]
+		[Category("Inventory")]
 		[Description("Default maximum number of given item in player's inventory")]
 		public int MaxInventoryCount { get; set; } = 1;
 
-		[Category("Gameplay")]
+		[Category("Inventory")]
 		[Description("Number of pickable items")]
 		public int PickupCount { get; set; } = 1;
 		
+
+
+		public void Draw( DebugRender dr, Matrix transform, Color color )
+		{
+			var w = Width/2;
+			var h = Height/2;
+			var d = Depth/2;
+
+			dr.DrawBox( new BoundingBox( new Vector3(-w, -h, -d), new Vector3(w, h, d) ), transform, color );
+			dr.DrawPoint( transform.TranslationVector, (w+h+d)/3/2, color );
+		}
 	}
+
 
 
 	[ContentLoader( typeof( ItemFactory ) )]
 	public sealed class ItemFactoryLoader : ContentLoader {
 
+		static Type[] extraTypes;
+
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 		{
-			return Misc.LoadObjectFromXml( typeof(ItemFactory), stream, null );
+			if (extraTypes==null) {
+				extraTypes = Misc.GetAllSubclassesOf( typeof(ItemFactory) );
+			}
+
+			return Misc.LoadObjectFromXml( typeof(ItemFactory), stream, extraTypes );
 		}
 	}
 }

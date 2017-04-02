@@ -27,7 +27,6 @@ namespace IronStar.Editors {
 		ConfigEditorControl configEditor;
 		ObjectEditorControl	modelEditor;
 		ObjectEditorControl	entityEditor;
-		ObjectEditorControl	weaponEditor;
 		ObjectEditorControl	itemEditor;
 		ObjectEditorControl	fxEditor;
 		MapEditorControl	mapEditor;
@@ -47,7 +46,6 @@ namespace IronStar.Editors {
 			configEditor	=	new ConfigEditorControl( game ) { Dock = DockStyle.Fill };
 			modelEditor		=	new ObjectEditorControl( game, "models",	typeof(ModelDescriptor), "Model"  ) { Dock = DockStyle.Fill };
 			entityEditor	=	new ObjectEditorControl( game, "entities",	typeof(EntityFactory), "Entity" ) { Dock = DockStyle.Fill };
-			weaponEditor	=	new ObjectEditorControl( game, "weapon",	typeof(WeaponFactory), "Weapon" ) { Dock = DockStyle.Fill };
 			itemEditor		=	new ObjectEditorControl( game, "items",		typeof(ItemFactory), "Items" ) { Dock = DockStyle.Fill };
 			fxEditor		=	new ObjectEditorControl( game, "fx",		typeof(FXFactory), "FX" ) { Dock = DockStyle.Fill };
 			mapEditor		=	new MapEditorControl( game ) { Dock = DockStyle.Fill };
@@ -56,7 +54,6 @@ namespace IronStar.Editors {
 			mainTabs.TabPages["tabConfig"].Controls.Add( configEditor );
 			mainTabs.TabPages["tabModels"].Controls.Add( modelEditor );
 			mainTabs.TabPages["tabEntities"].Controls.Add( entityEditor );
-			mainTabs.TabPages["tabWeapon"].Controls.Add( weaponEditor );
 			mainTabs.TabPages["tabItems"].Controls.Add( itemEditor );
 			mainTabs.TabPages["tabMap"].Controls.Add( mapEditor );
 			mainTabs.TabPages["tabFX"].Controls.Add( fxEditor );

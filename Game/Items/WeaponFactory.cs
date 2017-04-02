@@ -24,11 +24,48 @@ using Fusion.Core.IniParser.Model;
 using System.ComponentModel;
 
 namespace IronStar.Items {
-	public class WeaponFactory {
 
-		public int Damage { get; set; }
+	public class WeaponFactory : ItemFactory {
 
-		//public int 
+		[Category("Shooting Properties")]
+		public int Damage { get; set; } = 100;
+
+		[Category("Shooting Properties")]
+		public string Projectile { get; set; } = "";
+
+		[Category("Shooting Properties")]
+		public int Quantity { get; set; } = 1;
+
+		[Category("Shooting Properties")]
+		public string Ammo { get; set; } = "";
+
+		[Category("Shooting Properties")]
+		public int ConsumeAmmo { get; set; } = 1;
+
+		[Category("Shooting Properties")]
+		public int WarmupPeriod { get; set; } = 0;
+
+		[Category("Shooting Properties")]
+		public int CooldownPeriod { get; set; } = 500;
+
+		[Category("Shooting Properties")]
+		public float VSpread { get; set; } = 0;
+
+		[Category("Shooting Properties")]
+		public float HSpread { get; set; } = 0;
+
+		[Category("Shooting Properties")]
+		public bool PerfectFirstRound { get; set; } = false;
+
+		
+		[Category("Shooting FX")]
+		public string MuzzleFX { get; set; } = "";
+
+		[Category("Shooting FX")]
+		public string TraceFX { get; set; } = "";
+
+		[Category("Shooting FX")]
+		public string HitFX { get; set; } = "";
 
 	}
 

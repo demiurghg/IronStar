@@ -1,2 +1,25 @@
 <?xml version="1.0" encoding="utf-16"?>
-<ItemFactory xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" />
+<ItemFactory xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="WeaponFactory">
+  <NiceName>&lt;NiceName&gt;</NiceName>
+  <Icon />
+  <WorldModel />
+  <ViewModel />
+  <IdleFX />
+  <PickupFX />
+  <DropFX />
+  <Width>1</Width>
+  <Height>1</Height>
+  <Depth>1</Depth>
+  <Mass>1</Mass>
+  <MaxInventoryCount>1</MaxInventoryCount>
+  <PickupCount>1</PickupCount>
+  <Damage>100</Damage>
+  <WarmupPeriod>0</WarmupPeriod>
+  <CooldownPeriod>500</CooldownPeriod>
+  <Quantity>1</Quantity>
+  <Ammo />
+  <ConsumeAmmo>1</ConsumeAmmo>
+  <VSpread>0</VSpread>
+  <HSpread>0</HSpread>
+  <PerfectFirstRound>false</PerfectFirstRound>
+</ItemFactory>

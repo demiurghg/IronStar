@@ -78,9 +78,13 @@ namespace IronStar.Editors {
 		public ObjectEditorControl( Game game, string sourceFolder, Type baseTargetType, string objectName )
 		{
 			this.baseType	=	baseTargetType;
-			this.extraTypes	=	Misc.GetAllSubclassesOf( baseTargetType, false );
 			this.game		=	game;
 			this.objectName	=	objectName;
+			
+			this.extraTypes	=	Misc.GetAllSubclassesOf( baseTargetType, true )
+								.Where( t1 => !t1.IsAbstract )
+								.ToArray();
+			
 			InitializeComponent();
 
 			nameToolStripMenuItem.Text = objectName;

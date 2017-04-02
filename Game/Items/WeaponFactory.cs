@@ -68,14 +68,4 @@ namespace IronStar.Items {
 		public string HitFX { get; set; } = "";
 
 	}
-
-
-	[ContentLoader( typeof( WeaponFactory ) )]
-	public sealed class WeaponFactoryLoader : ContentLoader {
-
-		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
-		{
-			return Misc.LoadObjectFromXml( typeof(WeaponFactory), stream, null );
-		}
-	}
 }

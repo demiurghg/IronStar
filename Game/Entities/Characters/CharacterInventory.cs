@@ -60,6 +60,26 @@ namespace IronStar.Entities {
 
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public bool SetActiveItem ( string name )
+		{
+			if (!Contains(name)) {
+				return false;
+			}	
+			return false;
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
 		ItemFactory GetFactory( string name )
 		{
 			return content.Load<ItemFactory>(@"items\" + name);

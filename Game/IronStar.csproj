@@ -145,6 +145,7 @@
     <Compile Include="Entities\RigidBodyFactory.cs" />
     <Compile Include="Entities\ProxyFactory.cs" />
     <Compile Include="Entities\StartPoint.cs" />
+    <Compile Include="Items\IItem.cs" />
     <Compile Include="Items\WeaponFactory.cs" />
     <Compile Include="Items\ItemFactory.cs" />
     <Compile Include="Mapping\LightPreset.cs" />

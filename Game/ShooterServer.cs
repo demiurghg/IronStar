@@ -20,6 +20,8 @@ using IronStar.Core;
 namespace IronStar {
 	class ShooterServer : IServerInstance {
 
+		public GameWorld World { get { return world; } }
+
 		readonly GameWorld world;
 		readonly string mapName;
 		Map map;

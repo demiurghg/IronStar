@@ -47,6 +47,14 @@ namespace IronStar.Core {
 		}
 
 
+		public Entity[] GetAllPlayerEntities ()
+		{
+			return GetEntities()
+				.Where( e1 => e1.UserGuid!=Guid.Empty )
+				.ToArray();
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>

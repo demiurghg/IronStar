@@ -65,6 +65,7 @@
     <Compile Include="Client\GameInput.cs" />
     <Compile Include="Client\FPView.cs" />
     <Compile Include="Client\Hud.cs" />
+    <Compile Include="Commands\Give.cs" />
     <Compile Include="Commands\ShowWorldState.cs" />
     <Compile Include="Core\GameWorld.Atoms.cs" />
     <Compile Include="Core\GameWorld.AI.cs" />
@@ -137,11 +138,9 @@
     <Compile Include="Entities\GrenadeFactory.cs" />
     <Compile Include="Entities\NullFactory.cs" />
     <Compile Include="Entities\Grenade.cs" />
-    <Compile Include="Entities\PickableItemFactory.cs" />
     <Compile Include="Entities\ProjectileFactory.cs" />
     <Compile Include="Entities\Projectile.cs" />
     <Compile Include="Core\EntityController.cs" />
-    <Compile Include="Entities\PickableItem.cs" />
     <Compile Include="Entities\RigidBodyFactory.cs" />
     <Compile Include="Entities\ProxyFactory.cs" />
     <Compile Include="Entities\StartPoint.cs" />

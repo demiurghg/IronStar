@@ -67,5 +67,9 @@ namespace IronStar.Items {
 		[Category("Shooting FX")]
 		public string HitFX { get; set; } = "";
 
+		public override Item Spawn()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

@@ -41,7 +41,7 @@ namespace IronStar.Entities {
 			controller	=	new CharacterController( entity, world, factory );
 			health		=	new CharacterHealth( factory );
 			armor		=	new CharacterArmor( factory );
-			inventory	=	new CharacterInventory( world, factory );
+			inventory	=	new CharacterInventory( entity, world, factory );
 		}
 
 

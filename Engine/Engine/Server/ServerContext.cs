@@ -106,7 +106,7 @@ namespace Fusion.Engine.Server {
 			SendNotifications( netServer );
 
 			//	execute server's command queue :
-			game.Invoker.ExecuteQueue( svTime, CommandAffinity.Server );
+			game.Invoker.ExecuteQueue( svTime, CommandAffinity.Server, false, serverInstance );
 
 			//	crash test for server :
 			CrashServer.CrashTest();

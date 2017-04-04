@@ -26,59 +26,25 @@ using System.ComponentModel;
 namespace IronStar.Items {
 
 
-	public class ItemFactory {
+	public abstract class ItemFactory {
 
-		[Category("Appearance")]
-		public string NiceName { get; set; } = "<NiceName>";
+		[Browsable(false)]
+		[Description("Unique item name")]
+		public string Name { get; set; }
 
-		[Category("Appearance")]
+		[Category("Inventory")]
+		[Description("Displayable item name")]
+		public string NiceName { get; set; } = "Unnamed Item";
+
+		[Category("Inventory")]
+		[Description("Item HUD icon")]
 		public string Icon { get; set; } = "";
 
-		[Category("Appearance")]
-		[Description("World model of the item")]
-		public string WorldModel { get; set; } = "";
-
-		[Category("Appearance")]
-		[Description("World model of the item")]
-		public string IdleFX { get; set; } = "";
-
-		[Category("Appearance")]
-		public string PickupFX { get; set; } = "";
-
-		[Category("Appearance")]
-		public string DropFX { get; set; } = "";
-
-		[Category("Appearance")]
-		public string FallFX { get; set; } = "";
-
-
-
-		[Category("Item Physics")]
-		[Description("Width of physical box that represent item")]
-		public float Width { get; set; } = 1;
-
-		[Category("Item Physics")]
-		[Description("Height of physical box that represent item")]
-		public float Height { get; set; } = 1;
-
-		[Category("Item Physics")]
-		[Description("Depth of physical box that represent item")]
-		public float Depth { get; set; } = 1;
-
-		[Category("Item Physics")]
-		[Description("Mass of physical box that represent item")]
-		public float Mass { get; set; } = 1;
-		
-
-		public void Draw( DebugRender dr, Matrix transform, Color color )
-		{
-			var w = Width/2;
-			var h = Height/2;
-			var d = Depth/2;
-
-			dr.DrawBox( new BoundingBox( new Vector3(-w, -h, -d), new Vector3(w, h, d) ), transform, color );
-			dr.DrawPoint( transform.TranslationVector, (w+h+d)/3/2, color );
-		}
+		/// <summary>
+		/// Creates instance of item.
+		/// </summary>
+		/// <returns></returns>
+		public abstract Item Spawn ();
 	}
 
 
@@ -94,7 +60,11 @@ namespace IronStar.Items {
 				extraTypes = Misc.GetAllSubclassesOf( typeof(ItemFactory) );
 			}
 
-			return Misc.LoadObjectFromXml( typeof(ItemFactory), stream, extraTypes );
+			var factory = (ItemFactory)Misc.LoadObjectFromXml( typeof(ItemFactory), stream, extraTypes );
+
+			factory.Name = assetPath;
+
+			return factory;
 		}
 	}
 }

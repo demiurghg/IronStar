@@ -7,7 +7,8 @@ using Fusion.Core.Configuration;
 using Fusion.Core.Extensions;
 using Fusion.Engine.Common;
 using System.Diagnostics;
-
+using Fusion.Engine;
+using Fusion.Engine.Server;
 
 namespace Fusion.Core.Shell {
 	public partial class Invoker {
@@ -209,7 +210,7 @@ namespace Fusion.Core.Shell {
 		/// Executes enqueued commands. Updates delayed commands.
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void ExecuteQueue ( GameTime gameTime, CommandAffinity affinity, bool forceDelayed = false )
+		public void ExecuteQueue ( GameTime gameTime, CommandAffinity affinity, bool forceDelayed = false, IServerInstance serverInstance = null )
 		{
 			var delta = (int)gameTime.Elapsed.TotalMilliseconds;
 
@@ -225,7 +226,12 @@ namespace Fusion.Core.Shell {
 
 						if ( cmd.Delay<=0 || forceDelayed ) {
 							//	execute :
-							cmd.Execute();
+
+							if (affinity==CommandAffinity.Server) {
+								cmd.ExecuteServer(serverInstance);
+							} else {
+								cmd.Execute();
+							}
 
 							if (cmd.Result!=null) {
 								Log.Message( "// Result: {0} //", cmd.Result );

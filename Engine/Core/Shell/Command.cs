@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using Fusion.Core.Extensions;
 using Fusion.Engine.Common;
+using Fusion.Engine.Server;
 
 namespace Fusion.Core.Shell {
 
@@ -24,6 +25,12 @@ namespace Fusion.Core.Shell {
 		/// Execute action
 		/// </summary>
 		public abstract void Execute ();
+
+		/// <summary>
+		/// Execute action on server side.
+		/// STUB
+		/// </summary>
+		public virtual void ExecuteServer ( IServerInstance serverInstance ) {}
 
 		/// <summary>
 		/// Rollback action

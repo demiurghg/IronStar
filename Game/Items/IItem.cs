@@ -86,7 +86,23 @@ namespace IronStar.Items {
 	public abstract class Item {
 
 		/// <summary>
-		/// Called when player picks the item up.
+		/// 
+		/// </summary>
+		/// <param name="factory"></param>
+		public Item ( string name )
+		{
+			Name		=	name;
+		}
+
+		/// <summary>
+		/// The internal name of the item
+		/// </summary>
+		public readonly string Name;
+
+		/// <summary>
+		/// Called when player attempts to picks the item up.
+		/// This method return false, if item decided not to be added
+		/// and true otherwice.
 		/// </summary>
 		/// <param name="player">Player that picked item up</param>
 		public abstract bool Pickup ( Entity player );

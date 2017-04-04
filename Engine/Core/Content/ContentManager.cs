@@ -140,8 +140,15 @@ namespace Fusion.Core.Content {
 		/// <returns></returns>
 		public IEnumerable<string> EnumerateAssets ( string directory )
 		{
+			var dirName = Path.Combine(contentDirectory, directory);
+
+			if (!Directory.Exists(dirName)) {
+				Log.Warning("EnumerateAssets: directory {0} does not exist", directory );
+				return new string[] {};
+			}
+
 			return Directory
-				.EnumerateFiles( Path.Combine(contentDirectory, directory), "*.asset")
+				.EnumerateFiles( dirName, "*.asset")
 				.Select( path => Path.GetFileNameWithoutExtension(path) )
 				.ToArray();
 		}

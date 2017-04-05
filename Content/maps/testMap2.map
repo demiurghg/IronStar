@@ -459,7 +459,6 @@
       <Position X="-25.125" Y="5.625" Z="-2.125" />
       <Rotation X="0.6532815" Y="-0.270598024" Z="-0.653281331" W="-0.270597965" />
       <Scaling>1</Scaling>
-      <SpotMaskName>quad</SpotMaskName>
       <Intensity>100</Intensity>
       <Radius>15</Radius>
       <NearPlane>0.125</NearPlane>
@@ -814,7 +813,6 @@
       <Position X="-25.625" Y="5.625" Z="4" />
       <Rotation X="0.6532815" Y="-0.270598024" Z="-0.653281331" W="-0.270597965" />
       <Scaling>1</Scaling>
-      <SpotMaskName>quad</SpotMaskName>
       <Intensity>100</Intensity>
       <Radius>15</Radius>
       <NearPlane>0.125</NearPlane>

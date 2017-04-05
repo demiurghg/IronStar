@@ -5,11 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fusion.Engine.Common;
+using Fusion.Engine.Server;
 using Lidgren.Network;
 
 namespace Fusion.Engine.Client {
 
-	class ClientContext : IDisposable {
+	class ClientContext : IDisposable, IMessageService {
 
 		public readonly Game Game;
 		public readonly GameClient GameClient;
@@ -26,7 +27,7 @@ namespace Fusion.Engine.Client {
 			Guid		=	Guid.NewGuid();
 			Game		=	game;
 			GameClient	=	game.GameClient;
-			Instance	=	game.GameFactory.CreateClient( game, null, Guid );
+			Instance	=	game.GameFactory.CreateClient( game, this, Guid );
 
 
 
@@ -80,6 +81,34 @@ namespace Fusion.Engine.Client {
 		public void Dispose()
 		{
 			Dispose( true );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="client"></param>
+		/// <param name="message"></param>
+		public void Push( Guid client, string message )
+		{
+			Push(message);
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="message"></param>
+		public void Push( string message )
+		{
+			var msg		=	NetClient.CreateMessage( message.Length + 1 );
+				
+			msg.Write( (byte)NetCommand.Notification );
+			msg.Write( message );
+
+			NetClient.SendMessage( msg, NetDeliveryMethod.ReliableSequenced );
 		}
 	}
 }

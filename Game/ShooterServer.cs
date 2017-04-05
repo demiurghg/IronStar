@@ -22,6 +22,7 @@ namespace IronStar {
 
 		public GameWorld World { get { return world; } }
 
+		IMessageService msgsvc;
 		readonly GameWorld world;
 		readonly string mapName;
 		Map map;
@@ -29,6 +30,7 @@ namespace IronStar {
 		
 		public ShooterServer ( GameServer server, IMessageService msgsvc, string mapName )
 		{
+			this.msgsvc		=	msgsvc;
 			world			=	new GameWorld( server.Game, msgsvc, false, new Guid() );
 			this.mapName	=	mapName;
 		}
@@ -88,7 +90,12 @@ namespace IronStar {
 
 		public void FeedNotification( Guid clientGuid, string message )
 		{
-			Log.Message( "NOTIFICATION {0}: {1}", clientGuid, message );
+			if (message.StartsWith("*chat ")) {
+				msgsvc.Push(message);
+			}
+			if (message.StartsWith("*cmd ")) {
+				Game.Instance.Invoker.Push( message.Replace("*cmd ","") );
+			}
 		}
 
 

@@ -126,56 +126,50 @@ namespace Fusion.Engine.Server {
 			try {
 				Log.Message("Server starting: {0} [{1}]", map, options);
 
-				using ( var serverInstance = Game.GameFactory.CreateServer(Game, map, options) ) {
+				using ( var context = new ServerContext( Game, Game.GameID, Game.Network.Port, Game.GameFactory, map, options ) ) {
 
-					using ( var context = new ServerContext( Game, Game.GameID, Game.Network.Port, serverInstance ) ) {
+					//	Timer and fixed timestep stuff :
+					//	http://gafferongames.com/game-physics/fix-your-timestep/
+					var serverFrames    =   0L;
+					var accumulator		=	TimeSpan.Zero;
+					var stopwatch		=	new Stopwatch();
+					stopwatch.Start();
 
-						serverInstance.Initialize();
+					var currentTime		=	stopwatch.Elapsed;
+					var time			=	stopwatch.Elapsed;
 
-						//	Timer and fixed timestep stuff :
-						//	http://gafferongames.com/game-physics/fix-your-timestep/
-						var serverFrames    =   0L;
-						var accumulator		=	TimeSpan.Zero;
-						var stopwatch		=	new Stopwatch();
-						stopwatch.Start();
+					//
+					//	server loop :
+					//	
+					while ( serverState!=ServerState.ShutdownRequested ) {
 
-						var currentTime		=	stopwatch.Elapsed;
-						var time			=	stopwatch.Elapsed;
+					_retryTick:
+						var targetDelta	=	TimeSpan.FromTicks( (long)(10000000 / TargetFrameRate) );
+						var newTime		=	stopwatch.Elapsed;
+						var frameTime	=	newTime - currentTime;
+						currentTime		=	newTime;
 
-						//
-						//	server loop :
-						//	
-						while ( serverState!=ServerState.ShutdownRequested ) {
+						accumulator +=	 frameTime;
 
-						_retryTick:
-							var targetDelta	=	TimeSpan.FromTicks( (long)(10000000 / TargetFrameRate) );
-							var newTime		=	stopwatch.Elapsed;
-							var frameTime	=	newTime - currentTime;
-							currentTime		=	newTime;
-
-							accumulator +=	 frameTime;
-
-							if ( accumulator < targetDelta ) {
-								Thread.Sleep(1);
-								goto _retryTick;
-							}
-
-							while ( accumulator > targetDelta ) {
-
-								//var svTime = new GameTime( time, targetDelta );
-								var svTime	= new GameTime( serverFrames, time, targetDelta );
-								
-								//
-								//	Do actual server stuff :
-								//	
-								context.UpdateNetworkAndLogic( svTime );
-
-								serverFrames++;
-								accumulator	-= targetDelta;
-								time		+= targetDelta;
-							}
+						if ( accumulator < targetDelta ) {
+							Thread.Sleep(1);
+							goto _retryTick;
 						}
 
+						while ( accumulator > targetDelta ) {
+
+							//var svTime = new GameTime( time, targetDelta );
+							var svTime	= new GameTime( serverFrames, time, targetDelta );
+								
+							//
+							//	Do actual server stuff :
+							//	
+							context.UpdateNetworkAndLogic( svTime );
+
+							serverFrames++;
+							accumulator	-= targetDelta;
+							time		+= targetDelta;
+						}
 					}
 				}
 

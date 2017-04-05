@@ -167,12 +167,7 @@ namespace Fusion.Engine.Client {
 			/// <param name="message"></param>
 			public void NotifyServer ( string message )
 			{
-				var msg = context.NetClient.CreateMessage( message.Length + 1 );
-
-				msg.Write( (byte)NetCommand.Notification );
-				msg.Write( message );
-
-				context.NetClient.SendMessage( msg, NetDeliveryMethod.ReliableSequenced );
+				context.Push( message );
 			}
 
 

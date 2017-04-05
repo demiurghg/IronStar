@@ -197,6 +197,8 @@
     <Compile Include="Engine\Client\ClientContext.cs" />
     <Compile Include="Engine\Client\IContentPrecacher.cs" />
     <Compile Include="Engine\Client\IClientInstance.cs" />
+    <Compile Include="Engine\Common\Commands\SVCmd.cs" />
+    <Compile Include="Engine\Common\Commands\Chat.cs" />
     <Compile Include="Engine\Common\Commands\EdClose.cs" />
     <Compile Include="Engine\Common\Commands\ShowAtoms.cs" />
     <Compile Include="Engine\Common\GameEditor.cs" />

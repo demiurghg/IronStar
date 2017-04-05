@@ -40,11 +40,11 @@ namespace IronStar {
 
 
 
-		public ShooterClient ( GameClient client, Guid userGuid )
+		public ShooterClient ( GameClient client, IMessageService msgsvc, Guid userGuid )
 		{
 			this.userGuid	=	userGuid;
 			game			=	client.Game;
-			world			=	new GameWorld( client.Game, true, userGuid );
+			world			=	new GameWorld( client.Game, msgsvc, true, userGuid );
 			gameInput		=	new GameInput( client.Game );
 			userCommand		=	new UserCommand();
 			camera			=	new GameCamera( world, this );

@@ -27,9 +27,9 @@ namespace IronStar {
 		Map map;
 
 		
-		public ShooterServer ( GameServer server, string mapName )
+		public ShooterServer ( GameServer server, IMessageService msgsvc, string mapName )
 		{
-			world			=	new GameWorld( server.Game, false, new Guid() );
+			world			=	new GameWorld( server.Game, msgsvc, false, new Guid() );
 			this.mapName	=	mapName;
 		}
 

@@ -27,14 +27,14 @@ namespace IronStar {
 
 		class GameFactory : IGameFactory {
 
-			public IClientInstance CreateClient( Game game, Guid clientGuid )
+			public IClientInstance CreateClient( Game game, IMessageService msgsvc, Guid clientGuid )
 			{
-				return new ShooterClient( game.GameClient, clientGuid );
+				return new ShooterClient( game.GameClient, msgsvc, clientGuid );
 			}
 
-			public IServerInstance CreateServer( Game game, string map, string options )
+			public IServerInstance CreateServer( Game game, IMessageService msgsvc, string map, string options )
 			{
-				return new ShooterServer( game.GameServer, map );
+				return new ShooterServer( game.GameServer, msgsvc, map );
 			}
 
 			public IUserInterface CreateUI( Game game )

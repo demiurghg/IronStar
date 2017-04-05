@@ -136,7 +136,7 @@ namespace IronStar.Core {
 		/// <param name="userInfo"></param>
 		public void PlayerConnected ( Guid guid, string userInfo )
 		{
-			LogTrace("player connected: {0} {1}", guid, userInfo );
+			MessageService.Push( string.Format("Client connected : {0} {1}", guid, userInfo) );
 			Players.Add( new Player( guid, userInfo ) );
 		}
 
@@ -182,7 +182,7 @@ namespace IronStar.Core {
 		/// <param name="guid"></param>
 		public void PlayerDisconnected ( Guid guid )
 		{
-			LogTrace("player diconnected: {0}", guid );
+			MessageService.Push( string.Format("Client disconnected : {0}", guid) );
 			Players.RemoveAll( p => p.Guid == guid );
 		}
 

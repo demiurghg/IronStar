@@ -26,7 +26,7 @@ namespace Fusion.Engine.Client {
 			Guid		=	Guid.NewGuid();
 			Game		=	game;
 			GameClient	=	game.GameClient;
-			Instance	=	game.GameFactory.CreateClient( game, Guid );
+			Instance	=	game.GameFactory.CreateClient( game, null, Guid );
 
 
 

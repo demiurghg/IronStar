@@ -16,10 +16,10 @@ using Fusion.Core.Content;
 namespace Fusion.Engine.Server {
 	
 
-	class ServerContext : IDisposable {
+	class ServerContext : IDisposable, IMessageService {
 		
 		readonly Game game;
-		readonly Queue<string> notifications = null;
+		readonly Queue<Tuple<Guid,string>> notifications = null;
 
 		IServerInstance	serverInstance;
 		NetServer		netServer;
@@ -30,10 +30,12 @@ namespace Fusion.Engine.Server {
 		/// </summary>
 		/// <param name="server"></param>
 		/// <param name="serverInstance"></param>
-		public ServerContext ( Game game, string gameId, int port, IServerInstance serverInstance )
+		public ServerContext ( Game game, string gameId, int port, IGameFactory factory, string map, string options )
 		{
 			this.game			=	game;
-			this.serverInstance	=	serverInstance;
+			this.serverInstance	=	factory.CreateServer( game, this, map, options );
+
+			serverInstance.Initialize();
 
 			var netConfig						=   new NetPeerConfiguration(gameId);
 			netConfig.Port						=   port;
@@ -50,7 +52,7 @@ namespace Fusion.Engine.Server {
 			netConfig.EnableMessageType( NetIncomingMessageType.DiscoveryResponse );
 			netConfig.EnableMessageType( NetIncomingMessageType.ConnectionLatencyUpdated );
 
-			notifications	=	new Queue<string>();
+			notifications	=	new Queue<Tuple<Guid,string>>();
 
 			netServer		=	new NetServer( netConfig );
 			netServer.Start();
@@ -65,9 +67,8 @@ namespace Fusion.Engine.Server {
 		{
 			if ( !disposedValue ) {
 				if ( disposing ) {
-					
 					netServer.Shutdown("Server shutdown");
-					serverInstance.Dispose();
+					serverInstance?.Dispose();
 				}
 
 				disposedValue = true;
@@ -101,9 +102,6 @@ namespace Fusion.Engine.Server {
 
 			//	send snapshot to clients :
 			DispatchSnapshots( netServer, svTime.Total.Ticks );
-
-			//	send notifications to clients :
-			SendNotifications( netServer );
 
 			//	execute server's command queue :
 			game.Invoker.ExecuteQueue( svTime, CommandAffinity.Server, false, serverInstance );
@@ -296,27 +294,27 @@ namespace Fusion.Engine.Server {
 		/// 
 		/// </summary>
 		/// <param name="server"></param>
-		void SendNotifications ( NetServer server )
-		{
-			List<string> messages;
-			lock (notifications) {
-				messages = notifications.ToList();
-				notifications.Clear();
-			}
+		//void SendNotifications ( NetServer server )
+		//{
+		//	List<Tuple<Guid,string>> messages;
+		//	lock (notifications) {
+		//		messages = notifications.ToList();
+		//		notifications.Clear();
+		//	}
 
-			var conns = server.Connections;
+		//	var conns = server.Connections;
 
-			if (!conns.Any()) {
-				return;
-			}
+		//	if (!conns.Any()) {
+		//		return;
+		//	}
 
-			foreach ( var message in messages ) {
-				var msg = server.CreateMessage( message.Length + 1 );
-				msg.Write( (byte)NetCommand.Notification );
-				msg.Write( message );
-				server.SendMessage( msg, conns, NetDeliveryMethod.ReliableSequenced, 0 );
-			}
-		}
+		//	foreach ( var message in messages ) {
+		//		var msg = server.CreateMessage( message.Item2.Length + 1 );
+		//		msg.Write( (byte)NetCommand.Notification );
+		//		msg.Write( message.Item2 );
+		//		server.SendMessage( msg, conns, NetDeliveryMethod.ReliableSequenced, 0 );
+		//	}
+		//}
 
 
 
@@ -373,15 +371,45 @@ namespace Fusion.Engine.Server {
 
 
 		/// <summary>
-		/// 
+		/// Pushes message to particular client
+		/// </summary>
+		/// <param name="client"></param>
+		/// <param name="message"></param>
+		public void Push( Guid client, string message )
+		{
+			foreach ( var conn in netServer.Connections ) {
+
+				if (conn.PeekHailGuid()==client) {
+				
+					var msg		=	netServer.CreateMessage( message.Length + 1 );
+				
+					msg.Write( (byte)NetCommand.Notification );
+					msg.Write( message );
+
+					netServer.SendMessage( msg, conn, NetDeliveryMethod.ReliableSequenced, 0 );
+
+					break;					
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Pushes message to all clients
 		/// </summary>
 		/// <param name="message"></param>
-		void NotifyClientsInternal ( string message )
+		public void Push( string message )
 		{
-			if (notifications!=null) {
-				lock (notifications) {
-					notifications.Enqueue(message);
-				}
+			var conns	=	netServer.Connections;
+
+			if (conns.Any()) {
+
+				var msg		=	netServer.CreateMessage( message.Length + 1 );
+
+				msg.Write( (byte)NetCommand.Notification );
+				msg.Write( message );
+
+				netServer.SendMessage( msg, conns, NetDeliveryMethod.ReliableSequenced, 0 );
 			}
 		}
 	}

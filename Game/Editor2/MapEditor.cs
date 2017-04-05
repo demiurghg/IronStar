@@ -57,6 +57,19 @@ namespace IronStar.Editor2 {
 		public GameWorld World { get { return world; } }
 
 
+		class MessageService : IMessageService {
+			public void Push( string message )
+			{
+				Log.Message("MSG: {0}", message);
+			}
+
+			public void Push( Guid client, string message )
+			{
+				Log.Message("MSG: {0} {1}", client, message);
+			}
+		}
+
+
 		/// <summary>
 		/// Initializes server-side world.
 		/// </summary>
@@ -76,7 +89,7 @@ namespace IronStar.Editor2 {
 			camera			=	new EditorCamera( this );
 			hud				=	new EditorHud( this );
 			manipulator		=	new NullTool( this );
-			world			=	new GameWorld( Game, true, new Guid() );
+			world			=	new GameWorld( Game, new MessageService(), true, new Guid() );
 			world.InitServerAtoms();
 
 			SetupUI();

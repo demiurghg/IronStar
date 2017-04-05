@@ -29,6 +29,8 @@ namespace IronStar.Core {
 
 		public readonly Guid UserGuid;
 
+		public readonly IMessageService MessageService;
+
 		public AtomCollection Atoms { 
 			get; set;
 		}
@@ -78,9 +80,10 @@ namespace IronStar.Core {
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
-		public GameWorld( Game game, bool enablePresentation, Guid userGuid )
+		public GameWorld( Game game, IMessageService msgsvc, bool enablePresentation, Guid userGuid )
 		{
 			IsPresentationEnabled	=	enablePresentation;
+			MessageService			=	msgsvc;
 
 			this.Game	=	game;
 

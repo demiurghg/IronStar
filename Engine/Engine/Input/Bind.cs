@@ -10,7 +10,6 @@ namespace Fusion.Engine.Input {
 	/// <summary>
 	///	Binds key.
 	/// </summary>
-	[Command("bind", CommandAffinity.Default)]
 	internal sealed class Bind : Command {
 
 		

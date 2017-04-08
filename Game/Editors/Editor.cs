@@ -107,19 +107,4 @@ namespace IronStar.Editors {
 		}
 
 	}
-
-
-
-	[Command( "editor", CommandAffinity.Default )]
-	public class EditorCommand : NoRollbackCommand {
-
-		public EditorCommand( Invoker invoker ) : base(invoker) 
-		{
-		}
-
-		public override void Execute()
-		{
-			Editor.Run( Invoker.Game );
-		}
-	}
 }

@@ -8,7 +8,6 @@ using System.Threading;
 using System.Net;
 using Fusion.Core.Shell;
 using Fusion.Engine.Common;
-using Fusion.Engine.Common.Commands;
 using System.Diagnostics;
 using Fusion.Core.Content;
 
@@ -103,13 +102,8 @@ namespace Fusion.Engine.Server {
 			//	send snapshot to clients :
 			DispatchSnapshots( netServer, svTime.Total.Ticks );
 
-			//	execute server's command queue :
-			game.Invoker.ExecuteQueue( svTime, CommandAffinity.Server, false, serverInstance );
-
 			//	crash test for server :
-			CrashServer.CrashTest();
-			FreezeServer.FreezeTest();
-			SlowdownServer.SlowTest();
+			//	TODO : server crash
 		}
 
 

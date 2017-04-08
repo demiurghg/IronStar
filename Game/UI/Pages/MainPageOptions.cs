@@ -28,7 +28,7 @@ namespace IronStar.UI.Pages
         [Description("Start a new game")]
         public void NewGame_Click()
         {
-            game.Invoker.PushAndExecute("map testMap2");
+            game.Invoker.ExecuteCommand("map testMap2");
         }
 
 
@@ -72,7 +72,7 @@ namespace IronStar.UI.Pages
         [Description("Warning:: Creators mode")]
         public void Editor_Click()
         {
-            game.Invoker.PushAndExecute("map testMap2 /edit");
+            game.Invoker.ExecuteCommand("map testMap2 /edit");
         }
 #endif
     }

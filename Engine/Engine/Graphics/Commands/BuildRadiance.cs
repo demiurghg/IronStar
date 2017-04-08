@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Fusion.Core.Shell;
 
 namespace Fusion.Engine.Graphics.Commands {
-	[Command("buildRadiance", CommandAffinity.Default)]
 	public class BuildRadiance : NoRollbackCommand {
 
 

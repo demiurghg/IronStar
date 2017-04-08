@@ -118,6 +118,8 @@ namespace IronStar.Core {
 		{
 			if (disposing) {
 
+				Content?.Dispose();
+
 				if (IsPresentationEnabled) {
 					Game.RenderSystem.RenderWorld.ClearWorld();
 

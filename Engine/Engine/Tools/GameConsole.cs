@@ -354,7 +354,7 @@ namespace Fusion.Engine.Tools {
 			try {
 				var cmd  = editBox.Text;
 				Log.Message("]{0}", cmd);
-				Game.Invoker.Push(cmd);
+				Game.Invoker.PushCommand(cmd);
 			} catch ( Exception e ) {
 				Log.Error(e.Message);
 			}

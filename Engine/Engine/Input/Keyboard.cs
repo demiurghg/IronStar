@@ -199,7 +199,7 @@ namespace Fusion.Engine.Input {
 			if (bindings.TryGetValue( (Keys)e.Key, out bind )) {
 				try {
 					if (!string.IsNullOrWhiteSpace(bind.KeyDownCommand)) {
-						Game.Invoker.Push( bind.KeyDownCommand );
+						Game.Invoker.PushCommand( bind.KeyDownCommand );
 					}
 				} catch ( Exception cmdLineEx ) {
 					Log.Error("{0}", cmdLineEx.Message );
@@ -219,7 +219,7 @@ namespace Fusion.Engine.Input {
 			if (bindings.TryGetValue( (Keys)e.Key, out bind )) {
 				try {
 					if (!string.IsNullOrWhiteSpace(bind.KeyUpCommand)) {
-						Game.Invoker.Push( bind.KeyUpCommand );
+						Game.Invoker.PushCommand( bind.KeyUpCommand );
 					}
 				} catch ( Exception cmdLineEx ) {
 					Log.Error("{0}", cmdLineEx.Message );

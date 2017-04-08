@@ -65,8 +65,6 @@
     <Compile Include="Client\GameInput.cs" />
     <Compile Include="Client\FPView.cs" />
     <Compile Include="Client\Hud.cs" />
-    <Compile Include="Commands\Give.cs" />
-    <Compile Include="Commands\ShowWorldState.cs" />
     <Compile Include="Core\GameWorld.Atoms.cs" />
     <Compile Include="Core\GameWorld.AI.cs" />
     <Compile Include="Core\IStorable.cs" />
@@ -144,7 +142,7 @@
     <Compile Include="Entities\RigidBodyFactory.cs" />
     <Compile Include="Entities\ProxyFactory.cs" />
     <Compile Include="Entities\StartPoint.cs" />
-    <Compile Include="Items\IItem.cs" />
+    <Compile Include="Items\Item.cs" />
     <Compile Include="Items\WeaponFactory.cs" />
     <Compile Include="Items\ItemFactory.cs" />
     <Compile Include="Mapping\LightPreset.cs" />

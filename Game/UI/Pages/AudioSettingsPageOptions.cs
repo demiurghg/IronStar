@@ -98,7 +98,7 @@ namespace IronStar.UI.Pages
         [Description("Warning:: Creators mode")]
         public void Editor_Click()
         {
-            game.Invoker.PushAndExecute("map testMap2 /edit");
+            game.Invoker.ExecuteCommand("map testMap2 /edit");
         }
 #endif
     }

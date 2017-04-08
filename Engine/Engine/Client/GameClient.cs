@@ -8,7 +8,6 @@ using System.Threading;
 using System.IO;
 using Fusion.Engine.Common;
 using Fusion.Core.Content;
-using Fusion.Engine.Common.Commands;
 using Fusion.Core.Shell;
 
 namespace Fusion.Engine.Client {
@@ -139,18 +138,7 @@ namespace Fusion.Engine.Client {
 			//
 			//	Crash test :
 			//
-			CrashClient.CrashTest();
-			FreezeClient.FreezeTest();
-
-			//
-			//	Execute command :
-			//	Should command be executed in Active state only?
-			//	
-			try {
-				Game.Invoker.ExecuteQueue( gameTime, CommandAffinity.Client );
-			} catch ( Exception e ) {
-				Log.Error( e.Message );
-			}
+			//	TODO: client crash test
 		}
 
 

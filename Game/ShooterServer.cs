@@ -46,7 +46,6 @@ namespace IronStar {
 		}
 
 
-
 		public AtomCollection Atoms {
 			get {
 				return world.Atoms;
@@ -94,7 +93,7 @@ namespace IronStar {
 				msgsvc.Push(message);
 			}
 			if (message.StartsWith("*cmd ")) {
-				Game.Instance.Invoker.Push( message.Replace("*cmd ","") );
+				Game.Instance.Invoker.PushCommand( message.Replace("*cmd ","") );
 			}
 		}
 

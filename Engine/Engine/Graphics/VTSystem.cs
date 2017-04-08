@@ -16,6 +16,7 @@ using System.Diagnostics;
 using Fusion.Engine.Storage;
 using Fusion.Build.Mapping;
 using Fusion.Engine.Graphics.Ubershaders;
+using System.ComponentModel;
 
 namespace Fusion.Engine.Graphics {
 
@@ -25,6 +26,7 @@ namespace Fusion.Engine.Graphics {
 		readonly RenderSystem rs;
 
 		[Config]
+		[Description("Max uploaded to physical texture pages per frame")]
 		public int MaxPPF { get; set; }
 
 		[Config]
@@ -34,27 +36,34 @@ namespace Fusion.Engine.Graphics {
 		public bool ShowPageLoads { get; set; }
 
 		[Config]
+		[Description("Enables displaying of physical texture")]
 		public bool ShowPhysicalTextures { get; set; }
 
 		[Config]
 		public bool ShowPageTexture { get; set; }
 
 		[Config]
+		[Description("Shows tile border for each uploaded tile")]
 		public bool ShowTileBorder { get; set; }
 
 		[Config]
+		[Description("Disables virtual texturing feedback")]
 		public bool LockTiles { get; set; }
 
 		[Config]
+		[Description("Shows tile address for each uploaded tile")]
 		public bool ShowTileAddress { get; set; }
 
 		[Config]
+		[Description("Fills each tile with checkers, for filtering debugging")]
 		public bool ShowTileCheckers { get; set; }
 
 		[Config]
+		[Description("Fills each tile with random color.")]
 		public bool RandomColor { get; set; }
 
 		[Config]
+		[Description("Size of physical texture")]
 		public int PhysicalSize {
 			get {
 				return physicalSize;

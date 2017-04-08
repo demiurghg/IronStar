@@ -9,6 +9,7 @@ namespace Fusion.Core.Shell {
 	/// <summary>
 	/// Shell command attribute
 	/// </summary>
+	[AttributeUsage(AttributeTargets.Method)]
 	public sealed class CommandAttribute : Attribute {
 
 		/// <summary>
@@ -16,21 +17,13 @@ namespace Fusion.Core.Shell {
 		/// </summary>
 		public string Name { get; private set; }
 
-
-		/// <summary>
-		/// Command affinity.
-		/// </summary>
-		public CommandAffinity Affinity { get; private set; }
-
-
 		/// <summary>
 		///
 		/// </summary>
 		/// <param name="name"></param>
-		public CommandAttribute ( string name, CommandAffinity affinity )
+		public CommandAttribute ( string name )
 		{
 			this.Name		=	name;
-			this.Affinity	=	affinity;
 		}
 	}
 }

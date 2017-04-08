@@ -7,7 +7,6 @@ using Fusion.Core.Shell;
 
 namespace Fusion.Engine.Common.Commands {
 	
-	[Command("chat", CommandAffinity.Default)]
 	public class Chat : NoRollbackCommand {
 
 		[CommandLineParser.Required()]

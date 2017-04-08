@@ -114,14 +114,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Build\AssetSource.cs" />
-    <Compile Include="Build\ContentBuildCmd.cs" />
-    <Compile Include="Build\ContentFileCmd.cs" />
     <Compile Include="Build\BuildContext.cs" />
     <Compile Include="Build\Builder.cs" />
     <Compile Include="Build\BuildException.cs" />
     <Compile Include="Build\BuildOptions.cs" />
     <Compile Include="Build\BuildResult.cs" />
-    <Compile Include="Build\ContentReportCmd.cs" />
     <Compile Include="Build\Mapping\Allocator2D.Block.cs" />
     <Compile Include="Build\Mapping\Allocator2D.cs" />
     <Compile Include="Build\Mapping\LRUCache.cs" />
@@ -154,7 +151,7 @@
     <Compile Include="Core\Mathematics\UShort3.cs" />
     <Compile Include="Core\Mathematics\Segment.cs" />
     <Compile Include="Core\Mathematics\WaveLength.cs" />
-    <Compile Include="Core\Shell\TestCommand.cs" />
+    <Compile Include="Core\Shell\InvokerException.cs" />
     <Compile Include="Development\CheckListDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -197,17 +194,11 @@
     <Compile Include="Engine\Client\ClientContext.cs" />
     <Compile Include="Engine\Client\IContentPrecacher.cs" />
     <Compile Include="Engine\Client\IClientInstance.cs" />
-    <Compile Include="Engine\Common\Commands\SVCmd.cs" />
-    <Compile Include="Engine\Common\Commands\Chat.cs" />
-    <Compile Include="Engine\Common\Commands\EdClose.cs" />
-    <Compile Include="Engine\Common\Commands\ShowAtoms.cs" />
     <Compile Include="Engine\Common\GameEditor.cs" />
     <Compile Include="Engine\Common\IEditorInstance.cs" />
     <Compile Include="Engine\Common\IGameFactory.cs" />
     <Compile Include="Engine\Common\IMessageService.cs" />
     <Compile Include="Engine\Common\IUserInterface.cs" />
-    <Compile Include="Engine\Graphics\Commands\BuildRadiance.cs" />
-    <Compile Include="Engine\Graphics\Commands\VTRestart.cs" />
     <Compile Include="Engine\Graphics\Effects\FogSettings.cs" />
     <Compile Include="Engine\Graphics\Lights\Extents.cs" />
     <Compile Include="Engine\Graphics\Lights\LightGrid.cs" />
@@ -269,11 +260,6 @@
     <Compile Include="Core\IniParser\StringIniParser.cs" />
     <Compile Include="Core\Mathematics\Geometry.cs" />
     <Compile Include="Core\Mathematics\Geometry.Structures.cs" />
-    <Compile Include="Core\Shell\CommandAffinity.cs" />
-    <Compile Include="Core\Shell\Commands\Toggle.cs" />
-    <Compile Include="Core\Shell\Commands\Echo.cs" />
-    <Compile Include="Core\Shell\Commands\ListVariables.cs" />
-    <Compile Include="Core\Shell\NoRollbackCommand.cs" />
     <Compile Include="Core\Shell\Invoker.Helper.cs" />
     <Compile Include="Core\StringConverter.cs" />
     <Compile Include="Core\Utils\LogListener.cs" />
@@ -351,11 +337,6 @@
     <Compile Include="Engine\Client\GameClient.State.cs" />
     <Compile Include="Engine\Client\GameLoader.cs" />
     <Compile Include="Engine\Common\AtomCollection.cs" />
-    <Compile Include="Engine\Common\Commands\SlowdownServer.cs" />
-    <Compile Include="Engine\Common\Commands\FreezeClient.cs" />
-    <Compile Include="Engine\Common\Commands\FreezeServer.cs" />
-    <Compile Include="Engine\Common\Commands\CrashClient.cs" />
-    <Compile Include="Engine\Common\Commands\CrashServer.cs" />
     <Compile Include="Core\Configuration\ConfigManager.cs" />
     <Compile Include="Engine\Graphics\Scene\SceneMapping.cs" />
     <Compile Include="Engine\Graphics\Ubershaders\UbershaderSetupContext.cs" />
@@ -383,7 +364,6 @@
     <Compile Include="Engine\Graphics\Utils\DebugRender.cs" />
     <Compile Include="Engine\Graphics\Utils\DebugRenderConfig.cs" />
     <Compile Include="Engine\Graphics\Effects\SkySphere.cs" />
-    <Compile Include="Engine\Graphics\Commands\Screenshot.cs" />
     <Compile Include="Engine\Graphics\Effects\HdrSettings.cs" />
     <Compile Include="Engine\Graphics\Effects\Filter.cs" />
     <Compile Include="Engine\Graphics\Effects\HdrFilter.cs">
@@ -428,12 +408,6 @@
     <Compile Include="Drivers\Graphics\Resources\StructuredBuffer.cs" />
     <Compile Include="Drivers\Graphics\Resources\Texture2D.cs" />
     <Compile Include="Core\DisposableBase.cs" />
-    <Compile Include="Engine\Common\Commands\Connect.cs" />
-    <Compile Include="Engine\Common\Commands\Disconnect.cs" />
-    <Compile Include="Engine\Common\Commands\KillServer.cs" />
-    <Compile Include="Engine\Common\Commands\Map.cs" />
-    <Compile Include="Engine\Common\Commands\ServerInfo.cs" />
-    <Compile Include="Engine\Common\Commands\ServerDrop.cs" />
     <Compile Include="Engine\Graphics\RenderSystem.Config.cs" />
     <Compile Include="Engine\Graphics\Textures\TargetFormat.cs" />
     <Compile Include="Engine\Graphics\RenderWorld.cs">
@@ -444,11 +418,8 @@
     <Compile Include="Engine\Imaging\Image.Jpeg.cs" />
     <Compile Include="Engine\Imaging\Image.Png.cs" />
     <Compile Include="Engine\Imaging\Image.Tga.cs" />
-    <Compile Include="Engine\Input\Bind.cs" />
-    <Compile Include="Engine\Input\ListBindings.cs" />
     <Compile Include="Engine\Input\KeyBind.cs" />
     <Compile Include="Engine\Input\Touch.cs" />
-    <Compile Include="Engine\Input\Unbind.cs" />
     <Compile Include="Engine\Media\MediaState.cs" />
     <Compile Include="Engine\Media\Video.cs" />
     <Compile Include="Engine\Media\VideoPlayer.cs" />
@@ -569,7 +540,6 @@
     <Compile Include="Engine\Frames\Transition.cs" />
     <Compile Include="Engine\Frames\FrameProcessor.cs" />
     <Compile Include="Engine\Frames\Utils.cs" />
-    <Compile Include="Engine\Tools\ClearCmd.cs" />
     <Compile Include="Engine\Tools\GameConsole.Config.cs" />
     <Compile Include="Engine\Tools\EditBox.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -580,13 +550,7 @@
     <Compile Include="Engine\Graphics\Scene\VertexColorTexture.cs" />
     <Compile Include="Engine\Graphics\Scene\VertexColorTextureTBNRigid.cs" />
     <Compile Include="Core\Shell\CommandLineParser.cs" />
-    <Compile Include="Core\Shell\Command.cs" />
     <Compile Include="Core\Shell\CommandAttribute.cs" />
-    <Compile Include="Core\Shell\Commands\Help.cs" />
-    <Compile Include="Core\Shell\Commands\ListCommands.cs" />
-    <Compile Include="Core\Shell\Commands\Undo.cs" />
-    <Compile Include="Core\Shell\Commands\Exit.cs" />
-    <Compile Include="Core\Shell\Commands\Set.cs" />
     <Compile Include="Core\Shell\CommandLineParserException.cs" />
     <Compile Include="Core\Shell\Invoker.cs" />
     <Compile Include="Core\Test\TestAttribute.cs" />
@@ -681,7 +645,11 @@
       <Name>Lidgren.Network</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Core\Shell\Commands\" />
+    <Folder Include="Engine\Common\Commands\" />
+    <Folder Include="Engine\Graphics\Commands\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

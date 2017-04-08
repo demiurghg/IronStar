@@ -12,7 +12,6 @@ namespace Fusion.Engine.Tools {
 	/// <summary>
 	/// Clears trace recorder.
 	/// </summary>
-	[Command("clear", CommandAffinity.Default)]
 	public class ClearCmd : NoRollbackCommand {
 		
 		/// <summary>

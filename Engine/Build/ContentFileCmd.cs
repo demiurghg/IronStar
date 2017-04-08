@@ -12,7 +12,6 @@ namespace Fusion.Build {
 	/// <summary>
 	/// Returns full path to content file.
 	/// </summary>
-	[Command("contentFile", CommandAffinity.Default)]
 	public class ContentFileCmd : NoRollbackCommand {
 		
 		/// <summary>

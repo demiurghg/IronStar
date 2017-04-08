@@ -12,6 +12,7 @@ namespace Fusion.Core.Configuration {
 
 		public readonly string Name;
 		public readonly string FullName;
+		public readonly string Description;
 		public readonly PropertyInfo TargetProperty;
 		public readonly object TargetObject;
 		public readonly string ComponentName;
@@ -30,6 +31,7 @@ namespace Fusion.Core.Configuration {
 			ComponentName	=	componentName;
 			TargetProperty	=	targetProperty;
 			TargetObject	=	targetObject;
+			Description		=	targetProperty.GetCustomAttribute<DescriptionAttribute>()?.Description;
 		}
 
 

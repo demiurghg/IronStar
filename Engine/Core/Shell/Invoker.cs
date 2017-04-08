@@ -9,6 +9,8 @@ using Fusion.Engine.Common;
 using System.Diagnostics;
 using Fusion.Engine;
 using Fusion.Engine.Server;
+using System.Reflection;
+using System.ComponentModel;
 
 namespace Fusion.Core.Shell {
 	public partial class Invoker {
@@ -18,36 +20,35 @@ namespace Fusion.Core.Shell {
 		/// </summary>
 		public Game Game { get; private set; }
 
-		/// <summary>
-		/// Invoker's context object to target invoker and commands to particular object.
-		/// </summary>
-		public object Context { get; private set; }
+		public IEnumerable<string> CommandNames { get { return commandNames; } }
+		string[] commandNames;
 
-		Dictionary<string, CommandBinding> commands;
+		Dictionary<string, Binding> commands = new Dictionary<string, Binding>();
 
 		object lockObject = new object();
 
-		class CommandBinding {
-			
-			public readonly Type CommandType;
-			public readonly CommandLineParser Parser;
+		Queue<string> cmdQueue = new Queue<string>();
 
-			public CommandBinding ( Invoker invoker, Type type, CommandLineParser parser ) 
+		class Binding {
+			public readonly object Object;
+			public readonly MethodInfo Method;
+			public readonly string Name;
+			public readonly string Description;
+
+			public Binding( object obj, MethodInfo mi, string name, string description )
 			{
-				CommandType = type;
-				Parser = parser;
+				Object		=	obj;
+				Method		=	mi;
+				Name		=	name;
+				Description	=	description;
+			}
+
+			public string Run ( string[] args )
+			{
+				return (string)Method.Invoke( Object, new object[]{ args });
 			}
 		}
 
-		Queue<Command> queue	= new Queue<Command>(10000);
-		Queue<Command> delayed	= new Queue<Command>(10000);
-		Stack<Command> history	= new Stack<Command>(10000);
-
-
-		/// <summary>
-		/// Alphabetically sorted array of command names
-		/// </summary>
-		public string[] CommandList { get; private set; }
 
 
 		/// <summary>
@@ -56,7 +57,53 @@ namespace Fusion.Core.Shell {
 		/// <param name="game">Game instance</param>
 		public Invoker ( Game game )
 		{
-			Initialize( game, Command.GatherCommands() );
+			Game	=	game;
+			commandNames	=	new string[0];
+		}
+
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="obj"></param>
+		public void AddCommands ( object obj )
+		{
+			lock (lockObject) {
+
+				foreach ( var mi in obj.GetType().GetMethods() ) {
+
+					var cmdAttr		= mi.GetCustomAttribute<CommandAttribute>();
+
+					if(cmdAttr==null) {
+						continue;
+					}
+
+					if (mi.ReturnType!=typeof(string)) {
+						Log.Warning("Command '{0}' must return string. Ignored.", cmdAttr.Name);
+						continue;
+					}
+
+					var parameters = mi.GetParameters();
+
+					if (parameters.Length!=1 && parameters[0].ParameterType!=typeof(string[])) {
+						Log.Warning("Input parameters if command '{0}' must be string[]. Ignored.", cmdAttr.Name);
+						continue;
+					}
+
+					var descAttr	= mi.GetCustomAttribute<DescriptionAttribute>();
+
+					var binding = new Binding( obj, mi, cmdAttr.Name, descAttr?.Description);
+
+					commands.Add( cmdAttr.Name, binding );
+				}
+
+
+				commandNames	=	commands
+					.Select( pair => pair.Key )
+					.ToArray();	
+			}
 		}
 
 
@@ -64,21 +111,11 @@ namespace Fusion.Core.Shell {
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="game"></param>
-		/// <param name="types"></param>
-		void Initialize ( Game game, Type[] types )
+		/// <param name="obj"></param>
+		public void RemoveCommands ( object obj )
 		{
-			Context		=	null;
-			Game		=	game;
-			commands	=	types
-						.Where( t1 => t1.IsSubclassOf(typeof(Command)) )
-						.Where( t2 => t2.HasAttribute<CommandAttribute>() )
-						.Select( t3 => new { Name = t3.GetCustomAttribute<CommandAttribute>().Name, Type = t3 } )
-						.ToDictionary( pair => pair.Name, pair => new CommandBinding( this, pair.Type, new CommandLineParser( pair.Type, pair.Name ) ) );
-
-			CommandList	=	commands.Select( cmd => cmd.Key ).OrderBy( name => name ).ToArray();
-						
-			Log.Message("Invoker: {0} commands found", commands.Count);
+			lock (lockObject) {
+			}
 		}
 
 
@@ -89,51 +126,47 @@ namespace Fusion.Core.Shell {
 		/// </summary>
 		/// <param name="commandLine"></param>
 		/// <returns></returns>
-		public Command Push ( string commandLine )
+		public void PushCommand ( string commandLine )
 		{				  
-			var argList	=	CommandLineParser.SplitCommandLine( commandLine ).ToArray();
+			lock (lockObject) {
+				cmdQueue.Enqueue( commandLine );
+			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="commandLine"></param>
+		public string ExecuteCommand ( string commandLine )
+		{
+			var argList	=	SplitCommandLine( commandLine ).ToArray();
 
 			if (!argList.Any()) {
-				throw new CommandLineParserException("Empty command line.");
+				Log.Error("Empty command line");
 			} 
 
-
-
 			var cmdName	=	argList[0];
-			argList		=	argList.Skip(1).ToArray();
 
-			var	sw		=	new Stopwatch();
-			
-			sw.Start();
+			Binding binding;
+			ConfigVariable variable;
 
 			lock (lockObject) {
+				if (commands.TryGetValue( cmdName, out binding )) {
 
-				ConfigVariable variable;
+					return binding.Run( argList );
 
-				if (Game.Config.Variables.TryGetValue( cmdName, out variable )) {
-					if (argList.Count()==0) {
+				} else if (Game.Config.Variables.TryGetValue( cmdName, out variable )) {
+					if (argList.Count()==1) {
 						Log.Message("{0} = {1}", variable.Name, variable.Get() );
-						return null;
+						return variable.Get();
 					} else {
-						return Push( string.Format("set {0} \"{1}\"", cmdName, string.Join(" ", argList) ) );
+						return ExecuteCommand( string.Format("set {0} \"{1}\"", cmdName, string.Join(" ", argList.Skip(1)) ) );
 					}
+				} else {
+					throw new InvokerException(string.Format("Unknown command '{0}'", cmdName));
 				}
-
-				var command	=	GetCommand( cmdName );
-				var parser	=	GetParser( cmdName );
-
-				string error;
-
-				if (!parser.TryParseCommandLine( command, argList, out error )) {
-					throw new CommandLineParserException("Failed to parse command line: " + error );
-				}
-
-				Push( command );
-
-				sw.Stop();
-				Log.Message("{0} ms", sw.Elapsed.TotalMilliseconds );
-
-				return command;
 			}
 		}
 
@@ -142,156 +175,51 @@ namespace Fusion.Core.Shell {
 		/// <summary>
 		/// 
 		/// </summary>
-		public object PushAndExecute ( string commandLine )
-		{
-			var cmd = Push( commandLine );
-			ExecuteQueue( new GameTime(), CommandAffinity.Default, true );
-			return cmd.Result;
-		}
-
-		
-
-		/// <summary>
-		/// Parse given string and push parsed command to queue.
-		/// </summary>
-		/// <param name="command"></param>
-		void Push ( Command command )
+		public void ExecuteCommandQueue ()
 		{
 			lock (lockObject) {
-				if (queue.Any() && queue.Last().Terminal) {
-					Log.Warning("Attempt to push command after terminal one. Ignored.");
-					return;
-				}
-				queue.Enqueue( command );
-			}
-		}
-
-
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		internal Command GetCommand ( string name )
-		{
-			CommandBinding binding;
-
-			if (commands.TryGetValue( name, out binding )) {
-				return (Command)Activator.CreateInstance( binding.CommandType, this );
-			}
 			
-			throw new InvalidOperationException(string.Format("Unknown command '{0}'.", name));
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		internal CommandLineParser GetParser ( string name )
-		{
-			CommandBinding binding;
-
-			if (commands.TryGetValue( name, out binding )) {
-				return binding.Parser;
-			}
-			
-			throw new InvalidOperationException(string.Format("Unknown command '{0}'.", name));
-		}
-
-
-
-		/// <summary>
-		/// Executes enqueued commands. Updates delayed commands.
-		/// </summary>
-		/// <param name="gameTime"></param>
-		public void ExecuteQueue ( GameTime gameTime, CommandAffinity affinity, bool forceDelayed = false, IServerInstance serverInstance = null )
-		{
-			var delta = (int)gameTime.Elapsed.TotalMilliseconds;
-
-			lock (lockObject) {
-
-				delayed.Clear();
-
-				while (queue.Any()) {
+				while ( cmdQueue.Any() ) {
 					
-					var cmd = queue.Dequeue();
+					try {
+						var r = ExecuteCommand(cmdQueue.Dequeue());
 
-					if ( cmd.Affinity == affinity ) {
-
-						if ( cmd.Delay<=0 || forceDelayed ) {
-							//	execute :
-
-							if (affinity==CommandAffinity.Server) {
-								cmd.ExecuteServer(serverInstance);
-							} else {
-								cmd.Execute();
-							}
-
-							if (cmd.Result!=null) {
-								Log.Message( "// Result: {0} //", cmd.Result );
-							}
-
-							//	push to history :
-							if (!cmd.NoRollback && cmd.Affinity==CommandAffinity.Default) {
-								history.Push( cmd );
-							}
-
-						} else {
-
-							cmd.Delay -= delta;
-
-							delayed.Enqueue( cmd );
-
+						if (r!=null) {	
+							Log.Message("// {0} //", r);
 						}
 
-					} else {
-						
-						delayed.Enqueue( cmd );
+					} catch ( Exception e ) {
+						Log.Error("{0}", e.Message);
 
+						if (e.InnerException!=null) {
+							Log.Error("{0}", e.InnerException.Message);
+						}
 					}
+				}	
 
-				}
-
-				Misc.Swap( ref delayed, ref queue );
 			}
 		}
 
 
 
 		/// <summary>
-		/// Undo one command.
+		/// 
 		/// </summary>
-		public bool Undo ()
+		/// <param name="commandLine"></param>
+		/// <returns></returns>
+		public static IEnumerable<string> SplitCommandLine(string commandLine)
 		{
-			lock (lockObject) {
+			bool inQuotes = false;
 
-				if (!history.Any()) {
-					return false;
-				}
+			return commandLine.Split(c =>
+									 {
+										 if (c == '\"')
+											 inQuotes = !inQuotes;
 
-				var cmd = history.Pop();
-				cmd.Rollback();
-
-				return true;
-			}
-		}
-
-
-
-		/// <summary>
-		/// Purges all history.
-		/// </summary>
-		public void PurgeHistory ()
-		{
-			lock (lockObject) {
-				history.Clear();
-			}
+										 return !inQuotes && c == ' ';
+									 })
+							  .Select(arg => arg.Trim().TrimMatchingQuotes('\"'))
+							  .Where(arg => !string.IsNullOrEmpty(arg));
 		}
 	}
 }

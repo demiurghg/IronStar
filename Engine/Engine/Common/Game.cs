@@ -29,7 +29,7 @@ using Fusion.Engine.Storage;
 using Fusion.Engine.Audio;
 using Fusion.Engine.Tools;
 using Fusion.Engine.Frames;
-
+using System.ComponentModel;
 
 namespace Fusion.Engine.Common {
 
@@ -369,6 +369,8 @@ namespace Fusion.Engine.Common {
 
 			userStorage			=	new UserStorage(this);
 
+			invoker.AddCommands( this );
+
 
 			//	create SV, CL and UI instances :
 			sv = new GameServer( this );
@@ -680,9 +682,9 @@ namespace Fusion.Engine.Common {
 			}
 
 			try {
-				invoker.ExecuteQueue( gameTimeInternal, CommandAffinity.Default );
+				invoker.ExecuteCommandQueue();
 			} catch ( Exception e ) {
-				Log.Error( e.Message );
+				Log.Error( e.ToString() );
 			}
 
 			CheckExitInternal();
@@ -722,10 +724,71 @@ namespace Fusion.Engine.Common {
 
 		/*-----------------------------------------------------------------------------------------
 		 * 
-		 *	Client-server stuff :
+		 *	Commands :
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
+		[Command("quit")]
+		[Description("quit the game")]
+		public string Quit_f ( string[] args )
+		{
+			Exit();
+			return null;
+		}
+
+
+		[Command("map")]
+		[Description("starts new game")]
+		public string Map_f ( string[] args )
+		{
+			if (args.Length!=2) {
+				throw new Exception("Missing command line arguments: map");
+			}
+
+			StartServer( args[1], false );
+
+			return null;
+		}
+
+
+		[Command("killserver")]
+		[Description("kills game server and stops the game")]
+		public string KillServer_f ( string[] args )
+		{
+			KillServer();
+			return null;
+		}
+
+
+		[Command("connect")]
+		[Description("initiate connection to remote or local server")]
+		public string Connect_f ( string[] args )
+		{
+			if (args.Length<3) {
+				throw new Exception("Missing command line arguments: host and port");
+			}
+
+			Connect( args[1], int.Parse(args[2]));
+			return null;
+		}
+
+
+		[Command("disconnect")]
+		[Description("disconnect client from server")]
+		public string Disconnect_f ( string[] args )
+		{
+			var msg = (args.Length>1) ? args[1] : "";
+
+			Disconnect(msg);
+			return null;
+		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 * 
+		 *	Client-server stuff :
+		 * 
+		-----------------------------------------------------------------------------------------*/
 
 		
 		/// <summary>

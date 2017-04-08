@@ -60,11 +60,11 @@ namespace Fusion.Core.Shell {
 			}
 
 			var suggestion	=	new Suggestion(input);
-			var args		=	CommandLineParser.SplitCommandLine( input ).ToArray();
+			var args		=	SplitCommandLine( input ).ToArray();
 			var cmd			=	args[0];
-			var cmdList		=	CommandList.ToList();
+			var cmdList		=	CommandNames.ToList();
 			var varDict		=	Game.Config.Variables;
-			var comparison = StringComparison.OrdinalIgnoreCase;
+			var comparison	=	StringComparison.OrdinalIgnoreCase;
 
 			ConfigVariable cfgVar;
 
@@ -92,7 +92,12 @@ namespace Fusion.Core.Shell {
 					}
 				}
 
-				suggestion.AddRange( candidates );
+				suggestion.AddRange( candidates.Select( cc => GetDescription(cc) ) );
+
+				/*var descs = suggestion.Candidates.Select( cmd1 => AddDescription(cmd1) );
+
+				suggestion.Clear();
+				suggestion.AddRange( descs );*/
 
 				return suggestion;
 			}
@@ -100,35 +105,32 @@ namespace Fusion.Core.Shell {
 
 		
 
-
-		void AddCommandSyntax ( Suggestion suggestion, CommandLineParser parser, string commandName )
+		string GetDescription ( string command )
 		{
-			suggestion.Add( commandName 
-				+ " " + string.Join(" ", parser.RequiredUsageHelp.Select( o => "<" + o.Name + ">" + (o.IsList?"[...]":"")) )
-				+ " " + string.Join("", parser.OptionalUsageHelp.Select( o => "[/" + o.Value.Name + "]") ) 
-				);
+			var varDict		=	Game.Config.Variables;
+			Binding binding;
+			ConfigVariable variable;
+
+			if (commands.TryGetValue(command, out binding) && binding.Description!=null) {
+				return string.Format("{0,-25} {1}", command, binding.Description );
+			} else if ( varDict.TryGetValue(command, out variable ) && variable.Description!=null) {
+				return string.Format("{0,-25} {1}", command, variable.Description );
+			} else {
+				return command;
+			}
 		}
 
 
 
-		void DetailedCommandHelp ( Suggestion suggestion, CommandLineParser parser, string commandName )
+		void AddCommandSyntax ( Suggestion suggestion, CommandLineParser parser, string commandName )
 		{
-			suggestion.Add( commandName );
-			
-			suggestion.Add( "" );
-			suggestion.Add( "required : " );
+		}
 
-			foreach( var option in parser.RequiredUsageHelp ) {
-				suggestion.Add(string.Format("   {0,-20} {1}", "<"+option.Name+">", option.Description));
-			}
 
-			
-			suggestion.Add( "" );
-			suggestion.Add( "options : " );
 
-			foreach( var option in parser.OptionalUsageHelp.Select( p => p.Value ).OrderBy( n=>n.Name ) ) {
-				suggestion.Add(string.Format("   /{0,-20} {1}", option.Name, option.Description));
-			}
+		void DetailedCommandHelp ( Suggestion suggestion, string commandName )
+		{
+			suggestion.Add( GetDescription(commandName) );
 		}
 
 
@@ -142,10 +144,7 @@ namespace Fusion.Core.Shell {
 		{
 			var suggestion		=	new Suggestion(input);
 
-			var cmd				=	GetCommand(commandName);
-			var parser			=	GetParser(commandName);
-			var numRequired		=	parser.RequiredUsageHelp.Count;
-			var numOptions		=	parser.OptionalUsageHelp.Count;
+			var binding			=	commands[ args[0] ];
 			var tailingSpace	=	input.Last()==' ';
 
 			//	add fictional empty argument for more clear suggestion:
@@ -154,11 +153,10 @@ namespace Fusion.Core.Shell {
 				args[ args.Length-1 ] = "";
 			}
 
-
 			//	command without tailing space - add space:
 			if (args.Length==1) {
 				suggestion.CommandLine = ArgsToString( args ) + " ";
-				DetailedCommandHelp( suggestion, parser, commandName );
+				DetailedCommandHelp( suggestion, commandName );
 				return suggestion;
 			}
 
@@ -166,12 +164,13 @@ namespace Fusion.Core.Shell {
 			var lastArg = args.Last();
 
 			//	question?
-			if (lastArg=="?") {
-				DetailedCommandHelp( suggestion, parser, commandName );
+			/*if (lastArg=="?") {
+				DetailedCommandHelp( suggestion, commandName );
 				return suggestion;
-			}
+			} */
 
-
+		
+			#if false
 			//	add short help :
 			AddCommandSyntax( suggestion, parser, commandName );
 
@@ -249,6 +248,7 @@ namespace Fusion.Core.Shell {
 				#endregion
 
 			}
+			#endif
 			
 			return suggestion;
 		}

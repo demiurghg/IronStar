@@ -59,6 +59,8 @@ namespace Fusion.Core.Shell {
 		{
 			Game	=	game;
 			commandNames	=	new string[0];
+
+			AddCommands(this);
 		}
 
 
@@ -72,38 +74,61 @@ namespace Fusion.Core.Shell {
 		{
 			lock (lockObject) {
 
-				foreach ( var mi in obj.GetType().GetMethods() ) {
+				var bindAttr = BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Instance;
 
-					var cmdAttr		= mi.GetCustomAttribute<CommandAttribute>();
+				AddCommands( obj, obj.GetType().GetMethods(bindAttr) );
+			}
+		}
 
-					if(cmdAttr==null) {
-						continue;
-					}
 
-					if (mi.ReturnType!=typeof(string)) {
-						Log.Warning("Command '{0}' must return string. Ignored.", cmdAttr.Name);
-						continue;
-					}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="obj"></param>
+		public void AddCommands ( Type type )
+		{
+			lock (lockObject) {
 
-					var parameters = mi.GetParameters();
+				var bindAttr = BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Static;
 
-					if (parameters.Length!=1 && parameters[0].ParameterType!=typeof(string[])) {
-						Log.Warning("Input parameters if command '{0}' must be string[]. Ignored.", cmdAttr.Name);
-						continue;
-					}
+				AddCommands( null, type.GetMethods(bindAttr) );
+			}
+		}
 
-					var descAttr	= mi.GetCustomAttribute<DescriptionAttribute>();
 
-					var binding = new Binding( obj, mi, cmdAttr.Name, descAttr?.Description);
 
-					commands.Add( cmdAttr.Name, binding );
+		void AddCommands ( object obj, IEnumerable<MethodInfo> methods )
+		{
+			foreach ( var mi in methods ) {
+
+				var cmdAttr		= mi.GetCustomAttribute<CommandAttribute>();
+
+				if(cmdAttr==null) {
+					continue;
 				}
 
+				if (mi.ReturnType!=typeof(string)) {
+					Log.Warning("Command '{0}' must return string. Ignored.", cmdAttr.Name);
+					continue;
+				}
 
-				commandNames	=	commands
-					.Select( pair => pair.Key )
-					.ToArray();	
+				var parameters = mi.GetParameters();
+
+				if (parameters.Length!=1 && parameters[0].ParameterType!=typeof(string[])) {
+					Log.Warning("Input parameters if command '{0}' must be string[]. Ignored.", cmdAttr.Name);
+					continue;
+				}
+
+				var descAttr	= mi.GetCustomAttribute<DescriptionAttribute>();
+
+				var binding = new Binding( obj, mi, cmdAttr.Name, descAttr?.Description);
+
+				commands.Add( cmdAttr.Name, binding );
 			}
+
+			commandNames	=	commands
+				.Select( pair => pair.Key )
+				.ToArray();	
 		}
 
 
@@ -220,6 +245,119 @@ namespace Fusion.Core.Shell {
 									 })
 							  .Select(arg => arg.Trim().TrimMatchingQuotes('\"'))
 							  .Where(arg => !string.IsNullOrEmpty(arg));
+		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 * 
+		 *	Commands :
+		 * 
+		-----------------------------------------------------------------------------------------*/
+
+		[Command("set")]
+		string Set_f (string[] args)
+		{
+			if (args.Length<3) {
+				throw new InvokerException("Usage: set <variable> <value>");
+			}
+
+			var varName  = args[1];
+			var varValue = args[2];
+
+			ConfigVariable variable;
+
+			if (!Game.Config.Variables.TryGetValue( varName, out variable )) {
+				throw new Exception(string.Format("Variable '{0}' does not exist", varName) );
+			}
+
+			variable.Set( varValue );
+
+			return null;
+		}
+
+
+
+		[Command("toggle")]
+		string Toggle_f (string[] args)
+		{
+			if (args.Length<2) {
+				throw new InvokerException("Usage: set <variable> <value>");
+			}
+
+			var varName  = args[1];
+
+			ConfigVariable variable;
+
+			if (!Game.Config.Variables.TryGetValue( varName, out variable )) {
+				throw new Exception(string.Format("Variable '{0}' does not exist", varName) );
+			}
+
+			var oldValue	= variable.Get();
+			var value		= oldValue.ToLowerInvariant();
+
+			if (value=="false") {
+				variable.Set("true");
+			} else if (value=="true") {
+				variable.Set("false");
+			} else if (value=="0") {
+				variable.Set("1");
+			} else {
+				variable.Set("0");
+			}
+
+			return null;
+		}
+
+
+
+		[Command("listCmds")]
+		string ListCommands_f ( string[] args )
+		{
+			Log.Message("");
+			Log.Message("Commands:");
+
+			var list = commands
+				.Select( pair => pair.Value )
+				.OrderBy( cmd1 => cmd1.Name )
+				.ToArray();
+			
+			foreach ( var cmd in list ) {
+				Log.Message("  {0,-25} {1}", cmd.Name, cmd.Description );
+			}
+			Log.Message("{0} cmds", list.Length );
+
+			return null;
+		}
+
+
+
+		[Command("listVars")]
+		string ListVariables_f ( string[] args )
+		{
+			Log.Message("");
+			Log.Message("Variables:");
+
+			var list = Game.Config.Variables.ToList()
+					.Select( e1 => e1.Value )
+					.OrderBy( e => e.Name )
+					.ToList();
+			
+			foreach ( var variable in list ) {
+				Log.Message("  {0,-35} = {1}", variable.Name, variable.Get() );
+			}
+			Log.Message("{0} vars", list.Count );
+
+			return null;
+		}
+
+
+
+		[Command("echo")]
+		string Echo_f ( string[] args )
+		{
+			Log.Message( string.Join(" ", args) );
+
+			return null;
 		}
 	}
 }

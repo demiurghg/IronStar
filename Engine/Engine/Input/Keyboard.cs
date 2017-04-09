@@ -46,6 +46,8 @@ namespace Fusion.Engine.Input {
 			device.FormKeyDown += device_FormKeyDown;
 			device.FormKeyUp += device_FormKeyUp;
 			device.FormKeyPress += device_FormKeyPress;
+
+			Game.Invoker.AddCommands( this );
 		}
 
 
@@ -55,6 +57,67 @@ namespace Fusion.Engine.Input {
 		/// </summary>
 		public override void Initialize ()
 		{
+		}
+
+
+
+		[Command("bind")]
+		string Bind_f (string[] args)
+		{
+			if (args.Length<3) {
+				throw new InvokerException("Usage: bind <key> <key down cmd> [<key up command>]");
+			}
+		
+			Keys key;
+			if (!Enum.TryParse(args[1], out key)) {
+				throw new InvokerException("Bad key: {0}", args[1]);
+			}
+
+			if (IsBound(key)) {
+				Unbind(key);
+			}
+
+			var keydownCmd	=	args[2];
+			var keyupCmd	=	(args.Length>3) ? args[3] : "";
+
+			Bind( key, keydownCmd, keyupCmd );
+			
+			return null;
+		}
+
+
+		[Command("unbind")]
+		string Unbind_f (string[] args)
+		{
+			if (args.Length<2) {
+				throw new InvokerException("Usage: unbind <key>");
+			}
+		
+			Keys key;
+			if (!Enum.TryParse(args[1], out key)) {
+				throw new InvokerException("Bad key: {0}", args[1]);
+			}
+
+			if (IsBound(key)) {
+				Unbind(key);
+			}
+			
+			return null;
+		}
+
+
+		[Command("listbinds")]
+		string Listbinds_f (string[] args)
+		{
+			Log.Message("");
+
+			foreach ( var bind in Bindings.OrderBy(b=>b.Key) ) {
+				Log.Message("{0,-8} = {1} | {2}", bind.Key, bind.KeyDownCommand, bind.KeyUpCommand );
+			}
+
+			Log.Message("{0} keys are bound", Bindings.Count() );
+			
+			return null;
 		}
 
 

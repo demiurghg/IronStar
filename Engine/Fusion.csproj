@@ -645,11 +645,7 @@
       <Name>Lidgren.Network</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Core\Shell\Commands\" />
-    <Folder Include="Engine\Common\Commands\" />
-    <Folder Include="Engine\Graphics\Commands\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

@@ -30,6 +30,7 @@ using Fusion.Engine.Audio;
 using Fusion.Engine.Tools;
 using Fusion.Engine.Frames;
 using System.ComponentModel;
+using Fusion.Build;
 
 namespace Fusion.Engine.Common {
 
@@ -350,6 +351,7 @@ namespace Fusion.Engine.Common {
 			GCSettings.LatencyMode	=	GCLatencyMode.SustainedLowLatency;
 
 			config				=	new ConfigManager( this );
+			invoker				=	new Invoker(this);
 			inputDevice			=	new InputDevice( this );
 			graphicsDevice		=	new GraphicsDevice( this );
 			renderSystem		=	new RenderSystem( this );
@@ -357,7 +359,6 @@ namespace Fusion.Engine.Common {
 			network				=	new Network( this );
 			content				=	new ContentManager( this );
 			gameTimeInternal	=	new GameTime();
-			invoker				=	new Invoker(this);
 			console				=	new GameConsole(this);
 
 			keyboard			=	new Keyboard(this);
@@ -730,7 +731,7 @@ namespace Fusion.Engine.Common {
 
 		[Command("quit")]
 		[Description("quit the game")]
-		public string Quit_f ( string[] args )
+		string Quit_f ( string[] args )
 		{
 			Exit();
 			return null;
@@ -739,7 +740,7 @@ namespace Fusion.Engine.Common {
 
 		[Command("map")]
 		[Description("starts new game")]
-		public string Map_f ( string[] args )
+		string Map_f ( string[] args )
 		{
 			if (args.Length!=2) {
 				throw new Exception("Missing command line arguments: map");
@@ -751,9 +752,33 @@ namespace Fusion.Engine.Common {
 		}
 
 
-		[Command("killserver")]
+		[Command("editMap")]
+		[Description("starts map editor")]
+		string EditMap_f ( string[] args )
+		{
+			if (args.Length!=2) {
+				throw new Exception("Missing command line arguments: map");
+			}
+
+			GameEditor.Start( args[1] );
+
+			return null;
+		}
+
+
+		[Command("exitEditor")]
+		[Description("exit map editor")]
+		string ExitEditor_f ( string[] args )
+		{
+			GameEditor.Stop();
+
+			return null;
+		}
+
+
+		[Command("killServer")]
 		[Description("kills game server and stops the game")]
-		public string KillServer_f ( string[] args )
+		string KillServer_f ( string[] args )
 		{
 			KillServer();
 			return null;
@@ -762,7 +787,7 @@ namespace Fusion.Engine.Common {
 
 		[Command("connect")]
 		[Description("initiate connection to remote or local server")]
-		public string Connect_f ( string[] args )
+		string Connect_f ( string[] args )
 		{
 			if (args.Length<3) {
 				throw new Exception("Missing command line arguments: host and port");
@@ -775,7 +800,7 @@ namespace Fusion.Engine.Common {
 
 		[Command("disconnect")]
 		[Description("disconnect client from server")]
-		public string Disconnect_f ( string[] args )
+		string Disconnect_f ( string[] args )
 		{
 			var msg = (args.Length>1) ? args[1] : "";
 
@@ -783,6 +808,37 @@ namespace Fusion.Engine.Common {
 			return null;
 		}
 
+
+		[Command("contentBuild")]
+		[Description("builds content")]
+		string ContentBuild( string[] args )
+		{
+			var force	= args.Contains("/force");
+			var files	= args.Skip(1).Where( s=>!s.StartsWith("/") ).ToArray();
+
+			Builder.SafeBuild(force, null, files);
+
+			return null;
+		}
+
+		[Command("contentFile")]
+		[Description("gets content description file")]
+		string ContentFile( string[] args )
+		{
+			return Builder.Options.ContentIniFile;
+		}
+
+		[Command("contentReport")]
+		[Description("opens content report file")]
+		string ContentReport( string[] args )
+		{
+			if (args.Length<2) {
+				throw new Exception("Missing command line arguments: filename");
+			}
+
+			Builder.OpenReport( args[1] );
+			return null;
+		}
 
 		/*-----------------------------------------------------------------------------------------
 		 * 

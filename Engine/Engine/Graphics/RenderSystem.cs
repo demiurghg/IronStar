@@ -9,6 +9,7 @@ using Fusion.Core.Mathematics;
 using Fusion.Core.Configuration;
 using Fusion.Engine.Common;
 using Fusion.Drivers.Graphics;
+using Fusion.Core.Shell;
 
 namespace Fusion.Engine.Graphics {
 
@@ -118,14 +119,33 @@ namespace Fusion.Engine.Graphics {
 			bitonicSort		=	new BitonicSort( this );
 			vtSystem	=	new VTSystem( this );
 
-			Game.Config.ExposeConfig( lightManager,  "LightRenderer"	, "light" );
-			Game.Config.ExposeConfig( ssaoFilter,     "SSAO"			, "ssao"  );
-			Game.Config.ExposeConfig( vtSystem, "VirtualTexture"	, "vt"	  );
+			Game.Config.ExposeConfig( lightManager, "LightRenderer"	, "light" );
+			Game.Config.ExposeConfig( ssaoFilter,   "SSAO"			, "ssao"  );
+			Game.Config.ExposeConfig( vtSystem,		"VirtualTexture", "vt"	  );
+			Game.Invoker.AddCommands( this );
 
 			Device.DisplayBoundsChanged += (s,e) => {
 				DisplayBoundsChanged?.Invoke( s, e );
 			};
 		}
+
+
+		[Command("screenshot")]
+		public string Screenshot_f ( string[] args )
+		{
+			Screenshot(null);
+			return null;
+		}
+
+
+		[Command("vtrestart")]
+		public string VTRestart_f ( string[] args )
+		{
+			Game.RenderSystem.RenderWorld.VirtualTexture = null;
+			Game.RenderSystem.RenderWorld.VirtualTexture = Game.Content.Load<VirtualTexture>("*megatexture");
+			return null;
+		}
+
 
 
 										  

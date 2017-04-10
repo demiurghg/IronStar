@@ -831,6 +831,8 @@ namespace Fusion.Engine.Common {
 
 			Builder.SafeBuild(force, null, files);
 
+			Reload();
+
 			return null;
 		}
 

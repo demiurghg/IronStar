@@ -143,6 +143,7 @@
     <Compile Include="Entities\ProxyFactory.cs" />
     <Compile Include="Entities\StartPoint.cs" />
     <Compile Include="Items\Item.cs" />
+    <Compile Include="Items\Weapon.cs" />
     <Compile Include="Items\WeaponFactory.cs" />
     <Compile Include="Items\ItemFactory.cs" />
     <Compile Include="Mapping\LightPreset.cs" />

@@ -108,7 +108,8 @@ namespace IronStar.Items {
 		public abstract bool Pickup ( Entity player );
 
 		/// <summary>
-		/// Called when player drops the item
+		/// Called when player drops the item.
+		/// On drop, creates new entity.
 		/// </summary>
 		public abstract Entity Drop ();
 
@@ -151,7 +152,7 @@ namespace IronStar.Items {
 		/// <summary>
 		/// Indicates that given item could be used as weapon
 		/// </summary>
-		public abstract bool IsWeapon { get; set; }
+		public abstract bool IsWeapon { get; }
 		
 		/// <summary>
 		/// Indicated that given item is in use and can not be dropped, changed or switched off.

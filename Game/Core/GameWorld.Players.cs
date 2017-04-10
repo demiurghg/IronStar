@@ -47,6 +47,16 @@ namespace IronStar.Core {
 		}
 
 
+		public Character GetPlayerCharacter ( Guid guid )
+		{
+			return GetEntities()
+				.Where( e1 => e1.UserGuid==guid )
+				.Select( e2 => e2.Controller as Character )
+				.Where( ch => ch!=null )
+				.LastOrDefault();
+		}
+
+
 		public Entity[] GetAllPlayerEntities ()
 		{
 			return GetEntities()

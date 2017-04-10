@@ -809,6 +809,19 @@ namespace Fusion.Engine.Common {
 		}
 
 
+		[Command("cmd")]
+		[Description("sends command to remote server")]
+		string Cmd_f ( string[] args )
+		{
+			var rcmd = string.Join( " ", args.Skip(1) );
+
+			GameClient.NotifyServer("*cmd " + rcmd);
+
+			return null;
+		}
+
+
+
 		[Command("contentBuild")]
 		[Description("builds content")]
 		string ContentBuild( string[] args )

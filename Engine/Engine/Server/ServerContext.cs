@@ -34,8 +34,6 @@ namespace Fusion.Engine.Server {
 			this.game			=	game;
 			this.serverInstance	=	factory.CreateServer( game, this, map, options );
 
-			serverInstance.Initialize();
-
 			var netConfig						=   new NetPeerConfiguration(gameId);
 			netConfig.Port						=   port;
 			netConfig.MaximumConnections		=   32;
@@ -55,6 +53,8 @@ namespace Fusion.Engine.Server {
 
 			netServer		=	new NetServer( netConfig );
 			netServer.Start();
+
+			serverInstance.Initialize();
 		}
 
 

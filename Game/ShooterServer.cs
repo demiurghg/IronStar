@@ -16,6 +16,8 @@ using Fusion.Core.IniParser.Model;
 using Fusion.Engine.Graphics;
 using IronStar.Mapping;
 using IronStar.Core;
+using Fusion.Core.Shell;
+using IronStar.Items;
 
 namespace IronStar {
 	class ShooterServer : IServerInstance {
@@ -27,12 +29,16 @@ namespace IronStar {
 		readonly string mapName;
 		Map map;
 
+		Invoker invoker;
+
 		
 		public ShooterServer ( GameServer server, IMessageService msgsvc, string mapName )
 		{
 			this.msgsvc		=	msgsvc;
 			world			=	new GameWorld( server.Game, msgsvc, false, new Guid() );
 			this.mapName	=	mapName;
+			invoker			=	new Invoker( server.Game );
+			invoker.AddCommands(this);
 		}
 
 
@@ -41,8 +47,6 @@ namespace IronStar {
 			map		=   world.Content.Load<Map>( @"maps\" + mapName );
 			world.InitServerAtoms();
 			map.ActivateMap( world, true );
-
-			//EntityKilled += MPWorld_EntityKilled;
 		}
 
 
@@ -87,13 +91,47 @@ namespace IronStar {
 		}
 
 
+
 		public void FeedNotification( Guid clientGuid, string message )
 		{
 			if (message.StartsWith("*chat ")) {
 				msgsvc.Push(message);
 			}
 			if (message.StartsWith("*cmd ")) {
-				Game.Instance.Invoker.PushCommand( message.Replace("*cmd ","") );
+				var rcmd = message.Replace("*cmd ","");
+				Log.Message("Remote command: {0} {1}", clientGuid, rcmd);
+
+				var args = Invoker.SplitCommandLine(rcmd).ToArray();
+				var arg0 = args[0];
+				var arg1 = (args.Length>1) ? args[1] : "";
+
+				if (arg0=="give") {
+					GiveItem(clientGuid, arg1);	
+				}
+			}
+		}
+
+
+
+		void GiveItem ( Guid clientGuid, string item )
+		{
+			try {
+
+				var player		=	World.GetPlayerEntity( clientGuid );
+				var playerChar	=	World.GetPlayerCharacter( clientGuid );
+
+				var itemFactory	=	World.Content.Load<ItemFactory>(@"items\" + item);
+
+				var newItem		=	itemFactory.Spawn();
+
+				if (newItem.Pickup( player )) {
+					Log.Message("New item {0}", item);
+				} else {
+					Log.Warning("Can not put item {0} to inventory", item);
+				}
+
+			} catch ( Exception e ) {
+				Log.Error( e.Message );
 			}
 		}
 

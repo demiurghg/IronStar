@@ -28,33 +28,39 @@ namespace IronStar.Items {
 	public class WeaponFactory : ItemFactory {
 
 		[Category("Shooting Properties")]
+		[Description("Damage per projectile")]
 		public int Damage { get; set; } = 100;
 
 		[Category("Shooting Properties")]
+		[Description("Projectile classname")]
 		public string Projectile { get; set; } = "";
 
 		[Category("Shooting Properties")]
-		public int Quantity { get; set; } = 1;
+		[Description("Number of shot projectiles")]
+		public int ProjectileQuantity { get; set; } = 1;
 
 		[Category("Shooting Properties")]
-		public string Ammo { get; set; } = "";
+		[Description("Number of shot projectiles")]
+		public int AmmoCapacity { get; set; } = 100;
 
 		[Category("Shooting Properties")]
-		public int ConsumeAmmo { get; set; } = 1;
-
-		[Category("Shooting Properties")]
+		[Description("Delay between triggering attack and actual shot")]
 		public int WarmupPeriod { get; set; } = 0;
 
 		[Category("Shooting Properties")]
+		[Description("Delay between actual shot and ")]
 		public int CooldownPeriod { get; set; } = 500;
 
 		[Category("Shooting Properties")]
+		[Description("Tangent vertical spread addition")]
 		public float VSpread { get; set; } = 0;
 
 		[Category("Shooting Properties")]
+		[Description("Tangent horizontal spread addition")]
 		public float HSpread { get; set; } = 0;
 
 		[Category("Shooting Properties")]
+		[Description("Indicates that first bullet must be perfectly aimed")]
 		public bool PerfectFirstRound { get; set; } = false;
 
 		
@@ -69,7 +75,7 @@ namespace IronStar.Items {
 
 		public override Item Spawn()
 		{
-			throw new NotImplementedException();
+			return new Weapon( Name, this );
 		}
 	}
 }

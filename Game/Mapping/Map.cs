@@ -80,11 +80,11 @@ namespace IronStar.Mapping {
 		{
 			gameWorld.Physics.Gravity			=	Environment.Gravity;
 
-			gameWorld.environment.FogDensity	=	Environment.FogDensity;
-			gameWorld.environment.Gravity		=	Environment.Gravity;
-			gameWorld.environment.SunIntensity	=	Environment.SunIntensity;
-			gameWorld.environment.SunDirection	=	Environment.SunPosition;
-			gameWorld.environment.Turbidity		=	Environment.SkyTrubidity;
+			gameWorld.snapshotHeader.FogDensity	=	Environment.FogDensity;
+			gameWorld.snapshotHeader.Gravity		=	Environment.Gravity;
+			gameWorld.snapshotHeader.SunIntensity	=	Environment.SunIntensity;
+			gameWorld.snapshotHeader.SunDirection	=	Environment.SunPosition;
+			gameWorld.snapshotHeader.Turbidity		=	Environment.SkyTrubidity;
 		}
 
 

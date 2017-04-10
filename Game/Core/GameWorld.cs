@@ -62,15 +62,7 @@ namespace IronStar.Core {
 		public PhysicsManager	Physics		{ get { return physics; } }
 
 
-		public struct Environment {
-			public Vector3 SunDirection;
-			public float Turbidity;
-			public float FogDensity;
-			public float Gravity;
-			public float SunIntensity;
-		}
-
-		public Environment environment;
+		public SnapshotHeader snapshotHeader = new SnapshotHeader();
 
 
 		public readonly bool IsPresentationEnabled;
@@ -206,12 +198,12 @@ namespace IronStar.Core {
 			rw.HdrSettings.DirtAmount			= 0.0f;
 			rw.HdrSettings.KeyValue				= 0.18f;
 
-			rw.SkySettings.SunPosition			=	environment.SunDirection;
-			rw.SkySettings.SunLightIntensity	=	environment.SunIntensity;
-			rw.SkySettings.SkyTurbidity			=	environment.Turbidity;
+			rw.SkySettings.SunPosition			=	snapshotHeader.SunDirection;
+			rw.SkySettings.SunLightIntensity	=	snapshotHeader.SunIntensity;
+			rw.SkySettings.SkyTurbidity			=	snapshotHeader.Turbidity;
 			rw.SkySettings.SkyIntensity			=	0.5f;
 
-			rw.FogSettings.Density				=	environment.FogDensity;
+			rw.FogSettings.Density				=	snapshotHeader.FogDensity;
 
 			rw.LightSet.DirectLight.Direction	=	rw.SkySettings.SunLightDirection;
 			rw.LightSet.DirectLight.Intensity	=	rw.SkySettings.SunLightColor;
@@ -483,7 +475,7 @@ namespace IronStar.Core {
 		/// <param name="writer"></param>
 		public virtual void WriteToSnapshot ( Guid clientGuid, Stream stream )
 		{
-			snapshotWriter.Write( stream, ref environment, entities, fxEvents );
+			snapshotWriter.Write( stream, snapshotHeader, entities, fxEvents );
 		}
 
 
@@ -495,7 +487,7 @@ namespace IronStar.Core {
 		public virtual void ReadFromSnapshot ( Stream stream, float lerpFactor )
 		{
 			snapshotReader.Read( 
-				stream, ref environment, entities, 
+				stream, snapshotHeader, entities, 
 				fxe => fxPlayback?.RunFX(fxe,false), 
 				ent => EntitySpawned?.Invoke( this, new EntityEventArgs(ent)),
 				id  => KillImmediatly(id) 

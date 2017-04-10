@@ -87,6 +87,18 @@ namespace IronStar.Entities {
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="snapshotHeader"></param>
+		public void UpdateHud ( SnapshotHeader snapshotHeader )
+		{
+			snapshotHeader.HudState[ (int)HudElement.Health ]	=	(short)health.Health;
+			snapshotHeader.HudState[ (int)HudElement.Armor	]	=	(short)armor.Armor;
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="id"></param>
 		public override void Killed ()
 		{

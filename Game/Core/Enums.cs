@@ -30,38 +30,7 @@ namespace IronStar.Core {
 		CameraEntity		=	0x0002,
 		UseInlineModel		=	0x0004,
 		Crouching			=	0x0008,
-		PrimaryWeapon		=	0x0010,
-		SecondaryWeapon		=	0x0020,
 	}
-
-
-
-	public enum Inventory : byte {
-
-		Health,
-		Armor,
-
-		Weapon_Machinegun,
-		Weapon_Shotgun,
-		Weapon_GaussRifle,
-		Weapon_RocketLauncher,
-		Weapon_Plasamgun,
-
-		Ammo_Bullets,
-		Ammo_Shells,
-		Ammo_Slugs,
-		Ammo_Rockets,
-		Ammo_Cells,
-
-		Ammo_Grenades,
-
-		Key_XXX,
-		Powerup_XXX,
-
-		Max,
-	}
-
-
 
 	public enum DamageType {
 		BulletHit,

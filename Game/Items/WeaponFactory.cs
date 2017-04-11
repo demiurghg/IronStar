@@ -43,13 +43,7 @@ namespace IronStar.Items {
 		[Description("Number of shot projectiles")]
 		public int AmmoCapacity { get; set; } = 100;
 
-		[Category("Shooting Properties")]
-		[Description("Delay between triggering attack and actual shot")]
-		public int WarmupPeriod { get; set; } = 0;
 
-		[Category("Shooting Properties")]
-		[Description("Delay between actual shot and ")]
-		public int CooldownPeriod { get; set; } = 500;
 
 		[Category("Shooting Properties")]
 		[Description("Tangent vertical spread addition")]
@@ -62,6 +56,25 @@ namespace IronStar.Items {
 		[Category("Shooting Properties")]
 		[Description("Indicates that first bullet must be perfectly aimed")]
 		public bool PerfectFirstRound { get; set; } = false;
+
+
+
+		[Category("Shooting Timing")]
+		[Description("Time to take weapon up")]
+		public int TakeOutPeriod { get; set; } = 200;
+
+		[Category("Shooting Timing")]
+		[Description("Time to put weapon down")]
+		public int PutDownPeriod { get; set; } = 200;
+
+		[Category("Shooting Timing")]
+		[Description("Delay between triggering attack and actual shot")]
+		public int WarmupPeriod { get; set; } = 0;
+
+		[Category("Shooting Timing")]
+		[Description("Delay between actual shot and readiness for next shot")]
+		public int CooldownPeriod { get; set; } = 500;
+
 
 		
 		[Category("Shooting FX")]

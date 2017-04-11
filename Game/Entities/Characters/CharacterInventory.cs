@@ -27,6 +27,10 @@ namespace IronStar.Entities {
 		readonly ContentManager content;
 		readonly List<Item> items = new List<Item>();
 
+		int currentWeapon = 0;
+		int nextWeapon = 0;
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -61,25 +65,63 @@ namespace IronStar.Entities {
 			items.Add( item );
 		}
 
+
+
 		/// <summary>
-		///// Attempt to put item to inventory.
-		///// If items of given type is greater than MaxCount return false.
-		///// </summary>
-		///// <param name="item"></param>
-		///// <returns></returns>
-		//public bool TryGive ( Item item )
-		//{
-		//	int count = items.Count( it => it.GetType() == item.GetType() );
+		/// 
+		/// </summary>
+		/// <param name="elapsedTime"></param>
+		public void Update ( float elapsedTime )
+		{
+			foreach ( var item in items ) {
+				item.Update( elapsedTime );
+			}
 
-		//	item.
+			items.RemoveAll( item => (item is Powerup) && ((item as Powerup).IsExhausted()) );
+		}
 
-		//	if (count>item.MaxCount) {
-		//		return false;
-		//	} else {
-		//		item.Pickup(
-		//		items.Add( item );
-		//		return true;
-		//	}
-		//}
+
+
+		/// <summary>
+		/// Switches weapon in inventory
+		/// </summary>
+		public void SwitchWeapon ()
+		{
+			//	already switching weapon
+			if (nextWeapon!=0) {
+				return;
+			}
+
+			//	find next weapon in inventory
+			var nextWeaponItem = items.FirstOrDefault( item => item is Weapon && item.ID != currentWeapon );
+
+			//	no weapon - abort weapon switch
+			if (nextWeaponItem==null) {
+				nextWeapon = 0;
+				return;
+			}
+
+			nextWeapon	=	nextWeaponItem.ID;
+		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 * 
+		 *	Internal stuff :
+		 * 
+		-----------------------------------------------------------------------------------------*/
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		Item GetItem(int id) 
+		{
+			return items.SingleOrDefault( item => item.ID == id );
+		}
+
+
+
 	}
 }

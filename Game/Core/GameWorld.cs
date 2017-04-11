@@ -475,6 +475,11 @@ namespace IronStar.Core {
 		/// <param name="writer"></param>
 		public virtual void WriteToSnapshot ( Guid clientGuid, Stream stream )
 		{
+			var playerCharacter = GetPlayerCharacter( clientGuid );
+
+			snapshotHeader.ClearHud();
+			playerCharacter?.UpdateHud( snapshotHeader );
+
 			snapshotWriter.Write( stream, snapshotHeader, entities, fxEvents );
 		}
 

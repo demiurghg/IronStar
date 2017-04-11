@@ -27,6 +27,7 @@ namespace IronStar.Views {
 		SpriteFont	hudFont;
 		SpriteFont	hudFontSmall;
 		SpriteFont	hudFontMicro;
+		DiscTexture	iconMachinegun;
 
 		SpriteLayer	hudLayer;
 
@@ -60,6 +61,7 @@ namespace IronStar.Views {
 			hudFont			=	Game.Content.Load<SpriteFont>(@"hud\hudFont");
 			hudFontSmall	=	Game.Content.Load<SpriteFont>(@"hud\hudFontSmall");
 			hudFontMicro	=	Game.Content.Load<SpriteFont>(@"hud\hudFontMicro");
+			iconMachinegun	=	Game.Content.Load<DiscTexture>(@"hud\machinegun");
 		}
 
 
@@ -78,49 +80,73 @@ namespace IronStar.Views {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void Update ( float elapsedTime, float lerpFactor )
+		public void Update ( float elapsedTime, float lerpFactor, GameWorld world )
 		{
 			hudLayer.Clear();
 
 			var rw	= Game.RenderSystem.RenderWorld;
 			var vp	= Game.RenderSystem.DisplayBounds;
 
-			//hudLayer.SetSpriteFrame( 0, new Rectangle(10,10,vp.Width-20, vp.Height-20), Color.Red );
+			var snapshotHeader	=	world.snapshotHeader;
+			var atoms			=	world.Atoms;
 
+
+			var dimText			=	new Color(255,255,255,128);
+			var fullText		=	new Color(255,255,255,224);
+
+			var health			=	snapshotHeader.HudState[(int)HudElement.Health];
+			var armor			=	snapshotHeader.HudState[(int)HudElement.Armor];
+			var weapon			=	"Assault Rifle";// atoms[ snapshotHeader.HudState[(int)HudElement.Weapon] ];
+			var ammo			=	snapshotHeader.HudState[(int)HudElement.WeaponAmmo];
+
+			//
+			//	crosshair :
+			//
 			hudLayer.DrawSprite( crosshair, vp.Width/2, vp.Height/2, crosshair.Width, 0, Color.White ); 
 
-			hudLayer.Draw( null, 0, vp.Height-48, vp.Width, 48, new Color(0,0,0,128) );
+			//
+			//	health and armor : 
+			//
+			int baseLine		=	vp.Height - 16;
+			int baseLine2		=	vp.Height - 32;
+			int center			=	vp.Width / 2;
 
-			int baseLine	=	vp.Height - 16+8;
-			int baseLine2	=	vp.Height - 32+8;
-			int center		=	vp.Width / 2;
+			hudLayer.Draw( null, 8, vp.Height-48-8, 320, 48, new Color(0,0,0,128), 0 );
 
-			var dimText		=	new Color(255,255,255,128);
-			var fullText	=	new Color(255,255,255,224);
+			SmallTextRJ	( hudLayer, string.Format("Health {0,3:000}", health), 16+120, baseLine2,   fullText );
+			MicroTextRJ	( hudLayer, string.Format("Armor     {0,3:000}", armor ), 16+120, baseLine,    fullText );
 
-			short	health	=	100;
-			short	armor	=	100;
-			var		wpn1	=	"Weapon1";
-			short	ammo1	=	9999;
+			hudLayer.Draw( null, 144, vp.Height-48, 176, 16, new Color(255,255,255,128), 0 );
+			hudLayer.Draw( null, 144, vp.Height-24, 176,  8, new Color(255,255,255,128), 0 );
 
-			
-			SmallTextRJ	( hudLayer, "BULLETS",			center - 4, baseLine2, dimText );
-			MicroTextRJ	( hudLayer, wpn1.ToString(),	center - 4, baseLine,  dimText );
-			BigTextLJ	( hudLayer, ammo1.ToString(),	center + 4, baseLine,  fullText );
+			var barHealth = Math.Max( 0, Math.Min(176, 176 * health / 100) );
+			var barArmor  = Math.Max( 0, Math.Min(176, 176 * armor  / 100) );
 
+			hudLayer.Draw( null, 144, vp.Height-48, barHealth, 16, Color.White, 0 );
+			hudLayer.Draw( null, 144, vp.Height-24, barArmor,  8,  Color.White, 0 );
 
-			SmallTextRJ	( hudLayer, "HEALTH",			center - 4 - 200, baseLine2, dimText );
-			MicroTextRJ	( hudLayer, "NORMAL",			center - 4 - 200, baseLine,  dimText );
-			BigTextLJ	( hudLayer, health.ToString(),	center + 4 - 200, baseLine,  fullText );
+			//
+			//	Weapon :
+			//
+			hudLayer.Draw( null, vp.Width-320-8, vp.Height-48-8, 320, 48, new Color(0,0,0,128), 0 );
 
-			SmallTextRJ	( hudLayer, "ARMOR",			center - 4 + 200, baseLine2, dimText );
-			MicroTextRJ	( hudLayer, "HEAVY",			center - 4 + 200, baseLine,  dimText );
-			BigTextLJ	( hudLayer, armor.ToString(),	center + 4 + 200, baseLine,  fullText );
-			/*hudFontSmall.DrawString( hudLayer, "Bullets", vp.Width / 2 - 64, baseLine, Color.Gray, -2 );
-			hudFont.DrawString( hudLayer, player.Bullets.ToString(), vp.Width / 2 + 16, baseLine, Color.White, -4 );
+			SmallTextRJ	( hudLayer, string.Format("{0,3:000}", ammo), vp.Width - (144+16), baseLine2,   fullText );
+			MicroTextRJ	( hudLayer, string.Format("{0}", weapon )   , vp.Width - (144+16), baseLine,    fullText );
 
-			hudFont.DrawString( hudLayer, player.Health.ToString(),  vp.Width / 2 - 32 - 128, baseLine, Color.White, -4 );
-			hudFont.DrawString( hudLayer, player.Armor.ToString(),  vp.Width / 2 + 32 + 128, baseLine, Color.White, -4 );*/
+			var ammorBar = Math.Max( 0, Math.Min(120, 120 * ammo  / 100) );
+			hudLayer.Draw( null, vp.Width-320, vp.Height-48, 120,		16, new Color(255,255,255,128), 0 );
+			hudLayer.Draw( null, vp.Width-320, vp.Height-48, ammorBar,	16, Color.White, 0 );
+
+			hudLayer.Draw( iconMachinegun, vp.Width-144-8, vp.Height-48-8, 144,48, Color.White );
+			/*hudLayer.Draw( null, 144, vp.Height-48, 176, 16, new Color(255,255,255,128), 0 );
+			hudLayer.Draw( null, 144, vp.Height-24, 176,  8, new Color(255,255,255,128), 0 );
+
+			var barHealth = Math.Max( 0, Math.Min(176, 176 * health / 100) );
+			var barArmor  = Math.Max( 0, Math.Min(176, 176 * armor  / 100) );
+
+			hudLayer.Draw( null, 144, vp.Height-48, barHealth, 16, Color.White, 0 );
+			hudLayer.Draw( null, 144, vp.Height-24, barArmor,  8,  Color.White, 0 );*/
+
 		}
 
 
@@ -141,6 +167,12 @@ namespace IronStar.Views {
 		{
 			var r = hudFontMicro.MeasureStringF( text, -1 );
 			hudFontMicro.DrawString( layer, text, x-r.Width, y, color, 0, -1 );
+		}
+
+		void MicroTextLJ ( SpriteLayer layer, string text, int x, int y, Color color )
+		{
+			var r = hudFontMicro.MeasureStringF( text, -1 );
+			hudFontMicro.DrawString( layer, text, x, y, color, 0, -1 );
 		}
 
 

@@ -114,7 +114,8 @@ namespace IronStar.Entities {
 		public override void Action( UserAction action )
 		{
 			switch (action) {
-				case UserAction.Attack: break;
+				case UserAction.Attack:			break;
+				case UserAction.SwitchWeapon:	inventory.SwitchWeapon(); break;
 			}
 		}
 

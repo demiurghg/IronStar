@@ -82,7 +82,7 @@ namespace IronStar {
 
 			camera.Update( gameTime.ElapsedSec, 1 );
 			
-			hud.Update( gameTime.ElapsedSec, 1 );
+			hud.Update( gameTime.ElapsedSec, 1, world );
 
 			world.PresentWorld( gameTime.ElapsedSec, 1, camera );
 

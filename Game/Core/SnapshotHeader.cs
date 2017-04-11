@@ -30,6 +30,13 @@ namespace IronStar.Core {
 		public float Gravity;
 		public float SunIntensity;
 
+		public void ClearHud ()
+		{
+			for ( int i=0; i<HudState.Length; i++ ) {
+				HudState[i]	=	0;
+			}
+		}
+
 		public readonly short[] HudState = new short[(int)HudElement.Max];
 
 

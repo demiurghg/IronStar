@@ -26,34 +26,44 @@ using System.ComponentModel;
 namespace IronStar.Items {
 
 	public class Weapon : Item {
+
+		abstract class State {
+			public abstract void Attack();
+			public abstract void TakeOut ();
+			public abstract void PutDown ();
+			public abstract void Update( float dt );
+		}
+
+		#if false
+		class Packed : State {
+		}
+
+		class Idle : State {
+		}
+
+		class Takeout : State {
+		}
+
+		class Putdown : State {
+		}
+													
+		class Warmup : State {
+		}
+
+		class Cooldown : State {
+		}
+		#endif
+
+		readonly WeaponFactory factory;
+
+
+
 		public Weapon( string name, WeaponFactory factory ) : base( name )
 		{
+			this.factory	=	factory;
 		}
 
-		public override bool IsBusy {
-			get { return false;	}
-		}
 
-		public override bool IsDepleted {
-			get { return false;	}
-		}
-
-		public override bool IsDroppable {
-			get { return true;	}
-		}
-
-		public override bool IsUsable {
-			get { return true;	}
-		}
-
-		public override bool IsWeapon {
-			get { return true;	}
-		}
-
-		public override void Attack()
-		{
-			Log.Warning("WEAPON ATTACK");
-		}
 
 		public override Entity Drop()
 		{
@@ -61,29 +71,41 @@ namespace IronStar.Items {
 			return null;
 		}
 
+		
 		public override bool Pickup( Entity player )
 		{
 			Log.Warning("WEAPON PICKUP");
 			return true;
 		}
 
-		public override void Reload()
-		{
-			Log.Warning("WEAPON RELOAD");
-		}
-
-		public override void Throw()
-		{
-			Log.Warning("WEAPON THROW");
-		}
 
 		public override void Update( float elsapsedTime )
 		{
 		}
 
-		public override void Use()
+
+
+		public void Attack()
 		{
-			Log.Warning("WEAPON USE");
+			Log.Warning("WEAPON ATTACK");
 		}
+
+
+		public void TakeOut ()
+		{
+		}
+
+
+		public void PutDown()
+		{
+		}
+
+
+
+		public bool IsBusy()
+		{
+			return false; /* STATE != IDLE */
+		}
+
 	}
 }

@@ -85,19 +85,35 @@ namespace IronStar.Items {
 
 	public abstract class Item {
 
+		private static int idCounter = 1;
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="factory"></param>
 		public Item ( string name )
 		{
-			Name		=	name;
+			ID		=	idCounter++;
+
+			if (ID==0) {
+				throw new InvalidOperationException("Too much items created (ID==0).");
+			}
+
+			Name	=	name;
 		}
 
 		/// <summary>
 		/// The internal name of the item
 		/// </summary>
 		public readonly string Name;
+
+		/// <summary>
+		/// The internal name of the item
+		/// </summary>
+		public int ID {
+			get;
+			private set;
+		}
 
 		/// <summary>
 		/// Called when player attempts to picks the item up.
@@ -117,51 +133,5 @@ namespace IronStar.Items {
 		/// Updates internal item state
 		/// </summary>
 		public abstract void Update ( float elsapsedTime );
-		
-		/// <summary>
-		/// Called when player tries to use item.
-		/// For weapon it means making the weapon primary
-		/// </summary>
-		public abstract void Use ();
-
-		/// <summary>
-		/// Called when player tries to use item as weapon
-		/// </summary>
-		public abstract void Attack ();
-
-		/// <summary>
-		/// Called when player tries to throw item as grenade
-		/// </summary>
-		public abstract void Throw ();
-
-		/// <summary>
-		/// Called when player tries to reload item
-		/// </summary>
-		public abstract void Reload ();
-
-		/// <summary>
-		/// Indicated that given item could be used
-		/// </summary>
-		public abstract bool IsUsable { get; }
-
-		/// <summary>
-		/// Indicated that given item can not be removed from inventory.
-		/// </summary>
-		public abstract bool IsDroppable { get; }
-
-		/// <summary>
-		/// Indicates that given item could be used as weapon
-		/// </summary>
-		public abstract bool IsWeapon { get; }
-		
-		/// <summary>
-		/// Indicated that given item is in use and can not be dropped, changed or switched off.
-		/// </summary>
-		public abstract bool IsBusy { get; }
-
-		/// <summary>
-		/// Indicated that given item could be removed (not dropped!) from inventory.
-		/// </summary>
-		public abstract bool IsDepleted { get; }
 	}
 }

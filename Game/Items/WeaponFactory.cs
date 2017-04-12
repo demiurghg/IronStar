@@ -60,12 +60,16 @@ namespace IronStar.Items {
 
 
 		[Category("Shooting Timing")]
+		[Description("Idle animation period")]
+		public int IdlePeriod { get; set; } = 500;
+
+		[Category("Shooting Timing")]
 		[Description("Time to take weapon up")]
-		public int TakeOutPeriod { get; set; } = 200;
+		public int ActivationPeriod { get; set; } = 200;
 
 		[Category("Shooting Timing")]
 		[Description("Time to put weapon down")]
-		public int PutDownPeriod { get; set; } = 200;
+		public int DeactivationPeriod { get; set; } = 200;
 
 		[Category("Shooting Timing")]
 		[Description("Delay between triggering attack and actual shot")]
@@ -85,6 +89,9 @@ namespace IronStar.Items {
 
 		[Category("Shooting FX")]
 		public string HitFX { get; set; } = "";
+
+		[Category("Shooting FX")]
+		public string EmptyFX { get; set; } = "";
 
 		public override Item Spawn()
 		{

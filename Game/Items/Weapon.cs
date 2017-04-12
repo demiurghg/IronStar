@@ -22,90 +22,158 @@ using BEPUphysics.EntityStateManagement;
 using BEPUphysics.PositionUpdating;
 using Fusion.Core.IniParser.Model;
 using System.ComponentModel;
+using IronStar.Entities;
 
 namespace IronStar.Items {
 
-	public class Weapon : Item {
+	public partial class Weapon : Item {
 
-		abstract class State {
-			public abstract void Attack();
-			public abstract void TakeOut ();
-			public abstract void PutDown ();
-			public abstract void Update( float dt );
-		}
+		bool	rqAttack;
+		bool	rqReload;
+		bool	rqActivation;
+		int		rqNextWeapon;
 
-		#if false
-		class Packed : State {
-		}
+		Timer	timer = new Timer();
 
-		class Idle : State {
-		}
+		Entity		playerEntity;
+		Character	playerCharacter;
 
-		class Takeout : State {
-		}
-
-		class Putdown : State {
-		}
-													
-		class Warmup : State {
-		}
-
-		class Cooldown : State {
-		}
-		#endif
+		readonly IState	stInactive		=	new Inactive	();
+		readonly IState	stReady			=	new Ready		();
+		readonly IState	stWarmup		=	new Warmup		();
+		readonly IState	stCooldown		=	new Cooldown	();
+		readonly IState	stReloading		=	new Reloading	();
+		readonly IState	stEmpty			=	new Empty		();
+		readonly IState	stActivation	=	new Activation	();
+		readonly IState	stDeactivation	=	new Deactivation();
 
 		readonly WeaponFactory factory;
+		IState	state;
 
 
-
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="factory"></param>
 		public Weapon( string name, WeaponFactory factory ) : base( name )
 		{
+			state			=	stInactive;
 			this.factory	=	factory;
 		}
 
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		public override Entity Drop()
 		{
 			Log.Warning("WEAPON DROP");
+
+			playerEntity	= null;
+			playerCharacter = null;
+
 			return null;
 		}
 
 		
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="player"></param>
+		/// <returns></returns>
 		public override bool Pickup( Entity player )
 		{
 			Log.Warning("WEAPON PICKUP");
+
+			playerEntity	=	player;
+			playerCharacter	=	player?.Controller as Character;
+
+			if (playerCharacter==null) {
+				Log.Warning("Attempt to pick item by non-character entity");
+				playerEntity	=	null;
+				return false;
+			}
+
+			playerCharacter.Inventory.AddItem( this );
+			playerCharacter.Inventory.SwitchToWeapon(ID);
+
 			return true;
 		}
 
 
-		public override void Update( float elsapsedTime )
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="elsapsedTime"></param>
+		public override void Update( float elapsedTime )
 		{
+			int dt = (int)(elapsedTime * 1000);
+			state.Update( this, dt );
 		}
 
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		void FireProjectile ()
+		{
+			Log.Warning("** FIRE **");
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="state"></param>
+		void SetState ( IState state )
+		{
+			Log.Warning("...enter weapon state : {0}", state.GetType().Name );
+
+			this.state = state;
+			this.state.Enter( this );
+		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 * 
+		 *	External commands :
+		 * 
+		-----------------------------------------------------------------------------------------*/
 
 		public void Attack()
 		{
-			Log.Warning("WEAPON ATTACK");
+			rqAttack	=	true;
 		}
 
 
-		public void TakeOut ()
+		public void Activate ()
 		{
+			rqActivation = true;
 		}
 
 
-		public void PutDown()
+		public void Reload ()
 		{
+			rqReload = true;
 		}
 
 
-
-		public bool IsBusy()
-		{
-			return false; /* STATE != IDLE */
+		public void Switch ( int nextWeaponID )
+		{	
+			if (nextWeaponID==ID) {
+				//	TODO : check fast A-B-A switch
+				rqNextWeapon	=	0;
+			} else {
+				rqNextWeapon	=	nextWeaponID;
+			}
 		}
-
 	}
 }
+

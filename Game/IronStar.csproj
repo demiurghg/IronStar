@@ -146,6 +146,8 @@
     <Compile Include="Items\Powerup.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\Weapon.cs" />
+    <Compile Include="Items\Weapon.Timer.cs" />
+    <Compile Include="Items\Weapon.States.cs" />
     <Compile Include="Items\WeaponFactory.cs" />
     <Compile Include="Items\ItemFactory.cs" />
     <Compile Include="Mapping\LightPreset.cs" />

@@ -73,11 +73,22 @@ namespace IronStar.Entities {
 		/// <param name="elapsedTime"></param>
 		public void Update ( float elapsedTime )
 		{
+			//	update all items :
 			foreach ( var item in items ) {
 				item.Update( elapsedTime );
 			}
 
+			//	removed depleted powerups :
 			items.RemoveAll( item => (item is Powerup) && ((item as Powerup).IsExhausted()) );
+
+			//	update weapon switch :
+			UpdateWeaponSwitch();
+		}
+
+
+
+		void UpdateWeaponSwitch ()
+		{
 		}
 
 
@@ -87,23 +98,38 @@ namespace IronStar.Entities {
 		/// </summary>
 		public void SwitchWeapon ()
 		{
-			//	already switching weapon
-			if (nextWeapon!=0) {
-				return;
-			}
-
-			//	find next weapon in inventory
-			var nextWeaponItem = items.FirstOrDefault( item => item is Weapon && item.ID != currentWeapon );
-
-			//	no weapon - abort weapon switch
-			if (nextWeaponItem==null) {
-				nextWeapon = 0;
-				return;
-			}
-
-			nextWeapon	=	nextWeaponItem.ID;
 		}
 
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="weaponId"></param>
+		public void SwitchToWeapon ( int weaponId )
+		{
+			var weapon = GetItem( weaponId ) as Weapon;
+
+			if (weapon==null) {
+				Log.Warning("SwitchToWeapon: Item #{0} is not a weapon or does not exist", weaponId);
+				return;
+			}
+
+			currentWeapon = weaponId;
+
+			weapon.Activate();
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void AttackWeapon ()
+		{
+			var weapon = GetItem( currentWeapon ) as Weapon;
+			weapon?.Attack();
+		}
 
 		/*-----------------------------------------------------------------------------------------
 		 * 

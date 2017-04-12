@@ -80,6 +80,7 @@ namespace IronStar.Entities {
 			controller.Update( elapsedTime );
 			armor.Update( elapsedTime );
 			health.Update( elapsedTime );
+			inventory.Update( elapsedTime );
 		}
 
 
@@ -114,7 +115,7 @@ namespace IronStar.Entities {
 		public override void Action( UserAction action )
 		{
 			switch (action) {
-				case UserAction.Attack:			break;
+				case UserAction.Attack:			inventory.AttackWeapon(); break;
 				case UserAction.SwitchWeapon:	inventory.SwitchWeapon(); break;
 			}
 		}

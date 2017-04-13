@@ -38,14 +38,14 @@ namespace IronStar.Items {
 		Entity		playerEntity;
 		Character	playerCharacter;
 
-		readonly IState	stInactive		=	new Inactive	();
-		readonly IState	stReady			=	new Ready		();
-		readonly IState	stWarmup		=	new Warmup		();
-		readonly IState	stCooldown		=	new Cooldown	();
-		readonly IState	stReloading		=	new Reloading	();
-		readonly IState	stEmpty			=	new Empty		();
-		readonly IState	stActivation	=	new Activation	();
-		readonly IState	stDeactivation	=	new Deactivation();
+		static readonly IState	stInactive		=	new Inactive	();
+		static readonly IState	stReady			=	new Ready		();
+		static readonly IState	stWarmup		=	new Warmup		();
+		static readonly IState	stCooldown		=	new Cooldown	();
+		static readonly IState	stReloading		=	new Reloading	();
+		static readonly IState	stEmpty			=	new Empty		();
+		static readonly IState	stActivation	=	new Activation	();
+		static readonly IState	stDeactivation	=	new Deactivation();
 
 		readonly WeaponFactory factory;
 		IState	state;

@@ -48,7 +48,7 @@ namespace IronStar.Items {
 			{
 				if (weapon.rqActivation) {
 					weapon.rqActivation	= false;
-					weapon.SetState( weapon.stActivation );
+					weapon.SetState( stActivation );
 				}
 			}
 		}
@@ -68,13 +68,13 @@ namespace IronStar.Items {
 			{
 				if (weapon.rqAttack) {
 					weapon.rqAttack = false;
-					weapon.SetState( weapon.stWarmup );
+					weapon.SetState( stWarmup );
 				} else {
 					weapon.timer.Stop();
 				}
 
 				if (weapon.rqNextWeapon!=0) {
-					weapon.SetState( weapon.stDeactivation );
+					weapon.SetState( stDeactivation );
 				}
 			}
 		}
@@ -90,7 +90,7 @@ namespace IronStar.Items {
 			{
 				if (weapon.factory.WarmupPeriod<=0) {
 					weapon.FireProjectile();
-					weapon.SetState( weapon.stCooldown );
+					weapon.SetState( stCooldown );
 				} else {
 					weapon.timer.Restart( weapon.factory.WarmupPeriod );
 				}
@@ -100,7 +100,7 @@ namespace IronStar.Items {
 			{
 				if (weapon.timer.Trigger(dt)) {
 					weapon.FireProjectile();
-					weapon.SetState( weapon.stCooldown );
+					weapon.SetState( stCooldown );
 				}
 			}
 		}
@@ -120,7 +120,7 @@ namespace IronStar.Items {
 			public void Update( Weapon weapon, int dt )
 			{
 				if (weapon.timer.Trigger(dt)) {
-					weapon.SetState( weapon.stReady );
+					weapon.SetState( stReady );
 				}
 			}
 		}
@@ -172,7 +172,7 @@ namespace IronStar.Items {
 			public void Update( Weapon weapon, int dt )
 			{
 				if (weapon.timer.Trigger(dt)) {
-					weapon.SetState( weapon.stReady );
+					weapon.SetState( stReady );
 				}
 			}
 		}
@@ -192,7 +192,7 @@ namespace IronStar.Items {
 			public void Update( Weapon weapon, int dt )
 			{
 				if (weapon.timer.Trigger(dt)) {
-					weapon.SetState( weapon.stInactive );
+					weapon.SetState( stInactive );
 				}
 			}
 		}

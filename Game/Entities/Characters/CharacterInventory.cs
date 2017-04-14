@@ -87,6 +87,24 @@ namespace IronStar.Entities {
 
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="header"></param>
+		public void UpdateHud ( SnapshotHeader snapshotHeader )
+		{
+			snapshotHeader.WeaponModel		=	0;
+			snapshotHeader.WeaponAnimFrame	=	0;
+
+			var weapon = GetItem( currentWeapon ) as Weapon;
+
+			if (weapon!=null) {
+				weapon.UpdateHud( snapshotHeader );
+			}
+		}
+
+
+
 		void UpdateWeaponSwitch ()
 		{
 		}

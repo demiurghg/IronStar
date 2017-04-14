@@ -93,6 +93,8 @@ namespace IronStar.Entities {
 		{
 			snapshotHeader.HudState[ (int)HudElement.Health ]	=	(short)health.Health;
 			snapshotHeader.HudState[ (int)HudElement.Armor	]	=	(short)armor.Armor;
+
+			inventory.UpdateHud( snapshotHeader );
 		}
 
 

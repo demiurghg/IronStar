@@ -33,6 +33,13 @@ namespace IronStar.SFX {
 		public Matrix ViewMatrix;
 		public Matrix ProjectionMatrix;
 
+
+		short			weaponModel = 0;
+		bool			weaponModelDirty = true;
+		ModelInstance	weaponModelInstance = null;
+
+
+
 		public ModelManager ( GameWorld world )
 		{
 			this.world	=	world;
@@ -71,6 +78,7 @@ namespace IronStar.SFX {
 		void Game_Reloading( object sender, EventArgs e )
 		{
 			world.ForEachEntity( ent => ent.MakeRenderStateDirty() );
+			weaponModelDirty = true;
 		}
 
 
@@ -91,7 +99,9 @@ namespace IronStar.SFX {
 
 			var model		=	new ModelInstance( this, modelDesc, scene, entity );
 
-			AddModel( model );
+			if (entity!=null) {
+				AddModel( model );
+			}
 
 			return model;
 		}
@@ -134,6 +144,29 @@ namespace IronStar.SFX {
 			foreach ( var model in models ) {
 				model.Update( elapsedTime, lerpFactor );
 			}
+
+
+			//
+			//	update view-space weapon model :
+			//
+			if (weaponModel != world.snapshotHeader.WeaponModel || weaponModelDirty) {
+
+				weaponModelDirty	=	false;
+
+				weaponModel	= world.snapshotHeader.WeaponModel;
+				weaponModelInstance?.Kill();
+
+				if (weaponModel>0) {
+					weaponModelInstance	=	AddModel( weaponModel, null );
+				} else {
+					weaponModelInstance =	null;
+				}
+			}
+
+
+			var camMatrix	=	rw.Camera.GetCameraMatrix(Fusion.Drivers.Graphics.StereoEye.Mono);
+				
+			weaponModelInstance?.Update( elapsedTime, world.snapshotHeader.WeaponAnimFrame, camMatrix );
 		}
 
 	}

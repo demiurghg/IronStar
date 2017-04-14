@@ -22,7 +22,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public bool Visible {
 			get; set;
-		}
+		} = true;
 
 		/// <summary>
 		/// Indicates whether mesh instance visible.
@@ -30,7 +30,15 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public bool Static {
 			get; set;
-		}
+		} = true;
+
+		/// <summary>
+		/// Indicates that given mesh is view-space.
+		/// Default value is Fa;se.
+		/// </summary>
+		public bool FPView {
+			get; set;
+		} = false;
 
 		/// <summary>
 		/// Instance world matrix. Default value is Matrix.Identity.

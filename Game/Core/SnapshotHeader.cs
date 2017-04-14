@@ -30,8 +30,14 @@ namespace IronStar.Core {
 		public float Gravity;
 		public float SunIntensity;
 
+		public short WeaponModel;
+		public float WeaponAnimFrame;
+
 		public void ClearHud ()
 		{
+			WeaponModel		=	0;
+			WeaponAnimFrame	=	0;
+
 			for ( int i=0; i<HudState.Length; i++ ) {
 				HudState[i]	=	0;
 			}
@@ -48,6 +54,9 @@ namespace IronStar.Core {
 			writer.Write( Gravity );
 			writer.Write( SunIntensity );
 
+			writer.Write( WeaponModel );
+			writer.Write( WeaponAnimFrame );
+
 			for ( int i=0; i<HudState.Length; i++ ) {
 				writer.Write( HudState[i] );
 			}
@@ -61,6 +70,9 @@ namespace IronStar.Core {
 			FogDensity		=	reader.ReadSingle();
 			Gravity			=	reader.ReadSingle();
 			SunIntensity	=	reader.ReadSingle();
+
+			WeaponModel		=	reader.ReadInt16();
+			WeaponAnimFrame	=	reader.ReadSingle();
 
 			for ( int i=0; i<HudState.Length; i++ ) {
 				HudState[i]	=	reader.ReadInt16();

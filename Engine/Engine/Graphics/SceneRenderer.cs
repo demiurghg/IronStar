@@ -139,9 +139,10 @@ namespace Fusion.Engine.Graphics {
 
 				var device		=	Game.GraphicsDevice;
 
-				var view			=	camera.GetViewMatrix( stereoEye );
-				var projection		=	camera.GetProjectionMatrix( stereoEye );
-				var viewPosition	=	camera.GetCameraPosition4( stereoEye );
+				var view				=	camera.GetViewMatrix( stereoEye );
+				var projection			=	camera.GetProjectionMatrix( stereoEye );
+				var viewPosition		=	camera.GetCameraPosition4( stereoEye );
+				var weaponProjection	=	rw.WeaponCamera.GetProjectionMatrix( stereoEye );
 
 				var cbData			=	new BATCH();
 				var cbDataSubset	=	new SUBSET();
@@ -188,7 +189,7 @@ namespace Fusion.Engine.Graphics {
 					}
 
 					cbData.View				=	view;
-					cbData.Projection		=	projection;
+					cbData.Projection		=	instance.FPView ? weaponProjection : projection;
 					cbData.World			=	instance.World;
 					cbData.ViewPos			=	viewPosition;
 					cbData.Color			=	instance.Color;
@@ -274,9 +275,10 @@ namespace Fusion.Engine.Graphics {
 
 				var device		=	Game.GraphicsDevice;
 
-				var view			=	camera.GetViewMatrix( stereoEye );
-				var projection		=	camera.GetProjectionMatrix( stereoEye );
-				var viewPosition	=	camera.GetCameraPosition4( stereoEye );
+				var view				=	camera.GetViewMatrix( stereoEye );
+				var projection			=	camera.GetProjectionMatrix( stereoEye );
+				var weaponProjection	=	rw.WeaponCamera.GetProjectionMatrix( stereoEye );
+				var viewPosition		=	camera.GetCameraPosition4( stereoEye );
 
 				var cbData			=	new BATCH();
 				var cbDataSubset	=	new SUBSET();
@@ -304,7 +306,7 @@ namespace Fusion.Engine.Graphics {
 					}
 
 					cbData.View				=	view;
-					cbData.Projection		=	projection;
+					cbData.Projection		=	instance.FPView ? weaponProjection : projection;
 					cbData.World			=	instance.World;
 					cbData.ViewPos			=	viewPosition;
 					cbData.Color			=	instance.Color;

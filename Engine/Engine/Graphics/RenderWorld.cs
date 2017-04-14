@@ -29,6 +29,15 @@ namespace Fusion.Engine.Graphics {
 			get; set;
 		}
 
+
+		/// <summary>
+		/// Gets and sets weapon view camera.
+		/// This value is already initialized when View object is created.
+		/// </summary>
+		public Camera WeaponCamera {
+			get; set;
+		}
+
 		/// <summary>
 		/// Indicated whether target buffer should be cleared before rendering.
 		/// </summary>
@@ -157,6 +166,7 @@ namespace Fusion.Engine.Graphics {
 			this.rs		=	Game.RenderSystem;
 
 			Camera		=	new Camera();
+			WeaponCamera=	new Camera();
 
 			var vp	=	Game.GraphicsDevice.DisplayBounds;
 

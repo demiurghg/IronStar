@@ -26,8 +26,11 @@ namespace IronStar.SFX {
 		readonly Entity entity;
 		readonly Scene scene;
 		readonly bool useAnimation;
-		readonly Vector3 fpvTranslation;
+		readonly string fpvCamera;
 		readonly bool fpvEnabled;
+		readonly Matrix fpvCameraMatrix;
+		readonly Matrix fpvViewMatrix;
+		readonly int fpvCameraIndex;
 
 		Matrix[] globalTransforms;
 		Matrix[] animSnapshot;
@@ -58,7 +61,7 @@ namespace IronStar.SFX {
 			this.useAnimation	=	descriptor.UseAnimation;
 
 			this.fpvEnabled		=	descriptor.FPVEnable;
-			this.fpvTranslation	=	descriptor.FPVTranslation;
+			this.fpvCamera		=	descriptor.FPVCamera;
 
 			nodeCount			=	scene.Nodes.Count;
 
@@ -67,13 +70,30 @@ namespace IronStar.SFX {
 			scene.ComputeAbsoluteTransforms( globalTransforms );
 
 
+			if (fpvEnabled) {
+				fpvCameraIndex		=	scene.GetNodeIndex( fpvCamera );
+
+				if (fpvCameraIndex<0) {	
+					Log.Warning("Camera node {0} does not exist", fpvCamera);
+				} else {
+					fpvCameraMatrix	=	Matrix.RotationY( -MathUtil.PiOverTwo ) * globalTransforms[ fpvCameraIndex ];
+					fpvViewMatrix	=	Matrix.Invert( fpvCameraMatrix );
+
+					preTransform	=	fpvViewMatrix * Matrix.Scaling( descriptor.Scale );
+				}
+			} else {
+				preTransform	=	Matrix.Scaling( descriptor.Scale );	
+			}
+
+
 			meshInstances		=	new MeshInstance[ scene.Nodes.Count ];
 
 			for ( int i=0; i<nodeCount; i++ ) {
 				var meshIndex = scene.Nodes[i].MeshIndex;
 				
 				if (meshIndex>=0) {
-					meshInstances[i] = new MeshInstance( modelManager.rs, scene, scene.Meshes[meshIndex] );
+					meshInstances[i]		= new MeshInstance( modelManager.rs, scene, scene.Meshes[meshIndex] );
+					meshInstances[i].FPView = fpvEnabled;
 					modelManager.rw.Instances.Add( meshInstances[i] );
 				} else {
 					meshInstances[i] = null;
@@ -83,34 +103,12 @@ namespace IronStar.SFX {
 
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="dt"></param>
-		/// <param name="lerpFactor"></param>
-		public void Update ( float dt, float lerpFactor )
+		public void Update ( float dt, float animFrame, Matrix worldMatrix )
 		{
-			Matrix worldMatrix;
-
-			if (fpvEnabled) {
-
-				var rw = modelManager.rw;
-
-				var camMatrix	=	rw.Camera.GetCameraMatrix(Fusion.Drivers.Graphics.StereoEye.Mono);
-				var fpvMatrix	=	Matrix.Translation( fpvTranslation );
-				
-				worldMatrix		=	fpvMatrix * camMatrix;
-
-			} else {
-				worldMatrix = entity.GetWorldMatrix( lerpFactor );
-			}
-
 			//
 			//	do animation stuff :
 			//
 			if (useAnimation) {
-
-				var animFrame = entity.AnimFrame;
 
 				if (animFrame>scene.LastFrame) {
 					Log.Warning("Anim frame: {0} > {1}", animFrame, scene.LastFrame);
@@ -139,6 +137,21 @@ namespace IronStar.SFX {
 					meshInstances[i].Color = color;
 				}
 			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="dt"></param>
+		/// <param name="lerpFactor"></param>
+		public void Update ( float dt, float lerpFactor )
+		{
+			var animFrame = entity.AnimFrame;
+			var worldMatrix = entity.GetWorldMatrix( lerpFactor );
+
+			Update( dt, animFrame, worldMatrix );
 		}
 
 

@@ -41,7 +41,7 @@ namespace IronStar.SFX {
 		public bool FPVEnable { get; set; } = false;
 
 		[Category( "First Person View" )]
-		public Vector3 FPVTranslation { get; set; } = Vector3.Zero;
+		public string FPVCamera { get; set; } = "camera1";
 
 
 

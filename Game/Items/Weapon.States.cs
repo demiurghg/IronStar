@@ -66,6 +66,8 @@ namespace IronStar.Items {
 
 			public void Update( Weapon weapon, int dt )
 			{
+				weapon.viewWeaponFrame = 0;
+
 				if (weapon.rqAttack) {
 					weapon.rqAttack = false;
 					weapon.SetState( stWarmup );
@@ -119,6 +121,8 @@ namespace IronStar.Items {
 
 			public void Update( Weapon weapon, int dt )
 			{
+				weapon.viewWeaponFrame = weapon.factory.CooldownAnimation.GetFrame( weapon.timer.Fraction );
+
 				if (weapon.timer.Trigger(dt)) {
 					weapon.SetState( stReady );
 				}

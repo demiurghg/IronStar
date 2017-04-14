@@ -81,6 +81,26 @@ namespace IronStar.Items {
 
 
 		
+		[Category("View Model")]
+		public string ViewModel { get; set; } = "";
+
+		[Category("View Model")]
+		public AnimRegion IdleAnimation { get; set; } = new AnimRegion();
+
+		[Category("View Model")]
+		public AnimRegion WarmupAnimation { get; set; } = new AnimRegion();
+
+		[Category("View Model")]
+		public AnimRegion CooldownAnimation { get; set; } = new AnimRegion();
+
+		[Category("View Model")]
+		public AnimRegion ActivationAnimation { get; set; } = new AnimRegion();
+
+		[Category("View Model")]
+		public AnimRegion DeactivationAnimation { get; set; } = new AnimRegion();
+
+
+		
 		[Category("Shooting FX")]
 		public string MuzzleFX { get; set; } = "";
 
@@ -93,9 +113,9 @@ namespace IronStar.Items {
 		[Category("Shooting FX")]
 		public string EmptyFX { get; set; } = "";
 
-		public override Item Spawn()
+		public override Item Spawn( GameWorld world )
 		{
-			return new Weapon( Name, this );
+			return new Weapon( Name, world, this );
 		}
 	}
 }

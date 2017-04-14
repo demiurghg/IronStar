@@ -27,6 +27,8 @@ using IronStar.Entities;
 namespace IronStar.Items {
 
 	public partial class Weapon : Item {
+		
+		readonly GameWorld world;
 
 		bool	rqAttack;
 		bool	rqReload;
@@ -50,16 +52,26 @@ namespace IronStar.Items {
 		readonly WeaponFactory factory;
 		IState	state;
 
+		protected short viewWeaponModel = 0;
+		protected float viewWeaponFrame = 0;
+
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="factory"></param>
-		public Weapon( string name, WeaponFactory factory ) : base( name )
+		public Weapon( string name, GameWorld world, WeaponFactory factory ) : base( name )
 		{
+			this.world		=	world;
 			state			=	stInactive;
 			this.factory	=	factory;
+
+			viewWeaponModel	=	world.Atoms[ factory.ViewModel ];
+
+			if (viewWeaponModel<=0) {
+				Log.Warning("Bad weapon view model atom: {0}", factory.ViewModel );
+			}
 		}
 
 
@@ -112,8 +124,24 @@ namespace IronStar.Items {
 		/// <param name="elsapsedTime"></param>
 		public override void Update( float elapsedTime )
 		{
+			viewWeaponModel	=	world.Atoms[ factory.ViewModel ];
+
 			int dt = (int)(elapsedTime * 1000);
 			state.Update( this, dt );
+
+
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="snapshotHeader"></param>
+		public void UpdateHud ( SnapshotHeader snapshotHeader )
+		{
+			snapshotHeader.WeaponModel		=	viewWeaponModel;
+			snapshotHeader.WeaponAnimFrame	=	viewWeaponFrame;
 		}
 
 

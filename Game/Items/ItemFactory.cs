@@ -44,7 +44,7 @@ namespace IronStar.Items {
 		/// Creates instance of item.
 		/// </summary>
 		/// <returns></returns>
-		public abstract Item Spawn ();
+		public abstract Item Spawn ( GameWorld world );
 	}
 
 

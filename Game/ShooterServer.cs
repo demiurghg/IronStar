@@ -120,7 +120,7 @@ namespace IronStar {
 				var player		=	World.GetPlayerEntity( clientGuid );
 
 				var itemFactory	=	World.Content.Load<ItemFactory>(@"items\" + item);
-				var newItem		=	itemFactory.Spawn();
+				var newItem		=	itemFactory.Spawn(World);
 
 				if (newItem.Pickup( player )) {
 					Log.Message("New item {0}", item);

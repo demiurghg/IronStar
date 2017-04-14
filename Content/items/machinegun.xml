@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ItemFactory xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="WeaponFactory">
+  <NiceName>&lt;NiceName&gt;</NiceName>
+  <Icon />
+  <Damage>100</Damage>
+  <Projectile />
+  <ProjectileQuantity>1</ProjectileQuantity>
+  <AmmoCapacity>100</AmmoCapacity>
+  <VSpread>0</VSpread>
+  <HSpread>0</HSpread>
+  <PerfectFirstRound>false</PerfectFirstRound>
+  <IdlePeriod>500</IdlePeriod>
+  <ActivationPeriod>200</ActivationPeriod>
+  <DeactivationPeriod>200</DeactivationPeriod>
+  <WarmupPeriod>0</WarmupPeriod>
+  <CooldownPeriod>100</CooldownPeriod>
+  <ViewModel>weapon_machinegun_view</ViewModel>
+  <IdleAnimation>
+    <StartFrame>0</StartFrame>
+    <EndFrame>1</EndFrame>
+    <Length>1</Length>
+    <FramesPerSecond>60</FramesPerSecond>
+  </IdleAnimation>
+  <WarmupAnimation>
+    <StartFrame>2</StartFrame>
+    <EndFrame>7</EndFrame>
+    <Length>5</Length>
+    <FramesPerSecond>60</FramesPerSecond>
+  </WarmupAnimation>
+  <CooldownAnimation>
+    <StartFrame>0</StartFrame>
+    <EndFrame>6</EndFrame>
+    <Length>6</Length>
+    <FramesPerSecond>60</FramesPerSecond>
+  </CooldownAnimation>
+  <ActivationAnimation>
+    <StartFrame>0</StartFrame>
+    <EndFrame>0</EndFrame>
+    <Length>0</Length>
+    <FramesPerSecond>60</FramesPerSecond>
+  </ActivationAnimation>
+  <DeactivationAnimation>
+    <StartFrame>0</StartFrame>
+    <EndFrame>0</EndFrame>
+    <Length>0</Length>
+    <FramesPerSecond>60</FramesPerSecond>
+  </DeactivationAnimation>
+  <MuzzleFX />
+  <TraceFX />
+  <HitFX />
+  <EmptyFX />
+</ItemFactory>

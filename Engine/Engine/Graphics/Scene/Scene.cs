@@ -160,6 +160,24 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+
+		/// <summary>
+		/// Gets node index by its name
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public int GetNodeIndex ( string name )
+		{
+			for (int i=0; i<Nodes.Count; i++) {
+				if (Nodes[i].Name==name) {
+					return i;
+				}
+			}
+			return -1;
+		}
+
+
+
 		/// <summary>
 		/// Gets map dictionary
 		/// </summary>
@@ -436,7 +454,7 @@ namespace Fusion.Engine.Graphics {
 
 			int frame0	=	(int)Math.Floor( frame );
 			int frame1	=	frame0 + 1;
-			var factor	=	(frame > 0) ? (frame%1) : (1 + frame%1);
+			var factor	=	(frame >= 0) ? (frame%1) : (1 + frame%1);
 
 			if (animMode==AnimationMode.Repeat) {
 				frame0	=	MathUtil.Wrap( frame0, firstFrame, lastFrame );

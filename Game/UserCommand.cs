@@ -74,13 +74,16 @@ namespace IronStar {
 
 
 
-		public static void FireUserCommandAction ( UserCommand oldCmd, UserCommand newCmd, Action<UserAction> ctrlAction )
+		public static void FireUserCommandAction ( UserCommand oldCmd, UserCommand newCmd, Action<UserAction> beginAction, Action<UserAction> endAction )
 		{
 			var values = Enum.GetValues( typeof(UserAction) ).Cast<UserAction>().ToArray();
 
 			foreach ( var flag in values ) {
 				if ( newCmd.Action.HasFlag(flag) && !oldCmd.Action.HasFlag(flag) ) {
-					ctrlAction(flag);
+					beginAction(flag);
+				}
+				if ( !newCmd.Action.HasFlag(flag) && oldCmd.Action.HasFlag(flag) ) {
+					endAction(flag);
 				}
 			}
 		}

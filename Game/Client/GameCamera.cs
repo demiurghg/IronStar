@@ -87,7 +87,7 @@ namespace IronStar.Views {
 			currentFov		=	MathUtil.Drift( currentFov, targetFov, 360*elapsedTime, 360*elapsedTime );
 
 			rw.Camera		.SetupCameraFov( pos, fwd, up, MathUtil.Rad(currentFov), 0.125f/2.0f, 1024f, 2, 0.05f, aspect );
-			rw.WeaponCamera	.SetupCameraFov( pos, fwd, up, MathUtil.Rad(60),		 0.125f/2.0f, 1024f, 2, 0.05f, aspect );
+			rw.WeaponCamera	.SetupCameraFov( pos, fwd, up, MathUtil.Rad(75),		 0.125f/2.0f, 1024f, 2, 0.05f, aspect );
 
 			sw.Listener	=	new AudioListener();
 			sw.Listener.Position	=	pos;

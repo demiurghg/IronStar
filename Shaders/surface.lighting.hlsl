@@ -158,6 +158,11 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		}
 	}
 	
+	//
+	//	Ambient
+	//
+	totalLight.rgb += (diffuse + specular).rgb * Batch.Ambient;
+	
 	return totalLight;
 }
 

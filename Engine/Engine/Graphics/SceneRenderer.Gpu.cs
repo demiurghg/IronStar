@@ -51,9 +51,10 @@ namespace Fusion.Engine.Graphics {
 			[FieldOffset(192)] public Vector4	ViewPos			;
 			[FieldOffset(208)] public Vector4	BiasSlopeFar	;
 			[FieldOffset(224)] public Color4	Color;
-			[FieldOffset(240)] public Vector4	ViewBounds;
-			[FieldOffset(256)] public float		VTPageScaleRCP;
-			[FieldOffset(260)] public int		AssignmentGroup;
+			[FieldOffset(240)] public Color4	Ambient;
+			[FieldOffset(256)] public Vector4	ViewBounds;
+			[FieldOffset(272)] public float		VTPageScaleRCP;
+			[FieldOffset(276)] public int		AssignmentGroup;
 		}
 
 

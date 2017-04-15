@@ -193,6 +193,7 @@ namespace Fusion.Engine.Graphics {
 					cbData.World			=	instance.World;
 					cbData.ViewPos			=	viewPosition;
 					cbData.Color			=	instance.Color;
+					cbData.Ambient			=	rw.LightSet.AmbientLevel;
 					cbData.ViewBounds		=	new Vector4( hdr.Width, hdr.Height, hdr.Width, hdr.Height );
 					cbData.VTPageScaleRCP	=	rs.VTSystem.PageScaleRCP;
 					cbData.AssignmentGroup	=	instance.Static ? 0 : 1;

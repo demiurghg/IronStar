@@ -62,14 +62,15 @@ namespace IronStar.Items {
 
 			public void Enter( Weapon weapon )
 			{
+				weapon.idleAnimation = 0;
 			}
 
 			public void Update( Weapon weapon, int dt )
 			{
-				weapon.viewWeaponFrame = 0;
+				weapon.viewWeaponFrame = weapon.factory.IdleAnimation.GetFrame( weapon.idleAnimation );
 
 				if (weapon.rqAttack) {
-					weapon.rqAttack = false;
+					//weapon.rqAttack = false;
 					weapon.SetState( stWarmup );
 				} else {
 					weapon.timer.Stop();

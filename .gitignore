@@ -6,6 +6,7 @@
 Temp/
 _ssp/
 .alg_meta/
+smgvector/
 
 # User-specific files
 *.suo

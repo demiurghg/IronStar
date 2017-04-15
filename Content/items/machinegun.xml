@@ -9,17 +9,17 @@
   <VSpread>0</VSpread>
   <HSpread>0</HSpread>
   <PerfectFirstRound>false</PerfectFirstRound>
-  <IdlePeriod>500</IdlePeriod>
+  <IdlePeriod>2000</IdlePeriod>
   <ActivationPeriod>200</ActivationPeriod>
   <DeactivationPeriod>200</DeactivationPeriod>
   <WarmupPeriod>0</WarmupPeriod>
   <CooldownPeriod>100</CooldownPeriod>
   <ViewModel>weapon_machinegun_view</ViewModel>
   <IdleAnimation>
-    <StartFrame>0</StartFrame>
-    <EndFrame>1</EndFrame>
-    <Length>1</Length>
-    <FramesPerSecond>60</FramesPerSecond>
+    <StartFrame>40</StartFrame>
+    <EndFrame>100</EndFrame>
+    <Length>60</Length>
+    <FramesPerSecond>15</FramesPerSecond>
   </IdleAnimation>
   <WarmupAnimation>
     <StartFrame>2</StartFrame>

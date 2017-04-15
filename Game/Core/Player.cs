@@ -89,7 +89,12 @@ namespace IronStar {
 			UserCmd			=	UserCommand.FromBytes( cmdData );
 
 			player?.Controller?.Move( UserCmd.MoveForward, UserCmd.MoveRight, UserCmd.MoveUp );
-			UserCommand.FireUserCommandAction( oldCmd, UserCmd, userAction => ControlEventAction(player, userAction) );
+			UserCommand.FireUserCommandAction( 
+				oldCmd, 
+				UserCmd, 
+				userAction1 => BeginAction(player, userAction1), 
+				userAction2 => EndAction(player, userAction2) 
+			);
 		}
 
 
@@ -99,7 +104,7 @@ namespace IronStar {
 		/// </summary>
 		/// <param name="world"></param>
 		/// <param name="ctrlFlag"></param>
-		void ControlEventAction ( Entity player, UserAction userAction )
+		void BeginAction ( Entity player, UserAction userAction )
 		{
 			if (player!=null) {
 				var controller	= player.Controller;
@@ -112,7 +117,21 @@ namespace IronStar {
 		}
 
 
+		/// <summary>
+		/// Handle user button events (actions)
+		/// </summary>
+		/// <param name="world"></param>
+		/// <param name="ctrlFlag"></param>
+		void EndAction ( Entity player, UserAction userAction )
+		{
+			player?.Controller?.CancelAction( userAction ); 
+		}
 
+
+
+		/// <summary>
+		/// 
+		/// </summary>
 		void ForceRespawn ()
 		{
 			if (respawnTime>1) {

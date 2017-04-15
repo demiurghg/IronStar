@@ -33,6 +33,8 @@ namespace IronStar.Core {
 		public short WeaponModel;
 		public float WeaponAnimFrame;
 
+		public Color4 AmbientLevel;
+
 		public void ClearHud ()
 		{
 			WeaponModel		=	0;
@@ -54,6 +56,8 @@ namespace IronStar.Core {
 			writer.Write( Gravity );
 			writer.Write( SunIntensity );
 
+			writer.Write( AmbientLevel );
+
 			writer.Write( WeaponModel );
 			writer.Write( WeaponAnimFrame );
 
@@ -70,6 +74,8 @@ namespace IronStar.Core {
 			FogDensity		=	reader.ReadSingle();
 			Gravity			=	reader.ReadSingle();
 			SunIntensity	=	reader.ReadSingle();
+
+			AmbientLevel	=	reader.Read<Color4>();
 
 			WeaponModel		=	reader.ReadInt16();
 			WeaponAnimFrame	=	reader.ReadSingle();

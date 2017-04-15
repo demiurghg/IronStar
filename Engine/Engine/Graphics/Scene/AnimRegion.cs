@@ -35,6 +35,15 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		public float GetFrame ( int msec )
+		{
+			if (StartFrame==EndFrame) {
+				return StartFrame;
+			}
+			return (msec * FramesPerSecond / 1000.0f) % Length + StartFrame;
+		}
+
+
 		public override string ToString()
 		{
 			return string.Format("[{0}..{1}]@{2}", startFrame, endFrame, FramesPerSecond );

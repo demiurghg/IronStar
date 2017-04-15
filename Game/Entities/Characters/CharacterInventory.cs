@@ -143,10 +143,10 @@ namespace IronStar.Entities {
 		/// <summary>
 		/// 
 		/// </summary>
-		public void AttackWeapon ()
+		public void AttackWeapon ( bool attack )
 		{
 			var weapon = GetItem( currentWeapon ) as Weapon;
-			weapon?.Attack();
+			weapon?.Attack(attack);
 		}
 
 		/*-----------------------------------------------------------------------------------------

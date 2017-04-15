@@ -35,6 +35,7 @@ namespace IronStar.Items {
 		bool	rqActivation;
 		int		rqNextWeapon;
 
+		int		idleAnimation = 0;
 		Timer	timer = new Timer();
 
 		Entity		playerEntity;
@@ -127,6 +128,9 @@ namespace IronStar.Items {
 			viewWeaponModel	=	world.Atoms[ factory.ViewModel ];
 
 			int dt = (int)(elapsedTime * 1000);
+
+			idleAnimation += dt;
+
 			state.Update( this, dt );
 
 
@@ -175,9 +179,9 @@ namespace IronStar.Items {
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
-		public void Attack()
+		public void Attack(bool attack)
 		{
-			rqAttack	=	true;
+			rqAttack	=	attack;
 		}
 
 

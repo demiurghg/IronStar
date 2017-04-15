@@ -220,6 +220,7 @@ GBuffer PSMain( PSInput input )
 	//	Compute miplevel :
 	//---------------------------------
 	float mip		=	max(0,floor( MipLevel( input.TexCoord.xy ) ));
+	
 	float scale		=	exp2(mip);
 	float pageX		=	floor( saturate(input.TexCoord.x) * VTVirtualPageCount / scale );
 	float pageY		=	floor( saturate(input.TexCoord.y) * VTVirtualPageCount / scale );
@@ -232,15 +233,17 @@ GBuffer PSMain( PSInput input )
 	//---------------------------------
 	float2 vtexTC		=	saturate(input.TexCoord);
 	float4 fallback		=	float4( 0.5f, 0.5, 0.5f, 1.0f );
-	int2 indexXY 		=	(int2)floor(input.TexCoord * VTVirtualPageCount / scale);
+	int2 indexXY 		=	(int2)floor(input.TexCoord * VTVirtualPageCount / scale );
 	float4 physPageTC	=	Textures[0].Load( int3(indexXY, (int)(mip)) ).xyzw;
 	
 	if (physPageTC.w>0) {
 		float2 	withinPageTC	=	vtexTC * VTVirtualPageCount / exp2(physPageTC.z);
 				withinPageTC	=	frac( withinPageTC );
 				withinPageTC	=	withinPageTC * Batch.VTPageScaleRCP;
-		
-		float2	finalTC			=	physPageTC.xy + withinPageTC;
+
+		float  halfTexel	=	0.5f / 4096.0f;
+				
+		float2	finalTC			=	physPageTC.xy + withinPageTC;// + float2(halfTexel, -halfTexel);
 		
 		baseColor	=	Textures[1].Sample( SamplerLinear, finalTC ).rgb;
 		localNormal	=	Textures[2].Sample( SamplerLinear, finalTC ).rgb * 2 - 1;
@@ -275,6 +278,8 @@ GBuffer PSMain( PSInput input )
 	
 	output.hdr			=	float4( emission * entityColor + lighting, 0 );
 	output.feedback		=	feedback;
+	
+	//output.hdr = float4(worldNormal, 1);
 	
 	return output;
 }

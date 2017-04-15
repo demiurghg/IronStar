@@ -51,6 +51,16 @@ namespace IronStar.Core {
 
 
 		/// <summary>
+		/// Called when user try to do action
+		/// </summary>
+		/// <param name="action"></param>
+		public virtual void CancelAction ( UserAction action )
+		{
+		}
+
+
+
+		/// <summary>
 		/// Called when user moves
 		/// </summary>
 		/// <param name="forward"></param>

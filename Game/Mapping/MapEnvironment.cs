@@ -62,5 +62,8 @@ namespace IronStar.Mapping {
 		[Category("GI")]
 		[TypeConverter( typeof( ExpandableObjectConverter ) )]
 		public BoundingBox IrradianceVolume { get; set; } = new BoundingBox(128,64,128);
+
+		[Category("GI")]
+		public Color4 AmbientLevel { get; set; } = Color4.Zero;
 	}
 }

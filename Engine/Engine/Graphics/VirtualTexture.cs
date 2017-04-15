@@ -110,6 +110,7 @@ namespace Fusion.Engine.Graphics {
 			if ( textures.TryGetValue( name, out rect ) ) {
 				return rect;
 			} else {
+				//Log.Warning("Missing VT region {0}", name);
 				return new RectangleF( 0, 0, 0, 0 );
 			}
 		}

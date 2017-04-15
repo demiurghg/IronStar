@@ -16,9 +16,10 @@ struct BATCH {
 	float4     ViewPos;                       // offset:  192
 	float4     BiasSlopeFar;                  // offset:  208
 	float4     Color;                         // offset:  224
-	float4     ViewBounds;                    // offset:  240
-	float      VTPageScaleRCP;                // offset:  256
-	int        AssignmentGroup;               // offset:  260
+	float4     Ambient;                       // offset:  240
+	float4     ViewBounds;                    // offset:  256
+	float      VTPageScaleRCP;                // offset:  272
+	int        AssignmentGroup;               // offset:  276
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+SUBSET

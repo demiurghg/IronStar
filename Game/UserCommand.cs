@@ -14,7 +14,7 @@ namespace IronStar {
 	/// <summary>
 	/// Represents an instant user action and intention.
 	/// </summary>
-	public struct UserCommand {
+	public class UserCommand {
 
 		public float Yaw;
 		public float Pitch;
@@ -26,6 +26,9 @@ namespace IronStar {
 
 		public UserAction Action;
 
+
+		public float DYaw;
+		public float DPitch;
 
 
 		public void SetAnglesFromQuaternion ( Quaternion q )
@@ -41,13 +44,21 @@ namespace IronStar {
 		/// <returns></returns>
 		static public byte[] GetBytes(UserCommand userCmd) 
 		{
-			int size = Marshal.SizeOf(userCmd);
-			byte[] array = new byte[size];
+			var array = new byte[12+12+1];
 
-			IntPtr ptr = Marshal.AllocHGlobal(size);
-			Marshal.StructureToPtr(userCmd, ptr, true);
-			Marshal.Copy(ptr, array, 0, size);
-			Marshal.FreeHGlobal(ptr);
+			using ( var writer = new BinaryWriter( new MemoryStream( array ) ) ) {
+
+				writer.Write( userCmd.Yaw	);
+				writer.Write( userCmd.Pitch );
+				writer.Write( userCmd.Roll	);
+
+				writer.Write( userCmd.MoveForward	);
+				writer.Write( userCmd.MoveRight		);
+				writer.Write( userCmd.MoveUp		);
+
+				writer.Write( (byte)userCmd.Action	);
+			}
+
 			return array;
 		}
 
@@ -59,17 +70,22 @@ namespace IronStar {
 		/// <returns></returns>
 		static public UserCommand FromBytes(byte[] array) 
 		{
-			var userCmd = new UserCommand();
+			using ( var reader = new BinaryReader( new MemoryStream( array ) ) ) {
 
-			int size = Marshal.SizeOf(userCmd);
-			IntPtr ptr = Marshal.AllocHGlobal(size);
+				var userCmd = new UserCommand();
 
-			Marshal.Copy(array, 0, ptr, size);
+				userCmd.Yaw			=	reader.ReadSingle();
+				userCmd.Pitch		=	reader.ReadSingle();
+				userCmd.Roll		=	reader.ReadSingle();
 
-			userCmd = (UserCommand)Marshal.PtrToStructure(ptr, userCmd.GetType());
-			Marshal.FreeHGlobal(ptr);
+				userCmd.MoveForward	=	reader.ReadSingle();
+				userCmd.MoveRight	=	reader.ReadSingle();
+				userCmd.MoveUp		=	reader.ReadSingle();
 
-			return userCmd;
+				userCmd.Action		=	(UserAction)reader.ReadByte();
+
+				return userCmd;
+			}
 		}
 
 

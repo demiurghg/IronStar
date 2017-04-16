@@ -137,7 +137,7 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="elapsedTime"></param>
 		/// <param name="lerpFactor"></param>
-		public void Update ( float elapsedTime, float lerpFactor, GameCamera gameCamera )
+		public void Update ( float elapsedTime, float lerpFactor, GameCamera gameCamera, UserCommand userCmd )
 		{	
 			models.RemoveAll( m => m.Killed );
 
@@ -149,6 +149,45 @@ namespace IronStar.SFX {
 			//
 			//	update view-space weapon model :
 			//
+			if (gameCamera!=null && userCmd!=null) {
+				UpdateViewModel( elapsedTime, lerpFactor, gameCamera, userCmd );
+			}
+		}
+
+
+		float weaponYaw = 0;
+		float weaponRoll = 0;
+		bool oldTraction = true;
+		float landingKick = 0;
+		float landingKickF = 0;
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="current"></param>
+		/// <param name="filter">Factor at 60 fps</param>
+		/// <param name="factor"></param>
+		/// <param name="dt"></param>
+		/// <returns></returns>
+		float Filter ( float current, float target, float factor, float dt )
+		{
+			float  factor2	=	(float)( 1 - Math.Pow( 1 - factor, dt * 60 ) );
+			return MathUtil.Lerp( current, target, factor2 );
+		}
+
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="elapsedTime"></param>
+		/// <param name="lerpFactor"></param>
+		/// <param name="gameCamera"></param>
+		/// <param name="userCmd"></param>
+		void UpdateViewModel ( float elapsedTime, float lerpFactor, GameCamera gameCamera, UserCommand userCmd )
+		{
 			if (weaponModel != world.snapshotHeader.WeaponModel || weaponModelDirty) {
 
 				weaponModelDirty	=	false;
@@ -164,10 +203,49 @@ namespace IronStar.SFX {
 			}
 
 
+			var playerEntity	=	world.GetPlayerEntity(world.UserGuid);
+			var newTraction		=	(playerEntity==null) ? true : playerEntity.State.HasFlag( EntityState.HasTraction );
+
+			landingKick	=	MathUtil.Drift( landingKick, 0, 3*elapsedTime, 3*elapsedTime );
+
+			if (newTraction && !oldTraction) {
+				landingKick = -0.1f;
+				Log.Message("Landing");
+			}
+			oldTraction = newTraction;
+
+			landingKickF	=	Filter( landingKickF, landingKick, 0.05f, elapsedTime );
+
+
+			float maxWeaponRoll		=  MathUtil.DegreesToRadians(3);
+			float maxWeaponYaw		= -MathUtil.DegreesToRadians(3);
+			float angularThreshold	= MathUtil.DegreesToRadians(90) * elapsedTime;
+			float angularVelocity	= MathUtil.DegreesToRadians( 5) * elapsedTime;
+
+			if ( Math.Abs(userCmd.DYaw) > angularThreshold ) {
+				
+				float sign = Math.Sign( userCmd.DYaw );
+
+				weaponYaw	= Filter( weaponYaw , sign * maxWeaponYaw , 0.1f, elapsedTime );
+				weaponRoll	= Filter( weaponRoll, sign * maxWeaponRoll, 0.1f, elapsedTime );
+				//weaponYaw	= MathUtil.Drift( weaponYaw , sign * maxWeaponYaw , angularVelocity, angularVelocity );
+				//weaponRoll	= MathUtil.Drift( weaponRoll, sign * maxWeaponRoll, angularVelocity, angularVelocity );
+
+			} else {
+
+				weaponYaw	= Filter( weaponYaw , 0, 0.1f, elapsedTime );
+				weaponRoll	= Filter( weaponRoll, 0, 0.1f, elapsedTime );
+				//weaponYaw	= MathUtil.Drift( weaponYaw , 0, angularVelocity, angularVelocity );
+				//weaponRoll	= MathUtil.Drift( weaponRoll, 0, angularVelocity, angularVelocity );
+
+			}
+
+			var weaponMatrix	=	Matrix.RotationYawPitchRoll( weaponYaw, 0, weaponRoll )
+								*	Matrix.Translation(0, landingKickF, 0);
+
 			var camMatrix	=	rw.Camera.GetCameraMatrix(Fusion.Drivers.Graphics.StereoEye.Mono);
 				
-			weaponModelInstance?.Update( elapsedTime, world.snapshotHeader.WeaponAnimFrame, camMatrix );
+			weaponModelInstance?.Update( elapsedTime, world.snapshotHeader.WeaponAnimFrame, weaponMatrix * camMatrix );
 		}
-
 	}
 }

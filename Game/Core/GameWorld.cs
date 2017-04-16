@@ -165,7 +165,7 @@ namespace IronStar.Core {
 		/// Updates visual and audial stuff
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void PresentWorld ( float deltaTime, float lerpFactor, GameCamera gameCamera )
+		public void PresentWorld ( float deltaTime, float lerpFactor, GameCamera gameCamera, UserCommand userCmd )
 		{
 			var dr = Game.RenderSystem.RenderWorld.Debug;
 			var rw = Game.RenderSystem.RenderWorld;
@@ -189,7 +189,7 @@ namespace IronStar.Core {
 
 
 			fxPlayback.Update( deltaTime, lerpFactor );
-			modelManager.Update( deltaTime, lerpFactor, gameCamera );
+			modelManager.Update( deltaTime, lerpFactor, gameCamera, userCmd );
 
 			//
 			//	update environment :

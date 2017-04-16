@@ -114,8 +114,6 @@ namespace IronStar.Client {
 
 
 
-		UserAction weaponControl;
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -163,11 +161,13 @@ namespace IronStar.Client {
 			//var cam		=	World.GetView<CameraView>();
 
 			if (!Game.Console.IsShown) {
-				userCommand.Action	=	flags | weaponControl;
-				userCommand.Yaw         -=  2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.X / 16200.0f;
-				userCommand.Pitch       -=  2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.Y / 16200.0f * ( InvertMouse ? -1 : 1 );
-				//UserCommand.Yaw         -=  2 * MathUtil.Pi * cam.Sensitivity * Game.Mouse.PositionDelta.X / 16200.0f;
-				//UserCommand.Pitch       -=  2 * MathUtil.Pi * cam.Sensitivity * Game.Mouse.PositionDelta.Y / 16200.0f * ( InvertMouse ? -1 : 1 );
+
+				userCommand.DYaw		=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.X / 16200.0f;
+				userCommand.DPitch		=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.Y / 16200.0f * ( InvertMouse ? -1 : 1 );
+
+				userCommand.Action		=	flags;
+				userCommand.Yaw         +=  userCommand.DYaw;
+				userCommand.Pitch       +=  userCommand.DPitch;
 				userCommand.Roll		=	0;
 			}
 		}

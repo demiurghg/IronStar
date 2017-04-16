@@ -48,6 +48,8 @@ namespace Fusion.Engine.Graphics {
 
 		Dictionary<string,RectangleF> textures;
 
+		HashSet<string> warnings = new HashSet<string>();
+
 
 		/// <summary>
 		/// 
@@ -108,8 +110,17 @@ namespace Fusion.Engine.Graphics {
 
 			RectangleF rect;
 			if ( textures.TryGetValue( name, out rect ) ) {
+
 				return rect;
+
 			} else {
+
+				var warning = string.Format("Missing VT region {0}", name);
+
+				if (warnings.Add(warning)) {
+					Log.Warning(warning);
+				}
+
 				//Log.Warning("Missing VT region {0}", name);
 				return new RectangleF( 0, 0, 0, 0 );
 			}

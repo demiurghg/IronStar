@@ -60,6 +60,8 @@ namespace Fusion.Engine.Audio
         internal AudioBuffer	_buffer;
         internal AudioBuffer	_loopedBuffer;
         internal WaveFormat		_format;
+
+        private AudioProcessorManager _effectManager;
         
         // These three fields are used for keeping track of instances created
         // internally when Play is called directly on SoundEffect.
@@ -68,7 +70,11 @@ namespace Fusion.Engine.Audio
         private List<SoundEffectInstance> _toBeRecycledInstances;
 
 
-
+        public AudioProcessorManager EffeManager
+        {
+            get { return _effectManager; }
+            set { _effectManager = value; }
+        }
 		/// <summary>
 		/// SoundEffect constructor
 		/// </summary>
@@ -123,7 +129,9 @@ namespace Fusion.Engine.Audio
                 LoopLength = loopLength,
                 LoopCount = AudioBuffer.LoopInfinite,
                 Context = new IntPtr(42),
-            };            
+            };
+
+            EffeManager = device.ReverbEffect;            
         }
 
 
@@ -159,9 +167,14 @@ namespace Fusion.Engine.Audio
         internal SoundEffectInstance CreateInstance()
         {
             SourceVoice voice = null;
-            if (device.Device != null) {
+            if (device.Device != null)
+            {
                 voice = new SourceVoice(device.Device, _format, VoiceFlags.UseFilter, XAudio2.MaximumFrequencyRatio);
-			}
+                if (EffeManager != null)
+                {
+                    EffeManager.ConnectToSourceVoice(voice);
+                }
+            }
 
             var instance = new SoundEffectInstance(device, this, voice);
             return instance;

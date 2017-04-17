@@ -129,7 +129,7 @@ namespace Fusion.Engine.Audio
             var dspSettings = device.Device3D.Calculate(l, e, flags, srcChannelCount, dstChannelCount);
 
             // Apply Volume settings (from distance attenuation) ...
-            _voice.SetOutputMatrix(device.MasterVoice, srcChannelCount, dstChannelCount, dspSettings.MatrixCoefficients, operationSet);
+            _voice.SetOutputMatrix(device.ReverbEffect.Voice, srcChannelCount, dstChannelCount, dspSettings.MatrixCoefficients, operationSet);
 
 			//	USE: VoiceFlags.UseFilter !!!
 			//	_voice.SetFilterParameters( ... );

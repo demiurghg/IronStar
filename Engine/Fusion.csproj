@@ -53,6 +53,10 @@
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="SharpDX, Version=3.1.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpDX.3.1.1\lib\net45\SharpDX.dll</HintPath>
@@ -191,6 +195,17 @@
     <Compile Include="Development\UserMessage.Designer.cs">
       <DependentUpon>UserMessage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Engine\Audio\EffecManager.cs" />
+    <Compile Include="Engine\Audio\XAPOExperiments\HRTF\DirectConvolution.cs" />
+    <Compile Include="Engine\Audio\XAPOExperiments\HRTF\ConvolutionFiles.cs" />
+    <Compile Include="Engine\Audio\XAPOExperiments\HRTF\ConvolutionResourceReader.cs" />
+    <Compile Include="Engine\Audio\XAPOExperiments\HRTF\FastConvolution.cs" />
+    <Compile Include="Engine\Audio\XAPOExperiments\HRTF\HRTFApo.cs" />
+    <Compile Include="Engine\Audio\XAPOExperiments\HRTF\HrtfPair.cs" />
+    <Compile Include="Engine\Audio\XAPOExperiments\HRTF\IConvolution.cs" />
+    <Compile Include="Engine\Audio\XAPOExperiments\HRTF\IInterpolation.cs" />
+    <Compile Include="Engine\Audio\XAPOExperiments\HRTF\Utils.cs" />
+    <Compile Include="Engine\Audio\XAPOExperiments\ModulatorEffect.cs" />
     <Compile Include="Engine\Client\ClientContext.cs" />
     <Compile Include="Engine\Client\IContentPrecacher.cs" />
     <Compile Include="Engine\Client\IClientInstance.cs" />

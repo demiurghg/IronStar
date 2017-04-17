@@ -12,15 +12,20 @@ using SharpDX.Multimedia;
 using Fusion.Core;
 using Fusion.Engine.Common;
 using Fusion.Core.Configuration;
-
+using SharpDX.XAPO.Fx;
+using Fusion.Engine.Audio.XAPOExperiments;
+using Fusion.Engine.Audio.XAPOExperiments.HRTF;
 
 namespace Fusion.Engine.Audio {
 	public sealed partial class SoundSystem : GameComponent {
 
         internal XAudio2 Device { get; private set; }
         internal MasteringVoice MasterVoice { get; private set; }
+        internal AudioProcessorManager ReverbEffect { get; private set; }
+        internal const string HRTF_PATH = @"sound\HRTFData\";
+        internal HrtfPair[,] HrtfData;
 
-		internal static int OperationSetCounter {
+        internal static int OperationSetCounter {
 			get { return operationSetCounter; }
 		}
 		static int operationSetCounter = 1;
@@ -33,7 +38,15 @@ namespace Fusion.Engine.Audio {
 		{
 		}
 
+        public void StartEffect()
+        {
+            ReverbEffect.EnableEffects();
+        }
 
+        public void StopEffect()
+        {
+            ReverbEffect.DisableEffects();
+        }
 
 		/// <summary>
 		/// 
@@ -56,6 +69,29 @@ namespace Fusion.Engine.Audio {
                     // Let windows autodetect number of channels and sample rate.
                     MasterVoice = new MasteringVoice(Device, XAudio2.DefaultChannels, XAudio2.DefaultSampleRate, deviceId);
                     MasterVoice.SetVolume(_masterVolume, 0);
+                }
+                if (ReverbEffect == null)
+                {
+                    ReverbEffect = new AudioProcessorManager(Device, true);
+                    //var effect = new Reverb(Device);
+                    //ReverbEffect.SetEffcts(effect);
+                    //ReverbEffect.DisableEffects();
+
+                    //var reverbParams = new ReverbParameters
+                    //{
+                    //    RoomSize = 0.1f,
+                    //    Diffusion = 1
+                    //};
+                    //ReverbEffect.SetEffectParameters(0, reverbParams);
+
+                    var effect = new ModulatorEffect();
+                    effect.Intensity = 50f;
+                    ReverbEffect.SetEffcts(effect);
+                    //FilterParameters fp; 
+                    //fp.Frequency = 1.0f;
+                    //fp.OneOverQ = 1.0f;
+                    //fp.Type = FilterType.LowPassFilter;
+                    //ReverbEffect.Voice.SetFilterParameters(fp);
                 }
 
                 // The autodetected value of MasterVoice.ChannelMask corresponds to the speaker layout.

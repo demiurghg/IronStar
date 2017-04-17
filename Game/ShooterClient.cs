@@ -61,8 +61,8 @@ namespace IronStar {
 			map		=   world.Content.Load<Map>( @"maps\" + serverInfo );
 			world.InitServerAtoms();
 			map.ActivateMap( world, false );
-
 			world.EntitySpawned +=World_EntitySpawned;
+            game.LoadHrtfFunction();
 		}
 
 		

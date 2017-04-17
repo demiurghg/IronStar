@@ -31,6 +31,7 @@ using Fusion.Engine.Tools;
 using Fusion.Engine.Frames;
 using System.ComponentModel;
 using Fusion.Build;
+using Fusion.Engine.Audio.XAPOExperiments.HRTF;
 
 namespace Fusion.Engine.Common {
 
@@ -910,5 +911,50 @@ namespace Fusion.Engine.Common {
 			GameClient.Disconnect(message);
 			//	Kill server!
 		}
+
+        public void LoadHrtfFunction()
+        {
+            try
+            {
+                var root = SoundSystem.HRTF_PATH;
+                var subdirectories = Directory.GetDirectories(root);
+                var hrtfTracks = new HrtfPair[130,360];
+
+                int magicNumber = 40;
+
+                int angle, elevation;
+
+                foreach (var directory in subdirectories)
+                {
+                    var files = content.EnumerateAssets(root + directory);
+                    var lFiles = files.Where(f => f[0] == 'L');
+                    foreach (var lFile in lFiles)
+                    {
+                        var rFile = 'R' + lFile.Substring(1);
+                        ParseFileName(lFile, out elevation, out angle);
+                        elevation += magicNumber;
+                        var lArray = content.Load<float[]>(lFile);
+                        var rArray = content.Load<float[]>(rFile);
+                        hrtfTracks[elevation, angle] = new HrtfPair(lArray, rArray);
+                    }
+                }
+                SoundSystem.HrtfData = hrtfTracks;
+            }
+            catch (Exception ex)
+            {
+                Log.Message("Error : {0}", ex.Message);
+            }
+        }
+        
+        private void ParseFileName(string fileName, out int elevation, out  int angle)
+        {
+            var fielNameLength = fileName.Length;
+            var fstIndex = 0;
+            var lstIndex = fileName.IndexOf('e');
+            elevation = Int32.Parse(fileName.Substring(fstIndex, lstIndex));
+            fstIndex = lstIndex + 1;
+            lstIndex = fileName.IndexOf('a');
+            angle = Int32.Parse(fileName.Substring(fstIndex, lstIndex));
+        }  
 	}
 }

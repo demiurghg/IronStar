@@ -100,7 +100,10 @@ namespace IronStar.Core {
 		}
 
 
+        private void LoadHrtf(ContentManager content)
+        {
 
+        }
 
 		/// <summary>
 		/// 
@@ -209,6 +212,18 @@ namespace IronStar.Core {
 			rw.LightSet.DirectLight.Intensity	=	rw.SkySettings.SunLightColor;
 
 			rw.LightSet.AmbientLevel			=	snapshotHeader.AmbientLevel;
+
+            if (Game.Keyboard.IsKeyDown(Fusion.Engine.Input.Keys.E))
+            {
+                Game.SoundSystem.StartEffect();
+            }
+            else if (Game.Keyboard.IsKeyDown(Fusion.Engine.Input.Keys.Q))
+            {
+                Game.SoundSystem.StopEffect();
+            }
+
+			//rw.LightSet.AmbientLevel	=	rw.SkySettings.AmbientLevel;
+
 
 		}
 

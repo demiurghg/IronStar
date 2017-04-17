@@ -6,4 +6,6 @@
   <Color Red="10" Green="10" Blue="10" Alpha="1" />
   <FPVEnable>true</FPVEnable>
   <FPVCamera>camera1</FPVCamera>
+  <Prefix>anim_</Prefix>
+  <Clips>attack;firstlook;walk;landing;takeout;putdown;idle</Clips>
 </ModelDescriptor>

@@ -25,6 +25,7 @@ namespace IronStar.SFX {
 		readonly ModelManager modelManager;
 		readonly Entity entity;
 		readonly Scene scene;
+		readonly Scene[] clips;
 		readonly bool useAnimation;
 		readonly string fpvCamera;
 		readonly bool fpvEnabled;
@@ -51,11 +52,13 @@ namespace IronStar.SFX {
 		/// <param name="scene"></param>
 		/// <param name="entity"></param>
 		/// <param name="matrix"></param>
-		public ModelInstance ( ModelManager modelManager, ModelDescriptor descriptor, Scene scene, Entity entity )
+		public ModelInstance ( ModelManager modelManager, ModelDescriptor descriptor, ContentManager content, Entity entity )
 		{
+			this.scene			=	content.Load<Scene>( descriptor.ScenePath );
+			this.clips			=	descriptor.LoadClips( content );
+
 			this.modelManager   =   modelManager;
 			this.preTransform   =   descriptor.ComputePreTransformMatrix();
-			this.scene			=   scene;
 			this.entity			=	entity;
 			this.color			=	descriptor.Color;
 			this.useAnimation	=	descriptor.UseAnimation;

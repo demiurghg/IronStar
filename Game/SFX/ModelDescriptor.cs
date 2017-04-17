@@ -43,6 +43,34 @@ namespace IronStar.SFX {
 		[Category( "First Person View" )]
 		public string FPVCamera { get; set; } = "camera1";
 
+		[Category( "Animation" )]
+		public string Prefix { get; set; } = "anim_";
+
+		[Category( "Animation" )]
+		public string Clips { get; set; } = "";
+
+
+		public string[] GetClips ()
+		{
+			if (string.IsNullOrWhiteSpace(ScenePath)) {
+				return new string[0];
+			}
+
+			var baseDir = Path.GetDirectoryName( ScenePath );
+			
+			return Clips
+				.Split(new[] {',',';'}, StringSplitOptions.RemoveEmptyEntries)
+				.Select( name => Path.Combine( baseDir, Prefix + name.Trim() ) )
+				.ToArray();
+		}
+
+
+		public Scene[] LoadClips ( ContentManager content )
+		{
+			return GetClips()
+				.Select( name => content.Load<Scene>(name) )
+				.ToArray();
+		}
 
 
 		/// <summary>
@@ -70,6 +98,10 @@ namespace IronStar.SFX {
 		public void Precache( ContentManager content )
 		{
 			content.Precache<Scene>(ScenePath);
+
+			foreach ( var clip in GetClips() ) {
+				content.Precache<Scene>(clip);
+			}
 		}
 	}
 

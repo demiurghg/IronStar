@@ -34,6 +34,7 @@ turtle/*
 
 [Scenes]
 *.fbx /geom /report /anim
+*anim_*.fbx /report /anim
 
 [Sounds]
 *.wav

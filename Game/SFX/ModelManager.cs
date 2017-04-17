@@ -95,9 +95,7 @@ namespace IronStar.SFX {
 
 			var modelDesc	=	world.Content.Load<ModelDescriptor>( @"models\" + modelName );
 
-			var scene		=	world.Content.Load<Scene>( modelDesc.ScenePath );
-
-			var model		=	new ModelInstance( this, modelDesc, scene, entity );
+			var model		=	new ModelInstance( this, modelDesc, world.Content, entity );
 
 			if (entity!=null) {
 				AddModel( model );

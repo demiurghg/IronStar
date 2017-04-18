@@ -30,6 +30,14 @@ namespace Fusion.Engine.Graphics {
 
 
 		/// <summary>
+		/// Tag
+		/// </summary>
+		public string Tag {
+			get; set;
+		} = null;
+
+
+		/// <summary>
 		/// List of scene nodes
 		/// </summary>
 		public IList<Node> Nodes { 
@@ -98,6 +106,15 @@ namespace Fusion.Engine.Graphics {
 			get {
 				return lastFrame;
 			}
+		}
+
+
+		public int FirstTakeFrame {
+			get; set;
+		}
+
+		public int LastTakeFrame {
+			get; set;
 		}
 
 
@@ -559,11 +576,13 @@ namespace Fusion.Engine.Graphics {
 				reader.ExpectFourCC("SCN1", "scene");
 
 				//---------------------------------------------
-				scene.StartTime		=	new TimeSpan( reader.ReadInt64() );
-				scene.EndTime		=	new TimeSpan( reader.ReadInt64() );
-				scene.firstFrame	=	reader.ReadInt32();
-				scene.lastFrame		=	reader.ReadInt32();
-				scene.trackCount	=	reader.ReadInt32();
+				scene.StartTime			=	new TimeSpan( reader.ReadInt64() );
+				scene.EndTime			=	new TimeSpan( reader.ReadInt64() );
+				scene.firstFrame		=	reader.ReadInt32();
+				scene.lastFrame			=	reader.ReadInt32();
+				scene.FirstTakeFrame	=	reader.ReadInt32();
+				scene.LastTakeFrame		=	reader.ReadInt32();
+				scene.trackCount		=	reader.ReadInt32();
 
 				reader.ExpectFourCC("ANIM", "scene");
 
@@ -649,6 +668,8 @@ namespace Fusion.Engine.Graphics {
 				writer.Write( EndTime.Ticks );
 				writer.Write( FirstFrame );
 				writer.Write( LastFrame	);
+				writer.Write( FirstTakeFrame );
+				writer.Write( LastTakeFrame	);
 				writer.Write( trackCount );
 
 				//---------------------------------------------

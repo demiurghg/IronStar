@@ -828,8 +828,9 @@ namespace Fusion.Engine.Common {
 		{
 			var force	= args.Contains("/force");
 			var files	= args.Skip(1).Where( s=>!s.StartsWith("/") ).ToArray();
+			var clean	= args.FirstOrDefault( a => a.StartsWith("/clean:"))?.Replace("/clean:","");
 
-			Builder.SafeBuild(force, null, files);
+			Builder.SafeBuild(force, clean, files);
 
 			Reload();
 

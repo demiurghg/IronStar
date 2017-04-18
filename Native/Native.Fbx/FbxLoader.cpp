@@ -108,6 +108,7 @@ Fusion::Engine::Graphics::Scene ^ FbxLoader::LoadScene( string ^filename, Option
 	FbxTime		start;
 	FbxTime		end;
 
+
 	fbxScene->GetGlobalSettings().GetTimelineDefaultTimeSpan( timeSpan );
 	timeMode = fbxScene->GetGlobalSettings().GetTimeMode();
 	start = timeSpan.GetStart();
@@ -118,14 +119,34 @@ Fusion::Engine::Graphics::Scene ^ FbxLoader::LoadScene( string ^filename, Option
 	Fusion::Engine::Graphics::Scene ^scene =	gcnew Fusion::Engine::Graphics::Scene();
 
 	if (options->ImportAnimation) {
+
+		Console::WriteLine(gcnew String(fbxScene->ActiveAnimStackName.Get().Buffer()));
+		Console::WriteLine("Getting take info...");
+
+		FbxString takeName;
+
+		for (int lAnimStackCount = 0; lAnimStackCount < fbxImporter->GetAnimStackCount(); lAnimStackCount++) {
+			FbxTakeInfo* lTakeInfo = fbxImporter->GetTakeInfo(lAnimStackCount);
+			FbxString takeName = lTakeInfo->mName;
+
+			FbxTimeSpan takeSpan = lTakeInfo->mLocalTimeSpan;
+
+			scene->FirstTakeFrame = (int)takeSpan.GetStart().GetFrameCount(timeMode);
+			scene->LastTakeFrame  = (int)takeSpan.GetStop().GetFrameCount(timeMode);
+
+			Console::WriteLine("...take[{0}] {1} - [{2}..{3}]", lAnimStackCount, gcnew String(takeName.Buffer()), scene->FirstTakeFrame, scene->LastTakeFrame);
+		}
+
+
 		scene->StartTime	=	TimeSpan::FromMilliseconds( (long)start.GetMilliSeconds() );
 		scene->EndTime		=	TimeSpan::FromMilliseconds( (long)end.GetMilliSeconds() );
 
 		scene->CreateAnimation( (int)start.GetFrameCount( timeMode ), (int)end.GetFrameCount( timeMode ), fbxScene->GetNodeCount() );
 
 		Console::WriteLine("Animation time span : {0} - {1}",	scene->StartTime, scene->EndTime );
-		Console::WriteLine("Animation frame     : {0} - {1}",	scene->FirstFrame, scene->LastFrame ); 
-		Console::WriteLine("Total nodes         : {0}",			fbxScene->GetNodeCount() ); 
+		Console::WriteLine("Animation frame     : {0} - {1}", scene->FirstFrame, scene->LastFrame);
+		Console::WriteLine("Animation slider    : {0} - {1}", scene->FirstFrame, scene->LastFrame);
+		Console::WriteLine("Total nodes         : {0}",			fbxScene->GetNodeCount() );
 	}
 
 	Console::WriteLine("Traversing hierarchy...");

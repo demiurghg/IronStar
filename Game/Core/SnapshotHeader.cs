@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
+using IronStar.Items;
 
 namespace IronStar.Core {
 
@@ -30,15 +31,15 @@ namespace IronStar.Core {
 		public float Gravity;
 		public float SunIntensity;
 
-		public short WeaponModel;
-		public float WeaponAnimFrame;
+		public short		WeaponModel;
+		public WeaponState	WeaponState;
 
 		public Color4 AmbientLevel;
 
 		public void ClearHud ()
 		{
 			WeaponModel		=	0;
-			WeaponAnimFrame	=	0;
+			WeaponState		=	WeaponState.Idle;
 
 			for ( int i=0; i<HudState.Length; i++ ) {
 				HudState[i]	=	0;
@@ -59,7 +60,7 @@ namespace IronStar.Core {
 			writer.Write( AmbientLevel );
 
 			writer.Write( WeaponModel );
-			writer.Write( WeaponAnimFrame );
+			writer.Write( (byte)WeaponState );
 
 			for ( int i=0; i<HudState.Length; i++ ) {
 				writer.Write( HudState[i] );
@@ -78,7 +79,7 @@ namespace IronStar.Core {
 			AmbientLevel	=	reader.Read<Color4>();
 
 			WeaponModel		=	reader.ReadInt16();
-			WeaponAnimFrame	=	reader.ReadSingle();
+			WeaponState		=	(WeaponState)reader.ReadByte();
 
 			for ( int i=0; i<HudState.Length; i++ ) {
 				HudState[i]	=	reader.ReadInt16();

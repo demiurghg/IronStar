@@ -94,7 +94,7 @@ namespace IronStar.Entities {
 		public void UpdateHud ( SnapshotHeader snapshotHeader )
 		{
 			snapshotHeader.WeaponModel		=	0;
-			snapshotHeader.WeaponAnimFrame	=	0;
+			snapshotHeader.WeaponState		=	WeaponState.Idle;
 
 			var weapon = GetItem( currentWeapon ) as Weapon;
 

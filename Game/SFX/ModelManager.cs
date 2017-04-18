@@ -243,7 +243,7 @@ namespace IronStar.SFX {
 
 			var camMatrix	=	rw.Camera.GetCameraMatrix(Fusion.Drivers.Graphics.StereoEye.Mono);
 				
-			weaponModelInstance?.Update( elapsedTime, world.snapshotHeader.WeaponAnimFrame, weaponMatrix * camMatrix );
+			weaponModelInstance?.Update( elapsedTime, 0, weaponMatrix * camMatrix );
 		}
 	}
 }

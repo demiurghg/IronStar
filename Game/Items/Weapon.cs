@@ -26,6 +26,18 @@ using IronStar.Entities;
 
 namespace IronStar.Items {
 
+	public enum WeaponState : byte {
+		Idle			=	0x01,
+		Activating		=	0x02,
+		Deactivating	=	0x04,
+		Attack			=	0x08,
+		Landing			=	0x10,
+		Reloading		=	0x20,
+		Walking			=	0x40,
+	}
+
+
+
 	public partial class Weapon : Item {
 		
 		readonly GameWorld world;
@@ -144,8 +156,8 @@ namespace IronStar.Items {
 		/// <param name="snapshotHeader"></param>
 		public void UpdateHud ( SnapshotHeader snapshotHeader )
 		{
-			snapshotHeader.WeaponModel		=	viewWeaponModel;
-			snapshotHeader.WeaponAnimFrame	=	viewWeaponFrame;
+			snapshotHeader.WeaponModel	=	viewWeaponModel;
+			snapshotHeader.WeaponState	=	WeaponState.Idle;
 		}
 
 

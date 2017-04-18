@@ -57,6 +57,10 @@ namespace IronStar.SFX {
 			this.scene			=	content.Load<Scene>( descriptor.ScenePath );
 			this.clips			=	descriptor.LoadClips( content );
 
+			foreach ( var clip in clips ) {
+				Log.Message("...clip: [{0} {1}]", clip.FirstFrame, clip.LastFrame);
+			}
+
 			this.modelManager   =   modelManager;
 			this.preTransform   =   descriptor.ComputePreTransformMatrix();
 			this.entity			=	entity;
@@ -171,6 +175,8 @@ namespace IronStar.SFX {
 			}
 			Killed = true;
 		}
+
+
 
 
 	}

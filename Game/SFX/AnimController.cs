@@ -18,22 +18,29 @@ using Fusion.Engine.Audio;
 
 
 namespace IronStar.SFX {
+	public class AnimController {
 
-	public class AnimTrack {
 
-		public AnimTrack ( AnimController animController )
+		public Matrix[] Transforms {
+			get {
+				throw new NotImplementedException();
+			}
+		}
+
+		
+		public AnimController ( Scene scene, Scene[] clips, int numTracks )
 		{
 			throw new NotImplementedException();
 		}
 
 
-		public bool Play ( string clipName, float frameRate )
+		public AnimTrack GetTrack( int index )
 		{
 			throw new NotImplementedException();
 		}
 
 
-		public void Stop ()
+		public void Evaluate ( TimeSpan deltaTime )
 		{
 			throw new NotImplementedException();
 		}

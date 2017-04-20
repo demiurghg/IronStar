@@ -228,7 +228,7 @@ namespace IronStar.SFX {
 		 * 
 		-----------------------------------------------------------------------------------------------*/
 
-		readonly List<AnimTrack> tracks = new List<AnimTrack>();
+		readonly List<AnimTrack22> tracks = new List<AnimTrack22>();
 
 
 		/// <summary>
@@ -258,7 +258,7 @@ namespace IronStar.SFX {
 				Log.Warning("Clip {0} does not exist", clip);
 			}
 
-			var track = new AnimTrack( sourceClip, looped, 0.1f, 0.1f, 60 );
+			var track = new AnimTrack22( sourceClip, looped, 0.1f, 0.1f, 60 );
 
 			tracks.Add( track );
 		}

@@ -168,7 +168,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Physics\PhysicsManager.cs" />
+    <Compile Include="SFX\AnimController.cs" />
     <Compile Include="SFX\AnimTrack.cs" />
+    <Compile Include="SFX\AnimTrack22.cs" />
     <Compile Include="SFX\FXFactory.Utils.cs" />
     <Compile Include="SFX\FXFactory.cs" />
     <Compile Include="SFX\FXPlayback.Rail.cs" />

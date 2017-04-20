@@ -133,6 +133,7 @@ Fusion::Engine::Graphics::Scene ^ FbxLoader::LoadScene( string ^filename, Option
 
 			scene->FirstTakeFrame = (int)takeSpan.GetStart().GetFrameCount(timeMode);
 			scene->LastTakeFrame  = (int)takeSpan.GetStop().GetFrameCount(timeMode);
+			scene->TakeName		  = gcnew String(takeName.Buffer());
 
 			Console::WriteLine("...take[{0}] {1} - [{2}..{3}]", lAnimStackCount, gcnew String(takeName.Buffer()), scene->FirstTakeFrame, scene->LastTakeFrame);
 		}

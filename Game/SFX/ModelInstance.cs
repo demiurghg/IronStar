@@ -58,7 +58,7 @@ namespace IronStar.SFX {
 			this.clips			=	descriptor.LoadClips( content );
 
 			foreach ( var clip in clips ) {
-				Log.Message("...clip: [{0} {1}]", clip.FirstFrame, clip.LastFrame);
+				Log.Message("...clip: {0} [{1} {2}]", clip.TakeName, clip.FirstTakeFrame, clip.LastTakeFrame);
 			}
 
 			this.modelManager   =   modelManager;
@@ -75,6 +75,7 @@ namespace IronStar.SFX {
 			globalTransforms	=	new Matrix[ scene.Nodes.Count ];
 			animSnapshot		=	new Matrix[ scene.Nodes.Count ];
 			scene.ComputeAbsoluteTransforms( globalTransforms );
+
 
 
 			if (fpvEnabled) {
@@ -110,6 +111,12 @@ namespace IronStar.SFX {
 
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="dt"></param>
+		/// <param name="animFrame"></param>
+		/// <param name="worldMatrix"></param>
 		public void Update ( float dt, float animFrame, Matrix worldMatrix )
 		{
 			//
@@ -117,20 +124,11 @@ namespace IronStar.SFX {
 			//
 			if (useAnimation) {
 
-				if (animFrame>scene.LastFrame) {
-					Log.Warning("Anim frame: {0} > {1}", animFrame, scene.LastFrame);
-				}
-				if (animFrame<scene.FirstFrame) {
-					Log.Warning("Anim frame: {0} < {1}", animFrame, scene.FirstFrame);
-				}
-				animFrame = MathUtil.Clamp( animFrame, scene.FirstFrame, scene.LastFrame );
-
-				scene.GetAnimSnapshot( animFrame, scene.FirstFrame, scene.LastFrame, AnimationMode.Clamp, animSnapshot );
-				scene.ComputeAbsoluteTransforms( animSnapshot, animSnapshot );
+				EvaluateFrame( animFrame );
 
 			} else {
 
-				scene.ComputeAbsoluteTransforms( animSnapshot );
+				ResetPose();
 
 			}
 
@@ -177,7 +175,92 @@ namespace IronStar.SFX {
 		}
 
 
+		/*-----------------------------------------------------------------------------------------------
+		 * 
+		 *	Animation stuff :
+		 * 
+		-----------------------------------------------------------------------------------------------*/
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void ResetPose ()
+		{
+			scene.ComputeAbsoluteTransforms( animSnapshot );
+		}
 
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void SetBindPose ()
+		{
+			throw new NotImplementedException();
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="frame"></param>
+		public void EvaluateFrame ( float animFrame )
+		{
+			if (animFrame>scene.LastFrame) {
+				Log.Warning("Anim frame: {0} > {1}", animFrame, scene.LastFrame);
+			}
+
+			if (animFrame<scene.FirstFrame) {
+				Log.Warning("Anim frame: {0} < {1}", animFrame, scene.FirstFrame);
+			}
+
+			animFrame = MathUtil.Clamp( animFrame, scene.FirstFrame, scene.LastFrame );
+
+			scene.GetAnimSnapshot( animFrame, scene.FirstFrame, scene.LastFrame, AnimationMode.Clamp, animSnapshot );
+			scene.ComputeAbsoluteTransforms( animSnapshot, animSnapshot );
+		}
+
+
+		/*-----------------------------------------------------------------------------------------------
+		 * 
+		 *	Tracking stuff :
+		 * 
+		-----------------------------------------------------------------------------------------------*/
+
+		readonly List<AnimTrack> tracks = new List<AnimTrack>();
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="track"></param>
+		/// <param name="immediate"></param>
+		public void Stop ( int track, bool immediate )
+		{
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="track"></param>
+		/// <param name="clip"></param>
+		/// <param name="looped"></param>
+		/// <param name="fadein"></param>
+		/// <param name="fadeout"></param>
+		public void Play ( string clip, bool looped, float weight )
+		{
+			var sourceClip  = clips.FirstOrDefault( scene => scene.TakeName==clip );
+
+			if (sourceClip==null) {
+				Log.Warning("Clip {0} does not exist", clip);
+			}
+
+			var track = new AnimTrack( sourceClip, looped, 0.1f, 0.1f, 60 );
+
+			tracks.Add( track );
+		}
 	}
 }

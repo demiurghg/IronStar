@@ -153,6 +153,7 @@ namespace IronStar.SFX {
 		}
 
 
+
 		float weaponYaw = 0;
 		float weaponRoll = 0;
 		bool oldTraction = true;

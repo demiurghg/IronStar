@@ -27,13 +27,16 @@ using IronStar.Entities;
 namespace IronStar.Items {
 
 	public enum WeaponState : byte {
-		Idle			=	0x01,
-		Activating		=	0x02,
-		Deactivating	=	0x04,
-		Attack			=	0x08,
-		Landing			=	0x10,
-		Reloading		=	0x20,
-		Walking			=	0x40,
+		Warmup			,	//	weapon is warming up
+		Cooldown1		,	//	weapon is cooling down (and recoiled)
+		Cooldown2		,	//	weapon is cooling down (required to change state on atomatic fire)
+		Reloading		,	//	weapon is reloading
+		Activating		,	//	weapon is being taken out
+		Deactivating	,	//	weapon is being putted down
+		Landing			,	//	weapon is shaked by player landing
+		Walking1		,	//	weapon is shaked by player walking
+		Walking2		,	//	weapon is shaked by player walking (required to change state continious walking)
+		Idle			,	//	does nothing
 	}
 
 

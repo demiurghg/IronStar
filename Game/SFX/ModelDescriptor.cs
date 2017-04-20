@@ -67,6 +67,10 @@ namespace IronStar.SFX {
 
 		public Scene[] LoadClips ( ContentManager content )
 		{
+			if (!UseAnimation) {
+				return new Scene[0];
+			}
+
 			return GetClips()
 				.Select( name => content.Load<Scene>(name) )
 				.ToArray();

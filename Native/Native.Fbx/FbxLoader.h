@@ -25,6 +25,24 @@ namespace Native {
 				FbxGeometryConverter	*fbxGConv	;	
 				FbxTime::EMode			timeMode;
 
+				TimeMode ConvertTimeMode ( FbxTime::EMode mode )
+				{
+					switch (mode) {
+						case FbxTime::EMode::eFrames1000	: return TimeMode::Frames1000	; break;
+						case FbxTime::EMode::eFrames120		: return TimeMode::Frames120	; break;
+						case FbxTime::EMode::eFrames100		: return TimeMode::Frames100	; break;
+						case FbxTime::EMode::eFrames96		: return TimeMode::Frames96		; break;
+						case FbxTime::EMode::eFrames72		: return TimeMode::Frames72		; break;
+						case FbxTime::EMode::eFrames60		: return TimeMode::Frames60		; break;
+						case FbxTime::EMode::eFrames59dot94	: return TimeMode::Frames59dot94; break;
+						case FbxTime::EMode::eFrames50		: return TimeMode::Frames50		; break;
+						case FbxTime::EMode::eFrames48		: return TimeMode::Frames48		; break;
+						case FbxTime::EMode::eFrames30		: return TimeMode::Frames30		; break;
+						case FbxTime::EMode::eFrames24		: return TimeMode::Frames24		; break;
+						default : return TimeMode::Unknown;
+					}
+				}
+
 				void IterateChildren		( FbxNode *fbxNode, FbxScene *fbxScene, Fusion::Engine::Graphics::Scene ^scene, int parentIndex, int depth );
 				void HandleMesh				( Scene ^scene, Node ^node, FbxNode *fbxNode );
 				void HandleSkinning			( Mesh ^nodeMesh, Scene ^scene, Node ^node, FbxNode *fbxNode, Matrix^ meshTransform, array<Int4> ^skinIndices, array<Vector4>	^skinWeights );

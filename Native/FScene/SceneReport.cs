@@ -26,9 +26,10 @@ namespace FScene {
 			sb.AppendFormat("<b>Mesh count</b>      : {0}\r\n", scene.Meshes.Count );
 			sb.AppendFormat("<b>Materials count</b> : {0}\r\n", scene.Materials.Count );
 			sb.AppendLine();
+			sb.AppendFormat("<b>Time Mode</b>       : {0}\r\n", scene.TimeMode );
 			sb.AppendFormat("<b>Track count</b>     : {0}\r\n", scene.TrackCount );
-			sb.AppendFormat("<b>Frame range</b>     : {0} - {1}\r\n", scene.FirstFrame, scene.LastFrame );
-			sb.AppendFormat("<b>Time range</b>      : {0} - {1}\r\n", scene.StartTime, scene.EndTime );
+			sb.AppendFormat("<b>Scene range</b>     : {0} - {1}\r\n", scene.FirstFrame, scene.LastFrame );
+			sb.AppendFormat("<b>Take range</b>      : {0} - {1}\r\n", scene.FirstTakeFrame, scene.LastTakeFrame );
 
 
 

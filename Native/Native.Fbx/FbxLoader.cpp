@@ -118,6 +118,9 @@ Fusion::Engine::Graphics::Scene ^ FbxLoader::LoadScene( string ^filename, Option
 
 	Fusion::Engine::Graphics::Scene ^scene =	gcnew Fusion::Engine::Graphics::Scene();
 
+	scene->TimeMode  = ConvertTimeMode( timeMode );
+
+
 	if (options->ImportAnimation) {
 
 		Console::WriteLine(gcnew String(fbxScene->ActiveAnimStackName.Get().Buffer()));
@@ -139,15 +142,14 @@ Fusion::Engine::Graphics::Scene ^ FbxLoader::LoadScene( string ^filename, Option
 		}
 
 
-		scene->StartTime	=	TimeSpan::FromMilliseconds( (long)start.GetMilliSeconds() );
-		scene->EndTime		=	TimeSpan::FromMilliseconds( (long)end.GetMilliSeconds() );
+		//scene->StartTime	=	TimeSpan::FromMilliseconds( (long)start.GetMilliSeconds() );
+		//scene->EndTime		=	TimeSpan::FromMilliseconds( (long)end.GetMilliSeconds() );
 
 		scene->CreateAnimation( (int)start.GetFrameCount( timeMode ), (int)end.GetFrameCount( timeMode ), fbxScene->GetNodeCount() );
 
-		Console::WriteLine("Animation time span : {0} - {1}",	scene->StartTime, scene->EndTime );
-		Console::WriteLine("Animation frame     : {0} - {1}", scene->FirstFrame, scene->LastFrame);
-		Console::WriteLine("Animation slider    : {0} - {1}", scene->FirstFrame, scene->LastFrame);
-		Console::WriteLine("Total nodes         : {0}",			fbxScene->GetNodeCount() );
+		Console::WriteLine("Scene range : {0} - {1}", scene->FirstFrame, scene->LastFrame);
+		Console::WriteLine("Take range  : {0} - {1}", scene->FirstTakeFrame, scene->LastTakeFrame);
+		Console::WriteLine("Total nodes : {0}",			fbxScene->GetNodeCount() );
 	}
 
 	Console::WriteLine("Traversing hierarchy...");

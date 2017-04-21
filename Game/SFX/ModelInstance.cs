@@ -119,29 +119,44 @@ namespace IronStar.SFX {
 		/// <param name="worldMatrix"></param>
 		public void Update ( float dt, float animFrame, Matrix worldMatrix )
 		{
-			//
-			//	do animation stuff :
-			//
 			if (useAnimation) {
-
 				EvaluateFrame( animFrame );
-
 			} else {
-
 				ResetPose();
-
 			}
 
-			
-			//
-			//	apply transforms and colors
-			//
+			Update( worldMatrix, animSnapshot );
+		}
+
+
+		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="worldMatrix"></param>
+		/// <param name="noteTransforms"></param>
+		public void Update ( Matrix worldMatrix, Matrix[] nodeTransforms )
+		{
+			if (nodeTransforms==null) {
+				throw new ArgumentNullException("nodeTransforms");
+			}
+			if (nodeCount>nodeTransforms.Length) {
+				throw new ArgumentException("nodeTransforms.Length < nodeCount");
+			}
+
 			for ( int i = 0; i<nodeCount; i++ ) {
 				if (meshInstances[i]!=null) {
-					meshInstances[i].World = animSnapshot[i] * preTransform * worldMatrix;
+					meshInstances[i].World = nodeTransforms[i] * preTransform * worldMatrix;
 					meshInstances[i].Color = color;
 				}
 			}
+		}
+
+
+
+		public void ComputeAbsoluteTransforms ( Matrix[] transforms )
+		{
+			scene.ComputeAbsoluteTransforms( transforms, transforms );
 		}
 
 
@@ -180,6 +195,11 @@ namespace IronStar.SFX {
 		 *	Animation stuff :
 		 * 
 		-----------------------------------------------------------------------------------------------*/
+
+		public Scene GetClip ( string name )
+		{
+			return clips.FirstOrDefault( clip => clip.TakeName == name );
+		}
 
 		/// <summary>
 		/// 

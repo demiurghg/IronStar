@@ -17,6 +17,23 @@ using Fusion.Engine.Graphics.Ubershaders;
 
 
 namespace Fusion.Engine.Graphics {
+
+	public enum TimeMode : int {
+		Unknown			=       0,
+		Frames24		=   24000,
+		Frames30		=   30000,
+		Frames48		=   48000,
+		Frames50		=   50000,
+		Frames59dot94	=   59940,
+		Frames60		=   60000,
+		Frames72		=   70000,
+		Frames96		=   80000,
+		Frames100		=   90000,
+		Frames120		=  120000,
+		Frames1000		= 1000000,
+	}
+
+
 	public sealed class Scene : DisposableBase {
 
 		List<Node>			nodes		= new List<Node>();
@@ -61,23 +78,11 @@ namespace Fusion.Engine.Graphics {
 
 
 		/// <summary>
-		/// Start time of the animation. 
-		/// This value is a overall scene settings and does not affect node animation.
-		/// Thus value always corresponds to FirstFrame.
+		/// Gets and sets time mode
 		/// </summary>
-		public TimeSpan	StartTime {
+		public TimeMode TimeMode {
 			get; set;
-		}
-
-
-		/// <summary>
-		/// End time of the animation.
-		/// This value is a overall scene settings and does not affect node animation.
-		/// Thus value always corresponds to LastFrame.
-		/// </summary>
-		public TimeSpan	EndTime {
-			get; set;
-		}
+		} = TimeMode.Frames30;
 
 
 
@@ -101,16 +106,24 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		/// <summary>
+		/// First incluseive take frame
+		/// </summary>
 		public int FirstTakeFrame {
 			get; set;
 		}
 
+
+		/// <summary>
+		/// Last inclusive take frame
+		/// </summary>
 		public int LastTakeFrame {
 			get; set;
 		}
 
+
 		/// <summary>
-		/// Tag
+		/// Take name
 		/// </summary>
 		public string TakeName {
 			get; set;
@@ -126,6 +139,24 @@ namespace Fusion.Engine.Graphics {
 			get {
 				return trackCount;
 			}
+		}
+
+
+		public float FramesPerSecond {
+			get {
+				return ((int)TimeMode) / 1000.0f;
+			}
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="frame"></param>
+		/// <returns></returns>
+		public TimeSpan GetTime ( int frame )
+		{
+			return TimeSpan.FromMilliseconds( frame * (int)TimeMode );
 		}
 
 
@@ -508,6 +539,58 @@ namespace Fusion.Engine.Graphics {
 			}
 		}
 
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="time"></param>
+		/// <param name="looped"></param>
+		/// <param name="destination"></param>
+		public void PlayTake ( int timeMSec, bool looped, Matrix[] destination )
+		{
+			float frame	=	timeMSec * FramesPerSecond / 1000.0f;
+			int frame0	=	(int)Math.Floor( frame ) + FirstTakeFrame;
+			int frame1	=	frame0 + 1;
+			var factor	=	(frame >= 0) ? (frame%1) : (1 + frame%1);
+
+			if (looped) {
+				frame0	=	MathUtil.Wrap( frame0, FirstTakeFrame, LastTakeFrame );
+				frame1	=	MathUtil.Wrap( frame1, FirstTakeFrame, LastTakeFrame );
+			} else {
+				frame0	=	MathUtil.Clamp( frame0, FirstTakeFrame, LastTakeFrame );
+				frame1	=	MathUtil.Clamp( frame1, FirstTakeFrame, LastTakeFrame );
+			}
+
+			for (int i=0; i<Nodes.Count; i++) {
+				var node = Nodes[i];
+
+				if (node.TrackIndex<0) {
+					destination[i] = node.Transform;
+				} else {
+
+					var x0	=	GetAnimKey( frame0, node.TrackIndex );
+					var x1	=	GetAnimKey( frame1, node.TrackIndex );
+
+					Quaternion q0, q1;
+					Vector3 t0, t1;
+					Vector3 s0, s1;
+
+					x0.Decompose( out s0, out q0, out t0 );
+					x1.Decompose( out s1, out q1, out t1 );
+
+					var q	=	Quaternion.Slerp( q0, q1, factor );
+					var t	=	Vector3.Lerp( t0, t1, factor );
+					var s	=	Vector3.Lerp( s0, s1, factor );
+
+					var x	=	Matrix.Scaling( s ) * Matrix.RotationQuaternion( q ) * Matrix.Translation( t );
+
+					destination[i] = x;
+				}
+			}
+		}
+
+
 		/*-----------------------------------------------------------------------------------------
 		 * 
 		 *	Optimization stuff :
@@ -575,8 +658,9 @@ namespace Fusion.Engine.Graphics {
 				reader.ExpectFourCC("SCN1", "scene");
 
 				//---------------------------------------------
-				scene.StartTime			=	new TimeSpan( reader.ReadInt64() );
-				scene.EndTime			=	new TimeSpan( reader.ReadInt64() );
+				//scene.StartTime			=	new TimeSpan( reader.ReadInt64() );
+				//scene.EndTime			=	new TimeSpan( reader.ReadInt64() );
+				scene.TimeMode			=	(TimeMode)reader.ReadInt32();
 				scene.firstFrame		=	reader.ReadInt32();
 				scene.lastFrame			=	reader.ReadInt32();
 				scene.TakeName			=	reader.ReadString();
@@ -664,8 +748,9 @@ namespace Fusion.Engine.Graphics {
 				//---------------------------------------------
 				writer.Write(new[]{'S','C','N','1'});
 
-				writer.Write( StartTime.Ticks );
-				writer.Write( EndTime.Ticks );
+				//writer.Write( StartTime.Ticks );
+				//writer.Write( EndTime.Ticks );
+				writer.Write( (int)TimeMode );
 				writer.Write( FirstFrame );
 				writer.Write( LastFrame	);
 				writer.Write( TakeName );

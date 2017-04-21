@@ -154,13 +154,6 @@ namespace IronStar.SFX {
 
 
 
-		float weaponYaw = 0;
-		float weaponRoll = 0;
-		bool oldTraction = true;
-		float landingKick = 0;
-		float landingKickF = 0;
-
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -177,6 +170,7 @@ namespace IronStar.SFX {
 
 
 
+		int idle_timer;
 
 		/// <summary>
 		/// 
@@ -201,50 +195,33 @@ namespace IronStar.SFX {
 				}
 			}
 
-
-			var playerEntity	=	world.GetPlayerEntity(world.UserGuid);
-			var newTraction		=	(playerEntity==null) ? true : playerEntity.State.HasFlag( EntityState.HasTraction );
-
-			landingKick	=	MathUtil.Drift( landingKick, 0, 3*elapsedTime, 3*elapsedTime );
-
-			if (newTraction && !oldTraction) {
-				landingKick = -0.1f;
-				Log.Message("Landing");
-			}
-			oldTraction = newTraction;
-
-			landingKickF	=	Filter( landingKickF, landingKick, 0.05f, elapsedTime );
-
-
-			float maxWeaponRoll		=  MathUtil.DegreesToRadians(3);
-			float maxWeaponYaw		= -MathUtil.DegreesToRadians(3);
-			float angularThreshold	= MathUtil.DegreesToRadians(90) * elapsedTime;
-			float angularVelocity	= MathUtil.DegreesToRadians( 5) * elapsedTime;
-
-			if ( Math.Abs(userCmd.DYaw) > angularThreshold ) {
-				
-				float sign = Math.Sign( userCmd.DYaw );
-
-				weaponYaw	= Filter( weaponYaw , sign * maxWeaponYaw , 0.1f, elapsedTime );
-				weaponRoll	= Filter( weaponRoll, sign * maxWeaponRoll, 0.1f, elapsedTime );
-				//weaponYaw	= MathUtil.Drift( weaponYaw , sign * maxWeaponYaw , angularVelocity, angularVelocity );
-				//weaponRoll	= MathUtil.Drift( weaponRoll, sign * maxWeaponRoll, angularVelocity, angularVelocity );
-
-			} else {
-
-				weaponYaw	= Filter( weaponYaw , 0, 0.1f, elapsedTime );
-				weaponRoll	= Filter( weaponRoll, 0, 0.1f, elapsedTime );
-				//weaponYaw	= MathUtil.Drift( weaponYaw , 0, angularVelocity, angularVelocity );
-				//weaponRoll	= MathUtil.Drift( weaponRoll, 0, angularVelocity, angularVelocity );
-
+			if (weaponModelInstance==null) {
+				return;
 			}
 
-			var weaponMatrix	=	Matrix.RotationYawPitchRoll( weaponYaw, 0, weaponRoll )
-								*	Matrix.Translation(0, landingKickF, 0);
+			var dtime		=	(int)(elapsedTime * 1000);
 
-			var camMatrix	=	rw.Camera.GetCameraMatrix(Fusion.Drivers.Graphics.StereoEye.Mono);
+			var idle_transforms	=	new Matrix[256];
+			var walk_transforms	=	new Matrix[256];
+			var transforms		=	new Matrix[256];
+
+			var anim_idle	=	weaponModelInstance.GetClip("anim_idle");
+			var anim_walk	=	weaponModelInstance.GetClip("anim_walk");
+
+			anim_idle.PlayTake( idle_timer, true, idle_transforms );
+			anim_walk.PlayTake( idle_timer, true, walk_transforms );
+
+			AnimBlend.Blend( idle_transforms, walk_transforms, 0, transforms );
+
+			idle_timer += dtime;
+
+			weaponModelInstance.ComputeAbsoluteTransforms( transforms );
+
+
+			var weaponMatrix	=	Matrix.Identity;
+			var camMatrix		=	rw.Camera.GetCameraMatrix(Fusion.Drivers.Graphics.StereoEye.Mono);
 				
-			weaponModelInstance?.Update( elapsedTime, 0, weaponMatrix * camMatrix );
+			weaponModelInstance?.Update( weaponMatrix * camMatrix, transforms );
 		}
 	}
 }

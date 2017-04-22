@@ -18,6 +18,7 @@ using IronStar.Core;
 using Fusion.Engine.Audio;
 using BEPUphysics.BroadPhaseEntries;
 using IronStar.Views;
+using IronStar.Items;
 
 namespace IronStar.SFX {
 	public class ModelManager : DisposableBase {
@@ -172,6 +173,23 @@ namespace IronStar.SFX {
 
 		int idle_timer;
 
+		class AnimEvent {
+			public Scene clip;
+			public float frame;
+			public float length;
+			public float fps { get { return clip.FramesPerSecond; } }
+			public float weight {
+				get {
+					return Math.Max(0, Math.Min(1, (1 - frame / length) * 2));
+				}
+			}
+		}
+
+		WeaponState oldWeaponState;
+
+		List<AnimEvent> animEvents = new List<AnimEvent>();
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -201,6 +219,9 @@ namespace IronStar.SFX {
 
 			var dtime		=	(int)(elapsedTime * 1000);
 
+			//
+			//	walk / idle :
+			//
 			var idle_transforms	=	new Matrix[256];
 			var walk_transforms	=	new Matrix[256];
 			var transforms		=	new Matrix[256];
@@ -215,6 +236,45 @@ namespace IronStar.SFX {
 
 			idle_timer += dtime;
 
+			//
+			//	events :
+			//
+			var event_transforms	=	new Matrix[256];
+			var newWeaponState		=	world.snapshotHeader.WeaponState;
+
+			if ( oldWeaponState != newWeaponState ) {
+				oldWeaponState	=	newWeaponState;
+
+				Log.Warning("...weapon: {0}", newWeaponState );
+
+				if (newWeaponState==WeaponState.Recoil1 || newWeaponState==WeaponState.Recoil2) {
+					var animEvent		= new AnimEvent();
+					animEvent.clip		= weaponModelInstance.GetClip("anim_attack");
+					animEvent.frame		= 0;
+					animEvent.length	= (animEvent.clip.LastTakeFrame - animEvent.clip.FirstTakeFrame);
+
+					animEvents.Add( animEvent );
+				}
+
+
+			}
+			
+
+			foreach ( var animEvent in animEvents ) {
+				animEvent.clip.PlayTake( animEvent.frame, false, event_transforms );
+				animEvent.frame += elapsedTime * animEvent.fps;
+
+				Log.Warning("...ae: {0} {1}", animEvent.clip.TakeName, animEvent.weight);
+
+				AnimBlend.Blend( transforms, event_transforms, animEvent.weight, transforms );
+			}
+
+
+			animEvents.RemoveAll( ae => ae.frame > ae.length );
+
+			//
+			//	final transform :
+			//
 			weaponModelInstance.ComputeAbsoluteTransforms( transforms );
 
 

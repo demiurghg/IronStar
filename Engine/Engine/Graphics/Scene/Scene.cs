@@ -550,6 +550,17 @@ namespace Fusion.Engine.Graphics {
 		public void PlayTake ( int timeMSec, bool looped, Matrix[] destination )
 		{
 			float frame	=	timeMSec * FramesPerSecond / 1000.0f;
+
+			PlayTake( frame, looped, destination );
+		}
+
+
+
+
+		public bool PlayTake ( float frame, bool looped, Matrix[] destination )
+		{ 
+			var length	=	LastTakeFrame - FirstTakeFrame;
+
 			int frame0	=	(int)Math.Floor( frame ) + FirstTakeFrame;
 			int frame1	=	frame0 + 1;
 			var factor	=	(frame >= 0) ? (frame%1) : (1 + frame%1);
@@ -588,6 +599,8 @@ namespace Fusion.Engine.Graphics {
 					destination[i] = x;
 				}
 			}
+
+			return (frame <= length) || looped;
 		}
 
 

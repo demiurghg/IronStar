@@ -41,6 +41,7 @@ namespace IronStar.Items {
 
 			public void Enter( Weapon weapon )
 			{
+				weapon.weaponState	=	WeaponState.Inactive;
 				weapon.timer.Stop();
 			}
 
@@ -62,13 +63,11 @@ namespace IronStar.Items {
 
 			public void Enter( Weapon weapon )
 			{
-				weapon.idleAnimation = 0;
+				weapon.weaponState	=	WeaponState.Idle;
 			}
 
 			public void Update( Weapon weapon, int dt )
 			{
-				weapon.viewWeaponFrame = weapon.factory.IdleAnimation.GetFrame( weapon.idleAnimation );
-
 				if (weapon.rqAttack) {
 					//weapon.rqAttack = false;
 					weapon.SetState( stWarmup );
@@ -91,9 +90,11 @@ namespace IronStar.Items {
 
 			public void Enter( Weapon weapon )
 			{
+				weapon.weaponState	=	WeaponState.Warmup;
+
 				if (weapon.factory.WarmupPeriod<=0) {
 					weapon.FireProjectile();
-					weapon.SetState( stCooldown );
+					weapon.SetState( stRecoil );
 				} else {
 					weapon.timer.Restart( weapon.factory.WarmupPeriod );
 				}
@@ -103,7 +104,7 @@ namespace IronStar.Items {
 			{
 				if (weapon.timer.Trigger(dt)) {
 					weapon.FireProjectile();
-					weapon.SetState( stCooldown );
+					weapon.SetState( stRecoil );
 				}
 			}
 		}
@@ -113,17 +114,17 @@ namespace IronStar.Items {
 		/// <summary>
 		/// Weapon is ready and 
 		/// </summary>
-		class Cooldown : IState {
+		class Recoil : IState {
 
 			public void Enter( Weapon weapon )
 			{
+				weapon.weaponState	=	weapon.shotCount ? WeaponState.Recoil1 : WeaponState.Recoil2;
+				weapon.shotCount	=	!weapon.shotCount;
 				weapon.timer.Restart( weapon.factory.CooldownPeriod );
 			}
 
 			public void Update( Weapon weapon, int dt )
 			{
-				weapon.viewWeaponFrame = weapon.factory.CooldownAnimation.GetFrame( weapon.timer.Fraction );
-
 				if (weapon.timer.Trigger(dt)) {
 					weapon.SetState( stReady );
 				}

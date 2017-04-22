@@ -28,8 +28,8 @@ namespace IronStar.Items {
 
 	public enum WeaponState : byte {
 		Warmup			,	//	weapon is warming up
-		Cooldown1		,	//	weapon is cooling down (and recoiled)
-		Cooldown2		,	//	weapon is cooling down (required to change state on atomatic fire)
+		Recoil1			,	//	weapon is cooling down (and recoiled)
+		Recoil2			,	//	weapon is cooling down (required to change state on atomatic fire)
 		Reloading		,	//	weapon is reloading
 		Activating		,	//	weapon is being taken out
 		Deactivating	,	//	weapon is being putted down
@@ -37,6 +37,7 @@ namespace IronStar.Items {
 		Walking1		,	//	weapon is shaked by player walking
 		Walking2		,	//	weapon is shaked by player walking (required to change state continious walking)
 		Idle			,	//	does nothing
+		Inactive		,	
 	}
 
 
@@ -50,7 +51,7 @@ namespace IronStar.Items {
 		bool	rqActivation;
 		int		rqNextWeapon;
 
-		int		idleAnimation = 0;
+		bool	shotCount = false;
 		Timer	timer = new Timer();
 
 		Entity		playerEntity;
@@ -59,7 +60,7 @@ namespace IronStar.Items {
 		static readonly IState	stInactive		=	new Inactive	();
 		static readonly IState	stReady			=	new Ready		();
 		static readonly IState	stWarmup		=	new Warmup		();
-		static readonly IState	stCooldown		=	new Cooldown	();
+		static readonly IState	stRecoil		=	new Recoil	();
 		static readonly IState	stReloading		=	new Reloading	();
 		static readonly IState	stEmpty			=	new Empty		();
 		static readonly IState	stActivation	=	new Activation	();
@@ -69,7 +70,7 @@ namespace IronStar.Items {
 		IState	state;
 
 		protected short viewWeaponModel = 0;
-		protected float viewWeaponFrame = 0;
+		protected WeaponState weaponState;
 
 
 		/// <summary>
@@ -144,11 +145,7 @@ namespace IronStar.Items {
 
 			int dt = (int)(elapsedTime * 1000);
 
-			idleAnimation += dt;
-
 			state.Update( this, dt );
-
-
 		}
 
 
@@ -160,7 +157,7 @@ namespace IronStar.Items {
 		public void UpdateHud ( SnapshotHeader snapshotHeader )
 		{
 			snapshotHeader.WeaponModel	=	viewWeaponModel;
-			snapshotHeader.WeaponState	=	WeaponState.Idle;
+			snapshotHeader.WeaponState	=	weaponState;
 		}
 
 

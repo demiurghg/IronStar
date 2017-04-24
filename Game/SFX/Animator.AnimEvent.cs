@@ -31,6 +31,7 @@ namespace IronStar.SFX {
 			public readonly float Fps;
 			public readonly float FadeIn;
 			public readonly float FadeOut;
+			public readonly float MaxWeight;
 
 			public float Frame;
 
@@ -41,7 +42,7 @@ namespace IronStar.SFX {
 			/// <param name="clip"></param>
 			/// <param name="fadein"></param>
 			/// <param name="fadeout"></param>
-			public AnimEvent ( Animator animator, AnimChannel channel, Scene clip, float fadein, float fadeout )
+			public AnimEvent ( Animator animator, AnimChannel channel, Scene clip, float maxWeight, float fadein, float fadeout )
 			{
 				this.Animator	=	animator;
 				this.Channel	=	channel;
@@ -51,6 +52,11 @@ namespace IronStar.SFX {
 				this.Length		=	clip.LastTakeFrame - clip.FirstTakeFrame;
 				this.FadeIn		=	fadein;
 				this.FadeOut	=	fadeout;
+				this.MaxWeight	=	maxWeight;
+
+				if (maxWeight<0 || maxWeight>1) {	
+					throw new ArgumentOutOfRangeException( "maxWeight" );
+				}
 
 				if (fadein<0 || fadein>Length) {	
 					throw new ArgumentOutOfRangeException( "fadein" );
@@ -71,7 +77,7 @@ namespace IronStar.SFX {
 			{
 				var indices	=	Animator.GetChannelIndices( Channel );
 
-				var weight	=	Ramp( Frame, FadeIn, FadeOut );
+				var weight	=	Ramp( Frame, FadeIn, FadeOut ) * MaxWeight;
 
 				Clip.PlayTakeAndBlend( Frame, false, indices, weight, destination );
 

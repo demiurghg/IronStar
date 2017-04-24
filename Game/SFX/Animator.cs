@@ -118,7 +118,7 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="channel"></param>
 		/// <param name="clipName"></param>
-		public void PlayEvent ( AnimChannel channel, string clipName, float fadein, float fadeout )
+		public void PlayEvent ( AnimChannel channel, string clipName, float weight, float fadein, float fadeout )
 		{
 			var clip = modelInstance.Clips.FirstOrDefault( c => c.TakeName == clipName );
 
@@ -132,7 +132,7 @@ namespace IronStar.SFX {
 				Log.Warning("Animator: channel {0} is empty", channel );
 			}
 
-			var animEvent = new AnimEvent( this, channel, clip, fadein, fadeout );
+			var animEvent = new AnimEvent( this, channel, clip, weight, fadein, fadeout );
 
 			animEvents.Add( animEvent );
 		}

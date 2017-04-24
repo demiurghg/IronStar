@@ -171,26 +171,11 @@ namespace IronStar.SFX {
 
 
 
-		int idle_timer;
-
-		class AnimEvent {
-			public Scene clip;
-			public float frame;
-			public float length;
-			public float fps { get { return clip.FramesPerSecond; } }
-			public float weight {
-				get {
-					return Math.Max(0, Math.Min(1, (1 - frame / length) * 2));
-				}
-			}
-		}
-
 		WeaponState oldWeaponState;
 		Vector3 oldVelocity;
+		bool oldTraction;
 
-		List<AnimEvent> animEvents = new List<AnimEvent>();
-
-
+		
 		/// <summary>
 		/// 
 		/// </summary>
@@ -218,62 +203,25 @@ namespace IronStar.SFX {
 				return;
 			}
 
-			//var dtime		=	(int)(elapsedTime * 1000);
 
-			//
-			//	walk / idle :
-			//
-			#region OLD
-			//var idle_transforms	=	new Matrix[256];
-			//var walk_transforms	=	new Matrix[256];
-			//var transforms		=	new Matrix[256];
+			var player	=	world.GetPlayerEntity( world.UserGuid );
 
-			//var anim_idle	=	weaponModelInstance.GetClip("anim_idle");
-			//var anim_walk	=	weaponModelInstance.GetClip("anim_walk");
+			if (player!=null) {
+				var newVelocity	=	player.LinearVelocity;
 
-			//anim_idle.PlayTake( idle_timer, true, idle_transforms );
-			//anim_walk.PlayTake( idle_timer, true, walk_transforms );
+				float weight	=	MathUtil.Clamp( Math.Abs(newVelocity.Y - oldVelocity.Y) / 20, 0, 1 );
 
-			//AnimBlend.Blend( idle_transforms, walk_transforms, 0, transforms );
+				var newTraction	=	player.State.HasFlag(EntityState.HasTraction);
 
-			//idle_timer += dtime;
+				if (weight>0.1f && newTraction!=oldTraction) {
+					Log.Message("Landing: {0} {1}", newVelocity.Y, oldVelocity.Y);
+					weaponModelInstance.Animator.PlayEvent( AnimChannel.All, "anim_landing", weight, 0, 7 );
+				}
 
-			////
-			////	events :
-			////
-			//var event_transforms	=	new Matrix[256];
-			//var newWeaponState		=	world.snapshotHeader.WeaponState;
+				oldTraction	=	newTraction;
+				oldVelocity = newVelocity;
+			}
 
-			//if ( oldWeaponState != newWeaponState ) {
-			//	oldWeaponState	=	newWeaponState;
-
-			//	Log.Warning("...weapon: {0}", newWeaponState );
-
-			//	if (newWeaponState==WeaponState.Recoil1 || newWeaponState==WeaponState.Recoil2) {
-			//		var animEvent		= new AnimEvent();
-			//		animEvent.clip		= weaponModelInstance.GetClip("anim_recoil");
-			//		animEvent.frame		= 0;
-			//		animEvent.length	= (animEvent.clip.LastTakeFrame - animEvent.clip.FirstTakeFrame);
-
-			//		animEvents.Add( animEvent );
-			//	}
-
-
-			//}
-			
-
-			//foreach ( var animEvent in animEvents ) {
-			//	animEvent.clip.PlayTake( animEvent.frame, false, event_transforms );
-			//	animEvent.frame += elapsedTime * animEvent.fps;
-
-			//	Log.Warning("...ae: {0} {1}", animEvent.clip.TakeName, animEvent.weight);
-
-			//	AnimBlend.Blend( transforms, event_transforms, animEvent.weight, transforms );
-			//}
-
-
-			//animEvents.RemoveAll( ae => ae.frame > ae.length );
-			#endregion
 
 			var newWeaponState	=	world.snapshotHeader.WeaponState;
 
@@ -283,10 +231,17 @@ namespace IronStar.SFX {
 				Log.Warning("...weapon: {0}", newWeaponState );
 
 				if (newWeaponState==WeaponState.Recoil1 || newWeaponState==WeaponState.Recoil2) {
-					weaponModelInstance.Animator.PlayEvent( AnimChannel.All, "anim_recoil", 0, 3 );
+					weaponModelInstance.Animator.PlayEvent( AnimChannel.All, "anim_recoil", 1, 1, 3 );
 				}
-
-
+				if (newWeaponState==WeaponState.Activating) {
+					weaponModelInstance.Animator.PlayEvent( AnimChannel.All, "anim_takeout", 1, 0, 0 );
+				}
+				if (newWeaponState==WeaponState.Deactivating) {
+					weaponModelInstance.Animator.PlayEvent( AnimChannel.All, "anim_putdown", 1, 0, 0 );
+				}
+				if (newWeaponState==WeaponState.Warmup) {
+					weaponModelInstance.Animator.PlayEvent( AnimChannel.All, "anim_warmup", 1, 0, 0 );
+				}
 			}
 
 			//

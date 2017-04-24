@@ -17,7 +17,10 @@ using IronStar.Core;
 using Fusion.Engine.Audio;
 using IronStar.Views;
 
+
 namespace IronStar.SFX {
+
+
 	public class ModelInstance {
 
 		readonly Matrix preTransform;
@@ -27,11 +30,13 @@ namespace IronStar.SFX {
 		readonly Scene scene;
 		readonly Scene[] clips;
 		readonly bool useAnimation;
+		readonly bool useAnimator;
 		readonly string fpvCamera;
 		readonly bool fpvEnabled;
 		readonly Matrix fpvCameraMatrix;
 		readonly Matrix fpvViewMatrix;
 		readonly int fpvCameraIndex;
+		readonly Animator animator;
 
 		Matrix[] globalTransforms;
 		Matrix[] animSnapshot;
@@ -42,6 +47,22 @@ namespace IronStar.SFX {
 		public bool Killed {
 			get; private set;
 		}
+
+
+		/// <summary>
+		/// Gets model's scene
+		/// </summary>
+		public Scene Scene { get { return scene; } }
+
+		/// <summary>
+		/// Gets model's clips
+		/// </summary>
+		public Scene[] Clips { get { return clips; } }
+
+		/// <summary>
+		/// Gets model's animator
+		/// </summary>
+		public Animator Animator { get { return animator; } }
 
 
 		/// <summary>
@@ -57,15 +78,15 @@ namespace IronStar.SFX {
 			this.scene			=	content.Load<Scene>( descriptor.ScenePath );
 			this.clips			=	descriptor.LoadClips( content );
 
-			foreach ( var clip in clips ) {
-				Log.Message("...clip: {0} [{1} {2}]", clip.TakeName, clip.FirstTakeFrame, clip.LastTakeFrame);
-			}
+			this.animator		=	new Animator( this );
+
 
 			this.modelManager   =   modelManager;
 			this.preTransform   =   descriptor.ComputePreTransformMatrix();
 			this.entity			=	entity;
 			this.color			=	descriptor.Color;
 			this.useAnimation	=	descriptor.UseAnimation;
+			this.useAnimator	=	descriptor.UseAnimator;
 
 			this.fpvEnabled		=	descriptor.FPVEnable;
 			this.fpvCamera		=	descriptor.FPVCamera;
@@ -119,7 +140,9 @@ namespace IronStar.SFX {
 		/// <param name="worldMatrix"></param>
 		public void Update ( float dt, float animFrame, Matrix worldMatrix )
 		{
-			if (useAnimation) {
+			if (useAnimator) {
+				Animator.Update( dt, animSnapshot );
+			} else if (useAnimation) {
 				EvaluateFrame( animFrame );
 			} else {
 				ResetPose();
@@ -154,6 +177,10 @@ namespace IronStar.SFX {
 
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="transforms"></param>
 		public void ComputeAbsoluteTransforms ( Matrix[] transforms )
 		{
 			scene.ComputeAbsoluteTransforms( transforms, transforms );
@@ -239,48 +266,6 @@ namespace IronStar.SFX {
 
 			scene.GetAnimSnapshot( animFrame, scene.FirstFrame, scene.LastFrame, AnimationMode.Clamp, animSnapshot );
 			scene.ComputeAbsoluteTransforms( animSnapshot, animSnapshot );
-		}
-
-
-		/*-----------------------------------------------------------------------------------------------
-		 * 
-		 *	Tracking stuff :
-		 * 
-		-----------------------------------------------------------------------------------------------*/
-
-		readonly List<AnimTrack22> tracks = new List<AnimTrack22>();
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="track"></param>
-		/// <param name="immediate"></param>
-		public void Stop ( int track, bool immediate )
-		{
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="track"></param>
-		/// <param name="clip"></param>
-		/// <param name="looped"></param>
-		/// <param name="fadein"></param>
-		/// <param name="fadeout"></param>
-		public void Play ( string clip, bool looped, float weight )
-		{
-			var sourceClip  = clips.FirstOrDefault( scene => scene.TakeName==clip );
-
-			if (sourceClip==null) {
-				Log.Warning("Clip {0} does not exist", clip);
-			}
-
-			var track = new AnimTrack22( sourceClip, looped, 0.1f, 0.1f, 60 );
-
-			tracks.Add( track );
 		}
 	}
 }

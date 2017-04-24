@@ -34,6 +34,10 @@ namespace IronStar.SFX {
 		public bool UseAnimation { get; set; } = false;
 
 		[Category( "Appearance" )]
+		[Description( "Indicated whether advanced animation controller is used" )]
+		public bool UseAnimator { get; set; } = false;
+
+		[Category( "Appearance" )]
 		[Description( "Model glow color multiplier" )]
 		public Color4 Color { get; set; } = new Color4( 10, 10, 10, 1 );
 

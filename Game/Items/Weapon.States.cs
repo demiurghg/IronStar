@@ -118,7 +118,8 @@ namespace IronStar.Items {
 
 			public void Enter( Weapon weapon )
 			{
-				weapon.weaponState	=	weapon.shotCount ? WeaponState.Recoil1 : WeaponState.Recoil2;
+				//weapon.weaponState	=	weapon.shotCount ? WeaponState.Recoil1 : WeaponState.Recoil2;
+				weapon.weaponState	=	WeaponState.Recoil1;
 				weapon.shotCount	=	!weapon.shotCount;
 				weapon.timer.Restart( weapon.factory.CooldownPeriod );
 			}

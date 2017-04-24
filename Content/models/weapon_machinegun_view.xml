@@ -3,9 +3,10 @@
   <ScenePath>scenes\weapon\assault_rifle\assault_rifle_view.FBX</ScenePath>
   <Scale>0.01</Scale>
   <UseAnimation>true</UseAnimation>
+  <UseAnimator>true</UseAnimator>
   <Color Red="10" Green="10" Blue="10" Alpha="1" />
   <FPVEnable>true</FPVEnable>
   <FPVCamera>camera1</FPVCamera>
   <Prefix>anim_</Prefix>
-  <Clips>attack;firstlook;walk;landing;takeout;putdown;idle</Clips>
+  <Clips>recoil;firstlook;walk;landing;takeout;putdown;idle</Clips>
 </ModelDescriptor>

@@ -186,6 +186,7 @@ namespace IronStar.SFX {
 		}
 
 		WeaponState oldWeaponState;
+		Vector3 oldVelocity;
 
 		List<AnimEvent> animEvents = new List<AnimEvent>();
 
@@ -217,30 +218,64 @@ namespace IronStar.SFX {
 				return;
 			}
 
-			var dtime		=	(int)(elapsedTime * 1000);
+			//var dtime		=	(int)(elapsedTime * 1000);
 
 			//
 			//	walk / idle :
 			//
-			var idle_transforms	=	new Matrix[256];
-			var walk_transforms	=	new Matrix[256];
-			var transforms		=	new Matrix[256];
+			#region OLD
+			//var idle_transforms	=	new Matrix[256];
+			//var walk_transforms	=	new Matrix[256];
+			//var transforms		=	new Matrix[256];
 
-			var anim_idle	=	weaponModelInstance.GetClip("anim_idle");
-			var anim_walk	=	weaponModelInstance.GetClip("anim_walk");
+			//var anim_idle	=	weaponModelInstance.GetClip("anim_idle");
+			//var anim_walk	=	weaponModelInstance.GetClip("anim_walk");
 
-			anim_idle.PlayTake( idle_timer, true, idle_transforms );
-			anim_walk.PlayTake( idle_timer, true, walk_transforms );
+			//anim_idle.PlayTake( idle_timer, true, idle_transforms );
+			//anim_walk.PlayTake( idle_timer, true, walk_transforms );
 
-			AnimBlend.Blend( idle_transforms, walk_transforms, 0, transforms );
+			//AnimBlend.Blend( idle_transforms, walk_transforms, 0, transforms );
 
-			idle_timer += dtime;
+			//idle_timer += dtime;
 
-			//
-			//	events :
-			//
-			var event_transforms	=	new Matrix[256];
-			var newWeaponState		=	world.snapshotHeader.WeaponState;
+			////
+			////	events :
+			////
+			//var event_transforms	=	new Matrix[256];
+			//var newWeaponState		=	world.snapshotHeader.WeaponState;
+
+			//if ( oldWeaponState != newWeaponState ) {
+			//	oldWeaponState	=	newWeaponState;
+
+			//	Log.Warning("...weapon: {0}", newWeaponState );
+
+			//	if (newWeaponState==WeaponState.Recoil1 || newWeaponState==WeaponState.Recoil2) {
+			//		var animEvent		= new AnimEvent();
+			//		animEvent.clip		= weaponModelInstance.GetClip("anim_recoil");
+			//		animEvent.frame		= 0;
+			//		animEvent.length	= (animEvent.clip.LastTakeFrame - animEvent.clip.FirstTakeFrame);
+
+			//		animEvents.Add( animEvent );
+			//	}
+
+
+			//}
+			
+
+			//foreach ( var animEvent in animEvents ) {
+			//	animEvent.clip.PlayTake( animEvent.frame, false, event_transforms );
+			//	animEvent.frame += elapsedTime * animEvent.fps;
+
+			//	Log.Warning("...ae: {0} {1}", animEvent.clip.TakeName, animEvent.weight);
+
+			//	AnimBlend.Blend( transforms, event_transforms, animEvent.weight, transforms );
+			//}
+
+
+			//animEvents.RemoveAll( ae => ae.frame > ae.length );
+			#endregion
+
+			var newWeaponState	=	world.snapshotHeader.WeaponState;
 
 			if ( oldWeaponState != newWeaponState ) {
 				oldWeaponState	=	newWeaponState;
@@ -248,40 +283,19 @@ namespace IronStar.SFX {
 				Log.Warning("...weapon: {0}", newWeaponState );
 
 				if (newWeaponState==WeaponState.Recoil1 || newWeaponState==WeaponState.Recoil2) {
-					var animEvent		= new AnimEvent();
-					animEvent.clip		= weaponModelInstance.GetClip("anim_attack");
-					animEvent.frame		= 0;
-					animEvent.length	= (animEvent.clip.LastTakeFrame - animEvent.clip.FirstTakeFrame);
-
-					animEvents.Add( animEvent );
+					weaponModelInstance.Animator.PlayEvent( AnimChannel.All, "anim_recoil", 0, 3 );
 				}
 
 
 			}
-			
-
-			foreach ( var animEvent in animEvents ) {
-				animEvent.clip.PlayTake( animEvent.frame, false, event_transforms );
-				animEvent.frame += elapsedTime * animEvent.fps;
-
-				Log.Warning("...ae: {0} {1}", animEvent.clip.TakeName, animEvent.weight);
-
-				AnimBlend.Blend( transforms, event_transforms, animEvent.weight, transforms );
-			}
-
-
-			animEvents.RemoveAll( ae => ae.frame > ae.length );
 
 			//
 			//	final transform :
 			//
-			weaponModelInstance.ComputeAbsoluteTransforms( transforms );
-
-
 			var weaponMatrix	=	Matrix.Identity;
 			var camMatrix		=	rw.Camera.GetCameraMatrix(Fusion.Drivers.Graphics.StereoEye.Mono);
 				
-			weaponModelInstance?.Update( weaponMatrix * camMatrix, transforms );
+			weaponModelInstance?.Update( elapsedTime, 0, weaponMatrix * camMatrix );
 		}
 	}
 }

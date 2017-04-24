@@ -547,18 +547,22 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="time"></param>
 		/// <param name="looped"></param>
 		/// <param name="destination"></param>
-		public void PlayTake ( int timeMSec, bool looped, Matrix[] destination )
-		{
-			float frame	=	timeMSec * FramesPerSecond / 1000.0f;
+		//public void PlayTake ( int timeMSec, bool looped, Matrix[] destination )
+		//{
+		//	float frame	=	timeMSec * FramesPerSecond / 1000.0f;
 
-			PlayTake( frame, looped, destination );
-		}
-
-
+		//	PlayTake( frame, looped, destination );
+		//}
 
 
-		public bool PlayTake ( float frame, bool looped, Matrix[] destination )
+
+
+		public void PlayTakeAndBlend ( float frame, bool looped, int[] indices, float weight, Matrix[] destination )
 		{ 
+			if (weight<=0) {
+				return;
+			}
+		
 			var length	=	LastTakeFrame - FirstTakeFrame;
 
 			int frame0	=	(int)Math.Floor( frame ) + FirstTakeFrame;
@@ -573,36 +577,94 @@ namespace Fusion.Engine.Graphics {
 				frame1	=	MathUtil.Clamp( frame1, FirstTakeFrame, LastTakeFrame );
 			}
 
-			for (int i=0; i<Nodes.Count; i++) {
-				var node = Nodes[i];
+			for (int i=0; i<indices.Length; i++) {
 
-				if (node.TrackIndex<0) {
-					destination[i] = node.Transform;
-				} else {
+				int index = indices[i];
+				
+				var node = Nodes[ index ];
 
-					var x0	=	GetAnimKey( frame0, node.TrackIndex );
-					var x1	=	GetAnimKey( frame1, node.TrackIndex );
+				int trackIndex	=	node.TrackIndex;
 
-					Quaternion q0, q1;
-					Vector3 t0, t1;
-					Vector3 s0, s1;
+				var x0	=	(trackIndex < 0) ? node.Transform : GetAnimKey( frame0, node.TrackIndex );
+				var x1	=	(trackIndex < 0) ? node.Transform : GetAnimKey( frame1, node.TrackIndex );
+				var xd	=	destination[ index ];
 
-					x0.Decompose( out s0, out q0, out t0 );
-					x1.Decompose( out s1, out q1, out t1 );
+				Quaternion q0, q1, qd;
+				Vector3 t0, t1, td;
+				Vector3 s0, s1, sd;
 
-					var q	=	Quaternion.Slerp( q0, q1, factor );
-					var t	=	Vector3.Lerp( t0, t1, factor );
-					var s	=	Vector3.Lerp( s0, s1, factor );
+				x0.Decompose( out s0, out q0, out t0 );
+				x1.Decompose( out s1, out q1, out t1 );
 
-					var x	=	Matrix.Scaling( s ) * Matrix.RotationQuaternion( q ) * Matrix.Translation( t );
+				var q	=	Quaternion.Slerp( q0, q1, factor );
+				var t	=	Vector3.Lerp	( t0, t1, factor );
+				var s	=	Vector3.Lerp	( s0, s1, factor );
 
-					destination[i] = x;
+				if (weight<1) {
+					xd.Decompose( out sd, out qd, out td );
+
+					q	=	Quaternion.Slerp( qd, q, weight );
+					t	=	Vector3.Lerp	( td, t, weight );
+					s	=	Vector3.Lerp	( sd, s, weight );
 				}
-			}
 
-			return (frame <= length) || looped;
+				var x	=	Matrix.Scaling( s ) * Matrix.RotationQuaternion( q ) * Matrix.Translation( t );
+
+				destination[index] = x;
+			}
 		}
 
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="channelNodeIndex"></param>
+		/// <returns></returns>
+		public Node[] GetChannelNodes ( int channelNodeIndex )
+		{
+			if (channelNodeIndex<0) {
+				return new Node[0];
+			}
+			if (channelNodeIndex>=Nodes.Count) {
+				throw new ArgumentOutOfRangeException("channelNodeIndex >= Nodes.Count");
+			}
+
+			var parent = Nodes[ channelNodeIndex ];
+
+			return Nodes
+				.Where( node => IsParent( parent, node ) )
+				.ToArray();
+		}
+
+
+
+		/// <summary>
+		/// Gets indices
+		/// </summary>
+		/// <param name="chnnelNodeIndex"></param>
+		/// <returns></returns>
+		public int[] GetChannelNodeIndices ( int chnnelNodeIndex )
+		{
+			return GetChannelNodes(chnnelNodeIndex)
+				.Select( node => Nodes.IndexOf(node) )
+				.ToArray();
+		}
+
+
+
+		bool IsParent ( Node parent, Node child )
+		{
+			while ( child.ParentIndex >= 0 ) {
+				if ( Nodes[ child.ParentIndex ] == parent ) {
+					return true;
+				}
+
+				child = Nodes[ child.ParentIndex ];
+			}
+
+			return false;
+		}
 
 		/*-----------------------------------------------------------------------------------------
 		 * 

@@ -36,7 +36,6 @@ namespace IronStar.SFX {
 		readonly int[][] channels;
 
 		readonly List<AnimEvent> animEvents = new List<AnimEvent>();
-		readonly List<AnimLoop>	 animLoops  = new List<AnimLoop>();
 
 	
 		/// <summary>
@@ -118,7 +117,7 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="channel"></param>
 		/// <param name="clipName"></param>
-		public void PlayEvent ( AnimChannel channel, string clipName, float weight, float fadein, float fadeout )
+		public AnimEvent PlayEvent ( AnimChannel channel, string clipName, float weight, float fadein, float fadeout )
 		{
 			var clip = modelInstance.Clips.FirstOrDefault( c => c.TakeName == clipName );
 
@@ -132,9 +131,47 @@ namespace IronStar.SFX {
 				Log.Warning("Animator: channel {0} is empty", channel );
 			}
 
-			var animEvent = new AnimEvent( this, channel, clip, weight, fadein, fadeout );
+			var animEvent = new AnimEvent( this, channel, clip, false, 0, weight, fadein, fadeout );
 
 			animEvents.Add( animEvent );
+
+			return animEvent;
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="channel"></param>
+		/// <param name="clipName"></param>
+		public AnimEvent PlayLoop ( AnimChannel channel, string clipName )
+		{
+			var clip = modelInstance.Clips.FirstOrDefault( c => c.TakeName == clipName );
+
+			if (clip==null) {
+				Log.Warning("Animator: clip {0} does not exist", clipName );
+			}
+
+			//	discard looped event if already playing :
+			var oldEvent = animEvents.FirstOrDefault( ae => ae.Clip == clip && ae.Looped && ae.Channel == channel );
+
+			if (oldEvent!=null) {
+				return oldEvent;
+			}
+
+
+			var channelIndices = channels[(int)channel];
+
+			if (channelIndices.Length==0) {
+				Log.Warning("Animator: channel {0} is empty", channel );
+			}
+
+			var animEvent = new AnimEvent( this, channel, clip, true, 0, 1, 0, 0 );
+
+			animEvents.Add( animEvent );
+
+			return animEvent;
 		}
 	}
 }

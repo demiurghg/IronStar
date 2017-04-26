@@ -168,7 +168,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Physics\PhysicsManager.cs" />
-    <Compile Include="SFX\Animator.AnimLoop.cs" />
     <Compile Include="SFX\Animator.AnimEvent.cs" />
     <Compile Include="SFX\Animator.cs" />
     <Compile Include="SFX\AnimBlend.cs" />

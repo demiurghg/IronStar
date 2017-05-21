@@ -20,6 +20,7 @@ using Fusion.Build.Mapping;
 using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using IronStar.Editor2;
+using NLua;
 
 namespace IronStar {
 
@@ -74,6 +75,14 @@ namespace IronStar {
 			//Allocator2D.RunTest(512, 1024, @"C:\GITHUB\_alloc_test");
 			//return 0; 
 
+			//using ( var L = new Lua() ) {
+			//	L.LoadCLRPackage();
+			//	L.RegisterFunction("blah", 
+			//	L.DoFile("form.lua");
+			//	//L.DoString("print(5)");
+			//}
+
+			//return 0;
 
 			//
 			//	Build content on startup.

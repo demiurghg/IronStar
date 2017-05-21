@@ -262,6 +262,10 @@
       <Project>{34853dea-43a6-4f2f-a379-d1ee04d256d2}</Project>
       <Name>BEPUutilities</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SDKs\NLua\NLua.csproj">
+      <Project>{f55cabbb-4108-4a39-94e1-581fd46dc021}</Project>
+      <Name>NLua</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Editors\EditorForm.resx">

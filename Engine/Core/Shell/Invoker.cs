@@ -11,9 +11,12 @@ using Fusion.Engine;
 using Fusion.Engine.Server;
 using System.Reflection;
 using System.ComponentModel;
+using KopiLua;
 
 namespace Fusion.Core.Shell {
-	public partial class Invoker {
+	public partial class Invoker : IDisposable {
+
+		readonly LuaState L;
 
 		/// <summary>
 		/// Game reference.
@@ -57,12 +60,36 @@ namespace Fusion.Core.Shell {
 		/// <param name="game">Game instance</param>
 		public Invoker ( Game game )
 		{
+			L	=	Lua.LuaOpen();
+			Lua.LuaLOpenLibs(L);
+
 			Game	=	game;
 			commandNames	=	new string[0];
 
-			AddCommands(this);
+			ExposeApi(this);
 		}
 
+
+
+		#region IDisposable Support
+		private bool disposedValue = false; // To detect redundant calls
+
+		protected virtual void Dispose( bool disposing )
+		{
+			if ( !disposedValue ) {
+				if ( disposing ) {
+					Lua.LuaClose(L);
+				}
+
+				disposedValue = true;
+			}
+		}
+
+		public void Dispose()
+		{
+			Dispose( true );
+		}
+		#endregion
 
 
 
@@ -70,13 +97,13 @@ namespace Fusion.Core.Shell {
 		/// 
 		/// </summary>
 		/// <param name="obj"></param>
-		public void AddCommands ( object obj )
+		public void ExposeApi ( object obj, string apiName = null )
 		{
 			lock (lockObject) {
 
 				var bindAttr = BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Instance;
 
-				AddCommands( obj, obj.GetType().GetMethods(bindAttr) );
+				ExposeApi( apiName, obj, obj.GetType().GetMethods(bindAttr) );
 			}
 		}
 
@@ -85,50 +112,86 @@ namespace Fusion.Core.Shell {
 		/// 
 		/// </summary>
 		/// <param name="obj"></param>
-		public void AddCommands ( Type type )
+		public void ExposeApi ( Type type, string apiName = null )
 		{
 			lock (lockObject) {
 
 				var bindAttr = BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Static;
 
-				AddCommands( null, type.GetMethods(bindAttr) );
+				ExposeApi( type.GetMethods(bindAttr), apiName );
 			}
 		}
 
 
 
-		void AddCommands ( object obj, IEnumerable<MethodInfo> methods )
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="apiName"></param>
+		/// <param name="obj"></param>
+		/// <param name="methods"></param>
+		void ExposeApi ( string apiName, object obj, IEnumerable<MethodInfo> methods )
 		{
-			foreach ( var mi in methods ) {
+			bool useNamespace = !string.IsNullOrEmpty(apiName);
 
-				var cmdAttr		= mi.GetCustomAttribute<CommandAttribute>();
 
-				if(cmdAttr==null) {
-					continue;
+			using ( new LuaStackGuard( L ) ) {
+
+				//	create table if necessary :
+				if (useNamespace) {
+					Lua.LuaGetGlobal(L, apiName);
+
+					if (Lua.LuaType(L,-1)!=Lua.LUA_TTABLE) {
+						Lua.LuaPop(L,1);
+						Lua.LuaNewTable(L);
+						Lua.LuaSetGlobal(L, apiName);
+						Lua.LuaGetGlobal(L, apiName);
+					}
 				}
 
-				if (mi.ReturnType!=typeof(string)) {
-					Log.Warning("Command '{0}' must return string. Ignored.", cmdAttr.Name);
-					continue;
+				#region API Methods
+				foreach ( var mi in methods ) {
+
+					var cmdAttr     = mi.GetCustomAttribute<LuaApiAttribute>();
+
+					if ( cmdAttr==null ) {
+						continue;
+					}
+
+					if ( mi.ReturnType!=typeof( int ) ) {
+						Log.Warning( "API function '{0}' must return int. Ignored.", cmdAttr.Name );
+						continue;
+					}
+
+					var parameters = mi.GetParameters();
+
+					if ( parameters.Length!=1 && parameters[0].ParameterType!=typeof( string[] ) ) {
+						Log.Warning( "Input parameters of API function '{0}' must be LuaState. Ignored.", cmdAttr.Name );
+						continue;
+					}
+
+
+					var cfunc =  (LuaNativeFunction)mi.CreateDelegate( typeof(LuaNativeFunction), obj );
+
+					if (useNamespace) {
+						Lua.LuaPushString( L, cmdAttr.Name );
+						Lua.LuaPushCFunction( L, cfunc );
+						Lua.LuaSetTable( L, -3 );
+					} else {
+						Lua.LuaPushCFunction( L, cfunc );
+						Lua.LuaSetGlobal( L, cmdAttr.Name );
+					}
 				}
 
-				var parameters = mi.GetParameters();
-
-				if (parameters.Length!=1 && parameters[0].ParameterType!=typeof(string[])) {
-					Log.Warning("Input parameters if command '{0}' must be string[]. Ignored.", cmdAttr.Name);
-					continue;
+				if (useNamespace) {
+					Lua.LuaPop(L,1);
 				}
-
-				var descAttr	= mi.GetCustomAttribute<DescriptionAttribute>();
-
-				var binding = new Binding( obj, mi, cmdAttr.Name, descAttr?.Description);
-
-				commands.Add( cmdAttr.Name, binding );
+				#endregion
 			}
 
-			commandNames	=	commands
-				.Select( pair => pair.Key )
-				.ToArray();	
+
+			#warning remove command names
+			commandNames	=	new string[0];
 		}
 
 
@@ -166,7 +229,32 @@ namespace Fusion.Core.Shell {
 		/// <param name="commandLine"></param>
 		public string ExecuteCommand ( string commandLine )
 		{
-			var argList	=	SplitCommandLine( commandLine ).ToArray();
+			int errcode;
+
+			using ( new LuaStackGuard(L) ) {
+				
+				errcode = Lua.LuaLLoadString( L, commandLine);
+
+				if (errcode!=0) {
+					throw new LuaException(L, errcode);
+				}
+
+
+				errcode = Lua.LuaPCall(L,0,1,0);
+
+				if (errcode!=0) {
+					throw new LuaException(L, errcode);
+				} else {
+					
+					var result = Lua.LuaToString(L,-1)?.ToString();
+					Lua.LuaPop(L, 1);
+
+					return result;
+
+				}
+			}
+
+			/*var argList	=	SplitCommandLine( commandLine ).ToArray();
 
 			if (!argList.Any()) {
 				Log.Error("Empty command line");
@@ -192,7 +280,7 @@ namespace Fusion.Core.Shell {
 				} else {
 					throw new InvokerException(string.Format("Unknown command '{0}'", cmdName));
 				}
-			}
+			} */
 		}
 
 
@@ -254,15 +342,11 @@ namespace Fusion.Core.Shell {
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
-		[Command("set")]
-		string Set_f (string[] args)
+		[LuaApi("set")]
+		int Set_f (LuaState L)
 		{
-			if (args.Length<3) {
-				throw new InvokerException("Usage: set <variable> <value>");
-			}
-
-			var varName  = args[1];
-			var varValue = args[2];
+			var varName  = Lua.LuaLCheckString(L,1)?.ToString();
+			var varValue = Lua.LuaLCheckString(L,2)?.ToString();
 
 			ConfigVariable variable;
 
@@ -270,14 +354,19 @@ namespace Fusion.Core.Shell {
 				throw new Exception(string.Format("Variable '{0}' does not exist", varName) );
 			}
 
+			var oldValue = variable.Get();
+
 			variable.Set( varValue );
 
-			return null;
+			Lua.LuaPushString(L,oldValue);
+
+			return 1;
 		}
 
 
-
-		[Command("toggle")]
+		#region Old Invoker Stuff
+		#if false
+		[LuaApi("toggle")]
 		string Toggle_f (string[] args)
 		{
 			if (args.Length<2) {
@@ -310,7 +399,7 @@ namespace Fusion.Core.Shell {
 
 
 
-		[Command("listCmds")]
+		[LuaApi("listCmds")]
 		string ListCommands_f ( string[] args )
 		{
 			Log.Message("");
@@ -331,7 +420,7 @@ namespace Fusion.Core.Shell {
 
 
 
-		[Command("listVars")]
+		[LuaApi("listVars")]
 		string ListVariables_f ( string[] args )
 		{
 			Log.Message("");
@@ -352,12 +441,14 @@ namespace Fusion.Core.Shell {
 
 
 
-		[Command("echo")]
+		[LuaApi("echo")]
 		string Echo_f ( string[] args )
 		{
 			Log.Message( string.Join(" ", args) );
 
 			return null;
 		}
+		#endif
+		#endregion
 	}
 }

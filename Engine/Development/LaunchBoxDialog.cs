@@ -137,7 +137,7 @@ namespace Fusion.Development {
 
 		private void openContent_Click ( object sender, EventArgs e )
 		{
-			var file = game.Invoker.ExecuteCommand("contentFile");
+			var file = game.Invoker.ExecuteCommand("return contentFile()");
 			ShellExecute(file);
 		}
 
@@ -145,7 +145,7 @@ namespace Fusion.Development {
 
 		private void openContentDir_Click ( object sender, EventArgs e )
 		{
-			var file = game.Invoker.ExecuteCommand("contentFile");
+			var file = game.Invoker.ExecuteCommand("return contentFile()");
 			ShellExecute(Path.GetDirectoryName(file));
 		}
 
@@ -153,14 +153,14 @@ namespace Fusion.Development {
 
 		private void buildContent_Click ( object sender, EventArgs e )
 		{
-			game.Invoker.ExecuteCommand("contentBuild");
+			game.Invoker.ExecuteCommand("contentBuild()");
 		}
 
 
 
 		private void rebuildContent_Click ( object sender, EventArgs e )
 		{
-			game.Invoker.ExecuteCommand("contentBuild /force");
+			game.Invoker.ExecuteCommand("contentBuild()");
 		}
 
 		private void runEditorButton_Click( object sender, EventArgs e )

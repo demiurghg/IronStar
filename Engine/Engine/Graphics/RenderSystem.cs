@@ -122,7 +122,7 @@ namespace Fusion.Engine.Graphics {
 			Game.Config.ExposeConfig( lightManager, "LightRenderer"	, "light" );
 			Game.Config.ExposeConfig( ssaoFilter,   "SSAO"			, "ssao"  );
 			Game.Config.ExposeConfig( vtSystem,		"VirtualTexture", "vt"	  );
-			Game.Invoker.AddCommands( this );
+			Game.Invoker.ExposeApi( this );
 
 			Device.DisplayBoundsChanged += (s,e) => {
 				DisplayBoundsChanged?.Invoke( s, e );
@@ -130,7 +130,7 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		[Command("screenshot")]
+		[LuaApi("screenshot")]
 		public string Screenshot_f ( string[] args )
 		{
 			Screenshot(null);
@@ -138,7 +138,7 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		[Command("vtrestart")]
+		[LuaApi("vtrestart")]
 		public string VTRestart_f ( string[] args )
 		{
 			Game.RenderSystem.RenderWorld.VirtualTexture = null;

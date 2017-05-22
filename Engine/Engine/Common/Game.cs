@@ -31,6 +31,7 @@ using Fusion.Engine.Tools;
 using Fusion.Engine.Frames;
 using System.ComponentModel;
 using Fusion.Build;
+using KopiLua;
 
 namespace Fusion.Engine.Common {
 
@@ -370,7 +371,8 @@ namespace Fusion.Engine.Common {
 
 			userStorage			=	new UserStorage(this);
 
-			invoker.AddCommands( this );
+			invoker.ExposeApi( this );
+			invoker.ExposeApi( this, "game" );
 
 
 			//	create SV, CL and UI instances :
@@ -729,30 +731,55 @@ namespace Fusion.Engine.Common {
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
-		[Command("quit")]
+		[LuaApi("print")]
 		[Description("quit the game")]
-		string Quit_f ( string[] args )
+		int Print_f ( LuaState L )
+		{
+			int n = Lua.LuaGetTop(L);  /* number of arguments */
+			int i;
+			Lua.LuaGetGlobal(L, "tostring");
+
+			string r = "";
+
+			for (i=1; i<=n; i++) {
+				CharPtr s;
+				Lua.LuaPushValue(L, -1);  /* function to be called */
+				Lua.LuaPushValue(L, i);   /* value to print */
+				Lua.LuaCall(L, 1, 1);
+				s = Lua.LuaToString(L, -1);  /* get result */
+				if (s == null)
+				  return Lua.LuaLError(L, "'tostring' must return a string to 'print'");
+				if (i > 1) r += "\t";
+				r += s.ToString();
+				Lua.LuaPop(L, 1);  /* pop result */
+			}
+			Log.Message(r);
+			return 0;
+		}
+
+
+		[LuaApi("quit")]
+		[Description("quit the game")]
+		int Quit_f ( LuaState L )
 		{
 			Exit();
-			return null;
+			return 0;
 		}
 
 
-		[Command("map")]
+		[LuaApi("map")]
 		[Description("starts new game")]
-		string Map_f ( string[] args )
+		int Map_f ( LuaState L )
 		{
-			if (args.Length!=2) {
-				throw new Exception("Missing command line arguments: map");
-			}
+			var map = Lua.LuaLCheckString(L,1).ToString();
 
-			StartServer( args[1], false );
+			StartServer( map, false );
 
-			return null;
+			return 0;
 		}
 
 
-		[Command("editMap")]
+		[LuaApi("editMap")]
 		[Description("starts map editor")]
 		string EditMap_f ( string[] args )
 		{
@@ -766,7 +793,7 @@ namespace Fusion.Engine.Common {
 		}
 
 
-		[Command("exitEditor")]
+		[LuaApi("exitEditor")]
 		[Description("exit map editor")]
 		string ExitEditor_f ( string[] args )
 		{
@@ -776,84 +803,83 @@ namespace Fusion.Engine.Common {
 		}
 
 
-		[Command("killServer")]
+		[LuaApi("killServer")]
 		[Description("kills game server and stops the game")]
-		string KillServer_f ( string[] args )
+		int KillServer_f ( LuaState L )
 		{
 			KillServer();
-			return null;
+			return 0;
 		}
 
 
-		[Command("connect")]
+		[LuaApi("connect")]
 		[Description("initiate connection to remote or local server")]
-		string Connect_f ( string[] args )
+		int Connect_f ( LuaState L )
 		{
-			if (args.Length<3) {
-				throw new Exception("Missing command line arguments: host and port");
-			}
+			var host = Lua.LuaLCheckString(L,1).ToString();
+			int port = Lua.LuaLCheckInteger(L,2);
 
-			Connect( args[1], int.Parse(args[2]));
-			return null;
+			Connect( host, port );
+			return 0;
 		}
 
 
-		[Command("disconnect")]
+		[LuaApi("disconnect")]
 		[Description("disconnect client from server")]
-		string Disconnect_f ( string[] args )
+		int Disconnect_f ( LuaState L )
 		{
-			var msg = (args.Length>1) ? args[1] : "";
+			var msg = Lua.LuaLOptString(L,1,"").ToString();
 
 			Disconnect(msg);
-			return null;
+			return 0;
 		}
 
 
-		[Command("cmd")]
+		[LuaApi("cmd")]
 		[Description("sends command to remote server")]
-		string Cmd_f ( string[] args )
+		int Cmd_f ( LuaState L )
 		{
-			var rcmd = string.Join( " ", args.Skip(1) );
+			var rcmd = Lua.LuaLCheckString(L,1).ToString();
 
 			GameClient.NotifyServer("*cmd " + rcmd);
 
-			return null;
+			return 0;
 		}
 
 
-
-		[Command("contentBuild")]
+		[LuaApi("contentBuild")]
 		[Description("builds content")]
-		string ContentBuild( string[] args )
+		int ContentBuild( LuaState L )
 		{
-			var force	= args.Contains("/force");
-			var files	= args.Skip(1).Where( s=>!s.StartsWith("/") ).ToArray();
-			var clean	= args.FirstOrDefault( a => a.StartsWith("/clean:"))?.Replace("/clean:","");
+			//var force	= args.Contains("/force");
+			//var files	= args.Skip(1).Where( s=>!s.StartsWith("/") ).ToArray();
+			//var clean	= args.FirstOrDefault( a => a.StartsWith("/clean:"))?.Replace("/clean:","");
 
-			Builder.SafeBuild(force, clean, files);
+			Builder.SafeBuild(false, null, new string[0]);
 
 			Reload();
 
-			return null;
+			return 0;
 		}
 
-		[Command("contentFile")]
+
+		[LuaApi("contentFile")]
 		[Description("gets content description file")]
-		string ContentFile( string[] args )
+		int ContentFile( LuaState L )
 		{
-			return Builder.Options.ContentIniFile;
+			Lua.LuaPushString(L, Builder.Options.ContentIniFile);
+			return 1;
 		}
 
-		[Command("contentReport")]
-		[Description("opens content report file")]
-		string ContentReport( string[] args )
-		{
-			if (args.Length<2) {
-				throw new Exception("Missing command line arguments: filename");
-			}
 
-			Builder.OpenReport( args[1] );
-			return null;
+		[LuaApi("contentReport")]
+		[Description("opens content report file")]
+		int ContentReport( LuaState L )
+		{
+			var file = Lua.LuaLCheckString(L,1).ToString();
+
+			Builder.OpenReport( file );
+			return 0;
 		}
 
 		/*-----------------------------------------------------------------------------------------

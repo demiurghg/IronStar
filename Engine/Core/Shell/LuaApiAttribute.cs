@@ -10,7 +10,7 @@ namespace Fusion.Core.Shell {
 	/// Shell command attribute
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Method)]
-	public sealed class CommandAttribute : Attribute {
+	public sealed class LuaApiAttribute : Attribute {
 
 		/// <summary>
 		/// Command name
@@ -21,7 +21,7 @@ namespace Fusion.Core.Shell {
 		///
 		/// </summary>
 		/// <param name="name"></param>
-		public CommandAttribute ( string name )
+		public LuaApiAttribute ( string name )
 		{
 			this.Name		=	name;
 		}

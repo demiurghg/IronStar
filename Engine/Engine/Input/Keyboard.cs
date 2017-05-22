@@ -47,7 +47,7 @@ namespace Fusion.Engine.Input {
 			device.FormKeyUp += device_FormKeyUp;
 			device.FormKeyPress += device_FormKeyPress;
 
-			Game.Invoker.AddCommands( this );
+			Game.Invoker.ExposeApi( this );
 		}
 
 
@@ -61,7 +61,7 @@ namespace Fusion.Engine.Input {
 
 
 
-		[Command("bind")]
+		[LuaApi("bind")]
 		string Bind_f (string[] args)
 		{
 			if (args.Length<3) {
@@ -86,7 +86,7 @@ namespace Fusion.Engine.Input {
 		}
 
 
-		[Command("unbind")]
+		[LuaApi("unbind")]
 		string Unbind_f (string[] args)
 		{
 			if (args.Length<2) {
@@ -106,7 +106,7 @@ namespace Fusion.Engine.Input {
 		}
 
 
-		[Command("listbinds")]
+		[LuaApi("listbinds")]
 		string Listbinds_f (string[] args)
 		{
 			Log.Message("");

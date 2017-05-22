@@ -151,7 +151,9 @@
     <Compile Include="Core\Mathematics\UShort3.cs" />
     <Compile Include="Core\Mathematics\Segment.cs" />
     <Compile Include="Core\Mathematics\WaveLength.cs" />
+    <Compile Include="Core\Shell\LuaException.cs" />
     <Compile Include="Core\Shell\InvokerException.cs" />
+    <Compile Include="Core\Shell\LuaStackGuard.cs" />
     <Compile Include="Development\CheckListDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -551,7 +553,7 @@
     <Compile Include="Engine\Graphics\Scene\VertexColorTexture.cs" />
     <Compile Include="Engine\Graphics\Scene\VertexColorTextureTBNRigid.cs" />
     <Compile Include="Core\Shell\CommandLineParser.cs" />
-    <Compile Include="Core\Shell\CommandAttribute.cs" />
+    <Compile Include="Core\Shell\LuaApiAttribute.cs" />
     <Compile Include="Core\Shell\CommandLineParserException.cs" />
     <Compile Include="Core\Shell\Invoker.cs" />
     <Compile Include="Core\Test\TestAttribute.cs" />
@@ -644,6 +646,10 @@
     <ProjectReference Include="..\SDKs\LidgrenNetwork\Lidgren.Network\Lidgren.Network.csproj">
       <Project>{49ba1c69-6104-41ac-a5d8-b54fa9f696e8}</Project>
       <Name>Lidgren.Network</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SDKs\NLua\NLua.csproj">
+      <Project>{f55cabbb-4108-4a39-94e1-581fd46dc021}</Project>
+      <Name>NLua</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

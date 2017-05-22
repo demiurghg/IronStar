@@ -51,7 +51,7 @@ namespace IronStar {
 
 
 
-		[Command("editor")]
+		[LuaApi("editor")]
 		static string Editor_f ( string[] args )
 		{
 			Editor.Run( Game.Instance );
@@ -103,7 +103,7 @@ namespace IronStar {
 				//	first run will cause warning, 
 				//	because configuration file does not exist yet.
 				game.Config.ExposeConfig( new EditorConfig(), "MapEditor", "editor" );
-				game.Invoker.AddCommands( typeof(Program) );
+				game.Invoker.ExposeApi( typeof(Program) );
 
 				game.Config.Load( "Config.ini" );
 

@@ -371,8 +371,13 @@ namespace Fusion.Engine.Common {
 
 			userStorage			=	new UserStorage(this);
 
-			invoker.ExposeApi( this );
 			invoker.ExposeApi( this, "game" );
+			invoker.ExecuteCommand("print		= game.print");
+			invoker.ExecuteCommand("quit		= game.quit");
+			invoker.ExecuteCommand("map			= game.map");
+			invoker.ExecuteCommand("connect		= game.connect");
+			invoker.ExecuteCommand("disconnect	= game.disconnect");
+			invoker.ExecuteCommand("killserver	= game.killserver");
 
 
 			//	create SV, CL and UI instances :
@@ -803,7 +808,7 @@ namespace Fusion.Engine.Common {
 		}
 
 
-		[LuaApi("killServer")]
+		[LuaApi("killserver")]
 		[Description("kills game server and stops the game")]
 		int KillServer_f ( LuaState L )
 		{

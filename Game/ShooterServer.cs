@@ -38,7 +38,7 @@ namespace IronStar {
 			world			=	new GameWorld( server.Game, msgsvc, false, new Guid() );
 			this.mapName	=	mapName;
 			invoker			=	new Invoker( server.Game );
-			invoker.ExposeApi(this);
+			invoker.ExposeApi(this, "server");
 		}
 
 

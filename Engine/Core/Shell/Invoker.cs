@@ -147,6 +147,22 @@ namespace Fusion.Core.Shell {
 						Lua.LuaSetGlobal(L, apiName);
 						Lua.LuaGetGlobal(L, apiName);
 					}
+
+					Lua.LuaNewTable(L);										
+
+					Lua.LuaPushString(L,"__index");							
+					Lua.LuaPushCFunction(L, (ls) => MtIndex(obj,ls) );		
+					Lua.LuaRawSet(L, -3);									
+
+					Lua.LuaPushString(L,"__newindex");						
+					Lua.LuaPushCFunction(L, (ls) => MtNewIndex(obj,ls) );	
+					Lua.LuaSetTable(L, -3);									
+
+					Lua.LuaPushString(L,"__metatable");						
+					Lua.LuaPushBoolean(L, 0 );								
+					Lua.LuaSetTable(L, -3);									
+
+					Lua.LuaSetMetatable(L,-2);								
 				}
 
 				#region API Methods
@@ -176,7 +192,7 @@ namespace Fusion.Core.Shell {
 					if (useNamespace) {
 						Lua.LuaPushString( L, cmdAttr.Name );
 						Lua.LuaPushCFunction( L, cfunc );
-						Lua.LuaSetTable( L, -3 );
+						Lua.LuaRawSet( L, -3 );
 					} else {
 						Lua.LuaPushCFunction( L, cfunc );
 						Lua.LuaSetGlobal( L, cmdAttr.Name );
@@ -194,6 +210,107 @@ namespace Fusion.Core.Shell {
 			commandNames	=	new string[0];
 		}
 
+
+		int MtIndex ( object target, LuaState L )
+		{
+			if (Lua.LuaIsString(L,2)==0) {
+				LuaError("Lua API: only string keys are supported to access configuration variables");
+			}
+
+			var key	= Lua.LuaToString(L,2).ToString();
+
+			var prop = target.GetType().GetProperty( key );
+
+			if (prop==null) {
+				LuaError("Lua API: no such property {0}", key);
+			}
+
+			if (!prop.HasAttribute<ConfigAttribute>()) {
+				LuaError("Lua API: property {0} does not have [Config] attirbute", key);
+			}
+
+
+			try {
+				if (prop.PropertyType.IsEnum) {
+					Lua.LuaPushString( L, prop.GetValue(target).ToString() );
+				} else 
+				if (prop.PropertyType==typeof(int)) {
+					Lua.LuaPushInteger( L, (int)prop.GetValue(target) );
+				} else
+				if (prop.PropertyType==typeof(float)) {
+					Lua.LuaPushNumber( L, (float)prop.GetValue(target) );
+				} else
+				if (prop.PropertyType==typeof(string)) {
+					Lua.LuaPushString( L, (string)prop.GetValue(target) );
+				} else
+				if (prop.PropertyType==typeof(bool)) {
+					Lua.LuaPushBoolean( L, ((bool)prop.GetValue(target)) ? 1 : 0 );
+				} else {
+					LuaError("Lua API: property {0} has unsupported type {1}", key, prop.PropertyType.Name);
+				}
+			} catch ( Exception e ) {
+				LuaError("Exception: {0}", e.Message );
+			}
+
+			return 1;
+		}
+
+
+		int MtNewIndex ( object target, LuaState L )
+		{
+			//var sw = new Stopwatch();
+			//sw.Start();
+
+			if (Lua.LuaIsString(L,2)==0) {
+				LuaError("Lua API: only string keys are supported to access configuration variables");
+			}
+
+			var key	= Lua.LuaToString(L,2).ToString();
+
+			var prop = target.GetType().GetProperty( key );
+
+			if (prop==null) {
+				LuaError("Lua API: no such property {0}", key);
+			}
+
+			if (!prop.HasAttribute<ConfigAttribute>()) {
+				LuaError("Lua API: property {0} does not have [Config] attirbute", key);
+			}
+
+			try {
+				if (prop.PropertyType.IsEnum) {
+					prop.SetValue( target, Enum.Parse(prop.PropertyType, Lua.LuaToString(L,3).ToString() ) );
+				} else 
+				if (prop.PropertyType==typeof(int)) {
+					prop.SetValue( target, Lua.LuaToInteger(L,3) );
+				} else
+				if (prop.PropertyType==typeof(float)) {
+					prop.SetValue( target, (float)Lua.LuaToNumber(L,3) );
+				} else
+				if (prop.PropertyType==typeof(string)) {
+					prop.SetValue( target, Lua.LuaToString(L,3).ToString() );
+				} else
+				if (prop.PropertyType==typeof(bool)) {
+					prop.SetValue( target, (Lua.LuaToBoolean(L,3)!=0) );
+				} else {
+					LuaError("Lua API: property {0} has unsupported type {1}", key, prop.PropertyType.Name);
+				}
+			} catch ( Exception e ) {
+				LuaError("Exception: {0}", e.Message );
+			}	   
+
+			//sw.Stop();
+			//Log.Message("newindex = {0}", sw.Elapsed );
+
+			return 1;
+		}
+
+
+		void LuaError ( string frmt, params object[] args )
+		{
+			Lua.LuaPushString(L, string.Format(frmt, args));
+			Lua.LuaError(L);
+		}
 
 
 		/// <summary>
@@ -341,114 +458,5 @@ namespace Fusion.Core.Shell {
 		 *	Commands :
 		 * 
 		-----------------------------------------------------------------------------------------*/
-
-		[LuaApi("set")]
-		int Set_f (LuaState L)
-		{
-			var varName  = Lua.LuaLCheckString(L,1)?.ToString();
-			var varValue = Lua.LuaLCheckString(L,2)?.ToString();
-
-			ConfigVariable variable;
-
-			if (!Game.Config.Variables.TryGetValue( varName, out variable )) {
-				throw new Exception(string.Format("Variable '{0}' does not exist", varName) );
-			}
-
-			var oldValue = variable.Get();
-
-			variable.Set( varValue );
-
-			Lua.LuaPushString(L,oldValue);
-
-			return 1;
-		}
-
-
-		#region Old Invoker Stuff
-		#if false
-		[LuaApi("toggle")]
-		string Toggle_f (string[] args)
-		{
-			if (args.Length<2) {
-				throw new InvokerException("Usage: set <variable> <value>");
-			}
-
-			var varName  = args[1];
-
-			ConfigVariable variable;
-
-			if (!Game.Config.Variables.TryGetValue( varName, out variable )) {
-				throw new Exception(string.Format("Variable '{0}' does not exist", varName) );
-			}
-
-			var oldValue	= variable.Get();
-			var value		= oldValue.ToLowerInvariant();
-
-			if (value=="false") {
-				variable.Set("true");
-			} else if (value=="true") {
-				variable.Set("false");
-			} else if (value=="0") {
-				variable.Set("1");
-			} else {
-				variable.Set("0");
-			}
-
-			return null;
-		}
-
-
-
-		[LuaApi("listCmds")]
-		string ListCommands_f ( string[] args )
-		{
-			Log.Message("");
-			Log.Message("Commands:");
-
-			var list = commands
-				.Select( pair => pair.Value )
-				.OrderBy( cmd1 => cmd1.Name )
-				.ToArray();
-			
-			foreach ( var cmd in list ) {
-				Log.Message("  {0,-25} {1}", cmd.Name, cmd.Description );
-			}
-			Log.Message("{0} cmds", list.Length );
-
-			return null;
-		}
-
-
-
-		[LuaApi("listVars")]
-		string ListVariables_f ( string[] args )
-		{
-			Log.Message("");
-			Log.Message("Variables:");
-
-			var list = Game.Config.Variables.ToList()
-					.Select( e1 => e1.Value )
-					.OrderBy( e => e.Name )
-					.ToList();
-			
-			foreach ( var variable in list ) {
-				Log.Message("  {0,-35} = {1}", variable.Name, variable.Get() );
-			}
-			Log.Message("{0} vars", list.Count );
-
-			return null;
-		}
-
-
-
-		[LuaApi("echo")]
-		string Echo_f ( string[] args )
-		{
-			Log.Message( string.Join(" ", args) );
-
-			return null;
-		}
-		#endif
-		#endregion
 	}
 }

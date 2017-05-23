@@ -10,6 +10,7 @@ using Fusion.Core.Configuration;
 using Fusion.Engine.Common;
 using Fusion.Drivers.Graphics;
 using Fusion.Core.Shell;
+using KopiLua;
 
 namespace Fusion.Engine.Graphics {
 
@@ -122,7 +123,7 @@ namespace Fusion.Engine.Graphics {
 			Game.Config.ExposeConfig( lightManager, "LightRenderer"	, "light" );
 			Game.Config.ExposeConfig( ssaoFilter,   "SSAO"			, "ssao"  );
 			Game.Config.ExposeConfig( vtSystem,		"VirtualTexture", "vt"	  );
-			Game.Invoker.ExposeApi( this );
+			Game.Invoker.ExposeApi( this, "rs" );
 
 			Device.DisplayBoundsChanged += (s,e) => {
 				DisplayBoundsChanged?.Invoke( s, e );
@@ -130,20 +131,24 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		[Config]
+		public string Blah { get; set; } = "qqqqq";
+
+
 		[LuaApi("screenshot")]
-		public string Screenshot_f ( string[] args )
+		public int Screenshot_f ( LuaState L )
 		{
 			Screenshot(null);
-			return null;
+			return 0;
 		}
 
 
 		[LuaApi("vtrestart")]
-		public string VTRestart_f ( string[] args )
+		public int VTRestart_f ( LuaState L )
 		{
 			Game.RenderSystem.RenderWorld.VirtualTexture = null;
 			Game.RenderSystem.RenderWorld.VirtualTexture = Game.Content.Load<VirtualTexture>("*megatexture");
-			return null;
+			return 0;
 		}
 
 

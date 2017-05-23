@@ -47,7 +47,7 @@ namespace Fusion.Engine.Input {
 			device.FormKeyUp += device_FormKeyUp;
 			device.FormKeyPress += device_FormKeyPress;
 
-			Game.Invoker.ExposeApi( this );
+			Game.Invoker.ExposeApi( this, "kb" );
 		}
 
 

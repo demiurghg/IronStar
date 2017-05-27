@@ -9,7 +9,7 @@ using Fusion.Drivers.Input;
 using Fusion.Engine.Common;
 using Fusion.Core.Shell;
 using Fusion.Core.IniParser.Model;
-
+using KopiLua;
 
 namespace Fusion.Engine.Input {
 	public sealed class Keyboard : GameComponent {
@@ -62,62 +62,62 @@ namespace Fusion.Engine.Input {
 
 
 		[LuaApi("bind")]
-		string Bind_f (string[] args)
+		int Bind (LuaState L)
 		{
-			if (args.Length<3) {
-				throw new InvokerException("Usage: bind <key> <key down cmd> [<key up command>]");
-			}
+			//if (args.Length<3) {
+			//	throw new InvokerException("Usage: bind <key> <key down cmd> [<key up command>]");
+			//}
 		
-			Keys key;
-			if (!Enum.TryParse(args[1], out key)) {
-				throw new InvokerException("Bad key: {0}", args[1]);
-			}
+			//Keys key;
+			//if (!Enum.TryParse(args[1], out key)) {
+			//	throw new InvokerException("Bad key: {0}", args[1]);
+			//}
 
-			if (IsBound(key)) {
-				Unbind(key);
-			}
+			//if (IsBound(key)) {
+			//	Unbind(key);
+			//}
 
-			var keydownCmd	=	args[2];
-			var keyupCmd	=	(args.Length>3) ? args[3] : "";
+			//var keydownCmd	=	args[2];
+			//var keyupCmd	=	(args.Length>3) ? args[3] : "";
 
-			Bind( key, keydownCmd, keyupCmd );
+			//Bind( key, keydownCmd, keyupCmd );
 			
-			return null;
+			return 0;
 		}
 
 
 		[LuaApi("unbind")]
-		string Unbind_f (string[] args)
+		int Unbind (LuaState L)
 		{
-			if (args.Length<2) {
-				throw new InvokerException("Usage: unbind <key>");
-			}
+			//if (args.Length<2) {
+			//	throw new InvokerException("Usage: unbind <key>");
+			//}
 		
-			Keys key;
-			if (!Enum.TryParse(args[1], out key)) {
-				throw new InvokerException("Bad key: {0}", args[1]);
-			}
+			//Keys key;
+			//if (!Enum.TryParse(args[1], out key)) {
+			//	throw new InvokerException("Bad key: {0}", args[1]);
+			//}
 
-			if (IsBound(key)) {
-				Unbind(key);
-			}
+			//if (IsBound(key)) {
+			//	Unbind(key);
+			//}
 			
-			return null;
+			return 0;
 		}
 
 
-		[LuaApi("listbinds")]
-		string Listbinds_f (string[] args)
+		[LuaApi("listBinds")]
+		int Listbinds (LuaState L)
 		{
-			Log.Message("");
+			//Log.Message("");
 
-			foreach ( var bind in Bindings.OrderBy(b=>b.Key) ) {
-				Log.Message("{0,-8} = {1} | {2}", bind.Key, bind.KeyDownCommand, bind.KeyUpCommand );
-			}
+			//foreach ( var bind in Bindings.OrderBy(b=>b.Key) ) {
+			//	Log.Message("{0,-8} = {1} | {2}", bind.Key, bind.KeyDownCommand, bind.KeyUpCommand );
+			//}
 
-			Log.Message("{0} keys are bound", Bindings.Count() );
+			//Log.Message("{0} keys are bound", Bindings.Count() );
 			
-			return null;
+			return 0;
 		}
 
 

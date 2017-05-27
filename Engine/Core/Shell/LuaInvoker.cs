@@ -14,43 +14,15 @@ using System.ComponentModel;
 using KopiLua;
 
 namespace Fusion.Core.Shell {
-	public partial class Invoker : IDisposable {
+	public partial class LuaInvoker : IDisposable {
 
 		readonly LuaState L;
-
-		/// <summary>
-		/// Game reference.
-		/// </summary>
 		public Game Game { get; private set; }
-
-		public IEnumerable<string> CommandNames { get { return commandNames; } }
-		string[] commandNames;
-
-		Dictionary<string, Binding> commands = new Dictionary<string, Binding>();
-
 		object lockObject = new object();
+		readonly Queue<string> cmdQueue = new Queue<string>();
 
-		Queue<string> cmdQueue = new Queue<string>();
 
-		class Binding {
-			public readonly object Object;
-			public readonly MethodInfo Method;
-			public readonly string Name;
-			public readonly string Description;
 
-			public Binding( object obj, MethodInfo mi, string name, string description )
-			{
-				Object		=	obj;
-				Method		=	mi;
-				Name		=	name;
-				Description	=	description;
-			}
-
-			public string Run ( string[] args )
-			{
-				return (string)Method.Invoke( Object, new object[]{ args });
-			}
-		}
 
 
 
@@ -58,15 +30,12 @@ namespace Fusion.Core.Shell {
 		/// Creates instance of Invoker.
 		/// </summary>
 		/// <param name="game">Game instance</param>
-		public Invoker ( Game game )
+		public LuaInvoker ( Game game )
 		{
 			L	=	Lua.LuaOpen();
 			Lua.LuaLOpenLibs(L);
 
 			Game	=	game;
-			commandNames	=	new string[0];
-
-			ExposeApi(this);
 		}
 
 
@@ -92,141 +61,57 @@ namespace Fusion.Core.Shell {
 		#endregion
 
 
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="obj"></param>
-		public void ExposeApi ( object obj, string apiName = null )
-		{
-			lock (lockObject) {
-
-				var bindAttr = BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Instance;
-
-				ExposeApi( apiName, obj, obj.GetType().GetMethods(bindAttr) );
-			}
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="obj"></param>
-		public void ExposeApi ( Type type, string apiName = null )
-		{
-			lock (lockObject) {
-
-				var bindAttr = BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Static;
-
-				ExposeApi( type.GetMethods(bindAttr), apiName );
-			}
-		}
-
-
-
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="apiName"></param>
 		/// <param name="obj"></param>
 		/// <param name="methods"></param>
-		void ExposeApi ( string apiName, object obj, IEnumerable<MethodInfo> methods )
+		public void ExposeApi ( object target, string apiName )
 		{
-			bool useNamespace = !string.IsNullOrEmpty(apiName);
-
-
-			using ( new LuaStackGuard( L ) ) {
-
-				//	create table if necessary :
-				if (useNamespace) {
-					Lua.LuaGetGlobal(L, apiName);
-
-					if (Lua.LuaType(L,-1)!=Lua.LUA_TTABLE) {
-						Lua.LuaPop(L,1);
-						Lua.LuaNewTable(L);
-						Lua.LuaSetGlobal(L, apiName);
-						Lua.LuaGetGlobal(L, apiName);
-					}
-
-					Lua.LuaNewTable(L);										
-
-					Lua.LuaPushString(L,"__index");							
-					Lua.LuaPushCFunction(L, (ls) => MtIndex(obj,ls) );		
-					Lua.LuaRawSet(L, -3);									
-
-					Lua.LuaPushString(L,"__newindex");						
-					Lua.LuaPushCFunction(L, (ls) => MtNewIndex(obj,ls) );	
-					Lua.LuaSetTable(L, -3);									
-
-					Lua.LuaPushString(L,"__metatable");						
-					Lua.LuaPushBoolean(L, 0 );								
-					Lua.LuaSetTable(L, -3);									
-
-					Lua.LuaSetMetatable(L,-2);								
-				}
-
-				#region API Methods
-				foreach ( var mi in methods ) {
-
-					var cmdAttr     = mi.GetCustomAttribute<LuaApiAttribute>();
-
-					if ( cmdAttr==null ) {
-						continue;
-					}
-
-					if ( mi.ReturnType!=typeof( int ) ) {
-						Log.Warning( "API function '{0}' must return int. Ignored.", cmdAttr.Name );
-						continue;
-					}
-
-					var parameters = mi.GetParameters();
-
-					if ( parameters.Length!=1 && parameters[0].ParameterType!=typeof( string[] ) ) {
-						Log.Warning( "Input parameters of API function '{0}' must be LuaState. Ignored.", cmdAttr.Name );
-						continue;
-					}
-
-
-					var cfunc =  (LuaNativeFunction)mi.CreateDelegate( typeof(LuaNativeFunction), obj );
-
-					if (useNamespace) {
-						Lua.LuaPushString( L, cmdAttr.Name );
-						Lua.LuaPushCFunction( L, cfunc );
-						Lua.LuaRawSet( L, -3 );
-					} else {
-						Lua.LuaPushCFunction( L, cfunc );
-						Lua.LuaSetGlobal( L, cmdAttr.Name );
-					}
-				}
-
-				if (useNamespace) {
-					Lua.LuaPop(L,1);
-				}
-				#endregion
+			if (apiName==null) {
+				throw new ArgumentNullException("apiName");
 			}
 
-
-			#warning remove command names
-			commandNames	=	new string[0];
+			using ( new LuaStackGuard( L ) ) {
+				LuaObject.LuaPushObject( L, target, false );
+				Lua.LuaSetGlobal(L, apiName);
+			}
 		}
 
 
+		#if false
 		int MtIndex ( object target, LuaState L )
 		{
 			if (Lua.LuaIsString(L,2)==0) {
 				LuaError("Lua API: only string keys are supported to access configuration variables");
 			}
 
+			var methodFlags		=	BindingFlags.IgnoreCase|BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance;
+			var propertyFlags	=	BindingFlags.IgnoreCase|BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance;
+
 			var key	= Lua.LuaToString(L,2).ToString();
 
-			var prop = target.GetType().GetProperty( key );
+			//	try method :
+			var mi   = target.GetType().GetMethod( key, methodFlags );
+
+			if (mi!=null) {
+				if (mi.HasAttribute<LuaApiAttribute>()) {
+					Lua.LuaPushCFunction( L, (LuaNativeFunction)mi.CreateDelegate(typeof(LuaNativeFunction), target) );
+					return 1;
+				}
+			}
+
+
+			//	try property :
+			var prop = target.GetType().GetProperty( key, propertyFlags );
 
 			if (prop==null) {
-				LuaError("Lua API: no such property {0}", key);
+				LuaError("Lua API: no such property or method '{0}'", key);
 			}
 
 			if (!prop.HasAttribute<ConfigAttribute>()) {
-				LuaError("Lua API: property {0} does not have [Config] attirbute", key);
+				LuaError("Lua API: property '{0}' does not have [Config] attirbute", key);
 			}
 
 
@@ -246,7 +131,7 @@ namespace Fusion.Core.Shell {
 				if (prop.PropertyType==typeof(bool)) {
 					Lua.LuaPushBoolean( L, ((bool)prop.GetValue(target)) ? 1 : 0 );
 				} else {
-					LuaError("Lua API: property {0} has unsupported type {1}", key, prop.PropertyType.Name);
+					LuaError("Lua API: property '{0}' has unsupported type '{1}'", key, prop.PropertyType.Name);
 				}
 			} catch ( Exception e ) {
 				LuaError("Exception: {0}", e.Message );
@@ -270,11 +155,11 @@ namespace Fusion.Core.Shell {
 			var prop = target.GetType().GetProperty( key );
 
 			if (prop==null) {
-				LuaError("Lua API: no such property {0}", key);
+				LuaError("Lua API: no such property '{0}'", key);
 			}
 
 			if (!prop.HasAttribute<ConfigAttribute>()) {
-				LuaError("Lua API: property {0} does not have [Config] attirbute", key);
+				LuaError("Lua API: property '{0}' does not have [Config] attirbute", key);
 			}
 
 			try {
@@ -293,7 +178,7 @@ namespace Fusion.Core.Shell {
 				if (prop.PropertyType==typeof(bool)) {
 					prop.SetValue( target, (Lua.LuaToBoolean(L,3)!=0) );
 				} else {
-					LuaError("Lua API: property {0} has unsupported type {1}", key, prop.PropertyType.Name);
+					LuaError("Lua API: property '{0}' has unsupported type '{1}'", key, prop.PropertyType.Name);
 				}
 			} catch ( Exception e ) {
 				LuaError("Exception: {0}", e.Message );
@@ -304,6 +189,7 @@ namespace Fusion.Core.Shell {
 
 			return 1;
 		}
+		#endif
 
 
 		void LuaError ( string frmt, params object[] args )
@@ -370,34 +256,6 @@ namespace Fusion.Core.Shell {
 
 				}
 			}
-
-			/*var argList	=	SplitCommandLine( commandLine ).ToArray();
-
-			if (!argList.Any()) {
-				Log.Error("Empty command line");
-			} 
-
-			var cmdName	=	argList[0];
-
-			Binding binding;
-			ConfigVariable variable;
-
-			lock (lockObject) {
-				if (commands.TryGetValue( cmdName, out binding )) {
-
-					return binding.Run( argList );
-
-				} else if (Game.Config.Variables.TryGetValue( cmdName, out variable )) {
-					if (argList.Count()==1) {
-						Log.Message("{0} = {1}", variable.Name, variable.Get() );
-						return variable.Get();
-					} else {
-						return ExecuteCommand( string.Format("set {0} \"{1}\"", cmdName, string.Join(" ", argList.Skip(1)) ) );
-					}
-				} else {
-					throw new InvokerException(string.Format("Unknown command '{0}'", cmdName));
-				}
-			} */
 		}
 
 

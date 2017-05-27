@@ -12,5 +12,6 @@ namespace Fusion.Engine.Common {
 		IServerInstance CreateServer ( Game game, IMessageService msgsvc, string map, string options );
 		IUserInterface	CreateUI ( Game game );	 
 		IEditorInstance	CreateEditor ( Game game, string map );
+		void RunDashboard ( Game game );
 	}
 }

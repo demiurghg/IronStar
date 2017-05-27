@@ -9,18 +9,15 @@ namespace Fusion.Core.Shell {
 	/// <summary>
 	/// Shell command attribute
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Method|AttributeTargets.Property)]
-	public sealed class LuaApiAttribute : Attribute {
-
-		public readonly string Name;
+	[AttributeUsage(AttributeTargets.Method)]
+	public sealed class LuaReadonly : Attribute {
 
 		/// <summary>
 		///
 		/// </summary>
 		/// <param name="name"></param>
-		public LuaApiAttribute ( string name )
+		public LuaReadonly ()
 		{
-			this.Name = name;
 		}
 	}
 }

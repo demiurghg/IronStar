@@ -47,15 +47,11 @@ namespace IronStar {
 			{
 				return new Editor2.MapEditor( game.GameEditor, map );
 			}
-		}
 
-
-
-		[LuaApi("run")]
-		public static int Editor_f ( KopiLua.LuaState L )
-		{
-			Editor.Run( Game.Instance );
-			return 0;
+			public void RunDashboard ( Game game )
+			{
+				Editor.Run( Game.Instance );
+			}
 		}
 
 

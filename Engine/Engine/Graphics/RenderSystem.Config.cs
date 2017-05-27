@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Fusion.Core;
 using Fusion.Engine.Common;
 using Fusion.Core.Configuration;
+using Fusion.Core.Shell;
 
 namespace Fusion.Engine.Graphics {
 
@@ -25,6 +26,7 @@ namespace Fusion.Engine.Graphics {
 		/// Fullscreen
 		/// </summary>
 		[Config]
+		[LuaApi("fullscreen")]
 		public bool Fullscreen { 
 			get { 
 				return isFullscreen;
@@ -44,36 +46,42 @@ namespace Fusion.Engine.Graphics {
 		/// Screen width
 		/// </summary>
 		[Config]
+		[LuaApi("width")]
 		public int	Width { get; set; }
 
 		/// <summary>
 		/// Screen height
 		/// </summary>
 		[Config]
+		[LuaApi("height")]
 		public int	Height { get; set; }
 		
 		/// <summary>
 		/// Stereo mode.
 		/// </summary>
 		[Config]
+		[LuaApi("stereoMode")]
 		public StereoMode StereoMode { get; set; }
 
 		/// <summary>
 		/// Interlacing mode for stereo.
 		/// </summary>
 		[Config]
+		[LuaApi("interlacingMode")]
 		public InterlacingMode InterlacingMode { get; set; }
 
 		/// <summary>
 		/// Vertical synchronization interval.
 		/// </summary>
 		[Config]
+		[LuaApi("vsync")]
 		public int VSyncInterval { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		[Config]
+		[LuaApi("useDebugDevice")]
 		public bool UseDebugDevice { get; set; }
 
 		/// <summary>

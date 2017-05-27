@@ -104,7 +104,7 @@ namespace Fusion.Engine.Common {
 		/// <summary>
 		/// Gets invoker
 		/// </summary>
-		public	Invoker Invoker { get { return invoker; } }
+		public	LuaInvoker Invoker { get { return invoker; } }
 
 		/// <summary>
 		/// Gets user storage.
@@ -222,7 +222,7 @@ namespace Fusion.Engine.Common {
 		SoundSystem			soundSystem		;
 		Network				network			;
 		ContentManager		content			;
-		Invoker				invoker			;
+		LuaInvoker				invoker			;
 		Keyboard			keyboard		;
 		Mouse				mouse			;
 		Touch				touch;
@@ -352,7 +352,7 @@ namespace Fusion.Engine.Common {
 			GCSettings.LatencyMode	=	GCLatencyMode.SustainedLowLatency;
 
 			config				=	new ConfigManager( this );
-			invoker				=	new Invoker(this);
+			invoker				=	new LuaInvoker(this);
 			inputDevice			=	new InputDevice( this );
 			graphicsDevice		=	new GraphicsDevice( this );
 			renderSystem		=	new RenderSystem( this );
@@ -372,12 +372,16 @@ namespace Fusion.Engine.Common {
 			userStorage			=	new UserStorage(this);
 
 			invoker.ExposeApi( this, "game" );
-			invoker.ExecuteCommand("print		= game.print");
-			invoker.ExecuteCommand("quit		= game.quit");
-			invoker.ExecuteCommand("map			= game.map");
-			invoker.ExecuteCommand("connect		= game.connect");
-			invoker.ExecuteCommand("disconnect	= game.disconnect");
-			invoker.ExecuteCommand("killserver	= game.killserver");
+			try {
+				invoker.ExecuteCommand("print		= game.print");
+				invoker.ExecuteCommand("quit		= game.quit");
+				invoker.ExecuteCommand("map			= game.map");
+				invoker.ExecuteCommand("connect		= game.connect");
+				invoker.ExecuteCommand("disconnect	= game.disconnect");
+				invoker.ExecuteCommand("killserver	= game.killserver");
+			} catch ( LuaException le ) {
+				Log.Error("{0}", le.Message );
+			}
 
 
 			//	create SV, CL and UI instances :
@@ -737,8 +741,7 @@ namespace Fusion.Engine.Common {
 		-----------------------------------------------------------------------------------------*/
 
 		[LuaApi("print")]
-		[Description("quit the game")]
-		int Print_f ( LuaState L )
+		int Print ( LuaState L )
 		{
 			int n = Lua.LuaGetTop(L);  /* number of arguments */
 			int i;
@@ -764,8 +767,7 @@ namespace Fusion.Engine.Common {
 
 
 		[LuaApi("quit")]
-		[Description("quit the game")]
-		int Quit_f ( LuaState L )
+		int Quit ( LuaState L )
 		{
 			Exit();
 			return 0;
@@ -773,8 +775,7 @@ namespace Fusion.Engine.Common {
 
 
 		[LuaApi("map")]
-		[Description("starts new game")]
-		int Map_f ( LuaState L )
+		int Map ( LuaState L )
 		{
 			var map = Lua.LuaLCheckString(L,1).ToString();
 
@@ -784,33 +785,37 @@ namespace Fusion.Engine.Common {
 		}
 
 
-		[LuaApi("editMap")]
-		[Description("starts map editor")]
-		string EditMap_f ( string[] args )
+		[LuaApi("editmap")]
+		int EditMap ( LuaState L )
 		{
-			if (args.Length!=2) {
-				throw new Exception("Missing command line arguments: map");
-			}
+			var map = Lua.LuaLCheckString(L,1).ToString();
 
-			GameEditor.Start( args[1] );
+			GameEditor.Start( map );
 
-			return null;
+			return 0;
 		}
 
 
-		[LuaApi("exitEditor")]
-		[Description("exit map editor")]
-		string ExitEditor_f ( string[] args )
+		[LuaApi("editor")]
+		int RunEditor ( LuaState L )
+		{
+			GameFactory.RunDashboard(this);
+
+			return 0;
+		}
+
+
+		[LuaApi("exiteditor")]
+		int ExitEditor ( LuaState L )
 		{
 			GameEditor.Stop();
 
-			return null;
+			return 0;
 		}
 
 
 		[LuaApi("killserver")]
-		[Description("kills game server and stops the game")]
-		int KillServer_f ( LuaState L )
+		int KillServer ( LuaState L )
 		{
 			KillServer();
 			return 0;
@@ -818,8 +823,7 @@ namespace Fusion.Engine.Common {
 
 
 		[LuaApi("connect")]
-		[Description("initiate connection to remote or local server")]
-		int Connect_f ( LuaState L )
+		int Connect ( LuaState L )
 		{
 			var host = Lua.LuaLCheckString(L,1).ToString();
 			int port = Lua.LuaLCheckInteger(L,2);
@@ -830,8 +834,7 @@ namespace Fusion.Engine.Common {
 
 
 		[LuaApi("disconnect")]
-		[Description("disconnect client from server")]
-		int Disconnect_f ( LuaState L )
+		int Disconnect ( LuaState L )
 		{
 			var msg = Lua.LuaLOptString(L,1,"").ToString();
 
@@ -841,8 +844,7 @@ namespace Fusion.Engine.Common {
 
 
 		[LuaApi("cmd")]
-		[Description("sends command to remote server")]
-		int Cmd_f ( LuaState L )
+		int Cmd ( LuaState L )
 		{
 			var rcmd = Lua.LuaLCheckString(L,1).ToString();
 
@@ -853,7 +855,6 @@ namespace Fusion.Engine.Common {
 
 
 		[LuaApi("contentBuild")]
-		[Description("builds content")]
 		int ContentBuild( LuaState L )
 		{
 			//var force	= args.Contains("/force");
@@ -869,7 +870,6 @@ namespace Fusion.Engine.Common {
 
 
 		[LuaApi("contentFile")]
-		[Description("gets content description file")]
 		int ContentFile( LuaState L )
 		{
 			Lua.LuaPushString(L, Builder.Options.ContentIniFile);
@@ -878,7 +878,6 @@ namespace Fusion.Engine.Common {
 
 
 		[LuaApi("contentReport")]
-		[Description("opens content report file")]
 		int ContentReport( LuaState L )
 		{
 			var file = Lua.LuaLCheckString(L,1).ToString();

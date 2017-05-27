@@ -131,20 +131,20 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		[Config]
-		public string Blah { get; set; } = "qqqqq";
+		[LuaApi("blah")]
+		public string Blah { get; set; } = "";
 
 
 		[LuaApi("screenshot")]
-		public int Screenshot_f ( LuaState L )
+		public int Screenshot ( LuaState L )
 		{
-			Screenshot(null);
+			Screenshot((string)null);
 			return 0;
 		}
 
 
 		[LuaApi("vtrestart")]
-		public int VTRestart_f ( LuaState L )
+		public int VTRestart ( LuaState L )
 		{
 			Game.RenderSystem.RenderWorld.VirtualTexture = null;
 			Game.RenderSystem.RenderWorld.VirtualTexture = Game.Content.Load<VirtualTexture>("*megatexture");

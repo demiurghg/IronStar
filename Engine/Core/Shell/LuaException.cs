@@ -33,7 +33,7 @@ namespace Fusion.Core.Shell
 				case Lua.LUA_ERRSYNTAX	:	return "Syntex error : " + message;
 				case Lua.LUA_ERRMEM		:	return "Memory allocation error : " + message;
 				case Lua.LUA_ERRERR		:	return "Error while running the message handler : " + message;
-				default: return "Internal API error. Probably exception was thrown.";
+				default: return "Internal API error. Probably exception was thrown." + message;
 			}
 		}
 

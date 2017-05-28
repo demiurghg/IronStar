@@ -13,6 +13,7 @@ using System.Reflection;
 using System.ComponentModel;
 using KopiLua;
 using System.Threading;
+using Fusion.Core.Mathematics;
 
 namespace Fusion.Core.Shell {
 	public static class LuaUtils {
@@ -80,6 +81,17 @@ namespace Fusion.Core.Shell {
 		/// 
 		/// </summary>
 		/// <param name="L"></param>
+		/// <param name="obj"></param>
+		public static void PushObject( LuaState L, object obj, bool allowGC = false )
+		{
+			LuaObject.LuaPushObject( L, obj, allowGC );
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="L"></param>
 		/// <param name="index"></param>
 		/// <param name="message"></param>
 		/// <returns></returns>
@@ -93,6 +105,29 @@ namespace Fusion.Core.Shell {
 			}
 
 			return s.ToString();
+		}
+
+
+		public static Color ExpectHexColorString ( LuaState L, int index, string argument = null )
+		{
+			var s = ExpectString( L, index, argument );
+
+			if (!s.StartsWith("#")) {
+				LuaError(L, "hex-coded color string must contain leading '#'");
+			}
+			
+			try {
+				return Color.FromHexString(s);
+			} catch ( Exception e ) {
+				LuaError(L, e.Message);
+			}
+			return Color.Zero;
+		}
+
+
+		public static void PushHexColorString ( LuaState L, Color color )
+		{
+			Lua.LuaPushString( L, color.ToHexString() );
 		}
 
 

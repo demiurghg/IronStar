@@ -13,7 +13,8 @@ using System.Diagnostics;
 using Fusion.Core.Configuration;
 using Fusion.Engine.Common;
 using Fusion.Engine.Graphics;
-
+using KopiLua;
+using Fusion.Core.Shell;
 
 namespace Fusion.Engine.Frames {
 
@@ -32,7 +33,7 @@ namespace Fusion.Engine.Frames {
 
 
 		/// <summary>
-		/// Gets ans sets default font.
+		/// Gets and sets default font.
 		/// If this value not set, 
 		/// the creation of Frames without explicitly specified font will fail.
 		/// </summary>
@@ -85,6 +86,8 @@ namespace Fusion.Engine.Frames {
 		{
 			mouseProcessor		=	new MouseProcessor( Game, this );
 			touchProcessor		=	new TouchProcessor( Game, this );
+
+			Game.Invoker.ExposeApi( this, "ui" );
 		}
 
 
@@ -268,5 +271,37 @@ namespace Fusion.Engine.Frames {
 			}
 
 		}
+
+		/*-----------------------------------------------------------------------------------------
+		 * 
+		 *	Script support :
+		 * 											
+		-----------------------------------------------------------------------------------------*/
+
+		[LuaApi("root")]
+		public int GetRoot ( LuaState L )
+		{
+			LuaUtils.PushObject( L, RootFrame );
+
+			return 1;
+		}
+
+
+
+		[LuaApi("new")]
+		public int NewFrame ( LuaState L )
+		{
+			int x		= LuaUtils.ExpectInteger( L, 1, "x-position");
+			int y		= LuaUtils.ExpectInteger( L, 2, "y-position");
+			int w		= LuaUtils.ExpectInteger( L, 3, "frame width");
+			int h		= LuaUtils.ExpectInteger( L, 4, "frame height");
+			var text	= LuaUtils.ExpectString( L, 5, "frame text");
+			var color	= LuaUtils.ExpectHexColorString( L, 6, "color");
+
+			LuaUtils.PushObject( L, new Frame(this, x,y,w,h,text, color ) );
+
+			return 1;
+		}
+
 	}
 }

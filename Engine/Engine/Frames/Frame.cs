@@ -10,7 +10,7 @@ using Fusion.Engine.Input;
 using Fusion.Engine.Graphics;
 using Fusion.Engine.Common;
 using Forms = System.Windows.Forms;
-
+using Fusion.Core.Shell;
 
 namespace Fusion.Engine.Frames {
 
@@ -27,26 +27,31 @@ namespace Fusion.Engine.Frames {
 		/// <summary>
 		/// Is frame visible. Default true.
 		/// </summary>
+		[LuaApi("visible")]
 		public	bool		Visible				{ get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
+		[LuaApi("acceptControl")]
 		internal bool		CanAcceptControl	{ get { return Visible && OverallColor.A != 0 && !Ghost; } }
 
 		/// <summary>
 		/// 
 		/// </summary>
+		[LuaApi("isDrawable")]
 		internal bool		IsDrawable			{ get { return Visible && OverallColor.A != 0; } }
 
 		/// <summary>
 		/// Frame visible but does not receive input 
 		/// </summary>
+		[LuaApi("ghost")]
 		public	bool		Ghost				{ get; set; }
 
 		/// <summary>
 		/// Is frame receive input. Default true.
 		/// </summary>
+		[LuaApi("enabled")]
 		public	bool		Enabled				{ get; set; }
 
 		/// <summary>
@@ -79,32 +84,37 @@ namespace Fusion.Engine.Frames {
 		/// <summary>
 		/// 
 		/// </summary>
-		public	ClippingMode	 ClippingMode	{ get; set; }
+		public	ClippingMode	 ClippingMode	{ get; set; } = ClippingMode.ClipByBorder;
 
 		/// <summary>
 		/// Overall color that used as multiplier 
 		/// for all children elements
 		/// </summary>
+		[LuaApi("overallColor")]
 		public	Color		OverallColor		{ get; set; }
 
 		/// <summary>
 		/// Background color
 		/// </summary>
+		[LuaApi("backColor")]
 		public	Color		BackColor			{ get; set; }
 
 		/// <summary>
 		/// Background color
 		/// </summary>
+		[LuaApi("borderColor")]
 		public	Color		BorderColor			{ get; set; }
 
 		/// <summary>
 		/// Foreground (e.g. text) color
 		/// </summary>
+		[LuaApi("foreColor")]
 		public	Color		ForeColor			{ get; set; }
 
 		/// <summary>
 		/// Text shadow color
 		/// </summary>
+		[LuaApi("shadowColor")]
 		public	Color		ShadowColor			{ get; set; }
 
 		/// <summary>
@@ -116,41 +126,49 @@ namespace Fusion.Engine.Frames {
 		/// <summary>
 		/// Local X position of the frame
 		/// </summary>
+		[LuaApi("x")]
 		public	int			X					{ get; set; }
 
 		/// <summary>
 		/// Local Y position of the frame
 		/// </summary>
+		[LuaApi("y")]
 		public	int			Y					{ get; set; }
 
 		/// <summary>
 		///	Width of the frame
 		/// </summary>
+		[LuaApi("width")]
 		public virtual int	Width				{ get; set; }
 
 		/// <summary>
 		///	Height of the frame
 		/// </summary>
+		[LuaApi("height")]
 		public virtual int	Height				{ get; set; }
 
 		/// <summary>
 		/// Left gap between frame and its content
 		/// </summary>
+		[LuaApi("paddingLeft")]
 		public	int			PaddingLeft			{ get; set; }
 
 		/// <summary>
 		/// Right gap between frame and its content
 		/// </summary>
+		[LuaApi("paddingRight")]
 		public	int			PaddingRight		{ get; set; }
 
 		/// <summary>
 		/// Top gap  between frame and its content
 		/// </summary>
+		[LuaApi("paddingTop")]
 		public	int			PaddingTop			{ get; set; }
 
 		/// <summary>
 		/// Bottom gap  between frame and its content
 		/// </summary>
+		[LuaApi("paddingBottom")]
 		public	int			PaddingBottom		{ get; set; }
 
 		/// <summary>
@@ -166,51 +184,61 @@ namespace Fusion.Engine.Frames {
 		/// <summary>
 		/// Top, bottom, left and right padding
 		/// </summary>
+		[LuaApi("padding")]
 		public	int			Padding				{ set { VPadding = HPadding = value; } }
 
 		/// <summary>
 		/// 
 		/// </summary>
+		[LuaApi("borderTop")]
 		public	int			BorderTop			{ get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
+		[LuaApi("borderBottom")]
 		public	int			BorderBottom		{ get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
+		[LuaApi("borderLeft")]
 		public	int			BorderLeft			{ get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
+		[LuaApi("borderRight")]
 		public	int			BorderRight			{ get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
+		[LuaApi("border")]
 		public	int			Border				{ set { BorderTop = BorderBottom = BorderLeft = BorderRight = value; } }
 
 		/// <summary>
 		/// 
 		/// </summary>
+		[LuaApi("text")]
 		public	string		Text				{ get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
+		[LuaApi("textAlignment")]
 		public	Alignment	TextAlignment		{ get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
+		[LuaApi("textX")]
 		public	int			TextOffsetX			{ get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
+		[LuaApi("textY")]
 		public	int			TextOffsetY			{ get; set; }
 
 		/// <summary>
@@ -221,6 +249,7 @@ namespace Fusion.Engine.Frames {
 		/// <summary>
 		/// 
 		/// </summary>
+		[LuaApi("textTracking")]
 		public	float		TextTracking		{ get; set; }
 
 		/// <summary>
@@ -229,9 +258,15 @@ namespace Fusion.Engine.Frames {
 		public	FrameAnchor	Anchor			{ get; set; }
 
 
+		[LuaApi("imageX")]
 		public int				ImageOffsetX	{ get; set; }
+		
+		[LuaApi("imageY")]
 		public int				ImageOffsetY	{ get; set; }
+
+		[LuaApi("imageMode")]
 		public FrameImageMode	ImageMode		{ get; set; }
+		[LuaApi("imageColor")]
 		public Color			ImageColor		{ get; set; }
 		public Texture			Image			{ get; set; }
 

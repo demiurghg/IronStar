@@ -13,6 +13,7 @@ using System.Reflection;
 using System.ComponentModel;
 using KopiLua;
 using System.Threading;
+using Fusion.Core.Mathematics;
 
 namespace Fusion.Core.Shell {
 	class LuaObject {
@@ -120,6 +121,9 @@ namespace Fusion.Core.Shell {
 					if (prop.PropertyType==typeof(string)) {
 						Lua.LuaPushString( L, (string)prop.GetValue(target) );
 					} else
+					if (prop.PropertyType==typeof(Color)) {
+						LuaUtils.PushHexColorString( L, (Color)prop.GetValue(target) );
+					} else
 					if (prop.PropertyType==typeof(bool)) {
 						Lua.LuaPushBoolean( L, ((bool)prop.GetValue(target)) ? 1 : 0 );
 					} else {
@@ -177,6 +181,9 @@ namespace Fusion.Core.Shell {
 					} else
 					if (prop.PropertyType==typeof(bool)) {
 						prop.SetValue( target, LuaUtils.ExpectBoolean(L,3) );
+					} else
+					if (prop.PropertyType==typeof(Color)) {
+						prop.SetValue( target, LuaUtils.ExpectHexColorString(L,3) );
 					} else {
 						LuaUtils.LuaError(L, "Lua API: property '{0}' has unsupported type '{1}'", key, prop.PropertyType.Name);
 					}
@@ -211,10 +218,10 @@ namespace Fusion.Core.Shell {
 				LuaObject obj;
 				if (objects.TryGetValue(id, out obj)) {
 					
-					var target = obj as T;
+					var target = obj.target as T;
 
 					if (target==null) {
-						LuaUtils.LuaError( L, "value at index {0} is not a {1}", index, typeof(T) );
+						LuaUtils.LuaError( L, "value at index {0} is not a {1}, got {2}", index, typeof(T), obj.target.GetType() );
 					}
 
 					return target;

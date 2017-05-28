@@ -104,13 +104,6 @@ namespace IronStar {
 				//	set game title :
 				game.GameTitle = "IronStar";
 
-				try {
-					game.Invoker.ExecuteFile(@"ui\main.lua");
-					//game.Invoker.ExecuteFile(@"E:\GITHUB\IronStar\Content\ui\main.lua");
-				} catch ( LuaException le ) {
-					Log.Error(le.Message);
-				}
-
 				//	apply command-line options here:
 				//	...
 				if (!LaunchBox.ShowDialog(game, "Config.ini", ()=>Editor.Run(game))) {

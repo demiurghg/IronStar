@@ -205,6 +205,7 @@
     <Compile Include="Engine\Common\IGameFactory.cs" />
     <Compile Include="Engine\Common\IMessageService.cs" />
     <Compile Include="Engine\Common\IUserInterface.cs" />
+    <Compile Include="Engine\Frames\Frame.Lua.cs" />
     <Compile Include="Engine\Graphics\Effects\FogSettings.cs" />
     <Compile Include="Engine\Graphics\Lights\Extents.cs" />
     <Compile Include="Engine\Graphics\Lights\LightGrid.cs" />
@@ -655,7 +656,9 @@
       <Name>NLua</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

@@ -171,8 +171,12 @@ namespace KopiLua
 			  f(L, ud);
 		  }
 #if CATCH_EXCEPTIONS
-		  catch
+		  catch ( Exception e )
 		  {
+			if (!(e is LuaException)) {
+				Console.WriteLine( e.ToString() );
+			}
+
 			  if (lj.status == 0)
 				  lj.status = -1;
 		  }

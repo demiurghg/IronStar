@@ -80,6 +80,7 @@ namespace IronStar {
 		{
 			uiLayer	=	new SpriteLayer(Game.RenderSystem, 1024);
 
+
 			//	add console sprite layer to master view layer :
 			Game.RenderSystem.SpriteLayers.Add( uiLayer );
 

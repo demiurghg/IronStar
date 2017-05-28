@@ -38,6 +38,18 @@ namespace Fusion.Core.Shell
 		}
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="L"></param>
+		/// <param name="errcode"></param>
+		public static void ThrowIfError ( LuaState L, int errcode )
+		{
+			if (errcode!=0) {
+				throw new LuaException( L, errcode );
+			}
+		}
+
+		/// <summary>
 		/// Create exception from error message on stack
 		/// </summary>
 		/// <param name="L"></param>

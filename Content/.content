@@ -45,3 +45,4 @@ _outsource/*
 *.xml
 *.txt
 *.map
+*.lua

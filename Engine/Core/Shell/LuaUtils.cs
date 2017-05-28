@@ -30,6 +30,37 @@ namespace Fusion.Core.Shell {
 		}
 
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="L"></param>
+		/// <param name="text"></param>
+		/// <param name="fileName"></param>
+		public static void LuaDoFile ( LuaState L, string text, string path )
+		{
+			using ( new LuaStackGuard( L ) ) {
+
+				int status;
+				
+				int fnameindex = Lua.LuaGetTop(L) + 1; 
+				Lua.LuaPushFString(L, "@%s", path);
+
+				//	load file :
+				status = Lua.LuaLLoadBuffer( L, text, (uint)text.Length, Lua.LuaToString(L, -1));
+
+				Lua.LuaRemove(L, fnameindex);
+
+				LuaException.ThrowIfError( L, status );
+
+				//	call chunk :
+				status = Lua.LuaPCall( L, 0, Lua.LUA_MULTRET, 0);
+
+				LuaException.ThrowIfError( L, status );
+			}
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>

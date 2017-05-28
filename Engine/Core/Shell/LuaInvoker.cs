@@ -80,136 +80,6 @@ namespace Fusion.Core.Shell {
 		}
 
 
-		#if false
-		int MtIndex ( object target, LuaState L )
-		{
-			if (Lua.LuaIsString(L,2)==0) {
-				LuaError("Lua API: only string keys are supported to access configuration variables");
-			}
-
-			var methodFlags		=	BindingFlags.IgnoreCase|BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance;
-			var propertyFlags	=	BindingFlags.IgnoreCase|BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance;
-
-			var key	= Lua.LuaToString(L,2).ToString();
-
-			//	try method :
-			var mi   = target.GetType().GetMethod( key, methodFlags );
-
-			if (mi!=null) {
-				if (mi.HasAttribute<LuaApiAttribute>()) {
-					Lua.LuaPushCFunction( L, (LuaNativeFunction)mi.CreateDelegate(typeof(LuaNativeFunction), target) );
-					return 1;
-				}
-			}
-
-
-			//	try property :
-			var prop = target.GetType().GetProperty( key, propertyFlags );
-
-			if (prop==null) {
-				LuaError("Lua API: no such property or method '{0}'", key);
-			}
-
-			if (!prop.HasAttribute<ConfigAttribute>()) {
-				LuaError("Lua API: property '{0}' does not have [Config] attirbute", key);
-			}
-
-
-			try {
-				if (prop.PropertyType.IsEnum) {
-					Lua.LuaPushString( L, prop.GetValue(target).ToString() );
-				} else 
-				if (prop.PropertyType==typeof(int)) {
-					Lua.LuaPushInteger( L, (int)prop.GetValue(target) );
-				} else
-				if (prop.PropertyType==typeof(float)) {
-					Lua.LuaPushNumber( L, (float)prop.GetValue(target) );
-				} else
-				if (prop.PropertyType==typeof(string)) {
-					Lua.LuaPushString( L, (string)prop.GetValue(target) );
-				} else
-				if (prop.PropertyType==typeof(bool)) {
-					Lua.LuaPushBoolean( L, ((bool)prop.GetValue(target)) ? 1 : 0 );
-				} else {
-					LuaError("Lua API: property '{0}' has unsupported type '{1}'", key, prop.PropertyType.Name);
-				}
-			} catch ( Exception e ) {
-				LuaError("Exception: {0}", e.Message );
-			}
-
-			return 1;
-		}
-
-
-		int MtNewIndex ( object target, LuaState L )
-		{
-			//var sw = new Stopwatch();
-			//sw.Start();
-
-			if (Lua.LuaIsString(L,2)==0) {
-				LuaError("Lua API: only string keys are supported to access configuration variables");
-			}
-
-			var key	= Lua.LuaToString(L,2).ToString();
-
-			var prop = target.GetType().GetProperty( key );
-
-			if (prop==null) {
-				LuaError("Lua API: no such property '{0}'", key);
-			}
-
-			if (!prop.HasAttribute<ConfigAttribute>()) {
-				LuaError("Lua API: property '{0}' does not have [Config] attirbute", key);
-			}
-
-			try {
-				if (prop.PropertyType.IsEnum) {
-					prop.SetValue( target, Enum.Parse(prop.PropertyType, Lua.LuaToString(L,3).ToString() ) );
-				} else 
-				if (prop.PropertyType==typeof(int)) {
-					prop.SetValue( target, Lua.LuaToInteger(L,3) );
-				} else
-				if (prop.PropertyType==typeof(float)) {
-					prop.SetValue( target, (float)Lua.LuaToNumber(L,3) );
-				} else
-				if (prop.PropertyType==typeof(string)) {
-					prop.SetValue( target, Lua.LuaToString(L,3).ToString() );
-				} else
-				if (prop.PropertyType==typeof(bool)) {
-					prop.SetValue( target, (Lua.LuaToBoolean(L,3)!=0) );
-				} else {
-					LuaError("Lua API: property '{0}' has unsupported type '{1}'", key, prop.PropertyType.Name);
-				}
-			} catch ( Exception e ) {
-				LuaError("Exception: {0}", e.Message );
-			}	   
-
-			//sw.Stop();
-			//Log.Message("newindex = {0}", sw.Elapsed );
-
-			return 1;
-		}
-		#endif
-
-
-		void LuaError ( string frmt, params object[] args )
-		{
-			Lua.LuaPushString(L, string.Format(frmt, args));
-			Lua.LuaError(L);
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="obj"></param>
-		public void RemoveCommands ( object obj )
-		{
-			lock (lockObject) {
-			}
-		}
-
-
 
 		/// <summary>
 		/// Parses and pushes command to the queue.
@@ -236,7 +106,9 @@ namespace Fusion.Core.Shell {
 
 			using ( new LuaStackGuard(L) ) {
 				
-				errcode = Lua.LuaLLoadString( L, commandLine);
+				//errcode = Lua.LuaLLoadString( L, commandLine);
+
+				errcode = Lua.LuaLLoadBuffer( L, commandLine, (uint)commandLine.Length, "cmdline");
 
 				if (errcode!=0) {
 					throw new LuaException(L, errcode);
@@ -310,6 +182,16 @@ namespace Fusion.Core.Shell {
 							  .Where(arg => !string.IsNullOrEmpty(arg));
 		}
 
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="path"></param>
+		public void ExecuteFile ( string path )
+		{
+			LuaUtils.LuaDoFile( L, Game.Content.Load<string>(path), path );
+		}
 
 		/*-----------------------------------------------------------------------------------------
 		 * 

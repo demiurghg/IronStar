@@ -16,7 +16,7 @@ using KopiLua;
 namespace Fusion.Core.Shell {
 	public partial class LuaInvoker : IDisposable {
 
-		readonly LuaState L;
+		public readonly LuaState L;
 		public Game Game { get; private set; }
 		object lockObject = new object();
 		readonly Queue<string> cmdQueue = new Queue<string>();

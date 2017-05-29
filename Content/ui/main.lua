@@ -17,11 +17,16 @@ frame.backColor 	= "#FF000000"
 frame.borderColor	= "#FFFFFFFF"
 frame.border 		= 2;
 frame.textAlignment	= "MiddleCenter"
+frame.click = function (f,x,y)
+	print ("click " .. x .. ", " .. y )
+end
+print( type(true) )
 root.add( frame )
 
 print(frame.foreColor);
 print(frame.backColor);
 print(frame.borderColor);
+print("qqqqq")
 
 frame.y = 10
 

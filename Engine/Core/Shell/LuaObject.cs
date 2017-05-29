@@ -126,6 +126,10 @@ namespace Fusion.Core.Shell {
 					} else
 					if (prop.PropertyType==typeof(bool)) {
 						Lua.LuaPushBoolean( L, ((bool)prop.GetValue(target)) ? 1 : 0 );
+					} else
+					if (prop.PropertyType==typeof(LuaValue)) {
+						var propValue = (LuaValue)prop.GetValue( target );
+						propValue.LuaPushValue( L );
 					} else {
 						Lua.LuaPushNil(L);
 					}
@@ -184,6 +188,15 @@ namespace Fusion.Core.Shell {
 					} else
 					if (prop.PropertyType==typeof(Color)) {
 						prop.SetValue( target, LuaUtils.ExpectHexColorString(L,3) );
+					} else
+					if (prop.PropertyType==typeof(LuaValue)) {
+						var oldPropValue = (LuaValue)prop.GetValue( target );
+						oldPropValue?.Dispose();
+						if (Lua.LuaIsNil(L,3)) {
+							prop.SetValue( target, null );
+						} else {
+							prop.SetValue( target, new LuaValue(L,3) );
+						}
 					} else {
 						LuaUtils.LuaError(L, "Lua API: property '{0}' has unsupported type '{1}'", key, prop.PropertyType.Name);
 					}

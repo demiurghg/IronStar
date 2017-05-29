@@ -50,6 +50,18 @@ namespace Fusion.Core.Shell
 		}
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="L"></param>
+		/// <param name="errcode"></param>
+		public static void PrintIfError ( LuaState L, int errcode )
+		{
+			if (errcode!=0) {
+				Log.Error( GetErrMessage(L, errcode ) );
+			}
+		}
+
+		/// <summary>
 		/// Create exception from error message on stack
 		/// </summary>
 		/// <param name="L"></param>

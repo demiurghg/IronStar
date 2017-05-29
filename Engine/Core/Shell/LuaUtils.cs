@@ -26,7 +26,27 @@ namespace Fusion.Core.Shell {
 		/// <param name="args"></param>
 		public static void LuaError ( LuaState L, string frmt, params object[] args )
 		{
-			Lua.LuaPushString(L, string.Format(frmt, args));
+			var text = string.Format(frmt, args);
+
+			var ar = new LuaDebug();
+
+			string func_name = "";
+
+			if (Lua.LuaGetStack(L, 0, ref ar)!=0) {
+				Lua.LuaGetInfo(L, "nSlu", ref ar);
+				if (ar.name!=null) {
+					func_name = ar.name.ToString();
+					func_name += "()";
+				}
+			}
+
+			if (Lua.LuaGetStack(L, 1, ref ar)!=0) {
+				Lua.LuaGetInfo(L, "nSlu", ref ar);
+				Lua.LuaPushString(L, string.Format("{0}:{1}: {2}: {3}", ar.short_src, ar.currentline, func_name, text));
+			} else {
+				Lua.LuaPushString(L, text);
+			}
+
 			Lua.LuaError(L);
 		}
 
@@ -176,7 +196,7 @@ namespace Fusion.Core.Shell {
 		/// <returns></returns>
 		public static bool ExpectBoolean ( LuaState L, int index, string argument = null )
 		{
-			if (Lua.LuaIsBoolean(L,index)) {
+			if (!Lua.LuaIsBoolean(L,index)) {
 				LuaError( L, "{0} at index {1} is not a boolean", argument ?? "value", index );
 				return false;
 			}

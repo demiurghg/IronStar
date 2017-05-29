@@ -154,10 +154,12 @@
     <Compile Include="Core\Shell\LuaReadonly.cs" />
     <Compile Include="Core\Shell\LuaException.cs" />
     <Compile Include="Core\Shell\InvokerException.cs" />
+    <Compile Include="Core\Shell\LuaValue.cs" />
     <Compile Include="Core\Shell\LuaUtils.cs" />
     <Compile Include="Core\Shell\LuaObject.cs" />
     <Compile Include="Core\Shell\LuaInvoker.Helper.cs" />
     <Compile Include="Core\Shell\LuaStackGuard.cs" />
+    <Compile Include="Core\Shell\LuaWrapper.cs" />
     <Compile Include="Development\CheckListDialog.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -152,6 +152,12 @@ namespace Fusion.Engine.Frames {
 
 			return 0;
 		}
+
+
+		[LuaApi("click")]
+		LuaValue LClick {
+			get; set;
+		}
 	}
 }
 

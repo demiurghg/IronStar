@@ -11,6 +11,7 @@ using Fusion.Engine.Graphics;
 using Fusion.Engine.Common;
 using Forms = System.Windows.Forms;
 using Fusion.Core.Shell;
+using KopiLua;
 
 namespace Fusion.Engine.Frames {
 
@@ -275,7 +276,7 @@ namespace Fusion.Engine.Frames {
 		/// </summary>
 		public LayoutEngine	Layout	{ 
 			get { return layout; }
-			set { layout = value; if (LayoutChanged!=null) LayoutChanged(this, EventArgs.Empty); }
+			set { layout = value; LayoutChanged?.Invoke( this, EventArgs.Empty ); }
 		}
 
 		LayoutEngine layout = null;
@@ -596,12 +597,21 @@ namespace Fusion.Engine.Frames {
 			int y = location.Y - GlobalRectangle.Y;
 
 			if (doubleClick) {
-				if (DoubleClick!=null) {
-					DoubleClick( this, new MouseEventArgs(){ Key = key, X = x, Y = y } );
-				}
+				DoubleClick?.Invoke( this, new MouseEventArgs() { Key = key, X = x, Y = y } );
 			} else {
-				if (Click!=null) {
-					Click( this, new MouseEventArgs(){ Key = key, X = x, Y = y } );
+				Click?.Invoke( this, new MouseEventArgs() { Key = key, X = x, Y = y } );
+			}
+
+			if (LClick!=null) {
+				var L = LClick.L;
+				using ( new LuaStackGuard(L) ) {
+					LClick.LuaPushValue( L );
+					Lua.LuaPushNil(L);
+					Lua.LuaPushInteger( L, x );
+					Lua.LuaPushInteger( L, y );
+					var err = Lua.LuaPCall( L, 3, 0, 0 );
+
+					LuaException.PrintIfError( L, err );
 				}
 			}
 		}
@@ -612,9 +622,7 @@ namespace Fusion.Engine.Frames {
 			int x = location.X - GlobalRectangle.X;
 			int y = location.Y - GlobalRectangle.Y;
 
-			if (MouseIn!=null) {
-				MouseIn(this, new MouseEventArgs(){ Key = Keys.None, X = x, Y = y } );
-			}
+			MouseIn?.Invoke( this, new MouseEventArgs() { Key = Keys.None, X = x, Y = y } );
 		}
 
 
@@ -623,9 +631,7 @@ namespace Fusion.Engine.Frames {
 			int x = location.X - GlobalRectangle.X;
 			int y = location.Y - GlobalRectangle.Y;
 
-			if (MouseMove!=null) {
-				MouseMove(this, new MouseEventArgs(){ Key = Keys.None, X = x, Y = y, DX = dx, DY = dy });
-			}
+			MouseMove?.Invoke( this, new MouseEventArgs() { Key = Keys.None, X = x, Y = y, DX = dx, DY = dy } );
 		}
 
 
@@ -634,9 +640,7 @@ namespace Fusion.Engine.Frames {
 			int x = location.X - GlobalRectangle.X;
 			int y = location.Y - GlobalRectangle.Y;
 
-			if (MouseOut!=null) {
-				MouseOut(this, new MouseEventArgs(){ Key = Keys.None, X = x, Y = y } );
-			}
+			MouseOut?.Invoke( this, new MouseEventArgs() { Key = Keys.None, X = x, Y = y } );
 		}
 
 
@@ -645,9 +649,7 @@ namespace Fusion.Engine.Frames {
 			int x = location.X - GlobalRectangle.X;
 			int y = location.Y - GlobalRectangle.Y;
 
-			if (MouseDown!=null) {
-				MouseDown( this, new MouseEventArgs(){ Key = key, X = x, Y = y } );
-			}
+			MouseDown?.Invoke( this, new MouseEventArgs() { Key = key, X = x, Y = y } );
 		}
 
 
@@ -656,9 +658,7 @@ namespace Fusion.Engine.Frames {
 			int x = location.X - GlobalRectangle.X;
 			int y = location.Y - GlobalRectangle.Y;
 
-			if (MouseUp!=null) {
-				MouseUp( this, new MouseEventArgs(){ Key = key, X = x, Y = y } );
-			}
+			MouseUp?.Invoke( this, new MouseEventArgs() { Key = key, X = x, Y = y } );
 		}
 
 
@@ -674,99 +674,72 @@ namespace Fusion.Engine.Frames {
 
 		internal void OnTap ( int id, Point location )
 		{
-			var handler = Tap;
-			if (handler!=null) {
-				handler( this, new TouchEventArgs(){ TouchID = id, Location = location } );
-			}
+			Tap?.Invoke( this, new TouchEventArgs() { TouchID = id, Location = location } );
 		}
 
 
 		internal void OnTouchDown ( int id, Point location )
 		{
-			var handler = TouchDown;
-			if (handler!=null) {
-				handler( this, new TouchEventArgs(){ TouchID = id, Location = location } );
-			}
+			TouchDown?.Invoke( this, new TouchEventArgs() { TouchID = id, Location = location } );
 		}
 
 
 		internal void OnTouchUp ( int id, Point location )
 		{
-			var handler = TouchUp;
-			if (handler!=null) {
-				handler( this, new TouchEventArgs(){ TouchID = id, Location = location } );
-			}
+			TouchUp?.Invoke( this, new TouchEventArgs() { TouchID = id, Location = location } );
 		}
 
 
 		internal void OnTouchMove ( int id, Point location )
 		{
-			var handler = TouchMove;
-			if (handler!=null) {
-				handler( this, new TouchEventArgs(){ TouchID = id, Location = location } );
-			}
+			TouchMove?.Invoke( this, new TouchEventArgs() { TouchID = id, Location = location } );
 		}
 
 
 		internal void OnManipulationStart ( Vector2 translation, float scaling, Vector2 deltaTranslation, float deltaScaling )
 		{
-			var handler = ManipulationStart;
-			if (handler!=null) {
-				handler( this, new ManipulationEventArgs(){ 
-					Translation = translation, 
-					Scaling = scaling,
-					DeltaTranslation = deltaTranslation,
-					DeltaScaling = deltaScaling,
-				});
-			}
+			ManipulationStart?.Invoke( this, new ManipulationEventArgs() {
+				Translation = translation,
+				Scaling = scaling,
+				DeltaTranslation = deltaTranslation,
+				DeltaScaling = deltaScaling,
+			} );
 		}
 
 		internal void OnManipulationUpdate ( Vector2 translation, float scaling, Vector2 deltaTranslation, float deltaScaling )
 		{
-			var handler = ManipulationUpdate;
-			if (handler!=null) {
-				handler( this, new ManipulationEventArgs(){ 
-					Translation = translation, 
-					Scaling = scaling,
-					DeltaTranslation = deltaTranslation,
-					DeltaScaling = deltaScaling,
-				});
-			}
+			ManipulationUpdate?.Invoke( this, new ManipulationEventArgs() {
+				Translation = translation,
+				Scaling = scaling,
+				DeltaTranslation = deltaTranslation,
+				DeltaScaling = deltaScaling,
+			} );
 		}
 
 		internal void OnManipulationEnd ( Vector2 translation, float scaling, Vector2 deltaTranslation, float deltaScaling )
 		{
-			var handler = ManipulationEnd;
-			if (handler!=null) {
-				handler( this, new ManipulationEventArgs(){ 
-					Translation = translation, 
-					Scaling = scaling,
-					DeltaTranslation = deltaTranslation,
-					DeltaScaling = deltaScaling,
-				});
-			}
+			ManipulationEnd?.Invoke( this, new ManipulationEventArgs() {
+				Translation = translation,
+				Scaling = scaling,
+				DeltaTranslation = deltaTranslation,
+				DeltaScaling = deltaScaling,
+			} );
 		}
 
 
 		internal void OnTick ()
 		{
-			if (Tick!=null) {
-				Tick(this, EventArgs.Empty);
-			}
+			Tick?.Invoke( this, EventArgs.Empty );
 		}
 
 		internal void OnActivate ()
 		{
-			if (Activated!=null) {
-				Activated( this, EventArgs.Empty );
-			}
+			Activated?.Invoke( this, EventArgs.Empty );
 		}
 
 		internal void OnDeactivate ()
 		{
-			if (Deactivated!=null) {
-				Deactivated( this, EventArgs.Empty );
-			}
+			Deactivated?.Invoke( this, EventArgs.Empty );
 		}
 
 		/*-----------------------------------------------------------------------------------------
@@ -1014,9 +987,7 @@ namespace Fusion.Engine.Frames {
 			if ( oldX != X || oldY != Y ) {	
 				oldX = X;
 				oldY = Y;
-				if (Move!=null) {
-					Move( this, new MoveEventArgs(){ X = X, Y = Y } );
-				}
+				Move?.Invoke( this, new MoveEventArgs() { X = X, Y = Y } );
 			}
 		}
 
@@ -1027,11 +998,9 @@ namespace Fusion.Engine.Frames {
 		/// </summary>
 		protected void UpdateResize ()
 		{
-			if ( oldW != Width || oldH != Height ) {	
+			if ( oldW != Width || oldH != Height ) {
 
-				if (Resize!=null) {
-					Resize( this, new ResizeEventArgs(){ Width = Width, Height = Height } );
-				}
+				Resize?.Invoke( this, new ResizeEventArgs() { Width = Width, Height = Height } );
 
 				if (!firstResize) {
 					ForEachChildren( f => f.UpdateAnchors( oldW, oldH, Width, Height ) );

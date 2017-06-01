@@ -854,7 +854,7 @@ namespace Fusion.Engine.Common {
 		}
 
 
-		[LuaApi("contentBuild")]
+		[LuaApi("content_build")]
 		int ContentBuild( LuaState L )
 		{
 			//var force	= args.Contains("/force");
@@ -869,7 +869,7 @@ namespace Fusion.Engine.Common {
 		}
 
 
-		[LuaApi("contentFile")]
+		[LuaApi("content_file")]
 		int ContentFile( LuaState L )
 		{
 			Lua.LuaPushString(L, Builder.Options.ContentIniFile);
@@ -877,7 +877,7 @@ namespace Fusion.Engine.Common {
 		}
 
 
-		[LuaApi("contentReport")]
+		[LuaApi("content_report")]
 		int ContentReport( LuaState L )
 		{
 			var file = Lua.LuaLCheckString(L,1).ToString();
@@ -885,6 +885,16 @@ namespace Fusion.Engine.Common {
 			Builder.OpenReport( file );
 			return 0;
 		}
+
+
+		[LuaApi("crash")]
+		int CrashTest( LuaState L )
+		{
+			var obj = Activator.CreateInstance( typeof(int) );
+			var f = (Game)obj;
+			return 0;
+		}
+
 
 		/*-----------------------------------------------------------------------------------------
 		 * 

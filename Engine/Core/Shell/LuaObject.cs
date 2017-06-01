@@ -18,10 +18,9 @@ using Fusion.Core.Mathematics;
 namespace Fusion.Core.Shell {
 	class LuaObject {
 	
-		#warning add LuaState.Tag and use it to store object translation context
-
 		static int counter = 0;
-		readonly static Dictionary<int,LuaObject> objects = new Dictionary<int, LuaObject>();
+		class ObjectMap : Dictionary<int, LuaObject>{}
+
 
 		class Value {
 			public LuaNativeFunction function;
@@ -64,7 +63,18 @@ namespace Fusion.Core.Shell {
 							var name	=	luaAttr.Name;
 							var func	=	(LuaNativeFunction)method.CreateDelegate( typeof(LuaNativeFunction), target );
 
-							var value	=	new Value { function = func, property = null, readOnly = true };
+							LuaNativeFunction	guardedFunc;
+
+							guardedFunc	=	delegate (LuaState ls) { 
+								try { 
+									return func(ls);
+								} catch ( Exception e ) {
+									Lua.LuaPushString( ls, e.ToString() );
+									return Lua.LuaError(ls);
+								}
+							};
+
+							var value	=	new Value { function = guardedFunc, property = null, readOnly = true };
 
 							values.Add( name, value );
 						}
@@ -216,6 +226,22 @@ namespace Fusion.Core.Shell {
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="L"></param>
+		/// <returns></returns>
+		static ObjectMap GetObjectMap ( LuaState L )
+		{
+			if (L.tag==null) {
+				L.tag = new ObjectMap();
+			}
+
+			return	(ObjectMap)L.tag;
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
 		public static T LuaTo<T> ( LuaState L, int index ) where T: class
@@ -229,21 +255,22 @@ namespace Fusion.Core.Shell {
 
 			int id = BitConverter.ToInt32(data,0);
 
-			lock (objects) {
-				LuaObject obj;
-				if (objects.TryGetValue(id, out obj)) {
+			var objects = GetObjectMap(L);
+
+			LuaObject obj;
+			if (objects.TryGetValue(id, out obj)) {
 					
-					var target = obj.target as T;
+				var target = obj.target as T;
 
-					if (target==null) {
-						LuaUtils.LuaError( L, "value at index {0} is not a {1}, got {2}", index, typeof(T), obj.target.GetType() );
-					}
-
-					return target;
-				} else {
-					LuaUtils.LuaError( L, "Lua API object does not exist" );
+				if (target==null) {
+					LuaUtils.LuaError( L, "value at index {0} is not a {1}, got {2}", index, typeof(T), obj.target.GetType() );
 					return default(T);
 				}
+
+				return target;
+			} else {
+				LuaUtils.LuaError( L, "Lua API object (id={0}) does not exist", id );
+				return default(T);
 			}
 		}
 
@@ -255,37 +282,40 @@ namespace Fusion.Core.Shell {
 		/// <param name="L"></param>
 		/// <param name="target"></param>
 		/// <param name="allowGGFFinalizer"></param>
-		public static void LuaPushObject ( LuaState L, object target, bool allowGGFFinalizer )
+		public static void LuaPushObject ( LuaState L, object target, bool allowGCFinalizer )
 		{
-			lock (objects) {
-				
-				var id		=	Interlocked.Increment( ref counter );
-				var wrapper	=	new LuaObject(target);
+			if (L.tag==null) {
+				L.tag = new ObjectMap();
+			}
+
+			var objects	=	GetObjectMap(L);
+
+			var id		=	Interlocked.Increment( ref counter );
+			var wrapper	=	new LuaObject(target);
 
 
-				objects.Add( id, wrapper );
+			objects.Add( id, wrapper );
 
-				using ( new LuaStackGuard( L, 1 ) ) {
+			using ( new LuaStackGuard( L, 1 ) ) {
 
-					var array = (byte[])Lua.LuaNewUserData(L,4);
-					BitConverter.GetBytes( id ).CopyTo( array, 0 );
+				var array = (byte[])Lua.LuaNewUserData(L,4);
+				BitConverter.GetBytes( id ).CopyTo( array, 0 );
 
-					Lua.LuaNewTable(L);										
+				Lua.LuaNewTable(L);										
 
-					Lua.LuaPushString(L,"__index");							
-					Lua.LuaPushCFunction(L, wrapper.LuaMetaIndex );		
-					Lua.LuaRawSet(L, -3);									
+				Lua.LuaPushString(L,"__index");							
+				Lua.LuaPushCFunction(L, wrapper.LuaMetaIndex );		
+				Lua.LuaRawSet(L, -3);									
 
-					Lua.LuaPushString(L,"__newindex");						
-					Lua.LuaPushCFunction(L, wrapper.LuaMetaNewIndex );	
-					Lua.LuaSetTable(L, -3);									
+				Lua.LuaPushString(L,"__newindex");						
+				Lua.LuaPushCFunction(L, wrapper.LuaMetaNewIndex );	
+				Lua.LuaSetTable(L, -3);									
 
-					Lua.LuaPushString(L,"__metatable");						
-					Lua.LuaPushBoolean(L, 0 );								
-					Lua.LuaSetTable(L, -3);
+				Lua.LuaPushString(L,"__metatable");						
+				Lua.LuaPushBoolean(L, 0 );								
+				Lua.LuaSetTable(L, -3);
 
-					Lua.LuaSetMetatable(L,-2);								
-				}
+				Lua.LuaSetMetatable(L,-2);								
 			}
 		}
 	}

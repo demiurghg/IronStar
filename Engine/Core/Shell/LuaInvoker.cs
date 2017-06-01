@@ -22,10 +22,6 @@ namespace Fusion.Core.Shell {
 		readonly Queue<string> cmdQueue = new Queue<string>();
 
 
-
-
-
-
 		/// <summary>
 		/// Creates instance of Invoker.
 		/// </summary>

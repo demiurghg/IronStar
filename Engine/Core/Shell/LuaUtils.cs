@@ -52,6 +52,24 @@ namespace Fusion.Core.Shell {
 
 
 
+		public static string LuaGetTypeName ( int type )
+		{
+            switch (type) {
+                case Lua.LUA_TNIL			: return "nil"			; break;
+                case Lua.LUA_TNUMBER		: return "number"		; break;
+                case Lua.LUA_TSTRING		: return "string"		; break;
+                case Lua.LUA_TTABLE			: return "table"		; break;
+                case Lua.LUA_TFUNCTION		: return "function"		; break;
+                case Lua.LUA_TBOOLEAN		: return "boolean"		; break;
+                case Lua.LUA_TUSERDATA		: return "userdata"		; break;
+                case Lua.LUA_TTHREAD		: return "thread"		; break;
+                case Lua.LUA_TLIGHTUSERDATA	: return "lightuserdata"; break;
+                default: return "unknown";
+            }
+		}
+
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -145,6 +163,11 @@ namespace Fusion.Core.Shell {
 		}
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="L"></param>
+		/// <param name="color"></param>
 		public static void PushHexColorString ( LuaState L, Color color )
 		{
 			Lua.LuaPushString( L, color.ToHexString() );

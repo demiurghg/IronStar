@@ -18,10 +18,19 @@ namespace Fusion.Core.Shell {
 		/// </summary>
 		/// <param name="L"></param>
 		/// <param name="index"></param>
-		public LuaValue ( LuaState L, int index )
+		public LuaValue ( LuaState L, int index, int luaType = Lua.LUA_TNONE )
 		{	
 			this.L = L;
 			Lua.LuaPushValue( L, index );
+
+			int type = Lua.LuaType(L,-1);
+
+			if (luaType!=Lua.LUA_TNONE) {
+				if (luaType!=type) {
+					LuaUtils.LuaError( L, "LuaValue: expected type {0}, got {1}", LuaUtils.LuaGetTypeName(type), LuaUtils.LuaGetTypeName(luaType) );
+				}
+			}
+
 			refId  = Lua.LuaLRef( L, Lua.LUA_REGISTRYINDEX );
 		}
 
@@ -36,22 +45,6 @@ namespace Fusion.Core.Shell {
 			Debug.Assert( this.L == L );
 			Lua.LuaRawGetI( L, Lua.LUA_REGISTRYINDEX, refId );
 		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="L"></param>
-		/// <param name="nArgs"></param>
-		public void SafeCall ( LuaState L, int nArgs )
-		{
-			//Debug.Assert( this.L == L );
-			//LuaPushValue( L );
-			//int status = Lua.LuaPCall( L, nArgs, 0, 0 );
-			//LuaException.PrintIfError( L, status );
-		}
-
 
 
 		private bool disposedValue = false; // To detect redundant calls

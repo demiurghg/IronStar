@@ -159,7 +159,7 @@
     <Compile Include="Core\Shell\LuaObject.cs" />
     <Compile Include="Core\Shell\LuaInvoker.Helper.cs" />
     <Compile Include="Core\Shell\LuaStackGuard.cs" />
-    <Compile Include="Core\Shell\LuaWrapper.cs" />
+    <Compile Include="Core\Shell\Suggestion.cs" />
     <Compile Include="Development\CheckListDialog.cs">
       <SubType>Form</SubType>
     </Compile>

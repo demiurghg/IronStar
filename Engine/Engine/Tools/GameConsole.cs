@@ -65,7 +65,7 @@ namespace Fusion.Engine.Tools {
 		public bool IsShown { get { return isShown; } }
 
 
-		LuaInvoker.Suggestion suggestion = null;
+		Suggestion suggestion = null;
 
 
 

@@ -17,6 +17,8 @@ using Fusion.Core.Mathematics;
 
 namespace Fusion.Core.Shell {
 	class LuaObject {
+	
+		#warning add LuaState.Tag and use it to store object translation context
 
 		static int counter = 0;
 		readonly static Dictionary<int,LuaObject> objects = new Dictionary<int, LuaObject>();

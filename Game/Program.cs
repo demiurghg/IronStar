@@ -20,7 +20,6 @@ using Fusion.Build.Mapping;
 using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using IronStar.Editor2;
-using NLua;
 
 namespace IronStar {
 

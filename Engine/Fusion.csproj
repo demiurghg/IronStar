@@ -649,13 +649,13 @@
       <Project>{34d2ae22-ea1f-481e-b9f7-15ad914f4208}</Project>
       <Name>Native.Wic</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SDKs\KopiLua\KopiLua\KopiLua.Net45.csproj">
+      <Project>{e8ddbc21-ef74-4aba-9c49-bfc702be25d8}</Project>
+      <Name>KopiLua.Net45</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SDKs\LidgrenNetwork\Lidgren.Network\Lidgren.Network.csproj">
       <Project>{49ba1c69-6104-41ac-a5d8-b54fa9f696e8}</Project>
       <Name>Lidgren.Network</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SDKs\NLua\NLua.csproj">
-      <Project>{f55cabbb-4108-4a39-94e1-581fd46dc021}</Project>
-      <Name>NLua</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

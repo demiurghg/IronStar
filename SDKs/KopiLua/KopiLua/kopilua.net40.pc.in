@@ -1,0 +1,6 @@
+Name: KopiLua.Net40
+Description: KopiLua.Net40
+Version: 0.1
+
+Requires: 
+Libs: -r:@expanded_libdir@/@PACKAGE@/KopiLua.dll

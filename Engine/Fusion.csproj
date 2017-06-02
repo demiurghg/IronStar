@@ -151,12 +151,14 @@
     <Compile Include="Core\Mathematics\UShort3.cs" />
     <Compile Include="Core\Mathematics\Segment.cs" />
     <Compile Include="Core\Mathematics\WaveLength.cs" />
+    <Compile Include="Core\Shell\LuaObjectTranslator.cs" />
     <Compile Include="Core\Shell\LuaReadonly.cs" />
     <Compile Include="Core\Shell\LuaException.cs" />
     <Compile Include="Core\Shell\InvokerException.cs" />
+    <Compile Include="Core\Shell\LuaFunction.cs" />
     <Compile Include="Core\Shell\LuaValue.cs" />
     <Compile Include="Core\Shell\LuaUtils.cs" />
-    <Compile Include="Core\Shell\LuaObject.cs" />
+    <Compile Include="Core\Shell\LuaObjectWrapper.cs" />
     <Compile Include="Core\Shell\LuaInvoker.Helper.cs" />
     <Compile Include="Core\Shell\LuaStackGuard.cs" />
     <Compile Include="Core\Shell\Suggestion.cs" />

@@ -52,6 +52,11 @@ namespace Fusion.Core.Shell {
 
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
 		public static string LuaGetTypeName ( int type )
 		{
             switch (type) {
@@ -66,6 +71,20 @@ namespace Fusion.Core.Shell {
                 case Lua.LUA_TLIGHTUSERDATA	: return "lightuserdata"; break;
                 default: return "unknown";
             }
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="L"></param>
+		/// <param name="nargs"></param>
+		/// <param name="nreturn"></param>
+		public static void LuaSafeCall ( LuaState L, int nargs, int nresults )
+		{
+			int status = Lua.LuaPCall( L, nargs, nresults, 0 );
+			LuaException.PrintIfError( L, status );
 		}
 
 
@@ -110,7 +129,7 @@ namespace Fusion.Core.Shell {
 		/// <returns></returns>
 		public static T Expect<T>( LuaState L, int index, string argument ) where T: class
 		{
-			return LuaObject.LuaTo<T>( L, index );
+			return LuaObjectTranslator.Get(L).LuaTo<T>( L, index );
 		}
 
 
@@ -120,9 +139,9 @@ namespace Fusion.Core.Shell {
 		/// </summary>
 		/// <param name="L"></param>
 		/// <param name="obj"></param>
-		public static void PushObject( LuaState L, object obj, bool allowGC = false )
+		public static void PushObject( LuaState L, object obj )
 		{
-			LuaObject.LuaPushObject( L, obj, allowGC );
+			LuaObjectTranslator.Get(L).PushObject( L, obj );
 		}
 
 

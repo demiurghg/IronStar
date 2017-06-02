@@ -16,11 +16,9 @@ using System.Threading;
 using Fusion.Core.Mathematics;
 
 namespace Fusion.Core.Shell {
-	class LuaObject {
+	class LuaObjectWrapper {
 	
 		static int counter = 0;
-		class ObjectMap : Dictionary<int, LuaObject>{}
-
 
 		class Value {
 			public LuaNativeFunction function;
@@ -28,16 +26,25 @@ namespace Fusion.Core.Shell {
 			public bool readOnly;
 		}
 
+		public object Target {
+			get {
+				return target;
+			}
+		}
+
 		readonly object target;
 		readonly Type type;
+		readonly int id;
 		readonly Dictionary<string,Value> values = new Dictionary<string, Value>();
+
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="target"></param>
-		public LuaObject ( object target )
+		public LuaObjectWrapper ( int id, object target )
 		{
+			this.id		=	id;
 			this.target	=	target;
 
 			type		=	target.GetType();
@@ -219,104 +226,6 @@ namespace Fusion.Core.Shell {
 			}
 
 			return 1;
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="L"></param>
-		/// <returns></returns>
-		static ObjectMap GetObjectMap ( LuaState L )
-		{
-			if (L.tag==null) {
-				L.tag = new ObjectMap();
-			}
-
-			return	(ObjectMap)L.tag;
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="id"></param>
-		/// <returns></returns>
-		public static T LuaTo<T> ( LuaState L, int index ) where T: class
-		{
-			var data = Lua.LuaToUserData(L, index) as byte[];
-
-			if ( data == null ) {
-				LuaUtils.LuaError( L, "value at index {0} is not a user data", index );
-				return default(T);
-			}
-
-			int id = BitConverter.ToInt32(data,0);
-
-			var objects = GetObjectMap(L);
-
-			LuaObject obj;
-			if (objects.TryGetValue(id, out obj)) {
-					
-				var target = obj.target as T;
-
-				if (target==null) {
-					LuaUtils.LuaError( L, "value at index {0} is not a {1}, got {2}", index, typeof(T), obj.target.GetType() );
-					return default(T);
-				}
-
-				return target;
-			} else {
-				LuaUtils.LuaError( L, "Lua API object (id={0}) does not exist", id );
-				return default(T);
-			}
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="L"></param>
-		/// <param name="target"></param>
-		/// <param name="allowGGFFinalizer"></param>
-		public static void LuaPushObject ( LuaState L, object target, bool allowGCFinalizer )
-		{
-			if (L.tag==null) {
-				L.tag = new ObjectMap();
-			}
-
-			var objects	=	GetObjectMap(L);
-
-			var id		=	Interlocked.Increment( ref counter );
-			var wrapper	=	new LuaObject(target);
-
-
-			objects.Add( id, wrapper );
-
-			using ( new LuaStackGuard( L, 1 ) ) {
-
-				var array = (byte[])Lua.LuaNewUserData(L,4);
-				BitConverter.GetBytes( id ).CopyTo( array, 0 );
-
-				Lua.LuaNewTable(L);										
-
-				Lua.LuaPushString(L,"__index");							
-				Lua.LuaPushCFunction(L, wrapper.LuaMetaIndex );		
-				Lua.LuaRawSet(L, -3);									
-
-				Lua.LuaPushString(L,"__newindex");						
-				Lua.LuaPushCFunction(L, wrapper.LuaMetaNewIndex );	
-				Lua.LuaSetTable(L, -3);									
-
-				Lua.LuaPushString(L,"__metatable");						
-				Lua.LuaPushBoolean(L, 0 );								
-				Lua.LuaSetTable(L, -3);
-
-				Lua.LuaSetMetatable(L,-2);								
-			}
 		}
 	}
 }

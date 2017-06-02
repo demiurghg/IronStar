@@ -17,14 +17,56 @@ namespace Fusion.Engine.Frames {
 
 	public partial class Frame {
 
-		[LuaApi("setText")]
-		int LSetText ( LuaState L )
+		#region Handlers
+		[LuaApi("on_tick"		)]	LuaValue LOnTick		{ get; set;	}
+		[LuaApi("on_click"		)]	LuaValue LOnClick		{ get; set;	}
+		[LuaApi("on_dclick"		)]	LuaValue LOnDClick		{ get; set;	}
+		[LuaApi("on_move"		)]	LuaValue LOnMove		{ get; set;	}
+		[LuaApi("on_resize"		)]	LuaValue LOnResize		{ get; set;	}
+		[LuaApi("on_mouse_down" )]	LuaValue LOnMouseDown	{ get; set;	}
+		[LuaApi("on_mouse_up"   )]	LuaValue LOnMouseUp		{ get; set;	}
+		[LuaApi("on_mouse_move" )]	LuaValue LOnMouseMove	{ get; set;	}
+		[LuaApi("on_mouse_in"   )]	LuaValue LOnMouseIn		{ get; set;	}
+		[LuaApi("on_mouse_out"  )]	LuaValue LOnMouseOut	{ get; set;	}
+		[LuaApi("on_mouse_wheel")]	LuaValue LOnMouseWheel	{ get; set;	}
+		[LuaApi("on_hover"		)]	LuaValue LOnHover		{ get; set;	}
+		[LuaApi("on_press"		)]	LuaValue LOnPress		{ get; set;	}
+		[LuaApi("on_release"	)]	LuaValue LOnRelese		{ get; set;	}
+
+
+		void CallHandler ( LuaValue handler )
 		{
-			Text	=	LuaUtils.ExpectString( L, 1, "frame text" );
-			return 0;
+			if (handler!=null && handler.IsFunction) {
+				var L = handler.L;
+
+				handler.LuaPushValue(L);
+
+				LuaUtils.PushObject( L, this );
+				LuaUtils.LuaSafeCall(L,1,0);
+			}
 		}
 
 
+		void CallHandler ( LuaValue handler, int x, int y, Keys key )
+		{
+			if (handler!=null && handler.IsFunction) {
+				var L = handler.L;
+
+				handler.LuaPushValue(L);
+
+				LuaUtils.PushObject( L, this );
+				Lua.LuaPushNumber(L, x);
+				Lua.LuaPushNumber(L, y);
+				Lua.LuaPushString(L, key.ToString().ToLowerInvariant());
+
+				LuaUtils.LuaSafeCall(L,4,0);
+			}
+		}
+
+		#endregion
+
+
+		#region Hierarchy, position and size
 		[LuaApi("add")]
 		int LAdd ( LuaState L )
 		{
@@ -41,10 +83,10 @@ namespace Fusion.Engine.Frames {
 		}
 
 
-		[LuaApi("removeAll")]
+		[LuaApi("clear")]
 		public int LRemoveAll ( LuaState L )
 		{			
-			children.Clear();
+			Clear();
 			return 0;
 		}
 
@@ -69,52 +111,11 @@ namespace Fusion.Engine.Frames {
 			Height = h;
 			return 0;
 		}
+		#endregion
 
 
-		[LuaApi("anchor")]
-		int LAnchor ( LuaState L )
-		{
-			var s = LuaUtils.ExpectString(L, 1, "anchor (all|L|R|B|T)").ToLowerInvariant();
-			if (s=="all") {
-				Anchor = FrameAnchor.All;
-			} else {
-				var anchor = FrameAnchor.None;
-				if (s.Contains('l')) anchor |= FrameAnchor.Left;
-				if (s.Contains('r')) anchor |= FrameAnchor.Right;
-				if (s.Contains('b')) anchor |= FrameAnchor.Bottom;
-				if (s.Contains('t')) anchor |= FrameAnchor.Top;
-			}
-			return 0;
-		}
-
-
-		[LuaApi("setFont")]
-		int LSetFont ( LuaState L )
-		{
-			try {
-				var font = LuaUtils.ExpectString(L, 1, "sprite font path");
-				Font = ui.Game.Content.Load<SpriteFont>(font);
-			} catch ( Exception e ) {
-				LuaUtils.LuaError(L, e.Message);
-			}
-			return 0;
-		}
-
-
-		[LuaApi("setImage")]
-		int LSetImage ( LuaState L )
-		{
-			try {
-				var image = LuaUtils.ExpectString(L, 1, "image path");
-				Image = ui.Game.Content.Load<DiscTexture>(image);
-			} catch ( Exception e ) {
-				LuaUtils.LuaError(L, e.Message);
-			}
-			return 0;
-		}
-
-
-		[LuaApi("setBorder")]
+		#region Borders, padding and anchors
+		[LuaApi("set_borders")]
 		int LSetBorder ( LuaState L )
 		{
 			var n = Lua.LuaGetTop(L);
@@ -134,7 +135,7 @@ namespace Fusion.Engine.Frames {
 		}
 
 
-		[LuaApi("setPadding")]
+		[LuaApi("set_padding")]
 		int LSetPadding ( LuaState L )
 		{
 			var n = Lua.LuaGetTop(L);
@@ -154,10 +155,69 @@ namespace Fusion.Engine.Frames {
 		}
 
 
-		[LuaApi("click")]
-		LuaValue LClick {
-			get; set;
+		[LuaApi("anchor")]
+		int LAnchor ( LuaState L )
+		{
+			var s = LuaUtils.ExpectString(L, 1, "anchor (all|L|R|B|T)").ToLowerInvariant();
+			if (s=="all") {
+				Anchor = FrameAnchor.All;
+			} else {
+				var anchor = FrameAnchor.None;
+				if (s.Contains('l')) anchor |= FrameAnchor.Left;
+				if (s.Contains('r')) anchor |= FrameAnchor.Right;
+				if (s.Contains('b')) anchor |= FrameAnchor.Bottom;
+				if (s.Contains('t')) anchor |= FrameAnchor.Top;
+			}
+			return 0;
 		}
+		#endregion
+
+
+		#region Text
+		[LuaApi("set_text")]
+		int LSetText ( LuaState L )
+		{
+			Text	=	LuaUtils.ExpectString( L, 1, "frame text" );
+			return 0;
+		}
+
+
+		[LuaApi("get_text")]
+		int LGetText ( LuaState L )
+		{
+			Lua.LuaPushString( L, Text );
+			return 1;
+		}
+
+
+		[LuaApi("set_font")]
+		int LSetTextFont ( LuaState L )
+		{
+			var font = LuaUtils.ExpectString(L, 1, "sprite font path");
+			Font = ui.Game.Content.Load<SpriteFont>(font);
+
+			return 0;
+		}
+		#endregion
+
+
+
+
+		#region
+		[LuaApi("set_image")]
+		int LSetImage ( LuaState L )
+		{
+			try {
+				var image = LuaUtils.ExpectString(L, 1, "image path");
+				Image = ui.Game.Content.Load<DiscTexture>(image);
+			} catch ( Exception e ) {
+				LuaUtils.LuaError(L, e.Message);
+			}
+			return 0;
+		}
+
+		#endregion
+
 	}
 }
 

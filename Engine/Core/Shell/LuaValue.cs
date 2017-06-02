@@ -11,6 +11,7 @@ namespace Fusion.Core.Shell {
 	public class LuaValue : IDisposable {
 	
 		readonly int refId;
+		readonly int type;
 		public readonly LuaState L;
 
 		/// <summary>
@@ -23,7 +24,7 @@ namespace Fusion.Core.Shell {
 			this.L = L;
 			Lua.LuaPushValue( L, index );
 
-			int type = Lua.LuaType(L,-1);
+			type = Lua.LuaType(L,-1);
 
 			if (luaType!=Lua.LUA_TNONE) {
 				if (luaType!=type) {
@@ -34,6 +35,12 @@ namespace Fusion.Core.Shell {
 			refId  = Lua.LuaLRef( L, Lua.LUA_REGISTRYINDEX );
 		}
 
+
+		public bool IsFunction {
+			get {
+				return type == Lua.LUA_TFUNCTION;
+			}
+		}
 
 
 		/// <summary>

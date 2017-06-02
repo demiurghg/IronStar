@@ -70,7 +70,7 @@ namespace Fusion.Core.Shell {
 			}
 
 			using ( new LuaStackGuard( L ) ) {
-				LuaObject.LuaPushObject( L, target, false );
+				LuaUtils.PushObject( L, target );
 				Lua.LuaSetGlobal(L, apiName);
 			}
 		}

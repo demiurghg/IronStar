@@ -4,45 +4,37 @@ local root = ui.root()
 
 print("width:"..root.width.."  height:"..root.height);
 
-root.removeAll()	
+root.clear()	
 
-local frame = ui.new(10,10, 100, 100, "Test1", "#80000000")
-root.add( frame )
-
-local frame = ui.new(120,10, 200, 100, "TEST2", "#80000000")
-frame.anchor("all");
-frame.setFont('fonts/armata30');
-frame.foreColor 	= "#FFFFFFFF"
-frame.backColor 	= "#FF000000"
-frame.borderColor	= "#FFFFFFFF"
-frame.border 		= 2;
-frame.textAlignment	= "MiddleCenter"
-frame.click = function (f,x,y)
-	print ("click " .. x .. ", " .. y )
+function click_handler (f,x,y,key)
+	print ("click at [" .. x .. ", " .. y .. ", " .. key .. "] on " .. f.text)
 end
+
+frame = ui.new(10,10, 100, 100, "Test1", "#80000000")
+root.add( frame )
+frame.on_click = click_handler;
+
+frame = ui.new(120,10, 200, 100, "TEST2", "#80000000")
+frame.anchor	("all");
+frame.set_font	('fonts/armata30');
+frame.fore_color 	= "#FFFFFFFF"
+frame.back_color 	= "#FF000000"
+frame.border_color	= "#FFFFFFFF"
+frame.border 		= 5;
+frame.alignment		= "middlecenter"
+
+frame.on_click = click_handler;
+
 print( type(true) )
 root.add( frame )
 
-print(frame.foreColor);
-print(frame.backColor);
-print(frame.borderColor);
+print(frame.fore_color);
+print(frame.back_color);
+print(frame.border_color);
 print("qqqqq")
 
 frame.y = 10
 
-
-local test = {}
-local mt = {
-	__newindex = function (t,k,a,b,c) 
-		print( "key = " .. tostring(k) );
-		print( ". . . " .. tostring(a) );
-		print( ". . . " .. tostring(b) );
-		print( ". . . " .. tostring(c) );
-	end
-}
-setmetatable( test, mt )
-
-test.qqq = 2,3,"qqq";
 
 --[[
 -- hierarchy, position & size 
@@ -77,19 +69,19 @@ frame.set_image_mode	("stretch");
 
 -- handlers :
 -- __newindex???
-frame.on_tick		( function (f) end );
-frame.on_click		( function (f,x,y,key) end );
-frame.on_dclick		( function (f,x,y,key) end );
-frame.on_move		( function (f,x,y ) end );
-frame.on_resize		( function (f,w,h ) end );
-frame.on_mouse_down ( function (f,x,y,key) end; );
-frame.on_mouse_up   ( function (f,x,y,key) end; );
-frame.on_mouse_move ( function (f,x,y,key) end; );
-frame.on_mouse_in   ( function (f,x,y,key) end; );
-frame.on_mouse_out  ( function (f,x,y,key) end; );
-frame.on_mouse_wheel( function (f,x,y,key) end; );
-frame.on_hover		( function (f) end; )
-frame.on_press		( function (f) end; )
-frame.on_release	( function (f) end; )
+frame.on_tick			=	function (f) end );
+frame.on_click			=	function (f,x,y,key) end );
+frame.on_dclick			=	function (f,x,y,key) end );
+frame.on_move			=	function (f,x,y ) end );
+frame.on_resize			=	function (f,w,h ) end );
+frame.on_mouse_down 	=	function (f,x,y,key) end; );
+frame.on_mouse_up   	=	function (f,x,y,key) end; );
+frame.on_mouse_move 	=	function (f,x,y,key) end; );
+frame.on_mouse_in   	=	function (f,x,y,key) end; );
+frame.on_mouse_out  	=	function (f,x,y,key) end; );
+frame.on_mouse_wheel	=	function (f,x,y,key) end; );
+frame.on_hover			=	function (f) end; )
+frame.on_press			=	function (f) end; )
+frame.on_release		=	function (f) end; )
 
 --]]

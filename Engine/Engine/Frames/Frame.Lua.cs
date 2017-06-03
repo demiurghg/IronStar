@@ -28,13 +28,15 @@ namespace Fusion.Engine.Frames {
 		[LuaApi("on_mouse_move" )]	LuaValue LOnMouseMove	{ get; set;	}
 		[LuaApi("on_mouse_in"   )]	LuaValue LOnMouseIn		{ get; set;	}
 		[LuaApi("on_mouse_out"  )]	LuaValue LOnMouseOut	{ get; set;	}
-		[LuaApi("on_mouse_wheel")]	LuaValue LOnMouseWheel	{ get; set;	}
+		[LuaApi("on_wheel"		)]	LuaValue LOnWheel		{ get; set;	}
 		[LuaApi("on_hover"		)]	LuaValue LOnHover		{ get; set;	}
 		[LuaApi("on_press"		)]	LuaValue LOnPress		{ get; set;	}
 		[LuaApi("on_release"	)]	LuaValue LOnRelese		{ get; set;	}
+		#endregion
 
 
-		void CallHandler ( LuaValue handler )
+		#region Handler callers 
+		bool CallHandler ( LuaValue handler )
 		{
 			if (handler!=null && handler.IsFunction) {
 				var L = handler.L;
@@ -43,11 +45,15 @@ namespace Fusion.Engine.Frames {
 
 				LuaUtils.PushObject( L, this );
 				LuaUtils.LuaSafeCall(L,1,0);
+
+				return true;
+			} else {
+				return false;
 			}
 		}
 
 
-		void CallHandler ( LuaValue handler, int x, int y, Keys key )
+		bool CallHandler ( LuaValue handler, int x, int y, Keys key )
 		{
 			if (handler!=null && handler.IsFunction) {
 				var L = handler.L;
@@ -60,6 +66,48 @@ namespace Fusion.Engine.Frames {
 				Lua.LuaPushString(L, key.ToString().ToLowerInvariant());
 
 				LuaUtils.LuaSafeCall(L,4,0);
+				
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+
+		bool CallHandler ( LuaValue handler, int wheel )
+		{
+			if (handler!=null && handler.IsFunction) {
+				var L = handler.L;
+
+				handler.LuaPushValue(L);
+
+				LuaUtils.PushObject( L, this );
+				Lua.LuaPushNumber(L, wheel);
+
+				LuaUtils.LuaSafeCall(L,2,0);
+				
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		bool CallHandler ( LuaValue handler, int x, int y )
+		{
+			if (handler!=null && handler.IsFunction) {
+				var L = handler.L;
+
+				handler.LuaPushValue(L);
+
+				LuaUtils.PushObject( L, this );
+				Lua.LuaPushNumber(L, x);
+				Lua.LuaPushNumber(L, y);
+
+				LuaUtils.LuaSafeCall(L,3,0);
+				
+				return true;
+			} else {
+				return false;
 			}
 		}
 
@@ -201,9 +249,7 @@ namespace Fusion.Engine.Frames {
 		#endregion
 
 
-
-
-		#region
+		#region Image
 		[LuaApi("set_image")]
 		int LSetImage ( LuaState L )
 		{

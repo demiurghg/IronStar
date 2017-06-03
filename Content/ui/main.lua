@@ -23,7 +23,12 @@ frame.border_color	= "#FFFFFFFF"
 frame.border 		= 5;
 frame.alignment		= "middlecenter"
 
-frame.on_click = click_handler;
+frame.on_hover		=	function (f) f.back_color = "#FF808080"; print("hover"); end;
+frame.on_press		=	function (f) f.back_color = "#FFFFFFFF"; print("press"); end;
+frame.on_release	=	function (f) f.back_color = "#FF000000"; print("release"); end;
+
+frame.on_click	 	= 	click_handler;
+frame.on_wheel		=	function (f,w) print(w); end;
 
 print( type(true) )
 root.add( frame )

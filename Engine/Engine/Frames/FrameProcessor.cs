@@ -278,6 +278,16 @@ namespace Fusion.Engine.Frames {
 		 * 											
 		-----------------------------------------------------------------------------------------*/
 
+		[LuaApi("on_standby"	)] LuaValue LOnGameStandBy		{ get; set; }
+		[LuaApi("on_connecting"	)] LuaValue LOnGameConnected	{ get; set; }
+		[LuaApi("on_awaiting"	)] LuaValue LOnGameAwaiting		{ get; set; }
+		[LuaApi("on_loading"	)] LuaValue LOnGameLoading		{ get; set; }
+		[LuaApi("on_active"		)] LuaValue LOnGameActive		{ get; set; }
+		[LuaApi("on_disconnect"	)] LuaValue LOnGameDisconnect	{ get; set; }
+		[LuaApi("on_discovery"	)] LuaValue LOnGameDiscovery	{ get; set; }
+		[LuaApi("on_exiting"	)] LuaValue LOnGameExiting		{ get; set; }
+
+
 		[LuaApi("root")]
 		public int GetRoot ( LuaState L )
 		{

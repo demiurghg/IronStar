@@ -584,9 +584,16 @@ namespace Fusion.Engine.Frames {
 
 		internal void OnStatusChanged ( FrameStatus status )
 		{
+			switch (status) {
+				case FrameStatus.Hovered: CallHandler( LOnHover ); break;
+				case FrameStatus.None   : CallHandler( LOnRelese );break;
+				case FrameStatus.Pushed : CallHandler( LOnPress ); break;
+			}															
+
 			if (StatusChanged!=null) {
 				oldStatus = status;
 				StatusChanged( this, new StatusEventArgs(){ Status = status } ); 
+
 			}
 		}
 
@@ -602,7 +609,7 @@ namespace Fusion.Engine.Frames {
 				Click?.Invoke( this, new MouseEventArgs() { Key = key, X = x, Y = y } );
 			}
 
-			CallHandler( LOnClick, x,y,key );
+			CallHandler( doubleClick ? LOnDClick : LOnClick, x,y,key );
 		}
 
 
@@ -612,6 +619,8 @@ namespace Fusion.Engine.Frames {
 			int y = location.Y - GlobalRectangle.Y;
 
 			MouseIn?.Invoke( this, new MouseEventArgs() { Key = Keys.None, X = x, Y = y } );
+
+			CallHandler( LOnMouseIn, x,y,Keys.None );
 		}
 
 
@@ -621,6 +630,8 @@ namespace Fusion.Engine.Frames {
 			int y = location.Y - GlobalRectangle.Y;
 
 			MouseMove?.Invoke( this, new MouseEventArgs() { Key = Keys.None, X = x, Y = y, DX = dx, DY = dy } );
+
+			CallHandler( LOnMouseMove, x,y,Keys.None );
 		}
 
 
@@ -630,6 +641,7 @@ namespace Fusion.Engine.Frames {
 			int y = location.Y - GlobalRectangle.Y;
 
 			MouseOut?.Invoke( this, new MouseEventArgs() { Key = Keys.None, X = x, Y = y } );
+			CallHandler( LOnMouseOut, x,y,Keys.None );
 		}
 
 
@@ -639,6 +651,7 @@ namespace Fusion.Engine.Frames {
 			int y = location.Y - GlobalRectangle.Y;
 
 			MouseDown?.Invoke( this, new MouseEventArgs() { Key = key, X = x, Y = y } );
+			CallHandler( LOnMouseDown, x,y,key );
 		}
 
 
@@ -648,11 +661,23 @@ namespace Fusion.Engine.Frames {
 			int y = location.Y - GlobalRectangle.Y;
 
 			MouseUp?.Invoke( this, new MouseEventArgs() { Key = key, X = x, Y = y } );
+			CallHandler( LOnMouseUp, x,y,key );
 		}
 
 
 		internal void OnMouseWheel ( int wheel )
 		{
+			Frame target = this;
+
+			while (target!=null) {
+				if ( CallHandler( LOnWheel, wheel ) ) {
+					break;
+				} else {
+					target = target.Parent;
+				}
+			}
+			
+
 			if (MouseWheel!=null) {
 				MouseWheel( this, new MouseEventArgs(){ Wheel = wheel } );
 			} else if ( Parent!=null ) {
@@ -977,6 +1002,8 @@ namespace Fusion.Engine.Frames {
 				oldX = X;
 				oldY = Y;
 				Move?.Invoke( this, new MoveEventArgs() { X = X, Y = Y } );
+
+				CallHandler( LOnMove, X, Y );
 			}
 		}
 
@@ -990,6 +1017,8 @@ namespace Fusion.Engine.Frames {
 			if ( oldW != Width || oldH != Height ) {
 
 				Resize?.Invoke( this, new ResizeEventArgs() { Width = Width, Height = Height } );
+
+				CallHandler( LOnResize, Width, Height );
 
 				if (!firstResize) {
 					ForEachChildren( f => f.UpdateAnchors( oldW, oldH, Width, Height ) );

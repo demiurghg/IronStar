@@ -12,11 +12,10 @@ using System.Windows.Forms;
 using Fusion;
 using Fusion.Build;
 using Fusion.Engine.Common;
-using IronStar.SFX;
 using Fusion.Development;
 using Fusion.Core.Extensions;
 
-namespace IronStar.Editors {
+namespace Fusion.Development {
 	public partial class ObjectEditorControl : UserControl {
 		
 	

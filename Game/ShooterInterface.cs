@@ -149,7 +149,6 @@ namespace IronStar {
 		
 		void GameClient_ClientStateChanged ( object sender, GameClient.ClientEventArgs e )
 		{
-			Game.Console.Hide();
 		}
 
 
@@ -188,8 +187,6 @@ namespace IronStar {
 		public void Update ( GameTime gameTime )
 		{
 			//	update console :
-			Game.Console.Update( gameTime );
-
 			uiLayer.Clear();
 
 
@@ -288,17 +285,10 @@ namespace IronStar {
 				Game.Mouse.IsMouseHidden	=	false;
 
 			} else {
-				if (!Game.Console.IsShown) {
-					Game.Keyboard.ScanKeyboard	=	true;
-					Game.Mouse.IsMouseCentered	=	true;
-					Game.Mouse.IsMouseClipped	=	true;
-					Game.Mouse.IsMouseHidden	=	true;
-				} else {
-					Game.Keyboard.ScanKeyboard	=	false;
-					Game.Mouse.IsMouseCentered	=	false;
-					Game.Mouse.IsMouseClipped	=	false;
-					Game.Mouse.IsMouseHidden	=	false;
-				}
+				Game.Keyboard.ScanKeyboard	=	false;
+				Game.Mouse.IsMouseCentered	=	false;
+				Game.Mouse.IsMouseClipped	=	false;
+				Game.Mouse.IsMouseHidden	=	false;
 			}
 
             previousClientState = clientState;

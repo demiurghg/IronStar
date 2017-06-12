@@ -93,29 +93,11 @@
     <Compile Include="Editor2\Utils.cs" />
     <Compile Include="Editors\Editor.cs" />
     <Compile Include="Editors\EntityListConverter.cs" />
-    <Compile Include="Editors\EditorForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Editors\EditorForm.Designer.cs">
-      <DependentUpon>EditorForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Editors\MapEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Editors\MapEditorControl.Designer.cs">
       <DependentUpon>MapEditorControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editors\ConfigEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Editors\ConfigEditorControl.Designer.cs">
-      <DependentUpon>ConfigEditorControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editors\ObjectEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Editors\ObjectEditorControl.Designer.cs">
-      <DependentUpon>ObjectEditorControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Editors\SceneImportDialog.cs">
       <SubType>Form</SubType>
@@ -262,26 +244,10 @@
       <Project>{34853dea-43a6-4f2f-a379-d1ee04d256d2}</Project>
       <Name>BEPUutilities</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SDKs\NLua\NLua.csproj">
-      <Project>{f55cabbb-4108-4a39-94e1-581fd46dc021}</Project>
-      <Name>NLua</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Editors\EditorForm.resx">
-      <DependentUpon>EditorForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Editors\MapEditorControl.resx">
       <DependentUpon>MapEditorControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editors\ConfigEditorControl.resx">
-      <DependentUpon>ConfigEditorControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editors\ObjectEditorControl.resx">
-      <DependentUpon>ObjectEditorControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Editors\SceneImportDialog.resx">
       <DependentUpon>SceneImportDialog.cs</DependentUpon>

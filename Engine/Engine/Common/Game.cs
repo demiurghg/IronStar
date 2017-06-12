@@ -27,10 +27,10 @@ using Fusion.Engine.Server;
 using Lidgren.Network;
 using Fusion.Engine.Storage;
 using Fusion.Engine.Audio;
-using Fusion.Engine.Tools;
 using Fusion.Engine.Frames;
 using System.ComponentModel;
 using Fusion.Build;
+using System.Net;
 
 namespace Fusion.Engine.Common {
 
@@ -109,11 +109,6 @@ namespace Fusion.Engine.Common {
 		/// Gets user storage.
 		/// </summary>
 		public IStorage UserStorage { get { return userStorage; } }
-
-		/// <summary>
-		/// Gets console
-		/// </summary>
-		public GameConsole Console { get { return console; } }
 
 		/// <summary>
 		/// Gets frame processor
@@ -227,7 +222,6 @@ namespace Fusion.Engine.Common {
 		Touch				touch;
 		GamepadCollection	gamepads		;
 		UserStorage			userStorage		;
-		GameConsole		console;
 		FrameProcessor		frames;
 
 
@@ -359,7 +353,6 @@ namespace Fusion.Engine.Common {
 			network				=	new Network( this );
 			content				=	new ContentManager( this );
 			gameTimeInternal	=	new GameTime();
-			console				=	new GameConsole(this);
 
 			keyboard			=	new Keyboard(this);
 			mouse				=	new Mouse(this);
@@ -379,11 +372,12 @@ namespace Fusion.Engine.Common {
 			ui = new UserInterface( this );
 			ed = new GameEditor( this );
 
+			config.ExposeConfig( this,			"Game",		"game" );
+
 
 			config.ExposeConfig( SoundSystem,	"SoundSystem",		"snd"	);
 			config.ExposeConfig( RenderSystem,	"RenderSystem",		"rs"	);
-			config.ExposeConfig( Frames,		"Frames",			"frames");
-			config.ExposeConfig( Console,		"Console",			"con"	);
+			config.ExposeConfig( Frames,		"UIEngine",			"frames");
 			config.ExposeConfig( Network,		"Network",			"net"	);
 
 			config.ExposeConfig( Keyboard,		"Keyboard",			"kb"	);
@@ -401,35 +395,6 @@ namespace Fusion.Engine.Common {
 		void currentDomain_UnhandledException ( object sender, UnhandledExceptionEventArgs e )
 		{
 			ExceptionDialog.Show( (Exception) e.ExceptionObject );
-		}
-
-
-
-		
-		/// <summary>
-		/// Manage game to raise Reloading event.
-		/// </summary>
-		public void Reload()
-		{
-			if (!IsInitialized) {
-				throw new InvalidOperationException("Game is not initialized");
-			}
-			requestReload = true;
-		}
-
-
-
-		/// <summary>
-		/// Request game to exit.
-		/// Game will quit when update & draw loop will be completed.
-		/// </summary>
-		public void Exit ()
-		{
-			if (!IsInitialized) {
-				Log.Warning("Game is not initialized");
-				return;
-			}
-			requestExit	=	true;
 		}
 
 
@@ -467,7 +432,6 @@ namespace Fusion.Engine.Common {
 			Initialize( Touch );
 
 			//	initialize additional systems :
-			Initialize( Console );
 			Initialize( Frames );
 
 			//	initialize game-specific systems :
@@ -480,9 +444,6 @@ namespace Fusion.Engine.Common {
 			Log.Message("");
 
 			//	attach console sprite layer :
-			Console.ConsoleSpriteLayer.Order = int.MaxValue / 2;
-			RenderSystem.SpriteLayers.Add( Console.ConsoleSpriteLayer );
-
 			Frames.FramesSpriteLayer.Order = int.MaxValue / 2 - 1;
 			RenderSystem.SpriteLayers.Add( Frames.FramesSpriteLayer );
 
@@ -648,7 +609,6 @@ namespace Fusion.Engine.Common {
 				InputDevice.UpdateInput();
 
 				Frames.Update( gameTimeInternal );
-				Console.Update( gameTimeInternal );
 
 				//GIS.Update(gameTimeInternal);
 
@@ -682,13 +642,13 @@ namespace Fusion.Engine.Common {
 				InputDevice.EndUpdateInput();
 			}
 
-			try {
-				invoker.ExecuteCommandQueue();
-			} catch ( Exception e ) {
-				Log.Error( e.ToString() );
-			}
+			ExecuteQueue();
 
 			CheckExitInternal();
+
+			if (Keyboard.IsKeyDown(Input.Keys.F1)) {
+				
+			}
 		}
 
 
@@ -723,145 +683,41 @@ namespace Fusion.Engine.Common {
 
 
 
-		/*-----------------------------------------------------------------------------------------
-		 * 
-		 *	Commands :
-		 * 
-		-----------------------------------------------------------------------------------------*/
+		Queue<Action> actionQueue = new Queue<Action>();
 
-		[Command("quit")]
-		[Description("quit the game")]
-		string Quit_f ( string[] args )
+		/// <summary>
+		/// Pushes action to execution queue.
+		/// </summary>
+		/// <param name="action"></param>
+		public void Invoke ( Action action )
 		{
-			Exit();
-			return null;
-		}
-
-
-		[Command("map")]
-		[Description("starts new game")]
-		string Map_f ( string[] args )
-		{
-			if (args.Length!=2) {
-				throw new Exception("Missing command line arguments: map");
+			lock (actionQueue) {
+				if (!initialized) {
+					action();
+				} else {
+					actionQueue.Enqueue( action );
+				}
 			}
-
-			StartServer( args[1], false );
-
-			return null;
 		}
 
 
-		[Command("editMap")]
-		[Description("starts map editor")]
-		string EditMap_f ( string[] args )
+
+		public void ExecuteQueue ()
 		{
-			if (args.Length!=2) {
-				throw new Exception("Missing command line arguments: map");
+			lock (actionQueue) {
+				while ( actionQueue.Any() ) {
+					var action = actionQueue.Dequeue();
+					action();
+				}
 			}
-
-			GameEditor.Start( args[1] );
-
-			return null;
 		}
 
-
-		[Command("exitEditor")]
-		[Description("exit map editor")]
-		string ExitEditor_f ( string[] args )
-		{
-			GameEditor.Stop();
-
-			return null;
-		}
-
-
-		[Command("killServer")]
-		[Description("kills game server and stops the game")]
-		string KillServer_f ( string[] args )
-		{
-			KillServer();
-			return null;
-		}
-
-
-		[Command("connect")]
-		[Description("initiate connection to remote or local server")]
-		string Connect_f ( string[] args )
-		{
-			if (args.Length<3) {
-				throw new Exception("Missing command line arguments: host and port");
-			}
-
-			Connect( args[1], int.Parse(args[2]));
-			return null;
-		}
-
-
-		[Command("disconnect")]
-		[Description("disconnect client from server")]
-		string Disconnect_f ( string[] args )
-		{
-			var msg = (args.Length>1) ? args[1] : "";
-
-			Disconnect(msg);
-			return null;
-		}
-
-
-		[Command("cmd")]
-		[Description("sends command to remote server")]
-		string Cmd_f ( string[] args )
-		{
-			var rcmd = string.Join( " ", args.Skip(1) );
-
-			GameClient.NotifyServer("*cmd " + rcmd);
-
-			return null;
-		}
-
-
-
-		[Command("contentBuild")]
-		[Description("builds content")]
-		string ContentBuild( string[] args )
-		{
-			var force	= args.Contains("/force");
-			var files	= args.Skip(1).Where( s=>!s.StartsWith("/") ).ToArray();
-			var clean	= args.FirstOrDefault( a => a.StartsWith("/clean:"))?.Replace("/clean:","");
-
-			Builder.SafeBuild(force, clean, files);
-
-			Reload();
-
-			return null;
-		}
-
-		[Command("contentFile")]
-		[Description("gets content description file")]
-		string ContentFile( string[] args )
-		{
-			return Builder.Options.ContentIniFile;
-		}
-
-		[Command("contentReport")]
-		[Description("opens content report file")]
-		string ContentReport( string[] args )
-		{
-			if (args.Length<2) {
-				throw new Exception("Missing command line arguments: filename");
-			}
-
-			Builder.OpenReport( args[1] );
-			return null;
-		}
 
 		/*-----------------------------------------------------------------------------------------
 		 * 
 		 *	Client-server stuff :
 		 * 
 		-----------------------------------------------------------------------------------------*/
-
 		
 		/// <summary>
 		/// Updates game logic and client-server interaction.
@@ -878,6 +734,9 @@ namespace Fusion.Engine.Common {
 
 
 
+		[Browsable(true)]
+		[DisplayName("Start Server")]
+		[DisplayOrder(0)]
 		public void StartServer ( string map, bool dedicated )
 		{
 			//	Disconnect!
@@ -892,6 +751,10 @@ namespace Fusion.Engine.Common {
 		}
 
 
+
+		[Browsable(true)]
+		[DisplayName("Kill Server")]
+		[DisplayOrder(0)]
 		public void KillServer ()
 		{
 			GameServer.Kill();
@@ -899,6 +762,9 @@ namespace Fusion.Engine.Common {
 
 
 
+		[Browsable(true)]
+		[DisplayName("Connect")]
+		[DisplayOrder(0)]
 		public void Connect ( string host, int port )
 		{
 			GameClient.Connect(host, port);
@@ -906,10 +772,101 @@ namespace Fusion.Engine.Common {
 		}
 
 
+
+		[Browsable(true)]
+		[DisplayName("Disconnect")]
+		[DisplayOrder(0)]
 		public void Disconnect ( string message )
 		{
 			GameClient.Disconnect(message);
-			//	Kill server!
+		}
+
+
+
+		[Browsable(true)]
+		[DisplayName("Disconnect")]
+		[DisplayOrder(0)]
+		public void Disconnect ()
+		{
+			GameClient.Disconnect("");
+		}
+
+
+
+		[Browsable(true)]
+		[DisplayOrder(100)]
+		void EditMap ( string mapName )
+		{
+			GameEditor.Start( mapName );
+		}
+
+
+
+		[Browsable(true)]
+		[DisplayName("Close Editor")]
+		[DisplayOrder(100)]
+		void ExitEditor ()
+		{
+			GameEditor.Stop();
+		}
+
+
+
+		[Browsable(true)]
+		[DisplayName("Build Content")]
+		[DisplayOrder(200)]
+		string ContentBuild( string[] args )
+		{
+			var force	= args.Contains("/force");
+			var files	= args.Skip(1).Where( s=>!s.StartsWith("/") ).ToArray();
+			var clean	= args.FirstOrDefault( a => a.StartsWith("/clean:"))?.Replace("/clean:","");
+
+			Builder.SafeBuild(force, clean, files);
+
+			Reload();
+
+			return null;
+		}
+
+	
+		/// <summary>
+		/// Manage game to raise Reloading event.
+		/// </summary>
+		[Browsable(true)]
+		[DisplayName("Reload Content")]
+		[DisplayOrder(200)]
+		public void Reload()
+		{
+			if (!IsInitialized) {
+				throw new InvalidOperationException("Game is not initialized");
+			}
+			requestReload = true;
+		}
+
+
+
+		[Browsable(true)]
+		[DisplayName("Test Command UI")]
+		[DisplayOrder(200)]
+		public void TestCommandUI ( int connectionCount, Drivers.Graphics.StereoMode stereoMode, string mapName, string gameMode="qqq", bool dedicated=false,  bool checkDefault=true )
+		{
+		}
+
+
+		/// <summary>
+		/// Request game to exit.
+		/// Game will quit when update and draw loop will be completed.
+		/// </summary>
+		[Browsable(true)]
+		[DisplayName("Exit")]
+		[DisplayOrder(99999)]
+		public void Exit ()
+		{
+			if (!IsInitialized) {
+				Log.Warning("Game is not initialized");
+				return;
+			}
+			requestExit	=	true;
 		}
 	}
 }

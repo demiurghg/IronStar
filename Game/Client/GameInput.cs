@@ -159,17 +159,6 @@ namespace IronStar.Client {
 			var vp		=	Game.RenderSystem.DisplayBounds;
 			var ui		=	Game.UserInterface.Instance as ShooterInterface;
 			//var cam		=	World.GetView<CameraView>();
-
-			if (!Game.Console.IsShown) {
-
-				userCommand.DYaw		=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.X / 16200.0f;
-				userCommand.DPitch		=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.Y / 16200.0f * ( InvertMouse ? -1 : 1 );
-
-				userCommand.Action		=	flags;
-				userCommand.Yaw         +=  userCommand.DYaw;
-				userCommand.Pitch       +=  userCommand.DPitch;
-				userCommand.Roll		=	0;
-			}
 		}
 
 		

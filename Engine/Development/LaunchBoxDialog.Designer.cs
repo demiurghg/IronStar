@@ -178,7 +178,7 @@
 			this.versionLabel.Name = "versionLabel";
 			this.versionLabel.Size = new System.Drawing.Size(276, 23);
 			this.versionLabel.TabIndex = 15;
-			this.versionLabel.Text = "Fusion Engine v 0.1 (Debug, x64)";
+			this.versionLabel.Text = "IronStar v0.1 (Release)";
 			// 
 			// label2
 			// 

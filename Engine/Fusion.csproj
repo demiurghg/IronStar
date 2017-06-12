@@ -143,6 +143,7 @@
     <Compile Include="Build\Processors\UbershaderProcessor.cs" />
     <Compile Include="Build\Processors\UbershaderProcessor.Parser.cs" />
     <Compile Include="Build\ToolException.cs" />
+    <Compile Include="Core\DisplayOrder.cs" />
     <Compile Include="Core\Content\IniLoader.cs" />
     <Compile Include="Core\Content\IPrecachable.cs" />
     <Compile Include="Core\Extensions\KeyDataCollectionExtension.cs" />
@@ -152,11 +153,29 @@
     <Compile Include="Core\Mathematics\Segment.cs" />
     <Compile Include="Core\Mathematics\WaveLength.cs" />
     <Compile Include="Core\Shell\InvokerException.cs" />
+    <Compile Include="Development\ArgumentDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Development\ArgumentDialog.Designer.cs">
+      <DependentUpon>ArgumentDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Development\CheckListDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Development\CheckListDialog.Designer.cs">
       <DependentUpon>CheckListDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Development\ConfigEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Development\ConfigEditorControl.Designer.cs">
+      <DependentUpon>ConfigEditorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Development\EditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Development\EditorForm.Designer.cs">
+      <DependentUpon>EditorForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Development\FileLocationEditor.cs" />
     <Compile Include="Development\LaunchBox.cs" />
@@ -165,6 +184,12 @@
     </Compile>
     <Compile Include="Development\NameDialog.Designer.cs">
       <DependentUpon>NameDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Development\ObjectEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Development\ObjectEditorControl.Designer.cs">
+      <DependentUpon>ObjectEditorControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Development\ObjectSelector.cs">
       <SubType>Form</SubType>
@@ -541,8 +566,6 @@
     <Compile Include="Engine\Frames\Transition.cs" />
     <Compile Include="Engine\Frames\FrameProcessor.cs" />
     <Compile Include="Engine\Frames\Utils.cs" />
-    <Compile Include="Engine\Tools\GameConsole.Config.cs" />
-    <Compile Include="Engine\Tools\EditBox.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -551,7 +574,7 @@
     <Compile Include="Engine\Graphics\Scene\VertexColorTexture.cs" />
     <Compile Include="Engine\Graphics\Scene\VertexColorTextureTBNRigid.cs" />
     <Compile Include="Core\Shell\CommandLineParser.cs" />
-    <Compile Include="Core\Shell\CommandAttribute.cs" />
+    <Compile Include="Core\CommandAttribute.cs" />
     <Compile Include="Core\Shell\CommandLineParserException.cs" />
     <Compile Include="Core\Shell\Invoker.cs" />
     <Compile Include="Core\Test\TestAttribute.cs" />
@@ -580,11 +603,21 @@
     <Compile Include="Core\Mathematics\Temperature.cs" />
     <Compile Include="Core\Utils\Wildcard.cs" />
     <Compile Include="Core\Utils\LogRecorder.cs" />
-    <Compile Include="Engine\Tools\GameConsole.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Development\ArgumentDialog.resx">
+      <DependentUpon>ArgumentDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Development\CheckListDialog.resx">
       <DependentUpon>CheckListDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Development\ConfigEditorControl.resx">
+      <DependentUpon>ConfigEditorControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Development\EditorForm.resx">
+      <DependentUpon>EditorForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Development\ExceptionDialog.resx">
       <DependentUpon>ExceptionDialog.cs</DependentUpon>
@@ -594,6 +627,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Development\NameDialog.resx">
       <DependentUpon>NameDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Development\ObjectEditorControl.resx">
+      <DependentUpon>ObjectEditorControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Development\ObjectSelector.resx">
       <DependentUpon>ObjectSelector.cs</DependentUpon>

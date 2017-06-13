@@ -40,6 +40,8 @@ namespace Fusion.Development {
 
 			int ypos = -10;
 
+			SuspendLayout();
+
 			foreach ( var arg in args ) {
 
 				ypos += 28;
@@ -105,6 +107,8 @@ namespace Fusion.Development {
 					Controls.Add( comboBox );
 				}
 			}
+
+			ResumeLayout();
 		}
 
 

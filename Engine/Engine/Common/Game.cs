@@ -47,78 +47,93 @@ namespace Fusion.Engine.Common {
 		/// <summary>
 		/// Gets settings.
 		/// </summary>
+		[Browsable(false)]
 		public ConfigManager Config { get { return config; } }
 
 		/// <summary>
 		/// Gets the current input device
 		/// </summary>
+		[Browsable(false)]
 		internal InputDevice	InputDevice { get { return inputDevice; } }
 
 		/// <summary>
 		/// Gets the current graphics device
 		/// </summary>
+		[Browsable(false)]
 		internal GraphicsDevice GraphicsDevice { get { return graphicsDevice; } }
 
 		/// <summary>
 		/// Gets the render system
 		/// </summary>
+		[Browsable(false)]
 		public	RenderSystem RenderSystem { get { return renderSystem; } }
 
 		/// <summary>
 		/// Gets the sound system
 		/// </summary>
+		[Browsable(false)]
 		public SoundSystem SoundSystem { get { return soundSystem; } }
 
 		/// <summary>
 		/// Gets the network system.
 		/// Actually used only for configuration both client and server.
 		/// </summary>
+		[Browsable(false)]
 		public Network Network { get { return network; } }
 
 		/// <summary>
 		/// Gets current content manager
 		/// </summary>
+		[Browsable(false)]
 		public ContentManager Content { get { return content; } }
 
 		/// <summary>
 		/// Gets keyboard.
 		/// </summary>
+		[Browsable(false)]
 		public Keyboard Keyboard { get { return keyboard; } }
 
 		/// <summary>
 		/// Gets mouse.
 		/// </summary>
+		[Browsable(false)]
 		public Mouse Mouse { get { return mouse; } }
 
 		/// <summary>
 		/// Gets mouse.
 		/// </summary>
+		[Browsable(false)]
 		public Touch Touch { get { return touch; } }
 
 		/// <summary>
 		/// Gets gamepads
 		/// </summary>
+		[Browsable(false)]
 		public GamepadCollection Gamepads { get { return gamepads; } }
 
 		/// <summary>
 		/// Gets invoker
 		/// </summary>
+		[Browsable(false)]
 		public	Invoker Invoker { get { return invoker; } }
 
 		/// <summary>
 		/// Gets user storage.
 		/// </summary>
+		[Browsable(false)]
 		public IStorage UserStorage { get { return userStorage; } }
 
 		/// <summary>
 		/// Gets frame processor
 		/// </summary>
+		[Browsable(false)]
 		public FrameProcessor Frames { get { return frames; } }
 
 
 		/// <summary>
 		/// Sets and gets game window icon.
 		/// </summary>
+		[Browsable(false)]
 		public System.Drawing.Icon Icon {
 			get {
 				return windowIcon;
@@ -136,6 +151,8 @@ namespace Fusion.Engine.Common {
 		/// <summary>
 		/// Gets and sets game window title.
 		/// </summary>
+		[Browsable(false)]
+		[ReadOnly(true)]
 		public string GameTitle { 
 			get {
 				return gameTitle;
@@ -172,11 +189,13 @@ namespace Fusion.Engine.Common {
 		/// <summary>
 		/// Indicates whether the game is initialized.
 		/// </summary>
+		[ReadOnly(true)]
 		public	bool IsInitialized { get { return initialized; } }
 
 		/// <summary>
 		/// Indicates whether Game.Update and Game.Draw should be called on each frame.
 		/// </summary>
+		[ReadOnly(true)]
 		public	bool Enabled { get; set; }
 
 		/// <summary>
@@ -236,6 +255,7 @@ namespace Fusion.Engine.Common {
 		/// <summary>
 		/// Current game server.
 		/// </summary>
+		[Browsable(false)]
 		public GameServer GameServer { 
 			get { return sv; } 
 		}
@@ -243,6 +263,7 @@ namespace Fusion.Engine.Common {
 		/// <summary>
 		/// Current game client.
 		/// </summary>
+		[Browsable(false)]
 		public GameClient GameClient {
 			get { return cl; } 
 		}
@@ -250,6 +271,7 @@ namespace Fusion.Engine.Common {
 		/// <summary>
 		/// Current game interface.
 		/// </summary>
+		[Browsable(false)]
 		public UserInterface UserInterface {
 			get { return ui; } 
 		}
@@ -257,6 +279,7 @@ namespace Fusion.Engine.Common {
 		/// <summary>
 		/// Current game interface.
 		/// </summary>
+		[Browsable(false)]
 		public GameEditor GameEditor {
 			get { return ed; } 
 		}
@@ -372,8 +395,7 @@ namespace Fusion.Engine.Common {
 			ui = new UserInterface( this );
 			ed = new GameEditor( this );
 
-			config.ExposeConfig( this,			"Game",		"game" );
-
+			config.ExposeConfig( this,			"Game",				"game" );
 
 			config.ExposeConfig( SoundSystem,	"SoundSystem",		"snd"	);
 			config.ExposeConfig( RenderSystem,	"RenderSystem",		"rs"	);
@@ -718,6 +740,22 @@ namespace Fusion.Engine.Common {
 		 *	Client-server stuff :
 		 * 
 		-----------------------------------------------------------------------------------------*/
+
+		[Category("Startup Parameters")]
+		[Config]
+		public string StartupMap { get; set; }
+
+		[Category("Startup Parameters")]
+		[Config]
+		public bool Dedicated { get; set; }
+		
+		[Category("Startup Parameters")]
+		[Config]
+		public string IPAddress { get; set; }
+
+		[Category("Startup Parameters")]
+		[Config]
+		public int Port { get; set; }
 		
 		/// <summary>
 		/// Updates game logic and client-server interaction.
@@ -749,6 +787,7 @@ namespace Fusion.Engine.Common {
 				}
 			}
 		}
+
 
 
 
@@ -844,6 +883,22 @@ namespace Fusion.Engine.Common {
 		}
 
 
+
+		[Browsable(true)]
+		[DisplayName("Save Configuration")]
+		[DisplayOrder(300)]
+		public void SaveConfigurationUI ()
+		{
+			config.Save("Config.ini");
+		}
+
+		[Browsable(true)]
+		[DisplayName("Load Configuration")]
+		[DisplayOrder(300)]
+		public void LoadConfiguration ()
+		{
+			config.Load("Config.ini");
+		}
 
 		[Browsable(true)]
 		[DisplayName("Test Command UI")]

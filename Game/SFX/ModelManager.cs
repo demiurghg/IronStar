@@ -194,6 +194,7 @@ namespace IronStar.SFX {
 
 				if (weaponModel>0) {
 					weaponModelInstance	=	AddModel( weaponModel, null );
+					weaponModelInstance.Animator.PlayLoop( AnimChannel.All, "anim_idle" );
 				} else {
 					weaponModelInstance =	null;
 				}
@@ -204,7 +205,8 @@ namespace IronStar.SFX {
 			}
 
 
-			var player	=	world.GetPlayerEntity( world.UserGuid );
+			var player			=	world.GetPlayerEntity( world.UserGuid );
+			var newWeaponState	=	world.snapshotHeader.WeaponState;
 
 			if (player!=null) {
 				var newVelocity	=	player.LinearVelocity;
@@ -213,17 +215,24 @@ namespace IronStar.SFX {
 
 				var newTraction	=	player.State.HasFlag(EntityState.HasTraction);
 
+				if (oldTraction) {
+					weight /= 2;
+				}
+
+				if (newWeaponState!=WeaponState.Idle) {
+					weight = 0;
+				}
+
 				if (weight>0.1f && newTraction!=oldTraction) {
 					Log.Message("Landing: {0} {1}", newVelocity.Y, oldVelocity.Y);
 					weaponModelInstance.Animator.PlayEvent( AnimChannel.All, "anim_landing", weight, 0, 7 );
 				}
 
 				oldTraction	=	newTraction;
-				oldVelocity = newVelocity;
+				oldVelocity =	newVelocity;
 			}
 
 
-			var newWeaponState	=	world.snapshotHeader.WeaponState;
 
 			if ( oldWeaponState != newWeaponState ) {
 				oldWeaponState	=	newWeaponState;
@@ -231,7 +240,7 @@ namespace IronStar.SFX {
 				Log.Warning("...weapon: {0}", newWeaponState );
 
 				if (newWeaponState==WeaponState.Recoil1 || newWeaponState==WeaponState.Recoil2) {
-					weaponModelInstance.Animator.PlayEvent( AnimChannel.All, "anim_recoil", 1, 1, 3 );
+					weaponModelInstance.Animator.PlayEvent( AnimChannel.All, "anim_recoil", 1, 1, 5 );
 				}
 				if (newWeaponState==WeaponState.Activating) {
 					weaponModelInstance.Animator.PlayEvent( AnimChannel.All, "anim_takeout", 1, 0, 0 );

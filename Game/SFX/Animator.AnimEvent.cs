@@ -22,7 +22,9 @@ namespace IronStar.SFX {
 
 	partial class Animator {
 
-		class AnimEvent {
+		public class AnimEvent {
+
+			public static readonly AnimEvent Empty = new AnimEvent( null, AnimChannel.All, null, false, 0, 0, 0, 0 );
 
 			public readonly Animator Animator;
 			public readonly AnimChannel Channel;
@@ -34,6 +36,8 @@ namespace IronStar.SFX {
 			public readonly float MaxWeight;
 
 			public float Frame;
+			readonly int priority;
+			public readonly bool Looped;
 
 			/// <summary>
 			/// 
@@ -42,7 +46,7 @@ namespace IronStar.SFX {
 			/// <param name="clip"></param>
 			/// <param name="fadein"></param>
 			/// <param name="fadeout"></param>
-			public AnimEvent ( Animator animator, AnimChannel channel, Scene clip, float maxWeight, float fadein, float fadeout )
+			public AnimEvent ( Animator animator, AnimChannel channel, Scene clip, bool looped, int priority, float maxWeight, float fadein, float fadeout )
 			{
 				this.Animator	=	animator;
 				this.Channel	=	channel;
@@ -53,6 +57,8 @@ namespace IronStar.SFX {
 				this.FadeIn		=	fadein;
 				this.FadeOut	=	fadeout;
 				this.MaxWeight	=	maxWeight;
+				this.Looped		=	looped;
+				this.priority	=	priority;
 
 				if (maxWeight<0 || maxWeight>1) {	
 					throw new ArgumentOutOfRangeException( "maxWeight" );
@@ -77,13 +83,21 @@ namespace IronStar.SFX {
 			{
 				var indices	=	Animator.GetChannelIndices( Channel );
 
-				var weight	=	Ramp( Frame, FadeIn, FadeOut ) * MaxWeight;
+				var weight	=	Ramp( Frame ) * MaxWeight;
 
-				Clip.PlayTakeAndBlend( Frame, false, indices, weight, destination );
+				if (weight>0) {
+					Clip.PlayTakeAndBlend( Frame, Looped, indices, weight, destination );
+				}
 
 				//Log.Verbose("anim event: {0} {1}", Clip.TakeName, weight );
 				
 				Frame += elapsedTime * Fps;
+
+				if (Looped) {
+					while (Frame>Length) {
+						Frame -= Length;
+					}
+				}
 			}
 
 
@@ -93,7 +107,7 @@ namespace IronStar.SFX {
 			/// </summary>
 			public bool IsCompleted {
 				get {
-					return Frame > Length;
+					return (!Looped) && (Frame > Length);
 				}
 			}
 
@@ -106,9 +120,11 @@ namespace IronStar.SFX {
 			/// <param name="fi"></param>
 			/// <param name="fo"></param>
 			/// <returns></returns>
-			float Ramp ( float x, float fi, float fo )
+			float Ramp ( float x )
 			{
 				var L	=	Length;
+				var fi	=	FadeIn;
+				var fo	=	FadeOut;
 				var ki	=	 (1.0f / fi);
 				var ko	=	-(1.0f / fo);
 

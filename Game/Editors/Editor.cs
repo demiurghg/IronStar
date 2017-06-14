@@ -24,15 +24,30 @@ namespace IronStar.Editors {
 		}
 
 
+		public static void Run ( Game game )
+		{
+			var editorForm =	Application.OpenForms.Cast<Form>().FirstOrDefault( form => form is EditorForm );
+
+			if (editorForm==null) {
+				editorForm = new EditorForm(game);
+			}
+
+			editorForm.Show();
+			editorForm.Activate();
+			editorForm.BringToFront();
+		}
+
+
 		public static MapEditorControl GetMapEditor ()
 		{
-			return null;//(Application.OpenForms.Cast<Form>().FirstOrDefault( form => form is EditorForm ) as EditorForm)?.MapEditor;
+			return (Application.OpenForms.Cast<Form>().FirstOrDefault( form => form is EditorForm ) as EditorForm)?.MapEditor;
 		}
 
 
 		public static void CloseAll ()
 		{
-			throw new NotImplementedException();
+			var editorForm =    Application.OpenForms.Cast<Form>().FirstOrDefault( form => form is EditorForm );
+			editorForm?.Close();
 		}
 
 

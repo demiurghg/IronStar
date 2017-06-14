@@ -9,7 +9,7 @@ using Fusion;
 using Fusion.Build;
 using Fusion.Development;
 using Fusion.Engine.Common;
-using Fusion.Core;
+using Fusion.Core.Shell;
 using Fusion.Core.Utils;
 using Fusion.Engine.Imaging;
 using IronStar.Editors;
@@ -20,6 +20,7 @@ using Fusion.Build.Mapping;
 using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using IronStar.Editor2;
+using NLua;
 
 namespace IronStar {
 
@@ -48,6 +49,14 @@ namespace IronStar {
 			}
 		}
 
+
+
+		[Command("editor")]
+		static string Editor_f ( string[] args )
+		{
+			Editor.Run( Game.Instance );
+			return null;
+		}
 
 
 
@@ -110,7 +119,7 @@ namespace IronStar {
 
 				//	apply command-line options here:
 				//	...
-				if (!LaunchBox.ShowDialog(game, "Config.ini", () => EditorForm.Run(game))) {
+				if (!LaunchBox.ShowDialog(game, "Config.ini", ()=>Editor.Run(game))) {
 					return 0;
 				}
 

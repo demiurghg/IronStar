@@ -12,11 +12,11 @@ using System.Windows.Forms;
 using Fusion;
 using Fusion.Build;
 using Fusion.Engine.Common;
+using IronStar.SFX;
 using Fusion.Development;
 using Fusion.Core.Extensions;
-using Fusion.Core.Shell;
 
-namespace Fusion.Development {
+namespace IronStar.Editors {
 	public partial class ConfigEditorControl : UserControl {
 		
 		readonly Game game;
@@ -65,7 +65,6 @@ namespace Fusion.Development {
 					.OrderBy( t1 => t1.Key )
 					.Select( t2 => new Target { Name = t2.Key, Value = t2.Value } )
 					.ToArray() );
-
 		}
 
 

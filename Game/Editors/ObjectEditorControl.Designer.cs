@@ -1,4 +1,4 @@
-﻿namespace Fusion.Development {
+﻿namespace IronStar.Editors {
 	partial class ObjectEditorControl {
 		/// <summary> 
 		/// Required designer variable.

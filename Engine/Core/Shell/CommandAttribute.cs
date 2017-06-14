@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fusion.Core {
+namespace Fusion.Core.Shell {
 
 	/// <summary>
 	/// Shell command attribute
@@ -18,18 +18,12 @@ namespace Fusion.Core {
 		public string Name { get; private set; }
 
 		/// <summary>
-		/// Command name
-		/// </summary>
-		public int GroupID { get; private set; }
-
-		/// <summary>
 		///
 		/// </summary>
 		/// <param name="name"></param>
-		public CommandAttribute ( string name, int groupId = 0 )
+		public CommandAttribute ( string name )
 		{
 			this.Name		=	name;
-			this.GroupID	=	groupId;
 		}
 	}
 }

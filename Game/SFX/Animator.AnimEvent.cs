@@ -24,8 +24,6 @@ namespace IronStar.SFX {
 
 		public class AnimEvent {
 
-			public static readonly AnimEvent Empty = new AnimEvent( null, AnimChannel.All, null, false, 0, 0, 0, 0 );
-
 			public readonly Animator Animator;
 			public readonly AnimChannel Channel;
 			public readonly Scene Clip;

@@ -35,7 +35,6 @@ struct GBuffer {
 cbuffer 				CBBatch 			: 	register(b0) { BATCH    	Batch     	: packoffset( c0 ); }	
 cbuffer 				CBLayer 			: 	register(b1) { SUBSET		Subset    	: packoffset( c0 ); }	
 cbuffer 				CBBatch 			: 	register(b3) { float4x4 	Bones[128]	: packoffset( c0 ); }	
-cbuffer					CBLightData			: 	register(b4) { LIGHTDATA	LightData	: packoffset( c0 ); }		
 SamplerState			SamplerLinear		: 	register(s0);
 SamplerState			SamplerPoint		: 	register(s1);
 SamplerState			SamplerAnisotropic	: 	register(s2);

@@ -8,6 +8,7 @@ scenes/*.tga
 scenes/*.png
 scenes/*.jpg
 turtle/*
+_outsource/*
 
 [BinaryDirectories]
 ..\..\..\..\SDKs

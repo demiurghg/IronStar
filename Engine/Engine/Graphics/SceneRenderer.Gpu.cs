@@ -43,54 +43,24 @@ namespace Fusion.Engine.Graphics {
 
 
 		[ShaderStructure]
-		[StructLayout(LayoutKind.Explicit, Size=320)]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=320)]
 		struct BATCH {
-			[FieldOffset(  0)] public Matrix	Projection;
-			[FieldOffset( 64)] public Matrix	View;
-			[FieldOffset(128)] public Matrix	World;
-			[FieldOffset(192)] public Vector4	ViewPos			;
-			[FieldOffset(208)] public Vector4	BiasSlopeFar	;
-			[FieldOffset(224)] public Color4	Color;
-			[FieldOffset(240)] public Color4	Ambient;
-			[FieldOffset(256)] public Vector4	ViewBounds;
-			[FieldOffset(272)] public float		VTPageScaleRCP;
-			[FieldOffset(276)] public int		AssignmentGroup;
+			public Matrix	Projection		;
+			public Matrix	View			;
+			public Matrix	World			;
+			public Vector4	ViewPos			;
+			public Vector4	BiasSlopeFar	;
+			public Color4	Color			;
+			public Color4	Ambient			;
+			public Vector4	ViewBounds		;
+			public float	VTPageScaleRCP	;
+			public int		AssignmentGroup	;
 		}
 
 
 		[ShaderStructure]
 		struct SUBSET {
 			public Vector4 Rectangle;
-		}
-
-
-		[ShaderStructure]
-		[StructLayout(LayoutKind.Explicit, Size=656)]
-		struct LIGHTDATA {
-			[FieldOffset(  0)] public Matrix	View;
-			[FieldOffset( 64)] public Matrix	Projection;
-			//[FieldOffset(128)] public Matrix	InverseViewProjection;
-			//[FieldOffset(192)] public Vector4	FrustumVectorTR;
-			//[FieldOffset(208)] public Vector4	FrustumVectorBR;
-			//[FieldOffset(224)] public Vector4	FrustumVectorBL;
-			//[FieldOffset(240)] public Vector4	FrustumVectorTL;
-			//[FieldOffset(256)] public Matrix	CSMViewProjection0;
-			//[FieldOffset(320)] public Matrix	CSMViewProjection1;
-			//[FieldOffset(384)] public Matrix	CSMViewProjection2;
-			//[FieldOffset(448)] public Matrix	CSMViewProjection3;
-			[FieldOffset(512)] public Vector4	ViewPosition;
-			//[FieldOffset(528)] public Vector4	DirectLightDirection;
-			//[FieldOffset(544)] public Vector4	DirectLightIntensity;
-			//[FieldOffset(560)] public Vector4	ViewportSize;
-			//[FieldOffset(576)] public Vector4	CSMFilterRadius;
-			//[FieldOffset(592)] public Color4	AmbientColor;
-			//[FieldOffset(608)] public Vector4	Viewport;
-			//[FieldOffset(624)] public float		ShowCSLoadOmni;
-			//[FieldOffset(628)] public float		ShowCSLoadEnv;
-			//[FieldOffset(632)] public float		ShowCSLoadSpot;
-			//[FieldOffset(636)] public int		CascadeCount;
-			//[FieldOffset(640)] public float		CascadeScale;
-			//[FieldOffset(644)] public float		FogDensity;
 		}
 
 

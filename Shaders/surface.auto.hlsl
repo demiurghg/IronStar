@@ -28,14 +28,6 @@ struct SUBSET {
 	float4     Rectangle;                     // offset:    0
 };
 
-// Fusion.Engine.Graphics.SceneRenderer+LIGHTDATA
-// Marshal.SizeOf = 656
-struct LIGHTDATA {
-	float4x4   View;                          // offset:    0
-	float4x4   Projection;                    // offset:   64
-	float4     ViewPosition;                  // offset:  512
-};
-
 // Fusion.Engine.Graphics.SceneRenderer+LIGHTINDEX
 // Marshal.SizeOf = 8
 struct LIGHTINDEX {

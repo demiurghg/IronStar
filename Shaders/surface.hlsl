@@ -32,9 +32,10 @@ struct GBuffer {
 
 #include "surface.auto.hlsl"
 
-cbuffer 				CBBatch 			: 	register(b0) { BATCH    	Batch     	: packoffset( c0 ); }	
-cbuffer 				CBLayer 			: 	register(b1) { SUBSET		Subset    	: packoffset( c0 ); }	
-cbuffer 				CBBatch 			: 	register(b3) { float4x4 	Bones[128]	: packoffset( c0 ); }	
+cbuffer 				CBStage 			: 	register(b0) { STAGE    	Stage     	: packoffset( c0 ); }	
+cbuffer 				CBInstance 			: 	register(b1) { INSTANCE		Instance   	: packoffset( c0 ); }	
+cbuffer 				CBSubset 			: 	register(b2) { SUBSET		Subset    	: packoffset( c0 ); }	
+cbuffer 				CBBones				: 	register(b3) { float4x4 	Bones[128]	: packoffset( c0 ); }	
 SamplerState			SamplerLinear		: 	register(s0);
 SamplerState			SamplerPoint		: 	register(s1);
 SamplerState			SamplerAnisotropic	: 	register(s2);
@@ -117,12 +118,12 @@ PSInput VSMain( VSInput input )
 
 	#if RIGID
 		float4 	pos			=	float4( input.Position, 1 );
-		float4	wPos		=	mul( pos,  Batch.World 		);
-		float4	vPos		=	mul( wPos, Batch.View 		);
-		float4	pPos		=	mul( vPos, Batch.Projection );
-		float4	normal		=	mul( float4(input.Normal,0),  Batch.World 		);
-		float4	tangent		=	mul( float4(input.Tangent,0),  Batch.World 		);
-		float4	binormal	=	mul( float4(input.Binormal,0),  Batch.World 	);
+		float4	wPos		=	mul( pos,  Instance.World 		);
+		float4	vPos		=	mul( wPos, Stage.View 		);
+		float4	pPos		=	mul( vPos, Stage.Projection );
+		float4	normal		=	mul( float4(input.Normal,0),  Instance.World 		);
+		float4	tangent		=	mul( float4(input.Tangent,0),  Instance.World 		);
+		float4	binormal	=	mul( float4(input.Binormal,0),  Instance.World 	);
 	#endif
 	#if SKINNED
 		float4 	sPos		=	TransformPosition	( input.BoneIndices, input.BoneWeights, input.Position	);
@@ -130,17 +131,17 @@ PSInput VSMain( VSInput input )
 		float4  sTangent	=	TransformNormal		( input.BoneIndices, input.BoneWeights, input.Tangent	);
 		float4  sBinormal	=	TransformNormal		( input.BoneIndices, input.BoneWeights, input.Binormal	);
 		
-		float4	wPos		=	mul( sPos, Batch.World 		);
-		float4	vPos		=	mul( wPos, Batch.View 		);
-		float4	pPos		=	mul( vPos, Batch.Projection );
-		float4	normal		=	mul( sNormal,  Batch.World 	);
-		float4	tangent		=	mul( sTangent,  Batch.World 	);
-		float4	binormal	=	mul( sBinormal,  Batch.World 	);
+		float4	wPos		=	mul( sPos, Instance.World 		);
+		float4	vPos		=	mul( wPos, Stage.View 		);
+		float4	pPos		=	mul( vPos, Stage.Projection );
+		float4	normal		=	mul( sNormal,  Instance.World 	);
+		float4	tangent		=	mul( sTangent,  Instance.World 	);
+		float4	binormal	=	mul( sBinormal,  Instance.World 	);
 	#endif
 	
 	output.Position 	= 	pPos;
 	output.ProjPos		=	pPos;
-	output.Color 		= 	Batch.Color;
+	output.Color 		= 	Instance.Color;
 	output.TexCoord		= 	input.TexCoord;
 	output.Normal		= 	normal.xyz;
 	output.Tangent 		=  	tangent.xyz;
@@ -238,7 +239,7 @@ GBuffer PSMain( PSInput input )
 	if (physPageTC.w>0) {
 		float2 	withinPageTC	=	vtexTC * VTVirtualPageCount / exp2(physPageTC.z);
 				withinPageTC	=	frac( withinPageTC );
-				withinPageTC	=	withinPageTC * Batch.VTPageScaleRCP;
+				withinPageTC	=	withinPageTC * Stage.VTPageScaleRCP;
 
 		float  halfTexel	=	0.5f / 4096.0f;
 				
@@ -273,7 +274,7 @@ GBuffer PSMain( PSInput input )
 	
 	float3 entityColor	=	input.Color.rgb;
 	
-	float3 lighting		=	ComputeClusteredLighting( input, ClusterTable, Batch.ViewBounds.xy, baseColor, worldNormal, roughness, metallic );
+	float3 lighting		=	ComputeClusteredLighting( input, ClusterTable, Stage.ViewBounds.xy, baseColor, worldNormal, roughness, metallic );
 	
 	output.hdr			=	float4( emission * entityColor + lighting, 0 );
 	output.feedback		=	feedback;
@@ -289,13 +290,13 @@ GBuffer PSMain( PSInput input )
 #ifdef SHADOW
 float4 PSMain( PSInput input ) : SV_TARGET0
 {
-	float z		= input.ProjPos.z / Batch.BiasSlopeFar.z;
+	float z		= input.ProjPos.z / Stage.BiasSlopeFar.z;
 
 	float dzdx	 = ddx(z);
 	float dzdy	 = ddy(z);
 	float slope = abs(dzdx) + abs(dzdy);
 
-	return z + Batch.BiasSlopeFar.x + slope * Batch.BiasSlopeFar.y;
+	return z + Stage.BiasSlopeFar.x + slope * Stage.BiasSlopeFar.y;
 }
 #endif
 

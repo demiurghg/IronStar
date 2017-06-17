@@ -7,19 +7,24 @@ static const int LightTypeSpotShadow = 3;
 static const int LightSpotShapeSquare = 65536;
 static const int LightSpotShapeRound = 131072;
 
-// Fusion.Engine.Graphics.SceneRenderer+BATCH
+// Fusion.Engine.Graphics.SceneRenderer+STAGE
 // Marshal.SizeOf = 320
-struct BATCH {
+struct STAGE {
 	float4x4   Projection;                    // offset:    0
 	float4x4   View;                          // offset:   64
-	float4x4   World;                         // offset:  128
-	float4     ViewPos;                       // offset:  192
-	float4     BiasSlopeFar;                  // offset:  208
-	float4     Color;                         // offset:  224
-	float4     Ambient;                       // offset:  240
-	float4     ViewBounds;                    // offset:  256
-	float      VTPageScaleRCP;                // offset:  272
-	int        AssignmentGroup;               // offset:  276
+	float4     ViewPos;                       // offset:  128
+	float4     BiasSlopeFar;                  // offset:  144
+	float4     Ambient;                       // offset:  160
+	float4     ViewBounds;                    // offset:  176
+	float      VTPageScaleRCP;                // offset:  192
+};
+
+// Fusion.Engine.Graphics.SceneRenderer+INSTANCE
+// Marshal.SizeOf = 96
+struct INSTANCE {
+	float4x4   World;                         // offset:    0
+	float4     Color;                         // offset:   64
+	int        AssignmentGroup;               // offset:   80
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+SUBSET

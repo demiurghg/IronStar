@@ -44,16 +44,22 @@ namespace Fusion.Engine.Graphics {
 
 		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential, Pack=4, Size=320)]
-		struct BATCH {
+		struct STAGE {
 			public Matrix	Projection		;
 			public Matrix	View			;
-			public Matrix	World			;
 			public Vector4	ViewPos			;
 			public Vector4	BiasSlopeFar	;
-			public Color4	Color			;
 			public Color4	Ambient			;
 			public Vector4	ViewBounds		;
 			public float	VTPageScaleRCP	;
+		}
+
+
+		[ShaderStructure]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=96)]
+		struct INSTANCE {
+			public Matrix	World	;
+			public Color4	Color	;
 			public int		AssignmentGroup	;
 		}
 

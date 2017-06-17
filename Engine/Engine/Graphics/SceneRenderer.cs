@@ -18,11 +18,16 @@ namespace Fusion.Engine.Graphics {
 
 		internal const int MaxBones = 128;
 
-		ConstantBuffer	constBuffer;
+		ConstantBuffer	constBufferStage;
+		ConstantBuffer	constBufferInstance;
 		ConstantBuffer	constBufferBones;
 		ConstantBuffer	constBufferSubset;
 		Ubershader		surfaceShader;
 		StateFactory	factory;
+
+		STAGE			cbDataStage		=	new STAGE();
+		INSTANCE		cbDataInstance	=	new INSTANCE();
+		SUBSET			cbDataSubset	=	new SUBSET();
 
 		/// <summary>
 		/// Gets pipeline state factory
@@ -52,7 +57,8 @@ namespace Fusion.Engine.Graphics {
 		{
 			LoadContent();
 
-			constBuffer			=	new ConstantBuffer( Game.GraphicsDevice, typeof(BATCH) );
+			constBufferStage	=	new ConstantBuffer( Game.GraphicsDevice, typeof(STAGE) );
+			constBufferInstance	=	new ConstantBuffer( Game.GraphicsDevice, typeof(INSTANCE) );
 			constBufferBones	=	new ConstantBuffer( Game.GraphicsDevice, typeof(Matrix), MaxBones );
 			constBufferSubset	=	new ConstantBuffer( Game.GraphicsDevice, typeof(SUBSET) );
 
@@ -96,9 +102,6 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		
-
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -106,12 +109,125 @@ namespace Fusion.Engine.Graphics {
 		protected override void Dispose ( bool disposing )
 		{
 			if (disposing) {
-				SafeDispose( ref constBuffer );
+				SafeDispose( ref constBufferStage );
+				SafeDispose( ref constBufferInstance );
 				SafeDispose( ref constBufferBones );
 				SafeDispose( ref constBufferSubset );
 			}
 
 			base.Dispose( disposing );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="view"></param>
+		/// <param name="proj"></param>
+		/// <param name="viewPos"></param>
+		/// <param name="vpWidth"></param>
+		/// <param name="vpHeight"></param>
+		public bool SetupStage ( StereoEye stereoEye, Camera camera, HdrFrame hdrFrame, ShadowContext shadowContext )
+		{
+			device.ResetStates();
+
+			//	setup stage constants :
+			if (camera!=null) {
+				var width	=	hdrFrame.HdrBuffer.Width;
+				var height	=	hdrFrame.HdrBuffer.Height;
+
+				cbDataStage.View			=	camera.GetViewMatrix( stereoEye );
+				cbDataStage.Projection		=	camera.GetProjectionMatrix( stereoEye );
+				cbDataStage.ViewPos			=	camera.GetCameraPosition4( stereoEye );
+				cbDataStage.Ambient			=	rs.RenderWorld.LightSet.AmbientLevel;
+				cbDataStage.ViewBounds		=	new Vector4( width, height, width, height );
+				cbDataStage.VTPageScaleRCP	=	rs.VTSystem.PageScaleRCP;
+			}
+
+			if (shadowContext!=null) {
+
+				var viewPos	= Matrix.Invert( shadowContext.ShadowView ).TranslationVector;
+
+				var width	=	shadowContext.ShadowViewport.Width;
+				var height	=	shadowContext.ShadowViewport.Height;
+
+				cbDataStage.View			=	shadowContext.ShadowView;
+				cbDataStage.Projection		=	shadowContext.ShadowProjection;
+				cbDataStage.ViewPos			=	new Vector4( viewPos, 1 );
+				cbDataStage.Ambient			=	Color4.Zero;
+				cbDataStage.ViewBounds		=	new Vector4( width, height, width, height );
+				cbDataStage.VTPageScaleRCP	=	rs.VTSystem.PageScaleRCP;
+				cbDataStage.BiasSlopeFar	=	new Vector4( shadowContext.DepthBias, shadowContext.SlopeBias, shadowContext.FarDistance, 0 );
+			}
+
+			constBufferStage.SetData( cbDataStage );
+
+			//	assign constant buffers :
+			device.PixelShaderConstants[0]	=	constBufferStage ;
+			device.VertexShaderConstants[0]	=	constBufferStage ;
+			device.PixelShaderConstants[1]	=	constBufferInstance ;
+			device.VertexShaderConstants[1]	=	constBufferInstance ;
+			device.PixelShaderConstants[2]	=	constBufferSubset;
+			device.VertexShaderConstants[2]	=	constBufferSubset;
+
+			//	setup shader resources :		
+			device.PixelShaderResources[0]	= rs.VTSystem.PageTable;
+			device.PixelShaderResources[1]	= rs.VTSystem.PhysicalPages0;
+			device.PixelShaderResources[2]	= rs.VTSystem.PhysicalPages1;
+			device.PixelShaderResources[3]	= rs.VTSystem.PhysicalPages2;
+			device.PixelShaderResources[4]	= rs.LightManager.LightGrid.GridTexture;
+			device.PixelShaderResources[5]	= rs.LightManager.LightGrid.IndexDataGpu;
+			device.PixelShaderResources[6]	= rs.LightManager.LightGrid.LightDataGpu;
+			device.PixelShaderResources[7]	= rs.LightManager.LightGrid.DecalDataGpu;
+			
+			if (shadowContext==null) {	  // because these maps are used as render targets for shadows
+				device.PixelShaderResources[8]	= rs.RenderWorld.LightSet?.DecalAtlas?.Texture?.Srv;
+				device.PixelShaderResources[9]	= rs.LightManager.ShadowMap.ColorBuffer;
+				device.PixelShaderResources[10]	= rs.LightManager.ShadowMap.ParticleShadow;
+			}
+
+			//	setup samplers :
+			device.PixelShaderSamplers[0]	= SamplerState.LinearPointClamp ;
+			device.PixelShaderSamplers[1]	= SamplerState.PointClamp;
+			device.PixelShaderSamplers[2]	= SamplerState.AnisotropicClamp;
+			device.PixelShaderSamplers[3]	= SamplerState.LinearClamp4Mips;
+			device.PixelShaderSamplers[4]	= SamplerState.ShadowSampler;
+			device.PixelShaderSamplers[5]	= SamplerState.LinearClamp;
+
+			if (surfaceShader==null || rs.SkipSceneRendering) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+
+
+
+		bool SetupInstance ( SurfaceFlags stageFlag, MeshInstance instance )
+		{
+			#warning New pipeline state semantic: bool StateFactory.TrySetPipelineState( flags )
+
+			int flag = (int)( stageFlag | SurfaceFlags.RIGID );
+
+			device.PipelineState	=	factory[ flag ];
+
+			cbDataInstance.AssignmentGroup	=	instance.Static ? 0 : 1;
+			cbDataInstance.Color	=	instance.Color;
+			cbDataInstance.World	=	instance.World;
+
+			constBufferInstance.SetData( cbDataInstance );
+
+			return true;
+		}
+
+
+
+		bool SetupSubset ( ref RectangleF rect )
+		{
+			cbDataSubset.Rectangle	=	new Vector4( rect.X, rect.Y, rect.Width, rect.Height );
+			constBufferSubset.SetData( cbDataSubset );
+			return true;
 		}
 
 
@@ -129,111 +245,33 @@ namespace Fusion.Engine.Graphics {
 		{		
 			using ( new PixEvent("RenderForward") ) {
 
-				if (surfaceShader==null) {	
-					return;
-				}
+				var instances			=	rw.Instances;
 
-				if (rs.SkipSceneRendering) {
-					return;
-				}
+				if ( SetupStage( stereoEye, camera, frame, null ) ) {
 
-				var device		=	Game.GraphicsDevice;
+					var hdr			=	frame.HdrBuffer.Surface;
+					var depth		=	frame.DepthBuffer.Surface;
+					var feedback	=	frame.FeedbackBuffer.Surface;
 
-				var view				=	camera.GetViewMatrix( stereoEye );
-				var projection			=	camera.GetProjectionMatrix( stereoEye );
-				var viewPosition		=	camera.GetCameraPosition4( stereoEye );
-				var weaponProjection	=	rw.WeaponCamera.GetProjectionMatrix( stereoEye );
-
-				var cbData			=	new BATCH();
-				var cbDataSubset	=	new SUBSET();
-
-				var hdr			=	frame.HdrBuffer.Surface;
-				var depth		=	frame.DepthBuffer.Surface;
-				var feedback	=	frame.FeedbackBuffer.Surface;
-
-				device.ResetStates();
-
-				device.SetTargets( depth, hdr, feedback );
-				device.PixelShaderSamplers[0]	= SamplerState.LinearPointClamp ;
-				device.PixelShaderSamplers[1]	= SamplerState.PointClamp;
-				device.PixelShaderSamplers[2]	= SamplerState.AnisotropicClamp;
-				device.PixelShaderSamplers[3]	= SamplerState.LinearClamp4Mips;
-				device.PixelShaderSamplers[4]	= SamplerState.ShadowSampler;
-				device.PixelShaderSamplers[5]	= SamplerState.LinearClamp;
-
-				var instances	=	rw.Instances;
-
-				if (instances.Any()) {
-					device.PixelShaderResources[0]	= rs.VTSystem.PageTable;
-					device.PixelShaderResources[1]	= rs.VTSystem.PhysicalPages0;
-					device.PixelShaderResources[2]	= rs.VTSystem.PhysicalPages1;
-					device.PixelShaderResources[3]	= rs.VTSystem.PhysicalPages2;
-					device.PixelShaderResources[4]	= rs.LightManager.LightGrid.GridTexture;
-					device.PixelShaderResources[5]	= rs.LightManager.LightGrid.IndexDataGpu;
-					device.PixelShaderResources[6]	= rs.LightManager.LightGrid.LightDataGpu;
-					device.PixelShaderResources[7]	= rs.LightManager.LightGrid.DecalDataGpu;
-					device.PixelShaderResources[8]	= rs.RenderWorld.LightSet?.DecalAtlas?.Texture?.Srv;
-					device.PixelShaderResources[9]	= rs.LightManager.ShadowMap.ColorBuffer;
-					device.PixelShaderResources[10]	= rs.LightManager.ShadowMap.ParticleShadow;
-				}
-
-				//#warning INSTANSING!
-				foreach ( var instance in instances ) {
-
-					if (!instance.Visible) {
-						continue;
-					}
-
-					if ( staticOnly && !instance.Static ) {
-						continue;
-					}
-
-					cbData.View				=	view;
-					cbData.Projection		=	instance.FPView ? weaponProjection : projection;
-					cbData.World			=	instance.World;
-					cbData.ViewPos			=	viewPosition;
-					cbData.Color			=	instance.Color;
-					cbData.Ambient			=	rw.LightSet.AmbientLevel;
-					cbData.ViewBounds		=	new Vector4( hdr.Width, hdr.Height, hdr.Width, hdr.Height );
-					cbData.VTPageScaleRCP	=	rs.VTSystem.PageScaleRCP;
-					cbData.AssignmentGroup	=	instance.Static ? 0 : 1;
-
-					constBuffer.SetData( cbData );
-
-					device.PixelShaderConstants[0]	=	constBuffer ;
-					device.VertexShaderConstants[0]	=	constBuffer ;
-					device.PixelShaderConstants[1]	=	constBufferSubset;
-
-					device.SetupVertexInput( instance.vb, instance.ib );
-
-					if (instance.IsSkinned) {
-						constBufferBones.SetData( instance.BoneTransforms );
-						device.VertexShaderConstants[3]	= constBufferBones ;
-					}
-
-					try {
-
-						device.PipelineState	=	factory[ (int)( SurfaceFlags.FORWARD | SurfaceFlags.RIGID ) ];
+					device.SetTargets( depth, hdr, feedback );
 
 
-						foreach ( var subset in instance.Subsets ) {
+					foreach ( var instance in instances ) {
 
-							var vt		=	rw.VirtualTexture;
-							var rect	=	vt.GetTexturePosition( subset.Name );
+						if ( SetupInstance( SurfaceFlags.FORWARD, instance ) ) {
 
-							cbDataSubset.Rectangle	=	new Vector4( rect.X, rect.Y, rect.Width, rect.Height );
+							device.SetupVertexInput( instance.vb, instance.ib );
 
-							constBufferSubset.SetData( cbDataSubset );
-							device.PixelShaderConstants[1]	=	constBufferSubset;
+							foreach ( var subset in instance.Subsets ) {
 
-							device.DrawIndexed( subset.PrimitiveCount*3, subset.StartPrimitive*3, 0 );
+								var vt		=	rw.VirtualTexture;
+								var rect	=	vt.GetTexturePosition( subset.Name );
+
+								if (SetupSubset( ref rect )) {
+									device.DrawIndexed( subset.PrimitiveCount*3, subset.StartPrimitive*3, 0 );
+								}
+							}
 						}
-
-						rs.Counters.SceneDIPs++;
-						
-					} catch ( UbershaderException e ) {
-						Log.Warning( e.Message );					
-						ExceptionDialog.Show( e );
 					}
 				}
 
@@ -251,8 +289,6 @@ namespace Fusion.Engine.Graphics {
 
 
 
-
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -266,103 +302,45 @@ namespace Fusion.Engine.Graphics {
 		{		
 			using ( new PixEvent("RenderZPass") ) {
 
-				if (surfaceShader==null) {	
-					return;
-				}
-
-				if (rs.SkipSceneRendering) {
-					return;
-				}
-
-				var device		=	Game.GraphicsDevice;
+				var instances			=	rw.Instances;
 
 				var view				=	camera.GetViewMatrix( stereoEye );
 				var projection			=	camera.GetProjectionMatrix( stereoEye );
+				var viewPosition		=	camera.GetCameraPosition( stereoEye );
 				var weaponProjection	=	rw.WeaponCamera.GetProjectionMatrix( stereoEye );
-				var viewPosition		=	camera.GetCameraPosition4( stereoEye );
+				var vpWidth				=	frame.HdrBuffer.Width;
+				var vpHeight			=	frame.HdrBuffer.Height;
 
-				var cbData			=	new BATCH();
-				var cbDataSubset	=	new SUBSET();
+				if ( SetupStage( stereoEye, camera, frame, null ) ) {
 
-				var hdr			=	frame.HdrBuffer.Surface;
-				var depth		=	frame.DepthBuffer.Surface;
-				var feedback	=	frame.FeedbackBuffer.Surface;
+					var hdr			=	frame.HdrBuffer.Surface;
+					var depth		=	frame.DepthBuffer.Surface;
+					var feedback	=	frame.FeedbackBuffer.Surface;
 
-				device.ResetStates();
+					#warning remove hdr and feedback targets
+					device.SetTargets( depth, hdr, feedback );
 
-				device.SetTargets( depth );
+					foreach ( var instance in instances ) {
 
-				var instances	=	rw.Instances;
+						if ( SetupInstance( SurfaceFlags.ZPASS, instance ) ) {
 
+							device.SetupVertexInput( instance.vb, instance.ib );
 
-				//#warning INSTANSING!
-				foreach ( var instance in instances ) {
+							foreach ( var subset in instance.Subsets ) {
 
-					if (!instance.Visible) {
-						continue;
-					}
+								var vt		=	rw.VirtualTexture;
+								var rect	=	vt.GetTexturePosition( subset.Name );
 
-					if ( staticOnly && !instance.Static ) {
-						continue;
-					}
-
-					cbData.View				=	view;
-					cbData.Projection		=	instance.FPView ? weaponProjection : projection;
-					cbData.World			=	instance.World;
-					cbData.ViewPos			=	viewPosition;
-					cbData.Color			=	instance.Color;
-					cbData.ViewBounds		=	new Vector4( hdr.Width, hdr.Height, hdr.Width, hdr.Height );
-					cbData.VTPageScaleRCP	=	rs.VTSystem.PageScaleRCP;
-					cbData.AssignmentGroup	=	instance.Static ? 0 : 1;
-
-					constBuffer.SetData( cbData );
-
-					device.PixelShaderConstants[0]	=	constBuffer ;
-					device.VertexShaderConstants[0]	=	constBuffer ;
-					device.PixelShaderConstants[1]	=	constBufferSubset;
-
-					device.SetupVertexInput( instance.vb, instance.ib );
-
-					if (instance.IsSkinned) {
-						constBufferBones.SetData( instance.BoneTransforms );
-						device.VertexShaderConstants[3]	= constBufferBones ;
-					}
-
-					try {
-
-						device.PipelineState	=	factory[ (int)( SurfaceFlags.ZPASS | SurfaceFlags.RIGID ) ];
-
-						foreach ( var subset in instance.Subsets ) {
-							device.DrawIndexed( subset.PrimitiveCount*3, subset.StartPrimitive*3, 0 );
+								if (SetupSubset( ref rect )) {
+									device.DrawIndexed( subset.PrimitiveCount*3, subset.StartPrimitive*3, 0 );
+								}
+							}
 						}
-
-						rs.Counters.SceneDIPs++;
-						
-					} catch ( UbershaderException e ) {
-						Log.Warning( e.Message );					
-						ExceptionDialog.Show( e );
 					}
 				}
 			}
 		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="material"></param>
-		/// <param name="flags"></param>
-		/// <returns></returns>
-		SurfaceFlags ApplyFlags ( MeshInstance instance, SurfaceFlags flags )
-		{
-			if (instance.IsSkinned) {
-				flags |= SurfaceFlags.SKINNED;
-			} else {
-				flags |= SurfaceFlags.RIGID;
-			}
-
-			return flags;
-		}
-
+		
 
 
 		/// <summary>
@@ -372,51 +350,21 @@ namespace Fusion.Engine.Graphics {
 		internal void RenderShadowMapCascade ( ShadowContext shadowRenderCtxt, IEnumerable<MeshInstance> instances )
 		{
 			using ( new PixEvent("ShadowMap") ) {
-				if (surfaceShader==null) {
-					return;
-				}
 
-				var device			= Game.GraphicsDevice;
+				if ( SetupStage( StereoEye.Mono, null, null, shadowRenderCtxt ) ) {
 
-				var cbData			= new BATCH();
+					device.SetTargets( shadowRenderCtxt.DepthBuffer, shadowRenderCtxt.ColorBuffer );
+					device.SetViewport( shadowRenderCtxt.ShadowViewport );
+				
+									//#warning INSTANSING!
+					foreach ( var instance in instances ) {
 
-				var viewPosition	= Matrix.Invert( shadowRenderCtxt.ShadowView ).TranslationVector;
+						if (SetupInstance(SurfaceFlags.SHADOW, instance)) {
 
-				device.SetTargets( shadowRenderCtxt.DepthBuffer, shadowRenderCtxt.ColorBuffer );
-				device.SetViewport( shadowRenderCtxt.ShadowViewport );
-
-				device.PixelShaderConstants[0]	=	constBuffer ;
-				device.VertexShaderConstants[0]	=	constBuffer ;
-				device.PixelShaderSamplers[0]	=	SamplerState.AnisotropicWrap ;
-				device.PixelShaderConstants[1]	=	constBufferSubset;
-
-				cbData.Projection	=	shadowRenderCtxt.ShadowProjection;
-				cbData.View			=	shadowRenderCtxt.ShadowView;
-				cbData.ViewPos		=	new Vector4( viewPosition, 1 );
-				cbData.BiasSlopeFar	=	new Vector4( shadowRenderCtxt.DepthBias, shadowRenderCtxt.SlopeBias, shadowRenderCtxt.FarDistance, 0 );
-
-				//#warning INSTANSING!
-				foreach ( var instance in instances ) {
-
-					if (!instance.Visible) {
-						continue;
+							device.SetupVertexInput( instance.vb, instance.ib );
+							device.DrawIndexed( instance.indexCount, 0, 0 );
+						}
 					}
-
-					device.PipelineState	=	factory[ (int)ApplyFlags( instance, SurfaceFlags.SHADOW ) ];
-					cbData.World			=	instance.World;
-					cbData.Color			=	instance.Color;
-
-					constBuffer.SetData( cbData );
-
-					if (instance.IsSkinned) {
-						constBufferBones.SetData( instance.BoneTransforms );
-						device.VertexShaderConstants[3]	= constBufferBones ;
-					}
-
-					device.SetupVertexInput( instance.vb, instance.ib );
-					device.DrawIndexed( instance.indexCount, 0, 0 );
-
-					rs.Counters.ShadowDIPs++;
 				}
 			}
 		}

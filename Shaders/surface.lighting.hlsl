@@ -25,7 +25,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	float3 	worldPos	= 	input.WorldPos.xyz;
 	float3 	normal 		=	worldNormal;
 	
-	float3	viewDir		=	Batch.ViewPos.xyz - worldPos.xyz;
+	float3	viewDir		=	Stage.ViewPos.xyz - worldPos.xyz;
 	float	viewDistance=	length( viewDir );
 	float3	viewDirN	=	normalize( viewDir );
 
@@ -52,7 +52,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		
 		float4 decalPos	=	mul(float4(worldPos,1), decalMatrixI);
 		
-		if ( abs(decalPos.x)<1 && abs(decalPos.y)<1 && abs(decalPos.z)<1 && Batch.AssignmentGroup==decal.AssignmentGroup ) {
+		if ( abs(decalPos.x)<1 && abs(decalPos.y)<1 && abs(decalPos.z)<1 && Instance.AssignmentGroup==decal.AssignmentGroup ) {
 		
 			//float2 uv			=	mad(mad(decalPos.xy, float2(-0.5,0.5), float2(0.5,0.5), offsetScale.zw, offsetScale.xy); 
 			float2 uv			=	mad(decalPos.xy, scaleOffset.xy, scaleOffset.zw); 
@@ -161,7 +161,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	//
 	//	Ambient
 	//
-	totalLight.rgb += (diffuse + specular).rgb * Batch.Ambient;
+	totalLight.rgb += (diffuse + specular).rgb * Stage.Ambient;
 	
 	return totalLight;
 }

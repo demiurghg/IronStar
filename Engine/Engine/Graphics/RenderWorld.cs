@@ -419,7 +419,7 @@ namespace Fusion.Engine.Graphics {
 				rs.LightManager.LightGrid.UpdateLightSetVisibility( stereoEye, Camera, LightSet );
 
 				//	allocated and render shadows :
-				rs.LightManager.ShadowMap.RenderShadowMaps( gameTime, rs, this, LightSet );
+				rs.LightManager.ShadowMap.RenderShadowMaps( gameTime, Camera, rs, this, LightSet );
 
 				//	clusterize light set :
 				rs.LightManager.LightGrid.ClusterizeLightSet( stereoEye, Camera, LightSet );

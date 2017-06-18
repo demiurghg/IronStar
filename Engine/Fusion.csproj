@@ -203,6 +203,7 @@
     <Compile Include="Engine\Graphics\Lights\Extents.cs" />
     <Compile Include="Engine\Graphics\Lights\LightGrid.cs" />
     <Compile Include="Engine\Graphics\Lights\LightStyle.cs" />
+    <Compile Include="Engine\Graphics\Lights\ShadowMap.Cascade.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowMap.cs" />
     <Compile Include="Engine\Graphics\Lights\CascadedShadowMap.cs" />
     <Compile Include="Engine\Graphics\Lights\Decal.cs" />

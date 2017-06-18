@@ -132,8 +132,17 @@ namespace Fusion.Engine.Graphics {
 		{
 			device.ResetStates();
 
+			cbDataStage.DirectLightDirection	=	new Vector4( rs.RenderWorld.LightSet.DirectLight.Direction, 0 );
+			cbDataStage.DirectLightIntensity	=	rs.RenderWorld.LightSet.DirectLight.Intensity;
+
+			cbDataStage.CascadeViewProjection0	=	rs.LightManager.ShadowMap.GetCascade( 0 ).ViewProjectionMatrix;
+			cbDataStage.CascadeViewProjection1	=	rs.LightManager.ShadowMap.GetCascade( 1 ).ViewProjectionMatrix;
+			cbDataStage.CascadeViewProjection2	=	rs.LightManager.ShadowMap.GetCascade( 2 ).ViewProjectionMatrix;
+			cbDataStage.CascadeViewProjection3	=	rs.LightManager.ShadowMap.GetCascade( 3 ).ViewProjectionMatrix;
+
 			//	setup stage constants :
 			if (camera!=null) {
+
 				var width	=	hdrFrame.HdrBuffer.Width;
 				var height	=	hdrFrame.HdrBuffer.Height;
 
@@ -147,14 +156,12 @@ namespace Fusion.Engine.Graphics {
 
 			if (shadowContext!=null) {
 
-				var viewPos	= Matrix.Invert( shadowContext.ShadowView ).TranslationVector;
-
 				var width	=	shadowContext.ShadowViewport.Width;
 				var height	=	shadowContext.ShadowViewport.Height;
 
 				cbDataStage.View			=	shadowContext.ShadowView;
 				cbDataStage.Projection		=	shadowContext.ShadowProjection;
-				cbDataStage.ViewPos			=	new Vector4( viewPos, 1 );
+				cbDataStage.ViewPos			=	Vector4.Zero;
 				cbDataStage.Ambient			=	Color4.Zero;
 				cbDataStage.ViewBounds		=	new Vector4( width, height, width, height );
 				cbDataStage.VTPageScaleRCP	=	rs.VTSystem.PageScaleRCP;

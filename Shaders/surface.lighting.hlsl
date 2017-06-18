@@ -82,6 +82,24 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 
 	//----------------------------------------------------------------------------------------------
 
+	// TODO: check each cluster against lowres cascade	to check completly obscured ones 
+	// It could be done in compute shader
+	// 1 bit cluster table in of extra data is required.
+	if (1) { 
+		float3	lightDir	=	Stage.DirectLightDirection.xyz;
+		float3	intensity	=	Stage.DirectLightIntensity.rgb;
+		float3	lightDirN	=	normalize(lightDir);
+	
+		float  nDotL		= 	max( 0, dot(normal, lightDirN) );
+		
+		float	shadow		=	1;
+		
+		totalLight.rgb 		+= 	shadow * Lambert ( normal.xyz,  lightDirN, intensity, diffuse );
+		totalLight.rgb 		+= 	shadow * nDotL * CookTorrance( normal.xyz, viewDirN, lightDirN, intensity, specular, roughness );
+	}
+	
+	//----------------------------------------------------------------------------------------------
+
 	[loop]
 	for (i=0; i<lightCount; i++) {
 		uint idx  	= LightIndexTable.Load( index + i );

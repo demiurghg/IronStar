@@ -2,8 +2,8 @@
 <Map xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Environment>
     <Gravity>16</Gravity>
-    <SkyTrubidity>2</SkyTrubidity>
-    <SunPosition X="1" Y="1" Z="1" />
+    <SkyTrubidity>8</SkyTrubidity>
+    <SunPosition X="1" Y="0.2" Z="1" />
     <SunIntensity>100</SunIntensity>
     <FogDensity>0.001</FogDensity>
     <CharacterHeight>2</CharacterHeight>

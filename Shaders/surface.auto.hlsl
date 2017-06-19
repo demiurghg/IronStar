@@ -8,7 +8,7 @@ static const int LightSpotShapeSquare = 65536;
 static const int LightSpotShapeRound = 131072;
 
 // Fusion.Engine.Graphics.SceneRenderer+STAGE
-// Marshal.SizeOf = 512
+// Marshal.SizeOf = 640
 struct STAGE {
 	float4x4   Projection;                    // offset:    0
 	float4x4   View;                          // offset:   64
@@ -16,13 +16,17 @@ struct STAGE {
 	float4x4   CascadeViewProjection1;        // offset:  192
 	float4x4   CascadeViewProjection2;        // offset:  256
 	float4x4   CascadeViewProjection3;        // offset:  320
-	float4     ViewPos;                       // offset:  384
-	float4     BiasSlopeFar;                  // offset:  400
-	float4     Ambient;                       // offset:  416
-	float4     ViewBounds;                    // offset:  432
-	float4     DirectLightDirection;          // offset:  448
-	float4     DirectLightIntensity;          // offset:  464
-	float      VTPageScaleRCP;                // offset:  480
+	float4     CascadeScaleOffset0;           // offset:  384
+	float4     CascadeScaleOffset1;           // offset:  400
+	float4     CascadeScaleOffset2;           // offset:  416
+	float4     CascadeScaleOffset3;           // offset:  432
+	float4     ViewPos;                       // offset:  448
+	float4     BiasSlopeFar;                  // offset:  464
+	float4     Ambient;                       // offset:  480
+	float4     ViewBounds;                    // offset:  496
+	float4     DirectLightDirection;          // offset:  512
+	float4     DirectLightIntensity;          // offset:  528
+	float      VTPageScaleRCP;                // offset:  544
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+INSTANCE

@@ -51,6 +51,12 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="gameTime"></param>
+		/// <param name="lightSet"></param>
 		public void Update ( GameTime gameTime, LightSet lightSet )
 		{
 			if (shadowMap.ShadowQuality!=rs.ShadowQuality) {

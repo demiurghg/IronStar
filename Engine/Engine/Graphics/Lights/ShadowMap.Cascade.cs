@@ -26,13 +26,13 @@ namespace Fusion.Engine.Graphics {
 				get { return 0; }
 			}
 			
-			public Matrix ViewMatrix { 
-				get; set; 
-			}	
+			public float SlopeBias;
+			
+			public float DepthBias;
+			
+			public Matrix ViewMatrix;
 
-			public Matrix ProjectionMatrix	{ 
-				get; set; 
-			}	
+			public Matrix ProjectionMatrix;
 
 			public Matrix ViewProjectionMatrix {
 				get {
@@ -40,13 +40,9 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 
-			public Rectangle ShadowRegion {
-				get; set;
-			}
+			public Rectangle ShadowRegion;
 
-			public Vector4 ShadowScaleOffset {
-				get; set;
-			}
+			public Vector4 ShadowScaleOffset;
 		}
 
 	}

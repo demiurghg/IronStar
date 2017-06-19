@@ -1,56 +1,4 @@
 
-/*
-**	ComputeSpotShadow
-**	Computes spot shadows
-*/
-float3	ComputeSpotShadow ( 
-	float4 worldPos, 
-	SPOTLIGHT spot, 
-	SamplerComparisonState shadowSampler, 
-	SamplerState linearSampler, 
-	Texture2D spotShadowMap, 
-	Texture2D spotShadowMask, 
-	float filterRadius )
-{
-	float4	projPos	=	mul( worldPos, spot.ViewProjection );
-	projPos.xyw /= projPos.w;
-	
-	if ( abs(projPos.x)>1 || abs(projPos.y)>1 ) {
-		return float3(0,0,0);
-	}
-	
-	float2	smSize;
-	spotShadowMap.GetDimensions( smSize.x, smSize.y );
-	
-	float4  maskSO		=	spot.MaskScaleOffset;
-	float4  shadowSO	=	spot.ShadowScaleOffset;
-	
-	float2	offset	=	1 / smSize;
-	float2	smUV	=	projPos.xy * shadowSO.xy + shadowSO.zw;
-	float  	z  		= 	projPos.z / spot.IntensityFar.w;
-	float  	shadow	=	0;
-	
-	float radius = filterRadius;
-	
-	float3 mask	=	spotShadowMask.SampleLevel( linearSampler, projPos.xy * maskSO.xy + maskSO.zw, z ).rgb;
-	
-	#ifdef PARTICLES
-		shadow  = spotShadowMap.SampleCmpLevelZero( shadowSampler, smUV, z );
-	#else
-		for (int i=-1; i<2; i++) {
-			for (int j=-1; j<2; j++) {
-				float  x   = i/1.0f;
-				float  y   = j/1.0f;
-				float  sh  = spotShadowMap.SampleCmpLevelZero( shadowSampler, smUV + offset * radius * float2(x,y), z );
-				shadow += sh / 9;
-			}
-		}
-	#endif
-
-	return shadow * mask;
-}
-
-
 static float2 poisonDisk[16] = {
 	float2( 0.6471434f,  0.5442180f),
 	float2( 0.6627925f, -0.0145980f),
@@ -71,132 +19,81 @@ static float2 poisonDisk[16] = {
 	float2(-0.4085272f, -0.8579809f)
 };
 
-float3	ComputeCSM ( float4 worldPos, LightingParams params, SamplerComparisonState shadowSampler, SamplerState linearSampler, Texture2D csmTexture, Texture2D particleShadow, bool useFilter )
+
+float ProjectShadow ( float3 worldPos, float4x4 viewProjection, out float4 projection )
+{	
+	float4 temp = 	mul( float4(worldPos,1), viewProjection );
+	temp.xy 	/= 	temp.w;
+	temp.w   	= 	1;
+	
+	projection	=	temp;
+
+	return max(abs(temp.x), abs(temp.y));
+}
+
+
+float3	ComputeCSM ( 
+	float3 worldPos, 
+	STAGE stage, 
+	SamplerComparisonState shadowSampler, 
+	SamplerState linearSampler, 
+	Texture2D csmTexture, 
+	Texture2D particleShadow, 
+	bool useFilter )
 {
-	float3	colorizer		= float3(1,1,1);
-	float	shadowId	= -1;
-	float4	smProj;
-	float4 	smProj2;
+	float4	projection;
+	float4	bestProjection;
+	float4	bestScaleOffset;
 
 	//	select cascade :
-	smProj	   =  mul( worldPos, params.CSMViewProjection3 );
-	smProj.xy /=  smProj.w;	smProj.w   =  1;
-	if (abs(smProj.x)<0.99 && abs(smProj.y)<0.99 && params.CascadeCount>3) { colorizer = float3(0,0,4); shadowId = 3; smProj2 = smProj; }
-
-	smProj	   =  mul( worldPos, params.CSMViewProjection2 );
-	smProj.xy /=  smProj.w;	smProj.w   =  1;
-	if (abs(smProj.x)<0.99 && abs(smProj.y)<0.99 && params.CascadeCount>2) { colorizer = float3(0,2,0); shadowId = 2; smProj2 = smProj; }
+	if ( ProjectShadow( worldPos, stage.CascadeViewProjection3, projection ) < 0.99 ) {
+		bestProjection 	= projection;
+		bestScaleOffset	= stage.CascadeScaleOffset3;
+	}
 	
-	smProj	   =  mul( worldPos, params.CSMViewProjection1 );
-	smProj.xy /=  smProj.w;	smProj.w   =  1;
-	if (abs(smProj.x)<0.99 && abs(smProj.y)<0.99 && params.CascadeCount>1) { colorizer = float3(2,0,0); shadowId = 1; smProj2 = smProj; }
-
-	smProj	   =  mul( worldPos, params.CSMViewProjection0 );
-	smProj.xy /=  smProj.w;	smProj.w   =  1;
-	if (abs(smProj.x)<0.99 && abs(smProj.y)<0.99 && params.CascadeCount>0) { colorizer = float3(1,1,1); shadowId = 0; smProj2 = smProj; }
+	if ( ProjectShadow( worldPos, stage.CascadeViewProjection2, projection ) < 0.99 ) {
+		bestProjection 	= projection;
+		bestScaleOffset	= stage.CascadeScaleOffset2;
+	}
+	
+	if ( ProjectShadow( worldPos, stage.CascadeViewProjection1, projection ) < 0.99 ) {
+		bestProjection 	= projection;
+		bestScaleOffset	= stage.CascadeScaleOffset1;
+	}
+	
+	if ( ProjectShadow( worldPos, stage.CascadeViewProjection0, projection ) < 0.99 ) {
+		bestProjection 	= projection;
+		bestScaleOffset	= stage.CascadeScaleOffset0;
+	}
 
 	//	compute UVs 
 	float2	csmSize;
+	float2	csmSizeRcp;
 	csmTexture.GetDimensions( csmSize.x, csmSize.y );
 	
-	float2	offset	=	1 / csmSize;
-	float2	smUV	=	0.5 * (float2(1, -1) * smProj2.xy + float2(1, 1));
-	float2	smUVprt	=	0.5 * (float2(1, -1) * smProj2.xy + float2(1, 1));
-			smUV	=	smUV * float2(params.CascadeScale,1) + float2( shadowId*params.CascadeScale, 0 );
+	csmSizeRcp.xy	=	1 / csmSize.xy;
+
+	float2	uv		=	mad( projection.xy, bestScaleOffset.xy, bestScaleOffset.zw );
+	float   z  		= 	projection.z;
+	float3	shadow	=	0;
 	
-	float   z  		= 	smProj2.z;
-	float3  shadow	=	0;
-	
-	float radius = params.CSMFilterRadius.x;
+	// Poisson disk radius for 16 taps.
+	float radius = 2.257f; 
 	
 	if (useFilter) {
 		for (int i=0; i<16; i++) {
 			float  x   = poisonDisk[i].x;
 			float  y   = poisonDisk[i].y;
-			float  sh  = csmTexture.SampleCmpLevelZero( shadowSampler, smUV + offset * radius * float2(x,y), z );
+			float  sh  = csmTexture.SampleCmpLevelZero( shadowSampler, uv + csmSizeRcp * radius * float2(x,y), z );
 			shadow += sh / 16;
 		}
 
-		shadow *= particleShadow.SampleLevel( linearSampler, smUV, 0 ).rgb;
+		shadow *= particleShadow.SampleLevel( linearSampler, uv, 0 ).rgb;
 		
 	} else {
-		shadow = csmTexture.SampleCmpLevelZero( shadowSampler, smUV, z );
+		shadow = csmTexture.SampleCmpLevelZero( shadowSampler, uv, z );
 	}
 	
-	if ( shadowId==-1 ) {
-		shadow = 1;
-	}
-	
-	
-
-	#if 0
-		return shadow * colorizer;
-	#else
-		return shadow;
-	#endif
-}
-
-
-
-float3 ComputeParticleShadow ( float4 worldPos, LightingParams params, SamplerState shadowSampler, Texture2D particleShadow )
-{
-	float4	smProj;
-
-	//	select cascade :
-	smProj	   =  mul( worldPos, params.CSMViewProjection1 );
-
-	//	compute UVs :
-	float2	csmSize;
-	particleShadow.GetDimensions( csmSize.x, csmSize.y );
-	
-	float2	offset	=	1 / csmSize;
-	float2	smUV	=	0.5f * (float2(1, -1) * smProj.xy + float2(1, 1));
-			smUV	=	smUV * float2(0.25,1) + float2( 1.0f/4, 0 );
-	
-	float3  shadow	=	1;
-	
-	shadow	*=	particleShadow.SampleLevel( shadowSampler, smUV, 0 ).rgb;
-
 	return shadow;
 }
-
-
-
-float3 ComputeSkyOcclusion ( float4 worldPos, float3 normal, SamplerComparisonState shadowSampler, Texture2D skyOcclusionTexture, float4x4 skyOccMatricies[64] )
-{
-	float shadow = 0;
-
-	float2	csmSize;
-	skyOcclusionTexture.GetDimensions( csmSize.x, csmSize.y );
-	
-	for (int i=0; i<64; i++) {
-		
-		float3 randDirection;
-				randDirection.x	=	(i/8)-3.5f;
-				randDirection.z	=	(i%8)-3.5f;
-				randDirection.y =	4;
-				
-		randDirection = normalize(randDirection);
-		float nDotL = saturate(dot( normalize(normal), randDirection ));
-
-		float4x4	viewProj	=	skyOccMatricies[i];
-		float4		smProj		=	mul( worldPos, viewProj );
-		
-		float dx	=	i % 8;
-		float dy	=	i / 8;
-
-		smProj.xy /=  smProj.w;	
-		smProj.w   =  1;
-
-		float	z		=	smProj.z;
-		float2	smUV	=	0.5 * (float2(1, -1) * smProj.xy + float2(1, 1));
-				smUV	=	smUV * float2(0.125,0.128) + float2( dx/8.0f, dy/8.0f );
-		
-		float  sh  = nDotL * skyOcclusionTexture.SampleCmpLevelZero( shadowSampler, smUV, z );
-		shadow += sh / 64;
-	}
-
-	return shadow;
-}
-
 

@@ -149,7 +149,7 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		public Vector4 GetScaleOffset ( Rectangle rect )
+		Vector4 GetScaleOffset ( Rectangle rect )
 		{
 			float size = shadowMapSize;
 			float ax = rect.Width  / size;
@@ -298,6 +298,7 @@ namespace Fusion.Engine.Graphics {
 			#warning Configurate or compute values!
 			ComputeMatricies( camera, lightSet, 12, 4, 2.5f, 512 );
 
+
 			//
 			//	Render shadow maps regions :
 			//
@@ -307,6 +308,25 @@ namespace Fusion.Engine.Graphics {
 
 				device.Clear( depthBuffer.Surface, 1, 0 );
 				device.Clear( colorBuffer.Surface, Color4.White );
+
+				foreach ( var cascade in cascades ) {
+
+					var context = new ShadowContext();
+					var far		= 1;
+
+					var vp		= new Viewport( cascade.ShadowRegion );
+
+					context.ShadowView			=	cascade.ViewMatrix;
+					context.ShadowProjection	=	cascade.ProjectionMatrix;
+					context.ShadowViewport		=	vp;
+					context.FarDistance			=	far;
+					context.SlopeBias			=	cascade.SlopeBias;
+					context.DepthBias			=	cascade.DepthBias;
+					context.ColorBuffer			=	colorBuffer.Surface;
+					context.DepthBuffer			=	depthBuffer.Surface;
+
+					rs.SceneRenderer.RenderShadowMapCascade( context, instances );
+				}
 
 				foreach ( var spot in lights ) {
 
@@ -329,9 +349,24 @@ namespace Fusion.Engine.Graphics {
 			}
 
 
+			//
+			//	Particle shadow rendering 
+			//
+			#warning Add shadow mask (from atlas)
 			using ( new PixEvent( "Particle Shadows" ) ) {
 
 				device.Clear( prtShadow.Surface, Color4.White );
+
+				foreach ( var cascade in cascades ) {
+
+					var context = new ShadowContext();
+					var far		= cascade.ProjectionMatrix.GetFarPlaneDistance();
+
+					var vp		= new Viewport( cascade.ShadowRegion );
+
+					rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, cascade.ViewMatrix, cascade.ProjectionMatrix, prtShadow.Surface, depthBuffer.Surface );
+				}
+
 
 				foreach ( var spot in lights ) {
 

@@ -260,7 +260,10 @@ namespace Fusion.Engine.Graphics {
 
 
 				cascades[i].ViewMatrix			=	view;
-				cascades[i].ProjectionMatrix	=	projection;
+				cascades[i].ProjectionMatrix	=	projection;	  
+				cascades[i].DepthBias			=	0.0001f;
+				cascades[i].SlopeBias			=	2;
+
 			}
 		}
 
@@ -296,7 +299,7 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			#warning Configurate or compute values!
-			ComputeMatricies( camera, lightSet, 12, 4, 2.5f, 512 );
+			ComputeMatricies( camera, lightSet, 4, 0, 2.5f, 512 );
 
 
 			//

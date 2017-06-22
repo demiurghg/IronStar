@@ -19,6 +19,13 @@ static float2 poisonDisk[16] = {
 	float2(-0.4085272f, -0.8579809f)
 };
 
+static const float dither[4][4] = {{1,9,3,11},{13,5,15,7},{4,12,2,10},{16,8,14,16}};
+
+float Dither ( int xpos, int ypos )
+{
+	return dither[xpos%4][ypos%4]/16.0f;
+}
+
 
 float ProjectShadow ( float3 worldPos, float4x4 viewProjection, out float4 projection )
 {	
@@ -33,6 +40,7 @@ float ProjectShadow ( float3 worldPos, float4x4 viewProjection, out float4 proje
 
 
 float3	ComputeCSM ( 
+	float2 vpos,
 	float3 worldPos, 
 	STAGE stage, 
 	SamplerComparisonState shadowSampler, 
@@ -41,29 +49,41 @@ float3	ComputeCSM (
 	Texture2D particleShadow, 
 	bool useFilter )
 {
-	float4	projection;
-	float4	bestProjection;
-	float4	bestScaleOffset;
+	float4	projection		= float4(0,0,0,0);
+	float4	bestProjection 	= float4(0,0,0,0);
+	float4	bestScaleOffset = float4(0,0,0,0);
+	float4 	colorize   		= float4(1,0,2,1);
+	float 	radius			= 1;
+	
+	float	bias			= 0.90 + Dither( vpos.x, vpos.y ) / 20.0f;
 
 	//	select cascade :
-	if ( ProjectShadow( worldPos, stage.CascadeViewProjection3, projection ) < 0.99 ) {
+	if ( ProjectShadow( worldPos, stage.CascadeViewProjection3, projection ) < bias ) {
 		bestProjection 	= projection;
 		bestScaleOffset	= stage.CascadeScaleOffset3;
+		colorize		= float4(0,0,1,1);
+		radius 			= 1/pow(2.5,3);
 	}
 	
-	if ( ProjectShadow( worldPos, stage.CascadeViewProjection2, projection ) < 0.99 ) {
+	if ( ProjectShadow( worldPos, stage.CascadeViewProjection2, projection ) < bias ) {
 		bestProjection 	= projection;
 		bestScaleOffset	= stage.CascadeScaleOffset2;
+		colorize		= float4(0,1,0,1);
+		radius 			= 1/pow(2.5,2);
 	}
 	
-	if ( ProjectShadow( worldPos, stage.CascadeViewProjection1, projection ) < 0.99 ) {
+	if ( ProjectShadow( worldPos, stage.CascadeViewProjection1, projection ) < bias ) {
 		bestProjection 	= projection;
 		bestScaleOffset	= stage.CascadeScaleOffset1;
+		colorize		= float4(1,0,0,1);
+		radius 			= 1/pow(2.5,1);
 	}
 	
-	if ( ProjectShadow( worldPos, stage.CascadeViewProjection0, projection ) < 0.99 ) {
+	if ( ProjectShadow( worldPos, stage.CascadeViewProjection0, projection ) < bias ) {
 		bestProjection 	= projection;
 		bestScaleOffset	= stage.CascadeScaleOffset0;
+		colorize		= float4(1,1,1,1);
+		radius 			= 1/pow(2.5,0);
 	}
 
 	//	compute UVs 
@@ -73,12 +93,12 @@ float3	ComputeCSM (
 	
 	csmSizeRcp.xy	=	1 / csmSize.xy;
 
-	float2	uv		=	mad( projection.xy, bestScaleOffset.xy, bestScaleOffset.zw );
+	float2	uv		=	mad( bestProjection.xy, bestScaleOffset.xy, bestScaleOffset.zw );
 	float   z  		= 	projection.z;
 	float3	shadow	=	0;
 	
 	// Poisson disk radius for 16 taps.
-	float radius = 2.257f; 
+	radius *= (2.257f*2); 
 	
 	if (useFilter) {
 		for (int i=0; i<16; i++) {
@@ -93,7 +113,7 @@ float3	ComputeCSM (
 	} else {
 		shadow = csmTexture.SampleCmpLevelZero( shadowSampler, uv, z );
 	}
-	
-	return shadow;
+	//shadow = 1;
+	return shadow;// * lerp(colorize, float3(1,1,1), 0.7f);
 }
 

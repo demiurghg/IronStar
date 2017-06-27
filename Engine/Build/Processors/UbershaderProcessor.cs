@@ -178,6 +178,7 @@ namespace Fusion.Build.Processors {
 				var ds = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "ds_5_0", DSEntryPoint, defines, dsbc, dshtm );
 				var cs = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "cs_5_0", CSEntryPoint, defines, csbc, cshtm );
 				
+				Log.Message("    {0}", defines );
 
 				htmlBuilder.AppendFormat( (vs.Length==0) ? ".. " : "<a href=\"{0}\">vs</a> ",	Path.GetFileName(vshtm) );
 				htmlBuilder.AppendFormat( (ps.Length==0) ? ".. " : "<a href=\"{0}\">ps</a> ",	Path.GetFileName(pshtm) );
@@ -250,6 +251,8 @@ namespace Fusion.Build.Processors {
 
 		class IncludeHandler : FX.Include {
 
+			object lockObj = new object();
+
 			public readonly HashSet<string> Includes = new HashSet<string>();
 
 			readonly BuildContext buildContext;
@@ -262,11 +265,13 @@ namespace Fusion.Build.Processors {
 
 			public Stream Open( IncludeType type, string fileName, Stream parentStream )
 			{
-				Log.Debug("...include: {0}", fileName);
-				if (!Includes.Contains(fileName)) {
-					Includes.Add(fileName);
+				lock (lockObj) {
+					Log.Debug("...include: {0}", fileName);
+					if (!Includes.Contains(fileName)) {
+						Includes.Add(fileName);
+					}
+					return File.OpenRead( buildContext.ResolveContentPath( fileName ) );
 				}
-				return File.OpenRead( buildContext.ResolveContentPath( fileName ) );
 			}
 
 

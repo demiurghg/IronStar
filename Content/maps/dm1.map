@@ -3,7 +3,7 @@
   <Environment>
     <Gravity>16</Gravity>
     <SkyTrubidity>8</SkyTrubidity>
-    <SunPosition X="2" Y="3" Z="1" />
+    <SunPosition X="2" Y="0.5" Z="1" />
     <SunIntensity>10</SunIntensity>
     <FogDensity>0.001</FogDensity>
     <CharacterHeight>2</CharacterHeight>
@@ -152,8 +152,8 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="0.125" Y="2.25" Z="-1.375" />
-      <Rotation X="-0.000771306455" Y="-0.0666432" Z="-0.000385788269" W="0.997776568" />
+      <Position X="0.125" Y="3.5" Z="-2.125" />
+      <Rotation X="-0.259072959" Y="0.06190369" Z="-0.0168787949" W="0.963724256" />
       <Scaling>1</Scaling>
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>
@@ -432,7 +432,7 @@
     <MapNode xsi:type="MapSpotLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="0.5" Y="8.625" Z="-76.375" />
+      <Position X="0.5" Y="8.625" Z="8.375" />
       <Rotation X="-0.258819044" Y="0" Z="0" W="0.9659258" />
       <Scaling>1</Scaling>
       <Intensity>50</Intensity>
@@ -492,26 +492,6 @@
     <MapNode xsi:type="MapSpotLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="0.75" Y="8" Z="-73.25" />
-      <Rotation X="0.183012664" Y="-0.6830128" Z="-0.183012724" W="-0.683012545" />
-      <Scaling>1</Scaling>
-      <Intensity>50</Intensity>
-      <Radius>25</Radius>
-      <NearPlane>0.125</NearPlane>
-      <FarPlane>20</FarPlane>
-      <FovVertical>60</FovVertical>
-      <FovHorizontal>60</FovHorizontal>
-      <SpotShape>Square</SpotShape>
-      <LodBias>0</LodBias>
-      <PenumbraAngle>10</PenumbraAngle>
-      <LightPreset>FluorescentTubular</LightPreset>
-      <LightStyle>Default</LightStyle>
-      <DepthBias>0.0009765625</DepthBias>
-      <SlopeBias>2</SlopeBias>
-    </MapNode>
-    <MapNode xsi:type="MapSpotLight">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
       <Position X="65.75" Y="20" Z="-0.375" />
       <Rotation X="-0.5" Y="0.49999997" Z="0.49999997" W="0.499999851" />
       <Scaling>1</Scaling>
@@ -541,26 +521,6 @@
       <FarPlane>20</FarPlane>
       <FovVertical>60</FovVertical>
       <FovHorizontal>60</FovHorizontal>
-      <SpotShape>Square</SpotShape>
-      <LodBias>0</LodBias>
-      <PenumbraAngle>10</PenumbraAngle>
-      <LightPreset>FluorescentTubular</LightPreset>
-      <LightStyle>Default</LightStyle>
-      <DepthBias>0.0009765625</DepthBias>
-      <SlopeBias>2</SlopeBias>
-    </MapNode>
-    <MapNode xsi:type="MapSpotLight">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-15" Y="12" Z="-72.25" />
-      <Rotation X="-0.258819044" Y="0" Z="0" W="0.9659258" />
-      <Scaling>1</Scaling>
-      <Intensity>50</Intensity>
-      <Radius>25</Radius>
-      <NearPlane>0.125</NearPlane>
-      <FarPlane>20</FarPlane>
-      <FovVertical>45</FovVertical>
-      <FovHorizontal>45</FovHorizontal>
       <SpotShape>Square</SpotShape>
       <LodBias>0</LodBias>
       <PenumbraAngle>10</PenumbraAngle>

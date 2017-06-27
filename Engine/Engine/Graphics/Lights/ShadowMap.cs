@@ -226,7 +226,7 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		void ComputeMatricies ( Camera camera, LightSet lightSet, float splitSize, float splitOffset, float splitFactor, float projDepth )
+		void ComputeCascadeMatricies ( Camera camera, LightSet lightSet, float splitSize, float splitOffset, float splitFactor, float projDepth )
 		{
 			var camMatrix	=	camera.GetCameraMatrix( StereoEye.Mono );
 			var viewPos		=	camera.GetCameraPosition( StereoEye.Mono );
@@ -249,10 +249,10 @@ namespace Fusion.Engine.Graphics {
 				Matrix	lightRot	=	Matrix.LookAtRH( Vector3.Zero, Vector3.Zero + lightDir, Vector3.UnitY );
 				Matrix	lightRotI	=	Matrix.Invert( lightRot );
 				Vector3	lsOrigin	=	Vector3.TransformCoordinate( origin, lightRot );
-				float	snapValue	=	4.0f * radius / smSize;
+				float	snapValue	=	4 * radius / smSize;
 				lsOrigin.X			=	(float)Math.Round(lsOrigin.X / snapValue) * snapValue;
 				lsOrigin.Y			=	(float)Math.Round(lsOrigin.Y / snapValue) * snapValue;
-				lsOrigin.Z			=	(float)Math.Round(lsOrigin.Z / snapValue) * snapValue;
+				//lsOrigin.Z			=	(float)Math.Round(lsOrigin.Z / snapValue) * snapValue;
 				origin				=	Vector3.TransformCoordinate( lsOrigin, lightRotI );//*/
 
 				var view			=	Matrix.LookAtRH( origin, origin + lightDir, Vector3.UnitY );
@@ -299,7 +299,7 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			#warning Configurate or compute values!
-			ComputeMatricies( camera, lightSet, 4, 0, 2.5f, 512 );
+			ComputeCascadeMatricies( camera, lightSet, 4, 0, 2.5f, 512 );
 
 
 			//

@@ -41,6 +41,7 @@ float ProjectShadow ( float3 worldPos, float4x4 viewProjection, out float4 proje
 
 float3	ComputeCSM ( 
 	float2 vpos,
+	float3 normal,
 	float3 worldPos, 
 	STAGE stage, 
 	SamplerComparisonState shadowSampler, 
@@ -55,7 +56,9 @@ float3	ComputeCSM (
 	float4 	colorize   		= float4(1,0,2,1);
 	float 	radius			= 1;
 	
-	float	bias			= 0.90 + Dither( vpos.x, vpos.y ) / 20.0f;
+	float	bias			= 0.90 + Dither( vpos.x, vpos.y ) / 32.0f;
+	
+	worldPos += normal * 0.2f;
 
 	//	select cascade :
 	if ( ProjectShadow( worldPos, stage.CascadeViewProjection3, projection ) < bias ) {
@@ -98,15 +101,19 @@ float3	ComputeCSM (
 	float3	shadow	=	0;
 	
 	// Poisson disk radius for 16 taps.
-	radius *= (2.257f*2); 
+	radius *= 1; 
 	
-	if (useFilter) {
-		for (int i=0; i<16; i++) {
-			float  x   = poisonDisk[i].x;
-			float  y   = poisonDisk[i].y;
-			float  sh  = csmTexture.SampleCmpLevelZero( shadowSampler, uv + csmSizeRcp * radius * float2(x,y), z );
-			shadow += sh / 16;
+	if (true) {
+		for( float row = -2; row <= 2; row += 1 ) {
+			[unroll]for( float col = -2; col <= 2; col += 1 ) {
+				float 	x	=	row;
+				float	y	=	col;
+				float	sh	=	csmTexture.SampleCmpLevelZero( shadowSampler, uv + csmSizeRcp * float2(x,y), z ).r;
+				shadow		+=	sh;
+			}
 		}
+		
+		shadow /= 25;
 
 		shadow *= particleShadow.SampleLevel( linearSampler, uv, 0 ).rgb;
 		

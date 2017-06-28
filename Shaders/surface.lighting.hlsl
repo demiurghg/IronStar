@@ -89,11 +89,12 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	if (1) { 
 	
 		float2	vpos		=	input.Position.xy;
-		float3	shadow		=	ComputeCSM( vpos, geometryNormal, worldPos, Stage, ShadowSampler, ParticleSampler, ShadowMap, ShadowMapParticles, true ); 
 	
 		float3	lightDir	=	-Stage.DirectLightDirection.xyz;
 		float3	intensity	=	Stage.DirectLightIntensity.rgb;
 		float3	lightDirN	=	normalize(lightDir);
+
+		float3	shadow		=	ComputeCSM( vpos, geometryNormal, lightDirN, worldPos, Stage, ShadowSampler, ParticleSampler, ShadowMap, ShadowMapParticles, true ); 
 	
 		float  nDotL		= 	max( 0, dot(normal, lightDirN) );
 		

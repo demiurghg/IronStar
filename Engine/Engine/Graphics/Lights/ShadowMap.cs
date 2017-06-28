@@ -243,6 +243,11 @@ namespace Fusion.Engine.Graphics {
 				float	offset		=	splitOffset * (float)Math.Pow( splitFactor, i );
 				float	radius		=	splitSize   * (float)Math.Pow( splitFactor, i );
 
+				if (i==3) {
+					offset	=	0;
+					radius	=	512;
+				}
+
 				Vector3 viewDir		=	camMatrix.Forward.Normalized();
 				Vector3	origin		=	viewPos + viewDir * offset;
 
@@ -261,8 +266,8 @@ namespace Fusion.Engine.Graphics {
 
 				cascades[i].ViewMatrix			=	view;
 				cascades[i].ProjectionMatrix	=	projection;	  
-				cascades[i].DepthBias			=	0.0001f;
-				cascades[i].SlopeBias			=	2;
+				cascades[i].DepthBias			=	0*0.0001f;
+				cascades[i].SlopeBias			=	0*2;
 
 			}
 		}

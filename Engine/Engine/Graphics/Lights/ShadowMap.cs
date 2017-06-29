@@ -17,6 +17,7 @@ namespace Fusion.Engine.Graphics {
 	partial class ShadowMap : DisposableBase {
 
 		readonly GraphicsDevice device;
+		readonly RenderSystem rs;
 		public const int MaxShadowmapSize	= 8192;
 		public const int MaxCascades		= 4;
 		public readonly QualityLevel ShadowQuality; 
@@ -79,6 +80,7 @@ namespace Fusion.Engine.Graphics {
 		{
 			this.ShadowQuality	=	shadowQuality;
 			this.device			=	rs.Device;
+			this.rs				=	rs;
 
 			switch ( shadowQuality ) {
 				case QualityLevel.None:		shadowMapSize	=	1024; break;
@@ -235,6 +237,7 @@ namespace Fusion.Engine.Graphics {
 
 			lightDir.Normalize();
 
+			var slopes = new[] { rs.CSMSlope0, rs.CSMSlope1, rs.CSMSlope2, rs.CSMSlope3 };
 
 			for ( int i = 0; i<cascades.Length; i++ ) {
 
@@ -242,11 +245,6 @@ namespace Fusion.Engine.Graphics {
 
 				float	offset		=	splitOffset * (float)Math.Pow( splitFactor, i );
 				float	radius		=	splitSize   * (float)Math.Pow( splitFactor, i );
-
-				if (i==3) {
-					offset	=	0;
-					radius	=	512;
-				}
 
 				Vector3 viewDir		=	camMatrix.Forward.Normalized();
 				Vector3	origin		=	viewPos + viewDir * offset;
@@ -267,7 +265,7 @@ namespace Fusion.Engine.Graphics {
 				cascades[i].ViewMatrix			=	view;
 				cascades[i].ProjectionMatrix	=	projection;	  
 				cascades[i].DepthBias			=	0*0.0001f;
-				cascades[i].SlopeBias			=	0*2;
+				cascades[i].SlopeBias			=	slopes[i];
 
 			}
 		}
@@ -304,7 +302,7 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			#warning Configurate or compute values!
-			ComputeCascadeMatricies( camera, lightSet, 4, 0, 2.5f, 512 );
+			ComputeCascadeMatricies( camera, lightSet, 4, 0, 3, 512 );
 
 
 			//

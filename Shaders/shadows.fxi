@@ -35,7 +35,7 @@ float ProjectShadow ( float3 worldPos, float4x4 viewProjection, out float4 proje
 	
 	projection	=	temp;
 	
-	return	max(abs(temp.x), abs(temp.y));
+	return	max(abs(projection.x), abs(projection.y));//length(temp.xy);
 }
 
 
@@ -52,28 +52,36 @@ float3	ComputeCSM (
 	Texture2D particleShadow, 
 	bool useFilter )
 {
+	//	compute UVs 
+	float2	csmSize;
+	float2	csmSizeRcp;
+	csmTexture.GetDimensions( csmSize.x, csmSize.y );
+	csmSizeRcp.xy	=	1 / csmSize.xy;
+
 	float4	projection		= float4(0,0,0,0);
 	float4	bestProjection 	= float4(0,0,0,0);
 	float4	bestScaleOffset = float4(0,0,0,0);
 	float4 	colorize   		= float4(1,0,2,1);
 	float 	radius			= 1;
 	
-	float	bias			= 0.90 + Dither( vpos.x, vpos.y ) * 0.05f;
+	float	bias			= 0.75 + Dither( vpos.x, vpos.y ) * 0.2f;
 	float	fade			= 0;
 	
-	float3	normalOffset	=	normal * sqrt( 1 - sqr(dot(lightDir,normal)) );
-	
-	float3	offset0		=	normalOffset *   4.0f / 1024 * 10;
-	float3	offset1		=	normalOffset *  10.0f / 1024 * 10;
-	float3	offset2		=	normalOffset *  25.0f / 1024 * 10;
-	float3	offset3		=	normalOffset * 512.0f / 1024 * 5;
+	float3	normalOffset	=	normal * sqrt( 1 - sqr(dot(lightDir,normal)) )	
+							*	1/stage.CascadeViewProjection3._11
+							*	csmSizeRcp.x / 4 * 2.5;
+
+	float3	offset0		=	normalOffset;
+	float3	offset1		=	normalOffset*3*0.66;
+	float3	offset2		=	normalOffset*3;
+	float3	offset3		=	normalOffset*10;
 	
 	//	select cascade :
 	if ( ProjectShadow( worldPos + offset3, stage.CascadeViewProjection3, projection ) < 1 ) {
 		bestProjection 	=	projection;
 		bestScaleOffset	=	stage.CascadeScaleOffset3;
 		colorize		=	float4(0,0,1,1);
-		radius 			=	0.35f;
+		radius 			=	0.33;
 		fade			=	min(1, max(abs(projection.x), abs(projection.y)));
 	}
 	
@@ -81,14 +89,14 @@ float3	ComputeCSM (
 		bestProjection 	=	projection;
 		bestScaleOffset	=	stage.CascadeScaleOffset2;
 		colorize		=	float4(0,1,0,1);
-		radius 			=	0.5f;
+		radius 			=	0.33f;
 	}
 	
 	if ( ProjectShadow( worldPos + offset1, stage.CascadeViewProjection1, projection ) < bias ) {
 		bestProjection 	=	projection;
 		bestScaleOffset	=	stage.CascadeScaleOffset1;
 		colorize		=	float4(1,0,0,1);
-		radius 			=	0.707f;
+		radius 			=	0.66f;
 	}
 	
 	if ( ProjectShadow( worldPos + offset0, stage.CascadeViewProjection0, projection ) < bias ) {
@@ -98,12 +106,6 @@ float3	ComputeCSM (
 		radius 			=	1;
 	}
 
-	//	compute UVs 
-	float2	csmSize;
-	float2	csmSizeRcp;
-	csmTexture.GetDimensions( csmSize.x, csmSize.y );
-	
-	csmSizeRcp.xy	=	1 / csmSize.xy;
 
 	float2	uv		=	mad( bestProjection.xy, bestScaleOffset.xy, bestScaleOffset.zw );
 	float   z  		= 	projection.z;
@@ -126,6 +128,21 @@ float3	ComputeCSM (
 
 		shadow *= particleShadow.SampleLevel( linearSampler, uv, 0 ).rgb;
 		
+	} else if (true) {
+
+		radius *= 4; 
+		
+		for( int i=0; i<16; i++ ) {
+			float 	x	=	poisonDisk[i].x;
+			float	y	=	poisonDisk[i].y;
+			float	sh	=	csmTexture.SampleCmpLevelZero( shadowSampler, uv + csmSizeRcp * float2(x,y) * radius, z ).r;
+			shadow		+=	sh;
+		}
+		
+		shadow /= 16;
+
+		shadow *= particleShadow.SampleLevel( linearSampler, uv, 0 ).rgb;
+
 	} else {
 		shadow = csmTexture.SampleCmpLevelZero( shadowSampler, uv, z );
 	}

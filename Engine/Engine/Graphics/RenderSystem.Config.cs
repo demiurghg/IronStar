@@ -175,5 +175,11 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		[Config]
 		public bool UseFXAA { get; set; }
+
+
+		[Config]	public float CSMSlope0 { get; set; } = 0;
+		[Config]	public float CSMSlope1 { get; set; } = 0;
+		[Config]	public float CSMSlope2 { get; set; } = 0;
+		[Config]	public float CSMSlope3 { get; set; } = 0;
 	}
 }

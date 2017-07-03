@@ -95,7 +95,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		float3	lightDirN	=	normalize(lightDir);
 
 		float3	shadow		=	ComputeCSM( vpos, geometryNormal, lightDirN, worldPos, Stage, ShadowSampler, ParticleSampler, ShadowMap, ShadowMapParticles, true ); 
-	
+		
 		float  nDotL		= 	max( 0, dot(normal, lightDirN) );
 		
 		totalLight.rgb 		+= 	shadow * Lambert ( normal.xyz,  lightDirN, intensity, diffuse );

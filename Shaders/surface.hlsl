@@ -23,6 +23,7 @@ struct PSInput {
 	float3	Normal 		: TEXCOORD3;
 	float4	ProjPos		: TEXCOORD4;
 	float3 	WorldPos	: TEXCOORD5;
+	float4	TexShadow	: TEXCOORD6;
 };
 
 struct GBuffer {
@@ -147,6 +148,7 @@ PSInput VSMain( VSInput input )
 	output.Tangent 		=  	tangent.xyz;
 	output.Binormal		=  	binormal.xyz;
 	output.WorldPos		=	wPos.xyz;
+	output.TexShadow	=	float4(0,0,0,0);
 	
 	return output;
 }

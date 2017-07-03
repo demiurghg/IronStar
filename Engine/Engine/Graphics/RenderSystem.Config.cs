@@ -176,10 +176,15 @@ namespace Fusion.Engine.Graphics {
 		[Config]
 		public bool UseFXAA { get; set; }
 
+		[Config]	public bool UsePointShadowSampling { get; set; } = false;
 
-		[Config]	public float CSMSlope0 { get; set; } = 0;
-		[Config]	public float CSMSlope1 { get; set; } = 0;
-		[Config]	public float CSMSlope2 { get; set; } = 0;
-		[Config]	public float CSMSlope3 { get; set; } = 0;
+		[Config]	public float CSMSlopeBias0 { get; set; } = 0;
+		[Config]	public float CSMSlopeBias1 { get; set; } = 0;
+		[Config]	public float CSMSlopeBias2 { get; set; } = 0;
+		[Config]	public float CSMSlopeBias3 { get; set; } = 0;
+		[Config]	public float CSMDepthBias0 { get; set; } = 0;
+		[Config]	public float CSMDepthBias1 { get; set; } = 0;
+		[Config]	public float CSMDepthBias2 { get; set; } = 0;
+		[Config]	public float CSMDepthBias3 { get; set; } = 0;
 	}
 }

@@ -61,6 +61,7 @@ namespace Fusion.Drivers.Graphics {
 		public static SamplerState AnisotropicWrap		{ get; private set; }
 		public static SamplerState AnisotropicClamp		{ get; private set; }	
 		public static SamplerState ShadowSampler		{ get; private set; }
+		public static SamplerState ShadowSamplerPoint	{ get; private set; }
 
 		public static SamplerState LinearClamp4Mips		{ get; private set; }
 
@@ -79,6 +80,7 @@ namespace Fusion.Drivers.Graphics {
 			AnisotropicWrap		=	Create( Filter.Anisotropic		, AddressMode.Wrap,		new Color4(0f) );	
 			AnisotropicClamp	=	Create( Filter.Anisotropic		, AddressMode.Clamp,	new Color4(0f) );  	
 			ShadowSampler		=	Create( Filter.CmpMinMagLinearMipPoint, AddressMode.Clamp, new Color4( 0.0f, 1.0f, 1.0f, 1.0f ), ComparisonFunc.Less );
+			ShadowSamplerPoint	=	Create( Filter.CmpMinMagMipPoint,		AddressMode.Clamp, new Color4( 0.0f, 1.0f, 1.0f, 1.0f ), ComparisonFunc.Less );
 
 			LinearPointBorder0	=	Create( Filter.MinMagLinearMipPoint, AddressMode.Border, new Color4(0f) );
 			LinearPointClamp	=	Create( Filter.MinMagLinearMipPoint, AddressMode.Clamp,  new Color4(0f) );

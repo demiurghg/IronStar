@@ -237,7 +237,8 @@ namespace Fusion.Engine.Graphics {
 
 			lightDir.Normalize();
 
-			var slopes = new[] { rs.CSMSlope0, rs.CSMSlope1, rs.CSMSlope2, rs.CSMSlope3 };
+			var slopeBiases = new[] { rs.CSMSlopeBias0, rs.CSMSlopeBias1, rs.CSMSlopeBias2, rs.CSMSlopeBias3 };
+			var depthBiases = new[] { rs.CSMDepthBias0, rs.CSMDepthBias1, rs.CSMDepthBias2, rs.CSMDepthBias3 };
 
 			for ( int i = 0; i<cascades.Length; i++ ) {
 
@@ -260,12 +261,13 @@ namespace Fusion.Engine.Graphics {
 
 				var view			=	Matrix.LookAtRH( origin, origin + lightDir, Vector3.UnitY );
 				var projection		=	Matrix.OrthoRH( radius*2, radius*2, -projDepth/2, projDepth/2);
+				//var projection		=	Matrix.OrthoRH( radius*2, radius*2, -radius, radius);
 
 
 				cascades[i].ViewMatrix			=	view;
 				cascades[i].ProjectionMatrix	=	projection;	  
-				cascades[i].DepthBias			=	0*0.0001f;
-				cascades[i].SlopeBias			=	slopes[i];
+				cascades[i].DepthBias			=	depthBiases[i];
+				cascades[i].SlopeBias			=	slopeBiases[i];
 
 			}
 		}

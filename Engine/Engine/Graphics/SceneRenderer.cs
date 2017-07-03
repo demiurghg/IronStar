@@ -144,6 +144,7 @@ namespace Fusion.Engine.Graphics {
 			cbDataStage.CascadeScaleOffset2		=	rs.LightManager.ShadowMap.GetCascade( 2 ).ShadowScaleOffset;
 			cbDataStage.CascadeScaleOffset3		=	rs.LightManager.ShadowMap.GetCascade( 3 ).ShadowScaleOffset;
 
+
 			//	setup stage constants :
 			if (camera!=null) {
 
@@ -199,11 +200,13 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			//	setup samplers :
+			var shadowSampler	=	rs.UsePointShadowSampling ? SamplerState.ShadowSamplerPoint : SamplerState.ShadowSampler;
+
 			device.PixelShaderSamplers[0]	= SamplerState.LinearPointClamp ;
 			device.PixelShaderSamplers[1]	= SamplerState.PointClamp;
 			device.PixelShaderSamplers[2]	= SamplerState.AnisotropicClamp;
 			device.PixelShaderSamplers[3]	= SamplerState.LinearClamp4Mips;
-			device.PixelShaderSamplers[4]	= SamplerState.ShadowSampler;
+			device.PixelShaderSamplers[4]	= shadowSampler;
 			device.PixelShaderSamplers[5]	= SamplerState.LinearClamp;
 
 			if (surfaceShader==null || rs.SkipSceneRendering) {

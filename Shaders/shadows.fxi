@@ -94,16 +94,17 @@ float3	ComputeCSM (
 	float4	projection		= float4(0,0,0,0);
 	float4	bestProjection 	= float4(0,0,0,0);
 	float4	bestScaleOffset = float4(0,0,0,0);
+	float3	bestGradient	= float3(0,0,0);
 	float4 	colorize   		= float4(1,0,2,1);
 	float3 	scale			= 1;
 	
 	float	bias			= 0.85 + Dither( vpos.x, vpos.y ) * 0.1f;
 	float	fade			= 1;
 	
-	float3	normalOffset	=	normal * sqrt( 1 - sqr(dot(lightDir,normal)) )	
-							*	1/stage.CascadeViewProjection0._11
-							*	csmSizeRcp.x * 4 * 7
-							*	1;
+	float3	normalOffset	=	normalize(normal) * sqrt( 1 - sqr(dot(lightDir,normal)) )	
+							*	8.0f
+							*	1/512.0f
+							*	0;
 
 	float3	offset0		=	normalOffset;
 	float3	offset1		=	normalOffset * 3;
@@ -116,6 +117,7 @@ float3	ComputeCSM (
 	if ( ProjectShadow( worldPos + offset3, stage.CascadeViewProjection3, projection ) < 1 ) {
 		bestProjection 	=	projection;
 		bestScaleOffset	=	stage.CascadeScaleOffset3;
+		bestGradient	=	mul( normal, stage.CascadeGradientMatrix3 );
 		colorize		=	float4(0,0,1,1);
 		scale 			=	stage.CascadeViewProjection3._11_22_33;
 		fade			=	min(1, max(abs(projection.x), abs(projection.y)));
@@ -124,6 +126,7 @@ float3	ComputeCSM (
 	if ( ProjectShadow( worldPos + offset2, stage.CascadeViewProjection2, projection ) < bias ) {
 		bestProjection 	=	projection;
 		bestScaleOffset	=	stage.CascadeScaleOffset2;
+		bestGradient	=	mul( normal, stage.CascadeGradientMatrix2 );
 		colorize		=	float4(0,1,0,1);
 		scale 			=	stage.CascadeViewProjection2._11_22_33;
 	}
@@ -131,6 +134,7 @@ float3	ComputeCSM (
 	if ( ProjectShadow( worldPos + offset1, stage.CascadeViewProjection1, projection ) < bias ) {
 		bestProjection 	=	projection;
 		bestScaleOffset	=	stage.CascadeScaleOffset1;
+		bestGradient	=	mul( normal, stage.CascadeGradientMatrix1 );
 		colorize		=	float4(1,0,0,1);
 		scale 			=	stage.CascadeViewProjection1._11_22_33;
 	}
@@ -138,34 +142,44 @@ float3	ComputeCSM (
 	if ( ProjectShadow( worldPos + offset0, stage.CascadeViewProjection0, projection ) < bias ) {
 		bestProjection 	=	projection;
 		bestScaleOffset	=	stage.CascadeScaleOffset0;
+		bestGradient	=	mul( normal, stage.CascadeGradientMatrix0 );
 		colorize		=	float4(1,1,1,1);
 		scale 			=	stage.CascadeViewProjection0._11_22_33;
 	}
 	
 	//------------------------------------------------------
+	//	warning: no offset is required!
+	float2	uv				=	mad( bestProjection.xy, bestScaleOffset.xy, bestScaleOffset.zw );
+	float   depthcmp		= 	projection.z;
+	float3	shadow			=	0;
 	
-	float2	uv			=	mad( bestProjection.xy, bestScaleOffset.xy, bestScaleOffset.zw );
-	float   depthcmp	= 	projection.z;
-	float3	shadow		=	0;
+	float2	gradBias		=	float2( stage.ShadowGradientBiasX, stage.ShadowGradientBiasY );
+	
+	float	epsilon			=	1 / 8192.0f;
+	float2	depthWeights	=	bestGradient.xy / (bestGradient.z + epsilon );
+	
 	
 	if (true) {
-		for( float row = -3; row <= 3; row += 1 ) {
-			[unroll]for( float col = -3; col <= 3; col += 1 ) {
+		
+		for( float row = -2; row <= 2; row += 1 ) {
+			[unroll]for( float col = -2; col <= 2; col += 1 ) {
 				float 	x	=	col * 1;
 				float	y	=	row * 1;
-				float	z	=	depthcmp;// + dot( depthWeights, float2(x,y) );
+				float	z	=	depthcmp + dot( depthWeights, float2(x,y) );
 				float	sh	=	csmTexture.SampleCmpLevelZero( shadowSampler, uv + csmSizeRcp * float2(x,y), z ).r;
 				shadow		+=	sh;
 			}
 		}
 		
-		shadow /= 49;
+		shadow /= 25;
 
 		shadow *= particleShadow.SampleLevel( linearSampler, uv, 0 ).rgb;
 		
 	} else {
 		shadow = csmTexture.SampleCmpLevelZero( shadowSampler, uv, depthcmp );
 	}
+	
+	//shadow = saturate((shadow-0.5)*2+0.5);
 	
 	return lerp(shadow, 1, saturate(fade*16-15));
 }

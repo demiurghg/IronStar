@@ -18,21 +18,42 @@ namespace Fusion.Engine.Graphics {
 
 		public class Cascade {
 
+			readonly int sizeInTexels;
+
+			public Cascade ( int sizeInTexels )
+			{
+				this.sizeInTexels	=	sizeInTexels;
+			}
+
+
 			public bool IsActive {
 				get { return true; }
 			}
 
+
 			public int DetailLevel {
 				get { return 0; }
 			}
+
+
+			public int CascadeSizeInTexels {
+				get {
+					return sizeInTexels;
+				}
+			}
+
 			
 			public float SlopeBias;
 			
+
 			public float DepthBias;
 			
+
 			public Matrix ViewMatrix;
 
+
 			public Matrix ProjectionMatrix;
+
 
 			public Matrix ViewProjectionMatrix {
 				get {
@@ -40,7 +61,23 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 
+
+			public Matrix ComputeGradientMatrix () 
+			{
+				var matrix	=	ViewMatrix * ProjectionMatrix;
+					matrix	=	Matrix.Invert	( matrix );
+					matrix	=	Matrix.Transpose( matrix );
+
+				var size	=	(float)CascadeSizeInTexels;
+
+					matrix	*=	Matrix.Scaling( 2.0f/size, -2.0f/size, 1 );
+
+				return matrix;
+			}
+
+
 			public Rectangle ShadowRegion;
+
 
 			public Vector4 ShadowScaleOffset;
 		}

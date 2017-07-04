@@ -100,10 +100,10 @@ namespace Fusion.Engine.Graphics {
 			depthBuffer	=	new DepthStencil2D( device, DepthFormat.D24S8,		shadowMapSize, shadowMapSize );
 			prtShadow	=	new RenderTarget2D( device, ColorFormat.Rgba8_sRGB,	shadowMapSize, shadowMapSize );
 
-			cascades[0]	=	new Cascade();
-			cascades[1]	=	new Cascade();
-			cascades[2]	=	new Cascade();
-			cascades[3]	=	new Cascade();
+			cascades[0]	=	new Cascade(maxRegionSize);
+			cascades[1]	=	new Cascade(maxRegionSize);
+			cascades[2]	=	new Cascade(maxRegionSize);
+			cascades[3]	=	new Cascade(maxRegionSize);
 		}
 
 
@@ -254,8 +254,11 @@ namespace Fusion.Engine.Graphics {
 				Matrix	lightRotI	=	Matrix.Invert( lightRot );
 				Vector3	lsOrigin	=	Vector3.TransformCoordinate( origin, lightRot );
 				float	snapValue	=	4 * radius / smSize;
-				lsOrigin.X			=	(float)Math.Round(lsOrigin.X / snapValue) * snapValue;
-				lsOrigin.Y			=	(float)Math.Round(lsOrigin.Y / snapValue) * snapValue;
+
+				if (rs.SnapShadowmapCascades) {
+					lsOrigin.X		=	(float)Math.Round(lsOrigin.X / snapValue) * snapValue;
+					lsOrigin.Y		=	(float)Math.Round(lsOrigin.Y / snapValue) * snapValue;
+				}
 				//lsOrigin.Z			=	(float)Math.Round(lsOrigin.Z / snapValue) * snapValue;
 				origin				=	Vector3.TransformCoordinate( lsOrigin, lightRotI );//*/
 
@@ -266,8 +269,8 @@ namespace Fusion.Engine.Graphics {
 
 				cascades[i].ViewMatrix			=	view;
 				cascades[i].ProjectionMatrix	=	projection;	  
-				cascades[i].DepthBias			=	depthBiases[i];
-				cascades[i].SlopeBias			=	slopeBiases[i];
+				cascades[i].DepthBias			=	depthBiases[i]; // must be zero or epsilon!
+				cascades[i].SlopeBias			=	slopeBiases[i]; // must be 1.0f
 
 			}
 		}

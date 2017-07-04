@@ -8,7 +8,7 @@ static const int LightSpotShapeSquare = 65536;
 static const int LightSpotShapeRound = 131072;
 
 // Fusion.Engine.Graphics.SceneRenderer+STAGE
-// Marshal.SizeOf = 640
+// Marshal.SizeOf = 1024
 struct STAGE {
 	float4x4   Projection;                    // offset:    0
 	float4x4   View;                          // offset:   64
@@ -16,17 +16,23 @@ struct STAGE {
 	float4x4   CascadeViewProjection1;        // offset:  192
 	float4x4   CascadeViewProjection2;        // offset:  256
 	float4x4   CascadeViewProjection3;        // offset:  320
-	float4     CascadeScaleOffset0;           // offset:  384
-	float4     CascadeScaleOffset1;           // offset:  400
-	float4     CascadeScaleOffset2;           // offset:  416
-	float4     CascadeScaleOffset3;           // offset:  432
-	float4     ViewPos;                       // offset:  448
-	float4     BiasSlopeFar;                  // offset:  464
-	float4     Ambient;                       // offset:  480
-	float4     ViewBounds;                    // offset:  496
-	float4     DirectLightDirection;          // offset:  512
-	float4     DirectLightIntensity;          // offset:  528
-	float      VTPageScaleRCP;                // offset:  544
+	float4x4   CascadeGradientMatrix0;        // offset:  384
+	float4x4   CascadeGradientMatrix1;        // offset:  448
+	float4x4   CascadeGradientMatrix2;        // offset:  512
+	float4x4   CascadeGradientMatrix3;        // offset:  576
+	float4     CascadeScaleOffset0;           // offset:  640
+	float4     CascadeScaleOffset1;           // offset:  656
+	float4     CascadeScaleOffset2;           // offset:  672
+	float4     CascadeScaleOffset3;           // offset:  688
+	float4     ViewPos;                       // offset:  704
+	float4     BiasSlopeFar;                  // offset:  720
+	float4     Ambient;                       // offset:  736
+	float4     ViewBounds;                    // offset:  752
+	float4     DirectLightDirection;          // offset:  768
+	float4     DirectLightIntensity;          // offset:  784
+	float      VTPageScaleRCP;                // offset:  800
+	float      ShadowGradientBiasX;           // offset:  804
+	float      ShadowGradientBiasY;           // offset:  808
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+INSTANCE

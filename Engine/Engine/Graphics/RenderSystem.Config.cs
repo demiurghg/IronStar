@@ -177,6 +177,10 @@ namespace Fusion.Engine.Graphics {
 		public bool UseFXAA { get; set; }
 
 		[Config]	public bool UsePointShadowSampling { get; set; } = false;
+		[Config]	public bool SnapShadowmapCascades { get; set; } = true;
+
+		[Config]	public float ShadowGradientBiasX { get; set; } = 1;
+		[Config]	public float ShadowGradientBiasY { get; set; } = 1;
 
 		[Config]	public float CSMSlopeBias0 { get; set; } = 0;
 		[Config]	public float CSMSlopeBias1 { get; set; } = 0;

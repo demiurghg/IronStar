@@ -11,6 +11,7 @@ using Fusion.Drivers.Graphics;
 using System.Runtime.InteropServices;
 using Fusion.Development;
 using Fusion.Engine.Graphics.Ubershaders;
+using System.Runtime.CompilerServices;
 
 namespace Fusion.Engine.Graphics {
 
@@ -128,6 +129,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="viewPos"></param>
 		/// <param name="vpWidth"></param>
 		/// <param name="vpHeight"></param>
+		[MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
 		public bool SetupStage ( StereoEye stereoEye, Camera camera, HdrFrame hdrFrame, ShadowContext shadowContext )
 		{
 			device.ResetStates();
@@ -139,6 +141,14 @@ namespace Fusion.Engine.Graphics {
 			cbDataStage.CascadeViewProjection1	=	rs.LightManager.ShadowMap.GetCascade( 1 ).ViewProjectionMatrix;
 			cbDataStage.CascadeViewProjection2	=	rs.LightManager.ShadowMap.GetCascade( 2 ).ViewProjectionMatrix;
 			cbDataStage.CascadeViewProjection3	=	rs.LightManager.ShadowMap.GetCascade( 3 ).ViewProjectionMatrix;
+			
+			cbDataStage.CascadeGradientMatrix0	=	rs.LightManager.ShadowMap.GetCascade( 0 ).ComputeGradientMatrix();
+			cbDataStage.CascadeGradientMatrix1	=	rs.LightManager.ShadowMap.GetCascade( 1 ).ComputeGradientMatrix();
+			cbDataStage.CascadeGradientMatrix2	=	rs.LightManager.ShadowMap.GetCascade( 2 ).ComputeGradientMatrix();
+			cbDataStage.CascadeGradientMatrix3	=	rs.LightManager.ShadowMap.GetCascade( 3 ).ComputeGradientMatrix();
+			cbDataStage.ShadowGradientBiasX		=	rs.ShadowGradientBiasX;
+			cbDataStage.ShadowGradientBiasY		=	rs.ShadowGradientBiasY;
+
 			cbDataStage.CascadeScaleOffset0		=	rs.LightManager.ShadowMap.GetCascade( 0 ).ShadowScaleOffset;
 			cbDataStage.CascadeScaleOffset1		=	rs.LightManager.ShadowMap.GetCascade( 1 ).ShadowScaleOffset;
 			cbDataStage.CascadeScaleOffset2		=	rs.LightManager.ShadowMap.GetCascade( 2 ).ShadowScaleOffset;

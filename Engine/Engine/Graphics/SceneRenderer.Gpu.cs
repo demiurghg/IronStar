@@ -43,7 +43,7 @@ namespace Fusion.Engine.Graphics {
 
 
 		[ShaderStructure]
-		[StructLayout(LayoutKind.Sequential, Pack=4, Size=640)]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=1024)]
 		struct STAGE {
 			public Matrix	Projection				;
 			public Matrix	View					;
@@ -51,6 +51,10 @@ namespace Fusion.Engine.Graphics {
 			public Matrix	CascadeViewProjection1	;
 			public Matrix	CascadeViewProjection2	;
 			public Matrix	CascadeViewProjection3	;
+			public Matrix	CascadeGradientMatrix0	;
+			public Matrix	CascadeGradientMatrix1	;
+			public Matrix	CascadeGradientMatrix2	;
+			public Matrix	CascadeGradientMatrix3	;
 			public Vector4	CascadeScaleOffset0		;
 			public Vector4	CascadeScaleOffset1		;
 			public Vector4	CascadeScaleOffset2		;
@@ -62,6 +66,8 @@ namespace Fusion.Engine.Graphics {
 			public Vector4	DirectLightDirection	;
 			public Color4	DirectLightIntensity	;
 			public float	VTPageScaleRCP			;
+			public float	ShadowGradientBiasX		;
+			public float	ShadowGradientBiasY		;
 		}
 
 

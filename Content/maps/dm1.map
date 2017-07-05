@@ -769,7 +769,7 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-6.39055872" Y="9.400137" Z="-16.50159" />
+      <Position X="-6.39055872" Y="9.411091" Z="-16.22509" />
       <Rotation X="-0.577607334" Y="0.406167746" Z="0.407770157" W="0.578896344" />
       <Scaling>1</Scaling>
       <Factory xsi:type="ProxyFactory">

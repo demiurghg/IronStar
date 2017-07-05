@@ -9,7 +9,7 @@
 //
 //	ComputeClusteredLighting
 //	
-float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, float2 vpSize, float3 baseColor, float3 worldNormal, float roughness, float metallic )
+float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, float2 vpSize, float3 baseColor, float3 worldNormal, float3 triNormal, float roughness, float metallic )
 {
 	uint i,j,k;
 	float3 result		=	float3(0,0,0);
@@ -94,7 +94,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		float3	intensity	=	Stage.DirectLightIntensity.rgb;
 		float3	lightDirN	=	normalize(lightDir);
 
-		float3	shadow		=	ComputeCSM( vpos, geometryNormal, lightDirN, worldPos, Stage, ShadowSampler, ParticleSampler, ShadowMap, ShadowMapParticles, true ); 
+		float3	shadow		=	ComputeCSM( vpos, triNormal, lightDirN, worldPos, Stage, ShadowSampler, ParticleSampler, ShadowMap, ShadowMapParticles, true ); 
 		
 		float  nDotL		= 	max( 0, dot(normal, lightDirN) );
 		

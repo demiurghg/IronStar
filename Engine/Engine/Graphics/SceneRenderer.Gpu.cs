@@ -47,6 +47,7 @@ namespace Fusion.Engine.Graphics {
 		struct STAGE {
 			public Matrix	Projection				;
 			public Matrix	View					;
+			public Matrix	GradientToNormal		;
 			public Matrix	CascadeViewProjection0	;
 			public Matrix	CascadeViewProjection1	;
 			public Matrix	CascadeViewProjection2	;

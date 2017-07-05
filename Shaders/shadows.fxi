@@ -153,9 +153,8 @@ float3	ComputeCSM (
 	float   depthcmp		= 	projection.z;
 	float3	shadow			=	0;
 	
-	float2	gradBias		=	float2( stage.ShadowGradientBiasX, stage.ShadowGradientBiasY );
-	
-	float	epsilon			=	1 / 8192.0f;
+	float	epsilon			=	1 / 8192.0f / 4.0f;
+			bestGradient	=	normalize(bestGradient);
 	float2	depthWeights	=	bestGradient.xy / (bestGradient.z + epsilon );
 	
 	

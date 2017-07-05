@@ -12,27 +12,28 @@ static const int LightSpotShapeRound = 131072;
 struct STAGE {
 	float4x4   Projection;                    // offset:    0
 	float4x4   View;                          // offset:   64
-	float4x4   CascadeViewProjection0;        // offset:  128
-	float4x4   CascadeViewProjection1;        // offset:  192
-	float4x4   CascadeViewProjection2;        // offset:  256
-	float4x4   CascadeViewProjection3;        // offset:  320
-	float4x4   CascadeGradientMatrix0;        // offset:  384
-	float4x4   CascadeGradientMatrix1;        // offset:  448
-	float4x4   CascadeGradientMatrix2;        // offset:  512
-	float4x4   CascadeGradientMatrix3;        // offset:  576
-	float4     CascadeScaleOffset0;           // offset:  640
-	float4     CascadeScaleOffset1;           // offset:  656
-	float4     CascadeScaleOffset2;           // offset:  672
-	float4     CascadeScaleOffset3;           // offset:  688
-	float4     ViewPos;                       // offset:  704
-	float4     BiasSlopeFar;                  // offset:  720
-	float4     Ambient;                       // offset:  736
-	float4     ViewBounds;                    // offset:  752
-	float4     DirectLightDirection;          // offset:  768
-	float4     DirectLightIntensity;          // offset:  784
-	float      VTPageScaleRCP;                // offset:  800
-	float      ShadowGradientBiasX;           // offset:  804
-	float      ShadowGradientBiasY;           // offset:  808
+	float4x4   GradientToNormal;              // offset:  128
+	float4x4   CascadeViewProjection0;        // offset:  192
+	float4x4   CascadeViewProjection1;        // offset:  256
+	float4x4   CascadeViewProjection2;        // offset:  320
+	float4x4   CascadeViewProjection3;        // offset:  384
+	float4x4   CascadeGradientMatrix0;        // offset:  448
+	float4x4   CascadeGradientMatrix1;        // offset:  512
+	float4x4   CascadeGradientMatrix2;        // offset:  576
+	float4x4   CascadeGradientMatrix3;        // offset:  640
+	float4     CascadeScaleOffset0;           // offset:  704
+	float4     CascadeScaleOffset1;           // offset:  720
+	float4     CascadeScaleOffset2;           // offset:  736
+	float4     CascadeScaleOffset3;           // offset:  752
+	float4     ViewPos;                       // offset:  768
+	float4     BiasSlopeFar;                  // offset:  784
+	float4     Ambient;                       // offset:  800
+	float4     ViewBounds;                    // offset:  816
+	float4     DirectLightDirection;          // offset:  832
+	float4     DirectLightIntensity;          // offset:  848
+	float      VTPageScaleRCP;                // offset:  864
+	float      ShadowGradientBiasX;           // offset:  868
+	float      ShadowGradientBiasY;           // offset:  872
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+INSTANCE

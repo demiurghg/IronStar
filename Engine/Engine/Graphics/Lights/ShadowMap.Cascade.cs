@@ -70,7 +70,7 @@ namespace Fusion.Engine.Graphics {
 
 				var size	=	(float)CascadeSizeInTexels;
 
-					matrix	*=	Matrix.Scaling( 2.0f/size, -2.0f/size, 1 );
+					matrix	=	matrix * Matrix.Scaling( -2.0f/size, 2.0f/size, 1 );
 
 				return matrix;
 			}

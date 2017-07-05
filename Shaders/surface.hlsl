@@ -272,16 +272,17 @@ GBuffer PSMain( PSInput input )
 	//---------------------------------
 	//	NB: Multiply normal length by local normal projection on surface normal.
 	//	Shortened normal will be used as Fresnel decay (self occlusion) factor.
-	float3 worldNormal 	= 	normalize( mul( localNormal, tbnToWorld ).xyz );
+	float3 	worldNormal = 	normalize( mul( localNormal, tbnToWorld ).xyz );
+		
+	float3 	triNormal	=	cross( ddx(input.WorldPos.xyz), -ddy(input.WorldPos.xyz) );
+			triNormal	=	normalize( triNormal );
 	
-	float3 entityColor	=	input.Color.rgb;
+	float3 	entityColor	=	input.Color.rgb;
 	
-	float3 lighting		=	ComputeClusteredLighting( input, ClusterTable, Stage.ViewBounds.xy, baseColor, worldNormal, roughness, metallic );
+	float3 	lighting	=	ComputeClusteredLighting( input, ClusterTable, Stage.ViewBounds.xy, baseColor, worldNormal, triNormal, roughness, metallic );
 	
 	output.hdr			=	float4( emission * entityColor + lighting, 0 );
 	output.feedback		=	feedback;
-	
-	//output.hdr = float4(worldNormal, 1);
 	
 	return output;
 }

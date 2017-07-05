@@ -167,6 +167,8 @@ namespace Fusion.Engine.Graphics {
 				cbDataStage.Ambient			=	rs.RenderWorld.LightSet.AmbientLevel;
 				cbDataStage.ViewBounds		=	new Vector4( width, height, width, height );
 				cbDataStage.VTPageScaleRCP	=	rs.VTSystem.PageScaleRCP;
+
+				cbDataStage.GradientToNormal	=	camera.GetViewMatrix( stereoEye );
 			}
 
 			if (shadowContext!=null) {

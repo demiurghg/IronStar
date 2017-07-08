@@ -36,7 +36,7 @@ namespace IronStar.Mapping {
 		public float FovHorizontal { get; set; } = 60;
 		
 		[Category("Spot-light")]
-		public SpotShape SpotShape { get; set; } = SpotShape.Square;
+		public string SpotMaskName { get; set; } = "";
 		
 		[Category("Spot-light")]
 		public int LodBias { get; set; } = 0;
@@ -104,7 +104,7 @@ namespace IronStar.Mapping {
 			light.RadiusOuter	=	Radius;
 			light.RadiusInner	=	0;
 
-			light.SpotShape		=	SpotShape;
+			light.SpotMaskName	=	SpotMaskName;
 
 			light.LodBias		=	LodBias;
 

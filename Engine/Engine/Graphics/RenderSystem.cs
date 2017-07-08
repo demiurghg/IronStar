@@ -23,6 +23,9 @@ namespace Fusion.Engine.Graphics {
 		internal Filter Filter { get{ return filter; } }
 		Filter filter;
 
+		internal Filter2 Filter2 { get{ return filter2; } }
+		Filter2 filter2;
+
 		internal SsaoFilter SsaoFilter { get{ return ssaoFilter; } }
 		SsaoFilter ssaoFilter;
 
@@ -110,6 +113,7 @@ namespace Fusion.Engine.Graphics {
 
 			spriteEngine	=	new SpriteEngine( this );
 			filter			=	new Filter( this );
+			filter2			=	new Filter2( this );
 			ssaoFilter		=	new SsaoFilter( this );
 			hdrFilter		=	new HdrFilter( this );
 			dofFilter		=	new DofFilter( this );
@@ -174,6 +178,7 @@ namespace Fusion.Engine.Graphics {
 			//	init components :
 			InitializeComponent( spriteEngine	);
 			InitializeComponent( filter			);
+			InitializeComponent( filter2		);
 			InitializeComponent( ssaoFilter		);
 			InitializeComponent( hdrFilter		);
 			InitializeComponent( dofFilter		);

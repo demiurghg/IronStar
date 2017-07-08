@@ -53,7 +53,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// 
 		/// </summary>
-		public SpotShape	SpotShape;
+		public string	SpotMaskName;
 
 		/// <summary>
 		/// 

@@ -130,14 +130,8 @@ namespace Fusion.Engine.Graphics {
 			public void FromSpotLight ( SpotLight light ) 
 			{
 				#region Update structure fields from SpotLight object
-				var shape = 0;
 
-				switch (light.SpotShape) {
-					case SpotShape.Round	: shape = LightSpotShapeRound; break;
-					case SpotShape.Square	: shape = LightSpotShapeSquare; break;
-				}
-
-				LightType			=	LightTypeSpotShadow | shape;
+				LightType			=	LightTypeSpotShadow;
 				PositionRadius		=	new Vector4( light.Position, light.RadiusOuter );
 				IntensityFar		=	new Vector4( light.Intensity2.Red, light.Intensity2.Green, light.Intensity2.Blue, light.Projection.GetFarPlaneDistance() );
 				ViewProjection		=	light.SpotView * light.Projection;

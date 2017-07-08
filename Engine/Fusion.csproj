@@ -199,6 +199,7 @@
     <Compile Include="Engine\Common\IGameFactory.cs" />
     <Compile Include="Engine\Common\IMessageService.cs" />
     <Compile Include="Engine\Common\IUserInterface.cs" />
+    <Compile Include="Engine\Graphics\Effects\Filter2.cs" />
     <Compile Include="Engine\Graphics\Effects\FogSettings.cs" />
     <Compile Include="Engine\Graphics\Lights\Extents.cs" />
     <Compile Include="Engine\Graphics\Lights\LightGrid.cs" />

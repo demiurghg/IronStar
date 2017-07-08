@@ -366,8 +366,9 @@ namespace Fusion.Engine.Graphics {
 			#warning Add shadow mask (from atlas)
 			using ( new PixEvent( "Particle Shadows" ) ) {
 
-				device.Clear( prtShadow.Surface, Color4.White );
+				device.Clear( prtShadow.Surface, Color4.Black );
 
+				//	draw cascade shadow particles :
 				foreach ( var cascade in cascades ) {
 
 					var context = new ShadowContext();
@@ -375,11 +376,28 @@ namespace Fusion.Engine.Graphics {
 
 					var vp		= new Viewport( cascade.ShadowRegion );
 
+					rs.Filter2.RenderBorder( prtShadow.Surface, cascade.ShadowRegion, 1 );
+
 					rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, cascade.ViewMatrix, cascade.ProjectionMatrix, prtShadow.Surface, depthBuffer.Surface );
 				}
 
 
+				//	draw spot shadow particles :
 				foreach ( var spot in lights ) {
+
+					var name	=	spot.SpotMaskName;
+					var index	=	lightSet.SpotAtlas.IndexOf( name );
+
+					if (index>=0) {
+						var dstRegion	=	spot.ShadowRegion;
+						var	srcRegion	=	lightSet.SpotAtlas[index];
+						rs.Filter2.RenderQuad( prtShadow.Surface, lightSet.SpotAtlas.Texture.Srv, dstRegion, srcRegion );
+					} else {
+						var dstRegion	=	spot.ShadowRegion;
+						rs.Filter2.RenderSpot( prtShadow.Surface, dstRegion, 1 );
+					}
+
+					//-------------
 
 					var context = new ShadowContext();
 					var far		= spot.Projection.GetFarPlaneDistance();
@@ -388,6 +406,8 @@ namespace Fusion.Engine.Graphics {
 
 					rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, spot.SpotView, spot.Projection, prtShadow.Surface, depthBuffer.Surface );
 				}
+
+
 			}
 		}
 	}

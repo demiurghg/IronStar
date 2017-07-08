@@ -139,18 +139,6 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 				float3 	intensity	=	LightDataTable[idx].IntensityFar.rgb;
 				float4 	scaleOffset	=	LightDataTable[idx].ShadowScaleOffset;
 				
-				float	penumbra	=	1;
-				if (shape==LightSpotShapeRound) {
-					penumbra 	=	max(0, 1 - length(lsPos.xy));
-					penumbra	=	min(1, penumbra * 2 );				
-					penumbra	*=	penumbra;
-				}
-				if (shape==LightSpotShapeSquare) {
-					penumbra 	= 	max(0, 1 - length(max(abs(lsPos.x), abs(lsPos.y))));
-					penumbra	=	min(1, penumbra * 2 );				
-					penumbra	*=	penumbra;
-				}
-				
 				lsPos.xy		=	mad( lsPos.xy, scaleOffset.xy, scaleOffset.zw );
 						
 				float	accumulatedShadow	=	0;
@@ -160,20 +148,20 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 				#if 0
 				accumulatedShadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, lsPos.xy, shadowDepth ).r;
 				#else
-				for( float row = -3; row <= 3; row += 1 ) {
-					[unroll]for( float col = -3; col <= 3; col += 1 ) {
+				for( float row = -2; row <= 2; row += 1 ) {
+					[unroll]for( float col = -2; col <= 2; col += 1 ) {
 						float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, mad(float2(col,row), 0.5/1024.0f, lsPos.xy), shadowDepth ).r;
 						accumulatedShadow += shadow;
 					}
 				}
 				//accumulatedShadow 	/= 	49.0f;
-				accumulatedShadow	=	max(0,mad(accumulatedShadow, 1/49.0f*2.0f, -0.5));
+				accumulatedShadow	=	max(0,mad(accumulatedShadow, 1/25.0f*2.0f, -0.5));
 				#endif
 						
 				float3	prtShadow	=	ShadowMapParticles.SampleLevel( ParticleSampler, lsPos.xy, 0 ).rgb;
 				
 				float3 	lightDir	= 	position - worldPos.xyz;
-				float3 	falloff		= 	LinearFalloff( length(lightDir), radius ) * accumulatedShadow * penumbra * prtShadow;
+				float3 	falloff		= 	LinearFalloff( length(lightDir), radius ) * accumulatedShadow * prtShadow;
 				float  	nDotL		= 	max( 0, dot(normal, normalize(lightDir)) );
 				
 				totalLight.rgb 		+= 	falloff * Lambert ( normal.xyz,  lightDir, intensity, diffuse );

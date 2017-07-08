@@ -4,6 +4,7 @@
 -----------------------------------------------------------------------------*/
 
 #include "brdf.fxi"
+#include "shadows.particles.fxi"
 
 //
 //	ComputeClusteredLighting
@@ -22,6 +23,11 @@ float3 ComputeClusteredLighting ( float3 worldPos )
 	uint 	lightCount	=	(data.g & 0x000FFF) >> 0;
 
 	float3 totalLight	=	0;
+
+	//----------------------------------------------------------------------------------------------
+
+	float3	shadow		=	ComputeCSM( worldPos, Params, ShadowSampler, ShadowMap ); 
+	totalLight.rgb 		+= 	shadow * Params.DirectLightIntensity.rgb;
 
 	//----------------------------------------------------------------------------------------------
 

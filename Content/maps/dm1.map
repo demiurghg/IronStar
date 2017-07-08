@@ -4,7 +4,7 @@
     <Gravity>16</Gravity>
     <SkyTrubidity>8</SkyTrubidity>
     <SunPosition X="2" Y="1" Z="-1" />
-    <SunIntensity>10</SunIntensity>
+    <SunIntensity>20</SunIntensity>
     <FogDensity>0.001</FogDensity>
     <CharacterHeight>2</CharacterHeight>
     <CharacterSize>1.2</CharacterSize>
@@ -312,7 +312,7 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="1.75" Y="0.875" Z="-2.5" />
+      <Position X="1.75" Y="4.773301" Z="-2.5" />
       <Rotation X="1.87313617E-05" Y="-0.00315610785" Z="6.686941E-05" W="0.999995" />
       <Scaling>1</Scaling>
       <Factory xsi:type="ProxyFactory">
@@ -432,10 +432,10 @@
     <MapNode xsi:type="MapSpotLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-17.875" Y="8.625" Z="2.375" />
-      <Rotation X="-0.258819044" Y="0" Z="0" W="0.9659258" />
+      <Position X="7.91407967" Y="4.47423172" Z="14.9202309" />
+      <Rotation X="-0.205334947" Y="0.588018358" Z="0.157559052" W="0.766320467" />
       <Scaling>1</Scaling>
-      <Intensity>50</Intensity>
+      <Intensity>200</Intensity>
       <Radius>25</Radius>
       <NearPlane>0.125</NearPlane>
       <FarPlane>20</FarPlane>
@@ -444,7 +444,7 @@
       <SpotShape>Square</SpotShape>
       <LodBias>0</LodBias>
       <PenumbraAngle>10</PenumbraAngle>
-      <LightPreset>FluorescentTubular</LightPreset>
+      <LightPreset>StudioLight</LightPreset>
       <LightStyle>Default</LightStyle>
       <DepthBias>0.0009765625</DepthBias>
       <SlopeBias>2</SlopeBias>
@@ -674,7 +674,7 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="1.5" Y="9.5" Z="-1.625" />
+      <Position X="1.925108" Y="18.3109245" Z="1.01387787" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Factory xsi:type="FuncFXFactory">
@@ -749,8 +749,8 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="3.49151373" Y="4.63205147" Z="-13.562849" />
-      <Rotation X="-0.5677648" Y="0.561516166" Z="-0.426450133" W="0.424832642" />
+      <Position X="1.54769325" Y="4.493404" Z="-13.7793655" />
+      <Rotation X="0.00463731773" Y="-0.201729938" Z="0.00105360535" W="0.9794297" />
       <Scaling>1</Scaling>
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>

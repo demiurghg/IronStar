@@ -56,23 +56,33 @@ struct LIGHTINDEX {
 };
 
 // Fusion.Engine.Graphics.ParticleSystem+PARAMS
-// Marshal.SizeOf = 320
+// Marshal.SizeOf = 1024
 struct PARAMS {
 	float4x4   View;                          // offset:    0
 	float4x4   Projection;                    // offset:   64
 	float4x4   ViewProjection;                // offset:  128
-	float4     CameraForward;                 // offset:  192
-	float4     CameraRight;                   // offset:  208
-	float4     CameraUp;                      // offset:  224
-	float4     CameraPosition;                // offset:  240
-	float4     Gravity;                       // offset:  256
-	float4     LightMapSize;                  // offset:  272
-	float      LinearizeDepthA;               // offset:  288
-	float      LinearizeDepthB;               // offset:  292
-	int        MaxParticles;                  // offset:  296
-	float      DeltaTime;                     // offset:  300
-	uint       DeadListSize;                  // offset:  304
-	float      CocScale;                      // offset:  308
-	float      CocBias;                       // offset:  312
+	float4x4   CascadeViewProjection0;        // offset:  192
+	float4x4   CascadeViewProjection1;        // offset:  256
+	float4x4   CascadeViewProjection2;        // offset:  320
+	float4x4   CascadeViewProjection3;        // offset:  384
+	float4     CascadeScaleOffset0;           // offset:  448
+	float4     CascadeScaleOffset1;           // offset:  464
+	float4     CascadeScaleOffset2;           // offset:  480
+	float4     CascadeScaleOffset3;           // offset:  496
+	float4     CameraForward;                 // offset:  512
+	float4     CameraRight;                   // offset:  528
+	float4     CameraUp;                      // offset:  544
+	float4     CameraPosition;                // offset:  560
+	float4     Gravity;                       // offset:  576
+	float4     LightMapSize;                  // offset:  592
+	float4     DirectLightDirection;          // offset:  608
+	float4     DirectLightIntensity;          // offset:  624
+	float      LinearizeDepthA;               // offset:  640
+	float      LinearizeDepthB;               // offset:  644
+	int        MaxParticles;                  // offset:  648
+	float      DeltaTime;                     // offset:  652
+	uint       DeadListSize;                  // offset:  656
+	float      CocScale;                      // offset:  660
+	float      CocBias;                       // offset:  664
 };
 

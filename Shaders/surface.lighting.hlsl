@@ -3,8 +3,10 @@
 	Clustered lighting rendering :
 -----------------------------------------------------------------------------*/
 
+#define USE_SOLID_SHADOW
+
 #include "brdf.fxi"
-#include "shadows.fxi"
+#include "shadows.surface.fxi"
 
 //
 //	ComputeClusteredLighting

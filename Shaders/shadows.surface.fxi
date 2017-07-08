@@ -29,36 +29,6 @@ float Dither ( int xpos, int ypos )
 }
 
 
-void CalculateRightAndUpTexelDepthDeltas ( in float3 vShadowTexDDX,
-                                           in float3 vShadowTexDDY,
-										   in float2  texelSize,
-                                           out float2 depthWeights
-) {
-    float2x2 matScreentoShadow = float2x2( vShadowTexDDX.xy, vShadowTexDDY.xy );
-    float fDeterminant = determinant ( matScreentoShadow );
-    
-    float fInvDeterminant = 1.0f / fDeterminant;
-    
-    float2x2 matShadowToScreen = float2x2 (
-        matScreentoShadow._22 *  fInvDeterminant, matScreentoShadow._12 * -fInvDeterminant, 
-        matScreentoShadow._21 * -fInvDeterminant, matScreentoShadow._11 *  fInvDeterminant );
-
-    float2 vRightShadowTexelLocation 	= float2( texelSize.x, 0.0f );
-    float2 vUpShadowTexelLocation 		= float2( 0.0f, texelSize.y );  
-    
-    // Transform the right pixel by the shadow space to screen space matrix.
-    float2 vRightTexelDepthRatio 		= mul( vRightShadowTexelLocation,	matShadowToScreen );
-    float2 vUpTexelDepthRatio 			= mul( vUpShadowTexelLocation, 		matShadowToScreen );
-
-    // We can now caculate how much depth changes when you move up or right in the shadow map.
-    // We use the ratio of change in x and y times the dervivite in X and Y of the screen space 
-    // depth to calculate this change.
-    depthWeights.x	=	vUpTexelDepthRatio.x 	* vShadowTexDDX.z + vUpTexelDepthRatio.y 	* vShadowTexDDY.z;
-    depthWeights.y 	=	vRightTexelDepthRatio.x * vShadowTexDDX.z + vRightTexelDepthRatio.y * vShadowTexDDY.z;
-        
-}
-
-
 
 float ProjectShadow ( float3 worldPos, float4x4 viewProjection, out float4 projection )
 {	
@@ -72,7 +42,6 @@ float ProjectShadow ( float3 worldPos, float4x4 viewProjection, out float4 proje
 }
 
 
-
 float3	ComputeCSM ( 
 	float2 vpos,
 	float3 normal,
@@ -83,8 +52,8 @@ float3	ComputeCSM (
 	SamplerState linearSampler, 
 	Texture2D csmTexture, 
 	Texture2D particleShadow, 
-	bool useFilter )
-{
+	bool useFilter 
+) {
 	//	compute UVs 
 	float2	csmSize;
 	float2	csmSizeRcp;
@@ -100,21 +69,11 @@ float3	ComputeCSM (
 	
 	float	bias			= 0.85 + Dither( vpos.x, vpos.y ) * 0.1f;
 	float	fade			= 1;
-	
-	float3	normalOffset	=	normalize(normal) * sqrt( 1 - sqr(dot(lightDir,normal)) )	
-							*	8.0f
-							*	1/512.0f
-							*	0;
-
-	float3	offset0		=	normalOffset;
-	float3	offset1		=	normalOffset * 3;
-	float3	offset2		=	normalOffset * 9;
-	float3	offset3		=	normalOffset * 27;
 
 	//------------------------------------------------------
 	
 	//	select cascade :
-	if ( ProjectShadow( worldPos + offset3, stage.CascadeViewProjection3, projection ) < 1 ) {
+	if ( ProjectShadow( worldPos, stage.CascadeViewProjection3, projection ) < 1 ) {
 		bestProjection 	=	projection;
 		bestScaleOffset	=	stage.CascadeScaleOffset3;
 		bestGradient	=	mul( normal, stage.CascadeGradientMatrix3 );
@@ -123,7 +82,7 @@ float3	ComputeCSM (
 		fade			=	min(1, max(abs(projection.x), abs(projection.y)));
 	}
 	
-	if ( ProjectShadow( worldPos + offset2, stage.CascadeViewProjection2, projection ) < bias ) {
+	if ( ProjectShadow( worldPos, stage.CascadeViewProjection2, projection ) < bias ) {
 		bestProjection 	=	projection;
 		bestScaleOffset	=	stage.CascadeScaleOffset2;
 		bestGradient	=	mul( normal, stage.CascadeGradientMatrix2 );
@@ -131,7 +90,7 @@ float3	ComputeCSM (
 		scale 			=	stage.CascadeViewProjection2._11_22_33;
 	}
 	
-	if ( ProjectShadow( worldPos + offset1, stage.CascadeViewProjection1, projection ) < bias ) {
+	if ( ProjectShadow( worldPos, stage.CascadeViewProjection1, projection ) < bias ) {
 		bestProjection 	=	projection;
 		bestScaleOffset	=	stage.CascadeScaleOffset1;
 		bestGradient	=	mul( normal, stage.CascadeGradientMatrix1 );
@@ -139,7 +98,7 @@ float3	ComputeCSM (
 		scale 			=	stage.CascadeViewProjection1._11_22_33;
 	}
 	
-	if ( ProjectShadow( worldPos + offset0, stage.CascadeViewProjection0, projection ) < bias ) {
+	if ( ProjectShadow( worldPos, stage.CascadeViewProjection0, projection ) < bias ) {
 		bestProjection 	=	projection;
 		bestScaleOffset	=	stage.CascadeScaleOffset0;
 		bestGradient	=	mul( normal, stage.CascadeGradientMatrix0 );

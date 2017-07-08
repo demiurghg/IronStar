@@ -122,18 +122,28 @@ namespace Fusion.Engine.Graphics {
 //       int MaxParticles;              // Offset:  216
 //       float DeltaTime;               // Offset:  220
 //       uint DeadListSize;             // Offset:  224
-		[StructLayout(LayoutKind.Sequential, Size=320)]
+		[StructLayout(LayoutKind.Sequential, Size=1024)]
 		[ShaderStructure]
 		struct PARAMS {
 			public Matrix	View;
 			public Matrix	Projection;
 			public Matrix	ViewProjection;
+			public Matrix	CascadeViewProjection0	;
+			public Matrix	CascadeViewProjection1	;
+			public Matrix	CascadeViewProjection2	;
+			public Matrix	CascadeViewProjection3	;
+			public Vector4	CascadeScaleOffset0		;
+			public Vector4	CascadeScaleOffset1		;
+			public Vector4	CascadeScaleOffset2		;
+			public Vector4	CascadeScaleOffset3		;
 			public Vector4	CameraForward;
 			public Vector4	CameraRight;
 			public Vector4	CameraUp;
 			public Vector4	CameraPosition;
 			public Vector4	Gravity;
 			public Vector4	LightMapSize;
+			public Vector4	DirectLightDirection;
+			public Color4	DirectLightIntensity;
 			public float	LinearizeDepthA;
 			public float	LinearizeDepthB;
 			public int		MaxParticles;
@@ -374,6 +384,16 @@ namespace Fusion.Engine.Graphics {
 			param.View				=	view;
 			param.Projection        =   projection;
 			param.ViewProjection	=	view * projection;
+			param.CascadeViewProjection0	=	rs.LightManager.ShadowMap.GetCascade( 0 ).ViewProjectionMatrix;
+			param.CascadeViewProjection1	=	rs.LightManager.ShadowMap.GetCascade( 1 ).ViewProjectionMatrix;
+			param.CascadeViewProjection2	=	rs.LightManager.ShadowMap.GetCascade( 2 ).ViewProjectionMatrix;
+			param.CascadeViewProjection3	=	rs.LightManager.ShadowMap.GetCascade( 3 ).ViewProjectionMatrix;
+			param.CascadeScaleOffset0		=	rs.LightManager.ShadowMap.GetCascade( 0 ).ShadowScaleOffset;
+			param.CascadeScaleOffset1		=	rs.LightManager.ShadowMap.GetCascade( 1 ).ShadowScaleOffset;
+			param.CascadeScaleOffset2		=	rs.LightManager.ShadowMap.GetCascade( 2 ).ShadowScaleOffset;
+			param.CascadeScaleOffset3		=	rs.LightManager.ShadowMap.GetCascade( 3 ).ShadowScaleOffset;
+			param.DirectLightDirection		=	new Vector4( renderWorld.LightSet.DirectLight.Direction, 0 );
+			param.DirectLightIntensity		=	renderWorld.LightSet.DirectLight.Intensity;
 			param.MaxParticles		=	0;
 			param.DeltaTime			=	deltaTime;
 			param.CameraForward		=	new Vector4( cameraMatrix.Forward	, 0 );

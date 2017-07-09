@@ -17,6 +17,11 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	float3 result		=	float3(0,0,0);
 	float slice			= 	1 - exp(-input.ProjPos.w*0.03);
 	int3 loadUVW		=	int3( input.Position.xy/vpSize*float2(16,8), slice * 24 );
+
+	float2	smSize;
+	float2	smSizeRcp;
+	ShadowMap.GetDimensions( smSize.x, smSize.y );
+	smSizeRcp.xy	=	1 / smSize.xy;
 	
 	uint2	data		=	clusterTable.Load( int4(loadUVW,0) ).rg;
 	uint	index		=	data.r;
@@ -129,7 +134,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 			
 		} else if (type==LightTypeSpotShadow) {
 			
-			float4 lsPos		=	mul(float4(worldPos+geometryNormal * 0.1,1), LightDataTable[idx].ViewProjection);
+			float4 lsPos		=	mul(float4(worldPos+geometryNormal * 0.0,1), LightDataTable[idx].ViewProjection);
 			float  shadowDepth	=	lsPos.z / LightDataTable[idx].IntensityFar.w;
 				   lsPos.xyz	= 	lsPos.xyz / lsPos.w;
 				   
@@ -150,12 +155,13 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 				#else
 				for( float row = -2; row <= 2; row += 1 ) {
 					[unroll]for( float col = -2; col <= 2; col += 1 ) {
-						float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, mad(float2(col,row), 0.5/1024.0f, lsPos.xy), shadowDepth ).r;
+						float2	smcoord	=	mad(float2(col,row), smSizeRcp.xy, lsPos.xy);
+						float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, smcoord, shadowDepth ).r;
 						accumulatedShadow += shadow;
 					}
 				}
-				//accumulatedShadow 	/= 	49.0f;
-				accumulatedShadow	=	max(0,mad(accumulatedShadow, 1/25.0f*2.0f, -0.5));
+				accumulatedShadow 	/= 	25.0f;
+				//accumulatedShadow	=	max(0,mad(accumulatedShadow, 1/25.0f*2.0f, -0.5));
 				#endif
 						
 				float3	prtShadow	=	ShadowMapParticles.SampleLevel( ParticleSampler, lsPos.xy, 0 ).rgb;

@@ -10,14 +10,14 @@
     <Enabled>true</Enabled>
     <Sprite>smoke</Sprite>
     <Effect>LitShadow</Effect>
-    <Count>15</Count>
+    <Count>32</Count>
     <Period>1</Period>
     <Timing Delay="0" Bunch="1" FadeIn="0.5" FadeOut="0.5" />
     <Color0 Red="1" Green="1" Blue="1" Alpha="0" />
-    <Color1 Red="1" Green="1" Blue="1" Alpha="0.25" />
+    <Color1 Red="1" Green="1" Blue="1" Alpha="0.5" />
     <Lifetime Distribution="Uniform" MinLifetime="4" MaxLifetime="5" />
-    <Shape Size0="1" Size1="2" EnableRotation="true" InitialAngle="360" MinAngularVelocity="2" MaxAngularVelocity="3" />
-    <Position OffsetDirection="None" OffsetFactor="0" Distribution="UniformRadial" MinSize="0" MaxSize="1" />
+    <Shape Size0="4" Size1="4" EnableRotation="true" InitialAngle="360" MinAngularVelocity="2" MaxAngularVelocity="3" />
+    <Position OffsetDirection="None" OffsetFactor="0" Distribution="UniformRadial" MinSize="0" MaxSize="3" />
     <Velocity Direction="None" LinearDistribution="Uniform" LinearVelocityMin="0" LinearVelocityMax="0" RadialDistribution="GaussRadial" RadialVelocityMin="0" RadialVelocityMax="0.25" Advection="0" />
     <Acceleration GravityFactor="-50" Damping="1" DragForce="0" Turbulence="0" />
   </ParticleStage1>

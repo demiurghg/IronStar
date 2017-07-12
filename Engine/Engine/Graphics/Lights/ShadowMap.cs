@@ -363,8 +363,7 @@ namespace Fusion.Engine.Graphics {
 			//
 			//	Particle shadow rendering 
 			//
-			#warning Add shadow mask (from atlas)
-			using ( new PixEvent( "Particle Shadows" ) ) {
+			using ( new PixEvent( "Shadow Masks" ) ) {
 
 				device.Clear( prtShadow.Surface, Color4.Black );
 
@@ -378,7 +377,7 @@ namespace Fusion.Engine.Graphics {
 
 					rs.Filter2.RenderBorder( prtShadow.Surface, cascade.ShadowRegion, 1 );
 
-					rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, cascade.ViewMatrix, cascade.ProjectionMatrix, prtShadow.Surface, depthBuffer.Surface );
+					//rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, cascade.ViewMatrix, cascade.ProjectionMatrix, prtShadow.Surface, depthBuffer.Surface );
 				}
 
 
@@ -399,6 +398,56 @@ namespace Fusion.Engine.Graphics {
 
 					//-------------
 
+					//var context = new ShadowContext();
+					//var far		= spot.Projection.GetFarPlaneDistance();
+
+					//var vp		= new Viewport( spot.ShadowRegion );
+
+					//rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, spot.SpotView, spot.Projection, prtShadow.Surface, depthBuffer.Surface );
+				}
+
+
+			}
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="gameTime"></param>
+		/// <param name="camera"></param>
+		/// <param name="rs"></param>
+		/// <param name="renderWorld"></param>
+		/// <param name="lightSet"></param>
+		public void RenderParticleShadows ( GameTime gameTime, Camera camera, RenderSystem rs, RenderWorld renderWorld, LightSet lightSet )
+		{
+			var lights = lightSet
+					.SpotLights
+					.Where ( light0 => light0.Visible )
+					.ToArray();
+
+			var instances = renderWorld.Instances;
+
+
+			//
+			//	Particle shadow rendering 
+			//
+			#warning Add shadow mask (from atlas)
+			using ( new PixEvent( "Particle Shadows" ) ) {
+
+				//	draw cascade shadow particles :
+				foreach ( var cascade in cascades ) {
+
+					var vp		= new Viewport( cascade.ShadowRegion );
+
+					rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, cascade.ViewMatrix, cascade.ProjectionMatrix, prtShadow.Surface, depthBuffer.Surface );
+
+				}
+
+
+				//	draw spot shadow particles :
+				foreach ( var spot in lights ) {
+
 					var context = new ShadowContext();
 					var far		= spot.Projection.GetFarPlaneDistance();
 
@@ -406,8 +455,6 @@ namespace Fusion.Engine.Graphics {
 
 					rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, spot.SpotView, spot.Projection, prtShadow.Surface, depthBuffer.Surface );
 				}
-
-
 			}
 		}
 	}

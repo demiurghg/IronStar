@@ -26,7 +26,7 @@ float3 ComputeClusteredLighting ( float3 worldPos )
 
 	//----------------------------------------------------------------------------------------------
 
-	float3	shadow		=	ComputeCSM( worldPos, Params, ShadowSampler, ShadowMap ); 
+	float3	shadow		=	ComputeCSM( worldPos, Params, ShadowSampler, ShadowMap, Sampler, ShadowMask ); 
 	totalLight.rgb 		+= 	shadow * Params.DirectLightIntensity.rgb;
 
 	//----------------------------------------------------------------------------------------------
@@ -61,37 +61,13 @@ float3 ComputeClusteredLighting ( float3 worldPos )
 				float3 	intensity	=	LightDataTable[idx].IntensityFar.rgb;
 				float4 	scaleOffset	=	LightDataTable[idx].ShadowScaleOffset;
 				
-				float	penumbra	=	1;
-				if (shape==LightSpotShapeRound) {
-					penumbra 	=	max(0, 1 - length(lsPos.xy));
-					penumbra	=	min(1, penumbra * 2 );				
-					penumbra	*=	penumbra;
-				}
-				if (shape==LightSpotShapeSquare) {
-					penumbra 	= 	max(0, 1 - length(max(abs(lsPos.x), abs(lsPos.y))));
-					penumbra	=	min(1, penumbra * 2 );				
-					penumbra	*=	penumbra;
-				}
-				
 				lsPos.xy		=	mad( lsPos.xy, scaleOffset.xy, scaleOffset.zw );
 						
-				//	TODO : num taps <--> shadow quality
-				//	TODO : kernel size <--> shadow region size
-				#if 0
-				float accumulatedShadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, lsPos.xy, shadowDepth ).r;
-				#else
-				float accumulatedShadow = 	0;
-				for( float row = -3; row <= 3; row += 1 ) {
-					[unroll]for( float col = -3; col <= 3; col += 1 ) {
-						float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, mad(float2(col,row), 1/2048.0f, lsPos.xy), shadowDepth ).r;
-						accumulatedShadow += shadow;
-					}
-				}
-				accumulatedShadow /= 49.0f;
-				#endif
+				float3 	accumulatedShadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, lsPos.xy, shadowDepth ).rrr;
+						accumulatedShadow	*=	ShadowMask.SampleLevel( Sampler, lsPos.xy, 0 ).rgb;
 						
 				float3 	lightDir	= 	position - worldPos.xyz;
-				float3 	falloff		= 	LinearFalloff( length(lightDir), radius ) * accumulatedShadow * penumbra;
+				float3 	falloff		= 	LinearFalloff( length(lightDir), radius ) * accumulatedShadow;
 				
 				totalLight.rgb 		+= 	falloff * intensity;
 			}

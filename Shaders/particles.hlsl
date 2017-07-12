@@ -35,6 +35,7 @@ Buffer<uint>				LightIndexTable		: 	register(t8);
 StructuredBuffer<LIGHT>		LightDataTable		:	register(t9);
 Texture2D					ShadowMap			:	register(t10);
 Texture2D					LightMap			:	register(t11);
+Texture2D					ShadowMask			:	register(t12);
 
 #include "particles.lighting.hlsl"
 

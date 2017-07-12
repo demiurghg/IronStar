@@ -426,6 +426,9 @@ namespace Fusion.Engine.Graphics {
 
 				//	render particle lighting :
 				ParticleSystem.RenderLight( gameTime, Camera );
+
+				//	render particles casting shadows :
+				rs.LightManager.ShadowMap.RenderParticleShadows( gameTime, Camera, rs, this, LightSet );
 			}
 
 

@@ -593,6 +593,9 @@ namespace Fusion.Engine.Graphics {
 						device.PixelShaderResources[9]		=	rs.LightManager.LightGrid.LightDataGpu;
 						device.PixelShaderResources[10]		=	rs.LightManager.ShadowMap.ColorBuffer;
 
+						device.PixelShaderResources[12]		=	rs.LightManager.ShadowMap.ParticleShadow;
+
+						device.PixelShaderSamplers[0]		=	SamplerState.LinearWrap ;
 						device.PixelShaderSamplers[1]		=	SamplerState.ShadowSampler ;
 					}
 

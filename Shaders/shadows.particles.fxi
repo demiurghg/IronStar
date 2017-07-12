@@ -16,7 +16,9 @@ float3	ComputeCSM (
 	float3 worldPos, 
 	PARAMS params, 
 	SamplerComparisonState shadowSampler, 
-	Texture2D csmTexture
+	Texture2D csmTexture,
+	SamplerState linearSampler, 
+	Texture2D prtTexture
 ) {
 	float4	projection		= float4(0,0,0,0);
 	float4	bestProjection 	= float4(0,0,0,0);

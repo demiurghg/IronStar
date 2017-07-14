@@ -21,7 +21,10 @@ namespace IronStar.Mapping {
 		public float Intensity { get; set; } = 500;
 		
 		[Category("Spot-light")]
-		public float Radius { get; set; } = 5;
+		public float OuterRadius { get; set; } = 5;
+		
+		[Category("Spot-light")]
+		public float InnerRadius { get; set; } = 0.1f;
 		
 		[Category("Spot-light")]
 		public float NearPlane { get; set; } = 0.125f;
@@ -101,8 +104,8 @@ namespace IronStar.Mapping {
 			light.SpotView		=	SpotView;
 			light.Position		=	Position;
 			light.Projection	=	SpotProjection;
-			light.RadiusOuter	=	Radius;
-			light.RadiusInner	=	0;
+			light.RadiusOuter	=	OuterRadius;
+			light.RadiusInner	=	InnerRadius;
 
 			light.SpotMaskName	=	SpotMaskName;
 
@@ -141,6 +144,7 @@ namespace IronStar.Mapping {
 			var dispColor   = new Color( (byte)(lightColor.Red / max * 255), (byte)(lightColor.Green / max * 255), (byte)(lightColor.Blue / max * 255), (byte)255 ); 
 
 			dr.DrawPoint( transform.TranslationVector, 1, color, 2 );
+			dr.DrawSphere( transform.TranslationVector, InnerRadius, dispColor );
 
 			if (selected) {
 				

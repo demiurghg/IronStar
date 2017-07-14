@@ -39,13 +39,14 @@ struct Particle {
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHT
-// Marshal.SizeOf = 116
+// Marshal.SizeOf = 120
 struct LIGHT {
 	float4x4   ViewProjection;                // offset:    0
 	float4     PositionRadius;                // offset:   64
 	float4     IntensityFar;                  // offset:   80
 	float4     ShadowScaleOffset;             // offset:   96
 	int        LightType;                     // offset:  112
+	float      SourceRadius;                  // offset:  116
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHTINDEX

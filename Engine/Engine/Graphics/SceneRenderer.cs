@@ -136,6 +136,7 @@ namespace Fusion.Engine.Graphics {
 
 			cbDataStage.DirectLightDirection	=	new Vector4( rs.RenderWorld.LightSet.DirectLight.Direction, 0 );
 			cbDataStage.DirectLightIntensity	=	rs.RenderWorld.LightSet.DirectLight.Intensity;
+			cbDataStage.DirectLightAngularSize	=	rs.RenderWorld.LightSet.DirectLight.AngularSize;
 
 			cbDataStage.CascadeViewProjection0	=	rs.LightManager.ShadowMap.GetCascade( 0 ).ViewProjectionMatrix;
 			cbDataStage.CascadeViewProjection1	=	rs.LightManager.ShadowMap.GetCascade( 1 ).ViewProjectionMatrix;

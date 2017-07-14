@@ -66,6 +66,7 @@ namespace Fusion.Engine.Graphics {
 			public Vector4	ViewBounds				;
 			public Vector4	DirectLightDirection	;
 			public Color4	DirectLightIntensity	;
+			public float	DirectLightAngularSize	;
 			public float	VTPageScaleRCP			;
 			public float	ShadowGradientBiasX		;
 			public float	ShadowGradientBiasY		;
@@ -117,6 +118,7 @@ namespace Fusion.Engine.Graphics {
 			public Vector4	IntensityFar;
 			public Vector4	ShadowScaleOffset;
 			public int		LightType;
+			public float	SourceRadius;
 
 			public void FromOmniLight ( OmniLight light ) 
 			{
@@ -124,6 +126,7 @@ namespace Fusion.Engine.Graphics {
 				LightType		=	LightTypeOmni;
 				PositionRadius	=	new Vector4( light.Position, light.RadiusOuter );
 				IntensityFar	=	new Vector4( light.Intensity2.Red, light.Intensity2.Green, light.Intensity2.Blue, 0 );
+				SourceRadius	=	light.RadiusInner;
 				#endregion
 			}
 
@@ -136,6 +139,7 @@ namespace Fusion.Engine.Graphics {
 				IntensityFar		=	new Vector4( light.Intensity2.Red, light.Intensity2.Green, light.Intensity2.Blue, light.Projection.GetFarPlaneDistance() );
 				ViewProjection		=	light.SpotView * light.Projection;
 				ShadowScaleOffset	=	light.ShadowScaleOffset;
+				SourceRadius		=	light.RadiusInner;
 				#endregion
 			}
 		}

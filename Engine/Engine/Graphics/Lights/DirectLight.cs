@@ -45,6 +45,16 @@ namespace Fusion.Engine.Graphics {
 
 
 		/// <summary>
+		/// Direct light source angular size.
+		/// Sun angular size is ~0.5 degrees.
+		/// </summary>
+		public float AngularSize {
+			get;
+			set;
+		} = MathUtil.DegreesToRadians(0.5f); 
+
+
+		/// <summary>
 		/// The direction FROM distant light source (Sun, Moon, thunder etc).
 		/// </summary>
 		public Vector3 Direction {

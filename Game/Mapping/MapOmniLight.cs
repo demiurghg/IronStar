@@ -26,7 +26,10 @@ namespace IronStar.Mapping {
 		public float Intensity { get; set; } = 500;
 		
 		[Category("Omni-light")]
-		public float Radius { get; set; } = 5;
+		public float OuterRadius { get; set; } = 5;
+		
+		[Category("Omni-light")]
+		public float InnerRadius { get; set; } = 0.1f;
 
 		[Category("Omni-light")]
 		public LightPreset LightPreset { get; set; } = LightPreset.IncandescentStandard;
@@ -56,8 +59,8 @@ namespace IronStar.Mapping {
 
 			light.Intensity		=	LightPresetColor.GetColor( LightPreset, Intensity );;
 			light.Position		=	WorldMatrix.TranslationVector;
-			light.RadiusOuter	=	Radius;
-			light.RadiusInner	=	0;
+			light.RadiusOuter	=	OuterRadius;
+			light.RadiusInner	=	InnerRadius;
 			light.LightStyle	=	LightStyle;
 
 			world.Game.RenderSystem.RenderWorld.LightSet.OmniLights.Add( light );
@@ -90,8 +93,10 @@ namespace IronStar.Mapping {
 			dr.DrawPoint( transform.TranslationVector, 1, color, 1 );
 
 			if (selected) {
-				dr.DrawSphere( transform.TranslationVector, Radius, dispColor );
+				dr.DrawSphere( transform.TranslationVector, InnerRadius, dispColor );
+				dr.DrawSphere( transform.TranslationVector, OuterRadius, dispColor );
 			} else {
+				dr.DrawSphere( transform.TranslationVector, InnerRadius, dispColor );
 			}
 		}
 

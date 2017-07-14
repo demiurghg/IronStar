@@ -100,13 +100,14 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		float3	lightDir	=	-Stage.DirectLightDirection.xyz;
 		float3	intensity	=	Stage.DirectLightIntensity.rgb;
 		float3	lightDirN	=	normalize(lightDir);
+		float	srcRadius	=	Stage.DirectLightAngularSize;
 
 		float3	shadow		=	ComputeCSM( vpos, triNormal, lightDirN, worldPos, Stage, ShadowSampler, ParticleSampler, ShadowMap, ShadowMapParticles, true ); 
 		
 		float  nDotL		= 	max( 0, dot(normal, lightDirN) );
 		
 		totalLight.rgb 		+= 	shadow * Lambert ( normal.xyz,  lightDirN, intensity, diffuse );
-		totalLight.rgb 		+= 	shadow * nDotL * CookTorrance( normal.xyz, viewDirN, lightDirN, intensity, specular, roughness );
+		totalLight.rgb 		+= 	shadow * nDotL * CookTorrance( normal.xyz, viewDirN, lightDirN, intensity, specular, roughness, srcRadius );
 	}
 	
 	//----------------------------------------------------------------------------------------------
@@ -120,6 +121,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		float3 position		=	LightDataTable[idx].PositionRadius.xyz;
 		float  radius		=	LightDataTable[idx].PositionRadius.w;
 		float3 intensity	=	LightDataTable[idx].IntensityFar.rgb;
+		float  sourceRadius	=	LightDataTable[idx].SourceRadius;
 		
 		[branch]
 		if (type==LightTypeOmni) {
@@ -130,7 +132,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 			float  nDotL		= 	max( 0, dot(normal, lightDirN) );
 			
 			totalLight.rgb 		+= 	falloff * Lambert ( normal.xyz,  lightDirN, intensity, diffuse );
-			totalLight.rgb 		+= 	falloff * nDotL * CookTorrance( normal.xyz, viewDirN, lightDirN, intensity, specular, roughness );
+			totalLight.rgb 		+= 	falloff * nDotL * CookTorrance( normal.xyz, viewDirN, lightDir, intensity, specular, roughness, sourceRadius );
 			
 		} else if (type==LightTypeSpotShadow) {
 			
@@ -171,7 +173,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 				float  	nDotL		= 	max( 0, dot(normal, normalize(lightDir)) );
 				
 				totalLight.rgb 		+= 	falloff * Lambert ( normal.xyz,  lightDir, intensity, diffuse );
-				totalLight.rgb 		+= 	falloff * nDotL * CookTorrance( normal.xyz, viewDirN, lightDir, intensity, specular, roughness );
+				totalLight.rgb 		+= 	falloff * nDotL * CookTorrance( normal.xyz, viewDirN, lightDir, intensity, specular, roughness, sourceRadius );
 			}
 		}
 	}

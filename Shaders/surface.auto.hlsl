@@ -31,9 +31,10 @@ struct STAGE {
 	float4     ViewBounds;                    // offset:  816
 	float4     DirectLightDirection;          // offset:  832
 	float4     DirectLightIntensity;          // offset:  848
-	float      VTPageScaleRCP;                // offset:  864
-	float      ShadowGradientBiasX;           // offset:  868
-	float      ShadowGradientBiasY;           // offset:  872
+	float      DirectLightAngularSize;        // offset:  864
+	float      VTPageScaleRCP;                // offset:  868
+	float      ShadowGradientBiasX;           // offset:  872
+	float      ShadowGradientBiasY;           // offset:  876
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+INSTANCE
@@ -58,13 +59,14 @@ struct LIGHTINDEX {
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHT
-// Marshal.SizeOf = 116
+// Marshal.SizeOf = 120
 struct LIGHT {
 	float4x4   ViewProjection;                // offset:    0
 	float4     PositionRadius;                // offset:   64
 	float4     IntensityFar;                  // offset:   80
 	float4     ShadowScaleOffset;             // offset:   96
 	int        LightType;                     // offset:  112
+	float      SourceRadius;                  // offset:  116
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+DECAL

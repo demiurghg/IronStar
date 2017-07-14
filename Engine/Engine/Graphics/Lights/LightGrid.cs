@@ -232,7 +232,7 @@ namespace Fusion.Engine.Graphics {
 		int GetSpotLightLOD ( SpotLight spotLight, BoundingFrustum frustum, Vector3 viewPosition )
 		{
 			if (frustum.Contains( viewPosition )==ContainmentType.Contains) {
-				return 0;
+				return spotLight.LodBias;
 			}
 
 			var corners		=	frustum.GetCorners();

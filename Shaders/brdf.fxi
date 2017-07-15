@@ -86,7 +86,7 @@ float GTerm ( float roughness, float3 N, float3 V )
 	http://blog.selfshadow.com/publications/s2013-shading-course/hoffman/s2013_pbs_physics_math_slides.pdf
 -----------------------------------------------------------------------------*/
 
-float3	CookTorrance( float3 N, float3 V, float3 L, float3 I, float3 F, float roughness, float sourceRadius = 0.1 )
+float3	CookTorrance( float3 N, float3 V, float3 L, float3 I, float3 F, float roughness, float sourceRadius )
 {
 	float3	r				=	normalize(reflect(V,N));
 	float3	centerToRay		=	dot(L,r)*r-L;

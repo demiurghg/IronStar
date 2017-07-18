@@ -51,6 +51,7 @@ StructuredBuffer<DECAL>	DecalDataTable		:	register(t7);
 Texture2D				DecalImages			:	register(t8);
 Texture2D				ShadowMap			:	register(t9);
 Texture2D				ShadowMapParticles	:	register(t10);
+Texture2D				AmbientOcclusion	:	register(t11);
 
 #ifdef _UBERSHADER
 $ubershader FORWARD RIGID|SKINNED

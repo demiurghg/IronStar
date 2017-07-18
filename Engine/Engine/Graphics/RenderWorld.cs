@@ -432,12 +432,15 @@ namespace Fusion.Engine.Graphics {
 			}
 
 
-			//	render g-buffer :
+			//	Z-pass :
 			rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
+
+			//	Ambient occlusion :
+			rs.SsaoFilter.Render( stereoEye, Camera, viewHdrFrame.DepthBuffer, viewHdrFrame.GBuffer1 );
+
+			//	Forward+
 			rs.SceneRenderer.RenderForward( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
 
-			//	render ssao :
-			rs.SsaoFilter.Render( stereoEye, Camera, viewHdrFrame.DepthBuffer, viewHdrFrame.GBuffer1 );
 
 			switch (rs.ShowGBuffer) {
 				case 1  : rs.Filter.CopyColor( targetSurface, viewHdrFrame.GBuffer0 ); return;

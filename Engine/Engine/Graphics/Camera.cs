@@ -25,6 +25,8 @@ namespace Fusion.Engine.Graphics {
 		private float	projZNear;
 		private float	projZFar;
 
+		private float	nearWidth;
+		private float	nearHeight;
 
 		/// <summary>
 		/// 
@@ -56,8 +58,8 @@ namespace Fusion.Engine.Graphics {
 			projZFar			=	far;
 
 			float offset		=	separation / convergence * near / 2;
-			float nearHeight	=	height;
-			float nearWidth		=	width;
+			nearHeight			=	height;
+			nearWidth			=	width;
 
 			//	Projection :
 			this.projMatrix		=	Matrix.PerspectiveOffCenterRH( -nearWidth/2, nearWidth/2, -nearHeight/2, nearHeight/2, near, far );
@@ -113,9 +115,9 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="aspectRatio">Viewport width divided by viewport height</param>
 		public void SetupCameraFov ( Vector3 origin, Vector3 target, Vector3 up, float fov, float near, float far, float convergence, float separation, float aspectRatio )
 		{
-			var nearWidth	=	near * (float)Math.Tan( fov/2 ) * 2;
-			var nearHeight	=	nearWidth / aspectRatio;
-			var view		=	Matrix.LookAtRH( origin, target, up );
+			nearWidth	=	near * (float)Math.Tan( fov/2 ) * 2;
+			nearHeight	=	nearWidth / aspectRatio;
+			var view	=	Matrix.LookAtRH( origin, target, up );
 
 			SetupCamera( view, nearHeight, nearWidth, near, far, convergence, separation );
 		}
@@ -134,8 +136,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="separation"></param>
 		public void SetupCameraFov ( Matrix view, float fov, float near, float far, float convergence, float separation, float aspectRatio )
 		{
-			var nearWidth	=	near * (float)Math.Tan( fov/2 ) * 2;
-			var nearHeight	=	nearWidth / aspectRatio;
+			nearWidth	=	near * (float)Math.Tan( fov/2 ) * 2;
+			nearHeight	=	nearWidth / aspectRatio;
 
 			SetupCamera( view, nearHeight, nearWidth, near, far, convergence, separation );
 		}
@@ -257,6 +259,26 @@ namespace Fusion.Engine.Graphics {
 		internal float LinearizeDepthBias {
 			get {
 				return 1 / projZNear;
+			}
+		}
+
+
+		/// <summary>
+		/// Gets half tangent of horizontal fov
+		/// </summary>
+		internal float CameraTangentX {
+			get {
+				return nearWidth / projZNear / 2;
+			}
+		}
+
+
+		/// <summary>
+		/// Gets half tangent of horizontal fov
+		/// </summary>
+		internal float CameraTangentY {
+			get {
+				return nearHeight / projZNear / 2;
 			}
 		}
 

@@ -181,7 +181,8 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	//
 	//	Ambient
 	//
-	totalLight.rgb += (diffuse + specular).rgb * Stage.Ambient;
+	float ambientOcclusion	=	AmbientOcclusion.Load( int3( input.Position.xy,0 ) ).r;
+	totalLight.rgb += (diffuse + specular).rgb * Stage.Ambient * ambientOcclusion;
 	
 	return totalLight;
 }

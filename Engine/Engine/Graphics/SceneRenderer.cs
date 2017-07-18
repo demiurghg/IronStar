@@ -205,12 +205,14 @@ namespace Fusion.Engine.Graphics {
 			device.PixelShaderResources[5]	= rs.LightManager.LightGrid.IndexDataGpu;
 			device.PixelShaderResources[6]	= rs.LightManager.LightGrid.LightDataGpu;
 			device.PixelShaderResources[7]	= rs.LightManager.LightGrid.DecalDataGpu;
+			device.PixelShaderResources[11]	= rs.SsaoFilter.OcclusionMap;
 			
 			if (shadowContext==null) {	  // because these maps are used as render targets for shadows
 				device.PixelShaderResources[8]	= rs.RenderWorld.LightSet?.DecalAtlas?.Texture?.Srv;
 				device.PixelShaderResources[9]	= rs.LightManager.ShadowMap.ColorBuffer;
 				device.PixelShaderResources[10]	= rs.LightManager.ShadowMap.ParticleShadow;
 			}
+
 
 			//	setup samplers :
 			var shadowSampler	=	rs.UsePointShadowSampling ? SamplerState.ShadowSamplerPoint : SamplerState.ShadowSampler;

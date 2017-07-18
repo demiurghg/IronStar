@@ -46,6 +46,12 @@ namespace Fusion.Engine.Graphics {
 		RenderTarget2D	occlusionMap;
 		RenderTarget2D	temporaryMap;
 
+		[ShaderDefine]
+		const int BlockSizeX = 32;
+
+		[ShaderDefine]
+		const int BlockSizeY = 32;
+
 
 		[ShaderStructure()]
 		[StructLayout(LayoutKind.Sequential, Pack=4, Size=512)]
@@ -55,6 +61,14 @@ namespace Fusion.Engine.Graphics {
 			public	Matrix	ViewProj;
 			public	Matrix	InvViewProj;
 			public	Matrix	InvProj;
+
+			public	Vector4	InputSize;
+
+			public	float	CameraTangentX;
+			public	float	CameraTangentY;
+
+			public	float    LinDepthScale;
+			public	float    LinDepthBias;
 			
 			public	float	PowerIntensity;
 			public	float	LinearIntensity;
@@ -187,6 +201,14 @@ namespace Fusion.Engine.Graphics {
 					paramsData.InvViewProj		=	Matrix.Invert( view * projection );
 					paramsData.InvProj			=	Matrix.Invert(projection);
 
+					paramsData.InputSize		=	depthBuffer.SizeRcpSize;
+
+					paramsData.CameraTangentX	=	camera.CameraTangentX;
+					paramsData.CameraTangentY	=	camera.CameraTangentY;
+
+					paramsData.LinDepthBias		=	camera.LinearizeDepthBias;
+					paramsData.LinDepthScale	=	camera.LinearizeDepthScale;
+
 					paramsData.PowerIntensity	=	PowerIntensity	;
 					paramsData.LinearIntensity	=	LinearIntensity	;
 					paramsData.FadeoutDistance	=	FadeoutDistance	;
@@ -204,8 +226,8 @@ namespace Fusion.Engine.Graphics {
 
 					device.PipelineState = factory[ (int)Flags.HDAO ];
 			
-					int tgx = MathUtil.IntDivRoundUp( vp.Width, 16 );
-					int tgy = MathUtil.IntDivRoundUp( vp.Height, 16 );
+					int tgx = MathUtil.IntDivRoundUp( vp.Width,  BlockSizeX );
+					int tgy = MathUtil.IntDivRoundUp( vp.Height, BlockSizeY );
 					int tgz = 1;
 
 					device.Dispatch( tgx, tgy, tgz );

@@ -54,21 +54,15 @@ namespace Fusion.Engine.Graphics {
 
 
 		[ShaderStructure()]
-		[StructLayout(LayoutKind.Sequential, Pack=4, Size=512)]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=64)]
 		struct Params {
-			public	Matrix	ProjMatrix;
-			public	Matrix	View;
-			public	Matrix	ViewProj;
-			public	Matrix	InvViewProj;
-			public	Matrix	InvProj;
-
 			public	Vector4	InputSize;
 
 			public	float	CameraTangentX;
 			public	float	CameraTangentY;
 
-			public	float    LinDepthScale;
-			public	float    LinDepthBias;
+			public	float   LinDepthScale;
+			public	float   LinDepthBias;
 			
 			public	float	PowerIntensity;
 			public	float	LinearIntensity;
@@ -76,6 +70,7 @@ namespace Fusion.Engine.Graphics {
 			public	float	DiscardDistance;
 			public	float	AcceptRadius;
 			public	float	RejectRadius;
+			public	float	RejectRadiusRcp;
 
 		}
 
@@ -195,12 +190,6 @@ namespace Fusion.Engine.Graphics {
 					//
 					var paramsData				=	new Params();
 
-					paramsData.ProjMatrix		=	projection;
-					paramsData.View				=	view;
-					paramsData.ViewProj			=	view * projection;
-					paramsData.InvViewProj		=	Matrix.Invert( view * projection );
-					paramsData.InvProj			=	Matrix.Invert(projection);
-
 					paramsData.InputSize		=	depthBuffer.SizeRcpSize;
 
 					paramsData.CameraTangentX	=	camera.CameraTangentX;
@@ -215,6 +204,7 @@ namespace Fusion.Engine.Graphics {
 					paramsData.DiscardDistance	=	DiscardDistance	;
 					paramsData.AcceptRadius		=	AcceptRadius	;
 					paramsData.RejectRadius		=	RejectRadius	;
+					paramsData.RejectRadiusRcp	=	1 / RejectRadius;
 
 
 					paramsCB.SetData( paramsData );

@@ -49,7 +49,7 @@ float2 UintToFloat2( uint xy )
 
 float3 FetchPositionFromCache ( int2 xy )
 {
-	CachedPosition cp = cachedPosition[xy.x][xy.y];
+	CachedPosition cp = cachedPosition[xy.y][xy.x];
 	return float3( UintToFloat2(cp.xy), cp.z );
 }
 
@@ -63,10 +63,10 @@ float3 GetViewspacePosition( float z, float2 xy )
 # define NUM_VALLEYS	16
 static const int2		samplePattern[NUM_VALLEYS] =
 {
-  {0, -9}, {4, -9}, {2, -6}, {6, -6},
+  {0, -7}, {4, -7}, {2, -6}, {6, -6},
   {0, -3}, {4, -3}, {8, -3}, {2, 0},
-  {6, 0}, {9, 0}, {4, 3}, {8, 3},
-  {2, 6}, {6, 6}, {9, 6}, {4, 9},
+  {6, 0}, {7, 0}, {4, 3}, {8, 3},
+  {2, 6}, {6, 6}, {7, 6}, {4, 7},
 };
 
 //-----------------------------------------------------------------------------
@@ -82,6 +82,8 @@ void CSMain(
 	int2 location		=	dispatchThreadId.xy;
 	int2 blockSize		=	int2(BlockSizeX,BlockSizeY);
 	uint threadCount 	= 	BlockSizeX * BlockSizeY; 
+	
+	float distanceScale	=	length( float3( params.CameraTangentX, params.CameraTangentY, 1 ) );
 	
 	float2	projLocation	=	location.xy * params.InputSize.zw * 2 - 1;
 			projLocation.y	*=	-1;
@@ -117,7 +119,7 @@ void CSMain(
 			cp.xy	=	Float2ToUint( xyz.xy );
 			cp.z	=	z;
 
-			cachedPosition[ storePoint.x ][ storePoint.y ] = cp;
+			cachedPosition[ storePoint.y ][ storePoint.x ] = cp;
 		}
 	}
 	
@@ -127,36 +129,50 @@ void CSMain(
 	//----------------------------------------------
 	//	Find valleys :
 	//----------------------------------------------
+	
 
 	int2 	cacheCenter		=	groupThreadId.xy + int2(OverlapX, OverlapY);
 	float3	centerPosition	=	FetchPositionFromCache( cacheCenter );
-	float	centerDistance	=	length(centerPosition);
+	//float	centerDistance	=	length(centerPosition);
+	float	centerDistance	=	centerPosition.z * distanceScale;
 	float	occlusion		=	0.0f;
 
-	for (int i=0; i<NUM_VALLEYS; i++) {
+	[branch]
+	if ( centerPosition.z < params.DiscardDistance ) {
 
-		int2 	fetch0		=	cacheCenter + samplePattern[i];
-		int2 	fetch1		=	cacheCenter - samplePattern[i];
-		float3	position0	=	FetchPositionFromCache( fetch0 );
-		float3	position1	=	FetchPositionFromCache( fetch1 );
-		float	distance0	=	length(position0);
-		float	distance1	=	length(position1);
+		[unroll]
+		for (int i=0; i<NUM_VALLEYS; i++) {
+
+			int2 	fetch0		=	cacheCenter + samplePattern[i];
+			int2 	fetch1		=	cacheCenter - samplePattern[i];
+			float3	position0	=	FetchPositionFromCache( fetch0 );
+			float3	position1	=	FetchPositionFromCache( fetch1 );
+			// float	distance0	=	length(position0);
+			// float	distance1	=	length(position1);
+			float	distance0	=	position0.z * distanceScale;
+			float	distance1	=	position1.z * distanceScale;
+			
+			float	delta0		=	centerDistance - distance0;
+			float	delta1		=	centerDistance - distance1;
+			
+			float	weight0		=	(delta0 > params.AcceptRadius) ? saturate( (params.RejectRadius - delta0) * params.RejectRadiusRcp ) : 0;
+			float	weight1		=	(delta1 > params.AcceptRadius) ? saturate( (params.RejectRadius - delta1) * params.RejectRadiusRcp ) : 0;
+			
+			float3	direction0	=	normalize(centerPosition - position0);
+			float3	direction1	=	normalize(centerPosition - position1);
+			
+			float	valleyDot	=	saturate(dot(direction0, direction1) + 0.9f) * 1.2f;
+			
+			occlusion	+=	( weight0 * weight1 * valleyDot * valleyDot * valleyDot);
+		}
 		
-		float	delta0		=	centerDistance - distance0;
-		float	delta1		=	centerDistance - distance1;
+		occlusion /= (float)NUM_VALLEYS;
 		
-		float	weight0		=	(delta0 > params.AcceptRadius) ? saturate( (params.RejectRadius - delta0) / params.RejectRadius ) : 0;
-		float	weight1		=	(delta1 > params.AcceptRadius) ? saturate( (params.RejectRadius - delta1) / params.RejectRadius ) : 0;
-		
-		float3	direction0	=	normalize(centerPosition - position0);
-		float3	direction1	=	normalize(centerPosition - position1);
-		
-		float	valleyDot	=	saturate(dot(direction0, direction1) + 0.9f) * 1.2f;
-		
-		occlusion	+=	( weight0 * weight1 * valleyDot * valleyDot * valleyDot);
-	}
+	} else {
 	
-	occlusion /= (float)NUM_VALLEYS;
+		occlusion	=	0.5f;
+	
+	}
 	
 	target[location.xy] = 1-occlusion.xxxx;
 	

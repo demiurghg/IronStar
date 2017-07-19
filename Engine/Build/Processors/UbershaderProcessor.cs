@@ -381,7 +381,7 @@ namespace Fusion.Build.Processors {
 			var	flags	=	FX.ShaderFlags.Debug;
 
 			if ( DisableOptimization)	flags |= FX.ShaderFlags.OptimizationLevel0;
-			// (!DisableOptimization)	flags |= FX.ShaderFlags.OptimizationLevel3;
+			if (!DisableOptimization)	flags |= FX.ShaderFlags.OptimizationLevel3;
 			if ( PreferFlowControl)		flags |= FX.ShaderFlags.PreferFlowControl;
 			if ( AvoidFlowControl)		flags |= FX.ShaderFlags.AvoidFlowControl;
 

@@ -2,7 +2,7 @@ static const int BlockSizeX = 32;
 static const int BlockSizeY = 32;
 
 // Fusion.Engine.Graphics.SsaoFilter+Params
-// Marshal.SizeOf = 64
+// Marshal.SizeOf = 80
 struct Params {
 	float4     InputSize;                     // offset:    0
 	float      CameraTangentX;                // offset:   16
@@ -16,5 +16,7 @@ struct Params {
 	float      AcceptRadius;                  // offset:   48
 	float      RejectRadius;                  // offset:   52
 	float      RejectRadiusRcp;               // offset:   56
+	float      Dummy0;                        // offset:   60
+	int2       WriteOffset;                   // offset:   64
 };
 

@@ -1,6 +1,6 @@
 
 #if 0
-// $ubershader 	INTERLEAVE	
+$ubershader 	INTERLEAVE	
 // $ubershader 	DEINTERLEAVE
 $ubershader 	HDAO		
 // $ubershader 	BILATERAL_X	
@@ -17,9 +17,6 @@ $ubershader 	HDAO
 cbuffer CBParams : register(b0) {
 	Params	params;
 };
-
-Texture2D<float4> 	source  : register(t0); 
-RWTexture2D<float4> target  : register(u0); 
 
 struct CachedPosition {
 	uint xy;
@@ -60,16 +57,27 @@ float3 GetViewspacePosition( float z, float2 xy )
 }
 
 
+uint Interleave4X ( uint value, uint size )
+{
+	return (value%(size/4))*4 + (value%4);
+}
+
+
 # define NUM_VALLEYS	16
 static const int2		samplePattern[NUM_VALLEYS] =
 {
   {0, -7}, {4, -7}, {2, -6}, {6, -6},
-  {0, -3}, {4, -3}, {8, -3}, {2, 0},
-  {6, 0}, {7, 0}, {4, 3}, {8, 3},
+  {0, -3}, {4, -3}, {9, -3}, {2, 0},
+  {6, 0}, {7, 0}, {4, 3}, {9, 3},
   {2, 6}, {6, 6}, {7, 6}, {4, 7},
 };
 
 //-----------------------------------------------------------------------------
+
+#ifdef HDAO
+
+Texture2D<float4> 	source  : register(t0); 
+RWTexture2D<float4> target  : register(u0); 
 
 
 [numthreads(BlockSizeX,BlockSizeY,1)] 
@@ -88,13 +96,6 @@ void CSMain(
 	float2	projLocation	=	location.xy * params.InputSize.zw * 2 - 1;
 			projLocation.y	*=	-1;
 	
-	//	PLAN: 
-	//	+	location -> [-1,+1]
-	//	+	restore view position
-	//	+	debug view position (to texture)
-	//	+	store in cache and debug again
-	//	-	perform HDAO kernel
-	
 	//----------------------------------------------
 	//	Load 64x64 block to group-shared memory :
 	//----------------------------------------------
@@ -107,6 +108,7 @@ void CSMain(
 		
 			int2 topLeft	=	groupId.xy * blockSize.xy - int2(OverlapX,OverlapY);
 			int3 loadPoint 	= 	int3( topLeft + groupThreadId.xy*2 + int2(i,j), 0 );
+			
 			int2 storePoint	= 	int2( groupThreadId.xy*2    + int2(i,j) );
 			
 			float2	xy		=	loadPoint.xy * params.InputSize.zw * 2 - 1;
@@ -125,15 +127,12 @@ void CSMain(
 	
 	GroupMemoryBarrierWithGroupSync();
 	
-	
 	//----------------------------------------------
 	//	Find valleys :
 	//----------------------------------------------
-	
 
 	int2 	cacheCenter		=	groupThreadId.xy + int2(OverlapX, OverlapY);
 	float3	centerPosition	=	FetchPositionFromCache( cacheCenter );
-	//float	centerDistance	=	length(centerPosition);
 	float	centerDistance	=	centerPosition.z * distanceScale;
 	float	occlusion		=	0.0f;
 
@@ -174,10 +173,38 @@ void CSMain(
 	
 	}
 	
-	target[location.xy] = 1-occlusion.xxxx;
+	target[location.xy*2 + params.WriteOffset] = 1-occlusion.xxxx;
 	
 	//target[location.xy]	= float4( frac(GetViewspacePosition( LinearizeDepth(source.Load(int3(location,0))), projLocation )), 1 );
 }
 
+#endif
 
+//-----------------------------------------------------------------------------
+
+#ifdef INTERLEAVE
+
+Texture2D<float4> 	source  : register(t0); 
+RWTexture2D<float> 	target0	: register(u0); 
+RWTexture2D<float> 	target1	: register(u1); 
+RWTexture2D<float> 	target2	: register(u2); 
+RWTexture2D<float> 	target3	: register(u3); 
+
+[numthreads(BlockSizeX,BlockSizeY,1)] 
+void CSMain( 
+	uint3 groupId : SV_GroupID, 
+	uint3 groupThreadId : SV_GroupThreadID, 
+	uint  groupIndex: SV_GroupIndex, 
+	uint3 dispatchThreadId : SV_DispatchThreadID) 
+{
+	int2	storePoint			=	dispatchThreadId.xy;
+	int3	loadPoint			=	int3(dispatchThreadId.xy*2,0);
+	
+	target0[ storePoint.xy ]	=	source.Load( loadPoint + int3(0,0,0) ).r;
+	target1[ storePoint.xy ]	=	source.Load( loadPoint + int3(1,0,0) ).r;
+	target2[ storePoint.xy ]	=	source.Load( loadPoint + int3(0,1,0) ).r;
+	target3[ storePoint.xy ]	=	source.Load( loadPoint + int3(1,1,0) ).r;
+}
+
+#endif
 

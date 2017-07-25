@@ -46,6 +46,11 @@ namespace Fusion.Engine.Graphics {
 		RenderTarget2D	occlusionMap;
 		RenderTarget2D	temporaryMap;
 
+		RenderTarget2D	depthSliceMap0;
+		RenderTarget2D	depthSliceMap1;
+		RenderTarget2D	depthSliceMap2;
+		RenderTarget2D	depthSliceMap3;
+
 		[ShaderDefine]
 		const int BlockSizeX = 32;
 
@@ -54,7 +59,7 @@ namespace Fusion.Engine.Graphics {
 
 
 		[ShaderStructure()]
-		[StructLayout(LayoutKind.Sequential, Pack=4, Size=64)]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=80)]
 		struct Params {
 			public	Vector4	InputSize;
 
@@ -68,9 +73,13 @@ namespace Fusion.Engine.Graphics {
 			public	float	LinearIntensity;
 			public	float	FadeoutDistance;
 			public	float	DiscardDistance;
+
 			public	float	AcceptRadius;
 			public	float	RejectRadius;
 			public	float	RejectRadiusRcp;
+			public	float	Dummy0;
+
+			public	Int2	WriteOffset;
 
 		}
 
@@ -125,6 +134,11 @@ namespace Fusion.Engine.Graphics {
 			interleavedDepth	=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.R32F,  newWidth,	newHeight,	 false, true );
 			occlusionMap		=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.Rgba8, newWidth,	newHeight,	 false, true );
 			temporaryMap		=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.Rgba8, newWidth,	newHeight,	 false, true );
+
+			depthSliceMap0		=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.R32F, newWidth/2,	newHeight/2, false, true );
+			depthSliceMap1		=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.R32F, newWidth/2,	newHeight/2, false, true );
+			depthSliceMap2		=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.R32F, newWidth/2,	newHeight/2, false, true );
+			depthSliceMap3		=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.R32F, newWidth/2,	newHeight/2, false, true );
 		}
 
 
@@ -153,6 +167,11 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref occlusionMap );
 				SafeDispose( ref temporaryMap );
 				SafeDispose( ref paramsCB	 );
+
+				SafeDispose( ref depthSliceMap0 );
+				SafeDispose( ref depthSliceMap1 );
+				SafeDispose( ref depthSliceMap2 );
+				SafeDispose( ref depthSliceMap3 );
 			}
 
 			base.Dispose( disposing );
@@ -169,8 +188,6 @@ namespace Fusion.Engine.Graphics {
 			var device	=	Game.GraphicsDevice;
 			var filter	=	Game.RenderSystem.Filter;
 
-			device.ResetStates();
-
 			var view		=	camera.GetViewMatrix( stereoEye );
 			var projection	=	camera.GetProjectionMatrix( stereoEye );
 			var vp			=	device.DisplayBounds;
@@ -183,46 +200,73 @@ namespace Fusion.Engine.Graphics {
 
 			using (new PixEvent("HDAO Render")) {
 
-				using (new PixEvent("HDAO Pass")) {
+				using ( new PixEvent( "Interleave" ) ) {
 
+					device.ResetStates();
+
+					device.ComputeShaderResources[0]    =   depthBuffer;
+					
+					device.SetCSRWTexture( 0, depthSliceMap0.Surface );
+					device.SetCSRWTexture( 1, depthSliceMap1.Surface );
+					device.SetCSRWTexture( 2, depthSliceMap2.Surface );
+					device.SetCSRWTexture( 3, depthSliceMap3.Surface );
+
+					device.PipelineState = factory[(int)Flags.INTERLEAVE];
+					
+					int tgx = MathUtil.IntDivRoundUp( vp.Width/2,  BlockSizeX );
+					int tgy = MathUtil.IntDivRoundUp( vp.Height/2, BlockSizeY );
+					int tgz = 1;
+					device.Dispatch( tgx, tgy, tgz );
+				}
+
+
+				using ( new PixEvent( "HDAO Pass" ) ) {
+
+					device.ResetStates();
+		
 					//
 					//	Setup parameters :
 					//
-					var paramsData				=	new Params();
+					var paramsData              =   new Params();
 
-					paramsData.InputSize		=	depthBuffer.SizeRcpSize;
+					paramsData.InputSize        =   depthSliceMap1.SizeRcpSize;
 
-					paramsData.CameraTangentX	=	camera.CameraTangentX;
-					paramsData.CameraTangentY	=	camera.CameraTangentY;
+					paramsData.CameraTangentX   =   camera.CameraTangentX;
+					paramsData.CameraTangentY   =   camera.CameraTangentY;
 
-					paramsData.LinDepthBias		=	camera.LinearizeDepthBias;
-					paramsData.LinDepthScale	=	camera.LinearizeDepthScale;
+					paramsData.LinDepthBias     =   camera.LinearizeDepthBias;
+					paramsData.LinDepthScale    =   camera.LinearizeDepthScale;
 
-					paramsData.PowerIntensity	=	PowerIntensity	;
-					paramsData.LinearIntensity	=	LinearIntensity	;
-					paramsData.FadeoutDistance	=	FadeoutDistance	;
-					paramsData.DiscardDistance	=	DiscardDistance	;
-					paramsData.AcceptRadius		=	AcceptRadius	;
-					paramsData.RejectRadius		=	RejectRadius	;
-					paramsData.RejectRadiusRcp	=	1 / RejectRadius;
+					paramsData.PowerIntensity   =   PowerIntensity;
+					paramsData.LinearIntensity  =   LinearIntensity;
+					paramsData.FadeoutDistance  =   FadeoutDistance;
+					paramsData.DiscardDistance  =   DiscardDistance;
+					paramsData.AcceptRadius     =   AcceptRadius;
+					paramsData.RejectRadius     =   RejectRadius;
+					paramsData.RejectRadiusRcp  =   1 / RejectRadius;
 
+					var slices = new[] { depthSliceMap0, depthSliceMap1, depthSliceMap2, depthSliceMap3 };
 
-					paramsCB.SetData( paramsData );
+					for (int i=0; i<4; i++) {
 
-					device.ComputeShaderConstants[0]	=	paramsCB;
-					device.ComputeShaderResources[0]	=	depthBuffer;
+						paramsData.WriteOffset.X		=	i % 2;
+						paramsData.WriteOffset.Y		=	i / 2;
 
-					device.SetCSRWTexture( 0, occlusionMap.Surface );
+						paramsCB.SetData( paramsData );
 
-					device.PipelineState = factory[ (int)Flags.HDAO ];
-			
-					int tgx = MathUtil.IntDivRoundUp( vp.Width,  BlockSizeX );
-					int tgy = MathUtil.IntDivRoundUp( vp.Height, BlockSizeY );
-					int tgz = 1;
+						device.ComputeShaderConstants[0]    =   paramsCB;
+						device.ComputeShaderResources[0]    =   slices[i];
 
-					device.Dispatch( tgx, tgy, tgz );
-			
-					device.ResetStates();
+						device.SetCSRWTexture( 0, occlusionMap.Surface );
+
+						device.PipelineState = factory[(int)Flags.HDAO];
+
+						int tgx = MathUtil.IntDivRoundUp( vp.Width/2,  BlockSizeX );
+						int tgy = MathUtil.IntDivRoundUp( vp.Height/2, BlockSizeY );
+						int tgz = 1;
+
+						device.Dispatch( tgx, tgy, tgz );
+					}
 				}
 
 				/*using (new PixEvent("Bilateral Filter")) {

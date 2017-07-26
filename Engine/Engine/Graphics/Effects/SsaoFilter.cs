@@ -41,6 +41,7 @@ namespace Fusion.Engine.Graphics {
 		StateFactory	factory;
 
 		ConstantBuffer	paramsCB;
+		ConstantBuffer	patternCB;
 
 		RenderTarget2D	interleavedDepth;
 		RenderTarget2D	occlusionMap;
@@ -57,6 +58,8 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine]
 		const int BlockSizeY = 32;
 
+		[ShaderDefine]
+		const int PatternSize = 16*16;
 
 		[ShaderStructure()]
 		[StructLayout(LayoutKind.Sequential, Pack=4, Size=80)]
@@ -108,6 +111,10 @@ namespace Fusion.Engine.Graphics {
 		public override void Initialize ()
 		{
 			paramsCB	=	new ConstantBuffer( Game.GraphicsDevice, typeof(Params) );
+			patternCB	=	new ConstantBuffer( Game.GraphicsDevice, 2 * 4 * PatternSize );
+
+			var patternData	=	GeneratePattern( PatternSize );
+			patternCB.SetData( patternData );
 
 			CreateTargets();
 			LoadContent();
@@ -115,6 +122,22 @@ namespace Fusion.Engine.Graphics {
 			Game.RenderSystem.DisplayBoundsChanged += (s,e) => CreateTargets();
 			Game.Reloading += (s,e) => LoadContent();
 		}
+
+
+
+		Int2[] GeneratePattern ( int count )
+		{
+			var data = new Int2[ count ];
+			var rand = new Random();
+
+			for (int i=0; i<count; i++) {
+				var v	=	rand.UniformRadialDistribution(0,15);
+				data[i]	=	new Int2( (int)v.X, (int)v.Y );
+			}
+
+			return data;
+		}
+
 
 
 		/// <summary>
@@ -167,6 +190,7 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref occlusionMap );
 				SafeDispose( ref temporaryMap );
 				SafeDispose( ref paramsCB	 );
+				SafeDispose( ref patternCB	 );
 
 				SafeDispose( ref depthSliceMap0 );
 				SafeDispose( ref depthSliceMap1 );
@@ -255,6 +279,7 @@ namespace Fusion.Engine.Graphics {
 						paramsCB.SetData( paramsData );
 
 						device.ComputeShaderConstants[0]    =   paramsCB;
+						device.ComputeShaderConstants[1]    =   patternCB;
 						device.ComputeShaderResources[0]    =   slices[i];
 
 						device.SetCSRWTexture( 0, occlusionMap.Surface );

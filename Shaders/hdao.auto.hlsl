@@ -1,5 +1,6 @@
 static const int BlockSizeX = 32;
 static const int BlockSizeY = 32;
+static const int PatternSize = 256;
 
 // Fusion.Engine.Graphics.SsaoFilter+Params
 // Marshal.SizeOf = 80

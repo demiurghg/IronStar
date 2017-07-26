@@ -18,6 +18,10 @@ cbuffer CBParams : register(b0) {
 	Params	params;
 };
 
+cbuffer CBPattern : register(b1) {
+	int2 pattern[ PatternSize ];
+}
+
 struct CachedPosition {
 	uint xy;
 	float z;
@@ -64,13 +68,6 @@ uint Interleave4X ( uint value, uint size )
 
 
 # define NUM_VALLEYS	16
-static const int2		samplePattern[NUM_VALLEYS] =
-{
-  {0, -7}, {4, -7}, {2, -6}, {6, -6},
-  {0, -3}, {4, -3}, {9, -3}, {2, 0},
-  {6, 0}, {7, 0}, {4, 3}, {9, 3},
-  {2, 6}, {6, 6}, {7, 6}, {4, 7},
-};
 
 //-----------------------------------------------------------------------------
 
@@ -135,6 +132,9 @@ void CSMain(
 	float3	centerPosition	=	FetchPositionFromCache( cacheCenter );
 	float	centerDistance	=	centerPosition.z * distanceScale;
 	float	occlusion		=	0.0f;
+	
+	int2	coords			=	location.xy*2 + params.WriteOffset;
+	int		offset			=	((199 * coords.x + 179 * coords.y) & 0x1F);
 
 	[branch]
 	if ( centerPosition.z < params.DiscardDistance ) {
@@ -142,8 +142,8 @@ void CSMain(
 		[unroll]
 		for (int i=0; i<NUM_VALLEYS; i++) {
 
-			int2 	fetch0		=	cacheCenter + samplePattern[i];
-			int2 	fetch1		=	cacheCenter - samplePattern[i];
+			int2 	fetch0		=	cacheCenter + pattern[i + offset];
+			int2 	fetch1		=	cacheCenter - pattern[i + offset];
 			float3	position0	=	FetchPositionFromCache( fetch0 );
 			float3	position1	=	FetchPositionFromCache( fetch1 );
 			// float	distance0	=	length(position0);
@@ -173,7 +173,7 @@ void CSMain(
 	
 	}
 	
-	target[location.xy*2 + params.WriteOffset] = 1-occlusion.xxxx;
+	target[location.xy*2 + params.WriteOffset] = pow(1-occlusion.xxxx, 2);
 	
 	//target[location.xy]	= float4( frac(GetViewspacePosition( LinearizeDepth(source.Load(int3(location,0))), projLocation )), 1 );
 }

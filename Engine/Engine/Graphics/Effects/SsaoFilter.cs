@@ -59,6 +59,12 @@ namespace Fusion.Engine.Graphics {
 		const int BlockSizeY = 32;
 
 		[ShaderDefine]
+		const int InterleaveBlockSizeX = 16;
+
+		[ShaderDefine]
+		const int InterleaveBlockSizeY = 16;
+
+		[ShaderDefine]
 		const int PatternSize = 16*16;
 
 		[ShaderStructure()]
@@ -93,6 +99,11 @@ namespace Fusion.Engine.Graphics {
 			HDAO			=	0x004,
 			BILATERAL_X		=	0x008,
 			BILATERAL_Y		=	0x010,
+
+			LOW				=	0x100,
+			MEDIUM			=	0x200,
+			HIGH			=	0x400,
+			ULTRA			=	0x800,
 		}
 
 
@@ -209,6 +220,9 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="hdrImage">HDR source image.</param>
 		public void Render ( StereoEye stereoEye, Camera camera, ShaderResource depthBuffer, ShaderResource wsNormals )
 		{
+			var patternData	=	GeneratePattern( PatternSize );
+			patternCB.SetData( patternData );
+
 			var device	=	Game.GraphicsDevice;
 			var filter	=	Game.RenderSystem.Filter;
 
@@ -217,7 +231,7 @@ namespace Fusion.Engine.Graphics {
 			var vp			=	device.DisplayBounds;
 			
 
-			if (!Enabled) {
+			if (QualityLevel==QualityLevel.None) {
 				device.Clear( occlusionMap.Surface, Color4.White );
 				return;
 			}
@@ -237,8 +251,8 @@ namespace Fusion.Engine.Graphics {
 
 					device.PipelineState = factory[(int)Flags.INTERLEAVE];
 					
-					int tgx = MathUtil.IntDivRoundUp( vp.Width/2,  BlockSizeX );
-					int tgy = MathUtil.IntDivRoundUp( vp.Height/2, BlockSizeY );
+					int tgx = MathUtil.IntDivRoundUp( vp.Width/2,  InterleaveBlockSizeX );
+					int tgy = MathUtil.IntDivRoundUp( vp.Height/2, InterleaveBlockSizeY );
 					int tgz = 1;
 					device.Dispatch( tgx, tgy, tgz );
 				}
@@ -271,6 +285,15 @@ namespace Fusion.Engine.Graphics {
 
 					var slices = new[] { depthSliceMap0, depthSliceMap1, depthSliceMap2, depthSliceMap3 };
 
+					Flags flag = Flags.HDAO;
+
+					switch (QualityLevel) {
+						case QualityLevel.Low	: flag = Flags.HDAO | Flags.LOW		;  break;
+						case QualityLevel.Medium: flag = Flags.HDAO | Flags.MEDIUM	;  break;
+						case QualityLevel.High	: flag = Flags.HDAO | Flags.HIGH	;  break;
+						case QualityLevel.Ultra	: flag = Flags.HDAO | Flags.ULTRA	;  break;
+					}
+
 					for (int i=0; i<4; i++) {
 
 						paramsData.WriteOffset.X		=	i % 2;
@@ -284,7 +307,7 @@ namespace Fusion.Engine.Graphics {
 
 						device.SetCSRWTexture( 0, occlusionMap.Surface );
 
-						device.PipelineState = factory[(int)Flags.HDAO];
+						device.PipelineState = factory[(int)flag];
 
 						int tgx = MathUtil.IntDivRoundUp( vp.Width/2,  BlockSizeX );
 						int tgy = MathUtil.IntDivRoundUp( vp.Height/2, BlockSizeY );

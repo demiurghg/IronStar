@@ -1,5 +1,7 @@
 static const int BlockSizeX = 32;
 static const int BlockSizeY = 32;
+static const int InterleaveBlockSizeX = 16;
+static const int InterleaveBlockSizeY = 16;
 static const int PatternSize = 256;
 
 // Fusion.Engine.Graphics.SsaoFilter+Params

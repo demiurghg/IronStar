@@ -16,7 +16,7 @@ using Fusion.Engine.Common;
 namespace Fusion.Engine.Graphics {
 	internal partial class SsaoFilter {
 
-		[Config] public bool Enabled { get; set; }
+		[Config] public QualityLevel QualityLevel { get; set; }
 
 
 		[Config] public float PowerIntensity { get; set; } = 2;

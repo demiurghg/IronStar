@@ -1,6 +1,7 @@
 
 #if 0
 $ubershader 	INTERLEAVE	
+$ubershader 	BILATERAL VERTICAL|HORIZONTAL
 $ubershader 	HDAO LOW|MEDIUM|HIGH|ULTRA
 #endif
 
@@ -11,20 +12,26 @@ $ubershader 	HDAO LOW|MEDIUM|HIGH|ULTRA
 #define OverlapX ((BlockSizeX)/2)
 #define OverlapY ((BlockSizeY)/2)
 
+#ifdef HDAO
 cbuffer CBParams : register(b0) {
-	Params	params;
+	HdaoParams	hdaoParams;
 };
+#endif
 
-cbuffer CBPattern : register(b1) {
-	int4 pattern[ PatternSize ];
-}
+#ifdef BILATERAL
+cbuffer CBParams : register(b0) {
+	FilterParams	filterParams;
+};
+#endif
 
 struct CachedPosition {
 	uint xy;
 	float z;
 };
 
+#ifdef HDAO
 groupshared CachedPosition cachedPosition[BlockSizeX*2][BlockSizeY*2];
+#endif
 
 #if defined(HIGH) || defined(ULTRA)
 
@@ -85,7 +92,17 @@ static const int2 samplingPattern[16][8] = {
 
 float LinearizeDepth(float z)
 {
-	return 1.0f / (z * params.LinDepthScale + params.LinDepthBias);
+	#ifdef HDAO
+	float a	=	hdaoParams.LinDepthScale;
+	float b = 	hdaoParams.LinDepthBias;
+	return 1.0f / (z * a + b);
+	#endif
+	#ifdef BILATERAL
+	float a	=	filterParams.LinDepthScale;
+	float b = 	filterParams.LinDepthBias;
+	return 1.0f / (z * a + b);
+	#endif
+	return 0;
 }
 
 uint Float2ToUint ( float2 xy )
@@ -100,6 +117,7 @@ float2 UintToFloat2( uint xy )
 	return float2(x,y);
 }
 
+#ifdef HDAO
 float3 FetchPositionFromCache ( int2 xy )
 {
 	CachedPosition cp = cachedPosition[xy.y][xy.x];
@@ -108,9 +126,10 @@ float3 FetchPositionFromCache ( int2 xy )
 
 float3 GetViewspacePosition( float z, float2 xy )
 {
-	float2	tg	=	float2( params.CameraTangentX, params.CameraTangentY );
+	float2	tg	=	float2( hdaoParams.CameraTangentX, hdaoParams.CameraTangentY );
 	return float3( xy * tg * z, z );
 }
+#endif
 
 
 uint Interleave4X ( uint value, uint size )
@@ -147,9 +166,9 @@ void CSMain(
 	int2 blockSize		=	int2(BlockSizeX,BlockSizeY);
 	uint threadCount 	= 	BlockSizeX * BlockSizeY; 
 	
-	float distanceScale	=	length( float3( params.CameraTangentX, params.CameraTangentY, 1 ) );
+	float distanceScale	=	length( float3( hdaoParams.CameraTangentX, hdaoParams.CameraTangentY, 1 ) );
 	
-	float2	projLocation	=	location.xy * params.InputSize.zw * 2 - 1;
+	float2	projLocation	=	location.xy * hdaoParams.InputSize.zw * 2 - 1;
 			projLocation.y	*=	-1;
 	
 	//----------------------------------------------
@@ -167,7 +186,7 @@ void CSMain(
 			
 			int2 storePoint	= 	int2( groupThreadId.xy*2    + int2(i,j) );
 			
-			float2	xy		=	loadPoint.xy * params.InputSize.zw * 2 - 1;
+			float2	xy		=	loadPoint.xy * hdaoParams.InputSize.zw * 2 - 1;
 			
 			float 	z		=	LinearizeDepth ( source.Load(loadPoint).r );
 			float3 	xyz		=	GetViewspacePosition ( z, xy );
@@ -192,15 +211,14 @@ void CSMain(
 	float	centerDistance	=	centerPosition.z * distanceScale;
 	float	occlusion		=	0.0f;
 	
-	int2	coords			=	location.xy*2 + params.WriteOffset;
+	int2	coords			=	location.xy*2 + hdaoParams.WriteOffset;
 	int		offset			=	(wang_hash(199 * coords.x + 2999 * coords.y) & 0xF);
 	//int		offset			=	((199 * coords.x + 179 * coords.y) & 0x1F);
 
 	[branch]
-	if ( centerPosition.z < params.DiscardDistance ) {
+	if ( centerPosition.z < hdaoParams.DiscardDistance ) {
 
-		//[unroll]
-		[fastopt]
+		[unroll]
 		for (int i=0; i<NUM_VALLEYS; i++) {
 
 			int2 	fetch0		=	cacheCenter + samplingPattern[ offset ][ i ];
@@ -215,8 +233,8 @@ void CSMain(
 			float	delta0		=	centerDistance - distance0;
 			float	delta1		=	centerDistance - distance1;
 			
-			float	weight0		=	(delta0 > params.AcceptRadius) ? saturate( (params.RejectRadius - delta0) * params.RejectRadiusRcp ) : 0;
-			float	weight1		=	(delta1 > params.AcceptRadius) ? saturate( (params.RejectRadius - delta1) * params.RejectRadiusRcp ) : 0;
+			float	weight0		=	(delta0 > hdaoParams.AcceptRadius) ? saturate( (hdaoParams.RejectRadius - delta0) * hdaoParams.RejectRadiusRcp ) : 0;
+			float	weight1		=	(delta1 > hdaoParams.AcceptRadius) ? saturate( (hdaoParams.RejectRadius - delta1) * hdaoParams.RejectRadiusRcp ) : 0;
 			
 			float3	direction0	=	normalize(centerPosition - position0);
 			float3	direction1	=	normalize(centerPosition - position1);
@@ -230,17 +248,75 @@ void CSMain(
 		
 	} else {
 	
-		occlusion	=	0.5f;
+		occlusion	=	0;
 	
 	}
+	//*/
 	
-	target[location.xy*2 + params.WriteOffset] = pow(1-occlusion.xxxx, 4);
-	//target[location.xy/**2*/ + params.WriteOffset * int2(640,360)] = pow(1-occlusion.xxxx, 2);
-	
-	//target[location.xy]	= float4( frac(GetViewspacePosition( LinearizeDepth(source.Load(int3(location,0))), projLocation )), 1 );
+	target[location.xy*2 + hdaoParams.WriteOffset] = pow(abs(1-occlusion.xxxx * hdaoParams.LinearIntensity), hdaoParams.PowerIntensity);
 }
 
 #endif
+
+//-----------------------------------------------------------------------------
+
+#ifdef BILATERAL
+
+Texture2D<float4> 	hdao 	: register(t0); 
+Texture2D<float4> 	depth  	: register(t1); 
+RWTexture2D<float4> target  : register(u0); 
+
+groupshared float2 cachedData[BilateralBlockSizeX*2][BilateralBlockSizeX*2];
+
+
+[numthreads(BilateralBlockSizeX,BilateralBlockSizeY,1)] 
+void CSMain( 
+	uint3 groupId : SV_GroupID, 
+	uint3 groupThreadId : SV_GroupThreadID, 
+	uint  groupIndex: SV_GroupIndex, 
+	uint3 dispatchThreadId : SV_DispatchThreadID) 
+{
+	int2 location	=	dispatchThreadId.xy;
+	int2 blockSize	=	int2(BilateralBlockSizeX,BilateralBlockSizeY);
+	int3 loadPoint	=	int3( location.xy, 0 );
+
+	int overlapX 	=	((BilateralBlockSizeX)/2);
+	int overlapY 	=	((BilateralBlockSizeY)/2);
+	
+	//---------------------------------------------
+	//	load data to shared memory :
+	//---------------------------------------------
+
+	float accumValue 	= 0;
+	float accumWeight	= 0;
+	
+	float depthCenter	=	LinearizeDepth ( depth.Load( loadPoint ).r );
+	
+	[unroll]
+	for (int t=-7; t<=7; t++) {
+	
+		#ifdef VERTICAL
+		int3 offset = int3(0,t,0);
+		#endif
+		#ifdef HORIZONTAL
+		int3 offset = int3(t,0,0);
+		#endif
+	
+		float 	localDepth	=	LinearizeDepth ( depth.Load( loadPoint + offset ).r );
+		float	localHdao	=	hdao.Load( loadPoint + offset ).r;
+
+		float	delta		=	localDepth - depthCenter;
+		float 	weight		=	exp( - delta * delta * filterParams.DepthFactor );
+
+		accumValue	+=	localHdao * weight;
+		accumWeight	+= 	weight;
+	}
+
+	target[location.xy]		=	accumValue / accumWeight;
+}
+
+#endif
+
 
 //-----------------------------------------------------------------------------
 

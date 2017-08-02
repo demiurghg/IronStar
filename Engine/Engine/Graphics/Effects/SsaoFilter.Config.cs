@@ -16,17 +16,22 @@ using Fusion.Engine.Common;
 namespace Fusion.Engine.Graphics {
 	internal partial class SsaoFilter {
 
-		[Config] public QualityLevel QualityLevel { get; set; }
+		
+		[Category("HDAO")] [Config] public QualityLevel QualityLevel { get; set; }
 
 
-		[Config] public float PowerIntensity { get; set; } = 2;
-		[Config] public float LinearIntensity { get; set; } = 1;
+		[Category("HDAO")] [Config] public float	PowerIntensity { get; set; } = 2;
+		[Category("HDAO")] [Config] public float	LinearIntensity { get; set; } = 1;
 		
-		[Config] public float FadeoutDistance { get; set; } = 50;
-		[Config] public float DiscardDistance { get; set; } = 100;
+		[Category("HDAO")] [Config] public float	FadeoutDistance { get; set; } = 50;
+		[Category("HDAO")] [Config] public float	DiscardDistance { get; set; } = 100;
 		
-		[Config] public float AcceptRadius { get; set; } = 0.01f;
-		[Config] public float RejectRadius { get; set; } = 1.00f;
+		[Category("HDAO")] [Config] public float	AcceptRadius { get; set; } = 0.01f;
+		[Category("HDAO")] [Config] public float	RejectRadius { get; set; } = 1.00f;
+
+		[Category("Bilateral Filter")] [Config] public bool		SkipBilateralFilter { get; set; } = false;
+		[Category("Bilateral Filter")] [Config] public float	BilateralDepthFactor { get; set; } = 100;
+		[Category("Bilateral Filter")] [Config] public float	BilateralNormalFactor { get; set; } = 10;
 
 	}
 }

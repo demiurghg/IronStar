@@ -41,7 +41,7 @@ namespace Fusion.Engine.Graphics {
 		StateFactory	factory;
 
 		ConstantBuffer	paramsCB;
-		ConstantBuffer	patternCB;
+		ConstantBuffer	filterCB;
 
 		RenderTarget2D	interleavedDepth;
 		RenderTarget2D	occlusionMap;
@@ -65,11 +65,17 @@ namespace Fusion.Engine.Graphics {
 		const int InterleaveBlockSizeY = 16;
 
 		[ShaderDefine]
+		const int BilateralBlockSizeX = 16;
+
+		[ShaderDefine]
+		const int BilateralBlockSizeY = 16;
+
+		[ShaderDefine]
 		const int PatternSize = 16*16;
 
 		[ShaderStructure()]
 		[StructLayout(LayoutKind.Sequential, Pack=4, Size=80)]
-		struct Params {
+		struct HdaoParams {
 			public	Vector4	InputSize;
 
 			public	float	CameraTangentX;
@@ -92,13 +98,26 @@ namespace Fusion.Engine.Graphics {
 
 		}
 
+		[ShaderStructure()]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=16)]
+		struct FilterParams {
+
+			public	float   LinDepthScale;
+			public	float   LinDepthBias;
+
+			public	float	DepthFactor;
+			public	float	NormalFactor;
+		}
+
 
 		enum Flags {	
 			INTERLEAVE		=	0x001,
 			DEINTERLEAVE	=	0x002,
 			HDAO			=	0x004,
-			BILATERAL_X		=	0x008,
-			BILATERAL_Y		=	0x010,
+			BILATERAL		=	0x008,
+
+			VERTICAL		=	0x010,
+			HORIZONTAL		=	0x020,
 
 			LOW				=	0x100,
 			MEDIUM			=	0x200,
@@ -121,32 +140,14 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public override void Initialize ()
 		{
-			paramsCB	=	new ConstantBuffer( Game.GraphicsDevice, typeof(Params) );
-			patternCB	=	new ConstantBuffer( Game.GraphicsDevice, 2 * 4 * PatternSize );
-
-			var patternData	=	GeneratePattern( PatternSize );
-			patternCB.SetData( patternData );
+			paramsCB	=	new ConstantBuffer( Game.GraphicsDevice, typeof(HdaoParams) );
+			filterCB	=	new ConstantBuffer( Game.GraphicsDevice, typeof(FilterParams) );
 
 			CreateTargets();
 			LoadContent();
 
 			Game.RenderSystem.DisplayBoundsChanged += (s,e) => CreateTargets();
 			Game.Reloading += (s,e) => LoadContent();
-		}
-
-
-
-		Int2[] GeneratePattern ( int count )
-		{
-			var data = new Int2[ count ];
-			var rand = new Random();
-
-			for (int i=0; i<count; i++) {
-				var v	=	rand.UniformRadialDistribution(0,15);
-				data[i]	=	new Int2( (int)v.X, (int)v.Y );
-			}
-
-			return data;
 		}
 
 
@@ -201,7 +202,7 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref occlusionMap );
 				SafeDispose( ref temporaryMap );
 				SafeDispose( ref paramsCB	 );
-				SafeDispose( ref patternCB	 );
+				SafeDispose( ref filterCB	 );
 
 				SafeDispose( ref depthSliceMap0 );
 				SafeDispose( ref depthSliceMap1 );
@@ -220,9 +221,6 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="hdrImage">HDR source image.</param>
 		public void Render ( StereoEye stereoEye, Camera camera, ShaderResource depthBuffer, ShaderResource wsNormals )
 		{
-			var patternData	=	GeneratePattern( PatternSize );
-			patternCB.SetData( patternData );
-
 			var device	=	Game.GraphicsDevice;
 			var filter	=	Game.RenderSystem.Filter;
 
@@ -265,7 +263,7 @@ namespace Fusion.Engine.Graphics {
 					//
 					//	Setup parameters :
 					//
-					var paramsData              =   new Params();
+					var paramsData              =   new HdaoParams();
 
 					paramsData.InputSize        =   depthSliceMap1.SizeRcpSize;
 
@@ -302,7 +300,6 @@ namespace Fusion.Engine.Graphics {
 						paramsCB.SetData( paramsData );
 
 						device.ComputeShaderConstants[0]    =   paramsCB;
-						device.ComputeShaderConstants[1]    =   patternCB;
 						device.ComputeShaderResources[0]    =   slices[i];
 
 						device.SetCSRWTexture( 0, occlusionMap.Surface );
@@ -317,13 +314,48 @@ namespace Fusion.Engine.Graphics {
 					}
 				}
 
-				/*using (new PixEvent("Bilateral Filter")) {
-					if (BlurSigma!=0) {
-						filter.GaussBlurBilateral( occlusionMapHalf, occlusionMapFull, temporary, depthBuffer, wsNormals, BlurSigma, Sharpness, 0 );
-					} else {
-						filter.StretchRect( occlusionMapFull.Surface, occlusionMapHalf );
+
+
+				using ( new PixEvent( "Bilateral Filter" ) ) {
+
+					if (!SkipBilateralFilter) {
+
+						var filterData              =   new FilterParams();
+						filterData.LinDepthBias     =   camera.LinearizeDepthBias;
+						filterData.LinDepthScale    =   camera.LinearizeDepthScale;
+						filterData.DepthFactor		=   BilateralDepthFactor;
+						filterData.NormalFactor		=   BilateralNormalFactor;
+						filterCB.SetData( filterData );
+					
+						int tgx = MathUtil.IntDivRoundUp( vp.Width,  BilateralBlockSizeX );
+						int tgy = MathUtil.IntDivRoundUp( vp.Height, BilateralBlockSizeY );
+						int tgz = 1;
+
+						//	HORIZONTAL pass :
+						device.ResetStates();
+
+						device.ComputeShaderResources[0]    =   occlusionMap;
+						device.ComputeShaderResources[1]    =   depthBuffer;
+						device.ComputeShaderConstants[0]    =   filterCB;
+						device.SetCSRWTexture( 0, temporaryMap.Surface );
+
+						device.PipelineState = factory[(int)(Flags.BILATERAL|Flags.HORIZONTAL)];
+						device.Dispatch( tgx, tgy, tgz );
+
+						//	VERTICAL pass :
+						device.ResetStates();
+
+						device.ComputeShaderResources[0]    =   temporaryMap;
+						device.ComputeShaderResources[1]    =   depthBuffer;
+						device.ComputeShaderConstants[0]    =   filterCB;
+						device.SetCSRWTexture( 0, occlusionMap.Surface );
+
+						device.PipelineState = factory[(int)(Flags.BILATERAL|Flags.VERTICAL)];
+						device.Dispatch( tgx, tgy, tgz );
+
 					}
-				}*/
+				}
+
 			}
 		}
 

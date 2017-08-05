@@ -19,10 +19,6 @@ namespace Fusion.Engine.Graphics {
 		
 		[Category("HDAO")] [Config] public QualityLevel QualityLevel { get; set; }
 
-
-		[Category("HDAO")] [Config] public float	PowerIntensity { get; set; } = 2;
-		[Category("HDAO")] [Config] public float	LinearIntensity { get; set; } = 1;
-		
 		[Category("HDAO")] [Config] public float	FadeoutDistance { get; set; } = 50;
 		[Category("HDAO")] [Config] public float	DiscardDistance { get; set; } = 100;
 		
@@ -31,7 +27,7 @@ namespace Fusion.Engine.Graphics {
 
 		[Category("Bilateral Filter")] [Config] public bool		SkipBilateralFilter { get; set; } = false;
 		[Category("Bilateral Filter")] [Config] public float	BilateralDepthFactor { get; set; } = 100;
-		[Category("Bilateral Filter")] [Config] public float	BilateralNormalFactor { get; set; } = 10;
+		[Category("Bilateral Filter")] [Config] public float	BilateralColorFactor { get; set; } = 8;
 
 	}
 }

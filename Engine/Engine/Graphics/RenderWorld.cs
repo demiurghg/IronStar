@@ -436,14 +436,14 @@ namespace Fusion.Engine.Graphics {
 			rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
 
 			//	Ambient occlusion :
-			rs.SsaoFilter.Render( stereoEye, Camera, viewHdrFrame.DepthBuffer, viewHdrFrame.GBuffer1 );
+			rs.SsaoFilter.Render( stereoEye, Camera, viewHdrFrame.DepthBuffer, viewHdrFrame.Normals );
 
 			//	Forward+
 			rs.SceneRenderer.RenderForward( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
 
 
 			switch (rs.ShowGBuffer) {
-				case 1  : rs.Filter.CopyColor( targetSurface, viewHdrFrame.GBuffer0 ); return;
+				case 1  : rs.Filter.CopyColor( targetSurface, viewHdrFrame.Normals ); return;
 				case 2  : rs.Filter.CopyAlpha( targetSurface, viewHdrFrame.GBuffer0 ); return;
 				case 3  : rs.Filter.CopyColor( targetSurface, viewHdrFrame.GBuffer1 ); return;
 				case 4  : rs.Filter.CopyAlpha( targetSurface, viewHdrFrame.GBuffer1 ); return;

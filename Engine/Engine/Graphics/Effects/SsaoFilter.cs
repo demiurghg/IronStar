@@ -41,7 +41,6 @@ namespace Fusion.Engine.Graphics {
 		StateFactory	factory;
 
 		ConstantBuffer	paramsCB;
-		ConstantBuffer	filterCB;
 
 		RenderTarget2D	interleavedDepth;
 		RenderTarget2D	occlusionMap;
@@ -65,12 +64,6 @@ namespace Fusion.Engine.Graphics {
 		const int InterleaveBlockSizeY = 16;
 
 		[ShaderDefine]
-		const int BilateralBlockSizeX = 16;
-
-		[ShaderDefine]
-		const int BilateralBlockSizeY = 16;
-
-		[ShaderDefine]
 		const int PatternSize = 16*16;
 
 		[ShaderStructure()]
@@ -84,29 +77,14 @@ namespace Fusion.Engine.Graphics {
 			public	float   LinDepthScale;
 			public	float   LinDepthBias;
 			
-			public	float	PowerIntensity;
-			public	float	LinearIntensity;
 			public	float	FadeoutDistance;
 			public	float	DiscardDistance;
 
-			public	float	AcceptRadius;
 			public	float	RejectRadius;
 			public	float	RejectRadiusRcp;
-			public	float	Dummy0;
 
 			public	Int2	WriteOffset;
 
-		}
-
-		[ShaderStructure()]
-		[StructLayout(LayoutKind.Sequential, Pack=4, Size=16)]
-		struct FilterParams {
-
-			public	float   LinDepthScale;
-			public	float   LinDepthBias;
-
-			public	float	DepthFactor;
-			public	float	NormalFactor;
 		}
 
 
@@ -141,7 +119,6 @@ namespace Fusion.Engine.Graphics {
 		public override void Initialize ()
 		{
 			paramsCB	=	new ConstantBuffer( Game.GraphicsDevice, typeof(HdaoParams) );
-			filterCB	=	new ConstantBuffer( Game.GraphicsDevice, typeof(FilterParams) );
 
 			CreateTargets();
 			LoadContent();
@@ -202,7 +179,6 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref occlusionMap );
 				SafeDispose( ref temporaryMap );
 				SafeDispose( ref paramsCB	 );
-				SafeDispose( ref filterCB	 );
 
 				SafeDispose( ref depthSliceMap0 );
 				SafeDispose( ref depthSliceMap1 );
@@ -273,11 +249,8 @@ namespace Fusion.Engine.Graphics {
 					paramsData.LinDepthBias     =   camera.LinearizeDepthBias;
 					paramsData.LinDepthScale    =   camera.LinearizeDepthScale;
 
-					paramsData.PowerIntensity   =   PowerIntensity;
-					paramsData.LinearIntensity  =   LinearIntensity;
 					paramsData.FadeoutDistance  =   FadeoutDistance;
 					paramsData.DiscardDistance  =   DiscardDistance;
-					paramsData.AcceptRadius     =   AcceptRadius;
 					paramsData.RejectRadius     =   RejectRadius;
 					paramsData.RejectRadiusRcp  =   1 / RejectRadius;
 
@@ -314,48 +287,16 @@ namespace Fusion.Engine.Graphics {
 					}
 				}
 
+				//	
+				//	perform bilateral filtering of computed occlusion :
+				//
+				if (!SkipBilateralFilter) {
 
+					float depthFactor = BilateralDepthFactor;
+					float colorFactor = BilateralColorFactor;
 
-				using ( new PixEvent( "Bilateral Filter" ) ) {
-
-					if (!SkipBilateralFilter) {
-
-						var filterData              =   new FilterParams();
-						filterData.LinDepthBias     =   camera.LinearizeDepthBias;
-						filterData.LinDepthScale    =   camera.LinearizeDepthScale;
-						filterData.DepthFactor		=   BilateralDepthFactor;
-						filterData.NormalFactor		=   BilateralNormalFactor;
-						filterCB.SetData( filterData );
-					
-						int tgx = MathUtil.IntDivRoundUp( vp.Width,  BilateralBlockSizeX );
-						int tgy = MathUtil.IntDivRoundUp( vp.Height, BilateralBlockSizeY );
-						int tgz = 1;
-
-						//	HORIZONTAL pass :
-						device.ResetStates();
-
-						device.ComputeShaderResources[0]    =   occlusionMap;
-						device.ComputeShaderResources[1]    =   depthBuffer;
-						device.ComputeShaderConstants[0]    =   filterCB;
-						device.SetCSRWTexture( 0, temporaryMap.Surface );
-
-						device.PipelineState = factory[(int)(Flags.BILATERAL|Flags.HORIZONTAL)];
-						device.Dispatch( tgx, tgy, tgz );
-
-						//	VERTICAL pass :
-						device.ResetStates();
-
-						device.ComputeShaderResources[0]    =   temporaryMap;
-						device.ComputeShaderResources[1]    =   depthBuffer;
-						device.ComputeShaderConstants[0]    =   filterCB;
-						device.SetCSRWTexture( 0, occlusionMap.Surface );
-
-						device.PipelineState = factory[(int)(Flags.BILATERAL|Flags.VERTICAL)];
-						device.Dispatch( tgx, tgy, tgz );
-
-					}
+					rs.BilateralFilter.RenderBilateralFilter( camera, occlusionMap, temporaryMap, depthBuffer, depthFactor, colorFactor );
 				}
-
 			}
 		}
 

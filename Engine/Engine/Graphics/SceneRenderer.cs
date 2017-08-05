@@ -345,9 +345,10 @@ namespace Fusion.Engine.Graphics {
 					var hdr			=	frame.HdrBuffer.Surface;
 					var depth		=	frame.DepthBuffer.Surface;
 					var feedback	=	frame.FeedbackBuffer.Surface;
+					var normals		=	frame.Normals.Surface;
 
 					#warning remove hdr and feedback targets
-					device.SetTargets( depth, hdr, feedback );
+					device.SetTargets( depth, normals );
 
 					foreach ( var instance in instances ) {
 

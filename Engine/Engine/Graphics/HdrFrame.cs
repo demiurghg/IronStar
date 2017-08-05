@@ -25,6 +25,7 @@ namespace Fusion.Engine.Graphics {
 		public DepthStencil2D	DepthBuffer			;	
 		public RenderTarget2D	GBuffer0			;
 		public RenderTarget2D	GBuffer1			;
+		public RenderTarget2D	Normals				;	
 		public RenderTarget2D	SSAOBuffer			;
 		public RenderTarget2D	FeedbackBuffer		;
 
@@ -40,6 +41,7 @@ namespace Fusion.Engine.Graphics {
 			DepthBuffer			=	new DepthStencil2D( game.GraphicsDevice, DepthFormat.D24S8,			width,	height,	1 );
 			GBuffer0			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8_sRGB,	width,	height,	false, false );
 			GBuffer1			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,			width,	height,	false, false );
+			Normals				=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,			width,	height,	false, false );
 			SSAOBuffer			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,			width,	height, false, false );
 			FeedbackBuffer		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgb10A2,		width,	height, false, false );
 
@@ -63,6 +65,7 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref DepthBuffer			);
 				SafeDispose( ref GBuffer0				);
 				SafeDispose( ref GBuffer1		 		);
+				SafeDispose( ref Normals				);
 				SafeDispose( ref SSAOBuffer				);
 				SafeDispose( ref FeedbackBuffer			);
 			} 

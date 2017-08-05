@@ -190,10 +190,11 @@ float MipLevel( float2 uv )
 
 
 #ifdef ZPASS
-// float4 PSMain( PSInput input ) : SV_TARGET0
-// {
-	// return float4(0,0,0,0);
-// }
+float4 PSMain( PSInput input ) : SV_TARGET0
+{
+	float3 normal = normalize(input.Normal.xyz) * 0.5f + 0.5f;
+	return float4( normal, 1 );
+}
 #endif
 
 #ifdef FORWARD

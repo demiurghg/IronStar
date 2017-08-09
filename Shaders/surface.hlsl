@@ -214,6 +214,9 @@ GBuffer PSMain( PSInput input )
 	float	emission			=	0;
 	float 	metallic			=	0;
 	
+	
+	float2 	scaledCoords	=	input.TexCoord.xy * Subset.Rectangle.zw;
+	
 	input.TexCoord.x	=	frac(input.TexCoord.x);
 	input.TexCoord.y	=	frac(input.TexCoord.y);
 
@@ -223,7 +226,7 @@ GBuffer PSMain( PSInput input )
 	//---------------------------------
 	//	Compute miplevel :
 	//---------------------------------
-	float mip		=	max(0,floor( MipLevel( input.TexCoord.xy ) ));
+	float mip		=	max(0,floor( MipLevel( scaledCoords ) ));
 	
 	float scale		=	exp2(mip);
 	float pageX		=	floor( saturate(input.TexCoord.x) * VTVirtualPageCount / scale );

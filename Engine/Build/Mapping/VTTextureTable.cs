@@ -164,7 +164,10 @@ namespace Fusion.Build.Mapping {
 			var name	=	address.GetFileNameWithoutExtension("") + ".tile";
 
 			tile.Write( storage.OpenWrite(name) );
-			//tile.WriteDebug( storage.OpenWrite(name + ".tga") );
+
+			if (VTConfig.DebugOutput) {
+				tile.WriteDebug( storage.OpenWrite(name + ".tga") );
+			}
 		}			  
 
 

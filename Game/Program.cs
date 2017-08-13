@@ -71,8 +71,8 @@ namespace IronStar {
 			//	set verbosity :
 			Log.VerbosityLevel = LogMessageType.Verbose;
 
-			//Allocator2D.RunTest(512, 1024, @"C:\GITHUB\_alloc_test");
-			//return 0; 
+			/*Allocator2D.RunTest(512, 1024, @"E:\GITHUB\_alloc_test");
+			return 0; */
 
 
 			//

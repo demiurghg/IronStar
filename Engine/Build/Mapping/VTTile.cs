@@ -96,6 +96,14 @@ namespace Fusion.Build.Mapping {
 		/// <param name="c"></param>
 		public void SampleQ4( int x, int y, ref Color a, ref Color b, ref Color c )
 		{
+			//var min	=	VTConfig.PageBorderWidth;
+			//var max =	VTConfig.PageSizeBordered - VTConfig.PageBorderWidth;
+
+			//if (x<min) throw new ArgumentException("x < " + min.ToString() );
+			//if (y<min) throw new ArgumentException("x < " + min.ToString() );
+			//if (x>max) throw new ArgumentException("x > " + max.ToString() );
+			//if (y>max) throw new ArgumentException("x > " + max.ToString() );
+
 			a	=	colorData.SampleQ4Clamp( x, y );
 			b	=	normalData.SampleQ4Clamp( x, y );
 			c	=	specularData.SampleQ4Clamp( x, y );

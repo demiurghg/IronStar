@@ -306,8 +306,8 @@ namespace Fusion.Build.Mapping {
 				int endExX	= RoundUp2( vttex.AddressX + wTiles, sourceMipLevel );
 				int endExY	= RoundUp2( vttex.AddressY + hTiles, sourceMipLevel );
 
-				for ( int pageX = startX; pageX < endExX; pageX+=2 ) {
-					for ( int pageY = startY; pageY < endExY; pageY+=2 ) {
+				for ( int pageX = startX; pageX <= endExX; pageX+=2 ) {
+					for ( int pageY = startY; pageY <= endExY; pageY+=2 ) {
 
 						var address00 = new VTAddress( pageX + 0, pageY + 0, sourceMipLevel );
 						var address01 = new VTAddress( pageX + 0, pageY + 1, sourceMipLevel );

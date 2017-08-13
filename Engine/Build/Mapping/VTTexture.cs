@@ -200,14 +200,12 @@ namespace Fusion.Build.Mapping {
 					for ( int i=0; i<pageSizeBorder; i++) {
 						for ( int j=0; j<pageSizeBorder; j++) {
 
-							int srcX		=	x*pageSize + i - border;
-							int srcY		=	y*pageSize + j - border;
 
-							var c	=	colorMap.SampleClamp( srcX, srcY );
-							var n	=	normalMap.SampleClamp( srcX, srcY );
-							var r	=	roughness.SampleClamp( srcX, srcY ).R;
-							var m	=	metallic.SampleClamp( srcX, srcY ).R;
-							var e	=	emission.SampleClamp( srcX, srcY ).R;
+							var c	=	colorMap .SampleWrap( srcX, srcY );
+							var n	=	normalMap.SampleWrap( srcX, srcY );
+							var r	=	roughness.SampleWrap( srcX, srcY ).R;
+							var m	=	metallic .SampleWrap( srcX, srcY ).R;
+							var e	=	emission .SampleWrap( srcX, srcY ).R;
 
 							pageC.Write( i,j, c );
 							pageN.Write( i,j, n );

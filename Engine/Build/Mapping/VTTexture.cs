@@ -200,6 +200,8 @@ namespace Fusion.Build.Mapping {
 					for ( int i=0; i<pageSizeBorder; i++) {
 						for ( int j=0; j<pageSizeBorder; j++) {
 
+							int srcX		=	(x)*pageSize + i - border;
+							int srcY		=	(y)*pageSize + j - border;
 
 							var c	=	colorMap .SampleWrap( srcX, srcY );
 							var n	=	normalMap.SampleWrap( srcX, srcY );

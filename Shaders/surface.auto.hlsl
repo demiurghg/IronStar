@@ -1,6 +1,6 @@
 static const int VTVirtualPageCount = 1024;
 static const int VTPageSize = 128;
-static const int VTMaxMip = 5;
+static const int VTMaxMip = 6;
 static const int LightTypeOmni = 1;
 static const int LightTypeOmniShadow = 2;
 static const int LightTypeSpotShadow = 3;

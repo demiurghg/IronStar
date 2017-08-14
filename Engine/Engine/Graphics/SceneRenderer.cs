@@ -217,7 +217,7 @@ namespace Fusion.Engine.Graphics {
 			//	setup samplers :
 			var shadowSampler	=	rs.UsePointShadowSampling ? SamplerState.ShadowSamplerPoint : SamplerState.ShadowSampler;
 
-			device.PixelShaderSamplers[0]	= SamplerState.LinearPointClamp ;
+			device.PixelShaderSamplers[0]	= SamplerState.LinearClamp2Mips ;
 			device.PixelShaderSamplers[1]	= SamplerState.PointClamp;
 			device.PixelShaderSamplers[2]	= SamplerState.AnisotropicClamp;
 			device.PixelShaderSamplers[3]	= SamplerState.LinearClamp4Mips;

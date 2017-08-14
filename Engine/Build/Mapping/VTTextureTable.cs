@@ -163,6 +163,8 @@ namespace Fusion.Build.Mapping {
 		{
 			var name	=	address.GetFileNameWithoutExtension("") + ".tile";
 
+			tile.GenerateMipLevel();
+
 			tile.Write( storage.OpenWrite(name) );
 
 			if (VTConfig.DebugOutput) {

@@ -64,6 +64,7 @@ namespace Fusion.Drivers.Graphics {
 		public static SamplerState ShadowSamplerPoint	{ get; private set; }
 
 		public static SamplerState LinearClamp4Mips		{ get; private set; }
+		public static SamplerState LinearClamp2Mips		{ get; private set; }
 
 		D3DSamplerState	state;
 
@@ -89,6 +90,7 @@ namespace Fusion.Drivers.Graphics {
 
 			//LinearClamp4Mips	=	Create( Filter.MinMagMipPoint, AddressMode.Clamp, new Color4(1f), ComparisonFunc.Always, 4 );
 			LinearClamp4Mips	=	Create( Filter.MinMagMipLinear, AddressMode.Clamp, new Color4(1f), ComparisonFunc.Always, 4 );
+			LinearClamp2Mips	=	Create( Filter.MinMagMipLinear, AddressMode.Clamp, new Color4(1f), ComparisonFunc.Always, 2 );
 		}
 
 

@@ -30,6 +30,7 @@ namespace Fusion.Engine.Graphics {
 		class Stamp {
 			public readonly VTTile		Tile;
 			public readonly Rectangle	Rectangle;
+			public readonly Rectangle	RectangleMip;
 
 			int		counter = 0;
 			float	timer	= 0;
@@ -44,6 +45,7 @@ namespace Fusion.Engine.Graphics {
 			{
 				this.Tile			=	tile;
 				this.Rectangle		=	rect;
+				this.RectangleMip	=	new Rectangle( rect.X/2, rect.Y/2, rect.Width/2, rect.Height/2 );
 			}
 
 
@@ -57,9 +59,13 @@ namespace Fusion.Engine.Graphics {
 				timer -= dt;
 
 				if (timer<=0) {
-					vtSystem.PhysicalPages0.SetData( Rectangle, Tile.GetGpuData(0) );
-					vtSystem.PhysicalPages1.SetData( Rectangle, Tile.GetGpuData(1) );
-					vtSystem.PhysicalPages2.SetData( Rectangle, Tile.GetGpuData(2) );
+					vtSystem.PhysicalPages0.SetData( 0, Rectangle, Tile.GetGpuData(0, 0) );
+					vtSystem.PhysicalPages1.SetData( 0, Rectangle, Tile.GetGpuData(1, 0) );
+					vtSystem.PhysicalPages2.SetData( 0, Rectangle, Tile.GetGpuData(2, 0) );
+
+					vtSystem.PhysicalPages0.SetData( 1, RectangleMip, Tile.GetGpuData(0, 1) );
+					vtSystem.PhysicalPages1.SetData( 1, RectangleMip, Tile.GetGpuData(1, 1) );
+					vtSystem.PhysicalPages2.SetData( 1, RectangleMip, Tile.GetGpuData(2, 1) );
 					counter++;
 					timer = StampTimeInterval + jitter;
 				}

@@ -22,7 +22,7 @@ namespace Fusion.Engine.Graphics {
 
 		public const int VirtualPageCount		=	1024;
 		public const int TextureSize			=	PageSize * VirtualPageCount;
-		public const int MipCount				=	6;
+		public const int MipCount				=	7;
 		public const int MaxMipLevel			=	MipCount - 1;
 
 		public const int FallbackSize			=	TextureSize >> MaxMipLevel;

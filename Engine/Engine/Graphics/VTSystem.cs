@@ -59,6 +59,10 @@ namespace Fusion.Engine.Graphics {
 		public bool ShowTileCheckers { get; set; }
 
 		[Config]
+		[Description("Fills each tile mip level with solid colors to debug mip transitions")]
+		public bool ShowMipLevels { get; set; }
+
+		[Config]
 		[Description("Fills each tile with random color.")]
 		public bool RandomColor { get; set; }
 
@@ -178,9 +182,9 @@ namespace Fusion.Engine.Graphics {
 				int physPages	=	physicalSize / VTConfig.PageSizeBordered;
 				int maxTiles	=	physPages * physPages;
 
-				PhysicalPages0	=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8_sRGB, false, true );
-				PhysicalPages1	=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8,	  false, false );
-				PhysicalPages2	=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8,	  false, false );
+				PhysicalPages0	=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8_sRGB, 2, true );
+				PhysicalPages1	=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8,	  2, false );
+				PhysicalPages2	=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8,	  2, false );
 				PageTable		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba32F, tableSize, tableSize, true, true );
 				PageData		=	new StructuredBuffer( rs.Device, typeof(PageGpu), maxTiles, StructuredBufferFlags.None );
 				Params			=	new ConstantBuffer( rs.Device, 16 );
@@ -393,6 +397,10 @@ namespace Fusion.Engine.Graphics {
 
 							if (ShowTileBorder) {
 								tile.DrawBorder();
+							}
+
+							if (ShowMipLevels) {
+								tile.DrawMipLevels(ShowTileBorder);
 							}
 
 							//PhysicalPages.SetData( 0, rect, tile.Data, 0, tile.Data.Length );

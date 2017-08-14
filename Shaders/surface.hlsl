@@ -226,7 +226,9 @@ GBuffer PSMain( PSInput input )
 	//---------------------------------
 	//	Compute miplevel :
 	//---------------------------------
-	float mip		=	max(0,floor( MipLevel( scaledCoords ) ));
+	float mipf		=	max(0, MipLevel( scaledCoords ));
+	float mip		=	floor( mipf );
+	//float mipFrac	=	frac( mipf );
 	
 	float scale		=	exp2(mip);
 	float pageX		=	floor( saturate(input.TexCoord.x) * VTVirtualPageCount / scale );
@@ -243,6 +245,8 @@ GBuffer PSMain( PSInput input )
 	int2 indexXY 		=	(int2)floor(input.TexCoord * VTVirtualPageCount / scale );
 	float4 physPageTC	=	Textures[0].Load( int3(indexXY, (int)(mip)) ).xyzw;
 	
+	float mipFrac		=	max(0, mipf - physPageTC.z);
+	
 	if (physPageTC.w>0) {
 		float2 	withinPageTC	=	vtexTC * VTVirtualPageCount / exp2(physPageTC.z);
 				withinPageTC	=	frac( withinPageTC );
@@ -252,11 +256,11 @@ GBuffer PSMain( PSInput input )
 				
 		float2	finalTC			=	physPageTC.xy + withinPageTC;// + float2(halfTexel, -halfTexel);
 		
-		baseColor	=	Textures[1].Sample( SamplerLinear, finalTC ).rgb;
-		localNormal	=	Textures[2].Sample( SamplerLinear, finalTC ).rgb * 2 - 1;
-		roughness	=	Textures[3].Sample( SamplerLinear, finalTC ).r;
-		metallic	=	Textures[3].Sample( SamplerLinear, finalTC ).g;
-		emission	=	Textures[3].Sample( SamplerLinear, finalTC ).b;
+		baseColor	=	Textures[1].SampleLevel( SamplerLinear, finalTC, mipFrac ).rgb;
+		localNormal	=	Textures[2].SampleLevel( SamplerLinear, finalTC, mipFrac ).rgb * 2 - 1;
+		roughness	=	Textures[3].SampleLevel( SamplerLinear, finalTC, mipFrac ).r;
+		metallic	=	Textures[3].SampleLevel( SamplerLinear, finalTC, mipFrac ).g;
+		emission	=	Textures[3].SampleLevel( SamplerLinear, finalTC, mipFrac ).b;
 	}
 
 	if ( Subset.Rectangle.z==Subset.Rectangle.w && Subset.Rectangle.z==0 ) {

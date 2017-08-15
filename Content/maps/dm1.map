@@ -845,7 +845,7 @@
     <MapNode xsi:type="MapDecal">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="1.76910734" Y="0" Z="12.64744" />
+      <Position X="1.76910734" Y="0" Z="12.7742653" />
       <Rotation X="-0.6123724" Y="-0.353553385" Z="-0.353553385" W="0.6123724" />
       <Scaling>1</Scaling>
       <ImageName>blood3</ImageName>

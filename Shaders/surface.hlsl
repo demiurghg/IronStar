@@ -173,19 +173,28 @@ PSInput VSMain( VSInput input )
 float MipLevel( float2 uv );
 
 //	https://www.opengl.org/discussion_boards/showthread.php/171485-Texture-LOD-calculation-(useful-for-atlasing)
+//	http://developer.download.nvidia.com/opengl/specs/GL_EXT_texture_filter_anisotropic.txt
 float MipLevel( float2 uv )
 {
 	float2 dx = ddx( uv * VTPageSize*VTVirtualPageCount );
 	float2 dy = ddy( uv * VTPageSize*VTVirtualPageCount );
-	float d = max( dot( dx, dx ), dot( dy, dy ) );
 
+#if 1	
+	float d = max( dot( dx, dx ), dot( dy, dy ) );
 	// Clamp the value to the max mip level counts
 	const float rangeClamp = pow(2, (VTMaxMip - 1) * 2);
 	d = clamp(d, 1.0, rangeClamp);
-
-	float mipLevel = 0.5 * log2(d);
-
-	return mipLevel;
+	
+	return 0.5 * log2(d);
+#else
+	float px 	= 	length(dx);
+	float py 	= 	length(dy);
+	float pmax	= 	max(px,py);
+	float pmin	= 	max(px,py);
+	float n 	= 	min( ceil(pmax/pmin), 4 );
+	
+	return log2(pmax/n);
+#endif	
 }
 
 
@@ -229,6 +238,10 @@ GBuffer PSMain( PSInput input )
 	float mipf		=	max(0, MipLevel( scaledCoords ));
 	float mip		=	floor( mipf );
 	//float mipFrac	=	frac( mipf );
+	float2 gradScale = 	128.0f/136.0f / 1024.0f * VTVirtualPageCount * 128 * 2;
+
+	float2 uvddx	=	ddx( input.TexCoord.xy * 512 / 4 );
+	float2 uvddy	=	ddy( input.TexCoord.xy * 512 / 4 );
 	
 	float scale		=	exp2(mip);
 	float pageX		=	floor( saturate(input.TexCoord.x) * VTVirtualPageCount / scale );
@@ -256,11 +269,21 @@ GBuffer PSMain( PSInput input )
 				
 		float2	finalTC			=	physPageTC.xy + withinPageTC;// + float2(halfTexel, -halfTexel);
 		
-		baseColor	=	Textures[1].SampleLevel( SamplerLinear, finalTC, mipFrac ).rgb;
-		localNormal	=	Textures[2].SampleLevel( SamplerLinear, finalTC, mipFrac ).rgb * 2 - 1;
-		roughness	=	Textures[3].SampleLevel( SamplerLinear, finalTC, mipFrac ).r;
-		metallic	=	Textures[3].SampleLevel( SamplerLinear, finalTC, mipFrac ).g;
-		emission	=	Textures[3].SampleLevel( SamplerLinear, finalTC, mipFrac ).b;
+		#if 1
+		float4	channelC		=	Textures[1].SampleLevel( SamplerLinear, finalTC, mipFrac ).rgba;
+		float4	channelN		=	Textures[2].SampleLevel( SamplerLinear, finalTC, mipFrac ).rgba;
+		float4	channelS		=	Textures[3].SampleLevel( SamplerLinear, finalTC, mipFrac ).rgba;
+		#else
+		float4	channelC		=	Textures[1].SampleGrad( SamplerLinear, finalTC, uvddx, uvddy ).rgba;
+		float4	channelN		=	Textures[2].SampleGrad( SamplerLinear, finalTC, uvddx, uvddy ).rgba;
+		float4	channelS		=	Textures[3].SampleGrad( SamplerLinear, finalTC, uvddx, uvddy ).rgba;
+		#endif
+		
+		baseColor	=	channelC.rgb;
+		localNormal	=	channelN.rgb * 2 - 1;
+		roughness	=	channelS.r;
+		metallic	=	channelS.g;
+		emission	=	channelS.b;
 	}
 
 	if ( Subset.Rectangle.z==Subset.Rectangle.w && Subset.Rectangle.z==0 ) {

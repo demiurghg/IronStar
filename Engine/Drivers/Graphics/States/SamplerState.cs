@@ -65,6 +65,7 @@ namespace Fusion.Drivers.Graphics {
 
 		public static SamplerState LinearClamp4Mips		{ get; private set; }
 		public static SamplerState LinearClamp2Mips		{ get; private set; }
+		public static SamplerState VTAnisotropic		{ get; private set; }
 
 		D3DSamplerState	state;
 
@@ -91,6 +92,7 @@ namespace Fusion.Drivers.Graphics {
 			//LinearClamp4Mips	=	Create( Filter.MinMagMipPoint, AddressMode.Clamp, new Color4(1f), ComparisonFunc.Always, 4 );
 			LinearClamp4Mips	=	Create( Filter.MinMagMipLinear, AddressMode.Clamp, new Color4(1f), ComparisonFunc.Always, 4 );
 			LinearClamp2Mips	=	Create( Filter.MinMagMipLinear, AddressMode.Clamp, new Color4(1f), ComparisonFunc.Always, 2 );
+			VTAnisotropic		=	Create( Filter.Anisotropic,		AddressMode.Clamp, new Color4(1f), ComparisonFunc.Always, 2, 4 );
 		}
 
 
@@ -125,7 +127,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="borderColor"></param>
 		/// <param name="comparison"></param>
 		/// <returns></returns>
-		public static SamplerState Create ( Filter filter, AddressMode addressMode, Color4 borderColor, ComparisonFunc cmpFunc = ComparisonFunc.Always, int maxMipLevel = int.MaxValue )
+		public static SamplerState Create ( Filter filter, AddressMode addressMode, Color4 borderColor, ComparisonFunc cmpFunc = ComparisonFunc.Always, int maxMipLevel = int.MaxValue, int maxAnisotropy = 4 )
 		{
 			return new SamplerState() {
 				Filter			=	filter,
@@ -133,6 +135,7 @@ namespace Fusion.Drivers.Graphics {
 				BorderColor		=	borderColor,
 				ComparisonFunc	=	cmpFunc,
 				MaxMipLevel		=	maxMipLevel,
+				MaxAnisotropy	=	maxAnisotropy,
 			};
 		}
 

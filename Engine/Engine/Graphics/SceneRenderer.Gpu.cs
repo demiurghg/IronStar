@@ -34,7 +34,8 @@ namespace Fusion.Engine.Graphics {
 
 		[ShaderDefine]	public const int VTVirtualPageCount	=	VTConfig.VirtualPageCount;
 		[ShaderDefine]	public const int VTPageSize			=	VTConfig.PageSize;
-		[ShaderDefine]	public const int VTMaxMip				=	VTConfig.MaxMipLevel;
+		[ShaderDefine]	public const int VTMaxMip			=	VTConfig.MaxMipLevel;
+		[ShaderDefine]	public const int VTMipSelectorScale	=	(VTConfig.PageSize >> VTMaxMip) * VTConfig.VirtualPageCount;
 
 		[ShaderDefine]	public const int LightTypeOmni			=	1;
 		[ShaderDefine]	public const int LightTypeOmniShadow	=	2;

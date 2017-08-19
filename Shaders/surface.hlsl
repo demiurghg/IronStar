@@ -238,7 +238,7 @@ GBuffer PSMain( PSInput input )
 	//---------------------------------
 	//	Compute miplevel :
 	//---------------------------------
-	float2 mipuv	=	scaledCoords.xy * 128/64*1024;
+	float2 mipuv	=	scaledCoords.xy * VTMipSelectorScale;
 	float mipt		=	MipIndex.SampleGrad( MipSampler, mipuv, ddx(mipuv), ddy(mipuv) ).r;
 	float mipf		=	input.Position.x>640 ? MipLevel( scaledCoords ) : mipt;
 	float mip		=	floor( mipf );

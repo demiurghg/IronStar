@@ -201,10 +201,7 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref Params			);
 				SafeDispose( ref MipIndex		);
 
-				MipIndex		=	new Texture2D( rs.Device, 64,64, ColorFormat.R32F, 5, false );
-				for (int i=0; i<VTConfig.MipCount-1; i++) {
-					MipIndex.SetData( i, Enumerable.Range(0, (64>>i)*(64>>i)).Select( n=> (float)i ).ToArray() );
-				}
+				MipIndex		=	CreateMipSelectorTexture();
 
 				int tableSize	=	VTConfig.VirtualPageCount;
 				int physSize	=	physicalSize;
@@ -224,6 +221,21 @@ namespace Fusion.Engine.Graphics {
 				
 				physicalSizeDirty	=	false;
 			}
+		}
+
+
+
+		Texture2D CreateMipSelectorTexture ()
+		{
+			int mips = VTConfig.MaxMipLevel;
+			int size = 1 << VTConfig.MaxMipLevel;
+
+			var mipIndex		=	new Texture2D( rs.Device, size, size, ColorFormat.R32F, mips, false );
+
+			for (int i=0; i<=mips; i++) {
+				mipIndex.SetData( i, Enumerable.Range(0, (64>>i)*(64>>i)).Select( n=> (float)i ).ToArray() );
+			}
+			return mipIndex;
 		}
 
 

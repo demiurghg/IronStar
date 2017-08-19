@@ -43,15 +43,18 @@ SamplerState			SamplerAnisotropic	: 	register(s2);
 SamplerState			DecalSampler		: 	register(s3);
 SamplerComparisonState	ShadowSampler		: 	register(s4);
 SamplerState			ParticleSampler		: 	register(s5);
+SamplerState			MipSampler			: 	register(s6);
+
 Texture2D				Textures[4]			: 	register(t0);
-Texture3D<uint2>		ClusterTable		: 	register(t4);
-Buffer<uint>			LightIndexTable		: 	register(t5);
-StructuredBuffer<LIGHT>	LightDataTable		:	register(t6);
-StructuredBuffer<DECAL>	DecalDataTable		:	register(t7);
-Texture2D				DecalImages			:	register(t8);
-Texture2D				ShadowMap			:	register(t9);
-Texture2D				ShadowMapParticles	:	register(t10);
-Texture2D				AmbientOcclusion	:	register(t11);
+Texture2D				MipIndex			: 	register(t4);
+Texture3D<uint2>		ClusterTable		: 	register(t5);
+Buffer<uint>			LightIndexTable		: 	register(t6);
+StructuredBuffer<LIGHT>	LightDataTable		:	register(t7);
+StructuredBuffer<DECAL>	DecalDataTable		:	register(t8);
+Texture2D				DecalImages			:	register(t9);
+Texture2D				ShadowMap			:	register(t10);
+Texture2D				ShadowMapParticles	:	register(t11);
+Texture2D				AmbientOcclusion	:	register(t12);
 
 #ifdef _UBERSHADER
 $ubershader FORWARD RIGID|SKINNED +ANISOTROPIC
@@ -235,7 +238,9 @@ GBuffer PSMain( PSInput input )
 	//---------------------------------
 	//	Compute miplevel :
 	//---------------------------------
-	float mipf		=	MipLevel( scaledCoords );
+	float2 mipuv	=	scaledCoords.xy * 128/64*1024;
+	float mipt		=	MipIndex.SampleGrad( MipSampler, mipuv, ddx(mipuv), ddy(mipuv) ).r;
+	float mipf		=	input.Position.x>640 ? MipLevel( scaledCoords ) : mipt;
 	float mip		=	floor( mipf );
 	
 	float gradScale	=	Stage.GradientScaler * Stage.DebugGradientScale * exp2(-mip);
@@ -252,7 +257,7 @@ GBuffer PSMain( PSInput input )
 
 	#if 0
 	if (input.Position.x>640) {
-		output.hdr		=	frac(mipf);
+		output.hdr		=	frac(mipt);
 		output.feedback	=	feedback;
 		return output;
 	}

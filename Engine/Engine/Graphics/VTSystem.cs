@@ -113,6 +113,7 @@ namespace Fusion.Engine.Graphics {
 		public Texture2D		PhysicalPages0;
 		public Texture2D		PhysicalPages1;
 		public Texture2D		PhysicalPages2;
+		public Texture2D		MipIndex;
 		public RenderTarget2D	PageTable;
 		public StructuredBuffer	PageData;
 		public ConstantBuffer	Params;
@@ -198,6 +199,12 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref PageTable		);
 				SafeDispose( ref PageData		);
 				SafeDispose( ref Params			);
+				SafeDispose( ref MipIndex		);
+
+				MipIndex		=	new Texture2D( rs.Device, 64,64, ColorFormat.R32F, 5, false );
+				for (int i=0; i<VTConfig.MipCount-1; i++) {
+					MipIndex.SetData( i, Enumerable.Range(0, (64>>i)*(64>>i)).Select( n=> (float)i ).ToArray() );
+				}
 
 				int tableSize	=	VTConfig.VirtualPageCount;
 				int physSize	=	physicalSize;
@@ -237,6 +244,7 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref PageTable		);
 				SafeDispose( ref PageData		);
 				SafeDispose( ref Params			);
+				SafeDispose( ref MipIndex		);
 			}
 			base.Dispose( disposing );
 		}

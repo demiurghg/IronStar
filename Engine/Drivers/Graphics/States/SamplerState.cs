@@ -13,6 +13,7 @@ using D3DBlendState			=	SharpDX.Direct3D11.BlendState		;
 using D3DSamplerState		=	SharpDX.Direct3D11.SamplerState		;
 using D3DRasterizerState	=	SharpDX.Direct3D11.RasterizerState	;
 using D3DDepthStencilState	=	SharpDX.Direct3D11.DepthStencilState;
+using Fusion.Engine.Graphics;
 
 
 namespace Fusion.Drivers.Graphics {
@@ -67,6 +68,8 @@ namespace Fusion.Drivers.Graphics {
 		public static SamplerState LinearClamp2Mips		{ get; private set; }
 		public static SamplerState VTAnisotropic		{ get; private set; }
 		public static SamplerState VTTrilinear			{ get; private set; }
+		public static SamplerState VTAnisotropicIndex	{ get; private set; }
+		public static SamplerState VTTrilinearIndex		{ get; private set; }
 
 		D3DSamplerState	state;
 
@@ -96,6 +99,9 @@ namespace Fusion.Drivers.Graphics {
 			
 			VTAnisotropic		=	Create( Filter.Anisotropic,		AddressMode.Clamp, new Color4(1f), ComparisonFunc.Always, 2, 4 );
 			VTTrilinear			=	Create( Filter.MinMagMipLinear, AddressMode.Clamp, new Color4(1f), ComparisonFunc.Always, 2 );
+			
+			VTAnisotropicIndex	=	Create( Filter.Anisotropic,		AddressMode.Clamp, new Color4(1f), ComparisonFunc.Always, VTConfig.MaxMipLevel, 4 );
+			VTTrilinearIndex	=	Create( Filter.MinMagMipLinear, AddressMode.Clamp, new Color4(1f), ComparisonFunc.Always, VTConfig.MaxMipLevel );
 		}
 
 

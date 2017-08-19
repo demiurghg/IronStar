@@ -204,16 +204,17 @@ namespace Fusion.Engine.Graphics {
 			device.PixelShaderResources[1]	= rs.VTSystem.PhysicalPages0;
 			device.PixelShaderResources[2]	= rs.VTSystem.PhysicalPages1;
 			device.PixelShaderResources[3]	= rs.VTSystem.PhysicalPages2;
-			device.PixelShaderResources[4]	= rs.LightManager.LightGrid.GridTexture;
-			device.PixelShaderResources[5]	= rs.LightManager.LightGrid.IndexDataGpu;
-			device.PixelShaderResources[6]	= rs.LightManager.LightGrid.LightDataGpu;
-			device.PixelShaderResources[7]	= rs.LightManager.LightGrid.DecalDataGpu;
-			device.PixelShaderResources[11]	= rs.SsaoFilter.OcclusionMap;
+			device.PixelShaderResources[4]	= rs.VTSystem.MipIndex;
+			device.PixelShaderResources[5]	= rs.LightManager.LightGrid.GridTexture;
+			device.PixelShaderResources[6]	= rs.LightManager.LightGrid.IndexDataGpu;
+			device.PixelShaderResources[7]	= rs.LightManager.LightGrid.LightDataGpu;
+			device.PixelShaderResources[8]	= rs.LightManager.LightGrid.DecalDataGpu;
+			device.PixelShaderResources[12]	= rs.SsaoFilter.OcclusionMap;
 			
 			if (shadowContext==null) {	  // because these maps are used as render targets for shadows
-				device.PixelShaderResources[8]	= rs.RenderWorld.LightSet?.DecalAtlas?.Texture?.Srv;
-				device.PixelShaderResources[9]	= rs.LightManager.ShadowMap.ColorBuffer;
-				device.PixelShaderResources[10]	= rs.LightManager.ShadowMap.ParticleShadow;
+				device.PixelShaderResources[9]	= rs.RenderWorld.LightSet?.DecalAtlas?.Texture?.Srv;
+				device.PixelShaderResources[10]	= rs.LightManager.ShadowMap.ColorBuffer;
+				device.PixelShaderResources[11]	= rs.LightManager.ShadowMap.ParticleShadow;
 			}
 
 
@@ -226,6 +227,7 @@ namespace Fusion.Engine.Graphics {
 			device.PixelShaderSamplers[3]	= SamplerState.LinearClamp4Mips;
 			device.PixelShaderSamplers[4]	= shadowSampler;
 			device.PixelShaderSamplers[5]	= SamplerState.LinearClamp;
+			device.PixelShaderSamplers[6]	= rs.VTSystem.UseAnisotropic ? SamplerState.VTAnisotropicIndex : SamplerState.VTTrilinearIndex;
 
 			if (surfaceShader==null || rs.SkipSceneRendering) {
 				return false;

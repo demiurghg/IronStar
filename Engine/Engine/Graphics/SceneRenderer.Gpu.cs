@@ -18,11 +18,12 @@ namespace Fusion.Engine.Graphics {
 	internal partial class SceneRenderer : RenderComponent {
 
 		enum SurfaceFlags {
-			FORWARD	=	1 << 0,
-			SHADOW	=	1 << 1,
-			RIGID	=	1 << 4,
-			SKINNED	=	1 << 5,
-			ZPASS	=	1 << 6,
+			FORWARD		=	1 << 0,
+			SHADOW		=	1 << 1,
+			RIGID		=	1 << 4,
+			SKINNED		=	1 << 5,
+			ZPASS		=	1 << 6,
+			ANISOTROPIC	=	1 << 7,
 		}
 
 
@@ -70,6 +71,8 @@ namespace Fusion.Engine.Graphics {
 			public float	VTPageScaleRCP			;
 			public float	ShadowGradientBiasX		;
 			public float	ShadowGradientBiasY		;
+			public float	GradientScaler			;
+			public float	DebugGradientScale		;
 		}
 
 

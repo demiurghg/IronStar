@@ -26,47 +26,69 @@ namespace Fusion.Engine.Graphics {
 		readonly RenderSystem rs;
 
 		[Config]
+		[Category("Performamce")]
 		[Description("Max uploaded to physical texture pages per frame")]
 		public int MaxPPF { get; set; }
 
 		[Config]
+		[Category("Debugging")]
 		public bool ShowPageCaching { get; set; }
 
 		[Config]
+		[Category("Debugging")]
 		public bool ShowPageLoads { get; set; }
 
 		[Config]
+		[Category("Debugging")]
 		[Description("Enables displaying of physical texture")]
 		public bool ShowPhysicalTextures { get; set; }
 
 		[Config]
+		[Category("Debugging")]
 		public bool ShowPageTexture { get; set; }
 
 		[Config]
+		[Category("Debugging")]
 		[Description("Shows tile border for each uploaded tile")]
 		public bool ShowTileBorder { get; set; }
 
 		[Config]
+		[Category("Debugging")]
 		[Description("Disables virtual texturing feedback")]
 		public bool LockTiles { get; set; }
 
 		[Config]
+		[Category("Debugging")]
 		[Description("Shows tile address for each uploaded tile")]
 		public bool ShowTileAddress { get; set; }
 
 		[Config]
+		[Category("Debugging")]
 		[Description("Fills each tile with checkers, for filtering debugging")]
 		public bool ShowTileCheckers { get; set; }
 
 		[Config]
+		[Category("Debugging")]
 		[Description("Fills each tile mip level with solid colors to debug mip transitions")]
 		public bool ShowMipLevels { get; set; }
 
 		[Config]
+		[Category("Debugging")]
 		[Description("Fills each tile with random color.")]
 		public bool RandomColor { get; set; }
 
 		[Config]
+		[Category("Performamce")]
+		[Description("Enables and disables anisotropic filtering.")]
+		public bool UseAnisotropic { get; set; }
+
+		[Config]
+		[Category("Performamce")]
+		[Description("Enables and disables anisotropic filtering.")]
+		public float DebugGradientScale { get; set; } = 1;
+
+		[Config]
+		[Category("Performamce")]
 		[Description("Size of physical texture")]
 		public int PhysicalSize {
 			get {

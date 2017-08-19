@@ -35,6 +35,8 @@ struct STAGE {
 	float      VTPageScaleRCP;                // offset:  868
 	float      ShadowGradientBiasX;           // offset:  872
 	float      ShadowGradientBiasY;           // offset:  876
+	float      GradientScaler;                // offset:  880
+	float      DebugGradientScale;            // offset:  884
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+INSTANCE

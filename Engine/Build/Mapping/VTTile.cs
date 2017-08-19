@@ -343,8 +343,8 @@ namespace Fusion.Build.Mapping {
 			int count	= mipColors.Length;
 			int mip		= address.MipLevel;
 
-			colorData	.Fill( mipColors[ (mip+0) % count ] );
-			colorDataMip.Fill( mipColors[ (mip+1) % count ] );
+			colorData	.Tint( mipColors[ (mip+0) % count ] );
+			colorDataMip.Tint( mipColors[ (mip+1) % count ] );
 
 			if (border) {
 				DrawBorder();

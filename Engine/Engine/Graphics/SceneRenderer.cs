@@ -150,6 +150,9 @@ namespace Fusion.Engine.Graphics {
 			cbDataStage.ShadowGradientBiasX		=	rs.ShadowGradientBiasX;
 			cbDataStage.ShadowGradientBiasY		=	rs.ShadowGradientBiasY;
 
+			cbDataStage.GradientScaler			=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;
+			cbDataStage.DebugGradientScale		=	rs.VTSystem.DebugGradientScale;
+
 			cbDataStage.CascadeScaleOffset0		=	rs.LightManager.ShadowMap.GetCascade( 0 ).ShadowScaleOffset;
 			cbDataStage.CascadeScaleOffset1		=	rs.LightManager.ShadowMap.GetCascade( 1 ).ShadowScaleOffset;
 			cbDataStage.CascadeScaleOffset2		=	rs.LightManager.ShadowMap.GetCascade( 2 ).ShadowScaleOffset;
@@ -217,7 +220,7 @@ namespace Fusion.Engine.Graphics {
 			//	setup samplers :
 			var shadowSampler	=	rs.UsePointShadowSampling ? SamplerState.ShadowSamplerPoint : SamplerState.ShadowSampler;
 
-			device.PixelShaderSamplers[0]	= SamplerState.VTAnisotropic ;
+			device.PixelShaderSamplers[0]	= rs.VTSystem.UseAnisotropic ? SamplerState.VTAnisotropic : SamplerState.VTTrilinear;
 			device.PixelShaderSamplers[1]	= SamplerState.PointClamp;
 			device.PixelShaderSamplers[2]	= SamplerState.AnisotropicClamp;
 			device.PixelShaderSamplers[3]	= SamplerState.LinearClamp4Mips;
@@ -237,7 +240,13 @@ namespace Fusion.Engine.Graphics {
 		{
 			#warning New pipeline state semantic: bool StateFactory.TrySetPipelineState( flags )
 
+			bool aniso	=	rs.VTSystem.UseAnisotropic ;
+
 			int flag = (int)( stageFlag | SurfaceFlags.RIGID );
+
+			if (aniso && stageFlag==SurfaceFlags.FORWARD) {
+				flag |= (int)SurfaceFlags.ANISOTROPIC;
+			}
 
 			device.PipelineState	=	factory[ flag ];
 

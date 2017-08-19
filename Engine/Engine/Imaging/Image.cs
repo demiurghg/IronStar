@@ -102,6 +102,17 @@ namespace Fusion.Engine.Imaging {
 
 
 		/// <summary>
+		/// Fills image with 
+		/// </summary>
+		/// <param name="seed"></param>
+		/// <param name="monochrome"></param>
+		public void Tint ( Color color )
+		{
+			PerpixelProcessing( p => p * color );
+		}
+
+
+		/// <summary>
 		/// Samples image at given coordinates with wraping addressing mode
 		/// </summary>
 		/// <param name="u"></param>

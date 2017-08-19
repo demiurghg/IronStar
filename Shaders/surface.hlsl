@@ -54,7 +54,7 @@ Texture2D				ShadowMapParticles	:	register(t10);
 Texture2D				AmbientOcclusion	:	register(t11);
 
 #ifdef _UBERSHADER
-$ubershader FORWARD RIGID|SKINNED
+$ubershader FORWARD RIGID|SKINNED +ANISOTROPIC
 $ubershader SHADOW RIGID|SKINNED
 $ubershader ZPASS RIGID|SKINNED
 #endif
@@ -174,26 +174,26 @@ float MipLevel( float2 uv );
 
 //	https://www.opengl.org/discussion_boards/showthread.php/171485-Texture-LOD-calculation-(useful-for-atlasing)
 //	http://developer.download.nvidia.com/opengl/specs/GL_EXT_texture_filter_anisotropic.txt
+//	http://hugi.scene.org/online/coding/hugi%2014%20-%20comipmap.htm
+//	http://www.mrelusive.com/publications/papers/Software-Virtual-Textures.pdf
 float MipLevel( float2 uv )
 {
 	float2 dx = ddx( uv * VTPageSize*VTVirtualPageCount );
 	float2 dy = ddy( uv * VTPageSize*VTVirtualPageCount );
 
-#if 1	
+#ifndef ANISOTROPIC
 	float d = max( dot( dx, dx ), dot( dy, dy ) );
-	// Clamp the value to the max mip level counts
-	const float rangeClamp = pow(2, (VTMaxMip - 1) * 2);
-	d = clamp(d, 1.0, rangeClamp);
-	
-	return 0.5 * log2(d);
+	return clamp( 0.5 * log2(d), 0, VTMaxMip-1 );
 #else
-	float px 	= 	length(dx);
-	float py 	= 	length(dy);
-	float pmax	= 	max(px,py);
-	float pmin	= 	max(px,py);
-	float n 	= 	min( ceil(pmax/pmin), 4 );
+	const float maxAniso 		= 4;
+	const float maxAnisoLog2 	= log2( maxAniso );
+	float 	px 			=	dot( dx, dx );
+	float 	py 			=	dot( dy, dy );
+	float 	maxLod		=	0.5 * log2( max( px, py ) ); 
+	float 	minLod		=	0.5 * log2( min( px, py ) );
+	float 	anisoLOD 	=	maxLod - min( maxLod - minLod, maxAnisoLog2 );
 	
-	return log2(pmax/n);
+	return 	clamp( anisoLOD, 0, VTMaxMip-1 );
 #endif	
 }
 
@@ -235,13 +235,13 @@ GBuffer PSMain( PSInput input )
 	//---------------------------------
 	//	Compute miplevel :
 	//---------------------------------
-	float mipf		=	max(0, MipLevel( scaledCoords ));
+	float mipf		=	MipLevel( scaledCoords );
 	float mip		=	floor( mipf );
-	//float mipFrac	=	frac( mipf );
-	float2 gradScale = 	128.0f/136.0f / 1024.0f * VTVirtualPageCount * 128 * 2;
+	
+	float gradScale	=	Stage.GradientScaler * Stage.DebugGradientScale * exp2(-mip);
 
-	float2 uvddx	=	ddx( input.TexCoord.xy * 512 / 4 );
-	float2 uvddy	=	ddy( input.TexCoord.xy * 512 / 4 );
+	float2 uvddx	=	ddx( scaledCoords.xy ) * gradScale;
+	float2 uvddy	=	ddy( scaledCoords.xy ) * gradScale;
 	
 	float scale		=	exp2(mip);
 	float pageX		=	floor( saturate(input.TexCoord.x) * VTVirtualPageCount / scale );
@@ -249,6 +249,14 @@ GBuffer PSMain( PSInput input )
 	float dummy		=	1;
 	
 	float4 feedback	=	 float4( pageX / 1024.0f, pageY / 1024.0f, mip / 1024.0f, dummy / 4.0f );
+
+	#if 0
+	if (input.Position.x>640) {
+		output.hdr		=	frac(mipf);
+		output.feedback	=	feedback;
+		return output;
+	}
+	#endif
 
 	//---------------------------------
 	//	Virtual texturing stuff :
@@ -269,7 +277,7 @@ GBuffer PSMain( PSInput input )
 				
 		float2	finalTC			=	physPageTC.xy + withinPageTC;// + float2(halfTexel, -halfTexel);
 		
-		#if 1
+		#ifndef ANISOTROPIC
 		float4	channelC		=	Textures[1].SampleLevel( SamplerLinear, finalTC, mipFrac ).rgba;
 		float4	channelN		=	Textures[2].SampleLevel( SamplerLinear, finalTC, mipFrac ).rgba;
 		float4	channelS		=	Textures[3].SampleLevel( SamplerLinear, finalTC, mipFrac ).rgba;

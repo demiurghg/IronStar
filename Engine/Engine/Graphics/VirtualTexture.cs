@@ -46,7 +46,32 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		Dictionary<string,RectangleF> textures;
+		public class SegmentInfo {
+
+			public static readonly SegmentInfo Empty = new SegmentInfo();
+
+			private SegmentInfo () 
+			{
+				MaxMipLevel = 0;
+				Region = new RectangleF(0,0,0,0);
+			}
+
+			public SegmentInfo ( int x, int y, int w, int h ) 
+			{
+				var fx		=   x / (float)VTConfig.TextureSize;
+				var fy		=   y / (float)VTConfig.TextureSize;
+				var fw		=   w / (float)VTConfig.TextureSize;
+				var fh		=   h / (float)VTConfig.TextureSize;
+				Region		=	new RectangleF( fx, fy, fw, fh );
+				MaxMipLevel	=	MathUtil.LogBase2( w / VTConfig.PageSize );
+			}
+
+			public readonly RectangleF Region;
+			public readonly int MaxMipLevel;
+		}
+
+
+		Dictionary<string,SegmentInfo> textures;
 
 		HashSet<string> warnings = new HashSet<string>();
 
@@ -65,17 +90,17 @@ namespace Fusion.Engine.Graphics {
 			
 				num	=	reader.ReadInt32();
 
-				textures = new Dictionary<string, RectangleF>(num);
+				textures = new Dictionary<string, SegmentInfo>(num);
 
 				for ( int i=0; i<num; i++ ) {
 				
 					var name	=	reader.ReadString();
-					var x       =   reader.ReadInt32() / (float)VTConfig.TextureSize;
-					var y       =   reader.ReadInt32() / (float)VTConfig.TextureSize;
-					var w       =   reader.ReadInt32() / (float)VTConfig.TextureSize;
-					var h       =   reader.ReadInt32() / (float)VTConfig.TextureSize;
+					var x       =   reader.ReadInt32();
+					var y       =   reader.ReadInt32();
+					var w       =   reader.ReadInt32();
+					var h       =   reader.ReadInt32();
 
-					textures.Add( name, new RectangleF( x, y, w, h ) );
+					textures.Add( name, new SegmentInfo( x, y, w, h ) );
 				}
 
 			}
@@ -102,16 +127,17 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		internal RectangleF GetTexturePosition ( string name )
+		internal SegmentInfo GetTextureSegmentInfo ( string name )
 		{
 			if (string.IsNullOrWhiteSpace(name)) {
-				return new RectangleF( 0, 0, 0, 0 );
+				return SegmentInfo.Empty;
 			}
 
-			RectangleF rect;
-			if ( textures.TryGetValue( name, out rect ) ) {
+			SegmentInfo segmentInfo;
 
-				return rect;
+			if ( textures.TryGetValue( name, out segmentInfo ) ) {
+
+				return segmentInfo;
 
 			} else {
 
@@ -122,7 +148,7 @@ namespace Fusion.Engine.Graphics {
 				}
 
 				//Log.Warning("Missing VT region {0}", name);
-				return new RectangleF( 0, 0, 0, 0 );
+				return SegmentInfo.Empty;
 			}
 		}
 

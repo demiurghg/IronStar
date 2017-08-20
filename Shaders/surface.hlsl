@@ -240,7 +240,7 @@ GBuffer PSMain( PSInput input )
 	//---------------------------------
 	float2 mipuv	=	scaledCoords.xy * VTMipSelectorScale;
 	float mipt		=	MipIndex.SampleGrad( MipSampler, mipuv, ddx(mipuv), ddy(mipuv) ).r;
-	float mipf		=	input.Position.x>640 ? MipLevel( scaledCoords ) : mipt;
+	float mipf		=	clamp(mipt, 0, Subset.MaxMip); // MipLevel( scaledCoords );
 	float mip		=	floor( mipf );
 	
 	float gradScale	=	Stage.GradientScaler * Stage.DebugGradientScale * exp2(-mip);

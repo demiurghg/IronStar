@@ -263,10 +263,15 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		bool SetupSubset ( ref RectangleF rect )
+		bool SetupSubset ( VirtualTexture.SegmentInfo segmentInfo )
 		{
-			cbDataSubset.Rectangle	=	new Vector4( rect.X, rect.Y, rect.Width, rect.Height );
+			var region = segmentInfo.Region;
+
+			cbDataSubset.Rectangle	=	new Vector4( region.X, region.Y, region.Width, region.Height );
+			cbDataSubset.MaxMip		=	segmentInfo.MaxMipLevel;
+			
 			constBufferSubset.SetData( cbDataSubset );
+
 			return true;
 		}
 
@@ -305,9 +310,9 @@ namespace Fusion.Engine.Graphics {
 							foreach ( var subset in instance.Subsets ) {
 
 								var vt		=	rw.VirtualTexture;
-								var rect	=	vt.GetTexturePosition( subset.Name );
+								var segment	=	vt.GetTextureSegmentInfo( subset.Name );
 
-								if (SetupSubset( ref rect )) {
+								if (SetupSubset( segment )) {
 									device.DrawIndexed( subset.PrimitiveCount*3, subset.StartPrimitive*3, 0 );
 								}
 							}
@@ -370,9 +375,9 @@ namespace Fusion.Engine.Graphics {
 							foreach ( var subset in instance.Subsets ) {
 
 								var vt		=	rw.VirtualTexture;
-								var rect	=	vt.GetTexturePosition( subset.Name );
+								var segment	=	vt.GetTextureSegmentInfo( subset.Name );
 
-								if (SetupSubset( ref rect )) {
+								if (SetupSubset( segment )) {
 									device.DrawIndexed( subset.PrimitiveCount*3, subset.StartPrimitive*3, 0 );
 								}
 							}

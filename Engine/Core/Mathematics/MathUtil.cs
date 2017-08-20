@@ -560,8 +560,7 @@ namespace Fusion.Core.Mathematics
 			int v = x;	// 32-bit word to find the log base 2 of
 			int r = 0;			// r will be lg(v)
 
-			while (v!=0) {
-				v = v >> 1;
+			while ((v>>=1)!=0) {
 				r++;
 			}
 			return r;

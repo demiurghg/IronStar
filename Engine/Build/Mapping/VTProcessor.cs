@@ -15,6 +15,7 @@ using Fusion.Core.IniParser.Model;
 using Fusion.Core.Extensions;
 using System.Diagnostics;
 using Fusion.Core.Content;
+using System.Threading;
 
 namespace Fusion.Build.Mapping {
 
@@ -250,21 +251,22 @@ namespace Fusion.Build.Mapping {
 		void GenerateMostDetailedPages ( ICollection<VTTexture> textures, BuildContext context, VTTextureTable pageTable, IStorage mapStorage )
 		{
 			int totalCount = textures.Count;
-			int counter = 0;
+			int counter = 1;
 
-			foreach ( var texture in textures ) {
+			Parallel.ForEach( textures, texture => {
 				if (texture.TilesDirty) {
-					Log.Message("...{0}/{1} - {2}", counter, totalCount, texture.Name );
+					int counterValue = Interlocked.Increment( ref counter );
+
+					Log.Message("...{0}/{1} - {2}", counterValue, totalCount, texture.Name );
 					texture.SplitIntoPages( context, pageTable, mapStorage );
-					counter++;
 				}
-			}
+			});
 		}
 
 
 		int RoundUp2( int value, int mip )
 		{
-			return MathUtil.IntDivUp( (value >> mip), 2 ) * 2;
+			return MathUtil.IntDivUp( value, 2 << mip ) * 2;
 		}
 
 
@@ -297,39 +299,33 @@ namespace Fusion.Build.Mapping {
 					continue;
 				}
 
+				/*if ( vttex.Width>>sourceMipLevel <= VTConfig.PageSize ) {
+					continue;
+				} */
+
+
 				int startX	= RoundDown2( vttex.AddressX, sourceMipLevel );
 				int startY	= RoundDown2( vttex.AddressY, sourceMipLevel );
 
 				int wTiles  = (vttex.Width / VTConfig.PageSize);
-				int hTiles  = (vttex.Width / VTConfig.PageSize);
+				int hTiles  = (vttex.Height / VTConfig.PageSize);
 
 				int endExX	= RoundUp2( vttex.AddressX + wTiles, sourceMipLevel );
 				int endExY	= RoundUp2( vttex.AddressY + hTiles, sourceMipLevel );
 
-				for ( int pageX = startX; pageX <= endExX; pageX+=2 ) {
-					for ( int pageY = startY; pageY <= endExY; pageY+=2 ) {
+				for ( int pageX = startX; pageX < endExX; pageX+=2 ) {
+					for ( int pageY = startY; pageY < endExY; pageY+=2 ) {
 
-						var address00 = new VTAddress( pageX + 0, pageY + 0, sourceMipLevel );
-						var address01 = new VTAddress( pageX + 0, pageY + 1, sourceMipLevel );
-						var address10 = new VTAddress( pageX + 1, pageY + 0, sourceMipLevel );
-						var address11 = new VTAddress( pageX + 1, pageY + 1, sourceMipLevel );
+						var address			=   new VTAddress( pageX/2, pageY/2, sourceMipLevel+1 );
 
-						//	there are no images touching target mip-level.
-						//	NOTE: we can skip images that are touched by border.
-						//if ( !pageTable.IsAnyExists( address00, address01, address10, address11 ) ) {
-						//	continue;
-						//}
+						var tile			=   new VTTile(address);
 
-						var address =   new VTAddress( pageX/2, pageY/2, sourceMipLevel+1 );
+						var offsetX			=   (pageX) * VTConfig.PageSize;
+						var offsetY			=   (pageY) * VTConfig.PageSize;
+						var border			=   VTConfig.PageBorderWidth;
 
-						var tile    =   new VTTile(address);
-
-						var offsetX =   (pageX) * VTConfig.PageSize;
-						var offsetY =   (pageY) * VTConfig.PageSize;
-						var border  =   VTConfig.PageBorderWidth;
-
-						var colorValue  =   Color.Zero;
-						var normalValue =   Color.Zero;
+						var colorValue		=   Color.Zero;
+						var normalValue		=   Color.Zero;
 						var specularValue   =   Color.Zero;
 
 						for ( int x = 0; x<sizeB; x++ ) {
@@ -337,6 +333,8 @@ namespace Fusion.Build.Mapping {
 
 								int srcX    =   offsetX + x*2 - border * 2;
 								int srcY    =   offsetY + y*2 - border * 2;
+
+								vttex.WrapCoordinates( ref srcX, ref srcY, sourceMipLevel );
 
 								SampleMegatextureQ4( cache, srcX, srcY, sourceMipLevel, ref colorValue, ref normalValue, ref specularValue );
 

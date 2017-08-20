@@ -78,6 +78,11 @@ namespace Fusion.Engine.Graphics {
 		public bool RandomColor { get; set; }
 
 		[Config]
+		[Category("Debugging")]
+		[Description("Texture LOD bias.")]
+		public int LodBias { get; set; } = 0;
+
+		[Config]
 		[Category("Performamce")]
 		[Description("Enables and disables anisotropic filtering.")]
 		public bool UseAnisotropic { get; set; }
@@ -351,6 +356,10 @@ namespace Fusion.Engine.Graphics {
 			foreach ( var addr in feedback ) {
 
 				var paddr = addr;
+
+				if (addr.MipLevel<LodBias) {
+					continue;
+				}
 
 				feedbackTree.Add( paddr );
 

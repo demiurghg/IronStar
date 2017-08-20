@@ -85,6 +85,29 @@ namespace Fusion.Build.Mapping {
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		public void WrapCoordinates ( ref int x, ref int y, int mip )
+		{
+			var ox = TexelOffsetX >> mip;
+			var oy = TexelOffsetY >> mip;
+			
+			var w  = Width  >> mip;
+			var h  = Height >> mip;
+
+			if ( w <= VTConfig.PageSize || h <= VTConfig.PageSize ) {
+				return;
+			}
+
+			x = MathUtil.Wrap( x, ox, ox + w - 1 );
+			y = MathUtil.Wrap( y, oy, oy + h - 1 );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="targetLastWriteTime"></param>
 		/// <param name="sourceLastWriteTime"></param>
 		/// <returns></returns>

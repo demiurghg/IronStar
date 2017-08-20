@@ -441,6 +441,9 @@ namespace Fusion.Engine.Graphics {
 
 			timeAccumulator	+=	gameTime.ElapsedSec;
 
+			//	to avoid time accumulator be to much :
+			timeAccumulator	=	MathUtil.Clamp( timeAccumulator, -1, 1 );
+
 
 			using ( new PixEvent("Particle Simulation") ) {
 

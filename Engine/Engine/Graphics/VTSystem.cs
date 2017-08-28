@@ -69,6 +69,11 @@ namespace Fusion.Engine.Graphics {
 
 		[Config]
 		[Category("Debugging")]
+		[Description("Fills each tile with checkers, for filtering debugging")]
+		public bool UpdateStressTest { get; set; }
+
+		[Config]
+		[Category("Debugging")]
 		[Description("Fills each tile mip level with solid colors to debug mip transitions")]
 		public bool ShowMipLevels { get; set; }
 
@@ -122,6 +127,10 @@ namespace Fusion.Engine.Graphics {
 		public RenderTarget2D	PageTable;
 		public StructuredBuffer	PageData;
 		public ConstantBuffer	Params;
+
+		public Texture2D		StagingTile0;
+		public Texture2D		StagingTile1;
+		public Texture2D		StagingTile2;
 
 		VTTileLoader	tileLoader;
 		VTTileCache		tileCache;
@@ -212,10 +221,16 @@ namespace Fusion.Engine.Graphics {
 				int physSize	=	physicalSize;
 				int physPages	=	physicalSize / VTConfig.PageSizeBordered;
 				int maxTiles	=	physPages * physPages;
+				int tileSize	=	VTConfig.PageSizeBordered;
 
 				PhysicalPages0	=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8_sRGB, 2, true );
 				PhysicalPages1	=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8,	  2, false );
 				PhysicalPages2	=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8,	  2, false );
+
+				StagingTile0	=	new Texture2D( rs.Device, tileSize, tileSize, ColorFormat.Rgba8_sRGB, 2, true );
+				StagingTile1	=	new Texture2D( rs.Device, tileSize, tileSize, ColorFormat.Rgba8		, 2, true );
+				StagingTile2	=	new Texture2D( rs.Device, tileSize, tileSize, ColorFormat.Rgba8		, 2, true );
+
 				PageTable		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba32F, tableSize, tableSize, true, true );
 				PageData		=	new StructuredBuffer( rs.Device, typeof(PageGpu), maxTiles, StructuredBufferFlags.None );
 				Params			=	new ConstantBuffer( rs.Device, 16 );
@@ -258,6 +273,9 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref PhysicalPages0	);
 				SafeDispose( ref PhysicalPages1	);
 				SafeDispose( ref PhysicalPages2	);
+				SafeDispose( ref StagingTile0	);
+				SafeDispose( ref StagingTile1	);
+				SafeDispose( ref StagingTile2	);
 				SafeDispose( ref PageTable		);
 				SafeDispose( ref PageData		);
 				SafeDispose( ref Params			);
@@ -344,131 +362,192 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="data"></param>
 		public void Update ( VTAddress[] data, GameTime gameTime )
 		{
-			var feedback = data.Distinct().Where( p => p.Dummy!=0 ).ToArray();
+			using ( new PixEvent( "VT Update" ) ) {
 
-			ApplyVTState();
+				var feedback = data.Distinct().Where( p => p.Dummy!=0 ).ToArray();
 
-			List<VTAddress> feedbackTree = new List<VTAddress>();
+				ApplyVTState();
 
-			//	
-			//	Build tree :
-			//
-			foreach ( var addr in feedback ) {
+				List<VTAddress> feedbackTree = new List<VTAddress>();
 
-				var paddr = addr;
+				//	
+				//	Build tree :
+				//
+				foreach ( var addr in feedback ) {
 
-				if (addr.MipLevel<LodBias) {
-					continue;
-				}
+					var paddr = addr;
 
-				feedbackTree.Add( paddr );
+					if (addr.MipLevel<LodBias) {
+						continue;
+					}
 
-				while (paddr.MipLevel < VTConfig.MaxMipLevel) {
-					paddr = VTAddress.FromChild( paddr );
 					feedbackTree.Add( paddr );
+
+					while (paddr.MipLevel < VTConfig.MaxMipLevel) {
+						paddr = VTAddress.FromChild( paddr );
+						feedbackTree.Add( paddr );
+					}
+
 				}
 
-			}
-
-			//
-			//	Distinct :
-			//	
-			feedbackTree = feedbackTree
-			//	.Where( p0 => cache.Contains(p0) )
-				.Distinct()
-				.OrderBy( p1 => p1.MipLevel )
-				.ToList();//*/
+				//
+				//	Distinct :
+				//	
+				feedbackTree = feedbackTree
+				//	.Where( p0 => cache.Contains(p0) )
+					.Distinct()
+					.OrderBy( p1 => p1.MipLevel )
+					.ToList();//*/
 
 
-			//
-			//	Detect thrashing and prevention
-			//	Get highest mip, remove them, repeat until no thrashing occur.
-			//
-			while (feedbackTree.Count >= tileCache.Capacity/2 ) {
-				int minMip = feedbackTree.Min( va => va.MipLevel );
-				feedbackTree.RemoveAll( va => va.MipLevel == minMip );
-			}
+				//
+				//	Detect thrashing and prevention
+				//	Get highest mip, remove them, repeat until no thrashing occur.
+				//
+				while (feedbackTree.Count >= tileCache.Capacity/2 ) {
+					int minMip = feedbackTree.Min( va => va.MipLevel );
+					feedbackTree.RemoveAll( va => va.MipLevel == minMip );
+				}
 
 
-			if (LockTiles) {
-				feedbackTree.Clear();
-			}
+				if (LockTiles) {
+					feedbackTree.Clear();
+				}
 
 
-			if (tileCache!=null) {
-			}
+				if (tileCache!=null) {
+				}
 
-			//
-			//	Put into cache :
-			//
-			if (tileCache!=null && tileLoader!=null) {
-				foreach ( var addr in feedbackTree ) {
+				//
+				//	Put into cache :
+				//
+				if (tileCache!=null && tileLoader!=null) {
+					foreach ( var addr in feedbackTree ) {
 				
-					int physAddr;
+						int physAddr;
 
-					if ( tileCache.Add( addr, out physAddr ) ) {
+						if ( tileCache.Add( addr, out physAddr ) ) {
 
-						//Log.Message("...vt tile cache: {0} --> {1}", addr, physAddr );
+							//Log.Message("...vt tile cache: {0} --> {1}", addr, physAddr );
 
-						tileLoader.RequestTile( addr );
+							tileLoader.RequestTile( addr );
+						}
 					}
 				}
-			}
 
-			//
-			//	update table :
-			//
-			if (tileLoader!=null && tileCache!=null) {
+				//
+				//	update table :
+				//
+				if (tileLoader!=null && tileCache!=null) {
 
-				for (int i=0; i<MaxPPF; i++) {
+					for (int i=0; i<MaxPPF; i++) {
 				
-					VTTile tile;
+						VTTile tile;
 
-					if (tileLoader.TryGetTile( out tile )) {
+						if (tileLoader.TryGetTile( out tile )) {
 
-						Rectangle rect;
+							Rectangle rect;
 
-						if (tileCache.TranslateAddress( tile.VirtualAddress, tile, out rect )) {
+							if (tileCache.TranslateAddress( tile.VirtualAddress, tile, out rect )) {
 							
-							var sz = VTConfig.PageSizeBordered;
+								var sz = VTConfig.PageSizeBordered;
 
-							if (RandomColor) {	
-								tile.FillRandomColor();
+								if (RandomColor) {	
+									tile.FillRandomColor();
+								}
+
+								if (ShowTileCheckers) {
+									tile.DrawChecker();
+								}
+
+								if (ShowTileAddress) {	
+									tile.DrawText( fontImage, 16,16, tile.VirtualAddress.ToString() );
+									tile.DrawText( fontImage, 16,32, string.Format("{0} {1}", rect.X/sz, rect.Y/sz ) );
+									tile.DrawText( fontImage, 16,48, Math.Floor(stopwatch.Elapsed.TotalMilliseconds).ToString() );
+								}
+
+								if (ShowTileBorder) {
+									tile.DrawBorder();
+								}
+
+								if (ShowMipLevels) {
+									tile.DrawMipLevels(ShowTileBorder);
+								}
+
+								WriteTileToPhysicalTexture( tile, rect.X, rect.Y );
 							}
 
-							if (ShowTileCheckers) {
-								tile.DrawChecker();
-							}
-
-							if (ShowTileAddress) {	
-								tile.DrawText( fontImage, 16,16, tile.VirtualAddress.ToString() );
-								tile.DrawText( fontImage, 16,32, string.Format("{0} {1}", rect.X/sz, rect.Y/sz ) );
-								tile.DrawText( fontImage, 16,48, Math.Floor(stopwatch.Elapsed.TotalMilliseconds).ToString() );
-							}
-
-							if (ShowTileBorder) {
-								tile.DrawBorder();
-							}
-
-							if (ShowMipLevels) {
-								tile.DrawMipLevels(ShowTileBorder);
-							}
-
-							//PhysicalPages.SetData( 0, rect, tile.Data, 0, tile.Data.Length );
-							tileStamper?.Add( tile, rect );
 						}
 
 					}
 
+					if (UpdateStressTest) {
+					
+						var tile	=	new VTTile(VTAddress.CreateBadAddress(0));
+						tile.FillRandomColor();
+
+						var size	=	VTConfig.PageSizeBordered;;
+						int max		=	PhysicalPages0.Width / size;
+
+						for (int i=0; i<MaxPPF; i++) {
+
+							var x = rand.Next( max ) * size;
+							var y = rand.Next( max ) * size;
+
+							WriteTileToPhysicalTexture( tile, x, y );
+						}
+					}
+
+
+					//	update page table :
+					UpdatePageTable();
 				}
-
-
-				//	emboss tiles to physical texture
-				tileStamper?.Update( this, gameTime.ElapsedSec );
-
-				//	update page table :
-				UpdatePageTable();
 			}
+		}
+
+
+		Random rand = new Random();
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="tile"></param>
+		/// <param name="rect"></param>
+		void WriteTileToPhysicalTexture ( VTTile tile, int x, int y )
+		{
+			#if false
+
+			var mipRect	=	new Rectangle( rect.X/2, rect.Y/2, rect.Width/2, rect.Height/2 );
+
+			PhysicalPages0.SetData( 0, rect,	 tile.GetGpuData(0, 0) );
+			PhysicalPages1.SetData( 0, rect,	 tile.GetGpuData(1, 0) );
+			PhysicalPages2.SetData( 0, rect,	 tile.GetGpuData(2, 0) );
+
+			PhysicalPages0.SetData( 1, mipRect, tile.GetGpuData(0, 1) );
+			PhysicalPages1.SetData( 1, mipRect, tile.GetGpuData(1, 1) );
+			PhysicalPages2.SetData( 1, mipRect, tile.GetGpuData(2, 1) );
+
+			#else
+
+			StagingTile0.SetData( 0, tile.GetGpuData(0, 0) );
+			StagingTile1.SetData( 0, tile.GetGpuData(1, 0) );
+			StagingTile2.SetData( 0, tile.GetGpuData(2, 0) );
+
+			StagingTile0.SetData( 1, tile.GetGpuData(0, 1) );
+			StagingTile1.SetData( 1, tile.GetGpuData(1, 1) );
+			StagingTile2.SetData( 1, tile.GetGpuData(2, 1) );
+
+			StagingTile0.CopyToTexture( PhysicalPages0, 0, x, y );
+			StagingTile1.CopyToTexture( PhysicalPages1, 0, x, y );
+			StagingTile2.CopyToTexture( PhysicalPages2, 0, x, y );
+
+			StagingTile0.CopyToTexture( PhysicalPages0, 1, x/2, y/2 );
+			StagingTile1.CopyToTexture( PhysicalPages1, 1, x/2, y/2 );
+			StagingTile2.CopyToTexture( PhysicalPages2, 1, x/2, y/2 );
+
+			#endif
 		}
 	}
 }

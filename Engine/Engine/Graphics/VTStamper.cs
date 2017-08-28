@@ -29,8 +29,10 @@ namespace Fusion.Engine.Graphics {
 
 		class Stamp {
 			public readonly VTTile		Tile;
-			public readonly Rectangle	Rectangle;
-			public readonly Rectangle	RectangleMip;
+			public readonly Rectangle	SrcRectangle;
+			public readonly Rectangle	SrcRectangleMip;
+			public readonly Rectangle	DstRectangle;
+			public readonly Rectangle	DstRectangleMip;
 
 			int		counter = 0;
 			float	timer	= 0;
@@ -43,9 +45,11 @@ namespace Fusion.Engine.Graphics {
 			/// <param name="rect"></param>
 			public Stamp ( VTTile tile, Rectangle rect ) 
 			{
-				this.Tile			=	tile;
-				this.Rectangle		=	rect;
-				this.RectangleMip	=	new Rectangle( rect.X/2, rect.Y/2, rect.Width/2, rect.Height/2 );
+				this.Tile				=	tile;
+				this.DstRectangle		=	rect;
+				this.DstRectangleMip	=	new Rectangle( rect.X/2, rect.Y/2, rect.Width/2, rect.Height/2 );
+				this.SrcRectangle		=	new Rectangle( 0,0, DstRectangle.Width,    DstRectangle.Height );
+				this.SrcRectangleMip	=	new Rectangle( 0,0, DstRectangleMip.Width, DstRectangleMip.Height );
 			}
 
 
@@ -59,6 +63,8 @@ namespace Fusion.Engine.Graphics {
 				timer -= dt;
 
 				if (timer<=0) {
+					#if false
+
 					vtSystem.PhysicalPages0.SetData( 0, Rectangle, Tile.GetGpuData(0, 0) );
 					vtSystem.PhysicalPages1.SetData( 0, Rectangle, Tile.GetGpuData(1, 0) );
 					vtSystem.PhysicalPages2.SetData( 0, Rectangle, Tile.GetGpuData(2, 0) );
@@ -66,6 +72,30 @@ namespace Fusion.Engine.Graphics {
 					vtSystem.PhysicalPages0.SetData( 1, RectangleMip, Tile.GetGpuData(0, 1) );
 					vtSystem.PhysicalPages1.SetData( 1, RectangleMip, Tile.GetGpuData(1, 1) );
 					vtSystem.PhysicalPages2.SetData( 1, RectangleMip, Tile.GetGpuData(2, 1) );
+
+					#else
+
+					//vtSystem.StagingTile0.SetData( 0, SrcRectangle, Tile.GetGpuData(0, 0) );
+					//vtSystem.StagingTile1.SetData( 0, SrcRectangle, Tile.GetGpuData(1, 0) );
+					//vtSystem.StagingTile2.SetData( 0, SrcRectangle, Tile.GetGpuData(2, 0) );
+
+					//vtSystem.StagingTile0.SetData( 1, SrcRectangleMip, Tile.GetGpuData(0, 1) );
+					//vtSystem.StagingTile1.SetData( 1, SrcRectangleMip, Tile.GetGpuData(1, 1) );
+					//vtSystem.StagingTile2.SetData( 1, SrcRectangleMip, Tile.GetGpuData(2, 1) );
+
+					int x = DstRectangle.X;
+					int y = DstRectangle.Y;
+
+					//vtSystem.StagingTile0.CopyToTexture( vtSystem.PhysicalPages0, 0, x, y );
+					//vtSystem.StagingTile1.CopyToTexture( vtSystem.PhysicalPages1, 0, x, y );
+					//vtSystem.StagingTile2.CopyToTexture( vtSystem.PhysicalPages2, 0, x, y );
+
+					//vtSystem.StagingTile0.CopyToTexture( vtSystem.PhysicalPages0, 1, x, y );
+					//vtSystem.StagingTile1.CopyToTexture( vtSystem.PhysicalPages1, 1, x, y );
+					//vtSystem.StagingTile2.CopyToTexture( vtSystem.PhysicalPages2, 1, x, y );
+
+					#endif
+
 					counter++;
 					timer = StampTimeInterval + jitter;
 				}

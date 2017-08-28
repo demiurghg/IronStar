@@ -282,6 +282,19 @@ namespace Fusion.Drivers.Graphics {
         {
 			this.SetData(0, null, data, 0, data.Length);
         }
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="dstTexture"></param>
+		/// <param name="srcRect"></param>
+		/// <param name="dstRect"></param>
+		public void CopyToTexture ( Texture2D dstTexture, int level, int x, int y )
+		{
+			device.DeviceContext.CopySubresourceRegion( tex2D, level, null, dstTexture.tex2D, level, x, y );
+		}
 		
 
 
@@ -336,7 +349,7 @@ namespace Fusion.Drivers.Graphics {
 				lock (device.DeviceContext) {
 					device.DeviceContext.UpdateSubresource(box, tex2D, level, region);
 				}
-				
+
 			} finally {
 				dataHandle.Free();
 			}

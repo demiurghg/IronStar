@@ -40,6 +40,7 @@ namespace IronStar.Editors {
 			this.game		=	game;
 
 			InitializeComponent();
+			configPropertyGrid.LineColor = SystemColors.InactiveBorder;
 
 			RefreshFileConfigList();
 

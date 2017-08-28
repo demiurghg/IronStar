@@ -28,6 +28,10 @@
 			this.objectPropertyGrid = new System.Windows.Forms.PropertyGrid();
 			this.panel2 = new System.Windows.Forms.Panel();
 			this.splitter1 = new System.Windows.Forms.Splitter();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.objectListBox = new System.Windows.Forms.ListBox();
+			this.splitter2 = new System.Windows.Forms.Splitter();
+			this.comboBox1 = new System.Windows.Forms.ComboBox();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.nameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -35,13 +39,9 @@
 			this.actionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.mappingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.sendObjectToMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.panel1 = new System.Windows.Forms.Panel();
-			this.objectListBox = new System.Windows.Forms.ListBox();
-			this.comboBox1 = new System.Windows.Forms.ComboBox();
-			this.splitter2 = new System.Windows.Forms.Splitter();
 			this.panel2.SuspendLayout();
-			this.menuStrip1.SuspendLayout();
 			this.panel1.SuspendLayout();
+			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// objectPropertyGrid
@@ -75,62 +75,6 @@
 			this.splitter1.TabIndex = 7;
 			this.splitter1.TabStop = false;
 			// 
-			// menuStrip1
-			// 
-			this.menuStrip1.BackColor = System.Drawing.SystemColors.ControlLightLight;
-			this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.nameToolStripMenuItem,
-            this.actionsToolStripMenuItem,
-            this.mappingToolStripMenuItem});
-			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(442, 24);
-			this.menuStrip1.TabIndex = 6;
-			this.menuStrip1.Text = "menuStrip1";
-			// 
-			// nameToolStripMenuItem
-			// 
-			this.nameToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newToolStripMenuItem,
-            this.deleteToolStripMenuItem});
-			this.nameToolStripMenuItem.Name = "nameToolStripMenuItem";
-			this.nameToolStripMenuItem.Size = new System.Drawing.Size(67, 23);
-			this.nameToolStripMenuItem.Text = "<Name>";
-			// 
-			// newToolStripMenuItem
-			// 
-			this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-			this.newToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
-			this.newToolStripMenuItem.Text = "New...";
-			this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
-			// 
-			// deleteToolStripMenuItem
-			// 
-			this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
-			this.deleteToolStripMenuItem.Text = "Delete";
-			this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
-			// 
-			// actionsToolStripMenuItem
-			// 
-			this.actionsToolStripMenuItem.Name = "actionsToolStripMenuItem";
-			this.actionsToolStripMenuItem.Size = new System.Drawing.Size(59, 23);
-			this.actionsToolStripMenuItem.Text = "Actions";
-			// 
-			// mappingToolStripMenuItem
-			// 
-			this.mappingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.sendObjectToMapToolStripMenuItem});
-			this.mappingToolStripMenuItem.Name = "mappingToolStripMenuItem";
-			this.mappingToolStripMenuItem.Size = new System.Drawing.Size(67, 23);
-			this.mappingToolStripMenuItem.Text = "Mapping";
-			// 
-			// sendObjectToMapToolStripMenuItem
-			// 
-			this.sendObjectToMapToolStripMenuItem.Name = "sendObjectToMapToolStripMenuItem";
-			this.sendObjectToMapToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
-			this.sendObjectToMapToolStripMenuItem.Text = "Send Object to Map";
-			// 
 			// panel1
 			// 
 			this.panel1.Controls.Add(this.objectListBox);
@@ -155,6 +99,15 @@
 			this.objectListBox.Sorted = true;
 			this.objectListBox.TabIndex = 6;
 			this.objectListBox.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+			// 
+			// splitter2
+			// 
+			this.splitter2.Dock = System.Windows.Forms.DockStyle.Top;
+			this.splitter2.Location = new System.Drawing.Point(0, 21);
+			this.splitter2.Name = "splitter2";
+			this.splitter2.Size = new System.Drawing.Size(200, 3);
+			this.splitter2.TabIndex = 8;
+			this.splitter2.TabStop = false;
 			// 
 			// comboBox1
 			// 
@@ -181,14 +134,61 @@
 			this.comboBox1.Size = new System.Drawing.Size(200, 21);
 			this.comboBox1.TabIndex = 7;
 			// 
-			// splitter2
+			// menuStrip1
 			// 
-			this.splitter2.Dock = System.Windows.Forms.DockStyle.Top;
-			this.splitter2.Location = new System.Drawing.Point(0, 21);
-			this.splitter2.Name = "splitter2";
-			this.splitter2.Size = new System.Drawing.Size(200, 3);
-			this.splitter2.TabIndex = 8;
-			this.splitter2.TabStop = false;
+			this.menuStrip1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+			this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.nameToolStripMenuItem,
+            this.actionsToolStripMenuItem,
+            this.mappingToolStripMenuItem});
+			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+			this.menuStrip1.Name = "menuStrip1";
+			this.menuStrip1.Size = new System.Drawing.Size(442, 24);
+			this.menuStrip1.TabIndex = 6;
+			this.menuStrip1.Text = "menuStrip1";
+			// 
+			// nameToolStripMenuItem
+			// 
+			this.nameToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newToolStripMenuItem,
+            this.deleteToolStripMenuItem});
+			this.nameToolStripMenuItem.Name = "nameToolStripMenuItem";
+			this.nameToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
+			this.nameToolStripMenuItem.Text = "<Name>";
+			// 
+			// newToolStripMenuItem
+			// 
+			this.newToolStripMenuItem.Name = "newToolStripMenuItem";
+			this.newToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+			this.newToolStripMenuItem.Text = "New...";
+			this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
+			// 
+			// deleteToolStripMenuItem
+			// 
+			this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+			this.deleteToolStripMenuItem.Text = "Delete";
+			this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+			// 
+			// actionsToolStripMenuItem
+			// 
+			this.actionsToolStripMenuItem.Name = "actionsToolStripMenuItem";
+			this.actionsToolStripMenuItem.Size = new System.Drawing.Size(59, 20);
+			this.actionsToolStripMenuItem.Text = "Actions";
+			// 
+			// mappingToolStripMenuItem
+			// 
+			this.mappingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.sendObjectToMapToolStripMenuItem});
+			this.mappingToolStripMenuItem.Name = "mappingToolStripMenuItem";
+			this.mappingToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
+			this.mappingToolStripMenuItem.Text = "Mapping";
+			// 
+			// sendObjectToMapToolStripMenuItem
+			// 
+			this.sendObjectToMapToolStripMenuItem.Name = "sendObjectToMapToolStripMenuItem";
+			this.sendObjectToMapToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+			this.sendObjectToMapToolStripMenuItem.Text = "Send Object to Map";
 			// 
 			// ObjectEditorControl
 			// 
@@ -199,9 +199,9 @@
 			this.Size = new System.Drawing.Size(442, 517);
 			this.panel2.ResumeLayout(false);
 			this.panel2.PerformLayout();
+			this.panel1.ResumeLayout(false);
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
-			this.panel1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}

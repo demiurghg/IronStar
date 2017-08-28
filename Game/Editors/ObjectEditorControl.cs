@@ -86,6 +86,7 @@ namespace IronStar.Editors {
 								.ToArray();
 			
 			InitializeComponent();
+			this.objectPropertyGrid.LineColor = SystemColors.InactiveBorder;
 
 			nameToolStripMenuItem.Text = objectName;
 

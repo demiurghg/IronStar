@@ -29,6 +29,10 @@ namespace IronStar.Editors {
 			this.Game	=	game;
 			InitializeComponent();
 
+			this.gridEnv.LineColor			=	SystemColors.InactiveBorder;
+			this.gridFactory.LineColor		=	SystemColors.InactiveBorder;	
+			this.gridTransform.LineColor	=	SystemColors.InactiveBorder;	
+
 			PopulateCreateMenu();
 		}
 

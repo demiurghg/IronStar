@@ -8,6 +8,9 @@ _ssp/
 .alg_meta/
 smgvector/
 
+# World Machine
+*.session
+
 # User-specific files
 *.suo
 *.user

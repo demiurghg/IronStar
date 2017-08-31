@@ -27,6 +27,10 @@ namespace Fusion.Drivers.Graphics {
 		ColorFormat		format;
 		int				mipCount;
 
+		internal D3D.Texture2D Tex2D {
+			get { return tex2D; }
+		}
+
 		[ContentLoader(typeof(Texture2D))]
 		internal class Loader : ContentLoader {
 

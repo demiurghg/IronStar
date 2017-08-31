@@ -128,9 +128,10 @@ namespace Fusion.Engine.Graphics {
 		public StructuredBuffer	PageData;
 		public ConstantBuffer	Params;
 
-		public Texture2D		StagingTile0;
-		public Texture2D		StagingTile1;
-		public Texture2D		StagingTile2;
+		public Texture2DStaging		StagingTile;
+		public Texture2DStaging		StagingTileMip;
+		public Texture2DStaging		StagingTileSrgb;
+		public Texture2DStaging		StagingTileSrgbMip;
 
 		VTTileLoader	tileLoader;
 		VTTileCache		tileCache;
@@ -215,29 +216,30 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref Params			);
 				SafeDispose( ref MipIndex		);
 
-				MipIndex		=	CreateMipSelectorTexture();
+				MipIndex			=	CreateMipSelectorTexture();
 
-				int tableSize	=	VTConfig.VirtualPageCount;
-				int physSize	=	physicalSize;
-				int physPages	=	physicalSize / VTConfig.PageSizeBordered;
-				int maxTiles	=	physPages * physPages;
-				int tileSize	=	VTConfig.PageSizeBordered;
+				int tableSize		=	VTConfig.VirtualPageCount;
+				int physSize		=	physicalSize;
+				int physPages		=	physicalSize / VTConfig.PageSizeBordered;
+				int maxTiles		=	physPages * physPages;
+				int tileSize		=	VTConfig.PageSizeBordered;
 
-				PhysicalPages0	=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8_sRGB, 2, true );
-				PhysicalPages1	=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8,	  2, false );
-				PhysicalPages2	=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8,	  2, false );
+				PhysicalPages0		=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8_sRGB, 2, true );
+				PhysicalPages1		=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8,	  2, false );
+				PhysicalPages2		=	new Texture2D( rs.Device, physSize, physSize, ColorFormat.Rgba8,	  2, false );
 
-				StagingTile0	=	new Texture2D( rs.Device, tileSize, tileSize, ColorFormat.Rgba8_sRGB, 2, true );
-				StagingTile1	=	new Texture2D( rs.Device, tileSize, tileSize, ColorFormat.Rgba8		, 2, true );
-				StagingTile2	=	new Texture2D( rs.Device, tileSize, tileSize, ColorFormat.Rgba8		, 2, true );
+				StagingTile			=	new Texture2DStaging( rs.Device, tileSize,   tileSize,   ColorFormat.Rgba8		);
+				StagingTileSrgb		=	new Texture2DStaging( rs.Device, tileSize,   tileSize,   ColorFormat.Rgba8_sRGB	);
+				StagingTileMip		=	new Texture2DStaging( rs.Device, tileSize/2, tileSize/2, ColorFormat.Rgba8		);
+				StagingTileSrgbMip	=	new Texture2DStaging( rs.Device, tileSize/2, tileSize/2, ColorFormat.Rgba8_sRGB	);
 
-				PageTable		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba32F, tableSize, tableSize, true, true );
-				PageData		=	new StructuredBuffer( rs.Device, typeof(PageGpu), maxTiles, StructuredBufferFlags.None );
-				Params			=	new ConstantBuffer( rs.Device, 16 );
+				PageTable			=	new RenderTarget2D( rs.Device, ColorFormat.Rgba32F, tableSize, tableSize, true, true );
+				PageData			=	new StructuredBuffer( rs.Device, typeof(PageGpu), maxTiles, StructuredBufferFlags.None );
+				Params				=	new ConstantBuffer( rs.Device, 16 );
 
-				tileCache		=	new VTTileCache( physPages, physicalSize );
+				tileCache			=	new VTTileCache( physPages, physicalSize );
 
-				PageScaleRCP	=	VTConfig.PageSize / (float)physSize;
+				PageScaleRCP		=	VTConfig.PageSize / (float)physSize;
 				
 				physicalSizeDirty	=	false;
 			}
@@ -273,9 +275,10 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref PhysicalPages0	);
 				SafeDispose( ref PhysicalPages1	);
 				SafeDispose( ref PhysicalPages2	);
-				SafeDispose( ref StagingTile0	);
-				SafeDispose( ref StagingTile1	);
-				SafeDispose( ref StagingTile2	);
+				SafeDispose( ref StagingTile		);
+				SafeDispose( ref StagingTileSrgb	);
+				SafeDispose( ref StagingTileMip		);
+				SafeDispose( ref StagingTileSrgbMip	);
 				SafeDispose( ref PageTable		);
 				SafeDispose( ref PageData		);
 				SafeDispose( ref Params			);
@@ -531,21 +534,19 @@ namespace Fusion.Engine.Graphics {
 
 			#else
 
-			StagingTile0.SetData( 0, tile.GetGpuData(0, 0) );
-			StagingTile1.SetData( 0, tile.GetGpuData(1, 0) );
-			StagingTile2.SetData( 0, tile.GetGpuData(2, 0) );
+			StagingTileSrgb		.SetData		( 0, tile.GetGpuData(0, 0) );
+			StagingTileSrgb		.CopyToTexture	( PhysicalPages0, 0, x, y );
+			StagingTile			.SetData		( 0, tile.GetGpuData(1, 0) );
+			StagingTile			.CopyToTexture	( PhysicalPages1, 0, x, y );
+			StagingTile			.SetData		( 0, tile.GetGpuData(2, 0) );
+			StagingTile			.CopyToTexture	( PhysicalPages2, 0, x, y );
 
-			StagingTile0.SetData( 1, tile.GetGpuData(0, 1) );
-			StagingTile1.SetData( 1, tile.GetGpuData(1, 1) );
-			StagingTile2.SetData( 1, tile.GetGpuData(2, 1) );
-
-			StagingTile0.CopyToTexture( PhysicalPages0, 0, x, y );
-			StagingTile1.CopyToTexture( PhysicalPages1, 0, x, y );
-			StagingTile2.CopyToTexture( PhysicalPages2, 0, x, y );
-
-			StagingTile0.CopyToTexture( PhysicalPages0, 1, x/2, y/2 );
-			StagingTile1.CopyToTexture( PhysicalPages1, 1, x/2, y/2 );
-			StagingTile2.CopyToTexture( PhysicalPages2, 1, x/2, y/2 );
+			StagingTileSrgbMip	.SetData		( 0, tile.GetGpuData(0, 1) );
+			StagingTileSrgbMip	.CopyToTexture	( PhysicalPages0, 1, x/2, y/2 );
+			StagingTileMip		.SetData		( 0, tile.GetGpuData(1, 1) );
+			StagingTileMip		.CopyToTexture	( PhysicalPages1, 1, x/2, y/2 );
+			StagingTileMip		.SetData		( 0, tile.GetGpuData(2, 1) );
+			StagingTileMip		.CopyToTexture	( PhysicalPages2, 1, x/2, y/2 );
 
 			#endif
 		}

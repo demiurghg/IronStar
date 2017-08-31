@@ -191,6 +191,7 @@
     <Compile Include="Development\UserMessage.Designer.cs">
       <DependentUpon>UserMessage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Drivers\Graphics\Resources\Texture2DStaging.cs" />
     <Compile Include="Engine\Client\ClientContext.cs" />
     <Compile Include="Engine\Client\IContentPrecacher.cs" />
     <Compile Include="Engine\Client\IClientInstance.cs" />

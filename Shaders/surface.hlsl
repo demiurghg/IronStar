@@ -243,7 +243,7 @@ GBuffer PSMain( PSInput input )
 	float mipf		=	clamp(mipt, 0, Subset.MaxMip); // MipLevel( scaledCoords );
 	float mip		=	floor( mipf );
 	
-	float gradScale	=	Stage.GradientScaler * Stage.DebugGradientScale * exp2(-mip);
+	float gradScale	=	Stage.GradientScaler * exp2(-mip);
 
 	float2 uvddx	=	ddx( scaledCoords.xy ) * gradScale;
 	float2 uvddy	=	ddy( scaledCoords.xy ) * gradScale;

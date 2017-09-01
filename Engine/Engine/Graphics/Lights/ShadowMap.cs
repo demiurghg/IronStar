@@ -307,7 +307,12 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			#warning Configurate or compute values!
-			ComputeCascadeMatricies( camera, lightSet, 4, 0, 3, 512 );
+
+			var factor	=	rs.ShadowCascadeFactor;
+			var depth	=	rs.ShadowCascadeDepth;
+			var size	=	rs.ShadowCascadeSize;
+
+			ComputeCascadeMatricies( camera, lightSet, size, 0, factor, depth );
 
 
 			//

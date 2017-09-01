@@ -348,7 +348,7 @@ namespace Fusion.Engine.Common {
 
 			//	For animation rendering applications :
 			//	http://msdn.microsoft.com/en-us/library/bb384202.aspx
-			GCSettings.LatencyMode	=	GCLatencyMode.SustainedLowLatency;
+			GCSettings.LatencyMode	=	GCLatencyMode.Interactive;
 
 			config				=	new ConfigManager( this );
 			invoker				=	new Invoker(this);

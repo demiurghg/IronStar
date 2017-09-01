@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Fusion.Core;
 using Fusion.Engine.Common;
 using Fusion.Core.Configuration;
+using System.ComponentModel;
 
 namespace Fusion.Engine.Graphics {
 
@@ -176,19 +177,23 @@ namespace Fusion.Engine.Graphics {
 		[Config]
 		public bool UseFXAA { get; set; }
 
-		[Config]	public bool UsePointShadowSampling { get; set; } = false;
-		[Config]	public bool SnapShadowmapCascades { get; set; } = true;
+		[Category("Shadows")]  [Config]	public bool UsePointShadowSampling { get; set; } = false;
+		[Category("Shadows")]  [Config]	public bool SnapShadowmapCascades { get; set; } = true;
 
-		[Config]	public float ShadowGradientBiasX { get; set; } = 1;
-		[Config]	public float ShadowGradientBiasY { get; set; } = 1;
+		[Category("Shadows")]  [Config]	public float ShadowGradientBiasX { get; set; } = 1;
+		[Category("Shadows")]  [Config]	public float ShadowGradientBiasY { get; set; } = 1;
 
-		[Config]	public float CSMSlopeBias0 { get; set; } = 0;
-		[Config]	public float CSMSlopeBias1 { get; set; } = 0;
-		[Config]	public float CSMSlopeBias2 { get; set; } = 0;
-		[Config]	public float CSMSlopeBias3 { get; set; } = 0;
-		[Config]	public float CSMDepthBias0 { get; set; } = 0;
-		[Config]	public float CSMDepthBias1 { get; set; } = 0;
-		[Config]	public float CSMDepthBias2 { get; set; } = 0;
-		[Config]	public float CSMDepthBias3 { get; set; } = 0;
+		[Category("Shadows")]  [Config]	public float ShadowCascadeDepth { get; set; } = 1024;
+		[Category("Shadows")]  [Config]	public float ShadowCascadeFactor { get; set; } = 3;
+		[Category("Shadows")]  [Config]	public float ShadowCascadeSize { get; set; } = 4;
+
+		[Category("Shadows")]  [Config]	public float CSMSlopeBias0 { get; set; } = 1;
+		[Category("Shadows")]  [Config]	public float CSMSlopeBias1 { get; set; } = 1;
+		[Category("Shadows")]  [Config]	public float CSMSlopeBias2 { get; set; } = 1;
+		[Category("Shadows")]  [Config]	public float CSMSlopeBias3 { get; set; } = 1;
+		[Category("Shadows")]  [Config]	public float CSMDepthBias0 { get; set; } = 0;
+		[Category("Shadows")]  [Config]	public float CSMDepthBias1 { get; set; } = 0;
+		[Category("Shadows")]  [Config]	public float CSMDepthBias2 { get; set; } = 0;
+		[Category("Shadows")]  [Config]	public float CSMDepthBias3 { get; set; } = 0;
 	}
 }

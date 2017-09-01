@@ -88,6 +88,11 @@ namespace Fusion.Engine.Graphics {
 		public int LodBias { get; set; } = 0;
 
 		[Config]
+		[Category("Debugging")]
+		[Description("Show thrashing.")]
+		public bool ShowThrashing { get; set; } = false;
+
+		[Config]
 		[Category("Performamce")]
 		[Description("Enables and disables anisotropic filtering.")]
 		public bool UseAnisotropic { get; set; }
@@ -135,7 +140,6 @@ namespace Fusion.Engine.Graphics {
 
 		VTTileLoader	tileLoader;
 		VTTileCache		tileCache;
-		VTStamper		tileStamper;
 
 		Ubershader		shader;
 		StateFactory	factory;
@@ -297,8 +301,6 @@ namespace Fusion.Engine.Graphics {
 		{
 			var storage			=	vt.TileStorage;
 
-			tileStamper			=	new VTStamper();
-
 			fontImage			=	Imaging.Image.LoadTga( new MemoryStream( Fusion.Properties.Resources.conchars ) );
 
 			stopwatch.Restart();
@@ -399,7 +401,7 @@ namespace Fusion.Engine.Graphics {
 				feedbackTree = feedbackTree
 				//	.Where( p0 => cache.Contains(p0) )
 					.Distinct()
-					.OrderBy( p1 => p1.MipLevel )
+					.OrderByDescending( p1 => p1.MipLevel )
 					.ToList();//*/
 
 
@@ -407,9 +409,17 @@ namespace Fusion.Engine.Graphics {
 				//	Detect thrashing and prevention
 				//	Get highest mip, remove them, repeat until no thrashing occur.
 				//
-				while (feedbackTree.Count >= tileCache.Capacity/2 ) {
-					int minMip = feedbackTree.Min( va => va.MipLevel );
-					feedbackTree.RemoveAll( va => va.MipLevel == minMip );
+				while (feedbackTree.Count >= tileCache.Capacity ) {
+
+					if (ShowThrashing) {
+						Log.Warning("VT thrashing: r:{0} a:{1}", feedbackTree.Count, tileCache.Capacity);
+					}
+
+					feedbackTree = feedbackTree.Select( a1 => a1.IsLeastDetailed ? a1 : a1.GetLessDetailedMip() )
+						.Distinct()
+						.OrderByDescending( p1 => p1.MipLevel )
+						.ToList()
+						;
 				}
 
 

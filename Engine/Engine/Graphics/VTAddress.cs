@@ -67,6 +67,12 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		public bool IsLeastDetailed {
+			get {
+				return (MipLevel == VTConfig.MaxMipLevel);
+			}
+		}
+
 
 		public VTAddress GetLessDetailedMip ()
 		{

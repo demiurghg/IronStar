@@ -141,16 +141,7 @@ namespace Fusion.Engine.Graphics {
 		HdrFrame viewHdrFrame;
 		HdrFrame radianceFrame;
 
-		//	reuse diffuse buffer as temporal buffer for effects.
-		internal RenderTarget2D TempFXBuffer { get { return viewHdrFrame.GBuffer0; } }
-
-		internal RenderTarget2D	MeasuredOld;
-		internal RenderTarget2D	MeasuredNew;
-		internal RenderTarget2D	Bloom0;
-		internal RenderTarget2D	Bloom1;
-
 		internal RenderTargetCube Radiance;
-
 		internal TextureCubeArray RadianceCache;
 
 
@@ -189,9 +180,6 @@ namespace Fusion.Engine.Graphics {
 			
 			particleSystem	=	new ParticleSystem( Game.RenderSystem, this );
 
-			MeasuredOld		=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.Rgba32F,   1,  1 );
-			MeasuredNew		=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.Rgba32F,   1,  1 );
-
 			radianceFrame	=	new HdrFrame( Game, 512,512 );
 
 			Radiance		=	new RenderTargetCube( Game.GraphicsDevice, ColorFormat.Rgba16F, RenderSystem.EnvMapSize, true );
@@ -219,12 +207,6 @@ namespace Fusion.Engine.Graphics {
 
 				SafeDispose( ref viewHdrFrame );
 				SafeDispose( ref radianceFrame );
-
-				SafeDispose( ref Bloom0 );
-				SafeDispose( ref Bloom1 );
-
-				SafeDispose( ref MeasuredOld );
-				SafeDispose( ref MeasuredNew );
 
 			}
 			base.Dispose( disposing );
@@ -260,9 +242,6 @@ namespace Fusion.Engine.Graphics {
 		{
 			SafeDispose( ref viewHdrFrame );
 
-			SafeDispose( ref Bloom0 );
-			SafeDispose( ref Bloom1 );
-
 			//	clamp values :
 			newWidth	=	Math.Max(128, newWidth);
 			newHeight	=	Math.Max(128, newHeight);
@@ -274,14 +253,6 @@ namespace Fusion.Engine.Graphics {
 			int bloomHeight		=	( targetHeight/2 ) & 0xFFF0;
 
 			viewHdrFrame		=	new HdrFrame ( Game, targetWidth, targetHeight );
-			
-			Bloom0				=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.Rgba16F, bloomWidth, bloomHeight, true, false );
-			Bloom1				=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.Rgba16F, bloomWidth, bloomHeight, true, false );
-
-			//HdrTexture			=	new TargetTexture( HdrBuffer );
-			//DiffuseTexture		=	new TargetTexture( DiffuseBuffer );
-			//SpecularTexture		=	new TargetTexture( SpecularBuffer );
-			//NormalMapTexture	=	new TargetTexture( NormalMapBuffer );
 		}
 
 
@@ -436,19 +407,19 @@ namespace Fusion.Engine.Graphics {
 			rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
 
 			//	Ambient occlusion :
-			rs.SsaoFilter.Render( stereoEye, Camera, viewHdrFrame.DepthBuffer, viewHdrFrame.Normals );
+			rs.SsaoFilter.Render( stereoEye, Camera, viewHdrFrame );
 
 			//	Forward+
 			rs.SceneRenderer.RenderForward( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
 
 
 			switch (rs.ShowGBuffer) {
-				case 1  : rs.Filter.CopyColor( targetSurface, viewHdrFrame.Normals ); return;
-				case 2  : rs.Filter.CopyAlpha( targetSurface, viewHdrFrame.GBuffer0 ); return;
-				case 3  : rs.Filter.CopyColor( targetSurface, viewHdrFrame.GBuffer1 ); return;
-				case 4  : rs.Filter.CopyAlpha( targetSurface, viewHdrFrame.GBuffer1 ); return;
-				case 5  : rs.Filter.CopyColor( targetSurface, viewHdrFrame.HdrBuffer ); return;
-				case 6  : rs.Filter.Copy( targetSurface, rs.SsaoFilter.OcclusionMap ); return;
+				case 1  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.Normals ); return;
+				case 2  : rs.Filter.CopyAlpha( targetSurface,	viewHdrFrame.GBuffer0 ); return;
+				case 3  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.GBuffer1 ); return;
+				case 4  : rs.Filter.CopyAlpha( targetSurface,	viewHdrFrame.GBuffer1 ); return;
+				case 5  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.HdrBuffer ); return;
+				case 6  : rs.Filter.Copy( targetSurface,		viewHdrFrame.AOBuffer ); return;
 				case 7  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ParticleShadow ); return;
 				case 8  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ColorBuffer ); return;
 				case 9  : rs.Filter.StretchRect( targetSurface, ParticleSystem.Lightmap ); return;
@@ -478,14 +449,14 @@ namespace Fusion.Engine.Graphics {
 			ParticleSystem.Render( gameTime, Camera, stereoEye, viewHdrFrame );
 
 			//	apply tonemapping and bloom :
-			rs.HdrFilter.Render( gameTime, TempFXBuffer.Surface, viewHdrFrame.HdrBuffer, this );
+			rs.HdrFilter.Render( gameTime, HdrSettings, this.viewHdrFrame );
 
 
 			//	apply FXAA
 			if (rs.UseFXAA) {
-				rs.Filter.Fxaa( targetSurface, TempFXBuffer );
+				rs.Filter.Fxaa( targetSurface, viewHdrFrame.FinalColor );
 			} else {
-				rs.Filter.Copy( targetSurface, TempFXBuffer );
+				rs.Filter.Copy( targetSurface, viewHdrFrame.FinalColor );
 			} 
 
 			//	draw debug lines :

@@ -254,6 +254,9 @@ namespace Fusion.Engine.Graphics {
 			//	render world :
 			RenderWorld.Render( gameTime, stereoEye, targetColorSurface );
 
+			//	compose rendered image and sprites :
+			#warning compose rendered image and sprites :
+
 			//	draw sprites :
 			SpriteEngine.DrawSprites( gameTime, stereoEye, targetColorSurface, SpriteLayers );
 

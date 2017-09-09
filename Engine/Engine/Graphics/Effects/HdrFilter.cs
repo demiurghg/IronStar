@@ -181,31 +181,29 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="target">LDR target.</param>
 		/// <param name="hdrImage">HDR source image.</param>
-		public void Render ( GameTime gameTime, RenderTargetSurface target, ShaderResource hdrImage, RenderWorld viewLayer )
+		public void Render ( GameTime gameTime, HdrSettings settings, HdrFrame hdrFrame )
 		{
 			var device	=	Game.GraphicsDevice;
 			var filter	=	Game.RenderSystem.Filter;
-
-			var settings	=	viewLayer.HdrSettings;
 
 			using ( new PixEvent("HDR Postprocessing") ) {
 
 				//
 				//	Rough downsampling of source HDR-image :
 				//
-				filter.StretchRect( averageLum.Surface, hdrImage, SamplerState.PointClamp );
+				filter.StretchRect( averageLum.Surface, hdrFrame.HdrBuffer, SamplerState.PointClamp );
 				averageLum.BuildMipmaps();
 
 				//
 				//	Make bloom :
 				//
-				filter.StretchRect( viewLayer.Bloom0.Surface, hdrImage, SamplerState.LinearClamp );
-				viewLayer.Bloom0.BuildMipmaps();
+				filter.StretchRect( hdrFrame.Bloom0.Surface, hdrFrame.HdrBuffer, SamplerState.LinearClamp );
+				hdrFrame.Bloom0.BuildMipmaps();
 
-				filter.GaussBlur( viewLayer.Bloom0, viewLayer.Bloom1, settings.GaussBlurSigma, 0 );
-				filter.GaussBlur( viewLayer.Bloom0, viewLayer.Bloom1, settings.GaussBlurSigma, 1 );
-				filter.GaussBlur( viewLayer.Bloom0, viewLayer.Bloom1, settings.GaussBlurSigma, 2 );
-				filter.GaussBlur( viewLayer.Bloom0, viewLayer.Bloom1, settings.GaussBlurSigma, 3 );
+				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, settings.GaussBlurSigma, 0 );
+				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, settings.GaussBlurSigma, 1 );
+				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, settings.GaussBlurSigma, 2 );
+				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, settings.GaussBlurSigma, 3 );
 
 				//
 				//	Setup parameters :
@@ -229,10 +227,10 @@ namespace Fusion.Engine.Graphics {
 				//
 				//	Measure and adapt :
 				//
-				device.SetTargets( null, viewLayer.MeasuredNew );
+				device.SetTargets( null, hdrFrame.MeasuredNew );
 
 				device.PixelShaderResources[0]	=	averageLum;
-				device.PixelShaderResources[1]	=	viewLayer.MeasuredOld;
+				device.PixelShaderResources[1]	=	hdrFrame.MeasuredOld;
 
 				device.PipelineState		=	factory[ (int)(Flags.MEASURE_ADAPT) ];
 				
@@ -242,11 +240,11 @@ namespace Fusion.Engine.Graphics {
 				//
 				//	Tonemap and compose :
 				//
-				device.SetTargets( null, target );
+				device.SetTargets( null, hdrFrame.FinalColor );
 
-				device.PixelShaderResources[0]	=	hdrImage;// averageLum;
-				device.PixelShaderResources[1]	=	viewLayer.MeasuredNew;// averageLum;
-				device.PixelShaderResources[2]	=	viewLayer.Bloom0;// averageLum;
+				device.PixelShaderResources[0]	=	hdrFrame.HdrBuffer;// averageLum;
+				device.PixelShaderResources[1]	=	hdrFrame.MeasuredNew;// averageLum;
+				device.PixelShaderResources[2]	=	hdrFrame.Bloom0;// averageLum;
 				device.PixelShaderResources[3]	=	settings.DirtMask1==null ? whiteTex.Srv : settings.DirtMask1.Srv;
 				device.PixelShaderResources[4]	=	settings.DirtMask2==null ? whiteTex.Srv : settings.DirtMask2.Srv;
 				device.PixelShaderResources[5]	=	noiseTex.Srv;
@@ -265,7 +263,7 @@ namespace Fusion.Engine.Graphics {
 
 
 				//	swap luminanice buffers :
-				Misc.Swap( ref viewLayer.MeasuredNew, ref viewLayer.MeasuredOld );
+				Misc.Swap( ref hdrFrame.MeasuredNew, ref hdrFrame.MeasuredOld );
 			}
 		}
 	}

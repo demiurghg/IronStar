@@ -62,6 +62,7 @@ namespace Fusion.Engine.Graphics {
 			loaderThread		=	new Thread( new ThreadStart( LoaderTask ) );
 			loaderThread.Name	=	"VT Tile Loader Thread";
 			loaderThread.IsBackground	=	true;
+			loaderThread.Priority		=	ThreadPriority.BelowNormal;
 			loaderThread.Start();
 		}
 

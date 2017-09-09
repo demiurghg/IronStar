@@ -409,7 +409,7 @@ namespace Fusion.Engine.Graphics {
 				//	Detect thrashing and prevention
 				//	Get highest mip, remove them, repeat until no thrashing occur.
 				//
-				while (feedbackTree.Count >= tileCache.Capacity ) {
+				while (feedbackTree.Count >= tileCache.Capacity * 2 / 3 ) {
 
 					if (ShowThrashing) {
 						Log.Warning("VT thrashing: r:{0} a:{1}", feedbackTree.Count, tileCache.Capacity);

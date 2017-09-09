@@ -3,9 +3,9 @@
   <Environment>
     <Gravity>16</Gravity>
     <SkyTrubidity>2</SkyTrubidity>
-    <SunPosition X="2" Y="1" Z="3" />
-    <SunIntensity>4</SunIntensity>
-    <FogDensity>0.001</FogDensity>
+    <SunPosition X="2" Y="2" Z="3" />
+    <SunIntensity>40</SunIntensity>
+    <FogDensity>0.1</FogDensity>
     <CharacterHeight>2</CharacterHeight>
     <CharacterSize>1.2</CharacterSize>
     <WalkableSlope>45</WalkableSlope>
@@ -16,7 +16,7 @@
       <Minimum X="-64" Y="-32" Z="-64" />
       <Maximum X="64" Y="32" Z="64" />
     </IrradianceVolume>
-    <AmbientLevel Red="0.44" Green="0.48" Blue="0.5" Alpha="0" />
+    <AmbientLevel Red="0.32" Green="0.41" Blue="1" Alpha="0" />
   </Environment>
   <Nodes>
     <MapNode xsi:type="MapModel">
@@ -687,21 +687,6 @@
       <NormalMapFactor>1</NormalMapFactor>
       <FalloffFactor>10</FalloffFactor>
     </MapNode>
-    <MapNode xsi:type="MapEntity">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="8.799559" Y="5.06540251" Z="-13.5589008" />
-      <Rotation X="0" Y="0" Z="0" W="1" />
-      <Scaling>1</Scaling>
-      <Factory xsi:type="FuncFXFactory">
-        <FX>smoke</FX>
-        <FXMode>Persistent</FXMode>
-        <Once>true</Once>
-        <Start>true</Start>
-        <MinInterval>1</MinInterval>
-        <MaxInterval>1</MaxInterval>
-      </Factory>
-    </MapNode>
     <MapNode xsi:type="MapDecal">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
@@ -876,11 +861,11 @@
     <MapNode xsi:type="MapModel">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="0" Y="-62.463356" Z="0" />
+      <Position X="14.3815746" Y="-3.91029072" Z="121.792091" />
       <Rotation X="0" Y="0" Z="0" W="1" />
-      <Scaling>1000</Scaling>
+      <Scaling>200</Scaling>
       <ScenePath>terrain\terrain.fbx</ScenePath>
-      <Scale>1000</Scale>
+      <Scale>200</Scale>
       <Color Red="10" Green="10" Blue="10" Alpha="1" />
     </MapNode>
     <MapNode xsi:type="MapEntity">
@@ -891,6 +876,126 @@
       <Scaling>1</Scaling>
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-55.3298836" Y="9.79217" Z="110.1395" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-38.8128242" Y="9.79217" Z="136.38501" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-29.298027" Y="9.79217" Z="156.985367" />
+      <Rotation X="-0.4957224" Y="0.06526309" Z="-0.113038927" W="0.8586165" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-59.7009125" Y="9.79217" Z="84.89632" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="4.050682" Y="9.836641" Z="108.715126" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-0.320346832" Y="9.836641" Z="83.47194" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="6.738743" Y="4.80499268" Z="41.66611" />
+      <Rotation X="0" Y="0" Z="0.707106769" W="0.707106769" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog2</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-47.5944" Y="11.7635384" Z="130.6297" />
+      <Rotation X="0" Y="0" Z="0.258819044" W="0.9659258" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog2</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
       </Factory>
     </MapNode>
   </Nodes>

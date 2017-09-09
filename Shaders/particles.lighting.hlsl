@@ -74,6 +74,6 @@ float3 ComputeClusteredLighting ( float3 worldPos )
 		}
 	}
 	
-	return totalLight;
+	return totalLight * 1;
 }
 

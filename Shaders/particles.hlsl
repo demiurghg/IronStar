@@ -367,7 +367,7 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 
 		color.rgba *= softFactor;
 		color.rgb  *= light.rgb;
-		color.rgb  *= color.a;
+		//color.rgb  *= color.a;
 		
 		return color;
 	#endif

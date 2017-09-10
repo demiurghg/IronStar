@@ -513,9 +513,7 @@
     <Compile Include="Engine\Graphics\Sprites\SpriteFont.cs" />
     <Compile Include="Engine\Graphics\Textures\DiscTexture.cs" />
     <Compile Include="Engine\Graphics\Textures\DynamicTexture.cs" />
-    <Compile Include="Engine\Graphics\Textures\LightProbe.cs" />
     <Compile Include="Engine\Graphics\MeshInstance.cs" />
-    <Compile Include="Engine\Graphics\Textures\TargetTexture.cs" />
     <Compile Include="Engine\Graphics\Textures\Texture.cs" />
     <Compile Include="Engine\Graphics\Textures\UserTexture.cs" />
     <Compile Include="Engine\Input\GamepadButtons.cs" />
@@ -531,6 +529,8 @@
     <Compile Include="Engine\Server\NetConnExt.cs" />
     <Compile Include="Engine\Server\Snapshot.cs" />
     <Compile Include="Engine\Server\SnapshotQueue.cs" />
+    <Compile Include="Engine\ServiceModel\GameHost.cs" />
+    <Compile Include="Engine\ServiceModel\GameService.cs" />
     <Compile Include="Engine\Storage\IStorage.cs" />
     <Compile Include="Engine\Storage\DirectoryStorage.cs" />
     <Compile Include="Engine\Storage\UserStorage.cs" />

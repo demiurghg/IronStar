@@ -31,25 +31,10 @@ namespace Fusion.Engine.Graphics {
 	[RequireShader("hdao", true)]
 	internal partial class SsaoFilter : RenderComponent {
 
-		public ShaderResource	OcclusionMap { 
-			get {
-				return occlusionMap;
-			}
-		}
-
 		Ubershader		shader;
 		StateFactory	factory;
 
 		ConstantBuffer	paramsCB;
-
-		RenderTarget2D	interleavedDepth;
-		RenderTarget2D	occlusionMap;
-		RenderTarget2D	temporaryMap;
-
-		RenderTarget2D	depthSliceMap0;
-		RenderTarget2D	depthSliceMap1;
-		RenderTarget2D	depthSliceMap2;
-		RenderTarget2D	depthSliceMap3;
 
 		[ShaderDefine]
 		const int BlockSizeX = 32;
@@ -120,39 +105,11 @@ namespace Fusion.Engine.Graphics {
 		{
 			paramsCB	=	new ConstantBuffer( Game.GraphicsDevice, typeof(HdaoParams) );
 
-			CreateTargets();
 			LoadContent();
 
-			Game.RenderSystem.DisplayBoundsChanged += (s,e) => CreateTargets();
+			//Game.RenderSystem.DisplayBoundsChanged += (s,e) => CreateTargets();
 			Game.Reloading += (s,e) => LoadContent();
 		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		void CreateTargets ()
-		{
-			var disp	=	Game.GraphicsDevice.DisplayBounds;
-
-			var newWidth	=	Math.Max(64, disp.Width);
-			var newHeight	=	Math.Max(64, disp.Height);
-
-			SafeDispose( ref interleavedDepth );
-			SafeDispose( ref occlusionMap );
-			SafeDispose( ref temporaryMap );
-
-			interleavedDepth	=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.R32F,  newWidth,	newHeight,	 false, true );
-			occlusionMap		=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.Rgba8, newWidth,	newHeight,	 false, true );
-			temporaryMap		=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.Rgba8, newWidth,	newHeight,	 false, true );
-
-			depthSliceMap0		=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.R32F, newWidth/2,	newHeight/2, false, true );
-			depthSliceMap1		=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.R32F, newWidth/2,	newHeight/2, false, true );
-			depthSliceMap2		=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.R32F, newWidth/2,	newHeight/2, false, true );
-			depthSliceMap3		=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.R32F, newWidth/2,	newHeight/2, false, true );
-		}
-
 
 
 		/// <summary>
@@ -175,15 +132,7 @@ namespace Fusion.Engine.Graphics {
 		{
 			if (disposing) {
 				SafeDispose( ref factory );
-				SafeDispose( ref interleavedDepth );
-				SafeDispose( ref occlusionMap );
-				SafeDispose( ref temporaryMap );
 				SafeDispose( ref paramsCB	 );
-
-				SafeDispose( ref depthSliceMap0 );
-				SafeDispose( ref depthSliceMap1 );
-				SafeDispose( ref depthSliceMap2 );
-				SafeDispose( ref depthSliceMap3 );
 			}
 
 			base.Dispose( disposing );
@@ -195,14 +144,24 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="target">LDR target.</param>
 		/// <param name="hdrImage">HDR source image.</param>
-		public void Render ( StereoEye stereoEye, Camera camera, ShaderResource depthBuffer, ShaderResource wsNormals )
+		public void Render ( StereoEye stereoEye, Camera camera, HdrFrame hdrFrame )
 		{
-			var device	=	Game.GraphicsDevice;
-			var filter	=	Game.RenderSystem.Filter;
+			var occlusionMap	=	hdrFrame.AOBuffer;
+			var temporaryMap	=	hdrFrame.TempColorFull0;
 
-			var view		=	camera.GetViewMatrix( stereoEye );
-			var projection	=	camera.GetProjectionMatrix( stereoEye );
-			var vp			=	device.DisplayBounds;
+			var depthSliceMap0	=	hdrFrame.DepthSliceMap0;
+			var depthSliceMap1	=	hdrFrame.DepthSliceMap1;
+			var depthSliceMap2	=	hdrFrame.DepthSliceMap2;
+			var depthSliceMap3	=	hdrFrame.DepthSliceMap3;
+			var depthBuffer		=	hdrFrame.DepthBuffer;
+
+
+			var device			=	Game.GraphicsDevice;
+			var filter			=	Game.RenderSystem.Filter;
+
+			var view			=	camera.GetViewMatrix( stereoEye );
+			var projection		=	camera.GetProjectionMatrix( stereoEye );
+			var vp				=	device.DisplayBounds;
 			
 
 			if (QualityLevel==QualityLevel.None) {

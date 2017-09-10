@@ -529,6 +529,8 @@
     <Compile Include="Engine\Server\NetConnExt.cs" />
     <Compile Include="Engine\Server\Snapshot.cs" />
     <Compile Include="Engine\Server\SnapshotQueue.cs" />
+    <Compile Include="Engine\ServiceModel\GameHost.cs" />
+    <Compile Include="Engine\ServiceModel\GameService.cs" />
     <Compile Include="Engine\Storage\IStorage.cs" />
     <Compile Include="Engine\Storage\DirectoryStorage.cs" />
     <Compile Include="Engine\Storage\UserStorage.cs" />

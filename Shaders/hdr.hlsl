@@ -99,6 +99,34 @@ float3 Dither ( int xpos, int ypos, float3 color )
 }
 
 
+
+static const float3	lumVector	=	float3(0.3f,0.6f,0.2f);
+
+
+float3 SaturateColor ( float3 rgbVal, float factor )
+{
+	float3 grey = dot(lumVector,rgbVal);
+	float3 ret = grey + factor * (rgbVal-grey);	
+	return ret;
+}
+
+
+float3 TintColor ( float3 target, float3 blend )
+{
+	//return target * blend;
+
+	float3 multiplyFactor	=	target * (blend+0.5);
+	float3 screenFactor		=	(1 - (1-target) * (1-(blend-0.5)));
+	return lerp( multiplyFactor, screenFactor, step( blend, 0.5 ) );
+
+	// float3 result = 0;
+	// result.r = color.r + (1-color.r) * tint.r;
+	// result.g = color.g + (1-color.g) * tint.g;
+	// result.b = color.b + (1-color.b) * tint.b;
+	// return result;
+}
+
+
 float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 {
 	uint width;
@@ -124,7 +152,7 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	float3	bloom		=	( bloom0 * 1.000f  
 							+ bloom1 * 2.000f  
 							+ bloom2 * 3.000f  
-							+ bloom3 * 4.000f )/10.000f;//*/
+							+ bloom3 * 4.000f )/7.000f;//*/
 					
 	bloom	*=	bloomMask.rgb;
 	
@@ -148,20 +176,35 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 		float3 x = max(0,exposured-0.004);
 		float3 tonemapped = (x*(6.2*x+.5))/(x*(6.2*x+1.7)+0.06);
 	#endif
-
-	float desaturated	=	dot( tonemapped, float3(0.3f,0.6f,0.2f));
 	
-	tonemapped		=	lerp( float3(desaturated,desaturated,desaturated), tonemapped, Params.Saturation );
+	//
+	//	Color grading :
+	//	
+			luminance		=	dot( tonemapped, lumVector);
+	float	shadows			=	saturate( 1 - 2 * luminance );
+	float	midtones		=	saturate( 1-abs(luminance*2-1) );
+	float	highlights		=	saturate( 2 * luminance - 1 );
 	
-	tonemapped.r	=	lerp( Params.Minimum, Params.Maximum, tonemapped.r );
-	tonemapped.g	=	lerp( Params.Minimum, Params.Maximum, tonemapped.g );
-	tonemapped.b	=	lerp( Params.Minimum, Params.Maximum, tonemapped.b );
+	float3	tintShadows		=	float3( 0.2, 0.3, 0.5 );
+	float3	tintMidtones	=	float3( 0.4, 0.5, 0.6 );
+	float3	tintHighlights	=	float3( 0.5, 0.6, 0.7 );
 	
-	//tonemapped		=	noiseDither;
-	tonemapped		+=	(noiseDither*2-1)*3/256.0;
-	//tonemapped	=	Dither( xpos, ypos, tonemapped );
-
-	return  float4( tonemapped, desaturated );
+	float3	colorShadows	=	TintColor( tonemapped, tintShadows	  );
+	float3	colorMidtones	=	TintColor( tonemapped, tintMidtones   );
+	float3	colorHighlights	=	TintColor( tonemapped, tintHighlights );
+	
+	float3	colorGraded 	=	colorShadows * shadows
+							+	colorMidtones * midtones
+							+	colorHighlights * highlights;
+	
+	colorGraded	=	SaturateColor( colorGraded, 0.75f );
+	
+	//
+	//	Apply dithering :
+	//
+	float3 result	=	colorGraded + (noiseDither*2-1)*3/256.0;
+	
+	return  float4( result, dot(result,lumVector) );
 }
 
 #endif

@@ -2,10 +2,10 @@
 <Map xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Environment>
     <Gravity>16</Gravity>
-    <SkyTrubidity>2</SkyTrubidity>
-    <SunPosition X="2" Y="2" Z="3" />
+    <SkyTrubidity>3</SkyTrubidity>
+    <SunPosition X="1" Y="1" Z="2" />
     <SunIntensity>40</SunIntensity>
-    <FogDensity>0.1</FogDensity>
+    <FogDensity>0.002</FogDensity>
     <CharacterHeight>2</CharacterHeight>
     <CharacterSize>1.2</CharacterSize>
     <WalkableSlope>45</WalkableSlope>
@@ -911,8 +911,8 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-29.298027" Y="9.79217" Z="156.985367" />
-      <Rotation X="-0.4957224" Y="0.06526309" Z="-0.113038927" W="0.8586165" />
+      <Position X="-29.298027" Y="12.4912777" Z="55.2049026" />
+      <Rotation X="-0.707106769" Y="2.12118731E-08" Z="7.916379E-08" W="0.7071068" />
       <Scaling>1</Scaling>
       <Factory xsi:type="FuncFXFactory">
         <FX>fog</FX>
@@ -941,8 +941,8 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="4.050682" Y="9.836641" Z="108.715126" />
-      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Position X="7.90636063" Y="11.1989555" Z="108.715126" />
+      <Rotation X="0" Y="0" Z="-4.47034836E-08" W="1" />
       <Scaling>1</Scaling>
       <Factory xsi:type="FuncFXFactory">
         <FX>fog</FX>
@@ -971,8 +971,8 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="6.738743" Y="4.80499268" Z="41.66611" />
-      <Rotation X="0" Y="0" Z="0.707106769" W="0.707106769" />
+      <Position X="6.738743" Y="4.80499268" Z="149.009415" />
+      <Rotation X="0" Y="0" Z="0.3826834" W="0.9238795" />
       <Scaling>1</Scaling>
       <Factory xsi:type="FuncFXFactory">
         <FX>fog2</FX>
@@ -991,6 +991,226 @@
       <Scaling>1</Scaling>
       <Factory xsi:type="FuncFXFactory">
         <FX>fog2</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="23.2171364" Y="4.80499268" Z="144.6165" />
+      <Rotation X="0" Y="0" Z="0.3826834" W="0.9238795" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog2</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="37.0338669" Y="13.2528305" Z="116.990913" />
+      <Rotation X="0" Y="0" Z="0.3826834" W="0.9238795" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog2</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="63.0913162" Y="9.565696" Z="129.405563" />
+      <Rotation X="0" Y="0" Z="0.3826834" W="0.9238795" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog2</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="0.593923569" Y="4.80499268" Z="171.641022" />
+      <Rotation X="0" Y="0" Z="0.3826834" W="0.9238795" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog2</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="20.397068" Y="5.644369" Z="152.140671" />
+      <Rotation X="0" Y="0" Z="0.3826834" W="0.9238795" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog2</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="44.8238678" Y="4.80499268" Z="162.03183" />
+      <Rotation X="0" Y="0" Z="0.3826834" W="0.9238795" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog2</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="53.476963" Y="4.80499268" Z="162.03183" />
+      <Rotation X="0" Y="0" Z="0.3826834" W="0.9238795" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog2</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="6.738743" Y="4.80499268" Z="185.961151" />
+      <Rotation X="0" Y="0" Z="0.3826834" W="0.9238795" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog2</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="23.2171364" Y="4.80499268" Z="176.351959" />
+      <Rotation X="0" Y="0" Z="0.3826834" W="0.9238795" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog2</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="36.99857" Y="4.80499268" Z="183.170486" />
+      <Rotation X="0" Y="0" Z="0.3826834" W="0.9238795" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog2</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="53.476963" Y="4.80499268" Z="176.351959" />
+      <Rotation X="0" Y="0" Z="0.3826834" W="0.9238795" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog2</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapModel">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="14.3815746" Y="-119.535622" Z="208.673737" />
+      <Rotation X="0" Y="-0.7933534" Z="0" W="0.60876137" />
+      <Scaling>2000</Scaling>
+      <ScenePath>terrain\terrain.fbx</ScenePath>
+      <Scale>2000</Scale>
+      <Color Red="10" Green="10" Blue="10" Alpha="1" />
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-55.3298836" Y="9.79217" Z="214.611176" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-29.298027" Y="12.4912777" Z="159.676575" />
+      <Rotation X="-0.707106769" Y="2.12118731E-08" Z="7.916379E-08" W="0.7071068" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog</FX>
+        <FXMode>Persistent</FXMode>
+        <Once>true</Once>
+        <Start>true</Start>
+        <MinInterval>1</MinInterval>
+        <MaxInterval>1</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-59.7009125" Y="9.79217" Z="189.368" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>fog</FX>
         <FXMode>Persistent</FXMode>
         <Once>true</Once>
         <Start>true</Start>

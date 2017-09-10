@@ -32,12 +32,13 @@ struct STAGE {
 	float4     ViewBounds;                    // offset:  816
 	float4     DirectLightDirection;          // offset:  832
 	float4     DirectLightIntensity;          // offset:  848
-	float      DirectLightAngularSize;        // offset:  864
-	float      VTPageScaleRCP;                // offset:  868
-	float      ShadowGradientBiasX;           // offset:  872
-	float      ShadowGradientBiasY;           // offset:  876
-	float      GradientScaler;                // offset:  880
-	float      DebugGradientScale;            // offset:  884
+	float4     FogDensityHeight;              // offset:  864
+	float      DirectLightAngularSize;        // offset:  880
+	float      VTPageScaleRCP;                // offset:  884
+	float      ShadowGradientBiasX;           // offset:  888
+	float      ShadowGradientBiasY;           // offset:  892
+	float      GradientScaler;                // offset:  896
+	float      DebugGradientScale;            // offset:  900
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+INSTANCE

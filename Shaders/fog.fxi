@@ -8,6 +8,15 @@ float3 ApplyFogColor ( float3 color, float density, float dist, float3 fogColor 
 	return lerp( fogColor, color, exp(-density*dist) );
 }
 
+float3 ApplyFogColor ( float3 source, TextureCube fogSource, SamplerState samplerState, float density, float3 targetPoint, float3 viewPoint )
+{
+	float3 	dir  		=	targetPoint - viewPoint;
+	float 	dist 		=	length(dir);
+	float3	fogColor	=	fogSource.Sample( samplerState, -dir );
+	
+	return lerp( fogColor, source, exp(-density*dist) );
+}
+
 float ApplyFogAlpha ( float density, float dist )
 {
 	return exp(-density*dist);

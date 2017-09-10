@@ -12,14 +12,14 @@
     <Effect>LitShadow</Effect>
     <Count>10</Count>
     <Period>1</Period>
-    <Timing Delay="0" Bunch="0.9" FadeIn="0.1" FadeOut="0.7" />
+    <Timing Delay="0" Bunch="1" FadeIn="0.1" FadeOut="0.7" />
     <Color0 Red="1" Green="1" Blue="1" Alpha="0" />
-    <Color1 Red="1" Green="1" Blue="1" Alpha="1" />
+    <Color1 Red="1" Green="1" Blue="1" Alpha="0.5" />
     <Lifetime Distribution="Gauss" MinLifetime="2" MaxLifetime="3" />
-    <Shape Size0="4" Size1="12" EnableRotation="true" InitialAngle="360" MinAngularVelocity="0" MaxAngularVelocity="12" />
+    <Shape Size0="4" Size1="8" EnableRotation="true" InitialAngle="360" MinAngularVelocity="0" MaxAngularVelocity="12" />
     <Position OffsetDirection="None" OffsetFactor="0" Distribution="UniformRadial" MinSize="0" MaxSize="0" />
     <Velocity Direction="LocalRight" LinearDistribution="Gauss" LinearVelocityMin="6" LinearVelocityMax="10" RadialDistribution="GaussRadial" RadialVelocityMin="0" RadialVelocityMax="2" Advection="0" />
-    <Acceleration GravityFactor="0" Damping="0" DragForce="0" Turbulence="0" />
+    <Acceleration GravityFactor="0" Damping="0.05" DragForce="0" Turbulence="0" />
   </ParticleStage1>
   <ParticleStage2>
     <Enabled>false</Enabled>

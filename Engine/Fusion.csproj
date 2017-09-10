@@ -192,6 +192,7 @@
       <DependentUpon>UserMessage.cs</DependentUpon>
     </Compile>
     <Compile Include="Drivers\Graphics\Resources\Texture2DStaging.cs" />
+    <Compile Include="Drivers\Graphics\Resources\Texture3DCompute.cs" />
     <Compile Include="Engine\Client\ClientContext.cs" />
     <Compile Include="Engine\Client\IContentPrecacher.cs" />
     <Compile Include="Engine\Client\IClientInstance.cs" />
@@ -530,7 +531,7 @@
     <Compile Include="Engine\Server\Snapshot.cs" />
     <Compile Include="Engine\Server\SnapshotQueue.cs" />
     <Compile Include="Engine\ServiceModel\GameHost.cs" />
-    <Compile Include="Engine\ServiceModel\GameService.cs" />
+    <Compile Include="Engine\ServiceModel\IGameService.cs" />
     <Compile Include="Engine\Storage\IStorage.cs" />
     <Compile Include="Engine\Storage\DirectoryStorage.cs" />
     <Compile Include="Engine\Storage\UserStorage.cs" />

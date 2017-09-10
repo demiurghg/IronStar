@@ -68,6 +68,8 @@ namespace Fusion.Engine.Graphics {
 
 		Random	rand = new Random();
 
+		Texture3DCompute	fogTable3d;
+
 
 
 		/// <summary>
@@ -87,6 +89,8 @@ namespace Fusion.Engine.Graphics {
 		{
 			skyCube		=	new RenderTargetCube( device, ColorFormat.Rgba16F, 128, true );
 			skyConstsCB	=	new ConstantBuffer( device, typeof(SkyConsts) );
+
+			fogTable3d	=	new Texture3DCompute( device, 64,64,64 );
 
 			LoadContent();
 

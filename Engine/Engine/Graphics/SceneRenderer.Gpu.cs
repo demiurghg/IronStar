@@ -68,6 +68,7 @@ namespace Fusion.Engine.Graphics {
 			public Vector4	ViewBounds				;
 			public Vector4	DirectLightDirection	;
 			public Color4	DirectLightIntensity	;
+			public Vector4	FogDensityHeight		;
 			public float	DirectLightAngularSize	;
 			public float	VTPageScaleRCP			;
 			public float	ShadowGradientBiasX		;

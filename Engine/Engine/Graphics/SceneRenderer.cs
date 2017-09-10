@@ -134,6 +134,8 @@ namespace Fusion.Engine.Graphics {
 		{
 			device.ResetStates();
 
+			var fog	=	rs.RenderWorld.FogSettings;
+
 			cbDataStage.DirectLightDirection	=	new Vector4( rs.RenderWorld.LightSet.DirectLight.Direction, 0 );
 			cbDataStage.DirectLightIntensity	=	rs.RenderWorld.LightSet.DirectLight.Intensity;
 			cbDataStage.DirectLightAngularSize	=	rs.RenderWorld.LightSet.DirectLight.AngularSize;
@@ -157,6 +159,8 @@ namespace Fusion.Engine.Graphics {
 			cbDataStage.CascadeScaleOffset1		=	rs.LightManager.ShadowMap.GetCascade( 1 ).ShadowScaleOffset;
 			cbDataStage.CascadeScaleOffset2		=	rs.LightManager.ShadowMap.GetCascade( 2 ).ShadowScaleOffset;
 			cbDataStage.CascadeScaleOffset3		=	rs.LightManager.ShadowMap.GetCascade( 3 ).ShadowScaleOffset;
+
+			cbDataStage.FogDensityHeight		=	new Vector4( fog.Density, 0, 0, 0 );
 
 
 			//	setup stage constants :
@@ -219,6 +223,9 @@ namespace Fusion.Engine.Graphics {
 			if (hdrFrame!=null) {
 				device.PixelShaderResources[12]	=	hdrFrame.AOBuffer;
 			}
+
+			device.PixelShaderResources[13]	=	rs.Sky.SkyCube;
+
 
 			//	setup samplers :
 			var shadowSampler	=	rs.UsePointShadowSampling ? SamplerState.ShadowSamplerPoint : SamplerState.ShadowSampler;

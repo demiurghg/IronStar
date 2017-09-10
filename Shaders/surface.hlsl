@@ -55,6 +55,7 @@ Texture2D				DecalImages			:	register(t9);
 Texture2D				ShadowMap			:	register(t10);
 Texture2D				ShadowMapParticles	:	register(t11);
 Texture2D				AmbientOcclusion	:	register(t12);
+TextureCube				FogTable			: 	register(t13);
 
 #ifdef _UBERSHADER
 $ubershader FORWARD RIGID|SKINNED +ANISOTROPIC
@@ -63,6 +64,7 @@ $ubershader ZPASS RIGID|SKINNED
 #endif
 
 #include "surface.lighting.hlsl"
+#include "fog.fxi"
 
  
 /*-----------------------------------------------------------------------------
@@ -326,7 +328,15 @@ GBuffer PSMain( PSInput input )
 	
 	float3 	lighting	=	ComputeClusteredLighting( input, ClusterTable, Stage.ViewBounds.xy, baseColor, worldNormal, triNormal, roughness, metallic );
 	
-	output.hdr			=	float4( emission * entityColor + lighting, 0 );
+			lighting	=	emission * entityColor + lighting;
+	
+	//---------------------------------
+	//	Apply fog :
+	//---------------------------------
+	float	fogDensity	=	Stage.FogDensityHeight.x;
+	float3	final		=	ApplyFogColor( lighting, FogTable, SamplerLinear, fogDensity, Stage.ViewPos.xyz, input.WorldPos.xyz );
+	
+	output.hdr			=	float4( final, 1 );
 	output.feedback		=	feedback;
 	
 	return output;

@@ -23,8 +23,14 @@ namespace Fusion.Drivers.Graphics {
 	internal class Texture3DCompute : ShaderResource {
 
 		D3D.Texture3D	tex3D;
+
 		UnorderedAccessView uav;
 
+		internal UnorderedAccessView Uav {
+			get {
+				return uav;
+			}
+		}
 
 
 		/// <summary>

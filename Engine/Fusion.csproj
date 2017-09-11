@@ -205,6 +205,7 @@
     <Compile Include="Engine\Graphics\Effects\Filter2.cs" />
     <Compile Include="Engine\Graphics\Effects\FogSettings.cs" />
     <Compile Include="Engine\Graphics\Effects\PoissonDiscGenerator.cs" />
+    <Compile Include="Engine\Graphics\Effects\Fog.cs" />
     <Compile Include="Engine\Graphics\Lights\Extents.cs" />
     <Compile Include="Engine\Graphics\Lights\LightGrid.cs" />
     <Compile Include="Engine\Graphics\Lights\LightStyle.cs" />

@@ -149,6 +149,11 @@ namespace Fusion.Drivers.Graphics {
 		}
 
 
+		public StateFactory CreateFactory ( Type type )
+		{
+			return CreateFactory( type, Primitive.TriangleList, VertexInputElement.Empty, BlendState.Opaque, RasterizerState.CullNone, DepthStencilState.None ); 
+		}
+
 
 		/// <summary>
 		/// Creates pipeline state factory

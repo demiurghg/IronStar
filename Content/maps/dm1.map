@@ -2,8 +2,8 @@
 <Map xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Environment>
     <Gravity>16</Gravity>
-    <SkyTrubidity>3</SkyTrubidity>
-    <SunPosition X="1" Y="1" Z="2" />
+    <SkyTrubidity>2</SkyTrubidity>
+    <SunPosition X="2" Y="1" Z="2" />
     <SunIntensity>40</SunIntensity>
     <FogDensity>0.002</FogDensity>
     <CharacterHeight>2</CharacterHeight>
@@ -1017,7 +1017,7 @@
       <Visible>true</Visible>
       <Frozen>false</Frozen>
       <Position X="37.0338669" Y="13.2528305" Z="116.990913" />
-      <Rotation X="0" Y="0" Z="0.3826834" W="0.9238795" />
+      <Rotation X="0" Y="0" Z="0.49999997" W="0.866025448" />
       <Scaling>1</Scaling>
       <Factory xsi:type="FuncFXFactory">
         <FX>fog2</FX>
@@ -1032,7 +1032,7 @@
       <Visible>true</Visible>
       <Frozen>false</Frozen>
       <Position X="63.0913162" Y="9.565696" Z="129.405563" />
-      <Rotation X="0" Y="0" Z="0.3826834" W="0.9238795" />
+      <Rotation X="0" Y="0" Z="0.13052617" W="0.9914448" />
       <Scaling>1</Scaling>
       <Factory xsi:type="FuncFXFactory">
         <FX>fog2</FX>
@@ -1062,7 +1062,7 @@
       <Visible>true</Visible>
       <Frozen>false</Frozen>
       <Position X="20.397068" Y="5.644369" Z="152.140671" />
-      <Rotation X="0" Y="0" Z="0.3826834" W="0.9238795" />
+      <Rotation X="0" Y="0" Z="0.49999997" W="0.866025448" />
       <Scaling>1</Scaling>
       <Factory xsi:type="FuncFXFactory">
         <FX>fog2</FX>
@@ -1137,7 +1137,7 @@
       <Visible>true</Visible>
       <Frozen>false</Frozen>
       <Position X="36.99857" Y="4.80499268" Z="183.170486" />
-      <Rotation X="0" Y="0" Z="0.3826834" W="0.9238795" />
+      <Rotation X="0" Y="0" Z="0.60876137" W="0.7933533" />
       <Scaling>1</Scaling>
       <Factory xsi:type="FuncFXFactory">
         <FX>fog2</FX>
@@ -1152,7 +1152,7 @@
       <Visible>true</Visible>
       <Frozen>false</Frozen>
       <Position X="53.476963" Y="4.80499268" Z="176.351959" />
-      <Rotation X="0" Y="0" Z="0.3826834" W="0.9238795" />
+      <Rotation X="0" Y="0" Z="0.49999997" W="0.866025448" />
       <Scaling>1</Scaling>
       <Factory xsi:type="FuncFXFactory">
         <FX>fog2</FX>

@@ -53,6 +53,9 @@ namespace Fusion.Engine.Graphics {
 		internal Sky	Sky { get { return sky; } }
 		Sky	sky;
 
+		internal Fog	Fog { get { return fog; } }
+		Fog	fog;
+
 		/// <summary>
 		/// Gets render counters.
 		/// </summary>
@@ -124,6 +127,7 @@ namespace Fusion.Engine.Graphics {
 			lightManager	=	new LightManager( this );
 			sceneRenderer	=	new SceneRenderer( this );
 			sky				=	new Sky( this );
+			fog				=	new Fog( this );
 			bitonicSort		=	new BitonicSort( this );
 			vtSystem	=	new VTSystem( this );
 
@@ -190,6 +194,7 @@ namespace Fusion.Engine.Graphics {
 			InitializeComponent( lightManager	);
 			InitializeComponent( sceneRenderer	);
 			InitializeComponent( sky			);	
+			InitializeComponent( fog			);	
 			InitializeComponent( bitonicSort	);
 			InitializeComponent( vtSystem );
 

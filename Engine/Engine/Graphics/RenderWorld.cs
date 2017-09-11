@@ -439,13 +439,16 @@ namespace Fusion.Engine.Graphics {
 			rs.Sky.Render( Camera, stereoEye, viewHdrFrame, SkySettings );
 			rs.Sky.RenderFogTable( SkySettings );
 
+			//	render fog :
+			rs.Fog.RenderFog( Camera, FogSettings );
+
 			//	render lights :
 			//rs.LightRenderer.RenderLighting( stereoEye, Camera, viewHdrFrame, this, Radiance );
 
 			//	render "solid" DOF :
 			rs.DofFilter.Render( gameTime, viewHdrFrame.LightAccumulator, viewHdrFrame.HdrBuffer, viewHdrFrame.DepthBuffer, this );
 
-			//	render and simulate particles :
+			//	render particles :
 			ParticleSystem.Render( gameTime, Camera, stereoEye, viewHdrFrame );
 
 			//	apply tonemapping and bloom :

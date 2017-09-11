@@ -969,6 +969,26 @@ namespace Fusion.Drivers.Graphics {
 		}
 
 
+		/// <summary>
+		/// SetCSRWBuffer & SetCSRWTexture share same registers.
+		/// </summary>
+		/// <param name="register"></param>
+		/// <param name="buffer"></param>
+		/// <param name="initialCount">An array of append and consume buffer offsets. 
+		/// A value of -1 indicates to keep the current offset. 
+		/// Any other values set the hidden counter for that appendable and consumable UAV. </param>
+		public void SetCSRWTexture ( int register, Texture3DCompute volume ) 
+		{ 
+			if (register>8) {
+				throw new GraphicsException("Could not bind RW texture at register " + register.ToString() + " (max 8)");
+			}
+
+			lock (deviceContext) {
+				DeviceContext.ComputeShader.SetUnorderedAccessView( register, volume?.Uav, -1 ); 
+			}
+		}
+
+
 
 		/// <summary>
 		/// SetPSRWBuffer & SetPSRWTexture share same registers.

@@ -1,75 +1,351 @@
 
-struct LightingParams {
-	float4x4	View;
-	float4x4	Projection;
-	float4x4	InverseViewProjection;
+/*-----------------------------------------------------------------------------
+	Input Data :
+-----------------------------------------------------------------------------*/
 
-	float4		FrustumVectorTR;
-	float4		FrustumVectorBR;
-	float4		FrustumVectorBL;
-	float4		FrustumVectorTL;
-	
-	float4x4	CSMViewProjection0;
-	float4x4	CSMViewProjection1;
-	float4x4	CSMViewProjection2;
-	float4x4	CSMViewProjection3;
+struct LightingKernel {
 
-	float4		ViewPosition;
-	float4		DirectLightDirection;
-	float4		DirectLightIntensity;
-	float4		ViewportSize;
+	//	viewer :
+	float3		ViewPosition		;
+	float2		ViewportSize		;
 	
-	float4		CSMFilterRadius;	//	for each cascade
-	float4		AmbientColor;
+	//	surface properties :
+	float2 		ScreenPosition		;
+	float3		WorldPosition		;
+	float4		ProjectionPosition	;
+		
+	float3		TriangleNormal		;
+		
+	float3		SurfaceNormal		;
+	float3		SurfaceBaseColor	;
+	float		SurfaceRoughness	;
+	float		SurfaceMetallic		;
+		
+	//	direct light stuff :	
+	float3 		DirectLightDirection		;
+	float3		DirectLightIntensity		;
+	float		DirectLightAngularSize		;
 	
-	float4		Viewport;			//	x,y,w,h,
-	float		ShowCSLoadOmni;
-	float		ShowCSLoadEnv;
-	float		ShowCSLoadSpot;
+	float4x4	CascadeViewProjection[4]	;
+	float4x4	CascadeGradientMatrix[4]	;
+	float4		CascadeScaleOffset[4]		;
+
+	//	samplers & textures :
+	StructuredBuffer<DECAL>	DecalDataTable			;
+	StructuredBuffer<LIGHT>	LightDataTable			;
 	
-	int			CascadeCount;
-	float		CascadeScale;
-	
-	float		FogDensity;
+	Texture3D<uint2> 		ClusterTable			;
+	Texture2D				ShadowMap				;
+	Texture2D				MaskMap					;
+	SamplerComparisonState	ShadowSampler			;
+	SamplerState			MaskSampler				;
+	Texture2D				AmbientOcclusion		;
 };
 
-struct OMNILIGHT {
-	float4	PositionRadius;
-	float4	Intensity;
-	float4	ExtentMin;
-	float4	ExtentMax;
-};
 
-struct ENVLIGHT {
-	float4	Position;
-	float4	Dimensions;
-	float4	ExtentMin;
-	float4	ExtentMax;
-};
 
-struct DECAL {
-	float4x4 DecalMatrixInv;
-	float4	 BasisX;
-	float4	 BasisY;
-	float4	 BasisZ;
-	float4 	 EmissionRoughness;
-	float4	 BaseColorMetallic;
-	float4	 ImageScaleOffset;
-	float4	 ExtentMin;	// x,y, depth
-	float4	 ExtentMax;	// x,y, depth
-	float	 ColorFactor;
-	float	 SpecularFactor;
-	float	 NormalMapFactor;
-	float	 FalloffFactor;
-};
+/*-----------------------------------------------------------------------------
+	Cascaded Shadow Maps
+-----------------------------------------------------------------------------*/
 
-struct SPOTLIGHT {
-	float4x4	ViewProjection;
-	float4		PositionRadius;
-	float4		IntensityFar;
-	float4		ExtentMin;	// x,y, depth
-	float4		ExtentMax;	// x,y, depth
-	float4		MaskScaleOffset;
-	float4		ShadowScaleOffset;
-};
+#if true
+
+static const float dither4[4][4] = {{1,9,3,11},{13,5,15,7},{4,12,2,10},{16,8,14,16}};
+static const float dither2[2][2] = {{0,2},{3,1}};
+
+
+float Dither ( int xpos, int ypos )
+{
+	return dither2[xpos%2][ypos%2]/4.0f;
+}
+
+
+float ProjectShadow ( float3 worldPos, float4x4 viewProjection, out float4 projection )
+{	
+	float4 temp = 	mul( float4(worldPos,1), viewProjection );
+	temp.xy 	/= 	temp.w;
+	temp.w   	= 	1;
+	
+	projection	=	temp;
+	
+	return	max(abs(projection.x), abs(projection.y));//length(temp.xy);
+}
+
+
+float3	ComputeCascadedShadows ( LightingKernel kernel )
+{
+	//	compute UVs 
+	float2	csmSize;
+	float2	csmSizeRcp;
+	kernel.shadowMap.GetDimensions( csmSize.x, csmSize.y );
+	csmSizeRcp.xy	=	1 / csmSize.xy;
+
+	float4	projection		= float4(0,0,0,0);
+	float4	bestProjection 	= float4(0,0,0,0);
+	float4	bestScaleOffset = float4(0,0,0,0);
+	float3	bestGradient	= float3(0,0,0);
+	float4 	colorize   		= float4(1,0,2,1);
+	float3 	scale			= 1;
+	
+	float	bias			= 0.85 + Dither( vpos.x, vpos.y ) * 0.1f;
+	float	fade			= 1;
+
+	//------------------------------------------------------
+	
+	//	select cascade :
+	if ( ProjectShadow( worldPos, kernel.CascadeViewProjection[3], projection ) < 1 ) {
+		bestProjection 	=	projection;
+		bestScaleOffset	=	kernel.CascadeScaleOffset[3];
+		bestGradient	=	mul( normal, kernel.CascadeGradientMatrix[3] );
+		colorize		=	float4(0,0,1,1);
+		scale 			=	kernel.CascadeViewProjection[3]._11_22_33;
+		fade			=	min(1, max(abs(projection.x), abs(projection.y)));
+	}
+	
+	if ( ProjectShadow( worldPos, kernel.CascadeViewProjection[2], projection ) < bias ) {
+		bestProjection 	=	projection;
+		bestScaleOffset	=	kernel.CascadeScaleOffset[2];
+		bestGradient	=	mul( normal, kernel.CascadeGradientMatrix[2] );
+		colorize		=	float4(0,1,0,1);
+		scale 			=	kernel.CascadeViewProjection[2]._11_22_33;
+	}
+	
+	if ( ProjectShadow( worldPos, kernel.CascadeViewProjection[1], projection ) < bias ) {
+		bestProjection 	=	projection;
+		bestScaleOffset	=	kernel.CascadeScaleOffset[1];
+		bestGradient	=	mul( normal, kernel.CascadeGradientMatrix[1] );
+		colorize		=	float4(1,0,0,1);
+		scale 			=	kernel.CascadeViewProjection[1]._11_22_33;
+	}
+	
+	if ( ProjectShadow( worldPos, kernel.CascadeViewProjection[0], projection ) < bias ) {
+		bestProjection 	=	projection;
+		bestScaleOffset	=	kernel.CascadeScaleOffset[0];
+		bestGradient	=	mul( normal, kernel.CascadeGradientMatrix[0] );
+		colorize		=	float4(1,1,1,1);
+		scale 			=	kernel.CascadeViewProjection[0]._11_22_33;
+	}
+	
+	//------------------------------------------------------
+	//	warning: no offset is required!
+	float2	uv				=	mad( bestProjection.xy, bestScaleOffset.xy, bestScaleOffset.zw );
+	float   depthcmp		= 	projection.z;
+	float3	shadow			=	0;
+	
+	float	epsilon			=	1 / 8192.0f / 4.0f;
+			bestGradient	=	normalize(bestGradient);
+	float2	depthWeights	=	bestGradient.xy / (bestGradient.z + epsilon );
+	
+	
+	if (true) {
+		
+		for( float row = -2; row <= 2; row += 1 ) {
+			[unroll]for( float col = -2; col <= 2; col += 1 ) {
+				float 	x	=	col * 1;
+				float	y	=	row * 1;
+				float	z	=	depthcmp + dot( depthWeights, float2(x,y) );
+				float	sh	=	kernel.shadowMap.SampleCmpLevelZero( kernel.shadowSampler, uv + csmSizeRcp * float2(x,y), z ).r;
+				shadow		+=	sh;
+			}
+		}
+		
+		shadow /= 25;
+
+		shadow *= kernel.maskMap.SampleLevel( kernel.maskSampler, uv, 0 ).rgb;
+		
+	} else {
+		shadow = kernel.shadowMap.SampleCmpLevelZero( kernel.shadowSampler, uv, depthcmp );
+	}
+	
+	//shadow = saturate((shadow-0.5)*2+0.5);
+	
+	return lerp(shadow, 1, saturate(fade*16-15));
+}
+
+#endif
+
+/*-----------------------------------------------------------------------------
+	Cascaded Shadow Maps
+-----------------------------------------------------------------------------*/
+
+float3 ComputeClusteredLighting ( LightingKernel kernel )
+{
+	uint i,j,k;
+	float3 result		=	float3(0,0,0);
+	float slice			= 	1 - exp(-kernel.ProjectionPosition.w*0.03);
+	int3 loadUVW		=	int3( kernel.ScreenPosition.xy/kernel.ViewportSize.xy*float2(16,8), slice * 24 );
+
+	float2	smSize;
+	float2	smSizeRcp;
+	ShadowMap.GetDimensions( smSize.x, smSize.y );
+	smSizeRcp.xy	=	1 / smSize.xy;
+	
+	uint2	data		=	clusterTable.Load( int4(loadUVW,0) ).rg;
+	uint	index		=	data.r;
+	uint 	decalCount	=	(data.g & 0xFFF000) >> 12;
+	uint 	lightCount	=	(data.g & 0x000FFF) >> 0;
+
+	float3 totalLight	=	0;
+
+	float3 	worldPos	= 	kernel.WorldPosition.xyz;
+	float3 	normal 		=	kernel.SurfaceNormal.xyz;
+	
+	float3	viewDir		=	kernel.ViewPosition.xyz - worldPos.xyz;
+	float	viewDistance=	length( viewDir );
+	float3	viewDirN	=	normalize( viewDir );
+
+	float3	geometryNormal	=	normalize(kernel.TriangleNormal.xyz);
+	float	decalSlope		=	dot( viewDirN, geometryNormal );
+	float	decalBaseMip	=	log2( kernel.ProjectionPosition.w / decalSlope );
+
+	//----------------------------------------------------------------------------------------------
+	
+	[loop]
+	for (i=0; i<decalCount; i++) {
+		uint idx = kernel.LightIndexTable.Load( lightCount + index + i );
+		
+		DECAL decal = kernel.DecalDataTable[idx];
+
+		float4x4 decalMatrixI	=	decal.DecalMatrixInv;
+		float3	 decalColor		=	decal.BaseColorMetallic.rgb;
+		float3	 glowColor		=	decal.EmissionRoughness.rgb;
+		float3	 decalR			=	decal.EmissionRoughness.a;
+		float3	 decalM			=	decal.BaseColorMetallic.a;
+		float4	 scaleOffset	=	decal.ImageScaleOffset;
+		float	 falloff		=	decal.FalloffFactor;
+		float 	 mipDecalBias	=	decal.MipBias;
+		
+		float4 decalPos	=	mul(float4(worldPos,1), decalMatrixI);
+		
+		if ( abs(decalPos.x)<1 && abs(decalPos.y)<1 && abs(decalPos.z)<1 && Instance.AssignmentGroup==decal.AssignmentGroup ) {
+		
+			//float2 uv			=	mad(mad(decalPos.xy, float2(-0.5,0.5), float2(0.5,0.5), offsetScale.zw, offsetScale.xy); 
+			float2 uv			=	mad(decalPos.xy, scaleOffset.xy, scaleOffset.zw); 
+		
+			float4 decalImage	= 	DecalImages.SampleLevel( DecalSampler, uv, decalBaseMip + mipDecalBias );
+			float3 localNormal  = 	decalImage.xyz * 2 - 1;
+			float3 decalNormal	=	localNormal.x * decal.BasisX + localNormal.y * decal.BasisY + localNormal.z * decal.BasisZ;
+			float factor		=	decalImage.a * saturate(falloff - abs(decalPos.z)*falloff);
+			
+			totalLight.rgb		+=	 glowColor * factor;
+		
+			baseColor 	= lerp( baseColor.rgb, decalColor, decal.ColorFactor * factor );
+			roughness 	= lerp( roughness, decalR, decal.SpecularFactor * factor );
+			metallic 	= lerp( metallic,  decalM, decal.SpecularFactor * factor );
+			///normal		= lerp( normal, decalNormal, decal.NormalMapFactor * factor );
+
+			normal		= normal + decalNormal * decal.NormalMapFactor * factor;
+		}
+	}
+	
+	
+	//----------------------------------------------------------------------------------------------
+
+			normal 		= 	normalize(normal);
+	float3	diffuse 	=	lerp( baseColor, float3(0,0,0), metallic );
+	float3	specular  	=	lerp( float3(0.04f,0.04f,0.04f), baseColor, metallic );
+
+	//----------------------------------------------------------------------------------------------
+
+	// TODO: check each cluster against lowres cascade	to check completly obscured ones 
+	// It could be done in compute shader
+	// 1 bit cluster table in of extra data is required.
+	#if 0
+	if (1) { 
+	
+		float2	vpos		=	input.Position.xy;
+	
+		float3	lightDir	=	-Stage.DirectLightDirection.xyz;
+		float3	intensity	=	Stage.DirectLightIntensity.rgb;
+		float3	lightDirN	=	normalize(lightDir);
+		float	srcRadius	=	Stage.DirectLightAngularSize;
+
+		float3	shadow		=	ComputeCSM( vpos, triNormal, lightDirN, worldPos, Stage, ShadowSampler, ParticleSampler, ShadowMap, ShadowMapParticles, true ); 
+		
+		float  nDotL		= 	max( 0, dot(normal, lightDirN) );
+		
+		totalLight.rgb 		+= 	shadow * Lambert ( normal.xyz,  lightDirN, intensity, diffuse );
+		totalLight.rgb 		+= 	shadow * nDotL * CookTorrance( normal.xyz, viewDirN, lightDirN, intensity, specular, roughness, srcRadius );
+	}
+	#endif
+	
+	//----------------------------------------------------------------------------------------------
+
+	[loop]
+	for (i=0; i<lightCount; i++) {
+		uint idx  	= LightIndexTable.Load( index + i );
+		uint type 	= LightDataTable[idx].LightType & 0x0000FFFF;
+		uint shape	= LightDataTable[idx].LightType & 0xFFFF0000;	
+		
+		float3 position		=	LightDataTable[idx].PositionRadius.xyz;
+		float  radius		=	LightDataTable[idx].PositionRadius.w;
+		float3 intensity	=	LightDataTable[idx].IntensityFar.rgb;
+		float  sourceRadius	=	LightDataTable[idx].SourceRadius;
+		
+		[branch]
+		if (type==LightTypeOmni) {
+			
+			float3 lightDir		= 	position - worldPos.xyz;
+			float3 lightDirN	=	normalize(lightDir);
+			float  falloff		= 	LinearFalloff( length(lightDir), radius );
+			float  nDotL		= 	max( 0, dot(normal, lightDirN) );
+			
+			totalLight.rgb 		+= 	falloff * Lambert ( normal.xyz,  lightDirN, intensity, diffuse );
+			totalLight.rgb 		+= 	falloff * nDotL * CookTorrance( normal.xyz, viewDirN, lightDir, intensity, specular, roughness, sourceRadius );
+			
+		} else if (type==LightTypeSpotShadow) {
+			
+			float4 lsPos		=	mul(float4(worldPos+geometryNormal * 0.0,1), LightDataTable[idx].ViewProjection);
+			float  shadowDepth	=	lsPos.z / LightDataTable[idx].IntensityFar.w;
+				   lsPos.xyz	= 	lsPos.xyz / lsPos.w;
+				   
+			if ( abs(lsPos.x)<1 && abs(lsPos.y)<1 && abs(lsPos.z)<1 ) {
+				float3 	position	=	LightDataTable[idx].PositionRadius.xyz;
+				float  	radius		=	LightDataTable[idx].PositionRadius.w;
+				float3 	intensity	=	LightDataTable[idx].IntensityFar.rgb;
+				float4 	scaleOffset	=	LightDataTable[idx].ShadowScaleOffset;
+				
+				lsPos.xy		=	mad( lsPos.xy, scaleOffset.xy, scaleOffset.zw );
+						
+				float	accumulatedShadow	=	0;
+						
+				//	TODO : num taps <--> shadow quality
+				//	TODO : kernel size <--> shadow region size
+				#if 0
+				accumulatedShadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, lsPos.xy, shadowDepth ).r;
+				#else
+				for( float row = -2; row <= 2; row += 1 ) {
+					[unroll]for( float col = -2; col <= 2; col += 1 ) {
+						float2	smcoord	=	mad(float2(col,row), smSizeRcp.xy, lsPos.xy);
+						float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, smcoord, shadowDepth ).r;
+						accumulatedShadow += shadow;
+					}
+				}
+				accumulatedShadow 	/= 	25.0f;
+				//accumulatedShadow	=	max(0,mad(accumulatedShadow, 1/25.0f*2.0f, -0.5));
+				#endif
+						
+				float3	prtShadow	=	ShadowMapParticles.SampleLevel( ParticleSampler, lsPos.xy, 0 ).rgb;
+				
+				float3 	lightDir	= 	position - worldPos.xyz;
+				float3 	falloff		= 	LinearFalloff( length(lightDir), radius ) * accumulatedShadow * prtShadow;
+				float  	nDotL		= 	max( 0, dot(normal, normalize(lightDir)) );
+				
+				totalLight.rgb 		+= 	falloff * Lambert ( normal.xyz,  lightDir, intensity, diffuse );
+				totalLight.rgb 		+= 	falloff * nDotL * CookTorrance( normal.xyz, viewDirN, lightDir, intensity, specular, roughness, sourceRadius );
+			}
+		}
+	}
+	
+	//
+	//	Ambient
+	//
+	float ambientOcclusion	=	AmbientOcclusion.Load( int3( input.Position.xy,0 ) ).r;
+	
+	ambientOcclusion = pow(max(0,ambientOcclusion*1-0),2);
+	
+	totalLight.rgb += (diffuse + specular).rgb * Stage.Ambient * ambientOcclusion;
+	
+	return totalLight;
+}
 

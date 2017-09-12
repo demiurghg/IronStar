@@ -49,7 +49,6 @@ namespace Fusion.Engine.Graphics {
 		struct STAGE {
 			public Matrix	Projection				;
 			public Matrix	View					;
-			public Matrix	GradientToNormal		;
 			public Matrix	CascadeViewProjection0	;
 			public Matrix	CascadeViewProjection1	;
 			public Matrix	CascadeViewProjection2	;
@@ -71,10 +70,7 @@ namespace Fusion.Engine.Graphics {
 			public Vector4	FogDensityHeight		;
 			public float	DirectLightAngularSize	;
 			public float	VTPageScaleRCP			;
-			public float	ShadowGradientBiasX		;
-			public float	ShadowGradientBiasY		;
-			public float	GradientScaler			;
-			public float	DebugGradientScale		;
+			public float	VTGradientScaler		;
 		}
 
 

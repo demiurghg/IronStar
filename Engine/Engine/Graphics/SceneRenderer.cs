@@ -149,11 +149,8 @@ namespace Fusion.Engine.Graphics {
 			cbDataStage.CascadeGradientMatrix1	=	rs.LightManager.ShadowMap.GetCascade( 1 ).ComputeGradientMatrix();
 			cbDataStage.CascadeGradientMatrix2	=	rs.LightManager.ShadowMap.GetCascade( 2 ).ComputeGradientMatrix();
 			cbDataStage.CascadeGradientMatrix3	=	rs.LightManager.ShadowMap.GetCascade( 3 ).ComputeGradientMatrix();
-			cbDataStage.ShadowGradientBiasX		=	rs.ShadowGradientBiasX;
-			cbDataStage.ShadowGradientBiasY		=	rs.ShadowGradientBiasY;
 
-			cbDataStage.GradientScaler			=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;
-			cbDataStage.DebugGradientScale		=	rs.VTSystem.DebugGradientScale;
+			cbDataStage.VTGradientScaler		=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;
 
 			cbDataStage.CascadeScaleOffset0		=	rs.LightManager.ShadowMap.GetCascade( 0 ).ShadowScaleOffset;
 			cbDataStage.CascadeScaleOffset1		=	rs.LightManager.ShadowMap.GetCascade( 1 ).ShadowScaleOffset;
@@ -176,7 +173,7 @@ namespace Fusion.Engine.Graphics {
 				cbDataStage.ViewBounds		=	new Vector4( width, height, width, height );
 				cbDataStage.VTPageScaleRCP	=	rs.VTSystem.PageScaleRCP;
 
-				cbDataStage.GradientToNormal	=	camera.GetViewMatrix( stereoEye );
+				//cbDataStage.GradientToNormal	=	camera.GetViewMatrix( stereoEye );
 			}
 
 			if (shadowContext!=null) {

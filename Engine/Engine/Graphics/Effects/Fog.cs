@@ -19,8 +19,8 @@ namespace Fusion.Engine.Graphics {
 	internal class Fog : RenderComponent {
 
 		const int FogSizeX		=	64;
-		const int FogSizeY		=	64;
-		const int FogSizeZ		=	64;
+		const int FogSizeY		=	32;
+		const int FogSizeZ		=	92;
 
 		[ShaderDefine]
 		const int BlockSizeX	=	4;

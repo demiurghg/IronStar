@@ -38,6 +38,7 @@ Texture2D					LightMap			:	register(t11);
 Texture2D					ShadowMask			:	register(t12);
 
 #include "particles.lighting.hlsl"
+#include "fog.fxi"
 
 //-----------------------------------------------
 //	UAVs :
@@ -192,6 +193,7 @@ struct GSOutput {
 	float4  ViewPosSZ : TEXCOORD2;
 	float4	Color     : COLOR0;
 	float	LMFactor  : TEXCOORD3;
+	float	Fog		  : TEXCOORD4;
 };
 
 
@@ -219,6 +221,12 @@ float Ramp(float f_in, float f_out, float t)
 	return y;
 }
 
+
+float ApplyFog( float3 worldPos )
+{
+	float dist = distance( Params.CameraPosition, worldPos );
+	return 1 - exp( dist * Params.FogAttenuation );
+}
 
 
 [maxvertexcount(6)]
@@ -284,6 +292,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p0.ViewPosSZ = float4( pos0.xyz, 1/sz );
 	p0.Color 	 = color;
 	p0.LMFactor	 = 0;
+	p0.Fog		 = ApplyFog( wpos0 );
 	
 	p1.Position	 = mul( pos1, Params.Projection );
 	p1.TexCoord	 = image.xy;
@@ -291,6 +300,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p1.ViewPosSZ = float4( pos1.xyz, 1/sz );
 	p1.Color 	 = color;
 	p1.LMFactor	 = 0;
+	p1.Fog		 = ApplyFog( wpos1 );
 	
 	p2.Position	 = mul( pos2, Params.Projection );
 	p2.TexCoord	 = image.xw;
@@ -298,6 +308,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p2.ViewPosSZ = float4( pos2.xyz, 1/sz );
 	p2.Color 	 = color;
 	p2.LMFactor	 = 0;
+	p2.Fog		 = ApplyFog( wpos2 );
 	
 	p3.Position	 = mul( pos3, Params.Projection );
 	p3.TexCoord	 = image.zw;
@@ -305,6 +316,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p3.ViewPosSZ = float4( pos3.xyz, 1/sz );
 	p3.Color 	 = color;
 	p3.LMFactor	 = 0;
+	p3.Fog		 = ApplyFog( wpos3 );
 	
 	#ifdef DRAW
 	if (prt.Effects==ParticleFX_Lit || prt.Effects==ParticleFX_LitShadow) {
@@ -367,7 +379,8 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 
 		color.rgba *= softFactor;
 		color.rgb  *= light.rgb;
-		//color.rgb  *= color.a;
+		
+		color.rgb	=	lerp( color.rgb, Params.FogColor, input.Fog );
 		
 		return color;
 	#endif

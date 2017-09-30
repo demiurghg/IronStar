@@ -333,8 +333,21 @@ GBuffer PSMain( PSInput input )
 	//---------------------------------
 	//	Apply fog :
 	//---------------------------------
-	float	fogDensity	=	Stage.FogDensityHeight.x;
-	float3	final		=	ApplyFogColor( lighting, FogTable, SamplerLinear, fogDensity, Stage.ViewPos.xyz, input.WorldPos.xyz );
+	float	dist	=	distance( input.WorldPos.xyz, Stage.ViewPos.xyz ); 
+	float3	final	=	ApplyFogColor( lighting, Stage.FogAttenuation, dist, Stage.FogColor );
+	
+	//float3	final		=	ApplyGroundFog( lighting, Stage.FogColor, Stage.FogDistanceAttenuation, Stage.FogHeightAttenuation, dist, Stage.ViewPos.xyz, normalize(input.WorldPos.xyz - Stage.ViewPos.xyz) );
+	//float3	final	=	ApplyFogColor( lighting, FogTable, SamplerLinear, Stage.FogDensity, Stage.ViewPos.xyz, input.WorldPos.xyz );
+	// float3	fogCoords	=	float3( 
+								// (input.ProjPos.x / input.ProjPos.w)*( 0.5)+0.5, 
+								// (input.ProjPos.y / input.ProjPos.w)*(-0.5)+0.5, 
+								// 1 - exp(-input.ProjPos.w*0.03)
+							// );
+							
+	// float4	fogColor	=	FogGrid.SampleLevel( SamplerLinear, fogCoords, 0 ).rgba;
+	
+	// //float	fogDensity	=	Stage.FogDensityHeight.x;
+	// float3	final		=	lerp( lighting, fogColor.rgb, fogColor.a );
 	
 	output.hdr			=	float4( final, 1 );
 	output.feedback		=	feedback;

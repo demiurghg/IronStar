@@ -144,6 +144,9 @@ namespace Fusion.Engine.Graphics {
 			public Vector4	LightMapSize;
 			public Vector4	DirectLightDirection;
 			public Color4	DirectLightIntensity;
+			public Color4	AmbientLevel;
+			public Color4	FogColor;
+			public float	FogAttenuation;
 			public float	LinearizeDepthA;
 			public float	LinearizeDepthB;
 			public int		MaxParticles;
@@ -394,6 +397,9 @@ namespace Fusion.Engine.Graphics {
 			param.CascadeScaleOffset3		=	rs.LightManager.ShadowMap.GetCascade( 3 ).ShadowScaleOffset;
 			param.DirectLightDirection		=	new Vector4( renderWorld.LightSet.DirectLight.Direction, 0 );
 			param.DirectLightIntensity		=	renderWorld.LightSet.DirectLight.Intensity;
+			param.AmbientLevel				=	renderWorld.LightSet.AmbientLevel;
+			param.FogColor					=	renderWorld.FogSettings.Color;
+			param.FogAttenuation			=	renderWorld.FogSettings.DistanceAttenuation;
 			param.MaxParticles		=	0;
 			param.DeltaTime			=	deltaTime;
 			param.CameraForward		=	new Vector4( cameraMatrix.Forward	, 0 );

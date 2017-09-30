@@ -45,7 +45,7 @@ struct LIGHT {
 	float4     PositionRadius;                // offset:   64
 	float4     IntensityFar;                  // offset:   80
 	float4     ShadowScaleOffset;             // offset:   96
-	int        LightType;                     // offset:  112
+	uint       LightType;                     // offset:  112
 	float      SourceRadius;                  // offset:  116
 };
 
@@ -78,12 +78,15 @@ struct PARAMS {
 	float4     LightMapSize;                  // offset:  592
 	float4     DirectLightDirection;          // offset:  608
 	float4     DirectLightIntensity;          // offset:  624
-	float      LinearizeDepthA;               // offset:  640
-	float      LinearizeDepthB;               // offset:  644
-	int        MaxParticles;                  // offset:  648
-	float      DeltaTime;                     // offset:  652
-	uint       DeadListSize;                  // offset:  656
-	float      CocScale;                      // offset:  660
-	float      CocBias;                       // offset:  664
+	float4     AmbientLevel;                  // offset:  640
+	float4     FogColor;                      // offset:  656
+	float      FogAttenuation;                // offset:  672
+	float      LinearizeDepthA;               // offset:  676
+	float      LinearizeDepthB;               // offset:  680
+	int        MaxParticles;                  // offset:  684
+	float      DeltaTime;                     // offset:  688
+	uint       DeadListSize;                  // offset:  692
+	float      CocScale;                      // offset:  696
+	float      CocBias;                       // offset:  700
 };
 

@@ -4,7 +4,7 @@
 -----------------------------------------------------------------------------*/
 
 #include "brdf.fxi"
-#include "particles.shadows.hlsl"
+#include "fog.shadows.hlsl"
 
 //
 //	ComputeClusteredLighting
@@ -22,11 +22,11 @@ float3 ComputeClusteredLighting ( float3 worldPos )
 	uint	index		=	data.r;
 	uint 	lightCount	=	(data.g & 0x000FFF) >> 0;
 
-	float3 totalLight	=	Params.AmbientLevel.rgb;
+	float3 totalLight	=	0;
 
 	//----------------------------------------------------------------------------------------------
 
-	float3	shadow		=	ComputeCSM( worldPos, Params, ShadowSampler, ShadowMap, Sampler, ShadowMask ); 
+	float3	shadow		=	0.5 + 0.5*ComputeCSM( worldPos, Params, ShadowSampler, ShadowMap ); 
 	totalLight.rgb 		+= 	shadow * Params.DirectLightIntensity.rgb;
 
 	//----------------------------------------------------------------------------------------------
@@ -63,8 +63,8 @@ float3 ComputeClusteredLighting ( float3 worldPos )
 				
 				lsPos.xy		=	mad( lsPos.xy, scaleOffset.xy, scaleOffset.zw );
 						
-				float3 	accumulatedShadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, lsPos.xy, shadowDepth ).rrr;
-						accumulatedShadow	*=	ShadowMask.SampleLevel( Sampler, lsPos.xy, 0 ).rgb;
+				float3 	accumulatedShadow	=	1;//ShadowMap.SampleCmpLevelZero( ShadowSampler, lsPos.xy, shadowDepth ).rrr;
+						//accumulatedShadow	*=	ShadowMask.SampleLevel( Sampler, lsPos.xy, 0 ).rgb;
 						
 				float3 	lightDir	= 	position - worldPos.xyz;
 				float3 	falloff		= 	LinearFalloff( length(lightDir), radius ) * accumulatedShadow;
@@ -74,6 +74,6 @@ float3 ComputeClusteredLighting ( float3 worldPos )
 		}
 	}
 	
-	return totalLight * 1;
+	return totalLight;
 }
 

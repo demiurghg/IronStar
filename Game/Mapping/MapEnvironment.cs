@@ -32,7 +32,13 @@ namespace IronStar.Mapping {
 		public float SunIntensity { get; set; } = 100;
 
 		[Category( "Fog" )]
-		public float FogDensity { get; set; } = 0.001f;
+		public float FogDistance { get; set; } = 0.001f;
+
+		[Category( "Fog" )]
+		public float FogHeight { get; set; } = 0.05f;
+
+		[Category( "Fog" )]
+		public Color4 FogColor { get; set; } = new Color4(10,10,10,0);
 
 
 		[Category("AI")]

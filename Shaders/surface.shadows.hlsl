@@ -1,31 +1,11 @@
 
-static float2 poisonDisk[16] = {
-	float2( 0.6471434f,  0.5442180f),
-	float2( 0.6627925f, -0.0145980f),
-	float2( 0.2094653f,  0.6861125f),
-	float2( 0.01836824f, 0.1938052f),
-	float2(-0.5083427f, -0.0543112f),
-	float2(-0.1876637f, -0.4905864f),
-	float2( 0.2701841f, -0.1667389f),
-	float2(-0.5884321f,  0.5500614f),
-	
-	float2( 0.5244192f, -0.7732284f),
-	float2( 0.1206752f, -0.9527515f),
-	float2(-0.2352096f,  0.9127740f),
-	float2(-0.9525819f,  0.2960428f),
-	float2( 0.8872142f, -0.4135098f),
-	float2(-0.9452454f, -0.1600218f),
-	float2(-0.6495278f, -0.4626486f),
-	float2(-0.4085272f, -0.8579809f)
-};
-
 static const float dither4[4][4] = {{1,9,3,11},{13,5,15,7},{4,12,2,10},{16,8,14,16}};
 static const float dither2[2][2] = {{0,2},{3,1}};
 
 float Dither ( int xpos, int ypos )
 {
 	//return dither4[xpos%4][ypos%4]/16.0f;
-	return dither2[xpos%2][ypos%2]/4.0f;
+	return dither2[xpos&1][ypos&1]/4.0f;
 }
 
 
@@ -67,7 +47,7 @@ float3	ComputeCSM (
 	float4 	colorize   		= float4(1,0,2,1);
 	float3 	scale			= 1;
 	
-	float	bias			= 0.85 + Dither( vpos.x, vpos.y ) * 0.1f;
+	float	bias			= 0.925 + Dither( vpos.x, vpos.y ) * 0.05f;
 	float	fade			= 1;
 
 	//------------------------------------------------------
@@ -76,7 +56,7 @@ float3	ComputeCSM (
 	if ( ProjectShadow( worldPos, stage.CascadeViewProjection3, projection ) < 1 ) {
 		bestProjection 	=	projection;
 		bestScaleOffset	=	stage.CascadeScaleOffset3;
-		bestGradient	=	mul( normal, stage.CascadeGradientMatrix3 );
+		bestGradient	=	mul( float4(normal,0), stage.CascadeGradientMatrix3 ).xyz;
 		colorize		=	float4(0,0,1,1);
 		scale 			=	stage.CascadeViewProjection3._11_22_33;
 		fade			=	min(1, max(abs(projection.x), abs(projection.y)));
@@ -85,7 +65,7 @@ float3	ComputeCSM (
 	if ( ProjectShadow( worldPos, stage.CascadeViewProjection2, projection ) < bias ) {
 		bestProjection 	=	projection;
 		bestScaleOffset	=	stage.CascadeScaleOffset2;
-		bestGradient	=	mul( normal, stage.CascadeGradientMatrix2 );
+		bestGradient	=	mul( float4(normal,0), stage.CascadeGradientMatrix2 ).xyz;
 		colorize		=	float4(0,1,0,1);
 		scale 			=	stage.CascadeViewProjection2._11_22_33;
 	}
@@ -93,7 +73,7 @@ float3	ComputeCSM (
 	if ( ProjectShadow( worldPos, stage.CascadeViewProjection1, projection ) < bias ) {
 		bestProjection 	=	projection;
 		bestScaleOffset	=	stage.CascadeScaleOffset1;
-		bestGradient	=	mul( normal, stage.CascadeGradientMatrix1 );
+		bestGradient	=	mul( float4(normal,0), stage.CascadeGradientMatrix1 ).xyz;
 		colorize		=	float4(1,0,0,1);
 		scale 			=	stage.CascadeViewProjection1._11_22_33;
 	}
@@ -101,7 +81,7 @@ float3	ComputeCSM (
 	if ( ProjectShadow( worldPos, stage.CascadeViewProjection0, projection ) < bias ) {
 		bestProjection 	=	projection;
 		bestScaleOffset	=	stage.CascadeScaleOffset0;
-		bestGradient	=	mul( normal, stage.CascadeGradientMatrix0 );
+		bestGradient	=	mul( float4(normal,0), stage.CascadeGradientMatrix0 ).xyz;
 		colorize		=	float4(1,1,1,1);
 		scale 			=	stage.CascadeViewProjection0._11_22_33;
 	}

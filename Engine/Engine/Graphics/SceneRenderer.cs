@@ -157,7 +157,8 @@ namespace Fusion.Engine.Graphics {
 			cbDataStage.CascadeScaleOffset2		=	rs.LightManager.ShadowMap.GetCascade( 2 ).ShadowScaleOffset;
 			cbDataStage.CascadeScaleOffset3		=	rs.LightManager.ShadowMap.GetCascade( 3 ).ShadowScaleOffset;
 
-			cbDataStage.FogDensityHeight		=	new Vector4( fog.Density, 0, 0, 0 );
+			cbDataStage.FogColor				=	rs.RenderWorld.FogSettings.Color;
+			cbDataStage.FogAttenuation			=	rs.RenderWorld.FogSettings.DistanceAttenuation;
 
 
 			//	setup stage constants :

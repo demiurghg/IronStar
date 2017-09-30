@@ -16,11 +16,17 @@ using Fusion.Engine.Graphics.Ubershaders;
 namespace Fusion.Engine.Graphics {
 
 	[RequireShader("fog", true)]
-	internal class Fog : RenderComponent {
+	[ShaderSharedStructure(typeof(SceneRenderer.LIGHT), typeof(SceneRenderer.LIGHTINDEX))]
+	internal partial class Fog : RenderComponent {
 
-		const int FogSizeX		=	64;
-		const int FogSizeY		=	32;
-		const int FogSizeZ		=	92;
+		[ShaderDefine]
+		const int FogSizeX		=	128;
+
+		[ShaderDefine]
+		const int FogSizeY		=	64;
+
+		[ShaderDefine]
+		const int FogSizeZ		=	192;
 
 		[ShaderDefine]
 		const int BlockSizeX	=	4;
@@ -31,6 +37,10 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine]
 		const int BlockSizeZ	=	4;
 
+		[ShaderDefine]	public const uint LightTypeOmni			=	SceneRenderer.LightTypeOmni;
+		[ShaderDefine]	public const uint LightTypeSpotShadow	=	SceneRenderer.LightTypeSpotShadow;
+		[ShaderDefine]	public const uint LightSpotShapeRound	=	SceneRenderer.LightSpotShapeRound;
+		[ShaderDefine]	public const uint LightSpotShapeSquare	=	SceneRenderer.LightSpotShapeSquare;
 
 
 
@@ -67,9 +77,16 @@ namespace Fusion.Engine.Graphics {
 		Ubershader			shader;
 		StateFactory		factory;
 
+		ConstantBuffer		paramsCB;
+
 		Texture3DCompute	fog3d0;
 		Texture3DCompute	fog3d1;
 
+		public ShaderResource FogGrid {
+			get {
+				return fog3d0;
+			}
+		}
 
 
 		/// <summary>
@@ -87,8 +104,10 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public override void Initialize() 
 		{
-			fog3d0	=	new Texture3DCompute( device, FogSizeX, FogSizeY, FogSizeZ );
-			fog3d1	=	new Texture3DCompute( device, FogSizeX, FogSizeY, FogSizeZ );
+			fog3d0		=	new Texture3DCompute( device, FogSizeX, FogSizeY, FogSizeZ );
+			fog3d1		=	new Texture3DCompute( device, FogSizeX, FogSizeY, FogSizeZ );
+
+			paramsCB	=	new ConstantBuffer( device, typeof(PARAMS) );
 
 			LoadContent();
 
@@ -116,6 +135,7 @@ namespace Fusion.Engine.Graphics {
 			if( disposing ) {
 				SafeDispose( ref fog3d0 );
 				SafeDispose( ref fog3d1 );
+				SafeDispose( ref paramsCB );
 			}
 			base.Dispose( disposing );
 		}
@@ -123,25 +143,98 @@ namespace Fusion.Engine.Graphics {
 
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="camera"></param>
+		/// <param name="settings"></param>
+		void SetupParameters ( Camera camera, LightSet lightSet, FogSettings settings )
+		{
+			PARAMS param					=	new PARAMS();
+
+			var view						=	camera.GetViewMatrix( StereoEye.Mono );
+			var projection					=	camera.GetProjectionMatrix( StereoEye.Mono );
+			var cameraMatrix				=	camera.GetCameraMatrix( StereoEye.Mono );
+
+			param.View						=	view;
+			param.Projection				=   projection;
+			param.ViewProjection			=	view * projection;
+			param.CameraMatrix				=	camera.GetCameraMatrix( StereoEye.Mono );
+
+			param.CascadeViewProjection0	=	rs.LightManager.ShadowMap.GetCascade( 0 ).ViewProjectionMatrix;
+			param.CascadeViewProjection1	=	rs.LightManager.ShadowMap.GetCascade( 1 ).ViewProjectionMatrix;
+			param.CascadeViewProjection2	=	rs.LightManager.ShadowMap.GetCascade( 2 ).ViewProjectionMatrix;
+			param.CascadeViewProjection3	=	rs.LightManager.ShadowMap.GetCascade( 3 ).ViewProjectionMatrix;
+			param.CascadeScaleOffset0		=	rs.LightManager.ShadowMap.GetCascade( 0 ).ShadowScaleOffset;
+			param.CascadeScaleOffset1		=	rs.LightManager.ShadowMap.GetCascade( 1 ).ShadowScaleOffset;
+			param.CascadeScaleOffset2		=	rs.LightManager.ShadowMap.GetCascade( 2 ).ShadowScaleOffset;
+			param.CascadeScaleOffset3		=	rs.LightManager.ShadowMap.GetCascade( 3 ).ShadowScaleOffset;
+			param.DirectLightDirection		=	new Vector4( lightSet.DirectLight.Direction, 0 );
+			param.DirectLightIntensity		=	lightSet.DirectLight.Intensity;
+			param.CameraForward				=	new Vector4( cameraMatrix.Forward	, 0 );
+			param.CameraRight				=	new Vector4( cameraMatrix.Right		, 0 );
+			param.CameraUp					=	new Vector4( cameraMatrix.Up		, 0 );
+			param.CameraPosition			=	new Vector4( cameraMatrix.TranslationVector	, 1 );
+
+			param.CameraTangentX			=	camera.CameraTangentX;
+			param.CameraTangentY			=	camera.CameraTangentY;
+
+			//	copy to gpu :
+			paramsCB.SetData( param );
+
+			//	setup resources :
+			device.ComputeShaderResources[1]		=	rs.LightManager.LightGrid.GridTexture;
+			device.ComputeShaderResources[2]		=	rs.LightManager.LightGrid.IndexDataGpu;
+			device.ComputeShaderResources[3]		=	rs.LightManager.LightGrid.LightDataGpu;
+			device.ComputeShaderResources[4]		=	rs.LightManager.ShadowMap.ColorBuffer;
+		}
+
+
+
+		/// <summary>
 		/// Renders fog look-up table
 		/// </summary>
-		internal void RenderFog( Camera camera, FogSettings settings )
+		internal void RenderFog( Camera camera, LightSet lightSet, FogSettings settings )
 		{
 			using ( new PixEvent("Fog") ) {
 				
-				device.ResetStates();
+				using ( new PixEvent("Lighting") ) {
 
-				device.PipelineState	=	factory[ (int)FogFlags.COMPUTE ];
+					device.ResetStates();		  
+			
+					SetupParameters( camera, lightSet, settings );
 
-				device.ComputeShaderResources[0]	=	fog3d0;
+					device.PipelineState	=	factory[ (int)FogFlags.COMPUTE ];
 
-				device.SetCSRWTexture( 0, fog3d1 );
+					device.ComputeShaderResources[0]	=	fog3d0;
+					device.ComputeShaderConstants[0]	=	paramsCB;
 
-				var gx	=	MathUtil.IntDivUp( FogSizeX, BlockSizeX );
-				var gy	=	MathUtil.IntDivUp( FogSizeY, BlockSizeY );
-				var gz	=	MathUtil.IntDivUp( FogSizeZ, BlockSizeZ );
+					device.SetCSRWTexture( 0, fog3d1 );
 
-				device.Dispatch( gx, gy, gz );
+					var gx	=	MathUtil.IntDivUp( FogSizeX, BlockSizeX );
+					var gy	=	MathUtil.IntDivUp( FogSizeY, BlockSizeY );
+					var gz	=	MathUtil.IntDivUp( FogSizeZ, BlockSizeZ );
+
+					device.Dispatch( gx, gy, gz );
+				}
+				
+
+				using ( new PixEvent("Integrate") ) {
+
+					device.ResetStates();		  
+			
+					device.PipelineState	=	factory[ (int)FogFlags.INTEGRATE ];
+
+					device.ComputeShaderResources[0]	=	fog3d1;
+					device.ComputeShaderConstants[0]	=	paramsCB;
+
+					device.SetCSRWTexture( 0, fog3d0 );
+
+					var gx	=	MathUtil.IntDivUp( FogSizeX, BlockSizeX );
+					var gy	=	MathUtil.IntDivUp( FogSizeY, BlockSizeY );
+					var gz	=	1;
+
+					device.Dispatch( gx, gy );
+				}
 			}
 		}
 	}

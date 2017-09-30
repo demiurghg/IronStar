@@ -27,7 +27,9 @@ namespace IronStar.Core {
 
 		public Vector3 SunDirection;
 		public float Turbidity;
-		public float FogDensity;
+		public float FogDistance;
+		public float FogHeight;
+		public Color4 FogColor;
 		public float Gravity;
 		public float SunIntensity;
 
@@ -53,10 +55,12 @@ namespace IronStar.Core {
 		{
 			writer.Write( SunDirection );
 			writer.Write( Turbidity );
-			writer.Write( FogDensity );
+			writer.Write( FogDistance );
+			writer.Write( FogHeight );
 			writer.Write( Gravity );
 			writer.Write( SunIntensity );
 
+			writer.Write( FogColor );
 			writer.Write( AmbientLevel );
 
 			writer.Write( WeaponModel );
@@ -72,10 +76,12 @@ namespace IronStar.Core {
 		{
 			SunDirection	=	reader.Read<Vector3>();
 			Turbidity		=	reader.ReadSingle();
-			FogDensity		=	reader.ReadSingle();
+			FogDistance		=	reader.ReadSingle();
+			FogHeight		=	reader.ReadSingle();
 			Gravity			=	reader.ReadSingle();
 			SunIntensity	=	reader.ReadSingle();
 
+			FogColor		=	reader.Read<Color4>();
 			AmbientLevel	=	reader.Read<Color4>();
 
 			WeaponModel		=	reader.ReadInt16();

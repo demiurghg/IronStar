@@ -6,7 +6,7 @@
 #define USE_SOLID_SHADOW
 
 #include "brdf.fxi"
-#include "shadows.surface.fxi"
+#include "surface.shadows.hlsl"
 
 //
 //	ComputeClusteredLighting
@@ -52,8 +52,8 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		float4x4 decalMatrixI	=	decal.DecalMatrixInv;
 		float3	 decalColor		=	decal.BaseColorMetallic.rgb;
 		float3	 glowColor		=	decal.EmissionRoughness.rgb;
-		float3	 decalR			=	decal.EmissionRoughness.a;
-		float3	 decalM			=	decal.BaseColorMetallic.a;
+		float	 decalR			=	decal.EmissionRoughness.a;
+		float	 decalM			=	decal.BaseColorMetallic.a;
 		float4	 scaleOffset	=	decal.ImageScaleOffset;
 		float	 falloff		=	decal.FalloffFactor;
 		float 	 mipDecalBias	=	decal.MipBias;
@@ -67,7 +67,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		
 			float4 decalImage	= 	DecalImages.SampleLevel( DecalSampler, uv, decalBaseMip + mipDecalBias );
 			float3 localNormal  = 	decalImage.xyz * 2 - 1;
-			float3 decalNormal	=	localNormal.x * decal.BasisX + localNormal.y * decal.BasisY + localNormal.z * decal.BasisZ;
+			float3 decalNormal	=	localNormal.x * decal.BasisX.xyz + localNormal.y * decal.BasisY.xyz + localNormal.z * decal.BasisZ.xyz;
 			float factor		=	decalImage.a * saturate(falloff - abs(decalPos.z)*falloff);
 			
 			totalLight.rgb		+=	 glowColor * factor;
@@ -185,7 +185,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	
 	ambientOcclusion = pow(max(0,ambientOcclusion*1-0),2);
 	
-	totalLight.rgb += (diffuse + specular).rgb * Stage.Ambient * ambientOcclusion;
+	totalLight.rgb += (diffuse + specular).rgb * Stage.Ambient.xyz * ambientOcclusion;
 	
 	return totalLight;
 }

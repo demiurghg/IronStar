@@ -2,11 +2,11 @@ static const int VTVirtualPageCount = 1024;
 static const int VTPageSize = 128;
 static const int VTMaxMip = 6;
 static const int VTMipSelectorScale = 2048;
-static const int LightTypeOmni = 1;
-static const int LightTypeOmniShadow = 2;
-static const int LightTypeSpotShadow = 3;
-static const int LightSpotShapeSquare = 65536;
-static const int LightSpotShapeRound = 131072;
+static const uint LightTypeOmni = 1;
+static const uint LightTypeOmniShadow = 2;
+static const uint LightTypeSpotShadow = 3;
+static const uint LightSpotShapeSquare = 65536;
+static const uint LightSpotShapeRound = 131072;
 
 // Fusion.Engine.Graphics.SceneRenderer+STAGE
 // Marshal.SizeOf = 1024
@@ -31,10 +31,11 @@ struct STAGE {
 	float4     ViewBounds;                    // offset:  752
 	float4     DirectLightDirection;          // offset:  768
 	float4     DirectLightIntensity;          // offset:  784
-	float4     FogDensityHeight;              // offset:  800
-	float      DirectLightAngularSize;        // offset:  816
-	float      VTPageScaleRCP;                // offset:  820
-	float      VTGradientScaler;              // offset:  824
+	float4     FogColor;                      // offset:  800
+	float      FogAttenuation;                // offset:  816
+	float      DirectLightAngularSize;        // offset:  820
+	float      VTPageScaleRCP;                // offset:  824
+	float      VTGradientScaler;              // offset:  828
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+INSTANCE
@@ -69,7 +70,7 @@ struct LIGHT {
 	float4     PositionRadius;                // offset:   64
 	float4     IntensityFar;                  // offset:   80
 	float4     ShadowScaleOffset;             // offset:   96
-	int        LightType;                     // offset:  112
+	uint       LightType;                     // offset:  112
 	float      SourceRadius;                  // offset:  116
 };
 

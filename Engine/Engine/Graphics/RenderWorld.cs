@@ -440,7 +440,7 @@ namespace Fusion.Engine.Graphics {
 			rs.Sky.RenderFogTable( SkySettings );
 
 			//	render fog :
-			rs.Fog.RenderFog( Camera, FogSettings );
+			rs.Fog.RenderFog( Camera, LightSet, FogSettings );
 
 			//	render lights :
 			//rs.LightRenderer.RenderLighting( stereoEye, Camera, viewHdrFrame, this, Radiance );

@@ -1,0 +1,7 @@
+[ammoMachinegun]
+basecolor = ammoMachinegun.png
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false

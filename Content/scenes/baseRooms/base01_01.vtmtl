@@ -1,0 +1,15 @@
+[phong1]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[tubesRusty1]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false

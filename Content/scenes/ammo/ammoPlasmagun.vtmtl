@@ -1,0 +1,7 @@
+[ammoPlasmagun]
+basecolor = ammoPlasmagun.png
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false

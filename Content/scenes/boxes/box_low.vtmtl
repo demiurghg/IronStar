@@ -1,0 +1,6 @@
+[boxTest]
+basecolor	=	scenes\boxes\boxes_box_BaseColor.png
+normalmap	=	scenes\boxes\boxes_box_NormalMap.png
+metallic	=	scenes\boxes\boxes_box_Metallic.png
+roughness	=	scenes\boxes\boxes_box_Roughness.png
+transparent = false

@@ -14,6 +14,8 @@ using Fusion.Core.Utils;
 using Native.Fbx;
 using Fusion.Drivers.Graphics;
 using Fusion.Engine.Graphics;
+using Fusion.Core.IniParser.Model;
+using Fusion.Build.Mapping;
 
 namespace FScene {
 
@@ -61,7 +63,9 @@ namespace FScene {
 
 					Log.Message("Merging instances...");
 					scene.DetectAndMergeInstances();
-					
+
+					CreateVTMaterial( options.Input, scene );
+
 					#if false
 					if (options.BaseDirectory!=null) {
 
@@ -116,6 +120,25 @@ namespace FScene {
 			}
 
 			return 0;
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="scene"></param>
+		static void CreateVTMaterial ( string sceneName, Scene scene )
+		{
+			Log.Message("Writing VT material file...");
+
+			var mtrlFile = Path.ChangeExtension(sceneName, "vtmtl");
+
+			using ( var stream = File.OpenWrite( mtrlFile ) ) {
+				
+				VTMaterial.ExportToIniFile( stream, scene.Materials.Select( m => new VTMaterial(m) ) );
+
+			}
 		}
 
 

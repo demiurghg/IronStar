@@ -1,0 +1,6 @@
+[boxes_box]
+basecolor	=	scenes\boxes\boxes_box_BaseColor.png
+normalmap	=	scenes\boxes\boxes_box_NormalMap.png
+metallic	=	scenes\boxes\boxes_box_Metallic.png
+roughness	=	scenes\boxes\boxes_box_Roughness.png
+emission	=	scenes\boxes\boxes_box_Emission.png

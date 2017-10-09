@@ -1,0 +1,199 @@
+[sponza:bricks1]
+basecolor = textures\spnza_bricks_a_diff.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:roof1]
+basecolor = textures\sponza_roof_diff.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:vase1]
+basecolor = textures\vase_dif.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:Material__301]
+basecolor = textures\lion.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:Material__299]
+basecolor = textures\background.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:Material__58]
+basecolor = textures\vase_plant.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:vase_round1]
+basecolor = textures\vase_round.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:vase_hanging1]
+basecolor = textures\vase_hanging.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:chain1]
+basecolor = textures\chain_texture.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:fabric_c1]
+basecolor = textures\sponza_curtain_diff.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:fabric_f1]
+basecolor = textures\sponza_curtain_green_diff.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:fabric_g1]
+basecolor = textures\sponza_curtain_blue_diff.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:flagpole1]
+basecolor = textures\sponza_flagpole_diff.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:fabric_d1]
+basecolor = textures\sponza_fabric_blue_diff.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:fabric_a1]
+basecolor = textures\sponza_fabric_diff.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:fabric_e1]
+basecolor = textures\sponza_fabric_green_diff.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:leaf1]
+basecolor = textures\sponza_thorn_diff.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:column_b1]
+basecolor = textures\sponza_column_b_diff.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:Material__300]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:arch1]
+basecolor = textures\sponza_arch_diff.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:column_a1]
+basecolor = textures\sponza_column_a_diff.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:column_c1]
+basecolor = textures\sponza_column_c_diff.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:floor1]
+basecolor = textures\sponza_floor_a_diff.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:details1]
+basecolor = textures\sponza_details_diff.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[sponza:ceiling1]
+basecolor = textures\sponza_ceiling_a_diff.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false

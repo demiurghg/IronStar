@@ -1,0 +1,23 @@
+[floorHeavy]
+basecolor = textures\floorHeavyA_BaseColor.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[phong2]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[phong1]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false

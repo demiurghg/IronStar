@@ -1,0 +1,79 @@
+[testGold]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[testPlastic]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[testPlasticMatte]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[testLeather]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[testRustFine]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[testSkinHuman]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[testLatex]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[testMachinery]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[testMortar]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[testSteelRough]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false

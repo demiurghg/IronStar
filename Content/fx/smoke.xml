@@ -8,17 +8,17 @@
   <CameraShake Enabled="false" />
   <ParticleStage1>
     <Enabled>true</Enabled>
-    <Sprite>smoke</Sprite>
-    <Effect>LitShadow</Effect>
-    <Count>64</Count>
+    <Sprite>explosionSmoke2</Sprite>
+    <Effect>None</Effect>
+    <Count>128</Count>
     <Period>1</Period>
     <Timing Delay="0" Bunch="1" FadeIn="0.5" FadeOut="0.5" />
     <Color0 Red="1" Green="1" Blue="1" Alpha="0" />
-    <Color1 Red="1" Green="1" Blue="1" Alpha="0.5" />
-    <Lifetime Distribution="Uniform" MinLifetime="4" MaxLifetime="5" />
-    <Shape Size0="8" Size1="8" EnableRotation="true" InitialAngle="360" MinAngularVelocity="45" MaxAngularVelocity="45" />
-    <Position OffsetDirection="None" OffsetFactor="0" Distribution="UniformRadial" MinSize="0" MaxSize="5" />
-    <Velocity Direction="LocalRight" LinearDistribution="Gauss" LinearVelocityMin="25" LinearVelocityMax="50" RadialDistribution="GaussRadial" RadialVelocityMin="0" RadialVelocityMax="0.25" Advection="0" />
+    <Color1 Red="100" Green="1" Blue="1" Alpha="0.1" />
+    <Lifetime Distribution="Uniform" MinLifetime="1" MaxLifetime="2" />
+    <Shape Size0="2" Size1="2" EnableRotation="false" InitialAngle="360" MinAngularVelocity="45" MaxAngularVelocity="45" />
+    <Position OffsetDirection="None" OffsetFactor="0" Distribution="UniformRadial" MinSize="0" MaxSize="3" />
+    <Velocity Direction="LocalRight" LinearDistribution="Gauss" LinearVelocityMin="0" LinearVelocityMax="0" RadialDistribution="GaussRadial" RadialVelocityMin="0" RadialVelocityMax="0.25" Advection="0" />
     <Acceleration GravityFactor="0" Damping="0" DragForce="0" Turbulence="0" />
   </ParticleStage1>
   <ParticleStage2>

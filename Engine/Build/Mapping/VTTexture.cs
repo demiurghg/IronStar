@@ -46,23 +46,23 @@ namespace Fusion.Build.Mapping {
 		/// 
 		/// </summary>
 		/// <param name="fullPath"></param>
-		public VTTexture ( VTTextureContent vtexContent, string name, BuildContext context, DateTime sourceLastWriteTime )
+		public VTTexture ( VTMaterial vtmtrl, string name, BuildContext context, DateTime sourceLastWriteTime )
 		{			
 			this.context				=	context;
 			const int pageSize			=	VTConfig.PageSize;
 			this.sourceLastWriteTime	=	sourceLastWriteTime;
 
 			Name		=	name;
-			BaseColor	=   vtexContent.BaseColor;
-			NormalMap   =   vtexContent.NormalMap;
-			Metallic    =   vtexContent.Metallic;
-			Roughness   =   vtexContent.Roughness;
-			Emission    =   vtexContent.Emission;
-			Transparent	=	vtexContent.Transparent;
+			BaseColor	=   vtmtrl.BaseColor;
+			NormalMap   =   vtmtrl.NormalMap;
+			Metallic    =   vtmtrl.Metallic;
+			Roughness   =   vtmtrl.Roughness;
+			Emission    =   vtmtrl.Emission;
+			Transparent	=	vtmtrl.Transparent;
 
 
 			if (string.IsNullOrWhiteSpace(BaseColor)) {	
-				throw new BuildException("BaseColor must be specified for material '" + vtexContent.KeyPath + "'");
+				throw new BuildException("BaseColor must be specified for material '" + vtmtrl.KeyPath + "'");
 			}
 			
 			var fullPath	=	context.ResolveContentPath( BaseColor );

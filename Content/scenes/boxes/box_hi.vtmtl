@@ -1,0 +1,15 @@
+[lambert2]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[lambert3]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false

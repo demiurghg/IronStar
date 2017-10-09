@@ -49,7 +49,7 @@ namespace IronStar.Editors {
 			itemEditor		=	new ObjectEditorControl( game, "items",		typeof(ItemFactory), "Items" ) { Dock = DockStyle.Fill };
 			fxEditor		=	new ObjectEditorControl( game, "fx",		typeof(FXFactory), "FX" ) { Dock = DockStyle.Fill };
 			mapEditor		=	new MapEditorControl( game ) { Dock = DockStyle.Fill };
-			vtEditor		=	new ObjectEditorControl( game, "vt",		typeof(VTTextureContent), "Megatexture" ) { Dock = DockStyle.Fill };
+			//vtEditor		=	new ObjectEditorControl( game, "vt",		typeof(VTTextureContent), "Megatexture" ) { Dock = DockStyle.Fill };
 
 			mainTabs.TabPages["tabConfig"].Controls.Add( configEditor );
 			mainTabs.TabPages["tabModels"].Controls.Add( modelEditor );

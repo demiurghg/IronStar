@@ -1,0 +1,39 @@
+[northCam]
+basecolor = ..\..\textures\northCam.tga
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[steelObject]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[marineGlow]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[phong2]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false
+
+[goldGlass]
+basecolor = 
+emission = 
+metallic = 
+roughness = 
+normalmap = 
+transparent = false

@@ -48,9 +48,9 @@ namespace Fusion.Build.Mapping {
 			var stopwatch	=	new Stopwatch();
 			stopwatch.Start();
 
-			var xmlFiles	=	Directory.EnumerateFiles( Path.Combine(Builder.FullInputDirectory, "vt"), "*.xml").ToList();
+			var iniFiles	=	Directory.EnumerateFiles( Builder.FullInputDirectory, "*.vtmtl", SearchOption.AllDirectories).ToList();
 
-			Log.Message("{0} megatexture segments", xmlFiles.Count);
+			Log.Message("{0} megatexture material files", iniFiles.Count);
 
 
 			//
@@ -58,7 +58,7 @@ namespace Fusion.Build.Mapping {
 			//
 			using ( var tileStorage = context.GetVTStorage() ) {
 
-				var pageTable	=	CreateVTTextureTable( xmlFiles, context, tileStorage );
+				var pageTable	=	CreateVTTextureTableIni( iniFiles, context, tileStorage );
 
 
 				//
@@ -142,7 +142,49 @@ namespace Fusion.Build.Mapping {
 		/// <param name="iniData"></param>
 		/// <param name="baseDirectory"></param>
 		/// <returns></returns>
-		VTTextureTable CreateVTTextureTable ( IEnumerable<string> xmlFilePaths, BuildContext context, IStorage tileStorage )
+		VTTextureTable CreateVTTextureTableIni ( IEnumerable<string> iniFilePaths, BuildContext context, IStorage tileStorage )
+		{
+			var texTable	=	new VTTextureTable();
+
+			foreach ( var iniFile in iniFilePaths ) {
+
+				var baseDir = Path.GetDirectoryName( iniFile );
+
+				using ( var stream = File.OpenRead( iniFile ) ) {
+	
+					var mtrls = VTMaterial.ImportFromIniFile( stream );
+
+					var name		=	Path.GetFileNameWithoutExtension( iniFile );
+					var writeTime	=	File.GetLastWriteTimeUtc( iniFile );
+
+					foreach ( var mtrl in mtrls ) {
+						try {
+
+							mtrl.RebaseTextures( baseDir );
+
+							var tex = new VTTexture( mtrl, mtrl.KeyPath, context, writeTime );
+							texTable.AddTexture( tex );
+
+						} catch ( BuildException be ) {
+
+							Log.Warning("{0}. Skipped.", be.Message);
+						}
+					}
+				}
+			}
+
+			return texTable;
+		}
+
+																				 
+
+		/// <summary>
+		/// Creates VT tex table from INI-data and base directory
+		/// </summary>
+		/// <param name="iniData"></param>
+		/// <param name="baseDirectory"></param>
+		/// <returns></returns>
+		VTTextureTable CreateVTTextureTableXml ( IEnumerable<string> xmlFilePaths, BuildContext context, IStorage tileStorage )
 		{
 			var texTable	=	new VTTextureTable();
 
@@ -151,7 +193,7 @@ namespace Fusion.Build.Mapping {
 				using ( var stream = File.OpenRead( xmlFile ) ) {
 
 					var name		=	Path.GetFileNameWithoutExtension( xmlFile );
-					var content		=	(VTTextureContent)Misc.LoadObjectFromXml( typeof(VTTextureContent), stream );
+					var content		=	(VTMaterial)Misc.LoadObjectFromXml( typeof(VTMaterial), stream );
 					var writeTime	=	File.GetLastWriteTimeUtc( xmlFile );
 
 					if (content.SkipProcessing) {

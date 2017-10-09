@@ -10,6 +10,7 @@ using Fusion.Engine.Input;
 using Fusion.Drivers.Graphics;
 using Fusion.Engine.Common;
 using System.Diagnostics;
+using Fusion.Core.Shell;
 
 namespace Fusion.Engine.Graphics {
 
@@ -475,7 +476,6 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="gameTime"></param>
 		public void RenderRadiance ()
 		{
-			#if false
 			var sw = new Stopwatch();
 
 			Log.Message("Radiance capture...");
@@ -503,9 +503,6 @@ namespace Fusion.Engine.Graphics {
 						//	render sky :
 						rs.Sky.Render( camera, StereoEye.Mono, radianceFrame, SkySettings );
 
-						//	render lights :
-						rs.LightManager.RenderLighting( StereoEye.Mono, camera, radianceFrame, this, rs.Sky.SkyCube );
-
 						//	downsample captured frame to cube face.
 						rs.Filter.StretchRect4x4( Radiance.GetSurface( 0, (CubeFace)i ), radianceFrame.HdrBuffer, SamplerState.LinearClamp, true );
 					}
@@ -522,7 +519,6 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			Log.Message("{0} light probes - {1} ms", LightSet.EnvLights.Count, sw.ElapsedMilliseconds);
-			#endif
 		}
 
 

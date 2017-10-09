@@ -146,7 +146,7 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	float4	bloomMask1	=	BloomMask1.SampleLevel( LinearSampler, uv, 0 );
 	float4	bloomMask2	=	BloomMask2.SampleLevel( LinearSampler, uv, 0 );
 	float4	bloomMask	=	lerp( bloomMask1, bloomMask2, Params.DirtMaskLerpFactor );
-	float	luminance	=	MasuredLuminance.Load(int3(0,0,0)).r;
+	float	luminance	=	clamp( MasuredLuminance.Load(int3(0,0,0)).r, 2, 10 );
 	float	noiseDither	=	NoiseTexture.Load( int3(xpos%64,ypos%64,0) ).r;
 
 	float3	bloom		=	( bloom0 * 1.000f  
@@ -185,8 +185,8 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	float	midtones		=	saturate( 1-abs(luminance*2-1) );
 	float	highlights		=	saturate( 2 * luminance - 1 );
 	
-	float3	tintShadows		=	0.3f; //float3( 0.25, 0.30, 0.35 );
-	float3	tintMidtones	=	0.4f; //float3( 0.45, 0.50, 0.55 );
+	float3	tintShadows		=	0.4f; //float3( 0.25, 0.30, 0.35 );
+	float3	tintMidtones	=	0.5f; //float3( 0.45, 0.50, 0.55 );
 	float3	tintHighlights	=	0.5f; //float3( 0.55, 0.60, 0.65 );
 	
 	float3	colorShadows	=	TintColor( tonemapped, tintShadows	  );

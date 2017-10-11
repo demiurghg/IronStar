@@ -1,0 +1,9 @@
+[General]
+Transparent = false
+
+[Textures]
+BaseColor = ammoShotgun.png
+NormalMap = 
+Metallic  = 
+Roughness = 
+Emission  = 

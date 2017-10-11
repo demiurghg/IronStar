@@ -42,27 +42,30 @@ namespace Fusion.Build.Mapping {
 		private readonly DateTime sourceLastWriteTime;
 
 
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="fullPath"></param>
-		public VTTexture ( VTTextureContent vtexContent, string name, BuildContext context, DateTime sourceLastWriteTime )
+		public VTTexture ( Material material, string name, BuildContext context, DateTime sourceLastWriteTime )
 		{			
 			this.context				=	context;
 			const int pageSize			=	VTConfig.PageSize;
 			this.sourceLastWriteTime	=	sourceLastWriteTime;
 
+			var dir		=	Path.GetDirectoryName(name);
+
 			Name		=	name;
-			BaseColor	=   vtexContent.BaseColor;
-			NormalMap   =   vtexContent.NormalMap;
-			Metallic    =   vtexContent.Metallic;
-			Roughness   =   vtexContent.Roughness;
-			Emission    =   vtexContent.Emission;
-			Transparent	=	vtexContent.Transparent;
+			BaseColor	=   CombinePathIfNotEmpty( dir, material.ColorMap		);
+			NormalMap   =   CombinePathIfNotEmpty( dir, material.NormalMap		);
+			Metallic    =   CombinePathIfNotEmpty( dir, material.MetallicMap	);
+			Roughness   =   CombinePathIfNotEmpty( dir, material.RoughnessMap	);
+			Emission    =   CombinePathIfNotEmpty( dir, material.EmissionMap	);
+			Transparent	=	material.Transparent;
 
 
 			if (string.IsNullOrWhiteSpace(BaseColor)) {	
-				throw new BuildException("BaseColor must be specified for material '" + vtexContent.KeyPath + "'");
+				throw new BuildException("BaseColor must be specified for material '" + material.Name + "'");
 			}
 			
 			var fullPath	=	context.ResolveContentPath( BaseColor );
@@ -80,6 +83,16 @@ namespace Fusion.Build.Mapping {
 			Height	=	size.Height;
 		}
 
+
+
+		string CombinePathIfNotEmpty ( string basePath, string path )
+		{
+			if (string.IsNullOrWhiteSpace(path)) {
+				return null;
+			} else {
+				return Path.Combine( basePath, path );
+			}
+		}
 
 
 		/// <summary>

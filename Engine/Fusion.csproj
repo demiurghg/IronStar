@@ -382,7 +382,7 @@
     <Compile Include="Engine\Graphics\Effects\SkySettings.cs" />
     <Compile Include="Engine\Graphics\HdrFrame.cs" />
     <Compile Include="Engine\Graphics\SceneRenderer.cs" />
-    <Compile Include="Engine\Graphics\Scene\MaterialRef.cs" />
+    <Compile Include="Engine\Graphics\Scene\Material.cs" />
     <Compile Include="Engine\Graphics\Scene\VertexColorTextureTBNSkinned.cs" />
     <Compile Include="Drivers\Graphics\States\StateFactory.cs" />
     <Compile Include="Drivers\Graphics\UbershaderLoader.cs" />

@@ -59,9 +59,14 @@ namespace FScene {
 						}
 					}
 
+					scene.StripNamespaces();
+
 					Log.Message("Merging instances...");
 					scene.DetectAndMergeInstances();
 					
+					Log.Message("Creating missing materials...");
+					CreateMissingMaterials( options.Input, scene );
+
 					#if false
 					if (options.BaseDirectory!=null) {
 
@@ -120,8 +125,27 @@ namespace FScene {
 
 
 
+		static void CreateMissingMaterials ( string scenePath, Scene scene )
+		{
+			var dir = Path.GetDirectoryName( scenePath );
+			
+			foreach ( var mtrl in scene.Materials ) {
+
+				var mtrlPath = Path.Combine( dir, mtrl.Name + ".material" );
+
+				if (!File.Exists(mtrlPath)) {
+
+					Log.Message("...new material: {0}", mtrlPath);
+
+					Material.SaveToIniFile( mtrl, File.OpenWrite(mtrlPath) );
+
+				}
+			}
+		}
+
+
 		#if false
-		static void ResolveMaterial ( MaterialRef material, string relativeSceneDir, string fullSceneDir )
+		static void ResolveMaterial ( Material material, string relativeSceneDir, string fullSceneDir )
 		{
 			var mtrlName		=	ContentUtils.CreateSafeName( material.Name );
 			var texPath			=	material.Texture ?? "";

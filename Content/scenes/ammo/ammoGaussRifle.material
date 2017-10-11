@@ -1,0 +1,9 @@
+[General]
+Transparent = false
+
+[Textures]
+BaseColor = ammoGaussRifle.png
+NormalMap = 
+Metallic  = 
+Roughness = 
+Emission  = 

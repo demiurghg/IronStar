@@ -278,6 +278,18 @@ namespace Fusion.Build {
 
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="path"></param>
+		/// <returns></returns>
+		public string GetRelativePath ( string path )
+		{
+			var baseDir = contentPaths.FirstOrDefault();
+			return ContentUtils.MakeRelativePath( baseDir + @"\", path );
+		}
+
+
+		/// <summary>
 		/// Generates temporary file name for given key with given extension
 		/// and return full path to this file.
 		/// </summary>

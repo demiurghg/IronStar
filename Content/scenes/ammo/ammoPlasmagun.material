@@ -1,0 +1,9 @@
+[General]
+Transparent = false
+
+[Textures]
+BaseColor = ammoPlasmagun.png
+NormalMap = 
+Metallic  = 
+Roughness = 
+Emission  = 

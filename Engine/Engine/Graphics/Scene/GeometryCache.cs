@@ -53,7 +53,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Gets material references
 		/// </summary>
-		public IEnumerable<MaterialRef> Materials {
+		public IEnumerable<Material> Materials {
 			get;
 			private set;
 		}
@@ -107,12 +107,12 @@ namespace Fusion.Engine.Graphics {
                  */
                 var textureSection = reader.ReadFourCC();
                 var countTexture = reader.Read<int>();
-                List<MaterialRef> materialTexture = new List<MaterialRef>();
+                List<Material> materialTexture = new List<Material>();
                 for (int i = 0; i < countTexture; i++)
                 {
                     var Name = reader.ReadString();
                     var texture = reader.ReadString();
-                    materialTexture.Add(new MaterialRef(){Name =  Name, Texture =  texture});
+                    materialTexture.Add(new Material(){Name =  Name, ColorMap =  texture});
                 }
                 Materials = materialTexture;
 

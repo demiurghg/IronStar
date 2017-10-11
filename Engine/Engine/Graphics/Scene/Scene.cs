@@ -38,7 +38,7 @@ namespace Fusion.Engine.Graphics {
 
 		List<Node>			nodes		= new List<Node>();
 		List<Mesh>			meshes		= new List<Mesh>();
-		List<MaterialRef>	materials	= new List<MaterialRef>();
+		List<Material>	materials	= new List<Material>();
 
 		int firstFrame = 0;
 		int lastFrame = 0;
@@ -69,7 +69,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// List of scene materials.
 		/// </summary>
-		public IList<MaterialRef> Materials { 
+		public IList<Material> Materials { 
 			get {
 				return materials;
 			}
@@ -763,13 +763,13 @@ namespace Fusion.Engine.Graphics {
 				scene.materials.Clear();
 				
 				for ( int i=0; i<mtrlCount; i++) {
-					var mtrl	=	new MaterialRef();
+					var mtrl	=	new Material();
 					mtrl.Name	=	reader.ReadString();
 
 					if (reader.ReadBoolean()==true) {
-						mtrl.Texture = reader.ReadString();
+						mtrl.ColorMap = reader.ReadString();
 					} else {
-						mtrl.Texture = null;
+						mtrl.ColorMap = null;
 					}
 					scene.Materials.Add( mtrl );
 				}
@@ -849,9 +849,9 @@ namespace Fusion.Engine.Graphics {
 
 				foreach ( var mtrl in Materials ) {
 					writer.Write( mtrl.Name );
-					if ( mtrl.Texture!=null ) {
+					if ( mtrl.ColorMap!=null ) {
 						writer.Write( true );
-						writer.Write( mtrl.Texture );
+						writer.Write( mtrl.ColorMap );
 					} else {
 						writer.Write( false );
 					}
@@ -928,17 +928,17 @@ namespace Fusion.Engine.Graphics {
 
 			foreach ( var mtrl in Materials ) {
 					
-				if (mtrl.Texture==null) {
+				if (mtrl.ColorMap==null) {
 					continue;
 				}
-				Log.Message( "-" + mtrl.Texture );
+				Log.Message( "-" + mtrl.ColorMap );
 
-				var absTexPath		=	Path.Combine( sceneDirFullPath, mtrl.Texture );
+				var absTexPath		=	Path.Combine( sceneDirFullPath, mtrl.ColorMap );
 				var texUri			=	new Uri( absTexPath );
-				mtrl.Texture	=	baseDirUri.MakeRelativeUri( texUri ).ToString();
+				mtrl.ColorMap		=	baseDirUri.MakeRelativeUri( texUri ).ToString();
 
 				Log.Message( "-" + texUri );
-				Log.Message( "+" + mtrl.Texture );
+				Log.Message( "+" + mtrl.ColorMap );
 			}
 		}
 

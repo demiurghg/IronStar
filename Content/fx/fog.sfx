@@ -1,17 +1,13 @@
 
-emitter
-	count:			10
-	texture:		fog01 fog02 fog03
-	animation:		
-	temperature: 	20000, 15000, 10000,5000, 0
-	fade-in:		0.5%
-	fade-out:		0.2%
-	lifetime:		gauss 0.5 0.7
-	size:			linear 0.7 0.8
-	color0:			0.75 0.75 0.75 1.00
-	color1:			0.75 0.75 0.75 1.00
-end
 
-light
+particle stage
+	render		lit
+	sprite		fog0, fog1, fog2, fog3
+	count		10
+	lifetime	uniform	750 200
+	fading		0.2 	0.2
+	size		0.7 	0.3
+	rotation	none
+	position	box 	16 8 16
 	
-end
+	

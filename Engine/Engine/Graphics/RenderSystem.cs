@@ -158,6 +158,13 @@ namespace Fusion.Engine.Graphics {
 			return null;
 		}
 
+		[Command("buildrad")]
+		public string CaptureRadiance_f ( string[] args )
+		{
+			renderWorld?.CaptureRadiance();
+			return null;
+		}
+
 
 
 										  

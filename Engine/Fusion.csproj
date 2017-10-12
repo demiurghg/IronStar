@@ -124,7 +124,6 @@
     <Compile Include="Build\Mapping\LRUCache.cs" />
     <Compile Include="Build\Mapping\VTProcessor.cs" />
     <Compile Include="Build\Mapping\VTTexel.cs" />
-    <Compile Include="Build\Mapping\VTTextureContent.cs" />
     <Compile Include="Build\Mapping\VTTexture.cs" />
     <Compile Include="Build\Mapping\TileSamplerCache.cs" />
     <Compile Include="Build\Mapping\VTTextureTable.cs" />
@@ -203,6 +202,7 @@
     <Compile Include="Engine\Common\IUserInterface.cs" />
     <Compile Include="Engine\Graphics\Effects\BilateralFilter.cs" />
     <Compile Include="Engine\Graphics\Effects\Filter2.cs" />
+    <Compile Include="Engine\Graphics\Effects\Fog.Gpu.cs" />
     <Compile Include="Engine\Graphics\Effects\FogSettings.cs" />
     <Compile Include="Engine\Graphics\Effects\PoissonDiscGenerator.cs" />
     <Compile Include="Engine\Graphics\Effects\Fog.cs" />
@@ -381,7 +381,7 @@
     <Compile Include="Engine\Graphics\Effects\SkySettings.cs" />
     <Compile Include="Engine\Graphics\HdrFrame.cs" />
     <Compile Include="Engine\Graphics\SceneRenderer.cs" />
-    <Compile Include="Engine\Graphics\Scene\MaterialRef.cs" />
+    <Compile Include="Engine\Graphics\Scene\Material.cs" />
     <Compile Include="Engine\Graphics\Scene\VertexColorTextureTBNSkinned.cs" />
     <Compile Include="Drivers\Graphics\States\StateFactory.cs" />
     <Compile Include="Drivers\Graphics\UbershaderLoader.cs" />

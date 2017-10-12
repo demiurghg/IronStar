@@ -1,0 +1,9 @@
+[General]
+Transparent = false
+
+[Textures]
+BaseColor = textures\floorHeavyA_BaseColor.tga
+NormalMap = 
+Metallic  = 
+Roughness = 
+Emission  = 

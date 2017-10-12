@@ -1,75 +1,63 @@
 
-struct LightingParams {
-	float4x4	View;
-	float4x4	Projection;
-	float4x4	InverseViewProjection;
+/*
+	.......
+*/
 
-	float4		FrustumVectorTR;
-	float4		FrustumVectorBR;
-	float4		FrustumVectorBL;
-	float4		FrustumVectorTL;
+struct SURFACE {
 	
-	float4x4	CSMViewProjection0;
-	float4x4	CSMViewProjection1;
-	float4x4	CSMViewProjection2;
-	float4x4	CSMViewProjection3;
+}
 
-	float4		ViewPosition;
-	float4		DirectLightDirection;
-	float4		DirectLightIntensity;
-	float4		ViewportSize;
+
+
+StructuredBuffer<DECAL>	sbufferDecalData;
+Texture2D				textureShadowAtlas;
+Texture2D				textureShadowAtlas;
+SamplerState			samplerShadow;
+SamplerState			samplerLinear;
+
+StructuredBuffer<DECAL>	gDecalData;
+Texture2D				gTextureShadowAtlas;
+Texture2D				gTextureShadowAtlas;
+SamplerState			gSamplerShadow;
+SamplerState			gSamplerLinear;
+
+cbuffer 				CBStage 			: 	register(b0) { STAGE    	cbStage     	: packoffset( c0 ); }	
+
+
+float3 ComputeCascadedShadows ( 
+	float2 	screenPosition,
+	float3 	worldPosition, 
+	float3 	triangleNormal,
+	float4x4 cascadeViewProjection[4],
+	float4x4 cascadeGradientMatrix[4],
+	float4	 cascadeScaleOffset[4],
+	SamplerComparisonState shadowSampler, 
+	SamplerState linearSampler, 
+	Texture2D solidShadowMap, 
+	Texture2D maskShadowMap
+)
+{
+	return float3(1,0,1);
+}
 	
-	float4		CSMFilterRadius;	//	for each cascade
-	float4		AmbientColor;
 	
-	float4		Viewport;			//	x,y,w,h,
-	float		ShowCSLoadOmni;
-	float		ShowCSLoadEnv;
-	float		ShowCSLoadSpot;
 	
-	int			CascadeCount;
-	float		CascadeScale;
-	
-	float		FogDensity;
-};
-
-struct OMNILIGHT {
-	float4	PositionRadius;
-	float4	Intensity;
-	float4	ExtentMin;
-	float4	ExtentMax;
-};
-
-struct ENVLIGHT {
-	float4	Position;
-	float4	Dimensions;
-	float4	ExtentMin;
-	float4	ExtentMax;
-};
-
-struct DECAL {
-	float4x4 DecalMatrixInv;
-	float4	 BasisX;
-	float4	 BasisY;
-	float4	 BasisZ;
-	float4 	 EmissionRoughness;
-	float4	 BaseColorMetallic;
-	float4	 ImageScaleOffset;
-	float4	 ExtentMin;	// x,y, depth
-	float4	 ExtentMax;	// x,y, depth
-	float	 ColorFactor;
-	float	 SpecularFactor;
-	float	 NormalMapFactor;
-	float	 FalloffFactor;
-};
-
-struct SPOTLIGHT {
-	float4x4	ViewProjection;
-	float4		PositionRadius;
-	float4		IntensityFar;
-	float4		ExtentMin;	// x,y, depth
-	float4		ExtentMax;	// x,y, depth
-	float4		MaskScaleOffset;
-	float4		ShadowScaleOffset;
-};
-
+float3 ComputeClusteredLighting (
+	float2 	screenPosition,
+	float3 	worldPosition,
+	float4	projectionPosition,
+	float3 	surfaceNormal,
+	float3 	surfaceBaseColor,
+	float	surfaceRoughness,
+	float	surfaceMetallic,
+	Texture3D<uint2> clusterTable
+	StructuredBuffer<DECAL>	decalDataTable,
+	StructuredBuffer<LIGHT>	lightDataTable,
+	SamplerComparisonState shadowSampler, 
+	SamplerState linearSampler, 
+	Texture2D solidShadowMap, 
+	Texture2D maskShadowMap
+)
+{
+	return float3(1,0,1);
+}

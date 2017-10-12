@@ -80,7 +80,9 @@ namespace IronStar.Mapping {
 		{
 			gameWorld.Physics.Gravity			=	Environment.Gravity;
 
-			gameWorld.snapshotHeader.FogDensity	=	Environment.FogDensity;
+			gameWorld.snapshotHeader.FogDistance	=	Environment.FogDistance;
+			gameWorld.snapshotHeader.FogHeight		=	Environment.FogHeight;
+			gameWorld.snapshotHeader.FogColor		=	Environment.FogColor;
 			gameWorld.snapshotHeader.Gravity		=	Environment.Gravity;
 			gameWorld.snapshotHeader.SunIntensity	=	Environment.SunIntensity;
 			gameWorld.snapshotHeader.SunDirection	=	Environment.SunPosition;

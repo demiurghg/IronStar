@@ -48,9 +48,10 @@ namespace Fusion.Build.Mapping {
 			var stopwatch	=	new Stopwatch();
 			stopwatch.Start();
 
-			var xmlFiles	=	Directory.EnumerateFiles( Path.Combine(Builder.FullInputDirectory, "vt"), "*.xml").ToList();
+			//var xmlFiles	=	Directory.EnumerateFiles( Path.Combine(Builder.FullInputDirectory, "vt"), "*.xml").ToList();
+			var iniFiles	=	Directory.EnumerateFiles( Builder.FullInputDirectory, "*.material", SearchOption.AllDirectories).ToList();
 
-			Log.Message("{0} megatexture segments", xmlFiles.Count);
+			Log.Message("{0} megatexture segments", iniFiles.Count);
 
 
 			//
@@ -58,7 +59,7 @@ namespace Fusion.Build.Mapping {
 			//
 			using ( var tileStorage = context.GetVTStorage() ) {
 
-				var pageTable	=	CreateVTTextureTable( xmlFiles, context, tileStorage );
+				var pageTable	=	CreateVTTextureTable( iniFiles, context, tileStorage );
 
 
 				//
@@ -142,25 +143,29 @@ namespace Fusion.Build.Mapping {
 		/// <param name="iniData"></param>
 		/// <param name="baseDirectory"></param>
 		/// <returns></returns>
-		VTTextureTable CreateVTTextureTable ( IEnumerable<string> xmlFilePaths, BuildContext context, IStorage tileStorage )
+		VTTextureTable CreateVTTextureTable ( IEnumerable<string> materialFilePaths, BuildContext context, IStorage tileStorage )
 		{
 			var texTable	=	new VTTextureTable();
 
-			foreach ( var xmlFile in xmlFilePaths ) {
+			foreach ( var mtrlFile in materialFilePaths ) {
 
-				using ( var stream = File.OpenRead( xmlFile ) ) {
+				using ( var stream = File.OpenRead( mtrlFile ) ) {
 
-					var name		=	Path.GetFileNameWithoutExtension( xmlFile );
-					var content		=	(VTTextureContent)Misc.LoadObjectFromXml( typeof(VTTextureContent), stream );
-					var writeTime	=	File.GetLastWriteTimeUtc( xmlFile );
+					var name		=	ContentUtils.GetPathWithoutExtension( context.GetRelativePath( mtrlFile ) );
+					var content		=	Material.LoadFromIniFile( stream, name );
+					var writeTime	=	File.GetLastWriteTimeUtc( mtrlFile );
 
-					if (content.SkipProcessing) {
+					/*if (content.SkipProcessing) {
 						continue;
+					}*/
+
+					try {
+						var tex = new VTTexture( content, name, context, writeTime );
+						texTable.AddTexture( tex );
+					} catch ( Exception e ) {
+						Log.Warning("{0}. Skipped.", e.Message );
 					}
 
-					var tex = new VTTexture( content, name, context, writeTime );
-
-					texTable.AddTexture( tex );
 				}
 			}
 

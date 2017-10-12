@@ -4,7 +4,7 @@
 -----------------------------------------------------------------------------*/
 
 #include "brdf.fxi"
-#include "shadows.particles.fxi"
+#include "particles.shadows.hlsl"
 
 //
 //	ComputeClusteredLighting
@@ -22,7 +22,7 @@ float3 ComputeClusteredLighting ( float3 worldPos )
 	uint	index		=	data.r;
 	uint 	lightCount	=	(data.g & 0x000FFF) >> 0;
 
-	float3 totalLight	=	0;
+	float3 totalLight	=	Params.AmbientLevel.rgb;
 
 	//----------------------------------------------------------------------------------------------
 

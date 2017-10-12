@@ -59,10 +59,28 @@ namespace FScene {
 						}
 					}
 
+					scene.StripNamespaces();
+
 					Log.Message("Merging instances...");
 					scene.DetectAndMergeInstances();
 					
-					#if false
+					Log.Message("Creating missing materials...");
+					CreateMissingMaterials( options.Input, scene );
+
+					if (options.BaseDirectory != null) {
+						Log.Message("Resolving material paths...");
+
+						var relativePath	=	ContentUtils.MakeRelativePath(options.BaseDirectory + @"\", options.Input);
+						var relativeDir		=	Path.GetDirectoryName(relativePath);
+						var sceneDir = Path.GetDirectoryName(options.Input);
+
+						foreach (var mtrl in scene.Materials) {
+							mtrl.Name	=	Path.Combine( relativeDir, mtrl.Name );
+						}
+					}
+
+
+#if false
 					if (options.BaseDirectory!=null) {
 
 						Log.Message("Resolving assets path...");
@@ -79,7 +97,7 @@ namespace FScene {
 							ResolveMaterial( mtrl, relativeDir, sceneDir );
 						}
 					}
-					#endif
+#endif
 
 					//
 					//	Save scene :
@@ -120,8 +138,27 @@ namespace FScene {
 
 
 
+		static void CreateMissingMaterials ( string scenePath, Scene scene )
+		{
+			var dir = Path.GetDirectoryName( scenePath );
+			
+			foreach ( var mtrl in scene.Materials ) {
+
+				var mtrlPath = Path.Combine( dir, mtrl.Name + ".material" );
+
+				if (!File.Exists(mtrlPath)) {
+
+					Log.Message("...new material: {0}", mtrlPath);
+
+					Material.SaveToIniFile( mtrl, File.OpenWrite(mtrlPath) );
+
+				}
+			}
+		}
+
+
 		#if false
-		static void ResolveMaterial ( MaterialRef material, string relativeSceneDir, string fullSceneDir )
+		static void ResolveMaterial ( Material material, string relativeSceneDir, string fullSceneDir )
 		{
 			var mtrlName		=	ContentUtils.CreateSafeName( material.Name );
 			var texPath			=	material.Texture ?? "";

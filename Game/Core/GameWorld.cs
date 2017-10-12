@@ -203,10 +203,12 @@ namespace IronStar.Core {
 			rw.SkySettings.SkyTurbidity			=	snapshotHeader.Turbidity;
 			rw.SkySettings.SkyIntensity			=	0.5f;
 
-			rw.FogSettings.Density				=	snapshotHeader.FogDensity;
+			rw.FogSettings.VisibilityDistance	=	snapshotHeader.FogDistance;
+			rw.FogSettings.Color				=	snapshotHeader.FogColor;
 
 			rw.LightSet.DirectLight.Direction	=	rw.SkySettings.SunLightDirection;
 			rw.LightSet.DirectLight.Intensity	=	rw.SkySettings.SunLightColor;
+			rw.LightSet.DirectLight.Intensity	=	new Color4(40,40,35,1);
 
 			rw.LightSet.AmbientLevel			=	snapshotHeader.AmbientLevel;
 

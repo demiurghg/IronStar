@@ -1,0 +1,16 @@
+[General]
+Transparent = false
+
+[Textures]
+BaseColor = box_low_boxTest_BaseColor.png
+NormalMap = box_low_boxTest_Normal.png
+Metallic  = box_low_boxTest_Metallic.png
+Roughness = box_low_boxTest_Roughness.png
+Emission  = 
+
+
+# box_low_boxTest_BaseColor
+# box_low_boxTest_Height
+# box_low_boxTest_Metallic
+# box_low_boxTest_Normal
+# box_low_boxTest_Roughness

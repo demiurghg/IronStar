@@ -17,19 +17,37 @@ namespace Fusion.Engine.Graphics {
 	public class FogSettings {
 
 		/// <summary>
-		/// Aerial fog density.
+		/// 
 		/// </summary>
-		public float Density { 
+		public float DistanceAttenuation {
 			get {
-				return density;
-			}
-			set {
-				density	=	value;
+				return (float)( Math.Log(VisibilityPercentage) / VisibilityDistance );
 			}
 		}
 
-		float density	=	0.01f;
 
+		/// <summary>
+		/// Distance where visibility is less than VisibilityPercentage
+		/// </summary>
+		public float VisibilityDistance {
+			get; set;
+		} = 100.0f;
+
+
+		/// <summary>
+		/// Visibility percentage
+		/// </summary>
+		public float VisibilityPercentage {
+			get; set;
+		} = 0.5f;
+
+
+		/// <summary>
+		/// Fog color
+		/// </summary>
+		public Color4 Color {
+			get; set;
+		} = new Color4( 0.5f, 0.5f, 0.5f, 1.0f );
 
 
 		/// <summary>

@@ -67,7 +67,20 @@ namespace FScene {
 					Log.Message("Creating missing materials...");
 					CreateMissingMaterials( options.Input, scene );
 
-					#if false
+					if (options.BaseDirectory != null) {
+						Log.Message("Resolving material paths...");
+
+						var relativePath	=	ContentUtils.MakeRelativePath(options.BaseDirectory + @"\", options.Input);
+						var relativeDir		=	Path.GetDirectoryName(relativePath);
+						var sceneDir = Path.GetDirectoryName(options.Input);
+
+						foreach (var mtrl in scene.Materials) {
+							mtrl.Name	=	Path.Combine( relativeDir, mtrl.Name );
+						}
+					}
+
+
+#if false
 					if (options.BaseDirectory!=null) {
 
 						Log.Message("Resolving assets path...");
@@ -84,7 +97,7 @@ namespace FScene {
 							ResolveMaterial( mtrl, relativeDir, sceneDir );
 						}
 					}
-					#endif
+#endif
 
 					//
 					//	Save scene :

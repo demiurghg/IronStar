@@ -12,6 +12,7 @@ using Fusion.Core;
 using Fusion.Core.IniParser;
 using Fusion.Core.IniParser.Model;
 using Fusion.Core.IniParser.Model.Formatting;
+using Fusion.Core.Mathematics;
 
 namespace Fusion.Engine.Graphics {
 
@@ -57,6 +58,11 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public	bool	Transparent { get; set; }
 
+		/// <summary>
+		/// Emission texture path.
+		/// </summary>
+		public	Color4	Emission { get; set; }
+
 
 
 		/// <summary>
@@ -89,7 +95,8 @@ namespace Fusion.Engine.Graphics {
 			var sectionTextures		= new SectionData("Textures");
 			var sectionGeneral		= new SectionData("General");
 
-			sectionGeneral.Keys.AddKey("Transparent", material.Transparent ? "true" : "false" );
+			sectionGeneral.Keys.AddKey("Transparent", StringConverter.ToString( material.Transparent ) );
+			sectionGeneral.Keys.AddKey("Emission"	, StringConverter.ToString(	material.Emission ) );
 
 			sectionTextures.Keys.AddKey("BaseColor",	material.ColorMap		?? "" );
 			sectionTextures.Keys.AddKey("NormalMap",	material.NormalMap		?? "" );
@@ -141,7 +148,8 @@ namespace Fusion.Engine.Graphics {
 
 				material.Name	=	name;
 
-				material.Transparent	=	(sectionGeneral["Transparent"] ?? "").Equals("true", StringComparison.OrdinalIgnoreCase);
+				material.Transparent	=	StringConverter.ToBoolean( sectionGeneral["Transparent"	] ?? "false"	);
+				material.Emission		=	StringConverter.ToColor4 ( sectionGeneral["Emission"	] ?? "0 0 0 0"	);
 
 				material.ColorMap		=	sectionTextures["BaseColor"	] ?? "";
 				material.NormalMap		=	sectionTextures["NormalMap"	] ?? "";

@@ -29,6 +29,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	uint 	lightCount	=	(data.g & 0x000FFF) >> 0;
 
 	float3 totalLight	=	0;
+	float3 totalAmbient	=	0;
 
 	float3 	worldPos	= 	input.WorldPos.xyz;
 	float3 	normal 		=	worldNormal;
@@ -134,6 +135,15 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 			totalLight.rgb 		+= 	falloff * Lambert ( normal.xyz,  lightDirN, intensity, diffuse );
 			totalLight.rgb 		+= 	falloff * nDotL * CookTorrance( normal.xyz, viewDirN, lightDir, intensity, specular, roughness, sourceRadius );
 			
+		} else if (type==LightTypeAmbient) {
+			
+			float3 lightDir		= 	position - worldPos.xyz;
+			float3 lightDirN	=	normalize(lightDir);
+			float  falloff		= 	LinearFalloff( length(lightDir), radius );
+			float  nDotL		= 	max( 0, 0.5+0.5*dot(normal, lightDirN) );
+			
+			totalAmbient		+=	falloff * nDotL * intensity;
+			
 		} else if (type==LightTypeSpotShadow) {
 			
 			float4 lsPos		=	mul(float4(worldPos+geometryNormal * 0.0,1), LightDataTable[idx].ViewProjection);
@@ -185,7 +195,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	
 	ambientOcclusion = pow(max(0,ambientOcclusion*1-0),2);
 	
-	totalLight.rgb += (diffuse + specular).rgb * Stage.Ambient.xyz * ambientOcclusion;
+	totalLight.rgb += (diffuse + specular).rgb * (Stage.Ambient.xyz + totalAmbient) * ambientOcclusion;
 	
 	return totalLight;
 }

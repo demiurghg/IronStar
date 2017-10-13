@@ -44,6 +44,10 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public LightStyle	LightStyle;
 
+		/// <summary>
+		/// Ambient-only
+		/// </summary>
+		public bool Ambient;
 
 		internal bool	Visible;
 		internal Int3	MinExtent;

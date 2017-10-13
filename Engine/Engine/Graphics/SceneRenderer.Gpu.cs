@@ -40,6 +40,7 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine]	public const uint LightTypeOmni			=	1;
 		[ShaderDefine]	public const uint LightTypeOmniShadow	=	2;
 		[ShaderDefine]	public const uint LightTypeSpotShadow	=	3;
+		[ShaderDefine]	public const uint LightTypeAmbient		=	4;
 		[ShaderDefine]	public const uint LightSpotShapeSquare	=	0x00010000;
 		[ShaderDefine]	public const uint LightSpotShapeRound	=	0x00020000;
 
@@ -129,7 +130,7 @@ namespace Fusion.Engine.Graphics {
 			public void FromOmniLight ( OmniLight light ) 
 			{
 				#region Update structure fields from OmniLight object
-				LightType		=	LightTypeOmni;
+				LightType		=	light.Ambient ? LightTypeAmbient : LightTypeOmni;
 				PositionRadius	=	new Vector4( light.Position, light.RadiusOuter );
 				IntensityFar	=	new Vector4( light.Intensity2.Red, light.Intensity2.Green, light.Intensity2.Blue, 0 );
 				SourceRadius	=	light.RadiusInner;

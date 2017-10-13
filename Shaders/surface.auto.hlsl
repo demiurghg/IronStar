@@ -5,6 +5,7 @@ static const int VTMipSelectorScale = 2048;
 static const uint LightTypeOmni = 1;
 static const uint LightTypeOmniShadow = 2;
 static const uint LightTypeSpotShadow = 3;
+static const uint LightTypeAmbient = 4;
 static const uint LightSpotShapeSquare = 65536;
 static const uint LightSpotShapeRound = 131072;
 

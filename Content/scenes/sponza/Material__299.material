@@ -1,0 +1,10 @@
+[General]
+Transparent = False
+Emission    = 0, 0, 0, 0
+
+[Textures]
+BaseColor = textures\background.tga
+NormalMap = 
+Metallic  = 
+Roughness = 
+Emission  = 

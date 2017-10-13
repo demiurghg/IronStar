@@ -1,0 +1,10 @@
+[General]
+Transparent = False
+Emission    = 0, 0, 0, 0
+
+[Textures]
+BaseColor = textures\sponza_curtain_blue_diff.tga
+NormalMap = 
+Metallic  = 
+Roughness = 
+Emission  = 

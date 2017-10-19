@@ -403,6 +403,9 @@ namespace Fusion.Engine.Graphics {
 				rs.LightManager.ShadowMap.RenderParticleShadows( gameTime, Camera, rs, this, LightSet );
 			}
 
+			//	Render GI :
+			rs.SceneRenderer.RenderVoxelGrid( this ); 
+			rs.Lpv.RenderLpv( Camera, LightSet );
 
 			//	Z-pass :
 			rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, this, false );

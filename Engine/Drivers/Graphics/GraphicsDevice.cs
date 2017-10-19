@@ -1016,14 +1016,14 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		/// <param name="register"></param>
 		/// <param name="volumeTexture"></param>
-		public void SetPSRWTexture ( int register, VolumeRWTexture volumeTexture )
+		public void SetPSRWTexture ( int register, Texture3DCompute tex3D )
 		{
 			if (register>8) {
 				throw new GraphicsException("Could not bind RW texture at register " + register.ToString() + " (max 8)");
 			}
 
 			lock (deviceContext) {
-				DeviceContext.OutputMerger.SetUnorderedAccessView ( register, volumeTexture==null?null:volumeTexture.UAV, -1 ); 
+				DeviceContext.OutputMerger.SetUnorderedAccessView ( register, tex3D==null?null:tex3D.Uav, -1 ); 
 			}
 		}
 

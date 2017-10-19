@@ -24,6 +24,10 @@ namespace Fusion.Engine.Graphics {
 			SKINNED		=	1 << 5,
 			ZPASS		=	1 << 6,
 			ANISOTROPIC	=	1 << 7,
+			VOXELIZE	=	1 << 8,
+			XY			=	1 << 9,
+			YZ			=	1 << 10,
+			XZ			=	1 << 11,
 		}
 
 

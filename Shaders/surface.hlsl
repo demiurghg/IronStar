@@ -61,6 +61,7 @@ TextureCube				FogTable			: 	register(t13);
 $ubershader FORWARD RIGID|SKINNED +ANISOTROPIC
 $ubershader SHADOW RIGID|SKINNED
 $ubershader ZPASS RIGID|SKINNED
+$ubershader VOXELIZE RIGID|SKINNED XY|YZ|XZ
 #endif
 
 #include "surface.lighting.hlsl"
@@ -373,3 +374,20 @@ float4 PSMain( PSInput input ) : SV_TARGET0
 
 
 
+#ifdef VOXELIZE
+
+RWTexture3D<float4> lightGrid : register(u1);
+
+float4 PSMain( PSInput input ) : SV_TARGET0
+{	
+	float3 location;
+	float depth	= (input.ProjPos.z / input.ProjPos.w)*128;	
+	location.xy = input.Position.xy;
+	location.z 	= depth;
+	//float grad	= (ddx(depth) + ddy(depth))*0.5f;
+
+	lightGrid[ location ] = 1;
+	
+	return float4(0,0,0,0);
+}
+#endif

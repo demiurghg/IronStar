@@ -353,6 +353,28 @@ namespace Fusion.Core.Mathematics
             result = (value.X < Right) && (X < value.Right) && (value.Y < Bottom) && (Y < value.Bottom);
         }
 
+
+		/// <summary>
+		/// Gets mad-firendly scale offset for given rectangle and source texture size.
+		/// </summary>
+		/// <param name="sourceWidth"></param>
+		/// <param name="sourceHeight"></param>
+		/// <returns></returns>
+		public Vector4 GetMadOpScaleOffset( int sourceWidth, int sourceHeight )
+		{
+			float ax = this.Width  / (float)sourceWidth;
+			float ay = this.Height / (float)sourceHeight;
+			float bx = this.Left   / (float)sourceWidth;
+			float by = this.Top    / (float)sourceHeight;
+
+			float x		=	0.5f * ax;
+			float y		=  -0.5f * ay;
+			float z		=   0.5f * ax + bx;
+			float w		=	0.5f * ay + by;
+
+			return new Vector4(x,y,z,w);
+		}
+
         /// <summary>
         /// Creates a rectangle defining the area where one rectangle overlaps with another rectangle.
         /// </summary>

@@ -428,46 +428,5 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="context"></param>
-		internal void RenderVoxelGrid ( RenderWorld rw )
-		{
-			var instances	=	rw.Instances;
-
-			using ( new PixEvent("Voxelize") ) {
-
-				var lpv = rs.Lpv;
-
-				for ( int i=0; i<3; i++) {
-
-					var context = new LpvContext();
-
-					context.View		=	Matrix.LookAtRH( Vector3.Zero, Vector3.Right, Vector3.Up );
-					context.Projection	=	Matrix.OrthoRH( 64,64, -32, 32 );
-
-
-					if ( SetupStage( StereoEye.Mono, null, null, null, context ) ) {
-
-						device.SetTargets( null, lpv.DummyTarget );
-						device.SetPSRWTexture( 1, lpv.AmbientLight );
-						lpv.DummyTarget.SetViewport();
-				
-						foreach ( var instance in instances ) {
-
-							if (SetupInstance(SurfaceFlags.VOXELIZE|SurfaceFlags.XY, instance)) {
-
-								device.SetupVertexInput( instance.vb, instance.ib );
-								device.DrawIndexed( instance.indexCount, 0, 0 );
-							}
-						}
-					}
-				}
-			}
-		}
 	}
 }

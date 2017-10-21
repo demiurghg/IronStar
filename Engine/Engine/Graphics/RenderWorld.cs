@@ -409,8 +409,8 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			//	Render GI :
-			rs.SceneRenderer.RenderVoxelGrid( this ); 
-			rs.Lpv.RenderLpv( Camera, LightSet );
+			rs.Irs.CollectSurfels( Instances );
+			rs.Irs.RenderIRS( Camera, Instances, LightSet );
 
 			//	Z-pass :
 			rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
@@ -420,6 +420,9 @@ namespace Fusion.Engine.Graphics {
 
 			//	Forward+
 			rs.SceneRenderer.RenderForward( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
+
+			//	Debug surfels :
+			rs.Irs.DrawDebugSurfels( viewHdrFrame, Camera, stereoEye );
 
 
 			switch (rs.ShowGBuffer) {
@@ -496,7 +499,7 @@ namespace Fusion.Engine.Graphics {
 				}
 
 				if (!instance.Mesh.Surfels.Any()) {
-					instance.Mesh.BuildSurfels(1.0f);
+					instance.Mesh.BuildSurfels(2.0f);
 				}
 
 				foreach ( var surf in instance.Mesh.Surfels ) {

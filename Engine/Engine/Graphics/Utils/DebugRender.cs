@@ -216,6 +216,11 @@ namespace Fusion.Engine.Graphics {
 
 	
 			foreach ( var flag in flags ) {
+
+				if (Game.RenderSystem.SkipGhostDebugRendering && flag==RenderFlags.GHOST) {
+					break;
+				}
+
 				dev.PipelineState =	factory[(int)flag];
 
 				int numDPs = MathUtil.IntDivUp(vertexDataAccum.Count, vertexBufferSize);
@@ -374,8 +379,8 @@ namespace Fusion.Engine.Graphics {
 
 			for (int i = 0; i <= N; i++)
 			{
-				float c =  (float)Math.Cos(Math.PI * 2 * i / N + 0);
-				float s =  (float)Math.Sin(Math.PI * 2 * i / N + 0);
+				float c =  radius * (float)Math.Cos(Math.PI * 2 * i / N + 0);
+				float s =  radius * (float)Math.Sin(Math.PI * 2 * i / N + 0);
 
 				points[i] = origin + up * s + rt * c;
 			}

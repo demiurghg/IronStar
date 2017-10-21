@@ -496,13 +496,14 @@ namespace Fusion.Engine.Graphics {
 				}
 
 				if (!instance.Mesh.Surfels.Any()) {
-					instance.Mesh.BuildSurfels(4.0f);
+					instance.Mesh.BuildSurfels(1.0f);
 				}
 
 				foreach ( var surf in instance.Mesh.Surfels ) {
 					var p = Vector3.TransformCoordinate	( surf.Position, instance.World );
 					var n = Vector3.TransformNormal		( surf.Normal,	 instance.World );
 					var r = (float)Math.Sqrt(surf.Area / 3.141592f);
+					Debug.DrawPoint( p + n * 0.1f, 0.05f, Color.LightGray, 1 );
 					Debug.DrawVector( p, n, Color.LightGray, 0.1f );
 					Debug.DrawAxialRing( p, n, r, Color.LightGray );
 				}

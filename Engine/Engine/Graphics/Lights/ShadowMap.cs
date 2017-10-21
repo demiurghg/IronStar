@@ -10,11 +10,18 @@ using Fusion.Engine.Common;
 using Fusion.Drivers.Graphics;
 using System.Runtime.InteropServices;
 using Fusion.Build.Mapping;
-
+using Fusion.Engine.Graphics.Ubershaders;
 
 namespace Fusion.Engine.Graphics {
 
 	partial class ShadowMap : DisposableBase {
+
+		[ShaderStructure]
+		struct VPL {
+			Vector4 Position;
+			Vector4 Normal;
+			Vector4 Intensity;
+		}
 
 		readonly GraphicsDevice device;
 		readonly RenderSystem rs;
@@ -96,9 +103,9 @@ namespace Fusion.Engine.Graphics {
 
 			allocator	=	new Allocator2D(shadowMapSize);
 
-			colorBuffer	=	new RenderTarget2D( device, ColorFormat.R32F,		shadowMapSize, shadowMapSize );
-			depthBuffer	=	new DepthStencil2D( device, DepthFormat.D24S8,		shadowMapSize, shadowMapSize );
-			prtShadow	=	new RenderTarget2D( device, ColorFormat.Rgba8_sRGB,	shadowMapSize, shadowMapSize );
+			colorBuffer		=	new RenderTarget2D( device, ColorFormat.R32F,		shadowMapSize, shadowMapSize );
+			depthBuffer		=	new DepthStencil2D( device, DepthFormat.D24S8,		shadowMapSize, shadowMapSize );
+			prtShadow		=	new RenderTarget2D( device, ColorFormat.Rgba8_sRGB,	shadowMapSize, shadowMapSize );
 
 			cascades[0]	=	new Cascade(maxRegionSize);
 			cascades[1]	=	new Cascade(maxRegionSize);
@@ -382,7 +389,7 @@ namespace Fusion.Engine.Graphics {
 
 					rs.Filter2.RenderBorder( prtShadow.Surface, cascade.ShadowRegion, 1 );
 
-					//rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, cascade.ViewMatrix, cascade.ProjectionMatrix, prtShadow.Surface, depthBuffer.Surface );
+
 				}
 
 
@@ -400,15 +407,6 @@ namespace Fusion.Engine.Graphics {
 						var dstRegion	=	spot.ShadowRegion;
 						rs.Filter2.RenderSpot( prtShadow.Surface, dstRegion, 1 );
 					}
-
-					//-------------
-
-					//var context = new ShadowContext();
-					//var far		= spot.Projection.GetFarPlaneDistance();
-
-					//var vp		= new Viewport( spot.ShadowRegion );
-
-					//rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, spot.SpotView, spot.Projection, prtShadow.Surface, depthBuffer.Surface );
 				}
 
 

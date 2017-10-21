@@ -147,6 +147,12 @@ namespace Fusion.Engine.Graphics {
 		public bool SkipDebugRendering { get; set; }
 
 		/// <summary>
+		/// 
+		/// </summary>
+		[Config]
+		public bool SkipGhostDebugRendering { get; set; }
+
+		/// <summary>
 		/// Shows particles statistics.
 		/// </summary>
 		[Config]

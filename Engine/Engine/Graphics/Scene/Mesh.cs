@@ -521,23 +521,52 @@ namespace Fusion.Engine.Graphics {
 
 				n.Normalize();
 
-				int count	=	Math.Max(0, (int)(area / maxArea));
+				if (area>1024*maxArea) {
+					Log.Warning("Triangle is too big");
+					continue;
+				}
 
-				for ( int i=0; i<count; i++ ) {
+
+				if (area>maxArea) {
+					int count	=	Math.Max(0, (int)(area / maxArea));
+
+					for ( int i=0; i<count; i++ ) {
 					
-					var surfel	=	new MeshSurfel();
+						var surfel	=	new MeshSurfel();
 
-					var rpos	=	rand.NextPointOnTriangle( p0, p1, p2 );
+						var rpos	=	rand.NextPointOnTriangle( p0, p1, p2 );
 
-					surfel.Position =	rpos;
-					surfel.Area		=	area / count;
-					surfel.Normal	=	n;
+						surfel.Position =	rpos;
+						surfel.Area		=	area / count;
+						surfel.Normal	=	n;
 
-					surfel.Albedo	=	new Color(128,128,128,255);
+						surfel.Albedo	=	new Color(128,128,128,255);
 
-					Surfels.Add( surfel );
+						Surfels.Add( surfel );
+					}
+				} else {	
+
+					var prob = area / maxArea;
+
+					if (rand.NextFloat(0,1)<prob) {
+						
+						var surfel	=	new MeshSurfel();
+
+						var rpos	=	rand.NextPointOnTriangle( p0, p1, p2 );
+
+						surfel.Position =	rpos;
+						surfel.Area		=	maxArea;
+						surfel.Normal	=	n;
+
+						surfel.Albedo	=	new Color(128,128,128,255);
+
+						Surfels.Add( surfel );
+					}
 				}
 			}
+
+			//Log.Message("{0} triangles", Triangles.Count );
+			//Log.Message("{0} surfels are built", Surfels.Count );
 		}
 
 

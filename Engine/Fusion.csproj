@@ -226,6 +226,7 @@
     <Compile Include="Engine\Graphics\RenderComponent.cs" />
     <Compile Include="Engine\Graphics\SceneRenderer.Gpu.cs" />
     <Compile Include="Engine\Graphics\Scene\AnimRegion.cs" />
+    <Compile Include="Engine\Graphics\Scene\MeshSurfel.cs" />
     <Compile Include="Engine\Graphics\Ubershaders\ShaderDefineAttribute.cs" />
     <Compile Include="Engine\Graphics\Ubershaders\ShaderConstantBufferAttribute.cs" />
     <Compile Include="Engine\Graphics\Ubershaders\ShaderSharedStructureAttribute.cs" />

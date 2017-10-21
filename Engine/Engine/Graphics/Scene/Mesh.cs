@@ -18,7 +18,8 @@ namespace Fusion.Engine.Graphics {
 
 		public List<MeshVertex>		Vertices		{ get; private set; }	
 		public List<MeshTriangle>	Triangles		{ get; private set; }	
-		public List<MeshSubset>		Subsets			{ get; private set; }	
+		public List<MeshSubset>		Subsets			{ get; private set; }
+		public List<MeshSurfel>		Surfels			{ get; private set; }
 		public int					TriangleCount	{ get { return Triangles.Count; } }
 		public int					VertexCount		{ get { return Vertices.Count; } }
 		public int					IndexCount		{ get { return TriangleCount * 3; } }
@@ -40,6 +41,7 @@ namespace Fusion.Engine.Graphics {
 			Vertices		=	new List<MeshVertex>();
 			Triangles		=	new List<MeshTriangle>();
 			Subsets			=	new List<MeshSubset>();
+			Surfels			=	new List<MeshSurfel>();
 		}
 
 
@@ -487,6 +489,53 @@ namespace Fusion.Engine.Graphics {
 
 					//	assign vertex
 					Vertices[inds[(0+j)%3]] = vert0;
+				}
+			}
+		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 * 
+		 *	Some stuff
+		 * 
+		-----------------------------------------------------------------------------------------*/
+
+		public void BuildSurfels ( float maxArea )
+		{
+			Surfels.Clear();
+
+			var rand = new Random();
+
+			foreach ( var tri in Triangles ) {
+				
+				var p0		=	Vertices[ tri.Index0 ].Position;
+				var p1		=	Vertices[ tri.Index1 ].Position;
+				var p2		=	Vertices[ tri.Index2 ].Position;
+
+				var v01		=	p1 - p0;
+				var v02		=	p2 - p0;
+
+				var n		=	Vector3.Cross( v01, v02 );
+
+				var	area	=	n.Length() / 2;
+
+				n.Normalize();
+
+				int count	=	Math.Max(0, (int)(area / maxArea));
+
+				for ( int i=0; i<count; i++ ) {
+					
+					var surfel	=	new MeshSurfel();
+
+					var rpos	=	rand.NextPointOnTriangle( p0, p1, p2 );
+
+					surfel.Position =	rpos;
+					surfel.Area		=	area / count;
+					surfel.Normal	=	n;
+
+					surfel.Albedo	=	new Color(128,128,128,255);
+
+					Surfels.Add( surfel );
 				}
 			}
 		}

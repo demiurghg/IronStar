@@ -280,5 +280,29 @@ namespace Fusion.Core.Extensions
         {
             return TimeSpan.FromTicks(random.NextLong(min.Ticks, max.Ticks));
         }
+
+
+		/// <summary>
+		/// Gets uniformly distributes random point on given triangle
+		/// </summary>
+		/// <param name="rand"></param>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <param name="c"></param>
+		/// <returns></returns>
+		public static Vector3 NextPointOnTriangle ( this Random rand, Vector3 a, Vector3 b, Vector3 c )
+		{
+			var ab = b - a;
+			var ac = c - a;
+			
+			float u,v;
+
+			do {
+				u	=	rand.NextFloat(0,1);	
+				v	=	rand.NextFloat(0,1);
+			} while ( u+v>1 );
+
+			return a + ab * u + ac * v;
+		}
    }
 }

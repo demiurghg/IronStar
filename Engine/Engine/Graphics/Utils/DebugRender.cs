@@ -45,7 +45,7 @@ namespace Fusion.Engine.Graphics {
 		List<LineVertex>	vertexDataAccum	= new List<LineVertex>();
 		LineVertex[]		vertexArray = new LineVertex[vertexBufferSize];
 
-		const int vertexBufferSize = 4096;
+		const int vertexBufferSize = 4096*4;
 
 		ConstData	constData;
 
@@ -347,6 +347,37 @@ namespace Fusion.Engine.Graphics {
 				points[i].X = origin.X + radius * (float)Math.Cos(Math.PI * 2 * i / N + angle);
 				points[i].Y = origin.Y;
 				points[i].Z = origin.Z + radius * (float)Math.Sin(Math.PI * 2 * i / N + angle);
+			}
+
+			for (int i = 0; i < N; i++)
+			{
+				DrawLine(points[i], points[i + 1], color);
+			}
+		}
+
+
+		public void DrawAxialRing ( Vector3 origin, Vector3 axis, float radius, Color color )
+		{
+			axis	=	Vector3.Normalize( axis );
+			var rt	=	Vector3.Cross( axis, Vector3.Up );	
+
+			if (rt.LengthSquared()<0.001f) {
+				rt	=	Vector3.Cross( axis, Vector3.Right );
+			}
+			rt.Normalize();
+
+			var up	=	Vector3.Cross( rt, axis );
+			up.Normalize();
+
+			int N = 12;
+			Vector3[] points = new Vector3[N + 1];
+
+			for (int i = 0; i <= N; i++)
+			{
+				float c =  (float)Math.Cos(Math.PI * 2 * i / N + 0);
+				float s =  (float)Math.Sin(Math.PI * 2 * i / N + 0);
+
+				points[i] = origin + up * s + rt * c;
 			}
 
 			for (int i = 0; i < N; i++)

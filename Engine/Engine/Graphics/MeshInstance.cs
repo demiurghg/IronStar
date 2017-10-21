@@ -136,6 +136,8 @@ namespace Fusion.Engine.Graphics {
 
 			IsSkinned	=	mesh.IsSkinned;
 
+			this.Mesh	=	mesh;
+
 			if (IsSkinned && scene.Nodes.Count > SceneRenderer.MaxBones) {
 				throw new ArgumentOutOfRangeException( string.Format("Scene contains more than {0} bones and cannot be used for skinning.", SceneRenderer.MaxBones ) );
 			}

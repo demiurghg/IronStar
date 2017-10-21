@@ -323,6 +323,9 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+
+
+
 		/// <summary>
 		/// Renders view
 		/// </summary>
@@ -332,6 +335,8 @@ namespace Fusion.Engine.Graphics {
 				RenderRadiance();
 				captureRadiance = false;
 			}
+
+			ShowSurfels();
 
 			//	clear target buffer if necassary :
 			if ( Clear) {
@@ -470,6 +475,43 @@ namespace Fusion.Engine.Graphics {
 			Debug.Render( targetSurface, viewHdrFrame.DepthBuffer.Surface, Camera );
 		}
 
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void ShowSurfels ()
+		{
+			if (!Game.Keyboard.IsKeyDown(Keys.P)) {
+				return;
+			}
+
+			int count = 0;
+
+			foreach ( var instance in Instances ) {
+
+				if (instance.Mesh==null) {
+					continue;
+				}
+
+				if (!instance.Mesh.Surfels.Any()) {
+					instance.Mesh.BuildSurfels(4.0f);
+				}
+
+				foreach ( var surf in instance.Mesh.Surfels ) {
+					var p = Vector3.TransformCoordinate	( surf.Position, instance.World );
+					var n = Vector3.TransformNormal		( surf.Normal,	 instance.World );
+					var r = (float)Math.Sqrt(surf.Area / 3.141592f);
+					Debug.DrawVector( p, n, Color.LightGray, 0.1f );
+					Debug.DrawAxialRing( p, n, r, Color.LightGray );
+				}
+
+				count += instance.Mesh.Surfels.Count;
+			}
+
+			Log.Message("{0} surfels", count );
+		}
 
 
 

@@ -56,6 +56,7 @@ Texture2D				ShadowMap			:	register(t10);
 Texture2D				ShadowMapParticles	:	register(t11);
 Texture2D				AmbientOcclusion	:	register(t12);
 TextureCube				FogTable			: 	register(t13);
+Texture3D				AmbientLightMap		: 	register(t14);
 
 #ifdef _UBERSHADER
 $ubershader FORWARD RIGID|SKINNED +ANISOTROPIC

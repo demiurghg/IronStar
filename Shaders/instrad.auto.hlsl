@@ -1,5 +1,6 @@
 static const int MaxSurfels = 65536;
 static const int BlockSize = 256;
+static const int BlockSize3D = 4;
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHT
 // Marshal.SizeOf = 120
@@ -28,18 +29,30 @@ struct SURFEL {
 };
 
 // Fusion.Engine.Graphics.InstantRadiosity+LIGHTENPARAMS
-// Marshal.SizeOf = 256
+// Marshal.SizeOf = 512
 struct LIGHTENPARAMS {
-	float4x4   LightView;                     // offset:    0
-	float4x4   LightProjection;               // offset:   64
-	float4     ShadowRegion;                  // offset:  128
-	float4     LightPosition;                 // offset:  144
-	float4     LightIntensity;                // offset:  160
+	float4x4   CascadeViewProjection0;        // offset:    0
+	float4x4   CascadeViewProjection1;        // offset:   64
+	float4x4   CascadeViewProjection2;        // offset:  128
+	float4x4   CascadeViewProjection3;        // offset:  192
+	float4     CascadeScaleOffset0;           // offset:  256
+	float4     CascadeScaleOffset1;           // offset:  272
+	float4     CascadeScaleOffset2;           // offset:  288
+	float4     CascadeScaleOffset3;           // offset:  304
+	float4     DirectLightDirection;          // offset:  320
+	float4     DirectLightIntensity;          // offset:  336
+	int        LightCount;                    // offset:  352
 };
 
 // Fusion.Engine.Graphics.InstantRadiosity+DRAWPARAMS
-// Marshal.SizeOf = 256
+// Marshal.SizeOf = 512
 struct DRAWPARAMS {
+	float4x4   ViewProjection;                // offset:    0
+};
+
+// Fusion.Engine.Graphics.InstantRadiosity+LMPARAMS
+// Marshal.SizeOf = 512
+struct LMPARAMS {
 	float4x4   ViewProjection;                // offset:    0
 };
 

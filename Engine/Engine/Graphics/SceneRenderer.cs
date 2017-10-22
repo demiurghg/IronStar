@@ -230,6 +230,7 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			device.PixelShaderResources[13]	=	rs.Sky.SkyCube;
+			device.PixelShaderResources[14]	=	rs.Irs.AmbientLightMap;
 
 
 			//	setup samplers :

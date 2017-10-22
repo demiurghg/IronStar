@@ -25,12 +25,16 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine]
 		const int BlockSize		=	256;
 
+		[ShaderDefine]
+		const int BlockSize3D	=	4;
+
 
 		[Flags]
 		enum Flags : int
 		{
 			LIGHTEN		= 0x0001,
 			DRAW		= 0x0002,
+			LIGHTMAP	= 0x0004,
 		}
 
 
@@ -43,20 +47,41 @@ namespace Fusion.Engine.Graphics {
 
 
 		[ShaderStructure]
-		[StructLayout(LayoutKind.Explicit, Size=256)]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=512)]
 		struct LIGHTENPARAMS {
-			[FieldOffset(  0)] public Matrix 	LightView;
-			[FieldOffset( 64)] public Matrix 	LightProjection;
-			[FieldOffset(128)] public Vector4 	ShadowRegion;
-			[FieldOffset(144)] public Vector4 	LightPosition;
-			[FieldOffset(160)] public Vector4 	LightIntensity;
+			public Matrix	CascadeViewProjection0	;
+			public Matrix	CascadeViewProjection1	;
+			public Matrix	CascadeViewProjection2	;
+			public Matrix	CascadeViewProjection3	;
+			public Vector4	CascadeScaleOffset0		;
+			public Vector4	CascadeScaleOffset1		;
+			public Vector4	CascadeScaleOffset2		;
+			public Vector4	CascadeScaleOffset3		;
+			public Vector4	DirectLightDirection	;
+			public Color4	DirectLightIntensity	;
+			public int		LightCount				;
 		}
 
 
+		/// <summary>
+		/// structure size must be the same 
+		/// because share same constant buffer object
+		/// </summary>
 		[ShaderStructure]
-		[StructLayout(LayoutKind.Explicit, Size=256)]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=512)]
 		struct DRAWPARAMS {
-			[FieldOffset(  0)] public Matrix 	ViewProjection;
+			public Matrix 	ViewProjection;
+		}
+
+
+		/// <summary>
+		/// structure size must be the same 
+		/// because share same constant buffer object
+		/// </summary>
+		[ShaderStructure]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=512)]
+		struct LMPARAMS {
+			public Matrix 	ViewProjection;
 		}
 
 
@@ -162,7 +187,9 @@ namespace Fusion.Engine.Graphics {
 
 			using ( new PixEvent("IRS") ) {
 
-				
+				LightenSurfels(); 
+
+				RenderLightmap();
 				
 			}
 		}
@@ -176,34 +203,69 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="lightProj"></param>
 		/// <param name="lightPos"></param>
 		/// <param name="lightColor"></param>
-		void LightenSurfels ( Matrix lightView, Matrix lightProj, Vector3 lightPos, Color4 lightColor, Rectangle shadowRegion )
+		void LightenSurfels ()
 		{
 			using ( new PixEvent("Lighten") ) {
 
 				device.ResetStates();		  
 
-				LIGHTENPARAMS param;
-
+				var param				=	new LIGHTENPARAMS();
 				var shadowMap			=	rs.LightManager.ShadowMap.ColorBuffer;
 
-				param.LightView			=	lightView;
-				param.LightProjection	=	lightProj;
-				param.LightIntensity	=	lightColor;
-				param.LightPosition		=	new Vector4( lightPos, 1 );
-				param.ShadowRegion		=	shadowRegion.GetMadOpScaleOffset( shadowMap.Width, shadowMap.Height ); 
+				param.DirectLightDirection		=	new Vector4( rs.RenderWorld.LightSet.DirectLight.Direction, 0 );
+				param.DirectLightIntensity		=	rs.RenderWorld.LightSet.DirectLight.Intensity;
+
+				param.CascadeViewProjection0	=	rs.LightManager.ShadowMap.GetCascade( 0 ).ViewProjectionMatrix;
+				param.CascadeViewProjection1	=	rs.LightManager.ShadowMap.GetCascade( 1 ).ViewProjectionMatrix;
+				param.CascadeViewProjection2	=	rs.LightManager.ShadowMap.GetCascade( 2 ).ViewProjectionMatrix;
+				param.CascadeViewProjection3	=	rs.LightManager.ShadowMap.GetCascade( 3 ).ViewProjectionMatrix;
 			
+				param.CascadeScaleOffset0		=	rs.LightManager.ShadowMap.GetCascade( 0 ).ShadowScaleOffset;
+				param.CascadeScaleOffset1		=	rs.LightManager.ShadowMap.GetCascade( 1 ).ShadowScaleOffset;
+				param.CascadeScaleOffset2		=	rs.LightManager.ShadowMap.GetCascade( 2 ).ShadowScaleOffset;
+				param.CascadeScaleOffset3		=	rs.LightManager.ShadowMap.GetCascade( 3 ).ShadowScaleOffset;
+
 				paramsCB.SetData( param );
 
 				device.PipelineState	=	factory[ (int)Flags.LIGHTEN ];
 
 				device.ComputeShaderResources[0]	=	shadowMap;
+				device.ComputeShaderResources[1]	=	rs.LightManager.LightGrid.LightDataGpu;
 				device.ComputeShaderConstants[0]	=	paramsCB;
+				device.ComputeShaderSamplers[0]		=	SamplerState.ShadowSampler;
 
 				device.SetCSRWBuffer( 0, surfels );
 
 				var gx	=	MathUtil.IntDivUp( MaxSurfels, BlockSize );
 				var gy	=	1;
 				var gz	=	1;
+
+				device.Dispatch( gx, gy, gz );
+			}
+		}
+
+
+
+		public void RenderLightmap ()
+		{
+			using ( new PixEvent("Lightmap") ) {
+
+				device.ResetStates();		  
+
+				var param				=	new LMPARAMS();
+				var shadowMap			=	rs.LightManager.ShadowMap.ColorBuffer;
+
+				paramsCB.SetData( param );
+
+				device.PipelineState	=	factory[ (int)Flags.LIGHTMAP ];
+
+				device.ComputeShaderResources[0]	=	surfels;
+
+				device.SetCSRWTexture( 0, lightmap );
+
+				var gx	=	MathUtil.IntDivUp( 64, BlockSize3D );
+				var gy	=	MathUtil.IntDivUp( 64, BlockSize3D );
+				var gz	=	MathUtil.IntDivUp( 64, BlockSize3D );
 
 				device.Dispatch( gx, gy, gz );
 			}

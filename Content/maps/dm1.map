@@ -3,7 +3,7 @@
   <Environment>
     <Gravity>16</Gravity>
     <SkyTrubidity>3</SkyTrubidity>
-    <SunPosition X="2" Y="20" Z="0.01" />
+    <SunPosition X="2" Y="3" Z="2" />
     <SunIntensity>40</SunIntensity>
     <FogDistance>500</FogDistance>
     <FogHeight>-0.05</FogHeight>
@@ -470,7 +470,7 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-15.1286974" Y="4.160048" Z="-7.729669" />
+      <Position X="-15" Y="3" Z="-8" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Intensity>100</Intensity>
@@ -493,21 +493,6 @@
       <LightStyle>Default</LightStyle>
       <Ambient>false</Ambient>
     </MapNode>
-    <MapNode xsi:type="MapEntity">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-42.82791" Y="9.79217" Z="507.9945" />
-      <Rotation X="0" Y="0" Z="0" W="1" />
-      <Scaling>1</Scaling>
-      <Factory xsi:type="FuncFXFactory">
-        <FX>fog_distant</FX>
-        <FXMode>Persistent</FXMode>
-        <Once>true</Once>
-        <Start>true</Start>
-        <MinInterval>1</MinInterval>
-        <MaxInterval>1</MaxInterval>
-      </Factory>
-    </MapNode>
     <MapNode xsi:type="MapLightProbe">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
@@ -522,7 +507,113 @@
     <MapNode xsi:type="MapModel">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-0" Y="0" Z="0" />
+      <Position X="0" Y="0" Z="0" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <ScenePath>scenes\q3t5.fbx</ScenePath>
+      <Scale>1</Scale>
+      <Color Red="10" Green="10" Blue="10" Alpha="1" />
+    </MapNode>
+    <MapNode xsi:type="MapOmniLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="20" Y="2" Z="-8" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Intensity>1000</Intensity>
+      <OuterRadius>5</OuterRadius>
+      <InnerRadius>0.5</InnerRadius>
+      <LightPreset>Wave730</LightPreset>
+      <LightStyle>Emergency2</LightStyle>
+      <Ambient>false</Ambient>
+    </MapNode>
+    <MapNode xsi:type="MapOmniLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="20" Y="2" Z="-5" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Intensity>1000</Intensity>
+      <OuterRadius>5</OuterRadius>
+      <InnerRadius>0.5</InnerRadius>
+      <LightPreset>Wave780</LightPreset>
+      <LightStyle>Emergency1</LightStyle>
+      <Ambient>false</Ambient>
+    </MapNode>
+    <MapNode xsi:type="MapDecal">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="5" Y="8" Z="-7" />
+      <Rotation X="-0.707106769" Y="0" Z="0" W="0.707106769" />
+      <Scaling>1</Scaling>
+      <ImageName>blood3</ImageName>
+      <Width>1</Width>
+      <Height>1</Height>
+      <Depth>1</Depth>
+      <Emission Red="0" Green="0" Blue="0" Alpha="0" />
+      <BaseColor R="60" G="5" B="2" A="255" />
+      <Roughness>0.02</Roughness>
+      <Metallic>0</Metallic>
+      <ColorFactor>1.1</ColorFactor>
+      <SpecularFactor>0</SpecularFactor>
+      <NormalMapFactor>1</NormalMapFactor>
+      <FalloffFactor>10</FalloffFactor>
+    </MapNode>
+    <MapNode xsi:type="MapDecal">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="11" Y="5" Z="-14" />
+      <Rotation X="-0.707106769" Y="0" Z="0" W="0.707106769" />
+      <Scaling>1</Scaling>
+      <ImageName>blood3</ImageName>
+      <Width>1</Width>
+      <Height>1</Height>
+      <Depth>1</Depth>
+      <Emission Red="0" Green="0" Blue="0" Alpha="0" />
+      <BaseColor R="60" G="5" B="2" A="255" />
+      <Roughness>0.02</Roughness>
+      <Metallic>0</Metallic>
+      <ColorFactor>1.1</ColorFactor>
+      <SpecularFactor>0</SpecularFactor>
+      <NormalMapFactor>0</NormalMapFactor>
+      <FalloffFactor>20</FalloffFactor>
+    </MapNode>
+    <MapNode xsi:type="MapDecal">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="5" Y="5" Z="-14" />
+      <Rotation X="-0.707106769" Y="0" Z="0" W="0.707106769" />
+      <Scaling>1</Scaling>
+      <ImageName>blood3</ImageName>
+      <Width>1</Width>
+      <Height>1</Height>
+      <Depth>1</Depth>
+      <Emission Red="0" Green="0" Blue="0" Alpha="0" />
+      <BaseColor R="60" G="5" B="2" A="255" />
+      <Roughness>0.02</Roughness>
+      <Metallic>0</Metallic>
+      <ColorFactor>1.1</ColorFactor>
+      <SpecularFactor>0</SpecularFactor>
+      <NormalMapFactor>0</NormalMapFactor>
+      <FalloffFactor>20</FalloffFactor>
+    </MapNode>
+    <MapNode xsi:type="MapOmniLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-3" Y="0" Z="34" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Intensity>1000</Intensity>
+      <OuterRadius>5</OuterRadius>
+      <InnerRadius>0.5</InnerRadius>
+      <LightPreset>Red</LightPreset>
+      <LightStyle>Default</LightStyle>
+      <Ambient>false</Ambient>
+    </MapNode>
+    <MapNode xsi:type="MapModel">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="0" Y="0" Z="-58" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <ScenePath>scenes\sponza\sponza.fbx</ScenePath>

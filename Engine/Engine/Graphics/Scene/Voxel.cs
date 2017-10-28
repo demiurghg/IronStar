@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 
-namespace Fusion.Engine.Graphics.Scene {
+namespace Fusion.Engine.Graphics {
 	public class Voxel {
 
 		public readonly int Width;
@@ -30,7 +30,7 @@ namespace Fusion.Engine.Graphics.Scene {
 			Height	=	height;
 			Depth	=	depth;
 
-			deta	=	new byte[ Width * Height * Depth ];
+			data	=	new byte[ Width * Height * Depth ];
 		}
 
 

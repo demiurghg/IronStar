@@ -475,6 +475,19 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		public void DrawBox( Vector3 center, float w, float h, float d, Color color )
+		{
+			var hszv	=	new Vector3(w/2,h/2,d/2);
+			DrawBox( new BoundingBox( center-hszv, center+hszv), color );
+		}
+
+
+		public void DrawBox( Vector3 center, float size, Color color )
+		{
+			DrawBox( center, size, size, size, color );
+		}
+
+
 		public void DrawBox(BoundingBox bbox, Color color)
 		{
 			var crnrs = bbox.GetCorners();

@@ -207,6 +207,8 @@ namespace Fusion.Engine.Graphics {
 
 					device.ComputeShaderResources[0]	=	fog3d0;
 					device.ComputeShaderConstants[0]	=	paramsCB;
+					device.ComputeShaderSamplers[0]		=	SamplerState.LinearClamp;
+					device.ComputeShaderSamplers[0]		=	SamplerState.ShadowSampler;
 
 					device.SetCSRWTexture( 0, fog3d1 );
 

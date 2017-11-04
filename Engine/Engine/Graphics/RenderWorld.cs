@@ -336,7 +336,7 @@ namespace Fusion.Engine.Graphics {
 				captureRadiance = false;
 			}
 
-			ShowSurfels();
+			ShowVoxels();
 
 			//	clear target buffer if necassary :
 			if ( Clear) {
@@ -409,8 +409,8 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			//	Render GI :
-			rs.SceneRenderer.RenderVoxelGrid( this ); 
-			rs.Lpv.RenderLpv( Camera, LightSet );
+			//rs.Irs.CollectSurfels( Instances );
+			//rs.Irs.RenderIRS( Camera, Instances, LightSet );
 
 			//	Z-pass :
 			rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
@@ -420,6 +420,9 @@ namespace Fusion.Engine.Graphics {
 
 			//	Forward+
 			rs.SceneRenderer.RenderForward( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
+
+			//	Debug surfels :
+			//rs.Irs.DrawDebugSurfels( viewHdrFrame, Camera, stereoEye );
 
 
 			switch (rs.ShowGBuffer) {
@@ -481,7 +484,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// 
 		/// </summary>
-		public void ShowSurfels ()
+		public void ShowVoxels ()
 		{
 			if (!Game.Keyboard.IsKeyDown(Keys.P)) {
 				return;
@@ -495,23 +498,29 @@ namespace Fusion.Engine.Graphics {
 					continue;
 				}
 
-				if (!instance.Mesh.Surfels.Any()) {
-					instance.Mesh.BuildSurfels(1.0f);
+				foreach ( var tri in instance.Mesh.Triangles ) {
+
+					var p0	=	Vector3.TransformCoordinate( instance.Mesh.Vertices[ tri.Index0 ].Position, instance.World ) * 2;
+					var p1	=	Vector3.TransformCoordinate( instance.Mesh.Vertices[ tri.Index1 ].Position, instance.World ) * 2;
+					var p2	=	Vector3.TransformCoordinate( instance.Mesh.Vertices[ tri.Index2 ].Position, instance.World ) * 2;
+
+					/*Debug.DrawLine( p0, p1, Color.Red );
+					Debug.DrawLine( p1, p2, Color.Red );
+					Debug.DrawLine( p2, p0, Color.Red );*/
+
+					Voxelizer.RasterizeTriangle( p0, p1, p2, (x,y,z) => {
+						if (x<-32 || x>31) return;											
+						if (y<-32 || y>31) return;											
+						if (z<-32 || z>31) return;											
+
+						x	=	(float)Math.Round(x)/2;													
+						y	=	(float)Math.Round(y)/2;													
+						z	=	(float)Math.Round(z)/2;		
+						Debug.DrawBox( new Vector3(x,y,z), 0.2f, Color.Red );
+					});
 				}
 
-				foreach ( var surf in instance.Mesh.Surfels ) {
-					var p = Vector3.TransformCoordinate	( surf.Position, instance.World );
-					var n = Vector3.TransformNormal		( surf.Normal,	 instance.World );
-					var r = (float)Math.Sqrt(surf.Area / 3.141592f);
-					Debug.DrawPoint( p + n * 0.1f, 0.05f, Color.LightGray, 1 );
-					Debug.DrawVector( p, n, Color.LightGray, 0.1f );
-					Debug.DrawAxialRing( p, n, r, Color.LightGray );
-				}
-
-				count += instance.Mesh.Surfels.Count;
 			}
-
-			Log.Message("{0} surfels", count );
 		}
 
 

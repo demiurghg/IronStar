@@ -160,18 +160,7 @@ namespace Fusion.Engine.Graphics {
 
 		Vector4 GetScaleOffset ( Rectangle rect )
 		{
-			float size = shadowMapSize;
-			float ax = rect.Width  / size;
-			float ay = rect.Height / size;
-			float bx = rect.Left   / size;
-			float by = rect.Top    / size;
-
-			float x		=	0.5f * ax;
-			float y		=  -0.5f * ay;
-			float z		=   0.5f * ax + bx;
-			float w		=	0.5f * ay + by;
-
-			return new Vector4(x,y,z,w);
+			return rect.GetMadOpScaleOffset( shadowMapSize, shadowMapSize );
 		}
 
 

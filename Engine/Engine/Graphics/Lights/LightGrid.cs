@@ -144,7 +144,7 @@ namespace Fusion.Engine.Graphics {
 			var proj = camera.GetProjectionMatrix( stereoEye );
 			var vpos = camera.GetCameraMatrix( StereoEye.Mono ).TranslationVector;
 
-			ClusterizeOmniLights( view, proj, lightSet );
+			ClusterizeLightsAndDecals( view, proj, lightSet );
 		}
 
 
@@ -299,7 +299,7 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="lightSet"></param>
-		void ClusterizeOmniLights ( Matrix view, Matrix proj, LightSet lightSet )
+		void ClusterizeLightsAndDecals ( Matrix view, Matrix proj, LightSet lightSet )
 		{
 			var screen = rs.DisplayBounds;
 			var vp = new Rectangle(0,0,1,1);

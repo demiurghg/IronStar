@@ -52,6 +52,23 @@ namespace Fusion.Engine.Graphics {
 
 
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="disposing"></param>
+		protected override void Dispose( bool disposing )
+		{
+			if (disposing) {
+				SafeDispose( ref lightGrid );
+				SafeDispose( ref shadowMap );
+			}
+
+			base.Dispose( disposing );
+		}
+
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -59,6 +76,9 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="lightSet"></param>
 		public void Update ( GameTime gameTime, LightSet lightSet )
 		{
+			UpdateIrradianceMap();
+
+
 			if (shadowMap.ShadowQuality!=rs.ShadowQuality) {
 				SafeDispose( ref shadowMap );
 				shadowMap	=	new ShadowMap( rs, rs.ShadowQuality );
@@ -77,17 +97,10 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="disposing"></param>
-		protected override void Dispose( bool disposing )
-		{
-			if (disposing) {
-				SafeDispose( ref lightGrid );
-			}
 
-			base.Dispose( disposing );
+
+		public void UpdateIrradianceMap ()
+		{
 		}
 	}
 }

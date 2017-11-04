@@ -130,7 +130,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="vpWidth"></param>
 		/// <param name="vpHeight"></param>
 		[MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
-		public bool SetupStage ( StereoEye stereoEye, Camera camera, HdrFrame hdrFrame, ShadowContext shadowContext, LpvContext lpvContext )
+		public bool SetupStage ( StereoEye stereoEye, Camera camera, HdrFrame hdrFrame, ShadowContext shadowContext )
 		{
 			device.ResetStates();
 
@@ -191,13 +191,6 @@ namespace Fusion.Engine.Graphics {
 				cbDataStage.BiasSlopeFar	=	new Vector4( shadowContext.DepthBias, shadowContext.SlopeBias, shadowContext.FarDistance, 0 );
 			}
 
-			if (lpvContext!=null) {
-				cbDataStage.View			=	lpvContext.View;
-				cbDataStage.Projection		=	lpvContext.Projection;
-				cbDataStage.ViewPos			=	Vector4.Zero;
-				cbDataStage.Ambient			=	Color4.Zero;
-			}
-
 			constBufferStage.SetData( cbDataStage );
 
 			//	assign constant buffers :
@@ -230,7 +223,7 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			device.PixelShaderResources[13]	=	rs.Sky.SkyCube;
-			device.PixelShaderResources[14]	=	rs.Irs.AmbientLightMap;
+			device.PixelShaderResources[14]	=	null;
 
 
 			//	setup samplers :
@@ -307,7 +300,7 @@ namespace Fusion.Engine.Graphics {
 
 				var instances			=	rw.Instances;
 
-				if ( SetupStage( stereoEye, camera, frame, null, null ) ) {
+				if ( SetupStage( stereoEye, camera, frame, null ) ) {
 
 					var hdr			=	frame.HdrBuffer.Surface;
 					var depth		=	frame.DepthBuffer.Surface;
@@ -371,7 +364,7 @@ namespace Fusion.Engine.Graphics {
 				var vpWidth				=	frame.HdrBuffer.Width;
 				var vpHeight			=	frame.HdrBuffer.Height;
 
-				if ( SetupStage( stereoEye, camera, frame, null, null ) ) {
+				if ( SetupStage( stereoEye, camera, frame, null ) ) {
 
 					var hdr			=	frame.HdrBuffer.Surface;
 					var depth		=	frame.DepthBuffer.Surface;
@@ -412,7 +405,7 @@ namespace Fusion.Engine.Graphics {
 		{
 			using ( new PixEvent("ShadowMap") ) {
 
-				if ( SetupStage( StereoEye.Mono, null, null, shadowRenderCtxt, null ) ) {
+				if ( SetupStage( StereoEye.Mono, null, null, shadowRenderCtxt ) ) {
 
 					device.SetTargets( shadowRenderCtxt.DepthBuffer, shadowRenderCtxt.ColorBuffer );
 					device.SetViewport( shadowRenderCtxt.ShadowViewport );

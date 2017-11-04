@@ -202,8 +202,6 @@
     <Compile Include="Engine\Common\IUserInterface.cs" />
     <Compile Include="Engine\Graphics\Effects\BilateralFilter.cs" />
     <Compile Include="Engine\Graphics\Effects\Filter2.cs" />
-    <Compile Include="Engine\Graphics\Effects\LpvContext.cs" />
-    <Compile Include="Engine\Graphics\Effects\InstantRadiosity.cs" />
     <Compile Include="Engine\Graphics\Effects\Fog.Gpu.cs" />
     <Compile Include="Engine\Graphics\Effects\FogSettings.cs" />
     <Compile Include="Engine\Graphics\Effects\PoissonDiscGenerator.cs" />

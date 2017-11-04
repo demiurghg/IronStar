@@ -500,18 +500,22 @@ namespace Fusion.Engine.Graphics {
 
 				foreach ( var tri in instance.Mesh.Triangles ) {
 
-					var p0	=	Vector3.TransformCoordinate( instance.Mesh.Vertices[ tri.Index0 ].Position, instance.World ) * 4;
-					var p1	=	Vector3.TransformCoordinate( instance.Mesh.Vertices[ tri.Index1 ].Position, instance.World ) * 4;
-					var p2	=	Vector3.TransformCoordinate( instance.Mesh.Vertices[ tri.Index2 ].Position, instance.World ) * 4;
+					var p0	=	Vector3.TransformCoordinate( instance.Mesh.Vertices[ tri.Index0 ].Position, instance.World ) * 2;
+					var p1	=	Vector3.TransformCoordinate( instance.Mesh.Vertices[ tri.Index1 ].Position, instance.World ) * 2;
+					var p2	=	Vector3.TransformCoordinate( instance.Mesh.Vertices[ tri.Index2 ].Position, instance.World ) * 2;
 
 					/*Debug.DrawLine( p0, p1, Color.Red );
 					Debug.DrawLine( p1, p2, Color.Red );
 					Debug.DrawLine( p2, p0, Color.Red );*/
 
 					Voxelizer.RasterizeTriangle( p0, p1, p2, (x,y,z) => {
-						x	=	(float)Math.Round(x)/4;													
-						y	=	(float)Math.Round(y)/4;													
-						z	=	(float)Math.Round(z)/4;													
+						if (x<-32 || x>31) return;											
+						if (y<-32 || y>31) return;											
+						if (z<-32 || z>31) return;											
+
+						x	=	(float)Math.Round(x)/2;													
+						y	=	(float)Math.Round(y)/2;													
+						z	=	(float)Math.Round(z)/2;		
 						Debug.DrawBox( new Vector3(x,y,z), 0.2f, Color.Red );
 					});
 				}

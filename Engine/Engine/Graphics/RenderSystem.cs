@@ -56,9 +56,6 @@ namespace Fusion.Engine.Graphics {
 		internal Fog	Fog { get { return fog; } }
 		Fog	fog;
 
-		internal InstantRadiosity	Irs { get { return irs; } }
-		InstantRadiosity	irs;
-
 		/// <summary>
 		/// Gets render counters.
 		/// </summary>
@@ -129,7 +126,6 @@ namespace Fusion.Engine.Graphics {
 			sceneRenderer	=	new SceneRenderer( this );
 			sky				=	new Sky( this );
 			fog				=	new Fog( this );
-			irs				=	new InstantRadiosity( this );
 			bitonicSort		=	new BitonicSort( this );
 			vtSystem	=	new VTSystem( this );
 
@@ -204,7 +200,6 @@ namespace Fusion.Engine.Graphics {
 			InitializeComponent( sceneRenderer	);
 			InitializeComponent( sky			);	
 			InitializeComponent( fog			);	
-			InitializeComponent( irs			);
 			InitializeComponent( bitonicSort	);
 			InitializeComponent( vtSystem		);
 

@@ -392,7 +392,7 @@ namespace Fusion.Engine.Graphics {
 				ParticleSystem.Simulate( gameTime, Camera );
 
 				//	prepare light set for shadow rendering :
-				rs.LightManager.Update( gameTime, LightSet );
+				rs.LightManager.Update( gameTime, LightSet, Instances );
 				rs.LightManager.LightGrid.UpdateLightSetVisibility( stereoEye, Camera, LightSet );
 
 				//	allocated and render shadows :

@@ -60,7 +60,7 @@ namespace Fusion.Engine.Graphics {
 			Height	=	height;
 			Depth	=	depth;
 
-			gridTexture	=	new Texture3D( rs.Device, width, height, depth );
+			gridTexture	=	new Texture3D( rs.Device, ColorFormat.Rg32, width, height, depth );
 
 			lightData	=	new StructuredBuffer( rs.Device, typeof(SceneRenderer.LIGHT), MaxLights, StructuredBufferFlags.None );
 			decalData	=	new StructuredBuffer( rs.Device, typeof(SceneRenderer.DECAL), MaxDecals, StructuredBufferFlags.None );

@@ -24,22 +24,25 @@ namespace Fusion.Drivers.Graphics {
 
 		D3D.Texture3D	tex3D;
 
+		ColorFormat format;
+
 
 
 		/// <summary>
 		/// Creates texture
 		/// </summary>
 		/// <param name="device"></param>
-		public Texture3D ( GraphicsDevice device, int width, int height, int depth ) : base( device )
+		public Texture3D ( GraphicsDevice device, ColorFormat format, int width, int height, int depth ) : base( device )
 		{
 			this.Width		=	width;
 			this.Height		=	height;
 			this.Depth		=	depth;
+			this.format		=	format;
 
 			var texDesc = new Texture3DDescription();
 			texDesc.BindFlags		=	BindFlags.ShaderResource;
 			texDesc.CpuAccessFlags	=	CpuAccessFlags.None;
-			texDesc.Format			=	DXGI.Format.R32G32_UInt;;
+			texDesc.Format			=	Converter.Convert( format );
 			texDesc.Height			=	Height;
 			texDesc.MipLevels		=	1;
 			texDesc.OptionFlags		=	ResourceOptionFlags.None;
@@ -75,7 +78,8 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="data"></param>
         public void SetData<T>(T[] data) where T: struct
 		{
-			device.DeviceContext.UpdateSubresource(data, tex3D, 0, Width*8, Height*Width*8);
+			int stride = Converter.SizeOf( format );
+			device.DeviceContext.UpdateSubresource(data, tex3D, 0, Width*stride, Height*Width*stride);
 		}
 	}
 }

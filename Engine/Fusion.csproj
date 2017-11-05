@@ -221,6 +221,7 @@
     <Compile Include="Engine\Graphics\Lights\OmniLight.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowContext.cs" />
     <Compile Include="Engine\Graphics\Lights\SpotLight.cs" />
+    <Compile Include="Engine\Graphics\MathConverter.cs" />
     <Compile Include="Engine\Graphics\RenderComponent.cs" />
     <Compile Include="Engine\Graphics\SceneRenderer.Gpu.cs" />
     <Compile Include="Engine\Graphics\Scene\AnimRegion.cs" />
@@ -649,6 +650,10 @@
     <ProjectReference Include="..\Native\Native.Wic\Native.Wic.vcxproj">
       <Project>{34d2ae22-ea1f-481e-b9f7-15ad914f4208}</Project>
       <Name>Native.Wic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SDKs\BEPUPhysics\BEPUutilities\BEPUutilities.csproj">
+      <Project>{34853dea-43a6-4f2f-a379-d1ee04d256d2}</Project>
+      <Name>BEPUutilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\SDKs\LidgrenNetwork\Lidgren.Network\Lidgren.Network.csproj">
       <Project>{49ba1c69-6104-41ac-a5d8-b54fa9f696e8}</Project>

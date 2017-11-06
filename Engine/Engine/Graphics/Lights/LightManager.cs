@@ -128,6 +128,7 @@ namespace Fusion.Engine.Graphics {
 		static Random rand = new Random();
 
 		Vector3[] sphereRandomPoints;
+		Vector3[] hemisphereRandomPoints;
 
 
 		List<Vector3> points = new List<Vector3>();
@@ -143,7 +144,8 @@ namespace Fusion.Engine.Graphics {
 
 			points.Clear();
 
-			sphereRandomPoints = Enumerable.Range(0,64).Select( i => rand.NextUpHemispherePoint() ).ToArray();
+			sphereRandomPoints		= Enumerable.Range(0,SampleNum).Select( i => rand.NextVector3OnSphere() ).ToArray();
+			hemisphereRandomPoints	= Enumerable.Range(0,SampleNum).Select( i => rand.NextUpHemispherePoint() ).ToArray();
 
 			foreach ( var p in sphereRandomPoints ) {
 				dr.DrawPoint( p, 0.1f, Color.Orange );
@@ -151,10 +153,12 @@ namespace Fusion.Engine.Graphics {
 
 			Log.Message("...generating scene");
 
-			var space = new Space();
+			var spaceGAO = new Space();
+			var spaceLAO = new Space();
 
 			foreach ( var instance in instances ) {
-				AddMeshInstance( space, instance );
+				AddMeshInstance( spaceGAO, instance, false );
+				AddMeshInstance( spaceLAO, instance, true );
 			}
 
 			Log.Message("...tracing");
@@ -163,7 +167,11 @@ namespace Fusion.Engine.Graphics {
 
 
 			for ( int x=0; x<Width;  x++ ) {
-				for ( int y=0; y<Height; y++ ) {
+
+				Log.Message("{0}/{1}", x, Width);
+
+				for ( int y=0; y<Height/2; y++ ) {
+
 					for ( int z=0; z<Depth;  z++ ) {
 			//Parallel.For( 216, Width-216, (x) => {
 
@@ -178,13 +186,14 @@ namespace Fusion.Engine.Graphics {
 						var position	=	new Vector3( x, y, z );
 						//var position	=	new Vector3( (x-256+0.5f)/2.0f, (y-64+0.5f)/2.0f, (z-256+0.5f)/2.0f );
 
-						var localAO		=	(byte)(255*CalcLocalOcclusion( space, position ));
+						var localAO		=	(byte)(255*CalcLocalOcclusion ( spaceLAO, position ));
+						var globalAO	=	(byte)(255*CalcGlobalOcclusion( spaceGAO, position ));
 
 						byte byteX		=	(byte)( x*4 );
 						byte byteY		=	(byte)( y*4 );
 						byte byteZ		=	(byte)( z*4 );
 
-						data[index]		=	new Color(byteX,byteY,byteZ,localAO);
+						data[index]		=	new Color(globalAO,globalAO,globalAO,localAO);
 						//data[index]		=	new Color(byteX,byteY,byteZ, (byte)(255*((x+y+z)%2)) );
 					}
 				}
@@ -216,6 +225,9 @@ namespace Fusion.Engine.Graphics {
 		{
 			Random rand = new Random();
 
+			var min = Vector3.One * (-GridStep/2.0f);
+			var max = Vector3.One * ( GridStep/2.0f);
+
 			points.Add(point);
 
 			float factor = 0;
@@ -224,27 +236,66 @@ namespace Fusion.Engine.Graphics {
 				var dir		= (sphereRandomPoints[i]);
 					dir.Normalize();
 
-				var from	= MathConverter.Convert( point - dir*GridStep );
+				var bias	= rand.NextVector3(	min, max );
+
+				var from	= MathConverter.Convert( point + bias );
 				var dir2	= MathConverter.Convert( dir );
 
 				var ray		= new BEPUutilities.Ray( from, dir2 );
 
 				RayCastResult result;
 
-				if (space.RayCast( ray, 64, out result )) {
-					var localFactor = dir.Y/SampleNum;
+				if (space.RayCast( ray, 4, out result )) {
+					var localFactor = 1.0f/SampleNum;
 					factor = factor + (float)localFactor;
 					//points.Add( MathConverter.Convert(result.HitData.Location) );
 				}
 			}
 
-			return MathUtil.Clamp( factor, 0, 1 );
+			return 1-MathUtil.Clamp( factor, 0, 1 );
+		}
+
+
+
+		float CalcGlobalOcclusion ( Space space, Vector3 point )
+		{
+			var rand	=	new Random();
+
+			var min		=	Vector3.One * (-GridStep/2.0f);
+			var max		=	Vector3.One * ( GridStep/2.0f);
+			var range	=	new Vector3(Width*GridStep, Height*GridStep, Depth*GridStep).Length();
+
+			points.Add(point);
+
+			float factor = 0;
+
+			for (int i=0; i<SampleNum; i++) {
+				var dir		= (hemisphereRandomPoints[i]);
+					dir.Normalize();
+
+				var bias	= rand.NextVector3(	min, max );
+
+				var from	= MathConverter.Convert( point + bias );
+				var dir2	= MathConverter.Convert( dir - dir * GridStep/2.0f );
+
+				var ray		= new BEPUutilities.Ray( from, dir2 );
+
+				RayCastResult result;
+
+				if (space.RayCast( ray, range, out result )) {
+					var localFactor = dir.Y/SampleNum*2;
+					factor = factor + (float)localFactor;
+					//points.Add( MathConverter.Convert(result.HitData.Location) );
+				}
+			}
+
+			return 1-MathUtil.Clamp( factor, 0, 1 );
 		}
 
 
 
 
-		void AddMeshInstance ( Space space, MeshInstance instance )
+		void AddMeshInstance ( Space space, MeshInstance instance, bool doubleSided )
 		{
 			var mesh		=	instance.Mesh;
 
@@ -260,7 +311,7 @@ namespace Fusion.Engine.Graphics {
 
 			var staticMesh = new StaticMesh( vertices, indices );
 
-			staticMesh.Sidedness = BEPUutilities.TriangleSidedness.Clockwise;
+			staticMesh.Sidedness = doubleSided ? BEPUutilities.TriangleSidedness.DoubleSided : BEPUutilities.TriangleSidedness.Clockwise;
 
 			var scaling		= new BEPUutilities.Vector3(1,1,1);
 			var translation = new BEPUutilities.Vector3(0,0,0);

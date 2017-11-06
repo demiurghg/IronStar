@@ -193,17 +193,19 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	//
 	float ssaoFactor		=	AmbientOcclusion.Load( int3( input.Position.xy,0 ) ).r;
 	
-	float3	samplePos		=	worldPos + geometryNormal;
+	float3	samplePos		=	worldPos + geometryNormal*0.5f + float3(1,1,1)/2;
 	
 	float3	aogridCoords	=	float3( samplePos.x / 256.0f + 0.5f, samplePos.y / 128.0f + 0.5f, samplePos.z / 256.0f + 0.5f);
 	
-	float4	aogridValue		=	OcclusionGrid.Sample( SamplerLinear, aogridCoords ).rgba;
+	float4	aogridValue		=	OcclusionGrid.Sample( SamplerLinear, samplePos.xyz/64.0f ).rgba;
+	//float4	aogridValue		=	OcclusionGrid.Load( int4(samplePos.x, samplePos.y, samplePos.z, 0) ).rgba;
 	
 	float ambientOcclusion 	=	pow(max(0,ssaoFactor*1-0),2) * aogridValue.a;
 	
-	totalLight.rgb	=	aogridValue.rgb;
+	//totalLight.rgb	=	(1-aogridValue.a) * 10;
+	totalLight	=	0;
 	
-	//totalLight.rgb += (diffuse + specular).rgb * (Stage.Ambient.xyz) * aogridValue.rgb;
+	totalLight.rgb += (diffuse + specular).rgb * (Stage.Ambient.xyz) * (1-2*aogridValue.a) * ssaoFactor;
 	
 	return totalLight;
 }

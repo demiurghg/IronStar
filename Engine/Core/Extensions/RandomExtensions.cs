@@ -304,5 +304,15 @@ namespace Fusion.Core.Extensions
 
 			return a + ab * u + ac * v;
 		}
+
+
+		public static Vector3 NextUpHemispherePoint ( this Random random )
+		{
+			Vector3 r;
+			do {
+				r = NextVector3( random, -Vector3.One, Vector3.One );
+			} while ( r.Length()>1 || r.Length()<0.1f || r.Y<0 );
+			return r.Normalized();
+		}
    }
 }

@@ -14,6 +14,7 @@ using System.IO;
 using Fusion.Engine.Graphics.Ubershaders;
 using BEPUphysics;
 using BEPUphysics.BroadPhaseEntries;
+using Native.Embree;
 
 namespace Fusion.Engine.Graphics {
 
@@ -142,67 +143,76 @@ namespace Fusion.Engine.Graphics {
 		{
 			Log.Message("Building ambient occlusion map");
 
-			points.Clear();
+			using ( var rtc = new Rtc() ) {
 
-			sphereRandomPoints		= Enumerable.Range(0,SampleNum).Select( i => rand.NextVector3OnSphere() ).ToArray();
-			hemisphereRandomPoints	= Enumerable.Range(0,SampleNum).Select( i => rand.NextUpHemispherePoint() ).ToArray();
+				using ( var scene = new RtcScene( rtc, SceneFlags.Incoherent|SceneFlags.Static, AlgorithmFlags.Intersect1 ) ) {
 
-			foreach ( var p in sphereRandomPoints ) {
-				dr.DrawPoint( p, 0.1f, Color.Orange );
-			}
+					points.Clear();
 
-			Log.Message("...generating scene");
+					sphereRandomPoints		= Enumerable.Range(0,SampleNum).Select( i => rand.NextVector3OnSphere() ).ToArray();
+					hemisphereRandomPoints	= Enumerable.Range(0,SampleNum).Select( i => rand.NextUpHemispherePoint().Normalized() ).ToArray();
 
-			var spaceGAO = new Space();
-			var spaceLAO = new Space();
-
-			foreach ( var instance in instances ) {
-				AddMeshInstance( spaceGAO, instance, false );
-				AddMeshInstance( spaceLAO, instance, true );
-			}
-
-			Log.Message("...tracing");
-
-			var data = new Color[ Width*Height*Depth ];
-
-
-			for ( int x=0; x<Width;  x++ ) {
-
-				Log.Message("{0}/{1}", x, Width);
-
-				for ( int y=0; y<Height/2; y++ ) {
-
-					for ( int z=0; z<Depth;  z++ ) {
-			//Parallel.For( 216, Width-216, (x) => {
-
-			//for ( int x=220; x<Width-220;  x++ ) {
-			//	Log.Message("{0}/{1}", x, Width);
-			//	for ( int y=32; y<Height-32; y++ ) {
-			//		for ( int z=220; z<Depth-220;  z++ ) {
-				
-						int index		=	ComputeAddress(x,y,z);
-
-						var offset		=	new Vector3( GridStep/2.0f, GridStep/2.0f, GridStep/2.0f );
-						var position	=	new Vector3( x, y, z );
-						//var position	=	new Vector3( (x-256+0.5f)/2.0f, (y-64+0.5f)/2.0f, (z-256+0.5f)/2.0f );
-
-						var localAO		=	(byte)(255*CalcLocalOcclusion ( spaceLAO, position ));
-						var globalAO	=	(byte)(255*CalcGlobalOcclusion( spaceGAO, position ));
-
-						byte byteX		=	(byte)( x*4 );
-						byte byteY		=	(byte)( y*4 );
-						byte byteZ		=	(byte)( z*4 );
-
-						data[index]		=	new Color(globalAO,globalAO,globalAO,localAO);
-						//data[index]		=	new Color(byteX,byteY,byteZ, (byte)(255*((x+y+z)%2)) );
+					foreach ( var p in sphereRandomPoints ) {
+						dr.DrawPoint( p, 0.1f, Color.Orange );
 					}
+
+					Log.Message("...generating scene");
+
+					var spaceGAO = new Space();
+					var spaceLAO = new Space();
+
+					foreach ( var instance in instances ) {
+						//AddMeshInstance( spaceGAO, instance, false );
+						//AddMeshInstance( spaceLAO, instance, true );
+						AddMeshInstance( scene, instance );
+					}
+
+					scene.Commit();
+
+					Log.Message("...tracing");
+
+					var data = new Color[ Width*Height*Depth ];
+
+
+					for ( int x=0; x<Width;  x++ ) {
+
+						Log.Message("{0}/{1}", x, Width);
+
+						for ( int y=0; y<Height/2; y++ ) {
+
+							for ( int z=0; z<Depth;  z++ ) {
+					//Parallel.For( 216, Width-216, (x) => {
+
+					//for ( int x=220; x<Width-220;  x++ ) {
+					//	Log.Message("{0}/{1}", x, Width);
+					//	for ( int y=32; y<Height-32; y++ ) {
+					//		for ( int z=220; z<Depth-220;  z++ ) {
+				
+								int index		=	ComputeAddress(x,y,z);
+
+								var offset		=	new Vector3( GridStep/2.0f, GridStep/2.0f, GridStep/2.0f );
+								var position	=	new Vector3( x, y, z );
+								//var position	=	new Vector3( (x-256+0.5f)/2.0f, (y-64+0.5f)/2.0f, (z-256+0.5f)/2.0f );
+
+								var localAO		=	255;//(byte)(255*CalcLocalOcclusion ( spaceLAO, position ));
+								var globalAO	=	(byte)(255*CalcGlobalOcclusion( scene, position ));
+
+								byte byteX		=	(byte)( x*4 );
+								byte byteY		=	(byte)( y*4 );
+								byte byteZ		=	(byte)( z*4 );
+
+								data[index]		=	new Color(globalAO,globalAO,globalAO,localAO);
+								//data[index]		=	new Color(byteX,byteY,byteZ, (byte)(255*((x+y+z)%2)) );
+							}
+						}
+					}
+					//);
+
+					occlusionGrid.SetData( data );
+
+					Log.Message("Done!");
 				}
 			}
-			//);
-
-			occlusionGrid.SetData( data );
-
-			Log.Message("Done!");
 		}
 
 
@@ -220,7 +230,7 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-
+#if false
 		float CalcLocalOcclusion ( Space space, Vector3 point )
 		{
 			Random rand = new Random();
@@ -270,13 +280,8 @@ namespace Fusion.Engine.Graphics {
 			float factor = 0;
 
 			for (int i=0; i<SampleNum; i++) {
-				var dir		= (hemisphereRandomPoints[i]);
-					dir.Normalize();
-
+				var dir		= hemisphereRandomPoints[i];
 				var bias	= rand.NextVector3(	min, max );
-
-				var from	= MathConverter.Convert( point + bias );
-				var dir2	= MathConverter.Convert( dir - dir * GridStep/2.0f );
 
 				var ray		= new BEPUutilities.Ray( from, dir2 );
 
@@ -291,10 +296,44 @@ namespace Fusion.Engine.Graphics {
 
 			return 1-MathUtil.Clamp( factor, 0, 1 );
 		}
+#endif
+
+
+		float CalcGlobalOcclusion ( RtcScene scene, Vector3 point )
+		{
+			var rand	=	new Random();
+
+			var min		=	Vector3.One * (-GridStep/2.0f);
+			var max		=	Vector3.One * ( GridStep/2.0f);
+			var range	=	new Vector3(Width*GridStep, Height*GridStep, Depth*GridStep).Length();
+
+			points.Add(point);
+
+			float factor = 0;
+
+			for (int i=0; i<SampleNum; i++) {
+				
+				var dir	=	hemisphereRandomPoints[i];
+
+				var x	=	point.X;
+				var y	=	point.Y;
+				var z	=	point.Z;
+				var dx	=	dir.X;
+				var dy	=	dir.Y;
+				var dz	=	dir.Z;
+
+				if (scene.Occluded (  x,y,z, dx*8,dy*8,dz*8, 0,256 ) ) {
+					var localFactor = dir.Y/SampleNum*2;
+					factor = factor + (float)localFactor;
+				}
+			}
+
+			return 1-MathUtil.Clamp( factor, 0, 1 );
+		}
 
 
 
-
+#if false
 		void AddMeshInstance ( Space space, MeshInstance instance, bool doubleSided )
 		{
 			var mesh		=	instance.Mesh;
@@ -319,6 +358,41 @@ namespace Fusion.Engine.Graphics {
 			staticMesh.WorldTransform = new BEPUutilities.AffineTransform(scaling, rotation, translation);
 
 			space.Add( staticMesh );
+		}
+#endif
+
+
+		void AddMeshInstance ( RtcScene scene, MeshInstance instance )
+		{
+			var mesh		=	instance.Mesh;
+
+			if (mesh==null) {	
+				return;
+			}
+
+			var indices     =   mesh.GetIndices();
+			var vertices    =   mesh.Vertices
+								.Select( v1 => Vector3.TransformCoordinate( v1.Position, instance.World ) )
+								.Select( v2 => new BEPUutilities.Vector4( v2.X, v2.Y, v2.Z, 0 ) )
+								.ToArray();
+
+			var id		=	scene.NewTriangleMesh( GeometryFlags.Static, indices.Length/3, vertices.Length );
+
+			Log.Message("trimesh: id={0} tris={1} verts={2}", id, indices.Length/3, vertices.Length );
+
+
+			var pVerts	=	scene.MapBuffer( id, BufferType.VertexBuffer );
+			var pInds	=	scene.MapBuffer( id, BufferType.IndexBuffer );
+
+			SharpDX.Utilities.Write( pVerts, vertices, 0, vertices.Length );
+			SharpDX.Utilities.Write( pInds,  indices,  0, indices.Length );
+
+			scene.UnmapBuffer( id, BufferType.VertexBuffer );
+			scene.UnmapBuffer( id, BufferType.IndexBuffer );
+
+			//scene.UpdateBuffer( id, BufferType.VertexBuffer );
+			//scene.UpdateBuffer( id, BufferType.IndexBuffer );
+
 		}
 	}
 }

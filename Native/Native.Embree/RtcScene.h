@@ -55,15 +55,33 @@ namespace Native {
 
 		public ref class RtcScene {
 		private:
+			RTCDevice device;
 			RTCScene scene;
+			RTCRay *pRay;
 		public:
-			RtcScene( Rtc ^ rtc, SceneFlags sceneFlags, AlgorithmFlags algorithmFlags );
-			~RtcScene();
+			RtcScene( Rtc ^ rtc, SceneFlags sceneFlags, AlgorithmFlags algorithmFlags )
+			{
+				scene = rtcDeviceNewScene(rtc->device, (RTCSceneFlags)sceneFlags, (RTCAlgorithmFlags)algorithmFlags);
+
+				device = rtc->device;
+
+				pRay =	allocRay();
+
+				RtcException::CheckError(device);
+			}
+
+
+			~RtcScene()
+			{
+				freeRay(pRay);
+				rtcDeleteScene( scene );
+			}
+
 
 			unsigned int NewTriangleMesh(GeometryFlags geomFlags, int numTris, int numVerts)
 			{
-				auto id = rtcNewTriangleMesh2(scene, (RTCGeometryFlags)geomFlags, numTris, numVerts);
-				RtcException::CheckError();
+				auto id = rtcNewTriangleMesh2(scene, (RTCGeometryFlags)geomFlags, numTris, numVerts, 1);
+				RtcException::CheckError(device);
 				return id;
 			}
 
@@ -71,43 +89,43 @@ namespace Native {
 			IntPtr MapBuffer(unsigned int geometryId, BufferType bufferType)
 			{
 				auto ptr =  IntPtr( rtcMapBuffer(scene, geometryId, (RTCBufferType)bufferType) );
-				RtcException::CheckError();
+				RtcException::CheckError(device);
 				return ptr;
 			}
 
 
 			void UnmapBuffer(unsigned int geometryId, BufferType bufferType)
 			{
-				rtcMapBuffer(scene, geometryId, (RTCBufferType)bufferType);
-				RtcException::CheckError();
+				rtcUnmapBuffer(scene, geometryId, (RTCBufferType)bufferType);
+				RtcException::CheckError(device);
 			}
 
 
 			void DeleteGeometry ( unsigned int geometryId )
 			{
 				rtcDeleteGeometry( scene, geometryId );
-				RtcException::CheckError();
+				RtcException::CheckError(device);
 			}
 
 
 			void Commit ()
 			{
 				rtcCommit( scene );
-				RtcException::CheckError();
+				RtcException::CheckError(device);
 			}
 
 
 			void Update (unsigned int geometryId, BufferType bufferType)
 			{
 				rtcUpdate( scene, geometryId );
-				RtcException::CheckError();
+				RtcException::CheckError(device);
 			}
 
 
 			void UpdateBuffer (unsigned int geometryId, BufferType bufferType)
 			{
 				rtcUpdateBuffer(scene, geometryId, (RTCBufferType)bufferType);
-				RtcException::CheckError();
+				RtcException::CheckError(device);
 			}
 
 
@@ -123,11 +141,8 @@ namespace Native {
 			}
 
 
-			public: bool Occluded ( float x, float y, float z, float dx, float dy, float dz )
+			public: bool Occluded ( float x, float y, float z, float dx, float dy, float dz, float tnear, float tfar )
 			{
-				//#pragma managed(push off)
-				RTCRay *pRay	= allocRay();
-
 				pRay->org[0] = x;
 				pRay->org[1] = y;
 				pRay->org[2] = z;
@@ -138,8 +153,8 @@ namespace Native {
 				pRay->dir[2] = dz;
 				pRay->align1 = 0;
 
-				pRay->tnear = 0;
-				pRay->tfar = INFINITY;
+				pRay->tnear = tnear;
+				pRay->tfar = tfar;
 
 				pRay->time = 0;
 				pRay->mask = 0xFFFFFFFF;
@@ -156,14 +171,9 @@ namespace Native {
 				pRay->instID = RTC_INVALID_GEOMETRY_ID;
 
 				rtcOccluded(scene, *pRay);
+				RtcException::CheckError(device);
 
-				bool result = (pRay->geomID==0);
-
-				freeRay( pRay );
-
-				RtcException::CheckError();
-
-				return result;
+				return (pRay->geomID==0);
 			}
 
 

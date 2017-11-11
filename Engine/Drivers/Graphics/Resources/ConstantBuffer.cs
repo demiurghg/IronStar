@@ -132,7 +132,6 @@ namespace Fusion.Drivers.Graphics {
 
 
 
-		/// <summary>
 		/// Disposes buffer
 		/// </summary>
 		protected override void Dispose ( bool disposing )

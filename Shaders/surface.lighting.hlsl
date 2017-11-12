@@ -205,7 +205,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	//totalLight.rgb	=	(1-aogridValue.a) * 10;
 	//totalLight	=	0;
 	
-	totalLight.rgb += (diffuse + specular).rgb * (Stage.Ambient.xyz) * saturate(2*aogridValue.a) * aogridValue.r * ssaoFactor * ssaoFactor;
+	totalLight.rgb += (diffuse + specular).rgb * (Stage.Ambient.xyz) * saturate(0.5+0.5*aogridValue.a) * aogridValue.r * ssaoFactor * ssaoFactor;
 	
 	return totalLight;
 }

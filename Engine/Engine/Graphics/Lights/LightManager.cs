@@ -87,7 +87,7 @@ namespace Fusion.Engine.Graphics {
 		const int	Height		=	64;
 		const int	Depth		=	64;
 		const float GridStep	=	1.0f;
-		const int	SampleNum	=	64;
+		const int	SampleNum	=	256;
 
 
 		/// <summary>
@@ -158,12 +158,7 @@ namespace Fusion.Engine.Graphics {
 
 					Log.Message("...generating scene");
 
-					var spaceGAO = new Space();
-					var spaceLAO = new Space();
-
 					foreach ( var instance in instances ) {
-						//AddMeshInstance( spaceGAO, instance, false );
-						//AddMeshInstance( spaceLAO, instance, true );
 						AddMeshInstance( scene, instance );
 					}
 
@@ -176,37 +171,26 @@ namespace Fusion.Engine.Graphics {
 
 					for ( int x=0; x<Width;  x++ ) {
 
-						Log.Message("{0}/{1}", x, Width);
-
 						for ( int y=0; y<Height/2; y++ ) {
 
 							for ( int z=0; z<Depth;  z++ ) {
-					//Parallel.For( 216, Width-216, (x) => {
 
-					//for ( int x=220; x<Width-220;  x++ ) {
-					//	Log.Message("{0}/{1}", x, Width);
-					//	for ( int y=32; y<Height-32; y++ ) {
-					//		for ( int z=220; z<Depth-220;  z++ ) {
-				
 								int index		=	ComputeAddress(x,y,z);
 
 								var offset		=	new Vector3( GridStep/2.0f, GridStep/2.0f, GridStep/2.0f );
 								var position	=	new Vector3( x, y, z );
-								//var position	=	new Vector3( (x-256+0.5f)/2.0f, (y-64+0.5f)/2.0f, (z-256+0.5f)/2.0f );
 
-								var localAO		=	255;//(byte)(255*CalcLocalOcclusion ( spaceLAO, position ));
-								var globalAO	=	(byte)(255*CalcGlobalOcclusion( scene, position ));
+								var localAO		=	(byte)(255*ComputeOcclusion( scene, position, sphereRandomPoints, 4 ));
+								var globalAO	=	(byte)(255*ComputeOcclusion( scene, position, hemisphereRandomPoints, 512 ));
 
 								byte byteX		=	(byte)( x*4 );
 								byte byteY		=	(byte)( y*4 );
 								byte byteZ		=	(byte)( z*4 );
 
 								data[index]		=	new Color(globalAO,globalAO,globalAO,localAO);
-								//data[index]		=	new Color(byteX,byteY,byteZ, (byte)(255*((x+y+z)%2)) );
 							}
 						}
 					}
-					//);
 
 					occlusionGrid.SetData( data );
 
@@ -230,76 +214,8 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-#if false
-		float CalcLocalOcclusion ( Space space, Vector3 point )
-		{
-			Random rand = new Random();
 
-			var min = Vector3.One * (-GridStep/2.0f);
-			var max = Vector3.One * ( GridStep/2.0f);
-
-			points.Add(point);
-
-			float factor = 0;
-
-			for (int i=0; i<SampleNum; i++) {
-				var dir		= (sphereRandomPoints[i]);
-					dir.Normalize();
-
-				var bias	= rand.NextVector3(	min, max );
-
-				var from	= MathConverter.Convert( point + bias );
-				var dir2	= MathConverter.Convert( dir );
-
-				var ray		= new BEPUutilities.Ray( from, dir2 );
-
-				RayCastResult result;
-
-				if (space.RayCast( ray, 4, out result )) {
-					var localFactor = 1.0f/SampleNum;
-					factor = factor + (float)localFactor;
-					//points.Add( MathConverter.Convert(result.HitData.Location) );
-				}
-			}
-
-			return 1-MathUtil.Clamp( factor, 0, 1 );
-		}
-
-
-
-		float CalcGlobalOcclusion ( Space space, Vector3 point )
-		{
-			var rand	=	new Random();
-
-			var min		=	Vector3.One * (-GridStep/2.0f);
-			var max		=	Vector3.One * ( GridStep/2.0f);
-			var range	=	new Vector3(Width*GridStep, Height*GridStep, Depth*GridStep).Length();
-
-			points.Add(point);
-
-			float factor = 0;
-
-			for (int i=0; i<SampleNum; i++) {
-				var dir		= hemisphereRandomPoints[i];
-				var bias	= rand.NextVector3(	min, max );
-
-				var ray		= new BEPUutilities.Ray( from, dir2 );
-
-				RayCastResult result;
-
-				if (space.RayCast( ray, range, out result )) {
-					var localFactor = dir.Y/SampleNum*2;
-					factor = factor + (float)localFactor;
-					//points.Add( MathConverter.Convert(result.HitData.Location) );
-				}
-			}
-
-			return 1-MathUtil.Clamp( factor, 0, 1 );
-		}
-#endif
-
-
-		float CalcGlobalOcclusion ( RtcScene scene, Vector3 point )
+		float ComputeOcclusion ( RtcScene scene, Vector3 point, Vector3[] dirs, float maxRange )
 		{
 			var rand	=	new Random();
 
@@ -313,16 +229,17 @@ namespace Fusion.Engine.Graphics {
 
 			for (int i=0; i<SampleNum; i++) {
 				
-				var dir	=	hemisphereRandomPoints[i];
+				var dir		=	dirs[i];
+				var bias	=	rand.NextVector3( min, max );
 
-				var x	=	point.X;
-				var y	=	point.Y;
-				var z	=	point.Z;
+				var x	=	point.X + bias.X;
+				var y	=	point.Y + bias.Y;
+				var z	=	point.Z + bias.Z;
 				var dx	=	dir.X;
 				var dy	=	dir.Y;
 				var dz	=	dir.Z;
 
-				if (scene.Occluded (  x,y,z, dx*8,dy*8,dz*8, 0,256 ) ) {
+				if (scene.Occluded (  x,y,z, dx,dy,dz, 0,maxRange ) ) {
 					var localFactor = dir.Y/SampleNum*2;
 					factor = factor + (float)localFactor;
 				}
@@ -332,34 +249,6 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-
-#if false
-		void AddMeshInstance ( Space space, MeshInstance instance, bool doubleSided )
-		{
-			var mesh		=	instance.Mesh;
-
-			if (mesh==null) {	
-				return;
-			}
-
-			var indices     =   mesh.GetIndices();
-			var vertices    =   mesh.Vertices
-								.Select( v1 => Vector3.TransformCoordinate( v1.Position, instance.World ) )
-								.Select( v2 => new BEPUutilities.Vector3( v2.X, v2.Y, v2.Z ) )
-								.ToArray();
-
-			var staticMesh = new StaticMesh( vertices, indices );
-
-			staticMesh.Sidedness = doubleSided ? BEPUutilities.TriangleSidedness.DoubleSided : BEPUutilities.TriangleSidedness.Clockwise;
-
-			var scaling		= new BEPUutilities.Vector3(1,1,1);
-			var translation = new BEPUutilities.Vector3(0,0,0);
-			var rotation	= BEPUutilities.Quaternion.Identity;
-			staticMesh.WorldTransform = new BEPUutilities.AffineTransform(scaling, rotation, translation);
-
-			space.Add( staticMesh );
-		}
-#endif
 
 
 		void AddMeshInstance ( RtcScene scene, MeshInstance instance )

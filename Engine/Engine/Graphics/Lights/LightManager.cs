@@ -130,6 +130,7 @@ namespace Fusion.Engine.Graphics {
 
 		Vector3[] sphereRandomPoints;
 		Vector3[] hemisphereRandomPoints;
+		Vector3[] cubeRandomPoints;
 
 
 		List<Vector3> points = new List<Vector3>();
@@ -149,8 +150,12 @@ namespace Fusion.Engine.Graphics {
 
 					points.Clear();
 
+					var min		=	Vector3.One * (-GridStep/2.0f);
+					var max		=	Vector3.One * ( GridStep/2.0f);
+
 					sphereRandomPoints		= Enumerable.Range(0,SampleNum).Select( i => rand.NextVector3OnSphere() ).ToArray();
 					hemisphereRandomPoints	= Enumerable.Range(0,SampleNum).Select( i => rand.NextUpHemispherePoint().Normalized() ).ToArray();
+					cubeRandomPoints		= Enumerable.Range(0,SampleNum).Select( i => rand.NextVector3( min, max ) ).ToArray();
 
 					foreach ( var p in sphereRandomPoints ) {
 						dr.DrawPoint( p, 0.1f, Color.Orange );
@@ -180,14 +185,15 @@ namespace Fusion.Engine.Graphics {
 								var offset		=	new Vector3( GridStep/2.0f, GridStep/2.0f, GridStep/2.0f );
 								var position	=	new Vector3( x, y, z );
 
-								var localAO		=	(byte)(255*ComputeOcclusion( scene, position, sphereRandomPoints, 4 ));
-								var globalAO	=	(byte)(255*ComputeOcclusion( scene, position, hemisphereRandomPoints, 512 ));
+								var localAO		=	ComputeLocalOcclusion( scene, position, 5 );
+								var globalAO	=	ComputeSkyOcclusion( scene, position, 512 );
 
-								byte byteX		=	(byte)( x*4 );
-								byte byteY		=	(byte)( y*4 );
-								byte byteZ		=	(byte)( z*4 );
+								byte byteX		=	(byte)( 255 * (globalAO.X * 0.5+0.5) );
+								byte byteY		=	(byte)( 255 * (globalAO.Y * 0.5+0.5) );
+								byte byteZ		=	(byte)( 255 * (globalAO.Z * 0.5+0.5) );
+								byte byteW		=	(byte)( 255 * localAO );
 
-								data[index]		=	new Color(globalAO,globalAO,globalAO,localAO);
+								data[index]		=	new Color( byteX, byteY, byteZ, byteW );
 							}
 						}
 					}
@@ -215,37 +221,69 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		float ComputeOcclusion ( RtcScene scene, Vector3 point, Vector3[] dirs, float maxRange )
+		float ComputeLocalOcclusion ( RtcScene scene, Vector3 point, float maxRange )
 		{
-			var rand	=	new Random();
-
-			var min		=	Vector3.One * (-GridStep/2.0f);
-			var max		=	Vector3.One * ( GridStep/2.0f);
-			var range	=	new Vector3(Width*GridStep, Height*GridStep, Depth*GridStep).Length();
-
-			points.Add(point);
-
 			float factor = 0;
 
 			for (int i=0; i<SampleNum; i++) {
 				
-				var dir		=	dirs[i];
-				var bias	=	rand.NextVector3( min, max );
+				var dir		=	sphereRandomPoints[i];
+				var bias	=	cubeRandomPoints[i];
 
-				var x	=	point.X + bias.X;
-				var y	=	point.Y + bias.Y;
-				var z	=	point.Z + bias.Z;
+				var x	=	point.X + bias.X - dir.X;
+				var y	=	point.Y + bias.Y - dir.Y;
+				var z	=	point.Z + bias.Z - dir.Z;
 				var dx	=	dir.X;
 				var dy	=	dir.Y;
 				var dz	=	dir.Z;
 
-				if (scene.Occluded (  x,y,z, dx,dy,dz, 0,maxRange ) ) {
-					var localFactor = dir.Y/SampleNum*2;
+				var dist	=	scene.Intersect( x,y,z, dx,dy,dz, 0, maxRange );
+
+				if (dist>=0) {
+					var localFactor = (float)Math.Exp(-dist+0.5f) / SampleNum;
 					factor = factor + (float)localFactor;
 				}
 			}
 
-			return 1-MathUtil.Clamp( factor, 0, 1 );
+			return 1-MathUtil.Clamp( factor * 2, 0, 1 );
+		}
+
+
+
+		Vector3 ComputeSkyOcclusion ( RtcScene scene, Vector3 point, float maxRange )
+		{
+			var bentNormal	=	Vector3.Zero;
+			var factor		=	0;
+			var scale		=	1.0f / SampleNum;
+
+			for (int i=0; i<SampleNum; i++) {
+				
+				var dir		=	hemisphereRandomPoints[i];
+				var bias	=	cubeRandomPoints[i];
+
+				var x	=	point.X + bias.X + dir.X / 2.0f;
+				var y	=	point.Y + bias.Y + dir.Y / 2.0f;
+				var z	=	point.Z + bias.Z + dir.Z / 2.0f;
+				var dx	=	dir.X;
+				var dy	=	dir.Y;
+				var dz	=	dir.Z;
+
+				var dist	=	scene.Intersect( x,y,z, dx,dy,dz, 0, maxRange );
+
+				if (dist<=0) {
+					factor		+= 1;
+					bentNormal	+= dir;
+				}
+			}
+
+			if (bentNormal.Length()>0) {
+				bentNormal.Normalize();
+				bentNormal = bentNormal * factor * scale;
+			} else {
+				bentNormal = Vector3.Zero;
+			}
+
+			return bentNormal;
 		}
 
 

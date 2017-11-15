@@ -193,19 +193,22 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	//
 	float ssaoFactor		=	AmbientOcclusion.Load( int3( input.Position.xy,0 ) ).r;
 	
-	float3	samplePos		=	worldPos + geometryNormal*0.87f + float3(1,1,1)/2;
+	float3	samplePos		=	worldPos + geometryNormal*1 + float3(1,1,1)/2;
 	
-	float3	aogridCoords	=	float3( samplePos.x / 256.0f + 0.5f, samplePos.y / 128.0f + 0.5f, samplePos.z / 256.0f + 0.5f);
+	float3	aogridCoords	=	samplePos.xyz/64.0f;
 	
-	float4	aogridValue		=	OcclusionGrid.Sample( SamplerLinear, samplePos.xyz/64.0f ).rgba;
+	float4	aogridValue		=	OcclusionGrid.Sample( SamplerLinear, aogridCoords ).rgba;
+			aogridValue.xyz	=	aogridValue.xyz * 2 - 1;
 	//float4	aogridValue		=	OcclusionGrid.Load( int4(samplePos.x, samplePos.y, samplePos.z, 0) ).rgba;
 	
 	float ambientOcclusion 	=	pow(max(0,ssaoFactor*1-0),2) * aogridValue.a;
 	
-	//totalLight.rgb	=	(1-aogridValue.a) * 10;
-	//totalLight	=	0;
+	float	localFactor		=	saturate(aogridValue.w) * 0.5;
+	float 	skyFactor		=	length( aogridValue.xyz );
+	float3 	skyBentNormal	=	aogridValue.xyz / (skyFactor + 0.1);
+	float 	skyTerm			=	max(0, dot( skyBentNormal, normal ) * 0.5 + 0.5) * skyFactor;
 	
-	totalLight.rgb += (diffuse + specular).rgb * (Stage.Ambient.xyz) * saturate(0.5+0.5*aogridValue.a) * aogridValue.r * ssaoFactor * ssaoFactor;
+	totalLight.rgb			+=	(diffuse + specular).rgb * (Stage.Ambient.xyz) * (skyTerm) * ssaoFactor * ssaoFactor;
 	
 	return totalLight;
 }

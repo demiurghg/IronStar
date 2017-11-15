@@ -18,7 +18,7 @@
       <Minimum X="-64" Y="-32" Z="-64" />
       <Maximum X="64" Y="32" Z="64" />
     </IrradianceVolume>
-    <AmbientLevel Red="7" Green="10" Blue="15" Alpha="0" />
+    <AmbientLevel Red="15" Green="20" Blue="25" Alpha="0" />
   </Environment>
   <Nodes>
     <MapNode xsi:type="MapEntity">
@@ -168,6 +168,16 @@
       <ScenePath>scenes\mtrlTest.fbx</ScenePath>
       <Scale>1</Scale>
       <Color Red="10" Green="10" Blue="10" Alpha="1" />
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="35.5" Y="0.5" Z="32.5" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="StartPointFactory">
+        <StartPointType>SinglePlayer</StartPointType>
+      </Factory>
     </MapNode>
   </Nodes>
 </Map>

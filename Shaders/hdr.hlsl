@@ -153,6 +153,10 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 							+ bloom1 * 2.000f  
 							+ bloom2 * 3.000f  
 							+ bloom3 * 4.000f )/7.000f;//*/
+							
+	if (isnan(bloom.x)) {
+		bloom = 0;
+	}
 					
 	bloom	*=	bloomMask.rgb;
 	

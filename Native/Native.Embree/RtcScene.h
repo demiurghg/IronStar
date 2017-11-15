@@ -177,51 +177,85 @@ namespace Native {
 			}
 
 
-			#if 0
-			void Intersect ( RtcRay ^ ray )
-			{
-				RTCRay _ray;
-
-				_ray.org[0] =	ray->X;      
-				_ray.org[1] =	ray->Y;      
-				_ray.org[2] =	ray->Z;      
-				_ray.align0 =	0;
-
-				_ray.dir[0] =	ray->Dx;     
-				_ray.dir[1] =	ray->Dx;     
-				_ray.dir[2] =	ray->Dx;     
-				_ray.align1	=	0;
-
-				_ray.tnear	=	ray->TNear;  
-				_ray.tfar	=	ray->TFar;   
-
-				_ray.time	=	ray->Time;   
-				_ray.mask	=	ray->Mask;   
-
-				_ray.Ng[0]	=	0; 
-				_ray.Ng[1]	=	0; 
-				_ray.Ng[2]	=	0; 
-				_ray.align2	=	0;
-				_ray.u		=	0; 
-				_ray.v		=	0; 
 				
-				_ray.geomID	=	RTC_INVALID_GEOMETRY_ID; 
-				_ray.primID	=	RTC_INVALID_GEOMETRY_ID;
-				_ray.instID	=	RTC_INVALID_GEOMETRY_ID;
+			public: float Intersect(float x, float y, float z, float dx, float dy, float dz, float tnear, float tfar)
+			{
+				pRay->org[0] = x;
+				pRay->org[1] = y;
+				pRay->org[2] = z;
+				pRay->align0 = 0;
 
-				rtcIntersect( scene, _ray );
+				pRay->dir[0] = dx;
+				pRay->dir[1] = dy;
+				pRay->dir[2] = dz;
+				pRay->align1 = 0;
 
-				ray->Nx = _ray.Ng[0];
-				ray->Ny = _ray.Ng[1];
-				ray->Nz = _ray.Ng[2];
+				pRay->tnear = tnear;
+				pRay->tfar = tfar;
 
-				ray->U = _ray.u;
-				ray->V = _ray.v;
-				ray->GeometryId = _ray.geomID;
-				ray->TriangleId = _ray.primID;
-				ray->InstanceId = _ray.instID;
+				pRay->time = 0;
+				pRay->mask = 0xFFFFFFFF;
+
+				pRay->Ng[0] = 0;
+				pRay->Ng[1] = 0;
+				pRay->Ng[2] = 0;
+				pRay->align2 = 0;
+				pRay->u = 0;
+				pRay->v = 0;
+
+				pRay->geomID = RTC_INVALID_GEOMETRY_ID;
+				pRay->primID = RTC_INVALID_GEOMETRY_ID;
+				pRay->instID = RTC_INVALID_GEOMETRY_ID;
+
+				rtcIntersect(scene, *pRay);
+				RtcException::CheckError(device);
+
+				return (pRay->geomID==RTC_INVALID_GEOMETRY_ID) ? -1 : pRay->tfar;
 			}
-			#endif
+
+			//void Intersect ( RtcRay ^ ray )
+			//{
+			//	RTCRay _ray;
+
+			//	pRay->org[0] =	ray->X;      
+			//	pRay->org[1] =	ray->Y;      
+			//	pRay->org[2] =	ray->Z;      
+			//	pRay->align0 =	0;
+
+			//	pRay->dir[0] =	ray->Dx;     
+			//	pRay->dir[1] =	ray->Dx;     
+			//	pRay->dir[2] =	ray->Dx;     
+			//	pRay->align1	=	0;
+
+			//	pRay->tnear	=	ray->TNear;  
+			//	pRay->tfar	=	ray->TFar;   
+
+			//	pRay->time	=	ray->Time;   
+			//	pRay->mask	=	ray->Mask;   
+
+			//	pRay->Ng[0]	=	0; 
+			//	pRay->Ng[1]	=	0; 
+			//	pRay->Ng[2]	=	0; 
+			//	pRay->align2	=	0;
+			//	pRay->u		=	0; 
+			//	pRay->v		=	0; 
+			//	
+			//	pRay->geomID	=	RTC_INVALID_GEOMETRY_ID; 
+			//	pRay->primID	=	RTC_INVALID_GEOMETRY_ID;
+			//	pRay->instID	=	RTC_INVALID_GEOMETRY_ID;
+
+			//	rtcIntersect( scene, _ray );
+
+			//	ray->Nx = pRay->Ng[0];
+			//	ray->Ny = pRay->Ng[1];
+			//	ray->Nz = pRay->Ng[2];
+
+			//	ray->U = pRay->u;
+			//	ray->V = pRay->v;
+			//	ray->GeometryId = pRay->geomID;
+			//	ray->TriangleId = pRay->primID;
+			//	ray->InstanceId = pRay->instID;
+			//}
 		};
 	}
 }

@@ -83,11 +83,11 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		const int	Width		=	64;
+		const int	Width		=	128;
 		const int	Height		=	64;
-		const int	Depth		=	64;
+		const int	Depth		=	128;
 		const float GridStep	=	1.0f;
-		const int	SampleNum	=	256;
+		const int	SampleNum	=	64;
 
 
 		/// <summary>
@@ -153,8 +153,8 @@ namespace Fusion.Engine.Graphics {
 					var min		=	Vector3.One * (-GridStep/2.0f);
 					var max		=	Vector3.One * ( GridStep/2.0f);
 
-					sphereRandomPoints		= Enumerable.Range(0,SampleNum).Select( i => rand.NextVector3OnSphere() ).ToArray();
-					hemisphereRandomPoints	= Enumerable.Range(0,SampleNum).Select( i => rand.NextUpHemispherePoint().Normalized() ).ToArray();
+					sphereRandomPoints		= Enumerable.Range(0,SampleNum).Select( i => Hammersley.SphereUniform(i,SampleNum) ).ToArray();
+					hemisphereRandomPoints	= Enumerable.Range(0,SampleNum).Select( i => Hammersley.HemisphereCosine(i,SampleNum) ).ToArray();
 					cubeRandomPoints		= Enumerable.Range(0,SampleNum).Select( i => rand.NextVector3( min, max ) ).ToArray();
 
 					foreach ( var p in sphereRandomPoints ) {
@@ -259,7 +259,7 @@ namespace Fusion.Engine.Graphics {
 			for (int i=0; i<SampleNum; i++) {
 				
 				var dir		=	hemisphereRandomPoints[i];
-				var bias	=	cubeRandomPoints[i];
+				var bias	=	Vector3.Zero;// cubeRandomPoints[i];
 
 				var x	=	point.X + bias.X + dir.X / 2.0f;
 				var y	=	point.Y + bias.Y + dir.Y / 2.0f;

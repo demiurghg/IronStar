@@ -210,6 +210,7 @@
     <Compile Include="Engine\Graphics\Effects\Fog.cs" />
     <Compile Include="Engine\Graphics\Lights\Embree.cs" />
     <Compile Include="Engine\Graphics\Lights\Extents.cs" />
+    <Compile Include="Core\Mathematics\Hammersley.cs" />
     <Compile Include="Engine\Graphics\Lights\LightGrid.cs" />
     <Compile Include="Engine\Graphics\Lights\LightStyle.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowMap.Cascade.cs" />

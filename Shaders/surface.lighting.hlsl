@@ -191,11 +191,13 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	//
 	//	Ambient
 	//
+	//totalLight = 0;
+	
 	float ssaoFactor		=	AmbientOcclusion.Load( int3( input.Position.xy,0 ) ).r;
 	
 	float3	samplePos		=	worldPos + geometryNormal*1 + float3(1,1,1)/2;
 	
-	float3	aogridCoords	=	samplePos.xyz/64.0f;
+	float3	aogridCoords	=	samplePos.xyz/float3(128,64,128);
 	
 	float4	aogridValue		=	OcclusionGrid.Sample( SamplerLinear, aogridCoords ).rgba;
 			aogridValue.xyz	=	aogridValue.xyz * 2 - 1;

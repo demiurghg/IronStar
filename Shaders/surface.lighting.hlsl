@@ -188,6 +188,8 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		}
 	}
 	
+	
+	
 	//
 	//	Ambient
 	//
@@ -212,6 +214,27 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	
 	totalLight.rgb			+=	(diffuse + specular).rgb * (Stage.Ambient.xyz) * (skyTerm) * ssaoFactor * ssaoFactor;
 	
+
+	//
+	//	Light probes:
+	//	https://github.com/demiurghg/IronStar/blob/ed5d9348552548bd7a187a436894a6b27a5d8ea9/Shaders/lighting.hlsl
+	//
+	int	lightIndex	=	0;//(int)(aogridValue.w * 255);
+	roughness	=	0.05;
+	specular	=	1.0f;
+	diffuse		=	0.0f;
+	
+
+	totalLight.xyz	+=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, lightIndex), 4).rgb * diffuse * ssaoFactor;// * falloff * ssao.rgb;
+
+	float	NoV 	= 	dot(viewDirN, normal.xyz);
+
+	float2 	ab		=	EnvLut		 .SampleLevel( SamplerLinearClamp, float2(roughness, 1-NoV), 0 ).xy;
+	float3 	env		=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflect(-viewDir, normal.xyz), lightIndex), sqrt(roughness)*6 ).rgb;
+
+	totalLight.xyz	+=	env * ( specular * ab.x + ab.y ) * aogridValue.w * pow(ssaoFactor, 2);	
+	
+
 	return totalLight;
 }
 

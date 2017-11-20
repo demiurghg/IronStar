@@ -23,6 +23,21 @@ namespace Fusion {
 		}
 
 
+		public static int IndexOfMaximum<T>( this IEnumerable<T> list, Func<T,float> selector )
+		{
+			var maximum	=	float.MinValue;
+			var index	=	-1;
+			for (int i=0; i<list.Count(); i++) {
+				var value = selector( list.ElementAt(i) );
+				if (maximum<value) {
+					maximum = value;
+					index = i;
+				}
+			}
+			return index;
+		}
+
+
 		public static T SelectMinOrDefault<T>(this IEnumerable<T> list, Func<T, float> selector)
 		{
 			if (!list.Any()) return default(T);

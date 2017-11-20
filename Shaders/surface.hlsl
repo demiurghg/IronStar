@@ -44,6 +44,7 @@ SamplerState			DecalSampler		: 	register(s3);
 SamplerComparisonState	ShadowSampler		: 	register(s4);
 SamplerState			ParticleSampler		: 	register(s5);
 SamplerState			MipSampler			: 	register(s6);
+SamplerState			SamplerLinearClamp	:	register(s7);
 
 Texture2D				Textures[4]			: 	register(t0);
 Texture2D				MipIndex			: 	register(t4);
@@ -57,6 +58,8 @@ Texture2D				ShadowMapParticles	:	register(t11);
 Texture2D				AmbientOcclusion	:	register(t12);
 TextureCube				FogTable			: 	register(t13);
 Texture3D				OcclusionGrid		: 	register(t14);
+TextureCubeArray		RadianceCache		:	register(t15);
+Texture2D				EnvLut				:	register(t16);
 
 #ifdef _UBERSHADER
 $ubershader FORWARD RIGID|SKINNED +ANISOTROPIC

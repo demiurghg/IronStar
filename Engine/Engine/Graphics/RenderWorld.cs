@@ -331,7 +331,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		internal void Render ( GameTime gameTime, StereoEye stereoEye, RenderTargetSurface targetSurface )
 		{
-			if ( captureRadiance ) {
+			if ( Game.Keyboard.IsKeyDown(Input.Keys.T)) {
 				RenderRadiance();
 				captureRadiance = false;
 			}

@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using Fusion.Development;
 using Fusion.Engine.Graphics.Ubershaders;
 using System.Runtime.CompilerServices;
+using System.IO;
 
 namespace Fusion.Engine.Graphics {
 
@@ -25,6 +26,7 @@ namespace Fusion.Engine.Graphics {
 		ConstantBuffer	constBufferSubset;
 		Ubershader		surfaceShader;
 		StateFactory	factory;
+		UserTexture		envLut;
 
 		STAGE			cbDataStage		=	new STAGE();
 		INSTANCE		cbDataInstance	=	new INSTANCE();
@@ -62,6 +64,10 @@ namespace Fusion.Engine.Graphics {
 			constBufferInstance	=	new ConstantBuffer( Game.GraphicsDevice, typeof(INSTANCE) );
 			constBufferBones	=	new ConstantBuffer( Game.GraphicsDevice, typeof(Matrix), MaxBones );
 			constBufferSubset	=	new ConstantBuffer( Game.GraphicsDevice, typeof(SUBSET) );
+
+			using ( var ms = new MemoryStream( Properties.Resources.envLut ) ) {
+				envLut    =   UserTexture.CreateFromTga( rs, ms, false );
+			}
 
 			Game.Reloading += (s,e) => LoadContent();
 		}
@@ -114,6 +120,7 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref constBufferInstance );
 				SafeDispose( ref constBufferBones );
 				SafeDispose( ref constBufferSubset );
+				SafeDispose( ref envLut );
 			}
 
 			base.Dispose( disposing );
@@ -224,6 +231,8 @@ namespace Fusion.Engine.Graphics {
 
 			device.PixelShaderResources[13]	=	rs.Sky.SkyCube;
 			device.PixelShaderResources[14]	=	rs.LightManager.OcclusionGrid;
+			device.PixelShaderResources[15]	=	rs.RenderWorld.RadianceCache;
+			device.PixelShaderResources[16]	=	envLut.Srv;
 
 
 			//	setup samplers :
@@ -236,6 +245,7 @@ namespace Fusion.Engine.Graphics {
 			device.PixelShaderSamplers[4]	= shadowSampler;
 			device.PixelShaderSamplers[5]	= SamplerState.LinearClamp;
 			device.PixelShaderSamplers[6]	= rs.VTSystem.UseAnisotropic ? SamplerState.VTAnisotropicIndex : SamplerState.VTTrilinearIndex;
+			device.PixelShaderSamplers[7]	= SamplerState.LinearClamp;
 
 			if (surfaceShader==null || rs.SkipSceneRendering) {
 				return false;

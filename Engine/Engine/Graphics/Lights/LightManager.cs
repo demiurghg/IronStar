@@ -98,13 +98,7 @@ namespace Fusion.Engine.Graphics {
 		public void Update ( GameTime gameTime, LightSet lightSet, IEnumerable<MeshInstance> instances )
 		{
 			if (Game.Keyboard.IsKeyDown(Input.Keys.R)) {
-				UpdateIrradianceMap(instances, rs.RenderWorld.Debug);
-			}
-
-			if (Game.Keyboard.IsKeyDown(Input.Keys.T)) {
-				foreach ( var p in points ) {
-					rs.RenderWorld.Debug.DrawPoint( p, 0.1f, Color.Orange );
-				}
+				UpdateIrradianceMap(instances, lightSet, rs.RenderWorld.Debug);
 			}
 
 
@@ -140,7 +134,7 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="instances"></param>
-		public void UpdateIrradianceMap ( IEnumerable<MeshInstance> instances, DebugRender dr )
+		public void UpdateIrradianceMap ( IEnumerable<MeshInstance> instances, LightSet lightSet, DebugRender dr )
 		{
 			Log.Message("Building ambient occlusion map");
 
@@ -187,6 +181,7 @@ namespace Fusion.Engine.Graphics {
 
 								var localAO		=	ComputeLocalOcclusion( scene, position, 5 );
 								var globalAO	=	ComputeSkyOcclusion( scene, position, 512 );
+								//var probeIndex	=	GetLightProbeIndex( scene, lightSet, position );
 
 								byte byteX		=	(byte)( 255 * (globalAO.X * 0.5+0.5) );
 								byte byteY		=	(byte)( 255 * (globalAO.Y * 0.5+0.5) );
@@ -217,6 +212,34 @@ namespace Fusion.Engine.Graphics {
 		int	ComputeAddress ( int x, int y, int z ) 
 		{
 			return x + y * Width + z * Height*Width;
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="scene"></param>
+		/// <param name="point"></param>
+		/// <returns></returns>
+		byte GetLightProbeIndex ( RtcScene scene, LightSet lightSet, Vector3 point )
+		{
+			int count = Math.Min(255, lightSet.EnvLights.Count);
+
+			return GetClosestLightProbe( lightSet, point );
+		}
+
+
+
+		byte GetClosestLightProbe ( LightSet lightSet, Vector3 point )
+		{
+			int index = lightSet.EnvLights.IndexOfMaximum( (p) => Vector3.Distance( point, p.Position ) );
+
+			if (index<0) {
+				return 0;
+			} else {
+				return (byte)index;
+			}
 		}
 
 

@@ -60,6 +60,8 @@ TextureCube				FogTable			: 	register(t13);
 Texture3D				OcclusionGrid		: 	register(t14);
 TextureCubeArray		RadianceCache		:	register(t15);
 Texture2D				EnvLut				:	register(t16);
+Texture3D				IndicesGrid			: 	register(t17);
+Texture3D				WeightsGrid			: 	register(t18);
 
 #ifdef _UBERSHADER
 $ubershader FORWARD RIGID|SKINNED +ANISOTROPIC

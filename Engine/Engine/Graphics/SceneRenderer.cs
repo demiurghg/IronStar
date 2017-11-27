@@ -233,6 +233,8 @@ namespace Fusion.Engine.Graphics {
 			device.PixelShaderResources[14]	=	rs.LightManager.OcclusionGrid;
 			device.PixelShaderResources[15]	=	rs.RenderWorld.RadianceCache;
 			device.PixelShaderResources[16]	=	envLut.Srv;
+			device.PixelShaderResources[17]	=	rs.LightManager.LightProbeIndices;
+			device.PixelShaderResources[18]	=	rs.LightManager.LightProbeWeights;
 
 
 			//	setup samplers :

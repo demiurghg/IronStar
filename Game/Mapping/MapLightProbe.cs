@@ -18,16 +18,10 @@ namespace IronStar.Mapping {
 	public class MapLightProbe : MapNode {
 		
 		[Category("Light probe")]
-		public float Width { get; set; } = 2;
+		public float InnerRadius { get; set; } = 1;
 		
 		[Category("Light probe")]
-		public float Height { get; set; } = 2;
-		
-		[Category("Light probe")]
-		public float Depth { get; set; } = 2;
-		
-		[Category("Light probe")]
-		public float Factor { get; set; } = 1;
+		public float OuterRadius { get; set; } = 2;
 
 
 		EnvLight	light;
@@ -51,7 +45,7 @@ namespace IronStar.Mapping {
 
 			var lightSet	=	world.Game.RenderSystem.RenderWorld.LightSet;
 
-			light	=	new EnvLight( WorldMatrix.TranslationVector, Width, Height, Depth, Factor );
+			light	=	new EnvLight( WorldMatrix.TranslationVector, InnerRadius, OuterRadius );
 
 			ResetNode( world );
 
@@ -76,13 +70,22 @@ namespace IronStar.Mapping {
 		{
 			dr.DrawPoint( WorldMatrix.TranslationVector, 0.5f, color, 1 );
 
-			var bbox1	=	new BoundingBox( Width, Height, Depth );
-			var bbox2	=	new BoundingBox( 0.5f, 0.5f, 0.5f );
+			//var bbox1	=	new BoundingBox( Width, Height, Depth );
+			//var bbox2	=	new BoundingBox( 0.5f, 0.5f, 0.5f );
+
+			//if (selected) {
+			//	dr.DrawBox( bbox1, WorldMatrix, color );
+			//	dr.D
+			//} else {
+			//	dr.DrawBox( bbox2, WorldMatrix, color );
+			//}
 
 			if (selected) {
-				dr.DrawBox( bbox1, WorldMatrix, color );
+				dr.DrawSphere( WorldMatrix.TranslationVector, InnerRadius, Color.Cyan, 32 );
+				dr.DrawSphere( WorldMatrix.TranslationVector, OuterRadius, Color.Cyan, 32 );
+				dr.DrawSphere( WorldMatrix.TranslationVector, 0.33f, color, 16 );
 			} else {
-				dr.DrawBox( bbox2, WorldMatrix, color );
+				dr.DrawSphere( WorldMatrix.TranslationVector, 0.33f, color, 16 );
 			}
 		}
 

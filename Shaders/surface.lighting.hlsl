@@ -219,22 +219,36 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	//	Light probes:
 	//	https://github.com/demiurghg/IronStar/blob/ed5d9348552548bd7a187a436894a6b27a5d8ea9/Shaders/lighting.hlsl
 	//
-	int	lightIndex	=	0;//(int)(aogridValue.w * 255);
-	roughness	=	0.05;
+	int4	lightProbeIndices		=	int4(IndicesGrid.Sample( SamplerPoint, aogridCoords ).rgba * 255);
+	float4	lightProbeWeights		=		 IndicesGrid.Sample( SamplerLinear, aogridCoords ).rgba;
+
+	roughness	=	0.01;
 	specular	=	1.0f;
 	diffuse		=	0.0f;
-	
 
-	totalLight.xyz	+=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, lightIndex), 4).rgb * diffuse * ssaoFactor;// * falloff * ssao.rgb;
+	float3	ambientDiffuse	=	float3(0,0,0);
+	float3	ambientSpecular	=	float3(0,0,0);
+
+	ambientDiffuse	+=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, lightProbeIndices.x), 4).rgb * lightProbeWeights.x;
+	ambientDiffuse	+=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, lightProbeIndices.y), 4).rgb * lightProbeWeights.y;
+	ambientDiffuse	+=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, lightProbeIndices.z), 4).rgb * lightProbeWeights.z;
+	ambientDiffuse	+=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, lightProbeIndices.w), 4).rgb * lightProbeWeights.w;
+
+	ambientSpecular	+=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflect(-viewDir, normal.xyz), lightProbeIndices.x), sqrt(roughness)*6 ).rgb * lightProbeWeights.x;
+	ambientSpecular	+=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflect(-viewDir, normal.xyz), lightProbeIndices.y), sqrt(roughness)*6 ).rgb * lightProbeWeights.y;
+	ambientSpecular	+=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflect(-viewDir, normal.xyz), lightProbeIndices.z), sqrt(roughness)*6 ).rgb * lightProbeWeights.z;
+	ambientSpecular	+=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflect(-viewDir, normal.xyz), lightProbeIndices.w), sqrt(roughness)*6 ).rgb * lightProbeWeights.w;
 
 	float	NoV 	= 	dot(viewDirN, normal.xyz);
-
-	float2 	ab		=	EnvLut		 .SampleLevel( SamplerLinearClamp, float2(roughness, 1-NoV), 0 ).xy;
-	float3 	env		=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflect(-viewDir, normal.xyz), lightIndex), sqrt(roughness)*6 ).rgb;
-
-	totalLight.xyz	+=	env * ( specular * ab.x + ab.y ) * aogridValue.w * pow(ssaoFactor, 2);	
+	float2 	ab		=	EnvLut.SampleLevel( SamplerLinearClamp, float2(roughness, 1-NoV), 0 ).xy;
 	
+	ambientDiffuse	=	ambientDiffuse  * diffuse * aogridValue.w * ssaoFactor;
+	ambientSpecular	=	ambientSpecular	* (specular * ab.x + ab.y) * aogridValue.w * pow(ssaoFactor, 2);
 
+	totalLight.xyz	+=	ambientDiffuse + ambientSpecular;	
+	
+	totalLight.xyz	=	ambientSpecular;
+	
 	return totalLight;
 }
 

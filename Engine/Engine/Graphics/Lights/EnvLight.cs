@@ -21,12 +21,18 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Size of light probe
 		/// </summary>
-		public Vector3	Dimensions { get; set; }
+		public float	InnerRadius { get; set; }
 
 		/// <summary>
-		/// Outer radius of the environment light.
+		/// Size of light probe
 		/// </summary>
-		public float	Factor { get; set; }
+		public float	OuterRadius { get; set; }
+
+
+		internal bool		Visible = true;
+		internal Int3		MinExtent;
+		internal Int3		MaxExtent;
+
 
 		/// <summary>
 		/// Creates instance of EnvLight
@@ -34,9 +40,10 @@ namespace Fusion.Engine.Graphics {
 		public EnvLight ()
 		{
 			Position	=	Vector3.Zero;
-			Dimensions	=	Vector3.Zero;
-			Factor		=	0;
+			InnerRadius	=	0;
+			OuterRadius	=	1;
 		}
+
 
 
 		/// <summary>
@@ -45,11 +52,11 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="position"></param>
 		/// <param name="innerRadius"></param>
 		/// <param name="outerRadius"></param>
-		public EnvLight ( Vector3 position, float w, float h, float d, float f )
+		public EnvLight ( Vector3 position, float innerRadius, float outerRadius )
 		{
 			this.Position		=	position;
-			this.Dimensions		=	new Vector3(w,h,d);
-			this.Factor			=	f;
+			this.InnerRadius	=	innerRadius;
+			this.OuterRadius	=	outerRadius;
 		}
 		
 	}

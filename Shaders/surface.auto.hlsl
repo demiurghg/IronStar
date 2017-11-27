@@ -64,6 +64,14 @@ struct LIGHTINDEX {
 	uint       Count;                         // offset:    4
 };
 
+// Fusion.Engine.Graphics.SceneRenderer+LIGHTPROBE
+// Marshal.SizeOf = 24
+struct LIGHTPROBE {
+	float4     Position;                      // offset:    0
+	float      InnerRadius;                   // offset:   16
+	float      OuterRadius;                   // offset:   20
+};
+
 // Fusion.Engine.Graphics.SceneRenderer+LIGHT
 // Marshal.SizeOf = 120
 struct LIGHT {

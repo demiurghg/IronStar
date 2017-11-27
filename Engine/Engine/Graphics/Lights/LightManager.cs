@@ -33,11 +33,13 @@ namespace Fusion.Engine.Graphics {
 		public ShadowMap shadowMap;
 
 
-		public Texture3D OcclusionGrid {
-			get { return occlusionGrid; }
-		}
+		public Texture3D OcclusionGrid		{ get { return occlusionGrid; }	}
+		public Texture3D LightProbeIndices	{ get { return lightProbeIndices; }	}
+		public Texture3D LightProbeWeights	{ get { return lightProbeWeights; }	}
 
 		Texture3D occlusionGrid;
+		Texture3D lightProbeIndices;
+		Texture3D lightProbeWeights;
 		
 
 
@@ -60,8 +62,9 @@ namespace Fusion.Engine.Graphics {
 
 			shadowMap	=	new ShadowMap( rs, rs.ShadowQuality );
 
-			occlusionGrid	=	new Texture3D( rs.Device, ColorFormat.Rgba8, Width,Height,Depth );
-
+			occlusionGrid		=	new Texture3D( rs.Device, ColorFormat.Rgba8, Width,Height,Depth );
+			lightProbeIndices	=	new Texture3D( rs.Device, ColorFormat.Rgba8, Width,Height,Depth );
+			lightProbeWeights	=	new Texture3D( rs.Device, ColorFormat.Rgba8, Width,Height,Depth );
 		}
 
 
@@ -77,6 +80,8 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref lightGrid );
 				SafeDispose( ref shadowMap );
 				SafeDispose( ref occlusionGrid );
+				SafeDispose( ref lightProbeIndices );
+				SafeDispose( ref lightProbeWeights );
 			}
 
 			base.Dispose( disposing );
@@ -87,7 +92,7 @@ namespace Fusion.Engine.Graphics {
 		const int	Height		=	64;
 		const int	Depth		=	128;
 		const float GridStep	=	1.0f;
-		const int	SampleNum	=	64;
+		const int	SampleNum	=	16;
 
 
 		/// <summary>
@@ -165,7 +170,11 @@ namespace Fusion.Engine.Graphics {
 
 					Log.Message("...tracing");
 
-					var data = new Color[ Width*Height*Depth ];
+					var data	= new Color[ Width*Height*Depth ];
+					var indices = new Color[ Width*Height*Depth ];
+					var weights = new Color[ Width*Height*Depth ];
+
+					Color lpIndex, lpWeight;
 
 
 					for ( int x=0; x<Width;  x++ ) {
@@ -181,6 +190,8 @@ namespace Fusion.Engine.Graphics {
 
 								var localAO		=	ComputeLocalOcclusion( scene, position, 5 );
 								var globalAO	=	ComputeSkyOcclusion( scene, position, 512 );
+
+								GetLightProbeIndicesAndWeights( lightSet, position, out lpIndex, out lpWeight );
 								//var probeIndex	=	GetLightProbeIndex( scene, lightSet, position );
 
 								byte byteX		=	(byte)( 255 * (globalAO.X * 0.5+0.5) );
@@ -189,11 +200,16 @@ namespace Fusion.Engine.Graphics {
 								byte byteW		=	(byte)( 255 * localAO );
 
 								data[index]		=	new Color( byteX, byteY, byteZ, byteW );
+
+								indices[index]	=	lpIndex;
+								weights[index]	=	lpWeight;
 							}
 						}
 					}
 
 					occlusionGrid.SetData( data );
+					lightProbeIndices.SetData( indices );
+					lightProbeWeights.SetData( weights );
 
 					Log.Message("Done!");
 				}
@@ -241,6 +257,34 @@ namespace Fusion.Engine.Graphics {
 				return (byte)index;
 			}
 		}
+
+
+
+
+		void GetLightProbeIndicesAndWeights ( LightSet lightSet, Vector3 point, out Color indices, out Color weights )
+		{
+			indices		=	Color.Zero;
+			weights		=	Color.Zero;
+
+			var weight4	=	rand.NextVector4( Vector4.Zero, Vector4.One );
+			var sum		=	Vector4.Dot( Vector4.One, weight4 );
+
+				weight4	/=	(sum + 0.00001f);
+
+			int count	=	lightSet.EnvLights.Count;
+
+			indices.R	=	(byte)(rand.Next(0, count));
+			indices.G	=	(byte)(rand.Next(0, count));
+			indices.B	=	(byte)(rand.Next(0, count));
+			indices.A	=	(byte)(rand.Next(0, count));
+
+			weights.R	=	(byte)(weight4.X * 255);
+			weights.G	=	(byte)(weight4.Y * 255);
+			weights.B	=	(byte)(weight4.Z * 255);
+			weights.A	=	(byte)(weight4.W * 255);
+
+		}
+
 
 
 

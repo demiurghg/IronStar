@@ -105,6 +105,9 @@ namespace Fusion.Engine.Graphics {
 			[FieldOffset( 0)]	public uint		Offset;		///	Light index buffer offset
 			[FieldOffset( 4)]	public uint		Count;		/// [Spot count][Omni count]
 															
+			public void AddLightProbe () {
+				Count += (1<<24);
+			}
 			public void AddDecal () {
 				Count += (1<<12);
 			}
@@ -112,12 +115,32 @@ namespace Fusion.Engine.Graphics {
 				Count += (1<<0);
 			}
 
-			public ushort DecalCount { get { return (ushort)( (Count & 0xFFF000) >> 12 ); } }
-			public ushort LightCount { get { return (ushort)( (Count & 0x000FFF) >> 0  ); } }
+			public ushort ProbeCount { get { return (ushort)( (Count & 0xFF000000) >> 24 ); } }
+			public ushort DecalCount { get { return (ushort)( (Count & 0x00FFF000) >> 12 ); } }
+			public ushort LightCount { get { return (ushort)( (Count & 0x00000FFF) >> 0  ); } }
 
-			public ushort TotalCount { get { return (ushort)(DecalCount + LightCount); } }
+			public ushort TotalCount { get { return (ushort)(DecalCount + LightCount + ProbeCount); } }
 		}
 
+
+
+		[ShaderStructure]
+		[StructLayout(LayoutKind.Sequential)]
+		public struct LIGHTPROBE {	
+			//public Matrix	WorldMatrix;
+			public Vector4	Position;
+			public float	InnerRadius;
+			public float	OuterRadius;
+
+			public void FromLightProbe ( EnvLight light ) 
+			{
+				#region Update structure fields from OmniLight object
+				Position	=	new Vector4( light.Position, 1 );
+				InnerRadius	=	light.InnerRadius;
+				OuterRadius	=	light.OuterRadius;
+				#endregion
+			}
+		}
 
 
 		[ShaderStructure]

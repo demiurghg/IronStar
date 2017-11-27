@@ -298,6 +298,41 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="view"></param>
+		/// <param name="proj"></param>
+		/// <param name="lightSet"></param>
+		void UpdateLightProbeExtentsAndVisibility ( Matrix view, Matrix proj, LightSet lightSet )
+		{
+			var vp = new Rectangle(0,0,1,1);
+
+			foreach ( var lightProbe in lightSet.EnvLights ) {
+
+				Vector4 min, max;
+				lightProbe.Visible	=	false;
+
+				if ( Extents.GetBasisExtent( view, proj, vp, Matrix.Identity, false, out min, out max ) ) {
+
+					min.Z	=	GetGridSlice( -min.Z );
+					max.Z	=	GetGridSlice( -max.Z );
+
+					lightProbe.Visible		=	true;
+
+					lightProbe.MaxExtent.X	=	Math.Min( Width,  (int)Math.Ceiling( max.X * Width  ) );
+					lightProbe.MaxExtent.Y	=	Math.Min( Height, (int)Math.Ceiling( max.Y * Height ) );
+					lightProbe.MaxExtent.Z	=	Math.Min( Depth,  (int)Math.Ceiling( max.Z * Depth  ) );
+
+					lightProbe.MinExtent.X	=	Math.Max( 0, (int)Math.Floor( min.X * Width  ) );
+					lightProbe.MinExtent.Y	=	Math.Max( 0, (int)Math.Floor( min.Y * Height ) );
+					lightProbe.MinExtent.Z	=	Math.Max( 0, (int)Math.Floor( min.Z * Depth  ) );
+				}
+			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="lightSet"></param>
 		void ClusterizeLightsAndDecals ( Matrix view, Matrix proj, LightSet lightSet )
 		{
@@ -338,6 +373,17 @@ namespace Fusion.Engine.Graphics {
 					for (int k=dcl.MinExtent.Z; k<dcl.MaxExtent.Z; k++) {
 						int a = ComputeAddress(i,j,k);
 						lightGrid[a].AddDecal();
+					}
+				}
+			}
+
+			foreach ( EnvLight lpb in lightSet.EnvLights ) {
+				if (lpb.Visible) {
+					for (int i=lpb.MinExtent.X; i<lpb.MaxExtent.X; i++)
+					for (int j=lpb.MinExtent.Y; j<lpb.MaxExtent.Y; j++)
+					for (int k=lpb.MinExtent.Z; k<lpb.MaxExtent.Z; k++) {
+						int a = ComputeAddress(i,j,k);
+						lightGrid[a].AddLightProbe();
 					}
 				}
 			}

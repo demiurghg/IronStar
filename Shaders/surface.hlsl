@@ -46,22 +46,21 @@ SamplerState			ParticleSampler		: 	register(s5);
 SamplerState			MipSampler			: 	register(s6);
 SamplerState			SamplerLinearClamp	:	register(s7);
 
-Texture2D				Textures[4]			: 	register(t0);
-Texture2D				MipIndex			: 	register(t4);
-Texture3D<uint2>		ClusterTable		: 	register(t5);
-Buffer<uint>			LightIndexTable		: 	register(t6);
-StructuredBuffer<LIGHT>	LightDataTable		:	register(t7);
-StructuredBuffer<DECAL>	DecalDataTable		:	register(t8);
-Texture2D				DecalImages			:	register(t9);
-Texture2D				ShadowMap			:	register(t10);
-Texture2D				ShadowMapParticles	:	register(t11);
-Texture2D				AmbientOcclusion	:	register(t12);
-TextureCube				FogTable			: 	register(t13);
-Texture3D				OcclusionGrid		: 	register(t14);
-TextureCubeArray		RadianceCache		:	register(t15);
-Texture2D				EnvLut				:	register(t16);
-Texture3D				IndicesGrid			: 	register(t17);
-Texture3D				WeightsGrid			: 	register(t18);
+Texture2D					Textures[4]			: 	register(t0);
+Texture2D					MipIndex			: 	register(t4);
+Texture3D<uint2>			ClusterTable		: 	register(t5);
+Buffer<uint>				LightIndexTable		: 	register(t6);
+StructuredBuffer<LIGHT>		LightDataTable		:	register(t7);
+StructuredBuffer<DECAL>		DecalDataTable		:	register(t8);
+Texture2D					DecalImages			:	register(t9);
+Texture2D					ShadowMap			:	register(t10);
+Texture2D					ShadowMapParticles	:	register(t11);
+Texture2D					AmbientOcclusion	:	register(t12);
+TextureCube					FogTable			: 	register(t13);
+Texture3D					OcclusionGrid		: 	register(t14);
+TextureCubeArray			RadianceCache		:	register(t15);
+Texture2D					EnvLut				:	register(t16);
+StructuredBuffer<LIGHTPROBE> ProbeDataTable		:	register(t17);
 
 #ifdef _UBERSHADER
 $ubershader FORWARD RIGID|SKINNED +ANISOTROPIC

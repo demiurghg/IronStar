@@ -15,9 +15,10 @@ using Fusion.Engine.Graphics.Lights;
 namespace Fusion.Engine.Graphics {
 	public class LightGrid : DisposableBase {
 
-		const int MaxLights = 4096;
-		const int MaxDecals = 4096;
-		const int IndexTableSize = 256 * 512;
+		const int MaxLights			= 4096;
+		const int MaxDecals			= 4096;
+		const int MaxLightProbes	= 256;
+		const int IndexTableSize	= 256 * 512;
 
 		public readonly Game Game;
 		public readonly int Width;
@@ -32,9 +33,11 @@ namespace Fusion.Engine.Graphics {
 		FormattedBuffer  indexData;
 		StructuredBuffer lightData;
 		StructuredBuffer decalData;
+		StructuredBuffer probeData;
 
 		internal Texture3D GridTexture { get { return gridTexture;	} }
 		internal StructuredBuffer LightDataGpu { get { return lightData; } }
+		internal StructuredBuffer ProbeDataGpu { get { return probeData; } }
 		internal StructuredBuffer DecalDataGpu { get { return decalData; } }
 		internal FormattedBuffer  IndexDataGpu { get { return indexData; } }
 
@@ -62,9 +65,10 @@ namespace Fusion.Engine.Graphics {
 
 			gridTexture	=	new Texture3D( rs.Device, ColorFormat.Rg32, width, height, depth );
 
-			lightData	=	new StructuredBuffer( rs.Device, typeof(SceneRenderer.LIGHT), MaxLights, StructuredBufferFlags.None );
-			decalData	=	new StructuredBuffer( rs.Device, typeof(SceneRenderer.DECAL), MaxDecals, StructuredBufferFlags.None );
-			indexData	=	new FormattedBuffer( rs.Device, Drivers.Graphics.VertexFormat.UInt, IndexTableSize, StructuredBufferFlags.None ); 
+			lightData		=	new StructuredBuffer( rs.Device, typeof(SceneRenderer.LIGHT),		MaxLights,		StructuredBufferFlags.None );
+			decalData		=	new StructuredBuffer( rs.Device, typeof(SceneRenderer.DECAL),		MaxDecals,		StructuredBufferFlags.None );
+			probeData	=	new StructuredBuffer( rs.Device, typeof(SceneRenderer.LIGHTPROBE),	MaxLightProbes, StructuredBufferFlags.None );
+			indexData		=	new FormattedBuffer( rs.Device, Drivers.Graphics.VertexFormat.UInt, IndexTableSize, StructuredBufferFlags.None ); 
 
 			var rand = new Random();
 			var data = new Int2[GridLinearSize];
@@ -107,6 +111,7 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref gridTexture );
 				SafeDispose( ref indexData );
 				SafeDispose( ref lightData );
+				SafeDispose( ref probeData );
 				SafeDispose( ref decalData );
 			}
 
@@ -130,6 +135,7 @@ namespace Fusion.Engine.Graphics {
 			UpdateOmniLightExtentsAndVisibility( view, proj, lightSet );
 			UpdateSpotLightExtentsAndVisibility( view, proj, lightSet, vpos );
 			UpdateDecalExtentsAndVisibility( view, proj, lightSet );
+			UpdateLightProbeExtentsAndVisibility( view, proj, lightSet );
 		}
 
 
@@ -305,25 +311,25 @@ namespace Fusion.Engine.Graphics {
 		{
 			var vp = new Rectangle(0,0,1,1);
 
-			foreach ( var lightProbe in lightSet.EnvLights ) {
+			foreach ( var lpb in lightSet.LightProbes ) {
 
 				Vector4 min, max;
-				lightProbe.Visible	=	false;
+				lpb.Visible	=	false;
 
-				if ( Extents.GetBasisExtent( view, proj, vp, Matrix.Identity, false, out min, out max ) ) {
+				if ( Extents.GetSphereExtent( view, proj, lpb.Position, vp, lpb.OuterRadius, false, out min, out max ) ) {
 
-					min.Z	=	GetGridSlice( -min.Z );
-					max.Z	=	GetGridSlice( -max.Z );
+					min.Z	=	GetGridSlice( min.Z );
+					max.Z	=	GetGridSlice( max.Z );
 
-					lightProbe.Visible		=	true;
+					lpb.Visible		=	true;
 
-					lightProbe.MaxExtent.X	=	Math.Min( Width,  (int)Math.Ceiling( max.X * Width  ) );
-					lightProbe.MaxExtent.Y	=	Math.Min( Height, (int)Math.Ceiling( max.Y * Height ) );
-					lightProbe.MaxExtent.Z	=	Math.Min( Depth,  (int)Math.Ceiling( max.Z * Depth  ) );
+					lpb.MaxExtent.X	=	Math.Min( Width,  (int)Math.Ceiling( max.X * Width  ) );
+					lpb.MaxExtent.Y	=	Math.Min( Height, (int)Math.Ceiling( max.Y * Height ) );
+					lpb.MaxExtent.Z	=	Math.Min( Depth,  (int)Math.Ceiling( max.Z * Depth  ) );
 
-					lightProbe.MinExtent.X	=	Math.Max( 0, (int)Math.Floor( min.X * Width  ) );
-					lightProbe.MinExtent.Y	=	Math.Max( 0, (int)Math.Floor( min.Y * Height ) );
-					lightProbe.MinExtent.Z	=	Math.Max( 0, (int)Math.Floor( min.Z * Depth  ) );
+					lpb.MinExtent.X	=	Math.Max( 0, (int)Math.Floor( min.X * Width  ) );
+					lpb.MinExtent.Y	=	Math.Max( 0, (int)Math.Floor( min.Y * Height ) );
+					lpb.MinExtent.Z	=	Math.Max( 0, (int)Math.Floor( min.Z * Depth  ) );
 				}
 			}
 		}
@@ -342,6 +348,7 @@ namespace Fusion.Engine.Graphics {
 			var lightGrid	=	new SceneRenderer.LIGHTINDEX[GridLinearSize];
 			var lightData	=	new SceneRenderer.LIGHT[MaxLights];
 			var decalData	=	new SceneRenderer.DECAL[MaxDecals];
+			var probeData	=	new SceneRenderer.LIGHTPROBE[MaxLightProbes];
 
 			#region	Compute light and decal count
 			foreach ( OmniLight ol in lightSet.OmniLights ) {
@@ -377,7 +384,7 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 
-			foreach ( EnvLight lpb in lightSet.EnvLights ) {
+			foreach ( LightProbe lpb in lightSet.LightProbes ) {
 				if (lpb.Visible) {
 					for (int i=lpb.MinExtent.X; i<lpb.MaxExtent.X; i++)
 					for (int j=lpb.MinExtent.Y; j<lpb.MaxExtent.Y; j++)
@@ -398,6 +405,7 @@ namespace Fusion.Engine.Graphics {
 
 				offset += lightGrid[i].LightCount;
 				offset += lightGrid[i].DecalCount;
+				offset += lightGrid[i].ProbeCount;
 
 				lightGrid[i].Count	= 0;
 			}
@@ -438,6 +446,8 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 
+			index = 0;
+
 			foreach ( var dcl in lightSet.Decals ) {
 				if (dcl.Visible) {
 					for (int i=dcl.MinExtent.X; i<dcl.MaxExtent.X; i++)
@@ -454,11 +464,30 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 
+			index = 0;
+
+			foreach ( var lpb in lightSet.LightProbes ) {
+				if (lpb.Visible) {
+					for (int i=lpb.MinExtent.X; i<lpb.MaxExtent.X; i++)
+					for (int j=lpb.MinExtent.Y; j<lpb.MaxExtent.Y; j++)
+					for (int k=lpb.MinExtent.Z; k<lpb.MaxExtent.Z; k++) {
+						int a = ComputeAddress(i,j,k);
+						indexData[ lightGrid[a].Offset + lightGrid[a].TotalCount ] = index;
+						lightGrid[a].AddLightProbe();
+					}
+
+					probeData[index].FromLightProbe( lpb );
+
+					index++;
+				}
+			}
+
 
 			using ( new PixEvent( "Update cluster structures" ) ) {
 				LightDataGpu.SetData( lightData );
 				DecalDataGpu.SetData( decalData );
 				IndexDataGpu.SetData( indexData );
+				ProbeDataGpu.SetData( probeData );
 				gridTexture.SetData( lightGrid );
 			}
 		}

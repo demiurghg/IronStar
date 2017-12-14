@@ -131,8 +131,10 @@ namespace Fusion.Engine.Graphics {
 			public Vector4	Position;
 			public float	InnerRadius;
 			public float	OuterRadius;
+			public float	Dummy0;
+			public float	Dummy1;
 
-			public void FromLightProbe ( EnvLight light ) 
+			public void FromLightProbe ( LightProbe light ) 
 			{
 				#region Update structure fields from OmniLight object
 				Position	=	new Vector4( light.Position, 1 );

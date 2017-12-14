@@ -25,8 +25,9 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	
 	uint2	data		=	clusterTable.Load( int4(loadUVW,0) ).rg;
 	uint	index		=	data.r;
-	uint 	decalCount	=	(data.g & 0xFFF000) >> 12;
-	uint 	lightCount	=	(data.g & 0x000FFF) >> 0;
+	uint 	decalCount	=	(data.g & 0x00FFF000) >> 12;
+	uint 	lightCount	=	(data.g & 0x00000FFF) >> 0;
+	uint 	lpbCount	=	(data.g & 0xFF000000) >> 24;
 
 	float3 totalLight	=	0;
 	float3 totalAmbient	=	0;
@@ -84,10 +85,18 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	
 	
 	//----------------------------------------------------------------------------------------------
+	
+	// metallic = 1;
+	// baseColor = 1;
+	// roughness = 0.01;
 
 			normal 		= 	normalize(normal);
 	float3	diffuse 	=	lerp( baseColor, float3(0,0,0), metallic );
 	float3	specular  	=	lerp( float3(0.04f,0.04f,0.04f), baseColor, metallic );
+
+	/*roughness	=	0.1f;
+	specular	=	1.0f;
+	diffuse		=	0.0f;*/
 
 	//----------------------------------------------------------------------------------------------
 
@@ -188,67 +197,53 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		}
 	}
 	
-	
+	//----------------------------------------------------------------------------------------------
 	
 	//
-	//	Ambient
+	//	https://github.com/demiurghg/IronStar/blob/ed5d9348552548bd7a187a436894a6b27a5d8ea9/Shaders/lighting.hlsl
 	//
-	//totalLight = 0;
 	
-	float ssaoFactor		=	AmbientOcclusion.Load( int3( input.Position.xy,0 ) ).r;
-	
+	float3	ambientDiffuse	=	float3(0,0,0);
+	float3	ambientSpecular	=	float3(0,0,0);
+
+	//	occlusion & sky stuff :
+	float 	ssaoFactor		=	AmbientOcclusion.Load( int3( input.Position.xy,0 ) ).r;
 	float3	samplePos		=	worldPos + geometryNormal*1 + float3(1,1,1)/2;
-	
 	float3	aogridCoords	=	samplePos.xyz/float3(128,64,128);
-	
 	float4	aogridValue		=	OcclusionGrid.Sample( SamplerLinear, aogridCoords ).rgba;
 			aogridValue.xyz	=	aogridValue.xyz * 2 - 1;
-	//float4	aogridValue		=	OcclusionGrid.Load( int4(samplePos.x, samplePos.y, samplePos.z, 0) ).rgba;
 	
-	float ambientOcclusion 	=	pow(max(0,ssaoFactor*1-0),2) * aogridValue.a;
-	
-	float	localFactor		=	saturate(aogridValue.w) * 0.5;
 	float 	skyFactor		=	length( aogridValue.xyz );
 	float3 	skyBentNormal	=	aogridValue.xyz / (skyFactor + 0.1);
 	float 	skyTerm			=	max(0, dot( skyBentNormal, normal ) * 0.5 + 0.5) * skyFactor;
 	
-	totalLight.rgb			+=	(diffuse + specular).rgb * (Stage.Ambient.xyz) * (skyTerm) * ssaoFactor * ssaoFactor;
-	
-
-	//
-	//	Light probes:
-	//	https://github.com/demiurghg/IronStar/blob/ed5d9348552548bd7a187a436894a6b27a5d8ea9/Shaders/lighting.hlsl
-	//
-	int4	lightProbeIndices		=	int4(IndicesGrid.Sample( SamplerPoint, aogridCoords ).rgba * 255);
-	float4	lightProbeWeights		=		 IndicesGrid.Sample( SamplerLinear, aogridCoords ).rgba;
-
-	roughness	=	0.01;
-	specular	=	1.0f;
-	diffuse		=	0.0f;
-
-	float3	ambientDiffuse	=	float3(0,0,0);
-	float3	ambientSpecular	=	float3(0,0,0);
-
-	ambientDiffuse	+=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, lightProbeIndices.x), 4).rgb * lightProbeWeights.x;
-	ambientDiffuse	+=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, lightProbeIndices.y), 4).rgb * lightProbeWeights.y;
-	ambientDiffuse	+=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, lightProbeIndices.z), 4).rgb * lightProbeWeights.z;
-	ambientDiffuse	+=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, lightProbeIndices.w), 4).rgb * lightProbeWeights.w;
-
-	ambientSpecular	+=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflect(-viewDir, normal.xyz), lightProbeIndices.x), sqrt(roughness)*6 ).rgb * lightProbeWeights.x;
-	ambientSpecular	+=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflect(-viewDir, normal.xyz), lightProbeIndices.y), sqrt(roughness)*6 ).rgb * lightProbeWeights.y;
-	ambientSpecular	+=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflect(-viewDir, normal.xyz), lightProbeIndices.z), sqrt(roughness)*6 ).rgb * lightProbeWeights.z;
-	ambientSpecular	+=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflect(-viewDir, normal.xyz), lightProbeIndices.w), sqrt(roughness)*6 ).rgb * lightProbeWeights.w;
-
 	float	NoV 	= 	dot(viewDirN, normal.xyz);
 	float2 	ab		=	EnvLut.SampleLevel( SamplerLinearClamp, float2(roughness, 1-NoV), 0 ).xy;
 	
+	[loop]
+	for (i=0; i<lpbCount; i++) {
+		uint idx  			= 	LightIndexTable.Load( lightCount + decalCount + index + i );
+		float3 position		=	ProbeDataTable[idx].Position.xyz;
+		float  innerRadius	=	ProbeDataTable[idx].InnerRadius;
+		float  outerRadius	=	ProbeDataTable[idx].OuterRadius;
+		
+		float	localDist	=	distance( position.xyz, worldPos.xyz );
+		float	factor		=	saturate( 1 - (localDist-innerRadius)/(outerRadius-innerRadius) );
+		
+		float3	diffTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, idx), 4).rgb;
+		float3	specTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflect(-viewDir, normal.xyz), idx), sqrt(roughness)*6 ).rgb;
+
+		ambientDiffuse		=	lerp( ambientDiffuse,  diffTerm, factor );
+		ambientSpecular		=	lerp( ambientSpecular, specTerm, factor );//*/
+	}
+
 	ambientDiffuse	=	ambientDiffuse  * diffuse * aogridValue.w * ssaoFactor;
 	ambientSpecular	=	ambientSpecular	* (specular * ab.x + ab.y) * aogridValue.w * pow(ssaoFactor, 2);
-
+	
 	totalLight.xyz	+=	ambientDiffuse + ambientSpecular;	
 	
-	totalLight.xyz	=	ambientSpecular;
-	
+	//----------------------------------------------------------------------------------------------
+
 	return totalLight;
 }
 

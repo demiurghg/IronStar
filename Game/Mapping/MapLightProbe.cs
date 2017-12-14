@@ -24,7 +24,7 @@ namespace IronStar.Mapping {
 		public float OuterRadius { get; set; } = 2;
 
 
-		EnvLight	light;
+		LightProbe	light;
 
 
 
@@ -45,11 +45,11 @@ namespace IronStar.Mapping {
 
 			var lightSet	=	world.Game.RenderSystem.RenderWorld.LightSet;
 
-			light	=	new EnvLight( WorldMatrix.TranslationVector, InnerRadius, OuterRadius );
+			light	=	new LightProbe( WorldMatrix.TranslationVector, InnerRadius, OuterRadius );
 
 			ResetNode( world );
 
-			lightSet.EnvLights.Add( light );
+			lightSet.LightProbes.Add( light );
 		}
 
 
@@ -110,7 +110,7 @@ namespace IronStar.Mapping {
 
 		public override void KillNode( GameWorld world )
 		{
-			world.Game.RenderSystem.RenderWorld.LightSet.EnvLights.Remove( light );
+			world.Game.RenderSystem.RenderWorld.LightSet.LightProbes.Remove( light );
 		}
 
 

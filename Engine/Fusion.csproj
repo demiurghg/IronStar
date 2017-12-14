@@ -218,7 +218,7 @@
     <Compile Include="Engine\Graphics\Lights\CascadedShadowMap.cs" />
     <Compile Include="Engine\Graphics\Lights\Decal.cs" />
     <Compile Include="Engine\Graphics\Lights\DirectLight.cs" />
-    <Compile Include="Engine\Graphics\Lights\EnvLight.cs" />
+    <Compile Include="Engine\Graphics\Lights\LightProbe.cs" />
     <Compile Include="Engine\Graphics\Lights\ICSMController.cs" />
     <Compile Include="Engine\Graphics\Lights\LightManager.cs" />
     <Compile Include="Engine\Graphics\Lights\LightSet.cs" />

@@ -240,7 +240,7 @@ namespace Fusion.Engine.Graphics {
 		/// <returns></returns>
 		byte GetLightProbeIndex ( RtcScene scene, LightSet lightSet, Vector3 point )
 		{
-			int count = Math.Min(255, lightSet.EnvLights.Count);
+			int count = Math.Min(255, lightSet.LightProbes.Count);
 
 			return GetClosestLightProbe( lightSet, point );
 		}
@@ -249,7 +249,7 @@ namespace Fusion.Engine.Graphics {
 
 		byte GetClosestLightProbe ( LightSet lightSet, Vector3 point )
 		{
-			int index = lightSet.EnvLights.IndexOfMaximum( (p) => Vector3.Distance( point, p.Position ) );
+			int index = lightSet.LightProbes.IndexOfMaximum( (p) => Vector3.Distance( point, p.Position ) );
 
 			if (index<0) {
 				return 0;
@@ -266,23 +266,32 @@ namespace Fusion.Engine.Graphics {
 			indices		=	Color.Zero;
 			weights		=	Color.Zero;
 
-			var weight4	=	rand.NextVector4( Vector4.Zero, Vector4.One );
+			var envLights	=	lightSet.LightProbes.ToList();
+
+			var candidates	=	envLights.OrderByDescending( lp => Vector3.Distance(lp.Position, point) ).Take(4).ToArray();
+
+			indices.R	=	candidates.Length > 0 ? (byte)(envLights.IndexOf( candidates[0] )) : (byte)0;
+			indices.G	=	candidates.Length > 1 ? (byte)(envLights.IndexOf( candidates[1] )) : (byte)0;
+			indices.B	=	candidates.Length > 2 ? (byte)(envLights.IndexOf( candidates[2] )) : (byte)0;
+			indices.A	=	candidates.Length > 3 ? (byte)(envLights.IndexOf( candidates[3] )) : (byte)0;
+
+			var weight4	=	Vector4.Zero;
+
+			if (candidates.Length > 0) weight4.X = 1 / (Vector3.DistanceSquared(candidates[0].Position, point) + 1);
+			if (candidates.Length > 1) weight4.Y = 1 / (Vector3.DistanceSquared(candidates[1].Position, point) + 1);
+			if (candidates.Length > 2) weight4.Z = 1 / (Vector3.DistanceSquared(candidates[2].Position, point) + 1);
+			if (candidates.Length > 3) weight4.W = 1 / (Vector3.DistanceSquared(candidates[3].Position, point) + 1);
+
 			var sum		=	Vector4.Dot( Vector4.One, weight4 );
 
 				weight4	/=	(sum + 0.00001f);
 
-			int count	=	lightSet.EnvLights.Count;
-
-			indices.R	=	(byte)(rand.Next(0, count));
-			indices.G	=	(byte)(rand.Next(0, count));
-			indices.B	=	(byte)(rand.Next(0, count));
-			indices.A	=	(byte)(rand.Next(0, count));
+			int count	=	lightSet.LightProbes.Count;
 
 			weights.R	=	(byte)(weight4.X * 255);
 			weights.G	=	(byte)(weight4.Y * 255);
 			weights.B	=	(byte)(weight4.Z * 255);
 			weights.A	=	(byte)(weight4.W * 255);
-
 		}
 
 

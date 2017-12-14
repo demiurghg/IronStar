@@ -220,7 +220,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public void ClearWorld ()
 		{
-			LightSet.EnvLights.Clear();
+			LightSet.LightProbes.Clear();
 			LightSet.OmniLights.Clear();
 			LightSet.SpotLights.Clear();
 			LightSet.SpotAtlas	=	null;
@@ -543,7 +543,7 @@ namespace Fusion.Engine.Graphics {
 
 				int index = 0;
 
-				foreach ( var envLight in LightSet.EnvLights ) {
+				foreach ( var envLight in LightSet.LightProbes ) {
 
 					for (int i=0; i<6; i++) {
 					
@@ -573,7 +573,7 @@ namespace Fusion.Engine.Graphics {
 				SkySettings.SunGlowIntensity = sun;
 			}
 
-			Log.Message("{0} light probes - {1} ms", LightSet.EnvLights.Count, sw.ElapsedMilliseconds);
+			Log.Message("{0} light probes - {1} ms", LightSet.LightProbes.Count, sw.ElapsedMilliseconds);
 		}
 
 

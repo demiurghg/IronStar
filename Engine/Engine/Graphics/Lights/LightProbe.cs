@@ -9,7 +9,7 @@ using Fusion.Drivers.Graphics;
 using Fusion.Engine.Common;
 
 namespace Fusion.Engine.Graphics {
-	public class EnvLight {
+	public class LightProbe {
 
 		internal int radianceCacheIndex;
 
@@ -37,7 +37,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Creates instance of EnvLight
 		/// </summary>
-		public EnvLight ()
+		public LightProbe ()
 		{
 			Position	=	Vector3.Zero;
 			InnerRadius	=	0;
@@ -52,7 +52,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="position"></param>
 		/// <param name="innerRadius"></param>
 		/// <param name="outerRadius"></param>
-		public EnvLight ( Vector3 position, float innerRadius, float outerRadius )
+		public LightProbe ( Vector3 position, float innerRadius, float outerRadius )
 		{
 			this.Position		=	position;
 			this.InnerRadius	=	innerRadius;

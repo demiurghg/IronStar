@@ -15,10 +15,10 @@ using Fusion.Engine.Graphics.Lights;
 namespace Fusion.Engine.Graphics {
 	public class LightGrid : DisposableBase {
 
-		const int MaxLights			= 4096;
-		const int MaxDecals			= 4096;
-		const int MaxLightProbes	= 256;
-		const int IndexTableSize	= 256 * 512;
+		public const int MaxLights			= 4096;
+		public const int MaxDecals			= 4096;
+		public const int MaxLightProbes	= 256;
+		public const int IndexTableSize	= 256 * 512;
 
 		public readonly Game Game;
 		public readonly int Width;
@@ -67,7 +67,7 @@ namespace Fusion.Engine.Graphics {
 
 			lightData		=	new StructuredBuffer( rs.Device, typeof(SceneRenderer.LIGHT),		MaxLights,		StructuredBufferFlags.None );
 			decalData		=	new StructuredBuffer( rs.Device, typeof(SceneRenderer.DECAL),		MaxDecals,		StructuredBufferFlags.None );
-			probeData	=	new StructuredBuffer( rs.Device, typeof(SceneRenderer.LIGHTPROBE),	MaxLightProbes, StructuredBufferFlags.None );
+			probeData		=	new StructuredBuffer( rs.Device, typeof(SceneRenderer.LIGHTPROBE),	MaxLightProbes, StructuredBufferFlags.None );
 			indexData		=	new FormattedBuffer( rs.Device, Drivers.Graphics.VertexFormat.UInt, IndexTableSize, StructuredBufferFlags.None ); 
 
 			var rand = new Random();
@@ -131,6 +131,8 @@ namespace Fusion.Engine.Graphics {
 			var view = camera.GetViewMatrix( stereoEye );
 			var proj = camera.GetProjectionMatrix( stereoEye );
 			var vpos = camera.GetCameraMatrix( StereoEye.Mono ).TranslationVector;
+
+			lightSet.SortLightProbes();
 
 			UpdateOmniLightExtentsAndVisibility( view, proj, lightSet );
 			UpdateSpotLightExtentsAndVisibility( view, proj, lightSet, vpos );
@@ -316,7 +318,9 @@ namespace Fusion.Engine.Graphics {
 				Vector4 min, max;
 				lpb.Visible	=	false;
 
-				if ( Extents.GetSphereExtent( view, proj, lpb.Position, vp, lpb.OuterRadius, false, out min, out max ) ) {
+				var radius = Math.Max(lpb.OuterRadius, lpb.InnerRadius);
+
+				if ( Extents.GetSphereExtent( view, proj, lpb.Position, vp, radius, false, out min, out max ) ) {
 
 					min.Z	=	GetGridSlice( min.Z );
 					max.Z	=	GetGridSlice( max.Z );

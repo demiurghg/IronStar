@@ -94,6 +94,9 @@ namespace Fusion.Engine.Graphics {
 		List<Decal>		decals		= new List<Decal>();
 
 
+		List<bool>	imageIndices;
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -101,6 +104,46 @@ namespace Fusion.Engine.Graphics {
 		public LightSet ( RenderSystem rs )
 		{
 			AmbientLevel	=	Color4.Zero;
+			imageIndices	=	Enumerable.Range(0, LightGrid.MaxLightProbes)
+								.Select(i=>false)
+								.ToList();
 		}
+
+
+		public void SortLightProbes ()
+		{
+			envLights.Sort( delegate( LightProbe a, LightProbe b ) {
+				if (a.OuterRadius==b.OuterRadius) return 0;
+				if (a.OuterRadius>b.OuterRadius) return -1;
+				if (a.OuterRadius<b.OuterRadius) return  1;
+				return 0;
+			});
+		}
+
+
+		public int AllocImageIndex ()
+		{
+			int r = imageIndices.IndexOf(false);
+
+			imageIndices[r] = true;
+
+			return r;
+		}
+
+
+		public void FreeImageIndex( int index )
+		{
+			imageIndices[index] = false;
+		}
+
+
+
+		public void FreeAllImageIndices ()
+		{
+			for (int i=0; i<imageIndices.Count; i++) {
+				imageIndices[i] = false;
+			}
+		}
+
 	}
 }

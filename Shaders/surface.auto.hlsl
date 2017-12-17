@@ -70,7 +70,7 @@ struct LIGHTPROBE {
 	float4     Position;                      // offset:    0
 	float      InnerRadius;                   // offset:   16
 	float      OuterRadius;                   // offset:   20
-	float      Dummy0;                        // offset:   24
+	uint       ImageIndex;                    // offset:   24
 	float      Dummy1;                        // offset:   28
 };
 

@@ -85,10 +85,12 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	
 	
 	//----------------------------------------------------------------------------------------------
+	int3 checker  = (int3)abs(worldPos.xyz);
+	int3 checker2 = (int3)abs(worldPos.xyz*5);
 	
-	// metallic = 1;
-	// baseColor = 1;
-	// roughness = 0.01;
+	metallic = (checker.x + checker.y + checker.z)%2;
+	baseColor = 0.9;
+	roughness = (checker2.x + checker2.y + checker2.z)%7 / 10.0f;
 
 			normal 		= 	normalize(normal);
 	float3	diffuse 	=	lerp( baseColor, float3(0,0,0), metallic );
@@ -226,12 +228,13 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		float3 position		=	ProbeDataTable[idx].Position.xyz;
 		float  innerRadius	=	ProbeDataTable[idx].InnerRadius;
 		float  outerRadius	=	ProbeDataTable[idx].OuterRadius;
+		uint   imageIndex	=	ProbeDataTable[idx].ImageIndex;
 		
 		float	localDist	=	distance( position.xyz, worldPos.xyz );
 		float	factor		=	saturate( 1 - (localDist-innerRadius)/(outerRadius-innerRadius) );
 		
-		float3	diffTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, idx), 4).rgb;
-		float3	specTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflect(-viewDir, normal.xyz), idx), sqrt(roughness)*6 ).rgb;
+		float3	diffTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, imageIndex), 4).rgb;
+		float3	specTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflect(-viewDir, normal.xyz), imageIndex), sqrt(roughness)*5 ).rgb;
 
 		ambientDiffuse		=	lerp( ambientDiffuse,  diffTerm, factor );
 		ambientSpecular		=	lerp( ambientSpecular, specTerm, factor );//*/

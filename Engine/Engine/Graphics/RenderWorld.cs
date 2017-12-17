@@ -181,10 +181,10 @@ namespace Fusion.Engine.Graphics {
 			
 			particleSystem	=	new ParticleSystem( Game.RenderSystem, this );
 
-			radianceFrame	=	new HdrFrame( Game, 512,512 );
+			radianceFrame	=	new HdrFrame( Game, 256,256 );
 
 			Radiance		=	new RenderTargetCube( Game.GraphicsDevice, ColorFormat.Rgba16F, RenderSystem.EnvMapSize, true );
-			RadianceCache	=	new TextureCubeArray( Game.GraphicsDevice, 128, RenderSystem.MaxEnvLights, ColorFormat.Rgba16F, true );
+			RadianceCache	=	new TextureCubeArray( Game.GraphicsDevice, RenderSystem.EnvMapSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba16F, true );
 
 			Resize( width, height );
 		}
@@ -541,8 +541,6 @@ namespace Fusion.Engine.Graphics {
 				var sun	=	SkySettings.SunGlowIntensity;
 				SkySettings.SunGlowIntensity = 0;
 
-				int index = 0;
-
 				foreach ( var envLight in LightSet.LightProbes ) {
 
 					for (int i=0; i<6; i++) {
@@ -565,8 +563,7 @@ namespace Fusion.Engine.Graphics {
 					//	prefilter cubemap :
 					rs.Filter.PrefilterEnvMap( Radiance );
 
-					RadianceCache.CopyFromRenderTargetCube( index, Radiance );
-					index ++;
+					RadianceCache.CopyFromRenderTargetCube( envLight.ImageIndex, Radiance );
 				}
 				sw.Stop();
 	

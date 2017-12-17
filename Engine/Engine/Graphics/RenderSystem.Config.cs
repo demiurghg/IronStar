@@ -12,9 +12,9 @@ namespace Fusion.Engine.Graphics {
 
 	public partial class RenderSystem : GameComponent {
 
-		public const int	EnvMapSize = 128;
-		public const int	EnvMapSpecularMipCount = 7;
-		public const int	EnvMapDiffuseMipLevel = 7;
+		public const int	EnvMapSize = 64;
+		public const int	EnvMapSpecularMipCount = 6;
+		public const int	EnvMapDiffuseMipLevel = 6;
 
 		public const int	MaxDecals		=	1024;
 		public const int	MaxOmniLights	=	1024;

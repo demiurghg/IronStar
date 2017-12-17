@@ -28,10 +28,15 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public float	OuterRadius { get; set; }
 
+		/// <summary>
+		/// Unique image index in range [0..255]
+		/// </summary>
+		public int		ImageIndex = -1;
 
-		internal bool		Visible = true;
-		internal Int3		MinExtent;
-		internal Int3		MaxExtent;
+
+		internal bool	Visible = true;
+		internal Int3	MinExtent;
+		internal Int3	MaxExtent;
 
 
 		/// <summary>
@@ -52,11 +57,12 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="position"></param>
 		/// <param name="innerRadius"></param>
 		/// <param name="outerRadius"></param>
-		public LightProbe ( Vector3 position, float innerRadius, float outerRadius )
+		public LightProbe ( Vector3 position, float innerRadius, float outerRadius, int imageIndex )
 		{
 			this.Position		=	position;
 			this.InnerRadius	=	innerRadius;
 			this.OuterRadius	=	outerRadius;
+			this.ImageIndex		=	imageIndex;
 		}
 		
 	}

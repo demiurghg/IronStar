@@ -131,7 +131,7 @@ namespace Fusion.Engine.Graphics {
 			public Vector4	Position;
 			public float	InnerRadius;
 			public float	OuterRadius;
-			public float	Dummy0;
+			public uint		ImageIndex;
 			public float	Dummy1;
 
 			public void FromLightProbe ( LightProbe light ) 
@@ -140,6 +140,7 @@ namespace Fusion.Engine.Graphics {
 				Position	=	new Vector4( light.Position, 1 );
 				InnerRadius	=	light.InnerRadius;
 				OuterRadius	=	light.OuterRadius;
+				ImageIndex	=	(uint)light.ImageIndex;
 				#endregion
 			}
 		}

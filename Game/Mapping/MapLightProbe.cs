@@ -45,7 +45,7 @@ namespace IronStar.Mapping {
 
 			var lightSet	=	world.Game.RenderSystem.RenderWorld.LightSet;
 
-			light	=	new LightProbe( WorldMatrix.TranslationVector, InnerRadius, OuterRadius );
+			light	=	new LightProbe( WorldMatrix.TranslationVector, InnerRadius, OuterRadius, lightSet.AllocImageIndex() );
 
 			ResetNode( world );
 
@@ -110,6 +110,7 @@ namespace IronStar.Mapping {
 
 		public override void KillNode( GameWorld world )
 		{
+			world.Game.RenderSystem.RenderWorld.LightSet.FreeImageIndex( light.ImageIndex );
 			world.Game.RenderSystem.RenderWorld.LightSet.LightProbes.Remove( light );
 		}
 

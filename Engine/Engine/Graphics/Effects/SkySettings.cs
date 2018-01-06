@@ -131,7 +131,7 @@ namespace Fusion.Engine.Graphics {
 
 		public SkySettings()
 		{
-			RgbSpace			= RgbSpace.sRGB;
+			RgbSpace			= RgbSpace.CIE_RGB;
 			AerialFogDensity	= 0.001f;
 			SkySphereSize		= 1000.0f;
 			SkyTurbidity		= 4.0f;

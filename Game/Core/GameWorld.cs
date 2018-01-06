@@ -208,7 +208,6 @@ namespace IronStar.Core {
 
 			rw.LightSet.DirectLight.Direction	=	rw.SkySettings.SunLightDirection;
 			rw.LightSet.DirectLight.Intensity	=	rw.SkySettings.SunLightColor;
-			rw.LightSet.DirectLight.Intensity	=	new Color4(40,40,35,1);
 
 			rw.LightSet.AmbientLevel			=	snapshotHeader.AmbientLevel;
 

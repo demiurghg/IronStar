@@ -200,10 +200,12 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	float3	colorGraded 	=	colorShadows * shadows
 							+	colorMidtones * midtones
 							+	colorHighlights * highlights;
+							
 	
 	colorGraded	=	SaturateColor( colorGraded, 0.75f );
 	
-	//colorGraded	=	tonemapped;
+	//	DISABLE COLOR GRADING!!!
+	colorGraded	=	tonemapped;
 	
 	//
 	//	Apply dithering :

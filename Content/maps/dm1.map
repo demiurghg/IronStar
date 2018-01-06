@@ -3,7 +3,7 @@
   <Environment>
     <Gravity>16</Gravity>
     <SkyTrubidity>3</SkyTrubidity>
-    <SunPosition X="2" Y="2" Z="2" />
+    <SunPosition X="1" Y="0.2" Z="2" />
     <SunIntensity>40</SunIntensity>
     <FogDistance>5000</FogDistance>
     <FogHeight>-0.05</FogHeight>
@@ -18,7 +18,7 @@
       <Minimum X="-64" Y="-32" Z="-64" />
       <Maximum X="64" Y="32" Z="64" />
     </IrradianceVolume>
-    <AmbientLevel Red="15" Green="20" Blue="25" Alpha="0" />
+    <AmbientLevel Red="0" Green="0" Blue="0" Alpha="0" />
   </Environment>
   <Nodes>
     <MapNode xsi:type="MapEntity">
@@ -252,8 +252,8 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="28.25" Y="3.5" Z="28.125" />
-      <Rotation X="-0.341359675" Y="0.0495601222" Z="0.8058983" W="0.4811915" />
+      <Position X="28.5546379" Y="0.329105824" Z="28.5402374" />
+      <Rotation X="0.2383424" Y="0.239569291" Z="0.665855944" W="0.6651582" />
       <Scaling>1</Scaling>
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>
@@ -362,7 +362,7 @@
     <MapNode xsi:type="MapDecal">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="31.625" Y="0" Z="30.625" />
+      <Position X="32.875" Y="0" Z="34.25" />
       <Rotation X="0.707106769" Y="0" Z="0" W="0.707106769" />
       <Scaling>1</Scaling>
       <ImageName>blood1</ImageName>
@@ -381,7 +381,7 @@
     <MapNode xsi:type="MapDecal">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="31.625" Y="0" Z="30.875" />
+      <Position X="32.875" Y="0" Z="34.5" />
       <Rotation X="0.6123724" Y="-0.3535534" Z="0.3535534" W="0.6123724" />
       <Scaling>1</Scaling>
       <ImageName>blood1</ImageName>

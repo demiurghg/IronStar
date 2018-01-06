@@ -180,7 +180,7 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 
 	#if defined(SKY) || defined(FOG)
 
-		#if 1
+		#if 0
 			float3 v = normalize(input.worldPos);
 			float3 l = normalize(SunPosition); 
 		
@@ -206,7 +206,7 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 		#ifdef SKY
 			float  ldv = dot ( normalize(SunPosition), view );
 			float sunFactor = smoothstep( 0.99990f, 0.99991f, ldv );
-			sky.rgb += float3(40,40,35) * 1000 * sunFactor;
+			sky.rgb += SunColor * 1 * sunFactor;
 		#endif
 		
 		return float4( sky, 1.0f);

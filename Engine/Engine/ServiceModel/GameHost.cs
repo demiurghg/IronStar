@@ -9,7 +9,8 @@ namespace Fusion.Engine.ServiceModel {
 
 	public class GameHost : IDisposable {
 
-		readonly List<IGameService> services = new List<IGameService>();
+		readonly List<GameService> services = new List<GameService>();
+
 
 		/// <summary>
 		/// 
@@ -25,7 +26,7 @@ namespace Fusion.Engine.ServiceModel {
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public T GetService<T>() where T: IGameService
+		public T GetService<T>() where T: GameService
 		{
 			return (T)services.FirstOrDefault( svc => svc is T );
 		}
@@ -36,9 +37,11 @@ namespace Fusion.Engine.ServiceModel {
 		/// 
 		/// </summary>
 		/// <param name="gameService"></param>
-		public void Attach( IGameService gameService )
+		protected void Attach( GameService gameService )
 		{
-			services.Add( gameService );
+			lock (services) {
+				services.Add( gameService );
+			}
 		}
 
 
@@ -63,6 +66,18 @@ namespace Fusion.Engine.ServiceModel {
 		/// </summary>
 		public void SaveConfiguration ( IStorage storage )
 		{
+			Log.Message("Saving configuration...");
+
+			var storage = game.UserStorage;
+
+			storage.DeleteFile(filename);
+			Save( storage.OpenFile(filename, FileMode.Create, FileAccess.Write) );
+			foreach ( var svc in services ) {
+
+				Log.Message("Saving configuration: {0}/{1}", GetType().Name, svc.GetType().Name );
+
+				svc.Initialize();
+			}
 		}
 
 

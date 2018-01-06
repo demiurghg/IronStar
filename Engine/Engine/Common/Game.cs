@@ -725,6 +725,68 @@ namespace Fusion.Engine.Common {
 
 		/*-----------------------------------------------------------------------------------------
 		 * 
+		 *	Component model :
+		 * 
+		-----------------------------------------------------------------------------------------*/
+
+		readonly List<GameComponent> components = new List<GameComponent>();
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="component"></param>
+		/// <param name="niceName"></param>
+		/// <param name="shortName"></param>
+		public void AttachComponent ( GameComponent component, string niceName, string shortName )
+		{
+			lock (components) {
+				if ( components.IndexOf(component) < 0 ) {
+					components.Add( component );
+				} else {	
+					Log.Warning("Component {0} is already added.", component.GetType().ToString() );
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		void InitializeComponents ()
+		{
+			lock (components) {
+				foreach ( var component in components ) {
+					component.Initialize();
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		void DisposeComponents ()
+		{
+			lock (components) {
+
+				components.Reverse();
+
+				foreach ( var component in components ) {
+
+					var disposable = component as IDisposable;
+					disposable?.Dispose();
+
+				}
+
+				components.Clear();
+			}
+
+		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 * 
 		 *	Commands :
 		 * 
 		-----------------------------------------------------------------------------------------*/

@@ -208,7 +208,6 @@
     <Compile Include="Engine\Graphics\Effects\FogSettings.cs" />
     <Compile Include="Engine\Graphics\Effects\PoissonDiscGenerator.cs" />
     <Compile Include="Engine\Graphics\Effects\Fog.cs" />
-    <Compile Include="Engine\Graphics\Lights\Embree.cs" />
     <Compile Include="Engine\Graphics\Lights\Extents.cs" />
     <Compile Include="Core\Mathematics\Hammersley.cs" />
     <Compile Include="Engine\Graphics\Lights\LightGrid.cs" />
@@ -539,8 +538,6 @@
     <Compile Include="Engine\Server\NetConnExt.cs" />
     <Compile Include="Engine\Server\Snapshot.cs" />
     <Compile Include="Engine\Server\SnapshotQueue.cs" />
-    <Compile Include="Engine\ServiceModel\GameHost.cs" />
-    <Compile Include="Engine\ServiceModel\IGameService.cs" />
     <Compile Include="Engine\Storage\IStorage.cs" />
     <Compile Include="Engine\Storage\DirectoryStorage.cs" />
     <Compile Include="Engine\Storage\UserStorage.cs" />
@@ -668,7 +665,9 @@
       <Name>Lidgren.Network</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Engine\ServiceModel\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

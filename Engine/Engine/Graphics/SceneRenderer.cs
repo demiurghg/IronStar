@@ -137,9 +137,13 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="vpWidth"></param>
 		/// <param name="vpHeight"></param>
 		[MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
-		public bool SetupStage ( StereoEye stereoEye, Camera camera, HdrFrame hdrFrame, ShadowContext shadowContext )
+		public bool SetupStage ( StereoEye stereoEye, HdrFrame hdrFrame, IRenderContext context )
 		{
 			device.ResetStates();
+
+			context.SetupRenderTargets( device );
+			device.SetViewport( context.Viewport );
+
 
 			var fog	=	rs.RenderWorld.FogSettings;
 
@@ -167,36 +171,18 @@ namespace Fusion.Engine.Graphics {
 			cbDataStage.FogColor				=	rs.RenderWorld.FogSettings.Color;
 			cbDataStage.FogAttenuation			=	rs.RenderWorld.FogSettings.DistanceAttenuation;
 
+			cbDataStage.Ambient			=	rs.RenderWorld.LightSet.AmbientLevel;
+			cbDataStage.VTPageScaleRCP	=	rs.VTSystem.PageScaleRCP;
 
-			//	setup stage constants :
-			if (camera!=null) {
+			var width	=	context.Viewport.Width;
+			var height	=	context.Viewport.Height;
 
-				var width	=	hdrFrame.HdrBuffer.Width;
-				var height	=	hdrFrame.HdrBuffer.Height;
+			cbDataStage.View			=	context.GetViewMatrix( stereoEye );
+			cbDataStage.Projection		=	context.GetProjectionMatrix( stereoEye );
+			cbDataStage.ViewPos			=	new Vector4( context.GetViewPosition( stereoEye ), 1 );
+			cbDataStage.ViewBounds		=	new Vector4( width, height, width, height );
+			cbDataStage.BiasSlopeFar	=	new Vector4( context.DepthBias, context.SlopeBias, context.FarDistance, 0 );
 
-				cbDataStage.View			=	camera.GetViewMatrix( stereoEye );
-				cbDataStage.Projection		=	camera.GetProjectionMatrix( stereoEye );
-				cbDataStage.ViewPos			=	camera.GetCameraPosition4( stereoEye );
-				cbDataStage.Ambient			=	rs.RenderWorld.LightSet.AmbientLevel;
-				cbDataStage.ViewBounds		=	new Vector4( width, height, width, height );
-				cbDataStage.VTPageScaleRCP	=	rs.VTSystem.PageScaleRCP;
-
-				//cbDataStage.GradientToNormal	=	camera.GetViewMatrix( stereoEye );
-			}
-
-			if (shadowContext!=null) {
-
-				var width	=	shadowContext.ShadowViewport.Width;
-				var height	=	shadowContext.ShadowViewport.Height;
-
-				cbDataStage.View			=	shadowContext.ShadowView;
-				cbDataStage.Projection		=	shadowContext.ShadowProjection;
-				cbDataStage.ViewPos			=	Vector4.Zero;
-				cbDataStage.Ambient			=	Color4.Zero;
-				cbDataStage.ViewBounds		=	new Vector4( width, height, width, height );
-				cbDataStage.VTPageScaleRCP	=	rs.VTSystem.PageScaleRCP;
-				cbDataStage.BiasSlopeFar	=	new Vector4( shadowContext.DepthBias, shadowContext.SlopeBias, shadowContext.FarDistance, 0 );
-			}
 
 			constBufferStage.SetData( cbDataStage );
 
@@ -219,14 +205,11 @@ namespace Fusion.Engine.Graphics {
 			device.PixelShaderResources[7]	= rs.LightManager.LightGrid.LightDataGpu;
 			device.PixelShaderResources[8]	= rs.LightManager.LightGrid.DecalDataGpu;
 			
-			if (shadowContext==null) {	  // because these maps are used as render targets for shadows
+			if (context.RequireShadows) {	  // because these maps are used as render targets for shadows
 				device.PixelShaderResources[9]	= rs.RenderWorld.LightSet?.DecalAtlas?.Texture?.Srv;
 				device.PixelShaderResources[10]	= rs.LightManager.ShadowMap.ColorBuffer;
 				device.PixelShaderResources[11]	= rs.LightManager.ShadowMap.ParticleShadow;
-			}
-
-			if (hdrFrame!=null) {
-				device.PixelShaderResources[12]	=	hdrFrame.AOBuffer;
+				device.PixelShaderResources[12]	= hdrFrame?.AOBuffer;
 			}
 
 			device.PixelShaderResources[13]	=	rs.Sky.SkyCube;
@@ -309,16 +292,10 @@ namespace Fusion.Engine.Graphics {
 		{		
 			using ( new PixEvent("RenderForward") ) {
 
-				var instances			=	rw.Instances;
+				var instances		=	rw.Instances;
+				var context			=	new ForwardContext( camera, frame, false );
 
-				if ( SetupStage( stereoEye, camera, frame, null ) ) {
-
-					var hdr			=	frame.HdrBuffer.Surface;
-					var depth		=	frame.DepthBuffer.Surface;
-					var feedback	=	frame.FeedbackBuffer.Surface;
-
-					device.SetTargets( depth, hdr, feedback );
-
+				if ( SetupStage( stereoEye, frame, context ) ) {
 
 					foreach ( var instance in instances ) {
 
@@ -366,24 +343,10 @@ namespace Fusion.Engine.Graphics {
 		{		
 			using ( new PixEvent("RenderZPass") ) {
 
-				var instances			=	rw.Instances;
+				var instances		=	rw.Instances;
+				var context			=	new ForwardContext( camera, frame, true );
 
-				var view				=	camera.GetViewMatrix( stereoEye );
-				var projection			=	camera.GetProjectionMatrix( stereoEye );
-				var viewPosition		=	camera.GetCameraPosition( stereoEye );
-				var weaponProjection	=	rw.WeaponCamera.GetProjectionMatrix( stereoEye );
-				var vpWidth				=	frame.HdrBuffer.Width;
-				var vpHeight			=	frame.HdrBuffer.Height;
-
-				if ( SetupStage( stereoEye, camera, frame, null ) ) {
-
-					var hdr			=	frame.HdrBuffer.Surface;
-					var depth		=	frame.DepthBuffer.Surface;
-					var feedback	=	frame.FeedbackBuffer.Surface;
-					var normals		=	frame.Normals.Surface;
-
-					#warning remove hdr and feedback targets
-					device.SetTargets( depth, normals );
+				if ( SetupStage( stereoEye, frame, context ) ) {
 
 					foreach ( var instance in instances ) {
 
@@ -416,12 +379,8 @@ namespace Fusion.Engine.Graphics {
 		{
 			using ( new PixEvent("ShadowMap") ) {
 
-				if ( SetupStage( StereoEye.Mono, null, null, shadowRenderCtxt ) ) {
-
-					device.SetTargets( shadowRenderCtxt.DepthBuffer, shadowRenderCtxt.ColorBuffer );
-					device.SetViewport( shadowRenderCtxt.ShadowViewport );
+				if ( SetupStage( StereoEye.Mono, null, shadowRenderCtxt ) ) {
 				
-									//#warning INSTANSING!
 					foreach ( var instance in instances ) {
 
 						if (SetupInstance(SurfaceFlags.SHADOW, instance)) {
@@ -433,5 +392,29 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 		}
+
+
+
+		//internal void RenderLightProbeGBuffer ( LightProbeContext context, IEnumerable<MeshInstance> instances )
+		//{
+		//	using ( new PixEvent("LightProbeGBuffer") ) {
+
+		//		if ( SetupStage( StereoEye.Mono, null, null, shadowRenderCtxt ) ) {
+
+		//			device.SetTargets( context.DepthBuffer, context.ColorBuffer, context.NormalBuffer );
+		//			device.SetViewport( context.ColorBuffer );
+				
+		//							//#warning INSTANSING!
+		//			foreach ( var instance in instances ) {
+
+		//				if (SetupInstance(SurfaceFlags.SHADOW, instance)) {
+
+		//					device.SetupVertexInput( instance.vb, instance.ib );
+		//					device.DrawIndexed( instance.indexCount, 0, 0 );
+		//				}
+		//			}
+		//		}
+		//	}
+		//}
 	}
 }

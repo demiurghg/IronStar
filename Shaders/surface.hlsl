@@ -66,6 +66,7 @@ StructuredBuffer<LIGHTPROBE> ProbeDataTable		:	register(t17);
 $ubershader FORWARD RIGID|SKINNED +ANISOTROPIC
 $ubershader SHADOW RIGID|SKINNED
 $ubershader ZPASS RIGID|SKINNED
+$ubershader GBUFFER RIGID|SKINNED
 #endif
 
 #include "surface.lighting.hlsl"
@@ -378,20 +379,25 @@ float4 PSMain( PSInput input ) : SV_TARGET0
 
 
 
-#ifdef VOXELIZE
+#ifdef GBUFFER
 
-RWTexture3D<float4> lightGrid : register(u1);
+struct LPGBuffer {
+	float4	color 	: SV_Target0;
+	float4	normal	: SV_Target1;
+};
 
-float4 PSMain( PSInput input ) : SV_TARGET0
+LPGBuffer PSMain( PSInput input )
 {	
-	float3 location;
-	float depth	= (input.ProjPos.z / input.ProjPos.w)*128;	
-	location.xy = input.Position.xy;
-	location.z 	= depth;
-	//float grad	= (ddx(depth) + ddy(depth))*0.5f;
+	LPGBuffer	output;
 
-	lightGrid[ location ] = 1;
+	float depth	=	input.ProjPos.z / input.ProjPos.w;
 	
-	return float4(0,0,0,0);
+	float3	color	=	0.5;
+	float3	normal	=	normalize(input.Normal.xyz) * 0.5f + 0.5f;
+	
+	output.color	=	float4( color , 0 );
+	output.normal	=	float4( normal, 0 );
+
+	return output;
 }
 #endif

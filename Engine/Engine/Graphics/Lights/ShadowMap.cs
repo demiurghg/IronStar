@@ -323,38 +323,14 @@ namespace Fusion.Engine.Graphics {
 
 				foreach ( var cascade in cascades ) {
 
-					var context = new ShadowContext();
-					var far		= 1;
-
-					var vp		= new Viewport( cascade.ShadowRegion );
-
-					context.ShadowView			=	cascade.ViewMatrix;
-					context.ShadowProjection	=	cascade.ProjectionMatrix;
-					context.ShadowViewport		=	vp;
-					context.FarDistance			=	far;
-					context.SlopeBias			=	cascade.SlopeBias;
-					context.DepthBias			=	cascade.DepthBias;
-					context.ColorBuffer			=	colorBuffer.Surface;
-					context.DepthBuffer			=	depthBuffer.Surface;
+					var context = new ShadowContext( cascade, depthBuffer.Surface, colorBuffer.Surface );
 
 					rs.SceneRenderer.RenderShadowMapCascade( context, instances );
 				}
 
 				foreach ( var spot in lights ) {
 
-					var context = new ShadowContext();
-					var far		= spot.Projection.GetFarPlaneDistance();
-
-					var vp		= new Viewport( spot.ShadowRegion );
-
-					context.ShadowView			=	spot.SpotView;
-					context.ShadowProjection	=	spot.Projection;
-					context.ShadowViewport		=	vp;
-					context.FarDistance			=	far;
-					context.SlopeBias			=	spot.SlopeBias;
-					context.DepthBias			=	spot.DepthBias;
-					context.ColorBuffer			=	colorBuffer.Surface;
-					context.DepthBuffer			=	depthBuffer.Surface;
+					var context = new ShadowContext( spot, depthBuffer.Surface, colorBuffer.Surface );
 
 					rs.SceneRenderer.RenderShadowMapCascade( context, instances );
 				}
@@ -371,13 +347,11 @@ namespace Fusion.Engine.Graphics {
 				//	draw cascade shadow particles :
 				foreach ( var cascade in cascades ) {
 
-					var context = new ShadowContext();
 					var far		= cascade.ProjectionMatrix.GetFarPlaneDistance();
 
 					var vp		= new Viewport( cascade.ShadowRegion );
 
 					rs.Filter2.RenderBorder( prtShadow.Surface, cascade.ShadowRegion, 1 );
-
 
 				}
 
@@ -397,8 +371,6 @@ namespace Fusion.Engine.Graphics {
 						rs.Filter2.RenderSpot( prtShadow.Surface, dstRegion, 1 );
 					}
 				}
-
-
 			}
 		}
 
@@ -433,15 +405,11 @@ namespace Fusion.Engine.Graphics {
 					var vp		= new Viewport( cascade.ShadowRegion );
 
 					rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, cascade.ViewMatrix, cascade.ProjectionMatrix, prtShadow.Surface, depthBuffer.Surface );
-
 				}
 
 
 				//	draw spot shadow particles :
 				foreach ( var spot in lights ) {
-
-					var context = new ShadowContext();
-					var far		= spot.Projection.GetFarPlaneDistance();
 
 					var vp		= new Viewport( spot.ShadowRegion );
 

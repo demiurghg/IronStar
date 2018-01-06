@@ -905,6 +905,20 @@ namespace Fusion.Drivers.Graphics {
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="w"></param>
+		/// <param name="h"></param>
+		public void SetViewport ( RenderTargetSurface surface )
+		{
+			lock (deviceContext) {
+				SetViewport( 0, 0, surface.Width, surface.Height );
+			}
+		}
+
 
 
 		/// <summary>

@@ -15,14 +15,86 @@ namespace Fusion.Engine.Graphics {
 	/// <summary>
 	/// Shadow render context
 	/// </summary>
-	internal class ShadowContext {
-		public Matrix				ShadowView;
-		public Matrix				ShadowProjection;
-		public DepthStencilSurface	DepthBuffer;
-		public RenderTargetSurface	ColorBuffer;
-		public Viewport				ShadowViewport;
-		public float				DepthBias;
-		public float				SlopeBias;
-		public float				FarDistance;
+	internal class ShadowContext : IRenderContext {
+		
+		readonly Rectangle region;
+		readonly float farDistance;
+		readonly float depthBias;
+		readonly float slopeBias;
+		readonly Matrix viewMatrix;
+		readonly Matrix projMatrix;
+		readonly DepthStencilSurface depthBuffer;
+		readonly RenderTargetSurface colorBuffer;
+		
+
+		public ShadowContext ( ShadowMap.Cascade cascade, DepthStencilSurface depthBuffer, RenderTargetSurface colorBuffer )
+		{
+			this.viewMatrix		=	cascade.ViewMatrix;
+			this.projMatrix		=	cascade.ProjectionMatrix;
+			this.farDistance	=	1;
+			this.region			=	cascade.ShadowRegion;
+			this.depthBias		=	cascade.DepthBias;
+			this.slopeBias		=	cascade.SlopeBias;
+			this.depthBuffer	=	depthBuffer;
+			this.colorBuffer	=	colorBuffer;
+		}
+
+
+		public ShadowContext ( SpotLight spot, DepthStencilSurface depthBuffer, RenderTargetSurface colorBuffer )
+		{
+			this.viewMatrix		=	spot.SpotView;
+			this.projMatrix		=	spot.Projection;
+			this.farDistance	=	spot.Projection.GetFarPlaneDistance();
+			this.region			=	spot.ShadowRegion;
+			this.depthBias		=	spot.DepthBias;
+			this.slopeBias		=	spot.SlopeBias;
+			this.depthBuffer	=	depthBuffer;
+			this.colorBuffer	=	colorBuffer;
+		}
+
+
+
+		public void SetupRenderTargets ( GraphicsDevice device )
+		{
+			device.SetTargets( depthBuffer, colorBuffer );
+		}
+
+
+		public Matrix GetViewMatrix( StereoEye stereoEye )
+		{
+			return viewMatrix;
+		}
+
+
+		public Matrix GetProjectionMatrix( StereoEye stereoEye )
+		{
+			return projMatrix;
+		}
+
+
+		public Vector3 GetViewPosition( StereoEye stereoEye )
+		{
+			//	for shadows position does not matter
+			return Vector3.Zero;
+		}
+
+		
+		public float DepthBias { get { return depthBias; } }
+		public float SlopeBias { get { return slopeBias; } }
+		public float FarDistance { get { return farDistance; } }
+		
+
+		public Viewport Viewport { 
+			get {
+				return new Viewport( region );
+			}
+		}
+
+	
+		public bool RequireShadows {
+			get { 
+				return false; 
+			} 
+		}
 	}
 }

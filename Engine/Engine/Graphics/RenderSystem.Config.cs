@@ -185,6 +185,7 @@ namespace Fusion.Engine.Graphics {
 
 		[Category("Shadows")]  [Config]	public bool UsePointShadowSampling { get; set; } = false;
 		[Category("Shadows")]  [Config]	public bool SnapShadowmapCascades { get; set; } = true;
+		[Category("Shadows")]  [Config]	public bool LockLessDetailedSplit { get; set; } = false;
 
 		[Category("Shadows")]  [Config]	public float ShadowGradientBiasX { get; set; } = 1;
 		[Category("Shadows")]  [Config]	public float ShadowGradientBiasY { get; set; } = 1;

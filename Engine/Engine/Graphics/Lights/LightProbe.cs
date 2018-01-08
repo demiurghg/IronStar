@@ -11,8 +11,6 @@ using Fusion.Engine.Common;
 namespace Fusion.Engine.Graphics {
 	public class LightProbe {
 
-		internal int radianceCacheIndex;
-
 		/// <summary>
 		/// Environment light position
 		/// </summary>

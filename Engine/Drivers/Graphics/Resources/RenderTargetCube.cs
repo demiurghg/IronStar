@@ -62,21 +62,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="format"></param>
 		public RenderTargetCube ( GraphicsDevice device, ColorFormat format, int size, string debugName = "" ) : base ( device )
 		{
-			Create( format, size, 1, false, debugName );
-		}
-
-
-
-		/// <summary>
-		/// Creates render target
-		/// </summary>
-		/// <param name="rs"></param>
-		/// <param name="width"></param>
-		/// <param name="height"></param>
-		/// <param name="format"></param>
-		public RenderTargetCube ( GraphicsDevice device, ColorFormat format, int size, int samples, string debugName = "" ) : base ( device )
-		{
-			Create( format, size, samples, false, debugName );
+			Create( format, size, false, debugName );
 		}
 
 
@@ -90,7 +76,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="format"></param>
 		public RenderTargetCube ( GraphicsDevice device, ColorFormat format, int size, bool mips, string debugName = "" ) : base ( device )
 		{
-			Create( format, size, 1, mips, debugName );
+			Create( format, size, mips, debugName );
 		}
 
 
@@ -105,20 +91,10 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="samples"></param>
 		/// <param name="mips"></param>
 		/// <param name="debugName"></param>
-		void Create ( ColorFormat format, int size, int samples, bool mips, string debugName )
+		void Create ( ColorFormat format, int size, bool mips, string debugName )
 		{
-			bool msaa	=	samples > 1;
-
-			CheckSamplesCount( samples );
-
-			if (mips && samples>1) {
-				throw new ArgumentException("Render target should be multisampler either mipmapped");
-			}
-
-			SampleCount		=	samples;
-
+			SampleCount	=	1;
 			Format		=	format;
-			SampleCount	=	samples;
 			Width		=	size;
 			Height		=	size;
 			Depth		=	1;
@@ -128,19 +104,21 @@ namespace Fusion.Drivers.Graphics {
 				texDesc.Width				=	Width;
 				texDesc.Height				=	Height;
 				texDesc.ArraySize			=	6;
-				texDesc.BindFlags			=	BindFlags.RenderTarget | BindFlags.ShaderResource;
+				texDesc.BindFlags			=	BindFlags.RenderTarget | BindFlags.ShaderResource | BindFlags.UnorderedAccess;
 				texDesc.CpuAccessFlags		=	CpuAccessFlags.None;
 				texDesc.Format				=	Converter.Convert( format );
-				texDesc.MipLevels			=	mips ? MipCount : 1;
+				texDesc.MipLevels			=	MipCount;
 				texDesc.OptionFlags			=	ResourceOptionFlags.TextureCube | (mips ? ResourceOptionFlags.GenerateMipMaps : ResourceOptionFlags.None);
-				texDesc.SampleDescription	=	new DXGI.SampleDescription(samples, 0);
+				texDesc.SampleDescription	=	new DXGI.SampleDescription(1, 0);
 				texDesc.Usage				=	ResourceUsage.Default;
 
 
 			texCube	=	new D3D.Texture2D( device.Device, texDesc );
 			SRV		=	new ShaderResourceView( device.Device, texCube );
 
-
+			//
+			//	create staging resource using previous description :
+			//
 			texDesc.BindFlags		=	BindFlags.None;
 			texDesc.CpuAccessFlags	=	CpuAccessFlags.Write | CpuAccessFlags.Read;
 			texDesc.Usage			=	ResourceUsage.Staging;
@@ -183,14 +161,26 @@ namespace Fusion.Drivers.Graphics {
 						rtvDesc.Texture2DArray.MipSlice			=	mip;
 						rtvDesc.Texture2DArray.FirstArraySlice	=	face;
 						rtvDesc.Texture2DArray.ArraySize		=	1;
-						rtvDesc.Dimension						=	msaa ? RenderTargetViewDimension.Texture2DMultisampledArray : RenderTargetViewDimension.Texture2DArray;
+						rtvDesc.Dimension						=	RenderTargetViewDimension.Texture2DArray;
 						rtvDesc.Format							=	Converter.Convert( format );
 
 					var rtv	=	new RenderTargetView( device.Device, texCube, rtvDesc );
 
+					var uavDesc = new UnorderedAccessViewDescription();
+						uavDesc.Buffer.ElementCount	=	width * height;
+						uavDesc.Buffer.FirstElement	=	0;
+						uavDesc.Buffer.Flags		=	UnorderedAccessViewBufferFlags.None;
+						uavDesc.Dimension			=	UnorderedAccessViewDimension.Texture2DArray;
+						uavDesc.Format				=	Converter.Convert( format );
+						uavDesc.Texture2DArray.ArraySize		=	1;
+						uavDesc.Texture2DArray.FirstArraySlice	=	face;
+						uavDesc.Texture2DArray.MipSlice			=	mip;
+
+					var uav	=	new UnorderedAccessView( device.Device, texCube, uavDesc );
+
 					int subResId	=	Resource.CalculateSubResourceIndex( mip, face, MipCount );
 
-					surfaces[mip,face]	=	new RenderTargetSurface( rtv, null, texCube, subResId, format, Width, Height, samples );
+					surfaces[mip,face]	=	new RenderTargetSurface( rtv, uav, texCube, subResId, format, Width, Height, 1 );
 
 					GraphicsDevice.Clear( surfaces[mip,face], Color4.Zero );
 				}

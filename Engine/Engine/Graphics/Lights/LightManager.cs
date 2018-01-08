@@ -18,7 +18,29 @@ using Native.Embree;
 
 namespace Fusion.Engine.Graphics {
 
+	[RequireShader("relight", true)]
 	internal partial class LightManager : RenderComponent {
+
+
+		[ShaderDefine]
+		const int BlockSizeX = 16;
+
+		[ShaderDefine]
+		const int BlockSizeY = 16;
+
+		[ShaderDefine]
+		const int LightProbeSize = RenderSystem.EnvMapSize;
+
+
+		[ShaderStructure()]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=128)]
+		struct RELIGHT_PARAMS {
+			public	Matrix	ShadowViewProjection;
+			public	Vector4	LightProbePosition;
+			public	Color4	DirectLightIntensity;
+			public	Vector4	DirectLightDirection;
+			public	float	CubeIndex;
+		}
 
 
 		public LightGrid LightGrid {
@@ -40,6 +62,22 @@ namespace Fusion.Engine.Graphics {
 		Texture3D occlusionGrid;
 		Texture3D lightProbeIndices;
 		Texture3D lightProbeWeights;
+
+		Ubershader		shader;
+		StateFactory	factory;
+		ConstantBuffer	constBuffer;
+
+
+		enum Flags {
+			RELIGHT	=	0x0001,
+
+			POSX	=	0x0010,
+			POSY	=	0x0020,
+			POSZ	=	0x0040,
+			NEGX	=	0x0080,
+			NEGY	=	0x0100,
+			NEGZ	=	0x0200,
+		}
 		
 
 
@@ -65,8 +103,25 @@ namespace Fusion.Engine.Graphics {
 			occlusionGrid		=	new Texture3D( rs.Device, ColorFormat.Rgba8, Width,Height,Depth );
 			lightProbeIndices	=	new Texture3D( rs.Device, ColorFormat.Rgba8, Width,Height,Depth );
 			lightProbeWeights	=	new Texture3D( rs.Device, ColorFormat.Rgba8, Width,Height,Depth );
+
+			constBuffer			=	new ConstantBuffer( rs.Device, typeof(RELIGHT_PARAMS) );
+
+			LoadContent();
+			Game.Reloading += (s,e) => LoadContent();
 		}
 
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		void LoadContent ()
+		{
+			SafeDispose( ref factory );
+
+			shader	=	Game.Content.Load<Ubershader>("relight");
+			factory	=	shader.CreateFactory( typeof(Flags) );
+		}
 
 
 
@@ -77,6 +132,8 @@ namespace Fusion.Engine.Graphics {
 		protected override void Dispose( bool disposing )
 		{
 			if (disposing) {
+				SafeDispose( ref constBuffer );
+				SafeDispose( ref factory );
 				SafeDispose( ref lightGrid );
 				SafeDispose( ref shadowMap );
 				SafeDispose( ref occlusionGrid );
@@ -124,6 +181,62 @@ namespace Fusion.Engine.Graphics {
 			}
 		}
 
+
+
+		/*-----------------------------------------------------------------------------------------
+		 * 
+		 *	Light probe relighting :
+		 * 
+		-----------------------------------------------------------------------------------------*/
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void RelightLightProbe ( TextureCubeArray colorData, TextureCubeArray normalData, LightProbe lightProbe, LightSet lightSet, RenderTargetCube target )
+		{
+			using ( new PixEvent( "RelightLightProbe" ) ) {
+
+				device.ResetStates();
+
+				var constData = new RELIGHT_PARAMS();
+
+				constData.CubeIndex				=	lightProbe.ImageIndex;
+				constData.LightProbePosition	=	new Vector4( lightProbe.Position, 1 );
+				constData.ShadowViewProjection	=	shadowMap.GetLessDetailedCascade().ViewProjectionMatrix;
+				constData.DirectLightDirection	=	new Vector4( lightSet.DirectLight.Direction, 0 );
+				constData.DirectLightIntensity	=	lightSet.DirectLight.Intensity;
+
+				constBuffer.SetData( constData );
+
+				device.ComputeShaderResources[0]    =   colorData;
+				device.ComputeShaderResources[1]    =   normalData;
+				device.ComputeShaderResources[2]    =   rs.Sky.SkyCube;
+				device.ComputeShaderSamplers[0]		=	SamplerState.PointClamp;
+				device.ComputeShaderConstants[0]	=	constBuffer;
+					
+				for (int i=0; i<6; i++) {
+					device.SetCSRWTexture( i, target.GetSurface( 0, (CubeFace)i ) );
+				}
+
+				device.PipelineState = factory[(int)Flags.RELIGHT];
+
+				int size	=	RenderSystem.EnvMapSize;
+					
+				int tgx		=	MathUtil.IntDivRoundUp( size, BlockSizeX );
+				int tgy		=	MathUtil.IntDivRoundUp( size, BlockSizeY );
+				int tgz		=	1;
+
+				device.Dispatch( tgx, tgy, tgz );
+			}
+		}
+
+
+
+		/*-----------------------------------------------------------------------------------------
+		 * 
+		 *	Occlusion grid stuff :
+		 * 
+		-----------------------------------------------------------------------------------------*/
 
 		static Random rand = new Random();
 

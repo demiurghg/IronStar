@@ -158,6 +158,17 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public Cascade GetLessDetailedCascade ()
+		{
+			return cascades[ MaxCascades - 1 ];
+		}
+
+
 		Vector4 GetScaleOffset ( Rectangle rect )
 		{
 			return rect.GetMadOpScaleOffset( shadowMapSize, shadowMapSize );
@@ -226,10 +237,11 @@ namespace Fusion.Engine.Graphics {
 
 		void ComputeCascadeMatricies ( Camera camera, LightSet lightSet, float splitSize, float splitOffset, float splitFactor, float projDepth )
 		{
-			var camMatrix	=	camera.GetCameraMatrix( StereoEye.Mono );
-			var viewPos		=	camera.GetCameraPosition( StereoEye.Mono );
-			var lightDir	=	lightSet.DirectLight.Direction;
-			var viewMatrix	=	camera.GetViewMatrix( StereoEye.Mono );
+			var camMatrix		=	camera.GetCameraMatrix( StereoEye.Mono );
+			var viewPos			=	camera.GetCameraPosition( StereoEye.Mono );
+			var lightDir		=	lightSet.DirectLight.Direction;
+			var viewMatrix		=	camera.GetViewMatrix( StereoEye.Mono );
+			var lessDetailed	=	cascades.Length-1;
 
 			lightDir.Normalize();
 
@@ -245,6 +257,11 @@ namespace Fusion.Engine.Graphics {
 
 				Vector3 viewDir		=	camMatrix.Forward.Normalized();
 				Vector3	origin		=	viewPos + viewDir * offset;
+
+				if (rs.LockLessDetailedSplit && i==lessDetailed) {
+					origin	=	Vector3.Zero;
+					radius	=	128;
+				}
 
 				Matrix	lightRot	=	Matrix.LookAtRH( Vector3.Zero, Vector3.Zero + lightDir, Vector3.UnitY );
 				Matrix	lightRotI	=	Matrix.Invert( lightRot );

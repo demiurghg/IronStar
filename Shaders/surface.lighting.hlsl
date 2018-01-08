@@ -85,20 +85,20 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	
 	
 	//----------------------------------------------------------------------------------------------
-	int3 checker  = (int3)abs(worldPos.xyz);
+	/*int3 checker  = (int3)abs(worldPos.xyz);
 	int3 checker2 = (int3)abs(worldPos.xyz*5);
 	
 	metallic = (checker.x + checker.y + checker.z)%2;
-	baseColor = 0.9;
-	roughness = (checker2.x + checker2.y + checker2.z)%7 / 10.0f;
+	baseColor = 0.3;
+	roughness = (checker2.x + checker2.y + checker2.z)%7 / 10.0f;//*/
 
 			normal 		= 	normalize(normal);
 	float3	diffuse 	=	lerp( baseColor, float3(0,0,0), metallic );
 	float3	specular  	=	lerp( float3(0.04f,0.04f,0.04f), baseColor, metallic );
 
-	/*roughness	=	0.1f;
+	/*roughness	=	0.00f;
 	specular	=	1.0f;
-	diffuse		=	0.0f;*/
+	diffuse		=	0.0f;//*/
 
 	//----------------------------------------------------------------------------------------------
 
@@ -240,7 +240,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		ambientSpecular		=	lerp( ambientSpecular, specTerm, factor );//*/
 	}
 
-	ambientDiffuse	=	ambientDiffuse  * diffuse * aogridValue.w * ssaoFactor;
+	ambientDiffuse	=	ambientDiffuse  * diffuse * aogridValue.w * ssaoFactor * ssaoFactor;
 	ambientSpecular	=	ambientSpecular	* (specular * ab.x + ab.y) * aogridValue.w * pow(ssaoFactor, 2);
 	
 	totalLight.xyz	+=	ambientDiffuse + ambientSpecular;	

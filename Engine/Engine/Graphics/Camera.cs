@@ -155,8 +155,8 @@ namespace Fusion.Engine.Graphics {
 			Matrix proj = Matrix.Identity;
 
 			switch (cubeFace) {
-				case CubeFace.FacePosX : view = Matrix.LookAtLH( origin, -Vector3.UnitX + origin, Vector3.UnitY ); break;
-				case CubeFace.FaceNegX : view = Matrix.LookAtLH( origin,  Vector3.UnitX + origin, Vector3.UnitY ); break;
+				case CubeFace.FacePosX : view = Matrix.LookAtLH( origin,  Vector3.UnitX + origin, Vector3.UnitY ); break;
+				case CubeFace.FaceNegX : view = Matrix.LookAtLH( origin, -Vector3.UnitX + origin, Vector3.UnitY ); break;
 				case CubeFace.FacePosY : view = Matrix.LookAtLH( origin, -Vector3.UnitY + origin,-Vector3.UnitZ ); break;
 				case CubeFace.FaceNegY : view = Matrix.LookAtLH( origin,  Vector3.UnitY + origin, Vector3.UnitZ ); break;
 				case CubeFace.FacePosZ : view = Matrix.LookAtLH( origin, -Vector3.UnitZ + origin, Vector3.UnitY ); break;

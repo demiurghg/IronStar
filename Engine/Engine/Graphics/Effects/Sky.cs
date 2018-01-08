@@ -214,8 +214,6 @@ namespace Fusion.Engine.Graphics {
 				}
 
 				device.ResetStates();
-
-				SkyCube.BuildMipmaps();
 			}
 		}
 

@@ -140,10 +140,14 @@ namespace Fusion.Engine.Graphics {
 
 
 		HdrFrame viewHdrFrame;
-		HdrFrame radianceFrame;
 
-		internal RenderTargetCube Radiance;
-		internal TextureCubeArray RadianceCache;
+		internal DepthStencil2D		LightProbeDepth;
+		internal RenderTargetCube	LightProbeGBuffer0;
+		internal RenderTargetCube	LightProbeGBuffer1;
+		internal RenderTargetCube	LightProbeRadiance;
+		internal TextureCubeArray	RadianceCache;
+		internal TextureCubeArray	RadianceGBuffer0;
+		internal TextureCubeArray	RadianceGBuffer1;
 
 
 		/// <summary>
@@ -181,10 +185,16 @@ namespace Fusion.Engine.Graphics {
 			
 			particleSystem	=	new ParticleSystem( Game.RenderSystem, this );
 
-			radianceFrame	=	new HdrFrame( Game, 256,256 );
+			LightProbeDepth		=	new DepthStencil2D	( Game.GraphicsDevice, DepthFormat.D24S8,	RenderSystem.EnvMapSize, RenderSystem.EnvMapSize );
 
-			Radiance		=	new RenderTargetCube( Game.GraphicsDevice, ColorFormat.Rgba16F, RenderSystem.EnvMapSize, true );
-			RadianceCache	=	new TextureCubeArray( Game.GraphicsDevice, RenderSystem.EnvMapSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba16F, true );
+			#warning false
+			LightProbeGBuffer0	=	new RenderTargetCube( Game.GraphicsDevice, ColorFormat.Rgba8,	RenderSystem.EnvMapSize, false ); 
+			LightProbeGBuffer1	=	new RenderTargetCube( Game.GraphicsDevice, ColorFormat.Rgba8,	RenderSystem.EnvMapSize, false ); 
+			LightProbeRadiance	=	new RenderTargetCube( Game.GraphicsDevice, ColorFormat.Rgba16F, RenderSystem.EnvMapSize, true );
+
+			RadianceGBuffer0	=	new TextureCubeArray( Game.GraphicsDevice, RenderSystem.EnvMapSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba8,	false );
+			RadianceGBuffer1	=	new TextureCubeArray( Game.GraphicsDevice, RenderSystem.EnvMapSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba8,	false );
+			RadianceCache		=	new TextureCubeArray( Game.GraphicsDevice, RenderSystem.EnvMapSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba16F,	true );
 
 			Resize( width, height );
 		}
@@ -203,11 +213,16 @@ namespace Fusion.Engine.Graphics {
 
 				SafeDispose( ref debug );
 
-				SafeDispose( ref Radiance );
-				SafeDispose( ref RadianceCache );
-
+				SafeDispose( ref LightProbeDepth	 );
+				SafeDispose( ref LightProbeGBuffer0	 );
+				SafeDispose( ref LightProbeGBuffer1	 );
+				SafeDispose( ref LightProbeRadiance	 );
+				
+				SafeDispose( ref RadianceCache		 );
+				SafeDispose( ref RadianceGBuffer0	 );
+				SafeDispose( ref RadianceGBuffer1	 );
+				
 				SafeDispose( ref viewHdrFrame );
-				SafeDispose( ref radianceFrame );
 
 			}
 			base.Dispose( disposing );
@@ -452,7 +467,7 @@ namespace Fusion.Engine.Graphics {
 			rs.Sky.RenderFogTable( SkySettings );
 
 			//	render fog :
-			rs.Fog.RenderFog( Camera, LightSet, FogSettings );
+			//rs.Fog.RenderFog( Camera, LightSet, FogSettings );
 
 			//	render lights :
 			//rs.LightRenderer.RenderLighting( stereoEye, Camera, viewHdrFrame, this, Radiance );
@@ -532,42 +547,43 @@ namespace Fusion.Engine.Graphics {
 		public void RenderRadiance ()
 		{
 			var sw = new Stopwatch();
+			var device	=	Game.GraphicsDevice;
 
-			Log.Message("Radiance capture...");
+			Log.Message("Radiance geometry capture...");
 
 			sw.Start();
-			using (new PixEvent("Capture Radiance")) {
+			using (new PixEvent("Capture Radiance Geometry")) {
 
-				var sun	=	SkySettings.SunGlowIntensity;
-				SkySettings.SunGlowIntensity = 0;
-
-				foreach ( var envLight in LightSet.LightProbes ) {
+				foreach ( var lightProbe in LightSet.LightProbes ) {
 
 					for (int i=0; i<6; i++) {
-					
-						ClearBuffers( radianceFrame );
 
-						var camera = new Camera();
-						camera.SetupCameraCubeFace( envLight.Position, (CubeFace)i, 0.125f, 5000 );
+						var face	=	(CubeFace)i;
+						var depth	=	LightProbeDepth.Surface;
+						var gbuf0	=	LightProbeGBuffer0.GetSurface( 0, face );
+						var gbuf1	=	LightProbeGBuffer1.GetSurface( 0, face );
+					
+						device.Clear( depth );
+						device.Clear( gbuf0, Color4.Black );
+						device.Clear( gbuf1, Color4.Black );
+
+						var context	=	new LightProbeContext( lightProbe, face, depth, gbuf0, gbuf1 );
 
 						//	render g-buffer :
-						rs.SceneRenderer.RenderForward( new GameTime(0,0,0), StereoEye.Mono, camera, radianceFrame, this, true );
-
-						//	render sky :
-						rs.Sky.Render( camera, StereoEye.Mono, radianceFrame, SkySettings );
-
-						//	downsample captured frame to cube face.
-						rs.Filter.StretchRect4x4( Radiance.GetSurface( 0, (CubeFace)i ), radianceFrame.HdrBuffer, SamplerState.LinearClamp, true );
+						rs.SceneRenderer.RenderLightProbeGBuffer( context, this, Instances );
 					}
 				
-					//	prefilter cubemap :
-					rs.Filter.PrefilterEnvMap( Radiance );
+					RadianceGBuffer0.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeGBuffer0 );
+					RadianceGBuffer1.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeGBuffer1 );
 
-					RadianceCache.CopyFromRenderTargetCube( envLight.ImageIndex, Radiance );
+					rs.LightManager.RelightLightProbe( RadianceGBuffer0, RadianceGBuffer1, lightProbe, LightSet, LightProbeRadiance );
+
+					rs.Filter.PrefilterEnvMap( LightProbeRadiance );
+
+					RadianceCache.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeRadiance );
 				}
+
 				sw.Stop();
-	
-				SkySettings.SunGlowIntensity = sun;
 			}
 
 			Log.Message("{0} light probes - {1} ms", LightSet.LightProbes.Count, sw.ElapsedMilliseconds);

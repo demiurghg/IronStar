@@ -395,26 +395,31 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		//internal void RenderLightProbeGBuffer ( LightProbeContext context, IEnumerable<MeshInstance> instances )
-		//{
-		//	using ( new PixEvent("LightProbeGBuffer") ) {
+		internal void RenderLightProbeGBuffer ( LightProbeContext context, RenderWorld rw, IEnumerable<MeshInstance> instances )
+		{
+			using ( new PixEvent("LightProbeGBuffer") ) {
 
-		//		if ( SetupStage( StereoEye.Mono, null, null, shadowRenderCtxt ) ) {
+				if ( SetupStage( StereoEye.Mono, null, context ) ) {
 
-		//			device.SetTargets( context.DepthBuffer, context.ColorBuffer, context.NormalBuffer );
-		//			device.SetViewport( context.ColorBuffer );
-				
-		//							//#warning INSTANSING!
-		//			foreach ( var instance in instances ) {
+					foreach ( var instance in instances ) {
 
-		//				if (SetupInstance(SurfaceFlags.SHADOW, instance)) {
+						if ( SetupInstance( SurfaceFlags.GBUFFER, instance ) ) {
 
-		//					device.SetupVertexInput( instance.vb, instance.ib );
-		//					device.DrawIndexed( instance.indexCount, 0, 0 );
-		//				}
-		//			}
-		//		}
-		//	}
-		//}
+							device.SetupVertexInput( instance.vb, instance.ib );
+
+							foreach ( var subset in instance.Subsets ) {
+
+								var vt		=	rw.VirtualTexture;
+								var segment	=	vt.GetTextureSegmentInfo( subset.Name );
+
+								if (SetupSubset( segment )) {
+									device.DrawIndexed( subset.PrimitiveCount*3, subset.StartPrimitive*3, 0 );
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }

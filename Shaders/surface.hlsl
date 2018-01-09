@@ -381,6 +381,8 @@ float4 PSMain( PSInput input ) : SV_TARGET0
 
 #ifdef GBUFFER
 
+#include "rgbe.fxi"
+
 struct LPGBuffer {
 	float4	color 	: SV_Target0;
 	float4	normal	: SV_Target1;
@@ -390,13 +392,14 @@ LPGBuffer PSMain( PSInput input )
 {	
 	LPGBuffer	output;
 
-	float depth	=	input.ProjPos.z / input.ProjPos.w;
+	float 	dist	=	abs( input.ProjPos.w );
+	float4	dist_e	=	EncodeRGBE8( float3(dist,0,0) );
 	
-	float3	color	=	0.5;
+	float3	color	=	0.25;
 	float3	normal	=	normalize(input.Normal.xyz) * 0.5f + 0.5f;
 	
-	output.color	=	float4( color , 0 );
-	output.normal	=	float4( normal, 0 );
+	output.color	=	float4( color , dist_e.r );
+	output.normal	=	float4( normal, dist_e.w );
 
 	return output;
 }

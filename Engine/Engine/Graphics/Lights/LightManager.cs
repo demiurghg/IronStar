@@ -33,12 +33,13 @@ namespace Fusion.Engine.Graphics {
 
 
 		[ShaderStructure()]
-		[StructLayout(LayoutKind.Sequential, Pack=4, Size=128)]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=192)]
 		struct RELIGHT_PARAMS {
 			public	Matrix	ShadowViewProjection;
 			public	Vector4	LightProbePosition;
 			public	Color4	DirectLightIntensity;
 			public	Vector4	DirectLightDirection;
+			public	Vector4	ShadowRegion;
 			public	float	CubeIndex;
 		}
 
@@ -205,13 +206,16 @@ namespace Fusion.Engine.Graphics {
 				constData.ShadowViewProjection	=	shadowMap.GetLessDetailedCascade().ViewProjectionMatrix;
 				constData.DirectLightDirection	=	new Vector4( lightSet.DirectLight.Direction, 0 );
 				constData.DirectLightIntensity	=	lightSet.DirectLight.Intensity;
+				constData.ShadowRegion			=	shadowMap.GetLessDetailedCascade().ShadowScaleOffset;
 
 				constBuffer.SetData( constData );
 
 				device.ComputeShaderResources[0]    =   colorData;
 				device.ComputeShaderResources[1]    =   normalData;
 				device.ComputeShaderResources[2]    =   rs.Sky.SkyCube;
+				device.ComputeShaderResources[3]	=	shadowMap.ColorBuffer;
 				device.ComputeShaderSamplers[0]		=	SamplerState.PointClamp;
+				device.ComputeShaderSamplers[1]		=	SamplerState.ShadowSamplerPoint;
 				device.ComputeShaderConstants[0]	=	constBuffer;
 					
 				for (int i=0; i<6; i++) {

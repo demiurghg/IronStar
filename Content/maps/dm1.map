@@ -2,7 +2,7 @@
 <Map xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Environment>
     <Gravity>16</Gravity>
-    <SkyTrubidity>2</SkyTrubidity>
+    <SkyTrubidity>3</SkyTrubidity>
     <SunPosition X="1" Y="1" Z="2" />
     <SunIntensity>40</SunIntensity>
     <FogDistance>5000</FogDistance>
@@ -182,8 +182,8 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="31.5" Y="3.375" Z="32.125" />
-      <Rotation X="2.64772389E-05" Y="0.141393468" Z="-3.50236878E-05" W="0.989953458" />
+      <Position X="35.5" Y="3.375" Z="32.125" />
+      <Rotation X="0.378863275" Y="0.130643919" Z="0.0540765822" W="0.914587557" />
       <Scaling>1</Scaling>
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>
@@ -192,7 +192,7 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="41.375" Y="3.25" Z="33.625" />
+      <Position X="20.625" Y="3.125" Z="45.5" />
       <Rotation X="0.4716667" Y="-0.52636075" Z="0.527308" W="0.4716155" />
       <Scaling>1</Scaling>
       <Factory xsi:type="ProxyFactory">
@@ -419,15 +419,6 @@
     <MapNode xsi:type="MapLightProbe">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="22.5" Y="1.125" Z="60" />
-      <Rotation X="0" Y="0" Z="0" W="1" />
-      <Scaling>1</Scaling>
-      <InnerRadius>8</InnerRadius>
-      <OuterRadius>16</OuterRadius>
-    </MapNode>
-    <MapNode xsi:type="MapLightProbe">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
       <Position X="6.5" Y="-0.5" Z="60" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
@@ -446,7 +437,7 @@
     <MapNode xsi:type="MapLightProbe">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="49.25" Y="1.125" Z="34" />
+      <Position X="45.75" Y="1.125" Z="34" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <InnerRadius>8</InnerRadius>
@@ -455,7 +446,7 @@
     <MapNode xsi:type="MapLightProbe">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="49.25" Y="1.125" Z="43.25" />
+      <Position X="49" Y="1.125" Z="42" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <InnerRadius>8</InnerRadius>
@@ -464,7 +455,7 @@
     <MapNode xsi:type="MapLightProbe">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="49.25" Y="1.125" Z="25.875" />
+      <Position X="46.125" Y="1.125" Z="25.875" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <InnerRadius>8</InnerRadius>
@@ -496,6 +487,34 @@
       <Scaling>1</Scaling>
       <InnerRadius>8</InnerRadius>
       <OuterRadius>16</OuterRadius>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="38.625" Y="7.375" Z="31.125" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="StartPointFactory">
+        <StartPointType>SinglePlayer</StartPointType>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapLightProbe">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="45.75" Y="1.125" Z="43.375" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <InnerRadius>8</InnerRadius>
+      <OuterRadius>16</OuterRadius>
+    </MapNode>
+    <MapNode xsi:type="MapLightProbe">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="20.625" Y="3.125" Z="45.375" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <InnerRadius>2</InnerRadius>
+      <OuterRadius>3</OuterRadius>
     </MapNode>
   </Nodes>
 </Map>

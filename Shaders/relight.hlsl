@@ -3,12 +3,16 @@ $ubershader 	RELIGHT
 #endif
 
 #include "relight.auto.hlsl"
+#include "rgbe.fxi"
 
 TextureCubeArray	GBufferColorData		:	register(t0);
 TextureCubeArray	GBufferNormalData		:	register(t1);
 TextureCubeArray	SkyEnvironment			:	register(t2);
+Texture2D			ShadowMap				:	register(t3);
 
-SamplerState		PointSampler			: 	register(s0);
+SamplerState			PointSampler		: 	register(s0);
+SamplerComparisonState	ShadowSampler		: 	register(s1);
+
 
 RWTexture2D<float4>  TargetFacePosX : register(u0); 
 RWTexture2D<float4>  TargetFaceNegX : register(u1); 
@@ -34,12 +38,33 @@ cbuffer CBRelightParams :  register(b0) { RELIGHT_PARAMS RelightParams : packoff
 	10.	Store occlusion grid as separate content asset file.
 -----------------------------------------------------------------------------*/
 
+float ComputeShadow ( float3 worldPos )
+{	
+	float4 scaleOffset	=	RelightParams.ShadowRegion;
+	float4 projectedPos = 	mul( float4(worldPos,1), RelightParams.ShadowViewProjection );
+	projectedPos.xy 	/= 	projectedPos.w;
+	projectedPos.w   	= 	1;
+	
+	float2	shadowUV	=	mad( projectedPos.xy, scaleOffset.xy, scaleOffset.zw );
+	float   depthCmp	= 	projectedPos.z;
+
+	float	shadow		=	ShadowMap.SampleCmpLevelZero( ShadowSampler, shadowUV, depthCmp ).r;
+	
+	return	shadow;
+	
+	//max(abs(projection.x), abs(projection.y));//length(temp.xy);
+}
+
+
 float4	ComputeLight ( float3 dir )
 {
 	float	cubeId	=	RelightParams.CubeIndex;
 	float4	gbuf0	=	GBufferColorData .SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
 	float4	gbuf1	=	GBufferNormalData.SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
 	float4	sky		=	SkyEnvironment.SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
+	
+	float	dist	=	DecodeRGBE8( float4( gbuf0.w, 0, 0, gbuf1.w ) );
+	float3	pos		=	dir * dist + RelightParams.LightProbePosition.xyz;
 	
 	float3	color	=	gbuf0.rgb;
 	float3	normal	=	gbuf1.xyz * 2 - 1;
@@ -49,7 +74,11 @@ float4	ComputeLight ( float3 dir )
 	float3	lightDir	=	-normalize( RelightParams.DirectLightDirection.xyz );
 	float3	lightColor	=	RelightParams.DirectLightIntensity.rgb;
 	
-	float3	lighting	=	saturate(dot(normal, lightDir)) * color * lightColor;
+	float	shadow		=	ComputeShadow( pos );
+	
+	float3	lighting	=	saturate(dot(normal, lightDir)) * color * lightColor * shadow;
+	
+	//return float4(frac(pos/5.0f), 0);
 	
 	return float4( lerp(lighting, sky.rgb, skyFactor), 1 );
 }

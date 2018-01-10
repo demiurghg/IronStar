@@ -96,7 +96,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	float3	diffuse 	=	lerp( baseColor, float3(0,0,0), metallic );
 	float3	specular  	=	lerp( float3(0.04f,0.04f,0.04f), baseColor, metallic );
 
-	/*roughness	=	0.2f;
+	/*roughness	=	0.0f;
 	specular	=	1.0f;
 	diffuse		=	0.0f;//*/
 

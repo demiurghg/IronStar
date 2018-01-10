@@ -167,9 +167,6 @@ namespace Fusion.Drivers.Graphics {
 					var rtv	=	new RenderTargetView( device.Device, texCube, rtvDesc );
 
 					var uavDesc = new UnorderedAccessViewDescription();
-						uavDesc.Buffer.ElementCount	=	width * height;
-						uavDesc.Buffer.FirstElement	=	0;
-						uavDesc.Buffer.Flags		=	UnorderedAccessViewBufferFlags.None;
 						uavDesc.Dimension			=	UnorderedAccessViewDimension.Texture2DArray;
 						uavDesc.Format				=	Converter.Convert( format );
 						uavDesc.Texture2DArray.ArraySize		=	1;

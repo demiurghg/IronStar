@@ -578,7 +578,7 @@ namespace Fusion.Engine.Graphics {
 
 					rs.LightManager.RelightLightProbe( RadianceGBuffer0, RadianceGBuffer1, lightProbe, LightSet, LightProbeRadiance );
 
-					rs.Filter.PrefilterEnvMap( LightProbeRadiance );
+					//rs.Filter.PrefilterEnvMap( LightProbeRadiance );
 
 					RadianceCache.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeRadiance );
 				}

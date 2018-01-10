@@ -41,6 +41,8 @@ namespace Fusion.Engine.Graphics {
 			public	Vector4	DirectLightDirection;
 			public	Vector4	ShadowRegion;
 			public	float	CubeIndex;
+			public	float	Roughness;
+			public	float	TargetSize;
 		}
 
 
@@ -70,14 +72,8 @@ namespace Fusion.Engine.Graphics {
 
 
 		enum Flags {
-			RELIGHT	=	0x0001,
-
-			POSX	=	0x0010,
-			POSY	=	0x0020,
-			POSZ	=	0x0040,
-			NEGX	=	0x0080,
-			NEGY	=	0x0100,
-			NEGZ	=	0x0200,
+			RELIGHT		=	0x0001,
+			PREFILTER	=	0x0002,
 		}
 		
 
@@ -215,7 +211,8 @@ namespace Fusion.Engine.Graphics {
 				device.ComputeShaderResources[2]    =   rs.Sky.SkyCube;
 				device.ComputeShaderResources[3]	=	shadowMap.ColorBuffer;
 				device.ComputeShaderSamplers[0]		=	SamplerState.PointClamp;
-				device.ComputeShaderSamplers[1]		=	SamplerState.ShadowSamplerPoint;
+				device.ComputeShaderSamplers[0]		=	SamplerState.LinearWrap;
+				device.ComputeShaderSamplers[2]		=	SamplerState.ShadowSamplerPoint;
 				device.ComputeShaderConstants[0]	=	constBuffer;
 					
 				for (int i=0; i<6; i++) {
@@ -231,8 +228,36 @@ namespace Fusion.Engine.Graphics {
 				int tgz		=	1;
 
 				device.Dispatch( tgx, tgy, tgz );
+
+				//
+				//	prefilter :
+				//
+				device.PipelineState = factory[(int)Flags.PREFILTER];
+				
+				for (int mip=1; mip<RenderSystem.EnvMapSpecularMipCount; mip++) {
+					
+					constData.Roughness		=	(float)mip / (RenderSystem.EnvMapSpecularMipCount-1);
+					constData.TargetSize	=	RenderSystem.EnvMapSize >> mip;
+					constBuffer.SetData( constData );
+
+					for (int i=0; i<6; i++) {
+						device.SetCSRWTexture( i, target.GetSurface( mip, (CubeFace)i ) );
+					}
+
+					device.ComputeShaderResources[4]	=	target.GetCubeShaderResource( mip - 1 );
+
+					size	=	RenderSystem.EnvMapSize >> mip;
+					tgx		=	MathUtil.IntDivRoundUp( size, BlockSizeX );
+					tgy		=	MathUtil.IntDivRoundUp( size, BlockSizeY );
+					tgz		=	1;
+
+					device.Dispatch( tgx, tgy, tgz );
+				}
 			}
 		}
+
+
+
 
 
 

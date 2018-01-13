@@ -5,7 +5,9 @@
     <SkyTrubidity>2</SkyTrubidity>
     <SunPosition X="1" Y="1" Z="1" />
     <SunIntensity>100</SunIntensity>
-    <FogDensity>0.001</FogDensity>
+    <FogDistance>0.001</FogDistance>
+    <FogHeight>0.05</FogHeight>
+    <FogColor Red="10" Green="10" Blue="10" Alpha="0" />
     <CharacterHeight>2</CharacterHeight>
     <CharacterSize>1.2</CharacterSize>
     <WalkableSlope>45</WalkableSlope>

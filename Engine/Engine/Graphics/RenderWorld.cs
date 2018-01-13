@@ -185,16 +185,16 @@ namespace Fusion.Engine.Graphics {
 			
 			particleSystem	=	new ParticleSystem( Game.RenderSystem, this );
 
-			LightProbeDepth		=	new DepthStencil2D	( Game.GraphicsDevice, DepthFormat.D24S8,	RenderSystem.EnvMapSize, RenderSystem.EnvMapSize );
+			LightProbeDepth		=	new DepthStencil2D	( Game.GraphicsDevice, DepthFormat.D24S8,	RenderSystem.LightProbeSize, RenderSystem.LightProbeSize );
 
 			#warning false
-			LightProbeGBuffer0	=	new RenderTargetCube( Game.GraphicsDevice, ColorFormat.Rgba8,	RenderSystem.EnvMapSize, false ); 
-			LightProbeGBuffer1	=	new RenderTargetCube( Game.GraphicsDevice, ColorFormat.Rgba8,	RenderSystem.EnvMapSize, false ); 
-			LightProbeRadiance	=	new RenderTargetCube( Game.GraphicsDevice, ColorFormat.Rgba16F, RenderSystem.EnvMapSize, true );
+			LightProbeGBuffer0	=	new RenderTargetCube( Game.GraphicsDevice, ColorFormat.Rgba8,	RenderSystem.LightProbeSize, false ); 
+			LightProbeGBuffer1	=	new RenderTargetCube( Game.GraphicsDevice, ColorFormat.Rgba8,	RenderSystem.LightProbeSize, false ); 
+			LightProbeRadiance	=	new RenderTargetCube( Game.GraphicsDevice, ColorFormat.Rgba16F, RenderSystem.LightProbeSize, true );
 
-			RadianceGBuffer0	=	new TextureCubeArray( Game.GraphicsDevice, RenderSystem.EnvMapSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba8,	false );
-			RadianceGBuffer1	=	new TextureCubeArray( Game.GraphicsDevice, RenderSystem.EnvMapSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba8,	false );
-			RadianceCache		=	new TextureCubeArray( Game.GraphicsDevice, RenderSystem.EnvMapSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba16F,	true );
+			RadianceGBuffer0	=	new TextureCubeArray( Game.GraphicsDevice, RenderSystem.LightProbeSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba8,	false );
+			RadianceGBuffer1	=	new TextureCubeArray( Game.GraphicsDevice, RenderSystem.LightProbeSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba8,	false );
+			RadianceCache		=	new TextureCubeArray( Game.GraphicsDevice, RenderSystem.LightProbeSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba16F,	true );
 
 			Resize( width, height );
 		}

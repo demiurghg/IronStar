@@ -103,7 +103,7 @@ float3	CookTorrance( float3 N, float3 V, float3 L, float3 I, float3 F, float rou
 	
 	float	epsilon	=	0.0009765625;
 	
-	float 	m 		= 	roughness;
+	float 	m 		= 	roughness * roughness;
 
 	//	NB: To remove harsh edge on grazing angles :
 

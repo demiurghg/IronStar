@@ -85,7 +85,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public override void Initialize() 
 		{
-			skyCube		=	new RenderTargetCube( device, ColorFormat.Rgba16F, 128, true );
+			skyCube		=	new RenderTargetCube( device, ColorFormat.Rgba16F, 64, true );
 			skyConstsCB	=	new ConstantBuffer( device, typeof(SkyConsts) );
 
 			LoadContent();

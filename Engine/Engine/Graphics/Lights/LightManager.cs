@@ -29,7 +29,7 @@ namespace Fusion.Engine.Graphics {
 		const int BlockSizeY = 16;
 
 		[ShaderDefine]
-		const int LightProbeSize = RenderSystem.EnvMapSize;
+		const int LightProbeSize = RenderSystem.LightProbeSize;
 
 
 		[ShaderStructure()]
@@ -59,12 +59,8 @@ namespace Fusion.Engine.Graphics {
 
 
 		public Texture3D OcclusionGrid		{ get { return occlusionGrid; }	}
-		public Texture3D LightProbeIndices	{ get { return lightProbeIndices; }	}
-		public Texture3D LightProbeWeights	{ get { return lightProbeWeights; }	}
 
 		Texture3D occlusionGrid;
-		Texture3D lightProbeIndices;
-		Texture3D lightProbeWeights;
 
 		Ubershader		shader;
 		StateFactory	factory;
@@ -74,6 +70,8 @@ namespace Fusion.Engine.Graphics {
 		enum Flags {
 			RELIGHT		=	0x0001,
 			PREFILTER	=	0x0002,
+			SPECULAR	=	0x0004,
+			DIFFUSE		=	0x0008,
 		}
 		
 
@@ -98,8 +96,6 @@ namespace Fusion.Engine.Graphics {
 			shadowMap	=	new ShadowMap( rs, rs.ShadowQuality );
 
 			occlusionGrid		=	new Texture3D( rs.Device, ColorFormat.Rgba8, Width,Height,Depth );
-			lightProbeIndices	=	new Texture3D( rs.Device, ColorFormat.Rgba8, Width,Height,Depth );
-			lightProbeWeights	=	new Texture3D( rs.Device, ColorFormat.Rgba8, Width,Height,Depth );
 
 			constBuffer			=	new ConstantBuffer( rs.Device, typeof(RELIGHT_PARAMS) );
 
@@ -134,8 +130,6 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref lightGrid );
 				SafeDispose( ref shadowMap );
 				SafeDispose( ref occlusionGrid );
-				SafeDispose( ref lightProbeIndices );
-				SafeDispose( ref lightProbeWeights );
 			}
 
 			base.Dispose( disposing );
@@ -146,7 +140,7 @@ namespace Fusion.Engine.Graphics {
 		const int	Height		=	64;
 		const int	Depth		=	128;
 		const float GridStep	=	1.0f;
-		const int	SampleNum	=	16;
+		const int	SampleNum	=	64;
 
 
 		/// <summary>
@@ -221,7 +215,7 @@ namespace Fusion.Engine.Graphics {
 
 				device.PipelineState = factory[(int)Flags.RELIGHT];
 
-				int size	=	RenderSystem.EnvMapSize;
+				int size	=	RenderSystem.LightProbeSize;
 					
 				int tgx		=	MathUtil.IntDivRoundUp( size, BlockSizeX );
 				int tgy		=	MathUtil.IntDivRoundUp( size, BlockSizeY );
@@ -230,14 +224,14 @@ namespace Fusion.Engine.Graphics {
 				device.Dispatch( tgx, tgy, tgz );
 
 				//
-				//	prefilter :
+				//	prefilter specular :
 				//
-				device.PipelineState = factory[(int)Flags.PREFILTER];
+				device.PipelineState = factory[(int)(Flags.PREFILTER | Flags.SPECULAR)];
 				
-				for (int mip=1; mip<RenderSystem.EnvMapSpecularMipCount; mip++) {
+				for (int mip=1; mip<=RenderSystem.LightProbeMaxSpecularMip; mip++) {
 					
-					constData.Roughness		=	(float)mip / (RenderSystem.EnvMapSpecularMipCount-1);
-					constData.TargetSize	=	RenderSystem.EnvMapSize >> mip;
+					constData.Roughness		=	(float)mip / RenderSystem.LightProbeMaxSpecularMip;
+					constData.TargetSize	=	RenderSystem.LightProbeSize >> mip;
 					constBuffer.SetData( constData );
 
 					for (int i=0; i<6; i++) {
@@ -246,7 +240,31 @@ namespace Fusion.Engine.Graphics {
 
 					device.ComputeShaderResources[4]	=	target.GetCubeShaderResource( mip - 1 );
 
-					size	=	RenderSystem.EnvMapSize >> mip;
+					size	=	RenderSystem.LightProbeSize >> mip;
+					tgx		=	MathUtil.IntDivRoundUp( size, BlockSizeX );
+					tgy		=	MathUtil.IntDivRoundUp( size, BlockSizeY );
+					tgz		=	1;
+
+					device.Dispatch( tgx, tgy, tgz );
+				}
+
+				//
+				//	prefilter diffuse :
+				//
+				if (true) {
+					device.PipelineState = factory[(int)(Flags.PREFILTER | Flags.DIFFUSE)];
+				
+					constData.Roughness		=	0;
+					constData.TargetSize	=	RenderSystem.LightProbeSize;
+					constBuffer.SetData( constData );
+
+					for (int i=0; i<6; i++) {
+						device.SetCSRWTexture( i, target.GetSurface( RenderSystem.LightProbeDiffuseMip, (CubeFace)i ) );
+					}
+
+					device.ComputeShaderResources[4]	=	target.GetCubeShaderResource(0);
+
+					size	=	RenderSystem.LightProbeSize;
 					tgx		=	MathUtil.IntDivRoundUp( size, BlockSizeX );
 					tgy		=	MathUtil.IntDivRoundUp( size, BlockSizeY );
 					tgz		=	1;
@@ -316,8 +334,6 @@ namespace Fusion.Engine.Graphics {
 					var indices = new Color[ Width*Height*Depth ];
 					var weights = new Color[ Width*Height*Depth ];
 
-					Color lpIndex, lpWeight;
-
 
 					for ( int x=0; x<Width;  x++ ) {
 
@@ -333,25 +349,17 @@ namespace Fusion.Engine.Graphics {
 								var localAO		=	ComputeLocalOcclusion( scene, position, 5 );
 								var globalAO	=	ComputeSkyOcclusion( scene, position, 512 );
 
-								GetLightProbeIndicesAndWeights( lightSet, position, out lpIndex, out lpWeight );
-								//var probeIndex	=	GetLightProbeIndex( scene, lightSet, position );
-
 								byte byteX		=	(byte)( 255 * (globalAO.X * 0.5+0.5) );
 								byte byteY		=	(byte)( 255 * (globalAO.Y * 0.5+0.5) );
 								byte byteZ		=	(byte)( 255 * (globalAO.Z * 0.5+0.5) );
 								byte byteW		=	(byte)( 255 * localAO );
 
 								data[index]		=	new Color( byteX, byteY, byteZ, byteW );
-
-								indices[index]	=	lpIndex;
-								weights[index]	=	lpWeight;
 							}
 						}
 					}
 
 					occlusionGrid.SetData( data );
-					lightProbeIndices.SetData( indices );
-					lightProbeWeights.SetData( weights );
 
 					Log.Message("Done!");
 				}
@@ -360,82 +368,10 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="z"></param>
-		/// <returns></returns>
 		int	ComputeAddress ( int x, int y, int z ) 
 		{
 			return x + y * Width + z * Height*Width;
 		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="scene"></param>
-		/// <param name="point"></param>
-		/// <returns></returns>
-		byte GetLightProbeIndex ( RtcScene scene, LightSet lightSet, Vector3 point )
-		{
-			int count = Math.Min(255, lightSet.LightProbes.Count);
-
-			return GetClosestLightProbe( lightSet, point );
-		}
-
-
-
-		byte GetClosestLightProbe ( LightSet lightSet, Vector3 point )
-		{
-			int index = lightSet.LightProbes.IndexOfMaximum( (p) => Vector3.Distance( point, p.Position ) );
-
-			if (index<0) {
-				return 0;
-			} else {
-				return (byte)index;
-			}
-		}
-
-
-
-
-		void GetLightProbeIndicesAndWeights ( LightSet lightSet, Vector3 point, out Color indices, out Color weights )
-		{
-			indices		=	Color.Zero;
-			weights		=	Color.Zero;
-
-			var envLights	=	lightSet.LightProbes.ToList();
-
-			var candidates	=	envLights.OrderByDescending( lp => Vector3.Distance(lp.Position, point) ).Take(4).ToArray();
-
-			indices.R	=	candidates.Length > 0 ? (byte)(envLights.IndexOf( candidates[0] )) : (byte)0;
-			indices.G	=	candidates.Length > 1 ? (byte)(envLights.IndexOf( candidates[1] )) : (byte)0;
-			indices.B	=	candidates.Length > 2 ? (byte)(envLights.IndexOf( candidates[2] )) : (byte)0;
-			indices.A	=	candidates.Length > 3 ? (byte)(envLights.IndexOf( candidates[3] )) : (byte)0;
-
-			var weight4	=	Vector4.Zero;
-
-			if (candidates.Length > 0) weight4.X = 1 / (Vector3.DistanceSquared(candidates[0].Position, point) + 1);
-			if (candidates.Length > 1) weight4.Y = 1 / (Vector3.DistanceSquared(candidates[1].Position, point) + 1);
-			if (candidates.Length > 2) weight4.Z = 1 / (Vector3.DistanceSquared(candidates[2].Position, point) + 1);
-			if (candidates.Length > 3) weight4.W = 1 / (Vector3.DistanceSquared(candidates[3].Position, point) + 1);
-
-			var sum		=	Vector4.Dot( Vector4.One, weight4 );
-
-				weight4	/=	(sum + 0.00001f);
-
-			int count	=	lightSet.LightProbes.Count;
-
-			weights.R	=	(byte)(weight4.X * 255);
-			weights.G	=	(byte)(weight4.Y * 255);
-			weights.B	=	(byte)(weight4.Z * 255);
-			weights.A	=	(byte)(weight4.W * 255);
-		}
-
 
 
 

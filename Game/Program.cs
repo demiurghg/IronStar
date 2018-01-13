@@ -20,6 +20,7 @@ using Fusion.Build.Mapping;
 using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using IronStar.Editor2;
+using Fusion.Core.Mathematics;
 
 namespace IronStar {
 
@@ -73,7 +74,6 @@ namespace IronStar {
 
 			/*Allocator2D.RunTest(512, 1024, @"E:\GITHUB\_alloc_test");
 			return 0; */
-
 
 			//
 			//	Build content on startup.

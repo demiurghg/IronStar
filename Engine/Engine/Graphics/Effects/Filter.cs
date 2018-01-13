@@ -447,9 +447,9 @@ namespace Fusion.Engine.Graphics
 								   ShaderFlags.PREFILTER_ENVMAP | ShaderFlags.POSZ, ShaderFlags.PREFILTER_ENVMAP | ShaderFlags.NEGZ };
 
 				//	loop through mip levels from second to last specular mip level :
-				for (int mip=1; mip<RenderSystem.EnvMapSpecularMipCount; mip++) {
+				for (int mip=1; mip<RenderSystem.LightProbeMaxSpecularMip; mip++) {
 
-					float roughness = (float)mip / (float)(RenderSystem.EnvMapSpecularMipCount-1);
+					float roughness = (float)mip / (float)(RenderSystem.LightProbeMaxSpecularMip-1);
 					float step		= 1.0f / width;
 
 					vectorCB.SetData( new Vector4( roughness, step,0,0 ) );

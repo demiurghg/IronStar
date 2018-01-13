@@ -45,6 +45,10 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine]	public const uint LightSpotShapeSquare	=	0x00010000;
 		[ShaderDefine]	public const uint LightSpotShapeRound	=	0x00020000;
 
+		[ShaderDefine]	public const uint LightProbeSize			=	RenderSystem.LightProbeSize;
+		[ShaderDefine]	public const uint LightProbeMaxSpecularMip	=	RenderSystem.LightProbeMaxSpecularMip;
+		[ShaderDefine]	public const uint LightProbeDiffuseMip		=	RenderSystem.LightProbeDiffuseMip;
+
 
 		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential, Pack=4, Size=1024)]

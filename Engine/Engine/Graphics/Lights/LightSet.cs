@@ -113,9 +113,15 @@ namespace Fusion.Engine.Graphics {
 		public void SortLightProbes ()
 		{
 			envLights.Sort( delegate( LightProbe a, LightProbe b ) {
-				if (a.OuterRadius==b.OuterRadius) return 0;
-				if (a.OuterRadius>b.OuterRadius) return -1;
-				if (a.OuterRadius<b.OuterRadius) return  1;
+				if (a.OuterRadius>b.OuterRadius) {
+					return -1;
+				} else
+				if (a.OuterRadius<b.OuterRadius) {
+					return  1;
+				} else
+				if (a.OuterRadius==b.OuterRadius) {
+					return a.ImageIndex-b.ImageIndex;
+				}
 				return 0;
 			});
 		}

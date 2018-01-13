@@ -8,6 +8,9 @@ static const uint LightTypeSpotShadow = 3;
 static const uint LightTypeAmbient = 4;
 static const uint LightSpotShapeSquare = 65536;
 static const uint LightSpotShapeRound = 131072;
+static const uint LightProbeSize = 64;
+static const uint LightProbeMaxSpecularMip = 4;
+static const uint LightProbeDiffuseMip = 5;
 
 // Fusion.Engine.Graphics.SceneRenderer+STAGE
 // Marshal.SizeOf = 1024

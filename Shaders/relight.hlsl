@@ -1,6 +1,6 @@
 #if 0
 $ubershader 	RELIGHT
-$ubershader		PREFILTER
+$ubershader		PREFILTER SPECULAR|DIFFUSE
 #endif
 
 #include "relight.auto.hlsl"
@@ -35,9 +35,9 @@ cbuffer CBRelightParams :  register(b0) { RELIGHT_PARAMS RelightParams : packoff
 	4. 	[Optional] Get 3-5 closest spot-lights without shadows and inject light.
 	5.	Retrive color data from megatexture.
 	6.	[*] Move prefilter shader here.
-	7.	Prefilter sky.
-	8.	Apply specular and diffuse terms.
-	9.	Implement better occlusion grid.
+	7.	[*] Prefilter sky.
+	8.	[*] Apply specular and diffuse terms.
+	9.	Implement better occlusion grid (offset, grid density, better local occlusion)
 	10.	Store occlusion grid as separate content asset file.
 -----------------------------------------------------------------------------*/
 
@@ -88,7 +88,7 @@ float4	ComputeLight ( float3 dir )
 	
 	//return float4(frac(pos/5.0f), 0);
 	
-	return float4( lerp(lighting, sky.rgb, skyFactor), 1 );
+	return float4( lerp(lighting, sky.rgb, skyFactor), 1-skyFactor );
 }
 
 [numthreads(BlockSizeX,BlockSizeY,1)] 
@@ -119,6 +119,8 @@ void CSMain(
 
 #ifdef PREFILTER
 
+#include "hammersley.fxi"
+
 float Beckmann( float3 N, float3 H, float roughness)
 {
 	float 	m		=	roughness*roughness;
@@ -127,6 +129,10 @@ float Beckmann( float3 N, float3 H, float roughness)
 	return	exp( -(sin_a*sin_a) / (cos_a*cos_a) / (m*m) ) / (3.1415927 * m*m * cos_a * cos_a * cos_a * cos_a );
 }
 
+float Lambert( float3 N, float3 H )
+{
+	return max(0, dot(N,H));
+}
 
 float4	PrefilterFace ( float3 dir )
 {
@@ -140,9 +146,11 @@ float4	PrefilterFace ( float3 dir )
 
 	float dxy	=	1 / RelightParams.TargetSize;
 	
+#ifdef SPECULAR
 	//	11 steps is perfect number of steps to pick every texel 
 	//	of cubemap with initial size 256x256 and get all important 
 	//	samples of Beckmann distrubution.
+	
 	for (float x=-5; x<=5; x+=1 ) {
 		for (float y=-5; y<=5; y+=1 ) {
 			float3 H 	= 	normalize(dirN + tangentX * x * dxy + tangentY * y * dxy);
@@ -151,6 +159,17 @@ float4	PrefilterFace ( float3 dir )
 			result.rgb 	+= 	LightProbe.SampleLevel(LinearSampler, H, 0).rgb * d;
 		}
 	}
+#endif	
+
+#ifdef DIFFUSE
+	for (int i=0; i<128; i++) {
+		float3 H 	= 	hammersley_sphere_uniform( i, 128 );
+		float d 	= 	Lambert( H, dirN );
+		weight 		+= 	d;
+		float4 val	=	LightProbe.SampleLevel(LinearSampler, H, 0).rgba;
+		result.rgb 	+= 	val.rgb * d * val.a;
+	}
+#endif
 	
 	return float4(result/weight, 0);
 }

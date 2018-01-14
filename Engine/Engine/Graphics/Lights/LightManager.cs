@@ -209,7 +209,7 @@ namespace Fusion.Engine.Graphics {
 				device.ComputeShaderResources[4]	=	null;
 				device.ComputeShaderResources[5]	=	occlusionGrid;
 				device.ComputeShaderSamplers[0]		=	SamplerState.PointClamp;
-				device.ComputeShaderSamplers[0]		=	SamplerState.LinearWrap;
+				device.ComputeShaderSamplers[1]		=	SamplerState.LinearWrap;
 				device.ComputeShaderSamplers[2]		=	SamplerState.ShadowSamplerPoint;
 				device.ComputeShaderConstants[0]	=	constBuffer;
 					

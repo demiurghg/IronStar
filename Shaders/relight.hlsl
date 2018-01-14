@@ -137,12 +137,32 @@ float Beckmann( float3 N, float3 H, float roughness)
 	return	exp( -(sin_a*sin_a) / (cos_a*cos_a) / (m*m) ) / (3.1415927 * m*m * cos_a * cos_a * cos_a * cos_a );
 }
 
+float3 ImportanceSampleGGX( float2 E, float roughness, float3 N )
+{
+	float m = roughness * roughness;
+
+	float Phi = 2 * 3.1415 * E.x;
+	float CosTheta = sqrt( (1 - E.y) / ( 1 + (m*m - 1) * E.y ) );
+	float SinTheta = sqrt( 1 - CosTheta * CosTheta );
+
+	float3 H;
+	H.x = SinTheta * cos( Phi );
+	H.y = SinTheta * sin( Phi );
+	H.z = CosTheta;
+
+	float3 UpVector = abs(N.z) < 0.999 ? float3(0,0,1) : float3(1,0,0);
+	float3 TangentX = normalize( cross( UpVector, N ) );
+	float3 TangentY = cross( N, TangentX );
+	// tangent to world space
+	return TangentX * H.x + TangentY * H.y + N * H.z;
+}
+
 float Lambert( float3 N, float3 H )
 {
 	return max(0, dot(N,H));
 }
 
-float4	PrefilterFace ( float3 dir )
+float4	PrefilterFace ( float3 dir, int2 location )
 {
 	float weight 	= 0;
 	float3 result 	= 0;
@@ -154,19 +174,36 @@ float4	PrefilterFace ( float3 dir )
 
 	float dxy	=	1 / RelightParams.TargetSize;
 	
-#ifdef SPECULAR
+	//return LightProbe.SampleLevel(LinearSampler, dir, 0).rgba;// * saturate(dot(N,H));
+
+	#ifdef SPECULAR
 	//	11 steps is perfect number of steps to pick every texel 
 	//	of cubemap with initial size 256x256 and get all important 
 	//	samples of Beckmann distrubution.
 	
-	for (float x=-5; x<=5; x+=1 ) {
-		for (float y=-5; y<=5; y+=1 ) {
-			float3 H 	= 	normalize(dirN + tangentX * x * dxy + tangentY * y * dxy);
-			float d 	= 	Beckmann( H, dirN, RelightParams.Roughness.x );
-			weight 		+= 	d;
-			result.rgb 	+= 	LightProbe.SampleLevel(LinearSampler, H, 0).rgb * d;
-		}
+	#if 0
+	// for (float x=-4; x<=4; x+=1 ) {
+		// for (float y=-4; y<=4; y+=1 ) {
+			// float3 H 	= 	normalize(dirN + tangentX * x * dxy + tangentY * y * dxy);
+			// float d 	= 	Beckmann( H, dirN, RelightParams.Roughness.x );
+			// weight 		+= 	d;
+			// result.rgb 	+= 	LightProbe.SampleLevel(LinearSampler, H, 0).rgb * d;
+		// }
+	// }
+	#endif
+	
+	int count = 91;
+	weight = count;
+	int rand = location.x * 17846 + location.y * 14734;
+	
+	for (int i=0; i<count; i++) {
+		float2 E = hammersley2d(i+rand,count);
+		float3 N = dir;
+		float3 H = ImportanceSampleGGX( E, RelightParams.Roughness, N );
+
+		result.rgb += LightProbe.SampleLevel(LinearSampler, H, 0).rgb;// * saturate(dot(N,H));
 	}
+	
 #endif	
 
 #ifdef DIFFUSE
@@ -192,17 +229,17 @@ void CSMain(
 {
 	int3 location	=	dispatchThreadId.xyz;
 	
-	// if (location.x>=RelightParams.TargetSize) return;
-	// if (location.y>=RelightParams.TargetSize) return;
+	if (location.x>=RelightParams.TargetSize) return;
+	if (location.y>=RelightParams.TargetSize) return;
 	
 	float	u		=	2 * (location.x) / RelightParams.TargetSize - 1;
 	float	v		=	2 * (location.y) / RelightParams.TargetSize - 1;
 	
-	TargetFacePosX[location]	=	PrefilterFace( float3(  1, -v, -u ) );
-	TargetFaceNegX[location]	=	PrefilterFace( float3( -1, -v,  u ) );
-	TargetFacePosY[location]	=	PrefilterFace( float3(  u,  1,  v ) );
-	TargetFaceNegY[location]	=	PrefilterFace( float3(  u, -1, -v ) );
-	TargetFacePosZ[location]	=	PrefilterFace( float3(  u, -v,  1 ) );
-	TargetFaceNegZ[location]	=	PrefilterFace( float3( -u, -v, -1 ) );
+	TargetFacePosX[location]	=	PrefilterFace( float3(  1, -v, -u ), location.xy );
+	TargetFaceNegX[location]	=	PrefilterFace( float3( -1, -v,  u ), location.xy );
+	TargetFacePosY[location]	=	PrefilterFace( float3(  u,  1,  v ), location.xy );
+	TargetFaceNegY[location]	=	PrefilterFace( float3(  u, -1, -v ), location.xy );
+	TargetFacePosZ[location]	=	PrefilterFace( float3(  u, -v,  1 ), location.xy );
+	TargetFaceNegZ[location]	=	PrefilterFace( float3( -u, -v, -1 ), location.xy );
 }
 #endif

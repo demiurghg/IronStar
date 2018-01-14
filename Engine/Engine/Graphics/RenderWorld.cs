@@ -401,6 +401,8 @@ namespace Fusion.Engine.Graphics {
 			//	single pass for stereo rendering :
 			if (stereoEye!=StereoEye.Right) {
 
+				RelightLightProbes();
+
 				//	simulate particles BEFORE lighting
 				//	to make particle lit (position is required) and 
 				//	get simulated particles for shadows.
@@ -590,6 +592,22 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		void RelightLightProbes ()
+		{
+			using (new PixEvent("Light probe relighting")) {
+
+				foreach ( var lightProbe in LightSet.LightProbes ) {
+
+					rs.LightManager.RelightLightProbe( RadianceGBuffer0, RadianceGBuffer1, lightProbe, LightSet, LightProbeRadiance );
+
+					RadianceCache.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeRadiance );
+				}
+			}
+		}
 
 
 

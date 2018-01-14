@@ -82,25 +82,28 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="rtCube"></param>
 		public void CopyFromRenderTargetCube ( int index, RenderTargetCube rtCube )
 		{
-			if (rtCube.MipCount!=this.MipCount) {
-				throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different mip count");
-			}
+			using ( new PixEvent( "CopyFromRenderTargetCube" ) ) {
 
-			if (rtCube.Width!=this.Width) {
-				throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different width");
-			}
-			if (rtCube.Height!=this.Height) {
-				throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different height");
-			}
+				if ( rtCube.MipCount!=this.MipCount ) {
+					throw new GraphicsException( "CopyFromRenderTargetCube: source and destination have different mip count" );
+				}
 
-			int subResourceCount = 6 * rtCube.MipCount;
+				if (rtCube.Width!=this.Width) {
+					throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different width");
+				}
+				if (rtCube.Height!=this.Height) {
+					throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different height");
+				}
+
+				int subResourceCount = 6 * rtCube.MipCount;
 			
-			for (int i=0; i<subResourceCount; i++) {
+				for (int i=0; i<subResourceCount; i++) {
 				
-				int srcIndex = i;
-				int dstIndex = i + subResourceCount * index;
+					int srcIndex = i;
+					int dstIndex = i + subResourceCount * index;
 
-				GraphicsDevice.DeviceContext.CopySubresourceRegion( rtCube.TextureResource, srcIndex, null, texCubeArray, dstIndex );
+					GraphicsDevice.DeviceContext.CopySubresourceRegion( rtCube.TextureResource, srcIndex, null, texCubeArray, dstIndex );
+				}
 			}
 		}
 

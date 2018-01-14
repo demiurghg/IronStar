@@ -2,8 +2,8 @@
 Transparent = false
 
 [Textures]
-BaseColor = 
-NormalMap = 
-Metallic  = 
-Roughness = 
+BaseColor = test\testGold_BaseColor.png
+NormalMap = test\testGold_NormalMap.png
+Metallic  = test\testGold_Metallic.png
+Roughness = test\testGold_Roughness.png
 Emission  = 

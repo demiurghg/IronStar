@@ -40,6 +40,7 @@ namespace Fusion.Engine.Graphics {
 			public	Color4	DirectLightIntensity;
 			public	Vector4	DirectLightDirection;
 			public	Vector4	ShadowRegion;
+			public	Color4	SkyAmbient;
 			public	float	CubeIndex;
 			public	float	Roughness;
 			public	float	TargetSize;
@@ -196,6 +197,7 @@ namespace Fusion.Engine.Graphics {
 				constData.ShadowViewProjection	=	shadowMap.GetLessDetailedCascade().ViewProjectionMatrix;
 				constData.DirectLightDirection	=	new Vector4( lightSet.DirectLight.Direction, 0 );
 				constData.DirectLightIntensity	=	lightSet.DirectLight.Intensity;
+				constData.SkyAmbient			=	rs.RenderWorld.SkySettings.AmbientLevel;
 				constData.ShadowRegion			=	shadowMap.GetLessDetailedCascade().ShadowScaleOffset;
 
 				constBuffer.SetData( constData );
@@ -204,6 +206,8 @@ namespace Fusion.Engine.Graphics {
 				device.ComputeShaderResources[1]    =   normalData;
 				device.ComputeShaderResources[2]    =   rs.Sky.SkyCube;
 				device.ComputeShaderResources[3]	=	shadowMap.ColorBuffer;
+				device.ComputeShaderResources[4]	=	null;
+				device.ComputeShaderResources[5]	=	occlusionGrid;
 				device.ComputeShaderSamplers[0]		=	SamplerState.PointClamp;
 				device.ComputeShaderSamplers[0]		=	SamplerState.LinearWrap;
 				device.ComputeShaderSamplers[2]		=	SamplerState.ShadowSamplerPoint;

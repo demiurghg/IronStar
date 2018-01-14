@@ -135,7 +135,7 @@ namespace Fusion.Engine.Graphics {
 			AerialFogDensity	= 0.001f;
 			SkySphereSize		= 1000.0f;
 			SkyTurbidity		= 4.0f;
-			SunPosition		= new Vector3( 1.0f, 0.1f, 1.0f );
+			SunPosition			= new Vector3( 1.0f, 0.1f, 1.0f );
 			SunGlowIntensity	= Half.MaxValue/2;
 			SunLightIntensity	= 300.0f;
 			SunTemperature		= 5500;
@@ -146,12 +146,7 @@ namespace Fusion.Engine.Graphics {
 			var rand	=	new Random(465464);
 
 			for (int i=0; i<randVectors.Length; i++) {
-				Vector3 randV;
-				do {
-					randV = rand.NextVector3( -Vector3.One, Vector3.One );
-				} while ( randV.Length()>1 && randV.Y < 0 );
-
-				randVectors[i] = randV.Normalized();
+				randVectors[i] = Hammersley.HemisphereUniform(i,64);
 			}
 		}
 	}

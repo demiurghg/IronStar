@@ -10,8 +10,9 @@ struct RELIGHT_PARAMS {
 	float4     DirectLightIntensity;          // offset:   80
 	float4     DirectLightDirection;          // offset:   96
 	float4     ShadowRegion;                  // offset:  112
-	float      CubeIndex;                     // offset:  128
-	float      Roughness;                     // offset:  132
-	float      TargetSize;                    // offset:  136
+	float4     SkyAmbient;                    // offset:  128
+	float      CubeIndex;                     // offset:  144
+	float      Roughness;                     // offset:  148
+	float      TargetSize;                    // offset:  152
 };
 

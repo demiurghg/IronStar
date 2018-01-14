@@ -11,6 +11,7 @@ TextureCubeArray	GBufferNormalData		:	register(t1);
 TextureCubeArray	SkyEnvironment			:	register(t2);
 Texture2D			ShadowMap				:	register(t3);
 TextureCube			LightProbe				:	register(t4);
+Texture3D			OcclusionGrid			:	register(t5);
 
 SamplerState			PointSampler		: 	register(s0);
 SamplerState			LinearSampler		: 	register(s1);
@@ -31,7 +32,7 @@ cbuffer CBRelightParams :  register(b0) { RELIGHT_PARAMS RelightParams : packoff
 	TODO:
 	1.	[*] Write position in surface.hlsl and read position here.
 	2.	[*] Use shadomap for direct light.
-	3.  [Optional] Use sky occlusion map for more ambient light.
+	3.  [*] Use sky occlusion map for more ambient light.
 	4. 	[Optional] Get 3-5 closest spot-lights without shadows and inject light.
 	5.	Retrive color data from megatexture.
 	6.	[*] Move prefilter shader here.
@@ -66,25 +67,32 @@ float ComputeShadow ( float3 worldPos )
 
 float4	ComputeLight ( float3 dir )
 {
-	float	cubeId	=	RelightParams.CubeIndex;
-	float4	gbuf0	=	GBufferColorData .SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
-	float4	gbuf1	=	GBufferNormalData.SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
-	float4	sky		=	SkyEnvironment.SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
+	float	cubeId		=	RelightParams.CubeIndex;
+	float4	gbuf0		=	GBufferColorData .SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
+	float4	gbuf1		=	GBufferNormalData.SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
+	float4	sky			=	SkyEnvironment.SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
+		
+	float	dist		=	DecodeRGBE8( float4( gbuf0.w, 0, 0, gbuf1.w ) );
+	float3	worldPos	=	dir * dist + RelightParams.LightProbePosition.xyz;
 	
-	float	dist	=	DecodeRGBE8( float4( gbuf0.w, 0, 0, gbuf1.w ) );
-	float3	pos		=	dir * dist + RelightParams.LightProbePosition.xyz;
-	
-	float3	color	=	gbuf0.rgb;
-	float3	normal	=	normalize(gbuf1.xyz * 2 - 1);
+	float3	color		=	gbuf0.rgb;
+	float3	normal		=	normalize(gbuf1.xyz * 2 - 1);
 	
 	float	skyFactor	=	(gbuf0.xyz==float3(0,0,0)) ? 1 : 0;
 	
 	float3	lightDir	=	-normalize( RelightParams.DirectLightDirection.xyz );
 	float3	lightColor	=	RelightParams.DirectLightIntensity.rgb;
 	
-	float	shadow		=	ComputeShadow( pos + normal * 0.1f );
+	float	shadow		=	ComputeShadow( worldPos + normal * 0.05f );
+	
+	float3	samplePos		=	worldPos + normal*1 + float3(1,1,1)/2;
+	float3	aogridCoords	=	samplePos.xyz/float3(128,64,128);
+	float4	aogridValue		=	OcclusionGrid.SampleLevel( LinearSampler, aogridCoords, 0 ).rgba;
+			aogridValue.xyz	=	aogridValue.xyz * 2 - 1;
+	float 	skyOcclusion	=	length( aogridValue.xyz );
 	
 	float3	lighting	=	saturate(dot(normal, lightDir)) * color * lightColor * shadow;
+			lighting	=	lighting + color * RelightParams.SkyAmbient * skyOcclusion;
 	
 	//return float4(frac(pos/5.0f), 0);
 	

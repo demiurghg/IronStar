@@ -8,6 +8,11 @@
 #include "brdf.fxi"
 #include "surface.shadows.hlsl"
 
+float computeSpecOcclusion ( float NdotV , float AO , float roughness )
+{
+	return saturate (pow( NdotV + AO , exp2 ( -16.0f * roughness - 1.0f )) - 1.0f + AO );
+}
+
 //
 //	ComputeClusteredLighting
 //	
@@ -97,7 +102,9 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	float3	diffuse 	=	lerp( baseColor, float3(0,0,0), metallic );
 	float3	specular  	=	lerp( float3(0.04f,0.04f,0.04f), baseColor, metallic );
 
-	/*roughness	=	0.25f;
+	roughness	=	sqrt(roughness);
+	
+	/*roughness	=	0.125f;
 	specular	=	1.0f;
 	diffuse		=	0.0f;//*/
 
@@ -226,8 +233,10 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	//float 	skyTerm			=	max(0, dot( skyBentNormal, normal ) * 0.5 + 0.5) * skyFactor;
 	float3	skyValue		=	FogTable.SampleLevel( SamplerLinearClamp, skyBentNormal, 0 ).rgb * (normal.y*0.5+0.5);
 	
-	float	NoV 	= 	dot(viewDirN, normal.xyz);
-	float2 	ab		=	EnvLut.SampleLevel( SamplerLinearClamp, float2(roughness, 1-NoV), 0 ).xy;
+	float	NoV 			= 	dot(viewDirN, normal.xyz);
+	float2 	ab				=	EnvLut.SampleLevel( SamplerLinearClamp, float2(roughness, 1-NoV), 0 ).xy;
+	float	ssaoFactorDiff	=	ssaoFactor * ssaoFactor * aogridValue.w;
+	float	ssaoFactorSpec	=	ssaoFactor * ssaoFactor * aogridValue.w;//computeSpecOcclusion( NoV, ssaoFactor * aogridValue.w, roughness );
 	
 	[loop]
 	for (i=0; i<lpbCount; i++) {
@@ -253,9 +262,9 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		ambientSpecular		=	lerp( ambientSpecular, specTerm, factor );//*/
 	}
 
-	ambientDiffuse		=	ambientDiffuse  * diffuse * aogridValue.w * ssaoFactor * ssaoFactor;
-	ambientSpecular		=	ambientSpecular	* (specular * ab.x + ab.y) * aogridValue.w * pow(ssaoFactor, 2);
-	ambientDiffuseSky	=	diffuse * skyFactor * skyValue * ssaoFactor;
+	ambientDiffuse		=	ambientDiffuse  * ( diffuse                ) * ssaoFactorDiff;
+	ambientSpecular		=	ambientSpecular	* ( specular * ab.x + ab.y ) * ssaoFactorSpec;
+	ambientDiffuseSky	=	diffuse * skyFactor * skyValue * pow(ssaoFactor,2);
 	
 	totalLight.xyz	+=	ambientDiffuse + ambientDiffuseSky + ambientSpecular;	
 	

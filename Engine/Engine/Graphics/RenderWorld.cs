@@ -598,7 +598,12 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		void RelightLightProbes ()
 		{
+			var sw = new Stopwatch();
+			sw.Start();
+
 			using (new PixEvent("Light probe relighting")) {
+
+				this.rs.Device.ResetStates();
 
 				foreach ( var lightProbe in LightSet.LightProbes ) {
 
@@ -607,6 +612,9 @@ namespace Fusion.Engine.Graphics {
 					RadianceCache.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeRadiance );
 				}
 			}
+
+			sw.Stop();
+			Log.Message("Relight light probes [CPU] : {0} light probes - {1} ms", LightSet.LightProbes.Count, sw.ElapsedMilliseconds);
 		}
 
 

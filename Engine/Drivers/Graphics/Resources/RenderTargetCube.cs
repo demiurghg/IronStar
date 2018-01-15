@@ -45,6 +45,7 @@ namespace Fusion.Drivers.Graphics {
 		D3D.Texture2D			texCube;
 		D3D.Texture2D			staging;
 		RenderTargetSurface[,]	surfaces;
+		RenderTargetSurface[]	cubeSurfaces;
 			
 
 		/// <summary>
@@ -182,6 +183,30 @@ namespace Fusion.Drivers.Graphics {
 					GraphicsDevice.Clear( surfaces[mip,face], Color4.Zero );
 				}
 			}
+
+
+
+			cubeSurfaces = new RenderTargetSurface[MipCount];
+
+			for ( int mip=0; mip<MipCount; mip++ ) {
+				
+				int width	=	GetMipSize( Width,  mip );
+				int height	=	GetMipSize( Height, mip );
+
+				for ( int face=0; face<6; face++) {
+
+					var uavDesc = new UnorderedAccessViewDescription();
+						uavDesc.Dimension			=	UnorderedAccessViewDimension.Texture2DArray;
+						uavDesc.Format				=	Converter.Convert( format );
+						uavDesc.Texture2DArray.ArraySize		=	6;
+						uavDesc.Texture2DArray.FirstArraySlice	=	0;
+						uavDesc.Texture2DArray.MipSlice			=	mip;
+
+					var uav	=	new UnorderedAccessView( device.Device, texCube, uavDesc );
+
+					cubeSurfaces[mip]	=	new RenderTargetSurface( null, uav, texCube, -1, format, Width, Height, 1 );
+				}
+			}
 		}
 
 
@@ -280,6 +305,18 @@ namespace Fusion.Drivers.Graphics {
 
 
 		/// <summary>
+		/// Gets render target surface array for given mip level
+		/// Actually, can not be used as render target, but UAV only.
+		/// </summary>
+		/// <param name="mipLevel"></param>
+		/// <returns></returns>
+		public RenderTargetSurface GetCubeSurface ( int mipLevel )
+		{
+			return cubeSurfaces[ mipLevel ];
+		}
+
+
+		/// <summary>
 		/// Builds mipmap chain.
 		/// </summary>
 		public void BuildMipmaps ()
@@ -315,6 +352,8 @@ namespace Fusion.Drivers.Graphics {
 					}
 					surfaces = null;
 				}
+
+				SafeDispose( ref cubeSurfaces );
 
 				SafeDispose( ref cubeMipShaderResources );
 

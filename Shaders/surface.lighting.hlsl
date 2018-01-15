@@ -104,11 +104,11 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 
 	roughness	=	sqrt(roughness);
 	
-	/*roughness	=	0.25f;
+	roughness	=	0.50f;
 	specular	=	1.0f;
 	diffuse		=	0.0f;//*/
 
-	/*roughness	=	0.1f;
+	/*roughness	=	0.0f;
 	specular	=	0.0f;
 	diffuse		=	1.0f;//*/
 

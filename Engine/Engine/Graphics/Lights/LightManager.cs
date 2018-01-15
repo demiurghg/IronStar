@@ -188,8 +188,6 @@ namespace Fusion.Engine.Graphics {
 		{
 			using ( new PixEvent( "RelightLightProbe" ) ) {
 
-				device.ResetStates();
-
 				var constData = new RELIGHT_PARAMS();
 
 				constData.CubeIndex				=	lightProbe.ImageIndex;
@@ -213,10 +211,8 @@ namespace Fusion.Engine.Graphics {
 				device.ComputeShaderSamplers[2]		=	SamplerState.ShadowSamplerPoint;
 				device.ComputeShaderConstants[0]	=	constBuffer;
 					
-				for (int i=0; i<6; i++) {
-					device.SetCSRWTexture( i, target.GetSurface( 0, (CubeFace)i ) );
-				}
-
+				device.SetCSRWTexture( 0, target.GetCubeSurface( 0 ) );
+				
 				device.PipelineState = factory[(int)Flags.RELIGHT];
 
 				int size	=	RenderSystem.LightProbeSize;
@@ -238,9 +234,7 @@ namespace Fusion.Engine.Graphics {
 					constData.TargetSize	=	RenderSystem.LightProbeSize >> mip;
 					constBuffer.SetData( constData );
 
-					for (int i=0; i<6; i++) {
-						device.SetCSRWTexture( i, target.GetSurface( mip, (CubeFace)i ) );
-					}
+					device.SetCSRWTexture( 0, target.GetCubeSurface( mip ) );
 
 					device.ComputeShaderResources[4]	=	target.GetCubeShaderResource( mip - 1 );
 
@@ -262,9 +256,7 @@ namespace Fusion.Engine.Graphics {
 					constData.TargetSize	=	RenderSystem.LightProbeSize;
 					constBuffer.SetData( constData );
 
-					for (int i=0; i<6; i++) {
-						device.SetCSRWTexture( i, target.GetSurface( RenderSystem.LightProbeDiffuseMip, (CubeFace)i ) );
-					}
+					device.SetCSRWTexture( 0, target.GetCubeSurface( RenderSystem.LightProbeDiffuseMip ) );
 
 					device.ComputeShaderResources[4]	=	target.GetCubeShaderResource(0);
 

@@ -18,12 +18,7 @@ SamplerState			LinearSampler		: 	register(s1);
 SamplerComparisonState	ShadowSampler		: 	register(s2);
 
 
-RWTexture2DArray<float4>  TargetFacePosX : register(u0); 
-RWTexture2DArray<float4>  TargetFaceNegX : register(u1); 
-RWTexture2DArray<float4>  TargetFacePosY : register(u2); 
-RWTexture2DArray<float4>  TargetFaceNegY : register(u3); 
-RWTexture2DArray<float4>  TargetFacePosZ : register(u4); 
-RWTexture2DArray<float4>  TargetFaceNegZ : register(u5); 
+RWTexture2DArray<float4>  TargetCube : register(u0); 
 
 cbuffer CBRelightParams :  register(b0) { RELIGHT_PARAMS RelightParams : packoffset( c0 ); }	
 
@@ -44,9 +39,9 @@ cbuffer CBRelightParams :  register(b0) { RELIGHT_PARAMS RelightParams : packoff
 	------------------------
 	
 	Perfromance:
-	1. Check CPU timing
-	2. See CoD relighting
-	3. Spherical maps?
+	1. Check CPU timing 	(+/- OK, ResetDeviceState is quite expensive)
+	2. See CoD relighting	(fast approach with prefiltering)
+	3. CopyFromRenderTargetCube is too slooooow
 	
 -----------------------------------------------------------------------------*/
 
@@ -93,11 +88,11 @@ float4	ComputeLight ( float3 dir )
 	
 	float	shadow		=	ComputeShadow( worldPos + normal * 0.05f );
 	
-	float3	samplePos		=	worldPos + normal*1 + float3(1,1,1)/2;
+	float3	samplePos		=	worldPos + normal*0.25 + float3(1,1,1)/2;
 	float3	aogridCoords	=	samplePos.xyz/float3(128,64,128);
 	float4	aogridValue		=	OcclusionGrid.SampleLevel( LinearSampler, aogridCoords, 0 ).rgba;
 			aogridValue.xyz	=	aogridValue.xyz * 2 - 1;
-	float 	skyOcclusion	=	length( aogridValue.xyz );
+	float 	skyOcclusion	=	length( aogridValue.xyz ) * (normal.y+1)/2;
 	
 	float3	lighting	=	saturate(dot(normal, lightDir)) * color * lightColor * shadow;
 			lighting	=	lighting + color * RelightParams.SkyAmbient * skyOcclusion;
@@ -119,12 +114,12 @@ void CSMain(
 	float	u			=	2 * (location.x+0.5f) / (float)LightProbeSize - 1;
 	float	v			=	2 * (location.y+0.5f) / (float)LightProbeSize - 1;
 	
-	TargetFacePosX[location]	=	ComputeLight( float3( -1, -v, -u ) );
-	TargetFaceNegX[location]	=	ComputeLight( float3(  1, -v,  u ) );
-	TargetFacePosY[location]	=	ComputeLight( float3( -u,  1,  v ) );
-	TargetFaceNegY[location]	=	ComputeLight( float3( -u, -1, -v ) );
-	TargetFacePosZ[location]	=	ComputeLight( float3( -u, -v,  1 ) );
-	TargetFaceNegZ[location]	=	ComputeLight( float3(  u, -v, -1 ) );
+	TargetCube[int3(location.xy,0)]	=	ComputeLight( float3( -1, -v, -u ) );
+	TargetCube[int3(location.xy,1)]	=	ComputeLight( float3(  1, -v,  u ) );
+	TargetCube[int3(location.xy,2)]	=	ComputeLight( float3( -u,  1,  v ) );
+	TargetCube[int3(location.xy,3)]	=	ComputeLight( float3( -u, -1, -v ) );
+	TargetCube[int3(location.xy,4)]	=	ComputeLight( float3( -u, -v,  1 ) );
+	TargetCube[int3(location.xy,5)]	=	ComputeLight( float3(  u, -v, -1 ) );
 }
 #endif
 
@@ -200,7 +195,7 @@ float4	PrefilterFace ( float3 dir, int2 location )
 	// }
 	#endif
 	
-	int count = 91;
+	int count = 1;
 	weight = count;
 	int rand = location.x * 17846 + location.y * 14734;
 	
@@ -243,11 +238,11 @@ void CSMain(
 	float	u		=	2 * (location.x) / RelightParams.TargetSize - 1;
 	float	v		=	2 * (location.y) / RelightParams.TargetSize - 1;
 	
-	TargetFacePosX[location]	=	PrefilterFace( float3(  1, -v, -u ), location.xy );
-	TargetFaceNegX[location]	=	PrefilterFace( float3( -1, -v,  u ), location.xy );
-	TargetFacePosY[location]	=	PrefilterFace( float3(  u,  1,  v ), location.xy );
-	TargetFaceNegY[location]	=	PrefilterFace( float3(  u, -1, -v ), location.xy );
-	TargetFacePosZ[location]	=	PrefilterFace( float3(  u, -v,  1 ), location.xy );
-	TargetFaceNegZ[location]	=	PrefilterFace( float3( -u, -v, -1 ), location.xy );
+	TargetCube[int3(location.xy,0)]	=	PrefilterFace( float3(  1, -v, -u ), location.xy );
+	TargetCube[int3(location.xy,1)]	=	PrefilterFace( float3( -1, -v,  u ), location.xy );
+	TargetCube[int3(location.xy,2)]	=	PrefilterFace( float3(  u,  1,  v ), location.xy );
+	TargetCube[int3(location.xy,3)]	=	PrefilterFace( float3(  u, -1, -v ), location.xy );
+	TargetCube[int3(location.xy,4)]	=	PrefilterFace( float3(  u, -v,  1 ), location.xy );
+	TargetCube[int3(location.xy,5)]	=	PrefilterFace( float3( -u, -v, -1 ), location.xy );
 }
 #endif

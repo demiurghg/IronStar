@@ -194,6 +194,7 @@
     </Compile>
     <Compile Include="Drivers\Graphics\Resources\Texture2DStaging.cs" />
     <Compile Include="Drivers\Graphics\Resources\Texture3DCompute.cs" />
+    <Compile Include="Drivers\Graphics\Resources\TextureCubeArrayRW.cs" />
     <Compile Include="Engine\Client\ClientContext.cs" />
     <Compile Include="Engine\Client\IContentPrecacher.cs" />
     <Compile Include="Engine\Client\IClientInstance.cs" />

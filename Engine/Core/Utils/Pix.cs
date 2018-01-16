@@ -31,6 +31,8 @@ namespace Fusion {
 	public sealed class PixEvent : IDisposable {
 		public PixEvent (string eventName) {
 
+			SafeNativeMethods._BeginEvent( 0, eventName );
+#if false
 			StackTrace	st = new StackTrace();
 
 			StackFrame sf = st.GetFrame(1);
@@ -39,6 +41,7 @@ namespace Fusion {
 			string clsName = sf.GetMethod().DeclaringType.Name;
 
 			SafeNativeMethods._BeginEvent( 0, clsName + "." + sf.GetMethod().Name + " - " + eventName );
+#endif
 		}
 
 		public void Dispose () {

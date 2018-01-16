@@ -184,18 +184,20 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// 
 		/// </summary>
-		public void RelightLightProbe ( TextureCubeArray colorData, TextureCubeArray normalData, LightProbe lightProbe, LightSet lightSet, RenderTargetCube target )
+		public void RelightLightProbe ( TextureCubeArray colorData, TextureCubeArray normalData, LightProbe lightProbe, LightSet lightSet, Color4 skyAmbient, TextureCubeArrayRW target )
 		{
 			using ( new PixEvent( "RelightLightProbe" ) ) {
 
-				var constData = new RELIGHT_PARAMS();
+				var constData	=	new RELIGHT_PARAMS();
+
+				var cubeIndex	=	lightProbe.ImageIndex;
 
 				constData.CubeIndex				=	lightProbe.ImageIndex;
 				constData.LightProbePosition	=	new Vector4( lightProbe.Position, 1 );
 				constData.ShadowViewProjection	=	shadowMap.GetLessDetailedCascade().ViewProjectionMatrix;
 				constData.DirectLightDirection	=	new Vector4( lightSet.DirectLight.Direction, 0 );
 				constData.DirectLightIntensity	=	lightSet.DirectLight.Intensity;
-				constData.SkyAmbient			=	rs.RenderWorld.SkySettings.AmbientLevel;
+				constData.SkyAmbient			=	skyAmbient;
 				constData.ShadowRegion			=	shadowMap.GetLessDetailedCascade().ShadowScaleOffset;
 
 				constBuffer.SetData( constData );
@@ -211,7 +213,7 @@ namespace Fusion.Engine.Graphics {
 				device.ComputeShaderSamplers[2]		=	SamplerState.ShadowSamplerPoint;
 				device.ComputeShaderConstants[0]	=	constBuffer;
 					
-				device.SetCSRWTexture( 0, target.GetCubeSurface( 0 ) );
+				device.SetCSRWTexture( 0, target.GetCubeSurface( cubeIndex, 0 ) );
 				
 				device.PipelineState = factory[(int)Flags.RELIGHT];
 
@@ -234,9 +236,9 @@ namespace Fusion.Engine.Graphics {
 					constData.TargetSize	=	RenderSystem.LightProbeSize >> mip;
 					constBuffer.SetData( constData );
 
-					device.SetCSRWTexture( 0, target.GetCubeSurface( mip ) );
+					device.SetCSRWTexture( 0, target.GetCubeSurface( cubeIndex, mip ) );
 
-					device.ComputeShaderResources[4]	=	target.GetCubeShaderResource( mip - 1 );
+					device.ComputeShaderResources[4]	=	target.GetCubeShaderResource( cubeIndex, mip - 1 );
 
 					size	=	RenderSystem.LightProbeSize >> mip;
 					tgx		=	MathUtil.IntDivRoundUp( size, BlockSizeX );
@@ -256,9 +258,9 @@ namespace Fusion.Engine.Graphics {
 					constData.TargetSize	=	RenderSystem.LightProbeSize;
 					constBuffer.SetData( constData );
 
-					device.SetCSRWTexture( 0, target.GetCubeSurface( RenderSystem.LightProbeDiffuseMip ) );
+					device.SetCSRWTexture( 0, target.GetCubeSurface( cubeIndex, RenderSystem.LightProbeDiffuseMip ) );
 
-					device.ComputeShaderResources[4]	=	target.GetCubeShaderResource(0);
+					device.ComputeShaderResources[4]	=	target.GetCubeShaderResource( cubeIndex, 0 );
 
 					size	=	RenderSystem.LightProbeSize;
 					tgx		=	MathUtil.IntDivRoundUp( size, BlockSizeX );

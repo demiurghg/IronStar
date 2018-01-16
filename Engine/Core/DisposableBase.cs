@@ -94,12 +94,24 @@ namespace Fusion.Core {
 			}
 
 			foreach ( var obj in objArray ) {
-				if (obj!=null) {
-					obj.Dispose();
-				}
+				obj?.Dispose();
 			}
 
 			objArray	=	null;
+		}
+
+
+		public static void SafeDispose<T>( ref T[,] objArray ) where T: IDisposable
+		{
+			if ( objArray==null ) {
+				return;
+			}
+
+			foreach ( var obj in objArray ) {
+				obj?.Dispose();
+			}
+
+			objArray = null;
 		}
 	}
 }

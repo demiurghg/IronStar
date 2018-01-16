@@ -342,16 +342,7 @@ namespace Fusion.Drivers.Graphics {
 		protected override void Dispose ( bool disposing )
 		{
 			if (disposing) {
-				if (surfaces!=null) {
-					
-					for (int mip=0; mip<MipCount; mip++) {
-						for (int face=0; face<6; face++) {
-							var surf = surfaces[mip,face];
-							SafeDispose( ref surf );
-						}
-					}
-					surfaces = null;
-				}
+				SafeDispose( ref surfaces );
 
 				SafeDispose( ref cubeSurfaces );
 

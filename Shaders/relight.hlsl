@@ -1,6 +1,6 @@
 #if 0
 $ubershader 	RELIGHT
-$ubershader		PREFILTER SPECULAR|DIFFUSE
+$ubershader		PREFILTER (SPECULAR ROUGHNESS_025|ROUGHNESS_050|ROUGHNESS_075|ROUGHNESS_100)|DIFFUSE
 #endif
 
 #include "relight.auto.hlsl"
@@ -165,6 +165,50 @@ float Lambert( float3 N, float3 H )
 	return max(0, dot(N,H));
 }
 
+float3 PoissonBeckmann ( float x, float y, float size, float roughness )
+{	
+	float3 dir = float3(x*size,y*size,1);
+	return float3( dir.x, dir.y, Beckmann( float3(0,0,1), dir, roughness ) );
+}
+
+#ifdef ROUGHNESS_025
+	static const float	ROUGHNESS 	= 	0.25f;
+	static const float	KERNEL_SIZE	=	0.07f;
+#endif
+#ifdef ROUGHNESS_050
+	static const float	ROUGHNESS 	= 	0.50f;
+	static const float	KERNEL_SIZE	=	0.25f;
+#endif
+#ifdef ROUGHNESS_075
+	static const float	ROUGHNESS 	= 	0.75f;
+	static const float	KERNEL_SIZE	=	0.50f;
+#endif
+#ifdef ROUGHNESS_100
+	static const float	ROUGHNESS 	= 	1.00f;
+	static const float	KERNEL_SIZE	=	0.75f;
+#endif
+
+#ifdef SPECULAR
+static const float3 poissonBeckmann[16]= {
+	PoissonBeckmann( -0.6828758f,   0.5264853f,  KERNEL_SIZE,  ROUGHNESS ),
+	PoissonBeckmann( -0.9846674f,   0.1491582f,  KERNEL_SIZE,  ROUGHNESS ),
+	PoissonBeckmann( -0.3335175f,   0.1175671f,  KERNEL_SIZE,  ROUGHNESS ),
+	PoissonBeckmann( -0.1510262f,   0.9201540f,  KERNEL_SIZE,  ROUGHNESS ),
+	PoissonBeckmann(  0.0776904f,   0.4907993f,  KERNEL_SIZE,  ROUGHNESS ),
+	PoissonBeckmann( -0.6843108f,  -0.1940148f,  KERNEL_SIZE,  ROUGHNESS ),
+	PoissonBeckmann(  0.0070783f,  -0.1083425f,  KERNEL_SIZE,  ROUGHNESS ),
+	PoissonBeckmann( -0.5304128f,  -0.6343142f,  KERNEL_SIZE,  ROUGHNESS ),
+	PoissonBeckmann(  0.4250475f,   0.2877348f,  KERNEL_SIZE,  ROUGHNESS ),
+	PoissonBeckmann(  0.4858001f,   0.7253821f,  KERNEL_SIZE,  ROUGHNESS ),
+	PoissonBeckmann(  0.8246021f,   0.1354496f,  KERNEL_SIZE,  ROUGHNESS ),
+	PoissonBeckmann(  0.2029337f,  -0.4910559f,  KERNEL_SIZE,  ROUGHNESS ),
+	PoissonBeckmann( -0.1761186f,  -0.9231045f,  KERNEL_SIZE,  ROUGHNESS ),
+	PoissonBeckmann(  0.5713789f,  -0.2682010f,  KERNEL_SIZE,  ROUGHNESS ),
+	PoissonBeckmann(  0.3672436f,  -0.8677061f,  KERNEL_SIZE,  ROUGHNESS ),
+	PoissonBeckmann(  0.7550967f,  -0.6394721f,  KERNEL_SIZE,  ROUGHNESS ),
+};
+#endif
+
 float4	PrefilterFace ( float3 dir, int2 location )
 {
 	float weight 	= 0;
@@ -179,33 +223,32 @@ float4	PrefilterFace ( float3 dir, int2 location )
 	
 	//return LightProbe.SampleLevel(LinearSampler, dir, 0).rgba;// * saturate(dot(N,H));
 
-	#ifdef SPECULAR
+#ifdef SPECULAR
 	//	11 steps is perfect number of steps to pick every texel 
 	//	of cubemap with initial size 256x256 and get all important 
 	//	samples of Beckmann distrubution.
-	
-	#if 0
-	// for (float x=-4; x<=4; x+=1 ) {
-		// for (float y=-4; y<=4; y+=1 ) {
-			// float3 H 	= 	normalize(dirN + tangentX * x * dxy + tangentY * y * dxy);
-			// float d 	= 	Beckmann( H, dirN, RelightParams.Roughness.x );
-			// weight 		+= 	d;
-			// result.rgb 	+= 	LightProbe.SampleLevel(LinearSampler, H, 0).rgb * d;
-		// }
-	// }
-	#endif
-	
-	int count = 1;
+#if 0
+	int count = 91;
 	weight = count;
-	int rand = location.x * 17846 + location.y * 14734;
+	int rand = 0;//location.x * 17846 + location.y * 14734;
 	
 	for (int i=0; i<count; i++) {
-		float2 E = hammersley2d(i+rand,count);
+		float2 E = hammersley2d(i+rand, count);
 		float3 N = dir;
-		float3 H = ImportanceSampleGGX( E, RelightParams.Roughness, N );
+		float3 H = ImportanceSampleGGX( E, ROUGHNESS, N );
 
 		result.rgb += LightProbe.SampleLevel(LinearSampler, H, 0).rgb;// * saturate(dot(N,H));
 	}
+#else
+	for (int i=0; i<16; i++) {
+		float	x	=	poissonBeckmann[i].x;
+		float	y	=	poissonBeckmann[i].y;
+		float	d	=	poissonBeckmann[i].z;
+		float3 	H 	= 	normalize(dirN + tangentX * x + tangentY * y);
+		weight 		+= 	d;
+		result.rgb 	+= 	LightProbe.SampleLevel(LinearSampler, H, 0).rgb * d;
+	}
+#endif
 	
 #endif	
 
@@ -235,8 +278,10 @@ void CSMain(
 	if (location.x>=RelightParams.TargetSize) return;
 	if (location.y>=RelightParams.TargetSize) return;
 	
-	float	u		=	2 * (location.x) / RelightParams.TargetSize - 1;
-	float	v		=	2 * (location.y) / RelightParams.TargetSize - 1;
+	float	u	=	2 * (location.x+0.5f) / (float)RelightParams.TargetSize - 1;
+	float	v	=	2 * (location.y+0.5f) / (float)RelightParams.TargetSize - 1;
+	// float	u	=	2 * (location.x) / RelightParams.TargetSize - 1;
+	// float	v	=	2 * (location.y) / RelightParams.TargetSize - 1;
 	
 	TargetCube[int3(location.xy,0)]	=	PrefilterFace( float3(  1, -v, -u ), location.xy );
 	TargetCube[int3(location.xy,1)]	=	PrefilterFace( float3( -1, -v,  u ), location.xy );

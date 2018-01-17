@@ -93,20 +93,20 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	int3 checker  = (int3)abs(worldPos.xyz);
 	int3 checker2 = (int3)abs(worldPos.xyz*5);
 	
-	/*metallic = (checker.x + checker.y + checker.z)%2;
+	metallic = (checker.x + checker.y + checker.z)%2;
 	baseColor = 0.3;
 	roughness = (checker2.x + checker2.y + checker2.z)%7 / 10.0f + 0.1;//*/
-	//roughness = frac(worldPos.y-0.1);
+	roughness = frac(worldPos.y-0.1);
 	
 			normal 		= 	normalize(normal);
 	float3	diffuse 	=	lerp( baseColor, float3(0,0,0), metallic );
 	float3	specular  	=	lerp( float3(0.04f,0.04f,0.04f), baseColor, metallic );
 
-	roughness	=	sqrt(roughness);
+	//roughness	=	sqrt(roughness);
 	
-	roughness	=	0.5f;
-	specular	=	0.0f;
-	diffuse		=	0.3f;//*/
+	/*roughness	=	0.5f;
+	specular	=	1.0f;
+	diffuse		=	0.0f;//*/
 
 	/*roughness	=	0.0f;
 	specular	=	0.0f;

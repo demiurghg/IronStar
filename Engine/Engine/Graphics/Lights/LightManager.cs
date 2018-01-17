@@ -69,10 +69,15 @@ namespace Fusion.Engine.Graphics {
 
 
 		enum Flags {
-			RELIGHT		=	0x0001,
-			PREFILTER	=	0x0002,
-			SPECULAR	=	0x0004,
-			DIFFUSE		=	0x0008,
+			RELIGHT			=	0x0001,
+			PREFILTER		=	0x0002,
+			SPECULAR		=	0x0004,
+			DIFFUSE			=	0x0008,
+
+			ROUGHNESS_025	=	0x0010,
+			ROUGHNESS_050	=	0x0020,
+			ROUGHNESS_075	=	0x0040,
+			ROUGHNESS_100	=	0x0080,
 		}
 		
 
@@ -228,10 +233,20 @@ namespace Fusion.Engine.Graphics {
 				//
 				//	prefilter specular :
 				//
-				device.PipelineState = factory[(int)(Flags.PREFILTER | Flags.SPECULAR)];
-				
 				for (int mip=1; mip<=RenderSystem.LightProbeMaxSpecularMip; mip++) {
+
+					Flags flag;
+
+					switch (mip) {
+						case 1:	 flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_025; break;
+						case 2:	 flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_050; break;
+						case 3:	 flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_075; break;
+						case 4:	 flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_100; break;
+						default: flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_100;	break;
+					}
 					
+					device.PipelineState = factory[(int)flag];
+				
 					constData.Roughness		=	(float)mip / RenderSystem.LightProbeMaxSpecularMip;
 					constData.TargetSize	=	RenderSystem.LightProbeSize >> mip;
 					constBuffer.SetData( constData );

@@ -25,8 +25,11 @@ namespace Fusion.Drivers.Graphics {
 
 		public readonly int MipCount;
 
-		RenderTargetSurface[,]	cubeSurfaces;
-		ShaderResource[,]		cubeResources;
+		RenderTargetSurface[,]	singleCubeSurfaces;
+		RenderTargetSurface[,]	batchCubeSurfaces;
+		ShaderResource[,]		batchCubeResources;
+		readonly int batchSize;
+		readonly int batchCount;
 
 		/// <summary>
 		/// 
@@ -36,12 +39,18 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="count"></param>
 		/// <param name="format"></param>
 		/// <param name="mips"></param>
-		public TextureCubeArrayRW ( GraphicsDevice device, int size, int count, ColorFormat format, bool mips ) : base(device)
+		public TextureCubeArrayRW ( GraphicsDevice device, int size, int count, ColorFormat format, bool mips, int batchSize=1 ) : base(device)
 		{
 			if (count>2048/6) {
 				throw new GraphicsException("Too much elements in texture array");
 			}
 
+			if ((count/batchSize)*batchSize!=count) {
+				throw new ArgumentException("Argument 'batchSize' must be multiple of 'count'");
+			}
+
+			this.batchSize	=	batchSize;
+			this.batchCount	=	count / batchSize;
 			this.Width		=	size;
 			this.Depth		=	1;
 			this.Height		=	size;
@@ -65,11 +74,11 @@ namespace Fusion.Drivers.Graphics {
 			texCubeArray	=	new D3D.Texture2D( device.Device, texDesc );
 			SRV				=	new ShaderResourceView( device.Device, texCubeArray );
 
-			cubeSurfaces	=	new RenderTargetSurface	[count, MipCount];
-			cubeResources	=	new ShaderResource		[count, MipCount];
+			singleCubeSurfaces	=	new RenderTargetSurface	[count,		 MipCount];
+			batchCubeSurfaces	=	new RenderTargetSurface	[batchCount, MipCount];
+			batchCubeResources	=	new ShaderResource		[batchCount, MipCount];
 
-			
-			for ( int index=0; index<count; index++ ) {
+			for ( int batchIndex=0; batchIndex<batchCount; batchIndex++ ) {
 				
 				for ( int mip=0; mip<MipCount; mip++ ) {
 
@@ -77,16 +86,50 @@ namespace Fusion.Drivers.Graphics {
 
 					var srvDesc = new ShaderResourceViewDescription();
 						srvDesc.TextureCubeArray.MipLevels			=	1;
-						srvDesc.TextureCubeArray.CubeCount			=	1;
-						srvDesc.TextureCubeArray.First2DArrayFace	=	index * 6;
+						srvDesc.TextureCubeArray.CubeCount			=	batchSize;
+						srvDesc.TextureCubeArray.First2DArrayFace	=	batchIndex * 6 * batchSize;
 						srvDesc.TextureCubeArray.MostDetailedMip	=	mip;
 						srvDesc.Format		=	Converter.Convert( format );
 						srvDesc.Dimension	=	ShaderResourceViewDimension.TextureCubeArray;
 
 					var srv	=	new ShaderResourceView( device.Device, texCubeArray, srvDesc );
 
-					cubeResources[index,mip]	=	new ShaderResource( device, srv, mipSize, mipSize, 1 );
+					batchCubeResources[batchIndex,mip]	=	new ShaderResource( device, srv, mipSize, mipSize, 1 );
 
+
+					var uavDesc = new UnorderedAccessViewDescription();
+						uavDesc.Dimension			=	UnorderedAccessViewDimension.Texture2DArray;
+						uavDesc.Format				=	Converter.Convert( format );
+						uavDesc.Texture2DArray.ArraySize		=	6 * batchSize;
+						uavDesc.Texture2DArray.FirstArraySlice	=	batchIndex * 6 * batchSize;
+						uavDesc.Texture2DArray.MipSlice			=	mip;
+
+					var uav	=	new UnorderedAccessView( device.Device, texCubeArray, uavDesc );
+
+					batchCubeSurfaces[batchIndex,mip]	=	new RenderTargetSurface( null, uav, texCubeArray, -1, format, mipSize, mipSize, 1 );
+
+				}
+
+			}
+
+
+			for ( int index=0; index<count; index++ ) {
+				
+				for ( int mip=0; mip<MipCount; mip++ ) {
+
+					int mipSize = Math.Max(1, size >> mip);
+
+					//var srvDesc = new ShaderResourceViewDescription();
+					//	srvDesc.TextureCubeArray.MipLevels			=	1;
+					//	srvDesc.TextureCubeArray.CubeCount			=	batchSize;
+					//	srvDesc.TextureCubeArray.First2DArrayFace	=	index * 6;
+					//	srvDesc.TextureCubeArray.MostDetailedMip	=	mip;
+					//	srvDesc.Format		=	Converter.Convert( format );
+					//	srvDesc.Dimension	=	ShaderResourceViewDimension.TextureCubeArray;
+
+					//var srv	=	new ShaderResourceView( device.Device, texCubeArray, srvDesc );
+
+					//batchCubeResources[batchIndex,mip]	=	new ShaderResource( device, srv, mipSize, mipSize, 1 );
 
 					var uavDesc = new UnorderedAccessViewDescription();
 						uavDesc.Dimension			=	UnorderedAccessViewDimension.Texture2DArray;
@@ -97,7 +140,7 @@ namespace Fusion.Drivers.Graphics {
 
 					var uav	=	new UnorderedAccessView( device.Device, texCubeArray, uavDesc );
 
-					cubeSurfaces[index,mip]	=	new RenderTargetSurface( null, uav, texCubeArray, -1, format, mipSize, mipSize, 1 );
+					singleCubeSurfaces[index,mip]	=	new RenderTargetSurface( null, uav, texCubeArray, -1, format, mipSize, mipSize, 1 );
 
 				}
 
@@ -113,8 +156,8 @@ namespace Fusion.Drivers.Graphics {
 		protected override void Dispose ( bool disposing )
 		{
 			if (disposing) {
-				SafeDispose( ref cubeSurfaces );
-				SafeDispose( ref cubeResources );
+				SafeDispose( ref batchCubeSurfaces );
+				SafeDispose( ref batchCubeResources );
 				texCubeArray?.Dispose();
 			}
 
@@ -129,9 +172,9 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="index"></param>
 		/// <param name="mip"></param>
 		/// <returns></returns>
-		public RenderTargetSurface GetCubeSurface ( int index, int mip )
+		public RenderTargetSurface GetSingleCubeSurface ( int index, int mip )
 		{							
-			return cubeSurfaces[ index, mip ];
+			return singleCubeSurfaces[ index, mip ];
 		}
 
 
@@ -142,9 +185,22 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="index"></param>
 		/// <param name="mip"></param>
 		/// <returns></returns>
-		public ShaderResource GetCubeShaderResource ( int index, int mip )
+		public RenderTargetSurface GetBatchCubeSurface ( int batchIndex, int mip )
 		{							
-			return cubeResources[ index, mip ];
+			return batchCubeSurfaces[ batchIndex, mip ];
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="mip"></param>
+		/// <returns></returns>
+		public ShaderResource GetBatchCubeShaderResource ( int batchIndex, int mip )
+		{							
+			return batchCubeResources[ batchIndex, mip ];
 		}
 
 

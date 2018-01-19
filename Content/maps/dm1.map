@@ -2,8 +2,8 @@
 <Map xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Environment>
     <Gravity>16</Gravity>
-    <SkyTrubidity>2</SkyTrubidity>
-    <SunPosition X="1" Y="0.6" Z="-2" />
+    <SkyTrubidity>8</SkyTrubidity>
+    <SunPosition X="1" Y="1.5" Z="3" />
     <SunIntensity>40</SunIntensity>
     <FogDistance>5000</FogDistance>
     <FogHeight>-0.05</FogHeight>
@@ -212,8 +212,8 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="40.75" Y="5.5" Z="29" />
-      <Rotation X="-0.00366919045" Y="-0.008027723" Z="-0.00021400585" W="0.999961" />
+      <Position X="41.125" Y="5.375" Z="29" />
+      <Rotation X="-0.008270967" Y="-0.0030819478" Z="-0.707230568" W="0.7069279" />
       <Scaling>1</Scaling>
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>

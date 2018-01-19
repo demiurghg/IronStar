@@ -167,23 +167,29 @@ float Lambert( float3 N, float3 H )
 
 float3 PoissonBeckmann ( float x, float y, float size, float roughness )
 {	
-	float3 dir = float3(x*size,y*size,1);
+	float3 dir = normalize(float3(x*size,y*size,1));
 	return float3( dir.x, dir.y, Beckmann( float3(0,0,1), dir, roughness ) );
 }
 
+//#define USE_GGX
+
 #ifdef ROUGHNESS_025
+	static const uint 	COUNT		=	91;
 	static const float	ROUGHNESS 	= 	0.25f;
-	static const float	KERNEL_SIZE	=	0.07f;
+	static const float	KERNEL_SIZE	=	0.08f;
 #endif
 #ifdef ROUGHNESS_050
+	static const uint 	COUNT		=	91;
 	static const float	ROUGHNESS 	= 	0.50f;
-	static const float	KERNEL_SIZE	=	0.25f;
+	static const float	KERNEL_SIZE	=	0.4f;
 #endif
 #ifdef ROUGHNESS_075
+	static const uint 	COUNT		=	91;
 	static const float	ROUGHNESS 	= 	0.75f;
 	static const float	KERNEL_SIZE	=	0.50f;
 #endif
 #ifdef ROUGHNESS_100
+	static const uint 	COUNT		=	91;
 	static const float	ROUGHNESS 	= 	1.00f;
 	static const float	KERNEL_SIZE	=	0.75f;
 #endif
@@ -227,10 +233,10 @@ float4	PrefilterFace ( float3 dir, int2 location )
 	//	11 steps is perfect number of steps to pick every texel 
 	//	of cubemap with initial size 256x256 and get all important 
 	//	samples of Beckmann distrubution.
-#if 0
-	int count = 91;
+#ifdef USE_GGX
+	int count = COUNT;
 	weight = count;
-	int rand = 0;//location.x * 17846 + location.y * 14734;
+	int rand = location.x * 17846 + location.y * 14734;
 	
 	for (int i=0; i<count; i++) {
 		float2 E = hammersley2d(i+rand, count);
@@ -253,8 +259,8 @@ float4	PrefilterFace ( float3 dir, int2 location )
 #endif	
 
 #ifdef DIFFUSE
-	for (int i=0; i<128; i++) {
-		float3 H 	= 	hammersley_sphere_uniform( i, 128 );
+	for (int i=0; i<31; i++) {
+		float3 H 	= 	hammersley_sphere_uniform( i, 31 );
 		float d 	= 	Lambert( H, dirN );
 		weight 		+= 	d;
 		float4 val	=	LightProbe.SampleLevel(LinearSampler, H, 0).rgba;
@@ -266,7 +272,7 @@ float4	PrefilterFace ( float3 dir, int2 location )
 }
 
 
-[numthreads(BlockSizeX,BlockSizeY,1)] 
+[numthreads(PrefilterBlockSizeX,PrefilterBlockSizeX,1)] 
 void CSMain( 
 	uint3 groupId : SV_GroupID, 
 	uint3 groupThreadId : SV_GroupThreadID, 
@@ -274,20 +280,25 @@ void CSMain(
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
 	int3 location	=	dispatchThreadId.xyz;
+	uint width;
+	uint height;
+	uint count;
 	
-	if (location.x>=RelightParams.TargetSize) return;
-	if (location.y>=RelightParams.TargetSize) return;
+	TargetCube.GetDimensions(width, height, count);
 	
-	float	u	=	2 * (location.x+0.5f) / (float)RelightParams.TargetSize - 1;
-	float	v	=	2 * (location.y+0.5f) / (float)RelightParams.TargetSize - 1;
+	if (location.x>=width) return;
+	if (location.y>=height) return;
+	
+	float	u	=	2 * (location.x+0.5f) / (float)width  - 1;
+	float	v	=	2 * (location.y+0.5f) / (float)height - 1;
 	// float	u	=	2 * (location.x) / RelightParams.TargetSize - 1;
 	// float	v	=	2 * (location.y) / RelightParams.TargetSize - 1;
 	
-	TargetCube[int3(location.xy,0)]	=	PrefilterFace( float3(  1, -v, -u ), location.xy );
-	TargetCube[int3(location.xy,1)]	=	PrefilterFace( float3( -1, -v,  u ), location.xy );
-	TargetCube[int3(location.xy,2)]	=	PrefilterFace( float3(  u,  1,  v ), location.xy );
-	TargetCube[int3(location.xy,3)]	=	PrefilterFace( float3(  u, -1, -v ), location.xy );
-	TargetCube[int3(location.xy,4)]	=	PrefilterFace( float3(  u, -v,  1 ), location.xy );
-	TargetCube[int3(location.xy,5)]	=	PrefilterFace( float3( -u, -v, -1 ), location.xy );
+	TargetCube[int3(location.xy, location.z*6+0)]	=	PrefilterFace( float3(  1, -v, -u ), location.xy );
+	TargetCube[int3(location.xy, location.z*6+1)]	=	PrefilterFace( float3( -1, -v,  u ), location.xy );
+	TargetCube[int3(location.xy, location.z*6+2)]	=	PrefilterFace( float3(  u,  1,  v ), location.xy );
+	TargetCube[int3(location.xy, location.z*6+3)]	=	PrefilterFace( float3(  u, -1, -v ), location.xy );
+	TargetCube[int3(location.xy, location.z*6+4)]	=	PrefilterFace( float3(  u, -v,  1 ), location.xy );
+	TargetCube[int3(location.xy, location.z*6+5)]	=	PrefilterFace( float3( -u, -v, -1 ), location.xy );
 }
 #endif

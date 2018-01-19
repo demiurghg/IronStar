@@ -236,7 +236,7 @@ namespace Fusion.Engine.Graphics {
 					var gy	=	MathUtil.IntDivUp( FogSizeY, BlockSizeY );
 					var gz	=	1;
 
-					device.Dispatch( gx, gy );
+					device.Dispatch( gx, gy, gz );
 				}
 			}
 		}

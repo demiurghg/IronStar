@@ -194,7 +194,7 @@ namespace Fusion.Engine.Graphics {
 
 			RadianceGBuffer0	=	new TextureCubeArray	( Game.GraphicsDevice, RenderSystem.LightProbeSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba8,	false );
 			RadianceGBuffer1	=	new TextureCubeArray	( Game.GraphicsDevice, RenderSystem.LightProbeSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba8,	false );
-			RadianceCache		=	new TextureCubeArrayRW	( Game.GraphicsDevice, RenderSystem.LightProbeSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba16F,	true );
+			RadianceCache		=	new TextureCubeArrayRW	( Game.GraphicsDevice, RenderSystem.LightProbeSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba16F,	true,  RenderSystem.LightProbeBatchSize );
 
 			Resize( width, height );
 		}
@@ -615,6 +615,8 @@ namespace Fusion.Engine.Graphics {
 					rs.LightManager.RelightLightProbe( RadianceGBuffer0, RadianceGBuffer1, lightProbe, LightSet, skyAmbient, RadianceCache );
 				}
 			}
+
+			rs.LightManager.PrefilterLightProbes( LightSet, RadianceCache );
 
 			sw.Stop();
 			//Log.Message("Relight light probes [CPU] : {0} light probes - {1} ms", LightSet.LightProbes.Count, sw.ElapsedMilliseconds);

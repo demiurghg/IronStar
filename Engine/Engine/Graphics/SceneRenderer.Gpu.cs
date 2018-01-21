@@ -63,6 +63,7 @@ namespace Fusion.Engine.Graphics {
 			public Matrix	CascadeGradientMatrix1	;
 			public Matrix	CascadeGradientMatrix2	;
 			public Matrix	CascadeGradientMatrix3	;
+			public Matrix	OcclusionGridMatrix		;
 			public Vector4	CascadeScaleOffset0		;
 			public Vector4	CascadeScaleOffset1		;
 			public Vector4	CascadeScaleOffset2		;

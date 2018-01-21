@@ -151,8 +151,21 @@ namespace Fusion.Engine.Graphics {
 		const int	Width		=	128;
 		const int	Height		=	64;
 		const int	Depth		=	128;
-		const float GridStep	=	1.0f;
+		const float GridStep	=	0.5f;
 		const int	SampleNum	=	64;
+
+
+		public Matrix OcclusionGridMatrix {
+			get {
+				return	Matrix.Identity
+					*	Matrix.Translation( Width/2.0f*GridStep, 0, Depth/2.0f*GridStep )
+					*	Matrix.Translation( 0.5f*GridStep, 0.5f*GridStep, 0.5f*GridStep )
+					*	Matrix.Scaling( 1.0f/Width, 1.0f / Height, 1.0f / Depth ) 
+					*	Matrix.Scaling( 1.0f/GridStep )
+					;
+			}
+		}
+
 
 
 		/// <summary>
@@ -380,7 +393,8 @@ namespace Fusion.Engine.Graphics {
 								int index		=	ComputeAddress(x,y,z);
 
 								var offset		=	new Vector3( GridStep/2.0f, GridStep/2.0f, GridStep/2.0f );
-								var position	=	new Vector3( x, y, z );
+								var translation	=	new Vector3( -Width/2.0f, 0, -Depth/2.0f );
+								var position	=	(new Vector3( x, y, z ) + translation) * GridStep;
 
 								var localAO		=	ComputeLocalOcclusion( scene, position, 5 );
 								var globalAO	=	ComputeSkyOcclusion( scene, position, 512 );
@@ -391,6 +405,10 @@ namespace Fusion.Engine.Graphics {
 								byte byteW		=	(byte)( 255 * localAO );
 
 								data[index]		=	new Color( byteX, byteY, byteZ, byteW );
+
+								/*if (x==0 || y==0 || z==0 || x==Width-1 || y==Height-1 || z==Depth-1 ) {
+									data[index]	=	new Color( 127,255,127,0 );
+								} */
 							}
 						}
 					}

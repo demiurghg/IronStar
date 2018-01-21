@@ -25,21 +25,22 @@ struct STAGE {
 	float4x4   CascadeGradientMatrix1;        // offset:  448
 	float4x4   CascadeGradientMatrix2;        // offset:  512
 	float4x4   CascadeGradientMatrix3;        // offset:  576
-	float4     CascadeScaleOffset0;           // offset:  640
-	float4     CascadeScaleOffset1;           // offset:  656
-	float4     CascadeScaleOffset2;           // offset:  672
-	float4     CascadeScaleOffset3;           // offset:  688
-	float4     ViewPos;                       // offset:  704
-	float4     BiasSlopeFar;                  // offset:  720
-	float4     Ambient;                       // offset:  736
-	float4     ViewBounds;                    // offset:  752
-	float4     DirectLightDirection;          // offset:  768
-	float4     DirectLightIntensity;          // offset:  784
-	float4     FogColor;                      // offset:  800
-	float      FogAttenuation;                // offset:  816
-	float      DirectLightAngularSize;        // offset:  820
-	float      VTPageScaleRCP;                // offset:  824
-	float      VTGradientScaler;              // offset:  828
+	float4x4   OcclusionGridMatrix;           // offset:  640
+	float4     CascadeScaleOffset0;           // offset:  704
+	float4     CascadeScaleOffset1;           // offset:  720
+	float4     CascadeScaleOffset2;           // offset:  736
+	float4     CascadeScaleOffset3;           // offset:  752
+	float4     ViewPos;                       // offset:  768
+	float4     BiasSlopeFar;                  // offset:  784
+	float4     Ambient;                       // offset:  800
+	float4     ViewBounds;                    // offset:  816
+	float4     DirectLightDirection;          // offset:  832
+	float4     DirectLightIntensity;          // offset:  848
+	float4     FogColor;                      // offset:  864
+	float      FogAttenuation;                // offset:  880
+	float      DirectLightAngularSize;        // offset:  884
+	float      VTPageScaleRCP;                // offset:  888
+	float      VTGradientScaler;              // offset:  892
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+INSTANCE

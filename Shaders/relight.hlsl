@@ -35,7 +35,7 @@ cbuffer CBRelightParams :  register(b0) { RELIGHT_PARAMS RelightParams : packoff
 	8.	[X] Apply specular and diffuse terms.
 	9.	[ ] Implement better occlusion grid (offset, grid density, better local occlusion)
 	10.	[ ] Store occlusion grid as separate content asset file.
-	11. [?] Better roughness distribution
+	11. [X] Better roughness distribution
 	
 	------------------------
 	

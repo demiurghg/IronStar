@@ -104,7 +104,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 
 	roughness	=	sqrt(roughness);
 	
-	//roughness	=	1;
+	//roughness	=	0;
 	
 	/*roughness	=	0.75f;
 	specular	=	1.0f;
@@ -225,9 +225,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 
 	//	occlusion & sky stuff :
 	float 	ssaoFactor		=	AmbientOcclusion.Load( int3( input.Position.xy,0 ) ).r;
-	float3	samplePos		=	worldPos + geometryNormal*1 + float3(1,1,1)/2;
-	float3	aogridCoords	=	samplePos.xyz/float3(128,64,128);
-	float4	aogridValue		=	OcclusionGrid.Sample( SamplerLinear, aogridCoords ).rgba;
+	float4	aogridValue		=	OcclusionGrid.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 0.5f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba;
 			aogridValue.xyz	=	aogridValue.xyz * 2 - 1;
 	
 	float 	skyFactor		=	length( aogridValue.xyz );

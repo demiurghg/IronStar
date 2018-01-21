@@ -25,25 +25,26 @@ cbuffer CBRelightParams :  register(b0) { RELIGHT_PARAMS RelightParams : packoff
 
 /*-----------------------------------------------------------------------------
 	TODO:
-	1.	[*] Write position in surface.hlsl and read position here.
-	2.	[*] Use shadomap for direct light.
-	3.  [*] Use sky occlusion map for more ambient light.
+	1.	[X] Write position in surface.hlsl and read position here.
+	2.	[X] Use shadomap for direct light.
+	3.  [X] Use sky occlusion map for more ambient light.
 	4. 	[ ] Get 3-5 closest spot-lights without shadows and inject light.
-	5.	[ ] Retrive color data from megatexture.
-	6.	[*] Move prefilter shader here.
-	7.	[*] Prefilter sky.
-	8.	[*] Apply specular and diffuse terms.
+	5.	[ ] Retrive color data from megatexture (use Hammersley point set to sample texture)
+	6.	[X] Move prefilter shader here.
+	7.	[X] Prefilter sky.
+	8.	[X] Apply specular and diffuse terms.
 	9.	[ ] Implement better occlusion grid (offset, grid density, better local occlusion)
 	10.	[ ] Store occlusion grid as separate content asset file.
-	11. [ ] Better roughness distribution
+	11. [?] Better roughness distribution
 	
 	------------------------
 	
 	Perfromance:
-	1. [*] Check CPU timing 	(+/- OK, ResetDeviceState is quite expensive)
-	2. [*] See CoD relighting	(fast approach with prefiltering)
-	3. [*] CopyFromRenderTargetCube is too slooooow
-	4. [*] Batch prefiltering
+	1. [X] Check CPU timing 	(+/- OK, ResetDeviceState is quite expensive)
+	2. [X] See CoD relighting	(fast approach with prefiltering)
+	3. [X] CopyFromRenderTargetCube is too slooooow
+	4. [X] Batched & coherent light-probe prefiltering
+	4. [ ] Batched & coherent light-probe relighting
 	
 -----------------------------------------------------------------------------*/
 
@@ -140,6 +141,15 @@ void CSMain(
 	TargetCube[int3(location.xy,3)]	=	face[3] / 4.0f;
 	TargetCube[int3(location.xy,4)]	=	face[4] / 4.0f;
 	TargetCube[int3(location.xy,5)]	=	face[5] / 4.0f;
+	
+	// if (location.x==21 & location.y==21) {
+		// TargetCube[int3(location.xy,0)]	=	float4(1000,1000,1000,1);
+		// TargetCube[int3(location.xy,1)]	=	float4(1000,1000,1000,1);
+		// TargetCube[int3(location.xy,2)]	=	float4(1000,1000,1000,1);
+		// TargetCube[int3(location.xy,3)]	=	float4(1000,1000,1000,1);
+		// TargetCube[int3(location.xy,4)]	=	float4(1000,1000,1000,1);
+		// TargetCube[int3(location.xy,5)]	=	float4(1000,1000,1000,1);
+	// }
 }
 #endif
 
@@ -152,16 +162,7 @@ void CSMain(
 #ifdef PREFILTER
 
 #include "hammersley.fxi"
-
-float Beckmann( float3 N, float3 H, float roughness)
-{
-	//	exp( - ( tg(x/57.29)/0.5 )^2 ) / (3.1416 * 0.5^2 * cos(x/57.29)^4 )
-	//	exp( - ( tg(theta)/0.5 )^2 ) / (3.1416 * 0.5^2 * cos(theta)^4 )
-	float 	m		=	roughness*roughness;
-	float	cos_a	=	dot(N,H);
-	float	sin_a	=	sqrt(abs(1 - cos_a * cos_a)); // 'abs' to avoid negative values
-	return	exp( -(sin_a*sin_a) / (cos_a*cos_a) / (m*m) ) / (3.1415927 * m*m * cos_a * cos_a * cos_a * cos_a );
-}
+#include "brdf.fxi"
 
 float3 ImportanceSampleGGX( float2 E, float roughness, float3 N )
 {
@@ -191,24 +192,25 @@ float Lambert( float3 N, float3 H )
 float3 PoissonBeckmann ( float x, float y, float size, float roughness )
 {	
 	float3 dir = normalize(float3(x*size,y*size,1));
-	return float3( dir.x, dir.y, Beckmann( float3(0,0,1), dir, roughness ) );
+	return float3( dir.x, dir.y, NDF( roughness, float3(0,0,1), dir ) );
+	//return float3( dir.x, dir.y, 1 );
 }
 
 //#define USE_GGX
 
 #ifdef ROUGHNESS_025
 	static const uint 	COUNT		=	91;
-	static const float	ROUGHNESS 	= 	0.25f;
-	static const float	KERNEL_SIZE	=	0.11f;
+	static const float	ROUGHNESS 	= 	0.22f;
+	static const float	KERNEL_SIZE	=	0.1f;
 #endif
 #ifdef ROUGHNESS_050
 	static const uint 	COUNT		=	91;
-	static const float	ROUGHNESS 	= 	0.50f;
+	static const float	ROUGHNESS 	= 	0.45f;
 	static const float	KERNEL_SIZE	=	0.24f;
 #endif
 #ifdef ROUGHNESS_075
 	static const uint 	COUNT		=	91;
-	static const float	ROUGHNESS 	= 	0.75f;
+	static const float	ROUGHNESS 	= 	0.71f;
 	static const float	KERNEL_SIZE	=	0.50f;
 #endif
 #ifdef ROUGHNESS_100

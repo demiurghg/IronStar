@@ -29,10 +29,10 @@ namespace Fusion.Engine.Graphics {
 		const int BlockSizeY = 16;
 
 		[ShaderDefine]
-		const int PrefilterBlockSizeX = 4;
+		const int PrefilterBlockSizeX = 8;
 
 		[ShaderDefine]
-		const int PrefilterBlockSizeY = 4;
+		const int PrefilterBlockSizeY = 8;
 
 		[ShaderDefine]
 		const int LightProbeSize = RenderSystem.LightProbeSize;
@@ -256,6 +256,10 @@ namespace Fusion.Engine.Graphics {
 				//for ( int i=0; i<batchCount; i++ ) {
 
 				int batchIndex = counter % batchCount;
+
+				device.ComputeShaderSamplers[0]		=	SamplerState.PointClamp;
+				device.ComputeShaderSamplers[1]		=	SamplerState.LinearWrap;
+				device.ComputeShaderSamplers[2]		=	SamplerState.ShadowSamplerPoint;
 
 				//
 				//	prefilter specular :

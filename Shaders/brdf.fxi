@@ -75,6 +75,24 @@ float GTerm ( float roughness, float3 N, float3 V )
 	//return GTerm(roughness, N, V, 0, normalize(V*2+N) );
 }
 
+
+float NDF ( float roughness, float3 N, float3 H )
+{
+	float a 	= 	roughness * roughness;
+	float a2	=	a * a;
+	float ndh	=	dot(N,H);
+	float ndh2	=	ndh * ndh;
+	float ndh4	=	ndh2 * ndh2;
+	
+	//	Beckmann :
+	//return exp( ( ndh2-1 )/( a2 * ndh2 ) ) / ( PI * a2 * ndh4 );
+	
+	//	GGX :
+	return a2 / ( PI * sqr( ndh2 * (a2-1) + 1 ) );
+}
+
+
+
 /*-----------------------------------------------------------------------------
 	Specular lighting :
 
@@ -103,16 +121,9 @@ float3	CookTorrance( float3 N, float3 V, float3 L, float3 I, float3 F, float rou
 	
 	float	epsilon	=	0.0009765625;
 	
-	float 	m 		= 	roughness * roughness;
-
-	//	NB: To remove harsh edge on grazing angles :
-
 	float	G		=	GTerm( roughness, N,V,H,L );
 	
-	float	cos_a	=	dot(N,H);
-	float	sin_a	=	sqrt(abs(1 - cos_a * cos_a)); // 'abs' to avoid negative values
-	
-	float	D		=	exp( -(sin_a*sin_a) / (cos_a*cos_a) / (m*m) ) / (PI * m*m * cos_a * cos_a * cos_a * cos_a );
+	float	D		=	NDF( roughness, N,H );
 
 			F		=	Fresnel( dot(V,H), F );
 						  

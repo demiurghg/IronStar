@@ -29,10 +29,10 @@ namespace Fusion.Engine.Graphics {
 		const int BlockSizeY = 16;
 
 		[ShaderDefine]
-		const int PrefilterBlockSizeX = 8;
+		const int PrefilterBlockSizeX = 4;
 
 		[ShaderDefine]
-		const int PrefilterBlockSizeY = 8;
+		const int PrefilterBlockSizeY = 4;
 
 		[ShaderDefine]
 		const int LightProbeSize = RenderSystem.LightProbeSize;
@@ -245,7 +245,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="lightSet"></param>
 		/// <param name="target"></param>
-		public void PrefilterLightProbes ( LightSet lightSet, TextureCubeArrayRW target )
+		public void PrefilterLightProbes ( LightSet lightSet, TextureCubeArrayRW target, int counter )
 		{
 			device.ResetStates();
 			
@@ -253,57 +253,57 @@ namespace Fusion.Engine.Graphics {
 
 				int batchCount = RenderSystem.MaxEnvLights / RenderSystem.LightProbeBatchSize;
 
-				for ( int i=0; i<batchCount; i++ ) {
+				//for ( int i=0; i<batchCount; i++ ) {
 
-					int batchIndex = i;
+				int batchIndex = counter % batchCount;
 
-					//
-					//	prefilter specular :
-					//
-					for (int mip=1; mip<=RenderSystem.LightProbeMaxSpecularMip; mip++) {
+				//
+				//	prefilter specular :
+				//
+				for (int mip=1; mip<=RenderSystem.LightProbeMaxSpecularMip; mip++) {
 
-						Flags flag;
+					Flags flag;
 
-						switch (mip) {
-							case 1:	 flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_025; break;
-							case 2:	 flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_050; break;
-							case 3:	 flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_075; break;
-							case 4:	 flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_100; break;
-							default: flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_100;	break;
-						}
+					switch (mip) {
+						case 1:	 flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_025; break;
+						case 2:	 flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_050; break;
+						case 3:	 flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_075; break;
+						case 4:	 flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_100; break;
+						default: flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_100;	break;
+					}
 					
-						device.PipelineState = factory[(int)flag];
+					device.PipelineState = factory[(int)flag];
 				
-						device.SetCSRWTexture( 0, target.GetBatchCubeSurface( batchIndex, mip ) );
+					device.SetCSRWTexture( 0, target.GetBatchCubeSurface( batchIndex, mip ) );
 
-						device.ComputeShaderResources[4]	=	target.GetBatchCubeShaderResource( batchIndex, mip - 1 );
+					device.ComputeShaderResources[4]	=	target.GetBatchCubeShaderResource( batchIndex, mip - 1 );
 
-						int size	=	RenderSystem.LightProbeSize >> mip;
-						int tgx		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeX );
-						int tgy		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeX );
-						int tgz		=	RenderSystem.LightProbeBatchSize;
+					int size	=	RenderSystem.LightProbeSize >> mip;
+					int tgx		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeX );
+					int tgy		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeX );
+					int tgz		=	RenderSystem.LightProbeBatchSize;
 
-						device.Dispatch( tgx, tgy, tgz );
-					}
-
-					//
-					//	prefilter diffuse :
-					//
-					if (true) {
-						device.PipelineState = factory[(int)(Flags.PREFILTER | Flags.DIFFUSE)];
-
-						device.SetCSRWTexture( 0, target.GetBatchCubeSurface( batchIndex, RenderSystem.LightProbeDiffuseMip ) );
-
-						device.ComputeShaderResources[4]	=	target.GetBatchCubeShaderResource( batchIndex, 3 );
-
-						int size	=	RenderSystem.LightProbeSize;
-						int tgx		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeX );
-						int tgy		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeX );
-						int tgz		=	RenderSystem.LightProbeBatchSize;
-
-						device.Dispatch( tgx, tgy, tgz );
-					}
+					device.Dispatch( tgx, tgy, tgz );
 				}
+
+				//
+				//	prefilter diffuse :
+				//
+				if (true) {
+					device.PipelineState = factory[(int)(Flags.PREFILTER | Flags.DIFFUSE)];
+
+					device.SetCSRWTexture( 0, target.GetBatchCubeSurface( batchIndex, RenderSystem.LightProbeDiffuseMip ) );
+
+					device.ComputeShaderResources[4]	=	target.GetBatchCubeShaderResource( batchIndex, 3 );
+
+					int size	=	RenderSystem.LightProbeSize;
+					int tgx		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeX );
+					int tgy		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeX );
+					int tgz		=	RenderSystem.LightProbeBatchSize;
+
+					device.Dispatch( tgx, tgy, tgz );
+				}
+				//}
 			}
 		}
 

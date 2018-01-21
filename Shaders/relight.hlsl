@@ -10,7 +10,7 @@ TextureCubeArray	GBufferColorData		:	register(t0);
 TextureCubeArray	GBufferNormalData		:	register(t1);
 TextureCubeArray	SkyEnvironment			:	register(t2);
 Texture2D			ShadowMap				:	register(t3);
-TextureCube			LightProbe				:	register(t4);
+TextureCubeArray	LightProbe				:	register(t4);
 Texture3D			OcclusionGrid			:	register(t5);
 
 SamplerState			PointSampler		: 	register(s0);
@@ -28,20 +28,22 @@ cbuffer CBRelightParams :  register(b0) { RELIGHT_PARAMS RelightParams : packoff
 	1.	[*] Write position in surface.hlsl and read position here.
 	2.	[*] Use shadomap for direct light.
 	3.  [*] Use sky occlusion map for more ambient light.
-	4. 	[Optional] Get 3-5 closest spot-lights without shadows and inject light.
-	5.	Retrive color data from megatexture.
+	4. 	[ ] Get 3-5 closest spot-lights without shadows and inject light.
+	5.	[ ] Retrive color data from megatexture.
 	6.	[*] Move prefilter shader here.
 	7.	[*] Prefilter sky.
 	8.	[*] Apply specular and diffuse terms.
-	9.	Implement better occlusion grid (offset, grid density, better local occlusion)
-	10.	Store occlusion grid as separate content asset file.
+	9.	[ ] Implement better occlusion grid (offset, grid density, better local occlusion)
+	10.	[ ] Store occlusion grid as separate content asset file.
+	11. [ ] Better roughness distribution
 	
 	------------------------
 	
 	Perfromance:
-	1. Check CPU timing 	(+/- OK, ResetDeviceState is quite expensive)
-	2. See CoD relighting	(fast approach with prefiltering)
-	3. CopyFromRenderTargetCube is too slooooow
+	1. [*] Check CPU timing 	(+/- OK, ResetDeviceState is quite expensive)
+	2. [*] See CoD relighting	(fast approach with prefiltering)
+	3. [*] CopyFromRenderTargetCube is too slooooow
+	4. [*] Batch prefiltering
 	
 -----------------------------------------------------------------------------*/
 
@@ -76,7 +78,7 @@ float4	ComputeLight ( float3 dir )
 	float4	sky			=	SkyEnvironment.SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
 		
 	float	dist		=	DecodeRGBE8( float4( gbuf0.w, 0, 0, gbuf1.w ) );
-	float3	worldPos	=	dir * dist + RelightParams.LightProbePosition.xyz;
+	float3	worldPos	=	float3(-1,1,1) * dir * dist + RelightParams.LightProbePosition.xyz;
 	
 	float3	color		=	gbuf0.rgb;
 	float3	normal		=	normalize(gbuf1.xyz * 2 - 1);
@@ -102,6 +104,13 @@ float4	ComputeLight ( float3 dir )
 	return float4( lerp(lighting, sky.rgb, skyFactor), 1-skyFactor );
 }
 
+static const float2 offsets[4] = {
+	float2( 0.25f, 0.25f ),
+	float2(-0.25f, 0.25f ),
+	float2(-0.25f,-0.25f ),
+	float2( 0.25f,-0.25f ),
+};
+
 [numthreads(BlockSizeX,BlockSizeY,1)] 
 void CSMain( 
 	uint3 groupId : SV_GroupID, 
@@ -111,21 +120,33 @@ void CSMain(
 {
 	int3 	location	=	dispatchThreadId.xyz;
 	
-	float	u			=	2 * (location.x+0.5f) / (float)LightProbeSize - 1;
-	float	v			=	2 * (location.y+0.5f) / (float)LightProbeSize - 1;
+	float4 	face[6] 	= 	{ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0 };
+
+	for (int i=0; i<4; i++) {
+		float u	=	2 * (location.x+0.25f + offsets[i].x) / (float)LightProbeSize - 1;
+		float v	=	2 * (location.y+0.25f + offsets[i].y) / (float)LightProbeSize - 1;
+
+		face[0]	+=	ComputeLight( float3( -1, -v, -u ) );
+		face[1]	+=	ComputeLight( float3(  1, -v,  u ) );
+		face[2]	+=	ComputeLight( float3( -u,  1,  v ) );
+		face[3]	+=	ComputeLight( float3( -u, -1, -v ) );
+		face[4]	+=	ComputeLight( float3( -u, -v,  1 ) );
+		face[5]	+=	ComputeLight( float3(  u, -v, -1 ) );
+	}
 	
-	TargetCube[int3(location.xy,0)]	=	ComputeLight( float3( -1, -v, -u ) );
-	TargetCube[int3(location.xy,1)]	=	ComputeLight( float3(  1, -v,  u ) );
-	TargetCube[int3(location.xy,2)]	=	ComputeLight( float3( -u,  1,  v ) );
-	TargetCube[int3(location.xy,3)]	=	ComputeLight( float3( -u, -1, -v ) );
-	TargetCube[int3(location.xy,4)]	=	ComputeLight( float3( -u, -v,  1 ) );
-	TargetCube[int3(location.xy,5)]	=	ComputeLight( float3(  u, -v, -1 ) );
+	TargetCube[int3(location.xy,0)]	=	face[0] / 4.0f;
+	TargetCube[int3(location.xy,1)]	=	face[1] / 4.0f;
+	TargetCube[int3(location.xy,2)]	=	face[2] / 4.0f;
+	TargetCube[int3(location.xy,3)]	=	face[3] / 4.0f;
+	TargetCube[int3(location.xy,4)]	=	face[4] / 4.0f;
+	TargetCube[int3(location.xy,5)]	=	face[5] / 4.0f;
 }
 #endif
 
 
 /*-----------------------------------------------------------------------------
 	Light probe prefiltering :
+	http://graphicrants.blogspot.ru/2013/08/specular-brdf-reference.html
 -----------------------------------------------------------------------------*/
 
 #ifdef PREFILTER
@@ -134,6 +155,8 @@ void CSMain(
 
 float Beckmann( float3 N, float3 H, float roughness)
 {
+	//	exp( - ( tg(x/57.29)/0.5 )^2 ) / (3.1416 * 0.5^2 * cos(x/57.29)^4 )
+	//	exp( - ( tg(theta)/0.5 )^2 ) / (3.1416 * 0.5^2 * cos(theta)^4 )
 	float 	m		=	roughness*roughness;
 	float	cos_a	=	dot(N,H);
 	float	sin_a	=	sqrt(abs(1 - cos_a * cos_a)); // 'abs' to avoid negative values
@@ -176,12 +199,12 @@ float3 PoissonBeckmann ( float x, float y, float size, float roughness )
 #ifdef ROUGHNESS_025
 	static const uint 	COUNT		=	91;
 	static const float	ROUGHNESS 	= 	0.25f;
-	static const float	KERNEL_SIZE	=	0.08f;
+	static const float	KERNEL_SIZE	=	0.11f;
 #endif
 #ifdef ROUGHNESS_050
 	static const uint 	COUNT		=	91;
 	static const float	ROUGHNESS 	= 	0.50f;
-	static const float	KERNEL_SIZE	=	0.4f;
+	static const float	KERNEL_SIZE	=	0.24f;
 #endif
 #ifdef ROUGHNESS_075
 	static const uint 	COUNT		=	91;
@@ -191,31 +214,14 @@ float3 PoissonBeckmann ( float x, float y, float size, float roughness )
 #ifdef ROUGHNESS_100
 	static const uint 	COUNT		=	91;
 	static const float	ROUGHNESS 	= 	1.00f;
-	static const float	KERNEL_SIZE	=	0.75f;
+	static const float	KERNEL_SIZE	=	1.2f;
 #endif
 
 #ifdef SPECULAR
-static const float3 poissonBeckmann[16]= {
-	PoissonBeckmann( -0.6828758f,   0.5264853f,  KERNEL_SIZE,  ROUGHNESS ),
-	PoissonBeckmann( -0.9846674f,   0.1491582f,  KERNEL_SIZE,  ROUGHNESS ),
-	PoissonBeckmann( -0.3335175f,   0.1175671f,  KERNEL_SIZE,  ROUGHNESS ),
-	PoissonBeckmann( -0.1510262f,   0.9201540f,  KERNEL_SIZE,  ROUGHNESS ),
-	PoissonBeckmann(  0.0776904f,   0.4907993f,  KERNEL_SIZE,  ROUGHNESS ),
-	PoissonBeckmann( -0.6843108f,  -0.1940148f,  KERNEL_SIZE,  ROUGHNESS ),
-	PoissonBeckmann(  0.0070783f,  -0.1083425f,  KERNEL_SIZE,  ROUGHNESS ),
-	PoissonBeckmann( -0.5304128f,  -0.6343142f,  KERNEL_SIZE,  ROUGHNESS ),
-	PoissonBeckmann(  0.4250475f,   0.2877348f,  KERNEL_SIZE,  ROUGHNESS ),
-	PoissonBeckmann(  0.4858001f,   0.7253821f,  KERNEL_SIZE,  ROUGHNESS ),
-	PoissonBeckmann(  0.8246021f,   0.1354496f,  KERNEL_SIZE,  ROUGHNESS ),
-	PoissonBeckmann(  0.2029337f,  -0.4910559f,  KERNEL_SIZE,  ROUGHNESS ),
-	PoissonBeckmann( -0.1761186f,  -0.9231045f,  KERNEL_SIZE,  ROUGHNESS ),
-	PoissonBeckmann(  0.5713789f,  -0.2682010f,  KERNEL_SIZE,  ROUGHNESS ),
-	PoissonBeckmann(  0.3672436f,  -0.8677061f,  KERNEL_SIZE,  ROUGHNESS ),
-	PoissonBeckmann(  0.7550967f,  -0.6394721f,  KERNEL_SIZE,  ROUGHNESS ),
-};
+#include "relight.sampling.hlsl"
 #endif
 
-float4	PrefilterFace ( float3 dir, int2 location )
+float4	PrefilterFace ( float3 dir, int3 location )
 {
 	float weight 	= 0;
 	float3 result 	= 0;
@@ -243,16 +249,16 @@ float4	PrefilterFace ( float3 dir, int2 location )
 		float3 N = dir;
 		float3 H = ImportanceSampleGGX( E, ROUGHNESS, N );
 
-		result.rgb += LightProbe.SampleLevel(LinearSampler, H, 0).rgb;// * saturate(dot(N,H));
+		result.rgb += LightProbe.SampleLevel(LinearSampler, float4(H, location.z), 0).rgb;// * saturate(dot(N,H));
 	}
 #else
-	for (int i=0; i<16; i++) {
+	for (int i=0; i<sampleCount; i++) {
 		float	x	=	poissonBeckmann[i].x;
 		float	y	=	poissonBeckmann[i].y;
 		float	d	=	poissonBeckmann[i].z;
 		float3 	H 	= 	normalize(dirN + tangentX * x + tangentY * y);
 		weight 		+= 	d;
-		result.rgb 	+= 	LightProbe.SampleLevel(LinearSampler, H, 0).rgb * d;
+		result.rgb 	+= 	LightProbe.SampleLevel(LinearSampler, float4(H, location.z), 0).rgb * d;
 	}
 #endif
 	
@@ -263,7 +269,7 @@ float4	PrefilterFace ( float3 dir, int2 location )
 		float3 H 	= 	hammersley_sphere_uniform( i, 31 );
 		float d 	= 	Lambert( H, dirN );
 		weight 		+= 	d;
-		float4 val	=	LightProbe.SampleLevel(LinearSampler, H, 0).rgba;
+		float4 val	=	LightProbe.SampleLevel(LinearSampler, float4(H, location.z), 0).rgba;
 		result.rgb 	+= 	val.rgb * d * val.a;
 	}
 #endif
@@ -294,11 +300,11 @@ void CSMain(
 	// float	u	=	2 * (location.x) / RelightParams.TargetSize - 1;
 	// float	v	=	2 * (location.y) / RelightParams.TargetSize - 1;
 	
-	TargetCube[int3(location.xy, location.z*6+0)]	=	PrefilterFace( float3(  1, -v, -u ), location.xy );
-	TargetCube[int3(location.xy, location.z*6+1)]	=	PrefilterFace( float3( -1, -v,  u ), location.xy );
-	TargetCube[int3(location.xy, location.z*6+2)]	=	PrefilterFace( float3(  u,  1,  v ), location.xy );
-	TargetCube[int3(location.xy, location.z*6+3)]	=	PrefilterFace( float3(  u, -1, -v ), location.xy );
-	TargetCube[int3(location.xy, location.z*6+4)]	=	PrefilterFace( float3(  u, -v,  1 ), location.xy );
-	TargetCube[int3(location.xy, location.z*6+5)]	=	PrefilterFace( float3( -u, -v, -1 ), location.xy );
+	TargetCube[int3(location.xy, location.z*6+0)]	=	PrefilterFace( float3(  1, -v, -u ), location.xyz );
+	TargetCube[int3(location.xy, location.z*6+1)]	=	PrefilterFace( float3( -1, -v,  u ), location.xyz );
+	TargetCube[int3(location.xy, location.z*6+2)]	=	PrefilterFace( float3(  u,  1,  v ), location.xyz );
+	TargetCube[int3(location.xy, location.z*6+3)]	=	PrefilterFace( float3(  u, -1, -v ), location.xyz );
+	TargetCube[int3(location.xy, location.z*6+4)]	=	PrefilterFace( float3(  u, -v,  1 ), location.xyz );
+	TargetCube[int3(location.xy, location.z*6+5)]	=	PrefilterFace( float3( -u, -v, -1 ), location.xyz );
 }
 #endif

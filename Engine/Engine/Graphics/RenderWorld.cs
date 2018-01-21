@@ -144,7 +144,6 @@ namespace Fusion.Engine.Graphics {
 		internal DepthStencil2D		LightProbeDepth;
 		internal RenderTargetCube	LightProbeGBuffer0;
 		internal RenderTargetCube	LightProbeGBuffer1;
-		internal RenderTargetCube	LightProbeRadiance;
 		internal TextureCubeArrayRW	RadianceCache;
 		internal TextureCubeArray	RadianceGBuffer0;
 		internal TextureCubeArray	RadianceGBuffer1;
@@ -185,16 +184,15 @@ namespace Fusion.Engine.Graphics {
 			
 			particleSystem	=	new ParticleSystem( Game.RenderSystem, this );
 
-			LightProbeDepth		=	new DepthStencil2D		( Game.GraphicsDevice, DepthFormat.D24S8,	RenderSystem.LightProbeSize, RenderSystem.LightProbeSize );
+			LightProbeDepth		=	new DepthStencil2D		( Game.GraphicsDevice, DepthFormat.D24S8,	RenderSystem.LightProbeSize*2, RenderSystem.LightProbeSize*2 );
 
 			#warning false
-			LightProbeGBuffer0	=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba8,	RenderSystem.LightProbeSize, false ); 
-			LightProbeGBuffer1	=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba8,	RenderSystem.LightProbeSize, false ); 
-			LightProbeRadiance	=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba16F, RenderSystem.LightProbeSize, true );
+			LightProbeGBuffer0	=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba8,	RenderSystem.LightProbeSize*2, false ); 
+			LightProbeGBuffer1	=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba8,	RenderSystem.LightProbeSize*2, false ); 
 
-			RadianceGBuffer0	=	new TextureCubeArray	( Game.GraphicsDevice, RenderSystem.LightProbeSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba8,	false );
-			RadianceGBuffer1	=	new TextureCubeArray	( Game.GraphicsDevice, RenderSystem.LightProbeSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba8,	false );
-			RadianceCache		=	new TextureCubeArrayRW	( Game.GraphicsDevice, RenderSystem.LightProbeSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba16F,	true,  RenderSystem.LightProbeBatchSize );
+			RadianceGBuffer0	=	new TextureCubeArray	( Game.GraphicsDevice, RenderSystem.LightProbeSize*2, RenderSystem.MaxEnvLights, ColorFormat.Rgba8,	false );
+			RadianceGBuffer1	=	new TextureCubeArray	( Game.GraphicsDevice, RenderSystem.LightProbeSize*2, RenderSystem.MaxEnvLights, ColorFormat.Rgba8,	false );
+			RadianceCache		=	new TextureCubeArrayRW	( Game.GraphicsDevice, RenderSystem.LightProbeSize,   RenderSystem.MaxEnvLights, ColorFormat.Rgba16F,	true,  RenderSystem.LightProbeBatchSize );
 
 			Resize( width, height );
 		}
@@ -216,7 +214,6 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref LightProbeDepth	 );
 				SafeDispose( ref LightProbeGBuffer0	 );
 				SafeDispose( ref LightProbeGBuffer1	 );
-				SafeDispose( ref LightProbeRadiance	 );
 				
 				SafeDispose( ref RadianceCache		 );
 				SafeDispose( ref RadianceGBuffer0	 );
@@ -596,6 +593,7 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		int lightProbeUpdateCounter = 0;
 
 		/// <summary>
 		/// 
@@ -616,7 +614,8 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 
-			rs.LightManager.PrefilterLightProbes( LightSet, RadianceCache );
+			rs.LightManager.PrefilterLightProbes( LightSet, RadianceCache, lightProbeUpdateCounter );
+			lightProbeUpdateCounter++;
 
 			sw.Stop();
 			//Log.Message("Relight light probes [CPU] : {0} light probes - {1} ms", LightSet.LightProbes.Count, sw.ElapsedMilliseconds);

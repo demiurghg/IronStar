@@ -173,8 +173,8 @@ namespace Fusion.Engine.Graphics {
 			cbDataStage.FogColor				=	rs.RenderWorld.FogSettings.Color;
 			cbDataStage.FogAttenuation			=	rs.RenderWorld.FogSettings.DistanceAttenuation;
 
-			cbDataStage.Ambient			=	rs.RenderWorld.LightSet.AmbientLevel;
-			cbDataStage.VTPageScaleRCP	=	rs.VTSystem.PageScaleRCP;
+			cbDataStage.SkyAmbientLevel			=	rs.RenderWorld.SkySettings.AmbientLevel;
+			cbDataStage.VTPageScaleRCP			=	rs.VTSystem.PageScaleRCP;
 
 			var width	=	context.Viewport.Width;
 			var height	=	context.Viewport.Height;

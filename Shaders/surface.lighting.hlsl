@@ -110,8 +110,8 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	specular	=	1.0f;
 	diffuse		=	0.0f;//*/
 
-	//roughness	=	0.125f;
-	/*specular	=	0.0f;
+	/*roughness	=	0.125f;
+	specular	=	0.0f;
 	diffuse		=	1.0f;//*/
 
 	//----------------------------------------------------------------------------------------------
@@ -225,18 +225,21 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 
 	//	occlusion & sky stuff :
 	float 	ssaoFactor		=	AmbientOcclusion.Load( int3( input.Position.xy,0 ) ).r;
-	float4	aogridValue		=	OcclusionGrid.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 0.5f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba;
+	float4	aogridValue		=	OcclusionGrid.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 0.9f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba;
 			aogridValue.xyz	=	aogridValue.xyz * 2 - 1;
-	
+			
 	float 	skyFactor		=	length( aogridValue.xyz );
 	float3 	skyBentNormal	=	aogridValue.xyz / (skyFactor + 0.1);
-	//float 	skyTerm			=	max(0, dot( skyBentNormal, normal ) * 0.5 + 0.5) * skyFactor;
-	float3	skyValue		=	FogTable.SampleLevel( SamplerLinearClamp, skyBentNormal, 0 ).rgb * (normal.y*0.5+0.5);
+	
+	float 	fullSkyLight	=	max( 0, dot( skyBentNormal, normal ) * 0.5 + 0.5 );
+	float 	halfSkyLight	=	max( 0, dot( skyBentNormal, normal ) * 1.0 + 0.0 );
+	float3	skyLight		=	skyFactor * max(0, lerp(halfSkyLight, fullSkyLight, skyFactor ) ) * Stage.SkyAmbientLevel;
+	
 	
 	float	NoV 			= 	dot(viewDirN, normal.xyz);
 	float2 	ab				=	EnvLut.SampleLevel( SamplerLinearClamp, float2(roughness, 1-NoV), 0 ).xy;
-	float	ssaoFactorDiff	=	ssaoFactor * ssaoFactor * aogridValue.w;
-	float	ssaoFactorSpec	=	ssaoFactor * ssaoFactor * aogridValue.w;//computeSpecOcclusion( NoV, ssaoFactor * aogridValue.w, roughness );
+	float	ssaoFactorDiff	=	pow(ssaoFactor * aogridValue.w, 2);
+	float	ssaoFactorSpec	=	pow(ssaoFactor * aogridValue.w, 2);//computeSpecOcclusion( NoV, ssaoFactor * aogridValue.w, roughness );
 	
 	[loop]
 	for (i=0; i<lpbCount; i++) {
@@ -264,7 +267,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 
 	ambientDiffuse		=	ambientDiffuse  * ( diffuse                ) * ssaoFactorDiff;
 	ambientSpecular		=	ambientSpecular	* ( specular * ab.x + ab.y ) * ssaoFactorSpec;
-	ambientDiffuseSky	=	diffuse * skyFactor * skyValue * pow(ssaoFactor,2);
+	ambientDiffuseSky	=	diffuse * skyLight * pow(ssaoFactor,2);
 	
 	totalLight.xyz	+=	ambientDiffuse + ambientDiffuseSky + ambientSpecular;	
 	

@@ -33,7 +33,7 @@ cbuffer CBRelightParams :  register(b0) { RELIGHT_PARAMS RelightParams : packoff
 	6.	[X] Move prefilter shader here.
 	7.	[X] Prefilter sky.
 	8.	[X] Apply specular and diffuse terms.
-	9.	[ ] Implement better occlusion grid (offset, grid density, better local occlusion)
+	9.	[X] Implement better occlusion grid (Not perfect but OK for now)
 	10.	[ ] Store occlusion grid as separate content asset file.
 	11. [X] Better roughness distribution
 	
@@ -44,7 +44,7 @@ cbuffer CBRelightParams :  register(b0) { RELIGHT_PARAMS RelightParams : packoff
 	2. [X] See CoD relighting	(fast approach with prefiltering)
 	3. [X] CopyFromRenderTargetCube is too slooooow
 	4. [X] Batched & coherent light-probe prefiltering
-	4. [ ] Batched & coherent light-probe relighting
+	4. [ ] Batched & coherent light-probe relighting  <<----------!!!!!!
 	
 -----------------------------------------------------------------------------*/
 

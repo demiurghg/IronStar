@@ -32,7 +32,7 @@ struct STAGE {
 	float4     CascadeScaleOffset3;           // offset:  752
 	float4     ViewPos;                       // offset:  768
 	float4     BiasSlopeFar;                  // offset:  784
-	float4     Ambient;                       // offset:  800
+	float4     SkyAmbientLevel;               // offset:  800
 	float4     ViewBounds;                    // offset:  816
 	float4     DirectLightDirection;          // offset:  832
 	float4     DirectLightIntensity;          // offset:  848

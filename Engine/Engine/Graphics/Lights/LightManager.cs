@@ -148,11 +148,11 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		const int	Width		=	128;
-		const int	Height		=	64;
-		const int	Depth		=	128;
+		const int	Width		=	64;
+		const int	Height		=	32;
+		const int	Depth		=	64;
 		const float GridStep	=	0.5f;
-		const int	SampleNum	=	64;
+		const int	SampleNum	=	91;
 
 
 		public Matrix OcclusionGridMatrix {
@@ -362,10 +362,10 @@ namespace Fusion.Engine.Graphics {
 					var max		=	Vector3.One * ( GridStep/2.0f);
 
 					sphereRandomPoints		= Enumerable.Range(0,SampleNum).Select( i => Hammersley.SphereUniform(i,SampleNum) ).ToArray();
-					hemisphereRandomPoints	= Enumerable.Range(0,SampleNum).Select( i => Hammersley.HemisphereCosine(i,SampleNum) ).ToArray();
+					hemisphereRandomPoints	= Enumerable.Range(0,SampleNum).Select( i => Hammersley.HemisphereUniform(i,SampleNum) ).ToArray();
 					cubeRandomPoints		= Enumerable.Range(0,SampleNum).Select( i => rand.NextVector3( min, max ) ).ToArray();
 
-					foreach ( var p in sphereRandomPoints ) {
+					foreach ( var p in hemisphereRandomPoints ) {
 						dr.DrawPoint( p, 0.1f, Color.Orange );
 					}
 
@@ -386,7 +386,7 @@ namespace Fusion.Engine.Graphics {
 
 					for ( int x=0; x<Width;  x++ ) {
 
-						for ( int y=0; y<Height/2; y++ ) {
+						for ( int y=0; y<Height; y++ ) {
 
 							for ( int z=0; z<Depth;  z++ ) {
 
@@ -396,8 +396,8 @@ namespace Fusion.Engine.Graphics {
 								var translation	=	new Vector3( -Width/2.0f, 0, -Depth/2.0f );
 								var position	=	(new Vector3( x, y, z ) + translation) * GridStep;
 
-								var localAO		=	ComputeLocalOcclusion( scene, position, 5 );
-								var globalAO	=	ComputeSkyOcclusion( scene, position, 512 );
+								var localAO		=	ComputeLocalOcclusion( scene, position, 3 );
+								var globalAO	=	ComputeSkyOcclusion( scene, position, 128 );
 
 								byte byteX		=	(byte)( 255 * (globalAO.X * 0.5+0.5) );
 								byte byteY		=	(byte)( 255 * (globalAO.Y * 0.5+0.5) );
@@ -448,7 +448,7 @@ namespace Fusion.Engine.Graphics {
 				var dist	=	scene.Intersect( x,y,z, dx,dy,dz, 0, maxRange );
 
 				if (dist>=0) {
-					var localFactor = (float)Math.Exp(-dist+0.5f) / SampleNum;
+					var localFactor = (float)Math.Exp(-dist*2) / SampleNum;
 					factor = factor + (float)localFactor;
 				}
 			}
@@ -469,16 +469,23 @@ namespace Fusion.Engine.Graphics {
 				var dir		=	hemisphereRandomPoints[i];
 				var bias	=	Vector3.Zero;// cubeRandomPoints[i];
 
-				var x	=	point.X + bias.X + dir.X / 2.0f;
-				var y	=	point.Y + bias.Y + dir.Y / 2.0f;
-				var z	=	point.Z + bias.Z + dir.Z / 2.0f;
+				var x	=	point.X + bias.X + dir.X * GridStep / 2.0f;
+				var y	=	point.Y + bias.Y + dir.Y * GridStep / 2.0f;
+				var z	=	point.Z + bias.Z + dir.Z * GridStep / 2.0f;
 				var dx	=	dir.X;
 				var dy	=	dir.Y;
 				var dz	=	dir.Z;
 
-				var dist	=	scene.Intersect( x,y,z, dx,dy,dz, 0, maxRange );
+				//var dist	=	scene.Intersect( x,y,z, dx,dy,dz, 0, maxRange );
 
-				if (dist<=0) {
+				//if (dist<=0) {
+				//	factor		+= 1;
+				//	bentNormal	+= dir;
+				//}
+				
+				var occluded	=	scene.Occluded( x,y,z, dx,dy,dz, 0, maxRange );
+
+				if (!occluded) {
 					factor		+= 1;
 					bentNormal	+= dir;
 				}

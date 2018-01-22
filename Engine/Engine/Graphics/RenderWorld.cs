@@ -580,10 +580,6 @@ namespace Fusion.Engine.Graphics {
 					RadianceGBuffer1.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeGBuffer1 );
 
 					rs.LightManager.RelightLightProbe( RadianceGBuffer0, RadianceGBuffer1, lightProbe, LightSet, skyAmbient, RadianceCache );
-
-					//rs.Filter.PrefilterEnvMap( LightProbeRadiance );
-
-					//RadianceCache.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeRadiance );
 				}
 
 				sw.Stop();
@@ -591,6 +587,7 @@ namespace Fusion.Engine.Graphics {
 
 			Log.Message("{0} light probes - {1} ms", LightSet.LightProbes.Count, sw.ElapsedMilliseconds);
 		}
+
 
 
 		int lightProbeUpdateCounter = 0;

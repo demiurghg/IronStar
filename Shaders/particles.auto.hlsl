@@ -56,7 +56,7 @@ struct LIGHTINDEX {
 	uint       Count;                         // offset:    4
 };
 
-// Fusion.Engine.Graphics.ParticleSystem+PARAMS
+// Fusion.Engine.Graphics.ParticleStream+PARAMS
 // Marshal.SizeOf = 1024
 struct PARAMS {
 	float4x4   View;                          // offset:    0

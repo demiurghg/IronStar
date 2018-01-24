@@ -113,5 +113,19 @@ namespace Fusion.Core {
 
 			objArray = null;
 		}
+
+
+		public static void SafeDispose<T>( IEnumerable<T> objects ) where T: IDisposable
+		{
+			if ( objects==null ) {
+				return;
+			}
+
+			foreach ( var obj in objects ) {
+				obj?.Dispose();
+			}
+
+			objects = null;
+		}
 	}
 }

@@ -229,6 +229,7 @@
     <Compile Include="Engine\Graphics\Lights\ShadowContext.cs" />
     <Compile Include="Engine\Graphics\Lights\SpotLight.cs" />
     <Compile Include="Engine\Graphics\MathConverter.cs" />
+    <Compile Include="Engine\Graphics\ParticleStream.cs" />
     <Compile Include="Engine\Graphics\RenderComponent.cs" />
     <Compile Include="Engine\Graphics\SceneRenderer.Gpu.cs" />
     <Compile Include="Engine\Graphics\Scene\AnimRegion.cs" />

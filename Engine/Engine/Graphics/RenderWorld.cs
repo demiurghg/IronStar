@@ -448,7 +448,7 @@ namespace Fusion.Engine.Graphics {
 				case 6  : rs.Filter.Copy( targetSurface,		viewHdrFrame.AOBuffer ); return;
 				case 7  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ParticleShadow ); return;
 				case 8  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ColorBuffer ); return;
-				case 9  : rs.Filter.StretchRect( targetSurface, ParticleSystem.Lightmap ); return;
+				case 9  : rs.Filter.StretchRect( targetSurface, ParticleSystem.SoftStream.Lightmap ); return;
 				case 10 : rs.Filter.StretchRect( targetSurface, viewHdrFrame.FeedbackBufferRB, SamplerState.PointClamp ); return;
 			}
 

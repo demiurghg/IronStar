@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-16"?>
 <FXFactory xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <Period>0</Period>
+  <Period>500</Period>
   <SoundStage Enabled="true" Sound="sound\weapon\explosion.wav" Attenuation="Normal" />
-  <LightStage Enabled="false" Period="0.3" InnerRadius="0" OuterRadius="2" PulseString="m" LightStyle="Saw" LightType="Omni" SpotAngleX="60" SpotAngleY="60" LightMask="" OffsetDirection="LocalForward" OffsetFactor="0.5">
-    <Intensity Red="50" Green="30" Blue="10" Alpha="1" />
+  <LightStage Enabled="true" Period="0.3" InnerRadius="0" OuterRadius="4" PulseString="m" LightStyle="Saw" LightType="Omni" SpotAngleX="60" SpotAngleY="60" LightMask="" OffsetDirection="LocalForward" OffsetFactor="0.5">
+    <Intensity Red="100" Green="75" Blue="20" Alpha="1" />
   </LightStage>
   <CameraShake Enabled="false" />
   <ParticleStage1>

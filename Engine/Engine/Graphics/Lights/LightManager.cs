@@ -53,6 +53,13 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		[ShaderStructure()]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=16)]
+		struct LIGHTPROBE_DATA {
+			public	Vector4	Position;
+		}
+
+
 		public LightGrid LightGrid {
 			get { return lightGrid; }
 		}
@@ -71,7 +78,8 @@ namespace Fusion.Engine.Graphics {
 
 		Ubershader		shader;
 		StateFactory	factory;
-		ConstantBuffer	constBuffer;
+		ConstantBuffer	cbRelightParams;
+		ConstantBuffer	cbLightProbeData;
 
 
 		enum Flags {
@@ -109,7 +117,8 @@ namespace Fusion.Engine.Graphics {
 
 			occlusionGrid		=	new Texture3D( rs.Device, ColorFormat.Rgba8, Width,Height,Depth );
 
-			constBuffer			=	new ConstantBuffer( rs.Device, typeof(RELIGHT_PARAMS) );
+			cbRelightParams		=	new ConstantBuffer( rs.Device, typeof(RELIGHT_PARAMS) );
+			cbLightProbeData	=	new ConstantBuffer( rs.Device, typeof(LIGHTPROBE_DATA), RenderSystem.LightProbeBatchSize );
 
 			LoadContent();
 			Game.Reloading += (s,e) => LoadContent();
@@ -137,7 +146,8 @@ namespace Fusion.Engine.Graphics {
 		protected override void Dispose( bool disposing )
 		{
 			if (disposing) {
-				SafeDispose( ref constBuffer );
+				SafeDispose( ref cbRelightParams );
+				SafeDispose( ref cbLightProbeData );
 				SafeDispose( ref factory );
 				SafeDispose( ref lightGrid );
 				SafeDispose( ref shadowMap );
@@ -208,23 +218,25 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// 
 		/// </summary>
-		public void RelightLightProbe ( TextureCubeArray colorData, TextureCubeArray normalData, LightProbe lightProbe, LightSet lightSet, Color4 skyAmbient, TextureCubeArrayRW target )
+		public void RelightLightProbe ( TextureCubeArrayRW colorData, TextureCubeArrayRW normalData, LightProbe lightProbe, LightSet lightSet, Color4 skyAmbient, TextureCubeArrayRW target )
 		{
 			using ( new PixEvent( "RelightLightProbe" ) ) {
 
-				var constData	=	new RELIGHT_PARAMS();
+				var relightParams	=	new RELIGHT_PARAMS();
+				/*var lightProbeData	=	new LIGHTPROBE_DATA[ RenderSystem.LightProbeBatchSize ];*/
 
 				var cubeIndex	=	lightProbe.ImageIndex;
 
-				constData.CubeIndex				=	lightProbe.ImageIndex;
-				constData.LightProbePosition	=	new Vector4( lightProbe.Position, 1 );
-				constData.ShadowViewProjection	=	shadowMap.GetLessDetailedCascade().ViewProjectionMatrix;
-				constData.DirectLightDirection	=	new Vector4( lightSet.DirectLight.Direction, 0 );
-				constData.DirectLightIntensity	=	lightSet.DirectLight.Intensity;
-				constData.SkyAmbient			=	skyAmbient;
-				constData.ShadowRegion			=	shadowMap.GetLessDetailedCascade().ShadowScaleOffset;
+				relightParams.CubeIndex				=	lightProbe.ImageIndex;
+				relightParams.LightProbePosition	=	new Vector4( lightProbe.Position, 1 );
+				relightParams.ShadowViewProjection	=	shadowMap.GetLessDetailedCascade().ViewProjectionMatrix;
+				relightParams.DirectLightDirection	=	new Vector4( lightSet.DirectLight.Direction, 0 );
+				relightParams.DirectLightIntensity	=	lightSet.DirectLight.Intensity;
+				relightParams.SkyAmbient			=	skyAmbient;
+				relightParams.ShadowRegion			=	shadowMap.GetLessDetailedCascade().ShadowScaleOffset;
 
-				constBuffer.SetData( constData );
+				cbRelightParams.SetData( relightParams );
+				/*cbLightProbeData.SetData( lightProbeData );*/
 
 				device.ComputeShaderResources[0]    =   colorData;
 				device.ComputeShaderResources[1]    =   normalData;
@@ -235,7 +247,9 @@ namespace Fusion.Engine.Graphics {
 				device.ComputeShaderSamplers[0]		=	SamplerState.PointClamp;
 				device.ComputeShaderSamplers[1]		=	SamplerState.LinearWrap;
 				device.ComputeShaderSamplers[2]		=	SamplerState.ShadowSamplerPoint;
-				device.ComputeShaderConstants[0]	=	constBuffer;
+				
+				device.ComputeShaderConstants[0]	=	cbRelightParams;
+				/*device.ComputeShaderConstants[1]	=	cbLightProbeData;*/
 					
 				device.SetCSRWTexture( 0, target.GetSingleCubeSurface( cubeIndex, 0 ) );
 				

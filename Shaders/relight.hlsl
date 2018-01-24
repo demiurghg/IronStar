@@ -28,13 +28,13 @@ cbuffer CBRelightParams :  register(b0) { RELIGHT_PARAMS RelightParams : packoff
 	1.	[X] Write position in surface.hlsl and read position here.
 	2.	[X] Use shadomap for direct light.
 	3.  [X] Use sky occlusion map for more ambient light.
-	4. 	[ ] Get 3-5 closest spot-lights without shadows and inject light.
+	4. 	[ ] Get 3-5 closest spot-lights without shadows and inject light (later, no assets_
 	5.	[ ] Retrive color data from megatexture (use Hammersley point set to sample texture)
 	6.	[X] Move prefilter shader here.
 	7.	[X] Prefilter sky.
 	8.	[X] Apply specular and diffuse terms.
 	9.	[X] Implement better occlusion grid (Not perfect but OK for now)
-	10.	[ ] Store occlusion grid as separate content asset file.
+	10.	[ ] Store occlusion grid as separate content asset file (depends on level)
 	11. [X] Better roughness distribution
 	
 	------------------------
@@ -44,7 +44,7 @@ cbuffer CBRelightParams :  register(b0) { RELIGHT_PARAMS RelightParams : packoff
 	2. [X] See CoD relighting	(fast approach with prefiltering)
 	3. [X] CopyFromRenderTargetCube is too slooooow
 	4. [X] Batched & coherent light-probe prefiltering
-	4. [ ] Batched & coherent light-probe relighting  <<----------!!!!!!
+	4. [ ] Batched & coherent light-probe relighting  (later...)
 	
 -----------------------------------------------------------------------------*/
 

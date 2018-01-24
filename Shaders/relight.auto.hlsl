@@ -18,3 +18,9 @@ struct RELIGHT_PARAMS {
 	float      TargetSize;                    // offset:  152
 };
 
+// Fusion.Engine.Graphics.LightManager+LIGHTPROBE_DATA
+// Marshal.SizeOf = 16
+struct LIGHTPROBE_DATA {
+	float4     Position;                      // offset:    0
+};
+

@@ -91,8 +91,13 @@ namespace IronStar.SFX {
 
 				p.ImageIndex	=	spriteIndex;
 
-				p.Color0        =   stage.Color0;
-				p.Color1        =   stage.Color1;
+				p.Color			=   stage.Color.ToColor3();
+				p.Alpha			=	stage.Alpha;
+				p.Roughness		=	stage.Roughness;
+				p.Metallic		=	stage.Metallic;
+				p.Intensity		=	stage.Intensity;
+				p.Temperature0	=	stage.Temperature0;
+				p.Temperature1	=	stage.Temperature1;
 
 				p.LifeTime		=	stage.Lifetime.GetLifetime(rand);
 

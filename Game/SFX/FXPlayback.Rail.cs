@@ -68,11 +68,12 @@ namespace IronStar.SFX {
 				p.FadeIn		=	0.1f;
 				p.FadeOut		=	0.1f;
 				
-				p.Color0		=	new Color4(300,500,1000,1);
-				p.Color1		=	new Color4(300,500,1000,1);
+				throw new NotImplementedException();
+				//p.Color0		=	new Color4(300,500,1000,1);
+				//p.Color1		=	new Color4(300,500,1000,1);
 
 				p.TailPosition	=	pos1;
-				p.Effects	|=	ParticleFX.Beam;
+				//p.Effects		|=	ParticleFX.Beam;
  
 				rw.ParticleSystem.InjectParticle( p );
 			}

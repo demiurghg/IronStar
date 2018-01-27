@@ -1,6 +1,6 @@
 
 #if 0
-$ubershader INITIALIZE|INJECTION|SIMULATION|DRAW|DRAW_SHADOW|DRAW_LIGHT|ALLOC_LIGHTMAP
+$ubershader INITIALIZE|INJECTION|SIMULATION|DRAW_SOFT|DRAW_HARD|DRAW_DUDV|DRAW_SHADOW|DRAW_LIGHT|ALLOC_LIGHTMAP
 #endif
 
 #include "particles.auto.hlsl"
@@ -197,7 +197,7 @@ struct GSOutput {
 };
 
 
-#if (defined DRAW) || (defined DRAW_SHADOW) || (defined DRAW_LIGHT)
+#if (defined DRAW_SOFT) || (defined DRAW_HARD) || (defined DRAW_DUDV) || (defined DRAW_SHADOW) || (defined DRAW_LIGHT)
 VSOutput VSMain( uint vertexID : SV_VertexID )
 {
 	VSOutput output;
@@ -228,6 +228,7 @@ float ApplyFog( float3 worldPos )
 	return 1 - exp( dist * Params.FogAttenuation );
 }
 
+#include "temperature.fxi"
 
 [maxvertexcount(6)]
 void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> outputStream )
@@ -250,8 +251,19 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	float time		=	prt.TimeLag;
 	float factor	=	saturate(prt.TimeLag / prt.LifeTime);
 	
+	float3 glow		=	0;
+	
+	if (prt.Effects==ParticleFX_Hard || prt.Effects==ParticleFX_Soft) {
+		float t		=	lerp( prt.Temperature0, prt.Temperature1, sqrt(factor) );
+		glow		=	prt.Intensity * getRGBfromTemperature( t );
+	}
+	
 	float  sz 		=   lerp( prt.Size0, prt.Size1, factor )/2;
-	float4 color	=	lerp( prt.Color0, prt.Color1, Ramp( prt.FadeIn, prt.FadeOut, factor ) );
+	float  fade		=	Ramp( prt.FadeIn, prt.FadeOut, factor );
+	float3 color3	=	prt.Color * glow;
+	float  alpha	=	prt.Alpha * fade;
+	float4 color	=	float4( color3, alpha );
+	
 	float3 position	=	prt.Position    ;// + prt.Velocity * time + accel * time * time / 2;
 	float3 tailpos	=	prt.TailPosition;// + prt.Velocity * time + accel * time * time / 2;
 	float  a		=	lerp( prt.Rotation0, prt.Rotation1, factor );	
@@ -273,7 +285,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	float4 pos2		=	mul( wpos2, Params.View );
 	float4 pos3		=	mul( wpos3, Params.View );
 	
-	if (prt.Effects==ParticleFX_Beam) {
+	/*if (prt.Effects==ParticleFX_Beam) {
 		float3 dir	=	normalize(position - tailpos);
 		float3 eye	=	normalize(Params.CameraPosition.xyz - tailpos);
 		float3 side	=	normalize(cross( eye, dir ));
@@ -281,7 +293,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
         pos1		=	mul( float4( position + side * sz, 1 ), Params.View );
         pos2		=	mul( float4( position - side * sz, 1 ), Params.View );
 	    pos3		=	mul( float4( tailpos  - side * sz, 1 ), Params.View );
-	}
+	}//*/
 	
 	float2 lmszA	 = Params.LightMapSize.zw * 0.0f;
 	float2 lmszB	 = Params.LightMapSize.zw * float2(0.5f,-0.5f);
@@ -318,8 +330,8 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p3.LMFactor	 = 0;
 	p3.Fog		 = ApplyFog( wpos3 );
 	
-	#ifdef DRAW
-	if (prt.Effects==ParticleFX_Lit || prt.Effects==ParticleFX_LitShadow) {
+	#if defined(DRAW_SOFT) || defined(DRAW_HARD)
+	if (prt.Effects==ParticleFX_SoftLit || prt.Effects==ParticleFX_SoftLitShadow) {
 		p0.LMFactor	 = 1;
 		p1.LMFactor	 = 1;
 		p2.LMFactor	 = 1;
@@ -328,7 +340,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	#endif
 	
 	#ifdef DRAW_SHADOW
-	if (prt.Effects!=ParticleFX_LitShadow && prt.Effects!=ParticleFX_Shadow) {
+	if (prt.Effects!=ParticleFX_SoftLitShadow && prt.Effects!=ParticleFX_HardLitShadow) {
 		return;
 	}
 	#endif
@@ -356,7 +368,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 
 float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 {
-	#ifdef DRAW
+	#ifdef DRAW_SOFT
 		float4 color	=	Texture.Sample( Sampler, input.TexCoord ) * input.Color;
 		//	saves about 5%-10% of rasterizer time:
 		//clip( color.a < 0.001f ? -1:1 );
@@ -385,6 +397,24 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 		return color;
 	#endif
 	
+	
+	#ifdef DRAW_HARD
+		float4 	color	=	Texture.Sample( Sampler, input.TexCoord );
+				
+		// !!!!! APPLY HARD BASIS LIGHT !!!!! //
+		
+		color.rgb	*=	input.Color.rgb;
+		color.rgb	=	lerp( color.rgb, Params.FogColor, input.Fog );
+		
+		clip( color.a - ( 1 - input.Color.a ) );
+		
+		return color;
+	#endif
+	
+	#ifdef DRAW_DUDV
+		return float4(1,0,1,1);
+	#endif
+	
 	#ifdef DRAW_SHADOW
 		float4 textureColor	=	Texture.Sample( Sampler, input.TexCoord );
 		float4 vertexColor  =  	input.Color;
@@ -392,6 +422,7 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 		
 		return color;
 	#endif
+	
 	
 	#ifdef DRAW_LIGHT
 		float3 lighting = ComputeClusteredLighting( input.ViewPosSZ.xyz );

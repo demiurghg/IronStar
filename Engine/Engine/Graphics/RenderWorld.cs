@@ -435,8 +435,12 @@ namespace Fusion.Engine.Graphics {
 			//	Forward+
 			rs.SceneRenderer.RenderForward( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
 
-			//	Debug surfels :
-			//rs.Irs.DrawDebugSurfels( viewHdrFrame, Camera, stereoEye );
+			//	render sky :
+			rs.Sky.Render( Camera, stereoEye, viewHdrFrame, SkySettings );
+			rs.Sky.RenderFogTable( SkySettings );
+
+			//	Render particles :
+			ParticleSystem.Render( gameTime, Camera, stereoEye, viewHdrFrame );
 
 
 			switch (rs.ShowGBuffer) {
@@ -461,10 +465,6 @@ namespace Fusion.Engine.Graphics {
 				return;
 			}
 
-			//	render sky :
-			rs.Sky.Render( Camera, stereoEye, viewHdrFrame, SkySettings );
-			rs.Sky.RenderFogTable( SkySettings );
-
 			//	render fog :
 			//rs.Fog.RenderFog( Camera, LightSet, FogSettings );
 
@@ -473,9 +473,6 @@ namespace Fusion.Engine.Graphics {
 
 			//	render "solid" DOF :
 			rs.DofFilter.Render( gameTime, viewHdrFrame.LightAccumulator, viewHdrFrame.HdrBuffer, viewHdrFrame.DepthBuffer, this );
-
-			//	render particles :
-			ParticleSystem.Render( gameTime, Camera, stereoEye, viewHdrFrame );
 
 			//	apply tonemapping and bloom :
 			rs.HdrFilter.Render( gameTime, HdrSettings, this.viewHdrFrame );

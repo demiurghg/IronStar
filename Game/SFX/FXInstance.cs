@@ -245,17 +245,13 @@ namespace IronStar.SFX {
 
 		protected void	SetupColor ( ref Particle p, Color4 color0, Color4 color1 ) 
 		{
-			p.Color0		=	color0;
-			p.Color1		=	color1;
+			throw new NotImplementedException();
 		}
 
 
 		protected void	SetupColor ( ref Particle p, float intensity0, float intensity1, float alpha0, float alpha1 ) 
 		{
-			intensity0 *= alpha0;
-			intensity1 *= alpha1;
-			p.Color0		=	new Color4( intensity0, intensity0, intensity0, alpha0 );
-			p.Color1		=	new Color4( intensity1, intensity1, intensity1, alpha1 );
+			throw new NotImplementedException();
 		}
 
 

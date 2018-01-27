@@ -2,10 +2,13 @@ static const int BLOCK_SIZE = 256;
 static const int MAX_INJECTED = 4096;
 static const int MAX_PARTICLES = 65536;
 static const int MAX_IMAGES = 512;
-static const uint ParticleFX_Beam = 1;
-static const uint ParticleFX_Lit = 2;
-static const uint ParticleFX_LitShadow = 3;
-static const uint ParticleFX_Shadow = 4;
+static const uint ParticleFX_Hard = 0;
+static const uint ParticleFX_HardLit = 1;
+static const uint ParticleFX_HardLitShadow = 2;
+static const uint ParticleFX_Soft = 3;
+static const uint ParticleFX_SoftLit = 4;
+static const uint ParticleFX_SoftLitShadow = 5;
+static const uint ParticleFX_Distortive = 6;
 static const uint LightmapRegionSize = 1024;
 static const uint LightmapWidth = 4096;
 static const uint LightmapHeight = 2048;
@@ -15,27 +18,35 @@ static const uint LightSpotShapeRound = 131072;
 static const uint LightSpotShapeSquare = 65536;
 
 // Fusion.Engine.Graphics.Particle
-// Marshal.SizeOf = 144
+// Marshal.SizeOf = 184
 struct Particle {
 	float3     Position;                      // offset:    0
 	float3     Velocity;                      // offset:   12
 	float3     Acceleration;                  // offset:   24
 	float3     TailPosition;                  // offset:   36
-	float4     Color0;                        // offset:   48
-	float4     Color1;                        // offset:   64
-	float4     LightmapRegion;                // offset:   80
-	float      Gravity;                       // offset:   96
-	float      Damping;                       // offset:  100
-	float      Size0;                         // offset:  104
-	float      Size1;                         // offset:  108
-	float      Rotation0;                     // offset:  112
-	float      Rotation1;                     // offset:  116
-	float      LifeTime;                      // offset:  120
-	float      TimeLag;                       // offset:  124
-	float      FadeIn;                        // offset:  128
-	float      FadeOut;                       // offset:  132
-	int        ImageIndex;                    // offset:  136
-	uint       Effects;                       // offset:  140
+	float3     Color;                         // offset:   48
+	float      Alpha;                         // offset:   60
+	float      Roughness;                     // offset:   64
+	float      Metallic;                      // offset:   68
+	float      Intensity;                     // offset:   72
+	float      Temperature0;                  // offset:   76
+	float      Temperature1;                  // offset:   80
+	float4     LightmapRegion;                // offset:   84
+	float3     LightBasisX;                   // offset:  100
+	float3     LightBasisY;                   // offset:  112
+	float3     LightBasisZ;                   // offset:  124
+	float      Gravity;                       // offset:  136
+	float      Damping;                       // offset:  140
+	float      Size0;                         // offset:  144
+	float      Size1;                         // offset:  148
+	float      Rotation0;                     // offset:  152
+	float      Rotation1;                     // offset:  156
+	float      LifeTime;                      // offset:  160
+	float      TimeLag;                       // offset:  164
+	float      FadeIn;                        // offset:  168
+	float      FadeOut;                       // offset:  172
+	int        ImageIndex;                    // offset:  176
+	uint       Effects;                       // offset:  180
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHT

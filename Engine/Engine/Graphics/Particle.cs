@@ -14,72 +14,112 @@ namespace Fusion.Engine.Graphics {
 	/// </summary>
 	[Flags]
 	public enum ParticleFX : uint {
-		/// <summary>
-		/// Default value, no special effects.
-		/// </summary>
-		None	=	0,
 
 		/// <summary>
-		/// Particle is aimed billboard with defined tail position
+		/// Hard (alpha-kill) emissive particle 
+		/// like electric sparks or smoldering ash. 
 		/// </summary>
-		Beam	=	1,
+		Hard,
 
 		/// <summary>
-		/// Particle is lit. By default all particles are emissive.
+		/// Hard (alpha kill) lit by lights particle 
+		/// like blood drops and debris
 		/// </summary>
-		Lit		=	2,
+		HardLit,
 
 		/// <summary>
-		/// Particle is lit and casts shadow.
+		/// Hard (alpha kill), casting shadow, lit by lights particle 
+		/// like blood drops and debris
 		/// </summary>
-		LitShadow	=	3,
+		HardLitShadow,
 
 		/// <summary>
-		/// Particle casts shadow.
+		/// Soft (alpha blend) emissive particles
+		/// like fire or plasma balls
 		/// </summary>
-		Shadow	=	4,
+		Soft,
+
+		/// <summary>
+		/// Soft (alpha blend) light-mapped particles
+		/// like smoke, steam or dust clouds
+		/// </summary>
+		SoftLit,	
+
+		/// <summary>
+		/// Soft (alpha blend), casting shadow, light-mapped particles
+		/// like smoke, steam or dust clouds
+		/// </summary>
+		SoftLitShadow,	
+
+		/// <summary>
+		/// Distortive particles
+		/// </summary>
+		Distortive,
 	}
+
+
+
+	public enum ParticleStreamType {
+		Hard, Soft, Distortive,
+	}
+
+
 
 	/// <summary>
 	/// Particle structure
 	/// </summary>
-	[StructLayout(LayoutKind.Explicit, Size=144)]
+	[StructLayout(LayoutKind.Sequential)]
 	public struct Particle {
 		
 		/// <summary>
 		/// Initial position of the particle
 		/// </summary>
-		[FieldOffset(  0)] public Vector3	Position;              
+		public Vector3	Position;              
 
 		/// <summary>
 		/// Initial velocity of the particle
 		/// </summary>
-		[FieldOffset( 12)] public Vector3	Velocity;              
+		public Vector3	Velocity;              
 
 		/// <summary>
 		/// Acceleration of the particle regardless of gravity.
 		/// </summary>
-		[FieldOffset( 24)] public Vector3	Acceleration;          
+		public Vector3	Acceleration;          
 
 		/// <summary>
 		/// Particle tail position
 		/// </summary>
-		[FieldOffset( 36)] public Vector3	TailPosition;
+		public Vector3	TailPosition;
 
 		/// <summary>
-		/// "Faded-out" color of the particle.
+		/// Color of particle, tint for glowing particles.
 		/// </summary>
-		[FieldOffset( 48)] public Color4	Color0;                
+		public Color3	Color;
 
 		/// <summary>
-		/// "Faded-in" color of the particle.
+		/// Alpha factor, transparency or threshold
 		/// </summary>
-		[FieldOffset( 64)] public Color4	Color1;                
+		public float	Alpha;
+
+		public float	Roughness;
+
+		public float	Metallic;
+
+		public float	Intensity;
+
+		public float	Temperature0;
+
+		public float	Temperature1;
 
 		/// <summary>
-		/// "Faded-in" color of the particle.
+		/// Lightmap region
 		/// </summary>
-		[FieldOffset( 80)] public Vector4	LightmapRegion;                
+		public Vector4	LightmapRegion;        
+		
+
+		public Vector3	LightBasisX;
+		public Vector3	LightBasisY;
+		public Vector3	LightBasisZ;
 
 		/// <summary>
 		/// Gravity influence.
@@ -87,63 +127,63 @@ namespace Fusion.Engine.Graphics {
 		/// Values between 0 and 1 means reduced gravity, like snowflakes or dust.
 		/// Negative values means particle that has positive buoyancy.
 		/// </summary>
-		[FieldOffset( 96)] public float		Gravity;                
+		public float		Gravity;                
 
 		/// <summary>
 		/// NOT USED!
 		/// </summary>
-		[FieldOffset(100)] public float		Damping;                
+		public float		Damping;                
 
 		/// <summary>
 		/// Initial size of the particle
 		/// </summary>
-		[FieldOffset(104)] public float		Size0;                  
+		public float		Size0;                  
 
 		/// <summary>
 		/// Terminal size of the particle
 		/// </summary>
-		[FieldOffset(108)] public float		Size1;                  
+		public float		Size1;                  
 
 		/// <summary>
 		/// Initial rotation of the particle
 		/// </summary>
-		[FieldOffset(112)] public float		Rotation0;                 
+		public float		Rotation0;                 
 
 		/// <summary>
 		/// Terminal rotation of the particle
 		/// </summary>
-		[FieldOffset(116)] public float		Rotation1;                 
+		public float		Rotation1;                 
 
 		/// <summary>
 		/// Total particle life-time
 		/// </summary>
-		[FieldOffset(120)] public float		LifeTime;          
+		public float		LifeTime;          
 
 		/// <summary>
 		/// Lag between desired particle injection time and actual 
 		/// particle injection time caused by discrete updating.
 		/// Internally this field used as particle life-time counter.
 		/// </summary>
-		[FieldOffset(124)] public float		TimeLag;	           
+		public float		TimeLag;	           
 
 		/// <summary>
 		/// Fade in time fraction
 		/// </summary>
-		[FieldOffset(128)] public float		FadeIn;                
+		public float		FadeIn;                
 
 		/// <summary>
 		/// Fade out time fraction
 		/// </summary>
-		[FieldOffset(132)] public float		FadeOut;               
+		public float		FadeOut;               
 
 		/// <summary>
 		/// Index of the image in the texture atlas
 		/// </summary>
-		[FieldOffset(136)] public int		ImageIndex;            
+		public int		ImageIndex;            
 
 		/// <summary>
 		/// Index of the image in the texture atlas
 		/// </summary>
-		[FieldOffset(140)] public ParticleFX	Effects;            
+		public ParticleFX	Effects;            
 	}
 }

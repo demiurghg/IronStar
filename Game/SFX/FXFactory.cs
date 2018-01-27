@@ -347,23 +347,38 @@ namespace IronStar.SFX {
 		public string Sprite { get; set; } = "";
 
 		[Description( "Particle visual effect" )]
-		public ParticleFX Effect { get; set; } = ParticleFX.LitShadow;
+		public ParticleFX Effect { get; set; } = ParticleFX.Hard;
 
 		[Description( "Total number of emitted particles per active period" )]
 		public int Count { get; set; } = 10;
 
-		[Description( "Particle stage actie period" )]
+		[Description( "Particle stage active period" )]
 		public float Period { get; set; } = 1;
 
 		[Description( "Defines temporal properties of particle stage" )]
 		[TypeConverter( typeof( ExpandableObjectConverter ) )]
 		public FXTiming Timing { get; set; } = new FXTiming();
 
-		[Description( "Minimal intensity color" )]
-		public Color4 Color0 { get; set; } = Color4.Zero;
+		[Description( "Particle base color" )]
+		public Color Color { get; set; } = Color.White;
 
-		[Description( "Maximal intensity color" )]
-		public Color4 Color1 { get; set; } = new Color4( 1, 1, 1, 1 );
+		[Description( "Particle alpha factor or alpha-kill threshold" )]
+		public float Alpha { get; set; } = 1;
+
+		[Description( "Roughness for hard particles" )]
+		public float Roughness { get; set; } = 0;
+
+		[Description( "Metallic for hard particles" )]
+		public float Metallic { get; set; } = 1;
+
+		[Description( "Particle emission intensity" )]
+		public float Intensity { get; set; } = 100;
+
+		[Description( "Initial particles temperature" )]
+		public float Temperature0 { get; set; } = 5000;
+
+		[Description( "Terminal particles temperature" )]
+		public float Temperature1 { get; set; } = 5000;
 
 		[Description( "Defines life-time properties of particle stage" )]
 		[TypeConverter( typeof( ExpandableObjectConverter ) )]

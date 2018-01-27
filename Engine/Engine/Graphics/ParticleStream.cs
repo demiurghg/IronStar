@@ -26,18 +26,26 @@ namespace Fusion.Engine.Graphics {
 		readonly Game Game;
 		readonly RenderSystem rs;
 		readonly ParticleSystem ps;
+		readonly int particleCount;
+		readonly bool sortParticles;
+		readonly bool useLightmap;
 		Ubershader		shader;
 		StateFactory	factory;
 		RenderWorld	renderWorld;
 
-		[ShaderDefine]	public const int  BLOCK_SIZE			=	256;
-		[ShaderDefine]	public const int  MAX_INJECTED			=	4096;
-		[ShaderDefine]	public const int  MAX_PARTICLES			=	256 * 256;
-		[ShaderDefine]	public const int  MAX_IMAGES			=	512;
-		[ShaderDefine]	public const uint ParticleFX_Beam		=	(uint)ParticleFX.Beam		;
-		[ShaderDefine]	public const uint ParticleFX_Lit		=	(uint)ParticleFX.Lit			;
-		[ShaderDefine]	public const uint ParticleFX_LitShadow	=	(uint)ParticleFX.LitShadow	;
-		[ShaderDefine]	public const uint ParticleFX_Shadow		=	(uint)ParticleFX.Shadow		;
+		[ShaderDefine]	public const int  BLOCK_SIZE				=	256;
+		[ShaderDefine]	public const int  MAX_INJECTED				=	4096;
+		[ShaderDefine]	public const int  MAX_PARTICLES				=	256 * 256;
+		[ShaderDefine]	public const int  MAX_IMAGES				=	512;
+
+		[ShaderDefine]	public const uint ParticleFX_Hard			=	(uint)ParticleFX.Hard			;
+		[ShaderDefine]	public const uint ParticleFX_HardLit		=	(uint)ParticleFX.HardLit		;
+		[ShaderDefine]	public const uint ParticleFX_HardLitShadow	=	(uint)ParticleFX.HardLitShadow	;
+		[ShaderDefine]	public const uint ParticleFX_Soft			=	(uint)ParticleFX.Soft			;
+		[ShaderDefine]	public const uint ParticleFX_SoftLit		=	(uint)ParticleFX.SoftLit		;
+		[ShaderDefine]	public const uint ParticleFX_SoftLitShadow	=	(uint)ParticleFX.SoftLitShadow	;
+		[ShaderDefine]	public const uint ParticleFX_Distortive		=	(uint)ParticleFX.Distortive		;
+
 		[ShaderDefine]	public const uint LightmapRegionSize	=	1024;
 		[ShaderDefine]	public const uint LightmapWidth			=	LightmapRegionSize * 4;
 		[ShaderDefine]	public const uint LightmapHeight		=	LightmapRegionSize * 2;
@@ -101,13 +109,15 @@ namespace Fusion.Engine.Graphics {
 		}
 
 		enum Flags {
-			INJECTION		=	0x01,
-			SIMULATION		=	0x02,
-			DRAW			=	0x04,
-			INITIALIZE		=	0x08,
-			DRAW_SHADOW		=	0x10,
-			DRAW_LIGHT		=	0x20,
-			ALLOC_LIGHTMAP	=	0x40,
+			INJECTION		=	0x0001,
+			SIMULATION		=	0x0002,
+			DRAW_SOFT		=	0x0004,
+			DRAW_HARD		=	0x0008,
+			DRAW_DUDV		=	0x0010,
+			INITIALIZE		=	0x0020,
+			DRAW_SHADOW		=	0x0040,
+			DRAW_LIGHT		=	0x0080,
+			ALLOC_LIGHTMAP	=	0x0100,
 		}
 
 
@@ -187,15 +197,18 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="rs"></param>
-		internal ParticleStream ( RenderSystem rs, RenderWorld renderWorld, ParticleSystem ps )
+		internal ParticleStream ( RenderSystem rs, RenderWorld renderWorld, ParticleSystem ps, int count, bool sort, bool lightmap )
 		{
 			this.rs				=	rs;
 			this.Game			=	rs.Game;
 			this.renderWorld	=	renderWorld;
 			this.ps				=	ps;
+			particleCount		=	count;
+			sortParticles		=	sort;
+			useLightmap			=	lightmap;
 
-			paramsCB		=	new ConstantBuffer( Game.GraphicsDevice, typeof(PARAMS) );
-			imagesCB		=	new ConstantBuffer( Game.GraphicsDevice, typeof(Vector4), MAX_IMAGES );
+			paramsCB			=	new ConstantBuffer( Game.GraphicsDevice, typeof(PARAMS) );
+			imagesCB			=	new ConstantBuffer( Game.GraphicsDevice, typeof(Vector4), MAX_IMAGES );
 
 			injectionBuffer			=	new StructuredBuffer( Game.GraphicsDevice, typeof(Particle),	MAX_INJECTED, StructuredBufferFlags.None );
 			simulationBuffer		=	new StructuredBuffer( Game.GraphicsDevice, typeof(Particle),	MAX_PARTICLES, StructuredBufferFlags.None );
@@ -203,7 +216,9 @@ namespace Fusion.Engine.Graphics {
 			sortParticlesBuffer		=	new StructuredBuffer( Game.GraphicsDevice, typeof(Vector2),		MAX_PARTICLES, StructuredBufferFlags.None );
 			deadParticlesIndices	=	new StructuredBuffer( Game.GraphicsDevice, typeof(uint),		MAX_PARTICLES, StructuredBufferFlags.Append );
 
-			lightmap				=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.Rgba16F,	(int)LightmapWidth, (int)LightmapHeight, false );
+			if (useLightmap) {
+				this.lightmap	=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.Rgba16F,	(int)LightmapWidth, (int)LightmapHeight, false );
+			}
 
 			rs.Game.Reloading += LoadContent;
 			LoadContent(this, EventArgs.Empty);
@@ -262,8 +277,22 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="flag"></param>
 		void EnumAction ( PipelineState ps, Flags flag )
 		{
-			if (flag==Flags.DRAW) {
+			if (flag==Flags.DRAW_SOFT) {
 				ps.BlendState			=	BlendState.AlphaBlend;
+				ps.DepthStencilState	=	DepthStencilState.None;
+				ps.Primitive			=	Primitive.PointList;
+				ps.RasterizerState		=	RasterizerState.CullNone;
+			}
+
+			if (flag==Flags.DRAW_HARD) {
+				ps.BlendState			=	BlendState.Opaque;
+				ps.DepthStencilState	=	DepthStencilState.Default;
+				ps.Primitive			=	Primitive.PointList;
+				ps.RasterizerState		=	RasterizerState.CullNone;
+			}
+
+			if (flag==Flags.DRAW_DUDV) {
+				ps.BlendState			=	BlendState.Additive;
 				ps.DepthStencilState	=	DepthStencilState.None;
 				ps.Primitive			=	Primitive.PointList;
 				ps.RasterizerState		=	RasterizerState.CullNone;
@@ -306,7 +335,7 @@ namespace Fusion.Engine.Graphics {
 		/// Injects hard particle.
 		/// </summary>
 		/// <param name="particle"></param>
-		public void InjectParticle ( Particle particle )
+		public void InjectParticle ( ref Particle particle )
 		{
 			if (renderWorld.IsPaused) {
 				return;
@@ -402,7 +431,11 @@ namespace Fusion.Engine.Graphics {
 			param.CameraUp			=	new Vector4( cameraMatrix.Up		, 0 );
 			param.CameraPosition	=	new Vector4( cameraMatrix.TranslationVector	, 1 );
 			param.Gravity			=	new Vector4( this.Gravity, 0 );
-			param.LightMapSize		=	new Vector4( Lightmap.Width, Lightmap.Height, 1.0f/Lightmap.Width, 1.0f/Lightmap.Height );
+
+			if (useLightmap) {
+				param.LightMapSize	=	new Vector4( Lightmap.Width, Lightmap.Height, 1.0f/Lightmap.Width, 1.0f/Lightmap.Height );
+			}
+
 			param.MaxParticles		=	MAX_PARTICLES;
 			param.LinearizeDepthA	=	camera.LinearizeDepthScale;
 			param.LinearizeDepthB	=	camera.LinearizeDepthBias;
@@ -526,8 +559,10 @@ namespace Fusion.Engine.Graphics {
 				//
 				//	Sort :
 				//
-				using ( new PixEvent( "Sort" ) ) {
-					rs.BitonicSort.Sort( sortParticlesBuffer );
+				if (sortParticles) {
+					using ( new PixEvent( "Sort" ) ) {
+						rs.BitonicSort.Sort( sortParticlesBuffer );
+					}
 				}
 
 
@@ -603,7 +638,7 @@ namespace Fusion.Engine.Graphics {
 						device.PixelShaderSamplers[1]		=	SamplerState.ShadowSampler ;
 					}
 
-					if (flags==Flags.DRAW) {
+					if (flags==Flags.DRAW_SOFT) {
 						device.PixelShaderResources[11]		=	Lightmap;
 					}
 
@@ -623,7 +658,7 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		internal void Render ( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame viewFrame )
+		internal void RenderSoft ( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame viewFrame )
 		{
 			if (rs.SkipParticles) {
 				return;
@@ -637,7 +672,30 @@ namespace Fusion.Engine.Graphics {
 
 			var viewport	=	new Viewport( 0, 0, colorTarget.Width, colorTarget.Height );
 
-			RenderGeneric( "Particles", gameTime, camera, viewport, view, projection, colorTarget, null, viewFrame.DepthBuffer, Flags.DRAW );
+			RenderGeneric( "Soft Particles", gameTime, camera, viewport, view, projection, colorTarget, null, viewFrame.DepthBuffer, Flags.DRAW_SOFT );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="gameTime"></param>
+		internal void RenderHard ( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame viewFrame )
+		{
+			if (rs.SkipParticles) {
+				return;
+			}
+
+			var view		=	camera.GetViewMatrix( stereoEye );
+			var projection	=	camera.GetProjectionMatrix( stereoEye );
+
+			var colorTarget	=	viewFrame.HdrBuffer.Surface;
+			var depthTarget	=	viewFrame.DepthBuffer.Surface;
+
+			var viewport	=	new Viewport( 0, 0, colorTarget.Width, colorTarget.Height );
+
+			RenderGeneric( "Hard Particles", gameTime, camera, viewport, view, projection, colorTarget, depthTarget, null, Flags.DRAW_HARD );
 		}
 
 
@@ -647,7 +705,7 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		internal void RenderLight ( GameTime gameTime, Camera camera )
+		internal void RenderLightMap ( GameTime gameTime, Camera camera )
 		{
 			if (rs.SkipParticles) {
 				return;
@@ -665,6 +723,16 @@ namespace Fusion.Engine.Graphics {
 			RenderGeneric( "Particles Light", gameTime, camera, viewport, view, projection, colorTarget, null, null, Flags.DRAW_LIGHT );
 		}
 
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="gameTime"></param>
+		internal void RenderBasisLight ( GameTime gameTime )
+		{
+			
+		}
 
 
 

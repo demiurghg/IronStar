@@ -72,9 +72,9 @@ namespace Fusion.Engine.Graphics {
 			this.Game			=	rs.Game;
 			this.renderWorld	=	renderWorld;
 
-			softStream			=	new ParticleStream( rs, renderWorld, this );
-			hardStream			=	null;
-			dudvStream			=	null;
+			softStream			=	new ParticleStream( rs, renderWorld, this, -1, true, true );
+			hardStream			=	new ParticleStream( rs, renderWorld, this, -1, false, true );
+			dudvStream			=	new ParticleStream( rs, renderWorld, this, -1, false, false );
 		}
 
 
@@ -100,7 +100,28 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="particle"></param>
 		public void InjectParticle ( Particle particle )
 		{
-			softStream.InjectParticle( particle );
+			switch ( particle.Effects ) {
+
+				case ParticleFX.Hard:
+				case ParticleFX.HardLit:
+				case ParticleFX.HardLitShadow:
+					hardStream.InjectParticle( ref particle );
+					break;
+
+				case ParticleFX.Soft:
+				case ParticleFX.SoftLit:
+				case ParticleFX.SoftLitShadow:
+					softStream.InjectParticle( ref particle );
+					break;
+
+				case ParticleFX.Distortive:
+					dudvStream.InjectParticle( ref particle );
+					break;
+
+				default:
+					Log.Warning("Inject particle: bat FX type {0}", particle.Effects );
+					break;
+			}
 		}
 
 
@@ -134,7 +155,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="gameTime"></param>
 		internal void Render ( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame viewFrame )
 		{
-			softStream.Render( gameTime, camera, stereoEye, viewFrame );
+			hardStream.RenderHard( gameTime, camera, stereoEye, viewFrame );
+			softStream.RenderSoft( gameTime, camera, stereoEye, viewFrame );
 		}
 
 
@@ -144,7 +166,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="gameTime"></param>
 		internal void RenderLight ( GameTime gameTime, Camera camera )
 		{
-			softStream.RenderLight( gameTime, camera );
+			softStream.RenderLightMap( gameTime, camera );
+			hardStream.RenderBasisLight( gameTime );
 		}
 
 

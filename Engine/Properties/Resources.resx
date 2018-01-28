@@ -136,4 +136,7 @@
   <data name="envLut" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\envLut.tga;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="colorTemp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\colorTemp.tga;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>

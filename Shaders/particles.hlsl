@@ -29,6 +29,7 @@ StructuredBuffer<Particle>	particleBufferGS	:	register(t2);
 StructuredBuffer<float2>	sortParticleBufferGS:	register(t3);
 StructuredBuffer<float4>	particleLighting	:	register(t4);
 Texture2D					DepthValues			: 	register(t5);
+Texture2D					ColorTemperature	:	register(t6);
 
 Texture3D<uint2>			ClusterTable		: 	register(t7);
 Buffer<uint>				LightIndexTable		: 	register(t8);
@@ -254,8 +255,9 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	float3 glow		=	0;
 	
 	if (prt.Effects==ParticleFX_Hard || prt.Effects==ParticleFX_Soft) {
-		float t		=	lerp( prt.Temperature0, prt.Temperature1, sqrt(factor) );
-		glow		=	prt.Intensity * getRGBfromTemperature( t );
+		float t		=	clamp( lerp( prt.Temperature0, prt.Temperature1, sqrt(sqrt(factor)) ), 1000, 40000 );
+		float3	ct	=	ColorTemperature.SampleLevel( Sampler, float2( (t-1000.0f) / 39000.0f, 0.5f ), 0 );
+		glow		=	prt.Intensity * pow(ct, 2.2f);
 	}
 	
 	float  sz 		=   lerp( prt.Size0, prt.Size1, factor )/2;

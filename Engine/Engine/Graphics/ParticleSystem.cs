@@ -10,7 +10,7 @@ using Fusion.Drivers.Graphics;
 using System.Runtime.InteropServices;
 using Fusion.Core.Configuration;
 using Fusion.Engine.Graphics.Ubershaders;
-
+using System.IO;
 
 namespace Fusion.Engine.Graphics {
 
@@ -59,7 +59,12 @@ namespace Fusion.Engine.Graphics {
 			}
 		}
 
-		TextureAtlas images = null;
+		TextureAtlas	images = null;
+		DynamicTexture		colorTemp;
+
+		public DynamicTexture ColorTempMap {
+			get { return colorTemp; }
+		}
 
 
 		/// <summary>
@@ -75,7 +80,22 @@ namespace Fusion.Engine.Graphics {
 			softStream			=	new ParticleStream( rs, renderWorld, this, -1, true, true );
 			hardStream			=	new ParticleStream( rs, renderWorld, this, -1, false, true );
 			dudvStream			=	new ParticleStream( rs, renderWorld, this, -1, false, false );
+
+			colorTemp			=	CreateColorTemperatureMap();
 		}
+
+
+
+		DynamicTexture CreateColorTemperatureMap ()
+		{
+			var data = Temperature.GetRawTemperatureData().Select( v => new Color( v, 1.0f ) ).ToArray();
+
+			var tex = new DynamicTexture( rs, data.Length, 1, typeof(Color), false, false );
+			tex.SetData( data );
+
+			return tex;
+		}
+
 
 
 		/// <summary>
@@ -89,6 +109,8 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref softStream );
 				SafeDispose( ref hardStream );
 				SafeDispose( ref dudvStream );
+
+				SafeDispose( ref colorTemp );
 			}
 			base.Dispose( disposing );
 		}

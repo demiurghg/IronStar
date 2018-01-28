@@ -17,6 +17,11 @@ namespace Fusion.Core.Mathematics {
 			return temperatureData[i];
 		}
 
+		public static Vector3[] GetRawTemperatureData()
+		{
+			return temperatureData.ToArray();
+		}
+
 		static Vector3[] temperatureData = new Vector3[]{
 			new Vector3( 1.0000f, 0.0337f, 0.0000f ),
 			new Vector3( 1.0000f, 0.0592f, 0.0000f ),

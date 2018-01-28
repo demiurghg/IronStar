@@ -626,6 +626,8 @@ namespace Fusion.Engine.Graphics {
 					device.GeometryShaderResources[3]	=	sortParticlesBuffer;
 					device.GeometryShaderResources[4]	=	particleLighting;
 
+					device.GeometryShaderResources[6]	=	ps.ColorTempMap.Srv;
+
 					if (flags==Flags.DRAW_LIGHT) {
 						device.PixelShaderResources[7]		=	rs.LightManager.LightGrid.GridTexture;
 						device.PixelShaderResources[8]		=	rs.LightManager.LightGrid.IndexDataGpu;

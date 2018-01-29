@@ -14,76 +14,72 @@
     <Period>1</Period>
     <Timing Delay="0" Bunch="1" FadeIn="0.05" FadeOut="0.5" />
     <Color R="255" G="255" B="255" A="255" />
-    <Alpha>1</Alpha>
+    <Alpha>0.7</Alpha>
     <Roughness>0</Roughness>
     <Metallic>1</Metallic>
     <Intensity>100</Intensity>
-    <Temperature0>5000</Temperature0>
-    <Temperature1>5000</Temperature1>
-    <Lifetime Distribution="Uniform" MinLifetime="2" MaxLifetime="3" />
-    <Shape Size0="1.5" Size1="3" EnableRotation="true" InitialAngle="360" MinAngularVelocity="5" MaxAngularVelocity="-5" />
+    <Temperature>6600</Temperature>
+    <Lifetime Distribution="Gauss" MinLifetime="2" MaxLifetime="4" />
+    <Shape Size0="0.9" Size1="3" EnableRotation="true" InitialAngle="360" MinAngularVelocity="5" MaxAngularVelocity="-5" />
     <Position OffsetDirection="None" OffsetFactor="0" Distribution="GaussRadial" MinSize="0" MaxSize="0.5" />
-    <Velocity Direction="LocalUp" LinearDistribution="Gauss" LinearVelocityMin="3" LinearVelocityMax="4" RadialDistribution="GaussRadial" RadialVelocityMin="0" RadialVelocityMax="0.5" Advection="0" />
-    <Acceleration GravityFactor="0" Damping="0" DragForce="0" Turbulence="0" />
+    <Velocity Direction="LocalUp" LinearDistribution="Gauss" LinearVelocityMin="0" LinearVelocityMax="1" RadialDistribution="GaussRadial" RadialVelocityMin="0" RadialVelocityMax="0.5" Advection="0" />
+    <Acceleration GravityFactor="-0.5" Damping="0.5" DragForce="0" Turbulence="0" />
   </ParticleStage1>
   <ParticleStage2>
     <Enabled>true</Enabled>
     <Sprite>fire</Sprite>
     <Effect>Soft</Effect>
-    <Count>35</Count>
+    <Count>17</Count>
     <Period>1</Period>
-    <Timing Delay="0" Bunch="0.5" FadeIn="0.3" FadeOut="0.7" />
+    <Timing Delay="0" Bunch="0.5" FadeIn="0.4" FadeOut="0.7" />
     <Color R="255" G="255" B="255" A="255" />
     <Alpha>0.5</Alpha>
     <Roughness>0</Roughness>
     <Metallic>1</Metallic>
-    <Intensity>1000</Intensity>
-    <Temperature0>3000</Temperature0>
-    <Temperature1>3000</Temperature1>
-    <Lifetime Distribution="Gauss" MinLifetime="0.6" MaxLifetime="0.7" />
-    <Shape Size0="2" Size1="0.8" EnableRotation="true" InitialAngle="360" MinAngularVelocity="-90" MaxAngularVelocity="90" />
+    <Intensity>1400</Intensity>
+    <Temperature>2800</Temperature>
+    <Lifetime Distribution="Gauss" MinLifetime="0.6" MaxLifetime="0.8" />
+    <Shape Size0="2" Size1="1.2" EnableRotation="true" InitialAngle="360" MinAngularVelocity="-90" MaxAngularVelocity="90" />
     <Position OffsetDirection="None" OffsetFactor="0" Distribution="UniformRadial" MinSize="0" MaxSize="0" />
-    <Velocity Direction="LocalUp" LinearDistribution="Gauss" LinearVelocityMin="3" LinearVelocityMax="3.5" RadialDistribution="GaussRadial" RadialVelocityMin="0" RadialVelocityMax="1.2" Advection="0" />
-    <Acceleration GravityFactor="0" Damping="0" DragForce="0" Turbulence="0.1" />
+    <Velocity Direction="LocalUp" LinearDistribution="Gauss" LinearVelocityMin="0" LinearVelocityMax="1" RadialDistribution="GaussRadial" RadialVelocityMin="0" RadialVelocityMax="0.8" Advection="0" />
+    <Acceleration GravityFactor="-0.5" Damping="0" DragForce="0" Turbulence="0.1" />
   </ParticleStage2>
   <ParticleStage3>
     <Enabled>true</Enabled>
     <Sprite>bulletSpark</Sprite>
     <Effect>Hard</Effect>
-    <Count>50</Count>
+    <Count>30</Count>
     <Period>1</Period>
-    <Timing Delay="0" Bunch="0.1" FadeIn="0.5" FadeOut="0.5" />
+    <Timing Delay="0" Bunch="0.8" FadeIn="0.5" FadeOut="0.5" />
     <Color R="255" G="255" B="255" A="255" />
     <Alpha>1</Alpha>
     <Roughness>0</Roughness>
     <Metallic>1</Metallic>
     <Intensity>500</Intensity>
-    <Temperature0>3000</Temperature0>
-    <Temperature1>2000</Temperature1>
+    <Temperature>3000</Temperature>
     <Lifetime Distribution="Gauss" MinLifetime="1" MaxLifetime="3" />
-    <Shape Size0="0.1" Size1="0" EnableRotation="true" InitialAngle="360" MinAngularVelocity="0" MaxAngularVelocity="0" />
+    <Shape Size0="0.05" Size1="0" EnableRotation="true" InitialAngle="720" MinAngularVelocity="0" MaxAngularVelocity="0" />
     <Position OffsetDirection="LocalUp" OffsetFactor="0" Distribution="GaussRadial" MinSize="0" MaxSize="0.8" />
-    <Velocity Direction="LocalUp" LinearDistribution="Uniform" LinearVelocityMin="2" LinearVelocityMax="4" RadialDistribution="GaussRadial" RadialVelocityMin="0" RadialVelocityMax="1" Advection="0" />
-    <Acceleration GravityFactor="-1" Damping="0" DragForce="0" Turbulence="-0.2" />
+    <Velocity Direction="LocalUp" LinearDistribution="Gauss" LinearVelocityMin="0" LinearVelocityMax="0" RadialDistribution="GaussRadial" RadialVelocityMin="0" RadialVelocityMax="0.5" Advection="0" />
+    <Acceleration GravityFactor="-0.3" Damping="0" DragForce="0" Turbulence="-0.1" />
   </ParticleStage3>
   <ParticleStage4>
-    <Enabled>false</Enabled>
-    <Sprite>bulletSpark</Sprite>
-    <Effect>Hard</Effect>
-    <Count>100</Count>
+    <Enabled>true</Enabled>
+    <Sprite>hazeMap</Sprite>
+    <Effect>Distortive</Effect>
+    <Count>8</Count>
     <Period>1</Period>
-    <Timing Delay="0" Bunch="1" FadeIn="0.1" FadeOut="0.1" />
+    <Timing Delay="0" Bunch="1" FadeIn="0.1" FadeOut="0.7" />
     <Color R="255" G="255" B="255" A="255" />
-    <Alpha>0.9</Alpha>
+    <Alpha>0.5</Alpha>
     <Roughness>0</Roughness>
     <Metallic>1</Metallic>
-    <Intensity>5000</Intensity>
-    <Temperature0>20000</Temperature0>
-    <Temperature1>1000</Temperature1>
-    <Lifetime Distribution="Uniform" MinLifetime="1" MaxLifetime="1" />
-    <Shape Size0="1" Size1="0.5" EnableRotation="true" InitialAngle="360" MinAngularVelocity="0" MaxAngularVelocity="0" />
-    <Position OffsetDirection="LocalUp" OffsetFactor="10" Distribution="UniformRadial" MinSize="0" MaxSize="0" />
-    <Velocity Direction="LocalUp" LinearDistribution="Uniform" LinearVelocityMin="10" LinearVelocityMax="10" RadialDistribution="UniformRadial" RadialVelocityMin="0" RadialVelocityMax="0" Advection="0" />
+    <Intensity>20</Intensity>
+    <Temperature>6600</Temperature>
+    <Lifetime Distribution="Uniform" MinLifetime="0.5" MaxLifetime="1" />
+    <Shape Size0="3" Size1="2" EnableRotation="true" InitialAngle="360" MinAngularVelocity="0" MaxAngularVelocity="0" />
+    <Position OffsetDirection="LocalRight" OffsetFactor="0" Distribution="UniformRadial" MinSize="0" MaxSize="0" />
+    <Velocity Direction="LocalUp" LinearDistribution="Uniform" LinearVelocityMin="2" LinearVelocityMax="4" RadialDistribution="UniformRadial" RadialVelocityMin="0" RadialVelocityMax="0" Advection="0" />
     <Acceleration GravityFactor="0" Damping="0" DragForce="0" Turbulence="0" />
   </ParticleStage4>
 </FXFactory>

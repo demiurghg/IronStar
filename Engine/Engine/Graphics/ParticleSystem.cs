@@ -179,6 +179,7 @@ namespace Fusion.Engine.Graphics {
 		{
 			hardStream.RenderHard( gameTime, camera, stereoEye, viewFrame );
 			softStream.RenderSoft( gameTime, camera, stereoEye, viewFrame );
+			dudvStream.RenderDuDv( gameTime, camera, stereoEye, viewFrame );
 		}
 
 

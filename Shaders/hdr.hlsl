@@ -23,6 +23,7 @@ Texture2D		BloomTexture		: register(t2);
 Texture2D		BloomMask1			: register(t3);
 Texture2D		BloomMask2			: register(t4);
 Texture2D		NoiseTexture		: register(t5);
+Texture2D		DistortionMap		: register(t6);
 SamplerState	LinearSampler		: register(s0);
 	
 cbuffer PARAMS 		: register(b0) { 
@@ -138,11 +139,17 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	//
 	//	Read images :
 	//
-	float3	hdrImage	=	SourceHdrImage.SampleLevel( LinearSampler, uv, 0 ).rgb;
-	float3	bloom0		=	BloomTexture  .SampleLevel( LinearSampler, uv, 0 ).rgb;
-	float3	bloom1		=	BloomTexture  .SampleLevel( LinearSampler, uv, 1 ).rgb;
-	float3	bloom2		=	BloomTexture  .SampleLevel( LinearSampler, uv, 2 ).rgb;
-	float3	bloom3		=	BloomTexture  .SampleLevel( LinearSampler, uv, 3 ).rgb;
+	float4	dudvSrc		=	DistortionMap	.SampleLevel( LinearSampler, uv, 0 ).rgba;
+	
+	float2	dudv		=	dudvSrc.xy - dudvSrc.zw;
+	
+	uv	+=	dudv * 0.02;
+	
+	float3	hdrImage	=	SourceHdrImage	.SampleLevel( LinearSampler, uv, 0 ).rgb;
+	float3	bloom0		=	BloomTexture  	.SampleLevel( LinearSampler, uv, 0 ).rgb;
+	float3	bloom1		=	BloomTexture  	.SampleLevel( LinearSampler, uv, 1 ).rgb;
+	float3	bloom2		=	BloomTexture  	.SampleLevel( LinearSampler, uv, 2 ).rgb;
+	float3	bloom3		=	BloomTexture  	.SampleLevel( LinearSampler, uv, 3 ).rgb;
 	float4	bloomMask1	=	BloomMask1.SampleLevel( LinearSampler, uv, 0 );
 	float4	bloomMask2	=	BloomMask2.SampleLevel( LinearSampler, uv, 0 );
 	float4	bloomMask	=	lerp( bloomMask1, bloomMask2, Params.DirtMaskLerpFactor );

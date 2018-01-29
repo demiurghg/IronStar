@@ -96,8 +96,7 @@ namespace IronStar.SFX {
 				p.Roughness		=	stage.Roughness;
 				p.Metallic		=	stage.Metallic;
 				p.Intensity		=	stage.Intensity;
-				p.Temperature0	=	stage.Temperature0;
-				p.Temperature1	=	stage.Temperature1;
+				p.Temperature	=	stage.Temperature;
 
 				p.LifeTime		=	stage.Lifetime.GetLifetime(rand);
 

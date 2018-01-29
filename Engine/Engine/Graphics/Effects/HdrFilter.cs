@@ -248,6 +248,7 @@ namespace Fusion.Engine.Graphics {
 				device.PixelShaderResources[3]	=	settings.DirtMask1==null ? whiteTex.Srv : settings.DirtMask1.Srv;
 				device.PixelShaderResources[4]	=	settings.DirtMask2==null ? whiteTex.Srv : settings.DirtMask2.Srv;
 				device.PixelShaderResources[5]	=	noiseTex.Srv;
+				device.PixelShaderResources[6]	=	hdrFrame.DistortionBuffer;
 				device.PixelShaderSamplers[0]	=	SamplerState.LinearClamp;
 
 				Flags op = Flags.LINEAR;

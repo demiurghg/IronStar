@@ -683,6 +683,29 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
+		internal void RenderDuDv ( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame viewFrame )
+		{
+			if (rs.SkipParticles) {
+				return;
+			}
+
+			var view		=	camera.GetViewMatrix( stereoEye );
+			var projection	=	camera.GetProjectionMatrix( stereoEye );
+
+			var colorTarget	=	viewFrame.DistortionBuffer.Surface;
+			var depthTarget	=	viewFrame.DepthBuffer.Surface;
+
+			var viewport	=	new Viewport( 0, 0, colorTarget.Width, colorTarget.Height );
+
+			RenderGeneric( "DuDv Particles", gameTime, camera, viewport, view, projection, colorTarget, null, viewFrame.DepthBuffer, Flags.DRAW_DUDV );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="gameTime"></param>
 		internal void RenderHard ( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame viewFrame )
 		{
 			if (rs.SkipParticles) {

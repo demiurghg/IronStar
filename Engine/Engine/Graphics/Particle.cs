@@ -107,9 +107,7 @@ namespace Fusion.Engine.Graphics {
 
 		public float	Intensity;
 
-		public float	Temperature0;
-
-		public float	Temperature1;
+		public float	Temperature;
 
 		/// <summary>
 		/// Lightmap region

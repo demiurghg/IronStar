@@ -33,6 +33,8 @@ namespace Fusion.Engine.Graphics {
 		public RenderTarget2D	AOBuffer			;
 		public RenderTarget2D	FeedbackBuffer		;
 
+		public RenderTarget2D	DistortionBuffer	;
+
 		public RenderTarget2D	Bloom0				;
 		public RenderTarget2D	Bloom1				;
 
@@ -77,6 +79,8 @@ namespace Fusion.Engine.Graphics {
 			AOBuffer			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, true  );
 			FeedbackBuffer		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgb10A2,	width,		height,		false, false );
 
+			DistortionBuffer	=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, false );
+
 			Bloom0				=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	bloomWidth,	bloomHeight,true, false );
 			Bloom1				=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	bloomWidth,	bloomHeight,true, true );
 
@@ -102,6 +106,7 @@ namespace Fusion.Engine.Graphics {
 		{
 			var device = HdrBuffer.GraphicsDevice;
 			device.Clear( FeedbackBuffer.Surface, Color4.Black );
+			device.Clear( DistortionBuffer.Surface, Color4.Zero );
 		}
 
 
@@ -130,6 +135,8 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref Normals			 );
 				SafeDispose( ref AOBuffer			 );
 				SafeDispose( ref FeedbackBuffer		 );
+
+				SafeDispose( ref DistortionBuffer	 );
 
 				SafeDispose( ref Bloom0				 );
 				SafeDispose( ref Bloom1				 );

@@ -426,6 +426,8 @@ namespace Fusion.Engine.Graphics {
 			//rs.Irs.CollectSurfels( Instances );
 			//rs.Irs.RenderIRS( Camera, Instances, LightSet );
 
+			viewHdrFrame.Clear();
+
 			//	Z-pass :
 			rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
 

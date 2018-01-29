@@ -103,8 +103,9 @@ void CSMain(
 		//	Measure distance :
 		float  time		=	p.TimeLag;
 		
+		float3 gravity		=	-Params.Gravity * p.Gravity;
 		float3 velocity		=	p.Velocity;
-		float3 acceleration	=	p.Acceleration - velocity * length(velocity) * p.Damping;
+		float3 acceleration	=	p.Acceleration - velocity * length(velocity) * p.Damping + gravity;
 		
 		particleBuffer[ id ].Velocity	=	p.Velocity + acceleration * Params.DeltaTime;	
 		particleBuffer[ id ].Position	=	p.Position + velocity     * Params.DeltaTime;	
@@ -255,16 +256,20 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	float3 glow		=	0;
 	
 	if (prt.Effects==ParticleFX_Hard || prt.Effects==ParticleFX_Soft) {
-		float t		=	clamp( lerp( prt.Temperature0, prt.Temperature1, sqrt(sqrt(factor)) ), 1000, 40000 );
+		float t		=	prt.Temperature;
 		float3	ct	=	ColorTemperature.SampleLevel( Sampler, float2( (t-1000.0f) / 39000.0f, 0.5f ), 0 );
 		glow		=	prt.Intensity * pow(ct, 2.2f);
-	}
+	} 
 	
 	float  sz 		=   lerp( prt.Size0, prt.Size1, factor )/2;
 	float  fade		=	Ramp( prt.FadeIn, prt.FadeOut, factor );
 	float3 color3	=	prt.Color * glow;
 	float  alpha	=	prt.Alpha * fade;
 	float4 color	=	float4( color3, alpha );
+
+	if (prt.Effects==ParticleFX_Distortive) {
+		color	=	float4( 1,1,1, alpha );
+	}
 	
 	float3 position	=	prt.Position    ;// + prt.Velocity * time + accel * time * time / 2;
 	float3 tailpos	=	prt.TailPosition;// + prt.Velocity * time + accel * time * time / 2;
@@ -370,11 +375,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 
 float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 {
-	#ifdef DRAW_SOFT
-		float4 color	=	Texture.Sample( Sampler, input.TexCoord ) * input.Color;
-		//	saves about 5%-10% of rasterizer time:
-		//clip( color.a < 0.001f ? -1:1 );
-		
+	#if defined(DRAW_SOFT) || defined(DRAW_DUDV)
 		float  depth 	= 	DepthValues.Load( int3(vpos.xy,0) ).r;
 		float  a 		= 	Params.LinearizeDepthA;
 		float  b        = 	Params.LinearizeDepthB;
@@ -387,9 +388,15 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 		// if (depth < vpos.z) {
 		// clip(-1);
 		// }
-		float3 light		=	(input.LMFactor > 0.5f) ? LightMap.Sample( Sampler, input.LMCoord ).rgb : 1;
-		
 		float softFactor	=	saturate( (sceneZ - prtZ) * input.ViewPosSZ.w );
+	#endif
+
+	#ifdef DRAW_SOFT
+		float4 color	=	Texture.Sample( Sampler, input.TexCoord ) * input.Color;
+		//	saves about 5%-10% of rasterizer time:
+		//clip( color.a < 0.001f ? -1:1 );
+
+		float3 light		=	(input.LMFactor > 0.5f) ? LightMap.Sample( Sampler, input.LMCoord ).rgb : 1;
 
 		color.rgba *= softFactor;
 		color.rgb  *= light.rgb;
@@ -414,7 +421,17 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 	#endif
 	
 	#ifdef DRAW_DUDV
-		return float4(1,0,1,1);
+		float4 	color	=	pow(Texture.Sample( Sampler, input.TexCoord ), 1/2.2f);
+		float	decay	=	1 / (sceneZ+1);
+		float2	dudv	=	color.xy * 2 - 1;
+				dudv	*=	color.a;
+				dudv	*=	input.Color.a;
+				dudv	*=	softFactor;
+				
+				
+		float2	zero	=	float2(0, 0);
+
+		return float4( max(zero, dudv.xy), max(zero, -dudv.xy) );
 	#endif
 	
 	#ifdef DRAW_SHADOW

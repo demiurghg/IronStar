@@ -375,10 +375,7 @@ namespace IronStar.SFX {
 		public float Intensity { get; set; } = 100;
 
 		[Description( "Initial particles temperature" )]
-		public float Temperature0 { get; set; } = 5000;
-
-		[Description( "Terminal particles temperature" )]
-		public float Temperature1 { get; set; } = 5000;
+		public float Temperature { get; set; } = 6600;
 
 		[Description( "Defines life-time properties of particle stage" )]
 		[TypeConverter( typeof( ExpandableObjectConverter ) )]

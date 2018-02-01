@@ -38,6 +38,10 @@ Texture2D					ShadowMap			:	register(t10);
 Texture2D					LightMap			:	register(t11);
 Texture2D					ShadowMask			:	register(t12);
 
+Texture3D					OcclusionGrid		: 	register(t14);
+TextureCubeArray			RadianceCache		:	register(t15);
+StructuredBuffer<LIGHTPROBE> ProbeDataTable		:	register(t17);
+
 #include "particles.lighting.hlsl"
 #include "fog.fxi"
 
@@ -151,8 +155,8 @@ void CSMain(
 			if ( p.TimeLag >= p.LifeTime ) 	{ continue; }
 	
 			for (int i=0; i<8; i++) {
-				float minSize = (i==0)?     0 : 4*exp2(i-8);
-				float maxSize = (i==7)? 99999 : 4*exp2(i-8+1);
+				float minSize = (i==0)?     0 : 1*exp2(i-8);
+				float maxSize = (i==7)? 99999 : 1*exp2(i-8+1);
 				
 				if ( size > minSize && size <= maxSize ) {
 					InterlockedAdd( lmIndices[i], 1, offset );
@@ -253,7 +257,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	float time		=	prt.TimeLag;
 	float factor	=	saturate(prt.TimeLag / prt.LifeTime);
 	
-	float3 glow		=	0;
+	float3 glow		=	1;
 	
 	if (prt.Effects==ParticleFX_Hard || prt.Effects==ParticleFX_Soft) {
 		float t		=	prt.Temperature;
@@ -337,7 +341,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p3.LMFactor	 = 0;
 	p3.Fog		 = ApplyFog( wpos3 );
 	
-	#if defined(DRAW_SOFT) || defined(DRAW_HARD)
+	#if defined(DRAW_SOFT) //|| defined(DRAW_HARD)
 	if (prt.Effects==ParticleFX_SoftLit || prt.Effects==ParticleFX_SoftLitShadow) {
 		p0.LMFactor	 = 1;
 		p1.LMFactor	 = 1;
@@ -357,10 +361,10 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 		p1.Position	 = float4( float2(1,-1) * (p1.LMCoord.xy * 2 - 1), 0, 1 );
 		p2.Position	 = float4( float2(1,-1) * (p2.LMCoord.xy * 2 - 1), 0, 1 );
 		p3.Position	 = float4( float2(1,-1) * (p3.LMCoord.xy * 2 - 1), 0, 1 );
-		p0.ViewPosSZ = wpos0;
-		p1.ViewPosSZ = wpos1;
-		p2.ViewPosSZ = wpos2;
-		p3.ViewPosSZ = wpos3;
+		p0.ViewPosSZ = float4( wpos0.xyz, sz );
+		p1.ViewPosSZ = float4( wpos1.xyz, sz );
+		p2.ViewPosSZ = float4( wpos2.xyz, sz );
+		p3.ViewPosSZ = float4( wpos3.xyz, sz );
 	#endif
 	
 	outputStream.Append(p0);
@@ -397,7 +401,7 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 		//clip( color.a < 0.001f ? -1:1 );
 
 		float3 light		=	(input.LMFactor > 0.5f) ? LightMap.Sample( Sampler, input.LMCoord ).rgb : 1;
-
+		
 		color.rgba *= softFactor;
 		color.rgb  *= light.rgb;
 		
@@ -444,7 +448,14 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 	
 	
 	#ifdef DRAW_LIGHT
-		float3 lighting = ComputeClusteredLighting( input.ViewPosSZ.xyz );
+		float3 lighting = 0;
+		int count = 10;
+		
+		for (int i=0; i<count; i++) {
+			float 		t	=	(i / (float)count) - 0.5f;
+			float3 		pos = 	input.ViewPosSZ.xyz + t * Params.CameraForward.xyz * input.ViewPosSZ.w;
+			lighting 		+= 	ComputeClusteredLighting( pos ) / count;
+		}
 		return float4(lighting,1);
 	#endif
 	

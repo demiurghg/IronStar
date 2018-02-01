@@ -20,7 +20,7 @@ namespace Fusion.Engine.Graphics {
 	/// 2. Gareth Thomas Compute-based GPU Particle
 	/// </summary>
 	[RequireShader("particles", true)]
-	[ShaderSharedStructure(typeof(Particle), typeof(SceneRenderer.LIGHT), typeof(SceneRenderer.LIGHTINDEX))]
+	[ShaderSharedStructure(typeof(Particle), typeof(SceneRenderer.LIGHT), typeof(SceneRenderer.LIGHTINDEX), typeof(SceneRenderer.LIGHTPROBE))]
 	public class ParticleStream : DisposableBase {
 
 		readonly Game Game;
@@ -143,6 +143,7 @@ namespace Fusion.Engine.Graphics {
 			public Matrix	CascadeViewProjection1	;
 			public Matrix	CascadeViewProjection2	;
 			public Matrix	CascadeViewProjection3	;
+			public Matrix	OcclusionGridMatrix		;
 			public Vector4	CascadeScaleOffset0		;
 			public Vector4	CascadeScaleOffset1		;
 			public Vector4	CascadeScaleOffset2		;
@@ -155,7 +156,7 @@ namespace Fusion.Engine.Graphics {
 			public Vector4	LightMapSize;
 			public Vector4	DirectLightDirection;
 			public Color4	DirectLightIntensity;
-			public Color4	AmbientLevel;
+			public Color4	SkyAmbientLevel;
 			public Color4	FogColor;
 			public float	FogAttenuation;
 			public float	LinearizeDepthA;
@@ -419,9 +420,10 @@ namespace Fusion.Engine.Graphics {
 			param.CascadeScaleOffset1		=	rs.LightManager.ShadowMap.GetCascade( 1 ).ShadowScaleOffset;
 			param.CascadeScaleOffset2		=	rs.LightManager.ShadowMap.GetCascade( 2 ).ShadowScaleOffset;
 			param.CascadeScaleOffset3		=	rs.LightManager.ShadowMap.GetCascade( 3 ).ShadowScaleOffset;
+			param.OcclusionGridMatrix		=	rs.LightManager.OcclusionGridMatrix;
 			param.DirectLightDirection		=	new Vector4( renderWorld.LightSet.DirectLight.Direction, 0 );
 			param.DirectLightIntensity		=	renderWorld.LightSet.DirectLight.Intensity;
-			param.AmbientLevel				=	renderWorld.LightSet.AmbientLevel;
+			param.SkyAmbientLevel			=	rs.RenderWorld.SkySettings.AmbientLevel;
 			param.FogColor					=	renderWorld.FogSettings.Color;
 			param.FogAttenuation			=	renderWorld.FogSettings.DistanceAttenuation;
 			param.MaxParticles		=	0;
@@ -540,7 +542,7 @@ namespace Fusion.Engine.Graphics {
 				//
 				using (new PixEvent("Alloc LightMap")) {
 
-					if (!renderWorld.IsPaused && !rs.SkipParticlesSimulation) {
+					if (useLightmap && !renderWorld.IsPaused && !rs.SkipParticlesSimulation) {
 	
 						device.SetCSRWBuffer( 0, simulationBuffer,		0 );
 						device.SetCSRWBuffer( 1, deadParticlesIndices, -1 );
@@ -548,6 +550,7 @@ namespace Fusion.Engine.Graphics {
 
 						SetupGPUParameters( 0, renderWorld, view, projection, Flags.ALLOC_LIGHTMAP );
 						device.ComputeShaderConstants[0] = paramsCB ;
+						device.PixelShaderConstants[0]	 = paramsCB ;
 
 						device.PipelineState	=	factory[ (int)Flags.ALLOC_LIGHTMAP ];
 	
@@ -642,6 +645,12 @@ namespace Fusion.Engine.Graphics {
 
 					if (flags==Flags.DRAW_SOFT) {
 						device.PixelShaderResources[11]		=	Lightmap;
+					}
+
+					if (flags==Flags.DRAW_LIGHT) {
+						device.PixelShaderResources[14]		=	rs.LightManager.OcclusionGrid;
+						device.PixelShaderResources[15]		=	rs.RenderWorld.RadianceCache;
+						device.PixelShaderResources[17]		=	rs.LightManager.LightGrid.ProbeDataGpu;
 					}
 
 					//	setup PS :

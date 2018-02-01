@@ -18,7 +18,7 @@ static const uint LightSpotShapeRound = 131072;
 static const uint LightSpotShapeSquare = 65536;
 
 // Fusion.Engine.Graphics.Particle
-// Marshal.SizeOf = 180
+// Marshal.SizeOf = 192
 struct Particle {
 	float3     Position;                      // offset:    0
 	float3     Velocity;                      // offset:   12
@@ -34,18 +34,19 @@ struct Particle {
 	float3     LightBasisX;                   // offset:   96
 	float3     LightBasisY;                   // offset:  108
 	float3     LightBasisZ;                   // offset:  120
-	float      Gravity;                       // offset:  132
-	float      Damping;                       // offset:  136
-	float      Size0;                         // offset:  140
-	float      Size1;                         // offset:  144
-	float      Rotation0;                     // offset:  148
-	float      Rotation1;                     // offset:  152
-	float      LifeTime;                      // offset:  156
-	float      TimeLag;                       // offset:  160
-	float      FadeIn;                        // offset:  164
-	float      FadeOut;                       // offset:  168
-	int        ImageIndex;                    // offset:  172
-	uint       Effects;                       // offset:  176
+	float3     LightAmbient;                  // offset:  132
+	float      Gravity;                       // offset:  144
+	float      Damping;                       // offset:  148
+	float      Size0;                         // offset:  152
+	float      Size1;                         // offset:  156
+	float      Rotation0;                     // offset:  160
+	float      Rotation1;                     // offset:  164
+	float      LifeTime;                      // offset:  168
+	float      TimeLag;                       // offset:  172
+	float      FadeIn;                        // offset:  176
+	float      FadeOut;                       // offset:  180
+	int        ImageIndex;                    // offset:  184
+	uint       Effects;                       // offset:  188
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHT
@@ -66,6 +67,16 @@ struct LIGHTINDEX {
 	uint       Count;                         // offset:    4
 };
 
+// Fusion.Engine.Graphics.SceneRenderer+LIGHTPROBE
+// Marshal.SizeOf = 32
+struct LIGHTPROBE {
+	float4     Position;                      // offset:    0
+	float      InnerRadius;                   // offset:   16
+	float      OuterRadius;                   // offset:   20
+	uint       ImageIndex;                    // offset:   24
+	float      Dummy1;                        // offset:   28
+};
+
 // Fusion.Engine.Graphics.ParticleStream+PARAMS
 // Marshal.SizeOf = 1024
 struct PARAMS {
@@ -76,27 +87,28 @@ struct PARAMS {
 	float4x4   CascadeViewProjection1;        // offset:  256
 	float4x4   CascadeViewProjection2;        // offset:  320
 	float4x4   CascadeViewProjection3;        // offset:  384
-	float4     CascadeScaleOffset0;           // offset:  448
-	float4     CascadeScaleOffset1;           // offset:  464
-	float4     CascadeScaleOffset2;           // offset:  480
-	float4     CascadeScaleOffset3;           // offset:  496
-	float4     CameraForward;                 // offset:  512
-	float4     CameraRight;                   // offset:  528
-	float4     CameraUp;                      // offset:  544
-	float4     CameraPosition;                // offset:  560
-	float4     Gravity;                       // offset:  576
-	float4     LightMapSize;                  // offset:  592
-	float4     DirectLightDirection;          // offset:  608
-	float4     DirectLightIntensity;          // offset:  624
-	float4     AmbientLevel;                  // offset:  640
-	float4     FogColor;                      // offset:  656
-	float      FogAttenuation;                // offset:  672
-	float      LinearizeDepthA;               // offset:  676
-	float      LinearizeDepthB;               // offset:  680
-	int        MaxParticles;                  // offset:  684
-	float      DeltaTime;                     // offset:  688
-	uint       DeadListSize;                  // offset:  692
-	float      CocScale;                      // offset:  696
-	float      CocBias;                       // offset:  700
+	float4x4   OcclusionGridMatrix;           // offset:  448
+	float4     CascadeScaleOffset0;           // offset:  512
+	float4     CascadeScaleOffset1;           // offset:  528
+	float4     CascadeScaleOffset2;           // offset:  544
+	float4     CascadeScaleOffset3;           // offset:  560
+	float4     CameraForward;                 // offset:  576
+	float4     CameraRight;                   // offset:  592
+	float4     CameraUp;                      // offset:  608
+	float4     CameraPosition;                // offset:  624
+	float4     Gravity;                       // offset:  640
+	float4     LightMapSize;                  // offset:  656
+	float4     DirectLightDirection;          // offset:  672
+	float4     DirectLightIntensity;          // offset:  688
+	float4     SkyAmbientLevel;               // offset:  704
+	float4     FogColor;                      // offset:  720
+	float      FogAttenuation;                // offset:  736
+	float      LinearizeDepthA;               // offset:  740
+	float      LinearizeDepthB;               // offset:  744
+	int        MaxParticles;                  // offset:  748
+	float      DeltaTime;                     // offset:  752
+	uint       DeadListSize;                  // offset:  756
+	float      CocScale;                      // offset:  760
+	float      CocBias;                       // offset:  764
 };
 

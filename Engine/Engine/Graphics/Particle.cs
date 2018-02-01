@@ -118,6 +118,7 @@ namespace Fusion.Engine.Graphics {
 		public Vector3	LightBasisX;
 		public Vector3	LightBasisY;
 		public Vector3	LightBasisZ;
+		public Vector3	LightAmbient;
 
 		/// <summary>
 		/// Gravity influence.

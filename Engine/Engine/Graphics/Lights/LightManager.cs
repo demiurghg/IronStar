@@ -87,11 +87,12 @@ namespace Fusion.Engine.Graphics {
 			PREFILTER		=	0x0002,
 			SPECULAR		=	0x0004,
 			DIFFUSE			=	0x0008,
+			AMBIENT			=	0x0010,
 
-			ROUGHNESS_025	=	0x0010,
-			ROUGHNESS_050	=	0x0020,
-			ROUGHNESS_075	=	0x0040,
-			ROUGHNESS_100	=	0x0080,
+			ROUGHNESS_025	=	0x0100,
+			ROUGHNESS_050	=	0x0200,
+			ROUGHNESS_075	=	0x0400,
+			ROUGHNESS_100	=	0x0800,
 		}
 		
 
@@ -311,7 +312,7 @@ namespace Fusion.Engine.Graphics {
 
 					int size	=	RenderSystem.LightProbeSize >> mip;
 					int tgx		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeX );
-					int tgy		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeX );
+					int tgy		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeY );
 					int tgz		=	RenderSystem.LightProbeBatchSize;
 
 					device.Dispatch( tgx, tgy, tgz );
@@ -329,7 +330,25 @@ namespace Fusion.Engine.Graphics {
 
 					int size	=	RenderSystem.LightProbeSize;
 					int tgx		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeX );
-					int tgy		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeX );
+					int tgy		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeY );
+					int tgz		=	RenderSystem.LightProbeBatchSize;
+
+					device.Dispatch( tgx, tgy, tgz );
+				}
+
+				//
+				//	prefilter ambience :
+				//
+				if (true) {
+					device.PipelineState = factory[(int)(Flags.PREFILTER | Flags.AMBIENT)];
+
+					device.SetCSRWTexture( 0, target.GetBatchCubeSurface( batchIndex, RenderSystem.LightProbeAmbientMip ) );
+
+					device.ComputeShaderResources[4]	=	target.GetBatchCubeShaderResource( batchIndex, RenderSystem.LightProbeDiffuseMip );
+
+					int size	=	RenderSystem.LightProbeSize;
+					int tgx		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeX );
+					int tgy		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeY );
 					int tgz		=	RenderSystem.LightProbeBatchSize;
 
 					device.Dispatch( tgx, tgy, tgz );

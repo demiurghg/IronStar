@@ -1,6 +1,6 @@
 #if 0
 $ubershader 	RELIGHT
-$ubershader		PREFILTER (SPECULAR ROUGHNESS_025|ROUGHNESS_050|ROUGHNESS_075|ROUGHNESS_100)|DIFFUSE
+$ubershader		PREFILTER (SPECULAR ROUGHNESS_025|ROUGHNESS_050|ROUGHNESS_075|ROUGHNESS_100)|DIFFUSE|AMBIENT
 #endif
 
 #include "relight.auto.hlsl"
@@ -273,6 +273,16 @@ float4	PrefilterFace ( float3 dir, int3 location )
 		weight 		+= 	d;
 		float4 val	=	LightProbe.SampleLevel(LinearSampler, float4(H, location.z), 0).rgba;
 		result.rgb 	+= 	val.rgb * d * val.a;
+	}
+#endif
+
+#ifdef AMBIENT
+	int stepNum = 17;
+	weight		= stepNum;
+	for (int i=0; i<stepNum; i++) {
+		float3 H 	= 	hammersley_sphere_uniform( i, stepNum );
+		float4 val	=	LightProbe.SampleLevel(LinearSampler, float4(H, location.z), 0).rgba;
+		result.rgb 	+= 	val.rgb;
 	}
 #endif
 	

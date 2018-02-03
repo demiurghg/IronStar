@@ -109,16 +109,12 @@ namespace Fusion.Engine.Graphics {
 
 		public float	Temperature;
 
+		public float	Scattering;
+
 		/// <summary>
 		/// Lightmap region
 		/// </summary>
 		public Vector4	LightmapRegion;        
-		
-
-		public Vector3	LightBasisX;
-		public Vector3	LightBasisY;
-		public Vector3	LightBasisZ;
-		public Vector3	LightAmbient;
 
 		/// <summary>
 		/// Gravity influence.

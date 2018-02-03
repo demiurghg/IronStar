@@ -200,7 +200,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="gameTime"></param>
 		internal void RenderShadow ( GameTime gameTime, Viewport viewport, Matrix view, Matrix projection, RenderTargetSurface particleShadow, DepthStencilSurface depthBuffer )
 		{
-			softStream.RenderShadow( gameTime, viewport, view, projection, particleShadow, depthBuffer );
+			softStream.RenderShadow( gameTime, viewport, view, projection, particleShadow, depthBuffer, true );
+			hardStream.RenderShadow( gameTime, viewport, view, projection, particleShadow, depthBuffer, false );
 		}
 	}
 }

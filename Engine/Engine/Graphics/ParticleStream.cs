@@ -115,9 +115,10 @@ namespace Fusion.Engine.Graphics {
 			DRAW_HARD		=	0x0008,
 			DRAW_DUDV		=	0x0010,
 			INITIALIZE		=	0x0020,
-			DRAW_SHADOW		=	0x0040,
-			DRAW_LIGHT		=	0x0080,
-			ALLOC_LIGHTMAP	=	0x0100,
+			SOFT_SHADOW		=	0x0040,
+			HARD_SHADOW		=	0x0080,
+			DRAW_LIGHT		=	0x0100,
+			ALLOC_LIGHTMAP	=	0x0200,
 		}
 
 
@@ -299,7 +300,7 @@ namespace Fusion.Engine.Graphics {
 				ps.RasterizerState		=	RasterizerState.CullNone;
 			}
 
-			if (flag==Flags.DRAW_SHADOW) {
+			if (flag==Flags.SOFT_SHADOW || flag==Flags.HARD_SHADOW) {
 
 				var bs = new BlendState();
 				bs.DstAlpha	=	Blend.One;
@@ -774,7 +775,7 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		internal void RenderShadow ( GameTime gameTime, Viewport viewport, Matrix view, Matrix projection, RenderTargetSurface particleShadow, DepthStencilSurface depthBuffer )
+		internal void RenderShadow ( GameTime gameTime, Viewport viewport, Matrix view, Matrix projection, RenderTargetSurface particleShadow, DepthStencilSurface depthBuffer, bool soft )
 		{
 			if (rs.SkipParticleShadows) {
 				return;
@@ -783,7 +784,9 @@ namespace Fusion.Engine.Graphics {
 			var colorTarget	=	particleShadow;
 			var depthTarget	=	depthBuffer;
 
-			RenderGeneric( "Particles Shadow", gameTime, null, viewport, view, projection, colorTarget, depthTarget, null, Flags.DRAW_SHADOW );
+			var flags		=	soft ? Flags.SOFT_SHADOW : Flags.HARD_SHADOW;
+
+			RenderGeneric( "Particles Shadow", gameTime, null, viewport, view, projection, colorTarget, depthTarget, null, flags );
 		}
 	}
 }

@@ -58,7 +58,7 @@ namespace IronStar.Core {
 						.Select( name => content.Load<EntityFactory>(@"entities\"+name) )
 						.ToArray();
 
-				content.Precache<TextureAtlas>(@"sprites\particles|srgb");
+				content.Precache<TextureAtlas>(@"sprites\particles");
 				content.Precache<TextureAtlas>(@"spots\spots");
 				content.Precache<VirtualTexture>("*megatexture");
 

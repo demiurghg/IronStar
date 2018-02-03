@@ -6,10 +6,37 @@
 #include "brdf.fxi"
 #include "particles.shadows.hlsl"
 
+#ifdef SOFT_LIGHTING
+float3 ComputeLight ( float3 intensity, float3 dir, float3 vdir, float3 normal, float3 color, float scatter, float roughness, float metallic )
+{
+	float a = 1.0 - 0.5*scatter;
+	float b = 1 - a;
+	return intensity * max( 0, dot( dir, normal ) * a + b );
+}
+#endif
+
+#ifdef HARD_LIGHTING
+float3 ComputeLight ( float3 intensity, float3 dir, float3 vdir, float3 normal, float3 color, float scatter, float roughness, float metallic )
+{
+	float 	a 			= 	1.0 - 0.5*scatter;
+	float 	b 			= 	1 - a;
+	float3	diffuse 	=	lerp( color, float3(0,0,0), metallic );
+	float3	specular  	=	lerp( float3(0.04f,0.04f,0.04f), color, metallic );
+			roughness	=	sqrt(roughness);
+			
+	float	nDotL		=	max(0, dot(dir, normal));
+	float	nDotLSoft	=	max(0, dot(dir, normal) * a + b);
+			
+	return 	intensity * nDotLSoft * diffuse
+		+	nDotL * CookTorrance( normal, vdir, dir, intensity, specular, roughness, 0.05 )
+		;
+}
+#endif
+
 //
 //	ComputeClusteredLighting
 //	
-float3 ComputeClusteredLighting ( float3 worldPos, float3 normal )
+float3 ComputeClusteredLighting ( float3 worldPos, float3 normal, float3 color, float scatter, float roughness, float metallic )
 {
 //	return normal;
 
@@ -25,14 +52,17 @@ float3 ComputeClusteredLighting ( float3 worldPos, float3 normal )
 	uint 	lightCount	=	(data.g & 0x00000FFF) >> 0;
 	uint 	decalCount	=	(data.g & 0x00FFF000) >> 12;
 	uint 	lpbCount	=	(data.g & 0xFF000000) >> 24;
+	
+	float3	vdir		=	normalize( Params.CameraPosition.xyz - worldPos.xyz );
 
 	float3 totalLight	=	0;
-
+	
 	//----------------------------------------------------------------------------------------------
-
+			normal		=	normalize(normal);
 	float3	shadow		=	ComputeCSM( worldPos, Params, ShadowSampler, ShadowMap, Sampler, ShadowMask ); 
-	float3	lambert		=	max( 0, dot( -Params.DirectLightDirection.rgb, normal ) * 0.9 + 0.1 );
-	totalLight.rgb 		+= 	shadow * Params.DirectLightIntensity.rgb * lambert;
+	float3	dirLightDir	=	normalize( -Params.DirectLightDirection.xyz );
+	float3	dirLightInt = 	Params.DirectLightIntensity.rgb;
+	totalLight.rgb 		+= 	shadow * ComputeLight( dirLightInt, dirLightDir, vdir, normal, color, scatter, roughness, metallic );
 
 	//----------------------------------------------------------------------------------------------
 
@@ -46,14 +76,14 @@ float3 ComputeClusteredLighting ( float3 worldPos, float3 normal )
 		float  	radius		=	LightDataTable[idx].PositionRadius.w;
 		float3 	intensity	=	LightDataTable[idx].IntensityFar.rgb;
 		float3 	lightDir	= 	position - worldPos.xyz;
-		float	nDotL		=	max(0, dot( normalize(lightDir), normal ) * 0.9 + 0.1 );
+		
+		float3	lighting	=	ComputeLight( intensity, normalize(lightDir), vdir, normal, color, scatter, roughness, metallic );
 		
 		[branch]
 		if (type==LightTypeOmni) {
 			
 			float  falloff		= 	LinearFalloff( length(lightDir), radius );
-			
-			totalLight.rgb 		+= 	falloff * intensity * nDotL;
+			totalLight.rgb 		+= 	falloff * lighting;
 			
 		} else if (type==LightTypeSpotShadow) {
 			
@@ -73,9 +103,7 @@ float3 ComputeClusteredLighting ( float3 worldPos, float3 normal )
 						accumulatedShadow	*=	ShadowMask.SampleLevel( Sampler, lsPos.xy, 0 ).rgb;
 						
 				float3 	falloff		= 	LinearFalloff( length(lightDir), radius ) * accumulatedShadow;
-				
-				
-				totalLight.rgb 		+= 	falloff * intensity * nDotL;
+				totalLight.rgb 		+= 	falloff * lighting;
 			}
 		}
 	}
@@ -94,7 +122,7 @@ float3 ComputeClusteredLighting ( float3 worldPos, float3 normal )
 	float3	skyLight		=	skyFactor * Params.SkyAmbientLevel.rgb;
 	
 	
-	totalLight += skyLight;
+	totalLight += skyLight * color;
 
 	[loop]
 	for (i=0; i<lpbCount; i++) {
@@ -110,9 +138,9 @@ float3 ComputeClusteredLighting ( float3 worldPos, float3 normal )
 		float3	ambientTerm	=	RadianceCache.SampleLevel( Sampler, float4(0,0,1, imageIndex), 6).rgb;
 				ambientTerm *=	aoFactor;
 	
-		totalLight += ambientTerm;
+		totalLight += ambientTerm * color;
 	}
 	
-	return totalLight * 1;
+	return totalLight;
 }
 

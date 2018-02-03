@@ -1,9 +1,10 @@
 
 #if 0
-$ubershader INITIALIZE|INJECTION|SIMULATION|DRAW_SOFT|DRAW_HARD|DRAW_DUDV|DRAW_SHADOW|DRAW_LIGHT|ALLOC_LIGHTMAP
+$ubershader INITIALIZE|INJECTION|SIMULATION|DRAW_SOFT|DRAW_HARD|DRAW_DUDV|SOFT_SHADOW|HARD_SHADOW|DRAW_LIGHT|ALLOC_LIGHTMAP
 #endif
 
 #include "particles.auto.hlsl"
+#include "gamma.fxi"
 
 cbuffer CB1 : register(b0) { 
 	PARAMS Params; 
@@ -42,7 +43,6 @@ Texture3D					OcclusionGrid		: 	register(t14);
 TextureCubeArray			RadianceCache		:	register(t15);
 StructuredBuffer<LIGHTPROBE> ProbeDataTable		:	register(t17);
 
-#include "particles.lighting.hlsl"
 #include "fog.fxi"
 
 //-----------------------------------------------
@@ -205,14 +205,14 @@ struct GSOutput {
 	float4  ViewPosSZ : TEXCOORD2;
 	float4	Color     : COLOR0;
 	float	LMFactor  : TEXCOORD3;
-	float	Fog		  : TEXCOORD4;
+	float4	FogSRM	  : TEXCOORD4;
 	float3	WorldPos  : TEXCOORD5;
 	float3	Tangent	  : TEXCOORD6;
 	float3	Binormal  : TEXCOORD7;
 };
 
 
-#if (defined DRAW_SOFT) || (defined DRAW_HARD) || (defined DRAW_DUDV) || (defined DRAW_SHADOW) || (defined DRAW_LIGHT)
+#if (defined DRAW_SOFT) || (defined DRAW_HARD) || (defined DRAW_DUDV) || (defined SOFT_SHADOW) || (defined HARD_SHADOW) || (defined DRAW_LIGHT)
 VSOutput VSMain( uint vertexID : SV_VertexID )
 {
 	VSOutput output;
@@ -271,7 +271,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	if (prt.Effects==ParticleFX_Hard || prt.Effects==ParticleFX_Soft) {
 		float t		=	prt.Temperature;
 		float3	ct	=	ColorTemperature.SampleLevel( Sampler, float2( (t-1000.0f) / 39000.0f, 0.5f ), 0 );
-		glow		=	prt.Intensity * pow(ct, 2.2f);
+		glow		=	prt.Intensity * ct;
 	} 
 	
 	float  sz 		=   lerp( prt.Size0, prt.Size1, factor )/2;
@@ -301,10 +301,23 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	float4 wpos2	=	float4( position - rt - up - fwd, 1 );
 	float4 wpos3	=	float4( position + rt - up - fwd, 1 );
 	
-	float3 normal0	=	normalize(  rt + up - fwd * 0.1 );
-	float3 normal1	=	normalize( -rt + up - fwd * 0.1 );
-	float3 normal2	=	normalize( -rt - up - fwd * 0.1 );
-	float3 normal3	=	normalize(  rt - up - fwd * 0.1 );
+	float3 	normal0 =	0;
+	float3 	normal1 =	0;
+	float3 	normal2 =	0;
+	float3 	normal3 =	0;
+	
+	#ifdef DRAW_LIGHT
+		normal0	=	normalize(  rt + up - fwd * 0.1 );
+		normal1	=	normalize( -rt + up - fwd * 0.1 );
+		normal2	=	normalize( -rt - up - fwd * 0.1 );
+		normal3	=	normalize(  rt - up - fwd * 0.1 );
+	#endif
+	#ifdef DRAW_HARD
+		normal0	=	normalize( -fwd );
+		normal1	=	normalize( -fwd );
+		normal2	=	normalize( -fwd );
+		normal3	=	normalize( -fwd );
+	#endif
 	
 	float4 pos0		=	mul( wpos0, Params.View );
 	float4 pos1		=	mul( wpos1, Params.View );
@@ -331,10 +344,10 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p0.ViewPosSZ = float4( pos0.xyz, 1/sz );
 	p0.Color 	 = color;
 	p0.LMFactor	 = 0;
-	p0.Fog		 = ApplyFog( wpos0 );
+	p0.FogSRM	 = float4( ApplyFog( wpos0 ), prt.Scattering, prt.Roughness, prt.Metallic );
 	p0.WorldPos	 = wpos0.xyz;
 	p0.Tangent	 = rt;
-	p0.Binormal	 = up;
+	p0.Binormal	 = -up;
 	
 	p1.Position	 = mul( pos1, Params.Projection );
 	p1.Normal	 = normal1;
@@ -343,10 +356,10 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p1.ViewPosSZ = float4( pos1.xyz, 1/sz );
 	p1.Color 	 = color;
 	p1.LMFactor	 = 0;
-	p1.Fog		 = ApplyFog( wpos1 );
+	p1.FogSRM	 = float4( ApplyFog( wpos1 ), prt.Scattering, prt.Roughness, prt.Metallic );
 	p1.WorldPos	 = wpos1.xyz;
 	p1.Tangent	 = rt;
-	p1.Binormal	 = up;
+	p1.Binormal	 = -up;
 	
 	p2.Position	 = mul( pos2, Params.Projection );
 	p2.Normal	 = normal2;
@@ -355,10 +368,10 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p2.ViewPosSZ = float4( pos2.xyz, 1/sz );
 	p2.Color 	 = color;
 	p2.LMFactor	 = 0;
-	p2.Fog		 = ApplyFog( wpos2 );
+	p2.FogSRM	 = float4( ApplyFog( wpos2 ), prt.Scattering, prt.Roughness, prt.Metallic );
 	p2.WorldPos	 = wpos2.xyz;
 	p2.Tangent	 = rt;
-	p2.Binormal	 = up;
+	p2.Binormal	 = -up;
 	
 	p3.Position	 = mul( pos3, Params.Projection );
 	p3.Normal	 = normal3;
@@ -367,10 +380,10 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p3.ViewPosSZ = float4( pos3.xyz, 1/sz );
 	p3.Color 	 = color;
 	p3.LMFactor	 = 0;
-	p3.Fog		 = ApplyFog( wpos3 );
+	p3.FogSRM	 = float4( ApplyFog( wpos3 ), prt.Scattering, prt.Roughness, prt.Metallic );
 	p3.WorldPos	 = wpos3.xyz;
 	p3.Tangent	 = rt;
-	p3.Binormal	 = up;
+	p3.Binormal	 = -up;
 	
 	#if defined(DRAW_SOFT)
 	if (prt.Effects==ParticleFX_SoftLit || prt.Effects==ParticleFX_SoftLitShadow) {
@@ -413,6 +426,18 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 //	Soft particles :
 //	http://developer.download.nvidia.com/SDK/10/direct3d/Source/SoftParticles/doc/SoftParticles_hi.pdf
 
+#ifdef DRAW_LIGHT
+#define SOFT_LIGHTING
+#include "particles.lighting.hlsl"
+#endif
+
+
+#ifdef DRAW_HARD
+#define HARD_LIGHTING
+#include "particles.lighting.hlsl"
+#endif
+
+
 float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 {
 	#if defined(DRAW_SOFT) || defined(DRAW_DUDV)
@@ -432,24 +457,30 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 	#endif
 
 	#ifdef DRAW_SOFT
-		float4 color	=	Texture.Sample( Sampler, input.TexCoord ) * input.Color;
-		float3 light	=	(input.LMFactor > 0.5f) ? LightMap.Sample( Sampler, input.LMCoord ).rgb : 1;
+		float4 	color	=	Texture.Sample( Sampler, input.TexCoord );
+		float3 	light	=	(input.LMFactor > 0.5f) ? LightMap.Sample( Sampler, input.LMCoord ).rgb : 1;
 		
+		color.rgba		=	SRGBToLinear( color.rgba ) * input.Color;	
 		color.rgba 		*= 	softFactor;
 		color.rgb  		*= 	light.rgb;
 		
-		color.rgb		=	lerp( color.rgb, Params.FogColor, input.Fog );
+		color.rgb		=	lerp( color.rgb, Params.FogColor, input.FogSRM.x );
 		
 		return color;
 	#endif
 	
 	
 	#ifdef DRAW_HARD
-		float4 	normalAlpha	=	pow(Texture.Sample( Sampler, input.TexCoord ), 1/2.2);
+		float4 	normalAlpha	=	Texture.Sample( Sampler, input.TexCoord );
 		float3	normal		=	normalize(normalAlpha.xyz * 2 - 1);
 		float	alpha		=	normalAlpha.w;
+		float	scatter		=	input.FogSRM.y;
+		float	roughness	=	input.FogSRM.z;
+		float	metallic	=	input.FogSRM.w;
+		float3	baseColor	=	input.Color.rgb;
+		float3	worldPos	=	input.WorldPos.xyz;
 				
-		float3	lighting	=	0;
+		float3	finalColor	=	0;
 		
 		float3x3 tbnToWorld	= float3x3(
 				input.Tangent.x,	input.Tangent.y,	input.Tangent.z,	
@@ -461,34 +492,32 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 		
 		[branch]
 		if (input.LMFactor > 0.5f) {
-			lighting	=	ComputeClusteredLighting( input.WorldPos.xyz, worldNormal );
+			finalColor	=	ComputeClusteredLighting( worldPos, worldNormal, baseColor, scatter, roughness, metallic );
 		} else {
-			lighting	=	1;
+			finalColor	=	baseColor;
 		}
 		
-		float3 color	=	input.Color.rgb * lighting;
-		color.rgb		=	lerp( color.rgb, Params.FogColor, input.Fog );
+		finalColor		=	lerp( finalColor, Params.FogColor, input.FogSRM.x );
 		
 		clip( alpha - ( 1 - input.Color.a ) );
 		
-		return float4(color, 1);
+		return float4(finalColor, 1);
 	#endif
 	
 	#ifdef DRAW_DUDV
-		float4 	color	=	pow(Texture.Sample( Sampler, input.TexCoord ), 1/2.2f);
+		float4 	color	=	Texture.Sample( Sampler, input.TexCoord );
 		float	decay	=	1 / (sceneZ+1);
 		float2	dudv	=	color.xy * 2 - 1;
 				dudv	*=	color.a;
 				dudv	*=	input.Color.a;
 				dudv	*=	softFactor;
 				
-				
 		float2	zero	=	float2(0, 0);
 
 		return float4( max(zero, dudv.xy), max(zero, -dudv.xy) );
 	#endif
 	
-	#ifdef DRAW_SHADOW
+	#ifdef SOFT_SHADOW
 		float4 textureColor	=	Texture.Sample( Sampler, input.TexCoord );
 		float4 vertexColor  =  	input.Color;
 		float4 color		=	1 - vertexColor.a * textureColor.a;
@@ -496,16 +525,25 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 		return color;
 	#endif
 	
+	#ifdef HARD_SHADOW
+		float	alpha	=	Texture.Sample( Sampler, input.TexCoord ).a;
+		
+		clip( alpha - ( 1 - input.Color.a ) );
+		
+		return 0;
+	#endif
+	
 	
 	#ifdef DRAW_LIGHT
 		float3 lighting = 0;
 		int count = 8;
 		float sz = input.ViewPosSZ.w;
+		float scatter = input.FogSRM.y;
 		
 		for (int i=0; i<count; i++) {
 			float 		t	=	(((i / (float)count)*2-1) * sz) * 0.5 + 0.5;
 			float3 		pos = 	input.ViewPosSZ.xyz + t * Params.CameraForward.xyz * input.ViewPosSZ.w;
-			lighting 		+= 	ComputeClusteredLighting( pos, normalize(input.Normal) ) / count;
+			lighting 		+= 	ComputeClusteredLighting( pos, normalize(input.Normal), 1, scatter, 0, 0 ) / count;
 		}
 		return float4(lighting,1);
 	#endif

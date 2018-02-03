@@ -67,7 +67,7 @@ namespace IronStar.SFX {
 		/// <param name="e"></param>
 		void Game_Reloading ( object sender, EventArgs e )
 		{
-			spriteSheet	=  world.Content.Load<TextureAtlas>(@"sprites\particles|srgb");
+			spriteSheet	=  world.Content.Load<TextureAtlas>(@"sprites\particles");
 
 			rw.ParticleSystem.Images	=	spriteSheet;	
 		}

@@ -366,13 +366,16 @@ namespace IronStar.SFX {
 		public float Alpha { get; set; } = 1;
 
 		[Description( "Roughness for hard particles" )]
-		public float Roughness { get; set; } = 0;
+		public float Roughness { get; set; } = 0.5f;
 
 		[Description( "Metallic for hard particles" )]
-		public float Metallic { get; set; } = 1;
+		public float Metallic { get; set; } = 0.0f;
 
 		[Description( "Particle emission intensity" )]
 		public float Intensity { get; set; } = 100;
+
+		[Description( "Particle approximate subsurface scattering" )]
+		public float Scattering { get; set; } = 0;
 
 		[Description( "Initial particles temperature" )]
 		public float Temperature { get; set; } = 6600;

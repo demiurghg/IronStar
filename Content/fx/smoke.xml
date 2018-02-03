@@ -2,7 +2,7 @@
 <FXFactory xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Period>1</Period>
   <SoundStage Enabled="false" Sound="" Attenuation="Normal" />
-  <LightStage Enabled="true" Period="1" InnerRadius="0" OuterRadius="4" PulseString="zzzzz" LightStyle="Const" LightType="Omni" SpotAngleX="60" SpotAngleY="60" LightMask="" OffsetDirection="LocalUp" OffsetFactor="0">
+  <LightStage Enabled="false" Period="1" InnerRadius="0" OuterRadius="4" PulseString="zzzzz" LightStyle="Const" LightType="Omni" SpotAngleX="60" SpotAngleY="60" LightMask="" OffsetDirection="LocalUp" OffsetFactor="0">
     <Intensity Red="128" Green="64" Blue="3" Alpha="0" />
   </LightStage>
   <CameraShake Enabled="false" />
@@ -10,17 +10,18 @@
     <Enabled>true</Enabled>
     <Sprite>explosionSmoke</Sprite>
     <Effect>SoftLitShadow</Effect>
-    <Count>15</Count>
+    <Count>7</Count>
     <Period>1</Period>
     <Timing Delay="0" Bunch="1" FadeIn="0.05" FadeOut="0.5" />
     <Color R="64" G="64" B="64" A="255" />
-    <Alpha>1</Alpha>
+    <Alpha>0.9</Alpha>
     <Roughness>0</Roughness>
     <Metallic>1</Metallic>
     <Intensity>100</Intensity>
+    <Scattering>1</Scattering>
     <Temperature>6600</Temperature>
     <Lifetime Distribution="Gauss" MinLifetime="2" MaxLifetime="4" />
-    <Shape Size0="1.5" Size1="3" EnableRotation="true" InitialAngle="360" MinAngularVelocity="5" MaxAngularVelocity="-5" />
+    <Shape Size0="2" Size1="4" EnableRotation="true" InitialAngle="360" MinAngularVelocity="5" MaxAngularVelocity="-5" />
     <Position OffsetDirection="LocalUp" OffsetFactor="1" Distribution="GaussRadial" MinSize="0" MaxSize="0.5" />
     <Velocity Direction="LocalUp" LinearDistribution="Gauss" LinearVelocityMin="0" LinearVelocityMax="1" RadialDistribution="GaussRadial" RadialVelocityMin="0" RadialVelocityMax="2" Advection="0" />
     <Acceleration GravityFactor="-0.5" Damping="0.5" DragForce="0" Turbulence="0" />
@@ -37,7 +38,8 @@
     <Roughness>0</Roughness>
     <Metallic>1</Metallic>
     <Intensity>1400</Intensity>
-    <Temperature>2800</Temperature>
+    <Scattering>0</Scattering>
+    <Temperature>2200</Temperature>
     <Lifetime Distribution="Gauss" MinLifetime="0.6" MaxLifetime="0.8" />
     <Shape Size0="2" Size1="1.2" EnableRotation="true" InitialAngle="360" MinAngularVelocity="-45" MaxAngularVelocity="45" />
     <Position OffsetDirection="None" OffsetFactor="0" Distribution="UniformRadial" MinSize="0" MaxSize="0" />
@@ -56,6 +58,7 @@
     <Roughness>0</Roughness>
     <Metallic>1</Metallic>
     <Intensity>500</Intensity>
+    <Scattering>0</Scattering>
     <Temperature>3000</Temperature>
     <Lifetime Distribution="Gauss" MinLifetime="1" MaxLifetime="3" />
     <Shape Size0="0.05" Size1="0" EnableRotation="true" InitialAngle="720" MinAngularVelocity="0" MaxAngularVelocity="0" />
@@ -75,6 +78,7 @@
     <Roughness>0</Roughness>
     <Metallic>1</Metallic>
     <Intensity>20</Intensity>
+    <Scattering>0</Scattering>
     <Temperature>6600</Temperature>
     <Lifetime Distribution="Uniform" MinLifetime="0.5" MaxLifetime="1" />
     <Shape Size0="3" Size1="3" EnableRotation="true" InitialAngle="360" MinAngularVelocity="0" MaxAngularVelocity="0" />

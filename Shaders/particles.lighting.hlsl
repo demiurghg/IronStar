@@ -9,8 +9,10 @@
 //
 //	ComputeClusteredLighting
 //	
-float3 ComputeClusteredLighting ( float3 worldPos )
+float3 ComputeClusteredLighting ( float3 worldPos, float3 normal )
 {
+//	return normal;
+
 	uint i,j,k;
 	float4 projPos		=	mul( float4(worldPos,1), Params.ViewProjection );
 	float3 result		=	float3(0,0,0);
@@ -29,7 +31,8 @@ float3 ComputeClusteredLighting ( float3 worldPos )
 	//----------------------------------------------------------------------------------------------
 
 	float3	shadow		=	ComputeCSM( worldPos, Params, ShadowSampler, ShadowMap, Sampler, ShadowMask ); 
-	totalLight.rgb 		+= 	shadow * Params.DirectLightIntensity.rgb;
+	float3	lambert		=	max( 0, dot( -Params.DirectLightDirection.rgb, normal ) * 0.9 + 0.1 );
+	totalLight.rgb 		+= 	shadow * Params.DirectLightIntensity.rgb * lambert;
 
 	//----------------------------------------------------------------------------------------------
 
@@ -39,17 +42,18 @@ float3 ComputeClusteredLighting ( float3 worldPos )
 		uint type 	= LightDataTable[idx].LightType & 0x0000FFFF;
 		uint shape	= LightDataTable[idx].LightType & 0xFFFF0000;	
 		
-		float3 position		=	LightDataTable[idx].PositionRadius.xyz;
-		float  radius		=	LightDataTable[idx].PositionRadius.w;
-		float3 intensity	=	LightDataTable[idx].IntensityFar.rgb;
+		float3 	position	=	LightDataTable[idx].PositionRadius.xyz;
+		float  	radius		=	LightDataTable[idx].PositionRadius.w;
+		float3 	intensity	=	LightDataTable[idx].IntensityFar.rgb;
+		float3 	lightDir	= 	position - worldPos.xyz;
+		float	nDotL		=	max(0, dot( normalize(lightDir), normal ) * 0.9 + 0.1 );
 		
 		[branch]
 		if (type==LightTypeOmni) {
 			
-			float3 lightDir		= 	position - worldPos.xyz;
 			float  falloff		= 	LinearFalloff( length(lightDir), radius );
 			
-			totalLight.rgb 		+= 	falloff * intensity;
+			totalLight.rgb 		+= 	falloff * intensity * nDotL;
 			
 		} else if (type==LightTypeSpotShadow) {
 			
@@ -68,17 +72,17 @@ float3 ComputeClusteredLighting ( float3 worldPos )
 				float3 	accumulatedShadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, lsPos.xy, shadowDepth ).rrr;
 						accumulatedShadow	*=	ShadowMask.SampleLevel( Sampler, lsPos.xy, 0 ).rgb;
 						
-				float3 	lightDir	= 	position - worldPos.xyz;
 				float3 	falloff		= 	LinearFalloff( length(lightDir), radius ) * accumulatedShadow;
 				
-				totalLight.rgb 		+= 	falloff * intensity;
+				
+				totalLight.rgb 		+= 	falloff * intensity * nDotL;
 			}
 		}
 	}
 	
 	//----------------------------------------------------------------------------------------------
 	
-	float4	aogridValue		=	OcclusionGrid.Sample( Sampler, mul( float4(worldPos, 1), Params.OcclusionGridMatrix ).xyz ).rgba;
+	float4	aogridValue		=	OcclusionGrid.SampleLevel( Sampler, mul( float4(worldPos, 1), Params.OcclusionGridMatrix ).xyz, 0 ).rgba;
 			aogridValue.xyz	=	aogridValue.xyz * 2 - 1;
 			
 	float	aoFactor		=	aogridValue.w;

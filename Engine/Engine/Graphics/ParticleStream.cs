@@ -631,7 +631,7 @@ namespace Fusion.Engine.Graphics {
 
 					device.GeometryShaderResources[6]	=	ps.ColorTempMap.Srv;
 
-					if (flags==Flags.DRAW_LIGHT) {
+					if (flags==Flags.DRAW_LIGHT || flags==Flags.DRAW_HARD) {
 						device.PixelShaderResources[7]		=	rs.LightManager.LightGrid.GridTexture;
 						device.PixelShaderResources[8]		=	rs.LightManager.LightGrid.IndexDataGpu;
 						device.PixelShaderResources[9]		=	rs.LightManager.LightGrid.LightDataGpu;
@@ -647,7 +647,7 @@ namespace Fusion.Engine.Graphics {
 						device.PixelShaderResources[11]		=	Lightmap;
 					}
 
-					if (flags==Flags.DRAW_LIGHT) {
+					if (flags==Flags.DRAW_LIGHT || flags==Flags.DRAW_HARD) {
 						device.PixelShaderResources[14]		=	rs.LightManager.OcclusionGrid;
 						device.PixelShaderResources[15]		=	rs.RenderWorld.RadianceCache;
 						device.PixelShaderResources[17]		=	rs.LightManager.LightGrid.ProbeDataGpu;

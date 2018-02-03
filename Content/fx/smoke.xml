@@ -2,19 +2,19 @@
 <FXFactory xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Period>1</Period>
   <SoundStage Enabled="false" Sound="" Attenuation="Normal" />
-  <LightStage Enabled="false" Period="1" InnerRadius="0" OuterRadius="2" PulseString="zzzzz" LightStyle="Const" LightType="Omni" SpotAngleX="60" SpotAngleY="60" LightMask="" OffsetDirection="LocalUp" OffsetFactor="0">
-    <Intensity Red="250" Green="128" Blue="5" Alpha="0" />
+  <LightStage Enabled="true" Period="1" InnerRadius="0" OuterRadius="4" PulseString="zzzzz" LightStyle="Const" LightType="Omni" SpotAngleX="60" SpotAngleY="60" LightMask="" OffsetDirection="LocalUp" OffsetFactor="0">
+    <Intensity Red="128" Green="64" Blue="3" Alpha="0" />
   </LightStage>
   <CameraShake Enabled="false" />
   <ParticleStage1>
     <Enabled>true</Enabled>
     <Sprite>explosionSmoke</Sprite>
     <Effect>SoftLitShadow</Effect>
-    <Count>8</Count>
+    <Count>15</Count>
     <Period>1</Period>
     <Timing Delay="0" Bunch="1" FadeIn="0.05" FadeOut="0.5" />
-    <Color R="128" G="128" B="128" A="255" />
-    <Alpha>0.3</Alpha>
+    <Color R="64" G="64" B="64" A="255" />
+    <Alpha>1</Alpha>
     <Roughness>0</Roughness>
     <Metallic>1</Metallic>
     <Intensity>100</Intensity>
@@ -26,7 +26,7 @@
     <Acceleration GravityFactor="-0.5" Damping="0.5" DragForce="0" Turbulence="0" />
   </ParticleStage1>
   <ParticleStage2>
-    <Enabled>false</Enabled>
+    <Enabled>true</Enabled>
     <Sprite>fire</Sprite>
     <Effect>Soft</Effect>
     <Count>17</Count>
@@ -45,7 +45,7 @@
     <Acceleration GravityFactor="-0.5" Damping="0" DragForce="0" Turbulence="0.1" />
   </ParticleStage2>
   <ParticleStage3>
-    <Enabled>false</Enabled>
+    <Enabled>true</Enabled>
     <Sprite>bulletSpark</Sprite>
     <Effect>Hard</Effect>
     <Count>30</Count>

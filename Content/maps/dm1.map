@@ -2,7 +2,7 @@
 <Map xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Environment>
     <Gravity>16</Gravity>
-    <SkyTrubidity>2</SkyTrubidity>
+    <SkyTrubidity>8</SkyTrubidity>
     <SunPosition X="1" Y="0.5" Z="2" />
     <SunIntensity>40</SunIntensity>
     <FogDistance>5000</FogDistance>
@@ -437,7 +437,7 @@
     <MapNode xsi:type="MapLightProbe">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="18.5" Y="1.125" Z="5.875" />
+      <Position X="18.25" Y="1.125" Z="6.125" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <InnerRadius>8</InnerRadius>
@@ -606,7 +606,7 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="12.5" Y="0.75" Z="18.125" />
+      <Position X="15.625" Y="1.875" Z="14.625" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Factory xsi:type="FuncFXFactory">
@@ -636,7 +636,7 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="0.875" Y="1" Z="13.25" />
+      <Position X="-16.25" Y="1" Z="-30.75" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Factory xsi:type="FuncFXFactory">
@@ -681,8 +681,8 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-6.875" Y="0.875" Z="-12.75" />
-      <Rotation X="0" Y="0" Z="-0.6087614" W="0.7933533" />
+      <Position X="-6.375" Y="0.875" Z="-12.75" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Factory xsi:type="FuncFXFactory">
         <FX>smoke</FX>
@@ -698,6 +698,124 @@
       <Frozen>false</Frozen>
       <Position X="-6.875" Y="0.875" Z="-11" />
       <Rotation X="0" Y="0" Z="-0.6087614" W="0.7933533" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>smoke</FX>
+        <FXMode>AutoTrigger</FXMode>
+        <Once>false</Once>
+        <Start>true</Start>
+        <MinInterval>500</MinInterval>
+        <MaxInterval>500</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapOmniLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-17.125" Y="1" Z="-30.75" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Intensity>500</Intensity>
+      <OuterRadius>5</OuterRadius>
+      <InnerRadius>0.1</InnerRadius>
+      <LightPreset>IncandescentStandard</LightPreset>
+      <LightStyle>Default</LightStyle>
+      <Ambient>false</Ambient>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="17" Y="1.5" Z="11.5" />
+      <Rotation X="-0.258819044" Y="0" Z="0" W="0.9659257" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>blood</FX>
+        <FXMode>AutoTrigger</FXMode>
+        <Once>false</Once>
+        <Start>true</Start>
+        <MinInterval>1000</MinInterval>
+        <MaxInterval>1000</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="2.375" Y="0.875" Z="-1.875" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>smoke</FX>
+        <FXMode>AutoTrigger</FXMode>
+        <Once>false</Once>
+        <Start>true</Start>
+        <MinInterval>500</MinInterval>
+        <MaxInterval>500</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="2.375" Y="0.875" Z="-4.375" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>smoke</FX>
+        <FXMode>AutoTrigger</FXMode>
+        <Once>false</Once>
+        <Start>true</Start>
+        <MinInterval>500</MinInterval>
+        <MaxInterval>500</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="2.375" Y="0.875" Z="-6.625" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>smoke</FX>
+        <FXMode>AutoTrigger</FXMode>
+        <Once>false</Once>
+        <Start>true</Start>
+        <MinInterval>500</MinInterval>
+        <MaxInterval>500</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="5.375" Y="0.875" Z="-1.875" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>smoke</FX>
+        <FXMode>AutoTrigger</FXMode>
+        <Once>false</Once>
+        <Start>true</Start>
+        <MinInterval>500</MinInterval>
+        <MaxInterval>500</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="5.375" Y="0.875" Z="-4.375" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="FuncFXFactory">
+        <FX>smoke</FX>
+        <FXMode>AutoTrigger</FXMode>
+        <Once>false</Once>
+        <Start>true</Start>
+        <MinInterval>500</MinInterval>
+        <MaxInterval>500</MaxInterval>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="5.375" Y="0.875" Z="-6.625" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Factory xsi:type="FuncFXFactory">
         <FX>smoke</FX>

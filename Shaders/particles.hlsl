@@ -59,6 +59,10 @@ AppendStructuredBuffer<uint>	deadParticleIndices	: 	register(u1);
 
 RWStructuredBuffer<float2>		sortParticleBuffer	: 	register(u2);
 
+static const float3 lightBasisX	=	float3(  sqrt(3.0f/2.0f), 	 			 0,  sqrt(1/3.0f) );
+static const float3 lightBasisY	=	float3( -sqrt(1.0f/6.0f),  sqrt(1.0f/2.0f),  sqrt(1/3.0f) );
+static const float3 lightBasisZ	=	float3( -sqrt(1.0f/6.0f), -sqrt(1.0f/2.0f),  sqrt(1/3.0f) );
+
 /*-----------------------------------------------------------------------------
 	Simulation :
 -----------------------------------------------------------------------------*/
@@ -92,7 +96,7 @@ void CSMain(
 #ifdef SIMULATION
 	if (id < (uint)Params.MaxParticles) {
 		Particle p = particleBuffer[ id ];
-		
+
 		if (p.LifeTime>0) {
 			if (p.TimeLag < p.LifeTime) {
 				p.TimeLag += Params.DeltaTime;
@@ -104,7 +108,7 @@ void CSMain(
 
 		particleBuffer[ id ] = p;
 
-		//	Measure distance :
+		//	Integrate kinematics :
 		float  time		=	p.TimeLag;
 		
 		float3 gravity		=	-Params.Gravity * p.Gravity;
@@ -114,8 +118,9 @@ void CSMain(
 		particleBuffer[ id ].Velocity	=	p.Velocity + acceleration * Params.DeltaTime;	
 		particleBuffer[ id ].Position	=	p.Position + velocity     * Params.DeltaTime;	
 		
+		//	Measure distance :
 		float4 ppPos	=	mul( mul( float4(particleBuffer[ id ].Position,1), Params.View ), Params.Projection );
-
+		
 		sortParticleBuffer[ id ] = float2( -abs(ppPos.z / ppPos.w), id );
 	}
 #endif
@@ -140,7 +145,7 @@ void CSMain(
 
 		if (id < Params.MaxParticles) {
 			Particle p = particleBuffer[ id ];
-
+			
 			p.LightmapRegion = 	0;
 			
 			float 	factor	=	saturate(p.TimeLag / p.LifeTime);
@@ -194,12 +199,16 @@ struct VSOutput {
 
 struct GSOutput {
 	float4	Position  : SV_Position;
+	float3	Normal	  : NORMAL;
 	float2	TexCoord  : TEXCOORD0;
 	float2	LMCoord	  : TEXCOORD1;
 	float4  ViewPosSZ : TEXCOORD2;
 	float4	Color     : COLOR0;
 	float	LMFactor  : TEXCOORD3;
 	float	Fog		  : TEXCOORD4;
+	float3	WorldPos  : TEXCOORD5;
+	float3	Tangent	  : TEXCOORD6;
+	float3	Binormal  : TEXCOORD7;
 };
 
 
@@ -267,7 +276,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	
 	float  sz 		=   lerp( prt.Size0, prt.Size1, factor )/2;
 	float  fade		=	Ramp( prt.FadeIn, prt.FadeOut, factor );
-	float3 color3	=	prt.Color * glow;
+	float3 color3	=	pow(prt.Color, 2.2f) * glow;
 	float  alpha	=	prt.Alpha * fade;
 	float4 color	=	float4( color3, alpha );
 
@@ -283,13 +292,19 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	
 	float3		rt	=	(Params.CameraRight.xyz * cos(a) + Params.CameraUp.xyz * sin(a)) * sz;
 	float3		up	=	(Params.CameraUp.xyz * cos(a) - Params.CameraRight.xyz * sin(a)) * sz;
+	float3		fwd	=	(Params.CameraForward.xyz) * sz;
 	
 	float4		image	=	Images[prt.ImageIndex ];
 	
-	float4 wpos0	=	float4( position + rt + up, 1 );
-	float4 wpos1	=	float4( position - rt + up, 1 );
-	float4 wpos2	=	float4( position - rt - up, 1 );
-	float4 wpos3	=	float4( position + rt - up, 1 );
+	float4 wpos0	=	float4( position + rt + up - fwd, 1 );
+	float4 wpos1	=	float4( position - rt + up - fwd, 1 );
+	float4 wpos2	=	float4( position - rt - up - fwd, 1 );
+	float4 wpos3	=	float4( position + rt - up - fwd, 1 );
+	
+	float3 normal0	=	normalize(  rt + up - fwd * 0.1 );
+	float3 normal1	=	normalize( -rt + up - fwd * 0.1 );
+	float3 normal2	=	normalize( -rt - up - fwd * 0.1 );
+	float3 normal3	=	normalize(  rt - up - fwd * 0.1 );
 	
 	float4 pos0		=	mul( wpos0, Params.View );
 	float4 pos1		=	mul( wpos1, Params.View );
@@ -310,44 +325,65 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	float2 lmszB	 = Params.LightMapSize.zw * float2(0.5f,-0.5f);
 	
 	p0.Position	 = mul( pos0, Params.Projection );
+	p0.Normal	 = normal0;
 	p0.TexCoord	 = image.zy;
 	p0.LMCoord	 = prt.LightmapRegion.zy + lmszA;
 	p0.ViewPosSZ = float4( pos0.xyz, 1/sz );
 	p0.Color 	 = color;
 	p0.LMFactor	 = 0;
 	p0.Fog		 = ApplyFog( wpos0 );
+	p0.WorldPos	 = wpos0.xyz;
+	p0.Tangent	 = rt;
+	p0.Binormal	 = up;
 	
 	p1.Position	 = mul( pos1, Params.Projection );
+	p1.Normal	 = normal1;
 	p1.TexCoord	 = image.xy;
 	p1.LMCoord	 = prt.LightmapRegion.xy + lmszA;
 	p1.ViewPosSZ = float4( pos1.xyz, 1/sz );
 	p1.Color 	 = color;
 	p1.LMFactor	 = 0;
 	p1.Fog		 = ApplyFog( wpos1 );
+	p1.WorldPos	 = wpos1.xyz;
+	p1.Tangent	 = rt;
+	p1.Binormal	 = up;
 	
 	p2.Position	 = mul( pos2, Params.Projection );
+	p2.Normal	 = normal2;
 	p2.TexCoord	 = image.xw;
 	p2.LMCoord	 = prt.LightmapRegion.xw + lmszA;
 	p2.ViewPosSZ = float4( pos2.xyz, 1/sz );
 	p2.Color 	 = color;
 	p2.LMFactor	 = 0;
 	p2.Fog		 = ApplyFog( wpos2 );
+	p2.WorldPos	 = wpos2.xyz;
+	p2.Tangent	 = rt;
+	p2.Binormal	 = up;
 	
 	p3.Position	 = mul( pos3, Params.Projection );
+	p3.Normal	 = normal3;
 	p3.TexCoord	 = image.zw;
 	p3.LMCoord	 = prt.LightmapRegion.zw + lmszA;
 	p3.ViewPosSZ = float4( pos3.xyz, 1/sz );
 	p3.Color 	 = color;
 	p3.LMFactor	 = 0;
 	p3.Fog		 = ApplyFog( wpos3 );
+	p3.WorldPos	 = wpos3.xyz;
+	p3.Tangent	 = rt;
+	p3.Binormal	 = up;
 	
-	#if defined(DRAW_SOFT) //|| defined(DRAW_HARD)
+	#if defined(DRAW_SOFT)
 	if (prt.Effects==ParticleFX_SoftLit || prt.Effects==ParticleFX_SoftLitShadow) {
-		p0.LMFactor	 = 1;
-		p1.LMFactor	 = 1;
-		p2.LMFactor	 = 1;
-		p3.LMFactor	 = 1;
-	}//*/
+		p0.LMFactor	 = 1;		p1.LMFactor	 = 1;
+		p2.LMFactor	 = 1;		p3.LMFactor	 = 1;
+	}
+	#endif
+	
+	#if defined(DRAW_HARD)
+	if (prt.Effects==ParticleFX_HardLit || prt.Effects==ParticleFX_HardLitShadow) {
+		p0.LMFactor	 = 1;		p1.LMFactor	 = 1;
+		p2.LMFactor	 = 1;		p3.LMFactor	 = 1;
+	}
 	#endif
 	
 	#ifdef DRAW_SHADOW
@@ -390,38 +426,52 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 		// TODO : profile soft particles clipping!
 		//	May be using depth buffer instead? (copy required)
 		// if (depth < vpos.z) {
-		// clip(-1);
+		// 	clip(-1);
 		// }
 		float softFactor	=	saturate( (sceneZ - prtZ) * input.ViewPosSZ.w );
 	#endif
 
 	#ifdef DRAW_SOFT
 		float4 color	=	Texture.Sample( Sampler, input.TexCoord ) * input.Color;
-		//	saves about 5%-10% of rasterizer time:
-		//clip( color.a < 0.001f ? -1:1 );
-
-		float3 light		=	(input.LMFactor > 0.5f) ? LightMap.Sample( Sampler, input.LMCoord ).rgb : 1;
+		float3 light	=	(input.LMFactor > 0.5f) ? LightMap.Sample( Sampler, input.LMCoord ).rgb : 1;
 		
-		color.rgba *= softFactor;
-		color.rgb  *= light.rgb;
+		color.rgba 		*= 	softFactor;
+		color.rgb  		*= 	light.rgb;
 		
-		color.rgb	=	lerp( color.rgb, Params.FogColor, input.Fog );
+		color.rgb		=	lerp( color.rgb, Params.FogColor, input.Fog );
 		
 		return color;
 	#endif
 	
 	
 	#ifdef DRAW_HARD
-		float4 	color	=	Texture.Sample( Sampler, input.TexCoord );
+		float4 	normalAlpha	=	pow(Texture.Sample( Sampler, input.TexCoord ), 1/2.2);
+		float3	normal		=	normalize(normalAlpha.xyz * 2 - 1);
+		float	alpha		=	normalAlpha.w;
 				
-		// !!!!! APPLY HARD BASIS LIGHT !!!!! //
+		float3	lighting	=	0;
 		
-		color.rgb	*=	input.Color.rgb;
-		color.rgb	=	lerp( color.rgb, Params.FogColor, input.Fog );
+		float3x3 tbnToWorld	= float3x3(
+				input.Tangent.x,	input.Tangent.y,	input.Tangent.z,	
+				input.Binormal.x,	input.Binormal.y,	input.Binormal.z,	
+				input.Normal.x,		input.Normal.y,		input.Normal.z		
+			);
+			
+		float3 	worldNormal = 	normalize( mul( normal, tbnToWorld ).xyz );
 		
-		clip( color.a - ( 1 - input.Color.a ) );
+		[branch]
+		if (input.LMFactor > 0.5f) {
+			lighting	=	ComputeClusteredLighting( input.WorldPos.xyz, worldNormal );
+		} else {
+			lighting	=	1;
+		}
 		
-		return color;
+		float3 color	=	input.Color.rgb * lighting;
+		color.rgb		=	lerp( color.rgb, Params.FogColor, input.Fog );
+		
+		clip( alpha - ( 1 - input.Color.a ) );
+		
+		return float4(color, 1);
 	#endif
 	
 	#ifdef DRAW_DUDV
@@ -449,12 +499,13 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 	
 	#ifdef DRAW_LIGHT
 		float3 lighting = 0;
-		int count = 10;
+		int count = 8;
+		float sz = input.ViewPosSZ.w;
 		
 		for (int i=0; i<count; i++) {
-			float 		t	=	(i / (float)count) - 0.5f;
+			float 		t	=	(((i / (float)count)*2-1) * sz) * 0.5 + 0.5;
 			float3 		pos = 	input.ViewPosSZ.xyz + t * Params.CameraForward.xyz * input.ViewPosSZ.w;
-			lighting 		+= 	ComputeClusteredLighting( pos ) / count;
+			lighting 		+= 	ComputeClusteredLighting( pos, normalize(input.Normal) ) / count;
 		}
 		return float4(lighting,1);
 	#endif

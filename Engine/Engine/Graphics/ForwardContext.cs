@@ -7,29 +7,20 @@ using Fusion.Core.Mathematics;
 using Fusion.Drivers.Graphics;
 
 namespace Fusion.Engine.Graphics {
-	class ForwardContext : IRenderContext {
+	abstract class ForwardContext : IRenderContext {
 
-		readonly Camera		camera;
-		readonly HdrFrame	hdrFrame;	 
-		readonly bool		zpass;
+		readonly protected Camera		camera;
+		readonly protected HdrFrame	hdrFrame;	 
 
 
-		public ForwardContext ( Camera camera, HdrFrame hdrFrame, bool zpass )
+		public ForwardContext ( Camera camera, HdrFrame hdrFrame )
 		{
-			this.zpass		=	zpass;
 			this.camera		=	camera;
 			this.hdrFrame	=	hdrFrame;
 		}
 
 
-		public void SetupRenderTargets ( GraphicsDevice device )
-		{
-			if (zpass) {
-				device.SetTargets( hdrFrame.DepthBuffer.Surface );
-			} else {
-				device.SetTargets( hdrFrame.DepthBuffer.Surface, hdrFrame.HdrBuffer.Surface, hdrFrame.FeedbackBuffer.Surface );
-			}
-		}
+		public abstract void SetupRenderTargets ( GraphicsDevice device );
 
 
 		public Matrix GetViewMatrix( StereoEye stereoEye )
@@ -62,10 +53,8 @@ namespace Fusion.Engine.Graphics {
 		}
 
 	
-		public bool RequireShadows {
-			get { 
-				return true; 
-			} 
+		public abstract bool RequireShadows {
+			get;
 		}
 	}
 }

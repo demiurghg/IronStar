@@ -29,6 +29,9 @@ struct PSInput {
 struct GBuffer {
 	float4	hdr		 	: SV_Target0;
 	float4	feedback	: SV_Target1;
+#ifdef TRANSPARENT
+	float4	distort		: SV_Target2;
+#endif	
 };
 
 #include "surface.auto.hlsl"
@@ -63,7 +66,7 @@ Texture2D					EnvLut				:	register(t16);
 StructuredBuffer<LIGHTPROBE> ProbeDataTable		:	register(t17);
 
 #ifdef _UBERSHADER
-$ubershader FORWARD RIGID|SKINNED +ANISOTROPIC
+$ubershader FORWARD RIGID|SKINNED +ANISOTROPIC +TRANSPARENT
 $ubershader SHADOW RIGID|SKINNED
 $ubershader ZPASS RIGID|SKINNED
 $ubershader GBUFFER RIGID|SKINNED
@@ -228,6 +231,7 @@ GBuffer PSMain( PSInput input )
 			input.Normal.x,		input.Normal.y,		input.Normal.z		
 		);
 		
+	float	alpha				=	0.5f;
 	float3	baseColor			=	0.5f;
 	float	roughness			=	0.5f;
 	float3	localNormal			=	float3(0,0,1);
@@ -301,6 +305,7 @@ GBuffer PSMain( PSInput input )
 		#endif
 		
 		baseColor	=	channelC.rgb;
+		alpha		=	channelC.a;
 		localNormal	=	channelN.rgb * 2 - 1;
 		roughness	=	channelS.r;
 		metallic	=	channelS.g;
@@ -314,6 +319,7 @@ GBuffer PSMain( PSInput input )
 		roughness	=	0.5;
 		metallic	=	0;
 		emission	=	0;
+		alpha		=	0.5f;
 	}
 	
 	// output.hdr			=	float4( baseColor, 1 );
@@ -337,25 +343,29 @@ GBuffer PSMain( PSInput input )
 			lighting	=	emission * entityColor + lighting;
 	
 	//---------------------------------
+	//	Apply Fresnel alpha :
+	//---------------------------------
+
+#ifdef TRANSPARENT
+	float3	viewDir		=	normalize(Stage.ViewPos.xyz - input.WorldPos.xyz);
+	float	nDotV		=	max( 0, dot( worldNormal, viewDir ) );
+	float	fresnelF	=	pow( 1-nDotV, 5 );
+	alpha	=	lerp( alpha, 1, fresnelF );
+	
+	float4	viewNormal	=	normalize( mul( float4(worldNormal.xyz,0), Stage.View) );
+	float4	distort		=	float4( viewNormal.xy * 0.5 + 0.5, roughness, 1 );
+	
+	output.distort		=	distort;
+#endif
+	
+	
+	//---------------------------------
 	//	Apply fog :
 	//---------------------------------
 	float	dist	=	distance( input.WorldPos.xyz, Stage.ViewPos.xyz ); 
 	float3	final	=	ApplyFogColor( lighting, Stage.FogAttenuation, dist, Stage.FogColor );
 	
-	//float3	final		=	ApplyGroundFog( lighting, Stage.FogColor, Stage.FogDistanceAttenuation, Stage.FogHeightAttenuation, dist, Stage.ViewPos.xyz, normalize(input.WorldPos.xyz - Stage.ViewPos.xyz) );
-	//float3	final	=	ApplyFogColor( lighting, FogTable, SamplerLinear, Stage.FogDensity, Stage.ViewPos.xyz, input.WorldPos.xyz );
-	// float3	fogCoords	=	float3( 
-								// (input.ProjPos.x / input.ProjPos.w)*( 0.5)+0.5, 
-								// (input.ProjPos.y / input.ProjPos.w)*(-0.5)+0.5, 
-								// 1 - exp(-input.ProjPos.w*0.03)
-							// );
-							
-	// float4	fogColor	=	FogGrid.SampleLevel( SamplerLinear, fogCoords, 0 ).rgba;
-	
-	// //float	fogDensity	=	Stage.FogDensityHeight.x;
-	// float3	final		=	lerp( lighting, fogColor.rgb, fogColor.a );
-	
-	output.hdr			=	float4( final, 1 );
+	output.hdr			=	float4( final, alpha );
 	output.feedback		=	feedback;
 	
 	return output;

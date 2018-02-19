@@ -54,9 +54,11 @@ namespace Fusion.Engine.Graphics {
 			{
 				MaxMipLevel = 0;
 				Region = new RectangleF(0,0,0,0);
+				AverageColor = Color.Gray;
+				Transparent = false;
 			}
 
-			public SegmentInfo ( int x, int y, int w, int h ) 
+			public SegmentInfo ( int x, int y, int w, int h, Color color, bool transparent ) 
 			{
 				var fx		=   x / (float)VTConfig.TextureSize;
 				var fy		=   y / (float)VTConfig.TextureSize;
@@ -64,10 +66,14 @@ namespace Fusion.Engine.Graphics {
 				var fh		=   h / (float)VTConfig.TextureSize;
 				Region		=	new RectangleF( fx, fy, fw, fh );
 				MaxMipLevel	=	MathUtil.LogBase2( w / VTConfig.PageSize );
+				Transparent	=	transparent;
+				AverageColor=	color;
 			}
 
 			public readonly RectangleF Region;
 			public readonly int MaxMipLevel;
+			public bool Transparent;
+			public Color AverageColor;
 		}
 
 
@@ -99,8 +105,10 @@ namespace Fusion.Engine.Graphics {
 					var y       =   reader.ReadInt32();
 					var w       =   reader.ReadInt32();
 					var h       =   reader.ReadInt32();
+					var t		=	reader.ReadBoolean();
+					var c		=	reader.Read<Color>();
 
-					textures.Add( name, new SegmentInfo( x, y, w, h ) );
+					textures.Add( name, new SegmentInfo( x, y, w, h, c, t ) );
 				}
 
 			}

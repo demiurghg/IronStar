@@ -24,15 +24,23 @@ namespace Fusion.Engine.Graphics {
 		public RenderTarget2D	FinalColor			;	
 		public RenderTarget2D	TempColor			;
 
+		public RenderTarget2D	FinalHdrImage		;
+
 		public RenderTarget2D	HdrBuffer			;	
-		public RenderTarget2D	LightAccumulator	;
 		public DepthStencil2D	DepthBuffer			;	
+		public RenderTarget2D	HdrBufferGlass		;	
+		public RenderTarget2D	DistortionGlass		;	
+		public DepthStencil2D	DepthBufferGlass	;
+
+		#warning Remove GBuffer0, GBuffer1	
 		public RenderTarget2D	GBuffer0			;
 		public RenderTarget2D	GBuffer1			;
 		public RenderTarget2D	Normals				;	
 		public RenderTarget2D	AOBuffer			;
 		public RenderTarget2D	FeedbackBuffer		;
 
+		public RenderTarget2D	SoftParticlesFront	;
+		public RenderTarget2D	SoftParticlesBack	;
 		public RenderTarget2D	DistortionBuffer	;
 
 		public RenderTarget2D	Bloom0				;
@@ -70,9 +78,13 @@ namespace Fusion.Engine.Graphics {
 			FinalColor			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, false );
 			TempColor			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, false );
 
-			HdrBuffer			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width,		height,		false, false );
-			LightAccumulator	=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width,		height,		false, true );
+			FinalHdrImage		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width,		height,		false, false );
+
+			HdrBuffer			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width,		height,		true,  false );
 			DepthBuffer			=	new DepthStencil2D( game.GraphicsDevice, DepthFormat.D24S8,		width,		height,		1 );
+			HdrBufferGlass		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width,		height,		true,  false );
+			DistortionGlass		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, false );
+			DepthBufferGlass	=	new DepthStencil2D( game.GraphicsDevice, DepthFormat.D24S8,		width,		height,		1 );
 			GBuffer0			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8_sRGB,width,		height,		false, false );
 			GBuffer1			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, false );
 			Normals				=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, false );
@@ -80,6 +92,8 @@ namespace Fusion.Engine.Graphics {
 			FeedbackBuffer		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgb10A2,	width,		height,		false, false );
 
 			DistortionBuffer	=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, false );
+			SoftParticlesFront	=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width,		height,		false, false );
+			SoftParticlesBack	=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width,		height,		false, false );
 
 			Bloom0				=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	bloomWidth,	bloomHeight,true, false );
 			Bloom1				=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	bloomWidth,	bloomHeight,true, true );
@@ -105,8 +119,28 @@ namespace Fusion.Engine.Graphics {
 		public void Clear ()
 		{
 			var device = HdrBuffer.GraphicsDevice;
-			device.Clear( FeedbackBuffer.Surface, Color4.Black );
+
+			device.Clear( DepthBuffer.Surface,		1, 0 );
+			device.Clear( HdrBuffer.Surface,		Color4.Black );
+
+			device.Clear( FeedbackBuffer.Surface,	Color4.Black );
+
 			device.Clear( DistortionBuffer.Surface, Color4.Zero );
+			device.Clear( HdrBufferGlass.Surface,	Color4.Zero );
+			device.Clear( DistortionGlass.Surface,	new Color4(0.5f, 0.5f, 0, 0) );
+
+			device.Clear( FeedbackBufferRB.Surface,	Color4.Zero );
+			device.Clear( FeedbackBuffer.Surface,	Color4.Zero );
+
+		}
+
+
+
+		public void CopySolidDepthToTransparent ()
+		{
+			var device = HdrBuffer.GraphicsDevice;
+
+			//device.Gr
 		}
 
 
@@ -127,15 +161,20 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref FinalColor			 );
 				SafeDispose( ref TempColor			 );
 
+				SafeDispose( ref FinalHdrImage		 );
+
 				SafeDispose( ref HdrBuffer			 );
-				SafeDispose( ref LightAccumulator	 );
 				SafeDispose( ref DepthBuffer		 );
+				SafeDispose( ref HdrBufferGlass		 );
+				SafeDispose( ref DepthBufferGlass	 );
 				SafeDispose( ref GBuffer0			 );
 				SafeDispose( ref GBuffer1			 );
 				SafeDispose( ref Normals			 );
 				SafeDispose( ref AOBuffer			 );
 				SafeDispose( ref FeedbackBuffer		 );
 
+				SafeDispose( ref SoftParticlesFront	 );
+				SafeDispose( ref SoftParticlesBack	 );
 				SafeDispose( ref DistortionBuffer	 );
 
 				SafeDispose( ref Bloom0				 );

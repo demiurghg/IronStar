@@ -2,8 +2,8 @@
 <Map xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Environment>
     <Gravity>16</Gravity>
-    <SkyTrubidity>2</SkyTrubidity>
-    <SunPosition X="1" Y="2" Z="2" />
+    <SkyTrubidity>3</SkyTrubidity>
+    <SunPosition X="1" Y="0.5" Z="2" />
     <SunIntensity>40</SunIntensity>
     <FogDistance>5000</FogDistance>
     <FogHeight>-0.05</FogHeight>
@@ -242,7 +242,7 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-3.25" Y="2.125" Z="-7.375" />
+      <Position X="-12.625" Y="3.375" Z="9.125" />
       <Rotation X="-0.3852276" Y="-0.590767562" Z="0.594193459" W="-0.386687845" />
       <Scaling>1</Scaling>
       <Factory xsi:type="ProxyFactory">
@@ -546,7 +546,7 @@
     <MapNode xsi:type="MapModel">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="1.25" Y="3.5" Z="0.375" />
+      <Position X="1.25" Y="3.5" Z="3.5" />
       <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
       <Scaling>4</Scaling>
       <ScenePath>scenes\box.fbx</ScenePath>
@@ -639,7 +639,7 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-0.75" Y="2.125" Z="-7.375" />
+      <Position X="-0.750000358" Y="2.12455988" Z="-7.37499762" />
       <Rotation X="-0.3852276" Y="-0.590767562" Z="0.594193459" W="-0.386687845" />
       <Scaling>1</Scaling>
       <Factory xsi:type="ProxyFactory">

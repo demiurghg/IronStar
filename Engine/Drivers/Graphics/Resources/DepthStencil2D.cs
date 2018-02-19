@@ -124,6 +124,25 @@ namespace Fusion.Drivers.Graphics {
 
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="targetDepthBuffer"></param>
+		public void CopyDepthValuesTo ( DepthStencil2D targetDepthBuffer )
+		{
+			if (this.Width!=targetDepthBuffer.Width) {
+				throw new ArgumentException("CopyDepthValuesTo: source width and destination width are not equal");
+			}
+
+			if (this.Height!=targetDepthBuffer.Height) {
+				throw new ArgumentException("CopyDepthValuesTo: source height and destination height are not equal");
+			}
+
+			device.DeviceContext.CopyResource( this.tex2D, targetDepthBuffer.tex2D );
+		}
+
+
+
+		/// <summary>
 		/// Disposes
 		/// </summary>
 		protected override void Dispose ( bool disposing )

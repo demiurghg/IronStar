@@ -1,5 +1,5 @@
 [General]
-Transparent = false
+Transparent = true
 
 [Textures]
 BaseColor = test\testGold_BaseColor.png

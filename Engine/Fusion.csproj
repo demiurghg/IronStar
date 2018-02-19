@@ -209,6 +209,9 @@
     <Compile Include="Engine\Graphics\Effects\FogSettings.cs" />
     <Compile Include="Engine\Graphics\Effects\PoissonDiscGenerator.cs" />
     <Compile Include="Engine\Graphics\Effects\Fog.cs" />
+    <Compile Include="Engine\Graphics\ForwardTransparentContext.cs" />
+    <Compile Include="Engine\Graphics\ForwardSolidContext.cs" />
+    <Compile Include="Engine\Graphics\ForwardZPassContext.cs" />
     <Compile Include="Engine\Graphics\ForwardContext.cs" />
     <Compile Include="Engine\Graphics\IRenderContext.cs" />
     <Compile Include="Engine\Graphics\Lights\Extents.cs" />

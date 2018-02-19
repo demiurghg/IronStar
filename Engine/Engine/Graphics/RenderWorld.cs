@@ -367,23 +367,6 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		void ClearBuffers ( HdrFrame frame )
-		{
-			Game.GraphicsDevice.Clear( frame.GBuffer0.Surface,			Color4.Black );
-			Game.GraphicsDevice.Clear( frame.GBuffer1.Surface,			Color4.Black );
-
-			Game.GraphicsDevice.Clear( frame.FeedbackBufferRB.Surface,	Color4.Zero );
-
-			Game.GraphicsDevice.Clear( frame.FeedbackBuffer.Surface,	Color4.Zero );
-
-			Game.GraphicsDevice.Clear( frame.DepthBuffer.Surface,		1, 0 );
-			Game.GraphicsDevice.Clear( frame.HdrBuffer.Surface,			Color4.Black );
-		}
-
-
 
 		/// <summary>
 		/// 
@@ -393,7 +376,7 @@ namespace Fusion.Engine.Graphics {
 		void RenderHdrScene ( GameTime gameTime, StereoEye stereoEye, Viewport viewport, RenderTargetSurface targetSurface )
 		{
 			//	clear g-buffer and hdr-buffers:
-			ClearBuffers( viewHdrFrame );
+			viewHdrFrame.Clear();
 
 			//	single pass for stereo rendering :
 			if (stereoEye!=StereoEye.Right) {
@@ -422,28 +405,35 @@ namespace Fusion.Engine.Graphics {
 				rs.LightManager.ShadowMap.RenderParticleShadows( gameTime, Camera, rs, this, LightSet );
 			}
 
-			//	Render GI :
-			//rs.Irs.CollectSurfels( Instances );
-			//rs.Irs.RenderIRS( Camera, Instances, LightSet );
-
-			viewHdrFrame.Clear();
-
 			//	Z-pass :
 			rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
 
 			//	Ambient occlusion :
 			rs.SsaoFilter.Render( stereoEye, Camera, viewHdrFrame );
 
+			//------------------------------------------------------------
 			//	Forward+
-			rs.SceneRenderer.RenderForward( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
+			rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera, viewHdrFrame, this );
 
-			//	render sky :
 			rs.Sky.Render( Camera, stereoEye, viewHdrFrame, SkySettings );
 			rs.Sky.RenderFogTable( SkySettings );
 
-			//	Render particles :
 			ParticleSystem.Render( gameTime, Camera, stereoEye, viewHdrFrame );
 
+				var hdrFrame = viewHdrFrame;
+				var filter	 = rs.Filter;
+				filter.StretchRect( hdrFrame.Bloom0.Surface, hdrFrame.HdrBuffer, SamplerState.LinearClamp );
+				hdrFrame.Bloom0.BuildMipmaps();
+
+				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 0 );
+				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 1 );
+				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 2 );
+				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 3 );
+
+			rs.SceneRenderer.RenderForwardTransparent( gameTime, stereoEye, Camera, viewHdrFrame, this );
+			rs.SceneRenderer.GatherVTFeedbackAndUpdate( gameTime, viewHdrFrame );
+
+			//------------------------------------------------------------
 
 			switch (rs.ShowGBuffer) {
 				case 1  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.Normals ); return;
@@ -467,17 +457,10 @@ namespace Fusion.Engine.Graphics {
 				return;
 			}
 
-			//	render fog :
-			//rs.Fog.RenderFog( Camera, LightSet, FogSettings );
 
-			//	render lights :
-			//rs.LightRenderer.RenderLighting( stereoEye, Camera, viewHdrFrame, this, Radiance );
-
-			//	render "solid" DOF :
-			rs.DofFilter.Render( gameTime, viewHdrFrame.LightAccumulator, viewHdrFrame.HdrBuffer, viewHdrFrame.DepthBuffer, this );
-
-			//	apply tonemapping and bloom :
-			rs.HdrFilter.Render( gameTime, HdrSettings, this.viewHdrFrame );
+			//	compose, tonemap, bloob and color grade :
+			rs.HdrFilter.ComposeHdrImage( viewHdrFrame );
+			rs.HdrFilter.TonemapHdrImage( gameTime, HdrSettings, viewHdrFrame );
 
 
 			//	apply FXAA

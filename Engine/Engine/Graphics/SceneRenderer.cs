@@ -105,6 +105,10 @@ namespace Fusion.Engine.Graphics {
 			if (flags.HasFlag( SurfaceFlags.SHADOW )) {
 				ps.RasterizerState = RasterizerState.CullNone;
 			}
+
+			if (flags.HasFlag( SurfaceFlags.TRANSPARENT)) {
+				ps.BlendState = BlendState.Opaque;
+			}
 		}
 
 
@@ -267,9 +271,13 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		bool SetupSubset ( VirtualTexture.SegmentInfo segmentInfo )
+		bool SetupSubset ( ref VirtualTexture.SegmentInfo segmentInfo, bool transparent )
 		{
 			var region = segmentInfo.Region;
+
+			if (segmentInfo.Transparent!=transparent) {
+				return false;
+			}
 
 			cbDataSubset.Rectangle	=	new Vector4( region.X, region.Y, region.Width, region.Height );
 			cbDataSubset.MaxMip		=	segmentInfo.MaxMipLevel;
@@ -290,12 +298,12 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="diffuse"></param>
 		/// <param name="specular"></param>
 		/// <param name="normals"></param>
-		internal void RenderForward ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderWorld rw, bool staticOnly )
+		internal void RenderForwardSolid ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderWorld rw )
 		{		
-			using ( new PixEvent("RenderForward") ) {
+			using ( new PixEvent("RenderForwardSolid") ) {
 
 				var instances		=	rw.Instances;
-				var context			=	new ForwardContext( camera, frame, false );
+				var context			=	new ForwardSolidContext( camera, frame );
 
 				if ( SetupStage( stereoEye, frame, context ) ) {
 
@@ -310,23 +318,69 @@ namespace Fusion.Engine.Graphics {
 								var vt		=	rw.VirtualTexture;
 								var segment	=	vt.GetTextureSegmentInfo( subset.Name );
 
-								if (SetupSubset( segment )) {
+								if (SetupSubset( ref segment, false )) {
 									device.DrawIndexed( subset.PrimitiveCount*3, subset.StartPrimitive*3, 0 );
 								}
 							}
 						}
 					}
 				}
+			}
+		}
 
-				
-				//
-				//	downsample feedback buffer and readback it to virtual texture :
-				//
-				rs.Filter.StretchRect( frame.FeedbackBufferRB.Surface, frame.FeedbackBuffer, SamplerState.PointClamp );
 
-				var feedbackBuffer = new VTAddress[ HdrFrame.FeedbackBufferWidth * HdrFrame.FeedbackBufferHeight ];
-				frame.FeedbackBufferRB.GetFeedback( feedbackBuffer );
-				rs.VTSystem.Update( feedbackBuffer, gameTime );
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="frame"></param>
+		internal void GatherVTFeedbackAndUpdate ( GameTime gameTime, HdrFrame frame )
+		{
+			rs.Filter.StretchRect( frame.FeedbackBufferRB.Surface, frame.FeedbackBuffer, SamplerState.PointClamp );
+
+			var feedbackBuffer = new VTAddress[ HdrFrame.FeedbackBufferWidth * HdrFrame.FeedbackBufferHeight ];
+			frame.FeedbackBufferRB.GetFeedback( feedbackBuffer );
+			rs.VTSystem.Update( feedbackBuffer, gameTime );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="camera"></param>
+		/// <param name="depthBuffer"></param>
+		/// <param name="hdrTarget"></param>
+		/// <param name="diffuse"></param>
+		/// <param name="specular"></param>
+		/// <param name="normals"></param>
+		internal void RenderForwardTransparent ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderWorld rw )
+		{		
+			using ( new PixEvent("RenderForwardTransparent") ) {
+
+				var instances		=	rw.Instances;
+				var context			=	new ForwardTransparentContext( camera, frame );
+
+				if ( SetupStage( stereoEye, frame, context ) ) {
+
+					foreach ( var instance in instances ) {
+
+						if ( SetupInstance( SurfaceFlags.FORWARD|SurfaceFlags.TRANSPARENT, instance ) ) {
+
+							device.SetupVertexInput( instance.vb, instance.ib );
+
+							foreach ( var subset in instance.Subsets ) {
+
+								var vt		=	rw.VirtualTexture;
+								var segment	=	vt.GetTextureSegmentInfo( subset.Name );
+
+								if (SetupSubset( ref segment, true )) {
+									device.DrawIndexed( subset.PrimitiveCount*3, subset.StartPrimitive*3, 0 );
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -346,7 +400,7 @@ namespace Fusion.Engine.Graphics {
 			using ( new PixEvent("RenderZPass") ) {
 
 				var instances		=	rw.Instances;
-				var context			=	new ForwardContext( camera, frame, true );
+				var context			=	new ForwardZPassContext( camera, frame );
 
 				if ( SetupStage( stereoEye, frame, context ) ) {
 
@@ -361,7 +415,7 @@ namespace Fusion.Engine.Graphics {
 								var vt		=	rw.VirtualTexture;
 								var segment	=	vt.GetTextureSegmentInfo( subset.Name );
 
-								if (SetupSubset( segment )) {
+								if (SetupSubset( ref segment, false )) {
 									device.DrawIndexed( subset.PrimitiveCount*3, subset.StartPrimitive*3, 0 );
 								}
 							}
@@ -414,7 +468,7 @@ namespace Fusion.Engine.Graphics {
 								var vt		=	rw.VirtualTexture;
 								var segment	=	vt.GetTextureSegmentInfo( subset.Name );
 
-								if (SetupSubset( segment )) {
+								if (SetupSubset( ref segment, false )) {
 									device.DrawIndexed( subset.PrimitiveCount*3, subset.StartPrimitive*3, 0 );
 								}
 							}

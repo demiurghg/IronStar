@@ -55,6 +55,8 @@ namespace Fusion.Engine.Graphics {
 			LINEAR			=	0x004, 
 			REINHARD		=	0x008,
 			FILMIC			=	0x010,
+
+			COMPOSITION		=	0x100,
 		}
 
 		/// <summary>
@@ -175,13 +177,54 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+							
+		
+	 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="hdrFrame"></param>
+		public void ComposeHdrImage ( HdrFrame hdrFrame )
+		{
+			var device	=	Game.GraphicsDevice;
+			var filter	=	Game.RenderSystem.Filter;
+
+			device.ResetStates();
+
+			using ( new PixEvent("HDR Composition") ) {
+
+				//
+				//	Tonemap and compose :
+				//
+				device.SetTargets( null, hdrFrame.FinalHdrImage );
+
+				device.PixelShaderSamplers[0]	=	SamplerState.LinearClamp;
+
+				device.PixelShaderResources[0]	=	hdrFrame.HdrBuffer;
+				device.PixelShaderResources[1]	=	hdrFrame.HdrBufferGlass;
+				device.PixelShaderResources[2]	=	hdrFrame.DistortionGlass;
+				device.PixelShaderResources[3]	=	hdrFrame.DistortionBuffer;
+				device.PixelShaderResources[4]	=	hdrFrame.SoftParticlesFront;
+				device.PixelShaderResources[5]	=	hdrFrame.SoftParticlesBack;
+				device.PixelShaderResources[6]	=	hdrFrame.Bloom0;
+
+				device.PipelineState			=	factory[ (int)(Flags.COMPOSITION) ];
+				
+				device.Draw( 3, 0 );
+			
+				device.ResetStates();
+			}
+		}
+
+
+
 
 		/// <summary>
 		/// Performs luminance measurement, tonemapping, applies bloom.
 		/// </summary>
 		/// <param name="target">LDR target.</param>
 		/// <param name="hdrImage">HDR source image.</param>
-		public void Render ( GameTime gameTime, HdrSettings settings, HdrFrame hdrFrame )
+		public void TonemapHdrImage ( GameTime gameTime, HdrSettings settings, HdrFrame hdrFrame )
 		{
 			var device	=	Game.GraphicsDevice;
 			var filter	=	Game.RenderSystem.Filter;
@@ -191,13 +234,13 @@ namespace Fusion.Engine.Graphics {
 				//
 				//	Rough downsampling of source HDR-image :
 				//
-				filter.StretchRect( averageLum.Surface, hdrFrame.HdrBuffer, SamplerState.PointClamp );
+				filter.StretchRect( averageLum.Surface, hdrFrame.FinalHdrImage, SamplerState.PointClamp );
 				averageLum.BuildMipmaps();
 
 				//
 				//	Make bloom :
 				//
-				filter.StretchRect( hdrFrame.Bloom0.Surface, hdrFrame.HdrBuffer, SamplerState.LinearClamp );
+				filter.StretchRect( hdrFrame.Bloom0.Surface, hdrFrame.FinalHdrImage, SamplerState.LinearClamp );
 				hdrFrame.Bloom0.BuildMipmaps();
 
 				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, settings.GaussBlurSigma, 0 );
@@ -242,13 +285,15 @@ namespace Fusion.Engine.Graphics {
 				//
 				device.SetTargets( null, hdrFrame.FinalColor );
 
-				device.PixelShaderResources[0]	=	hdrFrame.HdrBuffer;// averageLum;
+				device.PixelShaderResources[0]	=	hdrFrame.FinalHdrImage;// averageLum;
 				device.PixelShaderResources[1]	=	hdrFrame.MeasuredNew;// averageLum;
 				device.PixelShaderResources[2]	=	hdrFrame.Bloom0;// averageLum;
 				device.PixelShaderResources[3]	=	settings.DirtMask1==null ? whiteTex.Srv : settings.DirtMask1.Srv;
 				device.PixelShaderResources[4]	=	settings.DirtMask2==null ? whiteTex.Srv : settings.DirtMask2.Srv;
 				device.PixelShaderResources[5]	=	noiseTex.Srv;
 				device.PixelShaderResources[6]	=	hdrFrame.DistortionBuffer;
+				device.PixelShaderResources[7]	=	hdrFrame.HdrBufferGlass;
+				device.PixelShaderResources[8]	=	hdrFrame.DistortionGlass;
 				device.PixelShaderSamplers[0]	=	SamplerState.LinearClamp;
 
 				Flags op = Flags.LINEAR;

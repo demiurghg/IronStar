@@ -25,6 +25,7 @@ namespace Fusion.Engine.Graphics {
 			ZPASS		=	1 << 6,
 			ANISOTROPIC	=	1 << 7,
 			GBUFFER		=	1 << 8,
+			TRANSPARENT	=	1 << 9,
 		}
 
 

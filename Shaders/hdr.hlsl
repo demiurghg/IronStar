@@ -2,6 +2,7 @@
 
 #if 0
 $ubershader		(TONEMAPPING LINEAR|REINHARD|FILMIC)|MEASURE_ADAPT
+$ubershader		COMPOSITION
 #endif
 
 struct PARAMS {
@@ -17,13 +18,6 @@ struct PARAMS {
 	float	Minimum;
 };
 
-Texture2D		SourceHdrImage 		: register(t0);
-Texture2D		MasuredLuminance	: register(t1);
-Texture2D		BloomTexture		: register(t2);
-Texture2D		BloomMask1			: register(t3);
-Texture2D		BloomMask2			: register(t4);
-Texture2D		NoiseTexture		: register(t5);
-Texture2D		DistortionMap		: register(t6);
 SamplerState	LinearSampler		: register(s0);
 	
 cbuffer PARAMS 		: register(b0) { 
@@ -49,6 +43,10 @@ float2 FSQuadUV ( uint VertexID )
 	Assumed 128x128 input image.
 -----------------------------------------------------------------------------*/
 #if MEASURE_ADAPT
+
+Texture2D	SourceHdrImage 		: register(t0);
+Texture2D	MasuredLuminance	: register(t1);
+
 
 float4 VSMain(uint VertexID : SV_VertexID) : SV_POSITION
 {
@@ -78,10 +76,75 @@ float4 PSMain(float4 position : SV_POSITION) : SV_Target
 
 
 /*-----------------------------------------------------------------------------
-	Tonemapping and Final Composing :
+	Frame composition
+-----------------------------------------------------------------------------*/
+
+#ifdef COMPOSITION
+
+Texture2D		HdrImageSolid 		: register(t0);
+Texture2D		HdrImageGlass		: register(t1);
+Texture2D		DistortionGlass		: register(t2);
+Texture2D		DistortionParticles	: register(t3);
+Texture2D		SoftParticlesFront	: register(t4);
+Texture2D		SoftParticlesBack	: register(t5);
+Texture2D		TurbidBackground	: register(t6);
+
+
+float4 VSMain(uint VertexID : SV_VertexID, out float2 uv : TEXCOORD) : SV_POSITION
+{
+	uv = FSQuadUV( VertexID );
+	return FSQuad( VertexID );
+}
+
+
+float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
+{
+	uint width;
+	uint height;
+	uint xpos = position.x;
+	uint ypos = position.y;
+	HdrImageSolid.GetDimensions( width, height );
+
+	//
+	//	Read images :
+	//
+	float4	dudvPrtSrc	=	DistortionParticles.SampleLevel( LinearSampler, uv, 0 ).rgba;
+	float2	dudvPrt		=	(dudvPrtSrc.xy - dudvPrtSrc.zw) * 0.02;
+	
+	//	sample distortion :
+	float4	distortGlass	=	DistortionGlass	.SampleLevel( LinearSampler, uv, 0 ).rgba;
+			distortGlass.xy	=	(distortGlass.xy * 2 - 1) * float2( 0.05f, -0.05f );
+
+	float4	hdrImageGlass	=	HdrImageGlass	.SampleLevel( LinearSampler, uv, 0 ).rgba;
+			
+	float	blurFactor		=	lerp(distortGlass.z, hdrImageGlass.a, 0.5f);
+	
+	float3	hdrImageSolid	=	HdrImageSolid	.SampleLevel( LinearSampler, uv + distortGlass.xy, 0 ).rgb;
+	float3	turbidBack		=	TurbidBackground.SampleLevel( LinearSampler, uv + distortGlass.xy, blurFactor*4 ).rgb;
+	
+	hdrImageSolid			=	lerp( hdrImageSolid, turbidBack, saturate(blurFactor*8) );
+	
+	float3	hdrImageFinal	=	lerp( hdrImageSolid.rgb, hdrImageGlass.rgb, hdrImageGlass.a );
+	
+	return float4( hdrImageFinal * float3(3,1,1), 1 );
+}
+
+
+#endif
+
+/*-----------------------------------------------------------------------------
+	Tonemapping and final color grading :
 -----------------------------------------------------------------------------*/
 
 #ifdef TONEMAPPING
+
+Texture2D		FinalHdrImage 		: register(t0);
+Texture2D		MasuredLuminance	: register(t1);
+Texture2D		BloomTexture		: register(t2);
+Texture2D		BloomMask1			: register(t3);
+Texture2D		BloomMask2			: register(t4);
+Texture2D		NoiseTexture		: register(t5);
+
 
 float4 VSMain(uint VertexID : SV_VertexID, out float2 uv : TEXCOORD) : SV_POSITION
 {
@@ -134,18 +197,12 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	uint height;
 	uint xpos = position.x;
 	uint ypos = position.y;
-	SourceHdrImage.GetDimensions( width, height );
+	FinalHdrImage.GetDimensions( width, height );
 
 	//
 	//	Read images :
 	//
-	float4	dudvSrc		=	DistortionMap	.SampleLevel( LinearSampler, uv, 0 ).rgba;
-	
-	float2	dudv		=	dudvSrc.xy - dudvSrc.zw;
-	
-	uv	+=	dudv * 0.02;
-	
-	float3	hdrImage	=	SourceHdrImage	.SampleLevel( LinearSampler, uv, 0 ).rgb;
+	float3	hdrImage	=	FinalHdrImage	.SampleLevel( LinearSampler, uv, 0 ).rgb;
 	float3	bloom0		=	BloomTexture  	.SampleLevel( LinearSampler, uv, 0 ).rgb;
 	float3	bloom1		=	BloomTexture  	.SampleLevel( LinearSampler, uv, 1 ).rgb;
 	float3	bloom2		=	BloomTexture  	.SampleLevel( LinearSampler, uv, 2 ).rgb;

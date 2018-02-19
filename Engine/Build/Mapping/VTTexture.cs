@@ -146,6 +146,8 @@ namespace Fusion.Build.Mapping {
 			writer.Write( vtex.TexelOffsetY );
 			writer.Write( vtex.Width );
 			writer.Write( vtex.Height );
+			writer.Write( vtex.Transparent );
+			writer.Write( Color.Gray );
 		}
 
 

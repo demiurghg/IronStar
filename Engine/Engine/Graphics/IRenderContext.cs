@@ -9,16 +9,19 @@ using Fusion.Drivers.Graphics;
 namespace Fusion.Engine.Graphics {
 	interface IRenderContext {
 
-		void		SetupRenderTargets ( GraphicsDevice device );
-		
-		Matrix		GetViewMatrix( StereoEye stereoEye );
-		Matrix		GetProjectionMatrix( StereoEye stereoEye );
-		Vector3		GetViewPosition( StereoEye stereoEye );
+		void			SetupRenderTargets ( GraphicsDevice device );
 
-		float		DepthBias { get; }
-		float		SlopeBias { get; }
-		float		FarDistance { get; }
-		Viewport	Viewport { get; }
-		bool		RequireShadows { get; }
+		ShaderResource	GetAOBuffer ();
+		
+		Matrix			GetViewMatrix( StereoEye stereoEye );
+		Matrix			GetProjectionMatrix( StereoEye stereoEye );
+		Vector3			GetViewPosition( StereoEye stereoEye );
+
+		float			DepthBias { get; }
+		float			SlopeBias { get; }
+		float			FarDistance { get; }
+		Viewport		Viewport { get; }
+		bool			RequireShadows { get; }
+		bool			Transparent { get; }
 	}
 }

@@ -141,7 +141,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="vpWidth"></param>
 		/// <param name="vpHeight"></param>
 		[MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
-		public bool SetupStage ( StereoEye stereoEye, HdrFrame hdrFrame, IRenderContext context )
+		public bool SetupStage ( StereoEye stereoEye, IRenderContext context )
 		{
 			device.ResetStates();
 
@@ -215,7 +215,7 @@ namespace Fusion.Engine.Graphics {
 				device.PixelShaderResources[9]	= rs.RenderWorld.LightSet?.DecalAtlas?.Texture?.Srv;
 				device.PixelShaderResources[10]	= rs.LightManager.ShadowMap.ColorBuffer;
 				device.PixelShaderResources[11]	= rs.LightManager.ShadowMap.ParticleShadow;
-				device.PixelShaderResources[12]	= hdrFrame?.AOBuffer;
+				device.PixelShaderResources[12]	= context.GetAOBuffer();
 			}
 
 			device.PixelShaderResources[13]	=	rs.Sky.SkyCube;
@@ -246,7 +246,7 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		bool SetupInstance ( SurfaceFlags stageFlag, MeshInstance instance )
+		bool SetupInstance ( SurfaceFlags stageFlag, IRenderContext context, MeshInstance instance )
 		{
 			#warning New pipeline state semantic: bool StateFactory.TrySetPipelineState( flags )
 
@@ -256,6 +256,10 @@ namespace Fusion.Engine.Graphics {
 
 			if (aniso && stageFlag==SurfaceFlags.FORWARD) {
 				flag |= (int)SurfaceFlags.ANISOTROPIC;
+			}
+
+			if (context.Transparent) {
+				flag |= (int)SurfaceFlags.TRANSPARENT;
 			}
 
 			device.PipelineState	=	factory[ flag ];
@@ -292,33 +296,30 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="camera"></param>
-		/// <param name="depthBuffer"></param>
-		/// <param name="hdrTarget"></param>
-		/// <param name="diffuse"></param>
-		/// <param name="specular"></param>
-		/// <param name="normals"></param>
-		internal void RenderForwardSolid ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderWorld rw )
-		{		
-			using ( new PixEvent("RenderForwardSolid") ) {
+		/// <param name="gameTime"></param>
+		/// <param name="stereoEye"></param>
+		/// <param name="context"></param>
+		/// <param name="rw"></param>
+		void RenderGeneric ( string eventName, GameTime gameTime, StereoEye stereoEye, SurfaceFlags surfFlags, IRenderContext context, IEnumerable<MeshInstance> instances )
+		{
+			using ( new PixEvent(eventName) ) {
 
-				var instances		=	rw.Instances;
-				var context			=	new ForwardSolidContext( camera, frame );
-
-				if ( SetupStage( stereoEye, frame, context ) ) {
+				var transparent		=	context.Transparent;
+			
+				if ( SetupStage( stereoEye, context ) ) {
 
 					foreach ( var instance in instances ) {
 
-						if ( SetupInstance( SurfaceFlags.FORWARD, instance ) ) {
+						if ( SetupInstance( surfFlags, context, instance ) ) {
 
 							device.SetupVertexInput( instance.vb, instance.ib );
 
 							foreach ( var subset in instance.Subsets ) {
 
-								var vt		=	rw.VirtualTexture;
+								var vt		=	rs.RenderWorld.VirtualTexture;
 								var segment	=	vt.GetTextureSegmentInfo( subset.Name );
 
-								if (SetupSubset( ref segment, false )) {
+								if (SetupSubset( ref segment, transparent )) {
 									device.DrawIndexed( subset.PrimitiveCount*3, subset.StartPrimitive*3, 0 );
 								}
 							}
@@ -327,6 +328,7 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 		}
+
 
 
 
@@ -345,137 +347,36 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="camera"></param>
-		/// <param name="depthBuffer"></param>
-		/// <param name="hdrTarget"></param>
-		/// <param name="diffuse"></param>
-		/// <param name="specular"></param>
-		/// <param name="normals"></param>
-		internal void RenderForwardTransparent ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderWorld rw )
-		{		
-			using ( new PixEvent("RenderForwardTransparent") ) {
-
-				var instances		=	rw.Instances;
-				var context			=	new ForwardTransparentContext( camera, frame );
-
-				if ( SetupStage( stereoEye, frame, context ) ) {
-
-					foreach ( var instance in instances ) {
-
-						if ( SetupInstance( SurfaceFlags.FORWARD|SurfaceFlags.TRANSPARENT, instance ) ) {
-
-							device.SetupVertexInput( instance.vb, instance.ib );
-
-							foreach ( var subset in instance.Subsets ) {
-
-								var vt		=	rw.VirtualTexture;
-								var segment	=	vt.GetTextureSegmentInfo( subset.Name );
-
-								if (SetupSubset( ref segment, true )) {
-									device.DrawIndexed( subset.PrimitiveCount*3, subset.StartPrimitive*3, 0 );
-								}
-							}
-						}
-					}
-				}
-			}
+		internal void RenderForwardSolid ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderWorld rw )
+		{	
+			var context	=	new ForwardSolidContext( camera, frame );
+			RenderGeneric("RenderForwardSolid", gameTime, stereoEye, SurfaceFlags.FORWARD, context, rw.Instances );
 		}
 
 
+		internal void RenderForwardTransparent ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderWorld rw )
+		{		
+			var context	=	new ForwardTransparentContext( camera, frame );
+			RenderGeneric("RenderForwardTransparent", gameTime, stereoEye, SurfaceFlags.FORWARD, context, rw.Instances );
+		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="camera"></param>
-		/// <param name="depthBuffer"></param>
-		/// <param name="hdrTarget"></param>
-		/// <param name="diffuse"></param>
-		/// <param name="specular"></param>
-		/// <param name="normals"></param>
+
 		internal void RenderZPass ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderWorld rw, bool staticOnly )
 		{		
-			using ( new PixEvent("RenderZPass") ) {
-
-				var instances		=	rw.Instances;
-				var context			=	new ForwardZPassContext( camera, frame );
-
-				if ( SetupStage( stereoEye, frame, context ) ) {
-
-					foreach ( var instance in instances ) {
-
-						if ( SetupInstance( SurfaceFlags.ZPASS, instance ) ) {
-
-							device.SetupVertexInput( instance.vb, instance.ib );
-
-							foreach ( var subset in instance.Subsets ) {
-
-								var vt		=	rw.VirtualTexture;
-								var segment	=	vt.GetTextureSegmentInfo( subset.Name );
-
-								if (SetupSubset( ref segment, false )) {
-									device.DrawIndexed( subset.PrimitiveCount*3, subset.StartPrimitive*3, 0 );
-								}
-							}
-						}
-					}
-				}
-			}
+			var context	=	new ForwardZPassContext( camera, frame );
+			RenderGeneric("RenderZPass", gameTime, stereoEye, SurfaceFlags.ZPASS, context, rw.Instances );
 		}
 		
 
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="context"></param>
-		internal void RenderShadowMapCascade ( ShadowContext shadowRenderCtxt, IEnumerable<MeshInstance> instances )
+		internal void RenderShadowMap ( ShadowContext shadowContext, IEnumerable<MeshInstance> instances )
 		{
-			using ( new PixEvent("ShadowMap") ) {
-
-				if ( SetupStage( StereoEye.Mono, null, shadowRenderCtxt ) ) {
-				
-					foreach ( var instance in instances ) {
-
-						if (SetupInstance(SurfaceFlags.SHADOW, instance)) {
-
-							device.SetupVertexInput( instance.vb, instance.ib );
-							device.DrawIndexed( instance.indexCount, 0, 0 );
-						}
-					}
-				}
-			}
+			RenderGeneric("ShadowMap", null, StereoEye.Mono, SurfaceFlags.SHADOW, shadowContext, instances );
 		}
-
 
 
 		internal void RenderLightProbeGBuffer ( LightProbeContext context, RenderWorld rw, IEnumerable<MeshInstance> instances )
 		{
-			using ( new PixEvent("LightProbeGBuffer") ) {
-
-				if ( SetupStage( StereoEye.Mono, null, context ) ) {
-
-					foreach ( var instance in instances ) {
-
-						if ( SetupInstance( SurfaceFlags.GBUFFER, instance ) ) {
-
-							device.SetupVertexInput( instance.vb, instance.ib );
-
-							foreach ( var subset in instance.Subsets ) {
-
-								var vt		=	rw.VirtualTexture;
-								var segment	=	vt.GetTextureSegmentInfo( subset.Name );
-
-								if (SetupSubset( ref segment, false )) {
-									device.DrawIndexed( subset.PrimitiveCount*3, subset.StartPrimitive*3, 0 );
-								}
-							}
-						}
-					}
-				}
-			}
+			RenderGeneric("LightProbeGBuffer", null, StereoEye.Mono, SurfaceFlags.GBUFFER, context, instances );
 		}
 	}
 }

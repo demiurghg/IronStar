@@ -24,5 +24,11 @@ namespace Fusion.Engine.Graphics {
 				return true;
 			}
 		}
+	
+		public override bool Transparent {
+			get {
+				return false;
+			}
+		}
 	}
 }

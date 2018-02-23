@@ -67,7 +67,7 @@ StructuredBuffer<LIGHTPROBE> ProbeDataTable		:	register(t17);
 
 #ifdef _UBERSHADER
 $ubershader FORWARD RIGID|SKINNED +ANISOTROPIC +TRANSPARENT
-$ubershader SHADOW RIGID|SKINNED
+$ubershader SHADOW RIGID|SKINNED +TRANSPARENT
 $ubershader ZPASS RIGID|SKINNED
 $ubershader GBUFFER RIGID|SKINNED
 #endif
@@ -372,16 +372,20 @@ GBuffer PSMain( PSInput input )
 }
 #endif
 
-
+#include "dither.fxi"
 
 #ifdef SHADOW
-float4 PSMain( PSInput input ) : SV_TARGET0
+float4 PSMain( PSInput input, float4 vpos : SV_POSITION ) : SV_TARGET0
 {
 	float z		= input.ProjPos.z / Stage.BiasSlopeFar.z;
 
 	float dzdx	 = ddx(z);
 	float dzdy	 = ddy(z);
 	float slope = abs(dzdx) + abs(dzdy);
+	
+	#ifdef TRANSPARENT
+		clip( BayerDitherAlpha4x4( 0.5f, vpos.xy ) );
+	#endif
 
 	return z + Stage.BiasSlopeFar.x + slope * Stage.BiasSlopeFar.y;
 }

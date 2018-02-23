@@ -38,6 +38,10 @@ namespace Fusion.Drivers.Graphics {
 		public static  BlendState	NegMultiply		 { get; private set; }
 		public static  BlendState	AlphaOnly		 { get; private set; }
 
+		public static  BlendState	AlphaBlendOffScreen	 { get; private set; }
+
+		public static  BlendState	WriteMaskRed { get; private set; }
+		public static  BlendState	WriteMaskGreen { get; private set; }
 
 
 		static BlendState()
@@ -52,6 +56,16 @@ namespace Fusion.Drivers.Graphics {
 			Screen				=	Create( ColorChannels.All,	Blend.InvDstColor,	Blend.One			);						
 			Multiply			=	Create( ColorChannels.All,	Blend.Zero,			Blend.SrcColor		);						
 			NegMultiply			=	Create( ColorChannels.All,	Blend.Zero,			Blend.InvSrcColor	);
+
+			AlphaBlendOffScreen	=	Create( ColorChannels.All,	
+										Blend.SrcAlpha,		
+										Blend.InvSrcAlpha,	
+										Blend.One, 
+										Blend.InvSrcAlpha	
+									);
+
+			WriteMaskRed		=	Create( ColorChannels.Red );
+			WriteMaskGreen		=	Create( ColorChannels.Green );
 		}
 
 

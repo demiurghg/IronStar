@@ -46,6 +46,8 @@ namespace Fusion.Engine.Graphics {
 		public RenderTarget2D	Bloom0				;
 		public RenderTarget2D	Bloom1				;
 
+		public RenderTarget2D	HalfDepthBuffer		;
+
 		public RenderTarget2D	TempColorFull0		;
 		public RenderTarget2D	TempColorFull1		;
 
@@ -95,6 +97,8 @@ namespace Fusion.Engine.Graphics {
 			SoftParticlesFront	=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width,		height,		false, false );
 			SoftParticlesBack	=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width,		height,		false, false );
 
+			HalfDepthBuffer		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rg32F,		width/2,	height/2,	false, false );
+
 			Bloom0				=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	bloomWidth,	bloomHeight,true, false );
 			Bloom1				=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	bloomWidth,	bloomHeight,true, true );
 
@@ -127,11 +131,15 @@ namespace Fusion.Engine.Graphics {
 
 			device.Clear( DistortionBuffer.Surface, Color4.Zero );
 			device.Clear( HdrBufferGlass.Surface,	Color4.Zero );
-			device.Clear( DistortionGlass.Surface,	new Color4(0.5f, 0.5f, 0, 0) );
+
+			float half	=	0.5f;
+			device.Clear( DistortionGlass.Surface,	new Color4(half, half, 0, 0) );
 
 			device.Clear( FeedbackBufferRB.Surface,	Color4.Zero );
 			device.Clear( FeedbackBuffer.Surface,	Color4.Zero );
 
+			device.Clear( SoftParticlesBack.Surface,  Color4.Zero );
+			device.Clear( SoftParticlesFront.Surface, Color4.Zero );
 		}
 
 

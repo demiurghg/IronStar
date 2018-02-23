@@ -47,6 +47,9 @@ namespace Fusion.Engine.Graphics
 			FILL_ALPHA_ONE						= 1 << 20,
 			BILATERAL							= 1 << 21,
 			COPY_ALPHA							= 1 << 22,
+			DOWNSAMPLE_DEPTH_RED				= 1 << 23,
+			DOWNSAMPLE_DEPTH_GREEN				= 1 << 24,
+
 
 		}
 
@@ -118,6 +121,14 @@ namespace Fusion.Engine.Graphics
 
 			if (flags==ShaderFlags.FILL_ALPHA_ONE) {
 				ps.BlendState = BlendState.AlphaMaskWrite;
+			}
+
+			if (flags==ShaderFlags.DOWNSAMPLE_DEPTH_RED) {
+				ps.BlendState = BlendState.WriteMaskRed;
+			}
+
+			if (flags==ShaderFlags.DOWNSAMPLE_DEPTH_GREEN) {
+				ps.BlendState = BlendState.WriteMaskGreen;
 			}
 		}
 
@@ -395,6 +406,55 @@ namespace Fusion.Engine.Graphics
 			device.ResetStates();
 		}
 
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="target"></param>
+		/// <param name="source"></param>
+		public void DownsampleDepthRed( RenderTargetSurface target, DepthStencil2D source )
+		{
+			SetDefaultRenderStates();
+
+			using( new PixEvent("DownsampleDepthToRed") ) {
+				
+				SetViewport( target );
+				device.SetTargets( null, target );
+				
+				device.PipelineState			=	factory[ (int)ShaderFlags.DOWNSAMPLE_DEPTH_RED ];
+				device.VertexShaderResources[0] =	source;
+				device.PixelShaderResources[0]	=	source;
+				device.PixelShaderSamplers[0]	=	SamplerState.LinearPointClamp;
+
+				device.Draw( 3, 0 );
+			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="target"></param>
+		/// <param name="source"></param>
+		public void DownsampleDepthGreen( RenderTargetSurface target, DepthStencil2D source )
+		{
+			SetDefaultRenderStates();
+
+			using( new PixEvent("DownsampleDepthToGreen") ) {
+
+				SetViewport( target );
+				device.SetTargets( null, target );
+				
+				device.PipelineState			=	factory[ (int)ShaderFlags.DOWNSAMPLE_DEPTH_GREEN ];
+				device.VertexShaderResources[0] =	source;
+				device.PixelShaderResources[0]	=	source;
+				device.PixelShaderSamplers[0]	=	SamplerState.LinearPointClamp;
+
+				device.Draw( 3, 0 );
+			}
+		}
 
 
 		/// <summary>

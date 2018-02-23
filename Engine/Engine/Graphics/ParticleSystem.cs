@@ -175,9 +175,18 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		internal void Render ( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame viewFrame )
+		internal void RenderHard ( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame viewFrame )
 		{
 			hardStream.RenderHard( gameTime, camera, stereoEye, viewFrame );
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="gameTime"></param>
+		internal void RenderSoft ( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame viewFrame )
+		{
 			softStream.RenderSoft( gameTime, camera, stereoEye, viewFrame );
 			dudvStream.RenderDuDv( gameTime, camera, stereoEye, viewFrame );
 		}

@@ -60,6 +60,12 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		public ShaderResource GetAOBuffer ()
+		{
+			return null;
+		}
+
+
 		public Matrix GetViewMatrix( StereoEye stereoEye )
 		{
 			return viewMatrix;
@@ -95,6 +101,12 @@ namespace Fusion.Engine.Graphics {
 			get { 
 				return false; 
 			} 
+		}
+
+		public virtual bool Transparent {
+			get {
+				return false;
+			}
 		}
 	}
 }

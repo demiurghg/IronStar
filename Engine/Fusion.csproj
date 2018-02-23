@@ -219,6 +219,7 @@
     <Compile Include="Engine\Graphics\Lights\LightGrid.cs" />
     <Compile Include="Engine\Graphics\Lights\LightStyle.cs" />
     <Compile Include="Engine\Graphics\Lights\LightProbeContext.cs" />
+    <Compile Include="Engine\Graphics\Lights\ShadowContextTransparent.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowMap.Cascade.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowMap.cs" />
     <Compile Include="Engine\Graphics\Lights\CascadedShadowMap.cs" />

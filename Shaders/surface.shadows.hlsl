@@ -99,8 +99,8 @@ float3	ComputeCSM (
 	
 	if (true) {
 		
-		for( float row = -2; row <= 2; row += 1 ) {
-			[unroll]for( float col = -2; col <= 2; col += 1 ) {
+		for( float row = -1.5; row <= 1.5; row += 1 ) {
+			[unroll]for( float col = -1.5; col <= 1.5; col += 1 ) {
 				float 	x	=	col * 1;
 				float	y	=	row * 1;
 				float	z	=	depthcmp + dot( depthWeights, float2(x,y) );

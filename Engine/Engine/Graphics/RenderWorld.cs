@@ -414,11 +414,10 @@ namespace Fusion.Engine.Graphics {
 			//------------------------------------------------------------
 			//	Forward+
 			rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera, viewHdrFrame, this );
+			ParticleSystem.RenderHard( gameTime, Camera, stereoEye, viewHdrFrame );
 
 			rs.Sky.Render( Camera, stereoEye, viewHdrFrame, SkySettings );
 			rs.Sky.RenderFogTable( SkySettings );
-
-			ParticleSystem.Render( gameTime, Camera, stereoEye, viewHdrFrame );
 
 				var hdrFrame = viewHdrFrame;
 				var filter	 = rs.Filter;
@@ -432,6 +431,8 @@ namespace Fusion.Engine.Graphics {
 
 			rs.SceneRenderer.RenderForwardTransparent( gameTime, stereoEye, Camera, viewHdrFrame, this );
 			rs.SceneRenderer.GatherVTFeedbackAndUpdate( gameTime, viewHdrFrame );
+
+			ParticleSystem.RenderSoft( gameTime, Camera, stereoEye, viewHdrFrame );
 
 			//------------------------------------------------------------
 

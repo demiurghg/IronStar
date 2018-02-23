@@ -340,16 +340,20 @@ namespace Fusion.Engine.Graphics {
 
 				foreach ( var cascade in cascades ) {
 
-					var context = new ShadowContext( cascade, depthBuffer.Surface, colorBuffer.Surface );
+					var contextSolid  = new ShadowContext			( cascade, depthBuffer.Surface, colorBuffer.Surface );
+					var contextTransp = new ShadowContextTransparent( cascade, depthBuffer.Surface, colorBuffer.Surface );
 
-					rs.SceneRenderer.RenderShadowMapCascade( context, instances );
+					rs.SceneRenderer.RenderShadowMap( contextSolid,  instances );
+					rs.SceneRenderer.RenderShadowMap( contextTransp, instances );
 				}
 
 				foreach ( var spot in lights ) {
 
-					var context = new ShadowContext( spot, depthBuffer.Surface, colorBuffer.Surface );
+					var contextSolid  = new ShadowContext			( spot, depthBuffer.Surface, colorBuffer.Surface );
+					var contextTransp = new ShadowContextTransparent( spot, depthBuffer.Surface, colorBuffer.Surface );
 
-					rs.SceneRenderer.RenderShadowMapCascade( context, instances );
+					rs.SceneRenderer.RenderShadowMap( contextSolid,  instances );
+					rs.SceneRenderer.RenderShadowMap( contextTransp, instances );
 				}
 			}
 

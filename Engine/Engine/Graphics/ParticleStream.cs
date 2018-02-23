@@ -280,7 +280,7 @@ namespace Fusion.Engine.Graphics {
 		void EnumAction ( PipelineState ps, Flags flag )
 		{
 			if (flag==Flags.DRAW_SOFT) {
-				ps.BlendState			=	BlendState.AlphaBlend;
+				ps.BlendState			=	BlendState.AlphaBlendOffScreen;
 				ps.DepthStencilState	=	DepthStencilState.None;
 				ps.Primitive			=	Primitive.PointList;
 				ps.RasterizerState		=	RasterizerState.CullNone;
@@ -679,12 +679,12 @@ namespace Fusion.Engine.Graphics {
 			var view		=	camera.GetViewMatrix( stereoEye );
 			var projection	=	camera.GetProjectionMatrix( stereoEye );
 
-			var colorTarget	=	viewFrame.HdrBuffer.Surface;
-			var depthTarget	=	viewFrame.DepthBuffer.Surface;
+			var colorTarget	=	viewFrame.SoftParticlesFront.Surface;
+			var depthSource	=	viewFrame.DepthBuffer;
 
 			var viewport	=	new Viewport( 0, 0, colorTarget.Width, colorTarget.Height );
 
-			RenderGeneric( "Soft Particles", gameTime, camera, viewport, view, projection, colorTarget, null, viewFrame.DepthBuffer, Flags.DRAW_SOFT );
+			RenderGeneric( "Soft Particles", gameTime, camera, viewport, view, projection, colorTarget, null, depthSource, Flags.DRAW_SOFT );
 		}
 
 
@@ -703,11 +703,11 @@ namespace Fusion.Engine.Graphics {
 			var projection	=	camera.GetProjectionMatrix( stereoEye );
 
 			var colorTarget	=	viewFrame.DistortionBuffer.Surface;
-			var depthTarget	=	viewFrame.DepthBuffer.Surface;
+			var depthSource	=	viewFrame.DepthBuffer;
 
 			var viewport	=	new Viewport( 0, 0, colorTarget.Width, colorTarget.Height );
 
-			RenderGeneric( "DuDv Particles", gameTime, camera, viewport, view, projection, colorTarget, null, viewFrame.DepthBuffer, Flags.DRAW_DUDV );
+			RenderGeneric( "DuDv Particles", gameTime, camera, viewport, view, projection, colorTarget, null, depthSource, Flags.DRAW_DUDV );
 		}
 
 

@@ -6,6 +6,8 @@ $ubershader GAUSS_BLUR PASS1|PASS2 +BILATERAL
 $ubershader LINEARIZE_DEPTH|RESOLVE_AND_LINEARIZE_DEPTH_MSAA
 $ubershader PREFILTER_ENVMAP POSX|POSY|POSZ|NEGX|NEGY|NEGZ
 $ubershader FILL_ALPHA_ONE
+$ubershader DOWNSAMPLE_DEPTH_RED
+$ubershader DOWNSAMPLE_DEPTH_GREEN
 #endif
 
 
@@ -77,6 +79,58 @@ PS_IN VSMain(uint VertexID : SV_VertexID)
 float4 PSMain(PS_IN input) : SV_Target
 {
 	return Source.SampleLevel(SamplerLinearClamp, input.uv, 0);
+}
+
+#endif
+
+//-------------------------------------------------------------------------------
+#if defined(DOWNSAMPLE_DEPTH_RED) || defined(DOWNSAMPLE_DEPTH_GREEN)
+
+SamplerState	SamplerLinearClamp : register(s0);
+Texture2D Source : register(t0);
+
+struct PS_IN {
+    float4 position : SV_POSITION;
+  	float4 uv0 : TEXCOORD0;
+	float4 uv1 : TEXCOORD1;
+};
+
+PS_IN VSMain(uint VertexID : SV_VertexID)
+{
+	PS_IN output;
+	output.position = float4((VertexID == 0) ? 3.0f : -1.0f, (VertexID == 2) ? 3.0f : -1.0f, 1.0f, 1.0f);
+
+	float2 uv0 = output.position.xy * float2(0.5f, -0.5f) + 0.5f;
+
+	float texWidth, texHeight;
+	Source.GetDimensions(texWidth, texHeight);
+
+	float2 texelSize = 4*float2(1.0f/texWidth, 1.0f/texHeight);
+
+	output.uv0.xy = uv0 + texelSize * float2(-1.0f, -1.0f);
+	output.uv0.zw = uv0 + texelSize * float2( 1.0f, -1.0f);
+	output.uv1.xy = uv0 + texelSize * float2(-1.0f,  1.0f);
+	output.uv1.zw = uv0 + texelSize * float2( 1.0f,  1.0f);
+
+	return output;
+}
+
+float4 PSMain(PS_IN input) : SV_Target
+{
+	float4 vpos	=	input.position;
+	int3 p00	=	int3( vpos.xy*2 + int2( 0, 0), 0 );
+	int3 p01	=	int3( vpos.xy*2 + int2( 0,-1), 0 );
+	int3 p10	=	int3( vpos.xy*2 + int2( -1, 0), 0 );
+	int3 p11	=	int3( vpos.xy*2 + int2( -1,-1), 0 );
+	
+	float d0 	= Source.Load(p00).r;
+	float d1 	= Source.Load(p01).r;
+	float d2 	= Source.Load(p10).r;
+	float d3 	= Source.Load(p11).r;
+
+	//return min( min( d0, d1 ), min( d2, d3 ) );
+	return max( max( d0, d1 ), max( d2, d3 ) );
+	//return 0.25f*(sample0 + sample1 + sample2 + sample3);
 }
 
 #endif

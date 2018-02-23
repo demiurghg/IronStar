@@ -104,29 +104,41 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	uint xpos = position.x;
 	uint ypos = position.y;
 	HdrImageSolid.GetDimensions( width, height );
-
-	//
-	//	Read images :
-	//
-	float4	dudvPrtSrc	=	DistortionParticles.SampleLevel( LinearSampler, uv, 0 ).rgba;
-	float2	dudvPrt		=	(dudvPrtSrc.xy - dudvPrtSrc.zw) * 0.02;
 	
-	//	sample distortion :
+	int3 intUV	=	int3(position.xy, 0);
+
+	//	Compute particle distortion :
+	float4	distortPrtSrc	=	DistortionParticles.SampleLevel( LinearSampler, uv, 0 ).rgba;
+	float2	distortPrt		=	(distortPrtSrc.xy - distortPrtSrc.zw) * 0.02;
+	
+	//	Compute transparent object distortion :
 	float4	distortGlass	=	DistortionGlass	.SampleLevel( LinearSampler, uv, 0 ).rgba;
-			distortGlass.xy	=	(distortGlass.xy * 2 - 1) * float2( 0.05f, -0.05f );
+			distortGlass.xy	=	(distortGlass.xy * 2 - float2(1,1));
+	float	distortAmount	=	length(distortGlass.xy);
+			//	fix little blurriness :
+			distortGlass.xy	=	distortGlass.xy / (distortAmount+0.001) * pow(saturate(distortAmount*1.05-0.05), 2);
+			distortGlass.xy *=	float2( 0.15, -0.15 );
 
+	//	Get transparent objects for composing :
 	float4	hdrImageGlass	=	HdrImageGlass	.SampleLevel( LinearSampler, uv, 0 ).rgba;
+	float	blurFactor		=	pow(lerp(distortGlass.z, hdrImageGlass.a, 0.5f), 2);
+
+	//	Get solid background :
+	float3	hdrImageSolid	=	HdrImageSolid	.SampleLevel( LinearSampler, uv + distortGlass.xy + distortPrt.xy, 0 ).rgb;
+	float3	turbidBack		=	TurbidBackground.SampleLevel( LinearSampler, uv + distortGlass.xy + distortPrt.xy, blurFactor*4 ).rgb;
+	
+			hdrImageSolid	=	lerp( hdrImageSolid.rgb, turbidBack.rgb, saturate(blurFactor*8) );
+
+	//	Compose solid and transparent objects :
+			hdrImageSolid	=	lerp( hdrImageSolid.rgb, hdrImageGlass.rgb, hdrImageGlass.a );
 			
-	float	blurFactor		=	lerp(distortGlass.z, hdrImageGlass.a, 0.5f);
+	//	Get soft particles :
+	float4	softPrtFront	=	SoftParticlesFront.SampleLevel( LinearSampler, uv + distortPrt.xy, 0 ).rgba;
+
+	//	Compose solid+transparent and soft particles :
+	float3	hdrImageFinal	=	lerp( hdrImageSolid.rgb, softPrtFront.rgb, softPrtFront.a );
 	
-	float3	hdrImageSolid	=	HdrImageSolid	.SampleLevel( LinearSampler, uv + distortGlass.xy, 0 ).rgb;
-	float3	turbidBack		=	TurbidBackground.SampleLevel( LinearSampler, uv + distortGlass.xy, blurFactor*4 ).rgb;
-	
-	hdrImageSolid			=	lerp( hdrImageSolid, turbidBack, saturate(blurFactor*8) );
-	
-	float3	hdrImageFinal	=	lerp( hdrImageSolid.rgb, hdrImageGlass.rgb, hdrImageGlass.a );
-	
-	return float4( hdrImageFinal * float3(3,1,1), 1 );
+	return float4( hdrImageFinal * float3(1,1,1), 1 );
 }
 
 

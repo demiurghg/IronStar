@@ -23,6 +23,12 @@ namespace Fusion.Engine.Graphics {
 		public abstract void SetupRenderTargets ( GraphicsDevice device );
 
 
+		public ShaderResource GetAOBuffer() 
+		{
+			return hdrFrame.AOBuffer;
+		}
+
+
 		public Matrix GetViewMatrix( StereoEye stereoEye )
 		{
 			return camera.GetViewMatrix( stereoEye );
@@ -54,6 +60,10 @@ namespace Fusion.Engine.Graphics {
 
 	
 		public abstract bool RequireShadows {
+			get;
+		}
+	
+		public abstract bool Transparent {
 			get;
 		}
 	}

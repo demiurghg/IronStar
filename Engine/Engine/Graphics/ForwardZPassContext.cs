@@ -19,7 +19,19 @@ namespace Fusion.Engine.Graphics {
 			device.SetTargets( hdrFrame.DepthBuffer.Surface );
 		}
 	
+		public ShaderResource GetAOBuffer() 
+		{
+			return null;
+		}
+
+
 		public override bool RequireShadows {
+			get {
+				return false;
+			}
+		}
+
+		public override bool Transparent {
 			get {
 				return false;
 			}

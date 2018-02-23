@@ -437,6 +437,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 #include "particles.lighting.hlsl"
 #endif
 
+#include "dither.fxi"
 
 float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 {
@@ -518,11 +519,18 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 	#endif
 	
 	#ifdef SOFT_SHADOW
+		#if 1
 		float4 textureColor	=	Texture.Sample( Sampler, input.TexCoord );
 		float4 vertexColor  =  	input.Color;
 		float4 color		=	1 - vertexColor.a * textureColor.a;
-		
 		return color;
+		#else
+		float	alphaT	=	Texture.Sample( Sampler, input.TexCoord ).a;
+		float	alphaV	=	input.Color.a;
+		float	alpha	=	alphaT * alphaV;
+		clip( BayerDitherAlpha4x4(sqrt(alpha), vpos.xy)-0.5 );
+		return 0;
+		#endif
 	#endif
 	
 	#ifdef HARD_SHADOW

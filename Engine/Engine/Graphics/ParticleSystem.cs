@@ -77,9 +77,9 @@ namespace Fusion.Engine.Graphics {
 			this.Game			=	rs.Game;
 			this.renderWorld	=	renderWorld;
 
-			softStream			=	new ParticleStream( rs, renderWorld, this, -1, true, true );
-			hardStream			=	new ParticleStream( rs, renderWorld, this, -1, false, true );
-			dudvStream			=	new ParticleStream( rs, renderWorld, this, -1, false, false );
+			softStream			=	new ParticleStream( rs, renderWorld, this, true, true );
+			hardStream			=	new ParticleStream( rs, renderWorld, this, false, false );
+			dudvStream			=	new ParticleStream( rs, renderWorld, this, false, false );
 
 			colorTemp			=	CreateColorTemperatureMap();
 		}

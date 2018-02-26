@@ -24,40 +24,42 @@ SamplerComparisonState	ShadowSampler	: 	register(s1);
 //-----------------------------------------------
 //	SRVs :
 //-----------------------------------------------
-Texture2D					Texture 			: 	register(t0);
-StructuredBuffer<Particle>	injectionBuffer		:	register(t1);
-StructuredBuffer<Particle>	particleBufferGS	:	register(t2);
-StructuredBuffer<float2>	sortParticleBufferGS:	register(t3);
-StructuredBuffer<float4>	particleLighting	:	register(t4);
-Texture2D					DepthValues			: 	register(t5);
-Texture2D					ColorTemperature	:	register(t6);
-
-Texture3D<uint2>			ClusterTable		: 	register(t7);
-Buffer<uint>				LightIndexTable		: 	register(t8);
-StructuredBuffer<LIGHT>		LightDataTable		:	register(t9);
-Texture2D					ShadowMap			:	register(t10);
-Texture2D					LightMap			:	register(t11);
-Texture2D					ShadowMask			:	register(t12);
-
-Texture3D					OcclusionGrid		: 	register(t14);
-TextureCubeArray			RadianceCache		:	register(t15);
-StructuredBuffer<LIGHTPROBE> ProbeDataTable		:	register(t17);
+Texture2D						Texture 			: 	register(t0);
+StructuredBuffer<Particle>		injectionBuffer		:	register(t1);
+StructuredBuffer<Particle>		particleBufferGS	:	register(t2);
+StructuredBuffer<float2>		sortParticleBufferGS:	register(t3);
+StructuredBuffer<float4>		particleLighting	:	register(t4);
+Texture2D						DepthValues			: 	register(t5);
+Texture2D						ColorTemperature	:	register(t6);
+		
+Texture3D<uint2>				ClusterTable		: 	register(t7);
+Buffer<uint>					LightIndexTable		: 	register(t8);
+StructuredBuffer<LIGHT>			LightDataTable		:	register(t9);
+Texture2D						ShadowMap			:	register(t10);
+Texture2D						LightMap			:	register(t11);
+Texture2D						ShadowMask			:	register(t12);
+		
+Texture3D						OcclusionGrid		: 	register(t14);
+TextureCubeArray				RadianceCache		:	register(t15);
+StructuredBuffer<LIGHTPROBE> 	ProbeDataTable		:	register(t17);
+StructuredBuffer<float4>		lightMapRegionsGS	:	register(t18);
 
 #include "fog.fxi"
 
 //-----------------------------------------------
 //	UAVs :
 //-----------------------------------------------
-RWStructuredBuffer<Particle>	particleBuffer		: 	register(u0);
-
-#ifdef INJECTION
-ConsumeStructuredBuffer<uint>	deadParticleIndices	: 	register(u1);
-#endif
-#if (defined SIMULATION) || (defined INITIALIZE)
-AppendStructuredBuffer<uint>	deadParticleIndices	: 	register(u1);
-#endif
-
-RWStructuredBuffer<float2>		sortParticleBuffer	: 	register(u2);
+RWStructuredBuffer<Particle>	particleBuffer			: 	register(u0);
+	
+#ifdef INJECTION	
+ConsumeStructuredBuffer<uint>	deadParticleIndices		: 	register(u1);
+#endif	
+#if (defined SIMULATION) || (defined INITIALIZE)	
+AppendStructuredBuffer<uint>	deadParticleIndices		: 	register(u1);
+#endif	
+	
+RWStructuredBuffer<float2>		sortParticleBuffer		: 	register(u2);
+RWStructuredBuffer<float4>		lightMapRegions			: 	register(u3);
 
 static const float3 lightBasisX	=	float3(  sqrt(3.0f/2.0f), 	 			 0,  sqrt(1/3.0f) );
 static const float3 lightBasisY	=	float3( -sqrt(1.0f/6.0f),  sqrt(1.0f/2.0f),  sqrt(1/3.0f) );
@@ -112,11 +114,18 @@ void CSMain(
 		float  time		=	p.TimeLag;
 		
 		float3 gravity		=	-Params.Gravity * p.Gravity;
+		float3 position		=	p.Position;
 		float3 velocity		=	p.Velocity;
-		float3 acceleration	=	p.Acceleration - velocity * length(velocity) * p.Damping + gravity;
+		float3 acceleration	=	0;
 		
-		particleBuffer[ id ].Velocity	=	p.Velocity + acceleration * Params.DeltaTime;	
-		particleBuffer[ id ].Position	=	p.Position + velocity     * Params.DeltaTime;	
+		for (uint i=0; i<Params.IntegrationSteps; i++) {
+			acceleration	=	p.Acceleration - velocity * length(velocity) * p.Damping + gravity;
+			velocity		=	velocity + acceleration * Params.DeltaTime;	
+			position		=	position + velocity     * Params.DeltaTime;	
+		}
+
+		particleBuffer[ id ].Velocity	=	velocity;	
+		particleBuffer[ id ].Position	=	position;	
 		
 		//	Measure distance :
 		float4 ppPos	=	mul( mul( float4(particleBuffer[ id ].Position,1), Params.View ), Params.Projection );
@@ -144,9 +153,10 @@ void CSMain(
 		int id = dispatchThreadID.x + base*1024;
 
 		if (id < Params.MaxParticles) {
+		
 			Particle p = particleBuffer[ id ];
 			
-			p.LightmapRegion = 	0;
+			lightMapRegions[id] = 	float4(0,0,0,0);
 			
 			float 	factor	=	saturate(p.TimeLag / p.LifeTime);
 			float4 	projPos	=	mul( float4(p.Position.xyz,1), Params.ViewProjection );
@@ -154,8 +164,6 @@ void CSMain(
 			uint	offset;
 			uint 	bank;
 
-			particleBuffer[ id ] = p;
-			
 			if ( p.TimeLag < 0 )			{ continue; }
 			if ( p.TimeLag >= p.LifeTime ) 	{ continue; }
 	
@@ -180,9 +188,7 @@ void CSMain(
 			float x1 = ( baseX + regSize*(offset % count) + regSize )  * Params.LightMapSize.z;
 			float y1 = ( baseY + regSize*(offset / count) + regSize )  * Params.LightMapSize.w;
 
-			p.LightmapRegion = float4( x0,y0,x1,y1 );
-			
-			particleBuffer[ id ] = p;
+			lightMapRegions[id]  = float4( x0,y0,x1,y1 );
 		}
 	}
 }	
@@ -285,7 +291,6 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	}
 	
 	float3 position	=	prt.Position    ;// + prt.Velocity * time + accel * time * time / 2;
-	float3 tailpos	=	prt.TailPosition;// + prt.Velocity * time + accel * time * time / 2;
 	float  a		=	lerp( prt.Rotation0, prt.Rotation1, factor );	
 
 	float2x2	m	=	float2x2( cos(a), sin(a), -sin(a), cos(a) );
@@ -337,10 +342,12 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	float2 lmszA	 = Params.LightMapSize.zw * 0.0f;
 	float2 lmszB	 = Params.LightMapSize.zw * float2(0.5f,-0.5f);
 	
+	float4 lightmapRegion	=	lightMapRegionsGS[ prtId ];
+	
 	p0.Position	 = mul( pos0, Params.Projection );
 	p0.Normal	 = normal0;
 	p0.TexCoord	 = image.zy;
-	p0.LMCoord	 = prt.LightmapRegion.zy + lmszA;
+	p0.LMCoord	 = lightmapRegion.zy + lmszA;
 	p0.ViewPosSZ = float4( pos0.xyz, 1/sz );
 	p0.Color 	 = color;
 	p0.LMFactor	 = 0;
@@ -352,7 +359,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p1.Position	 = mul( pos1, Params.Projection );
 	p1.Normal	 = normal1;
 	p1.TexCoord	 = image.xy;
-	p1.LMCoord	 = prt.LightmapRegion.xy + lmszA;
+	p1.LMCoord	 = lightmapRegion.xy + lmszA;
 	p1.ViewPosSZ = float4( pos1.xyz, 1/sz );
 	p1.Color 	 = color;
 	p1.LMFactor	 = 0;
@@ -364,7 +371,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p2.Position	 = mul( pos2, Params.Projection );
 	p2.Normal	 = normal2;
 	p2.TexCoord	 = image.xw;
-	p2.LMCoord	 = prt.LightmapRegion.xw + lmszA;
+	p2.LMCoord	 = lightmapRegion.xw + lmszA;
 	p2.ViewPosSZ = float4( pos2.xyz, 1/sz );
 	p2.Color 	 = color;
 	p2.LMFactor	 = 0;
@@ -376,7 +383,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p3.Position	 = mul( pos3, Params.Projection );
 	p3.Normal	 = normal3;
 	p3.TexCoord	 = image.zw;
-	p3.LMCoord	 = prt.LightmapRegion.zw + lmszA;
+	p3.LMCoord	 = lightmapRegion.zw + lmszA;
 	p3.ViewPosSZ = float4( pos3.xyz, 1/sz );
 	p3.Color 	 = color;
 	p3.LMFactor	 = 0;

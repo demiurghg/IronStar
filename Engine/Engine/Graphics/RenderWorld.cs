@@ -375,104 +375,116 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="stereoEye"></param>
 		void RenderHdrScene ( GameTime gameTime, StereoEye stereoEye, Viewport viewport, RenderTargetSurface targetSurface )
 		{
-			//	clear g-buffer and hdr-buffers:
-			viewHdrFrame.Clear();
+			using ( new PixEvent( "Frame" ) ) {
+				//	clear g-buffer and hdr-buffers:
+				viewHdrFrame.Clear();
 
-			//	single pass for stereo rendering :
-			if (stereoEye!=StereoEye.Right) {
+				using ( new PixEvent( "Frame Preprocessing" ) ) {
 
-				RelightLightProbes();
+					//	single pass for stereo rendering :
+					if ( stereoEye!=StereoEye.Right ) {
 
-				//	simulate particles BEFORE lighting
-				//	to make particle lit (position is required) and 
-				//	get simulated particles for shadows.
-				ParticleSystem.Simulate( gameTime, Camera );
+						RelightLightProbes();
 
-				//	prepare light set for shadow rendering :
-				rs.LightManager.Update( gameTime, LightSet, Instances );
-				rs.LightManager.LightGrid.UpdateLightSetVisibility( stereoEye, Camera, LightSet );
+						//	simulate particles BEFORE lighting
+						//	to make particle lit (position is required) and 
+						//	get simulated particles for shadows.
+						ParticleSystem.Simulate( gameTime, Camera );
 
-				//	allocated and render shadows :
-				rs.LightManager.ShadowMap.RenderShadowMaps( gameTime, Camera, rs, this, LightSet );
+						//	prepare light set for shadow rendering :
+						rs.LightManager.Update( gameTime, LightSet, Instances );
+						rs.LightManager.LightGrid.UpdateLightSetVisibility( stereoEye, Camera, LightSet );
 
-				//	clusterize light set :
-				rs.LightManager.LightGrid.ClusterizeLightSet( stereoEye, Camera, LightSet );
+						//	allocated and render shadows :
+						rs.LightManager.ShadowMap.RenderShadowMaps( gameTime, Camera, rs, this, LightSet );
 
-				//	render particle lighting :
-				ParticleSystem.RenderLight( gameTime, Camera );
+						//	clusterize light set :
+						rs.LightManager.LightGrid.ClusterizeLightSet( stereoEye, Camera, LightSet );
 
-				//	render particles casting shadows :
-				rs.LightManager.ShadowMap.RenderParticleShadows( gameTime, Camera, rs, this, LightSet );
+						//	render particle lighting :
+						ParticleSystem.RenderLight( gameTime, Camera );
+
+						//	render particles casting shadows :
+						rs.LightManager.ShadowMap.RenderParticleShadows( gameTime, Camera, rs, this, LightSet );
+					}
+				}
+
+
+				using ( new PixEvent( "Frame Scene Rendering" ) ) {
+					//	Z-pass :
+					rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
+
+					//	Ambient occlusion :
+					rs.SsaoFilter.Render( stereoEye, Camera, viewHdrFrame );
+
+					//------------------------------------------------------------
+					//	Forward+
+					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera, viewHdrFrame, this );
+					ParticleSystem.RenderHard( gameTime, Camera, stereoEye, viewHdrFrame );
+
+					rs.Sky.Render( Camera, stereoEye, viewHdrFrame, SkySettings );
+					rs.Sky.RenderFogTable( SkySettings );
+
+					using ( new PixEvent( "Background downsample" ) ) {
+						var hdrFrame = viewHdrFrame;
+						var filter	 = rs.Filter;
+						filter.StretchRect( hdrFrame.Bloom0.Surface, hdrFrame.HdrBuffer, SamplerState.LinearClamp );
+						hdrFrame.Bloom0.BuildMipmaps();
+
+						filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 0 );
+						filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 1 );
+						filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 2 );
+						filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 3 );
+					}
+
+					rs.SceneRenderer.RenderForwardTransparent( gameTime, stereoEye, Camera, viewHdrFrame, this );
+					rs.SceneRenderer.GatherVTFeedbackAndUpdate( gameTime, viewHdrFrame );
+
+					ParticleSystem.RenderSoft( gameTime, Camera, stereoEye, viewHdrFrame );
+
+					//------------------------------------------------------------
+
+					switch (rs.ShowGBuffer) {
+						case 1  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.Normals ); return;
+						case 2  : rs.Filter.CopyAlpha( targetSurface,	viewHdrFrame.GBuffer0 ); return;
+						case 3  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.GBuffer1 ); return;
+						case 4  : rs.Filter.CopyAlpha( targetSurface,	viewHdrFrame.GBuffer1 ); return;
+						case 5  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.HdrBuffer ); return;
+						case 6  : rs.Filter.Copy( targetSurface,		viewHdrFrame.AOBuffer ); return;
+						case 7  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ParticleShadow ); return;
+						case 8  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ColorBuffer ); return;
+						case 9  : rs.Filter.StretchRect( targetSurface, ParticleSystem.SoftStream.Lightmap ); return;
+						case 10 : rs.Filter.StretchRect( targetSurface, viewHdrFrame.FeedbackBufferRB, SamplerState.PointClamp ); return;
+					}
+
+					if (rs.VTSystem.ShowPhysicalTextures) {
+						rs.Filter.StretchRect( targetSurface, rs.VTSystem.PhysicalPages0 );
+						return;
+					}
+					if (rs.VTSystem.ShowPageTexture) {
+						rs.Filter.Copy( targetSurface, rs.VTSystem.PageTable );
+						return;
+					}
+				}
+
+
+				using ( new PixEvent( "Frame Postprocessing" ) ) {
+					//	compose, tonemap, bloob and color grade :
+					rs.HdrFilter.ComposeHdrImage( viewHdrFrame );
+					rs.HdrFilter.TonemapHdrImage( gameTime, HdrSettings, viewHdrFrame );
+
+
+					//	apply FXAA
+					if (rs.UseFXAA) {
+						rs.Filter.Fxaa( targetSurface, viewHdrFrame.FinalColor );
+					} else {
+						rs.Filter.Copy( targetSurface, viewHdrFrame.FinalColor );
+					} 
+				}
+
+				//	draw debug lines :
+				Debug.Render( targetSurface, viewHdrFrame.DepthBuffer.Surface, Camera );
 			}
-
-			//	Z-pass :
-			rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
-
-			//	Ambient occlusion :
-			rs.SsaoFilter.Render( stereoEye, Camera, viewHdrFrame );
-
-			//------------------------------------------------------------
-			//	Forward+
-			rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera, viewHdrFrame, this );
-			ParticleSystem.RenderHard( gameTime, Camera, stereoEye, viewHdrFrame );
-
-			rs.Sky.Render( Camera, stereoEye, viewHdrFrame, SkySettings );
-			rs.Sky.RenderFogTable( SkySettings );
-
-				var hdrFrame = viewHdrFrame;
-				var filter	 = rs.Filter;
-				filter.StretchRect( hdrFrame.Bloom0.Surface, hdrFrame.HdrBuffer, SamplerState.LinearClamp );
-				hdrFrame.Bloom0.BuildMipmaps();
-
-				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 0 );
-				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 1 );
-				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 2 );
-				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 3 );
-
-			rs.SceneRenderer.RenderForwardTransparent( gameTime, stereoEye, Camera, viewHdrFrame, this );
-			rs.SceneRenderer.GatherVTFeedbackAndUpdate( gameTime, viewHdrFrame );
-
-			ParticleSystem.RenderSoft( gameTime, Camera, stereoEye, viewHdrFrame );
-
-			//------------------------------------------------------------
-
-			switch (rs.ShowGBuffer) {
-				case 1  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.Normals ); return;
-				case 2  : rs.Filter.CopyAlpha( targetSurface,	viewHdrFrame.GBuffer0 ); return;
-				case 3  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.GBuffer1 ); return;
-				case 4  : rs.Filter.CopyAlpha( targetSurface,	viewHdrFrame.GBuffer1 ); return;
-				case 5  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.HdrBuffer ); return;
-				case 6  : rs.Filter.Copy( targetSurface,		viewHdrFrame.AOBuffer ); return;
-				case 7  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ParticleShadow ); return;
-				case 8  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ColorBuffer ); return;
-				case 9  : rs.Filter.StretchRect( targetSurface, ParticleSystem.SoftStream.Lightmap ); return;
-				case 10 : rs.Filter.StretchRect( targetSurface, viewHdrFrame.FeedbackBufferRB, SamplerState.PointClamp ); return;
-			}
-
-			if (rs.VTSystem.ShowPhysicalTextures) {
-				rs.Filter.StretchRect( targetSurface, rs.VTSystem.PhysicalPages0 );
-				return;
-			}
-			if (rs.VTSystem.ShowPageTexture) {
-				rs.Filter.Copy( targetSurface, rs.VTSystem.PageTable );
-				return;
-			}
-
-
-			//	compose, tonemap, bloob and color grade :
-			rs.HdrFilter.ComposeHdrImage( viewHdrFrame );
-			rs.HdrFilter.TonemapHdrImage( gameTime, HdrSettings, viewHdrFrame );
-
-
-			//	apply FXAA
-			if (rs.UseFXAA) {
-				rs.Filter.Fxaa( targetSurface, viewHdrFrame.FinalColor );
-			} else {
-				rs.Filter.Copy( targetSurface, viewHdrFrame.FinalColor );
-			} 
-
-			//	draw debug lines :
-			Debug.Render( targetSurface, viewHdrFrame.DepthBuffer.Surface, Camera );
 		}
 
 

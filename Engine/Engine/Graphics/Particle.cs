@@ -87,11 +87,6 @@ namespace Fusion.Engine.Graphics {
 		public Vector3	Acceleration;          
 
 		/// <summary>
-		/// Particle tail position
-		/// </summary>
-		public Vector3	TailPosition;
-
-		/// <summary>
 		/// Color of particle, tint for glowing particles.
 		/// </summary>
 		public Color3	Color;
@@ -112,11 +107,6 @@ namespace Fusion.Engine.Graphics {
 		public float	Scattering;
 
 		/// <summary>
-		/// Lightmap region
-		/// </summary>
-		public Vector4	LightmapRegion;        
-
-		/// <summary>
 		/// Gravity influence.
 		/// Zero means no gravity influence.
 		/// Values between 0 and 1 means reduced gravity, like snowflakes or dust.
@@ -125,7 +115,7 @@ namespace Fusion.Engine.Graphics {
 		public float		Gravity;                
 
 		/// <summary>
-		/// NOT USED!
+		/// Counter velocity deceleration
 		/// </summary>
 		public float		Damping;                
 

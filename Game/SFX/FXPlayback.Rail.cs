@@ -49,10 +49,8 @@ namespace IronStar.SFX {
 
 			if (true) {
 				var pos		=	fxEvent.Origin;
-				var pos1	=	fxEvent.Origin + fxEvent.Velocity;
 
 				p.Position		=	pos;
-				p.TailPosition	=	pos1;
 				p.Size0			=	0.1f;
 				p.Size1			=	0.0f;
 
@@ -69,11 +67,6 @@ namespace IronStar.SFX {
 				p.FadeOut		=	0.1f;
 				
 				throw new NotImplementedException();
-				//p.Color0		=	new Color4(300,500,1000,1);
-				//p.Color1		=	new Color4(300,500,1000,1);
-
-				p.TailPosition	=	pos1;
-				//p.Effects		|=	ParticleFX.Beam;
  
 				rw.ParticleSystem.InjectParticle( p );
 			}

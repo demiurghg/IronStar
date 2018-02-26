@@ -170,6 +170,33 @@ namespace Fusion.Drivers.Graphics {
 
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="data"></param>
+		public void UpdateData<T> ( T[] data ) where T: struct 
+		{
+			if (data==null) {
+				throw new ArgumentNullException("data");
+			}
+			
+			int inputBytes	=	data.Length * Marshal.SizeOf(typeof(T));
+			int bufferBytes =	StructureCapacity * StructureStride;
+
+			if ( inputBytes != bufferBytes ) {
+				throw new ArgumentException("Input buffer size (" + inputBytes.ToString() + " bytes) not equals structured buffer size (" + bufferBytes.ToString() + " bytes)"); 
+			}
+
+			lock (device.DeviceContext) {
+
+				device.DeviceContext.UpdateSubresource( data, bufferGpu );
+
+			}
+		}
+
+
+
+		/// <summary>
 		/// Sets structured buffer data
 		/// </summary>
 		public void SetData<T> ( T[] data, int startIndex, int elementCount ) where T: struct

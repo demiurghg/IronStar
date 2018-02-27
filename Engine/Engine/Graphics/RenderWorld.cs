@@ -428,13 +428,19 @@ namespace Fusion.Engine.Graphics {
 					using ( new PixEvent( "Background downsample" ) ) {
 						var hdrFrame = viewHdrFrame;
 						var filter	 = rs.Filter;
+						var blur	 = rs.Blur;
 						filter.StretchRect( hdrFrame.Bloom0.Surface, hdrFrame.HdrBuffer, SamplerState.LinearClamp );
 						hdrFrame.Bloom0.BuildMipmaps();
 
-						filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 0 );
-						filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 1 );
-						filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 2 );
-						filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 3 );
+						//filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 0 );
+						//filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 1 );
+						//filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 2 );
+						//filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 3 );
+
+						blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 0 );
+						blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 1 );
+						blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2 );
+						blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 3 );
 					}
 
 					rs.SceneRenderer.RenderForwardTransparent( gameTime, stereoEye, Camera, viewHdrFrame, this );

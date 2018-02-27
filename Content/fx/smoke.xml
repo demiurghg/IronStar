@@ -13,12 +13,12 @@
     <Count>7</Count>
     <Period>1</Period>
     <Timing Delay="0" Bunch="1" FadeIn="0.05" FadeOut="0.5" />
-    <Color R="64" G="64" B="64" A="255" />
-    <Alpha>0.9</Alpha>
+    <Color R="48" G="48" B="48" A="255" />
+    <Alpha>1</Alpha>
     <Roughness>0</Roughness>
     <Metallic>1</Metallic>
     <Intensity>100</Intensity>
-    <Scattering>1</Scattering>
+    <Scattering>0</Scattering>
     <Temperature>6600</Temperature>
     <Lifetime Distribution="Gauss" MinLifetime="2" MaxLifetime="4" />
     <Shape Size0="2" Size1="4" EnableRotation="true" InitialAngle="360" MinAngularVelocity="5" MaxAngularVelocity="-5" />

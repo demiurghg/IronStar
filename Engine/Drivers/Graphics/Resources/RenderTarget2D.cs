@@ -41,6 +41,7 @@ namespace Fusion.Drivers.Graphics {
 
 		D3D.Texture2D			tex2D;
 		RenderTargetSurface[]	surfaces;
+		ShaderResource[]		mipSrvs;
 			
 
 
@@ -176,6 +177,7 @@ namespace Fusion.Drivers.Graphics {
 			//	Create surfaces :
 			//
 			surfaces	=	new RenderTargetSurface[ MipCount ];
+			mipSrvs		=	new ShaderResource[ MipCount ];
 
 			for ( int i=0; i<MipCount; i++ ) { 
 
@@ -189,6 +191,18 @@ namespace Fusion.Drivers.Graphics {
 
 				var rtv	=	new RenderTargetView( device.Device, tex2D, rtvDesc );
 
+				
+				var srvDesc = new ShaderResourceViewDescription();
+					srvDesc.Dimension					=	ShaderResourceViewDimension.Texture2D;
+					srvDesc.Format						=	Converter.Convert( format );
+					srvDesc.Texture2D.MipLevels			=	1;
+					srvDesc.Texture2D.MostDetailedMip	=	i;
+
+				var srv	=	new ShaderResourceView( device.Device, tex2D, srvDesc );
+
+				mipSrvs[i]	=	new ShaderResource( device, srv, width, height, 1 );
+
+				
 				UnorderedAccessView uav = null;
 
 				if (enableRWBuffer) {
@@ -229,6 +243,18 @@ namespace Fusion.Drivers.Graphics {
 		public RenderTargetSurface GetSurface ( int mipLevel )
 		{
 			return surfaces[ mipLevel ];
+		}
+
+
+
+		/// <summary>
+		/// Gets render target surface for given mip level.
+		/// </summary>
+		/// <param name="mipLevel"></param>
+		/// <returns></returns>
+		public ShaderResource GetShaderResource ( int mipLevel )
+		{
+			return mipSrvs[ mipLevel ];
 		}
 
 

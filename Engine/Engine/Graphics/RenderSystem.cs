@@ -26,6 +26,9 @@ namespace Fusion.Engine.Graphics {
 		internal Filter2 Filter2 { get{ return filter2; } }
 		Filter2 filter2;
 
+		internal BlurFilter Blur { get{ return blur; } }
+		BlurFilter blur;
+
 		internal BilateralFilter BilateralFilter { get { return bilateralFilter; } }
 		BilateralFilter bilateralFilter;
 
@@ -118,6 +121,7 @@ namespace Fusion.Engine.Graphics {
 			spriteEngine	=	new SpriteEngine( this );
 			filter			=	new Filter( this );
 			filter2			=	new Filter2( this );
+			blur			=	new BlurFilter( this );
 			bilateralFilter	=	new BilateralFilter( this );
 			ssaoFilter		=	new SsaoFilter( this );
 			hdrFilter		=	new HdrFilter( this );
@@ -192,6 +196,7 @@ namespace Fusion.Engine.Graphics {
 			InitializeComponent( spriteEngine	);
 			InitializeComponent( filter			);
 			InitializeComponent( filter2		);
+			InitializeComponent( blur			);
 			InitializeComponent( bilateralFilter);
 			InitializeComponent( ssaoFilter		);
 			InitializeComponent( hdrFilter		);

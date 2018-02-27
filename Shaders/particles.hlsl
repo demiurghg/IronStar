@@ -101,7 +101,7 @@ void CSMain(
 
 		if (p.LifeTime>0) {
 			if (p.TimeLag < p.LifeTime) {
-				p.TimeLag += Params.DeltaTime;
+				p.TimeLag += Params.DeltaTime * Params.IntegrationSteps;
 			} else {
 				p.LifeTime = -1;
 				deadParticleIndices.Append( id );

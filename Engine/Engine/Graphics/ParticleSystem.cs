@@ -187,8 +187,10 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="gameTime"></param>
 		internal void RenderSoft ( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame viewFrame )
 		{
-			softStream.RenderSoft( gameTime, camera, stereoEye, viewFrame );
-			dudvStream.RenderDuDv( gameTime, camera, stereoEye, viewFrame );
+			softStream.RenderSoft	 ( gameTime, camera, stereoEye, viewFrame );
+			softStream.RenderVelocity( gameTime, camera, stereoEye, viewFrame );
+
+			dudvStream.RenderDuDv	 ( gameTime, camera, stereoEye, viewFrame );
 		}
 
 

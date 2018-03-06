@@ -3,7 +3,7 @@
   <Environment>
     <Gravity>16</Gravity>
     <SkyTrubidity>3</SkyTrubidity>
-    <SunPosition X="1" Y="0.5" Z="2" />
+    <SunPosition X="1" Y="0.5" Z="1" />
     <SunIntensity>40</SunIntensity>
     <FogDistance>5000</FogDistance>
     <FogHeight>-0.05</FogHeight>
@@ -192,7 +192,7 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="3.125" Y="0.625" Z="-2.75" />
+      <Position X="4.75" Y="0.625" Z="-2.75" />
       <Rotation X="0.5117943" Y="-0.004371751" Z="0.859094441" W="-0.002032272" />
       <Scaling>1</Scaling>
       <Factory xsi:type="ProxyFactory">
@@ -222,7 +222,7 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-0.75" Y="0.75" Z="-2.125" />
+      <Position X="-2.625" Y="0.75" Z="-2.125" />
       <Rotation X="-0.07394308" Y="-0.0739484653" Z="0.70322293" W="0.703236461" />
       <Scaling>1</Scaling>
       <Factory xsi:type="ProxyFactory">
@@ -566,7 +566,7 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="12.625" Y="1.875" Z="20" />
+      <Position X="12.625" Y="1" Z="19.25" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Factory xsi:type="FuncFXFactory">
@@ -624,7 +624,7 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-0.875" Y="0.875" Z="-1.875" />
+      <Position X="18.5" Y="2.125" Z="-2.125" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Factory xsi:type="FuncFXFactory">

@@ -1,6 +1,6 @@
 
 #if 0
-$ubershader INITIALIZE|INJECTION|SIMULATION|DRAW_SOFT|DRAW_HARD|DRAW_DUDV|SOFT_SHADOW|HARD_SHADOW|DRAW_LIGHT|ALLOC_LIGHTMAP
+$ubershader INITIALIZE|INJECTION|SIMULATION|DRAW_SOFT|DRAW_HARD|DRAW_DUDV|DRAW_VELOCITY|SOFT_SHADOW|HARD_SHADOW|DRAW_LIGHT|ALLOC_LIGHTMAP
 #endif
 
 #include "particles.auto.hlsl"
@@ -218,7 +218,7 @@ struct GSOutput {
 };
 
 
-#if (defined DRAW_SOFT) || (defined DRAW_HARD) || (defined DRAW_DUDV) || (defined SOFT_SHADOW) || (defined HARD_SHADOW) || (defined DRAW_LIGHT)
+#if (defined DRAW_SOFT) || (defined DRAW_HARD) || (defined DRAW_DUDV) || (defined SOFT_SHADOW) || (defined HARD_SHADOW) || (defined DRAW_LIGHT) || (defined DRAW_VELOCITY)
 VSOutput VSMain( uint vertexID : SV_VertexID )
 {
 	VSOutput output;
@@ -250,6 +250,18 @@ float ApplyFog( float3 worldPos )
 }
 
 #include "temperature.fxi"
+
+float3 ComputeVelocity ( float3 position, float3 velocity )
+{
+	float4 pp0	=	mul( float4( position,            1 ), Params.ViewProjection );
+	float4 pp1	=	mul( float4( position + velocity, 1 ), Params.ViewProjection );
+	
+	pp0 /= pp0.w;
+	pp1 /= pp1.w;
+	
+	return pp1.xyz - pp0.xyz;
+}
+
 
 [maxvertexcount(6)]
 void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> outputStream )
@@ -322,6 +334,12 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 		normal1	=	normalize( -fwd );
 		normal2	=	normalize( -fwd );
 		normal3	=	normalize( -fwd );
+	#endif
+	#ifdef DRAW_VELOCITY
+		normal0	=	ComputeVelocity( prt.Position.xyz, prt.Velocity.xyz );
+		normal1	=	ComputeVelocity( prt.Position.xyz, prt.Velocity.xyz );
+		normal2	=	ComputeVelocity( prt.Position.xyz, prt.Velocity.xyz );
+		normal3	=	ComputeVelocity( prt.Position.xyz, prt.Velocity.xyz );
 	#endif
 	
 	float4 pos0		=	mul( wpos0, Params.View );
@@ -523,6 +541,15 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 		float2	zero	=	float2(0, 0);
 
 		return float4( max(zero, dudv.xy), max(zero, -dudv.xy) );
+	#endif
+	
+	#ifdef DRAW_VELOCITY
+		float4 	tcolor		=	Texture.Sample( Sampler, input.TexCoord );
+		float4	vcolor		=	input.Color;
+		float	alpha		=	tcolor.a * vcolor.a;
+		float3	velocity	=	input.Normal.xyz * tcolor.a;
+
+		return float4( velocity.xyz * 0.5f + 0.5f, alpha*alpha );
 	#endif
 	
 	#ifdef SOFT_SHADOW

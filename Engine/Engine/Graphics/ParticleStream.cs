@@ -120,11 +120,12 @@ namespace Fusion.Engine.Graphics {
 			DRAW_SOFT		=	0x0004,
 			DRAW_HARD		=	0x0008,
 			DRAW_DUDV		=	0x0010,
-			INITIALIZE		=	0x0020,
-			SOFT_SHADOW		=	0x0040,
-			HARD_SHADOW		=	0x0080,
-			DRAW_LIGHT		=	0x0100,
-			ALLOC_LIGHTMAP	=	0x0200,
+			DRAW_VELOCITY	=	0x0020,
+			INITIALIZE		=	0x0040,
+			SOFT_SHADOW		=	0x0080,
+			HARD_SHADOW		=	0x0100,
+			DRAW_LIGHT		=	0x0200,
+			ALLOC_LIGHTMAP	=	0x0400,
 		}
 
 
@@ -304,6 +305,14 @@ namespace Fusion.Engine.Graphics {
 
 			if (flag==Flags.DRAW_DUDV) {
 				ps.BlendState			=	BlendState.Additive;
+				ps.DepthStencilState	=	DepthStencilState.None;
+				ps.Primitive			=	Primitive.PointList;
+				ps.RasterizerState		=	RasterizerState.CullNone;
+			}
+
+
+			if (flag==Flags.DRAW_VELOCITY) {
+				ps.BlendState			=	BlendState.AlphaBlend;
 				ps.DepthStencilState	=	DepthStencilState.None;
 				ps.Primitive			=	Primitive.PointList;
 				ps.RasterizerState		=	RasterizerState.CullNone;
@@ -723,6 +732,29 @@ namespace Fusion.Engine.Graphics {
 			var viewport	=	new Viewport( 0, 0, colorTarget.Width, colorTarget.Height );
 
 			RenderGeneric( "DuDv Particles", gameTime, camera, viewport, view, projection, colorTarget, null, depthSource, Flags.DRAW_DUDV );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="gameTime"></param>
+		internal void RenderVelocity ( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame viewFrame )
+		{
+			if (rs.SkipParticles) {
+				return;
+			}
+
+			var view		=	camera.GetViewMatrix( stereoEye );
+			var projection	=	camera.GetProjectionMatrix( stereoEye );
+
+			var colorTarget	=	viewFrame.ParticleVelocity.Surface;
+			var depthSource	=	viewFrame.DepthBuffer;
+
+			var viewport	=	new Viewport( 0, 0, colorTarget.Width, colorTarget.Height );
+
+			RenderGeneric( "Velocity Particles", gameTime, camera, viewport, view, projection, colorTarget, null, depthSource, Flags.DRAW_VELOCITY );
 		}
 
 

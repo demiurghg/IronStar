@@ -19,6 +19,7 @@ struct PARAMS {
 };
 
 SamplerState	LinearSampler		: register(s0);
+SamplerState	AnisotropicSampler	: register(s0);
 	
 cbuffer PARAMS 		: register(b0) { 
 	PARAMS Params 	: packoffset(c0); 
@@ -88,6 +89,7 @@ Texture2D		DistortionParticles	: register(t3);
 Texture2D		SoftParticlesFront	: register(t4);
 Texture2D		SoftParticlesBack	: register(t5);
 Texture2D		TurbidBackground	: register(t6);
+Texture2D		ParticleVelocity	: register(t7);
 
 
 float4 VSMain(uint VertexID : SV_VertexID, out float2 uv : TEXCOORD) : SV_POSITION
@@ -111,6 +113,11 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	float4	distortPrtSrc	=	DistortionParticles.SampleLevel( LinearSampler, uv, 0 ).rgba;
 	float2	distortPrt		=	(distortPrtSrc.xy - distortPrtSrc.zw) * 0.02;
 	
+	float2	velocityPrt		=	ParticleVelocity.SampleLevel( LinearSampler, uv, 0 ).rg * 2 - 1;
+	velocityPrt.y *= -1;
+	
+	//return float4(velocityPrt.xy*2-1, 0, 1);
+	
 	//	Compute transparent object distortion :
 	float4	distortGlass	=	DistortionGlass	.SampleLevel( LinearSampler, uv, 0 ).rgba;
 			distortGlass.xy	=	(distortGlass.xy * 2 - float2(1,1));
@@ -125,7 +132,7 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 
 	//	Get solid background :
 	float3	hdrImageSolid	=	HdrImageSolid	.SampleLevel( LinearSampler, uv + distortGlass.xy + distortPrt.xy, 0 ).rgb;
-	float3	turbidBack		=	TurbidBackground.SampleLevel( LinearSampler, uv + distortGlass.xy + distortPrt.xy, blurFactor*4 ).rgb;
+	float3	turbidBack		=	TurbidBackground.SampleLevel( LinearSampler, uv + distortGlass.xy + distortPrt.xy, blurFactor*3 ).rgb;
 	
 			hdrImageSolid	=	lerp( hdrImageSolid.rgb, turbidBack.rgb, saturate(blurFactor*8) );
 
@@ -133,7 +140,16 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 			hdrImageSolid	=	lerp( hdrImageSolid.rgb, hdrImageGlass.rgb, hdrImageGlass.a );
 			
 	//	Get soft particles :
+	#if 0
 	float4	softPrtFront	=	SoftParticlesFront.SampleLevel( LinearSampler, uv + distortPrt.xy, 0 ).rgba;
+	#else
+	float4	softPrtFront	=	0;
+	for (float t=-1; t<=1; t+=0.25f) {
+		softPrtFront += SoftParticlesFront.SampleLevel( LinearSampler, uv + distortPrt.xy + velocityPrt.xy * (t / 60.0f), 0 ).rgba;
+	}
+	softPrtFront.rgba /= 9.0f;
+	//softPrtFront.a = 1;
+	#endif
 
 	//	Compose solid+transparent and soft particles :
 	float3	hdrImageFinal	=	lerp( hdrImageSolid.rgb, softPrtFront.rgb, softPrtFront.a );
@@ -219,6 +235,7 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	float3	bloom1		=	BloomTexture  	.SampleLevel( LinearSampler, uv, 1 ).rgb;
 	float3	bloom2		=	BloomTexture  	.SampleLevel( LinearSampler, uv, 2 ).rgb;
 	float3	bloom3		=	BloomTexture  	.SampleLevel( LinearSampler, uv, 3 ).rgb;
+	float3	bloom4		=	BloomTexture  	.SampleLevel( LinearSampler, uv, 4 ).rgb;
 	float4	bloomMask1	=	BloomMask1.SampleLevel( LinearSampler, uv, 0 );
 	float4	bloomMask2	=	BloomMask2.SampleLevel( LinearSampler, uv, 0 );
 	float4	bloomMask	=	lerp( bloomMask1, bloomMask2, Params.DirtMaskLerpFactor );
@@ -228,7 +245,9 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	float3	bloom		=	( bloom0 * 1.000f  
 							+ bloom1 * 2.000f  
 							+ bloom2 * 3.000f  
-							+ bloom3 * 4.000f )/7.000f;//*/
+							+ bloom3 * 4.000f 
+							+ bloom4 * 5.000f 
+							)/15.000f;//*/
 							
 	if (isnan(bloom.x)) {
 		bloom = 0;

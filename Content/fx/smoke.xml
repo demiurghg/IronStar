@@ -21,9 +21,9 @@
     <Scattering>0</Scattering>
     <Temperature>6600</Temperature>
     <Lifetime Distribution="Gauss" MinLifetime="2" MaxLifetime="4" />
-    <Shape Size0="2" Size1="4" EnableRotation="true" InitialAngle="360" MinAngularVelocity="5" MaxAngularVelocity="-5" />
+    <Shape Size0="2" Size1="4" EnableRotation="true" InitialAngle="360" MinAngularVelocity="15" MaxAngularVelocity="-15" />
     <Position OffsetDirection="LocalUp" OffsetFactor="1" Distribution="GaussRadial" MinSize="0" MaxSize="0.5" />
-    <Velocity Direction="LocalUp" LinearDistribution="Gauss" LinearVelocityMin="0" LinearVelocityMax="1" RadialDistribution="GaussRadial" RadialVelocityMin="0" RadialVelocityMax="2" Advection="0" />
+    <Velocity Direction="LocalUp" LinearDistribution="Gauss" LinearVelocityMin="1" LinearVelocityMax="2" RadialDistribution="GaussRadial" RadialVelocityMin="0" RadialVelocityMax="2" Advection="0" />
     <Acceleration GravityFactor="-0.5" Damping="0.5" DragForce="0" Turbulence="0" />
   </ParticleStage1>
   <ParticleStage2>

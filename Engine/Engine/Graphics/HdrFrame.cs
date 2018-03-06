@@ -41,6 +41,7 @@ namespace Fusion.Engine.Graphics {
 
 		public RenderTarget2D	SoftParticlesFront	;
 		public RenderTarget2D	SoftParticlesBack	;
+		public RenderTarget2D	ParticleVelocity	;
 		public RenderTarget2D	DistortionBuffer	;
 
 		public RenderTarget2D	Bloom0				;
@@ -96,6 +97,7 @@ namespace Fusion.Engine.Graphics {
 			DistortionBuffer	=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, false );
 			SoftParticlesFront	=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width,		height,		false, false );
 			SoftParticlesBack	=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width,		height,		false, false );
+			ParticleVelocity	=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, false );
 
 			HalfDepthBuffer		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rg32F,		width/2,	height/2,	false, false );
 
@@ -140,6 +142,7 @@ namespace Fusion.Engine.Graphics {
 
 			device.Clear( SoftParticlesBack.Surface,  Color4.Zero );
 			device.Clear( SoftParticlesFront.Surface, Color4.Zero );
+			device.Clear( ParticleVelocity.Surface,   new Color4(half, half, 0, 0) );
 		}
 
 

@@ -199,6 +199,7 @@ namespace Fusion.Engine.Graphics {
 				device.SetTargets( null, hdrFrame.FinalHdrImage );
 
 				device.PixelShaderSamplers[0]	=	SamplerState.LinearClamp;
+				device.PixelShaderSamplers[1]	=	SamplerState.AnisotropicClamp;
 
 				device.PixelShaderResources[0]	=	hdrFrame.HdrBuffer;
 				device.PixelShaderResources[1]	=	hdrFrame.HdrBufferGlass;
@@ -207,6 +208,7 @@ namespace Fusion.Engine.Graphics {
 				device.PixelShaderResources[4]	=	hdrFrame.SoftParticlesFront;
 				device.PixelShaderResources[5]	=	hdrFrame.SoftParticlesBack;
 				device.PixelShaderResources[6]	=	hdrFrame.Bloom0;
+				device.PixelShaderResources[7]	=	hdrFrame.ParticleVelocity;
 
 				device.PipelineState			=	factory[ (int)(Flags.COMPOSITION) ];
 				
@@ -228,6 +230,7 @@ namespace Fusion.Engine.Graphics {
 		{
 			var device	=	Game.GraphicsDevice;
 			var filter	=	Game.RenderSystem.Filter;
+			var blur	=	Game.RenderSystem.Blur;
 
 			using ( new PixEvent("HDR Postprocessing") ) {
 
@@ -243,10 +246,20 @@ namespace Fusion.Engine.Graphics {
 				filter.StretchRect( hdrFrame.Bloom0.Surface, hdrFrame.FinalHdrImage, SamplerState.LinearClamp );
 				hdrFrame.Bloom0.BuildMipmaps();
 
+				#if true
+				blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 0 );
+				blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 1 );
+				blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2 );
+				blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 3 );
+				blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 4 );
+				device.ResetStates();
+				#else
 				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, settings.GaussBlurSigma, 0 );
 				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, settings.GaussBlurSigma, 1 );
 				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, settings.GaussBlurSigma, 2 );
 				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, settings.GaussBlurSigma, 3 );
+				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, settings.GaussBlurSigma, 4 );
+				#endif
 
 				//
 				//	Setup parameters :

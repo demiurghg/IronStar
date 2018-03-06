@@ -23,10 +23,7 @@ namespace Fusion.Engine.Graphics
 
 
 		[ShaderDefine]
-		const int BlockSizeX = 16;
-
-		[ShaderDefine]
-		const int BlockSizeY = 16;
+		const int BlockSize = 16;
 
 		[Flags]
 		enum Flags : int
@@ -98,18 +95,19 @@ namespace Fusion.Engine.Graphics
 		public void GaussBlur( RenderTarget2D target, RenderTarget2D temp, int mipLevel )
 		{
 
-			int width	=	target.Width;
-			int height	=	target.Height;
+			int width	=	target.Width  >> mipLevel;
+			int height	=	target.Height >> mipLevel;
 
 			using( new PixEvent("GaussBlur") ) {
 
-				int gx	=	MathUtil.IntDivRoundUp( width,  BlockSizeX );
-				int gy	=	MathUtil.IntDivRoundUp( height, BlockSizeY );
+				int gx	=	MathUtil.IntDivRoundUp( width,  BlockSize );
+				int gy	=	MathUtil.IntDivRoundUp( height, BlockSize );
 				int gz	=	1;
 
 
 				device.ResetStates();
 
+				device.ComputeShaderSamplers[0]		=	SamplerState.LinearClamp;
 				device.ComputeShaderResources[0]	=	target.GetShaderResource( mipLevel );
 				device.SetCSRWTexture( 0, temp.GetSurface( mipLevel ) );
 
@@ -119,13 +117,13 @@ namespace Fusion.Engine.Graphics
 
 				device.ResetStates();
 
+				device.ComputeShaderSamplers[0]		=	SamplerState.LinearClamp;
 				device.ComputeShaderResources[0]	=	temp.GetShaderResource( mipLevel );
 				device.SetCSRWTexture( 0, target.GetSurface( mipLevel ) );
 
 				device.PipelineState	=	factory[ (int)(Flags.GAUSSIAN|Flags.PASS2) ];
 				device.Dispatch( gx, gy, gz );
 			}
-			device.ResetStates();
 		}
 	}
 }

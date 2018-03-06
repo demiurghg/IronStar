@@ -1,3 +1,2 @@
-static const int BlockSizeX = 16;
-static const int BlockSizeY = 16;
+static const int BlockSize = 16;
 

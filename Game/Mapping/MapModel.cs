@@ -98,7 +98,8 @@ namespace IronStar.Mapping {
 
 				var q = MathConverter.Convert( Rotation );
 				var p = MathConverter.Convert( Position );
-				staticMesh.WorldTransform = new BEPUTransform( q, p );
+				var s = MathConverter.Convert( new Vector3( Scaling, Scaling, Scaling ) );
+				staticMesh.WorldTransform = new BEPUTransform( s, q, p );
 
 				collidables[i] =	staticMesh;
 	

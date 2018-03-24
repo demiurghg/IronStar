@@ -3,7 +3,7 @@
   <Environment>
     <Gravity>16</Gravity>
     <SkyTrubidity>3</SkyTrubidity>
-    <SunPosition X="1" Y="0.5" Z="1" />
+    <SunPosition X="-1" Y="0.5" Z="1" />
     <SunIntensity>40</SunIntensity>
     <FogDistance>5000</FogDistance>
     <FogHeight>-0.05</FogHeight>
@@ -21,138 +21,10 @@
     <AmbientLevel Red="0" Green="0" Blue="0" Alpha="0" />
   </Environment>
   <Nodes>
-    <MapNode xsi:type="MapEntity">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-8" Y="6" Z="-12.125" />
-      <Rotation X="0" Y="0" Z="0" W="1" />
-      <Scaling>1</Scaling>
-      <Factory xsi:type="NullFactory" />
-    </MapNode>
     <MapNode xsi:type="MapModel">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-15" Y="5" Z="0.375" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>4</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-8.5" Y="3.5" Z="0.375" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>4</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-9.5" Y="8" Z="0.375" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>4</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-15" Y="8" Z="0.375" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>4</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-9.5" Y="8" Z="6.875" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>4</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-15" Y="8" Z="6.875" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>4</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-9.5" Y="8" Z="12.375" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>4</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-15" Y="8" Z="12.375" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>4</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-9.5" Y="14" Z="12.375" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>4</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-15" Y="14" Z="12.375" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>4</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="2.5" Y="4.5" Z="12.375" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>4</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-3" Y="4.5" Z="12.375" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>4</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="2.5" Y="0.375" Z="-2.125" />
+      <Position X="2.5" Y="0.375" Z="114.875" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>0.5</Scaling>
       <ScenePath>scenes\mtrlTest.fbx</ScenePath>
@@ -162,28 +34,8 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="5" Y="0.5" Z="6.875" />
-      <Rotation X="0" Y="0" Z="0" W="1" />
-      <Scaling>1</Scaling>
-      <Factory xsi:type="StartPointFactory">
-        <StartPointType>SinglePlayer</StartPointType>
-      </Factory>
-    </MapNode>
-    <MapNode xsi:type="MapEntity">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
       <Position X="3.5" Y="0.625" Z="-9.875" />
       <Rotation X="0.5953795" Y="0.381953031" Z="0.382392228" W="-0.594484031" />
-      <Scaling>1</Scaling>
-      <Factory xsi:type="ProxyFactory">
-        <Classname>box</Classname>
-      </Factory>
-    </MapNode>
-    <MapNode xsi:type="MapEntity">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-7.875" Y="1.375" Z="6.75" />
-      <Rotation X="0.4716667" Y="-0.52636075" Z="0.527308" W="0.4716155" />
       <Scaling>1</Scaling>
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>
@@ -242,26 +94,6 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-12.625" Y="3.375" Z="9.125" />
-      <Rotation X="-0.3852276" Y="-0.590767562" Z="0.594193459" W="-0.386687845" />
-      <Scaling>1</Scaling>
-      <Factory xsi:type="ProxyFactory">
-        <Classname>box</Classname>
-      </Factory>
-    </MapNode>
-    <MapNode xsi:type="MapEntity">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-12.5" Y="0" Z="-9.625" />
-      <Rotation X="0.000898916158" Y="0.00271875178" Z="0.00287490338" W="0.9999918" />
-      <Scaling>1</Scaling>
-      <Factory xsi:type="ProxyFactory">
-        <Classname>box</Classname>
-      </Factory>
-    </MapNode>
-    <MapNode xsi:type="MapEntity">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
       <Position X="-12.5" Y="0.25" Z="-7.625" />
       <Rotation X="-0.000561544" Y="0.02095723" Z="9.681376E-05" W="0.9997802" />
       <Scaling>1</Scaling>
@@ -272,28 +104,8 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-11" Y="0" Z="-7.625" />
-      <Rotation X="-3.95632524E-05" Y="0.0397161171" Z="0.0007009146" W="0.9992108" />
-      <Scaling>1</Scaling>
-      <Factory xsi:type="ProxyFactory">
-        <Classname>box</Classname>
-      </Factory>
-    </MapNode>
-    <MapNode xsi:type="MapEntity">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
       <Position X="-12.5" Y="0" Z="-13.125" />
       <Rotation X="0.000154391746" Y="0.0025463535" Z="-2.85452043E-05" W="0.9999967" />
-      <Scaling>1</Scaling>
-      <Factory xsi:type="ProxyFactory">
-        <Classname>box</Classname>
-      </Factory>
-    </MapNode>
-    <MapNode xsi:type="MapEntity">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-12.5" Y="0.5" Z="-8.125" />
-      <Rotation X="9.57175362E-05" Y="0.005329067" Z="-0.000590405543" W="0.999985635" />
       <Scaling>1</Scaling>
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>
@@ -319,26 +131,6 @@
         <Classname>box</Classname>
       </Factory>
     </MapNode>
-    <MapNode xsi:type="MapEntity">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-12.5" Y="0.5" Z="-8.625" />
-      <Rotation X="-0.00653011957" Y="-0.000269229145" Z="-0.0002017395" W="0.9999786" />
-      <Scaling>1</Scaling>
-      <Factory xsi:type="ProxyFactory">
-        <Classname>box</Classname>
-      </Factory>
-    </MapNode>
-    <MapNode xsi:type="MapEntity">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-12.5" Y="1" Z="-8.625" />
-      <Rotation X="0.00011070638" Y="-0.00163256133" Z="0.000112680369" W="0.9999986" />
-      <Scaling>1</Scaling>
-      <Factory xsi:type="ProxyFactory">
-        <Classname>box</Classname>
-      </Factory>
-    </MapNode>
     <MapNode xsi:type="MapLightProbe">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
@@ -351,38 +143,9 @@
     <MapNode xsi:type="MapModel">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-17" Y="1.625" Z="19.375" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>1</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
       <Position X="-19" Y="1.625" Z="35.125" />
       <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
       <Scaling>1</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
-    <MapNode xsi:type="MapLightProbe">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-13.5" Y="1.5" Z="5.875" />
-      <Rotation X="0" Y="0" Z="0" W="1" />
-      <Scaling>1</Scaling>
-      <InnerRadius>8</InnerRadius>
-      <OuterRadius>16</OuterRadius>
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-18.125" Y="1.625" Z="6.125" />
-      <Rotation X="0" Y="0" Z="0" W="1" />
-      <Scaling>4</Scaling>
       <ScenePath>scenes\box.fbx</ScenePath>
       <Scale>1</Scale>
       <Color Red="10" Green="10" Blue="10" Alpha="1" />
@@ -462,8 +225,8 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="8.125" Y="7.375" Z="-8.875" />
-      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Position X="-86.25" Y="-4.125" Z="2.125" />
+      <Rotation X="0" Y="-0.6087614" Z="0" W="0.7933533" />
       <Scaling>1</Scaling>
       <Factory xsi:type="StartPointFactory">
         <StartPointType>SinglePlayer</StartPointType>
@@ -504,54 +267,6 @@
       <Scaling>1</Scaling>
       <InnerRadius>4</InnerRadius>
       <OuterRadius>8</OuterRadius>
-    </MapNode>
-    <MapNode xsi:type="MapLightProbe">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-4" Y="2.125" Z="-10.625" />
-      <Rotation X="0" Y="0" Z="0" W="1" />
-      <Scaling>1</Scaling>
-      <InnerRadius>7</InnerRadius>
-      <OuterRadius>14</OuterRadius>
-    </MapNode>
-    <MapNode xsi:type="MapLightProbe">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="2.75" Y="1.375" Z="-1.75" />
-      <Rotation X="0" Y="0" Z="0" W="1" />
-      <Scaling>1</Scaling>
-      <InnerRadius>5</InnerRadius>
-      <OuterRadius>12</OuterRadius>
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-4.5" Y="3.5" Z="0.375" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>4</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-1.5" Y="3.5" Z="0.375" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>4</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="1.25" Y="3.5" Z="3.5" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>4</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
     </MapNode>
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
@@ -646,36 +361,6 @@
         <Classname>box</Classname>
       </Factory>
     </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-9.5" Y="8" Z="-14.375" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>4</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-5" Y="8" Z="-14.375" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>4</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
-    <MapNode xsi:type="MapModel">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-0.5" Y="8" Z="-14.375" />
-      <Rotation X="0.0669873" Y="0.25" Z="0.25" W="0.933012664" />
-      <Scaling>4</Scaling>
-      <ScenePath>scenes\box.fbx</ScenePath>
-      <Scale>1</Scale>
-      <Color Red="10" Green="10" Blue="10" Alpha="1" />
-    </MapNode>
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
@@ -745,6 +430,16 @@
       <SpecularFactor>1</SpecularFactor>
       <NormalMapFactor>0</NormalMapFactor>
       <FalloffFactor>25</FalloffFactor>
+    </MapNode>
+    <MapNode xsi:type="MapModel">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="6.375" Y="0" Z="0" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <ScenePath>scenes\grayBoxing\map1.fbx</ScenePath>
+      <Scale>1</Scale>
+      <Color Red="10" Green="10" Blue="10" Alpha="1" />
     </MapNode>
   </Nodes>
 </Map>

@@ -186,11 +186,6 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="lightSet"></param>
 		public void Update ( GameTime gameTime, LightSet lightSet, IEnumerable<MeshInstance> instances )
 		{
-			if (Game.Keyboard.IsKeyDown(Input.Keys.R)) {
-				UpdateIrradianceMap(instances, lightSet, rs.RenderWorld.Debug);
-			}
-
-
 			if (shadowMap.ShadowQuality!=rs.ShadowQuality) {
 				SafeDispose( ref shadowMap );
 				shadowMap	=	new ShadowMap( rs, rs.ShadowQuality );

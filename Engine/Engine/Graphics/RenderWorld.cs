@@ -343,8 +343,8 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		internal void Render ( GameTime gameTime, StereoEye stereoEye, RenderTargetSurface targetSurface )
 		{
-			if ( Game.Keyboard.IsKeyDown(Input.Keys.T)) {
-				RenderRadiance();
+			if ( captureRadiance ) {
+				BuildRadiance();
 				captureRadiance = false;
 			}
 
@@ -544,10 +544,15 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void RenderRadiance ()
+		public void BuildRadiance ()
 		{
 			var sw = new Stopwatch();
 			var device	=	Game.GraphicsDevice;
+
+			Log.Message("Building occlusion volumes...");
+			
+			rs.LightManager.UpdateIrradianceMap( Instances, LightSet, Debug );
+
 
 			device.ResetStates();
 

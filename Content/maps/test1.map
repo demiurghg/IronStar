@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Map xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Environment>
+    <Gravity>16</Gravity>
+    <SkyTrubidity>2</SkyTrubidity>
+    <SunPosition X="1" Y="3" Z="2" />
+    <SunIntensity>100</SunIntensity>
+    <FogDistance>100</FogDistance>
+    <FogHeight>0.05</FogHeight>
+    <FogColor Red="10" Green="10" Blue="10" Alpha="0" />
+    <CharacterHeight>2</CharacterHeight>
+    <CharacterSize>1.2</CharacterSize>
+    <WalkableSlope>45</WalkableSlope>
+    <StepHeight>45</StepHeight>
+    <RecastCellHeight>0.25</RecastCellHeight>
+    <RecastCellSize>0.25</RecastCellSize>
+    <IrradianceVolume>
+      <Minimum X="-64" Y="-32" Z="-64" />
+      <Maximum X="64" Y="32" Z="64" />
+    </IrradianceVolume>
+    <AmbientLevel Red="0" Green="0" Blue="0" Alpha="0" />
+  </Environment>
+  <Nodes>
+    <MapNode xsi:type="MapOmniLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-12.5" Y="-0.125" Z="-3.875" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Intensity>0</Intensity>
+      <OuterRadius>5</OuterRadius>
+      <InnerRadius>0.1</InnerRadius>
+      <LightPreset>IncandescentStandard</LightPreset>
+      <LightStyle>Default</LightStyle>
+      <Ambient>false</Ambient>
+    </MapNode>
+    <MapNode xsi:type="MapOmniLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-14.5" Y="4.25" Z="0" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Intensity>500</Intensity>
+      <OuterRadius>5</OuterRadius>
+      <InnerRadius>0.1</InnerRadius>
+      <LightPreset>IncandescentStandard</LightPreset>
+      <LightStyle>Default</LightStyle>
+      <Ambient>false</Ambient>
+    </MapNode>
+    <MapNode xsi:type="MapModel">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="0" Y="-2.375" Z="0" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <ScenePath>scenes\grayBoxing\testLevel1.fbx</ScenePath>
+      <Scale>1</Scale>
+      <Color Red="10" Green="10" Blue="10" Alpha="1" />
+    </MapNode>
+    <MapNode xsi:type="MapSpotLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-20.375" Y="1.125" Z="0" />
+      <Rotation X="0" Y="-0.9238796" Z="0" W="0.3826834" />
+      <Scaling>1</Scaling>
+      <Intensity>500</Intensity>
+      <OuterRadius>10</OuterRadius>
+      <InnerRadius>0.1</InnerRadius>
+      <NearPlane>0.125</NearPlane>
+      <FarPlane>10</FarPlane>
+      <FovVertical>60</FovVertical>
+      <FovHorizontal>30</FovHorizontal>
+      <SpotMaskName />
+      <LodBias>0</LodBias>
+      <PenumbraAngle>10</PenumbraAngle>
+      <LightPreset>Red</LightPreset>
+      <LightStyle>Default</LightStyle>
+      <DepthBias>0.0009765625</DepthBias>
+      <SlopeBias>2</SlopeBias>
+    </MapNode>
+    <MapNode xsi:type="MapLightProbe">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-5.75" Y="2" Z="0" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <InnerRadius>12</InnerRadius>
+      <OuterRadius>16</OuterRadius>
+    </MapNode>
+  </Nodes>
+</Map>

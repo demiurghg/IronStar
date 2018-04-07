@@ -20,6 +20,13 @@ namespace Fusion.Engine.Frames {
 		readonly FrameProcessor	ui;
 
 		/// <summary>
+		/// Gets frame processor instance
+		/// </summary>
+		public  FrameProcessor Frames {
+			get { return ui; }
+		}
+
+		/// <summary>
 		/// 
 		/// </summary>
 		public	string		Name				{ get; set; }
@@ -385,13 +392,10 @@ namespace Fusion.Engine.Frames {
 		{
 			Game	=	ui.Game;
 			this.ui	=	ui;
-			if (ui.DefaultFont==null) {
-				throw new NullReferenceException( "FrameProcessor.DefaultFont is null. Set DefaultFont or use Frame constructor with explicitly specified font." );
-			}
 
 			Init();
 
-			Font			=	ui.DefaultFont;
+			Font			=	null;
 			X				=	x;
 			Y				=	y;
 			Width			=	w;
@@ -414,7 +418,7 @@ namespace Fusion.Engine.Frames {
 			Visible			=	true;
 			Enabled			=	true;
 			AutoSize		=	false;
-			Font			=	ui.DefaultFont;
+			Font			=	null;
 			ForeColor		=	Color.White;
 			Border			=	0;
 			BorderColor		=	Color.White;
@@ -460,7 +464,7 @@ namespace Fusion.Engine.Frames {
 		/// 
 		/// </summary>
 		/// <param name="frame"></param>
-		public void Clear ( Frame frame )
+		public void Clear ()
 		{
 			foreach ( var child in children ) {
 				child.parent = null;
@@ -1106,11 +1110,22 @@ namespace Fusion.Engine.Frames {
 				return;
 			}
 
-			if (Font==null) {
-				throw new InvalidOperationException("Frame.Font must be set to render text.");
+
+			float textWidth		=	8 * Text.Length;
+			float textHeight	=	8;
+			float capHeight		=	8;
+			float lineHeight	=	8;
+			float baseLine		=	8;
+
+			if (Font!=null) {
+				var r		=	Font.MeasureStringF( Text, TextTracking );
+				textWidth	=	r.Width;
+				textHeight	=	r.Height;
+				baseLine	=	Font.BaseLine;
+				capHeight	=	Font.CapHeight;
+				lineHeight	=	Font.LineHeight;
 			}
 
-			var r	=	Font.MeasureStringF( Text, TextTracking );
 			int x	=	0;
 			int y	=	0;
 			var gp	=	GetPaddedRectangle();
@@ -1135,13 +1150,13 @@ namespace Fusion.Engine.Frames {
 			}
 
 			if ( hAlign  < 0 )	x	=	gp.X;
-			if ( hAlign == 0 )	x	=	gp.X + (int)( gp.Width/2 - r.Width/2 );
-			if ( hAlign  > 0 )	x	=	gp.X + (int)( gp.Width - r.Width );
+			if ( hAlign == 0 )	x	=	gp.X + (int)( gp.Width/2 - textWidth/2 );
+			if ( hAlign  > 0 )	x	=	gp.X + (int)( gp.Width - textWidth );
 
 			if ( vAlign  < 0 )	y	=	gp.Y + (int)( 0 );
-			if ( vAlign == 0 )	y	=	gp.Y + (int)( Font.CapHeight/2 - Font.BaseLine + gp.Height/2 );
-			if ( vAlign  > 0 )	y	=	gp.Y + (int)( gp.Height - Font.LineHeight );
-			if ( vAlign == 2 )	y	=	gp.Y - Font.BaseLine;
+			if ( vAlign == 0 )	y	=	gp.Y + (int)( capHeight/2 - baseLine + gp.Height/2 );
+			if ( vAlign  > 0 )	y	=	gp.Y + (int)( gp.Height - lineHeight );
+			if ( vAlign == 2 )	y	=	gp.Y - (int)baseLine;
 
 			/*if (TextAlignment==Alignment.BaselineLeft) {
 				x	=	gp.X;
@@ -1162,11 +1177,23 @@ namespace Fusion.Engine.Frames {
 				Font.DrawString( sb, Text, x + TextOffsetX+1, y + TextOffsetY+1, ShadowColor, 0, false );
 			} */
 
+			if (Font!=null) {
+				
 			if (ShadowColor.A!=0) {
-				Font.DrawString( spriteLayer, Text, x + TextOffsetX+ShadowOffset.X, y + TextOffsetY+ShadowOffset.Y, ShadowColor, clipRectIndex, TextTracking, false );
-			}
+					Font.DrawString( spriteLayer, Text, x + TextOffsetX+ShadowOffset.X, y + TextOffsetY+ShadowOffset.Y, ShadowColor, clipRectIndex, TextTracking, false );
+				}
 
-			Font.DrawString( spriteLayer, Text, x + TextOffsetX, y + TextOffsetY, ForeColor, clipRectIndex, TextTracking, false );
+				Font.DrawString( spriteLayer, Text, x + TextOffsetX, y + TextOffsetY, ForeColor, clipRectIndex, TextTracking, false );
+
+			} else {
+
+				if (ShadowColor.A!=0) {
+					spriteLayer.DrawDebugString( x + TextOffsetX+ShadowOffset.X, y + TextOffsetY+ShadowOffset.Y, Text, ShadowColor, clipRectIndex );
+				}
+
+				spriteLayer.DrawDebugString( x + TextOffsetX, y + TextOffsetY, Text, ForeColor, clipRectIndex );
+
+			}
 		}
 
 

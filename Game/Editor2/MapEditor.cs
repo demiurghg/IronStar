@@ -18,6 +18,7 @@ using IronStar.Mapping;
 using Fusion.Build;
 using BEPUphysics;
 using IronStar.Core;
+using IronStar.Editor2.AttributeEditor;
 
 namespace IronStar.Editor2 {
 
@@ -132,12 +133,26 @@ namespace IronStar.Editor2 {
 		}
 
 
+		AEPropertyGrid aeGrid = null;
+
 		/// <summary>
 		/// 
 		/// </summary>
 		void FeedSelection ()
 		{
 			Editors.Editor.GetMapEditor()?.SetSelection( selection, map.Environment );
+
+			if (aeGrid==null) {
+				aeGrid = new AEPropertyGrid( Game.Frames );
+				aeGrid.Width	=	300;
+				aeGrid.Height	=	700;
+				aeGrid.X		=	1280 - 310;
+				aeGrid.Y		=	10;
+
+				Game.Frames.RootFrame.Add( aeGrid );
+			}
+
+			aeGrid.TargetObject = selection.FirstOrDefault();
 		}
 
 
@@ -207,16 +222,16 @@ namespace IronStar.Editor2 {
 		}
 
 
-		public void Select( MapNode factory )
+		public void Select( MapNode node )
 		{
-			if ( factory==null ) {
-				throw new ArgumentNullException( "factory" );
+			if ( node==null ) {
+				throw new ArgumentNullException( "node" );
 			}
-			if ( !map.Nodes.Contains( factory ) ) {
-				throw new ArgumentException( "Provided factory does not exist in current map" );
+			if ( !map.Nodes.Contains( node ) ) {
+				throw new ArgumentException( "Provided node does not exist in current map" );
 			}
 			selection.Clear();
-			selection.Add( factory );
+			selection.Add( node );
 
 			FeedSelection();
 		}

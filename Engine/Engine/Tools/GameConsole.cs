@@ -144,7 +144,7 @@ namespace Fusion.Engine.Tools {
 #else
 
 			using ( var ms = new MemoryStream( Properties.Resources.conchars ) ) {
-				consoleFont         =   UserTexture.CreateFromTga( Game.RenderSystem, ms, false );
+				consoleFont		=   UserTexture.CreateFromTga( Game.RenderSystem, ms, false );
 			}
 			//consoleFont			=	Game.Content.Load<DiscTexture>(font);
 #endif

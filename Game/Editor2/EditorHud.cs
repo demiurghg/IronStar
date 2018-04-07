@@ -8,6 +8,7 @@ using Fusion.Core.Mathematics;
 using Fusion.Engine.Common;
 using Fusion;
 using Fusion.Core;
+using Fusion.Engine.Frames;
 
 namespace IronStar.Editor2 {
 	public class EditorHud : DisposableBase {
@@ -15,6 +16,7 @@ namespace IronStar.Editor2 {
 		readonly RenderSystem rs;
 		readonly Game game;
 		readonly MapEditor editor;
+		readonly FrameProcessor frames;
 
 		SpriteLayer	spriteLayer;
 		List<float> fps = new List<float>();
@@ -30,6 +32,22 @@ namespace IronStar.Editor2 {
 			this.rs		=	editor.Game.RenderSystem;
 			this.game	=	editor.Game;
 			this.editor	=	editor;
+
+			this.frames	=	editor.Game.Frames;
+
+
+
+			//for ( int x=0; x<1280; x+=110) {
+			//	for ( int y=0; y<=720; y+=12) {
+			//		var frame = new Frame(frames, x,y, 100,10, "Trololo", new Color(0,0,0,64));
+			//		frame.TextAlignment = Alignment.MiddleCenter;
+			//		frames.RootFrame.Add(frame);
+			//	}
+			//}
+
+
+
+			
 
 			spriteLayer	=	new SpriteLayer( rs, 2048 );
 			rs.SpriteLayers.Add( spriteLayer );

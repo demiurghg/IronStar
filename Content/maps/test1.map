@@ -60,7 +60,7 @@
     <MapNode xsi:type="MapSpotLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-20.375" Y="1.125" Z="0" />
+      <Position X="-17.875" Y="-1.875" Z="2.125" />
       <Rotation X="0" Y="-0.9238796" Z="0" W="0.3826834" />
       <Scaling>1</Scaling>
       <Intensity>500</Intensity>
@@ -69,14 +69,14 @@
       <NearPlane>0.125</NearPlane>
       <FarPlane>10</FarPlane>
       <FovVertical>60</FovVertical>
-      <FovHorizontal>30</FovHorizontal>
+      <FovHorizontal>60</FovHorizontal>
       <SpotMaskName />
-      <LodBias>0</LodBias>
+      <LodBias>3</LodBias>
       <PenumbraAngle>10</PenumbraAngle>
-      <LightPreset>Red</LightPreset>
+      <LightPreset>DaylightHorizon</LightPreset>
       <LightStyle>Default</LightStyle>
       <DepthBias>0.0009765625</DepthBias>
-      <SlopeBias>2</SlopeBias>
+      <SlopeBias>4</SlopeBias>
     </MapNode>
     <MapNode xsi:type="MapLightProbe">
       <Visible>true</Visible>

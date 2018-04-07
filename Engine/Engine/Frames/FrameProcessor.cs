@@ -13,7 +13,7 @@ using System.Diagnostics;
 using Fusion.Core.Configuration;
 using Fusion.Engine.Common;
 using Fusion.Engine.Graphics;
-
+using System.IO;
 
 namespace Fusion.Engine.Frames {
 
@@ -73,7 +73,18 @@ namespace Fusion.Engine.Frames {
 			}
 		}
 
+
+		/// <summary>
+		/// Gets image for default font
+		/// </summary>
+		public UserTexture BaseFontImage {
+			get {
+				return baseFont;
+			}
+		}
+
 		SpriteLayer spriteLayer;
+		UserTexture	baseFont;
 
 
 		/// <summary>
@@ -95,6 +106,10 @@ namespace Fusion.Engine.Frames {
 		public override void Initialize()
 		{
 			spriteLayer	=	new SpriteLayer( Game.RenderSystem, 1024 );
+
+			using ( var ms = new MemoryStream( Properties.Resources.conchars ) ) {
+				baseFont = UserTexture.CreateFromTga( Game.RenderSystem, ms, false );
+			}
 
 			//	create root frame :
 			var vp			=	Game.RenderSystem.DisplayBounds;

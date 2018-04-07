@@ -15,7 +15,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// The number of sprite frames, that clips sprites against rectangle area and colorize them.
 		/// </summary>
-		public const int MaxSpriteFrames = 1024;
+		public const int MaxSpriteFrames = 2048;
 
 		readonly RenderSystem rs;
 
@@ -228,7 +228,7 @@ namespace Fusion.Engine.Graphics {
 		public void SetClipRectangle ( int index, Rectangle rectangle, Color color )
 		{
 			if (index<0 || index>=MaxSpriteFrames) {
-				throw new ArgumentOutOfRangeException("index", "must be greater or equal to zero and less than MaxClipRectangles (" + MaxSpriteFrames.ToString() + ")");
+				throw new ArgumentOutOfRangeException("index", "must be greater or equal to zero and less than MaxSpriteFrames (" + MaxSpriteFrames.ToString() + ")");
 			}
 
 			var rect	=	new RectangleF( rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height );

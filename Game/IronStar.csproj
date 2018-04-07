@@ -69,6 +69,14 @@
     <Compile Include="Core\GameWorld.AI.cs" />
     <Compile Include="Core\IStorable.cs" />
     <Compile Include="Core\SnapshotHeader.cs" />
+    <Compile Include="Editor2\AttributeEditor\AECategoryAttribute.cs" />
+    <Compile Include="Editor2\AttributeEditor\AEException.cs" />
+    <Compile Include="Editor2\AttributeEditor\AEPropertyGrid.CheckBox.cs" />
+    <Compile Include="Editor2\AttributeEditor\AEPropertyGrid.BindingInfo.cs" />
+    <Compile Include="Editor2\AttributeEditor\AEPropertyGrid.BaseElement.cs" />
+    <Compile Include="Editor2\AttributeEditor\AEPropertyGrid.cs" />
+    <Compile Include="Editor2\AttributeEditor\AENameAttribute.cs" />
+    <Compile Include="Editor2\AttributeEditor\AERangeAttribute.cs" />
     <Compile Include="Editor2\EditorConfig.cs" />
     <Compile Include="Editor2\EditorHud.cs" />
     <Compile Include="Editor2\MapEditor.Selection.cs" />

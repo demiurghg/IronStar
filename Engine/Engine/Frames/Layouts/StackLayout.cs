@@ -15,8 +15,17 @@ namespace Fusion.Engine.Frames.Layouts {
 
 	public class StackLayout : LayoutEngine {
 
-		public int	Offset			{ get; set; }
-		public int	Interval		{ get; set; }
+		public int	Offset		{ get; set; }
+		public int	Interval	{ get; set; }
+		public bool EqualWidth	{ get; set; }
+
+
+		public StackLayout( int offset, int interval, bool equalWidth = false )
+		{
+			Offset		=	offset;
+			Interval	=	interval;
+			EqualWidth	=	equalWidth;
+		}
 
 
 		/// <summary>
@@ -31,11 +40,17 @@ namespace Fusion.Engine.Frames.Layouts {
 
 			foreach ( var child in targetFrame.Children ) {
 
-				child.X = gp.X;
-				child.Y = gp.Y + offset;
+				child.X = gp.X + child.MarginLeft;
+				child.Y = gp.Y + child.MarginTop  + offset;
 
+				offset += child.MarginLeft;
 				offset += child.Height;
 				offset += Interval;
+				offset += child.MarginBottom;
+
+				if (EqualWidth) {
+					child.Width = gp.Width - child.MarginLeft - child.MarginRight;
+				}
 
 			}
 

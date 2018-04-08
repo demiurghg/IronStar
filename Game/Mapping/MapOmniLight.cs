@@ -11,6 +11,8 @@ using Fusion.Engine.Graphics;
 using IronStar.SFX;
 using Fusion.Development;
 using System.Drawing.Design;
+using Fusion;
+using Fusion.Core.Shell;
 
 namespace IronStar.Mapping {
 
@@ -22,25 +24,54 @@ namespace IronStar.Mapping {
 		//public string SpotMaskName { get; set; } = "";
 		
 		
-		[Category("Omni-light")]
+		[AECategory("Omni-light")]
+		[AEValueRange(0, 1000, 10, 0.1f)]
 		public float Intensity { get; set; } = 500;
 		
-		[Category("Omni-light")]
+		[AECategory("Omni-light")]
+		[AEValueRange(0, 50, 1, 0.1f)]
 		public float OuterRadius { get; set; } = 5;
 		
-		[Category("Omni-light")]
+		[AECategory("Omni-light")]
+		[AEValueRange(0, 50, 1, 0.1f)]
 		public float InnerRadius { get; set; } = 0.1f;
 
-		[Category("Omni-light")]
+		[AECategory("Omni-light")]
 		public LightPreset LightPreset { get; set; } = LightPreset.IncandescentStandard;
 
-		[Category("Omni-light")]
+		[AECategory("Omni-light")]
 		public LightStyle LightStyle { get; set; } = LightStyle.Default;
 
-		[Category("Omni-light")]
+		[AECategory("Omni-light")]
 		public bool Ambient { get; set; } = false;
 
 		OmniLight	light;
+
+		[AECommand]
+		[AECategory("Commands")]
+		[AEDisplayName("Do Blah!")]
+		public void ComputeLighting ()
+		{
+			Log.Warning("BLAH!!");
+		}
+
+
+		[AECommand]
+		[AECategory("Commands")]
+		[AEDisplayName("Do Blah!")]
+		public void FlushShaderCache ()
+		{
+			Log.Warning("BLAH!!");
+		}
+
+
+		[AECommand]
+		[AECategory("Commands")]
+		[AEDisplayName("Do Blah!")]
+		public void Bake ()
+		{
+			Log.Warning("BLAH!!");
+		}
 
 
 		/// <summary>

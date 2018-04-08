@@ -195,6 +195,32 @@ namespace Fusion.Engine.Frames {
 		/// </summary>
 		public	int			BorderRight			{ get; set; }
 
+
+		/// <summary>
+		/// Top, bottom, left and right margin
+		/// </summary>
+		public	int			Margin				{ set { MarginTop = MarginBottom = MarginLeft = MarginRight = value; } }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public	int			MarginTop			{ get; set; } = 0;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public	int			MarginBottom		{ get; set; } = 0;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public	int			MarginLeft			{ get; set; } = 0;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public	int			MarginRight			{ get; set; } = 0;
+
 		/// <summary>
 		/// 
 		/// </summary>

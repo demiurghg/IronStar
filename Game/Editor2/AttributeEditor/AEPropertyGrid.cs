@@ -8,15 +8,34 @@ using Fusion.Engine.Frames;
 using Fusion.Engine.Graphics;
 using System.Reflection;
 using Fusion.Core.Mathematics;
+using Fusion.Core.Extensions;
 using Fusion;
+using Fusion.Engine.Frames.Layouts;
+using Fusion.Core.Shell;
 
 namespace IronStar.Editor2.AttributeEditor {
 
 	public partial class AEPropertyGrid : Frame {
 
-		static readonly Color	ColorBackground		=	new Color( 26, 26, 26, 192);
-		static readonly Color	LabelColor			=	new Color(155,155,155, 192);
-		static readonly int		LabelFieldWidth		=	200;
+		static readonly Color	ColorBorder			=	new Color( 10, 10, 10, 192);
+		static readonly Color	ColorBackground		=	new Color( 30, 30, 30, 192);
+
+		static readonly Color	TextColorNormal		=	new Color(150,150,150, 192);
+		static readonly Color	TextColorHovered	=	new Color(200,200,200, 192);
+		static readonly Color	TextColorPushed		=	new Color(220,220,220, 192);
+
+		static readonly Color	ElementColorNormal	=	new Color(120,120,120, 192);
+		static readonly Color	ElementColorHovered	=	new Color(150,150,150, 192);
+		static readonly Color	ElementColorPushed	=	new Color(180,180,180, 192);
+
+		static readonly Color	ButtonColorNormal	=	new Color( 90, 90, 90, 192);
+		static readonly Color	ButtonColorHovered	=	new Color(120,120,120, 192);
+		static readonly Color	ButtonColorPushed	=	new Color(150,150,150, 192);
+		static readonly Color	ButtonBorderColor	=	new Color( 20, 20, 20, 192);
+
+		static readonly Color	ColorWhite			=	new Color(180,180,180, 255);
+		static readonly Color	ColorGreen			=	new Color(144,239,144, 255);
+		static readonly Color	ColorRed			=	new Color(239,144,144, 255);
 
 		/// <summary>
 		/// 
@@ -24,7 +43,13 @@ namespace IronStar.Editor2.AttributeEditor {
 		/// <param name="fp"></param>
 		public AEPropertyGrid( FrameProcessor fp ) : base(fp)
 		{
-			this.BackColor	=	ColorBackground;
+			this.BackColor		=	ColorBackground;
+			this.BorderColor	=	ColorBorder;
+			this.Border			=	1;
+
+			this.Padding		=	1;
+
+			this.Layout			=	new StackLayout(0,1, true);
 		}
 
 
@@ -67,8 +92,7 @@ namespace IronStar.Editor2.AttributeEditor {
 		/// </summary>
 		void RefreshEditor ()
 		{
-			int x = 0;
-			int y = 0;
+			var obj = targetObject;
 
 			Clear();
 
@@ -76,45 +100,74 @@ namespace IronStar.Editor2.AttributeEditor {
 				return;
 			}
 
-			foreach ( var mi in targetObject.GetType().GetMembers() ) {
+			foreach ( var pi in obj.GetType().GetProperties() ) {
 
-				Log.Message("{0}", mi.Name);
-
-				var frame = ConstructFromProperty(mi, targetObject);
-
-				if (frame==null) {
-					continue;
-				}
-
-				frame.X	=	x;
-				frame.Y	=	y;
-
-				y += frame.Height;
-
-				Add( frame );
-			}
-		}
-
-
-		Frame ConstructFromProperty ( MemberInfo mi, object obj )
-		{
-			if (mi.MemberType==MemberTypes.Property) {
-
-				var pi = mi as PropertyInfo;
-
-				if (pi==null) {
-					return null;
-				}
-
-				var bi = new BindingInfo("????????", mi.Name, obj, mi );
+				var name		=	pi.GetAttribute<AEDisplayNameAttribute>()?.Name ?? pi.Name;
+				var category	=	pi.GetAttribute<AECategoryAttribute>()?.Category ?? "Misc";
 
 				if (pi.PropertyType==typeof(bool)) {
-					return new CheckBox(this, bi);
+					AddCheckBox( category, name, ()=>(bool)(pi.GetValue(obj)), (val)=>pi.SetValue(obj,val) );
+				}
+
+				if (pi.PropertyType==typeof(float)) {
+					var min		=	1.0f;
+					var max		=	100.0f;
+					var step	=	5.0f;
+					var pstep	=	1.0f;
+
+					var range	=	pi.GetAttribute<AEValueRangeAttribute>();
+
+					if (range!=null) {
+						min		=	range.Min;
+						max		=	range.Max;
+						step	=	range.RoughStep;
+						pstep	=	range.PreciseStep;
+					}
+					
+					AddSlider( category, name, ()=>(float)(pi.GetValue(obj)), (val)=>pi.SetValue(obj,val), min, max, step, pstep );
 				}
 
 			}
 
-			return null;
+			foreach ( var mi in obj.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance) ) {
+
+				var name		=	mi.GetAttribute<AEDisplayNameAttribute>()?.Name ?? mi.Name;
+				var category	=	mi.GetAttribute<AECategoryAttribute>()?.Category ?? "Misc";
+
+				if (mi.HasAttribute<AECommandAttribute>()) {
+					AddButton( category, name, ()=>mi.Invoke(obj, new object[0]) );
+				}
+			}
+
+			RunLayout(true);
 		}
+
+
+
+
+		/// <summary>
+		/// Removes all control bindings
+		/// </summary>
+		public void ResetGrid ()
+		{
+			Clear();
+		}
+
+
+		public void AddCheckBox ( string category, string name, Func<bool> getFunc, Action<bool> setFunc )
+		{
+			Add( new AECheckBox( this, category, name, getFunc, setFunc ) );
+		}
+
+		public void AddSlider ( string category, string name, Func<float> getFunc, Action<float> setFunc, float min, float max, float step, float pstep )
+		{
+			Add( new AESlider( this, category, name, getFunc, setFunc, min, max, step, pstep ) );
+		}
+
+		public void AddButton ( string category, string name, Action action )
+		{
+			Add( new AEButton( this, category, name, action ) );
+		}
+
 	}
 }

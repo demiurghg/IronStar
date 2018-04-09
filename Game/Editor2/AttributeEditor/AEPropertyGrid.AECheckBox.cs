@@ -17,7 +17,6 @@ namespace IronStar.Editor2.AttributeEditor {
 
 			readonly Frame yesNoButton;
 
-			readonly AEPropertyGrid	grid;
 			readonly Func<bool> getFunc;
 			readonly Action<bool> setFunc;
 
@@ -29,19 +28,19 @@ namespace IronStar.Editor2.AttributeEditor {
 			/// <param name="bindingInfo"></param>
 			public AECheckBox ( AEPropertyGrid grid, string category, string name, Func<bool> getFunc, Action<bool> setFunc ) : base(grid, category, name)
 			{ 
-				this.grid		=	grid;
 				this.getFunc	=	getFunc;
 				this.setFunc	=	setFunc;
 				
-				Width			=	grid.Width;
+				Width			=	grid.Width-50;
 				Height			=	10;
 
 				this.StatusChanged +=CheckBox_StatusChanged;
 
-				yesNoButton = new Frame(this.Frames) {
-					Height = 10, BackColor = ColorBorder,
-					TextAlignment = Alignment.MiddleLeft,
-					TextOffsetX = 1,
+				yesNoButton			= new Frame(this.Frames) {
+					Height			= 10, 
+					BackColor		= ColorBorder,
+					TextAlignment	= Alignment.MiddleLeft,
+					TextOffsetX		= 1,
 				};
 
 				yesNoButton.Click+=YesNoButton_Click;
@@ -68,7 +67,8 @@ namespace IronStar.Editor2.AttributeEditor {
 			}
 
 
-			protected override void Update( GameTime gameTime )
+
+			public override void RunLayout()
 			{
 				TextAlignment		=	Alignment.MiddleRight;
 				TextOffsetX			=	-Width / 2 - 2;
@@ -77,7 +77,11 @@ namespace IronStar.Editor2.AttributeEditor {
 
 				yesNoButton.X		=	Width/2;
 				yesNoButton.Width	=	Width/2;
+			}
 
+
+			protected override void Update( GameTime gameTime )
+			{
 			}
 
 

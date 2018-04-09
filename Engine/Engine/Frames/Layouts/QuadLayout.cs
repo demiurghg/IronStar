@@ -44,7 +44,7 @@ namespace Fusion.Engine.Frames.Layouts {
 		/// 
 		/// </summary>
 		/// <param name="targetFrame"></param>
-		public override void RunLayout ( Frame targetFrame, bool forceTransitions = false )
+		public override void RunLayout ( Frame targetFrame )
 		{
 			var gp	=	targetFrame.GetPaddedRectangle();
 			int w1	=	( gp.Width	- gapW ) / 2;

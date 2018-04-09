@@ -18,6 +18,7 @@ namespace Fusion.Engine.Frames.Layouts {
 		public int	Offset		{ get; set; }
 		public int	Interval	{ get; set; }
 		public bool EqualWidth	{ get; set; }
+		public bool AllowResize { get; set; } = false;
 
 
 		public StackLayout( int offset, int interval, bool equalWidth = false )
@@ -33,12 +34,16 @@ namespace Fusion.Engine.Frames.Layouts {
 		/// </summary>
 		/// <param name="targetFrame"></param>
 		/// <param name="forceTransitions"></param>
-		public override void RunLayout ( Frame targetFrame, bool forceTransitions = false )
+		public override void RunLayout ( Frame targetFrame )
 		{
 			int offset = Offset;
 			var gp = targetFrame.GetPaddedRectangle(false);
 
 			foreach ( var child in targetFrame.Children ) {
+
+				if (!child.Visible) {
+					continue;
+				}
 
 				child.X = gp.X + child.MarginLeft;
 				child.Y = gp.Y + child.MarginTop  + offset;
@@ -54,6 +59,15 @@ namespace Fusion.Engine.Frames.Layouts {
 
 			}
 
+			if (AllowResize) {
+				targetFrame.Height = offset
+					 + targetFrame.PaddingTop
+					 + targetFrame.PaddingBottom
+					 + targetFrame.BorderTop
+					 + targetFrame.BorderBottom
+					 - Interval
+					 ;
+			}
 		}
 
 		

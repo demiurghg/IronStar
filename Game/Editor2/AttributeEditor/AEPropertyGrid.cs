@@ -49,7 +49,8 @@ namespace IronStar.Editor2.AttributeEditor {
 
 			this.Padding		=	1;
 
-			this.Layout			=	new StackLayout(0,1, true);
+			this.Layout			=	new StackLayout(0,1, true) { AllowResize = true };
+			
 		}
 
 
@@ -139,9 +140,9 @@ namespace IronStar.Editor2.AttributeEditor {
 				}
 			}
 
-			RunLayout(true);
+			RunLayout();
+			//RunLayout();
 		}
-
 
 
 
@@ -154,19 +155,35 @@ namespace IronStar.Editor2.AttributeEditor {
 		}
 
 
+		void AddToCollapseRegion ( string category, Frame frame )
+		{
+			var region = Children
+						.Where( f1 => f1 is AECollapseRegion )
+						.Select( f2 => (AECollapseRegion)f2 )
+						.FirstOrDefault( f3 => f3.Category == category );
+
+			if (region==null) {
+				region = new AECollapseRegion(this, category);
+				Add( region );	
+			}
+
+			region.Add( frame );
+		}
+
+
 		public void AddCheckBox ( string category, string name, Func<bool> getFunc, Action<bool> setFunc )
 		{
-			Add( new AECheckBox( this, category, name, getFunc, setFunc ) );
+			AddToCollapseRegion( category, new AECheckBox( this, category, name, getFunc, setFunc ) );
 		}
 
 		public void AddSlider ( string category, string name, Func<float> getFunc, Action<float> setFunc, float min, float max, float step, float pstep )
 		{
-			Add( new AESlider( this, category, name, getFunc, setFunc, min, max, step, pstep ) );
+			AddToCollapseRegion( category, new AESlider( this, category, name, getFunc, setFunc, min, max, step, pstep ) );
 		}
 
 		public void AddButton ( string category, string name, Action action )
 		{
-			Add( new AEButton( this, category, name, action ) );
+			AddToCollapseRegion( category, new AEButton( this, category, name, action ) );
 		}
 
 	}

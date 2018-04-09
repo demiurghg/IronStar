@@ -456,9 +456,6 @@ namespace Fusion.Engine.Frames {
 			Anchor			=	FrameAnchor.Left | FrameAnchor.Top;
 
 			ImageColor		=	Color.White;
-
-			LayoutChanged	+= (s,e) => RunLayout(true);
-			Resize			+= (s,e) => RunLayout(true);
 		}
 
 
@@ -525,6 +522,17 @@ namespace Fusion.Engine.Frames {
 				this.children.Remove( frame );
 				frame.parent	=	this;
 			}
+		}
+
+
+
+		/// <summary>
+		/// Sorts child frame (Unstable!)
+		/// </summary>
+		/// <param name="comparison"></param>
+		public void SortChildren ( Comparison<Frame> comparison )
+		{
+			children.Sort(comparison);
 		}
 
 
@@ -811,17 +819,9 @@ namespace Fusion.Engine.Frames {
 			var bfsList  = BFSList( this );
 			var bfsListR = bfsList.ToList();
 			bfsListR.Reverse();
-			//bfsList.Reverse();
+
 
 			UpdateGlobalRect(0,0);
-
-			bfsList .ForEach( f => f.UpdateTransitions(gameTime) );
-
-			UpdateGlobalRect(0,0);
-
-			if (ui.ForceLayout) {
-				bfsList.ForEach( f => f.RunLayout(true) );
-			}
 
 			bfsList.ForEach( f => f.UpdateMove() );
 			bfsList.ForEach( f => f.UpdateResize() );
@@ -1045,11 +1045,15 @@ namespace Fusion.Engine.Frames {
 		/// 
 		/// </summary>
 		/// <param name="forceTransitions"></param>
-		public void RunLayout (bool forceTransitions)
+		public virtual void RunLayout ()
 		{
-			if (layout!=null && !ui.SuppressLayout) {
-				layout.RunLayout( this, forceTransitions );
+			layout?.RunLayout( this );
+
+			foreach ( var child in Children ) {
+				child.RunLayout();
 			}
+
+			layout?.RunLayout( this );
 		}
 
 

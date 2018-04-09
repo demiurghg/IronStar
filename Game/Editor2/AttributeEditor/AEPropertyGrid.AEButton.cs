@@ -15,9 +15,6 @@ namespace IronStar.Editor2.AttributeEditor {
 
 		class AEButton : AEBaseEditor {
 
-			readonly Frame slider;
-
-			readonly AEPropertyGrid	grid;
 			readonly Action action;
 
 			/// <summary>
@@ -27,7 +24,6 @@ namespace IronStar.Editor2.AttributeEditor {
 			/// <param name="bindingInfo"></param>
 			public AEButton ( AEPropertyGrid grid, string category, string name, Action action ) : base(grid, category, name)
 			{ 
-				this.grid		=	grid;
 				this.action		=	action;
 				
 				Width			=	grid.Width;

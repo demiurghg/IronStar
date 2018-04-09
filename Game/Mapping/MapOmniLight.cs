@@ -48,7 +48,7 @@ namespace IronStar.Mapping {
 		OmniLight	light;
 
 		[AECommand]
-		[AECategory("Commands")]
+		[AECategory("Omni-light")]
 		[AEDisplayName("Do Blah!")]
 		public void ComputeLighting ()
 		{

@@ -71,7 +71,8 @@
     <Compile Include="Core\SnapshotHeader.cs" />
     <Compile Include="Editor2\AttributeEditor\AEException.cs" />
     <Compile Include="Editor2\AttributeEditor\AEPropertyGrid.AEBaseEditor.cs" />
-    <Compile Include="Editor2\AttributeEditor\AEPropertyGrid.AESlider - Copy.cs" />
+    <Compile Include="Editor2\AttributeEditor\AEPropertyGrid.AECollapseRegion.cs" />
+    <Compile Include="Editor2\AttributeEditor\AEPropertyGrid.AESlider.cs" />
     <Compile Include="Editor2\AttributeEditor\AEPropertyGrid.AEButton.cs" />
     <Compile Include="Editor2\AttributeEditor\AEPropertyGrid.TextBox.cs" />
     <Compile Include="Editor2\AttributeEditor\AEPropertyGrid.Slider.cs" />

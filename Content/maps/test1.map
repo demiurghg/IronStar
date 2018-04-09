@@ -40,7 +40,7 @@
       <Position X="-15" Y="-0.875" Z="8.375" />
       <Rotation X="0" Y="0.258819044" Z="0" W="0.9659258" />
       <Scaling>1</Scaling>
-      <Intensity>700</Intensity>
+      <Intensity>320</Intensity>
       <OuterRadius>7.4</OuterRadius>
       <InnerRadius>0.6</InnerRadius>
       <LightPreset>IncandescentStandard</LightPreset>
@@ -60,16 +60,16 @@
     <MapNode xsi:type="MapSpotLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-13.25" Y="-1.875" Z="0.25" />
+      <Position X="-13.25" Y="-1.875" Z="4.5" />
       <Rotation X="0" Y="-0.9238796" Z="0" W="0.382683426" />
       <Scaling>1</Scaling>
       <Intensity>80</Intensity>
       <OuterRadius>10</OuterRadius>
       <InnerRadius>1</InnerRadius>
-      <NearPlane>1.33333337</NearPlane>
-      <FarPlane>18.666666</FarPlane>
+      <NearPlane>3</NearPlane>
+      <FarPlane>14</FarPlane>
       <FovVertical>46</FovVertical>
-      <FovHorizontal>27.5</FovHorizontal>
+      <FovHorizontal>39</FovHorizontal>
       <SpotMaskName />
       <LodBias>3</LodBias>
       <PenumbraAngle>20</PenumbraAngle>
@@ -81,9 +81,9 @@
     <MapNode xsi:type="MapLightProbe">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-5.75" Y="2" Z="14.875" />
+      <Position X="-5.75" Y="2" Z="0.125" />
       <Rotation X="0" Y="0" Z="0" W="1" />
-      <Scaling>4</Scaling>
+      <Scaling>6</Scaling>
       <InnerRadius>6</InnerRadius>
       <OuterRadius>15.333334</OuterRadius>
     </MapNode>
@@ -143,8 +143,8 @@
       <Position X="-14.5" Y="-0.875" Z="-1.375" />
       <Rotation X="0" Y="0.258819044" Z="0" W="0.9659258" />
       <Scaling>1</Scaling>
-      <Intensity>330</Intensity>
-      <OuterRadius>8</OuterRadius>
+      <Intensity>450</Intensity>
+      <OuterRadius>9</OuterRadius>
       <InnerRadius>0.6</InnerRadius>
       <LightPreset>IncandescentStandard</LightPreset>
       <LightStyle>Default</LightStyle>

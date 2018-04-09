@@ -61,7 +61,7 @@ namespace IronStar.Editor2.AttributeEditor {
 			}
 
 
-			protected override void Update( GameTime gameTime )
+			public override void RunLayout()
 			{
 				TextAlignment		=	Alignment.MiddleRight;
 				TextOffsetX			=	-Width / 2 - 2;

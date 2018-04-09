@@ -155,6 +155,7 @@ namespace Fusion.Engine.Frames {
 		/// <summary>
 		/// Call this method after UI setup to make things right
 		/// </summary>
+		[Obsolete]
 		public void SettleControls () 
 		{
 			UpdateUI( new GameTime(), true, false );

@@ -559,7 +559,6 @@
     <Compile Include="Engine\Frames\Enums.cs" />
     <Compile Include="Engine\Frames\Frame.cs" />
     <Compile Include="Engine\Frames\LayoutEngine.cs" />
-    <Compile Include="Engine\Frames\Layouts\QuadLayout.cs" />
     <Compile Include="Engine\Frames\Layouts\QuadLayoutStyle.cs" />
     <Compile Include="Engine\Frames\Layouts\StackLayout.cs" />
     <Compile Include="Engine\Frames\MouseProcessor.cs" />

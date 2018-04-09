@@ -15,7 +15,7 @@ namespace Fusion.Engine.Frames {
 	
 	public abstract class LayoutEngine {
 
-		public abstract void RunLayout ( Frame targetFrame, bool forceTransitions = false );
+		public abstract void RunLayout ( Frame targetFrame );
 		
 	}
 }

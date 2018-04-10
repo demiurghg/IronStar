@@ -1233,6 +1233,7 @@ namespace Fusion.Engine.Frames {
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
+		#if false
 		List<ITransition>	transitions	=	new List<ITransition>();
 
 
@@ -1303,7 +1304,7 @@ namespace Fusion.Engine.Frames {
 
 			transitions.RemoveAll( t => t.IsDone );
 		}
-
+		#endif
 
 
 		/*-----------------------------------------------------------------------------------------

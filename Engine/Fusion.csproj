@@ -562,7 +562,6 @@
     <Compile Include="Engine\Frames\Layouts\QuadLayoutStyle.cs" />
     <Compile Include="Engine\Frames\Layouts\StackLayout.cs" />
     <Compile Include="Engine\Frames\MouseProcessor.cs" />
-    <Compile Include="Engine\Frames\Transition.cs" />
     <Compile Include="Engine\Frames\FrameProcessor.cs" />
     <Compile Include="Engine\Frames\Utils.cs" />
     <Compile Include="Engine\Tools\GameConsole.Config.cs" />

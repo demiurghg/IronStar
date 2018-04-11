@@ -13,36 +13,30 @@ namespace IronStar.Editor2.AttributeEditor {
 
 	public partial class AEPropertyGrid : Frame {
 
-		class AESlider : AEBaseEditor {
+		class AETextBox : AEBaseEditor {
+			
+			TextBox textBox;
 
-			readonly Frame slider;
-
-			readonly Func<float> getFunc;
-			readonly Action<float> setFunc;
-
-			readonly float min;
-			readonly float max;
+			readonly Func<string> getFunc;
+			readonly Action<string> setFunc;
 
 			/// <summary>
 			/// 
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AESlider ( AEPropertyGrid grid, string category, string name, Func<float> getFunc, Action<float> setFunc, float min, float max, float step, float pstep ) : base(grid, category, name)
+			public AETextBox ( AEPropertyGrid grid, string category, string name, Func<string> getFunc, Action<string> setFunc ) : base(grid, category, name)
 			{ 
 				this.getFunc	=	getFunc;
 				this.setFunc	=	setFunc;
-
-				this.min		=	min;
-				this.max		=	max;
 				
 				Width			=	grid.Width;
 				Height			=	10;
 
 				this.StatusChanged +=AESlider_StatusChanged;
 
-				slider			=	new Slider( Frames, getFunc, setFunc, min, max, step, pstep );
-				Add( slider );
+				textBox			=	new TextBox( Frames, getFunc, setFunc );
+				Add( textBox );
 
 				Update(new GameTime());
 			}
@@ -66,9 +60,9 @@ namespace IronStar.Editor2.AttributeEditor {
 
 				Text				=	Name;
 
-				slider.X		=	Width/2;
-				slider.Width	=	Width/2;
-				slider.Height	=	10;
+				textBox.X		=	Width/2;
+				textBox.Width	=	Width/2;
+				textBox.Height	=	10;
 			}
 
 
@@ -76,7 +70,7 @@ namespace IronStar.Editor2.AttributeEditor {
 			{
 				var value = getFunc();
 
-				slider.Text			=	value.ToString();
+				textBox.Text			=	value ?? "(null)";
 
 				base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
 			}

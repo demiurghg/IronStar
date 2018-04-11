@@ -220,6 +220,16 @@ namespace Fusion.Engine.Input {
 		}
 
 
+		/// <summary>
+		/// Returns whether a specified key is currently being locked.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public bool IsKeyLocked ( Keys key )
+		{
+			return Game.InputDevice.IsKeyLocked( (Drivers.Input.Keys)key );
+		}
+
 
 		/// <summary>
 		/// Returns whether a specified key is currently being pressed. 

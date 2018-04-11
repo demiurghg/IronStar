@@ -8,6 +8,7 @@ using Fusion.Engine.Frames;
 using Fusion.Engine.Graphics;
 using System.Reflection;
 using Fusion.Core.Mathematics;
+using Fusion;
 
 namespace IronStar.Editor2.AttributeEditor {
 
@@ -31,13 +32,53 @@ namespace IronStar.Editor2.AttributeEditor {
 				this.BackColor		=	ColorBorder;
 				this.Width			=	1;
 				this.BorderColor	=	ColorBorder;
-				this.TextAlignment	=	Alignment.MiddleCenter;
+				this.TextAlignment	=	Alignment.MiddleLeft;
 
-				StatusChanged	+=	Slider_StatusChanged;
+				StatusChanged	+=	TextBox_StatusChanged;
+				Activated+=TextBox_Activated;
+				Deactivated+=TextBox_Deactivated;
+
+				//KeyDown+=TextBox_KeyDown;
+				//KeyUp+=TextBox_KeyUp;
+				TypeWrite+=TextBox_TypeWrite;
 			}
 
+			private void TextBox_TypeWrite( object sender, KeyEventArgs e )
+			{
+				Log.Message("TypeWrite: [{0}] '{1}'", e.Key, e.Symbol);
+			}
 
-			private void Slider_StatusChanged( object sender, StatusEventArgs e )
+			private void TextBox_KeyUp( object sender, KeyEventArgs e )
+			{
+				Log.Message("Keyup   : [{0}] - {1} {2} {3}", 
+					e.Key, 
+					e.Shift? "[Shift]" : "",
+					e.Alt?   "[Alt]"   : "",
+					e.Ctrl?  "[Ctrl]"  : ""
+					);
+			}
+
+			private void TextBox_KeyDown( object sender, KeyEventArgs e )
+			{
+				Log.Message("Keydown : [{0}] - {1} {2} {3}", 
+					e.Key, 
+					e.Shift? "[Shift]" : "",
+					e.Alt?   "[Alt]"   : "",
+					e.Ctrl?  "[Ctrl]"  : ""
+					);
+			}
+
+			private void TextBox_Deactivated( object sender, EventArgs e )
+			{
+				
+			}
+
+			private void TextBox_Activated( object sender, EventArgs e )
+			{
+				
+			}
+
+			private void TextBox_StatusChanged( object sender, StatusEventArgs e )
 			{
 				switch ( e.Status ) {
 					case FrameStatus.None:		ForeColor	=	TextColorNormal; break;

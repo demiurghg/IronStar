@@ -108,6 +108,10 @@ namespace Fusion.Drivers.Input {
 
 			[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 			private static extern IntPtr LoadCursorFromFile(string path);
+
+
+			[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true, CallingConvention = CallingConvention.Winapi)]
+			public static extern short GetKeyState(int keyCode);
 		}		
 
 
@@ -162,6 +166,22 @@ namespace Fusion.Drivers.Input {
 			base.Dispose(disposing);
 		}
 
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		public bool IsKeyLocked ( Keys key )
+		{
+			switch ( key ) {
+				case Keys.CapsLock: return (((ushort)NativeMethods.GetKeyState(0x14)) & 0xffff) != 0;
+				case Keys.NumLock:  return (((ushort)NativeMethods.GetKeyState(0x90)) & 0xffff) != 0;
+				case Keys.Scroll:   return (((ushort)NativeMethods.GetKeyState(0x91)) & 0xffff) != 0;
+				default: return false;
+			}
+		}
 
 
 		/// <summary>

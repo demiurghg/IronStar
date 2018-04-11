@@ -48,20 +48,17 @@ namespace Fusion.Engine.Frames {
 			}
 			internal set {
 				if (targetFrame!=value) {
-					if (targetFrame!=null) {
-						targetFrame.OnDeactivate();
-					}
-					if (value!=null) {
-						value.OnActivate();
-					}
+					targetFrame?.OnDeactivate();
+					value?.OnActivate();
 					targetFrame = value;
 				}
 			}
 		}
 		Frame targetFrame = null;
 
-		MouseProcessor	mouseProcessor;
-		TouchProcessor	touchProcessor;
+		MouseProcessor		mouseProcessor;
+		TouchProcessor		touchProcessor;
+		KeyboardProcessor	keyboardProcessor;
 
 
 		/// <summary>
@@ -96,6 +93,7 @@ namespace Fusion.Engine.Frames {
 		{
 			mouseProcessor		=	new MouseProcessor( Game, this );
 			touchProcessor		=	new TouchProcessor( Game, this );
+			keyboardProcessor	=	new KeyboardProcessor( Game, this );
 		}
 
 
@@ -118,6 +116,7 @@ namespace Fusion.Engine.Frames {
 
 			mouseProcessor.Initialize();
 			touchProcessor.Initialize();
+			keyboardProcessor.Initialize();
 		}
 
 
@@ -174,7 +173,6 @@ namespace Fusion.Engine.Frames {
 			SuppressLayout	=	suppressLayout;
 			ForceLayout		=	forceLayout;
 
-			touchProcessor.UpdateManipulations( gameTime );
 
 			if (RootFrame!=null) {
 				RootFrame.UpdateInternal( gameTime );
@@ -190,6 +188,9 @@ namespace Fusion.Engine.Frames {
 		public void Update( GameTime gameTime )
 		{
 			var viewCtxt	=	new ViewContext();
+
+			touchProcessor.UpdateManipulations( gameTime );
+			keyboardProcessor.UpdateKeyboard( gameTime );
 
 			//
 			//	Update and profile UI stuff :

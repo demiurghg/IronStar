@@ -128,6 +128,10 @@ namespace IronStar.Editor2.AttributeEditor {
 					AddSlider( category, name, ()=>(float)(pi.GetValue(obj)), (val)=>pi.SetValue(obj,val), min, max, step, pstep );
 				}
 
+				if (pi.PropertyType==typeof(string)) {
+					AddTextBox( category, name, ()=>(string)(pi.GetValue(obj)), (val)=>pi.SetValue(obj,val) );
+				}
+
 			}
 
 			foreach ( var mi in obj.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance) ) {
@@ -179,6 +183,11 @@ namespace IronStar.Editor2.AttributeEditor {
 		public void AddSlider ( string category, string name, Func<float> getFunc, Action<float> setFunc, float min, float max, float step, float pstep )
 		{
 			AddToCollapseRegion( category, new AESlider( this, category, name, getFunc, setFunc, min, max, step, pstep ) );
+		}
+
+		public void AddTextBox ( string category, string name, Func<string> getFunc, Action<string> setFunc )
+		{
+			AddToCollapseRegion( category, new AETextBox( this, category, name, getFunc, setFunc ) );
 		}
 
 		public void AddButton ( string category, string name, Action action )

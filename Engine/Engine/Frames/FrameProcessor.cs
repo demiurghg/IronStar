@@ -46,7 +46,7 @@ namespace Fusion.Engine.Frames {
 			get { 
 				return targetFrame;
 			}
-			internal set {
+			set {
 				if (targetFrame!=value) {
 					targetFrame?.OnDeactivate();
 					value?.OnActivate();
@@ -149,6 +149,7 @@ namespace Fusion.Engine.Frames {
 		TimeSpan	uiUpdateProfiling;
 		internal	bool	SuppressLayout { get; private set; }
 		internal	bool	ForceLayout { get; private set; }
+
 
 
 		/// <summary>

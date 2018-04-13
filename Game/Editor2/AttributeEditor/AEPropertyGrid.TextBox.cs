@@ -9,6 +9,7 @@ using Fusion.Engine.Graphics;
 using System.Reflection;
 using Fusion.Core.Mathematics;
 using Fusion;
+using Fusion.Engine.Input;
 
 namespace IronStar.Editor2.AttributeEditor {
 
@@ -18,6 +19,8 @@ namespace IronStar.Editor2.AttributeEditor {
 
 			readonly Func<string> getFunc;
 			readonly Action<string> setFunc;
+
+			public Color CursorColor { get; set; } = Color.Gray;
 
 			/// <summary>
 			/// 
@@ -35,47 +38,22 @@ namespace IronStar.Editor2.AttributeEditor {
 				this.TextAlignment	=	Alignment.MiddleLeft;
 
 				StatusChanged	+=	TextBox_StatusChanged;
-				Activated+=TextBox_Activated;
-				Deactivated+=TextBox_Deactivated;
 
 				//KeyDown+=TextBox_KeyDown;
 				//KeyUp+=TextBox_KeyUp;
 				TypeWrite+=TextBox_TypeWrite;
-			}
-
-			private void TextBox_TypeWrite( object sender, KeyEventArgs e )
-			{
-				Log.Message("TypeWrite: [{0}] '{1}'", e.Key, e.Symbol);
-			}
-
-			private void TextBox_KeyUp( object sender, KeyEventArgs e )
-			{
-				Log.Message("Keyup   : [{0}] - {1} {2} {3}", 
-					e.Key, 
-					e.Shift? "[Shift]" : "",
-					e.Alt?   "[Alt]"   : "",
-					e.Ctrl?  "[Ctrl]"  : ""
-					);
-			}
-
-			private void TextBox_KeyDown( object sender, KeyEventArgs e )
-			{
-				Log.Message("Keydown : [{0}] - {1} {2} {3}", 
-					e.Key, 
-					e.Shift? "[Shift]" : "",
-					e.Alt?   "[Alt]"   : "",
-					e.Ctrl?  "[Ctrl]"  : ""
-					);
+				Activated+=TextBox_Activated;
+				Deactivated+=TextBox_Deactivated;
 			}
 
 			private void TextBox_Deactivated( object sender, EventArgs e )
 			{
-				
+				setFunc( Text );
 			}
 
 			private void TextBox_Activated( object sender, EventArgs e )
 			{
-				
+				ResetSelection();
 			}
 
 			private void TextBox_StatusChanged( object sender, StatusEventArgs e )
@@ -90,6 +68,10 @@ namespace IronStar.Editor2.AttributeEditor {
 
 			protected override void Update( GameTime gameTime )
 			{
+				if (Frames.TargetFrame==this) {
+				} else {
+					Text = getFunc();
+				}
 			}
 
 
@@ -99,8 +81,230 @@ namespace IronStar.Editor2.AttributeEditor {
 				var padRect	= GetPaddedRectangle(true);
 
 				base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
+
+				if (Frames.TargetFrame==this) {
+
+					var r		=	MeasureText();
+
+					var x		=	r.X + selectionStart * 8;
+					var y		=	r.Top;
+					var w		=	selectionLength * 8;
+					var h		=	r.Height;
+					var cx		=	selectionLength > 0 ? x + w : x;
+
+					var color	=	CursorColor;
+					var alpha	=	(byte)( color.A * (0.7 + 0.3 * Math.Cos(10*gameTime.Total.TotalSeconds) ) );
+					var colorC	=	new Color( color.R, color.G, color.B, alpha / 1 );
+					var colorS	=	new Color( color.R, color.G, color.B, alpha / 2 );
+
+					spriteLayer.Draw( null, x, y, w, h, colorS, clipRectIndex );
+					spriteLayer.Draw( null, x, y, 2, h, colorC, clipRectIndex );
+
+				}
 			}
 
+
+
+			/*-------------------------------------------------------------------------------------
+			 * 
+			 *	Typewriting :
+			 * 
+			-------------------------------------------------------------------------------------*/
+
+			private void TextBox_TypeWrite( object sender, KeyEventArgs e )
+			{
+				if (e.Ctrl) {
+					switch (e.Key) {
+						case Keys.C: CopyToClipboard(); break;
+						case Keys.X: CopyToClipboard(); ClearSelection(); break;
+						case Keys.V: PasteFromClipboard(); break;
+					}
+					return;
+				}
+
+				if (e.Key==Keys.Enter) {	
+					setFunc( Text );
+					return;
+				}
+
+				if (e.Key==Keys.Left) {
+					MoveCursor( -1, e.Shift );
+					return;
+				}
+
+				if (e.Key==Keys.Right) {
+					MoveCursor( 1, e.Shift );
+					return;
+				}
+
+				if (e.Key==Keys.Home) {
+					MoveCursor( int.MinValue, e.Shift );
+					return;
+				}
+
+				if (e.Key==Keys.End) {
+					MoveCursor( int.MaxValue, e.Shift );
+					return;
+				}
+
+				if (e.Key==Keys.Delete) {
+					Delete();
+					return;
+				}
+
+				if (e.Key==Keys.Back) {
+					Backspace();
+					return;
+				}
+
+				if (e.Key==Keys.Tab) {
+					return;
+				}
+
+				if (e.Key==Keys.Escape) {
+					Text = getFunc();
+					ResetSelection();
+				}
+
+				if (e.Symbol!='\0') {
+					InsertText( new string( e.Symbol, 1 ) );
+				}
+			}
+
+
+			/*-------------------------------------------------------------------------------------
+			 * 
+			 *	Editing stuff :
+			 * 
+			-------------------------------------------------------------------------------------*/
+
+			readonly StringBuilder text = new StringBuilder();
+			int selectionStart;
+			int selectionLength = 0;
+
+			public override string Text {
+				get {
+					return text.ToString();
+				}
+
+				set {
+					if (value==null) {
+						text.Clear();
+					} else {
+						text.Clear();
+						text.Insert(0, value);
+					}
+				}
+			}
+
+
+			void ResetSelection ()
+			{
+				selectionStart = int.MaxValue;
+				selectionLength = 0;
+				CheckSelection();
+			}
+
+
+
+			void CheckSelection ()
+			{
+				selectionStart	= MathUtil.Clamp( selectionStart, 0, Text.Length );
+				selectionLength	= MathUtil.Clamp( selectionLength, -selectionStart, Text.Length-selectionStart );
+			}
+
+
+			void MoveCursor ( int value, bool shift )
+			{
+				if (shift) {
+					if ( selectionStart + value > text.Length ) {
+						value = text.Length - selectionStart;
+					}
+					if ( selectionStart + value < 0 ) {
+						value = selectionStart;
+					}
+					selectionLength -= value;
+					selectionStart += value;
+				} else {
+					selectionLength = 0;
+					selectionStart += value;
+				}
+
+				CheckSelection();
+			}
+
+
+
+			void ClearSelection ()
+			{
+				int start  = selectionLength > 0 ? selectionStart : selectionStart + selectionLength;
+				int length = Math.Abs( selectionLength );
+
+				text.Remove( start, length );
+				selectionLength = 0;
+				CheckSelection();
+			}
+
+
+			string GetSelection ()
+			{
+				int start  = selectionLength > 0 ? selectionStart : selectionStart + selectionLength;
+				int length = Math.Abs( selectionLength );
+				
+				return text.ToString().Substring( start, length );
+			}
+
+
+			void Backspace ()
+			{
+				if (selectionLength!=0) {
+					ClearSelection();
+				} else {
+					if (selectionStart>0) {
+						text.Remove(selectionStart-1,1);
+						selectionStart--;
+					}
+				}
+			}
+
+
+			void Delete ()
+			{
+				if (selectionLength!=0) {
+					ClearSelection();
+				} else {
+					if (selectionStart<text.Length) {
+						text.Remove(selectionStart,1);
+						selectionStart--;
+					}
+				}
+			}
+
+
+			void InsertText ( string value )
+			{
+				ClearSelection();
+				text.Insert( selectionStart, value );
+				MoveCursor( value.Length, false );
+			}
+
+
+			void CopyToClipboard ()
+			{
+				if (selectionLength!=0) {
+					var textToCopy = GetSelection();
+					System.Windows.Forms.Clipboard.SetText( textToCopy );
+				}
+			}
+
+
+			void PasteFromClipboard ()
+			{
+				if (System.Windows.Forms.Clipboard.ContainsText()) {
+					var textToInsert = System.Windows.Forms.Clipboard.GetText();
+					InsertText( textToInsert );
+				}
+			}
 		}
 
 	}

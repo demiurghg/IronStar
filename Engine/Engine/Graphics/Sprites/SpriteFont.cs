@@ -181,23 +181,23 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="text"></param>
 		/// <returns></returns>
-		public RectangleF MeasureStringF ( string text, float tracking=0 ) {
+		public RectangleF MeasureStringF ( string text, float tracking=0 ) 
+		{
 			float	x = 0;
-			float	length = text.Length;
 			int		line = 1;
 			float	maxWidth = 0;
-
+			int		length = text.Length;
+			
 			for (int i=0; i<length; i++) {
+				
 
 				char ch0	= text[i];
 				char ch1	= (i+1)<length ? text[i+1] : '\0';
-
 				
 				if (ch0 == '\n') {
 					line++;
 					maxWidth = Math.Max( maxWidth, x );
 				}
-
 
 				var chi		= GetInfo(ch0);
 				var chPair	= new Tuple<char,char>(ch0,ch1);

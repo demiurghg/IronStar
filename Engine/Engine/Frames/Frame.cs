@@ -229,7 +229,7 @@ namespace Fusion.Engine.Frames {
 		/// <summary>
 		/// 
 		/// </summary>
-		public	string		Text				{ get; set; }
+		public	virtual string		Text		{ get; set; }
 
 		/// <summary>
 		/// 
@@ -1107,15 +1107,16 @@ namespace Fusion.Engine.Frames {
 
 
 		/// <summary>
-		/// Draws string
+		/// Gets global text rectangle without applied offsets
 		/// </summary>
-		/// <param name="text"></param>
-		protected virtual void DrawFrameText ( SpriteLayer spriteLayer, int clipRectIndex )
-		{											
-			if (string.IsNullOrEmpty(Text)) {
-				return;
+		/// <param name="start"></param>
+		/// <param name="length"></param>
+		/// <returns></returns>
+		protected Rectangle MeasureText ()
+		{
+			if (Text==null) {
+				return new Rectangle(0,0,0,0);
 			}
-
 
 			float textWidth		=	8 * Text.Length;
 			float textHeight	=	8;
@@ -1155,37 +1156,37 @@ namespace Fusion.Engine.Frames {
 				case Alignment.BaselineRight	: hAlign =  1; vAlign =  2; break;
 			}
 
-			if ( hAlign  < 0 )	x	=	gp.X;
-			if ( hAlign == 0 )	x	=	gp.X + (int)( gp.Width/2 - textWidth/2 );
-			if ( hAlign  > 0 )	x	=	gp.X + (int)( gp.Width - textWidth );
+			if ( hAlign  < 0 )	x	=	gp.X + (int)( 0 );
+			if ( hAlign == 0 )	x	=	gp.X + (int)( 0 + (int)( gp.Width/2 - textWidth/2 ) );
+			if ( hAlign  > 0 )	x	=	gp.X + (int)( 0 + (int)( gp.Width - textWidth ) );
 
 			if ( vAlign  < 0 )	y	=	gp.Y + (int)( 0 );
 			if ( vAlign == 0 )	y	=	gp.Y + (int)( capHeight/2 - baseLine + gp.Height/2 );
 			if ( vAlign  > 0 )	y	=	gp.Y + (int)( gp.Height - lineHeight );
 			if ( vAlign == 2 )	y	=	gp.Y - (int)baseLine;
 
-			/*if (TextAlignment==Alignment.BaselineLeft) {
-				x	=	gp.X;
-				y	=	gp.Y - Font.BaseLine;
+			return new Rectangle( x, y, (int)textWidth, (int)textHeight );
+		}
+
+
+		/// <summary>
+		/// Draws string
+		/// </summary>
+		/// <param name="text"></param>
+		protected virtual void DrawFrameText ( SpriteLayer spriteLayer, int clipRectIndex )
+		{											
+			if (string.IsNullOrEmpty(Text)) {
+				return;
 			}
 
-			if (TextAlignment==Alignment.BaselineLeft) {
-				x	=	gp.X;
-				y	=	gp.Y - Font.BaseLine;
-			}
+			var rect = MeasureText();
 
-			if (TextAlignment==Alignment.BaselineLeft) {
-				x	=	gp.X;
-				y	=	gp.Y - Font.BaseLine;
-			} */
-
-			/*if (TextEffect==TextEffect.Shadow) {
-				Font.DrawString( sb, Text, x + TextOffsetX+1, y + TextOffsetY+1, ShadowColor, 0, false );
-			} */
+			int x = rect.X;
+			int y = rect.Y;
 
 			if (Font!=null) {
 				
-			if (ShadowColor.A!=0) {
+				if (ShadowColor.A!=0) {
 					Font.DrawString( spriteLayer, Text, x + TextOffsetX+ShadowOffset.X, y + TextOffsetY+ShadowOffset.Y, ShadowColor, clipRectIndex, TextTracking, false );
 				}
 

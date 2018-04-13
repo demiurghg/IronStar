@@ -70,7 +70,7 @@ namespace IronStar.Editor2.AttributeEditor {
 			{
 				var value = getFunc();
 
-				textBox.Text			=	value ?? "(null)";
+				//textBox.Text			=	value ?? "(null)";
 
 				base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
 			}

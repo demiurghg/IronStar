@@ -224,7 +224,7 @@ namespace Fusion.Engine.Frames {
 				case Keys.OemPeriod:		return shift ? '>' : '.'  ;
 				case Keys.OemQuestion:		return shift ? '?' : '/'  ;
 
-				//case Keys.Br: return shift ? '~' : '`';
+				case Keys.Space: return ' ';
 													  
 				case Keys.A: return caps ? 'A' : 'a'; 
 				case Keys.B: return caps ? 'B' : 'b'; 

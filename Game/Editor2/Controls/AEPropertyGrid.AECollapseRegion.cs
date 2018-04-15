@@ -10,7 +10,7 @@ using System.Reflection;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Frames.Layouts;
 
-namespace IronStar.Editor2.AttributeEditor {
+namespace IronStar.Editor2.Controls {
 
 	public partial class AEPropertyGrid : Frame {
 
@@ -36,7 +36,7 @@ namespace IronStar.Editor2.AttributeEditor {
 				this.Category	=	category;
 
 				TextAlignment	=	Alignment.MiddleCenter;
-				BorderColor		=	ColorBorder;
+				BorderColor		=	ColorTheme.ColorBorder;
 				Border			=	0;
 				Padding			=	0;
 				PaddingBottom	=	0;
@@ -49,9 +49,9 @@ namespace IronStar.Editor2.AttributeEditor {
 					Border			=	1,
 					Text			=	category,
 					TextAlignment	=	Alignment.MiddleCenter,
-					BorderColor		=	ButtonBorderColor,
-					BackColor		=	ButtonColorNormal,
-					ForeColor		=	TextColorNormal,
+					BorderColor		=	ColorTheme.ButtonBorderColor,
+					BackColor		=	ColorTheme.ButtonColorNormal,
+					ForeColor		=	ColorTheme.TextColorNormal,
 					MarginBottom	=	0,
 				};
 
@@ -91,20 +91,20 @@ namespace IronStar.Editor2.AttributeEditor {
 			{
 				switch ( e.Status ) {
 					case FrameStatus.None:		
-						buttonCollapse.ForeColor	=	TextColorNormal;	
-						buttonCollapse.BackColor	=	ButtonColorNormal;	
+						buttonCollapse.ForeColor	=	ColorTheme.TextColorNormal;	
+						buttonCollapse.BackColor	=	ColorTheme.ButtonColorNormal;	
 						buttonCollapse.TextOffsetX	=	0;
 						buttonCollapse.TextOffsetY =	0;	
 						break;
 					case FrameStatus.Hovered:	
-						buttonCollapse.ForeColor	=	TextColorHovered;	
-						buttonCollapse.BackColor	=	ButtonColorHovered;	
+						buttonCollapse.ForeColor	=	ColorTheme.TextColorHovered;	
+						buttonCollapse.BackColor	=	ColorTheme.ButtonColorHovered;	
 						buttonCollapse.TextOffsetX	=	0;
 						buttonCollapse.TextOffsetY =	0;	
 						break;
 					case FrameStatus.Pushed:	
-						buttonCollapse.ForeColor	=	TextColorPushed;	
-						buttonCollapse.BackColor	=	ButtonColorPushed;		
+						buttonCollapse.ForeColor	=	ColorTheme.TextColorPushed;	
+						buttonCollapse.BackColor	=	ColorTheme.ButtonColorPushed;		
 						buttonCollapse.TextOffsetX	=	1;
 						buttonCollapse.TextOffsetY =	0;	
 					break;

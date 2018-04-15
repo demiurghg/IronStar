@@ -45,6 +45,15 @@ namespace IronStar.Mapping {
 		[AECategory("Omni-light")]
 		public bool Ambient { get; set; } = false;
 
+		[AECategory("Light Color")]
+		[AEDisplayName("Light Color")]
+		public Color LightColor { get; set; } = Color.White;
+
+		[AECategory("Light Color")]
+		[AEDisplayName("Intensity")]
+		[AEValueRange(0, 10000, 100, 1)]
+		public float LightIntensity { get; set; } = 100;
+
 		OmniLight	light;
 
 		[AECommand]

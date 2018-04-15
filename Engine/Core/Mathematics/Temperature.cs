@@ -7,6 +7,12 @@ using Fusion.Core.Mathematics;
 
 namespace Fusion.Core.Mathematics {
 	public static class Temperature {
+
+		static public Color GetColor ( int K )
+		{
+			return new Color( Get(K) );
+		}
+
 		static public Vector3 Get ( int K )
 		{
 			if (K<1000)  K = 1000;

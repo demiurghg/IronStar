@@ -9,7 +9,7 @@ using Fusion.Engine.Graphics;
 using System.Reflection;
 using Fusion.Core.Mathematics;
 
-namespace IronStar.Editor2.AttributeEditor {
+namespace IronStar.Editor2.Controls {
 
 	public partial class AEPropertyGrid : Frame {
 

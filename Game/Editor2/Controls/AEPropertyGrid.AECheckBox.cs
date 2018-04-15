@@ -9,7 +9,7 @@ using Fusion.Engine.Graphics;
 using System.Reflection;
 using Fusion.Core.Mathematics;
 
-namespace IronStar.Editor2.AttributeEditor {
+namespace IronStar.Editor2.Controls {
 
 	public partial class AEPropertyGrid : Frame {
 
@@ -38,7 +38,7 @@ namespace IronStar.Editor2.AttributeEditor {
 
 				yesNoButton			= new Frame(this.Frames) {
 					Height			= 10, 
-					BackColor		= ColorBorder,
+					BackColor		= ColorTheme.ColorBorder,
 					TextAlignment	= Alignment.MiddleLeft,
 					TextOffsetX		= 1,
 				};
@@ -60,9 +60,9 @@ namespace IronStar.Editor2.AttributeEditor {
 			private void CheckBox_StatusChanged( object sender, StatusEventArgs e )
 			{
 				switch ( e.Status ) {
-					case FrameStatus.None:		ForeColor	=	TextColorNormal; break;
-					case FrameStatus.Hovered:	ForeColor	=	TextColorHovered; break;
-					case FrameStatus.Pushed:	ForeColor	=	TextColorPushed; break;
+					case FrameStatus.None:		ForeColor	=	ColorTheme.TextColorNormal; break;
+					case FrameStatus.Hovered:	ForeColor	=	ColorTheme.TextColorHovered; break;
+					case FrameStatus.Pushed:	ForeColor	=	ColorTheme.TextColorPushed; break;
 				}
 			}
 
@@ -90,7 +90,7 @@ namespace IronStar.Editor2.AttributeEditor {
 				var value = getFunc();
 
 				yesNoButton.Text		=	value ? "Yes" : "No";
-				yesNoButton.ForeColor	=	value ? ColorGreen : ColorRed;
+				yesNoButton.ForeColor	=	value ? ColorTheme.ColorGreen : ColorTheme.ColorRed;
 
 				base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
 			}

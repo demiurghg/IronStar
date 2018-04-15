@@ -468,6 +468,20 @@ namespace Fusion.Engine.Graphics {
 		}
 		
 
+		public void DrawGradient ( Rectangle dstRect, Color topLeft, Color topRight, Color bottomLeft, Color bottomRight, int clipRectIndex=0 )
+		{
+			float x = dstRect.X;
+			float y = dstRect.Y;
+			float w = dstRect.Width;
+			float h = dstRect.Height;
+
+			PushQuad(defaultTexture,
+				new SpriteVertex( x + 0, y + 0, 0, topLeft     , 0,0, clipRectIndex ),
+				new SpriteVertex( x + w, y + 0, 0, topRight    , 0,0, clipRectIndex ),
+				new SpriteVertex( x + w, y + h, 0, bottomRight , 0,0, clipRectIndex ),
+				new SpriteVertex( x + 0, y + h, 0, bottomLeft  , 0,0, clipRectIndex )
+			);
+		}
 
 		/// <summary>
 		/// 

@@ -9,13 +9,13 @@ using Fusion.Engine.Graphics;
 using System.Reflection;
 using Fusion.Core.Mathematics;
 
-namespace IronStar.Editor2.AttributeEditor {
+namespace IronStar.Editor2.Controls {
 
 	public partial class AEPropertyGrid : Frame {
 
 		class AESlider : AEBaseEditor {
 
-			readonly Frame slider;
+			readonly Slider slider;
 
 			readonly Func<float> getFunc;
 			readonly Action<float> setFunc;
@@ -41,7 +41,10 @@ namespace IronStar.Editor2.AttributeEditor {
 
 				this.StatusChanged +=AESlider_StatusChanged;
 
-				slider			=	new Slider( Frames, getFunc, setFunc, min, max, step, pstep );
+				slider				=	new Slider( Frames, getFunc, setFunc, min, max, step, pstep );
+				slider.StatusChanged +=Slider_StatusChanged;
+				slider.Border		=	1;
+				slider.BorderColor	=	ColorTheme.ColorBorder;
 				Add( slider );
 
 				Update(new GameTime());
@@ -49,12 +52,21 @@ namespace IronStar.Editor2.AttributeEditor {
 
 
 
+			private void Slider_StatusChanged( object sender, StatusEventArgs e )
+			{
+				switch ( e.Status ) {
+					case FrameStatus.None:		slider.ForeColor	=	ColorTheme.TextColorNormal;		slider.SliderColor = ColorTheme.ElementColorNormal;	 break;
+					case FrameStatus.Hovered:	slider.ForeColor	=	ColorTheme.TextColorHovered;	slider.SliderColor = ColorTheme.ElementColorHovered; break;
+					case FrameStatus.Pushed:	slider.ForeColor	=	ColorTheme.TextColorPushed;		slider.SliderColor = ColorTheme.ElementColorPushed;	 break;
+				}
+			}
+
 			private void AESlider_StatusChanged( object sender, StatusEventArgs e )
 			{
 				switch ( e.Status ) {
-					case FrameStatus.None:		ForeColor	=	TextColorNormal; break;
-					case FrameStatus.Hovered:	ForeColor	=	TextColorHovered; break;
-					case FrameStatus.Pushed:	ForeColor	=	TextColorPushed; break;
+					case FrameStatus.None:		ForeColor	=	ColorTheme.TextColorNormal; break;
+					case FrameStatus.Hovered:	ForeColor	=	ColorTheme.TextColorHovered; break;
+					case FrameStatus.Pushed:	ForeColor	=	ColorTheme.TextColorPushed; break;
 				}
 			}
 

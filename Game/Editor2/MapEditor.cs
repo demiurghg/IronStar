@@ -18,7 +18,7 @@ using IronStar.Mapping;
 using Fusion.Build;
 using BEPUphysics;
 using IronStar.Core;
-using IronStar.Editor2.AttributeEditor;
+using IronStar.Editor2.Controls;
 using Fusion.Engine.Frames;
 
 namespace IronStar.Editor2 {
@@ -120,6 +120,7 @@ namespace IronStar.Editor2 {
 			world.SimulateWorld( 0 );
 			world.PresentWorld( 0.016f, 1, null, null );
 
+			ColorPicker.ShowDialog( Game.Frames, 50, 200, Color.CornflowerBlue, (clr)=>Log.Message("{0}", clr) );
 			//var modalFrame = new Frame( Game.Frames, 200,200, 300,200, "Modal Frame", new Color(40,40,40,40) );
 			//Game.Frames.RootFrame.Add( modalFrame );
 			//Game.Frames.ModalFrame = modalFrame;

@@ -9,7 +9,7 @@ using Fusion.Engine.Graphics;
 using System.Reflection;
 using Fusion.Core.Mathematics;
 
-namespace IronStar.Editor2.AttributeEditor {
+namespace IronStar.Editor2.Controls {
 
 	public partial class AEPropertyGrid : Frame {
 
@@ -31,7 +31,7 @@ namespace IronStar.Editor2.AttributeEditor {
 
 				TextAlignment	=	Alignment.MiddleCenter;
 				Border			=	1;
-				BorderColor		=	ButtonBorderColor;
+				BorderColor		=	ColorTheme.ButtonBorderColor;
 				Text			=	name;
 
 				StatusChanged	+=	AESlider_StatusChanged;
@@ -53,20 +53,20 @@ namespace IronStar.Editor2.AttributeEditor {
 			{
 				switch ( e.Status ) {
 					case FrameStatus.None:		
-						ForeColor	=	TextColorNormal;	
-						BackColor	=	ButtonColorNormal;	
+						ForeColor	=	ColorTheme.TextColorNormal;	
+						BackColor	=	ColorTheme.ButtonColorNormal;	
 						TextOffsetX	=	0;
 						TextOffsetY =	0;	
 						break;
 					case FrameStatus.Hovered:	
-						ForeColor	=	TextColorHovered;	
-						BackColor	=	ButtonColorHovered;	
+						ForeColor	=	ColorTheme.TextColorHovered;	
+						BackColor	=	ColorTheme.ButtonColorHovered;	
 						TextOffsetX	=	0;
 						TextOffsetY =	0;	
 						break;
 					case FrameStatus.Pushed:	
-						ForeColor	=	TextColorPushed;	
-						BackColor	=	ButtonColorPushed;		
+						ForeColor	=	ColorTheme.TextColorPushed;	
+						BackColor	=	ColorTheme.ButtonColorPushed;		
 						TextOffsetX	=	1;
 						TextOffsetY =	0;	
 					break;

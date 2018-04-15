@@ -49,7 +49,6 @@ namespace IronStar.Mapping {
 		CRTScreenSRGB			=	6500,
 		CRTScreenCool			=	9300,
 		PolarClearBlueSky		=	15000,
-
 		Cold20K					=	20000,
 		Cold30K					=	30000,
 		Cold40K					=	40000,

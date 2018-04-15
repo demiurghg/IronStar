@@ -33,6 +33,8 @@
       <LightPreset>IncandescentStandard</LightPreset>
       <LightStyle>Default</LightStyle>
       <Ambient>true</Ambient>
+      <LightColor R="255" G="255" B="255" A="255" />
+      <LightIntensity>100</LightIntensity>
     </MapNode>
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
@@ -43,9 +45,11 @@
       <Intensity>320</Intensity>
       <OuterRadius>7.4</OuterRadius>
       <InnerRadius>0.6</InnerRadius>
-      <LightPreset>IncandescentStandard</LightPreset>
+      <LightPreset>Cyan</LightPreset>
       <LightStyle>Default</LightStyle>
       <Ambient>false</Ambient>
+      <LightColor R="127" G="127" B="127" A="158" />
+      <LightIntensity>3467</LightIntensity>
     </MapNode>
     <MapNode xsi:type="MapModel">
       <Visible>true</Visible>
@@ -60,21 +64,21 @@
     <MapNode xsi:type="MapSpotLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-13.25" Y="-1.875" Z="4.5" />
-      <Rotation X="0" Y="-0.9238796" Z="0" W="0.382683426" />
+      <Position X="-3.5" Y="-1.875" Z="-8.75" />
+      <Rotation X="0" Y="-0.866025567" Z="0" W="0.5" />
       <Scaling>1</Scaling>
       <Intensity>70</Intensity>
-      <OuterRadius>10</OuterRadius>
+      <OuterRadius>45</OuterRadius>
       <InnerRadius>1</InnerRadius>
       <NearPlane>3</NearPlane>
       <FarPlane>14</FarPlane>
       <FovVertical>45</FovVertical>
-      <FovHorizontal>39</FovHorizontal>
+      <FovHorizontal>45</FovHorizontal>
       <SpotMaskName />
       <LodBias>3</LodBias>
       <PenumbraAngle>20</PenumbraAngle>
-      <LightPreset>DaylightHorizon</LightPreset>
-      <LightStyle>Default</LightStyle>
+      <LightPreset>XenonShortArcLamp</LightPreset>
+      <LightStyle>Flourescent1</LightStyle>
       <DepthBias>-0</DepthBias>
       <SlopeBias>4</SlopeBias>
     </MapNode>
@@ -83,34 +87,14 @@
       <Frozen>false</Frozen>
       <Position X="-5.75" Y="2" Z="0.125" />
       <Rotation X="0" Y="0" Z="0" W="1" />
-      <Scaling>6</Scaling>
-      <InnerRadius>6</InnerRadius>
-      <OuterRadius>15.333334</OuterRadius>
+      <Scaling>10</Scaling>
+      <InnerRadius>35</InnerRadius>
+      <OuterRadius>35</OuterRadius>
     </MapNode>
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
       <Position X="0" Y="0" Z="-5.5" />
-      <Rotation X="0" Y="0" Z="0" W="1" />
-      <Scaling>1</Scaling>
-      <Factory xsi:type="ProxyFactory">
-        <Classname>box</Classname>
-      </Factory>
-    </MapNode>
-    <MapNode xsi:type="MapEntity">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-5.375" Y="0" Z="-5.5" />
-      <Rotation X="0" Y="0" Z="0" W="1" />
-      <Scaling>1</Scaling>
-      <Factory xsi:type="ProxyFactory">
-        <Classname>box</Classname>
-      </Factory>
-    </MapNode>
-    <MapNode xsi:type="MapEntity">
-      <Visible>true</Visible>
-      <Frozen>false</Frozen>
-      <Position X="-5.375" Y="2.625" Z="-5.5" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <Factory xsi:type="ProxyFactory">
@@ -130,15 +114,81 @@
     <MapNode xsi:type="MapOmniLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-14.5" Y="-0.875" Z="-1.375" />
+      <Position X="-8.375" Y="-3.125" Z="12.375" />
       <Rotation X="0" Y="0.258819044" Z="0" W="0.9659258" />
       <Scaling>1</Scaling>
       <Intensity>180</Intensity>
       <OuterRadius>9</OuterRadius>
-      <InnerRadius>0.6</InnerRadius>
-      <LightPreset>IncandescentStandard</LightPreset>
-      <LightStyle>Default</LightStyle>
+      <InnerRadius>0.400000036</InnerRadius>
+      <LightPreset>CRTScreenCool</LightPreset>
+      <LightStyle>Flourescent1</LightStyle>
       <Ambient>false</Ambient>
+      <LightColor R="255" G="255" B="255" A="255" />
+      <LightIntensity>100</LightIntensity>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-2.5" Y="0" Z="-5.5" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <Factory xsi:type="ProxyFactory">
+        <Classname>box</Classname>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-5.75" Y="0" Z="-5.5" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <TargetName />
+      <Factory xsi:type="ProxyFactory">
+        <Classname>box</Classname>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="0" Y="1.875" Z="-5.5" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <TargetName>q`xsxs`q</TargetName>
+      <Factory xsi:type="ProxyFactory">
+        <Classname>box</Classname>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="-2.5" Y="1.875" Z="-5.5" />
+      <Rotation X="0" Y="0" Z="0" W="1" />
+      <Scaling>1</Scaling>
+      <TargetName>xsxsxsxs`q</TargetName>
+      <Factory xsi:type="ProxyFactory">
+        <Classname>box</Classname>
+      </Factory>
+    </MapNode>
+    <MapNode xsi:type="MapSpotLight">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <Position X="0.125" Y="-1.875" Z="9" />
+      <Rotation X="0" Y="-0.866025567" Z="0" W="0.5" />
+      <Scaling>1</Scaling>
+      <Intensity>70</Intensity>
+      <OuterRadius>45</OuterRadius>
+      <InnerRadius>1</InnerRadius>
+      <NearPlane>3</NearPlane>
+      <FarPlane>14</FarPlane>
+      <FovVertical>45</FovVertical>
+      <FovHorizontal>45</FovHorizontal>
+      <SpotMaskName />
+      <LodBias>3</LodBias>
+      <PenumbraAngle>20</PenumbraAngle>
+      <LightPreset>XenonShortArcLamp</LightPreset>
+      <LightStyle>Flourescent1</LightStyle>
+      <DepthBias>-0</DepthBias>
+      <SlopeBias>4</SlopeBias>
     </MapNode>
   </Nodes>
 </Map>

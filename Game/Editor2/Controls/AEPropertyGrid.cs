@@ -13,29 +13,9 @@ using Fusion;
 using Fusion.Engine.Frames.Layouts;
 using Fusion.Core.Shell;
 
-namespace IronStar.Editor2.AttributeEditor {
+namespace IronStar.Editor2.Controls {
 
 	public partial class AEPropertyGrid : Frame {
-
-		static readonly Color	ColorBorder			=	new Color( 10, 10, 10, 192);
-		static readonly Color	ColorBackground		=	new Color( 30, 30, 30, 192);
-
-		static readonly Color	TextColorNormal		=	new Color(150,150,150, 192);
-		static readonly Color	TextColorHovered	=	new Color(200,200,200, 192);
-		static readonly Color	TextColorPushed		=	new Color(220,220,220, 192);
-
-		static readonly Color	ElementColorNormal	=	new Color(120,120,120, 192);
-		static readonly Color	ElementColorHovered	=	new Color(150,150,150, 192);
-		static readonly Color	ElementColorPushed	=	new Color(180,180,180, 192);
-
-		static readonly Color	ButtonColorNormal	=	new Color( 90, 90, 90, 192);
-		static readonly Color	ButtonColorHovered	=	new Color(120,120,120, 192);
-		static readonly Color	ButtonColorPushed	=	new Color(150,150,150, 192);
-		static readonly Color	ButtonBorderColor	=	new Color( 20, 20, 20, 192);
-
-		static readonly Color	ColorWhite			=	new Color(180,180,180, 255);
-		static readonly Color	ColorGreen			=	new Color(144,239,144, 255);
-		static readonly Color	ColorRed			=	new Color(239,144,144, 255);
 
 		/// <summary>
 		/// 
@@ -43,8 +23,8 @@ namespace IronStar.Editor2.AttributeEditor {
 		/// <param name="fp"></param>
 		public AEPropertyGrid( FrameProcessor fp ) : base(fp)
 		{
-			this.BackColor		=	ColorBackground;
-			this.BorderColor	=	ColorBorder;
+			this.BackColor		=	ColorTheme.ColorBackground;
+			this.BorderColor	=	ColorTheme.ColorBorder;
 			this.Border			=	1;
 
 			this.Padding		=	1;
@@ -132,6 +112,10 @@ namespace IronStar.Editor2.AttributeEditor {
 					AddTextBox( category, name, ()=>(string)(pi.GetValue(obj)), (val)=>pi.SetValue(obj,val) );
 				}
 
+				if (pi.PropertyType==typeof(Color)) {
+					AddColorPicker( category, name, ()=>(Color)(pi.GetValue(obj)), (val)=>pi.SetValue(obj,val) );
+				}
+
 				if (pi.PropertyType.IsEnum) {
 
 					var type	=	pi.PropertyType;
@@ -152,10 +136,6 @@ namespace IronStar.Editor2.AttributeEditor {
 					AddButton( category, name, ()=>mi.Invoke(obj, new object[0]) );
 				}
 			}
-
-			var list = new[] { "Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot" };
-
-			AddDropDown( "DropDownTest", "TestDrop", "Echo", list, ()=>"", (s)=> {});
 
 			RunLayout();
 			//RunLayout();
@@ -211,6 +191,11 @@ namespace IronStar.Editor2.AttributeEditor {
 		public void AddDropDown ( string category, string name, string value, IEnumerable<string> values, Func<string> getFunc, Action<string> setFunc )
 		{
 			AddToCollapseRegion( category, new AEDropDown( this, name, value, values, getFunc, setFunc ) );
+		}
+
+		public void AddColorPicker ( string category, string name, Func<Color> getFunc, Action<Color> setFunc )
+		{
+			AddToCollapseRegion( category, new AEColorPicker( this, name, getFunc, setFunc ) );
 		}
 
 	}

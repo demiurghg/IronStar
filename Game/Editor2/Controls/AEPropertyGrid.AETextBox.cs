@@ -9,13 +9,13 @@ using Fusion.Engine.Graphics;
 using System.Reflection;
 using Fusion.Core.Mathematics;
 
-namespace IronStar.Editor2.AttributeEditor {
+namespace IronStar.Editor2.Controls {
 
 	public partial class AEPropertyGrid : Frame {
 
-		class AEDropDown : AEBaseEditor {
+		class AETextBox : AEBaseEditor {
 			
-			DropDown dropDown;
+			TextBox textBox;
 
 			readonly Func<string> getFunc;
 			readonly Action<string> setFunc;
@@ -25,7 +25,7 @@ namespace IronStar.Editor2.AttributeEditor {
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AEDropDown ( AEPropertyGrid grid, string name, string value, IEnumerable<string> values, Func<string> getFunc, Action<string> setFunc ) : base(grid, name)
+			public AETextBox ( AEPropertyGrid grid, string name, Func<string> getFunc, Action<string> setFunc ) : base(grid, name)
 			{ 
 				this.getFunc	=	getFunc;
 				this.setFunc	=	setFunc;
@@ -33,36 +33,36 @@ namespace IronStar.Editor2.AttributeEditor {
 				Width			=	grid.Width;
 				Height			=	10;
 
-				this.StatusChanged +=AEDropDown_StatusChanged;
+				this.StatusChanged +=AESlider_StatusChanged;
 
-				dropDown		=	new DropDown( Frames, value, values, getFunc, setFunc );
-				Add( dropDown );
+				textBox			=	new TextBox( Frames, getFunc, setFunc );
+				Add( textBox );
 
 				Update(new GameTime());
 			}
 
 
 
-			private void AEDropDown_StatusChanged( object sender, StatusEventArgs e )
+			private void AESlider_StatusChanged( object sender, StatusEventArgs e )
 			{
 				switch ( e.Status ) {
-					case FrameStatus.None:		ForeColor	=	TextColorNormal; break;
-					case FrameStatus.Hovered:	ForeColor	=	TextColorHovered; break;
-					case FrameStatus.Pushed:	ForeColor	=	TextColorPushed; break;
+					case FrameStatus.None:		ForeColor	=	ColorTheme.TextColorNormal; break;
+					case FrameStatus.Hovered:	ForeColor	=	ColorTheme.TextColorHovered; break;
+					case FrameStatus.Pushed:	ForeColor	=	ColorTheme.TextColorPushed; break;
 				}
 			}
 
 
 			public override void RunLayout()
 			{
-				TextAlignment	=	Alignment.MiddleRight;
-				TextOffsetX		=	-Width / 2 - 2;
+				TextAlignment		=	Alignment.MiddleRight;
+				TextOffsetX			=	-Width / 2 - 2;
 
-				Text			=	Name;
+				Text				=	Name;
 
-				dropDown.X		=	Width/2;
-				dropDown.Width	=	Width/2;
-				dropDown.Height	=	10;
+				textBox.X		=	Width/2;
+				textBox.Width	=	Width/2;
+				textBox.Height	=	10;
 			}
 
 

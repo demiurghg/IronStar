@@ -40,6 +40,15 @@ namespace Fusion.Engine.Frames {
 
 
 		/// <summary>
+		/// Sets and gets modal frame for entire UI.
+		/// This property does not set TargetFrame.
+		/// </summary>
+		public Frame ModalFrame {
+			get; set;
+		} = null;
+
+
+		/// <summary>
 		/// Gets and sets current target frame.
 		/// </summary>
 		public	Frame TargetFrame { 
@@ -55,6 +64,7 @@ namespace Fusion.Engine.Frames {
 			}
 		}
 		Frame targetFrame = null;
+
 
 		MouseProcessor		mouseProcessor;
 		TouchProcessor		touchProcessor;
@@ -246,7 +256,9 @@ namespace Fusion.Engine.Frames {
 		{
 			Frame mouseHoverFrame = null;
 
-			UpdateHoverRecursive( RootFrame, location, ref mouseHoverFrame );
+			var startFrame = ModalFrame ?? RootFrame;
+
+			UpdateHoverRecursive( startFrame, location, ref mouseHoverFrame );
 
 			return mouseHoverFrame;
 		}

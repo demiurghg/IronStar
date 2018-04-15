@@ -327,6 +327,7 @@ namespace Fusion.Engine.Frames {
 		public event EventHandler	LayoutChanged;
 		public event EventHandler	Activated;
 		public event EventHandler	Deactivated;
+		public event EventHandler	Missclick;
 		public event EventHandler<MouseEventArgs>	MouseIn;
 		public event EventHandler<MouseEventArgs>	MouseMove;
 		public event EventHandler<MouseEventArgs>	MouseOut;
@@ -746,6 +747,11 @@ namespace Fusion.Engine.Frames {
 		internal void OnTypeWrite( Keys key, char symbol, bool shift, bool alt, bool ctrl )
 		{
 			TypeWrite?.Invoke( this, new KeyEventArgs() { Key = key, Symbol = symbol, Shift = shift, Alt = alt, Ctrl = ctrl } );
+		}
+
+		internal void OnMissclick ()
+		{
+			Missclick?.Invoke( this, EventArgs.Empty );
 		}
 
 		/*-----------------------------------------------------------------------------------------

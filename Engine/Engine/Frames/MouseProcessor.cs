@@ -200,6 +200,9 @@ namespace Fusion.Engine.Frames {
 		/// <param name="key"></param>
 		void PushFrame ( Frame currentHovered, Keys key, Point location )
 		{
+			if (currentHovered==null) {
+				ui.ModalFrame?.OnMissclick();
+			}
 
 			//	frame pushed:
 			if (currentHovered!=null) {

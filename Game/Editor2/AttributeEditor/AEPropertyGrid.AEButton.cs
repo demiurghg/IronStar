@@ -22,7 +22,7 @@ namespace IronStar.Editor2.AttributeEditor {
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AEButton ( AEPropertyGrid grid, string category, string name, Action action ) : base(grid, category, name)
+			public AEButton ( AEPropertyGrid grid, string name, Action action ) : base(grid, name)
 			{ 
 				this.action		=	action;
 				

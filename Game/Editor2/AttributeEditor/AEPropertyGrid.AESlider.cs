@@ -28,7 +28,7 @@ namespace IronStar.Editor2.AttributeEditor {
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AESlider ( AEPropertyGrid grid, string category, string name, Func<float> getFunc, Action<float> setFunc, float min, float max, float step, float pstep ) : base(grid, category, name)
+			public AESlider ( AEPropertyGrid grid, string name, Func<float> getFunc, Action<float> setFunc, float min, float max, float step, float pstep ) : base(grid, name)
 			{ 
 				this.getFunc	=	getFunc;
 				this.setFunc	=	setFunc;

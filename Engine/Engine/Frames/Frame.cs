@@ -528,7 +528,7 @@ namespace Fusion.Engine.Frames {
 		{
 			if ( this.children.Contains(frame) ) {
 				this.children.Remove( frame );
-				frame.parent	=	this;
+				frame.parent	=	null;
 			}
 		}
 
@@ -1118,7 +1118,7 @@ namespace Fusion.Engine.Frames {
 		/// <param name="start"></param>
 		/// <param name="length"></param>
 		/// <returns></returns>
-		protected Rectangle MeasureText ()
+		public Rectangle MeasureText ()
 		{
 			if (Text==null) {
 				return new Rectangle(0,0,0,0);

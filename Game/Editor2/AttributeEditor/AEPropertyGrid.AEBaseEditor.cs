@@ -15,7 +15,6 @@ namespace IronStar.Editor2.AttributeEditor {
 
 		class AEBaseEditor : Frame {
 
-			readonly public string Category;
 			readonly public string Name;
 			readonly protected AEPropertyGrid	grid;
 
@@ -25,10 +24,9 @@ namespace IronStar.Editor2.AttributeEditor {
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AEBaseEditor ( AEPropertyGrid grid, string category, string name ) : base(grid.Frames)
+			public AEBaseEditor ( AEPropertyGrid grid, string name ) : base(grid.Frames)
 			{ 
 				this.grid		=	grid;
-				this.Category	=	category;
 				this.Name		=	name;
 			}
 		}

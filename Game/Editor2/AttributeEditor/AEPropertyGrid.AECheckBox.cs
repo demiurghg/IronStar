@@ -26,7 +26,7 @@ namespace IronStar.Editor2.AttributeEditor {
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AECheckBox ( AEPropertyGrid grid, string category, string name, Func<bool> getFunc, Action<bool> setFunc ) : base(grid, category, name)
+			public AECheckBox ( AEPropertyGrid grid, string name, Func<bool> getFunc, Action<bool> setFunc ) : base(grid, name)
 			{ 
 				this.getFunc	=	getFunc;
 				this.setFunc	=	setFunc;

@@ -19,6 +19,7 @@ using Fusion.Build;
 using BEPUphysics;
 using IronStar.Core;
 using IronStar.Editor2.AttributeEditor;
+using Fusion.Engine.Frames;
 
 namespace IronStar.Editor2 {
 
@@ -118,6 +119,15 @@ namespace IronStar.Editor2 {
 			map.ActivateMap( world, true );
 			world.SimulateWorld( 0 );
 			world.PresentWorld( 0.016f, 1, null, null );
+
+			//var modalFrame = new Frame( Game.Frames, 200,200, 300,200, "Modal Frame", new Color(40,40,40,40) );
+			//Game.Frames.RootFrame.Add( modalFrame );
+			//Game.Frames.ModalFrame = modalFrame;
+
+			//modalFrame.Missclick += (s,e) => Log.Warning("Missclick");
+			//modalFrame.Click += (s,e) => Log.Message("Click");
+			//modalFrame.MouseIn += (s,e) => Log.Message("MouseIn");
+			//modalFrame.MouseOut += (s,e) => Log.Message("MouseOut");
 		}
 
 

@@ -132,6 +132,15 @@ namespace IronStar.Editor2.AttributeEditor {
 					AddTextBox( category, name, ()=>(string)(pi.GetValue(obj)), (val)=>pi.SetValue(obj,val) );
 				}
 
+				if (pi.PropertyType.IsEnum) {
+
+					var type	=	pi.PropertyType;
+					var value	=	pi.GetValue(obj).ToString();
+					var values	=	Enum.GetNames( type );
+
+					AddDropDown( category, name, value, values, ()=>pi.GetValue(obj).ToString(), (val)=>pi.SetValue(obj, Enum.Parse(type, val)) );
+				}
+
 			}
 
 			foreach ( var mi in obj.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance) ) {
@@ -143,6 +152,10 @@ namespace IronStar.Editor2.AttributeEditor {
 					AddButton( category, name, ()=>mi.Invoke(obj, new object[0]) );
 				}
 			}
+
+			var list = new[] { "Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot" };
+
+			AddDropDown( "DropDownTest", "TestDrop", "Echo", list, ()=>"", (s)=> {});
 
 			RunLayout();
 			//RunLayout();
@@ -177,22 +190,27 @@ namespace IronStar.Editor2.AttributeEditor {
 
 		public void AddCheckBox ( string category, string name, Func<bool> getFunc, Action<bool> setFunc )
 		{
-			AddToCollapseRegion( category, new AECheckBox( this, category, name, getFunc, setFunc ) );
+			AddToCollapseRegion( category, new AECheckBox( this, name, getFunc, setFunc ) );
 		}
 
 		public void AddSlider ( string category, string name, Func<float> getFunc, Action<float> setFunc, float min, float max, float step, float pstep )
 		{
-			AddToCollapseRegion( category, new AESlider( this, category, name, getFunc, setFunc, min, max, step, pstep ) );
+			AddToCollapseRegion( category, new AESlider( this, name, getFunc, setFunc, min, max, step, pstep ) );
 		}
 
 		public void AddTextBox ( string category, string name, Func<string> getFunc, Action<string> setFunc )
 		{
-			AddToCollapseRegion( category, new AETextBox( this, category, name, getFunc, setFunc ) );
+			AddToCollapseRegion( category, new AETextBox( this, name, getFunc, setFunc ) );
 		}
 
 		public void AddButton ( string category, string name, Action action )
 		{
-			AddToCollapseRegion( category, new AEButton( this, category, name, action ) );
+			AddToCollapseRegion( category, new AEButton( this, name, action ) );
+		}
+
+		public void AddDropDown ( string category, string name, string value, IEnumerable<string> values, Func<string> getFunc, Action<string> setFunc )
+		{
+			AddToCollapseRegion( category, new AEDropDown( this, name, value, values, getFunc, setFunc ) );
 		}
 
 	}

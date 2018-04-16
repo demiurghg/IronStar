@@ -48,7 +48,7 @@
       <LightPreset>Cyan</LightPreset>
       <LightStyle>Default</LightStyle>
       <Ambient>false</Ambient>
-      <LightColor R="127" G="127" B="127" A="158" />
+      <LightColor R="92" G="117" B="23" A="255" />
       <LightIntensity>3467</LightIntensity>
     </MapNode>
     <MapNode xsi:type="MapModel">

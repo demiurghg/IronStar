@@ -40,35 +40,44 @@ namespace IronStar.Editor2.Controls {
 
 		Frame oldColorSample;
 		Frame newColorSample;
+		float temperature	=	6600;
 
-		float channelRed;
-		float channelGreen;
-		float channelBlue;
-		float channelAlpha;
+		Color4		colorRGBA;
+		HSVColor	colorHSV;
 
-		float channelHue;
-		float channelSaturation;
-		float channelBrightness;
-
-		Frame sliderRed		;
-		Frame sliderGreen	;
-		Frame sliderBlue	;
-		Frame sliderAlpha	;
+		Slider sliderRed	;
+		Slider sliderGreen	;
+		Slider sliderBlue	;
+		Slider sliderAlpha	;
+		Slider sliderSat	;
+		Slider sliderTemp	;
 
 		void UpdateFromColor ()
 		{
-			channelRed		=	targetColor.R;
-			channelGreen	=	targetColor.G;
-			channelBlue		=	targetColor.B;
-			channelAlpha	=	targetColor.A;
-
+			colorRGBA	=	new Color4( targetColor.R/255f, targetColor.G/255f, targetColor.B/255f, targetColor.A/255f );
+			colorHSV	=	HSVColor.ConvertRgbToHsv( colorRGBA );
+			newColorSample.BackColor = targetColor;
 			UpdateSliders();
 		}
 
 
 		void UpdateFromRGBA ()
 		{
-			targetColor = new Color( new Vector4( channelRed / 256.0f, channelGreen / 256.0f, channelBlue / 256.0f, channelAlpha / 256.0f ) );
+			targetColor =	new Color( colorRGBA );
+			colorHSV	=	HSVColor.ConvertRgbToHsv( colorRGBA );
+			newColorSample.BackColor = targetColor;
+
+			Log.Message("H = {0} S = {1}", colorHSV.H, colorHSV.S );
+
+			UpdateSliders();
+
+			setColor( targetColor );
+		}
+
+		void UpdateFromHSV ()
+		{
+			colorRGBA	= HSVColor.ConvertHsvToRgb( colorHSV, colorRGBA.Alpha );
+			targetColor = new Color( colorRGBA );
 			newColorSample.BackColor = targetColor;
 
 			UpdateSliders();
@@ -79,10 +88,12 @@ namespace IronStar.Editor2.Controls {
 
 		void UpdateSliders ()
 		{
-			sliderRed	.Text	=	channelRed		.ToString();
-			sliderGreen	.Text	=	channelGreen	.ToString();
-			sliderBlue	.Text	=	channelBlue		.ToString();
-			sliderAlpha	.Text	=	channelAlpha	.ToString();
+			sliderRed	.Text	=	( 255 * colorRGBA.Red	).ToString();
+			sliderGreen	.Text	=	( 255 * colorRGBA.Green	).ToString();
+			sliderBlue	.Text	=	( 255 * colorRGBA.Blue	).ToString();
+			sliderAlpha	.Text	=	( 255 * colorRGBA.Alpha	).ToString();
+
+			sliderSat	.Text	=	( 100 * colorHSV.V		).ToString();
 		}
 
 		/// <summary>
@@ -108,38 +119,32 @@ namespace IronStar.Editor2.Controls {
 
 			this.Missclick +=ColorPicker_Missclick;
 
-			/*AddColorButton(  2,  72, 40, 10, "", Color.White,	null );
-			AddColorButton( 42,  72, 40, 10, "", Color.Black,	null );
 
-			AddColorButton(  2,  82, 40, 10, "", Color.Red,		null );
-			AddColorButton( 42,  82, 40, 10, "", Color.Cyan,	null );
-			AddColorButton(  2,  92, 40, 10, "", Color.Lime,	null );
-			AddColorButton( 42,  92, 40, 10, "", Color.Magenta, null );
-			AddColorButton(  2, 102, 40, 10, "", Color.Blue,	null );
-			AddColorButton( 42, 102, 40, 10, "", Color.Yellow,	null );*/
-
-			colorField	=	new ColorField( Frames, 80+3, 2, 180+2, 128+2, null );
+			colorField	=	new ColorField( Frames, 80+3, 2, 180+2, 100+2, 
+				() => colorHSV, 
+				(hsv) => { colorHSV = hsv; UpdateFromHSV(); }
+			);
 			Add( colorField );
 
-			AddLabel( 2, 140+3, "Red"	);
-			AddLabel( 2, 151+3, "Green" );
-			AddLabel( 2, 162+3, "Blue"	);
-			AddLabel( 2, 173+3, "Alpha"	);
+			AddLabel( 2, 110+3, "Red"	);
+			AddLabel( 2, 121+3, "Green" );
+			AddLabel( 2, 132+3, "Blue"	);
+			AddLabel( 2, 143+3, "Alpha"	);
 
-			AddLabel( 2, 190+3, "Hue"	);
-			AddLabel( 2, 201+3, "Saturation" );
-			AddLabel( 2, 212+3, "Brightness" );
+			AddLabel( 2, 160+3, "Hue"	);
+			AddLabel( 2, 171+3, "Saturation" );
+			AddLabel( 2, 182+3, "Brightness" );
 
 			AddLabel( 2, 230,   "Temp, (K)" );
 
 
 			sliderRed	=	new Slider( 
 				Frames, 
-				()=>channelRed, 
-				(r)=> { channelRed = r; UpdateFromRGBA(); UpdateSliders(); },
+				()=>colorRGBA.Red * 255, 
+				(r)=> { colorRGBA.Red = r/255; UpdateFromRGBA(); UpdateSliders(); },
 				0, 255, 16, 1 ) {
 					X = 80+3,
-					Y = 140+3,
+					Y = 110+3,
 					Width = 256+2,
 					Height = 10,
 					Border = 1,
@@ -150,11 +155,11 @@ namespace IronStar.Editor2.Controls {
 
 			sliderGreen	=	new Slider( 
 				Frames, 
-				()=>channelGreen, 
-				(r)=> { channelGreen = r; UpdateFromRGBA(); UpdateSliders(); },
+				()=>colorRGBA.Green*255, 
+				(r)=> { colorRGBA.Green = r/255; UpdateFromRGBA(); UpdateSliders(); },
 				0, 255, 16, 1 ) {
 					X = 80+3,
-					Y = 151+3,
+					Y = 121+3,
 					Width = 256+2,
 					Height = 10,
 					Border = 1,
@@ -165,11 +170,11 @@ namespace IronStar.Editor2.Controls {
 
 			sliderBlue	=	new Slider( 
 				Frames, 
-				()=>channelBlue, 
-				(r)=> { channelBlue = r; UpdateFromRGBA(); UpdateSliders(); },
+				()=>colorRGBA.Blue*255, 
+				(r)=> { colorRGBA.Blue = r/255; UpdateFromRGBA(); UpdateSliders(); },
 				0, 255, 16, 1 ) {
 					X = 80+3,
-					Y = 162+3,
+					Y = 132+3,
 					Width = 256+2,
 					Height = 10,
 					Border = 1,
@@ -180,11 +185,11 @@ namespace IronStar.Editor2.Controls {
 
 			sliderAlpha	=	new Slider( 
 				Frames, 
-				()=>channelAlpha, 
-				(r)=> { channelAlpha = r; UpdateFromRGBA(); UpdateSliders(); },
+				()=>colorRGBA.Alpha*255, 
+				(r)=> { colorRGBA.Alpha = r/255; UpdateFromRGBA(); UpdateSliders(); },
 				0, 255, 16, 1 ) {
 					X = 80+3,
-					Y = 173+3,
+					Y = 143+3,
 					Width = 256+2,
 					Height = 10,
 					Border = 1,
@@ -194,10 +199,51 @@ namespace IronStar.Editor2.Controls {
 				};
 
 
+			sliderSat = new Slider(
+				Frames,
+				()=> colorHSV.S * 100f,
+				(v)=> { colorHSV.S = v/100f; UpdateFromHSV(); UpdateSliders(); },
+				0, 100, 10, 1 ) {
+					X = 267,
+					Y = 2,
+					Width = 30,
+					Height = 102,
+					Border = 1,
+					BackColor = new Color(0,0,0,64),
+					SliderColor = new Color(128,128,128,255),
+					ForeColor = new Color(0,0,0,160),
+					Vertical = true,
+				};
+
+
+			sliderTemp = new Slider(
+				Frames,
+				()=> temperature,
+				(t)=> { temperature = t; 
+						targetColor = Temperature.GetColor((int)t);  
+						UpdateFromColor(); 
+						UpdateSliders(); 
+						sliderTemp.SliderColor = targetColor; 
+						sliderTemp.Text = t.ToString() + "K";
+					},
+					1000, 40000, 100, 1 ) {
+					X = 80+3,
+					Y = 230,
+					Width = 256+2,
+					Height = 10,
+					Border = 1,
+					BackColor = new Color(0,0,0,64),
+					SliderColor = new Color(128,128,128,255),
+					ForeColor = new Color(0,0,0,160),
+				};
+
 			Add( sliderRed );
 			Add( sliderGreen );
 			Add( sliderBlue );
 			Add( sliderAlpha );
+
+			Add( sliderSat );
+			Add( sliderTemp );
 
 			UpdateFromColor();
 			UpdateSliders();

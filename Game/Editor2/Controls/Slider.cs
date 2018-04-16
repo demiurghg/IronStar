@@ -23,6 +23,8 @@ namespace IronStar.Editor2.Controls {
 
 		public Color SliderColor;
 
+		public bool Vertical;
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -86,14 +88,25 @@ namespace IronStar.Editor2.Controls {
 				if (dragPrecise) {
 
 					var origin	=	(float)(Math.Round( storedValue / psnap ) * psnap);
+					var delta	=	0;
 
-					var delta	=	(int)((e.X - dragXPos)/2);
+					if (Vertical) {
+						delta	=	(int)((dragYPos - e.Y)/2);
+					} else {
+						delta	=	(int)((e.X - dragXPos)/2);
+					}
 
 					newValue	=	origin + psnap * delta;
 
 				} else {
 
-					fraction	=	(e.X - padRect.X) / (float)(padRect.Width);
+					if (Vertical) {
+						fraction	=	1 - ((e.Y - padRect.Y) / (float)(padRect.Height));
+					} else {
+						fraction	=	(e.X - padRect.X) / (float)(padRect.Width);
+					}
+
+
 					newValue	=	min + (max-min)*fraction;
 					newValue	=	(float)(Math.Round( newValue / snap ) * snap);
 					
@@ -129,17 +142,21 @@ namespace IronStar.Editor2.Controls {
 			var frac	=	(value - min) / (max-min);
 
 			var totalWidth	=	padRect.Width;
+			var totalHeight	=	padRect.Height;
 			var	sliderWidth	=	(int)(totalWidth * frac);
+			var sliderHeight=	(int)(totalHeight * frac);
 
 			var rect		=	padRect;
-			rect.Width		=	sliderWidth;
+			var fadeColor	=	new Color( SliderColor.R, SliderColor.G, SliderColor.B, (byte)64 );
 
-			//spriteLayer.Draw( null, rect, SliderColor, clipRectIndex );
-
-			var fadeColor	=	new Color( (byte)(SliderColor.R), (byte)(SliderColor.G), (byte)(SliderColor.B), (byte)64 );
-
-			spriteLayer.DrawGradient( rect, fadeColor, SliderColor, fadeColor, SliderColor, clipRectIndex );
-
+			if (Vertical) {
+				rect.Height		=	sliderHeight;
+				rect.Y			=	padRect.Y + padRect.Height - sliderHeight;
+				spriteLayer.DrawGradient( rect, SliderColor, SliderColor, fadeColor, fadeColor, clipRectIndex );
+			} else {
+				rect.Width		=	sliderWidth;
+				spriteLayer.DrawGradient( rect, fadeColor, SliderColor, fadeColor, SliderColor, clipRectIndex );
+			}
 
 			this.DrawFrameText( spriteLayer, clipRectIndex );
 		}

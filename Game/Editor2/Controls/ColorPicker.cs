@@ -20,16 +20,18 @@ namespace IronStar.Editor2.Controls {
 		{
 			colorPicker = new ColorPicker( fp, initialColor, setColor );
 
-			colorPicker.X	=	Math.Max( 10, Math.Min( x, fp.RootFrame.Width  - DialogWidth  - 10 ) );
-			colorPicker.Y	=	Math.Max( 10, Math.Min( y, fp.RootFrame.Height - DialogHeight - 10 ) );
+			colorPicker.X	=	x;
+			colorPicker.Y	=	y;
 
 			fp.RootFrame.Add( colorPicker );
 			fp.ModalFrame = colorPicker;
+
+			FrameUtils.ConstrainFrame( colorPicker, 10 );
 		}
 
 
 		const int DialogWidth	=	80 + 256 + 3 + 2*2;
-		const int DialogHeight	=	244;
+		const int DialogHeight	=	165;
 
 
 		Color targetColor;
@@ -88,12 +90,12 @@ namespace IronStar.Editor2.Controls {
 
 		void UpdateSliders ()
 		{
-			sliderRed	.Text	=	( 255 * colorRGBA.Red	).ToString();
-			sliderGreen	.Text	=	( 255 * colorRGBA.Green	).ToString();
-			sliderBlue	.Text	=	( 255 * colorRGBA.Blue	).ToString();
-			sliderAlpha	.Text	=	( 255 * colorRGBA.Alpha	).ToString();
+			sliderRed	.Text	=	( (int)(255 * colorRGBA.Red		) ).ToString();
+			sliderGreen	.Text	=	( (int)(255 * colorRGBA.Green	) ).ToString();
+			sliderBlue	.Text	=	( (int)(255 * colorRGBA.Blue	) ).ToString();
+			sliderAlpha	.Text	=	( (int)(255 * colorRGBA.Alpha	) ).ToString();
 
-			sliderSat	.Text	=	( 100 * colorHSV.V		).ToString();
+			sliderSat	.Text	=	( (int)(100 * colorHSV.S		) ).ToString();
 		}
 
 		/// <summary>
@@ -126,16 +128,13 @@ namespace IronStar.Editor2.Controls {
 			);
 			Add( colorField );
 
-			AddLabel( 2, 110+3, "Red"	);
-			AddLabel( 2, 121+3, "Green" );
-			AddLabel( 2, 132+3, "Blue"	);
-			AddLabel( 2, 143+3, "Alpha"	);
 
-			AddLabel( 2, 160+3, "Hue"	);
-			AddLabel( 2, 171+3, "Saturation" );
-			AddLabel( 2, 182+3, "Brightness" );
+			AddLabel( 2, 107, "Red"	);
+			AddLabel( 2, 118, "Green" );
+			AddLabel( 2, 129, "Blue"	);
+			AddLabel( 2, 140, "Alpha"	);
 
-			AddLabel( 2, 230,   "Temp, (K)" );
+			AddLabel( 2, 153,   "Temp, (K)" );
 
 
 			sliderRed	=	new Slider( 
@@ -143,8 +142,8 @@ namespace IronStar.Editor2.Controls {
 				()=>colorRGBA.Red * 255, 
 				(r)=> { colorRGBA.Red = r/255; UpdateFromRGBA(); UpdateSliders(); },
 				0, 255, 16, 1 ) {
-					X = 80+3,
-					Y = 110+3,
+					X = 83,
+					Y = 107,
 					Width = 256+2,
 					Height = 10,
 					Border = 1,
@@ -158,8 +157,8 @@ namespace IronStar.Editor2.Controls {
 				()=>colorRGBA.Green*255, 
 				(r)=> { colorRGBA.Green = r/255; UpdateFromRGBA(); UpdateSliders(); },
 				0, 255, 16, 1 ) {
-					X = 80+3,
-					Y = 121+3,
+					X = 83,
+					Y = 118,
 					Width = 256+2,
 					Height = 10,
 					Border = 1,
@@ -173,8 +172,8 @@ namespace IronStar.Editor2.Controls {
 				()=>colorRGBA.Blue*255, 
 				(r)=> { colorRGBA.Blue = r/255; UpdateFromRGBA(); UpdateSliders(); },
 				0, 255, 16, 1 ) {
-					X = 80+3,
-					Y = 132+3,
+					X = 83,
+					Y = 129,
 					Width = 256+2,
 					Height = 10,
 					Border = 1,
@@ -188,8 +187,8 @@ namespace IronStar.Editor2.Controls {
 				()=>colorRGBA.Alpha*255, 
 				(r)=> { colorRGBA.Alpha = r/255; UpdateFromRGBA(); UpdateSliders(); },
 				0, 255, 16, 1 ) {
-					X = 80+3,
-					Y = 143+3,
+					X = 83,
+					Y = 140,
 					Width = 256+2,
 					Height = 10,
 					Border = 1,
@@ -203,7 +202,7 @@ namespace IronStar.Editor2.Controls {
 				Frames,
 				()=> colorHSV.S * 100f,
 				(v)=> { colorHSV.S = v/100f; UpdateFromHSV(); UpdateSliders(); },
-				0, 100, 10, 1 ) {
+				0, 100, 1, 1 ) {
 					X = 267,
 					Y = 2,
 					Width = 30,
@@ -227,13 +226,13 @@ namespace IronStar.Editor2.Controls {
 						sliderTemp.Text = t.ToString() + "K";
 					},
 					1000, 40000, 100, 1 ) {
-					X = 80+3,
-					Y = 230,
+					X = 83,
+					Y = 153,
 					Width = 256+2,
 					Height = 10,
 					Border = 1,
 					BackColor = new Color(0,0,0,64),
-					SliderColor = new Color(128,128,128,255),
+					SliderColor = new Color(256,256,256,255),
 					ForeColor = new Color(0,0,0,160),
 				};
 

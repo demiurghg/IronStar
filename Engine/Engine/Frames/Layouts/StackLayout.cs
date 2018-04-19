@@ -15,17 +15,14 @@ namespace Fusion.Engine.Frames.Layouts {
 
 	public class StackLayout : LayoutEngine {
 
-		public int	Offset		{ get; set; }
-		public int	Interval	{ get; set; }
-		public bool EqualWidth	{ get; set; }
+		public int	Offset		{ get; set; } = 0;
+		public int	Interval	{ get; set; } = 0;
+		public bool EqualWidth	{ get; set; } = false;
 		public bool AllowResize { get; set; } = false;
 
 
-		public StackLayout( int offset, int interval, bool equalWidth = false )
+		public StackLayout()
 		{
-			Offset		=	offset;
-			Interval	=	interval;
-			EqualWidth	=	equalWidth;
 		}
 
 

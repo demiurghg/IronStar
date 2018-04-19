@@ -29,7 +29,7 @@ namespace IronStar.Editor2.Controls {
 
 			this.Padding		=	1;
 
-			this.Layout			=	new StackLayout(0,1, true) { AllowResize = true };
+			this.Layout			=	new StackLayout() { AllowResize = true, EqualWidth = true, Interval = 1 };
 			
 		}
 
@@ -137,7 +137,7 @@ namespace IronStar.Editor2.Controls {
 				}
 			}
 
-			RunLayout();
+			//RunLayout();
 			//RunLayout();
 		}
 
@@ -185,7 +185,8 @@ namespace IronStar.Editor2.Controls {
 
 		public void AddButton ( string category, string name, Action action )
 		{
-			AddToCollapseRegion( category, new AEButton( this, name, action ) );
+			//AddToCollapseRegion( category, new AEButton( this, name, action ) );
+			AddToCollapseRegion( category, new Button( Frames, name, 0,0, 200, 20, action ) { MarginRight = 100 } );
 		}
 
 		public void AddDropDown ( string category, string name, string value, IEnumerable<string> values, Func<string> getFunc, Action<string> setFunc )

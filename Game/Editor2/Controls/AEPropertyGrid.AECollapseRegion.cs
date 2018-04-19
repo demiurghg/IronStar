@@ -60,7 +60,7 @@ namespace IronStar.Editor2.Controls {
 				buttonCollapse.StatusChanged +=ButtonCollapse_StatusChanged;
 				buttonCollapse.Click+=ButtonCollapse_Click;
 
-				Layout	=	new StackLayout(0,1,true) { AllowResize = true };
+				Layout	=	new StackLayout() { AllowResize = true, EqualWidth = true, Interval = 1 };
 			}
 
 
@@ -75,7 +75,7 @@ namespace IronStar.Editor2.Controls {
 					}
 				}
 
-				grid.RunLayout();
+				MakeLayoutDirty();
 			}
 
 

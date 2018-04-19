@@ -79,7 +79,7 @@ namespace IronStar.Editor2.Controls {
 
 			dropDownList.Width = maxWidth + 4;
 
-			dropDownList.Layout = new StackLayout(0,1,true) { AllowResize=true };
+			dropDownList.Layout = new StackLayout() { AllowResize = true, EqualWidth = true };
 
 			dropDownList.RunLayout();
 

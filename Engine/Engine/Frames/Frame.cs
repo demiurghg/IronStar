@@ -78,7 +78,7 @@ namespace Fusion.Engine.Frames {
 		public  bool		IsDoubleClickEnabled { get; set; }
 
 		/// <summary>
-		/// Indicated whether double click enabled on given control.
+		/// Indicated whether manipulation enabled on given control.
 		/// Default value is False
 		/// </summary>
 		public  bool		IsManipulationEnabled { get; set; }
@@ -119,113 +119,6 @@ namespace Fusion.Engine.Frames {
 		/// </summary>
 		public	Vector2		ShadowOffset		{ get; set; }
 
-
-		/// <summary>
-		/// Local X position of the frame
-		/// </summary>
-		public	int			X					{ get; set; }
-
-		/// <summary>
-		/// Local Y position of the frame
-		/// </summary>
-		public	int			Y					{ get; set; }
-
-		/// <summary>
-		///	Width of the frame
-		/// </summary>
-		public virtual int	Width				{ get; set; }
-
-		/// <summary>
-		///	Height of the frame
-		/// </summary>
-		public virtual int	Height				{ get; set; }
-
-		/// <summary>
-		/// Left gap between frame and its content
-		/// </summary>
-		public	int			PaddingLeft			{ get; set; }
-
-		/// <summary>
-		/// Right gap between frame and its content
-		/// </summary>
-		public	int			PaddingRight		{ get; set; }
-
-		/// <summary>
-		/// Top gap  between frame and its content
-		/// </summary>
-		public	int			PaddingTop			{ get; set; }
-
-		/// <summary>
-		/// Bottom gap  between frame and its content
-		/// </summary>
-		public	int			PaddingBottom		{ get; set; }
-
-		/// <summary>
-		/// Top and bottom padding
-		/// </summary>
-		public	int			VPadding			{ set { PaddingBottom = PaddingTop = value; } }
-
-		/// <summary>
-		///	Left and right padding
-		/// </summary>
-		public	int			HPadding			{ set { PaddingLeft = PaddingRight = value; } }
-
-		/// <summary>
-		/// Top, bottom, left and right padding
-		/// </summary>
-		public	int			Padding				{ set { VPadding = HPadding = value; } }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public	int			BorderTop			{ get; set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public	int			BorderBottom		{ get; set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public	int			BorderLeft			{ get; set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public	int			BorderRight			{ get; set; }
-
-
-		/// <summary>
-		/// Top, bottom, left and right margin
-		/// </summary>
-		public	int			Margin				{ set { MarginTop = MarginBottom = MarginLeft = MarginRight = value; } }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public	int			MarginTop			{ get; set; } = 0;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public	int			MarginBottom		{ get; set; } = 0;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public	int			MarginLeft			{ get; set; } = 0;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public	int			MarginRight			{ get; set; } = 0;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public	int			Border				{ set { BorderTop = BorderBottom = BorderLeft = BorderRight = value; } }
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -256,27 +149,12 @@ namespace Fusion.Engine.Frames {
 		/// </summary>
 		public	float		TextTracking		{ get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public	FrameAnchor	Anchor			{ get; set; }
-
 
 		public int				ImageOffsetX	{ get; set; }
 		public int				ImageOffsetY	{ get; set; }
 		public FrameImageMode	ImageMode		{ get; set; }
 		public Color			ImageColor		{ get; set; }
 		public Texture			Image			{ get; set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public LayoutEngine	Layout	{ 
-			get { return layout; }
-			set { layout = value; LayoutChanged?.Invoke( this, EventArgs.Empty ); }
-		}
-
-		LayoutEngine layout = null;
 
 
 		#region	Events
@@ -481,12 +359,13 @@ namespace Fusion.Engine.Frames {
 		/// Adds frame
 		/// </summary>
 		/// <param name="frame"></param>
-		public void Add ( Frame frame )
+		public virtual void Add ( Frame frame )
 		{
 			if ( !children.Contains(frame) ) {
 				children.Add( frame );
 				frame.parent	=	this;
 				frame.OnStatusChanged( FrameStatus.None );
+				layoutDirty = true;
 			}
 		}
 
@@ -495,12 +374,13 @@ namespace Fusion.Engine.Frames {
 		/// 
 		/// </summary>
 		/// <param name="frame"></param>
-		public void Clear ()
+		public virtual void Clear ()
 		{
 			foreach ( var child in children ) {
 				child.parent = null;
 			}
 			children.Clear();
+			layoutDirty = true;
 		}
 
 
@@ -509,12 +389,13 @@ namespace Fusion.Engine.Frames {
 		/// </summary>
 		/// <param name="index"></param>
 		/// <param name="frame"></param>
-		public void Insert ( int index, Frame frame )
+		public virtual void Insert ( int index, Frame frame )
 		{
 			if ( !children.Contains(frame) ) {
 				children.Insert( index, frame );
 				frame.parent	=	this;
 				frame.OnStatusChanged( FrameStatus.None );
+				layoutDirty = true;
 			}
 		}
 
@@ -524,11 +405,12 @@ namespace Fusion.Engine.Frames {
 		/// 
 		/// </summary>
 		/// <param name="frame"></param>
-		public void Remove ( Frame frame )
+		public virtual void Remove ( Frame frame )
 		{
 			if ( this.children.Contains(frame) ) {
 				this.children.Remove( frame );
 				frame.parent	=	null;
+				layoutDirty = true;
 			}
 		}
 
@@ -796,14 +678,16 @@ namespace Fusion.Engine.Frames {
 		/// <param name="parentX"></param>
 		/// <param name="parentY"></param>
 		/// <param name="frame"></param>
-		internal void UpdateInternal ( GameTime gameTime )
+		internal void UpdateInternalNonRecursive ( GameTime gameTime )
 		{
 			var bfsList  = BFSList( this );
 			var bfsListR = bfsList.ToList();
 			bfsListR.Reverse();
 
-
-			UpdateGlobalRect(0,0);
+			//	run layout engine twice to handle back propagation
+			bfsList.ForEach( f => f.RunLayoutInternal() );
+			bfsList.ForEach( f => f.RunLayoutInternal() );
+			bfsList.ForEach( f => f.RunLayoutInternal() );
 
 			bfsList.ForEach( f => f.UpdateMove() );
 			bfsList.ForEach( f => f.UpdateResize() );
@@ -976,8 +860,6 @@ namespace Fusion.Engine.Frames {
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
-		int oldX = int.MinValue;
-		int oldY = int.MinValue;
 		int oldW = int.MinValue;
 		int oldH = int.MinValue;
 		bool firstResize = true;
@@ -988,12 +870,9 @@ namespace Fusion.Engine.Frames {
 		/// </summary>
 		protected void UpdateMove ()
 		{
-			if ( oldX != X || oldY != Y ) {	
-				oldX = X;
-				oldY = Y;
-				if (Move!=null) {
-					Move( this, new MoveEventArgs(){ X = X, Y = Y } );
-				}
+			if (moveDirty) {
+				Move?.Invoke( this, new MoveEventArgs() { X = this.X, Y = this.Y } );
+				moveDirty = false;
 			}
 		}
 
@@ -1004,40 +883,24 @@ namespace Fusion.Engine.Frames {
 		/// </summary>
 		protected void UpdateResize ()
 		{
-			if ( oldW != Width || oldH != Height ) {	
-
-				if (Resize!=null) {
-					Resize( this, new ResizeEventArgs(){ Width = Width, Height = Height } );
-				}
-
-				if (!firstResize) {
-					ForEachChildren( f => f.UpdateAnchors( oldW, oldH, Width, Height ) );
-				}
-
-				firstResize = false;
-
-				oldW = Width;
-				oldH = Height;
+			if (sizeDirty) {
+				Resize?.Invoke( this, new ResizeEventArgs(){ Width = Width, Height = Height } );
+				sizeDirty = false;
 			}
+			//if ( oldW != Width || oldH != Height ) {	
+
+			//	Resize( this, new ResizeEventArgs(){ Width = Width, Height = Height } );
+
+			//	if (!firstResize) {
+			//		ForEachChildren( f => f.UpdateAnchors( oldW, oldH, Width, Height ) );
+			//	}
+
+			//	firstResize = false;
+
+			//	oldW = Width;
+			//	oldH = Height;
+			//}
 		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="forceTransitions"></param>
-		public virtual void RunLayout ()
-		{
-			layout?.RunLayout( this );
-
-			foreach ( var child in Children ) {
-				child.RunLayout();
-			}
-
-			layout?.RunLayout( this );
-		}
-
 
 
 		/// <summary>
@@ -1208,180 +1071,6 @@ namespace Fusion.Engine.Frames {
 
 			}
 		}
-
-
-		/*-----------------------------------------------------------------------------------------
-		 * 
-		 *	Animation stuff :
-		 * 
-		-----------------------------------------------------------------------------------------*/
-
-		#if false
-		List<ITransition>	transitions	=	new List<ITransition>();
-
-
-		/// <summary>
-		/// Pushes new transition to the chain of animation transitions.
-		/// Origin value will be retrived when transition starts.
-		/// When one of the newest transitions starts, previous transitions on same property will be terminated.
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <typeparam name="I"></typeparam>
-		/// <param name="property"></param>
-		/// <param name="termValue"></param>
-		/// <param name="delay"></param>
-		/// <param name="period"></param>
-		public void RunTransition<T,I> ( string property, T targetValue, int delay, int period ) where I: IInterpolator<T>, new()
-		{
-			var pi	=	GetType().GetProperty( property );
-			
-			if ( pi.PropertyType != typeof(T) ) {	
-				throw new ArgumentException(string.Format("Bad property and types: {0} is {1}, but values are {2}", property, pi.PropertyType, typeof(T)) );
-			}
-
-			//	call ToList() to terminate LINQ evaluation :
-			var toCancel = transitions.Where( t => t.TagName == property ).ToList();
-
-			transitions.Add( new Transition<T,I>( this, pi, targetValue, delay, period, toCancel ){ TagName = property } );
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="property"></param>
-		/// <param name="targetValue"></param>
-		/// <param name="delay"></param>
-		/// <param name="period"></param>
-		public void RunTransition ( string property, Color targetValue, int delay, int period )
-		{
-			RunTransition<Color, ColorInterpolator>( property, targetValue, delay, period );
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="property"></param>
-		/// <param name="targetValue"></param>
-		/// <param name="delay"></param>
-		/// <param name="period"></param>
-		public void RunTransition ( string property, int targetValue, int delay, int period )
-		{
-			RunTransition<int, IntInterpolator>( property, targetValue, delay, period );
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="gameTime"></param>
-		void UpdateTransitions ( GameTime gameTime )
-		{
-			foreach ( var t in transitions ) {
-				t.Update( gameTime );
-			}
-
-			transitions.RemoveAll( t => t.IsDone );
-		}
-		#endif
-
-
-		/*-----------------------------------------------------------------------------------------
-		 * 
-		 *	Anchors :
-		 * 
-		-----------------------------------------------------------------------------------------*/
-
-		/// <summary>
-		/// Incrementally preserving half offset
-		/// </summary>
-		/// <param name="oldV"></param>
-		/// <param name="newV"></param>
-		/// <param name="x"></param>
-		/// <returns></returns>
-		int SafeHalfOffset ( int oldV, int newV, int x )
-		{
-			int dw = newV - oldV;
-
-			if ( (dw & 1)==1 ) {
-
-				if ( dw > 0 ) {
-
-					if ( (oldV&1)==1 ) {
-						dw ++;
-					}
-
-				} else {
-
-					if ( (oldV&1)==0 ) {
-						dw --;
-					}
-				}
-
-				return	x + dw/2;
-
-			} else {
-				return	x + dw/2;
-			}
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="oldW"></param>
-		/// <param name="oldH"></param>
-		/// <param name="newW"></param>
-		/// <param name="newH"></param>
-		void UpdateAnchors ( int oldW, int oldH, int newW, int newH )
-		{
-			int dw	=	newW - oldW;
-			int dh	=	newH - oldH;
-
-			if ( !Anchor.HasFlag( FrameAnchor.Left ) && !Anchor.HasFlag( FrameAnchor.Right ) ) {
-				X	=	SafeHalfOffset( oldW, newW, X );				
-			}
-
-			if ( !Anchor.HasFlag( FrameAnchor.Left ) && Anchor.HasFlag( FrameAnchor.Right ) ) {
-				X	=	X + dw;
-			}
-
-			if ( Anchor.HasFlag( FrameAnchor.Left ) && !Anchor.HasFlag( FrameAnchor.Right ) ) {
-			}
-
-			if ( Anchor.HasFlag( FrameAnchor.Left ) && Anchor.HasFlag( FrameAnchor.Right ) ) {
-				Width	=	Width + dw;
-			}
-
-
-		
-			if ( !Anchor.HasFlag( FrameAnchor.Top ) && !Anchor.HasFlag( FrameAnchor.Bottom ) ) {
-				Y	=	SafeHalfOffset( oldH, newH, Y );				
-			}
-
-			if ( !Anchor.HasFlag( FrameAnchor.Top ) && Anchor.HasFlag( FrameAnchor.Bottom ) ) {
-				Y	=	Y + dh;
-			}
-
-			if ( Anchor.HasFlag( FrameAnchor.Top ) && !Anchor.HasFlag( FrameAnchor.Bottom ) ) {
-			}
-
-			if ( Anchor.HasFlag( FrameAnchor.Top ) && Anchor.HasFlag( FrameAnchor.Bottom ) ) {
-				Height	=	Height + dh;
-			}
-		}
-
-
-		/*-----------------------------------------------------------------------------------------
-		 * 
-		 *	Layouting :
-		 * 
-		-----------------------------------------------------------------------------------------*/
-
 	}
 }
 

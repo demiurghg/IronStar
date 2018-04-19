@@ -33,6 +33,26 @@ namespace Fusion.Engine.Frames {
 			frame.Y	=	Math.Max( margin, Math.Min( frame.Y, parent.Height - frame.Height - margin ) );
 		}
 
+
+
+		/// <summary>
+		/// Puts frame at center of parent frame
+		/// </summary>
+		/// <param name="frame"></param>
+		public static void CenterFrame ( Frame frame )
+		{
+			if (frame.Parent==null) {
+				throw new InvalidOperationException("CenterFrame could not be applied to top frame");
+			}
+
+			var parent = frame.Parent;
+
+			frame.Anchor = FrameAnchor.None;
+
+			frame.X	=	(parent.Width  - frame.Width )/2;
+			frame.Y	=	(parent.Height - frame.Height)/2;
+		}
+
 	}
 }
 

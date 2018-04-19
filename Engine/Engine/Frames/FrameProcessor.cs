@@ -156,42 +156,6 @@ namespace Fusion.Engine.Frames {
 
 
 
-		TimeSpan	uiUpdateProfiling;
-		internal	bool	SuppressLayout { get; private set; }
-		internal	bool	ForceLayout { get; private set; }
-
-
-
-		/// <summary>
-		/// Call this method after UI setup to make things right
-		/// </summary>
-		[Obsolete]
-		public void SettleControls () 
-		{
-			UpdateUI( new GameTime(), true, false );
-			UpdateUI( new GameTime(), false, true );
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="gameTime"></param>
-		/// <param name="suppressLayout"></param>
-		/// <param name="forceLayout"></param>
-		protected void UpdateUI ( GameTime gameTime, bool suppressLayout = false, bool forceLayout = false )
-		{
-			SuppressLayout	=	suppressLayout;
-			ForceLayout		=	forceLayout;
-
-
-			if (RootFrame!=null) {
-				RootFrame.UpdateInternal( gameTime );
-			}
-		}
-
-
-
 		/// <summary>
 		/// Updates stuff
 		/// </summary>
@@ -209,12 +173,9 @@ namespace Fusion.Engine.Frames {
 			Stopwatch sw = new Stopwatch();
 			sw.Start();
 
-				UpdateUI( gameTime );
+				RootFrame?.UpdateInternalNonRecursive( gameTime );
 
 			sw.Stop();
-
-			uiUpdateProfiling	=	sw.Elapsed;
-
 
 			//
 			//	Draw UI :

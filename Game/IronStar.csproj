@@ -75,10 +75,13 @@
     <Compile Include="Editor2\Controls\AEPropertyGrid.AEDropDown.cs" />
     <Compile Include="Editor2\Controls\AEPropertyGrid.AETextBox.cs" />
     <Compile Include="Editor2\Controls\AEPropertyGrid.AESlider.cs" />
-    <Compile Include="Editor2\Controls\AEPropertyGrid.AEButton.cs" />
+    <Compile Include="Editor2\Controls\Button.cs" />
+    <Compile Include="Editor2\Controls\FileSelector.cs" />
     <Compile Include="Editor2\Controls\ColorPicker.ColorField.cs" />
     <Compile Include="Editor2\Controls\ColorPicker.cs" />
     <Compile Include="Editor2\Controls\DropDown.cs" />
+    <Compile Include="Editor2\Controls\Panel.cs" />
+    <Compile Include="Editor2\Controls\ScrollBox.cs" />
     <Compile Include="Editor2\Controls\TextBox.cs" />
     <Compile Include="Editor2\Controls\Slider.cs" />
     <Compile Include="Editor2\Controls\AEPropertyGrid.AECheckBox.cs" />

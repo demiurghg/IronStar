@@ -144,6 +144,7 @@ namespace IronStar.Editor2 {
 		}
 
 
+		ScrollBox aeGridBox;
 		AEPropertyGrid aeGrid = null;
 
 		/// <summary>
@@ -154,13 +155,18 @@ namespace IronStar.Editor2 {
 			Editors.Editor.GetMapEditor()?.SetSelection( selection, map.Environment );
 
 			if (aeGrid==null) {
+
+				aeGridBox = new ScrollBox( Game.Frames, 1280 - 310, 10, 300, 200 );
+
 				aeGrid = new AEPropertyGrid( Game.Frames );
 				aeGrid.Width	=	300;
 				aeGrid.Height	=	700;
-				aeGrid.X		=	1280 - 310;
-				aeGrid.Y		=	10;
+				aeGrid.X		=	0;//1280-310;
+				aeGrid.Y		=	0;//10;
 
-				Game.Frames.RootFrame.Add( aeGrid );
+				aeGridBox.Add( aeGrid );
+
+				Game.Frames.RootFrame.Add( aeGridBox );
 			}
 
 			aeGrid.TargetObject = selection.FirstOrDefault();

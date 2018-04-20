@@ -40,9 +40,9 @@ namespace IronStar.Editor2.Controls {
 			this.snap			=	snap;
 			this.psnap			=	psnap;
 
-			this.BackColor		=	ColorTheme.ColorBorder;
+			this.BackColor		=	ColorTheme.BorderColor;
 			this.Width			=	1;
-			this.BorderColor	=	ColorTheme.ColorBorder;
+			this.BorderColor	=	ColorTheme.BorderColor;
 			this.TextAlignment	=	Alignment.MiddleCenter;
 
 			this.MouseDown  +=Slider_MouseDown;

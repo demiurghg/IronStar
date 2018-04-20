@@ -36,7 +36,7 @@ namespace IronStar.Editor2.Controls {
 				this.Category	=	category;
 
 				TextAlignment	=	Alignment.MiddleCenter;
-				BorderColor		=	ColorTheme.ColorBorder;
+				BorderColor		=	ColorTheme.BorderColor;
 				Border			=	0;
 				Padding			=	0;
 				PaddingBottom	=	0;

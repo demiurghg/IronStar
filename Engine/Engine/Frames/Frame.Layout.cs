@@ -48,7 +48,7 @@ namespace Fusion.Engine.Frames {
 		/// <summary>
 		/// Local X position of the frame
 		/// </summary>
-		public int X { 
+		public virtual int X { 
 			get { return x; }
 			set { 
 				if (x!=value) {
@@ -62,7 +62,7 @@ namespace Fusion.Engine.Frames {
 		/// <summary>
 		/// Local Y position of the frame
 		/// </summary>
-		public int Y {
+		public virtual int Y {
 			get { return y; }
 			set { 
 				if (y!=value) {
@@ -109,7 +109,7 @@ namespace Fusion.Engine.Frames {
 		/// <summary>
 		/// Left gap between frame and its content
 		/// </summary>
-		public int PaddingLeft { 
+		public virtual int PaddingLeft { 
 			get { return paddingLeft; }
 			set { 
 				if (paddingLeft!=value) {
@@ -122,7 +122,7 @@ namespace Fusion.Engine.Frames {
 		/// <summary>
 		/// Right gap between frame and its content
 		/// </summary>
-		public int PaddingRight {
+		public virtual int PaddingRight {
 			get { return paddingRight; }
 			set { 
 				if (paddingRight!=value) {
@@ -135,7 +135,7 @@ namespace Fusion.Engine.Frames {
 		/// <summary>
 		/// Top gap  between frame and its content
 		/// </summary>
-		public int PaddingTop {
+		public virtual int PaddingTop {
 			get { return paddingTop; }
 			set { 
 				if (paddingTop!=value) {
@@ -148,7 +148,7 @@ namespace Fusion.Engine.Frames {
 		/// <summary>
 		/// Bottom gap  between frame and its content
 		/// </summary>
-		public int PaddingBottom {
+		public virtual int PaddingBottom {
 			get { return paddingBottom; }
 			set { 
 				if (paddingBottom!=value) {
@@ -177,7 +177,7 @@ namespace Fusion.Engine.Frames {
 		/// <summary>
 		/// Left gap between frame and its content
 		/// </summary>
-		public int BorderLeft { 
+		public virtual int BorderLeft { 
 			get { return borderLeft; }
 			set { 
 				if (borderLeft!=value) {
@@ -190,7 +190,7 @@ namespace Fusion.Engine.Frames {
 		/// <summary>
 		/// Right gap between frame and its content
 		/// </summary>
-		public int BorderRight {
+		public virtual int BorderRight {
 			get { return borderRight; }
 			set { 
 				if (borderRight!=value) {
@@ -203,7 +203,7 @@ namespace Fusion.Engine.Frames {
 		/// <summary>
 		/// Top gap  between frame and its content
 		/// </summary>
-		public int BorderTop {
+		public virtual int BorderTop {
 			get { return borderTop; }
 			set {
 				if (borderTop!=value) { 
@@ -216,7 +216,7 @@ namespace Fusion.Engine.Frames {
 		/// <summary>
 		/// Bottom gap  between frame and its content
 		/// </summary>
-		public int BorderBottom {
+		public virtual int BorderBottom {
 			get { return borderBottom; }
 			set { 
 				if (borderBottom!=value) {

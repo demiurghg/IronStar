@@ -24,7 +24,7 @@ namespace IronStar.Editor2.Controls {
 		/// <summary>
 		/// Gets and sets scroll marker color
 		/// </summary>
-		public Color ScrollMarkerColor { get;set; } = Color.White;
+		public Color ScrollMarkerColor { get;set; } = ColorTheme.ScrollMarkerColor;
 
 
 		int offset = 0;
@@ -36,7 +36,7 @@ namespace IronStar.Editor2.Controls {
 		/// <param name="fp"></param>
 		public ScrollBox ( FrameProcessor fp, int x, int y, int w, int h ) : base(fp,x,y,w,h)
 		{
-			BackColor	=	Color.Zero;
+			BackColor	=	ColorTheme.BackgroundColorDark;
 			Border		=	0;
 			Padding		=	0;
 
@@ -54,7 +54,7 @@ namespace IronStar.Editor2.Controls {
 
 		int ScrollBoxWidth {
 			get {
-				return Width - ScrollMarkerSize - 2 - PaddingLeft - PaddingRight - BorderRight - BorderLeft;
+				return Width - ScrollMarkerSize - 1 - PaddingLeft - PaddingRight - BorderRight - BorderLeft;
 			}
 		}
 
@@ -113,7 +113,7 @@ namespace IronStar.Editor2.Controls {
 				return;
 			}
 
-			int clientWidth		=	Width - ScrollMarkerSize - 2 - PaddingLeft - PaddingRight - BorderRight - BorderLeft;
+			int clientWidth		=	Width - ScrollMarkerSize - 1 - PaddingLeft - PaddingRight - BorderRight - BorderLeft;
 			int clientHeight	=	Height - PaddingTop - PaddingBottom - BorderTop - BorderBottom;
 
 			int	scrollRange		=	Math.Max( 0, container.Height - clientHeight );
@@ -128,18 +128,18 @@ namespace IronStar.Editor2.Controls {
 
 			var targetFrame		=	TargetFrame;
 
-			var gp				=	GlobalRectangle;
+			var gp				=	GetPaddedRectangle();
 
 			var markerHeight	=	ScrollBoxHeight;
 			var markerOffset	=	0;
 
 			if (targetFrame!=null) {
 				
-				markerHeight	=	(ScrollBoxHeight * ScrollBoxHeight) / Math.Max( ScrollBoxHeight, targetFrame.Height );
-				markerOffset	=	(offset			 * ScrollBoxHeight) / Math.Max( ScrollBoxHeight, targetFrame.Height );
+				markerHeight	=	(ScrollBoxHeight * ScrollBoxHeight * 2 + 1) / Math.Max( ScrollBoxHeight, targetFrame.Height ) / 2 + 1;
+				markerOffset	=	(offset			 * ScrollBoxHeight * 2 + 1) / Math.Max( ScrollBoxHeight, targetFrame.Height ) / 2;
 			}
 
-			int x = gp.X + gp.Width - 1 - ScrollMarkerSize;
+			int x = gp.X + gp.Width - ScrollMarkerSize;
 			int y = gp.Y + markerOffset;
 			int w = ScrollMarkerSize;
 			int h = markerHeight;

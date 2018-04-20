@@ -113,8 +113,8 @@ namespace IronStar.Editor2.Controls {
 
 			Padding			=	1;
 			Border			=	1;
-			BorderColor		=	ColorTheme.ColorBorder;
-			BackColor		=	ColorTheme.ColorBackground;
+			BorderColor		=	ColorTheme.BorderColor;
+			BackColor		=	ColorTheme.BackgroundColor;
 
 			oldColorSample	=	AddColorButton(  2,   2, 80, 30, "", initColor, ()=> { targetColor = initColor; UpdateFromColor(); } );
 			newColorSample	=	AddColorButton(  2,  32, 80, 30, "", initColor, null );

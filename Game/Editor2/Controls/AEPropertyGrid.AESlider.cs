@@ -44,7 +44,7 @@ namespace IronStar.Editor2.Controls {
 				slider				=	new Slider( Frames, getFunc, setFunc, min, max, step, pstep );
 				slider.StatusChanged +=Slider_StatusChanged;
 				slider.Border		=	1;
-				slider.BorderColor	=	ColorTheme.ColorBorder;
+				slider.BorderColor	=	ColorTheme.BorderColor;
 				Add( slider );
 
 				Update(new GameTime());

@@ -23,8 +23,8 @@ namespace IronStar.Editor2.Controls {
 		/// <param name="fp"></param>
 		public AEPropertyGrid( FrameProcessor fp ) : base(fp)
 		{
-			this.BackColor		=	ColorTheme.ColorBackground;
-			this.BorderColor	=	ColorTheme.ColorBorder;
+			this.BackColor		=	ColorTheme.BackgroundColor;
+			this.BorderColor	=	ColorTheme.BorderColor;
 			this.Border			=	1;
 
 			this.Padding		=	1;

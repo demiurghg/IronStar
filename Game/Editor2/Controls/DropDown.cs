@@ -31,9 +31,9 @@ namespace IronStar.Editor2.Controls {
 			this.getFunc		=	getFunc;
 			this.setFunc		=	setFunc;
 
-			this.BackColor		=	ColorTheme.ColorBorder;
+			this.BackColor		=	ColorTheme.BorderColor;
 			this.Width			=	1;
-			this.BorderColor	=	ColorTheme.ColorBorder;
+			this.BorderColor	=	ColorTheme.BorderColor;
 			this.TextAlignment	=	Alignment.MiddleCenter;
 			this.Text			=	value;
 
@@ -51,7 +51,7 @@ namespace IronStar.Editor2.Controls {
 		void CreateDropDownList ()
 		{
 			dropDownList = new Frame( Frames ) {
-				BackColor	=	ColorTheme.ColorBackground,
+				BackColor	=	ColorTheme.BackgroundColor,
 				Padding = 1,
 			};
 
@@ -63,7 +63,7 @@ namespace IronStar.Editor2.Controls {
 				var w	=	value.Length * 8 + 2;
 				var h	=	8 + 2;
 
-				var dropDownElement = new Frame( Frames, 0,0,w,h, value, ColorTheme.ColorBackground );
+				var dropDownElement = new Frame( Frames, 0,0,w,h, value, ColorTheme.BackgroundColor );
 				var textRect = dropDownElement.MeasureText();
 
 				dropDownElement.TextAlignment = Alignment.MiddleLeft;

@@ -38,7 +38,7 @@ namespace IronStar.Editor2.Controls {
 
 				yesNoButton			= new Frame(this.Frames) {
 					Height			= 10, 
-					BackColor		= ColorTheme.ColorBorder,
+					BackColor		= ColorTheme.BorderColor,
 					TextAlignment	= Alignment.MiddleLeft,
 					TextOffsetX		= 1,
 				};

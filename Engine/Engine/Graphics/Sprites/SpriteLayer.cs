@@ -549,7 +549,9 @@ namespace Fusion.Engine.Graphics {
 				var u  = (ch%16)/16.0f;
 				var v  = (ch/16)/16.0f;
 
-				DrawUV(fontTexture, x, y, 8 * scale, 8 * scale, color, u, v, duv, duv, clipRectIndex);
+				if (ch!=' ') {
+					DrawUV(fontTexture, x, y, 8 * scale, 8 * scale, color, u, v, duv, duv, clipRectIndex);
+				}
 				x += 8 * scale;
 			}
 		}

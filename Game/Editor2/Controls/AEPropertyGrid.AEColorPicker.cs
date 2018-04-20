@@ -37,7 +37,7 @@ namespace IronStar.Editor2.Controls {
 
 				colorButton				=	new Frame( Frames );
 				colorButton.Border		=	1;
-				colorButton.BorderColor	=	ColorTheme.ColorBorder;
+				colorButton.BorderColor	=	ColorTheme.BorderColor;
 				colorButton.BackColor	=	Color.Black;
 
 				colorButton.Click +=ColorButton_Click;

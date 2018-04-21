@@ -113,6 +113,7 @@ namespace IronStar.Editor2.Controls {
 
 				Add( buttonAccept );
 				Add( buttonHome );
+				Add( buttonClose );
 				Add( scrollBox );
 				Add( labelDir );
 				scrollBox.Add( fileListBox );
@@ -127,9 +128,9 @@ namespace IronStar.Editor2.Controls {
 			{
 				var selectedItem = fileListBox.SelectedItem as ListItem;
 				
-				if (selectedItem!=null) {
+				/*if (selectedItem!=null) {
 					buttonAccept.Text = selectedItem.IsDirectory ? "Open Folder" : "Select File";
-				}
+				} */
 			}
 
 			

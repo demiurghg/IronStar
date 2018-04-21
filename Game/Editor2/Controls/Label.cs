@@ -19,6 +19,9 @@ namespace IronStar.Editor2.Controls {
 
 			this.ForeColor		=	ColorTheme.TextColorNormal;
 
+			this.ShadowColor	=	new Color(0,0,0,64);
+			this.ShadowOffset	=	new Vector2(1,1);
+
 			this.X				=	x;
 			this.Y				=	y;
 			this.Width			=	w;

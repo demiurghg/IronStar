@@ -19,16 +19,20 @@ namespace IronStar.Editor2.Controls {
 
 			readonly Func<string> getFunc;
 			readonly Action<string> setFunc;
+			readonly Action<string>	selectFunc;
+
+			Button buttonSelect;
 
 			/// <summary>
 			/// 
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AETextBox ( AEPropertyGrid grid, string name, Func<string> getFunc, Action<string> setFunc ) : base(grid, name)
+			public AETextBox ( AEPropertyGrid grid, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc ) : base(grid, name)
 			{ 
 				this.getFunc	=	getFunc;
 				this.setFunc	=	setFunc;
+				this.selectFunc	=	selectFunc;
 				
 				Width			=	grid.Width;
 				Height			=	10;
@@ -37,6 +41,12 @@ namespace IronStar.Editor2.Controls {
 
 				textBox			=	new TextBox( Frames, getFunc, setFunc );
 				Add( textBox );
+
+				if (selectFunc!=null) {
+					buttonSelect =	new Button( Frames, "\x00ff", 0,0,10,10, ()=>selectFunc(textBox.Text) );
+					buttonSelect.BorderColor = Color.Zero;
+					Add( buttonSelect );
+				}
 
 				Update(new GameTime());
 			}
@@ -63,6 +73,14 @@ namespace IronStar.Editor2.Controls {
 				textBox.X		=	Width/2;
 				textBox.Width	=	Width/2;
 				textBox.Height	=	10;
+
+				if (buttonSelect!=null) {
+					textBox.Width -= 10;
+					buttonSelect.X = Width-10;
+					buttonSelect.Y = 0;
+					buttonSelect.Width = 10;
+					buttonSelect.Height = 10;
+				}
 			}
 
 

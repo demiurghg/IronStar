@@ -109,7 +109,19 @@ namespace IronStar.Editor2.Controls {
 				}
 
 				if (pi.PropertyType==typeof(string)) {
-					AddTextBox( category, name, ()=>(string)(pi.GetValue(obj)), (val)=>pi.SetValue(obj,val) );
+
+					if (pi.HasAttribute<AEFileNameAttribute>()) {
+						var fna = pi.GetAttribute<AEFileNameAttribute>();
+						var ext = fna.Extension;
+						var dir = fna.Directory;
+						AddTextBox( category, name, 
+							()=>(string)(pi.GetValue(obj)), 
+							(val)=>pi.SetValue(obj,val), 
+							(val)=> FileSelector.ShowDialog( Frames, dir, ext, "", (fnm)=>pi.SetValue(obj,fnm) )
+						);
+					} else {
+						AddTextBox( category, name, ()=>(string)(pi.GetValue(obj)), (val)=>pi.SetValue(obj,val), null );
+					}
 				}
 
 				if (pi.PropertyType==typeof(Color)) {
@@ -178,9 +190,9 @@ namespace IronStar.Editor2.Controls {
 			AddToCollapseRegion( category, new AESlider( this, name, getFunc, setFunc, min, max, step, pstep ) );
 		}
 
-		public void AddTextBox ( string category, string name, Func<string> getFunc, Action<string> setFunc )
+		public void AddTextBox ( string category, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc )
 		{
-			AddToCollapseRegion( category, new AETextBox( this, name, getFunc, setFunc ) );
+			AddToCollapseRegion( category, new AETextBox( this, name, getFunc, setFunc, selectFunc ) );
 		}
 
 		public void AddButton ( string category, string name, Action action )

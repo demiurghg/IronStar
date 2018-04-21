@@ -30,7 +30,7 @@ namespace IronStar.Editor2.Controls {
 			this.getFunc		=	getFunc;
 			this.setFunc		=	setFunc;
 
-			this.BackColor		=	ColorTheme.BorderColor;
+			this.BackColor		=	ColorTheme.BackgroundColorDark;
 			this.Width			=	1;
 			this.BorderColor	=	ColorTheme.BorderColor;
 			this.TextAlignment	=	Alignment.MiddleLeft;

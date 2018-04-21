@@ -76,6 +76,7 @@ namespace IronStar.Editor2.Controls {
 		{
 			this.items		=	items.ToArray();
 			SelectedIndex	=	-1;
+			Parent?.MakeLayoutDirty();
 		}
 
 		

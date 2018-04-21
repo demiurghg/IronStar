@@ -55,6 +55,7 @@ namespace IronStar.Mapping {
 		public float LightIntensity { get; set; } = 100;
 
 		[AEFileName("scenes", "*.fbx", AEFileNameMode.NoExtension)]
+		[AEDisplayName("FileName")]
 		public string FileName { get; set; } = "/scenes/model.fbx";
 
 		OmniLight	light;

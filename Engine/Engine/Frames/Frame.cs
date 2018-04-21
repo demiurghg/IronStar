@@ -332,6 +332,7 @@ namespace Fusion.Engine.Frames {
 			AutoSize		=	false;
 			Font			=	null;
 			ForeColor		=	Color.White;
+			BackColor		=	Color.Gray;
 			Border			=	0;
 			BorderColor		=	Color.White;
 			ShadowColor		=	Color.Zero;

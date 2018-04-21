@@ -26,6 +26,7 @@ namespace IronStar.Editor2.Controls {
 			/// <param name="bindingInfo"></param>
 			public AEBaseEditor ( AEPropertyGrid grid, string name ) : base(grid.Frames)
 			{ 
+				this.BackColor	=	Color.Zero;
 				this.grid		=	grid;
 				this.Name		=	name;
 			}

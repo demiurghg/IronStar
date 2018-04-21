@@ -38,7 +38,7 @@ namespace IronStar.Editor2.Controls {
 
 		private void Button_Click( object sender, MouseEventArgs e )
 		{
-			action();
+			action?.Invoke();
 		}
 
 

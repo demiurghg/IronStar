@@ -51,4 +51,37 @@ namespace Fusion.Core.Shell {
 			this.PreciseStep	=	preciseStep;
 		}
 	}
+
+
+
+	public enum AEFileNameMode {
+		NoExtension = 0x0001,
+		FileNameOnly = 0x0002,
+	}
+
+
+	public class AEFileNameAttribute : Attribute {
+		public readonly string Directory;
+		public readonly string Extension;
+		public readonly bool FileNameOnly;
+		public readonly bool NoExtension;
+
+		public AEFileNameAttribute( string dir, string ext, AEFileNameMode fileNameMode )
+		{
+			Directory = dir;
+			Extension = ext;
+			FileNameOnly = fileNameMode.HasFlag( AEFileNameMode.FileNameOnly );
+			NoExtension  = fileNameMode.HasFlag( AEFileNameMode.NoExtension );
+		}
+	}
+
+
+	public class AEAtlasImage : Attribute {
+		public readonly string AtlasName;
+
+		public AEAtlasImage( string atlasName )
+		{
+			AtlasName = atlasName;
+		}
+	}
 }

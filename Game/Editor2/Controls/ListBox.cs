@@ -12,19 +12,30 @@ namespace IronStar.Editor2.Controls {
 
 	public class ListBox : Frame {
 
-		readonly string[] items;
+		object[] items;
 
 		readonly int itemHeight = 8;
+
+		public event EventHandler	SelectedItemChanged;
 
 		/// <summary>
 		/// Negative value means no selection
 		/// </summary>
-		public int SelectedIndex { get;	private set; } = -1;
+		public int SelectedIndex {	
+			get { return selectedIndex; }
+			private set {
+				if (selectedIndex!=value) {
+					selectedIndex = value;
+					SelectedItemChanged?.Invoke( this, EventArgs.Empty );
+				}
+			}
+		}
+		int selectedIndex = -1;
 
 		/// <summary>
 		/// Gets selected item value
 		/// </summary>
-		public string SelectedItem { 
+		public object SelectedItem { 
 			get {
 				return ( SelectedIndex < 0 ) ? null : items[ SelectedIndex ];
 			}
@@ -35,7 +46,7 @@ namespace IronStar.Editor2.Controls {
 		/// 
 		/// </summary>
 		/// <param name="fp"></param>
-		public ListBox ( FrameProcessor fp, string[] items ) : base(fp)
+		public ListBox ( FrameProcessor fp, IEnumerable<object> items ) : base(fp)
 		{
 			this.items	=	items.ToArray();
 
@@ -49,12 +60,23 @@ namespace IronStar.Editor2.Controls {
 			this.MouseIn+=ListBox_MouseIn;
 			this.MouseOut+=ListBox_MouseOut;
 			this.Click+=ListBox_Click;
+			this.MouseDown +=ListBox_MouseDown;
 		}
-
 
 		int mouseX;
 		int mouseY;
 		bool mouseIn;
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="items"></param>
+		public void SetItems ( IEnumerable<object> items )
+		{
+			this.items		=	items.ToArray();
+			SelectedIndex	=	-1;
+		}
 
 		
 		private void ListBox_MouseMove( object sender, MouseEventArgs e )
@@ -75,11 +97,19 @@ namespace IronStar.Editor2.Controls {
 			mouseIn = true;
 		}
 
+		private void ListBox_MouseDown( object sender, MouseEventArgs e )
+		{
+			int index = GetItemIndexUnderCursor(e.X, e.Y);
+			SelectedIndex = index;
+			SelectedItemChanged?.Invoke( this, EventArgs.Empty );
+		}
+
 
 		private void ListBox_Click( object sender, MouseEventArgs e )
 		{
 			int index = GetItemIndexUnderCursor(e.X, e.Y);
 			SelectedIndex = index;
+			SelectedItemChanged?.Invoke( this, EventArgs.Empty );
 		}
 
 
@@ -114,7 +144,7 @@ namespace IronStar.Editor2.Controls {
 
 			for (int i=0; i<count; i++) {
 
-				var text	=	items[i] ?? "(null)";
+				var text	=	items[i]?.ToString() ?? "(null)";
 				var hovered	=	false;
 				var selected=	false;
 				int x		=	gp.X;
@@ -148,6 +178,9 @@ namespace IronStar.Editor2.Controls {
 
 				} else {
 
+					if ((i&1)==1) {
+						spriteLayer.Draw( null, rect, new Color(255,255,255,4), clipRectIndex );
+					}
 					spriteLayer.DrawDebugString( x, y, text, ColorTheme.TextColorNormal, clipRectIndex );
 
 				}

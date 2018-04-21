@@ -121,6 +121,9 @@ namespace IronStar.Editor2 {
 			world.PresentWorld( 0.016f, 1, null, null );
 
 			//ColorPicker.ShowDialog( Game.Frames, 50, 200, Color.CornflowerBlue, (clr)=>Log.Message("{0}", clr) );
+
+			FileSelector.ShowDialog( Game.Frames, "scenes", "*.fbx", "scenes/box.fbx", (s) => Log.Message("{0}", s) );
+
 			//var modalFrame = new Frame( Game.Frames, 200,200, 300,200, "Modal Frame", new Color(40,40,40,40) );
 			//Game.Frames.RootFrame.Add( modalFrame );
 			//Game.Frames.ModalFrame = modalFrame;
@@ -130,7 +133,7 @@ namespace IronStar.Editor2 {
 			//modalFrame.MouseIn += (s,e) => Log.Message("MouseIn");
 			//modalFrame.MouseOut += (s,e) => Log.Message("MouseOut");
 
-			var data = "Lorem-ipsum dolor-sit-amet, consectetur-adipiscing-elit, sed do eiusmod-tempor incididunt ut-labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.".Split(new[] {' '});
+			/*var data = "Lorem-ipsum dolor-sit-amet, consectetur-adipiscing-elit, sed do eiusmod-tempor incididunt ut-labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.".Split(new[] {' '});
 
 
 			var panel		= new Panel( Game.Frames, 50,100, 400, 317);
@@ -145,7 +148,7 @@ namespace IronStar.Editor2 {
 			panel.Add( scrollBox );
 			scrollBox.Add( list );
 
-			Game.Frames.RootFrame.Add( panel );
+			Game.Frames.RootFrame.Add( panel );		*/
 		}
 
 

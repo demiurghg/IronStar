@@ -10,19 +10,23 @@ using System.Reflection;
 using Fusion.Core.Mathematics;
 using Fusion;
 using Fusion.Engine.Input;
+using System.IO;
+using Fusion.Build;
+using Fusion.Core.Content;
 
 namespace IronStar.Editor2.Controls {
-	partial class FileSelector : Frame {
 
-		static FileSelector fileSelector;
+	static public class FileSelector {
 
-		const int DialogWidth	= 640;
-		const int DialogHeight	= 480;
+		static FileSelectorFrame fileSelector;
+
+		const int DialogWidth	= 560 + 4 + 4 + 4;
+		const int DialogHeight	= 480 + 2 + 2 + 14 + 2 + 20 + 2;
 
 
-		static public void ShowDialog ( FrameProcessor fp, string oldFileName, Action<string> setFileName )
+		static public void ShowDialog ( FrameProcessor fp, string defaultDir, string searchPattern, string oldFileName, Action<string> setFileName )
 		{
-			fileSelector = new FileSelector( fp, oldFileName, setFileName );
+			var fileSelector	=	new FileSelectorFrame( fp, defaultDir, searchPattern, oldFileName, setFileName );
 
 			fp.RootFrame.Add( fileSelector );
 			fp.ModalFrame = fileSelector;
@@ -31,85 +35,178 @@ namespace IronStar.Editor2.Controls {
 		}
 
 
+		class ListItem {
+			public readonly bool IsDirectory;
+			public readonly string Name;
+			public readonly string DisplayName;
 
-		string oldFileName;
-		Action<string> setFileName;
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="fp"></param>
-		private FileSelector ( FrameProcessor fp, string oldFileName, Action<string> setFileName ) : base(fp)
-		{
-			this.oldFileName	=	oldFileName;
-			this.setFileName	=	setFileName;
-
-			Width	=	DialogWidth;
-			Height	=	DialogHeight;
-
-			Missclick +=FileSelector_Missclick;
-
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void FileSelector_Missclick( object sender, EventArgs e )
-		{
-			Frames.RootFrame.Remove( this );
-			Frames.ModalFrame = null;
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="w"></param>
-		/// <param name="h"></param>
-		/// <param name="text"></param>
-		/// <param name="color"></param>
-		/// <param name="action"></param>
-		/// <returns></returns>
-		Frame AddColorButton ( int x, int y, int w, int h, string text, Color color, Action action )
-		{
-			var frame = new Frame( Frames, x,y,w,h, text, color );
-			
-			frame.Border		=	1;
-			frame.BorderColor	=	Color.Black;
-			frame.ForeColor		=	new Color(0,0,0,64);
-
-			Add( frame );
-
-			if (action!=null) {
-				frame.Click += (s,e) => action();
+			string SizeToString ( long size ) {
+				if (size<1024) return size.ToString() + "   ";
+				if (size<1024*1024) return (size/1024).ToString() + " Kb";
+				return (size/1024/1024).ToString() + " Mb";
 			}
 
-			return frame;
-		}
+			public ListItem ( string name, bool dir, string disp = null ) 
+			{
+				Name		=	name;
+				IsDirectory	=	dir;
 
-
-
-		void AddLabel( int x, int y, string text )
-		{
-			var frame = new Frame( Frames, x,y, text.Length * 8+2, 10, text, Color.Zero );
+				DisplayName	=	disp ?? string.Format("{0,1}{1,-40}{2,-12}{3,12}",
+					IsDirectory ? "\\" : "",
+					IsDirectory ? Path.GetFileName(Name) : Path.GetFileNameWithoutExtension(Name),
+					IsDirectory ? "" : Path.GetExtension( Name ),
+					IsDirectory ? "Folder" : SizeToString( new FileInfo(Name).Length )
+					);
+			}
 			
-			frame.ForeColor		=	ColorTheme.TextColorNormal;
-			frame.TextAlignment	=	Alignment.MiddleLeft;
-			frame.ShadowColor	=	new Color(0,0,0,64);
-			frame.ShadowOffset	=	new Vector2(1,1);
-
-			Add( frame );
+			public override string ToString()
+			{
+				return DisplayName;
+			}
 		}
 
-		
+
+
+		class FileSelectorFrame : Panel {
+
+			readonly Action<string> setFileName;
+			readonly string		oldFileName;
+			readonly string		contentDir;
+			readonly string		searchPattern;
+					 string		currentDir;
+			readonly string		homeDir;
+
+			Label		labelDir;
+			ScrollBox	scrollBox;
+			Button		buttonAccept;
+			Button		buttonHome;
+			Button		buttonClose;
+			ListBox		fileListBox;
+
+
+
+			public FileSelectorFrame ( FrameProcessor fp, string defaultDir, string searchPattern, string oldFileName, Action<string> setFileName ) 
+			: base ( fp, 0,0, DialogWidth, DialogHeight )
+			{
+				this.contentDir		=	Builder.FullInputDirectory;
+
+				this.oldFileName	=	oldFileName;
+				this.setFileName	=	setFileName;
+				this.searchPattern	=	searchPattern;
+				this.currentDir		=	Path.Combine( contentDir, defaultDir );
+				this.homeDir		=	Path.Combine( contentDir, defaultDir );
+
+				labelDir		=	new Label( fp, 2, 3, DialogWidth - 4, 10, Path.Combine( contentDir, defaultDir ) );
+
+				scrollBox				=	new ScrollBox( fp, 2, 14, 560+4+4, 480+4 );
+				scrollBox.Border		=	1;
+				scrollBox.BorderColor	=	ColorTheme.BorderColorLight;
+
+				buttonAccept	=	new Button( fp, "Accept", DialogWidth - 140 - 2, DialogHeight - 2 - 20, 140, 20, ()=>Accept() );
+				buttonHome		=	new Button( fp, "Home",   DialogWidth - 280 - 4, DialogHeight - 2 - 20, 140, 20, ()=>Home() );
+				buttonClose		=	new Button( fp, "Close",  2,                     DialogHeight - 2 - 20, 140, 20, ()=>Close() );
+
+				fileListBox		=	new ListBox( fp, new object[0] );
+				fileListBox.IsDoubleClickEnabled = true;
+				fileListBox.DoubleClick += FileListBox_DoubleClick;
+				fileListBox.SelectedItemChanged+=FileListBox_SelectedItemChanged;
+
+				Add( buttonAccept );
+				Add( buttonHome );
+				Add( scrollBox );
+				Add( labelDir );
+				scrollBox.Add( fileListBox );
+
+				RefreshFileList();
+
+				Missclick += FileSelectorFrame_Missclick;
+			}
+
+
+			private void FileListBox_SelectedItemChanged( object sender, EventArgs e )
+			{
+				var selectedItem = fileListBox.SelectedItem as ListItem;
+				
+				if (selectedItem!=null) {
+					buttonAccept.Text = selectedItem.IsDirectory ? "Open Folder" : "Select File";
+				}
+			}
+
+			
+			private void FileListBox_DoubleClick( object sender, MouseEventArgs e )
+			{
+				Accept();
+			}
+
+
+
+			public void Close ()
+			{
+				Frames.RootFrame.Remove( this );
+				Frames.ModalFrame = null;
+			}
+
+
+			public void Home ()
+			{
+				currentDir = homeDir;
+				RefreshFileList();
+			}
+
+
+			public void Accept()
+			{
+				var selectedItem = fileListBox.SelectedItem as ListItem;
+
+				if (selectedItem==null) {
+					return;
+				}
+
+				if (selectedItem.IsDirectory) {
+					currentDir = selectedItem.Name;
+					RefreshFileList();
+				} else {
+					var relName = ContentUtils.MakeRelativePath( contentDir + "\\", selectedItem.Name );
+					setFileName( relName );
+					Close();
+				}
+			}
+
+
+
+			void RefreshFileList (  )
+			{
+				labelDir.Text	=	currentDir;
+
+				var itemList = new List<ListItem>();
+
+				var dirs = Directory
+					.EnumerateDirectories( currentDir, "*", SearchOption.TopDirectoryOnly )
+					.Select( dir => new ListItem(dir,true) )
+					.ToList();
+
+				var files = Directory
+					.EnumerateFiles( currentDir, searchPattern, SearchOption.TopDirectoryOnly )
+					.Select( file => new ListItem(file,false) )
+					.ToList();
+
+				var parentDir = Directory.GetParent( currentDir )?.FullName;
+
+				if (parentDir!=null) {
+					itemList.Add( new ListItem(parentDir, true, "..") );
+				}
+
+				itemList.AddRange( dirs );
+				itemList.AddRange( files );
+
+				fileListBox.SetItems(itemList);
+			}
+
+
+			private void FileSelectorFrame_Missclick( object sender, EventArgs e )
+			{
+				Close();
+			}
+		}
 	}
 }

@@ -39,7 +39,6 @@ namespace IronStar.Editor2 {
 
 		public EditorCamera	camera;
 		public Manipulator	manipulator;
-		public EditorHud	hud;
 
 		readonly Stack<MapNode[]> selectionStack = new Stack<MapNode[]>();
 		readonly List<MapNode> selection = new List<MapNode>();
@@ -89,7 +88,6 @@ namespace IronStar.Editor2 {
 			Config			=	Game.Config.GetConfig<EditorConfig>();
 
 			camera			=	new EditorCamera( this );
-			hud				=	new EditorHud( this );
 			manipulator		=	new NullTool( this );
 			world			=	new GameWorld( Game, new MessageService(), true, new Guid() );
 			world.InitServerAtoms();
@@ -204,7 +202,6 @@ namespace IronStar.Editor2 {
 				if ( disposing ) {
 
 					world?.Dispose();
-					hud?.Dispose();
 
 					SaveMap();
 
@@ -399,8 +396,6 @@ namespace IronStar.Editor2 {
 			rs.RenderWorld.Debug.DrawGrid( 10 );
 
 			map.DrawNavigationMeshDebug( rs.RenderWorld.Debug );
-
-			hud.Update(gameTime);
 
 			//
 			//	Draw unselected :

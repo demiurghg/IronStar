@@ -29,7 +29,7 @@ namespace IronStar {
 		readonly string mapName;
 		Map map;
 
-		Invoker invoker;
+		Shell invoker;
 
 		
 		public ShooterServer ( GameServer server, IMessageService msgsvc, string mapName )
@@ -37,7 +37,7 @@ namespace IronStar {
 			this.msgsvc		=	msgsvc;
 			world			=	new GameWorld( server.Game, msgsvc, false, new Guid() );
 			this.mapName	=	mapName;
-			invoker			=	new Invoker( server.Game );
+			invoker			=	new Shell( server.Game );
 			invoker.AddCommands(this);
 		}
 
@@ -101,7 +101,7 @@ namespace IronStar {
 				var rcmd = message.Replace("*cmd ","");
 				Log.Message("Remote command: {0} {1}", clientGuid, rcmd);
 
-				var args = Invoker.SplitCommandLine(rcmd).ToArray();
+				var args = Shell.SplitCommandLine(rcmd).ToArray();
 				var arg0 = args[0];
 				var arg1 = (args.Length>1) ? args[1] : "";
 

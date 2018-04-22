@@ -103,7 +103,7 @@ namespace Fusion.Engine.Common {
 		/// <summary>
 		/// Gets invoker
 		/// </summary>
-		public	Invoker Invoker { get { return invoker; } }
+		public	Shell Invoker { get { return invoker; } }
 
 		/// <summary>
 		/// Gets user storage.
@@ -221,7 +221,7 @@ namespace Fusion.Engine.Common {
 		SoundSystem			soundSystem		;
 		Network				network			;
 		ContentManager		content			;
-		Invoker				invoker			;
+		Shell				invoker			;
 		Keyboard			keyboard		;
 		Mouse				mouse			;
 		Touch				touch;
@@ -351,7 +351,7 @@ namespace Fusion.Engine.Common {
 			GCSettings.LatencyMode	=	GCLatencyMode.Interactive;
 
 			config				=	new ConfigManager( this );
-			invoker				=	new Invoker(this);
+			invoker				=	new Shell(this);
 			inputDevice			=	new InputDevice( this );
 			graphicsDevice		=	new GraphicsDevice( this );
 			renderSystem		=	new RenderSystem( this );

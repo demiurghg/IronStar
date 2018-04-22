@@ -65,7 +65,7 @@ namespace Fusion.Engine.Tools {
 		public bool IsShown { get { return isShown; } }
 
 
-		Invoker.Suggestion suggestion = null;
+		Shell.Suggestion suggestion = null;
 
 
 

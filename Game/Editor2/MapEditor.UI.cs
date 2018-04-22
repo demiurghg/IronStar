@@ -18,6 +18,7 @@ using IronStar.Mapping;
 using IronStar.Editors;
 using Fusion.Engine.Frames;
 using Fusion.Engine.Input;
+using IronStar.Editor2.Controls;
 
 namespace IronStar.Editor2 {
 
@@ -25,6 +26,9 @@ namespace IronStar.Editor2 {
 	/// World represents entire game state.
 	/// </summary>
 	public partial class MapEditor : IEditorInstance {
+		
+		Shelf			shelf;
+		AEPropertyGrid	grid;
 
 		/// <summary>
 		/// 
@@ -40,6 +44,8 @@ namespace IronStar.Editor2 {
 			rootFrame.Click		+= RootFrame_Click;
 
 			Game.Keyboard.KeyDown +=Keyboard_KeyDown;
+
+			shelf	=	new Shelf(Game.Frames);
 
 		}
 

@@ -9,7 +9,7 @@ using System.Reflection;
 
 
 namespace Fusion.Core.Shell {
-	public partial class Invoker {
+	public partial class Shell {
 
 		public class Suggestion {
 
@@ -55,52 +55,54 @@ namespace Fusion.Core.Shell {
 		/// <returns></returns>
 		public Suggestion AutoComplete ( string input )
 		{
+			return new Suggestion("");
+
 			if (string.IsNullOrWhiteSpace(input)) {
 				return new Suggestion("");
 			}
 
-			var suggestion	=	new Suggestion(input);
-			var args		=	SplitCommandLine( input ).ToArray();
-			var cmd			=	args[0];
-			var cmdList		=	CommandNames.ToList();
-			var varDict		=	Game.Config.Variables;
-			var comparison	=	StringComparison.OrdinalIgnoreCase;
+			//var suggestion	=	new Suggestion(input);
+			//var args		=	SplitCommandLine( input ).ToArray();
+			//var cmd			=	args[0];
+			//var cmdList		=	CommandNames.ToList();
+			//var varDict		=	Game.Config.Variables;
+			//var comparison	=	StringComparison.OrdinalIgnoreCase;
 
-			ConfigVariable cfgVar;
+			//ConfigVariable cfgVar;
 
 
-			if ( cmdList.Any( c => string.Equals(c, cmd, comparison) ) ) {
+			//if ( cmdList.Any( c => string.Equals(c, cmd, comparison) ) ) {
 
-				return AutoCompleteCommand( input, args, cmd );
+			//	return AutoCompleteCommand( input, args, cmd );
 
-			} else if ( varDict.TryGetValue( cmd, out cfgVar ) ) {
+			//} else if ( varDict.TryGetValue( cmd, out cfgVar ) ) {
 
-				return AutoCompleteVariable( input, args, cfgVar );
+			//	return AutoCompleteVariable( input, args, cfgVar );
 
-			} else {
+			//} else {
 				
-				cmdList.AddRange( varDict.Select( v => v.Value.FullName ).OrderBy( n=>n ) );
+			//	cmdList.AddRange( varDict.Select( v => v.Value.FullName ).OrderBy( n=>n ) );
 
-				var candidates		=	cmdList.ToArray();
-				var longestCommon	=	LongestCommon( cmd, ref candidates );
+			//	var candidates		=	cmdList.ToArray();
+			//	var longestCommon	=	LongestCommon( cmd, ref candidates );
 
-				if (!string.IsNullOrWhiteSpace(longestCommon)) {
-					if (candidates.Length<=1) {
-						suggestion.CommandLine	=	longestCommon + " ";
-					} else {
-						suggestion.CommandLine	=	longestCommon;
-					}
-				}
+			//	if (!string.IsNullOrWhiteSpace(longestCommon)) {
+			//		if (candidates.Length<=1) {
+			//			suggestion.CommandLine	=	longestCommon + " ";
+			//		} else {
+			//			suggestion.CommandLine	=	longestCommon;
+			//		}
+			//	}
 
-				suggestion.AddRange( candidates.Select( cc => GetDescription(cc) ) );
+			//	suggestion.AddRange( candidates.Select( cc => GetDescription(cc) ) );
 
-				/*var descs = suggestion.Candidates.Select( cmd1 => AddDescription(cmd1) );
+			//	/*var descs = suggestion.Candidates.Select( cmd1 => AddDescription(cmd1) );
 
-				suggestion.Clear();
-				suggestion.AddRange( descs );*/
+			//	suggestion.Clear();
+			//	suggestion.AddRange( descs );*/
 
-				return suggestion;
-			}
+			//	return suggestion;
+			//}
 		}
 
 		

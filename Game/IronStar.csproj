@@ -84,13 +84,13 @@
     <Compile Include="Editor2\Controls\Panel.cs" />
     <Compile Include="Editor2\Controls\ListBox.cs" />
     <Compile Include="Editor2\Controls\ScrollBox.cs" />
+    <Compile Include="Editor2\Controls\Shelf.cs" />
     <Compile Include="Editor2\Controls\TextBox.cs" />
     <Compile Include="Editor2\Controls\Slider.cs" />
     <Compile Include="Editor2\Controls\AEPropertyGrid.AECheckBox.cs" />
     <Compile Include="Editor2\Controls\AEPropertyGrid.cs" />
     <Compile Include="Editor2\Controls\ColorTheme.cs" />
     <Compile Include="Editor2\EditorConfig.cs" />
-    <Compile Include="Editor2\EditorHud.cs" />
     <Compile Include="Editor2\MapEditor.Selection.cs" />
     <Compile Include="Editor2\RotateTool.cs" />
     <Compile Include="Editor2\NullTool.cs" />

@@ -8,6 +8,8 @@ using Fusion.Core.Mathematics;
 namespace IronStar.Editor2.Controls {
 	static class ColorTheme {
 
+		public static readonly Color	ShadowColor				=	new Color(  0,  0,  0, 64);
+
 		public static readonly Color	BorderColor				=	new Color( 10, 10, 10, 192);
 		public static readonly Color	BorderColorLight		=	new Color( 10, 10, 10, 192);
 		public static readonly Color	BackgroundColor			=	new Color( 30, 30, 30, 192);

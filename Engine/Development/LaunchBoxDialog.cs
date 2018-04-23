@@ -91,7 +91,7 @@ namespace Fusion.Development {
 			game.RenderSystem.UseDebugDevice	=	debugDevice.Checked;
 
 			if (!string.IsNullOrWhiteSpace(startupCommand.Text)) {
-				game.Invoker.PushCommand( startupCommand.Text );
+				game.Invoker.ExecuteString( startupCommand.Text );
 			}
 
 			this.DialogResult	=	DialogResult.OK;
@@ -137,7 +137,7 @@ namespace Fusion.Development {
 
 		private void openContent_Click ( object sender, EventArgs e )
 		{
-			var file = game.Invoker.ExecuteCommand("contentFile");
+			var file = game.Invoker.ExecuteString("contentFile") as string;
 			ShellExecute(file);
 		}
 
@@ -145,7 +145,7 @@ namespace Fusion.Development {
 
 		private void openContentDir_Click ( object sender, EventArgs e )
 		{
-			var file = game.Invoker.ExecuteCommand("contentFile");
+			var file = game.Invoker.ExecuteString("contentFile") as string;
 			ShellExecute(Path.GetDirectoryName(file));
 		}
 
@@ -153,14 +153,14 @@ namespace Fusion.Development {
 
 		private void buildContent_Click ( object sender, EventArgs e )
 		{
-			game.Invoker.ExecuteCommand("contentBuild");
+			game.Invoker.ExecuteString("contentBuild");
 		}
 
 
 
 		private void rebuildContent_Click ( object sender, EventArgs e )
 		{
-			game.Invoker.ExecuteCommand("contentBuild /force");
+			game.Invoker.ExecuteString("contentBuild /force");
 		}
 
 		private void runEditorButton_Click( object sender, EventArgs e )

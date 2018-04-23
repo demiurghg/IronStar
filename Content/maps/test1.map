@@ -49,7 +49,7 @@
       <LightPreset>FlourescentSoftWhite</LightPreset>
       <LightStyle>Fire2</LightStyle>
       <Ambient>true</Ambient>
-      <LightColor R="85" G="134" B="175" A="255" />
+      <LightColor R="81" G="105" B="160" A="255" />
       <LightIntensity>4000</LightIntensity>
       <FileName>scenes\box.fbx</FileName>
     </MapNode>
@@ -153,7 +153,7 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <Position X="-2.5" Y="1.875" Z="-5.5" />
+      <Position X="-2.5" Y="2.5" Z="-5.5" />
       <Rotation X="0" Y="0" Z="0" W="1" />
       <Scaling>1</Scaling>
       <TargetName>xsxsxsxs`q</TargetName>

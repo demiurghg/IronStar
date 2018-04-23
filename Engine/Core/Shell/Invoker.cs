@@ -16,10 +16,13 @@ using Fusion.Core.Mathematics;
 namespace Fusion.Core.Shell {
 	public partial class Invoker {
 
-		object lockObject = new object();
-		Stack<ICommand> undoStack = new Stack<ICommand>(1024);
-		Stack<ICommand> redoStack = new Stack<ICommand>(1024);
+		public delegate ICommand CommandCreator ( ArgList args );
 
+		readonly object lockObject = new object();
+		readonly Stack<ICommand> undoStack	= new Stack<ICommand>(1024);
+		readonly Stack<ICommand> redoStack	= new Stack<ICommand>(1024);
+		readonly Queue<ICommand> cmdQueue	= new Queue<ICommand>(1024);
+		readonly Dictionary<string,CommandCreator> commandsRegistry = new Dictionary<string, CommandCreator>();
 
 
 		/// <summary>
@@ -31,13 +34,37 @@ namespace Fusion.Core.Shell {
 		}
 
 
-		public void RegisterCommand ( string commandName, Func<string[],ICommand> creator )
+		/// <summary>
+		/// Adds named command to command registry
+		/// </summary>
+		/// <param name="commandName"></param>
+		/// <param name="creator"></param>
+		public void RegisterCommand ( string commandName, CommandCreator creator )
 		{
+			lock (lockObject) {
+				if (commandsRegistry.ContainsKey( commandName ) ) {
+					Log.Warning("Command '{0}' is already registered", commandName );
+					return;
+				}
+				commandsRegistry.Add( commandName, creator );
+			}
 		}
 
 
+
+		/// <summary>
+		/// Removes command from command registry
+		/// </summary>
+		/// <param name="commandName"></param>
 		public void UnregisterCommand ( string commandName )
 		{
+			lock (lockObject) {
+				if (!commandsRegistry.ContainsKey( commandName ) ) {
+					Log.Warning("Command '{0}' is not registered", commandName );
+					return;
+				}
+				commandsRegistry.Remove( commandName );
+			}
 		}
 
 
@@ -52,16 +79,17 @@ namespace Fusion.Core.Shell {
 		{
 			lock (lockObject) {
 
-				command.Execute();
+				var result = command.Execute();
 
-				if (command.IsRollbackable) {
+				if (command.IsRollbackable()) {
 					redoStack.Clear();
 					undoStack.Push(command);
 				}
 
-				return command.Result;
+				return result;
 			}
 		}
+
 
 
 		/// <summary>
@@ -72,6 +100,56 @@ namespace Fusion.Core.Shell {
 		{
 			var batch = new Batch( commands.ToArray() );
 			Execute( batch );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="commandLine"></param>
+		/// <returns></returns>
+		public object ExecuteString ( string commandLine )
+		{
+			if (string.IsNullOrWhiteSpace(commandLine)) {
+				throw new InvokerException("Empty command line");
+			}
+
+			var args = commandLine.SplitCommandLine().ToArray();
+
+			lock (lockObject) {
+				
+				CommandCreator creator;
+				
+				if (!commandsRegistry.TryGetValue(args[0], out creator )) {
+					throw new InvokerException("Unknown command '{0}'", args[0] );
+				}
+
+				var command = creator( new ArgList(args) );
+
+				return Execute( command );
+			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void ExecuteDeferredCommands ()
+		{
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="commandLine"></param>
+		/// <returns></returns>
+		public Suggestion AutoComplete ( string commandLine )
+		{
+			return new Suggestion( commandLine );
 		}
 
 

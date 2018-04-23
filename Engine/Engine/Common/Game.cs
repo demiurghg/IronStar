@@ -37,7 +37,7 @@ namespace Fusion.Engine.Common {
 	/// <summary>
 	/// Provides basic graphics device initialization, game logic, and rendering code. 
 	/// </summary>
-	public class Game : DisposableBase {
+	public partial class Game : DisposableBase {
 
 		/// <summary>
 		/// Game instance.
@@ -103,7 +103,7 @@ namespace Fusion.Engine.Common {
 		/// <summary>
 		/// Gets invoker
 		/// </summary>
-		public	Shell Invoker { get { return invoker; } }
+		public	Invoker Invoker { get { return invoker; } }
 
 		/// <summary>
 		/// Gets user storage.
@@ -221,7 +221,7 @@ namespace Fusion.Engine.Common {
 		SoundSystem			soundSystem		;
 		Network				network			;
 		ContentManager		content			;
-		Shell				invoker			;
+		Invoker				invoker			;
 		Keyboard			keyboard		;
 		Mouse				mouse			;
 		Touch				touch;
@@ -351,7 +351,7 @@ namespace Fusion.Engine.Common {
 			GCSettings.LatencyMode	=	GCLatencyMode.Interactive;
 
 			config				=	new ConfigManager( this );
-			invoker				=	new Shell(this);
+			invoker				=	new Invoker();
 			inputDevice			=	new InputDevice( this );
 			graphicsDevice		=	new GraphicsDevice( this );
 			renderSystem		=	new RenderSystem( this );
@@ -370,8 +370,7 @@ namespace Fusion.Engine.Common {
 
 			userStorage			=	new UserStorage(this);
 
-			invoker.AddCommands( this );
-
+			RegisterCommands();
 
 			//	create SV, CL and UI instances :
 			sv = new GameServer( this );
@@ -683,7 +682,7 @@ namespace Fusion.Engine.Common {
 			}
 
 			try {
-				invoker.ExecuteCommandQueue();
+				invoker.ExecuteDeferredCommands();
 			} catch ( Exception e ) {
 				Log.Error( e.ToString() );
 			}
@@ -791,86 +790,182 @@ namespace Fusion.Engine.Common {
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
-		[Command("quit")]
-		[Description("quit the game")]
-		string Quit_f ( string[] args )
+		void RegisterCommands ()
 		{
-			Exit();
-			return null;
+			invoker.RegisterCommand("quit",			(args)=>new CmdQuit(this) );
+			invoker.RegisterCommand("map",			(args)=>new CmdMap(this, args) );
+			invoker.RegisterCommand("killserver",	(args)=>new CmdKillServer(this, args) );
+			invoker.RegisterCommand("connect",		(args)=>new CmdConnect(this, args) );
+			invoker.RegisterCommand("disconnect",	(args)=>new CmdDisconnect(this, args) );
+			invoker.RegisterCommand("editorMap",	(args)=>new CmdEditorMap(this, args) );
+			invoker.RegisterCommand("editorQuit",	(args)=>new CmdEditorQuit(this, args) );
+			invoker.RegisterCommand("contentBuild",	(args)=>new CmdContentBuild(this, args) );
+			invoker.RegisterCommand("contentFile",	(args)=>new CmdContentFile() );
+			invoker.RegisterCommand("contentReport",(args)=>new CmdContentReport(args) );
 		}
 
 
-		[Command("map")]
-		[Description("starts new game")]
-		string Map_f ( string[] args )
-		{
-			if (args.Length!=2) {
-				throw new Exception("Missing command line arguments: map");
+		class CmdQuit : ICommand {
+			public bool IsRollbackable() { return false; }
+			public void Rollback() {}
+
+			readonly Game game;
+
+			public CmdQuit ( Game game )
+			{
+				this.game = game;
 			}
 
-			StartServer( args[1], false );
-
-			return null;
+			public object Execute()
+			{
+				game.Exit();
+				return null;
+			}
 		}
 
 
-		[Command("editMap")]
-		[Description("starts map editor")]
-		string EditMap_f ( string[] args )
-		{
-			if (args.Length!=2) {
-				throw new Exception("Missing command line arguments: map");
+		class CmdMap : ICommand {
+			public bool IsRollbackable() { return false; }
+			public void Rollback() {}
+
+			readonly Game game;
+			readonly string map;
+
+			public CmdMap ( Game game, ArgList args )
+			{
+				if (args.Count<2) {
+					throw new Exception("Missing command line arguments: map");
+				}
+
+				this.game = game;
+				this.map = args[1];
 			}
 
-			GameEditor.Start( args[1] );
-
-			return null;
+			public object Execute()
+			{
+				game.StartServer( map, false );
+				return null;
+			}
 		}
 
 
-		[Command("exitEditor")]
-		[Description("exit map editor")]
-		string ExitEditor_f ( string[] args )
-		{
-			GameEditor.Stop();
+		class CmdKillServer : ICommand {
+			public bool IsRollbackable() { return false; }
+			public void Rollback() {}
 
-			return null;
-		}
+			readonly Game game;
 
-
-		[Command("killServer")]
-		[Description("kills game server and stops the game")]
-		string KillServer_f ( string[] args )
-		{
-			KillServer();
-			return null;
-		}
-
-
-		[Command("connect")]
-		[Description("initiate connection to remote or local server")]
-		string Connect_f ( string[] args )
-		{
-			if (args.Length<3) {
-				throw new Exception("Missing command line arguments: host and port");
+			public CmdKillServer ( Game game, ArgList args )
+			{
+				this.game = game;
 			}
 
-			Connect( args[1], int.Parse(args[2]));
-			return null;
+			public object Execute()
+			{
+				game.KillServer();
+				return null;
+			}
 		}
 
 
-		[Command("disconnect")]
-		[Description("disconnect client from server")]
-		string Disconnect_f ( string[] args )
-		{
-			var msg = (args.Length>1) ? args[1] : "";
+		class CmdConnect : ICommand {
+			public bool IsRollbackable() { return false; }
+			public void Rollback() {}
 
-			Disconnect(msg);
-			return null;
+			readonly Game game;
+			readonly string host;
+			readonly int port;
+
+			public CmdConnect ( Game game, ArgList args )
+			{
+				if (args.Count<3) {
+					throw new Exception("Missing command line arguments: host and port");
+				}
+
+				this.game	=	game;
+				this.host	=	args[1];
+				this.port	=	int.Parse(args[2]);
+			}
+
+			public object Execute()
+			{
+				game.Connect( host, port );
+				return null;
+			}
 		}
 
 
+		class CmdDisconnect : ICommand {
+			public bool IsRollbackable() { return false; }
+			public void Rollback() {}
+
+			readonly Game game;
+			readonly string message = "";
+
+			public CmdDisconnect ( Game game, ArgList args )
+			{
+				this.game	=	game;
+
+				if (args.Count>1) {
+					this.message = args[2];
+				}
+			}
+
+			public object Execute()
+			{
+				game.Disconnect(message);
+				return null;
+			}
+		}
+
+
+		class CmdEditorMap : ICommand {
+			public bool IsRollbackable() { return false; }
+			public void Rollback() {}
+
+			readonly Game game;
+			readonly string map;
+
+			public CmdEditorMap ( Game game, ArgList args )
+			{
+				this.game = game;
+
+				if (args.Count<2) {
+					throw new Exception("Missing command line arguments: map");
+				}
+
+				map = args[1];
+			}
+
+			public object Execute()
+			{
+				game.GameEditor.Start( map );
+				return null;
+			}
+		}
+
+
+		class CmdEditorQuit : ICommand {
+			public bool IsRollbackable() { return false; }
+			public void Rollback() {}
+
+			readonly Game game;
+			readonly string map;
+
+			public CmdEditorQuit ( Game game, ArgList args )
+			{
+				this.game = game;
+			}
+
+			public object Execute()
+			{
+				game.GameEditor.Stop();
+				return null;
+			}
+		}
+
+
+		#if false
 		[Command("cmd")]
 		[Description("sends command to remote server")]
 		string Cmd_f ( string[] args )
@@ -881,41 +976,67 @@ namespace Fusion.Engine.Common {
 
 			return null;
 		}
+		#endif
 
 
+		class CmdContentBuild : ICommand {
+			public bool IsRollbackable() { return false; }
+			public void Rollback() {}
 
-		[Command("contentBuild")]
-		[Description("builds content")]
-		string ContentBuild( string[] args )
-		{
-			var force	= args.Contains("/force");
-			var files	= args.Skip(1).Where( s=>!s.StartsWith("/") ).ToArray();
-			var clean	= args.FirstOrDefault( a => a.StartsWith("/clean:"))?.Replace("/clean:","");
+			Game	 game;
+			bool	 force;
+			string[] files;
+			string	 clean;
 
-			Builder.SafeBuild(force, clean, files);
-
-			Reload();
-
-			return null;
-		}
-
-		[Command("contentFile")]
-		[Description("gets content description file")]
-		string ContentFile( string[] args )
-		{
-			return Builder.Options.ContentIniFile;
-		}
-
-		[Command("contentReport")]
-		[Description("opens content report file")]
-		string ContentReport( string[] args )
-		{
-			if (args.Length<2) {
-				throw new Exception("Missing command line arguments: filename");
+			public CmdContentBuild ( Game game, ArgList args )
+			{
+				this.game	=	game;
+				this.force	=	args.Contains("/force");
+				this.files	=	args.Skip(1).Where( s=>!s.StartsWith("/") ).ToArray();
+				this.clean	=	args.FirstOrDefault( a => a.StartsWith("/clean:"))?.Replace("/clean:","");
 			}
 
-			Builder.OpenReport( args[1] );
-			return null;
+
+			public object Execute ()
+			{
+				Builder.SafeBuild(force, clean, files);
+				game.Reload();	
+				return null;		
+			}
+		}
+
+
+		class CmdContentFile : ICommand {
+			public bool IsRollbackable() { return false; }
+			public void Rollback() {}
+
+			public object Execute ()
+			{
+				return Builder.Options.ContentIniFile;
+			}
+		}
+
+
+		class CmdContentReport : ICommand {
+			public bool IsRollbackable() { return false; }
+			public void Rollback() {}
+
+			string reportFile;
+
+			public CmdContentReport( ArgList args )
+			{
+				if (args.Count<2) {
+					throw new Exception("Missing command line arguments: filename");
+				}
+				reportFile = args[1];
+			}
+
+			public object Execute() 
+			{
+				Builder.OpenReport( reportFile );
+				return false;
+			}
+
 		}
 
 		/*-----------------------------------------------------------------------------------------

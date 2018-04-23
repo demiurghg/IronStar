@@ -42,5 +42,25 @@ namespace Fusion.Core.Extensions {
 			return input;
 		}
 
+
+		/// <summary>
+		/// http://stackoverflow.com/questions/298830/split-string-containing-command-line-parameters-into-string-in-c-sharp/298990#298990
+		/// </summary>
+		/// <param name="commandLine"></param>
+		/// <returns></returns>
+		public static IEnumerable<string> SplitCommandLine(this string commandLine)
+		{
+			bool inQuotes = false;
+
+			return commandLine.Split(c =>
+									 {
+										 if (c == '\"')
+											 inQuotes = !inQuotes;
+
+										 return !inQuotes && c == ' ';
+									 })
+							  .Select(arg => arg.Trim().TrimMatchingQuotes('\"'))
+							  .Where(arg => !string.IsNullOrEmpty(arg));
+		}
 	}
 }

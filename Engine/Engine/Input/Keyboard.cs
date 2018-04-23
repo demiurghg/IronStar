@@ -47,7 +47,7 @@ namespace Fusion.Engine.Input {
 			device.FormKeyUp += device_FormKeyUp;
 			device.FormKeyPress += device_FormKeyPress;
 
-			Game.Invoker.AddCommands( this );
+			#warning Game.Invoker.AddCommands( this );
 		}
 
 
@@ -272,7 +272,7 @@ namespace Fusion.Engine.Input {
 			if (bindings.TryGetValue( (Keys)e.Key, out bind )) {
 				try {
 					if (!string.IsNullOrWhiteSpace(bind.KeyDownCommand)) {
-						Game.Invoker.PushCommand( bind.KeyDownCommand );
+						Game.Invoker.ExecuteString( bind.KeyDownCommand );
 					}
 				} catch ( Exception cmdLineEx ) {
 					Log.Error("{0}", cmdLineEx.Message );
@@ -292,7 +292,7 @@ namespace Fusion.Engine.Input {
 			if (bindings.TryGetValue( (Keys)e.Key, out bind )) {
 				try {
 					if (!string.IsNullOrWhiteSpace(bind.KeyUpCommand)) {
-						Game.Invoker.PushCommand( bind.KeyUpCommand );
+						Game.Invoker.ExecuteString( bind.KeyUpCommand );
 					}
 				} catch ( Exception cmdLineEx ) {
 					Log.Error("{0}", cmdLineEx.Message );

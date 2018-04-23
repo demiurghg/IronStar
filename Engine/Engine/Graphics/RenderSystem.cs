@@ -136,7 +136,7 @@ namespace Fusion.Engine.Graphics {
 			Game.Config.ExposeConfig( lightManager, "LightRenderer"	, "light" );
 			Game.Config.ExposeConfig( ssaoFilter,   "SSAO"			, "ssao"  );
 			Game.Config.ExposeConfig( vtSystem,		"VirtualTexture", "vt"	  );
-			Game.Invoker.AddCommands( this );
+			#warning Game.Invoker.AddCommands( this );
 
 			Device.DisplayBoundsChanged += (s,e) => {
 				DisplayBoundsChanged?.Invoke( s, e );

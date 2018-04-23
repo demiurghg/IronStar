@@ -154,12 +154,13 @@
     <Compile Include="Core\Mathematics\Segment.cs" />
     <Compile Include="Core\Mathematics\WaveLength.cs" />
     <Compile Include="Core\Shell\AEAttributes.cs" />
+    <Compile Include="Core\Shell\ArgList.cs" />
     <Compile Include="Core\Shell\ISyntax.cs" />
     <Compile Include="Core\Shell\ICommand.cs" />
     <Compile Include="Core\Shell\Invoker.Batch.cs" />
     <Compile Include="Core\Shell\Invoker.cs" />
-    <Compile Include="Core\Shell\Shell.Helper.cs" />
     <Compile Include="Core\Shell\InvokerException.cs" />
+    <Compile Include="Core\Shell\Suggestion.cs" />
     <Compile Include="Development\CheckListDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -584,7 +585,6 @@
     <Compile Include="Core\Shell\CommandLineParser.cs" />
     <Compile Include="Core\Shell\CommandAttribute.cs" />
     <Compile Include="Core\Shell\CommandLineParserException.cs" />
-    <Compile Include="Core\Shell\Shell.cs" />
     <Compile Include="Core\Test\TestAttribute.cs" />
     <Compile Include="Core\Test\Tester.cs" />
     <Compile Include="Core\Test\TestException.cs" />

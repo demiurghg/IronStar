@@ -94,7 +94,7 @@ namespace IronStar {
 				//	first run will cause warning, 
 				//	because configuration file does not exist yet.
 				game.Config.ExposeConfig( new EditorConfig(), "MapEditor", "editor" );
-				game.Invoker.AddCommands( typeof(Program) );
+				#warning game.Invoker.AddCommands( typeof(Program) );
 
 				game.Config.Load( "Config.ini" );
 

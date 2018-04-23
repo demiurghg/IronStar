@@ -366,7 +366,7 @@ namespace Fusion.Build {
 					.Reverse()
 					.Select( key => new {
 						Mask = key.KeyName.Split(' ', '\t').FirstOrDefault(), 
-						Args = CommandLineParser.SplitCommandLine( key.KeyName ).Skip(1).ToArray()
+						Args = key.KeyName.SplitCommandLine().Skip(1).ToArray()
 					 })
 					.ToList();
 					

@@ -65,7 +65,7 @@ namespace Fusion.Engine.Tools {
 		public bool IsShown { get { return isShown; } }
 
 
-		Shell.Suggestion suggestion = null;
+		Suggestion suggestion = null;
 
 
 
@@ -354,7 +354,7 @@ namespace Fusion.Engine.Tools {
 			try {
 				var cmd  = editBox.Text;
 				Log.Message("]{0}", cmd);
-				Game.Invoker.PushCommand(cmd);
+				Game.Invoker.ExecuteString(cmd);
 			} catch ( Exception e ) {
 				Log.Error(e.Message);
 			}

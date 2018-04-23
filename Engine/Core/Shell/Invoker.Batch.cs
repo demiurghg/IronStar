@@ -28,21 +28,13 @@ namespace Fusion.Core.Shell {
 			}
 
 
-			public bool IsRollbackable {
-				get {
-					return true;
-				}
+			public bool IsRollbackable ()
+			{
+				return true;
 			}
 
 
-			public object Result {
-				get {
-					return null;
-				}
-			}
-
-
-			public void Execute()
+			public object Execute()
 			{
 				int length = commands.Length;
 				
@@ -50,11 +42,12 @@ namespace Fusion.Core.Shell {
 
 					var cmd = commands[i];
 
-					if (cmd.IsRollbackable || firstRun) {
+					if (cmd.IsRollbackable() || firstRun) {
 						cmd.Execute();
 					}
 				}
 				firstRun = false;
+				return null;
 			}
 
 
@@ -66,7 +59,7 @@ namespace Fusion.Core.Shell {
 
 					var cmd = commands[i];
 
-					if (cmd.IsRollbackable || firstRun) {
+					if (cmd.IsRollbackable() || firstRun) {
 						cmd.Rollback();
 					}
 				}

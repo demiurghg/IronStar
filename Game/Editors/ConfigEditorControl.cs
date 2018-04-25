@@ -60,12 +60,12 @@ namespace IronStar.Editors {
 			configListBox.DisplayMember = "Name";
 			configListBox.ValueMember = "Value";
 
-			configListBox.Items.AddRange( 
+			/*configListBox.Items.AddRange( 
 				game.Config
 					.TargetObjects
 					.OrderBy( t1 => t1.Key )
 					.Select( t2 => new Target { Name = t2.Key, Value = t2.Value } )
-					.ToArray() );
+					.ToArray() );*/
 		}
 
 
@@ -94,12 +94,12 @@ namespace IronStar.Editors {
 
 		private void newToolStripMenuItem_Click( object sender, EventArgs e )
 		{
-			game.Config.Save("Config.ini");
+			game.Config.SaveSettings("Config.ini");
 		}
 
 		private void deleteToolStripMenuItem_Click( object sender, EventArgs e )
 		{
-			game.Config.Load("Config.ini");
+			game.Config.LoadSettings("Config.ini");
 		}
 	}
 }

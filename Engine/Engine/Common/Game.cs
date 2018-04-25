@@ -277,8 +277,19 @@ namespace Fusion.Engine.Common {
 		/// <param name="gi"></param>
 		public void Run ()
 		{
+			//	init game and subsystems :
 			InitInternal();
+
+			//	run game loop :
 			RenderLoop.Run( GraphicsDevice.Display.Window, UpdateInternal );
+
+			//	wait for server 
+			//	if it is still running :
+			cl.Wait();
+			sv.Wait();
+
+			//	call exit event :
+			Exiting?.Invoke( this, EventArgs.Empty );
 		}
 
 
@@ -378,21 +389,6 @@ namespace Fusion.Engine.Common {
 			ui = new UserInterface( this );
 			ed = new GameEditor( this );
 
-
-			config.ExposeConfig( SoundSystem,	"SoundSystem",		"snd"	);
-			config.ExposeConfig( RenderSystem,	"RenderSystem",		"rs"	);
-			config.ExposeConfig( Frames,		"Frames",			"frames");
-			config.ExposeConfig( Console,		"Console",			"con"	);
-			config.ExposeConfig( Network,		"Network",			"net"	);
-
-			config.ExposeConfig( Keyboard,		"Keyboard",			"kb"	);
-			config.ExposeConfig( Touch,			"Touch",			"touch"	);
-			config.ExposeConfig( Mouse,			"Mouse",			"mouse"	);
-
-			config.ExposeConfig( sv,			"GameServer",		"sv" );
-			config.ExposeConfig( cl,			"GameClient",		"cl" );
-			config.ExposeConfig( ui,			"UserInterface",	"ui" );
-			config.ExposeConfig( ed,			"GameEditor",		"ed" );
 		}
 
 
@@ -444,6 +440,19 @@ namespace Fusion.Engine.Common {
 			Log.Message("");
 			Log.Message("-------- Game Initializing --------");
 
+			config.ApplySettings( SoundSystem	);
+			config.ApplySettings( RenderSystem	);
+			config.ApplySettings( Frames		);
+			config.ApplySettings( Console		);
+			config.ApplySettings( Network		);
+			config.ApplySettings( Keyboard		);
+			config.ApplySettings( Touch			);
+			config.ApplySettings( Mouse			);
+			config.ApplySettings( sv			);
+			config.ApplySettings( cl			);
+			config.ApplySettings( ui			);
+			config.ApplySettings( ed			);
+
 			var p = new GraphicsParameters();
 			RenderSystem.ApplyParameters( ref p );
 
@@ -490,11 +499,29 @@ namespace Fusion.Engine.Common {
 			Log.Message("-----------------------------------------");
 			Log.Message("");
 
+			Exiting+=Game_Exiting;
+
 			return true;
 		}
 
 
+		private void Game_Exiting( object sender, EventArgs e )
+		{
+			config.RetrieveSettings( SoundSystem	);
+			config.RetrieveSettings( RenderSystem	);
+			config.RetrieveSettings( Frames			);
+			config.RetrieveSettings( Console		);
+			config.RetrieveSettings( Network		);
+			config.RetrieveSettings( Keyboard		);
+			config.RetrieveSettings( Touch			);
+			config.RetrieveSettings( Mouse			);
+			config.RetrieveSettings( sv				);
+			config.RetrieveSettings( cl				);
+			config.RetrieveSettings( ui				);
+			config.RetrieveSettings( ed				);
+		}
 
+		
 		Stack<GameComponent> modules = new Stack<GameComponent>();
 
 
@@ -522,14 +549,6 @@ namespace Fusion.Engine.Common {
 
 			Log.Message("");
 			Log.Message("-------- Game Shutting Down --------");
-
-			//	wait for server 
-			//	if it is still running :
-			cl.Wait();
-			sv.Wait();
-
-			//	call exit event :
-			Exiting?.Invoke( this, EventArgs.Empty );
 
 			if (disposing) {
 

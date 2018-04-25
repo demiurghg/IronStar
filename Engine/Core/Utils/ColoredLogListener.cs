@@ -13,8 +13,9 @@ namespace Fusion.Core.Utils {
 		public override void Log ( LogMessage message )
 		{
 			Colorize( message.MessageType );
-			
-			GetWriter( message.MessageType ).WriteLine("[{0:HH:mm:ss.fff}] {1}> : {2}", message.DateTime, message.ThreadId, message.MessageText );
+
+			GetWriter( message.MessageType ).WriteLine("{0}", message.MessageText );
+			//GetWriter( message.MessageType ).WriteLine("[{0:HH:mm:ss.fff}] {1}> : {2}", message.DateTime, message.ThreadId, message.MessageText );
 			//GetWriter( message.MessageType ).WriteLine("{1,2}| {2}", message.DateTime, message.ThreadId, message.MessageText );
 
 			Console.ResetColor();

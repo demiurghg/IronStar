@@ -9,228 +9,102 @@ using Fusion.Core.IniParser.Model;
 using Fusion.Core.Extensions;
 using Fusion.Engine.Common;
 using Fusion.Engine.Input;
+using Fusion.Engine.Storage;
 
 namespace Fusion.Core.Configuration {
 	public class ConfigManager {
 
-		const string KeyboardBindings = "KeyboardBindings";
-
-		/// <summary>
-		/// Gets dictionary of all configuration variables.
-		/// </summary>
-		internal IDictionary<string,ConfigVariable> Variables {
-			get {
-				return configVariables;
-			}
-		}
-
-
-		/// <summary>
-		/// Gets list of exposed objects.
-		/// </summary>
-		public IDictionary<string,object> TargetObjects {
-			get {
-				return targetObjects;
-			}
-		}
-
-
-		Dictionary<string,ConfigVariable> configVariables;
-		Dictionary<string,object> targetObjects;
+		IniData settings;
 		readonly Game game;
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="game"></param>
 		public ConfigManager ( Game game )
 		{
-			this.game		=	game;
-			configVariables	=	new Dictionary<string,ConfigVariable>( StringComparer.OrdinalIgnoreCase );
-			targetObjects	=	new Dictionary<string,object>();
+			this.game	=	game;
+			settings	=	new IniData();
 		}
-
 
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="?"></param>
-		public void ExposeConfig ( object targetObject, string niceName, string shortName )
+		/// <param name="target"></param>
+		public void ApplySettings ( object target )
 		{
-			if (game.IsInitialized) {	
-				throw new InvalidOperationException("Could not expose target object properties after game initialized");
+			string sectionName = target.GetType().Name;
+
+			var section = settings.Sections[sectionName];
+
+			if (section==null) {
+				Log.Warning("Section [{0}] does not exist.", sectionName);
+				return;
 			}
 
-			targetObjects.Add( niceName, targetObject );
-
-			var props = targetObject
-				.GetType()
-				.GetProperties()
-				.Where( p => p.HasAttribute<ConfigAttribute>() )
-				.ToList();
-
+			var props = target.GetType()
+						.GetProperties()
+						.Where( p1 => p1.HasAttribute<ConfigAttribute>() )
+						.ToArray();
+			
 			foreach ( var prop in props ) {
-				
-				var key  = shortName + "." + prop.Name;
-				var cvar = new ConfigVariable( niceName, shortName, prop.Name, prop, targetObject );
+			
+				var name	=	prop.Name;
+				var type	=	prop.PropertyType;
+				var keyData =	section.GetKeyData( name );
 
-				try {
-
-					configVariables.Add( key, cvar );
-
-				} catch ( ArgumentException ) {	
-					Log.Warning("Can not expose property {0}. Skipped.", key);
+				if (keyData==null) {	
+					Log.Warning("Key '{0}' does not exist in section [{1}].", name, sectionName );
 				}
 
+				object value;
+
+				if ( StringConverter.TryConvertFromString( type, keyData.Value, out value ) ) {
+					prop.SetValue( target, value );	
+				} else {
+					Log.Warning("Can not convert key '{0}' to {1}.", name, type.Name );
+				}
 			}
 		}
-
 
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
-		public T GetConfig<T>()
+		/// <param name="source"></param>
+		public void RetrieveSettings ( object source )
 		{
-			try {
-				return (T)(targetObjects.FirstOrDefault( t=>t.Value is T ).Value);
-			} catch ( Exception e ) {
-				throw new ArgumentException(string.Format("Config of type '{0}' was not exposed", typeof(T)), e);
+			string sectionName = source.GetType().Name;
+
+			var sectionData = new SectionData( sectionName );
+
+			if (sectionData==null) {
+				Log.Warning("Section [{0}] does not exist.", sectionName);
+				return;
 			}
-		}
 
+			var props = source.GetType()
+						.GetProperties()
+						.Where( p1 => p1.HasAttribute<ConfigAttribute>() )
+						.ToArray();
+			
+			foreach ( var prop in props ) {
+			
+				var name	=	prop.Name;
+				var type	=	prop.PropertyType;
+				var value	=	StringConverter.ConvertToString( prop.GetValue(source) );
 
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="variableName"></param>
-		/// <param name="value"></param>
-		public void Set ( string name, string value )
-		{
-			ConfigVariable cvar;
-
-			if (configVariables.TryGetValue( name, out cvar )) {
-				try {
-					cvar.Set( value );
-				} catch ( Exception e ) {
-					Log.Warning("Can not set '{0}' = '{1}', because: {2}", name, value, e.Message );
-				}
-			} else {
-				Log.Warning("Config variable '{0}' does not exist", name );
+				sectionData.Keys.AddKey( name, value );
 			}
-		}
 
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="variableName"></param>
-		/// <param name="value"></param>
-		public string Get ( string name, string defaultValue = null )
-		{
-			ConfigVariable cvar;
-
-			if (configVariables.TryGetValue( name, out cvar )) {
-				try {
-					return cvar.Get();
-				} catch ( Exception e ) {
-					Log.Warning("Can not get '{0}', because: {1}", name, e.Message );
-					return defaultValue;
-				}
-			} else {
-				Log.Warning("Config variable '{0}' does not exist", name );
-				return defaultValue;
-			}
-		}
-
-
-		
-		/// <summary>
-		/// Saves configuration to file in user storage.
-		/// </summary>
-		/// <param name="path"></param>
-		public void Save ( string filename )
-		{
-			Log.Message("Saving configuration...");
-
-			var storage = game.UserStorage;
-
-			storage.DeleteFile(filename);
-			Save( storage.OpenFile(filename, FileMode.Create, FileAccess.Write) );
-		}
-
-
-
-		/// <summary>
-		/// Saves configuration to stream.
-		/// </summary>
-		/// <param name="stream"></param>
-		public void Save ( Stream stream )
-		{
-			try {
-		
-				//	prepare ini data :			
-				IniData iniData = new IniData();
-				iniData.Configuration.CommentString	=	"# ";
-
-				var sortedList = configVariables
-								.Select( cv1 => cv1.Value )
-								.OrderBy( cv2 => cv2.ComponentName )
-								.ThenBy( cv3 => cv3.Name )
-								.ToList();
-
-
-				//
-				//	Write keyboard bindings :
-				//
-				iniData.Sections.AddSection( KeyboardBindings );
-				var keyboardSection = iniData.Sections[ KeyboardBindings ];
-				var bindingsData  = game.Keyboard.Bindings.Select( bind => new KeyData( bind.Key.ToString(), bind.KeyDownCommand + " | " + bind.KeyUpCommand ) );
-
-				foreach ( var bind in bindingsData ) {
-					keyboardSection.AddKey( bind );
-				}
-
-				//
-				//	Write variables :
-				//
-				foreach ( var cvar in sortedList ) {
-					
-					if (!iniData.Sections.ContainsSection( cvar.ComponentName )) {
-						iniData.Sections.AddSection( cvar.ComponentName );
-					}
-
-					var section = iniData.Sections[ cvar.ComponentName ];
-
-					section.AddKey( new KeyData( cvar.Name, cvar.Get() ) );
-				}
-
-				//
-				//	write file :
-				//
-				var parser = new StreamIniDataParser();
-
-				using ( var sw = new StreamWriter(stream) ) {
-					parser.WriteData( sw, iniData );
-				}
-
-			} catch (IniParser.Exceptions.ParsingException e) {
-				Log.Warning("INI parser error: {0}", e.Message);
-			}
+			settings.Sections.RemoveSection(sectionName);
+			settings.Sections.SetSectionData( sectionName, sectionData );
 		}
 
 
 		/// <summary>
-		/// Loads configuration from file in user storage.
+		/// Loads file from specified file
 		/// </summary>
-		/// <param name="path"></param>
-		public void Load ( string filename )
+		/// <param name="filename"></param>
+		public void LoadSettings ( string filename )
 		{
 			Log.Message("Loading configuration...");
 
@@ -238,7 +112,7 @@ namespace Fusion.Core.Configuration {
 
 			if (storage.FileExists(filename)) {
 				
-				Load( storage.OpenFile(filename, FileMode.Open, FileAccess.Read) );
+				LoadSettings( storage.OpenFile(filename, FileMode.Open, FileAccess.Read) );
 
 			} else {
 				Log.Warning("Can not load configuration from {0}", filename);
@@ -246,82 +120,52 @@ namespace Fusion.Core.Configuration {
 		}
 
 
+		/// <summary>
+		/// Saves settings to specified file
+		/// </summary>
+		/// <param name="filename"></param>
+		public void SaveSettings ( string filename )
+		{
+			Log.Message("Saving configuration...");
+
+			var storage = game.UserStorage;
+
+			storage.DeleteFile(filename);
+			SaveSettings( storage.OpenFile(filename, FileMode.Create, FileAccess.Write) );
+		}
+
 
 		/// <summary>
-		/// Loads configuration from stream.
+		/// Loads settings from stream
 		/// </summary>
 		/// <param name="stream"></param>
-		public void Load ( Stream stream )
+		public void LoadSettings ( Stream stream )
 		{
-			try {
-		
-				var iniData = new IniData();
-				var parser = new StreamIniDataParser();
+			var iniData = new IniData();
+			var parser = new StreamIniDataParser();
 
-				parser.Parser.Configuration.CommentString	=	"# ";
+			parser.Parser.Configuration.CommentString	=	"# ";
 
-				using ( var sw = new StreamReader(stream) ) {
-					iniData	= parser.ReadData( sw );
-				}
-			
-
-				//
-				//	Read keyboard bindings :
-				//	
-				if ( iniData.Sections.ContainsSection(KeyboardBindings) ) {
-					var section = iniData.Sections[KeyboardBindings];
-
-					foreach ( var keyData in section ) {
-
-						var key = (Keys)Enum.Parse(typeof(Keys), keyData.KeyName, true );
-						
-						var cmds	=	keyData.Value.Split('|').Select( s => s.Trim() ).ToArray();
-
-						string cmdDown	=	null;
-						string cmdUp	=	null;
-
-						if (!string.IsNullOrWhiteSpace(cmds[0])) {
-							cmdDown = cmds[0];
-						}
-
-						if (cmds.Length>1 && !string.IsNullOrWhiteSpace(cmds[1])) {
-							cmdUp = cmds[1];
-						}
-
-						game.Keyboard.Bind( key, cmdDown, cmdUp );
-					}
-				}
-
-
-				//
-				//	Read variables :
-				//
-				foreach ( var section in iniData.Sections ) {
-
-					if (section.SectionName == KeyboardBindings) {
-						continue;
-					}
-
-					var cvarDict = configVariables
-									.Where( cv1 => cv1.Value.ComponentName==section.SectionName )
-									.Select( cv2 => cv2.Value )
-									.ToDictionary( cv3 => cv3.Name );
-
-					ConfigVariable cvar;
-
-					foreach ( var keyData in section.Keys ) {
-						if (cvarDict.TryGetValue( keyData.KeyName, out cvar )) {
-							cvar.Set( keyData.Value );
-						} else {
-							Log.Warning("Key {0}.{1} ignored.", section.SectionName, keyData.KeyName );
-						}
-					}
-				}
-
-			} catch (IniParser.Exceptions.ParsingException e) {
-				Log.Warning("INI parser error: {0}", e.Message);
+			using ( var sw = new StreamReader(stream) ) {
+				settings	= parser.ReadData( sw );
 			}
-			
 		}
+
+
+		/// <summary>
+		/// Saves settings to stream
+		/// </summary>
+		/// <param name="stream"></param>
+		public void SaveSettings ( Stream stream )
+		{
+			settings.Configuration.CommentString	=	"# ";
+
+			var parser = new StreamIniDataParser();
+
+			using ( var sw = new StreamWriter(stream) ) {
+				parser.WriteData( sw, settings );
+			}
+		}
+
 	}
 }

@@ -85,7 +85,7 @@ namespace IronStar.Editor2 {
 			this.rs			=	Game.RenderSystem;
 			Content         =   new ContentManager( Game );
 
-			Config			=	Game.Config.GetConfig<EditorConfig>();
+			Config			=	new EditorConfig();
 
 			camera			=	new EditorCamera( this );
 			manipulator		=	new NullTool( this );
@@ -106,6 +106,8 @@ namespace IronStar.Editor2 {
 		/// </summary>
 		void IEditorInstance.Initialize()
 		{
+			Game.Config.ApplySettings( Config );
+
 			if (File.Exists(fullPath)) {
 				Log.Message("Opening existing map: {0}", fullPath);
 				this.map = Map.LoadFromXml( File.OpenRead( fullPath ) );
@@ -200,6 +202,8 @@ namespace IronStar.Editor2 {
 		{
 			if ( !disposedValue ) {
 				if ( disposing ) {
+
+					Game.Config.RetrieveSettings( Config );
 
 					world?.Dispose();
 

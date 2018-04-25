@@ -133,11 +133,6 @@ namespace Fusion.Engine.Graphics {
 			bitonicSort		=	new BitonicSort( this );
 			vtSystem	=	new VTSystem( this );
 
-			Game.Config.ExposeConfig( lightManager, "LightRenderer"	, "light" );
-			Game.Config.ExposeConfig( ssaoFilter,   "SSAO"			, "ssao"  );
-			Game.Config.ExposeConfig( vtSystem,		"VirtualTexture", "vt"	  );
-			#warning Game.Invoker.AddCommands( this );
-
 			Device.DisplayBoundsChanged += (s,e) => {
 				DisplayBoundsChanged?.Invoke( s, e );
 			};
@@ -192,6 +187,10 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public override void Initialize ()
 		{
+			Game.Config.ApplySettings( lightManager	);
+			Game.Config.ApplySettings( ssaoFilter	);
+			Game.Config.ApplySettings( vtSystem		);
+
 			//	init components :
 			InitializeComponent( spriteEngine	);
 			InitializeComponent( filter			);
@@ -228,6 +227,15 @@ namespace Fusion.Engine.Graphics {
 			renderWorld		=	new RenderWorld(Game, Width, Height);
 
 			DisplayBoundsChanged += (s,e) => renderWorld.Resize( DisplayBounds.Width, DisplayBounds.Height );
+			Game.Exiting+=Game_Exiting;
+		}
+
+
+		private void Game_Exiting( object sender, EventArgs e )
+		{
+			Game.Config.RetrieveSettings( lightManager	);
+			Game.Config.RetrieveSettings( ssaoFilter	);
+			Game.Config.RetrieveSettings( vtSystem		);
 		}
 
 

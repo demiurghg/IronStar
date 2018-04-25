@@ -122,7 +122,7 @@ namespace Fusion.Development {
 		private void openConfig_Click ( object sender, EventArgs e )
 		{
 			ShellExecute( configPath, true );
-			game.Config.Load(configName);
+			game.Config.LoadSettings(configName);
 			UpdateControls();
 		}
 

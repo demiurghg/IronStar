@@ -26,24 +26,38 @@ namespace IronStar {
 
 	class Program {
 
-		class GameFactory : IGameFactory {
+		class IronStarGame : Game {
 
-			public IClientInstance CreateClient( Game game, IMessageService msgsvc, Guid clientGuid )
+			public IronStarGame ( ) : base("IronStar")
+			{
+			}
+
+			public override void LoadConfig()
+			{
+				Config.LoadSettings("Config.ini");
+			}
+
+			public override void SaveConfig()
+			{
+				Config.SaveSettings("Config.ini");
+			}
+
+			public override IClientInstance CreateClient( Game game, IMessageService msgsvc, Guid clientGuid )
 			{
 				return new ShooterClient( game.GameClient, msgsvc, clientGuid );
 			}
 
-			public IServerInstance CreateServer( Game game, IMessageService msgsvc, string map, string options )
+			public override IServerInstance CreateServer( Game game, IMessageService msgsvc, string map, string options )
 			{
 				return new ShooterServer( game.GameServer, msgsvc, map );
 			}
 
-			public IUserInterface CreateUI( Game game )
+			public override IUserInterface CreateUI( Game game )
 			{
 				return new ShooterInterface( game );
 			}
 
-			public IEditorInstance CreateEditor( Game game, string map )
+			public override IEditorInstance CreateEditor( Game game, string map )
 			{
 				return new Editor2.MapEditor( game.GameEditor, map );
 			}
@@ -88,14 +102,7 @@ namespace IronStar {
 			//
 			//	Run game :
 			//
-			using (var game = new Game( "IronStar", new GameFactory() )) {
-
-				//	load configuration.
-				//	first run will cause warning, 
-				//	because configuration file does not exist yet.
-				#warning game.Invoker.AddCommands( typeof(Program) );
-
-				game.Config.LoadSettings( "Config.ini" );
+			using (var game = new IronStarGame()) {
 
 				//	enable and disable debug direct3d device :
 				game.RenderSystem.UseDebugDevice = false;
@@ -118,12 +125,7 @@ namespace IronStar {
 
 				//	close editors :
 				Editor.CloseAll();
-
-				//	save configuration :
-				game.Config.SaveSettings( "Config.ini" );
 			}
-
-			
 
 			return 0;
 		}

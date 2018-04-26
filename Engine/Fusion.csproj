@@ -211,7 +211,6 @@
     <Compile Include="Engine\Client\IClientInstance.cs" />
     <Compile Include="Engine\Common\GameEditor.cs" />
     <Compile Include="Engine\Common\IEditorInstance.cs" />
-    <Compile Include="Engine\Common\IGameFactory.cs" />
     <Compile Include="Engine\Common\IMessageService.cs" />
     <Compile Include="Engine\Common\IUserInterface.cs" />
     <Compile Include="Engine\Campaign\SinglePlayer.cs" />

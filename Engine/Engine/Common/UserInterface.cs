@@ -36,7 +36,7 @@ namespace Fusion.Engine.Common {
 		/// <param name="Game"></param>
 		public UserInterface ( Game game ) : base(game)
 		{
-			uiInstance	=	game.GameFactory.CreateUI(game);
+			uiInstance	=	game.CreateUI(game);
 		}
 
 

@@ -17,6 +17,8 @@ namespace Fusion.Core.Configuration {
 		IniData settings;
 		readonly Game game;
 
+		object lockObject = new object();
+
 
 		public ConfigManager ( Game game )
 		{
@@ -31,36 +33,39 @@ namespace Fusion.Core.Configuration {
 		/// <param name="target"></param>
 		public void ApplySettings ( object target )
 		{
-			string sectionName = target.GetType().Name;
+			lock (lockObject) {
 
-			var section = settings.Sections[sectionName];
+				string sectionName = target.GetType().Name;
 
-			if (section==null) {
-				Log.Warning("Section [{0}] does not exist.", sectionName);
-				return;
-			}
+				var section = settings.Sections[sectionName];
 
-			var props = target.GetType()
-						.GetProperties()
-						.Where( p1 => p1.HasAttribute<ConfigAttribute>() )
-						.ToArray();
-			
-			foreach ( var prop in props ) {
-			
-				var name	=	prop.Name;
-				var type	=	prop.PropertyType;
-				var keyData =	section.GetKeyData( name );
-
-				if (keyData==null) {	
-					Log.Warning("Key '{0}' does not exist in section [{1}].", name, sectionName );
+				if (section==null) {
+					Log.Warning("Section [{0}] does not exist.", sectionName);
+					return;
 				}
 
-				object value;
+				var props = target.GetType()
+							.GetProperties()
+							.Where( p1 => p1.HasAttribute<ConfigAttribute>() )
+							.ToArray();
+			
+				foreach ( var prop in props ) {
+			
+					var name	=	prop.Name;
+					var type	=	prop.PropertyType;
+					var keyData =	section.GetKeyData( name );
 
-				if ( StringConverter.TryConvertFromString( type, keyData.Value, out value ) ) {
-					prop.SetValue( target, value );	
-				} else {
-					Log.Warning("Can not convert key '{0}' to {1}.", name, type.Name );
+					if (keyData==null) {	
+						Log.Warning("Key '{0}' does not exist in section [{1}].", name, sectionName );
+					}
+
+					object value;
+
+					if ( StringConverter.TryConvertFromString( type, keyData.Value, out value ) ) {
+						prop.SetValue( target, value );	
+					} else {
+						Log.Warning("Can not convert key '{0}' to {1}.", name, type.Name );
+					}
 				}
 			}
 		}
@@ -72,31 +77,34 @@ namespace Fusion.Core.Configuration {
 		/// <param name="source"></param>
 		public void RetrieveSettings ( object source )
 		{
-			string sectionName = source.GetType().Name;
+			lock (lockObject) {
 
-			var sectionData = new SectionData( sectionName );
+				string sectionName = source.GetType().Name;
 
-			if (sectionData==null) {
-				Log.Warning("Section [{0}] does not exist.", sectionName);
-				return;
-			}
+				var sectionData = new SectionData( sectionName );
 
-			var props = source.GetType()
-						.GetProperties()
-						.Where( p1 => p1.HasAttribute<ConfigAttribute>() )
-						.ToArray();
+				if (sectionData==null) {
+					Log.Warning("Section [{0}] does not exist.", sectionName);
+					return;
+				}
+
+				var props = source.GetType()
+							.GetProperties()
+							.Where( p1 => p1.HasAttribute<ConfigAttribute>() )
+							.ToArray();
 			
-			foreach ( var prop in props ) {
+				foreach ( var prop in props ) {
 			
-				var name	=	prop.Name;
-				var type	=	prop.PropertyType;
-				var value	=	StringConverter.ConvertToString( prop.GetValue(source) );
+					var name	=	prop.Name;
+					var type	=	prop.PropertyType;
+					var value	=	StringConverter.ConvertToString( prop.GetValue(source) );
 
-				sectionData.Keys.AddKey( name, value );
+					sectionData.Keys.AddKey( name, value );
+				}
+
+				settings.Sections.RemoveSection(sectionName);
+				settings.Sections.SetSectionData( sectionName, sectionData );
 			}
-
-			settings.Sections.RemoveSection(sectionName);
-			settings.Sections.SetSectionData( sectionName, sectionData );
 		}
 
 
@@ -141,13 +149,16 @@ namespace Fusion.Core.Configuration {
 		/// <param name="stream"></param>
 		public void LoadSettings ( Stream stream )
 		{
-			var iniData = new IniData();
-			var parser = new StreamIniDataParser();
+			lock (lockObject) {
 
-			parser.Parser.Configuration.CommentString	=	"# ";
+				var iniData = new IniData();
+				var parser = new StreamIniDataParser();
 
-			using ( var sw = new StreamReader(stream) ) {
-				settings	= parser.ReadData( sw );
+				parser.Parser.Configuration.CommentString	=	"# ";
+
+				using ( var sw = new StreamReader(stream) ) {
+					settings	= parser.ReadData( sw );
+				}
 			}
 		}
 
@@ -158,14 +169,16 @@ namespace Fusion.Core.Configuration {
 		/// <param name="stream"></param>
 		public void SaveSettings ( Stream stream )
 		{
-			settings.Configuration.CommentString	=	"# ";
+			lock (lockObject) {
 
-			var parser = new StreamIniDataParser();
+				settings.Configuration.CommentString	=	"# ";
 
-			using ( var sw = new StreamWriter(stream) ) {
-				parser.WriteData( sw, settings );
+				var parser = new StreamIniDataParser();
+
+				using ( var sw = new StreamWriter(stream) ) {
+					parser.WriteData( sw, settings );
+				}
 			}
 		}
-
 	}
 }

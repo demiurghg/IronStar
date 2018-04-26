@@ -29,12 +29,12 @@ namespace Fusion.Engine.Server {
 		/// </summary>
 		/// <param name="server"></param>
 		/// <param name="serverInstance"></param>
-		public ServerContext ( Game game, string gameId, int port, IGameFactory factory, string map, string options )
+		public ServerContext ( Game game, int port, string map, string options )
 		{
 			this.game			=	game;
-			this.serverInstance	=	factory.CreateServer( game, this, map, options );
+			this.serverInstance	=	game.CreateServer( game, this, map, options );
 
-			var netConfig						=   new NetPeerConfiguration(gameId);
+			var netConfig						=   new NetPeerConfiguration(game.GameID);
 			netConfig.Port						=   port;
 			netConfig.MaximumConnections		=   32;
 			netConfig.UnreliableSizeBehaviour	=	NetUnreliableSizeBehaviour.NormalFragmentation;

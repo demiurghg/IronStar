@@ -37,7 +37,7 @@ namespace Fusion.Engine.Common {
 	/// <summary>
 	/// Provides basic graphics device initialization, game logic, and rendering code. 
 	/// </summary>
-	public partial class Game : DisposableBase {
+	public abstract class Game : DisposableBase {
 
 		/// <summary>
 		/// Game instance.
@@ -185,7 +185,7 @@ namespace Fusion.Engine.Common {
 		public	bool Enabled { get; set; }
 
 		/// <summary>
-		/// Raised when the game exiting before disposing
+		/// Raised when the game exiting BEFORE disposing.
 		/// </summary>
 		public event	EventHandler Exiting;
 
@@ -268,6 +268,14 @@ namespace Fusion.Engine.Common {
 		}
 
 
+		public abstract IClientInstance	CreateClient ( Game game, IMessageService msgsvc, Guid clientGuid );
+		public abstract IServerInstance CreateServer ( Game game, IMessageService msgsvc, string map, string options );
+		public abstract IUserInterface	CreateUI ( Game game );	 
+		public abstract IEditorInstance	CreateEditor ( Game game, string map );
+		public abstract void LoadConfig ();
+		public abstract void SaveConfig ();
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -322,19 +330,15 @@ namespace Fusion.Engine.Common {
 		}
 		readonly string gameId;
 
-		public readonly IGameFactory GameFactory;
-
 
 		/// <summary>
 		/// Initializes a new instance of this class, which provides 
 		/// basic graphics device initialization, game logic, rendering code, and a game loop.
 		/// </summary>
-		public Game ( string gameId, IGameFactory gameFactory )
+		public Game ( string gameId )
 		{
 			this.gameId	=	gameId;
 			Enabled	=	true;
-
-			this.GameFactory = gameFactory;
 
 			AppDomain currentDomain = AppDomain.CurrentDomain;
 			currentDomain.UnhandledException += currentDomain_UnhandledException;
@@ -362,6 +366,10 @@ namespace Fusion.Engine.Common {
 			GCSettings.LatencyMode	=	GCLatencyMode.Interactive;
 
 			config				=	new ConfigManager( this );
+			userStorage			=	new UserStorage(this);
+
+			LoadConfig();
+
 			invoker				=	new Invoker();
 			inputDevice			=	new InputDevice( this );
 			graphicsDevice		=	new GraphicsDevice( this );
@@ -379,9 +387,6 @@ namespace Fusion.Engine.Common {
 
 			frames				=	new FrameProcessor(this);
 
-			userStorage			=	new UserStorage(this);
-
-			RegisterCommands();
 
 			//	create SV, CL and UI instances :
 			sv = new GameServer( this );
@@ -389,6 +394,20 @@ namespace Fusion.Engine.Common {
 			ui = new UserInterface( this );
 			ed = new GameEditor( this );
 
+			RegisterCommands();
+
+			config.ApplySettings( SoundSystem	);
+			config.ApplySettings( RenderSystem	);
+			config.ApplySettings( Frames		);
+			config.ApplySettings( Console		);
+			config.ApplySettings( Network		);
+			config.ApplySettings( Keyboard		);
+			config.ApplySettings( Touch			);	  
+			config.ApplySettings( Mouse			);
+			config.ApplySettings( sv			);
+			config.ApplySettings( cl			);
+			config.ApplySettings( ui			);
+			config.ApplySettings( ed			);
 		}
 
 
@@ -439,19 +458,6 @@ namespace Fusion.Engine.Common {
 		{
 			Log.Message("");
 			Log.Message("-------- Game Initializing --------");
-
-			config.ApplySettings( SoundSystem	);
-			config.ApplySettings( RenderSystem	);
-			config.ApplySettings( Frames		);
-			config.ApplySettings( Console		);
-			config.ApplySettings( Network		);
-			config.ApplySettings( Keyboard		);
-			config.ApplySettings( Touch			);
-			config.ApplySettings( Mouse			);
-			config.ApplySettings( sv			);
-			config.ApplySettings( cl			);
-			config.ApplySettings( ui			);
-			config.ApplySettings( ed			);
 
 			var p = new GraphicsParameters();
 			RenderSystem.ApplyParameters( ref p );
@@ -566,6 +572,8 @@ namespace Fusion.Engine.Common {
 
 				Log.Message("Disposing : GraphicsDevice");
 				SafeDispose( ref graphicsDevice );
+
+				SaveConfig();
 
 				Log.Message("Disposing : UserStorage");
 				SafeDispose( ref userStorage );

@@ -60,7 +60,7 @@ namespace Fusion.Engine.Common {
 				Log.Warning("Editor is already started");
 				return;
 			}
-			editor = Game.GameFactory.CreateEditor( Game, map );
+			editor = Game.CreateEditor( Game, map );
 			editor?.Initialize();
 		}
 

@@ -98,6 +98,19 @@ namespace Fusion.Core {
 
 
 
+		public static bool TryConvertFromString<T>( string stringValue, out T result )
+		{
+			object obj;
+			bool r = TryConvertFromString( typeof(T), stringValue, out obj );
+
+			if (r) {
+				result = (T)obj;
+				return true;
+			} else {
+				result = default(T);
+				return false;
+			}
+		}
 
 
 		public static T FromString<T>( string value )

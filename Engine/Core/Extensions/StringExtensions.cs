@@ -62,5 +62,29 @@ namespace Fusion.Core.Extensions {
 							  .Select(arg => arg.Trim().TrimMatchingQuotes('\"'))
 							  .Where(arg => !string.IsNullOrEmpty(arg));
 		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="str"></param>
+		/// <param name="ch"></param>
+		/// <param name="left"></param>
+		/// <param name="right"></param>
+		/// <returns></returns>
+		public static bool Split ( this string str, char ch, out string left, out string right )
+		{
+			var list = str.Split( new[] {ch}, 2 );
+
+			if (list.Length!=2) {
+				left = list[0];
+				right = null;
+				return false;
+			} else {
+				left = list[0];
+				right = list[0];
+				return false;
+			}
+		}
 	}
 }

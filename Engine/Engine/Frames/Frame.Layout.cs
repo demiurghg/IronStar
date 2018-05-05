@@ -33,6 +33,9 @@ namespace Fusion.Engine.Frames {
 		int marginTop;
 		int marginBottom;
 
+		int oldWidth = int.MinValue;
+		int oldHeight = int.MinValue;
+
 		bool layoutDirty = true;
 		bool sizeDirty = true;
 		bool moveDirty = true;
@@ -366,6 +369,9 @@ namespace Fusion.Engine.Frames {
 		/// <param name="newH"></param>
 		void UpdateAnchors ( int oldW, int oldH, int newW, int newH )
 		{
+			if (oldW < 0) return;
+			if (oldH < 0) return;
+
 			int dw	=	newW - oldW;
 			int dh	=	newH - oldH;
 

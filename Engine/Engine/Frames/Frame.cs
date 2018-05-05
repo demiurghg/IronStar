@@ -861,11 +861,6 @@ namespace Fusion.Engine.Frames {
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
-		int oldW = int.MinValue;
-		int oldH = int.MinValue;
-		bool firstResize = true;
-
-
 		/// <summary>
 		/// Checks move and resize and calls appropriate events
 		/// </summary>
@@ -885,22 +880,17 @@ namespace Fusion.Engine.Frames {
 		protected void UpdateResize ()
 		{
 			if (sizeDirty) {
+
 				Resize?.Invoke( this, new ResizeEventArgs(){ Width = Width, Height = Height } );
-				sizeDirty = false;
+
+				ForEachChildren( f => f.UpdateAnchors( oldWidth, oldHeight, Width, Height ) );
+
+				oldWidth	=	Width;
+				oldHeight	=	Height;
+
+				sizeDirty	=	false;
 			}
-			//if ( oldW != Width || oldH != Height ) {	
 
-			//	Resize( this, new ResizeEventArgs(){ Width = Width, Height = Height } );
-
-			//	if (!firstResize) {
-			//		ForEachChildren( f => f.UpdateAnchors( oldW, oldH, Width, Height ) );
-			//	}
-
-			//	firstResize = false;
-
-			//	oldW = Width;
-			//	oldH = Height;
-			//}
 		}
 
 

@@ -121,6 +121,12 @@ namespace Fusion.Drivers.Graphics {
 			var rtv	=	new RenderTargetView( device.Device, tex2D, rtvDesc );
 
 			surface	=	new RenderTargetSurface( rtv, null, tex2D, 0, ColorFormat.Unknown, width, height, 1 );
+
+			device.Clear( surface, Color4.Zero );
+
+            device.DeviceContext.CopySubresourceRegion( tex2D, 0, null, tex2Dstaging,  0, 0, 0, 0);
+            device.DeviceContext.CopySubresourceRegion( tex2D, 0, null, tex2Dstaging1, 0, 0, 0, 0);
+            device.DeviceContext.CopySubresourceRegion( tex2D, 0, null, tex2Dstaging2, 0, 0, 0, 0);
 		}
 
 
@@ -194,11 +200,11 @@ namespace Fusion.Drivers.Graphics {
 				var pageY		=	(short)vaRaw.Y; 
 				var mipLevel	=	(short)vaRaw.Z; 
 				
-				if (mipLevel>=VTConfig.MipCount) {
+				if (!VTAddress.CheckBadAddress(pageX, pageY, mipLevel, true)) {
 					continue;
 				}
-				feedbackData[i]	=	new VTAddress( pageX, pageY, mipLevel );
 
+				feedbackData[i]	=	new VTAddress( pageX, pageY, mipLevel );
 			}
 		}
 

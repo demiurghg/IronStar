@@ -52,6 +52,35 @@ namespace Fusion.Engine.Graphics {
 
 
 
+		public static bool CheckBadAddress ( int pageX, int pageY, int mipLevel, bool showWarning )
+		{
+			if (mipLevel<0 | mipLevel>=VTConfig.MipCount) {
+				if (showWarning) {
+					Log.Warning("Bad mip level: {0} - [0..{1})", mipLevel, VTConfig.MipCount);
+				}
+				return false;
+			}
+
+			int maxPageCount = VTConfig.VirtualPageCount >> mipLevel;
+
+			if (pageX<0 | pageX>=maxPageCount) {
+				if (showWarning) {
+					Log.Warning("Bad page X: {0} - [0..{1})", pageX, maxPageCount);
+				}
+				return false;
+			}
+			if (pageY<0 | pageY>=maxPageCount) {
+				if (showWarning) {
+					Log.Warning("Bad page Y: {0} - [0..{1})", pageY, maxPageCount);
+				}
+				return false;
+			}
+
+			return true;
+		}
+
+
+
 		public static VTAddress FromChild ( VTAddress feedback )
 		{
 			if (feedback.MipLevel >= VTConfig.MaxMipLevel) {

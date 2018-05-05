@@ -12,6 +12,7 @@ using Fusion.Engine.Server;
 using System.Reflection;
 using System.ComponentModel;
 using Fusion.Core.Mathematics;
+using System.Collections.Concurrent;
 
 namespace Fusion.Core.Shell {
 	public partial class Invoker {
@@ -23,6 +24,7 @@ namespace Fusion.Core.Shell {
 		readonly Stack<ICommand> redoStack	= new Stack<ICommand>(1024);
 		readonly Queue<ICommand> cmdQueue	= new Queue<ICommand>(1024);
 		readonly Dictionary<string,CommandCreator> commandsRegistry = new Dictionary<string, CommandCreator>();
+		readonly Dictionary<string,object> objectRegistry = new Dictionary<string, object>();
 
 
 		/// <summary>
@@ -32,6 +34,7 @@ namespace Fusion.Core.Shell {
 		{
 			//RegisterCommand("set", (args)=>new Set(this,args));
 		}
+
 
 
 		/// <summary>
@@ -59,12 +62,75 @@ namespace Fusion.Core.Shell {
 		public void UnregisterCommand ( string commandName )
 		{
 			lock (lockObject) {
-				if (!commandsRegistry.ContainsKey( commandName ) ) {
+				if (!commandsRegistry.Remove( commandName )) {
 					Log.Warning("Command '{0}' is not registered", commandName );
+				}
+			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="obj"></param>
+		public void RegisterObject ( string objectName, object obj )
+		{
+			lock (lockObject) {
+				if (objectRegistry.ContainsKey( objectName ) ) {
+					Log.Warning("Named object '{0}' is already registered", objectName );
 					return;
 				}
-				commandsRegistry.Remove( commandName );
+				objectRegistry.Add( objectName, obj );
 			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		public void UnregisterObject ( string objectName )
+		{
+			lock (lockObject) {
+				if (!objectRegistry.Remove( objectName )) {
+					Log.Warning("Named object '{0}' is not registered", objectName );
+				}
+			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="objectName"></param>
+		/// <param name="pi"></param>
+		/// <param name="obj"></param>
+		private bool TryGetObject ( string objectName, out PropertyInfo pi, out object obj )
+		{
+			pi = null;
+			obj = null;
+
+			string left, right;
+
+			if (!objectName.Split('.', out left, out right)) {
+				return false;
+			}
+
+			if (!objectRegistry.TryGetValue( left, out obj)) {
+				return false;
+			}
+
+			pi = obj.GetType().GetProperty(right);
+
+			if (pi==null) {
+				return false;
+			}
+
+			return true;
 		}
 
 

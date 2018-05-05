@@ -857,15 +857,17 @@ namespace Fusion.Engine.Common {
 
 			readonly Game game;
 			readonly string map;
+			readonly bool dedicated;
 
 			public CmdMap ( Game game, ArgList args )
 			{
-				if (args.Count<2) {
-					throw new Exception("Missing command line arguments: map");
-				}
-
 				this.game = game;
-				this.map = args[1];
+
+				args.Usage("map <mapname> [/dedicated|/d]")
+					.Require("mapname"	,	out map			)
+					.Option	("dedicated",	out dedicated	)
+					.Option	("d"		,	out dedicated	)
+					.Apply();
 			}
 
 			public object Execute()

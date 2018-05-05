@@ -11,7 +11,7 @@ namespace Fusion.Core.Shell {
 	/// This class is used to create and retrieve argument lists 
 	/// that can be passed to command class methods that require arglists.
 	/// </summary>
-	public class ArgList : IEnumerable<string> {
+	public partial class ArgList : IEnumerable<string> {
 
 		readonly string[] args;
 		
@@ -35,6 +35,12 @@ namespace Fusion.Core.Shell {
 		}
 
 
+		public Context Usage( string usage )
+		{
+			return new Context(this, usage);
+		}
+
+
 		/// <summary>
 		/// Gets string value at given index.
 		/// Note: 0 index points to command name.
@@ -53,9 +59,16 @@ namespace Fusion.Core.Shell {
 			return args[index];
 		}
 
+
 		public float AsFloat ( int index )
 		{
 			return StringConverter.ToSingle( args[index] );
+		}
+
+
+		public int AsInt ( int index )
+		{
+			return StringConverter.ToInt32( args[index] );
 		}
 
 

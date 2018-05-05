@@ -155,7 +155,10 @@
     <Compile Include="Core\Mathematics\Segment.cs" />
     <Compile Include="Core\Mathematics\WaveLength.cs" />
     <Compile Include="Core\Shell\AEAttributes.cs" />
+    <Compile Include="Core\Shell\ArgListException.cs" />
+    <Compile Include="Core\Shell\ArgList.Context.cs" />
     <Compile Include="Core\Shell\ArgList.cs" />
+    <Compile Include="Core\Shell\Invoker.Set.cs" />
     <Compile Include="Core\Shell\ISyntax.cs" />
     <Compile Include="Core\Shell\ICommand.cs" />
     <Compile Include="Core\Shell\Invoker.Batch.cs" />

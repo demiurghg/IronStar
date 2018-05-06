@@ -40,8 +40,20 @@ namespace IronStar.Editor2.Controls {
 			//KeyDown+=TextBox_KeyDown;
 			//KeyUp+=TextBox_KeyUp;
 			TypeWrite+=TextBox_TypeWrite;
+			KeyDown+=TextBox_KeyDown;
+			KeyUp+=TextBox_KeyUp;
 			Activated+=TextBox_Activated;
 			Deactivated+=TextBox_Deactivated;
+		}
+
+		private void TextBox_KeyUp( object sender, KeyEventArgs e )
+		{
+			e.Handled = true;
+		}
+
+		private void TextBox_KeyDown( object sender, KeyEventArgs e )
+		{
+			e.Handled = true;
 		}
 
 		private void TextBox_Deactivated( object sender, EventArgs e )
@@ -111,6 +123,8 @@ namespace IronStar.Editor2.Controls {
 
 		private void TextBox_TypeWrite( object sender, KeyEventArgs e )
 		{
+			e.Handled = true;
+
 			if (e.Ctrl) {
 				switch (e.Key) {
 					case Keys.C: CopyToClipboard(); break;

@@ -9,6 +9,7 @@ using Fusion.Core.Configuration;
 using Fusion.Engine.Common;
 using Fusion;
 using System.ComponentModel;
+using Fusion.Core.Shell;
 
 namespace IronStar.Editor2 {
 
@@ -24,6 +25,13 @@ namespace IronStar.Editor2 {
 	}
 
 	public class EditorConfig {
+
+		readonly MapEditor editor;
+
+		public EditorConfig ( MapEditor editor )
+		{
+			this.editor	=	editor;
+		}
 
 		[Config]
 		[Category("Move Tool")]
@@ -48,5 +56,12 @@ namespace IronStar.Editor2 {
 		[Config]
 		[Category("Rotate Tool")]
 		public float RotateToolSnapValue { get; set; } = 15.0f;
+
+		[AECommand]
+		public void ToggleSimulation ()
+		{
+			editor.EnableSimulation = !editor.EnableSimulation;
+		}
+
 	}
 }

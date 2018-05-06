@@ -90,6 +90,7 @@
     <Compile Include="Editor2\Controls\AEPropertyGrid.AECheckBox.cs" />
     <Compile Include="Editor2\Controls\AEPropertyGrid.cs" />
     <Compile Include="Editor2\Controls\ColorTheme.cs" />
+    <Compile Include="Editor2\Controls\Workspace.cs" />
     <Compile Include="Editor2\EditorConfig.cs" />
     <Compile Include="Editor2\MapEditor.Selection.cs" />
     <Compile Include="Editor2\RotateTool.cs" />
@@ -101,7 +102,6 @@
     <Compile Include="Core\EntityCollection.cs" />
     <Compile Include="Core\GameWorld.Precacher.cs" />
     <Compile Include="Editor2\Enums.cs" />
-    <Compile Include="Editor2\MapEditor.UI.cs" />
     <Compile Include="Editor2\MapEditor.cs" />
     <Compile Include="Core\GameWorld.Query.cs" />
     <Compile Include="Core\Old\Filter.cs" />

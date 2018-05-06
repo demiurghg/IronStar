@@ -32,7 +32,7 @@ namespace IronStar.Editor2 {
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
-		void Select( int x, int y, bool add )
+		public void Select( int x, int y, bool add )
 		{
 			var ray = camera.PointToRay( x, y );
 

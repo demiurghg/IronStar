@@ -164,6 +164,7 @@ namespace Fusion.Engine.Frames {
 			public bool Ctrl = false;
 			public bool Alt = false;
 			public char Symbol = '\0';
+			public bool Handled = false;
 		}
 
 		public class MouseEventArgs : EventArgs {
@@ -619,18 +620,37 @@ namespace Fusion.Engine.Frames {
 
 		internal void OnKeyDown( Keys key, bool shift, bool alt, bool ctrl )
 		{
-			KeyDown?.Invoke( this, new KeyEventArgs() { Key = key, Shift = shift, Alt = alt, Ctrl = ctrl } );
+			var eventArgs = new KeyEventArgs() { Key = key, Shift = shift, Alt = alt, Ctrl = ctrl };
+			var frame = this;
+
+			while (frame!=null && !eventArgs.Handled) {
+				frame.KeyDown?.Invoke( this, eventArgs );
+				frame = frame.Parent;
+			}
 		}
 
 		internal void OnKeyUp( Keys key, bool shift, bool alt, bool ctrl )
 		{
-			KeyUp?.Invoke( this, new KeyEventArgs() { Key = key, Shift = shift, Alt = alt, Ctrl = ctrl } );
+			var eventArgs = new KeyEventArgs() { Key = key, Shift = shift, Alt = alt, Ctrl = ctrl };
+			var frame = this;
+
+			while (frame!=null && !eventArgs.Handled) {
+				frame.KeyUp?.Invoke( this, eventArgs );
+				frame = frame.Parent;
+			}
 		}
 
 		internal void OnTypeWrite( Keys key, char symbol, bool shift, bool alt, bool ctrl )
 		{
-			TypeWrite?.Invoke( this, new KeyEventArgs() { Key = key, Symbol = symbol, Shift = shift, Alt = alt, Ctrl = ctrl } );
+			var eventArgs = new KeyEventArgs() { Key = key, Symbol = symbol, Shift = shift, Alt = alt, Ctrl = ctrl };
+			var frame = this;
+
+			while (frame!=null && !eventArgs.Handled) {
+				frame.TypeWrite?.Invoke( this, eventArgs );
+				frame = frame.Parent;
+			}
 		}
+
 
 		internal void OnMissclick ()
 		{

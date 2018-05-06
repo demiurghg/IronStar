@@ -57,6 +57,8 @@ namespace IronStar.Editor2 {
 
 		public GameWorld World { get { return world; } }
 
+		Workspace workspace;
+
 
 		class MessageService : IMessageService {
 			public void Push( string message )
@@ -85,14 +87,15 @@ namespace IronStar.Editor2 {
 			this.rs			=	Game.RenderSystem;
 			Content         =   new ContentManager( Game );
 
-			Config			=	new EditorConfig();
+			Config			=	new EditorConfig(this);
 
 			camera			=	new EditorCamera( this );
 			manipulator		=	new NullTool( this );
 			world			=	new GameWorld( Game, new MessageService(), true, new Guid() );
 			world.InitServerAtoms();
 
-			SetupUI();
+			workspace		=	new Workspace( this, Game.Frames.RootFrame );
+			
 
 			Game.Keyboard.ScanKeyboard =	true;
 
@@ -122,7 +125,7 @@ namespace IronStar.Editor2 {
 
 			//ColorPicker.ShowDialog( Game.Frames, 50, 200, Color.CornflowerBlue, (clr)=>Log.Message("{0}", clr) );
 
-			FileSelector.ShowDialog( Game.Frames, "scenes", "*.fbx", "scenes/box.fbx", (s) => Log.Message("{0}", s) );
+			//FileSelector.ShowDialog( Game.Frames, "scenes", "*.fbx", "scenes/box.fbx", (s) => Log.Message("{0}", s) );
 
 			//var modalFrame = new Frame( Game.Frames, 200,200, 300,200, "Modal Frame", new Color(40,40,40,40) );
 			//Game.Frames.RootFrame.Add( modalFrame );
@@ -174,22 +177,7 @@ namespace IronStar.Editor2 {
 		{
 			Editors.Editor.GetMapEditor()?.SetSelection( selection, map.Environment );
 
-			if (aeGrid==null) {
-
-				aeGridBox = new ScrollBox( Game.Frames, 1280 - 310, 10, 300, 200 );
-
-				aeGrid = new AEPropertyGrid( Game.Frames );
-				aeGrid.Width	=	300;
-				aeGrid.Height	=	700;
-				aeGrid.X		=	0;//1280-310;
-				aeGrid.Y		=	0;//10;
-
-				aeGridBox.Add( aeGrid );
-
-				Game.Frames.RootFrame.Add( aeGridBox );
-			}
-
-			aeGrid.TargetObject = selection.FirstOrDefault();
+			workspace.FeedProperties( selection.FirstOrDefault() );
 		}
 
 
@@ -335,7 +323,7 @@ namespace IronStar.Editor2 {
 		/// <summary>
 		/// 
 		/// </summary>
-		public void SetToEntity ()
+		public void BakeToEntity ()
 		{
 			foreach ( var se in selection ) {
 				var entity = (se as MapEntity)?.Entity;
@@ -461,7 +449,7 @@ namespace IronStar.Editor2 {
 		/// <summary>
 		/// 
 		/// </summary>
-		void Focus ()
+		public void FocusSelection ()
 		{
 			var targets = selection.Any() ? selection.ToArray() : map.Nodes.ToArray();
 

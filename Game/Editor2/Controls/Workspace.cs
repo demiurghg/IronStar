@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Frames;
 using Fusion.Engine.Input;
+using Fusion.Engine.Frames.Layouts;
+using IronStar.Mapping;
+using Fusion.Core.Extensions;
+using IronStar.Core;
+using Fusion.Engine.Common;
 
 namespace IronStar.Editor2.Controls {
 	
@@ -15,6 +20,11 @@ namespace IronStar.Editor2.Controls {
 		Shelf	lowerShelf;
 		MapEditor editor;
 		AEPropertyGrid grid;
+		Panel	palette;
+
+		Type[] entityTypes;
+
+		Frame	statLabel;
 
 
 		/// <summary>
@@ -37,6 +47,9 @@ namespace IronStar.Editor2.Controls {
 
 			this.Anchor			=	FrameAnchor.All;
 
+			this.entityTypes	=	Misc.GetAllSubclassesOf( typeof(EntityFactory), false );
+
+
 			parent.Add(this);
 
 			//
@@ -55,19 +68,23 @@ namespace IronStar.Editor2.Controls {
 			upperShelf.AddLButton("LD", null, null );
 
 			upperShelf.AddLSplitter();
-			upperShelf.AddLButton("TRG", null, null );
-			upperShelf.AddLButton("SFX", null, null );
-			upperShelf.AddLButton("SPP", null, null );
+			upperShelf.AddFatLButton("ENTPLT", null, ()=> ToggleShowPalette() );
 
-			upperShelf.AddRButton("ES", null, ()=> FeedProperties(editor.Config) );
+			upperShelf.AddLSplitter();
+			upperShelf.AddFatLButton("UNFRZ", null, ()=> editor.UnfreezeAll() );
+
+			upperShelf.AddFatRButton("EDITOR\rCONFIG", null, ()=> FeedProperties(editor.Config) );
 
 
-			lowerShelf.AddFatLButton("PLAY",	null, () => editor.EnableSimulation = !editor.EnableSimulation );
-			lowerShelf.AddFatLButton("RESET",	null, () => editor.ResetWorld(true) );
-			lowerShelf.AddFatLButton("BAKE",	null, () => editor.BakeToEntity() );
-			lowerShelf.AddLSplitter();
-			lowerShelf.AddFatLButton("ACT",		null, () => editor.ActivateSelected() );
-			lowerShelf.AddFatLButton("USE",		null, () => editor.UseSelected() );
+			lowerShelf.AddFatLButton("PLAY\r[SPACE]" ,	null, () => editor.EnableSimulation = !editor.EnableSimulation );
+			lowerShelf.AddFatLButton("RESET\r[ESC]"	 ,	null, () => editor.ResetWorld(true) );
+			lowerShelf.AddFatLButton("BAKE\r[B]"	 ,	null, () => editor.BakeToEntity() );
+			lowerShelf.AddLSplitter();				 
+			lowerShelf.AddFatLButton("ACT\n[ENTER]"	 ,	null, () => editor.ActivateSelected() );
+			lowerShelf.AddFatLButton("USE\n[???]"	 ,	null, () => editor.UseSelected() );
+
+
+			statLabel	=	lowerShelf.AddRIndicator("FPS   : 57.29\r\r", 128 );
 
 			//
 			//	setup keys & mouse :
@@ -81,6 +98,32 @@ namespace IronStar.Editor2.Controls {
 			Click		+=	RootFrame_Click;
 		}
 
+
+
+		List<float> fps = new List<float>(60);
+
+
+		protected override void Update( GameTime gameTime )
+		{
+			base.Update( gameTime );
+
+			fps.Add( gameTime.Fps );
+			while (fps.Count>30) {
+				fps.RemoveAt(0);
+			}	
+
+			float curFps	=	gameTime.Fps;
+			float avgFps	=	fps.Average();
+			float maxFps	=	fps.Max();
+			float minFps	=	fps.Min();
+
+			statLabel.Text	=	
+				string.Format(
+ 				  "    FPS: {0,5:000.0}\r\n" +
+ 				  "Max FPS: {1,5:000.0}\r\n" +
+ 				  "Avg FPS: {2,5:000.0}\r\n" +
+ 				  "Min FPS: {3,5:000.0}", curFps, maxFps, avgFps, minFps );
+		}
 
 
 		/// <summary>
@@ -109,6 +152,49 @@ namespace IronStar.Editor2.Controls {
 				grid.Visible = false;
 			} else {
 				grid.Visible = true;
+			}
+		}
+
+
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void ToggleShowPalette ()
+		{
+			if (palette==null) {
+
+				palette	=	new Panel( Frames, 10, 50, 150, 10 );
+				palette.Layout = new StackLayout() { AllowResize = true, EqualWidth = true, Interval = 1 };
+
+				palette.Add( new Button( Frames, "Decal"		, 0,0,150,20, () => editor.CreateNodeUI( new MapDecal		() ) ) );
+				palette.Add( new Button( Frames, "Static Model"	, 0,0,150,20, () => editor.CreateNodeUI( new MapModel		() ) ) );
+				palette.Add( new Button( Frames, "Light Probe"	, 0,0,150,20, () => editor.CreateNodeUI( new MapLightProbe	() ) ) );
+				palette.Add( new Button( Frames, "Omni Light"	, 0,0,150,20, () => editor.CreateNodeUI( new MapOmniLight	() ) ) );
+				palette.Add( new Button( Frames, "Spot Light"	, 0,0,150,20, () => editor.CreateNodeUI( new MapSpotLight	() ) ) );
+
+				palette.Add( new Frame( Frames, 0,0,0,10, "", Color.Zero ) );
+
+				foreach ( var ent in entityTypes ) {
+
+					string name = ent.Name.Replace("Factory", "");
+					Action func = () => { 
+						var mapEntity = new MapEntity();
+						mapEntity.Factory = (EntityFactory)Activator.CreateInstance(ent);
+						editor.CreateNodeUI( mapEntity ); 
+					};
+					palette.Add( new Button( Frames, name, 0,0,150,20, func ) );
+				}
+
+				palette.Add( new Frame( Frames, 0,0,0,10, "", Color.Zero ) );
+
+				palette.Add( new Button( Frames, "Close Palette", 0,0,150,20, () => palette.Visible = false ) );
+
+				Add( palette );
+			} else {
+				palette.Visible = !palette.Visible;
 			}
 		}
 

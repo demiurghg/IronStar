@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 
 namespace IronStar.Editor2.Controls {
+
+
 	static class ColorTheme {
 
 		public static readonly Color	ShadowColor				=	new Color(  0,  0,  0, 64);

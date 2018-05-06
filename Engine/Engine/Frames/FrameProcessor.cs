@@ -121,7 +121,7 @@ namespace Fusion.Engine.Frames {
 
 			//	create root frame :
 			var vp			=	Game.RenderSystem.DisplayBounds;
-			RootFrame		=	new Frame( this, 0,0, vp.Width, vp.Height, null, null, Color.Zero );
+			RootFrame		=	new Frame( this, 0,0, vp.Width, vp.Height, "", null, Color.Zero );
 			Game.RenderSystem.DisplayBoundsChanged += RenderSystem_DisplayBoundsChanged;
 
 			mouseProcessor.Initialize();

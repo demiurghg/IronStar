@@ -217,6 +217,7 @@
     <Compile Include="Engine\Common\IMessageService.cs" />
     <Compile Include="Engine\Common\IUserInterface.cs" />
     <Compile Include="Engine\Campaign\SinglePlayer.cs" />
+    <Compile Include="Engine\Frames\Frame.Text.cs" />
     <Compile Include="Engine\Frames\Frame.Layout.cs" />
     <Compile Include="Engine\Frames\FrameUtils.cs" />
     <Compile Include="Engine\Frames\KeyboardProcessor.cs" />

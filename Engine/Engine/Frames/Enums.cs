@@ -49,18 +49,18 @@ namespace Fusion.Engine.Frames {
 	/// Alignment enum
 	/// </summary>
 	public enum Alignment {
-		TopLeft,
-		TopCenter,
-		TopRight,
-		MiddleLeft,
-		MiddleCenter,
-		MiddleRight,
-		BottomLeft,
-		BottomCenter,
-		BottomRight,
-		BaselineLeft,
-		BaselineCenter,
-		BaselineRight,
+		TopLeft			,
+		TopCenter		,
+		TopRight		,
+		MiddleLeft		,
+		MiddleCenter	,
+		MiddleRight		,
+		BottomLeft		,
+		BottomCenter	,
+		BottomRight		,
+		BaselineLeft	,
+		BaselineCenter	,
+		BaselineRight	,
 	}
 
 

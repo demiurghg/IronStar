@@ -248,6 +248,15 @@ namespace IronStar.Editor2 {
 		}
 
 
+
+		public void CreateNodeUI ( MapNode newNode )
+		{
+			newNode.SpawnNode( World );
+			Map.Nodes.Add( newNode );
+			Select( newNode );
+		}
+
+
 		public void Select( MapNode node )
 		{
 			if ( node==null ) {

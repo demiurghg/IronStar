@@ -64,13 +64,13 @@ namespace IronStar.Editor2.Controls {
 				var h	=	8 + 2;
 
 				var dropDownElement = new Frame( Frames, 0,0,w,h, value, ColorTheme.BackgroundColor );
-				var textRect = dropDownElement.MeasureText();
+				var textSize = dropDownElement.TextBlockSize;
 
 				dropDownElement.TextAlignment = Alignment.MiddleLeft;
 				dropDownElement.Padding = 1;
 				dropDownElement.ForeColor = ColorTheme.TextColorNormal;
 
-				maxWidth = Math.Max( textRect.Width, maxWidth );
+				maxWidth = Math.Max( textSize.Width, maxWidth );
 
 				dropDownList.Add( dropDownElement );
 				dropDownElement.StatusChanged += DropDown_StatusChanged;

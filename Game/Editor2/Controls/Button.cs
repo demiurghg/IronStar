@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Fusion.Core.Mathematics;
 using Fusion.Engine.Frames;
 
 namespace IronStar.Editor2.Controls {
@@ -30,6 +31,9 @@ namespace IronStar.Editor2.Controls {
 			BorderColor		=	ColorTheme.ButtonBorderColor;
 			Text			=	name;
 
+			ShadowColor		=	ColorTheme.ShadowColor;
+			ShadowOffset	=	new Vector2(1,1);
+
 			StatusChanged	+=	Button_StatusChanged;
 			Click			+=	Button_Click;
 		}
@@ -47,7 +51,7 @@ namespace IronStar.Editor2.Controls {
 		{
 			switch ( e.Status ) {
 				case FrameStatus.None:		
-					ForeColor	=	ColorTheme.TextColorNormal;	
+					ForeColor	=	(action == null) ? Color.Red : ColorTheme.TextColorNormal;	
 					BackColor	=	ColorTheme.ButtonColorNormal;	
 					TextOffsetX	=	0;
 					TextOffsetY =	0;	

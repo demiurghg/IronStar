@@ -62,11 +62,6 @@ namespace Fusion.Engine.Frames {
 		public	bool		AutoSize			{ get; set; }
 
 		/// <summary>
-		/// Text font
-		/// </summary>
-		public	SpriteFont	Font				{ get; set; }
-
-		/// <summary>
 		/// Tag object
 		/// </summary>
 		public	object		Tag;
@@ -118,37 +113,6 @@ namespace Fusion.Engine.Frames {
 		/// Shadow offset
 		/// </summary>
 		public	Vector2		ShadowOffset		{ get; set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public	virtual string		Text		{ get; set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public	Alignment	TextAlignment		{ get; set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public	int			TextOffsetX			{ get; set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public	int			TextOffsetY			{ get; set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public	TextEffect	TextEffect			{ get; set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public	float		TextTracking		{ get; set; }
-
 
 		public int				ImageOffsetX	{ get; set; }
 		public int				ImageOffsetY	{ get; set; }
@@ -984,104 +948,6 @@ namespace Fusion.Engine.Frames {
 
 		}
 
-
-
-		/// <summary>
-		/// Gets global text rectangle without applied offsets
-		/// </summary>
-		/// <param name="start"></param>
-		/// <param name="length"></param>
-		/// <returns></returns>
-		public Rectangle MeasureText ()
-		{
-			if (Text==null) {
-				return new Rectangle(0,0,0,0);
-			}
-
-			float textWidth		=	8 * Text.Length;
-			float textHeight	=	8;
-			float capHeight		=	8;
-			float lineHeight	=	8;
-			float baseLine		=	8;
-
-			if (Font!=null) {
-				var r		=	Font.MeasureStringF( Text, TextTracking );
-				textWidth	=	r.Width;
-				textHeight	=	r.Height;
-				baseLine	=	Font.BaseLine;
-				capHeight	=	Font.CapHeight;
-				lineHeight	=	Font.LineHeight;
-			}
-
-			int x	=	0;
-			int y	=	0;
-			var gp	=	GetPaddedRectangle();
-
-			int hAlign	=	0;
-			int vAlign	=	0;
-
-			switch (TextAlignment) {
-				case Alignment.TopLeft			: hAlign = -1; vAlign = -1; break;
-				case Alignment.TopCenter		: hAlign =  0; vAlign = -1; break;
-				case Alignment.TopRight			: hAlign =  1; vAlign = -1; break;
-				case Alignment.MiddleLeft		: hAlign = -1; vAlign =  0; break;
-				case Alignment.MiddleCenter		: hAlign =  0; vAlign =  0; break;
-				case Alignment.MiddleRight		: hAlign =  1; vAlign =  0; break;
-				case Alignment.BottomLeft		: hAlign = -1; vAlign =  1; break;
-				case Alignment.BottomCenter		: hAlign =  0; vAlign =  1; break;
-				case Alignment.BottomRight		: hAlign =  1; vAlign =  1; break;
-
-				case Alignment.BaselineLeft		: hAlign = -1; vAlign =  2; break;
-				case Alignment.BaselineCenter	: hAlign =  0; vAlign =  2; break;
-				case Alignment.BaselineRight	: hAlign =  1; vAlign =  2; break;
-			}
-
-			if ( hAlign  < 0 )	x	=	gp.X + (int)( 0 );
-			if ( hAlign == 0 )	x	=	gp.X + (int)( 0 + (int)( gp.Width/2 - textWidth/2 ) );
-			if ( hAlign  > 0 )	x	=	gp.X + (int)( 0 + (int)( gp.Width - textWidth ) );
-
-			if ( vAlign  < 0 )	y	=	gp.Y + (int)( 0 );
-			if ( vAlign == 0 )	y	=	gp.Y + (int)( capHeight/2 - baseLine + gp.Height/2 );
-			if ( vAlign  > 0 )	y	=	gp.Y + (int)( gp.Height - lineHeight );
-			if ( vAlign == 2 )	y	=	gp.Y - (int)baseLine;
-
-			return new Rectangle( x, y, (int)textWidth, (int)textHeight );
-		}
-
-
-		/// <summary>
-		/// Draws string
-		/// </summary>
-		/// <param name="text"></param>
-		protected virtual void DrawFrameText ( SpriteLayer spriteLayer, int clipRectIndex )
-		{											
-			if (string.IsNullOrEmpty(Text)) {
-				return;
-			}
-
-			var rect = MeasureText();
-
-			int x = rect.X;
-			int y = rect.Y;
-
-			if (Font!=null) {
-				
-				if (ShadowColor.A!=0) {
-					Font.DrawString( spriteLayer, Text, x + TextOffsetX+ShadowOffset.X, y + TextOffsetY+ShadowOffset.Y, ShadowColor, clipRectIndex, TextTracking, false );
-				}
-
-				Font.DrawString( spriteLayer, Text, x + TextOffsetX, y + TextOffsetY, ForeColor, clipRectIndex, TextTracking, false );
-
-			} else {
-
-				if (ShadowColor.A!=0) {
-					spriteLayer.DrawDebugString( x + TextOffsetX+ShadowOffset.X, y + TextOffsetY+ShadowOffset.Y, Text, ShadowColor, clipRectIndex );
-				}
-
-				spriteLayer.DrawDebugString( x + TextOffsetX, y + TextOffsetY, Text, ForeColor, clipRectIndex );
-
-			}
-		}
 	}
 }
 

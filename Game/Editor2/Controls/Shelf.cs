@@ -127,7 +127,25 @@ namespace IronStar.Editor2.Controls {
 			var button = new Button( Frames, text, 0,0,34+34+1,34, action);
 			button.ShadowColor = ColorTheme.ShadowColor;
 			button.ShadowOffset = new Vector2(1,1);
+			button.Padding = 1;
+			button.TextAlignment = Alignment.MiddleCenter;
 			itemsLeft.Add( button );
+			Add( button );
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="text"></param>
+		/// <param name="image"></param>
+		/// <param name="action"></param>
+		public void AddFatRButton ( string text, string image, Action action )
+		{
+			var button = new Button( Frames, text, 0,0,34+34+1,34, action);
+			button.ShadowColor = ColorTheme.ShadowColor;
+			button.ShadowOffset = new Vector2(1,1);
+			itemsRight.Add( button );
 			Add( button );
 		}
 
@@ -146,6 +164,32 @@ namespace IronStar.Editor2.Controls {
 			itemsRight.Add( button );
 			Add( button );
 		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="width"></param>
+		/// <returns></returns>
+		public Frame AddRIndicator ( string text, int width )
+		{
+			var label = new Frame( Frames, 0, 0, width, 34, text, ColorTheme.BackgroundColorDark );
+			
+			label.ForeColor		= ColorTheme.TextColorNormal;
+			label.ShadowColor	= ColorTheme.ShadowColor;
+			label.ShadowOffset	= new Vector2(1,1);
+			label.Border		= 1;
+			label.BorderColor	= ColorTheme.BorderColor;
+			label.TextAlignment	= Alignment.MiddleLeft;
+			label.Padding		= 1;
+
+			itemsRight.Add( label );
+			Add( label );
+
+			return label;
+		}
+
 
 	}
 }

@@ -32,7 +32,7 @@ namespace Fusion.Core.Shell {
 		/// </summary>
 		public Invoker ()
 		{
-			//RegisterCommand("set", (args)=>new Set(this,args));
+			RegisterCommand("set", (args)=>new Set(this,args));
 		}
 
 

@@ -31,6 +31,8 @@ namespace Fusion.Core.Shell {
 		
 			public Set ( Invoker invoker, ArgList args )
 			{
+				this.invoker = invoker;
+
 				args.Usage("set <variable> value /noundo /rollback:value /historyoff")
 					.Require( "variable"	,	out variable	)
 					.Require( "value"		,	out value		)
@@ -38,6 +40,7 @@ namespace Fusion.Core.Shell {
 					.Option	( "historyoff"	,	out historyoff	)
 					.Apply();
 			}
+
 
 			public object Execute()
 			{
@@ -48,7 +51,15 @@ namespace Fusion.Core.Shell {
 					throw new InvokerException("bad object name '{0}'", variable);
 				}
 
-				throw new NotImplementedException();
+				object objVal;
+
+				if (!StringConverter.TryConvertFromString(pi.PropertyType, value, out objVal )) {
+					throw new InvokerException("can not set {0} from '{1}'", pi.PropertyType, value);
+				}
+
+				pi.SetValue( obj, objVal );
+
+				return null;
 			}
 
 			public bool IsRollbackable()

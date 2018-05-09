@@ -110,6 +110,7 @@ namespace IronStar.Editor2 {
 		void IEditorInstance.Initialize()
 		{
 			Game.Config.ApplySettings( Config );
+			Game.Invoker.RegisterObject( "EditorConfig", Config );
 
 			if (File.Exists(fullPath)) {
 				Log.Message("Opening existing map: {0}", fullPath);
@@ -159,6 +160,7 @@ namespace IronStar.Editor2 {
 				if ( disposing ) {
 
 					Game.Config.RetrieveSettings( Config );
+					Game.Invoker.UnregisterObject( "EditorConfig" );
 
 					world?.Dispose();
 

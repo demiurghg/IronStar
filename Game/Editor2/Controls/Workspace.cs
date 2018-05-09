@@ -11,6 +11,8 @@ using IronStar.Mapping;
 using Fusion.Core.Extensions;
 using IronStar.Core;
 using Fusion.Engine.Common;
+using Fusion;
+using Fusion.Build;
 
 namespace IronStar.Editor2.Controls {
 	
@@ -21,6 +23,7 @@ namespace IronStar.Editor2.Controls {
 		MapEditor editor;
 		AEPropertyGrid grid;
 		Panel	palette;
+		Panel	assets;
 
 		Type[] entityTypes;
 
@@ -52,6 +55,7 @@ namespace IronStar.Editor2.Controls {
 
 
 			parent.Add(this);
+			Frames.TargetFrame = this;
 
 			//
 			//	setup controls :
@@ -72,10 +76,19 @@ namespace IronStar.Editor2.Controls {
 			upperShelf.AddLButton("LD", null, null );
 
 			upperShelf.AddLSplitter();
+			upperShelf.AddFatLButton("UNFRZ", null, ()=> editor.UnfreezeAll() );
+
+			upperShelf.AddLSplitter();
 			upperShelf.AddFatLButton("ENTPLT", null, ()=> ToggleShowPalette() );
 
 			upperShelf.AddLSplitter();
-			upperShelf.AddFatLButton("UNFRZ", null, ()=> editor.UnfreezeAll() );
+			upperShelf.AddFatLButton("SFX"		, null, ()=> ToggleAssetsExplorer("sfx"		) );
+			upperShelf.AddFatLButton("MODEL"	, null, ()=> ToggleAssetsExplorer("models"	) );
+			upperShelf.AddFatLButton("ENTITY"	, null, ()=> ToggleAssetsExplorer("entities") );
+			upperShelf.AddFatLButton("ITEM"		, null, ()=> ToggleAssetsExplorer("items"	) );
+
+			upperShelf.AddLSplitter();
+			upperShelf.AddFatLButton("BUILD\rRELOAD", null, ()=> Game.Invoker.ExecuteString("contentBuild") );
 
 			upperShelf.AddFatRButton("EDITOR\rCONFIG", null, ()=> FeedProperties(editor.Config) );
 			upperShelf.AddRButton	("EXIT", null, ()=> Game.GameEditor.Stop() );
@@ -89,9 +102,9 @@ namespace IronStar.Editor2.Controls {
 			lowerShelf.AddFatLButton("USE\n[???]"	 ,	null, () => editor.UseSelected() );
 
 
-			snapLabel	=	lowerShelf.AddRIndicator("SNAP", 192 );
+			snapLabel	=	lowerShelf.AddRIndicator("SNAP", 200 );
 			lowerShelf.AddRSplitter();
-			statLabel	=	lowerShelf.AddRIndicator("FPS   : 57.29\r\r", 128 );
+			statLabel	=	lowerShelf.AddRIndicator("FPS   : 57.29\r\r", 200 );
 
 			//
 			//	setup keys & mouse :
@@ -130,12 +143,14 @@ namespace IronStar.Editor2.Controls {
 			float maxFps	=	fps.Max();
 			float minFps	=	fps.Min();
 
+			bool vsync		=	Game.RenderSystem.VSyncInterval!=0;
+
 			statLabel.Text	=	
 				string.Format(
- 				  "    FPS: {0,5:000.0}\r\n" +
+ 				  "    FPS: {0,5:000.0} {4}\r\n" +
  				  "Max FPS: {1,5:000.0}\r\n" +
  				  "Avg FPS: {2,5:000.0}\r\n" +
- 				  "Min FPS: {3,5:000.0}", curFps, maxFps, avgFps, minFps );
+ 				  "Min FPS: {3,5:000.0}", curFps, maxFps, avgFps, minFps, vsync ? "VSYNC ON" : "VSYNC OFF" );
 
 			snapLabel.Text	=	
 				string.Format(
@@ -181,6 +196,25 @@ namespace IronStar.Editor2.Controls {
 
 
 
+		void ArrangeLeft ( params Frame[] frames )
+		{
+			int x = 10;
+			int y = 50;
+
+			foreach ( var frame in frames ) {
+				if (frame==null) {
+					continue;
+				}
+				if (!frame.Visible) {
+					continue;
+				}
+				frame.X = x;
+				frame.Y = y;
+				x += frame.Width;
+				x += 10;
+			}
+		}
+
 
 
 		/// <summary>
@@ -192,6 +226,8 @@ namespace IronStar.Editor2.Controls {
 
 				palette	=	new Panel( Frames, 10, 50, 150, 10 );
 				palette.Layout = new StackLayout() { AllowResize = true, EqualWidth = true, Interval = 1 };
+
+				palette.Add( new Label( Frames, 0,0,120,12, "Map Nodes Palette" ) { TextAlignment = Alignment.MiddleCenter } );
 
 				palette.Add( new Button( Frames, "Decal"		, 0,0,150,20, () => editor.CreateNodeUI( new MapDecal		() ) ) );
 				palette.Add( new Button( Frames, "Static Model"	, 0,0,150,20, () => editor.CreateNodeUI( new MapModel		() ) ) );
@@ -214,13 +250,48 @@ namespace IronStar.Editor2.Controls {
 
 				palette.Add( new Frame( Frames, 0,0,0,10, "", Color.Zero ) );
 
-				palette.Add( new Button( Frames, "Close Palette", 0,0,150,20, () => palette.Visible = false ) );
+				palette.Add( new Button( Frames, "Close", 0,0,150,20, () => palette.Visible = false ) );
 
 				Add( palette );
 			} else {
 				palette.Visible = !palette.Visible;
 			}
+
+			ArrangeLeft( palette, assets );
 		}
+
+
+
+		public void ToggleAssetsExplorer ( string category )
+		{
+			if (assets==null) {
+
+				assets	=	new Panel( Frames, 10, 50, 200, 10 );
+
+				assets.Add( new Label( Frames, 0,0,200,12, "Asset Explorer [" + category + "]" ) { TextAlignment = Alignment.MiddleCenter } );
+				
+				assets.Layout = new StackLayout() { AllowResize = true, EqualWidth = true, Interval = 1 };
+
+				var scrollBox = new ScrollBox( Frames, 0,0,100,400 );
+				scrollBox.Padding = 1;
+
+				var listView  = new ListBox( Frames, new[] {"xsaxsxs", "xsxsxsxs", "xsxsxsxsxsacweq"} );
+
+				scrollBox.Add( listView );
+				assets.Add( scrollBox );
+
+
+				assets.Add( new Button( Frames, "New", 0,0,150,20,   () => Log.Warning("New") ) );
+				assets.Add( new Button( Frames, "Close", 0,0,150,20, () => palette.Visible = false ) );
+
+				Add( assets );
+			} else {
+				assets.Visible = !assets.Visible;
+			}
+
+			ArrangeLeft( palette, assets );
+		}
+
 
 
 		/// <summary>
@@ -239,6 +310,12 @@ namespace IronStar.Editor2.Controls {
 			if (e.Key==Keys.F) {
 				editor.FocusSelection();
 			}
+			
+			if (e.Key==Keys.F2) {
+				var vsync = Game.RenderSystem.VSyncInterval == 1;
+				Game.RenderSystem.VSyncInterval = vsync ? 0 : 1;
+			}
+
 			if (!editor.manipulator.IsManipulating) {
 				if (e.Key==Keys.Q) {
 					editor.manipulator = new NullTool(editor);

@@ -33,29 +33,43 @@ namespace IronStar.Editor2 {
 			this.editor	=	editor;
 		}
 
-		[Config]
-		[Category("Move Tool")]
-		public AxisMode MoveToolAxisMode { get; set; } = AxisMode.Global;
+
 
 		[Config]
-		[Category("Move Tool")]
-		public SnapMode MoveToolSnapMode { get; set; } = SnapMode.None;
+		[AECategory("Move Tool")]
+		public bool MoveToolSnapEnable { get; set; } = true;
+
 
 		[Config]
-		[Category("Move Tool")]
-		public float MoveToolSnapValue { get; set; } = 1.0f;
+		[AECategory("Move Tool")]
+		public float MoveToolSnapValue { 
+			get {
+				return moveToolSnapValue;	
+			}
+			set {
+				moveToolSnapValue = MathUtil.Clamp( value, 1/64.0f, 8.0f );
+			}
+		}
+		float moveToolSnapValue = 1.0f;
+
 
 		[Config]
-		[Category("Rotate Tool")]
-		public AxisMode RotateToolAxisMode { get; set; } = AxisMode.Global;
+		[AECategory("Rotate Tool")]
+		public bool RotateToolSnapEnable { get; set; } = true;
+
 
 		[Config]
-		[Category("Rotate Tool")]
-		public SnapMode RotateToolSnapMode { get; set; } = SnapMode.None;
+		[AECategory("Rotate Tool")]
+		public float RotateToolSnapValue { 
+			get {
+				return rotateToolSnapValue;
+			}
+			set {
+				rotateToolSnapValue = MathUtil.Clamp( value, 5, 90 );
+			}
+		}
+		float rotateToolSnapValue = 1.0f;
 
-		[Config]
-		[Category("Rotate Tool")]
-		public float RotateToolSnapValue { get; set; } = 15.0f;
 
 		[AECommand]
 		public void ToggleSimulation ()

@@ -89,7 +89,7 @@ namespace IronStar.Editor2 {
 		Vector3 vector0, vector1;
 		float	angle;
 
-		SnapMode	snapMode;
+		bool		snapEnable;
 		float		snapValue;
 
 
@@ -103,7 +103,7 @@ namespace IronStar.Editor2 {
 				return false;
 			}
 
-			snapMode	=	editor.Config.RotateToolSnapMode;
+			snapEnable	=	editor.Config.RotateToolSnapEnable;
 			snapValue	=	editor.Config.RotateToolSnapValue;
 			angle		=	0;
 			vector0		=	Vector3.Zero;
@@ -173,7 +173,7 @@ namespace IronStar.Editor2 {
 
 				angle			=	(float)Math.Atan2( sine, cosine );
 
-				if (snapMode==SnapMode.Relative || snapMode==SnapMode.Absolute) {
+				if (snapEnable) {
 					angle		=	Snap( angle, MathUtil.DegreesToRadians( editor.Config.RotateToolSnapValue ) );
 				}
 

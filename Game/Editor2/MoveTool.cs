@@ -92,7 +92,7 @@ namespace IronStar.Editor2 {
 		Vector3 initialPoint;
 		Vector3 currentPoint;
 
-		SnapMode	snapMode;
+		bool		snapEnable;
 		float		snapValue;
 
 		MapNode[] targets = null;
@@ -105,7 +105,7 @@ namespace IronStar.Editor2 {
 				return false;
 			}
 
-			snapMode	=	editor.Config.MoveToolSnapMode;
+			snapEnable	=	editor.Config.MoveToolSnapEnable;
 			snapValue	=	editor.Config.MoveToolSnapValue;
 
 			targets	=	editor.GetSelection();
@@ -168,7 +168,7 @@ namespace IronStar.Editor2 {
 					var target	= targets[i];
 					var pos		= initPos[i];
 
-					if (snapMode==SnapMode.Absolute) {
+					if (snapEnable) {
 						target.Position = Snap( pos + (currentPoint - initialPoint), snapValue );
 					} else {
 						target.Position = pos + (currentPoint - initialPoint);

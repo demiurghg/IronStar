@@ -25,6 +25,7 @@ namespace IronStar.Editor2.Controls {
 		Type[] entityTypes;
 
 		Frame	statLabel;
+		Frame	snapLabel;
 
 
 		/// <summary>
@@ -64,6 +65,9 @@ namespace IronStar.Editor2.Controls {
 			upperShelf.AddLButton("RT", null, ()=> editor.manipulator = new RotateTool(editor) );
 
 			upperShelf.AddLSplitter();
+			upperShelf.AddLButton("FCS", null, ()=> editor.FocusSelection() );
+
+			upperShelf.AddLSplitter();
 			upperShelf.AddLButton("SV", null, null );
 			upperShelf.AddLButton("LD", null, null );
 
@@ -74,7 +78,8 @@ namespace IronStar.Editor2.Controls {
 			upperShelf.AddFatLButton("UNFRZ", null, ()=> editor.UnfreezeAll() );
 
 			upperShelf.AddFatRButton("EDITOR\rCONFIG", null, ()=> FeedProperties(editor.Config) );
-
+			upperShelf.AddRButton	("EXIT", null, ()=> Game.GameEditor.Stop() );
+ 
 
 			lowerShelf.AddFatLButton("PLAY\r[SPACE]" ,	null, () => editor.EnableSimulation = !editor.EnableSimulation );
 			lowerShelf.AddFatLButton("RESET\r[ESC]"	 ,	null, () => editor.ResetWorld(true) );
@@ -84,6 +89,8 @@ namespace IronStar.Editor2.Controls {
 			lowerShelf.AddFatLButton("USE\n[???]"	 ,	null, () => editor.UseSelected() );
 
 
+			snapLabel	=	lowerShelf.AddRIndicator("SNAP", 192 );
+			lowerShelf.AddRSplitter();
 			statLabel	=	lowerShelf.AddRIndicator("FPS   : 57.29\r\r", 128 );
 
 			//
@@ -98,6 +105,12 @@ namespace IronStar.Editor2.Controls {
 			Click		+=	RootFrame_Click;
 		}
 
+
+
+		public void CloseWorkspace ()
+		{
+			Parent.Remove(this);
+		}
 
 
 		List<float> fps = new List<float>(60);
@@ -123,6 +136,16 @@ namespace IronStar.Editor2.Controls {
  				  "Max FPS: {1,5:000.0}\r\n" +
  				  "Avg FPS: {2,5:000.0}\r\n" +
  				  "Min FPS: {3,5:000.0}", curFps, maxFps, avgFps, minFps );
+
+			snapLabel.Text	=	
+				string.Format(
+ 				  "Move snap   : {0}\r\n" +
+ 				  "Rotate snap : {1}\r\n" +
+ 				  "\r\n" +
+ 				  "", 
+				  editor.Config.MoveToolSnapEnable   ? editor.Config.MoveToolSnapValue  .ToString("000.00") : "Disabled",
+				  editor.Config.RotateToolSnapEnable ? editor.Config.RotateToolSnapValue.ToString("000.00") : "Disabled", 
+				  0,0 );
 		}
 
 
@@ -146,13 +169,14 @@ namespace IronStar.Editor2.Controls {
 				Add( grid );
 			}
 
-			grid.TargetObject = target;
-
 			if (target==null) {
 				grid.Visible = false;
 			} else {
 				grid.Visible = true;
 			}
+
+			grid.FeedObjects( target, (target as MapEntity)?.Factory );
+
 		}
 
 
@@ -208,6 +232,7 @@ namespace IronStar.Editor2.Controls {
 		{
 			bool shift	=	e.Shift;
 			bool ctrl	=	e.Ctrl;
+			bool alt	=	e.Alt;
 
 			e.Handled = true;
 
@@ -249,6 +274,13 @@ namespace IronStar.Editor2.Controls {
 				if (e.Key==Keys.U) {
 					editor.UseSelected();
 				}
+				if (e.Key==Keys.J) {
+					if (ctrl) {
+						editor.Config.RotateToolSnapEnable = !editor.Config.RotateToolSnapEnable;
+					} else {
+						editor.Config.MoveToolSnapEnable = !editor.Config.MoveToolSnapEnable;
+					}
+				}
 				if (e.Key==Keys.D) {
 					if (ctrl || shift) {
 						editor.DuplicateSelection();
@@ -256,6 +288,20 @@ namespace IronStar.Editor2.Controls {
 				}
 				if (e.Key==Keys.G) {
 					Game.RenderSystem.SkipDebugRendering = !Game.RenderSystem.SkipDebugRendering;
+				}
+				if (e.Key==Keys.OemComma) {
+					if (ctrl) {
+						editor.Config.RotateToolSnapValue -= 5;
+					} else {
+						editor.Config.MoveToolSnapValue *= 0.5f;
+					}
+				}
+				if (e.Key==Keys.OemPeriod) {
+					if (ctrl) {
+						editor.Config.RotateToolSnapValue += 5;
+					} else {
+						editor.Config.MoveToolSnapValue *= 2.0f;
+					}
 				}
 			}
 		}

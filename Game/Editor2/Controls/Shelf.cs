@@ -122,6 +122,20 @@ namespace IronStar.Editor2.Controls {
 		/// <param name="text"></param>
 		/// <param name="image"></param>
 		/// <param name="action"></param>
+		public void AddRSplitter ( int width = 17 )
+		{
+			var splitter = new Frame( Frames, 0,0,width,34, "", Color.Zero);
+			itemsRight.Add( splitter );
+			Add( splitter );
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="text"></param>
+		/// <param name="image"></param>
+		/// <param name="action"></param>
 		public void AddFatLButton ( string text, string image, Action action )
 		{
 			var button = new Button( Frames, text, 0,0,34+34+1,34, action);

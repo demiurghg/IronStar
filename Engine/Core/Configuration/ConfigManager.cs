@@ -57,6 +57,7 @@ namespace Fusion.Core.Configuration {
 
 					if (keyData==null) {	
 						Log.Warning("Key '{0}' does not exist in section [{1}].", name, sectionName );
+						continue;
 					}
 
 					object value;

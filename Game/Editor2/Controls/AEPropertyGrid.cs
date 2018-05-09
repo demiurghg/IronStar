@@ -36,23 +36,19 @@ namespace IronStar.Editor2.Controls {
 
 
 
-		object targetObject = null;
-
-
 		/// <summary>
 		/// 
 		/// </summary>
-		public object TargetObject {
-			get {
-				return targetObject;
-			} 
-			set {
-				if (targetObject!=value) {
-					targetObject = value;
-					RefreshEditor();
-				}
+		/// <param name="targetObjects"></param>
+		public void FeedObjects ( params object[] targetObjects )
+		{
+			Clear();
+
+			foreach ( var obj in targetObjects ) {
+				FeedObject(obj);
 			}
 		}
+
 
 
 		/// <summary>
@@ -71,13 +67,9 @@ namespace IronStar.Editor2.Controls {
 		/// <summary>
 		/// 
 		/// </summary>
-		void RefreshEditor ()
+		void FeedObject ( object obj )
 		{
-			var obj = targetObject;
-
-			Clear();
-
-			if (targetObject==null) {
+			if (obj==null) {
 				return;
 			}
 
@@ -138,6 +130,8 @@ namespace IronStar.Editor2.Controls {
 				}
 
 			}
+
+
 
 			foreach ( var mi in obj.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance) ) {
 

@@ -9,6 +9,8 @@ using Fusion.Core.Mathematics;
 namespace Fusion.Core.Extensions {
 	public static class StringExtensions {
 
+		static readonly string[] separators = new[]{ "\r\n", "\r", "\n" };
+
 		/// <summary>
 		/// http://stackoverflow.com/questions/298830/split-string-containing-command-line-parameters-into-string-in-c-sharp/298990#298990
 		/// </summary>
@@ -61,6 +63,13 @@ namespace Fusion.Core.Extensions {
 									 })
 							  .Select(arg => arg.Trim().TrimMatchingQuotes('\"'))
 							  .Where(arg => !string.IsNullOrEmpty(arg));
+		}
+
+
+
+		public static string[] SplitLines (this string text)
+		{
+			return text.Split( separators, StringSplitOptions.None );
 		}
 
 

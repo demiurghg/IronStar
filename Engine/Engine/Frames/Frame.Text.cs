@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion;
 using Fusion.Core.Mathematics;
+using Fusion.Core.Extensions;
 using Fusion.Engine.Input;
 using Fusion.Engine.Graphics;
 using Fusion.Engine.Common;
@@ -26,7 +27,6 @@ namespace Fusion.Engine.Frames {
 		int			textLineHeight;
 		Size2		textBlockSize;
 
-		static readonly string[] separators = new[]{ "\r\n", "\r", "\n" };
 
 
 		/// <summary>
@@ -111,7 +111,7 @@ namespace Fusion.Engine.Frames {
 				return;
 			}
 
-			textLines		=	textString.Split( separators, StringSplitOptions.None );
+			textLines		=	textString.SplitLines();
 
 			textBaseline	=	(Font==null) ? 8 : Font.BaseLine;
 			textCapHeight	=	(Font==null) ? 8 : Font.CapHeight;

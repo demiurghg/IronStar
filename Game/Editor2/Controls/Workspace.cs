@@ -13,6 +13,7 @@ using IronStar.Core;
 using Fusion.Engine.Common;
 using Fusion;
 using Fusion.Build;
+using Fusion.Engine.Graphics;
 
 namespace IronStar.Editor2.Controls {
 	
@@ -161,6 +162,49 @@ namespace IronStar.Editor2.Controls {
 				  editor.Config.MoveToolSnapEnable   ? editor.Config.MoveToolSnapValue  .ToString("000.00") : "Disabled",
 				  editor.Config.RotateToolSnapEnable ? editor.Config.RotateToolSnapValue.ToString("000.00") : "Disabled", 
 				  0,0 );
+		}
+
+
+
+		protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
+		{
+			base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
+
+			var r	=	editor.SelectionMarquee;
+			var x	=	r.Left;
+			var y	=	r.Top;
+			var w	=	r.Width;
+			var h	=	r.Height;
+
+			spriteLayer.Draw( null,     x,     y, w, h, new Color(220,220,220, 32), clipRectIndex);
+			spriteLayer.Draw( null,     x,     y, w, 1, new Color(220,220,220,192), clipRectIndex);
+			spriteLayer.Draw( null,     x,     y, 1, h, new Color(220,220,220,192), clipRectIndex);
+			spriteLayer.Draw( null,     x, y+h-1, w, 1, new Color(220,220,220,192), clipRectIndex);
+			spriteLayer.Draw( null, x+w-1,     y, 1, h, new Color(220,220,220,192), clipRectIndex);
+
+			//spriteLayer.Draw( null,     x,     y, w, h, new Color(44,85,128,128), clipRectIndex);
+			//spriteLayer.Draw( null,     x,     y, w, 1, new Color(44,85,128,128), clipRectIndex);
+			//spriteLayer.Draw( null,     x,     y, 1, h, new Color(44,85,128,128), clipRectIndex);
+			//spriteLayer.Draw( null,     x, y+h-1, w, 1, new Color(44,85,128,128), clipRectIndex);
+			//spriteLayer.Draw( null, x+w-1,     y, 1, h, new Color(44,85,128,128), clipRectIndex);
+
+			if (editor.manipulator!=null && editor.manipulator.IsManipulating) {
+				var text  = editor.manipulator.ManipulationText;
+				var lines = text.SplitLines();
+
+				x   =	mouseX + 0;
+				y	=  	mouseY + 20;
+				w	=	lines.Max( line => line.Length ) * 8 + 8;
+				h	=	lines.Length * 8 + 8;
+
+				w	=	Math.Max( w, 12 * 8 );
+				
+				spriteLayer.Draw( null, x,y,w,h, new Color(0,0,0,160), clipRectIndex);
+
+				foreach ( var line in lines ) {
+					spriteLayer.DrawDebugString( x+4, y+4, line, ColorTheme.TextColorPushed, clipRectIndex );
+				}
+			}
 		}
 
 
@@ -397,6 +441,9 @@ namespace IronStar.Editor2.Controls {
 
 		private void RootFrame_MouseDown( object sender,  Frame.MouseEventArgs e )
 		{
+			mouseX	=	e.X;
+			mouseY	=	e.Y;
+
 			if (Game.Keyboard.IsKeyDown(Keys.LeftAlt)) {
 				if (e.Key==Keys.LeftButton) {
 					editor.camera.StartManipulation( e.X, e.Y, Manipulation.Rotating );
@@ -417,6 +464,8 @@ namespace IronStar.Editor2.Controls {
 		}
 
 
+		int mouseX = 0; 
+		int mouseY = 0;
 
 		private void RootFrame_MouseMove( object sender, Frame.MouseEventArgs e )
 		{

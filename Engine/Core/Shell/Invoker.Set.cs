@@ -64,7 +64,7 @@ namespace Fusion.Core.Shell {
 
 			public bool IsRollbackable()
 			{
-				throw new NotImplementedException();
+				return false;
 			}
 
 			public void Rollback()

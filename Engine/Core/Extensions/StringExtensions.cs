@@ -85,14 +85,14 @@ namespace Fusion.Core.Extensions {
 		{
 			var list = str.Split( new[] {ch}, 2 );
 
-			if (list.Length!=2) {
+			if (list.Length<2) {
 				left = list[0];
 				right = null;
 				return false;
 			} else {
 				left = list[0];
-				right = list[0];
-				return false;
+				right = list[1];
+				return true;
 			}
 		}
 	}

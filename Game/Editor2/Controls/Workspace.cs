@@ -157,11 +157,11 @@ namespace IronStar.Editor2.Controls {
 				string.Format(
  				  "Move snap   : {0}\r\n" +
  				  "Rotate snap : {1}\r\n" +
- 				  "\r\n" +
+ 				  "Camera FOV  : {2}\r\n" +
  				  "", 
 				  editor.Config.MoveToolSnapEnable   ? editor.Config.MoveToolSnapValue  .ToString("000.00") : "Disabled",
 				  editor.Config.RotateToolSnapEnable ? editor.Config.RotateToolSnapValue.ToString("000.00") : "Disabled", 
-				  0,0 );
+				  editor.camera.Fov,0 );
 		}
 
 
@@ -176,7 +176,7 @@ namespace IronStar.Editor2.Controls {
 			var w	=	r.Width;
 			var h	=	r.Height;
 
-			spriteLayer.Draw( null,     x,     y, w, h, new Color(220,220,220, 32), clipRectIndex);
+			spriteLayer.Draw( null,     x,     y, w, h, new Color( 32, 32, 32, 32), clipRectIndex);
 			spriteLayer.Draw( null,     x,     y, w, 1, new Color(220,220,220,192), clipRectIndex);
 			spriteLayer.Draw( null,     x,     y, 1, h, new Color(220,220,220,192), clipRectIndex);
 			spriteLayer.Draw( null,     x, y+h-1, w, 1, new Color(220,220,220,192), clipRectIndex);
@@ -423,6 +423,12 @@ namespace IronStar.Editor2.Controls {
 					} else {
 						editor.Config.MoveToolSnapValue *= 2.0f;
 					}
+				}
+				if (e.Key==Keys.OemOpenBrackets) {
+					editor.Config.CameraFov -= 10.0f;
+				}
+				if (e.Key==Keys.OemCloseBrackets) {
+					editor.Config.CameraFov += 10.0f;
 				}
 			}
 		}

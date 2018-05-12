@@ -36,6 +36,16 @@ namespace IronStar.Editor2 {
 
 
 		[Config]
+		[AECategory("Camera")]
+		[AEValueRange(10,160,10,1)]
+		public float CameraFov { 
+			get { return cameraFov; }
+			set { cameraFov = MathUtil.Clamp( value, 10, 160 ); }
+		}
+		float cameraFov = 90;
+
+
+		[Config]
 		[AECategory("Move Tool")]
 		public bool MoveToolSnapEnable { get; set; } = true;
 

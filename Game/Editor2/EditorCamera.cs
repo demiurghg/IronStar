@@ -114,6 +114,8 @@ namespace IronStar.Editor2 {
 		/// <param name="gameTime"></param>
 		public void Update ( GameTime gameTime )
 		{
+			Fov			=	editor.Config.CameraFov;
+
 			var view	=	GetViewMatrix();
 
 			var vp		=	rs.DisplayBounds;

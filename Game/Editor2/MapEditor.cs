@@ -443,12 +443,15 @@ namespace IronStar.Editor2 {
 
 			}
 
+			var halfFov	= MathUtil.DegreesToRadians( camera.Fov / 2 );
+
+			var scaler	= MathUtil.Clamp ( (float)Math.Sin( halfFov ), 0.125f/2.0f, 1.0f );
 
 			var size	= Vector3.Distance( bbox.Minimum, bbox.Maximum ) + 1;
 			var center	= bbox.Center();
 
 			camera.Target	= center;
-			camera.Distance = size;
+			camera.Distance = (size / scaler) * 1.5f;
 		}
 
 

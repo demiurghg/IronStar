@@ -45,7 +45,7 @@ namespace IronStar.Mapping {
 
 		public override void SpawnNode( GameWorld world )
 		{
-			Entity = world.Spawn( Factory, 0,0, Position, Rotation, TargetName );
+			Entity = world.Spawn( Factory, 0,0, TranslateVector, RotateQuaternion, TargetName );
 		}
 
 
@@ -101,8 +101,8 @@ namespace IronStar.Mapping {
 				return;
 			}
 			if (world.IsAlive(Entity.ID)) {
-				Entity.Position = Entity.PositionOld = Position;
-				Entity.Rotation = Entity.RotationOld = Rotation;
+				Entity.Position = Entity.PositionOld = TranslateVector;
+				Entity.Rotation = Entity.RotationOld = RotateQuaternion;
 				Entity.LinearVelocity = Vector3.Zero;
 				Entity.AngularVelocity = Vector3.Zero;
 				Entity.Controller?.Reset();

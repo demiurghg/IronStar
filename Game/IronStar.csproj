@@ -92,11 +92,13 @@
     <Compile Include="Editor2\Controls\ColorTheme.cs" />
     <Compile Include="Editor2\Controls\Workspace.cs" />
     <Compile Include="Editor2\EditorConfig.cs" />
+    <Compile Include="Editor2\Manipulators\HandleIntersection.cs" />
+    <Compile Include="Editor2\Manipulators\Handle.cs" />
     <Compile Include="Editor2\MapEditor.Selection.cs" />
     <Compile Include="Editor2\RotateTool.cs" />
     <Compile Include="Editor2\NullTool.cs" />
     <Compile Include="Editor2\MoveTool.cs" />
-    <Compile Include="Editor2\Manipulator.cs" />
+    <Compile Include="Editor2\Manipulators\Manipulator.cs" />
     <Compile Include="Editor2\EditorCamera.cs" />
     <Compile Include="Core\EntityFactory.cs" />
     <Compile Include="Core\EntityCollection.cs" />

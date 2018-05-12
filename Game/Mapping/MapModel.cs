@@ -96,8 +96,8 @@ namespace IronStar.Mapping {
 				var staticMesh = new StaticMesh( vertices, indices );
 				staticMesh.Sidedness = BEPUutilities.TriangleSidedness.Clockwise;
 
-				var q = MathConverter.Convert( Rotation );
-				var p = MathConverter.Convert( Position );
+				var q = MathConverter.Convert( RotateQuaternion );
+				var p = MathConverter.Convert( TranslateVector );
 				var s = MathConverter.Convert( new Vector3( Scaling, Scaling, Scaling ) );
 				staticMesh.WorldTransform = new BEPUTransform( s, q, p );
 
@@ -172,8 +172,8 @@ namespace IronStar.Mapping {
 				var collidable = collidables[i];
 
 				if (collidable!=null) {
-					var q = MathConverter.Convert( Rotation );
-					var p = MathConverter.Convert( Position );
+					var q = MathConverter.Convert( RotateQuaternion );
+					var p = MathConverter.Convert( TranslateVector );
 
 					collidable.WorldTransform = new BEPUTransform( q, p );
 				}

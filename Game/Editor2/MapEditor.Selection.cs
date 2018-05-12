@@ -216,7 +216,7 @@ namespace IronStar.Editor2 {
 				}
 
 				foreach ( var item in map.Nodes ) {
-					if (camera.IsInRectangle( item.Position, SelectionMarquee )) {
+					if (camera.IsInRectangle( item.TranslateVector, SelectionMarquee )) {
 						if (!item.Frozen) {
 							selection.Add( item );
 						}

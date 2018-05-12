@@ -6,11 +6,16 @@ using System.Threading.Tasks;
 using Fusion.Engine.Graphics;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Common;
-using Fusion;
+using IronStar.Editor2.Manipulators;
+using Fusion;				  
 using IronStar.Mapping;
 
 namespace IronStar.Editor2 {
 	public class RotateTool : Manipulator {
+
+		enum Rotation {
+			Yaw, Pitch, Roll
+		}
 
 
 		/// <summary>
@@ -18,6 +23,33 @@ namespace IronStar.Editor2 {
 		/// </summary>
 		public RotateTool ( MapEditor editor ) : base(editor)
 		{
+		}
+
+
+		Vector3 GetAxis ( int index )
+		{
+			var target = editor.Selection.LastOrDefault();
+
+			if (target==null) {
+				switch (index) {
+					case 0: return Vector3.UnitX;
+					case 1: return Vector3.UnitY;
+					case 2: return Vector3.UnitZ;
+					case 3: return Vector3.ForwardRH;
+				}
+			} else {
+				float yaw   = MathUtil.DegreesToRadians( target.RotateYaw );
+				float pitch = MathUtil.DegreesToRadians( target.RotatePitch );
+				float roll  = MathUtil.DegreesToRadians( target.RotateRoll );
+				switch (index) {
+					case 0: return Matrix.RotationYawPitchRoll(yaw,pitch,0).Right;
+					case 1: return Matrix.RotationYawPitchRoll(yaw,0,0).Up;
+					case 2: return Matrix.RotationYawPitchRoll(yaw,pitch,roll).Forward;
+					case 3: return Matrix.RotationYawPitchRoll(yaw,0,0).Forward;
+				}
+			}
+
+			return Vector3.Zero;
 		}
 
 
@@ -36,31 +68,46 @@ namespace IronStar.Editor2 {
 			}
 
 			var target		= editor.Selection.Last();
-			var origin		= target.Position;
+			var origin		= target.TranslateVector;
 
 			var linerSize	= editor.camera.PixelToWorldSize( origin, 5 );
 			var ray			= editor.camera.PointToRay( x, y );
 
 
+
+
 			if (!manipulating) {
-				var hitX	=	IntersectRing( target.Position, Vector3.UnitX, mp );
-				var hitY	=	IntersectRing( target.Position, Vector3.UnitY, mp );
-				var hitZ	=	IntersectRing( target.Position, Vector3.UnitZ, mp );
+				var hitX	=	IntersectRing( target.TranslateVector, GetAxis(0), mp );
+				var hitY	=	IntersectRing( target.TranslateVector, GetAxis(1), mp );
+				var hitZ	=	IntersectRing( target.TranslateVector, GetAxis(2), mp );
 
-				int hitInd	=	PollIntersections( hitX, hitY, hitZ );
+				int hitInd	=	HandleIntersection.PollIntersections( hitX, hitY, hitZ );
 
-				DrawRing( dr, ray, origin, Vector3.UnitX,  hitInd == 0 ? Utils.SelectColor : Color.Red  );
-				DrawRing( dr, ray, origin, Vector3.UnitY,  hitInd == 1 ? Utils.SelectColor : Color.Lime );
-				DrawRing( dr, ray, origin, Vector3.UnitZ,  hitInd == 2 ? Utils.SelectColor : Color.Blue );
+				DrawRing( dr, ray, origin, GetAxis(0), hitInd == 0 ? Utils.SelectColor : Color.Red  );
+				DrawRing( dr, ray, origin, GetAxis(1), hitInd == 1 ? Utils.SelectColor : Color.Lime );
+				DrawRing( dr, ray, origin, GetAxis(2), hitInd == 2 ? Utils.SelectColor : Color.Blue );
+
 			} else {
 
-				DrawRing( dr, ray, origin, direction, Utils.SelectColor );
+				DrawRing( dr, ray, origin, GetAxis(axisIndex), Utils.SelectColor );
 
 				var vecSize	=	editor.camera.PixelToWorldSize(origin, 110);
 
 				dr.DrawLine( origin, origin + vector0 * vecSize, Utils.SelectColor, Utils.SelectColor, 2, 2 );
 				dr.DrawLine( origin, origin + vector1 * vecSize, Utils.SelectColor, Utils.SelectColor, 2, 2 );
 			}
+
+
+			var a	=	editor.camera.PixelToWorldSize(origin, 110);
+			var b	=	editor.camera.PixelToWorldSize(origin, 140);
+			var c	=	editor.camera.PixelToWorldSize(origin, 150);
+
+			var fwd	=	GetAxis(3);
+
+			var clr	=	manipulating ? Utils.SelectColor : Color.Lime;
+
+			dr.DrawLine( origin + fwd*a, origin + fwd*b, clr, clr,  4, 4 );
+			dr.DrawLine( origin + fwd*b, origin + fwd*c, clr, clr, 16, 2 );
 		}
 
 
@@ -75,16 +122,32 @@ namespace IronStar.Editor2 {
 
 		public override string ManipulationText {
 			get {
-				return string.Format("{0:0.00}", MathUtil.RadiansToDegrees( angle ));
+				var target = targets?.LastOrDefault();
+				if (target==null) {
+					return "---";
+				}
+
+				return string.Format(
+					"{0}\r" +
+					"{1,7:000.00}\r" +
+					"{2,7:000.00}\r" +
+					"{3,7:000.00}\r" + 
+					"{3,7:000.00}", 
+					rotation.ToString().ToUpper(), 
+					target.RotateYaw, 
+					target.RotatePitch, 
+					target.RotateRoll,
+					angle);
 			}
 		}
 
 
 
-		bool	manipulating;
-		Vector3 direction;
-		Vector3 initialPoint;
-		Vector3 currentPoint;
+		bool		manipulating;
+		Rotation	rotation; // yaw=0,pitch=1,roll=2
+		Vector3		initialPoint;
+		Vector3		currentPoint;
+		int			axisIndex;
 
 		Vector3 vector0, vector1;
 		float	angle;
@@ -93,8 +156,8 @@ namespace IronStar.Editor2 {
 		float		snapValue;
 
 
-		MapNode[] targets  = null;
-		Quaternion[] initRots = null;
+		MapNode[] targets	= null;
+		float[]	  angles	= null;
 
 
 		public override bool StartManipulation ( int x, int y )
@@ -110,43 +173,47 @@ namespace IronStar.Editor2 {
 			vector1		=	Vector3.Zero;
 
 			targets		=	editor.GetSelection();
-			initRots	=	targets.Select( t => t.Rotation ).ToArray();
 
-			var origin	=	targets.Last().Position;
+			var target	=	targets.LastOrDefault();
+
+			var origin	=	targets.Last().TranslateVector;
 			var mp		=	new Point( x, y );
 
 
-			var intersectX	=	IntersectRing( origin, Vector3.UnitX, mp );
-			var intersectY	=	IntersectRing( origin, Vector3.UnitY, mp );
-			var intersectZ	=	IntersectRing( origin, Vector3.UnitZ, mp );
+			var intersectX	=	IntersectRing( origin, GetAxis(0), mp );
+			var intersectY	=	IntersectRing( origin, GetAxis(1), mp );
+			var intersectZ	=	IntersectRing( origin, GetAxis(2), mp );
 
-			var index		=	PollIntersections( intersectX, intersectY, intersectZ );
+			axisIndex		=	HandleIntersection.PollIntersections( intersectX, intersectY, intersectZ );
 
-			if (index<0) {
+			if (axisIndex<0) {
 				return false;
 			}
 
-			if (index==0) {		
+			if (axisIndex==0) {		
 				manipulating	=	true;
-				direction		=	Vector3.UnitX;
+				rotation		=	Rotation.Pitch;
 				initialPoint	=	intersectX.HitPoint;
 				currentPoint	=	intersectX.HitPoint;
+				angles			=	targets.Select( t => t.RotatePitch ).ToArray();
 				return true;
 			}
 
-			if (index==1) {		
+			if (axisIndex==1) {		
 				manipulating	=	true;
-				direction		=	Vector3.UnitY;
+				rotation		=	Rotation.Yaw;
 				initialPoint	=	intersectY.HitPoint;
 				currentPoint	=	intersectY.HitPoint;
+				angles			=	targets.Select( t => t.RotateYaw ).ToArray();
 				return true;
 			}
 
-			if (index==2) {		
+			if (axisIndex==2) {		
 				manipulating	=	true;
-				direction		=	Vector3.UnitZ;
+				rotation		=	Rotation.Roll;
 				initialPoint	=	intersectZ.HitPoint;
 				currentPoint	=	intersectZ.HitPoint;
+				angles			=	targets.Select( t => t.RotateRoll ).ToArray();
 				return true;
 			}
 			
@@ -158,32 +225,29 @@ namespace IronStar.Editor2 {
 		{
 			if (manipulating) {
 
-				var origin	=	targets.Last().Position;
+				var origin	=	targets.Last().TranslateVector;
 				var mp		=	new Point( x, y );
 
-				var result	=	IntersectRing( origin, direction, mp );
+				var result	=	IntersectRing( origin, GetAxis(axisIndex), mp );
 				
 				currentPoint	=	result.HitPoint;
 
 				vector0			=	(initialPoint - origin).Normalized();
 				vector1			=	(currentPoint - origin).Normalized();
 
-				var sine		=	Vector3.Dot( direction, Vector3.Cross( vector0, vector1 ) );
+				var sine		=	Vector3.Dot( GetAxis(axisIndex), Vector3.Cross( vector0, vector1 ) );
 				var cosine		=	Vector3.Dot( vector0, vector1 );
 
-				angle			=	(float)Math.Atan2( sine, cosine );
-
-				if (snapEnable) {
-					angle		=	Snap( angle, MathUtil.DegreesToRadians( editor.Config.RotateToolSnapValue ) );
-				}
+				angle			=	MathUtil.RadiansToDegrees ( (float)Math.Atan2( sine, cosine ) );
 
 				for ( int i=0; i<targets.Length; i++) {
 					var target	=	targets[i];
-					var rot		=	initRots[i];
 
-					var addRot	=	Quaternion.RotationAxis( direction, angle );
-
-					target.Rotation = addRot * rot;
+					switch (rotation) {
+						case Rotation.Yaw  : target.RotateYaw   = Snap( angles[i] + angle, snapValue, snapEnable ); break;
+						case Rotation.Pitch: target.RotatePitch = Snap( angles[i] + angle, snapValue, snapEnable ); break;
+						case Rotation.Roll : target.RotateRoll  = Snap( angles[i] + angle, snapValue, snapEnable ); break;
+					}
 
 					target.ResetNode( this.editor.World );
 				}

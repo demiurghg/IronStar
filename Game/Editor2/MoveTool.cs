@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Fusion.Engine.Graphics;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Common;
+using IronStar.Editor2.Manipulators;
 using Fusion;
 using IronStar.Mapping;
 
@@ -36,7 +37,7 @@ namespace IronStar.Editor2 {
 			}
 
 			var target		= editor.Selection.Last();
-			var origin		= target.Position;
+			var origin		= target.TranslateVector;
 
 			var linerSize	= editor.camera.PixelToWorldSize( origin, 5 );
 
@@ -50,8 +51,8 @@ namespace IronStar.Editor2 {
 				dr.DrawLine(initialPoint, currentPoint, Utils.GridColor);
 
 				foreach ( var item in editor.Selection ) {
-					var pos   = item.Position;
-					var floor = item.Position;
+					var pos   = item.TranslateVector;
+					var floor = item.TranslateVector;
 					floor.Y = 0;
 
 					dr.DrawLine(floor, pos, Utils.GridColor);
@@ -60,11 +61,11 @@ namespace IronStar.Editor2 {
 				
 			} else {
 
-				var hitX	=	IntersectArrow( target.Position, Vector3.UnitX, mp );
-				var hitY	=	IntersectArrow( target.Position, Vector3.UnitY, mp );
-				var hitZ	=	IntersectArrow( target.Position, Vector3.UnitZ, mp );
+				var hitX	=	IntersectArrow( target.TranslateVector, Vector3.UnitX, mp );
+				var hitY	=	IntersectArrow( target.TranslateVector, Vector3.UnitY, mp );
+				var hitZ	=	IntersectArrow( target.TranslateVector, Vector3.UnitZ, mp );
 
-				int hitInd	=	PollIntersections( hitX, hitY, hitZ );
+				int hitInd	=	HandleIntersection.PollIntersections( hitX, hitY, hitZ );
 
 				DrawArrow( dr, ray, origin, Vector3.UnitX, hitInd == 0 ? Utils.SelectColor : Color.Red  );
 				DrawArrow( dr, ray, origin, Vector3.UnitY, hitInd == 1 ? Utils.SelectColor : Color.Lime );
@@ -82,7 +83,24 @@ namespace IronStar.Editor2 {
 
 		public override string ManipulationText {
 			get {
-				return Vector3.Distance( initialPoint, currentPoint ).ToString();
+				var target = targets?.LastOrDefault();
+				if (target==null) {
+					return "---";
+				}
+
+				var distance	= Vector3.Distance( initialPoint, currentPoint );
+				var translateX	= target.TranslateX;
+				var translateY	= target.TranslateY;
+				var translateZ	= target.TranslateZ;
+				return string.Format(
+					"X {0,8:###.00}\r" +
+					"Y {1,8:###.00}\r" +
+					"Z {2,8:###.00}\r" +
+					"D {3,8:###.00}\r",
+					translateX,
+					translateY,
+					translateZ,
+					distance);
 			}
 		}
 
@@ -109,7 +127,7 @@ namespace IronStar.Editor2 {
 			snapValue	=	editor.Config.MoveToolSnapValue;
 
 			targets	=	editor.GetSelection();
-			initPos	=	targets.Select( t => t.Position ).ToArray();
+			initPos	=	targets.Select( t => t.TranslateVector ).ToArray();
 
 			var origin	=	initPos.Last();
 			var mp		=	new Point( x, y );
@@ -119,7 +137,7 @@ namespace IronStar.Editor2 {
 			var intersectY	=	IntersectArrow( origin, Vector3.UnitY, mp );
 			var intersectZ	=	IntersectArrow( origin, Vector3.UnitZ, mp );
 
-			var index		=	PollIntersections( intersectX, intersectY, intersectZ );
+			var index		=	HandleIntersection.PollIntersections( intersectX, intersectY, intersectZ );
 
 			if (index<0) {
 				return false;
@@ -169,9 +187,9 @@ namespace IronStar.Editor2 {
 					var pos		= initPos[i];
 
 					if (snapEnable) {
-						target.Position = Snap( pos + (currentPoint - initialPoint), snapValue );
+						target.TranslateVector = Snap( pos + (currentPoint - initialPoint), snapValue );
 					} else {
-						target.Position = pos + (currentPoint - initialPoint);
+						target.TranslateVector = pos + (currentPoint - initialPoint);
 					}
 
 					target.ResetNode( this.editor.World );

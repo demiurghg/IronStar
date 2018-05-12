@@ -9,9 +9,21 @@ using Fusion.Core.Mathematics;
 using IronStar.Core;
 using Fusion.Engine.Graphics;
 using IronStar.SFX;
+using Fusion.Core.Shell;
 
 namespace IronStar.Mapping {
 	public abstract class MapNode {
+
+		/// <summary>
+		/// Indicates that map object or entity should be updated without
+		/// </summary>
+		protected bool dirty;
+
+		/// <summary>
+		/// Indicates that map object must be fully recreated
+		/// </summary>
+		protected bool hardDirty;
+
 
 		/// <summary>
 		/// 
@@ -20,22 +32,99 @@ namespace IronStar.Mapping {
 		{
 		}
 
-
-		[Category("Display")]
+		[AECategory("Display")]
 		[Description( "Node object scaling" )]
 		public bool Visible { get; set; } = true;
 
-		[Category("Display")]
+		[AECategory("Display")]
 		[Description( "Node object scaling" )]
 		public bool Frozen { get; set; }
 
-		[Category("Transform")]
-		[Description("Node translation vector")]
-		public Vector3 Position { get; set; }
+		float translateX  = 0;
+		float translateY  = 0;
+		float translateZ  = 0;
+		float rotateYaw   = 0;
+		float rotatePitch = 0;
+		float rotateRoll  = 0;
 
-		[Category("Transform")]
-		[Description("Node rotation quaternion")]
-		public Quaternion Rotation { get; set; } = Quaternion.Identity;
+		[AECategory("Transform")]
+		[AEDisplayName("Translate X")]
+		public float TranslateX { 
+			get { return translateX; }
+			set {
+				if (translateX!=value) {
+					dirty = true;
+					translateX = value;
+				}
+			}
+		}
+
+		[AECategory("Transform")]
+		[AEDisplayName("Translate Y")]
+		public float TranslateY { 
+			get { return translateY; }
+			set {
+				if (translateY!=value) {
+					dirty = true;
+					translateY = value;
+				}
+			}
+		}
+
+		[AECategory("Transform")]
+		[AEDisplayName("Translate Z")]
+		public float TranslateZ {
+			get { return translateZ; }
+			set {
+				if (translateZ!=value) {
+					dirty = true;
+					translateZ = value;
+				}
+			}
+		}
+
+		[AECategory("Transform")]
+		[AEDisplayName("Rotate Yaw")]
+		[AEValueRange(-180,180,15,1)]
+		public float RotateYaw {
+			get { return rotateYaw; }
+			set {
+				if (rotateYaw!=value) {
+					dirty = true;
+					rotateYaw = value;
+				}
+			}
+		}
+
+		[AECategory("Transform")]
+		[AEDisplayName("Rotate Pitch")]
+		[AEValueRange(-180,180,15,1)]
+		public float RotatePitch {
+			get { return rotatePitch; }
+			set {
+				if (rotatePitch!=value) {
+					dirty = true;
+					rotatePitch = value;
+				}
+			}
+		}
+
+		[AECategory("Transform")]
+		[AEDisplayName("Rotate Roll")]
+		[AEValueRange(-180,180,15,1)]
+		public float RotateRoll {
+			get { return rotateRoll; }
+			set {
+				if (rotateRoll!=value) {
+					dirty = true;
+					rotateRoll = value;
+				}
+			}
+		}
+
+		//[AECategory("Transform")]
+		//[Description("Node rotation quaternion")]
+		//public Quaternion Rotation { get; set; } = Quaternion.Identity;
 
 		[Category("Transform")]
 		[Description( "Node object scaling" )]
@@ -48,12 +137,43 @@ namespace IronStar.Mapping {
 		[Browsable(false)]
 		public Matrix WorldMatrix {
 			get {
-				return Matrix.RotationQuaternion( Rotation ) 
+				return Matrix.RotationQuaternion( RotateQuaternion ) 
 					* Matrix.Scaling( Scaling )
-					* Matrix.Translation( Position );
+					* Matrix.Translation( TranslateVector );
 			}
 		}
 
+
+		/// <summary>
+		/// Gets and sets translation vector
+		/// </summary>
+		[Browsable(false)]
+		public Vector3 TranslateVector {
+			get {
+				return new Vector3( TranslateX, TranslateY, TranslateZ );
+			}
+			set {
+				TranslateX = value.X;
+				TranslateY = value.Y;
+				TranslateZ = value.Z;
+			}
+		}
+
+
+		[Browsable(false)]
+		public Quaternion RotateQuaternion {
+			get {
+				return Quaternion.RotationYawPitchRoll( 
+					MathUtil.DegreesToRadians( rotateYaw   ), 
+					MathUtil.DegreesToRadians( rotatePitch ), 
+					MathUtil.DegreesToRadians( rotateRoll  )
+				);
+			}
+			set {
+				var rotationMatrix = Matrix.RotationQuaternion( value );
+				MathUtil.ToAnglesDeg( rotationMatrix, out rotateYaw, out rotatePitch, out rotateRoll );
+			}
+		}
 
 		/// <summary>
 		/// Creates instance of map object
@@ -90,7 +210,7 @@ namespace IronStar.Mapping {
 		public abstract void KillNode ( GameWorld world );
 
 		/// <summary>
-		/// 
+		/// Creates copy of current node without activation
 		/// </summary>
 		/// <returns></returns>
 		public abstract MapNode DuplicateNode ();

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Fusion.Engine.Graphics;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Common;
+using IronStar.Editor2.Manipulators;
 using Fusion;
 using IronStar.Mapping;
 

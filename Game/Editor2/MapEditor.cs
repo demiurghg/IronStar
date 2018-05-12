@@ -19,6 +19,7 @@ using Fusion.Build;
 using BEPUphysics;
 using IronStar.Core;
 using IronStar.Editor2.Controls;
+using IronStar.Editor2.Manipulators;
 using Fusion.Engine.Frames;
 
 namespace IronStar.Editor2 {
@@ -308,8 +309,8 @@ namespace IronStar.Editor2 {
 			foreach ( var se in selection ) {
 				var entity = (se as MapEntity)?.Entity;
 				if (entity!=null) {
-					se.Position	=	entity.Position;
-					se.Rotation	=	entity.Rotation;
+					se.TranslateVector	=	entity.Position;
+					se.RotateQuaternion	=	entity.Rotation;
 				}
 			}
 		}
@@ -439,7 +440,7 @@ namespace IronStar.Editor2 {
 				bbox = new BoundingBox( new Vector3(-10,-10,-10), new Vector3(10,10,10) );
 			} else {
 
-				bbox = BoundingBox.FromPoints( targets.Select( t => t.Position ).ToArray() );
+				bbox = BoundingBox.FromPoints( targets.Select( t => t.TranslateVector ).ToArray() );
 
 			}
 

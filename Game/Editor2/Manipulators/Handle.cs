@@ -9,35 +9,17 @@ using Fusion.Engine.Common;
 using Fusion;
 using IronStar.Mapping;
 
-namespace IronStar.Editor2 {
-	public abstract class Manipulator {
+namespace IronStar.Editor2.Manipulators {
+	public abstract class Handle {
 
 		readonly protected RenderSystem rs;
 		readonly protected Game game;
 		readonly protected MapEditor editor;
 
-		public abstract bool IsManipulating { get; }
-
-
-		protected class IntersectResult {
-			public IntersectResult ( bool hit, float pickDistance, float distance, Vector3 hitPoint ) 
-			{
-				Hit = hit; 
-				PickDistance = pickDistance; 
-				Distance	= distance;
-				HitPoint	= hitPoint;
-			}
-			public readonly bool Hit;
-			public readonly Vector3 HitPoint;
-			public readonly float PickDistance;
-			public readonly float Distance;
-		}
-
-
 		/// <summary>
 		/// Constrcutor
 		/// </summary>
-		public Manipulator ( MapEditor editor )
+		public Handle ( MapEditor editor )
 		{
 			this.rs		=	editor.Game.RenderSystem;
 			this.game	=	editor.Game;
@@ -45,14 +27,13 @@ namespace IronStar.Editor2 {
 		}
 
 
-		public abstract bool StartManipulation ( int x, int y );
-		public abstract void UpdateManipulation ( int x, int y );
-		public abstract void StopManipulation ( int x, int y );
-		public abstract void Update ( GameTime gameTime, int x, int y );
-		public abstract string ManipulationText { get; }
+		public abstract bool StartHandling ( int x, int y );
+		public abstract void UpdateHandling ( int x, int y );
+		public abstract void StopHandling ( int x, int y );
+		public abstract void DrawHandle ( DebugRender dr, Ray pickRay, bool active );
 
 
-
+	#if false
 		/// <summary>
 		/// Draw standard arrow.
 		/// </summary>
@@ -122,7 +103,7 @@ namespace IronStar.Editor2 {
 		/// <param name="pickPoint"></param>
 		/// <param name="hitPoint"></param>
 		/// <returns></returns>
-		protected IntersectResult IntersectArrow ( Vector3 origin, Vector3 dir, Point pickPoint )
+		protected HandleIntersection IntersectArrow ( Vector3 origin, Vector3 dir, Point pickPoint )
 		{
 			var length		=	editor.camera.PixelToWorldSize(origin, 110);
 			var tolerance	=	editor.camera.PixelToWorldSize(origin, 7);
@@ -137,9 +118,9 @@ namespace IronStar.Editor2 {
 			var pickDistance = Vector3.Distance( hitPoint, pickRay.Position );
 
 			if ( (dist < tolerance) && (t2 > 0) && (t2 < 1) && (t1 > 0)) {
-				return new IntersectResult( true, pickDistance, dist, hitPoint );
+				return new HandleIntersection( true, pickDistance, dist, hitPoint );
 			} else {
-				return new IntersectResult( false, pickDistance, dist, hitPoint );
+				return new HandleIntersection( false, pickDistance, dist, hitPoint );
 			}
 		}
 
@@ -154,7 +135,7 @@ namespace IronStar.Editor2 {
 		/// <param name="pickPoint"></param>
 		/// <param name="hitPoint"></param>
 		/// <returns></returns>
-		protected IntersectResult IntersectRing ( Vector3 origin, Vector3 axis, Point pickPoint )
+		protected HandleIntersection IntersectRing ( Vector3 origin, Vector3 axis, Point pickPoint )
 		{
 			var radius		=	editor.camera.PixelToWorldSize(origin, 90);
 			var tolerance	=	editor.camera.PixelToWorldSize(origin, 7);
@@ -171,10 +152,10 @@ namespace IronStar.Editor2 {
 
 				var hitRing	=	(originHitPointDistance > radius - tolerance) && (originHitPointDistance < radius + tolerance);
 
-				return new IntersectResult( hitRing, pickDistance, 0, hitPoint );
+				return new HandleIntersection( hitRing, pickDistance, 0, hitPoint );
 				
 			} else {
-				return new IntersectResult( false, float.PositiveInfinity, float.PositiveInfinity, Vector3.Zero );
+				return new HandleIntersection( false, float.PositiveInfinity, float.PositiveInfinity, Vector3.Zero );
 			}
 
 		}
@@ -186,10 +167,10 @@ namespace IronStar.Editor2 {
 		/// </summary>
 		/// <param name="intersectionResults"></param>
 		/// <returns></returns>
-		protected int PollIntersections ( params IntersectResult[] intersectionResults )
+		protected int PollIntersections ( params HandleIntersection[] intersectionResults )
 		{
 			int index = -1;
-			IntersectResult result = null;
+			HandleIntersection result = null;
 						
 
 			for ( int i=0; i<intersectionResults.Length; i++ ) {
@@ -220,9 +201,20 @@ namespace IronStar.Editor2 {
 		}
 
 
+		public float Snap ( float value, float snapValue, bool enable )
+		{
+			if (enable) {
+				return (float)(Math.Round( value / snapValue ) * snapValue);
+			} else {
+				return value;
+			}
+		}
+
+
 		public Vector3 Snap ( Vector3 value, float snapValue )
 		{
 			return new Vector3( Snap( value.X, snapValue ), Snap( value.Y, snapValue ), Snap( value.Z, snapValue ) );
 		}
+	#endif
 	}
 }

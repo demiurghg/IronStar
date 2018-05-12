@@ -24,6 +24,7 @@ namespace IronStar.Mapping {
 		/// <summary>
 		/// 
 		/// </summary>
+		#warning move to entities!
 		public MapEnvironment Environment { get; set; }
 
 
@@ -78,6 +79,7 @@ namespace IronStar.Mapping {
 		/// <param name="gameWorld"></param>
 		public void UpdateEnvironment ( GameWorld gameWorld )
 		{
+			#warning move to entities!
 			gameWorld.Physics.Gravity			=	Environment.Gravity;
 
 			gameWorld.snapshotHeader.FogDistance	=	Environment.FogDistance;

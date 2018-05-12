@@ -203,6 +203,7 @@ namespace IronStar.Editor2.Controls {
 
 				foreach ( var line in lines ) {
 					spriteLayer.DrawDebugString( x+4, y+4, line, ColorTheme.TextColorPushed, clipRectIndex );
+					y+=8;
 				}
 			}
 		}

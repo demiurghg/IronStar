@@ -102,7 +102,7 @@ namespace IronStar.Mapping {
 
 			light.Intensity		=	LightPresetColor.GetColor( LightPreset, Intensity );
 			light.SpotView		=	SpotView;
-			light.Position		=	Position;
+			light.Position		=	TranslateVector;
 			light.Projection	=	SpotProjection;
 			light.RadiusOuter	=	OuterRadius;
 			light.RadiusInner	=	InnerRadius;
@@ -175,7 +175,7 @@ namespace IronStar.Mapping {
 
 		public override void ResetNode( GameWorld world )
 		{
-			light.Position		=	Position;
+			light.Position		=	TranslateVector;
 			light.SpotView		=	SpotView;
 			light.Projection	=	SpotProjection;
 		}

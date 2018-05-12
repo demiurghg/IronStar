@@ -44,7 +44,7 @@ namespace IronStar.Editor2 {
 				switch (index) {
 					case 0: return Matrix.RotationYawPitchRoll(yaw,pitch,0).Right;
 					case 1: return Matrix.RotationYawPitchRoll(yaw,0,0).Up;
-					case 2: return Matrix.RotationYawPitchRoll(yaw,pitch,roll).Forward;
+					case 2: return Matrix.RotationYawPitchRoll(yaw,pitch,roll).Backward;
 					case 3: return Matrix.RotationYawPitchRoll(yaw,0,0).Forward;
 				}
 			}
@@ -52,6 +52,8 @@ namespace IronStar.Editor2 {
 			return Vector3.Zero;
 		}
 
+
+		readonly int[] ringSize = new[] {90,110,70};
 
 
 		/// <summary>
@@ -77,19 +79,19 @@ namespace IronStar.Editor2 {
 
 
 			if (!manipulating) {
-				var hitX	=	IntersectRing( target.TranslateVector, GetAxis(0), mp );
-				var hitY	=	IntersectRing( target.TranslateVector, GetAxis(1), mp );
-				var hitZ	=	IntersectRing( target.TranslateVector, GetAxis(2), mp );
+				var hitX	=	IntersectRing( target.TranslateVector, GetAxis(0), mp, ringSize[0] );
+				var hitY	=	IntersectRing( target.TranslateVector, GetAxis(1), mp, ringSize[1] );
+				var hitZ	=	IntersectRing( target.TranslateVector, GetAxis(2), mp, ringSize[2] );
 
 				int hitInd	=	HandleIntersection.PollIntersections( hitX, hitY, hitZ );
 
-				DrawRing( dr, ray, origin, GetAxis(0), hitInd == 0 ? Utils.SelectColor : Color.Red  );
-				DrawRing( dr, ray, origin, GetAxis(1), hitInd == 1 ? Utils.SelectColor : Color.Lime );
-				DrawRing( dr, ray, origin, GetAxis(2), hitInd == 2 ? Utils.SelectColor : Color.Blue );
+				DrawRing( dr, ray, origin, GetAxis(0), hitInd == 0 ? Utils.SelectColor : Color.Red  , ringSize[0] );
+				DrawRing( dr, ray, origin, GetAxis(1), hitInd == 1 ? Utils.SelectColor : Color.Lime , ringSize[1] );
+				DrawRing( dr, ray, origin, GetAxis(2), hitInd == 2 ? Utils.SelectColor : Color.Blue , ringSize[2] );
 
 			} else {
 
-				DrawRing( dr, ray, origin, GetAxis(axisIndex), Utils.SelectColor );
+				DrawRing( dr, ray, origin, GetAxis(axisIndex), Utils.SelectColor, ringSize[axisIndex] );
 
 				var vecSize	=	editor.camera.PixelToWorldSize(origin, 110);
 
@@ -180,9 +182,9 @@ namespace IronStar.Editor2 {
 			var mp		=	new Point( x, y );
 
 
-			var intersectX	=	IntersectRing( origin, GetAxis(0), mp );
-			var intersectY	=	IntersectRing( origin, GetAxis(1), mp );
-			var intersectZ	=	IntersectRing( origin, GetAxis(2), mp );
+			var intersectX	=	IntersectRing( origin, GetAxis(0), mp, ringSize[0] );
+			var intersectY	=	IntersectRing( origin, GetAxis(1), mp, ringSize[1] );
+			var intersectZ	=	IntersectRing( origin, GetAxis(2), mp, ringSize[2] );
 
 			axisIndex		=	HandleIntersection.PollIntersections( intersectX, intersectY, intersectZ );
 

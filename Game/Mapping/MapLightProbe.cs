@@ -100,14 +100,6 @@ namespace IronStar.Mapping {
 
 
 
-		public override void HardResetNode( GameWorld world )
-		{
-			KillNode( world );
-			SpawnNode( world );
-		}
-
-
-
 		public override void KillNode( GameWorld world )
 		{
 			world.Game.RenderSystem.RenderWorld.LightSet.FreeImageIndex( light.ImageIndex );

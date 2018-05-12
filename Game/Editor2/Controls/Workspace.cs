@@ -226,6 +226,8 @@ namespace IronStar.Editor2.Controls {
 
 				grid.Anchor	=	FrameAnchor.Top | FrameAnchor.Right;
 
+				grid.PropertyChanged+=Grid_PropertyChanged;
+
 				Add( grid );
 			}
 
@@ -239,6 +241,12 @@ namespace IronStar.Editor2.Controls {
 
 		}
 
+
+		private void Grid_PropertyChanged( object sender, AEPropertyGrid.PropertyChangedEventArgs e )
+		{
+			var mapNode = e.TargetObject as MapNode;
+			mapNode?.ResetNode( editor.World );
+		}
 
 
 		void ArrangeLeft ( params Frame[] frames )
@@ -385,7 +393,7 @@ namespace IronStar.Editor2.Controls {
 					editor.ResetWorld(true);
 				}
 				if (e.Key==Keys.R) {
-					Game.RenderSystem.RenderWorld.CaptureRadiance();
+					//Game.RenderSystem.RenderWorld.CaptureRadiance();
 				}
 				if (e.Key==Keys.B) {
 					editor.BakeToEntity();

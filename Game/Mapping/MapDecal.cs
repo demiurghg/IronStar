@@ -11,79 +11,94 @@ using Fusion.Engine.Graphics;
 using IronStar.SFX;
 using Fusion.Development;
 using System.Drawing.Design;
+using Fusion.Core.Shell;
 
 namespace IronStar.Mapping {
 	public class MapDecal : MapNode {
 
 
-		[Category("Decal Image")]
-		[Editor( typeof( DecalFileLocationEditor ), typeof( UITypeEditor ) )]
+		[AECategory("Decal Image")]
 		public string ImageName { get; set; } = "";
 
 		/// <summary>
 		/// 
 		/// </summary>
-		[Category("Decal Size")]
-		public float Width { get; set;} = 0.5f;
+		[AECategory("Decal Size")]
+		[AEValueRange(0, 16, 1/4f, 1/128f)]
+		public float Width { get; set;} = 1;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		[Category("Decal Size")]
-		public float Height { get; set;} = 0.5f;
+		[AECategory("Decal Size")]
+		[AEValueRange(0, 16, 1/4f, 1/128f)]
+		public float Height { get; set;} = 1;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		[Category("Decal Size")]
+		[AECategory("Decal Size")]
+		[AEValueRange(0, 4, 1/4f, 1/128f)]
 		public float Depth { get; set;} = 0.25f;
 
 		/// <summary>
 		/// Decal emission intensity
 		/// </summary>
-		[Category("Decal Material")]
-		public Color4 Emission { get; set;} = Color4.Zero;
+		[AECategory("Decal Material")]
+		public Color EmissionColor { get; set;} = Color.Black;
+
+		/// <summary>
+		/// Decal emission intensity
+		/// </summary>
+		[AECategory("Decal Material")]
+		public float EmissionIntensity { get; set;} = 100;
 
 		/// <summary>
 		/// Decal base color
 		/// </summary>
-		[Category("Decal Material")]
+		[AECategory("Decal Material")]
 		public Color BaseColor { get; set;} = new Color(128,128,128,255);
 
 		/// <summary>
 		/// Decal roughness
 		/// </summary>
-		[Category("Decal Material")]
+		[AECategory("Decal Material")]
+		[AEValueRange(0, 1, 1/4f, 1/128f)]
 		public float Roughness { get; set;}= 0.5f;
 
 		/// <summary>
 		/// Decal meatllic
 		/// </summary>
-		[Category("Decal Material")]
+		[AECategory("Decal Material")]
+		[AEValueRange(0, 1, 1/4f, 1/128f)]
 		public float Metallic { get; set;} = 0.5f;
 
 		/// <summary>
 		/// Color blend factor [0,1]
 		/// </summary>
-		[Category("Decal Material")]
+		[AECategory("Decal Material")]
+		[AEValueRange(0, 1, 1/4f, 1/128f)]
 		public float ColorFactor { get; set;} = 1.0f;
 
 		/// <summary>
 		/// Roughmess and specular blend factor [0,1]
 		/// </summary>
-		[Category("Decal Material")]
+		[AECategory("Decal Material")]
+		[AEValueRange(0, 1, 1/4f, 1/128f)]
 		public float SpecularFactor { get; set;} = 1.0f;
 
 		/// <summary>
 		/// Normalmap blend factor [-1,1]
 		/// </summary>
-		[Category("Decal Material")]
+		[AECategory("Decal Material")]
+		[AEValueRange(0, 1, 1/4f, 1/128f)]
 		public float NormalMapFactor { get; set;} = 1.0f;
 
 		/// <summary>
-		/// Normalmap blend factor [-1,1]
+		/// Falloff factor [-1,1]
 		/// </summary>
-		[Category("Decal Material")]
+		[AECategory("Decal Material")]
+		[AEValueRange(0, 1, 1/4f, 1/128f)]
 		public float FalloffFactor { get; set;} = 0.5f;
 		
 
@@ -114,23 +129,35 @@ namespace IronStar.Mapping {
 			var rw	=	world.Game.RenderSystem.RenderWorld;
 			var ls	=	rw.LightSet;
 
-			decal.DecalMatrix		=	Matrix.Scaling( Width/2, Height/2, Depth/2 ) * WorldMatrix;
-			decal.DecalMatrixInverse=	Matrix.Invert( decal.DecalMatrix );
-									
-			decal.Emission			=	Emission;
-			decal.BaseColor			=	new Color4( BaseColor.R/255.0f, BaseColor.G/255.0f, BaseColor.B/255.0f, 1 );
-			
-			decal.Metallic			=	Metallic;
-			decal.Roughness			=	Roughness;
-			decal.ImageRectangle	=	ls.DecalAtlas.GetNormalizedRectangleByName( ImageName );
-			decal.ImageSize			=	ls.DecalAtlas.GetAbsoluteRectangleByName( ImageName ).Size;
-
-			decal.ColorFactor		=	ColorFactor;
-			decal.SpecularFactor	=	SpecularFactor;
-			decal.NormalMapFactor	=	NormalMapFactor;
-			decal.FalloffFactor		=	FalloffFactor;
+			ResetNode( world );
 
 			world.Game.RenderSystem.RenderWorld.LightSet.Decals.Add( decal );
+		}
+
+
+
+		public override void ResetNode( GameWorld world )
+		{
+			if (decal!=null) {
+				var rw	=	world.Game.RenderSystem.RenderWorld;
+				var ls	=	rw.LightSet;
+
+				decal.DecalMatrix		=	Matrix.Scaling( Width/2, Height/2, Depth/2 ) * WorldMatrix;
+				decal.DecalMatrixInverse=	Matrix.Invert( decal.DecalMatrix );
+									
+				decal.Emission			=	EmissionColor.ToColor4() * EmissionIntensity;
+				decal.BaseColor			=	new Color4( BaseColor.R/255.0f, BaseColor.G/255.0f, BaseColor.B/255.0f, 1 );
+			
+				decal.Metallic			=	Metallic;
+				decal.Roughness			=	Roughness;
+				decal.ImageRectangle	=	ls.DecalAtlas.GetNormalizedRectangleByName( ImageName );
+				decal.ImageSize			=	ls.DecalAtlas.GetAbsoluteRectangleByName( ImageName ).Size;
+
+				decal.ColorFactor		=	ColorFactor;
+				decal.SpecularFactor	=	SpecularFactor;
+				decal.NormalMapFactor	=	NormalMapFactor;
+				decal.FalloffFactor		=	FalloffFactor;
+			}
 		}
 
 
@@ -177,22 +204,6 @@ namespace IronStar.Mapping {
 			dr.DrawLine( c, c+y, Color.Lime , Color.Lime , 2, 2 );
 
 			dr.DrawLine( p4, p5, color, color, 2, 2 );
-		}
-
-
-
-		public override void ResetNode( GameWorld world )
-		{
-			decal.DecalMatrix		=	Matrix.Scaling( Width/2, Height/2, Depth/2 ) * WorldMatrix;
-			decal.DecalMatrixInverse=	Matrix.Invert( decal.DecalMatrix );
-		}
-
-
-
-		public override void HardResetNode( GameWorld world )
-		{
-			KillNode( world );
-			SpawnNode( world );
 		}
 
 

@@ -12,51 +12,71 @@ using IronStar.SFX;
 using Fusion.Development;
 using System.Drawing.Design;
 using Fusion;
+using Fusion.Core.Shell;
 
 namespace IronStar.Mapping {
 
 	public class MapSpotLight : MapNode {
 
-		[Category("Spot-light")]
-		public float Intensity { get; set; } = 500;
+
+		[AECategory("Light Color")]
+		[AEDisplayName("Light Color")]
+		public Color LightColor { get; set; } = Color.White;
+
+		[AECategory("Light Color")]
+		[AEDisplayName("Intensity")]
+		[AEValueRange(0, 5000, 10, 1)]
+		public float LightIntensity { get; set; } = 100;
 		
-		[Category("Spot-light")]
+
+
+		[AECategory("Spot Shape")]
+		[AEDisplayName("Outer Radius")]
+		[AEValueRange(0, 100, 1, 0.125f)]
 		public float OuterRadius { get; set; } = 5;
 		
-		[Category("Spot-light")]
+		[AECategory("Spot Shape")]
+		[AEDisplayName("Inner Radius")]
+		[AEValueRange(0, 50, 1, 0.125f)]
 		public float InnerRadius { get; set; } = 0.1f;
 		
-		[Category("Spot-light")]
+		[AECategory("Spot Shape")]
+		[AEValueRange(0, 4, 1/4f, 1/64f)]
 		public float NearPlane { get; set; } = 0.125f;
 		
-		[Category("Spot-light")]
+		[AECategory("Spot Shape")]
+		[AEValueRange(0, 100, 1, 1/8f)]
 		public float FarPlane { get; set; } = 5;
 		
-		[Category("Spot-light")]
+		[AECategory("Spot Shape")]
+		[AEValueRange(0, 150, 15, 1)]
 		public float FovVertical { get; set; } = 60;
 		
-		[Category("Spot-light")]
+		[AECategory("Spot Shape")]
+		[AEValueRange(0, 150, 15, 1)]
 		public float FovHorizontal { get; set; } = 60;
-		
-		[Category("Spot-light")]
-		public string SpotMaskName { get; set; } = "";
-		
-		[Category("Spot-light")]
-		public int LodBias { get; set; } = 0;
-		
-		[Category("Spot-light")]
-		public float PenumbraAngle { get; set; } = 10;
 
-		[Category("Spot-light")]
-		public LightPreset LightPreset { get; set; } = LightPreset.IncandescentStandard;
-
-		[Category("Spot-light")]
+		[AECategory("Spot-light")]
 		public LightStyle LightStyle { get; set; } = LightStyle.Default;
 
-		[Category("Depth biasing")]
+
+
+		[AECategory("Spot Shadow")]
+		[AEDisplayName("Spot Mask")]
+		public string SpotMaskName { get; set; } = "";
+		
+		[AECategory("Spot Shadow")]
+		[AEDisplayName("Shadow LOD Bias")]
+		public int LodBias { get; set; } = 0;
+		
+		[AECategory("Spot Shadow")]
+		[AEDisplayName("Shadow Depth Bias")]
+		[AEValueRange(0, 1/512f, 1/8192f, 1/16384f)]
 		public float DepthBias { get; set; } = 1f / 1024f;
 
-		[Category("Depth biasing")]
+		[AECategory("Spot Shadow")]
+		[AEDisplayName("Shadow Slope Bias")]
+		[AEValueRange(0, 8, 1, 0.125f/4.0f)]
 		public float SlopeBias { get; set; } = 2;
 
 
@@ -100,7 +120,16 @@ namespace IronStar.Mapping {
 
 			light		=	new SpotLight();
 
-			light.Intensity		=	LightPresetColor.GetColor( LightPreset, Intensity );
+			ResetNode( world );
+
+			world.Game.RenderSystem.RenderWorld.LightSet.SpotLights.Add( light );
+		}
+
+
+
+		public override void ResetNode( GameWorld world )
+		{
+			light.Intensity		=	LightColor.ToColor4() * LightIntensity;
 			light.SpotView		=	SpotView;
 			light.Position		=	TranslateVector;
 			light.Projection	=	SpotProjection;
@@ -115,8 +144,6 @@ namespace IronStar.Mapping {
 			light.SlopeBias		=	SlopeBias;
 
 			light.LightStyle	=	LightStyle;
-
-			world.Game.RenderSystem.RenderWorld.LightSet.SpotLights.Add( light );
 		}
 
 
@@ -136,12 +163,7 @@ namespace IronStar.Mapping {
 		public override void DrawNode( GameWorld world, DebugRender dr, Color color, bool selected )
 		{
 			var transform	=	WorldMatrix;
-
-			var lightColor	=	LightPresetColor.GetColor( LightPreset, Intensity );;
-
-			var max			= Math.Max( Math.Max( lightColor.Red, lightColor.Green ), Math.Max( lightColor.Blue, 1 ) );
-
-			var dispColor   = new Color( (byte)(lightColor.Red / max * 255), (byte)(lightColor.Green / max * 255), (byte)(lightColor.Blue / max * 255), (byte)255 ); 
+			var dispColor   =	LightColor;
 
 			dr.DrawPoint( transform.TranslationVector, 1, color, 2 );
 			dr.DrawSphere( transform.TranslationVector, InnerRadius, dispColor );
@@ -169,23 +191,6 @@ namespace IronStar.Mapping {
 
 			} else {
 			}
-		}
-
-
-
-		public override void ResetNode( GameWorld world )
-		{
-			light.Position		=	TranslateVector;
-			light.SpotView		=	SpotView;
-			light.Projection	=	SpotProjection;
-		}
-
-
-
-		public override void HardResetNode( GameWorld world )
-		{
-			KillNode( world );
-			SpawnNode( world );
 		}
 
 

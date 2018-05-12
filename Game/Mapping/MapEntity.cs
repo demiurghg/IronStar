@@ -97,7 +97,8 @@ namespace IronStar.Mapping {
 		public override void ResetNode( GameWorld world )
 		{
 			if (Entity==null) {
-				HardResetNode(world);
+				KillNode(world);
+				SpawnNode(world);
 				return;
 			}
 			if (world.IsAlive(Entity.ID)) {
@@ -107,16 +108,9 @@ namespace IronStar.Mapping {
 				Entity.AngularVelocity = Vector3.Zero;
 				Entity.Controller?.Reset();
 			} else {
-				HardResetNode(world);
+				KillNode(world);
+				SpawnNode(world);
 			}
-		}
-
-
-
-		public override void HardResetNode( GameWorld world )
-		{
-			KillNode( world );
-			SpawnNode( world );
 		}
 
 

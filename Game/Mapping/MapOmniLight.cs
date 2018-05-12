@@ -19,25 +19,13 @@ namespace IronStar.Mapping {
 
 	public class MapOmniLight : MapNode {
 
-		//[Category("Decal Image")]
-		//[Editor( typeof( SpotFileLocationEditor ), typeof( UITypeEditor ) )]
-		//public string SpotMaskName { get; set; } = "";
-		
-		
 		[AECategory("Omni-light")]
-		[AEValueRange(0, 1000, 10, 0.1f)]
-		public float Intensity { get; set; } = 500;
-		
-		[AECategory("Omni-light")]
-		[AEValueRange(0, 50, 1, 0.1f)]
+		[AEValueRange(0, 50, 1, 0.125f)]
 		public float OuterRadius { get; set; } = 5;
 		
 		[AECategory("Omni-light")]
-		[AEValueRange(0, 50, 1, 0.1f)]
-		public float InnerRadius { get; set; } = 0.1f;
-
-		[AECategory("Omni-light")]
-		public LightPreset LightPreset { get; set; } = LightPreset.IncandescentStandard;
+		[AEValueRange(0, 50, 1, 0.125f)]
+		public float InnerRadius { get; set; } = 0.125f;
 
 		[AECategory("Omni-light")]
 		public LightStyle LightStyle { get; set; } = LightStyle.Default;
@@ -51,40 +39,11 @@ namespace IronStar.Mapping {
 
 		[AECategory("Light Color")]
 		[AEDisplayName("Intensity")]
-		[AEValueRange(0, 10000, 100, 1)]
+		[AEValueRange(0, 5000, 10, 1)]
 		public float LightIntensity { get; set; } = 100;
 
-		[AEFileName("scenes", "*.fbx", AEFileNameMode.NoExtension)]
-		[AEDisplayName("FileName")]
-		public string FileName { get; set; } = "/scenes/model.fbx";
 
 		OmniLight	light;
-
-		[AECommand]
-		[AECategory("Omni-light")]
-		[AEDisplayName("Do Blah!")]
-		public void ComputeLighting ()
-		{
-			Log.Warning("BLAH!!");
-		}
-
-
-		[AECommand]
-		[AECategory("Commands")]
-		[AEDisplayName("Do Blah!")]
-		public void FlushShaderCache ()
-		{
-			Log.Warning("BLAH!!");
-		}
-
-
-		[AECommand]
-		[AECategory("Commands")]
-		[AEDisplayName("Do Blah!")]
-		public void Bake ()
-		{
-			Log.Warning("BLAH!!");
-		}
 
 
 		/// <summary>
@@ -104,12 +63,7 @@ namespace IronStar.Mapping {
 
 			light		=	new OmniLight();
 
-			light.Intensity		=	LightPresetColor.GetColor( LightPreset, Intensity );;
-			light.Position		=	WorldMatrix.TranslationVector;
-			light.RadiusOuter	=	OuterRadius;
-			light.RadiusInner	=	InnerRadius;
-			light.LightStyle	=	LightStyle;
-			light.Ambient		=	Ambient;
+			ResetNode( world );
 
 			world.Game.RenderSystem.RenderWorld.LightSet.OmniLights.Add( light );
 		}
@@ -132,11 +86,7 @@ namespace IronStar.Mapping {
 		{
 			var transform	=	WorldMatrix;
 
-			var lightColor	=	LightPresetColor.GetColor( LightPreset, Intensity );
-
-			var max			=	Math.Max( Math.Max( lightColor.Red, lightColor.Green ), Math.Max( lightColor.Blue, 1 ) );
-
-			var dispColor   =	new Color( (byte)(lightColor.Red / max * 255), (byte)(lightColor.Green / max * 255), (byte)(lightColor.Blue / max * 255), (byte)255 ); 
+			var dispColor   =	LightColor; 
 
 			dr.DrawPoint( transform.TranslationVector, 1, color, 1 );
 
@@ -152,15 +102,12 @@ namespace IronStar.Mapping {
 
 		public override void ResetNode( GameWorld world )
 		{
+			light.Intensity		=	LightColor.ToColor4() * LightIntensity;
 			light.Position		=	WorldMatrix.TranslationVector;
-		}
-
-
-
-		public override void HardResetNode( GameWorld world )
-		{
-			KillNode( world );
-			SpawnNode( world );
+			light.RadiusOuter	=	OuterRadius;
+			light.RadiusInner	=	InnerRadius;
+			light.LightStyle	=	LightStyle;
+			light.Ambient		=	Ambient;
 		}
 
 

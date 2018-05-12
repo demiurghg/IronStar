@@ -286,14 +286,13 @@ namespace IronStar.Editor2 {
 		{
 			EnableSimulation = false;
 
-			if (hardResetSelection) {
-				foreach ( var se in selection ) {
-					se.HardResetNode( world );
-				}
-			}
-
 			foreach ( var node in map.Nodes ) {
 				node.ResetNode( world );
+
+				if (hardResetSelection) {
+					node.KillNode(world);
+					node.SpawnNode(world);
+				}
 			}
 
 			world.SimulateWorld(0);
@@ -359,13 +358,23 @@ namespace IronStar.Editor2 {
 
 			dr.DrawBox( map.Environment.IrradianceVolume, Color.Cyan );
 
-			//RefreshAppearance();
+			//
+			//	Update nodes :
+			//
+			foreach ( var item in map.Nodes ) {
+				item.Update( gameTime, world );
+			}
 
+
+			//
+			//	Simulate & present world
+			//
 			if (EnableSimulation) {
 				world.SimulateWorld( gameTime.ElapsedSec );
 			}
 			world.PresentWorld( gameTime.ElapsedSec, 1, null, null );
 
+			//	draw stuff :
 			rs.RenderWorld.Debug.DrawGrid( 10 );
 
 			map.DrawNavigationMeshDebug( rs.RenderWorld.Debug );

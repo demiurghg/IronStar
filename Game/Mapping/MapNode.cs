@@ -10,6 +10,8 @@ using IronStar.Core;
 using Fusion.Engine.Graphics;
 using IronStar.SFX;
 using Fusion.Core.Shell;
+using Fusion.Engine.Common;
+using Fusion.Engine.Common;
 
 namespace IronStar.Mapping {
 	public abstract class MapNode {
@@ -17,12 +19,12 @@ namespace IronStar.Mapping {
 		/// <summary>
 		/// Indicates that map object or entity should be updated without
 		/// </summary>
-		protected bool dirty;
+		protected bool dirty = true;
 
 		/// <summary>
 		/// Indicates that map object must be fully recreated
 		/// </summary>
-		protected bool hardDirty;
+		protected bool hardDirty = true;
 
 
 		/// <summary>
@@ -32,12 +34,12 @@ namespace IronStar.Mapping {
 		{
 		}
 
+
+
 		[AECategory("Display")]
-		[Description( "Node object scaling" )]
 		public bool Visible { get; set; } = true;
 
 		[AECategory("Display")]
-		[Description( "Node object scaling" )]
 		public bool Frozen { get; set; }
 
 		float translateX  = 0;
@@ -122,23 +124,15 @@ namespace IronStar.Mapping {
 			}
 		}
 
-		//[AECategory("Transform")]
-		//[Description("Node rotation quaternion")]
-		//public Quaternion Rotation { get; set; } = Quaternion.Identity;
-
-		[Category("Transform")]
-		[Description( "Node object scaling" )]
-		public float Scaling { get; set; } = 1;
 
 
 		/// <summary>
-		/// Gets 
+		/// Gets node's world transform matrix 
 		/// </summary>
 		[Browsable(false)]
 		public Matrix WorldMatrix {
 			get {
 				return Matrix.RotationQuaternion( RotateQuaternion ) 
-					* Matrix.Scaling( Scaling )
 					* Matrix.Translation( TranslateVector );
 			}
 		}
@@ -160,6 +154,9 @@ namespace IronStar.Mapping {
 		}
 
 
+		/// <summary>
+		/// Gets and sets rotation quaternion
+		/// </summary>
 		[Browsable(false)]
 		public Quaternion RotateQuaternion {
 			get {
@@ -174,6 +171,26 @@ namespace IronStar.Mapping {
 				MathUtil.ToAnglesDeg( rotationMatrix, out rotateYaw, out rotatePitch, out rotateRoll );
 			}
 		}
+
+
+		/// <summary>
+		/// Updates	node state.
+		/// Check dirty-flags and reset node if needed.
+		/// </summary>
+		/// <param name="gameTime"></param>
+		public virtual void Update ( GameTime gameTime, GameWorld world )
+		{
+			if (dirty) {
+				ResetNode(world);
+				dirty = false;
+			}
+			if (hardDirty) {
+				KillNode(world);
+				SpawnNode(world);
+				hardDirty = false;
+			}
+		}
+
 
 		/// <summary>
 		/// Creates instance of map object
@@ -196,12 +213,6 @@ namespace IronStar.Mapping {
 		/// </summary>
 		/// <param name="world"></param>
 		public abstract void ResetNode ( GameWorld world );
-
-		/// <summary>
-		/// Performs hard reset of the object
-		/// </summary>
-		/// <param name="world"></param>
-		public abstract void HardResetNode ( GameWorld world );
 
 		/// <summary>
 		/// Eliminates object

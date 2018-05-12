@@ -20,6 +20,9 @@ namespace IronStar.Editor2.Controls {
 
 		public Color CursorColor { get; set; } = Color.Gray;
 
+		public event EventHandler ValueChanged;
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -59,6 +62,7 @@ namespace IronStar.Editor2.Controls {
 		private void TextBox_Deactivated( object sender, EventArgs e )
 		{
 			setFunc( Text );
+			ValueChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		private void TextBox_Activated( object sender, EventArgs e )
@@ -136,6 +140,7 @@ namespace IronStar.Editor2.Controls {
 
 			if (e.Key==Keys.Enter) {	
 				setFunc( Text );
+				ValueChanged?.Invoke(this, EventArgs.Empty);
 				return;
 			}
 

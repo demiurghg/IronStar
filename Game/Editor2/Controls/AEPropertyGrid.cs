@@ -35,6 +35,28 @@ namespace IronStar.Editor2.Controls {
 
 
 
+		public class PropertyChangedEventArgs : EventArgs {
+			public PropertyChangedEventArgs(object target, PropertyInfo property, object value)
+			{
+				TargetObject = target;
+				Property = property;
+				Value = value;
+			}
+			public readonly object TargetObject;
+			public readonly PropertyInfo Property;
+			public readonly object Value;
+		}
+
+
+
+		public event EventHandler<PropertyChangedEventArgs>	PropertyChanged;
+
+		protected void OnPropertyChange (object target, PropertyInfo property, object value)
+		{
+			PropertyChanged?.Invoke( this, new PropertyChangedEventArgs(target, property, value) );
+		}
+
+
 
 		/// <summary>
 		/// 
@@ -75,11 +97,16 @@ namespace IronStar.Editor2.Controls {
 
 			foreach ( var pi in obj.GetType().GetProperties() ) {
 
+				Action<object> setFunc  =	delegate (object value) {
+					pi.SetValue(obj,value);
+					OnPropertyChange(obj,pi,value);
+				};
+
 				var name		=	pi.GetAttribute<AEDisplayNameAttribute>()?.Name ?? pi.Name;
 				var category	=	pi.GetAttribute<AECategoryAttribute>()?.Category ?? "Misc";
 
 				if (pi.PropertyType==typeof(bool)) {
-					AddCheckBox( category, name, ()=>(bool)(pi.GetValue(obj)), (val)=>pi.SetValue(obj,val) );
+					AddCheckBox( category, name, ()=>(bool)(pi.GetValue(obj)), (val)=>setFunc(val) );
 				}
 
 				if (pi.PropertyType==typeof(float)) {
@@ -97,7 +124,7 @@ namespace IronStar.Editor2.Controls {
 						pstep	=	range.PreciseStep;
 					}
 					
-					AddSlider( category, name, ()=>(float)(pi.GetValue(obj)), (val)=>pi.SetValue(obj,val), min, max, step, pstep );
+					AddSlider( category, name, ()=>(float)(pi.GetValue(obj)), (val)=>setFunc(val), min, max, step, pstep );
 				}
 
 				if (pi.PropertyType==typeof(string)) {
@@ -108,16 +135,16 @@ namespace IronStar.Editor2.Controls {
 						var dir = fna.Directory;
 						AddTextBox( category, name, 
 							()=>(string)(pi.GetValue(obj)), 
-							(val)=>pi.SetValue(obj,val), 
-							(val)=> FileSelector.ShowDialog( Frames, dir, ext, "", (fnm)=>pi.SetValue(obj,fnm) )
+							(val)=>setFunc(val), 
+							(val)=>FileSelector.ShowDialog( Frames, dir, ext, "", (fnm)=>setFunc(fnm) )
 						);
 					} else {
-						AddTextBox( category, name, ()=>(string)(pi.GetValue(obj)), (val)=>pi.SetValue(obj,val), null );
+						AddTextBox( category, name, ()=>(string)(pi.GetValue(obj)), (val)=>setFunc(val), null );
 					}
 				}
 
 				if (pi.PropertyType==typeof(Color)) {
-					AddColorPicker( category, name, ()=>(Color)(pi.GetValue(obj)), (val)=>pi.SetValue(obj,val) );
+					AddColorPicker( category, name, ()=>(Color)(pi.GetValue(obj)), (val)=>setFunc(val) );
 				}
 
 				if (pi.PropertyType.IsEnum) {
@@ -126,7 +153,7 @@ namespace IronStar.Editor2.Controls {
 					var value	=	pi.GetValue(obj).ToString();
 					var values	=	Enum.GetNames( type );
 
-					AddDropDown( category, name, value, values, ()=>pi.GetValue(obj).ToString(), (val)=>pi.SetValue(obj, Enum.Parse(type, val)) );
+					AddDropDown( category, name, value, values, ()=>pi.GetValue(obj).ToString(), (val)=>setFunc(Enum.Parse(type, val)) );
 				}
 
 			}

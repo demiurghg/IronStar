@@ -67,7 +67,7 @@ namespace IronStar.Editor2.Manipulators {
 		/// <param name="axisA"></param>
 		/// <param name="axisB"></param>
 		/// <param name="color"></param>
-		protected void DrawRing ( DebugRender dr, Ray pickRay, Vector3 origin, Vector3 axis, Color color )
+		protected void DrawRing ( DebugRender dr, Ray pickRay, Vector3 origin, Vector3 axis, Color color, float size = 90)
 		{
 				axis	=	Vector3.Normalize( axis );
 			var axisA	=	Vector3.Cross( axis, Vector3.Up ).Normalized();	
@@ -81,7 +81,7 @@ namespace IronStar.Editor2.Manipulators {
 			int N = 64;
 			Vector3[] points = new Vector3[N + 1];
 
-			var radius = editor.camera.PixelToWorldSize(origin, 90);
+			var radius = editor.camera.PixelToWorldSize(origin, size);
 
 			for (int i = 0; i <= N; i++)
 			{
@@ -139,9 +139,9 @@ namespace IronStar.Editor2.Manipulators {
 		/// <param name="pickPoint"></param>
 		/// <param name="hitPoint"></param>
 		/// <returns></returns>
-		protected HandleIntersection IntersectRing ( Vector3 origin, Vector3 axis, Point pickPoint )
+		protected HandleIntersection IntersectRing ( Vector3 origin, Vector3 axis, Point pickPoint, float size = 90 )
 		{
-			var radius		=	editor.camera.PixelToWorldSize(origin, 90);
+			var radius		=	editor.camera.PixelToWorldSize(origin, size);
 			var tolerance	=	editor.camera.PixelToWorldSize(origin, 7);
 			var pickRay		=	editor.camera.PointToRay( pickPoint.X, pickPoint.Y );
 

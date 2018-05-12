@@ -191,8 +191,6 @@ namespace IronStar.Editor2 {
 					} else {
 						target.TranslateVector = pos + (currentPoint - initialPoint);
 					}
-
-					target.ResetNode( this.editor.World );
 				}
 			}
 		}

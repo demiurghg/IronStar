@@ -98,7 +98,7 @@ namespace IronStar.Mapping {
 
 				var q = MathConverter.Convert( RotateQuaternion );
 				var p = MathConverter.Convert( TranslateVector );
-				var s = MathConverter.Convert( new Vector3( Scaling, Scaling, Scaling ) );
+				var s = MathConverter.Convert( new Vector3( Scale, Scale, Scale ) );
 				staticMesh.WorldTransform = new BEPUTransform( s, q, p );
 
 				collidables[i] =	staticMesh;
@@ -184,14 +184,6 @@ namespace IronStar.Mapping {
 					instances[i].World = transforms[ i ] * WorldMatrix;
 				}
 			}
-		}
-
-
-
-		public override void HardResetNode( GameWorld world )
-		{
-			KillNode( world );
-			SpawnNode( world );
 		}
 
 

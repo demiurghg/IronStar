@@ -17,13 +17,52 @@ using System.Threading;
 
 namespace Fusion.Engine.Common {
 
-	public abstract class GameComponent : DisposableBase {
+	public abstract class GameComponent : DisposableBase, IGameComponent, IUpdatable {
 
-		public Game Game { get; protected set; }
+		/// <summary>
+		/// Gets Game object associated with given component.
+		/// Lower values are updated first.
+		/// </summary>
+		public Game Game { 
+			get; 
+			private set; 
+		}
 
-		Stack<GameComponent> initializedComponents = new Stack<GameComponent>();
+		/// <summary>
+		/// Indicates whether the game component's 
+		/// Update method should be called in Game.Update.
+		/// </summary>
+		public bool Enabled {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				if (enabled!=value) {
+					enabled = value;
+					EnabledChanged?.Invoke(this, EventArgs.Empty);
+				}
+			}
+		}
+		bool enabled;
 
-		
+		/// <summary>
+		/// Indicates when the game component should be updated relative to other game components. 
+		/// Lower values are updated first.
+		/// </summary>
+		public int UpdateOrder {
+			get {
+				throw new NotImplementedException();
+			}
+			set {
+				if (updateOrder!=value) {
+					updateOrder = value;
+					UpdateOrderChanged?.Invoke(this, EventArgs.Empty);
+				}
+			}
+		}
+		int updateOrder;
+
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -33,37 +72,27 @@ namespace Fusion.Engine.Common {
 			this.Game = game;
 		}
 
-
-		/// <summary>
-		/// Intializes component.
-		/// </summary>
-		public abstract void Initialize ();
-
+		public event EventHandler<EventArgs> EnabledChanged;
+		public event EventHandler<EventArgs> UpdateOrderChanged;
 
 
 		/// <summary>
-		/// Iniitalizes componets and push it to initialized component stack.
+		/// Called when the component should be initialized. 
+		/// This method can be used for tasks like querying for services the component 
+		/// needs and setting up resources.
 		/// </summary>
-		/// <param name="component"></param>
-		protected void InitializeComponent ( GameComponent component )
+		public virtual void Initialize ()
 		{
-			initializedComponents.Push( component );
-			Log.Message("---- Init : {0} ----", component.GetType().Name );
-			component.Initialize();
 		}
 
 
-
 		/// <summary>
-		/// Disposes all initialized components in reverse order.
+		/// Indicates whether the game component's 
+		/// Update method should be called in Game.Update.
 		/// </summary>
-		protected void DisposeComponents ()
+		/// <param name="gameTime"></param>
+		public virtual void Update( GameTime gameTime )
 		{
-			while (initializedComponents.Any()) {
-				var component = initializedComponents.Pop();
-				Log.Message("Dispose : {0}", component.GetType().Name );
-				SafeDispose( ref component );
-			}
 		}
 	}
 }

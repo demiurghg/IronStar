@@ -8,8 +8,8 @@ using Fusion.Core.IniParser;
 using Fusion.Core.IniParser.Model;
 using Fusion.Core.Extensions;
 using Fusion.Engine.Common;
-using Fusion.Engine.Input;
-using Fusion.Engine.Storage;
+using Fusion.Core.Input;
+using Fusion.Core;
 
 namespace Fusion.Core.Configuration {
 	public class ConfigManager {

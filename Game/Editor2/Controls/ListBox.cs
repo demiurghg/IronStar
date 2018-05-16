@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Common;
+using Fusion.Core;
 using Fusion.Engine.Frames;
 using Fusion.Engine.Graphics;
 

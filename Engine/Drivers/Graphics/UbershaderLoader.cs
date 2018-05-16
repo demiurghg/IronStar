@@ -10,7 +10,7 @@ using SharpDX.Direct3D11;
 using D3D11 = SharpDX.Direct3D11;
 using Fusion.Core.Content;
 using Fusion.Core.Mathematics;
-using Fusion.Engine.Storage;
+using Fusion.Core;
 using Fusion.Engine.Common;
 
 

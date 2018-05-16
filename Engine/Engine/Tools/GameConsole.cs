@@ -7,12 +7,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using Fusion.Core;
+using Fusion.Core.Input;
 using Fusion.Core.Utils;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Common;
 using Fusion.Core.Configuration;
 using Fusion.Engine.Graphics;
-using Fusion.Engine.Input;
+using Fusion.Core.Input;
 using Fusion.Core.Shell;
 using System.IO;
 

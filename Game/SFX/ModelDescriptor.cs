@@ -13,7 +13,7 @@ using System.Drawing.Design;
 using System.Xml.Serialization;
 using IronStar.Editors;
 using Fusion.Core.Content;
-using Fusion.Engine.Storage;
+using Fusion.Core;
 using System.IO;
 using Fusion.Engine.Graphics;
 

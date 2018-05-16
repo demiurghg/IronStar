@@ -13,7 +13,7 @@ using IronStar.SFX;
 using Fusion.Engine.Graphics;
 using Fusion.Core.Content;
 using Fusion.Engine.Common;
-using Fusion.Engine.Storage;
+using Fusion.Core;
 using System.ComponentModel;
 using System.Xml.Serialization;
 using IronStar.Editor2;

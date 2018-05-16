@@ -13,6 +13,7 @@ using Fusion;
 using Fusion.Build;
 using Fusion.Engine.Common;
 using IronStar.SFX;
+using Fusion.Core;
 using Fusion.Development;
 using Fusion.Core.Extensions;
 

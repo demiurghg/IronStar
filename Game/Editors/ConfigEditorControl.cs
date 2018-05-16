@@ -14,6 +14,7 @@ using Fusion.Build;
 using Fusion.Engine.Common;
 using IronStar.SFX;
 using Fusion.Development;
+using Fusion.Core;
 using Fusion.Core.Extensions;
 
 namespace IronStar.Editors {

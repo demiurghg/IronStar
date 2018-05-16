@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Fusion.Engine.Imaging;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Graphics;
-using Fusion.Engine.Storage;
+using Fusion.Core;
 
 namespace Fusion.Build.Mapping {
 	internal class VTTextureTable {

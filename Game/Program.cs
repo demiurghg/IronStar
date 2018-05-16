@@ -9,6 +9,7 @@ using Fusion;
 using Fusion.Build;
 using Fusion.Development;
 using Fusion.Engine.Common;
+using Fusion.Core;
 using Fusion.Core.Shell;
 using Fusion.Core.Utils;
 using Fusion.Engine.Imaging;
@@ -32,7 +33,7 @@ namespace IronStar {
 			{
 			}
 
-			public override void LoadConfig()
+			/*public override void LoadConfig()
 			{
 				Config.LoadSettings("Config.ini");
 			}
@@ -40,9 +41,9 @@ namespace IronStar {
 			public override void SaveConfig()
 			{
 				Config.SaveSettings("Config.ini");
-			}
+			} */
 
-			public override IClientInstance CreateClient( Game game, IMessageService msgsvc, Guid clientGuid )
+			/*public override IClientInstance CreateClient( Game game, IMessageService msgsvc, Guid clientGuid )
 			{
 				return new ShooterClient( game.GameClient, msgsvc, clientGuid );
 			}
@@ -60,7 +61,7 @@ namespace IronStar {
 			public override IEditorInstance CreateEditor( Game game, string map )
 			{
 				return new Editor2.MapEditor( game.GameEditor, map );
-			}
+			}  */
 		}
 
 

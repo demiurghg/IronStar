@@ -10,7 +10,7 @@ using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
 using Fusion.Core.Configuration;
 using Fusion.Engine.Common;
-using Fusion.Engine.Input;
+using Fusion.Core.Input;
 using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;

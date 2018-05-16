@@ -16,6 +16,7 @@ using Fusion.Core.IniParser.Model;
 using Fusion.Engine.Graphics;
 using IronStar.Mapping;
 using IronStar.Core;
+using Fusion.Core;
 using Fusion.Core.Shell;
 using IronStar.Items;
 

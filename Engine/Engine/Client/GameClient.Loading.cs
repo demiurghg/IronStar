@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Lidgren.Network;
 using System.Threading;
 using System.IO;
+using Fusion.Core;
 using Fusion.Engine.Common;
 using Fusion.Engine.Server;
 

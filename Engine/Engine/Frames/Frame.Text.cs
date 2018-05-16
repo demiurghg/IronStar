@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Fusion;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
-using Fusion.Engine.Input;
+using Fusion.Core.Input;
 using Fusion.Engine.Graphics;
 using Fusion.Engine.Common;
 using Forms = System.Windows.Forms;

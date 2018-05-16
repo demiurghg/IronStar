@@ -16,7 +16,7 @@ using SharpDX.Direct3D;
 using Native.Dds;
 using Fusion.Core;
 using Fusion.Engine.Common;
-using Fusion.Engine.Storage;
+using Fusion.Core;
 
 
 namespace Fusion.Drivers.Graphics {

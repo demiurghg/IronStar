@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Fusion.Engine.Common;
 using Fusion.Core.Extensions;
 using System.IO;
-using Fusion.Engine.Storage;
+using Fusion.Core;
 
 
 namespace Fusion.Core.Content {

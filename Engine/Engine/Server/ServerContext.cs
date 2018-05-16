@@ -7,6 +7,7 @@ using Lidgren.Network;
 using System.Threading;
 using System.Net;
 using Fusion.Core.Shell;
+using Fusion.Core;
 using Fusion.Engine.Common;
 using System.Diagnostics;
 using Fusion.Core.Content;
@@ -32,7 +33,7 @@ namespace Fusion.Engine.Server {
 		public ServerContext ( Game game, int port, string map, string options )
 		{
 			this.game			=	game;
-			this.serverInstance	=	game.CreateServer( game, this, map, options );
+			//this.serverInstance	=	game.CreateServer( game, this, map, options );
 
 			var netConfig						=   new NetPeerConfiguration(game.GameID);
 			netConfig.Port						=   port;

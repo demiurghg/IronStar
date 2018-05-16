@@ -7,6 +7,7 @@ using Fusion.Engine.Common;
 using Fusion.Engine.Frames;
 using Fusion.Engine.Graphics;
 using System.Reflection;
+using Fusion.Core;
 using Fusion.Core.Mathematics;
 
 namespace IronStar.Editor2.Controls {

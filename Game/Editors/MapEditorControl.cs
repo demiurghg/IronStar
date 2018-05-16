@@ -15,6 +15,7 @@ using Fusion.Build;
 using Native.Fbx;
 using System.Reflection;
 using Fusion.Engine.Common;
+using Fusion.Core;
 using IronStar.Core;
 using IronStar.Editor2;
 using Fusion.Development;

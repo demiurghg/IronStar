@@ -19,6 +19,7 @@ using Fusion.Input;
 using System.Runtime.InteropServices;
 using Fusion.Engine.Graphics;
 using Fusion.Engine.Graphics.Ubershaders;
+using Fusion.Core;
 
 
 namespace Fusion.Drivers.Graphics.Display {
@@ -332,14 +333,14 @@ namespace Fusion.Drivers.Graphics.Display {
 
 		private void Form_MouseDown( object sender, MouseEventArgs e )
 		{
-			Input.Keys key = Input.Keys.None;
+			var key = Fusion.Core.Input.Keys.None;
 
 			switch ( e.Button ) {
-				case MouseButtons.Left: key = Input.Keys.LeftButton; break;
-				case MouseButtons.Right: key = Input.Keys.RightButton; break;
-				case MouseButtons.Middle: key = Input.Keys.MiddleButton; break;
-				case MouseButtons.XButton1: key = Input.Keys.MouseButtonX1; break;
-				case MouseButtons.XButton2: key = Input.Keys.MouseButtonX2; break;
+				case MouseButtons.Left: key = Fusion.Core.Input.Keys.LeftButton; break;
+				case MouseButtons.Right: key = Fusion.Core.Input.Keys.RightButton; break;
+				case MouseButtons.Middle: key = Fusion.Core.Input.Keys.MiddleButton; break;
+				case MouseButtons.XButton1: key = Fusion.Core.Input.Keys.MouseButtonX1; break;
+				case MouseButtons.XButton2: key = Fusion.Core.Input.Keys.MouseButtonX2; break;
 			}
 			Game.InputDevice.NotifyMouseDown( key, e.X, e.Y );
 		}
@@ -365,7 +366,7 @@ namespace Fusion.Drivers.Graphics.Display {
 
 		void form_KeyUp ( object sender, KeyEventArgs e )
 		{
-			Game.InputDevice.NotifyKeyUp( (Fusion.Drivers.Input.Keys)(int)e.KeyCode, e.Alt, e.Shift, e.Control );
+			Game.InputDevice.NotifyKeyUp( (Fusion.Core.Input.Keys)(int)e.KeyCode, e.Alt, e.Shift, e.Control );
 		}
 
 
@@ -376,7 +377,7 @@ namespace Fusion.Drivers.Graphics.Display {
 				Fullscreen = !Fullscreen;
 			}
 
-			Game.InputDevice.NotifyKeyDown( (Fusion.Drivers.Input.Keys)(int)e.KeyCode, e.Alt, e.Shift, e.Control );
+			Game.InputDevice.NotifyKeyDown( (Fusion.Core.Input.Keys)(int)e.KeyCode, e.Alt, e.Shift, e.Control );
 		}
 
 

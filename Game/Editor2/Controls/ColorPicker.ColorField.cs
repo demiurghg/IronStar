@@ -7,9 +7,10 @@ using Fusion.Engine.Common;
 using Fusion.Engine.Frames;
 using Fusion.Engine.Graphics;
 using System.Reflection;
+using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion;
-using Fusion.Engine.Input;
+using Fusion.Core.Input;
 
 namespace IronStar.Editor2.Controls {
 	partial class ColorPicker : Frame {

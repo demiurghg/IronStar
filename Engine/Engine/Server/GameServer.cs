@@ -8,6 +8,7 @@ using System.Threading;
 using Fusion.Core.Shell;
 using System.IO;
 using Fusion.Engine.Common;
+using Fusion.Core;
 using Fusion.Core.Content;
 using Fusion.Core.Configuration;
 

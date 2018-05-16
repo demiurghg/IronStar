@@ -7,7 +7,7 @@ using System.IO;
 using Fusion.Drivers.Graphics;
 using Fusion.Core.Content;
 using Fusion.Engine.Common;
-using Fusion.Engine.Storage;
+using Fusion.Core;
 
 namespace Fusion.Engine.Graphics {
 

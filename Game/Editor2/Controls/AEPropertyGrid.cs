@@ -11,6 +11,7 @@ using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
 using Fusion;
 using Fusion.Engine.Frames.Layouts;
+using Fusion.Core;
 using Fusion.Core.Shell;
 
 namespace IronStar.Editor2.Controls {

@@ -9,7 +9,7 @@ using Fusion.Core.Utils;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Common;
 using Fusion.Engine.Graphics;
-using Fusion.Engine.Input;
+using Fusion.Core.Input;
 using Fusion.Core.Configuration;
 
 namespace Fusion.Engine.Tools {

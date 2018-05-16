@@ -7,6 +7,7 @@ using System.IO;
 using Fusion;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Common;
+using Fusion.Core;
 using Fusion.Core.Content;
 using Fusion.Engine.Server;
 using Fusion.Engine.Client;

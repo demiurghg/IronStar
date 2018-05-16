@@ -6,7 +6,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using Fusion.Core;
-using Fusion.Engine.Input;
+using Fusion.Core.Input;
 using Fusion.Drivers.Graphics;
 using Fusion.Engine.Common;
 using System.Diagnostics;

@@ -9,6 +9,7 @@ using Fusion.Engine.Graphics;
 using System.Reflection;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Frames.Layouts;
+using Fusion.Core;
 using Fusion;
 
 namespace IronStar.Editor2.Controls {

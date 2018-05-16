@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Drivers.Graphics;
 using System.Net;
+using Fusion.Core;
 using Lidgren.Network;
 
 namespace Fusion.Engine.Common {
@@ -36,7 +37,7 @@ namespace Fusion.Engine.Common {
 		/// <param name="Game"></param>
 		public UserInterface ( Game game ) : base(game)
 		{
-			uiInstance	=	game.CreateUI(game);
+			//uiInstance	=	game.CreateUI(game);
 		}
 
 

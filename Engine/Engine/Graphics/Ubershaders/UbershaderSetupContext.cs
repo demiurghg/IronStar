@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using Fusion.Core;
 using Fusion.Core.Mathematics;
 using System.Runtime.InteropServices;
 using Fusion.Drivers.Graphics;

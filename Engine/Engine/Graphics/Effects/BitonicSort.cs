@@ -7,7 +7,7 @@ using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Configuration;
 using Fusion.Engine.Common;
-using Fusion.Engine.Input;
+using Fusion.Core.Input;
 using Fusion.Drivers.Graphics;
 using System.Runtime.InteropServices;
 using Fusion.Engine.Graphics.Ubershaders;

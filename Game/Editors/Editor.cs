@@ -12,6 +12,7 @@ using IronStar.SFX;
 using Fusion.Core.Content;
 using Fusion.Build;
 using System.IO;
+using Fusion.Core;
 using System.Reflection;
 
 namespace IronStar.Editors {

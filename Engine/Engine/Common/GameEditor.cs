@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Fusion.Core;
 
 namespace Fusion.Engine.Common {
 	public class GameEditor : GameComponent {
@@ -60,7 +61,7 @@ namespace Fusion.Engine.Common {
 				Log.Warning("Editor is already started");
 				return;
 			}
-			editor = Game.CreateEditor( Game, map );
+			///editor = Game.CreateEditor( Game, map );
 			editor?.Initialize();
 		}
 

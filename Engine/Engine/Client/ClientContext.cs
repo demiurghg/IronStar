@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Fusion.Engine.Common;
 using Fusion.Engine.Server;
 using Lidgren.Network;
+using Fusion.Core;
 
 namespace Fusion.Engine.Client {
 
@@ -27,7 +28,7 @@ namespace Fusion.Engine.Client {
 			Guid		=	Guid.NewGuid();
 			Game		=	game;
 			GameClient	=	game.GameClient;
-			Instance	=	game.CreateClient( game, this, Guid );
+			//Instance	=	game.CreateClient( game, this, Guid );
 
 
 

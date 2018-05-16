@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using Native.NvApi;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Common;
+using Fusion.Core;
 
 
 namespace Fusion.Drivers.Graphics.Display {

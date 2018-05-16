@@ -7,6 +7,7 @@ using Fusion.Engine.Common;
 using Fusion.Engine.Frames;
 using Fusion.Engine.Graphics;
 using System.Reflection;
+using Fusion.Core;
 using Fusion.Core.Mathematics;
 
 namespace IronStar.Editor2.Controls {
@@ -71,7 +72,7 @@ namespace IronStar.Editor2.Controls {
 			dragXPos	=	e.X;
 			dragYPos	=	e.Y;
 
-			if (Frames.Game.Keyboard.IsKeyDown( Fusion.Engine.Input.Keys.LeftShift ) ) {
+			if (Frames.Game.Keyboard.IsKeyDown( Fusion.Core.Input.Keys.LeftShift ) ) {
 				dragPrecise = true;
 			}
 		}

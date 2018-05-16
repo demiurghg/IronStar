@@ -9,7 +9,7 @@ using Fusion.Engine.Graphics;
 using System.Reflection;
 using Fusion.Core.Mathematics;
 using Fusion;
-using Fusion.Engine.Input;
+using Fusion.Core.Input;
 using System.IO;
 using Fusion.Build;
 using Fusion.Core.Content;

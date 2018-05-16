@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Fusion;
 using Fusion.Core.Mathematics;
+using Fusion.Core;
 using Fusion.Engine.Common;
 using Fusion.Core.Content;
 using Fusion.Engine.Server;

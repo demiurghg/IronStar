@@ -27,6 +27,21 @@ struct LIGHTINDEX {
 	uint       Count;                         // offset:    4
 };
 
+// Fusion.Engine.Graphics.Fog+FogConsts
+// Marshal.SizeOf = 160
+struct FogConsts {
+	float4x4   MatrixWVP;                     // offset:    0
+	float3     SunPosition;                   // offset:   64
+	float4     SunColor;                      // offset:   80
+	float      Turbidity;                     // offset:   96
+	float3     Temperature;                   // offset:  100
+	float      SkyIntensity;                  // offset:  112
+	float3     Ambient;                       // offset:  116
+	float      Time;                          // offset:  128
+	float3     ViewPos;                       // offset:  132
+	float      SunAngularSize;                // offset:  136
+};
+
 // Fusion.Engine.Graphics.Fog+PARAMS
 // Marshal.SizeOf = 1024
 struct PARAMS {
@@ -51,20 +66,5 @@ struct PARAMS {
 	float4     CameraPosition;                // offset:  720
 	float      CameraTangentX;                // offset:  736
 	float      CameraTangentY;                // offset:  740
-};
-
-// Fusion.Engine.Graphics.Fog+FogConsts
-// Marshal.SizeOf = 160
-struct FogConsts {
-	float4x4   MatrixWVP;                     // offset:    0
-	float3     SunPosition;                   // offset:   64
-	float4     SunColor;                      // offset:   80
-	float      Turbidity;                     // offset:   96
-	float3     Temperature;                   // offset:  100
-	float      SkyIntensity;                  // offset:  112
-	float3     Ambient;                       // offset:  116
-	float      Time;                          // offset:  128
-	float3     ViewPos;                       // offset:  132
-	float      SunAngularSize;                // offset:  136
 };
 

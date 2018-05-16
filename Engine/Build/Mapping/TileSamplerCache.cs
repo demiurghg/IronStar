@@ -9,7 +9,7 @@ using Fusion.Engine.Imaging;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
 using Fusion.Engine.Graphics;
-using Fusion.Engine.Storage;
+using Fusion.Core;
 
 namespace Fusion.Build.Mapping {
 

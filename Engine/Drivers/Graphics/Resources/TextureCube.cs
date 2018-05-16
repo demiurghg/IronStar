@@ -18,7 +18,7 @@ using Native.Dds;
 using Native.Wic;
 using Fusion.Core;
 using Fusion.Engine.Common;
-using Fusion.Engine.Storage;
+using Fusion.Core;
 
 
 namespace Fusion.Drivers.Graphics {

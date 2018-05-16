@@ -15,7 +15,7 @@ using Fusion.Core.Shell;
 
 namespace Fusion.Drivers.Graphics {
 
-	internal class GraphicsParameters {
+	public class GraphicsParameters {
 
 		/// <summary>
 		/// Enables debug graphics device.

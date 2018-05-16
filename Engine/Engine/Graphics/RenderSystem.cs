@@ -187,26 +187,6 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public override void Initialize ()
 		{
-			Game.Config.ApplySettings( lightManager	);
-			Game.Config.ApplySettings( ssaoFilter	);
-			Game.Config.ApplySettings( vtSystem		);
-
-			//	init components :
-			InitializeComponent( spriteEngine	);
-			InitializeComponent( filter			);
-			InitializeComponent( filter2		);
-			InitializeComponent( blur			);
-			InitializeComponent( bilateralFilter);
-			InitializeComponent( ssaoFilter		);
-			InitializeComponent( hdrFilter		);
-			InitializeComponent( dofFilter		);
-			InitializeComponent( lightManager	);
-			InitializeComponent( sceneRenderer	);
-			InitializeComponent( sky			);	
-			InitializeComponent( fog			);	
-			InitializeComponent( bitonicSort	);
-			InitializeComponent( vtSystem		);
-
 			//	create default textures :
 			whiteTexture	=	new DynamicTexture( this, 4,4, typeof(Color), false, false );
 			whiteTexture.SetData( Enumerable.Range(0,16).Select( i => Color.White ).ToArray() );
@@ -233,9 +213,6 @@ namespace Fusion.Engine.Graphics {
 
 		private void Game_Exiting( object sender, EventArgs e )
 		{
-			Game.Config.RetrieveSettings( lightManager	);
-			Game.Config.RetrieveSettings( ssaoFilter	);
-			Game.Config.RetrieveSettings( vtSystem		);
 		}
 
 
@@ -247,11 +224,7 @@ namespace Fusion.Engine.Graphics {
 		protected override void Dispose ( bool disposing )
 		{
 			if (disposing) {
-
-				DisposeComponents();
-
 				SafeDispose( ref renderWorld );
-
 				SafeDispose( ref grayTexture );
 				SafeDispose( ref whiteTexture );
 				SafeDispose( ref blackTexture );

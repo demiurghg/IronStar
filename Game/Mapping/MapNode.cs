@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Fusion.Core.Mathematics;
+using Fusion.Core;
 using IronStar.Core;
 using Fusion.Engine.Graphics;
 using IronStar.SFX;

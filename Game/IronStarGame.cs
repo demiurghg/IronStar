@@ -10,6 +10,7 @@ using Fusion.Engine.Audio;
 using Fusion.Engine.Frames;
 using Fusion.Engine.Tools;
 using Fusion;
+using Fusion.Core.Shell;
 
 namespace IronStar {
 	class IronStarGame : Game
@@ -76,10 +77,55 @@ namespace IronStar {
 		protected override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
-
-			if (Keyboard.IsKeyDown(Fusion.Core.Input.Keys.Escape)) {
-				Exit();
-			}
 		}
+
+
+
+		class Map : ICommand {
+			public void Rollback() {}
+			public bool IsHistoryOn() { return false; }
+
+			readonly IronStarGame game;
+			readonly string mapname;
+			readonly bool edit;
+
+			public Map ( IronStarGame game, ArgList args )
+			{
+				this.game	=	game;
+
+				args.Usage("map <mapname> [/edit]")
+					.Require("mapname"	, out mapname	)
+					.Option	("edit"		, out edit )
+					.Apply();
+			}
+
+			public object Execute()
+			{
+				return null;
+			}
+
+		}
+
+
+		//class EditorMap : ICommand {
+		//	public void Rollback() {}
+		//	public bool IsHistoryOn() { return false; }
+
+		//	public object Execute()
+		//	{
+		//		throw new NotImplementedException();
+		//	}
+		//}
+
+
+		//class EditorQuit : ICommand {
+		//	public void Rollback() {}
+		//	public bool IsHistoryOn() { return false; }
+
+		//	public object Execute()
+		//	{
+		//		throw new NotImplementedException();
+		//	}
+		//}
 	}
 }

@@ -302,6 +302,8 @@ namespace Fusion.Core {
 			mouse				=	new Mouse(this);
 			touch				=	new Touch(this);
 			gamepads			=	new GamepadCollection(this);
+
+			invoker.RegisterCommand("quit", (args) => new Quit(this) );
 		}
 
 
@@ -597,6 +599,29 @@ namespace Fusion.Core {
 				GraphicsDevice.Display.Window.Close();
 			}
 		}
+
+
+
+		/// <summary>
+		/// Quit command
+		/// </summary>
+		class Quit : ICommand {
+			public void Rollback() {}
+			public bool IsHistoryOn() { return false; }
+			readonly Game game;
+
+			public Quit ( Game game )
+			{
+				this.game = game;
+			}
+
+			public object Execute()
+			{
+				game.Exit();
+				return null;
+			}
+		}
+
 
 
 		public SoundSystem SoundSystem;

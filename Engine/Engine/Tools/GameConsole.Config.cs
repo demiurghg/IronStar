@@ -16,6 +16,8 @@ namespace Fusion.Engine.Tools {
 	
 	public partial class GameConsole : GameComponent {
 
+		[Config] public int LayerOrder { get; set; } = 9999;
+
 		[Config] public float FallSpeed { get; set; }
 
 		[Config] public float CursorBlinkRate { get; set; }

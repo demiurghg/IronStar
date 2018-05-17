@@ -62,7 +62,7 @@ namespace Fusion.Core.Shell {
 				return null;
 			}
 
-			public bool IsRollbackable()
+			public bool IsHistoryOn()
 			{
 				return false;
 			}

@@ -99,7 +99,7 @@ namespace Fusion.Engine.Tools {
 
 			consoleLayer	=	new SpriteLayer( Game.RenderSystem, 1024 );
 			editLayer		=	new SpriteLayer( Game.RenderSystem, 1024 );
-			consoleLayer.Order = 9999;
+			consoleLayer.Order = LayerOrder;
 			consoleLayer.Layers.Add( editLayer );
 
 			rs.SpriteLayers.Add( consoleLayer );

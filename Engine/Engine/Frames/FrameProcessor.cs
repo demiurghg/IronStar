@@ -14,12 +14,14 @@ using Fusion.Core.Configuration;
 using Fusion.Engine.Common;
 using Fusion.Engine.Graphics;
 using System.IO;
+using Fusion.Core.Extensions;
 
 namespace Fusion.Engine.Frames {
 
 
 	public class FrameProcessor : GameComponent {
 
+		[Config]	public int		LayerOrder			{ get; set; } = 0;
 		[Config]	public bool		ShowFrames			{ get; set; }
 		[Config]	public bool		SkipUserInterface	{ get; set; }
 		[Config]	public bool		ShowProfilingInfo	{ get; set; }
@@ -113,16 +115,21 @@ namespace Fusion.Engine.Frames {
 		/// </summary>
 		public override void Initialize()
 		{
-			spriteLayer	=	new SpriteLayer( Game.RenderSystem, 1024 );
-
 			using ( var ms = new MemoryStream( Properties.Resources.conchars ) ) {
 				baseFont = UserTexture.CreateFromTga( Game.RenderSystem, ms, false );
 			}
 
+			var rs		=	Game.GetService<RenderSystem>();
+
+			spriteLayer	=	new SpriteLayer( rs, 1024 );
+			spriteLayer.Order =	LayerOrder;
+
+			rs.SpriteLayers.Add( spriteLayer );
+
 			//	create root frame :
-			var vp			=	Game.RenderSystem.DisplayBounds;
-			RootFrame		=	new Frame( this, 0,0, vp.Width, vp.Height, "", null, Color.Zero );
-			Game.RenderSystem.DisplayBoundsChanged += RenderSystem_DisplayBoundsChanged;
+			var vp		=	rs.DisplayBounds;
+			RootFrame	=	new Frame( this, 0,0, vp.Width, vp.Height, "", null, Color.Zero );
+			rs.DisplayBoundsChanged += RenderSystem_DisplayBoundsChanged;
 
 			mouseProcessor.Initialize();
 			touchProcessor.Initialize();

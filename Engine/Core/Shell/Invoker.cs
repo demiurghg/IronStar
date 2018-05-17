@@ -147,7 +147,7 @@ namespace Fusion.Core.Shell {
 
 				var result = command.Execute();
 
-				if (command.IsRollbackable()) {
+				if (command.IsHistoryOn()) {
 					redoStack.Clear();
 					undoStack.Push(command);
 				}

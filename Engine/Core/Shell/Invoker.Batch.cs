@@ -28,7 +28,7 @@ namespace Fusion.Core.Shell {
 			}
 
 
-			public bool IsRollbackable ()
+			public bool IsHistoryOn ()
 			{
 				return true;
 			}
@@ -42,7 +42,7 @@ namespace Fusion.Core.Shell {
 
 					var cmd = commands[i];
 
-					if (cmd.IsRollbackable() || firstRun) {
+					if (cmd.IsHistoryOn() || firstRun) {
 						cmd.Execute();
 					}
 				}
@@ -59,7 +59,7 @@ namespace Fusion.Core.Shell {
 
 					var cmd = commands[i];
 
-					if (cmd.IsRollbackable() || firstRun) {
+					if (cmd.IsHistoryOn() || firstRun) {
 						cmd.Rollback();
 					}
 				}

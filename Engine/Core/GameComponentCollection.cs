@@ -17,15 +17,6 @@ namespace Fusion.Core {
         public event EventHandler<GameComponentCollectionEventArgs> ComponentAdded;
         public event EventHandler<GameComponentCollectionEventArgs> ComponentRemoved;
 
-		public class GameComponentCollectionEventArgs : EventArgs {
-			public readonly IGameComponent GameComponent;
-
-			public GameComponentCollectionEventArgs(IGameComponent gameComponent)
-			{
-				this.GameComponent = gameComponent;
-			}
-		}
-		
 
 		/// <summary>
 		/// 

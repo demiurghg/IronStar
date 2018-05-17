@@ -31,7 +31,7 @@ namespace IronStar {
 		}
 
 
-		private void Components_ComponentAdded(object sender, GameComponentCollection.GameComponentCollectionEventArgs e)
+		private void Components_ComponentAdded(object sender, GameComponentCollectionEventArgs e)
 		{
 			var name = e.GameComponent.GetType().Name;
 			Log.Message("Component added: {0}", name );
@@ -39,7 +39,7 @@ namespace IronStar {
 		}
 
 
-		private void Components_ComponentRemoved(object sender, GameComponentCollection.GameComponentCollectionEventArgs e)
+		private void Components_ComponentRemoved(object sender, GameComponentCollectionEventArgs e)
 		{
 			var name = e.GameComponent.GetType().Name;
 			Log.Message("Component removed: {0}", name );
@@ -61,8 +61,6 @@ namespace IronStar {
 		protected override void Initialize()
 		{
 			base.Initialize();
-
-			Log.Message(Environment.StackTrace);
 		}
 
 

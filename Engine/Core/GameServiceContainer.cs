@@ -58,6 +58,13 @@ namespace Fusion.Core {
 				return service;
 			}
 
+			//	search for class implementing given interface
+			foreach (var pair in services) {
+				if (type.IsAssignableFrom( pair.Value.GetType()) ) {
+					return pair.Value;
+				}
+			}
+
 			return null;
 		}
 

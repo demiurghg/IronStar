@@ -150,6 +150,7 @@ namespace Fusion.Engine.Frames {
 		{
 			if (disposing) {
 				SafeDispose( ref spriteLayer );
+				SafeDispose( ref baseFont );
 			}
 			base.Dispose( disposing );
 		}

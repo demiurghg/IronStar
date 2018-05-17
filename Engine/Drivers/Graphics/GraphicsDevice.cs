@@ -24,7 +24,7 @@ using Fusion.Engine.Common;
 
 namespace Fusion.Drivers.Graphics {
 
-	internal partial class GraphicsDevice : DisposableBase {
+	public partial class GraphicsDevice : DisposableBase {
 
 		public bool IsInitialized { get; private set; }
 
@@ -311,11 +311,35 @@ namespace Fusion.Drivers.Graphics {
 				SafeDispose( ref deviceContext );
 				SafeDispose( ref display );
 
+				PixelShaderResources	.Dispose();
+				VertexShaderResources 	.Dispose();
+				GeometryShaderResources .Dispose();
+				ComputeShaderResources 	.Dispose();
+				DomainShaderResources 	.Dispose();
+				HullShaderResources 	.Dispose();
+										
+				PixelShaderSamplers		.Dispose();
+				VertexShaderSamplers	.Dispose();
+				GeometryShaderSamplers	.Dispose();
+				ComputeShaderSamplers	.Dispose();
+				DomainShaderSamplers	.Dispose();
+				HullShaderSamplers		.Dispose();
+										
+				PixelShaderConstants	.Dispose();
+				VertexShaderConstants	.Dispose();
+				GeometryShaderConstants	.Dispose();
+				ComputeShaderConstants	.Dispose();
+				DomainShaderConstants	.Dispose();
+				HullShaderConstants		.Dispose();
+				
+
 				SamplerState.DisposeStates();
 				//DepthStencilState.DisposeStates();
 			}
 
 			base.Dispose(disposing);
+
+			GraphicsResource.ReportLiveObjects();
 		}
 
 

@@ -16,7 +16,7 @@ using Fusion.Core.Mathematics;
 
 namespace Fusion.Drivers.Graphics {
 	
-	internal class DepthStencil2D : ShaderResource {
+	public class DepthStencil2D : ShaderResource {
 
 		/// <summary>
 		/// Samples count
@@ -96,7 +96,7 @@ namespace Fusion.Drivers.Graphics {
 				SRV		=	new ShaderResourceView	( device.Device, tex2D,	srvDesc );
 			}
 
-			surface		=	new DepthStencilSurface	( dsv, format, width, height, samples );
+			surface		=	new DepthStencilSurface	( device, dsv, format, width, height, samples );
 		}
 
 

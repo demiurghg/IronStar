@@ -20,7 +20,7 @@ using Fusion.Core;
 
 
 namespace Fusion.Drivers.Graphics {
-	internal class Texture3DCompute : ShaderResource {
+	public class Texture3DCompute : ShaderResource {
 
 		D3D.Texture3D	tex3D;
 

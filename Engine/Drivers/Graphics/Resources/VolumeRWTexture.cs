@@ -18,7 +18,7 @@ using Fusion.Engine.Common;
 
 
 namespace Fusion.Drivers.Graphics {
-	internal class VolumeRWTexture : ShaderResource {
+	public class VolumeRWTexture : ShaderResource {
 
 		D3D.Texture3D	tex3D;
 		ColorFormat		format;

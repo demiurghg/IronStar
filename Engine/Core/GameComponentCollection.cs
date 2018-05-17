@@ -73,6 +73,22 @@ namespace Fusion.Core {
 			}
 		}
 
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void DisposeAndClear ()
+		{
+			lock (lockObj) {
+				foreach ( var component in this ) {
+					(component as IDisposable).Dispose();
+				}
+
+				Clear();
+			}
+		}
+
 		
 		/// <summary>
 		/// 

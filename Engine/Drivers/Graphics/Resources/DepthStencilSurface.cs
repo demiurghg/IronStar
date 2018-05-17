@@ -8,7 +8,7 @@ using SharpDX.Direct3D11;
 using Fusion.Core;
 
 namespace Fusion.Drivers.Graphics {
-	internal class DepthStencilSurface : DisposableBase {
+	public class DepthStencilSurface : ShaderResource {
 
 		public int			Width			{ get; private set; }
 		public int			Height			{ get; private set; }
@@ -22,7 +22,8 @@ namespace Fusion.Drivers.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="dsv"></param>
-		internal DepthStencilSurface ( DepthStencilView dsv, DepthFormat format, int width, int height, int sampleCount )
+		internal DepthStencilSurface ( GraphicsDevice device, DepthStencilView dsv, DepthFormat format, int width, int height, int sampleCount )
+		:base(device)
 		{
 			Width			=	width;
 			Height			=	height;

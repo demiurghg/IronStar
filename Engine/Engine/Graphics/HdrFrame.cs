@@ -166,44 +166,47 @@ namespace Fusion.Engine.Graphics {
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing) {
-
-				SafeDispose( ref FeedbackBufferRB	 );
-
-				SafeDispose( ref FinalColor			 );
-				SafeDispose( ref TempColor			 );
-
-				SafeDispose( ref FinalHdrImage		 );
-
-				SafeDispose( ref HdrBuffer			 );
-				SafeDispose( ref DepthBuffer		 );
-				SafeDispose( ref HdrBufferGlass		 );
-				SafeDispose( ref DepthBufferGlass	 );
-				SafeDispose( ref GBuffer0			 );
-				SafeDispose( ref GBuffer1			 );
-				SafeDispose( ref Normals			 );
-				SafeDispose( ref AOBuffer			 );
-				SafeDispose( ref FeedbackBuffer		 );
-
-				SafeDispose( ref SoftParticlesFront	 );
-				SafeDispose( ref SoftParticlesBack	 );
-				SafeDispose( ref DistortionBuffer	 );
-
-				SafeDispose( ref Bloom0				 );
-				SafeDispose( ref Bloom1				 );
-
-				SafeDispose( ref TempColorFull0		 );
-				SafeDispose( ref TempColorFull1		 );
-
-				SafeDispose( ref TempColorHalf0		 );
-				SafeDispose( ref TempColorHalf1		 );
-
-				SafeDispose( ref DepthSliceMap0		 );
-				SafeDispose( ref DepthSliceMap1		 );
-				SafeDispose( ref DepthSliceMap2		 );
-				SafeDispose( ref DepthSliceMap3		 );
-
-				SafeDispose( ref MeasuredOld		 );
-				SafeDispose( ref MeasuredNew		 );
+				SafeDispose( ref FeedbackBufferRB		);
+				
+				SafeDispose( ref FinalColor				);
+				SafeDispose( ref TempColor				);
+				
+				SafeDispose( ref FinalHdrImage			);
+				
+				SafeDispose( ref HdrBuffer				);
+				SafeDispose( ref DepthBuffer			);
+				SafeDispose( ref HdrBufferGlass			);
+				SafeDispose( ref DistortionGlass		);
+				SafeDispose( ref DepthBufferGlass		);
+				SafeDispose( ref GBuffer0				);
+				SafeDispose( ref GBuffer1				);
+				SafeDispose( ref Normals				);
+				SafeDispose( ref AOBuffer				);
+				SafeDispose( ref FeedbackBuffer			);
+				
+				SafeDispose( ref DistortionBuffer		);
+				SafeDispose( ref SoftParticlesFront		);
+				SafeDispose( ref SoftParticlesBack		);
+				SafeDispose( ref ParticleVelocity		);
+				
+				SafeDispose( ref HalfDepthBuffer		);
+				
+				SafeDispose( ref Bloom0					);
+				SafeDispose( ref Bloom1					);
+				
+				SafeDispose( ref TempColorFull0			);
+				SafeDispose( ref TempColorFull1			);
+				
+				SafeDispose( ref TempColorHalf0			);
+				SafeDispose( ref TempColorHalf1			);
+				
+				SafeDispose( ref DepthSliceMap0			);
+				SafeDispose( ref DepthSliceMap1			);
+				SafeDispose( ref DepthSliceMap2			);
+				SafeDispose( ref DepthSliceMap3			);
+				
+				SafeDispose( ref MeasuredOld			);
+				SafeDispose( ref MeasuredNew			);
 			} 
 
 			base.Dispose(disposing);

@@ -34,7 +34,7 @@ namespace Fusion.Core {
 		/// </summary>
 		public bool Enabled {
 			get {
-				throw new NotImplementedException();
+				return enabled;
 			}
 			set {
 				if (enabled!=value) {
@@ -51,7 +51,7 @@ namespace Fusion.Core {
 		/// </summary>
 		public int UpdateOrder {
 			get {
-				throw new NotImplementedException();
+				return updateOrder;
 			}
 			set {
 				if (updateOrder!=value) {

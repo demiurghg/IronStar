@@ -10,6 +10,7 @@ using Fusion.Core;
 using Fusion.Core.Input;
 using Fusion.Core.Utils;
 using Fusion.Core.Mathematics;
+using Fusion.Core.Extensions;
 using Fusion.Engine.Common;
 using Fusion.Core.Configuration;
 using Fusion.Engine.Graphics;
@@ -94,10 +95,14 @@ namespace Fusion.Engine.Tools {
 		{
 			editBox.FeedHistory( GetHistory() );
 
+			var rs = Game.GetService<RenderSystem>();
+
 			consoleLayer	=	new SpriteLayer( Game.RenderSystem, 1024 );
 			editLayer		=	new SpriteLayer( Game.RenderSystem, 1024 );
 			consoleLayer.Order = 9999;
 			consoleLayer.Layers.Add( editLayer );
+
+			rs.SpriteLayers.Add( consoleLayer );
 
 			LoadContent();
 			Game.Reloading += (s,e) => LoadContent();
@@ -208,7 +213,7 @@ namespace Fusion.Engine.Tools {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void Update ( GameTime gameTime )
+		public override void Update ( GameTime gameTime )
 		{
 			var vp		=	Game.GraphicsDevice.DisplayBounds;
 

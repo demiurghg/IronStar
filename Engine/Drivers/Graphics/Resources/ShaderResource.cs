@@ -12,7 +12,7 @@ using DXGI = SharpDX.DXGI;
 
 
 namespace Fusion.Drivers.Graphics {
-	internal class ShaderResource : GraphicsResource {
+	public class ShaderResource : GraphicsResource {
 
 		/// <summary>
 		/// Internal shader resource view

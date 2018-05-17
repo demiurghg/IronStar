@@ -21,6 +21,7 @@ using Fusion.Core.Configuration;
 using Fusion.Core.Shell;
 using Fusion.Core.IniParser;
 using Fusion.Engine.Graphics;
+using Fusion.Core.Extensions;
 using Fusion.Core.Input;
 using Fusion.Engine.Client;
 using Fusion.Engine.Server;
@@ -104,8 +105,7 @@ namespace Fusion.Core {
 		/// <summary>
 		/// Gets game services
 		/// </summary>
-		public IServiceProvider Services { get; private set; } = new GameServiceContainer();
-
+		public GameServiceContainer Services { get; private set; } = new GameServiceContainer();
 
 		/// <summary>
 		/// Sets and gets game window icon.
@@ -123,7 +123,6 @@ namespace Fusion.Core {
 		}
 		System.Drawing.Icon windowIcon = null;
 
-
 		/// <summary>
 		/// Gets and sets game window title.
 		/// </summary>
@@ -131,21 +130,8 @@ namespace Fusion.Core {
 			get {
 				return gameTitle;
 			} 
-			set {
-				if (value==null) {
-					throw new ArgumentNullException();
-				}
-				if (string.IsNullOrWhiteSpace(value)) {
-					throw new ArgumentException("GameTitle must be readable string", "value");
-				}
-				if (IsInitialized) {
-					throw new InvalidOperationException("Can not set GameTitle after game engine initialization");
-				}
-				gameTitle = value;
-			} 
 		}
-		string gameTitle = Path.GetFileNameWithoutExtension( Process.GetCurrentProcess().ProcessName );
-
+		string gameTitle;
 
 		/// <summary>
 		/// Enable COM object tracking
@@ -156,9 +142,9 @@ namespace Fusion.Core {
 			} 
 			set {
 				SharpDX.Configuration.EnableObjectTracking = value;
+				SharpDX.Configuration.UseThreadStaticObjectTracking = true;
 			}
 		}
-
 
 		/// <summary>
 		/// Indicates whether the game is initialized.
@@ -180,7 +166,6 @@ namespace Fusion.Core {
 		/// This event used primarily for developement puprpose.
 		/// </summary>
 		public event	EventHandler Reloading;
-
 
 		/// <summary>
 		/// Raised when the game gains focus.
@@ -236,6 +221,9 @@ namespace Fusion.Core {
 
 			//	call exit event :
 			Exiting?.Invoke( this, EventArgs.Empty );
+
+			//	unload content :
+			Content.Unload();
 		}
 
 
@@ -273,10 +261,11 @@ namespace Fusion.Core {
 		/// Initializes a new instance of this class, which provides 
 		/// basic graphics device initialization, game logic, rendering code, and a game loop.
 		/// </summary>
-		public Game ( string gameId )
+		public Game ( string gameId, string gameTitle )
 		{
-			this.gameId	=	gameId;
-			Enabled	=	true;
+			this.gameTitle	=	gameTitle;
+			this.gameId		=	gameId;
+			Enabled			=	true;
 
 			AppDomain currentDomain = AppDomain.CurrentDomain;
 			currentDomain.UnhandledException += currentDomain_UnhandledException;
@@ -366,21 +355,26 @@ namespace Fusion.Core {
 
 			var p = new GraphicsParameters();
 
-			var rs = (IRenderSystem)null;
-			rs?.ApplyParameters( ref p );
+			var rs = Services.GetService<IRenderSystem>();
+
+			if (rs==null) {
+				throw new InvalidOperationException("There is no IRenderSystem");
+			}
+
+			rs.ApplyParameters( ref p );
 
 			//	going to fullscreen immediatly on startup lead to 
-			//	bugs and inconsistnecy for diferrent stereo modes,
+			//	bugs and inconsistnecy for different stereo modes,
 			//	so we store fullscreen mode and apply it on next update step.
 			requestFullscreenOnStartup	=	p.FullScreen;
 			p.FullScreen = false;
 
 			//	initialize drivers :
-			GraphicsDevice.Initialize(p);
-			InputDevice.Initialize();
-			Keyboard.Initialize();
-			Mouse.Initialize();
-			Touch.Initialize();
+			graphicsDevice.Initialize(p);
+			inputDevice.Initialize();
+			keyboard.Initialize();
+			mouse.Initialize();
+			touch.Initialize();
 
 			Initialize();
 
@@ -424,16 +418,17 @@ namespace Fusion.Core {
 				Log.Message("");
 				Log.Message("-------- Game Shutting Down --------");
 
-				var components = Components.ToArrayThreadSafe();
-				var disposables = components
-							.Reverse()
-							.Select( c1 => c1 as IDisposable )
-							.ToArray();
-
-				foreach ( var disposable in disposables ) {
-					Log.Message("Dispose :  {0}", disposable.GetType().Name);
-					disposable?.Dispose();
+				for (int i=Components.Count-1; i>=0; i-- ) {
+					Log.Message("Dispose : {0}", Components[i].GetType().Name );
+					(Components[i] as IDisposable)?.Dispose();
 				}
+				Components.Clear();
+
+				SafeDispose( ref touch );
+				SafeDispose( ref keyboard );
+				SafeDispose( ref mouse );
+				SafeDispose( ref inputDevice );
+				SafeDispose( ref graphicsDevice );
 
 				Log.Message("------------------------------------------");
 				Log.Message("");
@@ -572,11 +567,7 @@ namespace Fusion.Core {
 		{
 			var eyeList	= graphicsDevice.Display.StereoEyeList;
 
-			var rs = (IRenderSystem)null;
-
-			if (rs==null) {
-				return;
-			}
+			var rs = this.GetService<IRenderSystem>();
 
 			foreach ( var eye in eyeList ) {
 
@@ -609,7 +600,7 @@ namespace Fusion.Core {
 
 
 		public SoundSystem SoundSystem;
-		public RenderSystem RenderSystem;
+		public RenderSystem RenderSystem { get { return Services.GetService<RenderSystem>(); } }
 		public GameConsole Console;
 		public GameClient GameClient;
 		public GameServer GameServer;

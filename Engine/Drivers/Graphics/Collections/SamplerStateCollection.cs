@@ -11,7 +11,7 @@ namespace Fusion.Drivers.Graphics {
 	/// <summary>
 	/// The sampler state collection.
 	/// </summary>
-	internal sealed class SamplerStateCollection : GraphicsResource {
+	public sealed class SamplerStateCollection : GraphicsResource {
 
 		readonly SamplerState[]		states;	
 		readonly CommonShaderStage	stage;

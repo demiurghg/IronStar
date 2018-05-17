@@ -18,7 +18,7 @@ namespace Fusion.Drivers.Graphics {
 	/// Wrapper for constant data and buffer
 	/// </summary>
 	/// <typeparam name="ConstDataT"></typeparam>
-	internal class ConstantBuffer : GraphicsResource {
+	public class ConstantBuffer : GraphicsResource {
 			
 		internal	D3D11.Buffer	buffer;
 

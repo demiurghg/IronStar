@@ -22,7 +22,6 @@ namespace Fusion.Core {
 		/// </summary>
 		/// <param name="parameters"></param>
 		void ApplyParameters ( ref GraphicsParameters parameters );
-		#warning RenderSystem must implement IRenderSystem	
 
 		/// <summary>
 		/// Gets VSync interval

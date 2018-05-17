@@ -120,7 +120,7 @@ namespace Fusion.Drivers.Graphics {
 
 			var rtv	=	new RenderTargetView( device.Device, tex2D, rtvDesc );
 
-			surface	=	new RenderTargetSurface( rtv, null, tex2D, 0, ColorFormat.Unknown, width, height, 1 );
+			surface	=	new RenderTargetSurface( device, rtv, null, tex2D, 0, ColorFormat.Unknown, width, height, 1 );
 
 			device.Clear( surface, Color4.Zero );
 

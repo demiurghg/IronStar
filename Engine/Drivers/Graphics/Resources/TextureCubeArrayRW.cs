@@ -106,7 +106,7 @@ namespace Fusion.Drivers.Graphics {
 
 					var uav	=	new UnorderedAccessView( device.Device, texCubeArray, uavDesc );
 
-					batchCubeSurfaces[batchIndex,mip]	=	new RenderTargetSurface( null, uav, texCubeArray, -1, format, mipSize, mipSize, 1 );
+					batchCubeSurfaces[batchIndex,mip]	=	new RenderTargetSurface( device, null, uav, texCubeArray, -1, format, mipSize, mipSize, 1 );
 
 				}
 
@@ -140,7 +140,7 @@ namespace Fusion.Drivers.Graphics {
 
 					var uav	=	new UnorderedAccessView( device.Device, texCubeArray, uavDesc );
 
-					singleCubeSurfaces[index,mip]	=	new RenderTargetSurface( null, uav, texCubeArray, -1, format, mipSize, mipSize, 1 );
+					singleCubeSurfaces[index,mip]	=	new RenderTargetSurface( device, null, uav, texCubeArray, -1, format, mipSize, mipSize, 1 );
 
 				}
 
@@ -156,6 +156,8 @@ namespace Fusion.Drivers.Graphics {
 		protected override void Dispose ( bool disposing )
 		{
 			if (disposing) {
+				SafeDispose( ref singleCubeSurfaces );
+
 				SafeDispose( ref batchCubeSurfaces );
 				SafeDispose( ref batchCubeResources );
 				texCubeArray?.Dispose();

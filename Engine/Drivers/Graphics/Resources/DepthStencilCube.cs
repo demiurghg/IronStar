@@ -101,7 +101,7 @@ namespace Fusion.Drivers.Graphics {
 
 				int subResId	=	Resource.CalculateSubResourceIndex( 0, face, 1 );
 
-				surfaces[face]	=	new DepthStencilSurface( dsv, format, Width, Height, SampleCount );
+				surfaces[face]	=	new DepthStencilSurface( device, dsv, format, Width, Height, SampleCount );
 			}
 		}
 

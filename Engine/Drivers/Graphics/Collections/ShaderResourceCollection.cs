@@ -11,7 +11,7 @@ namespace Fusion.Drivers.Graphics {
 	/// <summary>
 	/// The texture collection.
 	/// </summary>
-	internal sealed class ShaderResourceCollection : GraphicsResource {
+	public sealed class ShaderResourceCollection : GraphicsResource {
 
 		readonly ShaderResource[]	resources;	
 		readonly CommonShaderStage	stage;

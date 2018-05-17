@@ -21,7 +21,7 @@ using Fusion.Core.Mathematics;
 
 namespace Fusion.Drivers.Graphics {
 
-	internal class RenderTarget2D : ShaderResource {
+	public class RenderTarget2D : ShaderResource {
 
 		/// <summary>
 		/// Samples count
@@ -83,10 +83,10 @@ namespace Fusion.Drivers.Graphics {
 			surfaces		=	new RenderTargetSurface[1];
 
 			if (desc.HasValue) {
-				surfaces[0] = new RenderTargetSurface(new RenderTargetView(device.Device, backbufColor, desc.Value), null, tex2D, 0, Format, Width, Height, SampleCount);
+				surfaces[0] = new RenderTargetSurface( device, new RenderTargetView(device.Device, backbufColor, desc.Value), null, tex2D, 0, Format, Width, Height, SampleCount);
 			}
 			else {
-				surfaces[0] = new RenderTargetSurface(new RenderTargetView(device.Device, backbufColor), null, tex2D, 0, Format, Width, Height, SampleCount);
+				surfaces[0] = new RenderTargetSurface( device, new RenderTargetView(device.Device, backbufColor), null, tex2D, 0, Format, Width, Height, SampleCount);
 			}
 		} 
 
@@ -217,7 +217,7 @@ namespace Fusion.Drivers.Graphics {
 					uav	=	new UnorderedAccessView( device.Device, tex2D, uavDesc );
 				}
 
-				surfaces[i]	=	new RenderTargetSurface( rtv, uav, tex2D, i, format, width, height, samples );
+				surfaces[i]	=	new RenderTargetSurface( device, rtv, uav, tex2D, i, format, width, height, samples );
 			}
 		}
 
@@ -285,14 +285,8 @@ namespace Fusion.Drivers.Graphics {
 		protected override void Dispose ( bool disposing )
 		{
 			if (disposing) {
-				Log.Debug("RenderTarget2D: disposing");
-				if (surfaces!=null) {
-					for (int i=0; i<surfaces.Length; i++) {
-						var surf = surfaces[i];
-						SafeDispose( ref surf );
-					}
-					surfaces = null;
-				}
+				SafeDispose( ref surfaces );
+				SafeDispose( ref mipSrvs );
 
 				SafeDispose( ref SRV );
 				SafeDispose( ref tex2D );

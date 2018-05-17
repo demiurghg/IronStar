@@ -111,7 +111,7 @@ namespace IronStar.Editor2 {
 		/// </summary>
 		void IEditorInstance.Initialize()
 		{
-			Game.Config.ApplySettings( Config );
+			//Game.Config.ApplySettings( Config );
 			Game.Invoker.RegisterObject( "EditorConfig", Config );
 
 			if (File.Exists(fullPath)) {
@@ -161,7 +161,7 @@ namespace IronStar.Editor2 {
 			if ( !disposedValue ) {
 				if ( disposing ) {
 
-					Game.Config.RetrieveSettings( Config );
+					//Game.Config.RetrieveSettings( Config );
 					Game.Invoker.UnregisterObject( "EditorConfig" );
 
 					world?.Dispose();

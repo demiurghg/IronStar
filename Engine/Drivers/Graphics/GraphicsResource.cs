@@ -19,11 +19,42 @@ using Fusion.Core;
 using Fusion.Drivers.Graphics;
 using Fusion.Drivers.Graphics.Display;
 using Fusion.Core.Mathematics;
-
+using System.Threading;
+using System.Diagnostics;
 
 namespace Fusion.Drivers.Graphics {
 
-	internal class GraphicsResource : DisposableBase {
+	public class GraphicsResource : DisposableBase {
+
+		static volatile int trackCounter = 0;
+		static readonly HashSet<GraphicsResource> resourceTracker = new HashSet<GraphicsResource>();
+
+
+		public static void ReportLiveObjects ()
+		{
+			if (resourceTracker.Any()) {
+
+				Log.Warning("");
+				Log.Warning("Live graphics objects detected!");
+				Log.Warning("----------------------------------------------------");
+
+				var list =	resourceTracker
+							.OrderBy( obj1 => obj1.creationOrder )
+							.ToList();
+
+				foreach ( var obj in list ) {
+					Log.Warning("[{0}] : {1}\r\n{2}", obj.creationOrder, obj.GetType().Name, obj.creationStackTrace );
+				}
+
+				Log.Warning("----------------------------------------------------");
+				Log.Warning("{0} live objects\r\n", resourceTracker.Count);
+				
+			} else {
+				Log.Message("No live graphics resources detected.");
+			}
+		}
+
+
 
 		/// <summary>
 		/// Gets the GraphicsDevice associated with this GraphicsResource.
@@ -36,6 +67,8 @@ namespace Fusion.Drivers.Graphics {
 
 
 		protected readonly GraphicsDevice device;
+		private readonly string creationStackTrace;
+		private readonly int creationOrder;
 
 
 		/// <summary>
@@ -45,6 +78,23 @@ namespace Fusion.Drivers.Graphics {
 		public GraphicsResource ( GraphicsDevice device )
 		{
 			this.device	=	device;
+
+			var stackTrace = new StackTrace(1, true);
+
+			var stackTraceText = 
+					string.Join("",	
+					 stackTrace
+					.GetFrames()
+					.Select( sf => string.Format("  {0,40} -- {1,40}({2})\r\n", 
+						sf.GetMethod().DeclaringType.Name + "." + sf.GetMethod().Name, 
+						Path.GetFileName( sf.GetFileName() ), 
+						sf.GetFileLineNumber() )	
+						)
+					);
+
+			this.creationStackTrace = stackTraceText;
+			this.creationOrder		= Interlocked.Increment( ref trackCounter );
+			resourceTracker.Add(this);
 		}
 
 
@@ -55,6 +105,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="disposing"></param>
 		protected override void Dispose ( bool disposing )
 		{
+			resourceTracker.Remove(this);
 			base.Dispose( disposing );
 		}
 	}

@@ -10,62 +10,33 @@ using Fusion.Core.Configuration;
 using Fusion.Engine.Common;
 using Fusion.Drivers.Graphics;
 using Fusion.Core.Shell;
+using Fusion.Core.Extensions;
 
 namespace Fusion.Engine.Graphics {
 
-	public partial class RenderSystem : GameComponent {
+	public partial class RenderSystem : GameComponent, IRenderSystem {
 
 		internal readonly GraphicsDevice Device;
 
-		internal SpriteEngine	SpriteEngine { get { return spriteEngine; } }
-		SpriteEngine	spriteEngine;
-
-		internal Filter Filter { get{ return filter; } }
-		Filter filter;
-
-		internal Filter2 Filter2 { get{ return filter2; } }
-		Filter2 filter2;
-
-		internal BlurFilter Blur { get{ return blur; } }
-		BlurFilter blur;
-
-		internal BilateralFilter BilateralFilter { get { return bilateralFilter; } }
-		BilateralFilter bilateralFilter;
-
-		internal SsaoFilter SsaoFilter { get{ return ssaoFilter; } }
-		SsaoFilter ssaoFilter;
-
-		internal BitonicSort BitonicSort { get{ return bitonicSort; } }
-		BitonicSort bitonicSort;
-
-		internal HdrFilter HdrFilter { get{ return hdrFilter; } }
-		HdrFilter hdrFilter;
-		
-		internal DofFilter DofFilter { get{ return dofFilter; } }
-		DofFilter dofFilter;
-		
-		internal LightManager	LightManager { get { return lightManager; } }
-		LightManager	lightManager;
-		
-		internal SceneRenderer	SceneRenderer { get { return sceneRenderer; } }
-		SceneRenderer	sceneRenderer;
-		
-		internal VTSystem	VTSystem { get { return vtSystem; } }
-		VTSystem	vtSystem;
-		
-		internal Sky	Sky { get { return sky; } }
-		Sky	sky;
-
-		internal Fog	Fog { get { return fog; } }
-		Fog	fog;
+		internal SpriteEngine	SpriteEngine	{ get { return Game.GetService< SpriteEngine	>(); } }
+		internal Filter			Filter			{ get { return Game.GetService< Filter			>(); } }
+		internal Filter2		Filter2			{ get { return Game.GetService< Filter2			>(); } }
+		internal BlurFilter		Blur			{ get { return Game.GetService< BlurFilter		>(); } }
+		internal BilateralFilter BilateralFilter{ get { return Game.GetService< BilateralFilter	>(); } }
+		internal SsaoFilter		SsaoFilter		{ get { return Game.GetService< SsaoFilter		>(); } }
+		internal BitonicSort	BitonicSort		{ get { return Game.GetService< BitonicSort		>(); } }
+		internal HdrFilter		HdrFilter		{ get { return Game.GetService< HdrFilter		>(); } }
+		internal DofFilter		DofFilter		{ get { return Game.GetService< DofFilter		>(); } }
+		internal LightManager	LightManager	{ get { return Game.GetService< LightManager	>(); } }
+		internal SceneRenderer	SceneRenderer	{ get { return Game.GetService< SceneRenderer	>(); } }
+		internal VTSystem		VTSystem		{ get { return Game.GetService< VTSystem		>(); } }
+		internal Sky			Sky				{ get { return Game.GetService< Sky				>(); } }
+		internal Fog			Fog				{ get { return Game.GetService< Fog				>(); } }				
 
 		/// <summary>
 		/// Gets render counters.
 		/// </summary>
 		internal RenderCounters Counters { get; private set; }
-
-
-
 
 		public Texture	GrayTexture { get { return grayTexture; } }
 		public Texture	WhiteTexture { get { return whiteTexture; } }
@@ -118,20 +89,20 @@ namespace Fusion.Engine.Graphics {
 
 			this.Device	=	Game.GraphicsDevice;
 
-			spriteEngine	=	new SpriteEngine( this );
-			filter			=	new Filter( this );
-			filter2			=	new Filter2( this );
-			blur			=	new BlurFilter( this );
-			bilateralFilter	=	new BilateralFilter( this );
-			ssaoFilter		=	new SsaoFilter( this );
-			hdrFilter		=	new HdrFilter( this );
-			dofFilter		=	new DofFilter( this );
-			lightManager	=	new LightManager( this );
-			sceneRenderer	=	new SceneRenderer( this );
-			sky				=	new Sky( this );
-			fog				=	new Fog( this );
-			bitonicSort		=	new BitonicSort( this );
-			vtSystem	=	new VTSystem( this );
+			Game.AddServiceAndComponent( new SpriteEngine	( this ) );
+			Game.AddServiceAndComponent( new Filter			( this ) );
+			Game.AddServiceAndComponent( new Filter2		( this ) );
+			Game.AddServiceAndComponent( new BlurFilter		( this ) );
+			Game.AddServiceAndComponent( new BilateralFilter( this ) );
+			Game.AddServiceAndComponent( new SsaoFilter		( this ) );
+			Game.AddServiceAndComponent( new HdrFilter		( this ) );
+			Game.AddServiceAndComponent( new DofFilter		( this ) );
+			Game.AddServiceAndComponent( new LightManager	( this ) );
+			Game.AddServiceAndComponent( new SceneRenderer	( this ) );
+			Game.AddServiceAndComponent( new Sky			( this ) );
+			Game.AddServiceAndComponent( new Fog			( this ) );
+			Game.AddServiceAndComponent( new BitonicSort	( this ) );
+			Game.AddServiceAndComponent( new VTSystem		( this ) );
 
 			Device.DisplayBoundsChanged += (s,e) => {
 				DisplayBoundsChanged?.Invoke( s, e );
@@ -169,7 +140,7 @@ namespace Fusion.Engine.Graphics {
 		/// Applies graphics parameters.
 		/// </summary>
 		/// <param name="p"></param>
-		internal void ApplyParameters ( ref GraphicsParameters p )
+		public void ApplyParameters ( ref GraphicsParameters p )
 		{
 			p.Width				=	Width;
 			p.Height			=	Height;
@@ -240,7 +211,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="gameTime"></param>
 		/// <param name="stereoEye"></param>
-		internal void Draw ( GameTime gameTime, StereoEye stereoEye )
+		public void RenderView ( GameTime gameTime, StereoEye stereoEye )
 		{
 			Counters.Reset();
 

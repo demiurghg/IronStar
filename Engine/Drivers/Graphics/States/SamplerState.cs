@@ -17,7 +17,7 @@ using Fusion.Engine.Graphics;
 
 
 namespace Fusion.Drivers.Graphics {
-	public sealed class SamplerState : DisposableBase {
+	public sealed class SamplerState : GraphicsResource {
 
 		public Filter			Filter			{ get { return filter		 ; } set { PipelineBoundCheck() ; filter		  = value; } }
 		public AddressMode		AddressU		{ get { return addressU		 ; } set { PipelineBoundCheck() ; addressU		  = value; } }
@@ -112,19 +112,29 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		static internal void DisposeStates ()
 		{
-			LinearWrap			.Dispose();
-			LinearClamp			.Dispose();
-			LinearPointBorder0	.Dispose();
-			LinearPointClamp	.Dispose();	
-			LinearPointWrap		.Dispose();	
-			PointWrap			.Dispose();
-			PointClamp			.Dispose();
-			PointBorder1		.Dispose();	
-			AnisotropicWrap		.Dispose();
-			AnisotropicClamp	.Dispose();	
-			ShadowSampler		.Dispose();
+			LinearWrap			?.Dispose();
+			LinearClamp			?.Dispose();
+			PointWrap			?.Dispose();
+			PointClamp			?.Dispose();
+			AnisotropicWrap		?.Dispose();
+			AnisotropicClamp	?.Dispose();
+			ShadowSampler		?.Dispose();
+			ShadowSamplerPoint	?.Dispose();
 
-			LinearClamp4Mips	.Dispose();
+			LinearPointBorder0	?.Dispose();
+			LinearPointClamp	?.Dispose();
+			LinearPointWrap		?.Dispose();
+			PointBorder1		?.Dispose();
+
+			//LinearClamp4Mips	?.Dispose();
+			LinearClamp4Mips	?.Dispose();
+			LinearClamp2Mips	?.Dispose();
+
+			VTAnisotropic		?.Dispose();
+			VTTrilinear			?.Dispose();
+
+			VTAnisotropicIndex	?.Dispose();
+			VTTrilinearIndex	?.Dispose();
 		}
 
 
@@ -146,6 +156,12 @@ namespace Fusion.Drivers.Graphics {
 				MaxMipLevel		=	maxMipLevel,
 				MaxAnisotropy	=	maxAnisotropy,
 			};
+		}
+
+
+
+		public SamplerState() : base(null)
+		{
 		}
 
 

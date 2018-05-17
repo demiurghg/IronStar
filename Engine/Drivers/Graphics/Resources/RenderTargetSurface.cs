@@ -13,9 +13,9 @@ namespace Fusion.Drivers.Graphics {
 	/// Represenst single rendering surface for render targets.
 	/// 
 	/// Never dispose RenderTargetSurface. 
-	/// I always will be disposed by owning object.
+	/// It always will be disposed by owning object.
 	/// </summary>
-	internal class RenderTargetSurface : DisposableBase {
+	public class RenderTargetSurface : GraphicsResource {
 
 		public int			Width			{ get; private set; }
 		public int			Height			{ get; private set; }
@@ -32,7 +32,8 @@ namespace Fusion.Drivers.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="rtv"></param>
-		internal RenderTargetSurface ( RenderTargetView rtv, UnorderedAccessView uav, Resource resource, int subresource, ColorFormat format, int width, int height, int sampleCount )
+		internal RenderTargetSurface ( GraphicsDevice device, RenderTargetView rtv, UnorderedAccessView uav, Resource resource, int subresource, ColorFormat format, int width, int height, int sampleCount )
+		:base(device)
 		{
 			Width			=	width;
 			Height			=	height;

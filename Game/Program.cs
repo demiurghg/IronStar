@@ -27,43 +27,6 @@ namespace IronStar {
 
 	class Program {
 
-		class IronStarGame : Game {
-
-			public IronStarGame ( ) : base("IronStar")
-			{
-			}
-
-			/*public override void LoadConfig()
-			{
-				Config.LoadSettings("Config.ini");
-			}
-
-			public override void SaveConfig()
-			{
-				Config.SaveSettings("Config.ini");
-			} */
-
-			/*public override IClientInstance CreateClient( Game game, IMessageService msgsvc, Guid clientGuid )
-			{
-				return new ShooterClient( game.GameClient, msgsvc, clientGuid );
-			}
-
-			public override IServerInstance CreateServer( Game game, IMessageService msgsvc, string map, string options )
-			{
-				return new ShooterServer( game.GameServer, msgsvc, map );
-			}
-
-			public override IUserInterface CreateUI( Game game )
-			{
-				return new ShooterInterface( game );
-			}
-
-			public override IEditorInstance CreateEditor( Game game, string map )
-			{
-				return new Editor2.MapEditor( game.GameEditor, map );
-			}  */
-		}
-
 
 
 		[Command("editor")]
@@ -87,9 +50,6 @@ namespace IronStar {
 			//	set verbosity :
 			Log.VerbosityLevel = LogMessageType.Verbose;
 
-			/*Allocator2D.RunTest(512, 1024, @"E:\GITHUB\_alloc_test");
-			return 0; */
-
 			//
 			//	Build content on startup.
 			//	Remove this line in release code.
@@ -111,9 +71,6 @@ namespace IronStar {
 
 				//	enable and disable object tracking :
 				game.TrackObjects = false;
-
-				//	set game title :
-				game.GameTitle = "IronStar";
 
 				//	apply command-line options here:
 				//	...

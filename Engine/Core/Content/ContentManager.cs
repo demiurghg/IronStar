@@ -382,6 +382,11 @@ namespace Fusion.Core.Content {
 		public void Unload()
 		{
 			lock (lockObject) {
+
+				if (!toDispose.Any()) {
+					return;
+				}
+
 				Log.Message("Unloading content");
 
 				foreach ( var item in toDispose ) {

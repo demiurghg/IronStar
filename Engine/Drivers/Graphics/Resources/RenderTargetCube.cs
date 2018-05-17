@@ -53,7 +53,6 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		ShaderResource[]	cubeMipShaderResources;
 
-
 		/// <summary>
 		/// Creates render target
 		/// </summary>
@@ -67,7 +66,6 @@ namespace Fusion.Drivers.Graphics {
 		}
 
 
-
 		/// <summary>
 		/// Creates render target
 		/// </summary>
@@ -79,7 +77,6 @@ namespace Fusion.Drivers.Graphics {
 		{
 			Create( format, size, mips, debugName );
 		}
-
 
 
 		/// <summary>
@@ -178,7 +175,7 @@ namespace Fusion.Drivers.Graphics {
 
 					int subResId	=	Resource.CalculateSubResourceIndex( mip, face, MipCount );
 
-					surfaces[mip,face]	=	new RenderTargetSurface( rtv, uav, texCube, subResId, format, Width, Height, 1 );
+					surfaces[mip,face]	=	new RenderTargetSurface( device, rtv, uav, texCube, subResId, format, Width, Height, 1 );
 
 					GraphicsDevice.Clear( surfaces[mip,face], Color4.Zero );
 				}
@@ -193,19 +190,16 @@ namespace Fusion.Drivers.Graphics {
 				int width	=	GetMipSize( Width,  mip );
 				int height	=	GetMipSize( Height, mip );
 
-				for ( int face=0; face<6; face++) {
+				var uavDesc = new UnorderedAccessViewDescription();
+					uavDesc.Dimension			=	UnorderedAccessViewDimension.Texture2DArray;
+					uavDesc.Format				=	Converter.Convert( format );
+					uavDesc.Texture2DArray.ArraySize		=	6;
+					uavDesc.Texture2DArray.FirstArraySlice	=	0;
+					uavDesc.Texture2DArray.MipSlice			=	mip;
 
-					var uavDesc = new UnorderedAccessViewDescription();
-						uavDesc.Dimension			=	UnorderedAccessViewDimension.Texture2DArray;
-						uavDesc.Format				=	Converter.Convert( format );
-						uavDesc.Texture2DArray.ArraySize		=	6;
-						uavDesc.Texture2DArray.FirstArraySlice	=	0;
-						uavDesc.Texture2DArray.MipSlice			=	mip;
+				var uav	=	new UnorderedAccessView( device.Device, texCube, uavDesc );
 
-					var uav	=	new UnorderedAccessView( device.Device, texCube, uavDesc );
-
-					cubeSurfaces[mip]	=	new RenderTargetSurface( null, uav, texCube, -1, format, Width, Height, 1 );
-				}
+				cubeSurfaces[mip]	=	new RenderTargetSurface( device, null, uav, texCube, -1, format, Width, Height, 1 );
 			}
 		}
 

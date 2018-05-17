@@ -31,11 +31,9 @@ namespace Fusion.Core.Configuration {
 		/// 
 		/// </summary>
 		/// <param name="target"></param>
-		public void ApplySettings ( object target )
+		public void ApplySettings ( string sectionName, object target )
 		{
 			lock (lockObject) {
-
-				string sectionName = target.GetType().Name;
 
 				var section = settings.Sections[sectionName];
 
@@ -76,11 +74,9 @@ namespace Fusion.Core.Configuration {
 		/// 
 		/// </summary>
 		/// <param name="source"></param>
-		public void RetrieveSettings ( object source )
+		public void RetrieveSettings ( string sectionName, object source )
 		{
 			lock (lockObject) {
-
-				string sectionName = source.GetType().Name;
 
 				var sectionData = new SectionData( sectionName );
 

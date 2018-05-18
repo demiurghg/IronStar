@@ -11,13 +11,14 @@ using Fusion.Engine.Frames;
 using Fusion.Engine.Tools;
 using Fusion;
 using Fusion.Core.Shell;
+using IronStar.Editor2;
 
 namespace IronStar {
-	class IronStarGame : Game
+	class IronStar : Game
 	{
 		const string ConfigFile = "Config.ini";
 
-		public IronStarGame() : base("IronStar", "IronStar")
+		public IronStar() : base("IronStar", "IronStar")
 		{
 			this.Exiting += IronStarGame_Exiting;
 			this.Components.ComponentAdded += Components_ComponentAdded;
@@ -29,6 +30,12 @@ namespace IronStar {
 			this.AddServiceAndComponent( new SoundSystem(this) );
 			this.AddServiceAndComponent( new FrameProcessor(this) );
 			this.AddServiceAndComponent( new GameConsole(this) );
+
+			this.GetService<FrameProcessor>().LayerOrder = 100;
+			this.GetService<GameConsole>().LayerOrder = 200;
+
+			Invoker.RegisterCommand("map",			(args) => new MapCommand(this, args) );
+			Invoker.RegisterCommand("killeditor",	(args) => new KillEditorCommand(this, args) );
 		}
 
 
@@ -80,16 +87,39 @@ namespace IronStar {
 		}
 
 
+		protected void RunEditor ( string mapname )
+		{
+			var editor = new MapEditor( this, mapname );
+			editor.Initialize();
 
-		class Map : ICommand {
-			public void Rollback() {}
-			public bool IsHistoryOn() { return false; }
+			this.AddServiceAndComponent( editor );
+		}
 
-			readonly IronStarGame game;
+
+		protected void KillEditor ( )
+		{
+			//	try to stop editor :
+			var editor = this.GetService<MapEditor>();
+
+			if (editor!=null) {
+				Log.Message("Stopping map editor...");
+				Services.RemoveService( editor.GetType() );
+				Components.Remove( editor );
+				SafeDispose( ref editor );
+			} else {
+				Log.Warning("Editor is not running");
+			}
+		}
+
+
+
+		class MapCommand : CommandNoHistory {
+
+			readonly IronStar game;
 			readonly string mapname;
 			readonly bool edit;
 
-			public Map ( IronStarGame game, ArgList args )
+			public MapCommand ( IronStar game, ArgList args )
 			{
 				this.game	=	game;
 
@@ -99,13 +129,48 @@ namespace IronStar {
 					.Apply();
 			}
 
-			public object Execute()
+			public override object Execute()
 			{
+				if (edit) {
+					game.RunEditor(mapname);
+				}
 				return null;
 			}
 
 		}
 
+
+		class KillServerCommand : CommandNoHistory {
+
+			readonly IronStar game;
+
+			public KillServerCommand ( IronStar game, ArgList args )
+			{
+				this.game = game;
+			}
+
+			public override object Execute()
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+
+		class KillEditorCommand : CommandNoHistory {
+
+			readonly IronStar game;
+
+			public KillEditorCommand ( IronStar game, ArgList args )
+			{
+				this.game = game;
+			}
+
+			public override object Execute()
+			{
+				game.KillEditor();
+				return null;
+			}
+		}
 
 		//class EditorMap : ICommand {
 		//	public void Rollback() {}

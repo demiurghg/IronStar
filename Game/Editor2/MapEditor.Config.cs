@@ -3,13 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Fusion.Engine.Graphics;
-using Fusion.Core.Mathematics;
-using Fusion.Core.Configuration;
-using Fusion.Engine.Common;
+using System.IO;
 using Fusion;
-using System.ComponentModel;
+using Fusion.Core.Mathematics;
+using Fusion.Engine.Common;
+using Fusion.Core;
+using Fusion.Core.Content;
+using Fusion.Engine.Server;
+using Fusion.Engine.Client;
+using Fusion.Core.Extensions;
+using IronStar.SFX;
+using Fusion.Core.IniParser.Model;
+using Fusion.Engine.Graphics;
+using IronStar.Mapping;
+using Fusion.Build;
+using BEPUphysics;
+using IronStar.Core;
+using IronStar.Editor2.Controls;
+using IronStar.Editor2.Manipulators;
+using Fusion.Engine.Frames;
 using Fusion.Core.Shell;
+using Fusion.Core.Configuration;
 
 namespace IronStar.Editor2 {
 
@@ -24,16 +38,10 @@ namespace IronStar.Editor2 {
 		Relative,
 	}
 
-	public class EditorConfig {
-
-		readonly MapEditor editor;
-
-		public EditorConfig ( MapEditor editor )
-		{
-			this.editor	=	editor;
-		}
-
-
+	/// <summary>
+	/// World represents entire game state.
+	/// </summary>
+	public partial class MapEditor : GameComponent {
 
 		[Config]
 		[AECategory("Camera")]
@@ -84,8 +92,7 @@ namespace IronStar.Editor2 {
 		[AECommand]
 		public void ToggleSimulation ()
 		{
-			editor.EnableSimulation = !editor.EnableSimulation;
+			EnableSimulation = !EnableSimulation;
 		}
-
 	}
 }

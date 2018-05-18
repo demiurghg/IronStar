@@ -169,8 +169,8 @@ namespace IronStar.Editor2 {
 				return false;
 			}
 
-			snapEnable	=	editor.Config.RotateToolSnapEnable;
-			snapValue	=	editor.Config.RotateToolSnapValue;
+			snapEnable	=	editor.RotateToolSnapEnable;
+			snapValue	=	editor.RotateToolSnapValue;
 			angle		=	0;
 			vector0		=	Vector3.Zero;
 			vector1		=	Vector3.Zero;

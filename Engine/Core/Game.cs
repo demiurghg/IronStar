@@ -624,14 +624,14 @@ namespace Fusion.Core {
 
 
 
-		public SoundSystem SoundSystem;
+		public SoundSystem SoundSystem { get { return Services.GetService<SoundSystem>(); } }
 		public RenderSystem RenderSystem { get { return Services.GetService<RenderSystem>(); } }
-		public GameConsole Console;
+		public GameConsole Console { get { return Services.GetService<GameConsole>(); } }
 		public GameClient GameClient;
 		public GameServer GameServer;
 		public UserInterface UserInterface;
 		public GameEditor GameEditor;
 		public Network Network;
-		public FrameProcessor Frames;
+		public FrameProcessor Frames { get { return Services.GetService<FrameProcessor>(); } }
 	}
 }

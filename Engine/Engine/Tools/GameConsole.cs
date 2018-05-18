@@ -226,6 +226,7 @@ namespace Fusion.Engine.Tools {
 			}
 
 			consoleLayer.Visible	=	showFactor > 0;
+			consoleLayer.Order		=	LayerOrder;
 
 			//Log.Message("{0} {1}", showFactor, Show);
 			float offset	=	(int)(- (vp.Height / 2+1) * (1 - showFactor));

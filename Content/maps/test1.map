@@ -430,11 +430,11 @@
       <TranslateX>-3.5</TranslateX>
       <TranslateY>2.5</TranslateY>
       <TranslateZ>9</TranslateZ>
-      <RotateYaw>-99.9998856</RotateYaw>
-      <RotatePitch>-24.9999962</RotatePitch>
-      <RotateRoll>-8.537737E-06</RotateRoll>
+      <RotateYaw>-99.999855</RotateYaw>
+      <RotatePitch>-24.9999886</RotatePitch>
+      <RotateRoll>-1.40872644E-05</RotateRoll>
       <TranslateVector X="-3.5" Y="2.5" Z="9" />
-      <RotateQuaternion X="-0.1391248" Y="-0.747885466" Z="-0.16580224" W="0.627551734" />
+      <RotateQuaternion X="-0.139124766" Y="-0.747885346" Z="-0.1658022" W="0.6275519" />
       <LightColor R="255" G="190" B="127" A="255" />
       <LightIntensity>1710</LightIntensity>
       <OuterRadius>24</OuterRadius>
@@ -549,10 +549,10 @@
       <TranslateY>0.240499943</TranslateY>
       <TranslateZ>0.229106143</TranslateZ>
       <RotateYaw>-160.289536</RotateYaw>
-      <RotatePitch>0.312973082</RotatePitch>
+      <RotatePitch>0.312972963</RotatePitch>
       <RotateRoll>179.9991</RotateRoll>
       <TranslateVector X="1.835388" Y="0.240499943" Z="0.229106143" />
-      <RotateQuaternion X="-0.9852397" Y="-0.000475179229" Z="0.171158671" W="-0.00268955948" />
+      <RotateQuaternion X="-0.9852397" Y="-0.000475179026" Z="0.171158671" W="-0.00268955831" />
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>
       </Factory>
@@ -563,11 +563,11 @@
       <TranslateX>-10.375</TranslateX>
       <TranslateY>0</TranslateY>
       <TranslateZ>1.875</TranslateZ>
-      <RotateYaw>-0.0024724165</RotateYaw>
-      <RotatePitch>89.95576</RotatePitch>
-      <RotateRoll>89.99748</RotateRoll>
+      <RotateYaw>0.00571016269</RotateYaw>
+      <RotatePitch>89.98021</RotatePitch>
+      <RotateRoll>90.00568</RotateRoll>
       <TranslateVector X="-10.375" Y="0" Z="1.875" />
-      <RotateQuaternion X="0.499807119" Y="-0.499806732" Z="0.5001928" W="0.500193238" />
+      <RotateQuaternion X="0.499913752" Y="-0.499913484" Z="0.5000862" W="0.5000865" />
       <ImageName>blood1</ImageName>
       <Width>3</Width>
       <Height>3</Height>

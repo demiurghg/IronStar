@@ -63,7 +63,7 @@ namespace IronStar {
 			//
 			//	Run game :
 			//
-			using (var game = new IronStarGame()) {
+			using (var game = new IronStar()) {
 
 				//	enable and disable debug direct3d device :
 				game.RenderSystem.UseDebugDevice = false;

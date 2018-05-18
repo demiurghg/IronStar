@@ -21,7 +21,8 @@ namespace Fusion.Engine.Frames {
 
 	public class FrameProcessor : GameComponent {
 
-		[Config]	public int		LayerOrder			{ get; set; } = 0;
+		public int	LayerOrder	{ get; set; } = 0;
+
 		[Config]	public bool		ShowFrames			{ get; set; }
 		[Config]	public bool		SkipUserInterface	{ get; set; }
 		[Config]	public bool		ShowProfilingInfo	{ get; set; }
@@ -168,12 +169,14 @@ namespace Fusion.Engine.Frames {
 		/// Updates stuff
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void Update( GameTime gameTime )
+		public override void Update( GameTime gameTime )
 		{
 			var viewCtxt	=	new ViewContext();
 
 			touchProcessor.UpdateManipulations( gameTime );
 			keyboardProcessor.UpdateKeyboard( gameTime );
+
+			spriteLayer.Order = LayerOrder;
 
 			//
 			//	Update and profile UI stuff :

@@ -159,6 +159,7 @@
     <Compile Include="Core\Shell\ArgListException.cs" />
     <Compile Include="Core\Shell\ArgList.Context.cs" />
     <Compile Include="Core\Shell\ArgList.cs" />
+    <Compile Include="Core\Shell\CommandNoHistory.cs" />
     <Compile Include="Core\Shell\Invoker.Set.cs" />
     <Compile Include="Core\Shell\ISyntax.cs" />
     <Compile Include="Core\Shell\ICommand.cs" />

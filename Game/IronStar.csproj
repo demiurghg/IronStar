@@ -91,9 +91,10 @@
     <Compile Include="Editor2\Controls\AEPropertyGrid.cs" />
     <Compile Include="Editor2\Controls\ColorTheme.cs" />
     <Compile Include="Editor2\Controls\Workspace.cs" />
-    <Compile Include="Editor2\EditorConfig.cs" />
     <Compile Include="Editor2\Manipulators\HandleIntersection.cs" />
     <Compile Include="Editor2\Manipulators\Handle.cs" />
+    <Compile Include="Editor2\MapEditor.Commands.cs" />
+    <Compile Include="Editor2\MapEditor.Config.cs" />
     <Compile Include="Editor2\MapEditor.Selection.cs" />
     <Compile Include="Editor2\RotateTool.cs" />
     <Compile Include="Editor2\NullTool.cs" />
@@ -165,7 +166,7 @@
     <Compile Include="Entities\RigidBodyFactory.cs" />
     <Compile Include="Entities\ProxyFactory.cs" />
     <Compile Include="Entities\StartPoint.cs" />
-    <Compile Include="IronStarGame.cs" />
+    <Compile Include="IronStar.cs" />
     <Compile Include="Items\Powerup.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\Weapon.cs" />

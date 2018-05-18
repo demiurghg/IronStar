@@ -124,8 +124,8 @@ namespace IronStar.Editor2 {
 				return false;
 			}
 
-			snapEnable	=	editor.Config.MoveToolSnapEnable;
-			snapValue	=	editor.Config.MoveToolSnapValue;
+			snapEnable	=	editor.MoveToolSnapEnable;
+			snapValue	=	editor.MoveToolSnapValue;
 
 			targets	=	editor.GetSelection();
 			initPos	=	targets.Select( t => t.TranslateVector ).ToArray();

@@ -28,7 +28,7 @@ namespace IronStar.Editor2 {
 	/// <summary>
 	/// World represents entire game state.
 	/// </summary>
-	public partial class MapEditor : IEditorInstance {
+	public partial class MapEditor : GameComponent {
 
 		public static readonly BoundingBox DefaultBox = new BoundingBox( Vector3.One * (-0.25f), Vector3.One * 0.25f );
 
@@ -52,8 +52,6 @@ namespace IronStar.Editor2 {
 				return map;
 			}
 		}
-
-		public readonly EditorConfig Config;
 
 		GameWorld world;
 
@@ -80,16 +78,14 @@ namespace IronStar.Editor2 {
 		/// </summary>
 		/// <param name="maxPlayers"></param>
 		/// <param name="maxEntities"></param>
-		public MapEditor ( GameEditor editor, string map )
+		public MapEditor ( Game game, string map ) : base(game)
 		{
 			this.mapName	=	map;
 
 			Log.Verbose( "game editor" );
-			this.Game       =   editor.Game;
+			this.Game       =   game;
 			this.rs			=	Game.RenderSystem;
 			Content         =   new ContentManager( Game );
-
-			Config			=	new EditorConfig(this);
 
 			camera			=	new EditorCamera( this );
 			manipulator		=	new NullTool( this );
@@ -109,10 +105,9 @@ namespace IronStar.Editor2 {
 		/// <summary>
 		/// 
 		/// </summary>
-		void IEditorInstance.Initialize()
+		public override void Initialize()
 		{
-			//Game.Config.ApplySettings( Config );
-			Game.Invoker.RegisterObject( "EditorConfig", Config );
+			base.Initialize();
 
 			if (File.Exists(fullPath)) {
 				Log.Message("Opening existing map: {0}", fullPath);
@@ -351,7 +346,7 @@ namespace IronStar.Editor2 {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		void IEditorInstance.Update( GameTime gameTime )
+		public override void Update(GameTime gameTime)
 		{
 			camera.Update( gameTime );
 

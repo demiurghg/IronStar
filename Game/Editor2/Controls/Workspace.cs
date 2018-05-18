@@ -92,7 +92,7 @@ namespace IronStar.Editor2.Controls {
 			upperShelf.AddLSplitter();
 			upperShelf.AddFatLButton("BUILD\rRELOAD", null, ()=> Game.Invoker.ExecuteString("contentBuild") );
 
-			upperShelf.AddFatRButton("EDITOR\rCONFIG", null, ()=> FeedProperties(editor.Config) );
+			upperShelf.AddFatRButton("EDITOR\rCONFIG", null, ()=> FeedProperties(editor) );
 			upperShelf.AddRButton	("EXIT", null, ()=> Game.GameEditor.Stop() );
  
 
@@ -160,8 +160,8 @@ namespace IronStar.Editor2.Controls {
  				  "Rotate snap : {1}\r\n" +
  				  "Camera FOV  : {2}\r\n" +
  				  "", 
-				  editor.Config.MoveToolSnapEnable   ? editor.Config.MoveToolSnapValue  .ToString("000.00") : "Disabled",
-				  editor.Config.RotateToolSnapEnable ? editor.Config.RotateToolSnapValue.ToString("000.00") : "Disabled", 
+				  editor.MoveToolSnapEnable   ? editor.MoveToolSnapValue  .ToString("000.00") : "Disabled",
+				  editor.RotateToolSnapEnable ? editor.RotateToolSnapValue.ToString("000.00") : "Disabled", 
 				  editor.camera.Fov,0 );
 		}
 
@@ -407,9 +407,9 @@ namespace IronStar.Editor2.Controls {
 				}
 				if (e.Key==Keys.J) {
 					if (ctrl) {
-						editor.Config.RotateToolSnapEnable = !editor.Config.RotateToolSnapEnable;
+						editor.RotateToolSnapEnable = !editor.RotateToolSnapEnable;
 					} else {
-						editor.Config.MoveToolSnapEnable = !editor.Config.MoveToolSnapEnable;
+						editor.MoveToolSnapEnable = !editor.MoveToolSnapEnable;
 					}
 				}
 				if (e.Key==Keys.D) {
@@ -422,23 +422,23 @@ namespace IronStar.Editor2.Controls {
 				}
 				if (e.Key==Keys.OemComma) {
 					if (ctrl) {
-						editor.Config.RotateToolSnapValue -= 5;
+						editor.RotateToolSnapValue -= 5;
 					} else {
-						editor.Config.MoveToolSnapValue *= 0.5f;
+						editor.MoveToolSnapValue *= 0.5f;
 					}
 				}
 				if (e.Key==Keys.OemPeriod) {
 					if (ctrl) {
-						editor.Config.RotateToolSnapValue += 5;
+						editor.RotateToolSnapValue += 5;
 					} else {
-						editor.Config.MoveToolSnapValue *= 2.0f;
+						editor.MoveToolSnapValue *= 2.0f;
 					}
 				}
 				if (e.Key==Keys.OemOpenBrackets) {
-					editor.Config.CameraFov -= 10.0f;
+					editor.CameraFov -= 10.0f;
 				}
 				if (e.Key==Keys.OemCloseBrackets) {
-					editor.Config.CameraFov += 10.0f;
+					editor.CameraFov += 10.0f;
 				}
 			}
 		}

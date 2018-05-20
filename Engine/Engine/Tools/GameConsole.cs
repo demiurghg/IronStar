@@ -38,16 +38,8 @@ namespace Fusion.Engine.Tools {
 		
 		List<string> lines = new List<string>();
 
-		#if USE_PROFONT
-		const string FontName = "profont";
-		SpriteFont	consoleFont;
-		#elif USE_COURIER
-		const string FontName = "conchars2";
-		DiscTexture	consoleFont;
-		#else 
 		const string FontName = "conchars";
 		UserTexture	consoleFont;
-		#endif
 		SpriteLayer consoleLayer;
 		SpriteLayer editLayer;
 		
@@ -113,21 +105,18 @@ namespace Fusion.Engine.Tools {
 
 			Game.GetService<FrameProcessor>().Keyboard.KeyboardHook = this;
 
+			using ( var ms = new MemoryStream( Properties.Resources.conchars ) ) {
+				consoleFont		=   UserTexture.CreateFromTga( Game.RenderSystem, ms, false );
+			}
+
+
 			RefreshConsole();
 			RefreshEdit();
 		}
 
 
-		#if USE_PROFONT
-			int charHeight { get { return consoleFont.LineHeight; } }
-			int charWidth { get { return consoleFont.SpaceWidth; } }
-		#elif USE_COURIER
-			int charHeight { get { return 9; } }
-			int charWidth { get { return 8; } }
-		#else
-			int charHeight { get { return 9; } }
-			int charWidth { get { return 8; } }
-		#endif
+		int charHeight { get { return 9; } }
+		int charWidth { get { return 8; } }
 
 
 		/// <summary>
@@ -145,16 +134,6 @@ namespace Fusion.Engine.Tools {
 		/// </summary>
 		void LoadContent ()
 		{
-#if USE_PROFONT
-			consoleFont			=	Game.Content.Load<SpriteFont>("profont");
-#else
-
-			using ( var ms = new MemoryStream( Properties.Resources.conchars ) ) {
-				consoleFont		=   UserTexture.CreateFromTga( Game.RenderSystem, ms, false );
-			}
-			//consoleFont			=	Game.Content.Load<DiscTexture>(font);
-#endif
-
 			RefreshConsole();
 		}
 
@@ -183,10 +162,7 @@ namespace Fusion.Engine.Tools {
 				Game.GraphicsDevice.DisplayBoundsChanged -= GraphicsDevice_DisplayBoundsChanged;
 				LogRecorder.TraceRecorded -= TraceRecorder_TraceRecorded;
 
-				#if USE_PROFONT
-				#else
 				SafeDispose( ref consoleFont );
-				#endif
 
 				SafeDispose( ref consoleLayer );
 				SafeDispose( ref editLayer );

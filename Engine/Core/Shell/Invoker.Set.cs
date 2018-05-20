@@ -44,20 +44,20 @@ namespace Fusion.Core.Shell {
 
 			public object Execute()
 			{
-				object obj;
+				IGameComponent component;
 				PropertyInfo pi;
 
-				if (!invoker.TryGetObject( variable, out pi, out obj )) {
-					throw new InvokerException("bad object name '{0}'", variable);
+				if (!invoker.TryGetComponentProperty( variable, out pi, out component )) {
+					throw new InvokerException("bad component property name '{0}'", variable);
 				}
 
-				object objVal;
+				object newVal;
 
-				if (!StringConverter.TryConvertFromString(pi.PropertyType, value, out objVal )) {
+				if (!StringConverter.TryConvertFromString(pi.PropertyType, value, out newVal )) {
 					throw new InvokerException("can not set {0} from '{1}'", pi.PropertyType, value);
 				}
 
-				pi.SetValue( obj, objVal );
+				pi.SetValue( component, newVal );
 
 				return null;
 			}

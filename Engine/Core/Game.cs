@@ -292,7 +292,7 @@ namespace Fusion.Core {
 			config				=	new ConfigManager( this );
 			userStorage			=	new UserStorage(this);
 
-			invoker				=	new Invoker();
+			invoker				=	new Invoker( this );
 			inputDevice			=	new InputDevice( this );
 			graphicsDevice		=	new GraphicsDevice( this );
 			content				=	new ContentManager( this );

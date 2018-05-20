@@ -17,6 +17,8 @@ using System.Collections.Concurrent;
 namespace Fusion.Core.Shell {
 	public partial class Invoker {
 
+		public readonly Game Game;
+
 		public delegate ICommand CommandCreator ( ArgList args );
 
 		readonly object lockObject = new object();
@@ -30,9 +32,11 @@ namespace Fusion.Core.Shell {
 		/// <summary>
 		/// 
 		/// </summary>
-		public Invoker ()
+		public Invoker ( Game game )
 		{
+			this.Game = game; // optional ComponentCollection???
 			RegisterCommand("set", (args)=>new Set(this,args));
+			RegisterCommand("get", (args)=>new Get(this,args));
 		}
 
 
@@ -70,36 +74,6 @@ namespace Fusion.Core.Shell {
 
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="obj"></param>
-		public void RegisterObject ( string objectName, object obj )
-		{
-			lock (lockObject) {
-				if (objectRegistry.ContainsKey( objectName ) ) {
-					Log.Warning("Named object '{0}' is already registered", objectName );
-					return;
-				}
-				objectRegistry.Add( objectName, obj );
-			}
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="name"></param>
-		public void UnregisterObject ( string objectName )
-		{
-			lock (lockObject) {
-				if (!objectRegistry.Remove( objectName )) {
-					Log.Warning("Named object '{0}' is not registered", objectName );
-				}
-			}
-		}
 
 
 
@@ -109,10 +83,10 @@ namespace Fusion.Core.Shell {
 		/// <param name="objectName"></param>
 		/// <param name="pi"></param>
 		/// <param name="obj"></param>
-		private bool TryGetObject ( string objectName, out PropertyInfo pi, out object obj )
+		private bool TryGetComponentProperty ( string objectName, out PropertyInfo propertyInfo, out IGameComponent component )
 		{
-			pi = null;
-			obj = null;
+			propertyInfo = null;
+			component = null;
 
 			string left, right;
 
@@ -120,13 +94,15 @@ namespace Fusion.Core.Shell {
 				return false;
 			}
 
-			if (!objectRegistry.TryGetValue( left, out obj)) {
+			component = Game.Components.FirstOrDefault( c1 => c1.GetType().Name==left);
+
+			if (component==null) {
 				return false;
 			}
 
-			pi = obj.GetType().GetProperty(right);
+			propertyInfo = component.GetType().GetProperty(right);
 
-			if (pi==null) {
+			if (propertyInfo==null) {
 				return false;
 			}
 

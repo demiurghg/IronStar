@@ -66,12 +66,12 @@ namespace IronStar.Editor2.Controls {
 			lowerShelf	=	new Shelf( this, ShelfMode.Bottom );
 
 
-			upperShelf.AddLButton("ST", null, ()=> editor.manipulator = new NullTool(editor) );
-			upperShelf.AddLButton("MT", null, ()=> editor.manipulator = new MoveTool(editor) );
-			upperShelf.AddLButton("RT", null, ()=> editor.manipulator = new RotateTool(editor) );
+			upperShelf.AddLButton("ST", @"editor\iconToolSelect",	()=> editor.manipulator = new NullTool(editor) );
+			upperShelf.AddLButton("MT", @"editor\iconToolMove",		()=> editor.manipulator = new MoveTool(editor) );
+			upperShelf.AddLButton("RT", @"editor\iconToolRotate",	()=> editor.manipulator = new RotateTool(editor) );
 
 			upperShelf.AddLSplitter();
-			upperShelf.AddLButton("FCS", null, ()=> editor.FocusSelection() );
+			upperShelf.AddLButton("FCS", @"editor\iconFocus",		()=> editor.FocusSelection() );
 
 			upperShelf.AddLSplitter();
 			upperShelf.AddLButton("SV", null, null );
@@ -90,18 +90,18 @@ namespace IronStar.Editor2.Controls {
 			upperShelf.AddFatLButton("ITEM"		, null, ()=> ToggleAssetsExplorer("items"	) );
 
 			upperShelf.AddLSplitter();
-			upperShelf.AddFatLButton("BUILD\rRELOAD", null, ()=> Game.Invoker.ExecuteString("contentBuild") );
+			upperShelf.AddLButton("BUILD\rRELOAD", @"editor\iconBuild", ()=> Game.Invoker.ExecuteString("contentBuild") );
 
-			upperShelf.AddFatRButton("EDITOR\rCONFIG", null, ()=> FeedProperties(editor) );
-			upperShelf.AddRButton	("EXIT", null, ()=> Game.Invoker.ExecuteString("killEditor") );
+			upperShelf.AddRButton("EDITOR\rCONFIG", @"editor\iconSettings", ()=> FeedProperties(editor) );
+			upperShelf.AddRButton("EXIT", @"editor\iconExit", ()=> Game.Invoker.ExecuteString("killEditor") );
  
 
-			lowerShelf.AddFatLButton("PLAY\r[SPACE]" ,	null, () => editor.EnableSimulation = !editor.EnableSimulation );
-			lowerShelf.AddFatLButton("RESET\r[ESC]"	 ,	null, () => editor.ResetWorld(true) );
-			lowerShelf.AddFatLButton("BAKE\r[B]"	 ,	null, () => editor.BakeToEntity() );
+			lowerShelf.AddLButton("PLAY\r[SPACE]",	@"editor\iconSimulate2",() => editor.EnableSimulation = !editor.EnableSimulation );
+			lowerShelf.AddLButton("RESET\r[ESC]" ,	@"editor\iconReset2",	() => editor.ResetWorld(true) );
+			lowerShelf.AddLButton("BAKE\r[B]"	 ,	@"editor\iconBake",		() => editor.BakeToEntity() );
 			lowerShelf.AddLSplitter();				 
-			lowerShelf.AddFatLButton("ACT\n[ENTER]"	 ,	null, () => editor.ActivateSelected() );
-			lowerShelf.AddFatLButton("USE\n[U]"		 ,	null, () => editor.UseSelected() );
+			lowerShelf.AddLButton("ACT\n[ENTER]" ,	@"editor\iconActivate", () => editor.ActivateSelected() );
+			lowerShelf.AddLButton("USE\n[U]"	 ,	@"editor\iconUse"	,	() => editor.UseSelected() );
 
 
 			snapLabel	=	lowerShelf.AddRIndicator("SNAP", 200 );

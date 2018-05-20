@@ -7,6 +7,7 @@ using Fusion.Engine.Frames;
 using Fusion.Engine.Frames.Layouts;
 using System.Windows;
 using Fusion.Core.Mathematics;
+using Fusion.Engine.Graphics;
 
 namespace IronStar.Editor2.Controls {
 
@@ -95,6 +96,11 @@ namespace IronStar.Editor2.Controls {
 		public void AddLButton ( string text, string image, Action action )
 		{
 			var button = new Button( Frames, text, 0,0,34,34, action);
+			if (image!=null) {
+				button.Image = Frames.Game.Content.Load<DiscTexture>(image);
+				button.Text  = "";
+				button.ImageColor = Color.Gray;
+			}
 			button.ShadowColor = ColorTheme.ShadowColor;
 			button.ShadowOffset = new Vector2(1,1);
 			itemsLeft.Add( button );
@@ -173,6 +179,11 @@ namespace IronStar.Editor2.Controls {
 		public void AddRButton ( string text, string image, Action action )
 		{
 			var button = new Button( Frames, text, 0,0,34,34, action);
+			if (image!=null) {
+				button.Image = Frames.Game.Content.Load<DiscTexture>(image);
+				button.Text  = "";
+				button.ImageColor = Color.Gray;
+			}
 			button.ShadowColor = ColorTheme.ShadowColor;
 			button.ShadowOffset = new Vector2(1,1);
 			itemsRight.Add( button );

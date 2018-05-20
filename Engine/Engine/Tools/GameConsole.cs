@@ -17,10 +17,11 @@ using Fusion.Engine.Graphics;
 using Fusion.Core.Input;
 using Fusion.Core.Shell;
 using System.IO;
+using Fusion.Engine.Frames;
 
 namespace Fusion.Engine.Tools {
 	
-	public sealed partial class GameConsole : GameComponent {
+	public sealed partial class GameConsole : GameComponent, IKeyboardHook {
 
 
 
@@ -109,9 +110,8 @@ namespace Fusion.Engine.Tools {
 
 			Game.GraphicsDevice.DisplayBoundsChanged += GraphicsDevice_DisplayBoundsChanged;
 			LogRecorder.TraceRecorded += TraceRecorder_TraceRecorded;
-			Game.Keyboard.KeyDown += Keyboard_KeyDown;
-			Game.Keyboard.FormKeyPress += Keyboard_FormKeyPress;
-			Game.Keyboard.FormKeyDown += Keyboard_FormKeyDown;
+
+			Game.GetService<FrameProcessor>().Keyboard.KeyboardHook = this;
 
 			RefreshConsole();
 			RefreshEdit();
@@ -182,9 +182,6 @@ namespace Fusion.Engine.Tools {
 			if (disposing) {
 				Game.GraphicsDevice.DisplayBoundsChanged -= GraphicsDevice_DisplayBoundsChanged;
 				LogRecorder.TraceRecorded -= TraceRecorder_TraceRecorded;
-				Game.Keyboard.KeyDown -= Keyboard_KeyDown;
-				Game.Keyboard.FormKeyPress -= Keyboard_FormKeyPress;
-				Game.Keyboard.FormKeyDown -= Keyboard_FormKeyDown;
 
 				#if USE_PROFONT
 				#else
@@ -395,68 +392,12 @@ namespace Fusion.Engine.Tools {
 			editBox.Text = AutoComplete();
 		}
 
-
-
-		void Keyboard_KeyDown ( object sender, KeyEventArgs e )
-		{
-			//if (e.Key==Keys.OemTilde) {
-			//	Show = !Show;
-			//	return;
-			//}
-		}
-
-
-		void Keyboard_FormKeyDown ( object sender, KeyEventArgs e )
-		{
-			if (e.Key==Keys.OemTilde) {
-				isShown = !isShown;
-				return;
-			}
-			if (!isShown) {
-				return;
-			}
-			switch (e.Key) {
-				case Keys.End		: editBox.Move(int.MaxValue/2); break;
-				case Keys.Home		: editBox.Move(int.MinValue/2); break;
-				case Keys.Left		: editBox.Move(-1); break;
-				case Keys.Right		: editBox.Move( 1); break;
-				case Keys.Delete	: editBox.Delete(); break;
-				case Keys.Up		: editBox.Prev(); break;
-				case Keys.Down		: editBox.Next(); break;
-				case Keys.PageUp	: scroll += 2; dirty = true; break;
-				case Keys.PageDown	: scroll -= 2; dirty = true; break;
-			}
-
-			RefreshEdit();
-		}
-
 		
 		const char Tilde = (char)'`';
 		const char Backspace = (char)8;
 		const char Enter = (char)13;
 		const char Escape = (char)27;
 		const char Tab = (char)9;
-
-
-		void Keyboard_FormKeyPress ( object sender, KeyPressArgs e )
-		{
-			if (!isShown) {
-				return;
-			}
-			switch (e.KeyChar) {
-				case Tilde		: break;
-				case Backspace	: editBox.Backspace(); break;
-				case Enter		: ExecCmd(); editBox.Enter(); break;
-				case Escape		: break;
-				case Tab		: TabCmd(); break;
-				default			: editBox.TypeChar( e.KeyChar ); break;
-			}
-
-			// Run AutoComplete twice on TAB for better results :
-			AutoComplete();
-
-			RefreshEdit();
-		}
 
 
 		void TraceRecorder_TraceRecorded ( object sender, EventArgs e )
@@ -469,6 +410,53 @@ namespace Fusion.Engine.Tools {
 		void GraphicsDevice_DisplayBoundsChanged ( object sender, EventArgs e )
 		{
 			RefreshConsole();
+		}
+
+
+		public bool KeyDown( Keys key, bool shift, bool alt, bool ctrl )
+		{
+			if (key==Keys.OemTilde) {
+				isShown = !isShown;
+				return true;
+			}
+			return isShown;
+		}
+
+		public bool KeyUp( Keys key, bool shift, bool alt, bool ctrl )
+		{
+			return isShown;
+		}
+
+		public bool TypeWrite( Keys key, char keyChar, bool shift, bool alt, bool ctrl )
+		{
+			if (!isShown) {
+				return (key==Keys.OemTilde);
+			}
+
+			switch (key) {
+				case Keys.End		: editBox.Move(int.MaxValue/2); break;
+				case Keys.Home		: editBox.Move(int.MinValue/2); break;
+				case Keys.Left		: editBox.Move(-1); break;
+				case Keys.Right		: editBox.Move( 1); break;
+				case Keys.Delete	: editBox.Delete(); break;
+				case Keys.Up		: editBox.Prev(); break;
+				case Keys.Down		: editBox.Next(); break;
+				case Keys.PageUp	: scroll += 2; dirty = true; break;
+				case Keys.PageDown	: scroll -= 2; dirty = true; break;
+			}
+
+			switch (keyChar) {
+				case Tilde		: break;
+				case Backspace	: editBox.Backspace(); break;
+				case Enter		: ExecCmd(); editBox.Enter(); break;
+				case Escape		: break;
+				case Tab		: TabCmd(); break;
+				default			: editBox.TypeChar( keyChar ); break;
+			}
+
+			RefreshEdit();
+
+			return true;
 		}
 	}
 }

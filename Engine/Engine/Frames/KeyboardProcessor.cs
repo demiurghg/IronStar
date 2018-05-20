@@ -14,10 +14,14 @@ using System.Diagnostics;
 
 namespace Fusion.Engine.Frames {
 
-	class KeyboardProcessor {
+	public class KeyboardProcessor {
 
 		public readonly Game Game;
 		public FrameProcessor ui;
+
+		public IKeyboardHook KeyboardHook {
+			get; set;
+		}
 
 
 		/// <summary>
@@ -54,7 +58,7 @@ namespace Fusion.Engine.Frames {
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
-		public KeyboardProcessor ( Game game, FrameProcessor ui )
+		internal KeyboardProcessor ( Game game, FrameProcessor ui )
 		{
 			this.Game	=	game;
 			this.ui		=	ui;
@@ -138,18 +142,54 @@ namespace Fusion.Engine.Frames {
 		
 		void CallKeyDown ( Frame frame, Keys key )
 		{
-			frame?.OnKeyDown( key, IsShiftDown(), IsAltDown(), IsControlDown() );
+			bool hooked = false;
+			bool shift	= IsShiftDown();
+			bool alt	= IsAltDown();
+			bool ctrl	= IsControlDown();
+			
+			if (KeyboardHook!=null) {
+				hooked = KeyboardHook.KeyDown( key, shift, alt, ctrl );
+			}
+
+			if (!hooked) {
+				frame?.OnKeyDown( key, shift, alt, ctrl );
+			}
 		}
 		
+
 		void CallKeyUp ( Frame frame, Keys key )
 		{
-			frame?.OnKeyUp( key, IsShiftDown(), IsAltDown(), IsControlDown() );
+			bool hooked = false;
+			bool shift	= IsShiftDown();
+			bool alt	= IsAltDown();
+			bool ctrl	= IsControlDown();
+
+			if (KeyboardHook!=null) {
+				hooked = KeyboardHook.KeyUp( key, shift, alt, ctrl );
+			}
+
+			if (!hooked) {
+				frame?.OnKeyUp( key, shift, alt, ctrl );
+			}
 		}
+
 
 		void CallTypeWrite ( Frame frame, Keys key )
 		{											
-			var ch = GetCharCode( ref key, IsShiftDown() );
-			frame?.OnTypeWrite( key, ch, IsShiftDown(), IsAltDown(), IsControlDown() );
+			char ch		= GetCharCode( ref key, IsShiftDown() );
+
+			bool hooked = false;
+			bool shift	= IsShiftDown();
+			bool alt	= IsAltDown();
+			bool ctrl	= IsControlDown();
+
+			if (KeyboardHook!=null) {
+				hooked = KeyboardHook.TypeWrite( key, ch, shift, alt, ctrl );
+			}
+
+			if (!hooked) {
+				frame?.OnTypeWrite( key, ch, shift, alt, ctrl );
+			}
 		}
 
 

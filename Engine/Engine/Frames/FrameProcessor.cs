@@ -75,6 +75,16 @@ namespace Fusion.Engine.Frames {
 
 
 		/// <summary>
+		/// Gets keyboard processor 
+		/// </summary>
+		public KeyboardProcessor Keyboard {
+			get {
+				return keyboardProcessor;
+			}
+		}
+
+
+		/// <summary>
 		/// Gets FrameProcessor's sprite layer, that could be attached to RenderWorld and RenderView.
 		/// </summary>
 		public SpriteLayer FramesSpriteLayer {

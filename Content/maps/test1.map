@@ -549,10 +549,10 @@
       <TranslateY>0.240499943</TranslateY>
       <TranslateZ>0.229106143</TranslateZ>
       <RotateYaw>-160.289536</RotateYaw>
-      <RotatePitch>0.312972248</RotatePitch>
+      <RotatePitch>0.312972</RotatePitch>
       <RotateRoll>179.9991</RotateRoll>
       <TranslateVector X="1.835388" Y="0.240499943" Z="0.229106143" />
-      <RotateQuaternion X="-0.9852397" Y="-0.000475177949" Z="0.171158671" W="-0.002689552" />
+      <RotateQuaternion X="-0.9852397" Y="-0.0004751776" Z="0.171158671" W="-0.00268955" />
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>
       </Factory>

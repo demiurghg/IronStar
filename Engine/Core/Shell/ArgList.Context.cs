@@ -43,6 +43,15 @@ namespace Fusion.Core.Shell {
 			}
 
 
+			public Context DebugArgs ()
+			{
+				for (int i=0; i<argList.Count; i++) {
+					Log.Message("[{0}] - '{1}'", i, argList[i]);
+				}
+				return this;
+			}
+
+
 			public Context Option( string argName, out bool result )
 			{
 				var key = "/" + argName;

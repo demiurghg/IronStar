@@ -65,7 +65,10 @@ namespace Fusion.Engine.Tools {
 		/// </summary>
 		/// <param name="ch"></param>
 		public void TypeChar ( char ch )
-		{						
+		{					
+			if (ch=='\0') {
+				return;
+			}
 			if (cursor>=text.Length) {
 				text.Append(ch);
 				cursor++;

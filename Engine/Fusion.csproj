@@ -448,6 +448,7 @@
     <Compile Include="Engine\Frames\Frame.Text.cs" />
     <Compile Include="Engine\Frames\FrameProcessor.cs" />
     <Compile Include="Engine\Frames\FrameUtils.cs" />
+    <Compile Include="Engine\Frames\IKeyboardHook.cs" />
     <Compile Include="Engine\Frames\KeyboardProcessor.cs" />
     <Compile Include="Engine\Frames\LayoutEngine.cs" />
     <Compile Include="Engine\Frames\Layouts\QuadLayoutStyle.cs" />

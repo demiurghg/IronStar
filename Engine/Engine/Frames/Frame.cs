@@ -344,6 +344,7 @@ namespace Fusion.Engine.Frames {
 		public virtual void Clear ()
 		{
 			foreach ( var child in children ) {
+				ui.WipeRefs(child);
 				child.parent = null;
 			}
 			children.Clear();
@@ -378,6 +379,8 @@ namespace Fusion.Engine.Frames {
 				this.children.Remove( frame );
 				frame.parent	=	null;
 				layoutDirty = true;
+
+				ui.WipeRefs(frame);
 			}
 		}
 

@@ -12,9 +12,10 @@ using Fusion.Engine.Tools;
 using Fusion;
 using Fusion.Core.Shell;
 using IronStar.Editor2;
+using Fusion.Build;
 
 namespace IronStar {
-	class IronStar : Game
+	partial class IronStar : Game
 	{
 		const string ConfigFile = "Config.ini";
 
@@ -34,8 +35,11 @@ namespace IronStar {
 			this.GetService<FrameProcessor>().LayerOrder = 100;
 			this.GetService<GameConsole>().LayerOrder = 200;
 
-			Invoker.RegisterCommand("map",			(args) => new MapCommand(this, args) );
-			Invoker.RegisterCommand("killeditor",	(args) => new KillEditorCommand(this, args) );
+			Invoker.RegisterCommand("map",				(args) => new MapCommand(this, args) );
+			Invoker.RegisterCommand("killEditor",		(args) => new KillEditorCommand(this, args) );
+			Invoker.RegisterCommand("contentBuild",		(args) => new ContentBuildCommand(this, args) );
+			Invoker.RegisterCommand("contentFile",		(args) => new ContentFileCommand() );
+			Invoker.RegisterCommand("contentReport",	(args) => new ContentReportCommand(args) );
 		}
 
 
@@ -110,87 +114,5 @@ namespace IronStar {
 				Log.Warning("Editor is not running");
 			}
 		}
-
-
-
-		class MapCommand : CommandNoHistory {
-
-			readonly IronStar game;
-			readonly string mapname;
-			readonly bool edit;
-
-			public MapCommand ( IronStar game, ArgList args )
-			{
-				this.game	=	game;
-
-				args.Usage("map <mapname> [/edit]")
-					.Require("mapname"	, out mapname	)
-					.Option	("edit"		, out edit )
-					.Apply();
-			}
-
-			public override object Execute()
-			{
-				if (edit) {
-					game.RunEditor(mapname);
-				}
-				return null;
-			}
-
-		}
-
-
-		class KillServerCommand : CommandNoHistory {
-
-			readonly IronStar game;
-
-			public KillServerCommand ( IronStar game, ArgList args )
-			{
-				this.game = game;
-			}
-
-			public override object Execute()
-			{
-				throw new NotImplementedException();
-			}
-		}
-
-
-		class KillEditorCommand : CommandNoHistory {
-
-			readonly IronStar game;
-
-			public KillEditorCommand ( IronStar game, ArgList args )
-			{
-				this.game = game;
-			}
-
-			public override object Execute()
-			{
-				game.KillEditor();
-				return null;
-			}
-		}
-
-		//class EditorMap : ICommand {
-		//	public void Rollback() {}
-		//	public bool IsHistoryOn() { return false; }
-
-		//	public object Execute()
-		//	{
-		//		throw new NotImplementedException();
-		//	}
-		//}
-
-
-		//class EditorQuit : ICommand {
-		//	public void Rollback() {}
-		//	public bool IsHistoryOn() { return false; }
-
-		//	public object Execute()
-		//	{
-		//		throw new NotImplementedException();
-		//	}
-		//}
 	}
 }

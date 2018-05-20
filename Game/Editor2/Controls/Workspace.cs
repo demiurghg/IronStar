@@ -93,7 +93,7 @@ namespace IronStar.Editor2.Controls {
 			upperShelf.AddFatLButton("BUILD\rRELOAD", null, ()=> Game.Invoker.ExecuteString("contentBuild") );
 
 			upperShelf.AddFatRButton("EDITOR\rCONFIG", null, ()=> FeedProperties(editor) );
-			upperShelf.AddRButton	("EXIT", null, ()=> Game.GameEditor.Stop() );
+			upperShelf.AddRButton	("EXIT", null, ()=> Game.Invoker.ExecuteString("killEditor") );
  
 
 			lowerShelf.AddFatLButton("PLAY\r[SPACE]" ,	null, () => editor.EnableSimulation = !editor.EnableSimulation );
@@ -101,7 +101,7 @@ namespace IronStar.Editor2.Controls {
 			lowerShelf.AddFatLButton("BAKE\r[B]"	 ,	null, () => editor.BakeToEntity() );
 			lowerShelf.AddLSplitter();				 
 			lowerShelf.AddFatLButton("ACT\n[ENTER]"	 ,	null, () => editor.ActivateSelected() );
-			lowerShelf.AddFatLButton("USE\n[???]"	 ,	null, () => editor.UseSelected() );
+			lowerShelf.AddFatLButton("USE\n[U]"		 ,	null, () => editor.UseSelected() );
 
 
 			snapLabel	=	lowerShelf.AddRIndicator("SNAP", 200 );
@@ -418,7 +418,11 @@ namespace IronStar.Editor2.Controls {
 					}
 				}
 				if (e.Key==Keys.G) {
-					Game.RenderSystem.SkipDebugRendering = !Game.RenderSystem.SkipDebugRendering;
+					if (ctrl||alt) {
+						editor.DrawGrid = !editor.DrawGrid;
+					} else {
+						Game.RenderSystem.SkipDebugRendering = !Game.RenderSystem.SkipDebugRendering;
+					}
 				}
 				if (e.Key==Keys.OemComma) {
 					if (ctrl) {

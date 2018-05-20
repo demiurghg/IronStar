@@ -27,40 +27,61 @@ using Fusion.Core.Configuration;
 
 namespace IronStar.Editor2 {
 
-	class EditorSave : ICommand
-	{
-		public object Execute()
+	public partial class MapEditor : GameComponent {
+
+		void RegisterCommands ()
 		{
-			throw new NotImplementedException();
+			Game.Invoker.RegisterCommand("editorSave"	, (args) => new EditorSave(this, args) );
+			Game.Invoker.RegisterCommand("editorSaveAs"	, (args) => new EditorSaveAs(this, args) );
 		}
 
-		public bool IsHistoryOn()
+
+		void UnregisterCommands ()
 		{
-			throw new NotImplementedException();
+			Game.Invoker.UnregisterCommand("editorSave"		);
+			Game.Invoker.UnregisterCommand("editorSaveAs"	);
 		}
 
-		public void Rollback()
+
+
+
+
+		class EditorSave : CommandNoHistory
 		{
-			throw new NotImplementedException();
+			readonly MapEditor mapEditor;
+
+			public EditorSave ( MapEditor mapEditor, ArgList args )
+			{
+				this.mapEditor	=	mapEditor;
+			}
+
+			public override object Execute()
+			{
+				mapEditor.SaveMap();
+				return null;
+			}
 		}
-	}
 
 
-	class EditorQuit : ICommand
-	{
-		public object Execute()
+		class EditorSaveAs : CommandNoHistory
 		{
-			throw new NotImplementedException();
-		}
+			readonly MapEditor mapEditor;
+			readonly string newMapName;
 
-		public bool IsHistoryOn()
-		{
-			throw new NotImplementedException();
-		}
+			public EditorSaveAs ( MapEditor mapEditor, ArgList args )
+			{
+				this.mapEditor	=	mapEditor;
 
-		public void Rollback()
-		{
-			throw new NotImplementedException();
+				args.Usage("editorSaveAs <newMapName>")
+					.Require("newMapName", out newMapName )
+					.Apply();
+			}
+
+			public override object Execute()
+			{
+				mapEditor.SaveMapAs(newMapName);
+				return null;
+			}
 		}
 	}
 }

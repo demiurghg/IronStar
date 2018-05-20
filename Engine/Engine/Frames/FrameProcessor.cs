@@ -166,6 +166,33 @@ namespace Fusion.Engine.Frames {
 
 
 		/// <summary>
+		/// Resets 
+		/// </summary>
+		public void Reset ()
+		{
+			RootFrame.Clear();
+			TargetFrame = null;
+			ModalFrame = null;
+		}
+
+
+
+		/// <summary>
+		/// Wipes possible refs to given frame
+		/// </summary>
+		/// <param name="frame"></param>
+		public void WipeRefs ( Frame frame )
+		{
+			if (ModalFrame==frame) {
+				ModalFrame = null;
+			}
+			if (TargetFrame==frame) {
+				TargetFrame = null;
+			}
+		}
+
+
+		/// <summary>
 		/// Updates stuff
 		/// </summary>
 		/// <param name="gameTime"></param>

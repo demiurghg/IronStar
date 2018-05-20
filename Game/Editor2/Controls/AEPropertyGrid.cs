@@ -98,6 +98,10 @@ namespace IronStar.Editor2.Controls {
 
 			foreach ( var pi in obj.GetType().GetProperties() ) {
 
+				if (!pi.CanWrite) {
+					continue;
+				}
+
 				Action<object> setFunc  =	delegate (object value) {
 					pi.SetValue(obj,value);
 					OnPropertyChange(obj,pi,value);

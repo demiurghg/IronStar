@@ -32,10 +32,9 @@ namespace IronStar.Editor2 {
 
 		public static readonly BoundingBox DefaultBox = new BoundingBox( Vector3.One * (-0.25f), Vector3.One * 0.25f );
 
-		readonly string mapName;
-		readonly string fullPath;
+		string mapName;
+		string fullPath;
 		
-		public Game Game { get; private set; }
 		public ContentManager Content { get; private set; }
 		readonly RenderSystem rs;
 
@@ -82,8 +81,6 @@ namespace IronStar.Editor2 {
 		{
 			this.mapName	=	map;
 
-			Log.Verbose( "game editor" );
-			this.Game       =   game;
 			this.rs			=	Game.RenderSystem;
 			Content         =   new ContentManager( Game );
 
@@ -120,6 +117,8 @@ namespace IronStar.Editor2 {
 			map.ActivateMap( world, true );
 			world.SimulateWorld( 0 );
 			world.PresentWorld( 0.016f, 1, null, null );
+
+			RegisterCommands();
 		}
 
 
@@ -129,6 +128,20 @@ namespace IronStar.Editor2 {
 		/// </summary>
 		public void SaveMap ()
 		{
+			Log.Message("Saving map: {0}", fullPath);
+			File.Delete( fullPath );
+			Map.SaveToXml( map, File.OpenWrite( fullPath ) );
+		}
+
+
+		/// <summary>
+		/// Saved at dispose
+		/// </summary>
+		public void SaveMapAs ( string newMapName )
+		{
+			fullPath	=	Builder.GetFullPath(@"maps\" + newMapName + ".map");
+			mapName		=	newMapName;
+
 			Log.Message("Saving map: {0}", fullPath);
 			File.Delete( fullPath );
 			Map.SaveToXml( map, File.OpenWrite( fullPath ) );
@@ -151,34 +164,22 @@ namespace IronStar.Editor2 {
 		/// 
 		/// </summary>
 		/// <param name="disposing"></param>
-		protected virtual void Dispose( bool disposing )
+		protected override void Dispose( bool disposing )
 		{
-			if ( !disposedValue ) {
-				if ( disposing ) {
+			if ( disposing ) {
 
-					//Game.Config.RetrieveSettings( Config );
-					Game.Invoker.UnregisterObject( "EditorConfig" );
+				UnregisterCommands();
 
-					world?.Dispose();
+				world?.Dispose();
 
-					SaveMap();
+				SaveMap();
 
-					rs.RenderWorld.ClearWorld();
+				rs.RenderWorld.ClearWorld();
 
-					workspace.CloseWorkspace();
+				workspace.CloseWorkspace();
 
-					Builder.SafeBuild(false, null, null);
-				}
-
-				disposedValue = true;
+				Builder.SafeBuild(false, null, null);
 			}
-		}
-
-		private bool disposedValue = false;
-
-		public void Dispose()
-		{
-			Dispose( true );
 		}
 
 
@@ -371,7 +372,9 @@ namespace IronStar.Editor2 {
 			world.PresentWorld( gameTime.ElapsedSec, 1, null, null );
 
 			//	draw stuff :
-			rs.RenderWorld.Debug.DrawGrid( 10 );
+			if (DrawGrid) {
+				rs.RenderWorld.Debug.DrawGrid( 10 );
+			}
 
 			map.DrawNavigationMeshDebug( rs.RenderWorld.Debug );
 
@@ -380,9 +383,11 @@ namespace IronStar.Editor2 {
 			//
 			foreach ( var item in map.Nodes ) {
 
-				var color = item.Frozen ? Utils.GridColor : Utils.WireColor;
+				var color = IsSelectable( item ) ? Utils.WireColor : Utils.GridColor;
 
-				item.DrawNode( world, dr, color, false ); 
+				if (IsVisible(item)) {
+					item.DrawNode( world, dr, color, false ); 
+				}
 			}
 
 			//
@@ -396,8 +401,10 @@ namespace IronStar.Editor2 {
 					color = Color.White;
 				}
 
-				dr.DrawBasis( item.WorldMatrix, 0.5f, 3 );
-				item.DrawNode( world, dr, color, true ); 
+				if (IsVisible(item)) {
+					dr.DrawBasis( item.WorldMatrix, 0.5f, 3 );
+					item.DrawNode( world, dr, color, true ); 
+				}
 			}
 
 			var mp = Game.Mouse.Position;

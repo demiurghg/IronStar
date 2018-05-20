@@ -361,7 +361,12 @@ namespace Fusion.Engine.Tools {
 			try {
 				var cmd  = editBox.Text;
 				Log.Message("]{0}", cmd);
-				Game.Invoker.ExecuteString(cmd);
+				var result = Game.Invoker.ExecuteString(cmd);
+
+				if (result!=null) {
+					Log.Message("// {0} //", result.ToString() );
+				}
+
 			} catch ( Exception e ) {
 				Log.Error(e.Message);
 			}

@@ -26,6 +26,33 @@ namespace IronStar.Editor2 {
 	/// </summary>
 	public partial class MapEditor : IEditorInstance {
 
+		LayerState GetLayerStateForNode ( MapNode node )
+		{
+			if (node is MapEntity)			return LayerEntities;
+
+			if (node is MapModel)			return LayerGeometry;
+			if (node is MapDecal)			return LayerDecals;
+
+			if (node is MapLightProbe)		return LayerLightProbes;
+			if (node is MapOmniLight)		return LayerLightSet;
+			if (node is MapSpotLight)		return LayerLightSet;
+
+			return LayerState.Default;
+		}
+
+
+		bool IsVisible ( MapNode node )
+		{
+			return (GetLayerStateForNode(node)==LayerState.Frozen || GetLayerStateForNode(node)==LayerState.Default) && node.Visible; 
+		}
+
+
+		bool IsSelectable ( MapNode node )
+		{
+			return (GetLayerStateForNode(node)==LayerState.Default) && !node.Frozen; 
+		}
+
+
 
 		/// <summary>
 		/// 
@@ -108,7 +135,7 @@ namespace IronStar.Editor2 {
 					.Nodes
 					.Select( n1 => n1 as MapEntity )
 					.Where( n2 => n2 != null )
-					.FirstOrDefault( n3 => n3.Entity == entity && !n3.Frozen );
+					.FirstOrDefault( n3 => n3.Entity == entity && IsSelectable(n3) );
 
 			} else {
 				return null;
@@ -133,30 +160,19 @@ namespace IronStar.Editor2 {
 
 			foreach ( var item in map.Nodes ) {
 
-				////	no entity for some reason, skip it:
-				//if (item.Entity==null) {
-				//	continue;
-				//}
+				if (IsSelectable(item)) {
 
-				////	entity has model, skip it:
-				//if (item.Entity.Model>0) {
-				//	continue;
-				//}
+					var bbox	=	DefaultBox;
+					var iw		=	Matrix.Invert( item.WorldMatrix );
+					float d;
 
-				if (item.Frozen) {
-					continue;
-				}
+					var rayT	=	Utils.TransformRay( iw, ray );
 
-				var bbox	=	DefaultBox;
-				var iw		=	Matrix.Invert( item.WorldMatrix );
-				float d;
-
-				var rayT	=	Utils.TransformRay( iw, ray );
-
-				if (rayT.Intersects(ref bbox, out d)) {
-					if (distance > d) {
-						distance = d;
-						pickedItem = item;
+					if (rayT.Intersects(ref bbox, out d)) {
+						if (distance > d) {
+							distance = d;
+							pickedItem = item;
+						}
 					}
 				}
 			}
@@ -217,7 +233,7 @@ namespace IronStar.Editor2 {
 
 				foreach ( var item in map.Nodes ) {
 					if (camera.IsInRectangle( item.TranslateVector, SelectionMarquee )) {
-						if (!item.Frozen) {
+						if (IsSelectable(item)) {
 							selection.Add( item );
 						}
 					}

@@ -54,23 +54,37 @@ namespace Fusion.Core.Shell {
 
 			public Context Option( string argName, out bool result )
 			{
-				var key = "/" + argName;
+				if (string.IsNullOrWhiteSpace(argName)) {
+					throw new ArgumentException("argName is empty");
+				}
 
-				result = (argList.Any( s => (s == key) ));
+				if (argName[0]!='/') {
+					throw new ArgumentException("argName must contains leading '/'");
+				}
+
+				result = (argList.Any( s => (s == argName) ));
+
 				return this;
 			}
 
 
 			public Context Option<T>( string argName, out T result )
 			{
-				var key = "/" + argName + ":";
+				if (string.IsNullOrWhiteSpace(argName)) {
+					throw new ArgumentException("argName is empty");
+				}
+
+				if (argName[0]!='/' || argName[argName.Length-1]!=':') {
+					throw new ArgumentException("argName must contains leading '/' and trailng ':'");
+				}
+
 				result	= default(T);
 
 				foreach ( var arg in argList ) {
 
-					if (arg.StartsWith( key )) {
+					if (arg.StartsWith( argName )) {
 
-						var value = arg.Replace( key, "" );
+						var value = arg.Replace( argName, "" );
 
 						if (StringConverter.TryConvertFromString<T>( argList[index], out result ) ) {
 							return this;

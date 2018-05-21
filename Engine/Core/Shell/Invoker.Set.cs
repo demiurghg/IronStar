@@ -18,17 +18,47 @@ namespace Fusion.Core.Shell {
 
 		class Set : ICommand {
 
+			public class Syntax : ISyntax
+			{
+				public readonly Game game;
+
+				public Syntax ( Game game )
+				{
+					this.game = game;
+				}
+
+				public string Description { get { return ""; } }
+				public string Usage { get { return ""; } }
+
+				public string[] Optional( string arg )
+				{
+					return new[] {"/historyoff", "/fast", };
+				}
+
+				public string[] Required(int index, string arg)
+				{
+					return new[] {"test1", "test2", "tet2222", "quake", "unreal", "quake5"};
+				}
+			}
+
+
 			readonly Invoker invoker;
 			readonly string variable;
 			readonly string value;
 			readonly bool historyoff;
 
-			string rollback = null;
+			string oldValue = null;
 
-			///		set RenderSystem.VSyncInterval 1
-			///		set GameServer.UpdateRate 60
 
-		
+			public Set ( Invoker invoker, string variable, string value )
+			{
+				this.invoker	=	invoker;
+				this.value		=	value;
+				this.variable	=	variable;
+				this.historyoff	=	false;
+			}
+
+			
 			public Set ( Invoker invoker, ArgList args )
 			{
 				this.invoker = invoker;
@@ -36,40 +66,29 @@ namespace Fusion.Core.Shell {
 				args.Usage("set <variable> value /noundo /rollback:value /historyoff")
 					.Require( "variable"	,	out variable	)
 					.Require( "value"		,	out value		)
-					.Option	( "rollback"	,	out rollback	)
-					.Option	( "historyoff"	,	out historyoff	)
+					.Option	( "/historyoff"	,	out historyoff	)
 					.Apply();
 			}
 
 
 			public object Execute()
 			{
-				IGameComponent component;
-				PropertyInfo pi;
-
-				if (!invoker.TryGetComponentProperty( variable, out pi, out component )) {
-					throw new InvokerException("bad component property name '{0}'", variable);
+				if (IsHistoryOn()) {
+					oldValue = invoker.GetComponentProperty(variable);
 				}
 
-				object newVal;
-
-				if (!StringConverter.TryConvertFromString(pi.PropertyType, value, out newVal )) {
-					throw new InvokerException("can not set {0} from '{1}'", pi.PropertyType, value);
-				}
-
-				pi.SetValue( component, newVal );
-
+				invoker.SetComponentProperty( variable, value );
 				return null;
 			}
 
 			public bool IsHistoryOn()
 			{
-				return false;
+				return !historyoff;
 			}
 
 			public void Rollback()
 			{
-				throw new NotImplementedException();
+				invoker.SetComponentProperty( variable, oldValue );
 			}
 		}
 	}

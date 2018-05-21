@@ -29,7 +29,7 @@ namespace IronStar {
 
 				args.Usage("map <mapname> [/edit]")
 					.Require("mapname"	, out mapname	)
-					.Option	("edit"		, out edit )
+					.Option	("/edit"	, out edit )
 					.Apply();
 			}
 

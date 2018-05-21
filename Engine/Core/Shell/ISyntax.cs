@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Fusion.Core.Shell {
 	public interface ISyntax {
-		string Usage ();
+		string	 Description { get; }
+		string	 Usage { get; }
+		string[] Required( int index, string arg );
+		string[] Optional( string arg );
 	}
 }

@@ -20,30 +20,38 @@ namespace Fusion.Core.Shell {
 
 			readonly Invoker invoker;
 			readonly string variable;
+			readonly bool print;
 
 		
+			public Get ( Invoker invoker, string variable, bool print )
+			{
+				this.invoker = invoker;
+				this.variable = variable;
+				this.print	= print;
+			}
+
+
 			public Get ( Invoker invoker, ArgList args )
 			{
 				this.invoker = invoker;
 
-				args.Usage("set <variable>f")
+				args.Usage("set <variable> /print")
 					.Require( "variable"	,	out variable	)
+					.Option	( "/print"		, out print )
 					.Apply();
 			}
 
 
 			public override object Execute()
 			{
-				IGameComponent component;
-				PropertyInfo pi;
+				var propValue = invoker.GetComponentProperty(variable);
 
-				if (!invoker.TryGetComponentProperty( variable, out pi, out component )) {
-					throw new InvokerException("bad component property name '{0}'", variable);
+				if (print) {
+					Log.Message("{0} = {1}", variable, propValue);
+					return null;
+				} else {
+					return propValue;
 				}
-
-				var propValue = pi.GetValue( component );
-
-				return propValue;
 			}
 		}
 	}

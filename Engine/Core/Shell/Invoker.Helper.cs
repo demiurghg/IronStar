@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 using Fusion.Core.Configuration;
 using Fusion.Engine.Common;
 using System.Reflection;
-
+using Fusion.Core.Extensions;
+using System.Runtime.CompilerServices;
 
 namespace Fusion.Core.Shell {
-	public partial class Shell {
-
-
+	public partial class Invoker {
 
 		/// <summary>
 		/// 
@@ -22,16 +21,92 @@ namespace Fusion.Core.Shell {
 		/// <returns></returns>
 		public Suggestion AutoComplete ( string input )
 		{
-			return new Suggestion("");
-
 			if (string.IsNullOrWhiteSpace(input)) {
 				return new Suggestion("");
 			}
 
-			//var suggestion	=	new Suggestion(input);
-			//var args		=	SplitCommandLine( input ).ToArray();
-			//var cmd			=	args[0];
-			//var cmdList		=	CommandNames.ToList();
+			lock (lockObject) {
+				var tailSpace	=	input.Last()==' ';
+				var suggestion	=	new Suggestion(input);
+				var args		=	input.SplitCommandLine().ToList();
+
+				if (tailSpace) {
+					args.Add("");	//	add virtual element
+				}
+
+				var cmdList		=	commandsRegistry
+									.OrderBy( p1 => p1.Key )
+									.Select( p2 => p2.Key )
+									.ToArray();
+
+				var candidates	=	cmdList;
+
+				//	only command
+				if (args.Count==1) {
+
+					var longest = LongestCommon( args[0], ref candidates );
+
+					if (!string.IsNullOrWhiteSpace(longest)) {
+						suggestion.CommandLine	=	longest;
+						suggestion.AddRange( candidates );
+
+						if (candidates.Length==1) {
+							suggestion.CommandLine += " ";
+						}
+					}
+
+					return suggestion;
+
+				} else {
+
+					var cmd		= args[0];
+					int index	= args.Count-1;
+					var arg		= args[index];
+
+					CommandEntry commandEntry;
+
+					if (!commandsRegistry.TryGetValue(cmd, out commandEntry) ) {
+						suggestion.Add(string.Format("Unknown command : {0}", cmd));
+						return suggestion;
+					}
+
+					if (commandEntry.Syntax!=null) {
+
+						if (arg.Length>0 && arg[0]=='/') {
+							
+							var optCandidates = commandEntry.Syntax.Optional( arg );
+							var longest = LongestCommon( arg, ref optCandidates );
+
+							args[index] = longest;
+							
+							suggestion.CommandLine = string.Join( " ", args);
+							suggestion.AddRange( optCandidates );
+
+							return suggestion;
+
+						} else {
+
+							var argCandidates = commandEntry.Syntax.Required( index, arg );
+							var longest = LongestCommon( arg, ref argCandidates );
+
+							args[index] = longest;
+							
+							suggestion.CommandLine = string.Join( " ", args);
+							suggestion.AddRange( argCandidates );
+
+							return suggestion;
+						}
+
+					} else {
+						suggestion.Add("No syntax provided");
+						return suggestion;
+					}
+				
+				}
+
+				return suggestion;
+			}
+
 			//var varDict		=	Game.Config.Variables;
 			//var comparison	=	StringComparison.OrdinalIgnoreCase;
 
@@ -73,7 +148,7 @@ namespace Fusion.Core.Shell {
 		}
 
 		
-
+		#if false
 		string GetDescription ( string command )
 		{
 			var varDict		=	Game.Config.Variables;
@@ -298,7 +373,7 @@ namespace Fusion.Core.Shell {
 
 			return suggestion;
 		}
-
+		#endif
 
 
 		/// <summary>

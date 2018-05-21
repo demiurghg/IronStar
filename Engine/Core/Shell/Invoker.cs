@@ -25,9 +25,13 @@ namespace Fusion.Core.Shell {
 		readonly Stack<ICommand> undoStack	= new Stack<ICommand>(1024);
 		readonly Stack<ICommand> redoStack	= new Stack<ICommand>(1024);
 		readonly Queue<ICommand> cmdQueue	= new Queue<ICommand>(1024);
-		readonly Dictionary<string,CommandCreator> commandsRegistry = new Dictionary<string, CommandCreator>();
-		readonly Dictionary<string,object> objectRegistry = new Dictionary<string, object>();
+		readonly Dictionary<string,CommandEntry> commandsRegistry = new Dictionary<string, CommandEntry>();
+		readonly Dictionary<string,ISyntax> commandsSyntax = new Dictionary<string, ISyntax>();
 
+		class CommandEntry {
+			public CommandCreator Creator;
+			public ISyntax Syntax;
+		}
 
 		/// <summary>
 		/// 
@@ -35,8 +39,10 @@ namespace Fusion.Core.Shell {
 		public Invoker ( Game game )
 		{
 			this.Game = game; // optional ComponentCollection???
-			RegisterCommand("set", (args)=>new Set(this,args));
-			RegisterCommand("get", (args)=>new Get(this,args));
+			RegisterCommand("set",  (args)=>new Set(this,args), new Set.Syntax(game) );
+			RegisterCommand("get",  (args)=>new Get(this,args));
+			RegisterCommand("undo", (args)=>new UndoCmd(this,args));
+			RegisterCommand("redo", (args)=>new RedoCmd(this,args));
 		}
 
 
@@ -46,14 +52,14 @@ namespace Fusion.Core.Shell {
 		/// </summary>
 		/// <param name="commandName"></param>
 		/// <param name="creator"></param>
-		public void RegisterCommand ( string commandName, CommandCreator creator )
+		public void RegisterCommand ( string commandName, CommandCreator creator, ISyntax syntax = null )
 		{
 			lock (lockObject) {
 				if (commandsRegistry.ContainsKey( commandName ) ) {
 					Log.Warning("Command '{0}' is already registered", commandName );
 					return;
 				}
-				commandsRegistry.Add( commandName, creator );
+				commandsRegistry.Add( commandName, new CommandEntry() { Creator = creator, Syntax = syntax } );
 			}
 		}
 
@@ -71,9 +77,6 @@ namespace Fusion.Core.Shell {
 				}
 			}
 		}
-
-
-
 
 
 
@@ -110,6 +113,52 @@ namespace Fusion.Core.Shell {
 		}
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="variable"></param>
+		/// <param name="value"></param>
+		private void SetComponentProperty ( string variable, string value )
+		{
+			IGameComponent component;
+			PropertyInfo pi;
+
+			if (!TryGetComponentProperty( variable, out pi, out component )) {
+				throw new InvokerException("bad component property name '{0}'", variable);
+			}
+
+			object newVal;
+
+			if (!StringConverter.TryConvertFromString(pi.PropertyType, value, out newVal )) {
+				throw new InvokerException("can not set {0} from '{1}'", pi.PropertyType, value);
+			}
+			pi.SetValue( component, newVal );
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="variable"></param>
+		/// <returns></returns>
+		private string GetComponentProperty ( string variable )
+		{
+			IGameComponent component;
+			PropertyInfo pi;
+
+			if (!TryGetComponentProperty( variable, out pi, out component )) {
+				throw new InvokerException("bad component property name '{0}'", variable);
+			}
+
+			string strValue;
+
+			if (!StringConverter.TryConvertToString( pi.GetValue(component), out strValue )) {
+				throw new InvokerException("can not convert {0} to string", pi.PropertyType);
+			}
+
+			return strValue;
+		}
+
 
 		/// <summary>
 		/// 
@@ -133,7 +182,6 @@ namespace Fusion.Core.Shell {
 		}
 
 
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -143,7 +191,6 @@ namespace Fusion.Core.Shell {
 			var batch = new Batch( commands.ToArray() );
 			Execute( batch );
 		}
-
 
 
 		/// <summary>
@@ -161,16 +208,52 @@ namespace Fusion.Core.Shell {
 
 			lock (lockObject) {
 				
-				CommandCreator creator;
-				
-				if (!commandsRegistry.TryGetValue(args[0], out creator )) {
-					throw new InvokerException("Unknown command '{0}'", args[0] );
+				CommandEntry commandEntry;
+
+				object result;
+
+				if (commandsRegistry.TryGetValue(args[0], out commandEntry )) {
+
+					var command = commandEntry.Creator( new ArgList(args) );
+
+					return Execute( command );
+
+				} else if ( TryExecuteConfigCommand ( args, out result ) ) {
+
+					return result;
+
+				} else {
+					throw new InvokerException("Unknown command : {0}", args.First() );
 				}
-
-				var command = creator( new ArgList(args) );
-
-				return Execute( command );
 			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="args"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		bool TryExecuteConfigCommand ( string[] args, out object value )
+		{
+			value = null;
+			PropertyInfo pi;
+			IGameComponent gc;
+
+			if ( TryGetComponentProperty( args[0], out pi, out gc ) ) {
+			
+				if (args.Length==2) {
+					value = Execute( new Set(this, args[0], args[1] ) );
+					return true;
+				} else {
+					value = Execute( new Get(this, args[0], true ) );
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 
@@ -180,18 +263,6 @@ namespace Fusion.Core.Shell {
 		/// </summary>
 		public void ExecuteDeferredCommands ()
 		{
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="commandLine"></param>
-		/// <returns></returns>
-		public Suggestion AutoComplete ( string commandLine )
-		{
-			return new Suggestion( commandLine );
 		}
 
 

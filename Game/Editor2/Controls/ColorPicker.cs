@@ -60,6 +60,8 @@ namespace IronStar.Editor2.Controls {
 			colorHSV	=	HSVColor.ConvertRgbToHsv( colorRGBA );
 			newColorSample.BackColor = targetColor;
 			UpdateSliders();
+
+			setColor( targetColor );
 		}
 
 

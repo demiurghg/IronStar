@@ -153,8 +153,6 @@ namespace IronStar.Editor2 {
 		/// </summary>
 		void FeedSelection ()
 		{
-			Editors.Editor.GetMapEditor()?.SetSelection( selection, map.Environment );
-
 			workspace.FeedProperties( selection.FirstOrDefault() );
 		}
 
@@ -168,15 +166,17 @@ namespace IronStar.Editor2 {
 		{
 			if ( disposing ) {
 
+				selection.Clear();
+				FeedSelection();
+
 				UnregisterCommands();
+				SaveMap();
+
+				workspace.CloseWorkspace();
 
 				world?.Dispose();
 
-				SaveMap();
-
 				rs.RenderWorld.ClearWorld();
-
-				workspace.CloseWorkspace();
 
 				Builder.SafeBuild(false, null, null);
 			}

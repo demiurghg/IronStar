@@ -188,17 +188,41 @@ namespace Fusion.Engine.Frames {
 
 
 		/// <summary>
-		/// Wipes possible refs to given frame
+		/// Wipes possible refs to given frame or its children (recursivly)
 		/// </summary>
 		/// <param name="frame"></param>
 		public void WipeRefs ( Frame frame )
 		{
-			if (ModalFrame==frame) {
-				ModalFrame = null;
+			var scan = ModalFrame;
+
+			while (scan!=null) {
+				if (scan==frame) {
+					ModalFrame = null;
+					break;
+				} else {
+					scan = scan.Parent;
+				}
 			}
-			if (TargetFrame==frame) {
-				TargetFrame = null;
+
+			//---------------
+
+			scan = TargetFrame;	
+
+			while (scan!=null) {
+				if (scan==frame) {
+					TargetFrame = null;
+					break;
+				} else {
+					scan = scan.Parent;
+				}
 			}
+		}
+
+
+		public void WipeRefs ()
+		{
+			ModalFrame = null;
+			TargetFrame  = null;
 		}
 
 

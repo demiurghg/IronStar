@@ -156,12 +156,12 @@ namespace IronStar.Editor2.Controls {
 			}
 
 			if (e.Key==Keys.Home) {
-				MoveCursor( int.MinValue, e.Shift );
+				MoveCursor( -999999, e.Shift );
 				return;
 			}
 
 			if (e.Key==Keys.End) {
-				MoveCursor( int.MaxValue, e.Shift );
+				MoveCursor( 999999, e.Shift );
 				return;
 			}
 
@@ -230,14 +230,21 @@ namespace IronStar.Editor2.Controls {
 		void MoveCursor ( int value, bool shift )
 		{
 			if (shift) {
+
 				if ( selectionStart + value > Text.Length ) {
 					value = Text.Length - selectionStart;
 				}
 				if ( selectionStart + value < 0 ) {
-					value = selectionStart;
+					value = -selectionStart;
 				}
-				selectionLength -= value;
-				selectionStart += value;
+
+				if (value>0) {
+					selectionLength -= value;
+					selectionStart += value;
+				} else {
+					selectionLength -= value;
+					selectionStart += value;
+				}
 			} else {
 				selectionLength = 0;
 				selectionStart += value;
@@ -253,8 +260,17 @@ namespace IronStar.Editor2.Controls {
 			int start  = selectionLength > 0 ? selectionStart : selectionStart + selectionLength;
 			int length = Math.Abs( selectionLength );
 
-			Text = Text.Remove( start, length );
+			CheckSelection();
+
+			base.Text = Text.Remove( start, length );
+
+			if (selectionLength>0) {
+				selectionStart = selectionStart + 0;
+			} else {
+				selectionStart = selectionStart + selectionLength;
+			}
 			selectionLength = 0;
+
 			CheckSelection();
 		}
 
@@ -264,18 +280,23 @@ namespace IronStar.Editor2.Controls {
 			int start  = selectionLength > 0 ? selectionStart : selectionStart + selectionLength;
 			int length = Math.Abs( selectionLength );
 				
+			CheckSelection();
+
 			return Text.Substring( start, length );
 		}
 
 
 		void Backspace ()
 		{
+			CheckSelection();
+
 			if (selectionLength!=0) {
 				ClearSelection();
 			} else {
 				if (selectionStart>0) {
-					Text = Text.Remove(selectionStart-1,1);
+					base.Text = base.Text.Remove(selectionStart-1,1);
 					selectionStart--;
+					CheckSelection();
 				}
 			}
 		}
@@ -283,12 +304,13 @@ namespace IronStar.Editor2.Controls {
 
 		void Delete ()
 		{
+			CheckSelection();
+
 			if (selectionLength!=0) {
 				ClearSelection();
 			} else {
 				if (selectionStart<Text.Length) {
-					Text = Text.Remove(selectionStart,1);
-					selectionStart--;
+					base.Text = base.Text.Remove(selectionStart,1);
 				}
 			}
 		}
@@ -297,7 +319,7 @@ namespace IronStar.Editor2.Controls {
 		void InsertText ( string value )
 		{
 			ClearSelection();
-			Text = Text.Insert( selectionStart, value );
+			base.Text = base.Text.Insert( selectionStart, value );
 			MoveCursor( value.Length, false );
 		}
 

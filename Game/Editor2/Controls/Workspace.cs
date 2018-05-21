@@ -26,6 +26,7 @@ namespace IronStar.Editor2.Controls {
 		AEPropertyGrid grid;
 		Panel	palette;
 		Panel	assets;
+		Panel	components;
 
 		Type[] entityTypes;
 
@@ -92,6 +93,7 @@ namespace IronStar.Editor2.Controls {
 			upperShelf.AddLSplitter();
 			upperShelf.AddLButton("BUILD\rRELOAD", @"editor\iconBuild", ()=> Game.Invoker.ExecuteString("contentBuild") );
 
+			upperShelf.AddRButton("CONFIG", @"editor\iconComponents", ()=> ToggleShowComponents() );
 			upperShelf.AddRButton("EDITOR\rCONFIG", @"editor\iconSettings", ()=> FeedProperties(editor) );
 			upperShelf.AddRButton("EXIT", @"editor\iconExit", ()=> Game.Invoker.ExecuteString("killEditor") );
  
@@ -125,6 +127,7 @@ namespace IronStar.Editor2.Controls {
 		public void CloseWorkspace ()
 		{
 			Parent.Remove(this);
+			//Frames.WipeRefs();
 		}
 
 
@@ -311,7 +314,42 @@ namespace IronStar.Editor2.Controls {
 				palette.Visible = !palette.Visible;
 			}
 
-			ArrangeLeft( palette, assets );
+			ArrangeLeft( palette, assets, components );
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void ToggleShowComponents ()
+		{
+			if (components==null) {
+
+				components	=	new Panel( Frames, 10, 50, 150, 10 );
+				components.Layout = new StackLayout() { AllowResize = true, EqualWidth = true, Interval = 1 };
+
+				components.Add( new Label( Frames, 0,0,120,12, "Game Components" ) { TextAlignment = Alignment.MiddleCenter } );
+
+				foreach ( var component in Game.Components ) {
+
+					string name = component.GetType().Name;
+
+					Action func = () => { 
+						FeedProperties( component );
+					};
+					components.Add( new Button( Frames, name, 0,0,150,20, func ) );
+				}
+
+				components.Add( new Frame( Frames, 0,0,0,10, "", Color.Zero ) );
+
+				components.Add( new Button( Frames, "Close", 0,0,150,20, () => components.Visible = false ) );
+
+				Add( components );
+			} else {
+				components.Visible = !components.Visible;
+			}
+
+			ArrangeLeft( palette, assets, components );
 		}
 
 
@@ -343,7 +381,7 @@ namespace IronStar.Editor2.Controls {
 				assets.Visible = !assets.Visible;
 			}
 
-			ArrangeLeft( palette, assets );
+			ArrangeLeft( palette, assets, components );
 		}
 
 

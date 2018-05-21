@@ -53,18 +53,21 @@ namespace IronStar.Editor2.Controls {
 				case FrameStatus.None:		
 					ForeColor	=	(action == null) ? Color.Red : ColorTheme.TextColorNormal;	
 					BackColor	=	ColorTheme.ButtonColorNormal;	
+					ImageColor	=	ForeColor;
 					TextOffsetX	=	0;
 					TextOffsetY =	0;	
 					break;
 				case FrameStatus.Hovered:	
 					ForeColor	=	ColorTheme.TextColorHovered;	
 					BackColor	=	ColorTheme.ButtonColorHovered;	
+					ImageColor	=	ForeColor;
 					TextOffsetX	=	0;
 					TextOffsetY =	0;	
 					break;
 				case FrameStatus.Pushed:	
 					ForeColor	=	ColorTheme.TextColorPushed;	
 					BackColor	=	ColorTheme.ButtonColorPushed;		
+					ImageColor	=	ForeColor;
 					TextOffsetX	=	1;
 					TextOffsetY =	0;	
 				break;

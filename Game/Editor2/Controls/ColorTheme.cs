@@ -21,7 +21,7 @@ namespace IronStar.Editor2.Controls {
 
 		public static readonly Color	HighlightColor			=	new Color(150,150,150, 32 );
 		
-		public static readonly Color	TextColorNormal			=	new Color(150,150,150, 192);
+		public static readonly Color	TextColorNormal			=	new Color(170,170,170, 192);
 		public static readonly Color	TextColorHovered		=	new Color(200,200,200, 192);
 		public static readonly Color	TextColorPushed			=	new Color(220,220,220, 192);
 		

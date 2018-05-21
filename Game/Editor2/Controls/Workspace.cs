@@ -222,10 +222,10 @@ namespace IronStar.Editor2.Controls {
 			if (grid==null) {
 				grid = new AEPropertyGrid(Frames);
 
-				grid.Width	=	300;
-				grid.Height	=	400;
+				grid.Width	=	350;
+				grid.Height	=	500;
 
-				grid.X		=	Width - 300 - 10;
+				grid.X		=	Width - 350 - 10;
 				grid.Y		=	40 + 10;
 
 				grid.Anchor	=	FrameAnchor.Top | FrameAnchor.Right;

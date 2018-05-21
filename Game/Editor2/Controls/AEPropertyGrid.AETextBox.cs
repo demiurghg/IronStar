@@ -29,7 +29,7 @@ namespace IronStar.Editor2.Controls {
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AETextBox ( AEPropertyGrid grid, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc ) : base(grid, name)
+			public AETextBox ( AEPropertyGrid grid, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc, Alignment align ) : base(grid, name)
 			{ 
 				this.getFunc	=	getFunc;
 				this.setFunc	=	setFunc;
@@ -40,7 +40,8 @@ namespace IronStar.Editor2.Controls {
 
 				this.StatusChanged +=AESlider_StatusChanged;
 
-				textBox			=	new TextBox( Frames, getFunc, setFunc );
+				textBox			=	new TextBox( Frames, getFunc, setFunc ) { TextAlignment = align };
+
 				Add( textBox );
 
 				if (selectFunc!=null) {

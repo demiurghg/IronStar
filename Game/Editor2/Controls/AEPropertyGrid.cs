@@ -127,9 +127,20 @@ namespace IronStar.Editor2.Controls {
 						max		=	range.Max;
 						step	=	range.RoughStep;
 						pstep	=	range.PreciseStep;
+						AddSlider( category, name, ()=>(float)(pi.GetValue(obj)), (val)=>setFunc(val), min, max, step, pstep );
+					} else {
+						AddTextBoxNum( category, name, 
+							()	 => StringConverter.ConvertToString( pi.GetValue(obj) ),
+							(val)=>	setFunc( StringConverter.ToSingle(val) ),
+							null );
 					}
-					
-					AddSlider( category, name, ()=>(float)(pi.GetValue(obj)), (val)=>setFunc(val), min, max, step, pstep );
+				}
+
+				if (pi.PropertyType==typeof(int)) {
+					AddTextBoxNum( category, name, 
+						()	 => StringConverter.ConvertToString( pi.GetValue(obj) ),
+						(val)=>	setFunc( StringConverter.ToInt32(val) ),
+						null );
 				}
 
 				if (pi.PropertyType==typeof(string)) {
@@ -218,7 +229,12 @@ namespace IronStar.Editor2.Controls {
 
 		public void AddTextBox ( string category, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc )
 		{
-			AddToCollapseRegion( category, new AETextBox( this, name, getFunc, setFunc, selectFunc ) );
+			AddToCollapseRegion( category, new AETextBox( this, name, getFunc, setFunc, selectFunc, Alignment.MiddleLeft ) );
+		}
+
+		public void AddTextBoxNum ( string category, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc )
+		{
+			AddToCollapseRegion( category, new AETextBox( this, name, getFunc, setFunc, selectFunc, Alignment.MiddleRight ) );
 		}
 
 		public void AddButton ( string category, string name, Action action )

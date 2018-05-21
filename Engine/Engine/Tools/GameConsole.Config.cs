@@ -11,6 +11,7 @@ using Fusion.Engine.Common;
 using Fusion.Engine.Graphics;
 using Fusion.Core.Input;
 using Fusion.Core.Configuration;
+using Fusion.Core.Shell;
 
 namespace Fusion.Engine.Tools {
 	
@@ -22,27 +23,27 @@ namespace Fusion.Engine.Tools {
 
 		[Config] public float CursorBlinkRate { get; set; }
 
-		[Config] public Color MessageColor	{ get; set; }
-		[Config] public Color ErrorColor		{ get; set; }
-		[Config] public Color WarningColor	{ get; set; }
-		[Config] public Color CmdLineColor	{ get; set; }
-		[Config] public Color VersionColor	{ get; set; }
-		[Config] public Color VerboseColor	{ get; set; }
-		[Config] public Color DebugColor	{ get; set; }
+		[AECategory("Appearance")] [Config] public Color MessageColor	{ get; set; }
+		[AECategory("Appearance")] [Config] public Color ErrorColor		{ get; set; }
+		[AECategory("Appearance")] [Config] public Color WarningColor	{ get; set; }
+		[AECategory("Appearance")] [Config] public Color CmdLineColor	{ get; set; }
+		[AECategory("Appearance")] [Config] public Color VersionColor	{ get; set; }
+		[AECategory("Appearance")] [Config] public Color VerboseColor	{ get; set; }
+		[AECategory("Appearance")] [Config] public Color DebugColor	{ get; set; }
 
-		[Config] public Color BackColor		{ get; set; }
-		[Config] public Color HelpColor		{ get; set; }
-		[Config] public Color HintColor		{ get; set; }
+		[AECategory("Appearance")] [Config] public Color BackColor		{ get; set; }
+		[AECategory("Appearance")] [Config] public Color HelpColor		{ get; set; }
+		[AECategory("Appearance")] [Config] public Color HintColor		{ get; set; }
 
 
-		[Config] public string CommandHistory0 { get; set; }
-		[Config] public string CommandHistory1 { get; set; }
-		[Config] public string CommandHistory2 { get; set; }
-		[Config] public string CommandHistory3 { get; set; }
-		[Config] public string CommandHistory4 { get; set; }
-		[Config] public string CommandHistory5 { get; set; }
-		[Config] public string CommandHistory6 { get; set; }
-		[Config] public string CommandHistory7 { get; set; }
+		[AECategory("History")] [Config] public string CommandHistory0 { get; set; }
+		[AECategory("History")] [Config] public string CommandHistory1 { get; set; }
+		[AECategory("History")] [Config] public string CommandHistory2 { get; set; }
+		[AECategory("History")] [Config] public string CommandHistory3 { get; set; }
+		[AECategory("History")] [Config] public string CommandHistory4 { get; set; }
+		[AECategory("History")] [Config] public string CommandHistory5 { get; set; }
+		[AECategory("History")] [Config] public string CommandHistory6 { get; set; }
+		[AECategory("History")] [Config] public string CommandHistory7 { get; set; }
 
 
 		void SetDefaults ()

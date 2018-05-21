@@ -330,7 +330,9 @@ namespace IronStar.Editor2.Controls {
 
 				components.Add( new Label( Frames, 0,0,120,12, "Game Components" ) { TextAlignment = Alignment.MiddleCenter } );
 
-				foreach ( var component in Game.Components ) {
+				var componentList = Game.Components.OrderBy( c1 => c1.GetType().Name ).ToArray();
+
+				foreach ( var component in componentList ) {
 
 					string name = component.GetType().Name;
 

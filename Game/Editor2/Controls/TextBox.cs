@@ -37,7 +37,8 @@ namespace IronStar.Editor2.Controls {
 			this.BackColor		=	ColorTheme.BackgroundColorDark;
 			this.Width			=	1;
 			this.BorderColor	=	ColorTheme.BorderColor;
-			this.TextAlignment	=	Alignment.MiddleLeft;
+			this.PaddingRight	=	3;
+			this.PaddingLeft	=	3;
 
 			StatusChanged	+=	TextBox_StatusChanged;
 
@@ -49,6 +50,18 @@ namespace IronStar.Editor2.Controls {
 			Activated+=TextBox_Activated;
 			Deactivated+=TextBox_Deactivated;
 		}
+
+
+		void CallSetFunc ( string value )
+		{
+			try {
+				setFunc( value );
+			} catch ( FormatException ) {
+				Log.Warning("'{0}' is not in a valid format.", value);
+				Text = getFunc();
+			}
+		}
+
 
 		private void TextBox_KeyUp( object sender, KeyEventArgs e )
 		{
@@ -62,8 +75,7 @@ namespace IronStar.Editor2.Controls {
 
 		private void TextBox_Deactivated( object sender, EventArgs e )
 		{
-			setFunc( Text );
-			ValueChanged?.Invoke(this, EventArgs.Empty);
+			CallSetFunc( Text );
 		}
 
 		private void TextBox_Activated( object sender, EventArgs e )
@@ -140,8 +152,7 @@ namespace IronStar.Editor2.Controls {
 			}
 
 			if (e.Key==Keys.Enter) {	
-				setFunc( Text );
-				ValueChanged?.Invoke(this, EventArgs.Empty);
+				CallSetFunc( Text );
 				return;
 			}
 

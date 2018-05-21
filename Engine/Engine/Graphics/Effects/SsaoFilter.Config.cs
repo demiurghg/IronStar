@@ -11,23 +11,23 @@ using Fusion.Core.Configuration;
 using Fusion.Drivers.Graphics;
 using System.Runtime.InteropServices;
 using Fusion.Engine.Common;
-
+using Fusion.Core.Shell;
 
 namespace Fusion.Engine.Graphics {
 	internal partial class SsaoFilter {
 
 		
-		[Category("HDAO")] [Config] public QualityLevel QualityLevel { get; set; }
+		[AECategory("HDAO")] [Config] public QualityLevel QualityLevel { get; set; }
 
-		[Category("HDAO")] [Config] public float	FadeoutDistance { get; set; } = 50;
-		[Category("HDAO")] [Config] public float	DiscardDistance { get; set; } = 100;
+		[AECategory("HDAO")] [Config] public float	FadeoutDistance { get; set; } = 50;
+		[AECategory("HDAO")] [Config] public float	DiscardDistance { get; set; } = 100;
 		
-		[Category("HDAO")] [Config] public float	AcceptRadius { get; set; } = 0.01f;
-		[Category("HDAO")] [Config] public float	RejectRadius { get; set; } = 1.00f;
+		[AECategory("HDAO")] [Config] public float	AcceptRadius { get; set; } = 0.01f;
+		[AECategory("HDAO")] [Config] public float	RejectRadius { get; set; } = 1.00f;
 
-		[Category("Bilateral Filter")] [Config] public bool		SkipBilateralFilter { get; set; } = false;
-		[Category("Bilateral Filter")] [Config] public float	BilateralDepthFactor { get; set; } = 100;
-		[Category("Bilateral Filter")] [Config] public float	BilateralColorFactor { get; set; } = 8;
+		[AECategory("Bilateral Filter")] [Config] public bool		SkipBilateralFilter { get; set; } = false;
+		[AECategory("Bilateral Filter")] [Config] public float	BilateralDepthFactor { get; set; } = 100;
+		[AECategory("Bilateral Filter")] [Config] public float	BilateralColorFactor { get; set; } = 8;
 
 	}
 }

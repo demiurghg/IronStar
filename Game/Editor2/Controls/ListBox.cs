@@ -109,9 +109,9 @@ namespace IronStar.Editor2.Controls {
 
 		private void ListBox_Click( object sender, MouseEventArgs e )
 		{
-			int index = GetItemIndexUnderCursor(e.X, e.Y);
+			/*int index = GetItemIndexUnderCursor(e.X, e.Y);
 			SelectedIndex = index;
-			SelectedItemChanged?.Invoke( this, EventArgs.Empty );
+			SelectedItemChanged?.Invoke( this, EventArgs.Empty );  */
 		}
 
 

@@ -72,6 +72,7 @@ namespace Fusion.Engine.Frames {
 		Tiled,
 		Stretched,
 		DirectMapped,
+		Manual,
 		//ImageAndText,
 		//LetterBox,
 		//

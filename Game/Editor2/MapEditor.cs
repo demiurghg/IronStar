@@ -305,8 +305,14 @@ namespace IronStar.Editor2 {
 			foreach ( var se in selection ) {
 				var entity = (se as MapEntity)?.Entity;
 				if (entity!=null) {
-					se.TranslateVector	=	entity.Position;
-					se.RotateQuaternion	=	entity.Rotation;
+					try {
+						se.TranslateVector	=	entity.Position;
+						se.RotateQuaternion	=	entity.Rotation;
+					} catch ( Exception e ) {
+						Log.Error("Failed to bake: {0}", e.Message);
+						se.TranslateVector	=	entity.Position;
+						se.RotateQuaternion	=	Quaternion.Identity;
+					}
 				}
 			}
 		}

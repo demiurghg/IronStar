@@ -18,6 +18,7 @@ namespace IronStar.Mapping {
 
 
 		[AECategory("Decal Image")]
+		[AEAtlasImage(@"decals/decals")]
 		public string ImageName { get; set; } = "";
 
 		/// <summary>

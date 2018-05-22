@@ -18,8 +18,6 @@ namespace IronStar.Editor2.Controls {
 
 	static public class FileSelector {
 
-		static FileSelectorFrame fileSelector;
-
 		const int DialogWidth	= 560 + 4 + 4 + 4;
 		const int DialogHeight	= 480 + 2 + 2 + 14 + 2 + 20 + 2;
 

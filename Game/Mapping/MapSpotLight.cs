@@ -63,6 +63,7 @@ namespace IronStar.Mapping {
 
 		[AECategory("Spot Shadow")]
 		[AEDisplayName("Spot Mask")]
+		[AEAtlasImage("spots/spots")]
 		public string SpotMaskName { get; set; } = "";
 		
 		[AECategory("Spot Shadow")]

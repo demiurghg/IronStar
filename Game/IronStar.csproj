@@ -76,6 +76,7 @@
     <Compile Include="Editor2\Controls\AEPropertyGrid.AETextBox.cs" />
     <Compile Include="Editor2\Controls\AEPropertyGrid.AESlider.cs" />
     <Compile Include="Editor2\Controls\Button.cs" />
+    <Compile Include="Editor2\Controls\AtlasSelector.cs" />
     <Compile Include="Editor2\Controls\FileSelector.cs" />
     <Compile Include="Editor2\Controls\ColorPicker.ColorField.cs" />
     <Compile Include="Editor2\Controls\ColorPicker.cs" />

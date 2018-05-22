@@ -154,6 +154,14 @@ namespace IronStar.Editor2.Controls {
 							(val)=>setFunc(val), 
 							(val)=>FileSelector.ShowDialog( Frames, dir, ext, "", (fnm)=>setFunc(fnm) )
 						);
+					} else if (pi.HasAttribute<AEAtlasImageAttribute>()) {
+						var aia = pi.GetAttribute<AEAtlasImageAttribute>();
+						var an  = aia.AtlasName;
+						AddTextBox( category, name, 
+							()=>(string)(pi.GetValue(obj)), 
+							(val)=>setFunc(val), 
+							(val)=>AtlasSelector.ShowDialog( Frames, an, "", (fnm)=>setFunc(fnm) )
+						);
 					} else {
 						AddTextBox( category, name, ()=>(string)(pi.GetValue(obj)), (val)=>setFunc(val), null );
 					}

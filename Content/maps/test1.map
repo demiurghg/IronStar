@@ -109,11 +109,11 @@
       <TranslateX>-6.25922871</TranslateX>
       <TranslateY>0.239922389</TranslateY>
       <TranslateZ>-4.35133934</TranslateZ>
-      <RotateYaw>58.4685059</RotateYaw>
+      <RotateYaw>58.46906</RotateYaw>
       <RotatePitch>89.8573456</RotatePitch>
-      <RotateRoll>89.9450455</RotateRoll>
+      <RotateRoll>89.9456</RotateRoll>
       <TranslateVector X="-6.25922871" Y="0.239922389" Z="-4.35133934" />
-      <RotateQuaternion X="0.6803578" Y="-0.190950915" Z="0.192644939" W="0.6808369" />
+      <RotateQuaternion X="0.6803578" Y="-0.190950885" Z="0.192644924" W="0.6808369" />
       <TargetName>q`xsxs`q</TargetName>
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>
@@ -126,10 +126,10 @@
       <TranslateY>0.239602119</TranslateY>
       <TranslateZ>4.70773363</TranslateZ>
       <RotateYaw>-0.0204123985</RotateYaw>
-      <RotatePitch>8.49707358E-05</RotatePitch>
+      <RotatePitch>8.49706557E-05</RotatePitch>
       <RotateRoll>-0.05026324</RotateRoll>
       <TranslateVector X="3.41735673" Y="0.239602119" Z="4.70773363" />
-      <RotateQuaternion X="8.196433E-07" Y="-0.00017813145" Z="-0.0004386294" W="0.9999999" />
+      <RotateQuaternion X="8.196426E-07" Y="-0.00017813145" Z="-0.0004386294" W="0.9999999" />
       <TargetName>q`xsxs`q</TargetName>
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>
@@ -186,14 +186,14 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <TranslateX>-11.0417681</TranslateX>
-      <TranslateY>0.239333436</TranslateY>
-      <TranslateZ>1.26608908</TranslateZ>
-      <RotateYaw>-178.999939</RotateYaw>
-      <RotatePitch>4.99999952</RotatePitch>
-      <RotateRoll>-156.999969</RotateRoll>
-      <TranslateVector X="-11.0417681" Y="0.239333436" Z="1.26608908" />
-      <RotateQuaternion X="0.9790306" Y="-0.198797822" Z="0.000152285211" W="0.04448032" />
+      <TranslateX>-10.9933157</TranslateX>
+      <TranslateY>0.24071081</TranslateY>
+      <TranslateZ>1.02217686</TranslateZ>
+      <RotateYaw>-150.240585</RotateYaw>
+      <RotatePitch>-0.00363910315</RotatePitch>
+      <RotateRoll>-179.7293</RotateRoll>
+      <TranslateVector X="-10.9933157" Y="0.24071081" Z="1.02217686" />
+      <RotateQuaternion X="0.9664644" Y="-0.00229126378" Z="-0.256789863" W="0.0005759304" />
       <TargetName />
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>
@@ -205,11 +205,11 @@
       <TranslateX>1.64925146</TranslateX>
       <TranslateY>0.239557162</TranslateY>
       <TranslateZ>9.9782505</TranslateZ>
-      <RotateYaw>-0.030372655</RotateYaw>
-      <RotatePitch>-0.000908657</RotatePitch>
-      <RotateRoll>-0.042539116</RotateRoll>
+      <RotateYaw>59.3257751</RotateYaw>
+      <RotatePitch>42.5540466</RotatePitch>
+      <RotateRoll>5.1226416E-06</RotateRoll>
       <TranslateVector X="1.64925146" Y="0.239557162" Z="9.9782505" />
-      <RotateQuaternion X="-7.831132E-06" Y="-0.000265054317" Z="-0.000371225877" W="0.9999999" />
+      <RotateQuaternion X="0.315323323" Y="0.461162239" Z="-0.1795866" W="0.809721768" />
       <TargetName>q`xsxs`q</TargetName>
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>
@@ -221,11 +221,11 @@
       <TranslateX>-0.681122363</TranslateX>
       <TranslateY>0.239558458</TranslateY>
       <TranslateZ>-1.25144875</TranslateZ>
-      <RotateYaw>-0.0202796385</RotateYaw>
+      <RotateYaw>-0.02027962</RotateYaw>
       <RotatePitch>0.0004733785</RotatePitch>
       <RotateRoll>-0.0422117822</RotateRoll>
       <TranslateVector X="-0.681122363" Y="0.239558458" Z="-1.25144875" />
-      <RotateQuaternion X="4.19619755E-06" Y="-0.000176971691" Z="-0.000368366571" W="0.99999994" />
+      <RotateQuaternion X="4.19619755E-06" Y="-0.000176971531" Z="-0.000368366571" W="0.99999994" />
       <TargetName>q`xsxs`q</TargetName>
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>
@@ -237,11 +237,11 @@
       <TranslateX>-2</TranslateX>
       <TranslateY>3.238667</TranslateY>
       <TranslateZ>15</TranslateZ>
-      <RotateYaw>45.0000038</RotateYaw>
-      <RotatePitch>-0</RotatePitch>
-      <RotateRoll>-0</RotateRoll>
+      <RotateYaw>57.5520935</RotateYaw>
+      <RotatePitch>-12.9580946</RotatePitch>
+      <RotateRoll>-1.2806604E-06</RotateRoll>
       <TranslateVector X="-2" Y="3.238667" Z="15" />
-      <RotateQuaternion X="-0" Y="0.382683456" Z="0" W="0.9238795" />
+      <RotateQuaternion X="-0.09890505" Y="0.478312761" Z="0.0543196648" W="0.8709099" />
       <TargetName>q`xsxs`q</TargetName>
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>
@@ -255,9 +255,9 @@
       <TranslateZ>5.893219</TranslateZ>
       <RotateYaw>0.04693587</RotateYaw>
       <RotatePitch>-0.002643201</RotatePitch>
-      <RotateRoll>-0.0007393021</RotateRoll>
+      <RotateRoll>-0.0007393025</RotateRoll>
       <TranslateVector X="3.64780569" Y="0.239271611" Z="5.893219" />
-      <RotateQuaternion X="-2.3068922E-05" Y="0.000409592583" Z="-6.44217926E-06" W="0.99999994" />
+      <RotateQuaternion X="-2.3068922E-05" Y="0.000409592583" Z="-6.442183E-06" W="0.99999994" />
       <TargetName>q`xsxs`q</TargetName>
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>
@@ -362,14 +362,14 @@
     <MapNode xsi:type="MapEntity">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <TranslateX>0.323518</TranslateX>
-      <TranslateY>0.239362538</TranslateY>
-      <TranslateZ>8.89075</TranslateZ>
-      <RotateYaw>0.00108810293</RotateYaw>
-      <RotatePitch>0.02351743</RotatePitch>
-      <RotateRoll>-0.0417416766</RotateRoll>
-      <TranslateVector X="0.323518" Y="0.239362538" Z="8.89075" />
-      <RotateQuaternion X="0.000205224816" Y="9.570246E-06" Z="-0.0003642668" W="0.99999994" />
+      <TranslateX>0</TranslateX>
+      <TranslateY>2</TranslateY>
+      <TranslateZ>9</TranslateZ>
+      <RotateYaw>-83.6776</RotateYaw>
+      <RotatePitch>-36.04062</RotatePitch>
+      <RotateRoll>2.5613208E-06</RotateRoll>
+      <TranslateVector X="0" Y="2" Z="9" />
+      <RotateQuaternion X="-0.2304764" Y="-0.6343169" Z="-0.206350654" W="0.708478749" />
       <TargetName>q`xsxs`q</TargetName>
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>
@@ -381,11 +381,11 @@
       <TranslateX>0.9540449</TranslateX>
       <TranslateY>0.241040036</TranslateY>
       <TranslateZ>4.490979</TranslateZ>
-      <RotateYaw>-1.7763133</RotateYaw>
-      <RotatePitch>-0.4330896</RotatePitch>
-      <RotateRoll>-0.0845726654</RotateRoll>
+      <RotateYaw>-1.77631092</RotateYaw>
+      <RotatePitch>-0.433089048</RotatePitch>
+      <RotateRoll>-0.08457262</RotateRoll>
       <TranslateVector X="0.9540449" Y="0.241040036" Z="4.490979" />
-      <RotateQuaternion X="-0.00376751553" Y="-0.0155033106" Z="-0.000796525" W="0.9998723" />
+      <RotateQuaternion X="-0.00376751041" Y="-0.0155032892" Z="-0.000796524459" W="0.9998723" />
       <TargetName>q`xsxs`q</TargetName>
       <Factory xsi:type="ProxyFactory">
         <Classname>box</Classname>
@@ -427,7 +427,7 @@
       <FovVertical>60</FovVertical>
       <FovHorizontal>60</FovHorizontal>
       <LightStyle>Default</LightStyle>
-      <SpotMaskName>color</SpotMaskName>
+      <SpotMaskName>dust</SpotMaskName>
       <LodBias>1</LodBias>
       <DepthBias>0.000122070313</DepthBias>
       <SlopeBias>3</SlopeBias>
@@ -456,11 +456,11 @@
       <TranslateX>-4</TranslateX>
       <TranslateY>3</TranslateY>
       <TranslateZ>5</TranslateZ>
-      <RotateYaw>-44.9999771</RotateYaw>
-      <RotatePitch>-19.9999962</RotatePitch>
-      <RotateRoll>89.99996</RotateRoll>
+      <RotateYaw>-44.9999733</RotateYaw>
+      <RotatePitch>-19.9999924</RotatePitch>
+      <RotateRoll>89.9999542</RotateRoll>
       <TranslateVector X="-4" Y="3" Z="5" />
-      <RotateQuaternion X="-0.379928" Y="-0.153045923" Z="0.596367657" W="0.6903457" />
+      <RotateQuaternion X="-0.379928" Y="-0.153045967" Z="0.5963677" W="0.6903458" />
       <LightColor R="244" G="0" B="0" A="255" />
       <LightIntensity>5000</LightIntensity>
       <OuterRadius>24</OuterRadius>
@@ -543,13 +543,13 @@
     <MapNode xsi:type="MapDecal">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <TranslateX>-10.375</TranslateX>
-      <TranslateY>0</TranslateY>
-      <TranslateZ>1.875</TranslateZ>
+      <TranslateX>-10</TranslateX>
+      <TranslateY>-0</TranslateY>
+      <TranslateZ>2</TranslateZ>
       <RotateYaw>0</RotateYaw>
       <RotatePitch>89.98021</RotatePitch>
       <RotateRoll>-0</RotateRoll>
-      <TranslateVector X="-10.375" Y="0" Z="1.875" />
+      <TranslateVector X="-10" Y="-0" Z="2" />
       <RotateQuaternion X="0.706984639" Y="0" Z="-0" W="0.7072289" />
       <ImageName>blood3</ImageName>
       <Width>3</Width>
@@ -618,22 +618,22 @@
     <MapNode xsi:type="MapSpotLight">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <TranslateX>-9.605128</TranslateX>
-      <TranslateY>9.328906</TranslateY>
-      <TranslateZ>-1.200005</TranslateZ>
-      <RotateYaw>127.035446</RotateYaw>
-      <RotatePitch>-79.5533142</RotatePitch>
-      <RotateRoll>-102.399567</RotateRoll>
-      <TranslateVector X="-9.605128" Y="9.328906" Z="-1.200005" />
-      <RotateQuaternion X="-0.7148772" Y="0.208701" Z="0.09174922" W="0.6610421" />
+      <TranslateX>-10</TranslateX>
+      <TranslateY>3</TranslateY>
+      <TranslateZ>-1</TranslateZ>
+      <RotateYaw>153.839188</RotateYaw>
+      <RotatePitch>-50.76822</RotatePitch>
+      <RotateRoll>-1.7075472E-06</RotateRoll>
+      <TranslateVector X="-10" Y="3" Z="-1" />
+      <RotateQuaternion X="-0.09701913" Y="0.8800127" Z="0.4175617" W="0.204468116" />
       <LightColor R="255" G="169" B="91" A="255" />
       <LightIntensity>717</LightIntensity>
       <OuterRadius>24</OuterRadius>
       <InnerRadius>1</InnerRadius>
       <NearPlane>1</NearPlane>
       <FarPlane>15</FarPlane>
-      <FovVertical>60</FovVertical>
-      <FovHorizontal>60</FovHorizontal>
+      <FovVertical>45</FovVertical>
+      <FovHorizontal>45</FovHorizontal>
       <LightStyle>Default</LightStyle>
       <SpotMaskName>color</SpotMaskName>
       <LodBias>0</LodBias>
@@ -643,13 +643,13 @@
     <MapNode xsi:type="MapDecal">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <TranslateX>-11.7984991</TranslateX>
-      <TranslateY>0</TranslateY>
-      <TranslateZ>1.875</TranslateZ>
+      <TranslateX>-12</TranslateX>
+      <TranslateY>-0</TranslateY>
+      <TranslateZ>2</TranslateZ>
       <RotateYaw>0</RotateYaw>
       <RotatePitch>89.98021</RotatePitch>
       <RotateRoll>-0</RotateRoll>
-      <TranslateVector X="-11.7984991" Y="0" Z="1.875" />
+      <TranslateVector X="-12" Y="-0" Z="2" />
       <RotateQuaternion X="0.706984639" Y="0" Z="-0" W="0.7072289" />
       <ImageName>blood1</ImageName>
       <Width>3</Width>
@@ -668,14 +668,14 @@
     <MapNode xsi:type="MapDecal">
       <Visible>true</Visible>
       <Frozen>false</Frozen>
-      <TranslateX>-11.6478195</TranslateX>
-      <TranslateY>0</TranslateY>
-      <TranslateZ>-0.436691523</TranslateZ>
+      <TranslateX>-12</TranslateX>
+      <TranslateY>-0</TranslateY>
+      <TranslateZ>-0</TranslateZ>
       <RotateYaw>0</RotateYaw>
-      <RotatePitch>89.96573</RotatePitch>
+      <RotatePitch>89.97202</RotatePitch>
       <RotateRoll>-110.033272</RotateRoll>
-      <TranslateVector X="-11.6478195" Y="0" Z="-0.436691523" />
-      <RotateQuaternion X="0.405290335" Y="0.579172432" Z="-0.579519" W="0.405532837" />
+      <TranslateVector X="-12" Y="-0" Z="-0" />
+      <RotateQuaternion X="0.405312568" Y="0.5792042" Z="-0.579487145" W="0.405510575" />
       <ImageName>blood4</ImageName>
       <Width>5.1640625</Width>
       <Height>2.5625</Height>
@@ -689,6 +689,40 @@
       <SpecularFactor>1</SpecularFactor>
       <NormalMapFactor>0</NormalMapFactor>
       <FalloffFactor>0.984375</FalloffFactor>
+    </MapNode>
+    <MapNode xsi:type="MapEntity">
+      <Visible>true</Visible>
+      <Frozen>false</Frozen>
+      <TranslateX>0</TranslateX>
+      <TranslateY>2.56424236</TranslateY>
+      <TranslateZ>1.93580413</TranslateZ>
+      <RotateYaw>0</RotateYaw>
+      <RotatePitch>-0</RotatePitch>
+      <RotateRoll>-0</RotateRoll>
+      <TranslateVector X="0" Y="2.56424236" Z="1.93580413" />
+      <RotateQuaternion X="-0" Y="0" Z="0" W="1" />
+      <Factory xsi:type="CharacterFactory">
+        <MaxHealth>100</MaxHealth>
+        <MaxArmor>100</MaxArmor>
+        <Height>1.7</Height>
+        <CrouchingHeight>1.19</CrouchingHeight>
+        <Radius>0.6</Radius>
+        <Margin>0.1</Margin>
+        <Mass>10</Mass>
+        <MaximumTractionSlope>0.8</MaximumTractionSlope>
+        <MaximumSupportSlope>1.3</MaximumSupportSlope>
+        <StandingSpeed>8</StandingSpeed>
+        <CrouchingSpeed>3</CrouchingSpeed>
+        <TractionForce>1000</TractionForce>
+        <SlidingSpeed>6</SlidingSpeed>
+        <SlidingForce>50</SlidingForce>
+        <AirSpeed>1</AirSpeed>
+        <AirForce>250</AirForce>
+        <JumpSpeed>6</JumpSpeed>
+        <SlidingJumpSpeed>3</SlidingJumpSpeed>
+        <MaximumGlueForce>5000</MaximumGlueForce>
+        <MaxStepHeight>0.5</MaxStepHeight>
+      </Factory>
     </MapNode>
   </Nodes>
 </Map>

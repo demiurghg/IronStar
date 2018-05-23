@@ -110,32 +110,6 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		[Command("screenshot")]
-		public string Screenshot_f ( string[] args )
-		{
-			Screenshot(null);
-			return null;
-		}
-
-
-		[Command("vtrestart")]
-		public string VTRestart_f ( string[] args )
-		{
-			Game.RenderSystem.RenderWorld.VirtualTexture = null;
-			Game.RenderSystem.RenderWorld.VirtualTexture = Game.Content.Load<VirtualTexture>("*megatexture");
-			return null;
-		}
-
-		[Command("buildrad")]
-		public string CaptureRadiance_f ( string[] args )
-		{
-			renderWorld?.CaptureRadiance();
-			return null;
-		}
-
-
-
-										  
 		/// <summary>
 		/// Applies graphics parameters.
 		/// </summary>
@@ -158,6 +132,8 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public override void Initialize ()
 		{
+			RegisterCommands();
+
 			//	create default textures :
 			whiteTexture	=	new DynamicTexture( this, 4,4, typeof(Color), false, false );
 			whiteTexture.SetData( Enumerable.Range(0,16).Select( i => Color.White ).ToArray() );

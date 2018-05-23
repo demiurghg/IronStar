@@ -43,6 +43,9 @@ namespace Fusion.Core.Shell {
 			RegisterCommand("get",  (args)=>new Get(this,args));
 			RegisterCommand("undo", (args)=>new UndoCmd(this,args));
 			RegisterCommand("redo", (args)=>new RedoCmd(this,args));
+
+			Game.Components.ComponentAdded   += (s,e) => FlushNameCache();
+			Game.Components.ComponentRemoved += (s,e) => FlushNameCache();
 		}
 
 

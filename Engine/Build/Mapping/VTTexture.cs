@@ -27,6 +27,7 @@ namespace Fusion.Build.Mapping {
 		public readonly string  Roughness	;
 		public readonly string	Emission	;
 		public readonly bool	Transparent	;
+		public readonly bool	MaskEmission;
 
 		public int TexelOffsetX;
 		public int TexelOffsetY;
@@ -55,13 +56,14 @@ namespace Fusion.Build.Mapping {
 
 			var dir		=	Path.GetDirectoryName(name);
 
-			Name		=	name;
-			BaseColor	=   CombinePathIfNotEmpty( dir, material.ColorMap		);
-			NormalMap   =   CombinePathIfNotEmpty( dir, material.NormalMap		);
-			Metallic    =   CombinePathIfNotEmpty( dir, material.MetallicMap	);
-			Roughness   =   CombinePathIfNotEmpty( dir, material.RoughnessMap	);
-			Emission    =   CombinePathIfNotEmpty( dir, material.EmissionMap	);
-			Transparent	=	material.Transparent;
+			Name			=	name;
+			BaseColor		=   CombinePathIfNotEmpty( dir, material.ColorMap		);
+			NormalMap		=   CombinePathIfNotEmpty( dir, material.NormalMap		);
+			Metallic		=   CombinePathIfNotEmpty( dir, material.MetallicMap	);
+			Roughness		=   CombinePathIfNotEmpty( dir, material.RoughnessMap	);
+			Emission		=   CombinePathIfNotEmpty( dir, material.EmissionMap	);
+			Transparent		=	material.Transparent;
+			MaskEmission	=	material.MaskEmission;
 
 
 			if (string.IsNullOrWhiteSpace(BaseColor)) {	
@@ -246,6 +248,10 @@ namespace Fusion.Build.Mapping {
 							var r	=	roughness.SampleWrap( srcX, srcY ).R;
 							var m	=	metallic .SampleWrap( srcX, srcY ).R;
 							var e	=	emission .SampleWrap( srcX, srcY ).R;
+
+							if (MaskEmission) {
+								c	=	Color.Lerp( c, Color.Black, MathUtil.Clamp(e/255.0f * 8, 0, 1) );
+							}
 
 							pageC.Write( i,j, c );
 							pageN.Write( i,j, n );

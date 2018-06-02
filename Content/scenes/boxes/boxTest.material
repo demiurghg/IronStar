@@ -1,5 +1,6 @@
 [General]
 Transparent = false
+MaskEmission = true
 
 [Textures]
 BaseColor = box_low_boxTest_BaseColor.png
@@ -7,6 +8,16 @@ NormalMap = box_low_boxTest_Normal.png
 Metallic  = box_low_boxTest_Metallic.png
 Roughness = box_low_boxTest_Roughness.png
 Emission  = 
+
+[MetalShader]
+Color		= 119,107,101
+Substance 	= dark_metal
+
+
+[PaintShader]
+Color 		= 	127,127,127
+FlakeFactor =	75
+Roughness	=	0.3
 
 
 # box_low_boxTest_BaseColor

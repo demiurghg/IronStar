@@ -14,23 +14,24 @@ using System.Drawing.Design;
 using Fusion;
 using IronStar.Physics;
 using BEPUphysics.BroadPhaseEntries;
-using BEPUTransform = BEPUutilities.AffineTransform;  
+using BEPUTransform = BEPUutilities.AffineTransform;
+using Fusion.Core.Shell;
 
 namespace IronStar.Mapping {
 
 	public class MapModel : MapNode {
 
 
-		[Category( "Appearance" )]
+		[AECategory( "Appearance" )]
 		[Description( "Path to FBX scene" )]
-		[Editor( typeof( FbxFileLocationEditor ), typeof( UITypeEditor ) )]
+		[AEFileName("scenes", "*.fbx", AEFileNameMode.NoExtension)]
 		public string ScenePath { get; set; } = "";
 
-		[Category( "Appearance" )]
+		[AECategory( "Appearance" )]
 		[Description( "Entire model scale" )]
 		public float Scale { get; set; } = 1;
 
-		[Category( "Appearance" )]
+		[AECategory( "Appearance" )]
 		[Description( "Model glow color multiplier" )]
 		public Color4 Color { get; set; } = new Color4( 10, 10, 10, 1 );
 		

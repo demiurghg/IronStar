@@ -59,6 +59,10 @@ namespace IronStar.Editor2 {
 		}
 		float cameraFov = 90;
 
+		[Config]
+		[AECategory("Camera")]
+		public bool LockAzimuth { get; set; } = false;
+
 
 		[Config]
 		[AECategory("Move Tool")]

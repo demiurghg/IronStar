@@ -25,6 +25,7 @@ namespace Fusion.Engine.Frames {
 		Frame	heldFrame		=	null;
 		bool	heldFrameLBM	=	false;
 		bool	heldFrameRBM	=	false;
+		bool	heldFrameMBM	=	false;
 		Point	heldPoint;
 
 
@@ -80,26 +81,6 @@ namespace Fusion.Engine.Frames {
 		}
 
 
-		//void Touch_PointerDown ( object sender, Touch.TouchEventArgs e )
-		//{
-		//	PushFrame( ui.GetHoveredFrame(e.Location), Keys.LeftButton, e.Location );
-		//}
-
-
-		//void Touch_PointerUp ( object sender, Touch.TouchEventArgs e )
-		//{
-		//	ReleaseFrame( ui.GetHoveredFrame(e.Location), Keys.LeftButton, e.Location );
-		//	Update( e.Location, true );
-		//}
-
-
-		//void Touch_PointerUpdate ( object sender, Touch.TouchEventArgs e )
-		//{
-		//	Update( e.Location );
-		//}
-
-
-
 		void Mouse_Move ( object sender, MouseMoveEventArgs e )
 		{
 			Update( new Point( (int)e.Position.X, (int)e.Position.Y ) );
@@ -108,7 +89,7 @@ namespace Fusion.Engine.Frames {
 
 		void InputDevice_KeyDown ( object sender, KeyEventArgs e )
 		{
-			if (e.Key==Keys.LeftButton || e.Key==Keys.RightButton) {
+			if (e.Key==Keys.LeftButton || e.Key==Keys.RightButton || e.Key==Keys.MiddleButton) {
 				PushFrame( ui.GetHoveredFrame(Game.Mouse.Position), e.Key, Game.Mouse.Position );
 			}
 		}
@@ -116,7 +97,7 @@ namespace Fusion.Engine.Frames {
 
 		void InputDevice_KeyUp ( object sender, KeyEventArgs e )
 		{
-			if (e.Key==Keys.LeftButton || e.Key==Keys.RightButton) {
+			if (e.Key==Keys.LeftButton || e.Key==Keys.RightButton || e.Key==Keys.MiddleButton) {
 				ReleaseFrame( ui.GetHoveredFrame(Game.Mouse.Position), e.Key, Game.Mouse.Position);
 			}
 		}
@@ -225,6 +206,10 @@ namespace Fusion.Engine.Frames {
 					heldFrameRBM	=	true;
 				}
 
+				if (key==Keys.MiddleButton) {
+					heldFrameMBM	=	true;
+				}
+
 				CallMouseDown		( location, heldFrame, key );
 				CallStatusChanged	( location, heldFrame, FrameStatus.Pushed );
 			}
@@ -261,8 +246,12 @@ namespace Fusion.Engine.Frames {
 				heldFrameRBM	=	false;
 			}
 
+			if (key==Keys.MiddleButton) {
+				heldFrameMBM	=	false;
+			}
+
 			//	button are still pressed, no extra action :
-			if ( heldFrameLBM || heldFrameRBM ) {
+			if ( heldFrameLBM || heldFrameRBM || heldFrameMBM ) {
 				//	call MouseUp :
 				CallMouseUp( mousePosition, heldFrame, key );
 				//	and return

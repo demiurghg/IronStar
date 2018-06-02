@@ -29,6 +29,8 @@ namespace IronStar.Editor2 {
 		float			addYaw;
 		float			addPitch;
 		float			addZoom = 1;
+		float			addTX = 0;
+		float			addTY = 0;
 
 
 		public Manipulation Manipulation {
@@ -68,12 +70,23 @@ namespace IronStar.Editor2 {
 		/// <returns></returns>
 		Matrix GetViewMatrix ()
 		{
+			if (editor.LockAzimuth) {
+				Yaw = 0;
+				addYaw = 0;
+			}
+
 			var yaw		=	MathUtil.DegreesToRadians( Yaw + addYaw );
-			var pitch	=	MathUtil.DegreesToRadians( MathUtil.Clamp(Pitch + addPitch, -85, 85) );
+			var pitch	=	MathUtil.DegreesToRadians( MathUtil.Clamp(Pitch + addPitch, -89, 89) );
 
 			var offset	=	Matrix.RotationYawPitchRoll( yaw, pitch, 0 );
 
-			var view	=	Matrix.LookAtRH( Target + offset.Backward * Distance * addZoom, Target, Vector3.Up );
+			var transZ	=	offset.Backward * Distance * addZoom;
+
+			var transXY	=	offset.Right * Distance * addTX
+						+	offset.Up * Distance * addTY
+						;
+
+			var view	=	Matrix.LookAtRH( Target + transZ + transXY, Target + transXY, Vector3.Up );
 
 			return view;
 		}
@@ -163,26 +176,61 @@ namespace IronStar.Editor2 {
 
 		public void UpdateManipulation ( int x, int y )
 		{
+			var vp		=	rs.DisplayBounds;
+
+			var dx = x - startPoint.X;
+			var dy = y - startPoint.Y;
+
 			if (manipulation==Manipulation.Rotating) {
-				addYaw		=	(startPoint.X - x) / 2.5f;
-				addPitch	=	(startPoint.Y - y) / 2.5f;
+
+				addYaw		=	(-dx) / 2.5f;
+				addPitch	=	(-dy) / 2.5f;
+
 			} else if (manipulation==Manipulation.Zooming) {
-				addZoom		=	(float)Math.Pow( 2, (startPoint.Y - y + startPoint.X - x)/320.0 );
+
+				addZoom		=	(float)Math.Pow( 2, -(dx+dy)/320.0f );
+
+			} else if (manipulation==Manipulation.Translating) {
+
+				var tan	=	(float)Math.Tan( 0.5f * MathUtil.DegreesToRadians( Fov ) );
+
+				addTX = - ( dx / (float)(vp.Width  / 2 ) * tan );
+				addTY =   ( dy / (float)(vp.Height / 2 ) * tan );
+
 			}
 		}
 
 
 		public void StopManipulation ( int x, int y )
 		{
+			if (editor.LockAzimuth) {
+				Yaw = 0;
+				addYaw = 0;
+			}
+
 			manipulation	=	Manipulation.None;
 
+			var yaw		=	MathUtil.DegreesToRadians( Yaw + addYaw );
+			var pitch	=	MathUtil.DegreesToRadians( MathUtil.Clamp(Pitch + addPitch, -89, 89) );
+
+			var offset	=	Matrix.RotationYawPitchRoll( yaw, pitch, 0 );
+
+			var trans	=	offset.Right * Distance * addTX
+						+	offset.Up * Distance * addTY
+						;
+
+			Target		+=	trans;
+
 			Yaw			=	Yaw + addYaw;
-			Pitch		=	MathUtil.Clamp(Pitch + addPitch, -85, 85);
+			Pitch		=	MathUtil.Clamp(Pitch + addPitch, -89, 89);
 			Distance	=	Distance * addZoom;
 
 			addYaw		=	0;
 			addPitch	=	0;	
 			addZoom		=	1;
+
+			addTX		=	0;
+			addTY		=	0;
 		}
 
 	}

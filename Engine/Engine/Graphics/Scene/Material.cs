@@ -63,6 +63,11 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public	Color4	Emission { get; set; }
 
+		/// <summary>
+		/// Indicates whether material should be darkened where emission presents
+		/// </summary>
+		public bool MaskEmission { get; set; }
+
 
 
 		/// <summary>
@@ -95,14 +100,15 @@ namespace Fusion.Engine.Graphics {
 			var sectionTextures		= new SectionData("Textures");
 			var sectionGeneral		= new SectionData("General");
 
-			sectionGeneral.Keys.AddKey("Transparent", StringConverter.ToString( material.Transparent ) );
-			sectionGeneral.Keys.AddKey("Emission"	, StringConverter.ToString(	material.Emission ) );
+			sectionGeneral.Keys.AddKey("Transparent"	,	StringConverter.ToString( material.Transparent ) );
+			sectionGeneral.Keys.AddKey("Emission"		,	StringConverter.ToString( material.Emission ) );
+			sectionGeneral.Keys.AddKey("MaskEmission"	,	StringConverter.ToString( material.MaskEmission ) );
 
-			sectionTextures.Keys.AddKey("BaseColor",	material.ColorMap		?? "" );
-			sectionTextures.Keys.AddKey("NormalMap",	material.NormalMap		?? "" );
-			sectionTextures.Keys.AddKey("Metallic",		material.MetallicMap	?? "" );
-			sectionTextures.Keys.AddKey("Roughness",	material.RoughnessMap	?? "" );
-			sectionTextures.Keys.AddKey("Emission",		material.EmissionMap	?? "" );
+			sectionTextures.Keys.AddKey("BaseColor"		,	material.ColorMap		?? "" );
+			sectionTextures.Keys.AddKey("NormalMap"		,	material.NormalMap		?? "" );
+			sectionTextures.Keys.AddKey("Metallic"		,	material.MetallicMap	?? "" );
+			sectionTextures.Keys.AddKey("Roughness"		,	material.RoughnessMap	?? "" );
+			sectionTextures.Keys.AddKey("Emission"		,	material.EmissionMap	?? "" );
 
 			iniData.Sections.Add( sectionGeneral );
 			iniData.Sections.Add( sectionTextures );
@@ -148,8 +154,9 @@ namespace Fusion.Engine.Graphics {
 
 				material.Name	=	name;
 
-				material.Transparent	=	StringConverter.ToBoolean( sectionGeneral["Transparent"	] ?? "false"	);
-				material.Emission		=	StringConverter.ToColor4 ( sectionGeneral["Emission"	] ?? "0 0 0 0"	);
+				material.Transparent	=	StringConverter.ToBoolean( sectionGeneral["Transparent"		] ?? "false"	);
+				material.MaskEmission	=	StringConverter.ToBoolean( sectionGeneral["MaskEmission"	] ?? "true"	);
+				material.Emission		=	StringConverter.ToColor4 ( sectionGeneral["Emission"		] ?? "0 0 0 0"	);
 
 				material.ColorMap		=	sectionTextures["BaseColor"	] ?? "";
 				material.NormalMap		=	sectionTextures["NormalMap"	] ?? "";

@@ -1047,5 +1047,23 @@ namespace Fusion.Core.Mathematics
 			return packedOutput;
 		}
 
+
+		/// <summary>
+		/// Snaps value to given value step.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <param name="snapValue"></param>
+		/// <param name="enable"></param>
+		/// <returns></returns>
+		public static float Snap ( float value, float snapValue, bool enable )
+		{
+			if (enable) {
+				return (float)(Math.Round( value / snapValue ) * snapValue);
+			} else {
+				return value;
+			}
+		}
+
+
     }
 }

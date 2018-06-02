@@ -18,8 +18,6 @@ namespace IronStar.Editor2.Controls {
 
 	static public class FileSelector {
 
-		static FileSelectorFrame fileSelector;
-
 		const int DialogWidth	= 560 + 4 + 4 + 4;
 		const int DialogHeight	= 480 + 2 + 2 + 14 + 2 + 20 + 2;
 
@@ -72,7 +70,7 @@ namespace IronStar.Editor2.Controls {
 			readonly Action<string> setFileName;
 			readonly string		oldFileName;
 			readonly string		contentDir;
-			readonly string		searchPattern;
+			readonly string[]	searchPatterns;
 					 string		currentDir;
 			readonly string		homeDir;
 
@@ -80,8 +78,11 @@ namespace IronStar.Editor2.Controls {
 			ScrollBox	scrollBox;
 			Button		buttonAccept;
 			Button		buttonHome;
+			Button		buttonPreview;
 			Button		buttonClose;
 			ListBox		fileListBox;
+
+			Frame		previewFrame;
 
 
 
@@ -92,7 +93,7 @@ namespace IronStar.Editor2.Controls {
 
 				this.oldFileName	=	oldFileName;
 				this.setFileName	=	setFileName;
-				this.searchPattern	=	searchPattern;
+				this.searchPatterns	=	searchPattern.Split(' ',',',';','|').OrderBy(n=>n).ToArray();
 				this.currentDir		=	Path.Combine( contentDir, defaultDir );
 				this.homeDir		=	Path.Combine( contentDir, defaultDir );
 
@@ -102,9 +103,10 @@ namespace IronStar.Editor2.Controls {
 				scrollBox.Border		=	1;
 				scrollBox.BorderColor	=	ColorTheme.BorderColorLight;
 
-				buttonAccept	=	new Button( fp, "Accept", DialogWidth - 140 - 2, DialogHeight - 2 - 20, 140, 20, ()=>Accept() );
-				buttonHome		=	new Button( fp, "Home",   DialogWidth - 280 - 4, DialogHeight - 2 - 20, 140, 20, ()=>Home() );
-				buttonClose		=	new Button( fp, "Close",  2,                     DialogHeight - 2 - 20, 140, 20, ()=>Close() );
+				buttonAccept	=	new Button( fp, "Accept",	DialogWidth - 120 - 2, DialogHeight - 2 - 20, 120, 20, ()=>Accept() );
+				buttonHome		=	new Button( fp, "Home",		DialogWidth - 240 - 4, DialogHeight - 2 - 20, 120, 20, ()=>Home() );
+				buttonPreview	=	new Button( fp, "Preview",  DialogWidth - 360 - 6, DialogHeight - 2 - 20, 120, 20, ()=>Preview() );
+				buttonClose		=	new Button( fp, "Close",  2,                     DialogHeight - 2 - 20, 120, 20, ()=>Close() );
 
 				fileListBox		=	new ListBox( fp, new object[0] );
 				fileListBox.IsDoubleClickEnabled = true;
@@ -113,6 +115,7 @@ namespace IronStar.Editor2.Controls {
 
 				Add( buttonAccept );
 				Add( buttonHome );
+				Add( buttonPreview );
 				Add( buttonClose );
 				Add( scrollBox );
 				Add( labelDir );
@@ -128,9 +131,7 @@ namespace IronStar.Editor2.Controls {
 			{
 				var selectedItem = fileListBox.SelectedItem as ListItem;
 				
-				/*if (selectedItem!=null) {
-					buttonAccept.Text = selectedItem.IsDirectory ? "Open Folder" : "Select File";
-				} */
+				Preview();
 			}
 
 			
@@ -145,6 +146,8 @@ namespace IronStar.Editor2.Controls {
 			{
 				Frames.RootFrame.Remove( this );
 				Frames.ModalFrame = null;
+
+				ClosePreview();
 			}
 
 
@@ -152,6 +155,73 @@ namespace IronStar.Editor2.Controls {
 			{
 				currentDir = homeDir;
 				RefreshFileList();
+			}
+
+
+			public void Preview ()
+			{
+				var selectedItem = fileListBox.SelectedItem as ListItem;
+				var content = Frames.Game.Content;
+
+				ClosePreview();
+
+				if (selectedItem==null || selectedItem.IsDirectory) {
+					return;
+				}
+
+				var ext		= Path.GetExtension( selectedItem.Name );
+				var relName = ContentUtils.MakeRelativePath( contentDir + "\\", selectedItem.Name );
+				var path	= ContentUtils.GetPathWithoutExtension( relName );
+				var name	= Path.GetFileName(path);
+
+				if (ext==".tga"	|| ext==".png" || ext==".jpg") {
+
+					Log.Message("File selector preview : {0}", path );
+					
+					try {
+						var image = content.Load<DiscTexture>(path);	
+
+						var label = string.Format("{0}\r{1}x{2}", name, image.Width, image.Height );
+
+						var w = image.Width;
+						var h = image.Height;
+
+						while (w>320 || h>320) {
+							w /= 2;
+							h /= 2;
+						}
+
+						while (Math.Max(w,h)<128) {
+							w *= 2;
+							h *= 2;
+						}
+
+						var fw = w + 4 + 2;
+						var fh = h + 4 + 2 + 17;
+
+						previewFrame = new Frame( Frames, 50,50, fw, fh, label, Color.Black );
+						previewFrame.X				= this.X - fw - 5;
+						previewFrame.Y				= this.Y;
+						previewFrame.Padding		= 2;
+						previewFrame.Border			= 1;
+						previewFrame.BorderColor	= ColorTheme.BorderColorLight;
+						previewFrame.BackColor		= ColorTheme.BackgroundColorDark;
+						previewFrame.ForeColor		= ColorTheme.TextColorNormal;
+						previewFrame.TextAlignment	= Alignment.BottomCenter;
+						previewFrame.ShadowColor	= ColorTheme.ShadowColor;
+						previewFrame.ShadowOffset	= new Vector2(1,1);
+						previewFrame.Image			= image;
+						previewFrame.ImageMode		= FrameImageMode.Manual;
+						previewFrame.ImageDstRect	= new Rectangle(3,3,w,h);
+						previewFrame.ImageSrcRect	= new Rectangle(0,0,image.Width,image.Height);
+						previewFrame.ImageColor		= Color.White;
+
+						Frames.RootFrame.Add( previewFrame );
+
+					} catch ( Exception e ) {
+						Log.Warning("{0}", e.Message);
+					}
+				}
 			}
 
 
@@ -174,6 +244,13 @@ namespace IronStar.Editor2.Controls {
 			}
 
 
+			void ClosePreview ()
+			{
+				if (previewFrame!=null) {
+					Frames.RootFrame.Remove( previewFrame );
+				}
+			}
+
 
 			void RefreshFileList (  )
 			{
@@ -181,24 +258,33 @@ namespace IronStar.Editor2.Controls {
 
 				var itemList = new List<ListItem>();
 
-				var dirs = Directory
-					.EnumerateDirectories( currentDir, "*", SearchOption.TopDirectoryOnly )
-					.Select( dir => new ListItem(dir,true) )
-					.ToList();
-
-				var files = Directory
-					.EnumerateFiles( currentDir, searchPattern, SearchOption.TopDirectoryOnly )
-					.Select( file => new ListItem(file,false) )
-					.ToList();
-
+				//	add top level directory (if exists) :
 				var parentDir = Directory.GetParent( currentDir )?.FullName;
 
 				if (parentDir!=null) {
 					itemList.Add( new ListItem(parentDir, true, "..") );
 				}
 
+				//	add sub-directories :
+				var dirs = Directory
+					.EnumerateDirectories( currentDir, "*", SearchOption.TopDirectoryOnly )
+					.Select( dir => new ListItem(dir,true) )
+					.ToList();
+
 				itemList.AddRange( dirs );
-				itemList.AddRange( files );
+
+				//	add files for each pattern :
+				var fileList = new List<string>();
+				
+				foreach (var pattern in searchPatterns) {
+					var files = Directory
+						.EnumerateFiles( currentDir, pattern, SearchOption.TopDirectoryOnly )
+						.ToList();
+
+					fileList.AddRange( files );
+				}
+
+				itemList.AddRange( fileList.Select( file => new ListItem(file,false) ) );
 
 				fileListBox.SetItems(itemList);
 			}

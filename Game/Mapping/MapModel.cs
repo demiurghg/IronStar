@@ -32,8 +32,15 @@ namespace IronStar.Mapping {
 		public float Scale { get; set; } = 1;
 
 		[AECategory( "Appearance" )]
+		[AEDisplayName("Glow Color")]
 		[Description( "Model glow color multiplier" )]
-		public Color4 Color { get; set; } = new Color4( 10, 10, 10, 1 );
+		public Color GlowColor { get; set; } = Color.Red;
+
+		[AECategory( "Appearance" )]
+		[AEDisplayName("Glow Intensity")]
+		[AEValueRange(0,5000,100,1)]
+		[Description( "Model glow color multiplier" )]
+		public float GlowIntensity { get; set; } = 100;
 		
 
 

@@ -305,8 +305,14 @@ namespace IronStar.Editor2 {
 			foreach ( var se in selection ) {
 				var entity = (se as MapEntity)?.Entity;
 				if (entity!=null) {
-					se.TranslateVector	=	entity.Position;
-					se.RotateQuaternion	=	entity.Rotation;
+					try {
+						se.TranslateVector	=	entity.Position;
+						se.RotateQuaternion	=	entity.Rotation;
+					} catch ( Exception e ) {
+						Log.Error("Failed to bake: {0}", e.Message);
+						se.TranslateVector	=	entity.Position;
+						se.RotateQuaternion	=	Quaternion.Identity;
+					}
 				}
 			}
 		}
@@ -437,6 +443,31 @@ namespace IronStar.Editor2 {
 			ClearSelection();
 		}
 
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void TargetSelection ()
+		{
+			if (selection.Count<2) {
+				Log.Warning("TargetSelection: select at least two objects");
+				return;
+			}
+			var targets =	selection.Take(selection.Count-1);
+			var aimObj  =	selection.Last();
+
+			var x		=	targets.Average( t => t.TranslateX );
+			var y		=	targets.Average( t => t.TranslateY );
+			var z		=	targets.Average( t => t.TranslateZ );
+			
+			var tpos	=	new Vector3(x,y,z);
+
+			var matrix	=	Matrix.LookAtRH( aimObj.TranslateVector, tpos, Vector3.Up );
+			matrix.Invert();
+
+			aimObj.RotateQuaternion	=	Quaternion.RotationMatrix( matrix );
+		}
 
 
 		/// <summary>

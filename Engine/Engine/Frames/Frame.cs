@@ -120,6 +120,9 @@ namespace Fusion.Engine.Frames {
 		public FrameImageMode	ImageMode		{ get; set; }
 		public Color			ImageColor		{ get; set; }
 		public Texture			Image			{ get; set; }
+		public Rectangle		ImageDstRect	{ get; set; }
+		public Rectangle		ImageSrcRect	{ get; set; }
+
 
 
 		#region	Events
@@ -926,6 +929,7 @@ namespace Fusion.Engine.Frames {
 
 			var gp = GetPaddedRectangle();
 			var bp = GetBorderedRectangle();
+			var gr = GlobalRectangle;
 
 			if (ImageMode==FrameImageMode.Stretched) {
 				spriteLayer.Draw( Image, bp, ImageColor, clipRectIndex );
@@ -949,6 +953,13 @@ namespace Fusion.Engine.Frames {
 				return;
 			}
 
+			if (ImageMode == FrameImageMode.Manual) {
+				var dstRect = ImageDstRect;
+				var srcRect = ImageSrcRect;
+				dstRect.X += gr.X;
+				dstRect.Y += gr.Y;
+				spriteLayer.Draw( Image, dstRect, srcRect, ImageColor, clipRectIndex );
+			}
 
 		}
 

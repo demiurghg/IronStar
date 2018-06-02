@@ -76,10 +76,10 @@ namespace Fusion.Core.Shell {
 	}
 
 
-	public class AEAtlasImage : Attribute {
+	public class AEAtlasImageAttribute : Attribute {
 		public readonly string AtlasName;
 
-		public AEAtlasImage( string atlasName )
+		public AEAtlasImageAttribute( string atlasName )
 		{
 			AtlasName = atlasName;
 		}

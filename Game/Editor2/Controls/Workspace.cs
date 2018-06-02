@@ -93,6 +93,7 @@ namespace IronStar.Editor2.Controls {
 			upperShelf.AddLSplitter();
 			upperShelf.AddLButton("BUILD\rRELOAD", @"editor\iconBuild", ()=> Game.Invoker.ExecuteString("contentBuild") );
 
+			upperShelf.AddRButton("SCR", null, ()=> Game.Invoker.ExecuteString("screenshot") );
 			upperShelf.AddRButton("CONFIG", @"editor\iconComponents", ()=> ToggleShowComponents() );
 			upperShelf.AddRButton("EDITOR\rCONFIG", @"editor\iconSettings", ()=> FeedProperties(editor) );
 			upperShelf.AddRButton("EXIT", @"editor\iconExit", ()=> Game.Invoker.ExecuteString("killEditor") );
@@ -464,6 +465,9 @@ namespace IronStar.Editor2.Controls {
 						Game.RenderSystem.SkipDebugRendering = !Game.RenderSystem.SkipDebugRendering;
 					}
 				}
+				if (e.Key==Keys.T) {
+					editor.TargetSelection();
+				}
 				if (e.Key==Keys.OemComma) {
 					if (ctrl) {
 						editor.RotateToolSnapValue -= 5;
@@ -483,6 +487,9 @@ namespace IronStar.Editor2.Controls {
 				}
 				if (e.Key==Keys.OemCloseBrackets) {
 					editor.CameraFov += 10.0f;
+				}
+				if (e.Key==Keys.F11) {
+					Game.Invoker.ExecuteString("screenshot");
 				}
 			}
 		}

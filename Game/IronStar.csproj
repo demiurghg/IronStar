@@ -225,6 +225,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShooterServer.cs" />
+    <Compile Include="SinglePlayer.cs" />
     <Compile Include="UserCommand.cs" />
     <Compile Include="SFX\FXPlayback.cs" />
   </ItemGroup>

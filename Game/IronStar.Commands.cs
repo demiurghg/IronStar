@@ -37,6 +37,8 @@ namespace IronStar {
 			{
 				if (edit) {
 					game.RunEditor(mapname);
+				} else {
+					game.RunGame(mapname);
 				}
 				return null;
 			}
@@ -44,18 +46,19 @@ namespace IronStar {
 		}
 
 
-		class KillServerCommand : CommandNoHistory {
+		class KillGameCommand : CommandNoHistory {
 
 			readonly IronStar game;
 
-			public KillServerCommand ( IronStar game, ArgList args )
+			public KillGameCommand ( IronStar game, ArgList args )
 			{
 				this.game = game;
 			}
 
 			public override object Execute()
 			{
-				throw new NotImplementedException();
+				game.KillGame();
+				return null;
 			}
 		}
 

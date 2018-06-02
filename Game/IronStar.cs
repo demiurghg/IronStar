@@ -37,6 +37,7 @@ namespace IronStar {
 
 			Invoker.RegisterCommand("map",				(args) => new MapCommand(this, args) );
 			Invoker.RegisterCommand("killEditor",		(args) => new KillEditorCommand(this, args) );
+			Invoker.RegisterCommand("killGame",			(args) => new KillGameCommand(this, args) );
 			Invoker.RegisterCommand("contentBuild",		(args) => new ContentBuildCommand(this, args) );
 			Invoker.RegisterCommand("contentFile",		(args) => new ContentFileCommand() );
 			Invoker.RegisterCommand("contentReport",	(args) => new ContentReportCommand(args) );
@@ -112,6 +113,30 @@ namespace IronStar {
 				SafeDispose( ref editor );
 			} else {
 				Log.Warning("Editor is not running");
+			}
+		}
+
+
+		protected void RunGame ( string mapname )
+		{
+			var sp = new SinglePlayer(this, mapname);
+			sp.Initialize();
+
+			this.AddServiceAndComponent(sp);
+		}
+
+
+		protected void KillGame ()
+		{
+			var sp = this.GetService<SinglePlayer>();
+
+			if (sp!=null) {
+				Log.Message("Stopping game...");
+				Services.RemoveService( sp.GetType() );
+				Components.Remove( sp );
+				SafeDispose( ref sp );
+			} else {
+				Log.Warning("Game is not running");
 			}
 		}
 	}

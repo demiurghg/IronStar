@@ -34,9 +34,10 @@ namespace Fusion.Engine.Client {
 
 
 
-			public override void UserConnect ( string host, int port )
+			public override bool UserConnect ( string host, int port, IClientInstance clientInstance )
 			{
 				Log.Warning("Already connected. Waiting for snapshot.");
+				return false;
 			}
 
 

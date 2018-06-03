@@ -196,6 +196,7 @@ namespace Fusion.Core.Shell {
 		}
 
 
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -203,69 +204,87 @@ namespace Fusion.Core.Shell {
 		/// <returns></returns>
 		public object ExecuteString ( string commandLine )
 		{
-			if (string.IsNullOrWhiteSpace(commandLine)) {
+			lock (lockObject) {
+				return Execute( ParseCommand( commandLine ) );
+			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="commandLine"></param>
+		/// <returns></returns>
+		public void ExecuteStringDeferred ( string commandLine )
+		{
+			lock (lockObject) {
+				cmdQueue.Enqueue( ParseCommand( commandLine ) );
+			}
+		}
+
+
+
+		/// <summary>
+		/// Parses command line and returns command instance.
+		/// </summary>
+		/// <param name="comm"></param>
+		/// <returns></returns>
+		ICommand ParseCommand ( string commandLine )
+		{
+			CommandEntry commandEntry;
+			PropertyInfo pi;
+			IGameComponent gc;
+
+			if (string.IsNullOrWhiteSpace( commandLine )) {
 				throw new InvokerException("Empty command line");
 			}
 
 			var args = commandLine.SplitCommandLine().ToArray();
 
-			lock (lockObject) {
-				
-				CommandEntry commandEntry;
 
-				object result;
+			if (commandsRegistry.TryGetValue(args[0], out commandEntry )) {
 
-				if (commandsRegistry.TryGetValue(args[0], out commandEntry )) {
+				return commandEntry.Creator( new ArgList(args) );
 
-					var command = commandEntry.Creator( new ArgList(args) );
+			} else if ( TryGetComponentProperty( args[0], out pi, out gc ) ) {
 
-					return Execute( command );
-
-				} else if ( TryExecuteConfigCommand ( args, out result ) ) {
-
-					return result;
-
-				} else {
-					throw new InvokerException("Unknown command : {0}", args.First() );
-				}
-			}
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="args"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		bool TryExecuteConfigCommand ( string[] args, out object value )
-		{
-			value = null;
-			PropertyInfo pi;
-			IGameComponent gc;
-
-			if ( TryGetComponentProperty( args[0], out pi, out gc ) ) {
-			
 				if (args.Length==2) {
-					value = Execute( new Set(this, args[0], args[1] ) );
-					return true;
+					return new Set(this, args[0], args[1] );
 				} else {
-					value = Execute( new Get(this, args[0], true ) );
-					return true;
+					return new Get(this, args[0], true );
 				}
-			}
 
-			return false;
+			} else {
+				throw new InvokerException("Unknown command : {0}", args.First() );
+			}
 		}
 
 
 
 		/// <summary>
-		/// 
+		/// Executes deferred commands 
 		/// </summary>
-		public void ExecuteDeferredCommands ()
+		public void ExecuteDeferredCommands ( bool showResult = true )
 		{
+			lock ( lockObject ) {
+				while ( cmdQueue.Any() ) {
+
+					try {
+						
+						var result = Execute( cmdQueue.Dequeue() );	
+
+						if (showResult && result!=null) {
+							Log.Message("// {0} //", StringConverter.ConvertToString(result) );
+						}
+
+					} catch ( InvokerException e ) {
+
+						Log.Error( e.Message );
+					
+					}
+				}
+			}
 		}
 
 

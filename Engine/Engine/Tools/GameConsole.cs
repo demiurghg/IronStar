@@ -334,13 +334,10 @@ namespace Fusion.Engine.Tools {
 			try {
 				var cmd  = editBox.Text;
 				Log.Message("]{0}", cmd);
-				var result = Game.Invoker.ExecuteString(cmd);
 
-				if (result!=null) {
-					Log.Message("// {0} //", result.ToString() );
-				}
+				Game.Invoker.ExecuteStringDeferred(cmd);
 
-			} catch ( Exception e ) {
+			} catch ( InvokerException e ) {
 				Log.Error(e.Message);
 			}
 		}

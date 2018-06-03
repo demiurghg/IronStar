@@ -180,6 +180,23 @@ namespace Fusion.Core.Content {
 
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="assetPath"></param>
+		/// <returns></returns>
+		public bool PrecacheSafe<T>( string assetPath )
+		{
+			try {
+				return Precache<T>(assetPath);
+			} catch ( Exception e ) {
+				Log.Warning("Precache failed : {0}", e.Message);
+				return false;
+			}
+		}
+
+
 
 		/// <summary>
 		/// Opens a stream for reading the specified asset.

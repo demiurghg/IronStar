@@ -48,7 +48,7 @@ namespace Fusion.Engine.Client {
 			}
 
 
-			public abstract void UserConnect ( string host, int port );
+			public abstract bool UserConnect ( string host, int port, IClientInstance clientInstance );
 			public abstract void UserDisconnect ( string reason );
 			public abstract void Update ( GameTime gameTime );
 			public abstract void StatusChanged ( NetConnectionStatus status, string message, NetConnection connection );

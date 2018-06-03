@@ -39,7 +39,7 @@ namespace Fusion.Engine.Server {
 		/// </summary>
 		/// <param name="map"></param>
 		/// <param name="postCommand"></param>
-		public bool Start ( string map, string options )
+		public bool Start ( IServerInstance serverInstance )
 		{
 			lock (lockObj) {
 
@@ -50,7 +50,7 @@ namespace Fusion.Engine.Server {
 
 				serverState	=	ServerState.Starting;
 
-				ThreadStart ts				=	delegate { ServerTaskFunc(map, options); };
+				ThreadStart ts				=	delegate { ServerTaskFunc(serverInstance); };
 				serverThread				=	new Thread( ts );
 				serverThread.Name			=	"Game Server Thread";
 				serverThread.IsBackground	=	true;
@@ -83,7 +83,7 @@ namespace Fusion.Engine.Server {
 		/// <summary>
 		/// Waits for server thread.
 		/// </summary>
-		internal void Wait ()
+		public void Wait ()
 		{
 			serverState	=	ServerState.ShutdownRequested;
 
@@ -118,14 +118,14 @@ namespace Fusion.Engine.Server {
 		/// 
 		/// </summary>
 		/// <param name="map"></param>
-		void ServerTaskFunc ( string map, string options )
+		void ServerTaskFunc ( IServerInstance serverInstance )
 		{
 			serverState	=	ServerState.Running;
 
 			try {
-				Log.Message("Server starting: {0} [{1}]", map, options);
+				Log.Message("Server starting: {0}", serverInstance.ToString());
 
-				using ( var context = new ServerContext( Game, Game.Network.Port, map, options ) ) {
+				using ( var context = new ServerContext( Game, Game.Network.Port, serverInstance ) ) {
 
 					//	Timer and fixed timestep stuff :
 					//	http://gafferongames.com/game-physics/fix-your-timestep/

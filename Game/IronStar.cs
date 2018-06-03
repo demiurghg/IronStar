@@ -68,10 +68,17 @@ namespace IronStar {
 
 		private void IronStarGame_Exiting(object sender, EventArgs e)
 		{
+			//	wait for server and client tasks, 
+			//	stop game if neccessary
+			this.GetService<GameClient>().Wait();
+			this.GetService<GameServer>().Wait();
+
+			//	save components' configuration
 			foreach ( var component in Components ) {
 				this.Config.RetrieveSettings( component.GetType().Name, component );
 			}
 
+			//	save settings to file and unload content
 			this.Config.SaveSettings(ConfigFile);
 			this.Content.Unload();
 		}
@@ -95,6 +102,8 @@ namespace IronStar {
 		protected override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
+
+			Invoker.ExecuteDeferredCommands();
 		}
 
 
@@ -130,11 +139,13 @@ namespace IronStar {
 			var cl = this.GetService<GameClient>();
 			var nt = this.GetService<Network>();
 
+			var svInstance	=	new ShooterServer( sv, null, mapname );
+
 			if (dedicated) {
-				sv.Start( mapname, null );
+				sv.Start( svInstance );
 			} else {
-				if (sv.Start( mapname, null )) {
-					cl.Connect( "127.0.0.1", Network.Port );
+				if (sv.Start( svInstance )) {
+					Connect( "127.0.0.1", nt.Port );
 				}
 			}
 		}
@@ -149,7 +160,14 @@ namespace IronStar {
 
 		protected void Connect ( string host, int port )
 		{
-			this.GetService<GameClient>().Connect(host, port);
+			var cl = this.GetService<GameClient>();
+			var nt = this.GetService<Network>();
+
+			var clInstance	=	new ShooterClient( cl, null, Guid.NewGuid() );
+
+			if (!this.GetService<GameClient>().Connect(host, port, clInstance)) {
+				clInstance.Dispose();
+			}
 		}
 
 

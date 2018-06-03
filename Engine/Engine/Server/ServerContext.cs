@@ -30,10 +30,10 @@ namespace Fusion.Engine.Server {
 		/// </summary>
 		/// <param name="server"></param>
 		/// <param name="serverInstance"></param>
-		public ServerContext ( Game game, int port, string map, string options )
+		public ServerContext ( Game game, int port, IServerInstance serverInstance )
 		{
 			this.game			=	game;
-			//this.serverInstance	=	game.CreateServer( game, this, map, options );
+			this.serverInstance	=	serverInstance;
 
 			var netConfig						=   new NetPeerConfiguration(game.GameID);
 			netConfig.Port						=   port;

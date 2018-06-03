@@ -51,7 +51,7 @@ namespace IronStar {
 			camera			=	new GameCamera( world, this );
 			hud				=	new Hud( world );
 
-			(game.UserInterface.Instance as ShooterInterface).ShowMenu = false;
+			#warning (game.UserInterface.Instance as ShooterInterface).ShowMenu = false;
 		}
 
 
@@ -136,7 +136,8 @@ namespace IronStar {
 		{
 			if ( !disposedValue ) {
 				if ( disposing ) {
-					(game.UserInterface.Instance as ShooterInterface).ShowMenu = true;
+					#warning (game.UserInterface.Instance as ShooterInterface).ShowMenu = true;
+					gameInput?.Dispose();
 					world?.Dispose();
 					hud?.Dispose();
 				}

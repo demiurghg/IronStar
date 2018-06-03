@@ -24,14 +24,12 @@ namespace Fusion.Engine.Client {
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
-		public ClientContext ( Game game )
+		public ClientContext ( Game game, IClientInstance clientInstance )
 		{
 			Guid		=	Guid.NewGuid();
 			Game		=	game;
 			GameClient	=	game.GetService<GameClient>();
-			//Instance	=	game.CreateClient( game, this, Guid );
-
-
+			Instance	=	clientInstance;
 
 			var netConfig	=	new NetPeerConfiguration(Game.GameID);
 

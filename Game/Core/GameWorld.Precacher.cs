@@ -46,24 +46,24 @@ namespace IronStar.Core {
 			void IContentPrecacher.LoadContent()
 			{
 				content	.EnumerateAssets("fx")
-						.Select( name => content.Precache<FXFactory>(@"fx\"+name) )
+						.Select( name => content.PrecacheSafe<FXFactory>(@"fx\"+name) )
 						.ToArray();
 
 
 				content	.EnumerateAssets("models")
-						.Select( name => content.Precache<ModelDescriptor>(@"models\"+name) )
+						.Select( name => content.PrecacheSafe<ModelDescriptor>(@"models\"+name) )
 						.ToArray();
 
 				content	.EnumerateAssets("entities")
-						.Select( name => content.Load<EntityFactory>(@"entities\"+name) )
+						.Select( name => content.PrecacheSafe<EntityFactory>(@"entities\"+name) )
 						.ToArray();
 
-				content.Precache<TextureAtlas>(@"sprites\particles");
-				content.Precache<TextureAtlas>(@"spots\spots");
-				content.Precache<VirtualTexture>("*megatexture");
+				content.PrecacheSafe<TextureAtlas>(@"sprites\particles");
+				content.PrecacheSafe<TextureAtlas>(@"spots\spots");
+				content.PrecacheSafe<VirtualTexture>("*megatexture");
 
 
-				var map = content.Precache<Map>(@"maps\" + serverInfo );
+				var map = content.PrecacheSafe<Map>(@"maps\" + serverInfo );
 			}
 		}
 

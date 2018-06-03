@@ -19,9 +19,9 @@ namespace Fusion.Engine.Client {
 
 			public readonly ClientContext context;
 
-			public Connecting ( GameClient gameClient, IPEndPoint endPoint ) : base(gameClient, ClientState.Connecting)
+			public Connecting ( GameClient gameClient, IClientInstance clientInstance, IPEndPoint endPoint ) : base(gameClient, ClientState.Connecting)
 			{
-				context	=	new ClientContext( gameClient.Game );
+				context	=	new ClientContext( gameClient.Game, clientInstance );
 
 				Message	=	endPoint.ToString();
 
@@ -35,9 +35,10 @@ namespace Fusion.Engine.Client {
 
 
 
-			public override void UserConnect ( string host, int port )
+			public override bool UserConnect ( string host, int port, IClientInstance clientInstance )
 			{
 				Log.Warning("Connecting in progress");
+				return false;
 			}
 
 

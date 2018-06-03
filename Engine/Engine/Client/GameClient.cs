@@ -85,7 +85,7 @@ namespace Fusion.Engine.Client {
 		/// <summary>
 		/// Wait for client completion.
 		/// </summary>
-		internal void Wait ()
+		public void Wait ()
 		{	
 			if ( !(state is StandBy) && !(state is Disconnected) ) {
 				Disconnect("quit");
@@ -105,10 +105,10 @@ namespace Fusion.Engine.Client {
 		/// </summary>
 		/// <param name="host"></param>
 		/// <param name="port"></param>
-		public void Connect ( string host, int port )
+		public bool Connect ( string host, int port, IClientInstance clientInstance )
 		{
 			ping	=	float.MaxValue;
-			state.UserConnect( host, port );
+			return state.UserConnect( host, port, clientInstance );
 		}
 
 

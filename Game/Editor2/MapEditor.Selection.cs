@@ -24,7 +24,7 @@ namespace IronStar.Editor2 {
 	/// <summary>
 	/// World represents entire game state.
 	/// </summary>
-	public partial class MapEditor : IEditorInstance {
+	public partial class MapEditor {
 
 		LayerState GetLayerStateForNode ( MapNode node )
 		{

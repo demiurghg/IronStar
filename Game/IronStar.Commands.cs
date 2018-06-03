@@ -22,23 +22,25 @@ namespace IronStar {
 			readonly IronStar game;
 			readonly string mapname;
 			readonly bool edit;
+			readonly bool dedicated;
 
 			public MapCommand ( IronStar game, ArgList args )
 			{
 				this.game	=	game;
 
 				args.Usage("map <mapname> [/edit]")
-					.Require("mapname"	, out mapname	)
-					.Option	("/edit"	, out edit )
+					.Require("mapname"		, out mapname	)
+					.Option	("/edit"		, out edit		)
+					.Option ("/dedicated"	, out dedicated )
 					.Apply();
 			}
 
 			public override object Execute()
 			{
 				if (edit) {
-					game.RunEditor(mapname);
+					game.StartEditor(mapname);
 				} else {
-					game.RunGame(mapname);
+					game.StartServer(mapname, dedicated);
 				}
 				return null;
 			}
@@ -46,21 +48,66 @@ namespace IronStar {
 		}
 
 
-		class KillGameCommand : CommandNoHistory {
+
+		class KillServerCommand : CommandNoHistory {
 
 			readonly IronStar game;
 
-			public KillGameCommand ( IronStar game, ArgList args )
+			public KillServerCommand ( IronStar game, ArgList args )
 			{
 				this.game = game;
 			}
 
 			public override object Execute()
 			{
-				game.KillGame();
+				game.KillServer();
 				return null;
 			}
 		}
+
+
+
+		class ConnectCommand : CommandNoHistory {
+
+			readonly IronStar game;
+			readonly string host;
+			readonly int port;
+
+			public ConnectCommand ( IronStar game, ArgList args )
+			{
+				this.game = game;
+
+				args.Usage("connect <host> <port>")
+					.Require("host", out host)
+					.Require("port", out port)
+					.Apply();
+			}
+
+			public override object Execute()
+			{
+				game.Connect( host, port );
+				return null;
+			}
+		}
+
+
+
+		class DisconnectCommand : CommandNoHistory {
+
+			readonly IronStar game;
+
+			public DisconnectCommand ( IronStar game, ArgList args )
+			{
+				this.game = game;
+			}
+
+			public override object Execute()
+			{
+				game.Disconnect( "disconnect by user request" );
+				return null;
+			}
+		}
+
 
 
 		class KillEditorCommand : CommandNoHistory {
@@ -78,6 +125,7 @@ namespace IronStar {
 				return null;
 			}
 		}
+
 
 
 		class ContentBuildCommand : CommandNoHistory {
@@ -103,12 +151,14 @@ namespace IronStar {
 		}
 
 
+
 		class ContentFileCommand : CommandNoHistory {
 			public override object Execute()
 			{
 				return Builder.Options.ContentIniFile;
 			}
 		}
+
 
 
 		class ContentReportCommand : CommandNoHistory {
@@ -129,26 +179,5 @@ namespace IronStar {
 			}
 
 		}
-
-		//class EditorMap : ICommand {
-		//	public void Rollback() {}
-		//	public bool IsHistoryOn() { return false; }
-
-		//	public object Execute()
-		//	{
-		//		throw new NotImplementedException();
-		//	}
-		//}
-
-
-		//class EditorQuit : ICommand {
-		//	public void Rollback() {}
-		//	public bool IsHistoryOn() { return false; }
-
-		//	public object Execute()
-		//	{
-		//		throw new NotImplementedException();
-		//	}
-		//}
 	}
 }

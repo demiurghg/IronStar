@@ -30,7 +30,7 @@ namespace IronStar.Editors {
 		ObjectEditorControl	entityEditor;
 		ObjectEditorControl	itemEditor;
 		ObjectEditorControl	fxEditor;
-		MapEditorControl	mapEditor;
+		//MapEditorControl	mapEditor;
 		//VTEditor		vtEditor;
 		ObjectEditorControl	vtEditor;
 
@@ -49,14 +49,14 @@ namespace IronStar.Editors {
 			entityEditor	=	new ObjectEditorControl( game, "entities",	typeof(EntityFactory), "Entity" ) { Dock = DockStyle.Fill };
 			itemEditor		=	new ObjectEditorControl( game, "items",		typeof(ItemFactory), "Items" ) { Dock = DockStyle.Fill };
 			fxEditor		=	new ObjectEditorControl( game, "fx",		typeof(FXFactory), "FX" ) { Dock = DockStyle.Fill };
-			mapEditor		=	new MapEditorControl( game ) { Dock = DockStyle.Fill };
+			//mapEditor		=	new MapEditorControl( game ) { Dock = DockStyle.Fill };
 			//vtEditor		=	new ObjectEditorControl( game, "vt",		typeof(VTTextureContent), "Megatexture" ) { Dock = DockStyle.Fill };
 
 			mainTabs.TabPages["tabConfig"].Controls.Add( configEditor );
 			mainTabs.TabPages["tabModels"].Controls.Add( modelEditor );
 			mainTabs.TabPages["tabEntities"].Controls.Add( entityEditor );
 			mainTabs.TabPages["tabItems"].Controls.Add( itemEditor );
-			mainTabs.TabPages["tabMap"].Controls.Add( mapEditor );
+			//mainTabs.TabPages["tabMap"].Controls.Add( mapEditor );
 			mainTabs.TabPages["tabFX"].Controls.Add( fxEditor );
 			//mainTabs.TabPages["tabMegatexture"].Controls.Add( vtEditor );
 
@@ -65,11 +65,11 @@ namespace IronStar.Editors {
 
 
 
-		public MapEditorControl MapEditor {
+		/*public MapEditorControl MapEditor {
 			get {
 				return mapEditor;
 			}
-		}
+		} */
 
 
 

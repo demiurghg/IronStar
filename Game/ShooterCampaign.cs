@@ -10,13 +10,15 @@ using Fusion.Core.Content;
 using Fusion.Engine.Common;
 using IronStar.Core;
 using IronStar.Mapping;
+using IronStar.Views;
 
 namespace IronStar {
-	class SinglePlayer : GameComponent {
+	class ShooterCampaign : GameComponent {
 
 		readonly GameWorld world;
 		readonly ContentManager content;
 		readonly Map map;
+		readonly GameCamera camera;
 
 		class MessageService : IMessageService {
 			public void Push( string message )
@@ -35,7 +37,7 @@ namespace IronStar {
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
-		public SinglePlayer( Game game, string mapName ) : base( game )
+		public ShooterCampaign( Game game, string mapName ) : base( game )
 		{
 			var mapFile	=   Path.Combine("maps", mapName );
 
@@ -45,6 +47,8 @@ namespace IronStar {
 			content		=	new ContentManager( game );
 
 			map			=	content.Load<Map>( mapFile );
+
+			camera		=	new GameCamera( world, 
 		}
 
 

@@ -124,12 +124,6 @@
     <Compile Include="Editors\EditorForm.Designer.cs">
       <DependentUpon>EditorForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Editors\MapEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Editors\MapEditorControl.Designer.cs">
-      <DependentUpon>MapEditorControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Editors\ConfigEditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -225,7 +219,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShooterServer.cs" />
-    <Compile Include="SinglePlayer.cs" />
     <Compile Include="UserCommand.cs" />
     <Compile Include="SFX\FXPlayback.cs" />
   </ItemGroup>
@@ -259,9 +252,6 @@
     <EmbeddedResource Include="Editors\EditorForm.resx">
       <DependentUpon>EditorForm.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editors\MapEditorControl.resx">
-      <DependentUpon>MapEditorControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Editors\ConfigEditorControl.resx">
       <DependentUpon>ConfigEditorControl.cs</DependentUpon>

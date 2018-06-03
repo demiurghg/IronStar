@@ -105,7 +105,7 @@ namespace Fusion.Engine.Client {
 		/// </summary>
 		/// <param name="host"></param>
 		/// <param name="port"></param>
-		internal void Connect ( string host, int port )
+		public void Connect ( string host, int port )
 		{
 			ping	=	float.MaxValue;
 			state.UserConnect( host, port );
@@ -118,7 +118,7 @@ namespace Fusion.Engine.Client {
 		/// </summary>
 		/// <param name="host"></param>
 		/// <param name="port"></param>
-		internal void Disconnect (string message)
+		public void Disconnect (string message)
 		{
 			state.UserDisconnect(message);
 		}
@@ -129,7 +129,7 @@ namespace Fusion.Engine.Client {
 		/// Updates client.
 		/// </summary>
 		/// <param name="gameTime"></param>
-		internal void Update ( GameTime gameTime )
+		public override void Update ( GameTime gameTime )
 		{
 			//
 			//	Update client-side game :

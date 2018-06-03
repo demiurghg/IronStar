@@ -39,10 +39,10 @@ namespace IronStar.Editors {
 		}
 
 
-		public static MapEditorControl GetMapEditor ()
+		/*public static MapEditorControl GetMapEditor ()
 		{
 			return (Application.OpenForms.Cast<Form>().FirstOrDefault( form => form is EditorForm ) as EditorForm)?.MapEditor;
-		}
+		} */
 
 
 		public static void CloseAll ()

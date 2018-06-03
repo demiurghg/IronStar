@@ -8,6 +8,7 @@ using Fusion.Engine.Common;
 using Fusion.Engine.Server;
 using Lidgren.Network;
 using Fusion.Core;
+using Fusion.Core.Extensions;
 
 namespace Fusion.Engine.Client {
 
@@ -27,7 +28,7 @@ namespace Fusion.Engine.Client {
 		{
 			Guid		=	Guid.NewGuid();
 			Game		=	game;
-			GameClient	=	game.GameClient;
+			GameClient	=	game.GetService<GameClient>();
 			//Instance	=	game.CreateClient( game, this, Guid );
 
 

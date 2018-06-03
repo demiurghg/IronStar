@@ -85,7 +85,7 @@ namespace IronStar.Entities {
 			space.Add( capsule );
 
 			//	step projectile forward compensating server latency
-			UpdateProjectile( entity, 1.0f / Game.GameServer.TargetFrameRate );
+			UpdateProjectile( entity, 1.0f / Game.GetService<GameServer>().TargetFrameRate );
 		}
 
 

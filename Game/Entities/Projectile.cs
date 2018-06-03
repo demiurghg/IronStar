@@ -66,7 +66,7 @@ namespace IronStar.Entities {
 			trailFXAtom			=	atoms[ trailFX ]; 
 
 			//	step projectile forward compensating server latency
-			UpdateProjectile( entity, 1.0f / Game.GameServer.TargetFrameRate );
+			FixServerLag( entity );
 		}
 
 
@@ -84,6 +84,14 @@ namespace IronStar.Entities {
 		public override void Update ( float elapsedTime )
 		{
 			UpdateProjectile( Entity, elapsedTime );
+		}
+
+
+
+		public void FixServerLag ( Entity projEntity )
+		{
+			float deltaTime = 1.0f / Game.GetService<GameServer>().TargetFrameRate;
+			UpdateProjectile( projEntity, deltaTime );
 		}
 
 

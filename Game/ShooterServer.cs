@@ -66,7 +66,7 @@ namespace IronStar {
 
 		public void Update( GameTime gameTime )
 		{
-			var dt = 1 / world.Game.GameServer.TargetFrameRate;
+			var dt = gameTime.ElapsedSec;// 1 / world.Game.GameServer.TargetFrameRate;
 
 			world.SimulateWorld( dt );
 		}

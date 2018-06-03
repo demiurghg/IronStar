@@ -30,7 +30,7 @@ namespace IronStar.Views {
 		/// </summary>
 		/// <param name="game"></param>
 		/// <param name="space"></param>
-		public GameCamera ( GameWorld world, ShooterClient client ) 
+		public GameCamera ( GameWorld world, ShooterClient client )
 		{
 			this.World	=	world;
 			this.Game	=	world.Game;

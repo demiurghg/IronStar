@@ -13,6 +13,9 @@ using Fusion;
 using Fusion.Core.Shell;
 using IronStar.Editor2;
 using Fusion.Build;
+using Fusion.Engine.Client;
+using Fusion.Engine.Server;
+using Fusion.Engine.Common;
 
 namespace IronStar {
 	partial class IronStar : Game
@@ -30,14 +33,17 @@ namespace IronStar {
 			this.AddServiceAndComponent( new RenderSystem(this) );
 			this.AddServiceAndComponent( new SoundSystem(this) );
 			this.AddServiceAndComponent( new FrameProcessor(this) );
-			this.AddServiceAndComponent( new GameConsole(this) );
+			this.AddServiceAndComponent( new GameConsole( this ) );
+			this.AddServiceAndComponent( new Network( this ) );
+			this.AddServiceAndComponent( new GameClient( this ) );
+			this.AddServiceAndComponent( new GameServer( this ) );
 
 			this.GetService<FrameProcessor>().LayerOrder = 100;
 			this.GetService<GameConsole>().LayerOrder = 200;
 
 			Invoker.RegisterCommand("map",				(args) => new MapCommand(this, args) );
 			Invoker.RegisterCommand("killEditor",		(args) => new KillEditorCommand(this, args) );
-			Invoker.RegisterCommand("killGame",			(args) => new KillGameCommand(this, args) );
+			Invoker.RegisterCommand("killServer",		(args) => new KillServerCommand(this, args) );
 			Invoker.RegisterCommand("contentBuild",		(args) => new ContentBuildCommand(this, args) );
 			Invoker.RegisterCommand("contentFile",		(args) => new ContentFileCommand() );
 			Invoker.RegisterCommand("contentReport",	(args) => new ContentReportCommand(args) );
@@ -92,7 +98,8 @@ namespace IronStar {
 		}
 
 
-		protected void RunEditor ( string mapname )
+
+		protected void StartEditor ( string mapname )
 		{
 			var editor = new MapEditor( this, mapname );
 			editor.Initialize();
@@ -117,27 +124,38 @@ namespace IronStar {
 		}
 
 
-		protected void RunGame ( string mapname )
+		protected void StartServer ( string mapname, bool dedicated )
 		{
-			var sp = new SinglePlayer(this, mapname);
-			sp.Initialize();
+			var sv = this.GetService<GameServer>();
+			var cl = this.GetService<GameClient>();
+			var nt = this.GetService<Network>();
 
-			this.AddServiceAndComponent(sp);
+			if (dedicated) {
+				sv.Start( mapname, null );
+			} else {
+				if (sv.Start( mapname, null )) {
+					cl.Connect( "127.0.0.1", Network.Port );
+				}
+			}
 		}
 
 
-		protected void KillGame ()
+		protected void KillServer ()
 		{
-			var sp = this.GetService<SinglePlayer>();
+			this.GetService<GameServer>().Kill();
+		}
 
-			if (sp!=null) {
-				Log.Message("Stopping game...");
-				Services.RemoveService( sp.GetType() );
-				Components.Remove( sp );
-				SafeDispose( ref sp );
-			} else {
-				Log.Warning("Game is not running");
-			}
+
+
+		protected void Connect ( string host, int port )
+		{
+			this.GetService<GameClient>().Connect(host, port);
+		}
+
+
+		protected void Disconnect ( string message )
+		{
+			this.GetService<GameClient>().Disconnect(message);
 		}
 	}
 }

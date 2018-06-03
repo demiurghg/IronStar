@@ -627,11 +627,8 @@ namespace Fusion.Core {
 		public SoundSystem SoundSystem { get { return Services.GetService<SoundSystem>(); } }
 		public RenderSystem RenderSystem { get { return Services.GetService<RenderSystem>(); } }
 		public GameConsole Console { get { return Services.GetService<GameConsole>(); } }
-		public GameClient GameClient;
-		public GameServer GameServer;
 		public UserInterface UserInterface;
-		public GameEditor GameEditor;
-		public Network Network;
+		public Network Network { get { return Services.GetService<Network>(); } }
 		public FrameProcessor Frames { get { return Services.GetService<FrameProcessor>(); } }
 	}
 }

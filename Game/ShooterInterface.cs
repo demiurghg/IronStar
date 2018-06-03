@@ -13,6 +13,7 @@ using Fusion;
 using Fusion.Engine.Client;
 using Fusion.Engine.Common;
 using Fusion.Engine.Server;
+using Fusion.Core.Extensions;
 
 namespace IronStar {
 
@@ -52,8 +53,7 @@ namespace IronStar {
 			LoadContent();
 			Game.Reloading += (s,e) => LoadContent();
 
-			Game.GameClient.ClientStateChanged += GameClient_ClientStateChanged;
-
+			Game.GetService<GameClient>().ClientStateChanged += GameClient_ClientStateChanged;
 		}
 
 

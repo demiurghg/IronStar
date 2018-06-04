@@ -13,12 +13,89 @@ using System.Runtime.InteropServices;
 using Fusion.Engine.Graphics;
 using Fusion.Engine.Imaging;
 using Fusion.Engine.Graphics.Ubershaders;
-
+using Fusion.Core.Shell;
 
 namespace Fusion.Engine.Graphics {
 	[RequireShader("hdr")]
 	internal class HdrFilter : RenderComponent {
 
+		/// <summary>
+		/// Tonemapping operator.
+		/// </summary>
+		public TonemappingOperator TonemappingOperator { get; set; }
+		
+		/// <summary>
+		/// Time to adapt. Default value is 0.5 seconds.
+		/// </summary>
+		[AEValueRange(0.125f, 4f, 0.125f, 0.125f)]
+		public float AdaptationHalfTime { get; set; } = 0.5f;
+
+		/// <summary>
+		/// Luminance key value. Default value is 0.18.
+		/// </summary>
+		[AEValueRange(0.045f, 1, 0.05f, 0.01f)]
+		public float KeyValue { get; set; } = 0.18f;
+
+		/// <summary>
+		/// Minimum luminnance. Default is zero.
+		/// </summary>
+		public float LuminanceLowBound { get; set; } = 0f;
+
+		/// <summary>
+		/// Maximum luminance. Default is 99999.
+		/// </summary>
+		public float LuminanceHighBound { get; set; } = 99999f;
+		
+		/// <summary>
+		/// Bloom gaussian blur sigma. Default is 3.
+		/// </summary>
+		public float GaussBlurSigma { 
+			get { return gaussBlurSigma; }
+			set { gaussBlurSigma = MathUtil.Clamp( value, 1, 5 ); }
+		}
+
+		float gaussBlurSigma = 3;
+
+		/// <summary>
+		/// Amount of bloom. Zero means no bloom.
+		/// One means fully bloomed image.
+		/// </summary>
+		[AEValueRange(0, 1, 0.1f, 0.01f)]
+		public float BloomAmount { get; set; } = 0.1f;
+
+		/// <summary>
+		/// Amount of dirt. Zero means no bloom.
+		/// One means fully bloomed image.
+		/// </summary>
+		[AEValueRange(0, 1, 1f/32f, 1f/256f)]
+		public float DirtAmount { get; set; } = 0.9f;
+
+		/// <summary>
+		/// Gets and sets overall image saturation
+		/// Default value is 1.
+		/// </summary>
+		[AEValueRange(0, 1, 1f/32f, 1f/256f)]
+		public float Saturation { get; set; } = 1.0f;
+
+		/// <summary>
+		/// Minimum output value.
+		/// Default value is 1.
+		/// </summary>
+		[AEValueRange(0, 1, 1f/32f, 1f/256f)]
+		public float MaximumOutputValue { get; set; } = 1.0f;
+
+		/// <summary>
+		/// Minimum output value.
+		/// Default value is 0.
+		/// </summary>
+		[AEValueRange(0, 1, 1f/32f, 1f/256f)]
+		public float MinimumOutputValue { get; set; } = 0.0f;
+
+		/// <summary>
+		/// Dither pattern amount
+		/// </summary>
+		[AEValueRange(0, 1, 1f/32f, 1f/256f)]
+		public float DitherAmount { get; set; } = 3f/256f;
 
 		Ubershader	shader;
 		ConstantBuffer	paramsCB;
@@ -246,7 +323,8 @@ namespace Fusion.Engine.Graphics {
 				filter.StretchRect( hdrFrame.Bloom0.Surface, hdrFrame.FinalHdrImage, SamplerState.LinearClamp );
 				hdrFrame.Bloom0.BuildMipmaps();
 
-				#if true
+				#if false
+				#warning BLUR SCALING ERROR
 				blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 0 );
 				blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 1 );
 				blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2 );
@@ -265,17 +343,17 @@ namespace Fusion.Engine.Graphics {
 				//	Setup parameters :
 				//
 				var paramsData	=	new Params();
-				paramsData.AdaptationRate		=	1 - (float)Math.Pow( 0.5f, gameTime.ElapsedSec / settings.AdaptationHalfLife );
-				paramsData.LuminanceLowBound	=	settings.LuminanceLowBound;
-				paramsData.LuminanceHighBound	=	settings.LuminanceHighBound;
-				paramsData.KeyValue				=	settings.KeyValue;
-				paramsData.BloomAmount			=	settings.BloomAmount;
-				paramsData.DirtMaskLerpFactor	=	settings.DirtMaskLerpFactor;
-				paramsData.DirtAmount			=	settings.DirtAmount;
-				paramsData.Saturation			=	settings.Saturation;
-				paramsData.MaximumOutputValue	=	settings.MaximumOutputValue;
-				paramsData.MinimumOutputValue	=	settings.MinimumOutputValue;
-				paramsData.DitherAmount			=	settings.DitherAmount;
+				paramsData.AdaptationRate		=	1 - (float)Math.Pow( 0.5f, gameTime.ElapsedSec / AdaptationHalfTime );
+				paramsData.LuminanceLowBound	=	LuminanceLowBound;
+				paramsData.LuminanceHighBound	=	LuminanceHighBound;
+				paramsData.KeyValue				=	KeyValue;
+				paramsData.BloomAmount			=	BloomAmount;
+				paramsData.DirtMaskLerpFactor	=	0;
+				paramsData.DirtAmount			=	0;
+				paramsData.Saturation			=	Saturation;
+				paramsData.MaximumOutputValue	=	MaximumOutputValue;
+				paramsData.MinimumOutputValue	=	MinimumOutputValue;
+				paramsData.DitherAmount			=	DitherAmount;
 
 				paramsCB.SetData( paramsData );
 				device.PixelShaderConstants[0]	=	paramsCB;

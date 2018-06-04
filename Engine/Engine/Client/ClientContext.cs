@@ -26,7 +26,7 @@ namespace Fusion.Engine.Client {
 		/// <param name="game"></param>
 		public ClientContext ( Game game, IClientInstance clientInstance )
 		{
-			Guid		=	Guid.NewGuid();
+			Guid		=	clientInstance.UserGuid;
 			Game		=	game;
 			GameClient	=	game.GetService<GameClient>();
 			Instance	=	clientInstance;

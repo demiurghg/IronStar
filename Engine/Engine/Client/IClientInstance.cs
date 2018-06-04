@@ -11,6 +11,11 @@ namespace Fusion.Engine.Client {
 	public interface IClientInstance : IDisposable {
 
 		/// <summary>
+		/// Gets unchangable during the session client's constant GUID.
+		/// </summary>
+		Guid UserGuid { get; }
+
+		/// <summary>
 		/// Called when the game has determined that client-side need to be initialized.
 		/// </summary>
 		/// <param name="gameTime">Cliemt-side game time.</param>

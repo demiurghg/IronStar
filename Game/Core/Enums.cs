@@ -37,4 +37,10 @@ namespace IronStar.Core {
 		RailHit,
 		RocketExplosion,
 	}
+
+
+	public enum EntityFX {
+		None,
+		Highlight,
+	}
 }

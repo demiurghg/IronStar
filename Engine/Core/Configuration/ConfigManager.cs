@@ -73,6 +73,16 @@ namespace Fusion.Core.Configuration {
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="target"></param>
+		public void ApplySettings ( object target )
+		{
+			ApplySettings( target.GetType().Name, target );
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="source"></param>
 		public void RetrieveSettings ( string sectionName, object source )
 		{
@@ -102,6 +112,16 @@ namespace Fusion.Core.Configuration {
 				settings.Sections.RemoveSection(sectionName);
 				settings.Sections.SetSectionData( sectionName, sectionData );
 			}
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="source"></param>
+		public void RetrieveSettings ( object source )
+		{
+			RetrieveSettings( source.GetType().Name, source );
 		}
 
 

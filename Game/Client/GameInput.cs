@@ -15,41 +15,46 @@ using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
 using IronStar.Core;
-
+using Fusion.Engine.Tools;
 
 namespace IronStar.Client {
 	public partial class GameInput : GameComponent {
 
-		[Config] public float Sensitivity { get; set; }
-		[Config] public bool InvertMouse { get; set; }
-		[Config] public float PullFactor { get; set; }
-		[Config] public bool ThirdPerson { get; set; }
-		
-		[Config] public float ZoomFov { get; set; }
-		[Config] public float Fov { get; set; }
-		[Config] public float BobHeave	{ get; set; }
-		[Config] public float BobPitch	{ get; set; }
-		[Config] public float BobRoll	{ get; set; }
-		[Config] public float BobStrafe  { get; set; }
-		[Config] public float BobJump	{ get; set; }
-		[Config] public float BobLand	{ get; set; }
+		[Config] public float	Sensitivity		{ get; set; }	=	5;
+		[Config] public bool	InvertMouse		{ get; set; }	=	true;
+		[Config] public float	PullFactor		{ get; set; }	=	1;
+		[Config] public bool	ThirdPerson		{ get; set; }	=	false;
+																
+		[Config] public float	ZoomFov			{ get; set; }	=	90.0f;
+		[Config] public float	Fov				{ get; set; }	=	30.0f;
+		[Config] public float	BobHeave		{ get; set; }	=	0.05f;
+		[Config] public float	BobPitch		{ get; set; }	=	1.0f;
+		[Config] public float	BobRoll			{ get; set; }	=	2.0f;
+		[Config] public float	BobStrafe		{ get; set; }	=	5.0f;
+		[Config] public float	BobJump			{ get; set; }	=	5.0f;
+		[Config] public float	BobLand			{ get; set; }	=	5.0f;
 
-		[Config] public Keys	MoveForward		{ get; set; }
-		[Config] public Keys	MoveBackward	{ get; set; }
-		[Config] public Keys	StrafeRight		{ get; set; }
-		[Config] public Keys	StrafeLeft		{ get; set; }
-		[Config] public Keys	Jump			{ get; set; }
-		[Config] public Keys Crouch			{ get; set; }
-		[Config] public Keys Walk			{ get; set; }
+		[Config] public Keys	MoveForward		{ get; set; }	=	Keys.S;
+		[Config] public Keys	MoveBackward	{ get; set; }	=	Keys.Z;	
+		[Config] public Keys	StrafeRight		{ get; set; }	=	Keys.X;	
+		[Config] public Keys	StrafeLeft		{ get; set; }	=	Keys.A;	
+		[Config] public Keys	Jump			{ get; set; }	=	Keys.RightButton;	
+		[Config] public Keys	Crouch			{ get; set; }	=	Keys.LeftAlt;	
+		[Config] public Keys	Walk			{ get; set; }	=	Keys.LeftShift;	
+																
+		[Config] public Keys	Attack			{ get; set; }	=	Keys.LeftButton;
+		[Config] public Keys	Zoom			{ get; set; }	=	Keys.D;
+		[Config] public Keys	Use				{ get; set; }	=	Keys.LeftControl;
 
-		[Config] public Keys Attack			{ get; set; }
-		[Config] public Keys Zoom			{ get; set; }
-		[Config] public Keys Use			{ get; set; }
+		[Config] public Keys	MeleeAttack		{ get; set; }	=	Keys.Space;
+		[Config] public Keys	SwitchWeapon	{ get; set; }	=	Keys.Q;	
+		[Config] public Keys	ReloadWeapon	{ get; set; }	=	Keys.R;
+		[Config] public Keys	ThrowGrenade	{ get; set; }	=	Keys.G;
+																
 
-		[Config] public Keys MeleeAttack	{ get; set; }
-		[Config] public Keys SwitchWeapon	{ get; set; }
-		[Config] public Keys ReloadWeapon	{ get; set; }
-		[Config] public Keys ThrowGrenade	{ get; set; }
+		public bool EnableControl {
+			get; set;
+		}
 
 
 		/// <summary>
@@ -58,37 +63,6 @@ namespace IronStar.Client {
 		/// <param name="cl"></param>
 		public GameInput (Game game) : base(game)
 		{	
-			Sensitivity	=	5;
-			InvertMouse	=	true;
-			PullFactor	=	1;
-
-			Fov			=	90.0f;
-			ZoomFov		=	30.0f;
-
-			BobHeave	=	0.05f;
-			BobPitch	=	1.0f;
-			BobRoll		=	2.0f;
-			BobStrafe  	=	5.0f;
-			BobJump		=	5.0f;
-			BobLand		=	5.0f;
-
-
-			MoveForward		=	Keys.S;
-			MoveBackward	=	Keys.Z;
-			StrafeRight		=	Keys.X;
-			StrafeLeft		=	Keys.A;
-			Jump			=	Keys.RightButton;
-			Crouch			=	Keys.LeftAlt;
-			Walk			=	Keys.LeftShift;
-							
-			Attack			=	Keys.LeftButton;
-			Zoom			=	Keys.D;
-
-			Use				=	Keys.LeftControl;
-								
-			SwitchWeapon	=	Keys.Q;
-			ReloadWeapon	=	Keys.R;
-			ThrowGrenade	=	Keys.G;
 		}
 
 
@@ -133,6 +107,7 @@ namespace IronStar.Client {
 		public void Update ( GameTime gameTime, ref UserCommand userCommand )
 		{
 			var flags = UserAction.None;
+			var console = Game.GetService<GameConsole>();
 			
 			userCommand.MoveForward	=	0;
 			userCommand.MoveRight	=	0;
@@ -160,7 +135,11 @@ namespace IronStar.Client {
 			//var ui		=	Game.UserInterface.Instance as ShooterInterface;
 			//var cam		=	World.GetView<CameraView>();
 
-			if (!Game.Console.IsShown) {
+			if (EnableControl && !Game.Console.IsShown) {
+
+				Game.Mouse.IsMouseCentered	=	true;
+				Game.Mouse.IsMouseClipped	=	true;
+				Game.Mouse.IsMouseHidden	=	true;
 
 				userCommand.DYaw		=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.X / 16200.0f;
 				userCommand.DPitch		=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.Y / 16200.0f * ( InvertMouse ? -1 : 1 );
@@ -169,6 +148,15 @@ namespace IronStar.Client {
 				userCommand.Yaw         +=  userCommand.DYaw;
 				userCommand.Pitch       +=  userCommand.DPitch;
 				userCommand.Roll		=	0;
+
+			} else {
+				userCommand.MoveForward		=	0;
+				userCommand.MoveRight		=	0;
+				userCommand.MoveUp			=	0;
+			
+				Game.Mouse.IsMouseCentered	=	false;
+				Game.Mouse.IsMouseClipped	=	false;
+				Game.Mouse.IsMouseHidden	=	false;
 			}
 		}
 

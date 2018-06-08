@@ -44,6 +44,13 @@ namespace Fusion.Core {
 		/// </summary>
 		public float Fps { get { return 1 / ElapsedSec; } }
 
+
+		public static GameTime MSec16 {
+			get {
+				return new GameTime( 0, new TimeSpan(0,0,0,0,16), new TimeSpan(0,0,0,0,16) );
+			}
+		}
+
 		
 		/// <summary>
 		/// Constructor

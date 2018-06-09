@@ -204,5 +204,16 @@ namespace IronStar.Editor2 {
 
 			return palette;
 		}
+
+
+
+		Panel CreateAssetExplorer ( Workspace workspace )
+		{
+			var panel = new Panel( workspace.Frames, 0,0,700,500 );
+
+			//panel.Add( new FileSelector.FileSelectorFrame( workspace.Frames, "", "*.xml", "", (s) => Log.Message(s) );
+
+			return panel;
+		}
 	}
 }

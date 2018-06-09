@@ -49,19 +49,19 @@ namespace IronStar.Editor2.Controls {
 		/// <param name="fp"></param>
 		public ListBox ( FrameProcessor fp, IEnumerable<object> items ) : base(fp)
 		{
-			this.items	=	items.ToArray();
+			this.items		=	items.ToArray();
 
-			BorderColor	=	Color.Zero; // ColorTheme.BorderColor;
-			BackColor	=	Color.Zero; // ColorTheme.BackgroundColorDark;
-			ForeColor	=	ColorTheme.TextColorNormal;
-			Border		=	0;
-			Padding		=	0;
+			BorderColor		=	Color.Zero; // ColorTheme.BorderColor;
+			BackColor		=	Color.Zero; // ColorTheme.BackgroundColorDark;
+			ForeColor		=	ColorTheme.TextColorNormal;
+			Border			=	0;
+			Padding			=	0;
 
-			this.MouseMove  +=ListBox_MouseMove;
-			this.MouseIn+=ListBox_MouseIn;
-			this.MouseOut+=ListBox_MouseOut;
-			this.Click+=ListBox_Click;
-			this.MouseDown +=ListBox_MouseDown;
+			this.MouseMove  +=	ListBox_MouseMove;
+			this.MouseIn	+=	ListBox_MouseIn;
+			this.MouseOut	+=	ListBox_MouseOut;
+			this.Click		+=	ListBox_Click;
+			this.MouseDown	+=	ListBox_MouseDown;
 		}
 
 		int mouseX;

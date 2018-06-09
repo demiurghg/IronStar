@@ -84,6 +84,7 @@
     <Compile Include="Editor2\Controls\ColorPicker.cs" />
     <Compile Include="Editor2\Controls\DropDown.cs" />
     <Compile Include="Editor2\Controls\Label.cs" />
+    <Compile Include="Editor2\Controls\Palette.cs" />
     <Compile Include="Editor2\Controls\Panel.cs" />
     <Compile Include="Editor2\Controls\ListBox.cs" />
     <Compile Include="Editor2\Controls\ScrollBox.cs" />

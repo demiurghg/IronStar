@@ -5,6 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Fusion.Engine.Frames {
+						
+	[Flags]
+	public enum ModKeys {
+		None	=	0x000,
+		Shift	=	0x001,
+		Alt		=	0x002,	
+		Ctrl	=	0x004,
+	}
 
 
 	/// <summary>

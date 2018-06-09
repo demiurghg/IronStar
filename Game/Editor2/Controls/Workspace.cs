@@ -28,6 +28,21 @@ namespace IronStar.Editor2.Controls {
 			get { return lowerShelf; }
 		}
 
+		class Hotkey {
+			public Hotkey( Keys key, ModKeys modKey, Action action ) 
+			{
+				Key		=	key		;
+				ModKey	=	modKey	;
+				Action	=	action	;
+			}
+			public readonly Keys	Key;
+			public readonly ModKeys	ModKey;
+			public readonly Action	Action;
+		}
+
+		readonly List<Hotkey> hotkeys = new List<Hotkey>();
+		readonly List<Palette> palettes = new List<Palette>();
+
 		Shelf	upperShelf;
 		Shelf	lowerShelf;
 		MapEditor editor;
@@ -64,7 +79,6 @@ namespace IronStar.Editor2.Controls {
 
 			this.entityTypes	=	Misc.GetAllSubclassesOf( typeof(EntityFactory), false );
 
-
 			parent.Add(this);
 			Frames.TargetFrame = this;
 
@@ -88,23 +102,86 @@ namespace IronStar.Editor2.Controls {
 
 
 
+		/// <summary>
+		/// Cloeses workspace and remove it from parent frame node
+		/// </summary>
 		public void CloseWorkspace ()
 		{
 			Parent.Remove(this);
-			//Frames.WipeRefs();
 		}
 
+
+		/// <summary>
+		/// Adds hotkey action
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="modKey"></param>
+		/// <param name="action"></param>
+		public void AddHotkey ( Keys key, ModKeys modKey, Action action )
+		{
+			hotkeys.Add( new Hotkey( key, modKey, action ) );
+		}
+
+
+		/// <summary>
+		/// Toggles (and adds, if necessary) palette.
+		/// </summary>
+		/// <param name="palette"></param>
+		public void TogglePalette ( Palette palette )
+		{
+			if (!palettes.Contains(palette)) {
+				palettes.Add(palette);
+				this.Add( palette );
+				palette.Visible = true;
+			} else {
+				palette.Visible = !palette.Visible;
+			}
+
+			ArrangeLeft( palettes );
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="frames"></param>
+		void ArrangeLeft ( IEnumerable<Frame> frames )
+		{
+			int x = 10;
+			int y = 50;
+
+			foreach ( var frame in frames ) {
+				if (frame==null) { continue; }
+				if (!frame.Visible) { continue;	}
+				frame.X = x;
+				frame.Y = y;
+				x += frame.Width;
+				x += 10;
+			}
+		}
 
 		List<float> fps = new List<float>(60);
 
 
+		/// <summary>
+		/// Updates workspace internal state
+		/// </summary>
+		/// <param name="gameTime"></param>
 		protected override void Update( GameTime gameTime )
 		{
 			base.Update( gameTime );
+			ArrangeLeft( palettes );
 		}
 
 
-
+		/// <summary>
+		/// Draws workspace:
+		///  - Selection rectangle 
+		///  - Manipulator hints
+		/// </summary>
+		/// <param name="gameTime"></param>
+		/// <param name="spriteLayer"></param>
+		/// <param name="clipRectIndex"></param>
 		protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
 		{
 			base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
@@ -120,12 +197,6 @@ namespace IronStar.Editor2.Controls {
 			spriteLayer.Draw( null,     x,     y, 1, h, new Color(220,220,220,192), clipRectIndex);
 			spriteLayer.Draw( null,     x, y+h-1, w, 1, new Color(220,220,220,192), clipRectIndex);
 			spriteLayer.Draw( null, x+w-1,     y, 1, h, new Color(220,220,220,192), clipRectIndex);
-
-			//spriteLayer.Draw( null,     x,     y, w, h, new Color(44,85,128,128), clipRectIndex);
-			//spriteLayer.Draw( null,     x,     y, w, 1, new Color(44,85,128,128), clipRectIndex);
-			//spriteLayer.Draw( null,     x,     y, 1, h, new Color(44,85,128,128), clipRectIndex);
-			//spriteLayer.Draw( null,     x, y+h-1, w, 1, new Color(44,85,128,128), clipRectIndex);
-			//spriteLayer.Draw( null, x+w-1,     y, 1, h, new Color(44,85,128,128), clipRectIndex);
 
 			if (editor.manipulator!=null && editor.manipulator.IsManipulating) {
 				var text  = editor.manipulator.ManipulationText;
@@ -149,7 +220,7 @@ namespace IronStar.Editor2.Controls {
 
 
 		/// <summary>
-		/// 
+		/// Feeds object properties to workspace property grid
 		/// </summary>
 		/// <param name="target"></param>
 		public void FeedProperties ( object target )
@@ -181,146 +252,15 @@ namespace IronStar.Editor2.Controls {
 		}
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Grid_PropertyChanged( object sender, AEPropertyGrid.PropertyChangedEventArgs e )
 		{
-			var mapNode = e.TargetObject as MapNode;
-			mapNode?.ResetNode( editor.World );
+			editor.SelectedPropertyChange( e.TargetObject );
 		}
-
-
-		void ArrangeLeft ( params Frame[] frames )
-		{
-			int x = 10;
-			int y = 50;
-
-			foreach ( var frame in frames ) {
-				if (frame==null) {
-					continue;
-				}
-				if (!frame.Visible) {
-					continue;
-				}
-				frame.X = x;
-				frame.Y = y;
-				x += frame.Width;
-				x += 10;
-			}
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public void ToggleShowPalette ()
-		{
-			if (palette==null) {
-
-				palette	=	new Panel( Frames, 10, 50, 150, 10 );
-				palette.Layout = new StackLayout() { AllowResize = true, EqualWidth = true, Interval = 1 };
-
-				palette.Add( new Label( Frames, 0,0,120,12, "Map Nodes Palette" ) { TextAlignment = Alignment.MiddleCenter } );
-
-				palette.Add( new Button( Frames, "Decal"		, 0,0,150,20, () => editor.CreateNodeUI( new MapDecal		() ) ) );
-				palette.Add( new Button( Frames, "Static Model"	, 0,0,150,20, () => editor.CreateNodeUI( new MapModel		() ) ) );
-				palette.Add( new Button( Frames, "Light Probe"	, 0,0,150,20, () => editor.CreateNodeUI( new MapLightProbe	() ) ) );
-				palette.Add( new Button( Frames, "Omni Light"	, 0,0,150,20, () => editor.CreateNodeUI( new MapOmniLight	() ) ) );
-				palette.Add( new Button( Frames, "Spot Light"	, 0,0,150,20, () => editor.CreateNodeUI( new MapSpotLight	() ) ) );
-
-				palette.Add( new Frame( Frames, 0,0,0,10, "", Color.Zero ) );
-
-				foreach ( var ent in entityTypes ) {
-
-					string name = ent.Name.Replace("Factory", "");
-					Action func = () => { 
-						var mapEntity = new MapEntity();
-						mapEntity.Factory = (EntityFactory)Activator.CreateInstance(ent);
-						editor.CreateNodeUI( mapEntity ); 
-					};
-					palette.Add( new Button( Frames, name, 0,0,150,20, func ) );
-				}
-
-				palette.Add( new Frame( Frames, 0,0,0,10, "", Color.Zero ) );
-
-				palette.Add( new Button( Frames, "Close", 0,0,150,20, () => palette.Visible = false ) );
-
-				Add( palette );
-			} else {
-				palette.Visible = !palette.Visible;
-			}
-
-			ArrangeLeft( palette, assets, components );
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public void ToggleShowComponents ()
-		{
-			if (components==null) {
-
-				components	=	new Panel( Frames, 10, 50, 150, 10 );
-				components.Layout = new StackLayout() { AllowResize = true, EqualWidth = true, Interval = 1 };
-
-				components.Add( new Label( Frames, 0,0,120,12, "Game Components" ) { TextAlignment = Alignment.MiddleCenter } );
-
-				var componentList = Game.Components.OrderBy( c1 => c1.GetType().Name ).ToArray();
-
-				foreach ( var component in componentList ) {
-
-					string name = component.GetType().Name;
-
-					Action func = () => { 
-						FeedProperties( component );
-					};
-					components.Add( new Button( Frames, name, 0,0,150,20, func ) );
-				}
-
-				components.Add( new Frame( Frames, 0,0,0,10, "", Color.Zero ) );
-
-				components.Add( new Button( Frames, "Close", 0,0,150,20, () => components.Visible = false ) );
-
-				Add( components );
-			} else {
-				components.Visible = !components.Visible;
-			}
-
-			ArrangeLeft( palette, assets, components );
-		}
-
-
-
-		public void ToggleAssetsExplorer ( string category )
-		{
-			if (assets==null) {
-
-				assets	=	new Panel( Frames, 10, 50, 200, 10 );
-
-				assets.Add( new Label( Frames, 0,0,200,12, "Asset Explorer [" + category + "]" ) { TextAlignment = Alignment.MiddleCenter } );
-				
-				assets.Layout = new StackLayout() { AllowResize = true, EqualWidth = true, Interval = 1 };
-
-				var scrollBox = new ScrollBox( Frames, 0,0,100,400 );
-				scrollBox.Padding = 1;
-
-				var listView  = new ListBox( Frames, new[] {"xsaxsxs", "xsxsxsxs", "xsxsxsxsxsacweq"} );
-
-				scrollBox.Add( listView );
-				assets.Add( scrollBox );
-
-
-				assets.Add( new Button( Frames, "New", 0,0,150,20,   () => Log.Warning("New") ) );
-				assets.Add( new Button( Frames, "Close", 0,0,150,20, () => palette.Visible = false ) );
-
-				Add( assets );
-			} else {
-				assets.Visible = !assets.Visible;
-			}
-
-			ArrangeLeft( palette, assets, components );
-		}
-
 
 
 		/// <summary>
@@ -336,102 +276,29 @@ namespace IronStar.Editor2.Controls {
 
 			e.Handled = true;
 
-			if (e.Key==Keys.F) {
-				editor.FocusSelection();
-			}
-			
-			if (e.Key==Keys.F2) {
-				var vsync = Game.RenderSystem.VSyncInterval == 1;
-				Game.RenderSystem.VSyncInterval = vsync ? 0 : 1;
-			}
+			foreach ( var hotkey in hotkeys ) {
 
-			if (!editor.manipulator.IsManipulating) {
-				if (e.Key==Keys.Q) {
-					editor.manipulator = new NullTool(editor);
-				}
-				if (e.Key==Keys.W) {
-					editor.manipulator = new MoveTool(editor);
-				}
-				if (e.Key==Keys.E) {
-					editor.manipulator = new RotateTool(editor);
-				}
-				if (e.Key==Keys.Delete) {
-					editor.DeleteSelection();
-				}
-				if (e.Key==Keys.Space) {
-					editor.EnableSimulation = !editor.EnableSimulation;
-				}
-				if (e.Key==Keys.Escape) {
-					editor.EnableSimulation = false;
-					editor.ResetWorld(false);
-				}
-				if (e.Key==Keys.K) {
-					editor.ResetWorld(true);
-				}
-				if (e.Key==Keys.R) {
-					//Game.RenderSystem.RenderWorld.CaptureRadiance();
-				}
-				if (e.Key==Keys.B) {
-					editor.BakeToEntity();
-				}
-				if (e.Key==Keys.Enter) {
-					editor.ActivateSelected();
-				}
-				if (e.Key==Keys.U) {
-					editor.UseSelected();
-				}
-				if (e.Key==Keys.J) {
-					if (ctrl) {
-						editor.RotateToolSnapEnable = !editor.RotateToolSnapEnable;
-					} else {
-						editor.MoveToolSnapEnable = !editor.MoveToolSnapEnable;
+				if (hotkey.Key==e.Key) {
+
+					if ( shift == (hotkey.ModKey==ModKeys.Shift) && alt == (hotkey.ModKey==ModKeys.Alt) && ctrl == (hotkey.ModKey==ModKeys.Ctrl) ) {
+
+						hotkey.Action?.Invoke();
+
 					}
-				}
-				if (e.Key==Keys.D) {
-					if (ctrl || shift) {
-						editor.DuplicateSelection();
-					}
-				}
-				if (e.Key==Keys.G) {
-					if (ctrl||alt) {
-						editor.DrawGrid = !editor.DrawGrid;
-					} else {
-						Game.RenderSystem.SkipDebugRendering = !Game.RenderSystem.SkipDebugRendering;
-					}
-				}
-				if (e.Key==Keys.T) {
-					editor.TargetSelection();
-				}
-				if (e.Key==Keys.OemComma) {
-					if (ctrl) {
-						editor.RotateToolSnapValue -= 5;
-					} else {
-						editor.MoveToolSnapValue *= 0.5f;
-					}
-				}
-				if (e.Key==Keys.OemPeriod) {
-					if (ctrl) {
-						editor.RotateToolSnapValue += 5;
-					} else {
-						editor.MoveToolSnapValue *= 2.0f;
-					}
-				}
-				if (e.Key==Keys.OemOpenBrackets) {
-					editor.CameraFov -= 10.0f;
-				}
-				if (e.Key==Keys.OemCloseBrackets) {
-					editor.CameraFov += 10.0f;
-				}
-				if (e.Key==Keys.F11) {
-					Game.Invoker.ExecuteString("screenshot");
 				}
 			}
 		}
 
 
-
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void RootFrame_Click( object sender, Frame.MouseEventArgs e )
 		{
+			//	TODO: Manipulation, selection and camera manipulating are
+			//	common operations for each type of editors
 			if (editor.camera.Manipulation==Manipulation.None && !editor.manipulator.IsManipulating) {
 				var shift =	Game.Keyboard.IsKeyDown(Keys.LeftShift) || Game.Keyboard.IsKeyDown(Keys.RightShift);
 				editor.Select( e.X, e.Y, shift );
@@ -439,9 +306,15 @@ namespace IronStar.Editor2.Controls {
 		}
 
 
-
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void RootFrame_MouseDown( object sender,  Frame.MouseEventArgs e )
 		{
+			//	TODO: Manipulation, selection and camera manipulating are
+			//	common operations for each type of editors
 			mouseX	=	e.X;
 			mouseY	=	e.Y;
 
@@ -468,17 +341,30 @@ namespace IronStar.Editor2.Controls {
 		int mouseX = 0; 
 		int mouseY = 0;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void RootFrame_MouseMove( object sender, Frame.MouseEventArgs e )
 		{
+			//	TODO: Manipulation, selection and camera manipulating are
+			//	common operations for each type of editors
 			editor.camera.UpdateManipulation( e.X, e.Y );
 			editor.manipulator.UpdateManipulation( e.X, e.Y );
 			editor.UpdateMarqueeSelection( e.X, e.Y );
 		}
 
 
-
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void RootFrame_MouseUp( object sender, Frame.MouseEventArgs e )
 		{
+			//	TODO: Manipulation, selection and camera manipulating are
+			//	common operations for each type of editors
 			editor.camera.StopManipulation( e.X, e.Y );
 			editor.manipulator.StopManipulation( e.X, e.Y );
 			editor.StopMarqueeSelection( e.X, e.Y );

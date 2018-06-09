@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 namespace Fusion.Core.Input {
+
 	public enum Keys {
 
 		None = 0,

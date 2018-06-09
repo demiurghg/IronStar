@@ -41,6 +41,15 @@ namespace IronStar.Editor2 {
 		public EditorCamera	camera;
 		public Manipulator	manipulator;
 
+		public Manipulator Manipulator {
+			get { return manipulator; }
+			set {
+				if (!manipulator.IsManipulating) {
+					manipulator = value;
+				}
+			}
+		}
+
 		readonly Stack<MapNode[]> selectionStack = new Stack<MapNode[]>();
 		readonly List<MapNode> selection = new List<MapNode>();
 
@@ -240,6 +249,10 @@ namespace IronStar.Editor2 {
 
 		public void DeleteSelection ()
 		{
+			if (manipulator.IsManipulating) {
+				return;
+			}
+
 			foreach ( var se in selection ) {
 				se.KillNode( world );
 				map.Nodes.Remove( se );
@@ -253,6 +266,10 @@ namespace IronStar.Editor2 {
 
 		public void DuplicateSelection ()
 		{
+			if (manipulator.IsManipulating) {
+				return;
+			}
+
 			var newItems = selection
 				.Select( item => item.DuplicateNode() )
 				.ToArray();
@@ -278,6 +295,10 @@ namespace IronStar.Editor2 {
 		/// </summary>
 		public void ResetWorld (bool hardResetSelection)
 		{
+			if (manipulator.IsManipulating) {
+				return;
+			}
+
 			EnableSimulation = false;
 
 			foreach ( var node in map.Nodes ) {
@@ -299,6 +320,10 @@ namespace IronStar.Editor2 {
 		/// </summary>
 		public void BakeToEntity ()
 		{
+			if (manipulator.IsManipulating) {
+				return;
+			}
+
 			foreach ( var se in selection ) {
 				var entity = (se as MapEntity)?.Entity;
 				if (entity!=null) {
@@ -315,12 +340,27 @@ namespace IronStar.Editor2 {
 		}
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="target"></param>
+		public void SelectedPropertyChange ( object target )
+		{
+			var mapNode = target as MapNode;
+			mapNode?.ResetNode( World );
+		}
+
+
 
 		/// <summary>
 		/// 
 		/// </summary>
 		public void ActivateSelected ()
 		{
+			if (manipulator.IsManipulating) {
+				return;
+			}
+
 			foreach ( var se in selection ) {
 				se.ActivateNode();
 			}
@@ -332,6 +372,10 @@ namespace IronStar.Editor2 {
 		/// </summary>
 		public void UseSelected ()
 		{
+			if (manipulator.IsManipulating) {
+				return;
+			}
+
 			foreach ( var se in selection ) {
 				se.UseNode();
 			}
@@ -352,6 +396,8 @@ namespace IronStar.Editor2 {
 		/// <param name="gameTime"></param>
 		public override void Update(GameTime gameTime)
 		{
+			fpsCounter.AddTime( gameTime );
+
 			camera.Update( gameTime );
 
 			var dr = rs.RenderWorld.Debug;
@@ -416,7 +462,6 @@ namespace IronStar.Editor2 {
 		}
 
 
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -426,7 +471,6 @@ namespace IronStar.Editor2 {
 				node.Frozen = false;
 			}
 		}
-
 
 
 		/// <summary>
@@ -441,12 +485,15 @@ namespace IronStar.Editor2 {
 		}
 
 
-
 		/// <summary>
 		/// 
 		/// </summary>
 		public void TargetSelection ()
 		{
+			if (manipulator.IsManipulating) {
+				return;
+			}
+
 			if (selection.Count<2) {
 				Log.Warning("TargetSelection: select at least two objects");
 				return;

@@ -20,6 +20,14 @@ namespace IronStar.Editor2.Controls {
 	
 	public class Workspace : Frame  {
 
+		public Shelf UpperShelf {
+			get { return upperShelf; }
+		}
+
+		public Shelf LowerShelf {
+			get { return lowerShelf; }
+		}
+
 		Shelf	upperShelf;
 		Shelf	lowerShelf;
 		MapEditor editor;
@@ -66,51 +74,6 @@ namespace IronStar.Editor2.Controls {
 			upperShelf	=	new Shelf( this, ShelfMode.Top );
 			lowerShelf	=	new Shelf( this, ShelfMode.Bottom );
 
-
-			upperShelf.AddLButton("ST", @"editor\iconToolSelect",	()=> editor.manipulator = new NullTool(editor) );
-			upperShelf.AddLButton("MT", @"editor\iconToolMove",		()=> editor.manipulator = new MoveTool(editor) );
-			upperShelf.AddLButton("RT", @"editor\iconToolRotate",	()=> editor.manipulator = new RotateTool(editor) );
-
-			upperShelf.AddLSplitter();
-			upperShelf.AddLButton("FCS", @"editor\iconFocus",		()=> editor.FocusSelection() );
-
-			upperShelf.AddLSplitter();
-			upperShelf.AddLButton("SV", null, null );
-			upperShelf.AddLButton("LD", null, null );
-
-			upperShelf.AddLSplitter();
-			upperShelf.AddFatLButton("UNFRZ", null, ()=> editor.UnfreezeAll() );
-
-			upperShelf.AddLSplitter();
-			upperShelf.AddFatLButton("ENTPLT", null, ()=> ToggleShowPalette() );
-
-			upperShelf.AddLSplitter();
-			upperShelf.AddFatLButton("SFX"		, null, ()=> ToggleAssetsExplorer("sfx"		) );
-			upperShelf.AddFatLButton("MODEL"	, null, ()=> ToggleAssetsExplorer("models"	) );
-			upperShelf.AddFatLButton("ENTITY"	, null, ()=> ToggleAssetsExplorer("entities") );
-			upperShelf.AddFatLButton("ITEM"		, null, ()=> ToggleAssetsExplorer("items"	) );
-
-			upperShelf.AddLSplitter();
-			upperShelf.AddLButton("BUILD\rRELOAD", @"editor\iconBuild", ()=> Game.Invoker.ExecuteString("contentBuild") );
-
-			upperShelf.AddRButton("SCR", null, ()=> Game.Invoker.ExecuteString("screenshot") );
-			upperShelf.AddRButton("CONFIG", @"editor\iconComponents", ()=> ToggleShowComponents() );
-			upperShelf.AddRButton("EDITOR\rCONFIG", @"editor\iconSettings", ()=> FeedProperties(editor) );
-			upperShelf.AddRButton("EXIT", @"editor\iconExit", ()=> Game.Invoker.ExecuteString("killEditor") );
- 
-
-			lowerShelf.AddLButton("PLAY\r[SPACE]",	@"editor\iconSimulate2",() => editor.EnableSimulation = !editor.EnableSimulation );
-			lowerShelf.AddLButton("RESET\r[ESC]" ,	@"editor\iconReset2",	() => editor.ResetWorld(true) );
-			lowerShelf.AddLButton("BAKE\r[B]"	 ,	@"editor\iconBake",		() => editor.BakeToEntity() );
-			lowerShelf.AddLSplitter();				 
-			lowerShelf.AddLButton("ACT\n[ENTER]" ,	@"editor\iconActivate", () => editor.ActivateSelected() );
-			lowerShelf.AddLButton("USE\n[U]"	 ,	@"editor\iconUse"	,	() => editor.UseSelected() );
-
-
-			snapLabel	=	lowerShelf.AddRIndicator("SNAP", 200 );
-			lowerShelf.AddRSplitter();
-			statLabel	=	lowerShelf.AddRIndicator("FPS   : 57.29\r\r", 200 );
-
 			//
 			//	setup keys & mouse :
 			//
@@ -138,35 +101,6 @@ namespace IronStar.Editor2.Controls {
 		protected override void Update( GameTime gameTime )
 		{
 			base.Update( gameTime );
-
-			fps.Add( gameTime.Fps );
-			while (fps.Count>30) {
-				fps.RemoveAt(0);
-			}	
-
-			float curFps	=	gameTime.Fps;
-			float avgFps	=	fps.Average();
-			float maxFps	=	fps.Max();
-			float minFps	=	fps.Min();
-
-			bool vsync		=	Game.RenderSystem.VSyncInterval!=0;
-
-			statLabel.Text	=	
-				string.Format(
- 				  "    FPS: {0,5:000.0} {4}\r\n" +
- 				  "Max FPS: {1,5:000.0}\r\n" +
- 				  "Avg FPS: {2,5:000.0}\r\n" +
- 				  "Min FPS: {3,5:000.0}", curFps, maxFps, avgFps, minFps, vsync ? "VSYNC ON" : "VSYNC OFF" );
-
-			snapLabel.Text	=	
-				string.Format(
- 				  "Move snap   : {0}\r\n" +
- 				  "Rotate snap : {1}\r\n" +
- 				  "Camera FOV  : {2}\r\n" +
- 				  "", 
-				  editor.MoveToolSnapEnable   ? editor.MoveToolSnapValue  .ToString("000.00") : "Disabled",
-				  editor.RotateToolSnapEnable ? editor.RotateToolSnapValue.ToString("000.00") : "Disabled", 
-				  editor.camera.Fov,0 );
 		}
 
 
@@ -223,10 +157,10 @@ namespace IronStar.Editor2.Controls {
 			if (grid==null) {
 				grid = new AEPropertyGrid(Frames);
 
-				grid.Width	=	350;
+				grid.Width	=	300;
 				grid.Height	=	500;
 
-				grid.X		=	Width - 350 - 10;
+				grid.X		=	Width - 300 - 10;
 				grid.Y		=	40 + 10;
 
 				grid.Anchor	=	FrameAnchor.Top | FrameAnchor.Right;

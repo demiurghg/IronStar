@@ -56,8 +56,6 @@ namespace IronStar.Editor2 {
 
 		public GameWorld World { get { return world; } }
 
-		Workspace workspace;
-
 
 		class MessageService : IMessageService {
 			public void Push( string message )
@@ -89,8 +87,7 @@ namespace IronStar.Editor2 {
 			world			=	new GameWorld( Game, new MessageService(), true, new Guid() );
 			world.InitServerAtoms();
 
-			workspace		=	new Workspace( this, Game.Frames.RootFrame );
-			
+			SetupWorkspace();
 
 			Game.Keyboard.ScanKeyboard =	true;
 

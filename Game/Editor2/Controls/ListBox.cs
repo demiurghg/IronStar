@@ -51,22 +51,27 @@ namespace IronStar.Editor2.Controls {
 		{
 			this.items		=	items.ToArray();
 
-			BorderColor		=	Color.Zero; // ColorTheme.BorderColor;
-			BackColor		=	Color.Zero; // ColorTheme.BackgroundColorDark;
+			BorderColor		=	ColorTheme.BorderColorLight;
+			BackColor		=	ColorTheme.BackgroundColorDark;
 			ForeColor		=	ColorTheme.TextColorNormal;
-			Border			=	0;
-			Padding			=	0;
+			Border			=	1;
+			Padding			=	1;
 
 			this.MouseMove  +=	ListBox_MouseMove;
 			this.MouseIn	+=	ListBox_MouseIn;
 			this.MouseOut	+=	ListBox_MouseOut;
 			this.Click		+=	ListBox_Click;
 			this.MouseDown	+=	ListBox_MouseDown;
+			this.MouseWheel +=	ListBox_MouseWheel;
+
+			UpdateScroll();
 		}
 
 		int mouseX;
 		int mouseY;
 		bool mouseIn;
+
+		int scrollOffset = 0;
 
 
 		/// <summary>
@@ -78,6 +83,15 @@ namespace IronStar.Editor2.Controls {
 			this.items		=	items.ToArray();
 			SelectedIndex	=	-1;
 			Parent?.MakeLayoutDirty();
+			UpdateScroll();
+		}
+
+
+		private void ListBox_MouseWheel( object sender, MouseEventArgs e )
+		{
+			int sign = Math.Sign( e.Wheel );
+			scrollOffset -= 2 * itemHeight * sign;
+			UpdateScroll();
 		}
 
 		
@@ -115,22 +129,13 @@ namespace IronStar.Editor2.Controls {
 		}
 
 
-		public override int Height {
-			get {
-				return (items.Length * itemHeight) + BorderTop + BorderBottom + PaddingBottom + PaddingTop;
-			}
-			set {
-			}
-		}
-
-
 		int GetItemIndexUnderCursor (int x, int y)
 		{
 			if (!mouseIn) {
 				return -1;
 			}
 
-			int index = (mouseY - BorderTop - PaddingTop) / itemHeight;
+			int index = (mouseY - BorderTop - PaddingTop + scrollOffset) / itemHeight;
 			if (index < 0 || index >= items.Length) {
 				index = -1;
 			}
@@ -138,11 +143,50 @@ namespace IronStar.Editor2.Controls {
 		}
 
 
+		int ContentHeight {
+			get {
+				return itemHeight * items.Length;
+			}
+		}
+
+
+		Rectangle scrollRect;
+
+		void UpdateScroll ()
+		{
+			var gp			=	GetPaddedRectangle();
+			var height		=	Math.Max( ContentHeight, 1 );
+
+			//	content is completely inside of the frame
+			//	set scrollOffset zero and return
+			if (height<=gp.Height) {
+				scrollOffset = 0;
+				return;
+			}
+
+			var maxDelta	=	height - gp.Height;
+			
+			scrollOffset	=	MathUtil.Clamp( scrollOffset, 0, maxDelta );
+
+			var markerHeight	=	(gp.Height    * gp.Height * 2 + 1) / Math.Max( gp.Height, height ) / 2 + 1;
+			var markerOffset	=	(scrollOffset * gp.Height * 2 + 1) / Math.Max( gp.Height, height ) / 2;
+
+			scrollRect.Width	=	ColorTheme.ScrollSize;
+			scrollRect.Height	=	markerHeight;
+			scrollRect.X		=	gp.X + gp.Width - scrollRect.Width;
+			scrollRect.Y		=	gp.Y + markerOffset;
+		}
+
+
 		protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
 		{
+			UpdateScroll();
+
 			var gp			=	GetPaddedRectangle();
 			var count		=	items.Length;
 			var hoverIdx	=	GetItemIndexUnderCursor(mouseX, mouseY);
+
+			var	drawScroll	=	ContentHeight > gp.Height;
 
 			for (int i=0; i<count; i++) {
 
@@ -150,9 +194,14 @@ namespace IronStar.Editor2.Controls {
 				var hovered	=	false;
 				var selected=	false;
 				int x		=	gp.X;
-				int y		=	gp.Y + i * itemHeight;
+				int y		=	gp.Y + i * itemHeight - scrollOffset;
 				int h		=	itemHeight;
 				int w		=	gp.Width;
+
+				if (drawScroll) {
+					w -= (ColorTheme.ScrollSize + 1);
+				}
+
 				var rect	=	new Rectangle(x,y,w,h);
 				int yLocal	=	i * itemHeight;
 
@@ -167,6 +216,10 @@ namespace IronStar.Editor2.Controls {
 
 				var textColor	=	hovered ? ColorTheme.TextColorHovered : ColorTheme.TextColorNormal;
 				var highlight	=	ColorTheme.HighlightColor;
+
+				if (drawScroll) {
+					spriteLayer.Draw( null, scrollRect, ColorTheme.ScrollMarkerColor, clipRectIndex );
+				}
 
 				if (selected) {
 

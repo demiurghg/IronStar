@@ -10,6 +10,9 @@ namespace IronStar.Editor2.Controls {
 
 	static class ColorTheme {
 
+		public static readonly int		ScrollSize				=	3;
+		public static readonly int		ScrollVelocity			=	3;
+
 		public static readonly Color	ShadowColor				=	new Color(  0,  0,  0, 64);
 
 		public static readonly Color	BorderColor				=	new Color( 10, 10, 10, 192);

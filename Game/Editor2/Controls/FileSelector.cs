@@ -75,7 +75,7 @@ namespace IronStar.Editor2.Controls {
 			readonly string		homeDir;
 
 			Label		labelDir;
-			ScrollBox	scrollBox;
+			//ScrollBox	scrollBox;
 			Button		buttonAccept;
 			Button		buttonHome;
 			Button		buttonPreview;
@@ -99,16 +99,21 @@ namespace IronStar.Editor2.Controls {
 
 				labelDir		=	new Label( fp, 2, 3, DialogWidth - 4, 10, Path.Combine( contentDir, defaultDir ) );
 
-				scrollBox				=	new ScrollBox( fp, 2, 14, 560+4+4, 480+4 );
-				scrollBox.Border		=	1;
-				scrollBox.BorderColor	=	ColorTheme.BorderColorLight;
+				//scrollBox				=	new ScrollBox( fp, 2, 14, 560+4+4, 480+4 );
+				//scrollBox.Border		=	1;
+				//scrollBox.BorderColor	=	ColorTheme.BorderColorLight;
 
 				buttonAccept	=	new Button( fp, "Accept",	DialogWidth - 120 - 2, DialogHeight - 2 - 20, 120, 20, ()=>Accept() );
 				buttonHome		=	new Button( fp, "Home",		DialogWidth - 240 - 4, DialogHeight - 2 - 20, 120, 20, ()=>Home() );
 				buttonPreview	=	new Button( fp, "Preview",  DialogWidth - 360 - 6, DialogHeight - 2 - 20, 120, 20, ()=>Preview() );
 				buttonClose		=	new Button( fp, "Close",  2,                     DialogHeight - 2 - 20, 120, 20, ()=>Close() );
 
-				fileListBox		=	new ListBox( fp, new object[0] );
+				fileListBox				=	new ListBox( fp, new object[0] );
+				fileListBox.X			=	2;
+				fileListBox.Y			=	14;
+				fileListBox.Width		=	560+4+4;
+				fileListBox.Height		=	480+4;
+
 				fileListBox.IsDoubleClickEnabled = true;
 				fileListBox.DoubleClick += FileListBox_DoubleClick;
 				fileListBox.SelectedItemChanged+=FileListBox_SelectedItemChanged;
@@ -117,9 +122,8 @@ namespace IronStar.Editor2.Controls {
 				Add( buttonHome );
 				Add( buttonPreview );
 				Add( buttonClose );
-				Add( scrollBox );
+				Add( fileListBox );
 				Add( labelDir );
-				scrollBox.Add( fileListBox );
 
 				RefreshFileList();
 

@@ -38,8 +38,9 @@ namespace IronStar.Editor2.Controls {
 		public ScrollBox ( FrameProcessor fp, int x, int y, int w, int h ) : base(fp,x,y,w,h)
 		{
 			BackColor	=	ColorTheme.BackgroundColorDark;
-			Border		=	0;
-			Padding		=	0;
+			Border		=	1;
+			Padding		=	1;
+			BorderColor	=	ColorTheme.BorderColorLight;
 
 			this.MouseWheel +=ScrollBox_MouseWheel;
 		}

@@ -68,11 +68,6 @@ namespace IronStar.Editor2.Controls {
 		class FileSelectorFrame : Panel {
 
 			readonly Action<string> setFileName;
-			readonly string		oldFileName;
-			readonly string		contentDir;
-			readonly string[]	searchPatterns;
-					 string		currentDir;
-			readonly string		homeDir;
 
 			Label		labelDir;
 			//ScrollBox	scrollBox;
@@ -80,7 +75,7 @@ namespace IronStar.Editor2.Controls {
 			Button		buttonHome;
 			Button		buttonPreview;
 			Button		buttonClose;
-			ListBox		fileListBox;
+			FileListBox	fileListBox;
 
 			Frame		previewFrame;
 
@@ -89,34 +84,26 @@ namespace IronStar.Editor2.Controls {
 			public FileSelectorFrame ( FrameProcessor fp, string defaultDir, string searchPattern, string oldFileName, Action<string> setFileName ) 
 			: base ( fp, 0,0, DialogWidth, DialogHeight )
 			{
-				this.contentDir		=	Builder.FullInputDirectory;
-
-				this.oldFileName	=	oldFileName;
 				this.setFileName	=	setFileName;
-				this.searchPatterns	=	searchPattern.Split(' ',',',';','|').OrderBy(n=>n).ToArray();
-				this.currentDir		=	Path.Combine( contentDir, defaultDir );
-				this.homeDir		=	Path.Combine( contentDir, defaultDir );
 
-				labelDir		=	new Label( fp, 2, 3, DialogWidth - 4, 10, Path.Combine( contentDir, defaultDir ) );
+				labelDir			=	new Label( fp, 2, 3, DialogWidth - 4, 10, "" );
 
-				//scrollBox				=	new ScrollBox( fp, 2, 14, 560+4+4, 480+4 );
-				//scrollBox.Border		=	1;
-				//scrollBox.BorderColor	=	ColorTheme.BorderColorLight;
+				buttonAccept		=	new Button( fp, "Accept",	DialogWidth - 120 - 2, DialogHeight - 2 - 20, 120, 20, ()=>Accept() );
+				buttonHome			=	new Button( fp, "Home",		DialogWidth - 240 - 4, DialogHeight - 2 - 20, 120, 20, ()=>Home() );
+				buttonPreview		=	new Button( fp, "Preview",  DialogWidth - 360 - 6, DialogHeight - 2 - 20, 120, 20, ()=>Preview() );
+				buttonClose			=	new Button( fp, "Close",  2,                     DialogHeight - 2 - 20, 120, 20, ()=>Close() );
 
-				buttonAccept	=	new Button( fp, "Accept",	DialogWidth - 120 - 2, DialogHeight - 2 - 20, 120, 20, ()=>Accept() );
-				buttonHome		=	new Button( fp, "Home",		DialogWidth - 240 - 4, DialogHeight - 2 - 20, 120, 20, ()=>Home() );
-				buttonPreview	=	new Button( fp, "Preview",  DialogWidth - 360 - 6, DialogHeight - 2 - 20, 120, 20, ()=>Preview() );
-				buttonClose		=	new Button( fp, "Close",  2,                     DialogHeight - 2 - 20, 120, 20, ()=>Close() );
-
-				fileListBox				=	new ListBox( fp, new object[0] );
-				fileListBox.X			=	2;
-				fileListBox.Y			=	14;
-				fileListBox.Width		=	560+4+4;
-				fileListBox.Height		=	480+4;
+				fileListBox			=	new FileListBox( fp, defaultDir, searchPattern );
+				fileListBox.X		=	2;
+				fileListBox.Y		=	14;
+				fileListBox.Width	=	560+4+4;
+				fileListBox.Height	=	480+4;
 
 				fileListBox.IsDoubleClickEnabled = true;
 				fileListBox.DoubleClick += FileListBox_DoubleClick;
 				fileListBox.SelectedItemChanged+=FileListBox_SelectedItemChanged;
+
+				labelDir.Text	=	fileListBox.CurrentDirectory;
 
 				Add( buttonAccept );
 				Add( buttonHome );
@@ -125,16 +112,12 @@ namespace IronStar.Editor2.Controls {
 				Add( fileListBox );
 				Add( labelDir );
 
-				RefreshFileList();
-
 				Missclick += FileSelectorFrame_Missclick;
 			}
 
 
 			private void FileListBox_SelectedItemChanged( object sender, EventArgs e )
 			{
-				var selectedItem = fileListBox.SelectedItem as ListItem;
-				
 				Preview();
 			}
 
@@ -143,7 +126,6 @@ namespace IronStar.Editor2.Controls {
 			{
 				Accept();
 			}
-
 
 
 			public void Close ()
@@ -157,14 +139,13 @@ namespace IronStar.Editor2.Controls {
 
 			public void Home ()
 			{
-				currentDir = homeDir;
-				RefreshFileList();
+				fileListBox.ResetCurrentDirectory();
 			}
 
 
 			public void Preview ()
 			{
-				var selectedItem = fileListBox.SelectedItem as ListItem;
+				var selectedItem = fileListBox.SelectedItem;
 				var content = Frames.Game.Content;
 
 				ClosePreview();
@@ -173,8 +154,8 @@ namespace IronStar.Editor2.Controls {
 					return;
 				}
 
-				var ext		= Path.GetExtension( selectedItem.Name );
-				var relName = ContentUtils.MakeRelativePath( contentDir + "\\", selectedItem.Name );
+				var ext		= Path.GetExtension( selectedItem.RelativePath );
+				var relName = selectedItem.RelativePath;
 				var path	= ContentUtils.GetPathWithoutExtension( relName );
 				var name	= Path.GetFileName(path);
 
@@ -231,18 +212,16 @@ namespace IronStar.Editor2.Controls {
 
 			public void Accept()
 			{
-				var selectedItem = fileListBox.SelectedItem as ListItem;
+				var selectedItem = fileListBox.SelectedItem;
 
 				if (selectedItem==null) {
 					return;
 				}
 
 				if (selectedItem.IsDirectory) {
-					currentDir = selectedItem.Name;
-					RefreshFileList();
+					fileListBox.CurrentDirectory = selectedItem.FullPath;
 				} else {
-					var relName = ContentUtils.MakeRelativePath( contentDir + "\\", selectedItem.Name );
-					setFileName( relName );
+					setFileName( selectedItem.RelativePath );
 					Close();
 				}
 			}
@@ -253,44 +232,6 @@ namespace IronStar.Editor2.Controls {
 				if (previewFrame!=null) {
 					Frames.RootFrame.Remove( previewFrame );
 				}
-			}
-
-
-			void RefreshFileList (  )
-			{
-				labelDir.Text	=	currentDir;
-
-				var itemList = new List<ListItem>();
-
-				//	add top level directory (if exists) :
-				var parentDir = Directory.GetParent( currentDir )?.FullName;
-
-				if (parentDir!=null) {
-					itemList.Add( new ListItem(parentDir, true, "..") );
-				}
-
-				//	add sub-directories :
-				var dirs = Directory
-					.EnumerateDirectories( currentDir, "*", SearchOption.TopDirectoryOnly )
-					.Select( dir => new ListItem(dir,true) )
-					.ToList();
-
-				itemList.AddRange( dirs );
-
-				//	add files for each pattern :
-				var fileList = new List<string>();
-				
-				foreach (var pattern in searchPatterns) {
-					var files = Directory
-						.EnumerateFiles( currentDir, pattern, SearchOption.TopDirectoryOnly )
-						.ToList();
-
-					fileList.AddRange( files );
-				}
-
-				itemList.AddRange( fileList.Select( file => new ListItem(file,false) ) );
-
-				fileListBox.SetItems(itemList);
 			}
 
 

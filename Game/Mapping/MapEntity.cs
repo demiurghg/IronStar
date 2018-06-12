@@ -9,6 +9,7 @@ using Fusion.Core.Mathematics;
 using IronStar.Core;
 using Fusion.Engine.Graphics;
 using IronStar.SFX;
+using Newtonsoft.Json;
 
 namespace IronStar.Mapping {
 	public class MapEntity : MapNode {
@@ -18,6 +19,7 @@ namespace IronStar.Mapping {
 		/// for editor use only
 		/// </summary>
 		[XmlIgnore]
+		[JsonIgnore]
 		public Entity Entity = null;
 
 		/// <summary>

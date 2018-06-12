@@ -16,12 +16,16 @@ using Fusion.Build;
 using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using Fusion.Engine.Common;
+using IronStar.SFX;
+using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace IronStar {
 	partial class IronStar : Game
 	{
 		const string ConfigFile = "Config.ini";
 
+		[MethodImpl(MethodImplOptions.NoOptimization)]
 		public IronStar() : base("IronStar", "IronStar")
 		{
 			this.Exiting += IronStarGame_Exiting;
@@ -37,6 +41,14 @@ namespace IronStar {
 			this.AddServiceAndComponent( new Network( this ) );
 			this.AddServiceAndComponent( new GameClient( this ) );
 			this.AddServiceAndComponent( new GameServer( this ) );
+			this.AddServiceAndComponent( new Factory( this ) );
+
+			File.Delete("E:\\Github\\Ironstar\\test.json");
+			this.GetService<Factory>().ExportJson(File.OpenWrite("E:\\Github\\Ironstar\\test.json"), new FXFactory() );
+
+			var fxf = (FXFactory)this.GetService<Factory>().ImportJson(File.OpenRead("E:\\Github\\Ironstar\\test.json"));
+
+			fxf.CameraShake.Enabled = true;
 
 			this.GetService<FrameProcessor>().LayerOrder = 100;
 			this.GetService<GameConsole>().LayerOrder = 200;

@@ -1,0 +1,15 @@
+//	lorem ipsum blah dolored foo bar
+//	ipsum blah bar lorem
+
+$typename = FXFactory
+Period = 3
+SoundStage {
+	$typename = SoundStage
+	Enabled = true
+	Sound = sound/env/drone01.wav
+	Attenuation = 1.2
+}
+ParticleStage1 {
+	Enabled = true
+}
+

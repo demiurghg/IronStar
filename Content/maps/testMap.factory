@@ -1,0 +1,57 @@
+
+$root = {
+	$typename	=	Map
+	Distance	=	12.5
+	Position	=	{
+		$typename	=	Vector3
+		X	=	1
+		Y	=	2
+		Z	=	3
+	}
+	Color		=	255,255,255,255
+	FileList	=	["file1", "file2", "file2"]
+}
+
+
+$root begin
+	$typename	=	Map
+	Distance	=	12.5
+	Position	=	begin 
+		
+	end
+end
+
+
+$root = {
+	$typename = Map
+	Nodes = [
+		{
+	]
+}
+
+
+class UberFactory {
+	public void RegisterType( Type type, bool addSubclasses );
+	public void RegisterConverter<T> ( Type type, Func<T,string> writer, Func<string,T> reader );
+	public object Create( string typename );
+	public T Create<T>( string typename );
+	public object LoadXml ( Stream stream );
+	public void StoreXml ( Stream, object obj );
+	public object LoadBinary ( Stream stream );
+	public void StoreBinary ( Stream, object obj );
+}
+
+<?xml version="1.0" encoding="utf-8"?>
+<Root typename="Map">
+	<Distance>12.5</Distance>
+	<Color>127,127,127,255</Color>
+	<Position typename="Vector3">
+		<X>1546</X>
+		<Y>1546</Y>
+		<Z>1546</Z>
+	</Position>
+	<FileList>
+		<Item>file1.txt</Item>
+		<Item>file2.txt</Item>
+	</FileList>
+</Root>

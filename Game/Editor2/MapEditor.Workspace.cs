@@ -23,6 +23,7 @@ using IronStar.Editor2.Controls;
 using IronStar.Editor2.Manipulators;
 using Fusion.Engine.Frames;
 using Fusion.Core.Input;
+using IronStar.Items;
 
 namespace IronStar.Editor2 {
 
@@ -43,10 +44,12 @@ namespace IronStar.Editor2 {
 			var upperShelf	=	workspace.UpperShelf;
 			var lowerShelf	=	workspace.LowerShelf;
 
-			//- PALETTES ---------------------------------------------------------------
+			//- PALETTES & EXPLORERS ---------------------------------------------------
 
 			var entityPalette		=	CreateEntityPalette( workspace );
 			var componentPalette	=	CreateComponentPalette( workspace );
+			var assetExplorer		=	CreateAssetExplorer( workspace );
+			assetExplorer.Visible	=	false;
 
 			//- UPPER SHELF ------------------------------------------------------------
 
@@ -59,6 +62,7 @@ namespace IronStar.Editor2 {
 
 			upperShelf.AddLSplitter();
 			upperShelf.AddFatLButton("ENTPLT", null, ()=> workspace.TogglePalette( entityPalette ) );
+			upperShelf.AddFatLButton("ASSETS", null, ()=> assetExplorer.Visible = !assetExplorer.Visible );
 
 			upperShelf.AddLSplitter();
 			upperShelf.AddFatLButton("UNFRZ", null, ()=> UnfreezeAll() );
@@ -148,7 +152,6 @@ namespace IronStar.Editor2 {
 			workspace.AddHotkey( Keys.OemCloseBrackets, ModKeys.None, () => CameraFov -= 10 );
 
 			workspace.AddHotkey( Keys.F11		, ModKeys.None, () => Game.Invoker.ExecuteString("screenshot") );
-
 		}
 
 
@@ -207,11 +210,123 @@ namespace IronStar.Editor2 {
 
 
 
+		void ShowNameDialog ( FrameProcessor frames, FileListBox fileListBox )
+		{
+			var types = new List<Type>();
+
+			types.Add( typeof(FXFactory) );
+			types.AddRange( Misc.GetAllSubclassesOf(typeof(EntityFactory), true) );
+			types.AddRange( Misc.GetAllSubclassesOf(typeof(ItemFactory), true) );
+
+			var panel	=	new Panel( frames, 0,0, 300, 200 );
+			var listBox	=	new ListBox( frames, types )		{ X = 2, Y = 2, Width = 300-4, Height = 200-22-14 };
+			var textBox	=	new TextBox( frames, null, null )	{ X = 2, Y = 200-22-11, Width=300-4, Height=10 };
+				textBox.TextAlignment	=	Alignment.MiddleLeft;
+
+			panel.Add( listBox );
+			panel.Add( textBox );
+
+			panel.Add( new Button(frames, "Cancel", 300- 80-2, 200-22, 80, 20, () => panel.Close() ) );
+			panel.Add( new Button(frames, "OK",     300-160-4, 200-22, 80, 20, 
+				() => {
+					var type = listBox.SelectedItem as Type;
+					if (type==null) {
+						MessageBox.ShowError(frames, "Select asset type", null);
+						Log.Warning("Select asset type");
+						return;
+					}
+					if (string.IsNullOrWhiteSpace(textBox.Text)) {
+						Log.Warning("Provide asset name");
+						return;
+					}
+					var obj  = Activator.CreateInstance(type);
+					var path = Path.Combine( fileListBox.CurrentDirectory, textBox.Text + ".json" );
+
+					using ( var stream = File.OpenWrite( path ) ) {
+						Game.GetService<Factory>().ExportJson( stream, obj );
+					}
+
+					fileListBox.RefreshFileList();
+
+					panel.Close();
+				}
+			));
+
+			panel.Missclick += (s,e) => {
+				panel.Close();
+			};
+
+			frames.RootFrame.Add( panel );
+			FrameUtils.CenterFrame( panel );
+			frames.PushModalFrame( panel );
+		}
+
+
 		Panel CreateAssetExplorer ( Workspace workspace )
 		{
-			var panel = new Panel( workspace.Frames, 0,0,700,500 );
+			var frames	= workspace.Frames;
+			var factory = Game.GetService<Factory>();
 
-			//panel.Add( new FileSelector.FileSelectorFrame( workspace.Frames, "", "*.xml", "", (s) => Log.Message(s) );
+			var panel = new Panel( workspace.Frames, 0,0,600,500 );
+
+			var fileList	=	new FileListBox( frames, "entities", "*.json" );
+			fileList.X		=	2;
+			fileList.Y		=	14;
+			fileList.Width	=	600/2 - 2;
+			fileList.Height	=	500-14-2-22;
+			fileList.DisplayMode	=	FileListBox.FileDisplayMode.ShortNoExt;
+
+			var grid		=	new AEPropertyGrid( frames );
+			grid.X			=	600/2+1;
+			grid.Y			=	14;
+			grid.Width		=	600/2-3;
+			grid.Height		=	500-14-2-22;
+
+			panel.Add( fileList );
+			panel.Add( grid );
+
+			panel.Add( new Button(frames, "Close", 2, 500-22, 100, 20, () => panel.Visible = false ) );
+
+			panel.Add( new Button(frames, "New Asset", 600-102, 500-22, 100, 20, () => ShowNameDialog(frames, fileList) ) );
+
+			panel.Add( new Button(frames, "Delete", 600-204, 500-22, 100, 20, () => {
+				var item = fileList.SelectedItem;
+
+				if (item.IsDirectory) {
+					MessageBox.ShowError(frames, "Could not delete directory", null);
+					return;
+				}
+
+				MessageBox.ShowQuestion(frames, 
+					string.Format("Delete file {0}?", item.RelativePath), 
+					()=> {
+						File.Delete(item.FullPath); 
+						fileList.RefreshFileList();
+					},
+					null );
+			} ) );
+
+			workspace.Add( panel );
+
+			FrameUtils.CenterFrame( panel );
+
+			fileList.DoubleClick += (s,e) => {
+				if (fileList.SelectedItem!=null && fileList.SelectedItem.IsDirectory) {
+					fileList.CurrentDirectory = fileList.SelectedItem.FullPath;
+				}
+			};
+
+			fileList.SelectedItemChanged += (s,e) => {
+				try {
+					if (!fileList.SelectedItem.IsDirectory) {
+						var obj = factory.ImportJson( File.OpenRead(fileList.SelectedItem.FullPath) );
+						grid.FeedObjects( obj );
+					}
+				} catch ( Exception err ) {
+					Log.Warning(err.Message);
+				}
+			};
+
 
 			return panel;
 		}

@@ -16,6 +16,7 @@ using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
 using IronStar.Core;
 using Fusion.Engine.Tools;
+using Fusion.Engine.Frames;
 
 namespace IronStar.Client {
 	public partial class GameInput : GameComponent {
@@ -108,6 +109,7 @@ namespace IronStar.Client {
 		{
 			var flags = UserAction.None;
 			var console = Game.GetService<GameConsole>();
+			var frames	= Game.GetService<FrameProcessor>();
 			
 			userCommand.MoveForward	=	0;
 			userCommand.MoveRight	=	0;
@@ -135,7 +137,7 @@ namespace IronStar.Client {
 			//var ui		=	Game.UserInterface.Instance as ShooterInterface;
 			//var cam		=	World.GetView<CameraView>();
 
-			if (EnableControl && !Game.Console.IsShown) {
+			if (frames.TargetFrame==null && !Game.Console.IsShown) {
 
 				Game.Mouse.IsMouseCentered	=	true;
 				Game.Mouse.IsMouseClipped	=	true;

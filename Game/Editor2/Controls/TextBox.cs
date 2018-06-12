@@ -55,10 +55,10 @@ namespace IronStar.Editor2.Controls {
 		void CallSetFunc ( string value )
 		{
 			try {
-				setFunc( value );
+				setFunc?.Invoke( value );
 			} catch ( FormatException ) {
 				Log.Warning("'{0}' is not in a valid format.", value);
-				Text = getFunc();
+				Text = getFunc?.Invoke();
 			}
 		}
 
@@ -97,14 +97,16 @@ namespace IronStar.Editor2.Controls {
 		{
 			if (Frames.TargetFrame==this) {
 			} else {
-				Text = getFunc();
+				if (getFunc!=null) {
+					Text = getFunc();
+				}
 			}
 		}
 
 
 		protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
 		{
-			var value	= getFunc();
+			var value	= getFunc==null ? Text : getFunc.Invoke();
 			var padRect	= GetPaddedRectangle(true);
 
 			base.DrawFrame( gameTime, spriteLayer, clipRectIndex );

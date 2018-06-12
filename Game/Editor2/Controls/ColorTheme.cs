@@ -40,5 +40,8 @@ namespace IronStar.Editor2.Controls {
 		public static readonly Color	ColorWhite				=	new Color(180,180,180, 224);
 		public static readonly Color	ColorGreen				=	new Color(144,239,144, 224);
 		public static readonly Color	ColorRed				=	new Color(239,144,144, 224);
+
+		public static readonly Color	BackgroundColorRed		=	new Color(130, 30, 30, 192);
+
 	}
 }

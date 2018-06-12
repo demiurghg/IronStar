@@ -17,17 +17,21 @@ using BEPUphysics.BroadPhaseEntries;
 using Fusion.Core.Mathematics;
 using Fusion;
 using Native.Recast;
+using Newtonsoft.Json;
 
 namespace IronStar.Mapping {
 	public partial class Map {
 
 		[XmlIgnore]
+		[JsonIgnore]
 		public Native.Recast.RCConfig NavConfig { get; set; } = new RCConfig();
 
 		[XmlIgnore]
+		[JsonIgnore]
 		public RecastMesh SourceNavigationMesh;
 
 		[XmlIgnore]
+		[JsonIgnore]
 		public PolyMesh NavigationMesh;
 
 		int[] navIndices;

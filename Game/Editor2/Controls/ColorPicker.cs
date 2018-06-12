@@ -24,7 +24,7 @@ namespace IronStar.Editor2.Controls {
 			colorPicker.Y	=	y;
 
 			fp.RootFrame.Add( colorPicker );
-			fp.ModalFrame = colorPicker;
+			fp.PushModalFrame( colorPicker );
 
 			FrameUtils.ConstrainFrame( colorPicker, 10 );
 		}
@@ -253,8 +253,7 @@ namespace IronStar.Editor2.Controls {
 
 		private void ColorPicker_Missclick( object sender, EventArgs e )
 		{
-			Frames.RootFrame.Remove( this );
-			Frames.ModalFrame = null;
+			Close();
 		}
 
 		Frame AddColorButton ( int x, int y, int w, int h, string text, Color color, Action action )

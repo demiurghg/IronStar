@@ -48,6 +48,10 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -85,6 +89,7 @@
     <Compile Include="Editor2\Controls\DropDown.cs" />
     <Compile Include="Editor2\Controls\Label.cs" />
     <Compile Include="Editor2\Controls\FileListBox.cs" />
+    <Compile Include="Editor2\Controls\MessageBox.cs" />
     <Compile Include="Editor2\Controls\Palette.cs" />
     <Compile Include="Editor2\Controls\Panel.cs" />
     <Compile Include="Editor2\Controls\ListBox.cs" />
@@ -166,6 +171,8 @@
     <Compile Include="Entities\RigidBodyFactory.cs" />
     <Compile Include="Entities\ProxyFactory.cs" />
     <Compile Include="Entities\StartPoint.cs" />
+    <Compile Include="FactoryAttribute.cs" />
+    <Compile Include="Factory.cs" />
     <Compile Include="IronStar.Commands.cs" />
     <Compile Include="IronStar.cs" />
     <Compile Include="Items\Powerup.cs" />
@@ -182,6 +189,7 @@
     <Compile Include="Mapping\MapEnvironment.cs" />
     <Compile Include="Mapping\MapModel.cs" />
     <Compile Include="Mapping\MapLightProbe.cs" />
+    <Compile Include="Mapping\MapNodeCollection.cs" />
     <Compile Include="Mapping\MapSpotLight.cs" />
     <Compile Include="Mapping\MapOmniLight.cs" />
     <Compile Include="Mapping\MapNode.cs" />
@@ -295,6 +303,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Editors\toolRotate.png" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

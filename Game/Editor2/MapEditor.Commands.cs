@@ -44,6 +44,22 @@ namespace IronStar.Editor2 {
 
 
 
+		class CreateAsset : CommandNoHistory 
+		{
+			readonly MapEditor mapEditor;
+
+			public CreateAsset ( MapEditor mapEditor, ArgList args )
+			{
+				this.mapEditor	=	mapEditor;
+			}
+
+			public override object Execute()
+			{
+				mapEditor.SaveMap();
+				return null;
+			}
+		}
+
 
 
 		class EditorSave : CommandNoHistory

@@ -43,12 +43,59 @@ namespace Fusion.Engine.Frames {
 
 
 		/// <summary>
-		/// Sets and gets modal frame for entire UI.
+		/// Gets modal frame for entire UI.
 		/// This property does not set TargetFrame.
 		/// </summary>
-		public Frame ModalFrame {
-			get; set;
-		} = null;
+		internal Frame ModalFrame {
+			get {
+				if (modalFrames.Any()) {
+					return modalFrames.Peek();
+				} else {
+					return null;
+				}
+			}
+		}
+
+		Stack<Frame> modalFrames = new Stack<Frame>();
+
+		/// <summary>
+		/// Checks that given frame is modal
+		/// </summary>
+		/// <param name="frame"></param>
+		/// <returns></returns>
+		internal bool IsFrameModal ( Frame frame )
+		{
+			return modalFrames.Contains(frame);
+		}
+
+
+		/// <summary>
+		/// Pushes frame on top of modal frames.
+		/// </summary>
+		/// <param name="frame"></param>
+		public void PushModalFrame ( Frame frame )
+		{
+			if (frame==null) {
+				throw new ArgumentNullException("frame");
+			}
+			if (modalFrames.Contains(frame)) {
+				throw new InvalidOperationException("frame is already modal");
+			}
+			modalFrames.Push( frame );
+		}
+
+
+		/// <summary>
+		/// Removed top modal frame
+		/// </summary>
+		public void PopModalFrame ()
+		{
+			if (!modalFrames.Any()) {
+				throw new InvalidOperationException("no more modal frames");
+			}
+
+			modalFrames.Pop();
+		}
 
 
 		/// <summary>
@@ -182,7 +229,7 @@ namespace Fusion.Engine.Frames {
 		{
 			RootFrame.Clear();
 			TargetFrame = null;
-			ModalFrame = null;
+			modalFrames.Clear();
 		}
 
 
@@ -193,14 +240,17 @@ namespace Fusion.Engine.Frames {
 		/// <param name="frame"></param>
 		public void WipeRefs ( Frame frame )
 		{
-			var scan = ModalFrame;
+			Frame scan;
 
-			while (scan!=null) {
-				if (scan==frame) {
-					ModalFrame = null;
-					break;
-				} else {
-					scan = scan.Parent;
+			foreach ( var modalFrame in modalFrames ) {
+				scan = modalFrame;
+
+				while (scan!=null) {
+					if (scan==frame) {
+						throw new InvalidOperationException("Could not wipe refs for modal frame");
+					} else {
+						scan = scan.Parent;
+					}
 				}
 			}
 
@@ -216,13 +266,6 @@ namespace Fusion.Engine.Frames {
 					scan = scan.Parent;
 				}
 			}
-		}
-
-
-		public void WipeRefs ()
-		{
-			ModalFrame = null;
-			TargetFrame  = null;
 		}
 
 

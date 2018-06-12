@@ -96,15 +96,14 @@ namespace IronStar.Editor2.Controls {
 			dropDownList.Y = gr.Y + gr.Height;
 
 			Frames.RootFrame.Add( dropDownList );
-			Frames.ModalFrame = dropDownList;
+			Frames.PushModalFrame( dropDownList );
 		}
 
 
 
 		void CloseDropDownList()
 		{
-			Frames.RootFrame.Remove( dropDownList );
-			Frames.ModalFrame = null;
+			dropDownList.Close();
 		}
 
 

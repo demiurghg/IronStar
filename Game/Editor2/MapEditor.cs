@@ -30,6 +30,8 @@ namespace IronStar.Editor2 {
 	/// </summary>
 	public partial class MapEditor : GameComponent {
 
+		const string Ext = ".json";
+
 		public static readonly BoundingBox DefaultBox = new BoundingBox( Vector3.One * (-0.25f), Vector3.One * 0.25f );
 
 		string mapName;
@@ -100,7 +102,7 @@ namespace IronStar.Editor2 {
 
 			Game.Keyboard.ScanKeyboard =	true;
 
-			fullPath	=	Builder.GetFullPath(@"maps\" + map + ".map");
+			fullPath	=	Builder.GetFullPath(@"maps\" + map + Ext);
 		}
 
 
@@ -114,7 +116,7 @@ namespace IronStar.Editor2 {
 
 			if (File.Exists(fullPath)) {
 				Log.Message("Opening existing map: {0}", fullPath);
-				this.map = Map.LoadFromXml( File.OpenRead( fullPath ) );
+				this.map = (Map)Game.GetService<Factory>().ImportJson( File.OpenRead( fullPath ) );
 			} else {
 				Log.Message("Creating new map: {0}", fullPath);
 				this.map = new Map();
@@ -136,7 +138,8 @@ namespace IronStar.Editor2 {
 		{
 			Log.Message("Saving map: {0}", fullPath);
 			File.Delete( fullPath );
-			Map.SaveToXml( map, File.OpenWrite( fullPath ) );
+
+			Game.GetService<Factory>().ExportJson( File.OpenWrite( fullPath ), map );
 		}
 
 
@@ -145,12 +148,13 @@ namespace IronStar.Editor2 {
 		/// </summary>
 		public void SaveMapAs ( string newMapName )
 		{
-			fullPath	=	Builder.GetFullPath(@"maps\" + newMapName + ".map");
+			fullPath	=	Builder.GetFullPath(@"maps\" + newMapName + Ext);
 			mapName		=	newMapName;
 
 			Log.Message("Saving map: {0}", fullPath);
 			File.Delete( fullPath );
-			Map.SaveToXml( map, File.OpenWrite( fullPath ) );
+
+			Game.GetService<Factory>().ExportJson( File.OpenWrite( fullPath ), map );
 		}
 
 

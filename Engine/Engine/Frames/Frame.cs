@@ -175,6 +175,7 @@ namespace Fusion.Engine.Frames {
 		public event EventHandler	Activated;
 		public event EventHandler	Deactivated;
 		public event EventHandler	Missclick;
+		public event EventHandler	Closed;
 		public event EventHandler<MouseEventArgs>	MouseIn;
 		public event EventHandler<MouseEventArgs>	MouseMove;
 		public event EventHandler<MouseEventArgs>	MouseOut;
@@ -349,6 +350,7 @@ namespace Fusion.Engine.Frames {
 			foreach ( var child in children ) {
 				ui.WipeRefs(child);
 				child.parent = null;
+				child.Closed?.Invoke(this, EventArgs.Empty);
 			}
 			children.Clear();
 			layoutDirty = true;
@@ -378,15 +380,35 @@ namespace Fusion.Engine.Frames {
 		/// <param name="frame"></param>
 		public virtual void Remove ( Frame frame )
 		{
-			if ( this.children.Contains(frame) ) {
-				this.children.Remove( frame );
+			if ( children.Contains(frame) ) {
+
+				if (Frames.IsFrameModal(frame)) {
+					if (frame==Frames.ModalFrame) {
+						Frames.PopModalFrame();
+					} else {
+						throw new InvalidOperationException("Could not remove non top level modal frame");
+					}
+				}
+
+				children.Remove( frame );
 				frame.parent	=	null;
 				layoutDirty = true;
 
 				ui.WipeRefs(frame);
+
+				Closed?.Invoke(this, EventArgs.Empty);
 			}
 		}
 
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public virtual void Close ()
+		{
+			Parent?.Remove(this);
+		}
 
 
 		/// <summary>

@@ -31,7 +31,7 @@ namespace IronStar.Mapping {
 		/// <summary>
 		/// List of nodes
 		/// </summary>
-		public List<MapNode> Nodes { get; set; }
+		public MapNodeCollection Nodes { get; set; }
 
 
 		/// <summary>
@@ -39,7 +39,7 @@ namespace IronStar.Mapping {
 		/// </summary>
 		public Map ()
 		{
-			Nodes		=	new List<MapNode>();
+			Nodes		=	new MapNodeCollection();
 			Environment	=	new MapEnvironment();
 		}
 
@@ -91,36 +91,6 @@ namespace IronStar.Mapping {
 			gameWorld.snapshotHeader.Turbidity		=	Environment.SkyTrubidity;
 			gameWorld.snapshotHeader.AmbientLevel	=	Environment.AmbientLevel;
 		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="stream"></param>
-		/// <returns></returns>
-		public static Map LoadFromXml ( Stream stream )
-		{
-			var extraTypes = new List<Type>();
-			extraTypes.AddRange( Misc.GetAllSubclassesOf( typeof( MapNode ) ) );
-			extraTypes.AddRange( Misc.GetAllSubclassesOf( typeof( EntityFactory ) ) );
-
-			return (Map)Misc.LoadObjectFromXml( typeof( Map ), stream, extraTypes.ToArray() );
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="stream"></param>
-		public static void SaveToXml ( Map map, Stream stream )
-		{
-			var extraTypes = new List<Type>();
-			extraTypes.AddRange( Misc.GetAllSubclassesOf( typeof( MapNode ) ) );
-			extraTypes.AddRange( Misc.GetAllSubclassesOf( typeof( EntityFactory ) ) );
-			
-			Misc.SaveObjectToXml( map, typeof( Map ), stream, extraTypes.ToArray() );
-		}
 	}
 
 
@@ -131,11 +101,9 @@ namespace IronStar.Mapping {
 	[ContentLoader( typeof( Map ) )]
 	public sealed class MapLoader : ContentLoader {
 
-		static Type[] extraTypes;
-
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 		{
-			return Map.LoadFromXml( stream );
+			return content.Game.GetService<Factory>().ImportJson( stream );
 		}
 	}
 }

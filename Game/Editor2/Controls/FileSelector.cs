@@ -27,7 +27,7 @@ namespace IronStar.Editor2.Controls {
 			var fileSelector	=	new FileSelectorFrame( fp, defaultDir, searchPattern, oldFileName, setFileName );
 
 			fp.RootFrame.Add( fileSelector );
-			fp.ModalFrame = fileSelector;
+			fp.PushModalFrame( fileSelector );
 
 			FrameUtils.CenterFrame( fileSelector );
 		}
@@ -113,8 +113,13 @@ namespace IronStar.Editor2.Controls {
 				Add( labelDir );
 
 				Missclick += FileSelectorFrame_Missclick;
+				Closed += FileSelectorFrame_Closed;
 			}
 
+			private void FileSelectorFrame_Closed( object sender, EventArgs e )
+			{
+				ClosePreview();
+			}
 
 			private void FileListBox_SelectedItemChanged( object sender, EventArgs e )
 			{
@@ -125,15 +130,6 @@ namespace IronStar.Editor2.Controls {
 			private void FileListBox_DoubleClick( object sender, MouseEventArgs e )
 			{
 				Accept();
-			}
-
-
-			public void Close ()
-			{
-				Frames.RootFrame.Remove( this );
-				Frames.ModalFrame = null;
-
-				ClosePreview();
 			}
 
 

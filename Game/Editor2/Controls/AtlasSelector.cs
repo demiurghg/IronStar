@@ -27,7 +27,7 @@ namespace IronStar.Editor2.Controls {
 			var atlasSelector	=	new AtlasSelectorFrame( fp, atlasName, oldImageName, setImageName );
 
 			fp.RootFrame.Add( atlasSelector );
-			fp.ModalFrame = atlasSelector;
+			fp.PushModalFrame( atlasSelector );
 
 			FrameUtils.CenterFrame( atlasSelector );
 		}
@@ -140,13 +140,6 @@ namespace IronStar.Editor2.Controls {
 					break;
 				}
 			}
-
-			public void Close ()
-			{
-				Frames.RootFrame.Remove( this );
-				Frames.ModalFrame = null;
-			}
-
 
 			public void Accept(string name)
 			{

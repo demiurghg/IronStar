@@ -17,7 +17,14 @@ namespace IronStar.Editor2.Controls {
 
 	public class FileListBox : ListBox {
 
+		public enum FileDisplayMode {
+			ShortNoExt,
+			Short,
+			Full,
+		}
+
 		public class FileListItem {
+			public readonly FileDisplayMode DisplayMode;
 			public readonly bool IsDirectory;
 			public readonly string FullPath;
 			public readonly string DisplayName;
@@ -30,18 +37,28 @@ namespace IronStar.Editor2.Controls {
 				return ( size/1024/1024 ).ToString() + " Mb";
 			}
 
-			public FileListItem( string fullPath, bool dir, string disp = null )
+			public FileListItem( FileDisplayMode displayMode, string fullPath, bool dir, string disp = null )
 			{
 				FullPath		=   fullPath;
 				IsDirectory		=   dir;
 				RelativePath	=	ContentUtils.MakeRelativePath( ContentDirectory + "\\", fullPath );
 
-				DisplayName =   disp ?? string.Format( "{0,1}{1,-40}{2,-12}{3,12}",
-					IsDirectory ? "\\" : "",
-					IsDirectory ? Path.GetFileName( fullPath ) : Path.GetFileNameWithoutExtension( fullPath ),
-					IsDirectory ? "" : Path.GetExtension( fullPath ),
-					IsDirectory ? "Folder" : SizeToString( new FileInfo( fullPath ).Length )
-					);
+				switch (displayMode) {
+					case FileDisplayMode.Full: 				
+							DisplayName =   disp ?? string.Format( "{0,1}{1,-40}{2,-12}{3,12}",
+							dir ? "\\" : "",
+							dir ? Path.GetFileName( fullPath ) : Path.GetFileNameWithoutExtension( fullPath ),
+							dir ? "" : Path.GetExtension( fullPath ),
+							dir ? "Folder" : SizeToString( new FileInfo( fullPath ).Length )
+							);
+						break;
+					case FileDisplayMode.Short: 				
+							DisplayName =   disp ?? string.Format( "{0}{1}", dir ? "\\" : " ", Path.GetFileName( fullPath ) );
+						break;
+					case FileDisplayMode.ShortNoExt: 				
+							DisplayName =   disp ?? string.Format( "{0}{1}", dir ? "\\" : " ", Path.GetFileNameWithoutExtension( fullPath ) );
+						break;
+				}
 			}
 
 
@@ -87,6 +104,20 @@ namespace IronStar.Editor2.Controls {
 		}
 
 
+
+		FileDisplayMode fileDisplayMode = FileDisplayMode.Full;
+
+		public FileDisplayMode DisplayMode {
+			get {
+				return fileDisplayMode;
+			}
+			set {
+				fileDisplayMode = value;
+				RefreshFileList();
+			}
+		}
+
+
 		/// <summary>
 		/// Selected file list item.
 		/// </summary>
@@ -127,7 +158,7 @@ namespace IronStar.Editor2.Controls {
 		/// <summary>
 		/// Updates file list for current directory.
 		/// </summary>
-		void RefreshFileList ()
+		public void RefreshFileList ()
 		{
 			var itemList = new List<FileListItem>();
 
@@ -135,13 +166,13 @@ namespace IronStar.Editor2.Controls {
 			var parentDir = Directory.GetParent( currentDir )?.FullName;
 
 			if (parentDir!=null) {
-				itemList.Add( new FileListItem(parentDir, true, "..") );
+				itemList.Add( new FileListItem(fileDisplayMode, parentDir, true, "..") );
 			}
 
 			//	add sub-directories :
 			var dirs = Directory
 				.EnumerateDirectories( currentDir, "*", SearchOption.TopDirectoryOnly )
-				.Select( dir => new FileListItem(dir,true) )
+				.Select( dir => new FileListItem(fileDisplayMode, dir, true) )
 				.ToList();
 
 			itemList.AddRange( dirs );
@@ -157,7 +188,7 @@ namespace IronStar.Editor2.Controls {
 				fileList.AddRange( files );
 			}
 
-			itemList.AddRange( fileList.Select( file => new FileListItem(file,false) ) );
+			itemList.AddRange( fileList.Select( file => new FileListItem(fileDisplayMode, file, false) ) );
 
 			SetItems(itemList);
 		}

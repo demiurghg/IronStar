@@ -61,5 +61,25 @@ namespace Fusion {
 		{
 			return source.Skip(Math.Max(0, source.Count() - count));
 		}
+
+
+		/// <summary>
+		/// https://stackoverflow.com/questions/5729572/eliminate-consecutive-duplicates-of-list-elements
+		/// https://stackoverflow.com/a/5729869
+		/// </summary>
+		/// <param name="source"></param>
+		/// <returns></returns>
+		public static IEnumerable<T> DistinctAdjacent<T>(this IEnumerable<T> source)
+		{
+			List<T> results = new List<T>();
+
+			foreach (var element in source) {
+				if (results.Count == 0 || !results.Last().Equals(element) ) {
+					results.Add(element);
+				}
+			}
+
+			return results;
+		}
 	}
 }

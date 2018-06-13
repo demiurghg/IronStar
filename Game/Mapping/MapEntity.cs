@@ -10,6 +10,7 @@ using IronStar.Core;
 using Fusion.Engine.Graphics;
 using IronStar.SFX;
 using Newtonsoft.Json;
+using Fusion.Core.Shell;
 
 namespace IronStar.Mapping {
 	public class MapEntity : MapNode {
@@ -25,7 +26,7 @@ namespace IronStar.Mapping {
 		/// <summary>
 		/// Entity target name
 		/// </summary>
-		[Category("Entity")]
+		[AECategory("Entity")]
 		[Description("Entity target name")]
 		public string TargetName { get; set; }
 
@@ -33,6 +34,8 @@ namespace IronStar.Mapping {
 		/// Entity factory
 		/// </summary>
 		[Browsable(false)]
+		[AEExpandable]
+		[AECategory("Factory")]
 		public EntityFactory Factory { get; set; }
 
 

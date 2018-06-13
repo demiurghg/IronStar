@@ -17,6 +17,7 @@ namespace IronStar.Editor2.Controls {
 		readonly Factory factory;
 		readonly Label label;
 		readonly AEPropertyGrid grid;
+		readonly ScrollBox scrollBox;
 
 		string targetFileName;
 		object targetObject;
@@ -33,6 +34,12 @@ namespace IronStar.Editor2.Controls {
 			fileList.Height	=	500-14-2-22;
 			fileList.DisplayMode	=	FileListBox.FileDisplayMode.ShortNoExt;
 
+			scrollBox			=	new ScrollBox( Frames, 0,0,0,0 );
+			scrollBox.X			=	600/2+1;
+			scrollBox.Y			=	14;
+			scrollBox.Width		=	600/2-3;
+			scrollBox.Height	=	500-14-2-22;
+
 			grid			=	new AEPropertyGrid( Frames );
 			grid.X			=	600/2+1;
 			grid.Y			=	14;
@@ -40,7 +47,9 @@ namespace IronStar.Editor2.Controls {
 			grid.Height		=	500-14-2-22;
 
 			this.Add( fileList );
-			this.Add( grid );
+			this.Add( scrollBox );
+
+			scrollBox.Add( grid );
 
 			label = new Label( Frames, 2,2,600-4,10, fileList.CurrentDirectory );
 			label.TextAlignment = Alignment.MiddleLeft;

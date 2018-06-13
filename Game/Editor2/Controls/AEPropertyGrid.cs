@@ -90,15 +90,21 @@ namespace IronStar.Editor2.Controls {
 		/// <summary>
 		/// 
 		/// </summary>
-		void FeedObject ( object obj )
+		void FeedObject ( object obj, string subcat=null )
 		{
 			if (obj==null) {
 				return;
 			}
 
+			//--------------------------------------------------------------------------
+
 			foreach ( var pi in obj.GetType().GetProperties() ) {
 
-				if (!pi.CanWrite) {
+				if (!pi.CanWrite || !pi.CanRead) {
+					continue;
+				}
+
+				if (pi.HasAttribute<AEIgnoreAttribute>()) {
 					continue;
 				}
 
@@ -108,7 +114,15 @@ namespace IronStar.Editor2.Controls {
 				};
 
 				var name		=	pi.GetAttribute<AEDisplayNameAttribute>()?.Name ?? pi.Name;
-				var category	=	pi.GetAttribute<AECategoryAttribute>()?.Category ?? "Misc";
+				var category	=	pi.GetAttribute<AECategoryAttribute>()?.Category;
+
+				if (category==null) {
+					category	=	subcat ?? "Misc";
+				} else {
+					if (subcat!=null) {
+						category = category + "/" + subcat;
+					}
+				}
 
 				if (pi.PropertyType==typeof(bool)) {
 					AddCheckBox( category, name, ()=>(bool)(pi.GetValue(obj)), (val)=>setFunc(val) );
@@ -180,9 +194,18 @@ namespace IronStar.Editor2.Controls {
 					AddDropDown( category, name, value, values, ()=>pi.GetValue(obj).ToString(), (val)=>setFunc(Enum.Parse(type, val)) );
 				}
 
+				if (pi.PropertyType.IsClass) {
+					
+					if (pi.HasAttribute<AEExpandableAttribute>()) {
+						var type	=	pi.PropertyType;
+						var value	=	pi.GetValue(obj);
+						FeedObject( value, category + "/" + pi.Name );
+					}
+				}
+
 			}
 
-
+			//--------------------------------------------------------------------------
 
 			foreach ( var mi in obj.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance) ) {
 
@@ -209,19 +232,34 @@ namespace IronStar.Editor2.Controls {
 		}
 
 
+		/// <summary>
+		/// Adds frame to collapsibale region
+		/// </summary>
+		/// <param name="category"></param>
+		/// <param name="frame"></param>
 		void AddToCollapseRegion ( string category, Frame frame )
 		{
-			var region = Children
-						.Where( f1 => f1 is AECollapseRegion )
-						.Select( f2 => (AECollapseRegion)f2 )
-						.FirstOrDefault( f3 => f3.Category == category );
+			var path =	category.Split('/')
+						.DistinctAdjacent()
+						.ToArray();
 
-			if (region==null) {
-				region = new AECollapseRegion(this, category);
-				Add( region );	
+			Frame root = this;
+
+			for (int i=0; i<path.Length; i++) {
+				var region = root.Children
+							.Where( f1 => f1 is AECollapseRegion )
+							.Select( f2 => (AECollapseRegion)f2 )
+							.FirstOrDefault( f3 => f3.Category == path[i] );
+
+				if (region==null) {
+					region = new AECollapseRegion(this, path[i], i);
+					root.Add( region );	
+				}
+
+				root = region;
 			}
 
-			region.Add( frame );
+			root.Add( frame );
 		}
 
 
@@ -247,7 +285,6 @@ namespace IronStar.Editor2.Controls {
 
 		public void AddButton ( string category, string name, Action action )
 		{
-			//AddToCollapseRegion( category, new AEButton( this, name, action ) );
 			AddToCollapseRegion( category, new Button( Frames, name, 0,0, 200, 20, action ) { MarginRight = 100 } );
 		}
 

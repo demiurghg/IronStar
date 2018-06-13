@@ -21,40 +21,41 @@ using System.Drawing.Design;
 using Fusion.Core.Content;
 using Fusion.Development;
 using Fusion.Core;
+using Fusion.Core.Shell;
 
 namespace IronStar.SFX {
 
 	public partial class FXFactory : IPrecachable {
 
-		[Category("General")]
+		[AECategory("General")]
 		public float Period { get; set; } = 1;
 
-		[Category( "Misc Stages" )]
-		[TypeConverter( typeof( ExpandableObjectConverter ) )]
+		[AECategory( "Misc Stages" )]
+		[AEExpandable]
 		public FXSoundStage SoundStage { get; set; } = new FXSoundStage();
 
-		[Category( "Misc Stages" )]
-		[TypeConverter( typeof( ExpandableObjectConverter ) )]
+		[AECategory( "Misc Stages" )]
+		[AEExpandable]
 		public FXLightStage LightStage { get; set; } = new FXLightStage();
 
-		[Category( "Misc Stages" )]
-		[TypeConverter( typeof( ExpandableObjectConverter ) )]
+		[AECategory( "Misc Stages" )]
+		[AEExpandable]
 		public FXCameraShake CameraShake { get; set; } = new FXCameraShake();
 
-		[Category( "Particle Stages" )]
-		[TypeConverter( typeof( ExpandableObjectConverter ) )]
+		[AECategory( "Particle Stages" )]
+		[AEExpandable]
 		public FXParticleStage ParticleStage1 { get; set; } = new FXParticleStage();
 
-		[Category( "Particle Stages" )]
-		[TypeConverter( typeof( ExpandableObjectConverter ) )]
+		[AECategory( "Particle Stages" )]
+		[AEExpandable]
 		public FXParticleStage ParticleStage2 { get; set; } = new FXParticleStage();
 
-		[Category( "Particle Stages" )]
-		[TypeConverter( typeof( ExpandableObjectConverter ) )]
+		[AECategory( "Particle Stages" )]
+		[AEExpandable]
 		public FXParticleStage ParticleStage3 { get; set; } = new FXParticleStage();
 
-		[Category( "Particle Stages" )]
-		[TypeConverter( typeof( ExpandableObjectConverter ) )]
+		[AECategory( "Particle Stages" )]
+		[AEExpandable]
 		public FXParticleStage ParticleStage4 { get; set; } = new FXParticleStage();
 
 
@@ -362,7 +363,7 @@ namespace IronStar.SFX {
 		public float Period { get; set; } = 1;
 
 		[Description( "Defines temporal properties of particle stage" )]
-		[TypeConverter( typeof( ExpandableObjectConverter ) )]
+		[AEExpandable]
 		public FXTiming Timing { get; set; } = new FXTiming();
 
 		[Description( "Particle base color" )]
@@ -387,23 +388,23 @@ namespace IronStar.SFX {
 		public float Temperature { get; set; } = 6600;
 
 		[Description( "Defines life-time properties of particle stage" )]
-		[TypeConverter( typeof( ExpandableObjectConverter ) )]
+		[AEExpandable]
 		public FXLifetime Lifetime { get; set; } = new FXLifetime();
 
 		[Description( "Defines shape of particles" )]
-		[TypeConverter( typeof( ExpandableObjectConverter ) )]
+		[AEExpandable]
 		public FXShape Shape { get; set; } = new FXShape();
 
 		[Description( "Defines particle spawn area" )]
-		[TypeConverter( typeof( ExpandableObjectConverter ) )]
+		[AEExpandable]
 		public FXPosition Position { get; set; } = new FXPosition();
 
 		[Description( "Defines particle velocity" )]
-		[TypeConverter( typeof( ExpandableObjectConverter ) )]
+		[AEExpandable]
 		public FXVelocity Velocity { get; set; } = new FXVelocity();
 
 		[Description( "Defines particle damping and acceleration" )]
-		[TypeConverter( typeof( ExpandableObjectConverter ) )]
+		[AEExpandable]
 		public FXAcceleration Acceleration { get; set; } = new FXAcceleration();
 	}
 

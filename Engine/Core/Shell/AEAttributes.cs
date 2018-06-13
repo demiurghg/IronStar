@@ -36,6 +36,16 @@ namespace Fusion.Core.Shell {
 
 
 	[AttributeUsage(AttributeTargets.Property)]
+	public class AEExpandableAttribute : Attribute {
+	}
+
+
+	[AttributeUsage(AttributeTargets.Property)]
+	public class AEIgnoreAttribute : Attribute {
+	}
+
+
+	[AttributeUsage(AttributeTargets.Property)]
 	public class AEValueRangeAttribute : Attribute {
 
 		public readonly float Min;

@@ -30,17 +30,18 @@ namespace IronStar.Editor2.Controls {
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AECollapseRegion ( AEPropertyGrid grid, string category ) : base(grid.Frames)
+			public AECollapseRegion ( AEPropertyGrid grid, string category, int nestingLevel ) : base(grid.Frames)
 			{ 
 				this.grid		=	grid;
 				this.Category	=	category;
 
 				TextAlignment	=	Alignment.MiddleCenter;
-				BorderColor		=	ColorTheme.BorderColor;
+				BorderColor		=	ColorTheme.BackgroundColorDark;
 				BackColor		=	Color.Zero;
 				Border			=	0;
 				Padding			=	0;
-				PaddingBottom	=	0;
+				BorderLeft		=	3;
+				PaddingLeft		=	1;
 
 				Width			=	100;
 
@@ -109,6 +110,19 @@ namespace IronStar.Editor2.Controls {
 						buttonCollapse.TextOffsetX	=	1;
 						buttonCollapse.TextOffsetY =	0;	
 					break;
+				}
+
+
+				switch ( e.Status ) {
+					case FrameStatus.None:		
+						BorderColor		=	ColorTheme.BorderColorLight;
+						break;
+					case FrameStatus.Hovered:	
+						BorderColor		=	ColorTheme.ButtonColorHovered;
+						break;
+					case FrameStatus.Pushed:	
+						BorderColor		=	ColorTheme.ButtonColorPushed;
+						break;
 				}
 			}
 		}

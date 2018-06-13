@@ -14,6 +14,7 @@ using Fusion.Core.Utils;
 using Native.Fbx;
 using Fusion.Drivers.Graphics;
 using Fusion.Engine.Graphics;
+using Newtonsoft.Json;
 
 namespace FScene {
 
@@ -79,26 +80,6 @@ namespace FScene {
 						}
 					}
 
-
-#if false
-					if (options.BaseDirectory!=null) {
-
-						Log.Message("Resolving assets path...");
-						
-						var relativePath = ContentUtils.MakeRelativePath( options.BaseDirectory + @"\", options.Input );
-						var relativeDir  = Path.GetDirectoryName( relativePath );
-						var sceneDir	 = Path.GetDirectoryName( options.Input );
-						Log.Message("...scene directory      : {0}", sceneDir);
-						Log.Message("...scene base directory : {0}", options.BaseDirectory);
-						Log.Message("...scene relative path  : {0}", relativePath);
-						Log.Message("...scene relative dir   : {0}", relativeDir);
-
-						foreach ( var mtrl in scene.Materials ) {
-							ResolveMaterial( mtrl, relativeDir, sceneDir );
-						}
-					}
-#endif
-
 					//
 					//	Save scene :
 					//					
@@ -144,63 +125,21 @@ namespace FScene {
 			
 			foreach ( var mtrl in scene.Materials ) {
 
-				var mtrlPath = Path.Combine( dir, mtrl.Name + ".material" );
+				var mtrlPathIni	 = Path.Combine( dir, mtrl.Name + ".material" );
+				var mtrlPathJson = Path.Combine( dir, mtrl.Name + ".json" );
 
-				if (!File.Exists(mtrlPath)) {
+				if (!File.Exists(mtrlPathIni)) {
 
-					Log.Message("...new material: {0}", mtrlPath);
+					Log.Message("...new material: {0}", mtrlPathIni);
 
-					Material.SaveToIniFile( mtrl, File.OpenWrite(mtrlPath) );
-
+					Material.SaveToIniFile( mtrl, File.OpenWrite(mtrlPathIni) );
 				}
+
+				/*if (!File.Exists(mtrlPathJson)) {
+					Log.Message("...new material: {0}", mtrlPathJson);
+					File.WriteAllText( mtrlPathJson, JsonConvert.SerializeObject(mtrl, Formatting.Indented) );
+				} */
 			}
 		}
-
-
-		#if false
-		static void ResolveMaterial ( Material material, string relativeSceneDir, string fullSceneDir )
-		{
-			var mtrlName		=	ContentUtils.CreateSafeName( material.Name );
-			var texPath			=	material.Texture ?? "";
-
-			material.Name		=	Path.Combine( relativeSceneDir, mtrlName );
-			material.Texture	=	Path.Combine( relativeSceneDir, texPath );
-			var mtrlFileName	=	Path.Combine( fullSceneDir, mtrlName + ".material" );
-
-
-			if (!File.Exists(mtrlFileName)) {
-
-				var newMtrl =	new BaseIllum();
-
-				newMtrl.ColorTexture.Path		=	ResolveTexture( relativeSceneDir, fullSceneDir, texPath, ""					, newMtrl.ColorTexture.Path		);  
-				newMtrl.SurfaceTexture.Path		=	ResolveTexture( relativeSceneDir, fullSceneDir, texPath, "_surf"			, newMtrl.SurfaceTexture.Path	);  
-				newMtrl.NormalMapTexture.Path	=	ResolveTexture( relativeSceneDir, fullSceneDir, texPath, "_local", "_bump"	, newMtrl.NormalMapTexture.Path	);  
-				newMtrl.EmissionTexture.Path	=	ResolveTexture( relativeSceneDir, fullSceneDir, texPath, "_glow"			, newMtrl.EmissionTexture.Path	);  
-
-				File.WriteAllText( mtrlFileName, BaseIllum.ExportToXml(newMtrl) );
-			}
-
-		}
-
-
-
-		static string ResolveTexture ( string relativeSceneDir, string fullSceneDir, string textureName, string postfix, string fallback )
-		{	
-			if (string.IsNullOrWhiteSpace(textureName)) {
-				return "";
-			}
-
-			var ext		=	Path.GetExtension( textureName );
-			var noExt	=	Path.Combine( Path.GetDirectoryName(textureName), Path.GetFileNameWithoutExtension( textureName ) );
-
-			var fileName	=	Path.Combine( fullSceneDir, noExt + postfix + ext );
-			
-			if ( File.Exists(fileName) ) {
-				return Path.Combine( relativeSceneDir, noExt + postfix + ext );
-			} else {
-				return fallback;
-			}
-		}
-		#endif
 	}
 }

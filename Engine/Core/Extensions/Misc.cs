@@ -285,10 +285,6 @@ namespace Fusion.Core.Extensions {
 
 				foreach ( var t in a.GetLoadableTypes() ) {
 
-					if (t.IsAbstract) {
-						continue;
-					}
-					
 					if (includeBaseClass && (t==type)) {
 						types.Add(t);
 					}

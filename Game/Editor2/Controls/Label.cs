@@ -28,6 +28,8 @@ namespace IronStar.Editor2.Controls {
 			this.Height			=	h;
 
 			this.Text			=	text;
+
+			this.Ghost			=	true;
 		}
 
 	}

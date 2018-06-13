@@ -120,9 +120,10 @@ namespace Fusion.Engine.Frames {
 		/// <param name="root"></param>
 		public void Update ( Point mousePoint, bool releaseTouch = false )
 		{
-			var root		=	ui.RootFrame;
+			ui.MousePosition	=	mousePoint;
 
-			var hovered		=	ui.GetHoveredFrame(mousePoint);
+			var root			=	ui.RootFrame;
+			var hovered			=	ui.GetHoveredFrame(mousePoint);
 			
 			//
 			//	update mouse move :

@@ -28,6 +28,9 @@ namespace Fusion.Engine.Frames {
 		[Config]	public bool		ShowProfilingInfo	{ get; set; }
 
 
+		public Point MousePosition { get; internal set; }
+
+
 		/// <summary>
 		/// Sets and gets current root frame.
 		/// </summary>

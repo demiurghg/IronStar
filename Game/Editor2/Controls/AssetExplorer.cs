@@ -24,7 +24,9 @@ namespace IronStar.Editor2.Controls {
 		
 		public AssetExplorer( Frame parent, string initialDir, Type[] types, int x, int y, int w, int h ) : base(parent.Frames, x,y,600,500)
 		{
-			this.types		=	types;
+			AllowDrag		=	true;
+
+			this.types		=	types.Where( t => !t.IsAbstract ).ToArray();
 			this.factory	=	parent.Game.GetService<Factory>();
 
 			fileList		=	new FileListBox( Frames, "", "*.json" );

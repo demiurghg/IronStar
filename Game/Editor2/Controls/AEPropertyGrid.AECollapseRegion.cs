@@ -17,13 +17,14 @@ namespace IronStar.Editor2.Controls {
 		class AECollapseRegion : Frame {
 
 			readonly AEPropertyGrid	grid;
+			readonly int nestingLevel;
 
 			public readonly string Category;
 
 			bool visible = true;
 
 			Frame buttonCollapse;
-			bool collapsed = false;
+			bool collapsed = true;
 
 			/// <summary>
 			/// 
@@ -32,8 +33,9 @@ namespace IronStar.Editor2.Controls {
 			/// <param name="bindingInfo"></param>
 			public AECollapseRegion ( AEPropertyGrid grid, string category, int nestingLevel ) : base(grid.Frames)
 			{ 
-				this.grid		=	grid;
-				this.Category	=	category;
+				this.grid			=	grid;
+				this.Category		=	category;
+				this.nestingLevel	=	nestingLevel;
 
 				TextAlignment	=	Alignment.MiddleCenter;
 				BorderColor		=	ColorTheme.BackgroundColorDark;
@@ -44,6 +46,9 @@ namespace IronStar.Editor2.Controls {
 				PaddingLeft		=	1;
 
 				Width			=	100;
+
+				Collapsed		=	true;
+				Collapsed		=	nestingLevel > 0;
 
 				buttonCollapse		=	new Frame( grid.Frames ) {
 					Width			=	0, // does not matter due to layout engine
@@ -57,7 +62,7 @@ namespace IronStar.Editor2.Controls {
 					MarginBottom	=	0,
 				};
 
-				Add( buttonCollapse );
+				base.Add( buttonCollapse );
 
 				buttonCollapse.StatusChanged +=ButtonCollapse_StatusChanged;
 				buttonCollapse.Click+=ButtonCollapse_Click;
@@ -66,25 +71,41 @@ namespace IronStar.Editor2.Controls {
 			}
 
 
-
-			public void Collapse ( bool collapse )
+			public override void Add( Frame frame )
 			{
-				collapsed = collapse;
+				base.Add( frame );
+				if (collapsed) {
+					frame.Visible = false;
+				}
+			}
 
-				foreach ( var child in Children ) {
-					if (child!=buttonCollapse) {
-						child.Visible = !collapsed;
+
+			public bool Collapsed {
+				get {
+					return collapsed;
+				}
+				set {
+					if (collapsed!=value) {
+						collapsed = value;
+
+						MarginBottom = (collapsed || nestingLevel==0) ? 0 : 2;
+
+						foreach ( var child in Children ) {
+							if (child!=buttonCollapse) {
+								child.Visible = !collapsed;
+							}
+						}
+
+						MakeLayoutDirty();
 					}
 				}
-
-				MakeLayoutDirty();
 			}
 
 
 
 			private void ButtonCollapse_Click( object sender, MouseEventArgs e )
 			{
-				Collapse( !collapsed );
+				Collapsed = !Collapsed;
 			}
 
 

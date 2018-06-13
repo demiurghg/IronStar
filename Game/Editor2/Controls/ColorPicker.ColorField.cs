@@ -69,9 +69,6 @@ namespace IronStar.Editor2.Controls {
 				var pr	=	GetPaddedRectangle(true);
 				var hsv	=	getFunc();
 
-
-				Log.Message("{0} {1}", x, y );
-
 				hsv.H	=	MathUtil.Clamp( (x - 1) / (float)pr.Width, 0, 1 ) * 360;
 				hsv.V	=	1 - MathUtil.Clamp( (y - 1) / (float)pr.Height, 0, 1 );
 

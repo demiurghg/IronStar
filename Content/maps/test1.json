@@ -105,16 +105,16 @@
       },
       {
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
-        "LightColor": "255, 255, 255, 255",
+        "LightColor": "255, 0, 0, 255",
         "LightIntensity": 2670.0,
-        "OuterRadius": 5.0,
+        "OuterRadius": 12.0,
         "InnerRadius": 0.1,
         "NearPlane": 0.125,
-        "FarPlane": 5.0,
+        "FarPlane": 12.0,
         "FovVertical": 60.0,
         "FovHorizontal": 60.0,
         "LightStyle": "default",
-        "SpotMaskName": "color",
+        "SpotMaskName": "",
         "LodBias": 0,
         "DepthBias": 0.0009765625,
         "SlopeBias": 2.0,
@@ -122,13 +122,13 @@
         "Frozen": false,
         "TranslateX": -8.0,
         "TranslateY": 3.0,
-        "TranslateZ": 7.0,
-        "RotateYaw": -39.99999,
-        "RotatePitch": -9.999996,
-        "RotateRoll": -34.9999962,
-        "WorldMatrix": "0.563485, -0.5648625, 0.602839053, 0, 0.530817866, 0.8067073, 0.259722352, 0, -0.6330221, 0.173648119, 0.754406631, 0, -8, 3, 7, 1",
-        "TranslateVector": "-8, 3, 7",
-        "RotateQuaternion": "0.02434703, -0.349576771, -0.3099251, 0.883826733"
+        "TranslateZ": 13.0,
+        "RotateYaw": 154.443634,
+        "RotatePitch": -18.1850986,
+        "RotateRoll": -2.9882076E-06,
+        "WorldMatrix": "-0.9021615, -5.21540642E-08, -0.4313988, 0, -0.134634376, 0.9500533, 0.2815536, 0, 0.409851849, 0.312087864, -0.85710144, 0, -8, 3, 13, 1",
+        "TranslateVector": "-8, 3, 13",
+        "RotateQuaternion": "-0.0349525772, 0.962979257, 0.154115841, 0.218397915"
       }
     ]
   }

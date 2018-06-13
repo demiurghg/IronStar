@@ -1,0 +1,9 @@
+{
+  "$type": "IronStar.Entities.RigidBodyFactory, IronStar",
+  "Width": 1.0,
+  "Height": 1.0,
+  "Depth": 1.0,
+  "Mass": 1.0,
+  "Model": "",
+  "Target": null
+}

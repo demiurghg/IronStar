@@ -210,125 +210,17 @@ namespace IronStar.Editor2 {
 
 
 
-		void ShowNameDialog ( Frame owner, FileListBox fileListBox )
-		{
-			var frames	=	owner.Frames;
-			var types	=	new List<Type>();
-
-			types.Add( typeof(FXFactory) );
-			types.AddRange( Misc.GetAllSubclassesOf(typeof(EntityFactory), true) );
-			types.AddRange( Misc.GetAllSubclassesOf(typeof(ItemFactory), true) );
-
-			var panel	=	new Panel( frames, 0,0, 300, 200 );
-			var listBox	=	new ListBox( frames, types )		{ X = 2, Y = 2, Width = 300-4, Height = 200-22-14 };
-			var textBox	=	new TextBox( frames, null, null )	{ X = 2, Y = 200-22-11, Width=300-4, Height=10 };
-				textBox.TextAlignment	=	Alignment.MiddleLeft;
-
-			panel.Add( listBox );
-			panel.Add( textBox );
-
-			panel.Add( new Button(frames, "Cancel", 300- 80-2, 200-22, 80, 20, () => panel.Close() ) );
-			panel.Add( new Button(frames, "OK",     300-160-4, 200-22, 80, 20, 
-				() => {
-					var type = listBox.SelectedItem as Type;
-					if (type==null) {
-						MessageBox.ShowError(owner, "Select asset type", null);
-						Log.Warning("Select asset type");
-						return;
-					}
-					if (string.IsNullOrWhiteSpace(textBox.Text)) {
-						Log.Warning("Provide asset name");
-						return;
-					}
-					var obj  = Activator.CreateInstance(type);
-					var path = Path.Combine( fileListBox.CurrentDirectory, textBox.Text + ".json" );
-
-					using ( var stream = File.OpenWrite( path ) ) {
-						Game.GetService<Factory>().ExportJson( stream, obj );
-					}
-
-					fileListBox.RefreshFileList();
-
-					panel.Close();
-				}
-			));
-
-			panel.Missclick += (s,e) => {
-				panel.Close();
-			};
-
-			owner.Add( panel );
-			panel.CenterFrame();
-			frames.ModalFrame = panel;
-		}
-
 
 		Panel CreateAssetExplorer ( Workspace workspace )
 		{
-			var frames	= workspace.Frames;
-			var factory = Game.GetService<Factory>();
+			var types = new List<Type>();
 
-			var panel = new Panel( workspace.Frames, 0,0,600,500 );
-
-			var fileList	=	new FileListBox( frames, "entities", "*.json" );
-			fileList.X		=	2;
-			fileList.Y		=	14;
-			fileList.Width	=	600/2 - 2;
-			fileList.Height	=	500-14-2-22;
-			fileList.DisplayMode	=	FileListBox.FileDisplayMode.ShortNoExt;
-
-			var grid		=	new AEPropertyGrid( frames );
-			grid.X			=	600/2+1;
-			grid.Y			=	14;
-			grid.Width		=	600/2-3;
-			grid.Height		=	500-14-2-22;
-
-			panel.Add( fileList );
-			panel.Add( grid );
-
-			panel.Add( new Button(frames, "Close", 2, 500-22, 100, 20, () => panel.Visible = false ) );
-
-			panel.Add( new Button(frames, "New Asset", 600-102, 500-22, 100, 20, () => ShowNameDialog(workspace, fileList) ) );
-
-			panel.Add( new Button(frames, "Delete", 600-204, 500-22, 100, 20, () => {
-				var item = fileList.SelectedItem;
-
-				if (item.IsDirectory) {
-					MessageBox.ShowError(workspace, "Could not delete directory", null);
-					return;
-				}
-
-				MessageBox.ShowQuestion(frames, 
-					string.Format("Delete file {0}?", item.RelativePath), 
-					()=> {
-						File.Delete(item.FullPath); 
-						fileList.RefreshFileList();
-					},
-					null );
-			} ) );
-
-			workspace.Add( panel );
-			panel.CenterFrame();
-
-			fileList.DoubleClick += (s,e) => {
-				if (fileList.SelectedItem!=null && fileList.SelectedItem.IsDirectory) {
-					fileList.CurrentDirectory = fileList.SelectedItem.FullPath;
-				}
-			};
-
-			fileList.SelectedItemChanged += (s,e) => {
-				try {
-					if (!fileList.SelectedItem.IsDirectory) {
-						var obj = factory.ImportJson( File.OpenRead(fileList.SelectedItem.FullPath) );
-						grid.FeedObjects( obj );
-					}
-				} catch ( Exception err ) {
-					Log.Warning(err.Message);
-				}
-			};
-
-
-			return panel;
+			types.Add( typeof(FXFactory) );
+			types.AddRange( Misc.GetAllSubclassesOf(typeof(ItemFactory), true) );
+			types.AddRange( Misc.GetAllSubclassesOf(typeof(EntityFactory), true) );
+			types.AddRange( Misc.GetAllSubclassesOf(typeof(ModelDescriptor), true) );
+						  
+			return new AssetExplorer( workspace, "", types.ToArray(), 0,0,500,600 );
 		}
 	}
 }

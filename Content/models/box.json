@@ -1,0 +1,12 @@
+{
+  "$type": "IronStar.SFX.ModelDescriptor, IronStar",
+  "ScenePath": "",
+  "Scale": 1.0,
+  "UseAnimation": true,
+  "UseAnimator": false,
+  "Color": "10, 10, 10, 1",
+  "FPVEnable": true,
+  "FPVCamera": "camera1",
+  "Prefix": "anim_",
+  "Clips": ""
+}

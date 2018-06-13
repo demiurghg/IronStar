@@ -210,9 +210,10 @@ namespace IronStar.Editor2 {
 
 
 
-		void ShowNameDialog ( FrameProcessor frames, FileListBox fileListBox )
+		void ShowNameDialog ( Frame owner, FileListBox fileListBox )
 		{
-			var types = new List<Type>();
+			var frames	=	owner.Frames;
+			var types	=	new List<Type>();
 
 			types.Add( typeof(FXFactory) );
 			types.AddRange( Misc.GetAllSubclassesOf(typeof(EntityFactory), true) );
@@ -231,7 +232,7 @@ namespace IronStar.Editor2 {
 				() => {
 					var type = listBox.SelectedItem as Type;
 					if (type==null) {
-						MessageBox.ShowError(frames, "Select asset type", null);
+						MessageBox.ShowError(owner, "Select asset type", null);
 						Log.Warning("Select asset type");
 						return;
 					}
@@ -256,9 +257,9 @@ namespace IronStar.Editor2 {
 				panel.Close();
 			};
 
-			frames.RootFrame.Add( panel );
-			FrameUtils.CenterFrame( panel );
-			frames.PushModalFrame( panel );
+			owner.Add( panel );
+			panel.CenterFrame();
+			frames.ModalFrame = panel;
 		}
 
 
@@ -287,13 +288,13 @@ namespace IronStar.Editor2 {
 
 			panel.Add( new Button(frames, "Close", 2, 500-22, 100, 20, () => panel.Visible = false ) );
 
-			panel.Add( new Button(frames, "New Asset", 600-102, 500-22, 100, 20, () => ShowNameDialog(frames, fileList) ) );
+			panel.Add( new Button(frames, "New Asset", 600-102, 500-22, 100, 20, () => ShowNameDialog(workspace, fileList) ) );
 
 			panel.Add( new Button(frames, "Delete", 600-204, 500-22, 100, 20, () => {
 				var item = fileList.SelectedItem;
 
 				if (item.IsDirectory) {
-					MessageBox.ShowError(frames, "Could not delete directory", null);
+					MessageBox.ShowError(workspace, "Could not delete directory", null);
 					return;
 				}
 
@@ -307,8 +308,7 @@ namespace IronStar.Editor2 {
 			} ) );
 
 			workspace.Add( panel );
-
-			FrameUtils.CenterFrame( panel );
+			panel.CenterFrame();
 
 			fileList.DoubleClick += (s,e) => {
 				if (fileList.SelectedItem!=null && fileList.SelectedItem.IsDirectory) {

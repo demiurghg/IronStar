@@ -43,13 +43,6 @@ namespace IronStar {
 			this.AddServiceAndComponent( new GameServer( this ) );
 			this.AddServiceAndComponent( new Factory( this ) );
 
-			File.Delete("E:\\Github\\Ironstar\\test.json");
-			this.GetService<Factory>().ExportJson(File.OpenWrite("E:\\Github\\Ironstar\\test.json"), new FXFactory() );
-
-			var fxf = (FXFactory)this.GetService<Factory>().ImportJson(File.OpenRead("E:\\Github\\Ironstar\\test.json"));
-
-			fxf.CameraShake.Enabled = true;
-
 			this.GetService<FrameProcessor>().LayerOrder = 100;
 			this.GetService<GameConsole>().LayerOrder = 200;
 

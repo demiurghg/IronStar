@@ -43,59 +43,12 @@ namespace Fusion.Engine.Frames {
 
 
 		/// <summary>
-		/// Gets modal frame for entire UI.
+		/// Gets and sets modal frame for entire UI.
 		/// This property does not set TargetFrame.
 		/// </summary>
-		internal Frame ModalFrame {
-			get {
-				if (modalFrames.Any()) {
-					return modalFrames.Peek();
-				} else {
-					return null;
-				}
-			}
-		}
-
-		Stack<Frame> modalFrames = new Stack<Frame>();
-
-		/// <summary>
-		/// Checks that given frame is modal
-		/// </summary>
-		/// <param name="frame"></param>
-		/// <returns></returns>
-		internal bool IsFrameModal ( Frame frame )
-		{
-			return modalFrames.Contains(frame);
-		}
-
-
-		/// <summary>
-		/// Pushes frame on top of modal frames.
-		/// </summary>
-		/// <param name="frame"></param>
-		public void PushModalFrame ( Frame frame )
-		{
-			if (frame==null) {
-				throw new ArgumentNullException("frame");
-			}
-			if (modalFrames.Contains(frame)) {
-				throw new InvalidOperationException("frame is already modal");
-			}
-			modalFrames.Push( frame );
-		}
-
-
-		/// <summary>
-		/// Removed top modal frame
-		/// </summary>
-		public void PopModalFrame ()
-		{
-			if (!modalFrames.Any()) {
-				throw new InvalidOperationException("no more modal frames");
-			}
-
-			modalFrames.Pop();
-		}
+		public Frame ModalFrame {
+			get; set;
+		} = null;
 
 
 		/// <summary>
@@ -229,7 +182,7 @@ namespace Fusion.Engine.Frames {
 		{
 			RootFrame.Clear();
 			TargetFrame = null;
-			modalFrames.Clear();
+			ModalFrame = null;
 		}
 
 
@@ -240,17 +193,14 @@ namespace Fusion.Engine.Frames {
 		/// <param name="frame"></param>
 		public void WipeRefs ( Frame frame )
 		{
-			Frame scan;
+			var scan = ModalFrame;
 
-			foreach ( var modalFrame in modalFrames ) {
-				scan = modalFrame;
-
-				while (scan!=null) {
-					if (scan==frame) {
-						throw new InvalidOperationException("Could not wipe refs for modal frame");
-					} else {
-						scan = scan.Parent;
-					}
+			while (scan!=null) {
+				if (scan==frame) {
+					ModalFrame = null;
+					break;
+				} else {
+					scan = scan.Parent;
 				}
 			}
 

@@ -347,12 +347,12 @@ namespace Fusion.Engine.Frames {
 		/// <param name="frame"></param>
 		public virtual void Clear ()
 		{
-			foreach ( var child in children ) {
-				ui.WipeRefs(child);
-				child.parent = null;
-				child.Closed?.Invoke(this, EventArgs.Empty);
+			var toRemove = children.ToArray();
+
+			foreach ( var child in toRemove ) {
+				child.Close();
 			}
-			children.Clear();
+
 			layoutDirty = true;
 		}
 
@@ -381,14 +381,6 @@ namespace Fusion.Engine.Frames {
 		public virtual void Remove ( Frame frame )
 		{
 			if ( children.Contains(frame) ) {
-
-				if (Frames.IsFrameModal(frame)) {
-					if (frame==Frames.ModalFrame) {
-						Frames.PopModalFrame();
-					} else {
-						throw new InvalidOperationException("Could not remove non top level modal frame");
-					}
-				}
 
 				children.Remove( frame );
 				frame.parent	=	null;

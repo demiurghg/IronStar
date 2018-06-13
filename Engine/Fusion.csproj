@@ -448,6 +448,7 @@
     <Compile Include="Engine\Common\UserInterface.cs" />
     <Compile Include="Engine\Frames\Context.cs" />
     <Compile Include="Engine\Frames\Enums.cs" />
+    <Compile Include="Engine\Frames\Frame.Utils.cs" />
     <Compile Include="Engine\Frames\Frame.cs" />
     <Compile Include="Engine\Frames\Frame.Layout.cs" />
     <Compile Include="Engine\Frames\Frame.Text.cs" />

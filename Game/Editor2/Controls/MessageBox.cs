@@ -9,10 +9,14 @@ using Fusion.Engine.Frames;
 namespace IronStar.Editor2.Controls {
 	public static class MessageBox {
 
-		public static void ShowError ( FrameProcessor frames, string message, Action accept )
+		public static void ShowError ( Frame owner, string message, Action accept )
 		{
+			var frames	=	owner.Frames;
 			var panel	=	new Panel( frames, 0, 0, 350,   100 );
 			var label	=	new Frame( frames );
+
+			panel.Tag		=	frames.ModalFrame;
+			panel.Closed	+=  (s,e) => frames.ModalFrame = panel.Tag as Frame;
 
 			label.X				=	2;
 			label.Y				=	14;
@@ -35,9 +39,9 @@ namespace IronStar.Editor2.Controls {
 			panel.Add( label );
 			panel.Add( button );
 
-			frames.RootFrame.Add( panel );
-			FrameUtils.CenterFrame( panel );
-			frames.PushModalFrame( panel );
+			owner.Add( panel );
+			panel.CenterFrame();
+			frames.ModalFrame = panel;
 		}
 
 
@@ -45,6 +49,10 @@ namespace IronStar.Editor2.Controls {
 		{
 			var panel	=	new Panel( frames, 0, 0, 350,   100 );
 			var label	=	new Frame( frames );
+
+			panel.Tag		=	frames.ModalFrame;
+
+			panel.Closed	+=  (s,e) => frames.ModalFrame = panel.Tag as Frame;
 
 			label.X				=	2;
 			label.Y				=	14;
@@ -76,8 +84,8 @@ namespace IronStar.Editor2.Controls {
 			panel.Add( rejectBtn );
 
 			frames.RootFrame.Add( panel );
-			FrameUtils.CenterFrame( panel );
-			frames.PushModalFrame( panel );
+			panel.CenterFrame();
+			frames.ModalFrame = panel;
 		}
 
 

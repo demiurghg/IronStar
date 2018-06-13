@@ -284,13 +284,16 @@ namespace Fusion.Core.Extensions {
 			foreach ( var a in AppDomain.CurrentDomain.GetAssemblies() ) {
 
 				foreach ( var t in a.GetLoadableTypes() ) {
+
+					if (t.IsAbstract) {
+						continue;
+					}
 					
 					if (includeBaseClass && (t==type)) {
 						types.Add(t);
 					}
 
 					if (t.IsSubclassOf( type )) {
-
 						types.Add(t);						
 					}
 				}

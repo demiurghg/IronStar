@@ -27,9 +27,9 @@ namespace IronStar.Editor2.Controls {
 			var fileSelector	=	new FileSelectorFrame( fp, defaultDir, searchPattern, oldFileName, setFileName );
 
 			fp.RootFrame.Add( fileSelector );
-			fp.PushModalFrame( fileSelector );
+			fp.ModalFrame = fileSelector;
 
-			FrameUtils.CenterFrame( fileSelector );
+			fileSelector.CenterFrame();
 		}
 
 

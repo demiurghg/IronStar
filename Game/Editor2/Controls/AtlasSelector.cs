@@ -27,9 +27,9 @@ namespace IronStar.Editor2.Controls {
 			var atlasSelector	=	new AtlasSelectorFrame( fp, atlasName, oldImageName, setImageName );
 
 			fp.RootFrame.Add( atlasSelector );
-			fp.PushModalFrame( atlasSelector );
+			fp.ModalFrame = atlasSelector;
 
-			FrameUtils.CenterFrame( atlasSelector );
+			atlasSelector.CenterFrame();
 		}
 
 

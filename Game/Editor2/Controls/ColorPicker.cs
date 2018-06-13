@@ -24,9 +24,9 @@ namespace IronStar.Editor2.Controls {
 			colorPicker.Y	=	y;
 
 			fp.RootFrame.Add( colorPicker );
-			fp.PushModalFrame( colorPicker );
+			fp.ModalFrame = colorPicker;
 
-			FrameUtils.ConstrainFrame( colorPicker, 10 );
+			colorPicker.ConstrainFrame(10);
 		}
 
 

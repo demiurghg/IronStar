@@ -96,7 +96,7 @@ namespace IronStar.Editor2.Controls {
 			dropDownList.Y = gr.Y + gr.Height;
 
 			Frames.RootFrame.Add( dropDownList );
-			Frames.PushModalFrame( dropDownList );
+			Frames.ModalFrame = dropDownList;
 		}
 
 

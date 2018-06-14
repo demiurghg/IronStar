@@ -288,6 +288,11 @@ namespace Fusion.Engine.Frames {
 		}
 
 
+		public static Frame CreateEmptyFrame ( FrameProcessor frames )
+		{
+			return new Frame(frames, 0,0,0,0,"",Color.Zero);
+		}
+
 		
 		/// <summary>
 		/// Common init 

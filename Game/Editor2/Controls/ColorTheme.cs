@@ -37,6 +37,10 @@ namespace IronStar.Editor2.Controls {
 		public static readonly Color	ButtonColorPushed		=	new Color(150,150,150, 192);
 		public static readonly Color	ButtonBorderColor		=	new Color( 20, 20, 20, 192);
 		
+		public static readonly Color	ButtonRedColorNormal	=	new Color( 90, 45, 45, 192);
+		public static readonly Color	ButtonRedColorHovered	=	new Color(120, 60, 60, 192);
+		public static readonly Color	ButtonRedColorPushed	=	new Color(150, 75, 75, 192);
+
 		public static readonly Color	ColorWhite				=	new Color(180,180,180, 224);
 		public static readonly Color	ColorGreen				=	new Color(144,239,144, 224);
 		public static readonly Color	ColorRed				=	new Color(239,144,144, 224);

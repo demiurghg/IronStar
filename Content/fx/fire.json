@@ -5,7 +5,7 @@
     "$type": "IronStar.SFX.FXSoundStage, IronStar",
     "Enabled": false,
     "Sound": "",
-    "Attenuation": "normal"
+    "Attenuation": "loud"
   },
   "LightStage": {
     "$type": "IronStar.SFX.FXLightStage, IronStar",
@@ -25,13 +25,13 @@
   },
   "CameraShake": {
     "$type": "IronStar.SFX.FXCameraShake, IronStar",
-    "Enabled": false
+    "Enabled": true
   },
   "ParticleStage1": {
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
-    "Enabled": true,
+    "Enabled": false,
     "Sprite": "",
-    "Effect": "hard",
+    "Effect": "softLit",
     "Count": 10,
     "Period": 1.0,
     "Timing": {
@@ -41,7 +41,7 @@
       "FadeIn": 0.1,
       "FadeOut": 0.1
     },
-    "Color": "103, 43, 137, 255",
+    "Color": "88, 170, 53, 255",
     "Alpha": 1.0,
     "Roughness": 0.5,
     "Metallic": 0.0,
@@ -94,7 +94,7 @@
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
     "Enabled": false,
     "Sprite": "",
-    "Effect": "hard",
+    "Effect": "soft",
     "Count": 10,
     "Period": 1.0,
     "Timing": {
@@ -104,7 +104,7 @@
       "FadeIn": 0.1,
       "FadeOut": 0.1
     },
-    "Color": "255, 255, 255, 255",
+    "Color": "155, 155, 155, 255",
     "Alpha": 1.0,
     "Roughness": 0.5,
     "Metallic": 0.0,
@@ -167,9 +167,9 @@
       "FadeIn": 0.1,
       "FadeOut": 0.1
     },
-    "Color": "255, 255, 255, 255",
+    "Color": "124, 124, 124, 255",
     "Alpha": 1.0,
-    "Roughness": 0.5,
+    "Roughness": 0.2,
     "Metallic": 0.0,
     "Intensity": 100.0,
     "Scattering": 0.0,
@@ -230,7 +230,7 @@
       "FadeIn": 0.1,
       "FadeOut": 0.1
     },
-    "Color": "122, 191, 63, 255",
+    "Color": "153, 146, 48, 255",
     "Alpha": 1.0,
     "Roughness": 0.5,
     "Metallic": 0.0,

@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
+using Fusion.Engine.Frames.Layouts;
 
 namespace IronStar.Editor2.Controls {
 	public class AssetExplorer : Panel {
@@ -17,9 +18,11 @@ namespace IronStar.Editor2.Controls {
 		readonly Type[] types;
 		readonly FileListBox fileList;
 		readonly Factory factory;
-		readonly Label label;
+		readonly Label labelPath;
+		readonly Label labelName;
 		readonly AEPropertyGrid grid;
 		readonly ScrollBox scrollBox;
+		readonly Label labelStatus;
 
 		string targetFileName;
 		object targetObject;
@@ -27,6 +30,12 @@ namespace IronStar.Editor2.Controls {
 		public AssetExplorer( Frame parent, string initialDir, Type[] types, int x, int y, int w, int h ) : base(parent.Frames, x,y,600,500)
 		{
 			AllowDrag		=	true;
+
+			Layout			=	new PageLayout( 12, 12, 2, 20, 3, 12, 1 );
+
+			Padding			=	1;
+
+			//------------------------
 
 			this.types		=	types.Where( t => !t.IsAbstract ).ToArray();
 			this.factory	=	parent.Game.GetService<Factory>();
@@ -50,19 +59,35 @@ namespace IronStar.Editor2.Controls {
 			grid.Width		=	600/2-3;
 			grid.Height		=	500-14-2-22;
 
+
+			labelPath = new Label( Frames, 2,2,600-4,10, fileList.CurrentDirectory );
+			labelPath.TextAlignment = Alignment.MiddleLeft;
+			labelPath.BackColor = ColorTheme.BackgroundColor;
+
+			labelName = new Label( Frames, 2,2,600-4,10, "..." );
+			labelName.TextAlignment = Alignment.MiddleLeft;
+
+			labelStatus	= new Label( Frames, 0,0,0,0, "...");
+			labelStatus.BackColor = ColorTheme.BackgroundColor;
+			labelStatus.TextAlignment = Alignment.MiddleLeft;
+
+			//------------------------
+
+			this.Add(labelPath);
+			this.Add(labelName);
+			//this.Add( Frame.CreateEmptyFrame(Frames) );
+
 			this.Add( fileList );
 			this.Add( scrollBox );
-
 			scrollBox.Add( grid );
+	
+			this.Add( new Button(Frames, "New Asset", 0,0,10,10, () => ShowNameDialog(parent, fileList) ) );
+			this.Add( new Button(Frames, "Delete"	, 0,0,10,10, () => DeleteSelected() ) );
+			this.Add( new Button(Frames, "Close"	, 0,0,10,10, () => this.Visible = false ) { RedButton = true } );
 
-			label = new Label( Frames, 2,2,600-4,10, fileList.CurrentDirectory );
-			label.TextAlignment = Alignment.MiddleLeft;
-			this.Add(label);
+			this.Add( labelStatus );
 
-
-			this.Add( new Button(Frames, "Close", 2, 500-22, 100, 20, () => this.Visible = false ) );
-			this.Add( new Button(Frames, "New Asset", 600-102, 500-22, 100, 20, () => ShowNameDialog(parent, fileList) ) );
-			this.Add( new Button(Frames, "Delete", 600-204, 500-22, 100, 20, () => DeleteSelected() ) );
+			//------------------------
 
 			fileList.DoubleClick += (s,e) => {
 				if (fileList.SelectedItem!=null && fileList.SelectedItem.IsDirectory) {
@@ -83,17 +108,17 @@ namespace IronStar.Editor2.Controls {
 		bool dirty1 = false;
 
 		/// <summary>
-		/// Saves target object each 250 msec if dirty.
+		/// Saves target object each 500 msec if dirty.
 		/// </summary>
 		/// <param name="gameTime"></param>
 		protected override void Update(GameTime gameTime)
 		{
 			base.Update( gameTime );
 
-			int delta = MathUtil.Clamp((int)gameTime.Elapsed.TotalMilliseconds, 0, 250 );
+			int delta = MathUtil.Clamp((int)gameTime.Elapsed.TotalMilliseconds, 0, 500 );
 
 			if (countdownTimer<=0) {
-				countdownTimer += 250;
+				countdownTimer += 500;
 				if (dirty1) {
 					SaveTargetObject();
 				}
@@ -110,12 +135,14 @@ namespace IronStar.Editor2.Controls {
 		private void Grid_PropertyChanged(object sender, AEPropertyGrid.PropertyChangedEventArgs e)
 		{
 			dirty1 = true;
+			labelStatus.Text = string.Format("Property changed: {0} {1}", e.Property.Name, e.Value.ToString() );
 		}
 
 
 
 		void SaveTargetObject ()
 		{
+			labelStatus.Text = "Changes saved...";
 			//Log.Message("Saving object...");
 			if (File.Exists(targetFileName)) {
 				File.Delete(targetFileName);
@@ -135,7 +162,7 @@ namespace IronStar.Editor2.Controls {
 		private void FileList_SelectedItemChanged(object sender, EventArgs e)
 		{
 			try {
-				label.Text = fileList.CurrentDirectory;
+				labelPath.Text = fileList.CurrentDirectory;
 				if (fileList.SelectedItem==null) {
 					return;
 				}
@@ -146,9 +173,12 @@ namespace IronStar.Editor2.Controls {
 						targetObject = factory.ImportJson(stream);
 					}
 
+					labelName.Text	=	targetObject.GetType().Name + " - " + Path.GetFileNameWithoutExtension( targetFileName );
+
 					grid.TargetObject = targetObject;
 				}
 			} catch ( Exception err ) {
+				labelName.Text = "...";
 				targetFileName	=	null;
 				targetObject	=	null;
 				grid.TargetObject = null;
@@ -174,6 +204,7 @@ namespace IronStar.Editor2.Controls {
 				()=> {
 					File.Delete(item.FullPath); 
 					fileList.RefreshFileList();
+					grid.TargetObject = null;
 				},
 				null 
 			);
@@ -231,6 +262,5 @@ namespace IronStar.Editor2.Controls {
 			panel.CenterFrame();
 			frames.ModalFrame = panel;
 		}
-
 	}
 }

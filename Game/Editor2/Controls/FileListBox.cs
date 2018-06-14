@@ -56,7 +56,7 @@ namespace IronStar.Editor2.Controls {
 							DisplayName =   disp ?? string.Format( "{0}{1}", dir ? "\\" : " ", Path.GetFileName( fullPath ) );
 						break;
 					case FileDisplayMode.ShortNoExt: 				
-							DisplayName =   disp ?? string.Format( "{0}{1}", dir ? "\\" : " ", Path.GetFileNameWithoutExtension( fullPath ) );
+							DisplayName =   disp ?? string.Format( "{0}{1}", dir ? "\\" : " ", dir ? Path.GetFileName( fullPath ) : Path.GetFileNameWithoutExtension( fullPath ) );
 						break;
 				}
 			}

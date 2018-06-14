@@ -29,7 +29,7 @@
   },
   "ParticleStage1": {
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
-    "Enabled": false,
+    "Enabled": true,
     "Sprite": "",
     "Effect": "hard",
     "Count": 10,
@@ -41,7 +41,7 @@
       "FadeIn": 0.1,
       "FadeOut": 0.1
     },
-    "Color": "96, 36, 114, 255",
+    "Color": "103, 43, 137, 255",
     "Alpha": 1.0,
     "Roughness": 0.5,
     "Metallic": 0.0,

@@ -62,16 +62,20 @@ namespace IronStar.Editor2.Controls {
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="targetObjects"></param>
-		public void FeedObjects ( params object[] targetObjects )
-		{
-			Clear();
-
-			foreach ( var obj in targetObjects ) {
-				FeedObject(obj);
+		public object TargetObject {
+			get {
+				return targetObject;
+			}
+			set {
+				if (targetObject!=value) {
+					targetObject = value;
+					Clear();
+					FeedObject(targetObject, null);
+				}
 			}
 		}
 
+		object targetObject;
 
 
 		/// <summary>
@@ -90,7 +94,7 @@ namespace IronStar.Editor2.Controls {
 		/// <summary>
 		/// 
 		/// </summary>
-		void FeedObject ( object obj, string subcat=null )
+		void FeedObject ( object obj, string subcat )
 		{
 			if (obj==null) {
 				return;

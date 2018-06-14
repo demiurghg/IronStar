@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Fusion.Core;
+using Fusion.Core.Mathematics;
 
 namespace IronStar.Editor2.Controls {
 	public class AssetExplorer : Panel {
@@ -76,6 +78,30 @@ namespace IronStar.Editor2.Controls {
 		}
 
 
+
+		int countdownTimer = 0;
+		bool dirty1 = false;
+
+		/// <summary>
+		/// Saves target object each 250 msec if dirty.
+		/// </summary>
+		/// <param name="gameTime"></param>
+		protected override void Update(GameTime gameTime)
+		{
+			base.Update( gameTime );
+
+			int delta = MathUtil.Clamp((int)gameTime.Elapsed.TotalMilliseconds, 0, 250 );
+
+			if (countdownTimer<=0) {
+				countdownTimer += 250;
+				if (dirty1) {
+					SaveTargetObject();
+				}
+			}
+			countdownTimer -= delta;
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -83,12 +109,21 @@ namespace IronStar.Editor2.Controls {
 		/// <param name="e"></param>
 		private void Grid_PropertyChanged(object sender, AEPropertyGrid.PropertyChangedEventArgs e)
 		{
+			dirty1 = true;
+		}
+
+
+
+		void SaveTargetObject ()
+		{
+			//Log.Message("Saving object...");
 			if (File.Exists(targetFileName)) {
 				File.Delete(targetFileName);
 			}
 			using (var stream = File.OpenWrite(targetFileName)) {
 				factory.ExportJson(stream, targetObject);
 			}
+			dirty1 = false;
 		}
 
 
@@ -111,12 +146,12 @@ namespace IronStar.Editor2.Controls {
 						targetObject = factory.ImportJson(stream);
 					}
 
-					grid.FeedObjects( targetObject );
+					grid.TargetObject = targetObject;
 				}
 			} catch ( Exception err ) {
 				targetFileName	=	null;
 				targetObject	=	null;
-				grid.FeedObjects(null);
+				grid.TargetObject = null;
 				Log.Warning(err.Message);
 			}
 		}

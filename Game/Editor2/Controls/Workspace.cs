@@ -247,8 +247,7 @@ namespace IronStar.Editor2.Controls {
 				grid.Visible = true;
 			}
 
-			grid.FeedObjects( target );
-
+			grid.TargetObject = target;
 		}
 
 

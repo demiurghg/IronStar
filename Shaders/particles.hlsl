@@ -284,17 +284,9 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	float time		=	prt.TimeLag;
 	float factor	=	saturate(prt.TimeLag / prt.LifeTime);
 	
-	float3 glow		=	1;
-	
-	if (prt.Effects==ParticleFX_Hard || prt.Effects==ParticleFX_Soft) {
-		float t		=	prt.Temperature;
-		float3	ct	=	ColorTemperature.SampleLevel( Sampler, float2( (t-1000.0f) / 39000.0f, 0.5f ), 0 );
-		glow		=	prt.Intensity * ct;
-	} 
-	
 	float  sz 		=   lerp( prt.Size0, prt.Size1, factor )/2;
 	float  fade		=	Ramp( prt.FadeIn, prt.FadeOut, factor );
-	float3 color3	=	pow(prt.Color, 2.2f) * glow;
+	float3 color3	=	pow(prt.Color, 2.2f) * prt.Intensity;
 	float  alpha	=	prt.Alpha * fade;
 	float4 color	=	float4( color3, alpha );
 

@@ -384,9 +384,6 @@ namespace IronStar.SFX {
 		[Description( "Particle approximate subsurface scattering" )]
 		public float Scattering { get; set; } = 0;
 
-		[Description( "Initial particles temperature" )]
-		public float Temperature { get; set; } = 6600;
-
 		[Description( "Defines life-time properties of particle stage" )]
 		[AEExpandable]
 		public FXLifetime Lifetime { get; set; } = new FXLifetime();

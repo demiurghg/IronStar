@@ -102,8 +102,6 @@ namespace Fusion.Engine.Graphics {
 
 		public float	Intensity;
 
-		public float	Temperature;
-
 		public float	Scattering;
 
 		/// <summary>

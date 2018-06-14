@@ -87,7 +87,7 @@
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "OuterRadius": 5.0,
         "InnerRadius": 0.125,
-        "LightStyle": "default",
+        "LightStyle": "candle3",
         "Ambient": false,
         "LightColor": "255, 156, 73, 255",
         "LightIntensity": 270.0,

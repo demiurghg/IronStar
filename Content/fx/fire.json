@@ -47,7 +47,6 @@
     "Metallic": 0.0,
     "Intensity": 100.0,
     "Scattering": 0.0,
-    "Temperature": 6600.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "uniform",
@@ -94,7 +93,7 @@
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
     "Enabled": false,
     "Sprite": "",
-    "Effect": "soft",
+    "Effect": "hardLitShadow",
     "Count": 10,
     "Period": 1.0,
     "Timing": {
@@ -110,7 +109,6 @@
     "Metallic": 0.0,
     "Intensity": 100.0,
     "Scattering": 0.0,
-    "Temperature": 6600.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "uniform",
@@ -157,7 +155,7 @@
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
     "Enabled": false,
     "Sprite": "",
-    "Effect": "hard",
+    "Effect": "distortive",
     "Count": 10,
     "Period": 1.0,
     "Timing": {
@@ -173,10 +171,9 @@
     "Metallic": 0.0,
     "Intensity": 100.0,
     "Scattering": 0.0,
-    "Temperature": 6600.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
-      "Distribution": "uniform",
+      "Distribution": "gauss",
       "MinLifetime": 1.0,
       "MaxLifetime": 1.0
     },
@@ -236,7 +233,6 @@
     "Metallic": 0.0,
     "Intensity": 100.0,
     "Scattering": 0.0,
-    "Temperature": 6600.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "uniform",

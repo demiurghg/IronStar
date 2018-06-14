@@ -16,7 +16,7 @@ namespace IronStar.Editor2.Controls {
 		public static readonly Color	ShadowColor				=	new Color(  0,  0,  0, 64);
 
 		public static readonly Color	BorderColor				=	new Color( 10, 10, 10, 192);
-		public static readonly Color	BorderColorLight		=	new Color( 10, 10, 10, 192);
+		public static readonly Color	BorderColorLight		=	new Color( 15, 15, 15, 192);
 		public static readonly Color	BackgroundColor			=	new Color( 30, 30, 30, 192);
 		public static readonly Color	BackgroundColorDark		=	new Color( 15, 15, 15, 192);
 		public static readonly Color	BackgroundColorLight	=	new Color( 45, 45, 45, 192);

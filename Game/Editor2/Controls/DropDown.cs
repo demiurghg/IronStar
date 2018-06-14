@@ -54,6 +54,8 @@ namespace IronStar.Editor2.Controls {
 			dropDownList = new Frame( Frames ) {
 				BackColor	=	ColorTheme.BackgroundColor,
 				Padding = 1,
+				Border = 1,
+				BorderColor = ColorTheme.BackgroundColorLight,
 			};
 
 			int maxWidth = 40;
@@ -61,7 +63,7 @@ namespace IronStar.Editor2.Controls {
 
 			foreach ( var value in values ) {
 
-				var w	=	value.Length * 8 + 2;
+				var w	=	value.Length * 8 + 6;
 				var h	=	8 + 2;
 
 				var dropDownElement = new Frame( Frames, 0,0,w,h, value, ColorTheme.BackgroundColor );
@@ -74,11 +76,11 @@ namespace IronStar.Editor2.Controls {
 				maxWidth = Math.Max( textSize.Width, maxWidth );
 
 				dropDownList.Add( dropDownElement );
-				dropDownElement.StatusChanged += DropDown_StatusChanged;
+				dropDownElement.StatusChanged += DropDownElement_StatusChanged;
 				dropDownElement.Click+=DropDownElement_Click;
 			}
 
-			dropDownList.Width = maxWidth + 4;
+			dropDownList.Width = maxWidth + 8;
 
 			dropDownList.Layout = new StackLayout() { AllowResize = true, EqualWidth = true };
 
@@ -132,8 +134,26 @@ namespace IronStar.Editor2.Controls {
 
 			switch ( e.Status ) {
 				case FrameStatus.None:		frame.ForeColor	=	ColorTheme.TextColorNormal;	break;
-				case FrameStatus.Hovered:	frame.ForeColor	=	ColorTheme.TextColorHovered;	break;
+				case FrameStatus.Hovered:	frame.ForeColor	=	ColorTheme.TextColorHovered;break;
 				case FrameStatus.Pushed:	frame.ForeColor	=	ColorTheme.TextColorPushed;	break;
+			}
+		}
+
+
+		private void DropDownElement_StatusChanged( object sender, StatusEventArgs e )
+		{
+			var frame = (Frame)sender;
+
+			switch ( e.Status ) {
+				case FrameStatus.None:		frame.ForeColor	=	ColorTheme.TextColorNormal;	break;
+				case FrameStatus.Hovered:	frame.ForeColor	=	ColorTheme.TextColorHovered;break;
+				case FrameStatus.Pushed:	frame.ForeColor	=	ColorTheme.TextColorPushed;	break;
+			}
+
+			switch ( e.Status ) {
+				case FrameStatus.None:		frame.BackColor	=	ColorTheme.BackgroundColor;	break;
+				case FrameStatus.Hovered:	frame.BackColor	=	ColorTheme.ButtonColorHovered;break;
+				case FrameStatus.Pushed:	frame.BackColor	=	ColorTheme.ButtonColorPushed;	break;
 			}
 		}
 

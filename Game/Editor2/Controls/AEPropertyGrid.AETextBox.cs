@@ -67,10 +67,7 @@ namespace IronStar.Editor2.Controls {
 
 			public override void RunLayout()
 			{
-				TextAlignment		=	Alignment.MiddleRight;
-				TextOffsetX			=	-Width / 2 - 2;
-
-				Text				=	Name;
+				base.RunLayout();
 
 				textBox.X		=	Width/2;
 				textBox.Width	=	Width/2;

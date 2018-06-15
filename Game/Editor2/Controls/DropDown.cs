@@ -32,10 +32,10 @@ namespace IronStar.Editor2.Controls {
 			this.getFunc		=	getFunc;
 			this.setFunc		=	setFunc;
 
-			this.BackColor		=	ColorTheme.BackgroundColorDark;
+			this.BackColor		=	ColorTheme.ButtonColorNormal;
 			this.Width			=	1;
 			this.BorderColor	=	ColorTheme.BorderColor;
-			this.TextAlignment	=	Alignment.MiddleCenter;
+			this.TextAlignment	=	Alignment.MiddleLeft;
 			this.Text			=	value;
 
 			StatusChanged	+=	DropDown_StatusChanged;
@@ -43,23 +43,20 @@ namespace IronStar.Editor2.Controls {
 
 			this.values = values.ToArray();
 
-			CreateDropDownList();
+			dropDownList = CreateDropDownList(40);
 		}
 
 
 
 
-		void CreateDropDownList ()
+		Frame CreateDropDownList ( int minWidth )
 		{
-			dropDownList = new Frame( Frames ) {
+			var dropDownList = new Frame( Frames ) {
 				BackColor	=	ColorTheme.BackgroundColor,
 				Padding = 1,
 				Border = 1,
 				BorderColor = ColorTheme.BackgroundColorLight,
 			};
-
-			int maxWidth = 40;
-
 
 			foreach ( var value in values ) {
 
@@ -73,20 +70,22 @@ namespace IronStar.Editor2.Controls {
 				dropDownElement.Padding = 1;
 				dropDownElement.ForeColor = ColorTheme.TextColorNormal;
 
-				maxWidth = Math.Max( textSize.Width, maxWidth );
+				minWidth = Math.Max( textSize.Width + 8, minWidth );
 
 				dropDownList.Add( dropDownElement );
 				dropDownElement.StatusChanged += DropDownElement_StatusChanged;
 				dropDownElement.Click+=DropDownElement_Click;
 			}
 
-			dropDownList.Width = maxWidth + 8;
+			dropDownList.Width = minWidth;
 
 			dropDownList.Layout = new StackLayout() { AllowResize = true, EqualWidth = true };
 
 			dropDownList.RunLayout();
 
 			dropDownList.Missclick += (s,e) => CloseDropDownList();
+
+			return dropDownList;
 		}
 
 
@@ -136,6 +135,12 @@ namespace IronStar.Editor2.Controls {
 				case FrameStatus.None:		frame.ForeColor	=	ColorTheme.TextColorNormal;	break;
 				case FrameStatus.Hovered:	frame.ForeColor	=	ColorTheme.TextColorHovered;break;
 				case FrameStatus.Pushed:	frame.ForeColor	=	ColorTheme.TextColorPushed;	break;
+			}
+
+			switch ( e.Status ) {
+				case FrameStatus.None:		frame.BackColor	=	ColorTheme.ButtonColorDark;		break;
+				case FrameStatus.Hovered:	frame.BackColor	=	ColorTheme.ButtonColorHovered;	break;
+				case FrameStatus.Pushed:	frame.BackColor	=	ColorTheme.ButtonColorPushed;	break;
 			}
 		}
 

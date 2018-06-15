@@ -256,7 +256,7 @@ namespace IronStar.Editor2.Controls {
 							.FirstOrDefault( f3 => f3.Category == path[i] );
 
 				if (region==null) {
-					region = new AECollapseRegion(this, path[i], i);
+					region = new AECollapseRegion(this, path[i], i, null);
 					root.Add( region );	
 				}
 
@@ -284,7 +284,7 @@ namespace IronStar.Editor2.Controls {
 
 		public void AddTextBoxNum ( string category, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc )
 		{
-			AddToCollapseRegion( category, new AETextBox( this, name, getFunc, setFunc, selectFunc, Alignment.MiddleRight ) );
+			AddToCollapseRegion( category, new AETextBox( this, name, getFunc, setFunc, selectFunc, Alignment.MiddleLeft ) );
 		}
 
 		public void AddButton ( string category, string name, Action action )

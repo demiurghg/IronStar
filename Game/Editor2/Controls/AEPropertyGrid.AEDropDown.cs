@@ -56,10 +56,7 @@ namespace IronStar.Editor2.Controls {
 
 			public override void RunLayout()
 			{
-				TextAlignment	=	Alignment.MiddleRight;
-				TextOffsetX		=	-Width / 2 - 2;
-
-				Text			=	Name;
+				base.RunLayout();
 
 				dropDown.X		=	Width/2;
 				dropDown.Width	=	Width/2;

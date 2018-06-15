@@ -9,6 +9,7 @@ using Fusion.Engine.Graphics;
 using System.Reflection;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Frames.Layouts;
+using Fusion.Core;
 
 namespace IronStar.Editor2.Controls {
 
@@ -21,18 +22,20 @@ namespace IronStar.Editor2.Controls {
 
 			public readonly string Category;
 
-			bool visible = true;
-
 			Frame buttonCollapse;
 			bool collapsed = true;
+
+			object enclosingObject;
 
 			/// <summary>
 			/// 
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AECollapseRegion ( AEPropertyGrid grid, string category, int nestingLevel ) : base(grid.Frames)
+			public AECollapseRegion ( AEPropertyGrid grid, string category, int nestingLevel, object obj ) : base(grid.Frames)
 			{ 
+				enclosingObject		=	obj;
+
 				this.grid			=	grid;
 				this.Category		=	category;
 				this.nestingLevel	=	nestingLevel;
@@ -68,6 +71,19 @@ namespace IronStar.Editor2.Controls {
 				buttonCollapse.Click+=ButtonCollapse_Click;
 
 				Layout	=	new StackLayout() { AllowResize = true, EqualWidth = true, Interval = 1 };
+			}
+
+
+
+			protected override void DrawFrame(GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex)
+			{
+				base.DrawFrame(gameTime, spriteLayer, clipRectIndex);
+
+				//if (enclosingObject==null) {
+				//	Text = Category;
+				//} else {
+				//	Text = Category + ": " + enclosingObject.ToString();
+				//}
 			}
 
 

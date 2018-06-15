@@ -30,6 +30,17 @@ namespace IronStar.Editor2.Controls {
 				this.grid		=	grid;
 				this.Name		=	name;
 			}
+
+
+			public override void RunLayout()
+			{
+				base.RunLayout();
+
+				TextAlignment	=	Alignment.MiddleRight;
+				TextOffsetX		=	-Width / 2 - 3;
+
+				Text			=	Name;
+			}
 		}
 
 	}

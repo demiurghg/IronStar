@@ -44,6 +44,7 @@ namespace IronStar.Editor2.Controls {
 
 			//KeyDown+=TextBox_KeyDown;
 			//KeyUp+=TextBox_KeyUp;
+			Click += TextBox_Click;
 			TypeWrite+=TextBox_TypeWrite;
 			KeyDown+=TextBox_KeyDown;
 			KeyUp+=TextBox_KeyUp;
@@ -51,9 +52,15 @@ namespace IronStar.Editor2.Controls {
 			Deactivated+=TextBox_Deactivated;
 		}
 
+		private void TextBox_Click(object sender, MouseEventArgs e)
+		{
+			SetCursorFromMouse();
+		}
 
 		void CallSetFunc ( string value )
 		{
+			ValueChanged?.Invoke(this, EventArgs.Empty);
+
 			try {
 				setFunc?.Invoke( value );
 			} catch ( FormatException ) {
@@ -155,6 +162,7 @@ namespace IronStar.Editor2.Controls {
 
 			if (e.Key==Keys.Enter) {	
 				CallSetFunc( Text );
+				Parent.FocusTarget();
 				return;
 			}
 
@@ -237,6 +245,22 @@ namespace IronStar.Editor2.Controls {
 		{
 			selectionStart	= MathUtil.Clamp( selectionStart, 0, Text.Length );
 			selectionLength	= MathUtil.Clamp( selectionLength, -selectionStart, Text.Length-selectionStart );
+		}
+
+
+		void SetCursorFromMouse ()
+		{
+			var r = ComputeGlobalAlignedTextRectangle();
+			var x = Frames.MousePosition.X;
+			var y = Frames.MousePosition.X;
+
+			//	tricky stuff:
+			int d = (x - r.X + 3) / 8;
+
+			selectionStart = d;
+			selectionLength = 0;
+						
+			CheckSelection();
 		}
 
 

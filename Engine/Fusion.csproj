@@ -459,6 +459,7 @@
     <Compile Include="Engine\Frames\LayoutEngine.cs" />
     <Compile Include="Engine\Frames\Layouts\QuadLayoutStyle.cs" />
     <Compile Include="Engine\Frames\Layouts\PageLayout.cs" />
+    <Compile Include="Engine\Frames\Layouts\GaleryLayout.cs" />
     <Compile Include="Engine\Frames\Layouts\StackLayout.cs" />
     <Compile Include="Engine\Frames\Manipulator.cs" />
     <Compile Include="Engine\Frames\MouseProcessor.cs" />

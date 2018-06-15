@@ -409,6 +409,15 @@ namespace Fusion.Engine.Frames {
 
 
 		/// <summary>
+		/// 
+		/// </summary>
+		public void FocusTarget ()
+		{
+			Frames.TargetFrame = this;
+		}
+
+
+		/// <summary>
 		/// Sorts child frame (Unstable!)
 		/// </summary>
 		/// <param name="comparison"></param>

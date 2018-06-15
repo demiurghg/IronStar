@@ -351,6 +351,7 @@ namespace IronStar.SFX {
 
 		[Description( "Particle sprite name" )]
 		[Editor( typeof( SpriteFileLocationEditor ), typeof( UITypeEditor ) )]
+		[AEAtlasImage("sprites\\particles")]
 		public string Sprite { get; set; } = "";
 
 		[Description( "Particle visual effect" )]

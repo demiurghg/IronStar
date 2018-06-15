@@ -13,6 +13,7 @@ using Fusion.Core.Input;
 using System.IO;
 using Fusion.Build;
 using Fusion.Core.Content;
+using Fusion.Engine.Frames.Layouts;
 
 namespace IronStar.Editor2.Controls {
 
@@ -20,7 +21,6 @@ namespace IronStar.Editor2.Controls {
 
 		const int DialogWidth	= 640 + 4 + 4 + 4;
 		const int DialogHeight	= 480 + 2 + 2 + 14 + 2 + 20 + 2;
-
 
 		static public void ShowDialog ( FrameProcessor fp, string atlasName, string oldImageName, Action<string> setImageName )
 		{
@@ -38,12 +38,16 @@ namespace IronStar.Editor2.Controls {
 			readonly Action<string> setImageName;
 			readonly string		oldImageName;
 
+			GaleryLayout	galery;
 			Label		labelDir;
+			Label		labelStatus;
+			TextBox		filterBox;
 			ScrollBox	scrollBox;
 			Button		buttonAccept;
 			Button		buttonClose;
+			Button		buttonZoomIn;
+			Button		buttonZoomOut;
 			Frame		imageList;
-
 
 
 			public AtlasSelectorFrame ( FrameProcessor fp, string atlasName, string oldImageName, Action<string> setImageName ) 
@@ -52,26 +56,86 @@ namespace IronStar.Editor2.Controls {
 				this.oldImageName	=	oldImageName;
 				this.setImageName	=	setImageName;
 
-				labelDir		=	new Label( fp, 2, 3, DialogWidth - 4, 10, "Atlas: " + atlasName );
+				AllowDrag		=	true;
+
+				Layout			=	new PageLayout(12,12,1,20,4,12,1);
+
+				labelDir		=	new Label( fp, 0,0,0,0, "Atlas: " + atlasName ) { TextAlignment = Alignment.MiddleLeft };
+				labelStatus		=	new Label( fp, 0,0,0,0, "....") { TextAlignment = Alignment.MiddleLeft };
+
+				filterBox		=	new TextBox( fp, null, null ) { TextAlignment = Alignment.MiddleLeft };
+				filterBox.Text	=	"";
+				filterBox.TypeWrite += FilterBox_TypeWrite;
 
 				scrollBox				=	new ScrollBox( fp, 2, 14, 640+4+4, 480+4 );
 				scrollBox.Border		=	1;
 				scrollBox.BorderColor	=	ColorTheme.BorderColorLight;
 
-				buttonAccept	=	new Button( fp, "Accept", DialogWidth - 140 - 2, DialogHeight - 2 - 20, 140, 20, ()=>Accept(null) );
-				buttonClose		=	new Button( fp, "Close",  2,                     DialogHeight - 2 - 20, 140, 20, ()=>Close() );
+				buttonAccept	=	new Button( fp, "Accept",  0,0,0,0, ()=>Accept(null) );
+				buttonClose		=	new Button( fp, "Close",   0,0,0,0, ()=>Close() ) { RedButton = true };
+				buttonZoomIn	=	new Button( fp, "ZoomIn",  0,0,0,0, ()=>Zoom-- );
+				buttonZoomOut	=	new Button( fp, "ZoomOut", 0,0,0,0, ()=>Zoom++ );
 
 				imageList		=	CreateImageList( atlasName );
 
 				//Add( buttonAccept );
-				Add( buttonClose );
-				Add( scrollBox );
 				Add( labelDir );
+				Add( filterBox );
+				Add( scrollBox );
+				Add( buttonAccept );
+				Add( buttonZoomIn );
+				Add( buttonZoomOut );
+				Add( buttonClose );
 				scrollBox.Add( imageList );
+				Add( labelStatus );
 
 				Missclick += FileSelectorFrame_Missclick;
 			}
 
+
+			private void FilterBox_TypeWrite(object sender, KeyEventArgs e)
+			{
+				ApplyFilter();
+			}
+
+
+			void ApplyFilter ()
+			{
+				if (string.IsNullOrWhiteSpace(filterBox.Text)) {
+					foreach( var child in imageList.Children ) {
+						child.Visible = true;
+					}
+				} else {
+
+					var text = filterBox.Text;
+
+					foreach( var child in imageList.Children ) {
+						child.Visible = child.Text.ToLowerInvariant().Contains( text.ToLowerInvariant() );
+					}
+				}
+			}
+
+
+			public int Zoom {
+				get {
+					return zoom;
+				}
+				set {
+					if (zoom!=value) {
+						zoom = value;
+						zoom = MathUtil.Clamp( zoom, 0,2 );
+						galery.ItemWidth  =  64 << zoom;
+						galery.ItemHeight =  64 << zoom;
+						galery.NumColumns =  10 >> zoom;
+						imageList.MakeLayoutDirty();
+
+						foreach (var child in imageList.Children) {
+							child.ImageDstRect = new Rectangle(0,0, galery.ItemWidth, galery.ItemHeight);
+						}
+					}
+				}
+			}
+			int zoom = 0;
 
 
 			Frame CreateImageList ( string atlasName )
@@ -83,7 +147,9 @@ namespace IronStar.Editor2.Controls {
 				var width	= (size)*colNum;
 				var height	= (size)*rowNum;
 
-				var panel	= new Frame( Frames, 0,0, width, height, "", Color.Zero );
+				var panel		= new Frame( Frames, 0,0, width, height, "", Color.Zero );
+				galery			=	new GaleryLayout(5,128,128,0);
+				panel.Layout	=	galery;
 
 				var names	= atlas.GetSubImageNames().OrderBy( n => n ).ToArray();
 
@@ -91,9 +157,7 @@ namespace IronStar.Editor2.Controls {
 					var name   = names[i];
 					var rect   = atlas.GetAbsoluteRectangleByName(name);
 					var label  = string.Format("{0}\r\n{1}x{2}", name, rect.Width, rect.Height);
-					var row    = i / colNum;
-					int col    = i % colNum;
-					var button = new Frame( Frames, col*size, row*size, size, size, label, Color.Zero );
+					var button = new Frame( Frames, 0,0,0,0, label, Color.Zero );
 					button.TextAlignment = Alignment.BottomCenter;
 					button.Padding		 = 3;
 					button.Border		 = 1;
@@ -111,6 +175,7 @@ namespace IronStar.Editor2.Controls {
 
 				return panel;
 			}
+
 
 			private void Button_StatusChanged(object sender, StatusEventArgs e)
 			{

@@ -38,10 +38,7 @@
         "TranslateZ": 0.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0,
-        "WorldMatrix": "1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1",
-        "TranslateVector": "0, 0, 0",
-        "RotateQuaternion": "0, 0, 0, 1"
+        "RotateRoll": 0.0
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -58,10 +55,7 @@
         "TranslateZ": 17.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0,
-        "WorldMatrix": "1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 17, 1",
-        "TranslateVector": "0, 0, 17",
-        "RotateQuaternion": "0, 0, 0, 1"
+        "RotateRoll": 0.0
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -69,19 +63,16 @@
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
           "Classname": "box",
-          "Target": null
+          "Target": "quake vajcaxca"
         },
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 2.00020981,
-        "TranslateY": 0.2393317,
-        "TranslateZ": 10.0026579,
-        "RotateYaw": 0.0008292519,
-        "RotatePitch": 89.95576,
-        "RotateRoll": -5.31884861,
-        "WorldMatrix": "0.9956929, -7.158145E-05, -0.09271254, 0, 0.0927125663, 0.0007688999, 0.9956927, 0, 1.11758709E-08, -0.9999997, 0.0007721782, 0, 2.00020981, 0.2393317, 10.0026579, 1",
-        "TranslateVector": "2.00020981, 0.2393317, 10.0026579",
-        "RotateQuaternion": "0.7060722, 0.0328015238, -0.0328268558, 0.706617653"
+        "TranslateX": -11.6787786,
+        "TranslateY": 0.237981036,
+        "TranslateZ": 16.65843,
+        "RotateYaw": -180.0,
+        "RotatePitch": 89.82305,
+        "RotateRoll": 145.708008
       },
       {
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
@@ -98,37 +89,106 @@
         "TranslateZ": 6.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0,
-        "WorldMatrix": "1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -7, 3, 6, 1",
-        "TranslateVector": "-7, 3, 6",
-        "RotateQuaternion": "0, 0, 0, 1"
+        "RotateRoll": 0.0
       },
       {
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
-        "LightColor": "255, 0, 0, 255",
-        "LightIntensity": 2670.0,
+        "LightColor": "255, 128, 16, 255",
+        "LightIntensity": 2810.0,
         "OuterRadius": 12.0,
         "InnerRadius": 0.1,
         "NearPlane": 0.125,
         "FarPlane": 12.0,
         "FovVertical": 60.0,
         "FovHorizontal": 60.0,
-        "LightStyle": "default",
+        "LightStyle": "emergency1",
         "SpotMaskName": "",
         "LodBias": 0,
-        "DepthBias": 0.0009765625,
+        "DepthBias": 0.001953125,
         "SlopeBias": 2.0,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -8.0,
         "TranslateY": 3.0,
         "TranslateZ": 13.0,
-        "RotateYaw": 154.443634,
+        "RotateYaw": 147.585236,
         "RotatePitch": -18.1850986,
-        "RotateRoll": -3.4150944E-06,
-        "WorldMatrix": "-0.9021615, -5.96046448E-08, -0.4313988, 0, -0.134634376, 0.9500533, 0.2815536, 0, 0.409851849, 0.312087864, -0.85710144, 0, -8, 3, 13, 1",
-        "TranslateVector": "-8, 3, 13",
-        "RotateQuaternion": "-0.03495258, 0.962979257, 0.154115841, 0.218397915"
+        "RotateRoll": -3.4150944E-06
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box",
+          "Target": "quake vajcaxca"
+        },
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -11.6707916,
+        "TranslateY": 0.7248005,
+        "TranslateZ": 16.6693611,
+        "RotateYaw": -117.074532,
+        "RotatePitch": 89.53102,
+        "RotateRoll": 143.918518
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box",
+          "Target": "quake vajcaxca"
+        },
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -11.4859314,
+        "TranslateY": 1.21170676,
+        "TranslateZ": 16.8417759,
+        "RotateYaw": -60.0,
+        "RotatePitch": 88.87204,
+        "RotateRoll": 147.622543
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box",
+          "Target": "quake vajcaxca"
+        },
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -13.0596418,
+        "TranslateY": 0.32362932,
+        "TranslateZ": 17.83401,
+        "RotateYaw": -48.0509529,
+        "RotatePitch": -0.209863141,
+        "RotateRoll": -89.9319458
+      },
+      {
+        "$type": "IronStar.Mapping.MapSpotLight, IronStar",
+        "LightColor": "255, 128, 16, 255",
+        "LightIntensity": 2810.0,
+        "OuterRadius": 12.0,
+        "InnerRadius": 0.1,
+        "NearPlane": 0.125,
+        "FarPlane": 12.0,
+        "FovVertical": 60.0,
+        "FovHorizontal": 60.0,
+        "LightStyle": "emergency2",
+        "SpotMaskName": "",
+        "LodBias": 0,
+        "DepthBias": 0.001953125,
+        "SlopeBias": 2.0,
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -13.0,
+        "TranslateY": 3.0,
+        "TranslateZ": 13.0,
+        "RotateYaw": 198.581665,
+        "RotatePitch": -18.1850986,
+        "RotateRoll": -3.4150944E-06
       }
     ]
   }

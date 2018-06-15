@@ -13,6 +13,7 @@ using IronStar.SFX;
 using Fusion.Core.Shell;
 using Fusion.Engine.Common;
 using Fusion.Engine.Common;
+using Newtonsoft.Json;
 
 namespace IronStar.Mapping {
 	public abstract class MapNode {
@@ -131,6 +132,7 @@ namespace IronStar.Mapping {
 		/// Gets node's world transform matrix 
 		/// </summary>
 		[Browsable(false)]
+		[JsonIgnore]
 		public Matrix WorldMatrix {
 			get {
 				return Matrix.RotationQuaternion( RotateQuaternion ) 
@@ -143,6 +145,7 @@ namespace IronStar.Mapping {
 		/// Gets and sets translation vector
 		/// </summary>
 		[Browsable(false)]
+		[JsonIgnore]
 		public Vector3 TranslateVector {
 			get {
 				return new Vector3( TranslateX, TranslateY, TranslateZ );
@@ -159,6 +162,7 @@ namespace IronStar.Mapping {
 		/// Gets and sets rotation quaternion
 		/// </summary>
 		[Browsable(false)]
+		[JsonIgnore]
 		public Quaternion RotateQuaternion {
 			get {
 				return Quaternion.RotationYawPitchRoll( 

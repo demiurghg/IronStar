@@ -134,6 +134,8 @@ namespace IronStar.Editor2 {
 			workspace.AddHotkey( Keys.B			, ModKeys.None, () => BakeToEntity() );
 			workspace.AddHotkey( Keys.Enter		, ModKeys.None, () => ActivateSelected() );
 			workspace.AddHotkey( Keys.U			, ModKeys.None, () => UseSelected() );
+			workspace.AddHotkey( Keys.D			, ModKeys.Ctrl, () => DuplicateSelection() );
+
 
 			workspace.AddHotkey( Keys.J			, ModKeys.Ctrl, () => RotateToolSnapEnable = !RotateToolSnapEnable );
 			workspace.AddHotkey( Keys.J			, ModKeys.None, () => MoveToolSnapEnable = !MoveToolSnapEnable );

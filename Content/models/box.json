@@ -3,7 +3,7 @@
   "ScenePath": "",
   "Scale": 1.0,
   "UseAnimation": true,
-  "UseAnimator": false,
+  "UseAnimator": true,
   "Color": "10, 10, 10, 1",
   "FPVEnable": true,
   "FPVCamera": "camera1",

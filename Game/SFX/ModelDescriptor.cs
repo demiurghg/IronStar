@@ -16,41 +16,42 @@ using Fusion.Core.Content;
 using Fusion.Core;
 using System.IO;
 using Fusion.Engine.Graphics;
+using Fusion.Core.Shell;
 
 namespace IronStar.SFX {
 	public class ModelDescriptor : IPrecachable {
 
-		[Category( "Appearance" )]
+		[AECategory( "Appearance" )]
 		[Description( "Path to FBX scene" )]
-		[Editor( typeof( FbxFileLocationEditor ), typeof( UITypeEditor ) )]
+		[AEFileName("scenes", "*.fbx", AEFileNameMode.NoExtension)]
 		public string ScenePath { get; set; } = "";
 
-		[Category( "Appearance" )]
+		[AECategory( "Appearance" )]
 		[Description( "Entire model scale" )]
 		public float Scale { get; set; } = 1;
 
-		[Category( "Appearance" )]
+		[AECategory( "Appearance" )]
 		[Description( "Indicated whether animation enabled" )]
 		public bool UseAnimation { get; set; } = false;
 
-		[Category( "Appearance" )]
+		[AECategory( "Appearance" )]
 		[Description( "Indicated whether advanced animation controller is used" )]
 		public bool UseAnimator { get; set; } = false;
 
-		[Category( "Appearance" )]
+		[AECategory( "Appearance" )]
 		[Description( "Model glow color multiplier" )]
 		public Color4 Color { get; set; } = new Color4( 10, 10, 10, 1 );
 
-		[Category( "First Person View" )]
+		[AECategory( "First Person View" )]
 		public bool FPVEnable { get; set; } = false;
 
-		[Category( "First Person View" )]
+		[AECategory( "First Person View" )]
 		public string FPVCamera { get; set; } = "camera1";
 
-		[Category( "Animation" )]
+		[AECategory( "Animation" )]
 		public string Prefix { get; set; } = "anim_";
 
-		[Category( "Animation" )]
+		[AECategory( "Animation" )]
 		public string Clips { get; set; } = "";
 
 
@@ -91,12 +92,6 @@ namespace IronStar.SFX {
 		}
 
 
-		public static string SaveToXml( ModelDescriptor descriptor )
-		{
-			return Misc.SaveObjectToXml( descriptor, descriptor.GetType() );
-		}
-
-
 		public static ModelDescriptor LoadFromXml( string xmlText )
 		{
 			return (ModelDescriptor)Misc.LoadObjectFromXml( typeof( ModelDescriptor ), xmlText );
@@ -124,7 +119,7 @@ namespace IronStar.SFX {
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 		{
 			using ( var sr = new StreamReader( stream ) ) {
-				return ModelDescriptor.LoadFromXml( sr.ReadToEnd() );
+				return content.Game.GetService<Factory>().ImportJson( stream );
 			}
 		}
 	}

@@ -70,17 +70,9 @@ namespace IronStar.SFX {
 	[ContentLoader( typeof( FXFactory ) )]
 	public sealed class FXFactoryLoader : ContentLoader {
 
-		static Type[] extraTypes;
-		static XmlImporter importer;
-
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 		{
-			if (importer==null) {
-				importer = new XmlImporter( typeof(FXFactory), null );
-			}
-
-			object fxFactory = importer.Import( stream );
-			return fxFactory;
+			return content.Game.GetService<Factory>().ImportJson( stream );
 		}
 	}
 

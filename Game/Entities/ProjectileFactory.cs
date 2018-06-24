@@ -20,36 +20,39 @@ using BEPUphysics.EntityStateManagement;
 using BEPUphysics.PositionUpdating;
 using Fusion.Core.IniParser.Model;
 using System.ComponentModel;
+using Fusion.Core.Shell;
 
 namespace IronStar.Entities {
 
 	public class ProjectileFactory : EntityFactory {
 
-		[Category("Projectile")]
+		[AECategory("Projectile")]
 		[Description("Projectile velocity (m/sec)")]
 		public float Velocity { get; set; } = 10;	
 
-		[Category("Projectile")]
+		[AECategory("Projectile")]
 		[Description("Projectile damage impulse")]
 		public float Impulse	{ get; set; } = 0;
 
-		[Category("Projectile")]
+		[AECategory("Projectile")]
 		[Description("Hit damage")]
 		public short Damage { get; set; } = 0;
 
-		[Category("Projectile")]
+		[AECategory("Projectile")]
 		[Description("Projectile life-time in seconds")]
 		public float LifeTime { get; set; } = 10;
 
-		[Category("Projectile")]
+		[AECategory("Projectile")]
 		[Description("Hit radius in meters")]
 		public float Radius { get; set; } = 0;
 
 
-		[Category("Visual Effects")]
+		[AECategory("Visual Effects")]
+		[AEClassname("fx")]
 		public string	ExplosionFX	{ get; set; } = "";
 
-		[Category("Visual Effects")]
+		[AECategory("Visual Effects")]
+		[AEClassname("fx")]
 		public string	TrailFX		{ get; set; } = "";
 
 

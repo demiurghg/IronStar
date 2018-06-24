@@ -21,22 +21,24 @@ using BEPUphysics.EntityStateManagement;
 using BEPUphysics.PositionUpdating;
 using Fusion.Core.IniParser.Model;
 using System.ComponentModel;
+using Fusion.Core.Shell;
 //using BEPUphysics.
 
 
 namespace IronStar.Entities {
 	public class RigidBodyFactory : EntityFactory {
 
-		[Category("Physics")]
+		[AECategory("Physics")]
 		public float  Width  { get; set; } = 1;
-		[Category("Physics")]
+		[AECategory("Physics")]
 		public float  Height { get; set; } = 1;
-		[Category("Physics")]
+		[AECategory("Physics")]
 		public float  Depth  { get; set; } = 1;
-		[Category("Physics")]
+		[AECategory("Physics")]
 		public float  Mass   { get; set; } = 1;
 
-		[Category("Appearance")]
+		[AECategory("Appearance")]
+		[AEClassname("models")]
 		public string Model  { get; set; } = "";
 
 		public override EntityController Spawn( Entity entity, GameWorld world )

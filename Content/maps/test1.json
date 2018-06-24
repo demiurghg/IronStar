@@ -67,12 +67,12 @@
         },
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -11.6787786,
-        "TranslateY": 0.237981036,
-        "TranslateZ": 16.65843,
-        "RotateYaw": -180.0,
-        "RotatePitch": 89.82305,
-        "RotateRoll": 145.708008
+        "TranslateX": -11.6827593,
+        "TranslateY": 0.3636543,
+        "TranslateZ": 16.6555748,
+        "RotateYaw": -126.093765,
+        "RotatePitch": 89.98021,
+        "RotateRoll": -160.143387
       },
       {
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
@@ -125,12 +125,12 @@
         },
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -11.6707916,
-        "TranslateY": 0.7248005,
-        "TranslateZ": 16.6693611,
-        "RotateYaw": -117.074532,
-        "RotatePitch": 89.53102,
-        "RotateRoll": 143.918518
+        "TranslateX": -11.663372,
+        "TranslateY": 1.10237694,
+        "TranslateZ": 16.672327,
+        "RotateYaw": -152.831665,
+        "RotatePitch": 89.96573,
+        "RotateRoll": 107.536461
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -142,12 +142,12 @@
         },
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -11.4859314,
-        "TranslateY": 1.21170676,
-        "TranslateZ": 16.8417759,
-        "RotateYaw": -60.0,
-        "RotatePitch": 88.87204,
-        "RotateRoll": 147.622543
+        "TranslateX": -11.5264893,
+        "TranslateY": 0.364311278,
+        "TranslateZ": 17.887619,
+        "RotateYaw": -151.116348,
+        "RotatePitch": -0.00600111252,
+        "RotateRoll": -0.00243697572
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -159,12 +159,12 @@
         },
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -13.0596418,
-        "TranslateY": 0.32362932,
-        "TranslateZ": 17.83401,
-        "RotateYaw": -48.0509529,
-        "RotatePitch": -0.209863141,
-        "RotateRoll": -89.9319458
+        "TranslateX": -13.09584,
+        "TranslateY": 0.4894441,
+        "TranslateZ": 17.7884045,
+        "RotateYaw": -43.06521,
+        "RotatePitch": 0.0007342453,
+        "RotateRoll": -89.99747
       },
       {
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",

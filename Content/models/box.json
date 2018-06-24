@@ -1,9 +1,9 @@
 {
   "$type": "IronStar.SFX.ModelDescriptor, IronStar",
-  "ScenePath": "",
+  "ScenePath": "scenes\\boxes\\box_low.fbx",
   "Scale": 1.0,
-  "UseAnimation": true,
-  "UseAnimator": true,
+  "UseAnimation": false,
+  "UseAnimator": false,
   "Color": "10, 10, 10, 1",
   "FPVEnable": true,
   "FPVCamera": "camera1",

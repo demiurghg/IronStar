@@ -17,6 +17,7 @@ using Fusion.Core;
 using Fusion.Build.Mapping;
 using Fusion.Engine.Graphics.Ubershaders;
 using System.ComponentModel;
+using Fusion.Core.Shell;
 
 namespace Fusion.Engine.Graphics {
 
@@ -122,6 +123,13 @@ namespace Fusion.Engine.Graphics {
 
 		public float PageScaleRCP {
 			get; private set;
+		}
+
+
+		[AECommand]
+		public void VTRestart ()
+		{
+			Game.Invoker.ExecuteString("vtrestart");
 		}
 
 

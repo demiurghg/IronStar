@@ -14,6 +14,7 @@ using Fusion.Development;
 using System.Drawing.Design;
 using Fusion;
 using IronStar.Physics;
+using Fusion.Core.Shell;
 
 namespace IronStar.Entities {
 
@@ -182,54 +183,58 @@ namespace IronStar.Entities {
 	/// </summary>
 	public class FuncDoorFactory : EntityFactory {
 
-		[Category("Appearance")]
+		[AECategory("Appearance")]
 		[Description("Name of the model")]
+		[AEClassname("models")]
 		public string Model  { get; set; } = "";
 
 
-		[Category("Effects")]
+		[AECategory("Effects")]
 		[Description("FX to play when door starts moving")]
+		[AEClassname("fx")]
 		public string FXStart { get; set; } = "";
 
-		[Category("Effects")]
+		[AECategory("Effects")]
 		[Description("FX to play when door is moving")]
+		[AEClassname("fx")]
 		public string FXMove { get; set; } = "";
 
-		[Category("Effects")]
+		[AECategory("Effects")]
 		[Description("FX to play when door stops moving")]
+		[AEClassname("fx")]
 		public string FXStop { get; set; } = "";
 
 
-		[Category("Movement")]
+		[AECategory("Movement")]
 		[Description("Indicated that door could be trigerred only once")]
 		public bool Once { get; set; }
 
-		[Category("Movement")]
+		[AECategory("Movement")]
 		[Description("Door operation mode")]
 		public FuncDoorMode DoorMode { get; set; } = FuncDoorMode.OpenAndCloseAfterDelay;
 
-		[Category("Movement")]
+		[AECategory("Movement")]
 		[Description("Min interval (msec) before door closes")]
 		public int WaitingDelay { get; set; } = 500;
 
 
-		[Category("Animation")]
+		[AECategory("Animation")]
 		[Description("Animation frame rate")]
 		public int FramesPerSecond { get; set; } = 30;
 
-		[Category("Animation")]
+		[AECategory("Animation")]
 		[Description("Opening animation start inclusive frame")]
 		public int OpeningStartFrame { get; set; } = 0;
 
-		[Category("Animation")]
+		[AECategory("Animation")]
 		[Description("Opening animation end inclusive frame")]
 		public int OpeningEndFrame { get; set; } = 15;
 
-		[Category("Animation")]
+		[AECategory("Animation")]
 		[Description("Closing animation start inclusive frame")]
 		public int ClosingStartFrame { get; set; } = 15;
 
-		[Category("Animation")]
+		[AECategory("Animation")]
 		[Description("Closing animation end inclusive frame")]
 		public int ClosingEndFrame { get; set; } = 30;
 

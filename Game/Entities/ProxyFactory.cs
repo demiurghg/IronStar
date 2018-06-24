@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion;
 using Fusion.Core.Mathematics;
+using Fusion.Core.Shell;
 using Fusion.Engine.Graphics;
 using IronStar.Core;
 using IronStar.Editors;
@@ -14,7 +15,7 @@ namespace IronStar.Entities {
 	public class ProxyFactory : EntityFactory {
 
 		
-		[TypeConverter(typeof(EntityListConverter))]
+		[AEClassname("entities")]
 		public string Classname { 
 			get { return classname; }
 			set {

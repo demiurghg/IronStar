@@ -63,6 +63,15 @@ namespace Fusion.Core.Shell {
 	}
 
 
+	public class AEClassnameAttribute : Attribute {
+		public readonly string Directory;
+		public AEClassnameAttribute( string dir )
+		{
+			Directory = dir;
+		}
+	}
+
+
 
 	public enum AEFileNameMode {
 		NoExtension = 0x0001,

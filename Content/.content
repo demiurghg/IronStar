@@ -42,6 +42,5 @@ _outsource/*
 
 [Copy]
 *.ini
-*.xml
 *.txt
-*.map
+*.json

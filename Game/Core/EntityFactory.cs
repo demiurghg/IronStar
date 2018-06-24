@@ -69,15 +69,9 @@ namespace IronStar.Core {
 	[ContentLoader( typeof( EntityFactory ) )]
 	public sealed class EntityFactoryLoader : ContentLoader {
 
-		static Type[] extraTypes;
-
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 		{
-			if (extraTypes==null) {
-				extraTypes = Misc.GetAllSubclassesOf( typeof(EntityFactory) );
-			}
-
-			return Misc.LoadObjectFromXml( typeof(EntityFactory), stream, extraTypes );
+			return content.Game.GetService<Factory>().ImportJson( stream );
 		}
 	}
 }

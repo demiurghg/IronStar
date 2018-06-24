@@ -164,15 +164,20 @@ namespace IronStar.Editor2.Controls {
 				if (pi.PropertyType==typeof(string)) {
 
 					if (pi.HasAttribute<AEFileNameAttribute>()) {
-						var fna = pi.GetAttribute<AEFileNameAttribute>();
-						var ext = fna.Extension;
-						var dir = fna.Directory;
+					
+						var fna			= pi.GetAttribute<AEFileNameAttribute>();
+						var ext			= fna.Extension;
+						var dir			= fna.Directory;
+						var nameOnly	= fna.FileNameOnly;
+						var noExt		= fna.NoExtension;
 						AddTextBox( category, name, 
 							()=>(string)(pi.GetValue(obj)), 
 							(val)=>setFunc(val), 
 							(val)=>FileSelector.ShowDialog( Frames, dir, ext, "", (fnm)=>setFunc(fnm) )
 						);
+					
 					} else if (pi.HasAttribute<AEAtlasImageAttribute>()) {
+					
 						var aia = pi.GetAttribute<AEAtlasImageAttribute>();
 						var an  = aia.AtlasName;
 						AddTextBox( category, name, 
@@ -180,6 +185,16 @@ namespace IronStar.Editor2.Controls {
 							(val)=>setFunc(val), 
 							(val)=>AtlasSelector.ShowDialog( Frames, an, "", (fnm)=>setFunc(fnm) )
 						);
+					
+					} else if (pi.HasAttribute<AEClassnameAttribute>()) {
+
+						var dir		=	pi.GetAttribute<AEClassnameAttribute>().Directory;
+						var type	=	pi.PropertyType;
+						var value	=	pi.GetValue(obj).ToString();
+						var values	=	Game.Content.EnumerateAssets(dir).ToArray();
+
+						AddDropDown( category, name, value, values, ()=>pi.GetValue(obj).ToString(), (val)=>setFunc(val) );
+
 					} else {
 						AddTextBox( category, name, ()=>(string)(pi.GetValue(obj)), (val)=>setFunc(val), null );
 					}

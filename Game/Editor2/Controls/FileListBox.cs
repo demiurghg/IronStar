@@ -92,13 +92,15 @@ namespace IronStar.Editor2.Controls {
 				return currentDir;
 			}
 			set {
-				if (!Path.IsPathRooted(value)) {
-					throw new ArgumentException("value must be rooted path");
+				var newDir = value;
+
+				if (!Path.IsPathRooted(newDir)) {
+					newDir = Path.Combine( ContentDirectory, newDir );
 				}
-				if (!Directory.Exists(value)) {
+				if (!Directory.Exists(newDir)) {
 					throw new ArgumentException("directory '" + value + "' does not exist");
 				}
-				currentDir = value;
+				currentDir = newDir;
 				RefreshFileList();
 			}
 		}

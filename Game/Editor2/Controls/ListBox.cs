@@ -42,14 +42,18 @@ namespace IronStar.Editor2.Controls {
 			}
 		}
 
+		Func<object,string> nameConverter;
+
+
 		
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="fp"></param>
-		public ListBox ( FrameProcessor fp, IEnumerable<object> items ) : base(fp)
+		public ListBox ( FrameProcessor fp, IEnumerable<object> items, Func<object,string> nameConverter = null ) : base(fp)
 		{
 			this.items		=	items.ToArray();
+			this.nameConverter	=	nameConverter ?? ((obj) => obj.ToString());
 
 			BorderColor		=	ColorTheme.BorderColorLight;
 			BackColor		=	ColorTheme.BackgroundColorDark;
@@ -190,7 +194,7 @@ namespace IronStar.Editor2.Controls {
 
 			for (int i=0; i<count; i++) {
 
-				var text	=	items[i]?.ToString() ?? "(null)";
+				var text	=	nameConverter( items[i] );
 				var hovered	=	false;
 				var selected=	false;
 				int x		=	gp.X;

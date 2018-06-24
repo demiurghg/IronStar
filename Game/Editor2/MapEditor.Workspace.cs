@@ -217,12 +217,19 @@ namespace IronStar.Editor2 {
 		{
 			var types = new List<Type>();
 
-			types.Add( typeof(FXFactory) );
-			types.AddRange( Misc.GetAllSubclassesOf(typeof(ItemFactory), true) );
-			types.AddRange( Misc.GetAllSubclassesOf(typeof(EntityFactory), true) );
-			types.AddRange( Misc.GetAllSubclassesOf(typeof(ModelDescriptor), true) );
-						  
-			return new AssetExplorer( workspace, "", types.ToArray(), 0,0,500,600 );
+			var typeFX			=	new[] { typeof(FXFactory) };
+			var typeItems		=	Misc.GetAllSubclassesOf(typeof(ItemFactory), true);
+			var typeEntities	=	Misc.GetAllSubclassesOf(typeof(EntityFactory), true);
+			var typeModels		=	Misc.GetAllSubclassesOf(typeof(ModelDescriptor), true);
+
+			var assetExplorer	=	new AssetExplorer2( workspace, "fx", typeFX, 0,0, 500, 600 );
+
+			assetExplorer.AddToolButton( "FX"		,	() => assetExplorer.SetTargetClass( "fx"		, typeFX		) );
+			assetExplorer.AddToolButton( "Items"	,	() => assetExplorer.SetTargetClass( "items"		, typeItems		) );
+			assetExplorer.AddToolButton( "Entities"	,	() => assetExplorer.SetTargetClass( "entities"	, typeEntities	) );
+			assetExplorer.AddToolButton( "Models"	,	() => assetExplorer.SetTargetClass( "models"	, typeModels	) );
+
+			return assetExplorer;			  
 		}
 	}
 }

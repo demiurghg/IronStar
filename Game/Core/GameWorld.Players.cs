@@ -24,7 +24,7 @@ namespace IronStar.Core {
 		/// <summary>
 		/// List of players;
 		/// </summary>
-		public readonly List<Player> Players = new List<Player>();
+		public readonly List<PlayerState> Players = new List<PlayerState>();
 
 
 
@@ -33,7 +33,7 @@ namespace IronStar.Core {
 		/// </summary>
 		/// <param name="guid"></param>
 		/// <returns></returns>
-		Player GetPlayer ( Guid guid )
+		PlayerState GetPlayer ( Guid guid )
 		{
 			return Players.LastOrDefault( p => p.Guid==guid );
 		}
@@ -147,7 +147,7 @@ namespace IronStar.Core {
 		public void PlayerConnected ( Guid guid, string userInfo )
 		{
 			MessageService?.Push( string.Format("Client connected : {0} {1}", guid, userInfo) );
-			Players.Add( new Player( guid, userInfo ) );
+			Players.Add( new PlayerState( guid, userInfo ) );
 		}
 
 

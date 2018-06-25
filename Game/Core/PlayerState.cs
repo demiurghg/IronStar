@@ -18,7 +18,7 @@ using IronStar.Entities;
 
 namespace IronStar {
 
-	public class Player {
+	public class PlayerState {
 
 		static Random rand = new Random();
 
@@ -60,7 +60,7 @@ namespace IronStar {
 		/// </summary>
 		/// <param name="guid"></param>
 		/// <param name="userInfo"></param>
-		public Player ( Guid guid, string userInfo )
+		public PlayerState ( Guid guid, string userInfo )
 		{
 			Guid		=	guid;
 			UserInfo	=	userInfo;

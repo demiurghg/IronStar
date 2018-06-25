@@ -129,7 +129,7 @@
     <Compile Include="Entities\Characters\CharacterArmor.cs" />
     <Compile Include="Entities\Characters\CharacterHealth.cs" />
     <Compile Include="Entities\Characters\CharacterInventory.cs" />
-    <Compile Include="Entities\Characters\MonsterState.cs" />
+    <Compile Include="Monsters\MonsterState.cs" />
     <Compile Include="Entities\Characters\Character.cs" />
     <Compile Include="Entities\Characters\CharacterFactory.cs" />
     <Compile Include="Entities\FuncMotor.cs" />
@@ -181,7 +181,7 @@
     <Compile Include="SFX\ModelInstance.cs" />
     <Compile Include="SFX\ModelFactory.cs" />
     <Compile Include="SFX\ModelManager.cs" />
-    <Compile Include="Core\Player.cs" />
+    <Compile Include="Core\PlayerState.cs" />
     <Compile Include="Core\Enums.cs" />
     <Compile Include="SFX\FXEvent.cs" />
     <Compile Include="Core\GameWorld.Casting.cs" />
@@ -234,6 +234,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

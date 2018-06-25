@@ -14,7 +14,7 @@ using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
 using Fusion.Core.Extensions;
 using IronStar.Core;
-using Fusion.Core;
+using Fusion.Core.Shell;
 using System.IO;
 using BEPUphysics;
 using BEPUphysics.Entities.Prefabs;

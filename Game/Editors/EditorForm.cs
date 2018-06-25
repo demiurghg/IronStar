@@ -45,7 +45,7 @@ namespace IronStar.Editors {
 			InitializeComponent();
 
 			configEditor	=	new ConfigEditorControl( game ) { Dock = DockStyle.Fill };
-			modelEditor		=	new ObjectEditorControl( game, "models",	typeof(ModelDescriptor), "Model"  ) { Dock = DockStyle.Fill };
+			modelEditor		=	new ObjectEditorControl( game, "models",	typeof(ModelFactory), "Model"  ) { Dock = DockStyle.Fill };
 			entityEditor	=	new ObjectEditorControl( game, "entities",	typeof(EntityFactory), "Entity" ) { Dock = DockStyle.Fill };
 			itemEditor		=	new ObjectEditorControl( game, "items",		typeof(ItemFactory), "Items" ) { Dock = DockStyle.Fill };
 			fxEditor		=	new ObjectEditorControl( game, "fx",		typeof(FXFactory), "FX" ) { Dock = DockStyle.Fill };

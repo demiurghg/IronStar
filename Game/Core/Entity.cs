@@ -260,7 +260,7 @@ namespace IronStar.Core {
 		/// </summary>
 		/// <param name="position"></param>
 		/// <param name="orient"></param>
-		void SetPose ( Vector3 position, Quaternion orient )
+		void Teleport ( Vector3 position, Quaternion orient )
 		{
 			TeleportCount++;
 			TeleportCount &= 0x7F;

@@ -34,14 +34,12 @@ namespace IronStar.Core {
 		public float SunIntensity;
 
 		public short		WeaponModel;
-		public WeaponState	WeaponState;
 
 		public Color4 AmbientLevel;
 
 		public void ClearHud ()
 		{
 			WeaponModel		=	0;
-			WeaponState		=	WeaponState.Idle;
 
 			for ( int i=0; i<HudState.Length; i++ ) {
 				HudState[i]	=	0;
@@ -64,7 +62,6 @@ namespace IronStar.Core {
 			writer.Write( AmbientLevel );
 
 			writer.Write( WeaponModel );
-			writer.Write( (byte)WeaponState );
 
 			for ( int i=0; i<HudState.Length; i++ ) {
 				writer.Write( HudState[i] );
@@ -85,7 +82,6 @@ namespace IronStar.Core {
 			AmbientLevel	=	reader.Read<Color4>();
 
 			WeaponModel		=	reader.ReadInt16();
-			WeaponState		=	(WeaponState)reader.ReadByte();
 
 			for ( int i=0; i<HudState.Length; i++ ) {
 				HudState[i]	=	reader.ReadInt16();

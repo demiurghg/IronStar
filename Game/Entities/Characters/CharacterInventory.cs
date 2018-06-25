@@ -79,7 +79,7 @@ namespace IronStar.Entities {
 			}
 
 			//	removed depleted powerups :
-			items.RemoveAll( item => (item is Powerup) && ((item as Powerup).IsExhausted()) );
+			items.RemoveAll( item => item.Depleted );
 
 			//	update weapon switch :
 			UpdateWeaponSwitch();
@@ -93,14 +93,14 @@ namespace IronStar.Entities {
 		/// <param name="header"></param>
 		public void UpdateHud ( SnapshotHeader snapshotHeader )
 		{
-			snapshotHeader.WeaponModel		=	0;
+			/*snapshotHeader.WeaponModel		=	0;
 			snapshotHeader.WeaponState		=	WeaponState.Idle;
 
 			var weapon = GetItem( currentWeapon ) as Weapon;
 
 			if (weapon!=null) {
 				weapon.UpdateHud( snapshotHeader );
-			}
+			} */
 		}
 
 
@@ -126,7 +126,7 @@ namespace IronStar.Entities {
 		/// <param name="weaponId"></param>
 		public void SwitchToWeapon ( int weaponId )
 		{
-			var weapon = GetItem( weaponId ) as Weapon;
+			/*var weapon = GetItem( weaponId ) as Weapon;
 
 			if (weapon==null) {
 				Log.Warning("SwitchToWeapon: Item #{0} is not a weapon or does not exist", weaponId);
@@ -135,7 +135,7 @@ namespace IronStar.Entities {
 
 			currentWeapon = weaponId;
 
-			weapon.Activate();
+			weapon.Activate();*/
 		}
 
 
@@ -145,8 +145,8 @@ namespace IronStar.Entities {
 		/// </summary>
 		public void AttackWeapon ( bool attack )
 		{
-			var weapon = GetItem( currentWeapon ) as Weapon;
-			weapon?.Attack(attack);
+			/*var weapon = GetItem( currentWeapon ) as Weapon;
+			weapon?.Attack(attack);*/
 		}
 
 		/*-----------------------------------------------------------------------------------------
@@ -154,18 +154,6 @@ namespace IronStar.Entities {
 		 *	Internal stuff :
 		 * 
 		-----------------------------------------------------------------------------------------*/
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="id"></param>
-		/// <returns></returns>
-		Item GetItem(int id) 
-		{
-			return items.SingleOrDefault( item => item.ID == id );
-		}
-
-
 
 	}
 }

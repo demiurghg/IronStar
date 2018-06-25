@@ -9,7 +9,6 @@ using Fusion.Core.Mathematics;
 using Fusion.Core.Shell;
 using Fusion.Engine.Graphics;
 using IronStar.Core;
-using IronStar.Editors;
 
 namespace IronStar.Entities {
 	public class ProxyFactory : EntityFactory {

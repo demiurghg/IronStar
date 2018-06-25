@@ -16,7 +16,6 @@ using Fusion.Core.IniParser.Model;
 using System.ComponentModel;
 using System.Xml.Serialization;
 using Fusion.Engine.Graphics;
-using IronStar.Editors;
 using System.Drawing.Design;
 using Fusion.Core.Content;
 using Fusion.Development;

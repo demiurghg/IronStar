@@ -94,7 +94,7 @@ namespace IronStar.SFX {
 		{
 			var modelName	=	world.Atoms[modelAtom];
 
-			var modelDesc	=	world.Content.Load<ModelDescriptor>( @"models\" + modelName );
+			var modelDesc	=	world.Content.Load<ModelFactory>( @"models\" + modelName );
 
 			var model		=	new ModelInstance( this, modelDesc, world.Content, entity );
 
@@ -171,7 +171,6 @@ namespace IronStar.SFX {
 
 
 
-		WeaponState oldWeaponState;
 		Vector3 oldVelocity;
 		bool oldTraction;
 
@@ -185,6 +184,7 @@ namespace IronStar.SFX {
 		/// <param name="userCmd"></param>
 		void UpdateViewModel ( float elapsedTime, float lerpFactor, GameCamera gameCamera, UserCommand userCmd )
 		{
+			/*
 			if (weaponModel != world.snapshotHeader.WeaponModel || weaponModelDirty) {
 
 				weaponModelDirty	=	false;
@@ -260,6 +260,7 @@ namespace IronStar.SFX {
 			var camMatrix		=	rw.Camera.GetCameraMatrix(Fusion.Drivers.Graphics.StereoEye.Mono);
 				
 			weaponModelInstance?.Update( elapsedTime, 0, weaponMatrix * camMatrix );
+			*/
 		}
 	}
 }

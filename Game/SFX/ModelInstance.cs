@@ -73,7 +73,7 @@ namespace IronStar.SFX {
 		/// <param name="scene"></param>
 		/// <param name="entity"></param>
 		/// <param name="matrix"></param>
-		public ModelInstance ( ModelManager modelManager, ModelDescriptor descriptor, ContentManager content, Entity entity )
+		public ModelInstance ( ModelManager modelManager, ModelFactory descriptor, ContentManager content, Entity entity )
 		{
 			this.scene			=	content.Load<Scene>( descriptor.ScenePath );
 			this.clips			=	descriptor.LoadClips( content );

@@ -127,7 +127,7 @@ namespace IronStar.Items {
 				return false;
 			}
 
-			playerCharacter.Inventory.AddItem( this );
+			/*playerCharacter.Inventory.AddItem( this );
 			playerCharacter.Inventory.SwitchToWeapon(ID);
 
 			return true;
@@ -148,6 +148,14 @@ namespace IronStar.Items {
 			state.Update( this, dt );
 		}
 
+
+		public override bool Depleted
+		{
+			get
+			{
+				return false;
+			}
+		}
 
 
 		/// <summary>
@@ -197,7 +205,7 @@ namespace IronStar.Items {
 		}
 
 
-		public void Activate ()
+		public override void Activate ()
 		{
 			rqActivation = true;
 		}

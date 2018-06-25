@@ -126,37 +126,10 @@
     <Compile Include="Core\SnapshotWriter.cs" />
     <Compile Include="Editor2\Selection.cs" />
     <Compile Include="Editor2\Utils.cs" />
-    <Compile Include="Editors\Editor.cs" />
-    <Compile Include="Editors\EntityListConverter.cs" />
-    <Compile Include="Editors\EditorForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Editors\EditorForm.Designer.cs">
-      <DependentUpon>EditorForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editors\ConfigEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Editors\ConfigEditorControl.Designer.cs">
-      <DependentUpon>ConfigEditorControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editors\ObjectEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Editors\ObjectEditorControl.Designer.cs">
-      <DependentUpon>ObjectEditorControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Editors\SceneImportDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Editors\SceneImportDialog.Designer.cs">
-      <DependentUpon>SceneImportDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\Characters\CharacterController.cs" />
-    <Compile Include="Entities\Characters\CharacterHealth.cs" />
     <Compile Include="Entities\Characters\CharacterArmor.cs" />
+    <Compile Include="Entities\Characters\CharacterHealth.cs" />
     <Compile Include="Entities\Characters\CharacterInventory.cs" />
-    <Compile Include="Entities\Characters\CharacterState.cs" />
+    <Compile Include="Entities\Characters\MonsterState.cs" />
     <Compile Include="Entities\Characters\Character.cs" />
     <Compile Include="Entities\Characters\CharacterFactory.cs" />
     <Compile Include="Entities\FuncMotor.cs" />
@@ -173,14 +146,10 @@
     <Compile Include="Entities\StartPoint.cs" />
     <Compile Include="FactoryAttribute.cs" />
     <Compile Include="Factory.cs" />
+    <Compile Include="GameConfig.cs" />
     <Compile Include="IronStar.Commands.cs" />
     <Compile Include="IronStar.cs" />
-    <Compile Include="Items\Powerup.cs" />
     <Compile Include="Items\Item.cs" />
-    <Compile Include="Items\Weapon.cs" />
-    <Compile Include="Items\Weapon.Timer.cs" />
-    <Compile Include="Items\Weapon.States.cs" />
-    <Compile Include="Items\WeaponFactory.cs" />
     <Compile Include="Items\ItemFactory.cs" />
     <Compile Include="Mapping\LightPreset.cs" />
     <Compile Include="Mapping\Map.Build.cs" />
@@ -194,6 +163,7 @@
     <Compile Include="Mapping\MapOmniLight.cs" />
     <Compile Include="Mapping\MapNode.cs" />
     <Compile Include="Mapping\Map.cs" />
+    <Compile Include="Physics\CharacterController.cs" />
     <Compile Include="Physics\KinematicModel.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -209,7 +179,7 @@
     <Compile Include="SFX\FXFactory.cs" />
     <Compile Include="SFX\FXPlayback.Rail.cs" />
     <Compile Include="SFX\ModelInstance.cs" />
-    <Compile Include="SFX\ModelDescriptor.cs" />
+    <Compile Include="SFX\ModelFactory.cs" />
     <Compile Include="SFX\ModelManager.cs" />
     <Compile Include="Core\Player.cs" />
     <Compile Include="Core\Enums.cs" />
@@ -261,21 +231,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Editors\EditorForm.resx">
-      <DependentUpon>EditorForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editors\ConfigEditorControl.resx">
-      <DependentUpon>ConfigEditorControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editors\ObjectEditorControl.resx">
-      <DependentUpon>ObjectEditorControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Editors\SceneImportDialog.resx">
-      <DependentUpon>SceneImportDialog.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -286,8 +241,6 @@
       <Link>libfbxsdk.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Editors\toolMove.png" />
-    <Content Include="Editors\toolScale.png" />
     <Content Include="embree.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -302,7 +255,6 @@
     <None Include="app.manifest">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Editors\toolRotate.png" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

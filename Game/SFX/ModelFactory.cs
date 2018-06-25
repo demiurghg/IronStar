@@ -11,7 +11,6 @@ using System.Windows.Forms;
 using System.Windows.Forms.Design;
 using System.Drawing.Design;
 using System.Xml.Serialization;
-using IronStar.Editors;
 using Fusion.Core.Content;
 using Fusion.Core;
 using System.IO;
@@ -19,7 +18,7 @@ using Fusion.Engine.Graphics;
 using Fusion.Core.Shell;
 
 namespace IronStar.SFX {
-	public class ModelDescriptor : IPrecachable {
+	public class ModelFactory : IPrecachable {
 
 		[AECategory( "Appearance" )]
 		[Description( "Path to FBX scene" )]
@@ -92,9 +91,9 @@ namespace IronStar.SFX {
 		}
 
 
-		public static ModelDescriptor LoadFromXml( string xmlText )
+		public static ModelFactory LoadFromXml( string xmlText )
 		{
-			return (ModelDescriptor)Misc.LoadObjectFromXml( typeof( ModelDescriptor ), xmlText );
+			return (ModelFactory)Misc.LoadObjectFromXml( typeof( ModelFactory ), xmlText );
 		}
 
 
@@ -113,7 +112,7 @@ namespace IronStar.SFX {
 	/// <summary>
 	/// Scene loader
 	/// </summary>
-	[ContentLoader( typeof( ModelDescriptor ) )]
+	[ContentLoader( typeof( ModelFactory ) )]
 	public sealed class ModelDescriptorLoader : ContentLoader {
 
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )

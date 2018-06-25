@@ -85,35 +85,18 @@ namespace IronStar.Items {
 
 	public abstract class Item {
 
-		private static int idCounter = 1;
-
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="factory"></param>
 		public Item ( string name )
 		{
-			ID		=	idCounter++;
-
-			if (ID==0) {
-				throw new InvalidOperationException("Too much items created (ID==0).");
-			}
-
-			Name	=	name;
 		}
 
 		/// <summary>
 		/// The internal name of the item
 		/// </summary>
 		public readonly string Name;
-
-		/// <summary>
-		/// The internal name of the item
-		/// </summary>
-		public int ID {
-			get;
-			private set;
-		}
 
 		/// <summary>
 		/// Called when player attempts to picks the item up.
@@ -133,5 +116,18 @@ namespace IronStar.Items {
 		/// Updates internal item state
 		/// </summary>
 		public abstract void Update ( float elsapsedTime );
+
+		/// <summary>
+		/// Updates internal item state
+		/// </summary>
+		public abstract void Activate ();
+
+		/// <summary>
+		/// Indicates that item was depleted and could not be used again.
+		/// Depleted items are removed from inventory.
+		/// </summary>
+		public abstract bool Depleted {
+			get;
+		}
 	}
 }

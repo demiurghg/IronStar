@@ -56,7 +56,7 @@ namespace IronStar.Entities {
 		{
 			var c = e.Controller as Character;
 			var m = Matrix.RotationQuaternion(e.Rotation);
-			return e.PointOfView + m.Right * 0.1f + m.Down * 0.1f + m.Forward * 0.3f;
+			return e.PointOfView;// + m.Right * 0.1f + m.Down * 0.1f + m.Forward * 0.3f;
 		}
 
 

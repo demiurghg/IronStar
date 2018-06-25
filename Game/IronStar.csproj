@@ -157,7 +157,6 @@
     <Compile Include="Entities\Characters\CharacterArmor.cs" />
     <Compile Include="Entities\Characters\CharacterInventory.cs" />
     <Compile Include="Entities\Characters\CharacterState.cs" />
-    <Compile Include="Entities\Characters\CharacterWeaponry.cs" />
     <Compile Include="Entities\Characters\Character.cs" />
     <Compile Include="Entities\Characters\CharacterFactory.cs" />
     <Compile Include="Entities\FuncMotor.cs" />

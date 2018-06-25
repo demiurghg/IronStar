@@ -61,7 +61,11 @@ namespace Fusion.Engine.Frames {
 			get { 
 				return targetFrame;
 			}
-			set {
+			set {				
+				if (value==RootFrame) {
+					targetFrame = null;
+					return;
+				}
 				if (targetFrame!=value) {
 					targetFrame?.OnDeactivate();
 					value?.OnActivate();

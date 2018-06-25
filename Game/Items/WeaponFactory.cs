@@ -22,95 +22,96 @@ using BEPUphysics.EntityStateManagement;
 using BEPUphysics.PositionUpdating;
 using Fusion.Core.IniParser.Model;
 using System.ComponentModel;
+using Fusion.Core.Shell;
 
 namespace IronStar.Items {
 
 	public class WeaponFactory : ItemFactory {
 
-		[Category("Shooting Properties")]
+		[AECategory("Shooting Properties")]
 		[Description("Damage per projectile")]
 		public int Damage { get; set; } = 100;
 
-		[Category("Shooting Properties")]
+		[AECategory("Shooting Properties")]
 		[Description("Projectile classname")]
 		public string Projectile { get; set; } = "";
 
-		[Category("Shooting Properties")]
+		[AECategory("Shooting Properties")]
 		[Description("Number of shot projectiles")]
 		public int ProjectileQuantity { get; set; } = 1;
 
-		[Category("Shooting Properties")]
+		[AECategory("Shooting Properties")]
 		[Description("Number of shot projectiles")]
 		public int AmmoCapacity { get; set; } = 100;
 
 
 
-		[Category("Shooting Properties")]
+		[AECategory("Shooting Properties")]
 		[Description("Tangent vertical spread addition")]
 		public float VSpread { get; set; } = 0;
 
-		[Category("Shooting Properties")]
+		[AECategory("Shooting Properties")]
 		[Description("Tangent horizontal spread addition")]
 		public float HSpread { get; set; } = 0;
 
-		[Category("Shooting Properties")]
+		[AECategory("Shooting Properties")]
 		[Description("Indicates that first bullet must be perfectly aimed")]
 		public bool PerfectFirstRound { get; set; } = false;
 
 
 
-		[Category("Shooting Timing")]
+		[AECategory("Shooting Timing")]
 		[Description("Idle animation period")]
 		public int IdlePeriod { get; set; } = 500;
 
-		[Category("Shooting Timing")]
+		[AECategory("Shooting Timing")]
 		[Description("Time to take weapon up")]
 		public int ActivationPeriod { get; set; } = 200;
 
-		[Category("Shooting Timing")]
+		[AECategory("Shooting Timing")]
 		[Description("Time to put weapon down")]
 		public int DeactivationPeriod { get; set; } = 200;
 
-		[Category("Shooting Timing")]
+		[AECategory("Shooting Timing")]
 		[Description("Delay between triggering attack and actual shot")]
 		public int WarmupPeriod { get; set; } = 0;
 
-		[Category("Shooting Timing")]
+		[AECategory("Shooting Timing")]
 		[Description("Delay between actual shot and readiness for next shot")]
 		public int CooldownPeriod { get; set; } = 500;
 
 
 		
-		[Category("View Model")]
+		[AECategory("View Model")]
 		public string ViewModel { get; set; } = "";
 
-		[Category("View Model")]
+		[AECategory("View Model")]
 		public AnimRegion IdleAnimation { get; set; } = new AnimRegion();
 
-		[Category("View Model")]
+		[AECategory("View Model")]
 		public AnimRegion WarmupAnimation { get; set; } = new AnimRegion();
 
-		[Category("View Model")]
+		[AECategory("View Model")]
 		public AnimRegion CooldownAnimation { get; set; } = new AnimRegion();
 
-		[Category("View Model")]
+		[AECategory("View Model")]
 		public AnimRegion ActivationAnimation { get; set; } = new AnimRegion();
 
-		[Category("View Model")]
+		[AECategory("View Model")]
 		public AnimRegion DeactivationAnimation { get; set; } = new AnimRegion();
 
 
 		
-		[Category("Shooting FX")]
+		[AECategory("Shooting FX")]
 		public string MuzzleFX { get; set; } = "";
 
-		[Category("Shooting FX")]
+		[AECategory("Shooting FX")]
 		public string TraceFX { get; set; } = "";
 
-		[Category("Shooting FX")]
+		[AECategory("Shooting FX")]
 		public string HitFX { get; set; } = "";
 
-		[Category("Shooting FX")]
+		[AECategory("Shooting FX")]
 		public string EmptyFX { get; set; } = "";
 
 		public override Item Spawn( GameWorld world )

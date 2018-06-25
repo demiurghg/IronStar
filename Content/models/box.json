@@ -1,5 +1,5 @@
 {
-  "$type": "IronStar.SFX.ModelDescriptor, IronStar",
+  "$type": "IronStar.SFX.ModelFactory, IronStar",
   "ScenePath": "scenes\\boxes\\box_low.fbx",
   "Scale": 1.0,
   "UseAnimation": false,

@@ -90,7 +90,7 @@ namespace IronStar.Physics {
 		{
 			var modelName	=	World.Atoms[modelAtom];
 
-			var modelDesc	=	World.Content.Load<ModelDescriptor>( @"models\" + modelName );
+			var modelDesc	=	World.Content.Load<ModelFactory>( @"models\" + modelName );
 
 			var scene		=	World.Content.Load<Scene>( modelDesc.ScenePath );
 

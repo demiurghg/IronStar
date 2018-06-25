@@ -16,20 +16,24 @@ using Fusion.Engine.Graphics;
 using IronStar.Core;
 using BEPUphysics;
 using Fusion.Core.IniParser.Model;
+using IronStar.Physics;
 
 
 namespace IronStar.Entities {
 	public partial class Character : EntityController {
 
 		readonly CharacterController	controller;
-		readonly CharacterHealth		health;
-		readonly CharacterArmor			armor;
-		readonly CharacterInventory		inventory;
+		public CharacterController		Controller	{ get { return controller	; } }
 
-		public CharacterController	Controller	{ get { return controller	; } }
-		public CharacterHealth		Health		{ get { return health		; } }
-		public CharacterArmor		Armor		{ get { return armor		; } }
-		public CharacterInventory	Inventory	{ get { return inventory	; } }
+		int health			;
+		int armor			;
+		int ammo_bullets	;
+		int ammo_shells		;
+		int ammo_cells		;
+		int ammo_grenades	;
+		int ammo_rockets	;
+		int ammo_slugs		;
+
 
 		/// <summary>
 		/// 
@@ -38,10 +42,19 @@ namespace IronStar.Entities {
 		/// <param name="space"></param>
 		public Character ( Entity entity, GameWorld world, CharacterFactory factory ) : base(entity,world)
 		{
-			controller	=	new CharacterController( entity, world, factory );
-			health		=	new CharacterHealth( factory );
-			armor		=	new CharacterArmor( factory );
-			inventory	=	new CharacterInventory( entity, world, factory );
+			controller	=	new CharacterController( entity, world, 
+				factory.Height,
+				factory.CrouchingHeight,
+				factory.Radius,
+				factory.StandingSpeed,
+				factory.CrouchingSpeed,
+				factory.JumpSpeed,
+				factory.Mass,
+				factory.MaxStepHeight
+			 );
+
+			health		=	factory.MaxHealth;
+			armor		=	factory.MaxArmor;
 		}
 
 
@@ -62,9 +75,9 @@ namespace IronStar.Entities {
 
 			int penetration;
 
-			controller.Damage( kickImpulse, kickPoint );
-			armor.Damage( damage, out penetration );
-			health.Damage( penetration );
+			controller.ApplyImpulse( kickImpulse, kickPoint );
+			/*armor.Damage( damage, out penetration );
+			health.Damage( penetration );*/
 
 			return false;
 		}
@@ -77,10 +90,10 @@ namespace IronStar.Entities {
 		/// <param name="gameTime"></param>
 		public override void Update ( float elapsedTime )
 		{
-			controller.Update( elapsedTime );
-			armor.Update( elapsedTime );
-			health.Update( elapsedTime );
-			inventory.Update( elapsedTime );
+			controller.Update();
+			//armor.Update( elapsedTime );
+			//health.Update( elapsedTime );
+			//inventory.Update( elapsedTime );
 		}
 
 
@@ -91,10 +104,10 @@ namespace IronStar.Entities {
 		/// <param name="snapshotHeader"></param>
 		public void UpdateHud ( SnapshotHeader snapshotHeader )
 		{
-			snapshotHeader.HudState[ (int)HudElement.Health ]	=	(short)health.Health;
-			snapshotHeader.HudState[ (int)HudElement.Armor	]	=	(short)armor.Armor;
+			/*snapshotHeader.HudState[ (int)HudElement.Health ]	=	(short)health.Health;
+			snapshotHeader.HudState[ (int)HudElement.Armor	]	=	(short)armor.Armor;*/
 
-			inventory.UpdateHud( snapshotHeader );
+			//inventory.UpdateHud( snapshotHeader );
 		}
 
 
@@ -105,7 +118,7 @@ namespace IronStar.Entities {
 		/// <param name="id"></param>
 		public override void Killed ()
 		{
-			controller.Killed();
+			controller.Destroy();
 		}
 
 
@@ -116,10 +129,10 @@ namespace IronStar.Entities {
 		/// <param name="action"></param>
 		public override void Action( UserAction action )
 		{
-			switch (action) {
+			/*switch (action) {
 				case UserAction.Attack:			inventory.AttackWeapon(true); break;
 				case UserAction.SwitchWeapon:	inventory.SwitchWeapon(); break;
-			}
+			} */
 		}
 
 
@@ -131,7 +144,7 @@ namespace IronStar.Entities {
 		public override void CancelAction( UserAction action )
 		{
 			switch (action) {
-				case UserAction.Attack:			inventory.AttackWeapon(false); break;
+				//case UserAction.Attack:			inventory.AttackWeapon(false); break;
 			}
 		}
 

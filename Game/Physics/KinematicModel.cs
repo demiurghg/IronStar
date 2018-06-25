@@ -46,7 +46,7 @@ namespace IronStar.Physics {
 		/// <param name="descriptor"></param>
 		/// <param name="scene"></param>
 		/// <param name="entity"></param>
-		public KinematicModel ( PhysicsManager physicsManager, ModelDescriptor descriptor, Scene scene, Entity entity )
+		public KinematicModel ( PhysicsManager physicsManager, ModelFactory descriptor, Scene scene, Entity entity )
 		{
 			this.entity			=	entity;
 			this.physicsManager	=	physicsManager;

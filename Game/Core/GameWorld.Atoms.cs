@@ -36,7 +36,6 @@ namespace IronStar.Core {
 			atoms.AddRange( Content.EnumerateAssets( "fx" ) );
 			atoms.AddRange( Content.EnumerateAssets( "entities" ) );
 			atoms.AddRange( Content.EnumerateAssets( "models" ) );
-			atoms.AddRange( Content.EnumerateAssets( "decals" ) );
 			atoms.AddRange( Content.EnumerateAssets( "items" ) );
 			atoms.AddRange( Content.EnumerateAssets( "hud" ) );
 

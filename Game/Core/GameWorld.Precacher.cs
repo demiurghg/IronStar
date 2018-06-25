@@ -51,7 +51,7 @@ namespace IronStar.Core {
 
 
 				content	.EnumerateAssets("models")
-						.Select( name => content.PrecacheSafe<ModelDescriptor>(@"models\"+name) )
+						.Select( name => content.PrecacheSafe<ModelFactory>(@"models\"+name) )
 						.ToArray();
 
 				content	.EnumerateAssets("entities")

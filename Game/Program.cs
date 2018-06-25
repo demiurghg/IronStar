@@ -13,7 +13,6 @@ using Fusion.Core;
 using Fusion.Core.Shell;
 using Fusion.Core.Utils;
 using Fusion.Engine.Imaging;
-using IronStar.Editors;
 using IronStar.Core;
 using IronStar.Mapping;
 using Fusion.Core.Extensions;
@@ -26,17 +25,6 @@ using Fusion.Core.Mathematics;
 namespace IronStar {
 
 	class Program {
-
-
-
-		[Command("editor")]
-		static string Editor_f ( string[] args )
-		{
-			Editor.Run( Game.Instance );
-			return null;
-		}
-
-
 
 		[STAThread]
 		static int Main ( string[] args )
@@ -74,15 +62,12 @@ namespace IronStar {
 
 				//	apply command-line options here:
 				//	...
-				if (!LaunchBox.ShowDialog(game, "Config.ini", ()=>Editor.Run(game))) {
+				if (!LaunchBox.ShowDialog(game, "Config.ini", ()=>Log.Warning("Editor is in-game only"))) {
 					return 0;
 				}
 
 				//	run:
 				game.Run();
-
-				//	close editors :
-				Editor.CloseAll();
 			}
 
 			return 0;

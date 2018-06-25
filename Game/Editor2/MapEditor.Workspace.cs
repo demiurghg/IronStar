@@ -220,7 +220,7 @@ namespace IronStar.Editor2 {
 			var typeFX			=	new[] { typeof(FXFactory) };
 			var typeItems		=	Misc.GetAllSubclassesOf(typeof(ItemFactory), true);
 			var typeEntities	=	Misc.GetAllSubclassesOf(typeof(EntityFactory), true);
-			var typeModels		=	Misc.GetAllSubclassesOf(typeof(ModelDescriptor), true);
+			var typeModels		=	Misc.GetAllSubclassesOf(typeof(ModelFactory), true);
 
 			var assetExplorer	=	new AssetExplorer2( workspace, "fx", typeFX, 0,0, 500, 600 );
 

@@ -6,6 +6,24 @@ using System.Threading.Tasks;
 
 namespace IronStar.Core {
 
+	public enum WeaponType : byte {	
+		Machinegun		,
+		Shotgun			,
+		Plasmagun		,
+		RocketLauncher	,
+		GaussRifle		,
+	}
+
+
+	public enum AmmoType : byte {
+		Bullets,
+		Shells,
+		Cells,
+		Rockets,
+		Grenades,
+		Slugs,
+	}
+
 
 	[Flags]
 	public enum UserAction : byte {
@@ -21,14 +39,11 @@ namespace IronStar.Core {
 		Jump			=	0x80,
 	}	
 
-
-
 	[Flags]
 	public enum EntityState : short {
 		None				=	0x0000,
 		HasTraction			=	0x0001,
 		CameraEntity		=	0x0002,
-		UseInlineModel		=	0x0004,
 		Crouching			=	0x0008,
 	}
 
@@ -37,7 +52,6 @@ namespace IronStar.Core {
 		RailHit,
 		RocketExplosion,
 	}
-
 
 	public enum EntityFX {
 		None,

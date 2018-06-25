@@ -24,6 +24,8 @@ namespace IronStar.Entities.Players {
 
 		CharacterController	controller;
 		Inventory			inventory;
+		int					health;
+		int					armor;
 
 
 		/// <summary>
@@ -45,6 +47,9 @@ namespace IronStar.Entities.Players {
 			 );
 
 			 inventory	=	new Inventory();
+
+			 health		=	factory.MaxHealth;
+			 armor		=	factory.MaxArmor;
 		}
 
 
@@ -63,11 +68,29 @@ namespace IronStar.Entities.Players {
 			var c = controller;
 			var e = Entity;
 
-			int penetration;
+			if (damage<0) {
+				throw new ArgumentOutOfRangeException("damage < 0");
+			}
 
 			controller.ApplyImpulse( kickImpulse, kickPoint );
-			/*armor.Damage( damage, out penetration );
-			health.Damage( penetration );*/
+
+			//	armor could adsorb 2/3 of damage.
+			int damageHealth	=	damage / 3;
+			int damageArmor		=	damage - damageHealth;
+
+			if (armor>=damageArmor) {
+				armor  -= damageArmor;
+				health -= damageHealth;
+			} else {
+				damageArmor  = armor;
+				damageHealth = damage - damageArmor;
+				armor	=	0;
+				health	-=	damageHealth;
+			}
+
+			if (health<=0) {
+				Log.Warning("KILL!!!!!!!!");
+			}
 
 			return false;
 		}
@@ -80,24 +103,15 @@ namespace IronStar.Entities.Players {
 		/// <param name="gameTime"></param>
 		public override void Update ( float elapsedTime )
 		{
+			//	update physical character controller :
 			controller.Update();
-			//armor.Update( elapsedTime );
-			//health.Update( elapsedTime );
-			//inventory.Update( elapsedTime );
-		}
 
+			//	update inventory :
+			foreach ( var item in inventory ) {
+				item.Update( elapsedTime );
+			}
 
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="snapshotHeader"></param>
-		public void UpdateHud ( SnapshotHeader snapshotHeader )
-		{
-			/*snapshotHeader.HudState[ (int)HudElement.Health ]	=	(short)health.Health;
-			snapshotHeader.HudState[ (int)HudElement.Armor	]	=	(short)armor.Armor;*/
-
-			//inventory.UpdateHud( snapshotHeader );
+			inventory.RemoveAll( item => item.Depleted );
 		}
 
 

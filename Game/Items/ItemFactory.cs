@@ -22,23 +22,19 @@ using BEPUphysics.EntityStateManagement;
 using BEPUphysics.PositionUpdating;
 using Fusion.Core.IniParser.Model;
 using System.ComponentModel;
+using Fusion.Core.Shell;
 
 namespace IronStar.Items {
 
 
 	public abstract class ItemFactory {
 
-		[Browsable(false)]
-		[Description("Unique item name")]
+		[AEIgnore]
 		public string Name { get; set; }
 
-		[Category("Inventory")]
+		[AECategory("Inventory")]
 		[Description("Displayable item name")]
 		public string NiceName { get; set; } = "Unnamed Item";
-
-		[Category("Inventory")]
-		[Description("Item HUD icon")]
-		public string Icon { get; set; } = "";
 
 		/// <summary>
 		/// Creates instance of item.

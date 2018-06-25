@@ -479,7 +479,7 @@ namespace IronStar.Core {
 			var playerCharacter = GetPlayerCharacter( clientGuid );
 
 			snapshotHeader.ClearHud();
-			playerCharacter?.UpdateHud( snapshotHeader );
+			//playerCharacter?.UpdateHud( snapshotHeader );
 
 			snapshotWriter.Write( stream, snapshotHeader, entities, fxEvents );
 		}

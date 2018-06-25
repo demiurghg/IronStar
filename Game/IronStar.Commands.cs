@@ -11,7 +11,7 @@ using Fusion.Engine.Frames;
 using Fusion.Engine.Tools;
 using Fusion;
 using Fusion.Core.Shell;
-using IronStar.Editor2;
+using IronStar.Editor;
 using Fusion.Build;
 
 namespace IronStar {

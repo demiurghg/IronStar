@@ -16,7 +16,7 @@ using Fusion.Engine.Common;
 using Fusion.Core;
 using System.ComponentModel;
 using System.Xml.Serialization;
-using IronStar.Editor2;
+using IronStar.Editor;
 
 namespace IronStar.Core {
 

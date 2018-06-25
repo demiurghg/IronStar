@@ -15,6 +15,7 @@ using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
 using IronStar.Core;
 using IronStar.Entities;
+using IronStar.Entities.Players;
 
 namespace IronStar.Core {
 	public partial class GameWorld {
@@ -47,11 +48,11 @@ namespace IronStar.Core {
 		}
 
 
-		public Character GetPlayerCharacter ( Guid guid )
+		public Player GetPlayerCharacter ( Guid guid )
 		{
 			return GetEntities()
 				.Where( e1 => e1.UserGuid==guid )
-				.Select( e2 => e2.Controller as Character )
+				.Select( e2 => e2.Controller as Player )
 				.Where( ch => ch!=null )
 				.LastOrDefault();
 		}

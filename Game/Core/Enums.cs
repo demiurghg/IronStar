@@ -6,22 +6,19 @@ using System.Threading.Tasks;
 
 namespace IronStar.Core {
 
-	public enum WeaponType : byte {	
-		Machinegun		,
-		Shotgun			,
-		Plasmagun		,
-		RocketLauncher	,
-		GaussRifle		,
-	}
-
-
-	public enum AmmoType : byte {
-		Bullets,
-		Shells,
-		Cells,
-		Rockets,
-		Grenades,
-		Slugs,
+	public enum InventoryItem : byte {
+		Health,
+		Armor,
+		Ammo_Bullets,
+		Ammo_Shells,
+		Ammo_Cells,
+		Ammo_Rockets,
+		Ammo_Grenades,
+		Ammo_Slugs,
+		Key_Red,
+		Key_Yellow,
+		Key_Blue,
+		PowerCube,
 	}
 
 

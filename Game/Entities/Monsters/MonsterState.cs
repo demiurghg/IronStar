@@ -20,7 +20,7 @@ using Fusion.Core.IniParser.Model;
 
 
 
-namespace IronStar.Entities {
+namespace IronStar.Entities.Monsters {
 	public class CharacterState {
 		public virtual bool Damage ( int damage ) { return false; }
 		public virtual void Move ( short forward, short right, short up ) { }

@@ -19,20 +19,11 @@ using Fusion.Core.IniParser.Model;
 using IronStar.Physics;
 
 
-namespace IronStar.Entities {
-	public partial class Character : EntityController {
+namespace IronStar.Entities.Players {
+	public partial class Player : EntityController {
 
-		readonly CharacterController	controller;
-		public CharacterController		Controller	{ get { return controller	; } }
-
-		int health			;
-		int armor			;
-		int ammo_bullets	;
-		int ammo_shells		;
-		int ammo_cells		;
-		int ammo_grenades	;
-		int ammo_rockets	;
-		int ammo_slugs		;
+		CharacterController	controller;
+		Inventory			inventory;
 
 
 		/// <summary>
@@ -40,7 +31,7 @@ namespace IronStar.Entities {
 		/// </summary>
 		/// <param name="game"></param>
 		/// <param name="space"></param>
-		public Character ( Entity entity, GameWorld world, CharacterFactory factory ) : base(entity,world)
+		public Player ( Entity entity, GameWorld world, PlayerFactory factory ) : base(entity,world)
 		{
 			controller	=	new CharacterController( entity, world, 
 				factory.Height,
@@ -53,8 +44,7 @@ namespace IronStar.Entities {
 				factory.MaxStepHeight
 			 );
 
-			health		=	factory.MaxHealth;
-			armor		=	factory.MaxArmor;
+			 inventory	=	new Inventory();
 		}
 
 

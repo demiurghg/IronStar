@@ -19,12 +19,12 @@ using BEPUphysics.Character;
 using Fusion.Core.IniParser.Model;
 using System.ComponentModel;
 
-namespace IronStar.Entities {
-	public class CharacterFactory : EntityFactory {
+namespace IronStar.Entities.Players {
+	public class PlayerFactory : EntityFactory {
 
 		public override EntityController Spawn( Entity entity, GameWorld world )
 		{
-			return new Character( entity, world, this );
+			return new Player( entity, world, this );
 		}
 
 

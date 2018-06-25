@@ -1,5 +1,5 @@
 {
-  "$type": "IronStar.Entities.CharacterFactory, IronStar",
+  "$type": "IronStar.Entities.Players.PlayerFactory, IronStar",
   "MaxHealth": 100,
   "MaxArmor": 100,
   "Height": 1.7,

@@ -15,6 +15,7 @@ using IronStar.SFX;
 using Fusion.Core.IniParser.Model;
 using Fusion.Engine.Graphics;
 using IronStar.Entities;
+using IronStar.Entities.Players;
 
 namespace IronStar.Core {
 
@@ -93,10 +94,10 @@ namespace IronStar.Core {
 		/// <returns></returns>
 		public bool TryUse ( Entity user )
 		{
-			var character = user.Controller as Character;
+			var character = user.Controller as Player;
 
 			if (character==null) {
-				Log.Warning("TryUse: user is not a character!");
+				Log.Warning("TryUse: user is not a player!");
 				return false;
 			}
 

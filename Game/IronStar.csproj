@@ -126,12 +126,10 @@
     <Compile Include="Core\SnapshotWriter.cs" />
     <Compile Include="Editor2\Selection.cs" />
     <Compile Include="Editor2\Utils.cs" />
-    <Compile Include="Entities\Characters\CharacterArmor.cs" />
-    <Compile Include="Entities\Characters\CharacterHealth.cs" />
-    <Compile Include="Entities\Characters\CharacterInventory.cs" />
-    <Compile Include="Monsters\MonsterState.cs" />
-    <Compile Include="Entities\Characters\Character.cs" />
-    <Compile Include="Entities\Characters\CharacterFactory.cs" />
+    <Compile Include="Entities\Players\Inventory.cs" />
+    <Compile Include="Entities\Players\PlayerFactory.cs" />
+    <Compile Include="Entities\Monsters\MonsterState.cs" />
+    <Compile Include="Entities\Players\Player.cs" />
     <Compile Include="Entities\FuncMotor.cs" />
     <Compile Include="Entities\FuncDoor.cs" />
     <Compile Include="Entities\FuncFX.cs" />

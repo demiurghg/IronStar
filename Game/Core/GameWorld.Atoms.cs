@@ -38,6 +38,7 @@ namespace IronStar.Core {
 			atoms.AddRange( Content.EnumerateAssets( "models" ) );
 			atoms.AddRange( Content.EnumerateAssets( "items" ) );
 			atoms.AddRange( Content.EnumerateAssets( "hud" ) );
+			atoms.AddRange( map.Nodes.Where( n1 => n1 is MapEntity ).Select( n2 => (n2 as MapEntity).FactoryName ) );
 
 			Atoms.AddRange( atoms );
 		}

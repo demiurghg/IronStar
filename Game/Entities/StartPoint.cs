@@ -28,9 +28,9 @@ namespace IronStar.Entities {
 
 		public readonly StartPointType StartPointType;
 
-		public StartPoint( uint id, GameWorld world, StartPointType startPointType ) : base( id, world )
+		public StartPoint( uint id, short clsid, GameWorld world, StartPointFactory factory ) : base( id, clsid, world, factory )
 		{
-			StartPointType = startPointType;
+			StartPointType = factory.StartPointType;
 		}
 	}
 
@@ -41,9 +41,9 @@ namespace IronStar.Entities {
 		[Category( "Common" )]
 		public StartPointType StartPointType { get; set; }
 
-		public override Entity Spawn( uint id, GameWorld world )
+		public override Entity Spawn( uint id, short clsid, GameWorld world )
 		{
-			return new StartPoint( id, world, StartPointType );
+			return new StartPoint( id, clsid, world, this );
 		}
 
 

@@ -19,7 +19,7 @@ namespace IronStar.Entities {
 
 	public class NullEntity : Entity {
 
-		public NullEntity( uint id, GameWorld world ) : base( id, world )
+		public NullEntity( uint id, short clsid, GameWorld world, NullFactory factory ) : base( id, clsid, world, factory )
 		{
 			
 		}
@@ -28,9 +28,9 @@ namespace IronStar.Entities {
 
 	public class NullFactory : EntityFactory {
 
-		public override Entity Spawn( uint id, GameWorld world )
+		public override Entity Spawn( uint id, short clsid, GameWorld world )
 		{
-			return new NullEntity( id, world );
+			return new NullEntity( id, clsid, world, this );
 		}
 	}
 }

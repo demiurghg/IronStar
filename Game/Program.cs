@@ -47,7 +47,6 @@ namespace IronStar {
 			Builder.Options.OutputDirectory = @"Content";
 			Builder.SafeBuild();
 
-
 			//
 			//	Run game :
 			//

@@ -3,7 +3,7 @@
   "Environment": {
     "$type": "IronStar.Mapping.MapEnvironment, IronStar",
     "Gravity": 16.0,
-    "SkyTrubidity": 8.0,
+    "SkyTrubidity": 4.75,
     "SunAltitude": 71.0,
     "SunAzimuth": 89.0,
     "SunIntensity": 160.0,
@@ -31,11 +31,65 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.NullFactory, IronStar",
-          "Target": null
+          "TargetName": null
         },
+        "FactoryName": "rlVeqvUF",
         "Visible": true,
         "Frozen": false,
         "TranslateX": 0.0,
+        "TranslateY": 0.0,
+        "TranslateZ": 2.0,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.StartPointFactory, IronStar",
+          "StartPointType": "singlePlayer",
+          "TargetName": null
+        },
+        "FactoryName": "a1hocMPK",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -4.0,
+        "TranslateY": 0.0,
+        "TranslateZ": 4.0,
+        "RotateYaw": 30.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.NullFactory, IronStar",
+          "TargetName": null
+        },
+        "FactoryName": "njin5J0o",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.0,
+        "TranslateY": 0.0,
+        "TranslateZ": -5.0,
+        "RotateYaw": -60.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.StartPointFactory, IronStar",
+          "StartPointType": "singlePlayer",
+          "TargetName": null
+        },
+        "FactoryName": "9Ul2BSoq",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -3.0,
         "TranslateY": 0.0,
         "TranslateZ": 0.0,
         "RotateYaw": 0.0,
@@ -48,11 +102,12 @@
         "Factory": {
           "$type": "IronStar.Entities.StartPointFactory, IronStar",
           "StartPointType": "singlePlayer",
-          "Target": null
+          "TargetName": null
         },
+        "FactoryName": "5lWB0FHB",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 0.0,
+        "TranslateX": -4.0,
         "TranslateY": 0.0,
         "TranslateZ": 4.0,
         "RotateYaw": 30.0,

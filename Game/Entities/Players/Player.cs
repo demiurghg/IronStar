@@ -33,7 +33,7 @@ namespace IronStar.Entities.Players {
 		/// </summary>
 		/// <param name="game"></param>
 		/// <param name="space"></param>
-		public Player ( uint id, GameWorld world, PlayerFactory factory ) : base(id,world)
+		public Player ( uint id, short clsid, GameWorld world, PlayerFactory factory ) : base(id,clsid,world,factory)
 		{
 			controller	=	new CharacterController( this, world, 
 				factory.Height,

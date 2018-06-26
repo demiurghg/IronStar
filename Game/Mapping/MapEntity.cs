@@ -11,6 +11,7 @@ using Fusion.Engine.Graphics;
 using IronStar.SFX;
 using Newtonsoft.Json;
 using Fusion.Core.Shell;
+using Fusion.Core.Extensions;
 
 namespace IronStar.Mapping {
 	public class MapEntity : MapNode {
@@ -38,19 +39,22 @@ namespace IronStar.Mapping {
 		[AECategory("Factory")]
 		public EntityFactory Factory { get; set; }
 
+		[AEIgnore]
+		public string FactoryName { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		public MapEntity ()
 		{
+			 FactoryName	=	Misc.GenerateRandomString(8);
 		}
 
 
 
 		public override void SpawnNode( GameWorld world )
 		{
-			Entity = world.Spawn( Factory );
+			Entity = world.Spawn( FactoryName );
 			Entity.Teleport( TranslateVector, RotateQuaternion );
 		}
 
@@ -78,7 +82,7 @@ namespace IronStar.Mapping {
 			if (selected) {
 				if (Entity!=null) {
 				
-					var targets = world.GetTargets(Factory.Target);
+					var targets = world.GetTargets(Factory.TargetName);
 
 					if (targets.Any()) {
 						dr.DrawBox( new BoundingBox(0.5f, 0.5f, 0.5f), WorldMatrix, Color.Yellow );					}

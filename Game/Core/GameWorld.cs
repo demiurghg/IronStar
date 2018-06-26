@@ -223,13 +223,28 @@ namespace IronStar.Core {
 		 *	Entity creation
 		-----------------------------------------------------------------------------------------*/
 
+		EntityFactory FindFactory( string classname )
+		{
+			var factoryNode = map.Nodes.FirstOrDefault( n1 => (n1 as MapEntity)?.FactoryName == classname );
+
+			if (factoryNode==null) {
+				return Content.Load(@"entities\" + classname, (EntityFactory)null );
+			} else {
+				return (factoryNode as MapEntity).Factory;
+			}
+		}
+
+
 		/// <summary>
 		/// Creates entity by class name.
 		/// </summary>
 		/// <param name="classname"></param>
 		/// <returns></returns>
-		public Entity Spawn ( EntityFactory factory )
+		public Entity Spawn ( string classname )
 		{
+			var classId	=	Atoms[classname];
+			var factory	=	FindFactory( classname );
+
 			//	get ID :
 			uint id = idCounter;
 
@@ -241,27 +256,13 @@ namespace IronStar.Core {
 			}
 
 			//	Create instance.
-			var entity = factory.Spawn( id, this );
+			var entity = factory.Spawn( id, classId, this );
 
 			entities.Add( id, entity );
 
 			EntitySpawned?.Invoke( this, new EntityEventArgs( entity ) );
 
 			return entity;
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="classname"></param>
-		/// <returns></returns>
-		public Entity Spawn ( string classname )
-		{
-			var classId	=	Atoms[classname];
-			var factory	=	Content.Load(@"entities\" + classname, (EntityFactory)null );
-
-			return Spawn( factory );
 		}
 
 
@@ -274,9 +275,8 @@ namespace IronStar.Core {
 		public Entity Spawn ( short classId )
 		{
 			var classname	=	Atoms[classId];
-			var factory		=	Content.Load(@"entities\" + classname, (EntityFactory)null );
 
-			return Spawn( factory );
+			return Spawn( classname );
 		}
 		
 		/*-----------------------------------------------------------------------------------------

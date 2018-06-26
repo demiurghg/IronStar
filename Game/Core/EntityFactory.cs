@@ -24,9 +24,9 @@ namespace IronStar.Core {
 	public abstract class EntityFactory {
 
 		[AECategory("General")]
-		public string Target { get; set; }
+		public string TargetName { get; set; }
 
-		public abstract Entity Spawn ( uint id, GameWorld world );
+		public abstract Entity Spawn ( uint id, short clsid, GameWorld world );
 
 		/// <summary>
 		/// Draws entity in editor

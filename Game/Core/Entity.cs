@@ -28,14 +28,12 @@ namespace IronStar.Core {
 		/// Class ID.
 		/// Class ID is written to stream by GameWorld during replication.
 		/// </summary>
-		#warning CLASS ID MUST BE SET
-		public short ClassID;
+		public readonly short ClassID;
 
 		/// <summary>
 		/// Entity's target name.
 		/// Server-side only
 		/// </summary>
-		#warning TARGETNAME MUST BE SET
 		public readonly string TargetName = null;
 
 		/// <summary>
@@ -93,10 +91,12 @@ namespace IronStar.Core {
 		/// Used to replicate entity on client side.
 		/// </summary>
 		/// <param name="id"></param>
-		public Entity ( uint id, GameWorld world )
+		public Entity ( uint id, short clsid, GameWorld world, EntityFactory factory )
 		{
 			this.World		=	world;
 			this.ID			=	id;
+			this.ClassID	=	clsid;
+			this.TargetName	=	factory.TargetName;
 			RotationOld		=	Quaternion.Identity;
 			Rotation		=	Quaternion.Identity;
 			TeleportCount	=	0xFF;

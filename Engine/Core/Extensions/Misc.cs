@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Security.Cryptography;
 
 namespace Fusion.Core.Extensions {
 	public static class Misc {
@@ -462,5 +463,29 @@ namespace Fusion.Core.Extensions {
 		{
 			return BitConverter.ToString(sig);
 		}
+
+
+		/// <summary>
+		/// Creates random string of given length
+		/// </summary>
+		/// <param name="length"></param>
+		/// <returns></returns>
+		public static string GenerateRandomString ( int length )
+		{
+			StringBuilder name = new StringBuilder();
+			RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+			byte[] rnd = new byte[1];
+			int n = 0;
+			while (n < length) {
+				rng.GetBytes(rnd);
+				char c = (char)rnd[0];
+				if ((Char.IsDigit(c) || Char.IsLetter(c)) && rnd[0] < 127) {
+					++n;
+					name.Append(c);
+				}
+			}
+			return name.ToString();
+		}
+
 	}
 }

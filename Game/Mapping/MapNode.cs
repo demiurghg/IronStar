@@ -34,9 +34,8 @@ namespace IronStar.Mapping {
 		/// </summary>
 		public MapNode ()
 		{
+
 		}
-
-
 
 		[AECategory("Display")]
 		public bool Visible { get; set; } = true;

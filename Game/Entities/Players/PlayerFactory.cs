@@ -22,9 +22,9 @@ using System.ComponentModel;
 namespace IronStar.Entities.Players {
 	public class PlayerFactory : EntityFactory {
 
-		public override Entity Spawn( uint id, GameWorld world )
+		public override Entity Spawn( uint id, short clsid, GameWorld world )
 		{
-			return new Player( id, world, this );
+			return new Player( id, clsid,  world, this );
 		}
 
 

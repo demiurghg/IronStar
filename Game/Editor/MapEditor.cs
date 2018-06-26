@@ -90,19 +90,12 @@ namespace IronStar.Editor {
 		{
 			this.mapName	=	map;
 
-			this.map		=	new Map();
-
 			this.rs			=	Game.RenderSystem;
 			Content         =   new ContentManager( Game );
-
 			camera			=	new EditorCamera( this );
 			manipulator		=	new NullTool( this );
-			world			=	new GameWorld( Game, this.map, new MessageService(), true, new Guid() );
-			world.InitServerAtoms();
 
 			SetupWorkspace();
-
-			Game.Keyboard.ScanKeyboard =	true;
 
 			fullPath	=	Builder.GetFullPath(@"maps\" + map + Ext);
 		}
@@ -123,6 +116,8 @@ namespace IronStar.Editor {
 				Log.Message("Creating new map: {0}", fullPath);
 				this.map = new Map();
 			}
+
+			world			=	new GameWorld( Game, this.map, new MessageService(), true, new Guid() );
 
 			world.SimulateWorld( GameTime.MSec16 );
 			world.PresentWorld( GameTime.MSec16, 1, null, null );

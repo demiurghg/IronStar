@@ -214,7 +214,8 @@ namespace IronStar.SFX {
 		/// <param name="lerpFactor"></param>
 		public void Update ( float dt, float lerpFactor )
 		{
-			var animFrame = entity.AnimFrame;
+			#warning ANIM FRAME!
+			var animFrame = 0;//entity.AnimFrame;
 			var worldMatrix = entity.GetWorldMatrix( lerpFactor );
 
 			Update( dt, animFrame, worldMatrix );

@@ -123,8 +123,8 @@ namespace IronStar.Editor {
 			}
 
 			map.ActivateMap( world, true );
-			world.SimulateWorld( 0 );
-			world.PresentWorld( 0.016f, 1, null, null );
+			world.SimulateWorld( GameTime.MSec16 );
+			world.PresentWorld( GameTime.MSec16, 1, null, null );
 
 			RegisterCommands();
 		}
@@ -314,7 +314,7 @@ namespace IronStar.Editor {
 				}
 			}
 
-			world.SimulateWorld(0);
+			world.SimulateWorld( GameTime.Zero );
 		}
 
 
@@ -424,9 +424,9 @@ namespace IronStar.Editor {
 			//	Simulate & present world
 			//
 			if (EnableSimulation) {
-				world.SimulateWorld( gameTime.ElapsedSec );
+				world.SimulateWorld( gameTime );
 			}
-			world.PresentWorld( gameTime.ElapsedSec, 1, null, null );
+			world.PresentWorld( gameTime, 1, null, null );
 
 			//	draw stuff :
 			if (DrawGrid) {

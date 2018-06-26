@@ -1,0 +1,64 @@
+{
+  "$type": "IronStar.Mapping.Map, IronStar",
+  "Environment": {
+    "$type": "IronStar.Mapping.MapEnvironment, IronStar",
+    "Gravity": 16.0,
+    "SkyTrubidity": 5.25,
+    "SunAltitude": 15.0,
+    "SunAzimuth": 45.0,
+    "SunIntensity": 100.0,
+    "FogDistance": 0.001,
+    "FogHeight": 0.05,
+    "FogColor": "10, 10, 10, 0",
+    "CharacterHeight": 2.0,
+    "CharacterSize": 1.2,
+    "WalkableSlope": 45.0,
+    "StepHeight": 45.0,
+    "RecastCellHeight": 0.25,
+    "RecastCellSize": 0.25,
+    "IrradianceVolume": {
+      "$type": "Fusion.Core.Mathematics.BoundingBox, Fusion",
+      "Minimum": "-64, -32, -64",
+      "Maximum": "64, 32, 64"
+    },
+    "AmbientLevel": "0, 0, 0, 0"
+  },
+  "Nodes": {
+    "$type": "IronStar.Mapping.MapNodeCollection, IronStar",
+    "$values": [
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.NullFactory, IronStar",
+          "Target": null
+        },
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.0,
+        "TranslateY": 0.0,
+        "TranslateZ": 0.0,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.StartPointFactory, IronStar",
+          "StartPointType": "singlePlayer",
+          "Target": null
+        },
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.0,
+        "TranslateY": 0.0,
+        "TranslateZ": 4.0,
+        "RotateYaw": 30.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      }
+    ]
+  }
+}

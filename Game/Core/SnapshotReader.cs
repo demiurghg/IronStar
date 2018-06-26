@@ -26,7 +26,7 @@ namespace IronStar.Core {
 		/// <param name="snapshotStream"></param>
 		/// <param name="entities"></param>
 		/// <param name="fxEvents"></param>
-		public void Read ( Stream snapshotStream, IStorable header, IDictionary<uint,Entity> entities, Action<FXEvent> runfx, Action<Entity> spawned, Action<uint> killed )
+		public void Read ( GameWorld world, Stream snapshotStream, IStorable header, IDictionary<uint,Entity> entities, Action<FXEvent> runfx, Action<Entity> spawned, Action<uint> killed )
 		{
 			using ( var reader = new BinaryReader( snapshotStream ) ) {
 
@@ -44,23 +44,29 @@ namespace IronStar.Core {
 
 				for ( int i=0; i<length; i++ ) {
 
-					uint id		=	reader.ReadUInt32();
+					uint  id	=	reader.ReadUInt32();
+					short clsId	=	reader.ReadInt16();
 					newIDs[i]	=	id;
 
 					if ( entities.ContainsKey(id) ) {
 
 						//	Entity with given ID exists.
 						//	Just update internal state.
+						#warning LERP FACTOR!
 						entities[id].Read( reader, 1 );
 
 					} else {
 					
 						//	Entity does not exist.
 						//	Create new one.
-						var ent = new Entity(id);
+						var ent = world.Spawn(clsId);
 
 						ent.Read( reader, 1 );
 						entities.Add( id, ent );
+
+						//	teleport entity stuff (controllers, physical shapes etc)
+						//	to created position
+						ent.Teleport( ent.Position, ent.Rotation );
 
 						//ConstructEntity( ent );
 						spawned?.Invoke( ent );

@@ -50,21 +50,22 @@ namespace IronStar.Mapping {
 
 		public override void SpawnNode( GameWorld world )
 		{
-			Entity = world.Spawn( Factory, 0,0, TranslateVector, RotateQuaternion, TargetName );
+			Entity = world.Spawn( Factory );
+			Entity.Teleport( TranslateVector, RotateQuaternion );
 		}
 
 
 
 		public override void ActivateNode()
 		{
-			Entity?.Controller?.Activate( null );
+			Entity?.Activate( null );
 		}
 
 
 
 		public override void UseNode()
 		{
-			Entity?.Controller?.Use( null );
+			Entity?.Use( null );
 		}
 
 
@@ -111,7 +112,8 @@ namespace IronStar.Mapping {
 				Entity.Rotation = Entity.RotationOld = RotateQuaternion;
 				Entity.LinearVelocity = Vector3.Zero;
 				Entity.AngularVelocity = Vector3.Zero;
-				Entity.Controller?.Reset();
+				//Entity.Controller?.Reset();
+				#warning RESET ENTITY
 			} else {
 				KillNode(world);
 				SpawnNode(world);

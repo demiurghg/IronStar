@@ -81,7 +81,7 @@ namespace IronStar.Core {
 		{
 			var targets = GetTargets( targetName );
 			foreach ( var target in targets ) {
-				target.Controller?.Activate( activator );
+				target.Activate( activator );
 			}
 		}
 
@@ -94,7 +94,7 @@ namespace IronStar.Core {
 		/// <returns></returns>
 		public bool TryUse ( Entity user )
 		{
-			var character = user.Controller as Player;
+			var character = user as Player;
 
 			if (character==null) {
 				Log.Warning("TryUse: user is not a player!");
@@ -103,9 +103,10 @@ namespace IronStar.Core {
 
 			var dr = Game.RenderSystem.RenderWorld.Debug;
 
-			foreach ( var ent in GetEntities().Where( e=>e.Controller.AllowUse ) ) {
+			foreach ( var ent in GetEntities().Where( e=>e.AllowUse ) ) {
 				
-				var from	=	user.PointOfView;
+				#warning USE POINT OF VIEW!
+				var from	=	user.Position + Vector3.Up;
 				var dir		=	Matrix.RotationQuaternion( user.Rotation ).Forward;
 				var to		=	from + dir * 2.0f;
 
@@ -118,9 +119,11 @@ namespace IronStar.Core {
 					return false;
 				}
 
-				Log.Verbose("try use: {0}", e.Controller.GetType().Name);
+				Log.Verbose("try use: {0}", e.GetType().Name);
 
-				return e.Controller.Use( user );
+				e.Use( user );
+
+				return true;
 			}	
 
 			return false;

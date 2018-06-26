@@ -68,7 +68,7 @@ namespace IronStar {
 		{
 			var dt = gameTime.ElapsedSec;// 1 / world.Game.GameServer.TargetFrameRate;
 
-			world.SimulateWorld( dt );
+			world.SimulateWorld( gameTime );
 		}
 
 

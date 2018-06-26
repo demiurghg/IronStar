@@ -142,16 +142,16 @@ namespace IronStar.Core {
 		/// Simulates world.
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public virtual void SimulateWorld ( float elapsedTime )
+		public virtual void SimulateWorld ( GameTime gameTime )
 		{
-			UpdatePlayers( elapsedTime );
+			UpdatePlayers( gameTime.ElapsedSec );
 
-			physics.Update( elapsedTime );
+			physics.Update( gameTime.ElapsedSec );
 				
 			//
 			//	Control entities :
 			//
-			ForEachEntity( e => e.ForeachController( c => c.Update( elapsedTime ) ) );
+			ForEachEntity( e => e.Update( gameTime ) );
 
 			//
 			//	Kill entities :
@@ -165,7 +165,7 @@ namespace IronStar.Core {
 		/// Updates visual and audial stuff
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void PresentWorld ( float deltaTime, float lerpFactor, GameCamera gameCamera, UserCommand userCmd )
+		public void PresentWorld ( GameTime gameTime, float lerpFactor, GameCamera gameCamera, UserCommand userCmd )
 		{
 			var dr = Game.RenderSystem.RenderWorld.Debug;
 			var rw = Game.RenderSystem.RenderWorld;
@@ -176,7 +176,7 @@ namespace IronStar.Core {
 			//	draw all entities :
 			//
 			foreach ( var entity in visibleEntities ) {
-				entity.UpdateRenderState( fxPlayback, modelManager, gameCamera );
+				entity.Draw( gameTime, EntityFX.None );
 			}
 
 			//
@@ -188,8 +188,8 @@ namespace IronStar.Core {
 			fxEvents.Clear();
 
 
-			fxPlayback.Update( deltaTime, lerpFactor );
-			modelManager.Update( deltaTime, lerpFactor, gameCamera, userCmd );
+			fxPlayback.Update( gameTime, lerpFactor );
+			modelManager.Update( gameTime, lerpFactor, gameCamera, userCmd );
 
 			//
 			//	update environment :
@@ -219,34 +219,26 @@ namespace IronStar.Core {
 		-----------------------------------------------------------------------------------------*/
 
 		/// <summary>
-		/// 
+		/// Creates entity by class name.
 		/// </summary>
-		/// <param name="factory"></param>
-		/// <param name="classID"></param>
-		/// <param name="parentId"></param>
-		/// <param name="origin"></param>
-		/// <param name="orient"></param>
+		/// <param name="classname"></param>
 		/// <returns></returns>
-		public Entity Spawn( EntityFactory factory, short classID, uint parentId, Vector3 origin, Quaternion orient, string targetName )
+		public Entity Spawn ( EntityFactory factory )
 		{
 			//	get ID :
 			uint id = idCounter;
 
 			idCounter++;
 
+			//	this actually will never happen, about 103 day of intense playing.
 			if ( idCounter==0 ) {
-				//	this actually will never happen, about 103 day of intense playing.
 				throw new InvalidOperationException( "Too much entities were spawned" );
 			}
 
-			//
 			//	Create instance.
-			//	If creation failed later, entity become dummy.
-			//
-			var entity = new Entity( id, classID, parentId, origin, orient, targetName );
-			entities.Add( id, entity );
+			var entity = factory.Spawn( id, this );
 
-			entity.Controller = factory?.Spawn( entity, this );
+			entities.Add( id, entity );
 
 			EntitySpawned?.Invoke( this, new EntityEventArgs( entity ) );
 
@@ -254,55 +246,33 @@ namespace IronStar.Core {
 		}
 
 
-
 		/// <summary>
-		/// When called on client-side returns null.
+		/// 
 		/// </summary>
-		/// <param name="prefab"></param>
-		/// <param name="parent"></param>
-		/// <param name="origin"></param>
-		/// <param name="angles"></param>
+		/// <param name="classname"></param>
 		/// <returns></returns>
-		public Entity Spawn ( string classname, uint parentId, Vector3 origin, Quaternion orient )
+		public Entity Spawn ( string classname )
 		{
-			var classID	=	Atoms[classname];
+			var classId	=	Atoms[classname];
 			var factory	=	Content.Load(@"entities\" + classname, (EntityFactory)null );
 
-			return Spawn( factory, classID, parentId, origin, orient, null );
+			return Spawn( factory );
 		}
 
 
 
 		/// <summary>
-		/// Spawns entity with specified classname, parent ID and matrix.
+		/// Creates entity by class ID
 		/// </summary>
-		/// <param name="prefab"></param>
-		/// <param name="parentId"></param>
-		/// <param name="transform"></param>
+		/// <param name="classId"></param>
 		/// <returns></returns>
-		public Entity Spawn( string classname, uint parentId, Matrix transform )
+		public Entity Spawn ( short classId )
 		{
-			var p	=	transform.TranslationVector;
-			var q	=	Quaternion.RotationMatrix( transform );
+			var classname	=	Atoms[classId];
+			var factory		=	Content.Load(@"entities\" + classname, (EntityFactory)null );
 
-			return Spawn( classname, parentId, p, q );
+			return Spawn( factory );
 		}
-
-
-
-		/// <summary>
-		/// Spawns entity with specified classname, parent ID and yaw angle.
-		/// </summary>
-		/// <param name="prefab"></param>
-		/// <param name="parentId"></param>
-		/// <param name="origin"></param>
-		/// <param name="yaw"></param>
-		/// <returns></returns>
-		public Entity Spawn( string classname, uint parentId, Vector3 origin, float yaw )
-		{
-			return Spawn( classname, parentId, origin, Quaternion.RotationYawPitchRoll( yaw,0,0 ) );
-		}
-
 		
 		/*-----------------------------------------------------------------------------------------
 		 *	FX creation
@@ -397,9 +367,9 @@ namespace IronStar.Core {
 		/// <param name="kickImpulse"></param>
 		/// <param name="kickPoint"></param>
 		/// <param name="damageType"></param>
-		public void InflictDamage ( Entity entity, uint attackerID, short damage, Vector3 kickImpulse, Vector3 kickPoint, DamageType damageType )
+		public void InflictDamage ( Entity entity, Entity attacker, short damage, DamageType damageType, Vector3 kickImpulse, Vector3 kickPoint )
 		{
-			entity?.Controller?.Damage( entity.ID, attackerID, damage, kickImpulse, kickPoint, damageType );
+			entity?.Damage( attacker, damage, damageType, kickImpulse, kickPoint );
 		}
 
 
@@ -432,14 +402,12 @@ namespace IronStar.Core {
 
 			if ( entities.TryGetValue(id, out ent)) {
 
-				ent.DestroyRenderState(fxPlayback);
 				EntityKilled?.Invoke( this, new EntityEventArgs(ent) );
-				
 				entities.Remove( id );
-				ent?.Controller?.Killed();
+				ent.Kill();
 
 			} else {
-				Log.Warning("Entity #{0} does not exist", id);
+				Log.Warning("KillImmediatly: Entity #{0} does not exist", id);
 			}
 		}
 
@@ -463,8 +431,7 @@ namespace IronStar.Core {
 		public void KillAll()
 		{
 			foreach ( var ent in entities ) {
-				ent.Value.DestroyRenderState(fxPlayback);
-				ent.Value.Controller?.Killed();
+				ent.Value.Kill();
 			}
 			entities.Clear();
 		}
@@ -493,6 +460,7 @@ namespace IronStar.Core {
 		public virtual void ReadFromSnapshot ( Stream stream, float lerpFactor )
 		{
 			snapshotReader.Read( 
+				this,
 				stream, snapshotHeader, entities, 
 				fxe => fxPlayback?.RunFX(fxe,false), 
 				ent => EntitySpawned?.Invoke( this, new EntityEventArgs(ent)),
@@ -518,9 +486,9 @@ namespace IronStar.Core {
 				var parent		=	ent.ParentID;
 				var prefab		=	Atoms[ent.ClassID];
 				var guid		=	ent.UserGuid;
-				var controller	=	ent.Controller.GetType().Name;
+				var entity		=	ent.GetType().Name;
 
-				Log.Message("{0:X8} {1:X8} {2} {3,-32} {4,-32}", id, parent, guid, prefab, controller );
+				Log.Message("{0:X8} {1:X8} {2} {3,-32} {4,-32}", id, parent, guid, prefab, entity );
 			}
 
 			Log.Message("----------------" );

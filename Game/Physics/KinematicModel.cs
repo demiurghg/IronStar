@@ -120,7 +120,8 @@ namespace IronStar.Physics {
 			//
 			//	do animation stuff :
 			//
-			var animFrame = entity.AnimFrame;
+			#warning ZERO ANIM FRAME!!!
+			var animFrame = 0;//entity.AnimFrame;
 
 			if (animFrame>scene.LastFrame) {
 				Log.Warning("Anim frame: {0} > {1}", animFrame, scene.LastFrame);

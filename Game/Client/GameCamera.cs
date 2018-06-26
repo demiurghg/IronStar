@@ -76,7 +76,8 @@ namespace IronStar.Views {
 
 			var ppos	=	player.LerpPosition(lerpFactor);
 
-			var pos		=	player.GetPOV( lerpFactor );
+			#warning temp stuff
+			var pos		=	ppos + Vector3.Up;
 
 			var fwd	=	pos + m.Forward;
 			var up	=	m.Up;

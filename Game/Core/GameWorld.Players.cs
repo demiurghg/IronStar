@@ -52,7 +52,7 @@ namespace IronStar.Core {
 		{
 			return GetEntities()
 				.Where( e1 => e1.UserGuid==guid )
-				.Select( e2 => e2.Controller as Player )
+				.Select( e2 => e2 as Player )
 				.Where( ch => ch!=null )
 				.LastOrDefault();
 		}

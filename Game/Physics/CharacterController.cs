@@ -29,7 +29,7 @@ namespace IronStar.Physics {
 		BEPUCharacterController controller;
 		Vector3		oldVelocity = Vector3.Zero;
 		readonly	float heightStanding;
-		readonly	float heightCrouch;
+		readonly	float heightCrouching;
 		readonly	Vector3 offsetCrouch;
 		readonly	Vector3 offsetStanding;
 
@@ -44,6 +44,9 @@ namespace IronStar.Physics {
 		{
 			this.entity		=	entity;
 			this.space		=	world.PhysSpace;
+
+			this.heightStanding		=	heightStand;
+			this.heightCrouching	=	heightCrouch;
 
 			offsetCrouch	=	Vector3.Up * heightCrouch / 2;
 			offsetStanding	=	Vector3.Up * heightStanding / 2;
@@ -69,7 +72,7 @@ namespace IronStar.Physics {
 
 
 		/// <summary>
-		/// 
+		/// Destroys controller and remove it from physcs space.
 		/// </summary>
 		public void Destroy ()
 		{
@@ -79,11 +82,21 @@ namespace IronStar.Physics {
 
 
 		/// <summary>
-		/// 
+		/// Indicates thet given controller is in crouching state
 		/// </summary>
 		public bool Crouching {
 			get {
 				return (controller.StanceManager.CurrentStance == Stance.Crouching);
+			}
+		}
+
+
+		/// <summary>
+		/// Indicates that given character controller is standing on a ground.
+		/// </summary>
+		public bool HasTraction {
+			get {
+				return controller.SupportFinder.HasTraction;
 			}
 		}
 
@@ -129,25 +142,13 @@ namespace IronStar.Physics {
 			var e = entity;
 
 			var crouching		=	(c.StanceManager.CurrentStance==Stance.Crouching);
-			var height			=	crouching ? heightCrouch : heightStanding;
 
+			var height			=	crouching ? heightCrouching : heightStanding;
 			var offset			=	crouching ? offsetCrouch : offsetStanding;
 
 			e.Position			=	MathConverter.Convert( c.Body.Position ) - offset; 
 			e.LinearVelocity	=	MathConverter.Convert( c.Body.LinearVelocity );
 			e.AngularVelocity	=	MathConverter.Convert( c.Body.AngularVelocity );
-
-			if (c.SupportFinder.HasTraction) {
-				e.State |= EntityState.HasTraction;
-			} else {
-				e.State &= ~EntityState.HasTraction;
-			}
-
-			if (c.StanceManager.CurrentStance==Stance.Crouching) {
-				e.State |= EntityState.Crouching;
-			} else {
-				e.State &= ~EntityState.Crouching;
-			}
 		}
 
 

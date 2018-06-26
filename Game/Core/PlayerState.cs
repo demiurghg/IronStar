@@ -88,45 +88,8 @@ namespace IronStar {
 			var oldCmd		=	UserCmd;
 			UserCmd			=	UserCommand.FromBytes( cmdData );
 
-			player?.Controller?.Move( UserCmd.MoveForward, UserCmd.MoveRight, UserCmd.MoveUp );
-			UserCommand.FireUserCommandAction( 
-				oldCmd, 
-				UserCmd, 
-				userAction1 => BeginAction(player, userAction1), 
-				userAction2 => EndAction(player, userAction2) 
-			);
+			player.UserControl( UserCmd );
 		}
-
-
-
-		/// <summary>
-		/// Handle user button events (actions)
-		/// </summary>
-		/// <param name="world"></param>
-		/// <param name="ctrlFlag"></param>
-		void BeginAction ( Entity player, UserAction userAction )
-		{
-			if (player!=null) {
-				var controller	= player.Controller;
-				controller?.Action( userAction ); 
-			} else {
-				if (userAction==UserAction.Attack) {
-					ForceRespawn();
-				}
-			}
-		}
-
-
-		/// <summary>
-		/// Handle user button events (actions)
-		/// </summary>
-		/// <param name="world"></param>
-		/// <param name="ctrlFlag"></param>
-		void EndAction ( Entity player, UserAction userAction )
-		{
-			player?.Controller?.CancelAction( userAction ); 
-		}
-
 
 
 		/// <summary>
@@ -178,7 +141,7 @@ namespace IronStar {
 		public Entity Respawn (GameWorld world)
 		{
 			var sp = world.GetEntities()
-				.Where( e1 => e1.Controller is StartPoint && (e1.Controller as StartPoint).StartPointType==StartPointType.SinglePlayer)
+				.Where( e1 => e1 is StartPoint && (e1 as StartPoint).StartPointType==StartPointType.SinglePlayer)
 				.OrderBy( e => rand.Next() )
 				.FirstOrDefault();					
 
@@ -188,7 +151,8 @@ namespace IronStar {
 				throw new GameException("No start point");
 			}
 
-			ent = world.Spawn( "player", 0, sp.Position, sp.Rotation );
+			ent = world.Spawn( "player" );
+			ent.Teleport( sp.Position, sp.Rotation );
 			world.SpawnFX("TeleportOut", ent.ID, sp.Position );
 			ent.UserGuid = Guid;
 

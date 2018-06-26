@@ -18,48 +18,43 @@ using IronStar.Views;
 namespace IronStar.Core {
 	public class Entity {
 
-
 		/// <summary>
 		/// Entity ID
+		/// Entity ID is written to stream by GameWorld during replication.
 		/// </summary>
 		public readonly uint ID;
 
 		/// <summary>
-		/// Entity's target name.
+		/// Class ID.
+		/// Class ID is written to stream by GameWorld during replication.
 		/// </summary>
+		#warning CLASS ID MUST BE SET
+		public short ClassID;
+
+		/// <summary>
+		/// Entity's target name.
+		/// Server-side only
+		/// </summary>
+		#warning TARGETNAME MUST BE SET
 		public readonly string TargetName = null;
 
 		/// <summary>
 		/// Players guid. Zero if no player.
+		/// Server-side only
 		/// </summary>
-		public Guid UserGuid;// { get; private set; }
-
-		/// <summary>
-		/// Gets entity state
-		/// </summary>
-		public EntityState State;
+		public Guid UserGuid;
 
 		/// <summary>
 		///	Gets parent's ID. 
 		///	Zero value means no parent.
 		/// </summary>
-		public uint ParentID { get; private set; }
-
-		/// <summary>
-		/// Classname atoms.
-		/// </summary>
-		public short ClassID;
+		public uint ParentID;
 
 		/// <summary>
 		/// Teleportation counter.
 		/// Used to prevent interpolation in discreete movement.
 		/// </summary>
 		public byte TeleportCount;
-
-		/// <summary>
-		/// Point-of-view vertical offset
-		/// </summary>
-		public float PovHeight = 0;
 
 		/// <summary>
 		/// Entity position
@@ -83,7 +78,6 @@ namespace IronStar.Core {
 
 		/// <summary>
 		/// Linear object velocity.
-		/// Linear velocity XYZ also means decal bounds.
 		/// </summary>
 		public Vector3 LinearVelocity;
 
@@ -92,212 +86,40 @@ namespace IronStar.Core {
 		/// </summary>
 		public Vector3 AngularVelocity;
 
-		/// <summary>
-		/// Animation frame
-		/// </summary>
-		public float AnimFrame;
 
-		/// <summary>
-		/// Animation frame
-		/// </summary>
-		public float AnimFrame2;
-
-
-		/// <summary>
-		/// Visible model
-		/// </summary>
-		public short Model {
-			get { return model; }
-			set { 
-				modelDirty |= (model != value); 
-				model = value; 
-			}
-		}
-		private short model = -1;
-		private bool modelDirty = true;
-
-		/// <summary>
-		/// Visible model
-		/// </summary>
-		public short Model2 {
-			get { return model2; }
-			set { 
-				model2Dirty |= (model2 != value); 
-				model2 = value; 
-			}
-		}
-		private short model2 = -1;
-		private bool model2Dirty = true;
-
-		/// <summary>
-		/// Visible special effect
-		/// </summary>
-		public short Sfx {
-			get { return sfx; }
-			set { 
-				sfxDirty |= (sfx != value); 
-				sfx = value; 
-			}
-		}
-		private short sfx = -1;
-		private bool sfxDirty = true;
-
-
-
-		public FXInstance FXInstance { get; private set; }
-		public ModelInstance ModelInstance { get; private set; }
-		public ModelInstance ModelInstance2 { get; private set; }
-
+		protected readonly GameWorld World;
 
 		/// <summary>
 		/// Used to replicate entity on client side.
 		/// </summary>
 		/// <param name="id"></param>
-		public Entity ( uint id )
+		public Entity ( uint id, GameWorld world )
 		{
-			ID	=	id;
+			this.World		=	world;
+			this.ID			=	id;
 			RotationOld		=	Quaternion.Identity;
 			Rotation		=	Quaternion.Identity;
 			TeleportCount	=	0xFF;
 		}
 
-
+ 
 		/// <summary>
-		/// Used to spawn entity on server side.
+		/// Indicates whether entity 
+		/// should be removed from the game world
 		/// </summary>
-		/// <param name="id"></param>
-		public Entity ( uint id, short classId, uint parentId, Vector3 position, Quaternion rotation, string targetName )
-		{
-			ClassID		=	classId;
-			this.ID		=	id;
-
-			this.TargetName	=	targetName;
-
-			TeleportCount	=	0;
-
-			RotationOld		=	Quaternion.Identity;
-			PositionOld		=	Vector3.Zero;
-
-			UserGuid		=	new Guid();
-			ParentID		=	parentId;
-
-			Rotation		=	rotation;
-			Position		=	position;
-			PositionOld		=	position;
+		public virtual bool IsDead {
+			get;
 		}
 
-
-
+ 
 		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="fxPlayback"></param>
-		public void UpdateRenderState ( FXPlayback fxPlayback, ModelManager modelManager, GameCamera gameCamera )
-		{
-			if (sfxDirty) {
-				sfxDirty = false;
-
-				FXInstance?.Kill();
-				FXInstance = null;
-
-				if (sfx>0) {
-					var fxe = new FXEvent( sfx, ID, Position, LinearVelocity, Rotation );
-					FXInstance = fxPlayback.RunFX( fxe, true );
-				}
-			}
-
-			if (modelDirty) {
-				modelDirty = false;
-
-				ModelInstance?.Kill();
-				ModelInstance	=	null;
-
-				if (model>0) {
-					ModelInstance	=	modelManager.AddModel( model, this );
-				}
-			}
-
-			if (model2Dirty) {
-				model2Dirty = false;
-
-				ModelInstance2?.Kill();
-				ModelInstance2	=	null;
-
-				if (model2>0) {
-					ModelInstance2	=	modelManager.AddModel( model2, this );
-				}
-			}
-		}
-
-
-
-		public void MakeRenderStateDirty ()
-		{
-			sfxDirty	=	true;
-			modelDirty	=	true;
-			model2Dirty	=	true;
-		}
-
-
-
-		public void DestroyRenderState ( FXPlayback fxPlayback )
-		{
-			FXInstance?.Kill();
-			FXInstance = null;
-
-			ModelInstance?.Kill();
-			ModelInstance	=	null;
-
-			ModelInstance2?.Kill();
-			ModelInstance2	=	null;
-		}
-
-
-
-
-		/// <summary>
-		/// Immediatly put entity in given position without interpolation :
-		/// </summary>
-		/// <param name="position"></param>
-		/// <param name="orient"></param>
-		void Teleport ( Vector3 position, Quaternion orient )
-		{
-			TeleportCount++;
-			TeleportCount &= 0x7F;
-
-			Position		=	position;
-			Rotation		=	orient;
-			PositionOld		=	position;
-			RotationOld		=	orient;
-		}
-
-
-
-		/// <summary>
-		/// Moves entity to given position with interpolation :
-		/// </summary>
-		/// <param name="position"></param>
-		/// <param name="orient"></param>
-		public void Move ( Vector3 position, Quaternion orient, Vector3 velocity )
-		{
-			Position		=	position;
-			Rotation		=	orient;
-			LinearVelocity	=	velocity;
-		}
-
-
-
-		/// <summary>
-		/// 
+		/// Writes entity state to stream using binary writer.
 		/// </summary>
 		/// <param name="writer"></param>
-		public void Write ( BinaryWriter writer )
+		public virtual void Write ( BinaryWriter writer )
 		{
-			writer.Write( UserGuid.ToByteArray() );
-
 			writer.Write( ParentID );
-			writer.Write( (int)State );
-			writer.Write( ClassID );
+			writer.Write( UserGuid.ToByteArray() );
 
 			writer.Write( TeleportCount );
 
@@ -305,21 +127,14 @@ namespace IronStar.Core {
 			writer.Write( Rotation );
 			writer.Write( LinearVelocity );
 			writer.Write( AngularVelocity );
-			writer.Write( PovHeight );
-
-			writer.Write( AnimFrame );
-			writer.Write( Model );
-			writer.Write( Model2 );
-			writer.Write( Sfx );
 		}
 
 
-
 		/// <summary>
-		/// 
+		/// Reads entity states from stream using binary reader.
 		/// </summary>
 		/// <param name="writer"></param>
-		public void Read ( BinaryReader reader, float lerpFactor )
+		public virtual void Read ( BinaryReader reader, float lerpFactor )
 		{
 			//	keep old teleport counter :
 			var oldTeleport	=	TeleportCount;
@@ -332,8 +147,6 @@ namespace IronStar.Core {
 			UserGuid		=	new Guid( reader.ReadBytes(16) );
 								
 			ParentID		=	reader.ReadUInt32();
-			State			=	(EntityState)reader.ReadInt32();
-			ClassID			=	reader.ReadInt16();
 
 			TeleportCount	=	reader.ReadByte();
 
@@ -341,12 +154,6 @@ namespace IronStar.Core {
 			Rotation		=	reader.Read<Quaternion>();	
 			LinearVelocity	=	reader.Read<Vector3>();
 			AngularVelocity	=	reader.Read<Vector3>();	
-			PovHeight		=	reader.Read<float>();
-
-			AnimFrame		=	reader.ReadSingle();
-			Model			=	reader.ReadInt16();
-			Model2			=	reader.ReadInt16();
-			Sfx				=	reader.ReadInt16();
 
 			//	entity teleported - reset position and rotation :
 			if (oldTeleport!=TeleportCount) {
@@ -356,9 +163,129 @@ namespace IronStar.Core {
 		}
 
 
+		/// <summary>
+		/// Update entity state.
+		/// </summary>
+		/// <param name="gameTime"></param>
+		public virtual void Update ( GameTime gameTime )
+		{
+		}
+
+  
+		/// <summary>
+		/// Draw entity.
+		/// </summary>
+		/// <param name="gameTime"></param>
+		public virtual void Draw ( GameTime	gameTime, EntityFX entityFx )
+		{
+		}
+
 
 		/// <summary>
-		/// 
+		/// Called when entity has been removed from the game world.
+		/// </summary>
+		public virtual void Kill ()
+		{
+			
+		}
+
+
+		/// <summary>
+		/// Inflicts damage to current entity.
+		/// </summary>
+		/// <param name="attacker"></param>
+		/// <param name="damageType"></param>
+		/// <param name="damage"></param>
+		/// <param name="kickImpulse"></param>
+		/// <param name="kickPoint"></param>
+		public virtual void Damage ( Entity attacker, short damage, DamageType damageType, Vector3 kickImpulse, Vector3 kickPoint )
+		{
+		}
+
+
+		/// <summary>
+		/// Called when one entity starts to touch another
+		/// </summary>
+		/// <param name="other"></param>
+		/// <param name="touchPoint"></param>
+		public virtual void Touch ( Entity other, Vector3 touchPoint )
+		{
+		}
+
+
+		/// <summary>
+		/// Activate entity in trigger chain.
+		/// </summary>
+		/// <param name="activator"></param>
+		public virtual void Activate ( Entity activator )
+		{
+		}
+
+
+		/// <summary>
+		/// Attempt to use entity.
+		/// </summary>
+		/// <param name="user"></param>
+		public virtual void Use ( Entity user )
+		{
+		}
+
+
+		/// <summary>
+		/// Indicated, that given entity could be used by player.
+		/// Default FALSE.
+		/// </summary>
+		public virtual bool AllowUse { get { return false; } }
+
+
+		/// <summary>
+		/// Handle user control.
+		/// </summary>
+		/// <param name="userCommand"></param>
+		public virtual void UserControl ( UserCommand userCommand )
+		{
+		}
+
+
+		/// <summary>
+		/// Gets hint for player.
+		/// Could be null;
+		/// </summary>
+		public virtual string UserHint { get { return null; } }
+		
+
+  		/// <summary>
+		/// Immediatly put entity in given position without interpolation.
+		/// </summary>
+		/// <param name="position"></param>
+		/// <param name="orient"></param>
+		public virtual void Teleport ( Vector3 position, Quaternion orient )
+		{
+			TeleportCount++;
+			TeleportCount &= 0x7F;
+
+			Position		=	position;
+			Rotation		=	orient;
+			PositionOld		=	position;
+			RotationOld		=	orient;
+		}
+
+  
+		/// <summary>
+		/// Moves entity to given position with interpolation.
+		/// </summary>
+		/// <param name="position"></param>
+		/// <param name="orient"></param>
+		public virtual void Move ( Vector3 position, Quaternion orient, Vector3 velocity )
+		{
+			Position		=	position;
+			Rotation		=	orient;
+			LinearVelocity	=	velocity;
+		}
+  
+
+		/// <summary>
+		/// Compute entity world matrix
 		/// </summary>
 		/// <returns></returns>
 		public Matrix GetWorldMatrix (float lerpFactor)
@@ -367,78 +294,26 @@ namespace IronStar.Core {
 					* Matrix.Translation( LerpPosition(lerpFactor) );
 		}
 
-
-
+  
 		/// <summary>
-		/// 
+		/// Lerps entity rotation.
 		/// </summary>
 		/// <param name="lerpFactor"></param>
 		/// <returns></returns>
 		public Quaternion LerpRotation ( float lerpFactor )
 		{
-			//return Position;
 			return Quaternion.Slerp( RotationOld, Rotation, MathUtil.Clamp(lerpFactor,0,1f) );
 		}
 
-
-
+   
 		/// <summary>
-		/// 
+		/// Lerps entity position 
 		/// </summary>
 		/// <param name="lerpFactor"></param>
 		/// <returns></returns>
 		public Vector3 LerpPosition ( float lerpFactor )
 		{
-			//return Position;
 			return Vector3.Lerp( PositionOld, Position, MathUtil.Clamp(lerpFactor,0,2f) );
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="lerpFactor"></param>
-		/// <returns></returns>
-		public Vector3 GetPOV ( float lerpFactor )
-		{
-			return	LerpPosition( lerpFactor ) + Vector3.Up * PovHeight;
-		}
-
-
-		public Vector3 PointOfView {
-			get {
-				return	Position + Vector3.Up * PovHeight;
-			}
-		}
-
-
-		/*-----------------------------------------------------------------------------------------------
-		 * 
-		 *	Entity controllers :
-		 * 
-		-----------------------------------------------------------------------------------------------*/
-		EntityController controller;
-
-		public EntityController	Controller {
-			get {
-				return controller;
-			}
-			set {
-				controller = value;
-			}
-		}
-
-
-
-		/// <summary>
-		/// Iterates all controllers
-		/// </summary>
-		/// <param name="action"></param>
-		public void ForeachController ( Action<EntityController> action )
-		{
-			if (controller!=null) {
-				action(controller);
-			}
 		}
 	}
 }

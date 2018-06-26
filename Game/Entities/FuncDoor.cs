@@ -18,7 +18,7 @@ using Fusion.Core.Shell;
 
 namespace IronStar.Entities {
 
-	public class FuncDoor : EntityController {
+	public class FuncDoor : Entity {
 		
 		static Random rand = new Random();
 

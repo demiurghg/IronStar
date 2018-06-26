@@ -20,7 +20,7 @@ using IronStar.Physics;
 
 
 namespace IronStar.Entities.Players {
-	public partial class Player : EntityController {
+	public partial class Player : Entity {
 
 		CharacterController	controller;
 		Inventory			inventory;
@@ -33,9 +33,9 @@ namespace IronStar.Entities.Players {
 		/// </summary>
 		/// <param name="game"></param>
 		/// <param name="space"></param>
-		public Player ( Entity entity, GameWorld world, PlayerFactory factory ) : base(entity,world)
+		public Player ( uint id, GameWorld world, PlayerFactory factory ) : base(id,world)
 		{
-			controller	=	new CharacterController( entity, world, 
+			controller	=	new CharacterController( this, world, 
 				factory.Height,
 				factory.CrouchingHeight,
 				factory.Radius,
@@ -63,10 +63,9 @@ namespace IronStar.Entities.Players {
 		/// <param name="kickImpulse"></param>
 		/// <param name="kickPoint"></param>
 		/// <param name="damageType"></param>
-		public override bool Damage ( uint targetID, uint attackerID, short damage, Vector3 kickImpulse, Vector3 kickPoint, DamageType damageType )
+		public override void Damage(Entity attacker, short damage, DamageType damageType, Vector3 kickImpulse, Vector3 kickPoint)
 		{
-			var c = controller;
-			var e = Entity;
+			var e = this;
 
 			if (damage<0) {
 				throw new ArgumentOutOfRangeException("damage < 0");
@@ -91,8 +90,6 @@ namespace IronStar.Entities.Players {
 			if (health<=0) {
 				Log.Warning("KILL!!!!!!!!");
 			}
-
-			return false;
 		}
 
 
@@ -101,67 +98,17 @@ namespace IronStar.Entities.Players {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public override void Update ( float elapsedTime )
+		public override void Update ( GameTime gameTime )
 		{
 			//	update physical character controller :
 			controller.Update();
 
 			//	update inventory :
 			foreach ( var item in inventory ) {
-				item.Update( elapsedTime );
+				item.Update( gameTime.ElapsedSec );
 			}
 
 			inventory.RemoveAll( item => item.Depleted );
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="id"></param>
-		public override void Killed ()
-		{
-			controller.Destroy();
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="action"></param>
-		public override void Action( UserAction action )
-		{
-			/*switch (action) {
-				case UserAction.Attack:			inventory.AttackWeapon(true); break;
-				case UserAction.SwitchWeapon:	inventory.SwitchWeapon(); break;
-			} */
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="action"></param>
-		public override void CancelAction( UserAction action )
-		{
-			switch (action) {
-				//case UserAction.Attack:			inventory.AttackWeapon(false); break;
-			}
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="id"></param>
-		/// <param name="moveVector"></param>
-		public override void Move( float forward, float right, float up )
-		{
-			controller.Move( forward, right, up );
 		}
 	}
 }

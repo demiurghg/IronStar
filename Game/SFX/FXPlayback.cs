@@ -104,10 +104,10 @@ namespace IronStar.SFX {
 		/// Updates visible meshes
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void Update ( float elapsedTime, float lerpFactor )
+		public void Update ( GameTime gameTime, float lerpFactor )
 		{
 			const float dt = 1/60.0f;
-			timeAccumulator	+= elapsedTime;
+			timeAccumulator	+= gameTime.ElapsedSec;
 
 			while ( timeAccumulator > dt ) {
 

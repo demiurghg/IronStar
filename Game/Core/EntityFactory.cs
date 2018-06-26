@@ -17,16 +17,16 @@ using Fusion.Core;
 using System.ComponentModel;
 using System.Xml.Serialization;
 using IronStar.Editor;
+using Fusion.Core.Shell;
 
 namespace IronStar.Core {
 
 	public abstract class EntityFactory {
 
-		[Category("General")]
+		[AECategory("General")]
 		public string Target { get; set; }
 
-		
-		public abstract EntityController Spawn (Entity entity, GameWorld world);
+		public abstract Entity Spawn ( uint id, GameWorld world );
 
 		/// <summary>
 		/// Draws entity in editor

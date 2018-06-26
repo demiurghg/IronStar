@@ -78,7 +78,8 @@ namespace IronStar.SFX {
 		/// <param name="e"></param>
 		void Game_Reloading( object sender, EventArgs e )
 		{
-			world.ForEachEntity( ent => ent.MakeRenderStateDirty() );
+			#warning RELOAD ENTITY MODELS!
+			//world.ForEachEntity( ent => ent.MakeRenderStateDirty() );
 			weaponModelDirty = true;
 		}
 
@@ -136,12 +137,12 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="elapsedTime"></param>
 		/// <param name="lerpFactor"></param>
-		public void Update ( float elapsedTime, float lerpFactor, GameCamera gameCamera, UserCommand userCmd )
+		public void Update ( GameTime gameTime, float lerpFactor, GameCamera gameCamera, UserCommand userCmd )
 		{	
 			models.RemoveAll( m => m.Killed );
 
 			foreach ( var model in models ) {
-				model.Update( elapsedTime, lerpFactor );
+				model.Update( gameTime.ElapsedSec, lerpFactor );
 			}
 
 
@@ -149,7 +150,7 @@ namespace IronStar.SFX {
 			//	update view-space weapon model :
 			//
 			if (gameCamera!=null && userCmd!=null) {
-				UpdateViewModel( elapsedTime, lerpFactor, gameCamera, userCmd );
+				UpdateViewModel( gameTime.ElapsedSec, lerpFactor, gameCamera, userCmd );
 			}
 		}
 

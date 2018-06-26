@@ -51,6 +51,13 @@ namespace Fusion.Core {
 			}
 		}
 
+
+		public static GameTime Zero {
+			get {
+				return new GameTime( 0, new TimeSpan(0,0,0,0,0), new TimeSpan(0,0,0,0,0) );
+			}
+		}
+
 		
 		/// <summary>
 		/// Constructor

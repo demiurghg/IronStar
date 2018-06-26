@@ -20,12 +20,13 @@ namespace IronStar.Core {
 
 		/// <summary>
 		/// Entity ID
+		/// Entity ID is written to stream by GameWorld during replication.
 		/// </summary>
 		public readonly uint ID;
 
 		/// <summary>
 		/// Class ID.
-		/// Server-side only.
+		/// Class ID is written to stream by GameWorld during replication.
 		/// </summary>
 		public readonly short ClassID;
 
@@ -136,9 +137,8 @@ namespace IronStar.Core {
 		/// <param name="writer"></param>
 		public virtual void Write ( BinaryWriter writer )
 		{
-			writer.Write( UserGuid.ToByteArray() );
-
 			writer.Write( ParentID );
+			writer.Write( UserGuid.ToByteArray() );
 
 			writer.Write( TeleportCount );
 

@@ -64,20 +64,23 @@ namespace IronStar.Core {
 
 		public SnapshotHeader snapshotHeader = new SnapshotHeader();
 
-
 		public readonly bool IsPresentationEnabled;
+
+		Map map;
 
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
-		public GameWorld( Game game, IMessageService msgsvc, bool enablePresentation, Guid userGuid )
+		public GameWorld( Game game, Map map, IMessageService msgsvc, bool enablePresentation, Guid userGuid )
 		{
 			IsPresentationEnabled	=	enablePresentation;
 			MessageService			=	msgsvc;
 
 			this.Game	=	game;
+
+			this.map	=	map;
 
 			this.UserGuid	=	userGuid;
 
@@ -90,13 +93,15 @@ namespace IronStar.Core {
 
 				var rw = Game.RenderSystem.RenderWorld;
 
-				rw.VirtualTexture = Content.Load<VirtualTexture>("*megatexture");
-				fxPlayback		=	new SFX.FXPlayback( this );
-				modelManager	=	new SFX.ModelManager( this );
+				rw.VirtualTexture		=	Content.Load<VirtualTexture>("*megatexture");
+				fxPlayback				=	new SFX.FXPlayback( this );
+				modelManager			=	new SFX.ModelManager( this );
 
-				rw.LightSet.SpotAtlas		=	Content.Load<TextureAtlas>(@"spots\spots");
-				rw.LightSet.DecalAtlas		=	Content.Load<TextureAtlas>(@"decals\decals");
+				rw.LightSet.SpotAtlas	=	Content.Load<TextureAtlas>(@"spots\spots");
+				rw.LightSet.DecalAtlas	=	Content.Load<TextureAtlas>(@"decals\decals");
 			}
+
+			InitServerAtoms();
 		}
 
 
@@ -180,7 +185,7 @@ namespace IronStar.Core {
 			}
 
 			//
-			//	updare effects :
+			//	update effects :
 			//	
 			foreach ( var fxe in fxEvents ) {
 				fxPlayback.RunFX( fxe, false );

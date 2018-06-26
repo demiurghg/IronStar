@@ -23,10 +23,11 @@ using IronStar.Items;
 namespace IronStar {
 	class ShooterServer : IServerInstance {
 
+		readonly Game game;
 		public GameWorld World { get { return world; } }
 
 		IMessageService msgsvc;
-		readonly GameWorld world;
+		GameWorld world;
 		readonly string mapName;
 		Map map;
 
@@ -35,8 +36,8 @@ namespace IronStar {
 		
 		public ShooterServer ( GameServer server, IMessageService msgsvc, string mapName )
 		{
+			this.game		=	server.Game;
 			this.msgsvc		=	msgsvc;
-			world			=	new GameWorld( server.Game, msgsvc, false, new Guid() );
 			this.mapName	=	mapName;
 			invoker			=	new Invoker(server.Game);
 			#warning invoker.AddCommands(this);
@@ -46,6 +47,7 @@ namespace IronStar {
 		void IServerInstance.Initialize()
 		{
 			map		=   world.Content.Load<Map>( @"maps\" + mapName );
+			world	=	new GameWorld( game, map, msgsvc, false, new Guid() );
 			world.InitServerAtoms();
 			map.ActivateMap( world, true );
 		}

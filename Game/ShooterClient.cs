@@ -31,6 +31,7 @@ namespace IronStar {
 		GameCamera camera;
 		readonly Guid userGuid;
 		Map map;
+		IMessageService msgsvc;
 
 		public Guid UserGuid { get { return userGuid; } }
 
@@ -43,9 +44,9 @@ namespace IronStar {
 
 		public ShooterClient ( GameClient client, IMessageService msgsvc, Guid userGuid )
 		{
+			this.msgsvc		=	msgsvc;
 			this.userGuid	=	userGuid;
 			game			=	client.Game;
-			world			=	new GameWorld( client.Game, msgsvc, true, userGuid );
 			gameInput		=	new GameInput( client.Game );
 			userCommand		=	new UserCommand();
 			camera			=	new GameCamera( world, this );
@@ -66,10 +67,10 @@ namespace IronStar {
 		{
 			hud.Initialize();
 			map		=   world.Content.Load<Map>( @"maps\" + serverInfo );
+			world	=	new GameWorld( game, map, msgsvc, true, userGuid );
 			world.InitServerAtoms();
-			map.ActivateMap( world, false );
 
-			world.EntitySpawned +=World_EntitySpawned;
+			world.EntitySpawned += World_EntitySpawned;
 		}
 
 		

@@ -3,11 +3,11 @@
   "Environment": {
     "$type": "IronStar.Mapping.MapEnvironment, IronStar",
     "Gravity": 16.0,
-    "SkyTrubidity": 4.75,
-    "SunAltitude": 71.0,
-    "SunAzimuth": 89.0,
+    "SkyTrubidity": 3.75,
+    "SunAltitude": 60.0,
+    "SunAzimuth": -60.0,
     "SunIntensity": 160.0,
-    "FogDistance": 0.001,
+    "FogDistance": 1000.0,
     "FogHeight": 0.05,
     "FogColor": "10, 10, 10, 0",
     "CharacterHeight": 2.0,
@@ -111,6 +111,61 @@
         "TranslateY": 0.0,
         "TranslateZ": 4.0,
         "RotateYaw": 30.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.RigidBodyFactory, IronStar",
+          "Width": 1.0,
+          "Height": 1.0,
+          "Depth": 1.0,
+          "Mass": 1.0,
+          "Model": "",
+          "TargetName": null
+        },
+        "FactoryName": "ALZbxXpJ",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 2.97272348,
+        "TranslateY": -1.50924253,
+        "TranslateZ": 0.049354028,
+        "RotateYaw": -2.260765,
+        "RotatePitch": 0.0478202477,
+        "RotateRoll": 0.176897049
+      },
+      {
+        "$type": "IronStar.Mapping.MapModel, IronStar",
+        "ScenePath": "scenes\\grayBoxing\\testLevel1.fbx",
+        "Scale": 1.0,
+        "GlowColor": "255, 0, 0, 255",
+        "GlowIntensity": 100.0,
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.0,
+        "TranslateY": -2.0,
+        "TranslateZ": 0.0,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box",
+          "TargetName": null
+        },
+        "FactoryName": "JsZKmJUo",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.0,
+        "TranslateY": 0.0,
+        "TranslateZ": 0.0,
+        "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
       }

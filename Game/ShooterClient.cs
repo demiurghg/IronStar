@@ -29,6 +29,7 @@ namespace IronStar {
 		GameInput gameInput;
 		Hud hud;
 		GameCamera camera;
+		ContentManager content;
 		readonly Guid userGuid;
 		Map map;
 		IMessageService msgsvc;
@@ -49,28 +50,26 @@ namespace IronStar {
 			game			=	client.Game;
 			gameInput		=	new GameInput( client.Game );
 			userCommand		=	new UserCommand();
-			camera			=	new GameCamera( world, this );
-			hud				=	new Hud( world );
+			content			=	new ContentManager( client.Game );
 
 			game.Config.ApplySettings( this );
-			game.Config.ApplySettings( gameInput );
-			game.Config.ApplySettings( camera );
 
 			gameInput.EnableControl = true;
-
-			#warning (game.UserInterface.Instance as ShooterInterface).ShowMenu = false;
 		}
 
 
 
 		public void Initialize( string serverInfo )
 		{
-			hud.Initialize();
-			map		=   world.Content.Load<Map>( @"maps\" + serverInfo );
-			world	=	new GameWorld( game, map, msgsvc, true, userGuid );
+			map		=   content.Load<Map>( @"maps\" + serverInfo );
+			world	=	new GameWorld( game, map, content, msgsvc, true, userGuid );
 			world.InitServerAtoms();
 
 			world.EntitySpawned += World_EntitySpawned;
+
+			camera	=	new GameCamera( world, this );
+			hud		=	new Hud( world );
+			hud.Initialize();
 		}
 
 		
@@ -80,10 +79,7 @@ namespace IronStar {
 			if ( disposing ) {
 
 				game.Config.RetrieveSettings( this );
-				game.Config.RetrieveSettings( camera );
-				game.Config.RetrieveSettings( gameInput );
 
-				#warning (game.UserInterface.Instance as ShooterInterface).ShowMenu = true;
 				gameInput?.Dispose();
 				world?.Dispose();
 				hud?.Dispose();
@@ -119,7 +115,7 @@ namespace IronStar {
 
 		public IContentPrecacher CreatePrecacher( string serverInfo )
 		{
-			return new GameWorld.Precacher( world.Content, serverInfo );
+			return new GameWorld.Precacher( content, serverInfo );
 		}
 
 

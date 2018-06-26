@@ -131,6 +131,9 @@
     <Compile Include="Entities\Players\Inventory.cs" />
     <Compile Include="Entities\Players\Player.cs" />
     <Compile Include="Entities\Players\PlayerFactory.cs" />
+    <Compile Include="Entities\ProxyFactory.cs" />
+    <Compile Include="Entities\RigidBody.cs" />
+    <Compile Include="Entities\RigidBodyFactory.cs" />
     <Compile Include="Entities\StartPoint.cs" />
     <Compile Include="FactoryAttribute.cs" />
     <Compile Include="Factory.cs" />

@@ -24,10 +24,25 @@ using Fusion.Core.IniParser.Model;
 
 
 namespace IronStar.Entities {
-	public class RigidBody : EntityController {
+
+	public enum ReplicateLevel {
+		SyncEveryFrame,
+		Sync
+	}
+
+	public class ReplicateAttribute : Attribute {
+		
+	}
+
+
+	public class RigidBody : Entity {
 
 		readonly Space space;
 		readonly Box box;
+
+
+		[Replicate]
+		Vector3 CurrentPosition;
 
 
 		/// <summary>
@@ -35,9 +50,9 @@ namespace IronStar.Entities {
 		/// </summary>
 		/// <param name="game"></param>
 		/// <param name="space"></param>
-		public RigidBody ( Entity entity, GameWorld world, RigidBodyFactory factory ) : base(entity,world)
+		public RigidBody ( uint id, short clsid, GameWorld world, RigidBodyFactory factory ) : base( id, clsid, world, factory )
 		{
-			this.space	=	world.PhysSpace;
+			this.space		=	world.PhysSpace;
 
 			var width		=	factory.Width;
 			var height		=	factory.Height;
@@ -46,16 +61,13 @@ namespace IronStar.Entities {
 			var model		=	factory.Model;
 
 			var ms	=	new MotionState();
-			ms.AngularVelocity	=	MathConverter.Convert( entity.AngularVelocity );
-			ms.LinearVelocity	=	MathConverter.Convert( entity.LinearVelocity );
-			ms.Orientation		=	MathConverter.Convert( entity.Rotation );
-			ms.Position			=	MathConverter.Convert( entity.Position );
-			box	=	new Box(  ms, width, height, depth, mass );
+			ms.Orientation	=	MathConverter.Convert( Quaternion.Identity );
+			box		=	new Box( ms, width, height, depth, mass );
 			box.PositionUpdateMode	=	PositionUpdateMode.Continuous;
 
-			box.Tag	=	entity;
+			box.Tag	=	this;
 
-			entity.Model	=	world.Atoms[ model ];
+			#warning entity.Model	=	world.Atoms[ model ];
 
 			space.Add( box );
 		}
@@ -63,7 +75,7 @@ namespace IronStar.Entities {
 		Random rand = new Random();
 
 
-		public override void Reset()
+		/*public override void Reset()
 		{
 			var ms = new MotionState();
 			ms.AngularVelocity	=	MathConverter.Convert( Entity.AngularVelocity );
@@ -73,7 +85,7 @@ namespace IronStar.Entities {
 			box.MotionState = ms;
 			box.Orientation		=	MathConverter.Convert( Entity.Rotation );
 			box.Position		=	MathConverter.Convert( Entity.Position );
-		}
+		}*/
 
 
 		/// <summary>
@@ -85,18 +97,16 @@ namespace IronStar.Entities {
 		/// <param name="kickImpulse"></param>
 		/// <param name="kickPoint"></param>
 		/// <param name="damageType"></param>
-		public override bool Damage ( uint targetID, uint attackerID, short damage, Vector3 kickImpulse, Vector3 kickPoint, DamageType damageType )
+		public override void Damage( Entity attacker, short damage, DamageType damageType, Vector3 kickImpulse, Vector3 kickPoint )
 		{
 			var i = MathConverter.Convert( kickImpulse );
 			var p = MathConverter.Convert( kickPoint );
 			box.ApplyImpulse( p, i );
-
-			return false;
 		}
 
 
 
-		public override void Killed()
+		public override void Kill()
 		{
 			space.Remove(box);
 		}
@@ -109,10 +119,9 @@ namespace IronStar.Entities {
 		}
 
 
-		public override bool Use( Entity user )
+		public override void Use( Entity user )
 		{
 			Log.Message("Box used");
-			return true;
 		}
 
 
@@ -120,14 +129,34 @@ namespace IronStar.Entities {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public override void Update ( float elapsedTime )
+		public override void Update ( GameTime gameTime )
 		{
-			var e = Entity;
+			this.Position			=	MathConverter.Convert( box.Position ); 
+			this.Rotation			=	MathConverter.Convert( box.Orientation ); 
+			this.LinearVelocity		=	MathConverter.Convert( box.LinearVelocity );
+			this.AngularVelocity	=	MathConverter.Convert( box.AngularVelocity );
+		}
 
-			e.Position			=	MathConverter.Convert( box.Position ); 
-			e.Rotation			=	MathConverter.Convert( box.Orientation ); 
-			e.LinearVelocity	=	MathConverter.Convert( box.LinearVelocity );
-			e.AngularVelocity	=	MathConverter.Convert( box.AngularVelocity );
+
+		public override void Teleport( Vector3 position, Quaternion orient )
+		{
+			base.Teleport( position, orient );
+
+			box.Position		=	MathConverter.Convert( position );
+			box.Orientation		=	MathConverter.Convert( orient );
+			box.AngularVelocity	=	MathConverter.Convert( Vector3.Zero );
+			box.LinearVelocity	=	MathConverter.Convert( Vector3.Zero );
+		}
+
+
+		public override void Move( Vector3 position, Quaternion orient, Vector3 velocity )
+		{
+			base.Move( position, orient, velocity );
+
+			box.Position		=	MathConverter.Convert( position );
+			box.Orientation		=	MathConverter.Convert( orient );
+			box.AngularVelocity	=	MathConverter.Convert( Vector3.Zero );
+			box.LinearVelocity	=	MathConverter.Convert( velocity );
 		}
 	}
 }

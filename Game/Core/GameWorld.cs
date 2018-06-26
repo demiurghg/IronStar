@@ -73,25 +73,23 @@ namespace IronStar.Core {
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
-		public GameWorld( Game game, Map map, IMessageService msgsvc, bool enablePresentation, Guid userGuid )
+		public GameWorld( Game game, Map map, ContentManager content, IMessageService msgsvc, bool enablePresentation, Guid userGuid )
 		{
 			IsPresentationEnabled	=	enablePresentation;
 			MessageService			=	msgsvc;
 
-			this.Game	=	game;
-
-			this.map	=	map;
-
+			this.Content	=	content;
+			this.Game		=	game;
+			this.map		=	map;
 			this.UserGuid	=	userGuid;
 
-			Content		=	new ContentManager( Game );
-			entities	=	new EntityCollection();
+			entities		=	new EntityCollection();
+			physics			=	new PhysicsManager( this, 16 );
 
-			physics		=	new PhysicsManager( this, 16 );
-
+			//	setup rendering stuff :
 			if (enablePresentation) {
 
-				var rw = Game.RenderSystem.RenderWorld;
+				var rw					=	Game.RenderSystem.RenderWorld;
 
 				rw.VirtualTexture		=	Content.Load<VirtualTexture>("*megatexture");
 				fxPlayback				=	new SFX.FXPlayback( this );
@@ -101,7 +99,15 @@ namespace IronStar.Core {
 				rw.LightSet.DecalAtlas	=	Content.Load<TextureAtlas>(@"decals\decals");
 			}
 
+			//	initialize server atoms, 
+			//	including assets and inline-factories.
 			InitServerAtoms();
+
+			//	spawn map nodes: static models, lights, 
+			//	fx, entities, etc.
+			foreach ( var mapNode in map.Nodes ) {
+				mapNode.SpawnNode(this);
+			}
 		}
 
 
@@ -156,7 +162,7 @@ namespace IronStar.Core {
 			//
 			//	Control entities :
 			//
-			ForEachEntity( e => e.Update( gameTime ) );
+			ForEachEntity( e => e?.Update( gameTime ) );
 
 			//
 			//	Kill entities :
@@ -181,7 +187,7 @@ namespace IronStar.Core {
 			//	draw all entities :
 			//
 			foreach ( var entity in visibleEntities ) {
-				entity.Draw( gameTime, EntityFX.None );
+				entity?.Draw( gameTime, EntityFX.None );
 			}
 
 			//

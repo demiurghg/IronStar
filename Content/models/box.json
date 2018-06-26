@@ -4,7 +4,7 @@
   "Scale": 1.0,
   "UseAnimation": false,
   "UseAnimator": false,
-  "Color": "10, 10, 10, 1",
+  "Color": "242, 39, 16, 255",
   "Intensity": 100.0,
   "FPVEnable": true,
   "FPVCamera": "camera1",

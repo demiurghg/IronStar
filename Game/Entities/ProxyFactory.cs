@@ -37,16 +37,14 @@ namespace IronStar.Entities {
 		/// <param name="entity"></param>
 		/// <param name="world"></param>
 		/// <returns></returns>
-		public override EntityController Spawn( Entity entity, GameWorld world )
+		public override Entity Spawn( uint id, short clsid, GameWorld world )
 		{
 			if (string.IsNullOrWhiteSpace(Classname)) {
 				Log.Warning("ProxyFactory: classname is null or white space, null-entity spawned");
 				return null;
 			}
 
-			factory = world.Content.Load<EntityFactory>(@"entities\" + Classname);
-
-			return factory.Spawn( entity, world );
+			return world.Spawn(Classname);
 		}
 
 

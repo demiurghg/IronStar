@@ -268,7 +268,7 @@ namespace Fusion.Core {
 			Enabled			=	true;
 
 			AppDomain currentDomain = AppDomain.CurrentDomain;
-			//currentDomain.UnhandledException += currentDomain_UnhandledException;
+			currentDomain.UnhandledException += currentDomain_UnhandledException;
 
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault( false );

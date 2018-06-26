@@ -41,9 +41,9 @@ namespace IronStar.Entities {
 		[AEClassname("models")]
 		public string Model  { get; set; } = "";
 
-		public override EntityController Spawn( Entity entity, GameWorld world )
+		public override Entity Spawn( uint id, short clsid, GameWorld world )
 		{
-			return new RigidBody( entity, world, this );
+			return new RigidBody( id, clsid, world, this );
 		}
 
 

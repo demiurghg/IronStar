@@ -28,6 +28,7 @@ namespace IronStar {
 
 		IMessageService msgsvc;
 		GameWorld world;
+		ContentManager content;
 		readonly string mapName;
 		Map map;
 
@@ -39,6 +40,7 @@ namespace IronStar {
 			this.game		=	server.Game;
 			this.msgsvc		=	msgsvc;
 			this.mapName	=	mapName;
+			content			=	new ContentManager(server.Game);
 			invoker			=	new Invoker(server.Game);
 			#warning invoker.AddCommands(this);
 		}
@@ -46,10 +48,9 @@ namespace IronStar {
 
 		void IServerInstance.Initialize()
 		{
-			map		=   world.Content.Load<Map>( @"maps\" + mapName );
-			world	=	new GameWorld( game, map, msgsvc, false, new Guid() );
+			map		=   content.Load<Map>( @"maps\" + mapName );
+			world	=	new GameWorld( game, map, content, msgsvc, false, new Guid() );
 			world.InitServerAtoms();
-			map.ActivateMap( world, true );
 		}
 
 

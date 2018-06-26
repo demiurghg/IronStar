@@ -117,7 +117,7 @@ namespace IronStar.Editor {
 				this.map = new Map();
 			}
 
-			world			=	new GameWorld( Game, this.map, new MessageService(), true, new Guid() );
+			world			=	new GameWorld( Game, this.map, Content, new MessageService(), true, new Guid() );
 
 			world.SimulateWorld( GameTime.MSec16 );
 			world.PresentWorld( GameTime.MSec16, 1, null, null );
@@ -226,8 +226,8 @@ namespace IronStar.Editor {
 
 		public void CreateNodeUI ( MapNode newNode )
 		{
-			newNode.SpawnNode( World );
 			Map.Nodes.Add( newNode );
+			newNode.SpawnNode( World );
 			Select( newNode );
 		}
 

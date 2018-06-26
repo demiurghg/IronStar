@@ -57,26 +57,8 @@ namespace IronStar.Mapping {
 		/// <summary>
 		/// 
 		/// </summary>
-		public void ActivateMap ( GameWorld gameWorld, bool activateEntities )
-		{
-			UpdateEnvironment( gameWorld );
-
-			foreach ( var node in Nodes ) {
-				
-				if (node is MapEntity && !activateEntities) {
-					continue;
-				}
-
-				node.SpawnNode( gameWorld );
-			}
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="gameWorld"></param>
+		[Obsolete]
 		public void UpdateEnvironment ( GameWorld gameWorld )
 		{
 			#warning move to entities!

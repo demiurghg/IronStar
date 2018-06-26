@@ -168,6 +168,13 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		static public Scene CreateEmptyScene ()
+		{
+			var scene = new Scene();
+			scene.Nodes.Add( new Node() );
+			return scene;
+		}
+
 
 		/// <summary>
 		/// 

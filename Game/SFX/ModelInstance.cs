@@ -23,6 +23,8 @@ namespace IronStar.SFX {
 
 	public class ModelInstance {
 
+		static readonly Scene EmptyScene = Scene.CreateEmptyScene();
+
 		readonly Matrix preTransform;
 		readonly Color4 color;
 		readonly ModelManager modelManager;
@@ -37,6 +39,11 @@ namespace IronStar.SFX {
 		readonly Matrix fpvViewMatrix;
 		readonly int fpvCameraIndex;
 		readonly Animator animator;
+
+		readonly float boxWidth;
+		readonly float boxHeight;
+		readonly float boxDepth;
+		readonly Color boxColor;
 
 		Matrix[] globalTransforms;
 		Matrix[] animSnapshot;
@@ -73,31 +80,38 @@ namespace IronStar.SFX {
 		/// <param name="scene"></param>
 		/// <param name="entity"></param>
 		/// <param name="matrix"></param>
-		public ModelInstance ( ModelManager modelManager, ModelFactory descriptor, ContentManager content, Entity entity )
+		public ModelInstance ( ModelManager modelManager, ModelFactory factory, ContentManager content, Entity entity )
 		{
-			this.scene			=	content.Load<Scene>( descriptor.ScenePath );
-			this.clips			=	descriptor.LoadClips( content );
+			if (string.IsNullOrWhiteSpace(factory.ScenePath)) {
+				this.scene		=	EmptyScene;
+				this.clips		=	new Scene[0];
+			} else {
+				this.scene		=	content.Load<Scene>( factory.ScenePath );
+				this.clips		=	factory.LoadClips( content );
+			}
 
 			this.animator		=	new Animator( this );
 
+			this.boxWidth		=	factory.BoxWidth	;
+			this.boxHeight		=	factory.BoxHeight	;
+			this.boxDepth		=	factory.BoxDepth	;
+			this.boxColor		=	factory.BoxColor	;
 
 			this.modelManager   =   modelManager;
-			this.preTransform   =   descriptor.ComputePreTransformMatrix();
+			this.preTransform   =   factory.ComputePreTransformMatrix();
 			this.entity			=	entity;
-			this.color			=	descriptor.Color;
-			this.useAnimation	=	descriptor.UseAnimation;
-			this.useAnimator	=	descriptor.UseAnimator;
+			this.color			=	factory.Color;
+			this.useAnimation	=	factory.UseAnimation;
+			this.useAnimator	=	factory.UseAnimator;
 
-			this.fpvEnabled		=	descriptor.FPVEnable;
-			this.fpvCamera		=	descriptor.FPVCamera;
+			this.fpvEnabled		=	factory.FPVEnable;
+			this.fpvCamera		=	factory.FPVCamera;
 
 			nodeCount			=	scene.Nodes.Count;
 
 			globalTransforms	=	new Matrix[ scene.Nodes.Count ];
 			animSnapshot		=	new Matrix[ scene.Nodes.Count ];
 			scene.ComputeAbsoluteTransforms( globalTransforms );
-
-
 
 			if (fpvEnabled) {
 				fpvCameraIndex		=	scene.GetNodeIndex( fpvCamera );
@@ -108,10 +122,10 @@ namespace IronStar.SFX {
 					fpvCameraMatrix	=	Matrix.RotationY( -MathUtil.PiOverTwo ) * globalTransforms[ fpvCameraIndex ];
 					fpvViewMatrix	=	Matrix.Invert( fpvCameraMatrix );
 
-					preTransform	=	fpvViewMatrix * Matrix.Scaling( descriptor.Scale );
+					preTransform	=	fpvViewMatrix * Matrix.Scaling( factory.Scale );
 				}
 			} else {
-				preTransform	=	Matrix.Scaling( descriptor.Scale );	
+				preTransform	=	Matrix.Scaling( factory.Scale );	
 			}
 
 
@@ -140,6 +154,11 @@ namespace IronStar.SFX {
 		/// <param name="worldMatrix"></param>
 		public void Update ( float dt, float animFrame, Matrix worldMatrix )
 		{
+			if (scene==EmptyScene) {
+				modelManager.rw.Debug.DrawBox( new BoundingBox(boxWidth,boxHeight,boxDepth), worldMatrix, boxColor, 2 );
+				return;
+			}
+
 			if (useAnimator) {
 				Animator.Update( dt, animSnapshot );
 			} else if (useAnimation) {

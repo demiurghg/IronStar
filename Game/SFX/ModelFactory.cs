@@ -38,8 +38,12 @@ namespace IronStar.SFX {
 		public bool UseAnimator { get; set; } = false;
 
 		[AECategory( "Appearance" )]
-		[Description( "Model glow color multiplier" )]
-		public Color4 Color { get; set; } = new Color4( 10, 10, 10, 1 );
+		[Description( "Model glow color" )]
+		public Color Color { get; set; } = Color.White;
+
+		[AECategory( "Appearance" )]
+		[Description( "Model glow intensity" )]
+		public float Intensity { get; set; } = 100;
 
 		[AECategory( "First Person View" )]
 		public bool FPVEnable { get; set; } = false;
@@ -53,6 +57,17 @@ namespace IronStar.SFX {
 		[AECategory( "Animation" )]
 		public string Clips { get; set; } = "";
 
+		[AECategory("Placeholder")]
+		public float BoxWidth { get; set; } = 1;
+
+		[AECategory("Placeholder")]
+		public float BoxHeight { get; set; } = 1;
+
+		[AECategory("Placeholder")]
+		public float BoxDepth { get; set; } = 1;
+
+		[AECategory("Placeholder")]
+		public Color BoxColor { get; set; } = Color.YellowGreen;
 
 		public string[] GetClips ()
 		{

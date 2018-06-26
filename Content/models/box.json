@@ -5,8 +5,13 @@
   "UseAnimation": false,
   "UseAnimator": false,
   "Color": "10, 10, 10, 1",
+  "Intensity": 100.0,
   "FPVEnable": true,
   "FPVCamera": "camera1",
   "Prefix": "anim_",
-  "Clips": ""
+  "Clips": "",
+  "BoxWidth": 1.0,
+  "BoxHeight": 1.0,
+  "BoxDepth": 1.0,
+  "BoxColor": "154, 205, 50, 255"
 }

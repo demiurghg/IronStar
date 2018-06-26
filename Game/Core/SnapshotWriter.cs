@@ -45,6 +45,7 @@ namespace IronStar.Core {
 
 				foreach ( var ent in entityArray ) {
 					writer.Write( ent.ID );
+					writer.Write( ent.ClassID );
 					ent.Write( writer );
 				}
 

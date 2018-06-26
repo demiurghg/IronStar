@@ -59,10 +59,9 @@ namespace IronStar.Core {
 					
 						//	Entity does not exist.
 						//	Create new one.
-						var ent = world.Spawn(clsId);
+						var ent = world.Spawn(clsId, id);
 
 						ent.Read( reader, 1 );
-						entities.Add( id, ent );
 
 						//	teleport entity stuff (controllers, physical shapes etc)
 						//	to created position

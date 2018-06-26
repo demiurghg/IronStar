@@ -246,15 +246,16 @@ namespace IronStar.Core {
 		/// </summary>
 		/// <param name="classname"></param>
 		/// <returns></returns>
-		public Entity Spawn ( string classname )
+		public Entity Spawn ( string classname, uint id=0 )
 		{
 			var classId	=	Atoms[classname];
 			var factory	=	FindFactory( classname );
 
 			//	get ID :
-			uint id = idCounter;
-
-			idCounter++;
+			if (id==0) {
+				id = idCounter;
+				idCounter++;
+			}
 
 			//	this actually will never happen, about 103 day of intense playing.
 			if ( idCounter==0 ) {
@@ -278,7 +279,7 @@ namespace IronStar.Core {
 		/// </summary>
 		/// <param name="classId"></param>
 		/// <returns></returns>
-		public Entity Spawn ( short classId )
+		public Entity Spawn ( short classId, uint id=0 )
 		{
 			var classname	=	Atoms[classId];
 

@@ -15,6 +15,7 @@ using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
 using IronStar.Core;
 using IronStar.Entities;
+using System.Runtime.CompilerServices;
 
 namespace IronStar {
 
@@ -82,13 +83,14 @@ namespace IronStar {
 		/// 
 		/// </summary>
 		/// <param name="cmdData"></param>
+		[MethodImpl(MethodImplOptions.NoOptimization)]
 		public void FeedCommand ( GameWorld world, byte[] cmdData )
 		{
 			var player		=	world.GetPlayerEntity(Guid);
 			var oldCmd		=	UserCmd;
 			UserCmd			=	UserCommand.FromBytes( cmdData );
 
-			player.UserControl( UserCmd );
+			player?.UserControl( UserCmd );
 		}
 
 

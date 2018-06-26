@@ -352,6 +352,10 @@ namespace IronStar.Editor {
 		{
 			var mapNode = target as MapNode;
 			mapNode?.ResetNode( World );
+
+			if (target is MapEnvironment) {
+				map.UpdateEnvironment(world);
+			}
 		}
 
 

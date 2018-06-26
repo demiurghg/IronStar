@@ -70,6 +70,7 @@ namespace IronStar.Editor {
 			upperShelf.AddLSplitter();
 			upperShelf.AddLButton("BUILD\rRELOAD", @"editor\iconBuild", ()=> Game.Invoker.ExecuteString("contentBuild") );
 
+			upperShelf.AddRButton("ENV"				, null						, ()=> workspace.FeedProperties(map.Environment) );
 			upperShelf.AddRButton("SCR"				, null						, ()=> Game.Invoker.ExecuteString("screenshot") );
 			upperShelf.AddRButton("CONFIG"			, @"editor\iconComponents"	, ()=> workspace.TogglePalette( componentPalette ) );
 			upperShelf.AddRButton("EDITOR\rCONFIG"	, @"editor\iconSettings"	, ()=> workspace.FeedProperties(this) );

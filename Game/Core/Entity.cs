@@ -171,6 +171,14 @@ namespace IronStar.Core {
 		{
 		}
 
+
+		/// <summary>
+		/// Called when game decided to reload entire content.
+		/// </summary>
+		public virtual void Reload ()
+		{
+		}
+
   
 		/// <summary>
 		/// Draw entity.

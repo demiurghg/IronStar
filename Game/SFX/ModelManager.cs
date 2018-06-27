@@ -91,17 +91,16 @@ namespace IronStar.SFX {
 		/// <param name="modelAtom"></param>
 		/// <param name="entity"></param>
 		/// <returns></returns>
-		public ModelInstance AddModel ( short modelAtom, Entity entity )
+		public ModelInstance AddModel ( string modelName )
 		{
-			var modelName	=	world.Atoms[modelAtom];
+			if (string.IsNullOrWhiteSpace(modelName)) {
+				return null;
+			}
 
 			var modelDesc	=	world.Content.Load<ModelFactory>( @"models\" + modelName );
+			var model		=	new ModelInstance( this, modelDesc, world.Content );
 
-			var model		=	new ModelInstance( this, modelDesc, world.Content, entity );
-
-			if (entity!=null) {
-				AddModel( model );
-			}
+			AddModel( model );
 
 			return model;
 		}

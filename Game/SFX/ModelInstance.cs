@@ -28,7 +28,6 @@ namespace IronStar.SFX {
 		readonly Matrix preTransform;
 		readonly Color4 color;
 		readonly ModelManager modelManager;
-		readonly Entity entity;
 		readonly Scene scene;
 		readonly Scene[] clips;
 		readonly bool useAnimation;
@@ -71,6 +70,11 @@ namespace IronStar.SFX {
 		/// </summary>
 		public Animator Animator { get { return animator; } }
 
+		/// <summary>
+		/// Model position
+		/// </summary>
+		public Matrix WorldTransform { get; set; }
+
 
 		/// <summary>
 		/// 
@@ -80,7 +84,7 @@ namespace IronStar.SFX {
 		/// <param name="scene"></param>
 		/// <param name="entity"></param>
 		/// <param name="matrix"></param>
-		public ModelInstance ( ModelManager modelManager, ModelFactory factory, ContentManager content, Entity entity )
+		public ModelInstance ( ModelManager modelManager, ModelFactory factory, ContentManager content )
 		{
 			if (string.IsNullOrWhiteSpace(factory.ScenePath)) {
 				this.scene		=	EmptyScene;
@@ -99,7 +103,6 @@ namespace IronStar.SFX {
 
 			this.modelManager   =   modelManager;
 			this.preTransform   =   factory.ComputePreTransformMatrix();
-			this.entity			=	entity;
 			this.color			=	factory.Color;
 			this.useAnimation	=	factory.UseAnimation;
 			this.useAnimator	=	factory.UseAnimator;
@@ -152,8 +155,10 @@ namespace IronStar.SFX {
 		/// <param name="dt"></param>
 		/// <param name="animFrame"></param>
 		/// <param name="worldMatrix"></param>
-		public void Update ( float dt, float animFrame, Matrix worldMatrix )
+		public void Update ( float dt, float animFrame )
 		{
+			var worldMatrix = WorldTransform;
+
 			if (scene==EmptyScene) {
 				modelManager.rw.Debug.DrawBox( new BoundingBox(boxWidth,boxHeight,boxDepth), worldMatrix, boxColor, 2 );
 				return;
@@ -203,22 +208,6 @@ namespace IronStar.SFX {
 		public void ComputeAbsoluteTransforms ( Matrix[] transforms )
 		{
 			scene.ComputeAbsoluteTransforms( transforms, transforms );
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="dt"></param>
-		/// <param name="lerpFactor"></param>
-		public void Update ( float dt, float lerpFactor )
-		{
-			#warning ANIM FRAME!
-			var animFrame = 0;//entity.AnimFrame;
-			var worldMatrix = entity.GetWorldMatrix( lerpFactor );
-
-			Update( dt, animFrame, worldMatrix );
 		}
 
 

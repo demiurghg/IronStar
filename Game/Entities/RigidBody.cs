@@ -20,6 +20,7 @@ using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.EntityStateManagement;
 using BEPUphysics.PositionUpdating;
 using Fusion.Core.IniParser.Model;
+using IronStar.SFX;
 //using BEPUphysics.
 
 
@@ -44,6 +45,8 @@ namespace IronStar.Entities {
 		[Replicate]
 		Vector3 CurrentPosition;
 
+		ModelInstance model;
+
 
 		/// <summary>
 		/// 
@@ -67,7 +70,9 @@ namespace IronStar.Entities {
 
 			box.Tag	=	this;
 
-			#warning entity.Model	=	world.Atoms[ model ];
+			if (world.IsPresentationEnabled) {
+				this.model = world.ModelManager.AddModel( model );
+			}
 
 			space.Add( box );
 		}
@@ -75,17 +80,19 @@ namespace IronStar.Entities {
 		Random rand = new Random();
 
 
-		/*public override void Reset()
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="gameTime"></param>
+		/// <param name="entityFx"></param>
+		public override void Draw(GameTime gameTime, EntityFX entityFx)
 		{
-			var ms = new MotionState();
-			ms.AngularVelocity	=	MathConverter.Convert( Entity.AngularVelocity );
-			ms.LinearVelocity	=	MathConverter.Convert( Entity.LinearVelocity );
-			ms.Orientation		=	MathConverter.Convert( Entity.Rotation );
-			ms.Position			=	MathConverter.Convert( Entity.Position );
-			box.MotionState = ms;
-			box.Orientation		=	MathConverter.Convert( Entity.Rotation );
-			box.Position		=	MathConverter.Convert( Entity.Position );
-		}*/
+			base.Draw(gameTime, entityFx);
+
+			if (model!=null) {
+				model.WorldTransform = GetWorldMatrix(1);
+			}
+		}
 
 
 		/// <summary>
@@ -108,6 +115,7 @@ namespace IronStar.Entities {
 
 		public override void Kill()
 		{
+			model?.Kill();
 			space.Remove(box);
 		}
 

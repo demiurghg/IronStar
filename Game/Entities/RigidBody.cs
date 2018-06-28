@@ -89,9 +89,10 @@ namespace IronStar.Entities {
 		{
 			base.Draw(gameTime, entityFx);
 
-			if (model!=null) {
-				model.WorldTransform = GetWorldMatrix(1);
-			}
+			//if (model!=null) {
+			//	model.Position		=	Position;
+			//	model.Orientation	=	Rotation;
+			//}
 		}
 
 
@@ -143,6 +144,11 @@ namespace IronStar.Entities {
 			this.Rotation			=	MathConverter.Convert( box.Orientation ); 
 			this.LinearVelocity		=	MathConverter.Convert( box.LinearVelocity );
 			this.AngularVelocity	=	MathConverter.Convert( box.AngularVelocity );
+
+			if (model!=null) {
+				model.Position		=	Position;
+				model.Orientation	=	Rotation;
+			}
 		}
 
 
@@ -154,6 +160,11 @@ namespace IronStar.Entities {
 			box.Orientation		=	MathConverter.Convert( orient );
 			box.AngularVelocity	=	MathConverter.Convert( Vector3.Zero );
 			box.LinearVelocity	=	MathConverter.Convert( Vector3.Zero );
+
+			if (model!=null) {
+				model.Position		=	position;
+				model.Orientation	=	orient;
+			}
 		}
 
 
@@ -165,6 +176,11 @@ namespace IronStar.Entities {
 			box.Orientation		=	MathConverter.Convert( orient );
 			box.AngularVelocity	=	MathConverter.Convert( Vector3.Zero );
 			box.LinearVelocity	=	MathConverter.Convert( velocity );
+
+			if (model!=null) {
+				model.Position		=	position;
+				model.Orientation	=	orient;
+			}
 		}
 	}
 }

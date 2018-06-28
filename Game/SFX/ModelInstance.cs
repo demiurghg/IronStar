@@ -73,7 +73,12 @@ namespace IronStar.SFX {
 		/// <summary>
 		/// Model position
 		/// </summary>
-		public Matrix WorldTransform { get; set; }
+		public Vector3 Position { get; set; }
+
+		/// <summary>
+		/// Model rotation 
+		/// </summary>
+		public Quaternion Orientation { get; set; }
 
 
 		/// <summary>
@@ -157,7 +162,7 @@ namespace IronStar.SFX {
 		/// <param name="worldMatrix"></param>
 		public void Update ( float dt, float animFrame )
 		{
-			var worldMatrix = WorldTransform;
+			var worldMatrix = Matrix.RotationQuaternion( Orientation ) * Matrix.Translation( Position );
 
 			if (scene==EmptyScene) {
 				modelManager.rw.Debug.DrawBox( new BoundingBox(boxWidth,boxHeight,boxDepth), worldMatrix, boxColor, 2 );

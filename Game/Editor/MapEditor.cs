@@ -280,7 +280,6 @@ namespace IronStar.Editor {
 				newItem.SpawnNode(world);
 			}
 
-			ResetWorld(true);
 			ClearSelection();
 
 			selection.AddRange( newItems );

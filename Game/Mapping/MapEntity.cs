@@ -134,8 +134,9 @@ namespace IronStar.Mapping {
 		public override MapNode DuplicateNode()
 		{
 			var newNode = (MapEntity)MemberwiseClone();
-			newNode.Factory = Factory.Duplicate();
-			newNode.Entity  = null;
+			newNode.Factory		= Factory.Duplicate();
+			newNode.Entity		= null;
+			newNode.FactoryName	= Misc.GenerateRandomString(8);
 			return newNode;
 		}
 	}

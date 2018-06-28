@@ -184,7 +184,7 @@ namespace IronStar.Mapping {
 		/// <param name="gameTime"></param>
 		public virtual void Update ( GameTime gameTime, GameWorld world )
 		{
-			if (dirty) {
+			/*if (dirty) {
 				ResetNode(world);
 				dirty = false;
 			}
@@ -192,7 +192,7 @@ namespace IronStar.Mapping {
 				KillNode(world);
 				SpawnNode(world);
 				hardDirty = false;
-			}
+			} */
 		}
 
 

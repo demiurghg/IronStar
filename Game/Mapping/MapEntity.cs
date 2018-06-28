@@ -112,10 +112,7 @@ namespace IronStar.Mapping {
 				return;
 			}
 			if (world.IsAlive(Entity.ID)) {
-				Entity.Position = Entity.PositionOld = TranslateVector;
-				Entity.Rotation = Entity.RotationOld = RotateQuaternion;
-				Entity.LinearVelocity = Vector3.Zero;
-				Entity.AngularVelocity = Vector3.Zero;
+				Entity.Teleport( TranslateVector, RotateQuaternion );
 				//Entity.Controller?.Reset();
 				#warning RESET ENTITY
 			} else {

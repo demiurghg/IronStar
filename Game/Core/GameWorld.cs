@@ -229,7 +229,7 @@ namespace IronStar.Core {
 		 *	Entity creation
 		-----------------------------------------------------------------------------------------*/
 
-		EntityFactory FindFactory( string classname )
+		public EntityFactory GetFactoryByName( string classname )
 		{
 			var factoryNode = map.Nodes.FirstOrDefault( n1 => (n1 as MapEntity)?.FactoryName == classname );
 
@@ -249,7 +249,7 @@ namespace IronStar.Core {
 		public Entity Spawn ( string classname, uint id=0 )
 		{
 			var classId	=	Atoms[classname];
-			var factory	=	FindFactory( classname );
+			var factory	=	GetFactoryByName( classname );
 
 			//	get ID :
 			if (id==0) {

@@ -44,6 +44,8 @@ namespace IronStar.Entities {
 				return null;
 			}
 
+			factory = world.GetFactoryByName(Classname);
+
 			return world.Spawn(Classname);
 		}
 

@@ -65,6 +65,7 @@ namespace IronStar.Entities {
 
 			var ms	=	new MotionState();
 			ms.Orientation	=	MathConverter.Convert( Quaternion.Identity );
+			ms.Position		=	MathConverter.Convert( Vector3.Zero );
 			box		=	new Box( ms, width, height, depth, mass );
 			box.PositionUpdateMode	=	PositionUpdateMode.Continuous;
 

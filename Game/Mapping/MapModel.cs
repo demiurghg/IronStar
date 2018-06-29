@@ -167,6 +167,7 @@ namespace IronStar.Mapping {
 			if (scenePathDirty) {
 				KillNode(world);
 				SpawnNode(world);
+				scenePathDirty = false;
 			}
 
 			dr.DrawBasis( WorldMatrix, 1, 2 );

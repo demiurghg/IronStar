@@ -106,19 +106,8 @@ namespace IronStar.Mapping {
 
 		public override void ResetNode( GameWorld world )
 		{
-			if (Entity==null) {
-				KillNode(world);
-				SpawnNode(world);
-				return;
-			}
-			if (world.IsAlive(Entity.ID)) {
-				Entity.Teleport( TranslateVector, RotateQuaternion );
-				//Entity.Controller?.Reset();
-				#warning RESET ENTITY
-			} else {
-				KillNode(world);
-				SpawnNode(world);
-			}
+			KillNode(world);
+			SpawnNode(world);
 		}
 
 
@@ -126,7 +115,7 @@ namespace IronStar.Mapping {
 		public override void KillNode( GameWorld world )
 		{
 			if (Entity!=null) {
-				world.Kill( Entity.ID );
+				world.KillImmediatly( Entity.ID );
 			}
 		}
 

@@ -108,6 +108,8 @@ namespace IronStar.Core {
 			foreach ( var mapNode in map.Nodes ) {
 				mapNode.SpawnNode(this);
 			}
+
+			map.UpdateEnvironment(this);
 		}
 
 
@@ -401,10 +403,11 @@ namespace IronStar.Core {
 
 
 		/// <summary>
-		/// 
+		/// Immediatly removes given entity.
+		/// Never call the method from Entity.Update!
 		/// </summary>
 		/// <param name="id"></param>
-		void KillImmediatly ( uint id )
+		public void KillImmediatly ( uint id )
 		{
 			if (id==0) {
 				return;
@@ -426,7 +429,8 @@ namespace IronStar.Core {
 
 
 		/// <summary>
-		/// 
+		/// Adds entity to kill-list.
+		/// Entity will be killed at the end of the game update.
 		/// </summary>
 		/// <param name="id"></param>
 		public void Kill ( uint id )

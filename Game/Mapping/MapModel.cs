@@ -21,11 +21,24 @@ namespace IronStar.Mapping {
 
 	public class MapModel : MapNode {
 
+		static readonly Scene EmptyScene = Scene.CreateEmptyScene();
+
 
 		[AECategory( "Appearance" )]
 		[Description( "Path to FBX scene" )]
 		[AEFileName("scenes", "*.fbx", AEFileNameMode.NoExtension)]
-		public string ScenePath { get; set; } = "";
+		public string ScenePath { 
+			get { return scenePath; }
+			set {
+				if (scenePath!=value) {
+					scenePath = value;
+					scenePathDirty = true;
+				}
+			}
+		}
+
+		string scenePath = "";
+		bool scenePathDirty = true;
 
 		[AECategory( "Appearance" )]
 		[Description( "Entire model scale" )]
@@ -70,7 +83,7 @@ namespace IronStar.Mapping {
 
 			var pm		=	world.Physics;
 
-			scene		=	world.Content.Load<Scene>( ScenePath );
+			scene		=	world.Content.Load<Scene>( ScenePath, EmptyScene );
 
 			transforms	=	new Matrix[ scene.Nodes.Count ];
 			collidables	=	new StaticMesh[ scene.Nodes.Count ];
@@ -151,7 +164,17 @@ namespace IronStar.Mapping {
 
 		public override void DrawNode( GameWorld world, DebugRender dr, Color color, bool selected )
 		{
+			if (scenePathDirty) {
+				KillNode(world);
+				SpawnNode(world);
+			}
+
 			dr.DrawBasis( WorldMatrix, 1, 2 );
+			
+			if (scene==EmptyScene) {
+				dr.DrawBox( TranslateVector, 2,2,2, Color.Red );
+			}
+
 
 			if (scene!=null && selected) {
 				for ( int i=0; i<scene.Nodes.Count; i++ ) {

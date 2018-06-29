@@ -6,7 +6,7 @@
   "UseAnimator": false,
   "Color": "242, 39, 16, 255",
   "Intensity": 100.0,
-  "FPVEnable": true,
+  "FPVEnable": false,
   "FPVCamera": "camera1",
   "Prefix": "anim_",
   "Clips": "",

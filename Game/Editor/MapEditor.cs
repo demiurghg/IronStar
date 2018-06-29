@@ -123,6 +123,8 @@ namespace IronStar.Editor {
 			world.PresentWorld( GameTime.MSec16, 1, null, null );
 
 			RegisterCommands();
+
+			Game.Reloading += (s,e) => ResetWorld(true); 
 		}
 
 

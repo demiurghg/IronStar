@@ -130,7 +130,7 @@ namespace IronStar.Editor {
 			workspace.AddHotkey( Keys.U			, ModKeys.Ctrl, () => DuplicateSelection() );
 
 			workspace.AddHotkey( Keys.Space		, ModKeys.None, () => EnableSimulation = !EnableSimulation );
-			workspace.AddHotkey( Keys.Escape	, ModKeys.None, () => ResetWorld(false) );
+			workspace.AddHotkey( Keys.Escape	, ModKeys.None, () => ResetWorld(true) );
 			workspace.AddHotkey( Keys.K			, ModKeys.None, () => ResetWorld(true) );
 			workspace.AddHotkey( Keys.B			, ModKeys.None, () => BakeToEntity() );
 			workspace.AddHotkey( Keys.Enter		, ModKeys.None, () => ActivateSelected() );

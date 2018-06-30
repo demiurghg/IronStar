@@ -17,6 +17,7 @@ using BEPUphysics;
 using BEPUphysics.Character;
 using Fusion.Engine.Audio;
 using IronStar.Entities;
+using IronStar.Entities.Players;
 
 namespace IronStar.Views {
 	public class GameCamera {
@@ -67,18 +68,14 @@ namespace IronStar.Views {
 			var uc		=	client.UserCommand;
 			var m		= 	Matrix.RotationYawPitchRoll( uc.Yaw, uc.Pitch, uc.Roll );
 
-			var player	=	World.GetPlayerEntity( client.UserGuid );
+			var player	=	World.GetPlayerEntity( client.UserGuid ) as Player;
 
 			if (player==null) {
 				//Log.Warning("No entity associated with player");
 				return;
 			}
 
-			var ppos	=	player.LerpPosition(lerpFactor);
-
-			#warning temp stuff
-			var pos		=	ppos + Vector3.Up;
-
+			var pos	=	player.ViewPosition;
 			var fwd	=	pos + m.Forward;
 			var up	=	m.Up;
 

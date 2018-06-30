@@ -104,15 +104,6 @@ namespace IronStar.Core {
 
  
 		/// <summary>
-		/// Indicates whether entity 
-		/// should be removed from the game world
-		/// </summary>
-		public virtual bool IsDead {
-			get;
-		}
-
- 
-		/// <summary>
 		/// Writes entity state to stream using binary writer.
 		/// </summary>
 		/// <param name="writer"></param>

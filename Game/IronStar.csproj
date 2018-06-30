@@ -65,6 +65,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\FuncFX.cs" />
+    <Compile Include="Entities\Players\PlayerState.cs" />
     <Compile Include="ShooterCampaign.cs" />
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Client\GameInput.cs" />

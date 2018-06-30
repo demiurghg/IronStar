@@ -11,10 +11,11 @@ using IronStar.Core;
 using IronStar.SFX;
 using System.ComponentModel;
 using Fusion.Core.Shell;
+using Fusion.Core;
 
 namespace IronStar.Entities {
 
-	public class FuncFX : EntityController {
+	public class FuncFX : Entity {
 		
 		static Random rand = new Random();
 
@@ -30,7 +31,9 @@ namespace IronStar.Entities {
 		float timer = 0;
 		bool enabled;
 
-		public FuncFX( Entity entity, GameWorld world, FuncFXFactory factory ) : base(entity, world)
+		FXInstance fxInstance = null;
+
+		public FuncFX( uint id, short clsid, GameWorld world, FuncFXFactory factory ) : base(id, clsid, world, factory)
 		{
 			fx			=	factory.FX;
 			fxMode		=	factory.FXMode;
@@ -40,8 +43,6 @@ namespace IronStar.Entities {
 			start		=	factory.Start;
 
 			atom		=	world.Atoms[ fx ];
-
-			Reset();
 		}
 
 
@@ -54,26 +55,16 @@ namespace IronStar.Entities {
 			activationCount ++;
 
 			if (fxMode==FuncFXMode.Trigger) {
-				World.SpawnFX( fx, 0, Entity.Position, Entity.LinearVelocity, Entity.Rotation );
+				World.SpawnFX( fx, 0, Position, LinearVelocity, Rotation );
 			} else {
 				enabled = !enabled;
 			}
 		}
 
 
-		public override void Reset()
+		public override void Update( GameTime gameTime )
 		{
-			timer			= rand.NextFloat( minInterval, maxInterval );
-			enabled			= start;
-			activationCount	= 0;
-		}
-
-
-		public override void Update( float elapsedTime )
-		{
-			if (fxMode==FuncFXMode.Persistent) {
-				Entity.Sfx = enabled ? atom : (short)0;
-			}
+			float elapsedTime = gameTime.ElapsedSec;
 
 			if (fxMode==FuncFXMode.AutoTrigger) {
 				
@@ -81,18 +72,38 @@ namespace IronStar.Entities {
 					timer -= elapsedTime;
 
 					if (timer<0) {
-						World.SpawnFX( fx, 0, Entity.Position, Entity.LinearVelocity, Entity.Rotation );
+						World.SpawnFX( fx, 0, Position, LinearVelocity, Rotation );
 						timer = rand.NextFloat( minInterval, maxInterval );
 					}
 				} else {
 					timer = 0;
 				}
 			}
+		}
 
-			if (fxMode==FuncFXMode.Trigger) {
-				
+
+		public override void Draw( GameTime gameTime, EntityFX entityFx )
+		{
+			if (fxMode==FuncFXMode.Persistent) {
+				if (fxInstance==null) {
+					var fxe = new FXEvent(atom, 0, Position, LinearVelocity, Rotation);
+					fxInstance = World.FXPlayback.RunFX( fxe, true );
+				}
+
+				if (fxInstance!=null) {
+					fxInstance.Move( Position, LinearVelocity, Rotation );
+				}
 			}
 		}
+
+
+		public override void Kill()
+		{
+			base.Kill();
+
+			fxInstance?.Kill();
+		}
+
 	}
 
 
@@ -136,9 +147,10 @@ namespace IronStar.Entities {
 		public int MaxInterval { get; set; } = 1;
 
 
-		public override EntityController Spawn( Entity entity, GameWorld world )
+
+		public override Entity Spawn( uint id, short clsid, GameWorld world )
 		{
-			return new FuncFX( entity, world, this );
+			return new FuncFX( id, clsid, world, this );
 		}
 	}
 }

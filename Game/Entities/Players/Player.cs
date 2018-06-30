@@ -27,7 +27,11 @@ namespace IronStar.Entities.Players {
 		int					health;
 		int					armor;
 
+		public PlayerState	PlayerState;
 
+		public Vector3		ViewPosition;
+
+		
 		/// <summary>
 		/// 
 		/// </summary>
@@ -52,6 +56,21 @@ namespace IronStar.Entities.Players {
 			 armor		=	factory.MaxArmor;
 		}
 
+
+
+		public override void Read( BinaryReader reader, float lerpFactor )
+		{
+			base.Read( reader, lerpFactor );
+			PlayerState	=	(PlayerState)reader.ReadByte();
+			
+		}
+
+
+		public override void Write( BinaryWriter writer )
+		{
+			base.Write( writer );
+			writer.Write( (byte)PlayerState );
+		}
 
 
 		/// <summary>
@@ -103,6 +122,12 @@ namespace IronStar.Entities.Players {
 			//	update physical character controller :
 			controller.Update();
 
+			if (controller.Crouching) {
+				PlayerState |=	PlayerState.Crouching;
+			} else {
+				PlayerState &= ~PlayerState.Crouching;
+			}
+
 			//	update inventory :
 			foreach ( var item in inventory ) {
 				item.Update( gameTime.ElapsedSec );
@@ -111,6 +136,22 @@ namespace IronStar.Entities.Players {
 			inventory.RemoveAll( item => item.Depleted );
 		}
 
+
+
+		float targetPovHeight;
+		float currentPovHeight = float.NaN;
+
+
+		public override void Draw( GameTime gameTime, EntityFX entityFx )
+		{
+			base.Draw( gameTime, entityFx );
+			float dt = gameTime.ElapsedSec;
+
+			targetPovHeight		=	PlayerState.HasFlag(PlayerState.Crouching) ? GameConfig.PovHeightCrouch : GameConfig.PovHeightStand;
+			currentPovHeight	=	MathUtil.Drift( currentPovHeight, targetPovHeight, GameConfig.PovHeightVelocity * dt );
+
+			ViewPosition		=	Position + Vector3.Up * currentPovHeight;
+		}
 
 
 

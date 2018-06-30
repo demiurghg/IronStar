@@ -944,6 +944,10 @@ namespace Fusion.Core.Mathematics
 				return target;
 			}
 
+			if (float.IsNaN(current)) {
+				return target;
+			}
+
 			//	go down :
 			if (current>target) {
 				if (current>target+down) {
@@ -963,6 +967,12 @@ namespace Fusion.Core.Mathematics
 			}
 
 			return current;
+		}
+
+
+		public static float Drift ( float current, float target, float velocity )
+		{
+			return Drift( current, target, velocity, velocity );
 		}
 
 

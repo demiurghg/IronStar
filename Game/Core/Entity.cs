@@ -118,8 +118,8 @@ namespace IronStar.Core {
 		/// <param name="writer"></param>
 		public virtual void Write ( BinaryWriter writer )
 		{
-			writer.Write( ParentID );
 			writer.Write( UserGuid.ToByteArray() );
+			writer.Write( ParentID );
 
 			writer.Write( TeleportCount );
 
@@ -145,7 +145,6 @@ namespace IronStar.Core {
 
 			//	read state :
 			UserGuid		=	new Guid( reader.ReadBytes(16) );
-								
 			ParentID		=	reader.ReadUInt32();
 
 			TeleportCount	=	reader.ReadByte();

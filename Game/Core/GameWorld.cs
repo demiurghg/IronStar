@@ -106,6 +106,9 @@ namespace IronStar.Core {
 			//	spawn map nodes: static models, lights, 
 			//	fx, entities, etc.
 			foreach ( var mapNode in map.Nodes ) {
+				if (enablePresentation && mapNode is MapEntity) {
+					continue;
+				}
 				mapNode.SpawnNode(this);
 			}
 

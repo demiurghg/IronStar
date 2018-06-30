@@ -270,12 +270,12 @@
         "FactoryName": "k6zXwM1t",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 5.0,
+        "TranslateX": -2.0,
         "TranslateY": 5.0,
-        "TranslateZ": 5.0,
-        "RotateYaw": -55.0,
-        "RotatePitch": 40.0,
-        "RotateRoll": -20.0
+        "TranslateZ": -11.0,
+        "RotateYaw": -45.964,
+        "RotatePitch": -0.0443140976,
+        "RotateRoll": 2.12592968E-05
       }
     ]
   }

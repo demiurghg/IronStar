@@ -50,7 +50,6 @@ namespace IronStar {
 		{
 			map		=   content.Load<Map>( @"maps\" + mapName );
 			world	=	new GameWorld( game, map, content, msgsvc, false, new Guid() );
-			world.InitServerAtoms();
 		}
 
 

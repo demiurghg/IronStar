@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ShooterCampaign.cs" />
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Client\GameInput.cs" />
     <Compile Include="Client\FPView.cs" />
@@ -143,6 +144,7 @@
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\ItemFactory.cs" />
     <Compile Include="Items\Weapon.cs" />
+    <Compile Include="LocalMessageService.cs" />
     <Compile Include="Mapping\LightPreset.cs" />
     <Compile Include="Mapping\Map.Build.cs" />
     <Compile Include="Mapping\MapDecal.cs" />

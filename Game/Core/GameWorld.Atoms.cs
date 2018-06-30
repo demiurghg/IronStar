@@ -25,7 +25,7 @@ namespace IronStar.Core {
 	/// </summary>
 	public partial class GameWorld : DisposableBase {
 
-		public void InitServerAtoms ()
+		void InitServerAtoms ()
 		{
 			Atoms = new AtomCollection();
 

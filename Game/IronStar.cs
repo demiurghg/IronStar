@@ -112,6 +112,31 @@ namespace IronStar {
 		}
 
 
+		protected void StartLevel ( string mapname )
+		{
+			var campaign = new ShooterCampaign( this, mapname );
+			this.AddServiceAndComponent( campaign );
+			campaign.Initialize();
+		}
+
+
+
+		protected void StopLevel ()
+		{
+			//	try to stop editor :
+			var campaign = this.GetService<ShooterCampaign>();
+
+			if (campaign!=null) {
+				Log.Message("Stopping map campaign...");
+				Services.RemoveService( campaign.GetType() );
+				Components.Remove( campaign );
+				SafeDispose( ref campaign );
+			} else {
+				Log.Warning("Campaign is not running");
+			}
+		}
+
+
 
 		protected void StartEditor ( string mapname )
 		{
@@ -122,7 +147,7 @@ namespace IronStar {
 		}
 
 
-		protected void KillEditor ( )
+		protected void StopEditor ( )
 		{
 			//	try to stop editor :
 			var editor = this.GetService<MapEditor>();

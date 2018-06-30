@@ -121,7 +121,7 @@ namespace IronStar {
 
 			public override object Execute()
 			{
-				game.KillEditor();
+				game.StopEditor();
 				return null;
 			}
 		}

@@ -68,19 +68,6 @@ namespace IronStar.Editor {
 		public GameWorld World { get { return world; } }
 
 
-		class MessageService : IMessageService {
-			public void Push( string message )
-			{
-				Log.Message("MSG: {0}", message);
-			}
-
-			public void Push( Guid client, string message )
-			{
-				Log.Message("MSG: {0} {1}", client, message);
-			}
-		}
-
-
 		/// <summary>
 		/// Initializes server-side world.
 		/// </summary>
@@ -117,7 +104,7 @@ namespace IronStar.Editor {
 				this.map = new Map();
 			}
 
-			world			=	new GameWorld( Game, this.map, Content, new MessageService(), true, new Guid() );
+			world			=	new GameWorld( Game, this.map, Content, new LocalMessageService(), true, new Guid() );
 
 			world.SimulateWorld( GameTime.MSec16 );
 			world.PresentWorld( GameTime.MSec16, 1, null, null );

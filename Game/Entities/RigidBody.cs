@@ -97,6 +97,18 @@ namespace IronStar.Entities {
 		}
 
 
+
+		public override void Read( BinaryReader reader, float lerpFactor )
+		{
+			base.Read(reader, lerpFactor);
+
+			if (model!=null) {
+				model.Position		=	Position;
+				model.Orientation	=	Rotation;
+			}
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>

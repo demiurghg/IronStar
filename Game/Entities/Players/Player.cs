@@ -110,5 +110,19 @@ namespace IronStar.Entities.Players {
 
 			inventory.RemoveAll( item => item.Depleted );
 		}
+
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="userCommand"></param>
+		public override void UserControl( UserCommand userCommand )
+		{
+			Rotation	=	Quaternion.RotationYawPitchRoll( userCommand.Yaw, userCommand.Pitch, userCommand.Roll );
+
+			controller.Move( userCommand.MoveForward, userCommand.MoveRight, userCommand.MoveUp );
+		}
 	}
 }

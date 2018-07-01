@@ -177,7 +177,6 @@
     <Compile Include="SFX\ModelInstance.cs" />
     <Compile Include="SFX\ModelFactory.cs" />
     <Compile Include="SFX\ModelManager.cs" />
-    <Compile Include="Core\PlayerState.cs" />
     <Compile Include="Core\Enums.cs" />
     <Compile Include="SFX\FXEvent.cs" />
     <Compile Include="Core\GameWorld.Casting.cs" />

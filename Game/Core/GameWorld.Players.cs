@@ -20,24 +20,8 @@ using IronStar.Entities.Players;
 namespace IronStar.Core {
 	public partial class GameWorld {
 
-		Random rand = new Random();
-
-		/// <summary>
-		/// List of players;
-		/// </summary>
-		public readonly List<PlayerState> Players = new List<PlayerState>();
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="guid"></param>
-		/// <returns></returns>
-		PlayerState GetPlayer ( Guid guid )
-		{
-			return Players.LastOrDefault( p => p.Guid==guid );
-		}
+		readonly Random rand = new Random();
+		readonly Dictionary<Guid,string> usersInfo = new Dictionary<Guid, string>();
 
 
 		public Entity GetPlayerEntity ( Guid guid )
@@ -73,10 +57,6 @@ namespace IronStar.Core {
 		/// <param name="e"></param>
 		void MPWorld_EntityKilled ( object sender, EntityEventArgs e )
 		{
-			foreach ( var pe in Players.Where( p => p.PlayerEntity == e.Entity ) ) {
-				pe.Killed(e.Entity);
-			}
-			
 		}
 
 
@@ -85,28 +65,27 @@ namespace IronStar.Core {
 		/// 
 		/// </summary>
 		/// <param name="guid"></param>
-		/// <param name="n"></param>
-		public void AddScore ( Guid guid, int n )
+		/// <param name="userInfo"></param>
+		public Entity SpawnPlayer ( Guid guid, string userInfo )
 		{
-			var p = GetPlayer(guid);
-			if (p!=null) {
-				p.Score += n;
+			var sp = GetEntities()
+				.Where( e1 => e1 is StartPoint && (e1 as StartPoint).StartPointType==StartPointType.SinglePlayer)
+				.OrderBy( e => rand.Next() )
+				.FirstOrDefault();					
+
+			Entity ent;
+
+			if (sp==null) {
+				throw new GameException("No start point");
 			}
+
+			ent = Spawn( "player" );
+			ent.Teleport( sp.Position, sp.Rotation );
+			SpawnFX("TeleportOut", ent.ID, sp.Position );
+			ent.UserGuid = guid;
+
+			return ent;		
 		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="dt"></param>
-		public void UpdatePlayers ( float dt )
-		{
-			foreach ( var player in	Players ) {
-				player.Update(this, dt);
-			}
-		}
-
 
 
 		/// <summary>
@@ -114,16 +93,16 @@ namespace IronStar.Core {
 		/// </summary>
 		/// <param name="guid"></param>
 		/// <param name="command"></param>
-		/// <param name="lag"></param>
-		public void PlayerCommand ( Guid guid, byte[] command, float lag )
+		public void FeedPlayerCommand ( Guid guid, UserCommand command )
 		{
-			var p = GetPlayer(guid);
-			if (p!=null) {
-				p.FeedCommand(this, command);
+			var targets = entities
+							.Where( e => e.Value.UserGuid==guid )
+							.ToArray();
+
+			foreach ( var target in targets ) {
+				target.Value.UserControl( command );
 			}
 		}
-
-
 
 
 
@@ -135,7 +114,7 @@ namespace IronStar.Core {
 		/// <returns></returns>
 		public bool ApprovePlayer ( Guid guid, string userInfo )
 		{
-			return !Players.Any( p => p.Guid == guid );
+			return !entities.Any( p => p.Value.UserGuid == guid );
 		}
 
 
@@ -147,8 +126,8 @@ namespace IronStar.Core {
 		/// <param name="userInfo"></param>
 		public void PlayerConnected ( Guid guid, string userInfo )
 		{
+			usersInfo.Add( guid, userInfo );
 			MessageService?.Push( string.Format("Client connected : {0} {1}", guid, userInfo) );
-			Players.Add( new PlayerState( guid, userInfo ) );
 		}
 
 
@@ -161,11 +140,7 @@ namespace IronStar.Core {
 		{
 			LogTrace("player entered: {0}", guid );
 
-			var p = GetPlayer(guid);
-
-			if (p!=null) {
-				p.Ready = true;
-			}
+			var ent = SpawnPlayer( guid, usersInfo[guid] );
 		}
 
 
@@ -178,11 +153,7 @@ namespace IronStar.Core {
 		{
 			LogTrace("player left: {0}", guid );
 
-			var ent = GetPlayerEntity( guid );
-
-			if (ent!=null) {
-				Kill( ent.ID );
-			}
+			Kill( e => e.UserGuid==guid );
 		}
 
 
@@ -193,8 +164,8 @@ namespace IronStar.Core {
 		/// <param name="guid"></param>
 		public void PlayerDisconnected ( Guid guid )
 		{
+			usersInfo.Remove( guid );
 			MessageService?.Push( string.Format("Client disconnected : {0}", guid) );
-			Players.RemoveAll( p => p.Guid == guid );
 		}
 
 	}

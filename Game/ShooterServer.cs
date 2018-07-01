@@ -90,7 +90,9 @@ namespace IronStar {
 				return;
 			}
 
-			world.PlayerCommand( clientGuid, userCommand, lag );
+			var command = UserCommand.FromBytes( userCommand );
+
+			world.FeedPlayerCommand( clientGuid, command );
 		}
 
 

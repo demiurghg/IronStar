@@ -160,8 +160,6 @@ namespace IronStar.Core {
 		/// <param name="gameTime"></param>
 		public virtual void SimulateWorld ( GameTime gameTime )
 		{
-			UpdatePlayers( gameTime.ElapsedSec );
-
 			physics.Update( gameTime.ElapsedSec );
 				
 			//
@@ -440,6 +438,21 @@ namespace IronStar.Core {
 		{
 			LogTrace("kill: #{0}", id );
 			entityToKill.Add( id );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="predicate"></param>
+		public void Kill ( Func<Entity,bool> predicate )
+		{
+			foreach ( var ent in entities ) {
+				if ( predicate(ent.Value) ) {
+					Kill( ent.Value.ID );
+				}
+			}
 		}
 
 

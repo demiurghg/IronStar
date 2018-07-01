@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Frames.Layouts;
+using Fusion.Build;
 
 namespace IronStar.Editor.Controls {
 	public class AssetExplorer2 : Panel {
@@ -31,7 +32,7 @@ namespace IronStar.Editor.Controls {
 		{
 			AllowDrag		=	true;
 
-			Layout			=	new PageLayout( 12, 30, 2, 20, 3, 12, 1 );
+			Layout			=	new PageLayout( 12, 30, 2, 20, 4, 12, 1 );
 
 			Padding			=	1;
 
@@ -82,6 +83,7 @@ namespace IronStar.Editor.Controls {
 	
 			this.Add( new Button(Frames, "New Asset", 0,0,10,10, () => ShowNameDialog(parent, fileList) ) );
 			this.Add( new Button(Frames, "Delete"	, 0,0,10,10, () => DeleteSelected() ) );
+			this.Add( new Button(Frames, "Build"	, 0,0,10,10, () => SaveTargetObjectAndBuild() ) );
 			this.Add( new Button(Frames, "Close"	, 0,0,10,10, () => this.Visible = false ) { RedButton = true } );
 
 			this.Add( labelStatus );
@@ -137,6 +139,8 @@ namespace IronStar.Editor.Controls {
 		int countdownTimer = 0;
 		bool dirty1 = false;
 
+
+
 		/// <summary>
 		/// Saves target object each 500 msec if dirty.
 		/// </summary>
@@ -181,6 +185,14 @@ namespace IronStar.Editor.Controls {
 				factory.ExportJson(stream, targetObject);
 			}
 			dirty1 = false;
+		}
+
+
+		void SaveTargetObjectAndBuild ()
+		{
+			SaveTargetObject();
+			Builder.SafeBuild();
+			Game.Reload();
 		}
 
 
@@ -238,6 +250,23 @@ namespace IronStar.Editor.Controls {
 				},
 				null 
 			);
+		}
+
+
+		
+		/// <summary>
+		/// Deletes selected file with warning.
+		/// </summary>
+		void RenameSelected ()
+		{
+			var item = fileList.SelectedItem;
+
+			if (item.IsDirectory) {
+				MessageBox.ShowError(Parent, "Could not rename directory", null);
+				return;
+			}
+
+			throw new NotImplementedException();
 		}
 
 		

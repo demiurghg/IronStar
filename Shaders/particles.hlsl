@@ -232,12 +232,11 @@ float Ramp(float f_in, float f_out, float t)
 	float y = 1;
 	t = saturate(t);
 	
-	float k_in	=	1 / f_in;
-	float k_out	=	-1 / (1-f_out);
-	float b_out =	-k_out;	
+	float k_in	=	 1 / f_in;
+	float k_out	=	-1 / f_out;
 	
-	if (t<f_in)  y = t * k_in;
-	if (t>f_out) y = t * k_out + b_out;
+	if (t <   f_in ) y = t * k_in;
+	if (t > 1-f_out) y = t * k_out - k_out;
 	
 	return y;
 }
@@ -299,9 +298,11 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 
 	float2x2	m	=	float2x2( cos(a), sin(a), -sin(a), cos(a) );
 	
+	float3		offset	=	normalize( prt.Position - Params.CameraPosition );
+	
 	float3		rt	=	(Params.CameraRight.xyz * cos(a) + Params.CameraUp.xyz * sin(a)) * sz;
 	float3		up	=	(Params.CameraUp.xyz * cos(a) - Params.CameraRight.xyz * sin(a)) * sz;
-	float3		fwd	=	(Params.CameraForward.xyz) * sz;
+	float3		fwd	=	offset * sz;
 	
 	float4		image	=	Images[prt.ImageIndex ];
 	

@@ -205,5 +205,11 @@ namespace Fusion.Engine.Graphics {
 		[AECategory("Shadows")]  [Config]	public float CSMDepthBias1 { get; set; } = 0;
 		[AECategory("Shadows")]  [Config]	public float CSMDepthBias2 { get; set; } = 0;
 		[AECategory("Shadows")]  [Config]	public float CSMDepthBias3 { get; set; } = 0;
+
+		[AECommand]
+		public void KillParticles ()
+		{
+			RenderWorld.ParticleSystem.KillParticles();
+		}
 	}
 }

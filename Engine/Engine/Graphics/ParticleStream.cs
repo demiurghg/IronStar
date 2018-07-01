@@ -417,8 +417,9 @@ namespace Fusion.Engine.Graphics {
 			var cameraMatrix	=	Matrix.Invert( view );
 
 			//	kill particles by applying very large delta.
-			if (requestKill) {
-				deltaTime	=	float.MaxValue / 2;
+			if (flags.HasFlag(Flags.SIMULATION) && requestKill) {
+				deltaTime	=	9999;
+				stepCount	=	1;
 				requestKill	=	false;
 			}
 			if (rs.FreezeParticles) {

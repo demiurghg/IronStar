@@ -37,7 +37,7 @@
     "Timing": {
       "$type": "IronStar.SFX.FXTiming, IronStar",
       "Delay": 0.0,
-      "Bunch": 0.75,
+      "Bunch": 0.9,
       "FadeIn": 0.1,
       "FadeOut": 0.2
     },

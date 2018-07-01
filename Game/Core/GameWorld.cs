@@ -382,8 +382,10 @@ namespace IronStar.Core {
 		/// <param name="kickImpulse"></param>
 		/// <param name="kickPoint"></param>
 		/// <param name="damageType"></param>
-		public void InflictDamage ( Entity entity, Entity attacker, short damage, DamageType damageType, Vector3 kickImpulse, Vector3 kickPoint )
+		public void InflictDamage ( Entity entity, uint attackerId, short damage, DamageType damageType, Vector3 kickImpulse, Vector3 kickPoint )
 		{
+			var attacker = GetEntity( attackerId );
+
 			entity?.Damage( attacker, damage, damageType, kickImpulse, kickPoint );
 		}
 

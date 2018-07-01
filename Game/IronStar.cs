@@ -49,6 +49,8 @@ namespace IronStar {
 			Invoker.RegisterCommand("map",				(args) => new MapCommand(this, args) );
 			Invoker.RegisterCommand("killEditor",		(args) => new KillEditorCommand(this, args) );
 			Invoker.RegisterCommand("killServer",		(args) => new KillServerCommand(this, args) );
+			Invoker.RegisterCommand("connect",			(args) => new ConnectCommand(this, args) );
+			Invoker.RegisterCommand("disconnect",		(args) => new DisconnectCommand(this, args) );
 			Invoker.RegisterCommand("contentBuild",		(args) => new ContentBuildCommand(this, args) );
 			Invoker.RegisterCommand("contentFile",		(args) => new ContentFileCommand() );
 			Invoker.RegisterCommand("contentReport",	(args) => new ContentReportCommand(args) );

@@ -34,7 +34,7 @@ namespace IronStar.Core {
 		/// Entity's target name.
 		/// Server-side only
 		/// </summary>
-		public readonly string TargetName = null;
+		public string TargetName = null;
 
 		/// <summary>
 		/// Players guid. Zero if no player.
@@ -96,7 +96,6 @@ namespace IronStar.Core {
 			this.World		=	world;
 			this.ID			=	id;
 			this.ClassID	=	clsid;
-			this.TargetName	=	factory.TargetName;
 			RotationOld		=	Quaternion.Identity;
 			Rotation		=	Quaternion.Identity;
 			TeleportCount	=	0xFF;

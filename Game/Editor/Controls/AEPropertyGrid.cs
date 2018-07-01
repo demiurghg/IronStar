@@ -70,7 +70,7 @@ namespace IronStar.Editor.Controls {
 				if (targetObject!=value) {
 					targetObject = value;
 					Clear();
-					FeedObject(targetObject, null);
+					FeedObject(targetObject, 0, null);
 				}
 			}
 		}
@@ -94,7 +94,7 @@ namespace IronStar.Editor.Controls {
 		/// <summary>
 		/// 
 		/// </summary>
-		void FeedObject ( object obj, string subcat )
+		void FeedObject ( object obj, int nestingLevel, string subcat )
 		{
 			if (obj==null) {
 				return;
@@ -124,7 +124,7 @@ namespace IronStar.Editor.Controls {
 					category	=	subcat ?? "Misc";
 				} else {
 					if (subcat!=null) {
-						category = category + "/" + subcat;
+						category = subcat + "/" + category;
 					}
 				}
 
@@ -218,7 +218,7 @@ namespace IronStar.Editor.Controls {
 					if (pi.HasAttribute<AEExpandableAttribute>()) {
 						var type	=	pi.PropertyType;
 						var value	=	pi.GetValue(obj);
-						FeedObject( value, category + "/" + pi.Name );
+						FeedObject( value, nestingLevel+1, category + "/" + pi.Name );
 					}
 				}
 
@@ -258,6 +258,8 @@ namespace IronStar.Editor.Controls {
 		/// <param name="frame"></param>
 		void AddToCollapseRegion ( string category, Frame frame )
 		{
+			Log.Message("... {0}", category );
+
 			var path =	category.Split('/')
 						.DistinctAdjacent()
 						.ToArray();

@@ -82,10 +82,11 @@ namespace IronStar.Mapping {
 			if (selected) {
 				if (Entity!=null) {
 				
-					var targets = world.GetTargets(Factory.TargetName);
+					var targets = world.GetTargets(TargetName);
 
 					if (targets.Any()) {
-						dr.DrawBox( new BoundingBox(0.5f, 0.5f, 0.5f), WorldMatrix, Color.Yellow );					}
+						dr.DrawBox( new BoundingBox(0.5f, 0.5f, 0.5f), WorldMatrix, Color.Yellow );
+					}
 
 					foreach ( var target in targets ) {
 

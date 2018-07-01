@@ -38,7 +38,6 @@ namespace IronStar.Entities {
 
 	public class StartPointFactory : EntityFactory {
 
-		[Category( "Common" )]
 		public StartPointType StartPointType { get; set; }
 
 		public override Entity Spawn( uint id, short clsid, GameWorld world )

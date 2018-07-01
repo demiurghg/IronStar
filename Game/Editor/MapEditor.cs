@@ -109,6 +109,8 @@ namespace IronStar.Editor {
 			world.SimulateWorld( GameTime.MSec16 );
 			world.PresentWorld( GameTime.MSec16, 1, null, null );
 
+			ResetWorld(true);
+
 			RegisterCommands();
 
 			Game.Reloading += (s,e) => ResetWorld(true); 

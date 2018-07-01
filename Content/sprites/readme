@@ -1,0 +1,20 @@
+Naming convention for sprites:
+
+1) Camel-case
+2) Object|phenomena + Part of object/phenomena + Subpart + Frame
+3) Samples:
+
+	genericSpark
+	genericPuff
+	generixFlame
+
+	plasmaMuzzleSparks
+	plasmaMuzzlePuff
+	plasmaHitPuff
+	plasmaHitSparks
+	plasmaHitMaze
+	
+	explosionFire
+	explosionSmoke
+	explosionSparks
+	explosionWave

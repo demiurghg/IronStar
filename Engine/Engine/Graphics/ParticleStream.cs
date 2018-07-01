@@ -86,7 +86,7 @@ namespace Fusion.Engine.Graphics {
 				simulationStepTime = value; 
 			}
 		}
-		float simulationStepTime = 1 / 60.0f;
+		float simulationStepTime = 1 / 200.0f;
 
 
 		/// <summary>

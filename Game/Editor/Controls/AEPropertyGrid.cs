@@ -258,8 +258,6 @@ namespace IronStar.Editor.Controls {
 		/// <param name="frame"></param>
 		void AddToCollapseRegion ( string category, Frame frame )
 		{
-			Log.Message("... {0}", category );
-
 			var path =	category.Split('/')
 						.DistinctAdjacent()
 						.ToArray();

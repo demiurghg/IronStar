@@ -20,12 +20,12 @@ using BEPUphysics.Character;
 
 
 namespace IronStar.Entities {
-	public class Weaponry {
+	public static class Weaponry {
 
-		Random rand = new Random();
+		static Random rand = new Random();
 
 
-		Vector3 AttackPos( Entity attacker, Vector3 offset )
+		static Vector3 AttackPos( Entity attacker, Vector3 origin, Vector3 rotation )
 		{
 			return Vector3.TransformCoordinate( offset, attacker.GetWorldMatrix(0) );
 		}
@@ -38,15 +38,14 @@ namespace IronStar.Entities {
 		/// <param name="world"></param>
 		/// <param name="attacker"></param>
 		/// <param name="cooldown"></param>
-		void FirePlasma( GameWorld world, Entity attacker, Vector3 offset )
+		static void FirePlasma( GameWorld world, Entity attacker, Vector3 origin, Quaternion rotation )
 		{
-			var origin = AttackPos(attacker, offset);
-
-			var e = world.Spawn( "plasma", attacker.ID, origin, attacker.Rotation );
+			var e = world.Spawn( "plasma" );
+			e.ParentID	=	attacker.ID;
+			e.Teleport( origin, rotation );
+			(e as Projectile).FixServerLag();
 
 			world.SpawnFX( "MZBlaster",	attacker.ID, origin );
-
-			attacker.WeaponCooldown += cooldown;
 		}
 
 
@@ -56,7 +55,7 @@ namespace IronStar.Entities {
 		/// <param name="world"></param>
 		/// <param name="attacker"></param>
 		/// <param name="cooldown"></param>
-		void FireRocket( GameWorld world, Entity attacker, short cooldown )
+		static void FireRocket( GameWorld world, Entity attacker )
 		{
 			if (!TryConsumeAmmo( attacker, 1 )) {
 				return;
@@ -78,12 +77,8 @@ namespace IronStar.Entities {
 		/// </summary>
 		/// <param name="attacker"></param>
 		/// <param name="damage"></param>
-		void FireBullet ( GameWorld world, Entity attacker, int damage, float impulse, short cooldown, float spread )
+		static void FireBullet ( GameWorld world, Entity attacker, int damage, float impulse, float spread )
 		{
-			if (!TryConsumeAmmo( attacker, 1 )) {
-				return;
-			}
-
 			var view	=	Matrix.RotationQuaternion( attacker.Rotation );
 			Vector3 n,p;
 			Entity e;
@@ -112,12 +107,8 @@ namespace IronStar.Entities {
 		/// </summary>
 		/// <param name="attacker"></param>
 		/// <param name="damage"></param>
-		void FireShot ( GameWorld world, Entity attacker, int damage, int count, float impulse, short cooldown, float spread )
+		static void FireShot ( GameWorld world, Entity attacker, int damage, int count, float impulse, float spread )
 		{
-			if (!TryConsumeAmmo( attacker, 1 )) {
-				return;
-			}
-
 			var view	=	Matrix.RotationQuaternion( attacker.Rotation );
 			Vector3 n,p;
 			Entity e;
@@ -149,7 +140,7 @@ namespace IronStar.Entities {
 		/// </summary>
 		/// <param name="attacker"></param>
 		/// <param name="damage"></param>
-		void FireRail ( GameWorld world, Entity attacker, int damage, float impulse, short cooldown )
+		static void FireRail ( GameWorld world, Entity attacker, int damage, float impulse )
 		{
 			if (!TryConsumeAmmo( attacker, 1 )) {
 				return;

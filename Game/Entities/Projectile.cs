@@ -22,7 +22,7 @@ using Fusion.Core.IniParser.Model;
 
 namespace IronStar.Entities {
 
-	public class Projectile : EntityController {
+	public class Projectile : Entity {
 
 		Random rand = new Random();
 
@@ -46,7 +46,7 @@ namespace IronStar.Entities {
 		/// </summary>
 		/// <param name="game"></param>
 		/// <param name="space"></param>
-		public Projectile ( Entity entity, GameWorld world, ProjectileFactory factory ) : base(entity,world)
+		public Projectile ( uint id, short clsid, GameWorld world, ProjectileFactory factory ) : base(id,clsid,world,factory)
 		{
 			this.space	=	world.PhysSpace;
 			this.world	=	world;
@@ -64,34 +64,24 @@ namespace IronStar.Entities {
 			this.trailFX		=	factory.TrailFX		;
 
 			trailFXAtom			=	atoms[ trailFX ]; 
-
-			//	step projectile forward compensating server latency
-			FixServerLag( entity );
 		}
-
-
-		public override void Reset()
-		{
-			lifeTime = totalLifeTime;
-		}
-
 
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public override void Update ( float elapsedTime )
+		public override void Update ( GameTime gameTime )
 		{
-			UpdateProjectile( Entity, elapsedTime );
+			UpdateProjectile( gameTime.ElapsedSec );
 		}
 
 
 
 		public void FixServerLag ( Entity projEntity )
 		{
-			float deltaTime = 1.0f / Game.GetService<GameServer>().TargetFrameRate;
-			UpdateProjectile( projEntity, deltaTime );
+			float deltaTime = 1.0f / World.Game.GetService<GameServer>().TargetFrameRate;
+			UpdateProjectile( deltaTime );
 		}
 
 
@@ -101,40 +91,38 @@ namespace IronStar.Entities {
 		/// </summary>
 		/// <param name="projEntity"></param>
 		/// <param name="projectile"></param>
-		public void UpdateProjectile ( Entity projEntity, float elapsedTime )
+		public void UpdateProjectile ( float elapsedTime )
 		{
-			var origin	=	projEntity.Position;
-			var dir		=	Matrix.RotationQuaternion( projEntity.Rotation ).Forward;
+			var origin	=	Position;
+			var dir		=	Matrix.RotationQuaternion( Rotation ).Forward;
 			var target	=	origin + dir * velocity * elapsedTime;
-
-			projEntity.Sfx	=	trailFXAtom;
 
 			lifeTime -= elapsedTime;
 
 			Vector3 hitNormal, hitPoint;
 			Entity  hitEntity;
 
-			var parent	=	world.GetEntity( projEntity.ParentID );
+			var parent	=	world.GetEntity( ParentID );
 
 
 			if ( lifeTime <= 0 ) {
-				world.Kill( projEntity.ID );
+				world.Kill( ID );
 			}
 
 			if ( world.RayCastAgainstAll( origin, target, out hitNormal, out hitPoint, out hitEntity, parent ) ) {
 
 				//	inflict damage to hit object:
-				world.InflictDamage( hitEntity, projEntity.ParentID, hitDamage, dir * hitImpulse, hitPoint, DamageType.RocketExplosion );
+				world.InflictDamage( hitEntity, ParentID, hitDamage, DamageType.RocketExplosion, dir * hitImpulse, hitPoint );
 
-				Explode( explosionFX, projEntity.ID, hitEntity, hitPoint, hitNormal, hitRadius, hitDamage, hitImpulse, DamageType.RocketExplosion );
+				Explode( explosionFX, ParentID, hitEntity, hitPoint, hitNormal, hitRadius, hitDamage, hitImpulse, DamageType.RocketExplosion );
 
 				//world.SpawnFX( projectile.ExplosionFX, projEntity.ParentID, hitPoint, hitNormal );
-				projEntity.Move( hitPoint, projEntity.Rotation, dir * velocity );
+				Move( hitPoint, Rotation, dir * velocity );
 
-				world.Kill( projEntity.ID );
+				world.Kill( ID );
 
 			} else {
-				projEntity.Move( target, projEntity.Rotation, dir.Normalized() * velocity );
+				Move( target, Rotation, dir.Normalized() * velocity );
 			}
 		}
 
@@ -148,7 +136,7 @@ namespace IronStar.Entities {
 		/// <param name="damage"></param>
 		/// <param name="impulse"></param>
 		/// <param name="damageType"></param>
-		public void Explode ( string sfxName, uint attacker, Entity ignore, Vector3 hitPoint, Vector3 hitNormal, float radius, short damage, float impulse, DamageType damageType )
+		public void Explode ( string sfxName, uint attackerId, Entity ignore, Vector3 hitPoint, Vector3 hitNormal, float radius, short damage, float impulse, DamageType damageType )
 		{
 			if (radius>0) {
 				var list = world.WeaponOverlap( hitPoint, radius, ignore );
@@ -163,21 +151,11 @@ namespace IronStar.Entities {
 					var impP	= e.Position + rand.UniformRadialDistribution(0.1f, 0.1f);
 					var dmg		= (short)( factor * damage );
 
-					world.InflictDamage( e, attacker, dmg, impV, impP, DamageType.RocketExplosion );
+					world.InflictDamage( e, attackerId, dmg, DamageType.RocketExplosion, impV, impP );
 				}
 			}
 
-			world.SpawnFX( sfxName, attacker, hitPoint, hitNormal );
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="id"></param>
-		public override void Killed ()
-		{
+			world.SpawnFX( sfxName, attackerId, hitPoint, hitNormal );
 		}
 	}
 }

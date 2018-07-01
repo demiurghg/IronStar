@@ -56,9 +56,9 @@ namespace IronStar.Entities {
 		public string	TrailFX		{ get; set; } = "";
 
 
-		public override EntityController Spawn( Entity entity, GameWorld world )
+		public override Entity Spawn( uint id, short clsid, GameWorld world )
 		{
-			return new Projectile( entity, world, this );
+			return new Projectile( id, clsid, world, this );
 		}
 	}
 }

@@ -20,7 +20,7 @@ using IronStar.Physics;
 
 
 namespace IronStar.Entities.Players {
-	public partial class Player : Entity {
+	public partial class Player : Entity, IShooter {
 
 		CharacterController	controller;
 		Inventory			inventory;
@@ -30,6 +30,8 @@ namespace IronStar.Entities.Players {
 		public PlayerState	PlayerState;
 
 		public Vector3		ViewPosition;
+
+		float cooldown;
 
 		
 		/// <summary>
@@ -122,6 +124,14 @@ namespace IronStar.Entities.Players {
 			//	update physical character controller :
 			controller.Update();
 
+			//	decrease cooldown.
+			//	reset cooldown to zero only on next frame!
+			if (cooldown>0) {
+				cooldown -= gameTime.ElapsedSec;
+			} else if (cooldown<0) {
+				cooldown = 0;
+			}
+
 			if (controller.Crouching) {
 				PlayerState |=	PlayerState.Crouching;
 			} else {
@@ -164,6 +174,25 @@ namespace IronStar.Entities.Players {
 			Rotation	=	Quaternion.RotationYawPitchRoll( userCommand.Yaw, userCommand.Pitch, userCommand.Roll );
 
 			controller.Move( userCommand.MoveForward, userCommand.MoveRight, userCommand.MoveUp );
+		}
+
+
+
+		public bool TrySetCooldown( float cooldown )
+		{
+			if (this.cooldown>0) {
+				return false;
+			} else {
+				this.cooldown += cooldown;
+				return true;
+			}
+		}
+
+
+
+		public bool TryConsumeAmmo( string ammoClassname, short count )
+		{
+			return true;
 		}
 	}
 }

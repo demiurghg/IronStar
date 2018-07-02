@@ -113,7 +113,13 @@ namespace IronStar.Editor {
 
 			RegisterCommands();
 
-			Game.Reloading += (s,e) => ResetWorld(true); 
+			Game.Reloading += Game_Reloading;
+		}
+
+
+		private void Game_Reloading( object sender, EventArgs e )
+		{
+			ResetWorld(true);
 		}
 
 
@@ -162,6 +168,8 @@ namespace IronStar.Editor {
 		protected override void Dispose( bool disposing )
 		{
 			if ( disposing ) {
+
+				Game.Reloading -= Game_Reloading;
 
 				selection.Clear();
 				FeedSelection();

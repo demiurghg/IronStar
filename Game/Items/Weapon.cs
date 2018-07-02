@@ -26,7 +26,7 @@ using IronStar.Entities;
 
 namespace IronStar.Items {
 
-	public partial class Weapon : Item {
+	public partial class Weapon {
 
 		public Weapon( ItemFactory factory ) : base( factory )
 		{

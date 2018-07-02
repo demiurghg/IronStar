@@ -78,7 +78,7 @@ namespace IronStar.Entities {
 
 
 
-		public void FixServerLag ( Entity projEntity )
+		public void FixServerLag ( float dt )
 		{
 			float deltaTime = 1.0f / World.Game.GetService<GameServer>().TargetFrameRate;
 			UpdateProjectile( deltaTime );

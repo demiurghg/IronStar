@@ -43,7 +43,7 @@ namespace IronStar.Entities {
 			var e = world.Spawn( "plasma" );
 			e.ParentID	=	attacker.ID;
 			e.Teleport( origin, rotation );
-			(e as Projectile).FixServerLag();
+			(e as Projectile).FixServerLag(1/60.0f);
 
 			world.SpawnFX( "MZBlaster",	attacker.ID, origin );
 		}

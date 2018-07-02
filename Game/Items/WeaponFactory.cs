@@ -26,7 +26,7 @@ using Fusion.Core.Shell;
 
 namespace IronStar.Items {
 
-	public class WeaponFactory : ItemFactory {
+	public class WeaponFactory {
 
 		[AECategory("Shooting Properties")]
 		[Description("Damage per projectile")]

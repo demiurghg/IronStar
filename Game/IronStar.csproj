@@ -147,7 +147,6 @@
     <Compile Include="IronStar.cs" />
     <Compile Include="Items\Item.cs" />
     <Compile Include="Items\ItemFactory.cs" />
-    <Compile Include="Items\Weapon.cs" />
     <Compile Include="LocalMessageService.cs" />
     <Compile Include="Mapping\LightPreset.cs" />
     <Compile Include="Mapping\Map.Build.cs" />

@@ -12,6 +12,7 @@ using IronStar.SFX;
 using System.ComponentModel;
 using Fusion.Core.Shell;
 using Fusion.Core;
+using Fusion;
 
 namespace IronStar.Entities {
 
@@ -38,9 +39,10 @@ namespace IronStar.Entities {
 			fx			=	factory.FX;
 			fxMode		=	factory.FXMode;
 			once		=	factory.Once;
-			minInterval	=	factory.MinInterval / 1000.0f;
-			maxInterval	=	factory.MaxInterval / 1000.0f;
+			minInterval	=	factory.MinInterval;
+			maxInterval	=	factory.MaxInterval;
 			start		=	factory.Start;
+			enabled		=	start;
 
 			atom		=	world.Atoms[ fx ];
 		}

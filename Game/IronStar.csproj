@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\FuncFX.cs" />
+    <Compile Include="Entities\IShooter.cs" />
     <Compile Include="Entities\Players\PlayerState.cs" />
     <Compile Include="Entities\Projectile.cs" />
     <Compile Include="Entities\ProjectileFactory.cs" />

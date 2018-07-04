@@ -32,8 +32,6 @@ namespace IronStar.Entities {
 		float timer = 0;
 		bool enabled;
 
-		FXInstance fxInstance = null;
-
 		public FuncFX( uint id, short clsid, GameWorld world, FuncFXFactory factory ) : base(id, clsid, world, factory)
 		{
 			fx			=	factory.FX;
@@ -45,6 +43,10 @@ namespace IronStar.Entities {
 			enabled		=	start;
 
 			atom		=	world.Atoms[ fx ];
+
+			if (fxMode==FuncFXMode.Persistent) {
+				Sfx = atom;
+			}
 		}
 
 
@@ -86,24 +88,12 @@ namespace IronStar.Entities {
 
 		public override void Draw( GameTime gameTime, EntityFX entityFx )
 		{
-			if (fxMode==FuncFXMode.Persistent) {
-				if (fxInstance==null) {
-					var fxe = new FXEvent(atom, 0, Position, LinearVelocity, Rotation);
-					fxInstance = World.FXPlayback.RunFX( fxe, true );
-				}
-
-				if (fxInstance!=null) {
-					fxInstance.Move( Position, LinearVelocity, Rotation );
-				}
-			}
 		}
 
 
 		public override void Kill()
 		{
 			base.Kill();
-
-			fxInstance?.Kill();
 		}
 
 	}

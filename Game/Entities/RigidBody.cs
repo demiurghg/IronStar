@@ -41,13 +41,6 @@ namespace IronStar.Entities {
 		readonly Space space;
 		readonly Box box;
 
-
-		[Replicate]
-		Vector3 CurrentPosition;
-
-		ModelInstance model;
-
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -71,11 +64,9 @@ namespace IronStar.Entities {
 
 			box.Tag	=	this;
 
-			if (world.IsPresentationEnabled) {
-				this.model = world.ModelManager.AddModel( model );
-			}
-
 			space.Add( box );
+
+			this.Model		=	world.Atoms[ model ];
 		}
 
 		Random rand = new Random();
@@ -89,24 +80,8 @@ namespace IronStar.Entities {
 		public override void Draw(GameTime gameTime, EntityFX entityFx)
 		{
 			base.Draw(gameTime, entityFx);
-
-			//if (model!=null) {
-			//	model.Position		=	Position;
-			//	model.Orientation	=	Rotation;
-			//}
 		}
 
-
-
-		public override void Read( BinaryReader reader, float lerpFactor )
-		{
-			base.Read(reader, lerpFactor);
-
-			if (model!=null) {
-				model.Position		=	Position;
-				model.Orientation	=	Rotation;
-			}
-		}
 
 
 		/// <summary>
@@ -129,7 +104,7 @@ namespace IronStar.Entities {
 
 		public override void Kill()
 		{
-			model?.Kill();
+			base.Kill();
 			space.Remove(box);
 		}
 
@@ -157,11 +132,6 @@ namespace IronStar.Entities {
 			this.Rotation			=	MathConverter.Convert( box.Orientation ); 
 			this.LinearVelocity		=	MathConverter.Convert( box.LinearVelocity );
 			this.AngularVelocity	=	MathConverter.Convert( box.AngularVelocity );
-
-			if (model!=null) {
-				model.Position		=	Position;
-				model.Orientation	=	Rotation;
-			}
 		}
 
 
@@ -173,11 +143,6 @@ namespace IronStar.Entities {
 			box.Orientation		=	MathConverter.Convert( orient );
 			box.AngularVelocity	=	MathConverter.Convert( Vector3.Zero );
 			box.LinearVelocity	=	MathConverter.Convert( Vector3.Zero );
-
-			if (model!=null) {
-				model.Position		=	position;
-				model.Orientation	=	orient;
-			}
 		}
 
 
@@ -189,11 +154,6 @@ namespace IronStar.Entities {
 			box.Orientation		=	MathConverter.Convert( orient );
 			box.AngularVelocity	=	MathConverter.Convert( Vector3.Zero );
 			box.LinearVelocity	=	MathConverter.Convert( velocity );
-
-			if (model!=null) {
-				model.Position		=	position;
-				model.Orientation	=	orient;
-			}
 		}
 	}
 }

@@ -25,6 +25,8 @@ namespace IronStar.SFX {
 
 		static readonly Scene EmptyScene = Scene.CreateEmptyScene();
 
+		readonly public Entity Entity;
+
 		readonly Matrix preTransform;
 		readonly Color4 color;
 		readonly ModelManager modelManager;
@@ -70,16 +72,6 @@ namespace IronStar.SFX {
 		/// </summary>
 		public Animator Animator { get { return animator; } }
 
-		/// <summary>
-		/// Model position
-		/// </summary>
-		public Vector3 Position { get; set; }
-
-		/// <summary>
-		/// Model rotation 
-		/// </summary>
-		public Quaternion Orientation { get; set; }
-
 
 		/// <summary>
 		/// 
@@ -89,7 +81,7 @@ namespace IronStar.SFX {
 		/// <param name="scene"></param>
 		/// <param name="entity"></param>
 		/// <param name="matrix"></param>
-		public ModelInstance ( ModelManager modelManager, ModelFactory factory, ContentManager content )
+		public ModelInstance ( Entity entity, ModelManager modelManager, ModelFactory factory, ContentManager content )
 		{
 			if (string.IsNullOrWhiteSpace(factory.ScenePath)) {
 				this.scene		=	EmptyScene;
@@ -99,6 +91,7 @@ namespace IronStar.SFX {
 				this.clips		=	factory.LoadClips( content );
 			}
 
+			this.Entity			=	entity;
 			this.animator		=	new Animator( this );
 
 			this.boxWidth		=	factory.BoxWidth	;
@@ -162,7 +155,9 @@ namespace IronStar.SFX {
 		/// <param name="worldMatrix"></param>
 		public void Update ( float dt, float animFrame )
 		{
-			var worldMatrix = Matrix.RotationQuaternion( Orientation ) * Matrix.Translation( Position );
+			var q	=	Entity.Rotation;
+			var p	=	Entity.Position;
+			var worldMatrix = Matrix.RotationQuaternion( q ) * Matrix.Translation( p );
 
 			if (scene==EmptyScene) {
 				modelManager.rw.Debug.DrawBox( new BoundingBox(boxWidth,boxHeight,boxDepth), worldMatrix, boxColor, 2 );

@@ -191,6 +191,7 @@ namespace IronStar.Core {
 			//
 			foreach ( var entity in visibleEntities ) {
 				entity?.Draw( gameTime, EntityFX.None );
+				entity?.UpdatePresentation( fxPlayback, modelManager, gameCamera );
 			}
 
 			//

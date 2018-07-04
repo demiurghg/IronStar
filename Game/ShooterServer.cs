@@ -122,16 +122,16 @@ namespace IronStar {
 		{
 			try {
 
-				var player		=	World.GetPlayerEntity( clientGuid );
+				/*var player		=	World.GetPlayerEntity( clientGuid );
 
-				var itemFactory	=	World.Content.Load<ItemFactory>(@"items\" + item);
+				var itemFactory	=	World.Content.Load<Item>(@"items\" + item);
 				var newItem		=	itemFactory.Spawn(World);
 
 				if (newItem.Pickup( player )) {
 					Log.Message("New item {0}", item);
 				} else {
 					Log.Warning("Can not put item {0} to inventory", item);
-				}
+				} */
 
 			} catch ( Exception e ) {
 				Log.Error( e.Message );

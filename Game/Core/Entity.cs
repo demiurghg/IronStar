@@ -117,6 +117,10 @@ namespace IronStar.Core {
 			writer.Write( Rotation );
 			writer.Write( LinearVelocity );
 			writer.Write( AngularVelocity );
+
+			writer.Write( Sfx );
+			writer.Write( Model );
+			writer.Write( Model2 );
 		}
 
 
@@ -144,6 +148,10 @@ namespace IronStar.Core {
 			LinearVelocity	=	reader.Read<Vector3>();
 			AngularVelocity	=	reader.Read<Vector3>();	
 
+			Sfx				=	reader.ReadInt16();
+			Model			=	reader.ReadInt16();
+			Model2			=	reader.ReadInt16();
+
 			//	entity teleported - reset position and rotation :
 			if (oldTeleport!=TeleportCount) {
 				PositionOld	=	Position;
@@ -166,6 +174,7 @@ namespace IronStar.Core {
 		/// </summary>
 		public virtual void Reload ()
 		{
+			MakePresentationDirty();
 		}
 
   
@@ -183,7 +192,7 @@ namespace IronStar.Core {
 		/// </summary>
 		public virtual void Kill ()
 		{
-			
+			KillPresentation();
 		}
 
 
@@ -311,6 +320,119 @@ namespace IronStar.Core {
 		public Vector3 LerpPosition ( float lerpFactor )
 		{
 			return Vector3.Lerp( PositionOld, Position, MathUtil.Clamp(lerpFactor,0,2f) );
+		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 * 
+		 *	Presentation stuff
+		 * 
+		-----------------------------------------------------------------------------------------*/
+
+		/// <summary>
+		/// Visible model #1
+		/// </summary>
+		public short Model {
+			get { return model; }
+			set { 
+				modelDirty |= (model != value); 
+				model = value; 
+			}
+		}
+		private short model = -1;
+		private bool modelDirty = true;
+
+		/// <summary>
+		/// Visible model #2
+		/// </summary>
+		public short Model2 {
+			get { return model2; }
+			set { 
+				model2Dirty |= (model2 != value); 
+				model2 = value; 
+			}
+		}
+		private short model2 = -1;
+		private bool model2Dirty = true;
+
+		/// <summary>
+		/// Visible persistent special effect
+		/// </summary>
+		public short Sfx {
+			get { return sfx; }
+			set { 
+				sfxDirty |= (sfx != value); 
+				sfx = value; 
+			}
+		}
+		private short sfx = -1;
+		private bool sfxDirty = true;
+
+
+
+		public FXInstance FXInstance { get; private set; }
+		public ModelInstance ModelInstance { get; private set; }
+		public ModelInstance ModelInstance2 { get; private set; }
+
+	
+		public void UpdatePresentation ( FXPlayback fxPlayback, ModelManager modelManager, GameCamera gameCamera )
+		{
+			if (sfxDirty) {
+				sfxDirty = false;
+
+				FXInstance?.Kill();
+				FXInstance = null;
+
+				if (sfx>0) {
+					var fxe = new FXEvent( sfx, ID, Position, LinearVelocity, Rotation );
+					FXInstance = fxPlayback.RunFX( fxe, true );
+				}
+			}
+
+			if (modelDirty) {
+				modelDirty = false;
+
+				ModelInstance?.Kill();
+				ModelInstance	=	null;
+
+				if (model>0) {
+					ModelInstance	=	modelManager.AddModel( this, model );
+				}
+			}
+
+			if (model2Dirty) {
+				model2Dirty = false;
+
+				ModelInstance2?.Kill();
+				ModelInstance2	=	null;
+
+				if (model2>0) {
+					ModelInstance2	=	modelManager.AddModel( this, model2 );
+				}
+			}
+		}
+
+
+
+		public void MakePresentationDirty ()
+		{
+			sfxDirty	=	true;
+			modelDirty	=	true;
+			model2Dirty	=	true;
+		}
+
+
+
+		public void KillPresentation ()
+		{
+			FXInstance?.Kill();
+			FXInstance = null;
+
+			ModelInstance?.Kill();
+			ModelInstance	=	null;
+
+			ModelInstance2?.Kill();
+			ModelInstance2	=	null;
 		}
 	}
 }

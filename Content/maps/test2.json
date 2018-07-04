@@ -4,7 +4,7 @@
     "$type": "IronStar.Mapping.MapEnvironment, IronStar",
     "Gravity": 16.0,
     "SkyTrubidity": 2.75,
-    "SunAltitude": 5.0,
+    "SunAltitude": 30.0,
     "SunAzimuth": 34.0,
     "SunIntensity": 100.0,
     "FogDistance": 1000.0,
@@ -81,7 +81,7 @@
         "Factory": {
           "$type": "IronStar.Entities.FuncFXFactory, IronStar",
           "FX": "fire",
-          "FXMode": "autoTrigger",
+          "FXMode": "persistent",
           "Once": false,
           "Start": true,
           "MinInterval": 2,
@@ -90,9 +90,9 @@
         "FactoryName": "LZv5g1vt",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 13.6569271,
-        "TranslateY": -0.539193153,
-        "TranslateZ": 1.74065685,
+        "TranslateX": 5.446798,
+        "TranslateY": 2.0,
+        "TranslateZ": 2.48238754,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
@@ -107,12 +107,12 @@
         "FactoryName": "egIYvob7",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -1.67808437,
-        "TranslateY": 1.57267523,
-        "TranslateZ": -16.2433033,
-        "RotateYaw": -45.0,
-        "RotatePitch": 0.0161306839,
-        "RotateRoll": 179.9999
+        "TranslateX": -3.54596162,
+        "TranslateY": -0.631507456,
+        "TranslateZ": -5.94881153,
+        "RotateYaw": 150.905136,
+        "RotatePitch": -0.0484076962,
+        "RotateRoll": -0.0155407526
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -152,9 +152,9 @@
         "FactoryName": "m138G9vh",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -3.484369,
-        "TranslateY": -0.0525560379,
-        "TranslateZ": -5.773915,
+        "TranslateX": -3.57331038,
+        "TranslateY": -0.199646384,
+        "TranslateZ": -5.89821053,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
@@ -174,29 +174,12 @@
         "FactoryName": "AGv6MWOX",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 0.08771777,
-        "TranslateY": -0.198108137,
-        "TranslateZ": -5.70092249,
+        "TranslateX": 0.0,
+        "TranslateY": 0.0,
+        "TranslateZ": -6.0,
         "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
+        "RotatePitch": -43.71263,
         "RotateRoll": 0.0
-      },
-      {
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": "",
-        "Factory": {
-          "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
-        },
-        "FactoryName": "L5jp7TBv",
-        "Visible": true,
-        "Frozen": false,
-        "TranslateX": -3.453876,
-        "TranslateY": -0.6254771,
-        "TranslateZ": -5.767923,
-        "RotateYaw": 19.9651814,
-        "RotatePitch": -1.21867824,
-        "RotateRoll": -179.525024
       }
     ]
   }

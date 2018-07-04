@@ -219,16 +219,18 @@ namespace IronStar.Editor {
 			var types = new List<Type>();
 
 			var typeFX			=	new[] { typeof(FXFactory) };
-			var typeItems		=	Misc.GetAllSubclassesOf(typeof(ItemFactory), true);
 			var typeEntities	=	Misc.GetAllSubclassesOf(typeof(EntityFactory), true);
 			var typeModels		=	Misc.GetAllSubclassesOf(typeof(ModelFactory), true);
+			var typeItems		=	Misc.GetAllSubclassesOf(typeof(Item), true);
+			var typeWeapon		=	Misc.GetAllSubclassesOf(typeof(Weapon), true);
 
 			var assetExplorer	=	new AssetExplorer2( workspace, "fx", typeFX, 0,0, 500, 600 );
 
 			assetExplorer.AddToolButton( "FX"		,	() => assetExplorer.SetTargetClass( "fx"		, typeFX		) );
-			assetExplorer.AddToolButton( "Items"	,	() => assetExplorer.SetTargetClass( "items"		, typeItems		) );
 			assetExplorer.AddToolButton( "Entities"	,	() => assetExplorer.SetTargetClass( "entities"	, typeEntities	) );
 			assetExplorer.AddToolButton( "Models"	,	() => assetExplorer.SetTargetClass( "models"	, typeModels	) );
+			assetExplorer.AddToolButton( "Items"	,	() => assetExplorer.SetTargetClass( "items"		, typeItems		) );
+			assetExplorer.AddToolButton( "Weapon"	,	() => assetExplorer.SetTargetClass( "weapon"	, typeWeapon	) );
 
 			return assetExplorer;			  
 		}

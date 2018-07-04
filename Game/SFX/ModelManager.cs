@@ -91,14 +91,16 @@ namespace IronStar.SFX {
 		/// <param name="modelAtom"></param>
 		/// <param name="entity"></param>
 		/// <returns></returns>
-		public ModelInstance AddModel ( string modelName )
+		public ModelInstance AddModel ( Entity entity, short modelAtom )
 		{
+			var modelName	=	world.Atoms[ modelAtom ];
+
 			if (string.IsNullOrWhiteSpace(modelName)) {
 				return null;
 			}
 
 			var modelDesc	=	world.Content.Load<ModelFactory>( @"models\" + modelName );
-			var model		=	new ModelInstance( this, modelDesc, world.Content );
+			var model		=	new ModelInstance( entity, this, modelDesc, world.Content );
 
 			AddModel( model );
 
@@ -143,7 +145,6 @@ namespace IronStar.SFX {
 			foreach ( var model in models ) {
 				model.Update( gameTime.ElapsedSec, lerpFactor );
 			}
-
 
 			//
 			//	update view-space weapon model :

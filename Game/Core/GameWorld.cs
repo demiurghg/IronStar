@@ -190,7 +190,7 @@ namespace IronStar.Core {
 			//	draw all entities :
 			//
 			foreach ( var entity in visibleEntities ) {
-				entity?.Draw( gameTime, EntityFX.None );
+				entity?.Draw( gameTime );
 				entity?.UpdatePresentation( fxPlayback, modelManager, gameCamera );
 			}
 

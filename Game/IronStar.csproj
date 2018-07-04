@@ -65,10 +65,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\DamageType.cs" />
     <Compile Include="Entities\FuncFX.cs" />
     <Compile Include="Entities\IShooter.cs" />
     <Compile Include="Entities\Players\WeaponStateMachine.cs" />
-    <Compile Include="Entities\Players\PlayerState.cs" />
+    <Compile Include="Core\EntityState.cs" />
     <Compile Include="Entities\Projectile.cs" />
     <Compile Include="Entities\ProjectileFactory.cs" />
     <Compile Include="Items\Weapon.cs" />
@@ -180,7 +181,7 @@
     <Compile Include="SFX\ModelInstance.cs" />
     <Compile Include="SFX\ModelFactory.cs" />
     <Compile Include="SFX\ModelManager.cs" />
-    <Compile Include="Core\Enums.cs" />
+    <Compile Include="Core\UserAction.cs" />
     <Compile Include="SFX\FXEvent.cs" />
     <Compile Include="Core\GameWorld.Casting.cs" />
     <Compile Include="SFX\FXInstance.Stage.cs" />

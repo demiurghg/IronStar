@@ -37,6 +37,11 @@ namespace IronStar.Core {
 		public string TargetName = null;
 
 		/// <summary>
+		/// Entity misc state flags
+		/// </summary>
+		public EntityState EntityState;
+
+		/// <summary>
 		/// Players guid. Zero if no player.
 		/// Server-side only
 		/// </summary>
@@ -182,7 +187,7 @@ namespace IronStar.Core {
 		/// Draw entity.
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public virtual void Draw ( GameTime	gameTime, EntityFX entityFx )
+		public virtual void Draw ( GameTime	gameTime )
 		{
 		}
 

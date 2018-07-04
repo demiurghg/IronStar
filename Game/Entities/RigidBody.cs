@@ -72,17 +72,6 @@ namespace IronStar.Entities {
 		Random rand = new Random();
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="gameTime"></param>
-		/// <param name="entityFx"></param>
-		public override void Draw(GameTime gameTime, EntityFX entityFx)
-		{
-			base.Draw(gameTime, entityFx);
-		}
-
-
 
 		/// <summary>
 		/// 

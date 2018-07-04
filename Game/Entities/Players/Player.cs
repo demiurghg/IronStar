@@ -27,8 +27,6 @@ namespace IronStar.Entities.Players {
 		int					health;
 		int					armor;
 
-		public PlayerState	PlayerState;
-
 		public Vector3		ViewPosition;
 
 		float cooldown;
@@ -63,7 +61,7 @@ namespace IronStar.Entities.Players {
 		public override void Read( BinaryReader reader, float lerpFactor )
 		{
 			base.Read( reader, lerpFactor );
-			PlayerState	=	(PlayerState)reader.ReadByte();
+			EntityState	=	(EntityState)reader.ReadByte();
 			
 		}
 
@@ -71,7 +69,7 @@ namespace IronStar.Entities.Players {
 		public override void Write( BinaryWriter writer )
 		{
 			base.Write( writer );
-			writer.Write( (byte)PlayerState );
+			writer.Write( (byte)EntityState );
 		}
 
 
@@ -133,27 +131,10 @@ namespace IronStar.Entities.Players {
 			}
 
 			if (controller.Crouching) {
-				PlayerState |=	PlayerState.Crouching;
+				EntityState |=	EntityState.Crouching;
 			} else {
-				PlayerState &= ~PlayerState.Crouching;
+				EntityState &= ~EntityState.Crouching;
 			}
-		}
-
-
-
-		float targetPovHeight;
-		float currentPovHeight = float.NaN;
-
-
-		public override void Draw( GameTime gameTime, EntityFX entityFx )
-		{
-			base.Draw( gameTime, entityFx );
-			float dt = gameTime.ElapsedSec;
-
-			targetPovHeight		=	PlayerState.HasFlag(PlayerState.Crouching) ? GameConfig.PovHeightCrouch : GameConfig.PovHeightStand;
-			currentPovHeight	=	MathUtil.Drift( currentPovHeight, targetPovHeight, GameConfig.PovHeightVelocity * dt );
-
-			ViewPosition		=	Position + Vector3.Up * currentPovHeight;
 		}
 
 

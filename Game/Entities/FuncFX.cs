@@ -86,11 +86,6 @@ namespace IronStar.Entities {
 		}
 
 
-		public override void Draw( GameTime gameTime, EntityFX entityFx )
-		{
-		}
-
-
 		public override void Kill()
 		{
 			base.Kill();

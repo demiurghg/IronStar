@@ -26,6 +26,7 @@ namespace IronStar.Views {
 		public readonly GameWorld World;
 		readonly ShooterClient client;
 
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -40,8 +41,8 @@ namespace IronStar.Views {
 		}
 
 
-		float currentFov;
-		Vector3 filteredPos = Vector3.Zero;
+		float currentPov = float.NaN;
+		float currentFov = float.NaN;
 
 		/// <summary>
 		/// 
@@ -75,20 +76,24 @@ namespace IronStar.Views {
 				return;
 			}
 
-			var pos	=	player.ViewPosition;
-			var fwd	=	pos + m.Forward;
-			var up	=	m.Up;
-
-
 			var targetFov	=	MathUtil.Clamp( uc.Action.HasFlag( UserAction.Zoom ) ? 30 : 110, 10, 140 );
-
 			currentFov		=	MathUtil.Drift( currentFov, targetFov, 360*elapsedTime, 360*elapsedTime );
 
-			rw.Camera		.SetupCameraFov( pos, fwd, up, MathUtil.Rad(currentFov), 0.125f/2.0f, 1024f, 2, 0.05f, aspect );
-			rw.WeaponCamera	.SetupCameraFov( pos, fwd, up, MathUtil.Rad(75),		 0.125f/2.0f, 1024f, 2, 0.05f, aspect );
+			var targetPov	=	player.EntityState.HasFlag(EntityState.Crouching) ? GameConfig.PovHeightCrouch : GameConfig.PovHeightStand;
+			currentPov		=	MathUtil.Drift( currentPov, targetPov, GameConfig.PovHeightVelocity * elapsedTime );
+
+			var playerPos	=	player.Position;
+			var cameraPos	=	player.Position + Vector3.Up * currentPov;
+
+			var cameraFwd	=	cameraPos + m.Forward;
+			var cameraUp	=	m.Up;
+
+
+			rw.Camera		.SetupCameraFov( cameraPos, cameraFwd, cameraUp, MathUtil.Rad(currentFov),  0.125f/2.0f, 1024f, 2, 0.05f, aspect );
+			rw.WeaponCamera	.SetupCameraFov( cameraPos, cameraFwd, cameraUp, MathUtil.Rad(75),			0.125f/2.0f, 1024f, 2, 0.05f, aspect );
 
 			sw.Listener	=	new AudioListener();
-			sw.Listener.Position	=	pos;
+			sw.Listener.Position	=	cameraPos;
 			sw.Listener.Forward		=	m.Forward;
 			sw.Listener.Up			=	m.Up;
 			sw.Listener.Velocity	=	Vector3.Zero;

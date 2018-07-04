@@ -28,51 +28,13 @@ namespace IronStar.Items {
 
 	public partial class Weapon {
 
-		public Weapon( ItemFactory factory ) : base( factory )
+		public Weapon()
 		{
 		}
 
-		public override bool AllowDrop {
-			get {
-				return true;
-			}
-		}
 
-		public override bool Depleted {
-			get {
-				return false;
-			}
-		}
+		
 
-		public override bool Activate()
-		{
-			throw new NotImplementedException();
-		}
-
-		public override bool Attack()
-		{
-			throw new NotImplementedException();
-		}
-
-		public override Entity Drop()
-		{
-			throw new NotImplementedException();
-		}
-
-		public override bool Pickup( Entity player )
-		{
-			throw new NotImplementedException();
-		}
-
-		public override bool Reload()
-		{
-			throw new NotImplementedException();
-		}
-
-		public override void Update( float elsapsedTime )
-		{
-			throw new NotImplementedException();
-		}
 	}
 }
 

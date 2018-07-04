@@ -67,9 +67,11 @@
   <ItemGroup>
     <Compile Include="Entities\FuncFX.cs" />
     <Compile Include="Entities\IShooter.cs" />
+    <Compile Include="Entities\Players\WeaponStateMachine.cs" />
     <Compile Include="Entities\Players\PlayerState.cs" />
     <Compile Include="Entities\Projectile.cs" />
     <Compile Include="Entities\ProjectileFactory.cs" />
+    <Compile Include="Items\Weapon.cs" />
     <Compile Include="ShooterCampaign.cs" />
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Client\GameInput.cs" />
@@ -147,7 +149,6 @@
     <Compile Include="IronStar.Commands.cs" />
     <Compile Include="IronStar.cs" />
     <Compile Include="Items\Item.cs" />
-    <Compile Include="Items\ItemFactory.cs" />
     <Compile Include="LocalMessageService.cs" />
     <Compile Include="Mapping\LightPreset.cs" />
     <Compile Include="Mapping\Map.Build.cs" />

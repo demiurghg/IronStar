@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using IronStar.Core;
 using IronStar.Entities;
+using IronStar.Entities.Players;
 
 namespace IronStar.Items {
 
@@ -85,14 +86,8 @@ namespace IronStar.Items {
 
 	public abstract class Item {
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="factory"></param>
-		public Item ( ItemFactory factory )
+		public Item ()
 		{
-			Name		=	factory.Name;
-			NiceName	=	factory.NiceName;
 		}
 
 		/// <summary>
@@ -105,54 +100,5 @@ namespace IronStar.Items {
 		/// </summary>
 		public readonly string NiceName;
 
-		/// <summary>
-		/// Called when player attempts to picks the item up.
-		/// This method return false, if item decided not to be added
-		/// and true otherwice.
-		/// </summary>
-		/// <param name="player">Player that picked item up</param>
-		public abstract bool Pickup ( Entity player );
-
-		/// <summary>
-		/// Called when player drops the item.
-		/// On drop, creates new entity.
-		/// </summary>
-		public abstract Entity Drop ();
-
-		/// <summary>
-		/// Updates internal item state
-		/// </summary>
-		public abstract void Update ( float elsapsedTime );
-
-		/// <summary>
-		/// Updates internal item state
-		/// Return value indicates success of the operation
-		/// </summary>
-		public abstract bool Activate ();
-
-		/// <summary>
-		/// Attempts to reload given item.
-		/// Return value indicates success of the reloading.
-		/// E.g. false if not enough ammo
-		/// </summary>
-		public abstract bool Reload ();
-
-		/// <summary>
-		/// Attempts to use given item as weapon.
-		/// Return value indicates success of the attack.
-		/// E.g. false means need to reload.
-		/// </summary>
-		public abstract bool Attack ();
-
-		/// <summary>
-		/// Indicates that item could be dropped from inventory
-		/// </summary>
-		public abstract bool AllowDrop { get; }
-
-		/// <summary>
-		/// Indicates that item was depleted and could not be used again.
-		/// Depleted items are removed from inventory.
-		/// </summary>
-		public abstract bool Depleted { get; }
 	}
 }

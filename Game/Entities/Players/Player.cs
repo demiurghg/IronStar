@@ -137,13 +137,6 @@ namespace IronStar.Entities.Players {
 			} else {
 				PlayerState &= ~PlayerState.Crouching;
 			}
-
-			//	update inventory :
-			foreach ( var item in inventory ) {
-				item.Update( gameTime.ElapsedSec );
-			}
-
-			inventory.RemoveAll( item => item.Depleted );
 		}
 
 

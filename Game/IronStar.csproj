@@ -66,12 +66,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\DamageType.cs" />
+    <Compile Include="Entities\FuncShooter.cs" />
     <Compile Include="Entities\FuncFX.cs" />
     <Compile Include="Entities\IShooter.cs" />
     <Compile Include="Entities\Players\WeaponStateMachine.cs" />
     <Compile Include="Core\EntityState.cs" />
     <Compile Include="Entities\Projectile.cs" />
     <Compile Include="Entities\ProjectileFactory.cs" />
+    <Compile Include="Items\WeaponLoader.cs" />
     <Compile Include="Items\Weapon.cs" />
     <Compile Include="ShooterCampaign.cs" />
     <Compile Include="Client\GameCamera.cs" />

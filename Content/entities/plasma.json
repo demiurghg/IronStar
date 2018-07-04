@@ -1,11 +1,10 @@
 {
   "$type": "IronStar.Entities.ProjectileFactory, IronStar",
-  "Velocity": 10.0,
+  "Velocity": 30.0,
   "Impulse": 0.0,
   "Damage": 0,
   "LifeTime": 10.0,
   "Radius": 0.0,
-  "ExplosionFX": "",
-  "TrailFX": "",
-  "TargetName": null
+  "ExplosionFX": "plasmaExplosion",
+  "TrailFX": "plasmaTrail"
 }

@@ -53,7 +53,7 @@
         "Frozen": false,
         "TranslateX": -0.0572123528,
         "TranslateY": -0.6254771,
-        "TranslateZ": -5.767923,
+        "TranslateZ": -20.1484642,
         "RotateYaw": 19.9651814,
         "RotatePitch": -1.21867824,
         "RotateRoll": -179.525024
@@ -163,6 +163,43 @@
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
+          "$type": "IronStar.Entities.FuncShooterFactory, IronStar",
+          "Weapon": "plasmagun",
+          "Trigger": true,
+          "Once": false,
+          "Start": false
+        },
+        "FactoryName": "XgOGBs7W",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -0.0361135,
+        "TranslateY": -0.48580265,
+        "TranslateZ": 0.09351635,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "MQp8MyDG",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -6.562341,
+        "TranslateY": -0.6254771,
+        "TranslateZ": -5.407803,
+        "RotateYaw": 19.9651814,
+        "RotatePitch": -1.21867824,
+        "RotateRoll": -179.525024
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
           "$type": "IronStar.Entities.FuncFXFactory, IronStar",
           "FX": "plasmaExplosion",
           "FXMode": "persistent",
@@ -171,12 +208,12 @@
           "MinInterval": 2,
           "MaxInterval": 2
         },
-        "FactoryName": "AGv6MWOX",
+        "FactoryName": "azPqZt1R",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 0.0,
+        "TranslateX": -6.50512934,
         "TranslateY": 0.0,
-        "TranslateZ": -6.0,
+        "TranslateZ": -5.63988161,
         "RotateYaw": 0.0,
         "RotatePitch": -43.71263,
         "RotateRoll": 0.0

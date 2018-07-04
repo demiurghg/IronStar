@@ -168,5 +168,12 @@ namespace IronStar.Entities.Players {
 		{
 			return true;
 		}
+
+
+		public Vector3 GetWeaponPOV()
+		{
+			float height = EntityState.HasFlag(EntityState.Crouching) ? GameConfig.PovHeightCrouch : GameConfig.PovHeightStand;
+			return Position + Vector3.Up * health;
+		}
 	}
 }

@@ -324,21 +324,7 @@ namespace IronStar.Core {
 		/// <param name="orient"></param>
 		public void SpawnFX ( string fxName, uint parentID, Vector3 origin, Vector3 velocity, Vector3 forward )
 		{
-			forward	=	Vector3.Normalize( forward );
-			var rt	=	Vector3.Cross( forward, Vector3.Up );	
-
-			if (rt.LengthSquared()<0.001f) {
-				rt	=	Vector3.Cross( forward, Vector3.Right );
-			}
-			rt.Normalize();
-
-			var up	=	Vector3.Cross( rt, forward );
-			up.Normalize();
-
-			var m	=	Matrix.Identity;
-			m.Forward	=	forward;
-			m.Right		=	rt;
-			m.Up		=	up;
+			var m = MathUtil.ComputeAimedBasis( forward );
 			
 			SpawnFX( fxName, parentID, origin, velocity, Quaternion.RotationMatrix(m) );
 		}

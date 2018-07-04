@@ -1075,5 +1075,30 @@ namespace Fusion.Core.Mathematics
 		}
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="forward"></param>
+		/// <returns></returns>
+		public static Matrix ComputeAimedBasis ( Vector3 forward )
+		{
+			forward	=	Vector3.Normalize( forward );
+			var rt	=	Vector3.Cross( forward, Vector3.Up );	
+
+			if (rt.LengthSquared()<0.001f) {
+				rt	=	Vector3.Cross( forward, Vector3.Right );
+			}
+			rt.Normalize();
+
+			var up	=	Vector3.Cross( rt, forward );
+			up.Normalize();
+
+			var m	=	Matrix.Identity;
+			m.Forward	=	forward;
+			m.Right		=	rt;
+			m.Up		=	up;
+
+			return m;
+		}
     }
 }

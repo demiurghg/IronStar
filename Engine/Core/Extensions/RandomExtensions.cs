@@ -314,5 +314,5 @@ namespace Fusion.Core.Extensions
 			} while ( r.Length()>1 || r.Length()<0.1f || r.Y<0 );
 			return r.Normalized();
 		}
-   }
+	}
 }

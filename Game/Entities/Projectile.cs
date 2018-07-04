@@ -64,6 +64,8 @@ namespace IronStar.Entities {
 			this.trailFX		=	factory.TrailFX		;
 
 			trailFXAtom			=	atoms[ trailFX ]; 
+
+			Sfx	=	trailFXAtom;
 		}
 
 
@@ -155,7 +157,7 @@ namespace IronStar.Entities {
 				}
 			}
 
-			world.SpawnFX( sfxName, attackerId, hitPoint, hitNormal );
+			world.SpawnFX( sfxName, 0, hitPoint, hitNormal );
 		}
 	}
 }

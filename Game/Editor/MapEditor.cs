@@ -299,14 +299,28 @@ namespace IronStar.Editor {
 
 			EnableSimulation = false;
 
+
 			foreach ( var node in map.Nodes ) {
 				node.ResetNode( world );
+			}
 
-				if (hardResetSelection) {
+			if (hardResetSelection) {
+				
+				//	kill node's entities
+				foreach ( var node in map.Nodes ) {
 					node.KillNode(world);
+				}
+	
+				//	kill temporaly created entities
+				world.KillAll();
+
+				//	spawn entities again
+				foreach ( var node in map.Nodes ) {
 					node.SpawnNode(world);
 				}
 			}
+
+
 
 			world.SimulateWorld( GameTime.Zero );
 		}

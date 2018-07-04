@@ -1,0 +1,10 @@
+{
+  "$type": "IronStar.Items.Weapon, IronStar",
+  "BeamWeapon": false,
+  "BeamLength": 0.0,
+  "Projectile": "plasma",
+  "Damage": 100,
+  "ProjectileCount": 1,
+  "AngularSpread": 20.0,
+  "Cooldown": 100
+}

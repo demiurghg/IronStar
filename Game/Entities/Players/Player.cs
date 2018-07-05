@@ -82,7 +82,7 @@ namespace IronStar.Entities.Players {
 		/// <param name="kickImpulse"></param>
 		/// <param name="kickPoint"></param>
 		/// <param name="damageType"></param>
-		public override void Damage(Entity attacker, short damage, DamageType damageType, Vector3 kickImpulse, Vector3 kickPoint)
+		public override void Damage(Entity attacker, int damage, DamageType damageType, Vector3 kickImpulse, Vector3 kickPoint)
 		{
 			var e = this;
 

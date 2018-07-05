@@ -26,9 +26,19 @@ namespace IronStar.Entities {
 
 		Random rand = new Random();
 
+		public int HitDamage {
+			get { return hitDamage; }
+			set { hitDamage = value; }
+		}
+
+		public float HitImpulse {
+			get { return hitImpulse; }
+			set { hitImpulse = value; }
+		}
+
+		float	hitImpulse;
+		int		hitDamage;
 		readonly float	velocity;
-		readonly float	hitImpulse;
-		readonly short	hitDamage;
 		readonly float	hitRadius;
 		readonly string	explosionFX;
 		readonly string	trailFX;
@@ -138,7 +148,7 @@ namespace IronStar.Entities {
 		/// <param name="damage"></param>
 		/// <param name="impulse"></param>
 		/// <param name="damageType"></param>
-		public void Explode ( string sfxName, uint attackerId, Entity ignore, Vector3 hitPoint, Vector3 hitNormal, float radius, short damage, float impulse, DamageType damageType )
+		public void Explode ( string sfxName, uint attackerId, Entity ignore, Vector3 hitPoint, Vector3 hitNormal, float radius, int damage, float impulse, DamageType damageType )
 		{
 			if (radius>0) {
 				var list = world.WeaponOverlap( hitPoint, radius, ignore );

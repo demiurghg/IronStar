@@ -209,7 +209,7 @@ namespace IronStar.Core {
 		/// <param name="damage"></param>
 		/// <param name="kickImpulse"></param>
 		/// <param name="kickPoint"></param>
-		public virtual void Damage ( Entity attacker, short damage, DamageType damageType, Vector3 kickImpulse, Vector3 kickPoint )
+		public virtual void Damage ( Entity attacker, int damage, DamageType damageType, Vector3 kickImpulse, Vector3 kickPoint )
 		{
 		}
 

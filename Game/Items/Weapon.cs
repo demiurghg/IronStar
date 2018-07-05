@@ -52,6 +52,9 @@ namespace IronStar.Items {
 		public int Damage { get; set; }
 
 		[AECategory("Shooting")]
+		public float Impulse { get; set; }
+
+		[AECategory("Shooting")]
 		public int ProjectileCount { 
 			get { return projectileCount; }
 			set { projectileCount = MathUtil.Clamp(value, 0, 100); }
@@ -106,7 +109,7 @@ namespace IronStar.Items {
 		/// <param name="origin"></param>
 		void FireProjectile ( Entity attacker, IShooter shooter, GameWorld world )
 		{
-			var e = world.Spawn( Projectile );
+			var e = world.Spawn( Projectile ) as Projectile;
 
 			if (e==null) {
 				Log.Warning("Unknown class: {0}", Projectile);
@@ -118,6 +121,10 @@ namespace IronStar.Items {
 
 			e.ParentID	=	attacker.ID;
 			e.Teleport( p, q );
+
+			e.HitDamage		=	Damage;
+			e.HitImpulse	=	Impulse;
+
 			(e as Projectile)?.FixServerLag(1/60.0f);
 
 			//world.SpawnFX( "MZBlaster",	attacker.ID, origin );

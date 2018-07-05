@@ -110,7 +110,7 @@ namespace IronStar.Entities {
 		}
 
 
-		public Vector3 GetWeaponPOV()
+		public Vector3 GetWeaponPOV(bool useViewOffset)
 		{
 			return Position;
 		}

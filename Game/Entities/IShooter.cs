@@ -26,7 +26,7 @@ namespace IronStar.Entities {
 		/// Gets weapon point-of-view
 		/// </summary>
 		/// <returns></returns>
-		Vector3 GetWeaponPOV ();
+		Vector3 GetWeaponPOV ( bool useViewOffset );
 
 	}
 }

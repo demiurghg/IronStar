@@ -29,6 +29,8 @@ namespace IronStar.Items {
 
 	public partial class Weapon {
 
+		static readonly public Weapon EmptyWeapon = new Weapon();
+
 
 		readonly Random rand = new Random();
 
@@ -71,6 +73,10 @@ namespace IronStar.Items {
 		}
 		int cooldown = 1;
 
+		[AECategory("Beam")]
+		[AEClassname("fx")]
+		public string HitFX { get; set; }
+
 
 
 		/// <summary>
@@ -78,6 +84,10 @@ namespace IronStar.Items {
 		/// </summary>
 		public virtual bool Fire ( Entity attacker, GameWorld world )
 		{
+			if (this==EmptyWeapon) {
+				return false;
+			}
+
 			var shooter = (IShooter)attacker;
 
 			if (!shooter.TrySetCooldown( cooldown / 1000.0f )) {
@@ -86,7 +96,11 @@ namespace IronStar.Items {
 
 			if (BeamWeapon) {
 
-				//	...
+
+				for (int i=0; i<ProjectileCount; i++) {
+					FireBeam( attacker, shooter, world );
+				}
+
 				return true;
 
 			} else {
@@ -96,6 +110,32 @@ namespace IronStar.Items {
 				}
 
 				return true;
+			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="attacker"></param>
+		/// <param name="shooter"></param>
+		/// <param name="world"></param>
+		void FireBeam ( Entity attacker, IShooter shooter, GameWorld world )
+		{
+			var p = shooter.GetWeaponPOV(false);
+			var q = attacker.Rotation;
+			var d = -GetFireDirection(q);
+
+			Vector3 hitNormal;
+			Vector3 hitPoint;
+			Entity  hitEntity;
+
+			var r = world.RayCastAgainstAll( p, p + d * BeamLength, out hitNormal, out hitPoint, out hitEntity, attacker );
+
+			if (r) {
+				world.SpawnFX( HitFX, 0, hitPoint, hitNormal );
+				world.InflictDamage( hitEntity, attacker.ID, Damage, DamageType.BulletHit, d * Impulse, hitPoint );
 			}
 		}
 
@@ -115,7 +155,7 @@ namespace IronStar.Items {
 				Log.Warning("Unknown class: {0}", Projectile);
 			}
 
-			var p = shooter.GetWeaponPOV();
+			var p = shooter.GetWeaponPOV(false);
 			var q = attacker.Rotation;
 			var d = GetFireDirection(q);
 
@@ -125,7 +165,7 @@ namespace IronStar.Items {
 			e.HitDamage		=	Damage;
 			e.HitImpulse	=	Impulse;
 
-			(e as Projectile)?.FixServerLag(1/60.0f);
+			(e as Projectile)?.FixServerLag(2/60.0f);
 
 			//world.SpawnFX( "MZBlaster",	attacker.ID, origin );
 		}
@@ -141,7 +181,7 @@ namespace IronStar.Items {
 		{ 
 			var spreadVector	= GetSpreadVector( AngularSpread );
 			var rotationMatrix	= Matrix.RotationQuaternion( rotation );
-			return Vector3.TransformNormal( spreadVector, rotationMatrix );
+			return Vector3.TransformNormal( spreadVector, rotationMatrix ).Normalized();
 		}
 
 

@@ -3,10 +3,10 @@
   "Environment": {
     "$type": "IronStar.Mapping.MapEnvironment, IronStar",
     "Gravity": 16.0,
-    "SkyTrubidity": 2.75,
+    "SkyTrubidity": 4.25,
     "SunAltitude": 30.0,
-    "SunAzimuth": 34.0,
-    "SunIntensity": 100.0,
+    "SunAzimuth": -45.0,
+    "SunIntensity": 30.0,
     "FogDistance": 1000.0,
     "FogHeight": 0.05,
     "FogColor": "10, 10, 10, 0",
@@ -107,35 +107,12 @@
         "FactoryName": "egIYvob7",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -3.54596162,
-        "TranslateY": -0.631507456,
-        "TranslateZ": -5.94881153,
+        "TranslateX": 0.319278479,
+        "TranslateY": -0.6562573,
+        "TranslateZ": -12.4787083,
         "RotateYaw": 150.905136,
         "RotatePitch": -0.0484076962,
         "RotateRoll": -0.0155407526
-      },
-      {
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$type": "IronStar.Entities.ProjectileFactory, IronStar",
-          "Velocity": 10.0,
-          "Impulse": 0.0,
-          "Damage": 0,
-          "LifeTime": 10.0,
-          "Radius": 0.0,
-          "ExplosionFX": "",
-          "TrailFX": ""
-        },
-        "FactoryName": "VCbZugvu",
-        "Visible": true,
-        "Frozen": false,
-        "TranslateX": 8.072603,
-        "TranslateY": 3.76804137,
-        "TranslateZ": 0.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -152,8 +129,8 @@
         "FactoryName": "m138G9vh",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -3.57331038,
-        "TranslateY": -0.199646384,
+        "TranslateX": 4.37371826,
+        "TranslateY": 5.32740974,
         "TranslateZ": -5.89821053,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
@@ -174,7 +151,7 @@
         "Frozen": false,
         "TranslateX": 0.866233945,
         "TranslateY": -0.422406971,
-        "TranslateZ": 0.09351635,
+        "TranslateZ": 2.525466,
         "RotateYaw": 2.49318886,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
@@ -215,7 +192,7 @@
         "TranslateY": 0.0,
         "TranslateZ": -5.63988161,
         "RotateYaw": 0.0,
-        "RotatePitch": -43.71263,
+        "RotatePitch": 40.0,
         "RotateRoll": 0.0
       },
       {
@@ -438,6 +415,26 @@
         "RotateYaw": 19.9114761,
         "RotatePitch": -0.0132657122,
         "RotateRoll": -179.930954
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.FuncShooterFactory, IronStar",
+          "Weapon": "machinegun",
+          "Trigger": true,
+          "Once": false,
+          "Start": false
+        },
+        "FactoryName": "56gIZW8B",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.261560142,
+        "TranslateY": -0.422406971,
+        "TranslateZ": -5.688198,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
       }
     ]
   }

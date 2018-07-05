@@ -17,7 +17,7 @@ using IronStar.Core;
 using BEPUphysics;
 using Fusion.Core.IniParser.Model;
 using IronStar.Physics;
-
+using IronStar.Items;
 
 namespace IronStar.Entities.Players {
 	public partial class Player : Entity, IShooter {
@@ -27,9 +27,9 @@ namespace IronStar.Entities.Players {
 		int					health;
 		int					armor;
 
-		public Vector3		ViewPosition;
-
 		float cooldown;
+		string currentWeapon = "machinegun";
+		string pendingWeapon;
 
 		
 		/// <summary>
@@ -148,6 +148,14 @@ namespace IronStar.Entities.Players {
 			Rotation	=	Quaternion.RotationYawPitchRoll( userCommand.Yaw, userCommand.Pitch, userCommand.Roll );
 
 			controller.Move( userCommand.MoveForward, userCommand.MoveRight, userCommand.MoveUp );
+
+			if ( userCommand.Action.HasFlag( UserAction.Attack ) ) {
+
+				var weapon = LoadWeapon( currentWeapon );
+
+				weapon.Fire( this, World );
+
+			}
 		}
 
 
@@ -170,10 +178,16 @@ namespace IronStar.Entities.Players {
 		}
 
 
-		public Vector3 GetWeaponPOV()
+		public Vector3 GetWeaponPOV(bool useViewOffset)
 		{
 			float height = EntityState.HasFlag(EntityState.Crouching) ? GameConfig.PovHeightCrouch : GameConfig.PovHeightStand;
-			return Position + Vector3.Up * health;
+			return Position + Vector3.Up * height;
+		}
+
+
+		public Weapon LoadWeapon ( string name )
+		{
+			return World.Content.Load( @"weapon\" + name, Weapon.EmptyWeapon );
 		}
 	}
 }

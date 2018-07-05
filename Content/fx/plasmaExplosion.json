@@ -242,7 +242,7 @@
     "Shape": {
       "$type": "IronStar.SFX.FXShape, IronStar",
       "Size0": 0.5,
-      "Size1": 1.5,
+      "Size1": 2.0,
       "EnableRotation": false,
       "InitialAngle": 0.0,
       "MinAngularVelocity": 0.0,

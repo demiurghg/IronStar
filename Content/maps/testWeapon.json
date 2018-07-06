@@ -108,7 +108,7 @@
         "Visible": true,
         "Frozen": false,
         "TranslateX": 0.319278479,
-        "TranslateY": -0.6562573,
+        "TranslateY": 4.225852,
         "TranslateZ": -12.4787083,
         "RotateYaw": 150.905136,
         "RotatePitch": -0.0484076962,
@@ -433,7 +433,7 @@
         "TranslateY": -0.422406971,
         "TranslateZ": -5.688198,
         "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
+        "RotatePitch": -20.0,
         "RotateRoll": 0.0
       }
     ]

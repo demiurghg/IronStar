@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-16"?>
-<map xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<importmodel path="scenes\test.fbx" origin="0 0 0" angles="10 10 10"/>
-</map>

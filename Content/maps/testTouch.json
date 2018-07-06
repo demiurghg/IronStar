@@ -1,0 +1,97 @@
+{
+  "$type": "IronStar.Mapping.Map, IronStar",
+  "Environment": {
+    "$type": "IronStar.Mapping.MapEnvironment, IronStar",
+    "Gravity": 16.0,
+    "SkyTrubidity": 4.25,
+    "SunAltitude": 30.0,
+    "SunAzimuth": -45.0,
+    "SunIntensity": 30.0,
+    "FogDistance": 1000.0,
+    "FogHeight": 0.05,
+    "FogColor": "10, 10, 10, 0",
+    "CharacterHeight": 2.0,
+    "CharacterSize": 1.2,
+    "WalkableSlope": 45.0,
+    "StepHeight": 45.0,
+    "RecastCellHeight": 0.25,
+    "RecastCellSize": 0.25,
+    "IrradianceVolume": {
+      "$type": "Fusion.Core.Mathematics.BoundingBox, Fusion",
+      "Minimum": "-64, -32, -64",
+      "Maximum": "64, 32, 64"
+    },
+    "AmbientLevel": "0, 0, 0, 0"
+  },
+  "Nodes": {
+    "$type": "IronStar.Mapping.MapNodeCollection, IronStar",
+    "$values": [
+      {
+        "$type": "IronStar.Mapping.MapModel, IronStar",
+        "ScenePath": "scenes\\q3t5.fbx",
+        "Scale": 1.0,
+        "GlowColor": "255, 0, 0, 255",
+        "GlowIntensity": 100.0,
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -3.0,
+        "TranslateY": -1.0,
+        "TranslateZ": 9.0,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.StartPointFactory, IronStar",
+          "StartPointType": "singlePlayer"
+        },
+        "FactoryName": "nTMcz2N0",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.0,
+        "TranslateY": 0.0,
+        "TranslateZ": 0.0,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "MwHZRA9y",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.0,
+        "TranslateY": 18.0,
+        "TranslateZ": 0.0,
+        "RotateYaw": 20.93518,
+        "RotatePitch": -0.00641179038,
+        "RotateRoll": -179.964951
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "l83vvFvx",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.0,
+        "TranslateY": 19.0,
+        "TranslateZ": 0.0,
+        "RotateYaw": 21.2261276,
+        "RotatePitch": -0.010656381,
+        "RotateRoll": -179.921921
+      }
+    ]
+  }
+}

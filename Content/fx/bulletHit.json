@@ -156,17 +156,17 @@
     "Enabled": true,
     "Sprite": "smoke",
     "Effect": "softLitShadow",
-    "Count": 11,
+    "Count": 15,
     "Period": 1.0,
     "Timing": {
       "$type": "IronStar.SFX.FXTiming, IronStar",
       "Delay": 0.0,
-      "Bunch": 0.0,
+      "Bunch": 0.1,
       "FadeIn": 0.1,
-      "FadeOut": 0.8
+      "FadeOut": 0.9
     },
-    "Color": "53, 53, 53, 255",
-    "Alpha": 0.3,
+    "Color": "38, 38, 38, 255",
+    "Alpha": 0.5,
     "Roughness": 0.2,
     "Metallic": 0.0,
     "Intensity": 100.0,
@@ -199,15 +199,15 @@
       "Direction": "localForward",
       "LinearDistribution": "uniform",
       "LinearVelocityMin": 0.0,
-      "LinearVelocityMax": 7.0,
-      "RadialDistribution": "uniformRadial",
+      "LinearVelocityMax": 10.0,
+      "RadialDistribution": "gaussRadial",
       "RadialVelocityMin": 0.0,
-      "RadialVelocityMax": 2.0,
+      "RadialVelocityMax": 1.0,
       "Advection": 0.0
     },
     "Acceleration": {
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
-      "GravityFactor": -0.05,
+      "GravityFactor": 0.0,
       "Damping": 6.0,
       "DragForce": 0.0,
       "Turbulence": 0.0

@@ -14,6 +14,7 @@ using Fusion.Engine.Graphics;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
+using BEPUphysics.NarrowPhaseSystems.Pairs;
 
 namespace IronStar.Physics {
 	public class PhysicsManager {
@@ -53,6 +54,19 @@ namespace IronStar.Physics {
 			Game		=	world.Game;
 
 			Gravity		=	gravity;
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pair"></param>
+		public void HandleTouch ( CollidablePairHandler pair )
+		{
+			var entity1 = pair.EntityA?.Tag as Entity;
+			var entity2 = pair.EntityB?.Tag as Entity;
+			entity1?.Touch( entity2, Vector3.Zero );
 		}
 
 

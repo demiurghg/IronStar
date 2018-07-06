@@ -18,6 +18,9 @@ using BEPUphysics;
 using BEPUphysics.Character;
 using BEPUCharacterController = BEPUphysics.Character.CharacterController;
 using Fusion.Core.IniParser.Model;
+using BEPUphysics.BroadPhaseEntries.MobileCollidables;
+using BEPUphysics.BroadPhaseEntries;
+using BEPUphysics.NarrowPhaseSystems.Pairs;
 
 
 namespace IronStar.Physics {
@@ -25,6 +28,7 @@ namespace IronStar.Physics {
 
 		readonly Space space;
 		readonly Entity entity;
+		readonly GameWorld world;
 
 		BEPUCharacterController controller;
 		Vector3		oldVelocity = Vector3.Zero;
@@ -44,6 +48,7 @@ namespace IronStar.Physics {
 		{
 			this.entity		=	entity;
 			this.space		=	world.PhysSpace;
+			this.world		=	world;
 
 			this.heightStanding		=	heightStand;
 			this.heightCrouching	=	heightCrouch;
@@ -66,7 +71,22 @@ namespace IronStar.Physics {
 			controller.Body.Tag	=	entity;
 			controller.Tag		=	entity;
 
+			controller.Body.CollisionInformation.Events.InitialCollisionDetected +=Events_InitialCollisionDetected;
+
 			space.Add( controller );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="other"></param>
+		/// <param name="pair"></param>
+		private void Events_InitialCollisionDetected( EntityCollidable sender, Collidable other, CollidablePairHandler pair )
+		{
+			world.Physics.HandleTouch( pair );
 		}
 
 
@@ -99,6 +119,23 @@ namespace IronStar.Physics {
 				return controller.SupportFinder.HasTraction;
 			}
 		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="position"></param>
+		/// <param name="velocity"></param>
+		public void Teleport ( Vector3 position, Vector3 velocity )
+		{
+			controller.Body.Position		=	MathConverter.Convert( position );
+			controller.Body.LinearVelocity	=	MathConverter.Convert( velocity );
+
+			//	https://forum.bepuentertainment.com/viewtopic.php?f=4&t=2389
+			controller.SupportFinder.ClearSupportData();
+		}
+
 
 
 		/// <summary>

@@ -113,6 +113,12 @@ namespace IronStar.Entities.Players {
 
 
 
+		public override void Touch( Entity other, Vector3 touchPoint )
+		{
+			Log.Message("{0} touched by {1}", this, other );
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -135,6 +141,20 @@ namespace IronStar.Entities.Players {
 			} else {
 				EntityState &= ~EntityState.Crouching;
 			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="position"></param>
+		/// <param name="orient"></param>
+		public override void Teleport( Vector3 position, Quaternion orient )
+		{
+			base.Teleport( position, orient );
+
+			controller.Teleport( position, Vector3.Zero );
 		}
 
 

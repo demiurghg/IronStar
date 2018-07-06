@@ -221,6 +221,7 @@ namespace IronStar.Core {
 		/// <param name="touchPoint"></param>
 		public virtual void Touch ( Entity other, Vector3 touchPoint )
 		{
+			
 		}
 
 
@@ -282,16 +283,11 @@ namespace IronStar.Core {
 		}
 
   
-		/// <summary>
-		/// Moves entity to given position with interpolation.
-		/// </summary>
-		/// <param name="position"></param>
-		/// <param name="orient"></param>
+
+		[Obsolete]
 		public virtual void Move ( Vector3 position, Quaternion orient, Vector3 velocity )
 		{
-			Position		=	position;
-			Rotation		=	orient;
-			LinearVelocity	=	velocity;
+			throw new NotImplementedException("Entity.Move is obsolete method");
 		}
   
 

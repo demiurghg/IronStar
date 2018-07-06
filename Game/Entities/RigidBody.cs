@@ -15,31 +15,25 @@ using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
 using IronStar.Core;
+using Fusion.Core.IniParser.Model;
 using BEPUphysics;
 using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.EntityStateManagement;
 using BEPUphysics.PositionUpdating;
-using Fusion.Core.IniParser.Model;
+using BEPUphysics.BroadPhaseEntries.MobileCollidables;
+using BEPUphysics.BroadPhaseEntries;
+using BEPUphysics.NarrowPhaseSystems.Pairs;
 using IronStar.SFX;
+using System.Runtime.CompilerServices;
+using IronStar.Physics;
 //using BEPUphysics.
 
 
 namespace IronStar.Entities {
 
-	public enum ReplicateLevel {
-		SyncEveryFrame,
-		Sync
-	}
-
-	public class ReplicateAttribute : Attribute {
-		
-	}
-
-
 	public class RigidBody : Entity {
 
-		readonly Space space;
-		readonly Box box;
+		readonly RigidBox box;
 
 		/// <summary>
 		/// 
@@ -48,29 +42,16 @@ namespace IronStar.Entities {
 		/// <param name="space"></param>
 		public RigidBody ( uint id, short clsid, GameWorld world, RigidBodyFactory factory ) : base( id, clsid, world, factory )
 		{
-			this.space		=	world.PhysSpace;
-
 			var width		=	factory.Width;
 			var height		=	factory.Height;
 			var depth		=	factory.Depth;
 			var mass		=	factory.Mass;
 			var model		=	factory.Model;
 
-			var ms	=	new MotionState();
-			ms.Orientation	=	MathConverter.Convert( Quaternion.Identity );
-			ms.Position		=	MathConverter.Convert( Vector3.Zero );
-			box		=	new Box( ms, width, height, depth, mass );
-			box.PositionUpdateMode	=	PositionUpdateMode.Continuous;
-
-			box.Tag	=	this;
-
-			space.Add( box );
+			box				=	new RigidBox( this, world, width, height, depth, mass );
 
 			this.Model		=	world.Atoms[ model ];
 		}
-
-		Random rand = new Random();
-
 
 
 		/// <summary>
@@ -84,9 +65,7 @@ namespace IronStar.Entities {
 		/// <param name="damageType"></param>
 		public override void Damage( Entity attacker, int damage, DamageType damageType, Vector3 kickImpulse, Vector3 kickPoint )
 		{
-			var i = MathConverter.Convert( kickImpulse );
-			var p = MathConverter.Convert( kickPoint );
-			box.ApplyImpulse( p, i );
+			box.Kick( kickImpulse, kickPoint );
 		}
 
 
@@ -94,7 +73,7 @@ namespace IronStar.Entities {
 		public override void Kill()
 		{
 			base.Kill();
-			space.Remove(box);
+			box.Destroy();
 		}
 
 
@@ -111,38 +90,27 @@ namespace IronStar.Entities {
 		}
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="gameTime"></param>
 		public override void Update ( GameTime gameTime )
 		{
-			this.Position			=	MathConverter.Convert( box.Position ); 
-			this.Rotation			=	MathConverter.Convert( box.Orientation ); 
-			this.LinearVelocity		=	MathConverter.Convert( box.LinearVelocity );
-			this.AngularVelocity	=	MathConverter.Convert( box.AngularVelocity );
+			this.Position			=	box.Position; 
+			this.Rotation			=	box.Orientation; 
+			this.LinearVelocity		=	box.LinearVelocity;
+			this.AngularVelocity	=	box.AngularVelocity;
+		}
+
+
+		public override void Touch( Entity other, Vector3 touchPoint )
+		{
+			uint idA = this.ID;
+			uint idB = (other==null) ? 0 : other.ID;
+			Log.Message("#{0} touched by #{1}", idA, idB );
 		}
 
 
 		public override void Teleport( Vector3 position, Quaternion orient )
 		{
 			base.Teleport( position, orient );
-
-			box.Position		=	MathConverter.Convert( position );
-			box.Orientation		=	MathConverter.Convert( orient );
-			box.AngularVelocity	=	MathConverter.Convert( Vector3.Zero );
-			box.LinearVelocity	=	MathConverter.Convert( Vector3.Zero );
-		}
-
-
-		public override void Move( Vector3 position, Quaternion orient, Vector3 velocity )
-		{
-			base.Move( position, orient, velocity );
-
-			box.Position		=	MathConverter.Convert( position );
-			box.Orientation		=	MathConverter.Convert( orient );
-			box.AngularVelocity	=	MathConverter.Convert( Vector3.Zero );
-			box.LinearVelocity	=	MathConverter.Convert( velocity );
+			box.Teleport( position, orient );
 		}
 	}
 }

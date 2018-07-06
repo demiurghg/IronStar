@@ -75,6 +75,7 @@
     <Compile Include="Entities\ProjectileFactory.cs" />
     <Compile Include="Items\WeaponLoader.cs" />
     <Compile Include="Items\Weapon.cs" />
+    <Compile Include="Physics\RigidBox.cs" />
     <Compile Include="ShooterCampaign.cs" />
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Client\GameInput.cs" />

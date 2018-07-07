@@ -46,7 +46,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "k6zXwM1t",
         "Visible": true,
@@ -90,9 +90,9 @@
         "FactoryName": "LZv5g1vt",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 5.446798,
+        "TranslateX": 6.0,
         "TranslateY": 2.0,
-        "TranslateZ": 2.48238754,
+        "TranslateZ": 2.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
@@ -102,7 +102,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "egIYvob7",
         "Visible": true,
@@ -161,7 +161,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "MQp8MyDG",
         "Visible": true,
@@ -200,7 +200,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "aiViIQc6",
         "Visible": true,
@@ -217,7 +217,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "MwHZRA9y",
         "Visible": true,
@@ -234,7 +234,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "l9LEVcVV",
         "Visible": true,
@@ -251,7 +251,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "shSKB0jF",
         "Visible": true,
@@ -268,7 +268,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "vrhIDL4x",
         "Visible": true,
@@ -285,7 +285,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "px5ZRR7z",
         "Visible": true,
@@ -302,7 +302,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "tQObn7tO",
         "Visible": true,
@@ -319,7 +319,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "Zd9iJob4",
         "Visible": true,
@@ -336,7 +336,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "MvmqF93l",
         "Visible": true,
@@ -353,7 +353,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "l83vvFvx",
         "Visible": true,
@@ -370,7 +370,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "nNsA8Gc6",
         "Visible": true,
@@ -387,7 +387,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "gK2emr3n",
         "Visible": true,
@@ -404,7 +404,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "OvRZyKHY",
         "Visible": true,
@@ -458,7 +458,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "EQVonui5",
         "Visible": true,
@@ -475,7 +475,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "kIFXfHLG",
         "Visible": true,
@@ -492,7 +492,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "ycOcW2kQ",
         "Visible": true,
@@ -509,7 +509,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "ZgJfvoSF",
         "Visible": true,
@@ -526,7 +526,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "eIjCUFve",
         "Visible": true,
@@ -543,7 +543,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "Ow3JY7YX",
         "Visible": true,
@@ -560,7 +560,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "PtEyuY72",
         "Visible": true,
@@ -577,7 +577,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "iA9J0h3f",
         "Visible": true,
@@ -594,7 +594,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "UnIQ5qbu",
         "Visible": true,
@@ -611,7 +611,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "eZKpFFEa",
         "Visible": true,
@@ -628,7 +628,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "aToiOTcg",
         "Visible": true,
@@ -645,7 +645,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "hnMtYnSA",
         "Visible": true,
@@ -662,7 +662,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "DH7cchH9",
         "Visible": true,
@@ -679,7 +679,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "uypwT5j7",
         "Visible": true,
@@ -696,7 +696,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "ncCjWpKd",
         "Visible": true,
@@ -713,7 +713,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "KRGBiwhZ",
         "Visible": true,
@@ -730,7 +730,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "Gjd3cQ5v",
         "Visible": true,
@@ -747,7 +747,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "tK42H0Y3",
         "Visible": true,
@@ -764,7 +764,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "SsJWgYfa",
         "Visible": true,
@@ -781,7 +781,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "LiuZLPfA",
         "Visible": true,
@@ -798,7 +798,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "fiRKyvQB",
         "Visible": true,
@@ -815,7 +815,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "G8WsNeCT",
         "Visible": true,
@@ -832,7 +832,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "Se5ZDG02",
         "Visible": true,
@@ -849,7 +849,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "aJfZ5VE9",
         "Visible": true,
@@ -866,7 +866,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "BNlaBa0d",
         "Visible": true,
@@ -883,7 +883,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "Cp2GzM9W",
         "Visible": true,
@@ -900,7 +900,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "LmfVXVIu",
         "Visible": true,
@@ -917,7 +917,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "Zwap68OB",
         "Visible": true,
@@ -934,7 +934,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "6ryuJFp4",
         "Visible": true,
@@ -951,7 +951,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "Z9Rj6LJ7",
         "Visible": true,
@@ -968,7 +968,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "geAO0Igq",
         "Visible": true,
@@ -985,7 +985,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "nkbJnHJW",
         "Visible": true,
@@ -1002,7 +1002,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "6q0oPVsb",
         "Visible": true,
@@ -1019,7 +1019,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "hfjD7HbZ",
         "Visible": true,
@@ -1036,7 +1036,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "EPoq59Gf",
         "Visible": true,
@@ -1053,7 +1053,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "X3nOnffC",
         "Visible": true,
@@ -1070,7 +1070,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "vnNkPTj9",
         "Visible": true,
@@ -1087,7 +1087,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "n2o7Iz18",
         "Visible": true,
@@ -1104,7 +1104,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "pPxk8Ysf",
         "Visible": true,
@@ -1121,7 +1121,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "dwGVIEEH",
         "Visible": true,
@@ -1138,7 +1138,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "c1pavCFL",
         "Visible": true,
@@ -1155,7 +1155,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "sj3RpHGf",
         "Visible": true,
@@ -1172,7 +1172,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "3kYqCahL",
         "Visible": true,
@@ -1189,7 +1189,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "MQJ9huRj",
         "Visible": true,
@@ -1206,7 +1206,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "S0N006Wz",
         "Visible": true,
@@ -1223,7 +1223,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "GARhnOuz",
         "Visible": true,
@@ -1240,7 +1240,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "6B9xmYRZ",
         "Visible": true,
@@ -1257,7 +1257,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "etaVaKDT",
         "Visible": true,
@@ -1274,7 +1274,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "slbQYH3S",
         "Visible": true,
@@ -1291,7 +1291,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "4q18fuQk",
         "Visible": true,
@@ -1308,7 +1308,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "HW5Exxpd",
         "Visible": true,
@@ -1325,7 +1325,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "AuP0uR3g",
         "Visible": true,
@@ -1342,7 +1342,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "tWYTlHZV",
         "Visible": true,
@@ -1359,7 +1359,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "fLu2iLsL",
         "Visible": true,
@@ -1376,7 +1376,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "NaHwenFH",
         "Visible": true,
@@ -1393,7 +1393,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "Txat0TGD",
         "Visible": true,
@@ -1410,7 +1410,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "AniWXaRU",
         "Visible": true,
@@ -1427,7 +1427,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "lIXyM64s",
         "Visible": true,
@@ -1444,7 +1444,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "9THtXhWd",
         "Visible": true,
@@ -1461,7 +1461,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "6WMTW1q6",
         "Visible": true,
@@ -1478,7 +1478,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "H5O9kDf3",
         "Visible": true,
@@ -1495,7 +1495,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "x2VQ6cNe",
         "Visible": true,
@@ -1512,7 +1512,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "VNAhqQRr",
         "Visible": true,
@@ -1529,7 +1529,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "v11iJiBo",
         "Visible": true,
@@ -1546,7 +1546,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "XkCT0Ap4",
         "Visible": true,
@@ -1563,7 +1563,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "bYszQmiU",
         "Visible": true,
@@ -1580,7 +1580,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "S3GTiCh8",
         "Visible": true,
@@ -1597,7 +1597,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "k3QsWt1P",
         "Visible": true,
@@ -1614,7 +1614,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "c7wPkVSA",
         "Visible": true,
@@ -1631,7 +1631,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "7bcqQdo2",
         "Visible": true,
@@ -1648,7 +1648,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "e9YS51a5",
         "Visible": true,
@@ -1665,7 +1665,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "HuFvvB6Z",
         "Visible": true,
@@ -1682,7 +1682,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "TbXsFg0Y",
         "Visible": true,
@@ -1699,7 +1699,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "2RSca8FC",
         "Visible": true,
@@ -1716,7 +1716,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "Mk0GVLd3",
         "Visible": true,
@@ -1733,7 +1733,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "LqpLTO0y",
         "Visible": true,
@@ -1750,7 +1750,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "d5K5Qh0X",
         "Visible": true,
@@ -1767,7 +1767,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "5SVeSK6E",
         "Visible": true,
@@ -1784,7 +1784,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "E7O2ggND",
         "Visible": true,
@@ -1801,7 +1801,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "efNQiF8Y",
         "Visible": true,
@@ -1818,7 +1818,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "nxAN2XAA",
         "Visible": true,
@@ -1835,7 +1835,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "QfTDLk4S",
         "Visible": true,
@@ -1852,7 +1852,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "5Z4PxS3w",
         "Visible": true,
@@ -1869,7 +1869,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "EyCJQUxv",
         "Visible": true,
@@ -1886,7 +1886,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "WRckHgMd",
         "Visible": true,
@@ -1903,7 +1903,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "XbJbw8kE",
         "Visible": true,
@@ -1920,7 +1920,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "psBe0839",
         "Visible": true,
@@ -1937,7 +1937,7 @@
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "box"
+          "Classname": "boxNormal"
         },
         "FactoryName": "6lVC4YCb",
         "Visible": true,

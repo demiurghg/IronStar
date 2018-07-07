@@ -31,7 +31,7 @@ namespace IronStar.Entities.Players {
 		int					armor;
 
 		float cooldown;
-		string currentWeapon = "machinegun";
+		string currentWeapon = "plasmagun";
 		string pendingWeapon;
 
 		

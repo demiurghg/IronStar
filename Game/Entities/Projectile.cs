@@ -128,13 +128,14 @@ namespace IronStar.Entities {
 
 				Explode( explosionFX, ParentID, hitEntity, hitPoint, hitNormal, hitRadius, hitDamage, hitImpulse, DamageType.RocketExplosion );
 
-				//world.SpawnFX( projectile.ExplosionFX, projEntity.ParentID, hitPoint, hitNormal );
-				Move( hitPoint, Rotation, dir * velocity );
+				Position		=	hitPoint;
+				LinearVelocity	=	dir.Normalized() * velocity;
 
 				world.Kill( ID );
 
 			} else {
-				Move( target, Rotation, dir.Normalized() * velocity );
+				Position		=	target;
+				LinearVelocity	=	dir.Normalized() * velocity;
 			}
 		}
 

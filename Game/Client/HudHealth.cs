@@ -24,7 +24,7 @@ namespace IronStar.Views {
 
 		readonly GameWorld	world;
 
-		public int Heath;
+		public int Health;
 		public int Armor;
 
 		Frame labelArmor;
@@ -80,9 +80,15 @@ namespace IronStar.Views {
 		}
 
 
+		protected override void Update( GameTime gameTime )
+		{
+			base.Update( gameTime );
+
+			numberArmor .Text = string.Format("{0}/{1}", Armor , 100 );
+			numberHealth.Text = string.Format("{0}/{1}", Health, 100 );
+		}
 
 
-		
 
 
 	}

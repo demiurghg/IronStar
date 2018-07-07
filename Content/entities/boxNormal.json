@@ -1,0 +1,19 @@
+{
+  "$type": "IronStar.Entities.RigidBodyFactory, IronStar",
+  "Width": 1.0,
+  "Height": 0.75,
+  "Depth": 0.75,
+  "Mass": 5.0,
+  "Model": "box",
+  "Explosive": true,
+  "ExplodeOnTrigger": true,
+  "ExplodeOnDamage": true,
+  "ExplosionFX": "boxExplosion",
+  "BurningFX": "boxBurning",
+  "BurningMaxTime": 4000,
+  "BurningMinTime": 1000,
+  "Health": 100,
+  "ExplosionDamage": 100,
+  "ExplosionImpulse": 50.0,
+  "ExplosionRadius": 4.0
+}

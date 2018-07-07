@@ -118,8 +118,19 @@ namespace IronStar.Views {
 
 
 
+		protected override void Update( GameTime gameTime )
+		{
+			base.Update( gameTime );
 
-		
+			if (player!=null) {
+
+				hudHealth.Armor		=	player.Armor;
+				hudHealth.Health	=	player.Health;
+
+			}
+		}
+
+
 
 
 	}

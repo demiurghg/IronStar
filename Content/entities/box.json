@@ -5,5 +5,15 @@
   "Depth": 0.75,
   "Mass": 1.0,
   "Model": "box",
-  "Target": null
+  "Explosive": true,
+  "ExplodeOnTrigger": true,
+  "ExplodeOnDamage": true,
+  "ExplosionFX": "boxExplosion",
+  "BurningFX": "boxBurning",
+  "BurningMaxTime": 1000,
+  "BurningMinTime": 300,
+  "Health": 100,
+  "ExplosionDamage": 100,
+  "ExplosionImpulse": 10.0,
+  "ExplosionRadius": 3.0
 }

@@ -26,7 +26,7 @@ using Fusion.Core.Shell;
 
 
 namespace IronStar.Entities {
-	public class RigidBodyFactory : EntityFactory {
+	public class AmmoBoxFactory : EntityFactory {
 
 		[AECategory("Physics")]
 		public float  Width  { get; set; } = 1;
@@ -37,54 +37,13 @@ namespace IronStar.Entities {
 		[AECategory("Physics")]
 		public float  Mass   { get; set; } = 1;
 
-		
 		[AECategory("Appearance")]
 		[AEClassname("models")]
 		public string Model  { get; set; } = "";
 
-
-		[AECategory("Explosiveness")]
-		public bool Explosive  { get; set; } = false;
-
-		[AECategory("Explosiveness")]
-		public bool ExplodeOnTrigger  { get; set; } = false;
-
-		[AECategory("Explosiveness")]
-		public bool ExplodeOnDamage  { get; set; } = false;
-
-		[AECategory("Explosiveness")]
-		[AEClassname("fx")]
-		public string ExplosionFX  { get; set; } = "";
-
-		[AECategory("Explosiveness")]
-		[AEClassname("fx")]
-		public string BurningFX  { get; set; } = "";
-
-		[AECategory("Explosiveness")]
-		[AEClassname("fx")]
-		public int BurningMaxTime  { get; set; } = 100;
-
-		[AECategory("Explosiveness")]
-		[AEClassname("fx")]
-		public int BurningMinTime  { get; set; } = 500;
-
-		[AECategory("Explosiveness")]
-		public int Health  { get; set; } = 100;
-
-		[AECategory("Explosiveness")]
-		public int ExplosionDamage  { get; set; } = 100;
-
-		[AECategory("Explosiveness")]
-		public float ExplosionImpulse  { get; set; } = 10;
-
-		[AECategory("Explosiveness")]
-		public float ExplosionRadius  { get; set; } = 3;
-
-
-
 		public override Entity Spawn( uint id, short clsid, GameWorld world )
 		{
-			return new RigidBody( id, clsid, world, this );
+			return new AmmoBox( id, clsid, world, this );
 		}
 
 

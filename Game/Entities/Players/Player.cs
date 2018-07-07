@@ -22,6 +22,9 @@ using IronStar.Items;
 namespace IronStar.Entities.Players {
 	public partial class Player : Entity, IShooter {
 
+		public int Health { get { return health; } }
+		public int Armor  { get { return health; } }
+
 		CharacterController	controller;
 		Inventory			inventory;
 		int					health;
@@ -61,15 +64,18 @@ namespace IronStar.Entities.Players {
 		public override void Read( BinaryReader reader, float lerpFactor )
 		{
 			base.Read( reader, lerpFactor );
-			EntityState	=	(EntityState)reader.ReadByte();
-			
+
+			health	=	reader.ReadInt32();
+			armor	=	reader.ReadInt32();			
 		}
 
 
 		public override void Write( BinaryWriter writer )
 		{
 			base.Write( writer );
-			writer.Write( (byte)EntityState );
+			
+			writer.Write( health );
+			writer.Write( armor );
 		}
 
 

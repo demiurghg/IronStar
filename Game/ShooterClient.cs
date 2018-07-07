@@ -19,6 +19,8 @@ using IronStar.Mapping;
 using IronStar.Core;
 using IronStar.Client;
 using IronStar.Views;
+using Fusion.Engine.Frames;
+using IronStar.Entities.Players;
 
 namespace IronStar {
 	public partial class ShooterClient : DisposableBase, IClientInstance {
@@ -27,12 +29,13 @@ namespace IronStar {
 		GameWorld world;
 		UserCommand userCommand;
 		GameInput gameInput;
-		Hud hud;
 		GameCamera camera;
 		ContentManager content;
 		readonly Guid userGuid;
 		Map map;
 		IMessageService msgsvc;
+
+		HudFrame hud;
 
 		public Guid UserGuid { get { return userGuid; } }
 
@@ -52,6 +55,7 @@ namespace IronStar {
 			userCommand		=	new UserCommand();
 			content			=	new ContentManager( client.Game );
 
+
 			game.Config.ApplySettings( this );
 
 			gameInput.EnableControl = true;
@@ -67,8 +71,7 @@ namespace IronStar {
 			world.EntitySpawned += World_EntitySpawned;
 
 			camera	=	new GameCamera( world, this );
-			hud		=	new Hud( world );
-			hud.Initialize();
+			hud		=	new HudFrame( game.GetService<FrameProcessor>().RootFrame );
 		}
 
 		
@@ -81,7 +84,7 @@ namespace IronStar {
 
 				gameInput?.Dispose();
 				world?.Dispose();
-				hud?.Dispose();
+				hud?.Close();
 			}
 
 			base.Dispose(disposing);
@@ -99,12 +102,12 @@ namespace IronStar {
 
 		public byte[] Update( GameTime gameTime, uint sentCommandID )
 		{
+			hud.Player	=	world.GetPlayerEntity( this.UserGuid ) as Player;
+
 			gameInput.Update( gameTime, ref userCommand );
 
 			camera.Update( gameTime.ElapsedSec, 1 );
 			
-			hud.Update( gameTime.ElapsedSec, 1, world );
-
 			world.PresentWorld( gameTime, 1, camera, userCommand );
 
 			return UserCommand.GetBytes( userCommand );

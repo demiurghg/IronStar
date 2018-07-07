@@ -452,7 +452,7 @@ namespace IronStar.Core {
 		public void KillAll()
 		{
 			foreach ( var ent in entities ) {
-				ent.Value.Kill();
+				ent.Value?.Kill();
 			}
 			entities.Clear();
 		}

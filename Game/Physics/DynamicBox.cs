@@ -27,7 +27,7 @@ using BEPUphysics.PositionUpdating;
 using BEPUphysics.PositionUpdating;
 
 namespace IronStar.Physics {
-	public class RigidBox {
+	public class DynamicBox {
 
 		readonly Space space;
 		readonly Entity entity;
@@ -43,7 +43,7 @@ namespace IronStar.Physics {
 		/// <param name="height"></param>
 		/// <param name="depth"></param>
 		/// <param name="mass"></param>
-		public RigidBox ( Entity entity, GameWorld world, float width, float height, float depth, float mass )
+		public DynamicBox ( Entity entity, GameWorld world, float width, float height, float depth, float mass )
 		{
 			this.entity		=	entity;
 			this.space		=	world.PhysSpace;

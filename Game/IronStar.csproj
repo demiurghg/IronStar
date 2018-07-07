@@ -65,22 +65,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\HudColors.cs" />
+    <Compile Include="Client\HudWeapon.cs" />
+    <Compile Include="Client\HudHealth.cs" />
     <Compile Include="Core\DamageType.cs" />
     <Compile Include="Entities\FuncShooter.cs" />
     <Compile Include="Entities\FuncFX.cs" />
     <Compile Include="Entities\IShooter.cs" />
-    <Compile Include="Entities\Players\WeaponStateMachine.cs" />
     <Compile Include="Core\EntityState.cs" />
     <Compile Include="Entities\Projectile.cs" />
     <Compile Include="Entities\ProjectileFactory.cs" />
+    <Compile Include="Entities\AmmoBox.cs" />
+    <Compile Include="Entities\AmmoBoxFactory.cs" />
     <Compile Include="Items\WeaponLoader.cs" />
     <Compile Include="Items\Weapon.cs" />
-    <Compile Include="Physics\RigidBox.cs" />
+    <Compile Include="Physics\DynamicBox.cs" />
     <Compile Include="ShooterCampaign.cs" />
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Client\GameInput.cs" />
     <Compile Include="Client\FPView.cs" />
-    <Compile Include="Client\Hud.cs" />
+    <Compile Include="Client\HudFrame.cs" />
     <Compile Include="Core\Entity.cs" />
     <Compile Include="Core\GameWorld.Atoms.cs" />
     <Compile Include="Core\GameWorld.AI.cs" />

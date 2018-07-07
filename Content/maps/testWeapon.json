@@ -3,8 +3,8 @@
   "Environment": {
     "$type": "IronStar.Mapping.MapEnvironment, IronStar",
     "Gravity": 16.0,
-    "SkyTrubidity": 4.25,
-    "SunAltitude": 30.0,
+    "SkyTrubidity": 5.0,
+    "SunAltitude": 15.0,
     "SunAzimuth": -45.0,
     "SunIntensity": 30.0,
     "FogDistance": 1000.0,
@@ -51,12 +51,12 @@
         "FactoryName": "k6zXwM1t",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -0.0486321822,
-        "TranslateY": -0.635986447,
-        "TranslateZ": -20.140377,
-        "RotateYaw": 20.0626183,
-        "RotatePitch": -0.0488277338,
-        "RotateRoll": 179.996124
+        "TranslateX": 0.05982499,
+        "TranslateY": -0.6357077,
+        "TranslateZ": -32.09033,
+        "RotateYaw": 21.4607277,
+        "RotatePitch": -0.000299105974,
+        "RotateRoll": -179.9999
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -107,12 +107,12 @@
         "FactoryName": "egIYvob7",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 0.319278479,
-        "TranslateY": 4.225852,
-        "TranslateZ": -12.4787083,
-        "RotateYaw": 150.905136,
-        "RotatePitch": -0.0484076962,
-        "RotateRoll": -0.0155407526
+        "TranslateX": 0.227501035,
+        "TranslateY": -0.632190049,
+        "TranslateZ": -12.3139658,
+        "RotateYaw": -51.25946,
+        "RotatePitch": -89.54372,
+        "RotateRoll": -155.328644
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -205,12 +205,12 @@
         "FactoryName": "aiViIQc6",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 1.03381133,
-        "TranslateY": -0.6358943,
-        "TranslateZ": -20.1397877,
-        "RotateYaw": 20.05491,
-        "RotatePitch": -0.0267699119,
-        "RotateRoll": -179.995438
+        "TranslateX": 16.5766182,
+        "TranslateY": -0.6358857,
+        "TranslateZ": -14.3169975,
+        "RotateYaw": 20.3323956,
+        "RotatePitch": -0.0397718027,
+        "RotateRoll": -179.999542
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -222,12 +222,12 @@
         "FactoryName": "MwHZRA9y",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -1.103232,
-        "TranslateY": -0.6359541,
-        "TranslateZ": -20.138504,
-        "RotateYaw": 19.73638,
-        "RotatePitch": -0.0339004472,
-        "RotateRoll": 179.982742
+        "TranslateX": 13.8893566,
+        "TranslateY": -0.6357092,
+        "TranslateZ": -28.000185,
+        "RotateYaw": 19.7418747,
+        "RotatePitch": 0.0001000949,
+        "RotateRoll": -179.999969
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -239,12 +239,12 @@
         "FactoryName": "l9LEVcVV",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -0.0472523719,
-        "TranslateY": -0.636711538,
-        "TranslateZ": -21.220562,
-        "RotateYaw": 20.09435,
-        "RotatePitch": 0.02192408,
-        "RotateRoll": -179.997726
+        "TranslateX": 0.06921442,
+        "TranslateY": -0.636667252,
+        "TranslateZ": -33.2752151,
+        "RotateYaw": 20.3753185,
+        "RotatePitch": -0.0200879462,
+        "RotateRoll": 179.97493
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -256,12 +256,12 @@
         "FactoryName": "shSKB0jF",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 1.03348875,
-        "TranslateY": -0.6363237,
-        "TranslateZ": -21.21894,
-        "RotateYaw": 20.0185261,
-        "RotatePitch": -0.00322196679,
-        "RotateRoll": -179.957123
+        "TranslateX": 16.5442028,
+        "TranslateY": -0.6368301,
+        "TranslateZ": -15.45858,
+        "RotateYaw": 20.6354351,
+        "RotatePitch": 0.00656732637,
+        "RotateRoll": 179.950363
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -273,12 +273,12 @@
         "FactoryName": "vrhIDL4x",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -1.102935,
-        "TranslateY": -0.6362502,
-        "TranslateZ": -21.2196121,
-        "RotateYaw": 19.6901588,
-        "RotatePitch": 0.07003851,
-        "RotateRoll": 179.983521
+        "TranslateX": 13.8881855,
+        "TranslateY": -0.6363932,
+        "TranslateZ": -28.9944916,
+        "RotateYaw": 19.7473221,
+        "RotatePitch": 0.006823168,
+        "RotateRoll": 179.997559
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -290,12 +290,12 @@
         "FactoryName": "px5ZRR7z",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -0.0487077534,
-        "TranslateY": -0.636062562,
-        "TranslateZ": -22.1328773,
-        "RotateYaw": 19.8756561,
-        "RotatePitch": 0.04680376,
-        "RotateRoll": -179.990753
+        "TranslateX": -0.04838587,
+        "TranslateY": -0.6362975,
+        "TranslateZ": -34.1601448,
+        "RotateYaw": 21.3954258,
+        "RotatePitch": 0.0129053118,
+        "RotateRoll": -179.990234
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -307,12 +307,12 @@
         "FactoryName": "tQObn7tO",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 1.03227615,
-        "TranslateY": -0.635852754,
-        "TranslateZ": -22.1309185,
-        "RotateYaw": 20.0134411,
-        "RotatePitch": 0.0171729531,
-        "RotateRoll": -179.986038
+        "TranslateX": 16.5171318,
+        "TranslateY": -0.6361293,
+        "TranslateZ": -16.3216724,
+        "RotateYaw": 15.1048546,
+        "RotatePitch": 0.03187843,
+        "RotateRoll": -179.9738
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -324,9 +324,9 @@
         "FactoryName": "Zd9iJob4",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -1.10383809,
-        "TranslateY": -0.6358134,
-        "TranslateZ": -22.1316147,
+        "TranslateX": 13.8892794,
+        "TranslateY": -1.0,
+        "TranslateZ": -30.0,
         "RotateYaw": 19.6820641,
         "RotatePitch": 0.0240782872,
         "RotateRoll": 179.992081
@@ -341,12 +341,12 @@
         "FactoryName": "MvmqF93l",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 0.4867864,
-        "TranslateY": 0.103320554,
-        "TranslateZ": -20.6457081,
-        "RotateYaw": 19.9279041,
-        "RotatePitch": -0.111701004,
-        "RotateRoll": 179.957382
+        "TranslateX": 1.8149178,
+        "TranslateY": -0.635144234,
+        "TranslateZ": -33.14349,
+        "RotateYaw": 20.148344,
+        "RotatePitch": -0.0471392758,
+        "RotateRoll": -0.03660767
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -358,12 +358,12 @@
         "FactoryName": "l83vvFvx",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -0.5707273,
-        "TranslateY": 0.1035194,
-        "TranslateZ": -20.6424084,
-        "RotateYaw": 19.9805889,
-        "RotatePitch": -0.09602278,
-        "RotateRoll": -179.936935
+        "TranslateX": 13.89149,
+        "TranslateY": 0.102027856,
+        "TranslateZ": -28.9842224,
+        "RotateYaw": 20.0036278,
+        "RotatePitch": 0.01026045,
+        "RotateRoll": 179.996368
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -375,12 +375,12 @@
         "FactoryName": "nNsA8Gc6",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 0.486716837,
-        "TranslateY": 0.103396825,
-        "TranslateZ": -21.555481,
-        "RotateYaw": 20.0063248,
-        "RotatePitch": 0.132611781,
-        "RotateRoll": -179.957748
+        "TranslateX": 1.87621677,
+        "TranslateY": -0.634284,
+        "TranslateZ": -34.04131,
+        "RotateYaw": 15.5372334,
+        "RotatePitch": 0.008744598,
+        "RotateRoll": 0.03877481
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -392,9 +392,9 @@
         "FactoryName": "gK2emr3n",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -0.5697721,
-        "TranslateY": 0.103213318,
-        "TranslateZ": -21.5538673,
+        "TranslateX": 13.8892794,
+        "TranslateY": 0.0,
+        "TranslateZ": -30.0,
         "RotateYaw": 19.9690037,
         "RotatePitch": 0.136373982,
         "RotateRoll": 179.965988
@@ -409,12 +409,12 @@
         "FactoryName": "OvRZyKHY",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 0.0195510313,
-        "TranslateY": 0.844109,
-        "TranslateZ": -21.176466,
-        "RotateYaw": 19.9114761,
-        "RotatePitch": -0.0132657122,
-        "RotateRoll": -179.930954
+        "TranslateX": 16.0385513,
+        "TranslateY": -0.6354743,
+        "TranslateZ": -29.5131454,
+        "RotateYaw": 48.09573,
+        "RotatePitch": 0.04208969,
+        "RotateRoll": -0.00106372684
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -433,8 +433,1521 @@
         "TranslateY": -0.422406971,
         "TranslateZ": -5.688198,
         "RotateYaw": 0.0,
-        "RotatePitch": -20.0,
+        "RotatePitch": 0.0,
         "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "ammoBoxBullets"
+        },
+        "FactoryName": "g1Z0CqJY",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -0.159954563,
+        "TranslateY": -0.760475457,
+        "TranslateZ": -0.0459542759,
+        "RotateYaw": 70.29926,
+        "RotatePitch": -0.00364451273,
+        "RotateRoll": -0.062004853
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "EQVonui5",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -3.15701437,
+        "TranslateY": -0.6356893,
+        "TranslateZ": -19.9909725,
+        "RotateYaw": 12.3944817,
+        "RotatePitch": 0.000223012117,
+        "RotateRoll": 179.999863
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "kIFXfHLG",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -2.08626437,
+        "TranslateY": -0.6360047,
+        "TranslateZ": -31.9774132,
+        "RotateYaw": 10.3452616,
+        "RotatePitch": -0.0624602474,
+        "RotateRoll": 179.963486
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "ycOcW2kQ",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -3.181257,
+        "TranslateY": -0.6365985,
+        "TranslateZ": -20.9332123,
+        "RotateYaw": 14.93205,
+        "RotatePitch": -0.124981478,
+        "RotateRoll": 179.9295
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "ZgJfvoSF",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -1.76163316,
+        "TranslateY": -0.63728267,
+        "TranslateZ": -33.0397377,
+        "RotateYaw": 12.6511145,
+        "RotatePitch": -0.060624823,
+        "RotateRoll": -179.946533
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "eIjCUFve",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -3.81515574,
+        "TranslateY": -0.511359334,
+        "TranslateZ": -21.7917728,
+        "RotateYaw": 22.2055187,
+        "RotatePitch": -0.06654484,
+        "RotateRoll": -90.08541
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "Ow3JY7YX",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -1.7089206,
+        "TranslateY": -0.637130141,
+        "TranslateZ": -34.1431923,
+        "RotateYaw": 17.166584,
+        "RotatePitch": 0.0297620874,
+        "RotateRoll": -179.970566
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "PtEyuY72",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -2.007618,
+        "TranslateY": 0.099891156,
+        "TranslateZ": -33.0218468,
+        "RotateYaw": 15.3813324,
+        "RotatePitch": -0.2234357,
+        "RotateRoll": -179.932526
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "iA9J0h3f",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -1.95552468,
+        "TranslateY": 0.100127496,
+        "TranslateZ": -34.0699921,
+        "RotateYaw": 20.5024071,
+        "RotatePitch": 0.09023205,
+        "RotateRoll": 179.980835
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "UnIQ5qbu",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 4.32232761,
+        "TranslateY": -0.6362785,
+        "TranslateZ": -19.1583061,
+        "RotateYaw": 134.431961,
+        "RotatePitch": 0.4083852,
+        "RotateRoll": -0.120951675
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "eZKpFFEa",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 7.112336,
+        "TranslateY": -0.636172533,
+        "TranslateZ": -18.06618,
+        "RotateYaw": 7.7973485,
+        "RotatePitch": -89.97202,
+        "RotateRoll": 179.986679
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "aToiOTcg",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -0.273425221,
+        "TranslateY": 0.306962937,
+        "TranslateZ": -33.0775871,
+        "RotateYaw": 19.2557087,
+        "RotatePitch": -0.009593,
+        "RotateRoll": -105.31208
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "hnMtYnSA",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 17.05305,
+        "TranslateY": 0.384042025,
+        "TranslateZ": -15.219553,
+        "RotateYaw": -12.1368151,
+        "RotatePitch": -7.26117039,
+        "RotateRoll": 124.71138
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "DH7cchH9",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -0.71922,
+        "TranslateY": -0.6357082,
+        "TranslateZ": -36.57424,
+        "RotateYaw": 61.1134148,
+        "RotatePitch": 90.0,
+        "RotateRoll": -135.186188
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "uypwT5j7",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 17.45012,
+        "TranslateY": -0.499968022,
+        "TranslateZ": -17.1495438,
+        "RotateYaw": 43.23809,
+        "RotatePitch": -50.1332741,
+        "RotateRoll": 0.2050222
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "ncCjWpKd",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 6.629153,
+        "TranslateY": -0.6354601,
+        "TranslateZ": -18.9771481,
+        "RotateYaw": -152.238785,
+        "RotatePitch": -0.0406369939,
+        "RotateRoll": 0.0006177552
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "KRGBiwhZ",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 17.7634335,
+        "TranslateY": -0.4344699,
+        "TranslateZ": -16.0274353,
+        "RotateYaw": 118.728813,
+        "RotatePitch": 9.802487,
+        "RotateRoll": 164.237961
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "Gjd3cQ5v",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -4.093787,
+        "TranslateY": -0.5113772,
+        "TranslateZ": -19.7994137,
+        "RotateYaw": 10.2218637,
+        "RotatePitch": 0.0574551262,
+        "RotateRoll": -90.0983047
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "tK42H0Y3",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -3.69996738,
+        "TranslateY": -0.6357172,
+        "TranslateZ": -31.79294,
+        "RotateYaw": 29.6679573,
+        "RotatePitch": 0.00332174334,
+        "RotateRoll": -0.000169246123
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "SsJWgYfa",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -4.38061047,
+        "TranslateY": -0.5117569,
+        "TranslateZ": -20.6939526,
+        "RotateYaw": 23.2147655,
+        "RotatePitch": 0.1007257,
+        "RotateRoll": -90.02277
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "LiuZLPfA",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -3.10441041,
+        "TranslateY": -0.6356586,
+        "TranslateZ": -32.82223,
+        "RotateYaw": 3.460769,
+        "RotatePitch": -0.002911443,
+        "RotateRoll": -0.0169789288
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "fiRKyvQB",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -4.601958,
+        "TranslateY": -0.510427833,
+        "TranslateZ": -21.4370861,
+        "RotateYaw": 22.2101421,
+        "RotatePitch": 0.00523021724,
+        "RotateRoll": -89.97321
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "G8WsNeCT",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -1.58465362,
+        "TranslateY": 0.8381811,
+        "TranslateZ": -34.0917931,
+        "RotateYaw": 15.5896912,
+        "RotatePitch": 0.121488117,
+        "RotateRoll": 179.851044
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "Se5ZDG02",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -3.15174484,
+        "TranslateY": 0.995766938,
+        "TranslateZ": -20.8592148,
+        "RotateYaw": 11.1904974,
+        "RotatePitch": -5.542603,
+        "RotateRoll": -108.845749
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "aJfZ5VE9",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -3.28459239,
+        "TranslateY": -0.634089053,
+        "TranslateZ": -33.974205,
+        "RotateYaw": -22.0382252,
+        "RotatePitch": -0.00175195339,
+        "RotateRoll": -0.202648789
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "BNlaBa0d",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 4.03500938,
+        "TranslateY": -0.6354604,
+        "TranslateZ": -17.506897,
+        "RotateYaw": 113.265877,
+        "RotatePitch": 0.0451731421,
+        "RotateRoll": -0.003645279
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "Cp2GzM9W",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 7.389002,
+        "TranslateY": -0.6357139,
+        "TranslateZ": -16.0561485,
+        "RotateYaw": 37.3507423,
+        "RotatePitch": -90.0,
+        "RotateRoll": 152.799149
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "LmfVXVIu",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -1.05608249,
+        "TranslateY": 0.0548490472,
+        "TranslateZ": -32.3083725,
+        "RotateYaw": 30.0019188,
+        "RotatePitch": -22.6004772,
+        "RotateRoll": -21.7096939
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "Zwap68OB",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 18.7882652,
+        "TranslateY": -0.510552049,
+        "TranslateZ": -15.6343269,
+        "RotateYaw": -32.8716927,
+        "RotatePitch": -0.0028789246,
+        "RotateRoll": 89.99936
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "6ryuJFp4",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -0.0654536858,
+        "TranslateY": 0.102441736,
+        "TranslateZ": -34.1863861,
+        "RotateYaw": 19.7590466,
+        "RotatePitch": 0.04546931,
+        "RotateRoll": -179.97464
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "Z9Rj6LJ7",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 18.6999016,
+        "TranslateY": -0.6360893,
+        "TranslateZ": -16.7114925,
+        "RotateYaw": -119.021355,
+        "RotatePitch": 89.96573,
+        "RotateRoll": -130.600281
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "geAO0Igq",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 5.545144,
+        "TranslateY": -0.51086545,
+        "TranslateZ": -18.4573231,
+        "RotateYaw": -67.15052,
+        "RotatePitch": -0.0608177222,
+        "RotateRoll": 89.95435
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "nkbJnHJW",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 18.29824,
+        "TranslateY": 0.141154,
+        "TranslateZ": -16.8272552,
+        "RotateYaw": 113.9383,
+        "RotatePitch": 3.00282359,
+        "RotateRoll": 2.40817022
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "6q0oPVsb",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -5.008679,
+        "TranslateY": -0.5107956,
+        "TranslateZ": -19.50565,
+        "RotateYaw": 10.5218916,
+        "RotatePitch": 0.0434276238,
+        "RotateRoll": -89.99829
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "hfjD7HbZ",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -3.41589475,
+        "TranslateY": 0.4332661,
+        "TranslateZ": -19.51333,
+        "RotateYaw": 0.3863724,
+        "RotatePitch": 15.6888237,
+        "RotateRoll": -115.080269
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "EPoq59Gf",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -5.49375629,
+        "TranslateY": -0.401630968,
+        "TranslateZ": -20.22106,
+        "RotateYaw": 12.6080017,
+        "RotatePitch": -0.0308254957,
+        "RotateRoll": -54.9338264
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "X3nOnffC",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -4.610522,
+        "TranslateY": 1.02103138,
+        "TranslateZ": -20.7992821,
+        "RotateYaw": -26.9282513,
+        "RotatePitch": -8.613953,
+        "RotateRoll": -35.79916
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "vnNkPTj9",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -5.63776636,
+        "TranslateY": -0.5110003,
+        "TranslateZ": -21.2178459,
+        "RotateYaw": -6.20281458,
+        "RotatePitch": 0.0509950481,
+        "RotateRoll": -90.0092239
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "n2o7Iz18",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -0.6284189,
+        "TranslateY": 0.101550013,
+        "TranslateZ": -34.84413,
+        "RotateYaw": -20.3741817,
+        "RotatePitch": -89.80516,
+        "RotateRoll": 42.55149
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "pPxk8Ysf",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -3.68929362,
+        "TranslateY": 0.307634354,
+        "TranslateZ": -20.4505329,
+        "RotateYaw": 16.2204571,
+        "RotatePitch": -2.91607141,
+        "RotateRoll": -27.019577
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "dwGVIEEH",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -3.067763,
+        "TranslateY": 0.234860048,
+        "TranslateZ": -21.758028,
+        "RotateYaw": 16.9645576,
+        "RotatePitch": -4.348487,
+        "RotateRoll": -31.6277771
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "c1pavCFL",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 5.729244,
+        "TranslateY": -0.635920346,
+        "TranslateZ": -17.4811058,
+        "RotateYaw": -92.46854,
+        "RotatePitch": 89.95576,
+        "RotateRoll": 34.97362
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "sj3RpHGf",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 7.53319454,
+        "TranslateY": -0.635975361,
+        "TranslateZ": -16.9297256,
+        "RotateYaw": 5.89931631,
+        "RotatePitch": -0.0289373063,
+        "RotateRoll": -179.995819
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "3kYqCahL",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -0.9976816,
+        "TranslateY": -0.6360244,
+        "TranslateZ": -31.4560642,
+        "RotateYaw": 112.55217,
+        "RotatePitch": 0.04619958,
+        "RotateRoll": -0.0181302465
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "MQJ9huRj",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 18.5935249,
+        "TranslateY": -0.635709345,
+        "TranslateZ": -14.3218937,
+        "RotateYaw": -157.380127,
+        "RotatePitch": 0.0,
+        "RotateRoll": -14.4089642
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "S0N006Wz",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -0.392202973,
+        "TranslateY": -0.636539757,
+        "TranslateZ": -35.0070724,
+        "RotateYaw": -21.293602,
+        "RotatePitch": -89.90721,
+        "RotateRoll": -161.13945
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "GARhnOuz",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 19.2426033,
+        "TranslateY": -0.6357694,
+        "TranslateZ": -17.9835739,
+        "RotateYaw": 5.33679056,
+        "RotatePitch": -0.0511648469,
+        "RotateRoll": 0.00310291373
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "6B9xmYRZ",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 7.868823,
+        "TranslateY": -0.635035455,
+        "TranslateZ": -19.1441879,
+        "RotateYaw": -56.42191,
+        "RotatePitch": -89.913765,
+        "RotateRoll": 87.572464
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "etaVaKDT",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 18.3890038,
+        "TranslateY": -0.184175447,
+        "TranslateZ": -18.5298519,
+        "RotateYaw": -113.298035,
+        "RotatePitch": -31.824831,
+        "RotateRoll": 59.6673546
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "slbQYH3S",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -5.85968828,
+        "TranslateY": -0.5106158,
+        "TranslateZ": -19.27681,
+        "RotateYaw": 13.1100836,
+        "RotatePitch": 0.003132922,
+        "RotateRoll": -90.01188
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "4q18fuQk",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -4.59125662,
+        "TranslateY": -0.635709167,
+        "TranslateZ": -17.8161144,
+        "RotateYaw": 58.3924942,
+        "RotatePitch": -90.0,
+        "RotateRoll": 178.69281
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "HW5Exxpd",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -6.448109,
+        "TranslateY": -0.498508245,
+        "TranslateZ": -20.07386,
+        "RotateYaw": 9.797827,
+        "RotatePitch": 0.0329642035,
+        "RotateRoll": -87.82115
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "AuP0uR3g",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -15.1853743,
+        "TranslateY": 0.226970613,
+        "TranslateZ": -19.23788,
+        "RotateYaw": 18.2286053,
+        "RotatePitch": 0.6949196,
+        "RotateRoll": 89.60975
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "tWYTlHZV",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -6.4641943,
+        "TranslateY": -0.5106019,
+        "TranslateZ": -20.9389954,
+        "RotateYaw": 21.5120754,
+        "RotatePitch": -0.00671066064,
+        "RotateRoll": -89.98735
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "fLu2iLsL",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 16.90799,
+        "TranslateY": 0.270289958,
+        "TranslateZ": -16.2524719,
+        "RotateYaw": 177.809341,
+        "RotatePitch": 84.03825,
+        "RotateRoll": -92.2047653
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "NaHwenFH",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -5.83295345,
+        "TranslateY": -0.510562837,
+        "TranslateZ": -17.4665813,
+        "RotateYaw": 85.23073,
+        "RotatePitch": 5.9764152E-05,
+        "RotateRoll": -89.9999
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "Txat0TGD",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -4.14052534,
+        "TranslateY": 0.5037447,
+        "TranslateZ": -21.5378036,
+        "RotateYaw": 19.60552,
+        "RotatePitch": -0.1831595,
+        "RotateRoll": 85.74046
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "AniWXaRU",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 6.511162,
+        "TranslateY": -0.6357114,
+        "TranslateZ": -16.7995777,
+        "RotateYaw": 18.434948,
+        "RotatePitch": 90.0,
+        "RotateRoll": -80.65369
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "lIXyM64s",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 5.64315748,
+        "TranslateY": -0.635058463,
+        "TranslateZ": -15.5004358,
+        "RotateYaw": -33.3477669,
+        "RotatePitch": -0.00460463762,
+        "RotateRoll": 179.917343
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "9THtXhWd",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 16.7244759,
+        "TranslateY": -0.635671437,
+        "TranslateZ": -17.9750748,
+        "RotateYaw": 148.616531,
+        "RotatePitch": 0.0132468846,
+        "RotateRoll": -0.00653216848
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "6WMTW1q6",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 20.4495811,
+        "TranslateY": -0.635459,
+        "TranslateZ": -14.7464161,
+        "RotateYaw": -75.93401,
+        "RotatePitch": 0.04302262,
+        "RotateRoll": -0.000362175924
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "H5O9kDf3",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -0.343044728,
+        "TranslateY": -0.633820355,
+        "TranslateZ": -35.8389053,
+        "RotateYaw": 22.6724415,
+        "RotatePitch": 89.66603,
+        "RotateRoll": -166.149582
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "x2VQ6cNe",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 17.9518776,
+        "TranslateY": -0.635944366,
+        "TranslateZ": -17.9275,
+        "RotateYaw": 139.567627,
+        "RotatePitch": 0.09254268,
+        "RotateRoll": 179.996185
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "VNAhqQRr",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 17.9231033,
+        "TranslateY": -0.32868287,
+        "TranslateZ": -14.904089,
+        "RotateYaw": -150.698578,
+        "RotatePitch": -17.4127216,
+        "RotateRoll": 51.4777336
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "v11iJiBo",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 17.13135,
+        "TranslateY": -0.63571,
+        "TranslateZ": -18.6603241,
+        "RotateYaw": -136.8476,
+        "RotatePitch": -89.97202,
+        "RotateRoll": -76.82924
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "XkCT0Ap4",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -14.3940659,
+        "TranslateY": -0.6351271,
+        "TranslateZ": -18.6485443,
+        "RotateYaw": 11.3289251,
+        "RotatePitch": 0.00171524577,
+        "RotateRoll": -0.07289133
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "bYszQmiU",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -5.264074,
+        "TranslateY": 0.352915,
+        "TranslateZ": -18.7180614,
+        "RotateYaw": -126.493553,
+        "RotatePitch": 89.13362,
+        "RotateRoll": 156.74704
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "S3GTiCh8",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -14.4191666,
+        "TranslateY": -0.6357337,
+        "TranslateZ": -19.6806622,
+        "RotateYaw": 18.4460773,
+        "RotatePitch": 0.000329995673,
+        "RotateRoll": 0.0015919893
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "k3QsWt1P",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -1.26987612,
+        "TranslateY": 0.7190597,
+        "TranslateZ": -33.3823471,
+        "RotateYaw": 106.1364,
+        "RotatePitch": -60.787014,
+        "RotateRoll": -92.25755
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "c7wPkVSA",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -14.2301407,
+        "TranslateY": -0.5091709,
+        "TranslateZ": -20.9533024,
+        "RotateYaw": 19.1825981,
+        "RotatePitch": 0.241575956,
+        "RotateRoll": -90.00346
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "7bcqQdo2",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 16.085434,
+        "TranslateY": -0.5105741,
+        "TranslateZ": -17.153017,
+        "RotateYaw": 60.1058731,
+        "RotatePitch": -0.00206783973,
+        "RotateRoll": -89.999794
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "e9YS51a5",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -3.70813227,
+        "TranslateY": -0.63571167,
+        "TranslateZ": -18.6539249,
+        "RotateYaw": 116.822617,
+        "RotatePitch": -89.98021,
+        "RotateRoll": 12.9278088
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "HuFvvB6Z",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -5.064941,
+        "TranslateY": 0.300739229,
+        "TranslateZ": -20.8691425,
+        "RotateYaw": 83.73998,
+        "RotatePitch": -32.5835228,
+        "RotateRoll": -165.338882
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "TbXsFg0Y",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 7.36373234,
+        "TranslateY": 0.103205465,
+        "TranslateZ": -17.5835819,
+        "RotateYaw": -106.4609,
+        "RotatePitch": 89.97202,
+        "RotateRoll": 123.877182
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "2RSca8FC",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 10.0719566,
+        "TranslateY": -0.63530916,
+        "TranslateZ": -14.1795311,
+        "RotateYaw": -132.4782,
+        "RotatePitch": 89.92867,
+        "RotateRoll": -179.568512
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "Mk0GVLd3",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 18.5661049,
+        "TranslateY": -0.635986149,
+        "TranslateZ": -19.5828629,
+        "RotateYaw": 6.206892,
+        "RotatePitch": 0.02620648,
+        "RotateRoll": 0.007739618
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "LqpLTO0y",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 20.228466,
+        "TranslateY": -0.6335114,
+        "TranslateZ": -15.767746,
+        "RotateYaw": -146.221954,
+        "RotatePitch": -0.37534526,
+        "RotateRoll": 179.977325
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "d5K5Qh0X",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -0.1154483,
+        "TranslateY": -0.6357103,
+        "TranslateZ": -25.84582,
+        "RotateYaw": -166.591141,
+        "RotatePitch": -90.0,
+        "RotateRoll": 11.1990795
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "5SVeSK6E",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 17.09809,
+        "TranslateY": -0.6357082,
+        "TranslateZ": -19.5861874,
+        "RotateYaw": 170.537674,
+        "RotatePitch": -90.0,
+        "RotateRoll": -9.089899
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "E7O2ggND",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -1.97328448,
+        "TranslateY": -0.6357093,
+        "TranslateZ": -35.12939,
+        "RotateYaw": 13.66025,
+        "RotatePitch": -3.076349E-05,
+        "RotateRoll": 180.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "efNQiF8Y",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 21.0701218,
+        "TranslateY": -0.6354572,
+        "TranslateZ": -26.751791,
+        "RotateYaw": 156.934479,
+        "RotatePitch": 89.9476547,
+        "RotateRoll": 1.222883
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "nxAN2XAA",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -19.5647163,
+        "TranslateY": -0.635475039,
+        "TranslateZ": -18.3920422,
+        "RotateYaw": -18.7852116,
+        "RotatePitch": -0.04148897,
+        "RotateRoll": 0.00113226718
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "QfTDLk4S",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -5.942076,
+        "TranslateY": -0.5108453,
+        "TranslateZ": -18.43468,
+        "RotateYaw": -160.68129,
+        "RotatePitch": -0.0433443822,
+        "RotateRoll": 90.0508347
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "5Z4PxS3w",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -15.5065851,
+        "TranslateY": -0.636413455,
+        "TranslateZ": -19.4992638,
+        "RotateYaw": -46.1123657,
+        "RotatePitch": -0.0125784595,
+        "RotateRoll": -0.08115306
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "EyCJQUxv",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 6.157381,
+        "TranslateY": 0.282644182,
+        "TranslateZ": -18.0496387,
+        "RotateYaw": -40.92747,
+        "RotatePitch": 0.189806178,
+        "RotateRoll": 154.534454
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "WRckHgMd",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -15.0112,
+        "TranslateY": -0.5099448,
+        "TranslateZ": -20.5430717,
+        "RotateYaw": 8.145995,
+        "RotatePitch": 0.002307323,
+        "RotateRoll": -90.1096649
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "XbJbw8kE",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 16.030365,
+        "TranslateY": -0.5090598,
+        "TranslateZ": -18.91383,
+        "RotateYaw": 65.31709,
+        "RotatePitch": -0.000165632082,
+        "RotateRoll": -89.74464
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "psBe0839",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -6.20229,
+        "TranslateY": -0.635260344,
+        "TranslateZ": -24.0239887,
+        "RotateYaw": 163.48172,
+        "RotatePitch": 89.9184341,
+        "RotateRoll": -179.989655
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "box"
+        },
+        "FactoryName": "6lVC4YCb",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -4.79734564,
+        "TranslateY": -0.508031547,
+        "TranslateZ": -24.53932,
+        "RotateYaw": 39.68447,
+        "RotatePitch": -0.193777949,
+        "RotateRoll": -89.9103
       }
     ]
   }

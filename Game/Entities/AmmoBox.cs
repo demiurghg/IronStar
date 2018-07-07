@@ -26,38 +26,22 @@ using BEPUphysics.NarrowPhaseSystems.Pairs;
 using IronStar.SFX;
 using System.Runtime.CompilerServices;
 using IronStar.Physics;
+using IronStar.Entities.Players;
 //using BEPUphysics.
 
 
 namespace IronStar.Entities {
 
-	public class RigidBody : Entity {
-
-		static Random rand = new Random();
-
-		public int Health;
+	public class AmmoBox : Entity {
 
 		readonly DynamicBox box;
-
-		readonly bool	explodeOnTrigger;
-		readonly bool	explodeOnDamage;
-		readonly short	burningFx;
-		readonly short	explosionFx;
-
-		readonly int	explosionDamage;
-		readonly float	explosionImpulse;
-		readonly float	explosionRadius;
-				
-		bool burning = false;
-		int buringTime = 0;
-
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
 		/// <param name="space"></param>
-		public RigidBody ( uint id, short clsid, GameWorld world, RigidBodyFactory factory ) : base( id, clsid, world, factory )
+		public AmmoBox ( uint id, short clsid, GameWorld world, AmmoBoxFactory factory ) : base( id, clsid, world, factory )
 		{
 			var width		=	factory.Width;
 			var height		=	factory.Height;
@@ -65,22 +49,7 @@ namespace IronStar.Entities {
 			var mass		=	factory.Mass;
 			var model		=	factory.Model;
 
-			explodeOnTrigger	=	factory.Explosive && factory.ExplodeOnTrigger;
-			explodeOnDamage		=	factory.Explosive && factory.ExplodeOnDamage;
-			Health				=	factory.Health;
-
-			burningFx			=	world.Atoms[ factory.BurningFX ];
-			explosionFx			=	world.Atoms[ factory.ExplosionFX ];
-
-			explosionDamage		=	factory.ExplosionDamage;
-			explosionImpulse	=	factory.ExplosionImpulse;
-			explosionRadius		=	factory.ExplosionRadius;
-
-			int minTime			=	Math.Min( factory.BurningMinTime, factory.BurningMaxTime );
-			int maxTime			=	Math.Max( factory.BurningMinTime, factory.BurningMaxTime );
-			buringTime			=	rand.Next( minTime, maxTime );
-
-			box					=	new DynamicBox( this, world, width, height, depth, mass );
+			box				=	new DynamicBox( this, world, width, height, depth, mass );
 
 			this.Model		=	world.Atoms[ model ];
 		}
@@ -98,11 +67,6 @@ namespace IronStar.Entities {
 		public override void Damage( Entity attacker, int damage, DamageType damageType, Vector3 kickImpulse, Vector3 kickPoint )
 		{
 			box.Kick( kickImpulse, kickPoint );
-
-			if (explodeOnDamage) {
-				burning = true;
-				Sfx = burningFx;
-			}
 		}
 
 
@@ -112,34 +76,6 @@ namespace IronStar.Entities {
 			base.Kill();
 			box.Destroy();
 		}
-
-
-		public override void Activate( Entity activator )
-		{
-			if (explodeOnTrigger) {
-				Explode();
-			}
-		}
-
-
-
-		void Explode ()
-		{
-			var list = World.WeaponOverlap( Position, explosionRadius, this );
-
-			World.SpawnFX( World.Atoms[explosionFx], 0, Position );
-			
-			foreach (var ent in list) {
-				var dir  = ent.Position - Position;
-				var dirN = dir.Normalized();
-				var dist = dir.Length();
-				var torq = rand.NextVector3( -Vector3.One, Vector3.One );
-				ent.Damage( this, explosionDamage, DamageType.RocketExplosion, dirN * explosionImpulse, ent.Position + torq );
-			} 
-
-			World.Kill(ID);
-		}
-
 
 
 		public override bool AllowUse {
@@ -161,21 +97,16 @@ namespace IronStar.Entities {
 			this.Rotation			=	box.Orientation; 
 			this.LinearVelocity		=	box.LinearVelocity;
 			this.AngularVelocity	=	box.AngularVelocity;
-
-			if (burning) {
-				buringTime -= (int)(gameTime.ElapsedSec * 1000);
-				if (buringTime<0) {
-					Explode();
-				}
-			}
 		}
 
 
 		public override void Touch( Entity other, Vector3 touchPoint )
 		{
-			uint idA = this.ID;
-			uint idB = (other==null) ? 0 : other.ID;
-			Log.Message("#{0} touched by #{1}", idA, idB );
+			var player = other as Player;
+			if (player!=null) {
+				Log.Message("Give ammo player");
+				World.Kill(ID);
+			}
 		}
 
 

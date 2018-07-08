@@ -1,6 +1,6 @@
 {
   "$type": "IronStar.SFX.FXFactory, IronStar",
-  "Period": 1.0,
+  "Period": 0.1,
   "SoundStage": {
     "$type": "IronStar.SFX.FXSoundStage, IronStar",
     "Enabled": false,
@@ -9,19 +9,16 @@
   },
   "LightStage": {
     "$type": "IronStar.SFX.FXLightStage, IronStar",
-    "Enabled": false,
-    "Period": 1.0,
-    "Intensity": "10, 10, 10, 1",
+    "Enabled": true,
+    "Period": 0.1,
+    "Intensity": 300.0,
+    "Color": "255, 156, 73, 255",
     "InnerRadius": 0.0,
-    "OuterRadius": 5.0,
+    "OuterRadius": 1.0,
     "PulseString": "m",
-    "LightStyle": "const",
-    "LightType": "omni",
-    "SpotAngleX": 60.0,
-    "SpotAngleY": 60.0,
-    "LightMask": "",
-    "OffsetDirection": "none",
-    "OffsetFactor": 0.0
+    "LightStyle": "saw",
+    "OffsetDirection": "localForward",
+    "OffsetFactor": 0.25
   },
   "CameraShake": {
     "$type": "IronStar.SFX.FXCameraShake, IronStar",

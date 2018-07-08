@@ -9,17 +9,14 @@
   },
   "LightStage": {
     "$type": "IronStar.SFX.FXLightStage, IronStar",
-    "Enabled": false,
-    "Period": 1.0,
-    "Intensity": "10, 10, 10, 1",
+    "Enabled": true,
+    "Period": 0.2,
+    "Intensity": 500.0,
+    "Color": "255, 113, 26, 255",
     "InnerRadius": 0.0,
     "OuterRadius": 5.0,
     "PulseString": "m",
-    "LightStyle": "inverseSaw",
-    "LightType": "omni",
-    "SpotAngleX": 60.0,
-    "SpotAngleY": 60.0,
-    "LightMask": "",
+    "LightStyle": "saw",
     "OffsetDirection": "none",
     "OffsetFactor": 0.0
   },
@@ -49,7 +46,7 @@
     "Scattering": 1.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
-      "Distribution": "gauss",
+      "Distribution": "uniform",
       "MinLifetime": 0.1,
       "MaxLifetime": 0.3
     },

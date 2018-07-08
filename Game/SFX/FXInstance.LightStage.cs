@@ -58,7 +58,7 @@ namespace IronStar.SFX {
 
 				light.RadiusInner	=	stageDesc.InnerRadius;
 				light.RadiusOuter	=	stageDesc.OuterRadius;
-				light.Intensity     =   stageDesc.Intensity;
+				light.Intensity     =	stageDesc.Color.ToColor4() * stageDesc.Intensity;
 
 				this.period			=	stageDesc.Period;
 				this.looped         =   looped;
@@ -144,7 +144,7 @@ namespace IronStar.SFX {
 
 				var pulse = GetPulseString( stageDesc.PulseString, frac );
 
-				light.Intensity = stageDesc.Intensity * scale * intensityScale * pulse;
+				light.Intensity = stageDesc.Color.ToColor4() * stageDesc.Intensity * scale * intensityScale * pulse;
 			}
 		}
 

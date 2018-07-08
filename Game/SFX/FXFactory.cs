@@ -431,7 +431,7 @@ namespace IronStar.SFX {
 		public override string ToString()
 		{
 			if ( Enabled ) {
-				return string.Format( "R:{0} I:[{1}{2}{3}]", OuterRadius, Intensity.Red, Intensity.Green, Intensity.Blue );
+				return string.Format( "R:{0} I:[{1}{2}{3}]", OuterRadius, Color.R, Color.G, Color.B );
 			} else {
 				return string.Format( "Disabled" );
 			}
@@ -446,7 +446,10 @@ namespace IronStar.SFX {
 		public float Period { get; set; } = 1;
 
 		[Description( "Light intensity" )]
-		public Color4 Intensity { get; set; } = new Color4(10,10,10,1);
+		public float Intensity { get; set; } = 100;
+
+		[Description( "Light intensity" )]
+		public Color Color { get; set; } = Color.White;
 
 		[XmlAttribute]
 		[Description( "Light radius" )]
@@ -463,22 +466,6 @@ namespace IronStar.SFX {
 		[XmlAttribute]
 		[Description( "Light style" )]
 		public FXLightStyle LightStyle { get; set; } = FXLightStyle.Const;
-
-		[XmlAttribute]
-		[Description( "Light type: omni-light or spot-light with shadow" )]
-		public FXLightType LightType { get; set; } = FXLightType.Omni;
-
-		[XmlAttribute]
-		[Description( "Spot angle" )]
-		public float SpotAngleX { get; set; } = 60.0f;
-
-		[XmlAttribute]
-		[Description( "Spot angle" )]
-		public float SpotAngleY { get; set; } = 60.0f;
-
-		[XmlAttribute]
-		[Description( "Spot light mask" )]
-		public string LightMask { get; set; } = "";
 
 		[XmlAttribute]
 		[Description( "Offset direction" )]

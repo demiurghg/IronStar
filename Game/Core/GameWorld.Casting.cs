@@ -86,6 +86,26 @@ namespace IronStar.Core {
 			{
 				if (skipEntity==null) return true;
 
+				if (bpe is StaticCollidable) {
+
+					return true;
+
+				} else if (bpe is ConvexCollidable) {
+
+					var hitEnt = (bpe as ConvexCollidable).Entity.Tag as Entity;
+
+					if (hitEnt==null) {
+						return true;
+					}
+
+					if (hitEnt==skipEntity) {
+						return false;
+					}
+
+				} else {
+					return false;
+				}
+
 				ConvexCollidable cc = bpe as ConvexCollidable;
 				if (cc==null) return true;
 					

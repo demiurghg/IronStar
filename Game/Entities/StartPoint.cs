@@ -46,7 +46,7 @@ namespace IronStar.Entities {
 		}
 
 
-		public override void Draw( DebugRender dr, Matrix transform, Color color )
+		public override void Draw( DebugRender dr, Matrix transform, Color color, bool selected )
 		{
 			var p0 = transform.TranslationVector;
 			var p1 = transform.TranslationVector + Vector3.Up*2;

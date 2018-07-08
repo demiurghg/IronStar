@@ -31,7 +31,7 @@ namespace IronStar.Core {
 		/// <param name="dr"></param>
 		/// <param name="transform"></param>
 		/// <param name="color"></param>
-		public virtual void Draw ( DebugRender dr, Matrix transform, Color color )
+		public virtual void Draw ( DebugRender dr, Matrix transform, Color color, bool selected )
 		{
 			dr.DrawBox(	MapEditor.DefaultBox, transform, color );
 		}

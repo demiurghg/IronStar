@@ -418,7 +418,7 @@ namespace IronStar.Editor {
 
 			var dr = rs.RenderWorld.Debug;
 
-			dr.DrawBox( map.Environment.IrradianceVolume, Color.Cyan );
+			//dr.DrawBox( map.Environment.IrradianceVolume, Color.Cyan );
 
 			//
 			//	Update nodes :

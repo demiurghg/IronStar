@@ -55,6 +55,7 @@ namespace IronStar.Mapping {
 		public override void SpawnNode( GameWorld world )
 		{
 			Entity = world.Spawn( FactoryName );
+			Entity.TargetName = TargetName;
 			Entity?.Teleport( TranslateVector, RotateQuaternion );
 		}
 
@@ -77,12 +78,14 @@ namespace IronStar.Mapping {
 		public override void DrawNode( GameWorld world, DebugRender dr, Color color, bool selected )
 		{
 			dr.DrawBasis( WorldMatrix, 1 );
-			Factory.Draw( dr, WorldMatrix, color );
+			Factory.Draw( dr, WorldMatrix, color, selected );
+
+			var factoryTarget	=	Factory.GetType().GetProperty("Target")?.GetValue(Factory) as string;
 
 			if (selected) {
 				if (Entity!=null) {
-				
-					var targets = world.GetTargets(TargetName);
+
+					var targets = world.GetTargets(factoryTarget);
 
 					if (targets.Any()) {
 						dr.DrawBox( new BoundingBox(0.5f, 0.5f, 0.5f), WorldMatrix, Color.Yellow );

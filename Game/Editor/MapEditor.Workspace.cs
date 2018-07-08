@@ -87,6 +87,22 @@ namespace IronStar.Editor {
 
 			//--------------------------------------------------------------------------
 
+			var simLabel			=	lowerShelf.AddRIndicator("", 96 );
+			//simLabel.TextAlignment	=	Alignment.MiddleCenter;
+
+			simLabel.Tick += (s,e) => {
+				var sim    = this.EnableSimulation;
+
+				//var text1	=	string.Format("SIMULATION\r\n{0} entities", World.GetEntities().Count());
+				//var text2	=	string.Format("EDITOR MODE\r\n{0} nodes",    Map.Nodes.Count);
+
+				simLabel.ForeColor	=	sim ? ColorTheme.ColorRed : ColorTheme.ColorGreen;
+				simLabel.Text		=	sim ? "SIMULATION\r\n\r\n" : "EDITOR MODE\r\n\r\n";
+			};
+
+			//-----------
+
+			lowerShelf.AddRSplitter();
 			var snapLabel	=	lowerShelf.AddRIndicator("", 200 );
 			snapLabel.Tick += (s,e) => {
 				snapLabel.Text = string.Format(
@@ -98,6 +114,8 @@ namespace IronStar.Editor {
 				  RotateToolSnapEnable ? RotateToolSnapValue.ToString("000.00") : "Disabled", 
 				  camera.Fov,0 );
 			};
+
+			//-----------
 
 			lowerShelf.AddRSplitter();
 			var statLabel	=	lowerShelf.AddRIndicator("", 200 );

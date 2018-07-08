@@ -50,12 +50,12 @@ namespace IronStar.Entities {
 
 
 
-		public override void Draw( DebugRender dr, Matrix transform, Color color )
+		public override void Draw( DebugRender dr, Matrix transform, Color color, bool selected )
 		{
 			if (factory==null) {
-				base.Draw( dr, transform, color );
+				base.Draw( dr, transform, color, selected );
 			} else {
-				factory.Draw( dr, transform, color );
+				factory.Draw( dr, transform, color, selected );
 			}
 		}
 

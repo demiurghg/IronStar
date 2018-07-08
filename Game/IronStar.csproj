@@ -77,8 +77,10 @@
     <Compile Include="Entities\ProjectileFactory.cs" />
     <Compile Include="Entities\AmmoBox.cs" />
     <Compile Include="Entities\AmmoBoxFactory.cs" />
+    <Compile Include="Entities\TriggerArea.cs" />
     <Compile Include="Items\WeaponLoader.cs" />
     <Compile Include="Items\Weapon.cs" />
+    <Compile Include="Physics\DetectorArea.cs" />
     <Compile Include="Physics\DynamicBox.cs" />
     <Compile Include="ShooterCampaign.cs" />
     <Compile Include="Client\GameCamera.cs" />

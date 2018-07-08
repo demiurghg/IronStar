@@ -25,6 +25,7 @@ using BEPUphysics.EntityStateManagement;
 using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.PositionUpdating;
 using BEPUphysics.PositionUpdating;
+using BEPUphysics.CollisionRuleManagement;
 
 namespace IronStar.Physics {
 	public class DynamicBox {
@@ -43,7 +44,7 @@ namespace IronStar.Physics {
 		/// <param name="height"></param>
 		/// <param name="depth"></param>
 		/// <param name="mass"></param>
-		public DynamicBox ( Entity entity, GameWorld world, float width, float height, float depth, float mass )
+		public DynamicBox ( Entity entity, GameWorld world, float width, float height, float depth, float mass, bool noSolver = false )
 		{
 			this.entity		=	entity;
 			this.space		=	world.PhysSpace;
@@ -55,13 +56,16 @@ namespace IronStar.Physics {
 			box				=	new Box( ms, width, height, depth, mass );
 			box.PositionUpdateMode	=	PositionUpdateMode.Continuous;
 
+			if (noSolver) {
+				box.CollisionInformation.CollisionRules.Personal = CollisionRule.NoSolver;
+			}
+
 			box.Tag			=	entity;
 
-			box.CollisionInformation.Events.InitialCollisionDetected += Events_InitialCollisionDetected;
+			box.CollisionInformation.Events.InitialCollisionDetected +=Events_InitialCollisionDetected;
 
 			space.Add( box );
 		}
-
 
 		/// <summary>
 		/// 

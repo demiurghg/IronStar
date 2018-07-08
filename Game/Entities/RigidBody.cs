@@ -171,13 +171,6 @@ namespace IronStar.Entities {
 		}
 
 
-		public override void Touch( Entity other, Vector3 touchPoint )
-		{
-			uint idA = this.ID;
-			uint idB = (other==null) ? 0 : other.ID;
-			Log.Message("#{0} touched by #{1}", idA, idB );
-		}
-
 
 		public override void Teleport( Vector3 position, Quaternion orient )
 		{

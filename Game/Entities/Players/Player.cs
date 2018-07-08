@@ -31,7 +31,7 @@ namespace IronStar.Entities.Players {
 		int					armor;
 
 		float cooldown;
-		string currentWeapon = "plasmagun";
+		string currentWeapon = "machinegun";
 		string pendingWeapon;
 
 		
@@ -115,13 +115,6 @@ namespace IronStar.Entities.Players {
 			if (health<=0) {
 				Log.Warning("KILL!!!!!!!!");
 			}
-		}
-
-
-
-		public override void Touch( Entity other, Vector3 touchPoint )
-		{
-			Log.Message("{0} touched by {1}", this, other );
 		}
 
 

@@ -26,6 +26,8 @@ namespace IronStar.Physics {
 		public readonly Game	Game;
 		public readonly GameWorld World;
 
+		HashSet<Tuple<Entity,Entity>> touchEvents;
+
 
 		public Space PhysSpace {
 			get {
@@ -54,6 +56,8 @@ namespace IronStar.Physics {
 			Game		=	world.Game;
 
 			Gravity		=	gravity;
+
+			touchEvents	=	new HashSet<Tuple<Entity, Entity>>();
 		}
 
 
@@ -66,7 +70,11 @@ namespace IronStar.Physics {
 		{
 			var entity1 = pair.EntityA?.Tag as Entity;
 			var entity2 = pair.EntityB?.Tag as Entity;
-			entity1?.Touch( entity2, Vector3.Zero );
+
+			touchEvents.Add( new Tuple<Entity, Entity>( entity1, entity2 ) );
+			touchEvents.Add( new Tuple<Entity, Entity>( entity2, entity1 ) );
+
+			//entity1?.Touch( entity2, Vector3.Zero );
 		}
 
 
@@ -77,10 +85,12 @@ namespace IronStar.Physics {
 		/// <param name="dt"></param>
 		public void Update ( float elapsedTime )
 		{
+			//	update kinematics :
 			foreach ( var k in kinematics ) {
 				k.Update();
 			}
 
+			//	update physical space :
 			if (elapsedTime==0) {
 				physSpace.TimeStepSettings.MaximumTimeStepsPerFrame = 1;
 				physSpace.TimeStepSettings.TimeStepDuration = 1/1024.0f;
@@ -92,6 +102,12 @@ namespace IronStar.Physics {
 			physSpace.TimeStepSettings.MaximumTimeStepsPerFrame = 6;
 			physSpace.TimeStepSettings.TimeStepDuration = 1.0f/60.0f;
 			physSpace.Update(dt);
+
+			//	update touch events :
+			foreach ( var touchEvent in touchEvents ) {
+				touchEvent.Item1?.Touch( touchEvent.Item2, Vector3.Zero );
+			}
+			touchEvents.Clear();
 		}
 
 

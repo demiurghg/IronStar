@@ -47,7 +47,7 @@ namespace IronStar.Entities {
 		}
 
 
-		public override void Draw( DebugRender dr, Matrix transform, Color color )
+		public override void Draw( DebugRender dr, Matrix transform, Color color, bool selected )
 		{
 			var w = Width/2;
 			var h = Height/2;

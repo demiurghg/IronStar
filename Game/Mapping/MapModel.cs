@@ -122,6 +122,8 @@ namespace IronStar.Mapping {
 				var s = MathConverter.Convert( new Vector3( Scale, Scale, Scale ) );
 				staticMesh.WorldTransform = new BEPUTransform( s, q, p );
 
+				staticMesh.CollisionRules.Group	=	world.Physics.StaticGroup;
+
 				collidables[i] =	staticMesh;
 	
 				pm.PhysSpace.Add( staticMesh );

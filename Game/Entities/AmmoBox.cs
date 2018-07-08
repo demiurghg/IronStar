@@ -49,7 +49,7 @@ namespace IronStar.Entities {
 			var mass		=	factory.Mass;
 			var model		=	factory.Model;
 
-			box				=	new DynamicBox( this, world, width, height, depth, mass );
+			box				=	new DynamicBox( this, world, width, height, depth, mass, true );
 
 			this.Model		=	world.Atoms[ model ];
 		}

@@ -15,6 +15,7 @@ using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
 using BEPUphysics.NarrowPhaseSystems.Pairs;
+using BEPUphysics.CollisionRuleManagement;
 
 namespace IronStar.Physics {
 	public class PhysicsManager {
@@ -27,6 +28,12 @@ namespace IronStar.Physics {
 		public readonly GameWorld World;
 
 		HashSet<Tuple<Entity,Entity>> touchEvents;
+
+		public CollisionGroup StaticGroup		= new CollisionGroup();
+		public CollisionGroup KinematicGroup	= new CollisionGroup();
+		public CollisionGroup DymamicGroup		= new CollisionGroup();
+		public CollisionGroup PickupGroup		= new CollisionGroup();
+		public CollisionGroup CharacterGroup	= new CollisionGroup();
 
 
 		public Space PhysSpace {
@@ -58,6 +65,12 @@ namespace IronStar.Physics {
 			Gravity		=	gravity;
 
 			touchEvents	=	new HashSet<Tuple<Entity, Entity>>();
+
+			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( StaticGroup,	CharacterGroup ), CollisionRule.Normal );
+			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( StaticGroup,	DymamicGroup   ), CollisionRule.Normal );
+			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( CharacterGroup, DymamicGroup   ), CollisionRule.Normal );
+			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( PickupGroup,	StaticGroup    ), CollisionRule.Normal );
+			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( PickupGroup,	CharacterGroup ), CollisionRule.NoSolver );
 		}
 
 

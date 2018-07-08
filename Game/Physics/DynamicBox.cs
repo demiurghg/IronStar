@@ -56,13 +56,23 @@ namespace IronStar.Physics {
 			box				=	new Box( ms, width, height, depth, mass );
 			box.PositionUpdateMode	=	PositionUpdateMode.Continuous;
 
+			
+			/*CollisionRules.CollisionGroupRules.Add(
+
 			if (noSolver) {
-				box.CollisionInformation.CollisionRules.Personal = CollisionRule.NoSolver;
-			}
+				box.CollisionInformation.CollisionRules.Group
+			}*/
+
+
 
 			box.Tag			=	entity;
 
 			box.CollisionInformation.Events.InitialCollisionDetected +=Events_InitialCollisionDetected;
+			box.CollisionInformation.CollisionRules.Group = world.Physics.DymamicGroup;
+
+			if (noSolver) {
+				box.CollisionInformation.CollisionRules.Group = world.Physics.PickupGroup;
+			}
 
 			space.Add( box );
 		}

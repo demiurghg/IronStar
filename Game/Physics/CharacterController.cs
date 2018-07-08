@@ -73,6 +73,8 @@ namespace IronStar.Physics {
 
 			controller.Body.CollisionInformation.Events.InitialCollisionDetected +=Events_InitialCollisionDetected;
 
+			controller.Body.CollisionInformation.CollisionRules.Group = world.Physics.CharacterGroup;
+
 			space.Add( controller );
 		}
 

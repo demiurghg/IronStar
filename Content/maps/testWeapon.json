@@ -431,9 +431,9 @@
         "Frozen": false,
         "TranslateX": 0.261560142,
         "TranslateY": -0.422406971,
-        "TranslateZ": -5.688198,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
+        "TranslateZ": -8.83466,
+        "RotateYaw": 90.0,
+        "RotatePitch": 10.0,
         "RotateRoll": 0.0
       },
       {
@@ -446,12 +446,12 @@
         "FactoryName": "g1Z0CqJY",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -0.159954563,
-        "TranslateY": -0.760475457,
-        "TranslateZ": -0.0459542759,
-        "RotateYaw": 70.29926,
-        "RotatePitch": -0.00364451273,
-        "RotateRoll": -0.062004853
+        "TranslateX": -0.00780964736,
+        "TranslateY": -0.7607392,
+        "TranslateZ": -0.0194269065,
+        "RotateYaw": 70.25452,
+        "RotatePitch": 0.000119347766,
+        "RotateRoll": -9.925879E-05
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -1970,6 +1970,128 @@
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.FuncShooterFactory, IronStar",
+          "Weapon": "machinegun",
+          "Trigger": true,
+          "Once": false,
+          "Start": false
+        },
+        "FactoryName": "gaRUu4vJ",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.261560142,
+        "TranslateY": -0.422406971,
+        "TranslateZ": -5.688198,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "ammoBoxBullets"
+        },
+        "FactoryName": "1nvF6LAy",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 2.0181098,
+        "TranslateY": -0.7607391,
+        "TranslateZ": -0.00978926849,
+        "RotateYaw": 70.32139,
+        "RotatePitch": -0.000112012895,
+        "RotateRoll": -4.97816327E-05
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "ammoBoxBullets"
+        },
+        "FactoryName": "4bPf07Wr",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 4.01810837,
+        "TranslateY": -0.760739148,
+        "TranslateZ": -0.009939475,
+        "RotateYaw": 70.30305,
+        "RotatePitch": -0.000130800952,
+        "RotateRoll": -0.000110330737
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "ammoBoxBullets"
+        },
+        "FactoryName": "ZOJS8AUn",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 5.98294544,
+        "TranslateY": -0.7607121,
+        "TranslateZ": -0.00322459382,
+        "RotateYaw": 69.95888,
+        "RotatePitch": -0.00196032762,
+        "RotateRoll": 0.000146854116
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "ammoBoxBullets"
+        },
+        "FactoryName": "eNtTdfwe",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 8.008204,
+        "TranslateY": -0.76073873,
+        "TranslateZ": 0.019110132,
+        "RotateYaw": 70.8160248,
+        "RotatePitch": -0.000127991545,
+        "RotateRoll": 3.89199267E-05
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "ammoBoxBullets"
+        },
+        "FactoryName": "G5yTCM8J",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 10.0079737,
+        "TranslateY": -0.7607387,
+        "TranslateZ": 2.01824975,
+        "RotateYaw": 69.17212,
+        "RotatePitch": -0.000126387211,
+        "RotateRoll": 1.52026505E-05
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "ammoBoxBullets"
+        },
+        "FactoryName": "dsklWoA3",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 9.954576,
+        "TranslateY": -0.7614764,
+        "TranslateZ": 3.97211981,
+        "RotateYaw": 67.48448,
+        "RotatePitch": 0.012937922,
+        "RotateRoll": 0.040853776
       }
     ]
   }

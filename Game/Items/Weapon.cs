@@ -59,7 +59,7 @@ namespace IronStar.Items {
 		[AECategory("Shooting")]
 		public int ProjectileCount { 
 			get { return projectileCount; }
-			set { projectileCount = MathUtil.Clamp(value, 0, 100); }
+			set { projectileCount = MathUtil.Clamp(value, 1, 100); }
 		}
 		int projectileCount = 1;
 
@@ -75,8 +75,12 @@ namespace IronStar.Items {
 
 		[AECategory("Beam")]
 		[AEClassname("fx")]
-		public string HitFX { get; set; }
+		public string HitFX { get; set; } = "";
 
+
+		[AECategory("Ammo")]
+		[AEClassname("items")]
+		public string AmmoItem { get; set; } = "";
 
 
 		/// <summary>

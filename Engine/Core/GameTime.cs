@@ -40,6 +40,11 @@ namespace Fusion.Core {
 		public	float ElapsedSec { get { return (float)elapsed.TotalSeconds; } }
 
 		/// <summary>
+		/// Elapsed time in milliseconds
+		/// </summary>
+		public int Milliseconds { get { return (int)(elapsed.TotalMilliseconds); } }
+
+		/// <summary>
 		/// Frames per second.
 		/// </summary>
 		public float Fps { get { return 1 / ElapsedSec; } }

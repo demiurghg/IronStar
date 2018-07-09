@@ -24,17 +24,23 @@ using Fusion.Core.IniParser.Model;
 using System.ComponentModel;
 using Fusion.Core.Shell;
 
+
 namespace IronStar.Items {
 
 
 	public abstract class ItemFactory {
 
-		[AEIgnore]
+		[Browsable(false)]
+		[Description("Unique item name")]
 		public string Name { get; set; }
 
 		[AECategory("Inventory")]
 		[Description("Displayable item name")]
 		public string NiceName { get; set; } = "Unnamed Item";
+
+		[AECategory("Inventory")]
+		[Description("Item HUD icon")]
+		public string Icon { get; set; } = "";
 
 		/// <summary>
 		/// Creates instance of item.
@@ -64,3 +70,4 @@ namespace IronStar.Items {
 		}
 	}
 }
+

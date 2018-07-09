@@ -28,5 +28,28 @@ namespace IronStar.Entities {
 		/// <returns></returns>
 		Vector3 GetWeaponPOV ( bool useViewOffset );
 
+		#if false
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="ammo"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		bool TryAddItem ( string item, short count );
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="health"></param>
+		/// <returns></returns>
+		bool TryAddHealth ( short health );
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="armor"></param>
+		/// <returns></returns>
+		bool TryAddAmmo ( short armor );
+		#endif
 	}
 }

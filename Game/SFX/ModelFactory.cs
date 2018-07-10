@@ -18,7 +18,7 @@ using Fusion.Engine.Graphics;
 using Fusion.Core.Shell;
 
 namespace IronStar.SFX {
-	public class ModelFactory : IPrecachable {
+	public class ModelFactory : JsonObject, IPrecachable {
 
 		[AECategory( "Appearance" )]
 		[Description( "Path to FBX scene" )]
@@ -118,22 +118,6 @@ namespace IronStar.SFX {
 
 			foreach ( var clip in GetClips() ) {
 				content.Precache<Scene>(clip);
-			}
-		}
-	}
-
-
-
-	/// <summary>
-	/// Scene loader
-	/// </summary>
-	[ContentLoader( typeof( ModelFactory ) )]
-	public sealed class ModelDescriptorLoader : ContentLoader {
-
-		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
-		{
-			using ( var sr = new StreamReader( stream ) ) {
-				return content.Game.GetService<Factory>().ImportJson( stream );
 			}
 		}
 	}

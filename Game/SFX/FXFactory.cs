@@ -24,7 +24,7 @@ using Fusion.Core.Shell;
 
 namespace IronStar.SFX {
 
-	public partial class FXFactory : IPrecachable {
+	public partial class FXFactory : JsonObject, IPrecachable {
 
 		[AECategory("General")]
 		public float Period { get; set; } = 1;

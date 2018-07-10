@@ -170,7 +170,7 @@ namespace IronStar.Entities.Players {
 
 			if ( userCommand.Action.HasFlag( UserAction.Attack ) ) {
 
-				var weapon = LoadWeapon( currentWeapon );
+				var weapon = Weapon.Load( World.Content, currentWeapon );
 
 				weapon.Fire( this, World );
 
@@ -201,12 +201,6 @@ namespace IronStar.Entities.Players {
 		{
 			float height = EntityState.HasFlag(EntityState.Crouching) ? GameConfig.PovHeightCrouch : GameConfig.PovHeightStand;
 			return Position + Vector3.Up * height;
-		}
-
-
-		public Weapon LoadWeapon ( string name )
-		{
-			return World.Content.Load( @"weapon\" + name, Weapon.EmptyWeapon );
 		}
 	}
 }

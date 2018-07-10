@@ -27,10 +27,16 @@ using Fusion.Core.Shell;
 
 namespace IronStar.Items {
 
-	public partial class Weapon {
+	public partial class Weapon : JsonObject {
 
 		static readonly public Weapon EmptyWeapon = new Weapon();
 
+		static public Weapon Load ( ContentManager content, string name )
+		{
+			var weapon = content.Load( @"items\" + name, Weapon.EmptyWeapon );
+				weapon = (weapon as Weapon) ?? Weapon.EmptyWeapon;
+			return weapon;
+		}
 
 		readonly Random rand = new Random();
 

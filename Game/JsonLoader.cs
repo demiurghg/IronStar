@@ -10,7 +10,10 @@ using Fusion.Core.Extensions;
 
 namespace IronStar {
 
-	[ContentLoader( typeof( object ) )]
+	public class JsonObject {
+	}
+
+	[ContentLoader( typeof( JsonObject ) )]
 	public sealed class JsonLoader : ContentLoader {
 
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )

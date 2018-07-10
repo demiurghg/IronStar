@@ -32,7 +32,7 @@ namespace IronStar.Entities {
 
 		public FuncShooter( uint id, short clsid, GameWorld world, FuncShooterFactory factory ) : base(id, clsid, world, factory)
 		{
-			weapon	=	World.Content.Load( @"weapon\" + factory.Weapon, (Weapon)null );
+			weapon	=	Weapon.Load( world.Content, factory.Weapon );
 			trigger	=	factory.Trigger;
 			once	=	factory.Once;
 			enabled	=	factory.Start;
@@ -123,7 +123,7 @@ namespace IronStar.Entities {
 	/// </summary>
 	public class FuncShooterFactory : EntityFactory {
 
-		[AEClassname("weapon")]
+		[AEClassname("items")]
 		public string Weapon { get; set; } = "";
 
 		public bool Trigger { get; set; }

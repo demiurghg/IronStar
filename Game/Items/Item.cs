@@ -15,7 +15,7 @@ namespace IronStar.Items {
 	/// Item is stateless. State is kept by IShooter implementation.
 	/// 
 	/// </summary>
-	public abstract class Item {
+	public abstract class Item : JsonObject {
 
 		/// <summary>
 		/// Called when player attempts to picks the item up.

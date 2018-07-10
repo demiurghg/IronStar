@@ -21,7 +21,7 @@ using Fusion.Core.Shell;
 
 namespace IronStar.Core {
 
-	public abstract class EntityFactory {
+	public abstract class EntityFactory : JsonObject {
 
 		public abstract Entity Spawn ( uint id, short clsid, GameWorld world );
 
@@ -58,17 +58,6 @@ namespace IronStar.Core {
 				factories = Misc.GetAllSubclassesOf( typeof(EntityFactory) );
 			}
 			return factories;
-		}
-	}
-
-
-
-	[ContentLoader( typeof( EntityFactory ) )]
-	public sealed class EntityFactoryLoader : ContentLoader {
-
-		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
-		{
-			return content.Game.GetService<Factory>().ImportJson( stream );
 		}
 	}
 }

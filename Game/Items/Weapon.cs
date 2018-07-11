@@ -29,6 +29,10 @@ namespace IronStar.Items {
 
 	public partial class Weapon : JsonObject {
 
+		public const int	WeaponDropTime			=	250;
+		public const int	WeaponRaiseTime			=	250;
+		public const int	WeaponNoAmmoClickTime	=	250;
+
 		static readonly public Weapon EmptyWeapon = new Weapon();
 
 		static public Weapon Load ( ContentManager content, string name )
@@ -100,7 +104,7 @@ namespace IronStar.Items {
 
 			var shooter = (IShooter)attacker;
 
-			if (!shooter.TrySetCooldown( cooldown / 1000.0f )) {
+			if (!shooter.TrySetCooldown( cooldown )) {
 				return false;
 			}
 
@@ -122,6 +126,18 @@ namespace IronStar.Items {
 				return true;
 			}
 		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="shooter"></param>
+		/// <param name="gameTime"></param>
+		public void UpdateWeapon ( IShooter shooter, Entity attacker, GameWorld world, GameTime gameTime )
+		{
+		}
+
 
 
 

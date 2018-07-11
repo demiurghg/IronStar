@@ -26,9 +26,21 @@ namespace IronStar.Entities {
 		readonly bool once;
 		bool enabled;
 
-		float cooldown = 0;
+		int			weaponTimer;
+		WeaponState weaponState;
 
 		int activationCount = 0;
+
+		public int WeaponTime {
+			get { return weaponTimer; }
+			set	{ weaponTimer = value; }
+		}
+
+		public WeaponState WeaponState {
+			get { return weaponState; }
+			set{ weaponState = value; }
+		}
+
 
 		public FuncShooter( uint id, short clsid, GameWorld world, FuncShooterFactory factory ) : base(id, clsid, world, factory)
 		{
@@ -68,10 +80,10 @@ namespace IronStar.Entities {
 
 		public override void Update( GameTime gameTime )
 		{
-			float elapsedTime = gameTime.ElapsedSec;
+			int msec = gameTime.Milliseconds;
 
 			if (cooldown>0) {
-				cooldown -= elapsedTime;
+				cooldown -= msec;
 			}
 
 			if (weapon==null) {
@@ -92,27 +104,27 @@ namespace IronStar.Entities {
 			base.Kill();
 		}
 
-		
-		public bool TrySetCooldown( float cooldown )
+
+		public AttackResult TryAttack ( int cooldown, string ammo, int count )
 		{
 			if (this.cooldown>0) {
-				return false;
+				return AttackResult.FailCooldown;
 			} else {
 				this.cooldown = cooldown;
-				return true;
+				return AttackResult.Success;
 			}
 		}
-
-
-		public bool TryConsumeAmmo( string ammoClassname, short count )
-		{
-			return true;
-		}
+		
 
 
 		public Vector3 GetWeaponPOV(bool useViewOffset)
 		{
 			return Position;
+		}
+
+		public bool TryConsumeAmmo(string ammo, short count)
+		{
+			throw new NotImplementedException();
 		}
 	}
 

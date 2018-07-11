@@ -27,12 +27,23 @@ namespace IronStar.Entities.Players {
 
 		CharacterController	controller;
 		Inventory			inventory;
+		WeaponState			weaponState;
+		int					weaponTimer;
 		int					health;
 		int					armor;
 
-		float cooldown;
 		string currentWeapon = "machinegun";
-		string pendingWeapon;
+		string pendingWeapon = "";
+
+		public int WeaponTime {
+			get { return weaponTimer; }
+			set	{ weaponTimer = value; }
+		}
+
+		public WeaponState WeaponState {
+			get { return weaponState; }
+			set{ weaponState = value; }
+		}
 
 		
 		/// <summary>
@@ -127,14 +138,10 @@ namespace IronStar.Entities.Players {
 			//	update physical character controller :
 			controller.Update();
 
-			//	decrease cooldown.
-			//	reset cooldown to zero only on next frame!
-			if (cooldown>0) {
-				cooldown -= gameTime.ElapsedSec;
-			} else if (cooldown<0) {
-				cooldown = 0;
-			}
+			//	update weapon state :
+			UpdateWeaponState( gameTime );
 
+			//	update player's entity states :
 			if (controller.Crouching) {
 				EntityState |=	EntityState.Crouching;
 			} else {
@@ -175,16 +182,31 @@ namespace IronStar.Entities.Players {
 				weapon.Fire( this, World );
 
 			}
+
+			if ( userCommand.Weapon != 0 ) {
+				switch (userCommand.Weapon) {
+					case 1: pendingWeapon	=	"weapon_machinegun"	; break;
+					case 2: pendingWeapon	=	"weapon_plasmagun"	; break;
+					case 3: pendingWeapon	=	"machinegun"		; break;
+					case 4: pendingWeapon	=	"machinegun"		; break;
+					case 5: pendingWeapon	=	"machinegun"		; break;
+					case 6: pendingWeapon	=	"machinegun"		; break;
+					case 7: pendingWeapon	=	"machinegun"		; break;
+					case 8: pendingWeapon	=	"machinegun"		; break;
+					default: pendingWeapon	=	"";	break;
+				}
+			}
 		}
 
 
 
-		public bool TrySetCooldown( float cooldown )
+		public bool TrySetCooldown( int cooldown )
 		{
-			if (this.cooldown>0) {
+			if (this.weaponTimer>0) {
 				return false;
 			} else {
-				this.cooldown += cooldown;
+				weaponState = WeaponState.Cooldown; 
+				this.weaponTimer += cooldown;
 				return true;
 			}
 		}
@@ -201,6 +223,42 @@ namespace IronStar.Entities.Players {
 		{
 			float height = EntityState.HasFlag(EntityState.Crouching) ? GameConfig.PovHeightCrouch : GameConfig.PovHeightStand;
 			return Position + Vector3.Up * height;
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="gameTime"></param>
+		public void UpdateWeaponState ( GameTime gameTime )
+		{
+			if (!string.IsNullOrWhiteSpace( pendingWeapon )) {
+				if (weaponTimer<=0) {
+					WeaponState.
+				}
+			}
+
+			switch  (weaponState) {
+				case WeaponState.Idle: 
+					weaponTimer = 0; 
+					break;
+
+				case WeaponState.Cooldown:
+					if (weaponTimer<=0) {
+						weaponState = WeaponState.Idle;
+					} else {
+						weaponTimer -= gameTime.Milliseconds;
+					}
+					break;
+
+				case WeaponState.Drop:
+
+					break;
+
+				case WeaponState.Raise:
+
+					break;
+			}
 		}
 	}
 }

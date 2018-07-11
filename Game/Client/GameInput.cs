@@ -52,6 +52,15 @@ namespace IronStar.Client {
 		[Config] public Keys	ReloadWeapon	{ get; set; }	=	Keys.R;
 		[Config] public Keys	ThrowGrenade	{ get; set; }	=	Keys.G;
 																
+		[Config] public Keys	Weapon1			{ get; set; }	=	Keys.D1;
+		[Config] public Keys	Weapon2			{ get; set; }	=	Keys.D2;	
+		[Config] public Keys	Weapon3			{ get; set; }	=	Keys.D3;
+		[Config] public Keys	Weapon4			{ get; set; }	=	Keys.D4;
+		[Config] public Keys	Weapon5			{ get; set; }	=	Keys.D5;
+		[Config] public Keys	Weapon6			{ get; set; }	=	Keys.D6;	
+		[Config] public Keys	Weapon7			{ get; set; }	=	Keys.D7;
+		[Config] public Keys	Weapon8			{ get; set; }	=	Keys.D8;
+																
 
 		public bool EnableControl {
 			get; set;
@@ -130,6 +139,17 @@ namespace IronStar.Client {
 			if (Game.Keyboard.IsKeyDown( ThrowGrenade	)) flags |= UserAction.ThrowGrenade;
 			if (Game.Keyboard.IsKeyDown( MeleeAttack	)) flags |= UserAction.MeleeAtack;
 			if (Game.Keyboard.IsKeyDown( ReloadWeapon	)) flags |= UserAction.ReloadWeapon;
+
+			userCommand.Weapon = 0;
+
+			if (Game.Keyboard.IsKeyDown( Weapon1	)) userCommand.Weapon = 1;
+			if (Game.Keyboard.IsKeyDown( Weapon2	)) userCommand.Weapon = 2;
+			if (Game.Keyboard.IsKeyDown( Weapon3	)) userCommand.Weapon = 3;
+			if (Game.Keyboard.IsKeyDown( Weapon4	)) userCommand.Weapon = 4;
+			if (Game.Keyboard.IsKeyDown( Weapon5	)) userCommand.Weapon = 5;
+			if (Game.Keyboard.IsKeyDown( Weapon6	)) userCommand.Weapon = 6;
+			if (Game.Keyboard.IsKeyDown( Weapon7	)) userCommand.Weapon = 7;
+			if (Game.Keyboard.IsKeyDown( Weapon8	)) userCommand.Weapon = 8;
 
 			//	http://eliteownage.com/mousesensitivity.html 
 			//	Q3A: 16200 dot per 360 turn:

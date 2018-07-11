@@ -12,6 +12,5 @@ namespace IronStar.Core {
 		Crouching	=	0x0001,
 		Zooming		=	0x0002,
 		HasTraction	=	0x0004,
-
 	}
 }

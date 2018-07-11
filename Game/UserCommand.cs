@@ -26,6 +26,7 @@ namespace IronStar {
 
 		public UserAction Action;
 
+		public byte	 Weapon;
 
 		public float DYaw;
 		public float DPitch;
@@ -57,6 +58,7 @@ namespace IronStar {
 				writer.Write( userCmd.MoveUp		);
 
 				writer.Write( (byte)userCmd.Action	);
+				writer.Write( (byte)userCmd.Weapon	);
 			}
 
 			return array;
@@ -83,6 +85,7 @@ namespace IronStar {
 				userCmd.MoveUp		=	reader.ReadSingle();
 
 				userCmd.Action		=	(UserAction)reader.ReadByte();
+				userCmd.Weapon		=	reader.ReadByte();
 
 				return userCmd;
 			}

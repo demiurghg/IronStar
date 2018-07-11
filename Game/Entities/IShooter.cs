@@ -6,27 +6,46 @@ using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 
 namespace IronStar.Entities {
-	public interface IShooter {
-		
-		/// <summary>
-		/// Sets weapon cooldown
-		/// </summary>
-		/// <param name="cooldownPeriod"></param>
-		bool TrySetCooldown ( float cooldown );
 
-		/// <summary>
-		/// Tries to consume ammo.
-		/// </summary>
-		/// <param name="ammoClassname"></param>
-		/// <param name="count"></param>
-		/// <returns></returns>
-		bool TryConsumeAmmo ( string ammoClassname, short count );
+	public enum WeaponState {
+		Idle,
+		Cooldown,
+		Drop,
+		Raise,
+	}
+
+	public enum AttackResult {
+		Success,
+		FailCooldown,
+		FailNoAmmo,
+	}
+
+
+	public interface IShooter {
 
 		/// <summary>
 		/// Gets weapon point-of-view
 		/// </summary>
 		/// <returns></returns>
 		Vector3 GetWeaponPOV ( bool useViewOffset );
+
+		/// <summary>
+		/// Gets and sets weapon state timer (milliseconds)
+		/// </summary>
+		int WeaponTime { get; set; }
+
+		/// <summary>
+		/// Gets and sets weapon state
+		/// </summary>
+		WeaponState WeaponState { get; set; }
+
+		/// <summary>
+		/// Attempts to consume ammo from entity
+		/// </summary>
+		/// <param name="ammo"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		bool TryConsumeAmmo ( string ammo, short count )
 
 		#if false
 		/// <summary>

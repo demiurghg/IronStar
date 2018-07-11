@@ -10,8 +10,15 @@ namespace IronStar.Entities {
 	public enum WeaponState {
 		Idle,
 		Cooldown,
+		Empty,
 		Drop,
 		Raise,
+	}
+
+	public enum WeaponCommand {	
+		None,
+		Attack,
+		Zoom,
 	}
 
 	public enum AttackResult {
@@ -40,12 +47,17 @@ namespace IronStar.Entities {
 		WeaponState WeaponState { get; set; }
 
 		/// <summary>
+		/// Indicated whether shooter is going to attack
+		/// </summary>
+		WeaponCommand WeaponCommand { get; }
+
+		/// <summary>
 		/// Attempts to consume ammo from entity
 		/// </summary>
 		/// <param name="ammo"></param>
 		/// <param name="count"></param>
 		/// <returns></returns>
-		bool TryConsumeAmmo ( string ammo, short count )
+		bool TryConsumeAmmo ( string ammo, short count );
 
 		#if false
 		/// <summary>

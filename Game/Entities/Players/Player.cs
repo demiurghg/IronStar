@@ -27,23 +27,15 @@ namespace IronStar.Entities.Players {
 
 		CharacterController	controller;
 		Inventory			inventory;
-		WeaponState			weaponState;
-		int					weaponTimer;
 		int					health;
 		int					armor;
 
 		string currentWeapon = "machinegun";
 		string pendingWeapon = "";
 
-		public int WeaponTime {
-			get { return weaponTimer; }
-			set	{ weaponTimer = value; }
-		}
-
-		public WeaponState WeaponState {
-			get { return weaponState; }
-			set{ weaponState = value; }
-		}
+		public int			 WeaponTime	{ get; set; }
+		public WeaponState	 WeaponState { get; set; }
+		public WeaponCommand WeaponCommand { get; set; }
 
 		
 		/// <summary>
@@ -139,7 +131,8 @@ namespace IronStar.Entities.Players {
 			controller.Update();
 
 			//	update weapon state :
-			UpdateWeaponState( gameTime );
+			var weapon = Weapon.Load( World.Content, currentWeapon );
+			weapon.Update( this, this, World, gameTime );
 
 			//	update player's entity states :
 			if (controller.Crouching) {
@@ -175,12 +168,11 @@ namespace IronStar.Entities.Players {
 
 			controller.Move( userCommand.MoveForward, userCommand.MoveRight, userCommand.MoveUp );
 
+			
+			WeaponCommand = WeaponCommand.None;
+
 			if ( userCommand.Action.HasFlag( UserAction.Attack ) ) {
-
-				var weapon = Weapon.Load( World.Content, currentWeapon );
-
-				weapon.Fire( this, World );
-
+				WeaponCommand = WeaponCommand.Attack;
 			}
 
 			if ( userCommand.Weapon != 0 ) {
@@ -226,39 +218,5 @@ namespace IronStar.Entities.Players {
 		}
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="gameTime"></param>
-		public void UpdateWeaponState ( GameTime gameTime )
-		{
-			if (!string.IsNullOrWhiteSpace( pendingWeapon )) {
-				if (weaponTimer<=0) {
-					WeaponState.
-				}
-			}
-
-			switch  (weaponState) {
-				case WeaponState.Idle: 
-					weaponTimer = 0; 
-					break;
-
-				case WeaponState.Cooldown:
-					if (weaponTimer<=0) {
-						weaponState = WeaponState.Idle;
-					} else {
-						weaponTimer -= gameTime.Milliseconds;
-					}
-					break;
-
-				case WeaponState.Drop:
-
-					break;
-
-				case WeaponState.Raise:
-
-					break;
-			}
-		}
 	}
 }

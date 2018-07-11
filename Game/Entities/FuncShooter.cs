@@ -26,20 +26,11 @@ namespace IronStar.Entities {
 		readonly bool once;
 		bool enabled;
 
-		int			weaponTimer;
-		WeaponState weaponState;
-
 		int activationCount = 0;
 
-		public int WeaponTime {
-			get { return weaponTimer; }
-			set	{ weaponTimer = value; }
-		}
-
-		public WeaponState WeaponState {
-			get { return weaponState; }
-			set{ weaponState = value; }
-		}
+		public int			 WeaponTime	{ get; set; }
+		public WeaponState	 WeaponState { get; set; }
+		public WeaponCommand WeaponCommand { get; set; }
 
 
 		public FuncShooter( uint id, short clsid, GameWorld world, FuncShooterFactory factory ) : base(id, clsid, world, factory)
@@ -48,10 +39,6 @@ namespace IronStar.Entities {
 			trigger	=	factory.Trigger;
 			once	=	factory.Once;
 			enabled	=	factory.Start;
-
-			if (weapon==null) {
-				Log.Warning("FuncShooter : bad weapon : {0}", factory.Weapon );
-			}
 		}
 
 
@@ -68,9 +55,7 @@ namespace IronStar.Entities {
 			activationCount ++;
 
 			if (trigger) {
-				if (weapon.Fire( this, World )) {
-					Log.Verbose("FuncShooter: fire on trigger");
-				}
+				WeaponCommand = WeaponCommand.Attack;
 			} else {
 				enabled = !enabled;
 				Log.Verbose("FuncShooter: toggle enabled");
@@ -82,20 +67,18 @@ namespace IronStar.Entities {
 		{
 			int msec = gameTime.Milliseconds;
 
-			if (cooldown>0) {
-				cooldown -= msec;
-			}
-
-			if (weapon==null) {
-				return;
-			}
-
+			//	update
 			if (!trigger) {
 				if (enabled) {
-					weapon.Fire( this, World );
-					Log.Verbose("FuncShooter: fire auto");
+					WeaponCommand = WeaponCommand.Attack;
 				}
 			}
+
+			//	update weapon :
+			weapon.Update( this, this, World, gameTime );
+
+			//	reset attack request
+			WeaponCommand = WeaponCommand.None;
 		}
 
 
@@ -105,18 +88,6 @@ namespace IronStar.Entities {
 		}
 
 
-		public AttackResult TryAttack ( int cooldown, string ammo, int count )
-		{
-			if (this.cooldown>0) {
-				return AttackResult.FailCooldown;
-			} else {
-				this.cooldown = cooldown;
-				return AttackResult.Success;
-			}
-		}
-		
-
-
 		public Vector3 GetWeaponPOV(bool useViewOffset)
 		{
 			return Position;
@@ -124,7 +95,7 @@ namespace IronStar.Entities {
 
 		public bool TryConsumeAmmo(string ammo, short count)
 		{
-			throw new NotImplementedException();
+			return true;
 		}
 	}
 

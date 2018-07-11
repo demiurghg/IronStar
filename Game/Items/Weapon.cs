@@ -93,23 +93,59 @@ namespace IronStar.Items {
 		public string AmmoItem { get; set; } = "";
 
 
+
 		/// <summary>
 		/// 
 		/// </summary>
-		public virtual bool Fire ( Entity attacker, GameWorld world )
+		/// <param name="shooter"></param>
+		/// <param name="gameTime"></param>
+		public void Update ( IShooter shooter, Entity attacker, GameWorld world, GameTime gameTime )
 		{
 			if (this==EmptyWeapon) {
-				return false;
+				return;
 			}
 
-			var shooter = (IShooter)attacker;
 
-			if (!shooter.TrySetCooldown( cooldown )) {
-				return false;
+			switch (shooter.WeaponState) {
+
+				case WeaponState.Idle:
+					shooter.WeaponTime = 0;
+
+					if (shooter.IsAttacking) {
+						Fire( shooter, attacker, world );
+						shooter.WeaponTime  += Cooldown;
+						shooter.WeaponState	 = WeaponState.Cooldown;
+					}
+
+					break;
+
+				case WeaponState.Cooldown:
+					shooter.WeaponTime -= gameTime.Milliseconds;
+
+					if (shooter.WeaponTime<=0) {
+						shooter.WeaponState = WeaponState.Idle;
+					}
+
+					break;
+
+				case WeaponState.Drop:
+					break;
+
+				case WeaponState.Raise:
+					break;
+
 			}
+		}
 
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		protected virtual bool Fire ( IShooter shooter, Entity attacker, GameWorld world )
+		{
 			if (BeamWeapon) {
-
 
 				for (int i=0; i<ProjectileCount; i++) {
 					FireBeam( attacker, shooter, world );
@@ -126,19 +162,6 @@ namespace IronStar.Items {
 				return true;
 			}
 		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="shooter"></param>
-		/// <param name="gameTime"></param>
-		public void UpdateWeapon ( IShooter shooter, Entity attacker, GameWorld world, GameTime gameTime )
-		{
-		}
-
-
 
 
 		/// <summary>

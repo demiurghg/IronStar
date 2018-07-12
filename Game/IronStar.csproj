@@ -78,8 +78,10 @@
     <Compile Include="Entities\AmmoBox.cs" />
     <Compile Include="Entities\AmmoBoxFactory.cs" />
     <Compile Include="Entities\TriggerArea.cs" />
+    <Compile Include="Items\AmmoBox.cs" />
     <Compile Include="Items\ItemFactory.cs" />
     <Compile Include="Items\Weapon.cs" />
+    <Compile Include="Items\WeaponFactory.cs" />
     <Compile Include="JsonLoader.cs" />
     <Compile Include="Physics\DetectorArea.cs" />
     <Compile Include="Physics\DynamicBox.cs" />

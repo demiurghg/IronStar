@@ -1,5 +1,5 @@
 {
-  "$type": "IronStar.Items.Weapon, IronStar",
+  "$type": "IronStar.Items.WeaponFactory, IronStar",
   "BeamWeapon": true,
   "BeamLength": 500.0,
   "Projectile": "",

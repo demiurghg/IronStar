@@ -5,49 +5,22 @@ using System.Text;
 using System.Threading.Tasks;
 using IronStar.Items;
 using Fusion.Core.Mathematics;
+using Fusion.Core;
+using IronStar.Core;
 
 namespace IronStar.Entities.Players {
-	public class Inventory : Dictionary<string,int> {
+	public class Inventory : HashSet<Item> {
 
-		public bool AddItem ( string name, int count, int maxCount = int.MaxValue )
+		public Item CurrentItem { get; set; }
+		public Item PendingItem { get; set; }
+	
+		public void Update ( GameTime gameTime, Entity entity )
 		{
-			if (ContainsKey(name)) {
-
-				if (this[name]>=maxCount) {
-					return false;
-				}
-
-				this[name] = MathUtil.Clamp( this[name] + count, 0, maxCount );
-
-				return true;
-
-			} else {
-
-				Add( name, Math.Min( count, maxCount ) );
-
-				return true;
-
-			}
-		}
-
-
-		public bool TryTakeItem ( string name, int count )
-		{
-			if (!ContainsKey(name)) {
-
-				return false;
-
-			} else {
-
-				if (this[name] >= count) {
-					this[name] = this[name] - count;
-					return true;
-				} else {
-					return false;
-				}
+			foreach ( var item in this ) {
+				item.Update(gameTime, entity);
 			}
 
-
+			RemoveWhere( item=>item.IsDepleted() );
 		}
 
 	}

@@ -33,11 +33,6 @@ namespace IronStar.Entities.Players {
 		string currentWeapon = "machinegun";
 		string pendingWeapon = "";
 
-		public int			 WeaponTime	{ get; set; }
-		public WeaponState	 WeaponState { get; set; }
-		public WeaponCommand WeaponCommand { get; set; }
-
-		
 		/// <summary>
 		/// 
 		/// </summary>
@@ -131,9 +126,8 @@ namespace IronStar.Entities.Players {
 			controller.Update();
 
 			//	update weapon state :
-			var weapon = Weapon.Load( World.Content, currentWeapon );
-			weapon.Update( this, this, World, gameTime );
-
+			inventory.Update( gameTime, this );
+			
 			//	update player's entity states :
 			if (controller.Crouching) {
 				EntityState |=	EntityState.Crouching;
@@ -168,12 +162,7 @@ namespace IronStar.Entities.Players {
 
 			controller.Move( userCommand.MoveForward, userCommand.MoveRight, userCommand.MoveUp );
 
-			
-			WeaponCommand = WeaponCommand.None;
-
-			if ( userCommand.Action.HasFlag( UserAction.Attack ) ) {
-				WeaponCommand = WeaponCommand.Attack;
-			}
+			(inventory.CurrentItem as Weapon)?.Attack( this, this );
 
 			if ( userCommand.Weapon != 0 ) {
 				switch (userCommand.Weapon) {
@@ -192,31 +181,23 @@ namespace IronStar.Entities.Players {
 
 
 
-		public bool TrySetCooldown( int cooldown )
-		{
-			if (this.weaponTimer>0) {
-				return false;
-			} else {
-				weaponState = WeaponState.Cooldown; 
-				this.weaponTimer += cooldown;
-				return true;
-			}
-		}
-
-
-
-		public bool TryConsumeAmmo( string ammoClassname, short count )
-		{
-			return true;
-		}
-
-
-		public Vector3 GetWeaponPOV(bool useViewOffset)
+		public Vector3 GetActualPOV()
 		{
 			float height = EntityState.HasFlag(EntityState.Crouching) ? GameConfig.PovHeightCrouch : GameConfig.PovHeightStand;
 			return Position + Vector3.Up * height;
 		}
 
+
+		public Vector3 GetVisiblePOV()
+		{
+			return GetActualPOV();
+		}
+
+
+		public Inventory GetInventory()
+		{
+			return inventory;
+		}
 
 	}
 }

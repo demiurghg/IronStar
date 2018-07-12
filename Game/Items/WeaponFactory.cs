@@ -26,97 +26,54 @@ using Fusion.Core.Shell;
 
 namespace IronStar.Items {
 
-	public class WeaponFactory {
+	public class WeaponFactory : ItemFactory {
 
-		[AECategory("Shooting Properties")]
-		[Description("Damage per projectile")]
-		public int Damage { get; set; } = 100;
-
-		[AECategory("Shooting Properties")]
-		[Description("Projectile classname")]
+		[AECategory("Shooting")]
+		public bool BeamWeapon { get; set; }
+		
+		[AECategory("Shooting")]
+		public float BeamLength { get; set; }
+		
+		[AECategory("Shooting")]
+		[AEClassname("entities")]
 		public string Projectile { get; set; } = "";
 
-		[AECategory("Shooting Properties")]
-		[Description("Number of shot projectiles")]
-		public int ProjectileQuantity { get; set; } = 1;
+		[AECategory("Shooting")]
+		public int Damage { get; set; }
 
-		[AECategory("Shooting Properties")]
-		[Description("Number of shot projectiles")]
-		public int AmmoCapacity { get; set; } = 100;
+		[AECategory("Shooting")]
+		public float Impulse { get; set; }
 
+		[AECategory("Shooting")]
+		public int ProjectileCount { 
+			get { return projectileCount; }
+			set { projectileCount = MathUtil.Clamp(value, 1, 100); }
+		}
+		int projectileCount = 1;
 
+		[AECategory("Shooting")]
+		public float AngularSpread { get; set; }
 
-		[AECategory("Shooting Properties")]
-		[Description("Tangent vertical spread addition")]
-		public float VSpread { get; set; } = 0;
+		[AECategory("Shooting")]
+		public int Cooldown {
+			get { return cooldown; }
+			set { cooldown = MathUtil.Clamp(value, 0, 10000); }
+		}
+		int cooldown = 1;
 
-		[AECategory("Shooting Properties")]
-		[Description("Tangent horizontal spread addition")]
-		public float HSpread { get; set; } = 0;
-
-		[AECategory("Shooting Properties")]
-		[Description("Indicates that first bullet must be perfectly aimed")]
-		public bool PerfectFirstRound { get; set; } = false;
-
-
-
-		[AECategory("Shooting Timing")]
-		[Description("Idle animation period")]
-		public int IdlePeriod { get; set; } = 500;
-
-		[AECategory("Shooting Timing")]
-		[Description("Time to take weapon up")]
-		public int ActivationPeriod { get; set; } = 200;
-
-		[AECategory("Shooting Timing")]
-		[Description("Time to put weapon down")]
-		public int DeactivationPeriod { get; set; } = 200;
-
-		[AECategory("Shooting Timing")]
-		[Description("Delay between triggering attack and actual shot")]
-		public int WarmupPeriod { get; set; } = 0;
-
-		[AECategory("Shooting Timing")]
-		[Description("Delay between actual shot and readiness for next shot")]
-		public int CooldownPeriod { get; set; } = 500;
-
-
-		
-		[AECategory("View Model")]
-		public string ViewModel { get; set; } = "";
-
-		[AECategory("View Model")]
-		public AnimRegion IdleAnimation { get; set; } = new AnimRegion();
-
-		[AECategory("View Model")]
-		public AnimRegion WarmupAnimation { get; set; } = new AnimRegion();
-
-		[AECategory("View Model")]
-		public AnimRegion CooldownAnimation { get; set; } = new AnimRegion();
-
-		[AECategory("View Model")]
-		public AnimRegion ActivationAnimation { get; set; } = new AnimRegion();
-
-		[AECategory("View Model")]
-		public AnimRegion DeactivationAnimation { get; set; } = new AnimRegion();
-
-
-		
-		[AECategory("Shooting FX")]
-		public string MuzzleFX { get; set; } = "";
-
-		[AECategory("Shooting FX")]
-		public string TraceFX { get; set; } = "";
-
-		[AECategory("Shooting FX")]
+		[AECategory("Beam")]
+		[AEClassname("fx")]
 		public string HitFX { get; set; } = "";
 
-		[AECategory("Shooting FX")]
-		public string EmptyFX { get; set; } = "";
+		[AECategory("Ammo")]
+		[AEClassname("items")]
+		public string AmmoItem { get; set; } = "";
+
+
 
 		public override Item Spawn( GameWorld world )
 		{
-			return new Weapon( Name, world, this );
+			return new Weapon( world, this );
 		}
 	}
 }

@@ -27,127 +27,83 @@ using Fusion.Core.Shell;
 
 namespace IronStar.Items {
 
-	public partial class Weapon : JsonObject {
-
-		public const int	WeaponDropTime			=	250;
-		public const int	WeaponRaiseTime			=	250;
-		public const int	WeaponNoAmmoClickTime	=	250;
-
-		static readonly public Weapon EmptyWeapon = new Weapon();
-
-		static public Weapon Load ( ContentManager content, string name )
-		{
-			var weapon = content.Load( @"items\" + name, Weapon.EmptyWeapon );
-				weapon = (weapon as Weapon) ?? Weapon.EmptyWeapon;
-			return weapon;
-		}
+	public partial class Weapon : Item {
 
 		readonly Random rand = new Random();
+		readonly GameWorld world;
 
+		readonly bool	beamWeapon;
+		readonly float	beamLength;
+		readonly string projectile;
+		readonly int	damage;
+		readonly float	impulse;
+		readonly int	projectileCount;
+		readonly float	angularSpread;
 
-		public Weapon()
-		{
-		}
+		readonly int	cooldown;
+		readonly string hitFX;
+		readonly string ammoItem;
 
-
-		[AECategory("Shooting")]
-		public bool BeamWeapon { get; set; }
-		
-		[AECategory("Shooting")]
-		public float BeamLength { get; set; }
-		
-		[AECategory("Shooting")]
-		[AEClassname("entities")]
-		public string Projectile { get; set; } = "";
-
-		[AECategory("Shooting")]
-		public int Damage { get; set; }
-
-		[AECategory("Shooting")]
-		public float Impulse { get; set; }
-
-		[AECategory("Shooting")]
-		public int ProjectileCount { 
-			get { return projectileCount; }
-			set { projectileCount = MathUtil.Clamp(value, 1, 100); }
-		}
-		int projectileCount = 1;
-
-		[AECategory("Shooting")]
-		public float AngularSpread { get; set; }
-
-		[AECategory("Shooting")]
-		public int Cooldown {
-			get { return cooldown; }
-			set { cooldown = MathUtil.Clamp(value, 0, 10000); }
-		}
-		int cooldown = 1;
-
-		[AECategory("Beam")]
-		[AEClassname("fx")]
-		public string HitFX { get; set; } = "";
-
-
-		[AECategory("Ammo")]
-		[AEClassname("items")]
-		public string AmmoItem { get; set; } = "";
-
+		int timer;
 
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="shooter"></param>
-		/// <param name="gameTime"></param>
-		public void Update ( IShooter shooter, Entity attacker, GameWorld world, GameTime gameTime )
+		/// <param name="world"></param>
+		/// <param name="factory"></param>
+		public Weapon( GameWorld world, WeaponFactory factory )
 		{
-			if (this==EmptyWeapon) {
-				return;
-			}
+			this.world		=	world;
+				
+			beamWeapon		=	factory.BeamWeapon		;
+			beamLength		=	factory.BeamLength		;
+			projectile		=	factory.Projectile		;
+			damage			=	factory.Damage			;
+			impulse			=	factory.Impulse			;
+			projectileCount	=	factory.ProjectileCount	;
+			angularSpread	=	factory.AngularSpread	;
+
+			cooldown		=	factory.Cooldown		;
+			hitFX			=	factory.HitFX			;
+			ammoItem		=	factory.AmmoItem		;
+
+		}
 
 
-			switch (shooter.WeaponState) {
-
-				case WeaponState.Idle:
-					shooter.WeaponTime = 0;
-
-					if (shooter.IsAttacking) {
-						Fire( shooter, attacker, world );
-						shooter.WeaponTime  += Cooldown;
-						shooter.WeaponState	 = WeaponState.Cooldown;
-					}
-
-					break;
-
-				case WeaponState.Cooldown:
-					shooter.WeaponTime -= gameTime.Milliseconds;
-
-					if (shooter.WeaponTime<=0) {
-						shooter.WeaponState = WeaponState.Idle;
-					}
-
-					break;
-
-				case WeaponState.Drop:
-					break;
-
-				case WeaponState.Raise:
-					break;
-
+		public override bool Attack(IShooter shooter, Entity attacker)
+		{
+			if (timer<=0) {
+				if (Fire(shooter, attacker)) {
+					timer = cooldown;
+					return true;
+				} else {
+					return false;
+				}
+			} else {
+				return false;
 			}
 		}
 
 
+		public override void Update(GameTime gameTime, Entity entity)
+		{
+			if (timer>0) {
+				timer -= gameTime.Milliseconds;
+			} else {
+				timer = 0;
+			}
+		}
 
 
 		/// <summary>
 		/// 
 		/// </summary>
-		protected virtual bool Fire ( IShooter shooter, Entity attacker, GameWorld world )
+		protected virtual bool Fire ( IShooter shooter, Entity attacker )
 		{
-			if (BeamWeapon) {
+			if (beamWeapon) {
 
-				for (int i=0; i<ProjectileCount; i++) {
+				for (int i=0; i<projectileCount; i++) {
 					FireBeam( attacker, shooter, world );
 				}
 
@@ -155,7 +111,7 @@ namespace IronStar.Items {
 
 			} else {
 
-				for (int i=0; i<ProjectileCount; i++) {
+				for (int i=0; i<projectileCount; i++) {
 					FireProjectile( attacker, shooter, world );
 				}
 
@@ -172,7 +128,7 @@ namespace IronStar.Items {
 		/// <param name="world"></param>
 		void FireBeam ( Entity attacker, IShooter shooter, GameWorld world )
 		{
-			var p = shooter.GetWeaponPOV(false);
+			var p = shooter.GetActualPOV();
 			var q = attacker.Rotation;
 			var d = -GetFireDirection(q);
 
@@ -180,11 +136,11 @@ namespace IronStar.Items {
 			Vector3 hitPoint;
 			Entity  hitEntity;
 
-			var r = world.RayCastAgainstAll( p, p + d * BeamLength, out hitNormal, out hitPoint, out hitEntity, attacker );
+			var r = world.RayCastAgainstAll( p, p + d * beamLength, out hitNormal, out hitPoint, out hitEntity, attacker );
 
 			if (r) {
-				world.SpawnFX( HitFX, 0, hitPoint, hitNormal );
-				world.InflictDamage( hitEntity, attacker.ID, Damage, DamageType.BulletHit, d * Impulse, hitPoint );
+				world.SpawnFX( hitFX, 0, hitPoint, hitNormal );
+				world.InflictDamage( hitEntity, attacker.ID, damage, DamageType.BulletHit, d * impulse, hitPoint );
 			}
 		}
 
@@ -198,23 +154,24 @@ namespace IronStar.Items {
 		/// <param name="origin"></param>
 		void FireProjectile ( Entity attacker, IShooter shooter, GameWorld world )
 		{
-			var e = world.Spawn( Projectile ) as Projectile;
+			var e = world.Spawn( projectile ) as Projectile;
 
 			if (e==null) {
-				Log.Warning("Unknown class: {0}", Projectile);
+				Log.Warning("Unknown projectile class: {0}", projectile);
+				return;
 			}
 
-			var p = shooter.GetWeaponPOV(false);
+			var p = shooter.GetActualPOV();
 			var q = attacker.Rotation;
 			var d = GetFireDirection(q);
 
 			e.ParentID	=	attacker.ID;
 			e.Teleport( p, q );
 
-			e.HitDamage		=	Damage;
-			e.HitImpulse	=	Impulse;
+			e.HitDamage		=	damage;
+			e.HitImpulse	=	impulse;
 
-			(e as Projectile)?.FixServerLag(2/60.0f);
+			e.FixServerLag(2/60.0f);
 
 			//world.SpawnFX( "MZBlaster",	attacker.ID, origin );
 		}
@@ -228,7 +185,7 @@ namespace IronStar.Items {
 		/// <returns></returns>
 		Vector3 GetFireDirection ( Quaternion rotation )
 		{ 
-			var spreadVector	= GetSpreadVector( AngularSpread );
+			var spreadVector	= GetSpreadVector( angularSpread );
 			var rotationMatrix	= Matrix.RotationQuaternion( rotation );
 			return Vector3.TransformNormal( spreadVector, rotationMatrix ).Normalized();
 		}
@@ -256,6 +213,7 @@ namespace IronStar.Items {
 
 			return new Vector3( x, y, -z );
 		}
+
 	}
 
 

@@ -45,7 +45,7 @@ namespace IronStar {
 		/// <returns></returns>
 		static public byte[] GetBytes(UserCommand userCmd) 
 		{
-			var array = new byte[12+12+1];
+			var array = new byte[12+12+2];
 
 			using ( var writer = new BinaryWriter( new MemoryStream( array ) ) ) {
 

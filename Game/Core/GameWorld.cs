@@ -19,6 +19,7 @@ using Fusion.Core;
 using IronStar.Physics;
 using IronStar.Entities;
 using IronStar.Views;
+using IronStar.Items;
 
 namespace IronStar.Core {
 
@@ -290,6 +291,18 @@ namespace IronStar.Core {
 			return Spawn( classname );
 		}
 		
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="classname"></param>
+		/// <returns></returns>
+		public Item SpawnItem ( string classname )
+		{
+			var factory = Content.Load(@"items\" + classname, (ItemFactory)null );
+			return factory?.Spawn( this );
+		}
+
 		/*-----------------------------------------------------------------------------------------
 		 *	FX creation
 		-----------------------------------------------------------------------------------------*/

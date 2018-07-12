@@ -14,6 +14,7 @@ using Fusion.Core.Shell;
 using Fusion.Core;
 using Fusion;
 using IronStar.Items;
+using IronStar.Entities.Players;
 
 namespace IronStar.Entities {
 
@@ -28,14 +29,9 @@ namespace IronStar.Entities {
 
 		int activationCount = 0;
 
-		public int			 WeaponTime	{ get; set; }
-		public WeaponState	 WeaponState { get; set; }
-		public WeaponCommand WeaponCommand { get; set; }
-
-
 		public FuncShooter( uint id, short clsid, GameWorld world, FuncShooterFactory factory ) : base(id, clsid, world, factory)
 		{
-			weapon	=	Weapon.Load( world.Content, factory.Weapon );
+			weapon	=	world.SpawnItem( factory.Weapon ) as Weapon;
 			trigger	=	factory.Trigger;
 			once	=	factory.Once;
 			enabled	=	factory.Start;
@@ -55,7 +51,7 @@ namespace IronStar.Entities {
 			activationCount ++;
 
 			if (trigger) {
-				WeaponCommand = WeaponCommand.Attack;
+				weapon?.Attack( this, this );
 			} else {
 				enabled = !enabled;
 				Log.Verbose("FuncShooter: toggle enabled");
@@ -70,15 +66,12 @@ namespace IronStar.Entities {
 			//	update
 			if (!trigger) {
 				if (enabled) {
-					WeaponCommand = WeaponCommand.Attack;
+					weapon?.Attack( this, this );
 				}
 			}
 
 			//	update weapon :
-			weapon.Update( this, this, World, gameTime );
-
-			//	reset attack request
-			WeaponCommand = WeaponCommand.None;
+			weapon?.Update( gameTime, this );
 		}
 
 
@@ -88,15 +81,23 @@ namespace IronStar.Entities {
 		}
 
 
-		public Vector3 GetWeaponPOV(bool useViewOffset)
+		public Vector3 GetActualPOV()
 		{
 			return Position;
 		}
 
-		public bool TryConsumeAmmo(string ammo, short count)
+
+		public Vector3 GetVisiblePOV()
 		{
-			return true;
+			return GetActualPOV();
 		}
+
+
+		public Inventory GetInventory()
+		{
+			return null;
+		}
+
 	}
 
 

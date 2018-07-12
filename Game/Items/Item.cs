@@ -38,16 +38,22 @@ namespace IronStar.Items {
 		public virtual bool Activate ( Entity target ) { return false; }
 
 		/// <summary>
-		/// Attempts to apply current item on another one.
+		/// Attempts to apply current item on another item.
 		/// Return TRUE if succeded, FALSE otherwice, i.e. not applicable item (medkit on weapon)
 		/// </summary>
 		public virtual bool Apply ( Item target ) { return false; }
 
 		/// <summary>
-		/// Indicates, that given item could not be used any more and must be removed.
+		/// Indicates that given item could not be used any more and must be removed.
 		/// </summary>
 		/// <returns></returns>
 		public virtual bool IsDepleted () { return false; }
+
+		/// <summary>
+		/// Indicates that given item is in use and could not be replaced, reactivated, dropped, etc.
+		/// </summary>
+		/// <returns></returns>
+		public virtual bool IsBusy () { return false; }
 
 		/// <summary>
 		/// Called when player attempts to picks the item up.

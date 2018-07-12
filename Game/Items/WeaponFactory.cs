@@ -71,9 +71,9 @@ namespace IronStar.Items {
 
 
 
-		public override Item Spawn( GameWorld world )
+		public override Item Spawn( short clsid, GameWorld world )
 		{
-			return new Weapon( world, this );
+			return new Weapon( clsid, world, this );
 		}
 	}
 }

@@ -299,8 +299,9 @@ namespace IronStar.Core {
 		/// <returns></returns>
 		public Item SpawnItem ( string classname )
 		{
+			var clsid	= Atoms[classname];
 			var factory = Content.Load(@"items\" + classname, (ItemFactory)null );
-			return factory?.Spawn( this );
+			return factory?.Spawn( clsid, this );
 		}
 
 		/*-----------------------------------------------------------------------------------------

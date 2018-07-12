@@ -30,9 +30,6 @@ namespace IronStar.Entities.Players {
 		int					health;
 		int					armor;
 
-		string currentWeapon = "machinegun";
-		string pendingWeapon = "";
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -51,10 +48,18 @@ namespace IronStar.Entities.Players {
 				factory.MaxStepHeight
 			 );
 
-			 inventory	=	new Inventory();
+			 inventory	=	new Inventory(world.Atoms);
 
 			 health		=	factory.MaxHealth;
 			 armor		=	factory.MaxArmor;
+
+			 //	temp stuff :
+			 var weap1	=	world.SpawnItem("weapon_machinegun");
+			 var weap2	=	world.SpawnItem("weapon_machinegun");
+			 inventory.Add( weap1 );
+			 inventory.Add( weap2 );
+
+			 inventory.CurrentItem	=	weap1;
 		}
 
 
@@ -162,9 +167,11 @@ namespace IronStar.Entities.Players {
 
 			controller.Move( userCommand.MoveForward, userCommand.MoveRight, userCommand.MoveUp );
 
-			(inventory.CurrentItem as Weapon)?.Attack( this, this );
+			if (userCommand.Action.HasFlag(UserAction.Attack)) {
+				(inventory.CurrentItem as Weapon)?.Attack( this, this );
+			}
 
-			if ( userCommand.Weapon != 0 ) {
+			/*if ( userCommand.Weapon != 0 ) {
 				switch (userCommand.Weapon) {
 					case 1: pendingWeapon	=	"weapon_machinegun"	; break;
 					case 2: pendingWeapon	=	"weapon_plasmagun"	; break;
@@ -176,7 +183,7 @@ namespace IronStar.Entities.Players {
 					case 8: pendingWeapon	=	"machinegun"		; break;
 					default: pendingWeapon	=	"";	break;
 				}
-			}
+			} */
 		}
 
 

@@ -52,7 +52,7 @@ namespace IronStar.Items {
 		/// </summary>
 		/// <param name="world"></param>
 		/// <param name="factory"></param>
-		public Weapon( GameWorld world, WeaponFactory factory )
+		public Weapon( short clsid, GameWorld world, WeaponFactory factory ) : base(clsid)
 		{
 			this.world		=	world;
 				

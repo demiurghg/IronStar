@@ -8,7 +8,10 @@ using IronStar.Core;
 using IronStar.Entities;
 
 namespace IronStar.Items {
-	public class AmmoBox : Item
-	{
+	public class AmmoBox : Item {
+
+		public AmmoBox( short clsid ) : base( clsid )
+		{
+		}
 	}
 }

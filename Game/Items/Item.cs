@@ -14,6 +14,17 @@ namespace IronStar.Items {
 	/// </summary>
 	public class Item : JsonObject {
 
+		public readonly short ClassID;
+
+		/// <summary>
+		/// Creates new instance of Item
+		/// </summary>
+		/// <param name="clsid"></param>
+		protected Item ( short clsid )
+		{
+			ClassID = clsid;
+		}
+
 		/// <summary>
 		/// Attempts to use item as weapon.
 		/// Returns FALSE if item could not be used as weapon. TRUE otherwise.

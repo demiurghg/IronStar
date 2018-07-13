@@ -7,14 +7,23 @@ using IronStar.Core;
 using IronStar.Entities;
 using Fusion.Core;
 
-namespace IronStar.Items {
+namespace IronStar.Core {
 
 	/// <summary>
 	/// 
 	/// </summary>
 	public class Item : JsonObject {
+		
+		public readonly uint ID;
 
 		public readonly short ClassID;
+
+		/// <summary>
+		/// Gets and sets item owner.
+		/// If owner is zero or owner is dead, 
+		/// item will be removed from the world.
+		/// </summary>
+		public uint Owner { get; set; }
 
 		/// <summary>
 		/// Creates new instance of Item
@@ -71,6 +80,6 @@ namespace IronStar.Items {
 		/// <summary>
 		/// Updates internal item state
 		/// </summary>
-		public virtual void Update ( GameTime gameTime, Entity entity ) {}
+		public virtual void Update ( GameTime gameTime ) {}
 	}
 }

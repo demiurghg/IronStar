@@ -7,7 +7,7 @@ using IronStar.Core;
 using IronStar.Entities;
 using Fusion.Core;
 
-namespace IronStar.Items {
+namespace IronStar.Core {
 
 	public abstract class ItemFactory : JsonObject {
 		public abstract Item Spawn ( short clsid, GameWorld world );

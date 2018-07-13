@@ -19,13 +19,5 @@ namespace IronStar.Entities {
 		/// Gets visible shooter point-of-view
 		/// </summary>
 		Vector3		GetVisiblePOV ();
-
-		/// <summary>
-		/// Gets inventory.
-		/// Return value could be NULL, this means that IShooter does not have inventory.
-		/// I.e. Monster or FuncShooter
-		/// </summary>
-		/// <returns></returns>
-		Inventory	GetInventory ();
 	}
 }

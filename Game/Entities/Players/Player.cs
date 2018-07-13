@@ -26,7 +26,6 @@ namespace IronStar.Entities.Players {
 		public int Armor  { get { return health; } }
 
 		CharacterController	controller;
-		Inventory			inventory;
 		int					health;
 		int					armor;
 
@@ -48,18 +47,12 @@ namespace IronStar.Entities.Players {
 				factory.MaxStepHeight
 			 );
 
-			 inventory	=	new Inventory(world.Atoms);
-
 			 health		=	factory.MaxHealth;
 			 armor		=	factory.MaxArmor;
 
 			 //	temp stuff :
-			 var weap1	=	world.SpawnItem("weapon_machinegun");
-			 var weap2	=	world.SpawnItem("weapon_machinegun");
-			 inventory.Add( weap1 );
-			 inventory.Add( weap2 );
-
-			 inventory.CurrentItem	=	weap1;
+			 var weap1	=	world.SpawnItem("weapon_machinegun", ID);
+			 var weap2	=	world.SpawnItem("weapon_plasmagun", ID);
 		}
 
 
@@ -130,9 +123,6 @@ namespace IronStar.Entities.Players {
 			//	update physical character controller :
 			controller.Update();
 
-			//	update weapon state :
-			inventory.Update( gameTime, this );
-			
 			//	update player's entity states :
 			if (controller.Crouching) {
 				EntityState |=	EntityState.Crouching;
@@ -167,8 +157,12 @@ namespace IronStar.Entities.Players {
 
 			controller.Move( userCommand.MoveForward, userCommand.MoveRight, userCommand.MoveUp );
 
-			if (userCommand.Action.HasFlag(UserAction.Attack)) {
-				(inventory.CurrentItem as Weapon)?.Attack( this, this );
+			var weapon = World.Items
+						.GetOwnedItems( ID )
+						.FirstOrDefault( item => item is Weapon ) as Weapon;
+
+			if (userCommand.Action.HasFlag( UserAction.Attack ) ) {
+				weapon?.Attack( this, this );
 			}
 
 			/*if ( userCommand.Weapon != 0 ) {
@@ -199,12 +193,5 @@ namespace IronStar.Entities.Players {
 		{
 			return GetActualPOV();
 		}
-
-
-		public Inventory GetInventory()
-		{
-			return inventory;
-		}
-
 	}
 }

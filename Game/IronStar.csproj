@@ -69,6 +69,7 @@
     <Compile Include="Client\HudWeapon.cs" />
     <Compile Include="Client\HudHealth.cs" />
     <Compile Include="Core\DamageType.cs" />
+    <Compile Include="Core\ItemCollection.cs" />
     <Compile Include="Entities\FuncFX.cs" />
     <Compile Include="Entities\FuncShooter.cs" />
     <Compile Include="Entities\IShooter.cs" />
@@ -79,7 +80,7 @@
     <Compile Include="Entities\AmmoBoxFactory.cs" />
     <Compile Include="Entities\TriggerArea.cs" />
     <Compile Include="Items\AmmoBox.cs" />
-    <Compile Include="Items\ItemFactory.cs" />
+    <Compile Include="Core\ItemFactory.cs" />
     <Compile Include="Items\Weapon.cs" />
     <Compile Include="Items\WeaponFactory.cs" />
     <Compile Include="JsonLoader.cs" />
@@ -149,7 +150,6 @@
     <Compile Include="Editor\Utils.cs" />
     <Compile Include="Entities\Monsters\MonsterState.cs" />
     <Compile Include="Entities\NullFactory.cs" />
-    <Compile Include="Entities\Players\Inventory.cs" />
     <Compile Include="Entities\Players\Player.cs" />
     <Compile Include="Entities\Players\PlayerFactory.cs" />
     <Compile Include="Entities\ProxyFactory.cs" />
@@ -161,7 +161,7 @@
     <Compile Include="GameConfig.cs" />
     <Compile Include="IronStar.Commands.cs" />
     <Compile Include="IronStar.cs" />
-    <Compile Include="Items\Item.cs" />
+    <Compile Include="Core\Item.cs" />
     <Compile Include="LocalMessageService.cs" />
     <Compile Include="Mapping\LightPreset.cs" />
     <Compile Include="Mapping\Map.Build.cs" />

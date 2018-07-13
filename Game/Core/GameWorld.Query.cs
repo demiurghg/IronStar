@@ -154,6 +154,18 @@ namespace IronStar.Core {
 		}
 
 
+		public Item GetItem ( uint itemId )
+		{
+			return items.GetItem( itemId );
+		}
+
+
+		public IEnumerable<Item> GetEntityItems ( uint entityId )
+		{
+			return items.GetOwnedItems(entityId);
+		}
+
+
 
 		/// <summary>
 		/// Gets entity with current id.

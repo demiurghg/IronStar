@@ -31,7 +31,7 @@ namespace IronStar.Entities {
 
 		public FuncShooter( uint id, short clsid, GameWorld world, FuncShooterFactory factory ) : base(id, clsid, world, factory)
 		{
-			weapon	=	world.SpawnItem( factory.Weapon ) as Weapon;
+			weapon	=	world.SpawnItem( factory.Weapon, id ) as Weapon;
 			trigger	=	factory.Trigger;
 			once	=	factory.Once;
 			enabled	=	factory.Start;
@@ -69,9 +69,6 @@ namespace IronStar.Entities {
 					weapon?.Attack( this, this );
 				}
 			}
-
-			//	update weapon :
-			weapon?.Update( gameTime, this );
 		}
 
 
@@ -91,13 +88,6 @@ namespace IronStar.Entities {
 		{
 			return GetActualPOV();
 		}
-
-
-		public Inventory GetInventory()
-		{
-			return null;
-		}
-
 	}
 
 

@@ -81,5 +81,20 @@ namespace Fusion {
 
 			return results;
 		}
+
+
+		/// <summary>
+		/// https://www.codeproject.com/Tips/494499/Implementing-Dictionary-RemoveAll
+		/// </summary>
+		/// <typeparam name="K"></typeparam>
+		/// <typeparam name="V"></typeparam>
+		/// <param name="dict"></param>
+		/// <param name="match"></param>
+		public static void RemoveAll<K, V>(this IDictionary<K, V> dict, Func<K, V, bool> match)
+		{
+			foreach (var key in dict.Keys.ToArray()
+					.Where(key => match(key, dict[key])))
+				dict.Remove(key);
+		} 
 	}
 }

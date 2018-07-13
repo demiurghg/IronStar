@@ -47,6 +47,7 @@ namespace IronStar.Core {
 		List<uint> entityToKill = new List<uint>();
 
 		public EntityCollection entities;
+		public ItemCollection items;
 		uint idCounter = 1;
 
 		public event EntityEventHandler EntitySpawned;
@@ -61,6 +62,8 @@ namespace IronStar.Core {
 		public SFX.ModelManager	ModelManager { get { return modelManager; } }
 		public SFX.FXPlayback	FXPlayback   { get { return fxPlayback; } }
 		public PhysicsManager	Physics		{ get { return physics; } }
+		public EntityCollection	Entities { get { return entities; } }
+		public ItemCollection	Items	 { get { return items; } }
 
 
 		public SnapshotHeader snapshotHeader = new SnapshotHeader();
@@ -85,6 +88,7 @@ namespace IronStar.Core {
 			this.UserGuid	=	userGuid;
 
 			entities		=	new EntityCollection();
+			items			=	new ItemCollection();
 			physics			=	new PhysicsManager( this, 16 );
 
 			//	setup rendering stuff :
@@ -163,15 +167,17 @@ namespace IronStar.Core {
 		{
 			physics.Update( gameTime.ElapsedSec );
 				
-			//
-			//	Control entities :
-			//
+			//	update entitites :
 			ForEachEntity( e => e?.Update( gameTime ) );
 
-			//
-			//	Kill entities :
-			//
+			//	update items :
+			foreach ( var i in items ) {
+				i.Value.Update( gameTime );
+			}
+
+			//	kill entities & items :
 			CommitKilledEntities();
+			items.RemoveAll( (id,item) => item.Owner==0 || !IsAlive(item.Owner) );
 		}
 
 
@@ -297,11 +303,19 @@ namespace IronStar.Core {
 		/// </summary>
 		/// <param name="classname"></param>
 		/// <returns></returns>
-		public Item SpawnItem ( string classname )
+		public Item SpawnItem ( string classname, uint owner )
 		{
-			var clsid	= Atoms[classname];
-			var factory = Content.Load(@"items\" + classname, (ItemFactory)null );
-			return factory?.Spawn( clsid, this );
+			var id		=	idCounter++;
+			var clsid	=	Atoms[classname];
+			var factory =	Content.Load(@"items\" + classname, (ItemFactory)null );
+			var item	=	factory?.Spawn( clsid, this );
+
+			if (item!=null) {
+				item.Owner	=	owner;
+				items.Add( id, item );
+			}
+
+			return item;
 		}
 
 		/*-----------------------------------------------------------------------------------------
@@ -469,6 +483,7 @@ namespace IronStar.Core {
 				ent.Value?.Kill();
 			}
 			entities.Clear();
+			items.Clear();
 		}
 
 

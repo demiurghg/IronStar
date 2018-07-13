@@ -86,7 +86,7 @@ namespace IronStar.Items {
 		}
 
 
-		public override void Update(GameTime gameTime, Entity entity)
+		public override void Update(GameTime gameTime)
 		{
 			if (timer>0) {
 				timer -= gameTime.Milliseconds;

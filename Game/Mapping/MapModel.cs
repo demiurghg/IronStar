@@ -141,7 +141,7 @@ namespace IronStar.Mapping {
 					if (meshIndex>=0) {
 						instances[i] = new MeshInstance( rs, scene, scene.Meshes[meshIndex] );
 						instances[i].World	= transforms[ i ] * WorldMatrix;
-						instances[i].Static	= true;
+						instances[i].Group	= InstanceGroup.Static;
 						rs.RenderWorld.Instances.Add( instances[i] );
 					} else {
 						instances[i] = null;

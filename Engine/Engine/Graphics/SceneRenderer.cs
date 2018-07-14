@@ -185,6 +185,7 @@ namespace Fusion.Engine.Graphics {
 
 			cbDataStage.View			=	context.GetViewMatrix( stereoEye );
 			cbDataStage.Projection		=	context.GetProjectionMatrix( stereoEye );
+			cbDataStage.ProjectionFPV	=	rs.RenderWorld.WeaponCamera.GetProjectionMatrix( stereoEye );
 			cbDataStage.ViewPos			=	new Vector4( context.GetViewPosition( stereoEye ), 1 );
 			cbDataStage.ViewBounds		=	new Vector4( width, height, width, height );
 			cbDataStage.BiasSlopeFar	=	new Vector4( context.DepthBias, context.SlopeBias, context.FarDistance, 0 );
@@ -264,7 +265,7 @@ namespace Fusion.Engine.Graphics {
 
 			device.PipelineState	=	factory[ flag ];
 
-			cbDataInstance.AssignmentGroup	=	instance.Static ? 0 : 1;
+			cbDataInstance.Group	=	(int)instance.Group;
 			cbDataInstance.Color	=	instance.Color;
 			cbDataInstance.World	=	instance.World;
 

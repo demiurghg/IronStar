@@ -11,36 +11,41 @@ static const uint LightSpotShapeRound = 131072;
 static const uint LightProbeSize = 64;
 static const uint LightProbeMaxSpecularMip = 4;
 static const uint LightProbeDiffuseMip = 5;
+static const uint InstanceGroupStatic = 0;
+static const uint InstanceGroupDynamic = 1;
+static const uint InstanceGroupCharacter = 2;
+static const uint InstanceGroupWeapon = 3;
 
 // Fusion.Engine.Graphics.SceneRenderer+STAGE
 // Marshal.SizeOf = 1024
 struct STAGE {
 	float4x4   Projection;                    // offset:    0
-	float4x4   View;                          // offset:   64
-	float4x4   CascadeViewProjection0;        // offset:  128
-	float4x4   CascadeViewProjection1;        // offset:  192
-	float4x4   CascadeViewProjection2;        // offset:  256
-	float4x4   CascadeViewProjection3;        // offset:  320
-	float4x4   CascadeGradientMatrix0;        // offset:  384
-	float4x4   CascadeGradientMatrix1;        // offset:  448
-	float4x4   CascadeGradientMatrix2;        // offset:  512
-	float4x4   CascadeGradientMatrix3;        // offset:  576
-	float4x4   OcclusionGridMatrix;           // offset:  640
-	float4     CascadeScaleOffset0;           // offset:  704
-	float4     CascadeScaleOffset1;           // offset:  720
-	float4     CascadeScaleOffset2;           // offset:  736
-	float4     CascadeScaleOffset3;           // offset:  752
-	float4     ViewPos;                       // offset:  768
-	float4     BiasSlopeFar;                  // offset:  784
-	float4     SkyAmbientLevel;               // offset:  800
-	float4     ViewBounds;                    // offset:  816
-	float4     DirectLightDirection;          // offset:  832
-	float4     DirectLightIntensity;          // offset:  848
-	float4     FogColor;                      // offset:  864
-	float      FogAttenuation;                // offset:  880
-	float      DirectLightAngularSize;        // offset:  884
-	float      VTPageScaleRCP;                // offset:  888
-	float      VTGradientScaler;              // offset:  892
+	float4x4   ProjectionFPV;                 // offset:   64
+	float4x4   View;                          // offset:  128
+	float4x4   CascadeViewProjection0;        // offset:  192
+	float4x4   CascadeViewProjection1;        // offset:  256
+	float4x4   CascadeViewProjection2;        // offset:  320
+	float4x4   CascadeViewProjection3;        // offset:  384
+	float4x4   CascadeGradientMatrix0;        // offset:  448
+	float4x4   CascadeGradientMatrix1;        // offset:  512
+	float4x4   CascadeGradientMatrix2;        // offset:  576
+	float4x4   CascadeGradientMatrix3;        // offset:  640
+	float4x4   OcclusionGridMatrix;           // offset:  704
+	float4     CascadeScaleOffset0;           // offset:  768
+	float4     CascadeScaleOffset1;           // offset:  784
+	float4     CascadeScaleOffset2;           // offset:  800
+	float4     CascadeScaleOffset3;           // offset:  816
+	float4     ViewPos;                       // offset:  832
+	float4     BiasSlopeFar;                  // offset:  848
+	float4     SkyAmbientLevel;               // offset:  864
+	float4     ViewBounds;                    // offset:  880
+	float4     DirectLightDirection;          // offset:  896
+	float4     DirectLightIntensity;          // offset:  912
+	float4     FogColor;                      // offset:  928
+	float      FogAttenuation;                // offset:  944
+	float      DirectLightAngularSize;        // offset:  948
+	float      VTPageScaleRCP;                // offset:  952
+	float      VTGradientScaler;              // offset:  956
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+INSTANCE
@@ -48,7 +53,7 @@ struct STAGE {
 struct INSTANCE {
 	float4x4   World;                         // offset:    0
 	float4     Color;                         // offset:   64
-	int        AssignmentGroup;               // offset:   80
+	int        Group;                         // offset:   80
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+SUBSET

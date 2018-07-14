@@ -78,8 +78,7 @@ namespace IronStar.SFX {
 		/// <param name="e"></param>
 		void Game_Reloading( object sender, EventArgs e )
 		{
-			#warning RELOAD ENTITY MODELS!
-			//world.ForEachEntity( ent => ent.MakeRenderStateDirty() );
+			world.ForEachEntity( ent => ent.MakePresentationDirty() );
 			weaponModelDirty = true;
 		}
 
@@ -145,13 +144,6 @@ namespace IronStar.SFX {
 			foreach ( var model in models ) {
 				model.Update( gameTime.ElapsedSec, lerpFactor );
 			}
-
-			//
-			//	update view-space weapon model :
-			//
-			if (gameCamera!=null && userCmd!=null) {
-				UpdateViewModel( gameTime.ElapsedSec, lerpFactor, gameCamera, userCmd );
-			}
 		}
 
 
@@ -168,100 +160,6 @@ namespace IronStar.SFX {
 		{
 			float  factor2	=	(float)( 1 - Math.Pow( 1 - factor, dt * 60 ) );
 			return MathUtil.Lerp( current, target, factor2 );
-		}
-
-
-
-		Vector3 oldVelocity;
-		bool oldTraction;
-
-		
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="elapsedTime"></param>
-		/// <param name="lerpFactor"></param>
-		/// <param name="gameCamera"></param>
-		/// <param name="userCmd"></param>
-		void UpdateViewModel ( float elapsedTime, float lerpFactor, GameCamera gameCamera, UserCommand userCmd )
-		{
-			/*
-			if (weaponModel != world.snapshotHeader.WeaponModel || weaponModelDirty) {
-
-				weaponModelDirty	=	false;
-
-				weaponModel	= world.snapshotHeader.WeaponModel;
-				weaponModelInstance?.Kill();
-
-				if (weaponModel>0) {
-					weaponModelInstance	=	AddModel( weaponModel, null );
-					weaponModelInstance.Animator.PlayLoop( AnimChannel.All, "anim_idle" );
-				} else {
-					weaponModelInstance =	null;
-				}
-			}
-
-			if (weaponModelInstance==null) {
-				return;
-			}
-
-
-			var player			=	world.GetPlayerEntity( world.UserGuid );
-			var newWeaponState	=	world.snapshotHeader.WeaponState;
-
-			if (player!=null) {
-				var newVelocity	=	player.LinearVelocity;
-
-				float weight	=	MathUtil.Clamp( Math.Abs(newVelocity.Y - oldVelocity.Y) / 20, 0, 1 );
-
-				var newTraction	=	player.State.HasFlag(EntityState.HasTraction);
-
-				if (oldTraction) {
-					weight /= 2;
-				}
-
-				if (newWeaponState!=WeaponState.Idle) {
-					weight = 0;
-				}
-
-				if (weight>0.1f && newTraction!=oldTraction) {
-					Log.Message("Landing: {0} {1}", newVelocity.Y, oldVelocity.Y);
-					weaponModelInstance.Animator.PlayEvent( AnimChannel.All, "anim_landing", weight, 0, 7 );
-				}
-
-				oldTraction	=	newTraction;
-				oldVelocity =	newVelocity;
-			}
-
-
-
-			if ( oldWeaponState != newWeaponState ) {
-				oldWeaponState	=	newWeaponState;
-
-				Log.Warning("...weapon: {0}", newWeaponState );
-
-				if (newWeaponState==WeaponState.Recoil1 || newWeaponState==WeaponState.Recoil2) {
-					weaponModelInstance.Animator.PlayEvent( AnimChannel.All, "anim_recoil", 1, 1, 5 );
-				}
-				if (newWeaponState==WeaponState.Activating) {
-					weaponModelInstance.Animator.PlayEvent( AnimChannel.All, "anim_takeout", 1, 0, 0 );
-				}
-				if (newWeaponState==WeaponState.Deactivating) {
-					weaponModelInstance.Animator.PlayEvent( AnimChannel.All, "anim_putdown", 1, 0, 0 );
-				}
-				if (newWeaponState==WeaponState.Warmup) {
-					weaponModelInstance.Animator.PlayEvent( AnimChannel.All, "anim_warmup", 1, 0, 0 );
-				}
-			}
-
-			//
-			//	final transform :
-			//
-			var weaponMatrix	=	Matrix.Identity;
-			var camMatrix		=	rw.Camera.GetCameraMatrix(Fusion.Drivers.Graphics.StereoEye.Mono);
-				
-			weaponModelInstance?.Update( elapsedTime, 0, weaponMatrix * camMatrix );
-			*/
 		}
 	}
 }

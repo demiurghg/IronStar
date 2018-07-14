@@ -132,12 +132,15 @@ namespace IronStar.SFX {
 
 			meshInstances	=	new MeshInstance[ scene.Nodes.Count ];
 
+			var instGroup	=	fpvEnabled ? InstanceGroup.Weapon : InstanceGroup.Dynamic;
+
+
 			for ( int i=0; i<nodeCount; i++ ) {
 				var meshIndex = scene.Nodes[i].MeshIndex;
 				
 				if (meshIndex>=0) {
 					meshInstances[i]		= new MeshInstance( modelManager.rs, scene, scene.Meshes[meshIndex] );
-					meshInstances[i].FPView = fpvEnabled;
+					meshInstances[i].Group	= instGroup;
 					modelManager.rw.Instances.Add( meshInstances[i] );
 				} else {
 					meshInstances[i] = null;

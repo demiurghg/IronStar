@@ -50,11 +50,17 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine]	public const uint LightProbeMaxSpecularMip	=	RenderSystem.LightProbeMaxSpecularMip;
 		[ShaderDefine]	public const uint LightProbeDiffuseMip		=	RenderSystem.LightProbeDiffuseMip;
 
+		[ShaderDefine]	public const uint InstanceGroupStatic		=	(int)InstanceGroup.Static;
+		[ShaderDefine]	public const uint InstanceGroupDynamic		=	(int)InstanceGroup.Dynamic;
+		[ShaderDefine]	public const uint InstanceGroupCharacter	=	(int)InstanceGroup.Character;
+		[ShaderDefine]	public const uint InstanceGroupWeapon		=	(int)InstanceGroup.Weapon;
+
 
 		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential, Pack=4, Size=1024)]
 		struct STAGE {
 			public Matrix	Projection				;
+			public Matrix	ProjectionFPV			;
 			public Matrix	View					;
 			public Matrix	CascadeViewProjection0	;
 			public Matrix	CascadeViewProjection1	;
@@ -88,7 +94,7 @@ namespace Fusion.Engine.Graphics {
 		struct INSTANCE {
 			public Matrix	World	;
 			public Color4	Color	;
-			public int		AssignmentGroup	;
+			public int		Group	;
 		}
 
 

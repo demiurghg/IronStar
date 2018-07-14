@@ -67,7 +67,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		
 		float4 decalPos	=	mul(float4(worldPos,1), decalMatrixI);
 		
-		if ( abs(decalPos.x)<1 && abs(decalPos.y)<1 && abs(decalPos.z)<1 && Instance.AssignmentGroup==decal.AssignmentGroup ) {
+		if ( abs(decalPos.x)<1 && abs(decalPos.y)<1 && abs(decalPos.z)<1 && Instance.Group==decal.AssignmentGroup ) {
 		
 			//float2 uv			=	mad(mad(decalPos.xy, float2(-0.5,0.5), float2(0.5,0.5), offsetScale.zw, offsetScale.xy); 
 			float2 uv			=	mad(decalPos.xy, scaleOffset.xy, scaleOffset.zw); 

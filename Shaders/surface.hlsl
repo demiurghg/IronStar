@@ -131,14 +131,22 @@ float4 TransformNormal( int4 boneIndices, float4 boneWeights, float3 inputNormal
 PSInput VSMain( VSInput input )
 {
 	PSInput output;
+	
+	float4x4	projection	=	Stage.Projection;
+	
+	#if defined(FORWARD) || defined(ZPASS)
+	if ( Instance.Group==InstanceGroupWeapon ) {
+		projection = Stage.ProjectionFPV;
+	}
+	#endif
 
 	#if RIGID
-		float4 	pos			=	float4( input.Position, 1 );
-		float4	wPos		=	mul( pos,  Instance.World 		);
+		float4 	pos			=	float4( input.Position, 1 	);
+		float4	wPos		=	mul( pos,  Instance.World 	);
 		float4	vPos		=	mul( wPos, Stage.View 		);
-		float4	pPos		=	mul( vPos, Stage.Projection );
-		float4	normal		=	mul( float4(input.Normal,0),  Instance.World 		);
-		float4	tangent		=	mul( float4(input.Tangent,0),  Instance.World 		);
+		float4	pPos		=	mul( vPos, projection 		);
+		float4	normal		=	mul( float4(input.Normal,0	),  Instance.World 		);
+		float4	tangent		=	mul( float4(input.Tangent,0	),  Instance.World 		);
 		float4	binormal	=	mul( float4(input.Binormal,0),  Instance.World 	);
 	#endif
 	#if SKINNED
@@ -147,9 +155,9 @@ PSInput VSMain( VSInput input )
 		float4  sTangent	=	TransformNormal		( input.BoneIndices, input.BoneWeights, input.Tangent	);
 		float4  sBinormal	=	TransformNormal		( input.BoneIndices, input.BoneWeights, input.Binormal	);
 		
-		float4	wPos		=	mul( sPos, Instance.World 		);
+		float4	wPos		=	mul( sPos, Instance.World 	);
 		float4	vPos		=	mul( wPos, Stage.View 		);
-		float4	pPos		=	mul( vPos, Stage.Projection );
+		float4	pPos		=	mul( vPos, projection		);
 		float4	normal		=	mul( sNormal,  Instance.World 	);
 		float4	tangent		=	mul( sTangent,  Instance.World 	);
 		float4	binormal	=	mul( sBinormal,  Instance.World 	);

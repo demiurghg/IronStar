@@ -10,35 +10,22 @@ using Fusion.Engine.Common;
 using Fusion.Core.Content;
 
 namespace Fusion.Engine.Graphics {
+
+	public enum InstanceGroup {
+		Static,
+		Dynamic,
+		Character,
+		Weapon,
+	}
 	
 	/// <summary>
 	/// Represnets mesh instance
 	/// </summary>
 	public class MeshInstance {
 
-		/// <summary>
-		/// Indicates whether mesh instance visible.
-		/// Default value is True.
-		/// </summary>
-		public bool Visible {
+		public InstanceGroup Group {
 			get; set;
-		} = true;
-
-		/// <summary>
-		/// Indicates whether mesh instance visible.
-		/// Default value is True.
-		/// </summary>
-		public bool Static {
-			get; set;
-		} = true;
-
-		/// <summary>
-		/// Indicates that given mesh is view-space.
-		/// Default value is False.
-		/// </summary>
-		public bool FPView {
-			get; set;
-		} = false;
+		}
 
 		/// <summary>
 		/// Instance world matrix. Default value is Matrix.Identity.
@@ -124,7 +111,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="mesh"></param>
 		public MeshInstance ( RenderSystem rs, Scene scene, Mesh mesh )
 		{
-			Visible		=	true;
+			Group		=	InstanceGroup.Static;
 			World		=	Matrix.Identity;
 			Color		=	Color4.Zero;
 

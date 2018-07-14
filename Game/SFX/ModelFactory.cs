@@ -29,13 +29,14 @@ namespace IronStar.SFX {
 		[Description( "Entire model scale" )]
 		public float Scale { get; set; } = 1;
 
-		[AECategory( "Appearance" )]
-		[Description( "Indicated whether animation enabled" )]
-		public bool UseAnimation { get; set; } = false;
+		[AECategory( "Animation" )]
+		[AEClassname("animation")]
+		public string AnimController { get; set; } = "";
 
-		[AECategory( "Appearance" )]
-		[Description( "Indicated whether advanced animation controller is used" )]
-		public bool UseAnimator { get; set; } = false;
+		[AECategory( "Animation" )]
+		[AEDisplayName("Enabled")]
+		[AEClassname("animation")]
+		public bool AnimEnabled { get; set; } = false;
 
 		[AECategory( "Appearance" )]
 		[Description( "Model glow color" )]
@@ -86,7 +87,7 @@ namespace IronStar.SFX {
 
 		public Scene[] LoadClips ( ContentManager content )
 		{
-			if (!UseAnimation) {
+			if (AnimController=="") {
 				return new Scene[0];
 			}
 

@@ -86,7 +86,7 @@
     <Compile Include="JsonLoader.cs" />
     <Compile Include="Physics\DetectorArea.cs" />
     <Compile Include="Physics\DynamicBox.cs" />
-    <Compile Include="SFX\AnimTake.cs" />
+    <Compile Include="SFX\AnimController.cs" />
     <Compile Include="ShooterCampaign.cs" />
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Client\GameInput.cs" />
@@ -184,10 +184,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Physics\PhysicsManager.cs" />
-    <Compile Include="SFX\Animator.AnimEvent.cs" />
-    <Compile Include="SFX\Animator.cs" />
-    <Compile Include="SFX\AnimBlend.cs" />
-    <Compile Include="SFX\AnimChannel.cs" />
+    <Compile Include="SFX\AnimBlendUtils.cs" />
     <Compile Include="SFX\FXFactory.Utils.cs" />
     <Compile Include="SFX\FXFactory.cs" />
     <Compile Include="SFX\FXPlayback.Rail.cs" />

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 
 namespace IronStar.SFX {
-	static class AnimBlend {
+	static class AnimBlendUtils {
 
 		public static void Blend ( Matrix[] frame1, Matrix[] frame2, float weight, Matrix[] destination )
 		{

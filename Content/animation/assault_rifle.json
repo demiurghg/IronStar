@@ -1,0 +1,25 @@
+{
+    "Takes": {
+        "idle":{
+            "State"  	:  "Weapon_Idle",
+            "Take"   	:  "take_idle",
+            "Rate"   	:  60,
+            "NextTake"  :  "idle",
+			"NextKey"	:  0,
+            "Effects" : [
+                {"Sfx" : "step",   "Key" : 20,	"Joint" : "LeftFoot"   },
+                {"Sfx" : "step",   "Key" : 40,	"Joint" : "RightFoot"  }
+            ],
+			
+            "Transitions" : [
+                {
+                 "State"    : "Weapon_Idle",
+                 "Low"     	: 0,
+				 "High"		: 99999,
+                 "NextTake" : "idle",
+                 "NextKey"  : 0
+                }
+            ]
+        }
+    }
+}

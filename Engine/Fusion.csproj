@@ -154,6 +154,7 @@
     <Compile Include="Core\GameComponentCollectionEventArgs.cs" />
     <Compile Include="Core\Mathematics\Byte3.cs" />
     <Compile Include="Core\Mathematics\HSVColor.cs" />
+    <Compile Include="Core\Mathematics\Range.cs" />
     <Compile Include="Core\Mathematics\UShort3.cs" />
     <Compile Include="Core\Mathematics\Segment.cs" />
     <Compile Include="Core\Mathematics\WaveLength.cs" />

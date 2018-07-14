@@ -41,6 +41,8 @@ namespace IronStar.Core {
 		/// </summary>
 		public EntityState EntityState;
 
+		public AnimState	WeaponAnimation;
+
 		/// <summary>
 		/// Players guid. Zero if no player.
 		/// Server-side only
@@ -128,6 +130,8 @@ namespace IronStar.Core {
 			writer.Write( Model );
 			writer.Write( Model2 );
 			writer.Write( ModelFpv );
+
+			writer.Write( (byte)WeaponAnimation );
 		}
 
 
@@ -160,6 +164,8 @@ namespace IronStar.Core {
 			Model			=	reader.ReadInt16();
 			Model2			=	reader.ReadInt16();
 			ModelFpv		=	reader.ReadInt16();
+
+			WeaponAnimation	=	(AnimState)reader.ReadByte();
 
 			//	entity teleported - reset position and rotation :
 			if (oldTeleport!=TeleportCount) {

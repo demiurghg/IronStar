@@ -32,14 +32,11 @@ namespace IronStar.SFX {
 		readonly ModelManager modelManager;
 		readonly Scene scene;
 		readonly Scene[] clips;
-		readonly bool useAnimation;
-		readonly bool useAnimator;
 		readonly string fpvCamera;
 		readonly bool fpvEnabled;
 		readonly Matrix fpvCameraMatrix;
 		readonly Matrix fpvViewMatrix;
 		readonly int fpvCameraIndex;
-		readonly Animator animator;
 
 		readonly float boxWidth;
 		readonly float boxHeight;
@@ -49,6 +46,8 @@ namespace IronStar.SFX {
 		Matrix[] globalTransforms;
 		Matrix[] animSnapshot;
 		MeshInstance[] meshInstances;
+
+		AnimController	animController;
 
 		readonly int nodeCount;
 
@@ -66,12 +65,6 @@ namespace IronStar.SFX {
 		/// Gets model's clips
 		/// </summary>
 		public Scene[] Clips { get { return clips; } }
-
-		/// <summary>
-		/// Gets model's animator
-		/// </summary>
-		public Animator Animator { get { return animator; } }
-
 
 		/// <summary>
 		/// 
@@ -92,7 +85,6 @@ namespace IronStar.SFX {
 			}
 
 			this.Entity			=	entity;
-			this.animator		=	new Animator( this );
 
 			this.boxWidth		=	factory.BoxWidth	;
 			this.boxHeight		=	factory.BoxHeight	;
@@ -102,8 +94,6 @@ namespace IronStar.SFX {
 			this.modelManager   =   modelManager;
 			this.preTransform   =   factory.ComputePreTransformMatrix();
 			this.color			=	factory.Color;
-			this.useAnimation	=	factory.UseAnimation;
-			this.useAnimator	=	factory.UseAnimator;
 
 			this.fpvEnabled		=	factory.FPVEnable;
 			this.fpvCamera		=	factory.FPVCamera;
@@ -114,6 +104,11 @@ namespace IronStar.SFX {
 			animSnapshot		=	new Matrix[ scene.Nodes.Count ];
 			scene.ComputeAbsoluteTransforms( globalTransforms );
 			scene.ComputeAbsoluteTransforms( animSnapshot );
+
+			if (factory.AnimEnabled) {
+				animController	=	content.Load<AnimController>(@"animation\" + factory.AnimController);
+				animController.LoadTakes( content, factory.ScenePath );
+			}
 
 			if (fpvEnabled) {
 				fpvCameraIndex		=	scene.GetNodeIndex( fpvCamera );

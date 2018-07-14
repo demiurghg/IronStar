@@ -123,6 +123,8 @@ namespace IronStar.Entities.Players {
 			//	update physical character controller :
 			controller.Update();
 
+			ModelFpv	=	World.Atoms["weapon_machinegun"];
+
 			//	update player's entity states :
 			if (controller.Crouching) {
 				EntityState |=	EntityState.Crouching;

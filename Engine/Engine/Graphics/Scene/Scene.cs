@@ -257,11 +257,18 @@ namespace Fusion.Engine.Graphics {
 			}
 		}
 
+
+		public void ComputeAbsoluteTransforms ( Matrix[] destination )
+		{
+			ComputeAbsoluteTransforms( destination, Matrix.Identity );
+		}
+
+
 		/// <summary>
 		/// Copies absolute transform to provided array.
 		/// </summary>
 		/// <param name="destination"></param>
-		public void ComputeAbsoluteTransforms ( Matrix[] destination )
+		public void ComputeAbsoluteTransforms ( Matrix[] destination, Matrix preTransform )
 		{
 			if ( destination.Length < Nodes.Count ) {
 				throw new ArgumentOutOfRangeException("destination.Length must be greater of equal to Nodes.Count");
@@ -303,7 +310,7 @@ namespace Fusion.Engine.Graphics {
 					parentIndex =	Nodes[ parentIndex ].ParentIndex;
 				}
 
-				destination[i] = transform;
+				destination[i] = transform * preTransform;
 			} 
 			#endif
 		}

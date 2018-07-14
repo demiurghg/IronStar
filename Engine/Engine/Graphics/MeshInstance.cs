@@ -34,7 +34,7 @@ namespace Fusion.Engine.Graphics {
 
 		/// <summary>
 		/// Indicates that given mesh is view-space.
-		/// Default value is Fa;se.
+		/// Default value is False.
 		/// </summary>
 		public bool FPView {
 			get; set;

@@ -113,6 +113,7 @@ namespace IronStar.SFX {
 			globalTransforms	=	new Matrix[ scene.Nodes.Count ];
 			animSnapshot		=	new Matrix[ scene.Nodes.Count ];
 			scene.ComputeAbsoluteTransforms( globalTransforms );
+			scene.ComputeAbsoluteTransforms( animSnapshot );
 
 			if (fpvEnabled) {
 				fpvCameraIndex		=	scene.GetNodeIndex( fpvCamera );
@@ -122,7 +123,6 @@ namespace IronStar.SFX {
 				} else {
 					fpvCameraMatrix	=	Matrix.RotationY( -MathUtil.PiOverTwo ) * globalTransforms[ fpvCameraIndex ];
 					fpvViewMatrix	=	Matrix.Invert( fpvCameraMatrix );
-
 					preTransform	=	fpvViewMatrix * Matrix.Scaling( factory.Scale );
 				}
 			} else {
@@ -130,7 +130,7 @@ namespace IronStar.SFX {
 			}
 
 
-			meshInstances		=	new MeshInstance[ scene.Nodes.Count ];
+			meshInstances	=	new MeshInstance[ scene.Nodes.Count ];
 
 			for ( int i=0; i<nodeCount; i++ ) {
 				var meshIndex = scene.Nodes[i].MeshIndex;
@@ -157,22 +157,36 @@ namespace IronStar.SFX {
 		{
 			var q	=	Entity.Rotation;
 			var p	=	Entity.Position;
+
 			var worldMatrix = Matrix.RotationQuaternion( q ) * Matrix.Translation( p );
+
+			if ( fpvEnabled ) {
+				var weaponMatrix		=	Matrix.Identity;
+				var playerCameraMatrix	=	modelManager.rw.Camera.GetCameraMatrix(Fusion.Drivers.Graphics.StereoEye.Mono);
+				
+				worldMatrix				= 	playerCameraMatrix;
+			}
+
 
 			if (scene==EmptyScene) {
 				modelManager.rw.Debug.DrawBox( new BoundingBox(boxWidth,boxHeight,boxDepth), worldMatrix, boxColor, 2 );
 				return;
 			}
 
-			if (useAnimator) {
+			/*if (useAnimator) {
 				Animator.Update( dt, animSnapshot );
 			} else if (useAnimation) {
 				EvaluateFrame( animFrame );
 			} else {
 				ResetPose();
-			}
+			}*/
 
-			Update( worldMatrix, animSnapshot );
+			//ResetPose();
+			
+			Update( worldMatrix, globalTransforms );
+
+			#warning old stuff
+			//Update( worldMatrix, animSnapshot );
 		}
 
 

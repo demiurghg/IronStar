@@ -127,6 +127,7 @@ namespace IronStar.Core {
 			writer.Write( Sfx );
 			writer.Write( Model );
 			writer.Write( Model2 );
+			writer.Write( ModelFpv );
 		}
 
 
@@ -158,6 +159,7 @@ namespace IronStar.Core {
 			Sfx				=	reader.ReadInt16();
 			Model			=	reader.ReadInt16();
 			Model2			=	reader.ReadInt16();
+			ModelFpv		=	reader.ReadInt16();
 
 			//	entity teleported - reset position and rotation :
 			if (oldTeleport!=TeleportCount) {
@@ -359,6 +361,19 @@ namespace IronStar.Core {
 		private bool model2Dirty = true;
 
 		/// <summary>
+		/// First person view model #2
+		/// </summary>
+		public short ModelFpv {
+			get { return modelFpv; }
+			set { 
+				modelFpvDirty |= (modelFpv != value); 
+				modelFpv = value; 
+			}
+		}
+		private short modelFpv = -1;
+		private bool modelFpvDirty = true;
+
+		/// <summary>
 		/// Visible persistent special effect
 		/// </summary>
 		public short Sfx {
@@ -376,6 +391,7 @@ namespace IronStar.Core {
 		public FXInstance FXInstance { get; private set; }
 		public ModelInstance ModelInstance { get; private set; }
 		public ModelInstance ModelInstance2 { get; private set; }
+		public ModelInstance ModelFpvInstance { get; private set; }
 
 	
 		public void UpdatePresentation ( FXPlayback fxPlayback, ModelManager modelManager, GameCamera gameCamera )
@@ -399,7 +415,7 @@ namespace IronStar.Core {
 				ModelInstance	=	null;
 
 				if (model>0) {
-					ModelInstance	=	modelManager.AddModel( this, model );
+					ModelInstance	=	modelManager.AddModel( this, model, false );
 				}
 			}
 
@@ -410,7 +426,18 @@ namespace IronStar.Core {
 				ModelInstance2	=	null;
 
 				if (model2>0) {
-					ModelInstance2	=	modelManager.AddModel( this, model2 );
+					ModelInstance2	=	modelManager.AddModel( this, model2, false );
+				}
+			}
+
+			if (modelFpvDirty) {
+				modelFpvDirty = false;
+
+				ModelFpvInstance?.Kill();
+				ModelFpvInstance	=	null;
+
+				if (modelFpv>0) {
+					ModelFpvInstance	=	modelManager.AddModel( this, modelFpv, true );
 				}
 			}
 		}
@@ -419,9 +446,10 @@ namespace IronStar.Core {
 
 		public void MakePresentationDirty ()
 		{
-			sfxDirty	=	true;
-			modelDirty	=	true;
-			model2Dirty	=	true;
+			sfxDirty		=	true;
+			modelDirty		=	true;
+			model2Dirty		=	true;
+			modelFpvDirty	=	true;
 		}
 
 
@@ -429,13 +457,16 @@ namespace IronStar.Core {
 		public void KillPresentation ()
 		{
 			FXInstance?.Kill();
-			FXInstance = null;
+			FXInstance	= null;
 
 			ModelInstance?.Kill();
 			ModelInstance	=	null;
 
 			ModelInstance2?.Kill();
 			ModelInstance2	=	null;
+
+			ModelFpvInstance?.Kill();
+			ModelFpvInstance	=	null;
 		}
 	}
 }

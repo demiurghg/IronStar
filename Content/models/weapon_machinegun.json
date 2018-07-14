@@ -1,0 +1,17 @@
+{
+  "$type": "IronStar.SFX.ModelFactory, IronStar",
+  "ScenePath": "scenes\\weapon\\assault_rifle\\assault_rifle_view.FBX",
+  "Scale": 0.1,
+  "UseAnimation": false,
+  "UseAnimator": false,
+  "Color": "255, 255, 255, 255",
+  "Intensity": 100.0,
+  "FPVEnable": true,
+  "FPVCamera": "camera1",
+  "Prefix": "anim_",
+  "Clips": "",
+  "BoxWidth": 1.0,
+  "BoxHeight": 1.0,
+  "BoxDepth": 1.0,
+  "BoxColor": "154, 205, 50, 255"
+}

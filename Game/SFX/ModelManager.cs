@@ -91,7 +91,7 @@ namespace IronStar.SFX {
 		/// <param name="modelAtom"></param>
 		/// <param name="entity"></param>
 		/// <returns></returns>
-		public ModelInstance AddModel ( Entity entity, short modelAtom )
+		public ModelInstance AddModel ( Entity entity, short modelAtom, bool fpv )
 		{
 			var modelName	=	world.Atoms[ modelAtom ];
 

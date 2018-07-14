@@ -9,8 +9,10 @@ namespace IronStar.Core {
 	[Flags]
 	public enum EntityState : int {
 
-		Crouching	=	0x0001,
-		Zooming		=	0x0002,
-		HasTraction	=	0x0004,
+		Crouching	=	1 <<  0,
+		Zooming		=	1 <<  1,
+		HasTraction	=	1 <<  2,
+
+
 	}
 }

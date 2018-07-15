@@ -7,6 +7,14 @@
   "Impulse": 3.0,
   "ProjectileCount": 1,
   "AngularSpread": 2.0,
-  "Cooldown": 100,
-  "HitFX": "bulletHit"
+  "WarmupTime": 0,
+  "AttackTime": 100,
+  "CooldownTime": 0,
+  "OverheatTime": 0,
+  "ReloadTime": 500,
+  "EmptyTime": 500,
+  "RaiseTime": 500,
+  "DropTime": 500,
+  "HitFX": "bulletHit",
+  "AmmoItem": ""
 }

@@ -62,11 +62,6 @@ namespace IronStar.SFX {
 		public Scene Scene { get { return scene; } }
 
 		/// <summary>
-		/// Gets model's clips
-		/// </summary>
-		public Scene[] Clips { get { return clips; } }
-
-		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="modelManager"></param>
@@ -81,7 +76,6 @@ namespace IronStar.SFX {
 				this.clips		=	new Scene[0];
 			} else {
 				this.scene		=	content.Load<Scene>( factory.ScenePath );
-				this.clips		=	factory.LoadClips( content );
 			}
 
 			this.Entity			=	entity;
@@ -107,7 +101,6 @@ namespace IronStar.SFX {
 
 			if (factory.AnimEnabled) {
 				animController	=	content.Load<AnimController>(@"animation\" + factory.AnimController);
-				animController.LoadTakes( content, factory.ScenePath );
 			}
 
 			if (fpvEnabled) {

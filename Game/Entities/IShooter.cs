@@ -8,6 +8,7 @@ using IronStar.Entities.Players;
 
 namespace IronStar.Entities {
 
+	[Obsolete("Make GetPOV for all entities")]
 	public interface IShooter {
 
 		/// <summary>

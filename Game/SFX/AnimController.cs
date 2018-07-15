@@ -12,20 +12,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Converters;
 using Fusion.Engine.Graphics;
+using IronStar.Core;
 
 namespace IronStar.SFX {
-
-	public enum AnimState : byte {
-		Weapon_Idle,
-		Weapon_Warmup,
-		Weapon_Attack,
-		Weapon_Cooldown,
-		Weapon_Reload,
-		Weapon_Overheat,
-		Weapon_Drop,
-		Weapon_Raise,
-		Weapon_NoAmmo,
-	}
 
 
 	public class AnimTake {
@@ -92,12 +81,6 @@ namespace IronStar.SFX {
 			Takes = new Dictionary<string, AnimTake>();
 		}
 
-		public void LoadTakes ( ContentManager content, string baseScenePath )
-		{
-			var dir = Path.GetDirectoryName( baseScenePath );
-			
-			//foreach ( var tae
-		}
 
 		public void Update ()
 		{

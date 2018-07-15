@@ -54,12 +54,31 @@ namespace IronStar.Items {
 		[AECategory("Shooting")]
 		public float AngularSpread { get; set; }
 
-		[AECategory("Shooting")]
-		public int Cooldown {
-			get { return cooldown; }
-			set { cooldown = MathUtil.Clamp(value, 0, 10000); }
-		}
-		int cooldown = 1;
+
+		[AECategory("Timing")]
+		public int WarmupTime { get; set; } = 0;
+		
+		[AECategory("Timing")]
+		public int RecoilTime { get; set; } = 500;
+		
+		[AECategory("Timing")]
+		public int CooldownTime { get; set; } = 0;
+		
+		[AECategory("Timing")]
+		public int OverheatTime { get; set; } = 0;
+		
+		[AECategory("Timing")]
+		public int ReloadTime { get; set; } = 500;
+		
+		[AECategory("Timing")]
+		public int EmptyTime { get; set; } = 500;
+		
+		[AECategory("Timing")]
+		public int RaiseTime { get; set; } = 500;
+		
+		[AECategory("Timing")]
+		public int DropTime { get; set; } = 500;
+
 
 		[AECategory("Beam")]
 		[AEClassname("fx")]

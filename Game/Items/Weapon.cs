@@ -28,6 +28,18 @@ using Fusion.Core.Shell;
 namespace IronStar.Items {
 
 	public partial class Weapon : Item {
+		
+		public enum WeaponState {
+			Idle	,
+			Warmup	,
+			Recoil	,
+			Cooldown,
+			Reload	,
+			Overheat,
+			Drop	,
+			Raise	,
+			NoAmmo	,
+		}
 
 		readonly Random rand = new Random();
 		readonly GameWorld world;
@@ -40,11 +52,20 @@ namespace IronStar.Items {
 		readonly int	projectileCount;
 		readonly float	angularSpread;
 
-		readonly int	cooldown;
+		readonly int	timeWarmup	;
+		readonly int	timeRecoil	;
+		readonly int	timeCooldown;
+		readonly int	timeOverheat;
+		readonly int	timeReload	;
+		readonly int	timeDrop	;
+		readonly int	timeRaise	;
 		readonly string hitFX;
 		readonly string ammoItem;
 
 		int timer;
+		WeaponState state;
+		bool rqAttack;
+		bool rqReload;
 
 
 		/// <summary>
@@ -64,7 +85,14 @@ namespace IronStar.Items {
 			projectileCount	=	factory.ProjectileCount	;
 			angularSpread	=	factory.AngularSpread	;
 
-			cooldown		=	factory.Cooldown		;
+			timeWarmup		=	factory.WarmupTime		;
+			timeRecoil		=	factory.RecoilTime		;
+			timeCooldown	=	factory.CooldownTime	;
+			timeOverheat	=	factory.OverheatTime	;
+			timeReload		=	factory.ReloadTime		;
+			timeDrop		=	factory.DropTime		;
+			timeRaise		=	factory.RaiseTime		;
+			
 			hitFX			=	factory.HitFX			;
 			ammoItem		=	factory.AmmoItem		;
 
@@ -73,16 +101,8 @@ namespace IronStar.Items {
 
 		public override bool Attack(IShooter shooter, Entity attacker)
 		{
-			if (timer<=0) {
-				if (Fire(shooter, attacker)) {
-					timer = cooldown;
-					return true;
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
+			rqAttack = true;
+			return true;
 		}
 
 
@@ -92,6 +112,83 @@ namespace IronStar.Items {
 				timer -= gameTime.Milliseconds;
 			} else {
 				timer = 0;
+			}
+
+			var entity = world.Entities.GetEntity(Owner);
+			if (entity==null) {
+				return;
+			}
+
+			//	update FSM twice to 
+			//	bypass zero time states:
+			UpdateFSM( gameTime, entity );
+			UpdateFSM( gameTime, entity );
+
+			rqAttack = false;
+
+			//	update animation state :
+			//	actually, even dropped weapon could perform attack!!! :)
+			switch (state) {
+				case WeaponState.Idle		:	entity.WeaponAnimation	=	AnimState.Weapon_Idle		;	 break;
+				case WeaponState.Warmup		:	entity.WeaponAnimation	=	AnimState.Weapon_Warmup		;	 break;
+				case WeaponState.Recoil		:	entity.WeaponAnimation	=	AnimState.Weapon_Recoil		;	 break;
+				case WeaponState.Cooldown	:	entity.WeaponAnimation	=	AnimState.Weapon_Cooldown	;	 break;
+				case WeaponState.Reload		:	entity.WeaponAnimation	=	AnimState.Weapon_Reload		;	 break;
+				case WeaponState.Overheat	:	entity.WeaponAnimation	=	AnimState.Weapon_Overheat	;	 break;
+				case WeaponState.Drop		:	entity.WeaponAnimation	=	AnimState.Weapon_Drop		;	 break;
+				case WeaponState.Raise		:	entity.WeaponAnimation	=	AnimState.Weapon_Raise		;	 break;
+				case WeaponState.NoAmmo		:	entity.WeaponAnimation	=	AnimState.Weapon_NoAmmo		;	 break;
+			}
+		}
+
+
+
+		void UpdateFSM (GameTime gameTime, Entity entity)
+		{
+			switch (state) {
+				case WeaponState.Idle:	
+					if (rqAttack) {
+						state = WeaponState.Warmup;	
+						timer = timeWarmup;
+					}
+					break;
+
+				case WeaponState.Warmup:	
+					if (timer<=0) {
+						Fire(entity as IShooter, entity);
+						state = WeaponState.Recoil;	
+						timer = timeRecoil;
+					}
+					break;
+
+				case WeaponState.Recoil:	
+					if (timer<=0) {
+						state = WeaponState.Cooldown;	
+						timer = timeCooldown;
+					}
+					break;
+
+				case WeaponState.Cooldown:	
+					if (timer<=0) {
+						state = WeaponState.Idle;	
+						timer = 0;
+					}
+					break;
+
+				case WeaponState.Reload:		
+					break;
+
+				case WeaponState.Overheat:		
+					break;
+
+				case WeaponState.Drop:		
+					break;
+
+				case WeaponState.Raise:		
+					break;
+
+				case WeaponState.NoAmmo:		
+					break;
 			}
 		}
 

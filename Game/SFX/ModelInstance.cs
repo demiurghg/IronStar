@@ -244,11 +244,6 @@ namespace IronStar.SFX {
 		 * 
 		-----------------------------------------------------------------------------------------------*/
 
-		public Scene GetClip ( string name )
-		{
-			return clips.FirstOrDefault( clip => clip.TakeName == name );
-		}
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -275,7 +270,8 @@ namespace IronStar.SFX {
 		/// <param name="frame"></param>
 		public void EvaluateFrame ( float animFrame )
 		{
-			if (animFrame>scene.LastFrame) {
+			throw new NotImplementedException();
+			/*if (animFrame>scene.LastFrame) {
 				Log.Warning("Anim frame: {0} > {1}", animFrame, scene.LastFrame);
 			}
 
@@ -286,7 +282,7 @@ namespace IronStar.SFX {
 			animFrame = MathUtil.Clamp( animFrame, scene.FirstFrame, scene.LastFrame );
 
 			scene.GetAnimSnapshot( animFrame, scene.FirstFrame, scene.LastFrame, AnimationMode.Clamp, animSnapshot );
-			scene.ComputeAbsoluteTransforms( animSnapshot, animSnapshot );
+			scene.ComputeAbsoluteTransforms( animSnapshot, animSnapshot ); */
 		}
 	}
 }

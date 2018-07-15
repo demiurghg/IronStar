@@ -44,5 +44,11 @@ namespace Fusion.Core.Extensions {
 		{
 			Write<T>( writer, array, array.Length );
 		}
+
+
+		public static void Write<T>( this BinaryWriter writer, T[,] array ) where T : struct
+		{
+			Write<T>( writer, array, array.Length );
+		}
 	}
 }

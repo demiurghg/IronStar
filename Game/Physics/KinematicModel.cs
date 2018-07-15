@@ -131,7 +131,8 @@ namespace IronStar.Physics {
 			}
 			animFrame = MathUtil.Clamp( animFrame, scene.FirstFrame, scene.LastFrame );
 
-			scene.GetAnimSnapshot( animFrame, scene.FirstFrame, scene.LastFrame, AnimationMode.Clamp, animSnapshot );
+			#warning USE DEFAULT TAKE!!!!
+			scene.CopyLocalTransformsTo( animSnapshot );
 			scene.ComputeAbsoluteTransforms( animSnapshot, animSnapshot );
 
 

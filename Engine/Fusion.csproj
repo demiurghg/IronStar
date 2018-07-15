@@ -529,6 +529,7 @@
     <Compile Include="Engine\Graphics\SceneRenderer.Gpu.cs" />
     <Compile Include="Engine\Graphics\Scene\AnimMode.cs" />
     <Compile Include="Engine\Graphics\Scene\AnimRegion.cs" />
+    <Compile Include="Engine\Graphics\Scene\AnimTakeCollection.cs" />
     <Compile Include="Engine\Graphics\Scene\GeometryCache.cs" />
     <Compile Include="Engine\Graphics\Scene\Material.cs" />
     <Compile Include="Engine\Graphics\Scene\Mesh.cs" />
@@ -540,6 +541,7 @@
     <Compile Include="Engine\Graphics\Scene\Scene.cs" />
     <Compile Include="Engine\Graphics\Scene\SceneLoader.cs" />
     <Compile Include="Engine\Graphics\Scene\SceneMapping.cs" />
+    <Compile Include="Engine\Graphics\Scene\AnimTake.cs" />
     <Compile Include="Engine\Graphics\Scene\VertexColorTexture.cs" />
     <Compile Include="Engine\Graphics\Scene\VertexColorTextureNormal.cs" />
     <Compile Include="Engine\Graphics\Scene\VertexColorTextureTBNRigid.cs" />

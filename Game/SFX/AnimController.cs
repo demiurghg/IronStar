@@ -11,6 +11,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Converters;
+using Fusion.Engine.Graphics;
 
 namespace IronStar.SFX {
 
@@ -36,6 +37,14 @@ namespace IronStar.SFX {
 		public int			NextKey;
 		public AnimTransition[] Transitions;
 		public AnimEffect[]		Effects;
+
+		Scene take;
+
+		public void LoadTake ( ContentManager content, string baseDir )
+		{
+			take	=	content.Load<Scene>( Path.Combine( baseDir, TakePath ) );
+			//Length	=	take.LastFrame
+		}
 	}
 
 	public class AnimTransition {
@@ -85,6 +94,9 @@ namespace IronStar.SFX {
 
 		public void LoadTakes ( ContentManager content, string baseScenePath )
 		{
+			var dir = Path.GetDirectoryName( baseScenePath );
+			
+			//foreach ( var tae
 		}
 
 		public void Update ()

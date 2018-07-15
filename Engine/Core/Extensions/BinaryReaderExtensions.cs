@@ -45,8 +45,6 @@ namespace Fusion.Core.Extensions {
 		}
 
 
-
-
 		public static T[] Read<T> ( this BinaryReader reader, int count ) where T : struct
 		{
 			var buffer			= reader.ReadBytes( count * Marshal.SizeOf(typeof(T)) );

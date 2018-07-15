@@ -18,12 +18,24 @@ namespace Native {
 
 			private:
 
+				FbxNode**				fbxNodes;
+				int						fbxNodeCount;
+
 				Options					^options;
 				FbxManager				*fbxManager	;	
 				FbxImporter				*fbxImporter;		
 				FbxScene				*fbxScene	;	
 				FbxGeometryConverter	*fbxGConv	;	
 				FbxTime::EMode			timeMode;
+
+				int GetFbxNodeIndex ( FbxNode* fbxNode ) {
+					for ( int i = 0; i < fbxNodeCount; i++) {
+						if (fbxNodes[i]==fbxNode) {
+							return i;
+						}
+					}
+					return -1;
+				}
 
 				TimeMode ConvertTimeMode ( FbxTime::EMode mode )
 				{
@@ -43,7 +55,7 @@ namespace Native {
 					}
 				}
 
-				void IterateChildren		( FbxNode *fbxNode, FbxScene *fbxScene, Fusion::Engine::Graphics::Scene ^scene, int parentIndex, int depth );
+				Node ^CreateSceneNode		( FbxNode *fbxNode, FbxScene *fbxScene, Fusion::Engine::Graphics::Scene ^scene );
 				void HandleMesh				( Scene ^scene, Node ^node, FbxNode *fbxNode );
 				void HandleSkinning			( Mesh ^nodeMesh, Scene ^scene, Node ^node, FbxNode *fbxNode, Matrix^ meshTransform, array<Int4> ^skinIndices, array<Vector4>	^skinWeights );
 				void HandleCamera			( Scene ^scene, Node ^node, FbxNode *fbxNode );

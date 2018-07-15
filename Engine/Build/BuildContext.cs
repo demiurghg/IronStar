@@ -299,9 +299,22 @@ namespace Fusion.Build {
 		/// <returns>Full path for generated file name.</returns>
 		public string GetTempFileFullPath ( string key, string ext )
 		{
-			var fileName	=	ContentUtils.GetHashedFileName( key, ext );
+			//var fileName	=	ContentUtils.GetHashedFileName( key, ext );
+			var fileName	=	Path.GetFileName( key );
 
-			return Path.Combine( Options.FullTempDirectory, fileName );
+			var tempDir		=	Options.FullTempDirectory;
+
+			var relDir		=	Path.GetDirectoryName( key );
+
+			var fullDir		=	Path.Combine( tempDir, relDir );
+
+			if (!Directory.Exists(fullDir)) {
+				Directory.CreateDirectory(fullDir);
+			}
+
+			return Path.Combine( fullDir, fileName + ext );
+
+			//return Path.Combine( Options.FullTempDirectory, fileName );
 		}
 
 

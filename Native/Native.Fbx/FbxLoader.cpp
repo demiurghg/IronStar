@@ -103,23 +103,56 @@ Fusion::Engine::Graphics::Scene ^ FbxLoader::LoadScene( string ^filename, Option
 	}
 
 
-
 	FbxTimeSpan timeSpan;
 	FbxTime		start;
 	FbxTime		end;
-
 
 	fbxScene->GetGlobalSettings().GetTimelineDefaultTimeSpan( timeSpan );
 	timeMode = fbxScene->GetGlobalSettings().GetTimeMode();
 	start = timeSpan.GetStart();
 	end   = timeSpan.GetStop();
 
-	FbxNode *rootNode = fbxScene->GetRootNode();
-
 	Fusion::Engine::Graphics::Scene ^scene =	gcnew Fusion::Engine::Graphics::Scene();
 
 	scene->TimeMode  = ConvertTimeMode( timeMode );
 
+	//---------------------------------------------
+
+	Console::WriteLine("Traversing hierarchy...");
+
+	fbxNodeCount	=	fbxScene->GetNodeCount();
+	fbxNodes		=	new FbxNode*[ fbxNodeCount ];
+
+	for (int i=0; i<fbxNodeCount; i++) {
+		fbxNodes[i] = fbxScene->GetNode(i);
+	}
+	
+	for (int i=0; i<fbxNodeCount; i++) {
+		auto node = CreateSceneNode( fbxNodes[i], fbxScene, scene );
+		scene->Nodes->Add( node );
+
+		if (scene->Nodes->Count-1 != i) {
+			throw gcnew InvalidOperationException("Scene hierarchy is broken. Check node creation code.");
+		}
+	}
+
+	//---------------------------------------------
+
+	Console::WriteLine("Import Geometry...");
+
+	if (options->ImportGeometry) {
+
+		for (int i=0; i<fbxNodeCount; i++) {
+			//Console::WriteLine( "  {0}",node->Name);
+			Node	^node		=	scene->Nodes[i];
+			FbxNode *fbxNode	=	fbxNodes[i];
+			HandleMesh( scene, node, fbxNode );
+		}
+	}
+
+	scene->Nodes[0]->Name = "";
+
+	//---------------------------------------------
 
 	if (options->ImportAnimation) {
 
@@ -128,51 +161,60 @@ Fusion::Engine::Graphics::Scene ^ FbxLoader::LoadScene( string ^filename, Option
 
 		FbxString takeName;
 
-		for (int lAnimStackCount = 0; lAnimStackCount < fbxImporter->GetAnimStackCount(); lAnimStackCount++) {
-			FbxTakeInfo* lTakeInfo = fbxImporter->GetTakeInfo(lAnimStackCount);
-			FbxString takeName = lTakeInfo->mName;
+		auto takeCount	=	fbxImporter->GetAnimStackCount();
+		auto evaluator	=	fbxScene->GetEvaluator();
+
+		for (int takeIndex = 0; takeIndex < takeCount; takeIndex++) {
+
+			FbxTakeInfo* lTakeInfo = fbxImporter->GetTakeInfo(takeIndex);
 
 			FbxTimeSpan takeSpan = lTakeInfo->mLocalTimeSpan;
 
-			scene->FirstTakeFrame = (int)takeSpan.GetStart().GetFrameCount(timeMode);
-			scene->LastTakeFrame  = (int)takeSpan.GetStop().GetFrameCount(timeMode);
-			scene->TakeName		  = gcnew String(takeName.Buffer());
+			auto firstTakeFrame =	(int)takeSpan.GetStart().GetFrameCount(timeMode);
+			auto lastTakeFrame	=	(int)takeSpan.GetStop().GetFrameCount(timeMode);
+			auto takeName		=	gcnew String(lTakeInfo->mName.Buffer());
 
-			Console::WriteLine("...take[{0}] {1} - [{2}..{3}]", lAnimStackCount, gcnew String(takeName.Buffer()), scene->FirstTakeFrame, scene->LastTakeFrame);
+			auto animTake		=	gcnew AnimTake(takeName, fbxNodeCount, firstTakeFrame, lastTakeFrame );
+
+			auto animStack		=	(FbxAnimStack*)fbxScene->GetSrcObject<FbxAnimStack>(takeIndex);
+			auto stackName		=	animStack->GetName();
+
+			Console::WriteLine("  {0,-24} : [{1}..{2}]", gcnew String(stackName), firstTakeFrame, lastTakeFrame );
+
+			evaluator->SetContext( fbxScene->GetSrcObject<FbxAnimStack>(takeIndex) );
+
+			//	Animate :
+			for (int nodeId = 0; nodeId<fbxNodeCount; nodeId++ ) {
+				for (int frame = firstTakeFrame; frame <= lastTakeFrame; frame++) {
+				
+					FbxTime time;
+					time.SetFrame(frame, this->timeMode);
+
+					auto fbxNode = fbxNodes[nodeId];
+					auto animKey = FbxAMatrix2Matrix(evaluator->GetNodeLocalTransform(fbxNode, time, FbxNode::eSourcePivot, false, true));
+
+					animTake->SetKey( frame, nodeId, animKey );
+					//fbxScene->GetNode(
+					//evaluator->SetContext(
+					//Console::WriteLine("{0} {2} : {1}", frame, animKey.ToString(), time.GetSecondDouble() );
+					//scene->SetAnimKey(frame, trackId, animKey);
+				}
+			}
 		}
 
 
 		//scene->StartTime	=	TimeSpan::FromMilliseconds( (long)start.GetMilliSeconds() );
 		//scene->EndTime		=	TimeSpan::FromMilliseconds( (long)end.GetMilliSeconds() );
 
-		scene->CreateAnimation( (int)start.GetFrameCount( timeMode ), (int)end.GetFrameCount( timeMode ), fbxScene->GetNodeCount() );
-
 		Console::WriteLine("Scene range : {0} - {1}", scene->FirstFrame, scene->LastFrame);
-		Console::WriteLine("Take range  : {0} - {1}", scene->FirstTakeFrame, scene->LastTakeFrame);
-		Console::WriteLine("Total nodes : {0}",			fbxScene->GetNodeCount() );
+		Console::WriteLine("Total nodes : {0}", fbxScene->GetNodeCount());
 	}
 
-	Console::WriteLine("Traversing hierarchy...");
-
-	IterateChildren( rootNode, fbxScene, scene, -1, 1 );
-
-
-	Console::WriteLine("Import Geometry...");
-
-	if (options->ImportGeometry) {
-		for each ( Node ^node in scene->Nodes ) {
-			//Console::WriteLine( "  {0}",node->Name);
-
-			FbxNode *fbxNode	=	(FbxNode*)(((IntPtr)node->Tag).ToPointer());
-			HandleMesh( scene, node, fbxNode );
-		}
-	}
-
-	scene->Nodes[0]->Name = "";
 
 	//	do not destroy...
 	// 	stack overflow happens...
 	fbxImporter->Destroy(true);
+	delete[] fbxNodes;
 
 	return scene;
 }
@@ -199,44 +241,22 @@ FbxString GetNodeProperty( FbxNode *fbxNode, FbxString propertyName )
 /*
 **	Fusion::Fbx::FbxLoader::IterateChildren
 */
-void Native::Fbx::FbxLoader::IterateChildren( FbxNode *fbxNode, FbxScene *fbxScene, Fusion::Engine::Graphics::Scene ^scene, int parentIndex, int depth )
+Node ^Native::Fbx::FbxLoader::CreateSceneNode( FbxNode *fbxNode, FbxScene *fbxScene, Scene ^scene )
 {
 	auto node			=	gcnew Node();
 	node->Name			= 	gcnew string( fbxNode->GetName() );
 	node->Comment		=	gcnew string( GetNodeProperty( fbxNode, "notes" ) );
 
-	node->ParentIndex	=	parentIndex;
-	//	store FbxNode pointer for further use :
-	node->Tag			=	IntPtr(fbxNode);
+	node->ParentIndex	=	GetFbxNodeIndex( fbxNode->GetParent() );
 
-	scene->Nodes->Add( node );
 	auto index	=	scene->Nodes->Count-1;
-
-	auto trackId		=	index;
-	node->TrackIndex	=	trackId;
-
-
-	//Console::WriteLine("{0}{1}", gcnew String(' ', depth*2), node->Name);
-
-	//	Animate :
-	if (options->ImportAnimation) {
-		for ( int frame=scene->FirstFrame; frame<=scene->LastFrame; frame++) {
-			FbxTime time;
-			time.SetFrame( frame, this->timeMode );
-			auto animKey = FbxAMatrix2Matrix( fbxNode->GetScene()->GetEvaluator()->GetNodeLocalTransform( fbxNode, time, FbxNode::eSourcePivot, false, true ) ); 
-			//Console::WriteLine("{0} {2} : {1}", frame, animKey.ToString(), time.GetSecondDouble() );
-			scene->SetAnimKey( frame, trackId, animKey );
-		}
-	}
 
 	//	Get transform
 	FbxAMatrix	transform	=	fbxNode->GetScene()->GetEvaluator()->GetNodeLocalTransform( fbxNode );
-	//FbxAMatrix	transform	=	fbxNode->EvaluateLocalTransform();
 	node->Transform			=	FbxAMatrix2Matrix( transform );
 	node->BindPose			=	Matrix::Identity;
 
 	GetCustomProperties( node, fbxNode );
-
 
 	//	Get bind pose :
 	int poseCount = fbxScene->GetPoseCount();
@@ -255,12 +275,7 @@ void Native::Fbx::FbxLoader::IterateChildren( FbxNode *fbxNode, FbxScene *fbxSce
 		}
 	}
 
-
-	//	Iterate children :
-	for ( int i=0; i<fbxNode->GetChildCount(); i++) {
-		FbxNode *fbxChild	=	fbxNode->GetChild(i);
-		IterateChildren( fbxChild, fbxScene, scene, index, depth+1 );		
-	}
+	return node;
 }
 
 
@@ -445,7 +460,7 @@ void Native::Fbx::FbxLoader::HandleMesh( Fusion::Engine::Graphics::Scene ^scene,
 
 
 
-int GetFbxNodeIndex ( Scene ^scene, FbxNode *fbxNode )
+/*int GetFbxNodeIndex ( Scene ^scene, FbxNode *fbxNode )
 {
 	for (int i=0; i<scene->Nodes->Count; i++) {
 		if ( ((IntPtr)scene->Nodes[i]->Tag).ToPointer() == fbxNode ) {
@@ -453,7 +468,7 @@ int GetFbxNodeIndex ( Scene ^scene, FbxNode *fbxNode )
 		}
 	}
 	return -1;
-}
+} */
 
 /*-------------------------------------------------------------------------------------------------
 
@@ -536,7 +551,7 @@ void Native::Fbx::FbxLoader::HandleSkinning ( Mesh ^nodeMesh, Scene ^scene, Node
 						}
 
 						Int4 skinIndex							= skinIndices[index];
-						skinIndex[vertexWeightsCounter[index]]	= GetFbxNodeIndex( scene, fbxLinkNode );
+						skinIndex[vertexWeightsCounter[index]]	= GetFbxNodeIndex( fbxLinkNode );
 						skinIndices[index]						= skinIndex;
 
 						Vector4 skinWeight							= skinWeights[index];

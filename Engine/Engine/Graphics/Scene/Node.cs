@@ -34,12 +34,6 @@ namespace Fusion.Engine.Graphics {
 		public int MeshIndex	{ get; set; }
 
 		/// <summary>
-		/// Scene animation track index.
-		/// Negative value means no animation track.
-		/// </summary>
-		public int TrackIndex { get; set; }
-
-		/// <summary>
 		/// Node transform
 		/// </summary>
 		public Matrix Transform	{ get; set; }
@@ -64,7 +58,6 @@ namespace Fusion.Engine.Graphics {
 			Comment		=	"";
 			MeshIndex	=	-1;
 			ParentIndex	=	-1;
-			TrackIndex	=	-1;
 		}
 
 
@@ -81,7 +74,6 @@ namespace Fusion.Engine.Graphics {
 				&& ( this.ParentIndex   == other.ParentIndex	)
 				&& ( this.Comment	    == other.Comment		)
 				&& ( this.MeshIndex		== other.MeshIndex		)
-				&& ( this.TrackIndex	== other.TrackIndex		)
 				&& ( this.Transform		== other.Transform		)
 				&& ( this.BindPose		== other.BindPose		)
 				&& ( this.Tag			== other.Tag			);
@@ -99,7 +91,7 @@ namespace Fusion.Engine.Graphics {
 
 		public override int GetHashCode ()
 		{
-			return Misc.Hash( Name, ParentIndex, MeshIndex, TrackIndex, Transform, BindPose, Tag );
+			return Misc.Hash( Name, ParentIndex, MeshIndex, Transform, BindPose, Tag );
 		}
 
 

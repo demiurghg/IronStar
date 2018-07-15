@@ -27,11 +27,16 @@ namespace FScene {
 			sb.AppendFormat("<b>Materials count</b> : {0}\r\n", scene.Materials.Count );
 			sb.AppendLine();
 			sb.AppendFormat("<b>Time Mode</b>       : {0}\r\n", scene.TimeMode );
-			sb.AppendFormat("<b>Track count</b>     : {0}\r\n", scene.TrackCount );
 			sb.AppendFormat("<b>Scene range</b>     : {0} - {1}\r\n", scene.FirstFrame, scene.LastFrame );
-			sb.AppendFormat("<b>Take range</b>      : {0} - {1}\r\n", scene.FirstTakeFrame, scene.LastTakeFrame );
 
 
+			sb.AppendLine();
+			sb.AppendLine("<b>Takes:</b>");
+
+			foreach ( var take in scene.Takes ) {
+				var index = scene.Takes.IndexOf(take);
+				sb.AppendFormat("{0,4}:  {1,-30} : [{2}..{3}]\r\n", index, "\"" + take.Name + "\"", take.FirstFrame, take.LastFrame );
+			}
 
 
 			sb.AppendLine();
@@ -75,7 +80,7 @@ namespace FScene {
 				var padding	=	new string(' ', depth*2);
 				var hasMesh =	node.MeshIndex >= 0 ? "mesh #" + node.MeshIndex.ToString() : "";
 				
-				sb.AppendFormat("{0,4}:  {1,-30}{2,4}  track:{3}  {4}\r\n", index, padding + name, parent, node.TrackIndex, hasMesh );
+				sb.AppendFormat("{0,4}:  {1,-30}{2,4}  {3}\r\n", index, padding + name, parent, hasMesh );
 			}
 
 			sb.AppendLine("</pre>");

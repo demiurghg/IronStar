@@ -93,7 +93,7 @@ namespace Fusion.Engine.Graphics {
 				default: throw new ArgumentException("mode");
 			}
 				
-			int index = frame - FirstFrame;
+			frame = frame - FirstFrame;
 
 			for (int i=0; i<nodeCount; i++) {
 				destination[i] = animData[ Address( frame, i ) ];

@@ -142,7 +142,7 @@ namespace IronStar.SFX {
 			models.RemoveAll( m => m.Killed );
 
 			foreach ( var model in models ) {
-				model.Update( gameTime.ElapsedSec, lerpFactor );
+				model.Update( gameTime, lerpFactor );
 			}
 		}
 

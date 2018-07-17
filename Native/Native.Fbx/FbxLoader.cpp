@@ -200,6 +200,8 @@ Fusion::Engine::Graphics::Scene ^ FbxLoader::LoadScene( string ^filename, Option
 					//scene->SetAnimKey(frame, trackId, animKey);
 				}
 			}
+
+			scene->Takes->Add( animTake );
 		}
 
 

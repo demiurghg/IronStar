@@ -3,175 +3,72 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;
-using Fusion;
+using Fusion.Core.Mathematics;
 using Fusion.Core;
 using Fusion.Core.Content;
-using Fusion.Core.Mathematics;
-using Fusion.Engine.Common;
-using Fusion.Core.Input;
-using Fusion.Engine.Client;
-using Fusion.Engine.Server;
+using Fusion.Core.Extensions;
+using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Converters;
 using Fusion.Engine.Graphics;
 using IronStar.Core;
-using Fusion.Engine.Audio;
-using IronStar.Views;
-
 
 namespace IronStar.SFX {
 
-	public sealed partial class Animator {
+	public class Animator {
 
-		readonly ModelInstance modelInstance;
+		readonly Scene scene;
+		readonly AnimatorFactory factory;
 
-		readonly int[] channelsAll		;
-		readonly int[] channelsTorso	;
-		readonly int[] channelsLegs		;
-		readonly int[] channelsHead		;
-		readonly int[] channelsWeapon	;
+		readonly Dictionary<string,AnimTake> takes;
 
-		readonly Matrix[] transforms0;
-		readonly Matrix[] transforms1;
+		int			animFrame = 0;
+		AnimState	animState = AnimState.NoAnimation;
 
-		readonly int[][] channels;
-
-		readonly List<AnimEvent> animEvents = new List<AnimEvent>();
-
-	
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="scene"></param>
-		/// <param name="channels"></param>
-		public Animator ( ModelInstance modelInstance )
+		/// <param name="factory"></param>
+		public Animator ( Scene scene, AnimatorFactory factory )
 		{
-			this.modelInstance	=	modelInstance;
-
-			var scene	=	modelInstance.Scene;
-
-			//
-			//	channel stuff :
-			//	
-			channelsAll		=	scene.GetChannelNodeIndices( 0 );
-			channelsTorso	=	scene.GetChannelNodeIndices( scene.GetNodeIndex("torso"	) );
-			channelsLegs	=	scene.GetChannelNodeIndices( scene.GetNodeIndex("legs"	) );
-			channelsHead	=	scene.GetChannelNodeIndices( scene.GetNodeIndex("head"	) );
-			channelsWeapon	=	scene.GetChannelNodeIndices( scene.GetNodeIndex("weapon") );
-
-			channels		=	new int[(int)AnimChannel.Max][];
-
-			channels[(int)AnimChannel.All	]	=	channelsAll		;
-			channels[(int)AnimChannel.Torso	]	=	channelsTorso	;
-			channels[(int)AnimChannel.Legs	]	=	channelsLegs	;
-			channels[(int)AnimChannel.Head	]	=	channelsHead	;
-			channels[(int)AnimChannel.Weapon]	=	channelsWeapon	;
-
-			//
-			//	transform :
-			//	
-			transforms0		=	new Matrix[ scene.Nodes.Count ];
-			transforms1		=	new Matrix[ scene.Nodes.Count ];
+			this.scene		=	scene;
+			this.factory	=	factory;
+				
+			takes			=	scene.Takes.ToDictionary( take => take.Name );
 		}
 
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="animChannel"></param>
-		/// <returns></returns>
-		int[] GetChannelIndices ( AnimChannel animChannel )
+		/// <param name="gameTime"></param>
+		/// <param name="destination"></param>
+		public void Update ( Entity entity, GameTime gameTime, Matrix[] destination )
 		{
-			return channels[ (int)animChannel ];
-		}
+			animFrame++;
 
+			var take = scene.Takes.First( t => t.Name=="anim_idle");
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="dt"></param>
-		/// <param name="transforms"></param>
-		public void Update ( float elapsedTime, Matrix[] outputTransforms )
-		{
-			//	compute default transforms :
-			modelInstance.Scene.CopyLocalTransformsTo( outputTransforms );
+			take.Evaluate( animFrame + take.FirstFrame, AnimationMode.Repeat, destination );
 
-			//	sort animation events :
-			var animEventsSorted = animEvents.OrderBy( ae => ae.Channel );
-
-			//	... than play and apply them :
-			foreach ( var ae in animEventsSorted ) {
-				ae.UpdateAndBlend( elapsedTime, outputTransforms );
+			/*if (animState!=entity.WeaponAnimation) {
+				for (int
 			}
 
-			//	remove completed :
-			animEvents.RemoveAll( ae => ae.IsCompleted );
-
-			//	compute global transforms :
-			modelInstance.Scene.ComputeAbsoluteTransforms( outputTransforms, outputTransforms );
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="channel"></param>
-		/// <param name="clipName"></param>
-		public AnimEvent PlayEvent ( AnimChannel channel, string clipName, float weight, float fadein, float fadeout )
-		{
-			var clip = modelInstance.Clips.FirstOrDefault( c => c.TakeName == clipName );
-
-			if (clip==null) {
-				Log.Warning("Animator: clip {0} does not exist", clipName );
-			}
-
-			var channelIndices = channels[(int)channel];
-
-			if (channelIndices.Length==0) {
-				Log.Warning("Animator: channel {0} is empty", channel );
-			}
-
-			var animEvent = new AnimEvent( this, channel, clip, false, 0, weight, fadein, fadeout );
-
-			animEvents.Add( animEvent );
-
-			return animEvent;
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="channel"></param>
-		/// <param name="clipName"></param>
-		public AnimEvent PlayLoop ( AnimChannel channel, string clipName )
-		{
-			var clip = modelInstance.Clips.FirstOrDefault( c => c.TakeName == clipName );
-
-			if (clip==null) {
-				Log.Warning("Animator: clip {0} does not exist", clipName );
-			}
-
-			//	discard looped event if already playing :
-			var oldEvent = animEvents.FirstOrDefault( ae => ae.Clip == clip && ae.Looped && ae.Channel == channel );
-
-			if (oldEvent!=null) {
-				return oldEvent;
-			}
-
-
-			var channelIndices = channels[(int)channel];
-
-			if (channelIndices.Length==0) {
-				Log.Warning("Animator: channel {0} is empty", channel );
-			}
-
-			var animEvent = new AnimEvent( this, channel, clip, true, 0, 1, 0, 0 );
-
-			animEvents.Add( animEvent );
-
-			return animEvent;
+				if (state != targetState) {
+				  for (int i = 0; i < transCount; i++) {
+					if (trans[i].state == targetState &&
+						trans[i].loFrame <= currentFrame &&
+						trans[i].hiFrame >= currentFrame) {
+						// нашли подходящий переход
+						setAnimation(trans[i].nextAnimation, trans[i].nextFrame);            
+						return;
+					}
+				  }
+				}*/
 		}
 	}
+
 }

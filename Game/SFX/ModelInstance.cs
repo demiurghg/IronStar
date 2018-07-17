@@ -47,7 +47,7 @@ namespace IronStar.SFX {
 		Matrix[] animSnapshot;
 		MeshInstance[] meshInstances;
 
-		AnimController	animController;
+		Animator	animation;
 
 		readonly int nodeCount;
 
@@ -100,7 +100,7 @@ namespace IronStar.SFX {
 			scene.ComputeAbsoluteTransforms( animSnapshot );
 
 			if (factory.AnimEnabled) {
-				animController	=	content.Load<AnimController>(@"animation\" + factory.AnimController);
+				animation	=	content.Load<AnimatorFactory>(@"animation\" + factory.AnimController)?.Create( scene );
 			}
 
 			if (fpvEnabled) {
@@ -144,7 +144,7 @@ namespace IronStar.SFX {
 		/// <param name="dt"></param>
 		/// <param name="animFrame"></param>
 		/// <param name="worldMatrix"></param>
-		public void Update ( float dt, float animFrame )
+		public void Update ( GameTime gameTime, float animFrame )
 		{
 			var q	=	Entity.Rotation;
 			var p	=	Entity.Position;
@@ -164,16 +164,11 @@ namespace IronStar.SFX {
 				return;
 			}
 
-			/*if (useAnimator) {
-				Animator.Update( dt, animSnapshot );
-			} else if (useAnimation) {
-				EvaluateFrame( animFrame );
-			} else {
-				ResetPose();
-			}*/
+			if (animation!=null) {
+				animation.Update( Entity, gameTime, animSnapshot );
+				scene.ComputeAbsoluteTransforms( animSnapshot, globalTransforms );
+			}
 
-			//ResetPose();
-			
 			Update( worldMatrix, globalTransforms );
 
 			#warning old stuff

@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 namespace IronStar.Core {
 
 	public enum AnimState : byte {
+
+		NoAnimation,
+
 		Weapon_Idle,
 		Weapon_Warmup,
 		Weapon_Recoil,

@@ -52,7 +52,7 @@ namespace IronStar.Entities.Players {
 
 			 //	temp stuff :
 			 var weap1	=	world.SpawnItem("weapon_machinegun", ID);
-			 var weap2	=	world.SpawnItem("weapon_plasmagun", ID);
+			 //var weap2	=	world.SpawnItem("weapon_plasmagun", ID);
 		}
 
 

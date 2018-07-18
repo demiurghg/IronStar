@@ -13,6 +13,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Converters;
 using Fusion.Engine.Graphics;
 using IronStar.Core;
+using Fusion;
 
 namespace IronStar.SFX {
 
@@ -21,10 +22,14 @@ namespace IronStar.SFX {
 		readonly Scene scene;
 		readonly AnimatorFactory factory;
 
+		readonly Dictionary<string,Animation> anims;
 		readonly Dictionary<string,AnimTake> takes;
 
-		int			animFrame = 0;
-		AnimState	animState = AnimState.NoAnimation;
+		int			currentFrame	=	0;
+		AnimState	currentState	=	AnimState.Weapon_Idle;
+		Animation	currentAnim		=	null;
+		AnimTake	currentTake		=	null;
+
 
 		/// <summary>
 		/// 
@@ -37,6 +42,10 @@ namespace IronStar.SFX {
 			this.factory	=	factory;
 				
 			takes			=	scene.Takes.ToDictionary( take => take.Name );
+			anims			=	factory.Animations.ToDictionary( anim => anim.Take );
+			
+			SetAnimation( factory.Animations.FirstOrDefault().Name, 0, false );
+			#warning about empty take list.
 		}
 
 
@@ -47,27 +56,52 @@ namespace IronStar.SFX {
 		/// <param name="destination"></param>
 		public void Update ( Entity entity, GameTime gameTime, Matrix[] destination )
 		{
-			animFrame++;
+			currentFrame++;
 
-			var take = scene.Takes.First( t => t.Name=="anim_idle");
+			currentTake.Evaluate( currentFrame + currentTake.FirstFrame, AnimationMode.Clamp, destination );
 
-			take.Evaluate( animFrame + take.FirstFrame, AnimationMode.Repeat, destination );
+			if (currentState!=entity.WeaponAnimation) {
+				
+				foreach ( var trans in currentAnim.Transitions ) {
+					if (trans.State==entity.WeaponAnimation) {
+						if ( trans.Low <= currentFrame && trans.High >= currentFrame ) {
 
-			/*if (animState!=entity.WeaponAnimation) {
-				for (int
+							currentState	=	entity.WeaponAnimation;
+
+							SetAnimation( trans.NextAnim, trans.NextKey, true );
+						}
+					}
+				}
 			}
 
-				if (state != targetState) {
-				  for (int i = 0; i < transCount; i++) {
-					if (trans[i].state == targetState &&
-						trans[i].loFrame <= currentFrame &&
-						trans[i].hiFrame >= currentFrame) {
-						// нашли подходящий переход
-						setAnimation(trans[i].nextAnimation, trans[i].nextFrame);            
-						return;
-					}
-				  }
-				}*/
+
+			if (currentFrame>=currentTake.FrameCount) {
+				SetAnimation( currentAnim.NextAnim, 0, false );
+			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="anim"></param>
+		/// <param name="frame"></param>
+		void SetAnimation ( string anim, int frame, bool transition )
+		{
+			Log.Verbose("... anim :  {0} : {1}, {2}", anim, frame, transition ? "trnasition" : "next" );
+
+			if (string.IsNullOrWhiteSpace(anim)) {
+
+				currentFrame	=	0;
+
+			} else {
+
+				currentAnim		=	anims[ anim ];
+				currentTake		=	takes[ currentAnim.Take ];
+				currentFrame	=	frame;
+				currentState	=	currentAnim.State;
+			}
 		}
 	}
 

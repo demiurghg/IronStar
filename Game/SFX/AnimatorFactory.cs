@@ -19,20 +19,19 @@ namespace IronStar.SFX {
 
 	public class Animation {
 		public AnimState	State;
-		public string		TakeName;
-		public int			Length;
-		public float		Rate;
-		public string		NextTake;
+		public string		Take;
+		public string		NextAnim;
 		public int			NextKey;
 		public Transition[] Transitions;
 		public EffectTag[]	Effects;
+		public string		Name { get { return Take; } }
 	}
 
 	public class Transition {
 		public AnimState	State;
 		public int			Low;
 		public int			High;
-		public string		NextTake;
+		public string		NextAnim;
 		public int			NextKey;
 	}
 
@@ -66,11 +65,11 @@ namespace IronStar.SFX {
 
 	public class AnimatorFactory {
 
-		public List<Animation> Takes;
+		public List<Animation> Animations;
 
 		public AnimatorFactory ()
 		{
-			Takes = new List<Animation>();
+			Animations = new List<Animation>();
 		}
 
 		public Animator Create ( Scene scene )

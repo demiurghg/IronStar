@@ -20,6 +20,7 @@ using IronStar.Physics;
 using IronStar.Entities;
 using IronStar.Views;
 using IronStar.Items;
+using IronStar.Entities.Players;
 
 namespace IronStar.Core {
 

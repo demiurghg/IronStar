@@ -16,6 +16,13 @@ using Fusion.Core.Content;
 
 namespace Fusion.Engine.Graphics {
 
-	public class AnimTakeCollection : List<AnimTake> {
+	public class AnimationTakeCollection : List<AnimationTake> {
+
+		public AnimationTake this [ string name ] {
+			get {
+				return this.FirstOrDefault( t => t.Name == name );
+			}
+		}
+
 	}
 }

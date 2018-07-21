@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Fusion.Engine.Graphics {
-	public enum AnimationMode {
-		Clamp,
-		Repeat,
+	public enum AnimationBlendMode {
+		Override,
+		Additive,
 	}
 }

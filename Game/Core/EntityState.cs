@@ -12,7 +12,6 @@ namespace IronStar.Core {
 
 		Weapon_Idle,
 		Weapon_Warmup,
-		Weapon_Recoil,
 		Weapon_Cooldown,
 		Weapon_Reload,
 		Weapon_Overheat,

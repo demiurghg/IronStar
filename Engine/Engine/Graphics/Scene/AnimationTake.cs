@@ -16,11 +16,12 @@ using Fusion.Core.Content;
 
 namespace Fusion.Engine.Graphics {
 
-	public class AnimTake {
+	public class AnimationTake {
 
 		readonly string		name;
 
 		readonly Matrix[]	animData;
+		readonly Matrix[]	animDelta;
 		readonly int		frameCount;
 		readonly int		nodeCount;
 		readonly int		firstFrame;
@@ -58,7 +59,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="nodeCount">Node count</param>
 		/// <param name="firstFrame">First inclusive frame</param>
 		/// <param name="lastFrame">Last inclusive frame</param>
-		public AnimTake ( string name, int nodeCount, int firstFrame, int lastFrame )
+		public AnimationTake ( string name, int nodeCount, int firstFrame, int lastFrame )
 		{
 			this.name		=	name;
 			this.nodeCount	=	nodeCount;
@@ -68,6 +69,7 @@ namespace Fusion.Engine.Graphics {
 			this.frameCount	=	lastFrame - firstFrame + 1;
 
 			this.animData	=	new Matrix[ nodeCount * frameCount ];
+			this.animDelta	=	new Matrix[ nodeCount * frameCount ];
 		}
 
 
@@ -77,7 +79,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="frame"></param>
 		/// <param name="mode"></param>
-		public void Evaluate ( int frame, AnimationMode mode, Matrix[] destination )
+		public void Evaluate ( int frame, AnimationWrapMode wrapMode, Matrix[] destination )
 		{
 			if (destination==null) {
 				throw new ArgumentNullException("destination");
@@ -87,9 +89,9 @@ namespace Fusion.Engine.Graphics {
 				throw new ArgumentOutOfRangeException("destination.Length");
 			}
 
-			switch (mode) {
-				case AnimationMode.Clamp:	frame = MathUtil.Clamp( frame, FirstFrame, LastFrame ); break;
-				case AnimationMode.Repeat:	frame = MathUtil.Wrap ( frame, FirstFrame, LastFrame ); break;
+			switch (wrapMode) {
+				case AnimationWrapMode.Clamp:	frame = MathUtil.Clamp( frame, FirstFrame, LastFrame ); break;
+				case AnimationWrapMode.Repeat:	frame = MathUtil.Wrap ( frame, FirstFrame, LastFrame ); break;
 				default: throw new ArgumentException("mode");
 			}
 				
@@ -134,6 +136,81 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		/// <summary>
+		/// Sets anim key
+		/// </summary>
+		/// <param name="frame"></param>
+		/// <param name="node"></param>
+		/// <param name="transform"></param>
+		public void GetKey ( int frame, int node, out Matrix transform )
+		{
+			if (frame<FirstFrame) {
+				throw new ArgumentOutOfRangeException("frame < FirstFrame");
+			}
+			if (frame>LastFrame) {
+				throw new ArgumentOutOfRangeException("frame < LastFrame");
+			}
+
+			if (node<0) {
+				throw new ArgumentOutOfRangeException("node < 0");
+			}
+			if (node>=NodeCount) {
+				throw new ArgumentOutOfRangeException("node >= NodeCount");
+			}
+
+			transform  = animData[ Address( frame - firstFrame, node ) ];
+
+		}
+
+
+		/// <summary>
+		/// Sets anim key
+		/// </summary>
+		/// <param name="frame"></param>
+		/// <param name="node"></param>
+		/// <param name="transform"></param>
+		public void GetDeltaKey ( int frame, int node, out Matrix transform )
+		{
+			if (frame<FirstFrame) {
+				throw new ArgumentOutOfRangeException("frame < FirstFrame");
+			}
+			if (frame>LastFrame) {
+				throw new ArgumentOutOfRangeException("frame < LastFrame");
+			}
+
+			if (node<0) {
+				throw new ArgumentOutOfRangeException("node < 0");
+			}
+			if (node>=NodeCount) {
+				throw new ArgumentOutOfRangeException("node >= NodeCount");
+			}
+
+			transform  = animDelta[ Address( frame - firstFrame, node ) ];
+
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		void ComputeDeltaAnimation ()
+		{
+			var initialPose = new Matrix[ NodeCount ];
+			Evaluate( FirstFrame, AnimationWrapMode.Clamp, initialPose );
+
+			for ( int i=0; i < NodeCount; i++ ) {
+				initialPose[i]	=	Matrix.Invert( initialPose[i] );
+			}
+
+			for ( int frame = FirstFrame; frame <= LastFrame; frame++ ) {
+				for ( int node = 0; node<NodeCount; node++ ) {
+					int addr = Address( frame - firstFrame, node );
+					animDelta[ addr ] = animData[ addr ] * initialPose[node];
+				}
+			}
+		}
+
+
 		#region	GetAnimSnapshot
 		#if false
 		/// <summary>
@@ -143,7 +220,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="frame"></param>
 		/// <returns></returns>
-		public void GetAnimSnapshot ( float frame, int firstFrame, int lastFrame, AnimationMode animMode, Matrix[] destination )
+		public void GetAnimSnapshot ( float frame, int firstFrame, int lastFrame, AnimationWrapMode animMode, Matrix[] destination )
 		{
 			if ( animData==null ) {
 				throw new InvalidOperationException("Animation data is not created");
@@ -168,10 +245,10 @@ namespace Fusion.Engine.Graphics {
 			int frame1	=	frame0 + 1;
 			var factor	=	(frame >= 0) ? (frame%1) : (1 + frame%1);
 
-			if (animMode==AnimationMode.Repeat) {
+			if (animMode==AnimationWrapMode.Repeat) {
 				frame0	=	MathUtil.Wrap( frame0, firstFrame, lastFrame );
 				frame1	=	MathUtil.Wrap( frame1, firstFrame, lastFrame );
-			} else if (animMode==AnimationMode.Clamp) {
+			} else if (animMode==AnimationWrapMode.Clamp) {
 				frame0	=	MathUtil.Clamp( frame0, firstFrame, lastFrame );
 				frame1	=	MathUtil.Clamp( frame1, firstFrame, lastFrame );
 			}
@@ -211,7 +288,7 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="reader"></param>
-		public static AnimTake Read( BinaryReader reader )
+		public static AnimationTake Read( BinaryReader reader )
 		{
 			int nodeCount	=	reader.ReadInt32();
 			int firstFrame	=	reader.ReadInt32();
@@ -220,9 +297,11 @@ namespace Fusion.Engine.Graphics {
 
 			var name		=	reader.ReadString();
 
-			var take		=	new AnimTake( name, nodeCount, firstFrame, lastFrame );
+			var take		=	new AnimationTake( name, nodeCount, firstFrame, lastFrame );
 
 			reader.Read<Matrix>( take.animData, take.animData.Length );
+
+			take.ComputeDeltaAnimation();
 
 			return take;
 		}
@@ -233,7 +312,7 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="writer"></param>
-		public static void Write( AnimTake animTake, BinaryWriter writer )
+		public static void Write( AnimationTake animTake, BinaryWriter writer )
 		{
 			writer.Write( animTake.NodeCount );
 			writer.Write( animTake.FirstFrame );

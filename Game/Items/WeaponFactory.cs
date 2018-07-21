@@ -59,10 +59,7 @@ namespace IronStar.Items {
 		public int WarmupTime { get; set; } = 0;
 		
 		[AECategory("Timing")]
-		public int RecoilTime { get; set; } = 500;
-		
-		[AECategory("Timing")]
-		public int CooldownTime { get; set; } = 0;
+		public int CooldownTime { get; set; } = 500;
 		
 		[AECategory("Timing")]
 		public int OverheatTime { get; set; } = 0;

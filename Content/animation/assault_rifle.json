@@ -28,3 +28,12 @@
         }
     ]
 }
+
+// name key joint
+
+take 	take_walk
+sfx	 	marine_step	20	leftFoot
+sfx 	marine_step 40	rightFoot
+
+take 	take_attack
+sfx		machinegun_muzzle	0	muzzle

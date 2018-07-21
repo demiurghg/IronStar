@@ -174,7 +174,7 @@ Fusion::Engine::Graphics::Scene ^ FbxLoader::LoadScene( string ^filename, Option
 			auto lastTakeFrame	=	(int)takeSpan.GetStop().GetFrameCount(timeMode);
 			auto takeName		=	gcnew String(lTakeInfo->mName.Buffer());
 
-			auto animTake		=	gcnew AnimTake(takeName, fbxNodeCount, firstTakeFrame, lastTakeFrame );
+			auto animTake		=	gcnew AnimationTake(takeName, fbxNodeCount, firstTakeFrame, lastTakeFrame );
 
 			auto animStack		=	(FbxAnimStack*)fbxScene->GetSrcObject<FbxAnimStack>(takeIndex);
 			auto stackName		=	animStack->GetName();

@@ -74,7 +74,7 @@ namespace IronStar.SFX {
 
 		public Animator Create ( Scene scene )
 		{
-			return new Animator( scene, this );
+			throw new NotImplementedException();
 		}
 	}
 }

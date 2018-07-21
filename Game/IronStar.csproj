@@ -86,8 +86,13 @@
     <Compile Include="JsonLoader.cs" />
     <Compile Include="Physics\DetectorArea.cs" />
     <Compile Include="Physics\DynamicBox.cs" />
+    <Compile Include="SFX\AnimationClip.cs" />
+    <Compile Include="SFX\AnimationTrackCollection.cs" />
+    <Compile Include="SFX\AnimationTrack.cs" />
     <Compile Include="SFX\Animator.cs" />
     <Compile Include="SFX\AnimatorFactory.cs" />
+    <Compile Include="SFX\AnimationComposer.cs" />
+    <Compile Include="SFX\WeaponAnimator.cs" />
     <Compile Include="ShooterCampaign.cs" />
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Client\GameInput.cs" />

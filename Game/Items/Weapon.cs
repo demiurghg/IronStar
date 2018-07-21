@@ -32,7 +32,6 @@ namespace IronStar.Items {
 		public enum WeaponState {
 			Idle	,
 			Warmup	,
-			Recoil	,
 			Cooldown,
 			Reload	,
 			Overheat,
@@ -53,7 +52,6 @@ namespace IronStar.Items {
 		readonly float	angularSpread;
 
 		readonly int	timeWarmup	;
-		readonly int	timeRecoil	;
 		readonly int	timeCooldown;
 		readonly int	timeOverheat;
 		readonly int	timeReload	;
@@ -86,7 +84,6 @@ namespace IronStar.Items {
 			angularSpread	=	factory.AngularSpread	;
 
 			timeWarmup		=	factory.WarmupTime		;
-			timeRecoil		=	factory.RecoilTime		;
 			timeCooldown	=	factory.CooldownTime	;
 			timeOverheat	=	factory.OverheatTime	;
 			timeReload		=	factory.ReloadTime		;
@@ -131,7 +128,6 @@ namespace IronStar.Items {
 			switch (state) {
 				case WeaponState.Idle		:	entity.WeaponAnimation	=	AnimState.Weapon_Idle		;	 break;
 				case WeaponState.Warmup		:	entity.WeaponAnimation	=	AnimState.Weapon_Warmup		;	 break;
-				case WeaponState.Recoil		:	entity.WeaponAnimation	=	AnimState.Weapon_Recoil		;	 break;
 				case WeaponState.Cooldown	:	entity.WeaponAnimation	=	AnimState.Weapon_Cooldown	;	 break;
 				case WeaponState.Reload		:	entity.WeaponAnimation	=	AnimState.Weapon_Reload		;	 break;
 				case WeaponState.Overheat	:	entity.WeaponAnimation	=	AnimState.Weapon_Overheat	;	 break;
@@ -156,17 +152,11 @@ namespace IronStar.Items {
 				case WeaponState.Warmup:	
 					if (timer<=0) {
 						Fire(entity as IShooter, entity);
-						state = WeaponState.Recoil;	
-						timer = timeRecoil;
-					}
-					break;
-
-				case WeaponState.Recoil:	
-					if (timer<=0) {
 						state = WeaponState.Cooldown;	
 						timer = timeCooldown;
 					}
 					break;
+
 
 				case WeaponState.Cooldown:	
 					if (timer<=0) {

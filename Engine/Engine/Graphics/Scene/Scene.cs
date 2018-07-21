@@ -39,7 +39,7 @@ namespace Fusion.Engine.Graphics {
 		List<Node>			nodes		=	new List<Node>();
 		List<Mesh>			meshes		=	new List<Mesh>();
 		List<Material>		materials	=	new List<Material>();
-		AnimTakeCollection	takes		=	new AnimTakeCollection();
+		AnimationTakeCollection	takes		=	new AnimationTakeCollection();
 
 		int firstFrame = 0;
 		int lastFrame = 0;
@@ -78,7 +78,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// List of scene takes
 		/// </summary>
-		public IList<AnimTake> Takes {
+		public AnimationTakeCollection Takes {
 			get {
 				return takes;
 			}
@@ -199,7 +199,7 @@ namespace Fusion.Engine.Graphics {
 		/// Gets node index by its name
 		/// </summary>
 		/// <param name="name"></param>
-		/// <returns></returns>
+		/// <returns>Negatvie value if such node does not exist</returns>
 		public int GetNodeIndex ( string name )
 		{
 			for (int i=0; i<Nodes.Count; i++) {
@@ -362,13 +362,18 @@ namespace Fusion.Engine.Graphics {
 
 
 		/// <summary>
-		/// Gets indices
+		/// Gets indices of all channel children
+		/// If negative value provided returns indices of all nodes.
 		/// </summary>
 		/// <param name="chnnelNodeIndex"></param>
 		/// <returns></returns>
-		public int[] GetChannelNodeIndices ( int chnnelNodeIndex )
+		public int[] GetChannelNodeIndices ( int channelNodeIndex )
 		{
-			return GetChannelNodes(chnnelNodeIndex)
+			if (channelNodeIndex<0) {
+				return Enumerable.Range(0, Nodes.Count).ToArray();
+			}
+
+			return GetChannelNodes(channelNodeIndex)
 				.Select( node => Nodes.IndexOf(node) )
 				.ToArray();
 		}
@@ -467,7 +472,7 @@ namespace Fusion.Engine.Graphics {
 
 				for (int i=0; i<takeCount; i++) {
 					reader.ExpectFourCC("TAKE", "scene");
-					var take = AnimTake.Read( reader );
+					var take = AnimationTake.Read( reader );
 					scene.Takes.Add( take );
 				}
 
@@ -550,7 +555,7 @@ namespace Fusion.Engine.Graphics {
 				for (int i=0; i<takes.Count; i++) {
 
 					writer.Write(new[]{'T','A','K','E'});
-					AnimTake.Write( takes[i], writer );
+					AnimationTake.Write( takes[i], writer );
 				}
 
 				//---------------------------------------------

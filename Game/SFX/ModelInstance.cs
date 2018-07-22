@@ -27,7 +27,12 @@ namespace IronStar.SFX {
 
 		readonly public Entity Entity;
 
-		readonly Matrix preTransform;
+		public readonly Matrix PreTransform;
+
+		public bool IsFPVModel {
+			get { return fpvEnabled; }
+		}
+
 		readonly Color4 color;
 		readonly ModelManager modelManager;
 		readonly Scene scene;
@@ -86,7 +91,7 @@ namespace IronStar.SFX {
 			this.boxColor		=	factory.BoxColor	;
 
 			this.modelManager   =   modelManager;
-			this.preTransform   =   factory.ComputePreTransformMatrix();
+			this.PreTransform   =   factory.ComputePreTransformMatrix();
 			this.color			=	factory.Color;
 
 			this.fpvEnabled		=	factory.FPVEnable;
@@ -100,7 +105,7 @@ namespace IronStar.SFX {
 			scene.ComputeAbsoluteTransforms( animSnapshot );
 
 			if (factory.AnimEnabled) {
-				animator	=	new WeaponAnimator( Entity, this );
+				animator	=	new WeaponAnimator( modelManager.world, Entity, this );
 				//animation	=	content.Load<AnimatorFactory>(@"animation\" + factory.AnimController)?.Create( scene );
 			}
 
@@ -112,10 +117,10 @@ namespace IronStar.SFX {
 				} else {
 					fpvCameraMatrix	=	Matrix.RotationY( -MathUtil.PiOverTwo ) * globalTransforms[ fpvCameraIndex ];
 					fpvViewMatrix	=	Matrix.Invert( fpvCameraMatrix );
-					preTransform	=	fpvViewMatrix * Matrix.Scaling( factory.Scale );
+					PreTransform	=	fpvViewMatrix * Matrix.Scaling( factory.Scale );
 				}
 			} else {
-				preTransform	=	Matrix.Scaling( factory.Scale );	
+				PreTransform	=	Matrix.Scaling( factory.Scale );	
 			}
 
 
@@ -139,13 +144,7 @@ namespace IronStar.SFX {
 
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="dt"></param>
-		/// <param name="animFrame"></param>
-		/// <param name="worldMatrix"></param>
-		public void Update ( GameTime gameTime, float animFrame )
+		public Matrix ComputeWorldMatrix ()
 		{
 			var q	=	Entity.Rotation;
 			var p	=	Entity.Position;
@@ -159,6 +158,19 @@ namespace IronStar.SFX {
 				worldMatrix				= 	playerCameraMatrix;
 			}
 
+			return worldMatrix;
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="dt"></param>
+		/// <param name="animFrame"></param>
+		/// <param name="worldMatrix"></param>
+		public void Update ( GameTime gameTime, float animFrame )
+		{
+			var worldMatrix	=	ComputeWorldMatrix();
 
 			if (scene==EmptyScene) {
 				modelManager.rw.Debug.DrawBox( new BoundingBox(boxWidth,boxHeight,boxDepth), worldMatrix, boxColor, 2 );
@@ -166,14 +178,15 @@ namespace IronStar.SFX {
 			}
 
 			if (animator!=null) {
+
 				animator.Update( gameTime, animSnapshot );
-				scene.ComputeAbsoluteTransforms( animSnapshot, globalTransforms );
+				Update( worldMatrix, animSnapshot );
+
+			} else {
+
+				Update( worldMatrix, animSnapshot );
+
 			}
-
-			Update( worldMatrix, globalTransforms );
-
-			#warning old stuff
-			//Update( worldMatrix, animSnapshot );
 		}
 
 
@@ -194,7 +207,7 @@ namespace IronStar.SFX {
 
 			for ( int i = 0; i<nodeCount; i++ ) {
 				if (meshInstances[i]!=null) {
-					meshInstances[i].World = nodeTransforms[i] * preTransform * worldMatrix;
+					meshInstances[i].World = nodeTransforms[i] * PreTransform * worldMatrix;
 					meshInstances[i].Color = color;
 				}
 			}

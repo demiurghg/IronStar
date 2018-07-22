@@ -76,34 +76,35 @@ struct LIGHTPROBE {
 struct PARAMS {
 	float4x4   View;                          // offset:    0
 	float4x4   Projection;                    // offset:   64
-	float4x4   ViewProjection;                // offset:  128
-	float4x4   CascadeViewProjection0;        // offset:  192
-	float4x4   CascadeViewProjection1;        // offset:  256
-	float4x4   CascadeViewProjection2;        // offset:  320
-	float4x4   CascadeViewProjection3;        // offset:  384
-	float4x4   OcclusionGridMatrix;           // offset:  448
-	float4     CascadeScaleOffset0;           // offset:  512
-	float4     CascadeScaleOffset1;           // offset:  528
-	float4     CascadeScaleOffset2;           // offset:  544
-	float4     CascadeScaleOffset3;           // offset:  560
-	float4     CameraForward;                 // offset:  576
-	float4     CameraRight;                   // offset:  592
-	float4     CameraUp;                      // offset:  608
-	float4     CameraPosition;                // offset:  624
-	float4     Gravity;                       // offset:  640
-	float4     LightMapSize;                  // offset:  656
-	float4     DirectLightDirection;          // offset:  672
-	float4     DirectLightIntensity;          // offset:  688
-	float4     SkyAmbientLevel;               // offset:  704
-	float4     FogColor;                      // offset:  720
-	float      FogAttenuation;                // offset:  736
-	float      LinearizeDepthA;               // offset:  740
-	float      LinearizeDepthB;               // offset:  744
-	int        MaxParticles;                  // offset:  748
-	float      DeltaTime;                     // offset:  752
-	uint       DeadListSize;                  // offset:  756
-	float      CocScale;                      // offset:  760
-	float      CocBias;                       // offset:  764
-	uint       IntegrationSteps;              // offset:  768
+	float4x4   ProjectionFPV;                 // offset:  128
+	float4x4   ViewProjection;                // offset:  192
+	float4x4   CascadeViewProjection0;        // offset:  256
+	float4x4   CascadeViewProjection1;        // offset:  320
+	float4x4   CascadeViewProjection2;        // offset:  384
+	float4x4   CascadeViewProjection3;        // offset:  448
+	float4x4   OcclusionGridMatrix;           // offset:  512
+	float4     CascadeScaleOffset0;           // offset:  576
+	float4     CascadeScaleOffset1;           // offset:  592
+	float4     CascadeScaleOffset2;           // offset:  608
+	float4     CascadeScaleOffset3;           // offset:  624
+	float4     CameraForward;                 // offset:  640
+	float4     CameraRight;                   // offset:  656
+	float4     CameraUp;                      // offset:  672
+	float4     CameraPosition;                // offset:  688
+	float4     Gravity;                       // offset:  704
+	float4     LightMapSize;                  // offset:  720
+	float4     DirectLightDirection;          // offset:  736
+	float4     DirectLightIntensity;          // offset:  752
+	float4     SkyAmbientLevel;               // offset:  768
+	float4     FogColor;                      // offset:  784
+	float      FogAttenuation;                // offset:  800
+	float      LinearizeDepthA;               // offset:  804
+	float      LinearizeDepthB;               // offset:  808
+	int        MaxParticles;                  // offset:  812
+	float      DeltaTime;                     // offset:  816
+	uint       DeadListSize;                  // offset:  820
+	float      CocScale;                      // offset:  824
+	float      CocBias;                       // offset:  828
+	uint       IntegrationSteps;              // offset:  832
 };
 

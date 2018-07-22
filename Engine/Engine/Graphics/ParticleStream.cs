@@ -146,6 +146,7 @@ namespace Fusion.Engine.Graphics {
 		struct PARAMS {
 			public Matrix	View;
 			public Matrix	Projection;
+			public Matrix	ProjectionFPV			;
 			public Matrix	ViewProjection;
 			public Matrix	CascadeViewProjection0	;
 			public Matrix	CascadeViewProjection1	;
@@ -431,6 +432,7 @@ namespace Fusion.Engine.Graphics {
 
 			param.View				=	view;
 			param.Projection        =   projection;
+			param.ProjectionFPV		=	renderWorld.WeaponCamera.GetProjectionMatrix( StereoEye.Mono );
 			param.ViewProjection	=	view * projection;
 			param.CascadeViewProjection0	=	rs.LightManager.ShadowMap.GetCascade( 0 ).ViewProjectionMatrix;
 			param.CascadeViewProjection1	=	rs.LightManager.ShadowMap.GetCascade( 1 ).ViewProjectionMatrix;

@@ -161,6 +161,7 @@ namespace Fusion.Engine.Graphics {
 
 		/// <summary>
 		/// Index of the image in the texture atlas
+		/// HACK: negative value means weapon matrix
 		/// </summary>
 		public int		ImageIndex;            
 

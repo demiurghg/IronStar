@@ -22,11 +22,11 @@ namespace IronStar.SFX {
 		/// <summary>
 		/// 
 		/// </summary>
-		public Animator ( Entity entity, ModelInstance model )
+		public Animator ( GameWorld world, Entity entity, ModelInstance model )
 		{
 			this.entity	=	entity;
 			this.model	=	model;
-			composer	=	new AnimationComposer( model.Scene );
+			composer	=	new AnimationComposer( model, world );
 		}
 
 

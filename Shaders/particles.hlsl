@@ -304,7 +304,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	float3		up	=	(Params.CameraUp.xyz * cos(a) - Params.CameraRight.xyz * sin(a)) * sz;
 	float3		fwd	=	offset * sz;
 	
-	float4		image	=	Images[prt.ImageIndex ];
+	float4		image	=	Images[abs(prt.ImageIndex)];
 	
 	float4 wpos0	=	float4( position + rt + up - fwd, 1 );
 	float4 wpos1	=	float4( position - rt + up - fwd, 1 );
@@ -355,7 +355,9 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	
 	float4 lightmapRegion	=	lightMapRegionsGS[ prtId ];
 	
-	p0.Position	 = mul( pos0, Params.Projection );
+	float4x4	projection	= (prt.ImageIndex < 0) ? Params.ProjectionFPV : Params.Projection;
+	
+	p0.Position	 = mul( pos0, projection );
 	p0.Normal	 = normal0;
 	p0.TexCoord	 = image.zy;
 	p0.LMCoord	 = lightmapRegion.zy + lmszA;
@@ -367,7 +369,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p0.Tangent	 = rt;
 	p0.Binormal	 = -up;
 	
-	p1.Position	 = mul( pos1, Params.Projection );
+	p1.Position	 = mul( pos1, projection );
 	p1.Normal	 = normal1;
 	p1.TexCoord	 = image.xy;
 	p1.LMCoord	 = lightmapRegion.xy + lmszA;
@@ -379,7 +381,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p1.Tangent	 = rt;
 	p1.Binormal	 = -up;
 	
-	p2.Position	 = mul( pos2, Params.Projection );
+	p2.Position	 = mul( pos2, projection );
 	p2.Normal	 = normal2;
 	p2.TexCoord	 = image.xw;
 	p2.LMCoord	 = lightmapRegion.xw + lmszA;
@@ -391,7 +393,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p2.Tangent	 = rt;
 	p2.Binormal	 = -up;
 	
-	p3.Position	 = mul( pos3, Params.Projection );
+	p3.Position	 = mul( pos3, projection );
 	p3.Normal	 = normal3;
 	p3.TexCoord	 = image.zw;
 	p3.LMCoord	 = lightmapRegion.zw + lmszA;

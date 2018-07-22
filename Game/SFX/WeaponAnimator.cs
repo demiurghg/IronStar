@@ -35,7 +35,7 @@ namespace IronStar.SFX {
 		/// <summary>
 		/// 
 		/// </summary>
-		public WeaponAnimator ( Entity entity, ModelInstance model ) : base(entity,model)
+		public WeaponAnimator ( GameWorld world, Entity entity, ModelInstance model ) : base(world, entity,model)
 		{
 			trackWeapon	=	new AnimationTrack( model.Scene, null, AnimationBlendMode.Override );
 
@@ -91,10 +91,13 @@ namespace IronStar.SFX {
 
 				if (state.HasFlag( EntityState.Weapon_Cooldown)) {
 					trackWeapon.Sequence( "anim_recoil", true, false );
+					trackWeapon.Frame ++;
 
 					var shakeName = "anim_shake" + rand.Next(6).ToString();
-					var shakeAmpl = Math.Abs(rand.GaussDistribution(0,1));
+					var shakeAmpl = Math.Abs(rand.GaussDistribution(0,0.5f));
 					RunShakeAnimation( shakeName, shakeAmpl );
+
+					composer.SequenceFX( "bulletMuzzle", "muzzle" );
 				}
 
 				if (state.HasFlag( EntityState.Weapon_Idle)) {

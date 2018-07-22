@@ -40,6 +40,8 @@ namespace IronStar.SFX {
 
 		protected readonly bool looped;
 
+		public int JointIndex = 0;
+		public bool WeaponFX = false;
 
 		/// <summary>
 		/// Indicates thet SFX is looped.

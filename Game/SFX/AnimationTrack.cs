@@ -16,6 +16,21 @@ namespace IronStar.SFX {
 		public float TimeScale { get; set; } = 1;
 		public float Weight { get; set; } = 1;
 		public AnimationBlendMode BlendMode { get; set; }
+
+		public bool Busy { 
+			get {
+				return currentAnim!=null;
+			}
+		}
+
+		public int Frame {
+			get {
+				return frame;
+			}
+			set {
+				frame = value;
+			}
+		}
 		
 		readonly string channel;
 		readonly Scene scene;
@@ -45,7 +60,7 @@ namespace IronStar.SFX {
 
 			public void GetDeltaKey ( int node, int frame, out Matrix transform )
 			{
-				Take.GetKey( frame + Take.FirstFrame, node, out transform );
+				Take.GetDeltaKey( frame + Take.FirstFrame, node, out transform );
 			}
 		}
 
@@ -90,7 +105,7 @@ namespace IronStar.SFX {
 			ApplyTransforms( frame, destination );
 
 			//	advance time :
-			frame ++;
+			frame += (int)(1 * TimeScale);
 		}
 
 
@@ -107,6 +122,8 @@ namespace IronStar.SFX {
 		{
 			var take = scene.Takes[ takeName ];
 
+			Log.Verbose(" seq : {0} {1} {2}", takeName, immediate ? "immediate":"", looped ? "looped":"" );
+
 			if (take==null) {
 				Log.Warning("Take '{0}' does not exist", takeName );
 				return;
@@ -119,6 +136,7 @@ namespace IronStar.SFX {
 
 				currentAnim		=	anim;
 				pendingAnim		=	null;
+				frame			=	0;
 
 			} else {
 				pendingAnim		=	anim;
@@ -149,7 +167,7 @@ namespace IronStar.SFX {
 
 				if (additive) {
 
-					currentAnim.GetKey( nodeIndex, frame, out src );
+					currentAnim.GetDeltaKey( nodeIndex, frame, out src );
 					dst = AnimBlendUtils.Lerp( dst, dst * src, weight );
 
 				} else {

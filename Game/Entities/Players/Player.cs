@@ -20,7 +20,7 @@ using IronStar.Physics;
 using IronStar.Items;
 
 namespace IronStar.Entities.Players {
-	public partial class Player : Entity, IShooter {
+	public partial class Player : Entity {
 
 		public int Health { get { return health; } }
 		public int Armor  { get { return health; } }
@@ -120,17 +120,16 @@ namespace IronStar.Entities.Players {
 		/// <param name="gameTime"></param>
 		public override void Update ( GameTime gameTime )
 		{
+			base.Update(gameTime);
+
 			//	update physical character controller :
 			controller.Update();
 
 			ModelFpv	=	World.Atoms["weapon_machinegun"];
 
 			//	update player's entity states :
-			if (controller.Crouching) {
-				EntityState |=	EntityState.Crouching;
-			} else {
-				EntityState &= ~EntityState.Crouching;
-			}
+			SetState( EntityState.Crouching,	controller.Crouching );
+			SetState( EntityState.HasTraction,	controller.HasTraction );
 		}
 
 
@@ -155,16 +154,28 @@ namespace IronStar.Entities.Players {
 		/// <param name="userCommand"></param>
 		public override void UserControl( UserCommand userCommand )
 		{
+			var oldDir	=	Matrix.RotationQuaternion( Rotation ).Forward;
+
 			Rotation	=	Quaternion.RotationYawPitchRoll( userCommand.Yaw, userCommand.Pitch, userCommand.Roll );
 
+			var newDir	=	Matrix.RotationQuaternion( Rotation ).Forward;
+
+			var turnDir	=	Vector3.Dot( Vector3.Cross( newDir, oldDir ), Vector3.Up ); 
+
 			controller.Move( userCommand.MoveForward, userCommand.MoveRight, userCommand.MoveUp );
+
+			SetState( EntityState.TurnRight, turnDir > 0 );
+			SetState( EntityState.TurnLeft,  turnDir < 0 );
+
+			SetState( EntityState.StrafeRight, userCommand.MoveRight > 0 );
+			SetState( EntityState.StrafeLeft,  userCommand.MoveRight < 0 );
 
 			var weapon = World.Items
 						.GetOwnedItems( ID )
 						.FirstOrDefault( item => item is Weapon ) as Weapon;
 
 			if (userCommand.Action.HasFlag( UserAction.Attack ) ) {
-				weapon?.Attack( this, this );
+				weapon?.Attack( this );
 			}
 
 			/*if ( userCommand.Weapon != 0 ) {
@@ -184,14 +195,14 @@ namespace IronStar.Entities.Players {
 
 
 
-		public Vector3 GetActualPOV()
+		public override Vector3 GetActualPOV()
 		{
 			float height = EntityState.HasFlag(EntityState.Crouching) ? GameConfig.PovHeightCrouch : GameConfig.PovHeightStand;
 			return Position + Vector3.Up * height;
 		}
 
 
-		public Vector3 GetVisiblePOV()
+		public override Vector3 GetVisiblePOV()
 		{
 			return GetActualPOV();
 		}

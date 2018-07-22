@@ -16,6 +16,32 @@ using IronStar.Core;
 
 namespace IronStar.SFX {
 
+
+	public class Animation {
+		public AnimState	State;
+		public string		Take;
+		public string		NextAnim;
+		public int			NextKey;
+		public Transition[] Transitions;
+		public EffectTag[]	Effects;
+		public string		Name { get { return Take; } }
+	}
+
+	public class Transition {
+		public AnimState	State;
+		public int			Low;
+		public int			High;
+		public string		NextAnim;
+		public int			NextKey;
+	}
+
+	public class EffectTag {
+		public string	Sfx;
+		public int		Key;
+		public string	Joint;
+	}
+
+
 	#region AnimController Loader
 	[ContentLoader(typeof(AnimatorFactory))]
 	public class AnimControllerLoader : ContentLoader {
@@ -39,8 +65,11 @@ namespace IronStar.SFX {
 
 	public class AnimatorFactory {
 
+		public List<Animation> Animations;
+
 		public AnimatorFactory ()
 		{
+			Animations = new List<Animation>();
 		}
 
 		public Animator Create ( Scene scene )

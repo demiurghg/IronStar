@@ -24,6 +24,8 @@ namespace IronStar.SFX {
 		/// </summary>
 		public Animator ( Entity entity, ModelInstance model )
 		{
+			this.entity	=	entity;
+			this.model	=	model;
 			composer	=	new AnimationComposer( model.Scene );
 		}
 

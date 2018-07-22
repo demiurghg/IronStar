@@ -85,6 +85,8 @@ namespace IronStar.Entities {
 		/// <param name="gameTime"></param>
 		public override void Update ( GameTime gameTime )
 		{
+			base.Update(gameTime);
+
 			UpdateProjectile( gameTime.ElapsedSec );
 		}
 

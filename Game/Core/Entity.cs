@@ -41,8 +41,6 @@ namespace IronStar.Core {
 		/// </summary>
 		public EntityState EntityState;
 
-		public AnimState	WeaponAnimation;
-
 		/// <summary>
 		/// Players guid. Zero if no player.
 		/// Server-side only
@@ -130,8 +128,6 @@ namespace IronStar.Core {
 			writer.Write( Model );
 			writer.Write( Model2 );
 			writer.Write( ModelFpv );
-
-			writer.Write( (byte)WeaponAnimation );
 		}
 
 
@@ -165,8 +161,6 @@ namespace IronStar.Core {
 			Model2			=	reader.ReadInt16();
 			ModelFpv		=	reader.ReadInt16();
 
-			WeaponAnimation	=	(AnimState)reader.ReadByte();
-
 			//	entity teleported - reset position and rotation :
 			if (oldTeleport!=TeleportCount) {
 				PositionOld	=	Position;
@@ -175,8 +169,45 @@ namespace IronStar.Core {
 		}
 
 
+
+		public void ToggleState ( EntityState state )
+		{
+			EntityState	^= state;
+		}
+
+
+		public void SetState ( EntityState state, bool enable )
+		{
+			if (enable) {
+				EntityState	|= state;
+			} else {
+				EntityState &= (~state);
+			}
+		}
+
+
+		public void ResetState ( EntityState state )
+		{
+			EntityState &= (~state);
+		}
+
+
+		public bool GetState ( EntityState state )
+		{
+			return ( (EntityState & state) != 0 );
+		}
+
+
 		/// <summary>
 		/// Update entity state.
+		/// 
+		///	One mechanism is to declare two methods. Say you have a method
+		///	Update() and you want anyone that override Update to have to call your
+		///	base class implementation. Then don't make Update virtual but instead
+		///	declare a virtual UpdateEx method and call that from the start of
+		///	Update(). Children can override UpdateEx and you can guarantee that
+		///	Update will still be called:
+		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
 		public virtual void Update ( GameTime gameTime )
@@ -333,6 +364,23 @@ namespace IronStar.Core {
 			return Vector3.Lerp( PositionOld, Position, MathUtil.Clamp(lerpFactor,0,2f) );
 		}
 
+
+
+		/// <summary>
+		/// Gets actual (i.e. physical or logical) shooting point-of-view.
+		/// </summary>
+		public virtual Vector3 GetActualPOV ()
+		{
+			return Position;
+		}
+
+		/// <summary>
+		/// Gets visible shooting point-of-view
+		/// </summary>
+		public virtual Vector3 GetVisiblePOV ()
+		{
+			return Position;
+		}
 
 		/*-----------------------------------------------------------------------------------------
 		 * 

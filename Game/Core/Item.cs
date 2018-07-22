@@ -38,7 +38,7 @@ namespace IronStar.Core {
 		/// Attempts to use item as weapon.
 		/// Returns FALSE if item could not be used as weapon. TRUE otherwise.
 		/// </summary>
-		public virtual bool Attack ( IShooter shooter, Entity attacker ) { return false; }
+		public virtual bool Attack ( Entity attacker ) { return false; }
 
 		/// <summary>
 		/// Called when holding entity attempts to activate item.

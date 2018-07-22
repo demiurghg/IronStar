@@ -68,6 +68,8 @@ namespace IronStar.Entities {
 
 		public override void Update( GameTime gameTime )
 		{
+			base.Update(gameTime);
+
 			float elapsedTime = gameTime.ElapsedSec;
 
 			if (fxMode==FuncFXMode.AutoTrigger) {

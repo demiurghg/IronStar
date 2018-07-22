@@ -157,6 +157,8 @@ namespace IronStar.Entities {
 
 		public override void Update ( GameTime gameTime )
 		{
+			base.Update(gameTime);
+
 			this.Position			=	box.Position; 
 			this.Rotation			=	box.Orientation; 
 			this.LinearVelocity		=	box.LinearVelocity;

@@ -205,7 +205,7 @@ namespace Fusion.Engine.Graphics {
 			for ( int frame = FirstFrame; frame <= LastFrame; frame++ ) {
 				for ( int node = 0; node<NodeCount; node++ ) {
 					int addr = Address( frame - firstFrame, node );
-					animDelta[ addr ] = animData[ addr ] * initialPose[node];
+					animDelta[ addr ] = initialPose[node] * animData[ addr ];
 				}
 			}
 		}

@@ -62,6 +62,7 @@ namespace IronStar.Items {
 
 		int timer;
 		WeaponState state;
+		bool dirty;
 		bool rqAttack;
 		bool rqReload;
 
@@ -96,7 +97,7 @@ namespace IronStar.Items {
 		}
 
 
-		public override bool Attack(IShooter shooter, Entity attacker)
+		public override bool Attack(Entity attacker)
 		{
 			rqAttack = true;
 			return true;
@@ -125,15 +126,22 @@ namespace IronStar.Items {
 
 			//	update animation state :
 			//	actually, even dropped weapon could perform attack!!! :)
+			entity.SetState( EntityState.Weapon_States, false );
+
+			if (dirty) {
+				entity.ToggleState( EntityState.Weapon_Event );
+				dirty = false;
+			}
+
 			switch (state) {
-				case WeaponState.Idle		:	entity.WeaponAnimation	=	AnimState.Weapon_Idle		;	 break;
-				case WeaponState.Warmup		:	entity.WeaponAnimation	=	AnimState.Weapon_Warmup		;	 break;
-				case WeaponState.Cooldown	:	entity.WeaponAnimation	=	AnimState.Weapon_Cooldown	;	 break;
-				case WeaponState.Reload		:	entity.WeaponAnimation	=	AnimState.Weapon_Reload		;	 break;
-				case WeaponState.Overheat	:	entity.WeaponAnimation	=	AnimState.Weapon_Overheat	;	 break;
-				case WeaponState.Drop		:	entity.WeaponAnimation	=	AnimState.Weapon_Drop		;	 break;
-				case WeaponState.Raise		:	entity.WeaponAnimation	=	AnimState.Weapon_Raise		;	 break;
-				case WeaponState.NoAmmo		:	entity.WeaponAnimation	=	AnimState.Weapon_NoAmmo		;	 break;
+				case WeaponState.Idle		:	entity.SetState( EntityState.Weapon_Idle	 , true );	 break;
+				case WeaponState.Warmup		:	entity.SetState( EntityState.Weapon_Warmup	 , true );	 break;
+				case WeaponState.Cooldown	:	entity.SetState( EntityState.Weapon_Cooldown , true );	 break;
+				case WeaponState.Reload		:	entity.SetState( EntityState.Weapon_Reload	 , true );	 break;
+				case WeaponState.Overheat	:	entity.SetState( EntityState.Weapon_Overheat , true );	 break;
+				case WeaponState.Drop		:	entity.SetState( EntityState.Weapon_Drop	 , true );	 break;
+				case WeaponState.Raise		:	entity.SetState( EntityState.Weapon_Raise	 , true );	 break;
+				case WeaponState.NoAmmo		:	entity.SetState( EntityState.Weapon_NoAmmo	 , true );	 break;
 			}
 		}
 
@@ -145,14 +153,16 @@ namespace IronStar.Items {
 				case WeaponState.Idle:	
 					if (rqAttack) {
 						state = WeaponState.Warmup;	
+						dirty = true;
 						timer = timeWarmup;
 					}
 					break;
 
 				case WeaponState.Warmup:	
 					if (timer<=0) {
-						Fire(entity as IShooter, entity);
+						Fire(entity);
 						state = WeaponState.Cooldown;	
+						dirty = true;
 						timer = timeCooldown;
 					}
 					break;
@@ -161,6 +171,7 @@ namespace IronStar.Items {
 				case WeaponState.Cooldown:	
 					if (timer<=0) {
 						state = WeaponState.Idle;	
+						dirty = true;
 						timer = 0;
 					}
 					break;
@@ -186,12 +197,12 @@ namespace IronStar.Items {
 		/// <summary>
 		/// 
 		/// </summary>
-		protected virtual bool Fire ( IShooter shooter, Entity attacker )
+		protected virtual bool Fire ( Entity attacker )
 		{
 			if (beamWeapon) {
 
 				for (int i=0; i<projectileCount; i++) {
-					FireBeam( attacker, shooter, world );
+					FireBeam( attacker, world );
 				}
 
 				return true;
@@ -199,7 +210,7 @@ namespace IronStar.Items {
 			} else {
 
 				for (int i=0; i<projectileCount; i++) {
-					FireProjectile( attacker, shooter, world );
+					FireProjectile( attacker, world );
 				}
 
 				return true;
@@ -213,9 +224,9 @@ namespace IronStar.Items {
 		/// <param name="attacker"></param>
 		/// <param name="shooter"></param>
 		/// <param name="world"></param>
-		void FireBeam ( Entity attacker, IShooter shooter, GameWorld world )
+		void FireBeam ( Entity attacker, GameWorld world )
 		{
-			var p = shooter.GetActualPOV();
+			var p = attacker.GetActualPOV();
 			var q = attacker.Rotation;
 			var d = -GetFireDirection(q);
 
@@ -239,7 +250,7 @@ namespace IronStar.Items {
 		/// <param name="attacker"></param>
 		/// <param name="world"></param>
 		/// <param name="origin"></param>
-		void FireProjectile ( Entity attacker, IShooter shooter, GameWorld world )
+		void FireProjectile ( Entity attacker, GameWorld world )
 		{
 			var e = world.Spawn( projectile ) as Projectile;
 
@@ -248,7 +259,7 @@ namespace IronStar.Items {
 				return;
 			}
 
-			var p = shooter.GetActualPOV();
+			var p = attacker.GetActualPOV();
 			var q = attacker.Rotation;
 			var d = GetFireDirection(q);
 

@@ -18,7 +18,7 @@ using IronStar.Entities.Players;
 
 namespace IronStar.Entities {
 
-	public class FuncShooter : Entity, IShooter {
+	public class FuncShooter : Entity {
 		
 		static Random rand = new Random();
 
@@ -51,7 +51,7 @@ namespace IronStar.Entities {
 			activationCount ++;
 
 			if (trigger) {
-				weapon?.Attack( this, this );
+				weapon?.Attack( this );
 			} else {
 				enabled = !enabled;
 				Log.Verbose("FuncShooter: toggle enabled");
@@ -61,12 +61,14 @@ namespace IronStar.Entities {
 
 		public override void Update( GameTime gameTime )
 		{
+			base.Update(gameTime);
+
 			int msec = gameTime.Milliseconds;
 
 			//	update
 			if (!trigger) {
 				if (enabled) {
-					weapon?.Attack( this, this );
+					weapon?.Attack( this );
 				}
 			}
 		}
@@ -78,13 +80,13 @@ namespace IronStar.Entities {
 		}
 
 
-		public Vector3 GetActualPOV()
+		public override Vector3 GetActualPOV()
 		{
 			return Position;
 		}
 
 
-		public Vector3 GetVisiblePOV()
+		public override Vector3 GetVisiblePOV()
 		{
 			return GetActualPOV();
 		}

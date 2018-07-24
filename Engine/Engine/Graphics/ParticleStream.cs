@@ -145,6 +145,7 @@ namespace Fusion.Engine.Graphics {
 		[ShaderStructure]
 		struct PARAMS {
 			public Matrix	View;
+			public Matrix	ViewInverted;
 			public Matrix	Projection;
 			public Matrix	ProjectionFPV			;
 			public Matrix	ViewProjection;
@@ -431,6 +432,7 @@ namespace Fusion.Engine.Graphics {
 			PARAMS param		=	new PARAMS();
 
 			param.View				=	view;
+			param.ViewInverted		=	Matrix.Invert( view );//renderWorld.Camera.GetCameraMatrix( StereoEye.Mono );
 			param.Projection        =   projection;
 			param.ProjectionFPV		=	renderWorld.WeaponCamera.GetProjectionMatrix( StereoEye.Mono );
 			param.ViewProjection	=	view * projection;

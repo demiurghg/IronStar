@@ -65,6 +65,16 @@ static const float3 lightBasisX	=	float3(  sqrt(3.0f/2.0f), 	 			 0,  sqrt(1/3.0
 static const float3 lightBasisY	=	float3( -sqrt(1.0f/6.0f),  sqrt(1.0f/2.0f),  sqrt(1/3.0f) );
 static const float3 lightBasisZ	=	float3( -sqrt(1.0f/6.0f), -sqrt(1.0f/2.0f),  sqrt(1/3.0f) );
 
+void TransformVector ( float4x4 transform, inout float3 v )
+{
+	v.xyz = mul( float4(v,0), transform ).xyz;
+}
+
+void TransformPoint ( float4x4 transform, inout float3 p )
+{
+	p.xyz = mul( float4(p,1), transform ).xyz;
+}
+
 /*-----------------------------------------------------------------------------
 	Simulation :
 -----------------------------------------------------------------------------*/
@@ -88,6 +98,12 @@ void CSMain(
 	//	dead list must contain at leas MAX_INJECTED indices to prevent underflow.
 	if (id < (uint)Params.MaxParticles && Params.DeadListSize > (uint)MAX_INJECTED ) {
 		Particle p = injectionBuffer[ id ];
+		
+		if (p.ImageIndex<0) {
+			p.Basis = Params.ViewInverted;
+			TransformVector( Params.View, p.Velocity );
+			TransformPoint ( Params.View, p.Position );//*/
+		}
 		
 		uint newIndex = deadParticleIndices.Consume();
 		
@@ -118,11 +134,22 @@ void CSMain(
 		float3 velocity		=	p.Velocity;
 		float3 acceleration	=	0;
 		
+		/*if (p.ImageIndex<0) {
+			TransformVector( Params.ViewInverted, velocity );
+			TransformPoint ( Params.ViewInverted, position );
+		}//*/
+		
 		for (uint i=0; i<Params.IntegrationSteps; i++) {
-			acceleration	=	p.Acceleration - velocity * length(velocity) * p.Damping + gravity;
+			acceleration	=	p.Acceleration - velocity * length(velocity) * p.Damping + gravity*0;
 			velocity		=	velocity + acceleration * Params.DeltaTime;	
 			position		=	position + velocity     * Params.DeltaTime;	
 		}
+
+		
+		/*if (p.ImageIndex<0) {
+			TransformVector( Params.View, velocity );
+			TransformPoint ( Params.View, position );
+		}//*/
 
 		particleBuffer[ id ].Velocity	=	velocity;	
 		particleBuffer[ id ].Position	=	position;	
@@ -279,6 +306,11 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	if (prt.TimeLag >= prt.LifeTime ) {
 		return;
 	}
+
+	if (prt.ImageIndex<0) {
+		TransformVector( Params.ViewInverted, prt.Velocity );
+		TransformPoint ( Params.ViewInverted, prt.Position );
+	}//*/
 	
 	float time		=	prt.TimeLag;
 	float factor	=	saturate(prt.TimeLag / prt.LifeTime);

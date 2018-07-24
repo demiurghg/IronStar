@@ -97,7 +97,8 @@ namespace IronStar.SFX {
 					var shakeAmpl = Math.Abs(rand.GaussDistribution(0,0.5f));
 					RunShakeAnimation( shakeName, shakeAmpl );
 
-					composer.SequenceFX( "bulletMuzzle", "muzzle" );
+					composer.SequenceFX( "machinegunMuzzle", "muzzle" );
+					//composer.SequenceFX( "testTracer", "muzzle" );
 				}
 
 				if (state.HasFlag( EntityState.Weapon_Idle)) {

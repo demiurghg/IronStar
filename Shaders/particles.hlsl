@@ -100,7 +100,6 @@ void CSMain(
 		Particle p = injectionBuffer[ id ];
 		
 		if (p.ImageIndex<0) {
-			p.Basis = Params.ViewInverted;
 			TransformVector( Params.View, p.Velocity );
 			TransformPoint ( Params.View, p.Position );//*/
 		}

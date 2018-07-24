@@ -80,11 +80,6 @@ namespace Fusion.Engine.Graphics {
 		/// Initial velocity of the particle
 		/// </summary>
 		public Vector3	Velocity;           
-		
-		/// <summary>
-		/// Initial velocity of the particle
-		/// </summary>
-		public Matrix	Basis;   
 
 		/// <summary>
 		/// Acceleration of the particle regardless of gravity.

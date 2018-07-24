@@ -141,7 +141,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.FuncShooterFactory, IronStar",
-          "Weapon": "plasmagun",
+          "Weapon": "weapon_plasmagun",
           "Trigger": true,
           "Once": false,
           "Start": false
@@ -415,26 +415,6 @@
         "RotateYaw": 48.09573,
         "RotatePitch": 0.04208969,
         "RotateRoll": -0.00106372684
-      },
-      {
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$type": "IronStar.Entities.FuncShooterFactory, IronStar",
-          "Weapon": "machinegun",
-          "Trigger": true,
-          "Once": false,
-          "Start": false
-        },
-        "FactoryName": "56gIZW8B",
-        "Visible": true,
-        "Frozen": false,
-        "TranslateX": 0.261560142,
-        "TranslateY": -0.422406971,
-        "TranslateZ": -8.83466,
-        "RotateYaw": 90.0,
-        "RotatePitch": 10.0,
-        "RotateRoll": 0.0
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -1976,7 +1956,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.FuncShooterFactory, IronStar",
-          "Weapon": "machinegun",
+          "Weapon": "weapon_machinegun",
           "Trigger": true,
           "Once": false,
           "Start": false

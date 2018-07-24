@@ -211,8 +211,8 @@ namespace IronStar.Core {
 			fxEvents.Clear();
 
 
-			fxPlayback.Update( gameTime, lerpFactor );
 			modelManager.Update( gameTime, lerpFactor, gameCamera, userCmd );
+			fxPlayback.Update( gameTime, lerpFactor );
 
 			//
 			//	update environment :

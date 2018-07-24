@@ -408,7 +408,6 @@ namespace Fusion.Engine.Graphics {
 		bool requestKill = false;
 
 
-
 		/// <summary>
 		/// 
 		/// </summary>

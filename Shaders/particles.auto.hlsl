@@ -18,30 +18,29 @@ static const uint LightSpotShapeRound = 131072;
 static const uint LightSpotShapeSquare = 65536;
 
 // Fusion.Engine.Graphics.Particle
-// Marshal.SizeOf = 180
+// Marshal.SizeOf = 116
 struct Particle {
 	float3     Position;                      // offset:    0
 	float3     Velocity;                      // offset:   12
-	float4x4   Basis;                         // offset:   24
-	float3     Acceleration;                  // offset:   88
-	float3     Color;                         // offset:  100
-	float      Alpha;                         // offset:  112
-	float      Roughness;                     // offset:  116
-	float      Metallic;                      // offset:  120
-	float      Intensity;                     // offset:  124
-	float      Scattering;                    // offset:  128
-	float      Gravity;                       // offset:  132
-	float      Damping;                       // offset:  136
-	float      Size0;                         // offset:  140
-	float      Size1;                         // offset:  144
-	float      Rotation0;                     // offset:  148
-	float      Rotation1;                     // offset:  152
-	float      LifeTime;                      // offset:  156
-	float      TimeLag;                       // offset:  160
-	float      FadeIn;                        // offset:  164
-	float      FadeOut;                       // offset:  168
-	int        ImageIndex;                    // offset:  172
-	uint       Effects;                       // offset:  176
+	float3     Acceleration;                  // offset:   24
+	float3     Color;                         // offset:   36
+	float      Alpha;                         // offset:   48
+	float      Roughness;                     // offset:   52
+	float      Metallic;                      // offset:   56
+	float      Intensity;                     // offset:   60
+	float      Scattering;                    // offset:   64
+	float      Gravity;                       // offset:   68
+	float      Damping;                       // offset:   72
+	float      Size0;                         // offset:   76
+	float      Size1;                         // offset:   80
+	float      Rotation0;                     // offset:   84
+	float      Rotation1;                     // offset:   88
+	float      LifeTime;                      // offset:   92
+	float      TimeLag;                       // offset:   96
+	float      FadeIn;                        // offset:  100
+	float      FadeOut;                       // offset:  104
+	int        ImageIndex;                    // offset:  108
+	uint       Effects;                       // offset:  112
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHT

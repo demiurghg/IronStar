@@ -29,11 +29,11 @@
     "Enabled": true,
     "Sprite": "bulletSpark",
     "Effect": "hard",
-    "Count": 70,
+    "Count": 30,
     "Period": 1.0,
     "Timing": {
       "$type": "IronStar.SFX.FXTiming, IronStar",
-      "Delay": 0.1,
+      "Delay": 0.0,
       "Bunch": 0.0,
       "FadeIn": 0.1,
       "FadeOut": 0.1
@@ -157,7 +157,7 @@
     "Period": 1.0,
     "Timing": {
       "$type": "IronStar.SFX.FXTiming, IronStar",
-      "Delay": 0.0,
+      "Delay": 0.1,
       "Bunch": 0.1,
       "FadeIn": 0.1,
       "FadeOut": 0.9
@@ -176,8 +176,8 @@
     },
     "Shape": {
       "$type": "IronStar.SFX.FXShape, IronStar",
-      "Size0": 0.1,
-      "Size1": 0.9,
+      "Size0": 0.3,
+      "Size1": 0.5,
       "EnableRotation": true,
       "InitialAngle": 360.0,
       "MinAngularVelocity": -45.0,
@@ -196,10 +196,10 @@
       "Direction": "localForward",
       "LinearDistribution": "uniform",
       "LinearVelocityMin": 0.0,
-      "LinearVelocityMax": 10.0,
+      "LinearVelocityMax": 0.0,
       "RadialDistribution": "gaussRadial",
       "RadialVelocityMin": 0.0,
-      "RadialVelocityMax": 5.0,
+      "RadialVelocityMax": 3.0,
       "Advection": 0.0
     },
     "Acceleration": {

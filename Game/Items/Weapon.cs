@@ -30,6 +30,7 @@ namespace IronStar.Items {
 	public partial class Weapon : Item {
 		
 		public enum WeaponState {
+			Inactive,
 			Idle	,
 			Warmup	,
 			Cooldown,
@@ -59,6 +60,7 @@ namespace IronStar.Items {
 		readonly int	timeRaise	;
 		readonly string hitFX;
 		readonly string ammoItem;
+		readonly string viewModel;
 
 		int timer;
 		WeaponState state;
@@ -94,6 +96,8 @@ namespace IronStar.Items {
 			hitFX			=	factory.HitFX			;
 			ammoItem		=	factory.AmmoItem		;
 
+			viewModel		=	factory.ViewModel		;
+
 		}
 
 
@@ -117,6 +121,9 @@ namespace IronStar.Items {
 				return;
 			}
 
+
+			entity.ModelFpv	=	world.Atoms[viewModel];
+
 			//	update FSM twice to 
 			//	bypass zero time states:
 			UpdateFSM( gameTime, entity );
@@ -134,6 +141,7 @@ namespace IronStar.Items {
 			}
 
 			switch (state) {
+				case WeaponState.Inactive	:	entity.SetState( EntityState.Weapon_Inactive , true );	 break;
 				case WeaponState.Idle		:	entity.SetState( EntityState.Weapon_Idle	 , true );	 break;
 				case WeaponState.Warmup		:	entity.SetState( EntityState.Weapon_Warmup	 , true );	 break;
 				case WeaponState.Cooldown	:	entity.SetState( EntityState.Weapon_Cooldown , true );	 break;
@@ -182,13 +190,21 @@ namespace IronStar.Items {
 				case WeaponState.Overheat:		
 					break;
 
-				case WeaponState.Drop:		
+				case WeaponState.Drop:	
+					if (timer<=0) {
+						state = WeaponState.Inactive;
+						dirty = true;
+						timer = 0;
+					}
 					break;
 
 				case WeaponState.Raise:		
 					break;
 
 				case WeaponState.NoAmmo:		
+					break;
+
+				case WeaponState.Inactive:		
 					break;
 			}
 		}

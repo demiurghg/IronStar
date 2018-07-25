@@ -85,6 +85,10 @@ namespace IronStar.Items {
 		[AEClassname("items")]
 		public string AmmoItem { get; set; } = "";
 
+		[AECategory("View")]
+		[AEClassname("models")]
+		public string ViewModel { get; set; } = "";
+
 
 
 		public override Item Spawn( short clsid, GameWorld world )

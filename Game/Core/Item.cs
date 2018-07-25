@@ -9,6 +9,7 @@ using Fusion.Core;
 
 namespace IronStar.Core {
 
+
 	/// <summary>
 	/// 
 	/// </summary>
@@ -45,6 +46,12 @@ namespace IronStar.Core {
 		/// Returns FALSE if item could not be activated. TRUE otherwise.
 		/// </summary>
 		public virtual bool Activate ( Entity target ) { return false; }
+
+		/// <summary>
+		/// Called when holding entity attempts to deactivate item.
+		/// Returns FALSE if item could not be activated. TRUE otherwise.
+		/// </summary>
+		public virtual bool Deactivate ( Entity target ) { return false; }
 
 		/// <summary>
 		/// Attempts to apply current item on another item.

@@ -48,10 +48,10 @@ namespace IronStar.Core {
 		public virtual bool Activate ( Entity target ) { return false; }
 
 		/// <summary>
-		/// Called when holding entity attempts to deactivate item.
-		/// Returns FALSE if item could not be activated. TRUE otherwise.
+		/// Called when holding entity attempts to switch weapon to next one.
+		/// Returns FALSE if item could not be switched. TRUE otherwise.
 		/// </summary>
-		public virtual bool Deactivate ( Entity target ) { return false; }
+		public virtual bool Switch ( Entity target, uint nextItem ) { return false; }
 
 		/// <summary>
 		/// Attempts to apply current item on another item.

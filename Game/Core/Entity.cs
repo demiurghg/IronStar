@@ -41,6 +41,8 @@ namespace IronStar.Core {
 		/// </summary>
 		public EntityState EntityState;
 
+		public WeaponState WeaponState;
+
 		/// <summary>
 		/// Players guid. Zero if no player.
 		/// Server-side only
@@ -52,6 +54,12 @@ namespace IronStar.Core {
 		///	Zero value means no parent.
 		/// </summary>
 		public uint ParentID;
+
+		/// <summary>
+		///	Gets and sets current item ID (usually weapon)
+		///	Zero value means no item.
+		/// </summary>
+		public uint ItemID;
 
 		/// <summary>
 		/// Teleportation counter.

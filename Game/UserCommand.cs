@@ -26,7 +26,7 @@ namespace IronStar {
 
 		public UserAction Action;
 
-		public byte	 Weapon;
+		public short Weapon;
 
 		public float DYaw;
 		public float DPitch;
@@ -45,7 +45,7 @@ namespace IronStar {
 		/// <returns></returns>
 		static public byte[] GetBytes(UserCommand userCmd) 
 		{
-			var array = new byte[12+12+2];
+			var array = new byte[12+12+4];
 
 			using ( var writer = new BinaryWriter( new MemoryStream( array ) ) ) {
 
@@ -58,7 +58,7 @@ namespace IronStar {
 				writer.Write( userCmd.MoveUp		);
 
 				writer.Write( (byte)userCmd.Action	);
-				writer.Write( (byte)userCmd.Weapon	);
+				writer.Write( (short)userCmd.Weapon	);
 			}
 
 			return array;
@@ -85,7 +85,7 @@ namespace IronStar {
 				userCmd.MoveUp		=	reader.ReadSingle();
 
 				userCmd.Action		=	(UserAction)reader.ReadByte();
-				userCmd.Weapon		=	reader.ReadByte();
+				userCmd.Weapon		=	reader.ReadInt16();
 
 				return userCmd;
 			}

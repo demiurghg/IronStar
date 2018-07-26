@@ -29,18 +29,6 @@ namespace IronStar.Items {
 
 	public partial class Weapon : Item {
 		
-		public enum WeaponState {
-			Inactive,
-			Idle	,
-			Warmup	,
-			Cooldown,
-			Reload	,
-			Overheat,
-			Drop	,
-			Raise	,
-			NoAmmo	,
-		}
-
 		readonly Random rand = new Random();
 		readonly GameWorld world;
 
@@ -66,7 +54,8 @@ namespace IronStar.Items {
 		WeaponState state;
 		bool dirty;
 		bool rqAttack;
-		bool rqReload;
+		bool rqActivate;
+		uint rqNextWeapon;
 
 
 		/// <summary>
@@ -98,6 +87,14 @@ namespace IronStar.Items {
 
 			viewModel		=	factory.ViewModel		;
 
+		}
+
+
+
+		public override bool Switch(Entity target, uint nextItem)
+		{
+			rqNextWeapon = nextItem;
+			return true;
 		}
 
 
@@ -133,23 +130,15 @@ namespace IronStar.Items {
 
 			//	update animation state :
 			//	actually, even dropped weapon could perform attack!!! :)
-			entity.SetState( EntityState.Weapon_States, false );
+			//entity.SetState( EntityState.Weapon_States, false );
 
 			if (dirty) {
 				entity.ToggleState( EntityState.Weapon_Event );
 				dirty = false;
 			}
 
-			switch (state) {
-				case WeaponState.Inactive	:	entity.SetState( EntityState.Weapon_Inactive , true );	 break;
-				case WeaponState.Idle		:	entity.SetState( EntityState.Weapon_Idle	 , true );	 break;
-				case WeaponState.Warmup		:	entity.SetState( EntityState.Weapon_Warmup	 , true );	 break;
-				case WeaponState.Cooldown	:	entity.SetState( EntityState.Weapon_Cooldown , true );	 break;
-				case WeaponState.Reload		:	entity.SetState( EntityState.Weapon_Reload	 , true );	 break;
-				case WeaponState.Overheat	:	entity.SetState( EntityState.Weapon_Overheat , true );	 break;
-				case WeaponState.Drop		:	entity.SetState( EntityState.Weapon_Drop	 , true );	 break;
-				case WeaponState.Raise		:	entity.SetState( EntityState.Weapon_Raise	 , true );	 break;
-				case WeaponState.NoAmmo		:	entity.SetState( EntityState.Weapon_NoAmmo	 , true );	 break;
+			if (entity.ItemID==ID) {
+				entity.WeaponState = state;
 			}
 		}
 
@@ -163,6 +152,11 @@ namespace IronStar.Items {
 						state = WeaponState.Warmup;	
 						dirty = true;
 						timer = timeWarmup;
+					}
+					if (rqNextWeapon!=0) {
+						state = WeaponState.Drop;	
+						dirty = true;
+						timer = timeDrop;
 					}
 					break;
 
@@ -192,6 +186,7 @@ namespace IronStar.Items {
 
 				case WeaponState.Drop:	
 					if (timer<=0) {
+						entity.ItemID = rqNextWeapon;
 						state = WeaponState.Inactive;
 						dirty = true;
 						timer = 0;
@@ -199,12 +194,22 @@ namespace IronStar.Items {
 					break;
 
 				case WeaponState.Raise:		
+					if (timer<=0) {
+						state = WeaponState.Idle;
+						dirty = true;
+						timer = 0;
+					}
 					break;
 
 				case WeaponState.NoAmmo:		
 					break;
 
-				case WeaponState.Inactive:		
+				case WeaponState.Inactive:	
+					if (entity.ItemID == ID) {
+						state = WeaponState.Raise;
+						dirty = true;
+						timer = timeRaise;
+					}	
 					break;
 			}
 		}

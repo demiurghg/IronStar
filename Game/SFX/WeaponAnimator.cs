@@ -27,6 +27,7 @@ namespace IronStar.SFX {
 		AnimationTrack[]	shakeTracks;
 
 		bool weaponEvent;
+		WeaponState oldWeaponState;
 		bool oldTraction = true;
 		int stepCounter = 0;
 		int stepTimer = 0;
@@ -81,15 +82,15 @@ namespace IronStar.SFX {
 		/// </summary>
 		void UpdateWeaponStates (GameTime gameTime)
 		{
-			var state		=	entity.EntityState;
+			var weaponState	=	entity.WeaponState;
 
-			var fireEvent	=	state.HasFlag(EntityState.Weapon_Event) ^ weaponEvent;
+			var fireEvent	=	oldWeaponState != weaponState;
+			oldWeaponState	=	weaponState;
 
 			if (fireEvent) {
 
-				weaponEvent	=	state.HasFlag(EntityState.Weapon_Event);
+				if ( weaponState == WeaponState.Cooldown ) {
 
-				if (state.HasFlag( EntityState.Weapon_Cooldown)) {
 					trackWeapon.Sequence( "anim_recoil", true, false );
 					trackWeapon.Frame ++;
 
@@ -101,8 +102,19 @@ namespace IronStar.SFX {
 					//composer.SequenceFX( "testTracer", "muzzle" );
 				}
 
-				if (state.HasFlag( EntityState.Weapon_Idle)) {
+
+				if ( weaponState == WeaponState.Idle ) {
 					trackWeapon.Sequence( "anim_idle", false, true );
+				}
+
+
+				if ( weaponState == WeaponState.Raise ) {
+					trackWeapon.Sequence( "anim_takeout", true, false );
+				}
+
+
+				if ( weaponState == WeaponState.Drop ) {
+					trackWeapon.Sequence( "anim_putdown", true, false );
 				}
 			}
 		}

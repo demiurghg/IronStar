@@ -26,6 +26,7 @@ namespace IronStar.Entities.Players {
 		public int Armor  { get { return health; } }
 
 		CharacterController	controller;
+		Item				pendingItem;	// do not save
 		int					health;
 		int					armor;
 
@@ -51,8 +52,10 @@ namespace IronStar.Entities.Players {
 			 armor		=	factory.MaxArmor;
 
 			 //	temp stuff :
-			 var weap1	=	world.SpawnItem("weapon_machinegun", ID);
-			 //var weap2	=	world.SpawnItem("weapon_plasmagun", ID);
+			 world.SpawnItem("weapon_machinegun", ID);
+			 world.SpawnItem("weapon_plasmagun", ID);
+
+			 ItemID	=	World.Items.GetOwnedItemByClass( ID, "weapon_machinegun" ).ID;
 		}
 
 
@@ -168,27 +171,25 @@ namespace IronStar.Entities.Players {
 			SetState( EntityState.StrafeRight, userCommand.MoveRight > 0 );
 			SetState( EntityState.StrafeLeft,  userCommand.MoveRight < 0 );
 
-			var weapon = World.Items
-						.GetOwnedItems( ID )
-						.FirstOrDefault( item => item is Weapon ) as Weapon;
 
+			//------------------------------------------
+			//	shooting
+			//------------------------------------------
+			var weapon = World.Items.GetOwnedItemByID( ID, ItemID ) as Weapon;
+			
 			if (userCommand.Action.HasFlag( UserAction.Attack ) ) {
 				weapon?.Attack( this );
 			}
 
-			/*if ( userCommand.Weapon != 0 ) {
-				switch (userCommand.Weapon) {
-					case 1: pendingWeapon	=	"weapon_machinegun"	; break;
-					case 2: pendingWeapon	=	"weapon_plasmagun"	; break;
-					case 3: pendingWeapon	=	"machinegun"		; break;
-					case 4: pendingWeapon	=	"machinegun"		; break;
-					case 5: pendingWeapon	=	"machinegun"		; break;
-					case 6: pendingWeapon	=	"machinegun"		; break;
-					case 7: pendingWeapon	=	"machinegun"		; break;
-					case 8: pendingWeapon	=	"machinegun"		; break;
-					default: pendingWeapon	=	"";	break;
+			//------------------------------------------
+			//	weapon switch
+			//------------------------------------------
+			if ( userCommand.Weapon != 0 ) {
+				var nextWeapon = World.Items.GetOwnedItemByClass( ID, userCommand.Weapon );
+				if (nextWeapon!=null) {
+					weapon?.Switch( this, nextWeapon.ID );
 				}
-			} */
+			}
 		}
 
 

@@ -6,6 +6,14 @@
   "Damage": 100,
   "Impulse": 5.0,
   "ProjectileCount": 1,
-  "AngularSpread": 20.0,
-  "Cooldown": 100
+  "AngularSpread": 2.0,
+  "WarmupTime": 0,
+  "CooldownTime": 100,
+  "OverheatTime": 0,
+  "ReloadTime": 500,
+  "EmptyTime": 500,
+  "RaiseTime": 500,
+  "DropTime": 500,
+  "AmmoItem": "",
+  "ViewModel": "weapon_machinegun"
 }

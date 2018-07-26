@@ -104,7 +104,7 @@ namespace IronStar {
 		{
 			hud.Player	=	world.GetPlayerEntity( this.UserGuid ) as Player;
 
-			gameInput.Update( gameTime, ref userCommand );
+			gameInput.Update( gameTime, world, ref userCommand );
 
 			camera.Update( gameTime.ElapsedSec, 1 );
 			

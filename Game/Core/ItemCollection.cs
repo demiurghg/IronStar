@@ -10,13 +10,15 @@ using Fusion.Core.Mathematics;
 namespace IronStar.Core {
 	public class ItemCollection : Dictionary<uint,Item> {
 
+		readonly GameWorld world;
 
 		/// <summary>
 		/// Creates instance of entity collection.
 		/// </summary>
 		/// <param name="atoms"></param>
-		public ItemCollection ()
+		public ItemCollection ( GameWorld world )
 		{
+			this.world = world;
 		}
 
 
@@ -64,6 +66,47 @@ namespace IronStar.Core {
 			return this
 				.Select( pair => pair.Value )
 				.Where( value => value.Owner == entityId );
+		}
+
+
+		/// <summary>
+		/// Gets items owned by given entity
+		/// </summary>
+		/// <param name="entityId"></param>
+		/// <returns></returns>
+		public Item GetOwnedItemByClass ( uint entityId, string itemClass )
+		{
+			var itemClassId = world.Atoms[ itemClass ];
+			return this
+				.Select( pair => pair.Value )
+				.Where( value => value.Owner == entityId )
+				.FirstOrDefault( item => item.ClassID == itemClassId );
+		}
+
+		/// <summary>
+		/// Gets items owned by given entity
+		/// </summary>
+		/// <param name="entityId"></param>
+		/// <returns></returns>
+		public Item GetOwnedItemByClass ( uint entityId, short itemClassId )
+		{
+			return this
+				.Select( pair => pair.Value )
+				.Where( value => value.Owner == entityId )
+				.FirstOrDefault( item => item.ClassID == itemClassId );
+		}
+
+		/// <summary>
+		/// Gets items owned by given entity
+		/// </summary>
+		/// <param name="entityId"></param>
+		/// <returns></returns>
+		public Item GetOwnedItemByID ( uint entityId, uint itemId )
+		{
+			return this
+				.Select( pair => pair.Value )
+				.Where( value => value.Owner == entityId )
+				.FirstOrDefault( item => item.ID == itemId );
 		}
 	}
 }

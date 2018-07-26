@@ -6,6 +6,20 @@ using System.Threading.Tasks;
 
 namespace IronStar.Core {
 
+	public enum WeaponState : byte {
+		Inactive	=	0x00,
+		Idle		=	0x01,
+		Warmup		=	0x02,
+		Cooldown	=	0x03,
+		Reload		=	0x04,
+		Overheat	=	0x05,
+		Drop		=	0x06,
+		Raise		=	0x07,
+		NoAmmo		=	0x08,
+		Event		=	0x80,
+	}
+
+
 	[Flags]
 	public enum EntityState : int {
 

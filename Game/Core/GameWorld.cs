@@ -89,7 +89,7 @@ namespace IronStar.Core {
 			this.UserGuid	=	userGuid;
 
 			entities		=	new EntityCollection();
-			items			=	new ItemCollection();
+			items			=	new ItemCollection(this);
 			physics			=	new PhysicsManager( this, 16 );
 
 			//	setup rendering stuff :

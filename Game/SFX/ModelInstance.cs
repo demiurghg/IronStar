@@ -93,6 +93,7 @@ namespace IronStar.SFX {
 			this.modelManager   =   modelManager;
 			this.PreTransform   =   factory.ComputePreTransformMatrix();
 			this.color			=	factory.Color;
+			this.color			*=	factory.Intensity;
 
 			this.fpvEnabled		=	factory.FPVEnable;
 			this.fpvCamera		=	factory.FPVCamera;
@@ -135,6 +136,7 @@ namespace IronStar.SFX {
 				if (meshIndex>=0) {
 					meshInstances[i]		= new MeshInstance( modelManager.rs, scene, scene.Meshes[meshIndex] );
 					meshInstances[i].Group	= instGroup;
+					meshInstances[i].Color	= color;
 					modelManager.rw.Instances.Add( meshInstances[i] );
 				} else {
 					meshInstances[i] = null;

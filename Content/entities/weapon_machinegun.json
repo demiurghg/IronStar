@@ -1,0 +1,8 @@
+{
+  "$type": "IronStar.Entities.AmmoBoxFactory, IronStar",
+  "Width": 0.15,
+  "Height": 0.4,
+  "Depth": 1.5,
+  "Mass": 3.0,
+  "Model": "weapon_machinegun_world"
+}

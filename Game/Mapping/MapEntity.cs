@@ -55,8 +55,11 @@ namespace IronStar.Mapping {
 		public override void SpawnNode( GameWorld world )
 		{
 			Entity = world.Spawn( FactoryName );
-			Entity.TargetName = TargetName;
-			Entity?.Teleport( TranslateVector, RotateQuaternion );
+
+			if (Entity!=null) {
+				Entity.TargetName = TargetName;
+				Entity.Teleport( TranslateVector, RotateQuaternion );
+			}
 		}
 
 

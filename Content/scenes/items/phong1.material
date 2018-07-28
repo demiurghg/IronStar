@@ -1,0 +1,18 @@
+[General]
+Transparent  = False
+Emission     = 0, 0, 0, 0
+MaskEmission = False
+
+[Textures]
+BaseColor = medkit_low_phong1_BaseColor.png
+NormalMap = medkit_low_phong1_Normal.png
+Metallic  = medkit_low_phong1_Metallic.png
+Roughness = medkit_low_phong1_Roughness.png
+Emission  = medkit_low_phong1_Emissive.png
+
+
+
+
+
+
+

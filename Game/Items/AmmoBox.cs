@@ -10,7 +10,7 @@ using IronStar.Entities;
 namespace IronStar.Items {
 	public class AmmoBox : Item {
 
-		public AmmoBox( short clsid ) : base( clsid )
+		public AmmoBox( uint id, short clsid ) : base( id, clsid )
 		{
 		}
 	}

@@ -66,8 +66,14 @@ namespace IronStar.SFX {
 
 			//--------------------------------
 			//	pass transformations through all tracks :
+			bool anim = false;
+
 			foreach ( var track in tracks ) {
-				track.Evaluate( gameTime, localTransforms );
+				anim |= track.Evaluate( gameTime, localTransforms );
+			}
+
+			if (!anim) {
+				Log.Warning("No animation applied!");
 			}
 
 			//--------------------------------

@@ -30,8 +30,9 @@ namespace IronStar.Core {
 		/// Creates new instance of Item
 		/// </summary>
 		/// <param name="clsid"></param>
-		protected Item ( short clsid )
+		protected Item ( uint id, short clsid )
 		{
+			ID		= id;
 			ClassID = clsid;
 		}
 

@@ -93,7 +93,7 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="time"></param>
 		/// <param name="destination"></param>
-		public void Evaluate ( GameTime gameTime, Matrix[] destination )
+		public bool Evaluate ( GameTime gameTime, Matrix[] destination )
 		{
 			//	update sequence twice 
 			//	to avoid stucking 
@@ -102,10 +102,12 @@ namespace IronStar.SFX {
 			UpdateSequence();
 
 			//	apply transofrms :
-			ApplyTransforms( frame, destination );
+			bool r = ApplyTransforms( frame, destination );
 
 			//	advance time :
 			frame += (int)(1 * TimeScale);
+
+			return r;
 		}
 
 
@@ -149,10 +151,10 @@ namespace IronStar.SFX {
 		 *  Internal stuff :
 		-----------------------------------------------------------------------------------------*/
 
-		void ApplyTransforms ( int frame, Matrix[] destination )
+		bool ApplyTransforms ( int frame, Matrix[] destination )
 		{
 			if ( currentAnim==null || Weight==0 ) {
-				return; // bypass track
+				return false; // bypass track
 			}
 
 			bool additive = BlendMode==AnimationBlendMode.Additive;
@@ -179,6 +181,8 @@ namespace IronStar.SFX {
 
 				destination[nodeIndex] = dst;
 			}
+
+			return true;
 		}
 
 

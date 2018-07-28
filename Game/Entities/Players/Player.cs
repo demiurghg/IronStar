@@ -186,7 +186,7 @@ namespace IronStar.Entities.Players {
 			//------------------------------------------
 			if ( userCommand.Weapon != 0 ) {
 				var nextWeapon = World.Items.GetOwnedItemByClass( ID, userCommand.Weapon );
-				if (nextWeapon!=null) {
+				if (nextWeapon!=null && nextWeapon.ID!=ItemID) {
 					weapon?.Switch( this, nextWeapon.ID );
 				}
 			}

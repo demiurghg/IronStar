@@ -309,7 +309,7 @@ namespace IronStar.Core {
 			var id		=	idCounter++;
 			var clsid	=	Atoms[classname];
 			var factory =	Content.Load(@"items\" + classname, (ItemFactory)null );
-			var item	=	factory?.Spawn( clsid, this );
+			var item	=	factory?.Spawn( id, clsid, this );
 
 			if (item!=null) {
 				item.Owner	=	owner;

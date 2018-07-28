@@ -8,6 +8,7 @@ using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
 using Fusion.Engine.Graphics;
 using IronStar.Core;
+using Fusion;
 
 namespace IronStar.SFX {
 	public class WeaponAnimator : Animator {
@@ -88,6 +89,8 @@ namespace IronStar.SFX {
 			oldWeaponState	=	weaponState;
 
 			if (fireEvent) {
+
+				Log.Message("{0}", entity.WeaponState );
 
 				if ( weaponState == WeaponState.Cooldown ) {
 

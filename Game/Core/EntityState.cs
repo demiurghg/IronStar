@@ -11,11 +11,11 @@ namespace IronStar.Core {
 		Idle		=	0x01,
 		Warmup		=	0x02,
 		Cooldown	=	0x03,
-		Reload		=	0x04,
-		Overheat	=	0x05,
-		Drop		=	0x06,
-		Raise		=	0x07,
-		NoAmmo		=	0x08,
+		Reload		=	0x05,
+		Overheat	=	0x06,
+		Drop		=	0x07,
+		Raise		=	0x08,
+		NoAmmo		=	0x09,
 		Event		=	0x80,
 	}
 

@@ -63,7 +63,7 @@ namespace IronStar.Items {
 		/// </summary>
 		/// <param name="world"></param>
 		/// <param name="factory"></param>
-		public Weapon( short clsid, GameWorld world, WeaponFactory factory ) : base(clsid)
+		public Weapon( uint id, short clsid, GameWorld world, WeaponFactory factory ) : base(id, clsid)
 		{
 			this.world		=	world;
 				
@@ -118,9 +118,6 @@ namespace IronStar.Items {
 				return;
 			}
 
-
-			entity.ModelFpv	=	world.Atoms[viewModel];
-
 			//	update FSM twice to 
 			//	bypass zero time states:
 			UpdateFSM( gameTime, entity );
@@ -131,14 +128,11 @@ namespace IronStar.Items {
 			//	update animation state :
 			//	actually, even dropped weapon could perform attack!!! :)
 			//entity.SetState( EntityState.Weapon_States, false );
-
-			if (dirty) {
-				entity.ToggleState( EntityState.Weapon_Event );
-				dirty = false;
-			}
+			bool visible = !(state==WeaponState.Inactive);
 
 			if (entity.ItemID==ID) {
 				entity.WeaponState = state;
+				entity.ModelFpv	=	world.Atoms[viewModel];
 			}
 		}
 
@@ -187,6 +181,7 @@ namespace IronStar.Items {
 				case WeaponState.Drop:	
 					if (timer<=0) {
 						entity.ItemID = rqNextWeapon;
+						rqNextWeapon  = 0;
 						state = WeaponState.Inactive;
 						dirty = true;
 						timer = 0;

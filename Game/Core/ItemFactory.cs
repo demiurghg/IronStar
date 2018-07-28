@@ -10,6 +10,6 @@ using Fusion.Core;
 namespace IronStar.Core {
 
 	public abstract class ItemFactory : JsonObject {
-		public abstract Item Spawn ( short clsid, GameWorld world );
+		public abstract Item Spawn ( uint id, short clsid, GameWorld world );
 	}
 }

@@ -26,7 +26,7 @@ using Fusion.Core.Shell;
 
 
 namespace IronStar.Entities {
-	public class AmmoBoxFactory : EntityFactory {
+	public class ItemBoxFactory : EntityFactory {
 
 		[AECategory("Physics")]
 		public float  Width  { get; set; } = 1;
@@ -41,9 +41,13 @@ namespace IronStar.Entities {
 		[AEClassname("models")]
 		public string Model  { get; set; } = "";
 
-		public override Entity Spawn( uint id, short clsid, GameWorld world )
+		[AECategory("Item")]
+		[AEClassname("items")]
+		public string Item  { get; set; } = "";
+
+		public override Entity Spawn( uint id,  short clsid, GameWorld world )
 		{
-			return new AmmoBox( id, clsid, world, this );
+			return new ItemBox( id, clsid, world, this );
 		}
 
 

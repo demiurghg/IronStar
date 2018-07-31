@@ -32,16 +32,18 @@ using IronStar.Entities.Players;
 
 namespace IronStar.Entities {
 
-	public class AmmoBox : Entity {
+	public class Powerup : Entity {
 
 		readonly DynamicBox box;
+		readonly int health;
+		readonly int armor;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
 		/// <param name="space"></param>
-		public AmmoBox ( uint id, short clsid, GameWorld world, AmmoBoxFactory factory ) : base( id, clsid, world, factory )
+		public Powerup ( uint id, short clsid, GameWorld world, PowerupFactory factory ) : base( id, clsid, world, factory )
 		{
 			var width		=	factory.Width;
 			var height		=	factory.Height;
@@ -49,9 +51,13 @@ namespace IronStar.Entities {
 			var mass		=	factory.Mass;
 			var model		=	factory.Model;
 
+			this.health		=	factory.Health;
+			this.armor		=	factory.Armor;
+
 			box				=	new DynamicBox( this, world, width, height, depth, mass, true );
 
 			this.Model		=	world.Atoms[ model ];
+
 		}
 
 
@@ -87,7 +93,6 @@ namespace IronStar.Entities {
 
 		public override void Use( Entity user )
 		{
-			Log.Message("Box used");
 		}
 
 
@@ -106,7 +111,9 @@ namespace IronStar.Entities {
 		{
 			var player = other as Player;
 			if (player!=null) {
-				Log.Message("Give ammo player");
+				player.Health += health;
+				player.Armor  += armor;
+				Log.Verbose("Powerup used : health {0}, armor {1}", health, armor);
 				World.Kill(ID);
 			}
 		}

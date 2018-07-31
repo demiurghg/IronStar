@@ -22,8 +22,8 @@ using IronStar.Items;
 namespace IronStar.Entities.Players {
 	public partial class Player : Entity {
 
-		public int Health { get { return health; } }
-		public int Armor  { get { return health; } }
+		public int Health { get { return health; } set { health = value; } }
+		public int Armor  { get { return armor ; } set { armor  = value; } }
 
 		CharacterController	controller;
 		Item				pendingItem;	// do not save

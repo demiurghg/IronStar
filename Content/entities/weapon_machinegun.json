@@ -1,5 +1,5 @@
 {
-  "$type": "IronStar.Entities.AmmoBoxFactory, IronStar",
+  "$type": "IronStar.Entities.ItemBoxFactory, IronStar",
   "Width": 0.15,
   "Height": 0.4,
   "Depth": 1.5,

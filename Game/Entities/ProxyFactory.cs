@@ -45,6 +45,12 @@ namespace IronStar.Entities {
 			}
 
 			factory = world.GetFactoryByName(Classname);
+
+			if (factory==null) {
+				Log.Warning("ProxyFactory: failed to get entity factory for '{0}', null-entity spawned", Classname);
+				return null;
+			}
+
 			return factory.Spawn( id, clsid, world );
 		}
 

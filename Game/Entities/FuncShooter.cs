@@ -22,7 +22,6 @@ namespace IronStar.Entities {
 		
 		static Random rand = new Random();
 
-		readonly Weapon weapon;
 		readonly bool trigger;
 		readonly bool once;
 		bool enabled;
@@ -31,10 +30,13 @@ namespace IronStar.Entities {
 
 		public FuncShooter( uint id, short clsid, GameWorld world, FuncShooterFactory factory ) : base(id, clsid, world, factory)
 		{
-			weapon	=	world.SpawnItem( factory.Weapon, id ) as Weapon;
 			trigger	=	factory.Trigger;
 			once	=	factory.Once;
 			enabled	=	factory.Start;
+
+
+			var weapon	=	world.SpawnItem( factory.Weapon, id ) as Weapon;
+			ItemID		=	weapon==null ? 0 : weapon.ID;
 		}
 
 
@@ -44,13 +46,12 @@ namespace IronStar.Entities {
 				return;
 			}
 
-			if (weapon==null) {
-				return;
-			}
+			var weapon = World.Items.GetItem(ItemID);
 
 			activationCount ++;
 
 			if (trigger) {
+				Log.Verbose("FuncShooter: attack");
 				weapon?.Attack( this );
 			} else {
 				enabled = !enabled;
@@ -64,6 +65,8 @@ namespace IronStar.Entities {
 			base.Update(gameTime);
 
 			int msec = gameTime.Milliseconds;
+
+			var weapon = World.Items.GetItem(ItemID);
 
 			//	update
 			if (!trigger) {

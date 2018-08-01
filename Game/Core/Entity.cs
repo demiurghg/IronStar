@@ -495,12 +495,15 @@ namespace IronStar.Core {
 			}
 
 			if (modelFpvDirty) {
+
+				var fpv = (gameCamera!=null) && (gameCamera.ClientGuid==UserGuid);
+
 				modelFpvDirty = false;
 
 				ModelFpvInstance?.Kill();
 				ModelFpvInstance	=	null;
 
-				if (modelFpv>0) {
+				if (modelFpv>0 && fpv) {
 					ModelFpvInstance	=	modelManager.AddModel( this, modelFpv, true );
 				}
 			}

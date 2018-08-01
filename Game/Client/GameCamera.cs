@@ -24,7 +24,8 @@ namespace IronStar.Views {
 
 		public readonly Game Game;
 		public readonly GameWorld World;
-		readonly ShooterClient client;
+		public readonly Guid ClientGuid;
+		public readonly ShooterClient client;
 
 
 		/// <summary>
@@ -34,10 +35,11 @@ namespace IronStar.Views {
 		/// <param name="space"></param>
 		public GameCamera ( GameWorld world, ShooterClient client )
 		{
-			this.World	=	world;
-			this.Game	=	world.Game;
-			this.client	=	client;
-			currentFov	=	90;//(world.GameClient as ShooterClient).Fov;
+			this.ClientGuid	=	client.UserGuid;
+			this.client		=	client;
+			this.World		=	world;
+			this.Game		=	world.Game;
+			currentFov		=	90;//(world.GameClient as ShooterClient).Fov;
 		}
 
 
@@ -69,7 +71,7 @@ namespace IronStar.Views {
 			var uc		=	client.UserCommand;
 			var m		= 	Matrix.RotationYawPitchRoll( uc.Yaw, uc.Pitch, uc.Roll );
 
-			var player	=	World.GetPlayerEntity( client.UserGuid ) as Player;
+			var player	=	World.GetPlayerEntity( ClientGuid ) as Player;
 
 			if (player==null) {
 				//Log.Warning("No entity associated with player");

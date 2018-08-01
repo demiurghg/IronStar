@@ -86,7 +86,7 @@
         "Visible": true,
         "Frozen": false,
         "TranslateX": 4.0,
-        "TranslateY": -1.0,
+        "TranslateY": -0.5,
         "TranslateZ": -15.0,
         "RotateYaw": 156.934479,
         "RotatePitch": 89.9476547,
@@ -244,6 +244,77 @@
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.FuncShooterFactory, IronStar",
+          "Weapon": "weapon_machinegun",
+          "Trigger": true,
+          "Once": false,
+          "Start": false
+        },
+        "FactoryName": "uhKeJTqk",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 8.0,
+        "TranslateY": -0.5,
+        "TranslateZ": 0.0,
+        "RotateYaw": 0.0,
+        "RotatePitch": -15.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "FactoryName": "gAqBR1Uw",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 6.0,
+        "TranslateY": -0.5,
+        "TranslateZ": -15.0,
+        "RotateYaw": 156.934479,
+        "RotatePitch": 89.9476547,
+        "RotateRoll": 1.222883
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "FactoryName": "bFEJbTQe",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 8.0,
+        "TranslateY": -0.5,
+        "TranslateZ": -15.0,
+        "RotateYaw": 156.934479,
+        "RotatePitch": 89.9476547,
+        "RotateRoll": 1.222883
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": "",
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "FactoryName": "MGAz0otP",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 9.5,
+        "TranslateY": -0.5,
+        "TranslateZ": -15.0,
+        "RotateYaw": 156.934479,
+        "RotatePitch": 89.9476547,
+        "RotateRoll": 1.222883
       }
     ]
   }

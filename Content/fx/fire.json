@@ -11,14 +11,12 @@
     "$type": "IronStar.SFX.FXLightStage, IronStar",
     "Enabled": false,
     "Period": 1.0,
+    "Intensity": 100.0,
+    "Color": "255, 255, 255, 255",
     "InnerRadius": 0.0,
     "OuterRadius": 5.0,
     "PulseString": "m",
     "LightStyle": "inverseSaw",
-    "LightType": "omni",
-    "SpotAngleX": 60.0,
-    "SpotAngleY": 60.0,
-    "LightMask": "",
     "OffsetDirection": "none",
     "OffsetFactor": 0.0
   },
@@ -91,7 +89,7 @@
   "ParticleStage2": {
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
     "Enabled": true,
-    "Sprite": "explosionSmoke2",
+    "Sprite": "explosionSmoke",
     "Effect": "softLitShadow",
     "Count": 33,
     "Period": 1.0,
@@ -102,16 +100,16 @@
       "FadeIn": 0.1,
       "FadeOut": 0.3
     },
-    "Color": "5, 5, 5, 255",
-    "Alpha": 0.8,
+    "Color": "168, 168, 168, 255",
+    "Alpha": 0.7,
     "Roughness": 0.3,
     "Metallic": 0.0,
-    "Intensity": 100.0,
+    "Intensity": 1.0,
     "Scattering": 0.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "uniform",
-      "MinLifetime": 4.0,
+      "MinLifetime": 5.0,
       "MaxLifetime": 5.0
     },
     "Shape": {
@@ -134,8 +132,8 @@
     "Velocity": {
       "$type": "IronStar.SFX.FXVelocity, IronStar",
       "Direction": "localUp",
-      "LinearDistribution": "gauss",
-      "LinearVelocityMin": 3.0,
+      "LinearDistribution": "uniform",
+      "LinearVelocityMin": 5.0,
       "LinearVelocityMax": 5.0,
       "RadialDistribution": "gaussRadial",
       "RadialVelocityMin": 0.0,

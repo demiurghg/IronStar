@@ -85,12 +85,12 @@
         "FactoryName": "efNQiF8Y",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 4.0,
-        "TranslateY": -0.5,
-        "TranslateZ": -15.0,
-        "RotateYaw": 156.934479,
-        "RotatePitch": 89.9476547,
-        "RotateRoll": 1.222883
+        "TranslateX": 3.99163651,
+        "TranslateY": -0.635355949,
+        "TranslateZ": -15.0021849,
+        "RotateYaw": -22.3833389,
+        "RotatePitch": 89.95154,
+        "RotateRoll": -177.299164
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -262,7 +262,7 @@
         "TranslateY": -0.5,
         "TranslateZ": 0.0,
         "RotateYaw": 0.0,
-        "RotatePitch": -15.0,
+        "RotatePitch": 0.0,
         "RotateRoll": 0.0
       },
       {
@@ -275,46 +275,46 @@
         "FactoryName": "gAqBR1Uw",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 6.0,
-        "TranslateY": -0.5,
-        "TranslateZ": -15.0,
-        "RotateYaw": 156.934479,
+        "TranslateX": 5.991801,
+        "TranslateY": -0.63535285,
+        "TranslateZ": -15.0022831,
+        "RotateYaw": -22.3433037,
         "RotatePitch": 89.9476547,
-        "RotateRoll": 1.222883
+        "RotateRoll": -177.245514
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
+          "Classname": "boxNormal"
         },
         "FactoryName": "bFEJbTQe",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 8.0,
-        "TranslateY": -0.5,
-        "TranslateZ": -15.0,
-        "RotateYaw": 156.934479,
-        "RotatePitch": 89.9476547,
-        "RotateRoll": 1.222883
+        "TranslateX": 8.004042,
+        "TranslateY": -0.635707438,
+        "TranslateZ": -3.66286683,
+        "RotateYaw": 123.690063,
+        "RotatePitch": 89.98021,
+        "RotateRoll": -32.00545
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
+          "Classname": "boxNormal"
         },
         "FactoryName": "MGAz0otP",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 9.5,
-        "TranslateY": -0.5,
-        "TranslateZ": -15.0,
-        "RotateYaw": 156.934479,
-        "RotatePitch": 89.9476547,
-        "RotateRoll": 1.222883
+        "TranslateX": 9.49165249,
+        "TranslateY": -0.635361,
+        "TranslateZ": -15.0022392,
+        "RotateYaw": -22.5645542,
+        "RotatePitch": 89.944046,
+        "RotateRoll": -177.4838
       }
     ]
   }

@@ -586,6 +586,12 @@ namespace Fusion.Engine.Graphics {
 				}
 
 
+				if (rs.ShowParticles) {
+					rs.Counters.DeadParticles	=	deadParticlesIndices.GetStructureCount();
+				}
+
+				device.ResetStates();
+
 				//
 				//	Sort :
 				//
@@ -595,10 +601,6 @@ namespace Fusion.Engine.Graphics {
 					}
 				}
 
-
-				if (rs.ShowParticles) {
-					rs.Counters.DeadParticles	=	deadParticlesIndices.GetStructureCount();
-				}
 			}
 		}
 

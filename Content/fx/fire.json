@@ -100,12 +100,12 @@
       "FadeIn": 0.1,
       "FadeOut": 0.3
     },
-    "Color": "168, 168, 168, 255",
+    "Color": "35, 35, 35, 255",
     "Alpha": 0.7,
     "Roughness": 0.3,
     "Metallic": 0.0,
     "Intensity": 1.0,
-    "Scattering": 0.0,
+    "Scattering": 1.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "uniform",

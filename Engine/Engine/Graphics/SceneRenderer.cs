@@ -348,35 +348,45 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		internal void RenderForwardSolid ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderWorld rw )
+		internal void RenderForwardSolid ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderWorld rw, InstanceGroup mask )
 		{	
-			var context	=	new ForwardSolidContext( camera, frame );
-			RenderGeneric("RenderForwardSolid", gameTime, stereoEye, SurfaceFlags.FORWARD, context, rw.Instances );
+			var context		=	new ForwardSolidContext( camera, frame );
+			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
+
+			RenderGeneric("RenderForwardSolid", gameTime, stereoEye, SurfaceFlags.FORWARD, context, instances );
 		}
 
 
-		internal void RenderForwardTransparent ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderWorld rw )
+		internal void RenderForwardTransparent ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderWorld rw, InstanceGroup mask )
 		{		
-			var context	=	new ForwardTransparentContext( camera, frame );
-			RenderGeneric("RenderForwardTransparent", gameTime, stereoEye, SurfaceFlags.FORWARD, context, rw.Instances );
+			var context		=	new ForwardTransparentContext( camera, frame );
+			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
+
+			RenderGeneric("RenderForwardTransparent", gameTime, stereoEye, SurfaceFlags.FORWARD, context, instances );
 		}
 
 
-		internal void RenderZPass ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderWorld rw, bool staticOnly )
+		internal void RenderZPass ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderWorld rw, InstanceGroup mask )
 		{		
 			var context	=	new ForwardZPassContext( camera, frame );
-			RenderGeneric("RenderZPass", gameTime, stereoEye, SurfaceFlags.ZPASS, context, rw.Instances );
+			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
+
+			RenderGeneric("RenderZPass", gameTime, stereoEye, SurfaceFlags.ZPASS, context, instances );
 		}
 		
 
-		internal void RenderShadowMap ( ShadowContext shadowContext, IEnumerable<MeshInstance> instances )
+		internal void RenderShadowMap ( ShadowContext shadowContext, RenderWorld rw, InstanceGroup mask )
 		{
+			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
+
 			RenderGeneric("ShadowMap", null, StereoEye.Mono, SurfaceFlags.SHADOW, shadowContext, instances );
 		}
 
 
-		internal void RenderLightProbeGBuffer ( LightProbeContext context, RenderWorld rw, IEnumerable<MeshInstance> instances )
+		internal void RenderLightProbeGBuffer ( LightProbeContext context, RenderWorld rw, InstanceGroup mask )
 		{
+			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
+
 			RenderGeneric("LightProbeGBuffer", null, StereoEye.Mono, SurfaceFlags.GBUFFER, context, instances );
 		}
 	}

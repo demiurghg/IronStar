@@ -75,6 +75,16 @@ void TransformPoint ( float4x4 transform, inout float3 p )
 	p.xyz = mul( float4(p,1), transform ).xyz;
 }
 
+uint wang_hash(uint seed)
+{
+    seed = (seed ^ 61) ^ (seed >> 16);
+    seed *= 9;
+    seed = seed ^ (seed >> 4);
+    seed *= 0x27d4eb2d;
+    seed = seed ^ (seed >> 15);
+    return seed;
+}
+
 /*-----------------------------------------------------------------------------
 	Simulation :
 -----------------------------------------------------------------------------*/
@@ -111,6 +121,8 @@ void CSMain(
 #endif
 
 #ifdef SIMULATION
+	sortParticleBuffer[ id ] = float2(0,0);
+
 	if (id < (uint)Params.MaxParticles) {
 		Particle p = particleBuffer[ id ];
 
@@ -133,30 +145,23 @@ void CSMain(
 		float3 velocity		=	p.Velocity;
 		float3 acceleration	=	0;
 		
-		/*if (p.ImageIndex<0) {
-			TransformVector( Params.ViewInverted, velocity );
-			TransformPoint ( Params.ViewInverted, position );
-		}//*/
-		
 		for (uint i=0; i<Params.IntegrationSteps; i++) {
 			acceleration	=	p.Acceleration - velocity * length(velocity) * p.Damping + gravity*0;
 			velocity		=	velocity + acceleration * Params.DeltaTime;	
 			position		=	position + velocity     * Params.DeltaTime;	
 		}
 
-		
-		/*if (p.ImageIndex<0) {
-			TransformVector( Params.View, velocity );
-			TransformPoint ( Params.View, position );
-		}//*/
-
 		particleBuffer[ id ].Velocity	=	velocity;	
 		particleBuffer[ id ].Position	=	position;	
 		
 		//	Measure distance :
-		float4 ppPos	=	mul( mul( float4(particleBuffer[ id ].Position,1), Params.View ), Params.Projection );
+		float  pDist	=	distance( position.xyz, Params.CameraPosition.xyz );
 		
-		sortParticleBuffer[ id ] = float2( -abs(ppPos.z / ppPos.w), id );
+		float   pKey	=	(p.TimeLag > p.LifeTime) ? 0 : -abs(pDist);
+		//float 	pKey	=	wang_hash( id + (int)(Params.CameraPosition.x) );
+		float	pValue	=	id;
+		
+		sortParticleBuffer[ id ] = float2( pKey, pValue );
 	}
 #endif
 }
@@ -203,7 +208,7 @@ void CSMain(
 				}
 			}
 			
-			uint 	regSize = min(32,1 << bank);
+			uint 	regSize = min(16,1 << bank);
 			uint 	count	= LightmapRegionSize / regSize;
 			
 			uint	baseX	= (bank % 4)*LightmapRegionSize;

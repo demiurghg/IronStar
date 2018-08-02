@@ -338,13 +338,15 @@ namespace Fusion.Engine.Graphics {
 				device.Clear( depthBuffer.Surface, 1, 0 );
 				device.Clear( colorBuffer.Surface, Color4.White );
 
+				InstanceGroup mask = InstanceGroup.All & ~InstanceGroup.Weapon;
+
 				foreach ( var cascade in cascades ) {
 
 					var contextSolid  = new ShadowContext			( cascade, depthBuffer.Surface, colorBuffer.Surface );
 					var contextTransp = new ShadowContextTransparent( cascade, depthBuffer.Surface, colorBuffer.Surface );
 
-					rs.SceneRenderer.RenderShadowMap( contextSolid,  instances );
-					rs.SceneRenderer.RenderShadowMap( contextTransp, instances );
+					rs.SceneRenderer.RenderShadowMap( contextSolid,  renderWorld, mask );
+					rs.SceneRenderer.RenderShadowMap( contextTransp, renderWorld, mask );
 				}
 
 				foreach ( var spot in lights ) {
@@ -352,8 +354,8 @@ namespace Fusion.Engine.Graphics {
 					var contextSolid  = new ShadowContext			( spot, depthBuffer.Surface, colorBuffer.Surface );
 					var contextTransp = new ShadowContextTransparent( spot, depthBuffer.Surface, colorBuffer.Surface );
 
-					rs.SceneRenderer.RenderShadowMap( contextSolid,  instances );
-					rs.SceneRenderer.RenderShadowMap( contextTransp, instances );
+					rs.SceneRenderer.RenderShadowMap( contextSolid,  renderWorld, mask );
+					rs.SceneRenderer.RenderShadowMap( contextTransp, renderWorld, mask );
 				}
 			}
 

@@ -11,10 +11,10 @@ static const uint LightSpotShapeRound = 131072;
 static const uint LightProbeSize = 64;
 static const uint LightProbeMaxSpecularMip = 4;
 static const uint LightProbeDiffuseMip = 5;
-static const uint InstanceGroupStatic = 0;
-static const uint InstanceGroupDynamic = 1;
-static const uint InstanceGroupCharacter = 2;
-static const uint InstanceGroupWeapon = 3;
+static const uint InstanceGroupStatic = 1;
+static const uint InstanceGroupDynamic = 2;
+static const uint InstanceGroupCharacter = 4;
+static const uint InstanceGroupWeapon = 8;
 
 // Fusion.Engine.Graphics.SceneRenderer+STAGE
 // Marshal.SizeOf = 1024

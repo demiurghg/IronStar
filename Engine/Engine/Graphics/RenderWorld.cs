@@ -411,15 +411,19 @@ namespace Fusion.Engine.Graphics {
 
 
 				using ( new PixEvent( "Frame Scene Rendering" ) ) {
-					//	Z-pass :
-					rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, this, false );
+
+					//	Z-pass without weapon :
+					rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, this, InstanceGroup.Static|InstanceGroup.Dynamic|InstanceGroup.Character );
 
 					//	Ambient occlusion :
 					rs.SsaoFilter.Render( stereoEye, Camera, viewHdrFrame );
 
+					//	Z-pass weapon :
+					rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, this, InstanceGroup.Weapon );
+
 					//------------------------------------------------------------
 					//	Forward+
-					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera, viewHdrFrame, this );
+					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera, viewHdrFrame, this, InstanceGroup.All );
 					ParticleSystem.RenderHard( gameTime, Camera, stereoEye, viewHdrFrame );
 
 					rs.Sky.Render( Camera, stereoEye, viewHdrFrame, SkySettings );
@@ -443,7 +447,7 @@ namespace Fusion.Engine.Graphics {
 						blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 3 );
 					}
 
-					rs.SceneRenderer.RenderForwardTransparent( gameTime, stereoEye, Camera, viewHdrFrame, this );
+					rs.SceneRenderer.RenderForwardTransparent( gameTime, stereoEye, Camera, viewHdrFrame, this, InstanceGroup.All );
 					rs.SceneRenderer.GatherVTFeedbackAndUpdate( gameTime, viewHdrFrame );
 
 					ParticleSystem.RenderSoft( gameTime, Camera, stereoEye, viewHdrFrame );
@@ -579,7 +583,7 @@ namespace Fusion.Engine.Graphics {
 						var context	=	new LightProbeContext( lightProbe, face, depth, gbuf0, gbuf1 );
 
 						//	render g-buffer :
-						rs.SceneRenderer.RenderLightProbeGBuffer( context, this, Instances );
+						rs.SceneRenderer.RenderLightProbeGBuffer( context, this, InstanceGroup.Static );
 					}
 				
 					RadianceGBuffer0.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeGBuffer0 );

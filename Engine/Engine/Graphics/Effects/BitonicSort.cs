@@ -121,6 +121,8 @@ namespace Fusion.Engine.Graphics
 		{
 			device.ResetStates();
 
+			device.Clear( buffer2, Int4.Zero );
+
 			using (new PixEvent("Pass#1")) {
 
 				//	First sort the rows for the levels <= to the block size
@@ -174,10 +176,12 @@ namespace Fusion.Engine.Graphics
 			//
 			//	Check results 
 			//
-			#if false
-			if (Game.Keyboard.IsKeyDown(Keys.S)) {
+			#if true
+			//if (Game.Keyboard.IsKeyDown(Keys.K)) {
 
-				Log.Message("-- Bitonic sort check --");
+				int errorCount = 0;
+
+				//Log.Message("-- Bitonic sort check --");
 
 				var output = new Vector2[NumberOfElements];
 
@@ -187,11 +191,18 @@ namespace Fusion.Engine.Graphics
 					
 					bool error = (i < NumberOfElements-1) ? output[i].X>output[i+1].X : false;
 
-					//if (error) {
-						Log.Message("{0,4} : {1,6:0.00} - {2,6:0.00} {3}", i, output[i].X, output[i].Y, error?"<- Error":"" );
-					//}
+					if (error) {
+						errorCount ++;
+					}
+					if (error) {
+						//Log.Message("{0,4} : {1,6:0.00} - {2,6:0.00} {3}", i, output[i].X, output[i].Y, error?"<- Error":"" );
+					}
 				}
-			}
+
+				if (errorCount>0) {
+					Log.Warning("Sort errors : {0}", errorCount );
+				}
+			//}
 			#endif
 		}
 	}

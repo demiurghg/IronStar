@@ -91,7 +91,7 @@
         "Visible": true,
         "Frozen": false,
         "TranslateX": -11.5057135,
-        "TranslateY": 13.4172907,
+        "TranslateY": 0.0543251038,
         "TranslateZ": -34.2813759,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
@@ -432,23 +432,6 @@
         "RotateYaw": 70.25452,
         "RotatePitch": 0.000119347766,
         "RotateRoll": -9.925879E-05
-      },
-      {
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": "",
-        "Factory": {
-          "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
-        },
-        "FactoryName": "EQVonui5",
-        "Visible": true,
-        "Frozen": false,
-        "TranslateX": -2.9605186,
-        "TranslateY": -0.63667357,
-        "TranslateZ": -19.9558163,
-        "RotateYaw": 12.7937288,
-        "RotatePitch": 0.0451763831,
-        "RotateRoll": -179.9603
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -3720,9 +3703,9 @@
         "FactoryName": "tYKjq0jR",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 5.50986,
-        "TranslateY": 13.4172907,
-        "TranslateZ": -36.55358,
+        "TranslateX": -0.34286356,
+        "TranslateY": -0.514874935,
+        "TranslateZ": -32.9442863,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0

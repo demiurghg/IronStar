@@ -105,7 +105,7 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="fxname"></param>
 		/// <param name="joint"></param>
-		public void SequenceFX ( string fxName, string joint )
+		public void SequenceFX ( string fxName, string joint, float scale )
 		{
 			var jointId	 =	scene.GetNodeIndex( joint );
 
@@ -114,7 +114,9 @@ namespace IronStar.SFX {
 			}
 
 			var fxAtom	 = world.Atoms[ fxName ];
-			var instance = fxPlayback.RunFX( new FXEvent( fxAtom, 0, Vector3.Zero, Vector3.Zero, Quaternion.Identity ), false );
+			var fxEvent  = new FXEvent( fxAtom, 0, Vector3.Zero, Vector3.Zero, Quaternion.Identity );
+				fxEvent.Scale = scale;
+			var instance = fxPlayback.RunFX( fxEvent, false );
 
 			instance.JointIndex = jointId;
 			instance.WeaponFX = model.IsFPVModel;

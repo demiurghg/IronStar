@@ -45,6 +45,10 @@ namespace IronStar.SFX {
 		/// </summary>
 		public Vector3 Velocity;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public float Scale;
 
 
 		public FXEvent ()
@@ -67,6 +71,8 @@ namespace IronStar.SFX {
 			this.Velocity	=	velocity;
 			this.Rotation	=	rotation;
 
+			this.Scale		=	1;
+
 			SendCount		=	0;
 		}
 
@@ -83,6 +89,7 @@ namespace IronStar.SFX {
 			writer.Write( Origin );
 			writer.Write( Velocity );
 			writer.Write( Rotation );
+			writer.Write( Scale );
 		}
 
 
@@ -98,6 +105,7 @@ namespace IronStar.SFX {
 			Origin		=	reader.Read<Vector3>();
 			Velocity	=	reader.Read<Vector3>();
 			Rotation	=	reader.Read<Quaternion>();
+			Scale		=	reader.ReadSingle();
 		}
 	}
 }

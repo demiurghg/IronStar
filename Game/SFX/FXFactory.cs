@@ -276,10 +276,10 @@ namespace IronStar.SFX {
 			return string.Format( "D:{0}:{1:0.##} Sz:{2}:{3:0.##}", OffsetDirection, OffsetFactor, Distribution, MinSize );
 		}
 
-		public Vector3 GetPosition ( FXEvent fxEvent, Random rand )
+		public Vector3 GetPosition ( FXEvent fxEvent, Random rand, float scale )
 		{
-			var position = FXFactory.GetPosition( OffsetDirection, OffsetFactor, fxEvent);
-			var radial	= FXFactory.GetRadialDistribution( rand, Distribution, MinSize, MaxSize );
+			var position = FXFactory.GetPosition( OffsetDirection, OffsetFactor * scale, fxEvent);
+			var radial	= FXFactory.GetRadialDistribution( rand, Distribution, MinSize * scale, MaxSize * scale );
 			return position + radial;
 		}
 	}

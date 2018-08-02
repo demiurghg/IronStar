@@ -12,10 +12,11 @@ using Fusion.Core.Content;
 namespace Fusion.Engine.Graphics {
 
 	public enum InstanceGroup {
-		Static,
-		Dynamic,
-		Character,
-		Weapon,
+		Static		=	0x0001,
+		Dynamic		=	0x0002,
+		Character	=	0x0004,
+		Weapon		=	0x0008,
+		All			=	0xFFFF,
 	}
 	
 	/// <summary>

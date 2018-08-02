@@ -87,6 +87,8 @@ namespace IronStar.SFX {
 			/// <param name="fxEvent"></param>
 			void Emit ( ref Particle p, FXEvent fxEvent )
 			{
+				float scale		=	fxEvent.Scale;
+
 				p.Effects		=	stage.Effect;
 
 				p.ImageIndex	=	spriteIndex * ( fxInstance.WeaponFX ? -1 : 1);
@@ -108,17 +110,17 @@ namespace IronStar.SFX {
 				p.Rotation0     =   a;
 				p.Rotation1     =   b;
 
-				p.Size0         =   stage.Shape.Size0;
-				p.Size1         =   stage.Shape.Size1;
+				p.Size0         =   stage.Shape.Size0 * scale;
+				p.Size1         =   stage.Shape.Size1 * scale;
 
-				p.Position		=	stage.Position.GetPosition(fxEvent, rand);
+				p.Position		=	stage.Position.GetPosition(fxEvent, rand, scale);
 
-				p.Velocity		=	stage.Velocity.GetVelocity(fxEvent, rand);
+				p.Velocity		=	stage.Velocity.GetVelocity(fxEvent, rand) * scale;
 
-				var turbulence	=	rand.GaussRadialDistribution(0, stage.Acceleration.Turbulence);
+				var turbulence	=	rand.GaussRadialDistribution(0, stage.Acceleration.Turbulence * scale);
 				p.Acceleration	=	stage.Acceleration.DragForce * p.Velocity + turbulence;
-				p.Damping		=	stage.Acceleration.Damping;
-				p.Gravity		=	stage.Acceleration.GravityFactor;
+				p.Damping		=	stage.Acceleration.Damping / scale;
+				p.Gravity		=	stage.Acceleration.GravityFactor * scale;
 			}
 
 

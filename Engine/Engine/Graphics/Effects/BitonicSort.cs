@@ -8,10 +8,11 @@ using Fusion.Core.Mathematics;
 using Fusion.Core.Configuration;
 using Fusion.Engine.Common;
 using Fusion.Core.Input;
+using Fusion.Core.Extensions;
 using Fusion.Drivers.Graphics;
 using System.Runtime.InteropServices;
 using Fusion.Engine.Graphics.Ubershaders;
-
+using System.IO;
 
 namespace Fusion.Engine.Graphics
 {
@@ -121,6 +122,14 @@ namespace Fusion.Engine.Graphics
 		{
 			device.ResetStates();
 
+			var outputBytes		= new byte[NumberOfElements*4*2];
+			var outputVectors	= new Vector2[NumberOfElements];
+			buffer.GetData( outputBytes );
+			buffer.GetData( outputVectors );
+
+			var inputData = File.ReadAllBytes(@"D:\Github\bitonicSort.dat");
+			buffer.SetData(inputData);
+
 			device.Clear( buffer2, Int4.Zero );
 
 			using (new PixEvent("Pass#1")) {
@@ -200,6 +209,25 @@ namespace Fusion.Engine.Graphics
 				}
 
 				if (errorCount>0) {
+					Log.Warning("Sort errors : {0}", errorCount );
+				}
+
+				if (errorCount>100 && !File.Exists(@"D:\Github\bitonicSort.dat")) {
+
+					File.WriteAllBytes(@"D:\Github\bitonicSort.dat", outputBytes );
+
+					StringBuilder sb = new StringBuilder();
+
+					for (int i=0; i<NumberOfElements; i++) {
+						sb.AppendFormat("{0}\t{1}\t{2}\r\n", i, outputVectors[i].X, outputVectors[i].Y);
+					}
+					File.WriteAllText(@"D:\Github\bitonicSortA.txt", sb.ToString() );
+
+					for (int i=0; i<NumberOfElements; i++) {
+						sb.AppendFormat("{0}\t{1}\t{2}\r\n", i, output[i].X, output[i].Y);
+					}
+					File.WriteAllText(@"D:\Github\bitonicSortB.txt", sb.ToString() );
+
 					Log.Warning("Sort errors : {0}", errorCount );
 				}
 			//}

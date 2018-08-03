@@ -30,7 +30,7 @@ RWStructuredBuffer<float2> Data : register( u0 );
 //--------------------------------------------------------------------------------------
 #ifdef BITONIC_SORT
 
-groupshared float2 shared_data[BITONIC_BLOCK_SIZE];
+groupshared float2 shared_data[2][BITONIC_BLOCK_SIZE];
 
 [numthreads(BITONIC_BLOCK_SIZE, 1, 1)]
 void CSMain( uint3 Gid : SV_GroupID, 
@@ -39,20 +39,34 @@ void CSMain( uint3 Gid : SV_GroupID,
                   uint GI : SV_GroupIndex )
 {
     // Load shared data
-    shared_data[GI] = Data[DTid.x];
+    shared_data[0][GI] = Data[DTid.x];
     GroupMemoryBarrierWithGroupSync();
+	int index = 0;
     
     // Sort the shared data
     for (unsigned int j = g_iLevel >> 1 ; j > 0 ; j >>= 1) {
 	
-        float2 result = ((shared_data[GI & ~j].x <= shared_data[GI | j].x) == (bool)(g_iLevelMask & DTid.x))? shared_data[GI ^ j] : shared_data[GI];
-        GroupMemoryBarrierWithGroupSync();
-        shared_data[GI] = result;
+		float2 a 	  = shared_data[index][GI & ~j];
+		float2 b 	  = shared_data[index][GI | j ];
+		float2 c	  = shared_data[index][GI ^ j];
+		float2 d 	  = shared_data[index][GI];
+		
+        // float2 result = ((a.x <= b.x) == (g_iLevelMask & DTid.x == 0)) ? c : d;
+		
+		//float2 result = ( (a.x <= b.x) == (g_iLevelMask & GI.x != 0) ) ? c : d;
+		//float2 result = c;
+		float2 result = ((a.x <= b.x) == (bool)(g_iLevelMask & DTid.x)) ? c : d;
+		
+        //GroupMemoryBarrierWithGroupSync();
+        shared_data[index^1][GI] = result;
+		
+		index ^= 1;
+
         GroupMemoryBarrierWithGroupSync();
     }
     
     // Store shared data
-    Data[DTid.x] = shared_data[GI];
+    Data[DTid.x] = shared_data[index][GI];
 }
 #endif
 

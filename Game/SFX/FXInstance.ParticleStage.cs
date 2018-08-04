@@ -121,6 +121,10 @@ namespace IronStar.SFX {
 				p.Acceleration	=	stage.Acceleration.DragForce * p.Velocity + turbulence;
 				p.Damping		=	stage.Acceleration.Damping / scale;
 				p.Gravity		=	stage.Acceleration.GravityFactor * scale;
+
+				#if false
+				p.Check();
+				#endif
 			}
 
 

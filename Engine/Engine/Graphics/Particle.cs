@@ -168,6 +168,38 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Index of the image in the texture atlas
 		/// </summary>
-		public ParticleFX	Effects;            
+		public ParticleFX	Effects;      
+		
+
+		void CheckFloat ( float value )
+		{
+			if (float.IsNaN(value)) throw new NotFiniteNumberException();
+			if (float.IsPositiveInfinity(value)) throw new NotFiniteNumberException();
+			if (float.IsNegativeInfinity(value)) throw new NotFiniteNumberException();
+		}
+
+		
+		public void Check ()
+		{
+			CheckFloat( Position.X );
+			CheckFloat( Position.Y );
+			CheckFloat( Position.Z );
+
+			CheckFloat( Velocity.X );
+			CheckFloat( Velocity.Y );
+			CheckFloat( Velocity.Z );
+
+			CheckFloat( Acceleration.X );
+			CheckFloat( Acceleration.Y );
+			CheckFloat( Acceleration.Z );
+
+			CheckFloat( LifeTime );
+			CheckFloat( Damping );
+			CheckFloat( Gravity );
+
+			if (LifeTime<=0) {
+				throw new NotFiniteNumberException();
+			}
+		}
 	}
 }

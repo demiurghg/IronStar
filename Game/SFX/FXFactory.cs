@@ -172,7 +172,8 @@ namespace IronStar.SFX {
 
 		public float GetLifetime ( Random rand )
 		{
-			return FXFactory.GetLinearDistribution( rand, Distribution, MinLifetime, MaxLifetime );
+			var lifeTime = FXFactory.GetLinearDistribution( rand, Distribution, MinLifetime, MaxLifetime );
+			return MathUtil.Clamp( lifeTime, 0.00390625f, 64f );
 		}
 	}
 

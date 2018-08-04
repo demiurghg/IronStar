@@ -16,7 +16,7 @@
     "InnerRadius": 0.0,
     "OuterRadius": 5.0,
     "PulseString": "m",
-    "LightStyle": "saw",
+    "LightStyle": "const",
     "OffsetDirection": "none",
     "OffsetFactor": 0.0
   },
@@ -29,35 +29,35 @@
     "Enabled": true,
     "Sprite": "fire",
     "Effect": "soft",
-    "Count": 150,
+    "Count": 30,
     "Period": 1.0,
     "Timing": {
       "$type": "IronStar.SFX.FXTiming, IronStar",
       "Delay": 0.1,
       "Bunch": 0.0,
       "FadeIn": 0.1,
-      "FadeOut": 0.2
+      "FadeOut": 0.7
     },
     "Color": "255, 125, 38, 255",
-    "Alpha": 1.0,
+    "Alpha": 0.9,
     "Roughness": 0.5,
     "Metallic": 0.0,
-    "Intensity": 7000.0,
+    "Intensity": 25000.0,
     "Scattering": 1.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
-      "Distribution": "uniform",
+      "Distribution": "gauss",
       "MinLifetime": 0.1,
       "MaxLifetime": 0.3
     },
     "Shape": {
       "$type": "IronStar.SFX.FXShape, IronStar",
       "Size0": 0.2,
-      "Size1": 1.0,
+      "Size1": 1.5,
       "EnableRotation": true,
       "InitialAngle": 360.0,
-      "MinAngularVelocity": -360.0,
-      "MaxAngularVelocity": 360.0
+      "MinAngularVelocity": 0.0,
+      "MaxAngularVelocity": 0.0
     },
     "Position": {
       "$type": "IronStar.SFX.FXPosition, IronStar",
@@ -65,7 +65,7 @@
       "OffsetFactor": 0.0,
       "Distribution": "gaussRadial",
       "MinSize": 0.0,
-      "MaxSize": 0.23
+      "MaxSize": 0.5
     },
     "Velocity": {
       "$type": "IronStar.SFX.FXVelocity, IronStar",
@@ -81,7 +81,7 @@
     "Acceleration": {
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
       "GravityFactor": 0.0,
-      "Damping": 8.0,
+      "Damping": 6.0,
       "DragForce": 1.0,
       "Turbulence": 1.0
     }
@@ -100,12 +100,12 @@
       "FadeIn": 0.1,
       "FadeOut": 0.3
     },
-    "Color": "5, 5, 5, 255",
-    "Alpha": 1.0,
+    "Color": "48, 48, 48, 255",
+    "Alpha": 0.9,
     "Roughness": 0.3,
     "Metallic": 0.0,
-    "Intensity": 100.0,
-    "Scattering": 1.0,
+    "Intensity": 1.0,
+    "Scattering": 0.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "gauss",
@@ -166,7 +166,7 @@
     "Alpha": 0.9,
     "Roughness": 0.2,
     "Metallic": 0.0,
-    "Intensity": 4000.0,
+    "Intensity": 25000.0,
     "Scattering": 0.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",

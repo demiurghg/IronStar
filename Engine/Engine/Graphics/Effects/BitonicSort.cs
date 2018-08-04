@@ -114,6 +114,37 @@ namespace Fusion.Engine.Graphics
 
 
 
+		public void CheckResults (StructuredBuffer buffer)
+		{
+			var output = new Vector2[NumberOfElements];
+
+			int nan = 0;
+			int pinf = 0;
+			int ninf = 0;
+			int errors = 0;
+
+			buffer.GetData( output );
+	
+			for (int i=0; i<NumberOfElements; i++) {
+					
+				bool error = (i < NumberOfElements-1) ? output[i].X>output[i+1].X : false;
+
+				if ( float.IsNaN( output[i].X ) ) nan++;
+				if ( float.IsPositiveInfinity( output[i].X ) ) pinf++;
+				if ( float.IsNegativeInfinity( output[i].X ) ) ninf++;
+
+				if (error) {
+					errors ++;
+				}
+			}
+
+			if (nan>0 || pinf>0 || ninf>0) {
+				Log.Warning("BitonicSort: errors:{0} nan:{1} pInf:{2} nInf{3}", errors, nan, pinf, ninf );
+			}
+		}
+
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -121,16 +152,6 @@ namespace Fusion.Engine.Graphics
 		public void Sort ( StructuredBuffer buffer )
 		{
 			device.ResetStates();
-
-			var outputBytes		= new byte[NumberOfElements*4*2];
-			var outputVectors	= new Vector2[NumberOfElements];
-			buffer.GetData( outputBytes );
-			buffer.GetData( outputVectors );
-
-			var inputData = File.ReadAllBytes(@"D:\Github\bitonicSort.dat");
-			buffer.SetData(inputData);
-
-			device.Clear( buffer2, Int4.Zero );
 
 			using (new PixEvent("Pass#1")) {
 
@@ -181,56 +202,8 @@ namespace Fusion.Engine.Graphics
 				}
 			}
 
-
-			//
-			//	Check results 
-			//
-			#if true
-			//if (Game.Keyboard.IsKeyDown(Keys.K)) {
-
-				int errorCount = 0;
-
-				//Log.Message("-- Bitonic sort check --");
-
-				var output = new Vector2[NumberOfElements];
-
-				buffer.GetData( output );
-	
-				for (int i=0; i<NumberOfElements; i++) {
-					
-					bool error = (i < NumberOfElements-1) ? output[i].X>output[i+1].X : false;
-
-					if (error) {
-						errorCount ++;
-					}
-					if (error) {
-						//Log.Message("{0,4} : {1,6:0.00} - {2,6:0.00} {3}", i, output[i].X, output[i].Y, error?"<- Error":"" );
-					}
-				}
-
-				if (errorCount>0) {
-					Log.Warning("Sort errors : {0}", errorCount );
-				}
-
-				if (errorCount>100 && !File.Exists(@"D:\Github\bitonicSort.dat")) {
-
-					File.WriteAllBytes(@"D:\Github\bitonicSort.dat", outputBytes );
-
-					StringBuilder sb = new StringBuilder();
-
-					for (int i=0; i<NumberOfElements; i++) {
-						sb.AppendFormat("{0}\t{1}\t{2}\r\n", i, outputVectors[i].X, outputVectors[i].Y);
-					}
-					File.WriteAllText(@"D:\Github\bitonicSortA.txt", sb.ToString() );
-
-					for (int i=0; i<NumberOfElements; i++) {
-						sb.AppendFormat("{0}\t{1}\t{2}\r\n", i, output[i].X, output[i].Y);
-					}
-					File.WriteAllText(@"D:\Github\bitonicSortB.txt", sb.ToString() );
-
-					Log.Warning("Sort errors : {0}", errorCount );
-				}
-			//}
+			#if false
+			CheckResults( buffer );
 			#endif
 		}
 	}

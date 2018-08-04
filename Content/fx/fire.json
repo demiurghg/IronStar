@@ -204,7 +204,7 @@
     },
     "Acceleration": {
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
-      "GravityFactor": 0.0,
+      "GravityFactor": -0.1,
       "Damping": 0.0,
       "DragForce": 0.0,
       "Turbulence": 0.0

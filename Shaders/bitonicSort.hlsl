@@ -51,13 +51,8 @@ void CSMain( uint3 Gid : SV_GroupID,
 		float2 c	  = shared_data[index][GI ^ j];
 		float2 d 	  = shared_data[index][GI];
 		
-        // float2 result = ((a.x <= b.x) == (g_iLevelMask & DTid.x == 0)) ? c : d;
-		
-		//float2 result = ( (a.x <= b.x) == (g_iLevelMask & GI.x != 0) ) ? c : d;
-		//float2 result = c;
 		float2 result = ((a.x <= b.x) == (bool)(g_iLevelMask & DTid.x)) ? c : d;
 		
-        //GroupMemoryBarrierWithGroupSync();
         shared_data[index^1][GI] = result;
 		
 		index ^= 1;

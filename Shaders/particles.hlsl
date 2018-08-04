@@ -146,7 +146,8 @@ void CSMain(
 		float3 acceleration	=	0;
 		
 		for (uint i=0; i<Params.IntegrationSteps; i++) {
-			acceleration	=	p.Acceleration - velocity * length(velocity) * p.Damping + gravity*0;
+			
+			acceleration	=	p.Acceleration - velocity * length(velocity) * p.Damping + gravity;
 			velocity		=	velocity + acceleration * Params.DeltaTime;	
 			position		=	position + velocity     * Params.DeltaTime;	
 		}

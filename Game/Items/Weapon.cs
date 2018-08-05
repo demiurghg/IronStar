@@ -56,6 +56,7 @@ namespace IronStar.Items {
 		bool rqAttack;
 		bool rqActivate;
 		uint rqNextWeapon;
+		int counter;
 
 
 		/// <summary>
@@ -157,7 +158,14 @@ namespace IronStar.Items {
 				case WeaponState.Warmup:	
 					if (timer<=0) {
 						Fire(entity);
-						state = WeaponState.Cooldown;	
+
+						counter++;
+						if ((counter&1)==0) {
+							state = WeaponState.Cooldown;	
+						} else {
+							state = WeaponState.Cooldown2;	
+						}
+
 						dirty = true;
 						timer = timeCooldown;
 					}
@@ -165,6 +173,14 @@ namespace IronStar.Items {
 
 
 				case WeaponState.Cooldown:	
+					if (timer<=0) {
+						state = WeaponState.Idle;	
+						dirty = true;
+						timer = 0;
+					}
+					break;
+
+				case WeaponState.Cooldown2:	
 					if (timer<=0) {
 						state = WeaponState.Idle;	
 						dirty = true;

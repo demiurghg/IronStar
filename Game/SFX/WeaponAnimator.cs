@@ -90,7 +90,7 @@ namespace IronStar.SFX {
 
 				Log.Message("{0}", entity.WeaponState );
 
-				if ( weaponState == WeaponState.Cooldown ) {
+				if ( weaponState == WeaponState.Cooldown || weaponState == WeaponState.Cooldown2 ) {
 
 					trackWeapon.Sequence( "anim_recoil", true, false );
 					//trackWeapon.Frame ++;

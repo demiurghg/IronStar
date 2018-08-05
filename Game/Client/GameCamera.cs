@@ -19,6 +19,7 @@ using Fusion.Engine.Audio;
 using IronStar.Entities;
 using IronStar.Entities.Players;
 using IronStar.SFX;
+using Fusion.Core.Extensions;
 
 namespace IronStar.Views {
 	public class GameCamera {
@@ -204,9 +205,11 @@ namespace IronStar.Views {
 
 			if ( oldWeaponState!=newWpnState ) {
 				if (newWpnState==WeaponState.Cooldown || newWpnState==WeaponState.Cooldown2) {
+					
 					var shake = string.Format("shake{0}", rand.Next(6));
-					RunShakeAnimation(shake, 0.1f );
+					RunShakeAnimation(shake, rand.NextFloat(0.05f, 0.15f) );
 				}
+				oldWeaponState = newWpnState;
 			}
 
 			oldStanding = newStanding;

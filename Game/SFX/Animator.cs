@@ -26,7 +26,7 @@ namespace IronStar.SFX {
 		{
 			this.entity	=	entity;
 			this.model	=	model;
-			composer	=	new AnimationComposer( model, world );
+			composer	=	new AnimationComposer( "FPV weapon", model, model.Scene, world );
 		}
 
 

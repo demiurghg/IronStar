@@ -18,6 +18,7 @@ using BEPUphysics.Character;
 using Fusion.Engine.Audio;
 using IronStar.Entities;
 using IronStar.Entities.Players;
+using IronStar.SFX;
 
 namespace IronStar.Views {
 	public class GameCamera {
@@ -26,6 +27,19 @@ namespace IronStar.Views {
 		public readonly GameWorld World;
 		public readonly Guid ClientGuid;
 		public readonly ShooterClient client;
+
+		readonly Scene camera;
+		readonly AnimationComposer composer;
+		readonly AnimationTrack mainTrack;
+		readonly AnimationTrack shake0;
+		readonly AnimationTrack shake1;
+		readonly AnimationTrack shake2;
+		readonly AnimationTrack shake3;
+		readonly AnimationTrack shake4;
+		readonly AnimationTrack shake5;
+		readonly AnimationTrack[] shakes;
+
+		readonly Matrix[] transforms;
 
 
 		/// <summary>
@@ -40,6 +54,33 @@ namespace IronStar.Views {
 			this.World		=	world;
 			this.Game		=	world.Game;
 			currentFov		=	90;//(world.GameClient as ShooterClient).Fov;
+
+
+			camera		=	world.Content.Load<Scene>(@"scenes\camera");
+
+			composer	=	new AnimationComposer( "Camera", null, camera, world );
+
+			transforms	=	new Matrix[ camera.Nodes.Count ];
+
+			mainTrack	=	new AnimationTrack( camera, null, AnimationBlendMode.Override );
+			shake0		=	new AnimationTrack( camera, null, AnimationBlendMode.Additive );
+			shake1		=	new AnimationTrack( camera, null, AnimationBlendMode.Additive );
+			shake2		=	new AnimationTrack( camera, null, AnimationBlendMode.Additive );
+			shake3		=	new AnimationTrack( camera, null, AnimationBlendMode.Additive );
+			shake4		=	new AnimationTrack( camera, null, AnimationBlendMode.Additive );
+			shake5		=	new AnimationTrack( camera, null, AnimationBlendMode.Additive );
+
+			shakes		=	new[] { shake0, shake1, shake2, shake3, shake4, shake5 };
+
+			composer.Tracks.Add( mainTrack );
+			composer.Tracks.Add( shake0 );
+			composer.Tracks.Add( shake1 );
+			composer.Tracks.Add( shake2 );
+			composer.Tracks.Add( shake3 );
+			composer.Tracks.Add( shake4 );
+			composer.Tracks.Add( shake5 );
+
+			mainTrack.Sequence( "stand", true, false, true );
 		}
 
 
@@ -60,8 +101,10 @@ namespace IronStar.Views {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void Update ( float elapsedTime, float lerpFactor )
+		public void Update ( GameTime gameTime, float lerpFactor )
 		{
+			var elapsedTime =  gameTime.ElapsedSec;
+
 			var rw	= Game.RenderSystem.RenderWorld;
 			var sw	= Game.SoundSystem.SoundWorld;
 			var vp	= Game.RenderSystem.DisplayBounds;
@@ -81,6 +124,7 @@ namespace IronStar.Views {
 			var targetFov	=	MathUtil.Clamp( uc.Action.HasFlag( UserAction.Zoom ) ? 30 : 110, 10, 140 );
 			currentFov		=	MathUtil.Drift( currentFov, targetFov, 360*elapsedTime, 360*elapsedTime );
 
+			#if false
 			var targetPov	=	player.EntityState.HasFlag(EntityState.Crouching) ? GameConfig.PovHeightCrouch : GameConfig.PovHeightStand;
 			currentPov		=	MathUtil.Drift( currentPov, targetPov, GameConfig.PovHeightVelocity * elapsedTime );
 
@@ -89,7 +133,14 @@ namespace IronStar.Views {
 
 			var cameraFwd	=	cameraPos + m.Forward;
 			var cameraUp	=	m.Up;
+			#else
+			var camMatrix	=	UpdateAnimation( player, gameTime ) * player.GetWorldMatrix(0);
 
+			var cameraPos	=	camMatrix.TranslationVector;
+
+			var cameraFwd	=	cameraPos + camMatrix.Forward;
+			var cameraUp	=	camMatrix.Up;
+			#endif
 
 			rw.Camera		.SetupCameraFov( cameraPos, cameraFwd, cameraUp, MathUtil.Rad(currentFov),  0.125f/2.0f, 1024f, 2, 0.05f, aspect );
 			rw.WeaponCamera	.SetupCameraFov( cameraPos, cameraFwd, cameraUp, MathUtil.Rad(75),			0.125f/2.0f, 1024f, 2, 0.05f, aspect );
@@ -99,6 +150,70 @@ namespace IronStar.Views {
 			sw.Listener.Forward		=	m.Forward;
 			sw.Listener.Up			=	m.Up;
 			sw.Listener.Velocity	=	Vector3.Zero;
+		}
+
+
+
+		bool oldStanding = true;
+		bool oldTraction = true;
+
+		WeaponState oldWeaponState;
+
+
+		void RunShakeAnimation ( string name, float weight )
+		{
+			var track	=	shakes.FirstOrDefault( tr => !tr.Busy );
+
+			if (track!=null) {
+				track.Weight = weight;
+				track.Sequence( name, true, false );
+			}
+		}
+		
+
+		Random rand = new Random();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="player"></param>
+		/// <param name="gameTime"></param>
+		Matrix UpdateAnimation ( Player player, GameTime gameTime )
+		{
+			var newStanding = !player.EntityState.HasFlag( EntityState.Crouching );
+			var newTraction = player.EntityState.HasFlag( EntityState.HasTraction );
+
+			var newWpnState = player.WeaponState;
+
+			if ( newStanding!=oldStanding ) {
+				if (newStanding) {
+					mainTrack.Sequence("stand", true, false, true );
+				} else {
+					mainTrack.Sequence("crouch", true, false, true );
+				}
+			}
+
+
+			if ( newTraction!=oldTraction ) {
+				if (newTraction) {
+					RunShakeAnimation("landing", 1 );
+				} else {
+					//mainTrack.Sequence("crouch", true, false, true );
+				}
+			}
+
+			if ( oldWeaponState!=newWpnState ) {
+				if (newWpnState==WeaponState.Cooldown || newWpnState==WeaponState.Cooldown2) {
+					var shake = string.Format("shake{0}", rand.Next(6));
+					RunShakeAnimation(shake, 0.1f );
+				}
+			}
+
+			oldStanding = newStanding;
+			oldTraction = newTraction;
+
+			composer.Update( gameTime, transforms );
+			return Scene.FixGlobalCameraMatrix( transforms[1] );
 		}
 	}
 }

@@ -12,8 +12,9 @@ using IronStar.Core;
 namespace IronStar.SFX {
 	public class AnimationComposer {
 
-		readonly ModelInstance model;
 		readonly Scene scene;
+		readonly string name;
+		readonly ModelInstance model;
 		readonly AnimationStack tracks;
 
 		public AnimationStack Tracks { get { return tracks; } }
@@ -32,11 +33,12 @@ namespace IronStar.SFX {
 		/// 
 		/// </summary>
 		/// <param name="scene"></param>
-		public AnimationComposer ( ModelInstance model, GameWorld world )
+		public AnimationComposer ( string name, ModelInstance model, Scene scene, GameWorld world )
 		{
 			timer			=	new TimeSpan(0);
+			this.name		=	name;
 			this.model		=	model;
-			this.scene		=	model.Scene;
+			this.scene		=	scene;
 			this.tracks		=	new AnimationStack();
 			this.fxPlayback	=	world.FXPlayback;
 			this.world		=	world;
@@ -73,7 +75,7 @@ namespace IronStar.SFX {
 			}
 
 			if (!anim) {
-				Log.Warning("No animation applied!");
+				Log.Warning("{0} : no animation applied!", name);
 			}
 
 			//--------------------------------

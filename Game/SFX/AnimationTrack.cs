@@ -10,6 +10,11 @@ using Fusion.Engine.Graphics;
 
 namespace IronStar.SFX {
 
+	public enum AnimationSequenceMode {
+		Wrap,
+		Hold,
+		Stop,
+	}
 
 	public class AnimationTrack : AnimationSource {
 
@@ -31,16 +36,18 @@ namespace IronStar.SFX {
 			readonly TimeMode timeMode;
 			public readonly AnimationTake Take;
 			public readonly bool Looped;
+			public readonly bool Hold;
 			public readonly TimeSpan Start;
 			public readonly TimeSpan Length;
 			public readonly TimeSpan End;
 
-			public Animation ( TimeSpan startTime, AnimationTake take, TimeMode timeMode, bool looped ) 
+			public Animation ( TimeSpan startTime, AnimationTake take, TimeMode timeMode, bool looped, bool hold ) 
 			{
 				this.timeMode	=	timeMode;
 				this.Start		=	startTime;
 				this.Take		=	take;
 				this.Looped		=	looped;
+				this.Hold		=	hold;
 				this.Length		=	Scene.ComputeFrameLength( take.FrameCount, timeMode );
 				this.End		=	Start + Length;
 			}
@@ -119,7 +126,7 @@ namespace IronStar.SFX {
 		/// <param name="immediate"></param>
 		/// <param name="looped"></param>
 		/// <param name="crossfade"></param>
-		public void Sequence ( string takeName, bool immediate, bool looped )
+		public void Sequence ( string takeName, bool immediate, bool looped, bool hold = false )
 		{
 			var take = scene.Takes[ takeName ];
 
@@ -133,14 +140,14 @@ namespace IronStar.SFX {
 
 			if (currentAnim==null || immediate) {
 
-				var anim = new Animation ( trackTime, take, scene.TimeMode, looped );
+				var anim = new Animation ( trackTime, take, scene.TimeMode, looped, hold );
 	
 				currentAnim		=	anim;
 				pendingAnim		=	null;
 
 			} else {
 
-				var anim = new Animation ( currentAnim.End, take, scene.TimeMode, looped );
+				var anim = new Animation ( currentAnim.End, take, scene.TimeMode, looped, hold );
 
 				pendingAnim		=	anim;
 			}
@@ -207,7 +214,7 @@ namespace IronStar.SFX {
 
 					} else {
 
-						if ( !currentAnim.Looped ) {
+						if ( !currentAnim.Looped && !currentAnim.Hold ) {
 							currentAnim = null;
 						}
 					}

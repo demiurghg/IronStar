@@ -1,0 +1,1250 @@
+; FBX 6.1.0 project file
+; ----------------------------------------------------
+
+FBXHeaderExtension:  {
+	FBXHeaderVersion: 1003
+	FBXVersion: 6100
+	CurrentCameraResolution:  {
+		CameraName: "camera1"
+		CameraResolutionMode: "Fixed Resolution"
+		CameraResolutionW: 960
+		CameraResolutionH: 540
+	}
+	CreationTimeStamp:  {
+		Version: 1000
+		Year: 2018
+		Month: 8
+		Day: 5
+		Hour: 23
+		Minute: 3
+		Second: 45
+		Millisecond: 773
+	}
+	Creator: "FBX SDK/FBX Plugins version 2018.1.1"
+}
+
+; Document Description
+;------------------------------------------------------------------
+
+Document:  {
+	Name: ""
+}
+
+; Document References
+;------------------------------------------------------------------
+
+References:  {
+}
+
+; Object definitions
+;------------------------------------------------------------------
+
+Definitions:  {
+	Version: 100
+	Count: 3
+	ObjectType: "Model" {
+		Count: 1
+	}
+	ObjectType: "SceneInfo" {
+		Count: 1
+	}
+	ObjectType: "GlobalSettings" {
+		Count: 1
+	}
+}
+
+; Object properties
+;------------------------------------------------------------------
+
+Objects:  {
+	Model: "Model::camera1", "Camera" {
+		Version: 232
+		Properties60:  {
+			Property: "QuaternionInterpolate", "enum", "",0
+			Property: "RotationOffset", "Vector3D", "",0,0,0
+			Property: "RotationPivot", "Vector3D", "",0,0,0
+			Property: "ScalingOffset", "Vector3D", "",0,0,0
+			Property: "ScalingPivot", "Vector3D", "",0,0,0
+			Property: "TranslationActive", "bool", "",0
+			Property: "TranslationMin", "Vector3D", "",0,0,0
+			Property: "TranslationMax", "Vector3D", "",0,0,0
+			Property: "TranslationMinX", "bool", "",0
+			Property: "TranslationMinY", "bool", "",0
+			Property: "TranslationMinZ", "bool", "",0
+			Property: "TranslationMaxX", "bool", "",0
+			Property: "TranslationMaxY", "bool", "",0
+			Property: "TranslationMaxZ", "bool", "",0
+			Property: "RotationOrder", "enum", "",0
+			Property: "RotationSpaceForLimitOnly", "bool", "",0
+			Property: "RotationStiffnessX", "double", "",0
+			Property: "RotationStiffnessY", "double", "",0
+			Property: "RotationStiffnessZ", "double", "",0
+			Property: "AxisLen", "double", "",10
+			Property: "PreRotation", "Vector3D", "",0,0,0
+			Property: "PostRotation", "Vector3D", "",0,-90,0
+			Property: "RotationActive", "bool", "",1
+			Property: "RotationMin", "Vector3D", "",0,0,0
+			Property: "RotationMax", "Vector3D", "",0,0,0
+			Property: "RotationMinX", "bool", "",0
+			Property: "RotationMinY", "bool", "",0
+			Property: "RotationMinZ", "bool", "",0
+			Property: "RotationMaxX", "bool", "",0
+			Property: "RotationMaxY", "bool", "",0
+			Property: "RotationMaxZ", "bool", "",0
+			Property: "InheritType", "enum", "",1
+			Property: "ScalingActive", "bool", "",0
+			Property: "ScalingMin", "Vector3D", "",0,0,0
+			Property: "ScalingMax", "Vector3D", "",0,0,0
+			Property: "ScalingMinX", "bool", "",0
+			Property: "ScalingMinY", "bool", "",0
+			Property: "ScalingMinZ", "bool", "",0
+			Property: "ScalingMaxX", "bool", "",0
+			Property: "ScalingMaxY", "bool", "",0
+			Property: "ScalingMaxZ", "bool", "",0
+			Property: "GeometricTranslation", "Vector3D", "",0,0,0
+			Property: "GeometricRotation", "Vector3D", "",0,0,0
+			Property: "GeometricScaling", "Vector3D", "",1,1,1
+			Property: "MinDampRangeX", "double", "",0
+			Property: "MinDampRangeY", "double", "",0
+			Property: "MinDampRangeZ", "double", "",0
+			Property: "MaxDampRangeX", "double", "",0
+			Property: "MaxDampRangeY", "double", "",0
+			Property: "MaxDampRangeZ", "double", "",0
+			Property: "MinDampStrengthX", "double", "",0
+			Property: "MinDampStrengthY", "double", "",0
+			Property: "MinDampStrengthZ", "double", "",0
+			Property: "MaxDampStrengthX", "double", "",0
+			Property: "MaxDampStrengthY", "double", "",0
+			Property: "MaxDampStrengthZ", "double", "",0
+			Property: "PreferedAngleX", "double", "",0
+			Property: "PreferedAngleY", "double", "",0
+			Property: "PreferedAngleZ", "double", "",0
+			Property: "LookAtProperty", "object", ""
+			Property: "UpVectorProperty", "object", ""
+			Property: "Show", "bool", "",1
+			Property: "NegativePercentShapeSupport", "bool", "",1
+			Property: "DefaultAttributeIndex", "int", "",0
+			Property: "Freeze", "bool", "",0
+			Property: "LODBox", "bool", "",0
+			Property: "Lcl Translation", "Lcl Translation", "A+",0,1.6,0
+			Property: "Lcl Rotation", "Lcl Rotation", "A+",0,0,0
+			Property: "Lcl Scaling", "Lcl Scaling", "A+",1,1,1
+			Property: "Visibility", "Visibility", "A",1
+			Property: "Color", "ColorRGB", "N",0.8,0.8,0.8
+			Property: "Position", "Vector", "AN",0,1.6,0
+			Property: "UpVector", "Vector", "AN",0,1,0
+			Property: "InterestPosition", "Vector", "AN",0,1.6,-57.7514137154529
+			Property: "Roll", "Roll", "AN",0
+			Property: "OpticalCenterX", "OpticalCenterX", "AN",0
+			Property: "OpticalCenterY", "OpticalCenterY", "AN",0
+			Property: "BackgroundColor", "Color", "AN",0,0,0
+			Property: "TurnTable", "Number", "AN",0
+			Property: "DisplayTurnTableIcon", "bool", "N",0
+			Property: "UseMotionBlur", "bool", "N",0
+			Property: "UseRealTimeMotionBlur", "bool", "N",1
+			Property: "Motion Blur Intensity", "Number", "AN",1
+			Property: "AspectRatioMode", "enum", "N",0
+			Property: "AspectWidth", "double", "N",960
+			Property: "AspectHeight", "double", "N",540
+			Property: "PixelAspectRatio", "double", "N",1
+			Property: "FilmOffsetX", "Number", "AN",0
+			Property: "FilmOffsetY", "Number", "AN",0
+			Property: "FilmWidth", "Number", "AN",1.41732
+			Property: "FilmHeight", "Number", "AN",0.94488
+			Property: "FilmAspectRatio", "double", "N",1.5
+			Property: "FilmSqueezeRatio", "double", "N",1
+			Property: "FilmFormatIndex", "enum", "N",0
+			Property: "PreScale", "Number", "AN",1
+			Property: "FilmTranslateX", "Number", "AN",0
+			Property: "FilmTranslateY", "Number", "AN",0
+			Property: "FilmRollPivotX", "Number", "AN",0
+			Property: "FilmRollPivotY", "Number", "AN",0
+			Property: "FilmRollValue", "Number", "AN",0
+			Property: "FilmRollOrder", "enum", "N",0
+			Property: "ApertureMode", "enum", "N",3
+			Property: "GateFit", "enum", "N",3
+			Property: "FieldOfView", "FieldOfView", "AN",25.1149997711182
+			Property: "FieldOfViewX", "FieldOfViewX", "AN",40
+			Property: "FieldOfViewY", "FieldOfViewY", "AN",40
+			Property: "FocalLength", "Number", "AN",10.3922940741344
+			Property: "CameraFormat", "enum", "N",0
+			Property: "UseFrameColor", "bool", "N",0
+			Property: "FrameColor", "ColorRGB", "N",0.3,0.3,0.3
+			Property: "ShowName", "bool", "N",1
+			Property: "ShowInfoOnMoving", "bool", "N",1
+			Property: "ShowGrid", "bool", "N",1
+			Property: "ShowOpticalCenter", "bool", "N",0
+			Property: "ShowAzimut", "bool", "N",1
+			Property: "ShowTimeCode", "bool", "N",0
+			Property: "ShowAudio", "bool", "N",0
+			Property: "AudioColor", "Vector3D", "N",0,1,0
+			Property: "NearPlane", "double", "N",0.1
+			Property: "FarPlane", "double", "N",10000
+			Property: "AutoComputeClipPanes", "bool", "N",1
+			Property: "ViewCameraToLookAt", "bool", "N",1
+			Property: "ViewFrustumNearFarPlane", "bool", "N",0
+			Property: "ViewFrustumBackPlaneMode", "enum", "N",2
+			Property: "BackPlaneDistance", "Number", "AN",4000
+			Property: "BackPlaneDistanceMode", "enum", "N",1
+			Property: "ViewFrustumFrontPlaneMode", "enum", "N",2
+			Property: "FrontPlaneDistance", "Number", "AN",10
+			Property: "FrontPlaneDistanceMode", "enum", "N",1
+			Property: "LockMode", "bool", "N",0
+			Property: "LockInterestNavigation", "bool", "N",0
+			Property: "BackPlateFitImage", "bool", "N",0
+			Property: "BackPlateCrop", "bool", "N",0
+			Property: "BackPlateCenter", "bool", "N",1
+			Property: "BackPlateKeepRatio", "bool", "N",1
+			Property: "BackgroundAlphaTreshold", "double", "N",0.5
+			Property: "ShowBackplate", "bool", "N",1
+			Property: "BackPlaneOffsetX", "Number", "AN",0
+			Property: "BackPlaneOffsetY", "Number", "AN",0
+			Property: "BackPlaneRotation", "Number", "AN",0
+			Property: "BackPlaneScaleX", "Number", "AN",1
+			Property: "BackPlaneScaleY", "Number", "AN",1
+			Property: "Background Texture", "object", "N"
+			Property: "FrontPlateFitImage", "bool", "N",1
+			Property: "FrontPlateCrop", "bool", "N",0
+			Property: "FrontPlateCenter", "bool", "N",1
+			Property: "FrontPlateKeepRatio", "bool", "N",1
+			Property: "Foreground Opacity", "double", "N",1
+			Property: "ShowFrontplate", "bool", "N",1
+			Property: "FrontPlaneOffsetX", "Number", "AN",0
+			Property: "FrontPlaneOffsetY", "Number", "AN",0
+			Property: "FrontPlaneRotation", "Number", "AN",0
+			Property: "FrontPlaneScaleX", "Number", "AN",1
+			Property: "FrontPlaneScaleY", "Number", "AN",1
+			Property: "Foreground Texture", "object", "N"
+			Property: "DisplaySafeArea", "bool", "N",0
+			Property: "DisplaySafeAreaOnRender", "bool", "N",0
+			Property: "SafeAreaDisplayStyle", "enum", "N",1
+			Property: "SafeAreaAspectRatio", "double", "N",1.33333333333333
+			Property: "Use2DMagnifierZoom", "bool", "N",0
+			Property: "2D Magnifier Zoom", "Number", "AN",100
+			Property: "2D Magnifier X", "Number", "AN",50
+			Property: "2D Magnifier Y", "Number", "AN",50
+			Property: "CameraProjectionType", "enum", "N",0
+			Property: "OrthoZoom", "double", "N",1
+			Property: "UseRealTimeDOFAndAA", "bool", "N",0
+			Property: "UseDepthOfField", "bool", "N",0
+			Property: "FocusSource", "enum", "N",0
+			Property: "FocusAngle", "double", "N",3.5
+			Property: "FocusDistance", "Number", "AN",5
+			Property: "UseAntialiasing", "bool", "N",0
+			Property: "AntialiasingIntensity", "double", "N",0.77777
+			Property: "AntialiasingMethod", "enum", "N",0
+			Property: "UseAccumulationBuffer", "bool", "N",0
+			Property: "FrameSamplingCount", "int", "N",7
+			Property: "FrameSamplingType", "enum", "N",1
+		}
+		MultiLayer: 0
+		MultiTake: 0
+		Shading: Y
+		Culling: "CullingOff"
+		TypeFlags: "Camera"
+		GeometryVersion: 124
+		Position: 0,1.6,0
+		Up: 0,1,0
+		LookAt: 0,1.6,-57.7514137154529
+		ShowInfoOnMoving: 1
+		ShowAudio: 0
+		AudioColor: 0,1,0
+		CameraOrthoZoom: 1
+		NodeAttributeName: "NodeAttribute::camera1_ncl1_1"
+	}
+	SceneInfo: "SceneInfo::GlobalInfo", "UserData" {
+		Type: "UserData"
+		Version: 100
+		MetaData:  {
+			Version: 100
+			Title: ""
+			Subject: ""
+			Author: ""
+			Keywords: ""
+			Revision: ""
+			Comment: ""
+		}
+		Properties60:  {
+			Property: "DocumentUrl", "KString", "", "E:\GITHUB\IronStar\Content\scenes\camera.fbx"
+			Property: "SrcDocumentUrl", "KString", "", "E:\GITHUB\IronStar\Content\scenes\camera.fbx"
+			Property: "Original", "Compound", ""
+			Property: "Original|ApplicationVendor", "KString", "", "Autodesk"
+			Property: "Original|ApplicationName", "KString", "", "Maya LT"
+			Property: "Original|ApplicationVersion", "KString", "", "201800"
+			Property: "Original|DateTime_GMT", "DateTime", "", "05/08/2018 20:03:45.772"
+			Property: "Original|FileName", "KString", "", "E:\GITHUB\IronStar\Content\scenes\camera.fbx"
+			Property: "LastSaved", "Compound", ""
+			Property: "LastSaved|ApplicationVendor", "KString", "", "Autodesk"
+			Property: "LastSaved|ApplicationName", "KString", "", "Maya LT"
+			Property: "LastSaved|ApplicationVersion", "KString", "", "201800"
+			Property: "LastSaved|DateTime_GMT", "DateTime", "", "05/08/2018 20:03:45.772"
+			Property: "Original|ApplicationActiveProject", "KString", "", "E:\GITHUB\IronStar\Content"
+			Property: "Original|ApplicationNativeFile", "KString", "", "E:\GITHUB\IronStar\Content\scenes\camera.mlt"
+		}
+	}
+	GlobalSettings:  {
+		Version: 1000
+		Properties60:  {
+			Property: "UpAxis", "int", "",1
+			Property: "UpAxisSign", "int", "",1
+			Property: "FrontAxis", "int", "",2
+			Property: "FrontAxisSign", "int", "",1
+			Property: "CoordAxis", "int", "",0
+			Property: "CoordAxisSign", "int", "",1
+			Property: "OriginalUpAxis", "int", "",1
+			Property: "OriginalUpAxisSign", "int", "",1
+			Property: "UnitScaleFactor", "double", "",1
+			Property: "OriginalUnitScaleFactor", "double", "",1
+			Property: "AmbientColor", "ColorRGB", "",0,0,0
+			Property: "DefaultCamera", "KString", "", "camera1"
+			Property: "TimeMode", "enum", "",6
+			Property: "TimeProtocol", "enum", "",2
+			Property: "SnapOnFrameMode", "enum", "",0
+			Property: "TimeSpanStart", "KTime", "",-1539538600
+			Property: "TimeSpanStop", "KTime", "",170888784600
+			Property: "CustomFrameRate", "double", "",-1
+		}
+	}
+}
+
+; Object connections
+;------------------------------------------------------------------
+
+Connections:  {
+	Connect: "OO", "Model::camera1", "Model::Scene"
+}
+;Takes and animation section
+;----------------------------------------------------
+
+Takes:  {
+	Current: "Take 001"
+	Take: "landing" {
+		FileName: "landing.tak"
+		LocalTime: 0,23093079000
+		ReferenceTime: 0,23093079000
+		
+		;Models animation
+		;----------------------------------------------------
+		Model: "Model::camera1" {
+			Version: 1.1
+			Channel: "Transform" {
+				Channel: "T" {
+					Channel: "X" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 16
+						Key: 0,0,U,a,n,1539538600,0,U,a,n,3079077200,0,U,a,n,4618615800,0,U,a,n,6158154400,0,U
+                                        ,a,n,7697693000,0,U,a,n,9237231600,0,U,a,n,10776770200,0,U,a,n,12316308800,0,U,a,n
+                                        ,13855847400,0,U,a,n,15395386000,0,U,a,n,16934924600,0,U,a,n,18474463200,0,U,a,n,20014001800
+                                        ,0,U,a,n,21553540400,0,U,a,n,23093079000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 1.60000002384186
+						KeyVer: 4005
+						KeyCount: 16
+						Key: 0,1.60000002384186,U,a,n,1539538600,1.60000002384186,U,a,n,3079077200,1.60000002384186
+                                        ,U,a,n,4618615800,1.60000002384186,U,a,n,6158154400,1.60000002384186,U,a,n,7697693000
+                                        ,1.60000002384186,U,a,n,9237231600,1.60000002384186,U,a,n,10776770200,1.60000002384186
+                                        ,U,a,n,12316308800,1.60000002384186,U,a,n,13855847400,1.60000002384186,U,a,n,15395386000
+                                        ,1.60000002384186,U,a,n,16934924600,1.60000002384186,U,a,n,18474463200,1.60000002384186
+                                        ,U,a,n,20014001800,1.60000002384186,U,a,n,21553540400,1.60000002384186,U,a,n,23093079000
+                                        ,1.60000002384186,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 16
+						Key: 0,0,U,a,n,1539538600,0,U,a,n,3079077200,0,U,a,n,4618615800,0,U,a,n,6158154400,0,U
+                                        ,a,n,7697693000,0,U,a,n,9237231600,0,U,a,n,10776770200,0,U,a,n,12316308800,0,U,a,n
+                                        ,13855847400,0,U,a,n,15395386000,0,U,a,n,16934924600,0,U,a,n,18474463200,0,U,a,n,20014001800
+                                        ,0,U,a,n,21553540400,0,U,a,n,23093079000,0,U,a,n
+						Color: 1,1,1
+					}
+					LayerType: 1
+				}
+				Channel: "R" {
+					Channel: "X" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 16
+						Key: 0,0,U,a,n,1539538600,-6.89081192016602,U,a,n,3079077200,-11.3549480438232,U,a,n,4618615800
+                                        ,-13.8650045394897,U,a,n,6158154400,-14.8935813903809,U,a,n,7697693000,-14.901198387146
+                                        ,U,a,n,9237231600,-14.169095993042,U,a,n,10776770200,-12.8539037704468,U,a,n,12316308800
+                                        ,-11.1111106872559,U,a,n,13855847400,-9.09621047973633,U,a,n,15395386000,-6.96469068527222
+                                        ,U,a,n,16934924600,-4.8720440864563,U,a,n,18474463200,-2.97376084327698,U,a,n,20014001800
+                                        ,-1.42533195018768,U,a,n,21553540400,-0.382248163223267,U,a,n,23093079000,0,U,a,n
+                                        
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 16
+						Key: 0,0,U,a,n,1539538600,0,U,a,n,3079077200,0,U,a,n,4618615800,0,U,a,n,6158154400,0,U
+                                        ,a,n,7697693000,0,U,a,n,9237231600,0,U,a,n,10776770200,0,U,a,n,12316308800,0,U,a,n
+                                        ,13855847400,0,U,a,n,15395386000,0,U,a,n,16934924600,0,U,a,n,18474463200,0,U,a,n,20014001800
+                                        ,0,U,a,n,21553540400,0,U,a,n,23093079000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 16
+						Key: 0,0,U,a,n,1539538600,0,U,a,n,3079077200,0,U,a,n,4618615800,0,U,a,n,6158154400,0,U
+                                        ,a,n,7697693000,0,U,a,n,9237231600,0,U,a,n,10776770200,0,U,a,n,12316308800,0,U,a,n
+                                        ,13855847400,0,U,a,n,15395386000,0,U,a,n,16934924600,0,U,a,n,18474463200,0,U,a,n,20014001800
+                                        ,0,U,a,n,21553540400,0,U,a,n,23093079000,0,U,a,n
+						Color: 1,1,1
+					}
+					LayerType: 2
+				}
+				Channel: "S" {
+					Channel: "X" {
+						Default: 1
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 1
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 1
+						Color: 1,1,1
+					}
+					LayerType: 3
+				}
+			}
+		}
+		
+		;Generic nodes animation
+		;----------------------------------------------------
+		
+		;Textures animation
+		;----------------------------------------------------
+		
+		;Materials animation
+		;----------------------------------------------------
+		
+		
+		;Constraints animation
+		;----------------------------------------------------
+	}
+	Take: "shake0" {
+		FileName: "shake0.tak"
+		LocalTime: 123163088000,130860781000
+		ReferenceTime: 123163088000,130860781000
+		
+		;Models animation
+		;----------------------------------------------------
+		Model: "Model::camera1" {
+			Version: 1.1
+			Channel: "Transform" {
+				Channel: "T" {
+					Channel: "X" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 123163088000,0,U,a,n,124702626600,0,U,a,n,126242165200,0,U,a,n,127781703800,0,U,a
+                                        ,n,129321242400,0,U,a,n,130860781000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 1.60000002384186
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 123163088000,1.60000002384186,U,a,n,124702626600,1.60000002384186,U,a,n,126242165200
+                                        ,1.60000002384186,U,a,n,127781703800,1.60000002384186,U,a,n,129321242400,1.60000002384186
+                                        ,U,a,n,130860781000,1.60000002384186,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 123163088000,0,U,a,n,124702626600,0,U,a,n,126242165200,0,U,a,n,127781703800,0,U,a
+                                        ,n,129321242400,0,U,a,n,130860781000,0,U,a,n
+						Color: 1,1,1
+					}
+					LayerType: 1
+				}
+				Channel: "R" {
+					Channel: "X" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 123163088000,0,U,a,n,124702626600,0,U,a,n,126242165200,0,U,a,n,127781703800,0,U,a
+                                        ,n,129321242400,0,U,a,n,130860781000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 123163088000,0,U,a,n,124702626600,5,U,a,n,126242165200,4.59375,U,a,n,127781703800
+                                        ,3.5,U,a,n,129321242400,1.90625011920929,U,a,n,130860781000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 123163088000,0,U,a,n,124702626600,0,U,a,n,126242165200,0,U,a,n,127781703800,0,U,a
+                                        ,n,129321242400,0,U,a,n,130860781000,0,U,a,n
+						Color: 1,1,1
+					}
+					LayerType: 2
+				}
+				Channel: "S" {
+					Channel: "X" {
+						Default: 1
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 1
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 1
+						Color: 1,1,1
+					}
+					LayerType: 3
+				}
+			}
+		}
+		
+		;Generic nodes animation
+		;----------------------------------------------------
+		
+		;Textures animation
+		;----------------------------------------------------
+		
+		;Materials animation
+		;----------------------------------------------------
+		
+		
+		;Constraints animation
+		;----------------------------------------------------
+	}
+	Take: "shake1" {
+		FileName: "shake1.tak"
+		LocalTime: 130860781000,138558474000
+		ReferenceTime: 130860781000,138558474000
+		
+		;Models animation
+		;----------------------------------------------------
+		Model: "Model::camera1" {
+			Version: 1.1
+			Channel: "Transform" {
+				Channel: "T" {
+					Channel: "X" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 130860781000,0,U,a,n,132400319600,0,U,a,n,133939858200,0,U,a,n,135479396800,0,U,a
+                                        ,n,137018935400,0,U,a,n,138558474000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 1.60000002384186
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 130860781000,1.60000002384186,U,a,n,132400319600,1.60000002384186,U,a,n,133939858200
+                                        ,1.60000002384186,U,a,n,135479396800,1.60000002384186,U,a,n,137018935400,1.60000002384186
+                                        ,U,a,n,138558474000,1.60000002384186,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 130860781000,0,U,a,n,132400319600,0,U,a,n,133939858200,0,U,a,n,135479396800,0,U,a
+                                        ,n,137018935400,0,U,a,n,138558474000,0,U,a,n
+						Color: 1,1,1
+					}
+					LayerType: 1
+				}
+				Channel: "R" {
+					Channel: "X" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 130860781000,0,U,a,n,132400319600,0,U,a,n,133939858200,0,U,a,n,135479396800,0,U,a
+                                        ,n,137018935400,0,U,a,n,138558474000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 130860781000,0,U,a,n,132400319600,-5,U,a,n,133939858200,-4.21875,U,a,n,135479396800
+                                        ,-2.5,U,a,n,137018935400,-0.78125,U,a,n,138558474000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 130860781000,0,U,a,n,132400319600,6.21944612151372e-18,U,a,n,133939858200,5.24765738068387e-18
+                                        ,U,a,n,135479396800,3.10972306075686e-18,U,a,n,137018935400,9.71788534034701e-19,U
+                                        ,a,n,138558474000,0,U,a,n
+						Color: 1,1,1
+					}
+					LayerType: 2
+				}
+				Channel: "S" {
+					Channel: "X" {
+						Default: 1
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 1
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 1
+						Color: 1,1,1
+					}
+					LayerType: 3
+				}
+			}
+		}
+		
+		;Generic nodes animation
+		;----------------------------------------------------
+		
+		;Textures animation
+		;----------------------------------------------------
+		
+		;Materials animation
+		;----------------------------------------------------
+		
+		
+		;Constraints animation
+		;----------------------------------------------------
+	}
+	Take: "shake2" {
+		FileName: "shake2.tak"
+		LocalTime: 138558474000,146256167000
+		ReferenceTime: 138558474000,146256167000
+		
+		;Models animation
+		;----------------------------------------------------
+		Model: "Model::camera1" {
+			Version: 1.1
+			Channel: "Transform" {
+				Channel: "T" {
+					Channel: "X" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 138558474000,0,U,a,n,140098012600,0,U,a,n,141637551200,0,U,a,n,143177089800,0,U,a
+                                        ,n,144716628400,0,U,a,n,146256167000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 1.60000002384186
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 138558474000,1.60000002384186,U,a,n,140098012600,1.60000002384186,U,a,n,141637551200
+                                        ,1.60000002384186,U,a,n,143177089800,1.60000002384186,U,a,n,144716628400,1.60000002384186
+                                        ,U,a,n,146256167000,1.60000002384186,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 138558474000,0,U,a,n,140098012600,0,U,a,n,141637551200,0,U,a,n,143177089800,0,U,a
+                                        ,n,144716628400,0,U,a,n,146256167000,0,U,a,n
+						Color: 1,1,1
+					}
+					LayerType: 1
+				}
+				Channel: "R" {
+					Channel: "X" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 138558474000,0,U,a,n,140098012600,5,U,a,n,141637551200,4.59375,U,a,n,143177089800
+                                        ,3.5,U,a,n,144716628400,1.90625011920929,U,a,n,146256167000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 138558474000,0,U,a,n,140098012600,0,U,a,n,141637551200,0,U,a,n,143177089800,0,U,a
+                                        ,n,144716628400,0,U,a,n,146256167000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 138558474000,0,U,a,n,140098012600,0,U,a,n,141637551200,0,U,a,n,143177089800,0,U,a
+                                        ,n,144716628400,0,U,a,n,146256167000,0,U,a,n
+						Color: 1,1,1
+					}
+					LayerType: 2
+				}
+				Channel: "S" {
+					Channel: "X" {
+						Default: 1
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 1
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 1
+						Color: 1,1,1
+					}
+					LayerType: 3
+				}
+			}
+		}
+		
+		;Generic nodes animation
+		;----------------------------------------------------
+		
+		;Textures animation
+		;----------------------------------------------------
+		
+		;Materials animation
+		;----------------------------------------------------
+		
+		
+		;Constraints animation
+		;----------------------------------------------------
+	}
+	Take: "shake3" {
+		FileName: "shake3.tak"
+		LocalTime: 146256167000,153953860000
+		ReferenceTime: 146256167000,153953860000
+		
+		;Models animation
+		;----------------------------------------------------
+		Model: "Model::camera1" {
+			Version: 1.1
+			Channel: "Transform" {
+				Channel: "T" {
+					Channel: "X" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 146256167000,0,U,a,n,147795705600,0,U,a,n,149335244200,0,U,a,n,150874782800,0,U,a
+                                        ,n,152414321400,0,U,a,n,153953860000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 1.60000002384186
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 146256167000,1.60000002384186,U,a,n,147795705600,1.60000002384186,U,a,n,149335244200
+                                        ,1.60000002384186,U,a,n,150874782800,1.60000002384186,U,a,n,152414321400,1.60000002384186
+                                        ,U,a,n,153953860000,1.60000002384186,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 146256167000,0,U,a,n,147795705600,0,U,a,n,149335244200,0,U,a,n,150874782800,0,U,a
+                                        ,n,152414321400,0,U,a,n,153953860000,0,U,a,n
+						Color: 1,1,1
+					}
+					LayerType: 1
+				}
+				Channel: "R" {
+					Channel: "X" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 146256167000,0,U,a,n,147795705600,-5,U,a,n,149335244200,-4.21875,U,a,n,150874782800
+                                        ,-2.5,U,a,n,152414321400,-0.78125,U,a,n,153953860000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 146256167000,0,U,a,n,147795705600,0,U,a,n,149335244200,0,U,a,n,150874782800,0,U,a
+                                        ,n,152414321400,0,U,a,n,153953860000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 146256167000,0,U,a,n,147795705600,-2.48777844860549e-17,U,a,n,149335244200,-2.09906295227355e-17
+                                        ,U,a,n,150874782800,-1.24388922430274e-17,U,a,n,152414321400,-3.8871541361388e-18
+                                        ,U,a,n,153953860000,0,U,a,n
+						Color: 1,1,1
+					}
+					LayerType: 2
+				}
+				Channel: "S" {
+					Channel: "X" {
+						Default: 1
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 1
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 1
+						Color: 1,1,1
+					}
+					LayerType: 3
+				}
+			}
+		}
+		
+		;Generic nodes animation
+		;----------------------------------------------------
+		
+		;Textures animation
+		;----------------------------------------------------
+		
+		;Materials animation
+		;----------------------------------------------------
+		
+		
+		;Constraints animation
+		;----------------------------------------------------
+	}
+	Take: "shake4" {
+		FileName: "shake4.tak"
+		LocalTime: 153953860000,161651553000
+		ReferenceTime: 153953860000,161651553000
+		
+		;Models animation
+		;----------------------------------------------------
+		Model: "Model::camera1" {
+			Version: 1.1
+			Channel: "Transform" {
+				Channel: "T" {
+					Channel: "X" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 153953860000,0,U,a,n,155493398600,0,U,a,n,157032937200,0,U,a,n,158572475800,0,U,a
+                                        ,n,160112014400,0,U,a,n,161651553000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 1.60000002384186
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 153953860000,1.60000002384186,U,a,n,155493398600,1.60000002384186,U,a,n,157032937200
+                                        ,1.60000002384186,U,a,n,158572475800,1.60000002384186,U,a,n,160112014400,1.60000002384186
+                                        ,U,a,n,161651553000,1.60000002384186,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 153953860000,0,U,a,n,155493398600,0,U,a,n,157032937200,0,U,a,n,158572475800,0,U,a
+                                        ,n,160112014400,0,U,a,n,161651553000,0,U,a,n
+						Color: 1,1,1
+					}
+					LayerType: 1
+				}
+				Channel: "R" {
+					Channel: "X" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 153953860000,0,U,a,n,155493398600,0,U,a,n,157032937200,0,U,a,n,158572475800,0,U,a
+                                        ,n,160112014400,0,U,a,n,161651553000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 153953860000,0,U,a,n,155493398600,0,U,a,n,157032937200,0,U,a,n,158572475800,0,U,a
+                                        ,n,160112014400,0,U,a,n,161651553000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 153953860000,0,U,a,n,155493398600,5,U,a,n,157032937200,4.59375,U,a,n,158572475800
+                                        ,3.5,U,a,n,160112014400,1.90625011920929,U,a,n,161651553000,0,U,a,n
+						Color: 1,1,1
+					}
+					LayerType: 2
+				}
+				Channel: "S" {
+					Channel: "X" {
+						Default: 1
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 1
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 1
+						Color: 1,1,1
+					}
+					LayerType: 3
+				}
+			}
+		}
+		
+		;Generic nodes animation
+		;----------------------------------------------------
+		
+		;Textures animation
+		;----------------------------------------------------
+		
+		;Materials animation
+		;----------------------------------------------------
+		
+		
+		;Constraints animation
+		;----------------------------------------------------
+	}
+	Take: "shake5" {
+		FileName: "shake5.tak"
+		LocalTime: 161651553000,169349246000
+		ReferenceTime: 161651553000,169349246000
+		
+		;Models animation
+		;----------------------------------------------------
+		Model: "Model::camera1" {
+			Version: 1.1
+			Channel: "Transform" {
+				Channel: "T" {
+					Channel: "X" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 161651553000,0,U,a,n,163191091600,0,U,a,n,164730630200,0,U,a,n,166270168800,0,U,a
+                                        ,n,167809707400,0,U,a,n,169349246000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 1.60000002384186
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 161651553000,1.60000002384186,U,a,n,163191091600,1.60000002384186,U,a,n,164730630200
+                                        ,1.60000002384186,U,a,n,166270168800,1.60000002384186,U,a,n,167809707400,1.60000002384186
+                                        ,U,a,n,169349246000,1.60000002384186,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 161651553000,0,U,a,n,163191091600,0,U,a,n,164730630200,0,U,a,n,166270168800,0,U,a
+                                        ,n,167809707400,0,U,a,n,169349246000,0,U,a,n
+						Color: 1,1,1
+					}
+					LayerType: 1
+				}
+				Channel: "R" {
+					Channel: "X" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 161651553000,0,U,a,n,163191091600,0,U,a,n,164730630200,0,U,a,n,166270168800,0,U,a
+                                        ,n,167809707400,0,U,a,n,169349246000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 161651553000,0,U,a,n,163191091600,0,U,a,n,164730630200,0,U,a,n,166270168800,0,U,a
+                                        ,n,167809707400,0,U,a,n,169349246000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 6
+						Key: 161651553000,0,U,a,n,163191091600,-5,U,a,n,164730630200,-4.21875,U,a,n,166270168800
+                                        ,-2.5,U,a,n,167809707400,-0.78125,U,a,n,169349246000,0,U,a,n
+						Color: 1,1,1
+					}
+					LayerType: 2
+				}
+				Channel: "S" {
+					Channel: "X" {
+						Default: 1
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 1
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 1
+						Color: 1,1,1
+					}
+					LayerType: 3
+				}
+			}
+		}
+		
+		;Generic nodes animation
+		;----------------------------------------------------
+		
+		;Textures animation
+		;----------------------------------------------------
+		
+		;Materials animation
+		;----------------------------------------------------
+		
+		
+		;Constraints animation
+		;----------------------------------------------------
+	}
+	Take: "crouch" {
+		FileName: "crouch.tak"
+		LocalTime: 61581544000,76976930000
+		ReferenceTime: 61581544000,76976930000
+		
+		;Models animation
+		;----------------------------------------------------
+		Model: "Model::camera1" {
+			Version: 1.1
+			Channel: "Transform" {
+				Channel: "T" {
+					Channel: "X" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 11
+						Key: 61581544000,0,U,a,n,63121082600,0,U,a,n,64660621200,0,U,a,n,66200159800,0,U,a,n,67739698400
+                                        ,0,U,a,n,69279237000,0,U,a,n,70818775600,0,U,a,n,72358314200,0,U,a,n,73897852800,0
+                                        ,U,a,n,75437391400,0,U,a,n,76976930000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 1.60000002384186
+						KeyVer: 4005
+						KeyCount: 11
+						Key: 61581544000,1.60000002384186,U,a,n,63121082600,1.53323638439178,U,a,n,64660621200
+                                        ,1.37318658828735,U,a,n,66200159800,1.1802122592926,U,a,n,67739698400,1.01467502117157
+                                        ,U,a,n,69279237000,0.879318654537201,U,a,n,70818775600,0.809811294078827,U,a,n,72358314200
+                                        ,0.823903322219849,U,a,n,73897852800,0.854905664920807,U,a,n,75437391400,0.885908007621765
+                                        ,U,a,n,76976930000,0.899999976158142,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 11
+						Key: 61581544000,0,U,a,n,63121082600,0,U,a,n,64660621200,0,U,a,n,66200159800,0,U,a,n,67739698400
+                                        ,0,U,a,n,69279237000,0,U,a,n,70818775600,0,U,a,n,72358314200,0,U,a,n,73897852800,0
+                                        ,U,a,n,75437391400,0,U,a,n,76976930000,0,U,a,n
+						Color: 1,1,1
+					}
+					LayerType: 1
+				}
+				Channel: "R" {
+					Channel: "X" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 11
+						Key: 61581544000,0,U,a,n,63121082600,-1.5625,U,a,n,64660621200,-5,U,a,n,66200159800,-8.4375
+                                        ,U,a,n,67739698400,-10,U,a,n,69279237000,-9.25925922393799,U,a,n,70818775600,-7.40740776062012
+                                        ,U,a,n,72358314200,-5,U,a,n,73897852800,-2.59259247779846,U,a,n,75437391400,-0.740740776062012
+                                        ,U,a,n,76976930000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 11
+						Key: 61581544000,0,U,a,n,63121082600,0,U,a,n,64660621200,0,U,a,n,66200159800,0,U,a,n,67739698400
+                                        ,0,U,a,n,69279237000,0,U,a,n,70818775600,0,U,a,n,72358314200,0,U,a,n,73897852800,0
+                                        ,U,a,n,75437391400,0,U,a,n,76976930000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 11
+						Key: 61581544000,0,U,a,n,63121082600,0,U,a,n,64660621200,0,U,a,n,66200159800,0,U,a,n,67739698400
+                                        ,0,U,a,n,69279237000,0,U,a,n,70818775600,0,U,a,n,72358314200,0,U,a,n,73897852800,0
+                                        ,U,a,n,75437391400,0,U,a,n,76976930000,0,U,a,n
+						Color: 1,1,1
+					}
+					LayerType: 2
+				}
+				Channel: "S" {
+					Channel: "X" {
+						Default: 1
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 1
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 1
+						Color: 1,1,1
+					}
+					LayerType: 3
+				}
+			}
+		}
+		
+		;Generic nodes animation
+		;----------------------------------------------------
+		
+		;Textures animation
+		;----------------------------------------------------
+		
+		;Materials animation
+		;----------------------------------------------------
+		
+		
+		;Constraints animation
+		;----------------------------------------------------
+	}
+	Take: "stand" {
+		FileName: "stand.tak"
+		LocalTime: 76976930000,92372316000
+		ReferenceTime: 76976930000,92372316000
+		
+		;Models animation
+		;----------------------------------------------------
+		Model: "Model::camera1" {
+			Version: 1.1
+			Channel: "Transform" {
+				Channel: "T" {
+					Channel: "X" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 11
+						Key: 76976930000,0,U,a,n,78516468600,0,U,a,n,80056007200,0,U,a,n,81595545800,0,U,a,n,83135084400
+                                        ,0,U,a,n,84674623000,0,U,a,n,86214161600,0,U,a,n,87753700200,0,U,a,n,89293238800,0
+                                        ,U,a,n,90832777400,0,U,a,n,92372316000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 1.60000002384186
+						KeyVer: 4005
+						KeyCount: 11
+						Key: 76976930000,0.899999976158142,U,a,n,78516468600,0.71362429857254,U,a,n,80056007200
+                                        ,0.762259840965271,U,a,n,81595545800,0.966334819793701,U,a,n,83135084400,1.2462774515152
+                                        ,U,a,n,84674623000,1.52251577377319,U,a,n,86214161600,1.7154780626297,U,a,n,87753700200
+                                        ,1.74559247493744,U,a,n,89293238800,1.67249989509583,U,a,n,90832777400,1.61894237995148
+                                        ,U,a,n,92372316000,1.60000002384186,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 11
+						Key: 76976930000,0,U,a,n,78516468600,0,U,a,n,80056007200,0,U,a,n,81595545800,0,U,a,n,83135084400
+                                        ,0,U,a,n,84674623000,0,U,a,n,86214161600,0,U,a,n,87753700200,0,U,a,n,89293238800,0
+                                        ,U,a,n,90832777400,0,U,a,n,92372316000,0,U,a,n
+						Color: 1,1,1
+					}
+					LayerType: 1
+				}
+				Channel: "R" {
+					Channel: "X" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 11
+						Key: 76976930000,0,U,a,n,78516468600,0.785573899745941,U,a,n,80056007200,2.51383638381958
+                                        ,U,a,n,81595545800,4.24209928512573,U,a,n,83135084400,5.02767276763916,U,a,n,84674623000
+                                        ,4.6552529335022,U,a,n,86214161600,3.72420215606689,U,a,n,87753700200,2.51383638381958
+                                        ,U,a,n,89293238800,1.30347073078156,U,a,n,90832777400,0.372420221567154,U,a,n,92372316000
+                                        ,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 11
+						Key: 76976930000,0,U,a,n,78516468600,0,U,a,n,80056007200,0,U,a,n,81595545800,0,U,a,n,83135084400
+                                        ,0,U,a,n,84674623000,0,U,a,n,86214161600,0,U,a,n,87753700200,0,U,a,n,89293238800,0
+                                        ,U,a,n,90832777400,0,U,a,n,92372316000,0,U,a,n
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 0
+						KeyVer: 4005
+						KeyCount: 11
+						Key: 76976930000,0,U,a,n,78516468600,0,U,a,n,80056007200,0,U,a,n,81595545800,0,U,a,n,83135084400
+                                        ,0,U,a,n,84674623000,0,U,a,n,86214161600,0,U,a,n,87753700200,0,U,a,n,89293238800,0
+                                        ,U,a,n,90832777400,0,U,a,n,92372316000,0,U,a,n
+						Color: 1,1,1
+					}
+					LayerType: 2
+				}
+				Channel: "S" {
+					Channel: "X" {
+						Default: 1
+						Color: 1,1,1
+					}
+					Channel: "Y" {
+						Default: 1
+						Color: 1,1,1
+					}
+					Channel: "Z" {
+						Default: 1
+						Color: 1,1,1
+					}
+					LayerType: 3
+				}
+			}
+		}
+		
+		;Generic nodes animation
+		;----------------------------------------------------
+		
+		;Textures animation
+		;----------------------------------------------------
+		
+		;Materials animation
+		;----------------------------------------------------
+		
+		
+		;Constraints animation
+		;----------------------------------------------------
+	}
+}
+;Version 5 settings
+;------------------------------------------------------------------
+
+Version5:  {
+	AmbientRenderSettings:  {
+		Version: 101
+		AmbientLightColor: 0,0,0,1
+	}
+	FogOptions:  {
+		FlogEnable: 0
+		FogMode: 0
+		FogDensity: 0.002
+		FogStart: 0.3
+		FogEnd: 1000
+		FogColor: 1,1,1,1
+	}
+	Settings:  {
+		FrameRate: "30"
+		TimeFormat: 1
+		SnapOnFrames: 0
+		ReferenceTimeIndex: -1
+		TimeLineStartTime: -1539538600
+		TimeLineStopTime: 170888784600
+	}
+	RendererSetting:  {
+		DefaultCamera: "camera1"
+		DefaultViewingMode: 0
+	}
+}

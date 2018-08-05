@@ -116,7 +116,7 @@ namespace IronStar.SFX {
 				if (fpvCameraIndex<0) {	
 					Log.Warning("Camera node {0} does not exist", fpvCamera);
 				} else {
-					fpvCameraMatrix	=	Matrix.RotationY( -MathUtil.PiOverTwo ) * globalTransforms[ fpvCameraIndex ];
+					fpvCameraMatrix	=	Scene.FixGlobalCameraMatrix( globalTransforms[ fpvCameraIndex ] );
 					fpvViewMatrix	=	Matrix.Invert( fpvCameraMatrix );
 					PreTransform	=	fpvViewMatrix * Matrix.Scaling( factory.Scale );
 				}

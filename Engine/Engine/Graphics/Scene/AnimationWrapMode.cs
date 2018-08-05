@@ -8,5 +8,6 @@ namespace Fusion.Engine.Graphics {
 	public enum AnimationWrapMode {
 		Clamp,
 		Repeat,
+
 	}
 }

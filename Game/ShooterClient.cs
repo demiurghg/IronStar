@@ -106,7 +106,7 @@ namespace IronStar {
 
 			gameInput.Update( gameTime, world, ref userCommand );
 
-			camera.Update( gameTime.ElapsedSec, 1 );
+			camera.Update( gameTime, 1 );
 			
 			world.PresentWorld( gameTime, 1, camera, userCommand );
 

@@ -59,6 +59,11 @@ namespace Fusion.Engine.Graphics {
 			weight		=	(float)( floatFrame - prevFrame );
 		}
 
+		public static Matrix FixGlobalCameraMatrix ( Matrix globalTransform )
+		{
+			return Matrix.RotationY( -MathUtil.PiOverTwo ) * globalTransform;
+		}
+
 
 		/// <summary>
 		/// List of scene nodes

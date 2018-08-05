@@ -88,7 +88,9 @@
     <Compile Include="Physics\DetectorArea.cs" />
     <Compile Include="Physics\DynamicBox.cs" />
     <Compile Include="SFX\AnimationClip.cs" />
-    <Compile Include="SFX\AnimationTrackCollection.cs" />
+    <Compile Include="SFX\AnimationSource.cs" />
+    <Compile Include="SFX\AnimationPose.cs" />
+    <Compile Include="SFX\AnimationStack.cs" />
     <Compile Include="SFX\AnimationTrack.cs" />
     <Compile Include="SFX\Animator.cs" />
     <Compile Include="SFX\AnimatorFactory.cs" />

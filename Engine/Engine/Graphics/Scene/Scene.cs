@@ -45,6 +45,21 @@ namespace Fusion.Engine.Graphics {
 		int lastFrame = 0;
 
 
+		public static TimeSpan ComputeFrameLength( int frameCount, TimeMode timeMode )
+		{
+			return TimeSpan.FromSeconds( frameCount * 1000.0 / (int)timeMode );
+		}
+
+		public static void TimeToFrames ( TimeSpan time, TimeMode timeMode, out int prevFrame, out int nextFrame, out float weight )
+		{
+			double floatFrame = time.TotalSeconds * (int)timeMode / 1000.0;
+
+			prevFrame	=	(int)Math.Floor( floatFrame );
+			nextFrame	=	(int)Math.Ceiling( floatFrame );
+			weight		=	(float)( floatFrame - prevFrame );
+		}
+
+
 		/// <summary>
 		/// List of scene nodes
 		/// </summary>

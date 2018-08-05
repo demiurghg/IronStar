@@ -5,6 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace IronStar.SFX {
-	public class AnimationTrackCollection : List<AnimationTrack> {
+	public class AnimationStack : List<AnimationSource> {
 	}
 }

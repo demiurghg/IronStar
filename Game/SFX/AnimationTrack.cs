@@ -11,11 +11,9 @@ using Fusion.Engine.Graphics;
 namespace IronStar.SFX {
 
 
-	public class AnimationTrack {
+	public class AnimationTrack : AnimationSource {
 
 		public float TimeScale { get; set; } = 1;
-		public float Weight { get; set; } = 1;
-		public AnimationBlendMode BlendMode { get; set; }
 
 		public bool Busy { 
 			get {
@@ -23,44 +21,56 @@ namespace IronStar.SFX {
 			}
 		}
 
-		public int Frame {
-			get {
-				return frame;
-			}
-			set {
-				frame = value;
-			}
-		}
-		
-		readonly string channel;
-		readonly Scene scene;
-		readonly int nodeCount;
-		readonly int[] channelIndices;
-		readonly int channelIndex;
 
-		int frame;
+		TimeSpan trackTime;
 
 		Animation currentAnim;
 		Animation pendingAnim;
 
 		class Animation {
+			readonly TimeMode timeMode;
 			public readonly AnimationTake Take;
 			public readonly bool Looped;
+			public readonly TimeSpan Start;
+			public readonly TimeSpan Length;
+			public readonly TimeSpan End;
 
-			public Animation ( AnimationTake take, bool looped ) 
+			public Animation ( TimeSpan startTime, AnimationTake take, TimeMode timeMode, bool looped ) 
 			{
-				this.Take	=	take;
-				this.Looped	=	looped;
+				this.timeMode	=	timeMode;
+				this.Start		=	startTime;
+				this.Take		=	take;
+				this.Looped		=	looped;
+				this.Length		=	Scene.ComputeFrameLength( take.FrameCount, timeMode );
+				this.End		=	Start + Length;
 			}
 
-			public void GetKey ( int node, int frame, out Matrix transform )
+			public void GetKey ( int node, TimeSpan time, bool useDelta, out Matrix transform )
 			{
-				Take.GetKey( frame + Take.FirstFrame, node, out transform );
-			}
+				int prev, next;
+				float weight;
 
-			public void GetDeltaKey ( int node, int frame, out Matrix transform )
-			{
-				Take.GetDeltaKey( frame + Take.FirstFrame, node, out transform );
+				Scene.TimeToFrames( time - Start, timeMode, out prev, out next, out weight );
+
+				if (Looped) {
+					prev = MathUtil.Wrap( prev + Take.FirstFrame, Take.FirstFrame, Take.LastFrame );
+					next = MathUtil.Wrap( next + Take.FirstFrame, Take.FirstFrame, Take.LastFrame );
+				} else {
+					prev = MathUtil.Clamp( prev + Take.FirstFrame, Take.FirstFrame, Take.LastFrame );
+					next = MathUtil.Clamp( next + Take.FirstFrame, Take.FirstFrame, Take.LastFrame );
+				}
+				
+				Matrix prevT, nextT;
+
+				if (useDelta) {
+					Take.GetDeltaKey( prev, node, out prevT );
+					Take.GetDeltaKey( next, node, out nextT );
+				} else {
+					Take.GetKey( prev, node, out prevT );
+					Take.GetKey( next, node, out nextT );
+				}
+
+				transform = AnimBlendUtils.Lerp( prevT, nextT, weight );
 			}
 		}
 
@@ -70,20 +80,9 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="blendMode"></param>
-		public AnimationTrack( Scene scene, string channel, AnimationBlendMode blendMode )
+		public AnimationTrack( Scene scene, string channel, AnimationBlendMode blendMode ) : base(scene, channel, blendMode)
 		{
-			this.channel	=	channel;
-			BlendMode		=	blendMode;
-			this.scene		=	scene;
-			nodeCount		=	scene.Nodes.Count;
-
-			channelIndex	=	scene.GetNodeIndex( channel );
-
-			if (channelIndex<0) {
-				Log.Warning("Channel joint '{0}' does not exist", channel );
-			}
-
-			channelIndices	=	scene.GetChannelNodeIndices( channelIndex );
+			trackTime			=	new TimeSpan(0);
 		}
 
 
@@ -93,7 +92,7 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="time"></param>
 		/// <param name="destination"></param>
-		public bool Evaluate ( GameTime gameTime, Matrix[] destination )
+		public override bool Evaluate ( GameTime gameTime, Matrix[] destination )
 		{
 			//	update sequence twice 
 			//	to avoid stucking 
@@ -102,10 +101,10 @@ namespace IronStar.SFX {
 			UpdateSequence();
 
 			//	apply transofrms :
-			bool r = ApplyTransforms( frame, destination );
+			bool r = ApplyTransforms( destination );
 
 			//	advance time :
-			frame += (int)(1 * TimeScale);
+			trackTime += gameTime.Elapsed;
 
 			return r;
 		}
@@ -132,15 +131,17 @@ namespace IronStar.SFX {
 			}
 
 
-			var anim = new Animation ( take, looped );
-
 			if (currentAnim==null || immediate) {
 
+				var anim = new Animation ( trackTime, take, scene.TimeMode, looped );
+	
 				currentAnim		=	anim;
 				pendingAnim		=	null;
-				frame			=	0;
 
 			} else {
+
+				var anim = new Animation ( currentAnim.End, take, scene.TimeMode, looped );
+
 				pendingAnim		=	anim;
 			}
 		}
@@ -151,13 +152,14 @@ namespace IronStar.SFX {
 		 *  Internal stuff :
 		-----------------------------------------------------------------------------------------*/
 
-		bool ApplyTransforms ( int frame, Matrix[] destination )
+		bool ApplyTransforms ( Matrix[] destination )
 		{
 			if ( currentAnim==null || Weight==0 ) {
 				return false; // bypass track
 			}
 
-			bool additive = BlendMode==AnimationBlendMode.Additive;
+			bool additive = blendMode==AnimationBlendMode.Additive;
+
 
 			for ( int chIdx = 0; chIdx < channelIndices.Length; chIdx++ ) {
 				
@@ -169,12 +171,12 @@ namespace IronStar.SFX {
 
 				if (additive) {
 
-					currentAnim.GetDeltaKey( nodeIndex, frame, out src );
+					currentAnim.GetKey( nodeIndex, trackTime, true, out src );
 					dst = AnimBlendUtils.Lerp( dst, dst * src, weight );
 
 				} else {
 
-					currentAnim.GetKey( nodeIndex, frame, out src );
+					currentAnim.GetKey( nodeIndex, trackTime, false, out src );
 					dst = AnimBlendUtils.Lerp( dst, src, weight );
 
 				}
@@ -196,24 +198,20 @@ namespace IronStar.SFX {
 
 				int frameCount = currentAnim.Take.FrameCount;
 			
-				if ( frame >= frameCount ) {
+				if ( trackTime >= currentAnim.End ) {
 
 					if ( pendingAnim!=null ) {
-
-						frame %= frameCount;
 
 						currentAnim = pendingAnim;
 						pendingAnim = null;
 
 					} else {
 
-						if ( currentAnim.Looped ) {
-							frame %= frameCount;
-						} else {
+						if ( !currentAnim.Looped ) {
 							currentAnim = null;
 						}
 					}
-				}
+				} //*/
 			}
 		}
 	}

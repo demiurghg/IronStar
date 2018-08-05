@@ -14,9 +14,9 @@ namespace IronStar.SFX {
 
 		readonly ModelInstance model;
 		readonly Scene scene;
-		readonly AnimationTrackCollection tracks;
+		readonly AnimationStack tracks;
 
-		public AnimationTrackCollection Tracks { get { return tracks; } }
+		public AnimationStack Tracks { get { return tracks; } }
 
 		TimeSpan timer;
 		int frame;
@@ -37,7 +37,7 @@ namespace IronStar.SFX {
 			timer			=	new TimeSpan(0);
 			this.model		=	model;
 			this.scene		=	model.Scene;
-			this.tracks		=	new AnimationTrackCollection();
+			this.tracks		=	new AnimationStack();
 			this.fxPlayback	=	world.FXPlayback;
 			this.world		=	world;
 

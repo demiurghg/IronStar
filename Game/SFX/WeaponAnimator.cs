@@ -23,7 +23,7 @@ namespace IronStar.SFX {
 		AnimationTrack		trackShake1;
 		AnimationTrack		trackShake2;
 		AnimationTrack		trackShake3;
-		AnimationTrack		trackTilt;
+		AnimationPose		poseTilt;
 
 		AnimationTrack[]	shakeTracks;
 
@@ -46,9 +46,8 @@ namespace IronStar.SFX {
 			trackShake2	=	new AnimationTrack( model.Scene, null, AnimationBlendMode.Additive );
 			trackShake3	=	new AnimationTrack( model.Scene, null, AnimationBlendMode.Additive );
 
-			trackTilt	=	new AnimationTrack( model.Scene, null, AnimationBlendMode.Additive );
-			trackTilt.TimeScale = 0;
-			trackTilt.Weight = 0;
+			poseTilt	=	new AnimationPose( model.Scene, null, "anim_tilt", AnimationBlendMode.Additive );
+			poseTilt.Weight = 0;
 
 			shakeTracks	=	new[] { trackShake0, trackShake1, trackShake2, trackShake3 }; 
 
@@ -57,10 +56,9 @@ namespace IronStar.SFX {
 			composer.Tracks.Add( trackShake1 );
 			composer.Tracks.Add( trackShake2 );
 			composer.Tracks.Add( trackShake3 );
-			composer.Tracks.Add( trackTilt );
+			composer.Tracks.Add( poseTilt );
 
 			trackWeapon.Sequence( "anim_idle", true, true );
-			trackTilt.Sequence("anim_tilt", true, true );
 		}
 
 
@@ -95,14 +93,13 @@ namespace IronStar.SFX {
 				if ( weaponState == WeaponState.Cooldown ) {
 
 					trackWeapon.Sequence( "anim_recoil", true, false );
-					trackWeapon.Frame ++;
+					//trackWeapon.Frame ++;
 
 					var shakeName = "anim_shake" + rand.Next(6).ToString();
 					var shakeAmpl = Math.Abs(rand.GaussDistribution(0,0.5f));
 					RunShakeAnimation( shakeName, shakeAmpl );
 
 					composer.SequenceFX( "machinegunMuzzle", "muzzle", 0.1f );
-					//composer.SequenceFX( "testTracer", "muzzle" );
 				}
 
 
@@ -148,8 +145,8 @@ namespace IronStar.SFX {
 
 			tiltFactor = MathUtil.Drift( tiltFactor, targetTilt, dt*2, dt*2 );
 
-			trackTilt.Weight	=	Math.Abs( tiltFactor );
-			trackTilt.Frame		=	(tiltFactor > 0) ? 1 : 2;
+			poseTilt.Weight	=	Math.Abs( tiltFactor );
+			poseTilt.Frame	=	(tiltFactor > 0) ? 1 : 2;
 
 			//	step animation :
 			var groundVelocity = new Vector3( entity.LinearVelocity.X, 0, entity.LinearVelocity.Z );

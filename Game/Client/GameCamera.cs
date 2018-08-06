@@ -135,7 +135,12 @@ namespace IronStar.Views {
 			var cameraFwd	=	cameraPos + m.Forward;
 			var cameraUp	=	m.Up;
 			#else
-			var camMatrix	=	UpdateAnimation( player, gameTime ) * player.GetWorldMatrix(0);
+
+			var translate	=	Matrix.Translation( player.LerpPosition(0) );
+			var rotateYaw	=	Matrix.RotationYawPitchRoll( uc.Yaw, 0, 0 );
+			var rotatePR	=	Matrix.RotationYawPitchRoll( 0, uc.Pitch, uc.Roll );
+
+			var camMatrix	=	rotatePR * UpdateAnimation( player, gameTime ) * rotateYaw * translate;
 
 			var cameraPos	=	camMatrix.TranslationVector;
 

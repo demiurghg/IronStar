@@ -414,7 +414,10 @@
     <Compile Include="Engine\Audio\AudioListener.cs" />
     <Compile Include="Engine\Audio\CurvePoint.cs" />
     <Compile Include="Engine\Audio\Enums.cs" />
-    <Compile Include="Engine\Audio\fmod_studio.cs" />
+    <Compile Include="Drivers\FMOD\fmod.cs" />
+    <Compile Include="Drivers\FMOD\fmod_dsp.cs" />
+    <Compile Include="Drivers\FMOD\fmod_errors.cs" />
+    <Compile Include="Drivers\FMOD\fmod_studio.cs" />
     <Compile Include="Engine\Audio\SoundEffect.cs">
       <SubType>Code</SubType>
     </Compile>

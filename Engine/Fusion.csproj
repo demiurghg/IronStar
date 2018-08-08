@@ -414,6 +414,7 @@
     <Compile Include="Engine\Audio\AudioListener.cs" />
     <Compile Include="Engine\Audio\CurvePoint.cs" />
     <Compile Include="Engine\Audio\Enums.cs" />
+    <Compile Include="Engine\Audio\fmod_studio.cs" />
     <Compile Include="Engine\Audio\SoundEffect.cs">
       <SubType>Code</SubType>
     </Compile>

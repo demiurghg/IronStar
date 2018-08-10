@@ -79,12 +79,12 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
-		public SoundEffect	LoadSound ( string path )
+		public SoundBank	LoadSound ( string path )
 		{
 			if (string.IsNullOrWhiteSpace(path)) {
 				return null;
 			}
-			return world.Content.Load<SoundEffect>( path, (SoundEffect)null );
+			return world.Content.Load<SoundBank>( path, (SoundBank)null );
 		}
 
 

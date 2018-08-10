@@ -37,13 +37,9 @@ namespace Fusion.Engine.Audio {
 		/// <param name="options"></param>
 		/// <param name="volume"></param>
 		/// <param name="pitch"></param>
-		public void PlaySound ( SoundEffect soundEffect, PlayOptions options = PlayOptions.None )
+		public void PlaySound ( SoundBank soundEffect, PlayOptions options = PlayOptions.None )
 		{
-			soundInstance	=	soundEffect.CreateInstance();
-
-			soundInstance.IsLooped	=	options.HasFlag(PlayOptions.Looped);
-
-			soundInstance.Play(); 
+			soundInstance	=	null;
 		}
 
 

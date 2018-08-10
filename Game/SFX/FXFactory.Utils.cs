@@ -26,7 +26,7 @@ namespace IronStar.SFX {
 
 		public void Precache ( ContentManager content )
 		{
-			content.Precache<SoundEffect>( SoundStage.Sound );
+			content.Precache<SoundBank>( SoundStage.Sound );
 		}
 
 

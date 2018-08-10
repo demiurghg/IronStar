@@ -19,7 +19,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;DIRECTX</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;DIRECTX WIN64</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -34,7 +34,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE;DIRECTX LUA_CORE</DefineConstants>
+    <DefineConstants>TRACE;DIRECTX LUA_CORE WIN64</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -409,20 +409,20 @@
     <Compile Include="Core\IStorage.cs" />
     <Compile Include="Core\DirectoryStorage.cs" />
     <Compile Include="Core\UserStorage.cs" />
-    <Compile Include="Engine\Audio\AudioChannels.cs" />
+    <Compile Include="Engine\Audio\Old\AudioChannels.cs" />
     <Compile Include="Engine\Audio\AudioEmitter.cs" />
     <Compile Include="Engine\Audio\AudioListener.cs" />
-    <Compile Include="Engine\Audio\CurvePoint.cs" />
+    <Compile Include="Engine\Audio\Old\CurvePoint.cs" />
     <Compile Include="Engine\Audio\Enums.cs" />
     <Compile Include="Drivers\FMOD\fmod.cs" />
     <Compile Include="Drivers\FMOD\fmod_dsp.cs" />
     <Compile Include="Drivers\FMOD\fmod_errors.cs" />
     <Compile Include="Drivers\FMOD\fmod_studio.cs" />
-    <Compile Include="Engine\Audio\SoundEffect.cs">
+    <Compile Include="Engine\Audio\SoundBank.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Engine\Audio\SoundEffectInstance.cs" />
-    <Compile Include="Engine\Audio\SoundEffectLoader.cs" />
+    <Compile Include="Engine\Audio\SoundBankLoader.cs" />
     <Compile Include="Engine\Audio\SoundState.cs" />
     <Compile Include="Engine\Audio\SoundSystem.Config.cs">
       <SubType>Code</SubType>

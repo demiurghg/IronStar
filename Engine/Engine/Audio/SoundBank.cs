@@ -37,7 +37,7 @@ permitted under your local laws, the contributors exclude the implied warranties
 purpose and non-infringement.
 */
 #endregion License
-﻿
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -49,7 +49,7 @@ using Fusion.Core.Mathematics;
 using FMOD.Studio;
 using Fusion.Core.Extensions;
 using Fusion.Core;
-
+using FMOD;
 
 namespace Fusion.Engine.Audio
 {
@@ -70,7 +70,22 @@ namespace Fusion.Engine.Audio
 		/// <param name="data"></param>
 		public SoundBank( SoundSystem ss, byte[] data )
         {
-			SoundSystem.ERRCHECK( ss.StudioSystem.loadBankMemory( data, LOAD_BANK_FLAGS.NORMAL, out bank ) );
+			FmodExt.ERRCHECK( ss.system.loadBankMemory( data, LOAD_BANK_FLAGS.NORMAL, out bank ) );
+
+			FmodExt.ERRCHECK( bank.loadSampleData() );
+
+			EventDescription[] eventDescs;
+
+			LOADING_STATE loadState;
+			FmodExt.ERRCHECK( bank.getLoadingState( out loadState ) );
+			Log.Verbose("...{0}", loadState);
+
+			FmodExt.ERRCHECK( bank.getEventList( out eventDescs ) );
+
+			for ( int i=0; i<eventDescs.Length; i++ ) {
+
+				Log.Verbose("... {0}", eventDescs[i].GetPath() );
+			}
         }
 
 
@@ -83,7 +98,7 @@ namespace Fusion.Engine.Audio
 		{
 			if (disposing) {
 				if (Bank!=null) {
- 					SoundSystem.ERRCHECK( Bank.unload() );
+ 					FmodExt.ERRCHECK( Bank.unload() );
 				}
 			}
 		}

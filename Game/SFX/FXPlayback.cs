@@ -24,7 +24,7 @@ namespace IronStar.SFX {
 
 		readonly Game			game;
 		public readonly RenderWorld	rw;
-		public readonly SoundWorld	sw;
+		public readonly SoundSystem	ss;
 		public readonly GameWorld world;
 
 		List<FXInstance> runningSFXes = new List<FXInstance>();
@@ -41,7 +41,7 @@ namespace IronStar.SFX {
 			this.world	=	world;
 			this.game	=	world.Game;
 			this.rw		=	game.RenderSystem.RenderWorld;
-			this.sw		=	game.SoundSystem.SoundWorld;
+			this.ss		=	game.SoundSystem;
 
 			Game_Reloading(this, EventArgs.Empty);
 			game.Reloading +=	Game_Reloading;
@@ -79,12 +79,22 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
-		public SoundBank	LoadSound ( string path )
+		public SoundEventInstance	CreateSoundEventInstance ( string path )
 		{
 			if (string.IsNullOrWhiteSpace(path)) {
 				return null;
 			}
-			return world.Content.Load<SoundBank>( path, (SoundBank)null );
+
+			try {
+				var soundEvent = ss.GetEvent( path );
+
+				return soundEvent.CreateInstance();
+
+			} catch ( SoundException se ) {
+
+				Log.Warning(se.ToString());
+				return null;
+			}
 		}
 
 

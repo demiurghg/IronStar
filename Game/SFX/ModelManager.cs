@@ -28,7 +28,6 @@ namespace IronStar.SFX {
 		readonly Game			game;
 		public readonly RenderSystem rs;
 		public readonly RenderWorld	rw;
-		public readonly SoundWorld	sw;
 		public readonly GameWorld world;
 
 		public Matrix ViewMatrix;
@@ -47,7 +46,6 @@ namespace IronStar.SFX {
 			this.game	=	world.Game;
 			this.rs		=	game.RenderSystem;
 			this.rw		=	game.RenderSystem.RenderWorld;
-			this.sw		=	game.SoundSystem.SoundWorld;
 
 			Game_Reloading(this, EventArgs.Empty);
 			game.Reloading +=	Game_Reloading;

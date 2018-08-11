@@ -107,7 +107,7 @@ namespace IronStar.Views {
 			var elapsedTime =  gameTime.ElapsedSec;
 
 			var rw	= Game.RenderSystem.RenderWorld;
-			var sw	= Game.SoundSystem.SoundWorld;
+			var sw	= Game.SoundSystem;
 			var vp	= Game.RenderSystem.DisplayBounds;
 
 			var aspect	=	(vp.Width) / (float)vp.Height;
@@ -151,11 +151,10 @@ namespace IronStar.Views {
 			rw.Camera		.SetupCameraFov( cameraPos, cameraFwd, cameraUp, MathUtil.Rad(currentFov),  0.125f/2.0f, 1024f, 2, 0.05f, aspect );
 			rw.WeaponCamera	.SetupCameraFov( cameraPos, cameraFwd, cameraUp, MathUtil.Rad(75),			0.125f/2.0f, 1024f, 2, 0.05f, aspect );
 
-			sw.Listener	=	new AudioListener();
-			sw.Listener.Position	=	cameraPos;
-			sw.Listener.Forward		=	m.Forward;
-			sw.Listener.Up			=	m.Up;
-			sw.Listener.Velocity	=	Vector3.Zero;
+			//
+			//	Set player listener :
+			//
+			sw.SetListener( cameraPos, m.Forward, m.Up, player.LinearVelocity );
 		}
 
 

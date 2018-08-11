@@ -28,7 +28,7 @@
     "$values": [
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "ScenePath": "scenes\\q3t5.fbx",
+        "ScenePath": "scenes\\q3t5",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
         "GlowIntensity": 100.0,

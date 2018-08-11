@@ -40,25 +40,32 @@
 
 using System;
 using SharpDX.XAudio2;
-using SharpDX.X3DAudio;
-using SharpDX.Multimedia;
-using SharpDX.XAPO;
+using FMOD;
+using FMOD.Studio;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 
 
 namespace Fusion.Engine.Audio
 {
-	internal sealed class SoundEffectInstance : IDisposable
+	public sealed class SoundEventInstance
 	{
+		readonly EventDescription desc;
+		readonly EventInstance inst;
+		readonly FMOD.Studio.System system;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="effect"></param>
 		/// <param name="voice"></param>
-        internal SoundEffectInstance( SoundSystem device, SoundBank effect, SourceVoice voice )
+        internal SoundEventInstance( SoundSystem device, EventDescription desc )
         {
+			this.desc	=	desc;
+			this.inst	=	null;
+			this.system	=	device.system;
+
+			FmodExt.ERRCHECK( desc.createInstance( out inst ) );
         }
 
 
@@ -66,117 +73,88 @@ namespace Fusion.Engine.Audio
 		/// <summary>
 		/// 
 		/// </summary>
-        public void Dispose()
+        public void Release()
         {
+			FmodExt.ERRCHECK( inst.release() );
 		}
-		
 
 
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="listener"></param>
-		/// <param name="emitter"></param>
-		public void Apply3D (AudioListener listener, AudioEmitter emitter, int operationSet)
-        {
-        }
-
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="listeners"></param>
-		/// <param name="emitter"></param>
-		public void Apply3D (AudioListener[] listeners,AudioEmitter emitter, int operationSet)
+		public void Start ()
 		{
-		}		
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public void Pause ()
-        {
-		}
-		
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public void Play ()
-        {
+			FmodExt.ERRCHECK( inst.start() );
 		}
 
 
-
-		/// <summary>
-		/// Tries to play the sound, returns true if successful
-		/// </summary>
-		/// <returns></returns>
-		internal bool TryPlay()
+		public void Stop ( bool immediate )
 		{
-			return false;
+			var mode = immediate ? STOP_MODE.IMMEDIATE : STOP_MODE.ALLOWFADEOUT;
+			FmodExt.ERRCHECK( inst.stop( mode ) );
 		}
 
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public void Resume()
-        {
+		public void Set3DParameters ( Vector3 position, Vector3 forward, Vector3 up, Vector3 velocity )
+		{
+			FMOD.Studio._3D_ATTRIBUTES attrs;
+
+			attrs.forward	=	FmodExt.Convert( forward	);
+			attrs.position	=	FmodExt.Convert( position	);
+			attrs.up		=	FmodExt.Convert( up			);
+			attrs.velocity	=	FmodExt.Convert( velocity	);
+
+			FmodExt.ERRCHECK( inst.set3DAttributes( attrs ) );
+		}
+
+
+		public void Set3DParameters ( Vector3 position )
+		{
+			Set3DParameters( position, Vector3.ForwardRH, Vector3.Up, Vector3.Zero );
+		}
+
+
+		public void Set3DParameters ( Vector3 position, Vector3 velocity )
+		{
+			Set3DParameters( position, Vector3.ForwardRH, Vector3.Up, velocity );
 		}
 
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="immediate"></param>
-        public void Stop(bool immediate)
-        {
-        }		
+		PLAYBACK_STATE GetPlaybackState()
+		{
+			PLAYBACK_STATE result;
+			FmodExt.ERRCHECK( inst.getPlaybackState( out result ) );
+			return result;
+		}
 
 
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public bool IsDisposed { 
+		public bool IsStopped {
 			get {
-				return true;
+				return GetPlaybackState() == PLAYBACK_STATE.STOPPED;
 			}
 		}
+		/// <summary>
+		///// 
+		///// </summary>
+		//public bool IsLooped;
+
+		///// <summary>
+		///// 
+		///// </summary>
+  //      public float Pan;
 		
+		///// <summary>
+		///// 
+		///// </summary>
+		//public float Pitch         ;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public bool IsLooped;
+		///// <summary>
+		///// 
+		///// </summary>
+		//public SoundState State ;
 
-		/// <summary>
-		/// 
-		/// </summary>
-        public float Pan;
-		
-		/// <summary>
-		/// 
-		/// </summary>
-		public float Pitch         ;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public SoundState State ;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public float Volume;
+		///// <summary>
+		///// 
+		///// </summary>
+		//public float Volume;
 	}
 }

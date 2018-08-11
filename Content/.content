@@ -10,9 +10,6 @@ scenes/*.jpg
 turtle/*
 _outsource/*
 
-[Command]
-echo BLAH!
-
 [BinaryDirectories]
 ..\..\..\..\SDKs
 ..\..\..\..\Native\FScene\bin\x64\Release

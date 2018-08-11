@@ -27,9 +27,7 @@ namespace IronStar.SFX {
 		
 		public class SoundStage : Stage {
 
-			AudioEmitter	emitter;
-
-			CurvePoint[]	curve	=	Enumerable.Range(0,5).Select( i => new CurvePoint(i/4.0f, 1.0f-i/4.0f) ).ToArray();
+			SoundEventInstance soundInstance;
 
 			/// <summary>
 			/// 
@@ -39,51 +37,47 @@ namespace IronStar.SFX {
 			/// <param name="soundPath"></param>
 			public SoundStage ( FXInstance instance, FXSoundStage stageDesc, FXEvent fxEvent, bool looped ) : base(instance)
 			{
-				var sound	=	instance.fxPlayback.LoadSound( stageDesc.Sound );
+				soundInstance	=	instance.fxPlayback.CreateSoundEventInstance( stageDesc.Sound );
 
-				if (sound==null) {
+				if (soundInstance==null) {
 					return;
 				}
 
-				emitter	=	instance.sw.AllocEmitter();
-				emitter.Position		=	fxEvent.Origin;
-				emitter.DistanceScale	=	FXFactory.GetRadius( stageDesc.Attenuation );
-				emitter.DopplerScale	=	1;
-				emitter.VolumeCurve		=	null;
-				emitter.LocalSound		=	false;
+				soundInstance.Set3DParameters( fxEvent.Origin, fxEvent.Velocity );
+				soundInstance.Start();
 
-				emitter.PlaySound( sound, looped ? PlayOptions.Looped : PlayOptions.None );
+				/*if (!looped) {	
+					soundInstance.Stop(false);
+				} */
 			}
 
 
 			public override void Stop ( bool immediate )
 			{
-				if (emitter!=null) {
-					emitter.StopSound( immediate );
-				}
+				soundInstance?.Stop( immediate );
 			}
 
 
 			public override bool IsExhausted ()
 			{
-				return (emitter==null || emitter.SoundState==SoundState.Stopped);
+				if (soundInstance==null) {
+					return true;
+				}	
+				
+				return soundInstance.IsStopped;			
 			}
 
 
 			public override void Kill ()
 			{
-				if (emitter!=null) {
-					fxInstance.sw.FreeEmitter( emitter );
-				}
+				soundInstance.Stop(true);
+				soundInstance.Release();
 			}
 
 
 			public override void Update ( float dt, FXEvent fxEvent )
 			{
-				if (emitter!=null) {
-					emitter.Position	=	fxEvent.Origin;
-					emitter.Velocity	=	fxEvent.Velocity;
-				}
+				soundInstance.Set3DParameters( fxEvent.Origin, fxEvent.Velocity );
 			}
 
 		}

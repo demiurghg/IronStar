@@ -9,24 +9,16 @@ using SharpDX;
 using Fusion.Core;
 using Fusion.Engine.Common;
 using Fusion.Core.Configuration;
+using FMOD;
 using FMOD.Studio;
-
+using Fusion.Core.Input;
+using Fusion.Core.Mathematics;
 
 namespace Fusion.Engine.Audio {
 	public sealed partial class SoundSystem : GameComponent {
 
-		
-		FMOD.Studio.System studio;
-		FMOD.System lowlevel;
-
-		public FMOD.Studio.System StudioSystem {
-			get { return studio; }
-		}
-
-		public FMOD.Studio.System LowLevelSystem {
-			get { return studio; }
-		}
-
+		internal FMOD.Studio.System system;
+		internal FMOD.System		lowlevel;
 
 
 		/// <summary>
@@ -43,27 +35,36 @@ namespace Fusion.Engine.Audio {
 		/// </summary>
         public override void Initialize()
         {
-			soundWorld = new SoundWorld(Game);
+			var studioFlags		=	FMOD.Studio.INITFLAGS.NORMAL;
+			var lowlevelFlags	=	FMOD.INITFLAGS.NORMAL;
+			var speakerMode		=	FMOD.SPEAKERMODE._5POINT1;
 
-			ERRCHECK( FMOD.Studio.System.create( out studio ) );
-			ERRCHECK( studio.getLowLevelSystem( out lowlevel ) );
-			ERRCHECK( lowlevel.setSoftwareFormat( 0, FMOD.SPEAKERMODE._5POINT1, 0 ) );
-			ERRCHECK( studio.initialize( 1024, INITFLAGS.NORMAL, FMOD.INITFLAGS.NORMAL, IntPtr.Zero ) );
+			FmodExt.ERRCHECK( FMOD.Studio.System.create( out system ) );
+			FmodExt.ERRCHECK( system.getLowLevelSystem( out lowlevel ) );
+			FmodExt.ERRCHECK( lowlevel.setSoftwareFormat( 0, speakerMode, 0 ) );
+			FmodExt.ERRCHECK( system.initialize( 1024, studioFlags, lowlevelFlags, IntPtr.Zero ) );
+
+			Game.Content.Load<SoundBank>(@"audio\desktop\Master Bank.strings"  );
+			Game.Content.Load<SoundBank>(@"audio\desktop\Master Bank"		   );
+			Game.Content.Load<SoundBank>(@"audio\desktop\Music"				   );
+			Game.Content.Load<SoundBank>(@"audio\desktop\SFX"				   );
+			Game.Content.Load<SoundBank>(@"audio\desktop\Vehicles"			   );
+			Game.Content.Load<SoundBank>(@"audio\desktop\VO"				   );
+
+			Game.Keyboard.KeyDown+=Keyboard_KeyDown;
         }
 
-
-
-		/// <summary>
-		/// Checks FMOD call
-		/// </summary>
-		/// <param name="result"></param>
-		static internal void ERRCHECK( FMOD.RESULT result )
+		private void Keyboard_KeyDown( object sender, KeyEventArgs e )
 		{
-			switch ( result ) {
-				case FMOD.RESULT.OK: break;
-				default: Log.Error("FMOD Error: {0}", result); break;
+			if (e.Key==Keys.E) {
+
+				var desc = GetEvent("UI/Okay");
+				var inst = desc.CreateInstance();
+				inst.Start();
+				inst.Release();
 			}
 		}
+
 
 
 		/// <summary>
@@ -73,31 +74,20 @@ namespace Fusion.Engine.Audio {
         protected override void Dispose(bool disposing)
         {
 			if (disposing) {
-				if (studio!=null) {
-					ERRCHECK( studio.release() );
-					studio = null;
+				if (system!=null) {
+					FmodExt.ERRCHECK( system.release() );
+					system = null;
 				}
 			}
         }
 
 
-
-		/// <summary>
-		/// Gets default sound world.
-		/// </summary>
-		public SoundWorld SoundWorld {
-			get { return soundWorld; }
-		}
-
-
-		SoundWorld soundWorld;
-
-
 		/// <summary>
 		/// Updates sound.
-		/// </summary>
-		internal void Update ( GameTime gameTime )
+		/// </summary>			
+		public override void Update( GameTime gameTime )
 		{
+			FmodExt.ERRCHECK( system.update() );
 		}
 
 
@@ -107,6 +97,83 @@ namespace Fusion.Engine.Audio {
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="position"></param>
+		/// <param name="forward"></param>
+		/// <param name="up"></param>
+		public void SetListener ( Vector3 position, Vector3 forward, Vector3 up, Vector3 velocity )
+		{
+			FMOD.Studio._3D_ATTRIBUTES attrs;
+
+			attrs.forward	=	FmodExt.Convert( forward	);
+			attrs.position	=	FmodExt.Convert( position	);
+			attrs.up		=	FmodExt.Convert( up		);
+			attrs.velocity	=	FmodExt.Convert( velocity	);
+
+			FmodExt.ERRCHECK( system.setListenerAttributes( 0, attrs ) );
+		}
+
+
+
+		/// <summary>
+		/// Gets event by name
+		/// </summary>
+		/// <param name="path"></param>
+		/// <returns></returns>
+		public SoundEvent GetEvent ( string path )
+		{
+			EventDescription eventDesc;
+			string eventPath = Path.Combine(@"event:/", path);
+
+			var result = system.getEvent( eventPath, out eventDesc );
+
+			if (result!=FMOD.RESULT.OK) {
+				throw new SoundException( result, eventPath );
+			}
+
+			return new SoundEvent( this, eventDesc );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="path"></param>
+		/// <returns></returns>
+		public bool Play2DEvent ( string path )
+		{
+			EventDescription desc;
+			EventInstance inst;
+			var eventPath = Path.Combine(@"event:/", path);
+
+			FmodExt.ERRCHECK( system.getEvent(eventPath, out desc) );
+
+			if (desc==null) {
+				Log.Warning("Failed to play event: {0}", eventPath );
+				return false;
+			}
+
+			bool is3d;
+			FmodExt.ERRCHECK( desc.is3D( out is3d ) );
+
+			if (is3d) {
+				Log.Warning("Event '{0}' is 3D", eventPath);
+			}
+
+			FmodExt.ERRCHECK( desc.createInstance( out inst ) );
+
+			if (inst==null) {
+				return false;
+			}
+
+			inst.start();
+			inst.release();
+
+			return true;
+		}
 	}
 
 }

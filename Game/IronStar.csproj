@@ -95,6 +95,7 @@
     <Compile Include="SFX\Animator.cs" />
     <Compile Include="SFX\AnimatorFactory.cs" />
     <Compile Include="SFX\AnimationComposer.cs" />
+    <Compile Include="SFX\FXInstance.SoundStage.cs" />
     <Compile Include="SFX\WeaponAnimator.cs" />
     <Compile Include="ShooterCampaign.cs" />
     <Compile Include="Client\GameCamera.cs" />
@@ -204,7 +205,6 @@
     <Compile Include="SFX\FXEvent.cs" />
     <Compile Include="Core\GameWorld.Casting.cs" />
     <Compile Include="SFX\FXInstance.Stage.cs" />
-    <Compile Include="SFX\FXInstance.SoundStage.cs" />
     <Compile Include="SFX\FXInstance.LightStage.cs" />
     <Compile Include="SFX\FXInstance.ParticleStage.cs" />
     <Compile Include="SFX\FXInstance.cs" />

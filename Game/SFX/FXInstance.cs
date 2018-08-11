@@ -29,7 +29,7 @@ namespace IronStar.SFX {
 
 		protected readonly FXPlayback fxPlayback;
 		protected readonly RenderWorld rw;
-		protected readonly SoundWorld sw;
+		protected readonly SoundSystem ss;
 
 		public delegate void EmitFunction ( ref Particle p, FXEvent fxEvent );
 
@@ -63,7 +63,7 @@ namespace IronStar.SFX {
 			this.fxAtom		=	fxEvent.FXAtom;
 			this.fxPlayback	=	sfxSystem;
 			this.rw			=	sfxSystem.rw;
-			this.sw			=	sfxSystem.sw;
+			this.ss			=	sfxSystem.ss;
 			this.fxEvent	=	fxEvent;
 
 			AddParticleStage( fxFactory.ParticleStage1, fxEvent, looped );

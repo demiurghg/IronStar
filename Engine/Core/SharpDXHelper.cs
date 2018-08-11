@@ -81,40 +81,5 @@ namespace Fusion.Core {
                 OrientTop	=	Convert( up ),
             };
         }
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="curve"></param>
-		/// <returns></returns>
-		public static SharpDX.X3DAudio.CurvePoint[] Convert ( Fusion.Engine.Audio.CurvePoint[] curve )
-		{
-			if (curve==null) {
-				return null;
-			}
-
-			return curve
-				.Select( c => new SharpDX.X3DAudio.CurvePoint{ Distance = c.Distance, DspSetting = c.DspSetting } )
-				.ToArray();
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="curve"></param>
-		/// <returns></returns>
-		public static Fusion.Engine.Audio.CurvePoint[] Convert ( SharpDX.X3DAudio.CurvePoint[] curve )
-		{
-			if (curve==null) {
-				return null;
-			}
-
-			return curve
-				.Select( c => new Engine.Audio.CurvePoint{ Distance = c.Distance, DspSetting = c.DspSetting } )
-				.ToArray();
-		}
 	}
 }

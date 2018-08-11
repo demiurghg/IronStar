@@ -12,7 +12,7 @@ using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Common;
 using Fusion.Core.Extensions;
-
+using FMOD.Studio;
 
 namespace Fusion.Engine.Audio {
 	[ContentLoader(typeof(SoundBank))]

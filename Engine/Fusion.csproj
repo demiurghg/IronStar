@@ -214,6 +214,7 @@
     <Compile Include="Development\UserMessage.Designer.cs">
       <DependentUpon>UserMessage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Drivers\FMOD\FmodExt.cs" />
     <Compile Include="Drivers\Graphics\Resources\Texture2DStaging.cs" />
     <Compile Include="Drivers\Graphics\Resources\Texture3DCompute.cs" />
     <Compile Include="Drivers\Graphics\Resources\TextureCubeArrayRW.cs" />
@@ -409,10 +410,8 @@
     <Compile Include="Core\IStorage.cs" />
     <Compile Include="Core\DirectoryStorage.cs" />
     <Compile Include="Core\UserStorage.cs" />
-    <Compile Include="Engine\Audio\Old\AudioChannels.cs" />
-    <Compile Include="Engine\Audio\AudioEmitter.cs" />
-    <Compile Include="Engine\Audio\AudioListener.cs" />
-    <Compile Include="Engine\Audio\Old\CurvePoint.cs" />
+    <Compile Include="Engine\Audio\SoundException.cs" />
+    <Compile Include="Engine\Audio\Old\AudioListener.cs" />
     <Compile Include="Engine\Audio\Enums.cs" />
     <Compile Include="Drivers\FMOD\fmod.cs" />
     <Compile Include="Drivers\FMOD\fmod_dsp.cs" />
@@ -421,14 +420,14 @@
     <Compile Include="Engine\Audio\SoundBank.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Engine\Audio\SoundEffectInstance.cs" />
+    <Compile Include="Engine\Audio\SoundEvent.cs" />
+    <Compile Include="Engine\Audio\SoundEventInstance.cs" />
     <Compile Include="Engine\Audio\SoundBankLoader.cs" />
     <Compile Include="Engine\Audio\SoundState.cs" />
     <Compile Include="Engine\Audio\SoundSystem.Config.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Engine\Audio\SoundSystem.cs" />
-    <Compile Include="Engine\Audio\SoundWorld.cs" />
     <Compile Include="Engine\Client\ClientContext.cs" />
     <Compile Include="Engine\Client\ClientState.cs" />
     <Compile Include="Engine\Client\GameClient.Active.cs" />

@@ -405,7 +405,7 @@ namespace IronStar.SFX {
 		public override string ToString()
 		{
 			if ( Enabled ) {
-				return string.Format( "{0} [{1}]", Attenuation, Sound );
+				return string.Format( "{0}", Sound );
 			} else {
 				return string.Format( "Disabled" );
 			}
@@ -419,10 +419,6 @@ namespace IronStar.SFX {
 		[Description( "Sound path" )]
 		[Editor( typeof( SoundFileLocationEditor ), typeof( UITypeEditor ) )]
 		public string Sound { get; set; } = "";
-
-		[XmlAttribute]
-		[Description( "Sound emitter radius" )]
-		public FXSoundAttenuation Attenuation { get; set; } = FXSoundAttenuation.Normal;
 	}
 
 

@@ -126,9 +126,17 @@ namespace Fusion.Core.Content {
 			}
 
 			//	take characters until dash '|' :
-			assetPath = new string( assetPath.TakeWhile( ch => ch!='|' ).ToArray() );
+			assetPath		= new string( assetPath.TakeWhile( ch => ch!='|' ).ToArray() );
+			var assetExt	= Path.GetExtension( assetPath );
 
-			return Path.Combine(contentDirectory, Path.ChangeExtension( assetPath, ".asset" ) );
+			//	special case for FMOD banks
+			if (assetExt==".strings") {
+				assetPath = assetPath + ".asset";
+			} else {
+				assetPath = Path.ChangeExtension( assetPath, ".asset" );
+			}
+
+			return Path.Combine( contentDirectory, assetPath );
 		}
 
 

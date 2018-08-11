@@ -8,7 +8,7 @@
   "ProjectileCount": 1,
   "AngularSpread": 2.0,
   "WarmupTime": 0,
-  "CooldownTime": 100,
+  "CooldownTime": 72,
   "OverheatTime": 0,
   "ReloadTime": 500,
   "EmptyTime": 500,

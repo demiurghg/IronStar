@@ -74,7 +74,7 @@ namespace Fusion.Engine.Graphics {
 
 		public void LoadContent ()
 		{
-			effect		=	Game.Content.Load<Ubershader>("debugRender.hlsl");
+			effect		=	Game.Content.Load<Ubershader>("debugRender");
 			factory		=	effect.CreateFactory( typeof(RenderFlags), (ps,i) => Enum(ps, (RenderFlags)i ) );
 
 			//factory		=	effect.CreateFactory( typeof(RenderFlags), Primitive.LineList, VertexInputElement.FromStructure( typeof(LineVertex) ), BlendState.AlphaBlend, RasterizerState.CullNone, DepthStencilState.Default );

@@ -7,7 +7,9 @@ using Fusion;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Graphics;
+using Fusion.Engine.Audio;
 using IronStar.Core;
+using Fusion.Core.Extensions;
 
 namespace IronStar.SFX {
 	public class AnimationComposer {
@@ -26,7 +28,8 @@ namespace IronStar.SFX {
 		readonly GameWorld world;
 		readonly Matrix[] localTransforms;
 
-		List<FXInstance> fxInstances = new List<FXInstance>();
+		List<FXInstance> fxInstances = new List<FXInstance>(32);
+		List<SoundEventInstance> soundInstances = new List<SoundEventInstance>(32);
 
 
 		/// <summary>
@@ -96,6 +99,15 @@ namespace IronStar.SFX {
 			fxInstances.RemoveAll( fx => fx.IsExhausted );
 
 			//--------------------------------
+			//	update sound :
+			foreach ( var sound in soundInstances ) {
+				Vector3 position = 	model.ComputeWorldMatrix().TranslationVector;
+				sound.Set3DParameters( position );
+			}
+
+			soundInstances.RemoveAll( snd => snd.IsStopped );
+
+			//--------------------------------
 			//	increase timer :
 			timer = timer + gameTime.Elapsed;
 			frame++;
@@ -109,7 +121,13 @@ namespace IronStar.SFX {
 		/// <param name="joint"></param>
 		public void SequenceFX ( string fxName, string joint, float scale )
 		{
-			var jointId	 =	scene.GetNodeIndex( joint );
+			int jointId = 0;
+
+			if (joint==null) {
+				jointId	 =	0;
+			} else {
+				jointId	 =	scene.GetNodeIndex( joint );
+			}
 
 			if (jointId<0) {
 				Log.Warning("Bad joint name: {0}", joint);
@@ -124,6 +142,37 @@ namespace IronStar.SFX {
 			instance.WeaponFX = model.IsFPVModel;
 
 			fxInstances.Add( instance );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="fxname"></param>
+		/// <param name="joint"></param>
+		public void SequenceSound ( string soundEventName )
+		{
+			try {
+
+				var ss		=	world.Game.GetService<SoundSystem>();
+
+				if (string.IsNullOrWhiteSpace(soundEventName)) {
+					return;
+				}
+				
+				var soundEvent		=	ss.GetEvent( soundEventName );
+				var soundInstance	=	soundEvent.CreateInstance();
+				
+				soundInstance.Set3DParameters( model.ComputeWorldMatrix().TranslationVector );
+				soundInstance.ReverbLevel = 1;
+				soundInstance.Start();
+				
+				soundInstances.Add( soundInstance );
+
+			} catch ( SoundException e ) {
+				Log.Warning( e.Message );
+			}
 		}
 
 	}

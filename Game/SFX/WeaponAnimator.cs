@@ -32,6 +32,7 @@ namespace IronStar.SFX {
 		bool oldTraction = true;
 		int stepCounter = 0;
 		int stepTimer = 0;
+		bool stepFired = false;
 		float tiltFactor = 0;
 
 		/// <summary>
@@ -132,7 +133,13 @@ namespace IronStar.SFX {
 
 			//	landing animation :
 			if (oldTraction!=newTraction && newTraction) {
+				composer.SequenceSound("player/landing");
 				RunShakeAnimation("anim_landing", 0.5f);
+			}
+			//	jump animation :
+			if (oldTraction!=newTraction && !newTraction) {
+				composer.SequenceSound("player/jump");
+				//RunShakeAnimation("anim_landing", 0.5f);
 			}
 
 			//	tilt :
@@ -151,22 +158,29 @@ namespace IronStar.SFX {
 			//	step animation :
 			var groundVelocity = new Vector3( entity.LinearVelocity.X, 0, entity.LinearVelocity.Z );
 
-			if (newTraction && groundVelocity.Length() > 1 ) {
+			if (newTraction && groundVelocity.Length() > 0.1f ) {
 
 				stepTimer += gameTime.Milliseconds;
 
 				var weight	=	Math.Min( 1, groundVelocity.Length() / 10.0f ) * 0.5f;
 
-				if (stepTimer > 400) {
-					stepTimer = 0;
+				if (stepTimer > 50 && !stepFired) {
 					stepCounter++;
+
+					stepFired = true;
+
+					composer.SequenceSound("player/step");
 
 					if ((stepCounter & 1) == 0) {
 						RunShakeAnimation("anim_walk_right", weight);
 					} else {
 						RunShakeAnimation("anim_walk_left", weight);
 					}
+				}
 
+				if (stepTimer>300) {
+					stepFired = false;
+					stepTimer = 0;
 				}
 
 			} else {

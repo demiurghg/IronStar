@@ -44,26 +44,12 @@ namespace Fusion.Engine.Audio {
 			FmodExt.ERRCHECK( lowlevel.setSoftwareFormat( 0, speakerMode, 0 ) );
 			FmodExt.ERRCHECK( system.initialize( 1024, studioFlags, lowlevelFlags, IntPtr.Zero ) );
 
-			Game.Content.Load<SoundBank>(@"audio\desktop\Master Bank.strings"  );
-			Game.Content.Load<SoundBank>(@"audio\desktop\Master Bank"		   );
-			Game.Content.Load<SoundBank>(@"audio\desktop\Music"				   );
-			Game.Content.Load<SoundBank>(@"audio\desktop\SFX"				   );
-			Game.Content.Load<SoundBank>(@"audio\desktop\Vehicles"			   );
-			Game.Content.Load<SoundBank>(@"audio\desktop\VO"				   );
-
-			Game.Keyboard.KeyDown+=Keyboard_KeyDown;
+			Game.Content.Load<SoundBank>(@"audio\desktop\master.strings");
+			Game.Content.Load<SoundBank>(@"audio\desktop\master"		);
+			Game.Content.Load<SoundBank>(@"audio\desktop\env"			);
+			Game.Content.Load<SoundBank>(@"audio\desktop\music"			);
+			Game.Content.Load<SoundBank>(@"audio\desktop\vo"			);
         }
-
-		private void Keyboard_KeyDown( object sender, KeyEventArgs e )
-		{
-			if (e.Key==Keys.E) {
-
-				var desc = GetEvent("UI/Okay");
-				var inst = desc.CreateInstance();
-				inst.Start();
-				inst.Release();
-			}
-		}
 
 
 

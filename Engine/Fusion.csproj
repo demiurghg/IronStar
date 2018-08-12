@@ -411,7 +411,6 @@
     <Compile Include="Core\DirectoryStorage.cs" />
     <Compile Include="Core\UserStorage.cs" />
     <Compile Include="Engine\Audio\SoundException.cs" />
-    <Compile Include="Engine\Audio\Old\AudioListener.cs" />
     <Compile Include="Engine\Audio\Enums.cs" />
     <Compile Include="Drivers\FMOD\fmod.cs" />
     <Compile Include="Drivers\FMOD\fmod_dsp.cs" />

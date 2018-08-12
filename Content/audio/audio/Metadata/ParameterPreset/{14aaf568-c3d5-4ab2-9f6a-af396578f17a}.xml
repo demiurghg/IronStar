@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.01.10.00">
+    <object class="ParameterPreset" id="{14aaf568-c3d5-4ab2-9f6a-af396578f17a}">
+        <property name="name">
+            <value>Auto-Stop</value>
+        </property>
+        <relationship name="folder">
+            <destination>{9ad50ba5-3df4-4b10-ab2e-9ac1635b4782}</destination>
+        </relationship>
+        <relationship name="parameter">
+            <destination>{045d00fd-4410-40c3-bfd1-838590556a7f}</destination>
+        </relationship>
+    </object>
+    <object class="GameParameter" id="{045d00fd-4410-40c3-bfd1-838590556a7f}">
+        <property name="initialValue">
+            <value>0</value>
+        </property>
+        <property name="seekSpeed">
+            <value>0.68000006675720215</value>
+        </property>
+        <property name="isExposedRecursively">
+            <value>false</value>
+        </property>
+    </object>
+</objects>

@@ -46,6 +46,7 @@ namespace Fusion.Core {
 		}
 
 
+		#if false
         static public SharpDX.X3DAudio.Listener ToListener(this Fusion.Engine.Audio.AudioListener listener)
         {
             // Pulling out Vector properties for efficiency.
@@ -81,5 +82,6 @@ namespace Fusion.Core {
                 OrientTop	=	Convert( up ),
             };
         }
+		#endif
 	}
 }

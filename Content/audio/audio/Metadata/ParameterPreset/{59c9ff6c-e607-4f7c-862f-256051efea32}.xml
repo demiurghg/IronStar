@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.01.10.00">
+    <object class="ParameterPreset" id="{59c9ff6c-e607-4f7c-862f-256051efea32}">
+        <property name="name">
+            <value>Parameter 1</value>
+        </property>
+        <relationship name="folder">
+            <destination>{9ad50ba5-3df4-4b10-ab2e-9ac1635b4782}</destination>
+        </relationship>
+        <relationship name="parameter">
+            <destination>{4c1697cc-4bd2-4fef-8e5b-cdb415932b6a}</destination>
+        </relationship>
+    </object>
+    <object class="GameParameter" id="{4c1697cc-4bd2-4fef-8e5b-cdb415932b6a}">
+        <property name="initialValue">
+            <value>0</value>
+        </property>
+        <property name="seekSpeed">
+            <value>0.64000004529953003</value>
+        </property>
+        <relationship name="modulators">
+            <destination>{56caa61e-9f15-4801-a39f-f4a93d83a251}</destination>
+        </relationship>
+    </object>
+    <object class="ADSRModulator" id="{56caa61e-9f15-4801-a39f-f4a93d83a251}">
+        <property name="nameOfPropertyBeingModulated">
+            <value>cursorPosition</value>
+        </property>
+        <property name="initialValue">
+            <value>100</value>
+        </property>
+        <property name="attackTime">
+            <value>4600</value>
+        </property>
+        <property name="peakValue">
+            <value>100</value>
+        </property>
+        <property name="holdTime">
+            <value>5000</value>
+        </property>
+        <property name="sustainValue">
+            <value>100</value>
+        </property>
+        <property name="releaseTime">
+            <value>2000</value>
+        </property>
+    </object>
+</objects>

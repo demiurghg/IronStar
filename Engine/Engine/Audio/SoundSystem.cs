@@ -93,7 +93,7 @@ namespace Fusion.Engine.Audio {
 		{
 			FMOD.Studio._3D_ATTRIBUTES attrs;
 
-			attrs.forward	=	FmodExt.Convert( forward	);
+			attrs.forward	=	FmodExt.Convert( -forward	);
 			attrs.position	=	FmodExt.Convert( position	);
 			attrs.up		=	FmodExt.Convert( up		);
 			attrs.velocity	=	FmodExt.Convert( velocity	);

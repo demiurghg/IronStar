@@ -9,6 +9,8 @@ scenes/*.png
 scenes/*.jpg
 turtle/*
 _outsource/*
+*.wav
+*.ogg
 
 [BinaryDirectories]
 ..\..\..\..\SDKs

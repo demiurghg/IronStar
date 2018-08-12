@@ -9,11 +9,14 @@ using Fusion.Core.Mathematics;
 using Fusion.Engine.Common;
 using Fusion;
 using Fusion.Drivers.Graphics;
+using Fusion.Core.Extensions;
+using Fusion.Engine.Audio;
 
 namespace IronStar.Editor {
 	public class EditorCamera {
 
 		readonly RenderSystem rs;
+		readonly SoundSystem ss;
 		readonly Game game;
 		readonly MapEditor editor;
 
@@ -46,6 +49,7 @@ namespace IronStar.Editor {
 		public EditorCamera ( MapEditor editor )
 		{
 			this.rs		=	editor.Game.RenderSystem;
+			this.ss		=	editor.Game.GetService<SoundSystem>();
 			this.game	=	editor.Game;
 			this.editor	=	editor;
 		}
@@ -139,6 +143,10 @@ namespace IronStar.Editor {
 			var aspect	=	vp.Width / (float)vp.Height;
 
 			rs.RenderWorld.Camera.SetupCameraFov( view, fovr, 0.125f, 4096, 1, 0, aspect );
+
+			var camMatrix	=	rs.RenderWorld.Camera.GetCameraMatrix(StereoEye.Mono);
+
+			ss.SetListener( camMatrix.TranslationVector, camMatrix.Forward, camMatrix.Up, Vector3.Zero );
 		}
 
 

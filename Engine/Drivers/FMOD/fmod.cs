@@ -1469,7 +1469,7 @@ namespace FMOD
 #pragma warning disable 414
     [StructLayout(LayoutKind.Sequential)]
     public struct REVERB_PROPERTIES
-    {                            /*        MIN     MAX    DEFAULT   DESCRIPTION */
+    {									/*        MIN     MAX    DEFAULT   DESCRIPTION */
         public float DecayTime;         /* [r/w]  0.0    20000.0 1500.0  Reverberation decay time in ms                                        */
         public float EarlyDelay;        /* [r/w]  0.0    300.0   7.0     Initial reflection delay time                                         */
         public float LateDelay;         /* [r/w]  0.0    100     11.0    Late reverberation delay time relative to initial reflection          */

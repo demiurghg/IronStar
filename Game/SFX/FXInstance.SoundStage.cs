@@ -44,6 +44,7 @@ namespace IronStar.SFX {
 				}
 
 				soundInstance.Set3DParameters( fxEvent.Origin, fxEvent.Velocity );
+				soundInstance.ReverbLevel = stageDesc.Reverb;
 				soundInstance.Start();
 
 				/*if (!looped) {	

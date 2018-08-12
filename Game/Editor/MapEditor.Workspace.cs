@@ -188,6 +188,8 @@ namespace IronStar.Editor {
 			palette.AddButton( "Light Probe"	,	() => CreateNodeUI( new MapLightProbe	() ) );
 			palette.AddButton( "Omni Light"		,	() => CreateNodeUI( new MapOmniLight	() ) );
 			palette.AddButton( "Spot Light"		,	() => CreateNodeUI( new MapSpotLight	() ) );
+			palette.AddButton( "Sound"			,	() => CreateNodeUI( new MapSound		() ) );
+			palette.AddButton( "Reverb Zone"	,	() => CreateNodeUI( new MapReverb		() ) );
 
 			palette.AddSplitter();
 

@@ -3709,6 +3709,75 @@
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapSound, IronStar",
+        "SoundEvent": "env/fire",
+        "ReverbLevel": 1.0,
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 6.21152973,
+        "TranslateY": 0.5653484,
+        "TranslateZ": -36.54837,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapReverb, IronStar",
+        "ReverbPreset": "plain",
+        "MinimumDistance": 10.0,
+        "MaximumDistance": 20.0,
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.0,
+        "TranslateY": 1.1487093,
+        "TranslateZ": 0.0,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapReverb, IronStar",
+        "ReverbPreset": "hangar",
+        "MinimumDistance": 10.0,
+        "MaximumDistance": 20.0,
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -27.85498,
+        "TranslateY": 1.1487093,
+        "TranslateZ": 0.0,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapReverb, IronStar",
+        "ReverbPreset": "city",
+        "MinimumDistance": 10.0,
+        "MaximumDistance": 20.0,
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -27.85498,
+        "TranslateY": 1.1487093,
+        "TranslateZ": -35.5314,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapReverb, IronStar",
+        "ReverbPreset": "mountains",
+        "MinimumDistance": 10.0,
+        "MaximumDistance": 20.0,
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -7.32065,
+        "TranslateY": 1.1487093,
+        "TranslateZ": -35.5834923,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
       }
     ]
   }

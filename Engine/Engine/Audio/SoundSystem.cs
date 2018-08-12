@@ -127,6 +127,17 @@ namespace Fusion.Engine.Audio {
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <returns></returns>
+		public ReverbZone CreateReverbZone ()
+		{
+			return new ReverbZone( this );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
 		public bool Play2DEvent ( string path )

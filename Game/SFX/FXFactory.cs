@@ -411,14 +411,14 @@ namespace IronStar.SFX {
 			}
 		}
 
-		[XmlAttribute]
 		[Description( "Enables and disables sound stage" )]
 		public bool Enabled { get; set; } = false;
 
-		[XmlAttribute]
-		[Description( "Sound path" )]
 		[Editor( typeof( SoundFileLocationEditor ), typeof( UITypeEditor ) )]
 		public string Sound { get; set; } = "";
+
+		[AEValueRange(0,1, 0.125f, 0.125f/16)]
+		public float Reverb { get; set; } = 1;
 	}
 
 

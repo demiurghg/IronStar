@@ -85,6 +85,8 @@
     <Compile Include="Items\Weapon.cs" />
     <Compile Include="Items\WeaponFactory.cs" />
     <Compile Include="JsonLoader.cs" />
+    <Compile Include="Mapping\MapReverb.cs" />
+    <Compile Include="Mapping\MapSound.cs" />
     <Compile Include="Physics\DetectorArea.cs" />
     <Compile Include="Physics\DynamicBox.cs" />
     <Compile Include="SFX\AnimationClip.cs" />

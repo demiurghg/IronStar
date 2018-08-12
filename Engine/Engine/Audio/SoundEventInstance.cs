@@ -66,6 +66,7 @@ namespace Fusion.Engine.Audio
 			this.system	=	device.system;
 
 			FmodExt.ERRCHECK( desc.createInstance( out inst ) );
+			inst.setReverbLevel(0,1);
         }
 
 
@@ -130,6 +131,18 @@ namespace Fusion.Engine.Audio
 		public bool IsStopped {
 			get {
 				return GetPlaybackState() == PLAYBACK_STATE.STOPPED;
+			}
+		}
+
+
+		public float ReverbLevel {
+			set {
+				FmodExt.ERRCHECK( inst.setReverbLevel( 0, value ) );
+			}
+			get {
+				float result;
+				FmodExt.ERRCHECK( inst.getReverbLevel( 0, out result ) );
+				return result;
 			}
 		}
 		/// <summary>

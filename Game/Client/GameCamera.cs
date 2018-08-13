@@ -161,6 +161,7 @@ namespace IronStar.Views {
 
 		bool oldStanding = true;
 		bool oldTraction = true;
+		float oldVelocity = 0;
 
 		WeaponState oldWeaponState;
 
@@ -200,8 +201,8 @@ namespace IronStar.Views {
 
 
 			if ( newTraction!=oldTraction ) {
-				if (newTraction) {
-					RunShakeAnimation("landing", 1 );
+				if (newTraction) {				
+					RunShakeAnimation("landing", MathUtil.Clamp( oldVelocity/10.0f, 0, 1 ) );
 				} else {
 					//mainTrack.Sequence("crouch", true, false, true );
 				}
@@ -218,6 +219,7 @@ namespace IronStar.Views {
 
 			oldStanding = newStanding;
 			oldTraction = newTraction;
+			oldVelocity = Math.Abs( player.LinearVelocity.Z );
 
 			composer.Update( gameTime, transforms );
 			return Scene.FixGlobalCameraMatrix( transforms[1] );

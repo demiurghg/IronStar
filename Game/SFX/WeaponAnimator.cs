@@ -121,6 +121,8 @@ namespace IronStar.SFX {
 		}
 
 
+		float oldVelocity;
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -129,13 +131,23 @@ namespace IronStar.SFX {
 			var dt			=	gameTime.ElapsedSec;
 			var state		=	entity.EntityState;
 
-			var newTraction	=	state.HasFlag( EntityState.HasTraction );
+			var newTraction		=	state.HasFlag( EntityState.HasTraction );
+			var fallVelocity	=	Math.Abs( entity.LinearVelocity.Y );
+			var groundVelocity	=	new Vector3( entity.LinearVelocity.X, 0, entity.LinearVelocity.Z );
+
 
 			//	landing animation :
 			if (oldTraction!=newTraction && newTraction) {
 				composer.SequenceSound("player/landing");
-				RunShakeAnimation("anim_landing", 0.5f);
+				Log.Message("{0}", oldVelocity);
+
+				float w = MathUtil.Clamp( oldVelocity / 20.0f, 0, 1 );
+
+				RunShakeAnimation("anim_landing", w );
 			}
+
+			oldVelocity = fallVelocity;
+
 			//	jump animation :
 			if (oldTraction!=newTraction && !newTraction) {
 				composer.SequenceSound("player/jump");
@@ -156,8 +168,6 @@ namespace IronStar.SFX {
 			poseTilt.Frame	=	(tiltFactor > 0) ? 1 : 2;
 
 			//	step animation :
-			var groundVelocity = new Vector3( entity.LinearVelocity.X, 0, entity.LinearVelocity.Z );
-
 			if (newTraction && groundVelocity.Length() > 0.1f ) {
 
 				stepTimer += gameTime.Milliseconds;

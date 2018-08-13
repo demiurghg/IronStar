@@ -349,10 +349,12 @@ namespace Fusion.Engine.Graphics {
 			var screen = rs.DisplayBounds;
 			var vp = new Rectangle(0,0,1,1);
 
+			#warning pre-allocate data buffers on init!
 			var lightGrid	=	new SceneRenderer.LIGHTINDEX[GridLinearSize];
 			var lightData	=	new SceneRenderer.LIGHT[MaxLights];
 			var decalData	=	new SceneRenderer.DECAL[MaxDecals];
 			var probeData	=	new SceneRenderer.LIGHTPROBE[MaxLightProbes];
+			var indexData	=	new uint[ IndexTableSize ];
 
 			#region	Compute light and decal count
 			foreach ( OmniLight ol in lightSet.OmniLights ) {
@@ -414,7 +416,6 @@ namespace Fusion.Engine.Graphics {
 				lightGrid[i].Count	= 0;
 			}
 
-			var indexData	=	new uint[ offset + 1 /* one extra element */ ];
 
 
 			uint index = 0;
@@ -488,11 +489,11 @@ namespace Fusion.Engine.Graphics {
 
 
 			using ( new PixEvent( "Update cluster structures" ) ) {
-				LightDataGpu.SetData( lightData );
-				DecalDataGpu.SetData( decalData );
-				IndexDataGpu.SetData( indexData );
-				ProbeDataGpu.SetData( probeData );
-				gridTexture.SetData( lightGrid );
+				LightDataGpu.UpdateData	( lightData );
+				DecalDataGpu.UpdateData	( decalData );
+				IndexDataGpu.UpdateData	( indexData );
+				ProbeDataGpu.UpdateData	( probeData );
+				gridTexture	.SetData	( lightGrid );
 			}
 		}
 

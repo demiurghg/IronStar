@@ -221,6 +221,7 @@ namespace Fusion.Drivers.Graphics {
 			//	Write data
 			//
 			lock (device.DeviceContext ) {
+
 				var db = device.DeviceContext.MapSubresource( bufferStaging, 0, MapMode.Write, D3D11.MapFlags.None );
 
 				SharpDX.Utilities.Write( db.DataPointer, data, startIndex, elementCount );

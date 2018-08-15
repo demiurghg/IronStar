@@ -219,7 +219,7 @@ namespace IronStar.Views {
 
 			oldStanding = newStanding;
 			oldTraction = newTraction;
-			oldVelocity = Math.Abs( player.LinearVelocity.Z );
+			oldVelocity = Math.Abs( player.LinearVelocity.Y );
 
 			composer.Update( gameTime, transforms );
 			return Scene.FixGlobalCameraMatrix( transforms[1] );

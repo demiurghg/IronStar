@@ -173,7 +173,7 @@ namespace IronStar.SFX {
 			//	jump animation :
 			if (oldTraction!=newTraction && !newTraction) {
 				composer.SequenceSound( SOUND_JUMP );
-				//RunShakeAnimation("anim_landing", 0.5f);
+				RunShakeAnimation( ANIM_JUMP, 1 );
 			}
 
 			//	tilt :

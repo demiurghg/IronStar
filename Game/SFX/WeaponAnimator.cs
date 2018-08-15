@@ -13,6 +13,28 @@ using Fusion;
 namespace IronStar.SFX {
 	public class WeaponAnimator : Animator {
 
+		const string ANIM_TILT		=	"tilt"			;
+		const string ANIM_IDLE		=	"idle"			;
+		const string ANIM_WARMUP	=	"warmup"		;
+		const string ANIM_COOLDOWN	=	"cooldown"		;
+		const string ANIM_LANDING	=	"landing"		;
+		const string ANIM_JUMP		=	"jump"			;
+		const string ANIM_SHAKE		=	"shake"			;
+		const string ANIM_WALKLEFT	=	"step_left"		;
+		const string ANIM_WALKRIGHT	=	"step_right"	;
+		const string ANIM_FIRSTLOOK	=	"examine"		;
+		const string ANIM_RAISE		=	"raise"			;
+		const string ANIM_DROP		=	"drop"			;
+
+		const string SOUND_LANDING	=	"player/landing"	;
+		const string SOUND_STEP		=	"player/step"		;
+		const string SOUND_JUMP		=	"player/jump"		;
+
+		const string JOINT_MUZZLE	=	"muzzle"			;
+
+		const string SFX_MUZZLE		=	"machinegunMuzzle"	;
+
+
 		const int MaxShakeTracks = 4;
 
 		Random rand = new Random();
@@ -47,7 +69,7 @@ namespace IronStar.SFX {
 			trackShake2	=	new AnimationTrack( model.Scene, null, AnimationBlendMode.Additive );
 			trackShake3	=	new AnimationTrack( model.Scene, null, AnimationBlendMode.Additive );
 
-			poseTilt	=	new AnimationPose( model.Scene, null, "anim_tilt", AnimationBlendMode.Additive );
+			poseTilt	=	new AnimationPose( model.Scene, null, ANIM_TILT, AnimationBlendMode.Additive );
 			poseTilt.Weight = 0;
 
 			shakeTracks	=	new[] { trackShake0, trackShake1, trackShake2, trackShake3 }; 
@@ -59,7 +81,7 @@ namespace IronStar.SFX {
 			composer.Tracks.Add( trackShake3 );
 			composer.Tracks.Add( poseTilt );
 
-			trackWeapon.Sequence( "anim_idle", true, true );
+			trackWeapon.Sequence( ANIM_IDLE, true, true );
 		}
 
 
@@ -93,29 +115,29 @@ namespace IronStar.SFX {
 
 				if ( weaponState == WeaponState.Cooldown || weaponState == WeaponState.Cooldown2 ) {
 
-					trackWeapon.Sequence( "anim_recoil", true, false );
+					trackWeapon.Sequence( ANIM_COOLDOWN, true, false );
 					//trackWeapon.Frame ++;
 
-					var shakeName = "anim_shake" + rand.Next(6).ToString();
+					var shakeName = ANIM_SHAKE + rand.Next(6).ToString();
 					var shakeAmpl = Math.Abs(rand.GaussDistribution(0,0.5f));
 					RunShakeAnimation( shakeName, shakeAmpl );
 
-					composer.SequenceFX( "machinegunMuzzle", "muzzle", 0.1f );
+					composer.SequenceFX( SFX_MUZZLE, JOINT_MUZZLE, 0.1f );
 				}
 
 
 				if ( weaponState == WeaponState.Idle ) {
-					trackWeapon.Sequence( "anim_idle", false, true );
+					trackWeapon.Sequence( ANIM_IDLE, false, true );
 				}
 
 
 				if ( weaponState == WeaponState.Raise ) {
-					trackWeapon.Sequence( "anim_takeout", true, false );
+					trackWeapon.Sequence( ANIM_RAISE, true, false );
 				}
 
 
 				if ( weaponState == WeaponState.Drop ) {
-					trackWeapon.Sequence( "anim_putdown", true, false );
+					trackWeapon.Sequence( ANIM_DROP, true, false );
 				}
 			}
 		}
@@ -138,19 +160,19 @@ namespace IronStar.SFX {
 
 			//	landing animation :
 			if (oldTraction!=newTraction && newTraction) {
-				composer.SequenceSound("player/landing");
+				composer.SequenceSound( SOUND_LANDING );
 				Log.Message("{0}", oldVelocity);
 
 				float w = MathUtil.Clamp( oldVelocity / 20.0f, 0, 1 );
 
-				RunShakeAnimation("anim_landing", w );
+				RunShakeAnimation( ANIM_LANDING, w );
 			}
 
 			oldVelocity = fallVelocity;
 
 			//	jump animation :
 			if (oldTraction!=newTraction && !newTraction) {
-				composer.SequenceSound("player/jump");
+				composer.SequenceSound( SOUND_JUMP );
 				//RunShakeAnimation("anim_landing", 0.5f);
 			}
 
@@ -179,12 +201,12 @@ namespace IronStar.SFX {
 
 					stepFired = true;
 
-					composer.SequenceSound("player/step");
+					composer.SequenceSound( SOUND_STEP );
 
 					if ((stepCounter & 1) == 0) {
-						RunShakeAnimation("anim_walk_right", weight);
+						RunShakeAnimation( ANIM_WALKRIGHT, weight);
 					} else {
-						RunShakeAnimation("anim_walk_left", weight);
+						RunShakeAnimation( ANIM_WALKLEFT, weight);
 					}
 				}
 

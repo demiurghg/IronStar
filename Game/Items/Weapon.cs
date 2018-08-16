@@ -40,21 +40,19 @@ namespace IronStar.Items {
 		readonly int	projectileCount;
 		readonly float	angularSpread;
 
-		readonly int	timeWarmup	;
-		readonly int	timeCooldown;
-		readonly int	timeOverheat;
-		readonly int	timeReload	;
-		readonly int	timeDrop	;
-		readonly int	timeRaise	;
+		readonly TimeSpan	timeWarmup	;
+		readonly TimeSpan	timeCooldown;
+		readonly TimeSpan	timeOverheat;
+		readonly TimeSpan	timeReload	;
+		readonly TimeSpan	timeDrop	;
+		readonly TimeSpan	timeRaise	;
 		readonly string hitFX;
 		readonly string ammoItem;
 		readonly string viewModel;
 
-		int timer;
+		TimeSpan timer;
 		WeaponState state;
-		bool dirty;
 		bool rqAttack;
-		bool rqActivate;
 		uint rqNextWeapon;
 		int counter;
 
@@ -76,12 +74,12 @@ namespace IronStar.Items {
 			projectileCount	=	factory.ProjectileCount	;
 			angularSpread	=	factory.AngularSpread	;
 
-			timeWarmup		=	factory.WarmupTime		;
-			timeCooldown	=	factory.CooldownTime	;
-			timeOverheat	=	factory.OverheatTime	;
-			timeReload		=	factory.ReloadTime		;
-			timeDrop		=	factory.DropTime		;
-			timeRaise		=	factory.RaiseTime		;
+			timeWarmup		=	TimeSpan.FromMilliseconds( factory.WarmupTime	);
+			timeCooldown	=	TimeSpan.FromMilliseconds( factory.CooldownTime	);
+			timeOverheat	=	TimeSpan.FromMilliseconds( factory.OverheatTime	);
+			timeReload		=	TimeSpan.FromMilliseconds( factory.ReloadTime	);
+			timeDrop		=	TimeSpan.FromMilliseconds( factory.DropTime		);
+			timeRaise		=	TimeSpan.FromMilliseconds( factory.RaiseTime	);
 			
 			hitFX			=	factory.HitFX			;
 			ammoItem		=	factory.AmmoItem		;
@@ -108,10 +106,10 @@ namespace IronStar.Items {
 
 		public override void Update(GameTime gameTime)
 		{
-			if (timer>0) {
-				timer -= gameTime.Milliseconds;
+			if ( timer > TimeSpan.Zero ) {
+				timer = timer - gameTime.Elapsed;
 			} else {
-				timer = 0;
+				//timer = TimeSpan.Zero;
 			}
 
 			var entity = world.Entities.GetEntity(Owner);
@@ -121,6 +119,7 @@ namespace IronStar.Items {
 
 			//	update FSM twice to 
 			//	bypass zero time states:
+			UpdateFSM( gameTime, entity );
 			UpdateFSM( gameTime, entity );
 			UpdateFSM( gameTime, entity );
 
@@ -141,50 +140,46 @@ namespace IronStar.Items {
 
 		void UpdateFSM (GameTime gameTime, Entity entity)
 		{
+			bool timeout = timer <= TimeSpan.Zero;
+
 			switch (state) {
 				case WeaponState.Idle:	
 					if (rqAttack) {
-						state = WeaponState.Warmup;	
-						dirty = true;
-						timer = timeWarmup;
+						state =  WeaponState.Warmup;	
+						timer += timeWarmup;
 					}
 					if (rqNextWeapon!=0) {
-						state = WeaponState.Drop;	
-						dirty = true;
-						timer = timeDrop;
+						state =  WeaponState.Drop;	
+						timer =  timeDrop;
 					}
 					break;
 
 				case WeaponState.Warmup:	
-					if (timer<=0) {
+					if (timeout) {
 						Fire(entity);
 
 						counter++;
+						Log.Message("{0}", counter);
 						if ((counter&1)==0) {
 							state = WeaponState.Cooldown;	
 						} else {
 							state = WeaponState.Cooldown2;	
 						}
 
-						dirty = true;
-						timer = timeCooldown;
+						timer += timeCooldown;
 					}
 					break;
 
 
 				case WeaponState.Cooldown:	
-					if (timer<=0) {
+					if (timeout) {
 						state = WeaponState.Idle;	
-						dirty = true;
-						timer = 0;
 					}
 					break;
 
 				case WeaponState.Cooldown2:	
-					if (timer<=0) {
+					if (timeout) {
 						state = WeaponState.Idle;	
-						dirty = true;
-						timer = 0;
 					}
 					break;
 
@@ -195,20 +190,18 @@ namespace IronStar.Items {
 					break;
 
 				case WeaponState.Drop:	
-					if (timer<=0) {
+					if (timeout) {
 						entity.ItemID = rqNextWeapon;
 						rqNextWeapon  = 0;
 						state = WeaponState.Inactive;
-						dirty = true;
-						timer = 0;
+						timer = TimeSpan.Zero;
 					}
 					break;
 
 				case WeaponState.Raise:		
-					if (timer<=0) {
+					if (timeout) {
 						state = WeaponState.Idle;
-						dirty = true;
-						timer = 0;
+						timer = TimeSpan.Zero;
 					}
 					break;
 
@@ -218,7 +211,6 @@ namespace IronStar.Items {
 				case WeaponState.Inactive:	
 					if (entity.ItemID == ID) {
 						state = WeaponState.Raise;
-						dirty = true;
 						timer = timeRaise;
 					}	
 					break;

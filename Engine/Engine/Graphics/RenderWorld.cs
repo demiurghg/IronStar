@@ -413,7 +413,7 @@ namespace Fusion.Engine.Graphics {
 				using ( new PixEvent( "Frame Scene Rendering" ) ) {
 
 					//	Z-pass without weapon :
-					rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, this, InstanceGroup.Static|InstanceGroup.Dynamic|InstanceGroup.Character );
+					rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, this, InstanceGroup.NotWeapon );
 
 					//	Ambient occlusion :
 					rs.SsaoFilter.Render( stereoEye, Camera, viewHdrFrame );
@@ -423,7 +423,9 @@ namespace Fusion.Engine.Graphics {
 
 					//------------------------------------------------------------
 					//	Forward+
-					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera, viewHdrFrame, this, InstanceGroup.All );
+					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera, viewHdrFrame, this, InstanceGroup.NotWeapon );
+					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera, viewHdrFrame, this, InstanceGroup.Weapon );
+
 					ParticleSystem.RenderHard( gameTime, Camera, stereoEye, viewHdrFrame );
 
 					rs.Sky.Render( Camera, stereoEye, viewHdrFrame, SkySettings );

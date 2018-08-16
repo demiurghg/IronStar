@@ -77,7 +77,7 @@ namespace Fusion.Engine.Graphics {
 			public Vector4	CascadeScaleOffset3		;
 			public Vector4	ViewPos					;
 			public Vector4	BiasSlopeFar			;
-			public Color4	SkyAmbientLevel					;
+			public Color4	SkyAmbientLevel			;
 			public Vector4	ViewBounds				;
 			public Vector4	DirectLightDirection	;
 			public Color4	DirectLightIntensity	;
@@ -86,6 +86,7 @@ namespace Fusion.Engine.Graphics {
 			public float	DirectLightAngularSize	;
 			public float	VTPageScaleRCP			;
 			public float	VTGradientScaler		;
+			public float	SsaoWeight				;
 		}
 
 

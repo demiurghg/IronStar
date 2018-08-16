@@ -141,7 +141,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="vpWidth"></param>
 		/// <param name="vpHeight"></param>
 		[MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
-		public bool SetupStage ( StereoEye stereoEye, IRenderContext context )
+		public bool SetupStage ( StereoEye stereoEye, IRenderContext context, InstanceGroup instanceGroup )
 		{
 			device.ResetStates();
 
@@ -179,6 +179,8 @@ namespace Fusion.Engine.Graphics {
 
 			cbDataStage.SkyAmbientLevel			=	rs.RenderWorld.SkySettings.AmbientLevel;
 			cbDataStage.VTPageScaleRCP			=	rs.VTSystem.PageScaleRCP;
+
+			cbDataStage.SsaoWeight				=	instanceGroup.HasFlag(InstanceGroup.Weapon) ? 0 : 1;
 
 			var width	=	context.Viewport.Width;
 			var height	=	context.Viewport.Height;
@@ -301,13 +303,13 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="stereoEye"></param>
 		/// <param name="context"></param>
 		/// <param name="rw"></param>
-		void RenderGeneric ( string eventName, GameTime gameTime, StereoEye stereoEye, SurfaceFlags surfFlags, IRenderContext context, IEnumerable<MeshInstance> instances )
+		void RenderGeneric ( string eventName, GameTime gameTime, StereoEye stereoEye, SurfaceFlags surfFlags, IRenderContext context, IEnumerable<MeshInstance> instances, InstanceGroup instanceGroup )
 		{
 			using ( new PixEvent(eventName) ) {
 
 				var transparent		=	context.Transparent;
 			
-				if ( SetupStage( stereoEye, context ) ) {
+				if ( SetupStage( stereoEye, context, instanceGroup ) ) {
 
 					foreach ( var instance in instances ) {
 
@@ -353,7 +355,7 @@ namespace Fusion.Engine.Graphics {
 			var context		=	new ForwardSolidContext( camera, frame );
 			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
 
-			RenderGeneric("RenderForwardSolid", gameTime, stereoEye, SurfaceFlags.FORWARD, context, instances );
+			RenderGeneric("RenderForwardSolid", gameTime, stereoEye, SurfaceFlags.FORWARD, context, instances, mask );
 		}
 
 
@@ -362,7 +364,7 @@ namespace Fusion.Engine.Graphics {
 			var context		=	new ForwardTransparentContext( camera, frame );
 			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
 
-			RenderGeneric("RenderForwardTransparent", gameTime, stereoEye, SurfaceFlags.FORWARD, context, instances );
+			RenderGeneric("RenderForwardTransparent", gameTime, stereoEye, SurfaceFlags.FORWARD, context, instances, mask );
 		}
 
 
@@ -371,7 +373,7 @@ namespace Fusion.Engine.Graphics {
 			var context	=	new ForwardZPassContext( camera, frame );
 			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
 
-			RenderGeneric("RenderZPass", gameTime, stereoEye, SurfaceFlags.ZPASS, context, instances );
+			RenderGeneric("RenderZPass", gameTime, stereoEye, SurfaceFlags.ZPASS, context, instances, mask );
 		}
 		
 
@@ -379,7 +381,7 @@ namespace Fusion.Engine.Graphics {
 		{
 			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
 
-			RenderGeneric("ShadowMap", null, StereoEye.Mono, SurfaceFlags.SHADOW, shadowContext, instances );
+			RenderGeneric("ShadowMap", null, StereoEye.Mono, SurfaceFlags.SHADOW, shadowContext, instances, mask );
 		}
 
 
@@ -387,7 +389,7 @@ namespace Fusion.Engine.Graphics {
 		{
 			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
 
-			RenderGeneric("LightProbeGBuffer", null, StereoEye.Mono, SurfaceFlags.GBUFFER, context, instances );
+			RenderGeneric("LightProbeGBuffer", null, StereoEye.Mono, SurfaceFlags.GBUFFER, context, instances, mask );
 		}
 	}
 }

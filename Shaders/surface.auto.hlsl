@@ -46,6 +46,7 @@ struct STAGE {
 	float      DirectLightAngularSize;        // offset:  948
 	float      VTPageScaleRCP;                // offset:  952
 	float      VTGradientScaler;              // offset:  956
+	float      SsaoWeight;                    // offset:  960
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+INSTANCE

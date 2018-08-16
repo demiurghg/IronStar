@@ -238,6 +238,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 #ifdef TRANSPARENT
 	ssaoFactor	=	1;
 #endif
+	ssaoFactor	=	lerp( 1, ssaoFactor, Stage.SsaoWeight );
 	
 	
 	float	NoV 			= 	dot(viewDirN, normal.xyz);

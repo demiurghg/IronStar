@@ -73,7 +73,7 @@ namespace Fusion.Engine.Common {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		internal void Update ( GameTime gameTime )
+		public override void Update ( GameTime gameTime )
 		{
 			lock (lockObj) {
 				if (client!=null) {

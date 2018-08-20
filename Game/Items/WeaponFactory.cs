@@ -22,7 +22,6 @@ using BEPUphysics.EntityStateManagement;
 using BEPUphysics.PositionUpdating;
 using Fusion.Core.IniParser.Model;
 using System.ComponentModel;
-using Fusion.Core.Shell;
 
 namespace IronStar.Items {
 

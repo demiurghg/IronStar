@@ -8,7 +8,6 @@ using SharpDX;
 using Fusion;
 using Fusion.Core.Mathematics;
 using Fusion.Core;
-using Fusion.Core.Input;
 using Fusion.Engine.Common;
 
 namespace Fusion.Engine.Frames {

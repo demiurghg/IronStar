@@ -14,7 +14,6 @@ using Fusion.Core.Extensions;
 using Fusion.Engine.Common;
 using Fusion.Core.Configuration;
 using Fusion.Engine.Graphics;
-using Fusion.Core.Input;
 using Fusion.Core.Shell;
 using System.IO;
 using Fusion.Engine.Frames;

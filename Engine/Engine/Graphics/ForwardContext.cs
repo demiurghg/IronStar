@@ -23,7 +23,7 @@ namespace Fusion.Engine.Graphics {
 		public abstract void SetupRenderTargets ( GraphicsDevice device );
 
 
-		public ShaderResource GetAOBuffer() 
+		public virtual ShaderResource GetAOBuffer() 
 		{
 			return hdrFrame.AOBuffer;
 		}

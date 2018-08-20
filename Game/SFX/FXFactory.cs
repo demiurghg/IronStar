@@ -19,7 +19,6 @@ using Fusion.Engine.Graphics;
 using System.Drawing.Design;
 using Fusion.Core.Content;
 using Fusion.Development;
-using Fusion.Core;
 using Fusion.Core.Shell;
 
 namespace IronStar.SFX {

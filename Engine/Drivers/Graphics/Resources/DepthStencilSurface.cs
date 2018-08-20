@@ -10,8 +10,6 @@ using Fusion.Core;
 namespace Fusion.Drivers.Graphics {
 	public class DepthStencilSurface : ShaderResource {
 
-		public int			Width			{ get; private set; }
-		public int			Height			{ get; private set; }
 		public DepthFormat	Format			{ get; private set; }
 		public int			SampleCount		{ get; private set; }
 

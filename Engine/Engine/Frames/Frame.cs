@@ -28,11 +28,6 @@ namespace Fusion.Engine.Frames {
 		}
 
 		/// <summary>
-		/// 
-		/// </summary>
-		public	string		Name				{ get; set; }
-
-		/// <summary>
 		/// Is frame visible. Default true.
 		/// </summary>
 		public	bool		Visible				{ get; set; }

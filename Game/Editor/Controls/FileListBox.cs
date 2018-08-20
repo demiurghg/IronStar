@@ -11,7 +11,6 @@ using Fusion.Engine.Graphics;
 using System.IO;
 using Fusion.Core.Content;
 using Fusion.Build;
-using Fusion.Build;
 
 namespace IronStar.Editor.Controls {
 

@@ -26,13 +26,11 @@ using Fusion.Core.Input;
 using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using Lidgren.Network;
-using Fusion.Core;
 using Fusion.Engine.Audio;
 using Fusion.Engine.Tools;
 using Fusion.Engine.Frames;
 using System.ComponentModel;
 using Fusion.Build;
-using Fusion.Core.Input;
 using Fusion.Engine.Common;
 
 namespace Fusion.Core {

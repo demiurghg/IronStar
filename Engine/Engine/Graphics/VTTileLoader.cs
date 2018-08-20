@@ -14,7 +14,6 @@ using Fusion.Drivers.Graphics;
 using Fusion.Engine.Imaging;
 using System.Threading;
 using Fusion.Core.Collection;
-using Fusion.Core;
 using Fusion.Build.Mapping;
 
 namespace Fusion.Engine.Graphics {

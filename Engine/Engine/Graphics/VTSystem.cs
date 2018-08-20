@@ -13,7 +13,6 @@ using Fusion.Engine.Common;
 using Fusion.Drivers.Graphics;
 using Fusion.Engine.Imaging;
 using System.Diagnostics;
-using Fusion.Core;
 using Fusion.Build.Mapping;
 using Fusion.Engine.Graphics.Ubershaders;
 using System.ComponentModel;

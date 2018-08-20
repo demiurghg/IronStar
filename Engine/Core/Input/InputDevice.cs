@@ -419,26 +419,6 @@ namespace Fusion.Core.Input {
 			AddPressedKey( key );
 		}
 
-		[Obsolete]
-		internal void NotifyKeyDown ( Keys key, bool alt, bool shift, bool control )
-		{
-			FormKeyDown?.Invoke( this, new KeyEventArgs() { Key = key } );
-		}
-
-
-		[Obsolete]
-		internal void NotifyKeyUp  ( Keys key, bool alt, bool shift, bool control )
-		{
-			FormKeyUp?.Invoke( this, new KeyEventArgs() { Key = key } );
-		}
-
-
-		[Obsolete]
-		internal void NotifyKeyPress ( char keyChar )
-		{
-			FormKeyPress?.Invoke( this, new KeyPressArgs() { KeyChar = keyChar } );
-		}
-
 
 		public void NotifyTouchTap(Vector2 tapPosition)
 		{

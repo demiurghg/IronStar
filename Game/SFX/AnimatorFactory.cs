@@ -10,7 +10,6 @@ using Fusion.Core.Extensions;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Converters;
 using Fusion.Engine.Graphics;
 using IronStar.Core;
 

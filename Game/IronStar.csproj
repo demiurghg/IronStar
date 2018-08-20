@@ -199,7 +199,6 @@
     <Compile Include="SFX\AnimBlendUtils.cs" />
     <Compile Include="SFX\FXFactory.Utils.cs" />
     <Compile Include="SFX\FXFactory.cs" />
-    <Compile Include="SFX\FXPlayback.Rail.cs" />
     <Compile Include="SFX\ModelInstance.cs" />
     <Compile Include="SFX\ModelFactory.cs" />
     <Compile Include="SFX\ModelManager.cs" />

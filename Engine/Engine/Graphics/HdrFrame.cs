@@ -32,9 +32,6 @@ namespace Fusion.Engine.Graphics {
 		public RenderTarget2D	DistortionGlass		;	
 		public DepthStencil2D	DepthBufferGlass	;
 
-		#warning Remove GBuffer0, GBuffer1	
-		public RenderTarget2D	GBuffer0			;
-		public RenderTarget2D	GBuffer1			;
 		public RenderTarget2D	Normals				;	
 		public RenderTarget2D	AOBuffer			;
 		public RenderTarget2D	FeedbackBuffer		;
@@ -88,8 +85,6 @@ namespace Fusion.Engine.Graphics {
 			HdrBufferGlass		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width,		height,		true,  false );
 			DistortionGlass		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, false );
 			DepthBufferGlass	=	new DepthStencil2D( game.GraphicsDevice, DepthFormat.D24S8,		width,		height,		1 );
-			GBuffer0			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8_sRGB,width,		height,		false, false );
-			GBuffer1			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, false );
 			Normals				=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, false );
 			AOBuffer			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, true  );
 			FeedbackBuffer		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgb10A2,	width,		height,		false, false );
@@ -178,8 +173,6 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref HdrBufferGlass			);
 				SafeDispose( ref DistortionGlass		);
 				SafeDispose( ref DepthBufferGlass		);
-				SafeDispose( ref GBuffer0				);
-				SafeDispose( ref GBuffer1				);
 				SafeDispose( ref Normals				);
 				SafeDispose( ref AOBuffer				);
 				SafeDispose( ref FeedbackBuffer			);

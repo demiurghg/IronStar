@@ -19,7 +19,7 @@ namespace Fusion.Engine.Graphics {
 			device.SetTargets( hdrFrame.DepthBuffer.Surface );
 		}
 	
-		public ShaderResource GetAOBuffer() 
+		public override ShaderResource GetAOBuffer() 
 		{
 			return null;
 		}

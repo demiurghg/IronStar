@@ -24,7 +24,6 @@ using BEPUphysics.NarrowPhaseSystems.Pairs;
 using BEPUphysics.EntityStateManagement;
 using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.PositionUpdating;
-using BEPUphysics.PositionUpdating;
 using BEPUphysics.CollisionRuleManagement;
 
 namespace IronStar.Physics {

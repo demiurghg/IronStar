@@ -312,9 +312,6 @@ namespace Fusion.Drivers.Graphics.Display {
 			form.MouseDown += Form_MouseDown;
 			#endif
 
-			form.KeyDown += form_KeyDown;
-			form.KeyUp += form_KeyUp;
-			form.KeyPress += form_KeyPress;
 			form.Resize += (s,e) => Game.InputDevice.RemoveAllPressedKeys();
 			form.Move += (s,e) => Game.InputDevice.RemoveAllPressedKeys();
 			form.FormClosing += form_FormClosing;
@@ -353,31 +350,6 @@ namespace Fusion.Drivers.Graphics.Display {
 				Game.UserInterface.RequestToExit();
 				e.Cancel	=	true;
 			}
-		}
-
-
-
-		void form_KeyPress ( object sender, KeyPressEventArgs e )
-		{
-			Game.InputDevice.NotifyKeyPress( e.KeyChar );
-		}
-
-
-
-		void form_KeyUp ( object sender, KeyEventArgs e )
-		{
-			Game.InputDevice.NotifyKeyUp( (Fusion.Core.Input.Keys)(int)e.KeyCode, e.Alt, e.Shift, e.Control );
-		}
-
-
-
-		void form_KeyDown ( object sender, KeyEventArgs e )
-		{
-			if (e.Alt && e.KeyCode==Forms.Keys.Enter) {
-				Fullscreen = !Fullscreen;
-			}
-
-			Game.InputDevice.NotifyKeyDown( (Fusion.Core.Input.Keys)(int)e.KeyCode, e.Alt, e.Shift, e.Control );
 		}
 
 

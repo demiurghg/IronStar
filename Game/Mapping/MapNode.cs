@@ -12,7 +12,6 @@ using Fusion.Engine.Graphics;
 using IronStar.SFX;
 using Fusion.Core.Shell;
 using Fusion.Engine.Common;
-using Fusion.Engine.Common;
 using Newtonsoft.Json;
 
 namespace IronStar.Mapping {

@@ -12,7 +12,6 @@ using SharpDX.Mathematics.Interop;
 using SharpDX.MediaFoundation;
 using System.IO;
 using Fusion.Core.Content;
-using Fusion.Core;
 
 
 namespace Fusion.Engine.Media {

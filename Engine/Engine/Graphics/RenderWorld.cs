@@ -458,9 +458,9 @@ namespace Fusion.Engine.Graphics {
 
 					switch (rs.ShowGBuffer) {
 						case 1  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.Normals ); return;
-						case 2  : rs.Filter.CopyAlpha( targetSurface,	viewHdrFrame.GBuffer0 ); return;
-						case 3  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.GBuffer1 ); return;
-						case 4  : rs.Filter.CopyAlpha( targetSurface,	viewHdrFrame.GBuffer1 ); return;
+						//case 2  : rs.Filter.CopyAlpha( targetSurface,	viewHdrFrame.GBuffer0 ); return;
+						//case 3  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.GBuffer1 ); return;
+						//case 4  : rs.Filter.CopyAlpha( targetSurface,	viewHdrFrame.GBuffer1 ); return;
 						case 5  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.HdrBuffer ); return;
 						case 6  : rs.Filter.Copy( targetSurface,		viewHdrFrame.AOBuffer ); return;
 						case 7  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ParticleShadow ); return;
@@ -510,8 +510,6 @@ namespace Fusion.Engine.Graphics {
 			if (!Game.Keyboard.IsKeyDown(Keys.P)) {
 				return;
 			}
-
-			int count = 0;
 
 			foreach ( var instance in Instances ) {
 

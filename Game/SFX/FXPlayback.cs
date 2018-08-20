@@ -172,7 +172,7 @@ namespace IronStar.SFX {
 			var className = world.Atoms[ fxAtomID ];
 
 			if (className=="*rail_trail") {
-				RunRailTrailFX( fxEvent );
+				Log.Warning("\"*rail_trail\" is not implemented");
 				return null;
 			}
 

@@ -29,10 +29,6 @@ namespace Fusion.Core.Input {
 
 			device.KeyDown += device_KeyDown;
 			device.KeyUp += device_KeyUp;
-
-			device.FormKeyDown += device_FormKeyDown;
-			device.FormKeyUp += device_FormKeyUp;
-			device.FormKeyPress += device_FormKeyPress;
 		}
 
 
@@ -78,10 +74,6 @@ namespace Fusion.Core.Input {
 			if (disposing) {
 				device.KeyDown -= device_KeyDown;
 				device.KeyUp -= device_KeyUp;
-
-				device.FormKeyDown -= device_FormKeyDown;
-				device.FormKeyUp -= device_FormKeyUp;
-				device.FormKeyPress -= device_FormKeyPress;
 			}
 
 			base.Dispose( disposing );
@@ -123,9 +115,9 @@ namespace Fusion.Core.Input {
 
 		public event KeyDownEventHandler		KeyDown;
 		public event KeyUpEventHandler			KeyUp;
-		public event KeyDownEventHandler		FormKeyDown;
-		public event KeyUpEventHandler			FormKeyUp;
-		public event KeyPressEventHandler		FormKeyPress;
+		//public event KeyDownEventHandler		FormKeyDown;
+		//public event KeyUpEventHandler			FormKeyUp;
+		//public event KeyPressEventHandler		FormKeyPress;
 
 
 		void device_KeyDown ( object sender, InputDevice.KeyEventArgs e )
@@ -142,25 +134,5 @@ namespace Fusion.Core.Input {
 		{
 			KeyUp?.Invoke(sender, new KeyEventArgs() { Key = (Keys)e.Key });
 		}
-
-
-		void device_FormKeyDown ( object sender, InputDevice.KeyEventArgs e )
-		{
-			FormKeyDown?.Invoke(sender, new KeyEventArgs() { Key = (Keys)e.Key });
-		}
-
-		void device_FormKeyUp ( object sender, InputDevice.KeyEventArgs e )
-		{
-			FormKeyUp?.Invoke(sender, new KeyEventArgs() { Key = (Keys)e.Key });
-		}
-
-		void device_FormKeyPress ( object sender, InputDevice.KeyPressArgs e )
-		{
-			FormKeyPress?.Invoke(sender, new KeyPressArgs() { KeyChar = e.KeyChar });
-		}
-		
-
-
-
 	}
 }

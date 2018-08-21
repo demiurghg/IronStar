@@ -1,11 +1,19 @@
 [General]
 Transparent  = False
-Emission     = 0, 0, 0, 0
-MaskEmission = False
+Emission     = 10, 10, 10, 10
+MaskEmission = True
 
 [Textures]
-BaseColor = 
-NormalMap = 
-Metallic  = 
-Roughness = 
-Emission  = 
+BaseColor = assault_rifle_Base_Color.png
+NormalMap = assault_rifle_Normal_DirectX.png
+Metallic  = assault_rifle_Metallic.png
+Roughness = assault_rifle_Roughness.png
+Emission  = assault_rifle_Emissive.png
+
+
+# assault_rifle_Base_Color
+# assault_rifle_Emissive
+# assault_rifle_Metallic
+# assault_rifle_Mixed_AO
+# assault_rifle_Normal_DirectX
+# assault_rifle_Roughness

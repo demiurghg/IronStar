@@ -1,0 +1,20 @@
+[General]
+Transparent  = False
+Emission     = 0, 0, 0, 0
+MaskEmission = False
+
+[Textures]
+BaseColor = plasma_rifle_Base_Color.png
+NormalMap = plasma_rifle_Normal_DirectX.png
+Metallic  = plasma_rifle_Metallic.png
+Roughness = plasma_rifle_Roughness.png
+Emission  = plasma_rifle_Emissive.png
+Occlusion = plasma_rifle_Mixed_AO.png
+
+
+
+
+
+
+
+

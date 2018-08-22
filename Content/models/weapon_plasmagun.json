@@ -1,0 +1,17 @@
+{
+  "$type": "IronStar.SFX.ModelFactory, IronStar",
+  "ScenePath": "scenes\\weapon2\\plasma_rifle\\plasma_rifle_view.FBX",
+  "Scale": 0.01,
+  "AnimController": "assault_rifle",
+  "AnimEnabled": true,
+  "Color": "255, 80, 20, 255",
+  "Intensity": 200.0,
+  "FPVEnable": true,
+  "FPVCamera": "camera1",
+  "Prefix": "anim_",
+  "Clips": "",
+  "BoxWidth": 1.0,
+  "BoxHeight": 1.0,
+  "BoxDepth": 1.0,
+  "BoxColor": "154, 205, 50, 255"
+}

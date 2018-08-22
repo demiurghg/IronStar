@@ -5,7 +5,7 @@
     "$type": "IronStar.SFX.FXSoundStage, IronStar",
     "Enabled": true,
     "Sound": "weapon/machinegun",
-    "Attenuation": "normal"
+    "Reverb": 1.0
   },
   "LightStage": {
     "$type": "IronStar.SFX.FXLightStage, IronStar",
@@ -159,11 +159,11 @@
       "$type": "IronStar.SFX.FXTiming, IronStar",
       "Delay": 0.1,
       "Bunch": 0.1,
-      "FadeIn": 0.1,
+      "FadeIn": 0.8,
       "FadeOut": 0.9
     },
     "Color": "5, 5, 5, 255",
-    "Alpha": 1,
+    "Alpha": 1.0,
     "Roughness": 0.2,
     "Metallic": 0.0,
     "Intensity": 100.0,

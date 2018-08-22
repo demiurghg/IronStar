@@ -245,6 +245,7 @@ GBuffer PSMain( PSInput input )
 	float3	localNormal			=	float3(0,0,1);
 	float	emission			=	0;
 	float 	metallic			=	0;
+	float	occlusion			=	1;
 	
 	
 	float2 	scaledCoords	=	input.TexCoord.xy * Subset.Rectangle.zw;
@@ -316,8 +317,9 @@ GBuffer PSMain( PSInput input )
 		alpha		=	channelC.a;
 		localNormal	=	channelN.rgb * 2 - 1;
 		roughness	=	channelS.r;
-		metallic	=	channelS.g;
+		metallic	=	channelS.g;  //*/
 		emission	=	channelS.b;
+		occlusion	=	channelS.a * channelS.a;
 	}
 
 	if ( Subset.Rectangle.z==Subset.Rectangle.w && Subset.Rectangle.z==0 ) {
@@ -346,7 +348,7 @@ GBuffer PSMain( PSInput input )
 	
 	float3 	entityColor	=	input.Color.rgb;
 	
-	float3 	lighting	=	ComputeClusteredLighting( input, ClusterTable, Stage.ViewBounds.xy, baseColor, worldNormal, triNormal, roughness, metallic );
+	float3 	lighting	=	ComputeClusteredLighting( input, ClusterTable, Stage.ViewBounds.xy, baseColor, worldNormal, triNormal, roughness, metallic, occlusion );
 	
 			lighting	=	emission * entityColor + lighting;
 	

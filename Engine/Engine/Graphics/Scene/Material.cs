@@ -54,6 +54,11 @@ namespace Fusion.Engine.Graphics {
 		public	string	EmissionMap { get; set; }
 
 		/// <summary>
+		/// Ambiebnt occlusion texture path.
+		/// </summary>
+		public	string	OcclusionMap { get; set; }
+
+		/// <summary>
 		/// Emission texture path.
 		/// </summary>
 		public	bool	Transparent { get; set; }
@@ -109,6 +114,7 @@ namespace Fusion.Engine.Graphics {
 			sectionTextures.Keys.AddKey("Metallic"		,	material.MetallicMap	?? "" );
 			sectionTextures.Keys.AddKey("Roughness"		,	material.RoughnessMap	?? "" );
 			sectionTextures.Keys.AddKey("Emission"		,	material.EmissionMap	?? "" );
+			sectionTextures.Keys.AddKey("Occlusion"		,	material.OcclusionMap	?? "" );
 
 			iniData.Sections.Add( sectionGeneral );
 			iniData.Sections.Add( sectionTextures );
@@ -163,6 +169,7 @@ namespace Fusion.Engine.Graphics {
 				material.MetallicMap	=	sectionTextures["Metallic"	] ?? "";
 				material.RoughnessMap	=	sectionTextures["Roughness"	] ?? "";
 				material.EmissionMap	=	sectionTextures["Emission"	] ?? "";
+				material.OcclusionMap	=	sectionTextures["Occlusion"	] ?? "";
 
 				return material;
 			}

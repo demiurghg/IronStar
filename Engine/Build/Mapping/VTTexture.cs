@@ -26,6 +26,7 @@ namespace Fusion.Build.Mapping {
 		public readonly string  Metallic	;
 		public readonly string  Roughness	;
 		public readonly string	Emission	;
+		public readonly string	Occlusion	;
 		public readonly bool	Transparent	;
 		public readonly bool	MaskEmission;
 
@@ -62,6 +63,7 @@ namespace Fusion.Build.Mapping {
 			Metallic		=   CombinePathIfNotEmpty( dir, material.MetallicMap	);
 			Roughness		=   CombinePathIfNotEmpty( dir, material.RoughnessMap	);
 			Emission		=   CombinePathIfNotEmpty( dir, material.EmissionMap	);
+			Occlusion		=	CombinePathIfNotEmpty( dir, material.OcclusionMap	);
 			Transparent		=	material.Transparent;
 			MaskEmission	=	material.MaskEmission;
 
@@ -135,6 +137,7 @@ namespace Fusion.Build.Mapping {
 				 || IsTextureModifiedSince( targetLastWriteTime, NormalMap	)
 				 || IsTextureModifiedSince( targetLastWriteTime, Metallic	)
 				 || IsTextureModifiedSince( targetLastWriteTime, Roughness	)
+				 || IsTextureModifiedSince( targetLastWriteTime, Occlusion	)
 				 || IsTextureModifiedSince( targetLastWriteTime, Emission	)
 				 ;
 		}
@@ -186,7 +189,7 @@ namespace Fusion.Build.Mapping {
 				if ( ext==".jpg" ) {
 					return Image.TakeJpgSize( stream );
 				} else {
-					throw new BuildException("Material " + mtrlName + " must refer TGA or PNG image");
+					throw new BuildException("Material " + mtrlName + " must refer TGA, JPG or PNG image");
 				}
 			}
 		}
@@ -226,6 +229,7 @@ namespace Fusion.Build.Mapping {
 			var roughness			=	LoadTexture( Roughness, Color.Black );
 			var metallic			=	LoadTexture( Metallic,	Color.Black );
 			var emission			=	LoadTexture( Emission,	Color.Black );
+			var	occlusion			=	LoadTexture( Occlusion,	Color.White );
 
 			var pageCountX	=	colorMap.Width / pageSize;
 			var pageCountY	=	colorMap.Height / pageSize;
@@ -248,6 +252,7 @@ namespace Fusion.Build.Mapping {
 							var r	=	roughness.SampleWrap( srcX, srcY ).R;
 							var m	=	metallic .SampleWrap( srcX, srcY ).R;
 							var e	=	emission .SampleWrap( srcX, srcY ).R;
+							var o	=	occlusion.SampleWrap( srcX, srcY ).R;
 
 							if (MaskEmission) {
 								c	=	Color.Lerp( c, Color.Black, MathUtil.Clamp(e/255.0f * 8, 0, 1) );
@@ -255,7 +260,7 @@ namespace Fusion.Build.Mapping {
 
 							pageC.Write( i,j, c );
 							pageN.Write( i,j, n );
-							pageS.Write( i,j, new Color( r,m,e, (byte)255 ) );
+							pageS.Write( i,j, new Color( r,m,e,o ) );
 						}
 					}
 

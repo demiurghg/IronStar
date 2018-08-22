@@ -16,7 +16,7 @@ float computeSpecOcclusion ( float NdotV , float AO , float roughness )
 //
 //	ComputeClusteredLighting
 //	
-float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, float2 vpSize, float3 baseColor, float3 worldNormal, float3 triNormal, float roughness, float metallic )
+float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, float2 vpSize, float3 baseColor, float3 worldNormal, float3 triNormal, float roughness, float metallic, float occlusion )
 {
 	uint i,j,k;
 	float3 result		=	float3(0,0,0);
@@ -239,6 +239,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	ssaoFactor	=	1;
 #endif
 	ssaoFactor	=	lerp( 1, ssaoFactor, Stage.SsaoWeight );
+	ssaoFactor	*=	occlusion;
 	
 	
 	float	NoV 			= 	dot(viewDirN, normal.xyz);

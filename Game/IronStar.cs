@@ -19,7 +19,8 @@ using Fusion.Engine.Common;
 using IronStar.SFX;
 using System.IO;
 using System.Runtime.CompilerServices;
-																			 
+using Fusion.Core.Input;
+
 namespace IronStar {
 	partial class IronStar : Game
 	{
@@ -109,6 +110,11 @@ namespace IronStar {
 		protected override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
+
+			if (Keyboard.IsKeyDown(Keys.F5)) {
+				Builder.SafeBuild(false, null, null);
+				Reload();	
+			}
 
 			Invoker.ExecuteDeferredCommands();
 		}

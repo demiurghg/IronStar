@@ -54,10 +54,10 @@
       "$type": "IronStar.SFX.FXShape, IronStar",
       "Size0": 0.2,
       "Size1": 0.0,
-      "EnableRotation": false,
+      "EnableRotation": true,
       "InitialAngle": 0.0,
-      "MinAngularVelocity": 0.0,
-      "MaxAngularVelocity": 0.0
+      "MinAngularVelocity": -200.0,
+      "MaxAngularVelocity": 200.0
     },
     "Position": {
       "$type": "IronStar.SFX.FXPosition, IronStar",

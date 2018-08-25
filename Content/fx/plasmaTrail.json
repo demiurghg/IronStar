@@ -63,8 +63,8 @@
     },
     "Position": {
       "$type": "IronStar.SFX.FXPosition, IronStar",
-      "OffsetDirection": "none",
-      "OffsetFactor": 0.0,
+      "OffsetDirection": "LocalRight",
+      "OffsetFactor": 0.1,
       "Distribution": "uniformRadial",
       "MinSize": 0.0,
       "MaxSize": 0.0

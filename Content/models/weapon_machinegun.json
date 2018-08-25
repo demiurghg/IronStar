@@ -2,7 +2,7 @@
   "$type": "IronStar.SFX.ModelFactory, IronStar",
   "ScenePath": "scenes\\weapon2\\assault_rifle\\assault_rifle_view.FBX",
   "Scale": 0.01,
-  "AnimController": "assault_rifle",
+  "AnimController": "machinegun",
   "AnimEnabled": true,
   "Color": "255, 80, 20, 255",
   "Intensity": 200.0,

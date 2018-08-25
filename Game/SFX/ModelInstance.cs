@@ -34,6 +34,7 @@ namespace IronStar.SFX {
 		}
 
 		readonly Color4 color;
+		readonly GameWorld world;
 		readonly ModelManager modelManager;
 		readonly Scene scene;
 		readonly Scene[] clips;
@@ -91,6 +92,7 @@ namespace IronStar.SFX {
 			this.boxColor		=	factory.BoxColor	;
 
 			this.modelManager   =   modelManager;
+			this.world			=	modelManager.world;
 			this.PreTransform   =   factory.ComputePreTransformMatrix();
 			this.color			=	factory.Color;
 			this.color			*=	factory.Intensity;
@@ -106,8 +108,7 @@ namespace IronStar.SFX {
 			scene.ComputeAbsoluteTransforms( animSnapshot );
 
 			if (factory.AnimEnabled) {
-				animator	=	new WeaponAnimator( modelManager.world, Entity, this );
-				//animation	=	content.Load<AnimatorFactory>(@"animation\" + factory.AnimController)?.Create( scene );
+				animator	=	content.Load(@"animation\" + factory.AnimController, (AnimatorFactory)null)?.Create( world, entity, this );
 			}
 
 			if (fpvEnabled) {

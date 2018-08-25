@@ -3,8 +3,8 @@
   "Period": 1.0,
   "SoundStage": {
     "$type": "IronStar.SFX.FXSoundStage, IronStar",
-    "Enabled": false,
-    "Sound": "",
+    "Enabled": true,
+    "Sound": "weapon/plasmaExplosion",
     "Attenuation": "normal"
   },
   "LightStage": {

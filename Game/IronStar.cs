@@ -95,6 +95,40 @@ namespace IronStar {
 		protected override void Initialize()
 		{
 			base.Initialize();
+
+			Keyboard.KeyDown +=Keyboard_KeyDown;
+		}
+
+
+		private void Keyboard_KeyDown( object sender, KeyEventArgs e )
+		{
+			if (e.Key==Keys.F5) {
+				Builder.SafeBuild(false, null, null);
+				Reload();	
+			}
+
+			if (e.Key==Keys.F2) {
+				
+				var vsync = this.GetService<RenderSystem>().VSyncInterval;
+
+				if (vsync==0) {
+					vsync = 1;
+				} else {	
+					vsync = 0;
+				}
+
+				this.GetService<RenderSystem>().VSyncInterval = vsync;
+			}
+
+
+			if (e.Key==Keys.F1) {
+				
+				if (assetExplorer!=null) {
+					var frames = this.GetService<FrameProcessor>().RootFrame;
+					assetExplorer = MapEditor.CreateAssetExplorer( frames );
+				}
+			}
+
 		}
 
 
@@ -107,14 +141,11 @@ namespace IronStar {
 		}
 
 
+		Frame assetExplorer;
+
 		protected override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
-
-			if (Keyboard.IsKeyDown(Keys.F5)) {
-				Builder.SafeBuild(false, null, null);
-				Reload();	
-			}
 
 			Invoker.ExecuteDeferredCommands();
 		}

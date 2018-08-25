@@ -234,7 +234,7 @@ namespace IronStar.Editor {
 
 
 
-		Panel CreateAssetExplorer ( Workspace workspace )
+		public static Panel CreateAssetExplorer ( Frame parent )
 		{
 			var types = new List<Type>();
 
@@ -243,14 +243,15 @@ namespace IronStar.Editor {
 			var typeModels		=	Misc.GetAllSubclassesOf(typeof(ModelFactory), true);
 			var typeItems		=	Misc.GetAllSubclassesOf(typeof(Item), true);
 			var typeWeapon		=	Misc.GetAllSubclassesOf(typeof(Weapon), true);
+			var typeAnimation	=	Misc.GetAllSubclassesOf(typeof(AnimatorFactory), true);
 
-			var assetExplorer	=	new AssetExplorer2( workspace, "fx", typeFX, 0,0, 500, 600 );
+			var assetExplorer	=	new AssetExplorer2( parent, "fx", typeFX, 0,0, 500, 600 );
 
 			assetExplorer.AddToolButton( "FX"		,	() => assetExplorer.SetTargetClass( "fx"		, typeFX		) );
 			assetExplorer.AddToolButton( "Entities"	,	() => assetExplorer.SetTargetClass( "entities"	, typeEntities	) );
 			assetExplorer.AddToolButton( "Models"	,	() => assetExplorer.SetTargetClass( "models"	, typeModels	) );
 			assetExplorer.AddToolButton( "Items"	,	() => assetExplorer.SetTargetClass( "items"		, typeItems		) );
-			assetExplorer.AddToolButton( "Weapon"	,	() => assetExplorer.SetTargetClass( "weapon"	, typeWeapon	) );
+			assetExplorer.AddToolButton( "Animation",	() => assetExplorer.SetTargetClass( "animation"	, typeAnimation	) );
 
 			return assetExplorer;			  
 		}

@@ -89,16 +89,17 @@
     <Compile Include="Mapping\MapSound.cs" />
     <Compile Include="Physics\DetectorArea.cs" />
     <Compile Include="Physics\DynamicBox.cs" />
-    <Compile Include="SFX\AnimationClip.cs" />
-    <Compile Include="SFX\AnimationSource.cs" />
-    <Compile Include="SFX\AnimationPose.cs" />
-    <Compile Include="SFX\AnimationStack.cs" />
-    <Compile Include="SFX\AnimationTrack.cs" />
-    <Compile Include="SFX\Animator.cs" />
-    <Compile Include="SFX\AnimatorFactory.cs" />
-    <Compile Include="SFX\AnimationComposer.cs" />
+    <Compile Include="SFX\Animation\AnimationClip.cs" />
+    <Compile Include="SFX\Animation\AnimationSource.cs" />
+    <Compile Include="SFX\Animation\AnimationPose.cs" />
+    <Compile Include="SFX\Animation\AnimationStack.cs" />
+    <Compile Include="SFX\Animation\AnimationTrack.cs" />
+    <Compile Include="SFX\Animators\Animator.cs" />
+    <Compile Include="SFX\Animators\AnimatorFactory.cs" />
+    <Compile Include="SFX\Animation\AnimationComposer.cs" />
+    <Compile Include="SFX\Animators\WeaponAnimatorFactory.cs" />
     <Compile Include="SFX\FXInstance.SoundStage.cs" />
-    <Compile Include="SFX\WeaponAnimator.cs" />
+    <Compile Include="SFX\Animators\WeaponAnimator.cs" />
     <Compile Include="ShooterCampaign.cs" />
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Client\GameInput.cs" />
@@ -196,7 +197,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Physics\PhysicsManager.cs" />
-    <Compile Include="SFX\AnimBlendUtils.cs" />
+    <Compile Include="SFX\Animation\AnimBlendUtils.cs" />
     <Compile Include="SFX\FXFactory.Utils.cs" />
     <Compile Include="SFX\FXFactory.cs" />
     <Compile Include="SFX\ModelInstance.cs" />

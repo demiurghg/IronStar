@@ -1,0 +1,10 @@
+{
+  "$type": "IronStar.Entities.ProjectileFactory, IronStar",
+  "Velocity": 50.0,
+  "Impulse": 230.0,
+  "Damage": 100,
+  "LifeTime": 10.0,
+  "Radius": 5.0,
+  "ExplosionFX": "rocketExplosion",
+  "TrailFX": "rocketTrail"
+}

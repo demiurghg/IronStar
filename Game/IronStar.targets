@@ -4,7 +4,7 @@
     <ItemGroup>
         <FModFiles 			Include="$(ProjectDir)..\SDKs\FMOD\api\lowlevel\lib\*.dll;"/>
         <FModStudioFiles   	Include="$(ProjectDir)..\SDKs\FMOD\api\studio\lib\*.dll;"/>
-        <FbxSdkFiles 		Include="$(ProjectDir)..\SDKs\FbxSdk\lib\x64\release\*.dll;"/>
+        <FModPlugIns		Include="$(ProjectDir)..\SDKs\FMOD\plugins\fmod\*.dll;"/>
         <EmbreeFiles 		Include="$(ProjectDir)..\SDKs\Embree\lib\*.dll;"/>
     </ItemGroup>
 
@@ -12,6 +12,7 @@
 		<Exec Command='echo Copying SDKs files...'/>
 		<Copy SourceFiles="@(FModFiles)"   		DestinationFolder="$(OutDir)" SkipUnchangedFiles="false"/>
 		<Copy SourceFiles="@(FModStudioFiles)"  DestinationFolder="$(OutDir)" SkipUnchangedFiles="false"/>
+		<Copy SourceFiles="@(FModPlugIns)"  	DestinationFolder="$(OutDir)" SkipUnchangedFiles="false"/>
 		<Copy SourceFiles="@(FbxSdkFiles)" 		DestinationFolder="$(OutDir)" SkipUnchangedFiles="false"/>
 		<Copy SourceFiles="@(EmbreeFiles)" 		DestinationFolder="$(OutDir)" SkipUnchangedFiles="false"/>
 		<Exec Command='echo Done.'/>

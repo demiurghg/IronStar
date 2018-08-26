@@ -142,14 +142,14 @@ namespace IronStar.Client {
 
 			userCommand.Weapon = 0;
 
-			if (Game.Keyboard.IsKeyDown( Weapon1	)) userCommand.Weapon = world.Atoms["weapon_machinegun"	];
-			if (Game.Keyboard.IsKeyDown( Weapon2	)) userCommand.Weapon = world.Atoms["weapon_machinegun2"];
-			if (Game.Keyboard.IsKeyDown( Weapon3	)) userCommand.Weapon = world.Atoms["weapon_shotgun"	];
-			if (Game.Keyboard.IsKeyDown( Weapon4	)) userCommand.Weapon = world.Atoms["weapon_plasmagun"	];
-			if (Game.Keyboard.IsKeyDown( Weapon5	)) userCommand.Weapon = world.Atoms["weapon_machinegun"	];
-			if (Game.Keyboard.IsKeyDown( Weapon6	)) userCommand.Weapon = world.Atoms["weapon_machinegun"	];
-			if (Game.Keyboard.IsKeyDown( Weapon7	)) userCommand.Weapon = world.Atoms["weapon_railgun"	];
-			if (Game.Keyboard.IsKeyDown( Weapon8	)) userCommand.Weapon = world.Atoms["weapon_machinegun"	];
+			if (Game.Keyboard.IsKeyDown( Weapon1	)) userCommand.Weapon = world.Atoms["weapon_machinegun"			];
+			if (Game.Keyboard.IsKeyDown( Weapon2	)) userCommand.Weapon = world.Atoms["weapon_machinegun2"		];
+			if (Game.Keyboard.IsKeyDown( Weapon3	)) userCommand.Weapon = world.Atoms["weapon_shotgun"			];
+			if (Game.Keyboard.IsKeyDown( Weapon4	)) userCommand.Weapon = world.Atoms["weapon_plasmagun"			];
+			if (Game.Keyboard.IsKeyDown( Weapon5	)) userCommand.Weapon = world.Atoms["weapon_rocket_launcher"	];
+			if (Game.Keyboard.IsKeyDown( Weapon6	)) userCommand.Weapon = world.Atoms["weapon_machinegun"			];
+			if (Game.Keyboard.IsKeyDown( Weapon7	)) userCommand.Weapon = world.Atoms["weapon_railgun"			];
+			if (Game.Keyboard.IsKeyDown( Weapon8	)) userCommand.Weapon = world.Atoms["weapon_machinegun"			];
 
 			//	http://eliteownage.com/mousesensitivity.html 
 			//	Q3A: 16200 dot per 360 turn:

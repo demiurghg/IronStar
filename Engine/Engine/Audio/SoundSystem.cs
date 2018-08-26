@@ -44,6 +44,9 @@ namespace Fusion.Engine.Audio {
 			FmodExt.ERRCHECK( lowlevel.setSoftwareFormat( 0, speakerMode, 0 ) );
 			FmodExt.ERRCHECK( system.initialize( 1024, studioFlags, lowlevelFlags, IntPtr.Zero ) );
 
+			uint plugin;
+			FmodExt.ERRCHECK( lowlevel.loadPlugin("fmod_distance_filter", out plugin ) );
+
 			Game.Content.Load<SoundBank>(@"audio\desktop\master.strings");
 			Game.Content.Load<SoundBank>(@"audio\desktop\master"		);
 			Game.Content.Load<SoundBank>(@"audio\desktop\env"			);

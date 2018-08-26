@@ -1,0 +1,12 @@
+[General]
+Transparent  = False
+Emission     = 0, 0, 0, 0
+MaskEmission = False
+
+[Textures]
+BaseColor = canister_rifle_Base_Color.png
+NormalMap = canister_rifle_Normal_DirectX.png
+Metallic  = canister_rifle_Metallic.png
+Roughness = canister_rifle_Roughness.png
+Emission  = canister_rifle_Emissive.png
+Occlusion = canister_rifle_Mixed_AO.png

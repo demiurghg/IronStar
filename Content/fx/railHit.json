@@ -41,7 +41,7 @@
       "FadeOut": 0.5
     },
     "Color": "107, 136, 255, 255",
-    "Alpha": 0.8,
+    "Alpha": 0.3,
     "Roughness": 0.5,
     "Metallic": 0.0,
     "Intensity": 1500.0,
@@ -49,17 +49,17 @@
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "gauss",
-      "MinLifetime": 0.2,
-      "MaxLifetime": 0.8
+      "MinLifetime": 0.5,
+      "MaxLifetime": 1.2
     },
     "Shape": {
       "$type": "IronStar.SFX.FXShape, IronStar",
       "Size0": 0.2,
-      "Size1": 0.7,
+      "Size1": 1.2,
       "EnableRotation": true,
       "InitialAngle": 360.0,
-      "MinAngularVelocity": 0.0,
-      "MaxAngularVelocity": 0.0
+      "MinAngularVelocity": -20.0,
+      "MaxAngularVelocity": 20.0
     },
     "Position": {
       "$type": "IronStar.SFX.FXPosition, IronStar",
@@ -71,19 +71,19 @@
     },
     "Velocity": {
       "$type": "IronStar.SFX.FXVelocity, IronStar",
-      "Direction": "none",
+      "Direction": "localForward",
       "LinearDistribution": "uniform",
       "LinearVelocityMin": 0.0,
-      "LinearVelocityMax": 1.0,
+      "LinearVelocityMax": 2.0,
       "RadialDistribution": "gaussRadial",
       "RadialVelocityMin": 0.5,
-      "RadialVelocityMax": 1.5,
+      "RadialVelocityMax": 2.0,
       "Advection": 0.0
     },
     "Acceleration": {
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
       "GravityFactor": 0.0,
-      "Damping": 0.0,
+      "Damping": 0.1,
       "DragForce": 0.0,
       "Turbulence": 0.0
     }
@@ -97,7 +97,7 @@
     "Period": 1.0,
     "Timing": {
       "$type": "IronStar.SFX.FXTiming, IronStar",
-      "Delay": 0.1,
+      "Delay": 0.15,
       "Bunch": 0.0,
       "FadeIn": 0.1,
       "FadeOut": 0.2
@@ -111,7 +111,7 @@
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "uniform",
-      "MinLifetime": 0.1,
+      "MinLifetime": 0.3,
       "MaxLifetime": 0.7
     },
     "Shape": {
@@ -136,10 +136,10 @@
       "Direction": "localForward",
       "LinearDistribution": "gauss",
       "LinearVelocityMin": 0.0,
-      "LinearVelocityMax": 6.0,
+      "LinearVelocityMax": 8.0,
       "RadialDistribution": "gaussRadial",
       "RadialVelocityMin": 0.0,
-      "RadialVelocityMax": 3.0,
+      "RadialVelocityMax": 2.0,
       "Advection": 0.0
     },
     "Acceleration": {
@@ -178,7 +178,7 @@
     },
     "Shape": {
       "$type": "IronStar.SFX.FXShape, IronStar",
-      "Size0": 2.0,
+      "Size0": 3.0,
       "Size1": 0.1,
       "EnableRotation": true,
       "InitialAngle": 360.0,

@@ -144,8 +144,8 @@ namespace IronStar.Client {
 
 			if (Game.Keyboard.IsKeyDown( Weapon1	)) userCommand.Weapon = world.Atoms["weapon_machinegun"	];
 			if (Game.Keyboard.IsKeyDown( Weapon2	)) userCommand.Weapon = world.Atoms["weapon_machinegun2"];
-			if (Game.Keyboard.IsKeyDown( Weapon3	)) userCommand.Weapon = world.Atoms["weapon_plasmagun"	];
-			if (Game.Keyboard.IsKeyDown( Weapon4	)) userCommand.Weapon = world.Atoms["weapon_machinegun"	];
+			if (Game.Keyboard.IsKeyDown( Weapon3	)) userCommand.Weapon = world.Atoms["weapon_shotgun"	];
+			if (Game.Keyboard.IsKeyDown( Weapon4	)) userCommand.Weapon = world.Atoms["weapon_plasmagun"	];
 			if (Game.Keyboard.IsKeyDown( Weapon5	)) userCommand.Weapon = world.Atoms["weapon_machinegun"	];
 			if (Game.Keyboard.IsKeyDown( Weapon6	)) userCommand.Weapon = world.Atoms["weapon_machinegun"	];
 			if (Game.Keyboard.IsKeyDown( Weapon7	)) userCommand.Weapon = world.Atoms["weapon_railgun"	];

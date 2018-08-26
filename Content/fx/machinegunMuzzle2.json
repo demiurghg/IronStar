@@ -26,7 +26,7 @@
   },
   "ParticleStage1": {
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
-    "Enabled": true,
+    "Enabled": false,
     "Sprite": "bulletSpark",
     "Effect": "soft",
     "Count": 30,
@@ -124,7 +124,7 @@
     "Position": {
       "$type": "IronStar.SFX.FXPosition, IronStar",
       "OffsetDirection": "localForward",
-      "OffsetFactor": -0.3,
+      "OffsetFactor": 0.5,
       "Distribution": "uniformRadial",
       "MinSize": 0.0,
       "MaxSize": 0.0

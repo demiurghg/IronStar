@@ -67,6 +67,12 @@ namespace Fusion.Engine.Imaging {
 					var color   =   new Color( pixels[offset], pixels[offset], pixels[offset], (byte)255 );
 					image.RawImageData[i]     =   color;
 				}
+			} else if ( format==PixelFormats.Indexed8 ) {
+				for ( int i = 0; i<pixelCount; i++ ) {
+					var offset  =   i * 1;
+					var color   =   new Color( pixels[offset], pixels[offset], pixels[offset], (byte)255 );
+					image.RawImageData[i]     =   color;
+				}
 			} else {
 				throw new NotSupportedException( string.Format("PNG format {0} is not supported", format) );
 			}

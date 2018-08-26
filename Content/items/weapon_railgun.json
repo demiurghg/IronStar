@@ -1,0 +1,20 @@
+{
+  "$type": "IronStar.Items.WeaponFactory, IronStar",
+  "BeamWeapon": true,
+  "BeamLength": 1000.0,
+  "Projectile": "plasma",
+  "Damage": 100,
+  "Impulse": 50.0,
+  "ProjectileCount": 1,
+  "AngularSpread": 0.0,
+  "WarmupTime": 0,
+  "CooldownTime": 1500,
+  "OverheatTime": 0,
+  "ReloadTime": 500,
+  "EmptyTime": 500,
+  "RaiseTime": 350,
+  "DropTime": 350,
+  "AmmoItem": "",
+  "HitFX": "railHit",
+  "ViewModel": "weapon_railgun"
+}

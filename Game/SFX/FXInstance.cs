@@ -70,6 +70,7 @@ namespace IronStar.SFX {
 			AddParticleStage( fxFactory.ParticleStage2, fxEvent, looped );
 			AddParticleStage( fxFactory.ParticleStage3, fxEvent, looped );
 			AddParticleStage( fxFactory.ParticleStage4, fxEvent, looped );
+			AddParticleStage( fxFactory.ParticleStage5, fxEvent, looped );
 
 			AddLightStage( fxFactory.LightStage, fxEvent, looped );
 			AddSoundStage( fxFactory.SoundStage, fxEvent, looped );

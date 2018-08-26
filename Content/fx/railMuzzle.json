@@ -1,0 +1,337 @@
+{
+  "$type": "IronStar.SFX.FXFactory, IronStar",
+  "Period": 1.0,
+  "SoundStage": {
+    "$type": "IronStar.SFX.FXSoundStage, IronStar",
+    "Enabled": true,
+    "Sound": "weapon/railgun",
+    "Reverb": 1.0
+  },
+  "LightStage": {
+    "$type": "IronStar.SFX.FXLightStage, IronStar",
+    "Enabled": false,
+    "Period": 1.0,
+    "Intensity": 100.0,
+    "Color": "255, 255, 255, 255",
+    "InnerRadius": 0.0,
+    "OuterRadius": 5.0,
+    "PulseString": "m",
+    "LightStyle": "const",
+    "OffsetDirection": "none",
+    "OffsetFactor": 0.0
+  },
+  "CameraShake": {
+    "$type": "IronStar.SFX.FXCameraShake, IronStar",
+    "Enabled": false
+  },
+  "ParticleStage1": {
+    "$type": "IronStar.SFX.FXParticleStage, IronStar",
+    "Enabled": true,
+    "Sprite": "plasmaFire",
+    "Effect": "soft",
+    "Count": 30,
+    "Period": 1.0,
+    "Timing": {
+      "$type": "IronStar.SFX.FXTiming, IronStar",
+      "Delay": 0.1,
+      "Bunch": 0.0,
+      "FadeIn": 0.5,
+      "FadeOut": 0.5
+    },
+    "Color": "107, 136, 255, 255",
+    "Alpha": 0.4,
+    "Roughness": 0.5,
+    "Metallic": 0.0,
+    "Intensity": 500.0,
+    "Scattering": 0.0,
+    "Lifetime": {
+      "$type": "IronStar.SFX.FXLifetime, IronStar",
+      "Distribution": "gauss",
+      "MinLifetime": 0.1,
+      "MaxLifetime": 0.2
+    },
+    "Shape": {
+      "$type": "IronStar.SFX.FXShape, IronStar",
+      "Size0": 0.5,
+      "Size1": 0.1,
+      "EnableRotation": true,
+      "InitialAngle": 360.0,
+      "MinAngularVelocity": -30.0,
+      "MaxAngularVelocity": 30.0
+    },
+    "Position": {
+      "$type": "IronStar.SFX.FXPosition, IronStar",
+      "OffsetDirection": "none",
+      "OffsetFactor": 0.0,
+      "Distribution": "uniformRadial",
+      "MinSize": 0.0,
+      "MaxSize": 0.0
+    },
+    "Velocity": {
+      "$type": "IronStar.SFX.FXVelocity, IronStar",
+      "Direction": "localForward",
+      "LinearDistribution": "gauss",
+      "LinearVelocityMin": 15.0,
+      "LinearVelocityMax": 30.0,
+      "RadialDistribution": "gaussRadial",
+      "RadialVelocityMin": 0.0,
+      "RadialVelocityMax": 5,
+      "Advection": 0.0
+    },
+    "Acceleration": {
+      "$type": "IronStar.SFX.FXAcceleration, IronStar",
+      "GravityFactor": 0.0,
+      "Damping": 0.0,
+      "DragForce": 0.0,
+      "Turbulence": 0.0
+    }
+  },
+  "ParticleStage2": {
+    "$type": "IronStar.SFX.FXParticleStage, IronStar",
+    "Enabled": true,
+    "Sprite": "bulletSpark",
+    "Effect": "hard",
+    "Count": 100,
+    "Period": 1.0,
+    "Timing": {
+      "$type": "IronStar.SFX.FXTiming, IronStar",
+      "Delay": 0.05,
+      "Bunch": 0.0,
+      "FadeIn": 0.1,
+      "FadeOut": 0.2
+    },
+    "Color": "148, 171, 255, 255",
+    "Alpha": 0.5,
+    "Roughness": 0.5,
+    "Metallic": 0.0,
+    "Intensity": 1100.0,
+    "Scattering": 0.0,
+    "Lifetime": {
+      "$type": "IronStar.SFX.FXLifetime, IronStar",
+      "Distribution": "uniform",
+      "MinLifetime": 0.1,
+      "MaxLifetime": 0.4
+    },
+    "Shape": {
+      "$type": "IronStar.SFX.FXShape, IronStar",
+      "Size0": 0.2,
+      "Size1": 0.0,
+      "EnableRotation": true,
+      "InitialAngle": 360.0,
+      "MinAngularVelocity": 15.0,
+      "MaxAngularVelocity": -15.0
+    },
+    "Position": {
+      "$type": "IronStar.SFX.FXPosition, IronStar",
+      "OffsetDirection": "none",
+      "OffsetFactor": 0.0,
+      "Distribution": "uniformRadial",
+      "MinSize": 0.0,
+      "MaxSize": 0.0
+    },
+    "Velocity": {
+      "$type": "IronStar.SFX.FXVelocity, IronStar",
+      "Direction": "localForward",
+      "LinearDistribution": "gauss",
+      "LinearVelocityMin": 0.0,
+      "LinearVelocityMax": 7.0,
+      "RadialDistribution": "gaussRadial",
+      "RadialVelocityMin": 0.0,
+      "RadialVelocityMax": 1.0,
+      "Advection": 0.0
+    },
+    "Acceleration": {
+      "$type": "IronStar.SFX.FXAcceleration, IronStar",
+      "GravityFactor": 0.0,
+      "Damping": 0.0,
+      "DragForce": 0.0,
+      "Turbulence": 0.0
+    }
+  },
+  "ParticleStage3": {
+    "$type": "IronStar.SFX.FXParticleStage, IronStar",
+    "Enabled": true,
+    "Sprite": "bulletSpark",
+    "Effect": "soft",
+    "Count": 1,
+    "Period": 1.0,
+    "Timing": {
+      "$type": "IronStar.SFX.FXTiming, IronStar",
+      "Delay": 0.0,
+      "Bunch": 0.0,
+      "FadeIn": 0.1,
+      "FadeOut": 0.1
+    },
+    "Color": "167, 185, 255, 255",
+    "Alpha": 1.0,
+    "Roughness": 0.5,
+    "Metallic": 0.0,
+    "Intensity": 3000.0,
+    "Scattering": 0.0,
+    "Lifetime": {
+      "$type": "IronStar.SFX.FXLifetime, IronStar",
+      "Distribution": "uniform",
+      "MinLifetime": 0.1,
+      "MaxLifetime": 0.1
+    },
+    "Shape": {
+      "$type": "IronStar.SFX.FXShape, IronStar",
+      "Size0": 0.3,
+      "Size1": 0.7,
+      "EnableRotation": true,
+      "InitialAngle": 360.0,
+      "MinAngularVelocity": 0.0,
+      "MaxAngularVelocity": 0.0
+    },
+    "Position": {
+      "$type": "IronStar.SFX.FXPosition, IronStar",
+      "OffsetDirection": "none",
+      "OffsetFactor": 0.0,
+      "Distribution": "uniformRadial",
+      "MinSize": 0.0,
+      "MaxSize": 0.0
+    },
+    "Velocity": {
+      "$type": "IronStar.SFX.FXVelocity, IronStar",
+      "Direction": "none",
+      "LinearDistribution": "uniform",
+      "LinearVelocityMin": 0.0,
+      "LinearVelocityMax": 1.0,
+      "RadialDistribution": "uniformRadial",
+      "RadialVelocityMin": 0.0,
+      "RadialVelocityMax": 0.0,
+      "Advection": 0.0
+    },
+    "Acceleration": {
+      "$type": "IronStar.SFX.FXAcceleration, IronStar",
+      "GravityFactor": 0.0,
+      "Damping": 0.0,
+      "DragForce": 0.0,
+      "Turbulence": 0.0
+    }
+  },
+  "ParticleStage4": {
+    "$type": "IronStar.SFX.FXParticleStage, IronStar",
+    "Enabled": true,
+    "Sprite": "hazeMap",
+    "Effect": "distortive",
+    "Count": 15,
+    "Period": 1.5,
+    "Timing": {
+      "$type": "IronStar.SFX.FXTiming, IronStar",
+      "Delay": 0.05,
+      "Bunch": 1.0,
+      "FadeIn": 0.1,
+      "FadeOut": 0.9
+    },
+    "Color": "148, 171, 255, 255",
+    "Alpha": 0.9,
+    "Roughness": 0.5,
+    "Metallic": 0.0,
+    "Intensity": 1100.0,
+    "Scattering": 0.0,
+    "Lifetime": {
+      "$type": "IronStar.SFX.FXLifetime, IronStar",
+      "Distribution": "uniform",
+      "MinLifetime": 0.1,
+      "MaxLifetime": 0.4
+    },
+    "Shape": {
+      "$type": "IronStar.SFX.FXShape, IronStar",
+      "Size0": 0.4,
+      "Size1": 0.6,
+      "EnableRotation": true,
+      "InitialAngle": 360.0,
+      "MinAngularVelocity": 35.0,
+      "MaxAngularVelocity": -35.0
+    },
+    "Position": {
+      "$type": "IronStar.SFX.FXPosition, IronStar",
+      "OffsetDirection": "none",
+      "OffsetFactor": 0.0,
+      "Distribution": "uniformRadial",
+      "MinSize": 0.0,
+      "MaxSize": 0.0
+    },
+    "Velocity": {
+      "$type": "IronStar.SFX.FXVelocity, IronStar",
+      "Direction": "localForward",
+      "LinearDistribution": "gauss",
+      "LinearVelocityMin": 0.0,
+      "LinearVelocityMax": 4.0,
+      "RadialDistribution": "gaussRadial",
+      "RadialVelocityMin": 0.0,
+      "RadialVelocityMax": 0.3,
+      "Advection": 0.0
+    },
+    "Acceleration": {
+      "$type": "IronStar.SFX.FXAcceleration, IronStar",
+      "GravityFactor": 0.0,
+      "Damping": 0.0,
+      "DragForce": 0.0,
+      "Turbulence": 1.0
+    }
+  },
+  "ParticleStage5": {
+    "$type": "IronStar.SFX.FXParticleStage, IronStar",
+    "Enabled": true,
+    "Sprite": "plasmaFire",
+    "Effect": "soft",
+    "Count": 15,
+    "Period": 0.75,
+    "Timing": {
+      "$type": "IronStar.SFX.FXTiming, IronStar",
+      "Delay": 0.05,
+      "Bunch": 1.0,
+      "FadeIn": 0.1,
+      "FadeOut": 0.9
+    },
+    "Color": "148, 171, 255, 255",
+    "Alpha": 0.5,
+    "Roughness": 0.5,
+    "Metallic": 0.0,
+    "Intensity": 1100.0,
+    "Scattering": 0.0,
+    "Lifetime": {
+      "$type": "IronStar.SFX.FXLifetime, IronStar",
+      "Distribution": "uniform",
+      "MinLifetime": 0.1,
+      "MaxLifetime": 0.4
+    },
+    "Shape": {
+      "$type": "IronStar.SFX.FXShape, IronStar",
+      "Size0": 0.2,
+      "Size1": 0.4,
+      "EnableRotation": true,
+      "InitialAngle": 360.0,
+      "MinAngularVelocity": 35.0,
+      "MaxAngularVelocity": -35.0
+    },
+    "Position": {
+      "$type": "IronStar.SFX.FXPosition, IronStar",
+      "OffsetDirection": "none",
+      "OffsetFactor": 0.0,
+      "Distribution": "uniformRadial",
+      "MinSize": 0.0,
+      "MaxSize": 0.0
+    },
+    "Velocity": {
+      "$type": "IronStar.SFX.FXVelocity, IronStar",
+      "Direction": "localForward",
+      "LinearDistribution": "gauss",
+      "LinearVelocityMin": 0.0,
+      "LinearVelocityMax": 4.0,
+      "RadialDistribution": "gaussRadial",
+      "RadialVelocityMin": 0.0,
+      "RadialVelocityMax": 0.3,
+      "Advection": 0.0
+    },
+    "Acceleration": {
+      "$type": "IronStar.SFX.FXAcceleration, IronStar",
+      "GravityFactor": 0.0,
+      "Damping": 0.0,
+      "DragForce": 0.0,
+      "Turbulence": 1.0
+    }
+  }
+}

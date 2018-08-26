@@ -56,6 +56,10 @@ namespace IronStar.SFX {
 		[AEExpandable]
 		public FXParticleStage ParticleStage4 { get; set; } = new FXParticleStage();
 
+		[AECategory( "Particle Stages" )]
+		[AEExpandable]
+		public FXParticleStage ParticleStage5 { get; set; } = new FXParticleStage();
+
 
 		public FXInstance CreateFXInstance( FXPlayback fxPlayback, FXEvent fxEvent, bool looped )
 		{

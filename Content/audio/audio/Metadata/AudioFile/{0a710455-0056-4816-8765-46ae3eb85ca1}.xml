@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.01.10.00">
+    <object class="AudioFile" id="{0a710455-0056-4816-8765-46ae3eb85ca1}">
+        <property name="assetPath">
+            <value>weapon/shots/laser_gun_short_blast_08a.ogg</value>
+        </property>
+        <property name="frequencyInKHz">
+            <value>44.0999985</value>
+        </property>
+        <property name="channelCount">
+            <value>1</value>
+        </property>
+        <property name="length">
+            <value>0.91140589569161001</value>
+        </property>
+        <relationship name="masterAssetFolder">
+            <destination>{63028330-1a67-44b7-ba85-881ae659ed7e}</destination>
+        </relationship>
+    </object>
+</objects>

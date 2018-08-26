@@ -4,8 +4,9 @@ Emission     = 0, 0, 0, 0
 MaskEmission = False
 
 [Textures]
-BaseColor = 
-NormalMap = 
-Metallic  = 
-Roughness = 
-Emission  = 
+BaseColor = gauss_rifle_Base_Color.png
+NormalMap = gauss_rifle_Normal_DirectX.png
+Metallic  = gauss_rifle_Metallic.png
+Roughness = gauss_rifle_Roughness.png
+Emission  = gauss_rifle_Emissive.png
+Occlusion = gauss_rifle_Mixed_AO.png

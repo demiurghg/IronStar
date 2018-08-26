@@ -54,6 +54,7 @@ namespace IronStar.Entities.Players {
 			 //	temp stuff :
 			 world.SpawnItem("weapon_machinegun", ID);
 			 world.SpawnItem("weapon_plasmagun", ID);
+			 world.SpawnItem("weapon_railgun", ID);
 
 			 ItemID	=	World.Items.GetOwnedItemByClass( ID, "weapon_machinegun" ).ID;
 		}

@@ -1,4 +1,5 @@
 {
   "$type": "IronStar.SFX.WeaponAnimatorFactory, IronStar",
-  "MuzzleFX": "machinegunMuzzle"
+  "MuzzleFX": "machinegunMuzzle",
+  "MuzzleFXScale": 0.13
 }

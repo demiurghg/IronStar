@@ -1,0 +1,12 @@
+[General]
+Transparent  = False
+Emission     = 0, 0, 0, 0
+MaskEmission = False
+
+[Textures]
+BaseColor = battle_rifle_Base_Color.png
+NormalMap = battle_rifle_Normal_DirectX.png
+Metallic  = battle_rifle_Metallic.png
+Roughness = battle_rifle_Roughness.png
+Emission  = battle_rifle_Emissive.png
+Occlusion = battle_rifle_Mixed_AO.png

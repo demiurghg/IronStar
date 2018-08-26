@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.01.10.00">
+    <object class="AudioFile" id="{deed5873-c673-43bd-9b6a-1d8c9245090f}">
+        <property name="assetPath">
+            <value>weapon/shots/ak47_03.ogg</value>
+        </property>
+        <property name="frequencyInKHz">
+            <value>44.0999985</value>
+        </property>
+        <property name="channelCount">
+            <value>2</value>
+        </property>
+        <property name="length">
+            <value>0.69240362811791378</value>
+        </property>
+        <relationship name="masterAssetFolder">
+            <destination>{63028330-1a67-44b7-ba85-881ae659ed7e}</destination>
+        </relationship>
+    </object>
+</objects>

@@ -108,6 +108,7 @@
     "Metallic": 0.0,
     "Intensity": 1100.0,
     "Scattering": 0.0,
+	"BeamFactor": 1.5,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "uniform",
@@ -129,7 +130,7 @@
       "OffsetFactor": 0.0,
       "Distribution": "uniformRadial",
       "MinSize": 0.0,
-      "MaxSize": 0.0
+      "MaxSize": 0.2
     },
     "Velocity": {
       "$type": "IronStar.SFX.FXVelocity, IronStar",

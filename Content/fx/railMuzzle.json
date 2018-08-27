@@ -9,16 +9,16 @@
   },
   "LightStage": {
     "$type": "IronStar.SFX.FXLightStage, IronStar",
-    "Enabled": false,
-    "Period": 1.0,
-    "Intensity": 100.0,
-    "Color": "255, 255, 255, 255",
-    "InnerRadius": 0.0,
-    "OuterRadius": 5.0,
+    "Enabled": true,
+    "Period": 0.9,
+    "Intensity": 1000.0,
+    "Color": "148, 171, 255, 255",
+    "InnerRadius": 0.01,
+    "OuterRadius": 1.0,
     "PulseString": "m",
-    "LightStyle": "const",
-    "OffsetDirection": "none",
-    "OffsetFactor": 0.0
+    "LightStyle": "saw",
+    "OffsetDirection": "localUp",
+    "OffsetFactor": 0.02
   },
   "CameraShake": {
     "$type": "IronStar.SFX.FXCameraShake, IronStar",

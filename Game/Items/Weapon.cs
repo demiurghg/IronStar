@@ -48,6 +48,7 @@ namespace IronStar.Items {
 		readonly string hitFX;
 		readonly string ammoItem;
 		readonly string viewModel;
+		readonly string beamFx;
 
 		TimeSpan timer;
 		WeaponState state;
@@ -81,6 +82,7 @@ namespace IronStar.Items {
 			timeRaise		=	TimeSpan.FromMilliseconds( factory.RaiseTime	);
 			
 			hitFX			=	factory.HitFX			;
+			beamFx			=	factory.BeamFX			;
 			ammoItem		=	factory.AmmoItem		;
 
 			viewModel		=	factory.ViewModel		;
@@ -262,6 +264,11 @@ namespace IronStar.Items {
 			if (r) {
 				world.SpawnFX( hitFX, 0, hitPoint, hitNormal );
 				world.InflictDamage( hitEntity, attacker.ID, damage, DamageType.BulletHit, d * impulse, hitPoint );
+
+				var hitVector  = hitPoint - p;
+				var hitVectorN = hitVector.Normalized();
+
+				world.SpawnFX( beamFx, 0, hitPoint, hitVector, hitVectorN );
 			}
 		}
 

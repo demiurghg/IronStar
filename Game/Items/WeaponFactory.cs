@@ -80,6 +80,10 @@ namespace IronStar.Items {
 		[AEClassname("fx")]
 		public string HitFX { get; set; } = "";
 
+		[AECategory("Beam")]
+		[AEClassname("fx")]
+		public string BeamFX { get; set; } = "";
+
 		[AECategory("Ammo")]
 		[AEClassname("items")]
 		public string AmmoItem { get; set; } = "";

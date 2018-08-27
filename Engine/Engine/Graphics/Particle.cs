@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using Fusion.Core;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace Fusion.Engine.Graphics {
 
@@ -55,6 +56,11 @@ namespace Fusion.Engine.Graphics {
 		/// Distortive particles
 		/// </summary>
 		Distortive,
+
+		/// <summary>
+		/// Beam particle
+		/// </summary>
+		Beam
 	}
 
 
@@ -103,6 +109,8 @@ namespace Fusion.Engine.Graphics {
 		public float	Intensity;
 
 		public float	Scattering;
+
+		public float	BeamFactor;
 
 		/// <summary>
 		/// Gravity influence.
@@ -178,7 +186,8 @@ namespace Fusion.Engine.Graphics {
 			if (float.IsNegativeInfinity(value)) throw new NotFiniteNumberException();
 		}
 
-		
+
+		[Conditional("DEBUG")]		
 		public void Check ()
 		{
 			CheckFloat( Position.X );

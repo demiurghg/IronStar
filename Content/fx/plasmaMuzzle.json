@@ -106,6 +106,7 @@
     "Metallic": 0.0,
     "Intensity": 1100.0,
     "Scattering": 0.0,
+	"BeamFactor": 0.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "uniform",

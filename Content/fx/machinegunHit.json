@@ -44,6 +44,7 @@
     "Metallic": 0.0,
     "Intensity": 1500.0,
     "Scattering": 0.0,
+	"BeamFactor": 0.5,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "gauss",
@@ -158,16 +159,16 @@
     "Timing": {
       "$type": "IronStar.SFX.FXTiming, IronStar",
       "Delay": 0.0,
-      "Bunch": 0.1,
+      "Bunch": 0.2,
       "FadeIn": 0.1,
       "FadeOut": 0.9
     },
     "Color": "38, 38, 38, 255",
-    "Alpha": 0.5,
+    "Alpha": 0.6,
     "Roughness": 0.2,
     "Metallic": 0.0,
     "Intensity": 100.0,
-    "Scattering": 1.0,
+    "Scattering": 0.5,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "gauss",

@@ -294,6 +294,18 @@ float3 ComputeVelocity ( float3 position, float3 velocity )
 }
 
 
+float3 expand( float3 p, float3 v )
+{
+	float len = length(v);
+	float prj = dot(p,v);
+	float hgt = prj - p;
+	return v + hgt;
+}
+
+
+
+
+
 [maxvertexcount(6)]
 void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> outputStream )
 {
@@ -330,15 +342,28 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 		color	=	float4( 1,1,1, alpha );
 	}
 	
-	float3 position	=	prt.Position    ;// + prt.Velocity * time + accel * time * time / 2;
+	float3 position		=	prt.Position    ;// + prt.Velocity * time + accel * time * time / 2;
+	
 	float  a		=	lerp( prt.Rotation0, prt.Rotation1, factor );	
 
 	float2x2	m	=	float2x2( cos(a), sin(a), -sin(a), cos(a) );
 	
-	float3		offset	=	normalize( prt.Position - Params.CameraPosition );
+	float3	offset	=	normalize( prt.Position - Params.CameraPosition );
 	
-	float3		rt	=	(Params.CameraRight.xyz * cos(a) + Params.CameraUp.xyz * sin(a)) * sz;
-	float3		up	=	(Params.CameraUp.xyz * cos(a) - Params.CameraRight.xyz * sin(a)) * sz;
+	float3	basisRt	=	Params.CameraRight.xyz * sz;
+	float3	basisUp	=	Params.CameraUp.xyz    * sz;
+
+	if (prt.BeamFactor>0) {
+		basisRt	=	(prt.Velocity * 1/60.0f) * prt.BeamFactor;
+		basisUp	=	normalize( cross( Params.CameraPosition - position, basisRt ) ) * sz;
+		
+		if (length(basisRt)<sz) {
+			basisRt = normalize(basisRt)*sz;
+		}
+	}
+	
+	float3		rt	=	(basisRt * cos(a) + basisUp * sin(a));
+	float3		up	=	(basisUp * cos(a) - basisRt * sin(a));
 	float3		fwd	=	offset * sz;
 	
 	float4		image	=	Images[abs(prt.ImageIndex)];

@@ -99,6 +99,7 @@ namespace IronStar.SFX {
 				p.Metallic		=	stage.Metallic;
 				p.Intensity		=	stage.Intensity;
 				p.Scattering	=	stage.Scattering;
+				p.BeamFactor	=	stage.BeamFactor / scale;
 
 				p.LifeTime		=	stage.Lifetime.GetLifetime(rand);
 

@@ -28,13 +28,13 @@
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
     "Enabled": true,
     "Sprite": "bulletSpark",
-    "Effect": "hard",
-    "Count": 30,
+    "Effect": "soft",
+    "Count": 21,
     "Period": 1.0,
     "Timing": {
       "$type": "IronStar.SFX.FXTiming, IronStar",
       "Delay": 0.0,
-      "Bunch": 0.0,
+      "Bunch": 0.2,
       "FadeIn": 0.1,
       "FadeOut": 0.1
     },
@@ -42,22 +42,23 @@
     "Alpha": 0.95,
     "Roughness": 0.5,
     "Metallic": 0.0,
-    "Intensity": 1500.0,
+    "Intensity": 1000.0,
     "Scattering": 0.0,
+	"BeamFactor": 0.5,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "gauss",
       "MinLifetime": 0.1,
-      "MaxLifetime": 0.3
+      "MaxLifetime": 0.25
     },
     "Shape": {
       "$type": "IronStar.SFX.FXShape, IronStar",
       "Size0": 0.2,
       "Size1": 0.0,
       "EnableRotation": true,
-      "InitialAngle": 0.0,
-      "MinAngularVelocity": -200.0,
-      "MaxAngularVelocity": 200.0
+      "InitialAngle": 360.0,
+      "MinAngularVelocity": -1000.0,
+      "MaxAngularVelocity": 1000.0
     },
     "Position": {
       "$type": "IronStar.SFX.FXPosition, IronStar",
@@ -150,7 +151,7 @@
   },
   "ParticleStage3": {
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
-    "Enabled": true,
+    "Enabled": false,
     "Sprite": "smoke",
     "Effect": "softLitShadow",
     "Count": 15,
@@ -185,8 +186,8 @@
     },
     "Position": {
       "$type": "IronStar.SFX.FXPosition, IronStar",
-      "OffsetDirection": "none",
-      "OffsetFactor": 0.0,
+      "OffsetDirection": "localForward",
+      "OffsetFactor": 0.7,
       "Distribution": "uniformRadial",
       "MinSize": 0.0,
       "MaxSize": 0.0

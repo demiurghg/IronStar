@@ -100,6 +100,7 @@
     <Compile Include="SFX\Animators\WeaponAnimatorFactory.cs" />
     <Compile Include="SFX\FXInstance.SoundStage.cs" />
     <Compile Include="SFX\Animators\WeaponAnimator.cs" />
+    <Compile Include="SFX\FXPlayback.Trails.cs" />
     <Compile Include="ShooterCampaign.cs" />
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Client\GameInput.cs" />

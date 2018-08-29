@@ -16,5 +16,6 @@
   "DropTime": 350,
   "AmmoItem": "",
   "HitFX": "railHit",
+  "BeamFX": "*trail_gauss",
   "ViewModel": "weapon_railgun"
 }

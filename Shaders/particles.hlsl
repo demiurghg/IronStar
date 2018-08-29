@@ -152,8 +152,10 @@ void CSMain(
 			position		=	position + velocity     * Params.DeltaTime;	
 		}
 
-		particleBuffer[ id ].Velocity	=	velocity;	
-		particleBuffer[ id ].Position	=	position;	
+		if (p.BeamFactor>=0) {
+			particleBuffer[ id ].Velocity	=	velocity;	
+			particleBuffer[ id ].Position	=	position;	
+		}
 		
 		//	Measure distance :
 		float  pDist	=	distance( position.xyz, Params.CameraPosition.xyz );
@@ -355,6 +357,14 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 
 	if (prt.BeamFactor>0) {
 		basisRt	=	(prt.Velocity * 1/60.0f) * prt.BeamFactor;
+		basisUp	=	normalize( cross( Params.CameraPosition - position, basisRt ) ) * sz;
+		
+		if (length(basisRt)<sz) {
+			basisRt = normalize(basisRt)*sz;
+		}
+	}
+	if (prt.BeamFactor<0) {
+		basisRt	=	prt.Velocity;
 		basisUp	=	normalize( cross( Params.CameraPosition - position, basisRt ) ) * sz;
 		
 		if (length(basisRt)<sz) {

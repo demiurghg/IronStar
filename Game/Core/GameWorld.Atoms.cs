@@ -31,7 +31,9 @@ namespace IronStar.Core {
 
 			var atoms = new List<string>();
 
-			atoms.Add("*rail_trail");
+			atoms.Add("*trail_bullet");
+			atoms.Add("*trail_gauss");
+			atoms.Add("*trail_laser");
 
 			atoms.AddRange( Content.EnumerateAssets( "fx" ) );
 			atoms.AddRange( Content.EnumerateAssets( "entities" ) );
@@ -39,6 +41,7 @@ namespace IronStar.Core {
 			atoms.AddRange( Content.EnumerateAssets( "items" ) );
 			atoms.AddRange( Content.EnumerateAssets( "hud" ) );
 			atoms.AddRange( map.Nodes.Where( n1 => n1 is MapEntity ).Select( n2 => (n2 as MapEntity).FactoryName ) );
+
 
 			Atoms.AddRange( atoms );
 		}

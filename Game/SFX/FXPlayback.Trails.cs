@@ -23,8 +23,11 @@ namespace IronStar.SFX {
 
 		Random rand = new Random();
 
+		float sin ( float a ) { return (float)Math.Sin(a*6.28f); }
+		float cos ( float a ) { return (float)Math.Cos(a*6.28f); }
 
-		Particle CreateBeam ( FXEvent fxEvent )
+
+		Particle CreateBeam ( FXEvent fxEvent, float dx, float dy )
 		{
 			var p = new Particle();
 
@@ -32,7 +35,7 @@ namespace IronStar.SFX {
 			var dn = m.Down;
 			var rt = m.Right;
 
-			var offset		=	0.25f * (dn + rt * 1.2f);
+			var offset		=	dy * dn + dx * rt;
 
 			p.ImageIndex	=	GetSpriteIndex("bulletTrace");
 
@@ -58,7 +61,7 @@ namespace IronStar.SFX {
 		{
 			if (true) {
 
-				Particle p		=	CreateBeam( fxEvent );
+				Particle p		=	CreateBeam( fxEvent, 0.6f, 0.4f );
 
 				p.Size0			=	0.05f;
 				p.Size1			=	1.20f;
@@ -79,24 +82,97 @@ namespace IronStar.SFX {
 
 		public void RunTrailGauss ( FXEvent fxEvent )
 		{
-			if (true) {
+			var p			=	CreateBeam( fxEvent, 0.65f, 0.39f );
 
-				Particle p		=	CreateBeam( fxEvent );
+			var rayPos			=	p.Position - p.Velocity;
+			var rayVel			=	p.Velocity * 2;
 
-				p.Size0			=	1.00f;
-				p.Size1			=	0.10f;
+			var	color		=	new Color(148, 171, 255, 255).ToColor3();
 
-				p.LifeTime		=	0.4f;
-				p.FadeIn		=	0.1f;
-				p.FadeOut		=	0.9f;
+			p.Size0			=	0.70f;
+			p.Size1			=	0.10f;
+
+			p.LifeTime		=	0.4f;
+			p.FadeIn		=	0.1f;
+			p.FadeOut		=	0.9f;
 				
-				p.Color			=	new Color(148, 171, 255, 255).ToColor3();
+			p.Color			=	color;
+			p.Intensity		=	5000;
+			p.Alpha			=	1;
+
+			p.ImageIndex	=	GetSpriteIndex("bulletTrace");
+
+			rw.ParticleSystem.InjectParticle( p );
+
+			//----------------------------------
+
+			/*p.Size0			=	0.50f;
+			p.Size1			=	8.00f;
+
+			p.LifeTime		=	0.4f;
+			p.FadeIn		=	0.1f;
+			p.FadeOut		=	0.9f;
+				
+			p.Color			=	color;
+			p.Intensity		=	100;
+			p.Alpha			=	1;
+
+			p.ImageIndex	=	GetSpriteIndex("bulletTrace");
+
+			rw.ParticleSystem.InjectParticle( p );	//*/
+
+			//----------------------------------
+
+			int count = Math.Min((int)(fxEvent.Velocity.Length() * 2), 2000);
+
+			var m = Matrix.RotationQuaternion( fxEvent.Rotation );
+			var up = m.Up;
+			var rt = m.Right;
+
+			for (int i=0; i<count; i++) {
+
+				var t		=	i * 0.1f;
+				var c		=	(float)Math.Cos(t);
+				var s		=	(float)Math.Sin(t);
+
+				var factor	=	i / (float)count;
+
+				#if false
+				var pos		=	rayPos + rt * c * 0.10f + up * s * 0.10f + rayVel * (i+0)/(float)count;
+				var vel		=	rt * c * 0.15f + up * s * 0.15f + rand.GaussRadialDistribution(0,0.5f);
+				#else
+				var pos		=	rayPos + rt * c * 0.0f + up * s * 0.0f + rayVel * factor;
+				var vel		=	rand.GaussRadialDistribution(0,0.5f);
+				var accel	=	rand.GaussRadialDistribution(0,3f);
+				#endif
+
+				var time	=	rand.GaussDistribution(1, 0.2f);
+
+				p.Position		=	pos;
+				p.Velocity		=	vel;
+				p.Acceleration	=	accel;
+				p.Damping		=	8f;
+				p.Gravity		=	0;
+
+				p.BeamFactor	=	0;
+
+				p.TimeLag		=	-0.1f;
+				p.LifeTime		=	rand.GaussDistribution(0.5f, 0.3f);
+
 				p.Intensity		=	5000;
+				p.Color			=	color;
 				p.Alpha			=	1;
+				p.FadeIn		=	0.1f;
+				p.FadeOut		=	0.4f;			
+				p.ImageIndex	=	GetSpriteIndex("railDot");
+
+				p.Rotation0		=	rand.NextFloat(0,360);
+				p.Rotation1		=	p.Rotation0;
+				p.Size0			=	0.1f;
+				p.Size1			=	0.0f;
 
 				rw.ParticleSystem.InjectParticle( p );
 			}
-
 		}
 	}
 }

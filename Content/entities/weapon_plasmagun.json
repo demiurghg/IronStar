@@ -1,0 +1,9 @@
+{
+  "$type": "IronStar.Entities.ItemBoxFactory, IronStar",
+  "Width": 0.3,
+  "Height": 0.4,
+  "Depth": 1.5,
+  "Mass": 6.0,
+  "Model": "weapon_plasmagun_world",
+  "Item": "weapon_plasmagun"
+}

@@ -68,10 +68,10 @@
         "FactoryName": "nTMcz2N0",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 0.0,
-        "TranslateY": 0.0,
-        "TranslateZ": -1.10971117,
-        "RotateYaw": 0.0,
+        "TranslateX": -4.370969,
+        "TranslateY": 0.1723721,
+        "TranslateZ": 1.00181866,
+        "RotateYaw": -50.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
       },
@@ -138,26 +138,6 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$type": "IronStar.Entities.FuncShooterFactory, IronStar",
-          "Weapon": "weapon_plasmagun",
-          "Trigger": true,
-          "Once": false,
-          "Start": false
-        },
-        "FactoryName": "XgOGBs7W",
-        "Visible": true,
-        "Frozen": false,
-        "TranslateX": 0.866233945,
-        "TranslateY": -0.422406971,
-        "TranslateZ": 2.525466,
-        "RotateYaw": 2.49318886,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
-      },
-      {
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -167,7 +147,7 @@
         "Visible": true,
         "Frozen": false,
         "TranslateX": -6.562341,
-        "TranslateY": -0.6254771,
+        "TranslateY": -0.453104973,
         "TranslateZ": -5.407803,
         "RotateYaw": 19.9651814,
         "RotatePitch": -1.21867824,
@@ -189,7 +169,7 @@
         "Visible": true,
         "Frozen": false,
         "TranslateX": -6.50512934,
-        "TranslateY": 0.0,
+        "TranslateY": 0.1723721,
         "TranslateZ": -5.63988161,
         "RotateYaw": 0.0,
         "RotatePitch": 40.0,
@@ -415,23 +395,6 @@
         "RotateYaw": 48.09573,
         "RotatePitch": 0.04208969,
         "RotateRoll": -0.00106372684
-      },
-      {
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammoBoxBullets"
-        },
-        "FactoryName": "g1Z0CqJY",
-        "Visible": true,
-        "Frozen": false,
-        "TranslateX": -0.00780964736,
-        "TranslateY": -0.7607392,
-        "TranslateZ": -0.0194269065,
-        "RotateYaw": 70.25452,
-        "RotatePitch": 0.000119347766,
-        "RotateRoll": -9.925879E-05
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -665,7 +628,7 @@
         "Visible": true,
         "Frozen": false,
         "TranslateX": -11.0963821,
-        "TranslateY": 8.719233,
+        "TranslateY": 8.891605,
         "TranslateZ": -4.11935234,
         "RotateYaw": -152.238785,
         "RotatePitch": -0.0406369939,
@@ -1938,123 +1901,18 @@
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$type": "IronStar.Entities.FuncShooterFactory, IronStar",
-          "Weapon": "weapon_machinegun",
-          "Trigger": true,
-          "Once": false,
-          "Start": false
-        },
-        "FactoryName": "gaRUu4vJ",
-        "Visible": true,
-        "Frozen": false,
-        "TranslateX": 0.261560142,
-        "TranslateY": -0.422406971,
-        "TranslateZ": -5.688198,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
-      },
-      {
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammoBoxBullets"
+          "Classname": "ammo_machinegun"
         },
         "FactoryName": "1nvF6LAy",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 2.0181098,
-        "TranslateY": -0.7607391,
-        "TranslateZ": -0.00978926849,
-        "RotateYaw": 70.32139,
-        "RotatePitch": -0.000112012895,
-        "RotateRoll": -4.97816327E-05
-      },
-      {
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammoBoxBullets"
-        },
-        "FactoryName": "4bPf07Wr",
-        "Visible": true,
-        "Frozen": false,
-        "TranslateX": 4.01810837,
-        "TranslateY": -0.760739148,
-        "TranslateZ": -0.009939475,
-        "RotateYaw": 70.30305,
-        "RotatePitch": -0.000130800952,
-        "RotateRoll": -0.000110330737
-      },
-      {
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammoBoxBullets"
-        },
-        "FactoryName": "ZOJS8AUn",
-        "Visible": true,
-        "Frozen": false,
-        "TranslateX": 5.98294544,
-        "TranslateY": -0.7607121,
-        "TranslateZ": -0.00322459382,
-        "RotateYaw": 69.95888,
-        "RotatePitch": -0.00196032762,
-        "RotateRoll": 0.000146854116
-      },
-      {
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammoBoxBullets"
-        },
-        "FactoryName": "eNtTdfwe",
-        "Visible": true,
-        "Frozen": false,
-        "TranslateX": 8.008204,
-        "TranslateY": -0.76073873,
-        "TranslateZ": 0.019110132,
-        "RotateYaw": 70.8160248,
-        "RotatePitch": -0.000127991545,
-        "RotateRoll": 3.89199267E-05
-      },
-      {
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammoBoxBullets"
-        },
-        "FactoryName": "G5yTCM8J",
-        "Visible": true,
-        "Frozen": false,
-        "TranslateX": 10.0079737,
-        "TranslateY": -0.7607387,
-        "TranslateZ": 2.01824975,
-        "RotateYaw": 69.17212,
-        "RotatePitch": -0.000126387211,
-        "RotateRoll": 1.52026505E-05
-      },
-      {
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammoBoxBullets"
-        },
-        "FactoryName": "dsklWoA3",
-        "Visible": true,
-        "Frozen": false,
-        "TranslateX": 9.954576,
-        "TranslateY": -0.7614764,
-        "TranslateZ": 3.97211981,
-        "RotateYaw": 67.48448,
-        "RotatePitch": 0.012937922,
-        "RotateRoll": 0.040853776
+        "TranslateX": 2.32163382,
+        "TranslateY": -0.890489161,
+        "TranslateZ": -0.119127296,
+        "RotateYaw": 63.55992,
+        "RotatePitch": -0.00074036,
+        "RotateRoll": 0.00161243579
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -3731,7 +3589,7 @@
         "Visible": true,
         "Frozen": false,
         "TranslateX": 0.0,
-        "TranslateY": 1.1487093,
+        "TranslateY": 1.3210814,
         "TranslateZ": 0.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
@@ -3853,6 +3711,295 @@
         "RotateYaw": 0.0,
         "RotatePitch": 40.0,
         "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "weapon_machinegun"
+        },
+        "FactoryName": "CRmc8ee2",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 1.82012773,
+        "TranslateY": -0.7896583,
+        "TranslateZ": 0.5263996,
+        "RotateYaw": -30.9206753,
+        "RotatePitch": 10.7093258,
+        "RotateRoll": -89.90102
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "ammo_machinegun"
+        },
+        "FactoryName": "ZJebcVxz",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 2.17337537,
+        "TranslateY": -0.8825966,
+        "TranslateZ": 0.07165617,
+        "RotateYaw": 64.29304,
+        "RotatePitch": -0.8105173,
+        "RotateRoll": 9.971251
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "ammo_machinegun"
+        },
+        "FactoryName": "IxwJcpnG",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 1.99915969,
+        "TranslateY": -0.8904617,
+        "TranslateZ": -0.1391695,
+        "RotateYaw": 69.53709,
+        "RotatePitch": -0.0134317568,
+        "RotateRoll": 0.101201512
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "weapon_machinegun2"
+        },
+        "FactoryName": "5TVFdfGO",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 1.77850354,
+        "TranslateY": -0.920868635,
+        "TranslateZ": 3.71615338,
+        "RotateYaw": -31.68052,
+        "RotatePitch": 2.73207552E-05,
+        "RotateRoll": -90.0109253
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "weapon_plasmagun"
+        },
+        "FactoryName": "xMcn1Zvb",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 4.179732,
+        "TranslateY": -0.6837662,
+        "TranslateZ": 3.737387,
+        "RotateYaw": -20.2669563,
+        "RotatePitch": 10.2810736,
+        "RotateRoll": -1.77916789
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "weapon_railgun"
+        },
+        "FactoryName": "dZpZHg0Y",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 4.07921362,
+        "TranslateY": -0.860902846,
+        "TranslateZ": 0.999061346,
+        "RotateYaw": -25.210535,
+        "RotatePitch": 0.0006785794,
+        "RotateRoll": -0.004982835
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "weapon_shotgun"
+        },
+        "FactoryName": "MYwtDeR0",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 7.060107,
+        "TranslateY": -0.797700465,
+        "TranslateZ": 3.72240281,
+        "RotateYaw": -30.5216236,
+        "RotatePitch": 9.354764,
+        "RotateRoll": -93.335
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "weapon_rocketlauncher"
+        },
+        "FactoryName": "BX0U4I8V",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 7.088536,
+        "TranslateY": -0.8608219,
+        "TranslateZ": 0.546684742,
+        "RotateYaw": -30.7651367,
+        "RotatePitch": -0.002718415,
+        "RotateRoll": -90.0075455
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "ammo_plasmagun"
+        },
+        "FactoryName": "z03JX373",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 4.71137047,
+        "TranslateY": -0.8910748,
+        "TranslateZ": 3.1500957,
+        "RotateYaw": 87.64607,
+        "RotatePitch": 89.52977,
+        "RotateRoll": 37.0517159
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "ammo_rocket_launcher"
+        },
+        "FactoryName": "NgxSl39K",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 4.48787355,
+        "TranslateY": -0.8905353,
+        "TranslateZ": -0.28108272,
+        "RotateYaw": 52.9266434,
+        "RotatePitch": 0.000661304337,
+        "RotateRoll": -0.0003011825
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "ammo_plasmagun"
+        },
+        "FactoryName": "TTmk94sZ",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 4.246263,
+        "TranslateY": -0.8888854,
+        "TranslateZ": 3.03031039,
+        "RotateYaw": -25.5869579,
+        "RotatePitch": -87.31008,
+        "RotateRoll": 127.563858
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "ammo_shotgun"
+        },
+        "FactoryName": "Ltu0Zgrn",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 7.147238,
+        "TranslateY": -0.885537744,
+        "TranslateZ": 3.06997633,
+        "RotateYaw": 60.6247635,
+        "RotatePitch": 1.86615658,
+        "RotateRoll": 98.92494
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "ammo_shotgun"
+        },
+        "FactoryName": "3sJhalHD",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 7.60218668,
+        "TranslateY": -0.890582561,
+        "TranslateZ": 3.08294129,
+        "RotateYaw": 56.10553,
+        "RotatePitch": 0.1786268,
+        "RotateRoll": 90.20896
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "ammo_shotgun"
+        },
+        "FactoryName": "MIjmSQR4",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 7.80047655,
+        "TranslateY": -0.889297,
+        "TranslateZ": 3.4070487,
+        "RotateYaw": -19.6354752,
+        "RotatePitch": -0.01832625,
+        "RotateRoll": -91.03342
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "ammo_rocket_launcher"
+        },
+        "FactoryName": "G42LzoFC",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 6.67805147,
+        "TranslateY": -0.890538335,
+        "TranslateZ": -0.286212,
+        "RotateYaw": 29.3246956,
+        "RotatePitch": 0.0034011614,
+        "RotateRoll": -179.999435
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "ammo_rocket_launcher"
+        },
+        "FactoryName": "QcK3vWK2",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 6.570548,
+        "TranslateY": -0.8905249,
+        "TranslateZ": -0.49056825,
+        "RotateYaw": 29.2881165,
+        "RotatePitch": 0.005113407,
+        "RotateRoll": 179.9762
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.ProxyFactory, IronStar",
+          "Classname": "ammo_machinegun2"
+        },
+        "FactoryName": "69pkUqI7",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 2.00071836,
+        "TranslateY": -0.8904811,
+        "TranslateZ": 2.74750972,
+        "RotateYaw": 69.7504349,
+        "RotatePitch": 3.420963E-05,
+        "RotateRoll": -8.870549E-05
       }
     ]
   }

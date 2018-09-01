@@ -4,6 +4,6 @@
   "Height": 0.4,
   "Depth": 1.5,
   "Mass": 5.0,
-  "Model": "weapon_machinegun_world",
-  "Item": "weapon_machinegun"
+  "Model": "weapon_machinegun2_world",
+  "Item": "weapon_machinegun2"
 }

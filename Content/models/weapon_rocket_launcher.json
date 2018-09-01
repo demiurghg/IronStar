@@ -1,7 +1,7 @@
 {
   "$type": "IronStar.SFX.ModelFactory, IronStar",
   "ScenePath": "scenes\\weapon2\\rocket_launcher\\rocket_launcher_view.FBX",
-  "Scale": 0.01,
+  "Scale": 0.0125,
   "AnimController": "rocket_launcher",
   "AnimEnabled": true,
   "Color": "255, 24, 16, 255",

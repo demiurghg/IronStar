@@ -1,9 +1,9 @@
 {
   "$type": "IronStar.SFX.ModelFactory, IronStar",
-  "ScenePath": "scenes\\ammo\\ammoBoxBullets.fbx",
-  "Scale": 1.0,
-  "UseAnimation": false,
-  "UseAnimator": false,
+  "ScenePath": "scenes\\weapon2\\rocket_launcher\\rocket_ammo.fbx",
+  "Scale": 0.014,
+  "AnimController": "",
+  "AnimEnabled": false,
   "Color": "255, 255, 255, 255",
   "Intensity": 100.0,
   "FPVEnable": false,

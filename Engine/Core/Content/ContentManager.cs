@@ -354,6 +354,7 @@ namespace Fusion.Core.Content {
 		/// <param name="path"></param>
 		/// <param name="fallbackObject"></param>
 		/// <returns></returns>
+		[Obsolete("Use TryLoad instead")]
 		public T Load<T>( string path, T defaultObject )
 		{
 			if ( string.IsNullOrWhiteSpace(path) ) {
@@ -365,6 +366,27 @@ namespace Fusion.Core.Content {
 			} catch ( Exception e ) {
 				Log.Warning("Could not load {0} '{1}' : {2}", typeof(T).Name, path, e.Message);
 				return defaultObject;
+			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="path"></param>
+		/// <param name="defaultObject"></param>
+		/// <returns></returns>
+		public bool TryLoad<T>( string path, out T obj )
+		{
+			try {
+				obj = Load<T>(path);
+				return true;
+			} catch ( Exception e ) {
+				obj = default(T);
+				Log.Warning("Could not load {0} '{1}' : {2}", typeof(T).Name, path, e.Message);
+				return false;
 			}
 		}
 

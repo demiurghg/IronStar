@@ -201,7 +201,7 @@ namespace IronStar.Editor.Controls {
 			}
 
 			if (e.Key==Keys.Escape) {
-				Text = getFunc();
+				Text = getFunc?.Invoke();
 				ResetSelection();
 			}
 

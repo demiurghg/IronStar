@@ -96,12 +96,15 @@ namespace IronStar.SFX {
 				return null;
 			}
 
-			var modelDesc	=	world.Content.Load<ModelFactory>( @"models\" + modelName );
-			var model		=	new ModelInstance( entity, this, modelDesc, world.Content );
+			ModelFactory factory;
 
-			AddModel( model );
-
-			return model;
+			if (world.Content.TryLoad( @"models\" + modelName, out factory )) {
+				var model		=	new ModelInstance( entity, this, factory, world.Content );
+				AddModel( model );
+				return model;
+			} else {
+				return null;
+			}
 		}
 
 

@@ -123,7 +123,7 @@ namespace IronStar.SFX {
 
 			//----------------------------------
 
-			int count = Math.Min((int)(fxEvent.Velocity.Length() * 2), 2000);
+			int count = Math.Min((int)(fxEvent.Velocity.Length() * 4), 2000);
 
 			var m = Matrix.RotationQuaternion( fxEvent.Rotation );
 			var up = m.Up;

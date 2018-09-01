@@ -16,6 +16,6 @@
   "DropTime": 350,
   "HitFX": "machinegunHit",
   "BeamFX": "*trail_bullet",
-  "AmmoItem": "",
+  "AmmoItem": "ammo_machinegun",
   "ViewModel": "weapon_machinegun"
 }

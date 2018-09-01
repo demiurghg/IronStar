@@ -15,6 +15,6 @@
   "RaiseTime": 350,
   "DropTime": 350,
   "HitFX": "machinegunHit2",
-  "AmmoItem": "",
+  "AmmoItem": "ammo_machinegun2",
   "ViewModel": "weapon_machinegun2"
 }

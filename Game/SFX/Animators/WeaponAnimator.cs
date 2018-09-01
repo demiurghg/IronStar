@@ -29,6 +29,7 @@ namespace IronStar.SFX {
 		const string SOUND_LANDING	=	"player/landing"	;
 		const string SOUND_STEP		=	"player/step"		;
 		const string SOUND_JUMP		=	"player/jump"		;
+		const string SOUND_NO_AMMO	=	"weapon/noAmmo"		;
 
 		const string JOINT_MUZZLE	=	"muzzle"			;
 
@@ -143,6 +144,16 @@ namespace IronStar.SFX {
 
 				if ( weaponState == WeaponState.Drop ) {
 					trackWeapon.Sequence( ANIM_DROP, true, false );
+				}
+
+
+				if ( weaponState == WeaponState.NoAmmo ) {
+
+					composer.SequenceSound( SOUND_NO_AMMO );
+
+					var shakeName = ANIM_SHAKE + rand.Next(6).ToString();
+					var shakeAmpl = Math.Abs(rand.GaussDistribution(0,0.5f));
+					RunShakeAnimation( shakeName, shakeAmpl );
 				}
 			}
 		}

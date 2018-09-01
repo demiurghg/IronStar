@@ -49,6 +49,12 @@ namespace IronStar.Entities {
 			var mass		=	factory.Mass;
 			var model		=	factory.Model;
 
+			var itemNames	=	factory.Item.Split(new[] {' ',';',','});
+
+			foreach ( var itemName in itemNames ) {
+				world.SpawnItem( itemName, ID );
+			}
+
 			box				=	new DynamicBox( this, world, width, height, depth, mass, true );
 
 			this.Model		=	world.Atoms[ model ];
@@ -105,9 +111,18 @@ namespace IronStar.Entities {
 		public override void Touch( Entity other, Vector3 touchPoint )
 		{
 			var player = other as Player;
+
 			if (player!=null) {
-				Log.Message("Give ammo player");
-				World.Kill(ID);
+
+				bool accepted = false;
+
+				foreach ( var item in World.Items.GetOwnedItems(ID) ) {
+					accepted |= item.Pickup(player);
+				}
+
+				if (accepted) {
+					World.Kill(ID);
+				}
 			}
 		}
 

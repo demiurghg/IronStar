@@ -80,7 +80,8 @@
     <Compile Include="Entities\ItemBox.cs" />
     <Compile Include="Entities\ItemBoxFactory.cs" />
     <Compile Include="Entities\TriggerArea.cs" />
-    <Compile Include="Items\AmmoBox.cs" />
+    <Compile Include="Items\AmmoFactory.cs" />
+    <Compile Include="Items\Ammo.cs" />
     <Compile Include="Core\ItemFactory.cs" />
     <Compile Include="Items\Weapon.cs" />
     <Compile Include="Items\WeaponFactory.cs" />

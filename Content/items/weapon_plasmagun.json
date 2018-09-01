@@ -14,6 +14,6 @@
   "EmptyTime": 500,
   "RaiseTime": 350,
   "DropTime": 350,
-  "AmmoItem": "",
+  "AmmoItem": "ammo_plasmagun",
   "ViewModel": "weapon_plasmagun"
 }

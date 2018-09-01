@@ -241,7 +241,7 @@ namespace IronStar.Editor {
 			var typeFX			=	new[] { typeof(FXFactory) };
 			var typeEntities	=	Misc.GetAllSubclassesOf(typeof(EntityFactory), true);
 			var typeModels		=	Misc.GetAllSubclassesOf(typeof(ModelFactory), true);
-			var typeItems		=	Misc.GetAllSubclassesOf(typeof(Item), true);
+			var typeItems		=	Misc.GetAllSubclassesOf(typeof(ItemFactory), true);
 			var typeWeapon		=	Misc.GetAllSubclassesOf(typeof(Weapon), true);
 			var typeAnimation	=	Misc.GetAllSubclassesOf(typeof(AnimatorFactory), true);
 

@@ -27,6 +27,8 @@ using Fusion.Core.Shell;
 namespace IronStar.Items {
 
 	public partial class Weapon : Item {
+
+		const int TIME_NO_AMMO = 250;
 		
 		readonly Random rand = new Random();
 		readonly GameWorld world;
@@ -45,8 +47,11 @@ namespace IronStar.Items {
 		readonly TimeSpan	timeReload	;
 		readonly TimeSpan	timeDrop	;
 		readonly TimeSpan	timeRaise	;
+		readonly TimeSpan	timeNoAmmo	;
 		readonly string hitFX;
-		readonly string ammoItem;
+		readonly string ammoName;
+		readonly short  ammoClsId;
+		readonly int    ammoConsume;
 		readonly string viewModel;
 		readonly string beamFX;
 
@@ -80,15 +85,34 @@ namespace IronStar.Items {
 			timeReload		=	TimeSpan.FromMilliseconds( factory.ReloadTime	);
 			timeDrop		=	TimeSpan.FromMilliseconds( factory.DropTime		);
 			timeRaise		=	TimeSpan.FromMilliseconds( factory.RaiseTime	);
+			timeNoAmmo		=	TimeSpan.FromMilliseconds( TIME_NO_AMMO );
 			
 			hitFX			=	factory.HitFX			;
 			beamFX			=	factory.BeamFX			;
-			ammoItem		=	factory.AmmoItem		;
+			ammoName		=	factory.AmmoItem		;
+			ammoClsId		=	world.Atoms[ ammoName ]	;
+			ammoConsume		=	factory.AmmoConsumption ;
 
 			viewModel		=	factory.ViewModel		;
 
 		}
 
+
+		public override bool Pickup( Entity player )
+		{
+			var existingWeapon = world.Items.GetOwnedItemByClass( player.ID, ClassID );
+
+			if (existingWeapon==null) {
+
+				Owner = player.ID;
+				return true;
+			
+			} else {
+
+				return false;
+
+			}
+		}
 
 
 		public override bool Switch(Entity target, uint nextItem)
@@ -139,6 +163,19 @@ namespace IronStar.Items {
 
 
 
+		bool ConsumeAmmo ()
+		{
+			var ammoItem = world.Items.GetOwnedItemByClass( Owner, ammoName ) as Ammo;
+
+			if (ammoItem==null) {
+				return false;
+			}
+
+			return ammoItem.ConsumeAmmo( ammoConsume );
+		}
+
+
+
 		void UpdateFSM (GameTime gameTime, Entity entity)
 		{
 			bool timeout = timer <= TimeSpan.Zero;
@@ -146,8 +183,13 @@ namespace IronStar.Items {
 			switch (state) {
 				case WeaponState.Idle:	
 					if (rqAttack) {
-						state =  WeaponState.Warmup;	
-						timer += timeWarmup;
+						if (ConsumeAmmo()) {
+							state =  WeaponState.Warmup;	
+							timer += timeWarmup;
+						} else {
+							state =  WeaponState.NoAmmo;	
+							timer += timeNoAmmo;
+						}
 					}
 					if (rqNextWeapon!=0) {
 						state =  WeaponState.Drop;	
@@ -207,6 +249,10 @@ namespace IronStar.Items {
 					break;
 
 				case WeaponState.NoAmmo:		
+					if (timeout) {
+						state = WeaponState.Idle;
+						timer = TimeSpan.Zero;
+					}
 					break;
 
 				case WeaponState.Inactive:	

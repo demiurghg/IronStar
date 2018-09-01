@@ -1,9 +1,9 @@
 {
   "$type": "IronStar.Entities.ItemBoxFactory, IronStar",
-  "Width": 0.22,
-  "Height": 0.24,
-  "Depth": 0.22,
+  "Width": 0.44,
+  "Height": 0.48,
+  "Depth": 0.44,
   "Mass": 1.0,
-  "Model": "ammo_machinegun",
-  "Item": ""
+  "Model": "ammo_railgun",
+  "Item": "ammo_railgun"
 }

@@ -5,5 +5,5 @@
   "Depth": 1.5,
   "Mass": 6.0,
   "Model": "weapon_plasmagun_world",
-  "Item": "weapon_plasmagun"
+  "Item": "weapon_plasmagun, ammo_plasmagun"
 }

@@ -14,7 +14,7 @@
   "EmptyTime": 500,
   "RaiseTime": 350,
   "DropTime": 350,
-  "AmmoItem": "",
+  "AmmoItem": "ammo_shotgun",
   "HitFX": "shotgunHit",
   "ViewModel": "weapon_shotgun"
 }

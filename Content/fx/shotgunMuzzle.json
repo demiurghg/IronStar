@@ -34,7 +34,7 @@
     "Timing": {
       "$type": "IronStar.SFX.FXTiming, IronStar",
       "Delay": 0.0,
-      "Bunch": 0.0,
+      "Bunch": 0.1,
       "FadeIn": 0.1,
       "FadeOut": 0.1
     },
@@ -44,6 +44,7 @@
     "Metallic": 0.0,
     "Intensity": 1500.0,
     "Scattering": 0.0,
+	"BeamFactor": 0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "gauss",
@@ -52,7 +53,7 @@
     },
     "Shape": {
       "$type": "IronStar.SFX.FXShape, IronStar",
-      "Size0": 0.2,
+      "Size0": 0.1,
       "Size1": 0.0,
       "EnableRotation": true,
       "InitialAngle": 0.0,
@@ -114,7 +115,7 @@
     },
     "Shape": {
       "$type": "IronStar.SFX.FXShape, IronStar",
-      "Size0": 0.25,
+      "Size0": 0.5,
       "Size1": 0.8,
       "EnableRotation": true,
       "InitialAngle": 360.0,
@@ -153,12 +154,12 @@
     "Enabled": true,
     "Sprite": "smoke",
     "Effect": "softLitShadow",
-    "Count": 15,
+    "Count": 30,
     "Period": 1.0,
     "Timing": {
       "$type": "IronStar.SFX.FXTiming, IronStar",
       "Delay": 0.1,
-      "Bunch": 0.1,
+      "Bunch": 0.2,
       "FadeIn": 0.8,
       "FadeOut": 0.9
     },

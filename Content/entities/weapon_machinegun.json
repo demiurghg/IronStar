@@ -5,5 +5,5 @@
   "Depth": 1.5,
   "Mass": 5.0,
   "Model": "weapon_machinegun_world",
-  "Item": "weapon_machinegun"
+  "Item": "weapon_machinegun, ammo_machinegun"
 }

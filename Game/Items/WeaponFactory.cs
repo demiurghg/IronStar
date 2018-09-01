@@ -88,6 +88,9 @@ namespace IronStar.Items {
 		[AEClassname("items")]
 		public string AmmoItem { get; set; } = "";
 
+		[AECategory("Ammo")]
+		public int AmmoConsumption { get; set; } = 1;
+
 		[AECategory("View")]
 		[AEClassname("models")]
 		public string ViewModel { get; set; } = "";

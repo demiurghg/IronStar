@@ -107,6 +107,11 @@ namespace IronStar {
 				Reload();	
 			}
 
+			if (e.Key==Keys.F11) {
+				this.GetService<RenderSystem>().Screenshot();
+				Reload();	
+			}
+
 			if (e.Key==Keys.F2) {
 				
 				var vsync = this.GetService<RenderSystem>().VSyncInterval;

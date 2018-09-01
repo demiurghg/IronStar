@@ -1,0 +1,12 @@
+[General]
+Transparent  = False
+Emission     = 0, 0, 0, 0
+MaskEmission = False
+
+[Textures]
+BaseColor = bullet\bullet_Base_Color.png
+NormalMap = bullet\bullet_Normal_DirectX.png
+Metallic  = bullet\bullet_Metallic.png
+Roughness = bullet\bullet_Roughness.png
+Emission  = 
+Occlusion = bullet\bullet_Mixed_AO.png

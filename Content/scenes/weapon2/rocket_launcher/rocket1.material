@@ -1,0 +1,12 @@
+[General]
+Transparent  = False
+Emission     = 0, 0, 0, 0
+MaskEmission = False
+
+[Textures]
+BaseColor = rocket_Base_Color.png
+NormalMap = rocket_Normal_DirectX.png
+Metallic  = rocket_Metallic.png
+Roughness = rocket_Roughness.png
+Emission  = 
+Occlusion = 

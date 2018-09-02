@@ -45,6 +45,10 @@ namespace IronStar.Entities {
 		[AEClassname("items")]
 		public string Item  { get; set; } = "";
 
+		[AECategory("Item")]
+		[AEClassname("fx")]
+		public string PickupFX  { get; set; } = "";
+
 		public override Entity Spawn( uint id,  short clsid, GameWorld world )
 		{
 			return new ItemBox( id, clsid, world, this );

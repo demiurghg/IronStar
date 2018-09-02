@@ -5,5 +5,6 @@
   "Depth": 2.0,
   "Mass": 7.0,
   "Model": "weapon_rocket_launcher_world",
-  "Item": "weapon_rocket_launcher, ammo_rocket_launcher"
+  "Item": "weapon_rocket_launcher, ammo_rocket_launcher",
+  "PickupFX": "pickupWeapon"
 }

@@ -35,6 +35,7 @@ namespace IronStar.Entities {
 	public class ItemBox : Entity {
 
 		readonly DynamicBox box;
+		readonly string pickupFX;
 
 		/// <summary>
 		/// 
@@ -50,6 +51,8 @@ namespace IronStar.Entities {
 			var model		=	factory.Model;
 
 			var itemNames	=	factory.Item.Split(new[] {' ',';',','});
+
+			pickupFX		=	factory.PickupFX;
 
 			foreach ( var itemName in itemNames ) {
 				world.SpawnItem( itemName, ID );
@@ -121,6 +124,7 @@ namespace IronStar.Entities {
 				}
 
 				if (accepted) {
+					World.SpawnFX( pickupFX, 0, Position );
 					World.Kill(ID);
 				}
 			}

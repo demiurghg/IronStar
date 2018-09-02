@@ -4,7 +4,7 @@
   "BeamLength": 1000.0,
   "Projectile": "plasma",
   "Damage": 100,
-  "Impulse": 50.0,
+  "Impulse": 250.0,
   "ProjectileCount": 1,
   "AngularSpread": 0.0,
   "WarmupTime": 0,

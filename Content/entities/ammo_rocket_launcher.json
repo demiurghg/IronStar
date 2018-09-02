@@ -5,5 +5,6 @@
   "Depth": 0.24,
   "Mass": 1.0,
   "Model": "ammo_rocket_launcher",
-  "Item": "ammo_rocket_launcher"
+  "Item": "ammo_rocket_launcher",
+  "PickupFX": "pickupAmmo"
 }

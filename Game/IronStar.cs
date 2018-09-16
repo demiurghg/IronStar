@@ -127,10 +127,20 @@ namespace IronStar {
 
 
 			if (e.Key==Keys.F1) {
+
+				var frames = this.GetService<FrameProcessor>();
+				var parent = frames.RootFrame;
 				
-				if (assetExplorer!=null) {
-					var frames = this.GetService<FrameProcessor>().RootFrame;
-					assetExplorer = MapEditor.CreateAssetExplorer( frames );
+				if (assetExplorer==null) {
+
+					assetExplorer		= MapEditor.CreateAssetExplorer( parent );
+					frames.TargetFrame	= assetExplorer;
+
+				} else {
+
+					assetExplorer.Visible = true;
+					frames.TargetFrame	= assetExplorer;
+					
 				}
 			}
 

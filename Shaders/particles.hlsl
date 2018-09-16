@@ -491,7 +491,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	}
 	#endif
 	
-	#ifdef DRAW_SHADOW
+	#if defined(SOFT_SHADOW) || defined(HARD_SHADOW)
 	if (prt.Effects!=ParticleFX_SoftLitShadow && prt.Effects!=ParticleFX_HardLitShadow) {
 		return;
 	}

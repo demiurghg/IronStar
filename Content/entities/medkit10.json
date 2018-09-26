@@ -1,0 +1,9 @@
+{
+  "$type": "IronStar.Entities.PowerupFactory, IronStar",
+  "Width": 0.6,
+  "Height": 0.6,
+  "Depth": 1.0,
+  "Mass": 1.0,
+  "Model": "medkit10",
+  "Health": 50
+}

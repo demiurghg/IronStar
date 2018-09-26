@@ -1,0 +1,12 @@
+[General]
+Transparent  = False
+Emission     = 0, 0, 0, 0
+MaskEmission = False
+
+[Textures]
+BaseColor = medkit10_medkit_BaseColor.png
+NormalMap = medkit10_medkit_Normal.png
+Metallic  = medkit10_medkit_Metallic.png
+Roughness = medkit10_medkit_Roughness.png
+Emission  = medkit10_medkit_Emissive.png
+Occlusion = 

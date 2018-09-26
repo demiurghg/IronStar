@@ -1883,7 +1883,7 @@
           "Width": 5.0,
           "Height": 3.0,
           "Depth": 15.0,
-          "Color": "255, 0, 0, 255",
+          "Color": "0, 25, 193, 255",
           "Target": "box1",
           "TriggerFilter": "player"
         },
@@ -1891,7 +1891,7 @@
         "Visible": true,
         "Frozen": false,
         "TranslateX": -10.81657,
-        "TranslateY": 0.0,
+        "TranslateY": 0.232113242,
         "TranslateZ": -3.03629541,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,

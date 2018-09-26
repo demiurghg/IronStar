@@ -1,0 +1,17 @@
+{
+  "$type": "IronStar.SFX.ModelFactory, IronStar",
+  "ScenePath": "scenes\\items\\medkit\\medkit10.fbx",
+  "Scale": 0.05,
+  "AnimController": "",
+  "AnimEnabled": false,
+  "Color": "48, 96, 255, 255",
+  "Intensity": 3000.0,
+  "FPVEnable": false,
+  "FPVCamera": "camera1",
+  "Prefix": "anim_",
+  "Clips": "",
+  "BoxWidth": 1.0,
+  "BoxHeight": 1.0,
+  "BoxDepth": 1.0,
+  "BoxColor": "154, 205, 50, 255"
+}

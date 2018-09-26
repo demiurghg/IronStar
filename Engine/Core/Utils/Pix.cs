@@ -32,14 +32,14 @@ namespace Fusion {
 
 	public sealed class PixEvent : IDisposable {
 
-		static readonly MarkerSeries series = Markers.CreateMarkerSeries("Fusion");
-		readonly Span span;
+		//static readonly MarkerSeries series = Markers.CreateMarkerSeries("Fusion");
+		//readonly Span span;
 
 		public PixEvent (string eventName) {
 
 			SafeNativeMethods._BeginEvent( 0, eventName );
 
-			span	=	series.EnterSpan( eventName );
+			//span	=	series.EnterSpan( eventName );
 
 			/*StackTrace	st = new StackTrace();
 			StackFrame sf = st.GetFrame(1);
@@ -51,7 +51,7 @@ namespace Fusion {
 
 		public void Dispose () {
 			SafeNativeMethods._EndEvent();
-			span.Leave();
+			//span.Leave();
 			//GC.SuppressFinalize(this);
 		}
 

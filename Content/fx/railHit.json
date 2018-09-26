@@ -5,7 +5,7 @@
     "$type": "IronStar.SFX.FXSoundStage, IronStar",
     "Enabled": true,
     "Sound": "weapon/plasmaExplosion",
-    "Attenuation": "normal"
+    "Reverb": 1.0
   },
   "LightStage": {
     "$type": "IronStar.SFX.FXLightStage, IronStar",
@@ -39,11 +39,12 @@
       "FadeOut": 0.5
     },
     "Color": "107, 136, 255, 255",
-    "Alpha": 0.3,
+    "Alpha": 0.333,
     "Roughness": 0.5,
     "Metallic": 0.0,
     "Intensity": 1500.0,
     "Scattering": 0.0,
+    "BeamFactor": 0.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "gauss",
@@ -106,7 +107,7 @@
     "Metallic": 0.0,
     "Intensity": 1100.0,
     "Scattering": 0.0,
-	"BeamFactor": 1,
+    "BeamFactor": 1.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "uniform",
@@ -169,6 +170,7 @@
     "Metallic": 0.0,
     "Intensity": 10000.0,
     "Scattering": 0.0,
+    "BeamFactor": 0.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "uniform",
@@ -231,6 +233,7 @@
     "Metallic": 0.0,
     "Intensity": 100.0,
     "Scattering": 0.0,
+    "BeamFactor": 0.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "uniform",
@@ -293,6 +296,7 @@
     "Metallic": 0.0,
     "Intensity": 100.0,
     "Scattering": 1.0,
+    "BeamFactor": 0.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "gauss",
@@ -334,5 +338,5 @@
       "DragForce": 0.0,
       "Turbulence": 0.0
     }
-  },
+  }
 }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using Microsoft.ConcurrencyVisualizer.Instrumentation;
 
 namespace Fusion {
-	#if true
 
 	[System.Security.SuppressUnmanagedCodeSecurity]
 	internal static class SafeNativeMethods {
@@ -28,24 +28,30 @@ namespace Fusion {
 		internal static extern void SetMarker(uint col, string wszName);
 	}
 
+
+
 	public sealed class PixEvent : IDisposable {
+
+		static readonly MarkerSeries series = Markers.CreateMarkerSeries("Fusion");
+		readonly Span span;
+
 		public PixEvent (string eventName) {
 
 			SafeNativeMethods._BeginEvent( 0, eventName );
-#if false
-			StackTrace	st = new StackTrace();
 
+			span	=	series.EnterSpan( eventName );
+
+			/*StackTrace	st = new StackTrace();
 			StackFrame sf = st.GetFrame(1);
 
-			//string clsName = new string( sf.GetMethod().DeclaringType.Name.Where(ch=>char.IsUpper(ch)).ToArray() );*/
+			//string clsName = new string( sf.GetMethod().DeclaringType.Name.Where(ch=>char.IsUpper(ch)).ToArray() );
 			string clsName = sf.GetMethod().DeclaringType.Name;
-
-			SafeNativeMethods._BeginEvent( 0, clsName + "." + sf.GetMethod().Name + " - " + eventName );
-#endif
+			SafeNativeMethods._BeginEvent( 0, clsName + "." + sf.GetMethod().Name + " - " + eventName );*/
 		}
 
 		public void Dispose () {
 			SafeNativeMethods._EndEvent();
+			span.Leave();
 			//GC.SuppressFinalize(this);
 		}
 
@@ -55,17 +61,4 @@ namespace Fusion {
 			SafeNativeMethods.SetMarker(0, name);
 		}
 	}
-	#else
-	public sealed class PixEvent : IDisposable {
-		
-		public PixEvent (string eventName = "...") 
-		{
-		}
-
-		public void Dispose () 
-		{
-			GC.SuppressFinalize(this);
-		}
-	}
-	#endif
 }

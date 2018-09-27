@@ -32,7 +32,7 @@ namespace IronStar.Editor.Controls {
 		{
 			AllowDrag		=	true;
 
-			Layout			=	new PageLayout( 12, 30, 2, 20, 4, 12, 1 );
+			Layout			=	new PageLayout( 12, 30, 2, 20, 6, 12, 1 );
 
 			Padding			=	1;
 
@@ -83,6 +83,8 @@ namespace IronStar.Editor.Controls {
 	
 			this.Add( new Button(Frames, "New Asset", 0,0,10,10, () => ShowNameDialog(parent, fileList) ) );
 			this.Add( new Button(Frames, "Delete"	, 0,0,10,10, () => DeleteSelected() ) );
+			this.Add( new Button(Frames, "Explore"	, 0,0,10,10, () => Misc.ShellExecute(fileList.CurrentDirectory) ) );
+			this.Add( new Button(Frames, "Refresh"	, 0,0,10,10, () => fileList.RefreshFileList() ) );
 			this.Add( new Button(Frames, "Build"	, 0,0,10,10, () => SaveTargetObjectAndBuild() ) );
 			this.Add( new Button(Frames, "Close"	, 0,0,10,10, () => this.Visible = false ) { RedButton = true } );
 

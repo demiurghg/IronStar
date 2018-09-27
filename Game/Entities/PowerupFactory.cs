@@ -41,6 +41,10 @@ namespace IronStar.Entities {
 		[AEClassname("models")]
 		public string Model  { get; set; } = "";
 
+		[AECategory("Appearance")]
+		[AEClassname("fx")]
+		public string PickupFX  { get; set; } = "";
+
 		[AECategory("Powerup")]
 		public int Health { get; set; } = 0;
 

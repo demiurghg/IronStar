@@ -37,6 +37,7 @@ namespace IronStar.Entities {
 		readonly DynamicBox box;
 		readonly int health;
 		readonly int armor;
+		readonly string pickupFX;
 
 		/// <summary>
 		/// 
@@ -53,6 +54,8 @@ namespace IronStar.Entities {
 
 			this.health		=	factory.Health;
 			this.armor		=	factory.Armor;
+
+			this.pickupFX	=	factory.PickupFX;
 
 			box				=	new DynamicBox( this, world, width, height, depth, mass, true );
 
@@ -114,6 +117,9 @@ namespace IronStar.Entities {
 				player.Health += health;
 				player.Armor  += armor;
 				Log.Verbose("Powerup used : health {0}, armor {1}", health, armor);
+
+				World.SpawnFX( pickupFX, 0, Position );
+
 				World.Kill(ID);
 			}
 		}

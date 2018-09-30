@@ -26,13 +26,14 @@ namespace IronStar.Core {
 		/// <param name="snapshotStream"></param>
 		/// <param name="entities"></param>
 		/// <param name="fxEvents"></param>
-		public void Write ( Stream snapshotStream, IStorable header, Dictionary<uint,Entity> entities, List<FXEvent> fxEvents )
+		public void Write ( Stream snapshotStream, IStorable header, Dictionary<uint,Entity> entities, Dictionary<uint,Item> items, List<FXEvent> fxEvents )
 		{
 			using ( var writer = new BinaryWriter( snapshotStream ) ) {
 
 				header.Write( writer );
 
 				var entityArray = entities.OrderBy( pair => pair.Value.ID ).Select( pair1 => pair1.Value ).ToArray();
+				var itemsArray  = items   .OrderBy( pair => pair.Value.ID ).Select( pair1 => pair1.Value ).ToArray();
 
 				writer.Write( sendSnapshotCounter );
 				sendSnapshotCounter++;
@@ -40,7 +41,7 @@ namespace IronStar.Core {
 				//
 				//	Write fat entities :
 				//
-				writer.WriteFourCC("ENT0");
+				writer.WriteFourCC("ENT1");
 				writer.Write( entityArray.Length );
 
 				foreach ( var ent in entityArray ) {
@@ -49,11 +50,23 @@ namespace IronStar.Core {
 					ent.Write( writer );
 				}
 
+				//
+				//	Write items :
+				//
+				writer.WriteFourCC("ITM1");
+				writer.Write( itemsArray.Length );
+
+				foreach ( var item in itemsArray ) {
+					writer.Write( item.ID );
+					writer.Write( item.ClassID );
+					item.Write( writer );
+				}
+
 
 				//
 				//	Write FX events :
 				//
-				writer.WriteFourCC("FXE0");
+				writer.WriteFourCC("FXE1");
 				writer.Write( fxEvents.Count );
 			
 				foreach ( var fxe in fxEvents ) {

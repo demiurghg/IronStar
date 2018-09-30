@@ -22,18 +22,11 @@ using IronStar.Entities.Players;
 namespace IronStar.Views {
 	public class HudWeapon : Frame {
 
-		readonly GameWorld	world;
+		public Player Player;
 
-		public string Weapon1;
-		public string Weapon2;
-		public int Ammo1;
-		public int Ammo2;
-
-		Frame numberAmmo1;
-		Frame numberAmmo2;
-
-		Frame labelWeapon1;
-		Frame labelWeapon2;
+		Frame numberAmmo;
+		Frame labelWeapon;
+		Frame labelArsenal;
 
 		/// <summary>
 		/// 
@@ -56,27 +49,16 @@ namespace IronStar.Views {
 
 			this.Ghost			=	true;
 
-			labelWeapon1	=	new Frame( Frames, 68,4+0,160,8,"Assault Rifle", Color.Zero) {
+			labelWeapon	=	new Frame( Frames, 68,4+0,160,8,"Assault Rifle", Color.Zero) {
 				ForeColor	=	HudColors.TextColor,
 			};
 
-			labelWeapon2	=	new Frame( Frames, 68,4+8,160,8,"Rocket Launcher", Color.Zero) {
-				ForeColor	=	HudColors.TextColorDim,
-			};
-
-			numberAmmo1		=	new Frame( Frames, 4,4+0,56,8," 32/100", Color.Zero) {
+			numberAmmo		=	new Frame( Frames, 4,4+0,56,8," 32/100", Color.Zero) {
 				ForeColor	=	HudColors.AmmoColor,
 			};
 
-			numberAmmo2		=	new Frame( Frames, 4,4+8,56,8," 97/100", Color.Zero) {
-				ForeColor	=	HudColors.TextColorDim,
-			};
-
-			Add( labelWeapon1 );
-			Add( labelWeapon2 );
-
-			Add( numberAmmo1 );
-			Add( numberAmmo2 );
+			Add( labelWeapon );
+			Add( numberAmmo );
 		
 			parent.Add(this);
 		}
@@ -84,6 +66,30 @@ namespace IronStar.Views {
 
 
 
+		protected override void Update( GameTime gameTime )
+		{
+			base.Update( gameTime );
+
+			var weapon  = Player?.GetCurrentWeapon();
+
+			if (weapon!=null) {
+
+				Visible			=	true;
+
+				var weaponName	=	weapon.NiceName;
+				var ammo		=	weapon.GetPlayerAmmo();
+
+				var count		=	(ammo == null) ? 0 : ammo.Count;
+				var maxCount	=	(ammo == null) ? 0 : ammo.MaxCount;
+
+				labelWeapon .Text = string.Format("{0}"		, weaponName );
+				numberAmmo	.Text = string.Format("{0}/{1}"	, count, maxCount );
+
+			} else {
+
+				Visible		=	false;
+			}
+		}
 		
 
 

@@ -26,7 +26,7 @@ namespace IronStar.Core {
 		/// <param name="snapshotStream"></param>
 		/// <param name="entities"></param>
 		/// <param name="fxEvents"></param>
-		public void Read ( GameWorld world, Stream snapshotStream, IStorable header, IDictionary<uint,Entity> entities, Action<FXEvent> runfx, Action<Entity> spawned, Action<uint> killed )
+		public void Read ( GameWorld world, Stream snapshotStream, IStorable header, IDictionary<uint,Entity> entities, IDictionary<uint,Item> items, Action<FXEvent> runfx, Action<Entity> spawned, Action<uint> killed )
 		{
 			using ( var reader = new BinaryReader( snapshotStream ) ) {
 
@@ -36,7 +36,7 @@ namespace IronStar.Core {
 				int snapshotCountrerDelta	=	snapshotCounter - recvSnapshotCounter;
 				recvSnapshotCounter			=	snapshotCounter;
 
-				reader.ExpectFourCC("ENT0", "Bad snapshot");
+				reader.ExpectFourCC("ENT1", "Bad snapshot");
 
 				int length	=	reader.ReadInt32();
 				var oldIDs	=	entities.Select( pair => pair.Key ).ToArray();
@@ -79,11 +79,40 @@ namespace IronStar.Core {
 					killed?.Invoke( id );
 				}
 
+				//
+				//	Read items :
+				//
+				reader.ExpectFourCC("ITM1", "Bad snapshot");
+
+				foreach ( var item in items ) {
+					item.Value.Stale = true;
+				}
+
+				length	=	reader.ReadInt32();
+
+				for ( int i=0; i<length; i++ ) {
+
+					uint  id	=	reader.ReadUInt32();
+					short clsId	=	reader.ReadInt16();
+
+					if ( items.ContainsKey(id) ) {
+
+						items[id].Read( reader );
+						items[id].Stale = false;
+
+					} else {
+					
+						var item = world.SpawnItem(world.Atoms[clsId], 0, id);
+						item.Read( reader );
+					}
+				}
+
+				items.RemoveAll( (id,item) => item.Stale );
 
 				//
 				//	Run FX events
 				//
-				reader.ExpectFourCC("FXE0", "Bad snapshot");
+				reader.ExpectFourCC("FXE1", "Bad snapshot");
 
 				int count = reader.ReadInt32();
 

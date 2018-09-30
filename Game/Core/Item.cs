@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using IronStar.Core;
 using IronStar.Entities;
 using Fusion.Core;
+using System.IO;
 
 namespace IronStar.Core {
 
@@ -19,6 +20,10 @@ namespace IronStar.Core {
 
 		public readonly short ClassID;
 
+		public readonly string NiceName;
+
+		internal bool Stale = false;
+
 		/// <summary>
 		/// Gets and sets item owner.
 		/// If owner is zero or owner is dead, 
@@ -30,10 +35,11 @@ namespace IronStar.Core {
 		/// Creates new instance of Item
 		/// </summary>
 		/// <param name="clsid"></param>
-		protected Item ( uint id, short clsid )
+		protected Item ( uint id, short clsid, ItemFactory factory )
 		{
-			ID		= id;
-			ClassID = clsid;
+			ID			=	id;
+			ClassID		=	clsid;
+			NiceName	=	factory.NiceName;
 		}
 
 		/// <summary>
@@ -89,5 +95,23 @@ namespace IronStar.Core {
 		/// Updates internal item state
 		/// </summary>
 		public virtual void Update ( GameTime gameTime ) {}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="writer"></param>
+		public virtual void Write ( BinaryWriter writer ) 
+		{
+			writer.Write( Owner );
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="writer"></param>
+		public virtual void Read ( BinaryReader reader ) 
+		{
+			Owner	=	reader.ReadUInt32();
+		}
 	}
 }

@@ -198,6 +198,16 @@ namespace IronStar.Entities.Players {
 
 
 
+		/// <summary>
+		/// Gets current player weapon
+		/// </summary>
+		/// <returns></returns>
+		public Weapon GetCurrentWeapon ()
+		{
+			return World.Items.GetOwnedItemByID( ID, ItemID ) as Weapon;
+		}
+
+
 		public override Vector3 GetActualPOV()
 		{
 			float height = EntityState.HasFlag(EntityState.Crouching) ? GameConfig.PovHeightCrouch : GameConfig.PovHeightStand;

@@ -49,7 +49,8 @@ namespace IronStar.Core {
 
 		public EntityCollection entities;
 		public ItemCollection items;
-		uint idCounter = 1;
+		uint entityIdCounter = 1;
+		uint itemIdCounter = 1;
 
 		public event EntityEventHandler EntitySpawned;
 		public event EntityEventHandler EntityKilled;
@@ -265,12 +266,12 @@ namespace IronStar.Core {
 
 			//	get ID :
 			if (id==0) {
-				id = idCounter;
-				idCounter++;
+				id = entityIdCounter;
+				entityIdCounter++;
 			}
 
 			//	this actually will never happen, about 103 day of intense playing.
-			if ( idCounter==0 ) {
+			if ( entityIdCounter==0 ) {
 				throw new InvalidOperationException( "Too much entities were spawned" );
 			}
 
@@ -304,9 +305,14 @@ namespace IronStar.Core {
 		/// </summary>
 		/// <param name="classname"></param>
 		/// <returns></returns>
-		public Item SpawnItem ( string classname, uint owner )
+		public Item SpawnItem ( string classname, uint owner, uint id=0 )
 		{
-			var id		=	idCounter++;
+			//	get ID :
+			if (id==0) {
+				id = itemIdCounter | 0x80000000;	// to not to overlap with entities
+				itemIdCounter++;
+			}
+
 			var clsid	=	Atoms[classname];
 			var factory =	Content.Load(@"items\" + classname, (ItemFactory)null );
 			var item	=	factory?.Spawn( id, clsid, this );
@@ -499,7 +505,7 @@ namespace IronStar.Core {
 			snapshotHeader.ClearHud();
 			//playerCharacter?.UpdateHud( snapshotHeader );
 
-			snapshotWriter.Write( stream, snapshotHeader, entities, fxEvents );
+			snapshotWriter.Write( stream, snapshotHeader, entities, items, fxEvents );
 		}
 
 
@@ -512,7 +518,7 @@ namespace IronStar.Core {
 		{
 			snapshotReader.Read( 
 				this,
-				stream, snapshotHeader, entities, 
+				stream, snapshotHeader, entities, items,
 				fxe => fxPlayback?.RunFX(fxe,false), 
 				ent => EntitySpawned?.Invoke( this, new EntityEventArgs(ent)),
 				id  => KillImmediatly(id) 

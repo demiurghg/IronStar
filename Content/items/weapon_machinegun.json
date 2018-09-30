@@ -17,5 +17,7 @@
   "HitFX": "machinegunHit",
   "BeamFX": "*trail_bullet",
   "AmmoItem": "ammo_machinegun",
-  "ViewModel": "weapon_machinegun"
+  "AmmoConsumption": 1,
+  "ViewModel": "weapon_machinegun",
+  "NiceName": "Machinegun RTP52"
 }

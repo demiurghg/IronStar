@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,9 +14,23 @@ namespace IronStar.Items {
 		int count;
 		readonly int maxCount;
 		readonly GameWorld world;
+
+
+		public int Count {
+			get {
+				return count;
+			}
+		}
 		
 
-		public Ammo( uint id, short clsid, GameWorld world, AmmoFactory factory ) : base( id, clsid )
+		public int MaxCount {
+			get {
+				return maxCount;
+			}
+		}
+		
+
+		public Ammo( uint id, short clsid, GameWorld world, AmmoFactory factory ) : base( id, clsid, factory )
 		{
 			this.world		=	world;
 			this.count		=	factory.Count;
@@ -60,6 +75,22 @@ namespace IronStar.Items {
 				count -= requested;
 				return true;
 			}
+		}
+
+
+		public override void Write( BinaryWriter writer )
+		{
+			base.Write( writer );
+
+			writer.Write( count );
+		}
+
+
+		public override void Read( BinaryReader reader )
+		{
+			base.Read( reader );
+
+			count	=	reader.ReadInt32();
 		}
 	}
 }

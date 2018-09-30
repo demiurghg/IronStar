@@ -24,8 +24,7 @@ namespace IronStar.Views {
 
 		readonly GameWorld	world;
 
-		public int Health;
-		public int Armor;
+		public Player Player;
 
 		Frame labelArmor;
 		Frame labelHealth;
@@ -84,8 +83,20 @@ namespace IronStar.Views {
 		{
 			base.Update( gameTime );
 
-			numberArmor .Text = string.Format("{0}/{1}", Armor , 100 );
-			numberHealth.Text = string.Format("{0}/{1}", Health, 100 );
+			if (Player!=null) {
+
+				Visible		=	true;
+
+				var health	=	Player.Health;
+				var armor	=	Player.Armor;
+
+				numberArmor .Text = string.Format("{0}/{1}", armor , 100 );
+				numberHealth.Text = string.Format("{0}/{1}", health, 100 );
+
+			} else {
+
+				Visible		=	false;
+			}
 		}
 
 

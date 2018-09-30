@@ -102,7 +102,7 @@ namespace IronStar {
 
 		public byte[] Update( GameTime gameTime, uint sentCommandID )
 		{
-			hud.Player	=	world.GetPlayerEntity( this.UserGuid ) as Player;
+			hud.SetPlayer( world.GetPlayerEntity( this.UserGuid ) as Player );
 
 			gameInput.Update( gameTime, world, ref userCommand );
 

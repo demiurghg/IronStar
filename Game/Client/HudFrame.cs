@@ -106,8 +106,8 @@ namespace IronStar.Views {
 
 			this.Add( warning );
 			this.Add( message );
-			warning.Visible = false;
-			message.Visible = false;
+			warning.Visible = true;
+			message.Visible = true;
 
 			this.Add( crossHair );
 
@@ -117,21 +117,11 @@ namespace IronStar.Views {
 		}
 
 
-
-		protected override void Update( GameTime gameTime )
+		public void SetPlayer ( Player player )
 		{
-			base.Update( gameTime );
-
-			if (player!=null) {
-
-				hudHealth.Armor		=	player.Armor;
-				hudHealth.Health	=	player.Health;
-
-			}
+			this.player			=	player;
+			hudHealth.Player	=	player;
+			hudWeapon.Player	=	player;
 		}
-
-
-
-
 	}
 }

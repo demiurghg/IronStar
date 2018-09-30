@@ -17,7 +17,7 @@ namespace IronStar.Items {
 		readonly int bonusArmor;
 		
 
-		public Powerup( uint id, short clsid, GameWorld world, PowerupFactory factory ) : base( id, clsid )
+		public Powerup( uint id, short clsid, GameWorld world, PowerupFactory factory ) : base( id, clsid, factory )
 		{
 			this.world			=	world;
 

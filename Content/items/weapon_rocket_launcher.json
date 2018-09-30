@@ -14,7 +14,10 @@
   "EmptyTime": 500,
   "RaiseTime": 350,
   "DropTime": 350,
-  "AmmoItem": "ammo_rocket_launcher",
   "HitFX": "railHit",
-  "ViewModel": "weapon_rocket_launcher"
+  "BeamFX": "",
+  "AmmoItem": "ammo_rocket_launcher",
+  "AmmoConsumption": 1,
+  "ViewModel": "weapon_rocket_launcher",
+  "NiceName": "Rocket Launcher"
 }

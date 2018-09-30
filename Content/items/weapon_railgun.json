@@ -14,8 +14,10 @@
   "EmptyTime": 500,
   "RaiseTime": 350,
   "DropTime": 350,
-  "AmmoItem": "ammo_railgun",
   "HitFX": "railHit",
   "BeamFX": "*trail_gauss",
-  "ViewModel": "weapon_railgun"
+  "AmmoItem": "ammo_railgun",
+  "AmmoConsumption": 1,
+  "ViewModel": "weapon_railgun",
+  "NiceName": "Railgun"
 }

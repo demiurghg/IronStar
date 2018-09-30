@@ -55,6 +55,8 @@ namespace IronStar.Items {
 		readonly string viewModel;
 		readonly string beamFX;
 
+		public short AmmoClassID { get { return ammoClsId; } }
+
 		TimeSpan timer;
 		WeaponState state;
 		bool rqAttack;
@@ -67,7 +69,7 @@ namespace IronStar.Items {
 		/// </summary>
 		/// <param name="world"></param>
 		/// <param name="factory"></param>
-		public Weapon( uint id, short clsid, GameWorld world, WeaponFactory factory ) : base(id, clsid)
+		public Weapon( uint id, short clsid, GameWorld world, WeaponFactory factory ) : base(id, clsid, factory)
 		{
 			this.world		=	world;
 				
@@ -161,6 +163,16 @@ namespace IronStar.Items {
 			}
 		}
 
+
+
+		/// <summary>
+		/// Gets player owned ammo or null.
+		/// </summary>
+		/// <returns></returns>
+		public Ammo GetPlayerAmmo ()
+		{
+			return world.Items.GetOwnedItemByClass( Owner, ammoName ) as Ammo;
+		}
 
 
 		bool ConsumeAmmo ()

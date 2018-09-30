@@ -1,5 +1,6 @@
 {
   "$type": "IronStar.Items.AmmoFactory, IronStar",
   "Count": 50,
-  "MaxCount": 200
+  "MaxCount": 200,
+  "NiceName": "Bullets 5.1"
 }

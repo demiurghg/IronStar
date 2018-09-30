@@ -125,6 +125,7 @@ namespace IronStar.Core {
 			writer.Write( ParentID );
 			writer.Write( (int)EntityState );
 			writer.Write( (byte)WeaponState );
+			writer.Write( ItemID );
 
 			writer.Write( TeleportCount );
 
@@ -158,6 +159,7 @@ namespace IronStar.Core {
 			ParentID		=	reader.ReadUInt32();
 			EntityState		=	(EntityState)reader.ReadInt32();
 			WeaponState		=	(WeaponState)reader.ReadByte();
+			ItemID			=	reader.ReadUInt32();
 
 			TeleportCount	=	reader.ReadByte();
 

@@ -1,0 +1,5 @@
+{
+  "$type": "IronStar.Items.PowerupFactory, IronStar",
+  "HealthBonus": 50,
+  "ArmorBonus": 0
+}

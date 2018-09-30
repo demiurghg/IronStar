@@ -1,0 +1,13 @@
+[General]
+Transparent  = False
+Emission     = 0, 0, 0, 0
+MaskEmission = False
+
+[Textures]
+BaseColor = armor_lo_armorMtrl.png
+NormalMap = armor_lo_armorMtrl_nm.png
+Metallic  = armor_lo_armorMtrl_m.png
+Roughness = armor_lo_armorMtrl_r.png
+Emission  = armor_lo_armorMtrl_e.png
+Occlusion = armor_lo_armorMtrl_ao.png
+

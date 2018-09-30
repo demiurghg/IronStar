@@ -268,3 +268,5 @@ paket-files/
 .idea/
 *.sln.iml
 *.bak
+*.spp
+*.assbin

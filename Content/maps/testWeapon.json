@@ -4023,47 +4023,30 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "medkit"
-        },
-        "FactoryName": "fAwJbkhL",
-        "Visible": true,
-        "Frozen": false,
-        "TranslateX": 0.0,
-        "TranslateY": -0.7613325,
-        "TranslateZ": 0.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
-      },
-      {
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "medkit"
+          "Classname": "powerup_medkit"
         },
         "FactoryName": "VvEF3okd",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -2.99805284,
-        "TranslateY": -0.7600444,
-        "TranslateZ": -0.0149125885,
-        "RotateYaw": -0.271755069,
-        "RotatePitch": 0.0601380579,
-        "RotateRoll": -0.000206670476
+        "TranslateX": -2.99834633,
+        "TranslateY": -0.8107498,
+        "TranslateZ": -0.0109707192,
+        "RotateYaw": -0.277442932,
+        "RotatePitch": 0.000298251078,
+        "RotateRoll": -0.00165558292
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "medkit"
+          "Classname": "powerup_armor"
         },
         "FactoryName": "FSNikwnv",
         "Visible": true,
         "Frozen": false,
         "TranslateX": -5.0,
-        "TranslateY": -0.76133275,
+        "TranslateY": -0.8113325,
         "TranslateZ": 0.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
@@ -4074,13 +4057,13 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "medkit"
+          "Classname": "powerup_armor"
         },
         "FactoryName": "Wawr0Zwb",
         "Visible": true,
         "Frozen": false,
         "TranslateX": -7.0,
-        "TranslateY": -0.76133275,
+        "TranslateY": -0.8113325,
         "TranslateZ": 0.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
@@ -4091,30 +4074,30 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "medkit"
+          "Classname": "powerup_armor"
         },
         "FactoryName": "oHnK0ln2",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -6.999682,
-        "TranslateY": -0.7606901,
-        "TranslateZ": -2.99996781,
-        "RotateYaw": 0.000180064773,
-        "RotatePitch": 0.008669261,
-        "RotateRoll": -0.0160280615
+        "TranslateX": -6.999949,
+        "TranslateY": -0.810772836,
+        "TranslateZ": -2.99957776,
+        "RotateYaw": -0.0201100819,
+        "RotatePitch": -0.007710907,
+        "RotateRoll": 0.005803959
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "medkit"
+          "Classname": "powerup_armor"
         },
         "FactoryName": "NdNPb8nB",
         "Visible": true,
         "Frozen": false,
         "TranslateX": -5.0,
-        "TranslateY": -0.76133275,
+        "TranslateY": -0.8113325,
         "TranslateZ": -3.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
@@ -4125,30 +4108,30 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "medkit"
+          "Classname": "powerup_medkit"
         },
         "FactoryName": "Q0u2Kbvy",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -3.0001688,
-        "TranslateY": -0.7606997,
-        "TranslateZ": -2.99989128,
-        "RotateYaw": 0.00444990071,
-        "RotatePitch": -0.006557086,
-        "RotateRoll": 0.01618239
+        "TranslateX": -1.981654,
+        "TranslateY": -0.8107518,
+        "TranslateZ": -2.99249935,
+        "RotateYaw": 179.891037,
+        "RotatePitch": -6.227242E-05,
+        "RotateRoll": 0.000439880678
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "medkit"
+          "Classname": "powerup_medkit"
         },
         "FactoryName": "eS9BoMfJ",
         "Visible": true,
         "Frozen": false,
         "TranslateX": -1.0,
-        "TranslateY": -0.76133275,
+        "TranslateY": -0.8113325,
         "TranslateZ": -3.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
@@ -4159,13 +4142,13 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "medkit"
+          "Classname": "powerup_medkit"
         },
         "FactoryName": "PinBuvGi",
         "Visible": true,
         "Frozen": false,
         "TranslateX": -1.0,
-        "TranslateY": -0.76133275,
+        "TranslateY": -0.8113325,
         "TranslateZ": 0.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,

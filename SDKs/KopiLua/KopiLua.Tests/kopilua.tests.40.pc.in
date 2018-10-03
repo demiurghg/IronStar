@@ -1,0 +1,6 @@
+Name: KopiLua.Tests.40
+Description: KopiLua.Tests.40
+Version: 1.0
+
+Requires: 
+Libs: -r:@expanded_libdir@/@PACKAGE@/KopiLua.Tests.dll

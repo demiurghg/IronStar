@@ -44,11 +44,6 @@ namespace IronStar.SFX {
 		readonly Matrix fpvViewMatrix;
 		readonly int fpvCameraIndex;
 
-		readonly float boxWidth;
-		readonly float boxHeight;
-		readonly float boxDepth;
-		readonly Color boxColor;
-
 		Matrix[] globalTransforms;
 		Matrix[] animSnapshot;
 		MeshInstance[] meshInstances;
@@ -85,11 +80,6 @@ namespace IronStar.SFX {
 			}
 
 			this.Entity			=	entity;
-
-			this.boxWidth		=	factory.BoxWidth	;
-			this.boxHeight		=	factory.BoxHeight	;
-			this.boxDepth		=	factory.BoxDepth	;
-			this.boxColor		=	factory.BoxColor	;
 
 			this.modelManager   =   modelManager;
 			this.world			=	modelManager.world;
@@ -175,19 +165,14 @@ namespace IronStar.SFX {
 		{
 			var worldMatrix	=	ComputeWorldMatrix();
 
-			if (scene==EmptyScene) {
-				modelManager.rw.Debug.DrawBox( new BoundingBox(boxWidth,boxHeight,boxDepth), worldMatrix, boxColor, 2 );
-				return;
-			}
-
 			if (animator!=null) {
 
 				animator.Update( gameTime, animSnapshot );
-				Update( worldMatrix, animSnapshot );
+				UpdateInternal( worldMatrix, animSnapshot );
 
 			} else {
 
-				Update( worldMatrix, animSnapshot );
+				UpdateInternal( worldMatrix, animSnapshot );
 
 			}
 		}
@@ -199,7 +184,7 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="worldMatrix"></param>
 		/// <param name="noteTransforms"></param>
-		public void Update ( Matrix worldMatrix, Matrix[] nodeTransforms )
+		void UpdateInternal ( Matrix worldMatrix, Matrix[] nodeTransforms )
 		{
 			if (nodeTransforms==null) {
 				throw new ArgumentNullException("nodeTransforms");

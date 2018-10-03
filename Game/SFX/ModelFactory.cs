@@ -58,18 +58,6 @@ namespace IronStar.SFX {
 		[AECategory( "Animation" )]
 		public string Clips { get; set; } = "";
 
-		[AECategory("Placeholder")]
-		public float BoxWidth { get; set; } = 1;
-
-		[AECategory("Placeholder")]
-		public float BoxHeight { get; set; } = 1;
-
-		[AECategory("Placeholder")]
-		public float BoxDepth { get; set; } = 1;
-
-		[AECategory("Placeholder")]
-		public Color BoxColor { get; set; } = Color.YellowGreen;
-
 
 		/// <summary>
 		/// 

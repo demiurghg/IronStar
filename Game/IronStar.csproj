@@ -98,6 +98,7 @@
     <Compile Include="SFX\Animators\Animator.cs" />
     <Compile Include="SFX\Animators\AnimatorFactory.cs" />
     <Compile Include="SFX\Animation\AnimationComposer.cs" />
+    <Compile Include="SFX\Animators\LuaAnimator.cs" />
     <Compile Include="SFX\Animators\WeaponAnimatorFactory.cs" />
     <Compile Include="SFX\FXInstance.SoundStage.cs" />
     <Compile Include="SFX\Animators\WeaponAnimator.cs" />
@@ -248,6 +249,10 @@
     <ProjectReference Include="..\SDKs\BEPUPhysics\BEPUutilities\BEPUutilities.csproj">
       <Project>{34853dea-43a6-4f2f-a379-d1ee04d256d2}</Project>
       <Name>BEPUutilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SDKs\KopiLua\KopiLua\KopiLua.Net45.csproj">
+      <Project>{e8ddbc21-ef74-4aba-9c49-bfc702be25d8}</Project>
+      <Name>KopiLua.Net45</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

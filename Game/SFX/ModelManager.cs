@@ -19,6 +19,7 @@ using Fusion.Engine.Audio;
 using BEPUphysics.BroadPhaseEntries;
 using IronStar.Views;
 using IronStar.Items;
+using Fusion.Scripting;
 
 namespace IronStar.SFX {
 	public class ModelManager : DisposableBase {
@@ -29,6 +30,8 @@ namespace IronStar.SFX {
 		public readonly RenderSystem rs;
 		public readonly RenderWorld	rw;
 		public readonly GameWorld world;
+
+		public readonly LuaInvoker lua;
 
 		public Matrix ViewMatrix;
 		public Matrix ProjectionMatrix;
@@ -46,6 +49,7 @@ namespace IronStar.SFX {
 			this.game	=	world.Game;
 			this.rs		=	game.RenderSystem;
 			this.rw		=	game.RenderSystem.RenderWorld;
+			this.lua	=	new LuaInvoker( world.Content );
 
 			Game_Reloading(this, EventArgs.Empty);
 			game.Reloading +=	Game_Reloading;
@@ -61,6 +65,7 @@ namespace IronStar.SFX {
 		protected override void Dispose( bool disposing )
 		{
 			if (disposing) {
+				lua.Dispose();
 				KillAllModels();
 				game.Reloading -= Game_Reloading;
 			}

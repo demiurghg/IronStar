@@ -605,6 +605,16 @@
     <Compile Include="Engine\Tools\EditBox.cs" />
     <Compile Include="Engine\Tools\GameConsole.Config.cs" />
     <Compile Include="Engine\Tools\GameConsole.cs" />
+    <Compile Include="Scripting\LuaApiAttribute.cs" />
+    <Compile Include="Scripting\LuaException.cs" />
+    <Compile Include="Scripting\LuaFunction.cs" />
+    <Compile Include="Scripting\LuaInvoker.cs" />
+    <Compile Include="Scripting\LuaObjectTranslator.cs" />
+    <Compile Include="Scripting\LuaObjectWrapper.cs" />
+    <Compile Include="Scripting\LuaReadonly.cs" />
+    <Compile Include="Scripting\LuaStackGuard.cs" />
+    <Compile Include="Scripting\LuaUtils.cs" />
+    <Compile Include="Scripting\LuaValue.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -702,6 +712,10 @@
     <ProjectReference Include="..\SDKs\BEPUPhysics\BEPUutilities\BEPUutilities.csproj">
       <Project>{34853dea-43a6-4f2f-a379-d1ee04d256d2}</Project>
       <Name>BEPUutilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SDKs\KopiLua\KopiLua\KopiLua.Net45.csproj">
+      <Project>{e8ddbc21-ef74-4aba-9c49-bfc702be25d8}</Project>
+      <Name>KopiLua.Net45</Name>
     </ProjectReference>
     <ProjectReference Include="..\SDKs\LidgrenNetwork\Lidgren.Network\Lidgren.Network.csproj">
       <Project>{49ba1c69-6104-41ac-a5d8-b54fa9f696e8}</Project>

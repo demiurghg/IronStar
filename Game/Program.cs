@@ -21,6 +21,7 @@ using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using IronStar.Editor;
 using Fusion.Core.Mathematics;
+using Fusion.Scripting;
 
 namespace IronStar {
 

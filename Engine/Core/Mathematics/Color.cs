@@ -320,6 +320,16 @@ namespace Fusion.Core.Mathematics
             return (int)value;
         }
 
+		/// <summary>
+		/// Converts the color into web color
+		/// </summary>
+		/// <returns></returns>
+		public string ToHexString ()
+		{
+			return "#" + ToBgra().ToString("X8");
+		}
+
+
         /// <summary>
         /// Converts the color into a packed integer.
         /// </summary>
@@ -706,6 +716,19 @@ namespace Fusion.Core.Mathematics
         public static Color FromRgba(int color)
         {
             return new Color(color);
+        }
+
+        /// <summary>
+        /// Converts the color from a packed BGRA integer.
+        /// </summary>
+        /// <param name="color">A packed integer containing all four color components in RGBA order</param>
+        /// <returns>A color.</returns>
+        public static Color FromHexString(string color)
+        {
+			if (color.StartsWith("#")) {
+				color = color.Substring(1);
+			}
+            return Color.FromBgra( int.Parse(color, NumberStyles.HexNumber) );
         }
 
         /// <summary>

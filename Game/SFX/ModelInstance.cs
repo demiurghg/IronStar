@@ -16,7 +16,8 @@ using Fusion.Engine.Graphics;
 using IronStar.Core;
 using Fusion.Engine.Audio;
 using IronStar.Views;
-
+using KopiLua;
+using Fusion.Scripting;
 
 namespace IronStar.SFX {
 
@@ -26,22 +27,25 @@ namespace IronStar.SFX {
 
 		readonly public Entity Entity;
 
-		public readonly Matrix PreTransform;
 
 		public bool IsFPVModel {
 			get { return fpvEnabled; }
 		}
 
-		readonly Color4 color;
 		readonly GameWorld world;
 		readonly ModelManager modelManager;
-		readonly Scene scene;
-		readonly Scene[] clips;
-		readonly string fpvCamera;
-		readonly bool fpvEnabled;
-		readonly Matrix fpvCameraMatrix;
-		readonly Matrix fpvViewMatrix;
-		readonly int fpvCameraIndex;
+		readonly ContentManager content;
+		
+		Color4 color;
+		Scene scene;
+		Scene[] clips;
+		string fpvCamera;
+		bool fpvEnabled;
+		Matrix fpvCameraMatrix;
+		Matrix fpvViewMatrix;
+		int fpvCameraIndex;
+
+		public Matrix PreTransform;
 
 		Matrix[] globalTransforms;
 		Matrix[] animSnapshot;
@@ -49,7 +53,6 @@ namespace IronStar.SFX {
 
 		Animator	animator;
 
-		readonly int nodeCount;
 
 		public bool Killed {
 			get; private set;
@@ -69,58 +72,107 @@ namespace IronStar.SFX {
 		/// <param name="scene"></param>
 		/// <param name="entity"></param>
 		/// <param name="matrix"></param>
-		public ModelInstance ( Entity entity, ModelManager modelManager, ModelFactory factory, ContentManager content )
+		public ModelInstance ( Entity entity, ModelManager modelManager, string modelScript, ContentManager content )
 		{
-			if (string.IsNullOrWhiteSpace(factory.ScenePath)) {
+			this.content		=	content;
+			this.modelManager   =   modelManager;
+			this.world			=	modelManager.world;
+			this.Entity			=	entity;
+
+			var L	= modelManager.lua.L;
+			var lua = modelManager.lua;
+
+			using ( new LuaStackGuard( L ) ) {
+
+				
+
+
+				try {
+
+					int errcode = 0;
+
+					var text = content.Load<string>( modelScript );
+
+					errcode = Lua.LuaLLoadBuffer( L, text, (uint)text.Length, modelScript );
+
+					LuaException.ThrowIfError( L, errcode );
+					
+					LuaObjectTranslator.Get(L).PushObject( L, this );
+
+					errcode = Lua.LuaPCall( L, 1, Lua.LUA_MULTRET, 0 );
+
+					LuaException.ThrowIfError( L, errcode );
+
+				} catch ( Exception le ) {
+					Log.Error(le.Message);
+				}
+
+			}
+
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="L"></param>
+		/// <returns></returns>
+		[LuaApi("load")]
+		public int Load ( LuaState L )
+		{
+			using ( new LuaStackGuard(L) ) {
+				var path	=	Lua.LuaToString( L, 1 ).ToString();
+
+				LoadScene( path );
+			}
+			return 0;
+		}
+
+
+
+		void LoadScene ( string path )
+		{
+			if (string.IsNullOrWhiteSpace(path)) {
 				this.scene		=	EmptyScene;
 				this.clips		=	new Scene[0];
 			} else {
-				this.scene		=	content.Load<Scene>( factory.ScenePath );
+				this.scene		=	content.Load<Scene>( path );
 			}
 
-			this.Entity			=	entity;
+			this.PreTransform   =   Matrix.Identity;
+			this.color			=	Color.Orange;
+			this.color			*=	500;
 
-			this.modelManager   =   modelManager;
-			this.world			=	modelManager.world;
-			this.PreTransform   =   factory.ComputePreTransformMatrix();
-			this.color			=	factory.Color;
-			this.color			*=	factory.Intensity;
+			this.fpvEnabled		=	false;
+			this.fpvCamera		=	"";
 
-			this.fpvEnabled		=	factory.FPVEnable;
-			this.fpvCamera		=	factory.FPVCamera;
+			//if (factory.AnimEnabled) {
+			//	animator	=	content.Load(@"animation\" + factory.AnimController, (AnimatorFactory)null)?.Create( world, entity, this );
+			//}
 
-			nodeCount			=	scene.Nodes.Count;
+			//if (fpvEnabled) {
+			//	fpvCameraIndex		=	scene.GetNodeIndex( fpvCamera );
 
+			//	if (fpvCameraIndex<0) {	
+			//		Log.Warning("Camera node {0} does not exist", fpvCamera);
+			//	} else {
+			//		fpvCameraMatrix	=	Scene.FixGlobalCameraMatrix( globalTransforms[ fpvCameraIndex ] );
+			//		fpvViewMatrix	=	Matrix.Invert( fpvCameraMatrix );
+			//		PreTransform	=	fpvViewMatrix * Matrix.Scaling( factory.Scale );
+			//	}
+			//} else {
+			//	PreTransform	=	Matrix.Scaling( factory.Scale );	
+			//}
 			globalTransforms	=	new Matrix[ scene.Nodes.Count ];
 			animSnapshot		=	new Matrix[ scene.Nodes.Count ];
 			scene.ComputeAbsoluteTransforms( globalTransforms );
 			scene.ComputeAbsoluteTransforms( animSnapshot );
-
-			if (factory.AnimEnabled) {
-				animator	=	content.Load(@"animation\" + factory.AnimController, (AnimatorFactory)null)?.Create( world, entity, this );
-			}
-
-			if (fpvEnabled) {
-				fpvCameraIndex		=	scene.GetNodeIndex( fpvCamera );
-
-				if (fpvCameraIndex<0) {	
-					Log.Warning("Camera node {0} does not exist", fpvCamera);
-				} else {
-					fpvCameraMatrix	=	Scene.FixGlobalCameraMatrix( globalTransforms[ fpvCameraIndex ] );
-					fpvViewMatrix	=	Matrix.Invert( fpvCameraMatrix );
-					PreTransform	=	fpvViewMatrix * Matrix.Scaling( factory.Scale );
-				}
-			} else {
-				PreTransform	=	Matrix.Scaling( factory.Scale );	
-			}
-
-
+			
 			meshInstances	=	new MeshInstance[ scene.Nodes.Count ];
 
 			var instGroup	=	fpvEnabled ? InstanceGroup.Weapon : InstanceGroup.Dynamic;
 
-
-			for ( int i=0; i<nodeCount; i++ ) {
+			for ( int i=0; i<scene.Nodes.Count; i++ ) {
 				var meshIndex = scene.Nodes[i].MeshIndex;
 				
 				if (meshIndex>=0) {
@@ -185,14 +237,18 @@ namespace IronStar.SFX {
 		/// <param name="noteTransforms"></param>
 		void UpdateInternal ( Matrix worldMatrix, Matrix[] nodeTransforms )
 		{
+			if (scene==null || scene==EmptyScene) {
+				return;
+			}
+
 			if (nodeTransforms==null) {
 				throw new ArgumentNullException("nodeTransforms");
 			}
-			if (nodeCount>nodeTransforms.Length) {
+			if (scene.Nodes.Count>nodeTransforms.Length) {
 				throw new ArgumentException("nodeTransforms.Length < nodeCount");
 			}
 
-			for ( int i = 0; i<nodeCount; i++ ) {
+			for ( int i = 0; i<scene.Nodes.Count; i++ ) {
 				if (meshInstances[i]!=null) {
 					meshInstances[i].World = nodeTransforms[i] * PreTransform * worldMatrix;
 					meshInstances[i].Color = color;
@@ -218,7 +274,11 @@ namespace IronStar.SFX {
 		/// </summary>
 		public void Kill ()
 		{
-			for ( int i = 0; i<nodeCount; i++ ) {
+			if (scene==null || scene==EmptyScene) {
+				return;
+			}
+
+			for ( int i = 0; i<scene.Nodes.Count; i++ ) {
 				if (meshInstances[i]!=null) {
 					modelManager.rw.Instances.Remove( meshInstances[i] );
 				}

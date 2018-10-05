@@ -17,7 +17,7 @@ using Fusion.Core.Mathematics;
 
 namespace Fusion.Scripting {
 	
-	class LuaObjectTranslator {
+	public class LuaObjectTranslator {
 
 		const string tableName = "__LuaTranslator";
 		int counter = 0;
@@ -41,7 +41,7 @@ namespace Fusion.Scripting {
 				Lua.LuaPushString( L, tableName );
 				Lua.LuaNewTable		(L);
 				Lua.LuaNewTable		(L);
-				Lua.LuaPushString	(L, "__mode");
+				Lua.LuaPushString	(L, "__mode"); // make stored values weak.
 				Lua.LuaPushString	(L, "v");
 				Lua.LuaSetTable		(L, -3);
 				Lua.LuaSetMetatable (L, -2);

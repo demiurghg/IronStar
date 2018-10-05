@@ -101,7 +101,13 @@ namespace IronStar.SFX {
 				return null;
 			}
 
-			ModelFactory factory;
+
+			var model = new ModelInstance( entity, this, @"models\" + modelName, world.Content );
+			AddModel( model );
+
+			return model;
+
+			/*ModelFactory factory;
 
 			if (world.Content.TryLoad( @"models\" + modelName, out factory )) {
 				var model		=	new ModelInstance( entity, this, factory, world.Content );
@@ -109,7 +115,7 @@ namespace IronStar.SFX {
 				return model;
 			} else {
 				return null;
-			}
+			} */
 		}
 
 

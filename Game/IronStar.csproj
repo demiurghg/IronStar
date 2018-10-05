@@ -103,6 +103,7 @@
     <Compile Include="SFX\FXInstance.SoundStage.cs" />
     <Compile Include="SFX\Animators\WeaponAnimator.cs" />
     <Compile Include="SFX\FXPlayback.Trails.cs" />
+    <Compile Include="SFX\ModelInstance.cs" />
     <Compile Include="ShooterCampaign.cs" />
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Client\GameInput.cs" />
@@ -203,7 +204,6 @@
     <Compile Include="SFX\Animation\AnimBlendUtils.cs" />
     <Compile Include="SFX\FXFactory.Utils.cs" />
     <Compile Include="SFX\FXFactory.cs" />
-    <Compile Include="SFX\ModelInstance.cs" />
     <Compile Include="SFX\ModelFactory.cs" />
     <Compile Include="SFX\ModelManager.cs" />
     <Compile Include="Core\UserAction.cs" />

@@ -47,3 +47,4 @@ _outsource/*
 *.txt
 *.json
 *.bank
+*.lua

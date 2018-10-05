@@ -20,6 +20,7 @@ using IronStar.Views;
 
 namespace IronStar.SFX {
 
+
 	public class ModelInstance {
 
 		static readonly Scene EmptyScene = Scene.CreateEmptyScene();

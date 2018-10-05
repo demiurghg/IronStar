@@ -6,6 +6,16 @@ using System.Threading.Tasks;
 using KopiLua;
 
 namespace Fusion.Scripting {
+
+	/// <summary>
+	/// Protectes Lua stack from corruption.
+	/// 
+	/// Usage:
+	///		using ( new LuaStackGuard( returned value count ) ) {
+	///			...
+	///		}
+	/// 
+	/// </summary>
 	public class LuaStackGuard : IDisposable {
 
 		readonly LuaState L;

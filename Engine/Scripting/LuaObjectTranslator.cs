@@ -29,22 +29,7 @@ namespace Fusion.Scripting {
 
 
 		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="L"></param>
-		/// <returns></returns>
-		static public LuaObjectTranslator Get( LuaState L )
-		{
-			if (L.tag==null) {
-				L.tag = new LuaObjectTranslator(L);
-			} 
-			return (LuaObjectTranslator)L.tag;
-		}
-
-
-						  
-		/// <summary>
-		/// 
+		/// Constructor fo object translator
 		/// </summary>
 		/// <param name="L"></param>
 		public LuaObjectTranslator ( LuaState L )
@@ -67,38 +52,22 @@ namespace Fusion.Scripting {
 
 
 		/// <summary>
-		/// 
+		/// Gets instance of object translator for given Lua state :
 		/// </summary>
-		/// <param name="target"></param>
-		/// <param name="id"></param>
-		void CollectObject ( object target, int id )
+		/// <param name="L"></param>
+		/// <returns></returns>
+		static public LuaObjectTranslator Get( LuaState L )
 		{
-			#warning Should we call Dispose() for IDisposable?
-
-			Log.Verbose("...gc object: {0} - {1}", id, target.ToString() );
-
-			map.Remove( id );
-			backMap.Remove( target );
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="target"></param>
-		/// <param name="id"></param>
-		void CollectObject ( int id )
-		{
-			LuaObjectWrapper wrapper;
-			if (map.TryGetValue(id, out wrapper)) {
-				CollectObject( wrapper.Target, id );
-			}
+			if (L.tag==null) {
+				L.tag = new LuaObjectTranslator(L);
+			} 
+			return (LuaObjectTranslator)L.tag;
 		}
 
 
 
 		/// <summary>
-		/// 
+		/// Pushes object on stack
 		/// </summary>
 		/// <param name="L"></param>
 		/// <param name="target"></param>
@@ -144,73 +113,7 @@ namespace Fusion.Scripting {
 
 
 		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="L"></param>
-		/// <param name="target"></param>
-		/// <param name="id"></param>
-		void PushNewObject ( LuaState L, object target, int id )
-		{
-			var wrapper = new LuaObjectWrapper( id, target );
-
-			Log.Verbose("...new object: {0} - {1}", id, target.ToString() );
-
-			map.Add( id, wrapper );
-			backMap.Add( target, id );
-
-			using ( new LuaStackGuard( L, 1 ) ) {
-
-				var array = (byte[])Lua.LuaNewUserData(L,4);
-				BitConverter.GetBytes( id ).CopyTo( array, 0 );
-
-				Lua.LuaNewTable(L);										
-
-				Lua.LuaPushString(L,"__index");							
-				Lua.LuaPushCFunction(L, wrapper.LuaMetaIndex );		
-				Lua.LuaRawSet(L, -3);									
-
-				Lua.LuaPushString(L,"__newindex");						
-				Lua.LuaPushCFunction(L, wrapper.LuaMetaNewIndex );	
-				Lua.LuaSetTable(L, -3);									
-
-				Lua.LuaPushString(L,"__gc");						
-				Lua.LuaPushCFunction(L, LuaMetaGC );	
-				Lua.LuaSetTable(L, -3);									
-
-				Lua.LuaPushString(L,"__metatable");						
-				Lua.LuaPushBoolean(L, 0 );								
-				Lua.LuaSetTable(L, -3);
-
-				Lua.LuaSetMetatable(L,-2);	
-
-
-				//	add new object to registry :
-				Lua.LuaGetField( L, Lua.LUA_REGISTRYINDEX, tableName );
-				Lua.LuaPushValue( L, -2 );
-				Lua.LuaRawSetI( L, -2, id );
-				Lua.LuaPop(L,1);
-
-											
-			}		
-		}
-
-
-
-		int LuaMetaGC ( LuaState L )
-		{
-			int id = Lua.LuaNetRawNetObj(L,1);
-
-			if (id != -1) {
-				CollectObject (id);
-			}
-			
-			return 0;
-		}
-
-
-
-		/// <summary>
-		/// 
+		/// Converts object on stack to C# object. 
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
@@ -240,6 +143,111 @@ namespace Fusion.Scripting {
 				LuaUtils.LuaError( L, "Lua API object (id={0}) does not exist", id );
 				return default(T);
 			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="target"></param>
+		/// <param name="id"></param>
+		void CollectObject ( object target, int id )
+		{
+			#warning Should we call Dispose() for IDisposable?
+
+			Log.Verbose("...gc object: {0} - {1}", id, target.ToString() );
+
+			map.Remove( id );
+			backMap.Remove( target );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="target"></param>
+		/// <param name="id"></param>
+		void CollectObject ( int id )
+		{
+			LuaObjectWrapper wrapper;
+			if (map.TryGetValue(id, out wrapper)) {
+				CollectObject( wrapper.Target, id );
+			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="L"></param>
+		/// <param name="target"></param>
+		/// <param name="id"></param>
+		void PushNewObject ( LuaState L, object target, int id )
+		{
+			var wrapper = new LuaObjectWrapper( id, target );
+
+			Log.Verbose("...new object: {0} - {1}", id, target.ToString() );
+
+			map.Add( id, wrapper );
+			backMap.Add( target, id );
+
+			using ( new LuaStackGuard( L, 1 ) ) {
+
+				var array = (byte[])Lua.LuaNewUserData(L,4);
+				BitConverter.GetBytes( id ).CopyTo( array, 0 );
+
+				Lua.LuaNewTable(L);										
+
+				//	get by index :
+				Lua.LuaPushString(L,"__index");							
+				Lua.LuaPushCFunction(L, wrapper.LuaMetaIndex );		
+				Lua.LuaRawSet(L, -3);									
+
+				//	set by index :
+				Lua.LuaPushString(L,"__newindex");						
+				Lua.LuaPushCFunction(L, wrapper.LuaMetaNewIndex );	
+				Lua.LuaSetTable(L, -3);									
+
+				//	set GC method :
+				Lua.LuaPushString(L,"__gc");						
+				Lua.LuaPushCFunction(L, LuaMetaGC );	
+				Lua.LuaSetTable(L, -3);									
+
+				//	forbid access to object's metatable
+				Lua.LuaPushString(L,"__metatable");						
+				Lua.LuaPushBoolean(L, 0 );								
+				Lua.LuaSetTable(L, -3);
+
+				Lua.LuaSetMetatable(L,-2);	
+
+
+				//	add new object to registry :
+				Lua.LuaGetField( L, Lua.LUA_REGISTRYINDEX, tableName );
+				Lua.LuaPushValue( L, -2 );
+				Lua.LuaRawSetI( L, -2, id );
+				Lua.LuaPop(L,1);
+			}		
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="L"></param>
+		/// <returns></returns>
+		int LuaMetaGC ( LuaState L )
+		{
+			int id = Lua.LuaNetRawNetObj(L,1);
+
+			if (id != -1) {
+				CollectObject (id);
+			}
+			
+			return 0;
 		}
 	}
 }

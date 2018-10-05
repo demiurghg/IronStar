@@ -16,10 +16,13 @@ using System.Threading;
 using Fusion.Core.Mathematics;
 
 namespace Fusion.Scripting {
+
+	/// <summary>
+	/// LuaObjectWrapper reflects methods of the wrapped object
+	/// and exposes "index" and "newindex" to Lua object metatable.
+	/// </summary>
 	class LuaObjectWrapper {
 	
-		static int counter = 0;
-
 		class Value {
 			public LuaNativeFunction function;
 			public PropertyInfo property;

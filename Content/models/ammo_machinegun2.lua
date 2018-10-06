@@ -1,0 +1,4 @@
+local model		= ...
+model.load("scenes\\weapon2\\assault_rifle\\battle_rifle_ammo.fbx")
+model.setScale(0.01)
+

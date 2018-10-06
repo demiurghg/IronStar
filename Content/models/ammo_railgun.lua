@@ -1,0 +1,3 @@
+local model		= ...
+model.load("scenes\\items\\medkit\\medkit10.fbx")
+model.setScale( 0.02 )

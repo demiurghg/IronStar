@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-16"?>
-<ModelDescriptor xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <ScenePath>scenes\boxes\box_low.fbx</ScenePath>
-  <Scale>0.66666</Scale>
-  <UseAnimation>false</UseAnimation>
-  <Color Red="120" Green="80" Blue="40" Alpha="1" />
-  <FPVEnable>false</FPVEnable>
-  <FPVCamera>camera1</FPVCamera>
-</ModelDescriptor>

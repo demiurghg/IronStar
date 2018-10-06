@@ -1,0 +1,3 @@
+local model		= ...
+model.load("scenes\\weapon2\\rocket_launcher\\rocket_ammo.fbx")
+model.setScale( 0.014 )

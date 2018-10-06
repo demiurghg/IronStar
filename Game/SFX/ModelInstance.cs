@@ -36,7 +36,9 @@ namespace IronStar.SFX {
 		readonly ModelManager modelManager;
 		readonly ContentManager content;
 		
-		Color4 color;
+		Color color;
+		float intensity;
+		Color4 glowColor;
 		Scene scene;
 		Scene[] clips;
 		string fpvCamera;
@@ -118,16 +120,60 @@ namespace IronStar.SFX {
 		/// <param name="L"></param>
 		/// <returns></returns>
 		[LuaApi("load")]
-		public int Load ( LuaState L )
+		int Load ( LuaState L )
 		{
 			using ( new LuaStackGuard(L) ) {
 				var path	=	Lua.LuaToString( L, 1 ).ToString();
 
-				try {
-					LoadScene( path );
-				} catch ( Exception e ) {
-					LuaUtils.LuaError( L, e.Message );
-				}
+				LoadScene( path );
+			}
+			return 0;
+		}
+
+
+
+		[LuaApi("setColor")]
+		int SetColor ( LuaState L )
+		{
+			using ( new LuaStackGuard(L) ) {
+
+				var r		=	(byte)(int)Lua.LuaToNumber( L, 1 );
+				var g		=	(byte)(int)Lua.LuaToNumber( L, 2 );
+				var b		=	(byte)(int)Lua.LuaToNumber( L, 3 );
+
+				color		=	new Color( r,g,b,(byte)255 );
+
+				glowColor	=	color.ToColor4() * intensity;
+					
+			}
+			return 0;
+		}
+
+
+
+		[LuaApi("setIntensity")]
+		int SetIntensity ( LuaState L )
+		{
+			using ( new LuaStackGuard(L) ) {
+
+				intensity	=	(float)Lua.LuaToNumber( L, 1 );
+					
+				glowColor	=	color.ToColor4() * intensity;
+
+			}
+			return 0;
+		}
+
+
+
+		[LuaApi("setScale")]
+		int SetScale ( LuaState L )
+		{
+			using ( new LuaStackGuard(L) ) {
+
+				var scale		=	Lua.LuaToNumber( L, 1 );
+				PreTransform	=	Matrix.Scaling( (float)scale );
+					
 			}
 			return 0;
 		}
@@ -144,7 +190,7 @@ namespace IronStar.SFX {
 			}
 
 			this.PreTransform   =   Matrix.Identity;
-			this.color			=	Color.Orange;
+			this.color			=	Color.White	;
 			this.color			*=	500;
 
 			this.fpvEnabled		=	false;

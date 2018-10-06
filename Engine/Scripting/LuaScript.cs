@@ -114,6 +114,7 @@ namespace Fusion.Scripting {
 
 				//	error happened :
 				HandleError( status );
+				Terminate();
 				return false;
 
 			}

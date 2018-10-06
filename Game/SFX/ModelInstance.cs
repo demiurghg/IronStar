@@ -21,7 +21,7 @@ using Fusion.Scripting;
 
 namespace IronStar.SFX {
 
-	public class ModelInstance : LuaScript {
+	public partial class ModelInstance : LuaScript {
 
 		static readonly Scene EmptyScene = Scene.CreateEmptyScene();
 
@@ -80,7 +80,7 @@ namespace IronStar.SFX {
 			this.world			=	modelManager.world;
 			this.content		=	modelManager.content;
 
-			base.Resume();
+			base.Resume(this);
 		}
 
 
@@ -94,91 +94,19 @@ namespace IronStar.SFX {
 		/// <param name="worldMatrix"></param>
 		public void Update ( GameTime gameTime, float animFrame )
 		{
-			Resume();
+			Resume(null);
 
 			var worldMatrix	=	ComputeWorldMatrix();
 
-			if (animator!=null) {
-
-				animator.Update( gameTime, animSnapshot );
-				UpdateInternal( worldMatrix, animSnapshot );
-
-			} else {
-
-				UpdateInternal( worldMatrix, animSnapshot );
-
-			}
+			UpdateInternal( worldMatrix, animSnapshot );
 		}
 
 
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="L"></param>
-		/// <returns></returns>
-		[LuaApi("load")]
-		int Load ( LuaState L )
-		{
-			using ( new LuaStackGuard(L) ) {
-				var path	=	Lua.LuaToString( L, 1 ).ToString();
-
-				LoadScene( path );
-			}
-			return 0;
-		}
-
-
-
-		[LuaApi("setColor")]
-		int SetColor ( LuaState L )
-		{
-			using ( new LuaStackGuard(L) ) {
-
-				var r		=	(byte)(int)Lua.LuaToNumber( L, 1 );
-				var g		=	(byte)(int)Lua.LuaToNumber( L, 2 );
-				var b		=	(byte)(int)Lua.LuaToNumber( L, 3 );
-
-				color		=	new Color( r,g,b,(byte)255 );
-
-				glowColor	=	color.ToColor4() * intensity;
-					
-			}
-			return 0;
-		}
-
-
-
-		[LuaApi("setIntensity")]
-		int SetIntensity ( LuaState L )
-		{
-			using ( new LuaStackGuard(L) ) {
-
-				intensity	=	(float)Lua.LuaToNumber( L, 1 );
-					
-				glowColor	=	color.ToColor4() * intensity;
-
-			}
-			return 0;
-		}
-
-
-
-		[LuaApi("setScale")]
-		int SetScale ( LuaState L )
-		{
-			using ( new LuaStackGuard(L) ) {
-
-				var scale		=	Lua.LuaToNumber( L, 1 );
-				PreTransform	=	Matrix.Scaling( (float)scale );
-					
-			}
-			return 0;
-		}
-
-
+		/*-----------------------------------------------------------------------------------------------
+		 * 
+		 *	Model operations :
+		 * 
+		-----------------------------------------------------------------------------------------------*/
 
 		void LoadScene ( string path )
 		{
@@ -197,10 +125,6 @@ namespace IronStar.SFX {
 			this.fpvEnabled		=	false;
 			this.fpvCamera		=	"";
 
-			//if (factory.AnimEnabled) {
-			//	animator	=	content.Load(@"animation\" + factory.AnimController, (AnimatorFactory)null)?.Create( world, entity, this );
-			//}
-
 			//if (fpvEnabled) {
 			//	fpvCameraIndex		=	scene.GetNodeIndex( fpvCamera );
 
@@ -214,6 +138,7 @@ namespace IronStar.SFX {
 			//} else {
 			//	PreTransform	=	Matrix.Scaling( factory.Scale );	
 			//}
+
 			globalTransforms	=	new Matrix[ scene.Nodes.Count ];
 			animSnapshot		=	new Matrix[ scene.Nodes.Count ];
 			scene.ComputeAbsoluteTransforms( globalTransforms );
@@ -256,6 +181,8 @@ namespace IronStar.SFX {
 			return worldMatrix;
 		}
 		
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -325,39 +252,6 @@ namespace IronStar.SFX {
 		public void ResetPose ()
 		{
 			scene.ComputeAbsoluteTransforms( animSnapshot );
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public void SetBindPose ()
-		{
-			throw new NotImplementedException();
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="frame"></param>
-		public void EvaluateFrame ( float animFrame )
-		{
-			throw new NotImplementedException();
-			/*if (animFrame>scene.LastFrame) {
-				Log.Warning("Anim frame: {0} > {1}", animFrame, scene.LastFrame);
-			}
-
-			if (animFrame<scene.FirstFrame) {
-				Log.Warning("Anim frame: {0} < {1}", animFrame, scene.FirstFrame);
-			}
-
-			animFrame = MathUtil.Clamp( animFrame, scene.FirstFrame, scene.LastFrame );
-
-			scene.GetAnimSnapshot( animFrame, scene.FirstFrame, scene.LastFrame, AnimationMode.Clamp, animSnapshot );
-			scene.ComputeAbsoluteTransforms( animSnapshot, animSnapshot ); */
 		}
 	}
 }

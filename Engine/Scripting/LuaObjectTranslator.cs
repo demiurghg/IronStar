@@ -74,8 +74,6 @@ namespace Fusion.Scripting {
 		/// <param name="allowGGFFinalizer"></param>
 		public void PushObject ( LuaState L, object target )
 		{	
-			Debug.Assert(this.L == L);
-
 			//	push nil if null :
 			if (target==null) {	
 				Lua.LuaPushNil(L);

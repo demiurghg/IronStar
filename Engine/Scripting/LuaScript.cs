@@ -12,6 +12,8 @@ namespace Fusion.Scripting {
 		string		name;
 		LuaState	thread;
 		LuaValue	threadRef;
+		bool		firstRun = false;
+		LuaState	hostLuaState;
 
 		/// <summary>
 		/// Creates instance of scriptable object
@@ -20,7 +22,8 @@ namespace Fusion.Scripting {
 		/// <param name="loader"></param>
 		public LuaScript( LuaState L, byte[] bytecode, string name )
 		{
-			this.name	=	name;
+			this.name		=	name;
+			hostLuaState	=	L;
 
 			int status;
 
@@ -40,12 +43,9 @@ namespace Fusion.Scripting {
 					Terminate();
 					return;
 				}
-					
-				//	push object behind function
-				LuaObjectTranslator.Get(L).PushObject( L, this );
 
 				//	exchange function and object between threads :
-				Lua.LuaXMove( L, thread, 2 );
+				Lua.LuaXMove( L, thread, 1 );
 
 				//	store thread (keep ref count for gc too) and then remove it from stack :
 				threadRef	=	new LuaValue( L, 1, Lua.LUA_TTHREAD );
@@ -89,11 +89,14 @@ namespace Fusion.Scripting {
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public bool Resume ()
+		public bool Resume ( object argument )
 		{
 			if (thread==null) {
 				return false;
 			}
+
+			//	push argument
+			LuaObjectTranslator.Get(hostLuaState).PushObject( thread, argument );
 
 			//	resume execution :
 			var status =	Lua.LuaResume( thread, 1 );
@@ -103,7 +106,6 @@ namespace Fusion.Scripting {
 				//	execution finished
 				Terminate();
 				return false;
-
 
 			} else if (status==Lua.LUA_YIELD) {
 

@@ -103,6 +103,7 @@
     <Compile Include="SFX\FXInstance.SoundStage.cs" />
     <Compile Include="SFX\Animators\WeaponAnimator.cs" />
     <Compile Include="SFX\FXPlayback.Trails.cs" />
+    <Compile Include="SFX\ModelInstance.Lua.cs" />
     <Compile Include="SFX\ModelInstance.cs" />
     <Compile Include="ShooterCampaign.cs" />
     <Compile Include="Client\GameCamera.cs" />

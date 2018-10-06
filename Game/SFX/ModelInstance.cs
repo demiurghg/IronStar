@@ -191,7 +191,8 @@ namespace IronStar.SFX {
 
 			this.PreTransform   =   Matrix.Identity;
 			this.color			=	Color.White	;
-			this.color			*=	500;
+			this.intensity		=	500;
+			this.glowColor		=	color.ToColor4() * intensity;
 
 			this.fpvEnabled		=	false;
 			this.fpvCamera		=	"";
@@ -276,7 +277,7 @@ namespace IronStar.SFX {
 			for ( int i = 0; i<scene.Nodes.Count; i++ ) {
 				if (meshInstances[i]!=null) {
 					meshInstances[i].World = nodeTransforms[i] * PreTransform * worldMatrix;
-					meshInstances[i].Color = color;
+					meshInstances[i].Color = glowColor;
 				}
 			}
 		}

@@ -136,10 +136,10 @@
     <Compile Include="Build\Processors\AssetProcessor.cs" />
     <Compile Include="Build\Processors\AssetProcessorAttribute.cs" />
     <Compile Include="Build\Processors\AssetProcessorBinding.cs" />
+    <Compile Include="Build\Processors\LuaProcessor.cs" />
     <Compile Include="Build\Processors\CopyProcessor.cs" />
     <Compile Include="Build\Processors\FontProcessor.cs" />
     <Compile Include="Build\Processors\SceneProcessor.cs" />
-    <Compile Include="Build\Processors\ScriptProcessor.cs" />
     <Compile Include="Build\Processors\SoundProcessor.cs" />
     <Compile Include="Build\Processors\TextureAtlasProcessor.cs" />
     <Compile Include="Build\Processors\TextureProcessor.cs" />
@@ -612,6 +612,7 @@
     <Compile Include="Scripting\LuaObjectTranslator.cs" />
     <Compile Include="Scripting\LuaObjectWrapper.cs" />
     <Compile Include="Scripting\LuaReadonly.cs" />
+    <Compile Include="Scripting\LuaScriptable.cs" />
     <Compile Include="Scripting\LuaStackGuard.cs" />
     <Compile Include="Scripting\LuaUtils.cs" />
     <Compile Include="Scripting\LuaValue.cs" />

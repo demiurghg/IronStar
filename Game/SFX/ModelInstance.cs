@@ -91,9 +91,9 @@ namespace IronStar.SFX {
 
 					int errcode = 0;
 
-					var text = content.Load<string>( modelScript );
+					var bytecode = content.Load<byte[]>( modelScript );
 
-					errcode = Lua.LuaLLoadBuffer( L, text, (uint)text.Length, modelScript );
+					errcode = Lua.LuaLLoadBuffer( L, bytecode, (uint)bytecode.Length, modelScript );
 
 					LuaException.ThrowIfError( L, errcode );
 					

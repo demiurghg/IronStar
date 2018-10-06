@@ -28,7 +28,6 @@ namespace Fusion.Scripting
 			Lua.LuaPop(L,1);
 
 			switch (errcode) {
-				case Lua.LUA_YIELD		:	return "Yield : " + message;
 				case Lua.LUA_ERRRUN		:	return "Runtime error : " + message;
 				case Lua.LUA_ERRSYNTAX	:	return "Syntex error : " + message;
 				case Lua.LUA_ERRMEM		:	return "Memory allocation error : " + message;
@@ -44,7 +43,7 @@ namespace Fusion.Scripting
 		/// <param name="errcode"></param>
 		public static void ThrowIfError ( LuaState L, int errcode )
 		{
-			if (errcode!=0) {
+			if (errcode>1) {
 				throw new LuaException( L, errcode );
 			}
 		}
@@ -54,10 +53,13 @@ namespace Fusion.Scripting
 		/// </summary>
 		/// <param name="L"></param>
 		/// <param name="errcode"></param>
-		public static void PrintIfError ( LuaState L, int errcode )
+		public static bool PrintIfError ( LuaState L, int errcode )
 		{
-			if (errcode!=0) {
+			if (errcode>1) {
 				Log.Error( GetErrMessage(L, errcode ) );
+				return true;
+			} else {
+				return false;
 			}
 		}
 

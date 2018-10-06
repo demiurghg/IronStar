@@ -15,50 +15,24 @@ using KopiLua;
 using Fusion.Core.Content;
 
 namespace Fusion.Scripting {
-	public partial class LuaInvoker : IDisposable {
-
-		public readonly LuaState L;
-		object lockObject = new object();
-
-		readonly ContentManager content;
+	public static class LuaInvoker {
 
 
 		/// <summary>
-		/// Creates instance of Invoker.
+		/// Creates instance of LuaState with Fusion related stuff.
 		/// </summary>
-		/// <param name="game">Game instance</param>
-		public LuaInvoker ( ContentManager content )
+		/// <returns></returns>
+		public static LuaState CreateLuaState ()
 		{
-			this.content	=	content;
-			
-			L	=	Lua.LuaOpen();
+			var L	=	Lua.LuaOpen();
 			Lua.LuaLOpenLibs(L);
 
 			Lua.LuaPushCFunction( L, LuaBPrint );
 			Lua.LuaSetGlobal( L, "print" );
+
+			return L;
 		}
 
-
-
-		#region IDisposable Support
-		private bool disposedValue = false; // To detect redundant calls
-
-		protected virtual void Dispose( bool disposing )
-		{
-			if ( !disposedValue ) {
-				if ( disposing ) {
-					Lua.LuaClose(L);
-				}
-
-				disposedValue = true;
-			}
-		}
-
-		public void Dispose()
-		{
-			Dispose( true );
-		}
-		#endregion
 
 
 		/// <summary>
@@ -67,7 +41,7 @@ namespace Fusion.Scripting {
 		/// <param name="apiName"></param>
 		/// <param name="obj"></param>
 		/// <param name="methods"></param>
-		public void ExposeApi ( object target, string apiName )
+		public static void ExposeApi ( LuaState L, object target, string apiName )
 		{
 			if (apiName==null) {
 				throw new ArgumentNullException("apiName");
@@ -85,7 +59,8 @@ namespace Fusion.Scripting {
 		/// 
 		/// </summary>
 		/// <param name="commandLine"></param>
-		public string ExecuteString ( string commandLine )
+		[Obsolete]
+		public static string ExecuteString ( LuaState L, string commandLine )
 		{
 			int errcode;
 
@@ -113,16 +88,6 @@ namespace Fusion.Scripting {
 
 				}
 			}
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="path"></param>
-		public void ExecuteFile ( string path )
-		{
-			LuaUtils.LuaDoFile( L, content.Load<string>(path), path );
 		}
 
 		/*-----------------------------------------------------------------------------------------

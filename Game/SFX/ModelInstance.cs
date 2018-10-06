@@ -21,7 +21,7 @@ using Fusion.Scripting;
 
 namespace IronStar.SFX {
 
-	public class ModelInstance {
+	public class ModelInstance : LuaScript {
 
 		static readonly Scene EmptyScene = Scene.CreateEmptyScene();
 
@@ -53,7 +53,6 @@ namespace IronStar.SFX {
 
 		Animator	animator;
 
-
 		public bool Killed {
 			get; private set;
 		}
@@ -72,44 +71,45 @@ namespace IronStar.SFX {
 		/// <param name="scene"></param>
 		/// <param name="entity"></param>
 		/// <param name="matrix"></param>
-		public ModelInstance ( Entity entity, ModelManager modelManager, string modelScript, ContentManager content )
+		public ModelInstance ( Entity entity, ModelManager modelManager, byte[] bytecode, string name ) : base(modelManager.L, bytecode, name)
 		{
-			this.content		=	content;
+			this.Entity			=	entity;
 			this.modelManager   =   modelManager;
 			this.world			=	modelManager.world;
-			this.Entity			=	entity;
+			this.content		=	modelManager.content;
 
-			var L	= modelManager.lua.L;
-			var lua = modelManager.lua;
-
-			using ( new LuaStackGuard( L ) ) {
-
-				
+			base.Resume();
+		}
 
 
-				try {
 
-					int errcode = 0;
 
-					var bytecode = content.Load<byte[]>( modelScript );
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="dt"></param>
+		/// <param name="animFrame"></param>
+		/// <param name="worldMatrix"></param>
+		public void Update ( GameTime gameTime, float animFrame )
+		{
+			Resume();
 
-					errcode = Lua.LuaLLoadBuffer( L, bytecode, (uint)bytecode.Length, modelScript );
+			var worldMatrix	=	ComputeWorldMatrix();
 
-					LuaException.ThrowIfError( L, errcode );
-					
-					LuaObjectTranslator.Get(L).PushObject( L, this );
+			if (animator!=null) {
 
-					errcode = Lua.LuaPCall( L, 1, Lua.LUA_MULTRET, 0 );
+				animator.Update( gameTime, animSnapshot );
+				UpdateInternal( worldMatrix, animSnapshot );
 
-					LuaException.ThrowIfError( L, errcode );
+			} else {
 
-				} catch ( Exception le ) {
-					Log.Error(le.Message);
-				}
+				UpdateInternal( worldMatrix, animSnapshot );
 
 			}
-
 		}
+
+
+
 
 
 		/// <summary>
@@ -123,7 +123,11 @@ namespace IronStar.SFX {
 			using ( new LuaStackGuard(L) ) {
 				var path	=	Lua.LuaToString( L, 1 ).ToString();
 
-				LoadScene( path );
+				try {
+					LoadScene( path );
+				} catch ( Exception e ) {
+					LuaUtils.LuaError( L, e.Message );
+				}
 			}
 			return 0;
 		}
@@ -204,31 +208,6 @@ namespace IronStar.SFX {
 
 			return worldMatrix;
 		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="dt"></param>
-		/// <param name="animFrame"></param>
-		/// <param name="worldMatrix"></param>
-		public void Update ( GameTime gameTime, float animFrame )
-		{
-			var worldMatrix	=	ComputeWorldMatrix();
-
-			if (animator!=null) {
-
-				animator.Update( gameTime, animSnapshot );
-				UpdateInternal( worldMatrix, animSnapshot );
-
-			} else {
-
-				UpdateInternal( worldMatrix, animSnapshot );
-
-			}
-		}
-
-
 		
 		/// <summary>
 		/// 

@@ -33,9 +33,24 @@ namespace Fusion.Scripting {
 		public void Dispose()
 		{																  
 			int newtop = Lua.LuaGetTop(L);
+			var delta  = newtop - (oldtop+reserved);
+
 			if (newtop!=oldtop+reserved) {
+
 				Lua.LuaSetTop(L,oldtop);
-				Log.Warning("Lua stack corruption : {0}+{1} -> {2}. Restored.", oldtop, reserved, newtop );
+
+				string reason = "unknown";
+
+				if (newtop > oldtop+reserved) {
+					reason = delta.ToString() + " extra value(s) is/are pushed on stack";
+				}
+
+				if (newtop < oldtop+reserved) {
+					reason = (-delta).ToString() + " values was/were popped from stack";
+				}
+
+				Log.Warning("Lua stack corruption : {0}. Restored.", reason); 
+				//Log.Warning("Lua stack corruption : top[{0}] + reserved[{1}] != current{2}. Restored.", oldtop, reserved, newtop );
 			}
 		}
 

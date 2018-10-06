@@ -612,7 +612,7 @@
     <Compile Include="Scripting\LuaObjectTranslator.cs" />
     <Compile Include="Scripting\LuaObjectWrapper.cs" />
     <Compile Include="Scripting\LuaReadonly.cs" />
-    <Compile Include="Scripting\LuaScriptable.cs" />
+    <Compile Include="Scripting\LuaScript.cs" />
     <Compile Include="Scripting\LuaStackGuard.cs" />
     <Compile Include="Scripting\LuaUtils.cs" />
     <Compile Include="Scripting\LuaValue.cs" />

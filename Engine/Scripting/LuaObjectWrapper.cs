@@ -51,7 +51,7 @@ namespace Fusion.Scripting {
 			this.target	=	target;
 
 			type		=	target.GetType();
-			var flags	=	BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance;
+			var flags	=	BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.FlattenHierarchy;
 
 			//
 			//	retrieve methods :

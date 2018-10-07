@@ -16,7 +16,7 @@ using Fusion.Engine.Common;
 using IronStar.Views;
 
 namespace IronStar.Core {
-	public class Entity {
+	public partial class Entity {
 
 		/// <summary>
 		/// Entity ID

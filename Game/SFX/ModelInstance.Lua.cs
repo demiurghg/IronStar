@@ -25,7 +25,8 @@ namespace IronStar.SFX {
 
 
 		/// <summary>
-		/// 
+		/// Load scene with sepcified path
+		/// model.load("path");
 		/// </summary>
 		/// <param name="L"></param>
 		/// <returns></returns>
@@ -42,79 +43,119 @@ namespace IronStar.SFX {
 
 
 
+		/// <summary>
+		/// Sets model glow color 
+		/// setColor(255,128,64)
+		/// </summary>
+		/// <param name="L"></param>
+		/// <returns></returns>
 		[LuaApi("setColor")]
 		int SetColor ( LuaState L )
 		{
 			using ( new LuaStackGuard(L) ) {
-
-				var r		=	(byte)(int)Lua.LuaToNumber( L, 1 );
-				var g		=	(byte)(int)Lua.LuaToNumber( L, 2 );
-				var b		=	(byte)(int)Lua.LuaToNumber( L, 3 );
-
-				color		=	new Color( r,g,b,(byte)255 );
-
-				glowColor	=	color.ToColor4() * intensity;
-					
+				var r	=	(byte)(int)Lua.LuaToNumber( L, 1 );
+				var g	=	(byte)(int)Lua.LuaToNumber( L, 2 );
+				var b	=	(byte)(int)Lua.LuaToNumber( L, 3 );
+				color	=	new Color( r,g,b,(byte)255 );
 			}
 			return 0;
 		}
 
 
 
+		/// <summary>
+		/// Sets model glow intensity
+		/// setIntensity(1000)
+		/// </summary>
+		/// <param name="L"></param>
+		/// <returns></returns>
 		[LuaApi("setIntensity")]
 		int SetIntensity ( LuaState L )
 		{
 			using ( new LuaStackGuard(L) ) {
-
 				intensity	=	(float)Lua.LuaToNumber( L, 1 );
-					
-				glowColor	=	color.ToColor4() * intensity;
-
 			}
 			return 0;
 		}
 
 
 
+		/// <summary>
+		/// Sets model scale
+		/// 
+		/// </summary>
+		/// <param name="L"></param>
+		/// <returns></returns>
 		[LuaApi("setScale")]
 		int SetScale ( LuaState L )
 		{
 			using ( new LuaStackGuard(L) ) {
-
 				var scale		=	Lua.LuaToNumber( L, 1 );
-				PreTransform	=	Matrix.Scaling( (float)scale );
-					
+				preTransform	=	Matrix.Scaling( (float)scale );
 			}
 			return 0;
 		}
 
 
+		/// <summary>
+		/// Sets model FPV parameters
+		/// </summary>
+		/// <param name="L"></param>
+		/// <returns></returns>
 		[LuaApi("setFpv")]
 		int SetFPV( LuaState L )
 		{
 			using ( new LuaStackGuard( L ) ) {
 
-				float scale;
-
-				fpvEnabled	=	Lua.LuaToBoolean(L, 1)!=0;
-				scale		=	(float)Lua.LuaToNumber(L, 2);
-				fpvCamera	=	Lua.LuaToString(L, 3).ToString();
+				fpvEnabled		=	Lua.LuaToBoolean(L, 1)!=0;
+				var scale		=	(float)Lua.LuaToNumber(L, 2);
+				var camera	=	Lua.LuaToString(L, 3).ToString();
 
 				if (fpvEnabled) {
-					fpvCameraIndex		=	scene.GetNodeIndex( fpvCamera );
+					var fpvCameraIndex		=	scene.GetNodeIndex( camera );
 
 					if (fpvCameraIndex<0) {	
-						Log.Warning("Camera node {0} does not exist", fpvCamera);
+						Log.Warning("Camera node {0} does not exist", camera);
 					} else {
-						fpvCameraMatrix	=	Scene.FixGlobalCameraMatrix( globalTransforms[ fpvCameraIndex ] );
-						fpvViewMatrix	=	Matrix.Invert( fpvCameraMatrix );
-						PreTransform	=	fpvViewMatrix * Matrix.Scaling( scale );
+						var fpvCameraMatrix	=	Scene.FixGlobalCameraMatrix( globalTransforms[ fpvCameraIndex ] );
+						var fpvViewMatrix	=	Matrix.Invert( fpvCameraMatrix );
+						preTransform		=	fpvViewMatrix * Matrix.Scaling( scale );
 					}
 				} else {
-					PreTransform	=	Matrix.Scaling( scale );	
+					preTransform	=	Matrix.Scaling( scale );	
 				}
 			}
 			return 0;
+		}
+
+
+		/// <summary>
+		/// Gets instance of animation composer
+		/// </summary>
+		/// <param name="L"></param>
+		/// <returns></returns>
+		[LuaApi("composer")]
+		int GetComposer( LuaState L )
+		{
+			using ( new LuaStackGuard(L,1) ) {
+				LuaObjectTranslator.Instance(L).PushObject( L, composer );
+				return 1;
+			}
+		}
+
+
+		/// <summary>
+		/// Gets instance of animation composer
+		/// </summary>
+		/// <param name="L"></param>
+		/// <returns></returns>
+		[LuaApi("entity")]
+		int GetEntity( LuaState L )
+		{
+			using ( new LuaStackGuard(L,1) ) {
+				LuaObjectTranslator.Instance(L).PushObject( L, Entity );
+				return 1;
+			}
 		}
 
 	}

@@ -96,7 +96,7 @@ namespace Fusion.Scripting {
 			}
 
 			//	push argument
-			LuaObjectTranslator.Get(hostLuaState).PushObject( thread, argument );
+			LuaObjectTranslator.Instance(hostLuaState).PushObject( thread, argument );
 
 			//	resume execution :
 			var status =	Lua.LuaResume( thread, 1 );

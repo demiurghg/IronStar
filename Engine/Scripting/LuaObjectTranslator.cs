@@ -19,7 +19,8 @@ namespace Fusion.Scripting {
 	
 	public class LuaObjectTranslator {
 
-		const string tableName = "__LuaTranslator";
+		const string tableName		= "__LuaTranslatorTable";
+		const string translatorName	= "__LuaTranslator";
 		int counter = 0;
 
 		Dictionary<int, LuaObjectWrapper> map = new Dictionary<int, LuaObjectWrapper>();
@@ -32,12 +33,13 @@ namespace Fusion.Scripting {
 		/// Constructor fo object translator
 		/// </summary>
 		/// <param name="L"></param>
-		public LuaObjectTranslator ( LuaState L )
+		private LuaObjectTranslator ( LuaState L )
 		{
 			this.L = L;
 
 			using ( new LuaStackGuard( L ) ) {
 
+				//	push 
 				Lua.LuaPushString( L, tableName );
 				Lua.LuaNewTable		(L);
 				Lua.LuaNewTable		(L);
@@ -46,6 +48,10 @@ namespace Fusion.Scripting {
 				Lua.LuaSetTable		(L, -3);
 				Lua.LuaSetMetatable (L, -2);
 				Lua.LuaSetTable		(L, Lua.LUA_REGISTRYINDEX);
+
+				Lua.LuaPushString		( L, translatorName );
+				Lua.LuaPushLightUserData( L, new LuaTag(this) );
+				Lua.LuaSetTable			( L, Lua.LUA_REGISTRYINDEX );
 			}
 		}
 
@@ -56,12 +62,31 @@ namespace Fusion.Scripting {
 		/// </summary>
 		/// <param name="L"></param>
 		/// <returns></returns>
-		static public LuaObjectTranslator Get( LuaState L )
+		static public LuaObjectTranslator Instance( LuaState L )
 		{
-			if (L.tag==null) {
-				L.tag = new LuaObjectTranslator(L);
-			} 
-			return (LuaObjectTranslator)L.tag;
+			using ( new LuaStackGuard( L ) ) {
+
+				Lua.LuaPushString( L, translatorName );
+				Lua.LuaGetTable	 ( L, Lua.LUA_REGISTRYINDEX );
+
+				if (Lua.LuaIsNil( L, -1 )) {
+
+					Lua.LuaPop( L, 1 );
+					return new LuaObjectTranslator( L );
+
+				} else {
+
+					var tag = Lua.LuaToUserData( L, -1 );
+					Lua.LuaPop( L, 1 );
+
+					return (LuaObjectTranslator)tag;
+				}
+
+				/*if (L.tag==null) {
+					L.tag = new LuaObjectTranslator(L);
+				} 
+				return (LuaObjectTranslator)L.tag;*/
+			}
 		}
 
 

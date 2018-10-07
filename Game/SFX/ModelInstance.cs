@@ -38,22 +38,16 @@ namespace IronStar.SFX {
 		
 		Color color;
 		float intensity;
-		Color4 glowColor;
-		Scene scene;
-		Scene[] clips;
-		string fpvCamera;
-		bool fpvEnabled;
-		Matrix fpvCameraMatrix;
-		Matrix fpvViewMatrix;
-		int fpvCameraIndex;
 
-		public Matrix PreTransform;
+		Scene scene;
+
+		bool fpvEnabled;
+
+		public Matrix preTransform;
 
 		Matrix[] globalTransforms;
 		Matrix[] animSnapshot;
 		MeshInstance[] meshInstances;
-
-		Animator	animator;
 
 		public bool Killed {
 			get; private set;
@@ -112,32 +106,15 @@ namespace IronStar.SFX {
 		{
 			if (string.IsNullOrWhiteSpace(path)) {
 				this.scene		=	EmptyScene;
-				this.clips		=	new Scene[0];
 			} else {
 				this.scene		=	content.Load<Scene>( path );
 			}
 
-			this.PreTransform   =   Matrix.Identity;
+			this.preTransform   =   Matrix.Identity;
 			this.color			=	Color.White	;
-			this.intensity		=	500;
-			this.glowColor		=	color.ToColor4() * intensity;
+			this.intensity		=	100;
 
 			this.fpvEnabled		=	false;
-			this.fpvCamera		=	"";
-
-			//if (fpvEnabled) {
-			//	fpvCameraIndex		=	scene.GetNodeIndex( fpvCamera );
-
-			//	if (fpvCameraIndex<0) {	
-			//		Log.Warning("Camera node {0} does not exist", fpvCamera);
-			//	} else {
-			//		fpvCameraMatrix	=	Scene.FixGlobalCameraMatrix( globalTransforms[ fpvCameraIndex ] );
-			//		fpvViewMatrix	=	Matrix.Invert( fpvCameraMatrix );
-			//		PreTransform	=	fpvViewMatrix * Matrix.Scaling( factory.Scale );
-			//	}
-			//} else {
-			//	PreTransform	=	Matrix.Scaling( factory.Scale );	
-			//}
 
 			globalTransforms	=	new Matrix[ scene.Nodes.Count ];
 			animSnapshot		=	new Matrix[ scene.Nodes.Count ];
@@ -146,20 +123,20 @@ namespace IronStar.SFX {
 			
 			meshInstances	=	new MeshInstance[ scene.Nodes.Count ];
 
-			var instGroup	=	fpvEnabled ? InstanceGroup.Weapon : InstanceGroup.Dynamic;
-
 			for ( int i=0; i<scene.Nodes.Count; i++ ) {
 				var meshIndex = scene.Nodes[i].MeshIndex;
 				
 				if (meshIndex>=0) {
 					meshInstances[i]		= new MeshInstance( modelManager.rs, scene, scene.Meshes[meshIndex] );
-					meshInstances[i].Group	= instGroup;
-					meshInstances[i].Color	= color;
+					meshInstances[i].Group	= InstanceGroup.Dynamic;
+					meshInstances[i].Color	= Color4.Zero;
 					modelManager.rw.Instances.Add( meshInstances[i] );
 				} else {
 					meshInstances[i] = null;
 				}
 			}
+
+			composer	=	new AnimationComposer("", this, scene, world );
 		}
 
 
@@ -172,7 +149,6 @@ namespace IronStar.SFX {
 			var worldMatrix = Matrix.RotationQuaternion( q ) * Matrix.Translation( p );
 
 			if ( fpvEnabled ) {
-				var weaponMatrix		=	Matrix.Identity;
 				var playerCameraMatrix	=	modelManager.rw.Camera.GetCameraMatrix(Fusion.Drivers.Graphics.StereoEye.Mono);
 				
 				worldMatrix				= 	playerCameraMatrix;
@@ -201,10 +177,14 @@ namespace IronStar.SFX {
 				throw new ArgumentException("nodeTransforms.Length < nodeCount");
 			}
 
+			var instGroup	=	fpvEnabled ? InstanceGroup.Weapon : InstanceGroup.Dynamic;
+			var glowColor	=	color.ToColor4() * intensity;
+
 			for ( int i = 0; i<scene.Nodes.Count; i++ ) {
 				if (meshInstances[i]!=null) {
-					meshInstances[i].World = nodeTransforms[i] * PreTransform * worldMatrix;
-					meshInstances[i].Color = glowColor;
+					meshInstances[i].Group	=	instGroup;
+					meshInstances[i].World	=	nodeTransforms[i] * preTransform * worldMatrix;
+					meshInstances[i].Color	=	glowColor;
 				}
 			}
 		}
@@ -227,6 +207,8 @@ namespace IronStar.SFX {
 		/// </summary>
 		public void Kill ()
 		{
+			Terminate();
+
 			if (scene==null || scene==EmptyScene) {
 				return;
 			}
@@ -246,12 +228,7 @@ namespace IronStar.SFX {
 		 * 
 		-----------------------------------------------------------------------------------------------*/
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public void ResetPose ()
-		{
-			scene.ComputeAbsoluteTransforms( animSnapshot );
-		}
+		AnimationComposer composer;
+		//AnimationComposer composer = new AnimationComposer(""
 	}
 }

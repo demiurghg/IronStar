@@ -69,6 +69,7 @@
     <Compile Include="Client\HudWeapon.cs" />
     <Compile Include="Client\HudHealth.cs" />
     <Compile Include="Core\DamageType.cs" />
+    <Compile Include="Core\Entity.Lua.cs" />
     <Compile Include="Core\ItemCollection.cs" />
     <Compile Include="Entities\FuncFX.cs" />
     <Compile Include="Entities\FuncShooter.cs" />

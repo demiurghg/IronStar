@@ -1,11 +1,42 @@
 local model		= 	...
---local entity	=	model.entity;
+local entity	=	model.entity();
 
 model.load("scenes\\weapon2\\assault_rifle\\assault_rifle_view.FBX")
 model.setColor(255, 80, 20)
 model.setIntensity(200)
 model.setFpv(true, 0.01, "camera1")
+
+local composer 	=	model.composer()
+
+local track1	=	composer.addTrack("override", "root")
+--model.addTrack
 --model.setScale(0.01)
+
+local old_traction = false
+
+while true do
+
+	local traction = entity.traction()
+	
+	if old_traction~=traction and traction then
+		print("LANDING!")
+	end
+	old_traction = traction
+
+	local vspeed = entity.vspeed();
+	local gspeed = entity.gspeed();
+	
+	if math.abs(vspeed) > 0.01 then
+		print('vspeed = ' .. vspeed );
+	end
+	
+	if math.abs(gspeed) > 0.01 then
+		print('gspeed = ' .. gspeed );
+	end
+
+	coroutine.yield()
+end
+
 
 --[[
 

@@ -1,5 +1,5 @@
 local model		= ...
 model.load("scenes\\boxes\\box_low.fbx")
-model.setColor(48, 96, 255)
-model.setIntensity(100)
-model.setScale(1)
+model.set_color(48, 96, 255)
+model.set_intensity(100)
+model.set_scale(1)

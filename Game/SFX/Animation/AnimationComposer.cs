@@ -183,13 +183,13 @@ namespace IronStar.SFX {
 		 * 
 		-----------------------------------------------------------------------------------------------*/
 
-		[LuaApi("addTrack")]
+		[LuaApi("add_track")]
 		int AddTrack ( LuaState L )
 		{
 			using ( new LuaStackGuard(L,1) ) {
 
-				var modeName	=	Lua.LuaToString( L, 1 ).ToString();
-				var channel		=	Lua.LuaToString( L, 2 ).ToString();
+				var modeName	=	Lua.LuaToString( L, 1 )?.ToString();
+				var channel		=	Lua.LuaToString( L, 2 )?.ToString();
 
 				var blendMode	= AnimationBlendMode.Override;
 
@@ -201,6 +201,34 @@ namespace IronStar.SFX {
 				}
 
 				var track	=	new AnimationTrack( scene, channel, blendMode );
+
+				Tracks.Add( track );
+
+				LuaObjectTranslator.Instance(L).PushObject( L, track );
+
+				return 1;
+			}
+		}
+
+		[LuaApi("add_pose")]
+		int AddPose ( LuaState L )
+		{
+			using ( new LuaStackGuard(L,1) ) {
+
+				var modeName	=	Lua.LuaToString( L, 1 )?.ToString();
+				var channel		=	Lua.LuaToString( L, 2 )?.ToString();
+				var take		=	Lua.LuaToString( L, 3 )?.ToString();
+
+				var blendMode	= AnimationBlendMode.Override;
+
+				switch (modeName) {
+					case null		: blendMode = AnimationBlendMode.Override; break;
+					case "override"	: blendMode = AnimationBlendMode.Override; break;
+					case "additive"	: blendMode = AnimationBlendMode.Additive; break;
+					default: throw new ArgumentException("bad animation blend mode");
+				}
+
+				var track	=	new AnimationPose( scene, channel, take, blendMode );
 
 				Tracks.Add( track );
 

@@ -37,7 +37,7 @@ namespace IronStar.Core {
 		}
 
 
-		[LuaApi("wpnState")]
+		[LuaApi("getWeaponState")]
 		protected int getWeaponState( LuaState L )
 		{
 			var groundVelocity = new Vector2( LinearVelocity.X, LinearVelocity.Z );
@@ -46,7 +46,7 @@ namespace IronStar.Core {
 		}
 
 
-		[LuaApi("traction")]
+		[LuaApi("hasTraction")]
 		protected int getTraction( LuaState L )
 		{
 			var traction = EntityState.HasFlag( EntityState.HasTraction ) ? 1 : 0;

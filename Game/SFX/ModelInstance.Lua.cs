@@ -49,7 +49,7 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="L"></param>
 		/// <returns></returns>
-		[LuaApi("setColor")]
+		[LuaApi("set_color")]
 		int SetColor ( LuaState L )
 		{
 			using ( new LuaStackGuard(L) ) {
@@ -69,7 +69,7 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="L"></param>
 		/// <returns></returns>
-		[LuaApi("setIntensity")]
+		[LuaApi("set_intensity")]
 		int SetIntensity ( LuaState L )
 		{
 			using ( new LuaStackGuard(L) ) {
@@ -86,7 +86,7 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="L"></param>
 		/// <returns></returns>
-		[LuaApi("setScale")]
+		[LuaApi("set_scale")]
 		int SetScale ( LuaState L )
 		{
 			using ( new LuaStackGuard(L) ) {
@@ -102,7 +102,7 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="L"></param>
 		/// <returns></returns>
-		[LuaApi("setFpv")]
+		[LuaApi("set_fpv")]
 		int SetFPV( LuaState L )
 		{
 			using ( new LuaStackGuard( L ) ) {
@@ -134,10 +134,15 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="L"></param>
 		/// <returns></returns>
-		[LuaApi("composer")]
+		[LuaApi("get_composer")]
 		int GetComposer( LuaState L )
 		{
 			using ( new LuaStackGuard(L,1) ) {
+				
+				if (composer==null) {
+					composer = new AnimationComposer("", this, scene, world);
+				}
+
 				LuaObjectTranslator.Instance(L).PushObject( L, composer );
 				return 1;
 			}
@@ -149,7 +154,7 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="L"></param>
 		/// <returns></returns>
-		[LuaApi("entity")]
+		[LuaApi("get_entity")]
 		int GetEntity( LuaState L )
 		{
 			using ( new LuaStackGuard(L,1) ) {

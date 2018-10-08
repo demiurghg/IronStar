@@ -1,30 +1,63 @@
 local model		= 	...
-local entity	=	model.entity();
+local entity	=	model.get_entity();
 
-model.load("scenes\\weapon2\\assault_rifle\\assault_rifle_view.FBX")
-model.setColor(255, 80, 20)
-model.setIntensity(200)
-model.setFpv(true, 0.01, "camera1")
+-----------------------------------------------------------
 
-local composer 	=	model.composer()
+local ANIM_TILT			=	"tilt"			
+local ANIM_IDLE			=	"idle"			
+local ANIM_WARMUP		=	"warmup"		
+local ANIM_COOLDOWN		=	"cooldown"		
+local ANIM_LANDING		=	"landing"		
+local ANIM_JUMP			=	"jump"			
+local ANIM_SHAKE		=	"shake"			
+local ANIM_WALKLEFT		=	"step_left"		
+local ANIM_WALKRIGHT	=	"step_right"	
+local ANIM_FIRSTLOOK	=	"examine"		
+local ANIM_RAISE		=	"raise"			
+local ANIM_DROP			=	"drop"			
 
-local track1	=	composer.addTrack("override", "root")
---model.addTrack
---model.setScale(0.01)
+local SOUND_LANDING		=	"player/landing"
+local SOUND_STEP		=	"player/step"	
+local SOUND_JUMP		=	"player/jump"	
+local SOUND_NO_AMMO		=	"weapon/noAmmo"	
+
+local JOINT_MUZZLE		=	"muzzle"		
+
+-----------------------------------------------------------
+
+model.load			( "scenes\\weapon2\\assault_rifle\\assault_rifle_view.FBX" )
+model.set_color		( 255, 80, 20 )
+model.set_intensity	( 200 )
+model.set_fpv		( true, 0.01, "camera1" )
+
+local composer 		=	model.get_composer()
+
+local track_weapon	=	composer.add_track ( "override", nil )
+-- local track_barrel	=	composer.add_track ( "override", nil )
+-- local track_shake0	=	composer.add_track ( "additive", nil )
+-- local track_shake1	=	composer.add_track ( "additive", nil )
+-- local track_shake2	=	composer.add_track ( "additive", nil )
+-- local track_shake3	=	composer.add_track ( "additive", nil )
+-- local pose_tilt		=	composer.add_pose  ( "additive", nil, ANIM_TILT )
+
+track_weapon.sequence {
+	take = ANIM_IDLE,
+	loop = true,
+}
 
 local old_traction = false
 
 while true do
 
-	local traction = entity.traction()
+	--[[ local traction = false;---entity.has_traction()
 	
 	if old_traction~=traction and traction then
 		print("LANDING!")
 	end
 	old_traction = traction
 
-	local vspeed = entity.vspeed();
-	local gspeed = entity.gspeed();
+	local vspeed = entity.get_vspeed();
+	local gspeed = entity.get_gspeed();
 	
 	if math.abs(vspeed) > 0.01 then
 		print('vspeed = ' .. vspeed );
@@ -33,54 +66,7 @@ while true do
 	if math.abs(gspeed) > 0.01 then
 		print('gspeed = ' .. gspeed );
 	end
+	]]
 
 	coroutine.yield()
 end
-
-
---[[
-
-local trackWeapon	=	model.newTrack { additive = false, channel = "root", weight = 1 }
-local trackBarrel	=	model.newTrack { additive = true , channel = "root", weight = 1 }
-local trackShake0	=	model.newTrack { additive = true , channel = "root", weight = 1 }
-local trackShake1	=	model.newTrack { additive = true , channel = "root", weight = 1 }
-local trackShake2	=	model.newTrack { additive = true , channel = "root", weight = 1 }
-local trackShake3	=	model.newTrack { additive = true , channel = "root", weight = 1 }
-local poseTilt		=	model.newPose  { additive = true , channel = "root", weight = 1 }
-	  
-trackWeapon.sequence{ 
-	take	= "idle", 
-	loop	= true, 
-	xfade 	= 0,
-}
-
-while true do
-
-	if entity.event.traction then
-		model.playFx("player_landing")
-		--runshake(
-	end
-		
-
-	coroutine.yield()
-end
-]]
-  
-	  
--- {  
-  -- "$type": "IronStar.SFX.ModelFactory, IronStar",
-  -- "ScenePath": "scenes\\weapon2\\assault_rifle\\assault_rifle_view.FBX",
-  -- "Scale": 0.01,
-  -- "AnimController": "machinegun",
-  -- "AnimEnabled": true,
-  -- "Color": "255, 80, 20, 255",
-  -- "Intensity": 200.0,
-  -- "FPVEnable": true,
-  -- "FPVCamera": "camera1",
-  -- "Prefix": "anim_",
-  -- "Clips": "",
-  -- "BoxWidth": 1.0,
-  -- "BoxHeight": 1.0,
-  -- "BoxDepth": 1.0,
-  -- "BoxColor": "154, 205, 50, 255"
--- }

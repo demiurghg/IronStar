@@ -48,6 +48,7 @@ namespace IronStar.SFX {
 		Matrix[] globalTransforms;
 		Matrix[] animSnapshot;
 		MeshInstance[] meshInstances;
+		AnimationComposer composer;
 
 		public bool Killed {
 			get; private set;
@@ -92,6 +93,11 @@ namespace IronStar.SFX {
 
 			var worldMatrix	=	ComputeWorldMatrix();
 
+			if (composer!=null) {
+				composer.Update( gameTime, animSnapshot );
+				//scene.ComputeAbsoluteTransforms( animSnapshot );
+			}
+
 			UpdateInternal( worldMatrix, animSnapshot );
 		}
 
@@ -135,8 +141,6 @@ namespace IronStar.SFX {
 					meshInstances[i] = null;
 				}
 			}
-
-			composer	=	new AnimationComposer("", this, scene, world );
 		}
 
 
@@ -228,7 +232,6 @@ namespace IronStar.SFX {
 		 * 
 		-----------------------------------------------------------------------------------------------*/
 
-		AnimationComposer composer;
 		//AnimationComposer composer = new AnimationComposer(""
 	}
 }

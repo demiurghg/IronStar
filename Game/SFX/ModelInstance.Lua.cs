@@ -163,5 +163,19 @@ namespace IronStar.SFX {
 			}
 		}
 
+
+
+		/// <summary>
+		/// Gets instance of animation composer
+		/// </summary>
+		/// <param name="L"></param>
+		/// <returns></returns>
+		[LuaApi("get_dt")]
+		int GetDTime( LuaState L )
+		{
+			Lua.LuaPushNumber( L, dtime );
+			return 1;
+		}
+
 	}
 }

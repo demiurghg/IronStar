@@ -20,7 +20,7 @@ using KopiLua;
 namespace IronStar.Core {
 	public partial class Entity {
 
-		[LuaApi("vspeed")]
+		[LuaApi("get_vspeed")]
 		protected int getVerticalVelocity( LuaState L )
 		{
 			Lua.LuaPushNumber( L, LinearVelocity.Y );
@@ -28,7 +28,7 @@ namespace IronStar.Core {
 		}
 
 
-		[LuaApi("gspeed")]
+		[LuaApi("get_gspeed")]
 		protected int getGroundVelocity( LuaState L )
 		{
 			var groundVelocity = new Vector2( LinearVelocity.X, LinearVelocity.Z );
@@ -37,7 +37,7 @@ namespace IronStar.Core {
 		}
 
 
-		[LuaApi("getWeaponState")]
+		[LuaApi("get_weapon_state")]
 		protected int getWeaponState( LuaState L )
 		{
 			var groundVelocity = new Vector2( LinearVelocity.X, LinearVelocity.Z );
@@ -46,11 +46,39 @@ namespace IronStar.Core {
 		}
 
 
-		[LuaApi("hasTraction")]
+		[LuaApi("has_traction")]
 		protected int getTraction( LuaState L )
 		{
-			var traction = EntityState.HasFlag( EntityState.HasTraction ) ? 1 : 0;
-			Lua.LuaPushBoolean( L, traction );
+			Lua.LuaPushBoolean( L, EntityState.HasFlag( EntityState.HasTraction ) ? 1 : 0 );
+			return 1;
+		}
+
+
+		[LuaApi("is_strafe_right")]
+		protected int isStrafeRight( LuaState L )
+		{
+			Lua.LuaPushBoolean( L, EntityState.HasFlag( EntityState.StrafeRight ) ? 1 : 0 );
+			return 1;
+		}
+
+		[LuaApi("is_strafe_left")]
+		protected int isStrafeLeft( LuaState L )
+		{
+			Lua.LuaPushBoolean( L, EntityState.HasFlag( EntityState.StrafeLeft ) ? 1 : 0 );
+			return 1;
+		}
+
+		[LuaApi("is_turn_right")]
+		protected int isTurnRight( LuaState L )
+		{
+			Lua.LuaPushBoolean( L, EntityState.HasFlag( EntityState.TurnRight ) ? 1 : 0 );
+			return 1;
+		}
+
+		[LuaApi("is_turn_left")]
+		protected int isTurnLeft( LuaState L )
+		{
+			Lua.LuaPushBoolean( L, EntityState.HasFlag( EntityState.TurnLeft ) ? 1 : 0 );
 			return 1;
 		}
 

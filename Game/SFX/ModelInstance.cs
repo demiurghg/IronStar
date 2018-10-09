@@ -38,6 +38,7 @@ namespace IronStar.SFX {
 		
 		Color color;
 		float intensity;
+		float dtime; // send to script
 
 		Scene scene;
 
@@ -89,6 +90,8 @@ namespace IronStar.SFX {
 		/// <param name="worldMatrix"></param>
 		public void Update ( GameTime gameTime, float animFrame )
 		{
+			dtime	= gameTime.ElapsedSec;
+
 			Resume(null);
 
 			var worldMatrix	=	ComputeWorldMatrix();

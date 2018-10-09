@@ -7,6 +7,8 @@ using Fusion;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Graphics;
+using Fusion.Scripting;
+using KopiLua;
 
 namespace IronStar.SFX {
 
@@ -75,6 +77,27 @@ namespace IronStar.SFX {
 			}
 
 			return true;
+		}
+
+		/*-----------------------------------------------------------------------------------------
+		 * 
+		 *  Lua API :
+		 *  
+		-----------------------------------------------------------------------------------------*/
+
+		[LuaApi("set_frame")]
+		int SetFrame ( LuaState L )
+		{
+			Frame = Lua.LuaToInteger( L, 1 );
+			return 0;
+		}
+
+
+		[LuaApi("set_weight")]
+		int SetWeight ( LuaState L )
+		{
+			Weight = (float)Lua.LuaToNumber( L, 1 );
+			return 0;
 		}
 	}
 }

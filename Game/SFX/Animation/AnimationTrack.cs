@@ -271,5 +271,13 @@ namespace IronStar.SFX {
 			return 0;
 		}
 
+
+		[LuaApi("set_weight")]
+		int SetWeight ( LuaState L )
+		{
+			Weight = (float)Lua.LuaToNumber( L, 1 );
+			return 0;
+		}
+
 	}
 }

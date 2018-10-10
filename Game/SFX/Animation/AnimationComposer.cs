@@ -237,5 +237,58 @@ namespace IronStar.SFX {
 				return 1;
 			}
 		}
+
+		
+		[LuaApi("sequence_fx")]
+		int RunFX ( LuaState L )
+		{
+			using ( new LuaStackGuard(L,0) ) {
+
+				var fx		=	Lua.LuaToString( L, 1 )?.ToString();
+				var joint	=	Lua.LuaToString( L, 2 )?.ToString();
+				var scale	=	(float)Lua.LuaToNumber( L, 3 );
+				
+				if (scale<=0) {	
+					scale = 1;
+				}
+
+				SequenceFX( fx, joint, scale );
+
+				return 0;
+			}
+		}
+
+		
+		[LuaApi("play_fx")]
+		int PlayFX ( LuaState L )
+		{
+			using ( new LuaStackGuard(L,0) ) {
+
+				var fx		=	Lua.LuaToString( L, 1 )?.ToString();
+				var joint	=	Lua.LuaToString( L, 2 )?.ToString();
+				var scale	=	(float)Lua.LuaToNumber( L, 3 );
+				
+				if (scale<=0) {	
+					scale = 1;
+				}
+
+				SequenceFX( fx, joint, scale );
+
+				return 0;
+			}
+		}
+
+		
+		[LuaApi("play_sound")]
+		int PlaySound ( LuaState L )
+		{
+			using ( new LuaStackGuard(L,0) ) {
+
+				var sound	=	Lua.LuaToString( L, 1 )?.ToString();
+				SequenceSound( sound );
+
+				return 0;
+			}
+		}
 	}
 }

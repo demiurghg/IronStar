@@ -95,6 +95,7 @@
     <Compile Include="SFX\Animation\AnimationSource.cs" />
     <Compile Include="SFX\Animation\AnimationPose.cs" />
     <Compile Include="SFX\Animation\AnimationStack.cs" />
+    <Compile Include="SFX\Animation\AnimationTakeFX.cs" />
     <Compile Include="SFX\Animation\AnimationTrack.cs" />
     <Compile Include="SFX\Animators\Animator.cs" />
     <Compile Include="SFX\Animators\AnimatorFactory.cs" />

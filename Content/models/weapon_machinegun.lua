@@ -3,7 +3,11 @@ local entity	=	model.get_entity();
 
 -----------------------------------------------------------
 
-local ANIM_TILT			=	"tilt"			
+-- local anim_tilt			=	model.take('tile')
+	  -- anim_tilt.keyfx(  0, "step", "left_leg"	)
+	  -- anim_tilt.keyfx( 20, "step", "right_leg"	) 
+
+local ANIM_TILT			=	"tilt"
 local ANIM_IDLE			=	"idle"			
 local ANIM_WARMUP		=	"warmup"		
 local ANIM_COOLDOWN		=	"cooldown"		
@@ -50,6 +54,8 @@ local old_vspeed	= 0
 local old_gspeed 	= 0
 local tilt_factor	= 0
 local old_state		= ""
+local step_timer	= -0.05
+local step_left		= false
 
 function drift ( current, target, velocity )
 	if current==target then return target end
@@ -75,6 +81,10 @@ function drift ( current, target, velocity )
 	return current;
 end
 
+function smoothstep(x)
+	return x * x * (3 - 2 * x)
+end
+
 while true do
 
 	local traction 	= entity.has_traction();
@@ -90,6 +100,7 @@ while true do
 	
 		if state=="cooldown" or state=="cooldown2" then
 			track_weapon.sequence { take=ANIM_COOLDOWN, crossfade=0 }
+			composer.play_fx ("machinegunMuzzle", JOINT_MUZZLE, 0.13 )
 		end
 		
 		if state=="idle" then
@@ -105,7 +116,7 @@ while true do
 		end
 	
 		if state=="noammo" then
-			print("**** NO AMMO ****");
+			composer.play_sound(SOUND_NO_AMMO)
 		end
 	
 	end
@@ -117,9 +128,10 @@ while true do
 			local weight = math.min( 0.5, math.abs( old_vspeed / 20 ) );
 			track_shake0.sequence {	take = ANIM_LANDING, crossfade = 0	}
 			track_shake0.set_weight( weight )
-			print( weight );
+			composer.play_sound(SOUND_LANDING)
 		else
 			track_shake1.sequence {	take = ANIM_JUMP	}
+			composer.play_sound(SOUND_JUMP)
 		end
 	end
 	
@@ -134,25 +146,45 @@ while true do
 	tilt_target = math.min( tilt_target,  1 )
 	tilt_target = math.max( tilt_target, -1 )
 	
-	tilt_factor	= drift( tilt_factor, tilt_target, dtime * 2 );
+	tilt_factor	= drift( tilt_factor, tilt_target, dtime*2 );
 
 	if tilt_factor > 0 then
 		pose_tilt.set_frame( 1 )
-		pose_tilt.set_weight( math.abs(tilt_factor) )
+		pose_tilt.set_weight( smoothstep(math.abs(tilt_factor)) )
 	elseif tilt_factor < 0 then
 		pose_tilt.set_frame( 2 )
-		pose_tilt.set_weight( math.abs(tilt_factor) )
+		pose_tilt.set_weight( smoothstep(math.abs(tilt_factor)) )
 	else
 		pose_tilt.set_frame( 0 )
 		pose_tilt.set_weight( 0 )
 	end
-	-- if math.abs(vspeed) > 0.01 then
-		-- print('vspeed = ' .. vspeed );
-	-- end
 	
-	-- if math.abs(gspeed) > 0.01 then
-		-- print('gspeed = ' .. gspeed );
-	-- end
+	---- steps ----
+	
+	if traction and gspeed > 0.1 then
+	
+		step_timer = step_timer + dtime;
+	
+		local weight = math.min( 1, gspeed / 10 ) * 0.5
+		
+		if step_timer > 0.3 then
+			step_left = not step_left;
+			step_timer = 0
+			
+			if step_left then
+				composer.play_sound( SOUND_STEP )
+				track_shake2.sequence { take=ANIM_WALKLEFT, crossfade=0 }
+				track_shake2.set_weight( weight )
+			else
+				composer.play_sound( SOUND_STEP )
+				track_shake3.sequence { take=ANIM_WALKRIGHT, crossfade=0 }
+				track_shake3.set_weight( weight )
+			end
+		end
+	
+	else
+		step_timer = -0.01
+	end
 	
 	-- store values for future use :
 	old_traction 	=	traction

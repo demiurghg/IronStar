@@ -1,6 +1,16 @@
 local model		= 	...
 local entity	=	model.get_entity();
 
+-- print(package.path)
+-- print(package.cpath)
+
+-- package.loaders[1] = function(path)
+	-- print(path)
+	-- content.load("models\\"..path)
+-- end
+
+-- require('libweapon')
+
 -----------------------------------------------------------
 
 -- local anim_tilt			=	model.take('tile')
@@ -33,6 +43,8 @@ model.load			( "scenes\\weapon2\\assault_rifle\\assault_rifle_view.FBX" )
 model.set_color		( 255, 80, 20 )
 model.set_intensity	( 200 )
 model.set_fpv		( true, 0.01, "camera1" )
+
+content.dofile('models\\test')
 
 local composer 		=	model.get_composer()
 
@@ -85,7 +97,14 @@ function smoothstep(x)
 	return x * x * (3 - 2 * x)
 end
 
+for k,v in pairs(package.loaders) do
+	print( k )
+end
+
 while true do
+
+	--dofile('models\\test')
+	foo()
 
 	local traction 	= entity.has_traction();
 	local vspeed 	= entity.get_vspeed();

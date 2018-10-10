@@ -13,6 +13,7 @@ using System.Reflection;
 using System.ComponentModel;
 using KopiLua;
 using Fusion.Core.Content;
+using Fusion.Core;
 
 namespace Fusion.Scripting {
 	public static class LuaInvoker {
@@ -29,6 +30,9 @@ namespace Fusion.Scripting {
 
 			Lua.LuaPushCFunction( L, LuaBPrint );
 			Lua.LuaSetGlobal( L, "print" );
+
+			Lua.LuaPushCFunction( L, LuaBDoFile );
+			Lua.LuaSetGlobal( L, "dofile" );
 
 			return L;
 		}
@@ -95,6 +99,68 @@ namespace Fusion.Scripting {
 		 *	Commands :
 		 * 
 		-----------------------------------------------------------------------------------------*/
+
+		private static int LuaBDoFile (LuaState L) {
+			var fname = Lua.LuaLOptString(L, 1, null)?.ToString();
+			int n = Lua.LuaGetTop(L);
+			if (LuaLLoadFile(L, fname) != 0) Lua.LuaError(L);
+			Lua.LuaCall(L, 0, Lua.LUA_MULTRET);
+			return Lua.LuaGetTop(L) - n;
+		}
+
+		public static int LuaLLoadFile (LuaState L, string filename) {
+
+			var content = Game.Instance.Content;
+
+			if (filename==null) {
+				Lua.LuaLError( L, "filename must be specified");
+			}
+
+			if (!content.Exists(filename)) {
+				Lua.LuaLError( L, "file '{0}' not found", filename);
+			}
+				
+			var bytecode = content.Load<byte[]>( filename );
+
+			var status = Lua.LuaLLoadBuffer( L, bytecode, (uint)bytecode.Length, filename );
+
+			if (status!=0) {
+				Lua.LuaLError( L, "error loading file '{0}'", filename);
+			}
+
+			return status;
+		}
+
+		private static int LuaBDoFile2 (LuaState L) {
+
+			var content = Game.Instance.Content;
+
+			using ( new LuaStackGuard( L, 0 ) ) {
+
+				var fileName = Lua.LuaToString( L, 1 )?.ToString();
+
+				if (fileName==null) {
+					Lua.LuaLError( L, "filename must be specified");
+				}
+
+				if (!content.Exists(fileName)) {
+					Lua.LuaLError( L, "file '{0}' not found", fileName);
+				}
+				
+				var bytecode = content.Load<byte[]>( fileName );
+
+				var status = Lua.LuaLLoadBuffer( L, bytecode, (uint)bytecode.Length, fileName );
+
+				if (status!=0) {
+					Lua.LuaLError( L, "error loading file '{0}'", fileName);
+				}
+
+				Lua.LuaCall( L, 0, 0 );
+			}
+
+			return 0;
+		}
+
 
 		private static int LuaBPrint (LuaState L) {
 

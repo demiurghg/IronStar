@@ -23,6 +23,15 @@ namespace IronStar.SFX {
 
 	public partial class ModelInstance {
 
+		[LuaApi("sleep")]
+		int Sleep ( LuaState L )
+		{
+			using ( new LuaStackGuard(L) ) {
+				sleepTime	=	Lua.LuaToInteger( L, 1 );
+			}
+			return 0;
+		}
+
 
 		/// <summary>
 		/// Load scene with sepcified path

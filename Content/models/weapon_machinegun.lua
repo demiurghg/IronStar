@@ -98,12 +98,13 @@ while true do
 	
 	if old_traction~=traction then
 		if traction then
-			local weight = math.min( 0.5, math.abs( old_vspeed / 20 ) );
+			local weight = 0.7 * math.min( 0.5, math.abs( old_vspeed / 20 ) );
 			track_shake0.sequence {	take = ANIM_LANDING, crossfade = 0	}
 			track_shake0.set_weight( weight )
 			composer.play_sound(SOUND_LANDING)
 		else
 			track_shake1.sequence {	take = ANIM_JUMP	}
+			track_shake1.set_weight( 0.7 )
 			composer.play_sound(SOUND_JUMP)
 		end
 	end

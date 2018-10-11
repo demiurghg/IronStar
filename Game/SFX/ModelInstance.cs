@@ -55,6 +55,8 @@ namespace IronStar.SFX {
 			get; private set;
 		}
 
+		int sleepTime = 0;
+
 
 		/// <summary>
 		/// Gets model's scene
@@ -92,7 +94,12 @@ namespace IronStar.SFX {
 		{
 			dtime	= gameTime.ElapsedSec;
 
-			Resume(null);
+			if (sleepTime<=0) {
+				Resume(null);
+			} else {
+				sleepTime -= gameTime.Milliseconds;
+			}
+
 
 			var worldMatrix	=	ComputeWorldMatrix();
 

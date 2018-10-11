@@ -1,21 +1,10 @@
 local model		= 	...
 local entity	=	model.get_entity();
 
--- print(package.path)
--- print(package.cpath)
-
--- package.loaders[1] = function(path)
-	-- print(path)
-	-- content.load("models\\"..path)
--- end
-
--- require('libweapon')
+local libweapon = 	require('libweapon')
+local mathx		=	require('mathx')
 
 -----------------------------------------------------------
-
--- local anim_tilt			=	model.take('tile')
-	  -- anim_tilt.keyfx(  0, "step", "left_leg"	)
-	  -- anim_tilt.keyfx( 20, "step", "right_leg"	) 
 
 local ANIM_TILT			=	"tilt"
 local ANIM_IDLE			=	"idle"			
@@ -69,42 +58,7 @@ local old_state		= ""
 local step_timer	= -0.05
 local step_left		= false
 
-function drift ( current, target, velocity )
-	if current==target then return target end
-
-	-- go down :
-	if current>target then
-		if current>target+velocity then
-			return current - velocity;
-		else
-			return target;
-		end
-	end
-
-	-- go up:
-	if current<target then
-		if current<target-velocity then
-			return current + velocity;
-		else
-			return target;
-		end
-	end
-
-	return current;
-end
-
-function smoothstep(x)
-	return x * x * (3 - 2 * x)
-end
-
-for k,v in pairs(package.loaders) do
-	print( k )
-end
-
 while true do
-
-	--dofile('models\\test')
-	foo()
 
 	local traction 	= entity.has_traction();
 	local vspeed 	= entity.get_vspeed();
@@ -165,14 +119,14 @@ while true do
 	tilt_target = math.min( tilt_target,  1 )
 	tilt_target = math.max( tilt_target, -1 )
 	
-	tilt_factor	= drift( tilt_factor, tilt_target, dtime*2 );
+	tilt_factor	= mathx.drift( tilt_factor, tilt_target, dtime*2 );
 
 	if tilt_factor > 0 then
 		pose_tilt.set_frame( 1 )
-		pose_tilt.set_weight( smoothstep(math.abs(tilt_factor)) )
+		pose_tilt.set_weight( mathx.smoothstep(math.abs(tilt_factor)) )
 	elseif tilt_factor < 0 then
 		pose_tilt.set_frame( 2 )
-		pose_tilt.set_weight( smoothstep(math.abs(tilt_factor)) )
+		pose_tilt.set_weight( mathx.smoothstep(math.abs(tilt_factor)) )
 	else
 		pose_tilt.set_frame( 0 )
 		pose_tilt.set_weight( 0 )

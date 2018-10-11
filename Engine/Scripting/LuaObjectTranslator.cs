@@ -179,7 +179,7 @@ namespace Fusion.Scripting {
 		{
 			#warning Should we call Dispose() for IDisposable?
 
-			Log.Verbose("...gc object: {0} - {1}", id, target.ToString() );
+			//Log.Verbose("...gc object: {0} - {1}", id, target.ToString() );
 
 			map.Remove( id );
 			backMap.Remove( target );
@@ -212,7 +212,7 @@ namespace Fusion.Scripting {
 		{
 			var wrapper = new LuaObjectWrapper( id, target );
 
-			Log.Verbose("...new object: {0} - {1}", id, target.ToString() );
+			//Log.Verbose("...new object: {0} - {1}", id, target.ToString() );
 
 			map.Add( id, wrapper );
 			backMap.Add( target, id );

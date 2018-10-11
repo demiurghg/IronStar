@@ -28,20 +28,29 @@ namespace Fusion.Scripting {
 			var L	=	Lua.LuaOpen();
 			Lua.LuaLOpenLibs(L);
 
-			Lua.LuaPushCFunction( L, Print );
-			Lua.LuaSetGlobal( L, "print" );
+			using ( new LuaStackGuard( L ) ) {
 
-			Lua.LuaPushCFunction( L, DoFile );
-			Lua.LuaSetGlobal( L, "dofile" );
+				Lua.LuaPushCFunction( L, Print );
+				Lua.LuaSetGlobal( L, "print" );
 
-			var contentLib = new[]{
-				new Lua.LuaLReg("dofile",  DoFile),
-				new Lua.LuaLReg("load",  Load),
-				new Lua.LuaLReg(null, null),
-			};
+				Lua.LuaPushCFunction( L, DoFile );
+				Lua.LuaSetGlobal( L, "dofile" );
 
-			Lua.LuaLRegister( L, "content", contentLib );
-			Lua.LuaPop( L, 1 );
+				var contentLib = new[]{
+					new Lua.LuaLReg("dofile",	DoFile			),
+					new Lua.LuaLReg("loader",	LoaderContent	),
+					new Lua.LuaLReg(null	,	null			),
+				};
+
+				Lua.LuaLRegister( L, "content", contentLib );
+				Lua.LuaPop( L, 1 );
+
+				ExecuteString( L, "table.insert( package.loaders, content.loader );" );
+
+				ExecuteFile( L, "init" );
+			}
+
+			Game.Instance.Reloading += (s,e) => ExecuteFile( L, "reload" );
 
 			return L;
 		}
@@ -72,34 +81,70 @@ namespace Fusion.Scripting {
 		/// 
 		/// </summary>
 		/// <param name="commandLine"></param>
-		[Obsolete]
-		public static string ExecuteString ( LuaState L, string commandLine )
+		public static bool ExecuteString ( LuaState L, string commandLine )
 		{
-			int errcode;
+			using ( new LuaStackGuard( L ) ) {
 
-			using ( new LuaStackGuard(L) ) {
+				var status = Lua.LuaLLoadBuffer( L, commandLine, (uint)commandLine.Length, "[string]" );
+
+				if (status!=0) {
+					Log.Error( "error loading string '{0}'", commandLine );
+					return false;
+				}
+
+				status = Lua.LuaPCall(L, 0, 0, 0);
+
+				if (status!=0) {
+					var error = Lua.LuaToString(L,-1).ToString();
+					Lua.LuaPop( L, 1 );
+					Log.Error( error );
+					return false;
+				}
+
+				return true;
+			}
+		}
+
+
+
+		/// <summary>
+		/// Executes given file from content.
+		/// Returns true if succeded. 
+		/// False otherwice and prints error message.
+		/// </summary>
+		/// <param name="L"></param>
+		/// <param name="fileName"></param>
+		/// <returns></returns>
+		public static bool ExecuteFile ( LuaState L, string fileName )
+		{
+			using ( new LuaStackGuard( L ) ) {
+
+				int n		 = Lua.LuaGetTop(L);
+
+				if (!content.Exists(fileName)) {
+					Log.Error( "file '{0}' does not exist", fileName );
+					return false;
+				}
 				
-				//errcode = Lua.LuaLLoadString( L, commandLine);
+				var bytecode = content.Load<byte[]>( fileName );
 
-				errcode = Lua.LuaLLoadBuffer( L, commandLine, (uint)commandLine.Length, "cmdline");
+				var status = Lua.LuaLLoadBuffer( L, bytecode, (uint)bytecode.Length, fileName );
 
-				if (errcode!=0) {
-					throw new LuaException(L, errcode);
+				if (status!=0) {
+					Log.Error( "error loading file '{0}'", fileName );
+					return false;
 				}
 
+				status = Lua.LuaPCall(L, 0, 0, 0);
 
-				errcode = Lua.LuaPCall(L,0,1,0);
-
-				if (errcode!=0) {
-					throw new LuaException(L, errcode);
-				} else {
-					
-					var result = Lua.LuaToString(L,-1)?.ToString();
-					Lua.LuaPop(L, 1);
-
-					return result;
-
+				if (status!=0) {
+					var error = Lua.LuaToString(L,-1).ToString();
+					Lua.LuaPop( L, 1 );
+					Log.Error( error );
+					return false;
 				}
+
+				return true;
 			}
 		}
 
@@ -112,6 +157,7 @@ namespace Fusion.Scripting {
 		static ContentManager content {
 			get { return Game.Instance.Content; }
 		}
+
 
 
 		static int DoFile ( LuaState L )
@@ -139,23 +185,39 @@ namespace Fusion.Scripting {
 		}
 
 
-		static int Load ( LuaState L )
+
+		static int LoaderContent ( LuaState L )
 		{
 			using ( new LuaStackGuard( L, 1 ) ) {
+
 				var filename = Lua.LuaLCheckString(L, 1)?.ToString();
-				int n		 = Lua.LuaGetTop(L);
 
-				if (!content.Exists(filename)) {
-					Lua.LuaLError( L, "file '{0}' does not exist", filename);
+				Lua.LuaGetGlobal( L, "package" );
+				Lua.LuaGetField( L, -1, "path" );
+
+				var searchPath = Lua.LuaToString( L, -1 ).ToString();
+
+				Lua.LuaPop( L, -2 );
+
+				byte[] bytecode;
+
+				foreach ( var pattern in searchPath.Split(';') ) {
+
+					var path = pattern.Replace( "?", filename );
+
+					if (content.TryLoad( path, out bytecode )) {
+						
+						var status = Lua.LuaLLoadBuffer( L, bytecode, (uint)bytecode.Length, filename );
+
+						if (status!=0) {
+							Lua.LuaLError( L, "error loading file '{0}'", filename);
+						}
+
+						return 1;
+					}
 				}
-				
-				var bytecode = content.Load<byte[]>( filename );
 
-				var status = Lua.LuaLLoadBuffer( L, bytecode, (uint)bytecode.Length, filename );
-
-				if (status!=0) {
-					Lua.LuaLError( L, "error loading file '{0}'", filename);
-				}
+				Lua.LuaPushFString( L, "no file {0}", filename );
 
 				return 1;
 			}

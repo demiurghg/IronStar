@@ -28,11 +28,20 @@ namespace Fusion.Scripting {
 			var L	=	Lua.LuaOpen();
 			Lua.LuaLOpenLibs(L);
 
-			Lua.LuaPushCFunction( L, LuaBPrint );
+			Lua.LuaPushCFunction( L, Print );
 			Lua.LuaSetGlobal( L, "print" );
 
-			Lua.LuaPushCFunction( L, LuaBDoFile );
+			Lua.LuaPushCFunction( L, DoFile );
 			Lua.LuaSetGlobal( L, "dofile" );
+
+			var contentLib = new[]{
+				new Lua.LuaLReg("dofile",  DoFile),
+				new Lua.LuaLReg("load",  Load),
+				new Lua.LuaLReg(null, null),
+			};
+
+			Lua.LuaLRegister( L, "content", contentLib );
+			Lua.LuaPop( L, 1 );
 
 			return L;
 		}
@@ -100,69 +109,60 @@ namespace Fusion.Scripting {
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
-		private static int LuaBDoFile (LuaState L) {
-			var fname = Lua.LuaLOptString(L, 1, null)?.ToString();
-			int n = Lua.LuaGetTop(L);
-			if (LuaLLoadFile(L, fname) != 0) Lua.LuaError(L);
-			Lua.LuaCall(L, 0, Lua.LUA_MULTRET);
-			return Lua.LuaGetTop(L) - n;
+		static ContentManager content {
+			get { return Game.Instance.Content; }
 		}
 
-		public static int LuaLLoadFile (LuaState L, string filename) {
 
-			var content = Game.Instance.Content;
+		static int DoFile ( LuaState L )
+		{
+			using ( new LuaStackGuard( L ) ) {
+				var filename = Lua.LuaLCheckString(L, 1)?.ToString();
+				int n		 = Lua.LuaGetTop(L);
 
-			if (filename==null) {
-				Lua.LuaLError( L, "filename must be specified");
-			}
-
-			if (!content.Exists(filename)) {
-				Lua.LuaLError( L, "file '{0}' not found", filename);
-			}
-				
-			var bytecode = content.Load<byte[]>( filename );
-
-			var status = Lua.LuaLLoadBuffer( L, bytecode, (uint)bytecode.Length, filename );
-
-			if (status!=0) {
-				Lua.LuaLError( L, "error loading file '{0}'", filename);
-			}
-
-			return status;
-		}
-
-		private static int LuaBDoFile2 (LuaState L) {
-
-			var content = Game.Instance.Content;
-
-			using ( new LuaStackGuard( L, 0 ) ) {
-
-				var fileName = Lua.LuaToString( L, 1 )?.ToString();
-
-				if (fileName==null) {
-					Lua.LuaLError( L, "filename must be specified");
-				}
-
-				if (!content.Exists(fileName)) {
-					Lua.LuaLError( L, "file '{0}' not found", fileName);
+				if (!content.Exists(filename)) {
+					Lua.LuaLError( L, "file '{0}' does not exist", filename);
 				}
 				
-				var bytecode = content.Load<byte[]>( fileName );
+				var bytecode = content.Load<byte[]>( filename );
 
-				var status = Lua.LuaLLoadBuffer( L, bytecode, (uint)bytecode.Length, fileName );
+				var status = Lua.LuaLLoadBuffer( L, bytecode, (uint)bytecode.Length, filename );
 
 				if (status!=0) {
-					Lua.LuaLError( L, "error loading file '{0}'", fileName);
+					Lua.LuaLError( L, "error loading file '{0}'", filename);
 				}
 
-				Lua.LuaCall( L, 0, 0 );
-			}
+				Lua.LuaCall(L, 0, Lua.LUA_MULTRET);
 
-			return 0;
+				return Lua.LuaGetTop(L) - n;
+			}
 		}
 
 
-		private static int LuaBPrint (LuaState L) {
+		static int Load ( LuaState L )
+		{
+			using ( new LuaStackGuard( L, 1 ) ) {
+				var filename = Lua.LuaLCheckString(L, 1)?.ToString();
+				int n		 = Lua.LuaGetTop(L);
+
+				if (!content.Exists(filename)) {
+					Lua.LuaLError( L, "file '{0}' does not exist", filename);
+				}
+				
+				var bytecode = content.Load<byte[]>( filename );
+
+				var status = Lua.LuaLLoadBuffer( L, bytecode, (uint)bytecode.Length, filename );
+
+				if (status!=0) {
+					Lua.LuaLError( L, "error loading file '{0}'", filename);
+				}
+
+				return 1;
+			}
+		}
+
+
+		static int Print (LuaState L) {
 
 			StringBuilder sb = new StringBuilder(256);
 

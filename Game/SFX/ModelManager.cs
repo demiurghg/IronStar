@@ -58,63 +58,6 @@ namespace IronStar.SFX {
 			game.Reloading +=	Game_Reloading;
 
 			models	=	new LinkedList<ModelInstance>();
-
-			var contentLib = new[]{
-				new Lua.LuaLReg("dofile",  DoFile),
-				new Lua.LuaLReg("load",  Load),
-				new Lua.LuaLReg(null, null),
-			};
-
-			Lua.LuaLRegister( L, "content", contentLib );
-			Lua.LuaPop( L, 1 );
-		}
-
-
-		int DoFile ( LuaState L )
-		{
-			using ( new LuaStackGuard( L ) ) {
-				var filename = Lua.LuaLCheckString(L, 1)?.ToString();
-				int n		 = Lua.LuaGetTop(L);
-
-				if (!content.Exists(filename)) {
-					Lua.LuaLError( L, "file '{0}' does not exist", filename);
-				}
-				
-				var bytecode = content.Load<byte[]>( filename );
-
-				var status = Lua.LuaLLoadBuffer( L, bytecode, (uint)bytecode.Length, filename );
-
-				if (status!=0) {
-					Lua.LuaLError( L, "error loading file '{0}'", filename);
-				}
-
-				Lua.LuaCall(L, 0, Lua.LUA_MULTRET);
-
-				return Lua.LuaGetTop(L) - n;
-			}
-		}
-
-
-		int Load ( LuaState L )
-		{
-			using ( new LuaStackGuard( L, 1 ) ) {
-				var filename = Lua.LuaLCheckString(L, 1)?.ToString();
-				int n		 = Lua.LuaGetTop(L);
-
-				if (!content.Exists(filename)) {
-					Lua.LuaLError( L, "file '{0}' does not exist", filename);
-				}
-				
-				var bytecode = content.Load<byte[]>( filename );
-
-				var status = Lua.LuaLLoadBuffer( L, bytecode, (uint)bytecode.Length, filename );
-
-				if (status!=0) {
-					Lua.LuaLError( L, "error loading file '{0}'", filename);
-				}
-
-				return 1;
-			}
 		}
 
 

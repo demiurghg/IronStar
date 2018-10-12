@@ -3,7 +3,6 @@
 #include "stdafx.h"
 
 #include <fbxsdk.h>
-#include "Options.h"
 #include "FbxLoader.h"
 
 using namespace Fusion;
@@ -89,10 +88,8 @@ Native::Fbx::FbxLoader::FbxLoader()
 /*
 **	Fusion::Fbx::FbxLoader::LoadScene
 */
-Fusion::Engine::Graphics::Scene ^ FbxLoader::LoadScene( string ^filename, Options ^options2 )
+Fusion::Engine::Graphics::Scene ^ FbxLoader::LoadScene( string ^filename, bool importGeometry, bool importAnimation )
 {
-	this->options	=	options2;
-
 	if ( !fbxImporter->Initialize( StringHelper::ToNative(filename) ) ) {
 		throw gcnew Exception( string::Format( "Failed to initialise the FBX importer") );
 	}
@@ -140,7 +137,7 @@ Fusion::Engine::Graphics::Scene ^ FbxLoader::LoadScene( string ^filename, Option
 
 	Console::WriteLine("Import Geometry...");
 
-	if (options->ImportGeometry) {
+	if (importGeometry) {
 
 		for (int i=0; i<fbxNodeCount; i++) {
 			//Console::WriteLine( "  {0}",node->Name);
@@ -154,7 +151,7 @@ Fusion::Engine::Graphics::Scene ^ FbxLoader::LoadScene( string ^filename, Option
 
 	//---------------------------------------------
 
-	if (options->ImportAnimation) {
+	if (importAnimation) {
 
 		Console::WriteLine(gcnew String(fbxScene->ActiveAnimStackName.Get().Buffer()));
 		Console::WriteLine("Getting take info...");
@@ -892,6 +889,7 @@ void Native::Fbx::FbxLoader::HandleLight( Fusion::Engine::Graphics::Scene ^scene
 */
 int main(array<System::String ^> ^args)
 {
+	#if 0
 	auto options	=	gcnew Options();
 	auto parser		=	gcnew CommandLineParser( Options::typeid, nullptr );
 
@@ -908,7 +906,7 @@ int main(array<System::String ^> ^args)
 		sw->Restart();
 
 		auto loader	=	gcnew FbxLoader();
-		auto scene	=	loader->LoadScene( options->Input, options );
+		auto scene	=	loader->LoadScene( options->Input, true, true );
 
 		for each ( Fusion::Engine::Graphics::Mesh ^mesh in scene->Meshes ) {
 					
@@ -949,6 +947,7 @@ int main(array<System::String ^> ^args)
 		Console::WriteLine("Press any key to continue...");
 		Console::ReadKey();
 	}
+	#endif
 
 	return 0;
 }

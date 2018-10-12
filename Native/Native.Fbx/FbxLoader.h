@@ -14,14 +14,13 @@ namespace Native {
 		public ref class FbxLoader {
 			public:
 						FbxLoader	();
-				Scene	^LoadScene	( string ^filename, Options ^options );
+				Scene	^LoadScene	( string ^filename, bool importGeometry, bool importAnimation);
 
 			private:
 
 				FbxNode**				fbxNodes;
 				int						fbxNodeCount;
 
-				Options					^options;
 				FbxManager				*fbxManager	;	
 				FbxImporter				*fbxImporter;		
 				FbxScene				*fbxScene	;	

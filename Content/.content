@@ -39,6 +39,7 @@ _outsource/*
 [Scenes]
 *.fbx /geom /report /anim
 *anim_*.fbx /report /anim
+scenes/weapon2/*.fbx /geom /report /anim
 
 [Sounds]
 *.wav

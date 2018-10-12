@@ -18,6 +18,39 @@ using Newtonsoft.Json;
 
 namespace FScene {
 
+	class Options {
+
+		[CommandLineParser.Name("in", "input FBX file")]
+		[CommandLineParser.Required()]
+		public string Input { get; set; }
+
+		[CommandLineParser.Name("out", "output scene file")]
+		public string Output { get; set; }
+
+		[CommandLineParser.Name("merge", "merge tolerance (0.0 is default)")]
+		public float MergeTolerance { get; set; }
+
+		[CommandLineParser.Name("base", "root directory")]
+		public string BaseDirectory { get; set; }
+
+		[CommandLineParser.Name("anim", "bake and import animation tracks")]
+		public bool ImportAnimation { get; set; }
+
+		[CommandLineParser.Name("geom", "import geometry data.")]
+		public bool ImportGeometry { get; set; }
+
+		[CommandLineParser.Name("wait", "wait for user input after import")]
+		public bool Wait { get; set; }
+
+		[CommandLineParser.Name("report", "export html build report")]
+		public string Report { get; set; }
+
+		[CommandLineParser.Name("genmtrl", "generate missing materials")]
+		public bool GenerateMissingMaterials { get; set; }
+	};
+
+
+
 	class FScene {
 
 		static int Main ( string[] args )
@@ -37,19 +70,13 @@ namespace FScene {
 				if (options.Output==null) {
 					options.Output = Path.ChangeExtension( options.Input, ".scene");
 				}
-				
 
-				//
 				//	run fbx loader :
-				//
 				Log.Message("Reading FBX: {0}", options.Input);
 
 				var loader = new FbxLoader();
-				using ( var scene  = loader.LoadScene( options.Input, options ) ) {
+				using ( var scene  = loader.LoadScene( options.Input, options.ImportGeometry, options.ImportAnimation ) ) {
 				
-					//
-					//	Save scene :
-					//					
 					Log.Message("Preparation...");
 					foreach ( var mesh in scene.Meshes ) {
 						if (mesh!=null) {
@@ -68,27 +95,16 @@ namespace FScene {
 					Log.Message("Creating missing materials...");
 					CreateMissingMaterials( options.Input, scene );
 
-					if (options.BaseDirectory != null) {
-						Log.Message("Resolving material paths...");
+					Log.Message("Resolving material paths...");
+					ResolveMaterialPaths( options, scene );
 
-						var relativePath	=	ContentUtils.MakeRelativePath(options.BaseDirectory + @"\", options.Input);
-						var relativeDir		=	Path.GetDirectoryName(relativePath);
-						var sceneDir = Path.GetDirectoryName(options.Input);
-
-						foreach (var mtrl in scene.Materials) {
-							mtrl.Name	=	Path.Combine( relativeDir, mtrl.Name );
-						}
-					}
-
-					//
-					//	Save scene :
-					//					
+					//	save scene :
 					Log.Message("Writing binary file: {0}", options.Output);
 					using ( var stream = File.OpenWrite( options.Output ) ) {
 						scene.Save( stream );
 					}
 
-
+					//	write report :
 					if (!string.IsNullOrWhiteSpace(options.Report)) {
 						var reportPath = options.Report;
 						Log.Message("Writing report: {0}", reportPath);
@@ -100,18 +116,7 @@ namespace FScene {
 
 			} catch ( Exception e ) {
 				parser.PrintError( "{0}", e.ToString() );
-
-				if (options.Wait) {
-					Log.Message("Press any key to continue...");
-					Console.ReadKey();
-				}
-
 				return 1;
-			}
-
-			if (options.Wait) {
-				Log.Message("Press any key to continue...");
-				Console.ReadKey();
 			}
 
 			return 0;
@@ -119,6 +124,13 @@ namespace FScene {
 
 
 
+		/// <summary>
+		/// Creates missing materials.
+		/// If scene has reference to particular material but is does not exist,
+		/// this function create default material description file.
+		/// </summary>
+		/// <param name="scenePath"></param>
+		/// <param name="scene"></param>
 		static void CreateMissingMaterials ( string scenePath, Scene scene )
 		{
 			var dir = Path.GetDirectoryName( scenePath );
@@ -134,11 +146,30 @@ namespace FScene {
 
 					Material.SaveToIniFile( mtrl, File.OpenWrite(mtrlPathIni) );
 				}
+			}
+		}
 
-				/*if (!File.Exists(mtrlPathJson)) {
-					Log.Message("...new material: {0}", mtrlPathJson);
-					File.WriteAllText( mtrlPathJson, JsonConvert.SerializeObject(mtrl, Formatting.Indented) );
-				} */
+
+		/// <summary>
+		/// Resolves material paths:
+		///	Sample:
+		///		'models/weapon/machinegun.fbx' contains material 'machinegun'
+		///		-->
+		///		'models/weapon/machinegun'
+		/// </summary>
+		/// <param name="options"></param>
+		/// <param name="scene"></param>
+		static void ResolveMaterialPaths ( Options options, Scene scene )
+		{
+			if (options.BaseDirectory != null) {
+
+				var relativePath	=	ContentUtils.MakeRelativePath(options.BaseDirectory + @"\", options.Input);
+				var relativeDir		=	Path.GetDirectoryName( relativePath );
+				var sceneDir		=	Path.GetDirectoryName( options.Input );
+
+				foreach (var mtrl in scene.Materials) {
+					mtrl.Name	=	Path.Combine( relativeDir, mtrl.Name );
+				}
 			}
 		}
 	}

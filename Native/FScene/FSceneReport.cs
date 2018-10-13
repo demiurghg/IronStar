@@ -11,11 +11,11 @@ using Fusion.Core.Content;
 using Fusion.Engine.Graphics;
 
 namespace FScene {
-	static class SceneReport {
+	static class FSceneReport {
 		/// <summary>
 		/// 
 		/// </summary>
-		static public string CreateHtmlReport ( Scene scene )
+		static public string CreateHtmlReport ( Scene scene, string retargetLog )
 		{
 			var sb = new StringBuilder();
 
@@ -82,6 +82,11 @@ namespace FScene {
 				
 				sb.AppendFormat("{0,4}:  {1,-30}{2,4}  {3}\r\n", index, padding + name, parent, hasMesh );
 			}
+
+			sb.AppendLine();
+
+			sb.AppendLine("<b>Retargeting Log:</b>");
+			sb.Append( retargetLog );
 
 			sb.AppendLine("</pre>");
 

@@ -39,19 +39,16 @@ namespace FScene {
 		[CommandLineParser.Name("geom", "import geometry data.")]
 		public bool ImportGeometry { get; set; }
 
-		[CommandLineParser.Name("wait", "wait for user input after import")]
-		public bool Wait { get; set; }
-
 		[CommandLineParser.Name("report", "export html build report")]
 		public string Report { get; set; }
 
-		[CommandLineParser.Name("genmtrl", "generate missing materials")]
-		public bool GenerateMissingMaterials { get; set; }
+		[CommandLineParser.Name("retarget", "provides scene to retarget animation clips from")]
+		public string RetargetSource { get; set; }
 	};
 
 
 
-	class FScene {
+	partial class FScene {
 
 		static int Main ( string[] args )
 		{
@@ -98,6 +95,9 @@ namespace FScene {
 					Log.Message("Resolving material paths...");
 					ResolveMaterialPaths( options, scene );
 
+					var retargetLog = new StringBuilder();
+					FSceneRetarget.RetargetAnimation( scene, options, retargetLog );
+
 					//	save scene :
 					Log.Message("Writing binary file: {0}", options.Output);
 					using ( var stream = File.OpenWrite( options.Output ) ) {
@@ -108,7 +108,7 @@ namespace FScene {
 					if (!string.IsNullOrWhiteSpace(options.Report)) {
 						var reportPath = options.Report;
 						Log.Message("Writing report: {0}", reportPath);
-						File.WriteAllText( reportPath, SceneReport.CreateHtmlReport(scene));
+						File.WriteAllText( reportPath, FSceneReport.CreateHtmlReport(scene, retargetLog.ToString()));
 					}
 				}
 
@@ -121,6 +121,7 @@ namespace FScene {
 
 			return 0;
 		}
+
 
 
 

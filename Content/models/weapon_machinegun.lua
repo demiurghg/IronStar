@@ -1,7 +1,7 @@
 local model		= 	...
 local entity	=	model.get_entity();
 
-local libweapon = 	require('libweapon')
+local libwpn 	= 	require('libwpn')
 local mathx		=	require('mathx')
 
 -----------------------------------------------------------

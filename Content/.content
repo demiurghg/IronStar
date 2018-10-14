@@ -39,8 +39,7 @@ _outsource/*
 [Scenes]
 *.fbx /geom /report /anim
 *anim_*.fbx /report /anim
-scenes/weapon2/*.fbx /geom /report /anim
-scenes/weapon2/assault_rifle/assault_rifle_view_import_*.fbx /anim /geom /report /retarget:scenes\weapon2\weapon_common.fbx
+scenes/weapon2/*.fbx /geom /report /anim  /retarget:scenes\weapon2\weapon_common.fbx
 
 [Sounds]
 *.wav

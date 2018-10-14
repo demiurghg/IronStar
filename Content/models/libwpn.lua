@@ -3,7 +3,7 @@ local lib = {}
 
 local mathx 	= 	require('mathx')
 
-function lib.generic_weapon_animator ( model, entity, config )
+function lib.generic_weapon_animator ( model, entity, config, func )
 
 	local anim_tilt			=	"tilt"
 	local anim_idle			=	"idle"			
@@ -23,7 +23,10 @@ function lib.generic_weapon_animator ( model, entity, config )
 	local sound_jump		=	"player/jump"	
 	local sound_no_ammo		=	"weapon/noammo"	
 
-	local joint_muzzle		=	"muzzle"		
+	local muzzle_joint		=	"muzzle"	
+
+	local muzzle_fx_name	=	config.muzzle_fx_name	or "";
+	local muzzle_fx_scale	=	config.muzzle_fx_scale  or 0.1;
 
 	-----------------------------------------------------------
 
@@ -51,11 +54,13 @@ function lib.generic_weapon_animator ( model, entity, config )
 	local step_left		= false
 
 	while true do
-
+	
 		local traction 	= entity.has_traction();
 		local vspeed 	= entity.get_vspeed();
 		local gspeed 	= entity.get_gspeed();
 		local dtime		= model.get_dt();
+
+		if func then func(dtime) end;
 		
 		---- weapon operation ----
 		
@@ -65,7 +70,7 @@ function lib.generic_weapon_animator ( model, entity, config )
 		
 			if state=="cooldown" or state=="cooldown2" then
 				track_weapon.sequence { take=anim_cooldown, crossfade=0 }
-				composer.play_fx ("machinegunMuzzle", joint_muzzle, 0.13 )
+				composer.play_fx ( muzzle_fx_name, muzzle_joint, muzzle_fx_scale )
 			end
 			
 			if state=="idle" then

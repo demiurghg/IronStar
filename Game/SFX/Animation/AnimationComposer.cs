@@ -133,9 +133,16 @@ namespace IronStar.SFX {
 
 			if (jointId<0) {
 				Log.Warning("Bad joint name: {0}", joint);
+				return;
 			}
 
 			var fxAtom	 = world.Atoms[ fxName ];
+
+			if (fxAtom<=0) {
+				Log.Warning("Bad SFX name: {0}", fxName);
+				return;
+			}
+
 			var fxEvent  = new FXEvent( fxAtom, 0, Vector3.Zero, Vector3.Zero, Quaternion.Identity );
 				fxEvent.Scale = scale;
 			var instance = fxPlayback.RunFX( fxEvent, false );

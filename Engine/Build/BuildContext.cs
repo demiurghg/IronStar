@@ -185,6 +185,9 @@ namespace Fusion.Build {
 		/// <returns></returns>
 		public string ResolveContentPath ( string path )
 		{
+			if (path==null) {
+				return null;
+			}
 			string dummy;
 			return ResolveContentPath( path, out dummy );
 		}

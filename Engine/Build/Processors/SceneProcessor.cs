@@ -42,6 +42,12 @@ namespace Fusion.Build.Processors {
 		[CommandLineParser.Name("genmtrl", "generate missing materials")]
 		public bool GenerateMissingMaterials { get; set; }
 
+		/// <summary>
+		/// Evaluates transform
+		/// </summary>
+		[CommandLineParser.Name("retarget", "provides scene to retarget animation clips from")]
+		public string RetargetSource { get; set; }
+
 
 		
 		/// <summary>
@@ -62,6 +68,13 @@ namespace Fusion.Build.Processors {
 			var resolvedPath	=	assetFile.FullSourcePath;
 			var destPath		=	context.GetTempFileFullPath( assetFile.KeyPath, ".scene" );
 			var reportPath		=	context.GetTempFileFullPath( assetFile.KeyPath, ".html" );
+			var retargetPath	=	context.ResolveContentPath(RetargetSource);
+			var retarget		=	!string.IsNullOrWhiteSpace(RetargetSource);
+
+			var dependencies	=	new List<string>();
+			if (retarget) {
+				dependencies.Add( RetargetSource );
+			}
 
 			var cmdLine			=	string.Format("\"{0}\" /out:\"{1}\" /base:\"{2}\" /merge:{3} {4} {5} {6} {7}", 
 				resolvedPath, 
@@ -70,13 +83,13 @@ namespace Fusion.Build.Processors {
 				MergeTolerance, 
 				ImportAnimation ? "/anim":"", 
 				ImportGeometry ? "/geom":"", 
-				OutputReport ? "/report:" + "\"" + reportPath + "\"":"" ,
-				GenerateMissingMaterials ? "/genmtrl":""
+				OutputReport ? "/report:" + "\"" + reportPath + "\"":"",
+				retarget ? "/retarget:" + "\"" + retargetPath + "\"":""
 			);
 
 			context.RunTool( "FScene.exe", cmdLine );
 
-			using ( var target = assetFile.OpenTargetStream() ) {
+			using ( var target = assetFile.OpenTargetStream(dependencies) ) {
 				context.CopyFileTo( destPath, target );
 			}
 		}

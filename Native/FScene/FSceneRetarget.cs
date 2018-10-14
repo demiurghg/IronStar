@@ -15,13 +15,14 @@ using Native.Fbx;
 using Fusion.Drivers.Graphics;
 using Fusion.Engine.Graphics;
 using Newtonsoft.Json;
+using Fusion.Core.Mathematics;
 
 namespace FScene {
 	static class FSceneRetarget {
 
 		
 		/// <summary>
-		/// 
+		/// https://gamedev.stackexchange.com/questions/27058/how-to-programatically-retarget-animations-from-one-skeleton-to-another
 		/// </summary>
 		/// <param name="targetScene"></param>
 		/// <param name="options"></param>
@@ -34,8 +35,8 @@ namespace FScene {
 			}
 
 			log.AppendFormat("Retarget source : {0}\r\n", sourceScenePath );
+			Log.Message		("Retarget source : {0}", sourceScenePath );
 
-			Log.Message("Retargeting animations from: {0}", sourceScenePath);
 			Log.Message("...reading FBX");
 
 			var loader = new FbxLoader();
@@ -100,6 +101,8 @@ namespace FScene {
 				var srcNodeName	 = source.Nodes[ srcNodeIndex ].Name;
 				int dstNodeIndex = target.GetNodeIndex( srcNodeName );
 
+				Log.Message("...remap '{0}': {1} -> {2}", srcNodeName, srcNodeIndex, dstNodeIndex );
+
 				if ( dstNodeIndex<0) {
 					log.AppendFormat(" * dst node '{0}' does not exist, skipped.\r\n"	, srcNodeName );
 					Log.Message		(" * dst node '{0}' does not exist, skipped."		, srcNodeName );
@@ -107,8 +110,11 @@ namespace FScene {
 				}
 
 				for ( int frame = dstTake.FirstFrame; frame<=dstTake.LastFrame; frame++ ) {
-				
-					dstTake.SetKey( frame, dstNodeIndex, source.Nodes[ srcNodeIndex ].Transform );
+
+					Matrix transform;
+
+					srcTake.GetKey( frame, srcNodeIndex, out transform );
+					dstTake.SetKey( frame, dstNodeIndex, transform );
 
 				}
 			}

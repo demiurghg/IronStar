@@ -9,6 +9,7 @@ scenes/*.png
 scenes/*.jpg
 turtle/*
 _outsource/*
+_kitbash/*
 *.wav
 *.ogg
 

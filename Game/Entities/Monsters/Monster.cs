@@ -30,6 +30,8 @@ namespace IronStar.Entities.Monsters {
 		int					health;
 		int					armor;
 
+		string				model;
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -46,22 +48,33 @@ namespace IronStar.Entities.Monsters {
 				factory.JumpSpeed,
 				factory.Mass,
 				factory.MaxStepHeight
-			 );
+			);
 
-			 health		=	factory.MaxHealth;
-			 armor		=	factory.MaxArmor;
+			health		=	factory.MaxHealth;
+			armor		=	factory.MaxArmor;
 
-			 //	temp stuff :
-			 world.SpawnItem("weapon_machinegun", ID);
-			 /*world.SpawnItem("weapon_machinegun2", ID);
-			 world.SpawnItem("weapon_plasmagun", ID);
-			 world.SpawnItem("weapon_shotgun", ID);
-			 world.SpawnItem("weapon_rocket_launcher", ID);
-			 world.SpawnItem("weapon_railgun", ID);*/
+			model		=	factory.Model;
 
-			 ItemID	=	World.Items.GetOwnedItemByClass( ID, "weapon_machinegun" ).ID;
+			//	temp stuff :
+			world.SpawnItem("weapon_machinegun", ID);
+			/*world.SpawnItem("weapon_machinegun2", ID);
+			world.SpawnItem("weapon_plasmagun", ID);
+			world.SpawnItem("weapon_shotgun", ID);
+			world.SpawnItem("weapon_rocket_launcher", ID);
+			world.SpawnItem("weapon_railgun", ID);*/
+
+			this.ItemID		=	World.Items.GetOwnedItemByClass( ID, "weapon_machinegun" ).ID;
+
+			this.Model		=	world.Atoms[ model ];
 		}
 
+
+
+		public override void Kill()
+		{
+			base.Kill();
+			controller.Destroy();
+		}
 
 
 		public override void Read( BinaryReader reader, float lerpFactor )
@@ -128,6 +141,8 @@ namespace IronStar.Entities.Monsters {
 		public override void Update ( GameTime gameTime )
 		{
 			base.Update(gameTime);
+
+			//	
 
 			//	update physical character controller :
 			controller.Update();

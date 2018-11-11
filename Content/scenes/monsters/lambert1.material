@@ -1,0 +1,12 @@
+[General]
+Transparent  = False
+Emission     = 0, 0, 0, 0
+MaskEmission = False
+
+[Textures]
+BaseColor = 
+NormalMap = 
+Metallic  = 
+Roughness = 
+Emission  = 
+Occlusion = 

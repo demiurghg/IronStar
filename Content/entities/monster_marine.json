@@ -1,5 +1,6 @@
 {
   "$type": "IronStar.Entities.Monsters.MonsterFactory, IronStar",
+  "Model": "monster_marine",
   "MaxHealth": 100,
   "MaxArmor": 100,
   "Height": 1.7,

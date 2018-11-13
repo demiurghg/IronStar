@@ -4806,7 +4806,7 @@
         "Frozen": false,
         "TranslateX": 16.0,
         "TranslateY": 2.0,
-        "TranslateZ": 4.0,
+        "TranslateZ": 3.0,
         "RotateYaw": -90.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
@@ -6171,5 +6171,8 @@
         "RotateRoll": 0.0
       }
     ]
+  },
+  "Navigation": {
+    "$type": "IronStar.Mapping.MapNavigation, IronStar"
   }
 }

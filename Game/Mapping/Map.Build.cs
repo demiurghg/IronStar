@@ -54,17 +54,23 @@ namespace IronStar.Mapping {
             NavConfig.MergeRegionArea		= (int)20 * 20;
             NavConfig.DetailSampleDist		= 6f;
             NavConfig.DetailSampleMaxError	= 1f;
-            NavConfig.MaxVertsPerPoly		= 3;		
+            NavConfig.MaxVertsPerPoly		= 6;		
 
 
 			var indices = new List<int>();
 			var vertices = new List<Vector3>();
 
-			/*
-			foreach ( var factory in Nodes ) {
-				if (!string.IsNullOrWhiteSpace(factory.Model.ScenePath)) {
+			var staticModels = Nodes
+					.Select( n1 => n1 as MapModel )
+					.Where( n2 => n2 != null )
+					.ToArray();
 
-					var scene = content.Load<Scene>( factory.Model.ScenePath );
+
+			foreach ( var mapNode in staticModels ) {
+
+				if (!string.IsNullOrWhiteSpace( mapNode.ScenePath )) {
+
+					var scene = content.Load<Scene>( mapNode.ScenePath );
 
 					var nodeCount = scene.Nodes.Count;
 					
@@ -74,7 +80,7 @@ namespace IronStar.Mapping {
 
 					for ( int i=0; i<scene.Nodes.Count; i++) {
 
-						var worldMatrix = worldMatricies[i] * factory.WorldMatrix;
+						var worldMatrix = worldMatricies[i] * mapNode.WorldMatrix;
 
 						var node = scene.Nodes[i];
 
@@ -90,7 +96,6 @@ namespace IronStar.Mapping {
 					}
 				}
 			}
-			*/
 
 
             var rcmesh = new RecastMesh();
@@ -107,31 +112,85 @@ namespace IronStar.Mapping {
 			var ch = NavConfig.CellHeight;
 			var t = NavigationMesh;
 
-                navVertices = new Vector3[t.VerticesCount];
-				navIndices = new int[t.PolysCount*3];
+            navVertices = new Vector3[t.VerticesCount];
+			navIndices = new int[t.PolysCount*3];
 
-				Vector3 origin = NavConfig.BMin;
+			//Vector3 origin = NavConfig.BMin;
 
-				for (int i = 0; i < t.PolysCount; i++) {
+			/*for (int i = 0; i < t.PolysCount; i++) {
 
-					for (int j = 0; j < 3; j++) {
-						var index = t.Polys[i * 6 + j];
-						navIndices[i*3+j] = index;
+				for (int j = 0; j < 3; j++) {
+					var index = t.Polys[i * 6 + j];
+					navIndices[i*3+j] = index;
 
-						ushort a = t.Verts[index * 3];
-						ushort b = t.Verts[index * 3 + 1];
-						ushort c = t.Verts[index * 3 + 2];
-						Vector3 vertex = origin + new Vector3(a * cs, b * ch, c * cs);
-						navVertices[index] = vertex;
-					}
+					ushort a = t.Verts[index * 3];
+					ushort b = t.Verts[index * 3 + 1];
+					ushort c = t.Verts[index * 3 + 2];
+					Vector3 vertex = origin + new Vector3(a * cs, b * ch, c * cs);
+					navVertices[index] = vertex;
 				}
+			} */
 		}
 
 
 
 		public void DrawNavigationMeshDebug ( DebugRender dr )
 		{
-			if (SourceNavigationMesh!=null) {
+			if (NavigationMesh==null) {
+				return;
+			}
+
+			var color = Color.Yellow;
+
+			var cs = NavConfig.CellSize;
+			var ch = NavConfig.CellHeight;
+			var navMesh = NavigationMesh;
+
+			Vector3 origin = NavConfig.BMin;
+
+			var polyVerts = new Vector3[6];
+			var polyVertsCount = 0;
+
+			for (int i = 0; i < navMesh.PolysCount; i++) {
+
+				polyVertsCount = 0;
+
+				for (int j = 0; j < 6; j++) {
+					
+					var index = navMesh.Polys[i * 6 + j];
+
+					if (index==65535) {
+						continue;
+					}
+
+					ushort a = navMesh.Verts[index * 3];
+					ushort b = navMesh.Verts[index * 3 + 1];
+					ushort c = navMesh.Verts[index * 3 + 2];
+					Vector3 vertex = origin + new Vector3(a * cs, b * ch, c * cs);
+					polyVerts[polyVertsCount] = vertex;
+
+					polyVertsCount++;
+				}
+
+
+				if (polyVertsCount>0) {
+					for (int k=0; k<polyVertsCount; k++) {
+						var k0 = k;
+						var k1 = (k + 1) % polyVertsCount;
+						var p0 = polyVerts[k0];
+						var p1 = polyVerts[k1];
+					
+						dr.DrawLine( p0, p1, color, color, 2,2 );
+					}
+				}
+			}
+
+
+
+
+
+
+			/*if (SourceNavigationMesh!=null) {
 
 				var srcNavMesh = SourceNavigationMesh;
 				foreach ( var p in srcNavMesh.Vertices ) {
@@ -161,7 +220,7 @@ namespace IronStar.Mapping {
 				dr.DrawLine( p0, p1, color, color, 2,2 );
 				dr.DrawLine( p1, p2, color, color, 2,2 );
 				dr.DrawLine( p2, p0, color, color, 2,2 );
-			}
+			}*/
 		}
 		
 	}

@@ -64,7 +64,7 @@ namespace IronStar.Mapping {
 
 		[AECategory("AI")]
 		[Description("Stair step or climbable height")]
-		public float StepHeight { get; set; } = 45f;
+		public float StepHeight { get; set; } = 0.5f;
 
 		[AECategory("AI")]
 		[Description("Cell height for Recast voxelization")]

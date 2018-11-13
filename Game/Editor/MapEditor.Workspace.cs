@@ -85,6 +85,8 @@ namespace IronStar.Editor {
 			lowerShelf.AddLButton("ACT\n[ENTER]" ,	@"editor\iconActivate", () => ActivateSelected() );
 			lowerShelf.AddLButton("USE\n[U]"	 ,	@"editor\iconUse"	,	() => UseSelected() );
 
+			lowerShelf.AddFatLButton("Build NavMesh\n[U]"	 ,	null,	() => this.Map.BuildNavigationMesh(Content) );
+
 			//--------------------------------------------------------------------------
 
 			var simLabel			=	lowerShelf.AddRIndicator("", 96 );

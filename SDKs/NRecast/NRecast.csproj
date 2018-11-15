@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1F39043F-11B4-4202-9B0A-6606FA7BB355}</ProjectGuid>
+    <ProjectGuid>{DFC937F3-5019-43AF-B320-747D7A293EAF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NRecast</RootNamespace>
@@ -49,6 +49,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <NoWarn>3005, 3003, 3002, 3001, 0169</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />

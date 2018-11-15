@@ -37,6 +37,8 @@ namespace IronStar.Mapping {
 		int[] navIndices;
 		Vector3[] navVertices;
 
+
+
 		/// <summary>
 		/// 
 		/// </summary>

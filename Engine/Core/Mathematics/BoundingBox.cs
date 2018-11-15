@@ -46,7 +46,8 @@ using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
-
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Fusion.Core.Mathematics
 {
@@ -330,6 +331,30 @@ namespace Fusion.Core.Mathematics
             {
                 Vector3.Min(ref min, ref points[i], out min);
                 Vector3.Max(ref max, ref points[i], out max);
+            }
+
+            return new BoundingBox(min, max);
+        }
+
+
+        /// <summary>
+        /// Constructs a <see cref="BoundingBox"/> that fully contains the given points.
+        /// </summary>
+        /// <param name="points">The points that will be contained by the box.</param>
+        /// <returns>The newly constructed bounding box.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="points"/> is <c>null</c>.</exception>
+        public static BoundingBox FromPoints(IEnumerable<Vector3> points)
+        {
+            if (points == null)
+                throw new ArgumentNullException("points");
+
+            Vector3 min = new Vector3(float.MaxValue);
+            Vector3 max = new Vector3(float.MinValue);
+
+            foreach ( var point in points )
+            {
+                min = Vector3.Min(min, point);
+                max = Vector3.Max(max, point);
             }
 
             return new BoundingBox(min, max);

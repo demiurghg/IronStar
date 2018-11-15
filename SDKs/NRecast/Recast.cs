@@ -112,7 +112,7 @@ namespace NRecast.Recast {
 		/// See the #rcConfig documentation for more information on the configuration parameters.
 		/// 
 		/// @see rcAllocHeightfield, rcHeightfield 
-		public static bool rcCreateHeightfield( rcContext ctx, rcHeightfield hf, int width, int height,
+		public static void rcCreateHeightfield( rcContext ctx, rcHeightfield hf, int width, int height,
 							 float[] bmin, float[] bmax,
 							 float cs, float ch )
 		{
@@ -125,10 +125,6 @@ namespace NRecast.Recast {
 			hf.cs = cs;
 			hf.ch = ch;
 			hf.spans = new rcSpan[hf.width * hf.height];//(rcSpan**)rcAlloc(sizeof(rcSpan*)*hf.width*hf.height, RC_ALLOC_PERM);
-			if ( hf.spans == null )
-				return false;
-			//memset(hf.spans, 0, sizeof(rcSpan*)*hf.width*hf.height);
-			return true;
 		}
 
 		public static void calcTriNormal( float[] v0, float[] v1, float[] v2, float[] norm )

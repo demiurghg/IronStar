@@ -26,6 +26,9 @@ namespace IronStar.Mapping {
 		Vector3 pointStart	= new Vector3( 24.25f, -0.5f,  24.25f);
 		Vector3 pointEnd	= new Vector3(-24.25f, -0.5f, -24.25f);
 
+		RCMesh mesh;
+		RCBuildConfig config;
+
 		#region Get static geometry
 		public void GetStaticGeometry ( ContentManager content, out Vector3[] verts, out int[] inds )
 		{
@@ -82,11 +85,12 @@ namespace IronStar.Mapping {
 
 			GetStaticGeometry( content, out verts, out inds );
 
-			var config = new RCBuildConfig();
+			config = new RCBuildConfig();
 			config.CellHeight	=	0.25f;
 			config.CellSize		=	0.25f;
+			config.BBox			=	BoundingBox.FromPoints( verts );
 
-			var mesh = new RCMesh( config, verts, inds );
+			mesh = new RCMesh( config, verts, inds );
 
 		}
 
@@ -94,6 +98,15 @@ namespace IronStar.Mapping {
 
 		public void DrawNavMesh( DebugRender dr )
 		{
+			if (mesh!=null) {
+
+				var verts = mesh.GetPolyMeshVertices();
+
+				foreach ( var p in verts ) {
+					dr.DrawWaypoint( p, 0.25f, Color.Black, 2 );
+				}
+
+			}
 		}
 	}
 }

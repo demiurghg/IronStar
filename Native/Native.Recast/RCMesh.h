@@ -25,6 +25,8 @@ namespace Native {
 			RCMesh(RCBuildConfig ^config, array<Vector3>^ vertices, array<int>^ indices);
 
 			~RCMesh ();
+
+			array<Vector3>^ GetPolyMeshVertices();
 		};
 	}
 }

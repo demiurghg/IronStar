@@ -332,6 +332,30 @@ Native::Recast::RCMesh::~RCMesh()
 	Cleanup();
 }
 
+
+cli::array<Vector3>^ Native::Recast::RCMesh::GetPolyMeshVertices()
+{
+	auto mesh	= m_pmesh;
+	auto orig	= mesh->bmin;
+	auto ch		= mesh->ch;
+	auto cs		= mesh->cs;
+
+	array<Vector3> ^verts = gcnew array<Vector3>( mesh->nverts );
+
+	for (int i = 0; i < mesh->nverts; ++i) {
+
+		const unsigned short* v = &mesh->verts[i * 3];
+		const float x = orig[0] + v[0] * cs;
+		const float y = orig[1] + (v[1] + 1)*ch + 0.1f;
+		const float z = orig[2] + v[2] * cs;
+
+		verts[i] = Vector3( x, y, z );
+	}
+
+	return verts;
+}
+
+
 void Native::Recast::RCMesh::Cleanup()
 {
 	delete[] m_triareas;

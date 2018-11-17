@@ -65,6 +65,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\NavigationGraph.Build.cs" />
+    <Compile Include="AI\NavigationGraph.cs" />
+    <Compile Include="AI\NavigationSettings.cs" />
+    <Compile Include="AI\Route.cs" />
+    <Compile Include="AI\Waypoint.cs" />
     <Compile Include="Client\HudColors.cs" />
     <Compile Include="Client\HudWeapon.cs" />
     <Compile Include="Client\HudHealth.cs" />
@@ -89,7 +94,7 @@
     <Compile Include="Items\Weapon.cs" />
     <Compile Include="Items\WeaponFactory.cs" />
     <Compile Include="JsonLoader.cs" />
-    <Compile Include="Mapping\Map.Nav.cs" />
+    <Compile Include="Mapping\Map.Recast2.cs" />
     <Compile Include="Mapping\MapNavigation.cs" />
     <Compile Include="Mapping\MapReverb.cs" />
     <Compile Include="Mapping\MapSound.cs" />
@@ -189,7 +194,6 @@
     <Compile Include="Core\Item.cs" />
     <Compile Include="LocalMessageService.cs" />
     <Compile Include="Mapping\LightPreset.cs" />
-    <Compile Include="Mapping\Map.Build.cs" />
     <Compile Include="Mapping\MapDecal.cs" />
     <Compile Include="Mapping\MapEntity.cs" />
     <Compile Include="Mapping\MapEnvironment.cs" />
@@ -241,6 +245,10 @@
       <Project>{5d5df8be-ad60-4b6c-a518-62dfdcb3fd8c}</Project>
       <Name>Native.Detour</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Native\Native.Embree\Native.Embree.vcxproj">
+      <Project>{a7278494-726b-420f-b7bd-c29e39a274fd}</Project>
+      <Name>Native.Embree</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Native\Native.Fbx\Native.Fbx.vcxproj">
       <Project>{1131387f-6129-4287-a973-8b43dc9efd49}</Project>
       <Name>Native.Fbx</Name>
@@ -262,7 +270,7 @@
       <Name>KopiLua.Net45</Name>
     </ProjectReference>
     <ProjectReference Include="..\SDKs\NRecast\NRecast.csproj">
-      <Project>{dfc937f3-5019-43af-b320-747d7a293eaf}</Project>
+      <Project>{1e1744bf-2c8a-4c38-81bd-68a371942e81}</Project>
       <Name>NRecast</Name>
     </ProjectReference>
   </ItemGroup>

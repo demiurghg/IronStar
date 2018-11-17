@@ -33,12 +33,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Recast\Headers\Recast.h">
       <Filter>Recast\Headers</Filter>
     </ClInclude>
@@ -48,39 +42,24 @@
     <ClInclude Include="Recast\Headers\RecastAssert.h">
       <Filter>Recast\Headers</Filter>
     </ClInclude>
-    <ClInclude Include="RecastBuilder.h">
-      <Filter>RecastWrapper\Headers</Filter>
+    <ClInclude Include="RCBuilder.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RecastSharp.h">
-      <Filter>RecastWrapper\Headers</Filter>
+    <ClInclude Include="RCBuildConfig.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HeightField.h">
-      <Filter>RecastWrapper\Headers</Filter>
+    <ClInclude Include="RCMesh.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CompactHeightField.h">
-      <Filter>RecastWrapper\Headers</Filter>
+    <ClInclude Include="Utils.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ContourSet.h">
-      <Filter>RecastWrapper\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="PolyMesh.h">
-      <Filter>RecastWrapper\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="PolyMeshDetail.h">
-      <Filter>RecastWrapper\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="RCConfig.h">
-      <Filter>RecastWrapper\Headers</Filter>
+    <ClInclude Include="Local.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="RecastSharp.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AssemblyInfo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Recast\Source\Recast.cpp">
@@ -113,21 +92,17 @@
     <ClCompile Include="Recast\Source\RecastRegion.cpp">
       <Filter>Recast\Source</Filter>
     </ClCompile>
-    <ClCompile Include="RecastBuilder.cpp">
-      <Filter>RecastWrapper\Source</Filter>
+    <ClCompile Include="RCBuilder.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PolyMesh.cpp">
-      <Filter>RecastWrapper\Source</Filter>
+    <ClCompile Include="RCBuildConfig.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="app.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="app.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
+    <ClCompile Include="RCMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

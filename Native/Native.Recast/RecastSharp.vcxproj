@@ -137,25 +137,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CompactHeightField.h" />
-    <ClInclude Include="ContourSet.h" />
-    <ClInclude Include="HeightField.h" />
-    <ClInclude Include="PolyMesh.h" />
-    <ClInclude Include="PolyMeshDetail.h" />
-    <ClInclude Include="RCConfig.h" />
-    <ClInclude Include="RecastSharp.h" />
-    <ClInclude Include="RecastBuilder.h" />
+    <ClInclude Include="Local.h" />
+    <ClInclude Include="RCBuildConfig.h" />
+    <ClInclude Include="RCBuilder.h" />
+    <ClInclude Include="RCMesh.h" />
     <ClInclude Include="Recast\Headers\Recast.h" />
     <ClInclude Include="Recast\Headers\RecastAlloc.h" />
     <ClInclude Include="Recast\Headers\RecastAssert.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="Stdafx.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
-    <ClCompile Include="PolyMesh.cpp" />
-    <ClCompile Include="RecastBuilder.cpp" />
-    <ClCompile Include="RecastSharp.cpp" />
+    <ClCompile Include="RCBuildConfig.cpp" />
+    <ClCompile Include="RCBuilder.cpp" />
+    <ClCompile Include="RCMesh.cpp" />
     <ClCompile Include="Recast\Source\Recast.cpp" />
     <ClCompile Include="Recast\Source\RecastAlloc.cpp" />
     <ClCompile Include="Recast\Source\RecastArea.cpp" />
@@ -166,25 +161,14 @@
     <ClCompile Include="Recast\Source\RecastMeshDetail.cpp" />
     <ClCompile Include="Recast\Source\RecastRasterization.cpp" />
     <ClCompile Include="Recast\Source\RecastRegion.cpp" />
-    <ClCompile Include="Stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="app.rc" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Engine\Fusion.csproj">
       <Project>{085c9e62-cddf-4b95-994d-085c74fa90fc}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="app.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

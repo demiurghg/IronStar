@@ -334,11 +334,11 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		public void DrawWaypoint(Vector3 p, float size, Color color)
+		public void DrawWaypoint(Vector3 p, float size, Color color, int width = 1 )
 		{
 			float h = size / 2;	// half size
-			DrawLine(p + Vector3.UnitX * h, p - Vector3.UnitX * h, color);
-			DrawLine(p + Vector3.UnitZ * h, p - Vector3.UnitZ * h, color);
+			DrawLine( p + Vector3.UnitX * h, p - Vector3.UnitX * h, color, color, width, width );
+			DrawLine( p + Vector3.UnitZ * h, p - Vector3.UnitZ * h, color, color, width, width );
 		}
 
 

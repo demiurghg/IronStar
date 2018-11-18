@@ -241,10 +241,6 @@
       <Project>{085c9e62-cddf-4b95-994d-085c74fa90fc}</Project>
       <Name>Fusion</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Native\Native.Detour\Native.Detour.vcxproj">
-      <Project>{5d5df8be-ad60-4b6c-a518-62dfdcb3fd8c}</Project>
-      <Name>Native.Detour</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Native\Native.Embree\Native.Embree.vcxproj">
       <Project>{a7278494-726b-420f-b7bd-c29e39a274fd}</Project>
       <Name>Native.Embree</Name>

@@ -103,7 +103,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(ProjectDir)Recast\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Detour\Headers;$(ProjectDir)Recast\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
     </ClCompile>
     <Link>
@@ -125,7 +125,7 @@
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <AdditionalIncludeDirectories>$(ProjectDir)Recast\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Detour\Headers;$(ProjectDir)Recast\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies />
@@ -137,10 +137,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Detour\Headers\DetourAlloc.h" />
+    <ClInclude Include="Detour\Headers\DetourAssert.h" />
+    <ClInclude Include="Detour\Headers\DetourCommon.h" />
+    <ClInclude Include="Detour\Headers\DetourMath.h" />
+    <ClInclude Include="Detour\Headers\DetourNavMesh.h" />
+    <ClInclude Include="Detour\Headers\DetourNavMeshBuilder.h" />
+    <ClInclude Include="Detour\Headers\DetourNavMeshQuery.h" />
+    <ClInclude Include="Detour\Headers\DetourNode.h" />
+    <ClInclude Include="Detour\Headers\DetourStatus.h" />
     <ClInclude Include="Local.h" />
-    <ClInclude Include="RCBuildConfig.h" />
-    <ClInclude Include="RCBuilder.h" />
-    <ClInclude Include="RCMesh.h" />
+    <ClInclude Include="BuildConfig.h" />
+    <ClInclude Include="NavigationMesh.h" />
+    <ClInclude Include="NavigationRoute.h" />
     <ClInclude Include="Recast\Headers\Recast.h" />
     <ClInclude Include="Recast\Headers\RecastAlloc.h" />
     <ClInclude Include="Recast\Headers\RecastAssert.h" />
@@ -148,9 +157,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
-    <ClCompile Include="RCBuildConfig.cpp" />
-    <ClCompile Include="RCBuilder.cpp" />
-    <ClCompile Include="RCMesh.cpp" />
+    <ClCompile Include="Detour\Source\DetourAlloc.cpp" />
+    <ClCompile Include="Detour\Source\DetourCommon.cpp" />
+    <ClCompile Include="Detour\Source\DetourNavMesh.cpp" />
+    <ClCompile Include="Detour\Source\DetourNavMeshBuilder.cpp" />
+    <ClCompile Include="Detour\Source\DetourNavMeshQuery.cpp" />
+    <ClCompile Include="Detour\Source\DetourNode.cpp" />
+    <ClCompile Include="BuildConfig.cpp" />
+    <ClCompile Include="NavigationMesh.cpp" />
+    <ClCompile Include="NavigationRoute.cpp" />
     <ClCompile Include="Recast\Source\Recast.cpp" />
     <ClCompile Include="Recast\Source\RecastAlloc.cpp" />
     <ClCompile Include="Recast\Source\RecastArea.cpp" />

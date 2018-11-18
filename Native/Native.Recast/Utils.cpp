@@ -1,6 +1,7 @@
 #include <windows.h>
 #include "Local.h"
 
+using namespace Fusion;
 
 
 TimeVal getPerfTime()
@@ -38,6 +39,8 @@ void BuildContext::doResetLog()
 
 void BuildContext::doLog(const rcLogCategory category, const char* msg, const int len)
 {
+	Log::Message( gcnew System::String(msg, 0, len)  );
+
 	if (!len) return;
 	if (m_messageCount >= MAX_MESSAGES)
 		return;

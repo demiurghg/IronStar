@@ -16,9 +16,8 @@ using Fusion.Engine.Graphics;
 using BEPUphysics.BroadPhaseEntries;
 using Fusion.Core.Mathematics;
 using Fusion;
-using Native.Recast;
 using Newtonsoft.Json;
-using Native.Recast;
+using Native.NRecast;
 
 namespace IronStar.Mapping {
 	public partial class Map {
@@ -26,8 +25,10 @@ namespace IronStar.Mapping {
 		Vector3 pointStart	= new Vector3( 24.25f, -0.5f,  24.25f);
 		Vector3 pointEnd	= new Vector3(-24.25f, -0.5f, -24.25f);
 
-		RCMesh mesh;
-		RCBuildConfig config;
+		NavigationMesh mesh;
+		BuildConfig config;
+
+		Vector3[] route;
 
 		#region Get static geometry
 		public void GetStaticGeometry ( ContentManager content, out Vector3[] verts, out int[] inds )
@@ -85,15 +86,16 @@ namespace IronStar.Mapping {
 
 			GetStaticGeometry( content, out verts, out inds );
 
-			config = new RCBuildConfig();
+			config = new BuildConfig();
 			config.CellHeight		=	0.25f;
 			config.CellSize			=	0.25f;
 			config.BBox				=	BoundingBox.FromPoints( verts );
-			//config.BBox				=	new BoundingBox( Vector3.One * (-4), Vector3.One*4 );
+			//config.BBox			=	new BoundingBox( Vector3.One * (-4), Vector3.One*4 );
 			config.MaxVertsPerPoly	=	3;
 
-			mesh = new RCMesh( config, verts, inds );
+			mesh = new NavigationMesh( config, verts, inds );
 
+			route = mesh.FindRoute( pointStart, pointEnd );
 		}
 
 
@@ -132,6 +134,16 @@ namespace IronStar.Mapping {
 
 						dr.DrawLine( v0, v1, lineColor, lineColor, lineWidth, lineWidth );
 					}
+				}
+			}
+
+			if (route!=null) {
+				for (int i=0; i<route.Length-1; i++) {
+
+					var v0 = route[i];
+					var v1 = route[i+1];
+					dr.DrawLine( v0, v1, Color.Red, Color.Red, 5, 5 );
+
 				}
 			}
 		}

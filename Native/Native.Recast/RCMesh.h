@@ -27,6 +27,23 @@ namespace Native {
 			~RCMesh ();
 
 			array<Vector3>^ GetPolyMeshVertices();
+
+			int GetNumVertexPerPoly () {
+				return m_pmesh->nvp;
+			}
+
+			int GetNumPolys() {
+				return m_pmesh->npolys;
+			}
+
+			int GetNumVertices() {
+				return m_pmesh->nverts;
+			}
+
+			int GetPolygonVertexIndices(int polyIndex, array<int> ^indices);
+
+			void GetPolygonAdjacencyIndices(int polyIndex, array<int> ^indices);
+
 		};
 	}
 }

@@ -86,9 +86,11 @@ namespace IronStar.Mapping {
 			GetStaticGeometry( content, out verts, out inds );
 
 			config = new RCBuildConfig();
-			config.CellHeight	=	0.25f;
-			config.CellSize		=	0.25f;
-			config.BBox			=	BoundingBox.FromPoints( verts );
+			config.CellHeight		=	0.25f;
+			config.CellSize			=	0.25f;
+			config.BBox				=	BoundingBox.FromPoints( verts );
+			//config.BBox				=	new BoundingBox( Vector3.One * (-4), Vector3.One*4 );
+			config.MaxVertsPerPoly	=	3;
 
 			mesh = new RCMesh( config, verts, inds );
 
@@ -100,12 +102,37 @@ namespace IronStar.Mapping {
 		{
 			if (mesh!=null) {
 
+				var polyInds = new int[6];
+				var polyAdjs = new int[6];
+
 				var verts = mesh.GetPolyMeshVertices();
 
 				foreach ( var p in verts ) {
 					dr.DrawWaypoint( p, 0.25f, Color.Black, 2 );
 				}
 
+				for ( int polyIndex = 0; polyIndex < mesh.GetNumPolys(); polyIndex++ ) {
+				
+					int nverts =	mesh.GetPolygonVertexIndices( polyIndex, polyInds );
+									mesh.GetPolygonAdjacencyIndices( polyIndex, polyAdjs );
+					
+					for ( int edgeInd = 0; edgeInd < nverts; edgeInd++ ) {	
+						
+						var i0 = edgeInd;
+						var i1 = (edgeInd+1 == nverts) ? 0 : edgeInd+1;
+						var v0 = verts[ polyInds[ i0 ] ];	
+						var v1 = verts[ polyInds[ i1 ] ];	
+
+						int lineWidth = 1;
+						var lineColor = Color.Black;
+
+						if (polyAdjs[edgeInd]>=0) {
+							lineWidth = 2;
+						}
+
+						dr.DrawLine( v0, v1, lineColor, lineColor, lineWidth, lineWidth );
+					}
+				}
 			}
 		}
 	}

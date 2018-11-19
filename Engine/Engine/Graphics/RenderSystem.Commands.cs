@@ -16,21 +16,18 @@ namespace Fusion.Engine.Graphics {
 
 		void RegisterCommands ()
 		{
-			Game.Invoker.RegisterCommand("screenshot",	(args) => new ScreenshotCmd(this, args)	);
-			Game.Invoker.RegisterCommand("vtrestart",	(args) => new VTRestartCmd(this)	);
-			Game.Invoker.RegisterCommand("buildrad",	(args) => new BuildRadCmd(this)		);
+			Game.Invoker.RegisterCommand("screenshot",	() => new ScreenshotCmd(this)	);
+			Game.Invoker.RegisterCommand("vtrestart",	() => new VTRestartCmd(this)	);
+			Game.Invoker.RegisterCommand("buildrad",	() => new BuildRadCmd(this)		);
 		}
 
 
 		class ScreenshotCmd : CommandNoHistory {
 			readonly RenderSystem rs;
 
-			public ScreenshotCmd ( RenderSystem rs, ArgList args ) 
+			public ScreenshotCmd ( RenderSystem rs ) 
 			{
 				this.rs = rs;
-				//args.Usage("screenshot [/open]")
-				//	.Option("/open", out open)
-				//	.Apply();
 			}
 
 			public override object Execute()

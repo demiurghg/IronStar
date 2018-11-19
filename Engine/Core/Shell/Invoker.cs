@@ -13,24 +13,50 @@ using System.Reflection;
 using System.ComponentModel;
 using Fusion.Core.Mathematics;
 using System.Collections.Concurrent;
+using Fusion.Drivers.Graphics;
 
 namespace Fusion.Core.Shell {
 	public partial class Invoker {
 
 		public readonly Game Game;
 
-		public delegate ICommand CommandCreator ( ArgList args );
+		public delegate ICommand CommandCreator ();
 
 		readonly object lockObject = new object();
 		readonly Stack<ICommand> undoStack	= new Stack<ICommand>(1024);
 		readonly Stack<ICommand> redoStack	= new Stack<ICommand>(1024);
 		readonly Queue<ICommand> cmdQueue	= new Queue<ICommand>(1024);
 		readonly Dictionary<string,CommandEntry> commandsRegistry = new Dictionary<string, CommandEntry>();
-		readonly Dictionary<string,ISyntax> commandsSyntax = new Dictionary<string, ISyntax>();
 
 		class CommandEntry {
 			public CommandCreator Creator;
-			public ISyntax Syntax;
+			public CommandLineParser Parser;
+		}
+
+
+		class TestCommand : ICommand {
+			
+			[CommandLineParser.Required()]
+			[CommandLineParser.Name("name")]
+			public string Name { get; set; } = "";
+
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("mode")]
+			public StereoMode Mode { get; set; } = StereoMode.Disabled;
+
+			public object Execute()
+			{
+				return string.Format("{0} {1}", Name, Mode );
+			}
+
+			public bool IsHistoryOn()
+			{
+				return false;
+			}
+
+			public void Rollback()
+			{
+			}
 		}
 
 		/// <summary>
@@ -39,10 +65,12 @@ namespace Fusion.Core.Shell {
 		public Invoker ( Game game )
 		{
 			this.Game = game; // optional ComponentCollection???
-			RegisterCommand("set",  (args)=>new Set(this,args), new Set.Syntax(game) );
-			RegisterCommand("get",  (args)=>new Get(this,args));
-			RegisterCommand("undo", (args)=>new UndoCmd(this,args));
-			RegisterCommand("redo", (args)=>new RedoCmd(this,args));
+			RegisterCommand("set",  ()=>new Set(this)		);
+			RegisterCommand("get",  ()=>new Get(this)		);
+			RegisterCommand("undo", ()=>new UndoCmd(this)	);
+			RegisterCommand("redo", ()=>new RedoCmd(this)	);
+
+			RegisterCommand("test", () => new TestCommand() );
 
 			Game.Components.ComponentAdded   += (s,e) => FlushNameCache();
 			Game.Components.ComponentRemoved += (s,e) => FlushNameCache();
@@ -55,17 +83,20 @@ namespace Fusion.Core.Shell {
 		/// </summary>
 		/// <param name="commandName"></param>
 		/// <param name="creator"></param>
-		public void RegisterCommand ( string commandName, CommandCreator creator, ISyntax syntax = null )
+		public void RegisterCommand<TCommand> ( string commandName, Func<TCommand> creator ) where TCommand: ICommand
 		{
 			lock (lockObject) {
 				if (commandsRegistry.ContainsKey( commandName ) ) {
 					Log.Warning("Command '{0}' is already registered", commandName );
 					return;
 				}
-				commandsRegistry.Add( commandName, new CommandEntry() { Creator = creator, Syntax = syntax } );
+
+				CommandCreator		commandCreator	= () => creator();
+				CommandLineParser	commandParser	= new CommandLineParser(typeof(TCommand), commandName );
+
+				commandsRegistry.Add( commandName, new CommandEntry() { Creator = commandCreator, Parser = commandParser } );
 			}
 		}
-
 
 
 		/// <summary>
@@ -226,6 +257,24 @@ namespace Fusion.Core.Shell {
 
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		CommandLineParser GetParser ( string name )
+		{
+			CommandEntry entry;
+
+			if (commandsRegistry.TryGetValue( name, out entry )) {
+				return entry.Parser;
+			}
+			
+			throw new InvalidOperationException(string.Format("Unknown command '{0}'.", name));
+		}
+
+
+
+		/// <summary>
 		/// Parses command line and returns command instance.
 		/// </summary>
 		/// <param name="comm"></param>
@@ -244,8 +293,12 @@ namespace Fusion.Core.Shell {
 
 
 			if (commandsRegistry.TryGetValue(args[0], out commandEntry )) {
+				
+				var command = commandEntry.Creator();
 
-				return commandEntry.Creator( new ArgList(args) );
+				commandEntry.Parser?.ParseCommandLine( command, args.Skip(1).ToArray() );
+
+				return command;
 
 			} else if ( TryGetComponentProperty( args[0], out pi, out gc ) ) {
 
@@ -278,7 +331,7 @@ namespace Fusion.Core.Shell {
 							Log.Message("// {0} //", StringConverter.ConvertToString(result) );
 						}
 
-					} catch ( InvokerException e ) {
+					} catch ( Exception e ) {
 
 						Log.Error( e.Message );
 					

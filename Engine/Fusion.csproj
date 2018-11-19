@@ -156,6 +156,7 @@
     <Compile Include="Core\Extensions\XmlImporter.cs" />
     <Compile Include="Core\FpsCounter.cs" />
     <Compile Include="Core\GameComponentCollectionEventArgs.cs" />
+    <Compile Include="Core\IExitable.cs" />
     <Compile Include="Core\Mathematics\Byte3.cs" />
     <Compile Include="Core\Mathematics\HSVColor.cs" />
     <Compile Include="Core\Mathematics\Range.cs" />
@@ -173,7 +174,6 @@
     <Compile Include="Core\Shell\Invoker.Get.cs" />
     <Compile Include="Core\Shell\Invoker.Helper.cs" />
     <Compile Include="Core\Shell\Invoker.Set.cs" />
-    <Compile Include="Core\Shell\ISyntax.cs" />
     <Compile Include="Core\Shell\ICommand.cs" />
     <Compile Include="Core\Shell\Invoker.Batch.cs" />
     <Compile Include="Core\Shell\Invoker.cs" />

@@ -31,8 +31,8 @@ namespace IronStar.Editor {
 
 		void RegisterCommands ()
 		{
-			Game.Invoker.RegisterCommand("editorSave"	, (args) => new EditorSave(this, args) );
-			Game.Invoker.RegisterCommand("editorSaveAs"	, (args) => new EditorSaveAs(this, args) );
+			Game.Invoker.RegisterCommand("editorSave"	, () => new EditorSave(this) );
+			Game.Invoker.RegisterCommand("editorSaveAs"	, () => new EditorSaveAs(this) );
 		}
 
 
@@ -66,7 +66,7 @@ namespace IronStar.Editor {
 		{
 			readonly MapEditor mapEditor;
 
-			public EditorSave ( MapEditor mapEditor, ArgList args )
+			public EditorSave ( MapEditor mapEditor )
 			{
 				this.mapEditor	=	mapEditor;
 			}
@@ -82,20 +82,19 @@ namespace IronStar.Editor {
 		class EditorSaveAs : CommandNoHistory
 		{
 			readonly MapEditor mapEditor;
-			readonly string newMapName;
 
-			public EditorSaveAs ( MapEditor mapEditor, ArgList args )
+			[CommandLineParser.Required]
+			[CommandLineParser.Name("newMapName")]
+			public string NewMapName { get; set; }
+
+			public EditorSaveAs ( MapEditor mapEditor )
 			{
 				this.mapEditor	=	mapEditor;
-
-				args.Usage("editorSaveAs <newMapName>")
-					.Require("newMapName", out newMapName )
-					.Apply();
 			}
 
 			public override object Execute()
 			{
-				mapEditor.SaveMapAs(newMapName);
+				mapEditor.SaveMapAs(NewMapName);
 				return null;
 			}
 		}

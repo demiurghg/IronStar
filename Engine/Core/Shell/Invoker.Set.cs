@@ -18,34 +18,19 @@ namespace Fusion.Core.Shell {
 
 		class Set : ICommand {
 
-			public class Syntax : ISyntax
-			{
-				public readonly Game game;
-
-				public Syntax ( Game game )
-				{
-					this.game = game;
-				}
-
-				public string Description { get { return ""; } }
-				public string Usage { get { return ""; } }
-
-				public string[] Optional( string arg )
-				{
-					return new[] {"/historyoff", "/fast", };
-				}
-
-				public string[] Required(int index, string arg)
-				{
-					return new[] {"test1", "test2", "tet2222", "quake", "unreal", "quake5"};
-				}
-			}
-
-
 			readonly Invoker invoker;
-			readonly string variable;
-			readonly string value;
-			readonly bool historyoff;
+
+			[CommandLineParser.Required]
+			[CommandLineParser.Name("variable")]
+			public string Variable { get; set; }
+
+			[CommandLineParser.Required]
+			[CommandLineParser.Name("value")]
+			public string Value { get; set; }
+
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("historyOff")]
+			public bool HistoryOff { get; set; }
 
 			string oldValue = null;
 
@@ -53,42 +38,36 @@ namespace Fusion.Core.Shell {
 			public Set ( Invoker invoker, string variable, string value )
 			{
 				this.invoker	=	invoker;
-				this.value		=	value;
-				this.variable	=	variable;
-				this.historyoff	=	false;
+				this.Value		=	value;
+				this.Variable	=	variable;
+				this.HistoryOff	=	false;
 			}
 
 			
-			public Set ( Invoker invoker, ArgList args )
+			public Set ( Invoker invoker )
 			{
 				this.invoker = invoker;
-
-				args.Usage("set <variable> value /noundo /rollback:value /historyoff")
-					.Require( "variable"	,	out variable	)
-					.Require( "value"		,	out value		)
-					.Option	( "/historyoff"	,	out historyoff	)
-					.Apply();
 			}
 
 
 			public object Execute()
 			{
 				if (IsHistoryOn()) {
-					oldValue = invoker.GetComponentProperty(variable);
+					oldValue = invoker.GetComponentProperty(Variable);
 				}
 
-				invoker.SetComponentProperty( variable, value );
+				invoker.SetComponentProperty( Variable, Value );
 				return null;
 			}
 
 			public bool IsHistoryOn()
 			{
-				return !historyoff;
+				return !HistoryOff;
 			}
 
 			public void Rollback()
 			{
-				invoker.SetComponentProperty( variable, oldValue );
+				invoker.SetComponentProperty( Variable, oldValue );
 			}
 		}
 	}

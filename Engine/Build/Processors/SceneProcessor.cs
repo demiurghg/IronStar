@@ -16,36 +16,42 @@ namespace Fusion.Build.Processors {
 		/// Vertex merge tolerance
 		/// </summary>
 		[CommandLineParser.Name("merge", "merge tolerance (default=0)")]
+		[CommandLineParser.Option]
 		public float MergeTolerance { get; set; }
 
 		/// <summary>
 		/// Evaluates transform
 		/// </summary>
 		[CommandLineParser.Name("anim", "import animation")]
+		[CommandLineParser.Option]
 		public bool ImportAnimation { get; set; }
 
 		/// <summary>
 		/// Evaluates transform
 		/// </summary>
 		[CommandLineParser.Name("geom", "import geometry")]
+		[CommandLineParser.Option]
 		public bool ImportGeometry { get; set; }
 
 		/// <summary>
 		/// Evaluates transform
 		/// </summary>
 		[CommandLineParser.Name("report", "output html report")]
+		[CommandLineParser.Option]
 		public bool OutputReport { get; set; }
 
 		/// <summary>
 		/// Evaluates transform
 		/// </summary>
 		[CommandLineParser.Name("genmtrl", "generate missing materials")]
+		[CommandLineParser.Option]
 		public bool GenerateMissingMaterials { get; set; }
 
 		/// <summary>
 		/// Evaluates transform
 		/// </summary>
 		[CommandLineParser.Name("retarget", "provides scene to retarget animation clips from")]
+		[CommandLineParser.Option]
 		public string RetargetSource { get; set; }
 
 

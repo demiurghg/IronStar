@@ -79,6 +79,8 @@
     <Compile Include="Entities\FuncFX.cs" />
     <Compile Include="Entities\FuncShooter.cs" />
     <Compile Include="Core\EntityState.cs" />
+    <Compile Include="Entities\Monsters\CombatPointFactory.cs" />
+    <Compile Include="Entities\Monsters\CombatPoint.cs" />
     <Compile Include="Entities\Monsters\Monster.cs" />
     <Compile Include="Entities\Monsters\MonsterFactory.cs" />
     <Compile Include="Entities\Projectile.cs" />

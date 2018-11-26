@@ -14,24 +14,31 @@ namespace Fusion.Build.Processors {
 	public class TextureAtlasProcessor : AssetProcessor {
 
 		[CommandLineParser.Name("nomips", "do not generate mipmap levels")]
+		[CommandLineParser.Option]
 		public bool	NoMips { get; set; }
 
 		[CommandLineParser.Name("dxt", "use DXT compression method")]
+		[CommandLineParser.Option]
 		public bool	UseDXT { get; set; }
 
 		[CommandLineParser.Name("halfoffset", "adds half-pixel offset to texture coordinates")]
+		[CommandLineParser.Option]
 		public bool	HalfTexel { get; set; }
 
 		[CommandLineParser.Name("width", "output image width (default 256)")]
+		[CommandLineParser.Option]
 		public int Width { get; set; }
 
 		[CommandLineParser.Name("height", "output image height (default 256)")]
+		[CommandLineParser.Option]
 		public int Height { get; set; }
 
 		[CommandLineParser.Name("pad", "padding between images (default 0)")]
+		[CommandLineParser.Option]
 		public int Padding { get; set; }
 
 		[CommandLineParser.Name("fill", "color to fill gaps (default black)")]
+		[CommandLineParser.Option]
 		public Color FillColor { get; set; }
 
 

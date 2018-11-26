@@ -25,24 +25,31 @@ namespace FScene {
 		public string Input { get; set; }
 
 		[CommandLineParser.Name("out", "output scene file")]
+		[CommandLineParser.Option()]
 		public string Output { get; set; }
 
 		[CommandLineParser.Name("merge", "merge tolerance (0.0 is default)")]
+		[CommandLineParser.Option()]
 		public float MergeTolerance { get; set; }
 
 		[CommandLineParser.Name("base", "root directory")]
+		[CommandLineParser.Option()]
 		public string BaseDirectory { get; set; }
 
 		[CommandLineParser.Name("anim", "bake and import animation tracks")]
+		[CommandLineParser.Option()]
 		public bool ImportAnimation { get; set; }
 
 		[CommandLineParser.Name("geom", "import geometry data.")]
+		[CommandLineParser.Option()]
 		public bool ImportGeometry { get; set; }
 
 		[CommandLineParser.Name("report", "export html build report")]
+		[CommandLineParser.Option()]
 		public string Report { get; set; }
 
 		[CommandLineParser.Name("retarget", "provides scene to retarget animation clips from")]
+		[CommandLineParser.Option()]
 		public string RetargetSource { get; set; }
 	};
 

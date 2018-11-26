@@ -39,19 +39,24 @@ namespace Fusion.Build.Processors {
 
 
 		[CommandLineParser.Name("nopt", "disable optimization (fxc:/Od)")]
+		[CommandLineParser.Option]
 		public bool DisableOptimization { get; set; }
 			
 		[CommandLineParser.Name("opt", "optimization level 0..3. (fxc:/O)")]
+		[CommandLineParser.Option]
 		public int OptimizationLevel { get { return optimizationLevel; } set { optimizationLevel = MathUtil.Clamp( value, 0, 3 ); } }
 		int optimizationLevel = 1;
 
 		[CommandLineParser.Name("fa", "avoid flow control constructs. (fxc:/Gfa)")]
+		[CommandLineParser.Option]
 		public bool AvoidFlowControl { get; set; }
 
 		[CommandLineParser.Name("fp", "prefer flow control constructs. (fxc:/Gfp)")]
+		[CommandLineParser.Option]
 		public bool PreferFlowControl { get; set; }
 			
 		[CommandLineParser.Name("usp", "show ubershader permutations")]
+		[CommandLineParser.Option]
 		public bool ShowPemutations { get; set; }
 			
 		public ShaderMatrixPacking	MatrixPacking { get; set; }

@@ -18,24 +18,31 @@ namespace Fusion.Build.Processors {
 		}
 			
 		[CommandLineParser.Name("nomips", "do not build mip levels")]
+		[CommandLineParser.Option]
 		public bool NoMips { get; set; }
 
 		[CommandLineParser.Name("fast", "perform fast compression")]
+		[CommandLineParser.Option]
 		public bool Fast { get; set; }
 
 		[CommandLineParser.Name("tonormal", "build normalmap")]
+		[CommandLineParser.Option]
 		public bool ToNormal { get; set; }
 
 		[CommandLineParser.Name("color",  "texture contains color data")]
+		[CommandLineParser.Option]
 		public bool Color { get; set; }
 
 		[CommandLineParser.Name("alpha", "texture contains alpha data")]
+		[CommandLineParser.Option]
 		public bool Alpha { get; set; }
 
 		[CommandLineParser.Name("normal", "texture contains normalmap")]
+		[CommandLineParser.Option]
 		public bool Normal { get; set; }
 
 		[CommandLineParser.Name("compression", "compression mode")]
+		[CommandLineParser.Option]
 		public TextureCompression Compression { get; set; }
 
 		

@@ -20,27 +20,30 @@ namespace IronStar {
 		class MapCommand : CommandNoHistory {
 
 			readonly IronStar game;
-			readonly string mapname;
-			readonly bool edit;
-			readonly bool dedicated;
 
-			public MapCommand ( IronStar game, ArgList args )
+			[CommandLineParser.Name("mapname")]
+			[CommandLineParser.Required]
+			public string MapName { get; set; }
+
+			[CommandLineParser.Name("edit")]
+			[CommandLineParser.Option]
+			public bool Edit { get; set; } = false;
+
+			[CommandLineParser.Name("dedicated")]
+			[CommandLineParser.Option]
+			public bool Dedicated { get; set; } = false;
+
+			public MapCommand ( IronStar game )
 			{
 				this.game	=	game;
-
-				args.Usage("map <mapname> [/edit]")
-					.Require("mapname"		, out mapname	)
-					.Option	("/edit"		, out edit		)
-					.Option ("/dedicated"	, out dedicated )
-					.Apply();
 			}
 
 			public override object Execute()
 			{
-				if (edit) {
-					game.StartEditor(mapname);
+				if (Edit) {
+					game.StartEditor(MapName);
 				} else {
-					game.StartServer(mapname, dedicated);
+					game.StartServer(MapName, Dedicated);
 				}
 				return null;
 			}
@@ -53,7 +56,7 @@ namespace IronStar {
 
 			readonly IronStar game;
 
-			public KillServerCommand ( IronStar game, ArgList args )
+			public KillServerCommand ( IronStar game )
 			{
 				this.game = game;
 			}
@@ -70,22 +73,23 @@ namespace IronStar {
 		class ConnectCommand : CommandNoHistory {
 
 			readonly IronStar game;
-			readonly string host;
-			readonly int port;
 
-			public ConnectCommand ( IronStar game, ArgList args )
+			[CommandLineParser.Required]
+			[CommandLineParser.Name("Host")]
+			public string Host { get; set; }
+
+			[CommandLineParser.Required]
+			[CommandLineParser.Name("Port")]
+			public int Port { get; set; }
+
+			public ConnectCommand ( IronStar game )
 			{
 				this.game = game;
-
-				args.Usage("connect <host> <port>")
-					.Require("host", out host)
-					.Require("port", out port)
-					.Apply();
 			}
 
 			public override object Execute()
 			{
-				game.Connect( host, port );
+				game.Connect( Host, Port );
 				return null;
 			}
 		}
@@ -96,7 +100,7 @@ namespace IronStar {
 
 			readonly IronStar game;
 
-			public DisconnectCommand ( IronStar game, ArgList args )
+			public DisconnectCommand ( IronStar game )
 			{
 				this.game = game;
 			}
@@ -114,7 +118,7 @@ namespace IronStar {
 
 			readonly IronStar game;
 
-			public KillEditorCommand ( IronStar game, ArgList args )
+			public KillEditorCommand ( IronStar game )
 			{
 				this.game = game;
 			}
@@ -130,21 +134,23 @@ namespace IronStar {
 
 		class ContentBuildCommand : CommandNoHistory {
 			Game	 game;
-			bool	 force;
-			string[] files;
-			string	 clean;
+			
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("force")]
+			public bool	Force { get; set; }
 
-			public ContentBuildCommand ( Game game, ArgList args )
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("clean")]
+			public string Clean { get; set; }
+
+			public ContentBuildCommand ( Game game )
 			{
 				this.game	=	game;
-				this.force	=	args.Contains("/force");
-				this.files	=	args.Skip(1).Where( s=>!s.StartsWith("/") ).ToArray();
-				this.clean	=	args.FirstOrDefault( a => a.StartsWith("/clean:"))?.Replace("/clean:","");
 			}
 
 			public override object Execute ()
 			{
-				Builder.SafeBuild(force, clean, files);
+				Builder.SafeBuild( Force, Clean, new string[0] );
 				game.Reload();	
 				return null;		
 			}
@@ -162,19 +168,19 @@ namespace IronStar {
 
 
 		class ContentReportCommand : CommandNoHistory {
-			string reportFile;
 
-			public ContentReportCommand( ArgList args )
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("reportFile")]
+			public string ReportFile { get; set; }
+
+
+			public ContentReportCommand()
 			{
-				if (args.Count<2) {
-					throw new Exception("Missing command line arguments: filename");
-				}
-				reportFile = args[1];
 			}
 
 			public override object Execute() 
 			{
-				Builder.OpenReport( reportFile );
+				Builder.OpenReport( ReportFile );
 				return null;
 			}
 

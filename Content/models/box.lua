@@ -1,8 +1,5 @@
-
-local model 	= arg.model;
-local entity 	= arg.entity;
-
+local model		= ...
 model.load("scenes\\boxes\\box_low.fbx")
-model.scale(1)
-model.setColor( 242, 39, 16 )
-model.setIntensity = 100.0
+model.set_color(48, 96, 255)
+model.set_intensity(100)
+model.set_scale(1)

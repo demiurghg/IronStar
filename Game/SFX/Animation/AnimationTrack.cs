@@ -7,6 +7,8 @@ using Fusion;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Graphics;
+using Fusion.Scripting;
+using KopiLua;
 
 namespace IronStar.SFX {
 
@@ -156,7 +158,9 @@ namespace IronStar.SFX {
 
 
 		/*-----------------------------------------------------------------------------------------
+		 * 
 		 *  Internal stuff :
+		 *  
 		-----------------------------------------------------------------------------------------*/
 
 		bool ApplyTransforms ( Matrix[] destination )
@@ -221,5 +225,59 @@ namespace IronStar.SFX {
 				} //*/
 			}
 		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 * 
+		 *  Lua API :
+		 *  
+		-----------------------------------------------------------------------------------------*/
+
+		[LuaApi("sequence")]
+		int Sequence ( LuaState L )
+		{
+			using ( new LuaStackGuard( L ) ) {
+
+				// get take
+				Lua.LuaPushString(L, "take");
+				Lua.LuaGetTable(L, 1);
+				var take = Lua.LuaToString(L, -1).ToString();
+				Lua.LuaPop(L, 1);
+
+				// get loop
+				Lua.LuaPushString(L, "loop");
+				Lua.LuaGetTable(L, 1);
+				var loop = Lua.LuaToBoolean(L, -1)!=0;
+				Lua.LuaPop(L, 1);
+
+				//	get hold
+				Lua.LuaPushString(L, "hold");
+				Lua.LuaGetTable(L, 1);
+				var hold = Lua.LuaToBoolean(L, -1)!=0;
+				Lua.LuaPop(L, 1);
+
+				//	get crossfade, negative value means sequencing
+				Lua.LuaPushString(L, "crossfade");
+				Lua.LuaGetTable(L, 1);
+				var crossfade = (float)Lua.LuaToNumber(L, -1);
+				if (Lua.LuaIsNil(L,-1)) {
+					crossfade = -1;
+				}
+				Lua.LuaPop(L, 1);
+				
+				Sequence( take, crossfade==0, loop, hold );
+			}
+
+			return 0;
+		}
+
+
+		[LuaApi("set_weight")]
+		int SetWeight ( LuaState L )
+		{
+			Weight = (float)Lua.LuaToNumber( L, 1 );
+			return 0;
+		}
+
 	}
 }

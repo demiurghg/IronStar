@@ -185,6 +185,9 @@ namespace Fusion.Build {
 		/// <returns></returns>
 		public string ResolveContentPath ( string path )
 		{
+			if (path==null) {
+				return null;
+			}
 			string dummy;
 			return ResolveContentPath( path, out dummy );
 		}
@@ -399,7 +402,33 @@ namespace Fusion.Build {
 
 			return true;
 		}
+							  
 
+
+		public int RunTool ( string exePath, string commandLine, out string stdout, out string stderr )
+		{
+			Log.Debug("...exec: {0} {1}", exePath, commandLine );
+
+			ProcessStartInfo psi = new ProcessStartInfo();
+			psi.RedirectStandardInput	=	true;
+			psi.RedirectStandardOutput	=	true;
+			psi.RedirectStandardError	=	true;
+			psi.FileName				=	ResolvePath( exePath, binaryPaths );
+			psi.Arguments				=	commandLine;
+			psi.UseShellExecute			=	false;
+			psi.CreateNoWindow			=	true;
+
+			int exitCode = 0;
+
+			using ( Process proc = Process.Start( psi ) ) {
+				stdout = proc.StandardOutput.ReadToEnd().Trim(new[]{'\r', '\n'});
+				stderr = proc.StandardError.ReadToEnd().Trim(new[]{'\r', '\n'});
+				proc.WaitForExit();
+				exitCode = proc.ExitCode;
+			}
+
+			return exitCode;
+		}
 
 
 		/// <summary>

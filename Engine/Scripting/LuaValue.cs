@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 using KopiLua;
 
 namespace Fusion.Scripting {
-	
+
+	/// <summary>
+	/// Once created, stores value at given stack index in registry and removes it from stack.
+	/// </summary>
 	public class LuaValue : IDisposable {
 	
 		readonly int refId;
@@ -15,7 +18,7 @@ namespace Fusion.Scripting {
 		public readonly LuaState L;
 
 		/// <summary>
-		/// 
+		/// Stores value at given index in registry
 		/// </summary>
 		/// <param name="L"></param>
 		/// <param name="index"></param>
@@ -69,6 +72,13 @@ namespace Fusion.Scripting {
 
 				disposedValue = true;
 			}
+		}
+
+
+
+		public void Free ()
+		{
+			Dispose();
 		}
 
 

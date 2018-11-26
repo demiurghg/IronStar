@@ -20,6 +20,7 @@ using BEPUphysics.BroadPhaseEntries;
 using IronStar.Views;
 using IronStar.Items;
 using Fusion.Scripting;
+using KopiLua;
 
 namespace IronStar.SFX {
 	public class ModelManager : DisposableBase {
@@ -30,11 +31,12 @@ namespace IronStar.SFX {
 		public readonly RenderSystem rs;
 		public readonly RenderWorld	rw;
 		public readonly GameWorld world;
-
-		public readonly LuaInvoker lua;
+		public readonly ContentManager content;
 
 		public Matrix ViewMatrix;
 		public Matrix ProjectionMatrix;
+
+		public readonly LuaState L;
 
 
 		short			weaponModel = 0;
@@ -49,7 +51,8 @@ namespace IronStar.SFX {
 			this.game	=	world.Game;
 			this.rs		=	game.RenderSystem;
 			this.rw		=	game.RenderSystem.RenderWorld;
-			this.lua	=	new LuaInvoker( world.Content );
+			this.L		=	LuaInvoker.CreateLuaState();
+			this.content=	world.Content;
 
 			Game_Reloading(this, EventArgs.Empty);
 			game.Reloading +=	Game_Reloading;
@@ -58,14 +61,13 @@ namespace IronStar.SFX {
 		}
 
 
-
 		/// <summary>
 		/// 
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
 			if (disposing) {
-				lua.Dispose();
+				Lua.LuaClose(L);
 				KillAllModels();
 				game.Reloading -= Game_Reloading;
 			}
@@ -101,15 +103,13 @@ namespace IronStar.SFX {
 				return null;
 			}
 
-			ModelFactory factory;
+			var codepath = @"models\" + modelName;
+			var bytecode = content.Load<byte[]>(codepath);
 
-			if (world.Content.TryLoad( @"models\" + modelName, out factory )) {
-				var model		=	new ModelInstance( entity, this, factory, world.Content );
-				AddModel( model );
-				return model;
-			} else {
-				return null;
-			}
+			var model = new ModelInstance( entity, this, bytecode, codepath );
+			AddModel( model );
+
+			return model;
 		}
 
 

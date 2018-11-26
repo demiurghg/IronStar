@@ -50,9 +50,9 @@ namespace IronStar.Core {
 						.ToArray();
 
 
-				content	.EnumerateAssets("models")
-						.Select( name => content.PrecacheSafe<ModelFactory>(@"models\"+name) )
-						.ToArray();
+				//content	.EnumerateAssets("models")
+				//		.Select( name => content.PrecacheSafe<ModelFactory>(@"models\"+name) )
+				//		.ToArray();
 
 				content	.EnumerateAssets("entities")
 						.Select( name => content.PrecacheSafe<EntityFactory>(@"entities\"+name) )

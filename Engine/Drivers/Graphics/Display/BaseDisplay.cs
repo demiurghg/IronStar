@@ -344,11 +344,19 @@ namespace Fusion.Drivers.Graphics.Display {
 
 		void form_FormClosing ( object sender, FormClosingEventArgs e )
 		{
+			Log.Message("Exit requested... ");
+
 			if (Game.ExitRequested) {
-				e.Cancel	=	false;
+				e.Cancel = false;
 			} else {
-				Game.UserInterface.RequestToExit();
-				e.Cancel	=	true;
+				var exitable = Game.Services.GetService<IExitable>();
+
+				if (exitable!=null) {
+					exitable.RequestToExit();
+					e.Cancel = true;
+				} else {
+					e.Cancel = false;
+				}
 			}
 		}
 

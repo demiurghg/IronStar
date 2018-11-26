@@ -34,6 +34,9 @@ namespace IronStar.Mapping {
 		public MapNodeCollection Nodes { get; set; }
 
 
+		public MapNavigation Navigation { get; set; }
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -41,6 +44,7 @@ namespace IronStar.Mapping {
 		{
 			Nodes		=	new MapNodeCollection();
 			Environment	=	new MapEnvironment();
+			Navigation	=	new MapNavigation();
 		}
 
 

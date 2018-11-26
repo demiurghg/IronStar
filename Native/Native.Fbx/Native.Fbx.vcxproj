@@ -93,7 +93,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FbxLoader.h" />
-    <ClInclude Include="Options.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="StringHelper.h" />

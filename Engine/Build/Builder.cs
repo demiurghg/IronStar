@@ -630,8 +630,23 @@ namespace Fusion.Build {
 
 				buildResult.Succeded ++;
 
+			} catch ( BuildException be ) {
+
+				Log.Error(be.Message);
+				buildResult.Failed ++;
+
 			} catch ( Exception e ) {
-				Log.Error( "{0} : {1}", assetFile.KeyPath, e.Message );
+					
+				Log.Error("-------- Unhandled Exception --------");
+				Log.Error("Asset:{0}", assetFile.KeyPath );
+				Log.Error("{0}", e );
+
+				if (e.InnerException!=null) {
+					Log.Error("");
+					Log.Error("{0}", e.InnerException);
+				}
+
+				Log.Error("-------------------------------------");
 				buildResult.Failed ++;
 			}
 		}

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Fusion.Core.Extensions;
 
 namespace Fusion.Core.Shell {
 
@@ -13,15 +14,25 @@ namespace Fusion.Core.Shell {
 	/// </summary>
 	public partial class ArgList : IEnumerable<string> {
 
-		readonly string[] args;
+		readonly List<string> args;
 		
+		/// <summary>
+		/// Creats instance of ArgList
+		/// </summary>
+		/// <param name="args"></param>
+		public ArgList ( string commandLine )
+		{
+			this.args =new List<string>( commandLine.SplitCommandLine() );
+		}
+
+
 		/// <summary>
 		/// Creats instance of ArgList
 		/// </summary>
 		/// <param name="args"></param>
 		public ArgList ( string[] args )
 		{
-			this.args = args;
+			this.args = new List<string>( args );
 		}
 
 
@@ -30,8 +41,18 @@ namespace Fusion.Core.Shell {
 		/// </summary>
 		public int Count {
 			get {
-				return args.Length;
+				return args.Count;
 			}
+		}
+
+
+		/// <summary>
+		/// Adds new argument to the end of the list
+		/// </summary>
+		/// <param name="arg"></param>
+		public void Add ( string arg )
+		{
+			args.Add( arg );
 		}
 
 
@@ -94,6 +115,11 @@ namespace Fusion.Core.Shell {
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return ( (IEnumerable<string>)args ).GetEnumerator();
+		}
+
+		public string[] GetArray()
+		{
+			return args.ToArray();
 		}
 	}
 }

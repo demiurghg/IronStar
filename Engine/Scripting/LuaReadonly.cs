@@ -9,7 +9,7 @@ namespace Fusion.Scripting {
 	/// <summary>
 	/// Shell command attribute
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Method)]
+	[AttributeUsage(AttributeTargets.Property)]
 	public sealed class LuaReadonly : Attribute {
 
 		/// <summary>

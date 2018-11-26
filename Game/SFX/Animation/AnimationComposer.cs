@@ -10,6 +10,8 @@ using Fusion.Engine.Graphics;
 using Fusion.Engine.Audio;
 using IronStar.Core;
 using Fusion.Core.Extensions;
+using KopiLua;
+using Fusion.Scripting;
 
 namespace IronStar.SFX {
 	public class AnimationComposer {
@@ -91,7 +93,7 @@ namespace IronStar.SFX {
 			foreach ( var fxInstance in fxInstances ) {
 				Vector3 p, s;
 				Quaternion q;
-				Matrix jointWorld = transforms[ fxInstance.JointIndex ] * model.PreTransform * model.ComputeWorldMatrix();
+				Matrix jointWorld = transforms[ fxInstance.JointIndex ] * model.preTransform * model.ComputeWorldMatrix();
 				jointWorld.Decompose( out s, out q, out p );
 				fxInstance.Move( p, Vector3.Zero, q );
 			}
@@ -131,9 +133,16 @@ namespace IronStar.SFX {
 
 			if (jointId<0) {
 				Log.Warning("Bad joint name: {0}", joint);
+				return;
 			}
 
 			var fxAtom	 = world.Atoms[ fxName ];
+
+			if (fxAtom<=0) {
+				Log.Warning("Bad SFX name: {0}", fxName);
+				return;
+			}
+
 			var fxEvent  = new FXEvent( fxAtom, 0, Vector3.Zero, Vector3.Zero, Quaternion.Identity );
 				fxEvent.Scale = scale;
 			var instance = fxPlayback.RunFX( fxEvent, false );
@@ -175,5 +184,118 @@ namespace IronStar.SFX {
 			}
 		}
 
+		/*-----------------------------------------------------------------------------------------------
+		 * 
+		 *	Lua API 
+		 * 
+		-----------------------------------------------------------------------------------------------*/
+
+		[LuaApi("add_track")]
+		int AddTrack ( LuaState L )
+		{
+			using ( new LuaStackGuard(L,1) ) {
+
+				var modeName	=	Lua.LuaToString( L, 1 )?.ToString();
+				var channel		=	Lua.LuaToString( L, 2 )?.ToString();
+
+				var blendMode	= AnimationBlendMode.Override;
+
+				switch (modeName) {
+					case null		: blendMode = AnimationBlendMode.Override; break;
+					case "override"	: blendMode = AnimationBlendMode.Override; break;
+					case "additive"	: blendMode = AnimationBlendMode.Additive; break;
+					default: throw new ArgumentException("bad animation blend mode");
+				}
+
+				var track	=	new AnimationTrack( scene, channel, blendMode );
+
+				Tracks.Add( track );
+
+				LuaObjectTranslator.Instance(L).PushObject( L, track );
+
+				return 1;
+			}
+		}
+
+		[LuaApi("add_pose")]
+		int AddPose ( LuaState L )
+		{
+			using ( new LuaStackGuard(L,1) ) {
+
+				var modeName	=	Lua.LuaToString( L, 1 )?.ToString();
+				var channel		=	Lua.LuaToString( L, 2 )?.ToString();
+				var take		=	Lua.LuaToString( L, 3 )?.ToString();
+
+				var blendMode	= AnimationBlendMode.Override;
+
+				switch (modeName) {
+					case null		: blendMode = AnimationBlendMode.Override; break;
+					case "override"	: blendMode = AnimationBlendMode.Override; break;
+					case "additive"	: blendMode = AnimationBlendMode.Additive; break;
+					default: throw new ArgumentException("bad animation blend mode");
+				}
+
+				var track	=	new AnimationPose( scene, channel, take, blendMode );
+
+				Tracks.Add( track );
+
+				LuaObjectTranslator.Instance(L).PushObject( L, track );
+
+				return 1;
+			}
+		}
+
+		
+		[LuaApi("sequence_fx")]
+		int RunFX ( LuaState L )
+		{
+			using ( new LuaStackGuard(L,0) ) {
+
+				var fx		=	Lua.LuaToString( L, 1 )?.ToString();
+				var joint	=	Lua.LuaToString( L, 2 )?.ToString();
+				var scale	=	(float)Lua.LuaToNumber( L, 3 );
+				
+				if (scale<=0) {	
+					scale = 1;
+				}
+
+				SequenceFX( fx, joint, scale );
+
+				return 0;
+			}
+		}
+
+		
+		[LuaApi("play_fx")]
+		int PlayFX ( LuaState L )
+		{
+			using ( new LuaStackGuard(L,0) ) {
+
+				var fx		=	Lua.LuaToString( L, 1 )?.ToString();
+				var joint	=	Lua.LuaToString( L, 2 )?.ToString();
+				var scale	=	(float)Lua.LuaToNumber( L, 3 );
+				
+				if (scale<=0) {	
+					scale = 1;
+				}
+
+				SequenceFX( fx, joint, scale );
+
+				return 0;
+			}
+		}
+
+		
+		[LuaApi("play_sound")]
+		int PlaySound ( LuaState L )
+		{
+			using ( new LuaStackGuard(L,0) ) {
+
+				var sound	=	Lua.LuaToString( L, 1 )?.ToString();
+				SequenceSound( sound );
+
+				return 0;
+			}
+		}
 	}
 }

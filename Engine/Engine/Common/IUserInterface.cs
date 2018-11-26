@@ -7,7 +7,7 @@ using Fusion.Core;
 using System.Threading.Tasks;
 
 namespace Fusion.Engine.Common {
-	public interface IUserInterface : IDisposable {
+	public interface IUserInterface : IDisposable, IExitable {
 
 		/// <summary>
 		/// 
@@ -19,11 +19,6 @@ namespace Fusion.Engine.Common {
 		/// </summary>
 		/// <param name="gameTime"></param>
 		void Update ( GameTime gameTime );
-
-		/// <summary>
-		/// Called when user tries to close program using Alt-F4 or from windows menu.
-		/// </summary>
-		void RequestToExit ();
 
 		/// <summary>
 		/// This method called each time when discovery responce arrived.

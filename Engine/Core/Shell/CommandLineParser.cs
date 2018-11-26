@@ -87,7 +87,7 @@ namespace Fusion.Core.Shell
 			            requiredUsageHelp.Add(new ArgumentInfo(field));
 					}
 
-                } else {
+                } else if (GetAttribute<OptionAttribute>(field) != null) {
                     // Record an optional option.
                     optionalOptions.Add(fieldName.ToLowerInvariant(), field);
   
@@ -482,6 +482,15 @@ namespace Fusion.Core.Shell
 		/// </summary>
         [AttributeUsage(AttributeTargets.Property)]
         public sealed class RequiredAttribute : Attribute
+        { 
+        }
+
+
+		/// <summary>
+        /// Used on optionsObject fields to indicate which options are required.
+		/// </summary>
+        [AttributeUsage(AttributeTargets.Property)]
+        public sealed class OptionAttribute : Attribute
         { 
         }
 

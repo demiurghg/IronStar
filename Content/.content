@@ -9,12 +9,14 @@ scenes/*.png
 scenes/*.jpg
 turtle/*
 _outsource/*
+_kitbash/*
 *.wav
 *.ogg
 
 [BinaryDirectories]
 ..\..\..\..\SDKs
 ..\..\..\..\Native\FScene\bin\x64\Release
+..\..\..\..\SDKs\KopiLua\Luac\bin\x64\Release
 #..\..\..\..\Native\FScene\bin\x64\Debug
 #HKEY_CURRENT_USER\Software\FusionEngine@ToolsDir
 
@@ -38,13 +40,16 @@ _outsource/*
 [Scenes]
 *.fbx /geom /report /anim
 *anim_*.fbx /report /anim
+scenes/weapon2/*.fbx /geom /report /anim  /retarget:scenes\weapon2\weapon_common.fbx
 
 [Sounds]
 *.wav
+
+[Lua]
+*.lua
 
 [Copy]
 *.ini
 *.txt
 *.json
 *.bank
-*.lua

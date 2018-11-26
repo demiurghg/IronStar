@@ -129,7 +129,7 @@ namespace Fusion.Scripting {
 		/// <returns></returns>
 		public static T Expect<T>( LuaState L, int index, string argument ) where T: class
 		{
-			return LuaObjectTranslator.Get(L).LuaTo<T>( L, index );
+			return LuaObjectTranslator.Instance(L).LuaTo<T>( L, index );
 		}
 
 
@@ -141,7 +141,7 @@ namespace Fusion.Scripting {
 		/// <param name="obj"></param>
 		public static void PushObject( LuaState L, object obj )
 		{
-			LuaObjectTranslator.Get(L).PushObject( L, obj );
+			LuaObjectTranslator.Instance(L).PushObject( L, obj );
 		}
 
 

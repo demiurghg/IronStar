@@ -301,7 +301,7 @@ namespace Fusion.Core {
 			touch				=	new Touch(this);
 			gamepads			=	new GamepadCollection(this);
 
-			invoker.RegisterCommand("quit", (args) => new Quit(this) );
+			invoker.RegisterCommand("quit", () => new Quit(this) );
 		}
 
 
@@ -625,7 +625,6 @@ namespace Fusion.Core {
 		public SoundSystem SoundSystem { get { return Services.GetService<SoundSystem>(); } }
 		public RenderSystem RenderSystem { get { return Services.GetService<RenderSystem>(); } }
 		public GameConsole Console { get { return Services.GetService<GameConsole>(); } }
-		public UserInterface UserInterface;
 		public Network Network { get { return Services.GetService<Network>(); } }
 		public FrameProcessor Frames { get { return Services.GetService<FrameProcessor>(); } }
 	}

@@ -19,35 +19,36 @@ namespace Fusion.Core.Shell {
 		class Get : CommandNoHistory {
 
 			readonly Invoker invoker;
-			readonly string variable;
-			readonly bool print;
+
+			[CommandLineParser.Required]
+			[CommandLineParser.Name("variable")]
+			public string Variable { get; set; }
+
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("print")]
+			public bool Print { get; set; }
 
 		
 			public Get ( Invoker invoker, string variable, bool print )
 			{
 				this.invoker = invoker;
-				this.variable = variable;
-				this.print	= print;
+				this.Variable = variable;
+				this.Print	= print;
 			}
 
 
-			public Get ( Invoker invoker, ArgList args )
+			public Get ( Invoker invoker )
 			{
 				this.invoker = invoker;
-
-				args.Usage("set <variable> /print")
-					.Require( "variable"	,	out variable	)
-					.Option	( "/print"		, out print )
-					.Apply();
 			}
 
 
 			public override object Execute()
 			{
-				var propValue = invoker.GetComponentProperty(variable);
+				var propValue = invoker.GetComponentProperty(Variable);
 
-				if (print) {
-					Log.Message("{0} = {1}", variable, propValue);
+				if (Print) {
+					Log.Message("{0} = {1}", Variable, propValue);
 					return null;
 				} else {
 					return propValue;

@@ -16,44 +16,46 @@ using Fusion.Engine.Graphics;
 using IronStar.Core;
 using Fusion.Engine.Audio;
 using IronStar.Views;
-
+using KopiLua;
+using Fusion.Scripting;
 
 namespace IronStar.SFX {
 
-	public class ModelInstance {
+	public partial class ModelInstance : LuaScript {
 
 		static readonly Scene EmptyScene = Scene.CreateEmptyScene();
 
 		readonly public Entity Entity;
 
-		public readonly Matrix PreTransform;
 
 		public bool IsFPVModel {
 			get { return fpvEnabled; }
 		}
 
-		readonly Color4 color;
 		readonly GameWorld world;
 		readonly ModelManager modelManager;
-		readonly Scene scene;
-		readonly Scene[] clips;
-		readonly string fpvCamera;
-		readonly bool fpvEnabled;
-		readonly Matrix fpvCameraMatrix;
-		readonly Matrix fpvViewMatrix;
-		readonly int fpvCameraIndex;
+		readonly ContentManager content;
+		
+		Color color;
+		float intensity;
+		float dtime; // send to script
+
+		Scene scene;
+
+		bool fpvEnabled;
+
+		public Matrix preTransform;
 
 		Matrix[] globalTransforms;
 		Matrix[] animSnapshot;
 		MeshInstance[] meshInstances;
-
-		Animator	animator;
-
-		readonly int nodeCount;
+		AnimationComposer composer;
 
 		public bool Killed {
 			get; private set;
 		}
+
+		int sleepTime = 0;
 
 
 		/// <summary>
@@ -69,64 +71,81 @@ namespace IronStar.SFX {
 		/// <param name="scene"></param>
 		/// <param name="entity"></param>
 		/// <param name="matrix"></param>
-		public ModelInstance ( Entity entity, ModelManager modelManager, ModelFactory factory, ContentManager content )
+		public ModelInstance ( Entity entity, ModelManager modelManager, byte[] bytecode, string name ) : base(modelManager.L, bytecode, name)
 		{
-			if (string.IsNullOrWhiteSpace(factory.ScenePath)) {
-				this.scene		=	EmptyScene;
-				this.clips		=	new Scene[0];
-			} else {
-				this.scene		=	content.Load<Scene>( factory.ScenePath );
-			}
-
 			this.Entity			=	entity;
-
 			this.modelManager   =   modelManager;
 			this.world			=	modelManager.world;
-			this.PreTransform   =   factory.ComputePreTransformMatrix();
-			this.color			=	factory.Color;
-			this.color			*=	factory.Intensity;
+			this.content		=	modelManager.content;
 
-			this.fpvEnabled		=	factory.FPVEnable;
-			this.fpvCamera		=	factory.FPVCamera;
+			base.Resume(this);
+		}
 
-			nodeCount			=	scene.Nodes.Count;
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="dt"></param>
+		/// <param name="animFrame"></param>
+		/// <param name="worldMatrix"></param>
+		public void Update ( GameTime gameTime, float animFrame )
+		{
+			dtime	= gameTime.ElapsedSec;
+
+			if (sleepTime<=0) {
+				Resume(null);
+			} else {
+				sleepTime -= gameTime.Milliseconds;
+			}
+
+
+			var worldMatrix	=	ComputeWorldMatrix();
+
+			if (composer!=null) {
+				composer.Update( gameTime, animSnapshot );
+				//scene.ComputeAbsoluteTransforms( animSnapshot );
+			}
+
+			UpdateInternal( worldMatrix, animSnapshot );
+		}
+
+
+		/*-----------------------------------------------------------------------------------------------
+		 * 
+		 *	Model operations :
+		 * 
+		-----------------------------------------------------------------------------------------------*/
+
+		void LoadScene ( string path )
+		{
+			if (string.IsNullOrWhiteSpace(path)) {
+				this.scene		=	EmptyScene;
+			} else {
+				this.scene		=	content.Load<Scene>( path );
+			}
+
+			this.preTransform   =   Matrix.Identity;
+			this.color			=	Color.White	;
+			this.intensity		=	100;
+
+			this.fpvEnabled		=	false;
 
 			globalTransforms	=	new Matrix[ scene.Nodes.Count ];
 			animSnapshot		=	new Matrix[ scene.Nodes.Count ];
 			scene.ComputeAbsoluteTransforms( globalTransforms );
 			scene.ComputeAbsoluteTransforms( animSnapshot );
-
-			if (factory.AnimEnabled) {
-				animator	=	content.Load(@"animation\" + factory.AnimController, (AnimatorFactory)null)?.Create( world, entity, this );
-			}
-
-			if (fpvEnabled) {
-				fpvCameraIndex		=	scene.GetNodeIndex( fpvCamera );
-
-				if (fpvCameraIndex<0) {	
-					Log.Warning("Camera node {0} does not exist", fpvCamera);
-				} else {
-					fpvCameraMatrix	=	Scene.FixGlobalCameraMatrix( globalTransforms[ fpvCameraIndex ] );
-					fpvViewMatrix	=	Matrix.Invert( fpvCameraMatrix );
-					PreTransform	=	fpvViewMatrix * Matrix.Scaling( factory.Scale );
-				}
-			} else {
-				PreTransform	=	Matrix.Scaling( factory.Scale );	
-			}
-
-
+			
 			meshInstances	=	new MeshInstance[ scene.Nodes.Count ];
 
-			var instGroup	=	fpvEnabled ? InstanceGroup.Weapon : InstanceGroup.Dynamic;
-
-
-			for ( int i=0; i<nodeCount; i++ ) {
+			for ( int i=0; i<scene.Nodes.Count; i++ ) {
 				var meshIndex = scene.Nodes[i].MeshIndex;
 				
 				if (meshIndex>=0) {
 					meshInstances[i]		= new MeshInstance( modelManager.rs, scene, scene.Meshes[meshIndex] );
-					meshInstances[i].Group	= instGroup;
-					meshInstances[i].Color	= color;
+					meshInstances[i].Group	= InstanceGroup.Dynamic;
+					meshInstances[i].Color	= Color4.Zero;
 					modelManager.rw.Instances.Add( meshInstances[i] );
 				} else {
 					meshInstances[i] = null;
@@ -144,7 +163,6 @@ namespace IronStar.SFX {
 			var worldMatrix = Matrix.RotationQuaternion( q ) * Matrix.Translation( p );
 
 			if ( fpvEnabled ) {
-				var weaponMatrix		=	Matrix.Identity;
 				var playerCameraMatrix	=	modelManager.rw.Camera.GetCameraMatrix(Fusion.Drivers.Graphics.StereoEye.Mono);
 				
 				worldMatrix				= 	playerCameraMatrix;
@@ -152,32 +170,9 @@ namespace IronStar.SFX {
 
 			return worldMatrix;
 		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="dt"></param>
-		/// <param name="animFrame"></param>
-		/// <param name="worldMatrix"></param>
-		public void Update ( GameTime gameTime, float animFrame )
-		{
-			var worldMatrix	=	ComputeWorldMatrix();
-
-			if (animator!=null) {
-
-				animator.Update( gameTime, animSnapshot );
-				UpdateInternal( worldMatrix, animSnapshot );
-
-			} else {
-
-				UpdateInternal( worldMatrix, animSnapshot );
-
-			}
-		}
-
-
 		
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -185,17 +180,25 @@ namespace IronStar.SFX {
 		/// <param name="noteTransforms"></param>
 		void UpdateInternal ( Matrix worldMatrix, Matrix[] nodeTransforms )
 		{
+			if (scene==null || scene==EmptyScene) {
+				return;
+			}
+
 			if (nodeTransforms==null) {
 				throw new ArgumentNullException("nodeTransforms");
 			}
-			if (nodeCount>nodeTransforms.Length) {
+			if (scene.Nodes.Count>nodeTransforms.Length) {
 				throw new ArgumentException("nodeTransforms.Length < nodeCount");
 			}
 
-			for ( int i = 0; i<nodeCount; i++ ) {
+			var instGroup	=	fpvEnabled ? InstanceGroup.Weapon : InstanceGroup.Dynamic;
+			var glowColor	=	color.ToColor4() * intensity;
+
+			for ( int i = 0; i<scene.Nodes.Count; i++ ) {
 				if (meshInstances[i]!=null) {
-					meshInstances[i].World = nodeTransforms[i] * PreTransform * worldMatrix;
-					meshInstances[i].Color = color;
+					meshInstances[i].Group	=	instGroup;
+					meshInstances[i].World	=	nodeTransforms[i] * preTransform * worldMatrix;
+					meshInstances[i].Color	=	glowColor;
 				}
 			}
 		}
@@ -218,7 +221,13 @@ namespace IronStar.SFX {
 		/// </summary>
 		public void Kill ()
 		{
-			for ( int i = 0; i<nodeCount; i++ ) {
+			Terminate();
+
+			if (scene==null || scene==EmptyScene) {
+				return;
+			}
+
+			for ( int i = 0; i<scene.Nodes.Count; i++ ) {
 				if (meshInstances[i]!=null) {
 					modelManager.rw.Instances.Remove( meshInstances[i] );
 				}
@@ -233,45 +242,6 @@ namespace IronStar.SFX {
 		 * 
 		-----------------------------------------------------------------------------------------------*/
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public void ResetPose ()
-		{
-			scene.ComputeAbsoluteTransforms( animSnapshot );
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public void SetBindPose ()
-		{
-			throw new NotImplementedException();
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="frame"></param>
-		public void EvaluateFrame ( float animFrame )
-		{
-			throw new NotImplementedException();
-			/*if (animFrame>scene.LastFrame) {
-				Log.Warning("Anim frame: {0} > {1}", animFrame, scene.LastFrame);
-			}
-
-			if (animFrame<scene.FirstFrame) {
-				Log.Warning("Anim frame: {0} < {1}", animFrame, scene.FirstFrame);
-			}
-
-			animFrame = MathUtil.Clamp( animFrame, scene.FirstFrame, scene.LastFrame );
-
-			scene.GetAnimSnapshot( animFrame, scene.FirstFrame, scene.LastFrame, AnimationMode.Clamp, animSnapshot );
-			scene.ComputeAbsoluteTransforms( animSnapshot, animSnapshot ); */
-		}
+		//AnimationComposer composer = new AnimationComposer(""
 	}
 }

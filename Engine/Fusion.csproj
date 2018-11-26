@@ -136,10 +136,10 @@
     <Compile Include="Build\Processors\AssetProcessor.cs" />
     <Compile Include="Build\Processors\AssetProcessorAttribute.cs" />
     <Compile Include="Build\Processors\AssetProcessorBinding.cs" />
+    <Compile Include="Build\Processors\LuaProcessor.cs" />
     <Compile Include="Build\Processors\CopyProcessor.cs" />
     <Compile Include="Build\Processors\FontProcessor.cs" />
     <Compile Include="Build\Processors\SceneProcessor.cs" />
-    <Compile Include="Build\Processors\ScriptProcessor.cs" />
     <Compile Include="Build\Processors\SoundProcessor.cs" />
     <Compile Include="Build\Processors\TextureAtlasProcessor.cs" />
     <Compile Include="Build\Processors\TextureProcessor.cs" />
@@ -149,12 +149,14 @@
     <Compile Include="Build\ToolException.cs" />
     <Compile Include="Core\Content\IniLoader.cs" />
     <Compile Include="Core\Content\IPrecachable.cs" />
+    <Compile Include="Core\Extensions\EmbreeExtensions.cs" />
     <Compile Include="Core\Extensions\KeyDataCollectionExtension.cs" />
     <Compile Include="Core\Extensions\LinkedListExtensions.cs" />
     <Compile Include="Core\Extensions\GameExtensions.cs" />
     <Compile Include="Core\Extensions\XmlImporter.cs" />
     <Compile Include="Core\FpsCounter.cs" />
     <Compile Include="Core\GameComponentCollectionEventArgs.cs" />
+    <Compile Include="Core\IExitable.cs" />
     <Compile Include="Core\Mathematics\Byte3.cs" />
     <Compile Include="Core\Mathematics\HSVColor.cs" />
     <Compile Include="Core\Mathematics\Range.cs" />
@@ -172,7 +174,6 @@
     <Compile Include="Core\Shell\Invoker.Get.cs" />
     <Compile Include="Core\Shell\Invoker.Helper.cs" />
     <Compile Include="Core\Shell\Invoker.Set.cs" />
-    <Compile Include="Core\Shell\ISyntax.cs" />
     <Compile Include="Core\Shell\ICommand.cs" />
     <Compile Include="Core\Shell\Invoker.Batch.cs" />
     <Compile Include="Core\Shell\Invoker.cs" />
@@ -612,6 +613,7 @@
     <Compile Include="Scripting\LuaObjectTranslator.cs" />
     <Compile Include="Scripting\LuaObjectWrapper.cs" />
     <Compile Include="Scripting\LuaReadonly.cs" />
+    <Compile Include="Scripting\LuaScript.cs" />
     <Compile Include="Scripting\LuaStackGuard.cs" />
     <Compile Include="Scripting\LuaUtils.cs" />
     <Compile Include="Scripting\LuaValue.cs" />

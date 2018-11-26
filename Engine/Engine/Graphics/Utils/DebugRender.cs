@@ -334,11 +334,11 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		public void DrawWaypoint(Vector3 p, float size, Color color)
+		public void DrawWaypoint(Vector3 p, float size, Color color, int width = 1 )
 		{
 			float h = size / 2;	// half size
-			DrawLine(p + Vector3.UnitX * h, p - Vector3.UnitX * h, color);
-			DrawLine(p + Vector3.UnitZ * h, p - Vector3.UnitZ * h, color);
+			DrawLine( p + Vector3.UnitX * h, p - Vector3.UnitX * h, color, color, width, width );
+			DrawLine( p + Vector3.UnitZ * h, p - Vector3.UnitZ * h, color, color, width, width );
 		}
 
 
@@ -357,6 +357,32 @@ namespace Fusion.Engine.Graphics {
 			for (int i = 0; i < N; i++)
 			{
 				DrawLine(points[i], points[i + 1], color);
+			}
+		}
+
+
+		public void DrawCylinder(Vector3 origin, float radius, float height, Color color, int numSegments = 32, float angle = 0)
+		{
+			int N = numSegments;
+			Vector3[] pointsTop		= new Vector3[N + 1];
+			Vector3[] pointsBottom	= new Vector3[N + 1];
+
+			for (int i = 0; i <= N; i++)
+			{
+				pointsTop[i].X		= origin.X + radius * (float)Math.Cos(Math.PI * 2 * i / N + angle);
+				pointsTop[i].Y		= origin.Y + height/2;
+				pointsTop[i].Z		= origin.Z + radius * (float)Math.Sin(Math.PI * 2 * i / N + angle);
+
+				pointsBottom[i].X	= origin.X + radius * (float)Math.Cos(Math.PI * 2 * i / N + angle);
+				pointsBottom[i].Y	= origin.Y - height/2;
+				pointsBottom[i].Z	= origin.Z + radius * (float)Math.Sin(Math.PI * 2 * i / N + angle);
+			}
+
+			for (int i = 0; i < N; i++)
+			{
+				DrawLine( pointsTop[i]		, pointsTop		[i + 1]	, color);
+				DrawLine( pointsBottom[i]	, pointsBottom	[i + 1]	, color);
+				DrawLine( pointsTop[i]		, pointsBottom	[i]		, color);
 			}
 		}
 

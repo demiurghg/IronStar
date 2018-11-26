@@ -339,7 +339,7 @@ namespace Fusion.Drivers.Graphics {
 
 			base.Dispose(disposing);
 
-			GraphicsResource.ReportLiveObjects();
+			//GraphicsResource.ReportLiveObjects();
 		}
 
 

@@ -13,52 +13,48 @@ using System.Reflection;
 using System.ComponentModel;
 using KopiLua;
 using Fusion.Core.Content;
+using Fusion.Core;
 
 namespace Fusion.Scripting {
-	public partial class LuaInvoker : IDisposable {
-
-		public readonly LuaState L;
-		object lockObject = new object();
-
-		readonly ContentManager content;
+	public static class LuaInvoker {
 
 
 		/// <summary>
-		/// Creates instance of Invoker.
+		/// Creates instance of LuaState with Fusion related stuff.
 		/// </summary>
-		/// <param name="game">Game instance</param>
-		public LuaInvoker ( ContentManager content )
+		/// <returns></returns>
+		public static LuaState CreateLuaState ()
 		{
-			this.content	=	content;
-			
-			L	=	Lua.LuaOpen();
+			var L	=	Lua.LuaOpen();
 			Lua.LuaLOpenLibs(L);
 
-			Lua.LuaPushCFunction( L, LuaBPrint );
-			Lua.LuaSetGlobal( L, "print" );
-		}
+			using ( new LuaStackGuard( L ) ) {
 
+				Lua.LuaPushCFunction( L, Print );
+				Lua.LuaSetGlobal( L, "print" );
 
+				Lua.LuaPushCFunction( L, DoFile );
+				Lua.LuaSetGlobal( L, "dofile" );
 
-		#region IDisposable Support
-		private bool disposedValue = false; // To detect redundant calls
+				var contentLib = new[]{
+					new Lua.LuaLReg("dofile",	DoFile			),
+					new Lua.LuaLReg("loader",	LoaderContent	),
+					new Lua.LuaLReg(null	,	null			),
+				};
 
-		protected virtual void Dispose( bool disposing )
-		{
-			if ( !disposedValue ) {
-				if ( disposing ) {
-					Lua.LuaClose(L);
-				}
+				Lua.LuaLRegister( L, "content", contentLib );
+				Lua.LuaPop( L, 1 );
 
-				disposedValue = true;
+				ExecuteString( L, "table.insert( package.loaders, content.loader );" );
+
+				ExecuteFile( L, "init" );
 			}
+
+			Game.Instance.Reloading += (s,e) => ExecuteFile( L, "reload" );
+
+			return L;
 		}
 
-		public void Dispose()
-		{
-			Dispose( true );
-		}
-		#endregion
 
 
 		/// <summary>
@@ -67,7 +63,7 @@ namespace Fusion.Scripting {
 		/// <param name="apiName"></param>
 		/// <param name="obj"></param>
 		/// <param name="methods"></param>
-		public void ExposeApi ( object target, string apiName )
+		public static void ExposeApi ( LuaState L, object target, string apiName )
 		{
 			if (apiName==null) {
 				throw new ArgumentNullException("apiName");
@@ -85,44 +81,71 @@ namespace Fusion.Scripting {
 		/// 
 		/// </summary>
 		/// <param name="commandLine"></param>
-		public string ExecuteString ( string commandLine )
+		public static bool ExecuteString ( LuaState L, string commandLine )
 		{
-			int errcode;
+			using ( new LuaStackGuard( L ) ) {
 
-			using ( new LuaStackGuard(L) ) {
-				
-				//errcode = Lua.LuaLLoadString( L, commandLine);
+				var status = Lua.LuaLLoadBuffer( L, commandLine, (uint)commandLine.Length, "[string]" );
 
-				errcode = Lua.LuaLLoadBuffer( L, commandLine, (uint)commandLine.Length, "cmdline");
-
-				if (errcode!=0) {
-					throw new LuaException(L, errcode);
+				if (status!=0) {
+					Log.Error( "error loading string '{0}'", commandLine );
+					return false;
 				}
 
+				status = Lua.LuaPCall(L, 0, 0, 0);
 
-				errcode = Lua.LuaPCall(L,0,1,0);
-
-				if (errcode!=0) {
-					throw new LuaException(L, errcode);
-				} else {
-					
-					var result = Lua.LuaToString(L,-1)?.ToString();
-					Lua.LuaPop(L, 1);
-
-					return result;
-
+				if (status!=0) {
+					var error = Lua.LuaToString(L,-1).ToString();
+					Lua.LuaPop( L, 1 );
+					Log.Error( error );
+					return false;
 				}
+
+				return true;
 			}
 		}
 
 
+
 		/// <summary>
-		/// 
+		/// Executes given file from content.
+		/// Returns true if succeded. 
+		/// False otherwice and prints error message.
 		/// </summary>
-		/// <param name="path"></param>
-		public void ExecuteFile ( string path )
+		/// <param name="L"></param>
+		/// <param name="fileName"></param>
+		/// <returns></returns>
+		public static bool ExecuteFile ( LuaState L, string fileName )
 		{
-			LuaUtils.LuaDoFile( L, content.Load<string>(path), path );
+			using ( new LuaStackGuard( L ) ) {
+
+				int n		 = Lua.LuaGetTop(L);
+
+				if (!content.Exists(fileName)) {
+					Log.Error( "file '{0}' does not exist", fileName );
+					return false;
+				}
+				
+				var bytecode = content.Load<byte[]>( fileName );
+
+				var status = Lua.LuaLLoadBuffer( L, bytecode, (uint)bytecode.Length, fileName );
+
+				if (status!=0) {
+					Log.Error( "error loading file '{0}'", fileName );
+					return false;
+				}
+
+				status = Lua.LuaPCall(L, 0, 0, 0);
+
+				if (status!=0) {
+					var error = Lua.LuaToString(L,-1).ToString();
+					Lua.LuaPop( L, 1 );
+					Log.Error( error );
+					return false;
+				}
+
+				return true;
+			}
 		}
 
 		/*-----------------------------------------------------------------------------------------
@@ -131,7 +154,77 @@ namespace Fusion.Scripting {
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
-		private static int LuaBPrint (LuaState L) {
+		static ContentManager content {
+			get { return Game.Instance.Content; }
+		}
+
+
+
+		static int DoFile ( LuaState L )
+		{
+			using ( new LuaStackGuard( L ) ) {
+				var filename = Lua.LuaLCheckString(L, 1)?.ToString();
+				int n		 = Lua.LuaGetTop(L);
+
+				if (!content.Exists(filename)) {
+					Lua.LuaLError( L, "file '{0}' does not exist", filename);
+				}
+				
+				var bytecode = content.Load<byte[]>( filename );
+
+				var status = Lua.LuaLLoadBuffer( L, bytecode, (uint)bytecode.Length, filename );
+
+				if (status!=0) {
+					Lua.LuaLError( L, "error loading file '{0}'", filename);
+				}
+
+				Lua.LuaCall(L, 0, Lua.LUA_MULTRET);
+
+				return Lua.LuaGetTop(L) - n;
+			}
+		}
+
+
+
+		static int LoaderContent ( LuaState L )
+		{
+			using ( new LuaStackGuard( L, 1 ) ) {
+
+				var filename = Lua.LuaLCheckString(L, 1)?.ToString();
+
+				Lua.LuaGetGlobal( L, "package" );
+				Lua.LuaGetField( L, -1, "path" );
+
+				var searchPath = Lua.LuaToString( L, -1 ).ToString();
+
+				Lua.LuaPop( L, -2 );
+
+				byte[] bytecode;
+
+				foreach ( var pattern in searchPath.Split(';') ) {
+
+					var path = pattern.Replace( "?", filename );
+
+					if (content.TryLoad( path, out bytecode )) {
+						
+						var status = Lua.LuaLLoadBuffer( L, bytecode, (uint)bytecode.Length, filename );
+
+						if (status!=0) {
+							Lua.LuaLError( L, "error loading file '{0}'", filename);
+						}
+
+						return 1;
+					}
+				}
+
+				Lua.LuaPushFString( L, "no file {0}", filename );
+
+				return 1;
+			}
+		}
+
+
+		static int Print (LuaState L) {
 
 			StringBuilder sb = new StringBuilder(256);
 

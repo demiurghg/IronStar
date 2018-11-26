@@ -19,15 +19,14 @@ namespace Fusion.Core.Shell {
 		class UndoCmd : CommandNoHistory {
 
 			readonly Invoker invoker;
-			readonly int count;
+
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("count")]
+			public int Count { get; set; } = 1;
 		
-			public UndoCmd ( Invoker invoker, ArgList args )
+			public UndoCmd ( Invoker invoker )
 			{
 				this.invoker = invoker;
-
-				if (args.Count>1) {
-					count = MathUtil.Clamp( int.Parse(args[1]), 0, int.MaxValue );
-				}
 			}
 
 

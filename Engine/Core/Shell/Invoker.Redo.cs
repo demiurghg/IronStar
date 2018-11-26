@@ -19,21 +19,20 @@ namespace Fusion.Core.Shell {
 		class RedoCmd : CommandNoHistory {
 
 			readonly Invoker invoker;
-			readonly int count;
-		
-			public RedoCmd ( Invoker invoker, ArgList args )
+
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("count")]
+			public int Count { get; set; } = 1;
+
+			public RedoCmd ( Invoker invoker )
 			{
 				this.invoker = invoker;
-
-				if (args.Count>1) {
-					count = MathUtil.Clamp( int.Parse(args[1]), 0, int.MaxValue );
-				}
 			}
 
 
 			public override object Execute()
 			{
-				invoker.Redo(1);
+				invoker.Redo(Count);
 				return null;
 			}
 		}

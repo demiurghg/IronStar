@@ -26,6 +26,8 @@ namespace Fusion.Core.Mathematics {
 
 		public int MaxDepth { get; protected set; }
 
+		public delegate bool SearchCallback ( T current, Vector2 point, float distance );
+
 		
 		/// <summary>
 		/// Constructor
@@ -44,6 +46,18 @@ namespace Fusion.Core.Mathematics {
 		public void Add( Vector2 point, T value )
 		{
 			AddNodeToKdTree( ref treeRoot, new Node() { Point = point, Value = value }, 0 );
+		}
+
+
+
+		/// <summary>
+		/// Adds node to the tree
+		/// </summary>
+		/// <param name="point"></param>
+		/// <param name="value"></param>
+		public void Add( float x, float y, T value )
+		{
+			AddNodeToKdTree( ref treeRoot, new Node() { Point = new Vector2(x,y), Value = value }, 0 );
 		}
 
 
@@ -73,18 +87,31 @@ namespace Fusion.Core.Mathematics {
 		}
 
 
+		public T[] NearestRadius ( Vector2 target, float radius, Func<T,bool> predicate )
+		{
+			List<T> result = new List<T>();
+
+			NearestRadius( target, radius, 
+				(t,p,d) => {
+					if (predicate(t)) {
+						result.Add(t);
+					}
+					return false;
+				}
+			);
+
+			return result.ToArray();
+		}
+
+
 		/// <summary>
 		/// Gets nearest withing given radius object to target point.
 		/// </summary>
 		/// <param name="target"></param>
 		/// <param name="result"></param>
-		public void NearestRadius ( Vector2 target, float radius, out List<T> result )
+		public void NearestRadius ( Vector2 target, float radius, SearchCallback callback )
 		{
-			List<Node> nodes = new List<Node>();
-			List<float> distances = new List<float>();
-			NearestRadius ( treeRoot, target, nodes, distances, radius, 0 );
-
-			result	=	nodes.Select( n => n.Value ).ToList();
+			NearestRadius ( treeRoot, target, radius, callback, 0 );
 		}
 
 
@@ -134,6 +161,26 @@ namespace Fusion.Core.Mathematics {
 		}
 
 
+		void NearestRadius ( Node root, Vector2 target, float radius, SearchCallback callback, int depth=0 )
+		{
+			if (root==null) return;
+
+			float dist		=	(root.Point - target).Length();
+			float delta		=	KdTreeDelta( root.Point, target, depth );
+			int   branch	=	KdTreeBranch( root.Point, target, depth );
+
+			if ( dist <= radius ) {
+				if ( callback( root.Value, root.Point, dist ) ) {
+					return;
+				}
+			}
+
+			NearestRadius( root.KdBranch[ branch ], target, radius, callback, depth+1 );
+
+			if ( Math.Abs(delta) >= radius ) return;
+
+			NearestRadius( root.KdBranch[ 1-branch ], target, radius, callback, depth+1 );
+		}
 
 
 		/// <summary>

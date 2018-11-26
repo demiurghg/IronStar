@@ -47,14 +47,14 @@ namespace IronStar {
 			this.GetService<FrameProcessor>().LayerOrder = 100;
 			this.GetService<GameConsole>().LayerOrder = 200;
 
-			Invoker.RegisterCommand("map",				(args) => new MapCommand(this, args) );
-			Invoker.RegisterCommand("killEditor",		(args) => new KillEditorCommand(this, args) );
-			Invoker.RegisterCommand("killServer",		(args) => new KillServerCommand(this, args) );
-			Invoker.RegisterCommand("connect",			(args) => new ConnectCommand(this, args) );
-			Invoker.RegisterCommand("disconnect",		(args) => new DisconnectCommand(this, args) );
-			Invoker.RegisterCommand("contentBuild",		(args) => new ContentBuildCommand(this, args) );
-			Invoker.RegisterCommand("contentFile",		(args) => new ContentFileCommand() );
-			Invoker.RegisterCommand("contentReport",	(args) => new ContentReportCommand(args) );
+			Invoker.RegisterCommand("map",				() => new MapCommand(this) );
+			Invoker.RegisterCommand("killEditor",		() => new KillEditorCommand(this) );
+			Invoker.RegisterCommand("killServer",		() => new KillServerCommand(this) );
+			Invoker.RegisterCommand("connect",			() => new ConnectCommand(this) );
+			Invoker.RegisterCommand("disconnect",		() => new DisconnectCommand(this) );
+			Invoker.RegisterCommand("contentBuild",		() => new ContentBuildCommand(this) );
+			Invoker.RegisterCommand("contentFile",		() => new ContentFileCommand() );
+			Invoker.RegisterCommand("contentReport",	() => new ContentReportCommand() );
 		}
 
 

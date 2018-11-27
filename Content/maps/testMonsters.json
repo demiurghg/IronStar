@@ -6108,7 +6108,7 @@
         "InnerRadius": 0.125,
         "LightStyle": "default",
         "Ambient": false,
-        "LightColor": "255, 187, 122, 255",
+        "LightColor": "255, 113, 26, 255",
         "LightIntensity": 100.0,
         "Visible": true,
         "Frozen": false,

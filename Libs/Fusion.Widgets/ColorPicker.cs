@@ -11,7 +11,7 @@ using Fusion.Core.Mathematics;
 using Fusion;
 using Fusion.Core.Input;
 
-namespace IronStar.Editor.Controls {
+namespace Fusion.Widgets {
 	public partial class ColorPicker : Frame {
 
 		static ColorPicker colorPicker;

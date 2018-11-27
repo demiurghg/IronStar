@@ -24,6 +24,7 @@ using IronStar.Editor.Manipulators;
 using Fusion.Engine.Frames;
 using Fusion.Core.Input;
 using IronStar.Items;
+using Fusion.Widgets;
 
 namespace IronStar.Editor {
 
@@ -38,6 +39,10 @@ namespace IronStar.Editor {
 		void SetupWorkspace ()
 		{
 			var rs = Game.RenderSystem;
+
+			ColorTheme.Font	=	Content.Load<SpriteFont>(@"fonts\editorOpenSans");
+			//ColorTheme.Font	=	Content.Load<SpriteFont>(@"fonts\editorRoboto");
+			//ColorTheme.Font	=	Content.Load<SpriteFont>(@"fonts\editorArmata");
 
 			workspace		=	new Workspace( this, Game.Frames.RootFrame );
 

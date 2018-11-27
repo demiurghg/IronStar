@@ -156,7 +156,7 @@ namespace IronStar.Editor {
 		/// </summary>
 		void FeedSelection ()
 		{
-			workspace.FeedProperties( selection.FirstOrDefault() );
+			workspace?.FeedProperties( selection.FirstOrDefault() );
 		}
 
 
@@ -177,7 +177,7 @@ namespace IronStar.Editor {
 				UnregisterCommands();
 				SaveMap();
 
-				workspace.CloseWorkspace();
+				workspace?.CloseWorkspace();
 
 				world?.Dispose();
 

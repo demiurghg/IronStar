@@ -8,8 +8,10 @@ using Fusion.Engine.Frames;
 using Fusion.Engine.Graphics;
 using System.Reflection;
 using Fusion.Core.Mathematics;
+using Fusion.Widgets;
+using Fusion.Core;
 
-namespace IronStar.Editor2.Controls {
+namespace IronStar.Editor.Controls {
 
 	public partial class AEPropertyGrid : Frame {
 

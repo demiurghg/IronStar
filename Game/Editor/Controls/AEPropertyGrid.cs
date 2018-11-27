@@ -13,6 +13,7 @@ using Fusion;
 using Fusion.Engine.Frames.Layouts;
 using Fusion.Core;
 using Fusion.Core.Shell;
+using Fusion.Widgets;
 
 namespace IronStar.Editor.Controls {
 

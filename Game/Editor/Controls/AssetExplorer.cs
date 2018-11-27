@@ -11,8 +11,9 @@ using System.Threading.Tasks;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Frames.Layouts;
+using Fusion.Widgets;
 
-namespace IronStar.Editor2.Controls {
+namespace IronStar.Editor.Controls {
 	public class AssetExplorer : Panel {
 
 		readonly Type[] types;

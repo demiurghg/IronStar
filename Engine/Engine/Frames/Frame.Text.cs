@@ -65,7 +65,7 @@ namespace Fusion.Engine.Frames {
 				return textString;
 			}
 			set {
-				//	dirty hack
+				//	dirty hack: text will never be null value
 				var newVal = value ?? "";
 				if (textString!= newVal) {
 					textString = newVal;
@@ -146,6 +146,7 @@ namespace Fusion.Engine.Frames {
 				var r		=	Font.MeasureStringF( lineText );
 				textWidth	=	r.Width;
 				textHeight	=	r.Height;
+				//textHeight	=	Font.CapHeight;
 			} 
 
 			return new Size2( (int)textWidth, (int)textHeight );
@@ -205,6 +206,10 @@ namespace Fusion.Engine.Frames {
 			if ( vAlign == 0 )	y	=	gp.Y + ( gp.Height - textHeight ) / 2;  
 			if ( vAlign  > 0 )	y	=	gp.Y + ( gp.Height - textHeight );
 			if ( vAlign == 2 )	y	=	gp.Y - baseLine;
+
+			/*if (MathUtil.IsOdd(textHeight) && MathUtil.IsEven(gp.Height)) {
+				y--;
+			} */
 
 			return new Rectangle( x, y, textBlockSize.Width, textBlockSize.Height );
 		}

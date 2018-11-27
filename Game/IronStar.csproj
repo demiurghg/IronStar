@@ -76,6 +76,19 @@
     <Compile Include="Core\DamageType.cs" />
     <Compile Include="Core\Entity.Lua.cs" />
     <Compile Include="Core\ItemCollection.cs" />
+    <Compile Include="Editor\Controls\AEPropertyGrid.AEBaseEditor.cs" />
+    <Compile Include="Editor\Controls\AEPropertyGrid.AEButton.cs" />
+    <Compile Include="Editor\Controls\AEPropertyGrid.AECheckBox.cs" />
+    <Compile Include="Editor\Controls\AEPropertyGrid.AECollapseRegion.cs" />
+    <Compile Include="Editor\Controls\AEPropertyGrid.AEColorPicker.cs" />
+    <Compile Include="Editor\Controls\AEPropertyGrid.AEDropDown.cs" />
+    <Compile Include="Editor\Controls\AEPropertyGrid.AESlider.cs" />
+    <Compile Include="Editor\Controls\AEPropertyGrid.AETextBox.cs" />
+    <Compile Include="Editor\Controls\AEPropertyGrid.cs" />
+    <Compile Include="Editor\Controls\AssetExplorer.cs" />
+    <Compile Include="Editor\Controls\AssetExplorer2.cs" />
+    <Compile Include="Editor\Controls\AtlasSelector.cs" />
+    <Compile Include="Editor\Controls\Workspace.cs" />
     <Compile Include="Entities\FuncFX.cs" />
     <Compile Include="Entities\FuncShooter.cs" />
     <Compile Include="Core\EntityState.cs" />
@@ -129,33 +142,6 @@
     <Compile Include="Core\IEntity.cs" />
     <Compile Include="Core\IStorable.cs" />
     <Compile Include="Core\SnapshotHeader.cs" />
-    <Compile Include="Editor\Controls\AEPropertyGrid.AEBaseEditor.cs" />
-    <Compile Include="Editor\Controls\AEPropertyGrid.AECollapseRegion.cs" />
-    <Compile Include="Editor\Controls\AEPropertyGrid.AEColorPicker.cs" />
-    <Compile Include="Editor\Controls\AEPropertyGrid.AEDropDown.cs" />
-    <Compile Include="Editor\Controls\AEPropertyGrid.AETextBox.cs" />
-    <Compile Include="Editor\Controls\AEPropertyGrid.AESlider.cs" />
-    <Compile Include="Editor\Controls\AssetExplorer2.cs" />
-    <Compile Include="Editor\Controls\Button.cs" />
-    <Compile Include="Editor\Controls\AtlasSelector.cs" />
-    <Compile Include="Editor\Controls\FileSelector.cs" />
-    <Compile Include="Editor\Controls\ColorPicker.ColorField.cs" />
-    <Compile Include="Editor\Controls\ColorPicker.cs" />
-    <Compile Include="Editor\Controls\DropDown.cs" />
-    <Compile Include="Editor\Controls\Label.cs" />
-    <Compile Include="Editor\Controls\FileListBox.cs" />
-    <Compile Include="Editor\Controls\MessageBox.cs" />
-    <Compile Include="Editor\Controls\Palette.cs" />
-    <Compile Include="Editor\Controls\Panel.cs" />
-    <Compile Include="Editor\Controls\ListBox.cs" />
-    <Compile Include="Editor\Controls\ScrollBox.cs" />
-    <Compile Include="Editor\Controls\Shelf.cs" />
-    <Compile Include="Editor\Controls\TextBox.cs" />
-    <Compile Include="Editor\Controls\Slider.cs" />
-    <Compile Include="Editor\Controls\AEPropertyGrid.AECheckBox.cs" />
-    <Compile Include="Editor\Controls\AEPropertyGrid.cs" />
-    <Compile Include="Editor\Controls\ColorTheme.cs" />
-    <Compile Include="Editor\Controls\Workspace.cs" />
     <Compile Include="Editor\Manipulators\HandleIntersection.cs" />
     <Compile Include="Editor\Manipulators\Handle.cs" />
     <Compile Include="Editor\MapEditor.Commands.cs" />
@@ -242,6 +228,10 @@
     <ProjectReference Include="..\Engine\Fusion.csproj">
       <Project>{085c9e62-cddf-4b95-994d-085c74fa90fc}</Project>
       <Name>Fusion</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Libs\Fusion.Widgets\Fusion.Widgets.csproj">
+      <Project>{68592deb-c5ae-49d3-bfca-d529e90255b8}</Project>
+      <Name>Fusion.Widgets</Name>
     </ProjectReference>
     <ProjectReference Include="..\Native\Native.Embree\Native.Embree.vcxproj">
       <Project>{a7278494-726b-420f-b7bd-c29e39a274fd}</Project>

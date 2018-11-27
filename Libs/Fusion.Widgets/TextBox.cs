@@ -34,6 +34,8 @@ namespace Fusion.Widgets {
 			this.getFunc		=	getFunc;
 			this.setFunc		=	setFunc;
 
+			this.Font			=	ColorTheme.Font;
+
 			this.BackColor		=	ColorTheme.BackgroundColorDark;
 			this.Width			=	1;
 			this.BorderColor	=	ColorTheme.BorderColor;

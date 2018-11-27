@@ -66,8 +66,8 @@ namespace IronStar.Editor {
 			upperShelf.AddLButton("FCS", @"editor\iconFocus",		()=> FocusSelection() );
 
 			upperShelf.AddLSplitter();
-			upperShelf.AddFatLButton("ENTPLT", null, ()=> workspace.TogglePalette( entityPalette ) );
-			upperShelf.AddFatLButton("ASSETS", null, ()=> assetExplorer.Visible = !assetExplorer.Visible );
+			upperShelf.AddFatLButton("Palette", null, ()=> workspace.TogglePalette( entityPalette ) );
+			upperShelf.AddFatLButton("Assets", null, ()=> assetExplorer.Visible = !assetExplorer.Visible );
 
 			upperShelf.AddLSplitter();
 			upperShelf.AddFatLButton("UNFRZ", null, ()=> UnfreezeAll() );
@@ -90,7 +90,7 @@ namespace IronStar.Editor {
 			lowerShelf.AddLButton("ACT\n[ENTER]" ,	@"editor\iconActivate", () => ActivateSelected() );
 			lowerShelf.AddLButton("USE\n[U]"	 ,	@"editor\iconUse"	,	() => UseSelected() );
 
-			lowerShelf.AddFatLButton("Build NavMesh\n[U]"	 ,	null,	() => this.Map.BuildNavMesh(Content) );
+			lowerShelf.AddFatLButton("Build\nNavMesh"	 ,	null,	() => this.Map.BuildNavMesh(Content) );
 
 			//--------------------------------------------------------------------------
 

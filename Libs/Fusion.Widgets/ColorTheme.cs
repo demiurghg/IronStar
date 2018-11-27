@@ -15,6 +15,8 @@ namespace Fusion.Widgets {
 		public static readonly int		ScrollSize				=	3;
 		public static readonly int		ScrollVelocity			=	3;
 
+		public static readonly Color	Transparent				=	new Color(  0,  0,  0, 0);
+
 		public static readonly Color	ShadowColor				=	new Color(  0,  0,  0, 0);
 
 		public static readonly Color	BorderColor				=	new Color( 10, 10, 10, 192);
@@ -50,5 +52,9 @@ namespace Fusion.Widgets {
 
 		public static readonly Color	BackgroundColorRed		=	new Color(130, 30, 30, 192);
 
+		public static readonly Color	DropdownColor			=	new Color( 15, 15, 15, 240);
+		public static readonly Color	DropdownButtonNormal	=	new Color(  0,  0,  0,   0);
+		public static readonly Color	DropdownButtonHovered	=	new Color( 64, 64, 64, 192);
+		public static readonly Color	DropdownButtonPushed	=	new Color( 96, 96, 96, 192);
 	}
 }

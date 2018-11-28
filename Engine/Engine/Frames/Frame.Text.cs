@@ -139,11 +139,11 @@ namespace Fusion.Engine.Frames {
 				throw new ArgumentNullException("lineText");
 			}
 
-			float textWidth		=	8 * lineText.Length;
-			float textHeight	=	8 * 1;
+			int textWidth		=	8 * lineText.Length;
+			int textHeight	=	8 * 1;
 
 			if (Font!=null) {
-				var r		=	Font.MeasureStringF( lineText );
+				var r		=	Font.MeasureString( lineText );
 				textWidth	=	r.Width;
 				textHeight	=	r.Height;
 				//textHeight	=	Font.CapHeight;

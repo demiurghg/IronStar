@@ -33,7 +33,7 @@ namespace IronStar.Editor.Controls {
 		{
 			AllowDrag		=	true;
 
-			Layout			=	new PageLayout( 12, 30, 2, 20, 6, 12, 1 );
+			Layout			=	new PageLayout( 15, 27, 2, 23, 6, 15, 1 );
 
 			Padding			=	1;
 
@@ -62,7 +62,7 @@ namespace IronStar.Editor.Controls {
 			grid.Height		=	500-14-2-22;
 
 
-			toolPanel = new Panel( Frames, 2,2,600-4,20 );
+			toolPanel = new Panel( Frames, 2,2,600-4,25 );
 			toolPanel.Layout = new StackLayout() { StackingDirection = StackLayout.Direction.HorizontalStack, Interval = 1 };
 
 			labelName = new Label( Frames, 2,2,600-4,10, "..." );
@@ -116,7 +116,7 @@ namespace IronStar.Editor.Controls {
 		public void AddToolButton ( string name, Action action )
 		{
 			var w = name.Length * 8 + 16+2;
-			toolPanel.Add( new Button(Frames, name, 0,0, w,26, action ) );
+			toolPanel.Add( new Button(Frames, name, 0,0, w,23, action ) );
 		}
 
 

@@ -124,9 +124,14 @@ namespace Fusion.Widgets {
 
 				var r		=	ComputeGlobalAlignedTextRectangle();
 
-				var x		=	r.X + selectionStart * 8;
+				var minSel	=	Math.Min( selectionStart, selectionStart + selectionLength );
+				var maxSel	=	Math.Max( selectionStart, selectionStart + selectionLength );
+
+				var selRect	=	Font.MeasureSubstring( Text, minSel, maxSel );
+
+				var x		=	r.X + selRect.X; // selectionStart * 8;
 				var y		=	r.Top;
-				var w		=	selectionLength * 8;
+				var w		=	selRect.Width; //selectionLength * 8;
 				var h		=	r.Height;
 				var cx		=	selectionLength > 0 ? x + w : x;
 
@@ -135,8 +140,8 @@ namespace Fusion.Widgets {
 				var colorC	=	new Color( color.R, color.G, color.B, alpha / 1 );
 				var colorS	=	new Color( color.R, color.G, color.B, alpha / 2 );
 
-				spriteLayer.Draw( null, x, y, w, h, colorS, clipRectIndex );
-				spriteLayer.Draw( null, x, y, 2, h, colorC, clipRectIndex );
+				spriteLayer.Draw( null,  x, y, w, h, colorS, clipRectIndex );
+				spriteLayer.Draw( null, cx, y, 2, h, colorC, clipRectIndex );
 
 			}
 		}
@@ -254,12 +259,11 @@ namespace Fusion.Widgets {
 		{
 			var r = ComputeGlobalAlignedTextRectangle();
 			var x = Frames.MousePosition.X;
-			var y = Frames.MousePosition.X;
+			var y = Frames.MousePosition.Y;
+			
+			var i = Font.FindIndexUnderCursor( Text, x - r.X );
 
-			//	tricky stuff:
-			int d = (x - r.X + 3) / 8;
-
-			selectionStart = d;
+			selectionStart = i;
 			selectionLength = 0;
 						
 			CheckSelection();

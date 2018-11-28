@@ -159,6 +159,8 @@ namespace IronStar.Editor.Controls {
 					var rect   = atlas.GetAbsoluteRectangleByName(name);
 					var label  = string.Format("{0}\r\n{1}x{2}", name, rect.Width, rect.Height);
 					var button = new Frame( Frames, 0,0,0,0, label, Color.Zero );
+
+					button.Font			 = ColorTheme.NormalFont;
 					button.TextAlignment = Alignment.BottomCenter;
 					button.Padding		 = 3;
 					button.Border		 = 1;

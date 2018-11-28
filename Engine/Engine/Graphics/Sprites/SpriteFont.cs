@@ -38,7 +38,7 @@ namespace Fusion.Engine.Graphics {
 			public int			baseLine;
 			public int			scaleWidth, scaleHeight;
 			public CharInfo[]	charInfo;
-			public Dictionary<Tuple<char,char>, float>	kernings; 
+			public Dictionary<Tuple<char,char>, int>	kernings; 
 		}
 
 		SpriteFontInfo	fontInfo;
@@ -83,7 +83,7 @@ namespace Fusion.Engine.Graphics {
 				int numGlyphs	=	input.Chars.Max( ch => ch.ID );
 
 				//	create charInfo and kernings :
-				fontInfo.kernings = new Dictionary<Tuple<char,char>, float>();
+				fontInfo.kernings = new Dictionary<Tuple<char,char>, int>();
 				fontInfo.charInfo = new SpriteFontInfo.CharInfo[numGlyphs+1];
 
 				//	check one-page bitmap fonts :
@@ -175,41 +175,111 @@ namespace Fusion.Engine.Graphics {
 			}
 		}
 
+
+
+		/// <summary>
+		/// Gets character index under cursor in single line
+		/// </summary>
+		/// <param name="text"></param>
+		/// <param name="cursorPixelPos"></param>
+		/// <returns></returns>
+		public int FindIndexUnderCursor ( string text, int cursorPixelPos )
+		{
+			int	x = 0;
+			int	length = text.Length;
+			
+			for (int i=0; i<length; i++) {
+
+				char ch0	= text[i];
+				char ch1	= (i+1)<length ? text[i+1] : '\0';
+
+				var chi		= GetInfo(ch0);
+				var chPair	= new Tuple<char,char>(ch0,ch1);
+				var kerning = GetKerning( ch0, ch1 );
+
+				if (cursorPixelPos < x + chi.xAdvance/2) {
+					return i;
+				}
+
+				x += chi.xAdvance;
+				x += kerning;
+			}
+
+			return length;
+		}
+
 		
 		/// <summary>
-		/// Measures string 
+		/// Measures multiline string 
 		/// </summary>
 		/// <param name="text"></param>
 		/// <returns></returns>
-		public RectangleF MeasureStringF ( string text, float tracking=0 ) 
+		public RectangleF MeasureStringMultiline ( string text ) 
 		{
-			float	x = 0;
+			int		width = 0;
 			int		line = 1;
 			float	maxWidth = 0;
 			int		length = text.Length;
 			
 			for (int i=0; i<length; i++) {
-				
 
 				char ch0	= text[i];
 				char ch1	= (i+1)<length ? text[i+1] : '\0';
 				
 				if (ch0 == '\n') {
 					line++;
-					maxWidth = Math.Max( maxWidth, x );
+					maxWidth = Math.Max( maxWidth, width );
 				}
 
 				var chi		= GetInfo(ch0);
 				var chPair	= new Tuple<char,char>(ch0,ch1);
 				var kerning = GetKerning( ch0, ch1 );
 
-				x += chi.xAdvance;
-				x += kerning;
-				x += tracking;
+				width += chi.xAdvance;
+				width += kerning;
 
-				maxWidth = Math.Max( maxWidth, x );
+				maxWidth = Math.Max( maxWidth, width );
 			}
 			return new RectangleF( 0, 0, maxWidth, line * fontInfo.lineHeight );
+		}
+
+		
+		/// <summary>
+		/// Measures string single line substring
+		/// </summary>
+		/// <param name="text"></param>
+		/// <returns></returns>
+		public RectangleF MeasureSubstring ( string text, int start=0, int end = int.MaxValue ) 
+		{
+			int		left = 0;
+			int		right = 0;
+			int		length = Math.Min( text.Length, end );
+			
+			for (int i=0; i<length; i++) {
+
+				if (i<start) {
+					left = right;
+				}
+
+				char ch0	= text[i];
+				char ch1	= (i+1)<length ? text[i+1] : '\0';
+
+				var chi		= GetInfo(ch0);
+				var chPair	= new Tuple<char,char>(ch0,ch1);
+				var kerning = GetKerning( ch0, ch1 );
+
+				right += chi.xAdvance;
+				right += kerning;
+			}
+
+			var rect = new Rectangle();
+
+			rect.Left	=	left;
+			rect.Right	=	right;
+			rect.Bottom	=	fontInfo.lineHeight;
+			rect.Top	=	0;
+
+			return rect;
 		}
 
 
@@ -232,8 +302,8 @@ namespace Fusion.Engine.Graphics {
 		/// <returns></returns>
 		public Rectangle MeasureString( string text )
 		{
-			var rectF = MeasureStringF( text, 0 );
-			return new Rectangle( 0,0, (int)rectF.Width, (int)rectF.Height );
+			var rectF = MeasureSubstring( text );
+			return new Rectangle( (int)rectF.X, (int)rectF.Y, (int)rectF.Width, (int)rectF.Height );
 		}
 
 
@@ -368,7 +438,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="ch0"></param>
 		/// <param name="ch1"></param>
 		/// <returns></returns>
-		float GetKerning ( char ch0, char ch1 )
+		int GetKerning ( char ch0, char ch1 )
 		{
 			var chPair	= new Tuple<char,char>(ch0,ch1);
 

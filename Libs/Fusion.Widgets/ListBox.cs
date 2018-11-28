@@ -15,7 +15,11 @@ namespace Fusion.Widgets {
 
 		object[] items;
 
-		readonly int itemHeight = 8;
+		int itemHeight {
+			get {
+				return Font.LineHeight;
+			}
+		}
 
 		public event EventHandler	SelectedItemChanged;
 
@@ -54,6 +58,8 @@ namespace Fusion.Widgets {
 		{
 			this.items		=	items.ToArray();
 			this.nameConverter	=	nameConverter ?? ((obj) => obj.ToString());
+
+			Font			=	ColorTheme.NormalFont;
 
 			BorderColor		=	ColorTheme.BorderColorLight;
 			BackColor		=	ColorTheme.BackgroundColorDark;
@@ -182,6 +188,14 @@ namespace Fusion.Widgets {
 		}
 
 
+
+		void DrawText ( SpriteLayer spriteLayer, int x, int y, string text, Color color, int clipRectIndex )
+		{
+			//spriteLayer.DrawDebugString( x, y, text, color, clipRectIndex );
+			Font.DrawString( spriteLayer, text, x,y, color, clipRectIndex, 0, false, false );
+		}
+
+
 		protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
 		{
 			UpdateScroll();
@@ -228,19 +242,19 @@ namespace Fusion.Widgets {
 				if (selected) {
 
 					spriteLayer.Draw( null, rect, ColorTheme.TextColorNormal, clipRectIndex );
-					spriteLayer.DrawDebugString( x, y, text, ColorTheme.BackgroundColorDark, clipRectIndex );
+					DrawText( spriteLayer, x, y, text, ColorTheme.BackgroundColorDark, clipRectIndex );
 
 				} else if (hovered) {
 
 					spriteLayer.Draw( null, rect, ColorTheme.HighlightColor, clipRectIndex );
-					spriteLayer.DrawDebugString( x, y, text, ColorTheme.TextColorHovered, clipRectIndex );
+					DrawText( spriteLayer, x, y, text, ColorTheme.TextColorHovered, clipRectIndex );
 
 				} else {
 
 					if ((i&1)==1) {
 						spriteLayer.Draw( null, rect, new Color(255,255,255,4), clipRectIndex );
 					}
-					spriteLayer.DrawDebugString( x, y, text, ColorTheme.TextColorNormal, clipRectIndex );
+					DrawText( spriteLayer, x, y, text, ColorTheme.TextColorNormal, clipRectIndex );
 
 				}
 			}

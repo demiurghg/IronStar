@@ -29,7 +29,7 @@ namespace IronStar.Editor.Controls {
 				this.action		=	action;
 				
 				Width			=	grid.Width;
-				Height			=	20;
+				Height			=	23;
 
 				TextAlignment	=	Alignment.MiddleCenter;
 				Border			=	1;

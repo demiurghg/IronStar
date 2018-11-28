@@ -27,9 +27,19 @@ namespace IronStar.Editor.Controls {
 			/// <param name="bindingInfo"></param>
 			public AEBaseEditor ( AEPropertyGrid grid, string name ) : base(grid.Frames)
 			{ 
+				this.Font		=	ColorTheme.NormalFont;
+
 				this.BackColor	=	Color.Zero;
 				this.grid		=	grid;
 				this.Name		=	name;
+
+				this.Height		=	Font.LineHeight + 4;
+			}
+
+
+			protected int ComputeItemHeight ()
+			{
+				return GetFontHeight() + 2 * VerticalPadding;
 			}
 
 
@@ -38,7 +48,7 @@ namespace IronStar.Editor.Controls {
 				base.RunLayout();
 
 				TextAlignment	=	Alignment.MiddleRight;
-				TextOffsetX		=	-Width / 2 - 3;
+				TextOffsetX		=	-Width / 2 - 8;
 
 				Text			=	Name;
 			}

@@ -12,7 +12,7 @@ namespace Fusion.Widgets {
 
 		public Label ( FrameProcessor fp, int x, int y, int w, int h, string text ) : base( fp )
 		{	
-			this.Font			=	ColorTheme.Font;
+			this.Font			=	ColorTheme.NormalFont;
 
 			this.BackColor		=	Color.Zero;
 			this.BorderColor	=	Color.Zero;

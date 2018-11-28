@@ -23,7 +23,7 @@ namespace Fusion.Widgets {
 		/// <param name="bindingInfo"></param>
 		public Button ( FrameProcessor frames, string name, int x, int y, int w, int h, Action action ) : base(frames)
 		{ 
-			this.Font		=	ColorTheme.Font;
+			this.Font		=	ColorTheme.NormalFont;
 
 			this.action		=	action;
 				

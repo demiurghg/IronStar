@@ -133,7 +133,7 @@ namespace Fusion.Engine.Frames {
 		/// </summary>
 		/// <param name="lineIndex"></param>
 		/// <returns></returns>
-		Size2 MeasureSingleLineString ( SpriteFont font, string lineText )
+		public Size2 MeasureSingleLineString ( SpriteFont font, string lineText )
 		{
 			if (lineText==null) {
 				throw new ArgumentNullException("lineText");
@@ -150,6 +150,13 @@ namespace Fusion.Engine.Frames {
 			} 
 
 			return new Size2( (int)textWidth, (int)textHeight );
+		}
+
+
+
+		protected int GetFontHeight ()
+		{
+			return (Font==null) ? 8 : Font.LineHeight;
 		}
 
 

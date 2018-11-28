@@ -39,11 +39,18 @@ namespace IronStar.Editor.Controls {
 				this.max		=	max;
 				
 				Width			=	grid.Width;
-				Height			=	10;
+				Height			=	ComputeItemHeight();
 
 				this.StatusChanged +=AESlider_StatusChanged;
 
-				slider				=	new Slider( Frames, getFunc, setFunc, min, max, step, pstep );
+				slider				=	new Slider( Frames, getFunc, setFunc, min, max, step, pstep )  {
+					Font			=	ColorTheme.NormalFont,
+					PaddingLeft		=	VerticalPadding, // yes, for slider they should be the same
+					PaddingRight	=	VerticalPadding,
+					PaddingTop		=	VerticalPadding,
+					PaddingBottom	=	VerticalPadding,
+				};
+
 				slider.StatusChanged +=Slider_StatusChanged;
 				slider.Border		=	1;
 				slider.BorderColor	=	ColorTheme.BorderColor;
@@ -79,7 +86,7 @@ namespace IronStar.Editor.Controls {
 
 				slider.X		=	Width/2;
 				slider.Width	=	Width/2;
-				slider.Height	=	10;
+				slider.Height	=	ComputeItemHeight();
 			}
 
 

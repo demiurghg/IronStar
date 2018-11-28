@@ -15,6 +15,9 @@ namespace IronStar.Editor.Controls {
 
 	public partial class AEPropertyGrid : Frame {
 
+		const int VerticalPadding = 0;
+		const int HorizontalPadding = 4;
+
 		class AECheckBox : AEBaseEditor {
 
 			readonly Frame yesNoButton;
@@ -33,16 +36,21 @@ namespace IronStar.Editor.Controls {
 				this.getFunc	=	getFunc;
 				this.setFunc	=	setFunc;
 				
-				Width			=	grid.Width-50;
-				Height			=	10;
+				Width			=	1;
+				Height			=	ComputeItemHeight();
 
 				this.StatusChanged +=CheckBox_StatusChanged;
 
 				yesNoButton			= new Frame(this.Frames) {
-					Height			= 10, 
+					Font			= ColorTheme.NormalFont,
+					Height			= ComputeItemHeight(), 
 					BackColor		= ColorTheme.BackgroundColorDark,
 					TextAlignment	= Alignment.MiddleLeft,
 					TextOffsetX		= 1,
+					PaddingTop		= VerticalPadding,
+					PaddingBottom	= VerticalPadding,
+					PaddingLeft		= HorizontalPadding,
+					PaddingRight	= HorizontalPadding,
 				};
 
 				yesNoButton.Click+=YesNoButton_Click;

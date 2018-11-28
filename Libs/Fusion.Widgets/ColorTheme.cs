@@ -10,10 +10,14 @@ namespace Fusion.Widgets {
 
 	public static class ColorTheme {
 
-		public static SpriteFont Font = null;
+		public static SpriteFont NormalFont = null;
+		public static SpriteFont BoldFont = null;
 
 		public static readonly int		ScrollSize				=	3;
 		public static readonly int		ScrollVelocity			=	3;
+
+		public static readonly int		HorizontalPadding		=	5;
+		public static readonly int		VerticalPadding			=	1;
 
 		public static readonly Color	Transparent				=	new Color(  0,  0,  0, 0);
 
@@ -28,9 +32,9 @@ namespace Fusion.Widgets {
 
 		public static readonly Color	HighlightColor			=	new Color(150,150,150, 32 );
 		
-		public static readonly Color	TextColorNormal			=	new Color(230,230,230, 230);
+		public static readonly Color	TextColorNormal			=	new Color(210,210,210, 230);
 		public static readonly Color	TextColorHovered		=	new Color(230,230,230, 230);
-		public static readonly Color	TextColorPushed			=	new Color(230,230,230, 230);
+		public static readonly Color	TextColorPushed			=	new Color(250,250,250, 230);
 		
 		public static readonly Color	ElementColorNormal		=	new Color(120,120,120, 192);
 		public static readonly Color	ElementColorHovered		=	new Color(150,150,150, 192);

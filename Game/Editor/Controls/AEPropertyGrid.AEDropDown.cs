@@ -33,11 +33,17 @@ namespace IronStar.Editor.Controls {
 				this.setFunc	=	setFunc;
 				
 				Width			=	grid.Width;
-				Height			=	10;
+				Height			=	ComputeItemHeight();
 
 				this.StatusChanged +=AEDropDown_StatusChanged;
 
-				dropDown		=	new DropDown( Frames, value, values, getFunc, setFunc );
+				dropDown		=	new DropDown( Frames, value, values, getFunc, setFunc ) {
+					PaddingLeft		=	HorizontalPadding,
+					PaddingRight	=	HorizontalPadding,
+					PaddingTop		=	VerticalPadding,
+					PaddingBottom	=	VerticalPadding,
+				};
+
 				Add( dropDown );
 
 				Update(new GameTime());

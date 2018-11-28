@@ -34,7 +34,7 @@ namespace Fusion.Widgets {
 			this.getFunc		=	getFunc;
 			this.setFunc		=	setFunc;
 
-			this.Font			=	ColorTheme.Font;
+			this.Font			=	ColorTheme.NormalFont;
 
 			this.BackColor		=	ColorTheme.ButtonColorNormal;
 			this.Width			=	1;
@@ -51,6 +51,35 @@ namespace Fusion.Widgets {
 		}
 
 
+		int ComputeHeight ()
+		{
+			return GetFontHeight() + BorderTop + BorderBottom + PaddingTop + PaddingBottom;
+		}
+
+
+		public override int Width {
+			get {
+				return base.Width;
+			}
+
+			set {
+				base.Width=value;
+			}
+		}
+
+
+
+		public override int Height {
+			get {
+				return ComputeHeight();
+				//return base.Height;
+			}
+
+			set {
+				base.Height = ComputeHeight();
+			}
+		}
+
 
 
 		Frame CreateDropDownList ( int minWidth, out int minDropDownWidth )
@@ -65,14 +94,14 @@ namespace Fusion.Widgets {
 
 			foreach ( var value in values ) {
 
-				var textSize	=	Font.MeasureString( value );
+				var textSize	=	MeasureSingleLineString( Font, value );
 
 				var textWidth	=	textSize.Width;
 				var textHeight	=	textSize.Height;
 
 
 				var dropDownElement = new Frame( Frames, 0, 0, textWidth+8, textHeight+4, value, ColorTheme.DropdownButtonNormal );
-					dropDownElement.Font = ColorTheme.Font;
+					dropDownElement.Font = ColorTheme.NormalFont;
 
 
 				dropDownElement.TextAlignment	= Alignment.MiddleLeft;

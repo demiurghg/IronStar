@@ -49,20 +49,24 @@ namespace IronStar.Editor.Controls {
 				BorderLeft		=	3;
 				PaddingLeft		=	1;
 
+				Font			=	ColorTheme.NormalFont;
+
 				Width			=	100;
 
 				Collapsed		=	true;
 				Collapsed		=	nestingLevel > 0;
 
 				buttonCollapse		=	new Frame( grid.Frames ) {
+					Font			=	ColorTheme.NormalFont,
 					Width			=	0, // does not matter due to layout engine
-					Height			=	12,
+					Height			=	ColorTheme.NormalFont.LineHeight+4,
 					Border			=	1,
 					Text			=	category,
-					TextAlignment	=	Alignment.MiddleCenter,
+					TextAlignment	=	Alignment.MiddleLeft,
 					BorderColor		=	ColorTheme.ButtonBorderColor,
 					BackColor		=	ColorTheme.ButtonColorNormal,
 					ForeColor		=	ColorTheme.TextColorNormal,
+					PaddingLeft		=	HorizontalPadding,
 					MarginBottom	=	0,
 				};
 

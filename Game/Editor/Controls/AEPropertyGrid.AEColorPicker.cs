@@ -33,7 +33,7 @@ namespace IronStar.Editor.Controls {
 				this.setFunc	=	setFunc;
 				
 				Width			=	grid.Width;
-				Height			=	10;
+				Height			=	ComputeItemHeight();
 
 				this.StatusChanged  +=AEColorPicker_StatusChanged;
 
@@ -76,8 +76,8 @@ namespace IronStar.Editor.Controls {
 				base.RunLayout();
 
 				colorButton.X		=	Width/2;
-				colorButton.Width	=	Width/2;
-				colorButton.Height	=	10;
+				colorButton.Width	=	Math.Min(Width/2, 60);
+				colorButton.Height	=	ComputeItemHeight();
 			}
 
 

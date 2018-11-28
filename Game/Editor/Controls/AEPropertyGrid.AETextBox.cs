@@ -37,7 +37,7 @@ namespace IronStar.Editor.Controls {
 				this.selectFunc	=	selectFunc;
 				
 				Width			=	grid.Width;
-				Height			=	10;
+				Height			=	ComputeItemHeight();
 
 				this.StatusChanged +=AESlider_StatusChanged;
 
@@ -72,7 +72,7 @@ namespace IronStar.Editor.Controls {
 
 				textBox.X		=	Width/2;
 				textBox.Width	=	Width/2;
-				textBox.Height	=	10;
+				textBox.Height	=	ComputeItemHeight();
 
 				if (buttonSelect!=null) {
 					textBox.Width -= 10;

@@ -43,6 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Binding\DelegateBinding.cs" />
+    <Compile Include="Binding\StringBinding.cs" />
+    <Compile Include="Binding\PropertyBinding.cs" />
+    <Compile Include="Binding\ValueBindingException.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="ColorPicker.ColorField.cs" />
     <Compile Include="ColorPicker.cs" />
@@ -50,6 +54,7 @@
     <Compile Include="DropDown.cs" />
     <Compile Include="FileListBox.cs" />
     <Compile Include="FileSelector.cs" />
+    <Compile Include="Binding\IValueBinding.cs" />
     <Compile Include="Label.cs" />
     <Compile Include="ListBox.cs" />
     <Compile Include="MessageBox.cs" />
@@ -67,6 +72,7 @@
       <Name>Fusion</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

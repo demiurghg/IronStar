@@ -12,12 +12,16 @@ namespace Fusion.Widgets {
 
 		public static SpriteFont NormalFont = null;
 		public static SpriteFont BoldFont = null;
+		public static SpriteFont Monospaced = null;
 
 		public static readonly int		ScrollSize				=	3;
 		public static readonly int		ScrollVelocity			=	3;
 
 		public static readonly int		HorizontalPadding		=	5;
 		public static readonly int		VerticalPadding			=	1;
+
+		public static readonly Color	AccentColor				=	Color.LightGray;
+		public static readonly Color	AccentBorder			=	Color.Lerp( AccentColor, BorderColor, 0.33f );
 
 		public static readonly Color	Transparent				=	new Color(  0,  0,  0, 0);
 

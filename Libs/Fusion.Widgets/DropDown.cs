@@ -90,6 +90,8 @@ namespace Fusion.Widgets {
 				PaddingRight	= 4,
 				PaddingBottom	= 1,
 				PaddingTop		= 1,
+				Border			= 1,
+				BorderColor		= ColorTheme.AccentBorder,
 			};
 
 			foreach ( var value in values ) {

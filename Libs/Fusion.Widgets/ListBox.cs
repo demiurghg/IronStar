@@ -59,7 +59,7 @@ namespace Fusion.Widgets {
 			this.items		=	items.ToArray();
 			this.nameConverter	=	nameConverter ?? ((obj) => obj.ToString());
 
-			Font			=	ColorTheme.NormalFont;
+			Font			=	ColorTheme.Monospaced;
 
 			BorderColor		=	ColorTheme.BorderColorLight;
 			BackColor		=	ColorTheme.BackgroundColorDark;

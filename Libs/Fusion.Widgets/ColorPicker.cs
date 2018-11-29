@@ -31,7 +31,7 @@ namespace Fusion.Widgets {
 
 
 		const int DialogWidth	=	80 + 256 + 3 + 2*2;
-		const int DialogHeight	=	165;
+		const int DialogHeight	=	165 + 4*7-1;
 
 
 		Color targetColor;
@@ -129,12 +129,15 @@ namespace Fusion.Widgets {
 			Add( colorField );
 
 
-			AddLabel( 2, 107, "Red"	);
-			AddLabel( 2, 118, "Green" );
-			AddLabel( 2, 129, "Blue"	);
-			AddLabel( 2, 140, "Alpha"	);
+			int height	=	ColorTheme.NormalFont.LineHeight;
 
-			AddLabel( 2, 153,   "Temp, (K)" );
+
+			AddLabel( 2, 107 + height * 0-1, "Red"	);
+			AddLabel( 2, 107 + height * 1-1, "Green" );
+			AddLabel( 2, 107 + height * 2-1, "Blue"	);
+			AddLabel( 2, 107 + height * 3-1, "Alpha"	);
+										 
+			AddLabel( 2, 107 + height * 4-1, "Temp, (K)" );
 
 
 			sliderRed	=	new Slider( 
@@ -143,9 +146,9 @@ namespace Fusion.Widgets {
 				(r)=> { colorRGBA.Red = r/255; UpdateFromRGBA(); UpdateSliders(); },
 				0, 255, 16, 1 ) {
 					X = 83,
-					Y = 107,
+					Y = 107 + height * 0+1,
 					Width = 256+2,
-					Height = 10,
+					Height = height-2,
 					Border = 1,
 					BackColor = new Color(0,0,0,64),
 					SliderColor = new Color(255,0,0,255),
@@ -158,9 +161,9 @@ namespace Fusion.Widgets {
 				(r)=> { colorRGBA.Green = r/255; UpdateFromRGBA(); UpdateSliders(); },
 				0, 255, 16, 1 ) {
 					X = 83,
-					Y = 118,
+					Y = 107 + height * 1+1,
 					Width = 256+2,
-					Height = 10,
+					Height = height-2,
 					Border = 1,
 					BackColor = new Color(0,0,0,64),
 					SliderColor = new Color(0,255,0,255),
@@ -173,9 +176,9 @@ namespace Fusion.Widgets {
 				(r)=> { colorRGBA.Blue = r/255; UpdateFromRGBA(); UpdateSliders(); },
 				0, 255, 16, 1 ) {
 					X = 83,
-					Y = 129,
+					Y = 107 + height * 2+1,
 					Width = 256+2,
-					Height = 10,
+					Height = height-2,
 					Border = 1,
 					BackColor = new Color(0,0,0,64),
 					SliderColor = new Color(0,0,255,255),
@@ -188,15 +191,36 @@ namespace Fusion.Widgets {
 				(r)=> { colorRGBA.Alpha = r/255; UpdateFromRGBA(); UpdateSliders(); },
 				0, 255, 16, 1 ) {
 					X = 83,
-					Y = 140,
+					Y = 107 + height * 3+1,
 					Width = 256+2,
-					Height = 10,
+					Height = height-2,
 					Border = 1,
 					BackColor = new Color(0,0,0,64),
 					SliderColor = new Color(128,128,128,255),
 					ForeColor = new Color(0,0,0,160),
 				};
 
+
+			sliderTemp = new Slider(
+				Frames,
+				()=> temperature,
+				(t)=> { temperature = t; 
+						targetColor = Temperature.GetColor((int)t);  
+						UpdateFromColor(); 
+						UpdateSliders(); 
+						sliderTemp.SliderColor = targetColor; 
+						sliderTemp.Text = t.ToString() + "K";
+					},
+					1000, 40000, 100, 1 ) {
+					X = 83,
+					Y = 107 + height * 4+1,
+					Width = 256+2,
+					Height = height-2,
+					Border = 1,
+					BackColor = new Color(0,0,0,64),
+					SliderColor = new Color(256,256,256,255),
+					ForeColor = new Color(0,0,0,160),
+				};
 
 			sliderSat = new Slider(
 				Frames,
@@ -215,26 +239,7 @@ namespace Fusion.Widgets {
 				};
 
 
-			sliderTemp = new Slider(
-				Frames,
-				()=> temperature,
-				(t)=> { temperature = t; 
-						targetColor = Temperature.GetColor((int)t);  
-						UpdateFromColor(); 
-						UpdateSliders(); 
-						sliderTemp.SliderColor = targetColor; 
-						sliderTemp.Text = t.ToString() + "K";
-					},
-					1000, 40000, 100, 1 ) {
-					X = 83,
-					Y = 153,
-					Width = 256+2,
-					Height = 10,
-					Border = 1,
-					BackColor = new Color(0,0,0,64),
-					SliderColor = new Color(256,256,256,255),
-					ForeColor = new Color(0,0,0,160),
-				};
+
 
 			Add( sliderRed );
 			Add( sliderGreen );
@@ -274,12 +279,13 @@ namespace Fusion.Widgets {
 
 		void AddLabel( int x, int y, string text )
 		{
-			var frame = new Frame( Frames, x,y, text.Length * 8+2, 10, text, Color.Zero );
+			var rect	= ColorTheme.NormalFont.MeasureString( text );
+
+			var frame = new Frame( Frames, x,y, rect.Width, rect.Height, text, Color.Zero );
 			
+			frame.Font			=	ColorTheme.NormalFont;
 			frame.ForeColor		=	ColorTheme.TextColorNormal;
 			frame.TextAlignment	=	Alignment.MiddleLeft;
-			frame.ShadowColor	=	new Color(0,0,0,64);
-			frame.ShadowOffset	=	new Vector2(1,1);
 
 			Add( frame );
 		}

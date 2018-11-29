@@ -14,10 +14,11 @@ using Fusion.Core.Input;
 
 namespace Fusion.Widgets {
 
+	using Binding;
+
 	public class TextBox : Frame {
 
-		readonly Func<string> getFunc;
-		readonly Action<string> setFunc;
+		protected readonly IValueBinding<string> binding;
 
 		public Color CursorColor { get; set; } = Color.Gray;
 
@@ -29,10 +30,9 @@ namespace Fusion.Widgets {
 		/// </summary>
 		/// <param name="grid"></param>
 		/// <param name="bindingInfo"></param>
-		public TextBox ( FrameProcessor fp, Func<string> getFunc, Action<string> setFunc ) : base(fp)
+		public TextBox ( FrameProcessor fp, IValueBinding<string> binding = null ) : base(fp)
 		{ 
-			this.getFunc		=	getFunc;
-			this.setFunc		=	setFunc;
+			this.binding		=	binding;
 
 			this.Font			=	ColorTheme.NormalFont;
 
@@ -54,20 +54,21 @@ namespace Fusion.Widgets {
 			Deactivated+=TextBox_Deactivated;
 		}
 
+
 		private void TextBox_Click(object sender, MouseEventArgs e)
 		{
 			SetCursorFromMouse();
 		}
 
+
 		void CallSetFunc ( string value )
 		{
 			ValueChanged?.Invoke(this, EventArgs.Empty);
 
-			try {
-				setFunc?.Invoke( value );
-			} catch ( FormatException ) {
-				Log.Warning("'{0}' is not in a valid format.", value);
-				Text = getFunc?.Invoke();
+			if (binding!=null) {
+				if (!binding.SetValue( value )) {
+					Text = binding.GetValue();
+				}
 			}
 		}
 
@@ -106,8 +107,8 @@ namespace Fusion.Widgets {
 		{
 			if (Frames.TargetFrame==this) {
 			} else {
-				if (getFunc!=null) {
-					Text = getFunc();
+				if (binding!=null) {
+					Text = binding.GetValue();
 				}
 			}
 		}
@@ -115,7 +116,6 @@ namespace Fusion.Widgets {
 
 		protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
 		{
-			var value	= getFunc==null ? Text : getFunc.Invoke();
 			var padRect	= GetPaddedRectangle(true);
 
 			base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
@@ -208,7 +208,9 @@ namespace Fusion.Widgets {
 			}
 
 			if (e.Key==Keys.Escape) {
-				Text = getFunc?.Invoke();
+				if (binding!=null) {
+					Text = binding.GetValue();
+				}
 				ResetSelection();
 			}
 

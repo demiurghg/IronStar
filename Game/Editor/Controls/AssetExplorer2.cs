@@ -285,7 +285,7 @@ namespace IronStar.Editor.Controls {
 
 			var panel	=	new Panel( frames, 0,0, 300, 200 );
 			var listBox	=	new ListBox( frames, types, t => (t as Type).Name )		{ X = 2, Y = 2, Width = 300-4, Height = 200-22-14 };
-			var textBox	=	new TextBox( frames, null, null )	{ X = 2, Y = 200-22-11, Width=300-4, Height=10 };
+			var textBox	=	new TextBox( frames, null )	{ X = 2, Y = 200-22-11, Width=300-4, Height=10 };
 				textBox.TextAlignment	=	Alignment.MiddleLeft;
 
 			panel.Add( listBox );

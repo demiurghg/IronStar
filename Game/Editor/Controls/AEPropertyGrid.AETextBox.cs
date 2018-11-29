@@ -10,6 +10,7 @@ using System.Reflection;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Widgets;
+using Fusion.Widgets.Binding;
 
 namespace IronStar.Editor.Controls {
 
@@ -30,7 +31,7 @@ namespace IronStar.Editor.Controls {
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AETextBox ( AEPropertyGrid grid, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc, Alignment align ) : base(grid, name)
+			public AETextBox ( AEPropertyGrid grid, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc ) : base(grid, name)
 			{ 
 				this.getFunc	=	getFunc;
 				this.setFunc	=	setFunc;
@@ -41,7 +42,9 @@ namespace IronStar.Editor.Controls {
 
 				this.StatusChanged +=AESlider_StatusChanged;
 
-				textBox			=	new TextBox( Frames, getFunc, setFunc ) { TextAlignment = align };
+				textBox	=	new TextBox( Frames, new DelegateBinding<string>( getFunc, setFunc ) ) { 
+					TextAlignment = Alignment.MiddleLeft, 
+				};
 
 				Add( textBox );
 

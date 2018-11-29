@@ -295,12 +295,12 @@ namespace IronStar.Editor.Controls {
 
 		public void AddTextBox ( string category, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc )
 		{
-			AddToCollapseRegion( category, new AETextBox( this, name, getFunc, setFunc, selectFunc, Alignment.MiddleLeft ) );
+			AddToCollapseRegion( category, new AETextBox( this, name, getFunc, setFunc, selectFunc ) );
 		}
 
 		public void AddTextBoxNum ( string category, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc )
 		{
-			AddToCollapseRegion( category, new AETextBox( this, name, getFunc, setFunc, selectFunc, Alignment.MiddleLeft ) );
+			AddToCollapseRegion( category, new AETextBox( this, name, getFunc, setFunc, selectFunc ) );
 		}
 
 		public void AddButton ( string category, string name, Action action )

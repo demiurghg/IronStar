@@ -50,7 +50,6 @@ namespace IronStar.Editor.Controls {
 			}
 
 
-
 			private void ColorButton_Click( object sender, MouseEventArgs e )
 			{
 				var button	=	(Frame)sender;
@@ -76,7 +75,7 @@ namespace IronStar.Editor.Controls {
 				base.RunLayout();
 
 				colorButton.X		=	Width/2;
-				colorButton.Width	=	Math.Min(Width/2, 60);
+				colorButton.Width	=	Math.Min(Width/2, 70);
 				colorButton.Height	=	ComputeItemHeight();
 			}
 

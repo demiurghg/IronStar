@@ -42,6 +42,7 @@ namespace IronStar.Editor {
 
 			ColorTheme.NormalFont	=	Content.Load<SpriteFont>(@"fonts\editorOpenSans");
 			ColorTheme.BoldFont		=	Content.Load<SpriteFont>(@"fonts\editorOpenSansBold");
+			ColorTheme.Monospaced	=	Content.Load<SpriteFont>(@"fonts\editorInconsolata");
 			//ColorTheme.Font	=	Content.Load<SpriteFont>(@"fonts\editorRoboto");
 			//ColorTheme.Font	=	Content.Load<SpriteFont>(@"fonts\editorArmata");
 
@@ -71,7 +72,7 @@ namespace IronStar.Editor {
 			upperShelf.AddFatLButton("Assets", null, ()=> assetExplorer.Visible = !assetExplorer.Visible );
 
 			upperShelf.AddLSplitter();
-			upperShelf.AddFatLButton("UNFRZ", null, ()=> UnfreezeAll() );
+			upperShelf.AddFatLButton("Unfreeze All", null, ()=> UnfreezeAll() );
 
 			upperShelf.AddLSplitter();
 			upperShelf.AddLButton("BUILD\rRELOAD", @"editor\iconBuild", ()=> Game.Invoker.ExecuteString("contentBuild") );

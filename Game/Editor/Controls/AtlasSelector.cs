@@ -64,7 +64,7 @@ namespace IronStar.Editor.Controls {
 				labelDir		=	new Label( fp, 0,0,0,0, "Atlas: " + atlasName ) { TextAlignment = Alignment.MiddleLeft };
 				labelStatus		=	new Label( fp, 0,0,0,0, "....") { TextAlignment = Alignment.MiddleLeft };
 
-				filterBox		=	new TextBox( fp, null, null ) { TextAlignment = Alignment.MiddleLeft };
+				filterBox		=	new TextBox( fp, null ) { TextAlignment = Alignment.MiddleLeft };
 				filterBox.Text	=	"";
 				filterBox.TypeWrite += FilterBox_TypeWrite;
 

@@ -137,7 +137,7 @@ namespace Fusion.Widgets {
 
 			if (targetFrame!=null) {
 				
-				markerHeight	=	(ScrollBoxHeight * ScrollBoxHeight * 2 + 1) / Math.Max( ScrollBoxHeight, targetFrame.Height ) / 2 + 1;
+				markerHeight	=	(ScrollBoxHeight * ScrollBoxHeight * 2 + 1) / Math.Max( ScrollBoxHeight, targetFrame.Height ) / 2; // +1 ?
 				markerOffset	=	(offset			 * ScrollBoxHeight * 2 + 1) / Math.Max( ScrollBoxHeight, targetFrame.Height ) / 2;
 			}
 

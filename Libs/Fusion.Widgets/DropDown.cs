@@ -16,6 +16,9 @@ namespace Fusion.Widgets {
 
 	public class DropDown : Frame {
 
+		const int MaxElements = 12;
+		const int MinWidth = 70;
+
 		readonly Func<string> getFunc;
 		readonly Action<string> setFunc;
 		readonly string[] values;
@@ -47,7 +50,7 @@ namespace Fusion.Widgets {
 
 			this.values = values.ToArray();
 
-			dropDownList = CreateDropDownList(40, out minDropDownWidth);
+			dropDownList = CreateDropDownList(MinWidth, out minDropDownWidth);
 		}
 
 
@@ -84,23 +87,42 @@ namespace Fusion.Widgets {
 
 		Frame CreateDropDownList ( int minWidth, out int minDropDownWidth )
 		{
-			var dropDownList	= new Frame( Frames ) {
+			var numElements		=	values.Length;
+
+			var textHeight		=	Font.LineHeight;
+			var elementHeight	=	textHeight + 4;
+			var scrollBoxHeight	=	elementHeight * Math.Min(numElements, MaxElements) + 2 + 2;
+			var scrollBoxWidth	=	MinWidth;
+
+
+			var scrollBox		= new ScrollBox( Frames, 0,0, scrollBoxWidth, scrollBoxHeight ) {
 				BackColor		= ColorTheme.DropdownColor,
 				PaddingLeft		= 4,
-				PaddingRight	= 4,
+				PaddingRight	= 1,
 				PaddingBottom	= 1,
 				PaddingTop		= 1,
 				Border			= 1,
 				BorderColor		= ColorTheme.AccentBorder,
+				ScrollMarkerColor	=	ColorTheme.AccentBorder
 			};
+
+			var dropDownList	= new Frame( Frames ) {
+				BackColor		= ColorTheme.Transparent,
+			};
+			//var dropDownList	= new Frame( Frames ) {
+			//	BackColor		= ColorTheme.DropdownColor,
+			//	PaddingLeft		= 4,
+			//	PaddingRight	= 4,
+			//	PaddingBottom	= 1,
+			//	PaddingTop		= 1,
+			//	Border			= 1,
+			//	BorderColor		= ColorTheme.AccentBorder,
+			//};
 
 			foreach ( var value in values ) {
 
-				var textSize	=	MeasureSingleLineString( Font, value );
-
-				var textWidth	=	textSize.Width;
-				var textHeight	=	textSize.Height;
-
+				var textSize		=	MeasureSingleLineString( Font, value );
+				var textWidth		=	textSize.Width;
 
 				var dropDownElement = new Frame( Frames, 0, 0, textWidth+8, textHeight+4, value, ColorTheme.DropdownButtonNormal );
 					dropDownElement.Font = ColorTheme.NormalFont;
@@ -120,7 +142,7 @@ namespace Fusion.Widgets {
 				dropDownElement.Click+=DropDownElement_Click;
 			}
 
-			minDropDownWidth	=	minWidth + 8 + 8;
+			minDropDownWidth	=	minWidth + 8 + 8 + 4;
 
 			dropDownList.Width	=	minDropDownWidth;
 
@@ -128,16 +150,19 @@ namespace Fusion.Widgets {
 
 			dropDownList.RunLayout();
 
-			dropDownList.Missclick	+= (s,e) => CloseDropDownList();
+			
+			
+			scrollBox.Add( dropDownList );
 
+			scrollBox.Missclick	+= (s,e) => CloseDropDownList();
 
-			return dropDownList;
+			return scrollBox;
 		}
 
 
 		void ShowDropDownList()
 		{
-			var gr = GetPaddedRectangle(true);
+			var gr = GlobalRectangle;
 
 			dropDownList.X = gr.X;
 			dropDownList.Y = gr.Y + gr.Height;
@@ -146,6 +171,8 @@ namespace Fusion.Widgets {
 
 			Frames.RootFrame.Add( dropDownList );
 			Frames.ModalFrame = dropDownList;
+
+			dropDownList.ConstrainFrame(0);
 		}
 
 

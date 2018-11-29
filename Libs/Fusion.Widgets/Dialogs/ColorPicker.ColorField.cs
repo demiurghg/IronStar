@@ -12,7 +12,7 @@ using Fusion.Core.Mathematics;
 using Fusion;
 using Fusion.Core.Input;
 
-namespace Fusion.Widgets {
+namespace Fusion.Widgets.Dialogs {
 	partial class ColorPicker : Frame {
 
 		class ColorField : Frame {

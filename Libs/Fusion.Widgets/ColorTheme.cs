@@ -21,7 +21,7 @@ namespace Fusion.Widgets {
 		public static readonly int		VerticalPadding			=	1;
 
 		public static readonly Color	AccentColor				=	Color.LightGray;
-		public static readonly Color	AccentBorder			=	Color.Lerp( AccentColor, BorderColor, 0.33f );
+		public static readonly Color	AccentBorder			=	Color.Lerp( BorderColor, AccentColor, 0.5f );
 
 		public static readonly Color	Transparent				=	new Color(  0,  0,  0, 0);
 

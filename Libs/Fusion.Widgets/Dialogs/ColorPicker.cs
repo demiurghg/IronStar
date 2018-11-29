@@ -11,7 +11,7 @@ using Fusion.Core.Mathematics;
 using Fusion;
 using Fusion.Core.Input;
 
-namespace Fusion.Widgets {
+namespace Fusion.Widgets.Dialogs {
 	public partial class ColorPicker : Frame {
 
 		static ColorPicker colorPicker;

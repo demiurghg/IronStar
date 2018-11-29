@@ -16,7 +16,7 @@ using Fusion.Core.Content;
 using Fusion.Engine.Frames.Layouts;
 using Fusion.Widgets;
 
-namespace IronStar.Editor.Controls {
+namespace Fusion.Widgets.Dialogs {
 
 	static public class AtlasSelector {
 

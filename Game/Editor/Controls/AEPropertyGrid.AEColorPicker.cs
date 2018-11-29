@@ -10,6 +10,7 @@ using System.Reflection;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Widgets;
+using Fusion.Widgets.Dialogs;
 
 namespace IronStar.Editor.Controls {
 

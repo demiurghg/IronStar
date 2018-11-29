@@ -14,7 +14,7 @@ using System.IO;
 using Fusion.Build;
 using Fusion.Core.Content;
 
-namespace Fusion.Widgets {
+namespace Fusion.Widgets.Dialogs {
 
 	static public class FileSelector {
 

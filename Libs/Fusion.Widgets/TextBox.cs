@@ -133,7 +133,7 @@ namespace Fusion.Widgets {
 				var y		=	r.Top;
 				var w		=	selRect.Width; //selectionLength * 8;
 				var h		=	r.Height;
-				var cx		=	selectionLength > 0 ? x + w : x;
+				var cx		=	selectionLength < 0 ? x + w : x;
 
 				var color	=	CursorColor;
 				var alpha	=	(byte)( color.A * (0.7 + 0.3 * Math.Cos(10*gameTime.Total.TotalSeconds) ) );
@@ -265,6 +265,8 @@ namespace Fusion.Widgets {
 
 			selectionStart = i;
 			selectionLength = 0;
+
+			Log.Message(" -- {0} {1} --", selectionStart, selectionLength );
 						
 			CheckSelection();
 		}

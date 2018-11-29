@@ -251,14 +251,22 @@ namespace Fusion.Engine.Graphics {
 		/// <returns></returns>
 		public RectangleF MeasureSubstring ( string text, int start=0, int end = int.MaxValue ) 
 		{
-			int		left = 0;
-			int		right = 0;
-			int		length = Math.Min( text.Length, end );
+			int	x = 0;
+			int	left = 0;
+			int	right = 0;
+			int	length = text.Length;
+
+			if ( start < 0 ) { left = 0; }
+			if ( end < 0   ) { right = 0; }
 			
 			for (int i=0; i<length; i++) {
 
-				if (i<start) {
-					left = right;
+				if (i==start) {
+					left = x;
+				}
+
+				if (i==end) {	
+					right = x;
 				}
 
 				char ch0	= text[i];
@@ -268,9 +276,12 @@ namespace Fusion.Engine.Graphics {
 				var chPair	= new Tuple<char,char>(ch0,ch1);
 				var kerning = GetKerning( ch0, ch1 );
 
-				right += chi.xAdvance;
-				right += kerning;
+				x += chi.xAdvance;
+				x += kerning;
 			}
+
+			if ( start >= length ) { left = x; }
+			if ( end >= length   ) { right = x; }
 
 			var rect = new Rectangle();
 

@@ -88,6 +88,8 @@ namespace Fusion {
 		public bool Accept ( string s )
 		{
 			var substr = stream.Substring( ptr );
+			
+			#warning WTF!?!, why IndexOf?
 
 			if (substr.IndexOf(s)==0) {
 				ptr += s.Length;

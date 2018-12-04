@@ -48,6 +48,7 @@ namespace IronStar.Editor.Controls {
 		Shelf	lowerShelf;
 		MapEditor editor;
 		AEPropertyGrid grid;
+		ScrollBox	gridScrollBox;
 		Panel	palette;
 		Panel	assets;
 		Panel	components;
@@ -227,6 +228,11 @@ namespace IronStar.Editor.Controls {
 		public void FeedProperties ( object target )
 		{
 			if (grid==null) {
+
+				gridScrollBox = new ScrollBox( Frames, Width - 320, 40, 320, Height - 40-40 );
+
+				gridScrollBox.ScrollMarkerSize = 5;
+
 				grid = new AEPropertyGrid(Frames);
 
 				grid.Width	=	300;
@@ -239,13 +245,14 @@ namespace IronStar.Editor.Controls {
 
 				grid.PropertyChanged+=Grid_PropertyChanged;
 
-				Add( grid );
+				Add( gridScrollBox );
+				gridScrollBox.Add( grid );
 			}
 
 			if (target==null) {
-				grid.Visible = false;
+				gridScrollBox.Visible = false;
 			} else {
-				grid.Visible = true;
+				gridScrollBox.Visible = true;
 			}
 
 			grid.TargetObject = target;

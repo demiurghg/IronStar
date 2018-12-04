@@ -69,12 +69,17 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		readonly bool useRenderWorld;
+
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="engine"></param>
-		public RenderSystem ( Game Game ) : base(Game)
+		public RenderSystem ( Game Game, bool useRenderWorld ) : base(Game)
 		{
+			this.useRenderWorld	=	useRenderWorld;
+
 			Counters	=	new RenderCounters();
 
 			Width			=	1024;
@@ -151,7 +156,9 @@ namespace Fusion.Engine.Graphics {
 			SpriteLayers	=	new SpriteLayerCollection();
 
 			//	add default render world :
-			renderWorld		=	new RenderWorld(Game, Width, Height);
+			if (useRenderWorld) {
+				renderWorld		=	new RenderWorld(Game, Width, Height);
+			}
 
 			DisplayBoundsChanged += (s,e) => renderWorld.Resize( DisplayBounds.Width, DisplayBounds.Height );
 			Game.Exiting+=Game_Exiting;
@@ -195,7 +202,7 @@ namespace Fusion.Engine.Graphics {
 			var targetDepthSurface	=	Device.Display.BackbufferDepth.Surface;
 
 			//	render world :
-			RenderWorld.Render( gameTime, stereoEye, targetColorSurface );
+			RenderWorld?.Render( gameTime, stereoEye, targetColorSurface );
 
 			//	compose rendered image and sprites :
 			#warning compose rendered image and sprites :

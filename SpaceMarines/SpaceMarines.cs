@@ -11,23 +11,21 @@ using Fusion.Engine.Frames;
 using Fusion.Engine.Tools;
 using Fusion;
 using Fusion.Core.Shell;
-using IronStar.Editor;
 using Fusion.Build;
 using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using Fusion.Engine.Common;
-using IronStar.SFX;
 using System.IO;
 using System.Runtime.CompilerServices;
 using Fusion.Core.Input;
 
-namespace IronStar {
-	partial class IronStar : Game
+namespace SpaceMarines {
+	partial class SpaceMarines : Game
 	{
 		const string ConfigFile = "Config.ini";
 
 		[MethodImpl(MethodImplOptions.NoOptimization)]
-		public IronStar() : base("IronStar", "IronStar")
+		public SpaceMarines() : base("SpaceMarines", "SpaceMarines")
 		{
 			this.Exiting += IronStarGame_Exiting;
 			this.Components.ComponentAdded += Components_ComponentAdded;
@@ -35,7 +33,7 @@ namespace IronStar {
 
 			this.Config.LoadSettings(ConfigFile);
 
-			this.AddServiceAndComponent( new RenderSystem(this, true) );
+			this.AddServiceAndComponent( new RenderSystem(this, false) );
 			this.AddServiceAndComponent( new SoundSystem(this) );
 			this.AddServiceAndComponent( new FrameProcessor(this) );
 			this.AddServiceAndComponent( new GameConsole( this ) );
@@ -47,14 +45,14 @@ namespace IronStar {
 			this.GetService<FrameProcessor>().LayerOrder = 100;
 			this.GetService<GameConsole>().LayerOrder = 200;
 
-			Invoker.RegisterCommand("map",				() => new MapCommand(this) );
+			/*Invoker.RegisterCommand("map",				() => new MapCommand(this) );
 			Invoker.RegisterCommand("killEditor",		() => new KillEditorCommand(this) );
 			Invoker.RegisterCommand("killServer",		() => new KillServerCommand(this) );
 			Invoker.RegisterCommand("connect",			() => new ConnectCommand(this) );
 			Invoker.RegisterCommand("disconnect",		() => new DisconnectCommand(this) );
 			Invoker.RegisterCommand("contentBuild",		() => new ContentBuildCommand(this) );
 			Invoker.RegisterCommand("contentFile",		() => new ContentFileCommand() );
-			Invoker.RegisterCommand("contentReport",	() => new ContentReportCommand() );
+			Invoker.RegisterCommand("contentReport",	() => new ContentReportCommand() );*/
 		}
 
 
@@ -96,12 +94,6 @@ namespace IronStar {
 		{
 			base.Initialize();
 
-			Content.Load<SoundBank>(@"audio\desktop\master.strings"	);
-			Content.Load<SoundBank>(@"audio\desktop\master"			);
-			Content.Load<SoundBank>(@"audio\desktop\env"			);
-			Content.Load<SoundBank>(@"audio\desktop\music"			);
-			Content.Load<SoundBank>(@"audio\desktop\vo"				);
-
 			Keyboard.KeyDown +=Keyboard_KeyDown;
 		}
 
@@ -132,7 +124,7 @@ namespace IronStar {
 			}
 
 
-			if (e.Key==Keys.F1) {
+			/*if (e.Key==Keys.F1) {
 
 				var frames = this.GetService<FrameProcessor>();
 				var parent = frames.RootFrame;
@@ -148,7 +140,7 @@ namespace IronStar {
 					frames.TargetFrame	= assetExplorer;
 					
 				}
-			}
+			} */
 
 		}
 
@@ -174,9 +166,9 @@ namespace IronStar {
 
 		protected void StartLevel ( string mapname )
 		{
-			var campaign = new ShooterCampaign( this, mapname );
+			/*var campaign = new ShooterCampaign( this, mapname );
 			this.AddServiceAndComponent( campaign );
-			campaign.Initialize();
+			campaign.Initialize();*/
 		}
 
 
@@ -184,7 +176,7 @@ namespace IronStar {
 		protected void StopLevel ()
 		{
 			//	try to stop editor :
-			var campaign = this.GetService<ShooterCampaign>();
+			/*var campaign = this.GetService<ShooterCampaign>();
 
 			if (campaign!=null) {
 				Log.Message("Stopping map campaign...");
@@ -193,23 +185,23 @@ namespace IronStar {
 				SafeDispose( ref campaign );
 			} else {
 				Log.Warning("Campaign is not running");
-			}
+			} */
 		}
 
 
 
 		protected void StartEditor ( string mapname )
 		{
-			var editor = new MapEditor( this, mapname );
+			/*var editor = new MapEditor( this, mapname );
 			editor.Initialize();
 
-			this.AddServiceAndComponent( editor );
+			this.AddServiceAndComponent( editor );*/
 		}
 
 
 		protected void StopEditor ( )
 		{
-			//	try to stop editor :
+			/*//	try to stop editor :
 			var editor = this.GetService<MapEditor>();
 
 			if (editor!=null) {
@@ -219,13 +211,13 @@ namespace IronStar {
 				SafeDispose( ref editor );
 			} else {
 				Log.Warning("Editor is not running");
-			}
+			} */
 		}
 
 
 		protected void StartServer ( string mapname, bool dedicated )
 		{
-			var sv = this.GetService<GameServer>();
+			/*var sv = this.GetService<GameServer>();
 			var cl = this.GetService<GameClient>();
 			var nt = this.GetService<Network>();
 
@@ -237,33 +229,33 @@ namespace IronStar {
 				if (sv.Start( svInstance )) {
 					Connect( "127.0.0.1", nt.Port );
 				}
-			}
+			} */
 		}
 
 
 		protected void KillServer ()
 		{
-			this.GetService<GameServer>().Kill();
+			//this.GetService<GameServer>().Kill();
 		}
 
 
 
 		protected void Connect ( string host, int port )
 		{
-			var cl = this.GetService<GameClient>();
+			/*var cl = this.GetService<GameClient>();
 			var nt = this.GetService<Network>();
 
 			var clInstance	=	new ShooterClient( cl, null, Guid.NewGuid() );
 
 			if (!this.GetService<GameClient>().Connect(host, port, clInstance)) {
 				clInstance.Dispose();
-			}
+			} */
 		}
 
 
 		protected void Disconnect ( string message )
 		{
-			this.GetService<GameClient>().Disconnect(message);
+			//this.GetService<GameClient>().Disconnect(message);
 		}
 	}
 }

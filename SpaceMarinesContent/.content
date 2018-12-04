@@ -1,0 +1,55 @@
+[Ignore]
+*.ma
+*.psd
+spots/*.tga
+sprites/*.tga
+decals/*.tga
+scenes/*.tga
+scenes/*.png
+scenes/*.jpg
+turtle/*
+_outsource/*
+_kitbash/*
+*.wav
+*.ogg
+
+[BinaryDirectories]
+..\..\..\..\SDKs
+..\..\..\..\Native\FScene\bin\x64\Release
+..\..\..\..\SDKs\KopiLua\Luac\bin\x64\Release
+#..\..\..\..\Native\FScene\bin\x64\Debug
+#HKEY_CURRENT_USER\Software\FusionEngine@ToolsDir
+
+[ContentDirectories]
+..\..\..\..\Shaders
+#HKEY_CURRENT_USER\Software\FusionEngine@ContentDir
+
+[Textures]
+*.tga
+*.png
+*.jpg
+
+[TextureAtlas]
+*spots.atlas /width:512 /height:512
+*particles.atlas  /width:2048 /height:2048 /fill:"0, 0, 0, 0" /pad:16
+*decals.atlas  /width:2048 /height:1024 /fill:"128, 128, 255, 0" /pad:16
+
+[Fonts]
+*.bmfc
+
+[Scenes]
+*.fbx /geom /report /anim
+*anim_*.fbx /report /anim
+scenes/weapon2/*.fbx /geom /report /anim  /retarget:scenes\weapon2\weapon_common.fbx
+
+[Sounds]
+*.wav
+
+[Lua]
+*.lua
+
+[Copy]
+*.ini
+*.txt
+*.json
+*.bank

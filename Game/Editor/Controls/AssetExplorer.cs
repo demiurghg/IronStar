@@ -18,7 +18,7 @@ namespace IronStar.Editor.Controls {
 
 		readonly Type[] types;
 		readonly FileListBox fileList;
-		readonly Factory factory;
+		readonly JsonFactory factory;
 		readonly Label labelPath;
 		readonly Label labelName;
 		readonly AEPropertyGrid grid;
@@ -39,7 +39,7 @@ namespace IronStar.Editor.Controls {
 			//------------------------
 
 			this.types		=	types.Where( t => !t.IsAbstract ).ToArray();
-			this.factory	=	parent.Game.GetService<Factory>();
+			this.factory	=	parent.Game.GetService<JsonFactory>();
 
 			fileList		=	new FileListBox( Frames, "", "*.json" );
 			fileList.X		=	2;
@@ -246,7 +246,7 @@ namespace IronStar.Editor.Controls {
 					var path = Path.Combine( fileListBox.CurrentDirectory, textBox.Text + ".json" );
 
 					using ( var stream = File.OpenWrite( path ) ) {
-						Game.GetService<Factory>().ExportJson( stream, obj );
+						Game.GetService<JsonFactory>().ExportJson( stream, obj );
 					}
 
 					fileListBox.RefreshFileList();

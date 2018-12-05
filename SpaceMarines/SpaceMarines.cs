@@ -40,13 +40,13 @@ namespace SpaceMarines {
 			this.AddServiceAndComponent( new Network( this ) );
 			this.AddServiceAndComponent( new GameClient( this ) );
 			this.AddServiceAndComponent( new GameServer( this ) );
-			this.AddServiceAndComponent( new Factory( this ) );
+			this.AddServiceAndComponent( new JsonFactory( this ) );
 
 			this.GetService<FrameProcessor>().LayerOrder = 100;
 			this.GetService<GameConsole>().LayerOrder = 200;
 
-			/*Invoker.RegisterCommand("map",				() => new MapCommand(this) );
-			Invoker.RegisterCommand("killEditor",		() => new KillEditorCommand(this) );
+			Invoker.RegisterCommand("map",				() => new MapCommand(this) );
+			/*Invoker.RegisterCommand("killEditor",		() => new KillEditorCommand(this) );
 			Invoker.RegisterCommand("killServer",		() => new KillServerCommand(this) );
 			Invoker.RegisterCommand("connect",			() => new ConnectCommand(this) );
 			Invoker.RegisterCommand("disconnect",		() => new DisconnectCommand(this) );
@@ -155,107 +155,38 @@ namespace SpaceMarines {
 
 
 		Frame assetExplorer;
+		string nextMap;
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="gameTime"></param>
 		protected override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
+
+			if (nextMap!=null) {
+				
+				
+				
+			}
+
 
 			Invoker.ExecuteDeferredCommands();
 		}
 
 
-		protected void StartLevel ( string mapname )
+		/*-----------------------------------------------------------------------------------------------
+		 * 
+		 *	Stuff
+		 * 
+		-----------------------------------------------------------------------------------------------*/
+
+		void Map ( string mapname )
 		{
-			/*var campaign = new ShooterCampaign( this, mapname );
-			this.AddServiceAndComponent( campaign );
-			campaign.Initialize();*/
+			nextMap = mapname;
 		}
-
-
-
-		protected void StopLevel ()
-		{
-			//	try to stop editor :
-			/*var campaign = this.GetService<ShooterCampaign>();
-
-			if (campaign!=null) {
-				Log.Message("Stopping map campaign...");
-				Services.RemoveService( campaign.GetType() );
-				Components.Remove( campaign );
-				SafeDispose( ref campaign );
-			} else {
-				Log.Warning("Campaign is not running");
-			} */
-		}
-
-
-
-		protected void StartEditor ( string mapname )
-		{
-			/*var editor = new MapEditor( this, mapname );
-			editor.Initialize();
-
-			this.AddServiceAndComponent( editor );*/
-		}
-
-
-		protected void StopEditor ( )
-		{
-			/*//	try to stop editor :
-			var editor = this.GetService<MapEditor>();
-
-			if (editor!=null) {
-				Log.Message("Stopping map editor...");
-				Services.RemoveService( editor.GetType() );
-				Components.Remove( editor );
-				SafeDispose( ref editor );
-			} else {
-				Log.Warning("Editor is not running");
-			} */
-		}
-
-
-		protected void StartServer ( string mapname, bool dedicated )
-		{
-			/*var sv = this.GetService<GameServer>();
-			var cl = this.GetService<GameClient>();
-			var nt = this.GetService<Network>();
-
-			var svInstance	=	new ShooterServer( sv, null, mapname );
-
-			if (dedicated) {
-				sv.Start( svInstance );
-			} else {
-				if (sv.Start( svInstance )) {
-					Connect( "127.0.0.1", nt.Port );
-				}
-			} */
-		}
-
-
-		protected void KillServer ()
-		{
-			//this.GetService<GameServer>().Kill();
-		}
-
-
-
-		protected void Connect ( string host, int port )
-		{
-			/*var cl = this.GetService<GameClient>();
-			var nt = this.GetService<Network>();
-
-			var clInstance	=	new ShooterClient( cl, null, Guid.NewGuid() );
-
-			if (!this.GetService<GameClient>().Connect(host, port, clInstance)) {
-				clInstance.Dispose();
-			} */
-		}
-
-
-		protected void Disconnect ( string message )
-		{
-			//this.GetService<GameClient>().Disconnect(message);
-		}
+		
 	}
 }

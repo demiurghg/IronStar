@@ -13,11 +13,11 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
-namespace IronStar {
+namespace Fusion.Core {
 	/// <summary>
 	/// //	https://stackoverflow.com/questions/24171730/adding-a-custom-type-name-to-all-classes-during-serialisation-with-json-net
 	/// </summary>
-	public class Factory : GameComponent {
+	public class JsonFactory : GameComponent {
 
 		readonly JsonSerializerSettings settings;
 
@@ -27,7 +27,7 @@ namespace IronStar {
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
-		public Factory( Game game ) : base(game)
+		public JsonFactory( Game game ) : base(game)
 		{
 			settings = new JsonSerializerSettings();
 			settings.Formatting = Newtonsoft.Json.Formatting.Indented;

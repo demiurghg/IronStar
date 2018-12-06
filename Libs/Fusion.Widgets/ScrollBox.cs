@@ -105,6 +105,26 @@ namespace Fusion.Widgets {
 
 
 
+		public override void Add( Frame frame )
+		{
+			if (Children.Count()>0) {
+				throw new InvalidOperationException("Could not add more than one frame to ScrollBox");
+			}
+			base.Add( frame );
+		}
+
+
+
+		public override void Insert( int index, Frame frame )
+		{
+			if (Children.Count()>0) {
+				throw new InvalidOperationException("Could not insert more than one frame to ScrollBox");
+			}
+			base.Insert( index, frame );
+		}
+
+
+
 		protected override void Update( GameTime gameTime )
 		{
 			base.Update( gameTime );

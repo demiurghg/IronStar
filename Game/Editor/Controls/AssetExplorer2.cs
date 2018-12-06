@@ -32,6 +32,7 @@ namespace IronStar.Editor.Controls {
 		public AssetExplorer2( Frame parent, string initialDir, Type[] types, int x, int y, int w, int h ) : base(parent.Frames, x,y,600,500)
 		{
 			AllowDrag		=	true;
+			AllowResize		=	true;
 
 			Layout			=	new PageLayout( 15, 27, 2, 23, 6, 15, 1 );
 

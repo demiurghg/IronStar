@@ -28,11 +28,11 @@ namespace SpaceMarines.Mapping {
 		/// </summary>
 		/// <param name="mapPath"></param>
 		/// <returns></returns>
-		public static Map LoadLegacyMap ( string text )
+		public Map LoadLegacyMap ( string text )
 		{
 			var map = new Map();
 
-
+			return map;
 		}
 
 	}

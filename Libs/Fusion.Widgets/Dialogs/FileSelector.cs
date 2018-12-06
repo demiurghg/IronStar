@@ -13,6 +13,7 @@ using Fusion.Core.Input;
 using System.IO;
 using Fusion.Build;
 using Fusion.Core.Content;
+using Fusion.Engine.Frames.Layouts;
 
 namespace Fusion.Widgets.Dialogs {
 
@@ -86,12 +87,17 @@ namespace Fusion.Widgets.Dialogs {
 			{
 				this.setFileName	=	setFileName;
 
-				labelDir			=	new Label( fp, 2, 3, DialogWidth - 4, 10, "" );
+				AllowDrag			=	true;
+				AllowResize			=	true;
 
-				buttonAccept		=	new Button( fp, "Accept",	DialogWidth - 120 - 2, DialogHeight - 2 - 20, 120, 20, ()=>Accept() );
-				buttonHome			=	new Button( fp, "Home",		DialogWidth - 240 - 4, DialogHeight - 2 - 20, 120, 20, ()=>Home() );
-				buttonPreview		=	new Button( fp, "Preview",  DialogWidth - 360 - 6, DialogHeight - 2 - 20, 120, 20, ()=>Preview() );
-				buttonClose			=	new Button( fp, "Close",  2,                     DialogHeight - 2 - 20, 120, 20, ()=>Close() );
+				Layout				=	new PageLayout( 15, 1, 1, 23, 4, 15, 1 );
+
+				labelDir			=	new Label( fp, 2, 3, DialogWidth - 4, 15, "" );
+
+				buttonAccept		=	new Button( fp, "Accept",	DialogWidth - 120 - 2, DialogHeight - 2 - 25, 120, 15, ()=>Accept() );
+				buttonHome			=	new Button( fp, "Home",		DialogWidth - 240 - 4, DialogHeight - 2 - 25, 120, 15, ()=>Home() );
+				buttonPreview		=	new Button( fp, "Preview",  DialogWidth - 360 - 6, DialogHeight - 2 - 25, 120, 15, ()=>Preview() );
+				buttonClose			=	new Button( fp, "Close",	2,                     DialogHeight - 2 - 20, 120,   15, ()=>Close() );
 
 				fileListBox			=	new FileListBox( fp, defaultDir, searchPattern );
 				fileListBox.X		=	2;
@@ -105,12 +111,14 @@ namespace Fusion.Widgets.Dialogs {
 
 				labelDir.Text	=	fileListBox.CurrentDirectory;
 
+				Add( labelDir );
+				Add( Frame.CreateEmptyFrame(fp) );
+				Add( fileListBox );
+
 				Add( buttonAccept );
 				Add( buttonHome );
 				Add( buttonPreview );
 				Add( buttonClose );
-				Add( fileListBox );
-				Add( labelDir );
 
 				Missclick += FileSelectorFrame_Missclick;
 				Closed += FileSelectorFrame_Closed;

@@ -570,7 +570,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": "ccdcd",
+        "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
@@ -6057,16 +6057,16 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "ScenePath": "scenes\\grayBoxing\\boxSize4.fbx",
+        "ScenePath": "scenes\\grayBoxing\\pillarSize8.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
         "GlowIntensity": 100.0,
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -20.0,
-        "TranslateY": 4.0,
+        "TranslateX": -26.25,
+        "TranslateY": -1.0,
         "TranslateZ": -24.0,
-        "RotateYaw": 30.0,
+        "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
       },
@@ -6617,7 +6617,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapDecal, IronStar",
-        "ImageName": "blood1",
+        "ImageName": "explosion",
         "Width": 4.0,
         "Height": 4.0,
         "Depth": 0.5,
@@ -6638,6 +6638,28 @@
         "RotateYaw": -18.0,
         "RotatePitch": -90.0,
         "RotateRoll": -30.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.FuncFXFactory, IronStar",
+          "FX": "fire",
+          "FXMode": "persistent",
+          "Once": false,
+          "Start": true,
+          "MinInterval": 2,
+          "MaxInterval": 2
+        },
+        "FactoryName": "ydB2gFFO",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -8.5,
+        "TranslateY": -0.5,
+        "TranslateZ": -19.75,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
       }
     ]
   },

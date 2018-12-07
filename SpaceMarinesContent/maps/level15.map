@@ -1,0 +1,133 @@
+//----------------------------------------------------------------------
+//	Name :		"Face to face"
+//	Goal : 		
+//	Author : 	Demiurg-HG
+//----------------------------------------------------------------------
+
+progress	16;
+
+with PLAYER
+	set max_health		"150"
+endwith
+
+with ITEM_HEALTH
+	set	number	"120";
+endwith
+
+//----------------------------------------------------------------------
+//	APPEARANCE AND MAZE PARAMS :
+//----------------------------------------------------------------------
+mazeInit	16	16	"tiles/space02/space02";
+
+mazeDef	S	INFO_START		1
+mazeDef	F	INFO_FINISH		1
+mazeDef	+	ITEM_HEALTH		1
+
+mazeDef	a	MARINE_MG		3;
+mazeDef	c	MARINE_PG		3;
+
+mazeDef	1	BARREL			4
+mazeDef	2	BARREL_N		3
+mazeDef	4	BIG_BARREL		4
+mazeDef	X	SOF_BOSS		1
+mazeDef	P	SOF_P			2
+
+/////////////01234567890123456789012345678901
+maze	15	"               "
+maze	14	"  **+*+*+*+**  "
+maze	13	" +*  *   *  *+ "
+maze	12	" +*  4   4  *+ "
+maze	11	"  **4*****4**  "
+maze	10	"  *  *****  *  "
+maze	9	"  *  *P*P*  *  "
+maze	8	"  **4**X**4**  "
+maze	7	" +*  *P*P*  *+ "
+maze	6	" +*  *****  *+ "
+maze	5	"  **4*   *4**  "
+maze	4	"  +  +   +  +  "
+maze	3	"  *            "
+maze	2	"  *            "
+maze	1	" S*F           "
+maze	0	"                 "
+/////////////01234567890123456789012345678901
+                           
+mazeBuild
+//mazeWeather	"SNOW"
+mazeWeather	"WAR_SMOKE"
+
+setEnv	"env/stars.tga"
+setFog	"sprites/null.tga" 0;
+
+//----------------------------------------------------------------------
+//	ADD SOME DIRT :
+//----------------------------------------------------------------------
+//				TEXTURE							Rds	%%	r	g	b	a
+//----------------------------------------------------------------------
+addDecal	"gfx/decals/exp_decal.tga" 			30	70 	1	1	1	0.25;
+addDecal	"gfx/decals/exp_decal.tga" 			9	70 	1	1	1	0.30;
+addDecal	"gfx/decals/exp_decal.tga" 			2	50 	1	1	1	0.50;
+addDecal	"gfx/decals/plasma_decal.tga" 		5	100	1	1	1	0.70;
+addDecal	"gfx/decals/blood0.tga" 			4	30 	1	1	1	0.30;
+addDecal	"gfx/decals/blood1.tga" 			4	30 	1	1	1	0.30;
+addDecal	"gfx/decals/blood2.tga" 			4	30 	1	1	1	0.30;
+addDecal	"gfx/decals/blood3.tga" 			4	30 	1	1	1	0.30;
+
+
+//----------------------------------------------------------------------
+//	ADD BRIEFING :
+//----------------------------------------------------------------------
+
+exitCriteria	"kill" "ALL" "all";
+//nextLevel 		"level17";
+
+briefingCreate 	"1";
+briefingTime	"1" "10000";
+briefingImage	"1" "ui/space.jpg";
+briefingText	"1" "15. Face to Face";
+briefingText	"1" "";
+briefingText	"1" "Special Operation Forces: Making progress, marine?";
+briefingText	"1" "I`m colonel Smith. They told I was dead.";
+briefingText	"1" "Bastards! Do you really think you are able to stop me?";
+briefingText	"1" "Now I tell you the whole story, then you will die.";
+briefingText	"1" "";
+briefingText	"1" "Space station E.C.L.I.P.S.E was totally deserted, "
+briefingText	"1" "when I`d been serving as a marine as you already realized";
+briefingText	"1" "We reached the research facility core and";
+briefingText	"1" "found out all the information about research conducted there.";
+briefingText	"1" "They dealt with mind control and new lifeforms.";
+briefingText	"1" "";
+briefingText	"1" "My squad was not satisfied by United Earth Government, so";
+briefingText	"1" "me and my brothers-in-arms realized that these lifeforms";
+briefingText	"1" "could help us to establish new world order.";
+briefingText	"1" "";
+briefingText	"1" "We had prepared everything for the envasion, but little trouble attracted ";
+briefingText	"1" "your attention. I've managed your squad to prevent unmasking."
+ briefingText	"1" "However, now it does not matter, invasion can not be stopped.";
+briefingText	"1" "";
+                
+briefingTime	"DEAD" "10000";
+briefingImage	"DEAD" "ui/failed.jpg";
+briefingText	"DEAD" "";
+
+briefingTime	"WIN" "10000";
+briefingImage	"WIN" "ui/endgame.jpg";
+briefingText	"WIN" "";
+
+               
+
+//----------------------------------------------------------------------
+//	GIVE ITEMS TO PLAYER
+//	delay 500 is necessary!!!
+//----------------------------------------------------------------------
+with PLAYER
+	set max_health		"125"
+endwith
+
+delay 500 "give WEAPON1 1;";
+delay 500 "give WEAPON7 1;";
+
+delay 500 "give WEAPON1_AMMO 50;";
+delay 500 "give WEAPON7_AMMO 200;";
+delay 500 "weapon 7;";
+
+setMusic "music/drone2.ogg";

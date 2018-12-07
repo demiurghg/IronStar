@@ -1,0 +1,129 @@
+//----------------------------------------------------------------------
+//	Name :		"Labs: Level 2"
+//	Goal : 		
+//	Author : 	Demiurg-HG
+//----------------------------------------------------------------------
+
+//----------------------------------------------------------------------
+//	APPEARANCE AND MAZE PARAMS :
+//----------------------------------------------------------------------
+progress	7;
+mazeInit	32	32	"tiles/lab/lab";
+
+mazeDef	S	INFO_START		1
+mazeDef	F	INFO_FINISH		1
+mazeDef	+	ITEM_HEALTH		1
+mazeDef	o	ITEM_DNA		1
+
+mazeDef	a	MARINE			4
+mazeDef	a	MARINE			4
+mazeDef	s	MARINE_SNIPER	2
+
+mazeDef	1	BARREL			2
+mazeDef	2	BARREL_N		2
+mazeDef	4	BIG_BARREL		1
+mazeDef	3	BIOTANK			1
+mazeDef	x	GHOST			2
+mazeDef	z	MTVR_CHILD		1
+
+maze	31	"                                "
+maze	30	"               33333            "
+maze	29	" ***2  2********1*1*****        "
+maze	28	" *       *     33333   *        "
+maze	27	" *       *             *   333  "
+maze	26	" *4  11***2**        *********  "
+maze	25	" *4  11*    *   3  ***     333  "
+maze	24	" *4  11*    *   3***            "
+maze	23	" *4  11**   2   3  *            "
+maze	22	" *      *          ***2         "
+maze	21	" *      *           *       12* "
+maze	20	" *  +332*   +33+    *    ****F* "
+maze	19	" *  *****   *x**    *    x  **3 "
+maze	18	" **2*   *****       +    x      "
+maze	17	" +  *   *   *       *x*1**      "
+maze	16	" +  1***1   *  +*1x**   *****   "
+maze	15	"      *     1  ***  x   *   4   "
+maze	14	"      *     *  1**  *   x       "
+maze	13	"    **1**   *  +*x*1*   x       "
+maze	12	" +  *   1   *       **1x**      "
+maze	11	" ****   **2**       2    *  333 "
+maze	10	" *  *****   ****    *    **xx*1 "
+maze	9	" S  2*12*   2332  33**      333 "
+maze	8	"                  *  *          "
+maze	7	"                  *  *****      "
+maze	6	"  x****   2**2**2**      *33    "
+maze	5	"  x   *   *  *           ***    "
+maze	4	"  x   *                    *    "
+maze	3	" 3x3  *         1*****x    *    "
+maze	2	" 3o3  ****  *x***x*   *  31*    "
+maze	1	" 3*3     ****         **x***    "
+maze	0	"                                "
+                           
+mazeBuild
+
+setEnv	"*black"
+setFog	"gfx/fog_fov.tga" 100;
+mazeWeather "LAB";
+
+//----------------------------------------------------------------------
+//	ADD SOME DIRT :
+//----------------------------------------------------------------------
+//				TEXTURE							Rds	%%	r	g	b	a
+//----------------------------------------------------------------------
+addDecal	"gfx/decals/exp_decal.tga" 		25	50 	1	1	1	0.15;
+addDecal	"gfx/decals/exp_decal.tga" 		9	60 	1	1	1	0.30;
+addDecal	"gfx/decals/exp_decal.tga" 		1	60 	1	1	1	0.50;
+addDecal	"gfx/decals/plasma_decal.tga" 	7	100	1	1	1	0.70;
+addDecal	"gfx/decals/blood0.tga" 		4	20 	1	1	1	0.090;
+addDecal	"gfx/decals/blood1.tga" 		4	20 	1	1	1	0.090;
+addDecal	"gfx/decals/blood2.tga" 		4	20 	1	1	1	0.090;
+addDecal	"gfx/decals/blood3.tga" 		4	20 	1	1	1	0.090;
+addDecal	"gfx/decals/acid0.tga" 			8	10 	1	1	1	0.05;
+addDecal	"gfx/decals/acid1.tga" 			8	10 	1	1	1	0.05;
+addDecal	"gfx/decals/acid2.tga" 			8	10 	1	1	1	0.05;
+addDecal	"gfx/decals/acid3.tga" 			8	10 	1	1	1	0.05;
+
+
+//----------------------------------------------------------------------
+//	ADD BRIEFING :
+//----------------------------------------------------------------------
+exitCriteria	"get" "DNA" "DNA specimen";
+nextLevel 		"level07";
+
+briefingCreate 	"1";
+briefingTime	"1" "10000";
+briefingImage	"1" "ui/labs.jpg";
+briefingText	"1" "06. Ghost Story";
+briefingText	"1" "";
+briefingText	"1" "*No signal*";
+briefingText	"1" "You get lost in a maze of laboratories.";
+briefingText	"1" "Strange semitransparent creatures surrounded you.";
+briefingText	"1" "But your IR detector shows nothing.";
+briefingText	"1" "Probably the souls of innocently killed people.";
+briefingText	"1" "";
+                
+briefingTime	"DEAD" "10000";
+briefingImage	"DEAD" "ui/failed.jpg";
+briefingText	"DEAD" "";
+
+briefingTime	"WIN" "10000";
+briefingImage	"WIN" "ui/success.jpg";
+briefingText	"WIN" "";
+
+//----------------------------------------------------------------------
+//	GIVE ITEMS TO PLAYER
+//	delay 500 is necessary!!!
+//----------------------------------------------------------------------
+delay 500 "give WEAPON1 1;";
+delay 500 "give WEAPON2 1;";
+delay 500 "give WEAPON3 1;";
+delay 500 "give WEAPON5 1;";
+delay 500 "give WEAPON6 1;";
+
+delay 500 "give WEAPON1_AMMO 50;";
+delay 500 "give WEAPON2_AMMO 200;";
+delay 500 "give WEAPON3_AMMO 50;";
+delay 500 "give WEAPON5_AMMO 50;";
+delay 500 "give WEAPON6_AMMO 200;";
+
+setMusic "music/marine.ogg";

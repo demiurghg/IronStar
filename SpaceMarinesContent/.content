@@ -7,6 +7,9 @@ decals/*.tga
 scenes/*.tga
 scenes/*.png
 scenes/*.jpg
+tiles/*.tga
+Temp/*
+Temp2/*
 turtle/*
 _outsource/*
 _kitbash/*
@@ -30,9 +33,7 @@ _kitbash/*
 *.jpg
 
 [TextureAtlas]
-*spots.atlas /width:512 /height:512
-*particles.atlas  /width:2048 /height:2048 /fill:"0, 0, 0, 0" /pad:16
-*decals.atlas  /width:2048 /height:1024 /fill:"128, 128, 255, 0" /pad:16
+*.atlas /width:1024 /height:1024 /fill:"0, 0, 0, 0" /pad:16
 
 [Fonts]
 *.bmfc
@@ -53,3 +54,4 @@ scenes/weapon2/*.fbx /geom /report /anim  /retarget:scenes\weapon2\weapon_common
 *.txt
 *.json
 *.bank
+*.map

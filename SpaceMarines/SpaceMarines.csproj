@@ -81,6 +81,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SFX\LayerCollection.cs" />
     <Compile Include="SFX\ViewWorld.cs" />
+    <Compile Include="SinglePlayer.cs" />
     <Compile Include="SpaceMarines.Commands.cs" />
     <Compile Include="SpaceMarines.cs" />
   </ItemGroup>

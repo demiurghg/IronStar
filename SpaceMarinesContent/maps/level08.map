@@ -1,0 +1,120 @@
+//----------------------------------------------------------------------
+//	Name :		"Labs: Maze"
+//	Goal : 		
+//	Author : 	Demiurg-HG
+//----------------------------------------------------------------------
+
+//----------------------------------------------------------------------
+//	APPEARANCE AND MAZE PARAMS :
+//----------------------------------------------------------------------
+progress	9;
+mazeInit	16	16	"tiles/lab/lab";
+
+mazeDef	S	INFO_START		1
+mazeDef	F	INFO_FINISH		1
+mazeDef	+	ITEM_HEALTH	1
+
+mazeDef	a	MARINE			4
+mazeDef	b	MARINE_SG		4
+mazeDef	c	MARINE_PG		2
+mazeDef	s	MARINE_SNIPER	2
+
+mazeDef	1	BARREL			2
+mazeDef	2	BARREL_N		2
+mazeDef	3	BIOTANK			1
+mazeDef	x	ZOMBIE_JAW		9
+mazeDef	z	MTVR_CHILD		2
+mazeDef	X	BOSS_RL			1
+
+/////////////0123456789012345
+maze	15	"                "
+maze	14	"    *33xx33*    "
+maze	13	" ***3xxXxx*3*** "
+maze	12	" +  *xxxxx**  + "
+maze	11	" +  *11xx11*  + "
+maze	10	" +**3******3**+ "
+maze	9	" +  *1****1*  + "
+maze	8	" +  *11**11*  + "
+maze	7	" +**3******3**+ "
+maze	6	" +  *1****1*  + "
+maze	5	" +  *11**11*  + "
+maze	4	" ************** "
+maze	3	"       **   *   "
+maze	2	"       **   *   "
+maze	1	" S3a*a********F "
+maze	0	"                "
+/////////////0123456789012345
+                           
+mazeBuild
+
+setEnv	"*black"
+setFog	"gfx/fog_fov.tga" 100;
+mazeWeather "ACID_FOG";
+
+//----------------------------------------------------------------------
+//	ADD SOME DIRT :
+//----------------------------------------------------------------------
+//			TEXTURE							Rds	%%	r	g	b	a
+//----------------------------------------------------------------------
+addDecal	"gfx/decals/exp_decal.tga" 		25	50 	1	1	1	0.15;
+addDecal	"gfx/decals/exp_decal.tga" 		9	60 	1	1	1	0.30;
+addDecal	"gfx/decals/exp_decal.tga" 		1	60 	1	1	1	0.50;
+addDecal	"gfx/decals/plasma_decal.tga" 	7	100	1	1	1	0.70;
+addDecal	"gfx/decals/blood0.tga" 		4	20 	1	1	1	0.90;
+addDecal	"gfx/decals/blood1.tga" 		4	20 	1	1	1	0.90;
+addDecal	"gfx/decals/blood2.tga" 		4	20 	1	1	1	0.90;
+addDecal	"gfx/decals/blood3.tga" 		4	20 	1	1	1	0.90;
+addDecal	"gfx/decals/acid0.tga" 			8	10 	1	1	1	0.05;
+addDecal	"gfx/decals/acid1.tga" 			8	10 	1	1	1	0.05;
+addDecal	"gfx/decals/acid2.tga" 			8	10 	1	1	1	0.05;
+addDecal	"gfx/decals/acid3.tga" 			8	10 	1	1	1	0.05;
+
+
+//----------------------------------------------------------------------
+//	ADD BRIEFING :
+//----------------------------------------------------------------------
+exitCriteria	"kill"	"ALL" "all emenies";
+nextLevel 		"level09";
+
+briefingCreate 	"1";
+briefingTime	"1" "10000";
+briefingImage	"1" "ui/labs.jpg";
+briefingText	"1" "08. Labs: Minotaur"
+briefingText	"1" ""
+briefingText	"1" "You are located inside of research facility core."
+briefingText	"1" "Strange smell tickles your nose."
+briefingText	"1" "Terrific scream makes you soul cold "
+briefingText	"1" "and you grip you weapon more strong."
+briefingText	"1" "Giant monster stands front you and you know, that nobody will survive..."
+briefingText	"1" ""
+
+               
+briefingTime	"DEAD" "10000";
+briefingImage	"DEAD" "ui/failed.jpg";
+briefingText	"DEAD" "";
+
+briefingTime	"WIN" "10000";
+briefingImage	"WIN" "ui/success.jpg";
+briefingText	"WIN" "";
+
+
+//----------------------------------------------------------------------
+//	GIVE ITEMS TO PLAYER
+//	delay 500 is necessary!!!
+//----------------------------------------------------------------------
+delay 500 "give WEAPON1 1;";
+delay 500 "give WEAPON2 1;";
+delay 500 "give WEAPON3 1;";
+//delay 500 "give WEAPON4 1;";
+delay 500 "give WEAPON5 1;";
+delay 500 "give WEAPON6 1;";
+
+delay 500 "give WEAPON1_AMMO 999;";
+delay 500 "give WEAPON2_AMMO 200;";
+delay 500 "give WEAPON3_AMMO 50;";
+//delay 500 "give WEAPON4_AMMO 999;";
+delay 500 "give WEAPON5_AMMO 50;";
+delay 500 "give WEAPON6_AMMO 200;";
+
+setMusic "music/xen.ogg";
+

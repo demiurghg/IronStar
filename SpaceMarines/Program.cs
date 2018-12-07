@@ -41,7 +41,7 @@ namespace SpaceMarines {
 			//	Remove this line in release code.
 			//
 			Builder.Options.InputDirectory	= @"..\..\..\..\SpaceMarinesContent";
-			Builder.Options.TempDirectory	= @"..\..\..\..\SpaceMarinesContent\Temp";
+			Builder.Options.TempDirectory	= @"..\..\..\..\Temp2";
 			Builder.Options.OutputDirectory = @"Content";
 			Builder.SafeBuild();
 

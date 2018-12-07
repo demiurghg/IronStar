@@ -45,14 +45,16 @@ namespace SpaceMarines {
 			this.GetService<FrameProcessor>().LayerOrder = 100;
 			this.GetService<GameConsole>().LayerOrder = 200;
 
+			this.AddServiceAndComponent( new SinglePlayer(this) );
+
 			Invoker.RegisterCommand("map",				() => new MapCommand(this) );
 			/*Invoker.RegisterCommand("killEditor",		() => new KillEditorCommand(this) );
 			Invoker.RegisterCommand("killServer",		() => new KillServerCommand(this) );
 			Invoker.RegisterCommand("connect",			() => new ConnectCommand(this) );
-			Invoker.RegisterCommand("disconnect",		() => new DisconnectCommand(this) );
+			Invoker.RegisterCommand("disconnect",		() => new DisconnectCommand(this) );*/
 			Invoker.RegisterCommand("contentBuild",		() => new ContentBuildCommand(this) );
 			Invoker.RegisterCommand("contentFile",		() => new ContentFileCommand() );
-			Invoker.RegisterCommand("contentReport",	() => new ContentReportCommand() );*/
+			Invoker.RegisterCommand("contentReport",	() => new ContentReportCommand() );
 		}
 
 
@@ -76,8 +78,8 @@ namespace SpaceMarines {
 		{
 			//	wait for server and client tasks, 
 			//	stop game if neccessary
-			this.GetService<GameClient>().Wait();
-			this.GetService<GameServer>().Wait();
+			this.GetService<GameClient>()?.Wait();
+			this.GetService<GameServer>()?.Wait();
 
 			//	save components' configuration
 			foreach ( var component in Components ) {
@@ -155,7 +157,6 @@ namespace SpaceMarines {
 
 
 		Frame assetExplorer;
-		string nextMap;
 
 
 		/// <summary>
@@ -165,13 +166,6 @@ namespace SpaceMarines {
 		protected override void Update(GameTime gameTime)
 		{
 			base.Update(gameTime);
-
-			if (nextMap!=null) {
-				
-				
-				
-			}
-
 
 			Invoker.ExecuteDeferredCommands();
 		}
@@ -185,8 +179,7 @@ namespace SpaceMarines {
 
 		void Map ( string mapname )
 		{
-			nextMap = mapname;
+			this.GetService<SinglePlayer>().StartMap( mapname );
 		}
-		
 	}
 }

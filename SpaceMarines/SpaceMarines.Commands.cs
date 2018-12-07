@@ -45,5 +45,59 @@ namespace SpaceMarines {
 			}
 
 		}
+
+		class ContentBuildCommand : CommandNoHistory {
+			Game	 game;
+			
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("force")]
+			public bool	Force { get; set; }
+
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("clean")]
+			public string Clean { get; set; }
+
+			public ContentBuildCommand ( Game game )
+			{
+				this.game	=	game;
+			}
+
+			public override object Execute ()
+			{
+				Builder.SafeBuild( Force, Clean, new string[0] );
+				game.Reload();	
+				return null;		
+			}
+		}
+
+
+
+		class ContentFileCommand : CommandNoHistory {
+			public override object Execute()
+			{
+				return Builder.Options.ContentIniFile;
+			}
+		}
+
+
+
+		class ContentReportCommand : CommandNoHistory {
+
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("reportFile")]
+			public string ReportFile { get; set; }
+
+
+			public ContentReportCommand()
+			{
+			}
+
+			public override object Execute() 
+			{
+				Builder.OpenReport( ReportFile );
+				return null;
+			}
+
+		}
 	}
 }

@@ -66,6 +66,7 @@
     <Compile Include="Core\Entity.cs" />
     <Compile Include="Core\Enums.cs" />
     <Compile Include="Core\GameWorld.cs" />
+    <Compile Include="Core\Maze.cs" />
     <Compile Include="Core\Snapshot.cs" />
     <Compile Include="JsonLoader.cs" />
     <Compile Include="Mapping\MapLoader.cs" />

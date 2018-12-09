@@ -11,7 +11,7 @@ namespace SpaceMarines.Mapping {
 
 		public Rectangle	Area;
 		public string		Texture;
-		public ContentType	Content;
+		public TileContent	Content;
 
 	}
 }

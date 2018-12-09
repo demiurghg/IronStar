@@ -149,10 +149,11 @@ namespace Fusion.Engine.Graphics {
 
 				using ( new PixEvent("SpriteLayer") ) {
 
-					Matrix absTransform	=	parentTransform * layer.Transform;
-					Color4 absColor		=	parentColor * layer.Color.ToColor4();
+					Matrix absTransform		=	parentTransform * layer.Transform;
+					Matrix viewProjection	=	absTransform * ( layer.UseProjection ? layer.Projection : projection );
+					Color4 absColor			=	parentColor * layer.Color.ToColor4();
 
-					constData.Transform		=	absTransform * projection;
+					constData.Transform		=	viewProjection;
 					constData.ClipRectangle	=	new Vector4(0,0,0,0);
 					constData.MasterColor	=	absColor;
 

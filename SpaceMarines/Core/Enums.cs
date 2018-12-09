@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SpaceMarines.Core {
 
-	public enum ContentType {
+	public enum TileContent {
 		Void,
 		Wall,
 		Floor,

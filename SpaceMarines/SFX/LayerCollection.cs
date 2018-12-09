@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core;
 using Fusion.Core.Extensions;
+using Fusion.Core.Mathematics;
 using Fusion.Engine.Graphics;
 
 namespace SpaceMarines.SFX {
@@ -43,6 +44,11 @@ namespace SpaceMarines.SFX {
 			entities	.Order	=	13;
 			sfx			.Order	=	14;
 			info		.Order	=	15;
+
+			tiles.FilterMode	=	SpriteFilterMode.LinearClamp;
+			tiles.Transform		=	Matrix.Translation(-32,-18,0);
+			tiles.UseProjection	=	true;
+			tiles.Projection	=	Matrix.OrthoRH(64,36,-1024,1024);
 
 			rs.SpriteLayers.Add( background );
 			rs.SpriteLayers.Add( tiles		);

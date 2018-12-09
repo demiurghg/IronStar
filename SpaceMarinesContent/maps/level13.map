@@ -21,7 +21,6 @@ mazeDef	s	MARINE_SNIPER	3
 
 mazeDef	1	BARREL			3 
 mazeDef	2	BARREL_N		3
-mazeDef	2	BARREL_N		3
 mazeDef	N	NUKE			1
 mazeDef	x	ZOMBIE_JAW		8
 mazeDef	X	ZOMBIE_JAW		14

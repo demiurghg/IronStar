@@ -37,6 +37,9 @@ namespace SpaceMarines {
 		public void StartMap ( string mapName )
 		{
 			var map = Game.Content.Load<Map>( @"maps\" + mapName );
+
+			Game.GetService<ViewWorld>().Layers.Clear();
+
 			map.DrawStatic( Game.GetService<ViewWorld>() );
 		}
 	}

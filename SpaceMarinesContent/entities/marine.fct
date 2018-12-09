@@ -1,0 +1,34 @@
+class			"MONSTER";
+baseclass		"";
+max_health		"100";
+weapon			"WEAPON2";
+team			"1";
+
+pic_size		"2.0";
+body_pic		"sprites/actors/marine_body.tga";
+body_shadow		"sprites/actors/marine_body_shadow.tga";
+legs_pic		"sprites/actors/marine_legs.tga";
+legs_shadow		"sprites/actors/marine_legs_shadow.tga";
+gun_offset		"0.45";
+shadow_offset	"0.2";
+pain_gfx		"BLOOD_SPATTER";
+pain_sound		"";
+death_gfx		"MEAT_FLESH2";
+death_sound		"sound/voices/human_dying.ogg";
+
+max_shield		"250";
+shield_regen_time "0.1";
+shield_gfx  	"SHIELD";
+
+size			"1.5";
+linear_speed	"15";
+linear_accel	"120";
+angular_speed	"1000";
+
+ai_think_quantum	"100"	;
+ai_aim_speed		"400"	;	
+ai_aim_deviation	"0.999"	;	
+ai_attack_dist		"40"	;	
+ai_smell_dist		"10"	;
+ai_follow_dist		"20"	;  
+ai_patrol_area		"20"	;

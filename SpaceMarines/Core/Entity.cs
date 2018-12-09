@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
+using SpaceMarines.SFX;
 
 namespace SpaceMarines.Core {
 	public class Entity {
@@ -90,6 +91,16 @@ namespace SpaceMarines.Core {
 		/// </summary>
 		/// <param name="gameTime"></param>
 		public virtual void Update ( GameTime gameTime )
+		{
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="gameTime"></param>
+		/// <param name="layers"></param>
+		public virtual void LegacyDraw ( GameTime gameTime, LayerCollection layers )
 		{
 		}
 

@@ -8,7 +8,7 @@ using Fusion.Core.Extensions;
 using Fusion.Engine.Graphics;
 
 namespace SpaceMarines.SFX {
-	public class ViewWorld : GameComponent {
+	public class FXPlayback : GameComponent {
 
 		RenderSystem rs;
 
@@ -19,7 +19,7 @@ namespace SpaceMarines.SFX {
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
-		public ViewWorld( Game game ) : base( game )
+		public FXPlayback( Game game ) : base( game )
 		{
 		}
 

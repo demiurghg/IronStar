@@ -46,7 +46,7 @@ namespace SpaceMarines {
 			this.GetService<FrameProcessor>().LayerOrder = 100;
 			this.GetService<GameConsole>().LayerOrder = 200;
 
-			this.AddServiceAndComponent( new ViewWorld(this) );
+			this.AddServiceAndComponent( new FXPlayback(this) );
 			this.AddServiceAndComponent( new SinglePlayer(this) );
 
 			Invoker.RegisterCommand("map",				() => new MapCommand(this) );

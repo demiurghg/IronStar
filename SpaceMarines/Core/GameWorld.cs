@@ -59,5 +59,15 @@ namespace SpaceMarines.Core {
 
 			}
 		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="gameTime"></param>
+		public void Present ( GameTime gameTime )
+		{
+		}
 	}
 }

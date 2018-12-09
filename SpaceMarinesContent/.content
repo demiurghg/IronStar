@@ -55,3 +55,4 @@ scenes/weapon2/*.fbx /geom /report /anim  /retarget:scenes\weapon2\weapon_common
 *.json
 *.bank
 *.map
+*.fct

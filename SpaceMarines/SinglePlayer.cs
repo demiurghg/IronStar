@@ -38,9 +38,9 @@ namespace SpaceMarines {
 		{
 			var map = Game.Content.Load<Map>( @"maps\" + mapName );
 
-			Game.GetService<ViewWorld>().Layers.Clear();
+			Game.GetService<FXPlayback>().Layers.Clear();
 
-			map.DrawStatic( Game.GetService<ViewWorld>() );
+			map.DrawStatic( Game.GetService<FXPlayback>() );
 		}
 	}
 }

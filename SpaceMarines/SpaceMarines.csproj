@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\EntityFactoryLoader.cs" />
     <Compile Include="Core\EntityFactory.cs" />
     <Compile Include="Core\Entity.cs" />
     <Compile Include="Core\Enums.cs" />
@@ -87,7 +88,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SFX\LayerCollection.cs" />
-    <Compile Include="SFX\ViewWorld.cs" />
+    <Compile Include="SFX\Sprite.cs" />
+    <Compile Include="SFX\FXPlayback.cs" />
     <Compile Include="SinglePlayer.cs" />
     <Compile Include="SpaceMarines.Commands.cs" />
     <Compile Include="SpaceMarines.cs" />

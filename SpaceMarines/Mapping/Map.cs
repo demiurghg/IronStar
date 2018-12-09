@@ -58,7 +58,7 @@ namespace SpaceMarines.Mapping {
 		/// Draws static stuff like tiles and static decals
 		/// </summary>
 		/// <param name="viewWorld"></param>
-		public void DrawStatic ( ViewWorld viewWorld )
+		public void DrawStatic ( FXPlayback viewWorld )
 		{	  
 			var tileLayer	=	viewWorld.Layers.Tiles;
 

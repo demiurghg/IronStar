@@ -63,11 +63,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\EntityFactory.cs" />
     <Compile Include="Core\Entity.cs" />
     <Compile Include="Core\Enums.cs" />
     <Compile Include="Core\GameWorld.cs" />
     <Compile Include="Core\Maze.cs" />
     <Compile Include="Core\Snapshot.cs" />
+    <Compile Include="Entities\Info.cs" />
+    <Compile Include="Entities\Item.cs" />
+    <Compile Include="Entities\MonsterFactory.cs" />
+    <Compile Include="Entities\Monster.cs" />
+    <Compile Include="Entities\Projectile.cs" />
     <Compile Include="JsonLoader.cs" />
     <Compile Include="Mapping\MapLoader.cs" />
     <Compile Include="Mapping\Map.cs" />
@@ -133,7 +139,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AI\" />
-    <Folder Include="Entities\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

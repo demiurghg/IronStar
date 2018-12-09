@@ -10,34 +10,54 @@ using SpaceMarines.SFX;
 
 namespace SpaceMarines.Core {
 
-	class GameWorld : GameComponent {
+	public class GameWorld {
 		
-		ViewWorld viewWorld;
+		readonly Game Game;
+		readonly Dictionary<uint,Entity> entitites;
+		uint counter = 1;
+
 		
-		public GameWorld( Game game, Map map ) : base( game )
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="game"></param>
+		/// <param name="map"></param>
+		public GameWorld( Game game, Map map )
 		{
-			var view = game.GetService<ViewWorld>();
-			map.DrawStatic( view );
+			this.Game	=	game;
+			entitites	=	new Dictionary<uint, Entity>();
 		}
 
 
-		public override void Initialize()
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="classname"></param>
+		/// <returns></returns>
+		public Entity Spawn ( string classname )
 		{
-			base.Initialize();
+			var factory =	Game.Content.Load<EntityFactory>(@"entities\" + classname);
+			var entity	=	factory.Spawn( counter++, this ); 
+
+			entitites.Add( entity.ID, entity );
+
+			return entity;
 		}
 
 
-		protected override void Dispose( bool disposing )
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="gameTime"></param>
+		public void Simulate( GameTime gameTime )
 		{
-			
+			foreach ( var idEntityPair in entitites ) {
 
-			base.Dispose( disposing );
-		}
+				var entity	=	idEntityPair.Value;
 
+				entity.Update( gameTime );
 
-		public override void Update( GameTime gameTime )
-		{
-			base.Update( gameTime );
+			}
 		}
 	}
 }

@@ -10,56 +10,48 @@ using System.Reflection;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Widgets;
-using Fusion.Widgets.Binding;
 
-namespace IronStar.Editor.Controls {
+namespace Fusion.Widgets.Advanced {
 
 	public partial class AEPropertyGrid : Frame {
 
-		class AETextBox : AEBaseEditor {
+		class AEDropDown : AEBaseEditor {
 			
-			TextBox textBox;
+			DropDown dropDown;
 
 			readonly Func<string> getFunc;
 			readonly Action<string> setFunc;
-			readonly Action<string>	selectFunc;
-
-			Button buttonSelect;
 
 			/// <summary>
 			/// 
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AETextBox ( AEPropertyGrid grid, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc ) : base(grid, name)
+			public AEDropDown ( AEPropertyGrid grid, string name, string value, IEnumerable<string> values, Func<string> getFunc, Action<string> setFunc ) : base(grid, name)
 			{ 
 				this.getFunc	=	getFunc;
 				this.setFunc	=	setFunc;
-				this.selectFunc	=	selectFunc;
 				
 				Width			=	grid.Width;
 				Height			=	ComputeItemHeight();
 
-				this.StatusChanged +=AESlider_StatusChanged;
+				this.StatusChanged +=AEDropDown_StatusChanged;
 
-				textBox	=	new TextBox( Frames, new DelegateBinding<string>( getFunc, setFunc ) ) { 
-					TextAlignment = Alignment.MiddleLeft, 
+				dropDown		=	new DropDown( Frames, value, values, getFunc, setFunc ) {
+					PaddingLeft		=	HorizontalPadding,
+					PaddingRight	=	HorizontalPadding,
+					PaddingTop		=	VerticalPadding,
+					PaddingBottom	=	VerticalPadding,
 				};
 
-				Add( textBox );
-
-				if (selectFunc!=null) {
-					buttonSelect =	new Button( Frames, "[..]", 0,0,10,10, ()=>selectFunc(textBox.Text) );
-					buttonSelect.BorderColor = Color.Zero;
-					Add( buttonSelect );
-				}
+				Add( dropDown );
 
 				Update(new GameTime());
 			}
 
 
 
-			private void AESlider_StatusChanged( object sender, StatusEventArgs e )
+			private void AEDropDown_StatusChanged( object sender, StatusEventArgs e )
 			{
 				switch ( e.Status ) {
 					case FrameStatus.None:		ForeColor	=	ColorTheme.TextColorNormal; break;
@@ -73,17 +65,9 @@ namespace IronStar.Editor.Controls {
 			{
 				base.RunLayout();
 
-				textBox.X		=	Width/2;
-				textBox.Width	=	Width/2;
-				textBox.Height	=	ComputeItemHeight();
-
-				if (buttonSelect!=null) {
-					textBox.Width		-= 13;
-					buttonSelect.X		= Width-13;
-					buttonSelect.Y		= 0;
-					buttonSelect.Width	= 13;
-					buttonSelect.Height = textBox.Height;
-				}
+				dropDown.X		=	Width/2;
+				dropDown.Width	=	Width/2;
+				dropDown.Height	=	10;
 			}
 
 

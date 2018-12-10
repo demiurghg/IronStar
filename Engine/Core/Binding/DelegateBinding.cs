@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fusion.Widgets.Binding {
-	public class DelegateBinding<TValue> : IValueBinding<TValue> {
+namespace Fusion.Core.Binding {
+	public class DelegateBinding<TValue> : IValueBinding {
 
 		readonly Func<TValue> getFunc;
 		readonly Action<TValue> setFunc;
@@ -18,6 +18,13 @@ namespace Fusion.Widgets.Binding {
 		}
 
 
+		public DelegateBinding ( Func<TValue> getFunc )
+		{
+			this.getFunc	=	getFunc;
+			this.setFunc	=	null;
+		}
+
+
 		public bool IsReadonly {
 			get {
 				return setFunc==null;
@@ -25,18 +32,18 @@ namespace Fusion.Widgets.Binding {
 		}
 
 
-		public TValue GetValue()
+		public object GetValue()
 		{
 			return getFunc();
 		}
 
 
-		public bool SetValue( TValue value )
+		public bool SetValue( object value )
 		{
 			if (IsReadonly) {
 				return false;
 			} else {
-				setFunc(value);
+				setFunc((TValue)value);
 				return true;
 			}
 		}

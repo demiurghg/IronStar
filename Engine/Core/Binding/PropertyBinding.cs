@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 
-namespace Fusion.Widgets.Binding {
-	public class PropertyBinding<TValue> : IValueBinding<TValue> {
+namespace Fusion.Core.Binding {
+	public class PropertyBinding : IValueBinding {
 
 		readonly object targetObject;
 		readonly PropertyInfo propertyInfo;
@@ -48,13 +48,13 @@ namespace Fusion.Widgets.Binding {
 				throw new ValueBindingException("Property '{0}' was not found", propertyName );
 			}
 
-			if (!propertyInfo.PropertyType.IsAssignableFrom(typeof(TValue))) {
+			/*if (!propertyInfo.PropertyType.IsAssignableFrom(typeof(TValue))) {
 				throw new ValueBindingException("Type of property '{0}' and {1} is not assignable to each other", propertyName, typeof(TValue) );
 			}
 
 			if (!typeof(TValue).IsAssignableFrom(propertyInfo.PropertyType)) {
 				throw new ValueBindingException("Type of property '{0}' and {1} is not assignable to each other", propertyName, typeof(TValue) );
-			}
+			} */
 
 			if (!propertyInfo.CanRead) {
 				throw new ValueBindingException("Property '{0}' can not be read", propertyInfo.Name );
@@ -69,13 +69,13 @@ namespace Fusion.Widgets.Binding {
 		}
 
 
-		public TValue GetValue()
+		public object GetValue()
 		{
-			return (TValue)propertyInfo.GetValue(targetObject);
+			return propertyInfo.GetValue(targetObject);
 		}
 
 
-		public bool SetValue(TValue value)
+		public bool SetValue(object value)
 		{
 			if (IsReadonly) {
 				return false;
@@ -84,7 +84,5 @@ namespace Fusion.Widgets.Binding {
 				return true;
 			}
 		}
-
-
 	}
 }

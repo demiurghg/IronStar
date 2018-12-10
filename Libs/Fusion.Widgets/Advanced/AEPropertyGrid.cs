@@ -13,11 +13,11 @@ using Fusion;
 using Fusion.Engine.Frames.Layouts;
 using Fusion.Core;
 using Fusion.Core.Shell;
+using Fusion.Core.Binding;
 using Fusion.Widgets;
 using Fusion.Widgets.Dialogs;
-using Fusion.Widgets.Binding;
 
-namespace IronStar.Editor.Controls {
+namespace Fusion.Widgets.Advanced {
 
 	public partial class AEPropertyGrid : Frame {
 
@@ -164,6 +164,19 @@ namespace IronStar.Editor.Controls {
 						null );
 				}
 
+				if (pi.PropertyType==typeof(Color)) {
+					AddColorPicker( category, name, ()=>(Color)(pi.GetValue(obj)), (val)=>setFunc(val) );
+				}
+
+				if (pi.PropertyType.IsEnum) {
+
+					var type	=	pi.PropertyType;
+					var value	=	pi.GetValue(obj).ToString();
+					var values	=	Enum.GetNames( type );
+
+					AddDropDown( category, name, value, values, ()=>pi.GetValue(obj).ToString(), (val)=>setFunc(Enum.Parse(type, val)) );
+				}
+
 				if (pi.PropertyType==typeof(string)) {
 
 					if (pi.HasAttribute<AEFileNameAttribute>()) {
@@ -201,19 +214,6 @@ namespace IronStar.Editor.Controls {
 					} else {
 						AddTextBox( category, name, ()=>(string)(pi.GetValue(obj)), (val)=>setFunc(val), null );
 					}
-				}
-
-				if (pi.PropertyType==typeof(Color)) {
-					AddColorPicker( category, name, ()=>(Color)(pi.GetValue(obj)), (val)=>setFunc(val) );
-				}
-
-				if (pi.PropertyType.IsEnum) {
-
-					var type	=	pi.PropertyType;
-					var value	=	pi.GetValue(obj).ToString();
-					var values	=	Enum.GetNames( type );
-
-					AddDropDown( category, name, value, values, ()=>pi.GetValue(obj).ToString(), (val)=>setFunc(Enum.Parse(type, val)) );
 				}
 
 				if (pi.PropertyType.IsClass) {

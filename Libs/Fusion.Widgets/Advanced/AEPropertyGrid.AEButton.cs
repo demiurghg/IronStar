@@ -11,7 +11,7 @@ using Fusion.Core.Mathematics;
 using Fusion.Widgets;
 using Fusion.Core;
 
-namespace IronStar.Editor.Controls {
+namespace Fusion.Widgets.Advanced {
 
 	public partial class AEPropertyGrid : Frame {
 

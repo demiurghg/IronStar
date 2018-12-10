@@ -12,6 +12,7 @@ using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Frames.Layouts;
 using Fusion.Widgets;
+using Fusion.Widgets.Advanced;
 
 namespace IronStar.Editor.Controls {
 	public class AssetExplorer : Panel {

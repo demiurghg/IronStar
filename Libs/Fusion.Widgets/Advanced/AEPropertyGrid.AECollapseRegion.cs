@@ -12,7 +12,7 @@ using Fusion.Engine.Frames.Layouts;
 using Fusion.Core;
 using Fusion.Widgets;
 
-namespace IronStar.Editor.Controls {
+namespace Fusion.Widgets.Advanced {
 
 	public partial class AEPropertyGrid : Frame {
 

@@ -76,15 +76,6 @@
     <Compile Include="Core\DamageType.cs" />
     <Compile Include="Core\Entity.Lua.cs" />
     <Compile Include="Core\ItemCollection.cs" />
-    <Compile Include="Editor\Controls\AEPropertyGrid.AEBaseEditor.cs" />
-    <Compile Include="Editor\Controls\AEPropertyGrid.AEButton.cs" />
-    <Compile Include="Editor\Controls\AEPropertyGrid.AECheckBox.cs" />
-    <Compile Include="Editor\Controls\AEPropertyGrid.AECollapseRegion.cs" />
-    <Compile Include="Editor\Controls\AEPropertyGrid.AEColorPicker.cs" />
-    <Compile Include="Editor\Controls\AEPropertyGrid.AEDropDown.cs" />
-    <Compile Include="Editor\Controls\AEPropertyGrid.AESlider.cs" />
-    <Compile Include="Editor\Controls\AEPropertyGrid.AETextBox.cs" />
-    <Compile Include="Editor\Controls\AEPropertyGrid.cs" />
     <Compile Include="Editor\Controls\AssetExplorer.cs" />
     <Compile Include="Editor\Controls\AssetExplorer2.cs" />
     <Compile Include="Editor\Controls\Workspace.cs" />

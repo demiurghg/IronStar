@@ -10,24 +10,25 @@ using System.Reflection;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Widgets;
+using Fusion.Widgets.Dialogs;
 
-namespace IronStar.Editor.Controls {
+namespace Fusion.Widgets.Advanced {
 
 	public partial class AEPropertyGrid : Frame {
 
-		class AEDropDown : AEBaseEditor {
+		class AEColorPicker : AEBaseEditor {
 			
-			DropDown dropDown;
+			readonly Func<Color> getFunc;
+			readonly Action<Color> setFunc;
 
-			readonly Func<string> getFunc;
-			readonly Action<string> setFunc;
+			Frame colorButton;
 
 			/// <summary>
 			/// 
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AEDropDown ( AEPropertyGrid grid, string name, string value, IEnumerable<string> values, Func<string> getFunc, Action<string> setFunc ) : base(grid, name)
+			public AEColorPicker ( AEPropertyGrid grid, string name, Func<Color> getFunc, Action<Color> setFunc ) : base(grid, name)
 			{ 
 				this.getFunc	=	getFunc;
 				this.setFunc	=	setFunc;
@@ -35,23 +36,32 @@ namespace IronStar.Editor.Controls {
 				Width			=	grid.Width;
 				Height			=	ComputeItemHeight();
 
-				this.StatusChanged +=AEDropDown_StatusChanged;
+				this.StatusChanged  +=AEColorPicker_StatusChanged;
 
-				dropDown		=	new DropDown( Frames, value, values, getFunc, setFunc ) {
-					PaddingLeft		=	HorizontalPadding,
-					PaddingRight	=	HorizontalPadding,
-					PaddingTop		=	VerticalPadding,
-					PaddingBottom	=	VerticalPadding,
-				};
+				colorButton				=	new Frame( Frames );
+				colorButton.Border		=	1;
+				colorButton.BorderColor	=	ColorTheme.BorderColor;
+				colorButton.BackColor	=	Color.Black;
 
-				Add( dropDown );
+				colorButton.Click +=ColorButton_Click;
+
+				Add( colorButton );
 
 				Update(new GameTime());
 			}
 
 
+			private void ColorButton_Click( object sender, MouseEventArgs e )
+			{
+				var button	=	(Frame)sender;
+				var rect	=	button.GlobalRectangle;
 
-			private void AEDropDown_StatusChanged( object sender, StatusEventArgs e )
+				ColorPicker.ShowDialog( Frames, rect.X, rect.Y + rect.Height, getFunc(), setFunc );
+			}
+
+
+
+			private void AEColorPicker_StatusChanged( object sender, StatusEventArgs e )
 			{
 				switch ( e.Status ) {
 					case FrameStatus.None:		ForeColor	=	ColorTheme.TextColorNormal; break;
@@ -65,21 +75,18 @@ namespace IronStar.Editor.Controls {
 			{
 				base.RunLayout();
 
-				dropDown.X		=	Width/2;
-				dropDown.Width	=	Width/2;
-				dropDown.Height	=	10;
+				colorButton.X		=	Width/2;
+				colorButton.Width	=	Math.Min(Width/2, 70);
+				colorButton.Height	=	ComputeItemHeight();
 			}
+
 
 
 			protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
 			{
-				var value = getFunc();
-
-				//textBox.Text			=	value ?? "(null)";
-
+				colorButton.BackColor = getFunc();
 				base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
 			}
-
 		}
 
 	}

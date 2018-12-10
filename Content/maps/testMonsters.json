@@ -1432,7 +1432,7 @@
         "TranslateY": -0.636413455,
         "TranslateZ": -19.4992638,
         "RotateYaw": -46.1123657,
-        "RotatePitch": -0.0125784595,
+        "RotatePitch": 0.0,
         "RotateRoll": -0.08115306
       },
       {
@@ -5486,17 +5486,17 @@
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\grayBoxing\\boxSize4.fbx",
-        "Scale": 1.0,
+        "Scale": 2.0,
         "GlowColor": "255, 0, 0, 255",
         "GlowIntensity": 100.0,
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -12.0,
+        "TranslateX": -16.0,
         "TranslateY": 5.0,
         "TranslateZ": -8.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateYaw": 60.0,
+        "RotatePitch": 15.0,
+        "RotateRoll": -15.0
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -6065,7 +6065,7 @@
         "Frozen": false,
         "TranslateX": -26.25,
         "TranslateY": -1.0,
-        "TranslateZ": -24.0,
+        "TranslateZ": -20.5,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
@@ -6157,10 +6157,10 @@
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "OuterRadius": 9.0,
         "InnerRadius": 0.125,
-        "LightStyle": "default",
+        "LightStyle": "bulb1",
         "Ambient": false,
-        "LightColor": "255, 187, 122, 255",
-        "LightIntensity": 100.0,
+        "LightColor": "255, 169, 91, 255",
+        "LightIntensity": 130.0,
         "Visible": true,
         "Frozen": false,
         "TranslateX": 20.0,
@@ -6657,6 +6657,23 @@
         "TranslateX": -8.5,
         "TranslateY": -0.5,
         "TranslateZ": -19.75,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapOmniLight, IronStar",
+        "OuterRadius": 3.75,
+        "InnerRadius": 0.125,
+        "LightStyle": "bulb1",
+        "Ambient": false,
+        "LightColor": "255, 169, 91, 255",
+        "LightIntensity": 130.0,
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 20.0,
+        "TranslateY": 1.0,
+        "TranslateZ": 20.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0

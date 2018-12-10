@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 
-namespace Fusion.Widgets.Binding {
+namespace Fusion.Core.Binding {
 	public class StringPropertyBinding : PropertyBinding<string> {
 
 		public StringPropertyBinding ( object targetObject, PropertyInfo propertyInfo )	: base( targetObject, propertyInfo )

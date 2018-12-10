@@ -10,7 +10,7 @@ using System.Reflection;
 using Fusion.Core.Mathematics;
 using Fusion.Widgets;
 
-namespace IronStar.Editor.Controls {
+namespace Fusion.Widgets.Advanced {
 
 	public partial class AEPropertyGrid : Frame {
 

@@ -151,6 +151,10 @@
     <Compile Include="Build\Processors\UbershaderProcessor.cs" />
     <Compile Include="Build\Processors\UbershaderProcessor.Parser.cs" />
     <Compile Include="Build\ToolException.cs" />
+    <Compile Include="Core\Binding\DelegateBinding.cs" />
+    <Compile Include="Core\Binding\IValueBinding.cs" />
+    <Compile Include="Core\Binding\PropertyBinding.cs" />
+    <Compile Include="Core\Binding\ValueBindingException.cs" />
     <Compile Include="Core\Content\IniLoader.cs" />
     <Compile Include="Core\Content\IPrecachable.cs" />
     <Compile Include="Core\Extensions\EmbreeExtensions.cs" />

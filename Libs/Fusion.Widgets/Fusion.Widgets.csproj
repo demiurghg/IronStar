@@ -43,10 +43,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Binding\DelegateBinding.cs" />
-    <Compile Include="Binding\StringBinding.cs" />
-    <Compile Include="Binding\PropertyBinding.cs" />
-    <Compile Include="Binding\ValueBindingException.cs" />
+    <Compile Include="Advanced\AEPropertyGrid.AEBaseEditor.cs" />
+    <Compile Include="Advanced\AEPropertyGrid.AEButton.cs" />
+    <Compile Include="Advanced\AEPropertyGrid.AECheckBox.cs" />
+    <Compile Include="Advanced\AEPropertyGrid.AECollapseRegion.cs" />
+    <Compile Include="Advanced\AEPropertyGrid.AEColorPicker.cs" />
+    <Compile Include="Advanced\AEPropertyGrid.AEDropDown.cs" />
+    <Compile Include="Advanced\AEPropertyGrid.AESlider.cs" />
+    <Compile Include="Advanced\AEPropertyGrid.AETextBox.cs" />
+    <Compile Include="Advanced\AEPropertyGrid.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="Dialogs\ColorPicker.ColorField.cs" />
     <Compile Include="Dialogs\AtlasSelector.cs" />
@@ -55,7 +60,6 @@
     <Compile Include="DropDown.cs" />
     <Compile Include="FileListBox.cs" />
     <Compile Include="Dialogs\FileSelector.cs" />
-    <Compile Include="Binding\IValueBinding.cs" />
     <Compile Include="Label.cs" />
     <Compile Include="ListBox.cs" />
     <Compile Include="Dialogs\MessageBox.cs" />

@@ -10,15 +10,14 @@ using System.Reflection;
 using Fusion.Core.Mathematics;
 using Fusion;
 using Fusion.Core;
+using Fusion.Core.Binding;
 using Fusion.Core.Input;
 
 namespace Fusion.Widgets {
 
-	using Binding;
-
 	public class TextBox : Frame {
 
-		protected readonly IValueBinding<string> binding;
+		protected readonly IValueBinding binding;
 
 		public Color CursorColor { get; set; } = Color.Gray;
 
@@ -30,7 +29,7 @@ namespace Fusion.Widgets {
 		/// </summary>
 		/// <param name="grid"></param>
 		/// <param name="bindingInfo"></param>
-		public TextBox ( FrameProcessor fp, IValueBinding<string> binding = null ) : base(fp)
+		public TextBox ( FrameProcessor fp, IValueBinding binding = null ) : base(fp)
 		{ 
 			this.binding		=	binding;
 
@@ -67,7 +66,7 @@ namespace Fusion.Widgets {
 
 			if (binding!=null) {
 				if (!binding.SetValue( value )) {
-					Text = binding.GetValue();
+					Text = (string)binding.GetValue();
 				}
 			}
 		}
@@ -108,7 +107,7 @@ namespace Fusion.Widgets {
 			if (Frames.TargetFrame==this) {
 			} else {
 				if (binding!=null) {
-					Text = binding.GetValue();
+					Text = (string)binding.GetValue();
 				}
 			}
 		}
@@ -149,9 +148,9 @@ namespace Fusion.Widgets {
 
 
 		/*-------------------------------------------------------------------------------------
-			* 
-			*	Typewriting :
-			* 
+		* 
+		*	Typewriting :
+		* 
 		-------------------------------------------------------------------------------------*/
 
 		private void TextBox_TypeWrite( object sender, KeyEventArgs e )
@@ -209,7 +208,7 @@ namespace Fusion.Widgets {
 
 			if (e.Key==Keys.Escape) {
 				if (binding!=null) {
-					Text = binding.GetValue();
+					Text = (string)binding.GetValue();
 				}
 				ResetSelection();
 			}

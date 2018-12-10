@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Fusion.Core.Binding;
 
 namespace Fusion.Core.Shell {
 
@@ -73,10 +74,22 @@ namespace Fusion.Core.Shell {
 
 
 
+	public abstract class AEExternalEditorAttribute : Attribute {
+		public abstract void RunEditor ( IValueBinding binding );
+	}
+
+
+	public abstract class AEValueProviderAttribute : Attribute {
+		public abstract string[] GetValues ();
+	}
+
+
+
 	public enum AEFileNameMode {
 		NoExtension = 0x0001,
 		FileNameOnly = 0x0002,
 	}
+
 
 
 	public class AEFileNameAttribute : Attribute {

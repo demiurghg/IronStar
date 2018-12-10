@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fusion.Widgets.Binding {
+namespace Fusion.Core.Binding {
 	class ValueBindingException : Exception {
 
 		public ValueBindingException ()

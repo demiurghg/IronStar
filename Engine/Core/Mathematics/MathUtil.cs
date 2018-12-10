@@ -1100,5 +1100,17 @@ namespace Fusion.Core.Mathematics
 
 			return m;
 		}
+
+
+		
+		public static uint RandXorShift(uint seed)
+		{
+			// Xorshift algorithm from George Marsaglia's paper
+			seed ^= (seed << 13);
+			seed ^= (seed >> 17);
+			seed ^= (seed << 5);
+			return seed;
+		}
+
     }
 }

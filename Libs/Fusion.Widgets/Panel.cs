@@ -13,6 +13,13 @@ namespace Fusion.Widgets {
 			get; set;
 		}
 
+
+		public bool AllowResize {
+			get; set;
+		}
+
+
+
 		public Panel ( FrameProcessor fp, int x, int y, int w, int h ) : base( fp )
 		{	
 			this.BackColor		=	ColorTheme.BackgroundColor;
@@ -31,30 +38,88 @@ namespace Fusion.Widgets {
 		}
 
 
+		bool resizeRight;
+		bool resizeLeft;
+		bool resizeTop;
+		bool resizeBottom;
 
 		bool dragging = false;
 		int dragX;
 		int dragY;
 		int posX;
 		int posY;
+		int width;
+		int height;
+
+		const int borderArea = 1;
+
+
+		int Distance ( int a, int b ) 
+		{
+			return Math.Abs( a - b );
+		}
 
 
 		private void Panel_MouseDown( object sender, MouseEventArgs e )
 		{
-			if (AllowDrag) {
-				dragging	=	true;
+			if (AllowDrag || AllowResize) {
+
 				dragX		=	Frames.MousePosition.X;
 				dragY		=	Frames.MousePosition.Y;
 				posX		=	X;
 				posY		=	Y;
+				width		=	Width;
+				height		=	Height;
+
+				var gr = GlobalRectangle;
+
+				if (AllowDrag) {
+					dragging	=	true;
+				} 
+				
+				if (AllowResize) {
+					if ( Distance( gr.Bottom,	dragY ) <= borderArea ) { resizeBottom	= true;	dragging = false; }
+					if ( Distance( gr.Top,		dragY ) <= borderArea ) { resizeTop		= true; dragging = false; }
+					if ( Distance( gr.Right,	dragX ) <= borderArea ) { resizeRight	= true; dragging = false; }
+					if ( Distance( gr.Left,		dragX ) <= borderArea ) { resizeLeft	= true; dragging = false; }
+				}
 			}
 		}
 
+
+
+
+
 		private void Panel_MouseMove( object sender, MouseEventArgs e )
 		{
+			var mouseX = Frames.MousePosition.X;
+			var mouseY = Frames.MousePosition.Y;
+
 			if (dragging) {
-				X	=	posX + (Frames.MousePosition.X - dragX);
-				Y	=	posY + (Frames.MousePosition.Y - dragY);
+				X	=	posX + (mouseX - dragX);
+				Y	=	posY + (mouseY - dragY);
+			}
+
+			if (resizeRight) {
+				Width		=	width + (mouseX - dragX);
+				MakeLayoutDirty();
+			}
+
+			if (resizeBottom) {
+				Height		=	height + (mouseY - dragY);
+				MakeLayoutDirty();
+			}
+
+			if (resizeTop) {
+				Height		=	height - (mouseY - dragY);
+				Y			=	posY + (mouseY - dragY);
+				MakeLayoutDirty();
+			}
+
+			if (resizeLeft) {
+				Width		=	width - (mouseX - dragX);
+				X			=	posX + (mouseX - dragX);
+				MakeLayoutDirty();
 			}
 		}
 
@@ -63,6 +128,11 @@ namespace Fusion.Widgets {
 			if (dragging) {
 				dragging = false;
 			}
+			dragging		= false;
+			resizeBottom	= false;
+			resizeTop		= false;
+			resizeRight		= false;
+			resizeLeft		= false;
 		}
 	}
 }

@@ -23,11 +23,21 @@ namespace Fusion.Engine.Graphics {
 		/// Is current layer is visible. Default: True
 		/// </summary>
 		public bool Visible { get; set; }
+
+		/// <summary>
+		/// Indicates, custom projection matrix should be used. Default: False
+		/// </summary>
+		public bool UseProjection { get; set; } = false;
 		
 		/// <summary>
 		/// Layer's transform. Default: Indentity.
 		/// </summary>
 		public Matrix Transform { get; set; }
+		
+		/// <summary>
+		/// Layer's projection. Default: Indentity.
+		/// </summary>
+		public Matrix Projection { get; set; }
 
 		/// <summary>
 		/// Layer's master color. Default: White.

@@ -49,7 +49,7 @@ namespace IronStar.Editor.Controls {
 				Add( textBox );
 
 				if (selectFunc!=null) {
-					buttonSelect =	new Button( Frames, "\x00ff", 0,0,10,10, ()=>selectFunc(textBox.Text) );
+					buttonSelect =	new Button( Frames, "[..]", 0,0,10,10, ()=>selectFunc(textBox.Text) );
 					buttonSelect.BorderColor = Color.Zero;
 					Add( buttonSelect );
 				}
@@ -78,11 +78,11 @@ namespace IronStar.Editor.Controls {
 				textBox.Height	=	ComputeItemHeight();
 
 				if (buttonSelect!=null) {
-					textBox.Width -= 10;
-					buttonSelect.X = Width-10;
-					buttonSelect.Y = 0;
-					buttonSelect.Width = 10;
-					buttonSelect.Height = 10;
+					textBox.Width		-= 13;
+					buttonSelect.X		= Width-13;
+					buttonSelect.Y		= 0;
+					buttonSelect.Width	= 13;
+					buttonSelect.Height = textBox.Height;
 				}
 			}
 

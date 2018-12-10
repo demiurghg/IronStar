@@ -229,7 +229,10 @@ namespace IronStar.Editor.Controls {
 		{
 			if (grid==null) {
 
-				gridScrollBox = new ScrollBox( Frames, Width - 320, 40, 320, Height - 40-40 );
+				gridScrollBox = new ScrollBox( Frames, Width - 320, 40, 320, Height - 40-40 ) {
+					BorderColor = ColorTheme.BorderColor,
+					Border		= 1,
+				};
 
 				gridScrollBox.ScrollMarkerSize = 5;
 

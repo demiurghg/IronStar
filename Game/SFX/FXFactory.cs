@@ -74,7 +74,7 @@ namespace IronStar.SFX {
 
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 		{
-			return content.Game.GetService<Factory>().ImportJson( stream );
+			return content.Game.GetService<JsonFactory>().ImportJson( stream );
 		}
 	}
 

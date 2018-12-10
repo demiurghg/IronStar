@@ -297,7 +297,17 @@ namespace IronStar.Editor.Controls {
 
 		public void AddTextBox ( string category, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc )
 		{
-			AddToCollapseRegion( category, new AETextBox( this, name, getFunc, setFunc, selectFunc ) );
+			var textBox = new AETextBox( this, name, getFunc, setFunc, null );
+			var button	= new Button( Frames, "Select...", 0,0, 200, 20, () => selectFunc(textBox.Text) ) { 
+				MarginRight = 0,
+				MarginLeft = 150,
+				MarginBottom = 3,
+			};
+			
+			AddToCollapseRegion( category, textBox );
+			if (selectFunc!=null) {
+				AddToCollapseRegion( category, button );
+			}
 		}
 
 		public void AddTextBoxNum ( string category, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc )
@@ -307,7 +317,7 @@ namespace IronStar.Editor.Controls {
 
 		public void AddButton ( string category, string name, Action action )
 		{
-			AddToCollapseRegion( category, new Button( Frames, name, 0,0, 200, 20, action ) { MarginRight = 100 } );
+			AddToCollapseRegion( category, new Button( Frames, name, 0,0, 200, 23, action ) { MarginRight = 100 } );
 		}
 
 		public void AddDropDown ( string category, string name, string value, IEnumerable<string> values, Func<string> getFunc, Action<string> setFunc )

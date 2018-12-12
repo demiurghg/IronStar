@@ -109,15 +109,13 @@ float3	ComputeCSM (
 			}
 		}
 		
-		shadow /= 25;
+		shadow /= 16;
 
 		shadow *= particleShadow.SampleLevel( linearSampler, uv, 0 ).rgb;
 		
 	} else {
 		shadow = csmTexture.SampleCmpLevelZero( shadowSampler, uv, depthcmp );
 	}
-	
-	//shadow = saturate((shadow-0.5)*2+0.5);
 	
 	return lerp(shadow, 1, saturate(fade*16-15));
 }

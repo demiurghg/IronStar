@@ -328,7 +328,7 @@ namespace Fusion.Build.Mapping {
 				if ( ext==".jpg" ) {
 					image = Image.LoadJpg( stream );
 				} else {
-					throw new BuildException( "Only TGA or PNG images are supported." );
+					throw new BuildException( "Only TGA, JPG or PNG images are supported." );
 				}
 			}
 

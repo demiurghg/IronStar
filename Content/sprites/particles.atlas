@@ -1,44 +1,50 @@
-bloodSpray01.tga
-bloodSpray02.tga
-bloodSpray03.tga
-bloodSpray04.tga
-bulletSpark.tga
-bulletTrace.tga
-empSide.tga
-explosionCore.tga
-explosionDebris.tga
-explosionFire.tga
-explosionFire2.tga
-explosionParticle.tga
-explosionSmoke.tga
-explosionSmoke2.tga
-fire.tga
-fire2.tga
-gaussMuzzle.tga
-gunMuzzle.tga
-laserPoint.tga
-laserTrace.tga
-plasmaCore.tga
-plasmaFire.tga
-plasmaPuff.tga
-plasmaTrail.tga
-pointBlue.tga
-railCore.tga
-railDisk.tga
-railDot.tga
-railMuzzle.tga
-railMuzzle2.tga
-railPuff.tga
-railSpark.tga
-railTrace.tga
-rocketTrailFire.tga
-smoke.tga
-spark.tga
-spark2.tga
-sparkPuff.tga
-teleportSpark.tga
-wave.tga
-rocketSmoke.tga
-fog.tga
-cloud.tga
-hazeMap.tga
+Width 		= 2048
+Height 		= 2048
+Compression = false
+Padding		= 16
+
+[Textures]
+bloodSpray01		=	bloodSpray01.tga, bloodSpray02.tga, bloodSpray03.tga
+bloodSpray02        =   bloodSpray02.tga
+bloodSpray03        =   bloodSpray03.tga
+bloodSpray04        =   bloodSpray04.tga
+bulletSpark         =   bulletSpark.tga
+bulletTrace         =   bulletTrace.tga
+empSide             =   empSide.tga
+explosionCore       =   explosionCore.tga
+explosionDebris     =   explosionDebris.tga
+explosionFire       =   explosionFire.tga
+explosionFire2      =   explosionFire2.tga
+explosionParticle   =   explosionParticle.tga
+explosionSmoke      =   explosionSmoke.tga
+explosionSmoke2     =   explosionSmoke2.tga
+fire                =   fire.tga
+fire2               =   fire2.tga
+gaussMuzzle         =   gaussMuzzle.tga
+gunMuzzle           =   gunMuzzle.tga
+laserPoint          =   laserPoint.tga
+laserTrace          =   laserTrace.tga
+plasmaCore          =   plasmaCore.tga
+plasmaFire          =   plasmaFire.tga
+plasmaPuff          =   plasmaPuff.tga
+plasmaTrail         =   plasmaTrail.tga
+pointBlue           =   pointBlue.tga
+railCore            =   railCore.tga
+railDisk            =   railDisk.tga
+railDot             =   railDot.tga
+railMuzzle          =   railMuzzle.tga
+railMuzzle2         =   railMuzzle2.tga
+railPuff            =   railPuff.tga
+railSpark           =   railSpark.tga
+railTrace           =   railTrace.tga
+rocketTrailFire     =   rocketTrailFire.tga
+smoke               =   smoke.tga
+spark               =   spark.tga
+spark2              =   spark2.tga
+sparkPuff           =   sparkPuff.tga
+teleportSpark       =   teleportSpark.tga
+wave                =   wave.tga
+rocketSmoke         =   rocketSmoke.tga
+fog                 =   fog.tga
+cloud               =   cloud.tga
+hazeMap				=   hazeMap.tga				

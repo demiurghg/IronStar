@@ -1,6 +1,12 @@
-color.tga
-dust.tga
-grid.tga
-lena.tga
-quad.tga
-round.tga
+Width 		= 512
+Height 		= 512
+Compression = false
+Padding		= 0
+
+[Textures]
+color	=	color.tga	
+dust    =	dust.tga   
+grid    =	grid.tga   
+lena    =	lena.tga   
+quad    =	quad.tga   
+round   =	round.tga  

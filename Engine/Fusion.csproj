@@ -145,6 +145,10 @@
     <Compile Include="Build\Processors\FontProcessor.cs" />
     <Compile Include="Build\Processors\SceneProcessor.cs" />
     <Compile Include="Build\Processors\SoundProcessor.cs" />
+    <Compile Include="Build\Processors\TextureAtlas.cs" />
+    <Compile Include="Build\Processors\TextureAtlasAnimation.cs" />
+    <Compile Include="Build\Processors\TextureAtlasFrame.cs" />
+    <Compile Include="Build\Processors\TextureAtlasNode.cs" />
     <Compile Include="Build\Processors\TextureAtlasProcessor.cs" />
     <Compile Include="Build\Processors\TextureProcessor.cs" />
     <Compile Include="Build\Processors\UbershaderEnumerator.cs" />

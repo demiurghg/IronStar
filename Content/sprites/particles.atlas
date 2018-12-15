@@ -4,8 +4,8 @@ Compression = false
 Padding		= 16
 
 [Textures]
+testNum				=	testSprites\numTest*.tga
 bloodSpray01		=	bloodSpray01.tga, bloodSpray02.tga, bloodSpray03.tga
-testNum				=	testSprites\numTest01.tga testSprites\numTest02.tga testSprites\numTest03.tga testSprites\numTest04.tga testSprites\numTest05.tga testSprites\numTest06.tga 
 bloodSpray02        =   bloodSpray02.tga
 bloodSpray03        =   bloodSpray03.tga
 bloodSpray04        =   bloodSpray04.tga

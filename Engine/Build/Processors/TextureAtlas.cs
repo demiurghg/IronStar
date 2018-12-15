@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Fusion.Core.IniParser;
 using Fusion.Core;
+using Fusion.Core.Content;
 
 namespace Fusion.Build.Processors {
 
@@ -66,6 +67,8 @@ namespace Fusion.Build.Processors {
 			ip.Parser.Configuration.OverrideDuplicateKeys	=	false;
 			ip.Parser.Configuration.KeyValueAssigmentChar	=	'=';
 
+			var baseDir	=	Path.GetDirectoryName( path ) + "\\";
+
 			using ( var reader = new StreamReader( File.OpenRead( path ) ) ) {
 
 				var iniData = ip.ReadData( reader );
@@ -82,7 +85,6 @@ namespace Fusion.Build.Processors {
 				}
 
 				var atlas = new TextureAtlas();
-				var split = (" \t,;").ToArray();
 
 				atlas.Width			=	StringConverter.ToInt32	 ( sectionGeneral["Width"		] ?? "512"		);
 				atlas.Height		=	StringConverter.ToInt32	 ( sectionGeneral["Height"		] ?? "512"		);
@@ -93,13 +95,33 @@ namespace Fusion.Build.Processors {
 
 				foreach ( var keyValue in sectionTextures ) {
 					var name		=	keyValue.KeyName;
-					var textures	=	keyValue.Value.Split(split, StringSplitOptions.RemoveEmptyEntries);
+					var textures	=	GetTextureList( baseDir, keyValue.Value );
 					var animation	=	new TextureAtlasAnimation( name, textures );
 					atlas.Animations.Add( animation );
 				}
 
 				return atlas;
 			}
+		}
+
+
+		static string[] GetTextureList ( string baseDir, string keyValue )
+		{
+			var split = (" \t,;").ToArray();
+
+			if (keyValue.Contains("*")) {
+
+				var files = Directory.GetFiles( baseDir, keyValue, SearchOption.AllDirectories );
+				return files
+						.Select( n1 => ContentUtils.MakeRelativePath( baseDir, n1 ) )
+						.OrderBy( n => n )
+						.ToArray();
+
+			} else {
+
+				return keyValue.Split(split, StringSplitOptions.RemoveEmptyEntries);
+
+			} 
 		}
 
 

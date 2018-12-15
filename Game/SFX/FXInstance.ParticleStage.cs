@@ -29,6 +29,7 @@ namespace IronStar.SFX {
 
 			private bool	looped;
 			readonly int    spriteIndex;
+			readonly int	spriteCount;
 			private bool	stopped;
 			private float	time		= 0;
 			private int		emitCount	= 0;
@@ -50,7 +51,16 @@ namespace IronStar.SFX {
 			{
 				this.stage			=	stageDesc;
 				this.looped			=	looped;
-				this.spriteIndex	=	instance.fxPlayback.GetSpriteIndex( stageDesc.Sprite );
+
+				var clip			=	instance.fxPlayback.GetSpriteClip( stageDesc.Sprite );
+
+				if (clip==null) {
+					spriteIndex		=	-1;
+					spriteCount		=	1;
+				} else {
+					spriteIndex		=	clip.FirstIndex;
+					spriteCount		=	clip.Length;
+				}
 			}
 
 
@@ -91,7 +101,14 @@ namespace IronStar.SFX {
 
 				p.Effects		=	stage.Effect;
 
-				p.ImageIndex	=	spriteIndex * ( fxInstance.WeaponFX ? -1 : 1);
+				if (stage.UseRandomImages) {
+					p.ImageIndex	=	rand.Next( spriteIndex, spriteIndex + spriteCount );
+					p.ImageCount	=	1;
+				} else {
+					p.ImageIndex	=	spriteIndex;
+					p.ImageCount	=	spriteCount;
+				}
+				p.WeaponIndex	=	fxInstance.WeaponFX ? 1 : 0;
 
 				p.Color			=   stage.Color.ToColor3();
 				p.Alpha			=	stage.Alpha;

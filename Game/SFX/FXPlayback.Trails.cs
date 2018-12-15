@@ -37,7 +37,8 @@ namespace IronStar.SFX {
 
 			var offset		=	dy * dn + dx * rt;
 
-			p.ImageIndex	=	GetSpriteIndex("bulletTrace");
+			p.ImageIndex	=	GetSpriteClip("bulletTrace").FirstIndex;
+			p.ImageCount	=	GetSpriteClip("bulletTrace").Length;
 
 			p.TimeLag		=	0;
 			p.Position		=	fxEvent.Origin + offset + fxEvent.Velocity * 0.5f;
@@ -100,7 +101,8 @@ namespace IronStar.SFX {
 			p.Intensity		=	5000;
 			p.Alpha			=	1;
 
-			p.ImageIndex	=	GetSpriteIndex("bulletTrace");
+			p.ImageIndex	=	GetSpriteClip("bulletTrace").FirstIndex;
+			p.ImageCount	=	GetSpriteClip("bulletTrace").Length;
 
 			rw.ParticleSystem.InjectParticle( p );
 
@@ -164,7 +166,10 @@ namespace IronStar.SFX {
 				p.Alpha			=	1;
 				p.FadeIn		=	0.1f;
 				p.FadeOut		=	0.4f;			
-				p.ImageIndex	=	GetSpriteIndex("railDot");
+
+
+				p.ImageIndex	=	GetSpriteClip("railDot").FirstIndex;
+				p.ImageCount	=	GetSpriteClip("railDot").Length;
 
 				p.Rotation0		=	rand.NextFloat(0,360);
 				p.Rotation1		=	p.Rotation0;

@@ -9,7 +9,6 @@ static const uint ParticleFX_Soft = 3;
 static const uint ParticleFX_SoftLit = 4;
 static const uint ParticleFX_SoftLitShadow = 5;
 static const uint ParticleFX_Distortive = 6;
-static const uint ParticleFX_Beam = 7;
 static const uint LightmapRegionSize = 1024;
 static const uint LightmapWidth = 4096;
 static const uint LightmapHeight = 2048;
@@ -19,7 +18,7 @@ static const uint LightSpotShapeRound = 131072;
 static const uint LightSpotShapeSquare = 65536;
 
 // Fusion.Engine.Graphics.Particle
-// Marshal.SizeOf = 120
+// Marshal.SizeOf = 128
 struct Particle {
 	float3     Position;                      // offset:    0
 	float3     Velocity;                      // offset:   12
@@ -42,7 +41,9 @@ struct Particle {
 	float      FadeIn;                        // offset:  104
 	float      FadeOut;                       // offset:  108
 	int        ImageIndex;                    // offset:  112
-	uint       Effects;                       // offset:  116
+	int        ImageCount;                    // offset:  116
+	int        WeaponIndex;                   // offset:  120
+	uint       Effects;                       // offset:  124
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHT

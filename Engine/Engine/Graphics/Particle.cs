@@ -56,11 +56,6 @@ namespace Fusion.Engine.Graphics {
 		/// Distortive particles
 		/// </summary>
 		Distortive,
-
-		/// <summary>
-		/// Beam particle
-		/// </summary>
-		Beam
 	}
 
 
@@ -169,9 +164,18 @@ namespace Fusion.Engine.Graphics {
 
 		/// <summary>
 		/// Index of the image in the texture atlas
-		/// HACK: negative value means weapon matrix
 		/// </summary>
-		public int		ImageIndex;            
+		public int		ImageIndex;        
+		
+		/// <summary>
+		/// Number of frames
+		/// </summary>
+		public int		ImageCount;    
+
+		/// <summary>
+		/// Zero means world-space basis
+		/// </summary>
+		public int		WeaponIndex;
 
 		/// <summary>
 		/// Index of the image in the texture atlas

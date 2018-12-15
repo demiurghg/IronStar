@@ -50,7 +50,6 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine]	public const uint ParticleFX_SoftLit		=	(uint)ParticleFX.SoftLit		;
 		[ShaderDefine]	public const uint ParticleFX_SoftLitShadow	=	(uint)ParticleFX.SoftLitShadow	;
 		[ShaderDefine]	public const uint ParticleFX_Distortive		=	(uint)ParticleFX.Distortive		;
-		[ShaderDefine]	public const uint ParticleFX_Beam			=	(uint)ParticleFX.Beam			;
 
 		[ShaderDefine]	public const uint LightmapRegionSize	=	1024;
 		[ShaderDefine]	public const uint LightmapWidth			=	LightmapRegionSize * 4;

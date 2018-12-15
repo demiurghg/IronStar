@@ -109,7 +109,7 @@ void CSMain(
 	if (id < (uint)Params.MaxParticles && Params.DeadListSize > (uint)MAX_INJECTED ) {
 		Particle p = injectionBuffer[ id ];
 		
-		if (p.ImageIndex<0) {
+		if (p.WeaponIndex>0) {
 			TransformVector( Params.View, p.Velocity );
 			TransformPoint ( Params.View, p.Position );//*/
 		}
@@ -326,7 +326,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 		return;
 	}
 
-	if (prt.ImageIndex<0) {
+	if (prt.WeaponIndex>0) {
 		TransformVector( Params.ViewInverted, prt.Velocity );
 		TransformPoint ( Params.ViewInverted, prt.Position );
 	}//*/
@@ -376,7 +376,9 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	float3		up	=	(basisUp * cos(a) - basisRt * sin(a));
 	float3		fwd	=	offset * sz;
 	
-	float4		image	=	Images[abs(prt.ImageIndex)];
+	int			frame	=	(int)lerp( prt.ImageIndex, prt.ImageIndex + prt.ImageCount, factor );
+				frame	=	clamp( frame, prt.ImageIndex, prt.ImageIndex + prt.ImageCount );
+	float4		image	=	Images[frame];
 	
 	float4 wpos0	=	float4( position + rt + up - fwd, 1 );
 	float4 wpos1	=	float4( position - rt + up - fwd, 1 );
@@ -427,7 +429,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	
 	float4 lightmapRegion	=	lightMapRegionsGS[ prtId ];
 	
-	float4x4	projection	= (prt.ImageIndex < 0) ? Params.ProjectionFPV : Params.Projection;
+	float4x4	projection	= (prt.WeaponIndex > 0) ? Params.ProjectionFPV : Params.Projection;
 	
 	p0.Position	 = mul( pos0, projection );
 	p0.Normal	 = normal0;

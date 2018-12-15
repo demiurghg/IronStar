@@ -22,6 +22,8 @@ namespace IronStar.SFX {
 
 		TextureAtlas spriteSheet;
 
+		readonly TextureAtlasClip	EmptyClip	=	new TextureAtlasClip("*null", -1, 0 );
+
 		readonly Game			game;
 		public readonly RenderWorld	rw;
 		public readonly SoundSystem	ss;
@@ -143,17 +145,17 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="imageName"></param>
 		/// <returns></returns>
-		public int GetSpriteIndex ( string spriteName )
+		public TextureAtlasClip GetSpriteClip ( string spriteName )
 		{
 			var name	=	Path.GetFileName(spriteName);
 			var clip	=	spriteSheet.GetClipByName( spriteName );
 
 			if (clip==null) {
 				Log.Warning("{0} not included to sprite sheet", spriteName);
-				return -1;
-			} else {
-				return clip.FirstIndex;
+				return EmptyClip;
 			}
+
+			return clip;
 		}
 
 

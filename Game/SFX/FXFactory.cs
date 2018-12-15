@@ -349,6 +349,9 @@ namespace IronStar.SFX {
 		[AEAtlasImage("sprites\\particles")]
 		public string Sprite { get; set; } = "";
 
+		[Description( "Particle sprite name" )]
+		public bool UseRandomImages { get; set; } = false;
+
 		[Description( "Particle visual effect" )]
 		public ParticleFX Effect { get; set; } = ParticleFX.Hard;
 

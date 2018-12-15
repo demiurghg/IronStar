@@ -169,7 +169,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Gets names of all subimages. 
 		/// </summary>
-		public string[] GetSubImageNames () 
+		public string[] GetClipNames () 
 		{
 			return clips.Select( e => e.Name ).ToArray();
 		}

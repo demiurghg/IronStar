@@ -15,6 +15,7 @@ using Fusion.Build;
 using Fusion.Core.Content;
 using Fusion.Engine.Frames.Layouts;
 using Fusion.Widgets;
+using Fusion.Core;
 
 namespace Fusion.Widgets.Dialogs {
 
@@ -74,8 +75,8 @@ namespace Fusion.Widgets.Dialogs {
 
 				buttonAccept	=	new Button( fp, "Accept",  0,0,0,0, ()=>Accept(null) );
 				buttonClose		=	new Button( fp, "Close",   0,0,0,0, ()=>Close() ) { RedButton = true };
-				buttonZoomIn	=	new Button( fp, "ZoomIn",  0,0,0,0, ()=>Zoom-- );
-				buttonZoomOut	=	new Button( fp, "ZoomOut", 0,0,0,0, ()=>Zoom++ );
+				buttonZoomIn	=	new Button( fp, "ZoomIn",  0,0,0,0, ()=>Zoom++ );
+				buttonZoomOut	=	new Button( fp, "ZoomOut", 0,0,0,0, ()=>Zoom-- );
 
 				imageList		=	CreateImageList( atlasName );
 
@@ -139,6 +140,49 @@ namespace Fusion.Widgets.Dialogs {
 			int zoom = 0;
 
 
+			class AtlasButton : Frame {
+
+				readonly TextureAtlas atlas;
+				readonly TextureAtlasClip clip;
+				bool mouseIn = false;
+
+				public AtlasButton ( FrameProcessor frames, TextureAtlas atlas, string clipName, int size ) : base(frames)
+				{
+					this.atlas	=	atlas;
+					this.clip	=	atlas.GetClipByName( clipName );
+
+					Font			=	ColorTheme.NormalFont;
+					TextAlignment	=	Alignment.BottomCenter;
+					Padding			=	3;
+					Border			=	1;
+					Image			=	atlas.Texture;
+					BackColor		=	Color.Zero;
+					ImageColor		=	Color.White;
+					ImageMode		=	FrameImageMode.Manual;
+					ImageDstRect	=	new Rectangle(0,0,size,size);
+					Text			=	clipName;
+
+					this.MouseIn   +=   (s,e) => mouseIn = true;
+					this.MouseOut  +=   (s,e) => mouseIn = false;
+
+					ImageSrcRect	=	atlas.GetAbsoluteRectangleByName(clipName);
+				}
+
+				protected override void Update( GameTime gameTime )
+				{
+					if (mouseIn) {
+						var gpr	  = this.GetPaddedRectangle(true);
+						int frame = (Frames.MousePosition.X - gpr.X) * clip.Length / gpr.Width;
+							frame = MathUtil.Clamp( frame, 0, clip.Length-1 );
+						ImageSrcRect	=	atlas.AbsoluteRectangles[ clip.FirstIndex + frame ];
+					} else {
+						int frame = (int)(gameTime.Total.TotalSeconds * 10) % clip.Length;
+						ImageSrcRect	=	atlas.AbsoluteRectangles[ clip.FirstIndex + frame ];
+					}
+				}
+			}
+
+
 			Frame CreateImageList ( string atlasName )
 			{
 				var size	= 128;
@@ -148,30 +192,21 @@ namespace Fusion.Widgets.Dialogs {
 				var width	= (size)*colNum;
 				var height	= (size)*rowNum;
 
-				var panel		= new Frame( Frames, 0,0, width, height, "", Color.Zero );
+				var panel		=	new Frame( Frames, 0,0, width, height, "", Color.Zero );
 				galery			=	new GaleryLayout(5,128,128,0);
 				panel.Layout	=	galery;
+				panel.Tag		=	atlas;
 
-				var names	= atlas.GetSubImageNames().OrderBy( n => n ).ToArray();
+				var names	= atlas.GetClipNames().OrderBy( n => n ).ToArray();
 
 				for ( int i=0; i<names.Length; i++ ) {
+
 					var name   = names[i];
-					var rect   = atlas.GetAbsoluteRectangleByName(name);
-					var label  = string.Format("{0}\r\n{1}x{2}", name, rect.Width, rect.Height);
-					var button = new Frame( Frames, 0,0,0,0, label, Color.Zero );
 
-					button.Font			 = ColorTheme.NormalFont;
-					button.TextAlignment = Alignment.BottomCenter;
-					button.Padding		 = 3;
-					button.Border		 = 1;
-					button.Image		 = atlas.Texture;
-					button.ImageColor	 = Color.White;
-					button.ImageMode	 = FrameImageMode.Manual;
-					button.ImageDstRect	 = new Rectangle(0,0,size,size);
-					button.ImageSrcRect	 = atlas.GetAbsoluteRectangleByName(name);
-					button.Click		+= (s,e) => Accept(name);
+					var button = new AtlasButton( Frames, atlas, name, size );
 
-					button.StatusChanged += Button_StatusChanged;
+					button.Click			+= (s,e) => Accept(name);
+					button.StatusChanged	+= Button_StatusChanged;
 
 					panel.Add( button );
 				}

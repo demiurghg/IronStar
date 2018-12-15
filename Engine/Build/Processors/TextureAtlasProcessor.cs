@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Shell;
+using Fusion.Core.Extensions;
 using Fusion.Engine.Imaging;
 using Newtonsoft.Json;
 
@@ -88,24 +89,33 @@ namespace Fusion.Build.Processors {
 			using ( var fs = assetFile.OpenTargetStream(dependencies) ) {
 				using ( var bw = new BinaryWriter( fs ) ) {
 
+					int offset = 0;
+
 					bw.Write( new[] { 'A', 'T', 'L', 'S' } );
 					
 					bw.Write( atlas.Animations.Count ); 
+					bw.Write( atlas.Width );
+					bw.Write( atlas.Height );
 
 					foreach ( var anim in atlas.Animations ) {
 
 						bw.Write( anim.Name );
+						bw.Write( offset );
 						bw.Write( anim.Frames.Length );
-
-						foreach ( var frame in anim.Frames ) {
-							bw.Write( frame.Location.X );
-							bw.Write( frame.Location.Y );
-							bw.Write( frame.Width );
-							bw.Write( frame.Height );
-						}
+						offset += anim.Frames.Length;
 					}
 
-					bw.Write( new[] { 'D', 'A', 'T', 'A' } );
+					bw.Write( new[] { 'F', 'R', 'M', 'S' } );
+
+					frames = atlas.GetAllFrames();
+
+					bw.Write( frames.Length );
+
+					foreach ( var frame in frames ) {
+						bw.Write( frame.Rectangle );
+					}
+
+					bw.Write( new[] { 'T', 'E', 'X', '0' } );
 
 					bw.Write( (int)(new FileInfo(ddsOutput).Length) );
 				

@@ -146,12 +146,14 @@ namespace IronStar.SFX {
 		public int GetSpriteIndex ( string spriteName )
 		{
 			var name	=	Path.GetFileName(spriteName);
-			int index	=	spriteSheet.IndexOf( name );
+			var clip	=	spriteSheet.GetClipByName( spriteName );
 
-			if (index<0) {
+			if (clip==null) {
 				Log.Warning("{0} not included to sprite sheet", spriteName);
+				return -1;
+			} else {
+				return clip.FirstIndex;
 			}
-			return index;
 		}
 
 

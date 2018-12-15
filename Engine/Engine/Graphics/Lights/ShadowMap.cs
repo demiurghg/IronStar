@@ -361,13 +361,13 @@ namespace Fusion.Engine.Graphics {
 
 
 			//
-			//	Particle shadow rendering 
+			//	Shadow mask rendering 
 			//
 			using ( new PixEvent( "Shadow Masks" ) ) {
 
 				device.Clear( prtShadow.Surface, Color4.Black );
 
-				//	draw cascade shadow particles :
+				//	draw cascade shadow masks :
 				foreach ( var cascade in cascades ) {
 
 					var far		= cascade.ProjectionMatrix.GetFarPlaneDistance();
@@ -379,15 +379,15 @@ namespace Fusion.Engine.Graphics {
 				}
 
 
-				//	draw spot shadow particles :
+				//	draw spot shadow masks :
 				foreach ( var spot in lights ) {
 
 					var name	=	spot.SpotMaskName;
-					var index	=	lightSet.SpotAtlas.IndexOf( name );
+					var clip	=	lightSet.SpotAtlas.GetClipByName( name );
 
-					if (index>=0) {
+					if (clip!=null) {
 						var dstRegion	=	spot.ShadowRegion;
-						var	srcRegion	=	lightSet.SpotAtlas[index];
+						var	srcRegion	=	lightSet.SpotAtlas.AbsoluteRectangles[ clip.FirstIndex ];
 						rs.Filter2.RenderQuad( prtShadow.Surface, lightSet.SpotAtlas.Texture.Srv, dstRegion, srcRegion );
 					} else {
 						var dstRegion	=	spot.ShadowRegion;

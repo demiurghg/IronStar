@@ -35,27 +35,20 @@ namespace Fusion.Engine.Graphics {
 
 		private	Texture	texture;
 
-		struct Element {
-			public string Name;
-			public int Index;
-			public int X;
-			public int Y;
-			public int Width;
-			public int Height;
+		readonly TextureAtlasClip[] clips;
+		readonly int				width;
+		readonly int				height;
+		readonly Rectangle[]		rects;
+		readonly RectangleF[]		rectsf;
+		readonly Dictionary<string,TextureAtlasClip> dictionary;
 
-			public Rectangle GetRect ()
-			{
-				return new Rectangle(X, Y, Width, Height);
-			}
-
-			public RectangleF GetRectF (float width, float height)
-			{
-				return new RectangleF(X/width, Y/height, Width/width, Height/height);
-			}
+		public Rectangle[] AbsoluteRectangles {
+			get { return rects; }
 		}
 
-		List<Element> elements = new List<Element>();
-		Dictionary<string,Element> dictionary;
+		public RectangleF[] NormalizedRectangles {
+			get { return rectsf; }
+		}
 
 
 		/// <summary>
@@ -81,19 +74,44 @@ namespace Fusion.Engine.Graphics {
 			
 				br.ExpectFourCC("ATLS", "texture atlas");
 				
-				int count = br.ReadInt32();
-				
-				for ( int i=0; i<count; i++ ) {
-					var element = new Element();
-					element.Index	=	i;
-					element.Name	=	br.ReadString();
-					element.X		=	br.ReadInt32();
-					element.Y		=	br.ReadInt32();
-					element.Width	=	br.ReadInt32();
-					element.Height	=	br.ReadInt32();
+				int clipCount	=	br.ReadInt32();
+				width			=	br.ReadInt32();
+				height			=	br.ReadInt32();
 
-					elements.Add( element );
+				clips			=	new TextureAtlasClip[clipCount];
+				
+				for ( int i=0; i<clipCount; i++ ) {
+
+					var name	=	br.ReadString();
+					var first	=	br.ReadInt32();
+					var length	=	br.ReadInt32();
+
+					var clip	=	new TextureAtlasClip(name, first, length);
+
+					clips[ i ]	=	clip;
 				}				
+
+				//-----------------------------------------
+
+				br.ExpectFourCC("FRMS", "frame section");
+
+				int rectCount	=	br.ReadInt32();
+				rects			=	new Rectangle[ rectCount ];
+
+				for ( int i=0; i<rectCount; i++ ) {
+					rects[i]	=	br.Read<Rectangle>();
+				}
+
+				float fwidth	=	width;
+				float fheight	=	height;
+
+				rectsf	=	rects
+							.Select( r => new RectangleF( r.X / fwidth, r.Y / fheight, r.Width / fwidth, r.Height / fheight ) )
+							.ToArray();
+
+				//-----------------------------------------
+
+				br.ExpectFourCC("TEX0", "texture data");
 
 				int ddsFileLength	=	br.ReadInt32();
 				
@@ -102,8 +120,7 @@ namespace Fusion.Engine.Graphics {
 				texture	=	new UserTexture( rs, ddsImageBytes, useSRgb );
 			}
 
-
-			dictionary	=	elements.ToDictionary( e => e.Name );
+			dictionary	=	clips.ToDictionary( e => e.Name );
 		}
 
 
@@ -113,7 +130,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public int Count {
 			get {
-				return elements.Count;
+				return clips.Length;
 			}
 		}
 
@@ -124,11 +141,11 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="index"></param>
 		/// <returns></returns>
+		[Obsolete("!", true)]
 		public Rectangle this [int index]
 		{	
 			get {					
-				var e = elements[index];
-				return e.GetRect();
+				throw new NotImplementedException();
 			}
 		}
 
@@ -139,18 +156,11 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="index"></param>
 		/// <returns></returns>
+		[Obsolete("!", true)]
 		public Rectangle this [string name]
 		{	
 			get {					
-				Element e;
-
-				var r = dictionary.TryGetValue( name, out e );
-
-				if (!r) {
-					throw new InvalidOperationException(string.Format("Texture atlas does not contain subimage '{0}'", name));
-				}
-
-				return new Rectangle(e.X, e.Y, e.Width, e.Height);
+				return GetAbsoluteRectangleByName(name);
 			}
 		}
 
@@ -161,28 +171,24 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public string[] GetSubImageNames () 
 		{
-			return elements.Select( e => e.Name ).ToArray();
+			return clips.Select( e => e.Name ).ToArray();
 		}
 
 
 
 		/// <summary>
-		/// Gets rectangles of all subimages in texels.
+		/// Gets clip by name
 		/// </summary>
-		/// <param name="maxCount">Maximum number of recatangles. 
-		/// If maxCount greater than number of images
-		/// the rest of the array will be filled with zeroed rectangles.</param>
-		/// <returns></returns>
-		public Rectangle[] GetRectangles (int maxCount = -1 ) 
+		/// <param name="clipName"></param>
+		/// <returns>Instance of TextureAtlasClip. If does not exist returns NULL.</returns>
+		public TextureAtlasClip GetClipByName ( string clipName )
 		{
-			ThrowIfDisposed();
-
-			if (maxCount<0) {
-				maxCount = elements.Count;
+			TextureAtlasClip clip;
+			if ( dictionary.TryGetValue(clipName, out clip) ) {
+				return clip;
+			} else {
+				return null;
 			}
-			return Enumerable.Range( 0, maxCount )
-				.Select( i => (i<elements.Count)? elements[i].GetRect() : new Rectangle(0,0,0,0) )
-				.ToArray();
 		}
 
 
@@ -192,11 +198,12 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
+		[Obsolete]
 		public RectangleF GetNormalizedRectangleByName ( string name )
 		{
-			Element e;
-			if (dictionary.TryGetValue( name, out e )) {
-				return e.GetRectF( Texture.Width, Texture.Height );
+			TextureAtlasClip clip;
+			if (dictionary.TryGetValue( name, out clip )) {
+				return rectsf[ clip.FirstIndex ];
 			} else {
 				Log.Warning("Missing atlas entry: {0}", name);
 				return new RectangleF(0,0,0,0);
@@ -210,11 +217,12 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
+		[Obsolete]
 		public Rectangle GetAbsoluteRectangleByName ( string name )
 		{
-			Element e;
-			if (dictionary.TryGetValue( name, out e )) {
-				return e.GetRect();
+			TextureAtlasClip clip;
+			if (dictionary.TryGetValue( name, out clip )) {
+				return rects[ clip.FirstIndex ];
 			} else {
 				Log.Warning("Missing atlas entry: {0}", name);
 				return new Rectangle(0,0,0,0);
@@ -235,14 +243,33 @@ namespace Fusion.Engine.Graphics {
 			ThrowIfDisposed();
 
 			if (maxCount<0) {
-				maxCount = elements.Count;
+				maxCount = rectsf.Length;
 			}
 
-			float w = Texture.Width;
-			float h = Texture.Height;
+			return Enumerable.Range( 0, maxCount )
+				.Select( i => (i<rectsf.Length) ? rectsf[i] : new RectangleF(0,0,0,0) )
+				.ToArray();
+		}
+
+
+
+		/// <summary>
+		/// Gets rectangles of all subimages in texels.
+		/// </summary>
+		/// <param name="maxCount">Maximum number of recatangles. 
+		/// If maxCount greater than number of images
+		/// the rest of the array will be filled with zeroed rectangles.</param>
+		/// <returns></returns>
+		public Rectangle[] GetRectangles (int maxCount = -1 ) 
+		{
+			ThrowIfDisposed();
+
+			if (maxCount<0) {
+				maxCount = rects.Length;
+			}
 
 			return Enumerable.Range( 0, maxCount )
-				.Select( i => (i<elements.Count)? elements[i].GetRectF(w,h) : new RectangleF(0,0,0,0) )
+				.Select( i => (i<rects.Length) ? rects[i] : new Rectangle(0,0,0,0) )
 				.ToArray();
 		}
 
@@ -253,14 +280,16 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
+		[Obsolete("!", true)]
 		public int IndexOf( string name )
 		{
-			Element e;
-			if (dictionary.TryGetValue(name, out e)) {
-				return e.Index;
-			} else {
-				return -1;
-			}
+			return -1;
+			//Element e;
+			//if (dictionary.TryGetValue(name, out e)) {
+			//	return e.Index;
+			//} else {
+			//	return -1;
+			//}
 		}
 		
 

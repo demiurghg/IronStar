@@ -25,6 +25,12 @@ namespace Fusion.Build.Processors {
 		public int Width { get { return image.Width; } }
 		public int Height { get { return image.Height; } }
 
+		public Rectangle Rectangle {
+			get {
+				return new Rectangle( Location.X, Location.Y, Width, Height );
+			}
+		}
+
 		/// <summary>
 		/// Creates instance of atlas frame
 		/// </summary>

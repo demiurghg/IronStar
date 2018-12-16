@@ -20,6 +20,7 @@ using IronStar.SFX;
 using System.IO;
 using System.Runtime.CompilerServices;
 using Fusion.Core.Input;
+using Fusion.Widgets;
 
 namespace IronStar {
 	partial class IronStar : Game
@@ -101,6 +102,11 @@ namespace IronStar {
 			Content.Load<SoundBank>(@"audio\desktop\env"			);
 			Content.Load<SoundBank>(@"audio\desktop\music"			);
 			Content.Load<SoundBank>(@"audio\desktop\vo"				);
+
+			// HACK : preload editor fonts...
+			ColorTheme.NormalFont	=	Content.Load<SpriteFont>(@"fonts\editorOpenSans");
+			ColorTheme.BoldFont		=	Content.Load<SpriteFont>(@"fonts\editorOpenSansBold");
+			ColorTheme.Monospaced	=	Content.Load<SpriteFont>(@"fonts\editorInconsolata");
 
 			Keyboard.KeyDown +=Keyboard_KeyDown;
 		}

@@ -86,9 +86,16 @@ namespace IronStar.SFX {
 
 
 	public enum FXDistribution3D {
-		UniformRadial,
-		GaussRadial,
+		Box,
+		Sphere,
+		Cylinder,
+		Tube,
+		Ring,
+		Gauss,
 	}
+
+
+	//public enum FXVelocityDi
 
 
 	public enum FXVelocityBias {
@@ -213,40 +220,27 @@ namespace IronStar.SFX {
 		[XmlAttribute]
 		public FXDistribution LinearDistribution { get; set; } = FXDistribution.Uniform;
 
-		[XmlAttribute]
 		[Description( "Minimum linear velocity" )]
 		public float LinearVelocityMin { get; set; } = 0;
 
-		[XmlAttribute]
 		[Description( "Maximum linear velocity" )]
 		public float LinearVelocityMax { get; set; } = 1;
 
-		[XmlAttribute]
 		[Description( "Radial velocity distribution" )]
-		public FXDistribution3D RadialDistribution { get; set; } = FXDistribution3D.UniformRadial;
+		public FXDistribution3D RadialDistribution { get; set; } = FXDistribution3D.Gauss;
 		
-		[XmlAttribute]
 		[Description( "Minimum radial velocity" )]
-		public float RadialVelocityMin { get; set; } = 0;
-		
-		[XmlAttribute]
-		[Description( "Maximum radial velocity" )]
-		public float RadialVelocityMax { get; set; } = 1;
+		public float RadialVelocity { get; set; } = 1;
 
-		[XmlAttribute]
 		[Description( "Source velocity addition factor" )]
 		public float Advection { get; set; } = 0;
 
-		public override string ToString()
-		{
-			return string.Format( "L:{0}:{1:0.##} R:{2}:{3:0.##}", LinearDistribution, LinearVelocityMin, RadialDistribution, RadialVelocityMin );
-		}
-
 		public Vector3 GetVelocity( FXEvent fxEvent, Random rand )
 		{
+			var rv				=	RadialVelocity;
 			var velocityValue   =   FXFactory.GetLinearDistribution( rand, LinearDistribution, LinearVelocityMin, LinearVelocityMax );
 			var velocity		=   FXFactory.GetDirection( Direction, velocityValue, fxEvent );
-			var addition		=	FXFactory.GetRadialDistribution( rand, RadialDistribution, RadialVelocityMin, RadialVelocityMax );
+			var addition		=	FXFactory.GetVolumeDistribution( rand, RadialDistribution, rv,rv,rv,rv );
 			var advection		=	fxEvent.Velocity * Advection;
 
 			return velocity + addition + advection;
@@ -255,35 +249,31 @@ namespace IronStar.SFX {
 
 
 	public class FXPosition {
-		[XmlAttribute]
 		[Description( "Offset direction" )]
 		public FXDirection OffsetDirection { get; set; } = FXDirection.None;
 
-		[XmlAttribute]
 		[Description( "Offset along offset direction" )]
 		public float OffsetFactor { get; set; } = 0;
 
-		[XmlAttribute]
 		[Description( "Average size of spawn area" )]
-		public FXDistribution3D Distribution { get; set; } = FXDistribution3D.UniformRadial;
+		public FXDistribution3D Distribution { get; set; } = FXDistribution3D.Box;
 
-		[XmlAttribute]
-		[Description( "Average size of spawn area" )]
-		public float MinSize { get; set; } = 0;
+		[AEDisplayName("Width (X)")]
+		public float Width { get; set; } = 0;
 
-		[XmlAttribute]
-		[Description( "Average size of spawn area" )]
-		public float MaxSize { get; set; } = 0;
+		[AEDisplayName("Height (Y)")]
+		public float Height { get; set; } = 0;
 
-		public override string ToString()
-		{
-			return string.Format( "D:{0}:{1:0.##} Sz:{2}:{3:0.##}", OffsetDirection, OffsetFactor, Distribution, MinSize );
-		}
+		[AEDisplayName("Depth (Z)")]
+		public float Depth { get; set; } = 0;
+
+		[AEDisplayName("Radius (R)")]
+		public float Radius { get; set; } = 0;
 
 		public Vector3 GetPosition ( FXEvent fxEvent, Random rand, float scale )
 		{
 			var position = FXFactory.GetPosition( OffsetDirection, OffsetFactor * scale, fxEvent);
-			var radial	= FXFactory.GetRadialDistribution( rand, Distribution, MinSize * scale, MaxSize * scale );
+			var radial	= FXFactory.GetVolumeDistribution( rand, Distribution, Width, Height, Depth, Radius );
 			return position + radial;
 		}
 	}

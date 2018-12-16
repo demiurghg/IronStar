@@ -62,11 +62,17 @@ namespace IronStar.SFX {
 		}
 
 
-		public static Vector3 GetRadialDistribution ( Random rand, FXDistribution3D distribution, float min, float max )
+		public static Vector3 GetVolumeDistribution ( Random rand, FXDistribution3D distribution, float w, float h, float d, float r )
 		{
+			var whd = new Vector3(w/2,h/2,d/2);
+
 			switch (distribution) {
-				case FXDistribution3D.UniformRadial: return rand.UniformRadialDistribution( min, max );
-				case FXDistribution3D.GaussRadial: return rand.GaussRadialDistribution( (min+max)/2, (max-min)/3.0f );
+				case FXDistribution3D.Box: return rand.UniformBoxDistribution( w, h, d );
+				case FXDistribution3D.Sphere: return rand.UniformRadialDistribution( 0, r ) * whd;
+				case FXDistribution3D.Cylinder: return rand.UniformTubeDistribution( 0, r, 1 ) * whd;
+				case FXDistribution3D.Tube: return rand.UniformTubeDistribution( r, r, h );
+				case FXDistribution3D.Ring: return rand.UniformTubeDistribution( r, r, 0 );
+				case FXDistribution3D.Gauss: return rand.GaussRadialDistribution( r/2, r/3 );
 				default: return Vector3.Zero;
 			}
 		}

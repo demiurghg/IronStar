@@ -62,7 +62,7 @@
       "$type": "IronStar.SFX.FXPosition, IronStar",
       "OffsetDirection": "none",
       "OffsetFactor": 0.0,
-      "Distribution": "gaussRadial",
+      "Distribution": "gauss",
       "MinSize": 0.0,
       "MaxSize": 0.5
     },
@@ -72,9 +72,9 @@
       "LinearDistribution": "gauss",
       "LinearVelocityMin": 1.0,
       "LinearVelocityMax": 3.0,
-      "RadialDistribution": "gaussRadial",
-      "RadialVelocityMin": 0.0,
-      "RadialVelocityMax": 40.0,
+      "RadialDistribution": "gauss",
+      
+      "RadialVelocity": 40.0,
       "Advection": 0.0
     },
     "Acceleration": {
@@ -124,7 +124,7 @@
       "$type": "IronStar.SFX.FXPosition, IronStar",
       "OffsetDirection": "localRight",
       "OffsetFactor": 0.0,
-      "Distribution": "uniformRadial",
+      "Distribution": "sphere",
       "MinSize": 0.0,
       "MaxSize": 0.5
     },
@@ -134,9 +134,9 @@
       "LinearDistribution": "gauss",
       "LinearVelocityMin": 0.0,
       "LinearVelocityMax": 2.0,
-      "RadialDistribution": "gaussRadial",
-      "RadialVelocityMin": 0.0,
-      "RadialVelocityMax": 60.0,
+      "RadialDistribution": "gauss",
+      
+      "RadialVelocity": 60.0,
       "Advection": 0.0
     },
     "Acceleration": {
@@ -186,7 +186,7 @@
       "$type": "IronStar.SFX.FXPosition, IronStar",
       "OffsetDirection": "none",
       "OffsetFactor": 0.0,
-      "Distribution": "uniformRadial",
+      "Distribution": "sphere",
       "MinSize": 0.0,
       "MaxSize": 0.0
     },
@@ -196,9 +196,9 @@
       "LinearDistribution": "gauss",
       "LinearVelocityMin": 2.0,
       "LinearVelocityMax": 3.0,
-      "RadialDistribution": "gaussRadial",
-      "RadialVelocityMin": 0.0,
-      "RadialVelocityMax": 2.0,
+      "RadialDistribution": "gauss",
+      
+      "RadialVelocity": 2.0,
       "Advection": 0.0
     },
     "Acceleration": {
@@ -248,7 +248,7 @@
       "$type": "IronStar.SFX.FXPosition, IronStar",
       "OffsetDirection": "none",
       "OffsetFactor": 0.0,
-      "Distribution": "uniformRadial",
+      "Distribution": "sphere",
       "MinSize": 0.0,
       "MaxSize": 0.0
     },
@@ -258,9 +258,9 @@
       "LinearDistribution": "gauss",
       "LinearVelocityMin": 1.0,
       "LinearVelocityMax": 4.0,
-      "RadialDistribution": "uniformRadial",
-      "RadialVelocityMin": 0.0,
-      "RadialVelocityMax": 1.0,
+      "RadialDistribution": "sphere",
+      
+      "RadialVelocity": 1.0,
       "Advection": 0.0
     },
     "Acceleration": {

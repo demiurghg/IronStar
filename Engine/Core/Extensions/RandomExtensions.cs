@@ -76,6 +76,25 @@ namespace Fusion.Core.Extensions
 		/// 
 		/// </summary>
 		/// <param name="random"></param>
+		/// <param name="innerRadius"></param>
+		/// <param name="outerRadius"></param>
+		/// <param name="tubeHeight"></param>
+		/// <returns></returns>
+		public static Vector3 UniformTubeDistribution ( this Random random, float innerRadius, float outerRadius, float tubeHeight )
+		{
+			float angle		=	random.NextFloat( 0, MathUtil.Pi * 2 );
+			float radius	=	random.NextFloat( innerRadius, outerRadius );
+			float height	=	random.NextFloat( -tubeHeight/2, tubeHeight/2 );
+			float cos		=	(float)Math.Cos( angle );
+			float sin		=	(float)Math.Sin( angle );
+			return new Vector3( cos * radius, sin * radius, height );
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="random"></param>
 		/// <param name="mean"></param>
 		/// <param name="stdDev"></param>
 		/// <returns></returns>
@@ -90,6 +109,23 @@ namespace Fusion.Core.Extensions
 						 mean + stdDev * randStdNormal; //random normal(mean,stdDev^2)
 
 			return (float)randNormal;
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="random"></param>
+		/// <param name="mean"></param>
+		/// <param name="stdDev"></param>
+		/// <returns></returns>
+		public static Vector3 UniformBoxDistribution ( this Random random, float w, float h, float d )
+		{
+			float x = random.NextFloat( -w/2, w/2 );
+			float y = random.NextFloat( -h/2, h/2 );
+			float z = random.NextFloat( -d/2, d/2 );
+			return new Vector3(x,y,z);
 		}
 
 

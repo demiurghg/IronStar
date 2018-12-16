@@ -39,10 +39,6 @@ namespace IronStar.Editor {
 		void SetupWorkspace ()
 		{
 			var rs = Game.RenderSystem;
-
-			ColorTheme.NormalFont	=	Content.Load<SpriteFont>(@"fonts\editorOpenSans");
-			ColorTheme.BoldFont		=	Content.Load<SpriteFont>(@"fonts\editorOpenSansBold");
-			ColorTheme.Monospaced	=	Content.Load<SpriteFont>(@"fonts\editorInconsolata");
 			//ColorTheme.Font	=	Content.Load<SpriteFont>(@"fonts\editorRoboto");
 			//ColorTheme.Font	=	Content.Load<SpriteFont>(@"fonts\editorArmata");
 

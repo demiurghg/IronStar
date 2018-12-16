@@ -267,8 +267,6 @@ namespace Fusion.Widgets {
 			selectionStart = i;
 			selectionLength = 0;
 
-			Log.Message(" -- {0} {1} --", selectionStart, selectionLength );
-						
 			CheckSelection();
 		}
 

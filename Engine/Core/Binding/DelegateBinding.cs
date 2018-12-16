@@ -43,8 +43,13 @@ namespace Fusion.Core.Binding {
 			if (IsReadonly) {
 				return false;
 			} else {
-				setFunc((TValue)value);
-				return true;
+				try {
+					setFunc((TValue)value);
+					return true;
+				} catch ( Exception e ) {
+					Log.Error("{0}", e.Message);
+					return false;
+				}
 			}
 		}
 	}

@@ -35,7 +35,16 @@ namespace IronStar.Editor.Controls {
 			AllowDrag		=	true;
 			AllowResize		=	true;
 
-			Layout			=	new PageLayout( 15, 27, 2, 23, 6, 15, 1 );
+			var pageLayout	=	new PageLayout();
+
+			pageLayout.AddRow(  17, new[] { -1f } );
+			pageLayout.AddRow(  29, new[] { -1f } );
+			pageLayout.AddRow( -1f, new[] { 0.5f, 0.5f } );
+			pageLayout.AddRow(  25, new[] { -1f, -1f, -1f, -1f, -1f, -1f } );
+			pageLayout.AddRow(	17, new[] { -1f } );
+
+			Layout			=	pageLayout;
+			
 
 			Padding			=	1;
 
@@ -65,7 +74,7 @@ namespace IronStar.Editor.Controls {
 
 
 			toolPanel = new Panel( Frames, 2,2,600-4,25 );
-			toolPanel.Layout = new StackLayout() { StackingDirection = StackLayout.Direction.HorizontalStack, Interval = 1 };
+			toolPanel.Layout = new StackLayout() { StackingDirection = StackLayout.Direction.HorizontalStack, Interval = 1, EqualWidth=true };
 
 			labelName = new Label( Frames, 2,2,600-4,10, "..." );
 			labelName.TextAlignment = Alignment.MiddleLeft;

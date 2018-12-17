@@ -60,7 +60,16 @@ namespace Fusion.Widgets.Dialogs {
 
 				AllowDrag		=	true;
 
-				Layout			=	new PageLayout(12,12,1,20,4,12,1);
+				var pageLayout	=	new PageLayout();
+
+				pageLayout.AddRow(  17, new[] { -1f } );
+				pageLayout.AddRow(  17, new[] { -1f } );
+				pageLayout.AddRow( -1f, new[] { -1f } );
+				pageLayout.AddRow(  25, new[] { -1f, -1f, -1f, -1f } );
+				pageLayout.AddRow(	17, new[] { -1f } );
+
+				Layout			=	pageLayout;
+
 
 				labelDir		=	new Label( fp, 0,0,0,0, "Atlas: " + atlasName ) { TextAlignment = Alignment.MiddleLeft };
 				labelStatus		=	new Label( fp, 0,0,0,0, "....") { TextAlignment = Alignment.MiddleLeft };

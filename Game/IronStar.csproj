@@ -76,7 +76,6 @@
     <Compile Include="Core\DamageType.cs" />
     <Compile Include="Core\Entity.Lua.cs" />
     <Compile Include="Core\ItemCollection.cs" />
-    <Compile Include="Editor\Controls\AssetExplorer.cs" />
     <Compile Include="Editor\Controls\AssetExplorer2.cs" />
     <Compile Include="Editor\Controls\Workspace.cs" />
     <Compile Include="Entities\FuncFX.cs" />

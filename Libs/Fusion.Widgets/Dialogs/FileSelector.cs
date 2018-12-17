@@ -90,7 +90,14 @@ namespace Fusion.Widgets.Dialogs {
 				AllowDrag			=	true;
 				AllowResize			=	true;
 
-				Layout				=	new PageLayout( 15, 1, 1, 23, 4, 15, 1 );
+				var	pageLayout		=	new PageLayout();
+
+				pageLayout.AddRow(  17, new[] { -1f } );
+				pageLayout.AddRow( -1f, new[] { -1f } );
+				pageLayout.AddRow(  25, new[] { -1f, -1f, -1f, -1f } );
+				pageLayout.AddRow(	17, new[] { -1f } );
+
+				Layout			=	pageLayout;
 
 				labelDir			=	new Label( fp, 2, 3, DialogWidth - 4, 15, "" );
 
@@ -112,7 +119,6 @@ namespace Fusion.Widgets.Dialogs {
 				labelDir.Text	=	fileListBox.CurrentDirectory;
 
 				Add( labelDir );
-				Add( Frame.CreateEmptyFrame(fp) );
 				Add( fileListBox );
 
 				Add( buttonAccept );

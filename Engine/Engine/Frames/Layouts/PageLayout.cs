@@ -15,25 +15,102 @@ namespace Fusion.Engine.Frames.Layouts {
 
 	public class PageLayout : LayoutEngine {
 
-		readonly int headerHeight1;
-		readonly int headerHeight2;
-		readonly int numColumns;
-		readonly int buttonHeights;
-		readonly int buttonNum;
-		readonly int footerHeight;
-		readonly int gap;
-
-		public PageLayout( int headerHeight1, int headerHeight2, int numColumns, int buttonHeights, int buttonNum, int footerHeight, int gap )
-		{
-			this.headerHeight1	=	headerHeight1	;
-			this.headerHeight2	=	headerHeight2	;
-			this.numColumns		=	numColumns		;	
-			this.buttonHeights	=	buttonHeights	;
-			this.buttonNum		=	buttonNum		;
-			this.footerHeight	=	footerHeight	;
-			this.gap			=	gap				;
+		public int Margin {
+			get { return gap; }
+			set { gap = value; }
 		}
 
+		int gap = 1;
+
+		struct Row {
+			public float Height;
+			public float[] Width;
+		}
+
+		readonly List<Row> rows =	new List<Row>();
+
+
+		public PageLayout()
+		{
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="height"></param>
+		/// <param name="width"></param>
+		public void AddRow ( float height, float[] width )
+		{
+			rows.Add( new Row() { Height = height, Width = width.ToArray() } );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="total"></param>
+		/// <param name="margin"></param>
+		/// <param name="size"></param>
+		/// <returns></returns>
+		int[] ComputeSizes ( int total, int margin, float[] measures )
+		{
+			var length		=	measures.Length;
+			var sizes		=	new int[ measures.Length ];
+			int free		=	total - (margin * (length-1));
+			var spring		=	measures.Sum( v => (v >= 0 && v < 1) ? v : 0 );
+			var freeCount	=	measures.Count( v => v < 0 );
+
+			//	sum fixed values:
+			for ( int i=0; i<length; i++ ) {
+				if (measures[i]>=1) {
+					sizes[i] =	(int)measures[i];
+					free	 -=	sizes[i];
+				}
+			}
+
+			//	fixed elements get too much space:
+			if (free<=0) {
+				return sizes;
+			}
+
+			int free2 = free;
+
+			//	spring elements :
+			for ( int i=0; i<length; i++ ) {
+				if (measures[i]>=0 && measures[i]<1) {
+					sizes[i] =	(int)(measures[i] * free2);
+					free	 -=	sizes[i];
+				}
+			}
+
+			//	fixed elements get too much space:
+			if (free<=0) {
+				return sizes;
+			}
+
+			//	free elements :
+			if (freeCount>0) {
+				free /= freeCount;
+
+				for ( int i=0; i<length; i++ ) {
+					if (measures[i]<0) {
+						sizes[i] =	free;
+					}
+				}
+			}
+
+			//	fix errors :
+			/*int error = total - sizes.Sum();
+
+			if (error>0) {
+				
+			} */
+
+			return sizes;
+		}
 
 
 		/// <summary>
@@ -46,9 +123,31 @@ namespace Fusion.Engine.Frames.Layouts {
 			var gp = targetFrame.GetPaddedRectangle(false);
 			var w  = gp.Width;
 			var h  = gp.Height;
-
 			var x  = gp.X;
 			var y  = gp.Y;
+
+			var index = 0;
+			var rowHeights	=	ComputeSizes( h, gap, rows.Select( r => r.Height ).ToArray() );
+			
+			for ( int i=0; i<rows.Count; i++ ) {
+
+				x	=	gp.X;
+				var colWidths	=	ComputeSizes( w, gap, rows[i].Width );
+
+				for ( int j=0; j<colWidths.Length; j++ ) {
+					SetChildSize( targetFrame, index, x,y, colWidths[j], rowHeights[i] );
+					x += colWidths[j];
+					x += gap;
+
+					index++;
+				}
+				
+				y += rowHeights[i];
+				y += gap;
+			}
+
+			#if false
+
 			var index = 0;
 
 			// header 1
@@ -89,6 +188,7 @@ namespace Fusion.Engine.Frames.Layouts {
 
 			//	footer :
 			SetChildSize( targetFrame, index,  x, gp.Height - footerHeight + gp.Y,  w, footerHeight );
+			#endif
 		}
 
 

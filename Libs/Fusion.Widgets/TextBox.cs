@@ -41,6 +41,8 @@ namespace Fusion.Widgets {
 			this.PaddingRight	=	3;
 			this.PaddingLeft	=	3;
 
+			this.TabStop		=	true;
+
 			StatusChanged	+=	TextBox_StatusChanged;
 
 			//KeyDown+=TextBox_KeyDown;
@@ -157,6 +159,14 @@ namespace Fusion.Widgets {
 		{
 			e.Handled = true;
 
+			if (e.Key==Keys.Tab) {
+				if (e.Shift) {
+					Frames.TargetFrame = PrevTabStop();
+				} else {
+					Frames.TargetFrame = NextTabStop();
+				}
+			}
+
 			if (e.Ctrl) {
 				switch (e.Key) {
 					case Keys.C: CopyToClipboard(); break;
@@ -183,12 +193,12 @@ namespace Fusion.Widgets {
 			}
 
 			if (e.Key==Keys.Home) {
-				MoveCursor( -999999, e.Shift );
+				MoveCursor( int.MinValue, e.Shift );
 				return;
 			}
 
 			if (e.Key==Keys.End) {
-				MoveCursor( 999999, e.Shift );
+				MoveCursor( int.MaxValue, e.Shift );
 				return;
 			}
 

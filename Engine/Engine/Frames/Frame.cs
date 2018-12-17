@@ -75,6 +75,11 @@ namespace Fusion.Engine.Frames {
 		public  bool		IsManipulationEnabled { get; set; }
 
 		/// <summary>
+		/// Indicates whether given frame is tab-stoppable.
+		/// </summary>
+		public	bool		TabStop { get; set; } = false;
+
+		/// <summary>
 		/// 
 		/// </summary>
 		public	ClippingMode	 ClippingMode	{ get; set; }
@@ -462,6 +467,51 @@ namespace Fusion.Engine.Frames {
 		}
 
 
+		/// <summary>
+		/// Gets next tab-stoppable frame.
+		/// </summary>
+		/// <returns></returns>
+		public Frame NextTabStop()
+		{
+			return SearchForTabStop(1);
+		}
+
+
+		/// <summary>
+		/// Gets previous tab-stoppable frame.
+		/// </summary>
+		/// <returns></returns>
+		public Frame PrevTabStop()
+		{
+			return SearchForTabStop(-1);
+		}
+
+
+		/// <summary>
+		/// Searches for next tab-stoppable frame in given direction.
+		/// </summary>
+		/// <param name="dir"></param>
+		/// <returns></returns>
+		Frame SearchForTabStop ( int dir )
+		{
+			var list	=	DFSList( Frames.RootFrame, f1 => f1.CanAcceptControl, f => f.TabStop );
+			dir			=	MathUtil.Clamp( dir, -1, 1);
+
+			var index	=	list.IndexOf(this);
+			var	count	=	list.Count;
+
+			if (count==0) {
+				return null;
+			}
+
+			if (index<0) {
+				return null;
+			} else {
+				return list[ (index + count + dir) % count ];
+			}
+		}
+
+
 		/*-----------------------------------------------------------------------------------------
 		 * 
 		 *	Input stuff :
@@ -671,6 +721,32 @@ namespace Fusion.Engine.Frames {
 
 				foreach ( var u in t.Children ) {
 					Q.Enqueue( u );
+				}
+			}
+
+			return list;
+		}
+			
+
+		public static List<Frame> DFSList ( Frame v, Func<Frame,bool> traverse, Func<Frame,bool> include )
+		{
+			Stack<Frame> Q = new Stack<Frame>();
+			List<Frame> list = new List<Frame>();
+
+			Q.Push( v );
+
+			while ( Q.Any() ) {
+				
+				var t = Q.Pop();
+
+				if (include(t)) {
+					list.Add( t );
+				}
+
+				foreach ( var u in t.Children.Reverse() ) {
+					if (traverse(u)) {
+						Q.Push( u );
+					}
 				}
 			}
 

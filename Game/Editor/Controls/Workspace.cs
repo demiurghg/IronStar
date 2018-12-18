@@ -235,6 +235,8 @@ namespace IronStar.Editor.Controls {
 					Border		= 1,
 				};
 
+				gridScrollBox.Anchor	=	FrameAnchor.Top | FrameAnchor.Bottom | FrameAnchor.Right;
+
 				gridScrollBox.ScrollMarkerSize = 5;
 
 				grid = new AEPropertyGrid(Frames);
@@ -245,7 +247,7 @@ namespace IronStar.Editor.Controls {
 				grid.X		=	Width - 300 - 10;
 				grid.Y		=	40 + 10;
 
-				grid.Anchor	=	FrameAnchor.Top | FrameAnchor.Right;
+				//grid.Anchor	=	FrameAnchor.Top | FrameAnchor.Right;
 
 				grid.PropertyChanged+=Grid_PropertyChanged;
 

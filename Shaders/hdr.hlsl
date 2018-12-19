@@ -1,22 +1,12 @@
 
 
 #if 0
-$ubershader		(TONEMAPPING LINEAR|REINHARD|FILMIC)|MEASURE_ADAPT
+$ubershader		(TONEMAPPING LINEAR|REINHARD|FILMIC)|MEASURE_ADAPT +SHOW_HISTOGRAM
 $ubershader		COMPOSITION
+$ubershader		HISTOGRAM
 #endif
 
-struct PARAMS {
-	float 	AdaptationRate;
-	float 	LuminanceLowBound;
-	float	LuminanceHighBound;
-	float	KeyValue;
-	float	BloomAmount;
-	float	DirtMaskLerpFactor;
-	float	DirtAmount;
-	float	Saturation;
-	float	Maximum;
-	float	Minimum;
-};
+#include "hdr.auto.hlsl"
 
 SamplerState	LinearSampler		: register(s0);
 SamplerState	AnisotropicSampler	: register(s0);
@@ -38,6 +28,66 @@ float2 FSQuadUV ( uint VertexID )
 {
 	return float2((VertexID == 0) ? 2.0f : -0.0f, 1-((VertexID == 2) ? 2.0f : -0.0f));
 }
+
+float GetLuminance(float3 color)
+{
+    return dot(color, float3(0.2127f, 0.7152f, 0.0722f));
+}
+
+float HDRToLogNormalizedLuminance(float3 hdrColor)
+{
+    float luminance = GetLuminance(hdrColor);
+	float minLogLuminance			=	Params.MinLogLuminance;
+	float oneOverLogLuminanceRange	=	Params.OneOverLogLuminanceRange;
+    
+    if ( luminance < Epsilon ) {
+        return 0;
+    }
+    
+    return saturate((log2(luminance) - minLogLuminance) * oneOverLogLuminanceRange);
+}
+
+uint HDRToHistogramBin(float3 hdrColor)
+{
+    float logLuminance = HDRToLogNormalizedLuminance(hdrColor);
+    return (uint)(logLuminance * 254.0 + 1.0);
+}
+
+/*-----------------------------------------------------------------------------
+	HISTOGRAM
+-----------------------------------------------------------------------------*/
+
+#ifdef HISTOGRAM
+Texture2D HDRTexture : register(t0);
+RWByteAddressBuffer LuminanceHistogram : register(u0);
+
+//	Next we'll need some shared memory to store intermediate thread-group histogram bin counts. NumHistogramBins is, as you might've guessed, 256. 
+
+groupshared uint histogramShared[NumHistogramBins];
+                        
+//	Finally, the compute shader itself: 
+
+[numthreads(BlockSizeX, BlockSizeY, 1)]
+void CSMain(uint groupIndex : SV_GroupIndex, uint3 threadId : SV_DispatchThreadID)
+{
+    histogramShared[groupIndex] = 0;
+    
+    GroupMemoryBarrierWithGroupSync();
+    
+    if(threadId.x < Params.Width && threadId.y < Params.Height) {
+		
+        float3 hdrColor = HDRTexture.Load(int3(threadId.xy, 0)).rgb;
+        uint binIndex = HDRToHistogramBin(hdrColor);
+        InterlockedAdd(histogramShared[binIndex], 1);
+    }
+    
+    GroupMemoryBarrierWithGroupSync();
+    
+    LuminanceHistogram.InterlockedAdd(groupIndex * 4, histogramShared[groupIndex]);
+}
+
+#endif
+
 
 /*-----------------------------------------------------------------------------
 	Luminance Measurement and Adaptation:
@@ -173,6 +223,8 @@ Texture2D		BloomMask1			: register(t3);
 Texture2D		BloomMask2			: register(t4);
 Texture2D		NoiseTexture		: register(t5);
 
+ByteAddressBuffer Histogram			: register(t9);
+
 
 float4 VSMain(uint VertexID : SV_VertexID, out float2 uv : TEXCOORD) : SV_POSITION
 {
@@ -219,6 +271,51 @@ float3 TintColor ( float3 target, float3 blend )
 }
 
 
+float3 Tonemap ( float3 exposured )
+{
+	#ifdef LINEAR
+		float3 	tonemapped	=	saturate(pow( abs(exposured), 1/2.2f ));
+	#endif
+	
+	#ifdef REINHARD
+		float3 tonemapped	=	pow( abs(exposured / (1+exposured)), 1/2.2f );
+	#endif
+	
+	#ifdef FILMIC
+		float3 x = max(0,exposured-0.004);
+		float3 tonemapped = (x*(6.2*x+.5))/(x*(6.2*x+1.7)+0.06);
+	#endif
+	return tonemapped;
+}
+
+
+float3 ShowHistogram ( uint x, uint y, float3 image, float lum )
+{
+	int 	bin			=	clamp(x*256 / Params.Width, 0,255);
+	int		hvalue		=	Histogram.Load(bin*4);
+	int 	height1		=	(int)(10 * log10(hvalue+1));
+	int 	height2		=	(int)(hvalue / Params.Width);
+	float3 	shade1		=	(Params.Height-128 - y) <= height1 ? float3(0.5,0.5,0.5) : float3(1,1,1);
+	float3 	shade2		=	(Params.Height-128 - y) == height2 ? float3(5.0,5.0,1.0) : float3(1,1,1);
+	float3	shade		=	shade1 * shade2;
+	
+	float	nrmLogLum	=	HDRToLogNormalizedLuminance(float3(lum,lum,lum));
+	int		width		=	(int)(nrmLogLum*Params.Width);
+	
+	if (x>width-1 && x<width+1) {
+		return float3(1,0,0);
+	}
+	
+	float  exposured	=	pow( 2, (x / (float)Params.Width) / Params.OneOverLogLuminanceRange + Params.MinLogLuminance );
+	float3 curve		=	Tonemap( float3(exposured,exposured,exposured) * Params.KeyValue / lum );
+	if ((Params.Height-128 - y)<curve.x*128) {
+		shade *= 0.7f;
+	}
+	
+	return 	image * shade;
+}
+
+
 float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 {
 	uint width;
@@ -262,27 +359,16 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	//	Tonemapping :
 	//	
 	float3	exposured	=	Params.KeyValue * hdrImage / luminance;
+	float3	tonemapped	=	Tonemap( exposured );
 
-	#ifdef LINEAR
-		float3 	tonemapped	=	pow( abs(exposured), 1/2.2f );
-	#endif
-	
-	#ifdef REINHARD
-		float3 tonemapped	=	pow( abs(exposured / (1+exposured)), 1/2.2f );
-	#endif
-	
-	#ifdef FILMIC
-		float3 x = max(0,exposured-0.004);
-		float3 tonemapped = (x*(6.2*x+.5))/(x*(6.2*x+1.7)+0.06);
-	#endif
 	
 	//
 	//	Color grading :
 	//	
-			luminance		=	dot( tonemapped, lumVector);
-	float	shadows			=	saturate( 1 - 2 * luminance );
-	float	midtones		=	saturate( 1-abs(luminance*2-1) );
-	float	highlights		=	saturate( 2 * luminance - 1 );
+	float	brightness		=	dot( tonemapped, lumVector);
+	float	shadows			=	saturate( 1 - 2 * brightness );
+	float	midtones		=	saturate( 1-abs(brightness*2-1) );
+	float	highlights		=	saturate( 2 * brightness - 1 );
 	
 	float3	tintShadows		=	0.4f; //float3( 0.25, 0.30, 0.35 );
 	float3	tintMidtones	=	0.5f; //float3( 0.45, 0.50, 0.55 );
@@ -305,7 +391,11 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	//
 	//	Apply dithering :
 	//
-	float3 result	=	colorGraded + (noiseDither*2-1)*3/256.0;
+	float3 	result	=	colorGraded + (noiseDither*2-1)*3/256.0;
+	
+	#ifdef SHOW_HISTOGRAM
+	result	=	ShowHistogram( xpos, ypos, result, luminance );
+	#endif
 	
 	return  float4( result, dot(result,lumVector) );
 }

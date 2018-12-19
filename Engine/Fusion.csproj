@@ -232,6 +232,7 @@
       <DependentUpon>UserMessage.cs</DependentUpon>
     </Compile>
     <Compile Include="Drivers\FMOD\FmodExt.cs" />
+    <Compile Include="Drivers\Graphics\Resources\StructuredBuffer.cs" />
     <Compile Include="Drivers\Graphics\Resources\Texture2DStaging.cs" />
     <Compile Include="Drivers\Graphics\Resources\Texture3DCompute.cs" />
     <Compile Include="Drivers\Graphics\Resources\TextureCubeArrayRW.cs" />
@@ -351,7 +352,7 @@
     <Compile Include="Drivers\Graphics\Resources\TextureCube.cs" />
     <Compile Include="Drivers\Graphics\Resources\Texture3D.cs" />
     <Compile Include="Drivers\Graphics\Enums.cs" />
-    <Compile Include="Drivers\Graphics\Resources\StructuredBuffer.cs" />
+    <Compile Include="Drivers\Graphics\Resources\ByteAddressBuffer.cs" />
     <Compile Include="Drivers\Graphics\Resources\Texture2D.cs" />
     <Compile Include="Core\DisposableBase.cs" />
     <Compile Include="Core\Input\Touch.cs" />

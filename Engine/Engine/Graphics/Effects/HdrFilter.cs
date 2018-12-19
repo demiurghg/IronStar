@@ -16,14 +16,22 @@ using Fusion.Engine.Graphics.Ubershaders;
 using Fusion.Core.Shell;
 
 namespace Fusion.Engine.Graphics {
-	[RequireShader("hdr")]
+	[RequireShader("hdr", true)]
 	internal class HdrFilter : RenderComponent {
+
+		
 
 		/// <summary>
 		/// Tonemapping operator.
 		/// </summary>
 		[Config]
 		public TonemappingOperator TonemappingOperator { get; set; }
+
+		/// <summary>
+		/// Tonemapping operator.
+		/// </summary>
+		[Config]
+		public bool ShowHistogram { get; set; }
 		
 		/// <summary>
 		/// Time to adapt. Default value is 0.5 seconds.
@@ -87,7 +95,7 @@ namespace Fusion.Engine.Graphics {
 		public float Saturation { get; set; } = 1.0f;
 
 		/// <summary>
-		/// Minimum output value.
+		/// Maximum output value.
 		/// Default value is 1.
 		/// </summary>
 		[Config]
@@ -102,6 +110,30 @@ namespace Fusion.Engine.Graphics {
 		[AEValueRange(0, 1, 1f/32f, 1f/256f)]
 		public float MinimumOutputValue { get; set; } = 0.0f;
 
+		static readonly int		MinLogLuminance = -8;
+		static readonly int		MaxLogLuminance = 15;
+		static readonly float	MinLinearLuminance	=	(float)Math.Pow( 2, MinLogLuminance );
+		static readonly float	MaxLinearLuminance	=	(float)Math.Pow( 2, MaxLogLuminance );
+		float minLuminance = MinLinearLuminance;
+		float maxLuminance = MaxLinearLuminance;
+
+		[Config]
+		public float MinimumLuminance { 
+			get { return minLuminance; }
+			set { minLuminance = MathUtil.Clamp( value, MinLinearLuminance, MaxLinearLuminance ); }
+		}
+
+		[Config]
+		public float MaximumLuminance {
+			get { return maxLuminance; }
+			set { maxLuminance = MathUtil.Clamp( value, MinLinearLuminance, MaxLinearLuminance ); }
+		}
+
+		static float ComputeLogLuminance ( float linear )
+		{
+			return (float)Math.Log( linear, 2 );
+		}
+
 		/// <summary>
 		/// Dither pattern amount
 		/// </summary>
@@ -115,6 +147,7 @@ namespace Fusion.Engine.Graphics {
 		StateFactory	factory;
 		DynamicTexture	whiteTex;
 		DynamicTexture	noiseTex;
+		ByteAddressBuffer histogramBuffer;
 
 
 		//	float AdaptationRate;          // Offset:    0
@@ -123,7 +156,8 @@ namespace Fusion.Engine.Graphics {
 		//	float KeyValue;                // Offset:   12
 		//	float BloomAmount;             // Offset:   16
 		[StructLayout(LayoutKind.Explicit, Size=64)]
-		struct Params {
+		[ShaderStructure]
+		struct PARAMS {
 			[FieldOffset( 0)]	public	float	AdaptationRate;
 			[FieldOffset( 4)]	public	float 	LuminanceLowBound;
 			[FieldOffset( 8)]	public	float	LuminanceHighBound;
@@ -135,7 +169,22 @@ namespace Fusion.Engine.Graphics {
 			[FieldOffset(32)]	public	float	MaximumOutputValue;
 			[FieldOffset(36)]	public	float	MinimumOutputValue;
 			[FieldOffset(40)]	public	float	DitherAmount;
+			[FieldOffset(44)]	public	int		Width;
+			[FieldOffset(48)]	public	int		Height;
+			[FieldOffset(52)]	public	float	MinLogLuminance;
+			[FieldOffset(56)]	public	float	MaxLogLuminance;
+			[FieldOffset(60)]	public	float	OneOverLogLuminanceRange;
 		}
+
+
+		[ShaderDefine]
+		const int BlockSizeX		=	16;
+		[ShaderDefine]
+		const int BlockSizeY		=	16;
+		[ShaderDefine]
+		const int NumHistogramBins	=	256;
+		[ShaderDefine]
+		const float Epsilon			=	1f / 4096f;
 
 
 		enum Flags {	
@@ -144,8 +193,10 @@ namespace Fusion.Engine.Graphics {
 			LINEAR			=	0x004, 
 			REINHARD		=	0x008,
 			FILMIC			=	0x010,
+			SHOW_HISTOGRAM	=	0x020,
 
 			COMPOSITION		=	0x100,
+			HISTOGRAM		=	0x200,
 		}
 
 		/// <summary>
@@ -164,9 +215,11 @@ namespace Fusion.Engine.Graphics {
 		public override void Initialize ()
 		{
 			averageLum	=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.Rgba16F, 256,256, true, false );
-			paramsCB	=	new ConstantBuffer( Game.GraphicsDevice, typeof(Params) );
+			paramsCB	=	new ConstantBuffer( Game.GraphicsDevice, typeof(PARAMS) );
 			whiteTex	=	new DynamicTexture( Game.RenderSystem, 4,4, typeof(Color), false, false);
 			whiteTex.SetData( Enumerable.Range(0,16).Select( i=> Color.White ).ToArray() );
+
+			histogramBuffer	=	new ByteAddressBuffer( Game.GraphicsDevice, 256 );
 
 			LoadContent();
 
@@ -260,6 +313,7 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref paramsCB	 );
 				SafeDispose( ref whiteTex );
 				SafeDispose( ref noiseTex );
+				SafeDispose( ref histogramBuffer );
 			}
 
 			base.Dispose( disposing );
@@ -321,6 +375,9 @@ namespace Fusion.Engine.Graphics {
 			var filter	=	Game.RenderSystem.Filter;
 			var blur	=	Game.RenderSystem.Blur;
 
+			int imageWidth	=	hdrFrame.FinalHdrImage.Width;
+			int imageHeight	=	hdrFrame.FinalHdrImage.Height;
+
 			using ( new PixEvent("HDR Postprocessing") ) {
 
 				//
@@ -354,21 +411,43 @@ namespace Fusion.Engine.Graphics {
 				//
 				//	Setup parameters :
 				//
-				var paramsData	=	new Params();
-				paramsData.AdaptationRate		=	1 - (float)Math.Pow( 0.5f, gameTime.ElapsedSec / AdaptationHalfTime );
-				paramsData.LuminanceLowBound	=	LuminanceLowBound;
-				paramsData.LuminanceHighBound	=	LuminanceHighBound;
-				paramsData.KeyValue				=	KeyValue;
-				paramsData.BloomAmount			=	BloomAmount;
-				paramsData.DirtMaskLerpFactor	=	0;
-				paramsData.DirtAmount			=	0;
-				paramsData.Saturation			=	Saturation;
-				paramsData.MaximumOutputValue	=	MaximumOutputValue;
-				paramsData.MinimumOutputValue	=	MinimumOutputValue;
-				paramsData.DitherAmount			=	DitherAmount;
+				var paramsData	=	new PARAMS();
+				paramsData.AdaptationRate			=	1 - (float)Math.Pow( 0.5f, gameTime.ElapsedSec / AdaptationHalfTime );
+				paramsData.LuminanceLowBound		=	LuminanceLowBound;
+				paramsData.LuminanceHighBound		=	LuminanceHighBound;
+				paramsData.KeyValue					=	KeyValue;
+				paramsData.BloomAmount				=	BloomAmount;
+				paramsData.DirtMaskLerpFactor		=	0;
+				paramsData.DirtAmount				=	0;
+				paramsData.Saturation				=	Saturation;
+				paramsData.MaximumOutputValue		=	MaximumOutputValue;
+				paramsData.MinimumOutputValue		=	MinimumOutputValue;
+				paramsData.DitherAmount				=	DitherAmount;
+				paramsData.Width					=	imageWidth;
+				paramsData.Height					=	imageHeight;
+				paramsData.MinLogLuminance			=	ComputeLogLuminance( MinimumLuminance );
+				paramsData.MaxLogLuminance			=	ComputeLogLuminance( MaximumLuminance );
+				paramsData.OneOverLogLuminanceRange	=	1.0f / ( paramsData.MaxLogLuminance - paramsData.MinLogLuminance );
 
 				paramsCB.SetData( paramsData );
-				device.PixelShaderConstants[0]	=	paramsCB;
+				device.PixelShaderConstants[0]		=	paramsCB;
+				device.ComputeShaderConstants[0]	=	paramsCB;
+
+				//
+				//	Measure and adapt :
+				//
+				device.Clear( histogramBuffer, Int4.Zero );
+				device.ComputeShaderResources[0]	=	hdrFrame.FinalHdrImage;
+				device.SetCSRWBuffer( 0, histogramBuffer );
+
+				device.PipelineState		=	factory[ (int)(Flags.HISTOGRAM) ];
+				device.Dispatch( new Int2(imageWidth, imageHeight), new Int2(BlockSizeX, BlockSizeY) ); 
+
+				//var histogram = new uint[256];
+				//histogramBuffer.GetData( histogram );
+
+				device.ComputeShaderResources[0]	=	null;
+				device.SetCSRWBuffer( 0, (ByteAddressBuffer)null );
 
 				//
 				//	Measure and adapt :
@@ -397,12 +476,17 @@ namespace Fusion.Engine.Graphics {
 				device.PixelShaderResources[6]	=	hdrFrame.DistortionBuffer;
 				device.PixelShaderResources[7]	=	hdrFrame.HdrBufferGlass;
 				device.PixelShaderResources[8]	=	hdrFrame.DistortionGlass;
+				device.PixelShaderResources[9]	=	histogramBuffer;
 				device.PixelShaderSamplers[0]	=	SamplerState.LinearClamp;
 
 				Flags op = Flags.LINEAR;
-				if (settings.TonemappingOperator==TonemappingOperator.Filmic)   { op = Flags.FILMIC;   }
-				if (settings.TonemappingOperator==TonemappingOperator.Linear)   { op = Flags.LINEAR;	 }
-				if (settings.TonemappingOperator==TonemappingOperator.Reinhard) { op = Flags.REINHARD; }
+				if (TonemappingOperator==TonemappingOperator.Filmic)   { op = Flags.FILMIC;   }
+				if (TonemappingOperator==TonemappingOperator.Linear)   { op = Flags.LINEAR;	 }
+				if (TonemappingOperator==TonemappingOperator.Reinhard) { op = Flags.REINHARD; }
+
+				if (ShowHistogram) {
+					op |= Flags.SHOW_HISTOGRAM;
+				}
 
 				device.PipelineState		=	factory[ (int)(Flags.TONEMAPPING|op) ];
 				

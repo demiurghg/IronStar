@@ -588,6 +588,43 @@ namespace Fusion.Drivers.Graphics {
 		}
 
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="threadGroupCountX"></param>
+		/// <param name="threadGroupCountY"></param>
+		/// <param name="threadGroupCountZ"></param>
+		public void Dispatch( Int3 totalSize, Int3 blockSize )
+		{
+			lock (deviceContext) {
+				ApplyGpuState();
+				int tgx	=	MathUtil.IntDivRoundUp( totalSize.X, blockSize.X );
+				int tgy	=	MathUtil.IntDivRoundUp( totalSize.Y, blockSize.Y );
+				int tgz	=	MathUtil.IntDivRoundUp( totalSize.Z, blockSize.Z );
+				deviceContext.Dispatch( tgx, tgy, tgz ); 
+			}
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="threadGroupCountX"></param>
+		/// <param name="threadGroupCountY"></param>
+		/// <param name="threadGroupCountZ"></param>
+		public void Dispatch( Int2 totalSize, Int2 blockSize )
+		{
+			lock (deviceContext) {
+				ApplyGpuState();
+				int tgx	=	MathUtil.IntDivRoundUp( totalSize.X, blockSize.X );
+				int tgy	=	MathUtil.IntDivRoundUp( totalSize.Y, blockSize.Y );
+				int tgz	=	1;
+				deviceContext.Dispatch( tgx, tgy, tgz ); 
+			}
+		}
+
+
 		
 		/// <summary>
 		/// 
@@ -850,6 +887,20 @@ namespace Fusion.Drivers.Graphics {
 
 
 		/// <summary>
+		/// Fills structured buffer with given values
+		/// </summary>
+		/// <param name="buffer"></param>
+		/// <param name="values"></param>
+		public void Clear ( ByteAddressBuffer buffer, Int4 values )
+		{
+			lock (deviceContext) {
+				deviceContext.ClearUnorderedAccessView( buffer.UAV, SharpDXHelper.Convert( values ) );
+			}
+		}
+
+
+
+		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="source"></param>
@@ -954,6 +1005,27 @@ namespace Fusion.Drivers.Graphics {
 		/// A value of -1 indicates to keep the current offset. 
 		/// Any other values set the hidden counter for that appendable and consumable UAV. </param>
 		public void SetCSRWBuffer ( int register, StructuredBuffer buffer, int initialCount = -1 ) 
+		{ 
+			if (register>8) {
+				throw new GraphicsException("Could not bind RW buffer at register " + register.ToString() + " (max 8)");
+			}
+
+			lock (deviceContext) {
+				DeviceContext.ComputeShader.SetUnorderedAccessView( register, buffer==null?null:buffer.UAV, initialCount ); 
+			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="register"></param>
+		/// <param name="buffer"></param>
+		/// <param name="initialCount">An array of append and consume buffer offsets. 
+		/// A value of -1 indicates to keep the current offset. 
+		/// Any other values set the hidden counter for that appendable and consumable UAV. </param>
+		public void SetCSRWBuffer ( int register, ByteAddressBuffer buffer, int initialCount = -1 ) 
 		{ 
 			if (register>8) {
 				throw new GraphicsException("Could not bind RW buffer at register " + register.ToString() + " (max 8)");

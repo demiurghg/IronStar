@@ -7,6 +7,7 @@ using System.Reflection;
 using Fusion.Core.Mathematics;
 using System.Runtime.InteropServices;
 using Fusion.Drivers.Graphics;
+using System.Globalization;
 
 namespace Fusion.Engine.Graphics.Ubershaders {
 	public class UbershaderGenerator {
@@ -210,16 +211,17 @@ namespace Fusion.Engine.Graphics.Ubershaders {
 
 				if (field.IsLiteral) {
 
-					object value;
+					string value;
+					var culture	= CultureInfo.InvariantCulture;
 
-					if (field.FieldType==typeof(int)) value = field.GetValue(null);
-					else if (field.FieldType==typeof(float)) value = field.GetValue(null);
-					else if (field.FieldType==typeof(uint)) value = field.GetValue(null);
+					if (field.FieldType==typeof(int))			value = ((int)  field.GetValue(null)).ToString(culture);
+					else if (field.FieldType==typeof(float))	value = ((float)field.GetValue(null)).ToString(culture);
+					else if (field.FieldType==typeof(uint))		value = ((uint) field.GetValue(null)).ToString(culture);
 					else throw new Exception(string.Format("Bad type for HLSL definition : {0}", field.FieldType));
 
 					var typeName = GetStructFieldHLSLType( field.FieldType );
 
-					sb.AppendFormat("static const {0} {1} = {2};\r\n", typeName, field.Name, value.ToString());
+					sb.AppendFormat("static const {0} {1} = {2};\r\n", typeName, field.Name, value);
 				}
 			}
 			sb.AppendFormat("\r\n");

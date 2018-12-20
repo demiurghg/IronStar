@@ -14,14 +14,14 @@ struct PARAMS {
 	float      DirtMaskLerpFactor;            // offset:   20
 	float      DirtAmount;                    // offset:   24
 	float      Saturation;                    // offset:   28
-	float      MaximumOutputValue;            // offset:   32
-	float      MinimumOutputValue;            // offset:   36
-	float      DitherAmount;                  // offset:   40
-	int        Width;                         // offset:   44
-	int        Height;                        // offset:   48
-	float      MinLogLuminance;               // offset:   52
-	float      MaxLogLuminance;               // offset:   56
-	float      OneOverLogLuminanceRange;      // offset:   60
-	float      LogLuminanceRange;             // offset:   64
+	float      DitherAmount;                  // offset:   32
+	int        Width;                         // offset:   36
+	int        Height;                        // offset:   40
+	float      EVMin;                         // offset:   44
+	float      EVMax;                         // offset:   48
+	float      EVRange;                       // offset:   52
+	float      EVRangeInverse;                // offset:   56
+	float      AdaptEVMin;                    // offset:   60
+	float      AdaptEVMax;                    // offset:   64
 };
 

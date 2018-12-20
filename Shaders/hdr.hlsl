@@ -34,22 +34,33 @@ float GetLuminance(float3 color)
     return dot(color, float3(0.2127f, 0.7152f, 0.0722f));
 }
 
-float HDRToLogNormalizedLuminance(float3 hdrColor)
+float NormalizeEV( float ev )
 {
-    float luminance = GetLuminance(hdrColor);
-	float minLogLuminance			=	Params.MinLogLuminance;
-	float oneOverLogLuminanceRange	=	Params.OneOverLogLuminanceRange;
-    
+	return saturate( (ev - Params.EVMin) * Params.EVRangeInverse );
+}
+
+float ComputeEV( float luminance )
+{
     if ( luminance < Epsilon ) {
         return 0;
-    }
-    
-    return saturate((log2(luminance) - minLogLuminance) * oneOverLogLuminanceRange);
+    } else {
+		return log2(luminance);
+	}
+}
+
+float EVToLuminance( float ev )
+{
+	return exp2(ev);
+}
+
+float HDRToLogNormalizedEV(float3 hdrColor)
+{
+	return NormalizeEV( ComputeEV( GetLuminance(hdrColor) ) );
 }
 
 uint HDRToHistogramBin(float3 hdrColor)
 {
-    float logLuminance = HDRToLogNormalizedLuminance(hdrColor);
+    float logLuminance = HDRToLogNormalizedEV(hdrColor);
     return (uint)(logLuminance * 254.0 + 1.0);
 }
 
@@ -113,14 +124,17 @@ void CSMain(uint groupIndex : SV_GroupIndex)
     
     if(groupIndex == 0)
     {
-		float minLogLuminance			= 	Params.MinLogLuminance;
-		float logLuminanceRange			=	Params.LogLuminanceRange;
+		float minLogLuminance			= 	Params.EVMin;
+		float logLuminanceRange			=	Params.EVRange;
 			
 		float pixelCount				= 	Params.Width * Params.Height;
-        //float weightedLogAverage 		= 	(HistogramShared[0].x / max((float)pixelCount - countForThisBin, 1.0)) - 0.0;
-        float weightedLogAverage 		= 	(HistogramShared[0].x / max((float)pixelCount, 1.0)) - 0.0;
+        float weightedLogAverage 		= 	(HistogramShared[0].x / max((float)pixelCount - countForThisBin, 1.0)) - 1.0;
+		//float weightedLogAverage 		= 	(HistogramShared[0].x / max((float)pixelCount, 1.0)) - 1.0;
         float weightedAverageLuminance	= 	exp2(((weightedLogAverage / 254.0) * logLuminanceRange) + minLogLuminance);
         float luminanceLastFrame 		=	LuminanceOutput[uint2(0, 0)];
+		
+		weightedAverageLuminance		=	clamp( weightedAverageLuminance, EVToLuminance(Params.AdaptEVMin), EVToLuminance(Params.AdaptEVMax) );
+		
         float adaptedLuminance 			=	lerp( luminanceLastFrame, weightedAverageLuminance, Params.AdaptationRate );
         LuminanceOutput[uint2(0, 0)] 	=	adaptedLuminance;
     }
@@ -336,21 +350,28 @@ float3 ShowHistogram ( uint x, uint y, float3 image, float lum )
 	int 	height2		=	(int)(hvalue / Params.Width);
 	float4 	shade1		=	(Params.Height-128 - y) <= height1 ? float4(0.2,0.2,0.2,0.7f) : float4(0,0,0,0);
 	float4 	shade2		=	(Params.Height-128 - y) == height2 ? float4(1.0,1.0,0.0,1.0f) : float4(0,0,0,0);
-	float4	shade		=	lerp(shade1, shade2, shade2.a);
 	
-	float	nrmLogLum	=	HDRToLogNormalizedLuminance(float3(lum,lum,lum));
+	float	nrmLogLum	=	HDRToLogNormalizedEV(float3(lum,lum,lum));
 	int		width		=	(int)(nrmLogLum*Params.Width);
 	
 	if (x>width-1 && x<width+1) {
 		return float3(1,0,0);
 	}
 	
-	float  	exposured	=	pow( 2, (x / (float)Params.Width) / Params.OneOverLogLuminanceRange + Params.MinLogLuminance );
+	float  	exposured	=	pow( 2, (x / (float)Params.Width) * Params.EVRange + Params.EVMin );
 	int 	curve		=	(int)(Tonemap( float3(exposured,exposured,exposured) * Params.KeyValue / lum ).r * 128);
 	float4 	shade3		=	((Params.Height-128 - y)==curve) ? float4(0,1,0,1) : float4(0,0,0,0);
-			shade		=	lerp(shade, shade3, shade3.a);
+	
+	float	adaptMin	=	(int)(NormalizeEV( Params.AdaptEVMin ) * Params.Width);
+	float	adaptMax	=	(int)(NormalizeEV( Params.AdaptEVMax ) * Params.Width);
+	if (x==adaptMin) return float3(1,0,0);
+	if (x==adaptMax) return float3(1,0,0);
 			
-	return 	lerp(image, shade.rgb, shade.a);
+	image	=	lerp( image, shade1.rgb, shade1.a );
+	image	=	lerp( image, shade2.rgb, shade2.a );
+	image	=	lerp( image, shade3.rgb, shade3.a );
+			
+	return 	image;
 }
 
 

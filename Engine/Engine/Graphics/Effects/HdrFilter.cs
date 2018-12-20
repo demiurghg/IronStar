@@ -46,18 +46,6 @@ namespace Fusion.Engine.Graphics {
 		[Config]
 		[AEValueRange(0.045f, 1, 0.05f, 0.01f)]
 		public float KeyValue { get; set; } = 0.18f;
-
-		/// <summary>
-		/// Minimum luminnance. Default is zero.
-		/// </summary>
-		[Config]
-		public float LuminanceLowBound { get; set; } = 0f;
-
-		/// <summary>
-		/// Maximum luminance. Default is 99999.
-		/// </summary>
-		[Config]
-		public float LuminanceHighBound { get; set; } = 99999f;
 		
 		/// <summary>
 		/// Bloom gaussian blur sigma. Default is 3.
@@ -94,39 +82,38 @@ namespace Fusion.Engine.Graphics {
 		[AEValueRange(0, 1, 1f/32f, 1f/256f)]
 		public float Saturation { get; set; } = 1.0f;
 
-		/// <summary>
-		/// Maximum output value.
-		/// Default value is 1.
-		/// </summary>
-		[Config]
-		[AEValueRange(0, 1, 1f/32f, 1f/256f)]
-		public float MaximumOutputValue { get; set; } = 1.0f;
-
-		/// <summary>
-		/// Minimum output value.
-		/// Default value is 0.
-		/// </summary>
-		[Config]
-		[AEValueRange(0, 1, 1f/32f, 1f/256f)]
-		public float MinimumOutputValue { get; set; } = 0.0f;
-
 		static readonly int		MinLogLuminance = -8;
 		static readonly int		MaxLogLuminance = 15;
 		static readonly float	MinLinearLuminance	=	(float)Math.Pow( 2, MinLogLuminance );
 		static readonly float	MaxLinearLuminance	=	(float)Math.Pow( 2, MaxLogLuminance );
-		float minLuminance = MinLinearLuminance;
-		float maxLuminance = MaxLinearLuminance;
+		float minEv = MinLogLuminance;
+		float maxEv = MaxLogLuminance;
+		float adaptMinEv = MinLogLuminance;
+		float adaptMaxEv = MaxLogLuminance;
 
 		[Config]
-		public float MinimumLuminance { 
-			get { return minLuminance; }
-			set { minLuminance = MathUtil.Clamp( value, MinLinearLuminance, MaxLinearLuminance ); }
+		public float MinimumEV { 
+			get { return minEv; }
+			set { minEv = MathUtil.Clamp( value, MinLogLuminance, MaxLogLuminance ); }
 		}
 
 		[Config]
-		public float MaximumLuminance {
-			get { return maxLuminance; }
-			set { maxLuminance = MathUtil.Clamp( value, MinLinearLuminance, MaxLinearLuminance ); }
+		public float MaximumEV {
+			get { return maxEv; }
+			set { maxEv = MathUtil.Clamp( value, MinLogLuminance, MaxLogLuminance ); }
+		}
+
+
+		[Config]
+		public float AdaptMinEV { 
+			get { return adaptMinEv; }
+			set { adaptMinEv = MathUtil.Clamp( value, MinLogLuminance, MaxLogLuminance ); }
+		}
+
+		[Config]
+		public float AdaptMaxEV {
+			get { return adaptMaxEv; }
+			set { adaptMaxEv = MathUtil.Clamp( value, MinLogLuminance, MaxLogLuminance ); }
 		}
 
 		static float ComputeLogLuminance ( float linear )
@@ -155,26 +142,26 @@ namespace Fusion.Engine.Graphics {
 		//	float LuminanceHighBound;      // Offset:    8
 		//	float KeyValue;                // Offset:   12
 		//	float BloomAmount;             // Offset:   16
-		[StructLayout(LayoutKind.Explicit, Size=128)]
+		[StructLayout(LayoutKind.Sequential, Size=128)]
 		[ShaderStructure]
 		struct PARAMS {
-			[FieldOffset( 0)]	public	float	AdaptationRate;
-			[FieldOffset( 4)]	public	float 	LuminanceLowBound;
-			[FieldOffset( 8)]	public	float	LuminanceHighBound;
-			[FieldOffset(12)]	public	float	KeyValue;
-			[FieldOffset(16)]	public	float	BloomAmount;
-			[FieldOffset(20)]	public	float	DirtMaskLerpFactor;
-			[FieldOffset(24)]	public	float	DirtAmount;
-			[FieldOffset(28)]	public	float	Saturation;
-			[FieldOffset(32)]	public	float	MaximumOutputValue;
-			[FieldOffset(36)]	public	float	MinimumOutputValue;
-			[FieldOffset(40)]	public	float	DitherAmount;
-			[FieldOffset(44)]	public	int		Width;
-			[FieldOffset(48)]	public	int		Height;
-			[FieldOffset(52)]	public	float	MinLogLuminance;
-			[FieldOffset(56)]	public	float	MaxLogLuminance;
-			[FieldOffset(60)]	public	float	OneOverLogLuminanceRange;
-			[FieldOffset(64)]	public	float	LogLuminanceRange;
+			public	float	AdaptationRate;
+			public	float 	LuminanceLowBound;
+			public	float	LuminanceHighBound;
+			public	float	KeyValue;
+			public	float	BloomAmount;
+			public	float	DirtMaskLerpFactor;
+			public	float	DirtAmount;
+			public	float	Saturation;
+			public	float	DitherAmount;
+			public	int		Width;
+			public	int		Height;
+			public	float	EVMin;
+			public	float	EVMax;
+			public	float	EVRange;
+			public	float	EVRangeInverse;
+			public	float	AdaptEVMin;
+			public	float	AdaptEVMax;
 		}
 
 
@@ -414,23 +401,21 @@ namespace Fusion.Engine.Graphics {
 				//	Setup parameters :
 				//
 				var paramsData	=	new PARAMS();
-				paramsData.AdaptationRate			=	1 - (float)Math.Pow( 0.5f, gameTime.ElapsedSec / AdaptationHalfTime );
-				paramsData.LuminanceLowBound		=	LuminanceLowBound;
-				paramsData.LuminanceHighBound		=	LuminanceHighBound;
-				paramsData.KeyValue					=	KeyValue;
-				paramsData.BloomAmount				=	BloomAmount;
-				paramsData.DirtMaskLerpFactor		=	0;
-				paramsData.DirtAmount				=	0;
-				paramsData.Saturation				=	Saturation;
-				paramsData.MaximumOutputValue		=	MaximumOutputValue;
-				paramsData.MinimumOutputValue		=	MinimumOutputValue;
-				paramsData.DitherAmount				=	DitherAmount;
-				paramsData.Width					=	imageWidth;
-				paramsData.Height					=	imageHeight;
-				paramsData.MinLogLuminance			=	ComputeLogLuminance( MinimumLuminance );
-				paramsData.MaxLogLuminance			=	ComputeLogLuminance( MaximumLuminance );
-				paramsData.LogLuminanceRange		=	paramsData.MaxLogLuminance - paramsData.MinLogLuminance;
-				paramsData.OneOverLogLuminanceRange	=	1.0f / paramsData.LogLuminanceRange;
+				paramsData.AdaptationRate		=	1 - (float)Math.Pow( 0.5f, gameTime.ElapsedSec / AdaptationHalfTime );
+				paramsData.KeyValue				=	KeyValue;
+				paramsData.BloomAmount			=	BloomAmount;
+				paramsData.DirtMaskLerpFactor	=	0;
+				paramsData.DirtAmount			=	0;
+				paramsData.Saturation			=	Saturation;
+				paramsData.DitherAmount			=	DitherAmount;
+				paramsData.Width				=	imageWidth;
+				paramsData.Height				=	imageHeight;
+				paramsData.EVMin				=	MinimumEV;
+				paramsData.EVMax				=	MaximumEV;
+				paramsData.EVRange				=	paramsData.EVMax - paramsData.EVMin;
+				paramsData.EVRangeInverse		=	1.0f / paramsData.EVRange;
+				paramsData.AdaptEVMin			=	AdaptMinEV;
+				paramsData.AdaptEVMax			=	AdaptMaxEV;
 
 				paramsCB.SetData( paramsData );
 				device.PixelShaderConstants[0]		=	paramsCB;

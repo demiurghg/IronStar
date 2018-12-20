@@ -3,7 +3,7 @@
 #if 0
 $ubershader		(TONEMAPPING LINEAR|REINHARD|FILMIC)|MEASURE_ADAPT +SHOW_HISTOGRAM
 $ubershader		COMPOSITION
-$ubershader		HISTOGRAM
+$ubershader		COMPUTE_HISTOGRAM|AVERAGE_HISTOGRAM
 #endif
 
 #include "hdr.auto.hlsl"
@@ -57,15 +57,13 @@ uint HDRToHistogramBin(float3 hdrColor)
 	HISTOGRAM
 -----------------------------------------------------------------------------*/
 
-#ifdef HISTOGRAM
+#ifdef COMPUTE_HISTOGRAM
 Texture2D HDRTexture : register(t0);
 RWByteAddressBuffer LuminanceHistogram : register(u0);
 
-//	Next we'll need some shared memory to store intermediate thread-group histogram bin counts. NumHistogramBins is, as you might've guessed, 256. 
 
 groupshared uint histogramShared[NumHistogramBins];
                         
-//	Finally, the compute shader itself: 
 
 [numthreads(BlockSizeX, BlockSizeY, 1)]
 void CSMain(uint groupIndex : SV_GroupIndex, uint3 threadId : SV_DispatchThreadID)
@@ -85,7 +83,48 @@ void CSMain(uint groupIndex : SV_GroupIndex, uint3 threadId : SV_DispatchThreadI
     
     LuminanceHistogram.InterlockedAdd(groupIndex * 4, histogramShared[groupIndex]);
 }
+#endif
 
+
+#ifdef AVERAGE_HISTOGRAM
+RWByteAddressBuffer LuminanceHistogram : register(u0);
+RWTexture2D<float> LuminanceOutput : register(u1);
+
+
+groupshared float HistogramShared[NumHistogramBins];
+
+[numthreads(BlockSizeX, BlockSizeX, 1)]
+void CSMain(uint groupIndex : SV_GroupIndex)
+{
+    float countForThisBin = (float)LuminanceHistogram.Load(groupIndex * 4);
+    HistogramShared[groupIndex] = countForThisBin * (float)groupIndex;
+    
+    GroupMemoryBarrierWithGroupSync();
+    
+    [unroll]
+    for(uint histogramSampleIndex = (NumHistogramBins >> 1); histogramSampleIndex > 0; histogramSampleIndex >>= 1) {
+		
+        if(groupIndex < histogramSampleIndex) {
+            HistogramShared[groupIndex] += HistogramShared[groupIndex + histogramSampleIndex];
+        }
+
+        GroupMemoryBarrierWithGroupSync();
+    }
+    
+    if(groupIndex == 0)
+    {
+		float minLogLuminance			= 	Params.MinLogLuminance;
+		float logLuminanceRange			=	Params.LogLuminanceRange;
+			
+		float pixelCount				= 	Params.Width * Params.Height;
+        //float weightedLogAverage 		= 	(HistogramShared[0].x / max((float)pixelCount - countForThisBin, 1.0)) - 0.0;
+        float weightedLogAverage 		= 	(HistogramShared[0].x / max((float)pixelCount, 1.0)) - 0.0;
+        float weightedAverageLuminance	= 	exp2(((weightedLogAverage / 254.0) * logLuminanceRange) + minLogLuminance);
+        float luminanceLastFrame 		=	LuminanceOutput[uint2(0, 0)];
+        float adaptedLuminance 			=	lerp( luminanceLastFrame, weightedAverageLuminance, Params.AdaptationRate );
+        LuminanceOutput[uint2(0, 0)] 	=	adaptedLuminance;
+    }
+}
 #endif
 
 
@@ -295,9 +334,9 @@ float3 ShowHistogram ( uint x, uint y, float3 image, float lum )
 	int		hvalue		=	Histogram.Load(bin*4);
 	int 	height1		=	(int)(10 * log10(hvalue+1));
 	int 	height2		=	(int)(hvalue / Params.Width);
-	float3 	shade1		=	(Params.Height-128 - y) <= height1 ? float3(0.5,0.5,0.5) : float3(1,1,1);
-	float3 	shade2		=	(Params.Height-128 - y) == height2 ? float3(5.0,5.0,1.0) : float3(1,1,1);
-	float3	shade		=	shade1 * shade2;
+	float4 	shade1		=	(Params.Height-128 - y) <= height1 ? float4(0.2,0.2,0.2,0.7f) : float4(0,0,0,0);
+	float4 	shade2		=	(Params.Height-128 - y) == height2 ? float4(1.0,1.0,0.0,1.0f) : float4(0,0,0,0);
+	float4	shade		=	lerp(shade1, shade2, shade2.a);
 	
 	float	nrmLogLum	=	HDRToLogNormalizedLuminance(float3(lum,lum,lum));
 	int		width		=	(int)(nrmLogLum*Params.Width);
@@ -306,13 +345,12 @@ float3 ShowHistogram ( uint x, uint y, float3 image, float lum )
 		return float3(1,0,0);
 	}
 	
-	float  exposured	=	pow( 2, (x / (float)Params.Width) / Params.OneOverLogLuminanceRange + Params.MinLogLuminance );
-	float3 curve		=	Tonemap( float3(exposured,exposured,exposured) * Params.KeyValue / lum );
-	if ((Params.Height-128 - y)<curve.x*128) {
-		shade *= 0.7f;
-	}
-	
-	return 	image * shade;
+	float  	exposured	=	pow( 2, (x / (float)Params.Width) / Params.OneOverLogLuminanceRange + Params.MinLogLuminance );
+	int 	curve		=	(int)(Tonemap( float3(exposured,exposured,exposured) * Params.KeyValue / lum ).r * 128);
+	float4 	shade3		=	((Params.Height-128 - y)==curve) ? float4(0,1,0,1) : float4(0,0,0,0);
+			shade		=	lerp(shade, shade3, shade3.a);
+			
+	return 	lerp(image, shade.rgb, shade.a);
 }
 
 
@@ -336,7 +374,7 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	float4	bloomMask1	=	BloomMask1.SampleLevel( LinearSampler, uv, 0 );
 	float4	bloomMask2	=	BloomMask2.SampleLevel( LinearSampler, uv, 0 );
 	float4	bloomMask	=	lerp( bloomMask1, bloomMask2, Params.DirtMaskLerpFactor );
-	float	luminance	=	clamp( MasuredLuminance.Load(int3(0,0,0)).r, 2, 10 );
+	float	luminance	=	MasuredLuminance.Load(int3(0,0,0)).r;
 	float	noiseDither	=	NoiseTexture.Load( int3(xpos%64,ypos%64,0) ).r;
 
 	float3	bloom		=	( bloom0 * 1.000f  

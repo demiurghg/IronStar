@@ -110,8 +110,8 @@ namespace Fusion.Engine.Graphics {
 			DepthSliceMap2		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.R32F,		halfWidth,	halfHeight, false, true );
 			DepthSliceMap3		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.R32F,		halfWidth,	halfHeight, false, true );
 
-			MeasuredOld			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba32F,   1,  1 );
-			MeasuredNew			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba32F,   1,  1 );
+			MeasuredOld			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.R32F,	  1,  1, true );
+			MeasuredNew			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.R32F,	  1,  1, true );
 
 			Clear();
 		}

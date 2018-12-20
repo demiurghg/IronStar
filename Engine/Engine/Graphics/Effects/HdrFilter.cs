@@ -155,7 +155,7 @@ namespace Fusion.Engine.Graphics {
 		//	float LuminanceHighBound;      // Offset:    8
 		//	float KeyValue;                // Offset:   12
 		//	float BloomAmount;             // Offset:   16
-		[StructLayout(LayoutKind.Explicit, Size=64)]
+		[StructLayout(LayoutKind.Explicit, Size=128)]
 		[ShaderStructure]
 		struct PARAMS {
 			[FieldOffset( 0)]	public	float	AdaptationRate;
@@ -174,6 +174,7 @@ namespace Fusion.Engine.Graphics {
 			[FieldOffset(52)]	public	float	MinLogLuminance;
 			[FieldOffset(56)]	public	float	MaxLogLuminance;
 			[FieldOffset(60)]	public	float	OneOverLogLuminanceRange;
+			[FieldOffset(64)]	public	float	LogLuminanceRange;
 		}
 
 
@@ -188,15 +189,16 @@ namespace Fusion.Engine.Graphics {
 
 
 		enum Flags {	
-			TONEMAPPING		=	0x001,
-			MEASURE_ADAPT	=	0x002,
-			LINEAR			=	0x004, 
-			REINHARD		=	0x008,
-			FILMIC			=	0x010,
-			SHOW_HISTOGRAM	=	0x020,
+			TONEMAPPING			=	0x001,
+			MEASURE_ADAPT		=	0x002,
+			LINEAR				=	0x004, 
+			REINHARD			=	0x008,
+			FILMIC				=	0x010,
+			SHOW_HISTOGRAM		=	0x020,
 
-			COMPOSITION		=	0x100,
-			HISTOGRAM		=	0x200,
+			COMPOSITION			=	0x100,
+			COMPUTE_HISTOGRAM	=	0x200,
+			AVERAGE_HISTOGRAM	=	0x400,
 		}
 
 		/// <summary>
@@ -214,7 +216,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public override void Initialize ()
 		{
-			averageLum	=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.Rgba16F, 256,256, true, false );
+			averageLum	=	new RenderTarget2D( Game.GraphicsDevice, ColorFormat.Rgba16F, 256,256, true, true );
 			paramsCB	=	new ConstantBuffer( Game.GraphicsDevice, typeof(PARAMS) );
 			whiteTex	=	new DynamicTexture( Game.RenderSystem, 4,4, typeof(Color), false, false);
 			whiteTex.SetData( Enumerable.Range(0,16).Select( i=> Color.White ).ToArray() );
@@ -427,7 +429,8 @@ namespace Fusion.Engine.Graphics {
 				paramsData.Height					=	imageHeight;
 				paramsData.MinLogLuminance			=	ComputeLogLuminance( MinimumLuminance );
 				paramsData.MaxLogLuminance			=	ComputeLogLuminance( MaximumLuminance );
-				paramsData.OneOverLogLuminanceRange	=	1.0f / ( paramsData.MaxLogLuminance - paramsData.MinLogLuminance );
+				paramsData.LogLuminanceRange		=	paramsData.MaxLogLuminance - paramsData.MinLogLuminance;
+				paramsData.OneOverLogLuminanceRange	=	1.0f / paramsData.LogLuminanceRange;
 
 				paramsCB.SetData( paramsData );
 				device.PixelShaderConstants[0]		=	paramsCB;
@@ -440,26 +443,36 @@ namespace Fusion.Engine.Graphics {
 				device.ComputeShaderResources[0]	=	hdrFrame.FinalHdrImage;
 				device.SetCSRWBuffer( 0, histogramBuffer );
 
-				device.PipelineState		=	factory[ (int)(Flags.HISTOGRAM) ];
+				device.PipelineState		=	factory[ (int)(Flags.COMPUTE_HISTOGRAM) ];
 				device.Dispatch( new Int2(imageWidth, imageHeight), new Int2(BlockSizeX, BlockSizeY) ); 
 
-				//var histogram = new uint[256];
-				//histogramBuffer.GetData( histogram );
+				device.SetCSRWBuffer( 0, histogramBuffer );
+				device.SetCSRWTexture( 1, hdrFrame.MeasuredNew.Surface );
+
+				//--------------------
+
+				device.PipelineState		=	factory[ (int)(Flags.AVERAGE_HISTOGRAM) ];
+				device.Dispatch( 1,1,1 ); 
 
 				device.ComputeShaderResources[0]	=	null;
-				device.SetCSRWBuffer( 0, (ByteAddressBuffer)null );
+				device.SetCSRWBuffer ( 0, (ByteAddressBuffer)null );
+				device.SetCSRWTexture( 1, (RenderTargetSurface)null );
+
+				
+				//var histogram = new uint[256];
+				//histogramBuffer.GetData( histogram );
 
 				//
 				//	Measure and adapt :
 				//
-				device.SetTargets( null, hdrFrame.MeasuredNew );
+				/*device.SetTargets( null, hdrFrame.MeasuredNew );
 
 				device.PixelShaderResources[0]	=	averageLum;
 				device.PixelShaderResources[1]	=	hdrFrame.MeasuredOld;
 
 				device.PipelineState		=	factory[ (int)(Flags.MEASURE_ADAPT) ];
 				
-				device.Draw( 3, 0 );
+				device.Draw( 3, 0 );*/
 
 
 				//
@@ -496,7 +509,7 @@ namespace Fusion.Engine.Graphics {
 
 
 				//	swap luminanice buffers :
-				Misc.Swap( ref hdrFrame.MeasuredNew, ref hdrFrame.MeasuredOld );
+				///Misc.Swap( ref hdrFrame.MeasuredNew, ref hdrFrame.MeasuredOld );
 			}
 		}
 	}

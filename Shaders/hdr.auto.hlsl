@@ -4,7 +4,7 @@ static const int NumHistogramBins = 256;
 static const float Epsilon = 0.0002441406;
 
 // Fusion.Engine.Graphics.HdrFilter+PARAMS
-// Marshal.SizeOf = 64
+// Marshal.SizeOf = 128
 struct PARAMS {
 	float      AdaptationRate;                // offset:    0
 	float      LuminanceLowBound;             // offset:    4
@@ -22,5 +22,6 @@ struct PARAMS {
 	float      MinLogLuminance;               // offset:   52
 	float      MaxLogLuminance;               // offset:   56
 	float      OneOverLogLuminanceRange;      // offset:   60
+	float      LogLuminanceRange;             // offset:   64
 };
 

@@ -85,6 +85,7 @@ namespace Fusion.Drivers.Graphics {
 			var srvDesc = new ShaderResourceViewDescription {
 					Format		= DXGI.Format.R32_UInt,
 					Buffer		= {ElementCount = size, FirstElement = 0 },
+					BufferEx	= { ElementCount = size, FirstElement = 0, Flags = ShaderResourceViewExtendedBufferFlags.Raw },
 					Dimension	= ShaderResourceViewDimension.Buffer
 				};
 

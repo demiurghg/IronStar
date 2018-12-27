@@ -21,6 +21,7 @@ using IronStar.Entities;
 using IronStar.Views;
 using IronStar.Items;
 using IronStar.Entities.Players;
+using Native.NRecast;
 
 namespace IronStar.Core {
 
@@ -60,12 +61,14 @@ namespace IronStar.Core {
 		SFX.FXPlayback		fxPlayback = null;
 		SFX.ModelManager	modelManager = null;
 		PhysicsManager		physics	= null;
+		NavigationMesh		navMesh = null;
 
 		public SFX.ModelManager	ModelManager { get { return modelManager; } }
 		public SFX.FXPlayback	FXPlayback   { get { return fxPlayback; } }
 		public PhysicsManager	Physics		{ get { return physics; } }
 		public EntityCollection	Entities { get { return entities; } }
 		public ItemCollection	Items	 { get { return items; } }
+		public NavigationMesh	NavMesh { get { return navMesh; } }
 
 
 		public SnapshotHeader snapshotHeader = new SnapshotHeader();
@@ -92,6 +95,7 @@ namespace IronStar.Core {
 			entities		=	new EntityCollection();
 			items			=	new ItemCollection(this);
 			physics			=	new PhysicsManager( this, 16 );
+			navMesh			=	map.BuildNavMesh( content );
 
 			//	setup rendering stuff :
 			if (enablePresentation) {
@@ -123,6 +127,11 @@ namespace IronStar.Core {
 		}
 
 
+
+		public void RefreshWorld ()
+		{
+			navMesh			=	map.BuildNavMesh( content );
+		}
 
 
 		/// <summary>

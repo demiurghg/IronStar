@@ -22,6 +22,11 @@ namespace IronStar.Core {
 	/// World represents ai methods
 	/// </summary>
 	public partial class GameWorld {
+
+		void BuildNavigationMesh ()
+		{
+			
+		}
 		//public AISystem AISystem { get; set; }
 	}
 }

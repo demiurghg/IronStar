@@ -441,8 +441,6 @@ namespace IronStar.Editor {
 				rs.RenderWorld.Debug.DrawGrid( 10 );
 			}
 
-			map.DrawNavMesh( rs.RenderWorld.Debug );
-
 			//
 			//	Draw unselected :
 			//

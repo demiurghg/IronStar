@@ -68,7 +68,7 @@ namespace IronStar.Editor {
 			upperShelf.AddFatLButton("Assets", null, ()=> assetExplorer.Visible = !assetExplorer.Visible );
 
 			upperShelf.AddLSplitter();
-			upperShelf.AddFatLButton("Unfreeze All", null, ()=> UnfreezeAll() );
+			upperShelf.AddFatLButton("Unfreeze\rAll", null, ()=> UnfreezeAll() );
 
 			upperShelf.AddLSplitter();
 			upperShelf.AddLButton("BUILD\rRELOAD", @"editor\iconBuild", ()=> Game.Invoker.ExecuteString("contentBuild") );

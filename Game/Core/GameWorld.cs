@@ -130,7 +130,7 @@ namespace IronStar.Core {
 
 		public void RefreshWorld ()
 		{
-			navMesh			=	map.BuildNavMesh( content );
+			//navMesh			=	map.BuildNavMesh( content );
 		}
 
 

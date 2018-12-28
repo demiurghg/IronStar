@@ -82,8 +82,8 @@ namespace Fusion.Engine.Graphics {
 		[AEValueRange(0, 1, 1f/32f, 1f/256f)]
 		public float Saturation { get; set; } = 1.0f;
 
-		static readonly int		MinLogLuminance = -8;
-		static readonly int		MaxLogLuminance = 15;
+		static readonly int		MinLogLuminance = -16;
+		static readonly int		MaxLogLuminance =  16;
 		static readonly float	MinLinearLuminance	=	(float)Math.Pow( 2, MinLogLuminance );
 		static readonly float	MaxLinearLuminance	=	(float)Math.Pow( 2, MaxLogLuminance );
 		float minEv = MinLogLuminance;
@@ -92,26 +92,26 @@ namespace Fusion.Engine.Graphics {
 		float adaptMaxEv = MaxLogLuminance;
 
 		[Config]
-		public float MinimumEV { 
+		public float EVMin { 
 			get { return minEv; }
 			set { minEv = MathUtil.Clamp( value, MinLogLuminance, MaxLogLuminance ); }
 		}
 
 		[Config]
-		public float MaximumEV {
+		public float EVMax {
 			get { return maxEv; }
 			set { maxEv = MathUtil.Clamp( value, MinLogLuminance, MaxLogLuminance ); }
 		}
 
 
 		[Config]
-		public float AdaptMinEV { 
+		public float AdaptEVMin { 
 			get { return adaptMinEv; }
 			set { adaptMinEv = MathUtil.Clamp( value, MinLogLuminance, MaxLogLuminance ); }
 		}
 
 		[Config]
-		public float AdaptMaxEV {
+		public float AdaptEVMax {
 			get { return adaptMaxEv; }
 			set { adaptMaxEv = MathUtil.Clamp( value, MinLogLuminance, MaxLogLuminance ); }
 		}
@@ -410,12 +410,12 @@ namespace Fusion.Engine.Graphics {
 				paramsData.DitherAmount			=	DitherAmount;
 				paramsData.Width				=	imageWidth;
 				paramsData.Height				=	imageHeight;
-				paramsData.EVMin				=	MinimumEV;
-				paramsData.EVMax				=	MaximumEV;
+				paramsData.EVMin				=	EVMin;
+				paramsData.EVMax				=	EVMax;
 				paramsData.EVRange				=	paramsData.EVMax - paramsData.EVMin;
 				paramsData.EVRangeInverse		=	1.0f / paramsData.EVRange;
-				paramsData.AdaptEVMin			=	AdaptMinEV;
-				paramsData.AdaptEVMax			=	AdaptMaxEV;
+				paramsData.AdaptEVMin			=	AdaptEVMin;
+				paramsData.AdaptEVMax			=	AdaptEVMax;
 
 				paramsCB.SetData( paramsData );
 				device.PixelShaderConstants[0]		=	paramsCB;

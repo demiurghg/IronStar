@@ -342,8 +342,12 @@ float3 Tonemap ( float3 exposured )
 }
 
 
-float3 ShowHistogram ( uint x, uint y, float3 image, float lum, float lum2 )
+float3 ShowHistogram ( uint x, uint y, float3 image, float lumActual, float lumAdapt )
 {
+	if (y>32 && y<64 && x>32 && x<64) {
+		return float3( 0.5, 0.5, 0.5 );
+	}
+	
 	if (y>Params.Height-128 || y<Params.Height-256) {
 		return image;
 	}
@@ -355,16 +359,16 @@ float3 ShowHistogram ( uint x, uint y, float3 image, float lum, float lum2 )
 	int 	height1		=	(int)(10 * log10(hvalue+1));
 	int 	height2		=	(int)(hvalue / Params.Width);
 	float4 	shade1		=	(Params.Height-128 - y) <= height1 ? float4(0.2,0.2,0.2,0.7f) : float4(0,0,0,0);
-	float4 	shade2		=	(Params.Height-128 - y) == height2 ? float4(1.0,1.0,0.0,1.0f) : float4(0,0,0,0);
+	float4 	shade2		=	(Params.Height-128 - y)/2 == height2/2 ? float4(1.0,0.0,0.0,1.0f) : float4(0,0,0,0);
 	
-	float	nrmLogLum	=	HDRToLogNormalizedEV(float3(lum,lum,lum));
+	float	nrmLogLum	=	HDRToLogNormalizedEV(float3(lumActual,lumActual,lumActual));
 	int		width		=	(int)(nrmLogLum*Params.Width);
 	
 	if (x>width-1 && x<width+1) {
 		return float3(1,0,0);
 	}
 
-	float	nrmLogLum2	=	HDRToLogNormalizedEV(float3(lum2,lum2,lum2));
+	float	nrmLogLum2	=	HDRToLogNormalizedEV(float3(lumAdapt,lumAdapt,lumAdapt));
 	int		width2		=	(int)(nrmLogLum2*Params.Width);
 	
 	if (x>width2-2 && x<width2+1) {
@@ -372,7 +376,7 @@ float3 ShowHistogram ( uint x, uint y, float3 image, float lum, float lum2 )
 	}
 	
 	float  	exposured	=	pow( 2, (x / (float)Params.Width) * Params.EVRange + Params.EVMin );
-	int 	curve		=	(int)(Tonemap( float3(exposured,exposured,exposured) * Params.KeyValue / lum ).r * 128);
+	int 	curve		=	(int)(Tonemap( float3(exposured,exposured,exposured) * Params.KeyValue / lumAdapt ).r * 128);
 	float4 	shade3		=	((Params.Height-128 - y)==curve) ? float4(0,1,0,1) : float4(0,0,0,0);
 	
 	float	adaptMin	=	(int)(NormalizeEV( Params.AdaptEVMin ) * Params.Width);

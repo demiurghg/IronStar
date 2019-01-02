@@ -42,9 +42,9 @@ namespace IronStar.UI.Controls.Advanced {
 				this.StatusChanged +=CheckBox_StatusChanged;
 
 				yesNoButton			= new Frame(this.Frames) {
-					Font			= ColorTheme.NormalFont,
+					Font			= MenuTheme.NormalFont,
 					Height			= ComputeItemHeight(), 
-					BackColor		= ColorTheme.BackgroundColorDark,
+					BackColor		= MenuTheme.BackgroundColorDark,
 					TextAlignment	= Alignment.MiddleLeft,
 					TextOffsetX		= 1,
 					PaddingTop		= VerticalPadding,
@@ -70,9 +70,9 @@ namespace IronStar.UI.Controls.Advanced {
 			private void CheckBox_StatusChanged( object sender, StatusEventArgs e )
 			{
 				switch ( e.Status ) {
-					case FrameStatus.None:		ForeColor	=	ColorTheme.TextColorNormal; break;
-					case FrameStatus.Hovered:	ForeColor	=	ColorTheme.TextColorHovered; break;
-					case FrameStatus.Pushed:	ForeColor	=	ColorTheme.TextColorPushed; break;
+					case FrameStatus.None:		ForeColor	=	MenuTheme.TextColorNormal; break;
+					case FrameStatus.Hovered:	ForeColor	=	MenuTheme.TextColorHovered; break;
+					case FrameStatus.Pushed:	ForeColor	=	MenuTheme.TextColorPushed; break;
 				}
 			}
 
@@ -97,7 +97,7 @@ namespace IronStar.UI.Controls.Advanced {
 				var value = getFunc();
 
 				yesNoButton.Text		=	value ? "Yes" : "No";
-				yesNoButton.ForeColor	=	value ? ColorTheme.ColorGreen : ColorTheme.ColorRed;
+				yesNoButton.ForeColor	=	value ? MenuTheme.ColorGreen : MenuTheme.ColorRed;
 
 				base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
 			}

@@ -37,11 +37,11 @@ namespace IronStar.UI.Controls {
 			this.getFunc		=	getFunc;
 			this.setFunc		=	setFunc;
 
-			this.Font			=	ColorTheme.NormalFont;
+			this.Font			=	MenuTheme.NormalFont;
 
-			this.BackColor		=	ColorTheme.ButtonColorNormal;
+			this.BackColor		=	MenuTheme.ButtonColorNormal;
 			this.Width			=	1;
-			this.BorderColor	=	ColorTheme.BorderColor;
+			this.BorderColor	=	MenuTheme.BorderColor;
 			this.TextAlignment	=	Alignment.MiddleLeft;
 			this.Text			=	value;
 
@@ -96,27 +96,27 @@ namespace IronStar.UI.Controls {
 
 
 			var scrollBox		= new ScrollBox( Frames, 0,0, scrollBoxWidth, scrollBoxHeight ) {
-				BackColor		= ColorTheme.DropdownColor,
+				BackColor		= MenuTheme.DropdownColor,
 				PaddingLeft		= 4,
 				PaddingRight	= 1,
 				PaddingBottom	= 1,
 				PaddingTop		= 1,
 				Border			= 1,
-				BorderColor		= ColorTheme.AccentBorder,
-				ScrollMarkerColor	=	ColorTheme.AccentBorder
+				BorderColor		= MenuTheme.AccentBorder,
+				ScrollMarkerColor	=	MenuTheme.AccentBorder
 			};
 
 			var dropDownList	= new Frame( Frames ) {
-				BackColor		= ColorTheme.Transparent,
+				BackColor		= MenuTheme.Transparent,
 			};
 			//var dropDownList	= new Frame( Frames ) {
-			//	BackColor		= ColorTheme.DropdownColor,
+			//	BackColor		= MenuTheme.DropdownColor,
 			//	PaddingLeft		= 4,
 			//	PaddingRight	= 4,
 			//	PaddingBottom	= 1,
 			//	PaddingTop		= 1,
 			//	Border			= 1,
-			//	BorderColor		= ColorTheme.AccentBorder,
+			//	BorderColor		= MenuTheme.AccentBorder,
 			//};
 
 			foreach ( var value in values ) {
@@ -124,8 +124,8 @@ namespace IronStar.UI.Controls {
 				var textSize		=	MeasureSingleLineString( Font, value );
 				var textWidth		=	textSize.Width;
 
-				var dropDownElement = new Frame( Frames, 0, 0, textWidth+8, textHeight+4, value, ColorTheme.DropdownButtonNormal );
-					dropDownElement.Font = ColorTheme.NormalFont;
+				var dropDownElement = new Frame( Frames, 0, 0, textWidth+8, textHeight+4, value, MenuTheme.DropdownButtonNormal );
+					dropDownElement.Font = MenuTheme.NormalFont;
 
 
 				dropDownElement.TextAlignment	= Alignment.MiddleLeft;
@@ -133,7 +133,7 @@ namespace IronStar.UI.Controls {
 				dropDownElement.PaddingRight	= 4;
 				dropDownElement.PaddingTop		= 1;
 				dropDownElement.PaddingBottom	= 1;
-				dropDownElement.ForeColor		= ColorTheme.TextColorNormal;
+				dropDownElement.ForeColor		= MenuTheme.TextColorNormal;
 
 				minWidth = Math.Max( textWidth, minWidth );
 
@@ -207,15 +207,15 @@ namespace IronStar.UI.Controls {
 			var frame = (Frame)sender;
 
 			switch ( e.Status ) {
-				case FrameStatus.None:		frame.ForeColor	=	ColorTheme.TextColorNormal;	break;
-				case FrameStatus.Hovered:	frame.ForeColor	=	ColorTheme.TextColorHovered;break;
-				case FrameStatus.Pushed:	frame.ForeColor	=	ColorTheme.TextColorPushed;	break;
+				case FrameStatus.None:		frame.ForeColor	=	MenuTheme.TextColorNormal;	break;
+				case FrameStatus.Hovered:	frame.ForeColor	=	MenuTheme.TextColorHovered;break;
+				case FrameStatus.Pushed:	frame.ForeColor	=	MenuTheme.TextColorPushed;	break;
 			}
 
 			switch ( e.Status ) {
-				case FrameStatus.None:		frame.BackColor	=	ColorTheme.ButtonColorDark;		break;
-				case FrameStatus.Hovered:	frame.BackColor	=	ColorTheme.ButtonColorHovered;	break;
-				case FrameStatus.Pushed:	frame.BackColor	=	ColorTheme.ButtonColorPushed;	break;
+				case FrameStatus.None:		frame.BackColor	=	MenuTheme.ButtonColorDark;		break;
+				case FrameStatus.Hovered:	frame.BackColor	=	MenuTheme.ButtonColorHovered;	break;
+				case FrameStatus.Pushed:	frame.BackColor	=	MenuTheme.ButtonColorPushed;	break;
 			}
 		}
 
@@ -225,15 +225,15 @@ namespace IronStar.UI.Controls {
 			var frame = (Frame)sender;
 
 			switch ( e.Status ) {
-				case FrameStatus.None:		frame.ForeColor	=	ColorTheme.TextColorNormal;	break;
-				case FrameStatus.Hovered:	frame.ForeColor	=	ColorTheme.TextColorHovered;break;
-				case FrameStatus.Pushed:	frame.ForeColor	=	ColorTheme.TextColorPushed;	break;
+				case FrameStatus.None:		frame.ForeColor	=	MenuTheme.TextColorNormal;	break;
+				case FrameStatus.Hovered:	frame.ForeColor	=	MenuTheme.TextColorHovered;break;
+				case FrameStatus.Pushed:	frame.ForeColor	=	MenuTheme.TextColorPushed;	break;
 			}
 
 			switch ( e.Status ) {
-				case FrameStatus.None:		frame.BackColor	=	ColorTheme.DropdownButtonNormal;	break;
-				case FrameStatus.Hovered:	frame.BackColor	=	ColorTheme.DropdownButtonHovered;	break;
-				case FrameStatus.Pushed:	frame.BackColor	=	ColorTheme.DropdownButtonPushed;	break;
+				case FrameStatus.None:		frame.BackColor	=	MenuTheme.DropdownButtonNormal;	break;
+				case FrameStatus.Hovered:	frame.BackColor	=	MenuTheme.DropdownButtonHovered;	break;
+				case FrameStatus.Pushed:	frame.BackColor	=	MenuTheme.DropdownButtonPushed;	break;
 			}
 		}
 

@@ -199,11 +199,11 @@ namespace IronStar.UI.Controls.Dialogs {
 						previewFrame.Y				= this.Y;
 						previewFrame.Padding		= 2;
 						previewFrame.Border			= 1;
-						previewFrame.BorderColor	= ColorTheme.BorderColorLight;
-						previewFrame.BackColor		= ColorTheme.BackgroundColorDark;
-						previewFrame.ForeColor		= ColorTheme.TextColorNormal;
+						previewFrame.BorderColor	= MenuTheme.BorderColorLight;
+						previewFrame.BackColor		= MenuTheme.BackgroundColorDark;
+						previewFrame.ForeColor		= MenuTheme.TextColorNormal;
 						previewFrame.TextAlignment	= Alignment.BottomCenter;
-						previewFrame.ShadowColor	= ColorTheme.ShadowColor;
+						previewFrame.ShadowColor	= MenuTheme.ShadowColor;
 						previewFrame.ShadowOffset	= new Vector2(1,1);
 						previewFrame.Image			= image;
 						previewFrame.ImageMode		= FrameImageMode.Manual;

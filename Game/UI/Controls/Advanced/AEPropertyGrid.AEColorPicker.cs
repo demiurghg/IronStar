@@ -40,7 +40,7 @@ namespace IronStar.UI.Controls.Advanced {
 
 				colorButton				=	new Frame( Frames );
 				colorButton.Border		=	1;
-				colorButton.BorderColor	=	ColorTheme.BorderColor;
+				colorButton.BorderColor	=	MenuTheme.BorderColor;
 				colorButton.BackColor	=	Color.Black;
 
 				colorButton.Click +=ColorButton_Click;
@@ -64,9 +64,9 @@ namespace IronStar.UI.Controls.Advanced {
 			private void AEColorPicker_StatusChanged( object sender, StatusEventArgs e )
 			{
 				switch ( e.Status ) {
-					case FrameStatus.None:		ForeColor	=	ColorTheme.TextColorNormal; break;
-					case FrameStatus.Hovered:	ForeColor	=	ColorTheme.TextColorHovered; break;
-					case FrameStatus.Pushed:	ForeColor	=	ColorTheme.TextColorPushed; break;
+					case FrameStatus.None:		ForeColor	=	MenuTheme.TextColorNormal; break;
+					case FrameStatus.Hovered:	ForeColor	=	MenuTheme.TextColorHovered; break;
+					case FrameStatus.Pushed:	ForeColor	=	MenuTheme.TextColorPushed; break;
 				}
 			}
 

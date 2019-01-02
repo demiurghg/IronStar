@@ -25,7 +25,7 @@ namespace IronStar.UI.Controls {
 		/// <summary>
 		/// Gets and sets scroll marker color
 		/// </summary>
-		public Color ScrollMarkerColor { get;set; } = ColorTheme.ScrollMarkerColor;
+		public Color ScrollMarkerColor { get;set; } = MenuTheme.ScrollMarkerColor;
 
 
 		int offset = 0;
@@ -37,10 +37,10 @@ namespace IronStar.UI.Controls {
 		/// <param name="fp"></param>
 		public ScrollBox ( FrameProcessor fp, int x, int y, int w, int h ) : base(fp,x,y,w,h)
 		{
-			BackColor	=	ColorTheme.BackgroundColorDark;
+			BackColor	=	MenuTheme.BackgroundColorDark;
 			Border		=	1;
 			Padding		=	1;
-			BorderColor	=	ColorTheme.BorderColorLight;
+			BorderColor	=	MenuTheme.BorderColorLight;
 
 			this.MouseWheel +=ScrollBox_MouseWheel;
 		}

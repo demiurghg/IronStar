@@ -8,7 +8,7 @@ using Fusion.Engine.Frames;
 
 namespace IronStar.UI.Controls {
 
-	public class Button : Frame {
+	public class BigButton : Frame {
 
 		readonly Action action;
 
@@ -21,7 +21,7 @@ namespace IronStar.UI.Controls {
 		/// </summary>
 		/// <param name="grid"></param>
 		/// <param name="bindingInfo"></param>
-		public Button ( FrameProcessor frames, string name, int x, int y, int w, int h, Action action ) : base(frames)
+		public BigButton ( FrameProcessor frames, string name, int x, int y, int w, int h, Action action ) : base(frames)
 		{ 
 			this.Font		=	MenuTheme.NormalFont;
 
@@ -32,9 +32,12 @@ namespace IronStar.UI.Controls {
 			X				=	x;
 			Y				=	y;
 
-			TextAlignment	=	Alignment.MiddleCenter;
-			Border			=	1;
-			BorderColor		=	MenuTheme.ButtonBorderColor;
+			PaddingLeft		=	20;
+
+			TextAlignment	=	Alignment.MiddleLeft;
+			Border			=	0;
+			BorderLeft		=	4;
+			BorderColor		=	MenuTheme.Transparent;
 			Text			=	name;
 
 			ShadowColor		=	MenuTheme.ShadowColor;
@@ -59,24 +62,27 @@ namespace IronStar.UI.Controls {
 				case FrameStatus.None:		
 					//ForeColor	=	(action == null) ? Color.Red : MenuTheme.TextColorNormal;	
 					ForeColor	=	MenuTheme.TextColorNormal;	
-					BackColor	=	RedButton ? MenuTheme.ButtonRedColorNormal : MenuTheme.ButtonColorNormal;	
+					BackColor	=	MenuTheme.BigButtonColorNormal;	
 					ImageColor	=	ForeColor;
 					TextOffsetX	=	0;
 					TextOffsetY =	0;	
+					BorderColor	=	MenuTheme.Transparent;
 					break;
 				case FrameStatus.Hovered:	
 					ForeColor	=	MenuTheme.TextColorHovered;	
-					BackColor	=	RedButton ? MenuTheme.ButtonRedColorHovered : MenuTheme.ButtonColorHovered;	
+					BackColor	=	MenuTheme.BigButtonColorHovered;	
 					ImageColor	=	ForeColor;
 					TextOffsetX	=	0;
 					TextOffsetY =	0;	
+					BorderColor	=	MenuTheme.TextColorHovered;
 					break;
 				case FrameStatus.Pushed:	
 					ForeColor	=	MenuTheme.TextColorPushed;
-					BackColor	=	RedButton ? MenuTheme.ButtonRedColorPushed : MenuTheme.ButtonColorPushed;	
+					BackColor	=	MenuTheme.BigButtonColorPushed;	
 					ImageColor	=	ForeColor;
 					TextOffsetX	=	1;
 					TextOffsetY =	0;	
+					BorderColor	=	MenuTheme.TextColorHovered;
 				break;
 			}
 		}

@@ -33,7 +33,7 @@ namespace IronStar.UI.Controls.Advanced {
 
 				TextAlignment	=	Alignment.MiddleCenter;
 				Border			=	1;
-				BorderColor		=	ColorTheme.ButtonBorderColor;
+				BorderColor		=	MenuTheme.ButtonBorderColor;
 				Text			=	name;
 
 				StatusChanged	+=	AESlider_StatusChanged;
@@ -55,20 +55,20 @@ namespace IronStar.UI.Controls.Advanced {
 			{
 				switch ( e.Status ) {
 					case FrameStatus.None:		
-						ForeColor	=	ColorTheme.TextColorNormal;	
-						BackColor	=	ColorTheme.ButtonColorNormal;	
+						ForeColor	=	MenuTheme.TextColorNormal;	
+						BackColor	=	MenuTheme.ButtonColorNormal;	
 						TextOffsetX	=	0;
 						TextOffsetY =	0;	
 						break;
 					case FrameStatus.Hovered:	
-						ForeColor	=	ColorTheme.TextColorHovered;	
-						BackColor	=	ColorTheme.ButtonColorHovered;	
+						ForeColor	=	MenuTheme.TextColorHovered;	
+						BackColor	=	MenuTheme.ButtonColorHovered;	
 						TextOffsetX	=	0;
 						TextOffsetY =	0;	
 						break;
 					case FrameStatus.Pushed:	
-						ForeColor	=	ColorTheme.TextColorPushed;	
-						BackColor	=	ColorTheme.ButtonColorPushed;		
+						ForeColor	=	MenuTheme.TextColorPushed;	
+						BackColor	=	MenuTheme.ButtonColorPushed;		
 						TextOffsetX	=	1;
 						TextOffsetY =	0;	
 					break;

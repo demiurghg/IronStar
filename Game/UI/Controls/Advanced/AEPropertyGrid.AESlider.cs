@@ -44,7 +44,7 @@ namespace IronStar.UI.Controls.Advanced {
 				this.StatusChanged +=AESlider_StatusChanged;
 
 				slider				=	new Slider( Frames, getFunc, setFunc, min, max, step, pstep )  {
-					Font			=	ColorTheme.NormalFont,
+					Font			=	MenuTheme.NormalFont,
 					PaddingLeft		=	VerticalPadding, // yes, for slider they should be the same
 					PaddingRight	=	VerticalPadding,
 					PaddingTop		=	VerticalPadding,
@@ -53,7 +53,7 @@ namespace IronStar.UI.Controls.Advanced {
 
 				slider.StatusChanged +=Slider_StatusChanged;
 				slider.Border		=	1;
-				slider.BorderColor	=	ColorTheme.BorderColor;
+				slider.BorderColor	=	MenuTheme.BorderColor;
 				Add( slider );
 
 				Update(new GameTime());
@@ -64,18 +64,18 @@ namespace IronStar.UI.Controls.Advanced {
 			private void Slider_StatusChanged( object sender, StatusEventArgs e )
 			{
 				switch ( e.Status ) {
-					case FrameStatus.None:		slider.ForeColor	=	ColorTheme.TextColorNormal;		slider.SliderColor = ColorTheme.ElementColorNormal;	 break;
-					case FrameStatus.Hovered:	slider.ForeColor	=	ColorTheme.TextColorHovered;	slider.SliderColor = ColorTheme.ElementColorHovered; break;
-					case FrameStatus.Pushed:	slider.ForeColor	=	ColorTheme.TextColorPushed;		slider.SliderColor = ColorTheme.ElementColorPushed;	 break;
+					case FrameStatus.None:		slider.ForeColor	=	MenuTheme.TextColorNormal;		slider.SliderColor = MenuTheme.ElementColorNormal;	 break;
+					case FrameStatus.Hovered:	slider.ForeColor	=	MenuTheme.TextColorHovered;	slider.SliderColor = MenuTheme.ElementColorHovered; break;
+					case FrameStatus.Pushed:	slider.ForeColor	=	MenuTheme.TextColorPushed;		slider.SliderColor = MenuTheme.ElementColorPushed;	 break;
 				}
 			}
 
 			private void AESlider_StatusChanged( object sender, StatusEventArgs e )
 			{
 				switch ( e.Status ) {
-					case FrameStatus.None:		ForeColor	=	ColorTheme.TextColorNormal; break;
-					case FrameStatus.Hovered:	ForeColor	=	ColorTheme.TextColorHovered; break;
-					case FrameStatus.Pushed:	ForeColor	=	ColorTheme.TextColorPushed; break;
+					case FrameStatus.None:		ForeColor	=	MenuTheme.TextColorNormal; break;
+					case FrameStatus.Hovered:	ForeColor	=	MenuTheme.TextColorHovered; break;
+					case FrameStatus.Pushed:	ForeColor	=	MenuTheme.TextColorPushed; break;
 				}
 			}
 

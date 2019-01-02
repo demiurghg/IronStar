@@ -59,11 +59,11 @@ namespace IronStar.UI.Controls {
 			this.items		=	items.ToArray();
 			this.nameConverter	=	nameConverter ?? ((obj) => obj.ToString());
 
-			Font			=	ColorTheme.Monospaced;
+			Font			=	MenuTheme.Monospaced;
 
-			BorderColor		=	ColorTheme.BorderColorLight;
-			BackColor		=	ColorTheme.BackgroundColorDark;
-			ForeColor		=	ColorTheme.TextColorNormal;
+			BorderColor		=	MenuTheme.BorderColorLight;
+			BackColor		=	MenuTheme.BackgroundColorDark;
+			ForeColor		=	MenuTheme.TextColorNormal;
 			Border			=	1;
 			Padding			=	1;
 
@@ -181,7 +181,7 @@ namespace IronStar.UI.Controls {
 			var markerHeight	=	(gp.Height    * gp.Height * 2 + 1) / Math.Max( gp.Height, height ) / 2 + 1;
 			var markerOffset	=	(scrollOffset * gp.Height * 2 + 1) / Math.Max( gp.Height, height ) / 2;
 
-			scrollRect.Width	=	ColorTheme.ScrollSize;
+			scrollRect.Width	=	MenuTheme.ScrollSize;
 			scrollRect.Height	=	markerHeight;
 			scrollRect.X		=	gp.X + gp.Width - scrollRect.Width;
 			scrollRect.Y		=	gp.Y + markerOffset;
@@ -217,7 +217,7 @@ namespace IronStar.UI.Controls {
 				int w		=	gp.Width;
 
 				if (drawScroll) {
-					w -= (ColorTheme.ScrollSize + 1);
+					w -= (MenuTheme.ScrollSize + 1);
 				}
 
 				var rect	=	new Rectangle(x,y,w,h);
@@ -232,29 +232,29 @@ namespace IronStar.UI.Controls {
 					selected = true;
 				}
 
-				var textColor	=	hovered ? ColorTheme.TextColorHovered : ColorTheme.TextColorNormal;
-				var highlight	=	ColorTheme.HighlightColor;
+				var textColor	=	hovered ? MenuTheme.TextColorHovered : MenuTheme.TextColorNormal;
+				var highlight	=	MenuTheme.HighlightColor;
 
 				if (drawScroll) {
-					spriteLayer.Draw( null, scrollRect, ColorTheme.ScrollMarkerColor, clipRectIndex );
+					spriteLayer.Draw( null, scrollRect, MenuTheme.ScrollMarkerColor, clipRectIndex );
 				}
 
 				if (selected) {
 
-					spriteLayer.Draw( null, rect, ColorTheme.TextColorNormal, clipRectIndex );
-					DrawText( spriteLayer, x, y, text, ColorTheme.BackgroundColorDark, clipRectIndex );
+					spriteLayer.Draw( null, rect, MenuTheme.TextColorNormal, clipRectIndex );
+					DrawText( spriteLayer, x, y, text, MenuTheme.BackgroundColorDark, clipRectIndex );
 
 				} else if (hovered) {
 
-					spriteLayer.Draw( null, rect, ColorTheme.HighlightColor, clipRectIndex );
-					DrawText( spriteLayer, x, y, text, ColorTheme.TextColorHovered, clipRectIndex );
+					spriteLayer.Draw( null, rect, MenuTheme.HighlightColor, clipRectIndex );
+					DrawText( spriteLayer, x, y, text, MenuTheme.TextColorHovered, clipRectIndex );
 
 				} else {
 
 					if ((i&1)==1) {
 						spriteLayer.Draw( null, rect, new Color(255,255,255,4), clipRectIndex );
 					}
-					DrawText( spriteLayer, x, y, text, ColorTheme.TextColorNormal, clipRectIndex );
+					DrawText( spriteLayer, x, y, text, MenuTheme.TextColorNormal, clipRectIndex );
 
 				}
 			}

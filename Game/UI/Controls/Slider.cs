@@ -41,16 +41,16 @@ namespace IronStar.UI.Controls {
 			this.snap			=	snap;
 			this.psnap			=	psnap;
 
-			this.BackColor		=	ColorTheme.BackgroundColorDark;
+			this.BackColor		=	MenuTheme.BackgroundColorDark;
 			this.Width			=	1;
-			this.BorderColor	=	ColorTheme.BorderColor;
+			this.BorderColor	=	MenuTheme.BorderColor;
 			this.TextAlignment	=	Alignment.MiddleCenter;
 
 			this.MouseDown  +=Slider_MouseDown;
 			this.MouseMove+=Slider_MouseMove;
 			this.MouseUp+=Slider_MouseUp;
 				
-			SliderColor	=	ColorTheme.ElementColorNormal;
+			SliderColor	=	MenuTheme.ElementColorNormal;
 		}
 
 

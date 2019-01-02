@@ -12,14 +12,14 @@ namespace IronStar.UI.Controls {
 
 		public Label ( FrameProcessor fp, int x, int y, int w, int h, string text ) : base( fp )
 		{	
-			this.Font			=	ColorTheme.NormalFont;
+			this.Font			=	MenuTheme.NormalFont;
 
 			this.BackColor		=	Color.Zero;
 			this.BorderColor	=	Color.Zero;
 			this.Border			=	0;
 			this.Padding		=	0;
 
-			this.ForeColor		=	ColorTheme.TextColorNormal;
+			this.ForeColor		=	MenuTheme.TextColorNormal;
 
 			this.ShadowColor	=	new Color(0,0,0,64);
 			this.ShadowOffset	=	new Vector2(1,1);

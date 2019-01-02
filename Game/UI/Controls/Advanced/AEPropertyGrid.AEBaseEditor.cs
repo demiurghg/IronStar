@@ -27,7 +27,7 @@ namespace IronStar.UI.Controls.Advanced {
 			/// <param name="bindingInfo"></param>
 			public AEBaseEditor ( AEPropertyGrid grid, string name ) : base(grid.Frames)
 			{ 
-				this.Font		=	ColorTheme.NormalFont;
+				this.Font		=	MenuTheme.NormalFont;
 
 				this.BackColor	=	Color.Zero;
 				this.grid		=	grid;

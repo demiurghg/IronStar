@@ -80,7 +80,7 @@ namespace IronStar.UI.Controls.Dialogs {
 
 				scrollBox				=	new ScrollBox( fp, 2, 14, 640+4+4, 480+4 );
 				scrollBox.Border		=	1;
-				scrollBox.BorderColor	=	ColorTheme.BorderColorLight;
+				scrollBox.BorderColor	=	MenuTheme.BorderColorLight;
 
 				buttonAccept	=	new Button( fp, "Accept",  0,0,0,0, ()=>Accept(null) );
 				buttonClose		=	new Button( fp, "Close",   0,0,0,0, ()=>Close() ) { RedButton = true };
@@ -160,7 +160,7 @@ namespace IronStar.UI.Controls.Dialogs {
 					this.atlas	=	atlas;
 					this.clip	=	atlas.GetClipByName( clipName );
 
-					Font			=	ColorTheme.NormalFont;
+					Font			=	MenuTheme.NormalFont;
 					TextAlignment	=	Alignment.BottomCenter;
 					Padding			=	3;
 					Border			=	1;
@@ -230,23 +230,23 @@ namespace IronStar.UI.Controls.Dialogs {
 				
 				switch ( e.Status ) {
 					case FrameStatus.None:		
-						button.ForeColor	=	ColorTheme.TextColorNormal;	
-						button.BackColor	=	ColorTheme.ButtonColorNormal;	
+						button.ForeColor	=	MenuTheme.TextColorNormal;	
+						button.BackColor	=	MenuTheme.ButtonColorNormal;	
 						button.BorderColor	=	Color.Black;
 						button.TextOffsetX	=	0;
 						button.TextOffsetY	=	0;	
 						break;
 					case FrameStatus.Hovered:	
-						button.ForeColor	=	ColorTheme.TextColorHovered;	
-						button.BackColor	=	ColorTheme.ButtonColorHovered;	
-						button.BorderColor	=	ColorTheme.TextColorHovered;
+						button.ForeColor	=	MenuTheme.TextColorHovered;	
+						button.BackColor	=	MenuTheme.ButtonColorHovered;	
+						button.BorderColor	=	MenuTheme.TextColorHovered;
 						button.TextOffsetX	=	0;
 						button.TextOffsetY	=	0;	
 						break;
 					case FrameStatus.Pushed:	
-						button.ForeColor	=	ColorTheme.TextColorPushed;	
-						button.BackColor	=	ColorTheme.ButtonColorPushed;		
-						button.BorderColor	=	ColorTheme.TextColorPushed;
+						button.ForeColor	=	MenuTheme.TextColorPushed;	
+						button.BackColor	=	MenuTheme.ButtonColorPushed;		
+						button.BorderColor	=	MenuTheme.TextColorPushed;
 						button.TextOffsetX	=	1;
 						button.TextOffsetY	=	0;	
 					break;

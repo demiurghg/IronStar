@@ -113,8 +113,8 @@ namespace IronStar.UI.Controls.Dialogs {
 
 			Padding			=	1;
 			Border			=	1;
-			BorderColor		=	ColorTheme.BorderColor;
-			BackColor		=	ColorTheme.BackgroundColor;
+			BorderColor		=	MenuTheme.BorderColor;
+			BackColor		=	MenuTheme.BackgroundColor;
 
 			oldColorSample	=	AddColorButton(  2,   2, 80, 30, "", initColor, ()=> { targetColor = initColor; UpdateFromColor(); } );
 			newColorSample	=	AddColorButton(  2,  32, 80, 30, "", initColor, null );
@@ -129,7 +129,7 @@ namespace IronStar.UI.Controls.Dialogs {
 			Add( colorField );
 
 
-			int height	=	ColorTheme.NormalFont.LineHeight;
+			int height	=	MenuTheme.NormalFont.LineHeight;
 
 
 			AddLabel( 2, 107 + height * 0-1, "Red"	);
@@ -279,12 +279,12 @@ namespace IronStar.UI.Controls.Dialogs {
 
 		void AddLabel( int x, int y, string text )
 		{
-			var rect	= ColorTheme.NormalFont.MeasureString( text );
+			var rect	= MenuTheme.NormalFont.MeasureString( text );
 
 			var frame = new Frame( Frames, x,y, rect.Width, rect.Height, text, Color.Zero );
 			
-			frame.Font			=	ColorTheme.NormalFont;
-			frame.ForeColor		=	ColorTheme.TextColorNormal;
+			frame.Font			=	MenuTheme.NormalFont;
+			frame.ForeColor		=	MenuTheme.TextColorNormal;
 			frame.TextAlignment	=	Alignment.MiddleLeft;
 
 			Add( frame );

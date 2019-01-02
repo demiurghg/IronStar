@@ -42,14 +42,14 @@ namespace IronStar.UI.Controls.Advanced {
 				this.nestingLevel	=	nestingLevel;
 
 				TextAlignment	=	Alignment.MiddleCenter;
-				BorderColor		=	ColorTheme.BackgroundColorDark;
+				BorderColor		=	MenuTheme.BackgroundColorDark;
 				BackColor		=	Color.Zero;
 				Border			=	0;
 				Padding			=	0;
 				BorderLeft		=	3;
 				PaddingLeft		=	1;
 
-				Font			=	ColorTheme.NormalFont;
+				Font			=	MenuTheme.NormalFont;
 
 				Width			=	100;
 
@@ -57,15 +57,15 @@ namespace IronStar.UI.Controls.Advanced {
 				Collapsed		=	nestingLevel > 0;
 
 				buttonCollapse		=	new Frame( grid.Frames ) {
-					Font			=	ColorTheme.NormalFont,
+					Font			=	MenuTheme.NormalFont,
 					Width			=	0, // does not matter due to layout engine
-					Height			=	ColorTheme.NormalFont.LineHeight+4,
+					Height			=	MenuTheme.NormalFont.LineHeight+4,
 					Border			=	1,
 					Text			=	category,
 					TextAlignment	=	Alignment.MiddleLeft,
-					BorderColor		=	ColorTheme.ButtonBorderColor,
-					BackColor		=	ColorTheme.ButtonColorNormal,
-					ForeColor		=	ColorTheme.TextColorNormal,
+					BorderColor		=	MenuTheme.ButtonBorderColor,
+					BackColor		=	MenuTheme.ButtonColorNormal,
+					ForeColor		=	MenuTheme.TextColorNormal,
 					PaddingLeft		=	HorizontalPadding,
 					MarginBottom	=	0,
 				};
@@ -135,20 +135,20 @@ namespace IronStar.UI.Controls.Advanced {
 			{
 				switch ( e.Status ) {
 					case FrameStatus.None:		
-						buttonCollapse.ForeColor	=	ColorTheme.TextColorNormal;	
-						buttonCollapse.BackColor	=	ColorTheme.ButtonColorNormal;	
+						buttonCollapse.ForeColor	=	MenuTheme.TextColorNormal;	
+						buttonCollapse.BackColor	=	MenuTheme.ButtonColorNormal;	
 						buttonCollapse.TextOffsetX	=	0;
 						buttonCollapse.TextOffsetY =	0;	
 						break;
 					case FrameStatus.Hovered:	
-						buttonCollapse.ForeColor	=	ColorTheme.TextColorHovered;	
-						buttonCollapse.BackColor	=	ColorTheme.ButtonColorHovered;	
+						buttonCollapse.ForeColor	=	MenuTheme.TextColorHovered;	
+						buttonCollapse.BackColor	=	MenuTheme.ButtonColorHovered;	
 						buttonCollapse.TextOffsetX	=	0;
 						buttonCollapse.TextOffsetY =	0;	
 						break;
 					case FrameStatus.Pushed:	
-						buttonCollapse.ForeColor	=	ColorTheme.TextColorPushed;	
-						buttonCollapse.BackColor	=	ColorTheme.ButtonColorPushed;		
+						buttonCollapse.ForeColor	=	MenuTheme.TextColorPushed;	
+						buttonCollapse.BackColor	=	MenuTheme.ButtonColorPushed;		
 						buttonCollapse.TextOffsetX	=	1;
 						buttonCollapse.TextOffsetY =	0;	
 					break;
@@ -157,13 +157,13 @@ namespace IronStar.UI.Controls.Advanced {
 
 				switch ( e.Status ) {
 					case FrameStatus.None:		
-						BorderColor		=	ColorTheme.BorderColorLight;
+						BorderColor		=	MenuTheme.BorderColorLight;
 						break;
 					case FrameStatus.Hovered:	
-						BorderColor		=	ColorTheme.ButtonColorHovered;
+						BorderColor		=	MenuTheme.ButtonColorHovered;
 						break;
 					case FrameStatus.Pushed:	
-						BorderColor		=	ColorTheme.ButtonColorPushed;
+						BorderColor		=	MenuTheme.ButtonColorPushed;
 						break;
 				}
 			}

@@ -33,11 +33,11 @@ namespace IronStar.UI.Controls {
 		{ 
 			this.binding		=	binding;
 
-			this.Font			=	ColorTheme.NormalFont;
+			this.Font			=	MenuTheme.NormalFont;
 
-			this.BackColor		=	ColorTheme.BackgroundColorDark;
+			this.BackColor		=	MenuTheme.BackgroundColorDark;
 			this.Width			=	1;
-			this.BorderColor	=	ColorTheme.BorderColor;
+			this.BorderColor	=	MenuTheme.BorderColor;
 			this.PaddingRight	=	3;
 			this.PaddingLeft	=	3;
 
@@ -97,9 +97,9 @@ namespace IronStar.UI.Controls {
 		private void TextBox_StatusChanged( object sender, StatusEventArgs e )
 		{
 			switch ( e.Status ) {
-				case FrameStatus.None:		ForeColor	=	ColorTheme.TextColorNormal; break;
-				case FrameStatus.Hovered:	ForeColor	=	ColorTheme.TextColorHovered; break;
-				case FrameStatus.Pushed:	ForeColor	=	ColorTheme.TextColorPushed; break;
+				case FrameStatus.None:		ForeColor	=	MenuTheme.TextColorNormal; break;
+				case FrameStatus.Hovered:	ForeColor	=	MenuTheme.TextColorHovered; break;
+				case FrameStatus.Pushed:	ForeColor	=	MenuTheme.TextColorPushed; break;
 			}
 		}
 

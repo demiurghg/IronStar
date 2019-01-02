@@ -14,6 +14,8 @@ using Fusion.Engine.Client;
 using Fusion.Engine.Common;
 using Fusion.Engine.Server;
 using Fusion.Core.Extensions;
+using IronStar.UI;
+using Fusion.Engine.Frames;
 
 namespace IronStar {
 
@@ -25,7 +27,8 @@ namespace IronStar {
         private ClientState previousClientState;
         private bool firstStart = true;
 
-        SpriteLayer uiLayer;
+		MainMenu menu;
+
 
         /// <summary>
         /// Creates instance of ShooterDemoUserInterface
@@ -44,16 +47,14 @@ namespace IronStar {
 		/// </summary>
 		public void Initialize ()
 		{
-			uiLayer	=	new SpriteLayer(Game.RenderSystem, 1024);
-
-			//	add console sprite layer to master view layer :
-			Game.RenderSystem.SpriteLayers.Add( uiLayer );
-
-
 			LoadContent();
 			Game.Reloading += (s,e) => LoadContent();
 
 			Game.GetService<GameClient>().ClientStateChanged += GameClient_ClientStateChanged;
+
+			menu	=	new MainMenu( Game.GetService<FrameProcessor>() );
+			Game.GetService<FrameProcessor>().RootFrame.Add( menu );
+
 		}
 
 
@@ -76,9 +77,6 @@ namespace IronStar {
 		/// </summary>
 		protected virtual void Dispose ( bool disposing )
 		{
-			if (disposing) {
-				uiLayer?.Dispose();
-			}
 		}
 
 
@@ -87,8 +85,6 @@ namespace IronStar {
 			Dispose(true);
 		}
 
-
-		float dofFactor = 0;
 
 
 
@@ -100,8 +96,6 @@ namespace IronStar {
 		{
 			//	update console :
 			Game.Console.Update( gameTime );
-
-			uiLayer.Clear();
         }
 
 

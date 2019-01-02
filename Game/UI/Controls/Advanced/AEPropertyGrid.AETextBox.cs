@@ -62,9 +62,9 @@ namespace IronStar.UI.Controls.Advanced {
 			private void AESlider_StatusChanged( object sender, StatusEventArgs e )
 			{
 				switch ( e.Status ) {
-					case FrameStatus.None:		ForeColor	=	ColorTheme.TextColorNormal; break;
-					case FrameStatus.Hovered:	ForeColor	=	ColorTheme.TextColorHovered; break;
-					case FrameStatus.Pushed:	ForeColor	=	ColorTheme.TextColorPushed; break;
+					case FrameStatus.None:		ForeColor	=	MenuTheme.TextColorNormal; break;
+					case FrameStatus.Hovered:	ForeColor	=	MenuTheme.TextColorHovered; break;
+					case FrameStatus.Pushed:	ForeColor	=	MenuTheme.TextColorPushed; break;
 				}
 			}
 

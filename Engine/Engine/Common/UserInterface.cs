@@ -35,9 +35,9 @@ namespace Fusion.Engine.Common {
 		/// Creates instance of UserInterface
 		/// </summary>
 		/// <param name="Game"></param>
-		public UserInterface ( Game game ) : base(game)
+		public UserInterface ( Game game, IUserInterface uiInstance ) : base(game)
 		{
-			//uiInstance	=	game.CreateUI(game);
+			this.uiInstance	=	uiInstance;
 		}
 
 

@@ -2,8 +2,8 @@
 fileVersion=1
 
 # font settings
-fontName=Armata upd
-fontFile=Armata.otf
+fontName=Armata
+fontFile=armata.otf
 charSet=0
 fontSize=14
 aa=1
@@ -16,8 +16,8 @@ disableBoxChars=1
 outputInvalidCharGlyph=0
 dontIncludeKerningPairs=0
 useHinting=1
-renderFromOutline=0
-useClearType=1
+renderFromOutline=1
+useClearType=0
 
 # character alignment
 paddingDown=0
@@ -32,15 +32,15 @@ forceZero=0
 # output file
 outWidth=256
 outHeight=256
-outBitDepth=8
+outBitDepth=32
 fontDescFormat=1
 fourChnlPacked=0
 textureFormat=tga
 textureCompression=0
-alphaChnl=1
-redChnl=0
-greenChnl=0
-blueChnl=0
+alphaChnl=0
+redChnl=4
+greenChnl=4
+blueChnl=4
 invA=0
 invR=0
 invG=0
@@ -50,6 +50,6 @@ invB=0
 outlineThickness=0
 
 # selected chars
-chars=1-7,16-25,32-126,160-255,64256-64258
+chars=32-126,160-255,64256-64258
 
 # imported icon images

@@ -37,7 +37,12 @@ namespace Fusion.Engine.Frames.Layouts {
 
 
 		/// <summary>
-		/// 
+		/// Adds row to tha page layout:
+		///	Possible values both for row heights and column withs:
+		///		Greater than one - fixed size
+		///		Less than and greater or equal zero - relative size
+		///		Zero - always mean zero
+		///		Negative value - free size
 		/// </summary>
 		/// <param name="height"></param>
 		/// <param name="width"></param>

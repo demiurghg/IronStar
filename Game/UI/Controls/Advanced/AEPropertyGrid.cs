@@ -27,8 +27,8 @@ namespace IronStar.UI.Controls.Advanced {
 		/// <param name="fp"></param>
 		public AEPropertyGrid( FrameProcessor fp ) : base(fp)
 		{
-			this.BackColor		=	ColorTheme.BackgroundColor;
-			this.BorderColor	=	ColorTheme.BorderColor;
+			this.BackColor		=	MenuTheme.BackgroundColor;
+			this.BorderColor	=	MenuTheme.BorderColor;
 			this.Border			=	1;
 
 			this.Padding		=	1;

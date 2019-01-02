@@ -212,8 +212,9 @@
     <Compile Include="UI\Controls\Advanced\AEPropertyGrid.AESlider.cs" />
     <Compile Include="UI\Controls\Advanced\AEPropertyGrid.AETextBox.cs" />
     <Compile Include="UI\Controls\Advanced\AEPropertyGrid.cs" />
+    <Compile Include="UI\Controls\BigButton.cs" />
     <Compile Include="UI\Controls\Button.cs" />
-    <Compile Include="UI\Controls\ColorTheme.cs" />
+    <Compile Include="UI\Controls\MenuTheme.cs" />
     <Compile Include="UI\Controls\Dialogs\AtlasSelector.cs" />
     <Compile Include="UI\Controls\Dialogs\ColorPicker.ColorField.cs" />
     <Compile Include="UI\Controls\Dialogs\ColorPicker.cs" />
@@ -228,6 +229,7 @@
     <Compile Include="UI\Controls\Shelf.cs" />
     <Compile Include="UI\Controls\Slider.cs" />
     <Compile Include="UI\Controls\TextBox.cs" />
+    <Compile Include="UI\MainMenu.cs" />
     <Compile Include="UserCommand.cs" />
     <Compile Include="SFX\FXPlayback.cs" />
   </ItemGroup>

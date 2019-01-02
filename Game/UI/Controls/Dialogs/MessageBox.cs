@@ -25,9 +25,9 @@ namespace IronStar.UI.Controls {
 			label.Height		=	100-20-14-4;
 			label.Text			=	message;
 			label.ForeColor		=	textColor;
-			label.BackColor		=	ColorTheme.BackgroundColorDark;
+			label.BackColor		=	MenuTheme.BackgroundColorDark;
 			label.Border		=	1;
-			label.BorderColor	=	ColorTheme.BorderColorLight;
+			label.BorderColor	=	MenuTheme.BorderColorLight;
 			label.Padding		=	4;
 
 			panel.Add( label );
@@ -68,13 +68,13 @@ namespace IronStar.UI.Controls {
 
 		public static void ShowError ( Frame owner, string message, Action accept )
 		{
-			ShowDialog( owner, message, ColorTheme.ColorRed, 1, accept, null );
+			ShowDialog( owner, message, MenuTheme.ColorRed, 1, accept, null );
 		}
 
 
 		public static void ShowQuestion ( Frame owner, string message, Action accept, Action reject )
 		{
-			ShowDialog( owner, message, ColorTheme.TextColorNormal, 2, accept, reject );
+			ShowDialog( owner, message, MenuTheme.TextColorNormal, 2, accept, reject );
 		}
 	}
 }

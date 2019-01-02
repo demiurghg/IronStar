@@ -101,7 +101,7 @@ namespace IronStar.UI.Controls {
 				button.Text  = "";
 				button.ImageColor = Color.Gray;
 			}
-			button.ShadowColor = ColorTheme.ShadowColor;
+			button.ShadowColor = MenuTheme.ShadowColor;
 			button.ShadowOffset = new Vector2(1,1);
 			itemsLeft.Add( button );
 			Add( button );
@@ -145,7 +145,7 @@ namespace IronStar.UI.Controls {
 		public void AddFatLButton ( string text, string image, Action action )
 		{
 			var button = new Button( Frames, text, 0,0,34+34+1,34, action);
-			button.ShadowColor = ColorTheme.ShadowColor;
+			button.ShadowColor = MenuTheme.ShadowColor;
 			button.ShadowOffset = new Vector2(1,1);
 			button.Padding = 1;
 			button.TextAlignment = Alignment.MiddleCenter;
@@ -163,7 +163,7 @@ namespace IronStar.UI.Controls {
 		public void AddFatRButton ( string text, string image, Action action )
 		{
 			var button = new Button( Frames, text, 0,0,34+34+1,34, action);
-			button.ShadowColor = ColorTheme.ShadowColor;
+			button.ShadowColor = MenuTheme.ShadowColor;
 			button.ShadowOffset = new Vector2(1,1);
 			itemsRight.Add( button );
 			Add( button );
@@ -184,7 +184,7 @@ namespace IronStar.UI.Controls {
 				button.Text  = "";
 				button.ImageColor = Color.Gray;
 			}
-			button.ShadowColor = ColorTheme.ShadowColor;
+			button.ShadowColor = MenuTheme.ShadowColor;
 			button.ShadowOffset = new Vector2(1,1);
 			itemsRight.Add( button );
 			Add( button );
@@ -199,13 +199,13 @@ namespace IronStar.UI.Controls {
 		/// <returns></returns>
 		public Frame AddRIndicator ( string text, int width )
 		{
-			var label = new Frame( Frames, 0, 0, width, 34, text, ColorTheme.BackgroundColorDark );
+			var label = new Frame( Frames, 0, 0, width, 34, text, MenuTheme.BackgroundColorDark );
 			
-			label.ForeColor		= ColorTheme.TextColorNormal;
-			label.ShadowColor	= ColorTheme.ShadowColor;
+			label.ForeColor		= MenuTheme.TextColorNormal;
+			label.ShadowColor	= MenuTheme.ShadowColor;
 			label.ShadowOffset	= new Vector2(1,1);
 			label.Border		= 1;
-			label.BorderColor	= ColorTheme.BorderColor;
+			label.BorderColor	= MenuTheme.BorderColor;
 			label.TextAlignment	= Alignment.MiddleLeft;
 			label.Padding		= 1;
 

@@ -287,6 +287,9 @@
   <ItemGroup>
     <Folder Include="AI\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="cursor.cur" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

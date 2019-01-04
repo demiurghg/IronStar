@@ -98,6 +98,9 @@ namespace IronStar {
 		{
 			base.Initialize();
 
+			Mouse.SetCursorImage( Properties.Resources.cursor );
+			
+
 			Content.Load<SoundBank>(@"audio\desktop\master.strings"	);
 			Content.Load<SoundBank>(@"audio\desktop\master"			);
 			Content.Load<SoundBank>(@"audio\desktop\env"			);

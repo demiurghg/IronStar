@@ -7,6 +7,7 @@ using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Drivers.Input;
 using Fusion.Engine.Common;
+using System.IO;
 
 namespace Fusion.Core.Input {
 
@@ -52,6 +53,16 @@ namespace Fusion.Core.Input {
 			}
 
 			base.Dispose( disposing );
+		}
+
+
+		/// <summary>
+		/// Loads cursor image from file
+		/// </summary>
+		/// <param name="path"></param>
+		public void SetCursorImage ( byte[] curData )
+		{
+			device.SetCursorImage(curData);
 		}
 
 

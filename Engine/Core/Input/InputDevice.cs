@@ -12,6 +12,7 @@ using System.ComponentModel;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Common;
+using System.IO;
 //using FRBTouch.MultiTouch;
 //using FRBTouch.MultiTouch.Win32Helper;
 //using SharpDX.DirectInput;
@@ -84,14 +85,6 @@ namespace Fusion.Core.Input {
 		}
 
 
-
-		public event Action<Vector2> TouchGestureTap;
-		public event Action<Vector2> TouchGestureDoubleTap;
-		public event Action<Vector2> TouchGestureSecondaryTap;
-		public event Action<Vector2, Vector2, float> TouchGestureManipulate;
-
-
-
 		static class NativeMethods {
 			public static Forms.Cursor LoadCustomCursor(string path) 
 			{
@@ -117,6 +110,10 @@ namespace Fusion.Core.Input {
 			public static extern short GetKeyState(int keyCode);
 		}		
 
+		public event Action<Vector2> TouchGestureTap;
+		public event Action<Vector2> TouchGestureDoubleTap;
+		public event Action<Vector2> TouchGestureSecondaryTap;
+		public event Action<Vector2, Vector2, float> TouchGestureManipulate;
 
 
 		public readonly Game Game;
@@ -233,9 +230,9 @@ namespace Fusion.Core.Input {
 		/// Loads cursor image from file
 		/// </summary>
 		/// <param name="path"></param>
-		public void SetCursorImage ( string path )
+		public void SetCursorImage ( byte[] curData )
 		{
-			NativeMethods.LoadCustomCursor( path );
+			Game.GraphicsDevice.Display.Window.Cursor = CursorLoader.LoadEmbeddedCursor( curData, 0 );
 		}
 
 

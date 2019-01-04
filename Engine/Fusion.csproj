@@ -166,6 +166,7 @@
     <Compile Include="Core\Extensions\LinkedListExtensions.cs" />
     <Compile Include="Core\Extensions\GameExtensions.cs" />
     <Compile Include="Core\Extensions\XmlImporter.cs" />
+    <Compile Include="Core\Input\CursorLoader.cs" />
     <Compile Include="Core\JsonFactory.cs" />
     <Compile Include="Core\FpsCounter.cs" />
     <Compile Include="Core\GameComponentCollectionEventArgs.cs" />

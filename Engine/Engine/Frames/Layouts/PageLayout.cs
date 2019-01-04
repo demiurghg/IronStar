@@ -15,6 +15,15 @@ namespace Fusion.Engine.Frames.Layouts {
 
 	public class PageLayout : LayoutEngine {
 
+		static public PageLayout CreateFill {
+			get {
+				var layout = new PageLayout();
+				layout.AddRow(-1, new[] {-1f} );
+				return layout;
+			}
+		}
+
+
 		public int Margin {
 			get { return gap; }
 			set { gap = value; }
@@ -206,10 +215,10 @@ namespace Fusion.Engine.Frames.Layouts {
 
 			var child = targetFrame.Children.ElementAt(index);
 
-			child.X = x;
-			child.Y = y;
-			child.Width = w;
-			child.Height = h;
+			child.X			= x + child.MarginLeft;
+			child.Y			= y + child.MarginTop;
+			child.Width		= w - ( child.MarginLeft + child.MarginRight  );
+			child.Height	= h - ( child.MarginTop  + child.MarginBottom );
 		}
 		
 	}

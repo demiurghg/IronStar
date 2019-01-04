@@ -13,7 +13,7 @@ using Fusion.Core;
 
 namespace IronStar.UI.Controls.Advanced {
 
-	public partial class AEPropertyGrid : Frame {
+	public partial class PropertyGrid : Frame {
 
 		class AEButton : AEBaseEditor {
 
@@ -24,7 +24,7 @@ namespace IronStar.UI.Controls.Advanced {
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AEButton ( AEPropertyGrid grid, string name, Action action ) : base(grid, name)
+			public AEButton ( PropertyGrid grid, string name, Action action ) : base(grid, name)
 			{ 
 				this.action		=	action;
 				
@@ -32,8 +32,7 @@ namespace IronStar.UI.Controls.Advanced {
 				Height			=	23;
 
 				TextAlignment	=	Alignment.MiddleCenter;
-				Border			=	1;
-				BorderColor		=	MenuTheme.ButtonBorderColor;
+				Border			=	0;
 				Text			=	name;
 
 				StatusChanged	+=	AESlider_StatusChanged;

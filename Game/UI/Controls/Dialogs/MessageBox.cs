@@ -5,42 +5,67 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Frames;
+using Fusion.Engine.Frames.Layouts;
 
-namespace IronStar.UI.Controls {
+namespace IronStar.UI.Controls.Dialogs {
 	public static class MessageBox {
 
-		static void ShowDialog ( Frame owner, string message, Color textColor, int numButtons, Action accept, Action reject )
+		static void ShowDialog ( Frame owner, string headerText, string message, Color textColor, int numButtons, Action accept, Action reject, string acceptText="Accept", string rejectText="Reject" )
 		{
 			var frames	=	owner.Frames;
-			var panel	=	new Panel( frames, 0, 0, 350,   100 );
-			var label	=	new Frame( frames );
+			var panel	=	new Panel( frames, 0, 0, 400, 240 );
 
 			panel.Tag		=	frames.ModalFrame;
+			panel.AllowDrag	=	true;
 
 			panel.Closed	+=  (s,e) => frames.ModalFrame = panel.Tag as Frame;
 
-			label.X				=	2;
-			label.Y				=	14;
-			label.Width			=	350-4;
-			label.Height		=	100-20-14-4;
+			var layout		=	new PageLayout();
+			layout.AddRow( MenuTheme.ElementHeight, new float[] { -1 } );
+			layout.AddRow(						-1, new float[] { -1 } );
+			layout.AddRow( MenuTheme.ElementHeight, new float[] { 0.5f, 0.5f } );
+			layout.Margin	=	4;
+
+			panel.Layout	=	layout;
+
+			//	Header :
+
+			var header	=	new Frame( frames );
+
+			header.Font			=	MenuTheme.HeaderFont;
+			header.Text			=	headerText;
+			header.ForeColor	=	textColor;
+			header.BackColor	=	MenuTheme.Transparent;
+			header.Padding		=	0;
+			header.BorderBottom	=	1;
+
+			panel.Add( header );
+
+			//	Message text :
+
+			var label	=	new Frame( frames );
+
+			label.Font			=	MenuTheme.NormalFont;
 			label.Text			=	message;
 			label.ForeColor		=	textColor;
-			label.BackColor		=	MenuTheme.BackgroundColorDark;
-			label.Border		=	1;
-			label.BorderColor	=	MenuTheme.BorderColorLight;
-			label.Padding		=	4;
+			label.BackColor		=	MenuTheme.Transparent;
+			label.Padding		=	0;
+			label.MarginTop		=	10;
+			//label.TextAlignment	=	Alignment.MiddleLeft;
 
 			panel.Add( label );
 
+			//	Buttons :
+
 			if (numButtons==2) {
-				var acceptBtn		=	new Button(frames, "Accept",     350-160-4, 100-22, 80, 20, 
+				var acceptBtn		=	new Button(frames, acceptText, 0,0,0,0, 
 					() => {
 						accept?.Invoke();
 						panel.Close();
 					}
 				);
 
-				var rejectBtn	=	new Button(frames, "Reject",     350-80-2, 100-22, 80, 20, 
+				var rejectBtn	=	new Button(frames, rejectText, 0,0,0,0, 
 					() => {
 						reject?.Invoke();
 						panel.Close();
@@ -51,7 +76,7 @@ namespace IronStar.UI.Controls {
 				panel.Add( rejectBtn );
 			}
 			if (numButtons==1) {
-				var acceptBtn		=	new Button(frames, "Accept",     350-80-2, 100-22, 80, 20, 
+				var acceptBtn		=	new Button(frames, acceptText, 0,0,0,0, 
 					() => {
 						accept?.Invoke();
 						panel.Close();
@@ -66,15 +91,20 @@ namespace IronStar.UI.Controls {
 		}
 
 
-		public static void ShowError ( Frame owner, string message, Action accept )
+		public static void ShowError ( Frame owner, string header, string message, Action accept )
 		{
-			ShowDialog( owner, message, MenuTheme.ColorRed, 1, accept, null );
+			ShowDialog( owner, header, message, MenuTheme.ColorNegative, 1, accept, null );
 		}
 
 
-		public static void ShowQuestion ( Frame owner, string message, Action accept, Action reject )
+		public static void ShowQuestion ( Frame owner, string header, string message, Action accept, Action reject )
 		{
-			ShowDialog( owner, message, MenuTheme.TextColorNormal, 2, accept, reject );
+			ShowDialog( owner, header, message, MenuTheme.TextColorNormal, 2, accept, reject );
+		}
+
+		public static void ShowQuestion ( Frame owner, string header, string message, Action accept, Action reject, string acceptText, string rejectText )
+		{
+			ShowDialog( owner, header, message, MenuTheme.TextColorNormal, 2, accept, reject, acceptText, rejectText );
 		}
 	}
 }

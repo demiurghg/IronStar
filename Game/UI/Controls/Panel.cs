@@ -22,10 +22,9 @@ namespace IronStar.UI.Controls {
 
 		public Panel ( FrameProcessor fp, int x, int y, int w, int h ) : base( fp )
 		{	
-			this.BackColor		=	MenuTheme.BackgroundColor;
-			this.BorderColor	=	MenuTheme.BorderColor;
-			this.Border			=	1;
-			this.Padding		=	1;
+			this.BackColor		=	MenuTheme.BackColor;
+			this.BorderTop		=	MenuTheme.CaptionHeight;
+			this.Padding		=	MenuTheme.PanelContentPadding;
 
 			this.X				=	x;
 			this.Y				=	y;

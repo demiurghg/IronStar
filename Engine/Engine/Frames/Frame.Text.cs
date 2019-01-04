@@ -182,6 +182,29 @@ namespace Fusion.Engine.Frames {
 		}
 
 
+		Rectangle AlignRectangle ( Alignment alignment, int baseLine, Rectangle rect, Size2 size )
+		{
+			int hAlign	=	0;
+			int vAlign	=	0;
+
+			DecodeAlignment( alignment, out hAlign, out vAlign );
+
+			int x			=	0;
+			int y			=	0;
+
+			if ( hAlign  < 0 )	x	=	rect.X + ( 0 );
+			if ( hAlign == 0 )	x	=	rect.X + ( 0 + ( rect.Width/2 - size.Width/2 ) );
+			if ( hAlign  > 0 )	x	=	rect.X + ( 0 + ( rect.Width - size.Width ) );
+										
+			if ( vAlign  < 0 )	y	=	rect.Y + ( 0 );
+			if ( vAlign == 0 )	y	=	rect.Y + ( rect.Height - size.Height ) / 2;  
+			if ( vAlign  > 0 )	y	=	rect.Y + ( rect.Height - size.Height );
+			if ( vAlign == 2 )	y	=	rect.Y - baseLine;
+		
+			return new Rectangle( x, y, size.Width, size.Height );
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -190,8 +213,6 @@ namespace Fusion.Engine.Frames {
 		{
 			RefreshTextMetrics();
 
-			int x			=	0;
-			int y			=	0;
 			int textWidth	=	textBlockSize.Width;
 			int textHeight	=	textBlockSize.Height;
 			int baseLine	=	textBaseline;
@@ -199,6 +220,10 @@ namespace Fusion.Engine.Frames {
 			int capHeight	=	textCapHeight;
 			var gp			=	GetPaddedRectangle();
 
+			#if true
+			return AlignRectangle( TextAlignment, baseLine, gp, textBlockSize );
+
+			#else
 			int hAlign	=	0;
 			int vAlign	=	0;
 
@@ -219,6 +244,7 @@ namespace Fusion.Engine.Frames {
 			} */
 
 			return new Rectangle( x, y, textBlockSize.Width, textBlockSize.Height );
+			#endif
 		}
 
 

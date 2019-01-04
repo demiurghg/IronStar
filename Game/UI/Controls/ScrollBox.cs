@@ -15,7 +15,7 @@ namespace IronStar.UI.Controls {
 		/// <summary>
 		/// Gets and sets size of scroll bar marker
 		/// </summary>
-		public int ScrollMarkerSize { get; set; } = 3;
+		public int ScrollMarkerSize { get; set; } = 10;
 
 		/// <summary>
 		/// Gets and sets scroll amount per one wheel event in pixels.
@@ -37,10 +37,10 @@ namespace IronStar.UI.Controls {
 		/// <param name="fp"></param>
 		public ScrollBox ( FrameProcessor fp, int x, int y, int w, int h ) : base(fp,x,y,w,h)
 		{
-			BackColor	=	MenuTheme.BackgroundColorDark;
-			Border		=	1;
+			BackColor	=	MenuTheme.Transparent;
+			Border		=	0;
+			#warning value
 			Padding		=	1;
-			BorderColor	=	MenuTheme.BorderColorLight;
 
 			this.MouseWheel +=ScrollBox_MouseWheel;
 		}

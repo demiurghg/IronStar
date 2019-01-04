@@ -81,6 +81,7 @@ namespace Fusion.Engine.Frames {
 		Stretched,
 		DirectMapped,
 		Manual,
+		Aligned,
 		//ImageAndText,
 		//LetterBox,
 		//

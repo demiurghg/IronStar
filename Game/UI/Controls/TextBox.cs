@@ -35,9 +35,8 @@ namespace IronStar.UI.Controls {
 
 			this.Font			=	MenuTheme.NormalFont;
 
-			this.BackColor		=	MenuTheme.BackgroundColorDark;
+			this.BackColor		=	MenuTheme.BackColor;
 			this.Width			=	1;
-			this.BorderColor	=	MenuTheme.BorderColor;
 			this.PaddingRight	=	3;
 			this.PaddingLeft	=	3;
 

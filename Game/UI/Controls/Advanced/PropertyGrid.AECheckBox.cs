@@ -13,10 +13,10 @@ using IronStar.UI.Controls;
 
 namespace IronStar.UI.Controls.Advanced {
 
-	public partial class AEPropertyGrid : Frame {
+	public partial class PropertyGrid : Frame {
 
-		const int VerticalPadding = 0;
-		const int HorizontalPadding = 4;
+		const int VerticalPadding = 5;
+		const int HorizontalPadding = 8;
 
 		class AECheckBox : AEBaseEditor {
 
@@ -31,7 +31,7 @@ namespace IronStar.UI.Controls.Advanced {
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AECheckBox ( AEPropertyGrid grid, string name, Func<bool> getFunc, Action<bool> setFunc ) : base(grid, name)
+			public AECheckBox ( PropertyGrid grid, string name, Func<bool> getFunc, Action<bool> setFunc ) : base(grid, name)
 			{ 
 				this.getFunc	=	getFunc;
 				this.setFunc	=	setFunc;
@@ -39,12 +39,10 @@ namespace IronStar.UI.Controls.Advanced {
 				Width			=	1;
 				Height			=	ComputeItemHeight();
 
-				this.StatusChanged +=CheckBox_StatusChanged;
-
 				yesNoButton			= new Frame(this.Frames) {
 					Font			= MenuTheme.NormalFont,
 					Height			= ComputeItemHeight(), 
-					BackColor		= MenuTheme.BackgroundColorDark,
+					BackColor		= MenuTheme.Transparent,
 					TextAlignment	= Alignment.MiddleLeft,
 					TextOffsetX		= 1,
 					PaddingTop		= VerticalPadding,
@@ -67,17 +65,6 @@ namespace IronStar.UI.Controls.Advanced {
 			}
 
 
-			private void CheckBox_StatusChanged( object sender, StatusEventArgs e )
-			{
-				switch ( e.Status ) {
-					case FrameStatus.None:		ForeColor	=	MenuTheme.TextColorNormal; break;
-					case FrameStatus.Hovered:	ForeColor	=	MenuTheme.TextColorHovered; break;
-					case FrameStatus.Pushed:	ForeColor	=	MenuTheme.TextColorPushed; break;
-				}
-			}
-
-
-
 			public override void RunLayout()
 			{
 				base.RunLayout();
@@ -97,7 +84,7 @@ namespace IronStar.UI.Controls.Advanced {
 				var value = getFunc();
 
 				yesNoButton.Text		=	value ? "Yes" : "No";
-				yesNoButton.ForeColor	=	value ? MenuTheme.ColorGreen : MenuTheme.ColorRed;
+				yesNoButton.ForeColor	=	value ? MenuTheme.ColorPositive : MenuTheme.ColorNegative;
 
 				base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
 			}

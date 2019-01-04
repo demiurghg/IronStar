@@ -14,7 +14,7 @@ using IronStar.UI.Controls;
 
 namespace IronStar.UI.Controls.Advanced {
 
-	public partial class AEPropertyGrid : Frame {
+	public partial class PropertyGrid : Frame {
 
 		class AETextBox : AEBaseEditor {
 			
@@ -31,7 +31,7 @@ namespace IronStar.UI.Controls.Advanced {
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AETextBox ( AEPropertyGrid grid, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc ) : base(grid, name)
+			public AETextBox ( PropertyGrid grid, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc ) : base(grid, name)
 			{ 
 				this.getFunc	=	getFunc;
 				this.setFunc	=	setFunc;
@@ -39,8 +39,6 @@ namespace IronStar.UI.Controls.Advanced {
 				
 				Width			=	grid.Width;
 				Height			=	ComputeItemHeight();
-
-				this.StatusChanged +=AESlider_StatusChanged;
 
 				textBox	=	new TextBox( Frames, new DelegateBinding<string>( getFunc, setFunc ) ) { 
 					TextAlignment = Alignment.MiddleLeft, 
@@ -57,16 +55,6 @@ namespace IronStar.UI.Controls.Advanced {
 				Update(new GameTime());
 			}
 
-
-
-			private void AESlider_StatusChanged( object sender, StatusEventArgs e )
-			{
-				switch ( e.Status ) {
-					case FrameStatus.None:		ForeColor	=	MenuTheme.TextColorNormal; break;
-					case FrameStatus.Hovered:	ForeColor	=	MenuTheme.TextColorHovered; break;
-					case FrameStatus.Pushed:	ForeColor	=	MenuTheme.TextColorPushed; break;
-				}
-			}
 
 
 			public override void RunLayout()

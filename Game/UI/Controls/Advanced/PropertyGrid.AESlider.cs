@@ -13,7 +13,7 @@ using IronStar.UI.Controls;
 
 namespace IronStar.UI.Controls.Advanced {
 
-	public partial class AEPropertyGrid : Frame {
+	public partial class PropertyGrid : Frame {
 
 		class AESlider : AEBaseEditor {
 
@@ -30,7 +30,7 @@ namespace IronStar.UI.Controls.Advanced {
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AESlider ( AEPropertyGrid grid, string name, Func<float> getFunc, Action<float> setFunc, float min, float max, float step, float pstep ) : base(grid, name)
+			public AESlider ( PropertyGrid grid, string name, Func<float> getFunc, Action<float> setFunc, float min, float max, float step, float pstep ) : base(grid, name)
 			{ 
 				this.getFunc	=	getFunc;
 				this.setFunc	=	setFunc;
@@ -41,19 +41,15 @@ namespace IronStar.UI.Controls.Advanced {
 				Width			=	grid.Width;
 				Height			=	ComputeItemHeight();
 
-				this.StatusChanged +=AESlider_StatusChanged;
-
 				slider				=	new Slider( Frames, getFunc, setFunc, min, max, step, pstep )  {
 					Font			=	MenuTheme.NormalFont,
-					PaddingLeft		=	VerticalPadding, // yes, for slider they should be the same
-					PaddingRight	=	VerticalPadding,
-					PaddingTop		=	VerticalPadding,
-					PaddingBottom	=	VerticalPadding,
+					PaddingLeft		=	0, // yes, for slider they should be the same
+					PaddingRight	=	0,
+					PaddingTop		=	0,
+					PaddingBottom	=	0,
 				};
 
 				slider.StatusChanged +=Slider_StatusChanged;
-				slider.Border		=	1;
-				slider.BorderColor	=	MenuTheme.BorderColor;
 				Add( slider );
 
 				Update(new GameTime());
@@ -64,18 +60,9 @@ namespace IronStar.UI.Controls.Advanced {
 			private void Slider_StatusChanged( object sender, StatusEventArgs e )
 			{
 				switch ( e.Status ) {
-					case FrameStatus.None:		slider.ForeColor	=	MenuTheme.TextColorNormal;		slider.SliderColor = MenuTheme.ElementColorNormal;	 break;
-					case FrameStatus.Hovered:	slider.ForeColor	=	MenuTheme.TextColorHovered;	slider.SliderColor = MenuTheme.ElementColorHovered; break;
-					case FrameStatus.Pushed:	slider.ForeColor	=	MenuTheme.TextColorPushed;		slider.SliderColor = MenuTheme.ElementColorPushed;	 break;
-				}
-			}
-
-			private void AESlider_StatusChanged( object sender, StatusEventArgs e )
-			{
-				switch ( e.Status ) {
-					case FrameStatus.None:		ForeColor	=	MenuTheme.TextColorNormal; break;
-					case FrameStatus.Hovered:	ForeColor	=	MenuTheme.TextColorHovered; break;
-					case FrameStatus.Pushed:	ForeColor	=	MenuTheme.TextColorPushed; break;
+					case FrameStatus.None:		slider.ForeColor	=	MenuTheme.TextColorNormal;		slider.SliderColor = MenuTheme.ButtonColorNormal;	 break;
+					case FrameStatus.Hovered:	slider.ForeColor	=	MenuTheme.TextColorHovered;		slider.SliderColor = MenuTheme.ButtonColorHovered; break;
+					case FrameStatus.Pushed:	slider.ForeColor	=	MenuTheme.TextColorPushed;		slider.SliderColor = MenuTheme.ButtonColorPushed;	 break;
 				}
 			}
 

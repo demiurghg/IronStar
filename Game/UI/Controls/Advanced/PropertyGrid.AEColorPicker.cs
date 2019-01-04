@@ -14,7 +14,7 @@ using IronStar.UI.Controls.Dialogs;
 
 namespace IronStar.UI.Controls.Advanced {
 
-	public partial class AEPropertyGrid : Frame {
+	public partial class PropertyGrid : Frame {
 
 		class AEColorPicker : AEBaseEditor {
 			
@@ -28,7 +28,7 @@ namespace IronStar.UI.Controls.Advanced {
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AEColorPicker ( AEPropertyGrid grid, string name, Func<Color> getFunc, Action<Color> setFunc ) : base(grid, name)
+			public AEColorPicker ( PropertyGrid grid, string name, Func<Color> getFunc, Action<Color> setFunc ) : base(grid, name)
 			{ 
 				this.getFunc	=	getFunc;
 				this.setFunc	=	setFunc;
@@ -36,11 +36,7 @@ namespace IronStar.UI.Controls.Advanced {
 				Width			=	grid.Width;
 				Height			=	ComputeItemHeight();
 
-				this.StatusChanged  +=AEColorPicker_StatusChanged;
-
 				colorButton				=	new Frame( Frames );
-				colorButton.Border		=	1;
-				colorButton.BorderColor	=	MenuTheme.BorderColor;
 				colorButton.BackColor	=	Color.Black;
 
 				colorButton.Click +=ColorButton_Click;
@@ -59,16 +55,6 @@ namespace IronStar.UI.Controls.Advanced {
 				ColorPicker.ShowDialog( Frames, rect.X, rect.Y + rect.Height, getFunc(), setFunc );
 			}
 
-
-
-			private void AEColorPicker_StatusChanged( object sender, StatusEventArgs e )
-			{
-				switch ( e.Status ) {
-					case FrameStatus.None:		ForeColor	=	MenuTheme.TextColorNormal; break;
-					case FrameStatus.Hovered:	ForeColor	=	MenuTheme.TextColorHovered; break;
-					case FrameStatus.Pushed:	ForeColor	=	MenuTheme.TextColorPushed; break;
-				}
-			}
 
 
 			public override void RunLayout()

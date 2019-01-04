@@ -12,10 +12,6 @@ namespace IronStar.UI.Controls {
 
 		readonly Action action;
 
-		public bool RedButton {
-			get; set;
-		}
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -33,8 +29,7 @@ namespace IronStar.UI.Controls {
 			Y				=	y;
 
 			TextAlignment	=	Alignment.MiddleCenter;
-			Border			=	1;
-			BorderColor		=	MenuTheme.ButtonBorderColor;
+			Border			=	0;
 			Text			=	name;
 
 			ShadowColor		=	MenuTheme.ShadowColor;
@@ -59,21 +54,21 @@ namespace IronStar.UI.Controls {
 				case FrameStatus.None:		
 					//ForeColor	=	(action == null) ? Color.Red : MenuTheme.TextColorNormal;	
 					ForeColor	=	MenuTheme.TextColorNormal;	
-					BackColor	=	RedButton ? MenuTheme.ButtonRedColorNormal : MenuTheme.ButtonColorNormal;	
+					BackColor	=	MenuTheme.ButtonColorNormal;	
 					ImageColor	=	ForeColor;
 					TextOffsetX	=	0;
 					TextOffsetY =	0;	
 					break;
 				case FrameStatus.Hovered:	
 					ForeColor	=	MenuTheme.TextColorHovered;	
-					BackColor	=	RedButton ? MenuTheme.ButtonRedColorHovered : MenuTheme.ButtonColorHovered;	
+					BackColor	=	MenuTheme.ButtonColorHovered;	
 					ImageColor	=	ForeColor;
 					TextOffsetX	=	0;
 					TextOffsetY =	0;	
 					break;
 				case FrameStatus.Pushed:	
 					ForeColor	=	MenuTheme.TextColorPushed;
-					BackColor	=	RedButton ? MenuTheme.ButtonRedColorPushed : MenuTheme.ButtonColorPushed;	
+					BackColor	=	MenuTheme.ButtonColorPushed;	
 					ImageColor	=	ForeColor;
 					TextOffsetX	=	1;
 					TextOffsetY =	0;	

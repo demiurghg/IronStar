@@ -169,6 +169,8 @@ namespace Fusion.Widgets {
 
 			dropDownList.Width	=	Math.Max( this.Width, minDropDownWidth );
 
+			dropDownList.Tag	=	Frames.ModalFrame;
+
 			Frames.RootFrame.Add( dropDownList );
 			Frames.ModalFrame = dropDownList;
 
@@ -179,6 +181,7 @@ namespace Fusion.Widgets {
 
 		void CloseDropDownList()
 		{
+			Frames.ModalFrame = dropDownList.Tag as Frame;
 			dropDownList.Close();
 		}
 

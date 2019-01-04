@@ -41,9 +41,12 @@ namespace IronStar.UI.Controls {
 
 			this.BackColor		=	MenuTheme.ButtonColorNormal;
 			this.Width			=	1;
-			this.BorderColor	=	MenuTheme.BorderColor;
 			this.TextAlignment	=	Alignment.MiddleLeft;
 			this.Text			=	value;
+
+			this.Image			=	MenuTheme.ArrowDown;
+			this.ImageMode		=	FrameImageMode.Aligned;
+			this.ImageAlignment	=	Alignment.MiddleRight;
 
 			StatusChanged	+=	DropDown_StatusChanged;
 			Click += DropDown_Click;
@@ -95,15 +98,13 @@ namespace IronStar.UI.Controls {
 			var scrollBoxWidth	=	MinWidth;
 
 
-			var scrollBox		= new ScrollBox( Frames, 0,0, scrollBoxWidth, scrollBoxHeight ) {
-				BackColor		= MenuTheme.DropdownColor,
-				PaddingLeft		= 4,
-				PaddingRight	= 1,
-				PaddingBottom	= 1,
-				PaddingTop		= 1,
-				Border			= 1,
-				BorderColor		= MenuTheme.AccentBorder,
-				ScrollMarkerColor	=	MenuTheme.AccentBorder
+			var scrollBox			=	new ScrollBox( Frames, 0,0, scrollBoxWidth, scrollBoxHeight ) {
+				BackColor			=	MenuTheme.DropdownColor,
+				PaddingLeft			=	4,
+				PaddingRight		=	1,
+				PaddingBottom		=	1,
+				PaddingTop			=	1,
+				ScrollMarkerColor	=	MenuTheme.ElementColor,
 			};
 
 			var dropDownList	= new Frame( Frames ) {
@@ -169,8 +170,12 @@ namespace IronStar.UI.Controls {
 
 			dropDownList.Width	=	Math.Max( this.Width, minDropDownWidth );
 
+			dropDownList.Tag	=	Frames.ModalFrame;
+
 			Frames.RootFrame.Add( dropDownList );
 			Frames.ModalFrame = dropDownList;
+
+			BackColor	=	MenuTheme.ButtonColorPushed;
 
 			dropDownList.ConstrainFrame(0);
 		}
@@ -179,7 +184,10 @@ namespace IronStar.UI.Controls {
 
 		void CloseDropDownList()
 		{
+			Frames.ModalFrame = dropDownList.Tag as Frame;
 			dropDownList.Close();
+
+			SetFrameStatus( FrameStatus.None );
 		}
 
 
@@ -206,16 +214,18 @@ namespace IronStar.UI.Controls {
 		{
 			var frame = (Frame)sender;
 
-			switch ( e.Status ) {
-				case FrameStatus.None:		frame.ForeColor	=	MenuTheme.TextColorNormal;	break;
-				case FrameStatus.Hovered:	frame.ForeColor	=	MenuTheme.TextColorHovered;break;
-				case FrameStatus.Pushed:	frame.ForeColor	=	MenuTheme.TextColorPushed;	break;
-			}
+			if (Frames.ModalFrame!=dropDownList) {
+				switch ( e.Status ) {
+					case FrameStatus.None:		frame.ForeColor	=	MenuTheme.TextColorNormal;	break;
+					case FrameStatus.Hovered:	frame.ForeColor	=	MenuTheme.TextColorHovered;break;
+					case FrameStatus.Pushed:	frame.ForeColor	=	MenuTheme.TextColorPushed;	break;
+				}
 
-			switch ( e.Status ) {
-				case FrameStatus.None:		frame.BackColor	=	MenuTheme.ButtonColorDark;		break;
-				case FrameStatus.Hovered:	frame.BackColor	=	MenuTheme.ButtonColorHovered;	break;
-				case FrameStatus.Pushed:	frame.BackColor	=	MenuTheme.ButtonColorPushed;	break;
+				switch ( e.Status ) {
+					case FrameStatus.None:		frame.BackColor	=	MenuTheme.BigButtonColorNormal;	break;
+					case FrameStatus.Hovered:	frame.BackColor	=	MenuTheme.ButtonColorHovered;	break;
+					case FrameStatus.Pushed:	frame.BackColor	=	MenuTheme.ButtonColorPushed;	break;
+				}
 			}
 		}
 
@@ -247,21 +257,12 @@ namespace IronStar.UI.Controls {
 		{
 			Text = getFunc();
 
+			//	always pushed when drop-down is visible
+			//if (Frames.ModalFrame==dropDownList) {
+			//	BackColor	=	MenuTheme.ButtonColorPushed;
+			//}
+
 			base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
-			/*var value	= getFunc();
-			var padRect	= GetPaddedRectangle(true);
-
-			value		=	MathUtil.Clamp( value, min, max );
-			var frac	=	(value - min) / (max-min);
-
-			var totalWidth	=	padRect.Width;
-			var	sliderWidth	=	(int)(totalWidth * frac);
-
-			var rect		=	padRect;
-			rect.Width		=	sliderWidth;
-
-			spriteLayer.Draw( null, rect, sliderColor, clipRectIndex );
-			this.DrawFrameText( spriteLayer, clipRectIndex );*/
 		}
 	}
 }

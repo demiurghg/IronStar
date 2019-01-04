@@ -83,7 +83,7 @@ namespace IronStar.UI.Controls.Dialogs {
 				scrollBox.BorderColor	=	MenuTheme.BorderColorLight;
 
 				buttonAccept	=	new Button( fp, "Accept",  0,0,0,0, ()=>Accept(null) );
-				buttonClose		=	new Button( fp, "Close",   0,0,0,0, ()=>Close() ) { RedButton = true };
+				buttonClose		=	new Button( fp, "Close",   0,0,0,0, ()=>Close() );
 				buttonZoomIn	=	new Button( fp, "ZoomIn",  0,0,0,0, ()=>Zoom++ );
 				buttonZoomOut	=	new Button( fp, "ZoomOut", 0,0,0,0, ()=>Zoom-- );
 

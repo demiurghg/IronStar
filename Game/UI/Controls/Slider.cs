@@ -41,16 +41,15 @@ namespace IronStar.UI.Controls {
 			this.snap			=	snap;
 			this.psnap			=	psnap;
 
-			this.BackColor		=	MenuTheme.BackgroundColorDark;
+			this.BackColor		=	MenuTheme.BackColor;
 			this.Width			=	1;
-			this.BorderColor	=	MenuTheme.BorderColor;
 			this.TextAlignment	=	Alignment.MiddleCenter;
 
 			this.MouseDown  +=Slider_MouseDown;
 			this.MouseMove+=Slider_MouseMove;
 			this.MouseUp+=Slider_MouseUp;
 				
-			SliderColor	=	MenuTheme.ElementColorNormal;
+			SliderColor	=	MenuTheme.ButtonColorNormal;
 		}
 
 
@@ -137,7 +136,7 @@ namespace IronStar.UI.Controls {
 		protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
 		{
 			var value	= getFunc();
-			var padRect	= GetPaddedRectangle(true);
+			var padRect	= GlobalRectangle;// GetPaddedRectangle(true);
 
 			value		=	MathUtil.Clamp( value, min, max );
 			var frac	=	(value - min) / (max-min);
@@ -148,15 +147,14 @@ namespace IronStar.UI.Controls {
 			var sliderHeight=	(int)(totalHeight * frac);
 
 			var rect		=	padRect;
-			var fadeColor	=	new Color( SliderColor.R, SliderColor.G, SliderColor.B, (byte)64 );
 
 			if (Vertical) {
 				rect.Height		=	sliderHeight;
 				rect.Y			=	padRect.Y + padRect.Height - sliderHeight;
-				spriteLayer.DrawGradient( rect, SliderColor, SliderColor, fadeColor, fadeColor, clipRectIndex );
+				spriteLayer.Draw( null, rect, SliderColor, clipRectIndex );
 			} else {
 				rect.Width		=	sliderWidth;
-				spriteLayer.DrawGradient( rect, fadeColor, SliderColor, fadeColor, SliderColor, clipRectIndex );
+				spriteLayer.Draw( null, rect, SliderColor, clipRectIndex );
 			}
 
 			this.DrawFrameText( spriteLayer, clipRectIndex );

@@ -112,9 +112,7 @@ namespace IronStar.UI.Controls.Dialogs {
 			Height	=	DialogHeight;	
 
 			Padding			=	1;
-			Border			=	1;
-			BorderColor		=	MenuTheme.BorderColor;
-			BackColor		=	MenuTheme.BackgroundColor;
+			BackColor		=	MenuTheme.BackColor;
 
 			oldColorSample	=	AddColorButton(  2,   2, 80, 30, "", initColor, ()=> { targetColor = initColor; UpdateFromColor(); } );
 			newColorSample	=	AddColorButton(  2,  32, 80, 30, "", initColor, null );

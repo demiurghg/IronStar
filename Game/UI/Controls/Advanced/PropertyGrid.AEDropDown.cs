@@ -13,7 +13,7 @@ using IronStar.UI.Controls;
 
 namespace IronStar.UI.Controls.Advanced {
 
-	public partial class AEPropertyGrid : Frame {
+	public partial class PropertyGrid : Frame {
 
 		class AEDropDown : AEBaseEditor {
 			
@@ -27,15 +27,13 @@ namespace IronStar.UI.Controls.Advanced {
 			/// </summary>
 			/// <param name="grid"></param>
 			/// <param name="bindingInfo"></param>
-			public AEDropDown ( AEPropertyGrid grid, string name, string value, IEnumerable<string> values, Func<string> getFunc, Action<string> setFunc ) : base(grid, name)
+			public AEDropDown ( PropertyGrid grid, string name, string value, IEnumerable<string> values, Func<string> getFunc, Action<string> setFunc ) : base(grid, name)
 			{ 
 				this.getFunc	=	getFunc;
 				this.setFunc	=	setFunc;
 				
 				Width			=	grid.Width;
 				Height			=	ComputeItemHeight();
-
-				this.StatusChanged +=AEDropDown_StatusChanged;
 
 				dropDown		=	new DropDown( Frames, value, values, getFunc, setFunc ) {
 					PaddingLeft		=	HorizontalPadding,
@@ -49,16 +47,6 @@ namespace IronStar.UI.Controls.Advanced {
 				Update(new GameTime());
 			}
 
-
-
-			private void AEDropDown_StatusChanged( object sender, StatusEventArgs e )
-			{
-				switch ( e.Status ) {
-					case FrameStatus.None:		ForeColor	=	MenuTheme.TextColorNormal; break;
-					case FrameStatus.Hovered:	ForeColor	=	MenuTheme.TextColorHovered; break;
-					case FrameStatus.Pushed:	ForeColor	=	MenuTheme.TextColorPushed; break;
-				}
-			}
 
 
 			public override void RunLayout()

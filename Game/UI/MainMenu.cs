@@ -16,6 +16,7 @@ using Fusion;
 using Fusion.Build;
 using Fusion.Engine.Graphics;
 using IronStar.UI.Controls;
+using IronStar.UI.Controls.Dialogs;
 using System.Net;
 
 namespace IronStar.UI {
@@ -35,8 +36,11 @@ namespace IronStar.UI {
 		public MainMenu( FrameProcessor frames ) : base(frames)
 		{
 			MenuTheme.BigFont		=	frames.Game.Content.Load<SpriteFont>(@"fonts\amdrtg100");
-			MenuTheme.NormalFont	=	frames.Game.Content.Load<SpriteFont>(@"fonts\armata24");
+			MenuTheme.NormalFont	=	frames.Game.Content.Load<SpriteFont>(@"fonts\armata20");
+			MenuTheme.HeaderFont	=	frames.Game.Content.Load<SpriteFont>(@"fonts\armata28");
 			MenuTheme.SmallFont		=	frames.Game.Content.Load<SpriteFont>(@"fonts\armata14");
+
+			MenuTheme.ArrowDown		=	frames.Game.Content.Load<DiscTexture>(@"ui\arrowDown");
 
 			Anchor	=	FrameAnchor.All;
 
@@ -82,7 +86,7 @@ namespace IronStar.UI {
 			frame.TextAlignment	=	Alignment.BottomLeft;
 			frame.ForeColor		=	MenuTheme.TextColorNormal;
 
-			frame.PaddingLeft	=	60-16; // to fix gap in text
+			frame.PaddingLeft	=	MenuTheme.MainContentPadding-16; // to fix gap in text
 			frame.PaddingBottom	=	10;
 
 			return frame;
@@ -96,24 +100,37 @@ namespace IronStar.UI {
 
 			frame.BackColor		=	MenuTheme.Transparent;
 
-			frame.PaddingLeft	=	60;
+			frame.PaddingLeft	=	MenuTheme.MainContentPadding;
 			frame.PaddingBottom	=	20;
 			frame.PaddingTop	=	20;
 
 			frame.Layout		=	new StackLayout() { EqualWidth=true, Interval=0 };
 
-			int height			=	40;
+			int height			=	MenuTheme.ElementHeight;
 			int width			=	0;
 
 			frame.Add( new BigButton(Frames, "Game"			, 0,0, width, height, ()=>Log.Message("Game") ) );
 			frame.Add( new BigButton(Frames, "Multiplayer"	, 0,0, width, height, ()=>Log.Message("Game") ) );
-			frame.Add( new BigButton(Frames, "Options"		, 0,0, width, height, ()=>Log.Message("Game") ) );
+			frame.Add( new BigButton(Frames, "Options"		, 0,0, width, height, OptionsDialog ) );
 			frame.Add( new BigButton(Frames, "Credits"		, 0,0, width, height, ()=>Log.Message("Game") ) );
-			frame.Add( new BigButton(Frames, "Exit"			, 0,0, width, height, ()=>Log.Message("Game") ) );
+			frame.Add( new BigButton(Frames, "Exit"			, 0,0, width, height, ExitDialog ) );
 
 			return frame;
 		}
 
+
+
+		void ExitDialog ()
+		{
+			MessageBox.ShowQuestion( this, "EXIT", "Are you sure you want to exit the game?", ()=>Game.Exit(), null, "Exit game", "Cancel" );
+		}
+
+
+
+		void OptionsDialog ()
+		{
+			OptionsBox.ShowDialog( this, null, null, null, null );
+		}
 
 
 
@@ -121,16 +138,18 @@ namespace IronStar.UI {
 		{
 			var frame = new Frame(Frames);
 
-			frame.BackColor		=	MenuTheme.BackgroundColor;
+			frame.BackColor		=	MenuTheme.BackColor;
 			frame.BorderTop		=	1;
-			frame.BorderColor	=	MenuTheme.BorderColor;
+			#warning accent color?
+			frame.BorderColor	=	MenuTheme.AccentColor;
 			frame.Font			=	MenuTheme.SmallFont;
 			frame.Text			=	text;
 			frame.TextAlignment	=	alignment;
+			#warning text color?
 			frame.ForeColor		=	MenuTheme.TextColorDimmed;
 
-			frame.PaddingLeft	=	60;
-			frame.PaddingRight	=	60;
+			frame.PaddingLeft	=	MenuTheme.MainContentPadding;
+			frame.PaddingRight	=	MenuTheme.MainContentPadding;
 
 			return frame;
 		}

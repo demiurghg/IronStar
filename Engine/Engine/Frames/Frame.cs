@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SharpDX;
 using Fusion;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
@@ -122,6 +121,7 @@ namespace Fusion.Engine.Frames {
 		public Texture			Image			{ get; set; }
 		public Rectangle		ImageDstRect	{ get; set; }
 		public Rectangle		ImageSrcRect	{ get; set; }
+		public Alignment		ImageAlignment	{ get; set; }
 
 
 
@@ -517,6 +517,12 @@ namespace Fusion.Engine.Frames {
 		 *	Input stuff :
 		 * 
 		-----------------------------------------------------------------------------------------*/
+
+		public void SetFrameStatus ( FrameStatus status )
+		{
+			OnStatusChanged( status );
+		}
+
 
 		internal void OnStatusChanged ( FrameStatus status )
 		{
@@ -1058,6 +1064,11 @@ namespace Fusion.Engine.Frames {
 				dstRect.X += gr.X;
 				dstRect.Y += gr.Y;
 				spriteLayer.Draw( Image, dstRect, srcRect, ImageColor, clipRectIndex );
+			}
+
+			if (ImageMode==FrameImageMode.Aligned) {
+				var dstRect = AlignRectangle( ImageAlignment, 0, gp, new Size2(Image.Width, Image.Height) );
+				spriteLayer.Draw( Image, dstRect, ImageColor, clipRectIndex );
 			}
 
 		}

@@ -18,6 +18,7 @@ using Fusion.Engine.Graphics;
 using IronStar.UI.Controls;
 using IronStar.UI.Controls.Dialogs;
 using System.Net;
+using Fusion.Engine.Audio;
 
 namespace IronStar.UI {
 
@@ -129,7 +130,12 @@ namespace IronStar.UI {
 
 		void OptionsDialog ()
 		{
-			OptionsBox.ShowDialog( this, null, null, null, null );
+			var video		=	Game.GetService<RenderSystem>();
+			var audio		=	Game.GetService<SoundSystem>();
+			var gameplay	=	(object)null;
+			var controls	=	(object)null;
+			
+			OptionsBox.ShowDialog( this, video, audio, gameplay, controls );
 		}
 
 

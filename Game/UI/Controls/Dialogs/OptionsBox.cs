@@ -12,29 +12,6 @@ using Fusion.Core.Shell;
 
 namespace IronStar.UI.Controls.Dialogs {
 	public static class OptionsBox {
-		
-		class Options {
-			public bool			Fullscreen	{ get; set; }
-			public bool			VSync		{ get; set; }
-			public QualityLevel Lighting	{ get; set; }
-			public QualityLevel Shadows		{ get; set; }
-			public bool			Bloom		{ get; set; }
-			public QualityLevel	SSAO		{ get; set; }
-			public bool			GI			{ get; set; }
-			public QualityLevel	Reflection	{ get; set; }
-
-			[AEDisplayName("Field of view")]
-			[AEValueRange(60,140,1,1)]
-			public float		FOV { get; set; }
-
-			public QualityLevel SSLR		{ get; set; }
-			public QualityLevel DOF			{ get; set; }
-			public bool			Stereo		{ get; set; }
-			public QualityLevel	Particles	{ get; set; }
-			public bool			Antialiasing{ get; set; }
-			public QualityLevel	MotionBlur	{ get; set; }
-		}
-
 
 		static public void ShowDialog ( Frame owner, object video, object audio, object gameplay, object controls )
 		{
@@ -63,28 +40,32 @@ namespace IronStar.UI.Controls.Dialogs {
 			header.ForeColor	=	MenuTheme.TextColorNormal;
 			header.BackColor	=	MenuTheme.Transparent;
 			header.Padding		=	4;
+			header.Ghost		=	true;
+
+			//	Property grid :
+		
+			var grid			=	new PropertyGrid( owner.Frames );
+			grid.TargetObject	=	video;
 
 			//	Selector buttons :
 
-			var buttonVideo		=	new Button( owner.Frames, "VIDEO"	, 0,0,0,0, ()=> {} );
-			var buttonAudio		=	new Button( owner.Frames, "AUDIO"	, 0,0,0,0, ()=> {} );
-			var buttonGameplay	=	new Button( owner.Frames, "GAMEPLAY", 0,0,0,0, ()=> {} );
-			var buttonControls	=	new Button( owner.Frames, "CONTROLS", 0,0,0,0, ()=> {} );
+			var buttonVideo		=	new Button( owner.Frames, "VIDEO"	, 0,0,0,0, ()=> grid.TargetObject = video );
+			var buttonAudio		=	new Button( owner.Frames, "AUDIO"	, 0,0,0,0, ()=> grid.TargetObject = audio );
+			var buttonGameplay	=	new Button( owner.Frames, "GAMEPLAY", 0,0,0,0, ()=> grid.TargetObject = gameplay );
+			var buttonControls	=	new Button( owner.Frames, "CONTROLS", 0,0,0,0, ()=> grid.TargetObject = controls );
 
-			//	Property grid :
+			//	Scrollbox for property grid :
+
 			var scrollBox				=	new ScrollBox( owner.Frames, 0,0,0,0 );
 			scrollBox.ScrollMarkerSize	=	MenuTheme.ScrollSize;
 			scrollBox.ScrollMarkerColor	=	MenuTheme.ScrollMarkerColor;
 			scrollBox.MarginTop			=	MenuTheme.Margin;
 			scrollBox.MarginBottom		=	MenuTheme.Margin;
 
-			var grid			=	new PropertyGrid( owner.Frames );
-			grid.TargetObject	=	new Options();
-
 			//	OK/Cancel buttons :
 
-			var buttonOK		=	new Button( owner.Frames, "OK",		0,0,0,0, ()=> panel.Close() );
-			var buttonCancel	=	new Button( owner.Frames, "Cancel", 0,0,0,0, ()=> panel.Close() );
+			var buttonOK		=	new Button( owner.Frames, "OK",		0,0,0,0, ()=> { grid.CommitChanges(); panel.Close(); } );
+			var buttonCancel	=	new Button( owner.Frames, "Cancel", 0,0,0,0, ()=> { panel.Close(); } );
 
 			//	Construct all :
 

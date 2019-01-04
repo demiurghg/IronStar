@@ -21,6 +21,12 @@ namespace IronStar.UI.Controls.Advanced {
 
 	public partial class PropertyGrid : Frame {
 
+
+		class DeferredChange {
+			public PropertyInfo Property;
+			public object Value;
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -50,14 +56,6 @@ namespace IronStar.UI.Controls.Advanced {
 
 
 
-		public event EventHandler<PropertyChangedEventArgs>	PropertyChanged;
-
-		protected void OnPropertyChange (object target, PropertyInfo property, object value)
-		{
-			PropertyChanged?.Invoke( this, new PropertyChangedEventArgs(target, property, value) );
-		}
-
-
 
 		/// <summary>
 		/// 
@@ -70,6 +68,7 @@ namespace IronStar.UI.Controls.Advanced {
 				if (targetObject!=value) {
 					targetObject = value;
 					Clear();
+					CancelChanges();
 					FeedObject(targetObject, 0, null);
 				}
 			}
@@ -89,6 +88,26 @@ namespace IronStar.UI.Controls.Advanced {
 			base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
 		}
 
+
+		//List<DeferredChange> changes;
+		Dictionary<PropertyInfo,object> changes = new Dictionary<PropertyInfo, object>();
+
+
+		public void CancelChanges ()
+		{
+			changes.Clear();
+		}
+
+		public void CommitChanges ()
+		{
+			foreach ( var pair in changes ) {
+
+				Log.Message("  property grid commit: {0} -> {1}", pair.Key.Name, pair.Value.ToString() );
+				pair.Key.SetValue( TargetObject, pair.Value );
+
+			}
+			changes.Clear();
+		}
 
 
 		/// <summary>
@@ -113,14 +132,26 @@ namespace IronStar.UI.Controls.Advanced {
 				}
 
 				Action<object> setFunc  =	delegate (object value) {
-					pi.SetValue(obj,value);
-					OnPropertyChange(obj,pi,value);
+					if (changes.ContainsKey(pi)) {
+						changes[pi] = value;
+					} else {
+						changes.Add( pi, value );
+					}
+				};
+
+				Func<object> getFunc = delegate() {	
+					object value;
+					if (changes.TryGetValue(pi, out value)) {
+						return value;
+					} else {
+						return pi.GetValue(obj);
+					}
 				};
 
 				var name		=	pi.GetAttribute<AEDisplayNameAttribute>()?.Name ?? pi.Name;
 
 				if (pi.PropertyType==typeof(bool)) {
-					AddCheckBox( name, ()=>(bool)(pi.GetValue(obj)), (val)=>setFunc(val) );
+					AddCheckBox( name, ()=>(bool)getFunc(), (val)=>setFunc(val) );
 				}
 
 				if (pi.PropertyType==typeof(float)) {
@@ -136,10 +167,10 @@ namespace IronStar.UI.Controls.Advanced {
 						max		=	range.Max;
 						step	=	range.RoughStep;
 						pstep	=	range.PreciseStep;
-						AddSlider( name, ()=>(float)(pi.GetValue(obj)), (val)=>setFunc(val), min, max, step, pstep );
+						AddSlider( name, ()=>(float)getFunc(), (val)=>setFunc(val), min, max, step, pstep );
 					} else {
 						AddTextBoxNum( name, 
-							()	 => StringConverter.ConvertToString( pi.GetValue(obj) ),
+							()	 => StringConverter.ConvertToString( getFunc() ),
 							(val)=>	setFunc( StringConverter.ToSingle(val) ),
 							null );
 					}
@@ -147,13 +178,13 @@ namespace IronStar.UI.Controls.Advanced {
 
 				if (pi.PropertyType==typeof(int)) {
 					AddTextBoxNum( name, 
-						()	 => StringConverter.ConvertToString( pi.GetValue(obj) ),
+						()	 => StringConverter.ConvertToString( getFunc() ),
 						(val)=>	setFunc( StringConverter.ToInt32(val) ),
 						null );
 				}
 
 				if (pi.PropertyType==typeof(Color)) {
-					AddColorPicker( name, ()=>(Color)(pi.GetValue(obj)), (val)=>setFunc(val) );
+					AddColorPicker( name, ()=>(Color)getFunc(), (val)=>setFunc(val) );
 				}
 
 				if (pi.PropertyType.IsEnum) {
@@ -162,11 +193,11 @@ namespace IronStar.UI.Controls.Advanced {
 					var value	=	pi.GetValue(obj).ToString();
 					var values	=	Enum.GetNames( type );
 
-					AddDropDown( name, value, values, ()=>pi.GetValue(obj).ToString(), (val)=>setFunc(Enum.Parse(type, val)) );
+					AddDropDown( name, value, values, ()=>getFunc().ToString(), (val)=>setFunc(Enum.Parse(type, val)) );
 				}
 
 				if (pi.PropertyType==typeof(string)) {
-					AddTextBox( name, ()=>(string)(pi.GetValue(obj)), (val)=>setFunc(val), null );
+					AddTextBox( name, ()=>(string)getFunc(), (val)=>setFunc(val), null );
 				}
 			}
 
@@ -175,7 +206,6 @@ namespace IronStar.UI.Controls.Advanced {
 			foreach ( var mi in obj.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance) ) {
 
 				var name		=	mi.GetAttribute<AEDisplayNameAttribute>()?.Name ?? mi.Name;
-				var category	=	mi.GetAttribute<AECategoryAttribute>()?.Category ?? "Misc";
 
 				if (mi.HasAttribute<AECommandAttribute>()) {
 					AddButton( name, ()=>mi.Invoke(obj, new object[0]) );

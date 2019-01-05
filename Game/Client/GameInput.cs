@@ -119,6 +119,7 @@ namespace IronStar.Client {
 			var flags = UserAction.None;
 			var console = Game.GetService<GameConsole>();
 			var frames	= Game.GetService<FrameProcessor>();
+			var ui		= Game.GetService<UserInterface>().Instance;
 			
 			userCommand.MoveForward	=	0;
 			userCommand.MoveRight	=	0;
@@ -157,11 +158,8 @@ namespace IronStar.Client {
 			//var ui		=	Game.UserInterface.Instance as ShooterInterface;
 			//var cam		=	World.GetView<CameraView>();
 
-			if (frames.TargetFrame==null && !Game.Console.IsShown) {
 
-				Game.Mouse.IsMouseCentered	=	true;
-				Game.Mouse.IsMouseClipped	=	true;
-				Game.Mouse.IsMouseHidden	=	true;
+			if (ui.AllowGameInput()) {
 
 				userCommand.DYaw		=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.X / 16200.0f;
 				userCommand.DPitch		=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.Y / 16200.0f * ( InvertMouse ? -1 : 1 );
@@ -172,13 +170,11 @@ namespace IronStar.Client {
 				userCommand.Roll		=	0;
 
 			} else {
+
 				userCommand.MoveForward		=	0;
 				userCommand.MoveRight		=	0;
 				userCommand.MoveUp			=	0;
-			
-				Game.Mouse.IsMouseCentered	=	false;
-				Game.Mouse.IsMouseClipped	=	false;
-				Game.Mouse.IsMouseHidden	=	false;
+		
 			}
 		}
 

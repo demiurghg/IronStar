@@ -512,6 +512,22 @@ namespace Fusion.Engine.Frames {
 		}
 
 
+
+		public bool IsActuallyVisible ()
+		{	
+			var frame = this;
+
+			while (frame!=null) {
+				if (!frame.Visible) {
+					return false;
+				}
+				frame = frame.Parent;
+			}
+
+			return true;
+		}
+
+
 		/*-----------------------------------------------------------------------------------------
 		 * 
 		 *	Input stuff :
@@ -731,6 +747,29 @@ namespace Fusion.Engine.Frames {
 			}
 
 			return list;
+		}
+			
+
+		public static Frame BFSSearch ( Frame v, Func<Frame,bool> predicate )
+		{
+			Queue<Frame> Q = new Queue<Frame>();
+
+			Q.Enqueue( v );
+
+			while ( Q.Any() ) {
+				
+				var t = Q.Dequeue();
+				
+				if (predicate(t)) {
+					return t;
+				}
+
+				foreach ( var u in t.Children ) {
+					Q.Enqueue( u );
+				}
+			}
+
+			return default(Frame);
 		}
 			
 

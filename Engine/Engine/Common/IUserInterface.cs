@@ -26,5 +26,11 @@ namespace Fusion.Engine.Common {
 		/// <param name="endPoint"></param>
 		/// <param name="serverInfo"></param>
 		void DiscoveryResponse ( IPEndPoint endPoint, string serverInfo );
+
+		/// <summary>
+		/// Indicates that game input is allowed.
+		/// </summary>
+		/// <returns></returns>
+		bool AllowGameInput ();
 	}
 }

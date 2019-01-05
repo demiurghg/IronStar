@@ -16,18 +16,23 @@ using Fusion.Engine.Server;
 using Fusion.Core.Extensions;
 using IronStar.UI;
 using Fusion.Engine.Frames;
+using System.Runtime.CompilerServices;
+using IronStar.Editor;
 
 namespace IronStar {
 
 	class ShooterInterface : IUserInterface {
 
 		readonly Game Game;
+		FrameProcessor frames;
 
 
         private ClientState previousClientState;
         private bool firstStart = true;
 
-		MainMenu menu;
+
+		MainMenu		mainMenu;
+		LoadingScreen	loadingScreen;
 
 
         /// <summary>
@@ -37,7 +42,6 @@ namespace IronStar {
         public ShooterInterface ( Game game )
 		{
 			this.Game	=	game;
-			ShowMenu	=	true;
         }
 
 
@@ -52,24 +56,25 @@ namespace IronStar {
 
 			Game.GetService<GameClient>().ClientStateChanged += GameClient_ClientStateChanged;
 
-			menu	=	new MainMenu( Game.GetService<FrameProcessor>() );
-			Game.GetService<FrameProcessor>().RootFrame.Add( menu );
+			frames	=	Game.GetService<FrameProcessor>();
 
+			mainMenu				=	new MainMenu( frames );
+			mainMenu.Visible		=	true;
+
+			loadingScreen			=	new LoadingScreen( frames );
+			loadingScreen.Visible	=	false;
+
+			frames.RootFrame.Add( mainMenu );
+			frames.RootFrame.Add( loadingScreen );
 		}
 
 
-
-		void GameClient_ClientStateChanged ( object sender, GameClient.ClientEventArgs e )
-		{
-			Game.Console.Hide();
-		}
-
-
-
+		/// <summary>
+		/// 
+		/// </summary>
 		void LoadContent ()
 		{
 		}
-
 
 
 		/// <summary>
@@ -80,12 +85,13 @@ namespace IronStar {
 		}
 
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public void Dispose()
 		{
 			Dispose(true);
 		}
-
-
 
 
 		/// <summary>
@@ -94,17 +100,74 @@ namespace IronStar {
 		/// <param name="gameTime"></param>
 		public void Update ( GameTime gameTime )
 		{
+			if (AllowGameInput()) {
+				Game.Mouse.IsMouseCentered	=	true;
+				Game.Mouse.IsMouseClipped	=	true;
+				Game.Mouse.IsMouseHidden	=	true;
+			} else {
+				Game.Mouse.IsMouseCentered	=	false;
+				Game.Mouse.IsMouseClipped	=	false;
+				Game.Mouse.IsMouseHidden	=	false;
+			}
 			//	update console :
 			Game.Console.Update( gameTime );
+
+			//	HACK:
+			if (Game.GetService<GameClient>().ClientState==ClientState.StandBy) {
+				mainMenu.Visible	=	Game.Services.GetService(typeof(MapEditor))==null;
+			}
         }
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		[MethodImpl(MethodImplOptions.NoOptimization)]
+		public bool AllowGameInput()
+		{
+			bool frameTarget	=	frames.TargetFrame!=null && frames.TargetFrame.IsActuallyVisible();
+			bool menuVisible	=	mainMenu.Visible;
+			bool loadingVisible	=	loadingScreen.Visible;
+			bool consoleVisible	=	Game.Console.IsShown;
 
-
-		public bool ShowMenu {
-			get; set;
+			return !(frameTarget || menuVisible || loadingVisible || consoleVisible);
 		}
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void GameClient_ClientStateChanged ( object sender, GameClient.ClientEventArgs e )
+		{
+			Game.Console.Hide();
+
+			switch (e.ClientState) {
+				case ClientState.StandBy:
+					mainMenu.Visible = true;
+				break;
+				case ClientState.Connecting:
+					mainMenu.Visible = false;
+					loadingScreen.Visible		=	true;
+					loadingScreen.StatusText	=	"CONNECTING...";
+				break;
+				case ClientState.Loading:
+					loadingScreen.StatusText	=	"LOADING...";
+				break;
+				case ClientState.Awaiting:
+					loadingScreen.StatusText	=	"AWAITING SNAPSHOT...";
+				break;
+				case ClientState.Active:
+					loadingScreen.Visible		=	false;
+					mainMenu.Visible = false;
+				break;
+				case ClientState.Disconnected:
+					mainMenu.Visible = true;
+				break;
+			}
+		}
 
 
 		/// <summary>
@@ -114,7 +177,6 @@ namespace IronStar {
 		{
 			Game.Exit();
 		}
-
 
 
 		/// <summary>

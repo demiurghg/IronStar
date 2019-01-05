@@ -15,6 +15,7 @@ using IronStar.SFX;
 using Fusion.Core.IniParser.Model;
 using Fusion.Engine.Graphics;
 using IronStar.Mapping;
+using System.Threading;
 
 namespace IronStar.Core {
 
@@ -64,6 +65,8 @@ namespace IronStar.Core {
 
 
 				var map = content.PrecacheSafe<Map>(@"maps\" + serverInfo );
+
+				Thread.Sleep(2000);
 			}
 		}
 

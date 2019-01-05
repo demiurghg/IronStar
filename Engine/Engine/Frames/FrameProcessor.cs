@@ -183,6 +183,18 @@ namespace Fusion.Engine.Frames {
 
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="TFrame"></typeparam>
+		/// <returns></returns>
+		public TFrame QueryFrame<TFrame>() where TFrame: Frame
+		{
+			return (TFrame)Frame.BFSSearch( RootFrame, (frame) => frame is TFrame );
+		}
+
+
+
+		/// <summary>
 		/// Resets 
 		/// </summary>
 		public void Reset ()

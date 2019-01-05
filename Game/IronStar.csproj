@@ -224,6 +224,7 @@
     <Compile Include="UI\Controls\ScrollBox.cs" />
     <Compile Include="UI\Controls\Slider.cs" />
     <Compile Include="UI\Controls\TextBox.cs" />
+    <Compile Include="UI\LoadingScreen.cs" />
     <Compile Include="UI\MainMenu.cs" />
     <Compile Include="UserCommand.cs" />
     <Compile Include="SFX\FXPlayback.cs" />

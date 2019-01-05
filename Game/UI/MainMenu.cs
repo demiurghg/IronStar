@@ -110,15 +110,14 @@ namespace IronStar.UI {
 			int height			=	MenuTheme.ElementHeight;
 			int width			=	0;
 
-			frame.Add( new BigButton(Frames, "Game"			, 0,0, width, height, ()=>Log.Message("Game") ) );
-			frame.Add( new BigButton(Frames, "Multiplayer"	, 0,0, width, height, ()=>Log.Message("Game") ) );
+			frame.Add( new BigButton(Frames, "Game"			, 0,0, width, height, ()=>Game.Invoker.ExecuteString("map testMonsters") ) );
+			frame.Add( new BigButton(Frames, "Map Editor"	, 0,0, width, height, ()=>Game.Invoker.ExecuteString("map testMonsters /edit") ) );
 			frame.Add( new BigButton(Frames, "Options"		, 0,0, width, height, OptionsDialog ) );
 			frame.Add( new BigButton(Frames, "Credits"		, 0,0, width, height, ()=>Log.Message("Game") ) );
 			frame.Add( new BigButton(Frames, "Exit"			, 0,0, width, height, ExitDialog ) );
 
 			return frame;
 		}
-
 
 
 		void ExitDialog ()
@@ -147,7 +146,7 @@ namespace IronStar.UI {
 			frame.BackColor		=	MenuTheme.BackColor;
 			frame.BorderTop		=	1;
 			#warning accent color?
-			frame.BorderColor	=	MenuTheme.AccentColor;
+			frame.BorderColor	=	MenuTheme.ElementColor;
 			frame.Font			=	MenuTheme.SmallFont;
 			frame.Text			=	text;
 			frame.TextAlignment	=	alignment;

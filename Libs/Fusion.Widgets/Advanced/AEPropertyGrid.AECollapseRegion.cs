@@ -70,7 +70,10 @@ namespace Fusion.Widgets.Advanced {
 					MarginBottom	=	0,
 				};
 
+				//	Add calls virtual Insert, thus button could be invisible.
+				//	Force button visible.
 				base.Add( buttonCollapse );
+				buttonCollapse.Visible = true;
 
 				buttonCollapse.StatusChanged +=ButtonCollapse_StatusChanged;
 				buttonCollapse.Click+=ButtonCollapse_Click;
@@ -79,16 +82,9 @@ namespace Fusion.Widgets.Advanced {
 			}
 
 
-
 			protected override void DrawFrame(GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex)
 			{
 				base.DrawFrame(gameTime, spriteLayer, clipRectIndex);
-
-				//if (enclosingObject==null) {
-				//	Text = Category;
-				//} else {
-				//	Text = Category + ": " + enclosingObject.ToString();
-				//}
 			}
 
 
@@ -123,12 +119,10 @@ namespace Fusion.Widgets.Advanced {
 			}
 
 
-
 			private void ButtonCollapse_Click( object sender, MouseEventArgs e )
 			{
 				Collapsed = !Collapsed;
 			}
-
 
 
 			private void ButtonCollapse_StatusChanged( object sender, StatusEventArgs e )

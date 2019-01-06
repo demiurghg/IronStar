@@ -334,29 +334,13 @@ namespace Fusion.Engine.Frames {
 		
 
 		/// <summary>
-		/// Adds frame
+		/// Inserts frame at the end of the children list.
+		/// Internally calls virtual method Insert().
 		/// </summary>
 		/// <param name="frame"></param>
 		public void Add ( Frame frame )
-		{
+		{			
 			Insert( -1, frame );
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="frame"></param>
-		public virtual void Clear ()
-		{
-			var toRemove = children.ToArray();
-
-			foreach ( var child in toRemove ) {
-				child.Close();
-			}
-
-			layoutDirty = true;
 		}
 
 
@@ -381,6 +365,21 @@ namespace Fusion.Engine.Frames {
 			}
 		}
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="frame"></param>
+		public virtual void Clear ()
+		{
+			var toRemove = children.ToArray();
+
+			foreach ( var child in toRemove ) {
+				child.Close();
+			}
+
+			layoutDirty = true;
+		}
 
 
 		/// <summary>

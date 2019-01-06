@@ -83,9 +83,9 @@ namespace Fusion.Engine.Frames {
 			get { return width; }
 			set {
 				if (width!=value) { 
-					width = value; 
 					MakeLayoutDirty();
 					parent?.MakeLayoutDirty();
+					width = value; 
 					sizeDirty = true;
 				}
 			}
@@ -98,9 +98,9 @@ namespace Fusion.Engine.Frames {
 			get { return height; }
 			set { 
 				if (height!=value) {
-					height = value; 
 					MakeLayoutDirty();
 					parent?.MakeLayoutDirty();
+					height = value; 
 					sizeDirty = true;
 				}
 			}

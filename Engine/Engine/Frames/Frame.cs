@@ -174,6 +174,8 @@ namespace Fusion.Engine.Frames {
 		public event EventHandler	LayoutChanged;
 		public event EventHandler	Activated;
 		public event EventHandler	Deactivated;
+		public event EventHandler	Enter;
+		public event EventHandler	Leave;
 		public event EventHandler	Missclick;
 		public event EventHandler	Closed;
 		public event EventHandler<MouseEventArgs>	MouseIn;
@@ -335,15 +337,11 @@ namespace Fusion.Engine.Frames {
 		/// Adds frame
 		/// </summary>
 		/// <param name="frame"></param>
-		public virtual void Add ( Frame frame )
+		public void Add ( Frame frame )
 		{
-			if ( !children.Contains(frame) ) {
-				children.Add( frame );
-				frame.parent	=	this;
-				frame.OnStatusChanged( FrameStatus.None );
-				layoutDirty = true;
-			}
+			Insert( -1, frame );
 		}
+
 
 
 		/// <summary>
@@ -370,7 +368,13 @@ namespace Fusion.Engine.Frames {
 		public virtual void Insert ( int index, Frame frame )
 		{
 			if ( !children.Contains(frame) ) {
-				children.Insert( index, frame );
+
+				if (index<0) {
+					children.Add( frame );
+				} else {
+					children.Insert( index, frame );
+				}
+
 				frame.parent	=	this;
 				frame.OnStatusChanged( FrameStatus.None );
 				layoutDirty = true;
@@ -385,6 +389,11 @@ namespace Fusion.Engine.Frames {
 		/// <param name="frame"></param>
 		public virtual void Remove ( Frame frame )
 		{
+			if ( Frames.IsModalFrame(frame) ) {
+				Log.Warning("Frames : can not close/remove modal frame");
+				return;
+			}
+
 			if ( children.Contains(frame) ) {
 
 				children.Remove( frame );
@@ -404,7 +413,17 @@ namespace Fusion.Engine.Frames {
 		/// </summary>
 		public virtual void Close ()
 		{
-			Parent?.Remove(this);
+			if (Frames.IsModalFrame(this)) {
+				if (Frames.IsTopLevelModalFrame(this)) {
+					Frames.PopModalFrame(this);
+					return;
+				} else {
+					Log.Warning("Frames : Can not close non top level modal frame");
+					return;
+				}
+			} else {
+				Parent?.Remove(this);
+			}
 		}
 
 
@@ -674,15 +693,25 @@ namespace Fusion.Engine.Frames {
 			Tick?.Invoke( this, EventArgs.Empty );
 		}
 
+
+		bool activated = false;
+
+
 		internal void OnActivate ()
 		{
+			Parent?.OnActivate();
 			Activated?.Invoke( this, EventArgs.Empty );
+			Enter?.Invoke( this, EventArgs.Empty );
 		}
 
+		
 		internal void OnDeactivate ()
 		{
+			Parent?.OnDeactivate();
 			Deactivated?.Invoke( this, EventArgs.Empty );
+			Leave?.Invoke( this, EventArgs.Empty );
 		}
+
 
 		internal void OnKeyDown( Keys key, bool shift, bool alt, bool ctrl )
 		{

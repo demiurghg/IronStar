@@ -22,8 +22,6 @@ namespace IronStar.UI.Controls.Dialogs {
 			panel.Tag		=	frames.ModalFrame;
 			panel.AllowDrag	=	true;
 
-			panel.Closed	+=  (s,e) => frames.ModalFrame = panel.Tag as Frame;
-
 			var layout		=	new PageLayout();
 			layout.Margin	=	MenuTheme.Margin;
 			layout.AddRow( MenuTheme.ElementHeight, new float[] { -1 } );
@@ -84,9 +82,8 @@ namespace IronStar.UI.Controls.Dialogs {
 
 			//	Settle option's box :
 
-			owner.Add( panel );
+			frames.PushModalFrame( panel, owner );
 			panel.CenterFrame();
-			frames.ModalFrame = panel;
 		}
 	}
 }

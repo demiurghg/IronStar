@@ -23,8 +23,7 @@ namespace Fusion.Widgets.Dialogs {
 			colorPicker.X	=	x;
 			colorPicker.Y	=	y;
 
-			fp.RootFrame.Add( colorPicker );
-			fp.ModalFrame = colorPicker;
+			fp.PushModalFrame( colorPicker );
 
 			colorPicker.ConstrainFrame(10);
 		}

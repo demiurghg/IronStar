@@ -6617,7 +6617,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapDecal, IronStar",
-        "ImageName": "explosion",
+        "ImageName": "acid2",
         "Width": 4.0,
         "Height": 4.0,
         "Depth": 0.5,

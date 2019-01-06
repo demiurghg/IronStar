@@ -28,8 +28,7 @@ namespace Fusion.Widgets.Dialogs {
 		{
 			var atlasSelector	=	new AtlasSelectorFrame( fp, atlasName, oldImageName, setImageName );
 
-			fp.RootFrame.Add( atlasSelector );
-			fp.ModalFrame = atlasSelector;
+			fp.PushModalFrame( atlasSelector );
 
 			atlasSelector.CenterFrame();
 		}

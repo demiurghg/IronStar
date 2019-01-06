@@ -27,8 +27,7 @@ namespace Fusion.Widgets.Dialogs {
 		{
 			var fileSelector	=	new FileSelectorFrame( fp, defaultDir, searchPattern, oldFileName, setFileName );
 
-			fp.RootFrame.Add( fileSelector );
-			fp.ModalFrame = fileSelector;
+			fp.PushModalFrame( fileSelector );
 
 			fileSelector.CenterFrame();
 		}

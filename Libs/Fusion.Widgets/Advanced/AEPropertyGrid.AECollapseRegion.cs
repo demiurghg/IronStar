@@ -92,9 +92,9 @@ namespace Fusion.Widgets.Advanced {
 			}
 
 
-			public override void Add( Frame frame )
+			public override void Insert( int index, Frame frame )
 			{
-				base.Add( frame );
+				base.Insert( index, frame );
 				if (collapsed) {
 					frame.Visible = false;
 				}

@@ -130,8 +130,9 @@ namespace IronStar {
 			bool menuVisible	=	mainMenu.Visible;
 			bool loadingVisible	=	loadingScreen.Visible;
 			bool consoleVisible	=	Game.Console.IsShown;
+			bool editorRunning	=	Game.GetService<MapEditor>() != null;
 
-			return !(frameTarget || menuVisible || loadingVisible || consoleVisible);
+			return !(frameTarget || menuVisible || loadingVisible || consoleVisible || editorRunning);
 		}
 
 

@@ -171,8 +171,7 @@ namespace Fusion.Widgets {
 
 			dropDownList.Tag	=	Frames.ModalFrame;
 
-			Frames.RootFrame.Add( dropDownList );
-			Frames.ModalFrame = dropDownList;
+			Frames.PushModalFrame( dropDownList );
 
 			dropDownList.ConstrainFrame(0);
 		}
@@ -181,8 +180,7 @@ namespace Fusion.Widgets {
 
 		void CloseDropDownList()
 		{
-			Frames.ModalFrame = dropDownList.Tag as Frame;
-			dropDownList.Close();
+			Frames.PopModalFrame( dropDownList );
 		}
 
 

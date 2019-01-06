@@ -17,8 +17,6 @@ namespace Fusion.Widgets {
 
 			panel.Tag		=	frames.ModalFrame;
 
-			panel.Closed	+=  (s,e) => frames.ModalFrame = panel.Tag as Frame;
-
 			label.X				=	2;
 			label.Y				=	14;
 			label.Width			=	350-4;
@@ -60,9 +58,8 @@ namespace Fusion.Widgets {
 				panel.Add( acceptBtn );
 			}
 
-			frames.RootFrame.Add( panel );
+			frames.PushModalFrame( panel, owner );
 			panel.CenterFrame();
-			frames.ModalFrame = panel;
 		}
 
 

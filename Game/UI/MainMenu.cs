@@ -50,6 +50,9 @@ namespace IronStar.UI {
 			Image		=	frames.Game.Content.Load<DiscTexture>(@"ui\background");
 			ImageColor	=	new Color( 64,64,64,255 );
 
+			Activated	+=	(s,e) => { OverallColor = Color.White; Log.Message("Activated"); };
+			Deactivated	+=	(s,e) => { OverallColor = Color.Gray;  Log.Message("Deactivated"); };
+
 			X		=	0;
 			Y		=	0;
 			Width	=	frames.RootFrame.Width;

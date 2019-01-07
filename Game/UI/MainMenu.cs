@@ -49,18 +49,12 @@ namespace IronStar.UI {
 
 			Image		=	frames.Game.Content.Load<DiscTexture>(@"ui\background");
 			ImageColor	=	new Color( 64,64,64,255 );
+			ImageMode	=	FrameImageMode.Stretched;
 
 			OverallColor	=	Color.Gray;
 			Activated	+=	(s,e) => { OverallColor = Color.White; Log.Message("Main Menu: Activated"); };
 			Deactivated	+=	(s,e) => { OverallColor = Color.Gray;  Log.Message("Main Menu: Deactivated"); };
 
-			TrackActivation	=	true;
-
-			X		=	0;
-			Y		=	0;
-			Width	=	frames.RootFrame.Width;
-			Height	=	frames.RootFrame.Height;
-			
 			var pageLayout		=	new PageLayout();
 			pageLayout.Margin	=	0;
 			pageLayout.AddRow(  0.5f, new float[] {  -1			} );
@@ -79,8 +73,6 @@ namespace IronStar.UI {
 			Add( CreateFooter( textFooterLeft,		Alignment.MiddleLeft ) );
 			Add( CreateFooter( textFooterCenter,	Alignment.MiddleCenter ) );
 			Add( CreateFooter( textFooterRight,		Alignment.MiddleRight ) );
-
-			FocusTarget();
 		}
 
 
@@ -118,13 +110,19 @@ namespace IronStar.UI {
 			int height			=	MenuTheme.ElementHeight;
 			int width			=	0;
 
-			frame.Add( new BigButton(Frames, "Game"			, 0,0, width, height, ()=>Game.Invoker.ExecuteString("map testMonsters") ) );
+			frame.Add( new BigButton(Frames, "Game"			, 0,0, width, height, SelectLevel ) );
 			frame.Add( new BigButton(Frames, "Map Editor"	, 0,0, width, height, ()=>Game.Invoker.ExecuteString("map testMonsters /edit") ) );
 			frame.Add( new BigButton(Frames, "Options"		, 0,0, width, height, OptionsDialog ) );
 			frame.Add( new BigButton(Frames, "Credits"		, 0,0, width, height, ()=>Log.Message("Game") ) );
 			frame.Add( new BigButton(Frames, "Exit"			, 0,0, width, height, ExitDialog ) );
 
 			return frame;
+		}
+
+
+		void SelectLevel ()
+		{
+			Frames.ShowDialogCentered( new LevelBox(Frames) );
 		}
 
 

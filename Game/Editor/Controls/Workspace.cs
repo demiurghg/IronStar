@@ -64,7 +64,7 @@ namespace IronStar.Editor.Controls {
 		/// 
 		/// </summary>
 		/// <param name="parent"></param>
-		public Workspace ( MapEditor editor, Frame parent ) : base( parent.Frames )
+		public Workspace ( FrameProcessor frames, MapEditor editor ) : base( frames )
 		{	
 			this.editor			=	editor;
 
@@ -75,15 +75,12 @@ namespace IronStar.Editor.Controls {
 
 			this.X				=	0;
 			this.Y				=	0;
-			this.Width			=	parent.Width;
-			this.Height			=	parent.Height;
+			this.Width			=	frames.RootFrame.Width;
+			this.Height			=	frames.RootFrame.Height;
 
 			this.Anchor			=	FrameAnchor.All;
 
 			this.entityTypes	=	Misc.GetAllSubclassesOf( typeof(EntityFactory), false );
-
-			parent.Add(this);
-			Frames.TargetFrame = this;
 
 			//
 			//	setup controls :
@@ -110,7 +107,7 @@ namespace IronStar.Editor.Controls {
 		/// </summary>
 		public void CloseWorkspace ()
 		{
-			Parent.Remove(this);
+			Close();
 		}
 
 

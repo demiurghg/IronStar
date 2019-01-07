@@ -17,7 +17,6 @@ namespace IronStar.UI.Controls.Dialogs {
 			var panel	=	new Panel( frames, 0, 0, 400, 240 );
 
 			panel.AllowDrag			=	true;
-			panel.TrackActivation	=	true;
 
 			var layout		=	new PageLayout();
 			layout.AddRow( MenuTheme.ElementHeight, new float[] { -1 } );
@@ -84,8 +83,7 @@ namespace IronStar.UI.Controls.Dialogs {
 				panel.Add( acceptBtn );
 			}
 
-			frames.PushModalFrame( panel, owner );
-			panel.CenterFrame();
+			frames.ShowDialogCentered( panel );
 		}
 
 

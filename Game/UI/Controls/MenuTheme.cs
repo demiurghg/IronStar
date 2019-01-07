@@ -30,11 +30,14 @@ namespace IronStar.UI.Controls {
 		public static readonly Color	ColorPositive			=	new Color( 128, 255, 128, 224 );
 		public static readonly Color	ColorNegative			=	new Color( 255, 128, 128, 224 );
 
+		public static readonly Color	ImageColor				=	new Color( 64, 64, 64, 255 );
+
 		//	Base metrics :
 		public static readonly int		CaptionHeight			=	15;
 		public static readonly int		ScrollSize				=	10;
 		public static readonly int		ElementHeight			=	40;
 		public static readonly int		Margin					=	4;
+		public static readonly int		SmallContentPadding		=	10;
 		public static readonly int		PanelContentPadding		=	20;
 		public static readonly int		MainContentPadding		=	60;
 

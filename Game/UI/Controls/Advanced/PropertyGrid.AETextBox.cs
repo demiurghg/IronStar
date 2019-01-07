@@ -42,6 +42,11 @@ namespace IronStar.UI.Controls.Advanced {
 
 				textBox	=	new TextBox( Frames, new DelegateBinding<string>( getFunc, setFunc ) ) { 
 					TextAlignment = Alignment.MiddleLeft, 
+					PaddingTop		= VerticalPadding,
+					PaddingBottom	= VerticalPadding,
+					PaddingLeft		= HorizontalPadding,
+					PaddingRight	= HorizontalPadding,
+					BackColor		= MenuTheme.ElementColor,
 				};
 
 				Add( textBox );

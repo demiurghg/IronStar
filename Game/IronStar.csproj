@@ -215,6 +215,7 @@
     <Compile Include="UI\Controls\Button.cs" />
     <Compile Include="UI\Controls\Dialogs\ColorPicker.ColorField.cs" />
     <Compile Include="UI\Controls\Dialogs\ColorPicker.cs" />
+    <Compile Include="UI\Controls\Dialogs\LevelBox.cs" />
     <Compile Include="UI\Controls\Dialogs\OptionsBox.cs" />
     <Compile Include="UI\Controls\MenuTheme.cs" />
     <Compile Include="UI\Controls\Dialogs\MessageBox.cs" />

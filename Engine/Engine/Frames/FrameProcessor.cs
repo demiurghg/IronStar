@@ -204,6 +204,13 @@ namespace Fusion.Engine.Frames {
 		}
 
 
+		public void ShowFullscreenFrame ( Frame fullscrFrame, Frame owner = null )
+		{
+			stack.PushModalFrame( fullscrFrame, fullscrFrame, owner );
+			fullscrFrame.ExpandFrame(0);
+		}
+
+
 		public bool IsModalFrame ( Frame frame )
 		{
 			return stack.IsModalFrame( frame );

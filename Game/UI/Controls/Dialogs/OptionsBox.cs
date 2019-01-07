@@ -21,7 +21,9 @@ namespace IronStar.UI.Controls.Dialogs {
 			var header	=	new Frame( frames );
 
 			panel.AllowDrag			=	true;
-			panel.TrackActivation	=	true;
+			panel.Image				=	frames.Game.Content.Load<DiscTexture>(@"ui\options");
+			panel.ImageColor		=	MenuTheme.ImageColor;
+			panel.ImageMode			=	FrameImageMode.Stretched;
 
 			var layout		=	new PageLayout();
 			layout.Margin	=	MenuTheme.Margin;
@@ -83,7 +85,7 @@ namespace IronStar.UI.Controls.Dialogs {
 
 			//	Settle option's box :
 
-			frames.PushModalFrame( panel, owner );
+			frames.ShowDialogCentered( panel );
 			panel.CenterFrame();
 		}
 	}

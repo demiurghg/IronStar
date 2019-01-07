@@ -64,7 +64,7 @@ namespace IronStar {
 			loadingScreen			=	new LoadingScreen( frames );
 			loadingScreen.Visible	=	false;
 
-			frames.PushModalFrame( mainMenu );
+			frames.ShowFullscreenFrame( mainMenu );
 			frames.RootFrame.Add( loadingScreen );
 		}
 

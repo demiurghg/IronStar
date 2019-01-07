@@ -42,7 +42,8 @@ namespace IronStar.Editor {
 			//ColorTheme.Font	=	Content.Load<SpriteFont>(@"fonts\editorRoboto");
 			//ColorTheme.Font	=	Content.Load<SpriteFont>(@"fonts\editorArmata");
 
-			workspace		=	new Workspace( this, Game.Frames.RootFrame );
+			workspace		=	new Workspace( Game.Frames, this );
+			Game.Frames.ShowFullscreenFrame( workspace );
 
 			var upperShelf	=	workspace.UpperShelf;
 			var lowerShelf	=	workspace.LowerShelf;

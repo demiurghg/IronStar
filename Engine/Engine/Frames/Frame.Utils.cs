@@ -37,6 +37,27 @@ namespace Fusion.Engine.Frames {
 
 
 		/// <summary>
+		/// Constrains frame by its parent frame with given margin
+		/// </summary>
+		/// <param name="frame"></param>
+		/// <param name="margin"></param>
+		public void ExpandFrame( int margin = 0 )
+		{
+			if (Parent==null) {
+				throw new InvalidOperationException("ConstrainFrame could not be applied to top frame");
+			}
+
+			var parent = Parent;
+
+			X		=	margin;
+			Y		=	margin;
+			Width	=	parent.Width  - margin * 2;
+			Height	=	parent.Height - margin * 2;
+		}
+
+
+
+		/// <summary>
 		/// Puts frame at center of parent frame.
 		/// This methods sets anchors to none.
 		/// </summary>

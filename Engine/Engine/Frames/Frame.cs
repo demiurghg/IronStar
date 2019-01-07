@@ -79,11 +79,6 @@ namespace Fusion.Engine.Frames {
 		public	bool		TabStop { get; set; } = false;
 
 		/// <summary>
-		/// Enables and disables tracking of focusing of child frames.
-		/// </summary>
-		public	bool		TrackActivation { get; set; }
-
-		/// <summary>
 		/// 
 		/// </summary>
 		public	ClippingMode	 ClippingMode	{ get; set; }

@@ -50,8 +50,11 @@ namespace IronStar.UI {
 			Image		=	frames.Game.Content.Load<DiscTexture>(@"ui\background");
 			ImageColor	=	new Color( 64,64,64,255 );
 
-			Activated	+=	(s,e) => { OverallColor = Color.White; Log.Message("Activated"); };
-			Deactivated	+=	(s,e) => { OverallColor = Color.Gray;  Log.Message("Deactivated"); };
+			OverallColor	=	Color.Gray;
+			Activated	+=	(s,e) => { OverallColor = Color.White; Log.Message("Main Menu: Activated"); };
+			Deactivated	+=	(s,e) => { OverallColor = Color.Gray;  Log.Message("Main Menu: Deactivated"); };
+
+			TrackActivation	=	true;
 
 			X		=	0;
 			Y		=	0;
@@ -76,6 +79,8 @@ namespace IronStar.UI {
 			Add( CreateFooter( textFooterLeft,		Alignment.MiddleLeft ) );
 			Add( CreateFooter( textFooterCenter,	Alignment.MiddleCenter ) );
 			Add( CreateFooter( textFooterRight,		Alignment.MiddleRight ) );
+
+			FocusTarget();
 		}
 
 

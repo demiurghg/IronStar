@@ -15,8 +15,8 @@ namespace IronStar.UI.Controls.Dialogs {
 			var frames	=	owner.Frames;
 			var panel	=	new Panel( frames, 0, 0, 400, 240 );
 
-			panel.Tag		=	frames.ModalFrame;
-			panel.AllowDrag	=	true;
+			panel.AllowDrag			=	true;
+			panel.TrackActivation	=	true;
 
 			var layout		=	new PageLayout();
 			layout.AddRow( MenuTheme.ElementHeight, new float[] { -1 } );

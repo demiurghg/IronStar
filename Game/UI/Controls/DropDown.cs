@@ -170,8 +170,6 @@ namespace IronStar.UI.Controls {
 
 			dropDownList.Width	=	Math.Max( this.Width, minDropDownWidth );
 
-			dropDownList.Tag	=	Frames.ModalFrame;
-
 			BackColor	=	MenuTheme.ButtonColorPushed;
 
 			Frames.PushModalFrame( dropDownList );

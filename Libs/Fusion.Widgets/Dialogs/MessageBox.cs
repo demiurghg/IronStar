@@ -15,8 +15,6 @@ namespace Fusion.Widgets {
 			var panel	=	new Panel( frames, 0, 0, 350,   100 );
 			var label	=	new Frame( frames );
 
-			panel.Tag		=	frames.ModalFrame;
-
 			label.X				=	2;
 			label.Y				=	14;
 			label.Width			=	350-4;

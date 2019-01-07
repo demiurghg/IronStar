@@ -79,6 +79,11 @@ namespace Fusion.Engine.Frames {
 		public	bool		TabStop { get; set; } = false;
 
 		/// <summary>
+		/// Enables and disables tracking of focusing of child frames.
+		/// </summary>
+		public	bool		TrackActivation { get; set; }
+
+		/// <summary>
 		/// 
 		/// </summary>
 		public	ClippingMode	 ClippingMode	{ get; set; }
@@ -399,8 +404,6 @@ namespace Fusion.Engine.Frames {
 				frame.parent	=	null;
 				layoutDirty = true;
 
-				ui.WipeRefs(frame);
-
 				Closed?.Invoke(this, EventArgs.Empty);
 			}
 		}
@@ -431,7 +434,7 @@ namespace Fusion.Engine.Frames {
 		/// </summary>
 		public void FocusTarget ()
 		{
-			Frames.TargetFrame = this;
+			Frames.Stack.SetTargetFrame( this );
 		}
 
 
@@ -696,19 +699,27 @@ namespace Fusion.Engine.Frames {
 		bool activated = false;
 
 
+		internal void OnEnter ()
+		{
+			Enter?.Invoke( this, EventArgs.Empty );
+		}
+
+		
+		internal void OnLeave ()
+		{
+			Leave?.Invoke( this, EventArgs.Empty );
+		}
+
+
 		internal void OnActivate ()
 		{
-			Parent?.OnActivate();
 			Activated?.Invoke( this, EventArgs.Empty );
-			Enter?.Invoke( this, EventArgs.Empty );
 		}
 
 		
 		internal void OnDeactivate ()
 		{
-			Parent?.OnDeactivate();
 			Deactivated?.Invoke( this, EventArgs.Empty );
-			Leave?.Invoke( this, EventArgs.Empty );
 		}
 
 

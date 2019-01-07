@@ -331,8 +331,6 @@ namespace IronStar.Editor.Controls {
 				panel.Close();
 			};
 
-			owner.Add( panel );
-
 			frames.PushModalFrame( panel, owner );
 			panel.CenterFrame();
 		}

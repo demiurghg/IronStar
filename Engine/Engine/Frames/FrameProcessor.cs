@@ -18,8 +18,7 @@ using Fusion.Core.Extensions;
 
 namespace Fusion.Engine.Frames {
 
-
-	public class FrameProcessor : GameComponent {
+	public partial class FrameProcessor : GameComponent {
 
 		public int	LayerOrder	{ get; set; } = 0;
 
@@ -43,44 +42,6 @@ namespace Fusion.Engine.Frames {
 		/// the creation of Frames without explicitly specified font will fail.
 		/// </summary>
 		public	SpriteFont DefaultFont { get; set; }
-
-
-		/// <summary>
-		/// Gets modal frame for entire UI.
-		/// This property does not set TargetFrame.
-		/// </summary>
-		public Frame ModalFrame {
-			get {
-				if (modalFrames.Any()) {
-					return modalFrames.Peek();
-				} else {
-					return null;
-				}
-			}
-		}
-
-
-		/// <summary>
-		/// Gets and sets current target frame.
-		/// </summary>
-		public	Frame TargetFrame { 
-			get { 
-				return targetFrame;
-			}
-			set {				
-				if (value==RootFrame) {
-					targetFrame = null;
-					return;
-				}
-				if (targetFrame!=value) {
-					targetFrame?.OnDeactivate();
-					value?.OnActivate();
-					targetFrame = value;
-				}
-			}
-		}
-		Frame targetFrame = null;
-
 
 		MouseProcessor		mouseProcessor;
 		TouchProcessor		touchProcessor;
@@ -116,10 +77,18 @@ namespace Fusion.Engine.Frames {
 			}
 		}
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public FrameStack Stack {
+			get { return stack; }
+		}
+
+
 		SpriteLayer spriteLayer;
 		UserTexture	baseFont;
-
-		Stack<Frame> modalFrames;
+		FrameStack stack;
 
 
 		/// <summary>
@@ -132,7 +101,7 @@ namespace Fusion.Engine.Frames {
 			mouseProcessor		=	new MouseProcessor( Game, this );
 			touchProcessor		=	new TouchProcessor( Game, this );
 			keyboardProcessor	=	new KeyboardProcessor( Game, this );
-			modalFrames			=	new Stack<Frame>();
+			stack				=	new FrameStack( this );
 		}
 
 
@@ -204,18 +173,6 @@ namespace Fusion.Engine.Frames {
 
 
 		/// <summary>
-		/// Resets 
-		/// </summary>
-		public void Reset ()
-		{
-			RootFrame.Clear();
-			TargetFrame = null;
-			modalFrames.Clear();
-		}
-
-
-
-		/// <summary>
 		/// Push modal frame on top of stack of modal frames 
 		/// and adds it to the owner frame.
 		/// </summary>
@@ -223,15 +180,38 @@ namespace Fusion.Engine.Frames {
 		/// <param name="modalFrame"></param>
 		public void PushModalFrame( Frame modalFrame, Frame owner = null )
 		{
-			if (modalFrame.Parent!=null) {
-				Log.Warning("Frames : PushModalFrame : frame must not be added to another frame");
-			}
-
-			(owner ?? RootFrame).Add( modalFrame );
-			modalFrames.Push( modalFrame );
+			stack.PushModalFrame( modalFrame, modalFrame, owner );
 		}
 
 
+		public void ShowDialog ( Frame dialog, Frame owner = null )
+		{
+			stack.PushModalFrame( dialog, dialog, owner );
+			dialog.ConstrainFrame( 0 );
+		}
+
+
+		public bool IsModalFrame ( Frame frame )
+		{
+			return stack.IsModalFrame( frame );
+		}
+
+
+
+		public bool IsTopLevelModalFrame ( Frame frame )
+		{
+			return stack.IsTopLevelModalFrame( frame );
+		}
+
+
+		public Frame ModalFrame {
+			get { return stack.GetModalFrame(); }
+		}
+
+		public Frame TargetFrame {
+			get { return stack.GetTargetFrame(); }
+			set { stack.SetTargetFrame(value); }
+		}
 
 		/// <summary>
 		/// Push modal frame on top of stack of modal frames.
@@ -239,63 +219,7 @@ namespace Fusion.Engine.Frames {
 		/// <param name="modalFrame"></param>
 		public void PopModalFrame ( Frame modalFrame )
 		{
-			if (modalFrames.Any()) {
-
-				var topModalFrame = modalFrames.Peek();
-
-				if (topModalFrame!=modalFrame) {
-					Log.Warning("Frames : PopModalFrame : can not pop not top-level modal frame");
-					return;
-				}
-
-				modalFrames.Pop();
-
-				topModalFrame.Close();
-			}
-		}
-
-
-		public bool IsModalFrame ( Frame frame )
-		{
-			return modalFrames.Contains(frame);
-		}
-
-
-		public bool IsTopLevelModalFrame ( Frame frame )
-		{
-			return modalFrames.Any() && (frame == modalFrames.Peek());
-		}
-
-
-		/// <summary>
-		/// Wipes possible refs to given frame or its children (recursivly)
-		/// </summary>
-		/// <param name="frame"></param>
-		public void WipeRefs ( Frame frame )
-		{
-			var scan = ModalFrame;
-
-			/*while (scan!=null) {
-				if (scan==frame) {
-					ModalFrame = null;
-					break;
-				} else {
-					scan = scan.Parent;
-				}
-			} */
-
-			//---------------
-
-			scan = TargetFrame;	
-
-			while (scan!=null) {
-				if (scan==frame) {
-					TargetFrame = null;
-					break;
-				} else {
-					scan = scan.Parent;
-				}
-			}
+			stack.PopModalFrame( modalFrame );
 		}
 
 

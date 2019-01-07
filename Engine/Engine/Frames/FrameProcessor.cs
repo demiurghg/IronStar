@@ -184,6 +184,12 @@ namespace Fusion.Engine.Frames {
 		}
 
 
+		public void PopModalFrame ( Frame modalFrame )
+		{
+			stack.PopModalFrame( modalFrame );
+		}
+
+
 		public void ShowDialog ( Frame dialog, Frame owner = null )
 		{
 			stack.PushModalFrame( dialog, dialog, owner );
@@ -191,11 +197,17 @@ namespace Fusion.Engine.Frames {
 		}
 
 
+		public void ShowDialogCentered ( Frame dialog, Frame owner = null )
+		{
+			stack.PushModalFrame( dialog, dialog, owner );
+			dialog.CenterFrame();
+		}
+
+
 		public bool IsModalFrame ( Frame frame )
 		{
 			return stack.IsModalFrame( frame );
 		}
-
 
 
 		public bool IsTopLevelModalFrame ( Frame frame )
@@ -208,18 +220,10 @@ namespace Fusion.Engine.Frames {
 			get { return stack.GetModalFrame(); }
 		}
 
+
 		public Frame TargetFrame {
 			get { return stack.GetTargetFrame(); }
 			set { stack.SetTargetFrame(value); }
-		}
-
-		/// <summary>
-		/// Push modal frame on top of stack of modal frames.
-		/// </summary>
-		/// <param name="modalFrame"></param>
-		public void PopModalFrame ( Frame modalFrame )
-		{
-			stack.PopModalFrame( modalFrame );
 		}
 
 

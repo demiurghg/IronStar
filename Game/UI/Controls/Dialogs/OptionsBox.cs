@@ -13,6 +13,7 @@ using Fusion.Core.Shell;
 namespace IronStar.UI.Controls.Dialogs {
 	public static class OptionsBox {
 
+		[Obsolete("Use FrameProcessor.ShowDialog")]
 		static public void ShowDialog ( Frame owner, object video, object audio, object gameplay, object controls )
 		{
 			var frames	=	owner.Frames;

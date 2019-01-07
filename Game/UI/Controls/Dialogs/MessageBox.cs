@@ -10,6 +10,7 @@ using Fusion.Engine.Frames.Layouts;
 namespace IronStar.UI.Controls.Dialogs {
 	public static class MessageBox {
 
+		[Obsolete("Use FrameProcessor.ShowDialog")]
 		static void ShowDialog ( Frame owner, string headerText, string message, Color textColor, int numButtons, Action accept, Action reject, string acceptText="Accept", string rejectText="Reject" )
 		{
 			var frames	=	owner.Frames;

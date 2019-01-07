@@ -9,6 +9,7 @@ using Fusion.Engine.Frames;
 namespace Fusion.Widgets {
 	public static class MessageBox {
 
+		[Obsolete("Use FrameProcessor.ShowDialog")]
 		static void ShowDialog ( Frame owner, string message, Color textColor, int numButtons, Action accept, Action reject )
 		{
 			var frames	=	owner.Frames;

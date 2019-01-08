@@ -296,6 +296,12 @@ namespace Fusion.Engine.Frames {
 		}
 
 		
+		public static Frame CreateBlackFrame ( FrameProcessor frames )
+		{
+			return new Frame(frames, 0,0,0,0,"",Color.Black) { Ghost=true };
+		}
+
+		
 		/// <summary>
 		/// Common init 
 		/// </summary>
@@ -529,6 +535,11 @@ namespace Fusion.Engine.Frames {
 
 
 
+		/// <summary>
+		/// Indicates whether frame is visible, 
+		/// all its parent frames are visible and it is attached to root frame.
+		/// </summary>
+		/// <returns></returns>
 		public bool IsActuallyVisible ()
 		{	
 			var frame = this;
@@ -537,10 +548,15 @@ namespace Fusion.Engine.Frames {
 				if (!frame.Visible) {
 					return false;
 				}
+
+				if (frame.Parent==Frames.RootFrame) {
+					return true;
+				}
+
 				frame = frame.Parent;
 			}
 
-			return true;
+			return false;
 		}
 
 

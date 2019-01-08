@@ -77,8 +77,8 @@ namespace IronStar.UI.Controls.Dialogs {
 
 		void StartSelectedLevel ()
 		{
-			Game.Invoker.ExecuteString("map testMonsters");
 			Close();
+			Game.Invoker.ExecuteString("map testMonsters");
 		}
 
 

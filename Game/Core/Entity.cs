@@ -362,7 +362,7 @@ namespace IronStar.Core {
 		/// <returns></returns>
 		public Quaternion LerpRotation ( float lerpFactor )
 		{
-			return Quaternion.Slerp( RotationOld, Rotation, MathUtil.Clamp(lerpFactor,0,1f) );
+			return Rotation;// Quaternion.Slerp( RotationOld, Rotation, MathUtil.Clamp(lerpFactor,0,1f) );
 		}
 
    
@@ -373,7 +373,7 @@ namespace IronStar.Core {
 		/// <returns></returns>
 		public Vector3 LerpPosition ( float lerpFactor )
 		{
-			return Vector3.Lerp( PositionOld, Position, MathUtil.Clamp(lerpFactor,0,2f) );
+			return Position; //Vector3.Lerp( PositionOld, Position, MathUtil.Clamp(lerpFactor,0,2f) );
 		}
 
 

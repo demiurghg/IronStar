@@ -36,13 +36,6 @@ namespace IronStar.UI {
 
 		public MainMenu( FrameProcessor frames ) : base(frames)
 		{
-			MenuTheme.BigFont		=	frames.Game.Content.Load<SpriteFont>(@"fonts\amdrtg100");
-			MenuTheme.NormalFont	=	frames.Game.Content.Load<SpriteFont>(@"fonts\armata20");
-			MenuTheme.HeaderFont	=	frames.Game.Content.Load<SpriteFont>(@"fonts\armata28");
-			MenuTheme.SmallFont		=	frames.Game.Content.Load<SpriteFont>(@"fonts\armata14");
-
-			MenuTheme.ArrowDown		=	frames.Game.Content.Load<DiscTexture>(@"ui\arrowDown");
-
 			Anchor	=	FrameAnchor.All;
 
 			BackColor	=	Color.Black;

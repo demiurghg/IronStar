@@ -10,6 +10,9 @@ namespace IronStar.UI.Controls {
 
 	public static class MenuTheme {
 
+		//	Fire in the sky https://www.color-hex.com/color-palette/48018
+		//	Red Fire		https://www.color-hex.com/color-palette/67224
+
 		public static SpriteFont BigFont = null;
 		public static SpriteFont NormalFont = null;
 		public static SpriteFont HeaderFont = null;

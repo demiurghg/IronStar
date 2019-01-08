@@ -36,13 +36,8 @@ namespace IronStar.UI.Controls.Dialogs {
 
 			//	Header :
 
-			header.Font			=	MenuTheme.HeaderFont;
-			header.Text			=	"OPTIONS";
-			header.ForeColor	=	MenuTheme.TextColorNormal;
-			header.BackColor	=	MenuTheme.Transparent;
-			header.Padding		=	4;
-			header.Ghost		=	true;
-
+			header			=	panel.CreateHeader("OPTIONS");
+			
 			//	Property grid :
 		
 			var grid			=	new PropertyGrid( owner.Frames );
@@ -86,7 +81,6 @@ namespace IronStar.UI.Controls.Dialogs {
 			//	Settle option's box :
 
 			frames.ShowDialogCentered( panel );
-			panel.CenterFrame();
 		}
 	}
 }

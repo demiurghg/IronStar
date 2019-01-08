@@ -113,10 +113,6 @@ namespace IronStar.Mapping {
 
 		public override void SpawnNode( GameWorld world )
 		{
-			if (!world.IsPresentationEnabled) {
-				return;
-			}
-
 			var lightSet	=	world.Game.RenderSystem.RenderWorld.LightSet;
 
 			light		=	new SpotLight();

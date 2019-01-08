@@ -32,15 +32,15 @@ namespace Fusion.Widgets {
 			if (numButtons==2) {
 				var acceptBtn		=	new Button(frames, "Accept",     350-160-4, 100-22, 80, 20, 
 					() => {
-						accept?.Invoke();
 						panel.Close();
+						accept?.Invoke();
 					}
 				);
 
 				var rejectBtn	=	new Button(frames, "Reject",     350-80-2, 100-22, 80, 20, 
 					() => {
-						reject?.Invoke();
 						panel.Close();
+						reject?.Invoke();
 					}
 				);
 
@@ -50,8 +50,8 @@ namespace Fusion.Widgets {
 			if (numButtons==1) {
 				var acceptBtn		=	new Button(frames, "Accept",     350-80-2, 100-22, 80, 20, 
 					() => {
-						accept?.Invoke();
 						panel.Close();
+						accept?.Invoke();
 					}
 				);
 				panel.Add( acceptBtn );

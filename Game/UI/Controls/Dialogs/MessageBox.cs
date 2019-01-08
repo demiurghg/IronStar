@@ -58,15 +58,15 @@ namespace IronStar.UI.Controls.Dialogs {
 			if (numButtons==2) {
 				var acceptBtn		=	new Button(frames, acceptText, 0,0,0,0, 
 					() => {
-						accept?.Invoke();
 						panel.Close();
+						accept?.Invoke();
 					}
 				);
 
 				var rejectBtn	=	new Button(frames, rejectText, 0,0,0,0, 
 					() => {
-						reject?.Invoke();
 						panel.Close();
+						reject?.Invoke();
 					}
 				);
 
@@ -76,8 +76,8 @@ namespace IronStar.UI.Controls.Dialogs {
 			if (numButtons==1) {
 				var acceptBtn		=	new Button(frames, acceptText, 0,0,0,0, 
 					() => {
-						accept?.Invoke();
 						panel.Close();
+						accept?.Invoke();
 					}
 				);
 				panel.Add( acceptBtn );

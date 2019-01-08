@@ -8,6 +8,7 @@ using Fusion.Engine.Common;
 
 namespace IronStar {
 
+	#warning move to game as service!
 	class LocalMessageService : IMessageService {
 
 		public void Push( string message )

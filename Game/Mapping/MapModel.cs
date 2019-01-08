@@ -133,19 +133,16 @@ namespace IronStar.Mapping {
 			//
 			//	add visible mesh instance :
 			//
-			if (world.IsPresentationEnabled) {
-
-				for ( int i=0; i<scene.Nodes.Count; i++ ) {
-					var meshIndex = scene.Nodes[i].MeshIndex;
+			for ( int i=0; i<scene.Nodes.Count; i++ ) {
+				var meshIndex = scene.Nodes[i].MeshIndex;
 				
-					if (meshIndex>=0) {
-						instances[i] = new MeshInstance( rs, scene, scene.Meshes[meshIndex] );
-						instances[i].World	= transforms[ i ] * WorldMatrix;
-						instances[i].Group	= InstanceGroup.Static;
-						rs.RenderWorld.Instances.Add( instances[i] );
-					} else {
-						instances[i] = null;
-					}
+				if (meshIndex>=0) {
+					instances[i] = new MeshInstance( rs, scene, scene.Meshes[meshIndex] );
+					instances[i].World	= transforms[ i ] * WorldMatrix;
+					instances[i].Group	= InstanceGroup.Static;
+					rs.RenderWorld.Instances.Add( instances[i] );
+				} else {
+					instances[i] = null;
 				}
 			}
 		}

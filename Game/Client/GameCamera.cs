@@ -27,7 +27,6 @@ namespace IronStar.Views {
 		public readonly Game Game;
 		public readonly GameWorld World;
 		public readonly Guid ClientGuid;
-		public readonly ShooterClient client;
 
 		readonly Scene camera;
 		readonly AnimationComposer composer;
@@ -48,10 +47,9 @@ namespace IronStar.Views {
 		/// </summary>
 		/// <param name="game"></param>
 		/// <param name="space"></param>
-		public GameCamera ( GameWorld world, ShooterClient client )
+		public GameCamera ( GameWorld world, Guid userGuid )
 		{
-			this.ClientGuid	=	client.UserGuid;
-			this.client		=	client;
+			this.ClientGuid	=	userGuid;
 			this.World		=	world;
 			this.Game		=	world.Game;
 			currentFov		=	90;//(world.GameClient as ShooterClient).Fov;
@@ -102,7 +100,7 @@ namespace IronStar.Views {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void Update ( GameTime gameTime, float lerpFactor )
+		public void Update ( GameTime gameTime, float lerpFactor, UserCommand uc )
 		{
 			var elapsedTime =  gameTime.ElapsedSec;
 
@@ -112,15 +110,15 @@ namespace IronStar.Views {
 
 			var aspect	=	(vp.Width) / (float)vp.Height;
 
-			var uc		=	client.UserCommand;
 			var m		= 	Matrix.RotationYawPitchRoll( uc.Yaw, uc.Pitch, uc.Roll );
 
 			var player	=	World.GetPlayerEntity( ClientGuid ) as Player;
 
 			if (player==null) {
-				//Log.Warning("No entity associated with player");
+				Log.Warning("No entity associated with player");
 				return;
 			}
+
 
 			var targetFov	=	MathUtil.Clamp( uc.Action.HasFlag( UserAction.Zoom ) ? 30 : 110, 10, 140 );
 			currentFov		=	MathUtil.Drift( currentFov, targetFov, 360*elapsedTime, 360*elapsedTime );
@@ -136,7 +134,7 @@ namespace IronStar.Views {
 			var cameraUp	=	m.Up;
 			#else
 
-			var translate	=	Matrix.Translation( player.LerpPosition(0) );
+			var translate	=	Matrix.Translation( player.Position );
 			var rotateYaw	=	Matrix.RotationYawPitchRoll( uc.Yaw, 0, 0 );
 			var rotatePR	=	Matrix.RotationYawPitchRoll( 0, uc.Pitch, uc.Roll );
 

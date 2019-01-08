@@ -70,10 +70,7 @@ namespace IronStar.Core {
 		public ItemCollection	Items	 { get { return items; } }
 		public NavigationMesh	NavMesh { get { return navMesh; } }
 
-
 		public SnapshotHeader snapshotHeader = new SnapshotHeader();
-
-		public readonly bool IsPresentationEnabled;
 
 		Map map;
 
@@ -82,9 +79,8 @@ namespace IronStar.Core {
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
-		public GameWorld( Game game, Map map, ContentManager content, IMessageService msgsvc, bool enablePresentation, Guid userGuid )
+		public GameWorld( Game game, Map map, ContentManager content, IMessageService msgsvc, Guid userGuid )
 		{
-			IsPresentationEnabled	=	enablePresentation;
 			MessageService			=	msgsvc;
 
 			this.Content	=	content;
@@ -98,17 +94,14 @@ namespace IronStar.Core {
 			navMesh			=	map.BuildNavMesh( content );
 
 			//	setup rendering stuff :
-			if (enablePresentation) {
+			var rw					=	Game.RenderSystem.RenderWorld;
 
-				var rw					=	Game.RenderSystem.RenderWorld;
+			rw.VirtualTexture		=	Content.Load<VirtualTexture>("*megatexture");
+			fxPlayback				=	new SFX.FXPlayback( this );
+			modelManager			=	new SFX.ModelManager( this );
 
-				rw.VirtualTexture		=	Content.Load<VirtualTexture>("*megatexture");
-				fxPlayback				=	new SFX.FXPlayback( this );
-				modelManager			=	new SFX.ModelManager( this );
-
-				rw.LightSet.SpotAtlas	=	Content.Load<TextureAtlas>(@"spots\spots");
-				rw.LightSet.DecalAtlas	=	Content.Load<TextureAtlas>(@"decals\decals");
-			}
+			rw.LightSet.SpotAtlas	=	Content.Load<TextureAtlas>(@"spots\spots");
+			rw.LightSet.DecalAtlas	=	Content.Load<TextureAtlas>(@"decals\decals");
 
 			//	initialize server atoms, 
 			//	including assets and inline-factories.
@@ -117,9 +110,6 @@ namespace IronStar.Core {
 			//	spawn map nodes: static models, lights, 
 			//	fx, entities, etc.
 			foreach ( var mapNode in map.Nodes ) {
-				if (enablePresentation && mapNode is MapEntity) {
-					continue;
-				}
 				mapNode.SpawnNode(this);
 			}
 
@@ -144,12 +134,10 @@ namespace IronStar.Core {
 
 				Content?.Dispose();
 
-				if (IsPresentationEnabled) {
-					Game.RenderSystem.RenderWorld.ClearWorld();
+				Game.RenderSystem.RenderWorld.ClearWorld();
 
-					SafeDispose( ref fxPlayback );
-					SafeDispose( ref modelManager );
-				}
+				SafeDispose( ref fxPlayback );
+				SafeDispose( ref modelManager );
 			}
 
 			base.Dispose( disposing );

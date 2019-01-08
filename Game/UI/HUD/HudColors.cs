@@ -19,7 +19,7 @@ using BEPUphysics.Character;
 using Fusion.Engine.Frames;
 using IronStar.Entities.Players;
 
-namespace IronStar.Views {
+namespace IronStar.UI.HUD {
 	public static class HudColors {
 
 		public static Color BackgroundColor	=	new Color( 0,0,0, 96 );

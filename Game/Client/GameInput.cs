@@ -17,9 +17,12 @@ using Fusion.Engine.Graphics;
 using IronStar.Core;
 using Fusion.Engine.Tools;
 using Fusion.Engine.Frames;
+using IronStar.SinglePlayer;
 
 namespace IronStar.Client {
-	public partial class GameInput : GameComponent {
+	public partial class GameInput {
+
+		public readonly Game Game;
 
 		[Config] public float	Sensitivity		{ get; set; }	=	5;
 		[Config] public bool	InvertMouse		{ get; set; }	=	true;
@@ -60,51 +63,17 @@ namespace IronStar.Client {
 		[Config] public Keys	Weapon6			{ get; set; }	=	Keys.D6;	
 		[Config] public Keys	Weapon7			{ get; set; }	=	Keys.D7;
 		[Config] public Keys	Weapon8			{ get; set; }	=	Keys.D8;
-																
-
-		public bool EnableControl {
-			get; set;
-		}
-
+							
+		
+											
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="cl"></param>
-		public GameInput (Game game) : base(game)
+		public GameInput (Game game)
 		{	
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public override void Initialize()
-		{
-			Game.Keyboard.KeyDown += Keyboard_KeyDown;	
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="disposing"></param>
-		protected override void Dispose( bool disposing )
-		{
-			Game.Keyboard.KeyDown -= Keyboard_KeyDown;	
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void Keyboard_KeyDown ( object sender, KeyEventArgs e )
-		{
+			this.Game	=	game;
 		}
 
 
@@ -124,6 +93,8 @@ namespace IronStar.Client {
 			userCommand.MoveForward	=	0;
 			userCommand.MoveRight	=	0;
 			userCommand.MoveUp		=	0;
+
+			if (Game.Keyboard.IsKeyDown( Keys.Escape	)) Game.GetService<Mission>().State.Pause();
 			
 			if (Game.Keyboard.IsKeyDown( MoveForward	)) userCommand.MoveForward++;
 			if (Game.Keyboard.IsKeyDown( MoveBackward	)) userCommand.MoveForward--;

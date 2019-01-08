@@ -18,6 +18,18 @@ namespace Fusion.Core.Extensions {
 		{
 			int order = game.Components.Count;
 
+			AddServiceAndComponent( game, order, component );
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="game"></param>
+		/// <param name="component"></param>
+		public static void AddServiceAndComponent(this Game game, int order, IGameComponent component)
+		{
 			if (component is GameComponent) {
 				(component as GameComponent).UpdateOrder = order;
 			}

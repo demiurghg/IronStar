@@ -35,8 +35,6 @@ namespace IronStar {
 		Map map;
 		IMessageService msgsvc;
 
-		HudFrame hud;
-
 		public Guid UserGuid { get { return userGuid; } }
 
 
@@ -55,10 +53,7 @@ namespace IronStar {
 			userCommand		=	new UserCommand();
 			content			=	new ContentManager( client.Game );
 
-
 			game.Config.ApplySettings( this );
-
-			gameInput.EnableControl = true;
 		}
 
 
@@ -66,12 +61,11 @@ namespace IronStar {
 		public void Initialize( string serverInfo )
 		{
 			map		=   content.Load<Map>( @"maps\" + serverInfo );
-			world	=	new GameWorld( game, map, content, msgsvc, true, userGuid );
+			world	=	new GameWorld( game, map, content, msgsvc, userGuid );
 
 			world.EntitySpawned += World_EntitySpawned;
 
-			camera	=	new GameCamera( world, this );
-			hud		=	new HudFrame( game.GetService<FrameProcessor>().RootFrame );
+			camera	=	new GameCamera( world, userGuid );
 		}
 
 		
@@ -81,10 +75,7 @@ namespace IronStar {
 			if ( disposing ) {
 
 				game.Config.RetrieveSettings( this );
-
-				gameInput?.Dispose();
 				world?.Dispose();
-				hud?.Close();
 			}
 
 			base.Dispose(disposing);
@@ -102,11 +93,9 @@ namespace IronStar {
 
 		public byte[] Update( GameTime gameTime, uint sentCommandID )
 		{
-			hud.SetPlayer( world.GetPlayerEntity( this.UserGuid ) as Player );
-
 			gameInput.Update( gameTime, world, ref userCommand );
 
-			camera.Update( gameTime, 1 );
+			camera.Update( gameTime, 1, userCommand );
 			
 			world.PresentWorld( gameTime, 1, camera, userCommand );
 

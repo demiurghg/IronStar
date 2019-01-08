@@ -133,5 +133,20 @@ namespace IronStar.UI.Controls {
 			resizeRight		= false;
 			resizeLeft		= false;
 		}
+
+
+		public Frame CreateHeader ( string text )
+		{
+			Frame header = new Frame( Frames );
+
+			header.Font			=	MenuTheme.HeaderFont;
+			header.Text			=	text;
+			header.ForeColor	=	MenuTheme.TextColorNormal;
+			header.BackColor	=	MenuTheme.Transparent;
+			header.Padding		=	4;
+			header.Ghost		=	true;
+
+			return header;
+		}
 	}
 }

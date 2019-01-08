@@ -114,8 +114,8 @@ namespace IronStar.SFX {
 			var ent = fxPlayback.world.GetEntity( fxEvent.EntityID );
 
 			if (ent!=null) {
-				fxEvent.Origin		=	ent.LerpPosition( lerpFactor );
-				fxEvent.Rotation	=	ent.LerpRotation( lerpFactor );
+				fxEvent.Origin		=	ent.LerpPosition( 1 );
+				fxEvent.Rotation	=	ent.LerpRotation( 1 );
 				fxEvent.Velocity	=	ent.LinearVelocity;
 			}
 

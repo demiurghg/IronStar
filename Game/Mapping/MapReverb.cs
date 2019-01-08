@@ -43,10 +43,6 @@ namespace IronStar.Mapping {
 
 		public override void SpawnNode( GameWorld world )
 		{
-			if (!world.IsPresentationEnabled) {
-				return;
-			}
-
 			try {
 
 				var ss		=	world.Game.GetService<SoundSystem>();

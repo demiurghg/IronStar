@@ -19,7 +19,7 @@ using BEPUphysics.Character;
 using Fusion.Engine.Frames;
 using IronStar.Entities.Players;
 
-namespace IronStar.Views {
+namespace IronStar.UI.HUD {
 	public class HudFrame : Frame {
 
 		readonly GameWorld	world;
@@ -54,20 +54,21 @@ namespace IronStar.Views {
 		/// </summary>
 		/// <param name="game"></param>
 		/// <param name="space"></param>
-		public HudFrame ( Frame parent ) : base( parent.Frames )
+		public HudFrame ( FrameProcessor fp ) : base( fp )
 		{
 			this.BackColor		=	Color.Zero;
 			this.BorderColor	=	Color.Zero;
 			this.Border			=	0;
 			this.Padding		=	0;
 
-			int w				=	parent.Width;
-			int h				=	parent.Height;
-
 			this.X				=	0;
 			this.Y				=	0;
-			this.Width			=	parent.Width;
-			this.Height			=	parent.Height;
+			this.Width			=	fp.RootFrame.Width;
+			this.Height			=	fp.RootFrame.Height;
+
+			#warning USE PAGE LAYOUT!
+			int w				=	fp.RootFrame.Width;
+			int h				=	fp.RootFrame.Height;
 
 			this.Anchor			=	FrameAnchor.All;
 
@@ -110,10 +111,6 @@ namespace IronStar.Views {
 			message.Visible = true;
 
 			this.Add( crossHair );
-
-
-		
-			parent.Add(this);
 		}
 
 

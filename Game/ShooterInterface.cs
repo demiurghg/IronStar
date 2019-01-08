@@ -18,21 +18,20 @@ using IronStar.UI;
 using Fusion.Engine.Frames;
 using System.Runtime.CompilerServices;
 using IronStar.Editor;
+using IronStar.SinglePlayer;
+using IronStar.UI.HUD;
+using IronStar.UI.Controls;
 
 namespace IronStar {
 
 	class ShooterInterface : IUserInterface {
 
-		readonly Game Game;
-		FrameProcessor frames;
-
-
-        private ClientState previousClientState;
-        private bool firstStart = true;
-
-
+		readonly Game	Game;
+		FrameProcessor	frames;
 		MainMenu		mainMenu;
 		LoadingScreen	loadingScreen;
+		HudFrame		hudFrame;
+		PauseMenu		pauseMenu;
 
 
         /// <summary>
@@ -55,17 +54,24 @@ namespace IronStar {
 			Game.Reloading += (s,e) => LoadContent();
 
 			Game.GetService<GameClient>().ClientStateChanged += GameClient_ClientStateChanged;
+			Game.GetService<Mission>().MissionStateChanged +=ShooterInterface_MissionStateChanged;
 
 			frames	=	Game.GetService<FrameProcessor>();
 
+			MenuTheme.BigFont		=	frames.Game.Content.Load<SpriteFont>(@"fonts\amdrtg100");
+			MenuTheme.NormalFont	=	frames.Game.Content.Load<SpriteFont>(@"fonts\armata20");
+			MenuTheme.HeaderFont	=	frames.Game.Content.Load<SpriteFont>(@"fonts\armata28");
+			MenuTheme.SmallFont		=	frames.Game.Content.Load<SpriteFont>(@"fonts\armata14");
+			MenuTheme.ArrowDown		=	frames.Game.Content.Load<DiscTexture>(@"ui\arrowDown");
+
+
 			mainMenu				=	new MainMenu( frames );
-			mainMenu.Visible		=	true;
-
 			loadingScreen			=	new LoadingScreen( frames );
-			loadingScreen.Visible	=	false;
+			hudFrame				=	new HudFrame( frames );
+			pauseMenu				=	new PauseMenu( frames );
 
-			frames.ShowFullscreenFrame( mainMenu );
-			frames.RootFrame.Add( loadingScreen );
+			//	push empty frame :
+			frames.ShowFullscreenFrame( Frame.CreateBlackFrame(frames) );
 		}
 
 
@@ -123,17 +129,69 @@ namespace IronStar {
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		[MethodImpl(MethodImplOptions.NoOptimization)]
 		public bool AllowGameInput()
 		{
-			bool frameTarget	=	frames.TargetFrame!=null && frames.TargetFrame.IsActuallyVisible();
-			bool menuVisible	=	mainMenu.Visible;
-			bool loadingVisible	=	loadingScreen.Visible;
+			bool frameTarget	=	false;//frames.TargetFrame!=null && frames.TargetFrame.IsActuallyVisible();
+
+			bool menuVisible	=	mainMenu.IsActuallyVisible();
+				 menuVisible	|=	loadingScreen.IsActuallyVisible();
+				 menuVisible	|=	pauseMenu.IsActuallyVisible();
+
 			bool consoleVisible	=	Game.Console.IsShown;
 			bool editorRunning	=	Game.GetService<MapEditor>() != null;
 
-			return !(frameTarget || menuVisible || loadingVisible || consoleVisible || editorRunning);
+			return !(frameTarget || menuVisible  || consoleVisible || editorRunning);
 		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void ShooterInterface_MissionStateChanged( object sender, Mission.MissionEventArgs e )
+		{
+			switch (e.State) {
+				
+				case MissionState.StandBy:
+					frames.ModalFrame.Close();
+					frames.ShowFullscreenFrame( mainMenu );
+				break;
+
+				case MissionState.Loading:
+					frames.ModalFrame.Close();
+					frames.ShowFullscreenFrame( loadingScreen );
+					loadingScreen.StatusText	=	"LOADING";
+				break;
+
+				case MissionState.Waiting:
+					frames.ModalFrame.Close();
+					frames.ShowFullscreenFrame( loadingScreen );
+					loadingScreen.StatusText	=	"Press [ENTER] to continue... ";
+				break;
+
+				case MissionState.Briefing:
+					//loadingScreen.StatusText	=	"AWAITING SNAPSHOT...";
+				break;
+
+				case MissionState.Active:
+					frames.ModalFrame.Close();
+					frames.ShowFullscreenFrame( hudFrame );
+				break;
+
+				case MissionState.Paused:
+					frames.ModalFrame.Close();
+					frames.ShowDialogCentered( pauseMenu );
+				break;
+
+				case MissionState.Debriefing:
+					//loadingScreen.StatusText	=	"AWAITING SNAPSHOT...";
+				break;
+			}
+		}
+
+
 
 
 		/// <summary>

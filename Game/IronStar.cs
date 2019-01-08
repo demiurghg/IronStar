@@ -21,6 +21,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using Fusion.Core.Input;
 using Fusion.Widgets;
+using IronStar.SinglePlayer;
 
 namespace IronStar {
 	partial class IronStar : Game
@@ -36,15 +37,16 @@ namespace IronStar {
 
 			this.Config.LoadSettings(ConfigFile);
 
-			this.AddServiceAndComponent( new RenderSystem(this, true) );
-			this.AddServiceAndComponent( new SoundSystem(this) );
-			this.AddServiceAndComponent( new FrameProcessor(this) );
-			this.AddServiceAndComponent( new GameConsole( this ) );
-			this.AddServiceAndComponent( new Network( this ) );
-			this.AddServiceAndComponent( new GameClient( this ) );
-			this.AddServiceAndComponent( new GameServer( this ) );
-			this.AddServiceAndComponent( new UserInterface( this, new ShooterInterface(this) ) );
-			this.AddServiceAndComponent( new JsonFactory( this ) );
+			this.AddServiceAndComponent( 100, new RenderSystem(this, true) );
+			this.AddServiceAndComponent( 200, new SoundSystem(this) );
+			this.AddServiceAndComponent( 300, new GameConsole( this ) );
+			this.AddServiceAndComponent( 900, new FrameProcessor(this) );
+			this.AddServiceAndComponent( 400, new Network( this ) );
+			this.AddServiceAndComponent( 500, new GameClient( this ) );
+			this.AddServiceAndComponent( 600, new GameServer( this ) );
+			this.AddServiceAndComponent( 800, new UserInterface( this, new ShooterInterface(this) ) );
+			this.AddServiceAndComponent( 700, new Mission( this ) );
+			this.AddServiceAndComponent(1000, new JsonFactory( this ) );
 
 			this.GetService<FrameProcessor>().LayerOrder = 100;
 			this.GetService<GameConsole>().LayerOrder = 200;
@@ -125,7 +127,6 @@ namespace IronStar {
 
 			if (e.Key==Keys.F11) {
 				this.GetService<RenderSystem>().Screenshot();
-				Reload();	
 			}
 
 			if (e.Key==Keys.F2) {
@@ -182,29 +183,6 @@ namespace IronStar {
 		}
 
 
-		protected void StartLevel ( string mapname )
-		{
-			var campaign = new ShooterCampaign( this, mapname );
-			this.AddServiceAndComponent( campaign );
-			campaign.Initialize();
-		}
-
-
-
-		protected void StopLevel ()
-		{
-			//	try to stop editor :
-			var campaign = this.GetService<ShooterCampaign>();
-
-			if (campaign!=null) {
-				Log.Message("Stopping map campaign...");
-				Services.RemoveService( campaign.GetType() );
-				Components.Remove( campaign );
-				SafeDispose( ref campaign );
-			} else {
-				Log.Warning("Campaign is not running");
-			}
-		}
 
 
 

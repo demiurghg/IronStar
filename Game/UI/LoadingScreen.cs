@@ -19,6 +19,7 @@ using IronStar.UI.Controls;
 using IronStar.UI.Controls.Dialogs;
 using System.Net;
 using Fusion.Engine.Audio;
+using IronStar.SinglePlayer;
 
 namespace IronStar.UI {
 
@@ -28,10 +29,10 @@ namespace IronStar.UI {
 
 		public string StatusText { 
 			get { 
-				return header.Text;
+				return header1.Text;
 			}
 			set {
-				header.Text = value;
+				header1.Text = value;
 			}
 		}
 
@@ -47,7 +48,8 @@ namespace IronStar.UI {
 		};
 
 
-		Frame header;
+		Frame header1;
+		Frame header2;
 		Frame footer;
 
 
@@ -71,27 +73,39 @@ namespace IronStar.UI {
 			
 			var pageLayout		=	new PageLayout();
 			pageLayout.Margin	=	0;
-			pageLayout.AddRow(  120f, new float[] { -1 } );
+			pageLayout.AddRow(  120f, new float[] { -1, -1 } );
 			pageLayout.AddRow( -1.0f, new float[] { -1 } );
 			pageLayout.AddRow(  120f, new float[] { -1 } );
 
 			this.Layout	=	pageLayout;
 
+			this.TypeWrite +=LoadingScreen_TypeWrite;
+
 			//	header & footer
 
-			header				=	new Frame( Frames, 0,0,0,0, "Loading", MenuTheme.BackColor ) {
+			header1				=	new Frame( Frames, 0,0,0,0, "Loading", MenuTheme.BackColor ) {
 				ForeColor		=	MenuTheme.AccentColor,
 				Font			=	MenuTheme.HeaderFont,
 				TextAlignment	=	Alignment.BottomLeft,
 				PaddingTop		=	30,
 				PaddingBottom	=	30,
 				PaddingLeft		=	120,
+				PaddingRight	=	0,
+			};
+
+			header2				=	new Frame( Frames, 0,0,0,0, "147/5129", MenuTheme.BackColor ) {
+				ForeColor		=	MenuTheme.AccentColor,
+				Font			=	MenuTheme.HeaderFont,
+				TextAlignment	=	Alignment.BottomRight,
+				PaddingTop		=	30,
+				PaddingBottom	=	30,
+				PaddingLeft		=	0,
 				PaddingRight	=	120,
 			};
 
 			footer				=	new Frame( Frames, 0,0,0,0, "Some cool quote", MenuTheme.BackColor ) {
 				ForeColor		=	MenuTheme.TextColorNormal,
-				Font			=	MenuTheme.SmallFont,
+				Font			=	MenuTheme.NormalFont,
 				TextAlignment	=	Alignment.TopRight,
 				PaddingTop		=	30,
 				PaddingBottom	=	30,
@@ -101,7 +115,8 @@ namespace IronStar.UI {
 
 			//	structure :
 
-			Add( header );
+			Add( header1 );
+			Add( header2 );
 			Add( CreateEmptyFrame(frames) );
 			Add( footer );
 
@@ -111,6 +126,12 @@ namespace IronStar.UI {
 		}
 
 
-
+		private void LoadingScreen_TypeWrite( object sender, KeyEventArgs e )
+		{
+				Game.GetService<Mission>().State.Continue();
+			/*if (e.Key==Keys.Enter) {
+				Game.GetService<Mission>().State.Continue();
+			} */
+		}
 	}
 }

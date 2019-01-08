@@ -13,6 +13,7 @@ using Fusion;
 using Fusion.Core.Shell;
 using IronStar.Editor;
 using Fusion.Build;
+using IronStar.SinglePlayer;
 
 namespace IronStar {
 	partial class IronStar : Game
@@ -43,7 +44,7 @@ namespace IronStar {
 				if (Edit) {
 					game.StartEditor(MapName);
 				} else {
-					game.StartServer(MapName, Dedicated);
+					game.GetService<Mission>().State.Start(MapName);
 				}
 				return null;
 			}

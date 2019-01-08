@@ -19,21 +19,25 @@ using BEPUphysics.Character;
 using Fusion.Engine.Frames;
 using IronStar.Entities.Players;
 
-namespace IronStar.Views {
-	public class HudWeapon : Frame {
+namespace IronStar.UI.HUD {
+	public class HudHealth : Frame {
+
+		readonly GameWorld	world;
 
 		public Player Player;
 
-		Frame numberAmmo;
-		Frame labelWeapon;
-		Frame labelArsenal;
+		Frame labelArmor;
+		Frame labelHealth;
+
+		Frame numberArmor;
+		Frame numberHealth;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
 		/// <param name="space"></param>
-		public HudWeapon ( Frame parent, int x, int y ) : base( parent.Frames )
+		public HudHealth ( Frame parent, int x, int y ) : base( parent.Frames )
 		{
 			this.BackColor		=	HudColors.BackgroundColor;
 			this.BorderColor	=	HudColors.BorderColor;
@@ -42,55 +46,60 @@ namespace IronStar.Views {
 
 			this.X				=	x;
 			this.Y				=	y;
-			this.Width			=	200;
+			this.Width			=	120;
 			this.Height			=	24;
 
-			this.Anchor			=	FrameAnchor.Bottom | FrameAnchor.Right;
+			this.Anchor			=	FrameAnchor.Bottom | FrameAnchor.Left;
 
 			this.Ghost			=	true;
 
-			labelWeapon	=	new Frame( Frames, 68,4+0,160,8,"Assault Rifle", Color.Zero) {
+			labelArmor		=	new Frame( Frames, 4,4+0,48,8,"Armor", Color.Zero) {
 				ForeColor	=	HudColors.TextColor,
 			};
 
-			numberAmmo		=	new Frame( Frames, 4,4+0,56,8," 32/100", Color.Zero) {
-				ForeColor	=	HudColors.AmmoColor,
+			labelHealth		=	new Frame( Frames, 4,4+8,48,8,"Health", Color.Zero) {
+				ForeColor	=	HudColors.TextColor,
 			};
 
-			Add( labelWeapon );
-			Add( numberAmmo );
+			numberArmor		=	new Frame( Frames, 60,4+0,56,8," 32/100", Color.Zero) {
+				ForeColor	=	HudColors.ArmorColor,
+			};
+
+			numberHealth	=	new Frame( Frames, 60,4+8,56,8," 97/100", Color.Zero) {
+				ForeColor	=	HudColors.HealthColor,
+			};
+
+			Add( labelArmor );
+			Add( labelHealth );
+
+			Add( numberArmor );
+			Add( numberHealth );
 		
 			parent.Add(this);
 		}
-
-
 
 
 		protected override void Update( GameTime gameTime )
 		{
 			base.Update( gameTime );
 
-			var weapon  = Player?.GetCurrentWeapon();
+			if (Player!=null) {
 
-			if (weapon!=null) {
+				Visible		=	true;
 
-				Visible			=	true;
+				var health	=	Player.Health;
+				var armor	=	Player.Armor;
 
-				var weaponName	=	weapon.NiceName;
-				var ammo		=	weapon.GetPlayerAmmo();
-
-				var count		=	(ammo == null) ? 0 : ammo.Count;
-				var maxCount	=	(ammo == null) ? 0 : ammo.MaxCount;
-
-				labelWeapon .Text = string.Format("{0}"		, weaponName );
-				numberAmmo	.Text = string.Format("{0}/{1}"	, count, maxCount );
+				numberArmor .Text = string.Format("{0}/{1}", armor , 100 );
+				numberHealth.Text = string.Format("{0}/{1}", health, 100 );
 
 			} else {
 
 				Visible		=	false;
 			}
 		}
-		
+
+
 
 
 	}

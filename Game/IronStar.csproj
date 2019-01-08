@@ -65,9 +65,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Client\HudColors.cs" />
-    <Compile Include="Client\HudWeapon.cs" />
-    <Compile Include="Client\HudHealth.cs" />
+    <Compile Include="SinglePlayer\MissionContext.cs" />
+    <Compile Include="UI\HUD\HudColors.cs" />
+    <Compile Include="UI\HUD\HudWeapon.cs" />
+    <Compile Include="UI\HUD\HudHealth.cs" />
     <Compile Include="Core\DamageType.cs" />
     <Compile Include="Core\Entity.Lua.cs" />
     <Compile Include="Core\ItemCollection.cs" />
@@ -97,6 +98,17 @@
     <Compile Include="Mapping\MapNavigation.cs" />
     <Compile Include="Mapping\MapReverb.cs" />
     <Compile Include="Mapping\MapSound.cs" />
+    <Compile Include="SinglePlayer\Mission.Debriefing.cs" />
+    <Compile Include="SinglePlayer\Mission.Loading.cs" />
+    <Compile Include="SinglePlayer\Mission.Briefing.cs" />
+    <Compile Include="SinglePlayer\Mission.CutScene.cs" />
+    <Compile Include="SinglePlayer\Mission.Waiting.cs" />
+    <Compile Include="SinglePlayer\MissionState.cs" />
+    <Compile Include="SinglePlayer\Mission.Paused.cs" />
+    <Compile Include="SinglePlayer\IMissionState.cs" />
+    <Compile Include="SinglePlayer\Mission.cs" />
+    <Compile Include="SinglePlayer\Mission.StandBy.cs" />
+    <Compile Include="SinglePlayer\Mission.Active.cs" />
     <Compile Include="Physics\DetectorArea.cs" />
     <Compile Include="Physics\DynamicBox.cs" />
     <Compile Include="SFX\Animation\AnimationClip.cs" />
@@ -115,11 +127,10 @@
     <Compile Include="SFX\FXPlayback.Trails.cs" />
     <Compile Include="SFX\ModelInstance.Lua.cs" />
     <Compile Include="SFX\ModelInstance.cs" />
-    <Compile Include="ShooterCampaign.cs" />
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Client\GameInput.cs" />
     <Compile Include="Client\FPView.cs" />
-    <Compile Include="Client\HudFrame.cs" />
+    <Compile Include="UI\HUD\HudFrame.cs" />
     <Compile Include="Core\Entity.cs" />
     <Compile Include="Core\GameWorld.Atoms.cs" />
     <Compile Include="Core\GameWorld.AI.cs" />
@@ -226,6 +237,7 @@
     <Compile Include="UI\Controls\Slider.cs" />
     <Compile Include="UI\Controls\TextBox.cs" />
     <Compile Include="UI\LoadingScreen.cs" />
+    <Compile Include="UI\PauseMenu.cs" />
     <Compile Include="UI\MainMenu.cs" />
     <Compile Include="UserCommand.cs" />
     <Compile Include="SFX\FXPlayback.cs" />

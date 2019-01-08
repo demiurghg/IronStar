@@ -57,10 +57,6 @@ namespace IronStar.Mapping {
 
 		public override void SpawnNode( GameWorld world )
 		{
-			if (!world.IsPresentationEnabled) {
-				return;
-			}
-
 			light		=	new OmniLight();
 
 			ResetNode( world );

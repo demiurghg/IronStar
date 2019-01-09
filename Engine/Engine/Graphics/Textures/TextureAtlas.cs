@@ -137,36 +137,6 @@ namespace Fusion.Engine.Graphics {
 
 		
 		/// <summary>
-		/// Gets subimage rectangle by its index
-		/// </summary>
-		/// <param name="index"></param>
-		/// <returns></returns>
-		[Obsolete("!", true)]
-		public Rectangle this [int index]
-		{	
-			get {					
-				throw new NotImplementedException();
-			}
-		}
-
-					
-		
-		/// <summary>
-		/// Gets subimage rectangle by its index
-		/// </summary>
-		/// <param name="index"></param>
-		/// <returns></returns>
-		[Obsolete("!", true)]
-		public Rectangle this [string name]
-		{	
-			get {					
-				return GetAbsoluteRectangleByName(name);
-			}
-		}
-
-					
-
-		/// <summary>
 		/// Gets names of all subimages. 
 		/// </summary>
 		public string[] GetClipNames () 
@@ -271,25 +241,6 @@ namespace Fusion.Engine.Graphics {
 			return Enumerable.Range( 0, maxCount )
 				.Select( i => (i<rects.Length) ? rects[i] : new Rectangle(0,0,0,0) )
 				.ToArray();
-		}
-
-
-
-		/// <summary>
-		/// Gets index if particular subimage.
-		/// </summary>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		[Obsolete("!", true)]
-		public int IndexOf( string name )
-		{
-			return -1;
-			//Element e;
-			//if (dictionary.TryGetValue(name, out e)) {
-			//	return e.Index;
-			//} else {
-			//	return -1;
-			//}
 		}
 		
 

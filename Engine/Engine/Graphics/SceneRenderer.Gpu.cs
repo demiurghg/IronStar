@@ -225,7 +225,7 @@ namespace Fusion.Engine.Graphics {
 				NormalMapFactor		=	decal.NormalMapFactor;
 				FalloffFactor		=	decal.FalloffFactor;
 				ImageScaleOffset	=	decal.GetScaleOffset();
-				AssignmentGroup		=	0;
+				AssignmentGroup		=	(int)decal.Group;
 
 				var widthScaling	=	decal.DecalMatrix.Right.Length() + float.Epsilon;
 				var heightScaling	=	decal.DecalMatrix.Up.Length() + float.Epsilon;

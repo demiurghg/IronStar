@@ -75,7 +75,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 			float4 decalImage	= 	DecalImages.SampleLevel( DecalSampler, uv, decalBaseMip + mipDecalBias );
 			float3 localNormal  = 	decalImage.xyz * 2 - 1;
 			float3 decalNormal	=	localNormal.x * decal.BasisX.xyz + localNormal.y * decal.BasisY.xyz + localNormal.z * decal.BasisZ.xyz;
-			float factor		=	decalImage.a * saturate(falloff - abs(decalPos.z)*falloff);
+			float factor		=	pow(decalImage.a, 2.2f) * saturate(falloff - abs(decalPos.z)*falloff);
 			
 			totalLight.rgb		+=	 glowColor * factor;
 		

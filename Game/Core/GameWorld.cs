@@ -100,7 +100,7 @@ namespace IronStar.Core {
 			fxPlayback				=	new SFX.FXPlayback( this );
 			modelManager			=	new SFX.ModelManager( this );
 
-			rw.LightSet.SpotAtlas	=	Content.Load<TextureAtlas>(@"spots\spots");
+			rw.LightSet.SpotAtlas	=	Content.Load<TextureAtlas>(@"spots\spots|srgb");
 			rw.LightSet.DecalAtlas	=	Content.Load<TextureAtlas>(@"decals\decals");
 
 			//	initialize server atoms, 

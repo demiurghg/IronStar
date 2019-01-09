@@ -69,6 +69,11 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public float FalloffFactor = 0.0f;
 
+		/// <summary>
+		///	Instance group to apply decal to.
+		/// </summary>
+		public InstanceGroup Group = InstanceGroup.Static;
+
 
 		internal bool	Visible;
 		internal Int3	MinExtent;

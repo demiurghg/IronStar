@@ -150,10 +150,14 @@ namespace IronStar.Mapping {
 				decal.ImageRectangle	=	ls.DecalAtlas.GetNormalizedRectangleByName( ImageName );
 				decal.ImageSize			=	ls.DecalAtlas.GetAbsoluteRectangleByName( ImageName ).Size;
 
+				//decal.ImageRectangle	=	ls.DecalAtlas.GetClipByName( ImageName ).FirstIndex
+
 				decal.ColorFactor		=	ColorFactor;
 				decal.SpecularFactor	=	SpecularFactor;
 				decal.NormalMapFactor	=	NormalMapFactor;
 				decal.FalloffFactor		=	FalloffFactor;
+
+				decal.Group				=	InstanceGroup.Static;
 			}
 		}
 

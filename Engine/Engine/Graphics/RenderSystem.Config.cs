@@ -88,13 +88,6 @@ namespace Fusion.Engine.Graphics {
 
 
 		/// <summary>
-		/// Forbids creation of default render world.
-		/// </summary>
-		[Config]
-		public bool NoDefaultRenderWorld { get; set; }
-
-
-		/// <summary>
 		/// Shows G-buffer content.
 		///		0 - show final image
 		///		1 - show diffuse
@@ -183,8 +176,10 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// 
 		/// </summary>
-		[Config]
-		public bool UseFXAA { get; set; }
+		[Config]	
+		[AECategory("Postprocessing")]	
+		public bool		UseFXAA { get; set; }
+
 
 		[AECategory("Shadows")]  [Config]	public bool UsePointShadowSampling { get; set; } = false;
 		[AECategory("Shadows")]  [Config]	public bool SnapShadowmapCascades { get; set; } = true;

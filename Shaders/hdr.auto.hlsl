@@ -1,3 +1,5 @@
+static const int NoiseSizeX = 64;
+static const int NoiseSizeY = 64;
 static const int BlockSizeX = 16;
 static const int BlockSizeY = 16;
 static const int NumHistogramBins = 256;
@@ -23,5 +25,7 @@ struct PARAMS {
 	float      EVRangeInverse;                // offset:   56
 	float      AdaptEVMin;                    // offset:   60
 	float      AdaptEVMax;                    // offset:   64
+	uint       NoiseX;                        // offset:   68
+	uint       NoiseY;                        // offset:   72
 };
 

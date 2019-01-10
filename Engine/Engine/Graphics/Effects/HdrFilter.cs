@@ -19,6 +19,7 @@ namespace Fusion.Engine.Graphics {
 	[RequireShader("hdr", true)]
 	internal class HdrFilter : RenderComponent {
 
+		readonly Random rand = new Random();
 		
 
 		/// <summary>
@@ -125,15 +126,16 @@ namespace Fusion.Engine.Graphics {
 		/// Dither pattern amount
 		/// </summary>
 		[Config]
-		[AEValueRange(0, 1, 1f/32f, 1f/256f)]
-		public float DitherAmount { get; set; } = 3f/256f;
+		[AEValueRange(0, 16, 1f, 1f/16f)]
+		public float Dithering { get; set; } = 4;
+
 
 		Ubershader	shader;
 		ConstantBuffer	paramsCB;
 		RenderTarget2D	averageLum;
 		StateFactory	factory;
 		DynamicTexture	whiteTex;
-		DynamicTexture	noiseTex;
+		DiscTexture[]	noiseTex;
 		ByteAddressBuffer histogramBuffer;
 
 
@@ -162,8 +164,15 @@ namespace Fusion.Engine.Graphics {
 			public	float	EVRangeInverse;
 			public	float	AdaptEVMin;
 			public	float	AdaptEVMax;
+			public	uint	NoiseX;
+			public	uint	NoiseY;
 		}
 
+
+		[ShaderDefine]
+		const int NoiseSizeX		=	64;
+		[ShaderDefine]
+		const int NoiseSizeY		=	64;
 
 		[ShaderDefine]
 		const int BlockSizeX		=	16;
@@ -212,8 +221,6 @@ namespace Fusion.Engine.Graphics {
 
 			LoadContent();
 
-			noiseTex	=	GenerateBayerMatrix(8);
-
 			Game.Reloading += (s,e) => LoadContent();
 		}
 
@@ -225,8 +232,11 @@ namespace Fusion.Engine.Graphics {
 		void LoadContent ()
 		{
 			shader		=	Game.Content.Load<Ubershader>("hdr");
-			//noiseTex	=	Game.Content.Load<DiscTexture>(@"noise\hdrDitherNoise");
-			//noiseTex	=	Game.Content.Load<DiscTexture>(@"noise\bayerMatrix8x8");
+
+			noiseTex	=	new DiscTexture[8];
+			for (int i=0; i<8; i++) {
+				noiseTex[i]	=	Game.Content.Load<DiscTexture>(@"noise\anim\LDR_LLL1_" + i.ToString());
+			}
 
 			factory		=	shader.CreateFactory( typeof(Flags), Primitive.TriangleList, VertexInputElement.Empty, BlendState.Opaque, RasterizerState.CullNone, DepthStencilState.None );
 		}
@@ -352,6 +362,8 @@ namespace Fusion.Engine.Graphics {
 
 
 
+		uint frameCounter	=	0;
+
 
 		/// <summary>
 		/// Performs luminance measurement, tonemapping, applies bloom.
@@ -360,6 +372,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="hdrImage">HDR source image.</param>
 		public void TonemapHdrImage ( GameTime gameTime, HdrSettings settings, HdrFrame hdrFrame )
 		{
+			frameCounter++;
+
 			var device	=	Game.GraphicsDevice;
 			var filter	=	Game.RenderSystem.Filter;
 			var blur	=	Game.RenderSystem.Blur;
@@ -407,7 +421,7 @@ namespace Fusion.Engine.Graphics {
 				paramsData.DirtMaskLerpFactor	=	0;
 				paramsData.DirtAmount			=	0;
 				paramsData.Saturation			=	Saturation;
-				paramsData.DitherAmount			=	DitherAmount;
+				paramsData.DitherAmount			=	Dithering;
 				paramsData.Width				=	imageWidth;
 				paramsData.Height				=	imageHeight;
 				paramsData.EVMin				=	EVMin;
@@ -416,6 +430,8 @@ namespace Fusion.Engine.Graphics {
 				paramsData.EVRangeInverse		=	1.0f / paramsData.EVRange;
 				paramsData.AdaptEVMin			=	AdaptEVMin;
 				paramsData.AdaptEVMax			=	AdaptEVMax;
+				paramsData.NoiseX				=	0;
+				paramsData.NoiseY				=	0;
 
 				paramsCB.SetData( paramsData );
 				device.PixelShaderConstants[0]		=	paramsCB;
@@ -443,23 +459,6 @@ namespace Fusion.Engine.Graphics {
 				device.SetCSRWBuffer ( 0, (ByteAddressBuffer)null );
 				device.SetCSRWTexture( 1, (RenderTargetSurface)null );
 
-				
-				//var histogram = new uint[256];
-				//histogramBuffer.GetData( histogram );
-
-				//
-				//	Measure and adapt :
-				//
-				/*device.SetTargets( null, hdrFrame.MeasuredNew );
-
-				device.PixelShaderResources[0]	=	averageLum;
-				device.PixelShaderResources[1]	=	hdrFrame.MeasuredOld;
-
-				device.PipelineState		=	factory[ (int)(Flags.MEASURE_ADAPT) ];
-				
-				device.Draw( 3, 0 );*/
-
-
 				//
 				//	Tonemap and compose :
 				//
@@ -470,11 +469,7 @@ namespace Fusion.Engine.Graphics {
 				device.PixelShaderResources[2]	=	hdrFrame.Bloom0;// averageLum;
 				device.PixelShaderResources[3]	=	settings.DirtMask1==null ? whiteTex.Srv : settings.DirtMask1.Srv;
 				device.PixelShaderResources[4]	=	settings.DirtMask2==null ? whiteTex.Srv : settings.DirtMask2.Srv;
-				device.PixelShaderResources[5]	=	noiseTex.Srv;
-				device.PixelShaderResources[6]	=	hdrFrame.DistortionBuffer;
-				device.PixelShaderResources[7]	=	hdrFrame.HdrBufferGlass;
-				device.PixelShaderResources[8]	=	hdrFrame.DistortionGlass;
-				device.PixelShaderResources[9]	=	histogramBuffer;
+				device.PixelShaderResources[5]	=	noiseTex[frameCounter % 8].Srv;
 				device.PixelShaderSamplers[0]	=	SamplerState.LinearClamp;
 
 				Flags op = Flags.LINEAR;

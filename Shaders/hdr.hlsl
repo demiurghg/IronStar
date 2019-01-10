@@ -278,23 +278,41 @@ Texture2D		NoiseTexture		: register(t5);
 
 ByteAddressBuffer Histogram			: register(t9);
 
+float3 LinearToSRGB(float3 LinearRGB) {
+    return (LinearRGB<=0.0031308f)?(12.92f*LinearRGB):mad(1.055f,pow(LinearRGB,1.0f/2.4f),-0.055f);
+}
+
+float3 SRGBToLinear(float3 SRGB) {
+    return (SRGB<=0.04045f)?(SRGB/12.92f):pow(mad(SRGB,1.0f/1.055f,0.055f/1.055f),2.4f);
+}
+
+float3 Dither ( float3 color, uint x, uint y, float amount )
+{
+	uint width;
+	uint height;
+	NoiseTexture.GetDimensions( width, height );
+	
+	uint xx = x % 256;
+	uint yy = y % 256;
+	
+	float3 	noiseValue	=	NoiseTexture.Load( int3(xx, yy, 0) ).rgb;
+			
+    noiseValue	=	mad ( noiseValue, 2.0f, -1.0f );
+    noiseValue	=	sign( noiseValue ) * (1.0f - sqrt( 1.0f-abs(noiseValue) ) );
+			
+	color	=	saturate(color + noiseValue * amount);
+	//color	=	SRGBToLinear( LinearToSRGB( color ) + noiseValue * amount );
+	//color	=	pow( pow( color, 1/2.2f ) + noiseValue * amount, 2.2f );
+	
+	return color;
+}
+
 
 float4 VSMain(uint VertexID : SV_VertexID, out float2 uv : TEXCOORD) : SV_POSITION
 {
 	uv = FSQuadUV( VertexID );
 	return FSQuad( VertexID );
 }
-
-static const float dither[4][4] = {{1,9,3,11},{13,5,15,7},{4,12,2,10},{16,8,14,16}};
-
-
-float3 Dither ( int xpos, int ypos, float3 color )
-{
-	color += dither[(xpos+ypos/7)%4][(ypos+xpos/7)%4]/256.0f/5;
-	color -= dither[(ypos+xpos/7)%4][(xpos+ypos/7)%4]/256.0f/5;//*/
-	return color;
-}
-
 
 
 static const float3	lumVector	=	float3(0.3f,0.6f,0.2f);
@@ -459,21 +477,14 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	float3	colorMidtones	=	TintColor( tonemapped, tintMidtones   );
 	float3	colorHighlights	=	TintColor( tonemapped, tintHighlights );
 	
-	float3	colorGraded 	=	colorShadows * shadows
-							+	colorMidtones * midtones
-							+	colorHighlights * highlights;
-							
-	
-	colorGraded	=	SaturateColor( colorGraded, 0.75f );
-	
-	//	DISABLE COLOR GRADING!!!
-	colorGraded	=	tonemapped;
+	float3	colorGraded 	=	tonemapped;
 	
 	//
 	//	Apply dithering :
 	//
-	float3 	result	=	colorGraded + (noiseDither*2-1)*3/256.0;
-	
+	float3 	result	=	Dither( colorGraded, xpos, ypos, Params.DitherAmount / 256.0f );
+
+
 	#ifdef SHOW_HISTOGRAM
 	result	=	ShowHistogram( xpos, ypos, result, luminanceLinear, luminanceAdaptLinear );
 	#endif

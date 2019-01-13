@@ -1,8 +1,8 @@
 {
   "$type": "IronStar.Entities.ItemBoxFactory, IronStar",
-  "Width": 0.3,
-  "Height": 0.4,
-  "Depth": 2.0,
+  "Width": 0.9,
+  "Height": 1.0,
+  "Depth": 6.0,
   "Mass": 7.0,
   "Model": "weapon_rocket_launcher_world",
   "Item": "weapon_rocket_launcher, ammo_rocket_launcher",

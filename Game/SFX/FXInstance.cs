@@ -43,6 +43,8 @@ namespace IronStar.SFX {
 		public int JointIndex = 0;
 		public bool WeaponFX = false;
 
+		readonly float overallScale;
+
 		/// <summary>
 		/// Indicates thet SFX is looped.
 		/// </summary>
@@ -60,11 +62,12 @@ namespace IronStar.SFX {
 		/// <param name="fxEvent"></param>
 		public FXInstance( FXPlayback sfxSystem, FXEvent fxEvent, FXFactory fxFactory, bool looped )
 		{
-			this.fxAtom		=	fxEvent.FXAtom;
-			this.fxPlayback	=	sfxSystem;
-			this.rw			=	sfxSystem.rw;
-			this.ss			=	sfxSystem.ss;
-			this.fxEvent	=	fxEvent;
+			this.fxAtom			=	fxEvent.FXAtom;
+			this.fxPlayback		=	sfxSystem;
+			this.rw				=	sfxSystem.rw;
+			this.ss				=	sfxSystem.ss;
+			this.fxEvent		=	fxEvent;
+			this.overallScale	=	fxFactory.OverallScale;
 
 			AddParticleStage( fxFactory.ParticleStage1, fxEvent, looped );
 			AddParticleStage( fxFactory.ParticleStage2, fxEvent, looped );

@@ -28,6 +28,7 @@ namespace IronStar.SFX {
 		public class SoundStage : Stage {
 
 			SoundEventInstance soundInstance;
+			readonly float overallScale;
 
 			/// <summary>
 			/// 
@@ -38,6 +39,7 @@ namespace IronStar.SFX {
 			public SoundStage ( FXInstance instance, FXSoundStage stageDesc, FXEvent fxEvent, bool looped ) : base(instance)
 			{
 				soundInstance	=	instance.fxPlayback.CreateSoundEventInstance( stageDesc.Sound );
+				overallScale	=	instance.overallScale;
 
 				if (soundInstance==null) {
 					return;

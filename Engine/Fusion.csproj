@@ -432,7 +432,6 @@
     <Compile Include="Engine\Audio\ReverbPreset.cs" />
     <Compile Include="Engine\Audio\ReverbZone.cs" />
     <Compile Include="Engine\Audio\SoundException.cs" />
-    <Compile Include="Engine\Audio\Enums.cs" />
     <Compile Include="Drivers\FMOD\fmod.cs" />
     <Compile Include="Drivers\FMOD\fmod_dsp.cs" />
     <Compile Include="Drivers\FMOD\fmod_errors.cs" />

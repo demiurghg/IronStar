@@ -2,7 +2,7 @@ local model		= ...
 model.load("scenes\\items\\armor\\armor_lo.fbx")
 model.set_color(255, 112, 8)
 model.set_intensity(100)
-model.set_scale(0.1)
+model.set_scale(0.3)
 
 local bright = true
 

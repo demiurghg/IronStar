@@ -438,7 +438,7 @@ namespace IronStar.Editor {
 
 			//	draw stuff :
 			if (DrawGrid) {
-				rs.RenderWorld.Debug.DrawGrid( 10 );
+				rs.RenderWorld.Debug.DrawGrid();
 			}
 
 			//

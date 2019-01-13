@@ -30,6 +30,7 @@ namespace IronStar.SFX {
 			private bool	looped;
 			readonly int    spriteIndex;
 			readonly int	spriteCount;
+			readonly float	overlallScale;
 			private bool	stopped;
 			private float	time		= 0;
 			private int		emitCount	= 0;
@@ -51,6 +52,7 @@ namespace IronStar.SFX {
 			{
 				this.stage			=	stageDesc;
 				this.looped			=	looped;
+				this.overlallScale	=	instance.overallScale;
 
 				var clip			=	instance.fxPlayback.GetSpriteClip( stageDesc.Sprite );
 
@@ -97,7 +99,7 @@ namespace IronStar.SFX {
 			/// <param name="fxEvent"></param>
 			void Emit ( ref Particle p, FXEvent fxEvent )
 			{
-				float scale		=	fxEvent.Scale;
+				float scale		=	fxEvent.Scale * overlallScale;
 
 				p.Effects		=	stage.Effect;
 
@@ -138,7 +140,7 @@ namespace IronStar.SFX {
 				var turbulence	=	rand.GaussRadialDistribution(0, stage.Acceleration.Turbulence * scale);
 				p.Acceleration	=	stage.Acceleration.DragForce * p.Velocity + turbulence;
 				p.Damping		=	stage.Acceleration.Damping / scale;
-				p.Gravity		=	stage.Acceleration.GravityFactor * scale;
+				p.Gravity		=	stage.Acceleration.GravityFactor;
 
 				#if false
 				p.Check();

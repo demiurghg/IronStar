@@ -1,8 +1,8 @@
 {
   "$type": "IronStar.Entities.ItemBoxFactory, IronStar",
-  "Width": 0.4,
-  "Height": 0.4,
-  "Depth": 1.0,
+  "Width": 1.2,
+  "Height": 1.2,
+  "Depth": 3.0,
   "Mass": 5.0,
   "Model": "item_armor",
   "PickupFX": "pickupArmor",

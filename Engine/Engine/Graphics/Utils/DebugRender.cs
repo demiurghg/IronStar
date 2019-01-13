@@ -293,12 +293,12 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="wireCount"></param>
-		public void DrawGrid(int wireCount)
+		public void DrawGrid()
 		{
 			var color = new Color(64,64,64,255);
 
-			int gridsz = wireCount;
-			for (int x = -gridsz; x <= gridsz; x += 1)
+			int gridsz = 128;
+			for (int x = -gridsz; x <= gridsz; x += 4)
 			{
 				float w = (x==0) ? 2 : 1;
 				DrawLine(new Vector3(x, 0, gridsz), new Vector3(x, 0, -gridsz), color, color, w, w);

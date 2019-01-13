@@ -49,12 +49,12 @@ namespace IronStar.Entities {
 		public override void Draw( DebugRender dr, Matrix transform, Color color, bool selected )
 		{
 			var p0 = transform.TranslationVector;
-			var p1 = transform.TranslationVector + Vector3.Up*2;
+			var p1 = transform.TranslationVector + Vector3.Up*6;
 			var pf = transform.TranslationVector + transform.Forward;
 
 
-			dr.DrawRing( p0, 0.50f, color, 16 );
-			dr.DrawRing( p1, 0.50f, color, 16 );
+			dr.DrawRing( p0, 1.00f, color, 16 );
+			dr.DrawRing( p1, 1.00f, color, 16 );
 			dr.DrawLine( p0, pf, color, color, 5, 1 );
 		}
 	}

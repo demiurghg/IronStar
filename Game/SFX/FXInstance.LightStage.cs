@@ -32,8 +32,9 @@ namespace IronStar.SFX {
 			OmniLight	light = null;
 			FXLightStage stageDesc;
 
-			readonly bool			looped;
-			readonly float			period;
+			readonly bool	looped;
+			readonly float	period;
+			readonly float	overallScale;
 
 			float   timer = 0;
 			bool	stopped = false;
@@ -53,11 +54,12 @@ namespace IronStar.SFX {
 			{
 				light				=	new OmniLight();
 				this.stageDesc		=	stageDesc;
+				this.overallScale	=	instance.overallScale;
 
 				light.Position		=	FXFactory.GetPosition( stageDesc.OffsetDirection, stageDesc.OffsetFactor, fxEvent );
 
-				light.RadiusInner	=	stageDesc.InnerRadius;
-				light.RadiusOuter	=	stageDesc.OuterRadius;
+				light.RadiusInner	=	stageDesc.InnerRadius * overallScale;
+				light.RadiusOuter	=	stageDesc.OuterRadius * overallScale;
 				light.Intensity     =	stageDesc.Color.ToColor4() * stageDesc.Intensity;
 
 				this.period			=	stageDesc.Period;

@@ -28,6 +28,9 @@ namespace IronStar.SFX {
 		[AECategory("General")]
 		public float Period { get; set; } = 1;
 
+		[AECategory("General")]
+		public float OverallScale { get; set; } = 1;
+
 		[AECategory( "Misc Stages" )]
 		[AEExpandable]
 		public FXSoundStage SoundStage { get; set; } = new FXSoundStage();
@@ -273,7 +276,7 @@ namespace IronStar.SFX {
 		public Vector3 GetPosition ( FXEvent fxEvent, Random rand, float scale )
 		{
 			var position = FXFactory.GetPosition( OffsetDirection, OffsetFactor * scale, fxEvent);
-			var radial	= FXFactory.GetVolumeDistribution( rand, Distribution, Width, Height, Depth, Radius );
+			var radial	= FXFactory.GetVolumeDistribution( rand, Distribution, Width, Height, Depth, Radius ) * scale;
 			return position + radial;
 		}
 	}

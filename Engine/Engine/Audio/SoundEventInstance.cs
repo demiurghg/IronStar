@@ -66,6 +66,7 @@ namespace Fusion.Engine.Audio
 			this.system	=	device.system;
 
 			FmodExt.ERRCHECK( desc.createInstance( out inst ) );
+
 			inst.setReverbLevel(0,1);
         }
 
@@ -98,10 +99,10 @@ namespace Fusion.Engine.Audio
 		{
 			FMOD.Studio._3D_ATTRIBUTES attrs;
 
-			attrs.forward	=	FmodExt.Convert( forward	);
-			attrs.position	=	FmodExt.Convert( position	);
-			attrs.up		=	FmodExt.Convert( up			);
-			attrs.velocity	=	FmodExt.Convert( velocity	);
+			attrs.forward	=	FmodExt.Convert( forward.Normalized()	);
+			attrs.position	=	FmodExt.Convert( position.Normalized()	);
+			attrs.up		=	FmodExt.Convert( up.Normalized()		);
+			attrs.velocity	=	FmodExt.Convert( velocity				);
 
 			FmodExt.ERRCHECK( inst.set3DAttributes( attrs ) );
 		}

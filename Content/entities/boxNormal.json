@@ -1,8 +1,8 @@
 {
   "$type": "IronStar.Entities.RigidBodyFactory, IronStar",
-  "Width": 1.0,
-  "Height": 0.75,
-  "Depth": 0.75,
+  "Width":  3.0,
+  "Height": 2.25,
+  "Depth": 2.25,
   "Mass": 5.0,
   "Model": "box",
   "Explosive": false,

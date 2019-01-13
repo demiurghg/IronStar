@@ -19,6 +19,6 @@
   "JumpSpeed": 20.0,
   "SlidingJumpSpeed": 3.0,
   "MaximumGlueForce": 5000.0,
-  "MaxStepHeight": 1,
+  "MaxStepHeight": 2,
   "Target": null
 }

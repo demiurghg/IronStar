@@ -35,7 +35,7 @@ namespace Fusion.Engine.Audio {
 		/// </summary>
         public override void Initialize()
         {
-			var studioFlags		=	FMOD.Studio.INITFLAGS.NORMAL;
+			var studioFlags		=	FMOD.Studio.INITFLAGS.NORMAL | FMOD.Studio.INITFLAGS.LIVEUPDATE;
 			var lowlevelFlags	=	FMOD.INITFLAGS.NORMAL;
 			var speakerMode		=	FMOD.SPEAKERMODE._5POINT1;
 

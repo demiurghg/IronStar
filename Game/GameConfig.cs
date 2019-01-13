@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace IronStar {
 	public static class GameConfig {
 
-		public const float	PovHeightStand			=	1.6f;
+		public const float	PovHeightStand			=	5.5f;
 		public const float	PovHeightCrouch			=	0.9f;	
-		public const float	PovHeightVelocity		=	10.0f;
+		public const float	PovHeightVelocity		=	30.0f;
 
 	}
 }

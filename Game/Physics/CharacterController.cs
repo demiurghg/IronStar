@@ -131,7 +131,9 @@ namespace IronStar.Physics {
 		/// <param name="velocity"></param>
 		public void Teleport ( Vector3 position, Vector3 velocity )
 		{
-			controller.Body.Position		=	MathConverter.Convert( position );
+			var offset = Crouching ? offsetCrouch : offsetStanding;
+
+			controller.Body.Position		=	MathConverter.Convert( position + offset );
 			controller.Body.LinearVelocity	=	MathConverter.Convert( velocity );
 
 			//	https://forum.bepuentertainment.com/viewtopic.php?f=4&t=2389
@@ -162,7 +164,7 @@ namespace IronStar.Physics {
 			}
 
 			controller.HorizontalMotionConstraint.MovementDirection = new BEPUutilities.Vector2( move.X, -move.Z );
-			controller.HorizontalMotionConstraint.TargetSpeed	=	8.0f;
+			controller.HorizontalMotionConstraint.TargetSpeed	=	24.0f;
 
 			controller.StanceManager.DesiredStance	=	crouch ? Stance.Crouching : Stance.Standing;
 

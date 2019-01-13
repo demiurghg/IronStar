@@ -323,7 +323,7 @@ GBuffer PSMain( PSInput input )
 	}
 
 	if ( Subset.Rectangle.z==Subset.Rectangle.w && Subset.Rectangle.z==0 ) {
-		float3	checker	=	floor(input.WorldPos.xyz-0.5f)/2;
+		float3	checker	=	floor(input.WorldPos.xyz/4.0f-0.5f)/2;
 		baseColor	=	0.2*frac(checker.x + checker.y + checker.z)+0.3;
 		localNormal	=	float3(0,0,1);
 		roughness	=	0.5;

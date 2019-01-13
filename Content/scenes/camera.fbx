@@ -12,13 +12,13 @@ FBXHeaderExtension:  {
 	}
 	CreationTimeStamp:  {
 		Version: 1000
-		Year: 2018
-		Month: 8
-		Day: 5
-		Hour: 23
-		Minute: 10
-		Second: 5
-		Millisecond: 415
+		Year: 2019
+		Month: 1
+		Day: 13
+		Hour: 14
+		Minute: 30
+		Second: 21
+		Millisecond: 73
 	}
 	Creator: "FBX SDK/FBX Plugins version 2018.1.1"
 }
@@ -126,14 +126,14 @@ Objects:  {
 			Property: "DefaultAttributeIndex", "int", "",0
 			Property: "Freeze", "bool", "",0
 			Property: "LODBox", "bool", "",0
-			Property: "Lcl Translation", "Lcl Translation", "A+",0,1.0146750524109,0
-			Property: "Lcl Rotation", "Lcl Rotation", "A+",-5,0,0
+			Property: "Lcl Translation", "Lcl Translation", "A+",0,5.5,0
+			Property: "Lcl Rotation", "Lcl Rotation", "A+",0,0,0
 			Property: "Lcl Scaling", "Lcl Scaling", "A+",1,1,1
 			Property: "Visibility", "Visibility", "A",1
 			Property: "Color", "ColorRGB", "N",0.8,0.8,0.8
-			Property: "Position", "Vector", "AN",0,1.0146750524109,0
-			Property: "UpVector", "Vector", "AN",0,0.996194698091746,-0.0871557427476582
-			Property: "InterestPosition", "Vector", "AN",0,-4.01869230468669,-57.5316521506371
+			Property: "Position", "Vector", "AN",0,5.5,0
+			Property: "UpVector", "Vector", "AN",0,1,0
+			Property: "InterestPosition", "Vector", "AN",0,5.5,-57.7514137154529
 			Property: "Roll", "Roll", "AN",0
 			Property: "OpticalCenterX", "OpticalCenterX", "AN",0
 			Property: "OpticalCenterY", "OpticalCenterY", "AN",0
@@ -243,9 +243,9 @@ Objects:  {
 		Culling: "CullingOff"
 		TypeFlags: "Camera"
 		GeometryVersion: 124
-		Position: 0,1.0146750524109,0
-		Up: 0,0.996194698091746,-0.0871557427476582
-		LookAt: 0,-4.01869230468669,-57.5316521506371
+		Position: 0,5.5,0
+		Up: 0,1,0
+		LookAt: 0,5.5,-57.7514137154529
 		ShowInfoOnMoving: 1
 		ShowAudio: 0
 		AudioColor: 0,1,0
@@ -271,13 +271,13 @@ Objects:  {
 			Property: "Original|ApplicationVendor", "KString", "", "Autodesk"
 			Property: "Original|ApplicationName", "KString", "", "Maya LT"
 			Property: "Original|ApplicationVersion", "KString", "", "201800"
-			Property: "Original|DateTime_GMT", "DateTime", "", "05/08/2018 20:10:05.414"
+			Property: "Original|DateTime_GMT", "DateTime", "", "13/01/2019 11:30:21.071"
 			Property: "Original|FileName", "KString", "", "E:\GITHUB\IronStar\Content\scenes\camera.fbx"
 			Property: "LastSaved", "Compound", ""
 			Property: "LastSaved|ApplicationVendor", "KString", "", "Autodesk"
 			Property: "LastSaved|ApplicationName", "KString", "", "Maya LT"
 			Property: "LastSaved|ApplicationVersion", "KString", "", "201800"
-			Property: "LastSaved|DateTime_GMT", "DateTime", "", "05/08/2018 20:10:05.414"
+			Property: "LastSaved|DateTime_GMT", "DateTime", "", "13/01/2019 11:30:21.071"
 			Property: "Original|ApplicationActiveProject", "KString", "", "E:\GITHUB\IronStar\Content\scenes"
 			Property: "Original|ApplicationNativeFile", "KString", "", "E:\GITHUB\IronStar\Content\scenes\camera.mlt"
 		}
@@ -340,16 +340,13 @@ Takes:  {
 						Color: 1,1,1
 					}
 					Channel: "Y" {
-						Default: 1.01467502117157
+						Default: 5.5
 						KeyVer: 4005
 						KeyCount: 16
-						Key: 0,1.60000002384186,U,a,n,1539538600,1.60000002384186,U,a,n,3079077200,1.60000002384186
-                                        ,U,a,n,4618615800,1.60000002384186,U,a,n,6158154400,1.60000002384186,U,a,n,7697693000
-                                        ,1.60000002384186,U,a,n,9237231600,1.60000002384186,U,a,n,10776770200,1.60000002384186
-                                        ,U,a,n,12316308800,1.60000002384186,U,a,n,13855847400,1.60000002384186,U,a,n,15395386000
-                                        ,1.60000002384186,U,a,n,16934924600,1.60000002384186,U,a,n,18474463200,1.60000002384186
-                                        ,U,a,n,20014001800,1.60000002384186,U,a,n,21553540400,1.60000002384186,U,a,n,23093079000
-                                        ,1.60000002384186,U,a,n
+						Key: 0,5.5,U,a,n,1539538600,5.5,U,a,n,3079077200,5.5,U,a,n,4618615800,5.5,U,a,n,6158154400
+                                        ,5.5,U,a,n,7697693000,5.5,U,a,n,9237231600,5.5,U,a,n,10776770200,5.5,U,a,n,12316308800
+                                        ,5.5,U,a,n,13855847400,5.5,U,a,n,15395386000,5.5,U,a,n,16934924600,5.5,U,a,n,18474463200
+                                        ,5.5,U,a,n,20014001800,5.5,U,a,n,21553540400,5.5,U,a,n,23093079000,5.5,U,a,n
 						Color: 1,1,1
 					}
 					Channel: "Z" {
@@ -366,7 +363,7 @@ Takes:  {
 				}
 				Channel: "R" {
 					Channel: "X" {
-						Default: -5
+						Default: 0
 						KeyVer: 4005
 						KeyCount: 16
 						Key: 0,0,U,a,n,1539538600,-6.89081192016602,U,a,n,3079077200,-11.3549480438232,U,a,n,4618615800
@@ -451,12 +448,11 @@ Takes:  {
 						Color: 1,1,1
 					}
 					Channel: "Y" {
-						Default: 1.01467502117157
+						Default: 5.5
 						KeyVer: 4005
 						KeyCount: 6
-						Key: 123163088000,1.60000002384186,U,a,n,124702626600,1.60000002384186,U,a,n,126242165200
-                                        ,1.60000002384186,U,a,n,127781703800,1.60000002384186,U,a,n,129321242400,1.60000002384186
-                                        ,U,a,n,130860781000,1.60000002384186,U,a,n
+						Key: 123163088000,5.5,U,a,n,124702626600,5.5,U,a,n,126242165200,5.5,U,a,n,127781703800
+                                        ,5.5,U,a,n,129321242400,5.5,U,a,n,130860781000,5.5,U,a,n
 						Color: 1,1,1
 					}
 					Channel: "Z" {
@@ -471,7 +467,7 @@ Takes:  {
 				}
 				Channel: "R" {
 					Channel: "X" {
-						Default: -5
+						Default: 0
 						KeyVer: 4005
 						KeyCount: 6
 						Key: 123163088000,0,U,a,n,124702626600,0,U,a,n,126242165200,0,U,a,n,127781703800,0,U,a
@@ -547,12 +543,11 @@ Takes:  {
 						Color: 1,1,1
 					}
 					Channel: "Y" {
-						Default: 1.01467502117157
+						Default: 5.5
 						KeyVer: 4005
 						KeyCount: 6
-						Key: 130860781000,1.60000002384186,U,a,n,132400319600,1.60000002384186,U,a,n,133939858200
-                                        ,1.60000002384186,U,a,n,135479396800,1.60000002384186,U,a,n,137018935400,1.60000002384186
-                                        ,U,a,n,138558474000,1.60000002384186,U,a,n
+						Key: 130860781000,5.5,U,a,n,132400319600,5.5,U,a,n,133939858200,5.5,U,a,n,135479396800
+                                        ,5.5,U,a,n,137018935400,5.5,U,a,n,138558474000,5.5,U,a,n
 						Color: 1,1,1
 					}
 					Channel: "Z" {
@@ -567,7 +562,7 @@ Takes:  {
 				}
 				Channel: "R" {
 					Channel: "X" {
-						Default: -5
+						Default: 0
 						KeyVer: 4005
 						KeyCount: 6
 						Key: 130860781000,0,U,a,n,132400319600,0,U,a,n,133939858200,0,U,a,n,135479396800,0,U,a
@@ -644,12 +639,11 @@ Takes:  {
 						Color: 1,1,1
 					}
 					Channel: "Y" {
-						Default: 1.01467502117157
+						Default: 5.5
 						KeyVer: 4005
 						KeyCount: 6
-						Key: 138558474000,1.60000002384186,U,a,n,140098012600,1.60000002384186,U,a,n,141637551200
-                                        ,1.60000002384186,U,a,n,143177089800,1.60000002384186,U,a,n,144716628400,1.60000002384186
-                                        ,U,a,n,146256167000,1.60000002384186,U,a,n
+						Key: 138558474000,5.5,U,a,n,140098012600,5.5,U,a,n,141637551200,5.5,U,a,n,143177089800
+                                        ,5.5,U,a,n,144716628400,5.5,U,a,n,146256167000,5.5,U,a,n
 						Color: 1,1,1
 					}
 					Channel: "Z" {
@@ -664,7 +658,7 @@ Takes:  {
 				}
 				Channel: "R" {
 					Channel: "X" {
-						Default: -5
+						Default: 0
 						KeyVer: 4005
 						KeyCount: 6
 						Key: 138558474000,0,U,a,n,140098012600,5,U,a,n,141637551200,4.59375,U,a,n,143177089800
@@ -740,12 +734,11 @@ Takes:  {
 						Color: 1,1,1
 					}
 					Channel: "Y" {
-						Default: 1.01467502117157
+						Default: 5.5
 						KeyVer: 4005
 						KeyCount: 6
-						Key: 146256167000,1.60000002384186,U,a,n,147795705600,1.60000002384186,U,a,n,149335244200
-                                        ,1.60000002384186,U,a,n,150874782800,1.60000002384186,U,a,n,152414321400,1.60000002384186
-                                        ,U,a,n,153953860000,1.60000002384186,U,a,n
+						Key: 146256167000,5.5,U,a,n,147795705600,5.5,U,a,n,149335244200,5.5,U,a,n,150874782800
+                                        ,5.5,U,a,n,152414321400,5.5,U,a,n,153953860000,5.5,U,a,n
 						Color: 1,1,1
 					}
 					Channel: "Z" {
@@ -760,7 +753,7 @@ Takes:  {
 				}
 				Channel: "R" {
 					Channel: "X" {
-						Default: -5
+						Default: 0
 						KeyVer: 4005
 						KeyCount: 6
 						Key: 146256167000,0,U,a,n,147795705600,-5,U,a,n,149335244200,-4.21875,U,a,n,150874782800
@@ -837,12 +830,11 @@ Takes:  {
 						Color: 1,1,1
 					}
 					Channel: "Y" {
-						Default: 1.01467502117157
+						Default: 5.5
 						KeyVer: 4005
 						KeyCount: 6
-						Key: 153953860000,1.60000002384186,U,a,n,155493398600,1.60000002384186,U,a,n,157032937200
-                                        ,1.60000002384186,U,a,n,158572475800,1.60000002384186,U,a,n,160112014400,1.60000002384186
-                                        ,U,a,n,161651553000,1.60000002384186,U,a,n
+						Key: 153953860000,5.5,U,a,n,155493398600,5.5,U,a,n,157032937200,5.5,U,a,n,158572475800
+                                        ,5.5,U,a,n,160112014400,5.5,U,a,n,161651553000,5.5,U,a,n
 						Color: 1,1,1
 					}
 					Channel: "Z" {
@@ -857,7 +849,7 @@ Takes:  {
 				}
 				Channel: "R" {
 					Channel: "X" {
-						Default: -5
+						Default: 0
 						KeyVer: 4005
 						KeyCount: 6
 						Key: 153953860000,0,U,a,n,155493398600,0,U,a,n,157032937200,0,U,a,n,158572475800,0,U,a
@@ -933,12 +925,11 @@ Takes:  {
 						Color: 1,1,1
 					}
 					Channel: "Y" {
-						Default: 1.01467502117157
+						Default: 5.5
 						KeyVer: 4005
 						KeyCount: 6
-						Key: 161651553000,1.60000002384186,U,a,n,163191091600,1.60000002384186,U,a,n,164730630200
-                                        ,1.60000002384186,U,a,n,166270168800,1.60000002384186,U,a,n,167809707400,1.60000002384186
-                                        ,U,a,n,169349246000,1.60000002384186,U,a,n
+						Key: 161651553000,5.5,U,a,n,163191091600,5.5,U,a,n,164730630200,5.5,U,a,n,166270168800
+                                        ,5.5,U,a,n,167809707400,5.5,U,a,n,169349246000,5.5,U,a,n
 						Color: 1,1,1
 					}
 					Channel: "Z" {
@@ -953,7 +944,7 @@ Takes:  {
 				}
 				Channel: "R" {
 					Channel: "X" {
-						Default: -5
+						Default: 0
 						KeyVer: 4005
 						KeyCount: 6
 						Key: 161651553000,0,U,a,n,163191091600,0,U,a,n,164730630200,0,U,a,n,166270168800,0,U,a
@@ -1030,14 +1021,13 @@ Takes:  {
 						Color: 1,1,1
 					}
 					Channel: "Y" {
-						Default: 1.01467502117157
+						Default: 5.5
 						KeyVer: 4005
 						KeyCount: 11
-						Key: 61581544000,1.60000002384186,U,a,n,63121082600,1.53323638439178,U,a,n,64660621200
-                                        ,1.37318658828735,U,a,n,66200159800,1.1802122592926,U,a,n,67739698400,1.01467502117157
-                                        ,U,a,n,69279237000,0.879318654537201,U,a,n,70818775600,0.809811294078827,U,a,n,72358314200
-                                        ,0.823903322219849,U,a,n,73897852800,0.854905664920807,U,a,n,75437391400,0.885908007621765
-                                        ,U,a,n,76976930000,0.899999976158142,U,a,n
+						Key: 61581544000,5.5,U,a,n,63121082600,5.203125,U,a,n,64660621200,4.5,U,a,n,66200159800
+                                        ,3.671875,U,a,n,67739698400,3,U,a,n,69279237000,2.625,U,a,n,70818775600,2.5,U,a,n
+                                        ,72358314200,2.5390625,U,a,n,73897852800,2.625,U,a,n,75437391400,2.7109375,U,a,n,76976930000
+                                        ,2.75,U,a,n
 						Color: 1,1,1
 					}
 					Channel: "Z" {
@@ -1053,7 +1043,7 @@ Takes:  {
 				}
 				Channel: "R" {
 					Channel: "X" {
-						Default: -5
+						Default: 0
 						KeyVer: 4005
 						KeyCount: 11
 						Key: 61581544000,0,U,a,n,63121082600,-0.78125,U,a,n,64660621200,-2.5,U,a,n,66200159800
@@ -1134,14 +1124,14 @@ Takes:  {
 						Color: 1,1,1
 					}
 					Channel: "Y" {
-						Default: 1.01467502117157
+						Default: 5.5
 						KeyVer: 4005
 						KeyCount: 11
-						Key: 76976930000,0.899999976158142,U,a,n,78516468600,0.71362429857254,U,a,n,80056007200
-                                        ,0.762259840965271,U,a,n,81595545800,0.966334819793701,U,a,n,83135084400,1.2462774515152
-                                        ,U,a,n,84674623000,1.52251577377319,U,a,n,86214161600,1.7154780626297,U,a,n,87753700200
-                                        ,1.74559247493744,U,a,n,89293238800,1.67249989509583,U,a,n,90832777400,1.61894237995148
-                                        ,U,a,n,92372316000,1.60000002384186,U,a,n
+						Key: 76976930000,2.75,U,a,n,78516468600,2.62217807769775,U,a,n,80056007200,2.82994771003723
+                                        ,U,a,n,81595545800,3.26894736289978,U,a,n,83135084400,3.83481431007385,U,a,n,84674623000
+                                        ,4.42318677902222,U,a,n,86214161600,4.92970275878906,U,a,n,87753700200,5.25,U,a,n
+                                        ,89293238800,5.39957237243652,U,a,n,90832777400,5.47643327713013,U,a,n,92372316000
+                                        ,5.5,U,a,n
 						Color: 1,1,1
 					}
 					Channel: "Z" {
@@ -1157,7 +1147,7 @@ Takes:  {
 				}
 				Channel: "R" {
 					Channel: "X" {
-						Default: -5
+						Default: 0
 						KeyVer: 4005
 						KeyCount: 11
 						Key: 76976930000,0,U,a,n,78516468600,0.785573899745941,U,a,n,80056007200,2.51383638381958

@@ -14,7 +14,7 @@ namespace IronStar.Mapping {
 	public class MapEnvironment {
 
 		[AECategory( "Physics" )]
-		public float Gravity { get; set; } = 16;
+		public float Gravity { get; set; } = 48;
 
 		[AECategory( "Sky" )]
 		[AEValueRange(2,8,0.25f,0.125f)]

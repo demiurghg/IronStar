@@ -129,6 +129,13 @@ namespace Fusion.Engine.Graphics {
 		[AEValueRange(0, 16, 1f, 1f/16f)]
 		public float Dithering { get; set; } = 4;
 
+		/// <summary>
+		/// Dither pattern amount
+		/// </summary>
+		[Config]
+		[AEValueRange(0, 1, 1f/16f, 1f/256f)]
+		public float Vignette { get; set; } = 1;
+
 
 		Ubershader	shader;
 		ConstantBuffer	paramsCB;
@@ -136,6 +143,7 @@ namespace Fusion.Engine.Graphics {
 		StateFactory	factory;
 		DynamicTexture	whiteTex;
 		DiscTexture[]	noiseTex;
+		DiscTexture		vignetteTex;
 		ByteAddressBuffer histogramBuffer;
 
 
@@ -156,8 +164,8 @@ namespace Fusion.Engine.Graphics {
 			public	float	DirtAmount;
 			public	float	Saturation;
 			public	float	DitherAmount;
-			public	int		Width;
-			public	int		Height;
+			public	uint	Width;
+			public	uint	Height;
 			public	float	EVMin;
 			public	float	EVMax;
 			public	float	EVRange;
@@ -166,6 +174,7 @@ namespace Fusion.Engine.Graphics {
 			public	float	AdaptEVMax;
 			public	uint	NoiseX;
 			public	uint	NoiseY;
+			public	float	VignetteAmount;
 		}
 
 
@@ -232,13 +241,14 @@ namespace Fusion.Engine.Graphics {
 		void LoadContent ()
 		{
 			shader		=	Game.Content.Load<Ubershader>("hdr");
+			factory		=	shader.CreateFactory( typeof(Flags), Primitive.TriangleList, VertexInputElement.Empty, BlendState.Opaque, RasterizerState.CullNone, DepthStencilState.None );
+
+			vignetteTex	=	Game.Content.Load<DiscTexture>(@"noise\vignette");
 
 			noiseTex	=	new DiscTexture[8];
 			for (int i=0; i<8; i++) {
 				noiseTex[i]	=	Game.Content.Load<DiscTexture>(@"noise\anim\LDR_LLL1_" + i.ToString());
 			}
-
-			factory		=	shader.CreateFactory( typeof(Flags), Primitive.TriangleList, VertexInputElement.Empty, BlendState.Opaque, RasterizerState.CullNone, DepthStencilState.None );
 		}
 
 
@@ -422,8 +432,8 @@ namespace Fusion.Engine.Graphics {
 				paramsData.DirtAmount			=	0;
 				paramsData.Saturation			=	Saturation;
 				paramsData.DitherAmount			=	Dithering;
-				paramsData.Width				=	imageWidth;
-				paramsData.Height				=	imageHeight;
+				paramsData.Width				=	(uint)imageWidth;
+				paramsData.Height				=	(uint)imageHeight;
 				paramsData.EVMin				=	EVMin;
 				paramsData.EVMax				=	EVMax;
 				paramsData.EVRange				=	paramsData.EVMax - paramsData.EVMin;
@@ -432,6 +442,7 @@ namespace Fusion.Engine.Graphics {
 				paramsData.AdaptEVMax			=	AdaptEVMax;
 				paramsData.NoiseX				=	0;
 				paramsData.NoiseY				=	0;
+				paramsData.VignetteAmount		=	Vignette;
 
 				paramsCB.SetData( paramsData );
 				device.PixelShaderConstants[0]		=	paramsCB;
@@ -470,6 +481,8 @@ namespace Fusion.Engine.Graphics {
 				device.PixelShaderResources[3]	=	settings.DirtMask1==null ? whiteTex.Srv : settings.DirtMask1.Srv;
 				device.PixelShaderResources[4]	=	settings.DirtMask2==null ? whiteTex.Srv : settings.DirtMask2.Srv;
 				device.PixelShaderResources[5]	=	noiseTex[frameCounter % 8].Srv;
+				device.PixelShaderResources[6]	=	vignetteTex.Srv;
+				device.PixelShaderResources[9]	=	histogramBuffer;
 				device.PixelShaderSamplers[0]	=	SamplerState.LinearClamp;
 
 				Flags op = Flags.LINEAR;

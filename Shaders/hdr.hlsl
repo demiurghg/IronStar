@@ -269,14 +269,15 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 
 #ifdef TONEMAPPING
 
-Texture2D		FinalHdrImage 		: register(t0);
-Texture2D		MasuredLuminance	: register(t1);
-Texture2D		BloomTexture		: register(t2);
-Texture2D		BloomMask1			: register(t3);
-Texture2D		BloomMask2			: register(t4);
-Texture2D		NoiseTexture		: register(t5);
+Texture2D			FinalHdrImage 		: register(t0);
+Texture2D			MasuredLuminance	: register(t1);
+Texture2D			BloomTexture		: register(t2);
+Texture2D			BloomMask1			: register(t3);
+Texture2D			BloomMask2			: register(t4);
+Texture2D			NoiseTexture		: register(t5);
+Texture2D			VignmetteTexture	: register(t6);
+ByteAddressBuffer 	Histogram			: register(t9);
 
-ByteAddressBuffer Histogram			: register(t9);
 
 float3 LinearToSRGB(float3 LinearRGB) {
     return (LinearRGB<=0.0031308f)?(12.92f*LinearRGB):mad(1.055f,pow(LinearRGB,1.0f/2.4f),-0.055f);
@@ -372,33 +373,33 @@ float3 ShowHistogram ( uint x, uint y, float3 image, float lumActual, float lumA
 	
 	image *= 0.9;
 	
-	int 	bin			=	clamp(x*256 / Params.Width, 0,255);
-	int		hvalue		=	Histogram.Load(bin*4);
-	int 	height1		=	(int)(10 * log10(hvalue+1));
-	int 	height2		=	(int)(hvalue / Params.Width);
+	uint 	bin			=	clamp(x*256 / Params.Width, 0,255);
+	uint	hvalue		=	Histogram.Load(bin*4);
+	uint 	height1		=	(uint)(10 * log10(hvalue+1));
+	uint 	height2		=	(uint)(hvalue / Params.Width);
 	float4 	shade1		=	(Params.Height-128 - y) <= height1 ? float4(0.2,0.2,0.2,0.7f) : float4(0,0,0,0);
 	float4 	shade2		=	(Params.Height-128 - y)/2 == height2/2 ? float4(1.0,0.0,0.0,1.0f) : float4(0,0,0,0);
 	
 	float	nrmLogLum	=	HDRToLogNormalizedEV(float3(lumActual,lumActual,lumActual));
-	int		width		=	(int)(nrmLogLum*Params.Width);
+	uint		width		=	(uint)(nrmLogLum*Params.Width);
 	
 	if (x>width-1 && x<width+1) {
 		return float3(1,0,0);
 	}
 
 	float	nrmLogLum2	=	HDRToLogNormalizedEV(float3(lumAdapt,lumAdapt,lumAdapt));
-	int		width2		=	(int)(nrmLogLum2*Params.Width);
+	uint	width2		=	(uint)(nrmLogLum2*Params.Width);
 	
 	if (x>width2-2 && x<width2+1) {
 		return float3(1,1,0);
 	}
 	
 	float  	exposured	=	pow( 2, (x / (float)Params.Width) * Params.EVRange + Params.EVMin );
-	int 	curve		=	(int)(Tonemap( float3(exposured,exposured,exposured) * Params.KeyValue / lumAdapt ).r * 128);
+	uint 	curve		=	(uint)(Tonemap( float3(exposured,exposured,exposured) * Params.KeyValue / lumAdapt ).r * 128);
 	float4 	shade3		=	((Params.Height-128 - y)==curve) ? float4(0,1,0,1) : float4(0,0,0,0);
 	
-	float	adaptMin	=	(int)(NormalizeEV( Params.AdaptEVMin ) * Params.Width);
-	float	adaptMax	=	(int)(NormalizeEV( Params.AdaptEVMax ) * Params.Width);
+	uint	adaptMin	=	(uint)(NormalizeEV( Params.AdaptEVMin ) * Params.Width);
+	uint	adaptMax	=	(uint)(NormalizeEV( Params.AdaptEVMax ) * Params.Width);
 	if (x>=adaptMin && x<=adaptMax) {
 		image *= 0.8;
 	}
@@ -433,6 +434,8 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	float4	bloomMask	=	lerp( bloomMask1, bloomMask2, Params.DirtMaskLerpFactor );
 	float	luminanceEV	=	MasuredLuminance.Load(int3(0,0,0)).r;
 	float	noiseDither	=	NoiseTexture.Load( int3(xpos%64,ypos%64,0) ).r;
+	float3	vignette	=	VignmetteTexture.SampleLevel( LinearSampler, uv, 0 ).rgb;
+			vignette	=	lerp( float3(1,1,1), vignette, Params.VignetteAmount );
 	
 	float 	luminanceAdaptEV		=	((luminanceEV - Params.EVMin) * Params.EVRangeInverse) * (Params.AdaptEVMax - Params.AdaptEVMin) + Params.AdaptEVMin;
 	float	luminanceAdaptLinear	=	EVToLuminance( luminanceAdaptEV );
@@ -453,6 +456,7 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	
 	hdrImage			=	lerp( hdrImage * bloomMask.rgb, bloom, saturate(bloomMask.a * Params.DirtAmount + Params.BloomAmount));
 	
+	hdrImage			*=	vignette;
 
 	//
 	//	Tonemapping :

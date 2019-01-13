@@ -17,8 +17,8 @@ struct PARAMS {
 	float      DirtAmount;                    // offset:   24
 	float      Saturation;                    // offset:   28
 	float      DitherAmount;                  // offset:   32
-	int        Width;                         // offset:   36
-	int        Height;                        // offset:   40
+	uint       Width;                         // offset:   36
+	uint       Height;                        // offset:   40
 	float      EVMin;                         // offset:   44
 	float      EVMax;                         // offset:   48
 	float      EVRange;                       // offset:   52
@@ -27,5 +27,6 @@ struct PARAMS {
 	float      AdaptEVMax;                    // offset:   64
 	uint       NoiseX;                        // offset:   68
 	uint       NoiseY;                        // offset:   72
+	float      VignetteAmount;                // offset:   76
 };
 

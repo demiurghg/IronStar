@@ -95,7 +95,6 @@
     <Compile Include="Items\WeaponFactory.cs" />
     <Compile Include="JsonLoader.cs" />
     <Compile Include="Mapping\Map.Recast2.cs" />
-    <Compile Include="Mapping\MapNavigation.cs" />
     <Compile Include="Mapping\MapReverb.cs" />
     <Compile Include="Mapping\MapSound.cs" />
     <Compile Include="SinglePlayer\Mission.Debriefing.cs" />

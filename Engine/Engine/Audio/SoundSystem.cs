@@ -44,6 +44,8 @@ namespace Fusion.Engine.Audio {
 			FmodExt.ERRCHECK( lowlevel.setSoftwareFormat( 0, speakerMode, 0 ) );
 			FmodExt.ERRCHECK( system.initialize( 1024, studioFlags, lowlevelFlags, IntPtr.Zero ) );
 
+			lowlevel.set3DSettings( 1, 3.28f, 1 );
+
 			uint plugin;
 			FmodExt.ERRCHECK( lowlevel.loadPlugin("fmod_distance_filter", out plugin ) );
         }

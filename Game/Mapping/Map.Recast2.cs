@@ -81,8 +81,25 @@ namespace IronStar.Mapping {
 			GetStaticGeometry( content, out verts, out inds );
 
 			var config = new BuildConfig();
-			config.CellHeight		=	0.25f;
-			config.CellSize			=	0.25f;
+
+			config.TileSize					=	0;
+			config.BorderSize				=	0;
+			config.CellSize					=	1.00f;
+			config.CellHeight				=	1.00f;
+			config.WalkableSlopeAngle		=	45.0f;
+			config.WalkableHeight			=	6.0f;
+			config.WalkableClimb			=	1.0f;
+			config.WalkableRadius			=	1.0f;
+			config.MaxEdgeLen				=	24;
+			config.MaxSimplificationError	=	1.3f;
+			config.MinRegionSize			=	16;
+			config.MergeRegionSize			=	40;
+			config.MaxVertsPerPoly			=	6;
+			config.DetailSampleDist			=	12.0f;
+			config.DetailSampleMaxError		=	1.0f;
+
+			config.CellHeight		=	1.00f;
+			config.CellSize			=	1.00f;
 			config.BBox				=	BoundingBox.FromPoints( verts );
 			//config.BBox			=	new BoundingBox( Vector3.One * (-4), Vector3.One*4 );
 			config.MaxVertsPerPoly	=	6;

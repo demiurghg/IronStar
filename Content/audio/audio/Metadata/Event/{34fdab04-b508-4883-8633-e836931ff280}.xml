@@ -202,7 +202,7 @@
             <value>0.899999976</value>
         </property>
         <property name="maximumDistance">
-            <value>150</value>
+            <value>500</value>
         </property>
         <property name="extentMode">
             <value>1</value>
@@ -282,6 +282,5 @@
         <property name="dataType">
             <value>-2</value>
         </property>
-        <property name="value"/>
     </object>
 </objects>

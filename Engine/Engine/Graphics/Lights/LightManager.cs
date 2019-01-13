@@ -162,7 +162,7 @@ namespace Fusion.Engine.Graphics {
 		const int	Width		=	64;
 		const int	Height		=	32;
 		const int	Depth		=	64;
-		const float GridStep	=	0.5f;
+		const float GridStep	=	2.0f;
 		const int	SampleNum	=	91;
 
 

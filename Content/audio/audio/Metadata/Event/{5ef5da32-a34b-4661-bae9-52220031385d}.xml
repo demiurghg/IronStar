@@ -224,7 +224,7 @@
             <value>3</value>
         </property>
         <property name="maximumDistance">
-            <value>150</value>
+            <value>450</value>
         </property>
         <property name="extentMode">
             <value>1</value>

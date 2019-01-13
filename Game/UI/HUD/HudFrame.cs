@@ -89,7 +89,7 @@ namespace IronStar.UI.HUD {
 			warning.Anchor		=	FrameAnchor.None;
 			warning.ForeColor	=	HudColors.WarningColor;
 			warning.ShadowColor	=	HudColors.ShadowColor;
-			warning.Text		=	"Warning: Low health!";
+			warning.Text		=	"";//"Warning: Low health!";
 			warning.TextAlignment=	Alignment.MiddleCenter;
 			warning.ShadowOffset=	new Vector2(1,1);
 
@@ -97,7 +97,7 @@ namespace IronStar.UI.HUD {
 			message.Anchor		=	FrameAnchor.None;
 			message.ForeColor	=	HudColors.MessageColor;
 			message.ShadowColor	=	HudColors.ShadowColor;
-			message.Text		=	"You need blue key";
+			message.Text		=	"";//"You need blue key";
 			message.TextAlignment=	Alignment.MiddleCenter;
 			message.ShadowOffset=	new Vector2(1,1);
 

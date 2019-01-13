@@ -95,6 +95,8 @@ float3	ComputeCSM (
 	float	epsilon			=	1 / 8192.0f / 4.0f;
 			bestGradient	=	normalize(bestGradient);
 	float2	depthWeights	=	bestGradient.xy / (bestGradient.z + epsilon );
+	float2	depthClamp		=	0.01f;
+			depthWeights	=	clamp( depthWeights, -depthClamp, depthClamp );
 	
 	
 	if (true) {

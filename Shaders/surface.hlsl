@@ -66,10 +66,14 @@ Texture2D					EnvLut				:	register(t16);
 StructuredBuffer<LIGHTPROBE> ProbeDataTable		:	register(t17);
 
 #ifdef _UBERSHADER
-$ubershader FORWARD RIGID|SKINNED +ANISOTROPIC +TRANSPARENT
-$ubershader SHADOW RIGID|SKINNED +TRANSPARENT
-$ubershader ZPASS RIGID|SKINNED
-$ubershader GBUFFER RIGID|SKINNED
+$ubershader FORWARD RIGID ANISOTROPIC +TRANSPARENT
+$ubershader SHADOW RIGID +TRANSPARENT
+$ubershader ZPASS RIGID
+$ubershader GBUFFER RIGID
+// $ubershader FORWARD RIGID|SKINNED +ANISOTROPIC +TRANSPARENT
+// $ubershader SHADOW RIGID|SKINNED +TRANSPARENT
+// $ubershader ZPASS RIGID|SKINNED
+// $ubershader GBUFFER RIGID|SKINNED
 #endif
 
 #include "surface.lighting.hlsl"
@@ -323,10 +327,11 @@ GBuffer PSMain( PSInput input )
 	}
 
 	if ( Subset.Rectangle.z==Subset.Rectangle.w && Subset.Rectangle.z==0 ) {
-		float3	checker	=	floor(input.WorldPos.xyz/4.0f-0.5f)/2;
-		baseColor	=	0.2*frac(checker.x + checker.y + checker.z)+0.3;
+		float3	checker3	=	floor(input.WorldPos.xyz/4.0f-0.5f)/2;
+		float	checker		=	frac(checker3.x + checker3.y + checker3.z);
+		baseColor	=	pow(0.2*checker+0.3,2);
 		localNormal	=	float3(0,0,1);
-		roughness	=	0.5;
+		roughness	=	0.2*checker+0.25;
 		metallic	=	0;
 		emission	=	0;
 		alpha		=	0.5f;

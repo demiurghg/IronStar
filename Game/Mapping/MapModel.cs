@@ -255,5 +255,12 @@ namespace IronStar.Mapping {
 
 			return newNode;
 		}
+
+
+		public override BoundingBox GetBoundingBox()
+		{
+			#warning Need more smart bounding box for map models!
+			return new BoundingBox( 8, 8, 8 );
+		}
 	}
 }

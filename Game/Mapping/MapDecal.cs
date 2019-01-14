@@ -221,5 +221,10 @@ namespace IronStar.Mapping {
 			newNode.decal = null;
 			return newNode;
 		}
+
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox( Width, Height, 0.25f );
+		}
 	}
 }

@@ -113,5 +113,12 @@ namespace IronStar.Mapping {
 			newNode.reverb		= null;
 			return newNode;
 		}
+
+
+		public override BoundingBox GetBoundingBox()
+		{
+			float sz = MaximumDistance / (float)Math.Sqrt(3);
+			return new BoundingBox( sz, sz, sz );
+		}
 	}
 }

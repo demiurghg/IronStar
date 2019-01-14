@@ -535,15 +535,22 @@ namespace IronStar.Editor {
 		{
 			var targets = selection.Any() ? selection.ToArray() : map.Nodes.ToArray();
 
-			BoundingBox bbox;
+			var points = new List<Vector3>();
 
 			if (!targets.Any()) {
-				bbox = new BoundingBox( new Vector3(-10,-10,-10), new Vector3(10,10,10) );
+				points.Add( Vector3.One * 30 );
+				points.Add( Vector3.One * (-30) );
 			} else {
 
-				bbox = BoundingBox.FromPoints( targets.Select( t => t.TranslateVector ).ToArray() );
+				foreach ( var node in targets ) {
+					
+					points.AddRange( node.GetBoundingBox().GetCorners().Select( p => Vector3.TransformCoordinate( p, node.WorldMatrix ) ) );
+
+				}
 
 			}
+
+			var bbox	= BoundingBox.FromPoints( points );
 
 			var halfFov	= MathUtil.DegreesToRadians( camera.Fov / 2 );
 
@@ -553,7 +560,7 @@ namespace IronStar.Editor {
 			var center	= bbox.Center();
 
 			camera.Target	= center;
-			camera.Distance = (size / scaler) * 1.5f;
+			camera.Distance = (size / scaler) * 1.0f;
 		}
 
 

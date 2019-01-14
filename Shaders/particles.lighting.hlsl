@@ -128,8 +128,8 @@ float3 ComputeClusteredLighting ( float3 worldPos, float3 normal, float3 color, 
 	for (i=0; i<lpbCount; i++) {
 		uint idx  			= 	LightIndexTable.Load( lightCount + decalCount + index + i );
 		float3 position		=	ProbeDataTable[idx].Position.xyz;
-		float  innerRadius	=	ProbeDataTable[idx].InnerRadius;
-		float  outerRadius	=	ProbeDataTable[idx].OuterRadius;
+		float  innerRadius	=	4;//ProbeDataTable[idx].InnerRadius;
+		float  outerRadius	=	8;//ProbeDataTable[idx].OuterRadius;
 		uint   imageIndex	=	ProbeDataTable[idx].ImageIndex;
 		
 		float	localDist	=	distance( position.xyz, worldPos.xyz );

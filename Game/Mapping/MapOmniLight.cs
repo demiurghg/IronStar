@@ -120,5 +120,13 @@ namespace IronStar.Mapping {
 			newNode.light = null;
 			return newNode;
 		}
+
+
+
+		public override BoundingBox GetBoundingBox()
+		{
+			float sz = OuterRadius / (float)Math.Sqrt(3);
+			return new BoundingBox( sz, sz, sz );
+		}
 	}
 }

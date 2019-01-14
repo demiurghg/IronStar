@@ -110,9 +110,11 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	specular	=	1.0f;
 	diffuse		=	0.0f;//*/
 
-	/*roughness	=	0.125f;
-	specular	=	0.0f;
-	diffuse		=	1.0f;//*/
+	/*roughness	=	0.2f;
+	specular	=	1.0f;
+	diffuse		=	0.0f;//*/
+	
+	//roughness *= 0.3f;
 
 	//----------------------------------------------------------------------------------------------
 
@@ -230,6 +232,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 			
 	float 	skyFactor		=	length( aogridValue.xyz );
 	float3 	skyBentNormal	=	aogridValue.xyz / (skyFactor + 0.1);
+			//skyFactor		*=	skyFactor;
 	
 	float 	fullSkyLight	=	max( 0, dot( skyBentNormal, normal ) * 0.5 + 0.5 );
 	float 	halfSkyLight	=	max( 0, dot( skyBentNormal, normal ) * 1.0 + 0.0 );
@@ -251,8 +254,8 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	for (i=0; i<lpbCount; i++) {
 		uint idx  			= 	LightIndexTable.Load( lightCount + decalCount + index + i );
 		float3 position		=	ProbeDataTable[idx].Position.xyz;
-		float  innerRadius	=	ProbeDataTable[idx].InnerRadius;
-		float  outerRadius	=	ProbeDataTable[idx].OuterRadius;
+		float  innerRadius	=	42;//ProbeDataTable[idx].InnerRadius;
+		float  outerRadius	=	48;//ProbeDataTable[idx].OuterRadius;
 		uint   imageIndex	=	ProbeDataTable[idx].ImageIndex;
 		
 		float	localDist	=	distance( position.xyz, worldPos.xyz );

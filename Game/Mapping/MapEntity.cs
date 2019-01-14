@@ -135,5 +135,12 @@ namespace IronStar.Mapping {
 			newNode.FactoryName	= Misc.GenerateRandomString(8);
 			return newNode;
 		}
+
+
+		public override BoundingBox GetBoundingBox()
+		{
+			#warning Need more smart bounding box for entitites!
+			return new BoundingBox( 4, 4, 4 );
+		}
 	}
 }

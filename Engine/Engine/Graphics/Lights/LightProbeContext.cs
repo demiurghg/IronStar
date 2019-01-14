@@ -27,7 +27,8 @@ namespace Fusion.Engine.Graphics {
 		public LightProbeContext ( LightProbe lightProbe, CubeFace face, DepthStencilSurface depthBuffer, RenderTargetSurface colorBuffer, RenderTargetSurface normalBuffer )
 		{
 			var camera = new Camera();
-			camera.SetupCameraCubeFace( lightProbe.Position, face, 0.125f, 4096 );
+			#warning ROTATE LIGHT PROBE BASIS!!!
+			camera.SetupCameraCubeFace( lightProbe.ProbeMatrix.TranslationVector, face, 0.125f, 4096 );
 			
 			this.viewMatrix		=	camera.GetViewMatrix( StereoEye.Mono );
 			this.projMatrix		=	camera.GetProjectionMatrix( StereoEye.Mono );

@@ -137,20 +137,22 @@ namespace Fusion.Engine.Graphics {
 		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential)]
 		public struct LIGHTPROBE {	
-			//public Matrix	WorldMatrix;
+			public Matrix	Matrix;
 			public Vector4	Position;
-			public float	InnerRadius;
-			public float	OuterRadius;
+			public float	Hardness;
 			public uint		ImageIndex;
 			public float	Dummy1;
+			public float	Dummy2;
 
 			public void FromLightProbe ( LightProbe light ) 
 			{
 				#region Update structure fields from OmniLight object
-				Position	=	new Vector4( light.Position, 1 );
-				InnerRadius	=	light.InnerRadius;
-				OuterRadius	=	light.OuterRadius;
+				Matrix		=	light.ProbeMatrix;
+				Position	=	new Vector4( light.ProbeMatrix.TranslationVector, 1 );
+				Hardness	=	light.Hardness;
 				ImageIndex	=	(uint)light.ImageIndex;
+				Dummy1		=	0;
+				Dummy2		=	0;
 				#endregion
 			}
 		}

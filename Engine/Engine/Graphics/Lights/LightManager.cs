@@ -163,7 +163,7 @@ namespace Fusion.Engine.Graphics {
 		const int	Height		=	32;
 		const int	Depth		=	64;
 		const float GridStep	=	2.0f;
-		const int	SampleNum	=	91;
+		const int	SampleNum	=	255;
 
 
 		public Matrix OcclusionGridMatrix {
@@ -224,7 +224,7 @@ namespace Fusion.Engine.Graphics {
 				var cubeIndex	=	lightProbe.ImageIndex;
 
 				relightParams.CubeIndex				=	lightProbe.ImageIndex;
-				relightParams.LightProbePosition	=	new Vector4( lightProbe.Position, 1 );
+				relightParams.LightProbePosition	=	new Vector4( lightProbe.ProbeMatrix.TranslationVector, 1 );
 				relightParams.ShadowViewProjection	=	shadowMap.GetLessDetailedCascade().ViewProjectionMatrix;
 				relightParams.DirectLightDirection	=	new Vector4( lightSet.DirectLight.Direction, 0 );
 				relightParams.DirectLightIntensity	=	lightSet.DirectLight.Intensity;

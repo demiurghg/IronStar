@@ -14,17 +14,12 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Environment light position
 		/// </summary>
-		public Vector3	Position { get; set; }
+		public Matrix	ProbeMatrix { get; set; }
 
 		/// <summary>
 		/// Size of light probe
 		/// </summary>
-		public float	InnerRadius { get; set; }
-
-		/// <summary>
-		/// Size of light probe
-		/// </summary>
-		public float	OuterRadius { get; set; }
+		public float	Hardness { get; set; }
 
 		/// <summary>
 		/// Unique image index in range [0..255]
@@ -42,9 +37,6 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public LightProbe ()
 		{
-			Position	=	Vector3.Zero;
-			InnerRadius	=	0;
-			OuterRadius	=	1;
 		}
 
 
@@ -55,12 +47,9 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="position"></param>
 		/// <param name="innerRadius"></param>
 		/// <param name="outerRadius"></param>
-		public LightProbe ( Vector3 position, float innerRadius, float outerRadius, int imageIndex )
+		public LightProbe ( int imageIndex )
 		{
-			this.Position		=	position;
-			this.InnerRadius	=	innerRadius;
-			this.OuterRadius	=	outerRadius;
-			this.ImageIndex		=	imageIndex;
+			ImageIndex	=	imageIndex;
 		}
 		
 	}

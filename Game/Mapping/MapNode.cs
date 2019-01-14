@@ -234,5 +234,7 @@ namespace IronStar.Mapping {
 		/// </summary>
 		/// <param name="dr"></param>
 		public abstract void DrawNode ( GameWorld world, DebugRender dr, Color color, bool selected );
+
+		public abstract BoundingBox GetBoundingBox();
 	}
 }

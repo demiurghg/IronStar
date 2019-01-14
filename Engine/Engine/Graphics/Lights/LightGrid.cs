@@ -318,9 +318,8 @@ namespace Fusion.Engine.Graphics {
 				Vector4 min, max;
 				lpb.Visible	=	false;
 
-				var radius = Math.Max(lpb.OuterRadius, lpb.InnerRadius);
-
-				if ( Extents.GetSphereExtent( view, proj, lpb.Position, vp, radius, false, out min, out max ) ) {
+				if ( Extents.GetSphereExtent( view, proj, lpb.ProbeMatrix.TranslationVector, vp, 48, false, out min, out max ) ) {
+				//if ( Extents.GetBasisExtent( view, proj, vp, lpb.ProbeMatrix, false, out min, out max ) ) {
 
 					min.Z	=	GetGridSlice( min.Z );
 					max.Z	=	GetGridSlice( max.Z );

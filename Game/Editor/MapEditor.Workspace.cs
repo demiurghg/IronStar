@@ -90,6 +90,7 @@ namespace IronStar.Editor {
 			lowerShelf.AddLButton("USE\n[U]"	 ,	@"editor\iconUse"	,	() => UseSelected() );
 
 			lowerShelf.AddFatLButton("Build\nNavMesh"	 ,	null,	() => this.Map.BuildNavMesh(Content) );
+			lowerShelf.AddFatLButton("Build\nRadiace"	 ,	null,	() => Game.Invoker.ExecuteString("buildrad") );
 
 			//--------------------------------------------------------------------------
 

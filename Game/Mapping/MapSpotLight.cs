@@ -204,5 +204,13 @@ namespace IronStar.Mapping {
 			newNode.light = null;
 			return newNode;
 		}
+
+
+		public override BoundingBox GetBoundingBox()
+		{
+			var frustum = new BoundingFrustum( SpotView * SpotProjection );
+			var points  = frustum.GetCorners();
+			return BoundingBox.FromPoints( points );
+		}
 	}
 }

@@ -25,22 +25,22 @@ namespace IronStar.Mapping {
 		/// 
 		/// </summary>
 		[AECategory("Decal Size")]
-		[AEValueRange(0, 16, 1/4f, 1/128f)]
-		public float Width { get; set;} = 1;
+		[AEValueRange(0, 64, 1f, 1/16f)]
+		public float Width { get; set;} = 4;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		[AECategory("Decal Size")]
-		[AEValueRange(0, 16, 1/4f, 1/128f)]
-		public float Height { get; set;} = 1;
+		[AEValueRange(0, 64, 1f, 1/16f)]
+		public float Height { get; set;} = 4;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		[AECategory("Decal Size")]
-		[AEValueRange(0, 4, 1/4f, 1/128f)]
-		public float Depth { get; set;} = 0.25f;
+		[AEValueRange(0, 16, 1f, 1/16f)]
+		public float Depth { get; set;} = 1;
 
 		/// <summary>
 		/// Decal emission intensity

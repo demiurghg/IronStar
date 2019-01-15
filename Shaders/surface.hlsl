@@ -331,7 +331,7 @@ GBuffer PSMain( PSInput input )
 		float	checker		=	frac(checker3.x + checker3.y + checker3.z);
 		baseColor	=	pow(0.2*checker+0.3,2);
 		localNormal	=	float3(0,0,1);
-		roughness	=	0.2*checker+0.25;
+		roughness	=	0.3*checker+0.05;
 		metallic	=	0;
 		emission	=	0;
 		alpha		=	0.5f;

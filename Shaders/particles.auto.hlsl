@@ -67,7 +67,7 @@ struct LIGHTINDEX {
 // Fusion.Engine.Graphics.SceneRenderer+LIGHTPROBE
 // Marshal.SizeOf = 96
 struct LIGHTPROBE {
-	float4x4   Matrix;                        // offset:    0
+	float4x4   MatrixInv;                     // offset:    0
 	float4     Position;                      // offset:   64
 	float      Hardness;                      // offset:   80
 	uint       ImageIndex;                    // offset:   84

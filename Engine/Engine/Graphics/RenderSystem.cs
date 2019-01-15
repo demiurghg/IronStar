@@ -48,6 +48,8 @@ namespace Fusion.Engine.Graphics {
 		DynamicTexture blackTexture;
 		DynamicTexture flatNormalMap;
 
+		internal SpriteLayer	extentTest;
+
 
 		/// <summary>
 		/// Gets render world.
@@ -162,6 +164,11 @@ namespace Fusion.Engine.Graphics {
 
 			DisplayBoundsChanged += (s,e) => renderWorld.Resize( DisplayBounds.Width, DisplayBounds.Height );
 			Game.Exiting+=Game_Exiting;
+
+			//	add extent layer test :
+			extentTest			=	new SpriteLayer(this, 100);
+			extentTest.Order	=	0;
+			SpriteLayers.Add(extentTest);
 		}
 
 

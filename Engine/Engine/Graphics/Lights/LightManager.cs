@@ -163,7 +163,7 @@ namespace Fusion.Engine.Graphics {
 		const int	Height		=	32;
 		const int	Depth		=	64;
 		const float GridStep	=	2.0f;
-		const int	SampleNum	=	255;
+		const int	SampleNum	=	177;
 
 
 		public Matrix OcclusionGridMatrix {

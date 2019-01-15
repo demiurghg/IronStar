@@ -109,6 +109,13 @@ namespace Fusion.Engine.Graphics {
 		/// Shows particles statistics.
 		/// </summary>
 		[Config]
+		public bool ShowExtents { get; set; }
+
+
+		/// <summary>
+		/// Shows particles statistics.
+		/// </summary>
+		[Config]
 		public bool SkipParticles { get; set; }
 
 		/// <summary>

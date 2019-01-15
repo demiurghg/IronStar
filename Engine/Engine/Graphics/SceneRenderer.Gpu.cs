@@ -137,7 +137,7 @@ namespace Fusion.Engine.Graphics {
 		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential)]
 		public struct LIGHTPROBE {	
-			public Matrix	Matrix;
+			public Matrix	MatrixInv;
 			public Vector4	Position;
 			public float	Hardness;
 			public uint		ImageIndex;
@@ -147,7 +147,7 @@ namespace Fusion.Engine.Graphics {
 			public void FromLightProbe ( LightProbe light ) 
 			{
 				#region Update structure fields from OmniLight object
-				Matrix		=	light.ProbeMatrix;
+				MatrixInv	=	Matrix.Invert(light.ProbeMatrix);
 				Position	=	new Vector4( light.ProbeMatrix.TranslationVector, 1 );
 				Hardness	=	light.Hardness;
 				ImageIndex	=	(uint)light.ImageIndex;

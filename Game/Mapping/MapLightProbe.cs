@@ -81,7 +81,7 @@ namespace IronStar.Mapping {
 
 		private Matrix ComputeProbeMatrix ()
 		{
-			return Matrix.Scaling( Width, Height, Depth ) * WorldMatrix;
+			return Matrix.Scaling( Width/2.0f, Height/2.0f, Depth/2.0f ) * WorldMatrix;
 		}
 
 
@@ -107,7 +107,7 @@ namespace IronStar.Mapping {
 			//}
 
 			if (selected) {
-				var box = new BoundingBox( 1, 1, 1 );
+				var box = new BoundingBox( 2, 2, 2 );
 				dr.DrawBox( box, ComputeProbeMatrix(), Color.Cyan ); 
 				dr.DrawSphere( WorldMatrix.TranslationVector, 1.0f, color, 16 );
 			} else {

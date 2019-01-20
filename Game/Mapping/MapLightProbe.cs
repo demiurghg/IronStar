@@ -121,6 +121,7 @@ namespace IronStar.Mapping {
 		{
 			if (light!=null) {
 				light.ProbeMatrix		=	ComputeProbeMatrix();
+				light.BoundingBox		=	GetBoundingBox();
 			}
 		}
 

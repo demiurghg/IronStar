@@ -31,6 +31,11 @@ namespace Fusion.Engine.Graphics {
 		internal Int3	MinExtent;
 		internal Int3	MaxExtent;
 
+		/// <summary>
+		/// Bounding box for sorting
+		/// </summary>
+		public BoundingBox BoundingBox;
+
 
 		/// <summary>
 		/// Creates instance of EnvLight

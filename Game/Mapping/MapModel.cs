@@ -194,7 +194,10 @@ namespace IronStar.Mapping {
 
 		public override void ResetNode( GameWorld world )
 		{
-			if (scene==null) {
+			KillNode( world );
+			SpawnNode( world );
+
+			/*if (scene==null) {
 				return;
 			}
 
@@ -214,7 +217,7 @@ namespace IronStar.Mapping {
 				if (instance!=null) {
 					instances[i].World = transforms[ i ] * WorldMatrix;
 				}
-			}
+			} */
 		}
 
 

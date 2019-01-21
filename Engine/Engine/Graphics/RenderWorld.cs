@@ -327,15 +327,6 @@ namespace Fusion.Engine.Graphics {
 		 *	Rendering :
 		 * 
 		-----------------------------------------------------------------------------------------*/
-		bool captureRadiance;
-
-		public void CaptureRadiance ()
-		{
-			captureRadiance = true;
-		}
-
-
-
 
 
 		/// <summary>
@@ -343,11 +334,6 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		internal void Render ( GameTime gameTime, StereoEye stereoEye, RenderTargetSurface targetSurface )
 		{
-			if ( captureRadiance ) {
-				BuildRadiance();
-				captureRadiance = false;
-			}
-
 			//	clear target buffer if necassary :
 			if ( Clear) {
 				rs.Device.Clear( targetSurface, ClearColor );
@@ -505,59 +491,64 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void BuildRadiance ()
+		public void BuildRadiance ( bool obscurance, bool lightProbes )
 		{
 			var sw = new Stopwatch();
 			var device	=	Game.GraphicsDevice;
 
-			Log.Message("Building occlusion volumes...");
-			
-			rs.LightManager.UpdateIrradianceMap( Instances, LightSet, Debug );
-
-
-			device.ResetStates();
-
-			Log.Message("Radiance geometry capture...");
-
-			var skyAmbient = SkySettings.AmbientLevel;
-
-			sw.Start();
-			using (new PixEvent("Capture Radiance Geometry")) {
-
-				foreach ( var lightProbe in LightSet.LightProbes ) {
-
-					for (int i=0; i<6; i++) {
-
-						var face	=	(CubeFace)i;
-						var depth	=	LightProbeDepth.Surface;
-						var gbuf0	=	LightProbeGBuffer0.GetSurface( 0, face );
-						var gbuf1	=	LightProbeGBuffer1.GetSurface( 0, face );
-					
-						device.Clear( depth );
-						device.Clear( gbuf0, Color4.Black );
-						device.Clear( gbuf1, Color4.Black );
-
-						var context	=	new LightProbeContext( lightProbe, face, depth, gbuf0, gbuf1 );
-
-						//	render g-buffer :
-						rs.SceneRenderer.RenderLightProbeGBuffer( context, this, InstanceGroup.Static );
-					}
-				
-					RadianceGBuffer0.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeGBuffer0 );
-					RadianceGBuffer1.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeGBuffer1 );
-
-					rs.LightManager.RelightLightProbe( RadianceGBuffer0, RadianceGBuffer1, lightProbe, LightSet, skyAmbient, RadianceCache );
-				}
-
-				sw.Stop();
+			if (obscurance) {
+				Log.Message("Building obscurance volumes...");
+				rs.LightManager.UpdateIrradianceMap( Instances, LightSet, Debug );
 			}
 
-			Log.Message("{0} light probes - {1} ms", LightSet.LightProbes.Count, sw.ElapsedMilliseconds);
+
+			if (lightProbes) {
+				device.ResetStates();
+
+				Log.Message("Building light probes gbuffers...");
+
+				var skyAmbient = SkySettings.AmbientLevel;
+
+				sw.Start();
+				using (new PixEvent("Capture Radiance Geometry")) {
+
+					foreach ( var lightProbe in LightSet.LightProbes ) {
+
+						for (int i=0; i<6; i++) {
+
+							var face	=	(CubeFace)i;
+							var depth	=	LightProbeDepth.Surface;
+							var gbuf0	=	LightProbeGBuffer0.GetSurface( 0, face );
+							var gbuf1	=	LightProbeGBuffer1.GetSurface( 0, face );
+					
+							device.Clear( depth );
+							device.Clear( gbuf0, Color4.Black );
+							device.Clear( gbuf1, Color4.Black );
+
+							var context	=	new LightProbeContext( lightProbe, face, depth, gbuf0, gbuf1 );
+
+							//	render g-buffer :
+							rs.SceneRenderer.RenderLightProbeGBuffer( context, this, InstanceGroup.Static );
+						}
+				
+						RadianceGBuffer0.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeGBuffer0 );
+						RadianceGBuffer1.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeGBuffer1 );
+
+						rs.LightManager.RelightLightProbe( RadianceGBuffer0, RadianceGBuffer1, lightProbe, LightSet, skyAmbient, RadianceCache );
+					}
+
+					sw.Stop();
+				}
+
+				Log.Message("{0} light probes - {1} ms", LightSet.LightProbes.Count, sw.ElapsedMilliseconds);
+			}
 		}
 
 
 
 		int lightProbeUpdateCounter = 0;
+
+
 
 		/// <summary>
 		/// 

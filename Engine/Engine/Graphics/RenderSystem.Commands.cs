@@ -55,7 +55,16 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		class BuildRadCmd : CommandNoHistory {
+		class BuildRadCmd : CommandNoHistory 
+		{
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("obs")]
+			public bool Obscurance { get; set; }
+
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("lpb")]
+			public bool LightProbes { get; set; }
+
 			readonly RenderSystem rs;
 			
 			public BuildRadCmd ( RenderSystem rs ) {
@@ -64,11 +73,14 @@ namespace Fusion.Engine.Graphics {
 			
 			public override object Execute()
 			{
-				if (rs.RenderWorld!=null) {
-					rs.RenderWorld?.CaptureRadiance();
-				} else {
-					throw new InvalidOperationException("BuildRadCmd: Render world is not set");
+				if (!Obscurance && !LightProbes) 
+				{
+					Obscurance	=	true;
+					LightProbes	=	true;
 				}
+
+				rs.RenderWorld?.BuildRadiance( Obscurance, LightProbes );
+
 				return null;
 			}
 		}

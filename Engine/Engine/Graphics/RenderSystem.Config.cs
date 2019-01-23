@@ -203,10 +203,10 @@ namespace Fusion.Engine.Graphics {
 		[AECategory("Shadows")]  [Config]	public float CSMSlopeBias1 { get; set; } = 1;
 		[AECategory("Shadows")]  [Config]	public float CSMSlopeBias2 { get; set; } = 1;
 		[AECategory("Shadows")]  [Config]	public float CSMSlopeBias3 { get; set; } = 1;
-		[AECategory("Shadows")]  [Config]	public float CSMDepthBias0 { get; set; } = 0;
-		[AECategory("Shadows")]  [Config]	public float CSMDepthBias1 { get; set; } = 0;
-		[AECategory("Shadows")]  [Config]	public float CSMDepthBias2 { get; set; } = 0;
-		[AECategory("Shadows")]  [Config]	public float CSMDepthBias3 { get; set; } = 0;
+		[AECategory("Shadows")]  [Config]	public float CSMDepthBias0 { get; set; } = 1E-07f;
+		[AECategory("Shadows")]  [Config]	public float CSMDepthBias1 { get; set; } = 1E-07f;
+		[AECategory("Shadows")]  [Config]	public float CSMDepthBias2 { get; set; } = 1E-07f;
+		[AECategory("Shadows")]  [Config]	public float CSMDepthBias3 { get; set; } = 1E-07f;
 
 		[AECommand]
 		public void KillParticles ()

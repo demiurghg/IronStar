@@ -491,14 +491,14 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void BuildRadiance ( bool obscurance, bool lightProbes )
+		public void BuildRadiance ( bool obscurance, bool lightProbes, int numSamples )
 		{
 			var sw = new Stopwatch();
 			var device	=	Game.GraphicsDevice;
 
 			if (obscurance) {
 				Log.Message("Building obscurance volumes...");
-				rs.LightManager.UpdateIrradianceMap( Instances, LightSet, Debug );
+				rs.LightManager.UpdateIrradianceMap( Instances, LightSet, Debug, numSamples );
 			}
 
 

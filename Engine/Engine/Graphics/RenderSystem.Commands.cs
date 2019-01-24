@@ -65,6 +65,10 @@ namespace Fusion.Engine.Graphics {
 			[CommandLineParser.Name("lpb")]
 			public bool LightProbes { get; set; }
 
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("samples")]
+			public int NumSamples { get; set; }	= 29;
+
 			readonly RenderSystem rs;
 			
 			public BuildRadCmd ( RenderSystem rs ) {
@@ -79,7 +83,7 @@ namespace Fusion.Engine.Graphics {
 					LightProbes	=	true;
 				}
 
-				rs.RenderWorld?.BuildRadiance( Obscurance, LightProbes );
+				rs.RenderWorld?.BuildRadiance( Obscurance, LightProbes, NumSamples );
 
 				return null;
 			}

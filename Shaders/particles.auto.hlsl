@@ -69,10 +69,10 @@ struct LIGHTINDEX {
 struct LIGHTPROBE {
 	float4x4   MatrixInv;                     // offset:    0
 	float4     Position;                      // offset:   64
-	float      Hardness;                      // offset:   80
-	uint       ImageIndex;                    // offset:   84
-	float      Dummy1;                        // offset:   88
-	float      Dummy2;                        // offset:   92
+	uint       ImageIndex;                    // offset:   80
+	float      NormalizedWidth;               // offset:   84
+	float      NormalizedHeight;              // offset:   88
+	float      NormalizedDepth;               // offset:   92
 };
 
 // Fusion.Engine.Graphics.ParticleStream+PARAMS

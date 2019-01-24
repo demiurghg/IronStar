@@ -163,7 +163,6 @@ namespace Fusion.Engine.Graphics {
 		const int	Height		=	64;
 		const int	Depth		=	128;
 		const float GridStep	=	2.0f;
-		const int	SampleNum	=	97;
 
 
 		public Matrix OcclusionGridMatrix {
@@ -376,22 +375,22 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="instances"></param>
-		public void UpdateIrradianceMap ( IEnumerable<MeshInstance> instances, LightSet lightSet, DebugRender dr )
+		public void UpdateIrradianceMap ( IEnumerable<MeshInstance> instances, LightSet lightSet, DebugRender dr, int numSamples )
 		{
 			Log.Message("Building ambient occlusion map");
 
 			using ( var rtc = new Rtc() ) {
 
-				using ( var scene = new RtcScene( rtc, SceneFlags.Incoherent|SceneFlags.Static, AlgorithmFlags.Intersect1 ) ) {
+				using ( var scene = new RtcScene( rtc, SceneFlags.Coherent|SceneFlags.Static, AlgorithmFlags.Intersect1 ) ) {
 
 					points.Clear();
 
 					var min		=	Vector3.One * (-GridStep/2.0f);
 					var max		=	Vector3.One * ( GridStep/2.0f);
 
-					sphereRandomPoints		= Enumerable.Range(0,SampleNum).Select( i => Hammersley.SphereUniform(i,SampleNum) ).ToArray();
-					hemisphereRandomPoints	= Enumerable.Range(0,SampleNum).Select( i => Hammersley.HemisphereUniform(i,SampleNum) ).ToArray();
-					cubeRandomPoints		= Enumerable.Range(0,SampleNum).Select( i => rand.NextVector3( min, max ) ).ToArray();
+					sphereRandomPoints		= Enumerable.Range(0,numSamples).Select( i => Hammersley.SphereUniform(i,numSamples) ).ToArray();
+					hemisphereRandomPoints	= Enumerable.Range(0,numSamples).Select( i => Hammersley.HemisphereUniform(i,numSamples) ).ToArray();
+					cubeRandomPoints		= Enumerable.Range(0,numSamples).Select( i => rand.NextVector3( min, max ) ).ToArray();
 
 					foreach ( var p in hemisphereRandomPoints ) {
 						dr.DrawPoint( p, 0.1f, Color.Orange );
@@ -424,8 +423,8 @@ namespace Fusion.Engine.Graphics {
 								var translation	=	new Vector3( -Width/2.0f, 0, -Depth/2.0f );
 								var position	=	(new Vector3( x, y, z ) + translation) * GridStep;
 
-								var localAO		=	ComputeLocalOcclusion( scene, position, 3 );
-								var globalAO	=	ComputeSkyOcclusion( scene, position, 128 );
+								var localAO		=	ComputeLocalOcclusion( scene, position, 3, numSamples );
+								var globalAO	=	ComputeSkyOcclusion( scene, position, 128, numSamples );
 
 								byte byteX		=	(byte)( 255 * (globalAO.X * 0.5+0.5) );
 								byte byteY		=	(byte)( 255 * (globalAO.Y * 0.5+0.5) );
@@ -457,11 +456,11 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		float ComputeLocalOcclusion ( RtcScene scene, Vector3 point, float maxRange )
+		float ComputeLocalOcclusion ( RtcScene scene, Vector3 point, float maxRange, int numSamples )
 		{
 			float factor = 0;
 
-			for (int i=0; i<SampleNum; i++) {
+			for (int i=0; i<numSamples; i++) {
 				
 				var dir		=	sphereRandomPoints[i];
 				var bias	=	cubeRandomPoints[i];
@@ -476,7 +475,7 @@ namespace Fusion.Engine.Graphics {
 				var dist	=	scene.Intersect( x,y,z, dx,dy,dz, 0, maxRange );
 
 				if (dist>=0) {
-					var localFactor = (float)Math.Exp(-dist*2) / SampleNum;
+					var localFactor = (float)Math.Exp(-dist*2) / numSamples;
 					factor = factor + (float)localFactor;
 				}
 			}
@@ -486,13 +485,13 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		Vector3 ComputeSkyOcclusion ( RtcScene scene, Vector3 point, float maxRange )
+		Vector3 ComputeSkyOcclusion ( RtcScene scene, Vector3 point, float maxRange, int numSamples )
 		{
 			var bentNormal	=	Vector3.Zero;
 			var factor		=	0;
-			var scale		=	1.0f / SampleNum;
+			var scale		=	1.0f / numSamples;
 
-			for (int i=0; i<SampleNum; i++) {
+			for (int i=0; i<numSamples; i++) {
 				
 				var dir		=	hemisphereRandomPoints[i];
 				var bias	=	Vector3.Zero;// cubeRandomPoints[i];
@@ -548,7 +547,7 @@ namespace Fusion.Engine.Graphics {
 
 			var id		=	scene.NewTriangleMesh( GeometryFlags.Static, indices.Length/3, vertices.Length );
 
-			Log.Message("trimesh: id={0} tris={1} verts={2}", id, indices.Length/3, vertices.Length );
+			//Log.Message("trimesh: id={0} tris={1} verts={2}", id, indices.Length/3, vertices.Length );
 
 
 			var pVerts	=	scene.MapBuffer( id, BufferType.VertexBuffer );

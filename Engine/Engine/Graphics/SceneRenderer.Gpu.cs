@@ -139,20 +139,20 @@ namespace Fusion.Engine.Graphics {
 		public struct LIGHTPROBE {	
 			public Matrix	MatrixInv;
 			public Vector4	Position;
-			public float	Hardness;
 			public uint		ImageIndex;
-			public float	Dummy1;
-			public float	Dummy2;
+			public float	NormalizedWidth	;
+			public float	NormalizedHeight;
+			public float	NormalizedDepth	;
 
 			public void FromLightProbe ( LightProbe light ) 
 			{
-				#region Update structure fields from OmniLight object
-				MatrixInv	=	Matrix.Invert(light.ProbeMatrix);
-				Position	=	new Vector4( light.ProbeMatrix.TranslationVector, 1 );
-				Hardness	=	light.Hardness;
-				ImageIndex	=	(uint)light.ImageIndex;
-				Dummy1		=	0;
-				Dummy2		=	0;
+				#region Update structure fields from LightProbe object
+				MatrixInv			=	Matrix.Invert(light.ProbeMatrix);
+				Position			=	new Vector4( light.ProbeMatrix.TranslationVector, 1 );
+				ImageIndex			=	(uint)light.ImageIndex;
+				NormalizedWidth		=	light.NormalizedWidth	;
+				NormalizedHeight	=	light.NormalizedHeight	;
+				NormalizedDepth		=	light.NormalizedDepth	;
 				#endregion
 			}
 		}

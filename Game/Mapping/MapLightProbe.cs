@@ -38,8 +38,19 @@ namespace IronStar.Mapping {
 		public float Depth  { get; set; } = 16;
 
 		[Category("Light probe")]
-		[AEValueRange(0,100, 5, 1f )]
-		public float Hardness  { get; set; } = 75f;
+		[AEDisplayName("Transition Width")]
+		[AEValueRange(0.25f,32,1,0.25f)]
+		public float ShellWidth  { get; set; } = 2f;
+
+		[Category("Light probe")]
+		[AEDisplayName("Transition Height")]
+		[AEValueRange(0.25f,32,1,0.25f)]
+		public float ShellHeight  { get; set; } = 2f;
+
+		[Category("Light probe")]
+		[AEDisplayName("Transition Depth")]
+		[AEValueRange(0.25f,32,1,0.25f)]
+		public float ShellDepth  { get; set; } = 2f;
 
 
 		LightProbe	light;
@@ -122,6 +133,9 @@ namespace IronStar.Mapping {
 			if (light!=null) {
 				light.ProbeMatrix		=	ComputeProbeMatrix();
 				light.BoundingBox		=	GetBoundingBox();
+				light.NormalizedWidth	=	Math.Max( 0, Width  - ShellWidth  ) / Width	;
+				light.NormalizedHeight	=	Math.Max( 0, Height - ShellHeight ) / Height	;
+				light.NormalizedDepth	=	Math.Max( 0, Depth  - ShellDepth  ) / Depth	;
 			}
 		}
 

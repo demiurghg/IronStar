@@ -108,13 +108,17 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 
 	roughness	=	sqrt(roughness);
 	
-	/*roughness	=	0.75f;
+	/*roughness	=	0.5f;
 	specular	=	1.0f;
 	diffuse		=	0.0f;//*/
 
 	/*roughness	=	0.1f;
 	specular	=	0.1f;
 	diffuse		=	0.5f;//*/
+
+	/*roughness	=	0.1f;
+	specular	=	0.9f;
+	diffuse		=	0.1f;//*/
 
 	/*roughness	=	0.5f;
 	specular	=	0.0f;
@@ -262,14 +266,17 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	[loop]
 	for (i=0; i<lpbCount; i++) {
 		uint 		idx			= 	LightIndexTable.Load( lightCount + decalCount + index + i );
+		float3		innerRange	=	float3( ProbeDataTable[idx].NormalizedWidth, ProbeDataTable[idx].NormalizedHeight, ProbeDataTable[idx].NormalizedDepth );
 		float4x4	lpbMatrixI	=	ProbeDataTable[idx].MatrixInv;
 		float3		cubePos		=	mul(float4(worldPos,1), lpbMatrixI ).xyz;
-		float3		cubePosAbs	=	abs(cubePos);
-		float		factor		=	1-saturate(max(cubePosAbs.x, max(cubePosAbs.y, cubePosAbs.z)));
 		float3 		cubeMapPos	=	ProbeDataTable[idx].Position.xyz;
 		uint   		imageIndex	=	ProbeDataTable[idx].ImageIndex;
 		
-		factor		=	saturate( factor * 10 );
+		float3 		randColor	=	float3( (imageIndex/2)%2, (imageIndex/4)%2, (imageIndex/8)%2 );
+		
+		float3		factor3		=	abs(cubePos);
+					factor3		=	(factor3 - innerRange) / (float3(1,1,1) - innerRange);
+		float		factor		=	1 - saturate( max(factor3.x, max(factor3.y, factor3.z)) );
 		
 		float3	reflectVector	=	ParallaxCubeMap( worldPos, cameraPos, normal, cubeMapPos, lpbMatrixI );
 		float	selfOcclision	=	saturate( dot( normalize(normal.xyz), normalize(input.Normal.xyz) ) );
@@ -277,9 +284,10 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		float3	diffTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, imageIndex), LightProbeDiffuseMip).rgb;
 		float3	specTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflectVector, imageIndex), roughness*LightProbeMaxSpecularMip ).rgb;
 	
-		//totalLight.rgb		+=	factor * float3(0,0,100);
+		// diffTerm	=	randColor;
+		// specTerm	=	randColor;
 
-		ambientDiffuse		=	lerp( ambientDiffuse,  diffTerm, factor );
+		ambientDiffuse		=	lerp( ambientDiffuse , diffTerm, factor );
 		ambientSpecular		=	lerp( ambientSpecular, specTerm, factor );//*/
 	}
 

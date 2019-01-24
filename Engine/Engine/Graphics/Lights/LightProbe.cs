@@ -16,10 +16,9 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public Matrix	ProbeMatrix { get; set; }
 
-		/// <summary>
-		/// Size of light probe
-		/// </summary>
-		public float	Hardness { get; set; }
+		public float	NormalizedWidth { get; set; }
+		public float	NormalizedHeight { get; set; }
+		public float	NormalizedDepth { get; set; }
 
 		/// <summary>
 		/// Unique image index in range [0..255]

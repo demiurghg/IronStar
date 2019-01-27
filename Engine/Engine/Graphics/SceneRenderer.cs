@@ -165,7 +165,7 @@ namespace Fusion.Engine.Graphics {
 			cbDataStage.CascadeGradientMatrix2	=	rs.LightManager.ShadowMap.GetCascade( 2 ).ComputeGradientMatrix();
 			cbDataStage.CascadeGradientMatrix3	=	rs.LightManager.ShadowMap.GetCascade( 3 ).ComputeGradientMatrix();
 
-			cbDataStage.OcclusionGridMatrix		=	rs.LightManager.OcclusionGridMatrix;
+			cbDataStage.OcclusionGridMatrix		=	rs.LightManager.Obscurance.OcclusionGridMatrix;
 
 			cbDataStage.VTGradientScaler		=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;
 
@@ -222,7 +222,7 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			device.PixelShaderResources[13]	=	rs.Sky.SkyCube;
-			device.PixelShaderResources[14]	=	rs.LightManager.OcclusionGrid;
+			device.PixelShaderResources[14]	=	rs.LightManager.Obscurance.OcclusionGrid;
 			device.PixelShaderResources[15]	=	rs.RenderWorld.RadianceCache;
 			device.PixelShaderResources[16]	=	envLut.Srv;
 			device.PixelShaderResources[17]	=	rs.LightManager.LightGrid.ProbeDataGpu;

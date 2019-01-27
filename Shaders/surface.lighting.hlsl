@@ -258,8 +258,8 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	float 	selfOcclision	=	saturate(1*dot( reflectDir, normalize(input.Normal.xyz) ));
 	float	NoV 			= 	dot(viewDirN, normal.xyz);
 	float2 	ab				=	EnvLut.SampleLevel( SamplerLinearClamp, float2(roughness, 1-NoV), 0 ).xy;
-	float	ssaoFactorDiff	=	pow(ssaoFactor * aogridValue.w, 2);
-	float	ssaoFactorSpec	=	pow(ssaoFactor * aogridValue.w, 2);//computeSpecOcclusion( NoV, ssaoFactor * aogridValue.w, roughness );
+	float	ssaoFactorDiff	=	pow(ssaoFactor, 2);
+	float	ssaoFactorSpec	=	pow(ssaoFactor, 2);//computeSpecOcclusion( NoV, ssaoFactor * aogridValue.w, roughness );
 	
 	//return selfOcclision;
 	

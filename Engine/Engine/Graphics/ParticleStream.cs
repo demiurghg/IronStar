@@ -443,7 +443,7 @@ namespace Fusion.Engine.Graphics {
 			param.CascadeScaleOffset1		=	rs.LightManager.ShadowMap.GetCascade( 1 ).ShadowScaleOffset;
 			param.CascadeScaleOffset2		=	rs.LightManager.ShadowMap.GetCascade( 2 ).ShadowScaleOffset;
 			param.CascadeScaleOffset3		=	rs.LightManager.ShadowMap.GetCascade( 3 ).ShadowScaleOffset;
-			param.OcclusionGridMatrix		=	rs.LightManager.OcclusionGridMatrix;
+			param.OcclusionGridMatrix		=	rs.LightManager.Obscurance.OcclusionGridMatrix;
 			param.DirectLightDirection		=	new Vector4( renderWorld.LightSet.DirectLight.Direction, 0 );
 			param.DirectLightIntensity		=	renderWorld.LightSet.DirectLight.Intensity;
 			param.SkyAmbientLevel			=	rs.RenderWorld.SkySettings.AmbientLevel;
@@ -677,7 +677,7 @@ namespace Fusion.Engine.Graphics {
 					}
 
 					if (flags==Flags.DRAW_LIGHT || flags==Flags.DRAW_HARD) {
-						device.PixelShaderResources[14]		=	rs.LightManager.OcclusionGrid;
+						device.PixelShaderResources[14]		=	rs.LightManager.Obscurance.OcclusionGrid;
 						device.PixelShaderResources[15]		=	rs.RenderWorld.RadianceCache;
 						device.PixelShaderResources[17]		=	rs.LightManager.LightGrid.ProbeDataGpu;
 					}

@@ -11,6 +11,7 @@ using Fusion.Engine.Common;
 using Fusion.Drivers.Graphics;
 using Fusion.Core.Shell;
 using Fusion.Core.Extensions;
+using Fusion.Engine.Graphics.Lights;
 
 namespace Fusion.Engine.Graphics {
 
@@ -31,7 +32,7 @@ namespace Fusion.Engine.Graphics {
 		internal SceneRenderer	SceneRenderer	{ get { return Game.GetService< SceneRenderer	>(); } }
 		internal VTSystem		VTSystem		{ get { return Game.GetService< VTSystem		>(); } }
 		internal Sky			Sky				{ get { return Game.GetService< Sky				>(); } }
-		internal Fog			Fog				{ get { return Game.GetService< Fog				>(); } }				
+		internal Fog			Fog				{ get { return Game.GetService< Fog				>(); } }	
 
 		/// <summary>
 		/// Gets render counters.

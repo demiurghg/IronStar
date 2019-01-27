@@ -16,6 +16,7 @@ using SharpDX.Direct3D;
 using Native.Dds;
 using Fusion.Core;
 using Fusion.Engine.Common;
+using SharpDX.Mathematics.Interop;
 
 
 namespace Fusion.Drivers.Graphics {
@@ -58,6 +59,16 @@ namespace Fusion.Drivers.Graphics {
 			uav		=	new D3D.UnorderedAccessView( device.Device, tex3D );
 		}
 
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void Clear ( Vector4 clearValue )
+		{
+			var rawClearValue =	new RawVector4( clearValue.X, clearValue.Y, clearValue.Z, clearValue.W );
+			device.DeviceContext.ClearUnorderedAccessView( uav, rawClearValue );
+		}
 
 
 		/// <summary>

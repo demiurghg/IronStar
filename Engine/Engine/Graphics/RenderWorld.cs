@@ -498,7 +498,7 @@ namespace Fusion.Engine.Graphics {
 
 			if (obscurance) {
 				Log.Message("Building obscurance volumes...");
-				rs.LightManager.UpdateIrradianceMap( Instances, LightSet, Debug, numSamples );
+				rs.LightManager.Obscurance.UpdateIrradianceMapGPU( Instances, LightSet, Debug, numSamples );
 			}
 
 

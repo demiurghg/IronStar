@@ -529,6 +529,7 @@
     <Compile Include="Engine\Graphics\Lights\LightProbeContext.cs" />
     <Compile Include="Engine\Graphics\Lights\LightSet.cs" />
     <Compile Include="Engine\Graphics\Lights\LightStyle.cs" />
+    <Compile Include="Engine\Graphics\Lights\ObscuranceMap.cs" />
     <Compile Include="Engine\Graphics\Lights\OmniLight.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowContext.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowContextTransparent.cs" />

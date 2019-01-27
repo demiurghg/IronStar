@@ -15,6 +15,7 @@ using Fusion.Engine.Graphics.Ubershaders;
 using BEPUphysics;
 using BEPUphysics.BroadPhaseEntries;
 using Native.Embree;
+using Fusion.Engine.Graphics.Lights;
 
 namespace Fusion.Engine.Graphics {
 
@@ -63,18 +64,20 @@ namespace Fusion.Engine.Graphics {
 		public LightGrid LightGrid {
 			get { return lightGrid; }
 		}
-		public LightGrid lightGrid;
+		LightGrid lightGrid;
 
 
 		public ShadowMap ShadowMap {
 			get { return shadowMap; }
 		}
-		public ShadowMap shadowMap;
+		ShadowMap shadowMap;
+
+		public ObscuranceMap Obscurance {
+			get { return obscurance; }
+		}
+		ObscuranceMap obscurance;
 
 
-		public Texture3D OcclusionGrid		{ get { return occlusionGrid; }	}
-
-		Texture3D occlusionGrid;
 
 		Ubershader		shader;
 		StateFactory	factory;
@@ -116,7 +119,7 @@ namespace Fusion.Engine.Graphics {
 
 			shadowMap	=	new ShadowMap( rs, rs.ShadowQuality );
 
-			occlusionGrid		=	new Texture3D( rs.Device, ColorFormat.Rgba8, Width,Height,Depth );
+			obscurance	=	new ObscuranceMap( rs );
 
 			cbRelightParams		=	new ConstantBuffer( rs.Device, typeof(RELIGHT_PARAMS) );
 			cbLightProbeData	=	new ConstantBuffer( rs.Device, typeof(LIGHTPROBE_DATA), RenderSystem.LightProbeBatchSize );
@@ -152,29 +155,13 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref factory );
 				SafeDispose( ref lightGrid );
 				SafeDispose( ref shadowMap );
-				SafeDispose( ref occlusionGrid );
+				SafeDispose( ref obscurance );
 			}
 
 			base.Dispose( disposing );
 		}
 
 
-		const int	Width		=	128;
-		const int	Height		=	64;
-		const int	Depth		=	128;
-		const float GridStep	=	2.0f;
-
-
-		public Matrix OcclusionGridMatrix {
-			get {
-				return	Matrix.Identity
-					*	Matrix.Translation( Width/2.0f*GridStep, 0, Depth/2.0f*GridStep )
-					*	Matrix.Translation( 0.5f*GridStep, 0.5f*GridStep, 0.5f*GridStep )
-					*	Matrix.Scaling( 1.0f/Width, 1.0f / Height, 1.0f / Depth ) 
-					*	Matrix.Scaling( 1.0f/GridStep )
-					;
-			}
-		}
 
 
 
@@ -238,7 +225,7 @@ namespace Fusion.Engine.Graphics {
 				device.ComputeShaderResources[2]    =   rs.Sky.SkyCube;
 				device.ComputeShaderResources[3]	=	shadowMap.ColorBuffer;
 				device.ComputeShaderResources[4]	=	null;
-				device.ComputeShaderResources[5]	=	occlusionGrid;
+				device.ComputeShaderResources[5]	=	Obscurance.OcclusionGrid;
 				device.ComputeShaderSamplers[0]		=	SamplerState.PointClamp;
 				device.ComputeShaderSamplers[1]		=	SamplerState.LinearWrap;
 				device.ComputeShaderSamplers[2]		=	SamplerState.ShadowSamplerPoint;
@@ -354,214 +341,5 @@ namespace Fusion.Engine.Graphics {
 
 
 
-
-		/*-----------------------------------------------------------------------------------------
-		 * 
-		 *	Occlusion grid stuff :
-		 * 
-		-----------------------------------------------------------------------------------------*/
-
-		static Random rand = new Random();
-
-		Vector3[] sphereRandomPoints;
-		Vector3[] hemisphereRandomPoints;
-		Vector3[] cubeRandomPoints;
-
-
-		List<Vector3> points = new List<Vector3>();
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="instances"></param>
-		public void UpdateIrradianceMap ( IEnumerable<MeshInstance> instances, LightSet lightSet, DebugRender dr, int numSamples )
-		{
-			Log.Message("Building ambient occlusion map");
-
-			using ( var rtc = new Rtc() ) {
-
-				using ( var scene = new RtcScene( rtc, SceneFlags.Coherent|SceneFlags.Static, AlgorithmFlags.Intersect1 ) ) {
-
-					points.Clear();
-
-					var min		=	Vector3.One * (-GridStep/2.0f);
-					var max		=	Vector3.One * ( GridStep/2.0f);
-
-					sphereRandomPoints		= Enumerable.Range(0,numSamples).Select( i => Hammersley.SphereUniform(i,numSamples) ).ToArray();
-					hemisphereRandomPoints	= Enumerable.Range(0,numSamples).Select( i => Hammersley.HemisphereUniform(i,numSamples) ).ToArray();
-					cubeRandomPoints		= Enumerable.Range(0,numSamples).Select( i => rand.NextVector3( min, max ) ).ToArray();
-
-					foreach ( var p in hemisphereRandomPoints ) {
-						dr.DrawPoint( p, 0.1f, Color.Orange );
-					}
-
-					Log.Message("...generating scene");
-
-					foreach ( var instance in instances ) {
-						AddMeshInstance( scene, instance );
-					}
-
-					scene.Commit();
-
-					Log.Message("...tracing");
-
-					var data	= new Color[ Width*Height*Depth ];
-					var indices = new Color[ Width*Height*Depth ];
-					var weights = new Color[ Width*Height*Depth ];
-
-
-					for ( int x=0; x<Width;  x++ ) {
-
-						for ( int y=0; y<Height; y++ ) {
-
-							for ( int z=0; z<Depth;  z++ ) {
-
-								int index		=	ComputeAddress(x,y,z);
-
-								var offset		=	new Vector3( GridStep/2.0f, GridStep/2.0f, GridStep/2.0f );
-								var translation	=	new Vector3( -Width/2.0f, 0, -Depth/2.0f );
-								var position	=	(new Vector3( x, y, z ) + translation) * GridStep;
-
-								var localAO		=	ComputeLocalOcclusion( scene, position, 3, numSamples );
-								var globalAO	=	ComputeSkyOcclusion( scene, position, 128, numSamples );
-
-								byte byteX		=	(byte)( 255 * (globalAO.X * 0.5+0.5) );
-								byte byteY		=	(byte)( 255 * (globalAO.Y * 0.5+0.5) );
-								byte byteZ		=	(byte)( 255 * (globalAO.Z * 0.5+0.5) );
-								byte byteW		=	(byte)( 255 * localAO );
-
-								data[index]		=	new Color( byteX, byteY, byteZ, byteW );
-
-								/*if (x==0 || y==0 || z==0 || x==Width-1 || y==Height-1 || z==Depth-1 ) {
-									data[index]	=	new Color( 127,255,127,0 );
-								} */
-							}
-						}
-					}
-
-					occlusionGrid.SetData( data );
-
-					Log.Message("Done!");
-				}
-			}
-		}
-
-
-
-		int	ComputeAddress ( int x, int y, int z ) 
-		{
-			return x + y * Width + z * Height*Width;
-		}
-
-
-
-		float ComputeLocalOcclusion ( RtcScene scene, Vector3 point, float maxRange, int numSamples )
-		{
-			float factor = 0;
-
-			for (int i=0; i<numSamples; i++) {
-				
-				var dir		=	sphereRandomPoints[i];
-				var bias	=	cubeRandomPoints[i];
-
-				var x	=	point.X + bias.X - dir.X;
-				var y	=	point.Y + bias.Y - dir.Y;
-				var z	=	point.Z + bias.Z - dir.Z;
-				var dx	=	dir.X;
-				var dy	=	dir.Y;
-				var dz	=	dir.Z;
-
-				var dist	=	scene.Intersect( x,y,z, dx,dy,dz, 0, maxRange );
-
-				if (dist>=0) {
-					var localFactor = (float)Math.Exp(-dist*2) / numSamples;
-					factor = factor + (float)localFactor;
-				}
-			}
-
-			return 1-MathUtil.Clamp( factor * 2, 0, 1 );
-		}
-
-
-
-		Vector3 ComputeSkyOcclusion ( RtcScene scene, Vector3 point, float maxRange, int numSamples )
-		{
-			var bentNormal	=	Vector3.Zero;
-			var factor		=	0;
-			var scale		=	1.0f / numSamples;
-
-			for (int i=0; i<numSamples; i++) {
-				
-				var dir		=	hemisphereRandomPoints[i];
-				var bias	=	Vector3.Zero;// cubeRandomPoints[i];
-
-				var x	=	point.X + bias.X + dir.X * GridStep / 2.0f;
-				var y	=	point.Y + bias.Y + dir.Y * GridStep / 2.0f;
-				var z	=	point.Z + bias.Z + dir.Z * GridStep / 2.0f;
-				var dx	=	dir.X;
-				var dy	=	dir.Y;
-				var dz	=	dir.Z;
-
-				//var dist	=	scene.Intersect( x,y,z, dx,dy,dz, 0, maxRange );
-
-				//if (dist<=0) {
-				//	factor		+= 1;
-				//	bentNormal	+= dir;
-				//}
-				
-				var occluded	=	scene.Occluded( x,y,z, dx,dy,dz, 0, maxRange );
-
-				if (!occluded) {
-					factor		+= 1;
-					bentNormal	+= dir;
-				}
-			}
-
-			if (bentNormal.Length()>0) {
-				bentNormal.Normalize();
-				bentNormal = bentNormal * (float)Math.Sqrt( factor * scale );
-			} else {
-				bentNormal = Vector3.Zero;
-			}
-
-			return bentNormal;
-		}
-
-
-
-
-		void AddMeshInstance ( RtcScene scene, MeshInstance instance )
-		{
-			var mesh		=	instance.Mesh;
-
-			if (mesh==null) {	
-				return;
-			}
-
-			var indices     =   mesh.GetIndices();
-			var vertices    =   mesh.Vertices
-								.Select( v1 => Vector3.TransformCoordinate( v1.Position, instance.World ) )
-								.Select( v2 => new BEPUutilities.Vector4( v2.X, v2.Y, v2.Z, 0 ) )
-								.ToArray();
-
-			var id		=	scene.NewTriangleMesh( GeometryFlags.Static, indices.Length/3, vertices.Length );
-
-			//Log.Message("trimesh: id={0} tris={1} verts={2}", id, indices.Length/3, vertices.Length );
-
-
-			var pVerts	=	scene.MapBuffer( id, BufferType.VertexBuffer );
-			var pInds	=	scene.MapBuffer( id, BufferType.IndexBuffer );
-
-			SharpDX.Utilities.Write( pVerts, vertices, 0, vertices.Length );
-			SharpDX.Utilities.Write( pInds,  indices,  0, indices.Length );
-
-			scene.UnmapBuffer( id, BufferType.VertexBuffer );
-			scene.UnmapBuffer( id, BufferType.IndexBuffer );
-
-			//scene.UpdateBuffer( id, BufferType.VertexBuffer );
-			//scene.UpdateBuffer( id, BufferType.IndexBuffer );
-
-		}
 	}
 }

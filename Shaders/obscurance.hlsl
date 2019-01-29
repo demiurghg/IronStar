@@ -68,22 +68,23 @@ void CSMain(
 	uint3	location	=	dispatchThreadId;
 	float4	prevValue	=	SourceBuffer.Load( int4(location,0) );
 	float4	worldPos	=	float4( location.xyz * 2 - float3(128,0,128), 1 );
-	
-	float 	size		=	2.5f;
-	float	dd			=	0.5f;
-	float 	count		=	0;
+	float3	lightDir	=	Params.LightDirection.xyz;
 	float	shadow		=	0;
+	float	count		=	0;
 	
-	for ( float dx=-size; dx<size; dx += dd ) {
-		for ( float dy=-size; dy<size; dy += dd ) {
-			for ( float dz=-size; dz<size; dz += dd ) {
-				shadow		+=	ComputeShadow( worldPos + float3(dx,dy,dz) );
+	for ( int dx=-2; dx<2; dx++ ) {
+		for ( int dy=-2; dy<2; dy++ ) {
+			for ( int dz=-2; dz<2; dz++ ) {
+				shadow		+=	ComputeShadow( worldPos.xyz + float3(dx,dy,dz) * 0.75f );
 				count++;
 			}
 		}
 	}
 	
-	TargetBuffer[location] =	prevValue  + saturate(2.5*shadow / count) / 256.0f;
+	float 	factor		=	saturate(9*shadow / count) / 512.0f;
+	float4	obscurance	=	float4( normalize(lightDir.xyz) * factor, factor );
+	
+	TargetBuffer[location] =	prevValue + obscurance;
 
 	
 	//TargetBuffer[location] =	ShadowMap.Load( int3(location.xy*4,0) ).r;

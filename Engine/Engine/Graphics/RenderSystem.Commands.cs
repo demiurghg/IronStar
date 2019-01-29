@@ -67,7 +67,7 @@ namespace Fusion.Engine.Graphics {
 
 			[CommandLineParser.Option]
 			[CommandLineParser.Name("samples")]
-			public int NumSamples { get; set; }	= 256;
+			public int NumSamples { get; set; }	= 512;
 
 			readonly RenderSystem rs;
 			

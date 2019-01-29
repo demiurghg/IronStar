@@ -146,7 +146,7 @@ namespace Fusion.Engine.Graphics.Lights {
 				var lightDir	=	hemisphereRandomPoints[i];
 				//var view		=	Matrix.Invert( MathUtil.ComputeAimedBasis( lightDir ) );
 				var view		=	Matrix.LookAtRH( lightDir, Vector3.Zero, Vector3.Up );
-				var proj		=	Matrix.OrthoRH( 1024, 1024, -1024, 1024 );
+				var proj		=	Matrix.OrthoRH( 512, 512, -512, 512 );
 				var bias		=	0;
 				var slope		=	0;
 

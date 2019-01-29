@@ -101,8 +101,9 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	baseColor = 0.3;
 	roughness = (checker2.x + checker2.y + checker2.z)%7 / 10.0f + 0.1;//*/
 	//roughness = frac(worldPos.y-0.1);
+	float normalLength	=	length(normal) + 0.00001f;
 	
-			normal 		= 	normalize(normal);
+			normal 		= 	normal / normalLength;
 	float3	diffuse 	=	lerp( baseColor, float3(0,0,0), metallic );
 	float3	specular  	=	lerp( float3(0.04f,0.04f,0.04f), baseColor, metallic );
 
@@ -237,7 +238,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 
 	//	occlusion & sky stuff :
 	float 	ssaoFactor		=	AmbientOcclusion.Load( int3( input.Position.xy,0 ) ).r;
-	float4	aogridValue		=	OcclusionGrid.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 1.8f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba;
+	float4	aogridValue		=	OcclusionGrid.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 1.0f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba;
 			aogridValue.xyz	=	aogridValue.xyz * 2 - 1;
 			
 	float 	skyFactor		=	length( aogridValue.xyz );
@@ -247,6 +248,8 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	float 	fullSkyLight	=	max( 0, dot( skyBentNormal, normal ) * 0.5 + 0.5 );
 	float 	halfSkyLight	=	max( 0, dot( skyBentNormal, normal ) * 1.0 + 0.0 );
 	float3	skyLight		=	skyFactor * max(0, lerp(halfSkyLight, fullSkyLight, skyFactor ) ) * Stage.SkyAmbientLevel;
+	
+	return aogridValue.w * 4 * (normal.y*0.5+0.5);
 
 #ifdef TRANSPARENT
 	ssaoFactor	=	1;

@@ -27,6 +27,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		struct BAKE_PARAMS {
 			public	Matrix	ShadowViewProjection;
 			public	Matrix	OcclusionGridTransform;
+			public	Vector4 LightDirection;
 		}
 
 
@@ -35,11 +36,23 @@ namespace Fusion.Engine.Graphics.Lights {
 		Texture3DCompute	occlusionGrid0;
 		Texture3DCompute	occlusionGrid1;
 		ConstantBuffer		constBuffer;
+		StateFactory		factory;
+		Ubershader			shader;
+
+
+		enum Flags {
+			BAKE,
+			COPY,
+		}
+
 
 		const int	Width		=	128;
 		const int	Height		=	64;
 		const int	Depth		=	128;
 		const float GridStep	=	2.0f;
+
+		readonly Int3 GridSize	=	new Int3( Width, Height, Depth );
+		readonly Int3 BlockSize	=	new Int3( BlockSizeX, BlockSizeY, BlockSizeZ );	
 
 
 		public Matrix OcclusionGridMatrix {
@@ -62,6 +75,22 @@ namespace Fusion.Engine.Graphics.Lights {
 			occlusionGrid0	=	new Texture3DCompute( rs.Device, Width,Height,Depth );
 			occlusionGrid1	=	new Texture3DCompute( rs.Device, Width,Height,Depth );
 			constBuffer		=	new ConstantBuffer( rs.Device, typeof(BAKE_PARAMS) );
+
+			LoadContent();
+
+			Game.Reloading += (s,e) => LoadContent();
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		void LoadContent ()
+		{
+			SafeDispose( ref factory );
+
+			shader	=	Game.Content.Load<Ubershader>("obscurance");
+			factory	=	shader.CreateFactory( typeof(Flags) );
 		}
 
 
@@ -71,6 +100,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		protected override void Dispose( bool disposing )
 		{
 			if (disposing) {
+				SafeDispose( ref factory );
 				SafeDispose( ref occlusionGrid0 );
 				SafeDispose( ref occlusionGrid1 );
 				SafeDispose( ref constBuffer );
@@ -92,6 +122,8 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			Log.Message("...initialization");
 
+			var device	=	rs.Device;
+
 			hemisphereRandomPoints	= Enumerable.Range(0,numSamples)
 					.Select( i => Hammersley.HemisphereUniform(i,numSamples) )
 					.ToArray();
@@ -102,30 +134,59 @@ namespace Fusion.Engine.Graphics.Lights {
 			occlusionGrid0.Clear(Vector4.Zero);
 			occlusionGrid1.Clear(Vector4.Zero);
 
+			//------------------------------------------
 
 			Log.Message("...baking : {0} samples", numSamples);
 
 			for (int i=0; i<numSamples; i++) {
 
-				var view	=	MathUtil.ComputeAimedBasis( -hemisphereRandomPoints[i] );
-				var proj	=	Matrix.OrthoRH( 512, 512, -512, 512 );
-				var bias	=	1e-7f;
-				var slope	=	2;
+				device.Clear( colorBuffer.Surface, Color4.Zero );
+				device.Clear( depthBuffer.Surface, 1, 0 ); 
+
+				var lightDir	=	hemisphereRandomPoints[i];
+				//var view		=	Matrix.Invert( MathUtil.ComputeAimedBasis( lightDir ) );
+				var view		=	Matrix.LookAtRH( lightDir, Vector3.Zero, Vector3.Up );
+				var proj		=	Matrix.OrthoRH( 1024, 1024, -1024, 1024 );
+				var bias		=	0;
+				var slope		=	0;
+
+				Log.Message("...{0}", lightDir);
 
 				var context	=	new ShadowContext( view, proj, bias, slope, depthBuffer.Surface, colorBuffer.Surface ); 
 				
 				rs.SceneRenderer.RenderShadowMap( context, rs.RenderWorld, InstanceGroup.Static ); 
 
+				//------------------------------------------
+				//	compute occlusion for given shadow map :
+				//------------------------------------------
 
+				device.ResetStates();
 
+				BAKE_PARAMS constData;
+				constData.ShadowViewProjection		=	view * proj;
+				constData.OcclusionGridTransform	=	OcclusionGridMatrix;
+				constData.LightDirection			=	new Vector4( lightDir, 0 );
+				constBuffer.SetData( constData );
 
+				//	obscurance pass :
+				device.ComputeShaderSamplers[0]		=	SamplerState.ShadowSamplerPoint;
+				device.ComputeShaderResources[0]	=	colorBuffer;
+				device.ComputeShaderResources[1]	=	occlusionGrid0;
+				device.ComputeShaderConstants[0]	=	constBuffer;
+				device.SetCSRWTexture( 0, occlusionGrid1 );
+
+				device.PipelineState	=	factory[ (int)Flags.BAKE ];
+				device.Dispatch( GridSize, BlockSize );
+
+				Misc.Swap( ref occlusionGrid0, ref occlusionGrid1 );
 			}
 
 			Log.Message("Completed.");
 
+			//------------------------------------------
+
 			SafeDispose( ref depthBuffer );
 			SafeDispose( ref colorBuffer );
-
 		}
 
 
@@ -215,7 +276,7 @@ namespace Fusion.Engine.Graphics.Lights {
 						}
 					}
 
-					occlusionGrid.SetData( data );
+					occlusionGrid0.SetData( data );
 
 					Log.Message("Done!");
 				}

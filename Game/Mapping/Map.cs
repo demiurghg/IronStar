@@ -73,6 +73,51 @@ namespace IronStar.Mapping {
 			gameWorld.snapshotHeader.Turbidity		=	Environment.SkyTrubidity;
 			gameWorld.snapshotHeader.AmbientLevel	=	Environment.AmbientLevel;
 		}
+
+
+		public void Validate()
+		{
+			foreach ( var n in Nodes ) {
+				if ( Math.Abs( n.TranslateX ) > 1024 ||	Math.Abs( n.TranslateY ) > 1024 || Math.Abs( n.TranslateZ ) > 1024 ) {
+					Log.Warning("Map : bad position : [{0} {1} {2}]. Moved to [0 0 0]", n.TranslateX, n.TranslateY, n.TranslateZ );
+					n.TranslateX = 0;
+					n.TranslateY = 0;
+					n.TranslateZ = 0;
+				}
+
+
+				if ( float.IsNaN(n.RotateYaw) || float.IsInfinity(n.RotateYaw) ) {
+					Log.Warning("Map : bad rotation yaw : {0}", n.RotateYaw );
+					n.RotateYaw = 0;
+				}
+
+				if ( float.IsNaN(n.RotatePitch) || float.IsInfinity(n.RotatePitch) ) {
+					Log.Warning("Map : bad rotation pitch : {0}", n.RotatePitch );
+					n.RotatePitch = 0;
+				}
+
+				if ( float.IsNaN(n.RotateRoll) || float.IsInfinity(n.RotateRoll) ) {
+					Log.Warning("Map : bad rotation roll : {0}", n.RotateRoll );
+					n.RotateRoll = 0;
+				}
+
+
+				if ( float.IsNaN(n.TranslateX) || float.IsInfinity(n.TranslateX) ) {
+					Log.Warning("Map : bad translation X : {0}", n.TranslateX );
+					n.TranslateX = 0;
+				}
+
+				if ( float.IsNaN(n.TranslateY) || float.IsInfinity(n.TranslateY) ) {
+					Log.Warning("Map : bad translation Y : {0}", n.TranslateY );
+					n.TranslateY = 0;
+				}
+
+				if ( float.IsNaN(n.TranslateZ) || float.IsInfinity(n.TranslateZ) ) {
+					Log.Warning("Map : bad translation Z : {0}", n.TranslateZ );
+					n.TranslateZ = 0;
+				}
+			}
+		}
 	}
 
 
@@ -85,7 +130,11 @@ namespace IronStar.Mapping {
 
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 		{
-			return content.Game.GetService<JsonFactory>().ImportJson( stream );
+			Map map = content.Game.GetService<JsonFactory>().ImportJson( stream ) as Map;
+
+			map.Validate();
+
+			return map;
 		}
 	}
 }

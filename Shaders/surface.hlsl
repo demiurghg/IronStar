@@ -64,6 +64,7 @@ Texture3D					OcclusionGrid		: 	register(t14);
 TextureCubeArray			RadianceCache		:	register(t15);
 Texture2D					EnvLut				:	register(t16);
 StructuredBuffer<LIGHTPROBE> ProbeDataTable		:	register(t17);
+Texture3D					IrradianceMap		: 	register(t18);
 
 #ifdef _UBERSHADER
 $ubershader FORWARD RIGID ANISOTROPIC +TRANSPARENT
@@ -331,7 +332,7 @@ GBuffer PSMain( PSInput input )
 		float	checker		=	frac(checker3.x + checker3.y + checker3.z);
 		baseColor	=	pow(0.2*checker+0.3,2);
 		localNormal	=	float3(0,0,1);
-		roughness	=	0.3*checker+0.05;
+		roughness	=	0.3*checker+0.15;
 		metallic	=	0;
 		emission	=	0;
 		alpha		=	0.5f;
@@ -424,7 +425,7 @@ LPGBuffer PSMain( PSInput input )
 	float 	dist	=	abs( input.ProjPos.w );
 	float4	dist_e	=	EncodeRGBE8( float3(dist,0,0) );
 	
-	float3	color	=	0.25;
+	float3	color	=	pow(0.5, 2.2f);
 	float3	normal	=	normalize(input.Normal.xyz) * 0.5f + 0.5f;
 	
 	output.color	=	float4( color , dist_e.r );

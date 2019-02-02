@@ -187,6 +187,8 @@ namespace Fusion.Engine.Graphics {
 				spot.Timer += (uint)gameTime.Elapsed.TotalMilliseconds;
 				if (spot.Timer<0) spot.Timer = 0;
 			}
+
+			obscurance.Update( gameTime );
 		}
 
 

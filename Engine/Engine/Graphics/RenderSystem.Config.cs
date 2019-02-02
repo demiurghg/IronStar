@@ -150,12 +150,6 @@ namespace Fusion.Engine.Graphics {
 		public bool SkipDebugRendering { get; set; }
 
 		/// <summary>
-		/// 
-		/// </summary>
-		[Config]
-		public bool SkipGhostDebugRendering { get; set; }
-
-		/// <summary>
 		/// Shows particles statistics.
 		/// </summary>
 		[Config]
@@ -186,6 +180,10 @@ namespace Fusion.Engine.Graphics {
 		[Config]	
 		[AECategory("Postprocessing")]	
 		public bool		UseFXAA { get; set; }
+
+		[Config]
+		[AECategory("Debug Render")]
+		public bool SkipGhostDebugRendering { get; set; }
 
 
 		[AECategory("Shadows")]  [Config]	public bool UsePointShadowSampling { get; set; } = false;

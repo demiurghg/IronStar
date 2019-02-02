@@ -497,8 +497,11 @@ namespace Fusion.Engine.Graphics {
 			var device	=	Game.GraphicsDevice;
 
 			if (obscurance) {
-				Log.Message("Building obscurance volumes...");
-				rs.LightManager.Obscurance.UpdateIrradianceMapGPU( Instances, LightSet, Debug, numSamples );
+				Log.Message("Building obscurance map...");
+				rs.LightManager.Obscurance.UpdateObscuranceMapGPU( Instances, LightSet, Debug, numSamples );
+
+				Log.Message("Building irradiance map...");
+				rs.LightManager.Obscurance.UpdateIrradianceMap( Instances, LightSet, Debug, numSamples );
 			}
 
 

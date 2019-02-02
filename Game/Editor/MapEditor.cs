@@ -427,6 +427,7 @@ namespace IronStar.Editor {
 				item.Update( gameTime, world );
 			}
 
+			map.Validate();
 
 			//
 			//	Simulate & present world

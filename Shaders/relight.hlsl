@@ -267,8 +267,8 @@ float4	PrefilterFace ( float3 dir, int3 location )
 #endif	
 
 #ifdef DIFFUSE
-	for (int i=0; i<31; i++) {
-		float3 H 	= 	hammersley_sphere_uniform( i, 31 );
+	for (int i=0; i<111; i++) {
+		float3 H 	= 	hammersley_sphere_uniform( i, 111 );
 		float d 	= 	Lambert( H, dirN );
 		weight 		+= 	d;
 		float4 val	=	LightProbe.SampleLevel(LinearSampler, float4(H, location.z), 0).rgba;

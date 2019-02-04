@@ -246,7 +246,18 @@ namespace Native {
 				return ( pRay->geomID==0 );
 			}
 
-				
+
+			public: bool Occluded ( RtcRay ray )
+			{
+				CopyManagedRayToNativeRay( ray, pRay );
+
+				rtcOccluded( scene, *pRay );
+				RtcException::CheckError(device);
+
+				return ( pRay->geomID==0 );
+			}
+
+
 			public: float Intersect(float x, float y, float z, float dx, float dy, float dz, float tnear, float tfar)
 			{
 				pRay->org[0] = x;

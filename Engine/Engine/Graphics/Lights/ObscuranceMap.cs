@@ -147,6 +147,13 @@ namespace Fusion.Engine.Graphics.Lights {
 				rs.RenderWorld.Debug.DrawPoint( p, 0.3f, Color.Red, 1 );
 			}
 
+
+			if (vpls!=null) {
+				foreach (var vpl in vpls) {
+					rs.RenderWorld.Debug.DrawPoint( vpl.Position, 0.3f, Color.Yellow, 1 );
+					rs.RenderWorld.Debug.DrawLine( vpl.Position, vpl.Position + vpl.Normal, Color.Yellow );
+				}
+			}
 			/*for ( int x=-Width/2; x<=Width/2; x+=4 ) {
 				for ( int y=-Height/2; y<=Height/2; y+=4 ) {
 					for ( int z=-Depth/2; z<=Depth/2; z+=4 ) {
@@ -174,7 +181,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			var device	=	rs.Device;
 
-			hemisphereRandomPoints	= Enumerable.Range(0,numSamples)
+			var hemispherePoints	= Enumerable.Range(0,numSamples)
 					.Select( i => Hammersley.HemisphereUniform(i,numSamples) )
 					.ToArray();
 
@@ -196,7 +203,7 @@ namespace Fusion.Engine.Graphics.Lights {
 				device.Clear( colorBuffer.Surface, Color4.Zero );
 				device.Clear( depthBuffer.Surface, 1, 0 ); 
 
-				var lightDir	=	hemisphereRandomPoints[i];
+				var lightDir	=	hemispherePoints[i];
 				//var view		=	Matrix.Invert( MathUtil.ComputeAimedBasis( lightDir ) );
 				var view		=	Matrix.LookAtRH( lightDir, Vector3.Zero, Vector3.Up );
 				var proj		=	Matrix.OrthoRH( 512, 512, -512, 512 );
@@ -243,6 +250,27 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 
 
+		Vector3[] CreateRegularPoints5x5x6 ()
+		{
+			var points = new List<Vector3>();
+
+			for (int u=-4; u<=4; u++) {
+				for (int v=-4; v<=4; v++) {
+
+					points.Add( new Vector3( u, v,  4.5f ) );
+					points.Add( new Vector3( u, v, -4.5f ) );
+
+					points.Add( new Vector3( u,  4.5f, v ) );
+					points.Add( new Vector3( u, -4.5f, v ) );
+
+					points.Add( new Vector3(  4.5f, u, v ) );
+					points.Add( new Vector3( -4.5f, u, v ) );
+
+				}
+			}
+
+			return points.Select( vec => vec.Normalized() ).ToArray();
+		}
 
 
 		/*-----------------------------------------------------------------------------------------
@@ -256,19 +284,26 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		static Random rand = new Random();
 
-		Vector3[] sphereRandomPoints;
-		Vector3[] hemisphereRandomPoints;
-		Vector3[] cubeRandomPoints;
-
-
 		List<Vector3> points = new List<Vector3>();
 
-
-		int debugX = Width / 2 - 30/4 - 1;
-		int debugY = 30/4;
-		int debugZ = Depth / 2 + 30/4 - 1;
-
 		Vector3 skyAmbient;
+
+		class VPL {
+			public VPL(Vector3 p, Vector3 n) { Position = p; Normal = n; }
+			public Vector3 Position;
+			public Vector3 Normal;
+
+			public RtcRay CreateRay( Vector3 dir, float bias, float length )
+			{
+				var ray = new RtcRay();
+				EmbreeExtensions.UpdateRay( ref ray, Position + Normal * bias, dir, 0, length );
+				return ray;
+			}
+		}
+
+
+		List<VPL> vpls;
+
 
 		/// <summary>
 		/// 
@@ -284,37 +319,72 @@ namespace Fusion.Engine.Graphics.Lights {
 			//int numSamples	=	128;
 
 			var dirToLight		=	-lightSet.DirectLight.Direction;
+			var dirLightColor	=	lightSet.DirectLight.Intensity.ToVector3();
 
 			var randomVectors	=	Enumerable
 									.Range(0,91)
 									.Select( i => Hammersley.SphereUniform(i,91) )
 									.ToArray();
 
-			sphereRandomPoints	= Enumerable
+			var spherePoints	= Enumerable
 								.Range(0,numSamples)
 								.Select( i => Hammersley.SphereUniform(i,numSamples) )
-								.ToArray();
+								.ToArray();//*/
 
-			hemisphereRandomPoints	= Enumerable
-								.Range(0,numSamples)
-								.Select( i => Hammersley.HemisphereCosine(i,numSamples) )
-								.ToArray();
+			//var spherePoints	=	CreateRegularPoints5x5x6();
+			vpls = new List<VPL>();
 
 
 			using ( var rtc = new Rtc() ) {
 
-				using ( var scene = new RtcScene( rtc, SceneFlags.Incoherent|SceneFlags.Static, AlgorithmFlags.Intersect1 ) ) {
+				using ( var scene = new RtcScene( rtc, SceneFlags.Coherent|SceneFlags.Static, AlgorithmFlags.Intersect1 ) ) {
 
 					Log.Message("...generating scene");
 
 					foreach ( var instance in instances ) {
 						if (instance.Group==InstanceGroup.Static) {
 							AddMeshInstance( scene, instance );
+							RasterizeInstance( scene, instance );
 						}
 					}
 
 					scene.Commit();
 
+					Log.Message("{0} VPLs placed", vpls.Count);
+
+					vpls = vpls
+						.Where( vpl => !scene.Occluded( vpl.CreateRay( dirToLight, 0.125f, 512 ) ) )
+						.ToList();
+
+					Log.Message("{0} VPLs are lit");
+
+					var shadowMatrix = Matrix.LookAtRH( dirToLight * 256 + Vector3.Up*32, Vector3.Up*32, Vector3.Up );
+					shadowMatrix.Invert();
+
+					var ray = new RtcRay();
+
+					#if false
+					for (int x=-128; x<=128; x+=4) {
+						for (int y=-128; y<=128; y+=4) {
+
+							var pos = Vector3.TransformCoordinate( new Vector3(x,y,0), shadowMatrix );
+							//vpls.Add( new VPL(pos, shadowMatrix.Forward) );
+
+							EmbreeExtensions.UpdateRay( ref ray, pos, shadowMatrix.Forward, 0, 1024 );
+
+							if (scene.Intersect( ref ray )) {
+								var n   = EmbreeExtensions.Convert( ray.HitNormal ).Normalized();
+								var d   = EmbreeExtensions.Convert( ray.Direction );
+								var p   = EmbreeExtensions.Convert( ray.Origin );
+								var f   = ray.TFar;
+								var dot	= Math.Max( 0, Vector3.Dot(n,-d) );
+								vpls.Add( new VPL( p + d * f, -n ) );
+							}
+
+						}
+					}
+					#endif
+					
 					Log.Message("...tracing");
 
 					var sw = new Stopwatch();
@@ -333,16 +403,14 @@ namespace Fusion.Engine.Graphics.Lights {
 
 								int index		=	ComputeAddress(x,y,z);
 
-								var randVector	=	randomVectors[ rand.Next(0,91) ];
+								var randVector	=	randomVectors[ rand.Next(0,randomVectors.Length) ];
 
 								var translation	=	new Vector3( -Width/2.0f, 0, -Depth/2.0f );
 								var halfOffset	=	new Vector3( GridStep/2.0f, GridStep/2.0f, GridStep/2.0f );
 								var position	=	(new Vector3( x, y, z ) + translation) * GridStep + halfOffset;
 
-								var debugVoxel	=	(x==debugX && y==debugY && z==debugZ);
-
-
-								var irradiance	=	ComputeIndirectLight( scene, lightSet, position, randVector, 512, numSamples, debugVoxel );
+								var irradiance	=	GatherVPLs( scene, lightSet, position, 128 );
+								//var irradiance	=	ComputeIndirectLight( scene, lightSet, position, randVector, spherePoints, 128 );
 									//irradiance	+=	ComputeDirectLight( scene, lightSet, position, 512, numSamples );
 
 								data[index]		=	new Color4( irradiance, 0 );
@@ -350,23 +418,19 @@ namespace Fusion.Engine.Graphics.Lights {
 								//data2[index]	=	ComputeSkyOcclusion( scene, position, 512, numSamples );
 
 								if (x==0 || y==0 || z==0) {
-									data[index] = Color.Red.ToColor4();
+									data[index]  = Color.Red.ToColor4();
 									data2[index] = new Color(127,127,127,127);
 								}
 								if (x==Width-1 || y==Height-1 || z==Depth-1) {
-									data[index] = Color.Red.ToColor4();
+									data[index]  = Color.Red.ToColor4();
 									data2[index] = new Color(127,127,127,127);
 								}
-								if (debugVoxel) {
-									data[index] = Color.Orange.ToColor4() * 4;
-								}
-
 							}
 						}
 					}
 
 					occlusionGrid.SetData( data2 );
-					irradianceMap.SetData( data );
+					irradianceMap.SetData( data);
 
 					sw.Stop();
 
@@ -384,26 +448,66 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 
 
-
-		Vector3 ComputeIndirectLight ( RtcScene scene, LightSet lightSet, Vector3 point, Vector3 randVector, float maxRange, int numSamples, bool debugVoxel )
+		Vector3 GatherVPLs ( RtcScene scene, LightSet lightSet, Vector3 point, float maxRange )
 		{
-			var scale			=	1.0f / numSamples;
 			var irradiance		=	Vector3.Zero;
 			var dirLightDir		=	-lightSet.DirectLight.Direction.Normalized();
 			var dirLightColor	=	lightSet.DirectLight.Intensity.ToVector3();
 
-			for (int i=0; i<numSamples; i++) {
+			var ray				=	new RtcRay();
+
+			for (int i=0; i<vpls.Count; i++) {
+
+				var vpl		=	vpls[i];
+				var	dir		=	vpl.Position - point;
+				var len		=	dir.Length();
+				var dirn	=	dir / len;
+				var	origin	=	vpl.Position + vpl.Normal*0.125f;
+				var dot		=	-Vector3.Dot(dirn, vpl.Normal);
+
+				dot	=	Math.Max( 0, dot*1.1f - 0.1f );
+
+				if (len==0) {
+					continue;
+				}
+
+				if (len>128) {
+					continue;
+				}
+
+				if (dot<=0) {
+					continue;
+				}
+
+				EmbreeExtensions.UpdateRay( ref ray, origin, -dirn, 0, len*0.99f );
+
+				float rcpLen2 = 1 / (len*len+4);
+
+				if (!scene.Occluded( ref ray ) ) {
+					irradiance += dot * 4 * rcpLen2 / 4 / 3.14f * dirLightColor;
+				}
+			}
+
+			return irradiance;
+		}
+
+
+
+		Vector3 ComputeIndirectLight ( RtcScene scene, LightSet lightSet, Vector3 point, Vector3 randVector, Vector3[] randomPoints, float maxRange )
+		{
+			var irradiance		=	Vector3.Zero;
+			var dirLightDir		=	-lightSet.DirectLight.Direction.Normalized();
+			var dirLightColor	=	lightSet.DirectLight.Intensity.ToVector3();
+			var totalWeight		=	0f;
+
+			for (int i=0; i<randomPoints.Length; i++) {
 
 				RtcRay	ray		=	new RtcRay();
-				//var		dir		=	Vector3.Reflect( sphereRandomPoints[i], randVector );
-				var		dir		=	sphereRandomPoints[i];
+				var		dir		=	Vector3.Reflect( randomPoints[i], randVector );
+				//var		dir		=	randomPoints[i];
 				var		origin	=	point;
 
 				EmbreeExtensions.UpdateRay( ref ray, origin, dir, 0f, maxRange );
-
-				if (debugVoxel) {
-					points.Add( origin );
-				}
 
 				if (scene.Intersect( ref ray )) {
 
@@ -414,28 +518,26 @@ namespace Fusion.Engine.Graphics.Lights {
 					var nDotP		=	Vector3.Dot( normal, d );
 					var nDotL		=	Math.Max( 0, Vector3.Dot( normal.Normalized(), dirLightDir ) );
 
-					if (nDotL>0 && nDotP<0) {
+					var weight		=	1;//(float)Math.Exp( -ray.TFar/32.0f );
+					totalWeight		+=	weight;
 
-						if (debugVoxel) {
-							points.Add( position );
-							points.Add( position + normal * 0.5f );
-						}
+					if (nDotL>0 && nDotP<0) {
 
 						EmbreeExtensions.UpdateRay( ref ray, position + normal * 0.125f, dirLightDir, 0.125f, maxRange );
 
 						if (!scene.Occluded( ref ray )) {
 						
-							irradiance	= irradiance + dirLightColor * nDotL * 0.5f;
+							irradiance	= irradiance + dirLightColor * nDotL * 0.5f * weight;
 						}
 					}
 				} else {
 					if (dir.Y>0) {
 						irradiance += skyAmbient;// * dir.Y;
-					}
+					} //*/
 				}				
 			}
 
-			return irradiance * scale;
+			return irradiance / totalWeight;
 		}
 
 
@@ -464,15 +566,15 @@ namespace Fusion.Engine.Graphics.Lights {
 
 
 
-		Color ComputeSkyOcclusion ( RtcScene scene, Vector3 point, float maxRange, int numSamples )
+		Color ComputeSkyOcclusion ( RtcScene scene, Vector3 point, float maxRange, Vector3[] randomDirs )
 		{
 			var bentNormal	=	Vector3.Zero;
 			var factor		=	0;
-			var scale		=	1.0f / numSamples;
+			var scale		=	1.0f / randomDirs.Length;
 
-			for (int i=0; i<numSamples; i++) {
+			for (int i=0; i<randomDirs.Length; i++) {
 				
-				var dir		=	hemisphereRandomPoints[i];
+				var dir		=	randomDirs[i];
 				var ray		=	new RtcRay();
 				var dirBias	=	GridStep * (float)Math.Sqrt(3f);
 
@@ -503,6 +605,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 
 
+#if false
 		float ComputeLocalOcclusion ( RtcScene scene, Vector3 point, float maxRange, int numSamples )
 		{
 			float factor = 0;
@@ -529,7 +632,42 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			return 1-MathUtil.Clamp( factor * 2, 0, 1 );
 		}
+#endif
 
+		void RasterizeInstance ( RtcScene scene, MeshInstance instance )
+		{
+			var mesh		=	instance.Mesh;
+
+			if (mesh==null) {	
+				return;
+			}
+
+			var indices     =   mesh.GetIndices();
+			var vertices    =   mesh.Vertices
+								.Select( v1 => Vector3.TransformCoordinate( v1.Position, instance.World ) )
+								.ToArray();
+
+			var bias = new Vector3(4,4,4);
+
+			for (int i=0; i<indices.Length/3; i++) {
+				var p0 = vertices[i*3+0] + bias;
+				var p1 = vertices[i*3+1] + bias;
+				var p2 = vertices[i*3+2] + bias;
+				var n  = Vector3.Cross( p1 - p0, p2 - p0 ).Normalized();
+				Voxelizer.RasterizeTriangle( p0, p1, p2, 8, (p) => vpls.Add( new VPL(p-bias, n) ) );
+			}
+
+			/*var id		=	scene.NewTriangleMesh( GeometryFlags.Static, indices.Length/3, vertices.Length );
+
+			var pVerts	=	scene.MapBuffer( id, BufferType.VertexBuffer );
+			var pInds	=	scene.MapBuffer( id, BufferType.IndexBuffer );
+
+			SharpDX.Utilities.Write( pVerts, vertices, 0, vertices.Length );
+			SharpDX.Utilities.Write( pInds,  indices,  0, indices.Length );
+
+			scene.UnmapBuffer( id, BufferType.VertexBuffer );
+			scene.UnmapBuffer( id, BufferType.IndexBuffer );*/
+		}
 
 
 		void AddMeshInstance ( RtcScene scene, MeshInstance instance )

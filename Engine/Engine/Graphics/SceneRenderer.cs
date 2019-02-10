@@ -226,7 +226,12 @@ namespace Fusion.Engine.Graphics {
 			device.PixelShaderResources[15]	=	rs.RenderWorld.RadianceCache;
 			device.PixelShaderResources[16]	=	envLut.Srv;
 			device.PixelShaderResources[17]	=	rs.LightManager.LightGrid.ProbeDataGpu;
-			device.PixelShaderResources[18]	=	rs.LightManager.Obscurance.IrradianceMap;
+			device.PixelShaderResources[18]	=	rs.LightManager.Obscurance.IrradianceMap0;
+			device.PixelShaderResources[19]	=	rs.LightManager.Obscurance.IrradianceMap1;
+			device.PixelShaderResources[20]	=	rs.LightManager.Obscurance.IrradianceMap2;
+			device.PixelShaderResources[21]	=	rs.LightManager.Obscurance.IrradianceMap3;
+			device.PixelShaderResources[22]	=	rs.LightManager.Obscurance.IrradianceMap4;
+			device.PixelShaderResources[23]	=	rs.LightManager.Obscurance.IrradianceMap5;
 
 
 			//	setup samplers :

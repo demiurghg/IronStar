@@ -236,7 +236,27 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	float3	ambientDiffuseSky	=	float3(0,0,0);
 	
 	//	irradiance
-	float4	irradiance		=	IrradianceMap.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 3.0f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba;
+	float4	irradiance0		=	IrradianceMap0.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 3.0f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba * 4;
+	float4	irradiance1		=	IrradianceMap1.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 3.0f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba * 4;
+	float4	irradiance2		=	IrradianceMap2.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 3.0f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba * 4;
+	float4	irradiance3		=	IrradianceMap3.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 3.0f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba * 4;
+	float4	irradiance4		=	IrradianceMap4.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 3.0f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba * 4;
+	float4	irradiance5		=	IrradianceMap5.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 3.0f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba * 4;
+	
+	float	dotPX			=	max( 0, dot( normal.xyz, float3( 1, 0, 0 ) ) );
+	float	dotNX			=	max( 0, dot( normal.xyz, float3(-1, 0, 0 ) ) );
+	float	dotPY			=	max( 0, dot( normal.xyz, float3( 0, 1, 0 ) ) );
+	float	dotNY			=	max( 0, dot( normal.xyz, float3( 0,-1, 0 ) ) );
+	float	dotPZ			=	max( 0, dot( normal.xyz, float3( 0, 0, 1 ) ) );
+	float	dotNZ			=	max( 0, dot( normal.xyz, float3( 0, 0,-1 ) ) );
+	
+	float4 	irradiance		=	dotPX * irradiance0
+							+	dotNX * irradiance1
+							+	dotPY * irradiance2
+							+	dotNY * irradiance3
+							+	dotPZ * irradiance4
+							+	dotNZ * irradiance5
+							;
 	
 	ambientDiffuse			=	irradiance.rgb;
 

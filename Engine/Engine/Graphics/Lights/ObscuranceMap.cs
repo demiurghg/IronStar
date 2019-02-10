@@ -34,9 +34,20 @@ namespace Fusion.Engine.Graphics.Lights {
 
 
 		public ShaderResource OcclusionGrid { get { return occlusionGrid; } }
-		public ShaderResource IrradianceMap { get { return irradianceMap; } }
+		public ShaderResource IrradianceMap0 { get { return irradianceMap0; } }
+		public ShaderResource IrradianceMap1 { get { return irradianceMap1; } }
+		public ShaderResource IrradianceMap2 { get { return irradianceMap2; } }
+		public ShaderResource IrradianceMap3 { get { return irradianceMap3; } }
+		public ShaderResource IrradianceMap4 { get { return irradianceMap4; } }
+		public ShaderResource IrradianceMap5 { get { return irradianceMap5; } }
 
-		Texture3D			irradianceMap;
+		Texture3D			irradianceMap0;
+		Texture3D			irradianceMap1;
+		Texture3D			irradianceMap2;
+		Texture3D			irradianceMap3;
+		Texture3D			irradianceMap4;
+		Texture3D			irradianceMap5;
+		
 		Texture3D			occlusionGrid;
 		Texture3DCompute	occlusionGrid0;
 		Texture3DCompute	occlusionGrid1;
@@ -82,7 +93,12 @@ namespace Fusion.Engine.Graphics.Lights {
 			constBuffer		=	new ConstantBuffer( rs.Device, typeof(BAKE_PARAMS) );
 
 			occlusionGrid	=	new Texture3D( rs.Device, ColorFormat.Rgba8,	Width, Height, Depth );
-			irradianceMap	=	new Texture3D( rs.Device, ColorFormat.Rgba32F,	Width, Height, Depth );
+			irradianceMap0	=	new Texture3D( rs.Device, ColorFormat.Rgba32F,	Width, Height, Depth );
+			irradianceMap1	=	new Texture3D( rs.Device, ColorFormat.Rgba32F,	Width, Height, Depth );
+			irradianceMap2	=	new Texture3D( rs.Device, ColorFormat.Rgba32F,	Width, Height, Depth );
+			irradianceMap3	=	new Texture3D( rs.Device, ColorFormat.Rgba32F,	Width, Height, Depth );
+			irradianceMap4	=	new Texture3D( rs.Device, ColorFormat.Rgba32F,	Width, Height, Depth );
+			irradianceMap5	=	new Texture3D( rs.Device, ColorFormat.Rgba32F,	Width, Height, Depth );
 
 			LoadContent();
 
@@ -112,8 +128,14 @@ namespace Fusion.Engine.Graphics.Lights {
 				SafeDispose( ref occlusionGrid0 );
 				SafeDispose( ref occlusionGrid1 );
 				SafeDispose( ref constBuffer );		 
-				SafeDispose( ref irradianceMap );
 				SafeDispose( ref occlusionGrid );
+
+				SafeDispose( ref irradianceMap0 );
+				SafeDispose( ref irradianceMap1 );
+				SafeDispose( ref irradianceMap2 );
+				SafeDispose( ref irradianceMap3 );
+				SafeDispose( ref irradianceMap4 );
+				SafeDispose( ref irradianceMap5 );
 			}
 
 			base.Dispose( disposing );
@@ -150,8 +172,12 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			if (vpls!=null) {
 				foreach (var vpl in vpls) {
-					rs.RenderWorld.Debug.DrawPoint( vpl.Position, 0.3f, Color.Yellow, 1 );
-					rs.RenderWorld.Debug.DrawLine( vpl.Position, vpl.Position + vpl.Normal, Color.Yellow );
+
+					//var m =  Matrix.RotationY(MathUtil.PiOverTwo) * MathUtil.ComputeAimedBasis( vpl.Normal ) * Matrix.Translation( vpl.Position );
+
+					rs.RenderWorld.Debug.DrawPoint( vpl.Position + 0.5f  * vpl.Normal, 0.7f, Color.Yellow, 1 );
+					//rs.RenderWorld.Debug.DrawLine( vpl.Position, vpl.Position + vpl.Normal, Color.Yellow );
+					//rs.RenderWorld.Debug.DrawRing( m, 6, Color.Yellow, 12 );
 				}
 			}
 			/*for ( int x=-Width/2; x<=Width/2; x+=4 ) {
@@ -292,6 +318,8 @@ namespace Fusion.Engine.Graphics.Lights {
 			public VPL(Vector3 p, Vector3 n) { Position = p; Normal = n; }
 			public Vector3 Position;
 			public Vector3 Normal;
+			public bool Reject = false;
+			public int Rank;
 
 			public RtcRay CreateRay( Vector3 dir, float bias, float length )
 			{
@@ -350,13 +378,15 @@ namespace Fusion.Engine.Graphics.Lights {
 
 					scene.Commit();
 
+					MergeVPLs();
+
 					Log.Message("{0} VPLs placed", vpls.Count);
 
 					vpls = vpls
 						.Where( vpl => !scene.Occluded( vpl.CreateRay( dirToLight, 0.125f, 512 ) ) )
 						.ToList();
 
-					Log.Message("{0} VPLs are lit");
+					Log.Message("{0} VPLs are lit", vpls.Count);
 
 					var shadowMatrix = Matrix.LookAtRH( dirToLight * 256 + Vector3.Up*32, Vector3.Up*32, Vector3.Up );
 					shadowMatrix.Invert();
@@ -390,8 +420,12 @@ namespace Fusion.Engine.Graphics.Lights {
 					var sw = new Stopwatch();
 					sw.Start();
 
-					var data	=	new Color4[ Width*Height*Depth ];
-					var data2	=	new Color [ Width*Height*Depth ];
+					var data0	=	new Color4[ Width*Height*Depth ];
+					var data1	=	new Color4[ Width*Height*Depth ];
+					var data2	=	new Color4[ Width*Height*Depth ];
+					var data3	=	new Color4[ Width*Height*Depth ];
+					var data4	=	new Color4[ Width*Height*Depth ];
+					var data5	=	new Color4[ Width*Height*Depth ];
 
 					for ( int x=0; x<Width;  x++ ) {
 
@@ -413,24 +447,31 @@ namespace Fusion.Engine.Graphics.Lights {
 								//var irradiance	=	ComputeIndirectLight( scene, lightSet, position, randVector, spherePoints, 128 );
 									//irradiance	+=	ComputeDirectLight( scene, lightSet, position, 512, numSamples );
 
-								data[index]		=	new Color4( irradiance, 0 );
+								data0[index]		=	new Color4( irradiance[0], 0 );
+								data1[index]		=	new Color4( irradiance[1], 0 );
+								data2[index]		=	new Color4( irradiance[2], 0 );
+								data3[index]		=	new Color4( irradiance[3], 0 );
+								data4[index]		=	new Color4( irradiance[4], 0 );
+								data5[index]		=	new Color4( irradiance[5], 0 );
 								//data[index]		=	rand.NextColor4();
 								//data2[index]	=	ComputeSkyOcclusion( scene, position, 512, numSamples );
 
 								if (x==0 || y==0 || z==0) {
-									data[index]  = Color.Red.ToColor4();
-									data2[index] = new Color(127,127,127,127);
+									data0[index]  = Color.Red.ToColor4();
 								}
 								if (x==Width-1 || y==Height-1 || z==Depth-1) {
-									data[index]  = Color.Red.ToColor4();
-									data2[index] = new Color(127,127,127,127);
+									data0[index]  = Color.Red.ToColor4();
 								}
 							}
 						}
 					}
 
-					occlusionGrid.SetData( data2 );
-					irradianceMap.SetData( data);
+					irradianceMap0.SetData( data0 );
+					irradianceMap1.SetData( data1 );
+					irradianceMap2.SetData( data2 );
+					irradianceMap3.SetData( data3 );
+					irradianceMap4.SetData( data4 );
+					irradianceMap5.SetData( data5 );
 
 					sw.Stop();
 
@@ -448,9 +489,10 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 
 
-		Vector3 GatherVPLs ( RtcScene scene, LightSet lightSet, Vector3 point, float maxRange )
+		Vector3[] GatherVPLs ( RtcScene scene, LightSet lightSet, Vector3 point, float maxRange )
 		{
-			var irradiance		=	Vector3.Zero;
+			var irradiance		=	new[] { Vector3.Zero, Vector3.Zero, Vector3.Zero, Vector3.Zero, Vector3.Zero, Vector3.Zero };
+
 			var dirLightDir		=	-lightSet.DirectLight.Direction.Normalized();
 			var dirLightColor	=	lightSet.DirectLight.Intensity.ToVector3();
 
@@ -471,7 +513,7 @@ namespace Fusion.Engine.Graphics.Lights {
 					continue;
 				}
 
-				if (len>128) {
+				if (len>64) {
 					continue;
 				}
 
@@ -479,12 +521,28 @@ namespace Fusion.Engine.Graphics.Lights {
 					continue;
 				}
 
+
 				EmbreeExtensions.UpdateRay( ref ray, origin, -dirn, 0, len*0.99f );
 
 				float rcpLen2 = 1 / (len*len+4);
 
 				if (!scene.Occluded( ref ray ) ) {
-					irradiance += dot * 4 * rcpLen2 / 4 / 3.14f * dirLightColor;
+
+					var dotPX	=	Math.Max( 0,  Vector3.Dot( dirn, Vector3.UnitX ) );
+					var dotNX	=	Math.Max( 0, -Vector3.Dot( dirn, Vector3.UnitX ) );
+
+					var dotPY	=	Math.Max( 0,  Vector3.Dot( dirn, Vector3.UnitY ) );
+					var dotNY	=	Math.Max( 0, -Vector3.Dot( dirn, Vector3.UnitZ ) );
+
+					var dotPZ	=	Math.Max( 0,  Vector3.Dot( dirn, Vector3.UnitZ ) );
+					var dotNZ	=	Math.Max( 0, -Vector3.Dot( dirn, Vector3.UnitZ ) );
+
+					irradiance[0] += dotPX * dot * 4 * rcpLen2 / 4 / 3.14f * dirLightColor;
+					irradiance[1] += dotNX * dot * 4 * rcpLen2 / 4 / 3.14f * dirLightColor;
+					irradiance[2] += dotPY * dot * 4 * rcpLen2 / 4 / 3.14f * dirLightColor;
+					irradiance[3] += dotNY * dot * 4 * rcpLen2 / 4 / 3.14f * dirLightColor;
+					irradiance[4] += dotPZ * dot * 4 * rcpLen2 / 4 / 3.14f * dirLightColor;
+					irradiance[5] += dotNZ * dot * 4 * rcpLen2 / 4 / 3.14f * dirLightColor;
 				}
 			}
 
@@ -493,9 +551,10 @@ namespace Fusion.Engine.Graphics.Lights {
 
 
 
-		Vector3 ComputeIndirectLight ( RtcScene scene, LightSet lightSet, Vector3 point, Vector3 randVector, Vector3[] randomPoints, float maxRange )
+		Vector3[] ComputeIndirectLight ( RtcScene scene, LightSet lightSet, Vector3 point, Vector3 randVector, Vector3[] randomPoints, float maxRange )
 		{
-			var irradiance		=	Vector3.Zero;
+			var irradiance		=	new[] { Vector3.Zero, Vector3.Zero, Vector3.Zero, Vector3.Zero, Vector3.Zero, Vector3.Zero };
+
 			var dirLightDir		=	-lightSet.DirectLight.Direction.Normalized();
 			var dirLightColor	=	lightSet.DirectLight.Intensity.ToVector3();
 			var totalWeight		=	0f;
@@ -527,17 +586,17 @@ namespace Fusion.Engine.Graphics.Lights {
 
 						if (!scene.Occluded( ref ray )) {
 						
-							irradiance	= irradiance + dirLightColor * nDotL * 0.5f * weight;
+							irradiance[0]	= irradiance[0] + dirLightColor * nDotL * 0.5f * weight;
 						}
 					}
 				} else {
-					if (dir.Y>0) {
+					/*if (dir.Y>0) {
 						irradiance += skyAmbient;// * dir.Y;
 					} //*/
 				}				
 			}
 
-			return irradiance / totalWeight;
+			return irradiance;
 		}
 
 
@@ -634,6 +693,31 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 #endif
 
+		bool CanConsumeVPL( VPL a, VPL b, float maxLinearDistance, float maxProjectedDist )
+		{
+			var dot		= Vector3.Dot( a.Normal, b.Normal );
+			var dist	= a.Position - b.Position;
+
+			if (b.Reject) {
+				return false;
+			}
+
+			if (dot<(float)Math.Cos(30)) {
+				return false;
+			}
+			
+			if ( Math.Abs( Vector3.Dot( a.Normal, dist ) ) > maxProjectedDist ) {
+				return false;
+			}
+			
+			if ( Vector3.Distance( a.Position, b.Position ) > maxLinearDistance ) {
+				return false;
+			}
+
+			return true;
+		}
+
+
 		void RasterizeInstance ( RtcScene scene, MeshInstance instance )
 		{
 			var mesh		=	instance.Mesh;
@@ -650,23 +734,70 @@ namespace Fusion.Engine.Graphics.Lights {
 			var bias = new Vector3(4,4,4);
 
 			for (int i=0; i<indices.Length/3; i++) {
-				var p0 = vertices[i*3+0] + bias;
-				var p1 = vertices[i*3+1] + bias;
-				var p2 = vertices[i*3+2] + bias;
+				var p0 = vertices[indices[i*3+0]] + bias;
+				var p1 = vertices[indices[i*3+1]] + bias;
+				var p2 = vertices[indices[i*3+2]] + bias;
 				var n  = Vector3.Cross( p1 - p0, p2 - p0 ).Normalized();
-				Voxelizer.RasterizeTriangle( p0, p1, p2, 8, (p) => vpls.Add( new VPL(p-bias, n) ) );
+				Voxelizer.RasterizeTriangle( p0, p1, p2, 2, (p) => {
+					var vpl = new VPL(p-bias, n);
+					vpls.Add( vpl );
+				} );
+			}//*/
+
+		}
+
+
+		void MergeVPLs ()
+		{
+			Log.Message("Merging VPLs:");
+
+			//------------------------------
+
+			Log.Message("...shuffle");
+
+			vpls = vpls.Shuffle( new Random() ).ToList();
+
+			//------------------------------
+
+			Log.Message("...building KdTree");
+			KdTree3<VPL> kdTree = new KdTree3<VPL>();
+
+			foreach ( var vpl in vpls ) {
+				kdTree.Add( vpl.Position, vpl );
 			}
 
-			/*var id		=	scene.NewTriangleMesh( GeometryFlags.Static, indices.Length/3, vertices.Length );
+			//------------------------------
 
-			var pVerts	=	scene.MapBuffer( id, BufferType.VertexBuffer );
-			var pInds	=	scene.MapBuffer( id, BufferType.IndexBuffer );
+			Log.Message("...ranking VPLs");
 
-			SharpDX.Utilities.Write( pVerts, vertices, 0, vertices.Length );
-			SharpDX.Utilities.Write( pInds,  indices,  0, indices.Length );
+			foreach ( var vpl in vpls ) {
+				vpl.Rank = kdTree.NearestRadius( vpl.Position, 4.1f, (other) => CanConsumeVPL(vpl, other, 4, 1) ).Count();
+			}
 
-			scene.UnmapBuffer( id, BufferType.VertexBuffer );
-			scene.UnmapBuffer( id, BufferType.IndexBuffer );*/
+			vpls = vpls.OrderByDescending( v => v.Rank ).ToList();
+
+			//------------------------------
+
+			Log.Message("...merging VPLs");
+
+			foreach ( var vpl in vpls ) {
+
+				if (vpl.Reject) {
+					continue;
+				}
+			
+				var nearest = kdTree.NearestRadius( vpl.Position, 4, (other) => CanConsumeVPL(vpl, other, 4, 1) ); 	
+
+				foreach ( var other in nearest ) {
+					if (other!=vpl) {
+						other.Reject = true;
+					}
+				}
+			}
+
+			vpls = vpls.Where( vpl => !vpl.Reject ).ToList();
+
+			Log.Message("Completed.");
 		}
 
 

@@ -64,7 +64,12 @@ Texture3D					OcclusionGrid		: 	register(t14);
 TextureCubeArray			RadianceCache		:	register(t15);
 Texture2D					EnvLut				:	register(t16);
 StructuredBuffer<LIGHTPROBE> ProbeDataTable		:	register(t17);
-Texture3D					IrradianceMap		: 	register(t18);
+Texture3D					IrradianceMap0		: 	register(t18);
+Texture3D					IrradianceMap1		: 	register(t19);
+Texture3D					IrradianceMap2		: 	register(t20);
+Texture3D					IrradianceMap3		: 	register(t21);
+Texture3D					IrradianceMap4		: 	register(t22);
+Texture3D					IrradianceMap5		: 	register(t23);
 
 #ifdef _UBERSHADER
 $ubershader FORWARD RIGID ANISOTROPIC +TRANSPARENT

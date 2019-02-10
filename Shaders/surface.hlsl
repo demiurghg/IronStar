@@ -260,11 +260,14 @@ GBuffer PSMain( PSInput input )
 	
 	float2 	scaledCoords	=	input.TexCoord.xy * Subset.Rectangle.zw;
 	
+	float2	checkerTC	=	input.TexCoord.xy;
+
 	input.TexCoord.x	=	frac(input.TexCoord.x);
 	input.TexCoord.y	=	frac(input.TexCoord.y);
-
+	
 	input.TexCoord.x	=	mad( input.TexCoord.x, Subset.Rectangle.z, Subset.Rectangle.x );
 	input.TexCoord.y	=	mad( input.TexCoord.y, Subset.Rectangle.w, Subset.Rectangle.y );
+	
 	
 	//---------------------------------
 	//	Compute miplevel :
@@ -333,14 +336,16 @@ GBuffer PSMain( PSInput input )
 	}
 
 	if ( Subset.Rectangle.z==Subset.Rectangle.w && Subset.Rectangle.z==0 ) {
-		float3	checker3	=	floor(input.WorldPos.xyz/4.0f-0.5f)/2;
-		float	checker		=	frac(checker3.x + checker3.y + checker3.z);
-		baseColor	=	pow(0.2*checker+0.3,2);
+		float 	checkerX	=	frac(checkerTC.x/4) > 0.5 ? 1 : 0;
+		float 	checkerY	=	frac(checkerTC.y/4) > 0.5 ? 1 : 0;
+		float	checker		=	(checkerX+checkerY) % 2;
+		baseColor	=	pow(0.5*checker+0.25, 2);
 		localNormal	=	float3(0,0,1);
-		roughness	=	0.3*checker+0.15;
+		roughness	=	0.5;//0.3*checker+0.15;
 		metallic	=	0;
 		emission	=	0;
 		alpha		=	0.5f;
+		//baseColor	=	float3(frac(checkerTC.xy*100),0);
 	}
 	
 	// output.hdr			=	float4( baseColor, 1 );

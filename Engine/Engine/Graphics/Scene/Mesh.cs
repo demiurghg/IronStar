@@ -19,7 +19,7 @@ namespace Fusion.Engine.Graphics {
 
 	public sealed partial class Mesh : DisposableBase, IEquatable<Mesh> {
 
-		public List<MeshVertex>		Vertices			{ get; private set; }	
+		public List<MeshVertex>		Vertices			{ get; set; }	
 		public List<MeshTriangle>	Triangles			{ get; private set; }	
 		public List<MeshSubset>		Subsets				{ get; private set; }
 		public List<MeshSurfel>		Surfels				{ get; private set; }

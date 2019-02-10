@@ -567,11 +567,12 @@
     <Compile Include="Engine\Graphics\Scene\SceneLoader.cs" />
     <Compile Include="Engine\Graphics\Scene\SceneMapping.cs" />
     <Compile Include="Engine\Graphics\Scene\AnimationTake.cs" />
+    <Compile Include="Engine\Graphics\Scene\Unwrapper.Shell.cs" />
+    <Compile Include="Engine\Graphics\Scene\Unwrapper.cs" />
     <Compile Include="Engine\Graphics\Scene\VertexColorTexture.cs" />
     <Compile Include="Engine\Graphics\Scene\VertexColorTextureNormal.cs" />
     <Compile Include="Engine\Graphics\Scene\VertexColorTextureTBNRigid.cs" />
     <Compile Include="Engine\Graphics\Scene\VertexColorTextureTBNSkinned.cs" />
-    <Compile Include="Engine\Graphics\Scene\Voxel.cs" />
     <Compile Include="Engine\Graphics\Scene\Voxelizer.cs" />
     <Compile Include="Engine\Graphics\Sprites\SpriteEngine.cs" />
     <Compile Include="Engine\Graphics\Sprites\SpriteFont.BMFont.cs" />

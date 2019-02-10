@@ -7,10 +7,11 @@ using SharpDX;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
-
+using System.Diagnostics;
 
 namespace Fusion.Engine.Graphics {
 
+	[DebuggerDisplay("{Position}")]
 	public struct MeshVertex : IEquatable<MeshVertex> {
 
 		/// <summary>
@@ -52,9 +53,6 @@ namespace Fusion.Engine.Graphics {
 		/// Four component skin weights.
 		/// </summary>
 		public	Vector4		SkinWeights	;
-
-
-
 
 
 

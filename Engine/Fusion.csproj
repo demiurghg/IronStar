@@ -159,6 +159,7 @@
     <Compile Include="Core\Binding\IValueBinding.cs" />
     <Compile Include="Core\Binding\PropertyBinding.cs" />
     <Compile Include="Core\Binding\ValueBindingException.cs" />
+    <Compile Include="Core\Collection\Octree.cs" />
     <Compile Include="Core\Content\IniLoader.cs" />
     <Compile Include="Core\Content\IPrecachable.cs" />
     <Compile Include="Core\Extensions\EmbreeExtensions.cs" />
@@ -649,8 +650,8 @@
     <Compile Include="Core\Utils\CharStream.cs" />
     <Compile Include="Core\Utils\ColoredLogListener.cs" />
     <Compile Include="Core\Utils\StdLogListener.cs" />
-    <Compile Include="Core\Mathematics\KdTree3.cs" />
-    <Compile Include="Core\Mathematics\KdTree2.cs" />
+    <Compile Include="Core\Collection\KdTree3.cs" />
+    <Compile Include="Core\Collection\KdTree2.cs" />
     <Compile Include="Drivers\Graphics\GraphicsDevice.cs" />
     <Compile Include="Core\Extensions\ConsoleExtensions.cs" />
     <Compile Include="Core\GameTime.cs" />

@@ -11,6 +11,9 @@ using System.ComponentModel.Design;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
+using Fusion.Core.Collection;
+using Fusion.Core.Collection;
+using System.Diagnostics;
 
 namespace Fusion.Engine.Graphics {
 
@@ -278,32 +281,81 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		[DebuggerDisplay("{Source} --> {Target}")]
+		class ReIndex {
+			public ReIndex( int source, int target )
+			{
+				Source	=	source;
+				Target	=	target;
+			}
+			public readonly int Source;
+			public readonly int Target;
+		}
+
+
+		/// <summary>
+		/// Compares vertices
+		/// </summary>
+		/// <param name="v0"></param>
+		/// <param name="v1"></param>
+		/// <returns></returns>
+		int CompareVertexPair ( ReIndex index0, ReIndex index1 )
+		{
+			var v0 = Vertices[index0.Source];
+			var v1 = Vertices[index1.Source];
+
+			if ( Vector3.DistanceSquared( v0.Position	, v1.Position	 ) > float.Epsilon * 8192 ) return 1;
+			if ( Vector3.DistanceSquared( v0.Tangent	, v1.Tangent	 ) > float.Epsilon * 8192 ) return 1;
+			if ( Vector3.DistanceSquared( v0.Binormal	, v1.Binormal	 ) > float.Epsilon * 8192 ) return 1;
+			if ( Vector3.DistanceSquared( v0.Normal		, v1.Normal		 ) > float.Epsilon * 8192 ) return 1;
+			if ( Vector2.DistanceSquared( v0.TexCoord0	, v1.TexCoord0	 ) > float.Epsilon * 8192 ) return 1;
+			//if ( Vector2.DistanceSquared( v0.TexCoord1	, v1.TexCoord1	 ) > toleranceSquared ) return false;
+
+			if ( v0.Color0 != v1.Color0 ) return 1;
+			//if ( v0.Color1 != v1.Color1 ) return false;
+
+			if ( Vector4.DistanceSquared( v0.SkinWeights, v1.SkinWeights ) > float.Epsilon * 8192 ) return 1;
+			if ( v0.SkinIndices != v1.SkinIndices ) return 1;
+
+			return 0;
+		}
+
+
 		/// <summary>
 		/// Merges vertices
 		/// </summary>
 		public void MergeVertices ( float tolerance )
 		{
-			if (tolerance<=0) {
-				return;
+			var octree	=	new Octree<ReIndex>();
+			var remap	=	new ReIndex[ Vertices.Count ];
+			int counter	=	0;
+
+			for (int index=0; index<Vertices.Count; index++) {
+
+				var vertex		=	Vertices[index];
+				var newIndex	=	octree.Insert( vertex.Position, new ReIndex(index,counter), CompareVertexPair, (idx) => counter++ );
+
+				remap[ index ]	=	newIndex;
 			}
 
-			OctNode	root = null;
-			List<MeshVertex> oldVertices = new List<MeshVertex>( Vertices );
-			Vertices.Clear();
 
 			for (int i=0; i<Triangles.Count; i++) {
-				
-				MeshVertex v0	=	oldVertices[ Triangles[i].Index0 ];
-				MeshVertex v1	=	oldVertices[ Triangles[i].Index1 ];
-				MeshVertex v2	=	oldVertices[ Triangles[i].Index2 ];
-				
-				int i0		=	InsertVertex( ref root, v0, tolerance );	
-				int i1		=	InsertVertex( ref root, v1, tolerance );	
-				int i2		=	InsertVertex( ref root, v2, tolerance );
-				int mtrl	=	Triangles[i].MaterialIndex;	
 
-				Triangles[i] = new MeshTriangle(i0,i1,i2, mtrl);
+				var index0		=	remap[ Triangles[i].Index0 ].Target;
+				var index1		=	remap[ Triangles[i].Index1 ].Target;
+				var index2		=	remap[ Triangles[i].Index2 ].Target;
+				var mtrl		=	Triangles[i].MaterialIndex;
+				
+				Triangles[i] = new MeshTriangle( index0, index1, index2, mtrl);
 			}
+
+
+			Vertices	=	remap
+							.DistinctBy( value => value.Target )
+							.Select( idx0 => Vertices[idx0.Source] )
+							.ToList();
+
+			Log.Message("Merging : {0} -> {1}", remap.Length, Vertices.Count );
 		}
 
 
@@ -314,7 +366,8 @@ namespace Fusion.Engine.Graphics {
 		int InsertVertex ( ref OctNode node, MeshVertex v, float tolerance )
 		{
 			if (node==null) {
-				node = new OctNode();				node.index = Vertices.Count;
+				node = new OctNode();				
+				node.index = Vertices.Count;
 				Vertices.Add( v );
 				return node.index;
 			}

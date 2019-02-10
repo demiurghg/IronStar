@@ -24,9 +24,18 @@ namespace Fusion.Core.Mathematics {
 
 		Node treeRoot	=	null;
 
+		/// <summary>
+		/// Gets maximum depth
+		/// </summary>
 		public int MaxDepth { get; protected set; }
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public delegate bool SearchCallback ( T current, Vector3 point, float distance );
 		
+
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -54,23 +63,14 @@ namespace Fusion.Core.Mathematics {
 		/// <param name="target"></param>
 		/// <param name="result"></param>
 		/// <param name="distance"></param>
-		public void Nearest ( Vector3 target, ref T result, ref float distance )
+		public T Nearest ( Vector3 target )
 		{
+			var result	 = default(T);
+			var distance = 0f;
 			Nearest( treeRoot, target, ref result, ref distance, 0 );
+			return result;
 		}
 
-
-		/// <summary>
-		/// Gets nearest object to target point.
-		/// </summary>
-		/// <param name="target"></param>
-		/// <param name="result"></param>
-		/// <param name="distance"></param>
-		public void Nearest ( Vector3 target, ref T result )
-		{
-			float dummy = 0;
-			Nearest( treeRoot, target, ref result, ref dummy, 0 );
-		}
 
 
 		/// <summary>
@@ -78,13 +78,31 @@ namespace Fusion.Core.Mathematics {
 		/// </summary>
 		/// <param name="target"></param>
 		/// <param name="result"></param>
-		public void NearestRadius ( Vector3 target, float radius, out List<T> result )
+		public IEnumerable<T> NearestRadius ( Vector3 target, float radius, Func<T,bool> predicate )
 		{
-			List<Node> nodes = new List<Node>();
-			List<float> distances = new List<float>();
-			NearestRadius ( treeRoot, target, nodes, distances, radius, 0 );
+			List<T> result = new List<T>();
 
-			result	=	nodes.Select( n => n.Value ).ToList();
+			NearestRadius( target, radius, 
+				(t,p,d) => {
+					if (predicate(t)) {
+						result.Add(t);
+					}
+					return false;
+				}
+			);
+
+			return result;
+		}
+
+
+		/// <summary>
+		/// Gets nearest withing given radius object to target point that meets call back
+		/// </summary>
+		/// <param name="target"></param>
+		/// <param name="result"></param>
+		public void NearestRadius ( Vector3 target, float radius, SearchCallback callback )
+		{
+			NearestRadius ( treeRoot, target, radius, callback, 0 );
 		}
 
 
@@ -144,7 +162,7 @@ namespace Fusion.Core.Mathematics {
 		/// <param name="distances"></param>
 		/// <param name="radius"></param>
 		/// <param name="depth"></param>
-		void NearestRadius ( Node root, Vector3 target, List<Node> nodes, List<float> distances, float radius, int depth=0 )
+		void NearestRadius ( Node root, Vector3 target, float radius, SearchCallback callback, int depth=0 )
 		{
 			if (root==null) return;
 
@@ -152,28 +170,19 @@ namespace Fusion.Core.Mathematics {
 			float delta		=	KdTreeDelta( root.Point, target, depth );
 			int   branch	=	KdTreeBranch( root.Point, target, depth );
 
-			if ( dist < radius ) {
-				nodes.Add( root );
-				distances.Add( dist );
+			if ( dist <= radius ) {
+				if ( callback( root.Value, root.Point, dist ) ) {
+					return;
+				}
 			}
 
-			NearestRadius( root.KdBranch[ branch ], target, nodes, distances, radius, depth+1 );
+			NearestRadius( root.KdBranch[ branch ], target, radius, callback, depth+1 );
 
 			if ( Math.Abs(delta) >= radius ) return;
 
-			NearestRadius( root.KdBranch[ 1-branch ], target, nodes, distances, radius, depth+1 );
+			NearestRadius( root.KdBranch[ 1-branch ], target, radius, callback, depth+1 );
 		}
 
-
-		/// <summary>
-		/// Get nearest nodes in given radius
-		/// </summary>
-		/// <param name="point"></param>
-		/// <param name="result"></param>
-		/// <returns></returns>
-		/*public bool NearestInRadius ( Vector2 point, out T result )
-		{
-		} */
 
 
 		/// <summary>

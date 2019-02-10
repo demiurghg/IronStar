@@ -96,5 +96,18 @@ namespace Fusion.Core.Extensions {
 					.Where(key => match(key, dict[key])))
 				dict.Remove(key);
 		} 
+
+
+		/// <summary>
+		/// https://stackoverflow.com/questions/108819/best-way-to-randomize-an-array-with-net
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="source"></param>
+		/// <param name="rand"></param>
+		/// <returns></returns>
+		public static IEnumerable<T> Shuffle<T>( this IEnumerable<T> source, Random rand )
+		{
+			return source.OrderBy(x => rand.Next());
+		}
 	}
 }

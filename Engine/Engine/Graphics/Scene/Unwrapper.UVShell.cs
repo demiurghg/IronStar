@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
-using QuickGraph;
 
 namespace Fusion.Engine.Graphics {
 	public partial class Unwrapper {

@@ -411,7 +411,35 @@ namespace Fusion.Engine.Graphics {
 
 
 		/// <summary>
-		/// 
+		/// Separates triangles making triangle indices unique.
+		/// Vertices will be duplicated if necessary.
+		/// </summary>
+		public void SeparateTriangles ()
+		{
+			var oldVertices = Vertices;
+
+			Vertices	=	new List<MeshVertex>( TriangleCount * 3 );
+
+			for ( int i=0; i<TriangleCount; i++ ) {
+
+				var tri = Triangles[i];
+
+				Vertices.Add( oldVertices[ tri.Index0 ] );
+				Vertices.Add( oldVertices[ tri.Index1 ] );
+				Vertices.Add( oldVertices[ tri.Index2 ] );
+
+				tri.Index0 = i*3+0;
+				tri.Index1 = i*3+1;
+				tri.Index2 = i*3+2;
+
+				Triangles[i] = tri;
+			}
+		}
+
+
+
+		/// <summary>
+		/// Computes bounding box for given mesh.
 		/// </summary>
 		public BoundingBox ComputeBoundingBox() 
 		{
@@ -451,6 +479,8 @@ namespace Fusion.Engine.Graphics {
 
 			return minDistance;//*/
 		}
+
+
 
 
 

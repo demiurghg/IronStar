@@ -530,7 +530,7 @@
     <Compile Include="Engine\Graphics\Lights\LightProbeContext.cs" />
     <Compile Include="Engine\Graphics\Lights\LightSet.cs" />
     <Compile Include="Engine\Graphics\Lights\LightStyle.cs" />
-    <Compile Include="Engine\Graphics\Lights\ObscuranceMap.cs" />
+    <Compile Include="Engine\Graphics\Lights\LightMap.cs" />
     <Compile Include="Engine\Graphics\Lights\OmniLight.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowContext.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowContextTransparent.cs" />
@@ -567,7 +567,8 @@
     <Compile Include="Engine\Graphics\Scene\SceneLoader.cs" />
     <Compile Include="Engine\Graphics\Scene\SceneMapping.cs" />
     <Compile Include="Engine\Graphics\Scene\AnimationTake.cs" />
-    <Compile Include="Engine\Graphics\Scene\Unwrapper.Shell.cs" />
+    <Compile Include="Engine\Graphics\Scene\Unwrapper.UVTriangle.cs" />
+    <Compile Include="Engine\Graphics\Scene\Unwrapper.UVShell.cs" />
     <Compile Include="Engine\Graphics\Scene\Unwrapper.cs" />
     <Compile Include="Engine\Graphics\Scene\VertexColorTexture.cs" />
     <Compile Include="Engine\Graphics\Scene\VertexColorTextureNormal.cs" />

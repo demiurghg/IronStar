@@ -23,7 +23,7 @@ struct PSInput {
 	float3	Normal 		: TEXCOORD3;
 	float4	ProjPos		: TEXCOORD4;
 	float3 	WorldPos	: TEXCOORD5;
-	float4	TexShadow	: TEXCOORD6;
+	float2	LMCoord		: TEXCOORD6;
 };
 
 struct GBuffer {
@@ -64,12 +64,7 @@ Texture3D					OcclusionGrid		: 	register(t14);
 TextureCubeArray			RadianceCache		:	register(t15);
 Texture2D					EnvLut				:	register(t16);
 StructuredBuffer<LIGHTPROBE> ProbeDataTable		:	register(t17);
-Texture3D					IrradianceMap0		: 	register(t18);
-Texture3D					IrradianceMap1		: 	register(t19);
-Texture3D					IrradianceMap2		: 	register(t20);
-Texture3D					IrradianceMap3		: 	register(t21);
-Texture3D					IrradianceMap4		: 	register(t22);
-Texture3D					IrradianceMap5		: 	register(t23);
+Texture2D					LightMap			: 	register(t18);
 
 #ifdef _UBERSHADER
 $ubershader FORWARD RIGID ANISOTROPIC +TRANSPARENT
@@ -181,7 +176,7 @@ PSInput VSMain( VSInput input )
 	output.Tangent 		=  	tangent.xyz;
 	output.Binormal		=  	binormal.xyz;
 	output.WorldPos		=	wPos.xyz;
-	output.TexShadow	=	float4(0,0,0,0);
+	output.LMCoord		=	input.TexCoord;
 	
 	return output;
 }
@@ -336,8 +331,8 @@ GBuffer PSMain( PSInput input )
 	}
 
 	if ( Subset.Rectangle.z==Subset.Rectangle.w && Subset.Rectangle.z==0 ) {
-		float 	checkerX	=	frac(checkerTC.x/4) > 0.5 ? 1 : 0;
-		float 	checkerY	=	frac(checkerTC.y/4) > 0.5 ? 1 : 0;
+		float 	checkerX	=	frac(checkerTC.x*128) > 0.5 ? 1 : 0;
+		float 	checkerY	=	frac(checkerTC.y*128) > 0.5 ? 1 : 0;
 		float	checker		=	(checkerX+checkerY) % 2;
 		baseColor	=	pow(0.5*checker+0.25, 2);
 		localNormal	=	float3(0,0,1);
@@ -345,12 +340,12 @@ GBuffer PSMain( PSInput input )
 		metallic	=	0;
 		emission	=	0;
 		alpha		=	0.5f;
-		//baseColor	=	float3(frac(checkerTC.xy*100),0);
+		//baseColor	=	float3(frac(checkerTC*1024),0);
 	}
 	
-	// output.hdr			=	float4( baseColor, 1 );
-	// output.feedback		=	feedback;
-	// return output;
+	/*output.hdr			=	float4( baseColor, 1 );
+	output.feedback		=	feedback;
+	return output; //*/
 
 	//---------------------------------
 	//	Prepare output values :
@@ -364,7 +359,7 @@ GBuffer PSMain( PSInput input )
 	
 	float3 	entityColor	=	input.Color.rgb;
 	
-	float3 	lighting	=	ComputeClusteredLighting( input, ClusterTable, Stage.ViewBounds.xy, baseColor, worldNormal, triNormal, roughness, metallic, occlusion );
+	float3 	lighting	=	ComputeClusteredLighting( input, ClusterTable, Stage.ViewBounds.xy, baseColor, worldNormal, triNormal, roughness, metallic, occlusion, input.LMCoord );
 	
 			lighting	=	emission * entityColor + lighting;
 	
@@ -444,3 +439,4 @@ LPGBuffer PSMain( PSInput input )
 	return output;
 }
 #endif
+

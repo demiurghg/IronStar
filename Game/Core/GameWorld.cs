@@ -91,7 +91,12 @@ namespace IronStar.Core {
 			entities		=	new EntityCollection();
 			items			=	new ItemCollection(this);
 			physics			=	new PhysicsManager( this, 48 );
-			navMesh			=	map.BuildNavMesh( content );
+
+			try {
+				navMesh			=	map.BuildNavMesh( content );
+			} catch ( Exception e ) {
+				Log.Error(e.Message);
+			}
 
 			//	setup rendering stuff :
 			var rw					=	Game.RenderSystem.RenderWorld;

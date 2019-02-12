@@ -43,11 +43,10 @@ namespace Fusion.Engine.Graphics {
 
 			foreach ( var mesh in scene.Meshes ) {	
 
-				if (mesh.VertexCount<5000) {
-					Log.Warning("Unwrapping...");
-					var unwrapper = new Unwrapper( mesh, 1 );
-					unwrapper.Build();
-				}
+				//if (mesh.VertexCount<50) {
+				//	Log.Warning("Unwrapping...");
+				//	var unwrapper = new Unwrapper( mesh, 1 );
+				//}
 
 				mesh.CreateVertexAndIndexBuffers( content.Game.GraphicsDevice );
 			}

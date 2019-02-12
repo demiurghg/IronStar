@@ -497,18 +497,19 @@ namespace Fusion.Engine.Graphics {
 			var device	=	Game.GraphicsDevice;
 
 			if (obscurance) {
-				Log.Message("Building obscurance map...");
-				rs.LightManager.Obscurance.UpdateObscuranceMapGPU( Instances, LightSet, Debug, numSamples );
 
-				Log.Message("Building irradiance map...");
-				rs.LightManager.Obscurance.UpdateIrradianceMap( Instances, LightSet, Debug, numSamples );
+				Log.Message("---- Baking Light Map ----");
+
+				rs.LightManager.LightMap.BakeLightMap( Instances, LightSet, Debug, numSamples );
+
+				Log.Message("----------------");
 			}
 
 
 			if (lightProbes) {
 				device.ResetStates();
 
-				Log.Message("Building light probes gbuffers...");
+				Log.Message("---- Building Light Probes G-buffers ---");
 
 				var skyAmbient = SkySettings.AmbientLevel;
 
@@ -544,6 +545,8 @@ namespace Fusion.Engine.Graphics {
 				}
 
 				Log.Message("{0} light probes - {1} ms", LightSet.LightProbes.Count, sw.ElapsedMilliseconds);
+
+				Log.Message("----------------");
 			}
 		}
 

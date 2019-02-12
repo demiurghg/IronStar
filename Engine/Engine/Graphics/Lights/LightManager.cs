@@ -72,10 +72,10 @@ namespace Fusion.Engine.Graphics {
 		}
 		ShadowMap shadowMap;
 
-		public ObscuranceMap Obscurance {
-			get { return obscurance; }
+		public LightMap LightMap {
+			get { return lightmap; }
 		}
-		ObscuranceMap obscurance;
+		LightMap lightmap;
 
 
 
@@ -119,7 +119,7 @@ namespace Fusion.Engine.Graphics {
 
 			shadowMap	=	new ShadowMap( rs, rs.ShadowQuality );
 
-			obscurance	=	new ObscuranceMap( rs );
+			lightmap	=	new LightMap( rs );
 
 			cbRelightParams		=	new ConstantBuffer( rs.Device, typeof(RELIGHT_PARAMS) );
 			cbLightProbeData	=	new ConstantBuffer( rs.Device, typeof(LIGHTPROBE_DATA), RenderSystem.LightProbeBatchSize );
@@ -155,7 +155,7 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref factory );
 				SafeDispose( ref lightGrid );
 				SafeDispose( ref shadowMap );
-				SafeDispose( ref obscurance );
+				SafeDispose( ref lightmap );
 			}
 
 			base.Dispose( disposing );
@@ -188,7 +188,7 @@ namespace Fusion.Engine.Graphics {
 				if (spot.Timer<0) spot.Timer = 0;
 			}
 
-			obscurance.Update( gameTime );
+			lightmap.Update( gameTime );
 		}
 
 
@@ -227,7 +227,7 @@ namespace Fusion.Engine.Graphics {
 				device.ComputeShaderResources[2]    =   rs.Sky.SkyCube;
 				device.ComputeShaderResources[3]	=	shadowMap.ColorBuffer;
 				device.ComputeShaderResources[4]	=	null;
-				device.ComputeShaderResources[5]	=	Obscurance.OcclusionGrid;
+				device.ComputeShaderResources[5]	=	LightMap.LightMap2D;
 				device.ComputeShaderSamplers[0]		=	SamplerState.PointClamp;
 				device.ComputeShaderSamplers[1]		=	SamplerState.LinearWrap;
 				device.ComputeShaderSamplers[2]		=	SamplerState.ShadowSamplerPoint;

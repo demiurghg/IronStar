@@ -84,7 +84,7 @@ namespace FScene {
 					Log.Message("Preparation...");
 					foreach ( var mesh in scene.Meshes ) {
 						if (mesh!=null) {
-							mesh.MergeVertices( options.MergeTolerance );
+							//mesh.MergeVertices( options.MergeTolerance );
 							mesh.DefragmentSubsets(scene, true);
 							mesh.ComputeTangentFrame();
 							mesh.ComputeBoundingBox();

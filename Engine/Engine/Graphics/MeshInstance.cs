@@ -8,6 +8,7 @@ using Fusion.Core;
 using Fusion.Drivers.Graphics;
 using Fusion.Engine.Common;
 using Fusion.Core.Content;
+using Native.Embree;
 
 namespace Fusion.Engine.Graphics {
 

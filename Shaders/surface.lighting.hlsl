@@ -17,7 +17,7 @@ float computeSpecOcclusion ( float NdotV , float AO , float roughness )
 //
 //	ComputeClusteredLighting
 //	
-float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, float2 vpSize, float3 baseColor, float3 worldNormal, float3 triNormal, float roughness, float metallic, float occlusion )
+float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, float2 vpSize, float3 baseColor, float3 worldNormal, float3 triNormal, float roughness, float metallic, float occlusion, float2 lmCoord )
 {
 	uint i,j,k;
 	float3 result		=	float3(0,0,0);
@@ -227,7 +227,6 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	}
 	
 	//----------------------------------------------------------------------------------------------
-
 	//
 	//	https://github.com/demiurghg/IronStar/blob/ed5d9348552548bd7a187a436894a6b27a5d8ea9/Shaders/lighting.hlsl
 	//
@@ -235,30 +234,9 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	float3	ambientSpecular		=	float3(0,0,0);
 	float3	ambientDiffuseSky	=	float3(0,0,0);
 	
-	//	irradiance
-	float4	irradiance0		=	IrradianceMap0.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 3.0f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba * 4;
-	float4	irradiance1		=	IrradianceMap1.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 3.0f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba * 4;
-	float4	irradiance2		=	IrradianceMap2.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 3.0f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba * 4;
-	float4	irradiance3		=	IrradianceMap3.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 3.0f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba * 4;
-	float4	irradiance4		=	IrradianceMap4.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 3.0f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba * 4;
-	float4	irradiance5		=	IrradianceMap5.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 3.0f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba * 4;
+	float4  lightMap			=	LightMap.Sample( SamplerPoint, lmCoord );
 	
-	float	dotPX			=	max( 0, dot( normal.xyz, float3( 1, 0, 0 ) ) );
-	float	dotNX			=	max( 0, dot( normal.xyz, float3(-1, 0, 0 ) ) );
-	float	dotPY			=	max( 0, dot( normal.xyz, float3( 0, 1, 0 ) ) );
-	float	dotNY			=	max( 0, dot( normal.xyz, float3( 0,-1, 0 ) ) );
-	float	dotPZ			=	max( 0, dot( normal.xyz, float3( 0, 0, 1 ) ) );
-	float	dotNZ			=	max( 0, dot( normal.xyz, float3( 0, 0,-1 ) ) );
-	
-	float4 	irradiance		=	dotPX * irradiance0
-							+	dotNX * irradiance1
-							+	dotPY * irradiance2
-							+	dotNY * irradiance3
-							+	dotPZ * irradiance4
-							+	dotNZ * irradiance5
-							;
-	
-	ambientDiffuse			=	irradiance.rgb;
+	return lightMap;
 
 	//	occlusion & sky stuff :
 	float 	ssaoFactor		=	AmbientOcclusion.Load( int3( input.Position.xy,0 ) ).r;

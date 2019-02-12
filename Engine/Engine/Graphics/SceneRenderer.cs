@@ -165,7 +165,7 @@ namespace Fusion.Engine.Graphics {
 			cbDataStage.CascadeGradientMatrix2	=	rs.LightManager.ShadowMap.GetCascade( 2 ).ComputeGradientMatrix();
 			cbDataStage.CascadeGradientMatrix3	=	rs.LightManager.ShadowMap.GetCascade( 3 ).ComputeGradientMatrix();
 
-			cbDataStage.OcclusionGridMatrix		=	rs.LightManager.Obscurance.OcclusionGridMatrix;
+			cbDataStage.OcclusionGridMatrix		=	rs.LightManager.LightMap.LightMap3DMatrix;
 
 			cbDataStage.VTGradientScaler		=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;
 
@@ -222,16 +222,11 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			device.PixelShaderResources[13]	=	rs.Sky.SkyCube;
-			device.PixelShaderResources[14]	=	rs.LightManager.Obscurance.OcclusionGrid;
+			device.PixelShaderResources[14]	=	rs.LightManager.LightMap.LightMap2D;
 			device.PixelShaderResources[15]	=	rs.RenderWorld.RadianceCache;
 			device.PixelShaderResources[16]	=	envLut.Srv;
 			device.PixelShaderResources[17]	=	rs.LightManager.LightGrid.ProbeDataGpu;
-			device.PixelShaderResources[18]	=	rs.LightManager.Obscurance.IrradianceMap0;
-			device.PixelShaderResources[19]	=	rs.LightManager.Obscurance.IrradianceMap1;
-			device.PixelShaderResources[20]	=	rs.LightManager.Obscurance.IrradianceMap2;
-			device.PixelShaderResources[21]	=	rs.LightManager.Obscurance.IrradianceMap3;
-			device.PixelShaderResources[22]	=	rs.LightManager.Obscurance.IrradianceMap4;
-			device.PixelShaderResources[23]	=	rs.LightManager.Obscurance.IrradianceMap5;
+			device.PixelShaderResources[18]	=	rs.LightManager.LightMap.LightMap2D;
 
 
 			//	setup samplers :

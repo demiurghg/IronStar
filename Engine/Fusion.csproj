@@ -574,6 +574,7 @@
     <Compile Include="Engine\Graphics\Scene\VertexColorTextureNormal.cs" />
     <Compile Include="Engine\Graphics\Scene\VertexColorTextureTBNRigid.cs" />
     <Compile Include="Engine\Graphics\Scene\VertexColorTextureTBNSkinned.cs" />
+    <Compile Include="Engine\Graphics\Scene\Rasterizer.cs" />
     <Compile Include="Engine\Graphics\Scene\Voxelizer.cs" />
     <Compile Include="Engine\Graphics\Sprites\SpriteEngine.cs" />
     <Compile Include="Engine\Graphics\Sprites\SpriteFont.BMFont.cs" />
@@ -608,6 +609,7 @@
     <Compile Include="Engine\Graphics\VTSystem.cs" />
     <Compile Include="Engine\Graphics\VTTileCache.cs" />
     <Compile Include="Engine\Graphics\VTTileLoader.cs" />
+    <Compile Include="Engine\Imaging\GenericImage.cs" />
     <Compile Include="Engine\Imaging\Image.cs" />
     <Compile Include="Engine\Imaging\Image.Jpeg.cs" />
     <Compile Include="Engine\Imaging\Image.Png.cs" />

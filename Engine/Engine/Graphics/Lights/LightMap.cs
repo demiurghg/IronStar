@@ -9,6 +9,7 @@ using Native.Embree;
 using System.Runtime.InteropServices;
 using Fusion.Core;
 using System.Diagnostics;
+using Fusion.Engine.Imaging;
 
 namespace Fusion.Engine.Graphics.Lights {
 
@@ -121,12 +122,67 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		public void BakeLightMap ( IEnumerable<MeshInstance> instances, LightSet lightSet, DebugRender dr, int numSamples )
 		{
-			var rand = new Random();
+			var rand		=	new Random();
+			var colorMap	=	new GenericImage<Color>(256,256);
 
-			lightMap2D.SetData( Enumerable.Range(0,256*256).Select( idx => rand.NextColor() ).ToArray() );
+			colorMap.PerpixelProcessing( (c) => rand.NextColor() );
+			colorMap.Fill( Color.Red );
+
+
+
+
+			foreach ( var instance in instances ) {
+
+				RasterizeInstance( colorMap, instance );
+
+			}
+
+			lightMap2D.SetData( colorMap.RawImageData );
+
+			var image = new Image( colorMap );
+			Image.SaveTga( image, @"E:\Github\testlm.tga");
 		}
 
 
+
+		void RasterizeInstance ( GenericImage<Color> lightmap, MeshInstance instance )
+		{
+			var mesh		=	instance.Mesh;
+
+			if (mesh==null) {	
+				return;
+			}
+
+			var indices		=	mesh.GetIndices();
+			var positions	=	mesh.Vertices
+								.Select( v1 => Vector3.TransformCoordinate( v1.Position, instance.World ) )
+								.ToArray();
+
+			var points		=	mesh.Vertices
+								.Select( v2 => v2.TexCoord0 * 256 )
+								.ToArray();
+
+			var bias = new Vector3(4,4,4);
+
+			for (int i=0; i<indices.Length/3; i++) {
+
+				var p0 = positions[indices[i*3+0]];
+				var p1 = positions[indices[i*3+1]];
+				var p2 = positions[indices[i*3+2]];
+
+				var d0 = points[indices[i*3+0]];
+				var d1 = points[indices[i*3+1]];
+				var d2 = points[indices[i*3+2]];
+
+				var n  = Vector3.Cross( p1 - p0, p2 - p0 ).Normalized();
+
+				Rasterizer.RasterizeTriangle( d0, d1, d2, (xy,s,t) => lightmap.SetPixel(xy.X, xy.Y, Color.White) );
+				/*Voxelizer.RasterizeTriangle( p0, p1, p2, 2, (p) => {
+					var vpl = new VPL(p-bias, n);
+					vpls.Add( vpl );
+				} );//*/
+			}
+		}
 
 		/*-----------------------------------------------------------------------------------------
 		 * 

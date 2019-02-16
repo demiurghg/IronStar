@@ -5,7 +5,7 @@
     "Gravity": 48.0,
     "SkyTrubidity": 3.75,
     "SunAltitude": 45.0,
-    "SunAzimuth": 30.0,
+    "SunAzimuth": -15.0,
     "SunIntensity": 140.0,
     "FogDistance": 2500000.0,
     "FogHeight": 0.05,

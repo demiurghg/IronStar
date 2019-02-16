@@ -63,7 +63,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		{
 			constBuffer		=	new ConstantBuffer( rs.Device, typeof(BAKE_PARAMS) );
 
-			lightMap2D		=	new Texture2D( rs.Device, 256,256, ColorFormat.Rgba8, false, false );
+			lightMap2D		=	new Texture2D( rs.Device, 256,256, ColorFormat.Rgba32F, false, false );
 
 			LoadContent();
 
@@ -117,35 +117,169 @@ namespace Fusion.Engine.Graphics.Lights {
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
+
+		class LightMapSet {
+
+			public readonly int Width;
+			public readonly int Height;
+
+			public LightMapSet( int w, int h ) 
+			{
+				Width		=	w;
+				Height		=	h;
+
+				Albedo		=	new GenericImage<Color>		( w, h, Color.Zero	 );
+				Position	=	new GenericImage<Vector3>	( w, h, Vector3.Zero );
+				Normal		=	new GenericImage<Vector3>	( w, h, Vector3.Zero );
+				Radiance	=	new GenericImage<Color4>	( w, h, Color4.Zero );
+			}
+			
+			public readonly GenericImage<Color>		Albedo;
+			public readonly GenericImage<Vector3>	Position;
+			public readonly GenericImage<Vector3>	Normal;
+			public readonly GenericImage<Color4>	Radiance;
+		}
+
+
+		Random rand		=	new Random();
+
 		/// <summary>
 		/// Update lightmap
 		/// </summary>
 		public void BakeLightMap ( IEnumerable<MeshInstance> instances, LightSet lightSet, DebugRender dr, int numSamples )
 		{
-			var rand		=	new Random();
-			var colorMap	=	new GenericImage<Color>(256,256);
+			var lightmap	=	new LightMapSet( 256, 256 );
+			var hammersley	=	Hammersley.GenerateSphereUniform(256);
 
-			colorMap.PerpixelProcessing( (c) => rand.NextColor() );
-			colorMap.Fill( Color.Red );
+			lightmap.Radiance.PerpixelProcessing( (c) => rand.NextColor().ToColor4() );
 
+			//-------------------------------------------------
 
-
+			Log.Message("Rasterizing lightmap G-buffer...");
 
 			foreach ( var instance in instances ) {
-
-				RasterizeInstance( colorMap, instance );
-
+				RasterizeInstance( lightmap, instance );
 			}
 
-			lightMap2D.SetData( colorMap.RawImageData );
+			//--------------------------------------
 
-			var image = new Image( colorMap );
-			Image.SaveTga( image, @"E:\Github\testlm.tga");
+			using ( var rtc = new Rtc() ) {
+
+				var sceneFlags	=	SceneFlags.Coherent|SceneFlags.Static;
+				var algFlags	=	AlgorithmFlags.Intersect1;
+
+				using ( var scene = new RtcScene( rtc, sceneFlags, algFlags ) ) {
+
+					//--------------------------------------
+
+					Log.Message("Generating RTC scene...");
+
+					foreach ( var instance in instances ) {
+						AddMeshInstance( scene, instance );
+					}
+
+					scene.Commit();
+
+					//--------------------------------------
+
+					Log.Message("Lightmap ray tracing...");
+
+					for ( int i=0; i<lightmap.Width; i++ ) {
+						for ( int j=0; j<lightmap.Height; j++ ) {
+
+							var p = lightmap.Position[i,j];
+							var n = lightmap.Normal[i,j];
+							var c = lightmap.Albedo[i,j];
+
+							var r = ComputeRadiance( scene, hammersley, lightSet, p, n, c );
+
+							lightmap.Radiance[i,j]	=	r;
+
+						}
+					}
+
+				}
+			}
+
+			//--------------------------------------
+
+			Log.Message("Uploading lightmap to GPU...");
+
+			lightMap2D.SetData( lightmap.Radiance.RawImageData );
+
+			Log.Message("Completed.");
 		}
 
 
 
-		void RasterizeInstance ( GenericImage<Color> lightmap, MeshInstance instance )
+		/// <summary>
+		/// 
+		/// </summary>
+		Color4 ComputeRadiance ( RtcScene scene, Vector3[] randomPoints, LightSet lightSet, Vector3 position, Vector3 normal, Color albedo )
+		{
+			var sampleCount		=	randomPoints.Length;
+			var invSamleCount	=	1.0f / sampleCount;
+			var result			=	Color4.Zero;
+
+			var dirLightDir		=	-(lightSet.DirectLight.Direction).Normalized();
+			var dirLightColor	=	lightSet.DirectLight.Intensity;
+
+			var skyAmbient		=	rs.RenderWorld.SkySettings.AmbientLevel;
+
+			//---------------------------------
+			//	direct light :
+
+			if (true) {
+
+				var nDotL	=	 Math.Max( 0, Vector3.Dot( dirLightDir, normal ) );
+
+				var ray		=	new RtcRay();
+
+				EmbreeExtensions.UpdateRay( ref ray, position, dirLightDir, 0, 9999 );
+
+				var shadow	=	 scene.Occluded( ray ) ? 0 : 1;
+
+				result		+=	nDotL * dirLightColor * shadow;
+			}
+
+			//---------------------------------
+			//	sky light :
+
+			for ( int i = 0; i<sampleCount; i++ ) {
+
+				var dir		= randomPoints[i];
+
+				var nDotL	= Vector3.Dot( dir, normal );
+
+				if (nDotL<=0) {
+					continue;
+				}
+
+				if (dir.Y<0) {
+					continue;
+				}
+
+				var ray		=	new RtcRay();
+
+				EmbreeExtensions.UpdateRay( ref ray, position, dir, 0, 9999 );
+
+				var shadow	=	 scene.Occluded( ray ) ? 0 : 1;
+
+				result		+=	nDotL * skyAmbient * shadow * invSamleCount; 
+
+			} 
+
+			return result;
+		}
+
+
+
+		/// <summary>
+		/// Rasterizes LM texcoords to lightmap
+		/// </summary>
+		/// <param name="lightmap"></param>
+		/// <param name="instance"></param>
+		void RasterizeInstance ( LightMapSet lightmap, MeshInstance instance )
 		{
 			var mesh		=	instance.Mesh;
 
@@ -158,30 +292,74 @@ namespace Fusion.Engine.Graphics.Lights {
 								.Select( v1 => Vector3.TransformCoordinate( v1.Position, instance.World ) )
 								.ToArray();
 
+			var normals		=	mesh.Vertices
+								.Select( v1 => Vector3.TransformNormal( v1.Normal, instance.World ) )
+								.ToArray();
+
+			var color		=	mesh.Vertices
+								.Select( v3 => rand.NextColor() )
+								.ToArray();
+
 			var points		=	mesh.Vertices
 								.Select( v2 => v2.TexCoord0 * 256 )
 								.ToArray();
 
-			var bias = new Vector3(4,4,4);
 
 			for (int i=0; i<indices.Length/3; i++) {
 
-				var p0 = positions[indices[i*3+0]];
-				var p1 = positions[indices[i*3+1]];
-				var p2 = positions[indices[i*3+2]];
+				var i0 = indices[i*3+0];
+				var i1 = indices[i*3+1];
+				var i2 = indices[i*3+2];
 
-				var d0 = points[indices[i*3+0]];
-				var d1 = points[indices[i*3+1]];
-				var d2 = points[indices[i*3+2]];
+				var p0 = positions[i0];
+				var p1 = positions[i1];
+				var p2 = positions[i2];
+
+				var d0 = points[i0];
+				var d1 = points[i1];
+				var d2 = points[i2];
+
+				var n0 = normals[i0];
+				var n1 = normals[i1];
+				var n2 = normals[i2];
+
+				var c0 = color[i0];
+				var c1 = color[i1];
+				var c2 = color[i2];
 
 				var n  = Vector3.Cross( p1 - p0, p2 - p0 ).Normalized();
 
-				Rasterizer.RasterizeTriangle( d0, d1, d2, (xy,s,t) => lightmap.SetPixel(xy.X, xy.Y, Color.White) );
-				/*Voxelizer.RasterizeTriangle( p0, p1, p2, 2, (p) => {
-					var vpl = new VPL(p-bias, n);
-					vpls.Add( vpl );
-				} );//*/
+				var bias	=	n * 1 / 16.0f;
+
+				Rasterizer.RasterizeTriangle( d0, d1, d2, 
+					(xy,s,t) => {
+						lightmap.Albedo	 [xy] = InterpolateColor	( c0, c1, c2, s, t );
+						lightmap.Position[xy] = InterpolatePosition	( p0, p1, p2, s, t ) + bias;
+						lightmap.Normal  [xy] = InterpolateNormal	( n0, n1, n2, s, t );
+					} 
+				);
 			}
+		}
+
+
+		Color InterpolateColor ( Color c0, Color c1, Color c2, float s, float t )
+		{
+			float q = 1 - s - t;
+			return (q * c0) + (s * c1) + (t * c2);
+		}
+
+
+		Vector3 InterpolatePosition ( Vector3 p0, Vector3 p1, Vector3 p2, float s, float t )
+		{
+			float q = 1 - s - t;
+			return (q * p0) + (s * p1) + (t * p2);
+		}
+
+
+		Vector3 InterpolateNormal ( Vector3 n0, Vector3 n1, Vector3 n2, float s, float t )
+		{
+			float q = 1 - s - t;
+			return Vector3.Normalize( (q * n0) + (s * n1) + (t * n2) );
 		}
 
 		/*-----------------------------------------------------------------------------------------

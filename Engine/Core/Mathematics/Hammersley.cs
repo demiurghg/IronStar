@@ -83,5 +83,27 @@ namespace Fusion.Core.Mathematics {
 		}
     
 
+		public static Vector3[] GenerateSphereUniform ( int numSamples )
+		{
+			return Enumerable.Range(0,numSamples)
+					.Select( i => Hammersley.SphereUniform(i,numSamples) )
+					.ToArray();
+		}
+
+
+		public static Vector3[] GenerateHemisphereUniform ( int numSamples )
+		{
+			return Enumerable.Range(0,numSamples)
+					.Select( i => Hammersley.HemisphereUniform(i,numSamples) )
+					.ToArray();
+		}
+
+
+		public static Vector3[] GenerateHemisphereCosine ( int numSamples )
+		{
+			return Enumerable.Range(0,numSamples)
+					.Select( i => Hammersley.HemisphereCosine(i,numSamples) )
+					.ToArray();
+		}
  	}
 }

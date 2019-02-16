@@ -235,7 +235,8 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	float3	ambientDiffuseSky	=	float3(0,0,0);
 	
 	//SamplerPoint
-	float4  lightMap			=	LightMap.Sample( SamplerLinear, lmCoord );
+	//SamplerLinear
+	float4  lightMap			=	LightMap.Sample( SamplerPoint, lmCoord );
 	
 	return lightMap;
 

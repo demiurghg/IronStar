@@ -91,6 +91,44 @@ namespace Fusion.Engine.Imaging {
 
 
 		/// <summary>
+		/// Sets and gets pixel color at given coordinates.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		public TColor this[int x, int y] {
+			get {
+				return Sample(x, y, false);
+			}
+			
+			set {
+				SetPixel(x,y, value, false);
+			}	
+
+		}
+
+
+
+		/// <summary>
+		/// Sets and gets pixel color at given coordinates.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		public TColor this[Int2 xy] {
+			get {
+				return Sample(xy.X, xy.Y, false);
+			}
+			
+			set {
+				SetPixel(xy.X, xy.Y, value, false);
+			}	
+
+		}
+
+
+
+		/// <summary>
 		/// Fills image with 
 		/// </summary>
 		/// <param name="seed"></param>

@@ -149,7 +149,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		public void BakeLightMap ( IEnumerable<MeshInstance> instances, LightSet lightSet, DebugRender dr, int numSamples )
 		{
 			var lightmap	=	new LightMapSet( 256, 256 );
-			var hammersley	=	Hammersley.GenerateSphereUniform(256);
+			var hammersley	=	Hammersley.GenerateSphereUniform(1024);
 
 			lightmap.Radiance.PerpixelProcessing( (c) => rand.NextColor().ToColor4() );
 
@@ -158,7 +158,7 @@ namespace Fusion.Engine.Graphics.Lights {
 			Log.Message("Rasterizing lightmap G-buffer...");
 
 			foreach ( var instance in instances ) {
-				RasterizeInstance( lightmap, instance );
+				RasterizeInstance( lightmap, instance, lightmap.Width, lightmap.Height );
 			}
 
 			//--------------------------------------
@@ -182,9 +182,25 @@ namespace Fusion.Engine.Graphics.Lights {
 
 					//--------------------------------------
 
+					Log.Message("Fix geometry overlaps...");
+
+					for ( int i=0; i<lightmap.Width; i++ ) {
+						for ( int j=0; j<lightmap.Height; j++ ) {
+							var p = lightmap.Position[i,j];
+							var n = lightmap.Normal[i,j];
+							p = FixGeometryOverlap( scene, p, n );
+							lightmap.Position[i,j] = p;
+						}
+					}
+
+					//--------------------------------------
+
 					Log.Message("Lightmap ray tracing...");
 
 					for ( int i=0; i<lightmap.Width; i++ ) {
+
+						Log.Message("... tracing : {0}/{1}", i, lightmap.Width );
+
 						for ( int j=0; j<lightmap.Height; j++ ) {
 
 							var p = lightmap.Position[i,j];
@@ -199,26 +215,59 @@ namespace Fusion.Engine.Graphics.Lights {
 					}
 
 				}
-			}
+			}	 //*/
 
 			//--------------------------------------
 
 			Log.Message("Uploading lightmap to GPU...");
 
 			lightMap2D.SetData( lightmap.Radiance.RawImageData );
+			//lightMap2D.SetData( lightmap.Position.RawImageData.Select( p => new Vector4(p,1) ).ToArray() );
+			//lightMap2D.SetData( lightmap.Albedo.RawImageData.Select( c => c.ToColor4() ).ToArray() );
+
+			var image = new Image( lightmap.Albedo );
+			Image.SaveTga( image, @"E:\GITHUB\testlm.tga" );
 
 			Log.Message("Completed.");
 		}
 
 
 
-		/// <summary>
-		/// 
-		/// </summary>
+		Vector3 FixGeometryOverlap ( RtcScene scene, Vector3 position, Vector3 normal)
+		{
+			var basis	=	MathUtil.ComputeAimedBasis( normal );
+			var dirs	=	new[] { basis.Right, basis.Left, basis.Up, basis.Down };
+			var ray		=	new RtcRay();
+			var minT	=	float.MaxValue;
+			var result	=	position;
+
+			foreach ( var dir in dirs ) {
+				
+				EmbreeExtensions.UpdateRay( ref ray, position, dir, 0, 3 );
+
+				if ( scene.Intersect( ref ray ) ) {
+
+					if ( ray.TFar < minT ) {
+					
+						var n	= -ray.GetHitNormal();	
+
+						if ( Vector3.Dot( n, dir ) > 0 ) {
+							minT	= ray.TFar;
+							result	= ray.GetHitPoint() + n / 16f;
+						}
+					}
+				}
+			}
+
+			return result;
+		}
+
+
+		
 		Color4 ComputeRadiance ( RtcScene scene, Vector3[] randomPoints, LightSet lightSet, Vector3 position, Vector3 normal, Color albedo )
 		{
 			var sampleCount		=	randomPoints.Length;
-			var invSamleCount	=	1.0f / sampleCount;
+			var invSampleCount	=	1.0f / sampleCount;
 			var result			=	Color4.Zero;
 
 			var dirLightDir		=	-(lightSet.DirectLight.Direction).Normalized();
@@ -227,23 +276,6 @@ namespace Fusion.Engine.Graphics.Lights {
 			var skyAmbient		=	rs.RenderWorld.SkySettings.AmbientLevel;
 
 			//---------------------------------
-			//	direct light :
-
-			if (true) {
-
-				var nDotL	=	 Math.Max( 0, Vector3.Dot( dirLightDir, normal ) );
-
-				var ray		=	new RtcRay();
-
-				EmbreeExtensions.UpdateRay( ref ray, position, dirLightDir, 0, 9999 );
-
-				var shadow	=	 scene.Occluded( ray ) ? 0 : 1;
-
-				result		+=	nDotL * dirLightColor * shadow;
-			}
-
-			//---------------------------------
-			//	sky light :
 
 			for ( int i = 0; i<sampleCount; i++ ) {
 
@@ -255,23 +287,60 @@ namespace Fusion.Engine.Graphics.Lights {
 					continue;
 				}
 
-				if (dir.Y<0) {
-					continue;
-				}
-
 				var ray		=	new RtcRay();
 
 				EmbreeExtensions.UpdateRay( ref ray, position, dir, 0, 9999 );
 
-				var shadow	=	 scene.Occluded( ray ) ? 0 : 1;
+				var intersect	=	 scene.Intersect( ref ray );
+					
+				//-------------------------------------------
+				//	ray hits nothing, so this is sky light :
+				if (!intersect && dir.Y>0) {
+					result		+=	nDotL * skyAmbient * invSampleCount; 
+				}
 
-				result		+=	nDotL * skyAmbient * shadow * invSamleCount; 
+				//-------------------------------------------
+				//	trying to find direct light :
+				if (intersect) {
+					
+					var origin		=	EmbreeExtensions.Convert( ray.Origin );
+					var direction	=	EmbreeExtensions.Convert( ray.Direction );
+					var hitPoint	=	origin + direction * (ray.TFar);
+					var hitNormal	=	(-1) * EmbreeExtensions.Convert( ray.HitNormal ).Normalized();
 
+					var dirDotN		=	Vector3.Dot( hitNormal, direction );
+
+					if (dirDotN<0) // we hit front side of the face
+					{
+						var directLight	=	ComputeDirectLight( scene, dirLightDir, dirLightColor, hitPoint, hitNormal );
+
+						result			+=	directLight * invSampleCount * 0.5f * (-dirDotN);
+					}
+				}
 			} 
 
 			return result;
 		}
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		Color4 ComputeDirectLight ( RtcScene scene, Vector3 lightDir, Color4 lightColor, Vector3 position, Vector3 normal )
+		{
+			var nDotL	=	 Math.Max( 0, Vector3.Dot( lightDir, normal ) );
+
+			var ray		=	new RtcRay();
+
+			var bias	=	normal / 16.0f;
+
+			EmbreeExtensions.UpdateRay( ref ray, position + bias, lightDir, 0, 9999 );
+
+			var shadow	=	 scene.Occluded( ray ) ? 0 : 1;
+		 
+			return	nDotL * lightColor * shadow;
+		}
 
 
 		/// <summary>
@@ -279,7 +348,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		/// <param name="lightmap"></param>
 		/// <param name="instance"></param>
-		void RasterizeInstance ( LightMapSet lightmap, MeshInstance instance )
+		void RasterizeInstance ( LightMapSet lightmap, MeshInstance instance, float w, float h )
 		{
 			var mesh		=	instance.Mesh;
 
@@ -301,7 +370,7 @@ namespace Fusion.Engine.Graphics.Lights {
 								.ToArray();
 
 			var points		=	mesh.Vertices
-								.Select( v2 => v2.TexCoord0 * 256 )
+								.Select( v2 => v2.TexCoord0 * new Vector2(w,h) )
 								.ToArray();
 
 
@@ -331,9 +400,9 @@ namespace Fusion.Engine.Graphics.Lights {
 
 				var bias	=	n * 1 / 16.0f;
 
-				Rasterizer.RasterizeTriangle( d0, d1, d2, 
+				Rasterizer.RasterizeTriangleConservative( d0, d1, d2, 
 					(xy,s,t) => {
-						lightmap.Albedo	 [xy] = InterpolateColor	( c0, c1, c2, s, t );
+						lightmap.Albedo	 [xy] = Color.Yellow;// InterpolateColor	( c0, c1, c2, s, t );
 						lightmap.Position[xy] = InterpolatePosition	( p0, p1, p2, s, t ) + bias;
 						lightmap.Normal  [xy] = InterpolateNormal	( n0, n1, n2, s, t );
 					} 

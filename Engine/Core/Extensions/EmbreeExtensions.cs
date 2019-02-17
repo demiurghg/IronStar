@@ -46,6 +46,22 @@ namespace Fusion.Core.Extensions {
 
 
 
+		public static Vector3 GetHitPoint ( this RtcRay ray )
+		{
+			var origin		=	Convert( ray.Origin );
+			var direction	=	Convert( ray.Direction );
+			var hitPoint	=	origin + direction * (ray.TFar);
+			return hitPoint;
+		}
+
+
+		public static Vector3 GetHitNormal ( this RtcRay ray )
+		{
+			var hitNormal	=	Convert( ray.HitNormal );
+			return hitNormal;
+		}
+
+
 		public static Vector3 Convert ( RtcVector3 v )
 		{
 			return new Vector3( v.X, v.Y, v.Z );

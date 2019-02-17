@@ -236,9 +236,17 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	
 	//SamplerPoint
 	//SamplerLinear
-	float4  lightMap			=	LightMap.Sample( SamplerPoint, lmCoord );
+	float4  lightMap			=	LightMap.Sample( SamplerLinear, lmCoord );
 	
-	return lightMap;
+	/*if (input.Position.x<640) {
+		return lightMap.rgb;
+	} else {
+		return worldPos.xyz;
+	}*/
+	
+	totalLight += diffuse * lightMap.rgb;
+	
+	return totalLight;
 
 	//	occlusion & sky stuff :
 	float 	ssaoFactor		=	AmbientOcclusion.Load( int3( input.Position.xy,0 ) ).r;

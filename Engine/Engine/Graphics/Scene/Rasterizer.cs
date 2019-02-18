@@ -40,7 +40,7 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		public static void RasterizeTriangleConservative ( Vector2 A, Vector2 B, Vector2 C, Action<Int2,float,float> interpolate )
+		public static void RasterizeTriangleConservative ( Vector2 A, Vector2 B, Vector2 C, Action<Int2,float,float,bool> interpolate )
 		{
 			/*RasterizeLineDDA ( A, B, (p,f) => interpolate(p,   f, 0) );
 			RasterizeLineDDA ( A, C, (p,f) => interpolate(p,   0, f) );
@@ -69,19 +69,19 @@ namespace Fusion.Engine.Graphics {
 
 					if ( (s >= 0) && (t >= 0) && (s + t <= 1) )
 					{
-						interpolate( new Int2(x,y), s, t );
+						interpolate( new Int2(x,y), s, t, true );
 					}
 					else if ( pixel.Contains( A ) )
 					{
-						interpolate( new Int2(x,y), s, t );
+						interpolate( new Int2(x,y), s, t, false );
 					}
 					else if ( pixel.Contains( B ) ) 
 					{
-						interpolate( new Int2(x,y), s, t );
+						interpolate( new Int2(x,y), s, t, false );
 					}
 					else if ( pixel.Contains( C ) ) 
 					{
-						interpolate( new Int2(x,y), s, t );
+						interpolate( new Int2(x,y), s, t, false );
 					}
 					else
 					{
@@ -89,7 +89,7 @@ namespace Fusion.Engine.Graphics {
 							|| LineRectangleIntersection( pixel, B, C ) 
 							|| LineRectangleIntersection( pixel, C, A ) )
 						{
-							interpolate( new Int2(x,y), s, t );
+							interpolate( new Int2(x,y), s, t, false );
 						}
 					}
 				}

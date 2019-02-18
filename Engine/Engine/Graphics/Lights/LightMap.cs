@@ -55,6 +55,8 @@ namespace Fusion.Engine.Graphics.Lights {
 		Texture2D	lightMap2D;
 		Texture3D	lightMap3D;
 
+		LightMapSet	lightMapSet;
+
 
 		/// <summary>
 		/// Creates instance of the Lightmap
@@ -108,6 +110,26 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		public void Update ( GameTime gameTime )
 		{
+			if (lightMapSet!=null) {
+
+				for ( int i=114; i<136; i++ ) {
+					for ( int j=1; j<12; j++ ) {
+				//for ( int i=0; i<lightMapSet.Width; i++ ) {
+				//	for ( int j=0; j<lightMapSet.Height; j++ ) {
+					
+						var p = lightMapSet.Position[i,j];
+						var po=	lightMapSet.PositionOld[i,j];
+						var n = lightMapSet.Normal[i,j];
+
+						if (p!=po || true) {
+							rs.RenderWorld.Debug.DrawPoint( p, 0.5f			, Color.Red );
+							rs.RenderWorld.Debug.DrawLine ( p, p + n * 1.5f	, Color.Blue );
+							rs.RenderWorld.Debug.DrawLine ( p, po, Color.Gray );
+						}
+
+					}
+				}
+			}
 		}
 
 
@@ -118,7 +140,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		-----------------------------------------------------------------------------------------*/
 
 
-		class LightMapSet {
+		public class LightMapSet {
 
 			public readonly int Width;
 			public readonly int Height;
@@ -130,14 +152,20 @@ namespace Fusion.Engine.Graphics.Lights {
 
 				Albedo		=	new GenericImage<Color>		( w, h, Color.Zero	 );
 				Position	=	new GenericImage<Vector3>	( w, h, Vector3.Zero );
+				PositionOld	=	new GenericImage<Vector3>	( w, h, Vector3.Zero );
 				Normal		=	new GenericImage<Vector3>	( w, h, Vector3.Zero );
 				Radiance	=	new GenericImage<Color4>	( w, h, Color4.Zero );
+				Radiance2	=	new GenericImage<Color4>	( w, h, Color4.Zero );
+				Coverage	=	new GenericImage<Bool>		( w, h, false );
 			}
 			
 			public readonly GenericImage<Color>		Albedo;
 			public readonly GenericImage<Vector3>	Position;
+			public readonly GenericImage<Vector3>	PositionOld;
 			public readonly GenericImage<Vector3>	Normal;
 			public readonly GenericImage<Color4>	Radiance;
+			public readonly GenericImage<Color4>	Radiance2;
+			public readonly GenericImage<Bool>		Coverage;
 		}
 
 
@@ -146,10 +174,10 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// <summary>
 		/// Update lightmap
 		/// </summary>
-		public void BakeLightMap ( IEnumerable<MeshInstance> instances, LightSet lightSet, DebugRender dr, int numSamples )
+		public LightMapSet BakeLightMap ( IEnumerable<MeshInstance> instances, LightSet lightSet, DebugRender dr, int numSamples )
 		{
 			var lightmap	=	new LightMapSet( 256, 256 );
-			var hammersley	=	Hammersley.GenerateSphereUniform(1024);
+			var hammersley	=	Hammersley.GenerateSphereUniform(2048);
 
 			lightmap.Radiance.PerpixelProcessing( (c) => rand.NextColor().ToColor4() );
 
@@ -186,9 +214,13 @@ namespace Fusion.Engine.Graphics.Lights {
 
 					for ( int i=0; i<lightmap.Width; i++ ) {
 						for ( int j=0; j<lightmap.Height; j++ ) {
+
 							var p = lightmap.Position[i,j];
 							var n = lightmap.Normal[i,j];
+							lightmap.PositionOld[i,j] = p;
+
 							p = FixGeometryOverlap( scene, p, n );
+
 							lightmap.Position[i,j] = p;
 						}
 					}
@@ -219,9 +251,15 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			//--------------------------------------
 
+			Log.Message("Dilate radiance...");
+
+			DilateRadiance( lightmap );
+
+			//--------------------------------------
+
 			Log.Message("Uploading lightmap to GPU...");
 
-			lightMap2D.SetData( lightmap.Radiance.RawImageData );
+			lightMap2D.SetData( lightmap.Radiance2.RawImageData );
 			//lightMap2D.SetData( lightmap.Position.RawImageData.Select( p => new Vector4(p,1) ).ToArray() );
 			//lightMap2D.SetData( lightmap.Albedo.RawImageData.Select( c => c.ToColor4() ).ToArray() );
 
@@ -229,6 +267,33 @@ namespace Fusion.Engine.Graphics.Lights {
 			Image.SaveTga( image, @"E:\GITHUB\testlm.tga" );
 
 			Log.Message("Completed.");
+
+			this.lightMapSet	=	lightmap;
+
+			return lightmap;
+		}
+
+
+
+		void DilateRadiance ( LightMapSet lightmap )
+		{
+			for ( int i=0; i<lightmap.Width; i++ ) {
+				for ( int j=0; j<lightmap.Height; j++ ) {
+
+					var c = lightmap.Radiance[i,j];
+
+					c	=	c.Alpha > 0 ? c : lightmap.Radiance[i+1, j+0];
+					c	=	c.Alpha > 0 ? c : lightmap.Radiance[i-1, j+0];
+					c	=	c.Alpha > 0 ? c : lightmap.Radiance[i+0, j+1];
+					c	=	c.Alpha > 0 ? c : lightmap.Radiance[i+0, j-1];
+					c	=	c.Alpha > 0 ? c : lightmap.Radiance[i+1, j+1];
+					c	=	c.Alpha > 0 ? c : lightmap.Radiance[i-1, j-1];
+					c	=	c.Alpha > 0 ? c : lightmap.Radiance[i+1, j-1];
+					c	=	c.Alpha > 0 ? c : lightmap.Radiance[i-1, j+1];
+
+					lightmap.Radiance2[i,j] = c;
+				}
+			}
 		}
 
 
@@ -243,13 +308,13 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			foreach ( var dir in dirs ) {
 				
-				EmbreeExtensions.UpdateRay( ref ray, position, dir, 0, 3 );
+				EmbreeExtensions.UpdateRay( ref ray, position - dir*0.125f, dir, 0, 3 );
 
 				if ( scene.Intersect( ref ray ) ) {
 
 					if ( ray.TFar < minT ) {
 					
-						var n	= -ray.GetHitNormal();	
+						var n	= -ray.GetHitNormal().Normalized();	
 
 						if ( Vector3.Dot( n, dir ) > 0 ) {
 							minT	= ray.TFar;
@@ -401,10 +466,17 @@ namespace Fusion.Engine.Graphics.Lights {
 				var bias	=	n * 1 / 16.0f;
 
 				Rasterizer.RasterizeTriangleConservative( d0, d1, d2, 
-					(xy,s,t) => {
-						lightmap.Albedo	 [xy] = Color.Yellow;// InterpolateColor	( c0, c1, c2, s, t );
-						lightmap.Position[xy] = InterpolatePosition	( p0, p1, p2, s, t ) + bias;
-						lightmap.Normal  [xy] = InterpolateNormal	( n0, n1, n2, s, t );
+					(xy,s,t,coverage) => {
+						if (!lightmap.Coverage[xy]) {
+							lightmap.Albedo	 [xy] = Color.Yellow;// InterpolateColor	( c0, c1, c2, s, t );
+							lightmap.Position[xy] = InterpolatePosition	( p0, p1, p2, s, t ) + bias;
+							lightmap.Normal  [xy] = InterpolateNormal	( n0, n1, n2, s, t );
+							lightmap.Coverage[xy] = coverage;
+						} else {
+							if (coverage) {
+								Log.Warning("LM coverage conflict: {0}", xy );
+							}
+						}
 					} 
 				);
 			}

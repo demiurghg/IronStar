@@ -230,11 +230,14 @@ namespace Fusion.Engine.Imaging {
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="img"></param>
-		public void Copy ( int offsetX, int offsetY, GenericImage<TColor> img )
+		public void CopyTo ( GenericImage<TColor> destination )
 		{
-			for (int x=0; x<img.Width; x++) {
-				for (int y=0; y<img.Height; y++) {
-					SetPixel( offsetX + x, offsetY + y, img.Sample( x, y ) );
+			var w = Math.Min( Width, destination.Width );
+			var h = Math.Min( Height, destination.Height );
+
+			for (int x=0; x<w; x++) {
+				for (int y=0; y<h; y++) {
+					destination[x,y] = this[x,y];
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 
-// Fusion.Engine.Graphics.Lights.LightMap+BAKE_PARAMS
+// Fusion.Engine.Graphics.Lights.LightMapper+BAKE_PARAMS
 // Marshal.SizeOf = 192
 struct BAKE_PARAMS {
 	float4x4   ShadowViewProjection;          // offset:    0

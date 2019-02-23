@@ -3,9 +3,9 @@
   "Environment": {
     "$type": "IronStar.Mapping.MapEnvironment, IronStar",
     "Gravity": 48.0,
-    "SkyTrubidity": 2.0,
-    "SunAltitude": 15.0,
-    "SunAzimuth": 30.0,
+    "SkyTrubidity": 8.0,
+    "SunAltitude": 30.0,
+    "SunAzimuth": -30.0,
     "SunIntensity": 500.0,
     "FogDistance": 60000.0,
     "FogHeight": 0.05,
@@ -28,32 +28,18 @@
     "$values": [
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
+        "NodeGuid": "1b05e9c3-dfb7-4d11-9019-9e06ec572763",
         "ScenePath": "scenes\\grayBoxing\\lightMapTest.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
         "GlowIntensity": 100.0,
+        "LightMapSize": "lightMap256",
+        "Dynamic": false,
         "Visible": true,
         "Frozen": false,
         "TranslateX": 0.0,
         "TranslateY": 0.0,
-        "TranslateZ": 0.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
-      },
-      {
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$type": "IronStar.Entities.StartPointFactory, IronStar",
-          "StartPointType": "singlePlayer"
-        },
-        "FactoryName": "rjBnEszO",
-        "Visible": true,
-        "Frozen": false,
-        "TranslateX": 4.0,
-        "TranslateY": 0.0,
-        "TranslateZ": 96.0,
+        "TranslateZ": 24.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0

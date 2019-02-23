@@ -355,12 +355,12 @@ namespace Fusion.Core.Mathematics
 
 
 		/// <summary>
-		/// Gets mad-firendly scale offset for given rectangle and source texture size.
+		/// Gets mad-friendly scale offset for given rectangle and source texture size.
 		/// </summary>
 		/// <param name="sourceWidth"></param>
 		/// <param name="sourceHeight"></param>
 		/// <returns></returns>
-		public Vector4 GetMadOpScaleOffset( int sourceWidth, int sourceHeight )
+		public Vector4 GetMadOpScaleOffsetOffCenterProjectToNDC( int sourceWidth, int sourceHeight )
 		{
 			float ax = this.Width  / (float)sourceWidth;
 			float ay = this.Height / (float)sourceHeight;
@@ -371,6 +371,24 @@ namespace Fusion.Core.Mathematics
 			float y		=  -0.5f * ay;
 			float z		=   0.5f * ax + bx;
 			float w		=	0.5f * ay + by;
+
+			return new Vector4(x,y,z,w);
+		}
+
+        /// <summary>
+
+		/// <summary>
+		/// Gets mad-friendly scale offset for given rectangle and source texture size.
+		/// </summary>
+		/// <param name="sourceWidth"></param>
+		/// <param name="sourceHeight"></param>
+		/// <returns></returns>
+		public Vector4 GetMadOpScaleOffsetNDC( int sourceWidth, int sourceHeight )
+		{
+			float x		=	Width  / (float)sourceWidth;
+			float y		=   Height / (float)sourceHeight;
+			float z		=   X / (float)sourceWidth;
+			float w		=	Y / (float)sourceHeight;
 
 			return new Vector4(x,y,z,w);
 		}

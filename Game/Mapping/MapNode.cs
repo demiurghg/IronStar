@@ -17,6 +17,8 @@ using Newtonsoft.Json;
 namespace IronStar.Mapping {
 	public abstract class MapNode {
 
+		public Guid NodeGuid = Guid.NewGuid();
+
 		/// <summary>
 		/// Indicates that map object or entity should be updated without
 		/// </summary>

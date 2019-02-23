@@ -171,7 +171,7 @@ namespace Fusion.Engine.Graphics {
 
 		Vector4 GetScaleOffset ( Rectangle rect )
 		{
-			return rect.GetMadOpScaleOffset( shadowMapSize, shadowMapSize );
+			return rect.GetMadOpScaleOffsetOffCenterProjectToNDC( shadowMapSize, shadowMapSize );
 		}
 
 

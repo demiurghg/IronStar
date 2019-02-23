@@ -526,11 +526,12 @@
     <Compile Include="Engine\Graphics\Lights\ICSMController.cs" />
     <Compile Include="Engine\Graphics\Lights\LightGrid.cs" />
     <Compile Include="Engine\Graphics\Lights\LightManager.cs" />
+    <Compile Include="Engine\Graphics\Lights\LightMapGBuffer.cs" />
     <Compile Include="Engine\Graphics\Lights\LightProbe.cs" />
     <Compile Include="Engine\Graphics\Lights\LightProbeContext.cs" />
     <Compile Include="Engine\Graphics\Lights\LightSet.cs" />
     <Compile Include="Engine\Graphics\Lights\LightStyle.cs" />
-    <Compile Include="Engine\Graphics\Lights\LightMap.cs" />
+    <Compile Include="Engine\Graphics\Lights\LightMapper.cs" />
     <Compile Include="Engine\Graphics\Lights\OmniLight.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowContext.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowContextTransparent.cs" />

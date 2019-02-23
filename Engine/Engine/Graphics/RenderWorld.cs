@@ -491,63 +491,90 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void BuildRadiance ( bool obscurance, bool lightProbes, int numSamples )
+		public void BuildRadiance ( QualityLevel quality )
 		{
 			var sw = new Stopwatch();
 			var device	=	Game.GraphicsDevice;
 
-			if (obscurance) {
+			//----------------------------------------
 
-				Log.Message("---- Baking Light Map ----");
+			Log.Message("---- Baking Light Map ----");
+			sw.Start();
 
-				rs.LightManager.LightMap.BakeLightMap( Instances, LightSet, Debug, numSamples );
+			var samples	= 0;
+			var filter	= false;
+			var bias	= 0;
 
-				Log.Message("----------------");
+			switch (quality) {
+				case QualityLevel.Low:	
+					samples	=	256;
+					bias	=	-1;
+					filter	=	false;
+					break; 
+				case QualityLevel.Medium:	
+					samples	=	256;
+					bias	=	0;
+					filter	=	true;
+					break; 
+				case QualityLevel.High:	
+					samples	=	1024;
+					bias	=	0;
+					filter	=	false;
+					break; 
+				case QualityLevel.Ultra:	
+					samples	=	2048;
+					bias	=	1;
+					filter	=	false;
+					break; 
 			}
 
+			rs.LightManager.LightMap.BakeLightMap( Instances, LightSet, samples, filter, bias );
 
-			if (lightProbes) {
-				device.ResetStates();
+			Log.Message("Lightmap : {0} : {1}", quality, sw.ElapsedMilliseconds);
+			Log.Message("----------------");
 
-				Log.Message("---- Building Light Probes G-buffers ---");
+			//----------------------------------------
 
-				var skyAmbient = SkySettings.AmbientLevel;
+			device.ResetStates();
 
-				sw.Start();
-				using (new PixEvent("Capture Radiance Geometry")) {
+			Log.Message("---- Building Light Probes G-buffers ---");
 
-					foreach ( var lightProbe in LightSet.LightProbes ) {
+			var skyAmbient = SkySettings.AmbientLevel;
 
-						for (int i=0; i<6; i++) {
+			sw.Start();
+			using (new PixEvent("Capture Radiance Geometry")) {
 
-							var face	=	(CubeFace)i;
-							var depth	=	LightProbeDepth.Surface;
-							var gbuf0	=	LightProbeGBuffer0.GetSurface( 0, face );
-							var gbuf1	=	LightProbeGBuffer1.GetSurface( 0, face );
+				foreach ( var lightProbe in LightSet.LightProbes ) {
+
+					for (int i=0; i<6; i++) {
+
+						var face	=	(CubeFace)i;
+						var depth	=	LightProbeDepth.Surface;
+						var gbuf0	=	LightProbeGBuffer0.GetSurface( 0, face );
+						var gbuf1	=	LightProbeGBuffer1.GetSurface( 0, face );
 					
-							device.Clear( depth );
-							device.Clear( gbuf0, Color4.Black );
-							device.Clear( gbuf1, Color4.Black );
+						device.Clear( depth );
+						device.Clear( gbuf0, Color4.Black );
+						device.Clear( gbuf1, Color4.Black );
 
-							var context	=	new LightProbeContext( lightProbe, face, depth, gbuf0, gbuf1 );
+						var context	=	new LightProbeContext( lightProbe, face, depth, gbuf0, gbuf1 );
 
-							//	render g-buffer :
-							rs.SceneRenderer.RenderLightProbeGBuffer( context, this, InstanceGroup.Static );
-						}
-				
-						RadianceGBuffer0.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeGBuffer0 );
-						RadianceGBuffer1.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeGBuffer1 );
-
-						rs.LightManager.RelightLightProbe( RadianceGBuffer0, RadianceGBuffer1, lightProbe, LightSet, skyAmbient, RadianceCache );
+						//	render g-buffer :
+						rs.SceneRenderer.RenderLightProbeGBuffer( context, this, InstanceGroup.Static );
 					}
+				
+					RadianceGBuffer0.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeGBuffer0 );
+					RadianceGBuffer1.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeGBuffer1 );
 
-					sw.Stop();
+					rs.LightManager.RelightLightProbe( RadianceGBuffer0, RadianceGBuffer1, lightProbe, LightSet, skyAmbient, RadianceCache );
 				}
 
-				Log.Message("{0} light probes - {1} ms", LightSet.LightProbes.Count, sw.ElapsedMilliseconds);
-
-				Log.Message("----------------");
+				sw.Stop();
 			}
+
+			Log.Message("{0} light probes - {1} ms", LightSet.LightProbes.Count, sw.ElapsedMilliseconds);
+
+			Log.Message("----------------");
 		}
 
 

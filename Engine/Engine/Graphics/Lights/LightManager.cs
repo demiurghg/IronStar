@@ -72,10 +72,10 @@ namespace Fusion.Engine.Graphics {
 		}
 		ShadowMap shadowMap;
 
-		public LightMap LightMap {
+		public LightMapper LightMap {
 			get { return lightmap; }
 		}
-		LightMap lightmap;
+		LightMapper lightmap;
 
 
 
@@ -119,7 +119,7 @@ namespace Fusion.Engine.Graphics {
 
 			shadowMap	=	new ShadowMap( rs, rs.ShadowQuality );
 
-			lightmap	=	new LightMap( rs );
+			lightmap	=	new LightMapper( rs );
 
 			cbRelightParams		=	new ConstantBuffer( rs.Device, typeof(RELIGHT_PARAMS) );
 			cbLightProbeData	=	new ConstantBuffer( rs.Device, typeof(LIGHTPROBE_DATA), RenderSystem.LightProbeBatchSize );

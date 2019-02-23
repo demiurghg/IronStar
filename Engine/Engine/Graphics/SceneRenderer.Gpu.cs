@@ -91,10 +91,11 @@ namespace Fusion.Engine.Graphics {
 
 
 		[ShaderStructure]
-		[StructLayout(LayoutKind.Sequential, Pack=4, Size=96)]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=128)]
 		struct INSTANCE {
 			public Matrix	World	;
 			public Color4	Color	;
+			public Vector4	LMRegion;
 			public int		Group	;
 		}
 

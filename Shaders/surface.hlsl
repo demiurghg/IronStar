@@ -176,7 +176,7 @@ PSInput VSMain( VSInput input )
 	output.Tangent 		=  	tangent.xyz;
 	output.Binormal		=  	binormal.xyz;
 	output.WorldPos		=	wPos.xyz;
-	output.LMCoord		=	input.TexCoord;
+	output.LMCoord		=	mad( input.TexCoord.xy, Instance.LMRegion.xy, Instance.LMRegion.zw );
 	
 	return output;
 }
@@ -334,7 +334,7 @@ GBuffer PSMain( PSInput input )
 		float 	checkerX	=	frac(checkerTC.x*128) > 0.5 ? 1 : 0;
 		float 	checkerY	=	frac(checkerTC.y*128) > 0.5 ? 1 : 0;
 		float	checker		=	(checkerX+checkerY) % 2;
-		baseColor	=	pow(0.5*checker+0.25, 2);
+		baseColor	=	pow(0.1*checker+0.5, 2);
 		localNormal	=	float3(0,0,1);
 		roughness	=	0.5;//0.3*checker+0.15;
 		metallic	=	0;

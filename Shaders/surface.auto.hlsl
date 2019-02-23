@@ -50,11 +50,12 @@ struct STAGE {
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+INSTANCE
-// Marshal.SizeOf = 96
+// Marshal.SizeOf = 128
 struct INSTANCE {
 	float4x4   World;                         // offset:    0
 	float4     Color;                         // offset:   64
-	int        Group;                         // offset:   80
+	float4     LMRegion;                      // offset:   80
+	int        Group;                         // offset:   96
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+SUBSET

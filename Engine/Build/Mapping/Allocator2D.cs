@@ -19,6 +19,8 @@ namespace Fusion.Build.Mapping {
 
 		public readonly int Size;
 
+		public int Width { get { return Size; } }
+		public int Height { get { return Size; } }
 
 
 

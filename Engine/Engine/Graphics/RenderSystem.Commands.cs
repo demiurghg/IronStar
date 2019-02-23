@@ -57,17 +57,10 @@ namespace Fusion.Engine.Graphics {
 
 		class BuildRadCmd : CommandNoHistory 
 		{
-			[CommandLineParser.Option]
-			[CommandLineParser.Name("obs")]
-			public bool Obscurance { get; set; }
+			[CommandLineParser.Required]
+			[CommandLineParser.Name("quality")]
+			public QualityLevel QualityLevel { get; set; }
 
-			[CommandLineParser.Option]
-			[CommandLineParser.Name("lpb")]
-			public bool LightProbes { get; set; }
-
-			[CommandLineParser.Option]
-			[CommandLineParser.Name("samples")]
-			public int NumSamples { get; set; }	= 512;
 
 			readonly RenderSystem rs;
 			
@@ -77,13 +70,7 @@ namespace Fusion.Engine.Graphics {
 			
 			public override object Execute()
 			{
-				if (!Obscurance && !LightProbes) 
-				{
-					Obscurance	=	true;
-					LightProbes	=	true;
-				}
-
-				rs.RenderWorld?.BuildRadiance( Obscurance, LightProbes, NumSamples );
+				rs.RenderWorld?.BuildRadiance( QualityLevel );
 
 				return null;
 			}

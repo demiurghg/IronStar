@@ -81,6 +81,23 @@ namespace Fusion.Engine.Graphics {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Sets and gets lightmaps region size
+		/// </summary>
+		public Size2 LightMapSize {
+			get; set;
+		}
+
+		/// <summary>
+		/// Tag
+		/// </summary>
+		public object LightMapTag {
+			get; set;
+		}
+
+		public Vector4 LightMapScaleOffset {
+			get; set;
+		}
 
 		/// <summary>
 		/// Tag

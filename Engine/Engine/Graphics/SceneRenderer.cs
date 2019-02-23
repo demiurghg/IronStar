@@ -271,6 +271,7 @@ namespace Fusion.Engine.Graphics {
 			cbDataInstance.Group	=	(int)instance.Group;
 			cbDataInstance.Color	=	instance.Color;
 			cbDataInstance.World	=	instance.World;
+			cbDataInstance.LMRegion	=	instance.LightMapScaleOffset;
 
 			constBufferInstance.SetData( cbDataInstance );
 

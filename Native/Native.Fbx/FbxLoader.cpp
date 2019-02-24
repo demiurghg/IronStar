@@ -358,6 +358,7 @@ void Native::Fbx::FbxLoader::HandleMesh( Fusion::Engine::Graphics::Scene ^scene,
 			//	v.SkinWeights.X, v.SkinWeights.Y, v.SkinWeights.Z, v.SkinWeights.W );
 			 
 			v.TexCoord0.Y = 1 - v.TexCoord0.Y;
+			v.TexCoord1.Y = 1 - v.TexCoord1.Y;
 
 			nodeMesh->Vertices->Add( v );
 
@@ -840,7 +841,7 @@ void Native::Fbx::FbxLoader::GetTextureForVertex( Fusion::Engine::Graphics::Mesh
 
 			switch ( setIndexOfUV ) {
 				case 0 : { vertex->TexCoord0 = FbxVector2ToVector(valueOfUV); }
-				//case 1 : { vertex->TexCoord1 = FbxVector2ToVector(valueOfUV); }
+				case 1 : { vertex->TexCoord1 = FbxVector2ToVector(valueOfUV); }
 			}
 		}
 		else if ( elementOfUV->GetMappingMode() == FbxGeometryElement::eByPolygonVertex ) {
@@ -852,7 +853,7 @@ void Native::Fbx::FbxLoader::GetTextureForVertex( Fusion::Engine::Graphics::Mesh
 
 				switch ( setIndexOfUV ) {
 					case 0 : {vertex->TexCoord0 = FbxVector2ToVector(valueOfUV); }
-					//case 1 : {vertex->TexCoord1 = FbxVector2ToVector(valueOfUV); }
+					case 1 : {vertex->TexCoord1 = FbxVector2ToVector(valueOfUV); }
 				}
 
 			}

@@ -495,7 +495,7 @@ namespace Fusion.Engine.Graphics.Lights {
 								.ToArray();
 
 			var points		=	mesh.Vertices
-								.Select( v2 => v2.TexCoord0 * scale + offset )
+								.Select( v2 => v2.TexCoord1 * scale + offset )
 								.ToArray();
 
 

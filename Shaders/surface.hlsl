@@ -8,6 +8,7 @@ struct VSInput {
 	float3 Normal 	: NORMAL;
 	float4 Color 	: COLOR;
 	float2 TexCoord : TEXCOORD0;
+	float2 LMCoord  : TEXCOORD1;
 #ifdef SKINNED
     int4   BoneIndices  : BLENDINDICES0;
     float4 BoneWeights  : BLENDWEIGHTS0;
@@ -176,7 +177,7 @@ PSInput VSMain( VSInput input )
 	output.Tangent 		=  	tangent.xyz;
 	output.Binormal		=  	binormal.xyz;
 	output.WorldPos		=	wPos.xyz;
-	output.LMCoord		=	mad( input.TexCoord.xy, Instance.LMRegion.xy, Instance.LMRegion.zw );
+	output.LMCoord		=	mad( input.LMCoord.xy, Instance.LMRegion.xy, Instance.LMRegion.zw );
 	
 	return output;
 }
@@ -255,7 +256,7 @@ GBuffer PSMain( PSInput input )
 	
 	float2 	scaledCoords	=	input.TexCoord.xy * Subset.Rectangle.zw;
 	
-	float2	checkerTC	=	input.TexCoord.xy;
+	float2	checkerTC	=	input.LMCoord.xy;
 
 	input.TexCoord.x	=	frac(input.TexCoord.x);
 	input.TexCoord.y	=	frac(input.TexCoord.y);

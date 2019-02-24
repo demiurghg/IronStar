@@ -364,7 +364,7 @@ namespace Fusion.Engine.Graphics {
 			if ( Vector3.DistanceSquared( v0.Binormal	, v1.Binormal	 ) > float.Epsilon * 8192 ) return 1;
 			if ( Vector3.DistanceSquared( v0.Normal		, v1.Normal		 ) > float.Epsilon * 8192 ) return 1;
 			if ( Vector2.DistanceSquared( v0.TexCoord0	, v1.TexCoord0	 ) > float.Epsilon * 8192 ) return 1;
-			//if ( Vector2.DistanceSquared( v0.TexCoord1	, v1.TexCoord1	 ) > toleranceSquared ) return false;
+			if ( Vector2.DistanceSquared( v0.TexCoord1	, v1.TexCoord1	 ) > float.Epsilon * 8192 ) return 1;
 
 			if ( v0.Color0 != v1.Color0 ) return 1;
 			//if ( v0.Color1 != v1.Color1 ) return false;

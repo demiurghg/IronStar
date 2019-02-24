@@ -256,7 +256,7 @@ GBuffer PSMain( PSInput input )
 	
 	float2 	scaledCoords	=	input.TexCoord.xy * Subset.Rectangle.zw;
 	
-	float2	checkerTC	=	input.LMCoord.xy;
+	float2	checkerTC	=	input.TexCoord.xy;
 
 	input.TexCoord.x	=	frac(input.TexCoord.x);
 	input.TexCoord.y	=	frac(input.TexCoord.y);
@@ -332,10 +332,10 @@ GBuffer PSMain( PSInput input )
 	}
 
 	if ( Subset.Rectangle.z==Subset.Rectangle.w && Subset.Rectangle.z==0 ) {
-		float 	checkerX	=	frac(checkerTC.x*128) > 0.5 ? 1 : 0;
-		float 	checkerY	=	frac(checkerTC.y*128) > 0.5 ? 1 : 0;
+		float 	checkerX	=	frac(checkerTC.x*4) > 0.5 ? 1 : 0;
+		float 	checkerY	=	frac(checkerTC.y*4) > 0.5 ? 1 : 0;
 		float	checker		=	(checkerX+checkerY) % 2;
-		baseColor	=	pow(0.1*checker+0.5, 2);
+		baseColor	=	Subset.Color.rgb;// pow(0.1*checker+0.5, 2);
 		localNormal	=	float3(0,0,1);
 		roughness	=	0.5;//0.3*checker+0.15;
 		metallic	=	0;

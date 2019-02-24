@@ -366,6 +366,27 @@ namespace Fusion.Engine.Imaging {
 		}
 
 
+
+		public Color ComputeAverageColor ()
+		{
+			Color4 average = Color4.Zero;
+
+			for (int i=0; i<RawImageData.Length; i++) {
+				var c = RawImageData[i];
+				average.Red		+= c.R;
+				average.Green	+= c.G;
+				average.Blue	+= c.B;
+				average.Alpha	+= c.A;
+			}
+
+			average.Red		/= (RawImageData.Length * 255.0f);
+			average.Green	/= (RawImageData.Length * 255.0f);
+			average.Blue	/= (RawImageData.Length * 255.0f);
+			average.Alpha	/= (RawImageData.Length * 255.0f);
+
+			return new Color( average.Red, average.Green, average.Blue, average.Alpha );
+		}
+
 		/*-----------------------------------------------------------------------------------------
 		 * 
 		 *	Simple Math :

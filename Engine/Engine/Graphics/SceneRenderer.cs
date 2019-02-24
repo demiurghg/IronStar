@@ -289,6 +289,7 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			cbDataSubset.Rectangle	=	new Vector4( region.X, region.Y, region.Width, region.Height );
+			cbDataSubset.Color		=	segmentInfo.AverageColor.ToColor4();
 			cbDataSubset.MaxMip		=	segmentInfo.MaxMipLevel;
 			
 			constBufferSubset.SetData( cbDataSubset );

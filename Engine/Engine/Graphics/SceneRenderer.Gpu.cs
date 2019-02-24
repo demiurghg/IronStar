@@ -103,6 +103,7 @@ namespace Fusion.Engine.Graphics {
 		[ShaderStructure]
 		struct SUBSET {
 			public Vector4	Rectangle;
+			public Color4	Color;
 			public float	MaxMip;
 			public float	Dummy1;
 			public float	Dummy2;

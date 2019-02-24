@@ -59,13 +59,14 @@ struct INSTANCE {
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+SUBSET
-// Marshal.SizeOf = 32
+// Marshal.SizeOf = 48
 struct SUBSET {
 	float4     Rectangle;                     // offset:    0
-	float      MaxMip;                        // offset:   16
-	float      Dummy1;                        // offset:   20
-	float      Dummy2;                        // offset:   24
-	float      Dummy3;                        // offset:   28
+	float4     Color;                         // offset:   16
+	float      MaxMip;                        // offset:   32
+	float      Dummy1;                        // offset:   36
+	float      Dummy2;                        // offset:   40
+	float      Dummy3;                        // offset:   44
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHTINDEX

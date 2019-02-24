@@ -107,6 +107,8 @@ namespace Fusion.Engine.Graphics {
 					var t		=	reader.ReadBoolean();
 					var c		=	reader.Read<Color>();
 
+					Log.Message("{0} - {1}", name, c);
+
 					textures.Add( name, new SegmentInfo( x, y, w, h, c, t ) );
 				}
 

@@ -13,6 +13,8 @@ namespace Native {
 
 		public value class RtcRay {
 		public:
+			literal unsigned int InvalidGeometryID = RTC_INVALID_GEOMETRY_ID;
+		public:
 			RtcVector3	Origin;
 			RtcVector3	Direction;
 			float		TNear;

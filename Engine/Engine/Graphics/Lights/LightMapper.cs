@@ -161,7 +161,8 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		public LightMapGBuffer BakeLightMap ( IEnumerable<MeshInstance> instances, LightSet lightSet, int numSamples, bool filter, int sizeBias )
 		{
-			var hammersley	=	Hammersley.GenerateSphereUniform(numSamples);
+			var hammersley		=	Hammersley.GenerateSphereUniform(numSamples);
+			var instanceArray	=	instances.ToArray();
 
 			//-------------------------------------------------
 
@@ -281,7 +282,7 @@ namespace Fusion.Engine.Graphics.Lights {
 							var c = lightmap.Albedo[i,j];
 
 							if (c.A>0) {
-								var r = ComputeRadiance( scene, hammersley, lightSet, p, n, c );
+								var r = ComputeRadiance( scene, instanceArray, hammersley, lightSet, p, n );
 								lightmap.Radiance[i,j]	=	r;
 							} else {
 								lightmap.Radiance[i,j]	=	Color4.Zero;
@@ -356,8 +357,30 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 
 
+
+		Color4 GetAlbedo ( MeshInstance[] instances, ref RtcRay ray )
+		{
+			var geomId	=	ray.GeometryId;
+			var primId	=	ray.PrimitiveId;
+
+			if (geomId==RtcRay.InvalidGeometryID) {
+				return Color4.Zero;
+			}
+
+			var instance = instances[geomId];
+
+			foreach ( var subset in instance.Subsets ) {
+				if (primId>=subset.StartPrimitive && primId<subset.StartPrimitive+subset.PrimitiveCount) {
+					var segment = rs.RenderWorld.VirtualTexture.GetTextureSegmentInfo( subset.Name );
+					return segment.AverageColor.ToColor4();
+				}
+			}
+
+			return new Color4(1,0,1,1);
+		}
+
 		
-		Color4 ComputeRadiance ( RtcScene scene, Vector3[] randomPoints, LightSet lightSet, Vector3 position, Vector3 normal, Color albedo )
+		Color4 ComputeRadiance ( RtcScene scene, MeshInstance[] instances, Vector3[] randomPoints, LightSet lightSet, Vector3 position, Vector3 normal )
 		{
 			var sampleCount		=	randomPoints.Length;
 			var invSampleCount	=	1.0f / sampleCount;
@@ -392,7 +415,9 @@ namespace Fusion.Engine.Graphics.Lights {
 				//-------------------------------------------
 				//	trying to find direct light :
 				if (intersect) {
-					
+
+					var albedo		=	GetAlbedo( instances, ref ray );
+
 					var origin		=	EmbreeExtensions.Convert( ray.Origin );
 					var direction	=	EmbreeExtensions.Convert( ray.Direction );
 					var hitPoint	=	origin + direction * (ray.TFar);
@@ -404,7 +429,7 @@ namespace Fusion.Engine.Graphics.Lights {
 					{
 						var directLight	=	ComputeDirectLight( scene, lightSet, hitPoint, hitNormal );
 
-						result			+=	directLight * invSampleCount * 0.5f * (-dirDotN);
+						result			+=	directLight * invSampleCount * albedo * (-dirDotN);
 					}
 				}
 			} 
@@ -587,6 +612,7 @@ namespace Fusion.Engine.Graphics.Lights {
 								.ToArray();
 
 			var id		=	scene.NewTriangleMesh( GeometryFlags.Static, indices.Length/3, vertices.Length );
+			Log.Message("{0}", id);
 
 			var pVerts	=	scene.MapBuffer( id, BufferType.VertexBuffer );
 			var pInds	=	scene.MapBuffer( id, BufferType.IndexBuffer );

@@ -1,0 +1,12 @@
+[General]
+Transparent  = False
+Emission     = 0, 0, 0, 0
+MaskEmission = False
+
+[Textures]
+BaseColor = ..\test\testPlastic_BaseColor.png
+NormalMap = ..\test\testPlastic_NormalMap.png
+Metallic  = ..\test\testPlastic_Metallic.png
+Roughness = ..\test\testPlastic_Roughness.png
+Emission  = 
+Occlusion = 

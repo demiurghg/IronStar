@@ -605,6 +605,8 @@
     <Compile Include="Engine\Graphics\Utils\DebugRender.cs" />
     <Compile Include="Engine\Graphics\Utils\DebugRenderConfig.cs" />
     <Compile Include="Engine\Graphics\VirtualTexture.cs" />
+    <Compile Include="Engine\Graphics\VTSegmentCollection.cs" />
+    <Compile Include="Engine\Graphics\VTSegment.cs" />
     <Compile Include="Engine\Graphics\VTAddress.cs" />
     <Compile Include="Engine\Graphics\VTConfig.cs" />
     <Compile Include="Engine\Graphics\VTSystem.cs" />

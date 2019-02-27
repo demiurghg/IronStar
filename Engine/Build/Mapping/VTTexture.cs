@@ -146,6 +146,20 @@ namespace Fusion.Build.Mapping {
 
 
 
+		public VTSegment GetSegmentInfo ()
+		{
+			return new VTSegment( 
+				Name			,
+				TexelOffsetX	,
+				TexelOffsetY	,
+				Width			,
+				Height			,
+				AverageColor	,
+				Transparent		
+			);				
+		}
+
+
 		public static void Write ( VTTexture vtex, BinaryWriter writer )
 		{
 			writer.Write( vtex.Name );

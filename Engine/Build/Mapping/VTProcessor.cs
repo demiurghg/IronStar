@@ -23,9 +23,9 @@ namespace Fusion.Build.Mapping {
 	public class VTProcessor : AssetProcessor {
 
 
-		const string targetMegatexture	=	".megatexture";
-		const string targetAllocator	=	".allocator";
-
+		const string targetMegatexture		=	".megatexture";
+		const string targetAllocator		=	".allocator";
+		const string targetMegatexturePath	=	"Content\\.vtstorage\\.megatexture";
 
 		/// <summary>
 		/// 
@@ -48,7 +48,6 @@ namespace Fusion.Build.Mapping {
 			var stopwatch	=	new Stopwatch();
 			stopwatch.Start();
 
-			//var xmlFiles	=	Directory.EnumerateFiles( Path.Combine(Builder.FullInputDirectory, "vt"), "*.xml").ToList();
 			var iniFiles	=	Directory.EnumerateFiles( Builder.FullInputDirectory, "*.material", SearchOption.AllDirectories).ToList();
 
 			Log.Message("{0} megatexture segments", iniFiles.Count);
@@ -78,6 +77,13 @@ namespace Fusion.Build.Mapping {
 
 						Log.Message("Repacking textures to atlas...");
 						RepackTextureAtlas( pageTable, allocator, targetTime );
+					}
+
+					using ( var vtStream = AssetStream.OpenRead( targetMegatexturePath ) ) {
+						var vt = new VirtualTexture( vtStream );
+						foreach ( var tex in pageTable.SourceTextures ) {
+							tex.AverageColor = vt.GetTextureSegmentInfo( tex.Name ).AverageColor;
+						}
 					}
 			
 				} else {

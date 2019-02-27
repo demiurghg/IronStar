@@ -280,7 +280,7 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		bool SetupSubset ( ref VirtualTexture.SegmentInfo segmentInfo, bool transparent )
+		bool SetupSubset ( ref VTSegment segmentInfo, bool transparent )
 		{
 			var region = segmentInfo.Region;
 

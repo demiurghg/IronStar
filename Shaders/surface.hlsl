@@ -246,7 +246,7 @@ GBuffer PSMain( PSInput input )
 		);
 		
 	float	alpha				=	0.5f;
-	float3	baseColor			=	0.5f;
+	float3	baseColor			=	pow(Subset.Color.rgb, 2.2);
 	float	roughness			=	0.5f;
 	float3	localNormal			=	float3(0,0,1);
 	float	emission			=	0;
@@ -335,7 +335,7 @@ GBuffer PSMain( PSInput input )
 		float 	checkerX	=	frac(checkerTC.x*4) > 0.5 ? 1 : 0;
 		float 	checkerY	=	frac(checkerTC.y*4) > 0.5 ? 1 : 0;
 		float	checker		=	(checkerX+checkerY) % 2;
-		baseColor	=	Subset.Color.rgb;// pow(0.1*checker+0.5, 2);
+		baseColor	=	pow(0.1*checker+0.5, 2);
 		localNormal	=	float3(0,0,1);
 		roughness	=	0.5;//0.3*checker+0.15;
 		metallic	=	0;

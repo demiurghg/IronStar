@@ -4,98 +4,61 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.IO;
-using System.Threading.Tasks;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
-using Fusion.Core.Configuration;
 using Fusion.Core.Extensions;
-using Fusion.Engine.Common;
-using Fusion.Drivers.Graphics;
-using Fusion.Engine.Imaging;
-using System.Diagnostics;
 using Fusion.Core.Content;
+using Newtonsoft.Json;
+using Fusion.Build.Mapping;
 
 namespace Fusion.Engine.Graphics {
 	
 	/// <summary>
 	/// Represents virtual texture resource
 	/// </summary>
-	public class VirtualTexture : DisposableBase {
+	public sealed class VirtualTexture {
 
 		[ContentLoader(typeof(VirtualTexture))]
 		internal class Loader : ContentLoader {
 
 			public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 			{
-				//bool srgb = assetPath.ToLowerInvariant().Contains("|srgb");
-				return new VirtualTexture(content.Game.RenderSystem, stream, content.VTStorage );
+				return new VirtualTexture(stream);
 			}
 		}
 
-		readonly IStorage tileStorage;
+		[JsonRequired]
+		public VTSegmentCollection VTSegments { get; set; }
+
+		[JsonIgnore]
+		HashSet<string> warnings = new HashSet<string>();
 
 
 		/// <summary>
-		/// Gets tile storage
+		/// Creates VT instance from allocator and segments collection
 		/// </summary>
-		internal IStorage TileStorage {
-			get {
-				return tileStorage;
-			}
+		/// <param name="allocator"></param>
+		/// <param name="segments"></param>
+		public VirtualTexture ( IEnumerable<VTSegment> segments )
+		{
+			VTSegments	=	new VTSegmentCollection( segments.ToDictionary( s => s.Name ) );
 		}
 
-
-		public class SegmentInfo {
-
-			public static readonly SegmentInfo Empty = new SegmentInfo();
-
-			private SegmentInfo () 
-			{
-				MaxMipLevel = 0;
-				Region = new RectangleF(0,0,0,0);
-				AverageColor = Color.Gray;
-				Transparent = false;
-			}
-
-			public SegmentInfo ( int x, int y, int w, int h, Color color, bool transparent ) 
-			{
-				var fx		=   x / (float)VTConfig.TextureSize;
-				var fy		=   y / (float)VTConfig.TextureSize;
-				var fw		=   w / (float)VTConfig.TextureSize;
-				var fh		=   h / (float)VTConfig.TextureSize;
-				Region		=	new RectangleF( fx, fy, fw, fh );
-				MaxMipLevel	=	MathUtil.LogBase2( w / VTConfig.PageSize );
-				Transparent	=	transparent;
-				AverageColor=	color;
-			}
-
-			public readonly RectangleF Region;
-			public readonly int MaxMipLevel;
-			public bool Transparent;
-			public Color AverageColor;
-		}
-
-
-		Dictionary<string,SegmentInfo> textures;
-
-		HashSet<string> warnings = new HashSet<string>();
 
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rs"></param>
-		internal VirtualTexture ( RenderSystem rs, Stream stream, IStorage storage )
+		internal VirtualTexture ( Stream stream )
 		{
-			tileStorage	=	storage;
-
 			int num;
 
 			using ( var reader = new BinaryReader( stream ) ) {				
 			
 				num	=	reader.ReadInt32();
 
-				textures = new Dictionary<string, SegmentInfo>(num);
+				VTSegments = new VTSegmentCollection();
 
 				for ( int i=0; i<num; i++ ) {
 				
@@ -109,26 +72,11 @@ namespace Fusion.Engine.Graphics {
 
 					Log.Message("{0} - {1}", name, c);
 
-					textures.Add( name, new SegmentInfo( x, y, w, h, c, t ) );
+					VTSegments.Add( name, new VTSegment( name, x, y, w, h, c, t ) );
 				}
 
 			}
 		}
-
-
-
-		/// <summary>
-		/// Dispose virtual texture stuff
-		/// </summary>
-		/// <param name="disposing"></param>
-		protected override void Dispose( bool disposing )
-		{
-			if (disposing) {
-			}
-
-			base.Dispose(disposing);
-		}
-
 
 
 		/// <summary>
@@ -136,15 +84,15 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		internal SegmentInfo GetTextureSegmentInfo ( string name )
+		internal VTSegment GetTextureSegmentInfo ( string name )
 		{
 			if (string.IsNullOrWhiteSpace(name)) {
-				return SegmentInfo.Empty;
+				return VTSegment.Empty;
 			}
 
-			SegmentInfo segmentInfo;
+			VTSegment segmentInfo;
 
-			if ( textures.TryGetValue( name, out segmentInfo ) ) {
+			if ( VTSegments.TryGetValue( name, out segmentInfo ) ) {
 
 				return segmentInfo;
 
@@ -156,10 +104,35 @@ namespace Fusion.Engine.Graphics {
 					Log.Warning(warning);
 				}
 
-				//Log.Warning("Missing VT region {0}", name);
-				return SegmentInfo.Empty;
+				return VTSegment.Empty;
 			}
 		}
 
+
+		public static void SaveToStream ( VirtualTexture vt, Stream stream )
+		{
+			var serializer					=	new JsonSerializer();
+			serializer.NullValueHandling	=	NullValueHandling.Ignore;
+			serializer.Formatting			=	Formatting.Indented;
+
+			using (var sw = new StreamWriter(stream)) {
+				using (var writer = new JsonTextWriter(sw)) {
+					serializer.Serialize(writer, vt);
+				}
+			}
+		}
+
+
+		public static VirtualTexture LoadToStream ( Stream stream )
+		{
+			var serializer					=	new JsonSerializer();
+			serializer.NullValueHandling	=	NullValueHandling.Ignore;
+
+			using (var sw = new StreamReader(stream)) {
+				using (var reader = new JsonTextReader(sw)) {
+					return serializer.Deserialize<VirtualTexture>(reader);
+				}
+			}
+		}
 	}
 }

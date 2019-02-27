@@ -8,6 +8,7 @@ using Fusion.Core.Extensions;
 using System.Diagnostics;
 using System.IO;
 using Fusion.Engine.Imaging;
+using Newtonsoft.Json;
 
 namespace Fusion.Build.Mapping {
 
@@ -21,8 +22,6 @@ namespace Fusion.Build.Mapping {
 
 		public int Width { get { return Size; } }
 		public int Height { get { return Size; } }
-
-
 
 		Block rootBlock;
 

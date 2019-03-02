@@ -126,6 +126,9 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	diffuse		=	1.0f;//*/
 
 	//roughness *= 0.3f;
+	
+	
+	//diffuse = 0.5f;
 
 	//----------------------------------------------------------------------------------------------
 
@@ -236,31 +239,20 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	
 	//SamplerPoint
 	//SamplerLinear
-	float4  lightMap			=	LightMap.Sample( SamplerLinear, lmCoord );
+	float4  irradianceR			=	IrradianceR.Sample( SamplerLinear, lmCoord );
+	float4  irradianceG			=	IrradianceG.Sample( SamplerLinear, lmCoord );
+	float4  irradianceB			=	IrradianceB.Sample( SamplerLinear, lmCoord );
 	
-	/*if (input.Position.x<640) {
-		return lightMap.rgb;
-	} else {
-		return worldPos.xyz;
-	}*/
+	float	lightR				=	irradianceR.x + dot( normal, irradianceR.wyz );
+	float	lightG				=	irradianceG.x + dot( normal, irradianceG.wyz );
+	float	lightB				=	irradianceB.x + dot( normal, irradianceB.wyz );
 	
-	totalLight += diffuse * lightMap.rgb;
+	totalLight += diffuse * float3( lightR, lightG, lightB );
 	
 	return totalLight;
 
 	//	occlusion & sky stuff :
 	float 	ssaoFactor		=	AmbientOcclusion.Load( int3( input.Position.xy,0 ) ).r;
-	float4	aogridValue		=	OcclusionGrid.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 2.0f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba;
-			//aogridValue.xyz	=	aogridValue.xyz * 2 - 1;
-			
-	float 	skyFactor		=	aogridValue.a;//length( aogridValue.xyz );
-	float3 	skyBentNormal	=	aogridValue.xyz;// / (skyFactor + 0.1);
-	
-	float 	fullSkyLight	=	max( 0, dot( skyBentNormal, normal ) * 0.5 + 0.5 );
-	float 	halfSkyLight	=	max( 0, dot( skyBentNormal, normal ) * 1.0 + 0.0 );
-	float3	skyLight		=	pow(skyFactor,1) * max(0, lerp(halfSkyLight, fullSkyLight, skyFactor ) ) * Stage.SkyAmbientLevel;
-	
-	//return float4(aogridValue.rgb,2);//a * 4 * (normal.y*0.5+0.5);
 
 #ifdef TRANSPARENT
 	ssaoFactor	=	1;
@@ -311,9 +303,8 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	
 	ambientDiffuse		=	ambientDiffuse  * ( diffuse                ) * ssaoFactorDiff;
 	ambientSpecular		=	0*ambientSpecular	* ( specular * ab.x + ab.y ) * ssaoFactorSpec * selfOcclision;
-	ambientDiffuseSky	=	diffuse * skyLight * pow(ssaoFactor,2);
 	
-	totalLight.xyz	+=	ambientDiffuse + ambientDiffuseSky + ambientSpecular;	
+	totalLight.xyz	+=	ambientDiffuse + ambientSpecular;	
 
 	//----------------------------------------------------------------------------------------------
 

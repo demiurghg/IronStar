@@ -221,12 +221,12 @@ namespace Fusion.Engine.Graphics {
 				device.PixelShaderResources[12]	= context.GetAOBuffer();
 			}
 
-			device.PixelShaderResources[13]	=	rs.Sky.SkyCube;
-			device.PixelShaderResources[14]	=	rs.LightManager.LightMap.LightMap2D;
-			device.PixelShaderResources[15]	=	rs.RenderWorld.RadianceCache;
-			device.PixelShaderResources[16]	=	envLut.Srv;
-			device.PixelShaderResources[17]	=	rs.LightManager.LightGrid.ProbeDataGpu;
-			device.PixelShaderResources[18]	=	rs.LightManager.LightMap.LightMap2D;
+			device.PixelShaderResources[13]	=	rs.LightManager.LightMap.LightMapSHL1R;
+			device.PixelShaderResources[14]	=	rs.LightManager.LightMap.LightMapSHL1G;
+			device.PixelShaderResources[15]	=	rs.LightManager.LightMap.LightMapSHL1B;
+			device.PixelShaderResources[16]	=	rs.RenderWorld.RadianceCache;
+			device.PixelShaderResources[17]	=	envLut.Srv;
+			device.PixelShaderResources[18]	=	rs.LightManager.LightGrid.ProbeDataGpu;
 
 
 			//	setup samplers :

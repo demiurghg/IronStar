@@ -384,6 +384,60 @@ namespace Fusion.Engine.Imaging {
 		{
 			return a*(1-x) + b*x;
 		}
+
+		/*-----------------------------------------------------------------------------------------
+		 * 
+		 *	Filters
+		 * 
+		-----------------------------------------------------------------------------------------*/
+
+		public void Dilate ( GenericImage<TColor> temp, Func<Int2,bool> predicate )
+		{
+			if (temp.Width!=Width) {
+				throw new ArgumentException("temp.Width!=Width");
+			}
+			if (temp.Height!=Height) {
+				throw new ArgumentException("temp.Height!=Height");
+			}
+
+			Int2[] offsets = new[] { 
+				new Int2(+1,+0),
+				new Int2(-1,+0),
+				new Int2(+0,+1),
+				new Int2(+0,-1),
+				new Int2(+1,+1),
+				new Int2(-1,-1),
+				new Int2(+1,-1),
+				new Int2(-1,+1),
+			};
+
+
+			for ( int i=0; i<Width; i++ ) {
+
+				for ( int j=0; j<Height; j++ ) {
+
+					if (!predicate(new Int2(i,j))) {
+
+						for (int k=0; k<8; k++) {
+
+							Int2 xy = new Int2( i + offsets[k].X, j + offsets[k].Y );
+
+							if (predicate(xy)) {
+								temp[i,j] = this[xy];
+							}
+
+						}
+
+					} else {
+
+						temp[i,j] = this[i,j];
+
+					}
+				}
+			}
+
+			temp.CopyTo( this );
+		}
 	}
 
 }

@@ -60,12 +60,13 @@ Texture2D					DecalImages			:	register(t9);
 Texture2D					ShadowMap			:	register(t10);
 Texture2D					ShadowMapParticles	:	register(t11);
 Texture2D					AmbientOcclusion	:	register(t12);
-TextureCube					FogTable			: 	register(t13);
-Texture3D					OcclusionGrid		: 	register(t14);
-TextureCubeArray			RadianceCache		:	register(t15);
-Texture2D					EnvLut				:	register(t16);
-StructuredBuffer<LIGHTPROBE> ProbeDataTable		:	register(t17);
-Texture2D					LightMap			: 	register(t18);
+
+Texture2D					IrradianceR			: 	register(t13);
+Texture2D					IrradianceG			: 	register(t14);
+Texture2D					IrradianceB			: 	register(t15);
+TextureCubeArray			RadianceCache		:	register(t16);
+Texture2D					EnvLut				:	register(t17);
+StructuredBuffer<LIGHTPROBE> ProbeDataTable		:	register(t18);
 
 #ifdef _UBERSHADER
 $ubershader FORWARD RIGID ANISOTROPIC +TRANSPARENT

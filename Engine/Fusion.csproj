@@ -525,6 +525,7 @@
     <Compile Include="Engine\Graphics\Lights\DirectLight.cs" />
     <Compile Include="Engine\Graphics\Lights\Extents.cs" />
     <Compile Include="Engine\Graphics\Lights\ICSMController.cs" />
+    <Compile Include="Engine\Graphics\Lights\Irradiance.cs" />
     <Compile Include="Engine\Graphics\Lights\LightGrid.cs" />
     <Compile Include="Engine\Graphics\Lights\LightManager.cs" />
     <Compile Include="Engine\Graphics\Lights\LightMapGBuffer.cs" />

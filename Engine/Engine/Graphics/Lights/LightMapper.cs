@@ -37,8 +37,14 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 
 
-		public ShaderResource LightMap2D {
-			get { return lightMap2D ?? blackLightMap.Srv; }
+		public ShaderResource LightMapSHL1R {
+			get { return lightMapSHL1R ?? blackLightMap.Srv; }
+		}
+		public ShaderResource LightMapSHL1G {
+			get { return lightMapSHL1G ?? blackLightMap.Srv; }
+		}
+		public ShaderResource LightMapSHL1B {
+			get { return lightMapSHL1B ?? blackLightMap.Srv; }
 		}
 
 		public ShaderResource LightMap3D {
@@ -53,7 +59,9 @@ namespace Fusion.Engine.Graphics.Lights {
 		Texture2D		gbufferPosition;
 		Texture2D		gbufferNormal;
 		Texture2D		gbufferColor;
-		Texture2D		lightMap2D;
+		Texture2D		lightMapSHL1R;
+		Texture2D		lightMapSHL1G;
+		Texture2D		lightMapSHL1B;
 		Texture3D		lightMap3D;
 		DynamicTexture	blackLightMap;
 
@@ -100,7 +108,9 @@ namespace Fusion.Engine.Graphics.Lights {
 				SafeDispose( ref gbufferPosition );
 				SafeDispose( ref gbufferNormal	 );
 				SafeDispose( ref gbufferColor	 );
-				SafeDispose( ref lightMap2D		 );
+				SafeDispose( ref lightMapSHL1R	 );
+				SafeDispose( ref lightMapSHL1G	 );
+				SafeDispose( ref lightMapSHL1B	 );
 				SafeDispose( ref lightMap3D		 );
 				SafeDispose( ref blackLightMap	 );
 			}
@@ -214,7 +224,9 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			var lightmap	=	new LightMapGBuffer( allocator.Width, allocator.Height );
 
-			lightMap2D		=	new Texture2D( rs.Device, allocator.Width, allocator.Height, ColorFormat.Rgba32F, false, false );
+			lightMapSHL1R	=	new Texture2D( rs.Device, allocator.Width, allocator.Height, ColorFormat.Rgba32F, false, false );
+			lightMapSHL1G	=	new Texture2D( rs.Device, allocator.Width, allocator.Height, ColorFormat.Rgba32F, false, false );
+			lightMapSHL1B	=	new Texture2D( rs.Device, allocator.Width, allocator.Height, ColorFormat.Rgba32F, false, false );
 
 			//-------------------------------------------------
 
@@ -282,10 +294,14 @@ namespace Fusion.Engine.Graphics.Lights {
 							var c = lightmap.Albedo[i,j];
 
 							if (c.A>0) {
-								var r = ComputeRadiance( scene, instanceArray, hammersley, lightSet, p, n );
-								lightmap.Radiance[i,j]	=	r;
+								var r	=	ComputeRadiance( scene, instanceArray, hammersley, lightSet, p, n );
+								lightmap.IrradianceR[i,j]	=	r.Red;
+								lightmap.IrradianceG[i,j]	=	r.Green;
+								lightmap.IrradianceB[i,j]	=	r.Blue;
 							} else {
-								lightmap.Radiance[i,j]	=	Color4.Zero;
+								lightmap.IrradianceR[i,j]	=	SHL1.Zero;
+								lightmap.IrradianceG[i,j]	=	SHL1.Zero;
+								lightmap.IrradianceB[i,j]	=	SHL1.Zero;
 							}
 						}
 					}  //*/
@@ -310,9 +326,9 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			Log.Message("Uploading lightmap to GPU...");
 
-			lightMap2D.SetData( lightmap.Radiance.RawImageData );
-			//lightMap2D.SetData( lightmap.Position.RawImageData.Select( p => new Vector4(p,1) ).ToArray() );
-			//lightMap2D.SetData( lightmap.Albedo.RawImageData.Select( c => c.ToColor4() ).ToArray() );
+			lightMapSHL1R.SetData( lightmap.IrradianceR.RawImageData );
+			lightMapSHL1G.SetData( lightmap.IrradianceG.RawImageData );
+			lightMapSHL1B.SetData( lightmap.IrradianceB.RawImageData );
 
 			var image = new Image( lightmap.Albedo );
 			Image.SaveTga( image, @"E:\GITHUB\testlm.tga" );
@@ -380,13 +396,14 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 
 		
-		Color4 ComputeRadiance ( RtcScene scene, MeshInstance[] instances, Vector3[] randomPoints, LightSet lightSet, Vector3 position, Vector3 normal )
+		Irradiance ComputeRadiance ( RtcScene scene, MeshInstance[] instances, Vector3[] randomPoints, LightSet lightSet, Vector3 position, Vector3 normal )
 		{
 			var sampleCount		=	randomPoints.Length;
 			var invSampleCount	=	1.0f / sampleCount;
-			var result			=	Color4.Zero;
 
 			var skyAmbient		=	rs.RenderWorld.SkySettings.AmbientLevel;
+
+			var irradiance		=	new Irradiance();
 
 			//---------------------------------
 
@@ -409,7 +426,7 @@ namespace Fusion.Engine.Graphics.Lights {
 				//-------------------------------------------
 				//	ray hits nothing, so this is sky light :
 				if (!intersect && dir.Y>0) {
-					result		+=	nDotL * skyAmbient * invSampleCount; 
+					irradiance.Add( skyAmbient * invSampleCount, dir );
 				}
 
 				//-------------------------------------------
@@ -429,14 +446,12 @@ namespace Fusion.Engine.Graphics.Lights {
 					{
 						var directLight	=	ComputeDirectLight( scene, lightSet, hitPoint, hitNormal );
 
-						result			+=	directLight * invSampleCount * albedo * (-dirDotN);
+						irradiance.Add( directLight * invSampleCount * albedo * (-dirDotN), dir );
 					}
 				}
 			} 
 
-			result.Alpha = 1;
-
-			return result;
+			return irradiance;
 		}
 
 

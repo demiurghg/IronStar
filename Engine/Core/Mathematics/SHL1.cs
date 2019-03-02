@@ -9,6 +9,8 @@ namespace Fusion.Core.Mathematics {
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
 	public struct SHL1 : IEquatable<SHL1>{
 		
+        public static readonly SHL1 Zero = new SHL1(0,0,0,0);
+
 		public float A;
 		public float B;
 		public float C;

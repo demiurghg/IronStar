@@ -14,6 +14,7 @@ using Fusion.Engine.Imaging;
 namespace Fusion.Engine.Graphics.Lights {
 
 
+
 	public class LightMapGBuffer {
 
 		public readonly int Width;
@@ -23,11 +24,13 @@ namespace Fusion.Engine.Graphics.Lights {
 		public readonly GenericImage<Vector3>	Position;
 		public readonly GenericImage<Vector3>	PositionOld;
 		public readonly GenericImage<Vector3>	Normal;
-		public readonly GenericImage<Color4>	Radiance;
-		public readonly GenericImage<Vector3>	Direction;
-		public readonly GenericImage<Color4>	TempColor;
-		public readonly GenericImage<Vector3>	TempDir;
 		public readonly GenericImage<Bool>		Coverage;
+
+		public readonly GenericImage<SHL1>		IrradianceR;
+		public readonly GenericImage<SHL1>		IrradianceG;
+		public readonly GenericImage<SHL1>		IrradianceB;
+
+		public readonly GenericImage<SHL1>		TempSHs;
 
 
 		/// <summary>
@@ -37,20 +40,23 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// <param name="h"></param>
 		public LightMapGBuffer( int w, int h ) 
 		{
-			Width		=	w;
-			Height		=	h;
+			Width			=	w;
+			Height			=	h;
 
-			Albedo		=	new GenericImage<Color>		( w, h, Color.Zero	 );
-			Position	=	new GenericImage<Vector3>	( w, h, Vector3.Zero );
-			PositionOld	=	new GenericImage<Vector3>	( w, h, Vector3.Zero );
-			Normal		=	new GenericImage<Vector3>	( w, h, Vector3.Zero );
-			Radiance	=	new GenericImage<Color4>	( w, h, Color4.Zero );
-			Direction	=	new GenericImage<Vector3>	( w, h, Vector3.Zero );
-			TempColor	=	new GenericImage<Color4>	( w, h, Color4.Zero );
-			TempDir		=	new GenericImage<Vector3>	( w, h, Vector3.Zero );
-			Coverage	=	new GenericImage<Bool>		( w, h, false );
+			Albedo			=	new GenericImage<Color>		( w, h, Color.Zero	 );
+			Position		=	new GenericImage<Vector3>	( w, h, Vector3.Zero );
+			PositionOld		=	new GenericImage<Vector3>	( w, h, Vector3.Zero );
+			Normal			=	new GenericImage<Vector3>	( w, h, Vector3.Zero );
+			Coverage		=	new GenericImage<Bool>		( w, h, false );
+
+			IrradianceR		=	new GenericImage<SHL1>( w, h, SHL1.Zero );
+			IrradianceG		=	new GenericImage<SHL1>( w, h, SHL1.Zero );
+			IrradianceB		=	new GenericImage<SHL1>( w, h, SHL1.Zero );
+
+			TempSHs			=	new GenericImage<SHL1>( w, h, SHL1.Zero );
 		}
 			
+
 
 
 		/// <summary>
@@ -58,25 +64,9 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		public void DilateRadiance ()
 		{
-			for ( int i=0; i<Width; i++ ) {
-				for ( int j=0; j<Height; j++ ) {
-
-					var c = Radiance[i,j];
-
-					c	=	c.Alpha > 0 ? c : Radiance[i+1, j+0];
-					c	=	c.Alpha > 0 ? c : Radiance[i-1, j+0];
-					c	=	c.Alpha > 0 ? c : Radiance[i+0, j+1];
-					c	=	c.Alpha > 0 ? c : Radiance[i+0, j-1];
-					c	=	c.Alpha > 0 ? c : Radiance[i+1, j+1];
-					c	=	c.Alpha > 0 ? c : Radiance[i-1, j-1];
-					c	=	c.Alpha > 0 ? c : Radiance[i+1, j-1];
-					c	=	c.Alpha > 0 ? c : Radiance[i-1, j+1];
-
-					TempColor[i,j] = c;
-				}
-			}
-
-			TempColor.CopyTo( Radiance );
+			IrradianceR.Dilate( TempSHs, (xy) => Albedo[xy].A > 0 );
+			IrradianceG.Dilate( TempSHs, (xy) => Albedo[xy].A > 0 );
+			IrradianceB.Dilate( TempSHs, (xy) => Albedo[xy].A > 0 );
 		}
 
 
@@ -86,7 +76,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		public void BlurRadianceBilateral ()
 		{
-			for ( int i=1; i<Width-1; i++ ) {
+			/*for ( int i=1; i<Width-1; i++ ) {
 				for ( int j=1; j<Height-1; j++ ) {
 
 					var c = Radiance[i+0, j+0];
@@ -101,44 +91,13 @@ namespace Fusion.Engine.Graphics.Lights {
 						c	+=	Radiance[i-1, j+0];
 						c	+=	Radiance[i-1, j-1];
 
-						TempColor[i,j] = c / c.Alpha;
+						TempSHs[i,j] = c / c.Alpha;
 					}
 				}
 			}//*/
 
-			TempColor.CopyTo( Radiance );
+			//TempSHs.CopyTo( Radiance );		  */
 		}
-
-
-
-		/// <summary>
-		/// Blur direction
-		/// </summary>
-		public void BlurDirection ()
-		{
-			for ( int i=1; i<Width-1; i++ ) {
-				for ( int j=1; j<Height-1; j++ ) {
-
-					var d = Direction[i+0, j+0]  * 1.0f;
-
-					d	+=	Direction[i+1, j+1] * 0.35f;
-					d	+=	Direction[i+1, j-1] * 0.35f;
-					d	+=	Direction[i-1, j-1] * 0.35f;
-					d	+=	Direction[i-1, j+1] * 0.35f;
-
-					d	+=	Direction[i+1, j+0] * 0.50f;
-					d	+=	Direction[i+0, j+1] * 0.50f;
-					d	+=	Direction[i+0, j-1] * 0.50f;
-					d	+=	Direction[i-1, j+0] * 0.50f;
-
-					TempDir[i,j] = d.Normalized();
-				}
-			}//*/
-
-			TempDir.CopyTo( Direction );
-		}
-
-
 	}
 
 }

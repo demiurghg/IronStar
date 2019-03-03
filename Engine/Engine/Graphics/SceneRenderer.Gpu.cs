@@ -18,14 +18,16 @@ namespace Fusion.Engine.Graphics {
 	internal partial class SceneRenderer : RenderComponent {
 
 		enum SurfaceFlags {
-			FORWARD		=	1 << 0,
-			SHADOW		=	1 << 1,
-			RIGID		=	1 << 4,
-			SKINNED		=	1 << 5,
-			ZPASS		=	1 << 6,
-			ANISOTROPIC	=	1 << 7,
-			GBUFFER		=	1 << 8,
-			TRANSPARENT	=	1 << 9,
+			FORWARD				=	1 << 0,
+			SHADOW				=	1 << 1,
+			RIGID				=	1 << 4,
+			SKINNED				=	1 << 5,
+			ZPASS				=	1 << 6,
+			ANISOTROPIC			=	1 << 7,
+			GBUFFER				=	1 << 8,
+			TRANSPARENT			=	1 << 9,
+			IRRADIANCE_MAP		=	1 << 10,
+			IRRADIANCE_VOLUME	=	1 << 11,
 		}
 
 

@@ -1,4 +1,14 @@
 
+#ifdef _UBERSHADER
+$ubershader FORWARD RIGID +ANISOTROPIC +TRANSPARENT IRRADIANCE_MAP|IRRADIANCE_VOLUME
+$ubershader SHADOW RIGID +TRANSPARENT
+$ubershader ZPASS RIGID
+$ubershader GBUFFER RIGID
+// $ubershader FORWARD RIGID|SKINNED +ANISOTROPIC +TRANSPARENT
+// $ubershader SHADOW RIGID|SKINNED +TRANSPARENT
+// $ubershader ZPASS RIGID|SKINNED
+// $ubershader GBUFFER RIGID|SKINNED
+#endif
 
 
 struct VSInput {
@@ -61,25 +71,21 @@ Texture2D					ShadowMap			:	register(t10);
 Texture2D					ShadowMapParticles	:	register(t11);
 Texture2D					AmbientOcclusion	:	register(t12);
 
-Texture2D					IrradianceR			: 	register(t13);
-Texture2D					IrradianceG			: 	register(t14);
-Texture2D					IrradianceB			: 	register(t15);
-TextureCubeArray			RadianceCache		:	register(t16);
-Texture2D					EnvLut				:	register(t17);
-StructuredBuffer<LIGHTPROBE> ProbeDataTable		:	register(t18);
+Texture2D					IrradianceMapR		: 	register(t13);
+Texture2D					IrradianceMapG		: 	register(t14);
+Texture2D					IrradianceMapB		: 	register(t15);
+Texture3D					IrradianceVolumeR	: 	register(t16);
+Texture3D					IrradianceVolumeG	: 	register(t17);
+Texture3D					IrradianceVolumeB	: 	register(t18);
 
-#ifdef _UBERSHADER
-$ubershader FORWARD RIGID ANISOTROPIC +TRANSPARENT
-$ubershader SHADOW RIGID +TRANSPARENT
-$ubershader ZPASS RIGID
-$ubershader GBUFFER RIGID
-// $ubershader FORWARD RIGID|SKINNED +ANISOTROPIC +TRANSPARENT
-// $ubershader SHADOW RIGID|SKINNED +TRANSPARENT
-// $ubershader ZPASS RIGID|SKINNED
-// $ubershader GBUFFER RIGID|SKINNED
+TextureCubeArray			RadianceCache		:	register(t20);
+Texture2D					EnvLut				:	register(t21);
+StructuredBuffer<LIGHTPROBE> ProbeDataTable		:	register(t22);
+
+#ifdef FORWARD
+#include "surface.lighting.hlsl"
 #endif
 
-#include "surface.lighting.hlsl"
 #include "fog.fxi"
 
  

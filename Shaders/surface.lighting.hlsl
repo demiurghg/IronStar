@@ -239,15 +239,28 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	
 	//SamplerPoint
 	//SamplerLinear
-	float4  irradianceR			=	IrradianceR.Sample( SamplerLinear, lmCoord );
-	float4  irradianceG			=	IrradianceG.Sample( SamplerLinear, lmCoord );
-	float4  irradianceB			=	IrradianceB.Sample( SamplerLinear, lmCoord );
+	float4	irradianceR	=	float4(0,0,0,0);
+	float4	irradianceG	=	float4(0,0,0,0);
+	float4	irradianceB	=	float4(0,0,0,0);
+	float3	volumeCoord	=	float4(0,0,0,0);
 	
-	float	lightR				=	irradianceR.x + dot( normal, irradianceR.wyz );
-	float	lightG				=	irradianceG.x + dot( normal, irradianceG.wyz );
-	float	lightB				=	irradianceB.x + dot( normal, irradianceB.wyz );
+	#ifdef IRRADIANCE_MAP
+		irradianceR		=	IrradianceMapR.Sample( SamplerLinear, lmCoord );
+		irradianceG		=	IrradianceMapG.Sample( SamplerLinear, lmCoord );
+		irradianceB		=	IrradianceMapB.Sample( SamplerLinear, lmCoord );
+	#endif
+	#ifdef IRRADIANCE_VOLUME
+		volumeCoord		=	worldPos.xyz / float3(512,256,512) + float3(0.5f, 0.0f, 0.5f);
+		irradianceR		=	IrradianceVolumeR.Sample( SamplerLinear, volumeCoord );
+		irradianceG		=	IrradianceVolumeG.Sample( SamplerLinear, volumeCoord );
+		irradianceB		=	IrradianceVolumeB.Sample( SamplerLinear, volumeCoord );
+	#endif
 	
-	totalLight += diffuse * float3( lightR, lightG, lightB );
+	float	lightR		=	irradianceR.x + dot( normal, irradianceR.wyz );
+	float	lightG		=	irradianceG.x + dot( normal, irradianceG.wyz );
+	float	lightB		=	irradianceB.x + dot( normal, irradianceB.wyz );
+	
+	totalLight += diffuse * float3( lightR, lightG, lightB ) * pow(occlusion,2);
 	
 	return totalLight;
 

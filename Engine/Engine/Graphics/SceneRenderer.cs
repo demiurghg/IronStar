@@ -221,12 +221,16 @@ namespace Fusion.Engine.Graphics {
 				device.PixelShaderResources[12]	= context.GetAOBuffer();
 			}
 
-			device.PixelShaderResources[13]	=	rs.LightManager.LightMap.LightMapSHL1R;
-			device.PixelShaderResources[14]	=	rs.LightManager.LightMap.LightMapSHL1G;
-			device.PixelShaderResources[15]	=	rs.LightManager.LightMap.LightMapSHL1B;
-			device.PixelShaderResources[16]	=	rs.RenderWorld.RadianceCache;
-			device.PixelShaderResources[17]	=	envLut.Srv;
-			device.PixelShaderResources[18]	=	rs.LightManager.LightGrid.ProbeDataGpu;
+			device.PixelShaderResources[13]	=	rs.LightManager.LightMap.IrradianceMapRed;
+			device.PixelShaderResources[14]	=	rs.LightManager.LightMap.IrradianceMapGreen;
+			device.PixelShaderResources[15]	=	rs.LightManager.LightMap.IrradianceMapBlue;
+			device.PixelShaderResources[16]	=	rs.LightManager.LightMap.IrradianceVolumeRed;
+			device.PixelShaderResources[17]	=	rs.LightManager.LightMap.IrradianceVolumeGreen;
+			device.PixelShaderResources[18]	=	rs.LightManager.LightMap.IrradianceVolumeBlue;
+
+			device.PixelShaderResources[20]	=	rs.RenderWorld.RadianceCache;
+			device.PixelShaderResources[21]	=	envLut.Srv;
+			device.PixelShaderResources[22]	=	rs.LightManager.LightGrid.ProbeDataGpu;
 
 
 			//	setup samplers :
@@ -264,6 +268,14 @@ namespace Fusion.Engine.Graphics {
 
 			if (context.Transparent) {
 				flag |= (int)SurfaceFlags.TRANSPARENT;
+			}
+
+			if ( stageFlag==SurfaceFlags.FORWARD) {
+				if ( instance.Group==InstanceGroup.Static ) {
+					flag |= (int)SurfaceFlags.IRRADIANCE_MAP;
+				} else {
+					flag |= (int)SurfaceFlags.IRRADIANCE_VOLUME;
+				}
 			}
 
 			device.PipelineState	=	factory[ flag ];

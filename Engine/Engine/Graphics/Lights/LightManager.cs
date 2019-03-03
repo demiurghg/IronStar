@@ -227,7 +227,7 @@ namespace Fusion.Engine.Graphics {
 				device.ComputeShaderResources[2]    =   rs.Sky.SkyCube;
 				device.ComputeShaderResources[3]	=	shadowMap.ColorBuffer;
 				device.ComputeShaderResources[4]	=	null;
-				device.ComputeShaderResources[5]	=	LightMap.LightMapSHL1R;
+				device.ComputeShaderResources[5]	=	LightMap.IrradianceMapRed;
 				device.ComputeShaderSamplers[0]		=	SamplerState.PointClamp;
 				device.ComputeShaderSamplers[1]		=	SamplerState.LinearWrap;
 				device.ComputeShaderSamplers[2]		=	SamplerState.ShadowSamplerPoint;

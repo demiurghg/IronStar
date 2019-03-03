@@ -677,9 +677,9 @@ namespace Fusion.Engine.Graphics {
 					}
 
 					if (flags==Flags.DRAW_LIGHT || flags==Flags.DRAW_HARD) {
-						device.PixelShaderResources[14]		=	rs.LightManager.LightMap.LightMap3D;
-						device.PixelShaderResources[15]		=	rs.RenderWorld.RadianceCache;
-						device.PixelShaderResources[17]		=	rs.LightManager.LightGrid.ProbeDataGpu;
+						device.PixelShaderResources[14]		=	rs.LightManager.LightMap.IrradianceVolumeRed;
+						device.PixelShaderResources[15]		=	rs.LightManager.LightMap.IrradianceVolumeGreen;
+						device.PixelShaderResources[17]		=	rs.LightManager.LightMap.IrradianceVolumeBlue;
 					}
 
 					device.GeometryShaderResources[18]		=	lightMapRegions;

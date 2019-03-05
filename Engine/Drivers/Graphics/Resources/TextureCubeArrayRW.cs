@@ -30,6 +30,7 @@ namespace Fusion.Drivers.Graphics {
 		ShaderResource[,]		batchCubeResources;
 		readonly int batchSize;
 		readonly int batchCount;
+		readonly ColorFormat format;
 
 		/// <summary>
 		/// 
@@ -55,6 +56,7 @@ namespace Fusion.Drivers.Graphics {
 			this.Depth		=	1;
 			this.Height		=	size;
 			this.MipCount	=	mips ? ShaderResource.CalculateMipLevels(Width,Height) : 1;
+			this.format		=	format;
 
 			var texDesc = new Texture2DDescription();
 
@@ -206,6 +208,35 @@ namespace Fusion.Drivers.Graphics {
 		}
 
 
+		public void CopyTopMipLevelFromRenderTargetCube ( int index, RenderTargetCube rtSourceCube )
+		{
+			using ( new PixEvent( "CopyTopMipLevelFromRenderTargetCube" ) ) {
+
+				
+				if (rtSourceCube.Width!=this.Width) {
+					throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different width");
+				}
+
+				if (rtSourceCube.Height!=this.Height) {
+					throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different height");
+				}
+
+				if (rtSourceCube.Format!=this.format) {
+					throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different format");
+				}
+
+				int subResourceCount = 6 * rtSourceCube.MipCount;
+			
+				for (int i=0; i<6; i++) {
+
+					int srcIndex = Resource.CalculateSubResourceIndex( 0, i,			 rtSourceCube.MipCount );
+					int dstIndex = Resource.CalculateSubResourceIndex( 0, index * 6 + i, this.MipCount );
+
+					GraphicsDevice.DeviceContext.CopySubresourceRegion( rtSourceCube.TextureResource, srcIndex, null, texCubeArray, dstIndex );
+				}
+			}
+		}
+
 
 		/// <summary>
 		/// 
@@ -222,8 +253,13 @@ namespace Fusion.Drivers.Graphics {
 				if (rtCube.Width!=this.Width) {
 					throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different width");
 				}
+
 				if (rtCube.Height!=this.Height) {
 					throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different height");
+				}
+
+				if (rtCube.Format!=this.format) {
+					throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different format");
 				}
 
 				int subResourceCount = 6 * rtCube.MipCount;

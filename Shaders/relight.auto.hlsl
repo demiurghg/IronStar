@@ -2,7 +2,7 @@ static const int BlockSizeX = 16;
 static const int BlockSizeY = 16;
 static const int PrefilterBlockSizeX = 8;
 static const int PrefilterBlockSizeY = 8;
-static const int LightProbeSize = 64;
+static const int LightProbeSize = 128;
 
 // Fusion.Engine.Graphics.LightManager+RELIGHT_PARAMS
 // Marshal.SizeOf = 192

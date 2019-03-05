@@ -22,13 +22,17 @@ namespace Fusion.Engine.Graphics {
 		readonly DepthStencilSurface depthBuffer;
 		readonly RenderTargetSurface colorBuffer;
 		readonly RenderTargetSurface normalBuffer;
+		readonly Vector3 position;
 		
 
 		public LightProbeContext ( LightProbe lightProbe, CubeFace face, DepthStencilSurface depthBuffer, RenderTargetSurface colorBuffer, RenderTargetSurface normalBuffer )
 		{
 			var camera = new Camera();
 			#warning ROTATE LIGHT PROBE BASIS!!!
-			camera.SetupCameraCubeFace( lightProbe.ProbeMatrix.TranslationVector, face, 0.125f, 4096 );
+
+			this.position		=	lightProbe.ProbeMatrix.TranslationVector;
+
+			camera.SetupCameraCubeFaceLH( position, face, 0.125f, 4096 );
 			
 			this.viewMatrix		=	camera.GetViewMatrix( StereoEye.Mono );
 			this.projMatrix		=	camera.GetProjectionMatrix( StereoEye.Mono );
@@ -40,7 +44,11 @@ namespace Fusion.Engine.Graphics {
 
 		public void SetupRenderTargets ( GraphicsDevice device )
 		{
-			device.SetTargets( depthBuffer, colorBuffer, normalBuffer );
+			if (normalBuffer!=null) {
+				device.SetTargets( depthBuffer, colorBuffer, normalBuffer );
+			} else {
+				device.SetTargets( depthBuffer, colorBuffer );
+			}
 		}
 
 
@@ -65,7 +73,7 @@ namespace Fusion.Engine.Graphics {
 		public Vector3 GetViewPosition( StereoEye stereoEye )
 		{
 			//	for shadows position does not matter
-			return Vector3.Zero;
+			return position;
 		}
 
 		
@@ -83,7 +91,11 @@ namespace Fusion.Engine.Graphics {
 	
 		public bool RequireShadows {
 			get { 
-				return false; 
+				if (normalBuffer==null) {
+					return true;
+				} else {
+					return false; 
+				}
 			} 
 		}
 	

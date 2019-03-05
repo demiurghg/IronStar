@@ -4,6 +4,7 @@ $ubershader FORWARD RIGID +ANISOTROPIC +TRANSPARENT IRRADIANCE_MAP|IRRADIANCE_VO
 $ubershader SHADOW RIGID +TRANSPARENT
 $ubershader ZPASS RIGID
 $ubershader GBUFFER RIGID
+$ubershader RADIANCE RIGID
 // $ubershader FORWARD RIGID|SKINNED +ANISOTROPIC +TRANSPARENT
 // $ubershader SHADOW RIGID|SKINNED +TRANSPARENT
 // $ubershader ZPASS RIGID|SKINNED
@@ -83,6 +84,11 @@ Texture2D					EnvLut				:	register(t21);
 StructuredBuffer<LIGHTPROBE> ProbeDataTable		:	register(t22);
 
 #ifdef FORWARD
+#include "surface.lighting.hlsl"
+#endif
+
+#ifdef RADIANCE
+#define DIFFUSE_ONLY
 #include "surface.lighting.hlsl"
 #endif
 
@@ -240,6 +246,7 @@ float MipLevel( float2 uv )
 	// return float4( normal, 1 );
 // }
 #endif
+
 
 #ifdef FORWARD
 GBuffer PSMain( PSInput input )
@@ -400,6 +407,31 @@ GBuffer PSMain( PSInput input )
 	return output;
 }
 #endif
+
+
+#ifdef RADIANCE
+float4 PSMain( PSInput input ) : SV_TARGET0
+{
+	float3	baseColor	=	pow(Subset.Color.rgb, 2.2);
+	
+	float3	localNormal	=	float3(0,0,1);
+
+	float3 	worldNormal = 	input.Normal.xyz;
+			
+	float3 	triNormal	=	cross( ddx(input.WorldPos.xyz), -ddy(input.WorldPos.xyz) );
+			triNormal	=	normalize( triNormal );
+	
+	//	Compute light :
+	float3 	lighting	=	ComputeClusteredLighting( input, ClusterTable, Stage.ViewBounds.xy, baseColor, worldNormal, triNormal, 1, 0, 1, input.LMCoord );
+	
+	//	Apply fog :
+	float	dist	=	distance( input.WorldPos.xyz, Stage.ViewPos.xyz ); 
+	float3	final	=	lighting;//ApplyFogColor( lighting, Stage.FogAttenuation, dist, Stage.FogColor );
+	
+	return	float4( final, 1 );
+}
+#endif
+
 
 #include "dither.fxi"
 

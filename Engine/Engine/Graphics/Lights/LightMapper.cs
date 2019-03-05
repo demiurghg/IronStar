@@ -183,7 +183,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		public LightMapGBuffer BakeLightMap ( IEnumerable<MeshInstance> instances, LightSet lightSet, int numSamples, bool filter, int sizeBias )
 		{
 			var hammersley		=	Hammersley.GenerateSphereUniform(numSamples);
-			var hammersleyVol	=	Hammersley.GenerateSphereUniform(numSamples/4);
+			var hammersleyVol	=	Hammersley.GenerateSphereUniform(numSamples/64);
 			var instanceArray	=	instances.ToArray();
 
 			var irrVolR			=	new GenericVolume<SHL1>(64,32,64);
@@ -335,7 +335,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 					sw.Start();
 
-					for ( int i=0; i<64; i++ ) {
+					/*for ( int i=0; i<64; i++ ) {
 						for ( int j=0; j<32; j++ ) {
 							for ( int k=0; k<64; k++ ) {
 

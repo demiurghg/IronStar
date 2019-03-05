@@ -406,5 +406,13 @@ namespace Fusion.Engine.Graphics {
 
 			RenderGeneric("LightProbeGBuffer", null, StereoEye.Mono, SurfaceFlags.GBUFFER, context, instances, mask );
 		}
+
+
+		internal void RenderLightProbeRadiance ( LightProbeContext context, RenderWorld rw, InstanceGroup mask )
+		{
+			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
+
+			RenderGeneric("LightProbeRadiance", null, StereoEye.Mono, SurfaceFlags.RADIANCE, context, instances, mask );
+		}
 	}
 }

@@ -25,9 +25,10 @@ namespace Fusion.Engine.Graphics {
 			ZPASS				=	1 << 6,
 			ANISOTROPIC			=	1 << 7,
 			GBUFFER				=	1 << 8,
-			TRANSPARENT			=	1 << 9,
-			IRRADIANCE_MAP		=	1 << 10,
-			IRRADIANCE_VOLUME	=	1 << 11,
+			RADIANCE			=	1 << 9,
+			TRANSPARENT			=	1 << 10,
+			IRRADIANCE_MAP		=	1 << 11,
+			IRRADIANCE_VOLUME	=	1 << 12,
 		}
 
 

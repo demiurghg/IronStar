@@ -251,6 +251,16 @@ namespace Fusion.Engine.Graphics {
 
 
 
+		public void PrefilterLightProbesAll( LightSet lightSet, TextureCubeArrayRW target )
+		{
+			int batchCount = RenderSystem.MaxEnvLights / RenderSystem.LightProbeBatchSize;
+
+			for ( int batch = 0; batch < batchCount; batch++ ) {
+				PrefilterLightProbes( lightSet, target, batch );
+			}
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>

@@ -320,9 +320,10 @@ namespace Fusion.Core {
 		public void Reload()
 		{
 			if (!IsInitialized) {
-				throw new InvalidOperationException("Game is not initialized");
+				Log.Warning("Game is not initialized");
+			} else {
+				requestReload = true;
 			}
-			requestReload = true;
 		}
 
 

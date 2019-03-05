@@ -13,7 +13,7 @@ namespace Fusion.Engine.Graphics {
 
 	public partial class RenderSystem : GameComponent {
 
-		public const int	LightProbeSize = 64;
+		public const int	LightProbeSize = 128;
 		public const int	LightProbeMaxSpecularMip = 4;
 		public const int	LightProbeDiffuseMip = 5;
 		public const int	LightProbeAmbientMip = 6;

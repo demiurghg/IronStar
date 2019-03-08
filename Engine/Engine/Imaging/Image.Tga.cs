@@ -125,12 +125,12 @@ namespace Fusion.Engine.Imaging {
 				/* char	 */	header.bitsperpixel		=	br.ReadByte();
 				/* char	 */	header.imagedescriptor	=	br.ReadByte();
 
-				if ( header.datatypecode != 2 ) {
-					throw new Exception(string.Format("Only uncompressed RGB and RGBA images are supported. Got {0} data type code", header.datatypecode));
+				if ( header.datatypecode != 2 && header.datatypecode != 3 ) {
+					throw new Exception(string.Format("Only uncompressed RGB, RGBA anf Grayscale images are supported. Got {0} data type code", header.datatypecode));
 				}
 
-				if ( header.bitsperpixel != 24 && header.bitsperpixel != 32 ) {
-					throw new Exception(string.Format("Only 24- and 32-bit images are supported. Got {0} bits per pixel", header.bitsperpixel));
+				if ( header.bitsperpixel != 24 && header.bitsperpixel != 32 && header.bitsperpixel != 8 ) {
+					throw new Exception(string.Format("Only 8, 24 and 32-bit images are supported. Got {0} bits per pixel", header.bitsperpixel));
 				}
 			
 				int w = header.width;

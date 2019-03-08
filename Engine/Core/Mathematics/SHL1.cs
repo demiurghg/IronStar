@@ -100,6 +100,20 @@ namespace Fusion.Core.Mathematics {
 		}
 
 
+		public static SHL1 EvaluateDiffuseSimplified ( Vector3 normalizedDir )
+		{
+			var p	=	normalizedDir;
+			var sh	=	new SHL1();
+
+			sh[0] = 1;
+			sh[1] = p.Y;
+			sh[2] = p.Z;
+			sh[3] = p.X;
+
+			return sh;
+		}
+
+
 		/// <summary>
 		/// For rendering, we need to compute the amount of light that falls on a surface with a
 		/// particular normal from all directions on a hemisphere around it. In other words, we

@@ -18,7 +18,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		public Irradiance ( Color4 intensity, Vector3 direction )
 		{
 			var ndir	=	Vector3.Normalize( direction );
-			var shl1	=	SHL1.EvaluateDiffuse( ndir );
+			var shl1	=	SHL1.EvaluateDiffuseSimplified( ndir );
 
 			Red		= shl1 * intensity.Red;
 			Green	= shl1 * intensity.Green;

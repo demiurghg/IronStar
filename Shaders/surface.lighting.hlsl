@@ -8,6 +8,7 @@
 #include "brdf.fxi"
 #include "surface.shadows.hlsl"
 #include "surface.cubemap.hlsl"
+#include "shl1.fxi"
 
 float computeSpecOcclusion ( float NdotV , float AO , float roughness )
 {
@@ -113,15 +114,16 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	#endif
 	
 
+	#ifndef DIFFUSE_ONLY
 	roughness	=	sqrt(roughness);
 	
 	/*roughness	=	0.4f;
 	specular	=	1.0f;
 	diffuse		=	0.0f;//*/
 
-	/*roughness	=	0.0f;
-	specular	=	0.2f;
-	diffuse		=	0.5f;//*/
+	/*roughness	=	0.5f;
+	specular	=	0.5f;
+	diffuse		=	0.0f;//*/
 
 	/*roughness	=	0.4f;
 	specular	=	0.9f;
@@ -132,7 +134,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	diffuse		=	1.0f;//*/
 
 	//roughness *= 0.3f;
-	
+	#endif
 	
 	//diffuse = 0.5f;
 
@@ -260,7 +262,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	float4	irradianceR	=	float4(0,0,0,0);
 	float4	irradianceG	=	float4(0,0,0,0);
 	float4	irradianceB	=	float4(0,0,0,0);
-	float3	volumeCoord	=	float4(0,0,0,0);
+	float3	volumeCoord	=	float3(0,0,0);
 	
 	#ifdef IRRADIANCE_MAP
 		irradianceR		=	IrradianceMapR.Sample( SamplerLinear, lmCoord );
@@ -268,18 +270,35 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		irradianceB		=	IrradianceMapB.Sample( SamplerLinear, lmCoord );
 	#endif
 	#ifdef IRRADIANCE_VOLUME
-		volumeCoord		=	worldPos.xyz / float3(512,256,512) + float3(0.5f, 0.0f, 0.5f);
+		volumeCoord		=	(worldPos.xyz + float3(2,2,2)) / float3(512,256,512) + float3(0.5f, 0.0f, 0.5f);
 		irradianceR		=	IrradianceVolumeR.Sample( SamplerLinear, volumeCoord );
 		irradianceG		=	IrradianceVolumeG.Sample( SamplerLinear, volumeCoord );
 		irradianceB		=	IrradianceVolumeB.Sample( SamplerLinear, volumeCoord );
 	#endif
 	
-	float	lightR		=	irradianceR.x + dot( normal, irradianceR.wyz );
-	float	lightG		=	irradianceG.x + dot( normal, irradianceG.wyz );
-	float	lightB		=	irradianceB.x + dot( normal, irradianceB.wyz );
+	/*float	lightR		=	max(0, irradianceR.x + dot( normal, irradianceR.wyz ));
+	float	lightG		=	max(0, irradianceG.x + dot( normal, irradianceG.wyz ));
+	float	lightB		=	max(0, irradianceB.x + dot( normal, irradianceB.wyz ));//*/
+	
+	float	lightR		=	EvalSHL1Smooth( irradianceR, normalize(normal) );
+	float	lightG		=	EvalSHL1Smooth( irradianceG, normalize(normal) );
+	float	lightB		=	EvalSHL1Smooth( irradianceB, normalize(normal) );//*/
 	
 	ambientDiffuse		=	float3( lightR, lightG, lightB );
-	ambientLuminance	=	saturate((irradianceR + irradianceG + irradianceB)/3);
+	ambientLuminance	=	saturate((irradianceR.x + irradianceG.x + irradianceB.x)/3);
+	
+	//
+	//	APPROX SPECULAR :
+	//
+	/*float3 approxDir		=	(irradianceR.wyz + irradianceG.wyz + irradianceB.wyz)/3;
+	float  approxLength		=	length(approxDir) + 0.0001;
+	float  focus			=	approxLength / ambientLuminance / 1.5f;
+		   approxDir		/=	approxLength;
+	float3 approxLight		=	float3( irradianceR.x, irradianceG.x, irradianceB.x );
+	float  approxRoughness	=	saturate( 1 - ( 1 - roughness ) * sqrt(focus) );
+	float  nDotLApprox		=	saturate(dot( normal.xyz, approxDir ));
+	ambientSpecular 		= 	nDotLApprox * CookTorrance( normal.xyz, viewDirN, approxDir, approxLight, specular, roughness, focus );//*/
+	
 	
 	//
 	//	OCCLUSION :
@@ -324,9 +343,11 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		float3	diffTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, imageIndex), LightProbeDiffuseMip).rgb;
 		float3	specTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflectVector, imageIndex), roughness*LightProbeMaxSpecularMip ).rgb;
 		
-		ambientReflection	=	lerp( ambientReflection, specTerm, factor ) * ambientLuminance;//*/
+		ambientReflection	=	lerp( ambientReflection, specTerm, factor );
 	}
 #endif	
+
+	//ambientReflection	*=	pow(ambientLuminance,2);
 
 	//----------------------------------------------------------------------------------------------
 	
@@ -334,7 +355,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	ambientSpecular		=	ambientSpecular	* ( specular * ab.x + ab.y ) * ssaoFactorSpec * selfOcclusion;
 	ambientReflection	=	ambientReflection	* ( specular * ab.x + ab.y ) * ssaoFactorSpec * selfOcclusion;
 	
-	totalLight.xyz	+=	ambientDiffuse + ambientReflection;	
+	totalLight.xyz	+=	ambientDiffuse + ambientSpecular + ambientReflection;
 
 	//----------------------------------------------------------------------------------------------
 

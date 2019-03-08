@@ -6,7 +6,7 @@ MaskEmission = False
 [Textures]
 BaseColor = ..\textures\floorHeavy.tga
 NormalMap = ..\textures\floorHeavy_local.tga
-Metallic  = ..\textures\floorHeavy.tga
-Roughness = ..\textures\floorHeavy.tga
+Metallic  = ..\textures\floorHeavy_m.tga
+Roughness = ..\textures\floorHeavy_r.tga
 Emission  = 
 Occlusion = 

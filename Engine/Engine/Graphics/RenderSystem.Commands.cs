@@ -61,7 +61,6 @@ namespace Fusion.Engine.Graphics {
 			[CommandLineParser.Name("quality")]
 			public QualityLevel QualityLevel { get; set; }
 
-
 			readonly RenderSystem rs;
 			
 			public BuildRadCmd ( RenderSystem rs ) {

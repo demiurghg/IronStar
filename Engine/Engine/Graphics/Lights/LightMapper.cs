@@ -12,6 +12,7 @@ using System.Diagnostics;
 using Fusion.Engine.Imaging;
 using Fusion.Core.Configuration;
 using Fusion.Build.Mapping;
+using System.Threading.Tasks;
 
 namespace Fusion.Engine.Graphics.Lights {
 
@@ -37,15 +38,6 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 
 
-		public ShaderResource IrradianceMapRed {
-			get { return irradianceMapSHL1R ?? blackLightMap.Srv; }
-		}
-		public ShaderResource IrradianceMapGreen {
-			get { return irradianceMapSHL1G ?? blackLightMap.Srv; }
-		}
-		public ShaderResource IrradianceMapBlue {
-			get { return irradianceMapSHL1B ?? blackLightMap.Srv; }
-		}
 
 		public ShaderResource IrradianceVolumeRed {
 			get { return irradianceVolumeSHL1R ?? blackLightMap.Srv; }
@@ -63,18 +55,10 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 
 
-		Texture2D		gbufferPosition;
-		Texture2D		gbufferNormal;
-		Texture2D		gbufferColor;
-		Texture2D		irradianceMapSHL1R;
-		Texture2D		irradianceMapSHL1G;
-		Texture2D		irradianceMapSHL1B;
 		Texture3D		irradianceVolumeSHL1R;
 		Texture3D		irradianceVolumeSHL1G;
 		Texture3D		irradianceVolumeSHL1B;
 		DynamicTexture	blackLightMap;
-
-		LightMapGBuffer	lightMapSet;
 
 
 		/// <summary>
@@ -114,12 +98,6 @@ namespace Fusion.Engine.Graphics.Lights {
 				SafeDispose( ref factory );
 				SafeDispose( ref constBuffer );		 
 
-				SafeDispose( ref gbufferPosition );
-				SafeDispose( ref gbufferNormal	 );
-				SafeDispose( ref gbufferColor	 );
-				SafeDispose( ref irradianceMapSHL1R );
-				SafeDispose( ref irradianceMapSHL1G );
-				SafeDispose( ref irradianceMapSHL1B );
 				SafeDispose( ref irradianceVolumeSHL1R );
 				SafeDispose( ref irradianceVolumeSHL1G );
 				SafeDispose( ref irradianceVolumeSHL1B );
@@ -135,26 +113,6 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		public void Update ( GameTime gameTime )
 		{
-			if (lightMapSet!=null) {
-
-				for ( int i=114; i<136; i++ ) {
-					for ( int j=1; j<12; j++ ) {
-				//for ( int i=0; i<lightMapSet.Width; i++ ) {
-				//	for ( int j=0; j<lightMapSet.Height; j++ ) {
-					
-						var p = lightMapSet.Position[i,j];
-						var po=	lightMapSet.PositionOld[i,j];
-						var n = lightMapSet.Normal[i,j];
-
-						if (p!=po || true) {
-							rs.RenderWorld.Debug.DrawPoint( p, 0.5f			, Color.Red );
-							rs.RenderWorld.Debug.DrawLine ( p, p + n * 1.5f	, Color.Blue );
-							rs.RenderWorld.Debug.DrawLine ( p, po, Color.Gray );
-						}
-
-					}
-				}
-			}
 		}
 
 
@@ -165,11 +123,13 @@ namespace Fusion.Engine.Graphics.Lights {
 		-----------------------------------------------------------------------------------------*/
 
 		class LMGroup {
-			public LMGroup ( int size, IEnumerable<MeshInstance> instances )
+			public LMGroup ( int size, Guid guid, IEnumerable<MeshInstance> instances )
 			{
-				Region = new Rectangle(0,0,size,size);
-				Instances = instances.ToArray();
+				Guid		=	guid;
+				Region		=	new Rectangle(0,0,size,size);
+				Instances	=	instances.ToArray();
 			}
+			public Guid Guid;
 			public Rectangle Region;
 			public MeshInstance[] Instances;
 		}
@@ -180,11 +140,13 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// <summary>
 		/// Update lightmap
 		/// </summary>
-		public LightMapGBuffer BakeLightMap ( IEnumerable<MeshInstance> instances, LightSet lightSet, int numSamples, bool filter, int sizeBias )
+		public IrradianceMap BakeLightMap ( IEnumerable<MeshInstance> instances2, LightSet lightSet, int numSamples, bool filter, int sizeBias )
 		{
 			var hammersley		=	Hammersley.GenerateSphereUniform(numSamples);
 			var hammersleyVol	=	Hammersley.GenerateSphereUniform(numSamples/64);
-			var instanceArray	=	instances.ToArray();
+			var instances		=	instances2
+									.Where( inst => inst.Group==InstanceGroup.Static || inst.Group==InstanceGroup.Kinematic )
+									.ToArray();
 
 			var irrVolR			=	new GenericVolume<SHL1>(64,32,64);
 			var irrVolG			=	new GenericVolume<SHL1>(64,32,64);
@@ -197,9 +159,9 @@ namespace Fusion.Engine.Graphics.Lights {
 			var lmGroups = instances
 					.Where( i0 => i0.Group==InstanceGroup.Static )
 					.GroupBy( 
-						instance => instance.LightMapTag,
-						instance => instance,
-						(tag,inst) => new LMGroup( inst.First().LightMapSize.Width, inst )
+						instance => instance.LightMapGuid, // guid
+						instance => instance,              // instance
+						(guid,inst) => new LMGroup( inst.First().LightMapSize.Width, guid, inst )
 					)
 					.ToArray();
 
@@ -215,15 +177,9 @@ namespace Fusion.Engine.Graphics.Lights {
 				try {
 
 					foreach ( var group in lmGroups ) {
-
 						var addr = allocator.Alloc( group.Region.Width, "");
-
 						group.Region.X = addr.X;
 						group.Region.Y = addr.Y;
-
-						foreach ( var inst in group.Instances ) {
-							inst.LightMapScaleOffset	=	group.Region.GetMadOpScaleOffsetNDC( allocator.Width, allocator.Height );
-						}
 					}
 
 					Log.Message("Completed");
@@ -238,11 +194,12 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			Log.Message("Allocating buffers...");
 
-			var lightmap	=	new LightMapGBuffer( allocator.Width, allocator.Height );
+			var irradianceMap	=	new IrradianceMap( rs, allocator.Width, allocator.Height );
+			var lightmapGBuffer	=	new LightMapGBuffer( allocator.Width, allocator.Height );
 
-			irradianceMapSHL1R		=	new Texture2D( rs.Device, allocator.Width, allocator.Height, ColorFormat.Rgba16F, false, false );
-			irradianceMapSHL1G		=	new Texture2D( rs.Device, allocator.Width, allocator.Height, ColorFormat.Rgba16F, false, false );
-			irradianceMapSHL1B		=	new Texture2D( rs.Device, allocator.Width, allocator.Height, ColorFormat.Rgba16F, false, false );
+			foreach ( var group in lmGroups ) {
+				irradianceMap.AddRegion( group.Guid, group.Region );
+			}
 
 			irradianceVolumeSHL1R	=	new Texture3D( rs.Device, ColorFormat.Rgba16F, 64, 32, 64 );
 			irradianceVolumeSHL1G	=	new Texture3D( rs.Device, ColorFormat.Rgba16F, 64, 32, 64 );
@@ -254,7 +211,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			foreach ( var group in lmGroups ) {
 				foreach ( var instance in group.Instances ) {
-					RasterizeInstance( lightmap, instance, group.Region );
+					RasterizeInstance( lightmapGBuffer, instance, group.Region );
 				}
 			}
 
@@ -272,7 +229,7 @@ namespace Fusion.Engine.Graphics.Lights {
 					Log.Message("Generating RTC scene...");
 
 					foreach ( var instance in instances ) {
-						if (instance.Group==InstanceGroup.Static || instance.Group==InstanceGroup.Dynamic) {
+						if (instance.Group==InstanceGroup.Static || instance.Group==InstanceGroup.Kinematic) {
 							AddMeshInstance( scene, instance );
 						}
 					}
@@ -283,16 +240,16 @@ namespace Fusion.Engine.Graphics.Lights {
 
 					Log.Message("Fix geometry overlaps...");
 
-					for ( int i=0; i<lightmap.Width; i++ ) {
-						for ( int j=0; j<lightmap.Height; j++ ) {
+					for ( int i=0; i<lightmapGBuffer.Width; i++ ) {
+						for ( int j=0; j<lightmapGBuffer.Height; j++ ) {
 
-							var p = lightmap.Position[i,j];
-							var n = lightmap.Normal[i,j];
-							lightmap.PositionOld[i,j] = p;
+							var p = lightmapGBuffer.Position[i,j];
+							var n = lightmapGBuffer.Normal[i,j];
+							lightmapGBuffer.PositionOld[i,j] = p;
 
 							p = FixGeometryOverlap( scene, p, n );
 
-							lightmap.Position[i,j] = p;
+							lightmapGBuffer.Position[i,j] = p;
 						}
 					}
 
@@ -303,28 +260,28 @@ namespace Fusion.Engine.Graphics.Lights {
 					var sw = new Stopwatch();
 					sw.Start();
 
-					for ( int i=0; i<lightmap.Width; i++ ) {
+					for ( int i=0; i<lightmapGBuffer.Width; i++ ) {
 
-						Log.Message("... tracing : {0}/{1}", i, lightmap.Width );
+						Log.Message("... tracing : {0}/{1}", i, lightmapGBuffer.Width );
 
-						for ( int j=0; j<lightmap.Height; j++ ) {
+						for ( int j=0; j<lightmapGBuffer.Height; j++ ) {
 
-							var p = lightmap.Position[i,j];
-							var n = lightmap.Normal[i,j];
-							var c = lightmap.Albedo[i,j];
+							var p = lightmapGBuffer.Position[i,j];
+							var n = lightmapGBuffer.Normal[i,j];
+							var c = lightmapGBuffer.Albedo[i,j];
 
 							if (c.A>0) {
-								var r	=	ComputeRadiance( scene, instanceArray, hammersley, lightSet, p, n );
-								lightmap.IrradianceR[i,j]	=	r.Red;
-								lightmap.IrradianceG[i,j]	=	r.Green;
-								lightmap.IrradianceB[i,j]	=	r.Blue;
+								var r	=	ComputeRadiance( scene, instances, hammersley, lightSet, p, n );
+								irradianceMap.IrradianceRed		[i,j]	=	r.Red;
+								irradianceMap.IrradianceGreen	[i,j]	=	r.Green;
+								irradianceMap.IrradianceBlue	[i,j]	=	r.Blue;
 							} else {
-								lightmap.IrradianceR[i,j]	=	SHL1.Zero;
-								lightmap.IrradianceG[i,j]	=	SHL1.Zero;
-								lightmap.IrradianceB[i,j]	=	SHL1.Zero;
+								irradianceMap.IrradianceRed		[i,j]	=	SHL1.Zero;
+								irradianceMap.IrradianceGreen	[i,j]	=	SHL1.Zero;
+								irradianceMap.IrradianceBlue	[i,j]	=	SHL1.Zero;
 							}
 						}
-					}  //*/
+					} //*/
 
 					sw.Stop();
 					Log.Message("{0} ms", sw.ElapsedMilliseconds);
@@ -335,13 +292,15 @@ namespace Fusion.Engine.Graphics.Lights {
 
 					sw.Start();
 
-					for ( int i=0; i<64; i++ ) {
+					//Parallel.For( 0, 64, (i)=> {
+					/*for ( int i=0; i<64; i++ ) {
+						Log.Message("... tracing : {0}/{1}", i, 64 );
 						for ( int j=0; j<32; j++ ) {
 							for ( int k=0; k<64; k++ ) {
 
-								var x = (i-32) * 8;
-								var y = (j- 0) * 8;
-								var z = (k-32) * 8;
+								var x = (i-32) * 8 + 8/2;
+								var y = (j- 0) * 8 + 8/2;
+								var z = (k-32) * 8 + 8/2;
 
 								var p = new Vector3(x,y,z);
 								var n = Vector3.Zero;
@@ -352,7 +311,7 @@ namespace Fusion.Engine.Graphics.Lights {
 								irrVolB[i,j,k]	=	r.Blue;
 							}
 						}
-					}  //*/
+					}//);//*/
 
 					sw.Stop();
 					Log.Message("{0} ms", sw.ElapsedMilliseconds);
@@ -364,32 +323,30 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			Log.Message("Dilate radiance...");
 
-			lightmap.DilateRadiance();
+			//irradianceMap.DilateRadiance( lightmapGBuffer.Albedo );
 
 			if (filter) {
-				lightmap.BlurRadianceBilateral();
+				lightmapGBuffer.BlurRadianceBilateral();
 			}
 			
 			//--------------------------------------
 
 			Log.Message("Uploading lightmap to GPU...");
 
-			irradianceMapSHL1R.SetData( lightmap.IrradianceR.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
-			irradianceMapSHL1G.SetData( lightmap.IrradianceG.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
-			irradianceMapSHL1B.SetData( lightmap.IrradianceB.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
+			irradianceMap.UpdateGPUTextures();
+
+			rs.RenderWorld.IrradianceMap	=	irradianceMap;
 
 			irradianceVolumeSHL1R.SetData( irrVolR.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
 			irradianceVolumeSHL1G.SetData( irrVolG.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
 			irradianceVolumeSHL1B.SetData( irrVolB.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
 
-			var image = new Image( lightmap.Albedo );
+			var image = new Image( lightmapGBuffer.Albedo );
 			Image.SaveTga( image, @"E:\GITHUB\testlm.tga" );
 
 			Log.Message("Completed.");
 
-			this.lightMapSet	=	lightmap;
-
-			return lightmap;
+			return irradianceMap;
 		}
 
 
@@ -437,8 +394,10 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			var instance = instances[geomId];
 
-			foreach ( var subset in instance.Subsets ) {
-				if (primId>=subset.StartPrimitive && primId<subset.StartPrimitive+subset.PrimitiveCount) {
+			foreach ( var subset in instance.Subsets ) 
+			{
+				if (primId >= subset.StartPrimitive && primId < subset.StartPrimitive + subset.PrimitiveCount) 
+				{
 					var segment = rs.RenderWorld.VirtualTexture.GetTextureSegmentInfo( subset.Name );
 					return segment.AverageColor.ToColor4();
 				}

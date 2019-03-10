@@ -11,6 +11,8 @@ using Fusion.Drivers.Graphics;
 using Fusion.Engine.Common;
 using System.Diagnostics;
 using Fusion.Core.Shell;
+using Fusion.Engine.Graphics.Lights;
+using Fusion.Build;
 
 namespace Fusion.Engine.Graphics {
 
@@ -114,8 +116,17 @@ namespace Fusion.Engine.Graphics {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Gets collection of mesh instances.
+		/// </summary>
+		//public ICollection<MeshInstanceGroup> InstanceGroups {
+		//	get; private set;
+		//}
+
 
 		VirtualTexture virtualTexture = null;
+		IrradianceMap  irradianceMap = null;	
+		IrradianceMap  irradianceMapDefault = null;
 
 		/// <summary>
 		/// Sets and gets virtual texture for entire world
@@ -133,6 +144,27 @@ namespace Fusion.Engine.Graphics {
 						rs.VTSystem.Stop();
 						rs.VTSystem.Start(value);
 						virtualTexture = value;
+					}
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Sets anf gets irradiance map
+		/// </summary>
+		public IrradianceMap IrradianceMap {
+			get {
+				return irradianceMap ?? irradianceMapDefault;
+			}
+			set {
+				if (irradianceMap!=value) {
+					irradianceMap = value;
+
+					foreach ( var instance in Instances ) {
+						if (instance.Group==InstanceGroup.Static) {
+							instance.LightMapScaleOffset = irradianceMap.GetRegionMadScaleOffset( instance.LightMapGuid );
+						}
 					}
 				}
 			}
@@ -196,6 +228,9 @@ namespace Fusion.Engine.Graphics {
 			RadianceGBuffer1	=	new TextureCubeArrayRW	( Game.GraphicsDevice, RenderSystem.LightProbeSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba8,	false,	RenderSystem.LightProbeBatchSize );
 			RadianceCache		=	new TextureCubeArrayRW	( Game.GraphicsDevice, RenderSystem.LightProbeSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba16F,	true,	RenderSystem.LightProbeBatchSize );
 
+			irradianceMapDefault	=	new IrradianceMap( rs, 16, 16 );
+			irradianceMapDefault.FillAmbient( Color4.White );
+
 			Resize( width, height );
 		}
 
@@ -210,6 +245,8 @@ namespace Fusion.Engine.Graphics {
 			if (disposing) {
 				
 				SafeDispose( ref particleSystem );
+
+				SafeDispose( ref irradianceMapDefault );
 
 				SafeDispose( ref debug );
 
@@ -327,6 +364,13 @@ namespace Fusion.Engine.Graphics {
 
 		/*-----------------------------------------------------------------------------------------
 		 * 
+		 *	Visibility system :
+		 * 
+		-----------------------------------------------------------------------------------------*/
+
+
+		/*-----------------------------------------------------------------------------------------
+		 * 
 		 *	Rendering :
 		 * 
 		-----------------------------------------------------------------------------------------*/
@@ -343,6 +387,13 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			var viewport	=	new Viewport( 0,0, targetSurface.Width, targetSurface.Height );
+
+			foreach ( var instance in Instances ) {
+				if (instance.Group==InstanceGroup.Static) {
+					instance.LightMapScaleOffset = irradianceMap.GetRegionMadScaleOffset( instance.LightMapGuid );
+				}
+			}
+
 
 			//	Render HDR stuff: mesh instances, 
 			//	special effects, sky, water, light etc. 
@@ -596,9 +647,16 @@ namespace Fusion.Engine.Graphics {
 					break; 
 			}
 
-			rs.LightManager.LightMap.BakeLightMap( Instances, LightSet, samples, filter, bias );
+			using ( var irrMap = rs.LightManager.LightMap.BakeLightMap( Instances, LightSet, samples, filter, bias ) ) {
 
-			Log.Message("Lightmap : {0} : {1}", quality, sw.ElapsedMilliseconds);
+				var fullPath	=	Builder.GetFullPath(@"test_lightmap.irrmap");
+
+				using ( var stream = File.OpenWrite( fullPath ) ) {
+					irrMap.WriteToStream( stream );
+				}
+			}
+
+				Log.Message( "Lightmap : {0} : {1}", quality, sw.ElapsedMilliseconds );
 			Log.Message("----------------");
 
 			//----------------------------------------

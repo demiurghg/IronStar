@@ -10,6 +10,7 @@
 #include "surface.cubemap.hlsl"
 #include "shl1.fxi"
 
+
 float computeSpecOcclusion ( float NdotV , float AO , float roughness )
 {
 	return saturate (pow( NdotV + AO , exp2 ( -16.0f * roughness - 1.0f )) - 1.0f + AO );
@@ -84,7 +85,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 			totalLight.rgb		+=	 glowColor * factor;
 		
 			baseColor 	= lerp( baseColor.rgb, decalColor, decal.ColorFactor * factor );
-			roughness 	= max( lerp( roughness, decalR, decal.SpecularFactor * factor ), 0.01f );
+			roughness 	= lerp( roughness, decalR, decal.SpecularFactor * factor );
 			metallic 	= lerp( metallic,  decalM, decal.SpecularFactor * factor );
 			normal		= lerp( normal, decalNormal, decal.NormalMapFactor * factor );
 
@@ -115,7 +116,8 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	
 
 	#ifndef DIFFUSE_ONLY
-	roughness	=	sqrt(roughness);
+	roughness	=	sqrt(saturate(roughness));
+	roughness	=	clamp( roughness, 1.0f / 1024.0f, 1 );
 	
 	/*roughness	=	0.4f;
 	specular	=	1.0f;

@@ -14,9 +14,10 @@ namespace Fusion.Engine.Graphics {
 
 	public enum InstanceGroup : uint {
 		Static		=	0x00000001,
-		Dynamic		=	0x00000002,
-		Character	=	0x00000004,
-		Weapon		=	0x00000008,
+		Kinematic	=	0x00000002,
+		Dynamic		=	0x00000004,
+		Character	=	0x00000008,
+		Weapon		=	0x00000010,
 		NotWeapon	=	~Weapon,
 		All			=	0xFFFFFFFF,
 	}
@@ -91,7 +92,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Tag
 		/// </summary>
-		public object LightMapTag {
+		public Guid LightMapGuid {
 			get; set;
 		}
 

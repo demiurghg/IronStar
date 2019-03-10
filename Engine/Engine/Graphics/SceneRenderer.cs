@@ -221,9 +221,9 @@ namespace Fusion.Engine.Graphics {
 				device.PixelShaderResources[12]	= context.GetAOBuffer();
 			}
 
-			device.PixelShaderResources[13]	=	rs.LightManager.LightMap.IrradianceMapRed;
-			device.PixelShaderResources[14]	=	rs.LightManager.LightMap.IrradianceMapGreen;
-			device.PixelShaderResources[15]	=	rs.LightManager.LightMap.IrradianceMapBlue;
+			device.PixelShaderResources[13]	=	rs.RenderWorld.IrradianceMap.IrradianceTextureRed;
+			device.PixelShaderResources[14]	=	rs.RenderWorld.IrradianceMap.IrradianceTextureGreen;
+			device.PixelShaderResources[15]	=	rs.RenderWorld.IrradianceMap.IrradianceTextureBlue;
 			device.PixelShaderResources[16]	=	rs.LightManager.LightMap.IrradianceVolumeRed;
 			device.PixelShaderResources[17]	=	rs.LightManager.LightMap.IrradianceVolumeGreen;
 			device.PixelShaderResources[18]	=	rs.LightManager.LightMap.IrradianceVolumeBlue;

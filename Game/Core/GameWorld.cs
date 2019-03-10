@@ -22,6 +22,7 @@ using IronStar.Views;
 using IronStar.Items;
 using IronStar.Entities.Players;
 using Native.NRecast;
+using Fusion.Engine.Graphics.Lights;
 
 namespace IronStar.Core {
 
@@ -107,6 +108,7 @@ namespace IronStar.Core {
 
 			rw.LightSet.SpotAtlas	=	Content.Load<TextureAtlas>(@"spots\spots|srgb");
 			rw.LightSet.DecalAtlas	=	Content.Load<TextureAtlas>(@"decals\decals");
+			rw.IrradianceMap		=	Content.Load<IrradianceMap>(@"test_lightmap", (IrradianceMap)null );
 
 			//	initialize server atoms, 
 			//	including assets and inline-factories.

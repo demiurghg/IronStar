@@ -160,7 +160,7 @@ namespace IronStar.Mapping {
 					instances[i].World			=	transforms[ i ] * WorldMatrix;
 					instances[i].Group			=	Dynamic ? InstanceGroup.Dynamic : InstanceGroup.Static;
 					instances[i].LightMapSize	=	new Size2( (int)LightMapSize, (int)LightMapSize );
-					instances[i].LightMapTag	=	this;
+					instances[i].LightMapGuid	=	this.NodeGuid;
 					rs.RenderWorld.Instances.Add( instances[i] );
 				} else {
 					instances[i] = null;

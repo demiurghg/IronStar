@@ -26,10 +26,6 @@ namespace Fusion.Engine.Graphics.Lights {
 		public readonly GenericImage<Vector3>	Normal;
 		public readonly GenericImage<Bool>		Coverage;
 
-		public readonly GenericImage<SHL1>		IrradianceR;
-		public readonly GenericImage<SHL1>		IrradianceG;
-		public readonly GenericImage<SHL1>		IrradianceB;
-
 		public readonly GenericImage<SHL1>		TempSHs;
 
 
@@ -49,25 +45,10 @@ namespace Fusion.Engine.Graphics.Lights {
 			Normal			=	new GenericImage<Vector3>	( w, h, Vector3.Zero );
 			Coverage		=	new GenericImage<Bool>		( w, h, false );
 
-			IrradianceR		=	new GenericImage<SHL1>( w, h, SHL1.Zero );
-			IrradianceG		=	new GenericImage<SHL1>( w, h, SHL1.Zero );
-			IrradianceB		=	new GenericImage<SHL1>( w, h, SHL1.Zero );
-
 			TempSHs			=	new GenericImage<SHL1>( w, h, SHL1.Zero );
 		}
 			
 
-
-
-		/// <summary>
-		/// Dilate lighting
-		/// </summary>
-		public void DilateRadiance ()
-		{
-			IrradianceR.Dilate( TempSHs, (xy) => Albedo[xy].A > 0 );
-			IrradianceG.Dilate( TempSHs, (xy) => Albedo[xy].A > 0 );
-			IrradianceB.Dilate( TempSHs, (xy) => Albedo[xy].A > 0 );
-		}
 
 
 

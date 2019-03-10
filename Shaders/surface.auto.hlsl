@@ -12,9 +12,9 @@ static const uint LightProbeSize = 128;
 static const uint LightProbeMaxSpecularMip = 4;
 static const uint LightProbeDiffuseMip = 5;
 static const uint InstanceGroupStatic = 1;
-static const uint InstanceGroupDynamic = 2;
-static const uint InstanceGroupCharacter = 4;
-static const uint InstanceGroupWeapon = 8;
+static const uint InstanceGroupDynamic = 4;
+static const uint InstanceGroupCharacter = 8;
+static const uint InstanceGroupWeapon = 16;
 
 // Fusion.Engine.Graphics.SceneRenderer+STAGE
 // Marshal.SizeOf = 1024

@@ -81,8 +81,8 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			using ( var reader = new BinaryReader( stream ) ) {
 				
-				reader.ExpectFourCC("IRM1", "Bad irradiance map format. IRM1 expected.");
-				reader.ExpectFourCC("RGN1", "Bad irradiance map format. RGN1 expected.");
+				reader.ExpectFourCC("IRM1", "irradiance map format. IRM1 expected.");
+				reader.ExpectFourCC("RGN1", "irradiance map format. RGN1 expected.");
 
 				int count = reader.ReadInt32();
 
@@ -92,7 +92,7 @@ namespace Fusion.Engine.Graphics.Lights {
 					regions.Add( guid, region );
 				}
 
-				reader.ExpectFourCC("MAP1", "Bad irradiance map format. MAP1 expected.");
+				reader.ExpectFourCC("MAP1", "irradiance map format. MAP1 expected.");
 
 				width	=	reader.ReadInt32();
 				height	=	reader.ReadInt32();

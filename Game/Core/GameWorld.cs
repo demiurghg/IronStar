@@ -108,7 +108,8 @@ namespace IronStar.Core {
 
 			rw.LightSet.SpotAtlas	=	Content.Load<TextureAtlas>(@"spots\spots|srgb");
 			rw.LightSet.DecalAtlas	=	Content.Load<TextureAtlas>(@"decals\decals");
-			rw.IrradianceMap		=	Content.Load<IrradianceMap>(@"test_lightmap", (IrradianceMap)null );
+			rw.IrradianceMap		=	Content.Load(@"test_lightmap",	(IrradianceMap)null );
+			rw.IrradianceVolume		=	Content.Load(@"test_lightvol",	(IrradianceVolume)null );
 
 			//	initialize server atoms, 
 			//	including assets and inline-factories.

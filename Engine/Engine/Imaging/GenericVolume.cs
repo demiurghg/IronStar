@@ -214,6 +214,13 @@ namespace Fusion.Engine.Imaging {
 		}
 
 
+
+		public void Fill ( TColor value )
+		{
+			for (int i=0; i<RawImageData.Length; i++) {
+				RawImageData[i] = value;
+			}
+		}
 		
 
 		/*-----------------------------------------------------------------------------------------

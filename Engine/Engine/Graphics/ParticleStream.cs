@@ -443,7 +443,7 @@ namespace Fusion.Engine.Graphics {
 			param.CascadeScaleOffset1		=	rs.LightManager.ShadowMap.GetCascade( 1 ).ShadowScaleOffset;
 			param.CascadeScaleOffset2		=	rs.LightManager.ShadowMap.GetCascade( 2 ).ShadowScaleOffset;
 			param.CascadeScaleOffset3		=	rs.LightManager.ShadowMap.GetCascade( 3 ).ShadowScaleOffset;
-			param.OcclusionGridMatrix		=	rs.LightManager.LightMap.LightMap3DMatrix;
+			param.OcclusionGridMatrix		=	rs.RenderWorld.IrradianceVolume.VolumeTransform;
 			param.DirectLightDirection		=	new Vector4( renderWorld.LightSet.DirectLight.Direction, 0 );
 			param.DirectLightIntensity		=	renderWorld.LightSet.DirectLight.Intensity;
 			param.SkyAmbientLevel			=	rs.RenderWorld.SkySettings.AmbientLevel;
@@ -677,9 +677,9 @@ namespace Fusion.Engine.Graphics {
 					}
 
 					if (flags==Flags.DRAW_LIGHT || flags==Flags.DRAW_HARD) {
-						device.PixelShaderResources[14]		=	rs.LightManager.LightMap.IrradianceVolumeRed;
-						device.PixelShaderResources[15]		=	rs.LightManager.LightMap.IrradianceVolumeGreen;
-						device.PixelShaderResources[17]		=	rs.LightManager.LightMap.IrradianceVolumeBlue;
+						device.PixelShaderResources[14]		=	rs.RenderWorld.IrradianceVolume.IrradianceTextureRed;
+						device.PixelShaderResources[15]		=	rs.RenderWorld.IrradianceVolume.IrradianceTextureGreen;
+						device.PixelShaderResources[17]		=	rs.RenderWorld.IrradianceVolume.IrradianceTextureBlue;
 					}
 
 					device.GeometryShaderResources[18]		=	lightMapRegions;

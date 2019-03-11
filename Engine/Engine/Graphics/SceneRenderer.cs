@@ -165,7 +165,7 @@ namespace Fusion.Engine.Graphics {
 			cbDataStage.CascadeGradientMatrix2	=	rs.LightManager.ShadowMap.GetCascade( 2 ).ComputeGradientMatrix();
 			cbDataStage.CascadeGradientMatrix3	=	rs.LightManager.ShadowMap.GetCascade( 3 ).ComputeGradientMatrix();
 
-			cbDataStage.OcclusionGridMatrix		=	rs.LightManager.LightMap.LightMap3DMatrix;
+			cbDataStage.OcclusionGridMatrix		=	rs.RenderWorld.IrradianceVolume.VolumeTransform;
 
 			cbDataStage.VTGradientScaler		=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;
 
@@ -224,9 +224,9 @@ namespace Fusion.Engine.Graphics {
 			device.PixelShaderResources[13]	=	rs.RenderWorld.IrradianceMap.IrradianceTextureRed;
 			device.PixelShaderResources[14]	=	rs.RenderWorld.IrradianceMap.IrradianceTextureGreen;
 			device.PixelShaderResources[15]	=	rs.RenderWorld.IrradianceMap.IrradianceTextureBlue;
-			device.PixelShaderResources[16]	=	rs.LightManager.LightMap.IrradianceVolumeRed;
-			device.PixelShaderResources[17]	=	rs.LightManager.LightMap.IrradianceVolumeGreen;
-			device.PixelShaderResources[18]	=	rs.LightManager.LightMap.IrradianceVolumeBlue;
+			device.PixelShaderResources[16]	=	rs.RenderWorld.IrradianceVolume.IrradianceTextureRed;
+			device.PixelShaderResources[17]	=	rs.RenderWorld.IrradianceVolume.IrradianceTextureGreen;
+			device.PixelShaderResources[18]	=	rs.RenderWorld.IrradianceVolume.IrradianceTextureBlue;
 
 			device.PixelShaderResources[20]	=	rs.RenderWorld.RadianceCache;
 			device.PixelShaderResources[21]	=	envLut.Srv;

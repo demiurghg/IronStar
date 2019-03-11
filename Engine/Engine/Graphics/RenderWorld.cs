@@ -124,9 +124,11 @@ namespace Fusion.Engine.Graphics {
 		//}
 
 
-		VirtualTexture virtualTexture = null;
-		IrradianceMap  irradianceMap = null;	
-		IrradianceMap  irradianceMapDefault = null;
+		VirtualTexture		virtualTexture = null;
+		IrradianceMap		irradianceMap = null;	
+		IrradianceMap		irradianceMapDefault = null;
+		IrradianceVolume	irradianceVolume = null;
+		IrradianceVolume	irradianceVolumeDefault = null;
 
 		/// <summary>
 		/// Sets and gets virtual texture for entire world
@@ -166,6 +168,21 @@ namespace Fusion.Engine.Graphics {
 							instance.LightMapScaleOffset = irradianceMap.GetRegionMadScaleOffset( instance.LightMapGuid );
 						}
 					}
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Sets anf gets irradiance map
+		/// </summary>
+		public IrradianceVolume IrradianceVolume {
+			get {
+				return irradianceVolume ?? irradianceVolumeDefault;
+			}
+			set {
+				if (irradianceVolume!=value) {
+					irradianceVolume = value;
 				}
 			}
 		}
@@ -231,6 +248,9 @@ namespace Fusion.Engine.Graphics {
 			irradianceMapDefault	=	new IrradianceMap( rs, 16, 16 );
 			irradianceMapDefault.FillAmbient( Color4.White );
 
+			irradianceVolumeDefault	=	new IrradianceVolume( rs, 4, 4, 4, 1024 );
+			irradianceVolumeDefault.FillAmbient( Color4.White );
+
 			Resize( width, height );
 		}
 
@@ -247,6 +267,7 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref particleSystem );
 
 				SafeDispose( ref irradianceMapDefault );
+				SafeDispose( ref irradianceVolumeDefault );
 
 				SafeDispose( ref debug );
 
@@ -647,7 +668,7 @@ namespace Fusion.Engine.Graphics {
 					break; 
 			}
 
-			using ( var irrMap = rs.LightManager.LightMap.BakeLightMap( Instances, LightSet, samples, filter, bias ) ) {
+			using ( var irrMap = rs.LightManager.LightMap.BakeIrradianceMap( Instances, LightSet, samples, filter, bias ) ) {
 
 				var fullPath	=	Builder.GetFullPath(@"test_lightmap.irrmap");
 
@@ -656,7 +677,17 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 
-				Log.Message( "Lightmap : {0} : {1}", quality, sw.ElapsedMilliseconds );
+
+			using ( var irrVol = rs.LightManager.LightMap.BakeIrradianceVolume( Instances, LightSet, samples/64, 64,32,64, 8 ) ) {
+
+				var fullPath	=	Builder.GetFullPath(@"test_lightvol.irrvol");
+
+				using ( var stream = File.OpenWrite( fullPath ) ) {
+					irrVol.WriteToStream( stream );
+				}
+			}
+
+			Log.Message( "Lightmap : {0} : {1}", quality, sw.ElapsedMilliseconds );
 			Log.Message("----------------");
 
 			//----------------------------------------

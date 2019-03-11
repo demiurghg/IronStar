@@ -16,61 +16,13 @@ using System.Threading.Tasks;
 
 namespace Fusion.Engine.Graphics.Lights {
 
-	[RequireShader("lightmap", true)]
 	internal class LightMapper : RenderComponent {
-
-		[ShaderStructure()]
-		[StructLayout(LayoutKind.Sequential, Pack=4, Size=192)]
-		struct BAKE_PARAMS {
-			public	Matrix	ShadowViewProjection;
-			public	Matrix	OcclusionGridTransform;
-			public	Vector4 LightDirection;
-		}
-
-
-		ConstantBuffer		constBuffer;
-		StateFactory		factory;
-		Ubershader			shader;
-
-		enum Flags {
-			BAKE,
-			COPY,
-		}
-
-
-
-		public ShaderResource IrradianceVolumeRed {
-			get { return irradianceVolumeSHL1R ?? blackLightMap.Srv; }
-		}
-		public ShaderResource IrradianceVolumeGreen {
-			get { return irradianceVolumeSHL1G ?? blackLightMap.Srv; }
-		}
-		public ShaderResource IrradianceVolumeBlue {
-			get { return irradianceVolumeSHL1B ?? blackLightMap.Srv; }
-		}
-
-
-		public Matrix LightMap3DMatrix {
-			get { return Matrix.Identity; }
-		}
-
-
-		Texture3D		irradianceVolumeSHL1R;
-		Texture3D		irradianceVolumeSHL1G;
-		Texture3D		irradianceVolumeSHL1B;
-		DynamicTexture	blackLightMap;
-
 
 		/// <summary>
 		/// Creates instance of the Lightmap
 		/// </summary>
 		public LightMapper(RenderSystem rs) : base(rs)
 		{
-			constBuffer		=	new ConstantBuffer( rs.Device, typeof(BAKE_PARAMS) );
-
-			blackLightMap	=	new DynamicTexture(rs, 32, 32, typeof(Color), false, false );
-			blackLightMap.SetData( new GenericImage<Color>(32,32,Color.Black).RawImageData );
-
 			LoadContent();
 
 			Game.Reloading += (s,e) => LoadContent();
@@ -82,10 +34,6 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		void LoadContent ()
 		{
-			SafeDispose( ref factory );
-
-			shader	=	Game.Content.Load<Ubershader>("lightmap");
-			factory	=	shader.CreateFactory( typeof(Flags) );
 		}
 
 
@@ -95,13 +43,6 @@ namespace Fusion.Engine.Graphics.Lights {
 		protected override void Dispose( bool disposing )
 		{
 			if (disposing) {
-				SafeDispose( ref factory );
-				SafeDispose( ref constBuffer );		 
-
-				SafeDispose( ref irradianceVolumeSHL1R );
-				SafeDispose( ref irradianceVolumeSHL1G );
-				SafeDispose( ref irradianceVolumeSHL1B );
-				SafeDispose( ref blackLightMap );
 			}
 
 			base.Dispose( disposing );
@@ -137,20 +78,22 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		Random rand		=	new Random();
 
+
+		MeshInstance[] SelectOccludingInstances ( IEnumerable<MeshInstance> instances )
+		{
+			return instances
+					.Where( inst => inst.Group==InstanceGroup.Static || inst.Group==InstanceGroup.Kinematic )
+					.ToArray();
+		}
+
+
 		/// <summary>
 		/// Update lightmap
 		/// </summary>
-		public IrradianceMap BakeLightMap ( IEnumerable<MeshInstance> instances2, LightSet lightSet, int numSamples, bool filter, int sizeBias )
+		public IrradianceMap BakeIrradianceMap ( IEnumerable<MeshInstance> instances2, LightSet lightSet, int numSamples, bool filter, int sizeBias )
 		{
 			var hammersley		=	Hammersley.GenerateSphereUniform(numSamples);
-			var hammersleyVol	=	Hammersley.GenerateSphereUniform(numSamples/64);
-			var instances		=	instances2
-									.Where( inst => inst.Group==InstanceGroup.Static || inst.Group==InstanceGroup.Kinematic )
-									.ToArray();
-
-			var irrVolR			=	new GenericVolume<SHL1>(64,32,64);
-			var irrVolG			=	new GenericVolume<SHL1>(64,32,64);
-			var irrVolB			=	new GenericVolume<SHL1>(64,32,64);
+			var instances		=	SelectOccludingInstances( instances2 );
 
 			//-------------------------------------------------
 
@@ -201,10 +144,6 @@ namespace Fusion.Engine.Graphics.Lights {
 				irradianceMap.AddRegion( group.Guid, group.Region );
 			}
 
-			irradianceVolumeSHL1R	=	new Texture3D( rs.Device, ColorFormat.Rgba16F, 64, 32, 64 );
-			irradianceVolumeSHL1G	=	new Texture3D( rs.Device, ColorFormat.Rgba16F, 64, 32, 64 );
-			irradianceVolumeSHL1B	=	new Texture3D( rs.Device, ColorFormat.Rgba16F, 64, 32, 64 );
-
 			//-------------------------------------------------
 
 			Log.Message("Rasterizing lightmap G-buffer...");
@@ -219,24 +158,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			using ( var rtc = new Rtc() ) {
 
-				var sceneFlags	=	SceneFlags.Static|SceneFlags.Coherent;
-				var algFlags	=	AlgorithmFlags.Intersect1;
-
-				using ( var scene = new RtcScene( rtc, sceneFlags, algFlags ) ) {
-
-					//--------------------------------------
-
-					Log.Message("Generating RTC scene...");
-
-					foreach ( var instance in instances ) {
-						if (instance.Group==InstanceGroup.Static || instance.Group==InstanceGroup.Kinematic) {
-							AddMeshInstance( scene, instance );
-						}
-					}
-
-					scene.Commit();
-
-					//--------------------------------------
+				using ( var scene = BuildRtcScene( rtc, instances ) ) {
 
 					Log.Message("Fix geometry overlaps...");
 
@@ -256,9 +178,6 @@ namespace Fusion.Engine.Graphics.Lights {
 					//--------------------------------------
 
 					Log.Message("Indirect light ray tracing...");
-
-					var sw = new Stopwatch();
-					sw.Start();
 
 					for ( int i=0; i<lightmapGBuffer.Width; i++ ) {
 
@@ -281,43 +200,9 @@ namespace Fusion.Engine.Graphics.Lights {
 								irradianceMap.IrradianceBlue	[i,j]	=	SHL1.Zero;
 							}
 						}
-					} //*/
-
-					sw.Stop();
-					Log.Message("{0} ms", sw.ElapsedMilliseconds);
-
-					//--------------------------------------
-
-					Log.Message("Indirect light ray tracing...");
-
-					sw.Start();
-
-					//Parallel.For( 0, 64, (i)=> {
-					/*for ( int i=0; i<64; i++ ) {
-						Log.Message("... tracing : {0}/{1}", i, 64 );
-						for ( int j=0; j<32; j++ ) {
-							for ( int k=0; k<64; k++ ) {
-
-								var x = (i-32) * 8 + 8/2;
-								var y = (j- 0) * 8 + 8/2;
-								var z = (k-32) * 8 + 8/2;
-
-								var p = new Vector3(x,y,z);
-								var n = Vector3.Zero;
-
-								var r	=	ComputeRadiance( scene, instanceArray, hammersleyVol, lightSet, p, n );
-								irrVolR[i,j,k]	=	r.Red;
-								irrVolG[i,j,k]	=	r.Green;
-								irrVolB[i,j,k]	=	r.Blue;
-							}
-						}
-					}//);//*/
-
-					sw.Stop();
-					Log.Message("{0} ms", sw.ElapsedMilliseconds);
-
+					}
 				}
-			}	 //*/
+			}
 
 			//--------------------------------------
 
@@ -335,15 +220,6 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			irradianceMap.UpdateGPUTextures();
 
-			rs.RenderWorld.IrradianceMap	=	irradianceMap;
-
-			irradianceVolumeSHL1R.SetData( irrVolR.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
-			irradianceVolumeSHL1G.SetData( irrVolG.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
-			irradianceVolumeSHL1B.SetData( irrVolB.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
-
-			var image = new Image( lightmapGBuffer.Albedo );
-			Image.SaveTga( image, @"E:\GITHUB\testlm.tga" );
-
 			Log.Message("Completed.");
 
 			return irradianceMap;
@@ -351,7 +227,54 @@ namespace Fusion.Engine.Graphics.Lights {
 
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public IrradianceVolume BakeIrradianceVolume (	IEnumerable<MeshInstance> instances2, LightSet lightSet, int numSamples, int w, int h, int d, float stride )
+		{
+			var instances	=	SelectOccludingInstances( instances2 );
+			var hammersley	=	Hammersley.GenerateSphereUniform(numSamples);
+			var irrVolume	=	new IrradianceVolume( rs, w,h,d, stride );
 
+			using ( var rtc = new Rtc() ) {
+
+				using ( var scene = BuildRtcScene( rtc, instances ) ) {
+
+					Log.Message("Indirect light ray tracing...");
+
+					for ( int i=0; i<irrVolume.Width; i++ ) {
+
+						Log.Message("... tracing : {0}/{1}", i, irrVolume.Width );
+
+						for ( int j=0; j<irrVolume.Height; j++ ) {
+
+							for ( int k=0; k<irrVolume.Depth; k++ ) {
+
+								var x = ( i-w/2f ) * stride + stride/2;
+								var y = ( j      ) * stride + stride/2;
+								var z = ( k-d/2f ) * stride + stride/2;
+
+								var p = new Vector3(x,y,z);
+								var n = Vector3.Zero;
+
+								var r	=	ComputeRadiance( scene, instances, hammersley, lightSet, p, n );
+								irrVolume.IrradianceRed	 [i,j,k]	=	r.Red;
+								irrVolume.IrradianceGreen[i,j,k]	=	r.Green;
+								irrVolume.IrradianceBlue [i,j,k]	=	r.Blue;
+							}
+						}
+					}
+				}
+			}
+
+			return irrVolume;
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
 		Vector3 FixGeometryOverlap ( RtcScene scene, Vector3 position, Vector3 normal)
 		{
 			var basis	=	MathUtil.ComputeAimedBasis( normal );
@@ -621,6 +544,33 @@ namespace Fusion.Engine.Graphics.Lights {
 		 *	Embree stuff
 		 * 
 		-----------------------------------------------------------------------------------------*/
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rtc"></param>
+		/// <param name="instances"></param>
+		/// <returns></returns>
+		RtcScene BuildRtcScene ( Rtc rtc, IEnumerable<MeshInstance> instances )
+		{
+			Log.Message("Generating RTC scene...");
+
+			var sceneFlags	=	SceneFlags.Static|SceneFlags.Coherent;
+			var algFlags	=	AlgorithmFlags.Intersect1;
+
+			var scene		=	new RtcScene( rtc, sceneFlags, algFlags );
+
+			foreach ( var instance in instances ) {
+				if (instance.Group==InstanceGroup.Static || instance.Group==InstanceGroup.Kinematic) {
+					AddMeshInstance( scene, instance );
+				}
+			}
+
+			scene.Commit();
+
+			return scene;
+		}
+
 
 		/// <summary>
 		/// Adds mesh instance to the RTC scene

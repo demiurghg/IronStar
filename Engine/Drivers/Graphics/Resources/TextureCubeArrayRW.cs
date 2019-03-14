@@ -28,6 +28,7 @@ namespace Fusion.Drivers.Graphics {
 		RenderTargetSurface[,]	singleCubeSurfaces;
 		RenderTargetSurface[,]	batchCubeSurfaces;
 		ShaderResource[,]		batchCubeResources;
+		D3D.Texture2D			stagingCube;
 		readonly int batchSize;
 		readonly int batchCount;
 		readonly ColorFormat format;
@@ -60,6 +61,28 @@ namespace Fusion.Drivers.Graphics {
 
 			var texDesc = new Texture2DDescription();
 
+			//-------------------------------------------
+			//	create staging cube texture :
+			//-------------------------------------------
+
+			texDesc.ArraySize		=	6;
+			texDesc.BindFlags		=	BindFlags.None;
+			texDesc.CpuAccessFlags	=	CpuAccessFlags.Read|CpuAccessFlags.Write;
+			texDesc.Format			=	Converter.Convert( format );
+			texDesc.Height			=	Height;
+			texDesc.MipLevels		=	MipCount;
+			texDesc.OptionFlags		=	ResourceOptionFlags.TextureCube;
+			texDesc.SampleDescription.Count	=	1;
+			texDesc.SampleDescription.Quality	=	0;
+			texDesc.Usage			=	ResourceUsage.Staging;
+			texDesc.Width			=	Width;
+
+			stagingCube				=	new D3D.Texture2D( device.Device, texDesc );
+
+			//-------------------------------------------
+			//	create cube texture array :
+			//-------------------------------------------
+
 			texDesc.ArraySize		=	6 * count;
 			texDesc.BindFlags		=	BindFlags.ShaderResource|BindFlags.UnorderedAccess;
 			texDesc.CpuAccessFlags	=	CpuAccessFlags.None;
@@ -71,7 +94,6 @@ namespace Fusion.Drivers.Graphics {
 			texDesc.SampleDescription.Quality	=	0;
 			texDesc.Usage			=	ResourceUsage.Default;
 			texDesc.Width			=	Width;
-
 
 			texCubeArray	=	new D3D.Texture2D( device.Device, texDesc );
 			SRV				=	new ShaderResourceView( device.Device, texCubeArray );
@@ -208,6 +230,12 @@ namespace Fusion.Drivers.Graphics {
 		}
 
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="rtSourceCube"></param>
 		public void CopyTopMipLevelFromRenderTargetCube ( int index, RenderTargetCube rtSourceCube )
 		{
 			using ( new PixEvent( "CopyTopMipLevelFromRenderTargetCube" ) ) {
@@ -262,17 +290,62 @@ namespace Fusion.Drivers.Graphics {
 					throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different format");
 				}
 
-				int subResourceCount = 6 * rtCube.MipCount;
+				/*int subResourceCount = 6 * rtCube.MipCount;
 			
 				for (int i=0; i<subResourceCount; i++) {
 				
 					int srcIndex = i;
-					int dstIndex = i + subResourceCount * index;
-
+					int dstIndex = i + subResourceCount * index;				
+				
 					GraphicsDevice.DeviceContext.CopySubresourceRegion( rtCube.TextureResource, srcIndex, null, texCubeArray, dstIndex );
+				} //*/
+				int mipCount = rtCube.MipCount;
+				int stride	 = 6;
+				var context	 = GraphicsDevice.DeviceContext;
+
+				for (int mip=0; mip<rtCube.MipCount; mip++) {
+					for (int face=0; face<6; face++) {
+
+						int srcIndex = Resource.CalculateSubResourceIndex( mip, face,                  mipCount );
+						int dstIndex = Resource.CalculateSubResourceIndex( mip, face + stride * index, mipCount );;
+
+						context.CopySubresourceRegion( rtCube.TextureResource, srcIndex, null, texCubeArray, dstIndex );
+					}
 				}
 			}
 		}
 
+
+
+		void GetData<T> ( int mip, int index, CubeFace face, T[] data ) where T: struct
+		{																	
+			int faceId		=	(int)face;			
+			int srcIndex	=	Resource.CalculateSubResourceIndex( mip, index * 6 + faceId, MipCount );
+			int dstIndex	=	Resource.CalculateSubResourceIndex( mip,             faceId, MipCount );
+
+			var context		=	GraphicsDevice.DeviceContext;
+
+			context.CopySubresourceRegion( texCubeArray, srcIndex, null, stagingCube, dstIndex );
+
+			DataStream stream;
+			var dataBox = context.MapSubresource( stagingCube, dstIndex, MapMode.Read, MapFlags.None, out stream );
+
+			int mipWidth		=	Width  >> mip;
+			int mipHeight		=	Height >> mip;
+            int currentIndex	=	0;
+			int elementSize		=	Marshal.SizeOf(typeof(T));
+
+			for ( int row=0; row<mipHeight; row++ ) {
+
+                stream.ReadRange( data, currentIndex, mipWidth );
+                stream.Seek( dataBox.RowPitch - (elementSize * mipWidth), SeekOrigin.Current);
+                currentIndex += mipWidth;
+
+			}
+
+			stream.Dispose();
+
+			context.UnmapSubresource( stagingCube, dstIndex );
+		}
 	}
 }

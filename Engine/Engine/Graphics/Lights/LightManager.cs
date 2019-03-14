@@ -350,9 +350,5 @@ namespace Fusion.Engine.Graphics {
 				//}
 			}
 		}
-
-
-
-
 	}
 }

@@ -11,6 +11,7 @@ using Fusion.Drivers.Graphics;
 using Fusion.Engine.Common;
 using System.Diagnostics;
 using Fusion.Core.Shell;
+using Fusion.Core.Extensions;
 using Fusion.Engine.Graphics.Lights;
 using Fusion.Build;
 
@@ -192,6 +193,7 @@ namespace Fusion.Engine.Graphics {
 
 		internal DepthStencil2D		LightProbeDepth;
 		internal RenderTargetCube	LightProbeHdr;
+		internal RenderTargetCube	LightProbeHdrTemp;
 		internal RenderTargetCube	LightProbeGBuffer0;
 		internal RenderTargetCube	LightProbeGBuffer1;
 		internal TextureCubeArrayRW	RadianceCache;
@@ -237,7 +239,8 @@ namespace Fusion.Engine.Graphics {
 			LightProbeDepth		=	new DepthStencil2D		( Game.GraphicsDevice, DepthFormat.D24S8,	RenderSystem.LightProbeSize, RenderSystem.LightProbeSize );
 
 			#warning false
-			LightProbeHdr		=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba16F,	RenderSystem.LightProbeSize, false ); 
+			LightProbeHdr		=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba16F,	RenderSystem.LightProbeSize, true ); 
+			LightProbeHdrTemp	=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba16F,	RenderSystem.LightProbeSize, true ); 
 			LightProbeGBuffer0	=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba8,	RenderSystem.LightProbeSize, false ); 
 			LightProbeGBuffer1	=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba8,	RenderSystem.LightProbeSize, false ); 
 
@@ -462,7 +465,7 @@ namespace Fusion.Engine.Graphics {
 						rs.LightManager.LightGrid.ClusterizeLightSet( stereoEye, Camera, LightSet );
 
 						//	render particle lighting :
-						ParticleSystem.RenderLight( gameTime, Camera );
+						#warning ParticleSystem.RenderLight( gameTime, Camera );
 
 						//	render particles casting shadows :
 						rs.LightManager.ShadowMap.RenderParticleShadows( gameTime, Camera, rs, this, LightSet );
@@ -486,7 +489,7 @@ namespace Fusion.Engine.Graphics {
 					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera, viewHdrFrame, this, InstanceGroup.NotWeapon );
 					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera, viewHdrFrame, this, InstanceGroup.Weapon );
 
-					ParticleSystem.RenderHard( gameTime, Camera, stereoEye, viewHdrFrame );
+					#warning ParticleSystem.RenderHard( gameTime, Camera, stereoEye, viewHdrFrame );
 
 					rs.Sky.Render( Camera, stereoEye, viewHdrFrame, SkySettings );
 					rs.Sky.RenderFogTable( SkySettings );
@@ -608,10 +611,12 @@ namespace Fusion.Engine.Graphics {
 						rs.Sky.Render( camera, mono, depth, color, SkySettings );
 					}
 				
-					RadianceCache.CopyTopMipLevelFromRenderTargetCube( lightProbe.ImageIndex, LightProbeHdr );
+					Game.GetService<CubeMapFilter>().PrefilterLightProbe( LightProbeHdr, LightProbeHdrTemp, RenderSystem.LightProbeMaxSpecularMip );
+					RadianceCache.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeHdrTemp ); 
+					//RadianceCache.CopyTopMipLevelFromRenderTargetCube( lightProbe.ImageIndex, LightProbeHdr );
 				}
 
-				rs.LightManager.PrefilterLightProbesAll( LightSet, RadianceCache );
+				//rs.LightManager.PrefilterLightProbesAll( LightSet, RadianceCache );
 			}
 
 			
@@ -627,70 +632,90 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void BuildRadiance ( QualityLevel quality )
+		public void BuildRadiance ( QualityLevel quality, bool map, bool volume, bool cubes )
 		{
 			var sw = new Stopwatch();
 			var device	=	Game.GraphicsDevice;
 
 			//----------------------------------------
 
-			CaptureRadiance();
+			if (cubes) {
+				CaptureRadiance();
+			}
 
 			//----------------------------------------
 
-			Log.Message("---- Baking Light Map ----");
-			sw.Start();
+			if (map) {
 
-			var samples	= 0;
-			var filter	= false;
-			var bias	= 0;
+				sw.Start();
 
-			switch (quality) {
-				case QualityLevel.Low:	
-					samples	=	256;
-					bias	=	-1;
-					filter	=	false;
-					break; 
-				case QualityLevel.Medium:	
-					samples	=	256;
-					bias	=	0;
-					filter	=	true;
-					break; 
-				case QualityLevel.High:	
-					samples	=	1024;
-					bias	=	0;
-					filter	=	false;
-					break; 
-				case QualityLevel.Ultra:	
-					samples	=	2048;
-					bias	=	1;
-					filter	=	false;
-					break; 
-			}
+				var samples	= 0;
+				var filter	= false;
+				var bias	= 0;
 
-			using ( var irrMap = rs.LightManager.LightMap.BakeIrradianceMap( Instances, LightSet, samples, filter, bias ) ) {
+				switch (quality) {
+					case QualityLevel.Low:	
+						samples	=	256;
+						bias	=	-1;
+						filter	=	false;
+						break; 
+					case QualityLevel.Medium:	
+						samples	=	256;
+						bias	=	0;
+						filter	=	true;
+						break; 
+					case QualityLevel.High:	
+						samples	=	1024;
+						bias	=	0;
+						filter	=	false;
+						break; 
+					case QualityLevel.Ultra:	
+						samples	=	2048;
+						bias	=	1;
+						filter	=	false;
+						break; 
+				}
 
-				var fullPath	=	Builder.GetFullPath(@"test_lightmap.irrmap");
+				using ( var irrMap = rs.LightManager.LightMap.BakeIrradianceMap( Instances, LightSet, samples, filter, bias ) ) {
 
-				using ( var stream = File.OpenWrite( fullPath ) ) {
-					irrMap.WriteToStream( stream );
+					var fullPath	=	Builder.GetFullPath(@"test_lightmap.irrmap");
+
+					using ( var stream = File.OpenWrite( fullPath ) ) {
+						irrMap.WriteToStream( stream );
+					}
 				}
 			}
-
-
-			using ( var irrVol = rs.LightManager.LightMap.BakeIrradianceVolume( Instances, LightSet, samples/64, 64,32,64, 8 ) ) {
-
-				var fullPath	=	Builder.GetFullPath(@"test_lightvol.irrvol");
-
-				using ( var stream = File.OpenWrite( fullPath ) ) {
-					irrVol.WriteToStream( stream );
-				}
-			}
-
-			Log.Message( "Lightmap : {0} : {1}", quality, sw.ElapsedMilliseconds );
-			Log.Message("----------------");
 
 			//----------------------------------------
+
+			if (volume) {
+
+				var samples	= 0;
+
+				switch (quality) {
+					case QualityLevel.Low:	
+						samples	=	64;
+						break; 
+					case QualityLevel.Medium:	
+						samples	=	128;
+						break; 
+					case QualityLevel.High:	
+						samples	=	256;
+						break; 
+					case QualityLevel.Ultra:	
+						samples	=	512;
+						break; 
+				}
+
+				using ( var irrVol = rs.LightManager.LightMap.BakeIrradianceVolume( Instances, LightSet, samples/64, 64,32,64, 8 ) ) {
+
+					var fullPath	=	Builder.GetFullPath(@"test_lightvol.irrvol");
+
+					using ( var stream = File.OpenWrite( fullPath ) ) {
+						irrVol.WriteToStream( stream );
+					}
+				}
+			}
 
 		}
 

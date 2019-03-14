@@ -125,7 +125,8 @@ namespace Fusion.Drivers.Graphics {
 
 		internal protected int CalcSubresource ( int mipSlice, int arraySlice, int mipLevels )
 		{
-			return mipSlice + (arraySlice * mipLevels);
+			return Resource.CalculateSubResourceIndex( mipSlice, arraySlice, mipLevels );
+			//return mipSlice + (arraySlice * mipLevels);
 		}
 
 

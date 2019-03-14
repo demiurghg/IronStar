@@ -32,7 +32,7 @@ namespace Fusion.Engine.Graphics {
 		internal SceneRenderer	SceneRenderer	{ get { return Game.GetService< SceneRenderer	>(); } }
 		internal VTSystem		VTSystem		{ get { return Game.GetService< VTSystem		>(); } }
 		internal Sky			Sky				{ get { return Game.GetService< Sky				>(); } }
-		internal Fog			Fog				{ get { return Game.GetService< Fog				>(); } }	
+		internal Fog			Fog				{ get { return Game.GetService< Fog				>(); } }
 
 		/// <summary>
 		/// Gets render counters.
@@ -100,6 +100,7 @@ namespace Fusion.Engine.Graphics {
 			Game.AddServiceAndComponent( new SpriteEngine	( this ) );
 			Game.AddServiceAndComponent( new Filter			( this ) );
 			Game.AddServiceAndComponent( new Filter2		( this ) );
+			Game.AddServiceAndComponent( new CubeMapFilter	( this ) );
 			Game.AddServiceAndComponent( new BlurFilter		( this ) );
 			Game.AddServiceAndComponent( new BilateralFilter( this ) );
 			Game.AddServiceAndComponent( new SsaoFilter		( this ) );

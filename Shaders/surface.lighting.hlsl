@@ -123,7 +123,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	specular	=	1.0f;
 	diffuse		=	0.0f;//*/
 
-	/*roughness	=	0.5f;
+	/*roughness	=	0.4f;
 	specular	=	0.5f;
 	diffuse		=	0.0f;//*/
 
@@ -342,7 +342,8 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		float3	reflectVector	=	SpecularParallaxCubeMap( worldPos, cameraPos, normal, cubeMapPos, lpbMatrixI ) * float3(-1,1,1);
 		float3	diffuseVector	=	DiffuseParallaxCubeMap ( worldPos, cameraPos, normal, cubeMapPos, lpbMatrixI );
 
-		float3	diffTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, imageIndex), LightProbeDiffuseMip).rgb;
+		//float3	diffTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, imageIndex), LightProbeDiffuseMip).rgb;
+		
 		float3	specTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflectVector, imageIndex), roughness*LightProbeMaxSpecularMip ).rgb;
 		
 		ambientReflection	=	lerp( ambientReflection, specTerm, factor );

@@ -133,6 +133,7 @@ namespace IronStar.Mapping {
 			newNode.Factory		= Factory.Duplicate();
 			newNode.Entity		= null;
 			newNode.FactoryName	= Misc.GenerateRandomString(8);
+			newNode.NodeGuid = Guid.NewGuid();
 			return newNode;
 		}
 

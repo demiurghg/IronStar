@@ -142,6 +142,7 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		[Obsolete]
 		public int AllocImageIndex ()
 		{
 			int r = imageIndices.IndexOf(false);
@@ -152,6 +153,7 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		[Obsolete]
 		public void FreeImageIndex( int index )
 		{
 			imageIndices[index] = false;
@@ -159,6 +161,7 @@ namespace Fusion.Engine.Graphics {
 
 
 
+		[Obsolete]
 		public void FreeAllImageIndices ()
 		{
 			for (int i=0; i<imageIndices.Count; i++) {

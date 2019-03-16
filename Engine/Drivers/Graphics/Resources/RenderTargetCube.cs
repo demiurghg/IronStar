@@ -221,8 +221,8 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="face"></param>
 		/// <param name="level"></param>
 		/// <param name="data"></param>
-		/// <returns></returns>
-		public void GetData<T>( CubeFace face, int level, T[] data ) where T : struct
+		/// <returns>Number of copied elements</returns>
+		public int GetData<T>( CubeFace face, int level, T[] data ) where T : struct
 		{
 			int startIndex		=	0;
 			int elementCount	=	data.Length;
@@ -243,19 +243,16 @@ namespace Fusion.Drivers.Graphics {
 				//
                 // Copy the data from the GPU to the staging texture.
 				//
-                int elementsInRow;
-                int rows;
-                    
-				elementsInRow = Width;
-                rows = Height;
+                int elementsInRow	= Resource.CalculateMipSize( level, Width );
+                int rows			= Resource.CalculateMipSize( level, Height );
 
 				int subres	=	CalcSubresource( level, (int)face, MipCount );
 
-                d3dContext.CopySubresourceRegion( texCube, subres, null, staging, 0, 0, 0, 0);
+                d3dContext.CopySubresourceRegion( texCube, subres, null, staging, subres, 0, 0, 0);
 
                 // Copy the data to the array :
                 DataStream stream;
-                var databox = d3dContext.MapSubresource(staging, 0, D3D.MapMode.Read, D3D.MapFlags.None, out stream);
+                var databox = d3dContext.MapSubresource(staging, subres, D3D.MapMode.Read, D3D.MapFlags.None, out stream);
 
                 // Some drivers may add pitch to rows.
                 // We need to copy each row separatly and skip trailing zeros.
@@ -270,9 +267,11 @@ namespace Fusion.Drivers.Graphics {
 
                 }
 
-				d3dContext.UnmapSubresource( staging, 0 );
+				d3dContext.UnmapSubresource( staging, subres );
 
                 stream.Dispose();
+
+				return elementsInRow * rows;
             }
 		}
 

@@ -19,7 +19,7 @@ namespace Fusion.Core.Extensions {
 
 
 
-		static void Write<T>( BinaryWriter writer, object src, int elementCount )
+		static void WriteGeneric<T>( BinaryWriter writer, object src, int elementCount )
 		{
 			var size = elementCount * Marshal.SizeOf( typeof( T ) );
 			var buffer = new byte[ size ];
@@ -35,20 +35,29 @@ namespace Fusion.Core.Extensions {
 
 		public static void Write<T>( this BinaryWriter writer, T structure ) where T : struct
 		{
-			Write<T>( writer, structure, 1 );
+			WriteGeneric<T>( writer, structure, 1 );
 		}
 
 
 
 		public static void Write<T>( this BinaryWriter writer, T[] array ) where T : struct
 		{
-			Write<T>( writer, array, array.Length );
+			WriteGeneric<T>( writer, array, array.Length );
+		}
+
+
+		public static void Write<T>( this BinaryWriter writer, T[] array, int count ) where T : struct
+		{
+			if (count>array.Length) {
+				throw new ArgumentOutOfRangeException("count > array.Length");
+			}
+			WriteGeneric<T>( writer, array, count );
 		}
 
 
 		public static void Write<T>( this BinaryWriter writer, T[,] array ) where T : struct
 		{
-			Write<T>( writer, array, array.Length );
+			WriteGeneric<T>( writer, array, array.Length );
 		}
 	}
 }

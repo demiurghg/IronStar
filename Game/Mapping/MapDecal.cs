@@ -219,6 +219,7 @@ namespace IronStar.Mapping {
 		{
 			var newNode = (MapDecal)MemberwiseClone();
 			newNode.decal = null;
+			newNode.NodeGuid = Guid.NewGuid();
 			return newNode;
 		}
 

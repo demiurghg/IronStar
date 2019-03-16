@@ -146,6 +146,7 @@ namespace IronStar.Mapping {
 			var newNode = (MapSound)MemberwiseClone();
 			newNode.soundEvent		= null;
 			newNode.soundInstance	= null;
+			newNode.NodeGuid		= Guid.NewGuid();
 			return newNode;
 		}
 

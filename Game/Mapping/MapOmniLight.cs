@@ -118,6 +118,7 @@ namespace IronStar.Mapping {
 		{
 			var newNode = (MapOmniLight)MemberwiseClone();
 			newNode.light = null;
+			newNode.NodeGuid = Guid.NewGuid();
 			return newNode;
 		}
 

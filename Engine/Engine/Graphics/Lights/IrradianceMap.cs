@@ -191,6 +191,7 @@ namespace Fusion.Engine.Graphics.Lights {
 			if (regions.TryGetValue( guid, out rect ) ) {
 				return rect;
 			} else {
+				Log.Warning("Irradiance map region [{0}] not found", guid );
 				return new Rectangle(0,0,0,0);
 			}
 		}

@@ -228,7 +228,7 @@ namespace Fusion.Engine.Graphics {
 			device.PixelShaderResources[17]	=	rs.RenderWorld.IrradianceVolume.IrradianceTextureGreen;
 			device.PixelShaderResources[18]	=	rs.RenderWorld.IrradianceVolume.IrradianceTextureBlue;
 
-			device.PixelShaderResources[20]	=	rs.RenderWorld.RadianceCache;
+			device.PixelShaderResources[20]	=	rs.RenderWorld.IrradianceCache.IrradianceCubeMaps;
 			device.PixelShaderResources[21]	=	envLut.Srv;
 			device.PixelShaderResources[22]	=	rs.LightManager.LightGrid.ProbeDataGpu;
 

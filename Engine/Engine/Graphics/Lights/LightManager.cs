@@ -318,7 +318,7 @@ namespace Fusion.Engine.Graphics {
 				if (true) {
 					device.PipelineState = factory[(int)(Flags.PREFILTER | Flags.DIFFUSE)];
 
-					device.SetCSRWTexture( 0, target.GetBatchCubeSurface( batchIndex, RenderSystem.LightProbeDiffuseMip ) );
+					device.SetCSRWTexture( 0, target.GetBatchCubeSurface( batchIndex, RenderSystem.LightProbeMaxMips ) );
 
 					device.ComputeShaderResources[4]	=	target.GetBatchCubeShaderResource( batchIndex, 3 );
 
@@ -329,25 +329,6 @@ namespace Fusion.Engine.Graphics {
 
 					device.Dispatch( tgx, tgy, tgz );
 				}
-
-				//
-				//	prefilter ambience :
-				//
-				if (true) {
-					device.PipelineState = factory[(int)(Flags.PREFILTER | Flags.AMBIENT)];
-
-					device.SetCSRWTexture( 0, target.GetBatchCubeSurface( batchIndex, RenderSystem.LightProbeAmbientMip ) );
-
-					device.ComputeShaderResources[4]	=	target.GetBatchCubeShaderResource( batchIndex, RenderSystem.LightProbeDiffuseMip );
-
-					int size	=	RenderSystem.LightProbeSize;
-					int tgx		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeX );
-					int tgy		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeY );
-					int tgz		=	RenderSystem.LightProbeBatchSize;
-
-					device.Dispatch( tgx, tgy, tgz );
-				}
-				//}
 			}
 		}
 	}

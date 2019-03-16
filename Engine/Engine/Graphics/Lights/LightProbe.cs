@@ -11,6 +11,8 @@ using Fusion.Engine.Common;
 namespace Fusion.Engine.Graphics {
 	public class LightProbe {
 
+		public readonly Guid Guid;
+
 		/// <summary>
 		/// Environment light position
 		/// </summary>
@@ -51,8 +53,9 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="position"></param>
 		/// <param name="innerRadius"></param>
 		/// <param name="outerRadius"></param>
-		public LightProbe ( int imageIndex )
+		public LightProbe ( Guid guid, int imageIndex )
 		{
+			this.Guid	=	guid;
 			ImageIndex	=	imageIndex;
 		}
 		

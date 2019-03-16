@@ -51,7 +51,7 @@ namespace Fusion.Engine.Graphics {
 
 		[ShaderDefine]	public const uint LightProbeSize			=	RenderSystem.LightProbeSize;
 		[ShaderDefine]	public const uint LightProbeMaxSpecularMip	=	RenderSystem.LightProbeMaxSpecularMip;
-		[ShaderDefine]	public const uint LightProbeDiffuseMip		=	RenderSystem.LightProbeDiffuseMip;
+		[ShaderDefine]	public const uint LightProbeDiffuseMip		=	RenderSystem.LightProbeMaxMips;
 
 		[ShaderDefine]	public const uint InstanceGroupStatic		=	(int)InstanceGroup.Static;
 		[ShaderDefine]	public const uint InstanceGroupDynamic		=	(int)InstanceGroup.Dynamic;

@@ -37,41 +37,65 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		readonly Dictionary<Guid,int> probes = new Dictionary<Guid,int>();
 
-		readonly public int Width;
-		readonly public int Height;
-		readonly public int MipCount;
 		readonly public int CubeCount;
 		
 
+		/// <summary>
+		/// Creates default black irradiance map with no lights
+		/// </summary>
+		/// <param name="rs"></param>
+		/// <param name="stream"></param>
+		public IrradianceCache ( RenderSystem rs )
+		{
+			this.rs		=	rs;
+			irradianceCubeMaps	=	new TextureCubeArray( rs.Device, 4, 1, ColorFormat.Rgba16F, 1 );
+		}
+
+		
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rs"></param>
+		/// <param name="stream"></param>
 		public IrradianceCache ( RenderSystem rs, Stream stream )
 		{
 			this.rs		=	rs;
 
 			using ( var reader = new BinaryReader( stream ) ) {
 				
-				//reader.ExpectFourCC("IRM1", "irradiance map format. IRM1 expected.");
-				//reader.ExpectFourCC("RGN1", "irradiance map format. RGN1 expected.");
+				reader.ExpectFourCC("IRC1", "irradiance cache format");
 
-				//int count = reader.ReadInt32();
+				CubeCount	=	reader.ReadInt32();
 
-				//for ( int i=0; i<count; i++ ) {
-				//	var guid	= reader.Read<Guid>();
-				//	var region	= reader.Read<Rectangle>();
-				//	regions.Add( guid, region );
-				//}
+				int size	=	RenderSystem.LightProbeSize;
+				int mips	=	RenderSystem.LightProbeMaxMips;
+				var buffer	=	new Half4[ size * size ];
 
-				//reader.ExpectFourCC("MAP1", "irradiance map format. MAP1 expected.");
+				irradianceCubeMaps	=	new TextureCubeArray( rs.Device, size, CubeCount, ColorFormat.Rgba16F, mips );
 
-				//width	=	reader.ReadInt32();
-				//height	=	reader.ReadInt32();
+				for ( int cubeId = 0; cubeId < CubeCount; cubeId++ ) {
 
-				//irradianceTextureR	=	new Texture2D( rs.Device, width, height, ColorFormat.Rgba16F, false ); 
-				//irradianceTextureG	=	new Texture2D( rs.Device, width, height, ColorFormat.Rgba16F, false ); 
-				//irradianceTextureB	=	new Texture2D( rs.Device, width, height, ColorFormat.Rgba16F, false ); 
-				
-				//irradianceTextureR.SetData( reader.Read<Half4>( width * height ) );
-				//irradianceTextureG.SetData( reader.Read<Half4>( width * height ) );
-				//irradianceTextureB.SetData( reader.Read<Half4>( width * height ) );
+					reader.ExpectFourCC("CUBE", "irradiance cache cubemap");
+
+					var guid	=	reader.Read<Guid>();
+
+					probes.Add( guid, cubeId );
+					
+					for (int face=0; face<6; face++) {
+
+						for (int mip=0; mip<mips; mip++) {
+
+							int mipSize		= size >> mip;
+							int dataSize	= mipSize * mipSize;
+
+							reader.Read( buffer, dataSize );
+
+							irradianceCubeMaps.SetData( cubeId, (CubeFace)face, mip, buffer );
+						}
+					}
+
+				}
 			}
 		}
 
@@ -100,6 +124,7 @@ namespace Fusion.Engine.Graphics.Lights {
 			if (probes.TryGetValue( guid, out index ) ) {
 				return index;
 			} else {
+				Log.Warning("LightProbe [{0}] not found", guid );
 				return -1;
 			}
 		}

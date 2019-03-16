@@ -69,7 +69,7 @@ namespace IronStar.Mapping {
 		{
 			var lightSet	=	world.Game.RenderSystem.RenderWorld.LightSet;
 
-			light	=	new LightProbe( lightSet.AllocImageIndex() );
+			light	=	new LightProbe( NodeGuid, lightSet.AllocImageIndex() );
 
 			ResetNode( world );
 
@@ -152,6 +152,7 @@ namespace IronStar.Mapping {
 		{
 			var newNode = (MapLightProbe)MemberwiseClone();
 			newNode.light = null;
+			newNode.NodeGuid = Guid.NewGuid();
 			return newNode;
 		}
 	}

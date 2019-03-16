@@ -202,6 +202,7 @@ namespace IronStar.Mapping {
 		{
 			var newNode = (MapSpotLight)MemberwiseClone();
 			newNode.light = null;
+			newNode.NodeGuid = Guid.NewGuid();
 			return newNode;
 		}
 

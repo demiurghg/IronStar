@@ -273,6 +273,7 @@ namespace IronStar.Mapping {
 		public override MapNode DuplicateNode()
 		{
 			var newNode = (MapModel)MemberwiseClone();
+			newNode.NodeGuid = Guid.NewGuid();
 
 			instances	=	null;
 			collidables	=	null;

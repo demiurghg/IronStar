@@ -130,6 +130,8 @@ namespace Fusion.Engine.Graphics {
 		IrradianceMap		irradianceMapDefault = null;
 		IrradianceVolume	irradianceVolume = null;
 		IrradianceVolume	irradianceVolumeDefault = null;
+		IrradianceCache		irradianceCache = null;
+		IrradianceCache		irradianceCacheDefault = null;
 
 		/// <summary>
 		/// Sets and gets virtual texture for entire world
@@ -189,16 +191,26 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		/// <summary>
+		/// Sets anf gets irradiance map
+		/// </summary>
+		public IrradianceCache IrradianceCache {
+			get {
+				return irradianceCache ?? irradianceCacheDefault;
+			}
+			set {
+				if (irradianceCache!=value) {
+					irradianceCache = value;
+				}
+			}
+		}
+
+
 		HdrFrame viewHdrFrame;
 
 		internal DepthStencil2D		LightProbeDepth;
 		internal RenderTargetCube	LightProbeHdr;
 		internal RenderTargetCube	LightProbeHdrTemp;
-		internal RenderTargetCube	LightProbeGBuffer0;
-		internal RenderTargetCube	LightProbeGBuffer1;
-		internal TextureCubeArrayRW	RadianceCache;
-		internal TextureCubeArrayRW	RadianceGBuffer0;
-		internal TextureCubeArrayRW	RadianceGBuffer1;
 
 
 		/// <summary>
@@ -241,18 +253,14 @@ namespace Fusion.Engine.Graphics {
 			#warning false
 			LightProbeHdr		=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba16F,	RenderSystem.LightProbeSize, true ); 
 			LightProbeHdrTemp	=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba16F,	RenderSystem.LightProbeSize, true ); 
-			LightProbeGBuffer0	=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba8,	RenderSystem.LightProbeSize, false ); 
-			LightProbeGBuffer1	=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba8,	RenderSystem.LightProbeSize, false ); 
-
-			RadianceGBuffer0	=	new TextureCubeArrayRW	( Game.GraphicsDevice, RenderSystem.LightProbeSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba8,	false,	RenderSystem.LightProbeBatchSize );
-			RadianceGBuffer1	=	new TextureCubeArrayRW	( Game.GraphicsDevice, RenderSystem.LightProbeSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba8,	false,	RenderSystem.LightProbeBatchSize );
-			RadianceCache		=	new TextureCubeArrayRW	( Game.GraphicsDevice, RenderSystem.LightProbeSize, RenderSystem.MaxEnvLights, ColorFormat.Rgba16F,	true,	RenderSystem.LightProbeBatchSize );
 
 			irradianceMapDefault	=	new IrradianceMap( rs, 16, 16 );
 			irradianceMapDefault.FillAmbient( Color4.White );
 
 			irradianceVolumeDefault	=	new IrradianceVolume( rs, 4, 4, 4, 1024 );
 			irradianceVolumeDefault.FillAmbient( Color4.White );
+
+			irradianceCacheDefault	=	new IrradianceCache( rs );
 
 			Resize( width, height );
 		}
@@ -271,17 +279,13 @@ namespace Fusion.Engine.Graphics {
 
 				SafeDispose( ref irradianceMapDefault );
 				SafeDispose( ref irradianceVolumeDefault );
+				SafeDispose( ref irradianceCacheDefault );
 
 				SafeDispose( ref debug );
 
-				SafeDispose( ref LightProbeDepth	 );
-				SafeDispose( ref LightProbeHdr		 );
-				SafeDispose( ref LightProbeGBuffer0	 );
-				SafeDispose( ref LightProbeGBuffer1	 );
-				
-				SafeDispose( ref RadianceCache		 );
-				SafeDispose( ref RadianceGBuffer0	 );
-				SafeDispose( ref RadianceGBuffer1	 );
+				SafeDispose( ref LightProbeDepth	);
+				SafeDispose( ref LightProbeDepth	);
+				SafeDispose( ref LightProbeHdr		);
 				
 				SafeDispose( ref viewHdrFrame );
 
@@ -386,6 +390,23 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		void UpdateInstanceAndLightMapping ()
+		{
+			foreach ( var instance in Instances ) {
+				if (instance.Group==InstanceGroup.Static) {
+					instance.LightMapScaleOffset = irradianceMap.GetRegionMadScaleOffset( instance.LightMapGuid );
+				}
+			}
+
+			foreach ( var lpb in LightSet.LightProbes ) {
+				lpb.ImageIndex	= irradianceCache.GetLightProbeIndex( lpb.Guid );
+			}
+		}
+	
+
 		/*-----------------------------------------------------------------------------------------
 		 * 
 		 *	Visibility system :
@@ -412,12 +433,7 @@ namespace Fusion.Engine.Graphics {
 
 			var viewport	=	new Viewport( 0,0, targetSurface.Width, targetSurface.Height );
 
-			foreach ( var instance in Instances ) {
-				if (instance.Group==InstanceGroup.Static) {
-					instance.LightMapScaleOffset = irradianceMap.GetRegionMadScaleOffset( instance.LightMapGuid );
-				}
-			}
-
+			UpdateInstanceAndLightMapping();
 
 			//	Render HDR stuff: mesh instances, 
 			//	special effects, sky, water, light etc. 
@@ -567,7 +583,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Captures radiance for reflection cubemap
 		/// </summary>
-		public void CaptureRadiance ()
+		public void CaptureRadiance ( Stream stream )
 		{
 			var sw		= new Stopwatch();
 			var device	=	Game.GraphicsDevice;
@@ -575,9 +591,15 @@ namespace Fusion.Engine.Graphics {
 
 			Log.Message("---- Building Environment Radiance ----");
 
-			using (new PixEvent("Capture Environment Radiance")) {
+			using ( var writer = new BinaryWriter(stream) ) {
+
+				writer.WriteFourCC("IRC1");
+				writer.Write( LightSet.LightProbes.Count );
+
 
 				foreach ( var lightProbe in LightSet.LightProbes ) {
+
+					Log.Message("...{0}", lightProbe.Guid );
 
 					for (int i=0; i<6; i++) {
 
@@ -612,14 +634,23 @@ namespace Fusion.Engine.Graphics {
 					}
 				
 					Game.GetService<CubeMapFilter>().PrefilterLightProbe( LightProbeHdr, LightProbeHdrTemp, RenderSystem.LightProbeMaxSpecularMip );
-					RadianceCache.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeHdrTemp ); 
-					//RadianceCache.CopyTopMipLevelFromRenderTargetCube( lightProbe.ImageIndex, LightProbeHdr );
-				}
 
-				//rs.LightManager.PrefilterLightProbesAll( LightSet, RadianceCache );
+					var bufferSize		=	RenderSystem.LightProbeSize * RenderSystem.LightProbeSize;
+					var stagingBuffer	=	new Half4[ bufferSize ];
+
+					writer.WriteFourCC("CUBE");
+
+					writer.Write( lightProbe.Guid );
+
+					for (int face=0; face<6; face++) {
+						for (int mip=0; mip<RenderSystem.LightProbeMaxMips; mip++) {
+							int count = LightProbeHdrTemp.GetData( (CubeFace)face, mip, stagingBuffer );
+							writer.Write( stagingBuffer, count );
+						}
+					}
+				}
 			}
 
-			
 
 			sw.Stop();
 			Log.Message("{0} light probes - {1} ms", LightSet.LightProbes.Count, sw.ElapsedMilliseconds);
@@ -640,7 +671,10 @@ namespace Fusion.Engine.Graphics {
 			//----------------------------------------
 
 			if (cubes) {
-				CaptureRadiance();
+				var fullPath	=	Builder.GetFullPath(@"test_lightcache.irrcache");
+				using ( var stream = File.OpenWrite( fullPath ) ) {
+					CaptureRadiance( stream );
+				}
 			}
 
 			//----------------------------------------
@@ -717,84 +751,6 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 
-		}
-
-
-
-		public void CaptureRaianceGBuffer ()
-		{
-			var sw		= new Stopwatch();
-			var device	=	Game.GraphicsDevice;
-			device.ResetStates();
-
-			Log.Message("---- Building Light Probes G-buffers ---");
-
-			var skyAmbient = SkySettings.AmbientLevel;
-
-			sw.Start();
-			using (new PixEvent("Capture Radiance Geometry")) {
-
-				foreach ( var lightProbe in LightSet.LightProbes ) {
-
-					for (int i=0; i<6; i++) {
-
-						var face	=	(CubeFace)i;
-						var depth	=	LightProbeDepth.Surface;
-						var gbuf0	=	LightProbeGBuffer0.GetSurface( 0, face );
-						var gbuf1	=	LightProbeGBuffer1.GetSurface( 0, face );
-					
-						device.Clear( depth );
-						device.Clear( gbuf0, Color4.Black );
-						device.Clear( gbuf1, Color4.Black );
-
-						var context	=	new LightProbeContext( lightProbe, face, depth, gbuf0, gbuf1 );
-
-						//	render g-buffer :
-						rs.SceneRenderer.RenderLightProbeGBuffer( context, this, InstanceGroup.Static );
-					}
-				
-					RadianceGBuffer0.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeGBuffer0 );
-					RadianceGBuffer1.CopyFromRenderTargetCube( lightProbe.ImageIndex, LightProbeGBuffer1 );
-
-					rs.LightManager.RelightLightProbe( RadianceGBuffer0, RadianceGBuffer1, lightProbe, LightSet, skyAmbient, RadianceCache );
-				}
-
-				sw.Stop();
-			}
-
-			Log.Message("{0} light probes - {1} ms", LightSet.LightProbes.Count, sw.ElapsedMilliseconds);
-
-			Log.Message("----------------");
-		}
-
-		int lightProbeUpdateCounter = 0;
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		void RelightLightProbes ()
-		{
-			var sw = new Stopwatch();
-			sw.Start();
-
-			using (new PixEvent("Light probe relighting")) {
-
-				var skyAmbient = SkySettings.AmbientLevel;
-				this.rs.Device.ResetStates();
-
-				foreach ( var lightProbe in LightSet.LightProbes ) {
-
-					rs.LightManager.RelightLightProbe( RadianceGBuffer0, RadianceGBuffer1, lightProbe, LightSet, skyAmbient, RadianceCache );
-				}
-			}
-
-			rs.LightManager.PrefilterLightProbes( LightSet, RadianceCache, lightProbeUpdateCounter );
-			lightProbeUpdateCounter++;
-
-			sw.Stop();
-			//Log.Message("Relight light probes [CPU] : {0} light probes - {1} ms", LightSet.LightProbes.Count, sw.ElapsedMilliseconds);
 		}
 
 

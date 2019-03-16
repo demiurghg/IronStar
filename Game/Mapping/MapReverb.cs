@@ -111,6 +111,7 @@ namespace IronStar.Mapping {
 		{
 			var newNode = (MapReverb)MemberwiseClone();
 			newNode.reverb		= null;
+			newNode.NodeGuid = Guid.NewGuid();
 			return newNode;
 		}
 

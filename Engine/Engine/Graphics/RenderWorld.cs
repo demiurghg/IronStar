@@ -481,7 +481,7 @@ namespace Fusion.Engine.Graphics {
 						rs.LightManager.LightGrid.ClusterizeLightSet( stereoEye, Camera, LightSet );
 
 						//	render particle lighting :
-						#warning ParticleSystem.RenderLight( gameTime, Camera );
+						ParticleSystem.RenderLight( gameTime, Camera );
 
 						//	render particles casting shadows :
 						rs.LightManager.ShadowMap.RenderParticleShadows( gameTime, Camera, rs, this, LightSet );
@@ -505,7 +505,7 @@ namespace Fusion.Engine.Graphics {
 					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera, viewHdrFrame, this, InstanceGroup.NotWeapon );
 					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera, viewHdrFrame, this, InstanceGroup.Weapon );
 
-					#warning ParticleSystem.RenderHard( gameTime, Camera, stereoEye, viewHdrFrame );
+					ParticleSystem.RenderHard( gameTime, Camera, stereoEye, viewHdrFrame );
 
 					rs.Sky.Render( Camera, stereoEye, viewHdrFrame, SkySettings );
 					rs.Sky.RenderFogTable( SkySettings );

@@ -110,36 +110,13 @@ float3 ComputeClusteredLighting ( float3 worldPos, float3 normal, float3 color, 
 	
 	//----------------------------------------------------------------------------------------------
 	
-	float4	aogridValue		=	OcclusionGrid.SampleLevel( Sampler, mul( float4(worldPos, 1), Params.OcclusionGridMatrix ).xyz, 0 ).rgba;
-			aogridValue.xyz	=	aogridValue.xyz * 2 - 1;
-			
-	float	aoFactor		=	aogridValue.w;
-	float 	skyFactor		=	length( aogridValue.xyz );
+	float3	samplePoint		=	mul( float4(worldPos, 1), Params.OcclusionGridMatrix ).xyz;
 	
-	//aoFactor = skyFactor = 1;
+	float4	irradianceR		=	IrradianceVolumeR.SampleLevel( Sampler, samplePoint, 0 ).rgba;
+	float4	irradianceG		=	IrradianceVolumeG.SampleLevel( Sampler, samplePoint, 0 ).rgba;
+	float4	irradianceB		=	IrradianceVolumeB.SampleLevel( Sampler, samplePoint, 0 ).rgba;
 	
-	float3 	skyBentNormal	=	aogridValue.xyz / (skyFactor + 0.1) * aoFactor;
-	float3	skyLight		=	skyFactor * Params.SkyAmbientLevel.rgb;
-	
-	
-	totalLight += skyLight * color;
-
-	[loop]
-	for (i=0; i<lpbCount; i++) {
-		uint idx  			= 	LightIndexTable.Load( lightCount + decalCount + index + i );
-		float3 position		=	ProbeDataTable[idx].Position.xyz;
-		float  innerRadius	=	4;//ProbeDataTable[idx].InnerRadius;
-		float  outerRadius	=	8;//ProbeDataTable[idx].OuterRadius;
-		uint   imageIndex	=	ProbeDataTable[idx].ImageIndex;
-		
-		float	localDist	=	distance( position.xyz, worldPos.xyz );
-		float	factor		=	saturate( 1 - (localDist-innerRadius)/(outerRadius-innerRadius) );
-
-		float3	ambientTerm	=	RadianceCache.SampleLevel( Sampler, float4(0,0,1, imageIndex), 6).rgb;
-				ambientTerm *=	aoFactor;
-	
-		totalLight += ambientTerm * color;
-	}
+	totalLight.rgb			+=	float3( irradianceR.x, irradianceG.x, irradianceB.x ) * color.rgb;
 	
 	return totalLight;
 }

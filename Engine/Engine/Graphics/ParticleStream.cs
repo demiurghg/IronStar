@@ -452,7 +452,7 @@ namespace Fusion.Engine.Graphics {
 			param.MaxParticles		=	0;
 			param.DeltaTime			=	deltaTime;
 			param.CameraForward		=	new Vector4( cameraMatrix.Forward	, 0 );
-			param.CameraRight		=	new Vector4( cameraMatrix.Right	, 0 );
+			param.CameraRight		=	new Vector4( cameraMatrix.Right		, 0 );
 			param.CameraUp			=	new Vector4( cameraMatrix.Up		, 0 );
 			param.CameraPosition	=	new Vector4( cameraMatrix.TranslationVector	, 1 );
 			param.Gravity			=	new Vector4( this.Gravity, 0 );
@@ -679,7 +679,7 @@ namespace Fusion.Engine.Graphics {
 					if (flags==Flags.DRAW_LIGHT || flags==Flags.DRAW_HARD) {
 						device.PixelShaderResources[14]		=	rs.RenderWorld.IrradianceVolume.IrradianceTextureRed;
 						device.PixelShaderResources[15]		=	rs.RenderWorld.IrradianceVolume.IrradianceTextureGreen;
-						device.PixelShaderResources[17]		=	rs.RenderWorld.IrradianceVolume.IrradianceTextureBlue;
+						device.PixelShaderResources[16]		=	rs.RenderWorld.IrradianceVolume.IrradianceTextureBlue;
 					}
 
 					device.GeometryShaderResources[18]		=	lightMapRegions;

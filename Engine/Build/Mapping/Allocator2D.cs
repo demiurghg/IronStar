@@ -108,6 +108,10 @@ namespace Fusion.Build.Mapping {
 
 				var state = block.State;
 
+				if (block.Size<size) {
+					continue;
+				}
+
 				// block is already allocated - skip
 				if (state==BlockState.Allocated) {
 					continue;

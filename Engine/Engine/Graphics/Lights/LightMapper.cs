@@ -108,6 +108,10 @@ namespace Fusion.Engine.Graphics.Lights {
 					)
 					.ToArray();
 
+			foreach ( var lmGroup in lmGroups ) {
+				Log.Message("...{0} : {1}x{2}", lmGroup.Guid, lmGroup.Region.Width, lmGroup.Region.Height );
+			}
+
 
 			Allocator2D allocator = null;
 

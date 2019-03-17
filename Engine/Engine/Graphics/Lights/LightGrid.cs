@@ -128,6 +128,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="lightSet"></param>
 		public void UpdateLightSetVisibility ( StereoEye stereoEye, Camera camera, LightSet lightSet )
 		{
+			rs.extentTest.Clear();
+
 			var view = camera.GetViewMatrix( stereoEye );
 			var proj = camera.GetProjectionMatrix( stereoEye );
 			var vpos = camera.GetCameraMatrix( StereoEye.Mono ).TranslationVector;
@@ -139,7 +141,6 @@ namespace Fusion.Engine.Graphics {
 			UpdateDecalExtentsAndVisibility( view, proj, lightSet );
 			UpdateLightProbeExtentsAndVisibility( view, proj, lightSet );
 		}
-
 
 
 		/// <summary>
@@ -288,6 +289,8 @@ namespace Fusion.Engine.Graphics {
 					min.Z	=	GetGridSlice( -min.Z );
 					max.Z	=	GetGridSlice( -max.Z );
 
+					TestExtent( min, max, new Color(255,0,0,64) );
+
 					dcl.Visible		=	true;
 
 					dcl.MaxExtent.X	=	Math.Min( Width,  (int)Math.Ceiling( max.X * Width  ) );
@@ -301,6 +304,19 @@ namespace Fusion.Engine.Graphics {
 			}
 		}
 
+
+
+		void TestExtent ( Vector4 min, Vector4 max, Color color )
+		{
+			if (rs.ShowExtents) {
+				var vp	=	rs.DisplayBounds;
+				var x	=	min.X * vp.Width;
+				var y	=	min.Y * vp.Height;
+				var w	=	(max.X - min.X) * vp.Width;
+				var h	=	(max.Y - min.Y) * vp.Height;
+				rs.extentTest.Draw( null, x,y,w,h, color );
+			}
+		}
 
 
 		/// <summary>
@@ -318,12 +334,12 @@ namespace Fusion.Engine.Graphics {
 				Vector4 min, max;
 				lpb.Visible	=	false;
 
-				var radius = Math.Max(lpb.OuterRadius, lpb.InnerRadius);
+				if ( Extents.GetBasisExtent( view, proj, vp, lpb.ProbeMatrix, false, out min, out max ) ) {
 
-				if ( Extents.GetSphereExtent( view, proj, lpb.Position, vp, radius, false, out min, out max ) ) {
+					min.Z	=	GetGridSlice( -min.Z );
+					max.Z	=	GetGridSlice( -max.Z );
 
-					min.Z	=	GetGridSlice( min.Z );
-					max.Z	=	GetGridSlice( max.Z );
+					TestExtent( min, max, new Color(0,0,255,64) );
 
 					lpb.Visible		=	true;
 

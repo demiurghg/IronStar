@@ -12,6 +12,7 @@ using IronStar.SFX;
 using Fusion.Development;
 using System.Drawing.Design;
 using Fusion;
+using Fusion.Core.Shell;
 
 namespace IronStar.Mapping {
 
@@ -24,8 +25,35 @@ namespace IronStar.Mapping {
 		public float OuterRadius { get; set; } = 2;
 
 
-		LightProbe	light;
+		[Category("Light probe")]
+		[AEValueRange(0,128,4,0.25f)]
+		public float Width  { get; set; } = 16;
 
+		[Category("Light probe")]
+		[AEValueRange(0,128,4,0.25f)]
+		public float Height { get; set; } = 16;
+
+		[Category("Light probe")]
+		[AEValueRange(0,128,4,0.25f)]
+		public float Depth  { get; set; } = 16;
+
+		[Category("Light probe")]
+		[AEDisplayName("Transition Width")]
+		[AEValueRange(0.25f,32,1,0.25f)]
+		public float ShellWidth  { get; set; } = 2f;
+
+		[Category("Light probe")]
+		[AEDisplayName("Transition Height")]
+		[AEValueRange(0.25f,32,1,0.25f)]
+		public float ShellHeight  { get; set; } = 2f;
+
+		[Category("Light probe")]
+		[AEDisplayName("Transition Depth")]
+		[AEValueRange(0.25f,32,1,0.25f)]
+		public float ShellDepth  { get; set; } = 2f;
+
+
+		LightProbe	light;
 
 
 		/// <summary>
@@ -41,7 +69,7 @@ namespace IronStar.Mapping {
 		{
 			var lightSet	=	world.Game.RenderSystem.RenderWorld.LightSet;
 
-			light	=	new LightProbe( WorldMatrix.TranslationVector, InnerRadius, OuterRadius, lightSet.AllocImageIndex() );
+			light	=	new LightProbe( NodeGuid, lightSet.AllocImageIndex() );
 
 			ResetNode( world );
 
@@ -62,9 +90,22 @@ namespace IronStar.Mapping {
 
 
 
+		private Matrix ComputeProbeMatrix ()
+		{
+			return Matrix.Scaling( Width/2.0f, Height/2.0f, Depth/2.0f ) * WorldMatrix;
+		}
+
+
+
+		public override BoundingBox GetBoundingBox()
+		{
+			return new BoundingBox( Width, Height, Depth );
+		}
+
+
 		public override void DrawNode( GameWorld world, DebugRender dr, Color color, bool selected )
 		{
-			dr.DrawPoint( WorldMatrix.TranslationVector, 0.5f, color, 1 );
+			dr.DrawPoint( WorldMatrix.TranslationVector, 2.0f, color, 1 );
 
 			//var bbox1	=	new BoundingBox( Width, Height, Depth );
 			//var bbox2	=	new BoundingBox( 0.5f, 0.5f, 0.5f );
@@ -77,11 +118,11 @@ namespace IronStar.Mapping {
 			//}
 
 			if (selected) {
-				dr.DrawSphere( WorldMatrix.TranslationVector, InnerRadius, Color.Cyan, 32 );
-				dr.DrawSphere( WorldMatrix.TranslationVector, OuterRadius, Color.Cyan, 32 );
-				dr.DrawSphere( WorldMatrix.TranslationVector, 0.33f, color, 16 );
+				var box = new BoundingBox( 2, 2, 2 );
+				dr.DrawBox( box, ComputeProbeMatrix(), Color.Cyan ); 
+				dr.DrawSphere( WorldMatrix.TranslationVector, 1.0f, color, 16 );
 			} else {
-				dr.DrawSphere( WorldMatrix.TranslationVector, 0.33f, color, 16 );
+				dr.DrawSphere( WorldMatrix.TranslationVector, 1.0f, color, 16 );
 			}
 		}
 
@@ -90,7 +131,11 @@ namespace IronStar.Mapping {
 		public override void ResetNode( GameWorld world )
 		{
 			if (light!=null) {
-				light.Position		=	WorldMatrix.TranslationVector;
+				light.ProbeMatrix		=	ComputeProbeMatrix();
+				light.BoundingBox		=	GetBoundingBox();
+				light.NormalizedWidth	=	Math.Max( 0, Width  - ShellWidth  ) / Width	;
+				light.NormalizedHeight	=	Math.Max( 0, Height - ShellHeight ) / Height	;
+				light.NormalizedDepth	=	Math.Max( 0, Depth  - ShellDepth  ) / Depth	;
 			}
 		}
 
@@ -107,6 +152,7 @@ namespace IronStar.Mapping {
 		{
 			var newNode = (MapLightProbe)MemberwiseClone();
 			newNode.light = null;
+			newNode.NodeGuid = Guid.NewGuid();
 			return newNode;
 		}
 	}

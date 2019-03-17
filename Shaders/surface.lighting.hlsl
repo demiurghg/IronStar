@@ -7,6 +7,9 @@
 
 #include "brdf.fxi"
 #include "surface.shadows.hlsl"
+#include "surface.cubemap.hlsl"
+#include "shl1.fxi"
+
 
 float computeSpecOcclusion ( float NdotV , float AO , float roughness )
 {
@@ -16,7 +19,7 @@ float computeSpecOcclusion ( float NdotV , float AO , float roughness )
 //
 //	ComputeClusteredLighting
 //	
-float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, float2 vpSize, float3 baseColor, float3 worldNormal, float3 triNormal, float roughness, float metallic, float occlusion )
+float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, float2 vpSize, float3 baseColor, float3 worldNormal, float3 triNormal, float roughness, float metallic, float occlusion, float2 lmCoord )
 {
 	uint i,j,k;
 	float3 result		=	float3(0,0,0);
@@ -38,6 +41,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	float3 totalAmbient	=	0;
 
 	float3 	worldPos	= 	input.WorldPos.xyz;
+	float3  cameraPos	=	Stage.ViewPos.xyz;
 	float3 	normal 		=	worldNormal;
 	
 	float3	viewDir		=	Stage.ViewPos.xyz - worldPos.xyz;
@@ -50,6 +54,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 
 	//----------------------------------------------------------------------------------------------
 	
+#ifndef DIFFUSE_ONLY	
 	[loop]
 	for (i=0; i<decalCount; i++) {
 		uint idx = LightIndexTable.Load( lightCount + index + i );
@@ -59,7 +64,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		float4x4 decalMatrixI	=	decal.DecalMatrixInv;
 		float3	 decalColor		=	decal.BaseColorMetallic.rgb;
 		float3	 glowColor		=	decal.EmissionRoughness.rgb;
-		float	 decalR			=	decal.EmissionRoughness.a;
+		float	 decalR			=	decal.EmissionRoughness.a * decal.EmissionRoughness.a;
 		float	 decalM			=	decal.BaseColorMetallic.a;
 		float4	 scaleOffset	=	decal.ImageScaleOffset;
 		float	 falloff		=	decal.FalloffFactor;
@@ -73,7 +78,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 			float2 uv			=	mad(decalPos.xy, scaleOffset.xy, scaleOffset.zw); 
 		
 			float4 decalImage	= 	DecalImages.SampleLevel( DecalSampler, uv, decalBaseMip + mipDecalBias );
-			float3 localNormal  = 	decalImage.xyz * 2 - 1;
+			float3 localNormal  = 	normalize(decalImage.xyz * 2 - 1);
 			float3 decalNormal	=	localNormal.x * decal.BasisX.xyz + localNormal.y * decal.BasisY.xyz + localNormal.z * decal.BasisZ.xyz;
 			float factor		=	pow(decalImage.a, 2.2f) * saturate(falloff - abs(decalPos.z)*falloff);
 			
@@ -82,12 +87,14 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 			baseColor 	= lerp( baseColor.rgb, decalColor, decal.ColorFactor * factor );
 			roughness 	= lerp( roughness, decalR, decal.SpecularFactor * factor );
 			metallic 	= lerp( metallic,  decalM, decal.SpecularFactor * factor );
-			///normal		= lerp( normal, decalNormal, decal.NormalMapFactor * factor );
+			normal		= lerp( normal, decalNormal, decal.NormalMapFactor * factor );
 
-			normal		= normal + decalNormal * decal.NormalMapFactor * factor;
+			//normal		= normal + decalNormal * decal.NormalMapFactor * factor;
+			
+			//baseColor	=	0;
 		}
 	}
-	
+#endif	
 	
 	//----------------------------------------------------------------------------------------------
 	int3 checker  = (int3)abs(worldPos.xyz);
@@ -97,22 +104,42 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	baseColor = 0.3;
 	roughness = (checker2.x + checker2.y + checker2.z)%7 / 10.0f + 0.1;//*/
 	//roughness = frac(worldPos.y-0.1);
+	float normalLength	=	length(normal) + 0.00001f;
 	
-			normal 		= 	normalize(normal);
+			normal 		= 	normal / normalLength;
 	float3	diffuse 	=	lerp( baseColor, float3(0,0,0), metallic );
 	float3	specular  	=	lerp( float3(0.04f,0.04f,0.04f), baseColor, metallic );
+	
+	#ifdef DIFFUSE_ONLY	
+	diffuse	=	baseColor;
+	#endif
+	
 
-	roughness	=	sqrt(roughness);
+	#ifndef DIFFUSE_ONLY
 	
-	//roughness	=	0;
-	
-	/*roughness	=	0.75f;
+	/*roughness	=	0.25f;
 	specular	=	1.0f;
 	diffuse		=	0.0f;//*/
 
-	/*roughness	=	0.125f;
+	/*roughness	=	0.0f;
+	specular	=	0.5f;
+	diffuse		=	0.0f;//*/
+
+	/*roughness	=	0.3f;
+	specular	=	0.9f;
+	diffuse		=	0.0f;//*/
+
+	/*roughness	=	0.5f;
 	specular	=	0.0f;
 	diffuse		=	1.0f;//*/
+
+	//roughness *= 0.3f;
+
+	roughness	=	saturate(roughness);
+	roughness	=	clamp( roughness, 1.0f / 1024.0f, 1 );
+	#endif
+	
+	//diffuse = 0.5f;
 
 	//----------------------------------------------------------------------------------------------
 
@@ -133,7 +160,10 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		float  nDotL		= 	max( 0, dot(normal, lightDirN) );
 		
 		totalLight.rgb 		+= 	shadow * Lambert ( normal.xyz,  lightDirN, intensity, diffuse );
+		
+		#ifndef DIFFUSE_ONLY	
 		totalLight.rgb 		+= 	shadow * nDotL * CookTorrance( normal.xyz, viewDirN, lightDirN, intensity, specular, roughness, srcRadius );
+		#endif
 	}
 	
 	//----------------------------------------------------------------------------------------------
@@ -158,7 +188,10 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 			float  nDotL		= 	max( 0, dot(normal, lightDirN) );
 			
 			totalLight.rgb 		+= 	falloff * Lambert ( normal.xyz,  lightDirN, intensity, diffuse );
+			
+			#ifndef DIFFUSE_ONLY	
 			totalLight.rgb 		+= 	falloff * nDotL * CookTorrance( normal.xyz, viewDirN, lightDir, intensity, specular, roughness, sourceRadius );
+			#endif
 			
 		} else if (type==LightTypeAmbient) {
 			
@@ -208,75 +241,127 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 				float  	nDotL		= 	max( 0, dot(normal, normalize(lightDir)) );
 				
 				totalLight.rgb 		+= 	falloff * Lambert ( normal.xyz,  lightDir, intensity, diffuse );
+				
+				#ifndef DIFFUSE_ONLY	
 				totalLight.rgb 		+= 	falloff * nDotL * CookTorrance( normal.xyz, viewDirN, lightDir, intensity, specular, roughness, sourceRadius );
+				#endif
 			}
 		}
 	}
 	
 	//----------------------------------------------------------------------------------------------
-	
-	//
 	//	https://github.com/demiurghg/IronStar/blob/ed5d9348552548bd7a187a436894a6b27a5d8ea9/Shaders/lighting.hlsl
-	//
-	
+	//----------------------------------------------------------------------------------------------
 	float3	ambientDiffuse		=	float3(0,0,0);
 	float3	ambientSpecular		=	float3(0,0,0);
-	float3	ambientDiffuseSky	=	float3(0,0,0);
-
-	//	occlusion & sky stuff :
-	float 	ssaoFactor		=	AmbientOcclusion.Load( int3( input.Position.xy,0 ) ).r;
-	float4	aogridValue		=	OcclusionGrid.Sample( SamplerLinear, mul( float4(worldPos + geometryNormal * 0.9f, 1), Stage.OcclusionGridMatrix ).xyz ).rgba;
-			aogridValue.xyz	=	aogridValue.xyz * 2 - 1;
-			
-	float 	skyFactor		=	length( aogridValue.xyz );
-	float3 	skyBentNormal	=	aogridValue.xyz / (skyFactor + 0.1);
+	float3	ambientReflection	=	float3(0,0,0);
+	float	ambientLuminance	=	1;
 	
-	float 	fullSkyLight	=	max( 0, dot( skyBentNormal, normal ) * 0.5 + 0.5 );
-	float 	halfSkyLight	=	max( 0, dot( skyBentNormal, normal ) * 1.0 + 0.0 );
-	float3	skyLight		=	skyFactor * max(0, lerp(halfSkyLight, fullSkyLight, skyFactor ) ) * Stage.SkyAmbientLevel;
-
+	//
+	//	LIGHTMAP :
+	//
+	//SamplerPoint
+	//SamplerLinear
+	float4	irradianceR	=	float4(0,0,0,0);
+	float4	irradianceG	=	float4(0,0,0,0);
+	float4	irradianceB	=	float4(0,0,0,0);
+	float3	volumeCoord	=	float3(0,0,0);
+	
+	#ifdef IRRADIANCE_MAP
+		irradianceR		=	IrradianceMapR.Sample( SamplerLinear, lmCoord );
+		irradianceG		=	IrradianceMapG.Sample( SamplerLinear, lmCoord );
+		irradianceB		=	IrradianceMapB.Sample( SamplerLinear, lmCoord );
+	#endif
+	#ifdef IRRADIANCE_VOLUME
+		volumeCoord		=	mul(float4(worldPos.xyz,1), Stage.OcclusionGridMatrix );
+		irradianceR		=	IrradianceVolumeR.Sample( SamplerLinear, volumeCoord );
+		irradianceG		=	IrradianceVolumeG.Sample( SamplerLinear, volumeCoord );
+		irradianceB		=	IrradianceVolumeB.Sample( SamplerLinear, volumeCoord );
+	#endif
+	
+	/*float	lightR		=	max(0, irradianceR.x + dot( normal, irradianceR.wyz ));
+	float	lightG		=	max(0, irradianceG.x + dot( normal, irradianceG.wyz ));
+	float	lightB		=	max(0, irradianceB.x + dot( normal, irradianceB.wyz ));//*/
+	
+	float	lightR		=	EvalSHL1Smooth( irradianceR, normalize(normal) );
+	float	lightG		=	EvalSHL1Smooth( irradianceG, normalize(normal) );
+	float	lightB		=	EvalSHL1Smooth( irradianceB, normalize(normal) );//*/
+	
+	ambientDiffuse		=	float3( lightR, lightG, lightB );
+	ambientLuminance	=	saturate((irradianceR.x + irradianceG.x + irradianceB.x)/3);
+	
+	//
+	//	APPROX SPECULAR :
+	//
+	/*float3 approxDir		=	(irradianceR.wyz + irradianceG.wyz + irradianceB.wyz)/3;
+	float  approxLength		=	length(approxDir) + 0.0001;
+	float  focus			=	approxLength / ambientLuminance / 1.5f;
+		   approxDir		/=	approxLength;
+	float3 approxLight		=	float3( irradianceR.x, irradianceG.x, irradianceB.x );
+	float  approxRoughness	=	saturate( 1 - ( 1 - roughness ) * sqrt(focus) );
+	float  nDotLApprox		=	saturate(dot( normal.xyz, approxDir ));
+	ambientSpecular 		= 	nDotLApprox * CookTorrance( normal.xyz, viewDirN, approxDir, approxLight, specular, roughness, focus );//*/
+	
+	
+	//
+	//	OCCLUSION :
+	//
 #ifdef TRANSPARENT
-	ssaoFactor	=	1;
-#endif
+	float 	ssaoFactor	=	1;
+#else
+	float 	ssaoFactor	=	AmbientOcclusion.Load( int3( input.Position.xy, 0 ) ).r;
+#endif	
 	ssaoFactor	=	lerp( 1, ssaoFactor, Stage.SsaoWeight );
 	ssaoFactor	*=	occlusion;
 	
-	
+	//
+	//	REFLECTION :
+	//
+	float3	reflectDir		=	reflect( -viewDirN, normal.xyz );
+	float	selfOcclusion	=	saturate( dot( normalize(normal.xyz), normalize(input.Normal.xyz) ) );
 	float	NoV 			= 	dot(viewDirN, normal.xyz);
 	float2 	ab				=	EnvLut.SampleLevel( SamplerLinearClamp, float2(roughness, 1-NoV), 0 ).xy;
-	float	ssaoFactorDiff	=	pow(ssaoFactor * aogridValue.w, 2);
-	float	ssaoFactorSpec	=	pow(ssaoFactor * aogridValue.w, 2);//computeSpecOcclusion( NoV, ssaoFactor * aogridValue.w, roughness );
+	float	ssaoFactorDiff	=	pow(ssaoFactor, 2);
+	float	ssaoFactorSpec	=	pow(ssaoFactor, 4);
 	
+#ifndef DIFFUSE_ONLY	
 	[loop]
 	for (i=0; i<lpbCount; i++) {
-		uint idx  			= 	LightIndexTable.Load( lightCount + decalCount + index + i );
-		float3 position		=	ProbeDataTable[idx].Position.xyz;
-		float  innerRadius	=	ProbeDataTable[idx].InnerRadius;
-		float  outerRadius	=	ProbeDataTable[idx].OuterRadius;
-		uint   imageIndex	=	ProbeDataTable[idx].ImageIndex;
+		uint 		idx			= 	LightIndexTable.Load( lightCount + decalCount + index + i );
+		float3		innerRange	=	float3( ProbeDataTable[idx].NormalizedWidth, ProbeDataTable[idx].NormalizedHeight, ProbeDataTable[idx].NormalizedDepth );
+		float4x4	lpbMatrixI	=	ProbeDataTable[idx].MatrixInv;
+		float3		cubePos		=	mul(float4(worldPos,1), lpbMatrixI ).xyz;
+		float3 		cubeMapPos	=	ProbeDataTable[idx].Position.xyz;
+		uint   		imageIndex	=	ProbeDataTable[idx].ImageIndex;
 		
-		float	localDist	=	distance( position.xyz, worldPos.xyz );
-		float	factor		=	saturate( 1 - (localDist-innerRadius)/(outerRadius-innerRadius) );
+		float3 		randColor	=	float3( (imageIndex/2)%2, (imageIndex/4)%2, (imageIndex/8)%2 );
+		
+		float3		factor3		=	abs(cubePos);
+					factor3		=	(factor3 - innerRange) / (float3(1,1,1) - innerRange);
+		float		factor		=	1 - saturate( max(factor3.x, max(factor3.y, factor3.z)) );
+		
+		float3	reflectVector	=	SpecularParallaxCubeMap( worldPos, cameraPos, normal, cubeMapPos, lpbMatrixI ) * float3(-1,1,1);
+		float3	diffuseVector	=	DiffuseParallaxCubeMap ( worldPos, cameraPos, normal, cubeMapPos, lpbMatrixI );
 
-	#if 1
-		float3	diffTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, imageIndex), LightProbeDiffuseMip).rgb;
-		float3	specTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflect(-viewDir, normal.xyz), imageIndex), roughness*LightProbeMaxSpecularMip ).rgb;
-	#else
-		float3	diffTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, imageIndex), LightProbeMaxSpecularMip).rgb;
-		float3	specTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflect(-viewDir, normal.xyz), imageIndex), roughness*LightProbeMaxSpecularMip ).rgb;
-		skyFactor			=	0;
-	#endif
-
-		ambientDiffuse		=	lerp( ambientDiffuse,  diffTerm, factor );
-		ambientSpecular		=	lerp( ambientSpecular, specTerm, factor );//*/
+		//float3	diffTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, imageIndex), LightProbeDiffuseMip).rgb;
+		float		mipLevel	=	(sqrt(roughness) * LightProbeMaxSpecularMip);
+		
+		float3	specTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflectVector, imageIndex), mipLevel ).rgb;
+		
+		ambientReflection	=	lerp( ambientReflection, specTerm, factor );
 	}
+#endif	
 
+	//ambientReflection	*=	pow(ambientLuminance,2);
+
+	//----------------------------------------------------------------------------------------------
+	
 	ambientDiffuse		=	ambientDiffuse  * ( diffuse                ) * ssaoFactorDiff;
-	ambientSpecular		=	ambientSpecular	* ( specular * ab.x + ab.y ) * ssaoFactorSpec;
-	ambientDiffuseSky	=	diffuse * skyLight * pow(ssaoFactor,2);
+	ambientSpecular		=	ambientSpecular	* ( specular * ab.x + ab.y ) * ssaoFactorSpec * selfOcclusion;
+	ambientReflection	=	ambientReflection * ( specular /* ab.x + ab.y*/ ) * ssaoFactorSpec * selfOcclusion * ambientLuminance;
 	
-	totalLight.xyz	+=	ambientDiffuse + ambientDiffuseSky + ambientSpecular;	
-	
+	totalLight.xyz	+=	ambientDiffuse + ambientSpecular + ambientReflection;
+
 	//----------------------------------------------------------------------------------------------
 
 	return totalLight;

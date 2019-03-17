@@ -8,14 +8,16 @@ using Fusion.Core;
 using Fusion.Drivers.Graphics;
 using Fusion.Engine.Common;
 using Fusion.Core.Content;
+using Native.Embree;
 
 namespace Fusion.Engine.Graphics {
 
 	public enum InstanceGroup : uint {
 		Static		=	0x00000001,
-		Dynamic		=	0x00000002,
-		Character	=	0x00000004,
-		Weapon		=	0x00000008,
+		Kinematic	=	0x00000002,
+		Dynamic		=	0x00000004,
+		Character	=	0x00000008,
+		Weapon		=	0x00000010,
 		NotWeapon	=	~Weapon,
 		All			=	0xFFFFFFFF,
 	}
@@ -80,6 +82,23 @@ namespace Fusion.Engine.Graphics {
 			get; private set;
 		}
 
+		/// <summary>
+		/// Sets and gets lightmaps region size
+		/// </summary>
+		public Size2 LightMapSize {
+			get; set;
+		}
+
+		/// <summary>
+		/// Tag
+		/// </summary>
+		public Guid LightMapGuid {
+			get; set;
+		}
+
+		public Vector4 LightMapScaleOffset {
+			get; set;
+		}
 
 		/// <summary>
 		/// Tag

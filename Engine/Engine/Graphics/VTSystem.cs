@@ -306,8 +306,6 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="baseDir"></param>
 		public void Start ( VirtualTexture vt )
 		{
-			var storage			=	vt.TileStorage;
-
 			fontImage			=	Imaging.Image.LoadTga( new MemoryStream( Fusion.Properties.Resources.conchars ) );
 
 			stopwatch.Restart();

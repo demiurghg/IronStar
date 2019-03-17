@@ -53,6 +53,18 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		public ShadowContext ( Matrix view, Matrix proj, float depthBias, float slopeBias, DepthStencilSurface depthBuffer, RenderTargetSurface colorBuffer )
+		{
+			this.viewMatrix		=	view;
+			this.projMatrix		=	proj;
+			this.farDistance	=	1;
+			this.region			=	new Rectangle( 0,0, depthBuffer.Width, depthBuffer.Height );
+			this.depthBias		=	depthBias;
+			this.slopeBias		=	slopeBias;
+			this.depthBuffer	=	depthBuffer;
+			this.colorBuffer	=	colorBuffer;
+		}
+
 
 		public void SetupRenderTargets ( GraphicsDevice device )
 		{

@@ -13,11 +13,11 @@ namespace Fusion.Engine.Graphics {
 
 	public partial class RenderSystem : GameComponent {
 
-		public const int	LightProbeSize = 64;
-		public const int	LightProbeMaxSpecularMip = 4;
-		public const int	LightProbeDiffuseMip = 5;
-		public const int	LightProbeAmbientMip = 6;
-		public const int	LightProbeBatchSize = 32;
+		public const int	LightProbeSize				= 128;
+		public const int	LightProbeMaxMips			= 6;
+		public const int	LightProbeMaxSpecularMip	= LightProbeMaxMips-1;
+
+		public const int	LightProbeBatchSize			= 32;
 
 		public const int	MaxDecals		=	1024;
 		public const int	MaxOmniLights	=	1024;
@@ -109,6 +109,13 @@ namespace Fusion.Engine.Graphics {
 		/// Shows particles statistics.
 		/// </summary>
 		[Config]
+		public bool ShowExtents { get; set; }
+
+
+		/// <summary>
+		/// Shows particles statistics.
+		/// </summary>
+		[Config]
 		public bool SkipParticles { get; set; }
 
 		/// <summary>
@@ -143,12 +150,6 @@ namespace Fusion.Engine.Graphics {
 		public bool SkipDebugRendering { get; set; }
 
 		/// <summary>
-		/// 
-		/// </summary>
-		[Config]
-		public bool SkipGhostDebugRendering { get; set; }
-
-		/// <summary>
 		/// Shows particles statistics.
 		/// </summary>
 		[Config]
@@ -180,6 +181,10 @@ namespace Fusion.Engine.Graphics {
 		[AECategory("Postprocessing")]	
 		public bool		UseFXAA { get; set; }
 
+		[Config]
+		[AECategory("Debug Render")]
+		public bool SkipGhostDebugRendering { get; set; }
+
 
 		[AECategory("Shadows")]  [Config]	public bool UsePointShadowSampling { get; set; } = false;
 		[AECategory("Shadows")]  [Config]	public bool SnapShadowmapCascades { get; set; } = true;
@@ -196,10 +201,10 @@ namespace Fusion.Engine.Graphics {
 		[AECategory("Shadows")]  [Config]	public float CSMSlopeBias1 { get; set; } = 1;
 		[AECategory("Shadows")]  [Config]	public float CSMSlopeBias2 { get; set; } = 1;
 		[AECategory("Shadows")]  [Config]	public float CSMSlopeBias3 { get; set; } = 1;
-		[AECategory("Shadows")]  [Config]	public float CSMDepthBias0 { get; set; } = 0;
-		[AECategory("Shadows")]  [Config]	public float CSMDepthBias1 { get; set; } = 0;
-		[AECategory("Shadows")]  [Config]	public float CSMDepthBias2 { get; set; } = 0;
-		[AECategory("Shadows")]  [Config]	public float CSMDepthBias3 { get; set; } = 0;
+		[AECategory("Shadows")]  [Config]	public float CSMDepthBias0 { get; set; } = 1E-07f;
+		[AECategory("Shadows")]  [Config]	public float CSMDepthBias1 { get; set; } = 1E-07f;
+		[AECategory("Shadows")]  [Config]	public float CSMDepthBias2 { get; set; } = 1E-07f;
+		[AECategory("Shadows")]  [Config]	public float CSMDepthBias3 { get; set; } = 1E-07f;
 
 		[AECommand]
 		public void KillParticles ()

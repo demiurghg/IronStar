@@ -66,7 +66,6 @@ namespace Fusion.Core.Shell {
 
 					return suggestion;
 				}
-				return suggestion;
 			}
 		}
 

@@ -22,6 +22,7 @@ using IronStar.Views;
 using IronStar.Items;
 using IronStar.Entities.Players;
 using Native.NRecast;
+using Fusion.Engine.Graphics.Lights;
 
 namespace IronStar.Core {
 
@@ -91,7 +92,12 @@ namespace IronStar.Core {
 			entities		=	new EntityCollection();
 			items			=	new ItemCollection(this);
 			physics			=	new PhysicsManager( this, 48 );
-			navMesh			=	map.BuildNavMesh( content );
+
+			try {
+				navMesh			=	map.BuildNavMesh( content );
+			} catch ( Exception e ) {
+				Log.Error(e.Message);
+			}
 
 			//	setup rendering stuff :
 			var rw					=	Game.RenderSystem.RenderWorld;
@@ -112,6 +118,10 @@ namespace IronStar.Core {
 			foreach ( var mapNode in map.Nodes ) {
 				mapNode.SpawnNode(this);
 			}
+
+			rw.IrradianceMap		=	Content.Load(@"test_lightmap",	(IrradianceMap)null );
+			rw.IrradianceVolume		=	Content.Load(@"test_lightvol",	(IrradianceVolume)null );
+			rw.IrradianceCache		=	Content.Load(@"test_lightcache",(IrradianceCache)null );
 
 			map.UpdateEnvironment(this);
 		}

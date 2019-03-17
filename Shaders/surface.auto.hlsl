@@ -8,13 +8,13 @@ static const uint LightTypeSpotShadow = 3;
 static const uint LightTypeAmbient = 4;
 static const uint LightSpotShapeSquare = 65536;
 static const uint LightSpotShapeRound = 131072;
-static const uint LightProbeSize = 64;
-static const uint LightProbeMaxSpecularMip = 4;
-static const uint LightProbeDiffuseMip = 5;
+static const uint LightProbeSize = 128;
+static const uint LightProbeMaxSpecularMip = 5;
+static const uint LightProbeDiffuseMip = 6;
 static const uint InstanceGroupStatic = 1;
-static const uint InstanceGroupDynamic = 2;
-static const uint InstanceGroupCharacter = 4;
-static const uint InstanceGroupWeapon = 8;
+static const uint InstanceGroupDynamic = 4;
+static const uint InstanceGroupCharacter = 8;
+static const uint InstanceGroupWeapon = 16;
 
 // Fusion.Engine.Graphics.SceneRenderer+STAGE
 // Marshal.SizeOf = 1024
@@ -50,21 +50,23 @@ struct STAGE {
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+INSTANCE
-// Marshal.SizeOf = 96
+// Marshal.SizeOf = 128
 struct INSTANCE {
 	float4x4   World;                         // offset:    0
 	float4     Color;                         // offset:   64
-	int        Group;                         // offset:   80
+	float4     LMRegion;                      // offset:   80
+	int        Group;                         // offset:   96
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+SUBSET
-// Marshal.SizeOf = 32
+// Marshal.SizeOf = 48
 struct SUBSET {
 	float4     Rectangle;                     // offset:    0
-	float      MaxMip;                        // offset:   16
-	float      Dummy1;                        // offset:   20
-	float      Dummy2;                        // offset:   24
-	float      Dummy3;                        // offset:   28
+	float4     Color;                         // offset:   16
+	float      MaxMip;                        // offset:   32
+	float      Dummy1;                        // offset:   36
+	float      Dummy2;                        // offset:   40
+	float      Dummy3;                        // offset:   44
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHTINDEX
@@ -75,13 +77,14 @@ struct LIGHTINDEX {
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHTPROBE
-// Marshal.SizeOf = 32
+// Marshal.SizeOf = 96
 struct LIGHTPROBE {
-	float4     Position;                      // offset:    0
-	float      InnerRadius;                   // offset:   16
-	float      OuterRadius;                   // offset:   20
-	uint       ImageIndex;                    // offset:   24
-	float      Dummy1;                        // offset:   28
+	float4x4   MatrixInv;                     // offset:    0
+	float4     Position;                      // offset:   64
+	uint       ImageIndex;                    // offset:   80
+	float      NormalizedWidth;               // offset:   84
+	float      NormalizedHeight;              // offset:   88
+	float      NormalizedDepth;               // offset:   92
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHT

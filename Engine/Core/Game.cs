@@ -213,10 +213,6 @@ namespace Fusion.Core {
 			//	run game loop :
 			RenderLoop.Run( GraphicsDevice.Display.Window, UpdateAndDrawInternal );
 
-			//	wait for server 
-			//	if it is still running :
-			#warning wait for server and client (and megatexture too) completition
-
 			//	call exit event :
 			Exiting?.Invoke( this, EventArgs.Empty );
 
@@ -320,9 +316,10 @@ namespace Fusion.Core {
 		public void Reload()
 		{
 			if (!IsInitialized) {
-				throw new InvalidOperationException("Game is not initialized");
+				Log.Warning("Game is not initialized");
+			} else {
+				requestReload = true;
 			}
-			requestReload = true;
 		}
 
 

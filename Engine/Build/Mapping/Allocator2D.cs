@@ -8,6 +8,7 @@ using Fusion.Core.Extensions;
 using System.Diagnostics;
 using System.IO;
 using Fusion.Engine.Imaging;
+using Newtonsoft.Json;
 
 namespace Fusion.Build.Mapping {
 
@@ -19,8 +20,8 @@ namespace Fusion.Build.Mapping {
 
 		public readonly int Size;
 
-
-
+		public int Width { get { return Size; } }
+		public int Height { get { return Size; } }
 
 		Block rootBlock;
 
@@ -106,6 +107,10 @@ namespace Fusion.Build.Mapping {
 				var block = Q.Pop();
 
 				var state = block.State;
+
+				if (block.Size<size) {
+					continue;
+				}
 
 				// block is already allocated - skip
 				if (state==BlockState.Allocated) {

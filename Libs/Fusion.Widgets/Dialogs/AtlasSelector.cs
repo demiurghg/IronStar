@@ -173,7 +173,7 @@ namespace Fusion.Widgets.Dialogs {
 					this.MouseIn   +=   (s,e) => mouseIn = true;
 					this.MouseOut  +=   (s,e) => mouseIn = false;
 
-					ImageSrcRect	=	atlas.GetAbsoluteRectangleByName(clipName);
+					ImageSrcRect	=	new Rectangle(0,0,0,0);// atlas.GetAbsoluteRectangleByName(clipName);
 				}
 
 				protected override void Update( GameTime gameTime )

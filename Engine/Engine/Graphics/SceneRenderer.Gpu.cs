@@ -18,14 +18,17 @@ namespace Fusion.Engine.Graphics {
 	internal partial class SceneRenderer : RenderComponent {
 
 		enum SurfaceFlags {
-			FORWARD		=	1 << 0,
-			SHADOW		=	1 << 1,
-			RIGID		=	1 << 4,
-			SKINNED		=	1 << 5,
-			ZPASS		=	1 << 6,
-			ANISOTROPIC	=	1 << 7,
-			GBUFFER		=	1 << 8,
-			TRANSPARENT	=	1 << 9,
+			FORWARD				=	1 << 0,
+			SHADOW				=	1 << 1,
+			RIGID				=	1 << 4,
+			SKINNED				=	1 << 5,
+			ZPASS				=	1 << 6,
+			ANISOTROPIC			=	1 << 7,
+			GBUFFER				=	1 << 8,
+			RADIANCE			=	1 << 9,
+			TRANSPARENT			=	1 << 10,
+			IRRADIANCE_MAP		=	1 << 11,
+			IRRADIANCE_VOLUME	=	1 << 12,
 		}
 
 
@@ -48,7 +51,7 @@ namespace Fusion.Engine.Graphics {
 
 		[ShaderDefine]	public const uint LightProbeSize			=	RenderSystem.LightProbeSize;
 		[ShaderDefine]	public const uint LightProbeMaxSpecularMip	=	RenderSystem.LightProbeMaxSpecularMip;
-		[ShaderDefine]	public const uint LightProbeDiffuseMip		=	RenderSystem.LightProbeDiffuseMip;
+		[ShaderDefine]	public const uint LightProbeDiffuseMip		=	RenderSystem.LightProbeMaxMips;
 
 		[ShaderDefine]	public const uint InstanceGroupStatic		=	(int)InstanceGroup.Static;
 		[ShaderDefine]	public const uint InstanceGroupDynamic		=	(int)InstanceGroup.Dynamic;
@@ -91,10 +94,11 @@ namespace Fusion.Engine.Graphics {
 
 
 		[ShaderStructure]
-		[StructLayout(LayoutKind.Sequential, Pack=4, Size=96)]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=128)]
 		struct INSTANCE {
 			public Matrix	World	;
 			public Color4	Color	;
+			public Vector4	LMRegion;
 			public int		Group	;
 		}
 
@@ -102,6 +106,7 @@ namespace Fusion.Engine.Graphics {
 		[ShaderStructure]
 		struct SUBSET {
 			public Vector4	Rectangle;
+			public Color4	Color;
 			public float	MaxMip;
 			public float	Dummy1;
 			public float	Dummy2;
@@ -137,20 +142,22 @@ namespace Fusion.Engine.Graphics {
 		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential)]
 		public struct LIGHTPROBE {	
-			//public Matrix	WorldMatrix;
+			public Matrix	MatrixInv;
 			public Vector4	Position;
-			public float	InnerRadius;
-			public float	OuterRadius;
 			public uint		ImageIndex;
-			public float	Dummy1;
+			public float	NormalizedWidth	;
+			public float	NormalizedHeight;
+			public float	NormalizedDepth	;
 
 			public void FromLightProbe ( LightProbe light ) 
 			{
-				#region Update structure fields from OmniLight object
-				Position	=	new Vector4( light.Position, 1 );
-				InnerRadius	=	light.InnerRadius;
-				OuterRadius	=	light.OuterRadius;
-				ImageIndex	=	(uint)light.ImageIndex;
+				#region Update structure fields from LightProbe object
+				MatrixInv			=	Matrix.Invert(light.ProbeMatrix);
+				Position			=	new Vector4( light.ProbeMatrix.TranslationVector, 1 );
+				ImageIndex			=	(uint)light.ImageIndex;
+				NormalizedWidth		=	light.NormalizedWidth	;
+				NormalizedHeight	=	light.NormalizedHeight	;
+				NormalizedDepth		=	light.NormalizedDepth	;
 				#endregion
 			}
 		}

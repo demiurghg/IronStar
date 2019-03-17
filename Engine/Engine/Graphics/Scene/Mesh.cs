@@ -11,23 +11,28 @@ using System.ComponentModel.Design;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
+using Fusion.Core.Collection;
+using System.Diagnostics;
 
 namespace Fusion.Engine.Graphics {
 
 	public sealed partial class Mesh : DisposableBase, IEquatable<Mesh> {
 
-		public List<MeshVertex>		Vertices		{ get; private set; }	
-		public List<MeshTriangle>	Triangles		{ get; private set; }	
-		public List<MeshSubset>		Subsets			{ get; private set; }
-		public List<MeshSurfel>		Surfels			{ get; private set; }
-		public int					TriangleCount	{ get { return Triangles.Count; } }
-		public int					VertexCount		{ get { return Vertices.Count; } }
-		public int					IndexCount		{ get { return TriangleCount * 3; } }
+		public List<MeshVertex>		Vertices			{ get; set; }	
+		public List<MeshTriangle>	Triangles			{ get; private set; }	
+		public List<MeshSubset>		Subsets				{ get; private set; }
+		public List<MeshSurfel>		Surfels				{ get; private set; }
+		public int					TriangleCount		{ get { return Triangles.Count; } }
+		public int					VertexCount			{ get { return Vertices.Count; } }
+		public int					IndexCount			{ get { return TriangleCount * 3; } }
 
-		internal VertexBuffer		VertexBuffer	{ get { return vertexBuffer; } }
-		internal IndexBuffer		IndexBuffer		{ get { return indexBuffer; } }
+		internal VertexBuffer		VertexBuffer		{ get { return vertexBuffer; } }
+		internal IndexBuffer		IndexBuffer			{ get { return indexBuffer; } }
 
-		public bool					IsSkinned		{ get; private set; }
+		public bool					IsSkinned			{ get; private set; }
+
+		public int[]				AdjacentVertices	{ get; private set; } = new int[0];
+		public int[]				AdjacentTriangles	{ get; private set; } = new int[0];
 
 		VertexBuffer vertexBuffer;
 		IndexBuffer	 indexBuffer;
@@ -268,66 +273,78 @@ namespace Fusion.Engine.Graphics {
 
 		/*-----------------------------------------------------------------------------------------
 		 * 
+		 *	Adjacency :
+		 * 
+		-----------------------------------------------------------------------------------------*/
+
+		public void BuildAdjacency ()
+		{
+			var count = Triangles.Count;
+
+			AdjacentTriangles	=	Enumerable.Repeat( -1, count * 3 ).ToArray();
+			AdjacentVertices	=	Enumerable.Repeat( -1, count * 3 ).ToArray();
+
+			for ( int i=0; i<count; i++ ) {
+
+				for ( int j=0; j<count; j++ ) {
+
+					if (i==j) {
+						continue;
+					}
+
+					UpdateAdjacency( i, j ); 					
+				}
+			}
+		}
+
+
+
+		bool UpdateAdjacency( int indexA, int indexB )
+		{
+			var a = Triangles[indexA];
+			var b = Triangles[indexB];
+
+			var adjTris		=	AdjacentTriangles;
+			var adjVerts	=	AdjacentVertices;
+			int adjIndex	=	indexA * 3;
+
+			if (a.Index0 == b.Index1 && a.Index1 == b.Index0) { adjTris[adjIndex] = indexB; adjVerts[adjIndex] = b.Index2; return true; }
+			if (a.Index0 == b.Index2 && a.Index1 == b.Index1) { adjTris[adjIndex] = indexB; adjVerts[adjIndex] = b.Index0; return true; }
+			if (a.Index0 == b.Index0 && a.Index1 == b.Index2) { adjTris[adjIndex] = indexB; adjVerts[adjIndex] = b.Index1; return true; }
+
+			adjIndex	=	indexA * 3 + 1;
+
+			if (a.Index1 == b.Index1 && a.Index2 == b.Index0) { adjTris[adjIndex] = indexB; adjVerts[adjIndex] = b.Index2; return true; }
+			if (a.Index1 == b.Index2 && a.Index2 == b.Index1) { adjTris[adjIndex] = indexB; adjVerts[adjIndex] = b.Index0; return true; }
+			if (a.Index1 == b.Index0 && a.Index2 == b.Index2) { adjTris[adjIndex] = indexB; adjVerts[adjIndex] = b.Index1; return true; }
+
+			adjIndex	=	indexA * 3 + 2;
+
+			if (a.Index2 == b.Index1 && a.Index0 == b.Index0) { adjTris[adjIndex] = indexB; adjVerts[adjIndex] = b.Index2; return true; }
+			if (a.Index2 == b.Index2 && a.Index0 == b.Index1) { adjTris[adjIndex] = indexB; adjVerts[adjIndex] = b.Index0; return true; }
+			if (a.Index2 == b.Index0 && a.Index0 == b.Index2) { adjTris[adjIndex] = indexB; adjVerts[adjIndex] = b.Index1; return true; }
+
+			return false;
+		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 * 
 		 *	Vertex merge stuff :
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
-		class OctNode {
-			public int index;
-			public OctNode[] nodes = new OctNode[8];
+
+		[DebuggerDisplay("{Source} --> {Target}")]
+		class ReIndex {
+			public ReIndex( int source, int target )
+			{
+				Source	=	source;
+				Target	=	target;
+			}
+			public readonly int Source;
+			public readonly int Target;
 		}
-
-
-		/// <summary>
-		/// Merges vertices
-		/// </summary>
-		public void MergeVertices ( float tolerance )
-		{
-			if (tolerance<=0) {
-				return;
-			}
-
-			OctNode	root = null;
-			List<MeshVertex> oldVertices = new List<MeshVertex>( Vertices );
-			Vertices.Clear();
-
-			for (int i=0; i<Triangles.Count; i++) {
-				
-				MeshVertex v0	=	oldVertices[ Triangles[i].Index0 ];
-				MeshVertex v1	=	oldVertices[ Triangles[i].Index1 ];
-				MeshVertex v2	=	oldVertices[ Triangles[i].Index2 ];
-				
-				int i0		=	InsertVertex( ref root, v0, tolerance );	
-				int i1		=	InsertVertex( ref root, v1, tolerance );	
-				int i2		=	InsertVertex( ref root, v2, tolerance );
-				int mtrl	=	Triangles[i].MaterialIndex;	
-
-				Triangles[i] = new MeshTriangle(i0,i1,i2, mtrl);
-			}
-		}
-
-
-
-		/// <summary>
-		/// Inserts node to oct tree 
-		/// </summary>
-		int InsertVertex ( ref OctNode node, MeshVertex v, float tolerance )
-		{
-			if (node==null) {
-				node = new OctNode();				node.index = Vertices.Count;
-				Vertices.Add( v );
-				return node.index;
-			}
-
-			if ( CompareVertexPair( Vertices[node.index], v, tolerance ) ) {
-				return node.index;
-			}
-
-			int r = ClassifyVertexPair( Vertices[node.index], v );
-
-			return InsertVertex( ref node.nodes[r], v, tolerance * tolerance );
-		}
-
 
 
 		/// <summary>
@@ -336,45 +353,92 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="v0"></param>
 		/// <param name="v1"></param>
 		/// <returns></returns>
-		bool CompareVertexPair ( MeshVertex v0, MeshVertex v1, float toleranceSquared )
+		int CompareVertexPair ( ReIndex index0, ReIndex index1 )
 		{
-			if ( Vector3.DistanceSquared( v0.Position	, v1.Position	 ) > toleranceSquared ) return false;
-			if ( Vector3.DistanceSquared( v0.Tangent	, v1.Tangent	 ) > toleranceSquared ) return false;
-			if ( Vector3.DistanceSquared( v0.Binormal	, v1.Binormal	 ) > toleranceSquared ) return false;
-			if ( Vector3.DistanceSquared( v0.Normal		, v1.Normal		 ) > toleranceSquared ) return false;
-			if ( Vector2.DistanceSquared( v0.TexCoord0	, v1.TexCoord0	 ) > toleranceSquared ) return false;
-			//if ( Vector2.DistanceSquared( v0.TexCoord1	, v1.TexCoord1	 ) > toleranceSquared ) return false;
+			var v0 = Vertices[index0.Source];
+			var v1 = Vertices[index1.Source];
 
-			if ( v0.Color0 != v1.Color0 ) return false;
+			if ( Vector3.DistanceSquared( v0.Position	, v1.Position	 ) > float.Epsilon * 8192 ) return 1;
+			if ( Vector3.DistanceSquared( v0.Tangent	, v1.Tangent	 ) > float.Epsilon * 8192 ) return 1;
+			if ( Vector3.DistanceSquared( v0.Binormal	, v1.Binormal	 ) > float.Epsilon * 8192 ) return 1;
+			if ( Vector3.DistanceSquared( v0.Normal		, v1.Normal		 ) > float.Epsilon * 8192 ) return 1;
+			if ( Vector2.DistanceSquared( v0.TexCoord0	, v1.TexCoord0	 ) > float.Epsilon * 8192 ) return 1;
+			if ( Vector2.DistanceSquared( v0.TexCoord1	, v1.TexCoord1	 ) > float.Epsilon * 8192 ) return 1;
+
+			if ( v0.Color0 != v1.Color0 ) return 1;
 			//if ( v0.Color1 != v1.Color1 ) return false;
 
-			if ( Vector4.DistanceSquared( v0.SkinWeights, v1.SkinWeights ) > toleranceSquared ) return false;
-			if ( v0.SkinIndices != v1.SkinIndices ) return false;
+			if ( Vector4.DistanceSquared( v0.SkinWeights, v1.SkinWeights ) > float.Epsilon * 8192 ) return 1;
+			if ( v0.SkinIndices != v1.SkinIndices ) return 1;
 
-			return true;
+			return 0;
 		}
 
 
-
 		/// <summary>
-		/// 
+		/// Merges vertices
 		/// </summary>
-		/// <param name="v0"></param>
-		/// <param name="v1"></param>
-		/// <returns></returns>
-		int ClassifyVertexPair ( MeshVertex v0, MeshVertex v1 )
+		public void MergeVertices ( float tolerance )
 		{
-			int res = 0;
-			if (v0.Position.X < v1.Position.X) res |= 0x1;
-			if (v0.Position.Y < v1.Position.Y) res |= 0x2;
-			if (v0.Position.Z < v1.Position.Z) res |= 0x4;
-			return res;
+			var octree	=	new Octree<ReIndex>();
+			var remap	=	new ReIndex[ Vertices.Count ];
+			int counter	=	0;
+
+			for (int index=0; index<Vertices.Count; index++) {
+
+				var vertex		=	Vertices[index];
+				var newIndex	=	octree.Insert( vertex.Position, new ReIndex(index,counter), CompareVertexPair, (idx) => counter++ );
+
+				remap[ index ]	=	newIndex;
+			}
+
+			for (int i=0; i<Triangles.Count; i++) {
+
+				var index0		=	remap[ Triangles[i].Index0 ].Target;
+				var index1		=	remap[ Triangles[i].Index1 ].Target;
+				var index2		=	remap[ Triangles[i].Index2 ].Target;
+				var mtrl		=	Triangles[i].MaterialIndex;
+				
+				Triangles[i] = new MeshTriangle( index0, index1, index2, mtrl);
+			}
+
+			Vertices	=	remap
+							.DistinctBy( value => value.Target )
+							.Select( idx0 => Vertices[idx0.Source] )
+							.ToList();
+		}
+
+
+		/// <summary>
+		/// Separates triangles making triangle indices unique.
+		/// Vertices will be duplicated if necessary.
+		/// </summary>
+		public void SeparateTriangles ()
+		{
+			var oldVertices = Vertices;
+
+			Vertices	=	new List<MeshVertex>( TriangleCount * 3 );
+
+			for ( int i=0; i<TriangleCount; i++ ) {
+
+				var tri = Triangles[i];
+
+				Vertices.Add( oldVertices[ tri.Index0 ] );
+				Vertices.Add( oldVertices[ tri.Index1 ] );
+				Vertices.Add( oldVertices[ tri.Index2 ] );
+
+				tri.Index0 = i*3+0;
+				tri.Index1 = i*3+1;
+				tri.Index2 = i*3+2;
+
+				Triangles[i] = tri;
+			}
 		}
 
 
 
 		/// <summary>
-		/// 
+		/// Computes bounding box for given mesh.
 		/// </summary>
 		public BoundingBox ComputeBoundingBox() 
 		{
@@ -414,6 +478,8 @@ namespace Fusion.Engine.Graphics {
 
 			return minDistance;//*/
 		}
+
+
 
 
 
@@ -617,6 +683,14 @@ namespace Fusion.Engine.Graphics {
 			//	read subsets :
 			int subsetCount	=	reader.ReadInt32();
 			Subsets			=	reader.Read<MeshSubset>( subsetCount ).ToList();
+							
+			//	read adjacent tris :
+			int adjTrisCount		=	reader.ReadInt32();
+			AdjacentTriangles	=	reader.Read<int>( adjTrisCount );
+
+			//	read adjacent verts :
+			int adjVertsCount	=	reader.ReadInt32();
+			AdjacentVertices	=	reader.Read<int>( adjVertsCount );
 		}
 
 
@@ -629,10 +703,18 @@ namespace Fusion.Engine.Graphics {
 		{
 			writer.Write( VertexCount );
 			writer.Write( Vertices.ToArray() );
+			
 			writer.Write( TriangleCount );
 			writer.Write( Triangles.ToArray() );
+			
 			writer.Write( Subsets.Count );
 			writer.Write( Subsets.ToArray() );
+
+			writer.Write( AdjacentTriangles.Length );
+			writer.Write( AdjacentTriangles );
+
+			writer.Write( AdjacentVertices.Length );
+			writer.Write( AdjacentVertices );
 		}
 	}
 }

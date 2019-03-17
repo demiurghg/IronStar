@@ -60,15 +60,15 @@ namespace Fusion.Scripting {
 		public static string LuaGetTypeName ( int type )
 		{
             switch (type) {
-                case Lua.LUA_TNIL			: return "nil"			; break;
-                case Lua.LUA_TNUMBER		: return "number"		; break;
-                case Lua.LUA_TSTRING		: return "string"		; break;
-                case Lua.LUA_TTABLE			: return "table"		; break;
-                case Lua.LUA_TFUNCTION		: return "function"		; break;
-                case Lua.LUA_TBOOLEAN		: return "boolean"		; break;
-                case Lua.LUA_TUSERDATA		: return "userdata"		; break;
-                case Lua.LUA_TTHREAD		: return "thread"		; break;
-                case Lua.LUA_TLIGHTUSERDATA	: return "lightuserdata"; break;
+                case Lua.LUA_TNIL			: return "nil"			;
+                case Lua.LUA_TNUMBER		: return "number"		;
+                case Lua.LUA_TSTRING		: return "string"		;
+                case Lua.LUA_TTABLE			: return "table"		;
+                case Lua.LUA_TFUNCTION		: return "function"		;
+                case Lua.LUA_TBOOLEAN		: return "boolean"		;
+                case Lua.LUA_TUSERDATA		: return "userdata"		;
+                case Lua.LUA_TTHREAD		: return "thread"		;
+                case Lua.LUA_TLIGHTUSERDATA	: return "lightuserdata";
                 default: return "unknown";
             }
 		}

@@ -11,6 +11,7 @@ using Fusion.Engine.Common;
 using Fusion.Drivers.Graphics;
 using Fusion.Core.Shell;
 using Fusion.Core.Extensions;
+using Fusion.Engine.Graphics.Lights;
 
 namespace Fusion.Engine.Graphics {
 
@@ -31,7 +32,7 @@ namespace Fusion.Engine.Graphics {
 		internal SceneRenderer	SceneRenderer	{ get { return Game.GetService< SceneRenderer	>(); } }
 		internal VTSystem		VTSystem		{ get { return Game.GetService< VTSystem		>(); } }
 		internal Sky			Sky				{ get { return Game.GetService< Sky				>(); } }
-		internal Fog			Fog				{ get { return Game.GetService< Fog				>(); } }				
+		internal Fog			Fog				{ get { return Game.GetService< Fog				>(); } }
 
 		/// <summary>
 		/// Gets render counters.
@@ -47,6 +48,8 @@ namespace Fusion.Engine.Graphics {
 		DynamicTexture whiteTexture;
 		DynamicTexture blackTexture;
 		DynamicTexture flatNormalMap;
+
+		internal SpriteLayer	extentTest;
 
 
 		/// <summary>
@@ -97,6 +100,7 @@ namespace Fusion.Engine.Graphics {
 			Game.AddServiceAndComponent( new SpriteEngine	( this ) );
 			Game.AddServiceAndComponent( new Filter			( this ) );
 			Game.AddServiceAndComponent( new Filter2		( this ) );
+			Game.AddServiceAndComponent( new CubeMapFilter	( this ) );
 			Game.AddServiceAndComponent( new BlurFilter		( this ) );
 			Game.AddServiceAndComponent( new BilateralFilter( this ) );
 			Game.AddServiceAndComponent( new SsaoFilter		( this ) );
@@ -162,6 +166,11 @@ namespace Fusion.Engine.Graphics {
 
 			DisplayBoundsChanged += (s,e) => renderWorld.Resize( DisplayBounds.Width, DisplayBounds.Height );
 			Game.Exiting+=Game_Exiting;
+
+			//	add extent layer test :
+			extentTest			=	new SpriteLayer(this, 100);
+			extentTest.Order	=	0;
+			SpriteLayers.Add(extentTest);
 		}
 
 

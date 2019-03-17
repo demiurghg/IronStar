@@ -165,7 +165,7 @@ namespace Fusion.Engine.Graphics {
 			cbDataStage.CascadeGradientMatrix2	=	rs.LightManager.ShadowMap.GetCascade( 2 ).ComputeGradientMatrix();
 			cbDataStage.CascadeGradientMatrix3	=	rs.LightManager.ShadowMap.GetCascade( 3 ).ComputeGradientMatrix();
 
-			cbDataStage.OcclusionGridMatrix		=	rs.LightManager.OcclusionGridMatrix;
+			cbDataStage.OcclusionGridMatrix		=	rs.RenderWorld.IrradianceVolume.VolumeTransform;
 
 			cbDataStage.VTGradientScaler		=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;
 
@@ -221,11 +221,16 @@ namespace Fusion.Engine.Graphics {
 				device.PixelShaderResources[12]	= context.GetAOBuffer();
 			}
 
-			device.PixelShaderResources[13]	=	rs.Sky.SkyCube;
-			device.PixelShaderResources[14]	=	rs.LightManager.OcclusionGrid;
-			device.PixelShaderResources[15]	=	rs.RenderWorld.RadianceCache;
-			device.PixelShaderResources[16]	=	envLut.Srv;
-			device.PixelShaderResources[17]	=	rs.LightManager.LightGrid.ProbeDataGpu;
+			device.PixelShaderResources[13]	=	rs.RenderWorld.IrradianceMap.IrradianceTextureRed;
+			device.PixelShaderResources[14]	=	rs.RenderWorld.IrradianceMap.IrradianceTextureGreen;
+			device.PixelShaderResources[15]	=	rs.RenderWorld.IrradianceMap.IrradianceTextureBlue;
+			device.PixelShaderResources[16]	=	rs.RenderWorld.IrradianceVolume.IrradianceTextureRed;
+			device.PixelShaderResources[17]	=	rs.RenderWorld.IrradianceVolume.IrradianceTextureGreen;
+			device.PixelShaderResources[18]	=	rs.RenderWorld.IrradianceVolume.IrradianceTextureBlue;
+
+			device.PixelShaderResources[20]	=	rs.RenderWorld.IrradianceCache.IrradianceCubeMaps;
+			device.PixelShaderResources[21]	=	envLut.Srv;
+			device.PixelShaderResources[22]	=	rs.LightManager.LightGrid.ProbeDataGpu;
 
 
 			//	setup samplers :
@@ -265,11 +270,20 @@ namespace Fusion.Engine.Graphics {
 				flag |= (int)SurfaceFlags.TRANSPARENT;
 			}
 
+			if ( stageFlag==SurfaceFlags.FORWARD) {
+				if ( instance.Group==InstanceGroup.Static ) {
+					flag |= (int)SurfaceFlags.IRRADIANCE_MAP;
+				} else {
+					flag |= (int)SurfaceFlags.IRRADIANCE_VOLUME;
+				}
+			}
+
 			device.PipelineState	=	factory[ flag ];
 
 			cbDataInstance.Group	=	(int)instance.Group;
 			cbDataInstance.Color	=	instance.Color;
 			cbDataInstance.World	=	instance.World;
+			cbDataInstance.LMRegion	=	instance.LightMapScaleOffset;
 
 			constBufferInstance.SetData( cbDataInstance );
 
@@ -278,7 +292,7 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		bool SetupSubset ( ref VirtualTexture.SegmentInfo segmentInfo, bool transparent )
+		bool SetupSubset ( ref VTSegment segmentInfo, bool transparent )
 		{
 			var region = segmentInfo.Region;
 
@@ -287,6 +301,7 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			cbDataSubset.Rectangle	=	new Vector4( region.X, region.Y, region.Width, region.Height );
+			cbDataSubset.Color		=	segmentInfo.AverageColor.ToColor4();
 			cbDataSubset.MaxMip		=	segmentInfo.MaxMipLevel;
 			
 			constBufferSubset.SetData( cbDataSubset );
@@ -390,6 +405,14 @@ namespace Fusion.Engine.Graphics {
 			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
 
 			RenderGeneric("LightProbeGBuffer", null, StereoEye.Mono, SurfaceFlags.GBUFFER, context, instances, mask );
+		}
+
+
+		internal void RenderLightProbeRadiance ( LightProbeContext context, RenderWorld rw, InstanceGroup mask )
+		{
+			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
+
+			RenderGeneric("LightProbeRadiance", null, StereoEye.Mono, SurfaceFlags.RADIANCE, context, instances, mask );
 		}
 	}
 }

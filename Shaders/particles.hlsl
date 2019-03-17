@@ -39,9 +39,10 @@ Texture2D						ShadowMap			:	register(t10);
 Texture2D						LightMap			:	register(t11);
 Texture2D						ShadowMask			:	register(t12);
 		
-Texture3D						OcclusionGrid		: 	register(t14);
-TextureCubeArray				RadianceCache		:	register(t15);
-StructuredBuffer<LIGHTPROBE> 	ProbeDataTable		:	register(t17);
+Texture3D						IrradianceVolumeR	: 	register(t14);
+Texture3D						IrradianceVolumeG	: 	register(t15);
+Texture3D						IrradianceVolumeB	: 	register(t16);
+
 StructuredBuffer<float4>		lightMapRegionsGS	:	register(t18);
 
 #include "fog.fxi"

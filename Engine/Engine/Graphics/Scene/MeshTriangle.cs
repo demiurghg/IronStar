@@ -5,10 +5,14 @@ using System.Text;
 using System.Runtime.Serialization;
 using SharpDX;
 using Fusion.Core.Mathematics;
-
+using System.Diagnostics;
 
 namespace Fusion.Engine.Graphics {
 
+	/// <summary>
+	/// 
+	/// </summary>
+	[DebuggerDisplay("Indices: {Index0} {Index1} {Index2} Material: {MaterialIndex}")]
 	public struct MeshTriangle : IEquatable<MeshTriangle> {
 
 		public int		Index0			;
@@ -24,11 +28,12 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="i1"></param>
 		/// <param name="i2"></param>
 		/// <param name="mtrlId"></param>
-		public MeshTriangle( int i0 = 0, int i1 = 0, int i2 = 0, int mtrlId = 0 ) {
-			Index0	= i0;
-			Index1	= i1;
-			Index2	= i2;
-			MaterialIndex	= mtrlId;
+		public MeshTriangle( int i0 = 0, int i1 = 0, int i2 = 0, int mtrlId = 0 ) 
+		{
+			Index0				=	i0;
+			Index1				=	i1;
+			Index2				=	i2;
+			MaterialIndex		=	mtrlId;
 		}
 
 

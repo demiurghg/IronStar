@@ -85,7 +85,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public override void Initialize() 
 		{
-			skyCube		=	new RenderTargetCube( device, ColorFormat.Rgba16F, 64, true );
+			skyCube		=	new RenderTargetCube( device, ColorFormat.Rgba16F, 64, 0 );
 			skyConstsCB	=	new ConstantBuffer( device, typeof(SkyConsts) );
 
 			LoadContent();
@@ -218,13 +218,25 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="camera"></param>
+		/// <param name="stereoEye"></param>
+		/// <param name="frame"></param>
+		/// <param name="settings"></param>
+		internal void Render( Camera camera, StereoEye stereoEye, HdrFrame frame, SkySettings settings )
+		{
+			Render( camera, stereoEye, frame.DepthBuffer.Surface, frame.HdrBuffer.Surface, settings );
+		}
+
 
 		/// <summary>
 		/// Renders sky with specified technique
 		/// </summary>
 		/// <param name="rendCtxt"></param>
 		/// <param name="techName"></param>
-		internal void Render( Camera camera, StereoEye stereoEye, HdrFrame frame, SkySettings settings )
+		internal void Render( Camera camera, StereoEye stereoEye, DepthStencilSurface depth, RenderTargetSurface color, SkySettings settings, bool noSun = false )
 		{
 			using ( new PixEvent("Sky Rendering") ) {
 				var scale		=	Matrix.Scaling( settings.SkySphereSize );
@@ -233,11 +245,15 @@ namespace Fusion.Engine.Graphics {
 				var	sunPos		=	settings.SunPosition;
 				var sunColor	=	settings.SunGlowColor;
 
+				if (noSun) {
+					sunColor	=	Color4.Zero;
+				}
+
 				device.ResetStates();
 
 				//rs.DepthStencilState = depthBuffer==null? DepthStencilState.None : DepthStencilState.Default ;
 
-				device.SetTargets( frame.DepthBuffer.Surface, frame.HdrBuffer.Surface );
+				device.SetTargets( depth, color );
 
 				var viewMatrix = camera.GetViewMatrix( stereoEye );
 				var projMatrix = camera.GetProjectionMatrix( stereoEye );

@@ -55,7 +55,28 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		class BuildRadCmd : CommandNoHistory {
+		class BuildRadCmd : CommandNoHistory 
+		{
+			[CommandLineParser.Required]
+			[CommandLineParser.Name("quality")]
+			public QualityLevel QualityLevel { get; set; }
+
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("all")]
+			public bool All { get; set; }
+
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("map")]
+			public bool Map { get; set; }
+
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("vol")]
+			public bool Volume { get; set; }
+
+			[CommandLineParser.Option]
+			[CommandLineParser.Name("cube")]
+			public bool Cubes { get; set; }
+
 			readonly RenderSystem rs;
 			
 			public BuildRadCmd ( RenderSystem rs ) {
@@ -64,11 +85,8 @@ namespace Fusion.Engine.Graphics {
 			
 			public override object Execute()
 			{
-				if (rs.RenderWorld!=null) {
-					rs.RenderWorld?.CaptureRadiance();
-				} else {
-					throw new InvalidOperationException("BuildRadCmd: Render world is not set");
-				}
+				rs.RenderWorld?.BuildRadiance( QualityLevel, Map||All, Volume||All, Cubes||All );
+
 				return null;
 			}
 		}

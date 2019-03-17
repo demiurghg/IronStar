@@ -118,7 +118,16 @@ namespace IronStar.Mapping {
 		{
 			var newNode = (MapOmniLight)MemberwiseClone();
 			newNode.light = null;
+			newNode.NodeGuid = Guid.NewGuid();
 			return newNode;
+		}
+
+
+
+		public override BoundingBox GetBoundingBox()
+		{
+			float sz = OuterRadius / (float)Math.Sqrt(3);
+			return new BoundingBox( sz, sz, sz );
 		}
 	}
 }

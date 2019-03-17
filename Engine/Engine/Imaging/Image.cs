@@ -39,6 +39,20 @@ namespace Fusion.Engine.Imaging {
 		}
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="image"></param>
+		public Image ( GenericImage<Color> image )
+		{
+			Width			=	image.Width;
+			Height			=	image.Height;
+
+			RawImageData	=	new Color[Width*Height];
+
+			Array.Copy( image.RawImageData, RawImageData, RawImageData.Length );
+		}
+
 
 		/// <summary>
 		/// Constructor
@@ -351,6 +365,27 @@ namespace Fusion.Engine.Imaging {
 				Write(x,y, procFunc( x, y, Sample( x,y ) ) );
 		}
 
+
+
+		public Color ComputeAverageColor ()
+		{
+			Color4 average = Color4.Zero;
+
+			for (int i=0; i<RawImageData.Length; i++) {
+				var c = RawImageData[i];
+				average.Red		+= c.R;
+				average.Green	+= c.G;
+				average.Blue	+= c.B;
+				average.Alpha	+= c.A;
+			}
+
+			average.Red		/= (RawImageData.Length * 255.0f);
+			average.Green	/= (RawImageData.Length * 255.0f);
+			average.Blue	/= (RawImageData.Length * 255.0f);
+			average.Alpha	/= (RawImageData.Length * 255.0f);
+
+			return new Color( average.Red, average.Green, average.Blue, average.Alpha );
+		}
 
 		/*-----------------------------------------------------------------------------------------
 		 * 

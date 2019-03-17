@@ -111,7 +111,15 @@ namespace IronStar.Mapping {
 		{
 			var newNode = (MapReverb)MemberwiseClone();
 			newNode.reverb		= null;
+			newNode.NodeGuid = Guid.NewGuid();
 			return newNode;
+		}
+
+
+		public override BoundingBox GetBoundingBox()
+		{
+			float sz = MaximumDistance / (float)Math.Sqrt(3);
+			return new BoundingBox( sz, sz, sz );
 		}
 	}
 }

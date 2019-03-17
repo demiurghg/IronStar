@@ -149,7 +149,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="origin"></param>
 		/// <param name="rightHanded"></param>
-		public void SetupCameraCubeFace ( Vector3 origin, CubeFace cubeFace, float near, float far )
+		public void SetupCameraCubeFaceLH ( Vector3 origin, CubeFace cubeFace, float near, float far )
 		{
 			Matrix view = Matrix.Identity;
 			Matrix proj = Matrix.Identity;
@@ -161,6 +161,58 @@ namespace Fusion.Engine.Graphics {
 				case CubeFace.FaceNegY : view = Matrix.LookAtLH( origin,  Vector3.UnitY + origin, Vector3.UnitZ ); break;
 				case CubeFace.FacePosZ : view = Matrix.LookAtLH( origin, -Vector3.UnitZ + origin, Vector3.UnitY ); break;
 				case CubeFace.FaceNegZ : view = Matrix.LookAtLH( origin,  Vector3.UnitZ + origin, Vector3.UnitY ); break;
+			}
+			
+			SetupCamera( view, 2*near, 2*near, near, far, 1, 0 );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="origin"></param>
+		/// <param name="rightHanded"></param>
+		public void SetupCameraCubeFaceRH ( Vector3 origin, CubeFace cubeFace, float near, float far )
+		{
+			Matrix view = Matrix.Identity;
+			Matrix proj = Matrix.Identity;
+
+			switch (cubeFace) {
+				case CubeFace.FacePosX : view = Matrix.LookAtRH( origin,  Vector3.UnitX + origin, Vector3.UnitY ); break;
+				case CubeFace.FaceNegX : view = Matrix.LookAtRH( origin, -Vector3.UnitX + origin, Vector3.UnitY ); break;
+				case CubeFace.FacePosY : view = Matrix.LookAtRH( origin, -Vector3.UnitY + origin,-Vector3.UnitZ ); break;
+				case CubeFace.FaceNegY : view = Matrix.LookAtRH( origin,  Vector3.UnitY + origin, Vector3.UnitZ ); break;
+				case CubeFace.FacePosZ : view = Matrix.LookAtRH( origin, -Vector3.UnitZ + origin, Vector3.UnitY ); break;
+				case CubeFace.FaceNegZ : view = Matrix.LookAtRH( origin,  Vector3.UnitZ + origin, Vector3.UnitY ); break;
+			}
+			
+			SetupCamera( view, 2*near, 2*near, near, far, 1, 0 );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="origin"></param>
+		/// <param name="rightHanded"></param>
+		public void SetupCameraCubeFaceLH ( Matrix basis, CubeFace cubeFace, float near, float far )
+		{
+			Matrix view = Matrix.Identity;
+			Matrix proj = Matrix.Identity;
+			var origin	= basis.TranslationVector;
+			var unitX	= basis.Right;
+			var unitY	= basis.Up;
+			var unitZ	= basis.Backward;
+
+			switch (cubeFace) {
+				case CubeFace.FacePosX : view = Matrix.LookAtLH( origin,  unitX + origin, unitY ); break;
+				case CubeFace.FaceNegX : view = Matrix.LookAtLH( origin, -unitX + origin, unitY ); break;
+				case CubeFace.FacePosY : view = Matrix.LookAtLH( origin, -unitY + origin,-unitZ ); break;
+				case CubeFace.FaceNegY : view = Matrix.LookAtLH( origin,  unitY + origin, unitZ ); break;
+				case CubeFace.FacePosZ : view = Matrix.LookAtLH( origin, -unitZ + origin, unitY ); break;
+				case CubeFace.FaceNegZ : view = Matrix.LookAtLH( origin,  unitZ + origin, unitY ); break;
 			}
 			
 			SetupCamera( view, 2*near, 2*near, near, far, 1, 0 );

@@ -13,12 +13,12 @@ FBXHeaderExtension:  {
 	CreationTimeStamp:  {
 		Version: 1000
 		Year: 2019
-		Month: 1
-		Day: 13
-		Hour: 15
-		Minute: 47
-		Second: 59
-		Millisecond: 90
+		Month: 2
+		Day: 10
+		Hour: 16
+		Minute: 43
+		Second: 3
+		Millisecond: 267
 	}
 	Creator: "FBX SDK/FBX Plugins version 2018.1.1"
 }
@@ -411,13 +411,13 @@ Objects:  {
 			Property: "Original|ApplicationVendor", "KString", "", "Autodesk"
 			Property: "Original|ApplicationName", "KString", "", "Maya LT"
 			Property: "Original|ApplicationVersion", "KString", "", "201800"
-			Property: "Original|DateTime_GMT", "DateTime", "", "13/01/2019 12:47:59.088"
+			Property: "Original|DateTime_GMT", "DateTime", "", "10/02/2019 13:43:03.265"
 			Property: "Original|FileName", "KString", "", "E:\GITHUB\IronStar\Content\scenes\modules\crossroad01.fbx"
 			Property: "LastSaved", "Compound", ""
 			Property: "LastSaved|ApplicationVendor", "KString", "", "Autodesk"
 			Property: "LastSaved|ApplicationName", "KString", "", "Maya LT"
 			Property: "LastSaved|ApplicationVersion", "KString", "", "201800"
-			Property: "LastSaved|DateTime_GMT", "DateTime", "", "13/01/2019 12:47:59.088"
+			Property: "LastSaved|DateTime_GMT", "DateTime", "", "10/02/2019 13:43:03.265"
 			Property: "Original|ApplicationActiveProject", "KString", "", "E:\GITHUB\IronStar\Content\scenes\modules"
 			Property: "Original|ApplicationNativeFile", "KString", "", "E:\GITHUB\IronStar\Content\scenes\modules\crossroad01.mlt"
              

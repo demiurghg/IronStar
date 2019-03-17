@@ -16,7 +16,8 @@ namespace Fusion.Engine.Graphics {
 		[Vertex("BINORMAL")]	public Half4	Binormal;
 		[Vertex("NORMAL")]		public Half4	Normal	;
 		[Vertex("COLOR")]		public Color	Color	;
-		[Vertex("TEXCOORD")]	public Vector2	TexCoord;
+		[Vertex("TEXCOORD",0)]	public Vector2	TexCoord0;
+		[Vertex("TEXCOORD",1)]	public Vector2	TexCoord1;
 
 		static public VertexInputElement[] Elements {
 			get {
@@ -31,9 +32,10 @@ namespace Fusion.Engine.Graphics {
 			v.Position	=	meshVertex.Position;
 			v.Tangent	=	MathUtil.ToHalf4( meshVertex.Tangent,	0 );
 			v.Binormal	=	MathUtil.ToHalf4( meshVertex.Binormal,	0 );	
-			v.Normal	=	MathUtil.ToHalf4( meshVertex.Normal,		0 );	
+			v.Normal	=	MathUtil.ToHalf4( meshVertex.Normal,	0 );	
 			v.Color		=	meshVertex.Color0;
-			v.TexCoord	=	meshVertex.TexCoord0;
+			v.TexCoord0	=	meshVertex.TexCoord0;
+			v.TexCoord1	=	meshVertex.TexCoord1;
 			return v;
 		}
 	}

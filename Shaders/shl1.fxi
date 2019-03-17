@@ -1,0 +1,36 @@
+
+float EvalSHL1( float4 shl, float3 ndir )
+{
+	float  L0	=	shl.x + 0.000001f;
+	float3 L1	=	shl.wyz;
+	float3 L1n	=	L1 / L0 / 2;
+	
+	//return max(0, L0 + 2*dot(L1,ndir) );
+	
+	return (0.5 + dot(L1n,ndir)) * 2 * L0;
+}
+
+
+
+float EvalSHL1Smooth( float4 shl, float3 ndir )
+{
+	float  	L0		=	shl.x + 0.001f;
+	float3 	L1		=	shl.wyz;
+	float 	R0		=	L0;
+	float	R1		=	clamp(length(L1), 0, R0);
+	float	R10		=	R1 / R0;
+	float	Rdot	=	dot( ndir, L1 );
+	float 	a		=	(1 - R10) / (1 + R10);
+	float	p		=	1 + 2 * R10;
+	float	q		=	0.5f * ( 1 + Rdot / R0 );
+	
+	if (R1>R0) {
+		return 10000;
+	}
+	
+	//return max( 0, R0 + 3*Rdot );
+	
+	return max( 0, R0 * ( a + (1-a)*(p+1) * pow(q,p) ) );
+	
+	//return (0.5 + dot(L1n,ndir)) * 2 * L0;
+}

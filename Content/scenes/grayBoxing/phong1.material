@@ -1,10 +1,12 @@
 [General]
-Transparent = False
-Emission    = 0, 0, 0, 0
+Transparent  = False
+Emission     = 0, 0, 0, 0
+MaskEmission = False
 
 [Textures]
-BaseColor = 
-NormalMap = 
-Metallic  = 
-Roughness = 
+BaseColor = ..\textures\floorHeavy.tga
+NormalMap = ..\textures\floorHeavy_local.tga
+Metallic  = ..\textures\floorHeavy_m.tga
+Roughness = ..\textures\floorHeavy_r.tga
 Emission  = 
+Occlusion = 

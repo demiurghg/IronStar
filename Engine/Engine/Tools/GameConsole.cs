@@ -419,22 +419,16 @@ namespace Fusion.Engine.Tools {
 				case Keys.PageDown	: scroll -= 2; dirty = true; break;
 			}
 
-			bool typeChar = false;
-
 			switch (keyChar) {
 				case Tilde		: break;
 				case Backspace	: editBox.Backspace(); break;
 				case Enter		: ExecCmd(); editBox.Enter(); break;
 				case Escape		: break;
 				case Tab		: TabCmd(); break;
-				default			: editBox.TypeChar( keyChar ); typeChar = true; break;
+				default			: editBox.TypeChar( keyChar ); break;
 			}
 
 			var newText = AutoComplete();
-
-			/*if (typeChar) {
-				editBox.Text = newText;
-			} */
 
 			RefreshEdit();
 

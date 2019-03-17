@@ -51,3 +51,6 @@ scenes/weapon2/*.fbx /geom /report /anim  /retarget:scenes\weapon2\weapon_common
 *.txt
 *.json
 *.bank
+*.irrmap
+*.irrvol
+*.irrcache

@@ -226,7 +226,7 @@ float3 PoissonBeckmann ( float x, float y, float size, float roughness )
 float4	PrefilterFace ( float3 dir, int3 location )
 {
 	float weight 	= 0;
-	float3 result 	= 0;
+	float4 result 	= 0;
 
 	float3 dirN		= normalize(dir);
 	float3 upVector = abs(dirN.z) < 0.71 ? float3(0,0,1) : float3(1,0,0);
@@ -247,11 +247,11 @@ float4	PrefilterFace ( float3 dir, int3 location )
 	int rand = location.x * 17846 + location.y * 14734;
 	
 	for (int i=0; i<count; i++) {
-		float2 E = hammersley2d(i+rand, count);
-		float3 N = dir;
-		float3 H = ImportanceSampleGGX( E, ROUGHNESS, N );
+		float2 E 	= hammersley2d(i+rand, count);
+		float3 N 	= dir;
+		float3 H 	= ImportanceSampleGGX( E, ROUGHNESS, N );
 
-		result.rgb += LightProbe.SampleLevel(LinearSampler, float4(H, location.z), 0).rgb;// * saturate(dot(N,H));
+		result.rgba	+= LightProbe.SampleLevel(LinearSampler, float4(H, location.z), 0).rgba;// * saturate(dot(N,H));
 	}
 #else
 	for (int i=0; i<sampleCount; i++) {
@@ -260,19 +260,19 @@ float4	PrefilterFace ( float3 dir, int3 location )
 		float	d	=	poissonBeckmann[i].z;
 		float3 	H 	= 	normalize(dirN + tangentX * x + tangentY * y);
 		weight 		+= 	d;
-		result.rgb 	+= 	LightProbe.SampleLevel(LinearSampler, float4(H, location.z), 0).rgb * d;
+		result.rgba	+= 	LightProbe.SampleLevel(LinearSampler, float4(H, location.z), 0).rgba * d;
 	}
 #endif
 	
 #endif	
 
 #ifdef DIFFUSE
-	for (int i=0; i<31; i++) {
-		float3 H 	= 	hammersley_sphere_uniform( i, 31 );
+	for (int i=0; i<111; i++) {
+		float3 H 	= 	hammersley_sphere_uniform( i, 111 );
 		float d 	= 	Lambert( H, dirN );
 		weight 		+= 	d;
 		float4 val	=	LightProbe.SampleLevel(LinearSampler, float4(H, location.z), 0).rgba;
-		result.rgb 	+= 	val.rgb * d * val.a;
+		result.rgba	= 	result.rgba + val.rgba * d * val.a;
 	}
 #endif
 
@@ -282,11 +282,11 @@ float4	PrefilterFace ( float3 dir, int3 location )
 	for (int i=0; i<stepNum; i++) {
 		float3 H 	= 	hammersley_sphere_uniform( i, stepNum );
 		float4 val	=	LightProbe.SampleLevel(LinearSampler, float4(H, location.z), 0).rgba;
-		result.rgb 	+= 	val.rgb;
+		result.rgba += 	val.rgba;
 	}
 #endif
 	
-	return float4(result/weight, 0);
+	return float4(result/weight);
 }
 
 

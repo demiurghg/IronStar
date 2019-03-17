@@ -19,6 +19,19 @@ using Fusion.Core.Shell;
 
 namespace IronStar.Mapping {
 
+	public enum LightMapSize {
+		LightMap8	= 8,
+		LightMap16	= 16,
+		LightMap32	= 32,
+		LightMap64	= 64,
+		LightMap128	= 128,
+		LightMap256	= 256,
+		LightMap512	= 512,
+		LightMap1K	= 1024,
+		LightMap2K	= 2048,
+	}
+
+
 	public class MapModel : MapNode {
 
 		static readonly Scene EmptyScene = Scene.CreateEmptyScene();
@@ -54,6 +67,12 @@ namespace IronStar.Mapping {
 		[AEValueRange(0,5000,100,1)]
 		[Description( "Model glow color multiplier" )]
 		public float GlowIntensity { get; set; } = 100;
+
+		[AECategory( "Light Mapping" )]
+		public LightMapSize LightMapSize { get; set; } = LightMapSize.LightMap32;
+
+		[AECategory( "Light Mapping" )]
+		public bool Dynamic { get; set; } = false;
 		
 
 
@@ -138,8 +157,10 @@ namespace IronStar.Mapping {
 				
 				if (meshIndex>=0) {
 					instances[i] = new MeshInstance( rs, scene, scene.Meshes[meshIndex] );
-					instances[i].World	= transforms[ i ] * WorldMatrix;
-					instances[i].Group	= InstanceGroup.Static;
+					instances[i].World			=	transforms[ i ] * WorldMatrix;
+					instances[i].Group			=	Dynamic ? InstanceGroup.Dynamic : InstanceGroup.Static;
+					instances[i].LightMapSize	=	new Size2( (int)LightMapSize, (int)LightMapSize );
+					instances[i].LightMapGuid	=	this.NodeGuid;
 					rs.RenderWorld.Instances.Add( instances[i] );
 				} else {
 					instances[i] = null;
@@ -194,7 +215,10 @@ namespace IronStar.Mapping {
 
 		public override void ResetNode( GameWorld world )
 		{
-			if (scene==null) {
+			KillNode( world );
+			SpawnNode( world );
+
+			/*if (scene==null) {
 				return;
 			}
 
@@ -214,7 +238,7 @@ namespace IronStar.Mapping {
 				if (instance!=null) {
 					instances[i].World = transforms[ i ] * WorldMatrix;
 				}
-			}
+			} */
 		}
 
 
@@ -249,11 +273,19 @@ namespace IronStar.Mapping {
 		public override MapNode DuplicateNode()
 		{
 			var newNode = (MapModel)MemberwiseClone();
+			newNode.NodeGuid = Guid.NewGuid();
 
 			instances	=	null;
 			collidables	=	null;
 
 			return newNode;
+		}
+
+
+		public override BoundingBox GetBoundingBox()
+		{
+			#warning Need more smart bounding box for map models!
+			return new BoundingBox( 8, 8, 8 );
 		}
 	}
 }

@@ -33,6 +33,8 @@ namespace Fusion.Build.Mapping {
 		public int TexelOffsetX;
 		public int TexelOffsetY;
 
+		public Color AverageColor		=	Color.Gray;
+
 		public bool TilesDirty;
 
 		public readonly int Width;
@@ -144,6 +146,20 @@ namespace Fusion.Build.Mapping {
 
 
 
+		public VTSegment GetSegmentInfo ()
+		{
+			return new VTSegment( 
+				Name			,
+				TexelOffsetX	,
+				TexelOffsetY	,
+				Width			,
+				Height			,
+				AverageColor	,
+				Transparent		
+			);				
+		}
+
+
 		public static void Write ( VTTexture vtex, BinaryWriter writer )
 		{
 			writer.Write( vtex.Name );
@@ -152,7 +168,7 @@ namespace Fusion.Build.Mapping {
 			writer.Write( vtex.Width );
 			writer.Write( vtex.Height );
 			writer.Write( vtex.Transparent );
-			writer.Write( Color.Gray );
+			writer.Write( vtex.AverageColor );
 		}
 
 
@@ -220,16 +236,18 @@ namespace Fusion.Build.Mapping {
 		/// <param name="pageTable"></param>
 		public void SplitIntoPages ( BuildContext context, VTTextureTable pageTable, IStorage storage )
 		{
-			var pageSize			=	VTConfig.PageSize;
-			var pageSizeBorder		=	VTConfig.PageSizeBordered;
-			var border				=	VTConfig.PageBorderWidth;
+			var pageSize		=	VTConfig.PageSize;
+			var pageSizeBorder	=	VTConfig.PageSizeBordered;
+			var border			=	VTConfig.PageBorderWidth;
 
-			var colorMap			=	LoadTexture( BaseColor, Color.Gray );
-			var normalMap			=	LoadTexture( NormalMap, Color.FlatNormals );
-			var roughness			=	LoadTexture( Roughness, Color.Black );
-			var metallic			=	LoadTexture( Metallic,	Color.Black );
-			var emission			=	LoadTexture( Emission,	Color.Black );
-			var	occlusion			=	LoadTexture( Occlusion,	Color.White );
+			var colorMap		=	LoadTexture( BaseColor, Color.Gray );
+			var normalMap		=	LoadTexture( NormalMap, Color.FlatNormals );
+			var roughness		=	LoadTexture( Roughness, Color.Black );
+			var metallic		=	LoadTexture( Metallic,	Color.Black );
+			var emission		=	LoadTexture( Emission,	Color.Black );
+			var	occlusion		=	LoadTexture( Occlusion,	Color.White );
+
+			AverageColor		=	colorMap.ComputeAverageColor();
 
 			var pageCountX	=	colorMap.Width / pageSize;
 			var pageCountY	=	colorMap.Height / pageSize;

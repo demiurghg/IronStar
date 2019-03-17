@@ -202,7 +202,16 @@ namespace IronStar.Mapping {
 		{
 			var newNode = (MapSpotLight)MemberwiseClone();
 			newNode.light = null;
+			newNode.NodeGuid = Guid.NewGuid();
 			return newNode;
+		}
+
+
+		public override BoundingBox GetBoundingBox()
+		{
+			var frustum = new BoundingFrustum( SpotView * SpotProjection );
+			var points  = frustum.GetCorners();
+			return BoundingBox.FromPoints( points );
 		}
 	}
 }

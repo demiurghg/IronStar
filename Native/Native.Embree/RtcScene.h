@@ -177,7 +177,87 @@ namespace Native {
 			}
 
 
-				
+			private: void CopyManagedRayToNativeRay ( RtcRay %src, RTCRay *dst )
+			{
+				dst->org[0] =	src.Origin.X;
+				dst->org[1] =	src.Origin.Y;
+				dst->org[2] =	src.Origin.Z;
+				dst->align0	=	0;
+
+				dst->dir[0] =	src.Direction.X;
+				dst->dir[1] =	src.Direction.Y;
+				dst->dir[2] =	src.Direction.Z;
+				dst->align1 =	0;
+
+				dst->tnear	=	src.TNear;
+				dst->tfar	=	src.TFar;
+				dst->time	=	src.Time;
+				dst->mask	=	src.Mask;
+			
+				dst->Ng[0]	=	0;
+				dst->Ng[1]	=	0;
+				dst->Ng[2]	=	0;
+				dst->align2 =	0;
+				dst->u		=	0;
+				dst->v		=	0;
+
+				dst->geomID =	RTC_INVALID_GEOMETRY_ID;
+				dst->primID =	RTC_INVALID_GEOMETRY_ID;
+				dst->instID =	RTC_INVALID_GEOMETRY_ID;
+			}
+
+
+
+			private: void CopyResultToManagedRay( RTCRay *src, RtcRay %dst )
+			{
+				dst.HitNormal.X =	src->Ng[0];
+				dst.HitNormal.Y =	src->Ng[1];
+				dst.HitNormal.Z =	src->Ng[2];
+				dst.HitU		=	src->u;
+				dst.HitU		=	src->v;
+				dst.InstanceId	=	src->instID;				
+				dst.PrimitiveId	=	src->primID;				
+				dst.GeometryId	=	src->geomID;	
+				dst.TFar		=	src->tfar;			
+			}
+
+
+
+			public: bool Intersect ( RtcRay% ray )
+			{
+				CopyManagedRayToNativeRay( ray, pRay );
+
+				rtcIntersect( scene, *pRay );
+				RtcException::CheckError(device);
+
+				CopyResultToManagedRay( pRay, ray );
+
+				return ( pRay->geomID!=RTC_INVALID_GEOMETRY_ID );
+			}
+
+
+			public: bool Occluded ( RtcRay %ray )
+			{
+				CopyManagedRayToNativeRay( ray, pRay );
+
+				rtcOccluded( scene, *pRay );
+				RtcException::CheckError(device);
+
+				return ( pRay->geomID==0 );
+			}
+
+
+			public: bool Occluded ( RtcRay ray )
+			{
+				CopyManagedRayToNativeRay( ray, pRay );
+
+				rtcOccluded( scene, *pRay );
+				RtcException::CheckError(device);
+
+				return ( pRay->geomID==0 );
+			}
+
+
 			public: float Intersect(float x, float y, float z, float dx, float dy, float dz, float tnear, float tfar)
 			{
 				pRay->org[0] = x;

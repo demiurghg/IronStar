@@ -216,7 +216,6 @@ namespace Fusion.Engine.Graphics {
 					var gy	=	MathUtil.IntDivUp( FogSizeY, BlockSizeY );
 					var gz	=	MathUtil.IntDivUp( FogSizeZ, BlockSizeZ );
 
-					#warning D3D11 ERROR: ID3D11DeviceContext::Dispatch: The Compute Shader unit expects a Sampler configured for comparison filtering to be set at Slot 1, but the sampler bound at this slot is configured for default filtering.  This mismatch will produce undefined behavior if the sampler is used (e.g. it is not skipped due to shader code branching). [ EXECUTION ERROR #390: DEVICE_DRAW_SAMPLER_MISMATCH]
 					device.Dispatch( gx, gy, gz );
 				}
 				

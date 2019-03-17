@@ -12,9 +12,9 @@ coroutine.yield()
 
 while true do
 	if bright then
-		model.set_intensity( 2000 )
-	else
 		model.set_intensity( 200 )
+	else
+		model.set_intensity( 20 )
 	end
 	
 	bright = not bright;

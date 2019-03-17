@@ -113,20 +113,36 @@ namespace Fusion.Engine.Graphics {
 		public void SortLightProbes ()
 		{
 			envLights.Sort( delegate( LightProbe a, LightProbe b ) {
-				if (a.OuterRadius>b.OuterRadius) {
+
+				var sizeA	=	a.BoundingBox.Size();
+				var sizeB	=	b.BoundingBox.Size();
+				var volA	=	a.BoundingBox.Size().X * a.BoundingBox.Size().Y * a.BoundingBox.Size().Z;
+				var volB	=	b.BoundingBox.Size().X * b.BoundingBox.Size().Y * b.BoundingBox.Size().Z;
+				
+				if ( sizeA.X > sizeB.X && sizeA.Y > sizeB.Y && sizeA.Z > sizeB.Z ) 
+				{
 					return -1;
-				} else
-				if (a.OuterRadius<b.OuterRadius) {
+				} 
+				else if ( sizeA.X < sizeB.X && sizeA.Y < sizeB.Y && sizeA.Z < sizeB.Z ) 
+				{
 					return  1;
-				} else
-				if (a.OuterRadius==b.OuterRadius) {
+				} 
+				else if ( volA > volB ) 
+				{
+					return -1;
+				}
+				else if ( volA < volB ) 
+				{
+					return 1;
+				}
+				else {
 					return a.ImageIndex-b.ImageIndex;
 				}
-				return 0;
 			});
 		}
 
 
+		[Obsolete]
 		public int AllocImageIndex ()
 		{
 			int r = imageIndices.IndexOf(false);
@@ -137,6 +153,7 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		[Obsolete]
 		public void FreeImageIndex( int index )
 		{
 			imageIndices[index] = false;
@@ -144,6 +161,7 @@ namespace Fusion.Engine.Graphics {
 
 
 
+		[Obsolete]
 		public void FreeAllImageIndices ()
 		{
 			for (int i=0; i<imageIndices.Count; i++) {

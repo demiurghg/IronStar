@@ -1,4 +1,15 @@
 
+#ifdef _UBERSHADER
+$ubershader FORWARD RIGID +ANISOTROPIC +TRANSPARENT IRRADIANCE_MAP|IRRADIANCE_VOLUME
+$ubershader SHADOW RIGID +TRANSPARENT
+$ubershader ZPASS RIGID
+$ubershader GBUFFER RIGID
+$ubershader RADIANCE RIGID
+// $ubershader FORWARD RIGID|SKINNED +ANISOTROPIC +TRANSPARENT
+// $ubershader SHADOW RIGID|SKINNED +TRANSPARENT
+// $ubershader ZPASS RIGID|SKINNED
+// $ubershader GBUFFER RIGID|SKINNED
+#endif
 
 
 struct VSInput {
@@ -8,6 +19,7 @@ struct VSInput {
 	float3 Normal 	: NORMAL;
 	float4 Color 	: COLOR;
 	float2 TexCoord : TEXCOORD0;
+	float2 LMCoord  : TEXCOORD1;
 #ifdef SKINNED
     int4   BoneIndices  : BLENDINDICES0;
     float4 BoneWeights  : BLENDWEIGHTS0;
@@ -23,7 +35,7 @@ struct PSInput {
 	float3	Normal 		: TEXCOORD3;
 	float4	ProjPos		: TEXCOORD4;
 	float3 	WorldPos	: TEXCOORD5;
-	float4	TexShadow	: TEXCOORD6;
+	float2	LMCoord		: TEXCOORD6;
 };
 
 struct GBuffer {
@@ -59,20 +71,27 @@ Texture2D					DecalImages			:	register(t9);
 Texture2D					ShadowMap			:	register(t10);
 Texture2D					ShadowMapParticles	:	register(t11);
 Texture2D					AmbientOcclusion	:	register(t12);
-TextureCube					FogTable			: 	register(t13);
-Texture3D					OcclusionGrid		: 	register(t14);
-TextureCubeArray			RadianceCache		:	register(t15);
-Texture2D					EnvLut				:	register(t16);
-StructuredBuffer<LIGHTPROBE> ProbeDataTable		:	register(t17);
 
-#ifdef _UBERSHADER
-$ubershader FORWARD RIGID|SKINNED +ANISOTROPIC +TRANSPARENT
-$ubershader SHADOW RIGID|SKINNED +TRANSPARENT
-$ubershader ZPASS RIGID|SKINNED
-$ubershader GBUFFER RIGID|SKINNED
+Texture2D					IrradianceMapR		: 	register(t13);
+Texture2D					IrradianceMapG		: 	register(t14);
+Texture2D					IrradianceMapB		: 	register(t15);
+Texture3D					IrradianceVolumeR	: 	register(t16);
+Texture3D					IrradianceVolumeG	: 	register(t17);
+Texture3D					IrradianceVolumeB	: 	register(t18);
+
+TextureCubeArray			RadianceCache		:	register(t20);
+Texture2D					EnvLut				:	register(t21);
+StructuredBuffer<LIGHTPROBE> ProbeDataTable		:	register(t22);
+
+#ifdef FORWARD
+#include "surface.lighting.hlsl"
 #endif
 
+#ifdef RADIANCE
+#define DIFFUSE_ONLY
 #include "surface.lighting.hlsl"
+#endif
+
 #include "fog.fxi"
 
  
@@ -171,7 +190,7 @@ PSInput VSMain( VSInput input )
 	output.Tangent 		=  	tangent.xyz;
 	output.Binormal		=  	binormal.xyz;
 	output.WorldPos		=	wPos.xyz;
-	output.TexShadow	=	float4(0,0,0,0);
+	output.LMCoord		=	mad( input.LMCoord.xy, Instance.LMRegion.xy, Instance.LMRegion.zw );
 	
 	return output;
 }
@@ -228,6 +247,7 @@ float MipLevel( float2 uv )
 // }
 #endif
 
+
 #ifdef FORWARD
 GBuffer PSMain( PSInput input )
 {
@@ -240,7 +260,7 @@ GBuffer PSMain( PSInput input )
 		);
 		
 	float	alpha				=	0.5f;
-	float3	baseColor			=	0.5f;
+	float3	baseColor			=	pow(Subset.Color.rgb, 2.2);
 	float	roughness			=	0.5f;
 	float3	localNormal			=	float3(0,0,1);
 	float	emission			=	0;
@@ -250,11 +270,14 @@ GBuffer PSMain( PSInput input )
 	
 	float2 	scaledCoords	=	input.TexCoord.xy * Subset.Rectangle.zw;
 	
+	float2	checkerTC	=	input.TexCoord.xy;
+
 	input.TexCoord.x	=	frac(input.TexCoord.x);
 	input.TexCoord.y	=	frac(input.TexCoord.y);
-
+	
 	input.TexCoord.x	=	mad( input.TexCoord.x, Subset.Rectangle.z, Subset.Rectangle.x );
 	input.TexCoord.y	=	mad( input.TexCoord.y, Subset.Rectangle.w, Subset.Rectangle.y );
+	
 	
 	//---------------------------------
 	//	Compute miplevel :
@@ -323,18 +346,21 @@ GBuffer PSMain( PSInput input )
 	}
 
 	if ( Subset.Rectangle.z==Subset.Rectangle.w && Subset.Rectangle.z==0 ) {
-		float3	checker	=	floor(input.WorldPos.xyz/4.0f-0.5f)/2;
-		baseColor	=	0.2*frac(checker.x + checker.y + checker.z)+0.3;
+		float 	checkerX	=	frac(checkerTC.x*4) > 0.5 ? 1 : 0;
+		float 	checkerY	=	frac(checkerTC.y*4) > 0.5 ? 1 : 0;
+		float	checker		=	(checkerX+checkerY) % 2;
+		baseColor	=	pow(0.1*checker+0.5, 2);
 		localNormal	=	float3(0,0,1);
-		roughness	=	0.5;
+		roughness	=	0.5;//0.3*checker+0.15;
 		metallic	=	0;
 		emission	=	0;
 		alpha		=	0.5f;
+		//baseColor	=	float3(frac(checkerTC*1024),0);
 	}
 	
-	// output.hdr			=	float4( baseColor, 1 );
-	// output.feedback		=	feedback;
-	// return output;
+	/*output.hdr			=	float4( baseColor, 1 );
+	output.feedback		=	feedback;
+	return output; //*/
 
 	//---------------------------------
 	//	Prepare output values :
@@ -348,7 +374,7 @@ GBuffer PSMain( PSInput input )
 	
 	float3 	entityColor	=	input.Color.rgb;
 	
-	float3 	lighting	=	ComputeClusteredLighting( input, ClusterTable, Stage.ViewBounds.xy, baseColor, worldNormal, triNormal, roughness, metallic, occlusion );
+	float3 	lighting	=	ComputeClusteredLighting( input, ClusterTable, Stage.ViewBounds.xy, baseColor, worldNormal, triNormal, roughness, metallic, occlusion, input.LMCoord );
 	
 			lighting	=	emission * entityColor + lighting;
 	
@@ -381,6 +407,31 @@ GBuffer PSMain( PSInput input )
 	return output;
 }
 #endif
+
+
+#ifdef RADIANCE
+float4 PSMain( PSInput input ) : SV_TARGET0
+{
+	float3	baseColor	=	pow(Subset.Color.rgb, 2.2);
+	
+	float3	localNormal	=	float3(0,0,1);
+
+	float3 	worldNormal = 	input.Normal.xyz;
+			
+	float3 	triNormal	=	cross( ddx(input.WorldPos.xyz), -ddy(input.WorldPos.xyz) );
+			triNormal	=	normalize( triNormal );
+	
+	//	Compute light :
+	float3 	lighting	=	ComputeClusteredLighting( input, ClusterTable, Stage.ViewBounds.xy, baseColor, worldNormal, triNormal, 1, 0, 1, input.LMCoord );
+	
+	//	Apply fog :
+	float	dist	=	distance( input.WorldPos.xyz, Stage.ViewPos.xyz ); 
+	float3	final	=	lighting;//ApplyFogColor( lighting, Stage.FogAttenuation, dist, Stage.FogColor );
+	
+	return	float4( final, 1 );
+}
+#endif
+
 
 #include "dither.fxi"
 
@@ -419,7 +470,7 @@ LPGBuffer PSMain( PSInput input )
 	float 	dist	=	abs( input.ProjPos.w );
 	float4	dist_e	=	EncodeRGBE8( float3(dist,0,0) );
 	
-	float3	color	=	0.25;
+	float3	color	=	pow(0.5, 2.2f);
 	float3	normal	=	normalize(input.Normal.xyz) * 0.5f + 0.5f;
 	
 	output.color	=	float4( color , dist_e.r );
@@ -428,3 +479,4 @@ LPGBuffer PSMain( PSInput input )
 	return output;
 }
 #endif
+

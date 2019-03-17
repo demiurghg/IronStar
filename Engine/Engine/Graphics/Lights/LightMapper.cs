@@ -13,6 +13,7 @@ using Fusion.Engine.Imaging;
 using Fusion.Core.Configuration;
 using Fusion.Build.Mapping;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace Fusion.Engine.Graphics.Lights {
 
@@ -244,7 +245,11 @@ namespace Fusion.Engine.Graphics.Lights {
 
 				using ( var scene = BuildRtcScene( rtc, instances ) ) {
 
+					scene.Commit();
+
 					Log.Message("Indirect light ray tracing...");
+
+					Log.Message("   WHD: {0}x{1}x{2} @ {3}", irrVolume.Width, irrVolume.Height, irrVolume.Depth, irrVolume.Stride );
 
 					for ( int i=0; i<irrVolume.Width; i++ ) {
 
@@ -261,7 +266,7 @@ namespace Fusion.Engine.Graphics.Lights {
 								var p = new Vector3(x,y,z);
 								var n = Vector3.Zero;
 
-								var r	=	ComputeRadiance( scene, instances, hammersley, lightSet, p, n );
+								var r	=	ComputeRadiance( scene, instances, hammersley, lightSet, p, n, stride );
 								irrVolume.IrradianceRed	 [i,j,k]	=	r.Red;
 								irrVolume.IrradianceGreen[i,j,k]	=	r.Green;
 								irrVolume.IrradianceBlue [i,j,k]	=	r.Blue;
@@ -335,7 +340,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		
 
-		Irradiance ComputeRadiance ( RtcScene scene, MeshInstance[] instances, Vector3[] randomPoints, LightSet lightSet, Vector3 position, Vector3 normal )
+		Irradiance ComputeRadiance ( RtcScene scene, MeshInstance[] instances, Vector3[] randomPoints, LightSet lightSet, Vector3 position, Vector3 normal, float bias=0 )
 		{
 			var sampleCount		=	randomPoints.Length;
 			var invSampleCount	=	1.0f / sampleCount;
@@ -358,8 +363,9 @@ namespace Fusion.Engine.Graphics.Lights {
 				}
 
 				var ray		=	new RtcRay();
+				var pos		=	position + dir * bias;
 
-				EmbreeExtensions.UpdateRay( ref ray, position, dir, 0, 512 );
+				EmbreeExtensions.UpdateRay( ref ray, pos, dir, 0, 1024 );
 
 				var intersect	=	 scene.Intersect( ref ray );
 					
@@ -372,6 +378,8 @@ namespace Fusion.Engine.Graphics.Lights {
 				//-------------------------------------------
 				//	trying to find direct light :
 				if (intersect) {
+
+					//Log.Message("HUY!");
 
 					var albedo		=	GetAlbedo( instances, ref ray );
 

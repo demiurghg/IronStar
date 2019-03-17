@@ -743,7 +743,8 @@ namespace Fusion.Engine.Graphics {
 						break; 
 				}
 
-				using ( var irrVol = rs.LightManager.LightMap.BakeIrradianceVolume( Instances, LightSet, samples/64, 64,32,64, 8 ) ) {
+				//using ( var irrVol = rs.LightManager.LightMap.BakeIrradianceVolume( Instances, LightSet, samples, 64,32,64, 8 ) ) {
+				using ( var irrVol = rs.LightManager.LightMap.BakeIrradianceVolume( Instances, LightSet, samples, 32,16,32, 8 ) ) {
 
 					var fullPath	=	Builder.GetFullPath(@"test_lightvol.irrvol");
 

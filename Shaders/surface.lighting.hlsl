@@ -273,7 +273,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		irradianceB		=	IrradianceMapB.Sample( SamplerLinear, lmCoord );
 	#endif
 	#ifdef IRRADIANCE_VOLUME
-		volumeCoord		=	(worldPos.xyz + float3(2,2,2)) / float3(512,256,512) + float3(0.5f, 0.0f, 0.5f);
+		volumeCoord		=	(worldPos.xyz + float3(2,2,2)) / float3(256,128,256) + float3(0.5f, 0.0f, 0.5f);
 		irradianceR		=	IrradianceVolumeR.Sample( SamplerLinear, volumeCoord );
 		irradianceG		=	IrradianceVolumeG.Sample( SamplerLinear, volumeCoord );
 		irradianceB		=	IrradianceVolumeB.Sample( SamplerLinear, volumeCoord );

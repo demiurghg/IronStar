@@ -8,7 +8,6 @@ using Fusion.Engine.Graphics.Ubershaders;
 using Native.Embree;
 using System.Runtime.InteropServices;
 using Fusion.Core;
-using Fusion.Core.Extensions;
 using System.Diagnostics;
 using Fusion.Engine.Imaging;
 using Fusion.Core.Configuration;

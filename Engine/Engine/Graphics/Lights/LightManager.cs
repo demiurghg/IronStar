@@ -227,7 +227,6 @@ namespace Fusion.Engine.Graphics {
 				device.ComputeShaderResources[2]    =   rs.Sky.SkyCube;
 				device.ComputeShaderResources[3]	=	shadowMap.ColorBuffer;
 				device.ComputeShaderResources[4]	=	null;
-				#warning PARTICLE LIGHTMAP!!!!!!!!!!
 				device.ComputeShaderResources[5]	=	null;
 				device.ComputeShaderSamplers[0]		=	SamplerState.PointClamp;
 				device.ComputeShaderSamplers[1]		=	SamplerState.LinearWrap;

@@ -192,7 +192,7 @@ namespace Fusion.Scripting {
 						var s = LuaUtils.ExpectString(L,3);
 						try {
 							prop.SetValue( target, Enum.Parse(prop.PropertyType, s, true ) );
-						} catch ( ArgumentException ae ) {
+						} catch ( ArgumentException ) {
 							LuaUtils.LuaError(L, "Bad enum value {0} for enum type {1}", s, prop.PropertyType );
 						}
 					} else 

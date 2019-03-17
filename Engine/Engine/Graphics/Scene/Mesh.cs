@@ -12,7 +12,6 @@ using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
 using Fusion.Core.Collection;
-using Fusion.Core.Collection;
 using System.Diagnostics;
 
 namespace Fusion.Engine.Graphics {

@@ -319,8 +319,6 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 
-			#warning Configurate or compute values!
-
 			var factor	=	rs.ShadowCascadeFactor;
 			var depth	=	rs.ShadowCascadeDepth;
 			var size	=	rs.ShadowCascadeSize;
@@ -419,7 +417,6 @@ namespace Fusion.Engine.Graphics {
 			//
 			//	Particle shadow rendering 
 			//
-			#warning Add shadow mask (from atlas)
 			using ( new PixEvent( "Particle Shadows" ) ) {
 
 				//	draw cascade shadow particles :

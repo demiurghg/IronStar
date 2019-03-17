@@ -4,16 +4,7 @@ using System.Linq;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
 using Fusion.Drivers.Graphics;
-using Fusion.Engine.Graphics.Ubershaders;
-using Native.Embree;
-using System.Runtime.InteropServices;
 using Fusion.Core;
-using Fusion.Core.Extensions;
-using System.Diagnostics;
-using Fusion.Engine.Imaging;
-using Fusion.Core.Configuration;
-using Fusion.Build.Mapping;
-using System.Threading.Tasks;
 using System.IO;
 using Fusion.Core.Content;
 

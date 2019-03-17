@@ -187,6 +187,7 @@ namespace IronStar.Mapping {
 
 			var x  = transform.Right * len;
 			var y  = transform.Down * len;
+			var z  = transform.Backward * len;
 
 			var p0 = Vector3.TransformCoordinate( new Vector3(  Width/2,  Height/2, 0 ), transform ); 
 			var p1 = Vector3.TransformCoordinate( new Vector3( -Width/2,  Height/2, 0 ), transform ); 
@@ -203,6 +204,7 @@ namespace IronStar.Mapping {
 
 			dr.DrawLine( c, c+x, Color.Red  , Color.Red  , 2, 2 );
 			dr.DrawLine( c, c+y, Color.Lime , Color.Lime , 2, 2 );
+			dr.DrawLine( c, c+z, Color.Blue , Color.Blue , 5, 1 );
 
 			dr.DrawLine( p4, p5, color, color, 2, 2 );
 		}

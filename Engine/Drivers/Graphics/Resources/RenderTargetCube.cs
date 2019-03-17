@@ -62,7 +62,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="format"></param>
 		public RenderTargetCube ( GraphicsDevice device, ColorFormat format, int size, string debugName = "" ) : base ( device )
 		{
-			Create( format, size, false, debugName );
+			Create( format, size, 1, debugName );
 		}
 
 
@@ -73,7 +73,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="width"></param>
 		/// <param name="height"></param>
 		/// <param name="format"></param>
-		public RenderTargetCube ( GraphicsDevice device, ColorFormat format, int size, bool mips, string debugName = "" ) : base ( device )
+		public RenderTargetCube ( GraphicsDevice device, ColorFormat format, int size, int mips, string debugName = "" ) : base ( device )
 		{
 			Create( format, size, mips, debugName );
 		}
@@ -89,14 +89,16 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="samples"></param>
 		/// <param name="mips"></param>
 		/// <param name="debugName"></param>
-		void Create ( ColorFormat format, int size, bool mips, string debugName )
+		void Create ( ColorFormat format, int size, int mips, string debugName )
 		{
 			SampleCount	=	1;
 			Format		=	format;
 			Width		=	size;
 			Height		=	size;
 			Depth		=	1;
-			MipCount	=	mips ? ShaderResource.CalculateMipLevels( Width, Height ) : 1;
+			MipCount	=	mips == 0 ? CalculateMipLevels( Width, Height ) : mips;
+
+			var genMips	=	MipCount > 0 ? ResourceOptionFlags.GenerateMipMaps : ResourceOptionFlags.None;
 
 			var	texDesc	=	new Texture2DDescription();
 				texDesc.Width				=	Width;
@@ -106,7 +108,7 @@ namespace Fusion.Drivers.Graphics {
 				texDesc.CpuAccessFlags		=	CpuAccessFlags.None;
 				texDesc.Format				=	Converter.Convert( format );
 				texDesc.MipLevels			=	MipCount;
-				texDesc.OptionFlags			=	ResourceOptionFlags.TextureCube | (mips ? ResourceOptionFlags.GenerateMipMaps : ResourceOptionFlags.None);
+				texDesc.OptionFlags			=	ResourceOptionFlags.TextureCube | genMips;
 				texDesc.SampleDescription	=	new DXGI.SampleDescription(1, 0);
 				texDesc.Usage				=	ResourceUsage.Default;
 

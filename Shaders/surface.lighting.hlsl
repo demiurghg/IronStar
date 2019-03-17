@@ -64,7 +64,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		float4x4 decalMatrixI	=	decal.DecalMatrixInv;
 		float3	 decalColor		=	decal.BaseColorMetallic.rgb;
 		float3	 glowColor		=	decal.EmissionRoughness.rgb;
-		float	 decalR			=	decal.EmissionRoughness.a;
+		float	 decalR			=	decal.EmissionRoughness.a * decal.EmissionRoughness.a;
 		float	 decalM			=	decal.BaseColorMetallic.a;
 		float4	 scaleOffset	=	decal.ImageScaleOffset;
 		float	 falloff		=	decal.FalloffFactor;
@@ -78,7 +78,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 			float2 uv			=	mad(decalPos.xy, scaleOffset.xy, scaleOffset.zw); 
 		
 			float4 decalImage	= 	DecalImages.SampleLevel( DecalSampler, uv, decalBaseMip + mipDecalBias );
-			float3 localNormal  = 	decalImage.xyz * 2 - 1;
+			float3 localNormal  = 	normalize(decalImage.xyz * 2 - 1);
 			float3 decalNormal	=	localNormal.x * decal.BasisX.xyz + localNormal.y * decal.BasisY.xyz + localNormal.z * decal.BasisZ.xyz;
 			float factor		=	pow(decalImage.a, 2.2f) * saturate(falloff - abs(decalPos.z)*falloff);
 			
@@ -89,7 +89,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 			metallic 	= lerp( metallic,  decalM, decal.SpecularFactor * factor );
 			normal		= lerp( normal, decalNormal, decal.NormalMapFactor * factor );
 
-			normal		= normal + decalNormal * decal.NormalMapFactor * factor;
+			//normal		= normal + decalNormal * decal.NormalMapFactor * factor;
 			
 			//baseColor	=	0;
 		}
@@ -116,14 +116,12 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	
 
 	#ifndef DIFFUSE_ONLY
-	roughness	=	sqrt(saturate(roughness));
-	roughness	=	clamp( roughness, 1.0f / 1024.0f, 1 );
 	
-	/*roughness	=	0.4f;
+	/*roughness	=	0.25f;
 	specular	=	1.0f;
 	diffuse		=	0.0f;//*/
 
-	/*roughness	=	0.4f;
+	/*roughness	=	0.0f;
 	specular	=	0.5f;
 	diffuse		=	0.0f;//*/
 
@@ -136,6 +134,9 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	diffuse		=	1.0f;//*/
 
 	//roughness *= 0.3f;
+
+	roughness	=	saturate(roughness);
+	roughness	=	clamp( roughness, 1.0f / 1024.0f, 1 );
 	#endif
 	
 	//diffuse = 0.5f;
@@ -343,8 +344,9 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		float3	diffuseVector	=	DiffuseParallaxCubeMap ( worldPos, cameraPos, normal, cubeMapPos, lpbMatrixI );
 
 		//float3	diffTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, imageIndex), LightProbeDiffuseMip).rgb;
+		float		mipLevel	=	(sqrt(roughness) * LightProbeMaxSpecularMip);
 		
-		float3	specTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflectVector, imageIndex), roughness*LightProbeMaxSpecularMip ).rgb;
+		float3	specTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflectVector, imageIndex), mipLevel ).rgb;
 		
 		ambientReflection	=	lerp( ambientReflection, specTerm, factor );
 	}
@@ -356,7 +358,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	
 	ambientDiffuse		=	ambientDiffuse  * ( diffuse                ) * ssaoFactorDiff;
 	ambientSpecular		=	ambientSpecular	* ( specular * ab.x + ab.y ) * ssaoFactorSpec * selfOcclusion;
-	ambientReflection	=	ambientReflection	* ( specular * ab.x + ab.y ) * ssaoFactorSpec * selfOcclusion;
+	ambientReflection	=	ambientReflection * ( specular /* ab.x + ab.y*/ ) * ssaoFactorSpec * selfOcclusion * ambientLuminance;
 	
 	totalLight.xyz	+=	ambientDiffuse + ambientSpecular + ambientReflection;
 

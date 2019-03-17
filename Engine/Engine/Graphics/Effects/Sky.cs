@@ -85,7 +85,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public override void Initialize() 
 		{
-			skyCube		=	new RenderTargetCube( device, ColorFormat.Rgba16F, 64, true );
+			skyCube		=	new RenderTargetCube( device, ColorFormat.Rgba16F, 64, 0 );
 			skyConstsCB	=	new ConstantBuffer( device, typeof(SkyConsts) );
 
 			LoadContent();
@@ -236,7 +236,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="rendCtxt"></param>
 		/// <param name="techName"></param>
-		internal void Render( Camera camera, StereoEye stereoEye, DepthStencilSurface depth, RenderTargetSurface color, SkySettings settings )
+		internal void Render( Camera camera, StereoEye stereoEye, DepthStencilSurface depth, RenderTargetSurface color, SkySettings settings, bool noSun = false )
 		{
 			using ( new PixEvent("Sky Rendering") ) {
 				var scale		=	Matrix.Scaling( settings.SkySphereSize );
@@ -244,6 +244,10 @@ namespace Fusion.Engine.Graphics {
 
 				var	sunPos		=	settings.SunPosition;
 				var sunColor	=	settings.SunGlowColor;
+
+				if (noSun) {
+					sunColor	=	Color4.Zero;
+				}
 
 				device.ResetStates();
 

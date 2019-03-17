@@ -251,8 +251,8 @@ namespace Fusion.Engine.Graphics {
 			LightProbeDepth		=	new DepthStencil2D		( Game.GraphicsDevice, DepthFormat.D24S8,	RenderSystem.LightProbeSize, RenderSystem.LightProbeSize );
 
 			#warning false
-			LightProbeHdr		=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba16F,	RenderSystem.LightProbeSize, true ); 
-			LightProbeHdrTemp	=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba16F,	RenderSystem.LightProbeSize, true ); 
+			LightProbeHdr		=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba16F,	RenderSystem.LightProbeSize, RenderSystem.LightProbeMaxMips ); 
+			LightProbeHdrTemp	=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba16F,	RenderSystem.LightProbeSize, RenderSystem.LightProbeMaxMips ); 
 
 			irradianceMapDefault	=	new IrradianceMap( rs, 16, 16 );
 			irradianceMapDefault.FillAmbient( Color4.White );
@@ -630,10 +630,12 @@ namespace Fusion.Engine.Graphics {
 						rs.SceneRenderer.RenderLightProbeRadiance( context, this, InstanceGroup.Static );
 					
 						//	render sky :
-						rs.Sky.Render( camera, mono, depth, color, SkySettings );
+						rs.Sky.Render( camera, mono, depth, color, SkySettings, true );
 					}
 				
-					Game.GetService<CubeMapFilter>().PrefilterLightProbe( LightProbeHdr, LightProbeHdrTemp, RenderSystem.LightProbeMaxSpecularMip );
+					Game.GetService<CubeMapFilter>().PrefilterLightProbe( LightProbeHdr, LightProbeHdrTemp );
+
+					IrradianceCache.UpdateLightProbe( lightProbe.Guid, LightProbeHdrTemp ); 
 
 					var bufferSize		=	RenderSystem.LightProbeSize * RenderSystem.LightProbeSize;
 					var stagingBuffer	=	new Half4[ bufferSize ];

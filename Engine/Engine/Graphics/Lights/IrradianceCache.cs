@@ -128,5 +128,16 @@ namespace Fusion.Engine.Graphics.Lights {
 				return -1;
 			}
 		}
+
+
+		internal void UpdateLightProbe ( Guid guid, RenderTargetCube renderTargetCube )
+		{
+			int index = GetLightProbeIndex( guid );
+			if (index<0) {
+				return;
+			}
+
+			irradianceCubeMaps.CopyFromRenderTargetCube( index, renderTargetCube );
+		}
 	}
 }

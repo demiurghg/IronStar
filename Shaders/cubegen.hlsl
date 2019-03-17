@@ -42,13 +42,13 @@ float4	PrefilterFace ( float3 dir, uint2 location, float2 dxy )
 	roughness	=	sqrt(saturate(roughness));
 	roughness	=	clamp( roughness, 1.0f / 1024.0f, 1 );
 	
-	int range	=	7;
+	int range	=	9;
 
-	if (roughness>0.05f) {
+	if (roughness>0.01f) {
 		for (int i=-range; i<=range; i++) {
 			for (int j=-range; j<=range; j++) {
-				float 	x	=	i * dxy.x;
-				float 	y	=	j * dxy.y;
+				float 	x	=	i * dxy.x * 0.5f;
+				float 	y	=	j * dxy.y * 0.5f;
 				float3 	H 	= 	normalize(dirN + tangentX * x + tangentY * y);
 				float	d	=	NDF( roughness, H, dirN );
 				weight 		+= 	d;

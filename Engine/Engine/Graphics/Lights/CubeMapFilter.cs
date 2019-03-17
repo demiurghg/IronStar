@@ -116,9 +116,12 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="lightSet"></param>
 		/// <param name="target"></param>
-		public void PrefilterLightProbe ( RenderTargetCube source, RenderTargetCube target, int maxMip )
+		public void PrefilterLightProbe ( RenderTargetCube source, RenderTargetCube target )
 		{
 			device.ResetStates();
+
+			int mipCount	=	RenderSystem.LightProbeMaxMips;
+			int maxMip		=	RenderSystem.LightProbeMaxSpecularMip;
 
 			if (source==null) throw new ArgumentNullException("source");
 			if (target==null) throw new ArgumentNullException("target");
@@ -133,7 +136,7 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			int initialSize	=	source.Width;
-			int mipCount	=	Math.Min( source.MipCount, maxMip );
+			//int mipCount	=	Math.Min( source.MipCount, maxMip );
 
 			source.BuildMipmaps();
 			
@@ -146,7 +149,7 @@ namespace Fusion.Engine.Graphics {
 				for (int mip=0; mip<mipCount; mip++) {
 
 					var flag		=	Flags.PREFILTER;
-					var roughness	=	MathUtil.Clamp( mip / (float)mipCount, 0, 1 );
+					var roughness	=	MathUtil.Clamp( mip / (float)maxMip, 0, 1 );
 					
 					device.PipelineState = factory[(int)flag];
 

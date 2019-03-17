@@ -213,7 +213,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			Log.Message("Dilate radiance...");
 
-			//irradianceMap.DilateRadiance( lightmapGBuffer.Albedo );
+			irradianceMap.DilateRadiance( lightmapGBuffer.Albedo );
 
 			if (filter) {
 				lightmapGBuffer.BlurRadianceBilateral();

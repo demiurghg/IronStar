@@ -3,9 +3,9 @@
   "Model": "monster_marine",
   "MaxHealth": 100,
   "MaxArmor": 100,
-  "Height": 6,
-  "CrouchingHeight": 4,
-  "Radius": 2,
+  "Height": 6.0,
+  "CrouchingHeight": 4.0,
+  "Radius": 2.0,
   "Margin": 0.25,
   "Mass": 10.0,
   "MaximumTractionSlope": 0.8,
@@ -20,5 +20,5 @@
   "JumpSpeed": 6.0,
   "SlidingJumpSpeed": 3.0,
   "MaximumGlueForce": 5000.0,
-  "MaxStepHeight": 2
+  "MaxStepHeight": 2.0
 }

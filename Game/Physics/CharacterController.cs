@@ -60,6 +60,7 @@ namespace IronStar.Physics {
 
 			controller = new BEPUCharacterController( pos, 
 						height			:	heightStand,
+						radius			:	radius,
 						crouchingHeight	:	heightCrouch,
 						standingSpeed	:	speedStand,
 						crouchingSpeed	:	speedCrouch,

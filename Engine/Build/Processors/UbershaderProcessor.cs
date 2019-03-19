@@ -100,6 +100,7 @@ namespace Fusion.Build.Processors {
 			}
 		}
 
+		
 
 		/// <summary>
 		/// 
@@ -107,6 +108,8 @@ namespace Fusion.Build.Processors {
 		/// <param name="buildContext"></param>
 		public override void Process ( AssetSource assetFile, BuildContext buildContext )
 		{
+			var reportLock =  new object();
+
 			//
 			//	Get combinations :
 			//
@@ -155,9 +158,39 @@ namespace Fusion.Build.Processors {
 			var include = new IncludeHandler(buildContext);
 
 
-			//
-			//	Build all :
-			//
+			#if true
+			Parallel.ForEach( defineList, (defines) => {
+
+				var id		=	defineList.IndexOf( defines );
+
+				var psbc	=	buildContext.GetTempFileFullPath( assetFile.KeyPath, "." + id.ToString("D8") + ".PS.dxbc" );
+				var vsbc	=	buildContext.GetTempFileFullPath( assetFile.KeyPath, "." + id.ToString("D8") + ".VS.dxbc" );
+				var gsbc	=	buildContext.GetTempFileFullPath( assetFile.KeyPath, "." + id.ToString("D8") + ".GS.dxbc" );
+				var hsbc	=	buildContext.GetTempFileFullPath( assetFile.KeyPath, "." + id.ToString("D8") + ".HS.dxbc" );
+				var dsbc	=	buildContext.GetTempFileFullPath( assetFile.KeyPath, "." + id.ToString("D8") + ".DS.dxbc" );
+				var csbc	=	buildContext.GetTempFileFullPath( assetFile.KeyPath, "." + id.ToString("D8") + ".CS.dxbc" );
+															  
+				var pshtm	=	buildContext.GetTempFileFullPath( assetFile.KeyPath, "." + id.ToString("D8") + ".PS.html" );
+				var vshtm	=	buildContext.GetTempFileFullPath( assetFile.KeyPath, "." + id.ToString("D8") + ".VS.html" );
+				var gshtm	=	buildContext.GetTempFileFullPath( assetFile.KeyPath, "." + id.ToString("D8") + ".GS.html" );
+				var hshtm	=	buildContext.GetTempFileFullPath( assetFile.KeyPath, "." + id.ToString("D8") + ".HS.html" );
+				var dshtm	=	buildContext.GetTempFileFullPath( assetFile.KeyPath, "." + id.ToString("D8") + ".DS.html" );
+				var cshtm	=	buildContext.GetTempFileFullPath( assetFile.KeyPath, "." + id.ToString("D8") + ".CS.html" );
+
+				var ps = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "ps_5_0", PSEntryPoint, defines, psbc, pshtm );
+				var vs = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "vs_5_0", VSEntryPoint, defines, vsbc, vshtm );
+				var gs = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "gs_5_0", GSEntryPoint, defines, gsbc, gshtm );
+				var hs = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "hs_5_0", HSEntryPoint, defines, hsbc, hshtm );
+				var ds = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "ds_5_0", DSEntryPoint, defines, dsbc, dshtm );
+				var cs = Compile( buildContext, include, shaderSource, assetFile.FullSourcePath, "cs_5_0", CSEntryPoint, defines, csbc, cshtm );
+				
+				Log.Message("COMPILING : [{0,3:D3}] : {1}", id, defines );
+
+				usdb.Add( new UsdbEntry( defines, ps, vs, gs, hs, ds, cs ) );
+			});
+
+			#else
+
 			foreach ( var defines in defineList ) {
 
 				var id		=	defineList.IndexOf( defines );
@@ -196,6 +229,7 @@ namespace Fusion.Build.Processors {
 
 				usdb.Add( new UsdbEntry( defines, ps, vs, gs, hs, ds, cs ) );
 			}
+			#endif
 
 
 			htmlBuilder.Insert( includeInsert, 
@@ -275,7 +309,7 @@ namespace Fusion.Build.Processors {
 					if (!Includes.Contains(fileName)) {
 						Includes.Add(fileName);
 					}
-					return File.OpenRead( buildContext.ResolveContentPath( fileName ) );
+					return File.Open( buildContext.ResolveContentPath( fileName ), FileMode.Open, FileAccess.Read, FileShare.Read );
 				}
 			}
 
@@ -367,6 +401,7 @@ namespace Fusion.Build.Processors {
 		}
 
 
+		object consoleLock = new object();
 
 		/// <summary>
 		/// 
@@ -401,16 +436,26 @@ namespace Fusion.Build.Processors {
 			var sourceBytes = Encoding.UTF8.GetBytes(shaderSource);
 			var result = FX.ShaderBytecode.Compile( sourceBytes, entryPoint, profile, flags, FX.EffectFlags.None, defs, include, sourceFile );
 			
-			if ( result.Message!=null ) {
-				if (result.Bytecode==null) {
-					if (result.Message.Contains("X3501")) {
-						Log.Debug("No entry point '{0}'. It's ok", entryPoint );
-						return new byte[0];
+			lock ( consoleLock ) {
+
+				if ( result.Message!=null ) {
+
+					if (result.Bytecode==null) {
+
+						if (result.Message.Contains("X3501")) {
+
+							Log.Debug("No entry point '{0}'. It's ok", entryPoint );
+							return new byte[0];
+						}
+
+						Log.Error("FAILED: [{0}]", defines);
+						Log.Error( result.Message );
+						throw new BuildException( result.Message );
+
+					} else {
+						Log.Warning("WARNINGS: [{0}]", defines);
+						Log.Warning( result.Message );
 					}
-					Log.Error( result.Message );
-					throw new BuildException( result.Message );
-				} else {
-					Log.Warning( result.Message );
 				}
 			}
 

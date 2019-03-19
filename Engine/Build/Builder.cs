@@ -635,6 +635,15 @@ namespace Fusion.Build {
 				Log.Error(be.Message);
 				buildResult.Failed ++;
 
+			} catch ( AggregateException ae ) {
+
+				ae = ae.Flatten();
+
+				foreach ( var e in ae.InnerExceptions ) {
+					Log.Error(e.Message);
+				}
+				buildResult.Failed ++;
+
 			} catch ( Exception e ) {
 					
 				Log.Error("-------- Unhandled Exception --------");

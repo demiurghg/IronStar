@@ -153,8 +153,6 @@
     <Compile Include="Editor\Enums.cs" />
     <Compile Include="Editor\MapEditor.cs" />
     <Compile Include="Core\GameWorld.Query.cs" />
-    <Compile Include="Core\Old\Filter.cs" />
-    <Compile Include="Core\Old\Oscillator.cs" />
     <Compile Include="Core\GameWorld.Physics.cs" />
     <Compile Include="Core\SnapshotReader.cs" />
     <Compile Include="Core\SnapshotWriter.cs" />

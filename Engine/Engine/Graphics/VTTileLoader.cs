@@ -73,7 +73,7 @@ namespace Fusion.Engine.Graphics {
 		public void RequestTile ( VTAddress address )
 		{
 			#if USE_PRIORITY_QUEUE
-				requestQueue.Enqueue( address.MipLevel, address );
+				requestQueue.Enqueue( 100-address.MipLevel, address );
 			#else
 				requestQueue.Enqueue( address );
 			#endif

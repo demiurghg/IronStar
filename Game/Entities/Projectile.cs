@@ -126,9 +126,9 @@ namespace IronStar.Entities {
 			if ( world.RayCastAgainstAll( origin, target, out hitNormal, out hitPoint, out hitEntity, parent ) ) {
 
 				//	inflict damage to hit object:
-				world.InflictDamage( hitEntity, ParentID, hitDamage, DamageType.RocketExplosion, dir * hitImpulse, hitPoint );
+				world.InflictDamage( hitEntity, ParentID, hitDamage, DamageType.ShockWave, dir * hitImpulse, hitPoint );
 
-				Explode( explosionFX, ParentID, hitEntity, hitPoint, hitNormal, hitRadius, hitDamage, hitImpulse, DamageType.RocketExplosion );
+				Explode( explosionFX, ParentID, hitEntity, hitPoint, hitNormal, hitRadius, hitDamage, hitImpulse, DamageType.ShockWave );
 
 				Position		=	hitPoint;
 				LinearVelocity	=	dir.Normalized() * velocity;
@@ -166,7 +166,7 @@ namespace IronStar.Entities {
 					var impP	= e.Position + rand.UniformRadialDistribution(0.1f, 0.1f);
 					var dmg		= (short)( factor * damage );
 
-					world.InflictDamage( e, attackerId, dmg, DamageType.RocketExplosion, impV, impP );
+					world.InflictDamage( e, attackerId, dmg, DamageType.ShockWave, impV, impP );
 				}
 			}
 

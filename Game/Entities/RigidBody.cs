@@ -134,7 +134,7 @@ namespace IronStar.Entities {
 				var dirN = dir.Normalized();
 				var dist = dir.Length();
 				var torq = rand.NextVector3( -Vector3.One, Vector3.One );
-				ent.Damage( this, explosionDamage, DamageType.RocketExplosion, dirN * explosionImpulse, ent.Position + torq );
+				ent.Damage( this, explosionDamage, DamageType.ShockWave, dirN * explosionImpulse, ent.Position + torq );
 			} 
 
 			World.Kill(ID);

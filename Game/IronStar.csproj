@@ -69,14 +69,13 @@
     <Compile Include="UI\HUD\HudColors.cs" />
     <Compile Include="UI\HUD\HudWeapon.cs" />
     <Compile Include="UI\HUD\HudHealth.cs" />
-    <Compile Include="Core\DamageType.cs" />
     <Compile Include="Core\Entity.Lua.cs" />
     <Compile Include="Core\ItemCollection.cs" />
     <Compile Include="Editor\Controls\AssetExplorer2.cs" />
     <Compile Include="Editor\Controls\Workspace.cs" />
     <Compile Include="Entities\FuncFX.cs" />
     <Compile Include="Entities\FuncShooter.cs" />
-    <Compile Include="Core\EntityState.cs" />
+    <Compile Include="Core\Enums.cs" />
     <Compile Include="Entities\Monsters\CombatPointFactory.cs" />
     <Compile Include="Entities\Monsters\CombatPoint.cs" />
     <Compile Include="Entities\Monsters\Monster.cs" />
@@ -128,7 +127,6 @@
     <Compile Include="SFX\ModelInstance.cs" />
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Client\GameInput.cs" />
-    <Compile Include="Client\FPView.cs" />
     <Compile Include="UI\HUD\HudFrame.cs" />
     <Compile Include="Core\Entity.cs" />
     <Compile Include="Core\GameWorld.Atoms.cs" />

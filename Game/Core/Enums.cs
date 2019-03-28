@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace IronStar.Core {
 
+	public enum DamageType {
+		GunShot,
+		DirectEnergy,
+		ShockWave,
+	}
+
+
 	public enum WeaponState : byte {
 		Inactive	=	0x00,
 		Idle		=	0x01,
@@ -36,7 +43,7 @@ namespace IronStar.Core {
 		Weapon_States	=	0x000FFE00,	//	mask for all weapon relates states (weapon_event is not included!)
 		Weapon_Event	=	0x00000100,	//	weapon event flag, toggled on each weapon state change
 
-		Weapon_Inactive	=	0x00000200,
+		/*Weapon_Inactive	=	0x00000200,
 		Weapon_Reserve0	=	0x00000400,
 		Weapon_Reserve1	=	0x00000800,
 		Weapon_Idle		=	0x00001000,
@@ -46,7 +53,7 @@ namespace IronStar.Core {
 		Weapon_Overheat	=	0x00010000,
 		Weapon_Drop		=	0x00020000,
 		Weapon_Raise	=	0x00040000,
-		Weapon_NoAmmo	=	0x00080000,
+		Weapon_NoAmmo	=	0x00080000,*/
 
 
 	}

@@ -322,7 +322,7 @@ namespace IronStar.Items {
 			if (r) {
 
 				world.SpawnFX( hitFX, 0, hitPoint, hitNormal );
-				world.InflictDamage( hitEntity, attacker.ID, damage, DamageType.BulletHit, d * impulse, hitPoint );
+				world.InflictDamage( hitEntity, attacker.ID, damage, DamageType.GunShot, d * impulse, hitPoint );
 			} else {
 				hitPoint = p + d * beamLength;
 			}

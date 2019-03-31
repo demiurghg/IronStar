@@ -80,12 +80,13 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public Color4 SunLightColor {
 			get {
-				Color4 dusk		=	new Color4(Temperature.Get(2000), 1);
-				Color4 zenith	=	new Color4(Temperature.Get(SunTemperature), 1);
+				var dusk	=	new Color4(Temperature.Get(2000), 1);
+				var zenith	=	new Color4(Temperature.Get(SunTemperature), 1);
 
-				Vector3 ndir	=	SunPosition.Normalized();
+				var ndir	=	SunPosition.Normalized();
+				var factor	=	MathUtil.Clamp( (float)Math.Pow(ndir.Y, 0.5f)*1.1f-0.1f, 0, 1 );
 
-				return Color4.Lerp( dusk, zenith, (float)Math.Pow(ndir.Y, 0.5f) ) * SunLightIntensity;
+				return Color4.Lerp( dusk, zenith, factor ) * SunLightIntensity;
 			}
 		}
 

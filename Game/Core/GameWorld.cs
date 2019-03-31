@@ -239,9 +239,6 @@ namespace IronStar.Core {
 
 			rw.LightSet.DirectLight.Direction	=	rw.SkySettings.SunLightDirection;
 			rw.LightSet.DirectLight.Intensity	=	rw.SkySettings.SunLightColor;
-
-			rw.LightSet.AmbientLevel			=	snapshotHeader.AmbientLevel;
-
 		}
 
 
@@ -508,9 +505,6 @@ namespace IronStar.Core {
 		public virtual void WriteToSnapshot ( Guid clientGuid, Stream stream )
 		{
 			var playerCharacter = GetPlayerCharacter( clientGuid );
-
-			snapshotHeader.ClearHud();
-			//playerCharacter?.UpdateHud( snapshotHeader );
 
 			snapshotWriter.Write( stream, snapshotHeader, entities, items, fxEvents );
 		}

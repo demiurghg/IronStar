@@ -26,7 +26,6 @@ namespace IronStar.Mapping {
 		/// <summary>
 		/// 
 		/// </summary>
-		#warning move to entities!
 		public MapEnvironment Environment { get; set; }
 
 
@@ -67,13 +66,11 @@ namespace IronStar.Mapping {
 			gameWorld.Physics.Gravity			=	Environment.Gravity;
 
 			gameWorld.snapshotHeader.FogDistance	=	Environment.FogDistance;
-			gameWorld.snapshotHeader.FogHeight		=	Environment.FogHeight;
 			gameWorld.snapshotHeader.FogColor		=	Environment.FogColor;
 			gameWorld.snapshotHeader.Gravity		=	Environment.Gravity;
 			gameWorld.snapshotHeader.SunIntensity	=	Environment.SunIntensity;
 			gameWorld.snapshotHeader.SunDirection	=	Environment.SunPosition;
 			gameWorld.snapshotHeader.Turbidity		=	Environment.SkyTrubidity;
-			gameWorld.snapshotHeader.AmbientLevel	=	Environment.AmbientLevel;
 		}
 
 

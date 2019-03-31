@@ -49,38 +49,6 @@ namespace IronStar.Mapping {
 		[AECategory( "Fog" )]
 		public Color4 FogColor { get; set; } = new Color4(10,10,10,0);
 
-
-		[AECategory("AI")]
-		[Description("Character height")]
-		public float CharacterHeight { get; set; } = 2;
-
-		[AECategory("AI")]
-		[Description("Character size")]
-		public float CharacterSize { get; set; } = 1.2f;
-
-		[AECategory("AI")]
-		[Description("Walkable slope angle")]
-		public float WalkableSlope { get; set; } = 45f;
-
-		[AECategory("AI")]
-		[Description("Stair step or climbable height")]
-		public float StepHeight { get; set; } = 0.5f;
-
-		[AECategory("AI")]
-		[Description("Cell height for Recast voxelization")]
-		public float RecastCellHeight { get; set; } = 0.25f;
-
-		[AECategory("AI")]
-		[Description("Cell width for Recast voxelization")]
-		public float RecastCellSize { get; set; } = 0.25f;
-
-		[AECategory("GI")]
-		[TypeConverter( typeof( ExpandableObjectConverter ) )]
-		public BoundingBox IrradianceVolume { get; set; } = new BoundingBox(128,64,128);
-
-		[AECategory("GI")]
-		public Color4 AmbientLevel { get; set; } = Color4.Zero;
-
 		[AEIgnore]
 		[JsonIgnore]
 		public Vector3 SunPosition {

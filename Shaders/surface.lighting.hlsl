@@ -125,7 +125,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	specular	=	0.5f;
 	diffuse		=	0.0f;//*/
 
-	/*roughness	=	0.3f;
+	/*roughness	=	0.0f;
 	specular	=	0.9f;
 	diffuse		=	0.0f;//*/
 
@@ -136,7 +136,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	//roughness *= 0.3f;
 
 	roughness	=	saturate(roughness);
-	roughness	=	clamp( roughness, 1.0f / 1024.0f, 1 );
+	roughness	=	clamp( roughness, 1.0f / 512.0f, 1 );
 	#endif
 	
 	//diffuse = 0.5f;
@@ -288,7 +288,13 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	float	lightB		=	EvalSHL1Smooth( irradianceB, normalize(normal) );//*/
 	
 	ambientDiffuse		=	float3( lightR, lightG, lightB );
+
+	#ifdef IRRADIANCE_MAP
 	ambientLuminance	=	saturate((irradianceR.x + irradianceG.x + irradianceB.x)/3);
+	#endif
+	#ifdef IRRADIANCE_VOLUME
+	ambientLuminance	=	1;
+	#endif
 	
 	//
 	//	APPROX SPECULAR :

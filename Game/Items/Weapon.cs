@@ -361,8 +361,6 @@ namespace IronStar.Items {
 			e.HitImpulse	=	impulse;
 
 			e.FixServerLag(2/60.0f);
-
-			//world.SpawnFX( "MZBlaster",	attacker.ID, origin );
 		}
 
 

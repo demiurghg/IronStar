@@ -62,6 +62,16 @@ namespace IronStar.Core {
 		public uint ItemID;
 
 		/// <summary>
+		/// Gets and sets health, if applicable
+		/// </summary>
+		public int Health;
+
+		/// <summary>
+		/// Gets and sets armor, if applicable
+		/// </summary>
+		public int Armor;
+
+		/// <summary>
 		/// Teleportation counter.
 		/// Used to prevent interpolation in discreete movement.
 		/// </summary>
@@ -127,6 +137,9 @@ namespace IronStar.Core {
 			writer.Write( (byte)WeaponState );
 			writer.Write( ItemID );
 
+			writer.Write( Health );
+			writer.Write( Armor );
+
 			writer.Write( TeleportCount );
 
 			writer.Write( Position );
@@ -160,6 +173,9 @@ namespace IronStar.Core {
 			EntityState		=	(EntityState)reader.ReadInt32();
 			WeaponState		=	(WeaponState)reader.ReadByte();
 			ItemID			=	reader.ReadUInt32();
+
+			Health			=	reader.ReadInt32();
+			Armor			=	reader.ReadInt32();
 
 			TeleportCount	=	reader.ReadByte();
 

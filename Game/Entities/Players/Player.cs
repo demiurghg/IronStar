@@ -22,13 +22,8 @@ using IronStar.Items;
 namespace IronStar.Entities.Players {
 	public partial class Player : Entity {
 
-		public int Health { get { return health; } set { health = value; } }
-		public int Armor  { get { return armor ; } set { armor  = value; } }
-
 		CharacterController	controller;
 		Item				pendingItem;	// do not save
-		int					health;
-		int					armor;
 
 		/// <summary>
 		/// 
@@ -46,40 +41,26 @@ namespace IronStar.Entities.Players {
 				factory.JumpSpeed,
 				factory.Mass,
 				factory.MaxStepHeight
-			 );
+			);
 
-			 health		=	factory.MaxHealth;
-			 armor		=	factory.MaxArmor;
+			Health		=	(short)factory.MaxHealth;
+			Armor		=	(short)factory.MaxArmor;
 
-			 //	temp stuff :
-			 world.SpawnItem("weapon_machinegun", ID);
-			 /*world.SpawnItem("weapon_machinegun2", ID);
-			 world.SpawnItem("weapon_plasmagun", ID);
-			 world.SpawnItem("weapon_shotgun", ID);
-			 world.SpawnItem("weapon_rocket_launcher", ID);
-			 world.SpawnItem("weapon_railgun", ID);*/
+			Model		=	world.Atoms[ factory.Model ];	
 
-			 ItemID	=	World.Items.GetOwnedItemByClass( ID, "weapon_machinegun" ).ID;
+			//	temp stuff :
+			world.SpawnItem("weapon_machinegun", ID);
+			/*world.SpawnItem("weapon_machinegun2", ID);
+			world.SpawnItem("weapon_plasmagun", ID);
+			world.SpawnItem("weapon_shotgun", ID);
+			world.SpawnItem("weapon_rocket_launcher", ID);
+			world.SpawnItem("weapon_railgun", ID);*/
+
+			ItemID	=	World.Items.GetOwnedItemByClass( ID, "weapon_machinegun" ).ID;
 		}
 
 
 
-		public override void Read( BinaryReader reader, float lerpFactor )
-		{
-			base.Read( reader, lerpFactor );
-
-			health	=	reader.ReadInt32();
-			armor	=	reader.ReadInt32();			
-		}
-
-
-		public override void Write( BinaryWriter writer )
-		{
-			base.Write( writer );
-			
-			writer.Write( health );
-			writer.Write( armor );
-		}
 
 
 		/// <summary>
@@ -102,20 +83,20 @@ namespace IronStar.Entities.Players {
 			controller.ApplyImpulse( kickImpulse, kickPoint );
 
 			//	armor could adsorb 2/3 of damage.
-			int damageHealth	=	damage / 3;
-			int damageArmor		=	damage - damageHealth;
+			int damageHealth	=	(damage / 3);
+			int damageArmor		=	(damage - damageHealth);
 
-			if (armor>=damageArmor) {
-				armor  -= damageArmor;
-				health -= damageHealth;
+			if (Armor>=damageArmor) {
+				Armor  -= damageArmor;
+				Health -= damageHealth;
 			} else {
-				damageArmor  = armor;
-				damageHealth = damage - damageArmor;
-				armor	=	0;
-				health	-=	damageHealth;
+				damageArmor  = Armor;
+				damageHealth = (damage - damageArmor);
+				Armor	=	0;
+				Health	-=	damageHealth;
 			}
 
-			if (health<=0) {
+			if (Health<=0) {
 				Log.Warning("KILL!!!!!!!!");
 			}
 		}

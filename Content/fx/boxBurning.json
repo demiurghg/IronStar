@@ -29,7 +29,7 @@
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
     "Enabled": true,
     "Sprite": "fire",
-    "UseRandomImages": false,
+    "UseRandomImages": true,
     "Effect": "soft",
     "Count": 50,
     "Period": 1.0,

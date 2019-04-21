@@ -24,6 +24,10 @@ namespace IronStar.Core {
 
 		internal bool Stale = false;
 
+		public short Count;
+
+		public short MaxCount;
+
 		/// <summary>
 		/// Gets and sets item owner.
 		/// If owner is zero or owner is dead, 
@@ -103,6 +107,8 @@ namespace IronStar.Core {
 		public virtual void Write ( BinaryWriter writer ) 
 		{
 			writer.Write( Owner );
+			writer.Write( MaxCount );
+			writer.Write( Count );
 		}
 
 		/// <summary>
@@ -111,7 +117,9 @@ namespace IronStar.Core {
 		/// <param name="writer"></param>
 		public virtual void Read ( BinaryReader reader ) 
 		{
-			Owner	=	reader.ReadUInt32();
+			Owner		=	reader.ReadUInt32();
+			MaxCount	=	reader.ReadInt16();
+			Count		=	reader.ReadInt16();
 		}
 	}
 }

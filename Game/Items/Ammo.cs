@@ -11,30 +11,15 @@ using IronStar.Entities;
 namespace IronStar.Items {
 	public class Ammo : Item {
 
-		int count;
-		readonly int maxCount;
 		readonly GameWorld world;
 
-
-		public int Count {
-			get {
-				return count;
-			}
-		}
-		
-
-		public int MaxCount {
-			get {
-				return maxCount;
-			}
-		}
 		
 
 		public Ammo( uint id, short clsid, GameWorld world, AmmoFactory factory ) : base( id, clsid, factory )
 		{
 			this.world		=	world;
-			this.count		=	factory.Count;
-			this.maxCount	=	factory.MaxCount;
+			this.Count		=	(short)factory.Count;
+			this.MaxCount	=	(short)factory.MaxCount;
 		}
 
 
@@ -46,8 +31,8 @@ namespace IronStar.Items {
 				Owner = player.ID;
 				return true;
 			} else {
-				existingAmmo.count += count;
-				existingAmmo.count = Math.Min( existingAmmo.count, existingAmmo.maxCount );
+				existingAmmo.Count += Count;
+				existingAmmo.Count = Math.Min( existingAmmo.Count, existingAmmo.MaxCount );
 				return true;
 			}
 		}
@@ -56,11 +41,11 @@ namespace IronStar.Items {
 
 		public bool AddAmmo ( int add )
 		{
-			if (count==maxCount) {
+			if (Count==MaxCount) {
 				return false;
 			} else {
-				count += add;
-				count  = Math.Min( count, maxCount );
+				Count += (short)add;
+				Count  = Math.Min( Count, MaxCount );
 				return true;
 			}
 		}
@@ -69,28 +54,12 @@ namespace IronStar.Items {
 
 		public bool	ConsumeAmmo ( int requested )
 		{
-			if (count < requested) {
+			if (Count < requested) {
 				return false;
 			} else {
-				count -= requested;
+				Count -= (short)requested;
 				return true;
 			}
-		}
-
-
-		public override void Write( BinaryWriter writer )
-		{
-			base.Write( writer );
-
-			writer.Write( count );
-		}
-
-
-		public override void Read( BinaryReader reader )
-		{
-			base.Read( reader );
-
-			count	=	reader.ReadInt32();
 		}
 	}
 }

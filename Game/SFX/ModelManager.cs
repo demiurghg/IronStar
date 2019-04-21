@@ -39,11 +39,6 @@ namespace IronStar.SFX {
 		public readonly LuaState L;
 
 
-		short			weaponModel = 0;
-		bool			weaponModelDirty = true;
-		ModelInstance	weaponModelInstance = null;
-
-
 
 		public ModelManager ( GameWorld world )
 		{
@@ -84,7 +79,6 @@ namespace IronStar.SFX {
 		void Game_Reloading( object sender, EventArgs e )
 		{
 			world.ForEachEntity( ent => ent?.MakePresentationDirty() );
-			weaponModelDirty = true;
 		}
 
 

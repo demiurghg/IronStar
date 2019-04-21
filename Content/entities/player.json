@@ -2,6 +2,7 @@
   "$type": "IronStar.Entities.Players.PlayerFactory, IronStar",
   "MaxHealth": 100,
   "MaxArmor": 100,
+  "Model": "",
   "Height": 6,
   "CrouchingHeight": 4,
   "Radius": 2,

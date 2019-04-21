@@ -213,14 +213,14 @@ namespace IronStar.Views {
 					RunShakeAnimation(shake, rand.NextFloat(0.05f, 0.15f) );
 				}
 				oldWeaponState = newWpnState;
-			}
+			}//*/
 
 			oldStanding = newStanding;
 			oldTraction = newTraction;
 			oldVelocity = Math.Abs( player.LinearVelocity.Y );
 
 			composer.Update( gameTime, transforms );
-			return Scene.FixGlobalCameraMatrix( transforms[1] );
+			return Scene.FixGlobalCameraMatrix( transforms[1] );//*/
 		}
 	}
 }

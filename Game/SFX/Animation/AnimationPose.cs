@@ -15,7 +15,29 @@ namespace IronStar.SFX {
 
 	public class AnimationPose : AnimationSource {
 
-		public int Frame { get; set; } = 0;
+		int frameFrom = 0;
+		int frameTo = 0;
+
+
+		public int Frame { 
+			get {
+				return (frameFrom==frameTo) ? frameFrom : int.MaxValue;
+			}
+			set {
+				frameFrom = value;
+				frameTo   = value;
+			}
+		}
+
+		public int FrameFrom { 
+			get { return frameFrom; }
+			set { frameFrom = value; }
+		}
+
+		public int FrameTo { 
+			get { return frameTo; }
+			set { frameTo = value; }
+		}
 
 		readonly AnimationTake take;
 

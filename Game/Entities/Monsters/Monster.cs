@@ -22,9 +22,6 @@ using IronStar.Items;
 namespace IronStar.Entities.Monsters {
 	public partial class Monster : Entity {
 
-		public int Health { get { return health; } set { health = value; } }
-		public int Armor  { get { return armor ; } set { armor  = value; } }
-
 		CharacterController	controller;
 		Item				pendingItem;	// do not save
 		int					health;
@@ -77,24 +74,6 @@ namespace IronStar.Entities.Monsters {
 		}
 
 
-		public override void Read( BinaryReader reader, float lerpFactor )
-		{
-			base.Read( reader, lerpFactor );
-
-			health	=	reader.ReadInt32();
-			armor	=	reader.ReadInt32();			
-		}
-
-
-		public override void Write( BinaryWriter writer )
-		{
-			base.Write( writer );
-			
-			writer.Write( health );
-			writer.Write( armor );
-		}
-
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -115,20 +94,20 @@ namespace IronStar.Entities.Monsters {
 			controller.ApplyImpulse( kickImpulse, kickPoint );
 
 			//	armor could adsorb 2/3 of damage.
-			int damageHealth	=	damage / 3;
-			int damageArmor		=	damage - damageHealth;
+			var damageHealth	=	(damage / 3);
+			var damageArmor		=	(damage - damageHealth);
 
-			if (armor>=damageArmor) {
-				armor  -= damageArmor;
+			if (Armor>=damageArmor) {
+				Armor  -= damageArmor;
 				health -= damageHealth;
 			} else {
-				damageArmor  = armor;
-				damageHealth = damage - damageArmor;
-				armor	=	0;
-				health	-=	damageHealth;
+				damageArmor  = Armor;
+				damageHealth = (damage - damageArmor);
+				Armor	=	0;
+				Health	-=	damageHealth;
 			}
 
-			if (health<=0) {
+			if (Health<=0) {
 				Log.Warning("KILL!!!!!!!!");
 			}
 		}

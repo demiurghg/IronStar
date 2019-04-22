@@ -243,11 +243,11 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 			hdrImageSolid	=	lerp( hdrImageSolid.rgb, hdrImageGlass.rgb, hdrImageGlass.a );
 			
 	//	Get soft particles :
-	#if 0
+	#if 1
 	float4	softPrtFront	=	SoftParticlesFront.SampleLevel( LinearSampler, uv + distortPrt.xy, 0 ).rgba;
 	#else
 	float4	softPrtFront	=	0;
-	for (float t=-1; t<=1; t+=0.25f) {
+	for (float t=-0.5; t<=0.5; t+=0.25f) {
 		softPrtFront += SoftParticlesFront.SampleLevel( LinearSampler, uv + distortPrt.xy + velocityPrt.xy * (t / 60.0f), 0 ).rgba;
 	}
 	softPrtFront.rgba /= 9.0f;

@@ -79,12 +79,12 @@
         "FactoryName": "ma2cNZ5B",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -377.705231,
-        "TranslateY": 11.6231861,
-        "TranslateZ": -97.8998642,
-        "RotateYaw": -33.0419235,
-        "RotatePitch": -5.41544676,
-        "RotateRoll": 76.71138
+        "TranslateX": -404.7927,
+        "TranslateY": 11.4148483,
+        "TranslateZ": -80.11561,
+        "RotateYaw": -116.850006,
+        "RotatePitch": -0.0001892615,
+        "RotateRoll": -179.998352
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -320,12 +320,12 @@
         "FactoryName": "ImK8leLT",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -333.98,
-        "TranslateY": 4.590087,
-        "TranslateZ": -99.49121,
-        "RotateYaw": -0.0615971833,
-        "RotatePitch": 0.00291276444,
-        "RotateRoll": -0.00162742788
+        "TranslateX": -407.211731,
+        "TranslateY": 13.6378307,
+        "TranslateZ": -79.2506,
+        "RotateYaw": -0.06615337,
+        "RotatePitch": -0.00181946822,
+        "RotateRoll": 89.99733
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -338,12 +338,12 @@
         "FactoryName": "dkfCGSqQ",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -335.0099,
-        "TranslateY": 4.590129,
-        "TranslateZ": -99.02168,
-        "RotateYaw": -11.3505259,
+        "TranslateX": -408.0009,
+        "TranslateY": 13.5775261,
+        "TranslateZ": -78.99961,
+        "RotateYaw": 30.1672935,
         "RotatePitch": 90.0,
-        "RotateRoll": -37.20526
+        "RotateRoll": 86.54693
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -446,12 +446,12 @@
         "FactoryName": "3rIcqo6q",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -354.642517,
-        "TranslateY": 4.559726,
-        "TranslateZ": -98.98952,
-        "RotateYaw": -8.609447,
-        "RotatePitch": -0.0169000216,
-        "RotateRoll": 89.93259
+        "TranslateX": -403.988434,
+        "TranslateY": 12.7973957,
+        "TranslateZ": -79.49938,
+        "RotateYaw": 59.8605461,
+        "RotatePitch": -0.0118145188,
+        "RotateRoll": 89.9955
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -554,12 +554,12 @@
         "FactoryName": "bDA2O9yB",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -375.585175,
-        "TranslateY": 10.5115719,
-        "TranslateZ": -93.24061,
-        "RotateYaw": -95.43391,
-        "RotatePitch": 74.72979,
-        "RotateRoll": -46.1846581
+        "TranslateX": -402.557,
+        "TranslateY": 11.4148188,
+        "TranslateZ": -77.9073639,
+        "RotateYaw": -122.876259,
+        "RotatePitch": 89.98021,
+        "RotateRoll": -54.9292374
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -572,12 +572,12 @@
         "FactoryName": "Ev9zhdXn",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -380.876465,
-        "TranslateY": 11.7901506,
-        "TranslateZ": -95.96138,
-        "RotateYaw": 35.2176361,
-        "RotatePitch": -0.0463018566,
-        "RotateRoll": 90.0055542
+        "TranslateX": -407.623169,
+        "TranslateY": 11.7895126,
+        "TranslateZ": -79.07156,
+        "RotateYaw": 26.3584232,
+        "RotatePitch": 0.018723255,
+        "RotateRoll": 89.9974
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -752,7 +752,7 @@
         "Visible": true,
         "Frozen": false,
         "TranslateX": -339.5,
-        "TranslateY": 3.5,
+        "TranslateY": 6.0,
         "TranslateZ": -67.5,
         "RotateYaw": 0.0,
         "RotatePitch": 30.0,

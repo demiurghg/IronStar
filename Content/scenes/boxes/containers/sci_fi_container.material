@@ -1,0 +1,12 @@
+[General]
+Transparent  = False
+Emission     = 0, 0, 0, 0
+MaskEmission = False
+
+[Textures]
+BaseColor = BOX_DIFFUSE.jpg
+NormalMap = BOX_NORMAL.jpg
+Metallic  = BOX_Metallic.jpg
+Roughness = BOX_Roughness.jpg
+Emission  = 
+Occlusion = BOX_AO_.jpg

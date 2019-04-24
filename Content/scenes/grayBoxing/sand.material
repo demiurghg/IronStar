@@ -1,0 +1,12 @@
+[General]
+Transparent  = False
+Emission     = 0, 0, 0, 0
+MaskEmission = False
+
+[Textures]
+BaseColor = ..\textures\sand\TexturesCom_MuddySand5_3x3_1K_albedo.jpg
+NormalMap = ..\textures\sand\TexturesCom_MuddySand5_3x3_1K_normal.jpg
+Metallic  = 
+Roughness = ..\textures\sand\TexturesCom_MuddySand5_3x3_1K_roughness.jpg.jpg
+Emission  = 
+Occlusion = ..\textures\sand\TexturesCom_MuddySand5_3x3_1K_ao.jpg

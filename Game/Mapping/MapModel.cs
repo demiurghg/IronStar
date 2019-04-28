@@ -103,7 +103,6 @@ namespace IronStar.Mapping {
 			}
 
 			var rs		=	world.Game.RenderSystem;
-
 			var pm		=	world.Physics;
 
 			scene		=	world.Content.Load<Scene>( ScenePath, EmptyScene );
@@ -115,8 +114,7 @@ namespace IronStar.Mapping {
 
 			scene.ComputeAbsoluteTransforms( transforms );
 
-			bboxes		=	scene.Meshes.Select( m => m.ComputeBoundingBox() ).ToArray();
-
+			bboxes			=	scene.Meshes.Select( m => m.ComputeBoundingBox() ).ToArray();
 
 			//
 			//	add static collision mesh :
@@ -146,11 +144,13 @@ namespace IronStar.Mapping {
 									.Select( v1 => v1.Position )
 									.ToArray();
 
-				var debugModel		=	new DebugModel( rs.RenderWorld.Debug, dvertices, indices );
-				debugModel.World	=	transforms[ i ] * Matrix.Scaling( Scale ) * WorldMatrix;
-				debugModels[i]		=	debugModel;
-				rs.RenderWorld.Debug.DebugModels.Add( debugModel );
-
+				if (world.EditorMode) {				
+					var debugModel		=	new DebugModel( rs.RenderWorld.Debug, dvertices, indices );
+					debugModel.World	=	transforms[ i ] * Matrix.Scaling( Scale ) * WorldMatrix;
+					debugModels[i]		=	debugModel;
+					rs.RenderWorld.Debug.DebugModels.Add( debugModel );
+				}
+				
 				var staticMesh = new StaticMesh( vertices, indices );
 				staticMesh.Sidedness = BEPUutilities.TriangleSidedness.Clockwise;
 
@@ -160,6 +160,7 @@ namespace IronStar.Mapping {
 				staticMesh.WorldTransform = new BEPUTransform( s, q, p );
 
 				staticMesh.CollisionRules.Group	=	world.Physics.StaticGroup;
+				staticMesh.Tag	=	this;
 
 				collidables[i] =	staticMesh;
 	

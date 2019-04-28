@@ -125,21 +125,30 @@ namespace IronStar.Editor {
 		{
 			var ray		=	camera.PointToRay( x, y );
 			var from	=	ray.Position;
-			var to		=	ray.Position + ray.Direction.Normalized() * 1000;
+			var to		=	ray.Position + ray.Direction.Normalized() * 3000;
+			var n		=	Vector3.Zero;
 
-			Entity entity;
+			var obj = world.RayCastEditor( from, to, out n, out hitPoint, out distance );
 
-			if (world.RayCastAgainstEntity( from, to, out hitPoint, out distance, out entity )) {
+			if (obj==null) {
+				return null;
+			}
 
+			if (obj is Entity) {
+				var entity = obj as Entity;
 				return map
 					.Nodes
 					.Select( n1 => n1 as MapEntity )
 					.Where( n2 => n2 != null )
 					.FirstOrDefault( n3 => n3.Entity == entity && IsSelectable(n3) );
-
-			} else {
-				return null;
 			}
+
+			if (obj is MapNode) {
+				var node = obj as MapNode;
+				return IsSelectable(node) ? node : null;
+			}
+
+			return null;
 		}
 
 

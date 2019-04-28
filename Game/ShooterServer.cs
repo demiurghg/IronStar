@@ -49,7 +49,7 @@ namespace IronStar {
 		void IServerInstance.Initialize()
 		{
 			map		=   content.Load<Map>( @"maps\" + mapName );
-			world	=	new GameWorld( game, map, content, msgsvc, new Guid() );
+			world	=	new GameWorld( game, map, content, msgsvc, new Guid(), false );
 		}
 
 

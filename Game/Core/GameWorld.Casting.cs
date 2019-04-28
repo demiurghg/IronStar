@@ -26,6 +26,7 @@ using BEPUphysics.CollisionRuleManagement;
 using BEPUphysics.CollisionShapes.ConvexShapes;
 using BEPUphysics.CollisionShapes;
 using BEPUphysics.BroadPhaseEntries.MobileCollidables;
+using IronStar.Mapping;
 
 namespace IronStar.Core {
 	public partial class GameWorld  {
@@ -62,6 +63,55 @@ namespace IronStar.Core {
 
 			return true;
 		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="from"></param>
+		/// <param name="to"></param>
+		/// <param name="normal"></param>
+		/// <param name="pos"></param>
+		/// <returns></returns>
+		public object RayCastEditor ( Vector3 from, Vector3 to, out Vector3 normal, out Vector3 pos, out float distance )
+		{
+			var dir		=	to - from;
+			var dist	=	dir.Length();
+			var ndir	=	dir.Normalized();
+			Ray ray		=	new Ray( from, ndir );
+
+			normal	= Vector3.Zero;
+			pos		= to;
+
+			var rcr		= new RayCastResult();	
+			var bRay	= MathConverter.Convert( ray );
+
+			bool result = PhysSpace.RayCast( bRay, dist, out rcr );
+
+			distance	=	rcr.HitData.T;
+
+			if (!result) {
+				return null;
+			}
+
+			normal		=	MathConverter.Convert( rcr.HitData.Normal ).Normalized();
+			pos			=	MathConverter.Convert( rcr.HitData.Location );
+
+			var convexMesh	=	rcr.HitObject as ConvexCollidable;
+			var staticMesh	=	rcr.HitObject as StaticMesh;
+
+			if (convexMesh!=null) {
+				return convexMesh.Entity.Tag as Entity;
+			}
+			if (staticMesh!=null) {
+				return staticMesh.Tag as MapNode;
+			}
+
+			return null;
+		}
+
+
 
 		/// <summary>
 		/// 

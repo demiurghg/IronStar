@@ -7,7 +7,7 @@
     "SunAltitude": 20.0,
     "SunAzimuth": -75.0,
     "SunIntensity": 250.0,
-    "FogDistance": 1000.0,
+    "FogDistance": 10000.0,
     "FogHeight": 0.05,
     "FogColor": "10, 10, 10, 0"
   },

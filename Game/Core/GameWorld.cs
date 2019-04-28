@@ -44,6 +44,7 @@ namespace IronStar.Core {
 
 		public readonly Game Game;
 		public readonly ContentManager Content;
+		public readonly bool EditorMode;
 
 		public delegate void EntityEventHandler ( object sender, EntityEventArgs e );
 
@@ -76,13 +77,16 @@ namespace IronStar.Core {
 		Map map;
 
 
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
-		public GameWorld( Game game, Map map, ContentManager content, IMessageService msgsvc, Guid userGuid )
+		public GameWorld( Game game, Map map, ContentManager content, IMessageService msgsvc, Guid userGuid, bool editor )
 		{
-			MessageService			=	msgsvc;
+			MessageService	=	msgsvc;
+
+			this.EditorMode	=	editor;
 
 			this.Content	=	content;
 			this.Game		=	game;

@@ -134,7 +134,7 @@ namespace Fusion.Engine.Graphics {
 		{
 			RgbSpace			= RgbSpace.CIE_RGB;
 			AerialFogDensity	= 0.001f;
-			SkySphereSize		= 1000.0f;
+			SkySphereSize		= 4000.0f;
 			SkyTurbidity		= 4.0f;
 			SunPosition			= new Vector3( 1.0f, 0.1f, 1.0f );
 			SunGlowIntensity	= Half.MaxValue/2;

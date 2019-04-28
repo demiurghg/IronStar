@@ -23,7 +23,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 {
 	uint i,j,k;
 	float3 result		=	float3(0,0,0);
-	float slice			= 	1 - exp(-input.ProjPos.w*0.03);
+	float slice			= 	1 - exp(-input.ProjPos.w*0.015625f);
 	int3 loadUVW		=	int3( input.Position.xy/vpSize*float2(16,8), slice * 24 );
 
 	float2	smSize;

@@ -44,7 +44,7 @@ namespace Fusion.Engine.Graphics {
 
 		static float GetGridSlice ( float z )
 		{
-			return 1 - (float)Math.Exp( 0.03f * ( z ) );
+			return 1 - (float)Math.Exp( 0.015625f * ( z ) );
 		}
 
 

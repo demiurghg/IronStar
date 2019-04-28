@@ -222,10 +222,12 @@ namespace IronStar.Mapping {
 				dr.DrawBox( TranslateVector, 2,2,2, Color.Red );
 			}
 
-
-			foreach ( var debugModel in debugModels ) {
-				if (debugModel!=null) {
-					debugModel.Color	=	color;
+			
+			if (debugModels!=null) {
+				foreach ( var debugModel in debugModels ) {
+					if (debugModel!=null) {
+						debugModel.Color	=	color;
+					}
 				}
 			}
 		}

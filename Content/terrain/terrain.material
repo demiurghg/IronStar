@@ -1,9 +1,10 @@
 [General]
 Transparent = false
+InvertYNormal = False
 
 [Textures]
-BaseColor = 
-NormalMap = 
+BaseColor = color.png
+NormalMap = local_normals.png
 Metallic  = 
 Roughness = 
 Emission  = 

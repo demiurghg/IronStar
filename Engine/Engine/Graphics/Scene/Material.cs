@@ -73,6 +73,11 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public bool MaskEmission { get; set; }
 
+		/// <summary>
+		/// Indicates that Y axis must be reversed
+		/// </summary>
+		public bool InvertYNormal { get; set; }
+
 
 
 		/// <summary>
@@ -108,6 +113,7 @@ namespace Fusion.Engine.Graphics {
 			sectionGeneral.Keys.AddKey("Transparent"	,	StringConverter.ToString( material.Transparent ) );
 			sectionGeneral.Keys.AddKey("Emission"		,	StringConverter.ToString( material.Emission ) );
 			sectionGeneral.Keys.AddKey("MaskEmission"	,	StringConverter.ToString( material.MaskEmission ) );
+			sectionGeneral.Keys.AddKey("InvertYNormal"	,	StringConverter.ToString( material.InvertYNormal ) );
 
 			sectionTextures.Keys.AddKey("BaseColor"		,	material.ColorMap		?? "" );
 			sectionTextures.Keys.AddKey("NormalMap"		,	material.NormalMap		?? "" );
@@ -161,7 +167,8 @@ namespace Fusion.Engine.Graphics {
 				material.Name	=	name;
 
 				material.Transparent	=	StringConverter.ToBoolean( sectionGeneral["Transparent"		] ?? "false"	);
-				material.MaskEmission	=	StringConverter.ToBoolean( sectionGeneral["MaskEmission"	] ?? "true"	);
+				material.MaskEmission	=	StringConverter.ToBoolean( sectionGeneral["MaskEmission"	] ?? "true"		);
+				material.InvertYNormal	=	StringConverter.ToBoolean( sectionGeneral["InvertYNormal"	] ?? "false"	);
 				material.Emission		=	StringConverter.ToColor4 ( sectionGeneral["Emission"		] ?? "0 0 0 0"	);
 
 				material.ColorMap		=	sectionTextures["BaseColor"	] ?? "";

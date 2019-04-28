@@ -93,6 +93,16 @@ namespace Fusion.Engine.Graphics {
 		public bool ShowThrashing { get; set; } = false;
 
 		[Config]
+		[Category("Debugging")]
+		[Description("Show thrashing.")]
+		public bool ShowDiffuse { get; set; } = false;
+
+		[Config]
+		[Category("Debugging")]
+		[Description("Show thrashing.")]
+		public bool ShowSpecular { get; set; } = false;
+
+		[Config]
 		[Category("Performamce")]
 		[Description("Enables and disables anisotropic filtering.")]
 		public bool UseAnisotropic { get; set; }
@@ -490,6 +500,14 @@ namespace Fusion.Engine.Graphics {
 
 								if (ShowMipLevels) {
 									tile.DrawMipLevels(ShowTileBorder);
+								}
+
+								if (ShowDiffuse) {
+									tile.MakeWhiteDiffuse();
+								}
+
+								if (ShowSpecular) {
+									tile.MakeGlossyMetal();
 								}
 
 								WriteTileToPhysicalTexture( tile, rect.X, rect.Y );

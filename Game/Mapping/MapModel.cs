@@ -73,6 +73,9 @@ namespace IronStar.Mapping {
 
 		[AECategory( "Light Mapping" )]
 		public bool Dynamic { get; set; } = false;
+
+		[AECategory( "Physics" )]
+		public bool UseCollisionMesh { get; set; } = false;
 		
 
 
@@ -81,6 +84,7 @@ namespace IronStar.Mapping {
 		MeshInstance[]	instances	= null;
 		StaticMesh[]	collidables = null;
 		Matrix[]		transforms	= null;
+		DebugModel[]	debugModels = null;
 
 
 		/// <summary>
@@ -107,6 +111,7 @@ namespace IronStar.Mapping {
 			transforms	=	new Matrix[ scene.Nodes.Count ];
 			collidables	=	new StaticMesh[ scene.Nodes.Count ];
 			instances	=	new MeshInstance[ scene.Nodes.Count ];
+			debugModels	=	new DebugModel[ scene.Nodes.Count ];
 
 			scene.ComputeAbsoluteTransforms( transforms );
 
@@ -126,12 +131,25 @@ namespace IronStar.Mapping {
 					continue;
 				}
 
+				if (UseCollisionMesh && !node.Name.StartsWith("cm_")) {
+					continue;
+				}
+
 				var mesh		=	scene.Meshes[ node.MeshIndex ];
 				var indices     =   mesh.GetIndices();
 				var vertices    =   mesh.Vertices
 									.Select( v1 => Vector3.TransformCoordinate( v1.Position, transforms[i] ) )
 									.Select( v2 => MathConverter.Convert( v2 ) )
 									.ToArray();
+
+				var dvertices    =   mesh.Vertices
+									.Select( v1 => v1.Position )
+									.ToArray();
+
+				var debugModel		=	new DebugModel( rs.RenderWorld.Debug, dvertices, indices );
+				debugModel.World	=	transforms[ i ] * Matrix.Scaling( Scale ) * WorldMatrix;
+				debugModels[i]		=	debugModel;
+				rs.RenderWorld.Debug.DebugModels.Add( debugModel );
 
 				var staticMesh = new StaticMesh( vertices, indices );
 				staticMesh.Sidedness = BEPUutilities.TriangleSidedness.Clockwise;
@@ -153,11 +171,18 @@ namespace IronStar.Mapping {
 			//	add visible mesh instance :
 			//
 			for ( int i=0; i<scene.Nodes.Count; i++ ) {
+
 				var meshIndex = scene.Nodes[i].MeshIndex;
+
+				var node = scene.Nodes[i];
+
+				if (UseCollisionMesh && node.Name.StartsWith("cm_")) {
+					continue;
+				}
 				
 				if (meshIndex>=0) {
 					instances[i] = new MeshInstance( rs, scene, scene.Meshes[meshIndex] );
-					instances[i].World			=	transforms[ i ] * WorldMatrix;
+					instances[i].World			=	transforms[ i ] * Matrix.Scaling( Scale ) * WorldMatrix;
 					instances[i].Group			=	Dynamic ? InstanceGroup.Dynamic : InstanceGroup.Static;
 					instances[i].LightMapSize	=	new Size2( (int)LightMapSize, (int)LightMapSize );
 					instances[i].LightMapGuid	=	this.NodeGuid;
@@ -197,16 +222,9 @@ namespace IronStar.Mapping {
 			}
 
 
-			if (scene!=null && selected) {
-				for ( int i=0; i<scene.Nodes.Count; i++ ) {
-
-					var node = scene.Nodes[i];
-
-					if (node.MeshIndex<0) {
-						continue;
-					}
-
-					dr.DrawBox( bboxes[node.MeshIndex], transforms[ i ] * WorldMatrix, color, 1 ); 
+			foreach ( var debugModel in debugModels ) {
+				if (debugModel!=null) {
+					debugModel.Color	=	color;
 				}
 			}
 		}
@@ -252,6 +270,14 @@ namespace IronStar.Mapping {
 				foreach ( var instance in instances ) {
 					if ( instance!=null ) {
 						rs.RenderWorld.Instances.Remove( instance );
+					}
+				}
+			}
+
+			if (debugModels!=null) {
+				foreach ( var debugModel in debugModels ) {
+					if ( debugModel!=null ) {
+						rs.RenderWorld.Debug.DebugModels.Remove( debugModel );
 					}
 				}
 			}

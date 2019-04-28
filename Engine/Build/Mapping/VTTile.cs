@@ -102,6 +102,34 @@ namespace Fusion.Build.Mapping {
 		}
 
 
+		/// <summary>
+		/// Clears tile with particular color, flat normal and no specular.
+		/// </summary>
+		/// <param name="color"></param>
+		public void MakeWhiteDiffuse()
+		{
+			colorData.Fill( Color.Gray );
+			specularData.PerpixelProcessing( spec => new Color( (byte)255, (byte)0, (byte)0, spec.A ) );
+
+			colorDataMip?.Fill( Color.Gray );
+			specularDataMip?.PerpixelProcessing( spec => new Color( (byte)255, (byte)0, (byte)0, spec.A ) );
+		}
+
+
+		/// <summary>
+		/// Clears tile with particular color, flat normal and no specular.
+		/// </summary>
+		/// <param name="color"></param>
+		public void MakeGlossyMetal()
+		{
+			colorData.Fill( Color.Gray );
+			specularData.PerpixelProcessing( spec => new Color( (byte)0, (byte)255, (byte)0, spec.A ) );
+
+			colorDataMip?.Fill( Color.Gray );
+			specularDataMip?.PerpixelProcessing( spec => new Color( (byte)0, (byte)255, (byte)0, spec.A ) );
+		}
+
+
 
 		/// <summary>
 		/// Sampling perfomed using coordinates from top-left corner including border

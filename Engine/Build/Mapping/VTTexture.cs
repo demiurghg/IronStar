@@ -29,6 +29,7 @@ namespace Fusion.Build.Mapping {
 		public readonly string	Occlusion	;
 		public readonly bool	Transparent	;
 		public readonly bool	MaskEmission;
+		public readonly bool	InvertYNormal;
 
 		public int TexelOffsetX;
 		public int TexelOffsetY;
@@ -68,6 +69,7 @@ namespace Fusion.Build.Mapping {
 			Occlusion		=	CombinePathIfNotEmpty( dir, material.OcclusionMap	);
 			Transparent		=	material.Transparent;
 			MaskEmission	=	material.MaskEmission;
+			InvertYNormal	=	material.InvertYNormal;
 
 
 			if (string.IsNullOrWhiteSpace(BaseColor)) {	
@@ -274,6 +276,10 @@ namespace Fusion.Build.Mapping {
 
 							if (MaskEmission) {
 								c	=	Color.Lerp( c, Color.Black, MathUtil.Clamp(e/255.0f * 8, 0, 1) );
+							}
+
+							if (InvertYNormal) {
+								n	=	new Color( n.R, (byte)(255-n.G), n.B, n.A );
 							}
 
 							pageC.Write( i,j, c );

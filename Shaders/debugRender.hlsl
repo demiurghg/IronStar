@@ -2,18 +2,13 @@
 	Debug render shader :
 -----------------------------------------------------------------------------*/
 
+#include "debugRender.auto.hlsl"
+
 #if 0
-$ubershader SOLID|GHOST
+$ubershader SOLID|GHOST|MODEL
 #endif
 
-struct BATCH {
-	float4x4	View;
-	float4x4	Projection;
-	float4		ViewPosition;
-	float4		PixelSize;
-};
-
-cbuffer CBBatch : register(b0) { BATCH Batch : packoffset( c0 ); }
+cbuffer CBBatch : register(b0) { ConstData Batch : packoffset( c0 ); }
 
 struct VS_IN {
 	float4 pos : POSITION;
@@ -31,6 +26,39 @@ struct PS_IN {
 	float4 col : COLOR;
 };
 
+/*------------------------------------------------------------------------------
+	DEBUG MODEL RENDERING
+------------------------------------------------------------------------------*/
+
+#if defined(MODEL)
+
+PS_IN VSMain( VS_IN input )
+{
+	PS_IN output = (PS_IN)0;
+	
+	float4 wpos	=	mul( float4(input.pos.xyz,1), Batch.World );
+	float4 vpos	=	mul( wpos, Batch.View );
+	float4 ppos	=	mul( vpos, Batch.Projection );
+	
+	output.pos = ppos;
+	output.col = Batch.Color;
+	
+	return output;
+}
+
+
+float4 PSMain( PS_IN input, float4 vpos : SV_Position ) : SV_Target
+{
+	return input.col.rgba;
+}
+
+#endif
+
+/*------------------------------------------------------------------------------
+	DEBUG LINE RENDERING
+------------------------------------------------------------------------------*/
+
+#if defined(SOLID) || defined(GHOST)
 
 GS_IN VSMain( VS_IN input )
 {
@@ -139,6 +167,8 @@ float4 PSMain( PS_IN input, float4 vpos : SV_Position ) : SV_Target
 		return float4(input.col.rgb,1);
 	#endif
 }
+
+#endif
 
 
 

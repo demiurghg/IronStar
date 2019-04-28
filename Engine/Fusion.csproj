@@ -608,8 +608,11 @@
     <Compile Include="Engine\Graphics\Ubershaders\ShaderStructureAttribute.cs" />
     <Compile Include="Engine\Graphics\Ubershaders\UbershaderGenerator.cs" />
     <Compile Include="Engine\Graphics\Ubershaders\UbershaderSetupContext.cs" />
+    <Compile Include="Engine\Graphics\Utils\DebugModelCollection.cs" />
+    <Compile Include="Engine\Graphics\Utils\DebugModel.cs" />
     <Compile Include="Engine\Graphics\Utils\DebugRender.cs" />
     <Compile Include="Engine\Graphics\Utils\DebugRenderConfig.cs" />
+    <Compile Include="Engine\Graphics\Utils\DebugVertex.cs" />
     <Compile Include="Engine\Graphics\VirtualTexture.cs" />
     <Compile Include="Engine\Graphics\VTSegmentCollection.cs" />
     <Compile Include="Engine\Graphics\VTSegment.cs" />

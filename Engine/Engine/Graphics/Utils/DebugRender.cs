@@ -10,31 +10,29 @@ using Fusion.Engine.Common;
 using System.Runtime.InteropServices;
 using Fusion.Engine.Graphics.Ubershaders;
 
-
 namespace Fusion.Engine.Graphics {
 
-	[RequireShader("debugRender")]
+	[RequireShader("debugRender", true)]
 	public class DebugRender : DisposableBase {
 
-		readonly Game Game;
-
-		struct LineVertex {
-			[Vertex("POSITION")] public Vector4 Pos;
-			[Vertex("COLOR", 0)] public Vector4 Color;
-		}
+		public readonly Game Game;
 
 		[Flags]
 		public enum RenderFlags : int {
 			SOLID = 0x0001,
 			GHOST = 0x0002,
+			MODEL = 0x0004,
 		}
 
-		[StructLayout(LayoutKind.Explicit)]
+		[ShaderStructure]
+		[StructLayout(LayoutKind.Sequential, Size = 256)]
 		struct ConstData {
-			[FieldOffset(  0)] public Matrix  View;
-			[FieldOffset( 64)] public Matrix  Projection;
-			[FieldOffset(128)] public Vector4 ViewPosition;
-			[FieldOffset(144)] public Vector4 PixelSize;
+			public Matrix  View;
+			public Matrix  Projection;
+			public Matrix  World;
+			public Color4  Color;
+			public Vector4 ViewPosition;
+			public Vector4 PixelSize;
 		}
 
 		VertexBuffer		vertexBuffer;
@@ -42,13 +40,22 @@ namespace Fusion.Engine.Graphics {
 		StateFactory		factory;
 		ConstantBuffer		constBuffer;
 
-		List<LineVertex>	vertexDataAccum	= new List<LineVertex>();
-		LineVertex[]		vertexArray = new LineVertex[vertexBufferSize];
+		List<DebugVertex>	vertexDataAccum	= new List<DebugVertex>();
+		DebugVertex[]		vertexArray = new DebugVertex[vertexBufferSize];
 
 		const int vertexBufferSize = 4096*4;
 
 		ConstData	constData;
 
+
+		public DebugModelCollection DebugModels {
+			get {
+				return debugModels;
+			}
+		}
+
+
+		DebugModelCollection debugModels = new DebugModelCollection();
 
 		/// <summary>
 		/// Constructor
@@ -64,7 +71,7 @@ namespace Fusion.Engine.Graphics {
 			constBuffer =	new ConstantBuffer(dev, typeof(ConstData));
 
 			//	create vertex buffer :
-			vertexBuffer		= new VertexBuffer(dev, typeof(LineVertex), vertexBufferSize, VertexBufferOptions.Dynamic );
+			vertexBuffer		= new VertexBuffer(dev, typeof(DebugVertex), vertexBufferSize, VertexBufferOptions.Dynamic );
 			vertexDataAccum.Capacity = vertexBufferSize;
 
 			Game.Reloading += (s,e) => LoadContent();
@@ -90,7 +97,7 @@ namespace Fusion.Engine.Graphics {
 		void Enum ( PipelineState ps, RenderFlags flags )
 		{
 			ps.Primitive			=	Primitive.LineList;
-			ps.VertexInputElements	=	VertexInputElement.FromStructure( typeof(LineVertex) );
+			ps.VertexInputElements	=	VertexInputElement.FromStructure( typeof(DebugVertex) );
 			ps.RasterizerState		=	RasterizerState.CullNone;
 
 			if (flags.HasFlag( RenderFlags.SOLID )) {
@@ -101,6 +108,12 @@ namespace Fusion.Engine.Graphics {
 			if (flags.HasFlag( RenderFlags.GHOST )) {
 				ps.BlendState			=	BlendState.AlphaBlend;
 				ps.DepthStencilState	=	DepthStencilState.None;
+			}
+
+			if (flags.HasFlag( RenderFlags.MODEL )) {
+				ps.BlendState		=	BlendState.AlphaBlend;
+				ps.Primitive		=	Primitive.TriangleList;
+				ps.RasterizerState	=	RasterizerState.Wireframe;
 			}
 		}
 
@@ -115,6 +128,10 @@ namespace Fusion.Engine.Graphics {
 			if (disposing) {
 				vertexBuffer.Dispose();
 				constBuffer.Dispose();
+
+				foreach ( var m in debugModels ) {
+					m?.Dispose();
+				}
 			}
 			base.Dispose( disposing );
 		}
@@ -129,8 +146,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="color"></param>
 		public void DrawLine(Vector3 p0, Vector3 p1, Color color)
 		{
-			vertexDataAccum.Add(new LineVertex() { Pos = new Vector4(p0,0), Color = color.ToVector4() });
-			vertexDataAccum.Add(new LineVertex() { Pos = new Vector4(p1,0), Color = color.ToVector4() });
+			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p0,0), Color = color.ToVector4() });
+			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p1,0), Color = color.ToVector4() });
 			//DrawLine( p0, p1, color, Matrix.Identity );
 		}
 
@@ -144,8 +161,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="color"></param>
 		public void DrawLine(Vector2 p0, Vector2 p1, Color color)
 		{
-			vertexDataAccum.Add(new LineVertex() { Pos = new Vector4(p0, 0,0), Color = color.ToVector4() });
-			vertexDataAccum.Add(new LineVertex() { Pos = new Vector4(p1, 0,0), Color = color.ToVector4() });
+			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p0, 0,0), Color = color.ToVector4() });
+			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p1, 0,0), Color = color.ToVector4() });
 			//DrawLine( p0, p1, color, Matrix.Identity );
 		}
 
@@ -159,42 +176,27 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="color"></param>
 		public void DrawLine(Vector3 p0, Vector3 p1, Color color0, Color color1)
 		{
-			vertexDataAccum.Add(new LineVertex() { Pos = new Vector4(p0,0), Color = color0.ToVector4() });
-			vertexDataAccum.Add(new LineVertex() { Pos = new Vector4(p1,0), Color = color1.ToVector4() });
+			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p0,0), Color = color0.ToVector4() });
+			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p1,0), Color = color1.ToVector4() });
 			//DrawLine( p0, p1, color, Matrix.Identity );
 		}
 
 
 		public void DrawLine(Vector3 p0, Vector3 p1, Color color0, Color color1, float width0, float width1)
 		{
-			vertexDataAccum.Add(new LineVertex() { Pos = new Vector4(p0,width0), Color = color0.ToVector4() });
-			vertexDataAccum.Add(new LineVertex() { Pos = new Vector4(p1,width1), Color = color1.ToVector4() });
+			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p0,width0), Color = color0.ToVector4() });
+			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p1,width1), Color = color1.ToVector4() });
 			//DrawLine( p0, p1, color, Matrix.Identity );
 		}
 
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		internal void Render ( RenderTargetSurface colorBuffer, DepthStencilSurface depthBuffer, Camera camera )
+		void SetupRender ( RenderTargetSurface colorBuffer, DepthStencilSurface depthBuffer, Camera camera )
 		{
-			DrawTracers();
-
-			if (!vertexDataAccum.Any()) {
-				return;
-			}
-
-			if (Game.RenderSystem.SkipDebugRendering) {
-				vertexDataAccum.Clear();	
-				return;
-			}
-
 			var dev = Game.GraphicsDevice;
 			dev.ResetStates();
 
 			dev.SetTargets( depthBuffer, colorBuffer );
-
 
 			var a = camera.GetProjectionMatrix(StereoEye.Mono).M11;
 			var b = camera.GetProjectionMatrix(StereoEye.Mono).M22;
@@ -203,18 +205,53 @@ namespace Fusion.Engine.Graphics {
 
 			constData.View			=	camera.GetViewMatrix(StereoEye.Mono);
 			constData.Projection	=	camera.GetProjectionMatrix(StereoEye.Mono);
+			constData.World			=	Matrix.Identity;
 			constData.ViewPosition	=	camera.GetCameraPosition4(StereoEye.Mono);
 			constData.PixelSize		=	new Vector4( 1/w/a, 1/b/h, 1/w, 1/h );
 			constBuffer.SetData(constData);
 
-			dev.SetupVertexInput( vertexBuffer, null );
 			dev.VertexShaderConstants[0]	=	constBuffer ;
 			dev.PixelShaderConstants[0]		=	constBuffer ;
 			dev.GeometryShaderConstants[0]	=	constBuffer ;
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="colorBuffer"></param>
+		/// <param name="depthBuffer"></param>
+		/// <param name="camera"></param>
+		void RenderModels( RenderTargetSurface colorBuffer, DepthStencilSurface depthBuffer, Camera camera )
+		{
+			var dev = Game.GraphicsDevice;
+
+			dev.PipelineState = factory[ (int)RenderFlags.MODEL ];
+
+			foreach ( var debugModel in DebugModels ) {
+
+				if (debugModel==null) {
+					continue;
+				}
+
+				constData.World	=	debugModel.World;
+				constData.Color	=	debugModel.Color.ToColor4();	
+				constBuffer.SetData(constData);
+				
+				debugModel.Draw( dev );
+			}
+		}
+
+
+
+		void RenderLines ( RenderTargetSurface colorBuffer, DepthStencilSurface depthBuffer, Camera camera )
+		{
+			var dev = Game.GraphicsDevice;
+
+			dev.SetupVertexInput( vertexBuffer, null );
 
 			var flags = new[]{ RenderFlags.SOLID, RenderFlags.GHOST };
 
-	
 			foreach ( var flag in flags ) {
 
 				if (Game.RenderSystem.SkipGhostDebugRendering && flag==RenderFlags.GHOST) {
@@ -243,6 +280,31 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			vertexDataAccum.Clear();
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		internal void Render ( RenderTargetSurface colorBuffer, DepthStencilSurface depthBuffer, Camera camera )
+		{
+			DrawTracers();
+
+			if (Game.RenderSystem.SkipDebugRendering) {
+				vertexDataAccum.Clear();	
+				return;
+			}
+
+			var dev = Game.GraphicsDevice;
+			dev.ResetStates();
+
+			SetupRender( colorBuffer, depthBuffer, camera );
+
+			RenderLines( colorBuffer, depthBuffer, camera );
+
+			RenderModels( colorBuffer, depthBuffer, camera );
+
 		}
 
 

@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = True
+
+[Textures]
+BaseColor = Rock_9_Tex\Rock_9_Base_Color.jpg
+NormalMap = Rock_9_Tex\Rock_9_Normal_DirectX.jpg
+Metallic  = 
+Roughness = 
+Emission  = 
+Occlusion = Rock_9_Tex\Rock_9_Mixed_AO.jpg

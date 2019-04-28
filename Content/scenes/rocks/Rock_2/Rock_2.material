@@ -1,0 +1,12 @@
+[General]
+Transparent  = False
+Emission     = 0, 0, 0, 0
+MaskEmission = False
+
+[Textures]
+BaseColor = Rock_2_Tex\Rock_2_Base_Color.jpg
+NormalMap = Rock_2_Tex\Rock_2_Normal_DirectX.jpg
+Metallic  = 
+Roughness = 
+Emission  = 
+Occlusion = Rock_2_Tex\Rock_2_Mixed_AO.jpg

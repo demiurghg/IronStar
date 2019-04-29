@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = False
+
+[Textures]
+BaseColor = pipeSegment_phong1.png
+NormalMap = pipeSegment_phong1_nm.png
+Metallic  = pipeSegment_phong1_m.png
+Roughness = pipeSegment_phong1_r.png
+Emission  = 
+Occlusion = pipeSegment_phong1_ao.png

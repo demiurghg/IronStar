@@ -350,7 +350,7 @@ float3 Tonemap ( float3 exposured )
 	#endif
 	
 	#ifdef REINHARD
-		float3 tonemapped	=	pow( abs(exposured / (1+exposured)), 1/2.2f );
+		float3 tonemapped	=	pow( abs(exposured / (1+exposured)), 1/1.0f );
 	#endif
 	
 	#ifdef FILMIC

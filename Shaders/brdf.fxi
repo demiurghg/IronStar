@@ -22,7 +22,7 @@ float	LinearFalloff( float dist, float max_range )
 float3	Lambert( float3 normal, float3 light_dir, float3 intensity, float3 diff_color, float bias = 0 )
 {
 	light_dir	=	normalize(light_dir);
-	return intensity * diff_color * max( 0, dot(light_dir, normal) + bias ) / (1+bias);
+	return intensity * diff_color * max( 0, dot(light_dir, normal) + bias ) / (1+bias) / PI;
 }
 
 

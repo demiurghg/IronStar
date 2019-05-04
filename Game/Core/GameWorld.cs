@@ -236,7 +236,7 @@ namespace IronStar.Core {
 			rw.SkySettings.SunPosition			=	snapshotHeader.SunDirection;
 			rw.SkySettings.SunLightIntensity	=	snapshotHeader.SunIntensity;
 			rw.SkySettings.SkyTurbidity			=	snapshotHeader.Turbidity;
-			rw.SkySettings.SkyIntensity			=	0.5f;
+			rw.SkySettings.SkyIntensity			=	snapshotHeader.SkyIntensity;
 
 			rw.FogSettings.VisibilityDistance	=	snapshotHeader.FogDistance;
 			rw.FogSettings.Color				=	snapshotHeader.FogColor;

@@ -33,6 +33,10 @@ namespace IronStar.Mapping {
 		public float SunAltitude { get; set; } = 45;
 
 		[AECategory( "Sky" )]
+		[AEValueRange(0,10,1,0.01f)]
+		public float SkyIntensity { get; set; } = 1;
+
+		[AECategory( "Sky" )]
 		[AEValueRange(-180,180,15,1)]
 		public float SunAzimuth { get; set; } = 45;
 

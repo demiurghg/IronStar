@@ -71,6 +71,7 @@ namespace IronStar.Mapping {
 			gameWorld.snapshotHeader.SunIntensity	=	Environment.SunIntensity;
 			gameWorld.snapshotHeader.SunDirection	=	Environment.SunPosition;
 			gameWorld.snapshotHeader.Turbidity		=	Environment.SkyTrubidity;
+			gameWorld.snapshotHeader.SkyIntensity	=	Environment.SkyIntensity;
 		}
 
 

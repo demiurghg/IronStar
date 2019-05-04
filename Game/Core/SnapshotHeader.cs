@@ -18,6 +18,7 @@ namespace IronStar.Core {
 		public Color4 FogColor;
 		public float Gravity;
 		public float SunIntensity;
+		public float SkyIntensity;
 
 
 		public void Write( BinaryWriter writer )
@@ -27,6 +28,7 @@ namespace IronStar.Core {
 			writer.Write( FogDistance );
 			writer.Write( Gravity );
 			writer.Write( SunIntensity );
+			writer.Write( SkyIntensity );
 			writer.Write( FogColor );
 		}
 
@@ -38,6 +40,7 @@ namespace IronStar.Core {
 			FogDistance		=	reader.ReadSingle();
 			Gravity			=	reader.ReadSingle();
 			SunIntensity	=	reader.ReadSingle();
+			SkyIntensity	=	reader.ReadSingle();
 			FogColor		=	reader.Read<Color4>();
 		}
 	}

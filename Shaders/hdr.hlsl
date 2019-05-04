@@ -7,6 +7,7 @@ $ubershader		COMPUTE_HISTOGRAM|AVERAGE_HISTOGRAM
 #endif
 
 #include "hdr.auto.hlsl"
+#include "colorGrading.fxi"
 
 SamplerState	LinearSampler		: register(s0);
 SamplerState	AnisotropicSampler	: register(s0);
@@ -32,6 +33,22 @@ float2 FSQuadUV ( uint VertexID )
 float GetLuminance(float3 color)
 {
     return dot(color, float3(0.2127f, 0.7152f, 0.0722f));
+}
+
+
+float3 ColorSaturation( float3 rgbVal, float3 sat )
+{
+	float3 grey = GetLuminance(rgbVal);
+	return grey + sat * (rgbVal-grey);
+}
+
+float EvalLogContrastFunc(float x, float midpoint, float contrast)
+{
+	float logMidpoint = log2(midpoint);
+	float logX = log2(x+Epsilon);
+	float adjX = logMidpoint + (logX - logMidpoint) * contrast;
+	float ret  = max(0.0f, exp2(adjX) - Epsilon);
+	return ret;
 }
 
 float NormalizeEV( float ev )
@@ -327,19 +344,19 @@ float3 SaturateColor ( float3 rgbVal, float factor )
 }
 
 
-float3 TintColor ( float3 target, float3 blend )
+float3 TintColor ( float3 color, float3 tint )
 {
 	//return target * blend;
 
-	float3 multiplyFactor	=	target * (blend+0.5);
+	/*float3 multiplyFactor	=	target * (blend+0.5);
 	float3 screenFactor		=	(1 - (1-target) * (1-(blend-0.5)));
-	return lerp( multiplyFactor, screenFactor, step( blend, 0.5 ) );
+	return lerp( multiplyFactor, screenFactor, step( blend, 0.5 ) );*/
 
-	// float3 result = 0;
-	// result.r = color.r + (1-color.r) * tint.r;
-	// result.g = color.g + (1-color.g) * tint.g;
-	// result.b = color.b + (1-color.b) * tint.b;
-	// return result;
+	float3 result = 0;
+	result.r = color.r + (1-color.r) * tint.r/2.0;
+	result.g = color.g + (1-color.g) * tint.g/2.0;
+	result.b = color.b + (1-color.b) * tint.b/2.0;
+	return result;
 }
 
 
@@ -462,26 +479,32 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	//	Tonemapping :
 	//	
 	float3	exposured	=	Params.KeyValue * hdrImage / luminanceAdaptLinear;
+			exposured.r	=	EvalLogContrastFunc( exposured.r, 0.18, 1.2f );
+			exposured.g	=	EvalLogContrastFunc( exposured.g, 0.18, 1.2f );
+			exposured.b	=	EvalLogContrastFunc( exposured.b, 0.18, 1.2f );
 	float3	tonemapped	=	Tonemap( exposured );
 
 	
 	//
 	//	Color grading :
 	//	
-	float	brightness		=	dot( tonemapped, lumVector);
+	float	brightness		=	sqrt(dot( tonemapped, lumVector));
 	float	shadows			=	saturate( 1 - 2 * brightness );
 	float	midtones		=	saturate( 1-abs(brightness*2-1) );
 	float	highlights		=	saturate( 2 * brightness - 1 );
 	
-	float3	tintShadows		=	0.4f; //float3( 0.25, 0.30, 0.35 );
-	float3	tintMidtones	=	0.5f; //float3( 0.45, 0.50, 0.55 );
-	float3	tintHighlights	=	0.5f; //float3( 0.55, 0.60, 0.65 );
 	
-	float3	colorShadows	=	TintColor( tonemapped, tintShadows	  );
-	float3	colorMidtones	=	TintColor( tonemapped, tintMidtones   );
-	float3	colorHighlights	=	TintColor( tonemapped, tintHighlights );
+	float3	tintShadows		=	float3( 0.50, 0.50, 1.00 );
+	float3	tintMidtones	=	float3( 1.50, 1.50, 1.50 );
+	float3	tintHighlights	=	float3( 1.00, 1.00, 0.90 );
 	
-	float3	colorGraded 	=	tonemapped;
+	float3	colorShadows	=	tonemapped * shadows	* tintShadows	 ;
+	float3	colorMidtones	=	tonemapped * midtones	* tintMidtones   ;
+	float3	colorHighlights	=	tonemapped * highlights	* tintHighlights ;
+	
+	float3 	colorGraded		=	(colorShadows + colorMidtones + colorHighlights);
+	colorGraded				=	ColorSaturation( colorGraded, 0.6 );
+	//float3	colorGraded 	=	tonemapped;
 	
 	//
 	//	Apply dithering :

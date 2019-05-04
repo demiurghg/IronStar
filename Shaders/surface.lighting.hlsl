@@ -100,41 +100,20 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	int3 checker  = (int3)abs(worldPos.xyz);
 	int3 checker2 = (int3)abs(worldPos.xyz*5);
 	
-	/*metallic = (checker.x + checker.y + checker.z)%2;
-	baseColor = 0.3;
-	roughness = (checker2.x + checker2.y + checker2.z)%7 / 10.0f + 0.1;//*/
-	//roughness = frac(worldPos.y-0.1);
 	float normalLength	=	length(normal) + 0.00001f;
 	
 			normal 		= 	normal / normalLength;
-	float3	diffuse 	=	lerp( baseColor, float3(0,0,0), metallic );
-	float3	specular  	=	lerp( float3(0.04f,0.04f,0.04f), baseColor, metallic );
+			
+	// pow3 help to reduce white fringes in metallic PBR pipeline:
+	float3  insulatorF0	=	float3(0.04f,0.04f,0.04f);
+	float3	diffuse 	=	pow( lerp( pow(baseColor, 1/3.0),   float3(0,0,0),           metallic ), 3 );
+	float3	specular  	=	pow( lerp( pow(insulatorF0, 1/3.0), pow(baseColor, 1/3.0f),  metallic ), 3 );
 	
 	#ifdef DIFFUSE_ONLY	
 	diffuse	=	baseColor;
 	#endif
-	
 
 	#ifndef DIFFUSE_ONLY
-	
-	/*roughness	=	0.25f;
-	specular	=	1.0f;
-	diffuse		=	0.0f;//*/
-
-	/*roughness	=	0.0f;
-	specular	=	0.5f;
-	diffuse		=	0.0f;//*/
-
-	/*roughness	=	0.0f;
-	specular	=	0.9f;
-	diffuse		=	0.0f;//*/
-
-	/*roughness	=	0.5f;
-	specular	=	0.0f;
-	diffuse		=	1.0f;//*/
-
-	//roughness *= 0.3f;
-
 	roughness	=	saturate(roughness);
 	roughness	=	clamp( roughness, 1.0f / 512.0f, 1 );
 	#endif
@@ -165,6 +144,8 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		totalLight.rgb 		+= 	shadow * nDotL * CookTorrance( normal.xyz, viewDirN, lightDirN, intensity, specular, roughness, srcRadius );
 		#endif
 	}
+	
+	//return totalLight;
 	
 	//----------------------------------------------------------------------------------------------
 

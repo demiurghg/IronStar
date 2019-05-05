@@ -113,7 +113,7 @@ namespace Fusion.Engine.Graphics {
 			if (flags.HasFlag( RenderFlags.MODEL )) {
 				ps.BlendState		=	BlendState.AlphaBlend;
 				ps.Primitive		=	Primitive.TriangleList;
-				ps.RasterizerState	=	RasterizerState.Wireframe;
+				ps.RasterizerState	=	RasterizerState.WireframeBias;
 			}
 		}
 

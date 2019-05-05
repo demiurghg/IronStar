@@ -76,11 +76,19 @@ namespace IronStar.Mapping {
 
 		[AECategory( "Physics" )]
 		public bool UseCollisionMesh { get; set; } = false;
+
+		[AECategory( "Custom Node" )]
+		public bool UseCustomNodes { get; set; } = false;
+
+		[AECategory( "Custom Node" )]
+		public string CustomVisibleNode { get; set; } = "";
+
+		[AECategory( "Custom Node" )]
+		public string CustomCollisionNode { get; set; } = "";
 		
 
 
 		Scene			scene		= null;
-		BoundingBox[]	bboxes		= null;
 		MeshInstance[]	instances	= null;
 		StaticMesh[]	collidables = null;
 		Matrix[]		transforms	= null;
@@ -114,8 +122,7 @@ namespace IronStar.Mapping {
 
 			scene.ComputeAbsoluteTransforms( transforms );
 
-			bboxes			=	scene.Meshes.Select( m => m.ComputeBoundingBox() ).ToArray();
-
+			
 			//
 			//	add static collision mesh :
 			//
@@ -133,6 +140,10 @@ namespace IronStar.Mapping {
 					continue;
 				}
 
+				if (UseCustomNodes && node.Name!=CustomCollisionNode) {
+					continue;
+				}
+				
 				var mesh		=	scene.Meshes[ node.MeshIndex ];
 				var indices     =   mesh.GetIndices();
 				var vertices    =   mesh.Vertices
@@ -180,6 +191,10 @@ namespace IronStar.Mapping {
 				if (UseCollisionMesh && node.Name.StartsWith("cm_")) {
 					continue;
 				}
+
+				if (UseCustomNodes && node.Name!=CustomVisibleNode) {
+					continue;
+				}
 				
 				if (meshIndex>=0) {
 					instances[i] = new MeshInstance( rs, scene, scene.Meshes[meshIndex] );
@@ -193,6 +208,7 @@ namespace IronStar.Mapping {
 				}
 			}
 		}
+
 
 
 
@@ -295,6 +311,7 @@ namespace IronStar.Mapping {
 
 			instances	=	null;
 			collidables	=	null;
+			debugModels	=	null;
 		}
 
 
@@ -306,6 +323,7 @@ namespace IronStar.Mapping {
 
 			instances	=	null;
 			collidables	=	null;
+			debugModels	=	null;
 
 			return newNode;
 		}

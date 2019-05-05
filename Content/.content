@@ -1,6 +1,8 @@
 [Ignore]
 *.ma
 *.psd
+*_highPoly.fbx
+*_lowPoly.fbx
 spots/*.tga
 sprites/*.tga
 decals/*.tga

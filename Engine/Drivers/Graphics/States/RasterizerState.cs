@@ -24,10 +24,11 @@ namespace Fusion.Drivers.Graphics {
 		public bool		ScissorEnabled		{ get; set; }
 
 
-		public static RasterizerState CullNone	{ get; private set; }
-		public static RasterizerState CullCW	{ get; private set; }
-		public static RasterizerState CullCCW	{ get; private set; }
-		public static RasterizerState Wireframe	{ get; private set; }
+		public static RasterizerState CullNone		{ get; private set; }
+		public static RasterizerState CullCW		{ get; private set; }
+		public static RasterizerState CullCCW		{ get; private set; }
+		public static RasterizerState Wireframe		{ get; private set; }
+		public static RasterizerState WireframeBias	{ get; private set; }
 
 
 		/// <summary>
@@ -47,10 +48,11 @@ namespace Fusion.Drivers.Graphics {
 
 		static RasterizerState ()
 		{
-			CullNone	=	Create( CullMode.CullNone ); 
-			CullCW		=	Create( CullMode.CullCW ); 
-			CullCCW		=	Create( CullMode.CullCCW ); 
-			Wireframe	=	Create( CullMode.CullNone, FillMode.Wireframe ); 
+			CullNone		=	Create( CullMode.CullNone ); 
+			CullCW			=	Create( CullMode.CullCW ); 
+			CullCCW			=	Create( CullMode.CullCCW ); 
+			Wireframe		=	Create( CullMode.CullNone, FillMode.Wireframe ); 
+			WireframeBias	=	Create( CullMode.CullNone, FillMode.Wireframe, -5, -1 ); 
 		}
 
 

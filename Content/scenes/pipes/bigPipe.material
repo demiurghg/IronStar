@@ -1,0 +1,14 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = False
+
+[Textures]
+BaseColor = bigPipes\bigPipes_lowPoly_bigPipes_lowPoly_bigPipe.png
+NormalMap = bigPipes\bigPipes_lowPoly_bigPipes_lowPoly_bigPipe_nm.png
+Metallic  = bigPipes\bigPipes_lowPoly_bigPipes_lowPoly_bigPipe_m.png
+Roughness = bigPipes\bigPipes_lowPoly_bigPipes_lowPoly_bigPipe_r.png
+Emission  = 
+Occlusion = bigPipes\bigPipes_lowPoly_bigPipes_lowPoly_bigPipe_ao.png
+ 

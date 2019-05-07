@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = False
+
+[Textures]
+BaseColor = truss_lowpoly_truss64x16.png
+NormalMap = truss_lowpoly_truss64x16_nm.png
+Metallic  = truss_lowpoly_truss64x16_m.png
+Roughness = truss_lowpoly_truss64x16_r.png
+Emission  = 
+Occlusion = truss_lowpoly_truss64x16_ao.png

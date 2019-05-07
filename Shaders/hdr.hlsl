@@ -7,7 +7,7 @@ $ubershader		COMPUTE_HISTOGRAM|AVERAGE_HISTOGRAM
 #endif
 
 #include "hdr.auto.hlsl"
-#include "colorGrading.fxi"
+//#include "colorGrading.fxi"
 
 SamplerState	LinearSampler		: register(s0);
 SamplerState	AnisotropicSampler	: register(s0);
@@ -504,7 +504,8 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	
 	float3 	colorGraded		=	(colorShadows + colorMidtones + colorHighlights);
 	colorGraded				=	ColorSaturation( colorGraded, 0.6 );
-	//float3	colorGraded 	=	tonemapped;
+	
+	colorGraded 	=	tonemapped;
 	
 	//
 	//	Apply dithering :

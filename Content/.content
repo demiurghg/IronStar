@@ -3,6 +3,8 @@
 *.psd
 *_highPoly.fbx
 *_lowPoly.fbx
+*_highpoly.fbx
+*_lowpoly.fbx
 spots/*.tga
 sprites/*.tga
 decals/*.tga

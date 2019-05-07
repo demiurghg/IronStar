@@ -198,7 +198,7 @@ namespace IronStar.Mapping {
 		}
 
 
-		public override MapNode DuplicateNode()
+		public override MapNode DuplicateNode( GameWorld world )
 		{
 			var newNode = (MapSpotLight)MemberwiseClone();
 			newNode.light = null;

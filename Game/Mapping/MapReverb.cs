@@ -107,7 +107,7 @@ namespace IronStar.Mapping {
 		}
 
 
-		public override MapNode DuplicateNode()
+		public override MapNode DuplicateNode( GameWorld world )
 		{
 			var newNode = (MapReverb)MemberwiseClone();
 			newNode.reverb		= null;

@@ -229,7 +229,7 @@ namespace IronStar.Mapping {
 		/// Creates copy of current node without activation
 		/// </summary>
 		/// <returns></returns>
-		public abstract MapNode DuplicateNode ();
+		public abstract MapNode DuplicateNode ( GameWorld world );
 
 		/// <summary>
 		/// 

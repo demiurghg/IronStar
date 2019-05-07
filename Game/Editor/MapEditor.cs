@@ -270,7 +270,7 @@ namespace IronStar.Editor {
 			}
 
 			var newItems = selection
-				.Select( item => item.DuplicateNode() )
+				.Select( item => item.DuplicateNode( World ) )
 				.ToArray();
 
 			Map.Nodes.AddRange( newItems );

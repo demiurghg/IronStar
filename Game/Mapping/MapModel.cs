@@ -316,14 +316,14 @@ namespace IronStar.Mapping {
 
 
 
-		public override MapNode DuplicateNode()
+		public override MapNode DuplicateNode( GameWorld world )
 		{
+			KillNode( world );
+
 			var newNode = (MapModel)MemberwiseClone();
 			newNode.NodeGuid = Guid.NewGuid();
 
-			instances	=	null;
-			collidables	=	null;
-			debugModels	=	null;
+			SpawnNode( world );
 
 			return newNode;
 		}

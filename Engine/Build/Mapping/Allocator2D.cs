@@ -356,7 +356,7 @@ namespace Fusion.Build.Mapping {
 					if (!clear && c!=Color.Black) {
 						Log.Warning("Overlap!");
 					}
-					image.Write( i,j, color );	
+					image.SetPixel( i,j, color );	
 				}
 			}
 		}

@@ -12,9 +12,15 @@ namespace Fusion.Engine.Imaging {
 		public int	Width	{ get; protected set; }
 		public int	Height	{ get; protected set; }
 
-		public Color[]	RawImageData { get; protected set; }
+		public byte[]	RawImageData { get; protected set; }
 
 		public object Tag { get; set; }
+
+		public int PixelCount {
+			get {
+				return Width * Height;
+			}
+		}
 		
 
 		/// <summary>
@@ -24,7 +30,7 @@ namespace Fusion.Engine.Imaging {
 		/// <param name="height">Image height</param>
 		public Image ( int width, int height )
 		{
-			RawImageData	=	new Color[width*height];
+			RawImageData	=	new byte[width*height*4];
 
 			Width	=	width;
 			Height	=	height;
@@ -48,9 +54,11 @@ namespace Fusion.Engine.Imaging {
 			Width			=	image.Width;
 			Height			=	image.Height;
 
-			RawImageData	=	new Color[Width*Height];
+			RawImageData	=	new byte[Width*Height*4];
 
-			Array.Copy( image.RawImageData, RawImageData, RawImageData.Length );
+			for (int i=0; i<PixelCount; i++) {
+				SetPixelLinear( i, image.RawImageData[i] );
+			}
 		}
 
 
@@ -62,7 +70,7 @@ namespace Fusion.Engine.Imaging {
 		/// <param name="fillColor">Color to fill image</param>
 		public Image ( int width, int height, Color fillColor )
 		{
-			RawImageData	=	new Color[width*height];
+			RawImageData	=	new byte[width*height*4];
 
 			Width	=	width;
 			Height	=	height;
@@ -75,8 +83,8 @@ namespace Fusion.Engine.Imaging {
 				throw new ArgumentOutOfRangeException("Image height must be > 0");
 			}
 
-			for (int i=0; i<RawImageData.Length; i++) {
-				RawImageData[i]	=	fillColor;
+			for (int i=0; i<PixelCount; i++) {
+				SetPixelLinear( i, fillColor );
 			}
 		}
 
@@ -90,16 +98,12 @@ namespace Fusion.Engine.Imaging {
 		/// <param name="v"></param>
 		/// <param name="wrap"></param>
 		/// <returns></returns>
-		public int Address ( int x, int y, bool wrap = true )
+		public int ComputeByteAddress ( int x, int y )
 		{
-			if (wrap) {
-				x =	Wrap( x, Width );
-				y =	Wrap( y, Height );
-			} else {
-				x	=	Clamp( x, 0, Width - 1 );
-				y	=	Clamp( y, 0, Height - 1 );
-			}
-			return x + y * Width;
+			x	=	Clamp( x, 0, Width - 1 );
+			y	=	Clamp( y, 0, Height - 1 );
+
+			return (x + y * Width) * 4;
 		}
 
 
@@ -132,41 +136,21 @@ namespace Fusion.Engine.Imaging {
 		/// <param name="u"></param>
 		/// <param name="v"></param>
 		/// <returns></returns>
-		public Color SampleWrap ( int x, int y )
+		public Color Sample ( int x, int y )
 		{
-			x = Wrap(x, Width);
-			y = Wrap(y, Height);
-			var a = x + y * Width;
-			return RawImageData[ a ];
+			x = Clamp(x, 0, Width);
+			y = Clamp(y, 0, Height);
+
+			var addr = ComputeByteAddress(x,y);
+
+			var r	 = RawImageData[ addr + 0 ];
+			var g	 = RawImageData[ addr + 1 ];
+			var b	 = RawImageData[ addr + 2 ];
+			var a	 = RawImageData[ addr + 3 ];
+
+			return new Color(r,g,b,a);
 		}
 
-
-		/// <summary>
-		/// Samples image at given coordinates with clamping addressing mode
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <returns></returns>
-		public Color SampleClamp ( int x, int y )
-		{
-			x	=	Clamp( x, 0, Width - 1 );
-			y	=	Clamp( y, 0, Height - 1 );
-			var a = x + y * Width;
-			return RawImageData[ a ];
-		}
-
-
-
-		/// <summary>
-		/// Samples image at given coordinates with wraping addressing mode
-		/// </summary>
-		/// <param name="u"></param>
-		/// <param name="v"></param>
-		/// <returns></returns>
-		public Color Sample ( int x, int y, bool wrap = true)
-		{
-			return RawImageData[ Address( x, y, wrap ) ];
-		}
 
 
 		/// <summary>
@@ -177,10 +161,10 @@ namespace Fusion.Engine.Imaging {
 		/// <returns></returns>
 		public Color SampleMip ( int x, int y, bool wrap = true)
 		{
-			var c00 = RawImageData[ Address( x*2+0, y*2+0, true ) ];
-			var c01 = RawImageData[ Address( x*2+0, y*2+1, true ) ];
-			var c10 = RawImageData[ Address( x*2+1, y*2+0, true ) ];
-			var c11 = RawImageData[ Address( x*2+1, y*2+1, true ) ];
+			var c00 = Sample( x*2+0, y*2+0 );
+			var c01 = Sample( x*2+0, y*2+1 );
+			var c10 = Sample( x*2+1, y*2+0 );
+			var c11 = Sample( x*2+1, y*2+1 );
 
 			var c0x	= Color.Lerp( c00, c01, 0.5f );
 			var c1x	= Color.Lerp( c10, c11, 0.5f );
@@ -198,10 +182,10 @@ namespace Fusion.Engine.Imaging {
 		/// <returns></returns>
 		public Color SampleQ4Clamp ( int x, int y )
 		{
-			var c00 = RawImageData[ Address( x+0, y+0, false ) ];
-			var c01 = RawImageData[ Address( x+0, y+1, false ) ];
-			var c10 = RawImageData[ Address( x+1, y+0, false ) ];
-			var c11 = RawImageData[ Address( x+1, y+1, false ) ];
+			var c00 = Sample( x+0, y+0 );
+			var c01 = Sample( x+0, y+1 );
+			var c10 = Sample( x+1, y+0 );
+			var c11 = Sample( x+1, y+1 );
 
 			var c0x	= Color.Lerp( c00, c01, 0.5f );
 			var c1x	= Color.Lerp( c10, c11, 0.5f );
@@ -221,7 +205,7 @@ namespace Fusion.Engine.Imaging {
 		{
 			for (int x=0; x<img.Width; x++) {
 				for (int y=0; y<img.Height; y++) {
-					Write( offsetX + x, offsetY + y, img.Sample( x, y ) );
+					SetPixel( offsetX + x, offsetY + y, img.Sample( x, y ) );
 				}
 			}
 		}
@@ -238,40 +222,10 @@ namespace Fusion.Engine.Imaging {
 		{
 			for (int x=0; x<srcWidth; x++) {
 				for (int y=0; y<srcHeight; y++) {
-					destination.Write( dstX + x, dstY + y, Sample( srcX+x, srcY+y ) );
+					destination.SetPixel( dstX + x, dstY + y, Sample( srcX+x, srcY+y ) );
 				}
 			}
 		}
-
-
-
-		/// <summary>
-		/// Sample with filtering
-		/// </summary>
-		/// <param name="x">value within range 0..1</param>
-		/// <param name="y">value within range 0..1</param>
-		/// <param name="wrap"></param>
-		/// <returns></returns>
-		public Color Sample ( float x, float y, bool wrap = true )
-		{
-			var	tx	=	Frac( x * Width );
-			var	ty	=	Frac( y * Height );
-			int	x0	=	Wrap( (int)(x * Width)		, Width );
-			int	x1	=	Wrap( (int)(x * Width + 1)	, Width );
-			int	y0	=	Wrap( (int)(y * Height)		, Height );
-			int	y1	=	Wrap( (int)(y * Height + 1) , Height );
-			
-			//   xy
-			var v00	=	Sample( x0, y0, wrap );
-			var v01	=	Sample( x0, y1, wrap );
-			var v10	=	Sample( x1, y0, wrap );
-			var v11	=	Sample( x1, y1, wrap );
-
-			var v0x	=	Color.Lerp( v00, v01, ty );
-			var v1x	=	Color.Lerp( v10, v11, ty );
-			return		Color.Lerp( v0x, v1x, tx );
-		}
-
 
 
 
@@ -287,7 +241,7 @@ namespace Fusion.Engine.Imaging {
 		{
 			for (var i=x; i<x+w; i++) {
 				for (var j=y; j<y+h; j++) {
-					Write( i,j, color );	
+					SetPixel( i,j, color );	
 				}
 			}
 		}
@@ -309,47 +263,77 @@ namespace Fusion.Engine.Imaging {
 
 
 
-		/// <summary>
-		/// Create half-sized image using bilinear filtering
-		/// </summary>
-		/// <returns></returns>
-		public Image DownsampleAndUpscaleBilinear ()
+		public void SetPixel ( int x, int y, Color value )
 		{
-			float w = Width;
-			float h = Height;
+			int addr = ComputeByteAddress( x, y );
 
-			var downsampled	=	DownsampleBilinear();
-			var upscaled	=	new Image( Width, Height );
-
-			upscaled.PerpixelProcessing( (x,y,input) => downsampled.Sample( (x-0.5f)/w, (y-0.5f)/h ) );
-
-			return upscaled;
+			RawImageData[ addr + 0 ]	=	value.R;
+			RawImageData[ addr + 1 ]	=	value.G;
+			RawImageData[ addr + 2 ]	=	value.B;
+			RawImageData[ addr + 3 ]	=	value.A;
 		}
 
 
-
-		/// <summary>
-		/// Writes pixel to image
-		/// </summary>
-		/// <param name="u"></param>
-		/// <param name="v"></param>
-		/// <param name="color"></param>
-		/// <param name="wrap"></param>
-		public void Write ( int u, int v, Color value, bool wrap = true )
+		public void SetPixel ( int x, int y, byte gray )
 		{
-			RawImageData[ Address( u, v, wrap ) ] = value;
+			int addr = ComputeByteAddress( x, y );
+
+			RawImageData[ addr + 0 ]	=	gray;
+			RawImageData[ addr + 1 ]	=	gray;
+			RawImageData[ addr + 2 ]	=	gray;
+			RawImageData[ addr + 3 ]	=	255;
 		}
 
 
-		
+		public void SetPixel ( int x, int y, byte r, byte g, byte b, byte a )
+		{
+			int addr = ComputeByteAddress( x, y );
+
+			RawImageData[ addr + 0 ]	=	r;
+			RawImageData[ addr + 1 ]	=	g;
+			RawImageData[ addr + 2 ]	=	b;
+			RawImageData[ addr + 3 ]	=	a;
+		}
+
+
+		public void SetPixel ( int x, int y, byte r, byte g, byte b )
+		{
+			int addr = ComputeByteAddress( x, y );
+
+			RawImageData[ addr + 0 ]	=	r;
+			RawImageData[ addr + 1 ]	=	g;
+			RawImageData[ addr + 2 ]	=	b;
+			RawImageData[ addr + 3 ]	=	255;
+		}
+
+
+		public void SetPixelLinear( int pixelIndex, Color color )
+		{
+			RawImageData[ pixelIndex * 4 + 0 ] = color.R;
+			RawImageData[ pixelIndex * 4 + 1 ] = color.G;
+			RawImageData[ pixelIndex * 4 + 2 ] = color.B;
+			RawImageData[ pixelIndex * 4 + 3 ] = color.A;
+		}
+
+
+		public Color GetPixelLinear( int pixelIndex )
+		{
+			var r = RawImageData[ pixelIndex * 4 + 0 ];
+			var g = RawImageData[ pixelIndex * 4 + 1 ];
+			var b = RawImageData[ pixelIndex * 4 + 2 ];
+			var a = RawImageData[ pixelIndex * 4 + 3 ];
+			return new Color(r,g,b,a);
+		}
+
+
 		/// <summary>
 		/// Does perpixel processing with given function
 		/// </summary>
 		/// <param name="procFunc"></param>
-		public void PerpixelProcessing ( Func<Color, Color> procFunc, float amount = 1 )
+		public void PerpixelProcessing ( Func<Color, Color> procFunc )
 		{
-			for (int i=0; i<RawImageData.Length; i++) {
-				RawImageData[i] = Color.Lerp( RawImageData[i], procFunc( RawImageData[i] ), amount );
+			for (int i=0; i<PixelCount; i++) {
+				SetPixelLinear( i, procFunc( GetPixelLinear(i) ) );
 			}
 		}
 
@@ -362,7 +346,7 @@ namespace Fusion.Engine.Imaging {
 		{
 			for (int x=0; x<Width; x++) 
 			for (int y=0; y<Height; y++)  
-				Write(x,y, procFunc( x, y, Sample( x,y ) ) );
+				SetPixel(x,y, procFunc( x, y, Sample( x,y ) ) );
 		}
 
 
@@ -371,12 +355,16 @@ namespace Fusion.Engine.Imaging {
 		{
 			Color4 average = Color4.Zero;
 
-			for (int i=0; i<RawImageData.Length; i++) {
-				var c = RawImageData[i];
-				average.Red		+= c.R;
-				average.Green	+= c.G;
-				average.Blue	+= c.B;
-				average.Alpha	+= c.A;
+			for (int x=0; x<Width; x++) {
+				for (int y=0; y<Height; y++) {
+
+					var c = Sample(x,y);
+
+					average.Red		+= c.R;
+					average.Green	+= c.G;
+					average.Blue	+= c.B;
+					average.Alpha	+= c.A;
+				}
 			}
 
 			average.Red		/= (RawImageData.Length * 255.0f);

@@ -52,15 +52,13 @@ namespace Fusion.Engine.Imaging {
 				bw.Write( (byte)32   );									  /* bitsperpixel;		*/
 				bw.Write( (byte)0x28 );	/* 0010 1000 */					  /* imagedescriptor;	*/
 
-				foreach ( var c in image.RawImageData ) {
-					byte r = c.R;
-					byte g = c.G;
-					byte b = c.B;
-					byte a = c.A;
-					bw.Write(b);
-					bw.Write(g);
-					bw.Write(r);
-					bw.Write(a);
+				for (int i=0; i<image.PixelCount; i++) {
+
+					var c = image.GetPixelLinear( i );
+					bw.Write(c.B);
+					bw.Write(c.G);
+					bw.Write(c.R);
+					bw.Write(c.A);
 				}
 			}
 		}
@@ -154,7 +152,7 @@ namespace Fusion.Engine.Imaging {
 							for ( int y=0; y<h; ++y ) {
 								int p =  flip ? ((h-y-1) * w + x) : (y * w + x);
 
-								image.RawImageData[ y * w + x ] = new Color( data[p*3+2], data[p*3+1], data[p*3+0], (byte)255 );
+								image.SetPixel( x, y, new Color( data[p*3+2], data[p*3+1], data[p*3+0], (byte)255 ) );
 							}
 						}
 					} else if (bytePerPixel==4) {
@@ -162,7 +160,7 @@ namespace Fusion.Engine.Imaging {
 							for ( int y=0; y<h; ++y ) {
 								int p =  flip ? ((h-y-1) * w + x) : (y * w + x);
 
-								image.RawImageData[ y * w + x ] = new Color( data[p*4+2], data[p*4+1], data[p*4+0], data[p*4+3] );
+								image.SetPixel( x, y, new Color( data[p*4+2], data[p*4+1], data[p*4+0], data[p*4+3] ) );
 							}
 						}
 					} else if (bytePerPixel==1) {
@@ -170,7 +168,7 @@ namespace Fusion.Engine.Imaging {
 							for ( int y=0; y<h; ++y ) {
 								int p =  flip ? ((h-y-1) * w + x) : (y * w + x);
 
-								image.RawImageData[ y * w + x ] = new Color( data[p], data[p], data[p], (byte)255 );
+								image.SetPixel( x, y, new Color( data[p], data[p], data[p], (byte)255 ) );
 							}
 						}
 					}

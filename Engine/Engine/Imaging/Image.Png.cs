@@ -53,25 +53,25 @@ namespace Fusion.Engine.Imaging {
 				for ( int i = 0; i<pixelCount; i++ ) {
 					var offset	=	i * 3;
 					var color	=	new Color( pixels[offset+2], pixels[offset+1], pixels[offset+0] );
-					image.RawImageData[ i ]		=	color;
+					image.SetPixelLinear( i, color );
 				}
 			} else if ( format==PixelFormats.Bgra32 ) {
 				for ( int i = 0; i<pixelCount; i++ ) {
 					var offset  =   i * 4;
 					var color   =   new Color( pixels[offset+2], pixels[offset+1], pixels[offset+0], pixels[offset+3] );
-					image.RawImageData[i]     =   color;
+					image.SetPixelLinear( i, color );
 				}
 			} else if ( format==PixelFormats.Gray8 ) {
 				for ( int i = 0; i<pixelCount; i++ ) {
 					var offset  =   i * 1;
 					var color   =   new Color( pixels[offset], pixels[offset], pixels[offset], (byte)255 );
-					image.RawImageData[i]     =   color;
+					image.SetPixelLinear( i, color );
 				}													  
 			} else if ( format==PixelFormats.Indexed8 ) {
 				for ( int i = 0; i<pixelCount; i++ ) {
 					var offset  =   i * 1;
 					var color   =   new Color( pixels[offset], pixels[offset], pixels[offset], (byte)255 );
-					image.RawImageData[i]     =   color;
+					image.SetPixelLinear( i, color );
 				}
 			} else {
 				throw new NotSupportedException( string.Format("PNG format {0} is not supported", format) );

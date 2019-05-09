@@ -29,6 +29,8 @@ namespace Fusion.Drivers.Graphics {
 
 		public readonly int Width;
 		public readonly int Height;
+
+		readonly int elementSize;
 		
 
 		/// <summary>
@@ -42,6 +44,8 @@ namespace Fusion.Drivers.Graphics {
 			Width			=	width;
 			Height			=	height;
 			this.format		=	format;
+
+			elementSize		=	Converter.SizeOf( format );
 
 			var texDesc = new Texture2DDescription();
 			texDesc.ArraySize		=	1;
@@ -103,12 +107,14 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="elementCount"></param>
 		public void SetData<T>( int level, T[] data ) where T: struct
 		{
-
 			var dataBox				=	device.DeviceContext.MapSubresource( tex2D, level, MapMode.WriteDiscard, MapFlags.None );
 
 			var elementSizeInByte	=	Marshal.SizeOf(typeof(T));
-			var elementPitch		=	dataBox.RowPitch / elementSizeInByte;
 			var pointer				=	dataBox.DataPointer;
+
+			if (elementSizeInByte!=elementSize) {
+				throw new InvalidDataException("Marshal.SizeOf(typeof(T)) != pixel size");
+			}
 
 			int width				=	Width >> level;
 			int height				=	Height >> level;
@@ -122,7 +128,34 @@ namespace Fusion.Drivers.Graphics {
 
 			device.DeviceContext.UnmapSubresource( tex2D, level );
 		}
+		
 
 
+		/// <summary>
+		/// Sets 2D texture data, specifying a mipmap level, source rectangle, start index, and number of elements.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="level"></param>
+		/// <param name="data"></param>
+		/// <param name="startIndex"></param>
+		/// <param name="elementCount"></param>
+		public void SetDataRaw( int level, byte[] data )
+		{
+			var dataBox				=	device.DeviceContext.MapSubresource( tex2D, level, MapMode.WriteDiscard, MapFlags.None );
+
+			var pointer				=	dataBox.DataPointer;
+
+			int width				=	Width >> level;
+			int height				=	Height >> level;
+
+			for ( int row = 0; row < height; row++ ) {
+
+				Utilities.Write( pointer, data, width * row * elementSize, width * elementSize );
+				pointer += dataBox.RowPitch;
+
+			}
+
+			device.DeviceContext.UnmapSubresource( tex2D, level );
+		}
 	}
 }

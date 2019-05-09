@@ -267,12 +267,12 @@ namespace Fusion.Build.Mapping {
 							int srcX		=	(x)*pageSize + i - border;
 							int srcY		=	(y)*pageSize + j - border;
 
-							var c	=	colorMap .SampleWrap( srcX, srcY );
-							var n	=	normalMap.SampleWrap( srcX, srcY );
-							var r	=	roughness.SampleWrap( srcX, srcY ).R;
-							var m	=	metallic .SampleWrap( srcX, srcY ).R;
-							var e	=	emission .SampleWrap( srcX, srcY ).R;
-							var o	=	occlusion.SampleWrap( srcX, srcY ).R;
+							var c	=	colorMap .Sample( srcX, srcY );
+							var n	=	normalMap.Sample( srcX, srcY );
+							var r	=	roughness.Sample( srcX, srcY ).R;
+							var m	=	metallic .Sample( srcX, srcY ).R;
+							var e	=	emission .Sample( srcX, srcY ).R;
+							var o	=	occlusion.Sample( srcX, srcY ).R;
 
 							if (MaskEmission) {
 								c	=	Color.Lerp( c, Color.Black, MathUtil.Clamp(e/255.0f * 8, 0, 1) );
@@ -282,9 +282,9 @@ namespace Fusion.Build.Mapping {
 								n	=	new Color( n.R, (byte)(255-n.G), n.B, n.A );
 							}
 
-							pageC.Write( i,j, c );
-							pageN.Write( i,j, n );
-							pageS.Write( i,j, new Color( r,m,e,o ) );
+							pageC.SetPixel( i,j, c );
+							pageN.SetPixel( i,j, n );
+							pageS.SetPixel( i,j, new Color( r,m,e,o ) );
 						}
 					}
 

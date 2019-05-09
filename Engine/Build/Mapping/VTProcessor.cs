@@ -412,7 +412,7 @@ namespace Fusion.Build.Mapping {
 							int u = pageX * pageSize + x;
 							int v = pageY * pageSize + y;
 
-							fallbackImage.Write( u, v, image.Sample( x, y ) );
+							fallbackImage.SetPixel( u, v, image.Sample( x, y ) );
 						}
 					}
 				}
@@ -452,25 +452,25 @@ namespace Fusion.Build.Mapping {
 
 			for ( int i=0; i<pageSize/2; i++) {
 				for ( int j=0; j<pageSize/2; j++) {
-					image.Write( i,j, image00.SampleMip( i, j ) );
+					image.SetPixel( i,j, image00.SampleMip( i, j ) );
 				}
 			}
 
 			for ( int i=pageSize/2; i<pageSize; i++) {
 				for ( int j=pageSize/2; j<pageSize; j++) {
-					image.Write( i,j, image11.SampleMip( i, j ) );
+					image.SetPixel( i,j, image11.SampleMip( i, j ) );
 				}
 			}
 
 			for ( int i=0; i<pageSize/2; i++) {
 				for ( int j=pageSize/2; j<pageSize; j++) {
-					image.Write( i,j, image01.SampleMip( i, j ) );
+					image.SetPixel( i,j, image01.SampleMip( i, j ) );
 				}
 			}
 
 			for ( int i=pageSize/2; i<pageSize; i++) {
 				for ( int j=0; j<pageSize/2; j++) {
-					image.Write( i,j, image10.SampleMip( i, j ) );
+					image.SetPixel( i,j, image10.SampleMip( i, j ) );
 				}
 			}
 

@@ -503,9 +503,9 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	float3	colorHighlights	=	tonemapped * highlights	* tintHighlights ;
 	
 	float3 	colorGraded		=	(colorShadows + colorMidtones + colorHighlights);
-	colorGraded				=	ColorSaturation( colorGraded, 0.6 );
+	colorGraded				=	ColorSaturation( colorGraded, 0.8 );
 	
-	colorGraded 	=	tonemapped;
+	//colorGraded 	=	tonemapped;
 	
 	//
 	//	Apply dithering :

@@ -126,9 +126,10 @@ namespace Fusion.Engine.Graphics {
 			lock (lockObj) {
 				requestQueue.Clear();
 
-				VTTile t;
+				VTTile tile;
 
-				while (loadedTiles.TryDequeue(out t)) {
+				while (loadedTiles.TryDequeue(out tile)) {
+					VTTilePool.Recycle(tile);
 				}
 			}
 		}

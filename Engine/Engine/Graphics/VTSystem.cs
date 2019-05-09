@@ -589,18 +589,18 @@ namespace Fusion.Engine.Graphics {
 
 				#else
 
-				StagingTileSrgb		.SetData		( 0, tile.GetGpuData(0, 0) );
+				StagingTileSrgb		.SetDataRaw		( 0, tile.GetGpuData(0, 0) );
 				StagingTileSrgb		.CopyToTexture	( PhysicalPages0, 0, x, y );
-				StagingTile			.SetData		( 0, tile.GetGpuData(1, 0) );
+				StagingTile			.SetDataRaw		( 0, tile.GetGpuData(1, 0) );
 				StagingTile			.CopyToTexture	( PhysicalPages1, 0, x, y );
-				StagingTile			.SetData		( 0, tile.GetGpuData(2, 0) );
+				StagingTile			.SetDataRaw		( 0, tile.GetGpuData(2, 0) );
 				StagingTile			.CopyToTexture	( PhysicalPages2, 0, x, y );
 
-				StagingTileSrgbMip	.SetData		( 0, tile.GetGpuData(0, 1) );
+				StagingTileSrgbMip	.SetDataRaw		( 0, tile.GetGpuData(0, 1) );
 				StagingTileSrgbMip	.CopyToTexture	( PhysicalPages0, 1, x/2, y/2 );
-				StagingTileMip		.SetData		( 0, tile.GetGpuData(1, 1) );
+				StagingTileMip		.SetDataRaw		( 0, tile.GetGpuData(1, 1) );
 				StagingTileMip		.CopyToTexture	( PhysicalPages1, 1, x/2, y/2 );
-				StagingTileMip		.SetData		( 0, tile.GetGpuData(2, 1) );
+				StagingTileMip		.SetDataRaw		( 0, tile.GetGpuData(2, 1) );
 				StagingTileMip		.CopyToTexture	( PhysicalPages2, 1, x/2, y/2 );
 
 				#endif

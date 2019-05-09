@@ -170,7 +170,7 @@ namespace Fusion.Build.Mapping {
 		/// </summary>
 		/// <param name="index"></param>
 		/// <returns></returns>
-		public Color[] GetGpuData(int index, int mip) 
+		public byte[] GetGpuData(int index, int mip) 
 		{
 			if (mip==0) {
 				switch ( index ) {
@@ -207,9 +207,9 @@ namespace Fusion.Build.Mapping {
 
 					SampleQ4( x*2, y*2, ref c, ref n, ref s );
 
-					colorDataMip	.Write( x, y, c );
-					normalDataMip	.Write( x, y, n );
-					specularDataMip	.Write( x, y, s );
+					colorDataMip	.SetPixel( x, y, c );
+					normalDataMip	.SetPixel( x, y, n );
+					specularDataMip	.SetPixel( x, y, s );
 				}
 			}
 		}
@@ -227,9 +227,9 @@ namespace Fusion.Build.Mapping {
 		/// <param name="c"></param>
 		public void SetValues ( int x, int y, ref Color a, ref Color b, ref Color c )
 		{
-			colorData.Write( x, y, a );
-			normalData.Write( x, y, b );
-			specularData.Write( x, y, c );
+			colorData.SetPixel( x, y, a );
+			normalData.SetPixel( x, y, b );
+			specularData.SetPixel( x, y, c );
 		}
 
 
@@ -274,19 +274,16 @@ namespace Fusion.Build.Mapping {
 				}
 
 				var size		=	VTConfig.PageSizeBordered;
-				colorData		=	new Image(size, size);
-				normalData		=	new Image(size, size);
-				specularData	=	new Image(size, size);
 
-				var length		=	size * size;
+				var length		=	size * size * 4;
 
-				reader.Read( colorData.RawImageData, length );
-				reader.Read( normalData.RawImageData, length );
-				reader.Read( specularData.RawImageData, length );
+				reader.Read( colorData.RawImageData, 0, length ); 
+				reader.Read( normalData.RawImageData, 0, length ); 
+				reader.Read( specularData.RawImageData, 0, length ); 
 
-				reader.Read( colorDataMip.RawImageData, length/4 );
-				reader.Read( normalDataMip.RawImageData, length/4 );
-				reader.Read( specularDataMip.RawImageData, length/4 );
+				reader.Read( colorDataMip.RawImageData, 0, length/4 );
+				reader.Read( normalDataMip.RawImageData, 0, length/4 );
+				reader.Read( specularDataMip.RawImageData, 0, length/4 );
 			}
 		}
 
@@ -303,6 +300,10 @@ namespace Fusion.Build.Mapping {
 		/// <param name="text"></param>
 		public void DrawText ( Image font, int x, int y, string text )
 		{
+			if (font==null) {
+				return;
+			}
+
 			for (int i=0; i<text.Length; i++) {
 
 				var ch		=	((int)text[i]) & 0xFF;
@@ -347,13 +348,13 @@ namespace Fusion.Build.Mapping {
 
 					var c = (((i << m ) >> 5) + ((j << m ) >> 5)) & 0x01;
 
-					normalData.Write( u,v, Color.FlatNormals );
-					specularData.Write( u,v, Color.Black );
+					normalData.SetPixel( u,v, Color.FlatNormals );
+					specularData.SetPixel( u,v, Color.Black );
 
 					if (c==0) {
-						colorData.Write( u,v, Color.Black );
+						colorData.SetPixel( u,v, Color.Black );
 					} else {
-						colorData.Write( u,v, Color.White );
+						colorData.SetPixel( u,v, Color.White );
 					}
 				}			
 			}
@@ -400,10 +401,10 @@ namespace Fusion.Build.Mapping {
 			var b	=	VTConfig.PageBorderWidth;
 
 			for (int i=b; i<s+b; i++) {
-				colorData.Write( b,     i,		Color.Red );
-				colorData.Write( b+s-1,	i,		Color.Red );
-				colorData.Write( i,		b,      Color.Red );
-				colorData.Write( i,		b+s-1,	Color.Red );
+				colorData.SetPixel( b,     i,		Color.Red );
+				colorData.SetPixel( b+s-1,	i,		Color.Red );
+				colorData.SetPixel( i,		b,      Color.Red );
+				colorData.SetPixel( i,		b+s-1,	Color.Red );
 			}
 		}
 
@@ -418,10 +419,10 @@ namespace Fusion.Build.Mapping {
 			var b	=	VTConfig.PageBorderWidth/2;
 
 			for (int i=b; i<s+b; i++) {
-				colorDataMip.Write( b,     i,		Color.Red );
-				colorDataMip.Write( b+s-1,	i,		Color.Red );
-				colorDataMip.Write( i,		b,      Color.Red );
-				colorDataMip.Write( i,		b+s-1,	Color.Red );
+				colorDataMip.SetPixel( b,		i,		Color.Red );
+				colorDataMip.SetPixel( b+s-1,	i,		Color.Red );
+				colorDataMip.SetPixel( i,		b,      Color.Red );
+				colorDataMip.SetPixel( i,		b+s-1,	Color.Red );
 			}
 		}
 

@@ -30,29 +30,35 @@ namespace Fusion {
 
 
 
+	/// <summary>
+	/// In case of "Strong name validation failed."
+	/// https://stackoverflow.com/questions/403731/strong-name-validation-failed
+	/// 
+	/// Open the command prompt as administrator and enter following commands:
+	///
+	///	reg DELETE "HKLM\Software\Microsoft\StrongName\Verification" /f
+	///	reg ADD "HKLM\Software\Microsoft\StrongName\Verification\*,*" /f
+	///	reg DELETE "HKLM\Software\Wow6432Node\Microsoft\StrongName\Verification" /f
+	///	reg ADD "HKLM\Software\Wow6432Node\Microsoft\StrongName\Verification\*,*" /f
+	/// 
+	/// </summary>
 	public sealed class PixEvent : IDisposable {
 
-		//static readonly MarkerSeries series = Markers.CreateMarkerSeries("Fusion");
-		//readonly Span span;
+		readonly CVEvent cvEvent;
 
-		public PixEvent (string eventName) {
-
+		public PixEvent (string eventName) 
+		{
 			SafeNativeMethods._BeginEvent( 0, eventName );
 
-			//span	=	series.EnterSpan( eventName );
-
-			/*StackTrace	st = new StackTrace();
-			StackFrame sf = st.GetFrame(1);
-
-			//string clsName = new string( sf.GetMethod().DeclaringType.Name.Where(ch=>char.IsUpper(ch)).ToArray() );
-			string clsName = sf.GetMethod().DeclaringType.Name;
-			SafeNativeMethods._BeginEvent( 0, clsName + "." + sf.GetMethod().Name + " - " + eventName );*/
+			cvEvent	=	new CVEvent( eventName );
 		}
 
-		public void Dispose () {
+
+		public void Dispose () 
+		{
 			SafeNativeMethods._EndEvent();
-			//span.Leave();
-			//GC.SuppressFinalize(this);
+
+			cvEvent.Dispose();
 		}
 
 

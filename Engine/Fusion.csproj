@@ -56,6 +56,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.ConcurrencyVisualizer.Markers, Version=14.1.341.4, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Extensions\dryujlze.qhy\SDK\Managed\4.0\Microsoft.ConcurrencyVisualizer.Markers.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -136,6 +137,7 @@
     <Compile Include="Build\Mapping\VTTexture.cs" />
     <Compile Include="Build\Mapping\TileSamplerCache.cs" />
     <Compile Include="Build\Mapping\VTTextureTable.cs" />
+    <Compile Include="Build\Mapping\VTTilePool.cs" />
     <Compile Include="Build\Mapping\VTTile.cs" />
     <Compile Include="Build\Processors\AssetProcessor.cs" />
     <Compile Include="Build\Processors\AssetProcessorAttribute.cs" />
@@ -195,6 +197,8 @@
     <Compile Include="Core\Shell\Invoker.cs" />
     <Compile Include="Core\Shell\InvokerException.cs" />
     <Compile Include="Core\Shell\Suggestion.cs" />
+    <Compile Include="Core\Utils\CVEvent.cs" />
+    <Compile Include="Core\Utils\FixedObjectPool.cs" />
     <Compile Include="Development\CheckListDialog.cs">
       <SubType>Form</SubType>
     </Compile>

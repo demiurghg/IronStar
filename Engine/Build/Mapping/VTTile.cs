@@ -11,6 +11,9 @@ using Fusion.Engine.Imaging;
 
 namespace Fusion.Build.Mapping {
 	
+	/// <summary>
+	/// https://www.infoworld.com/article/3221392/how-to-use-the-object-pool-design-pattern-in-c.html
+	/// </summary>
 	public class VTTile {
 
 		static Random rand = new Random();		
@@ -24,6 +27,9 @@ namespace Fusion.Build.Mapping {
 			get {
 				return address;
 			}
+			set {
+				address = value;
+			}
 		}
 
 		Image	colorData;
@@ -33,6 +39,9 @@ namespace Fusion.Build.Mapping {
 		Image	colorDataMip;
 		Image	normalDataMip;
 		Image	specularDataMip;
+
+
+
 
 		
 		/// <summary>

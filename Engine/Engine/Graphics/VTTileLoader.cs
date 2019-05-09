@@ -141,47 +141,56 @@ namespace Fusion.Engine.Graphics {
 		void LoaderTask ()
 		{
 			while (!stopLoader) {
-				
-				VTAddress address;
 
-			#if USE_PRIORITY_QUEUE
-				address = default(VTAddress);
-				KeyValuePair<int,VTAddress> result;
-				if (!requestQueue.TryDequeue(out result)) {
-					//Thread.Sleep(1);
-					continue;
-				} else {
-					address = result.Value;
-				}
-			#else
-				if (!requestQueue.TryDequeue(out address)) {
-					//Thread.Sleep(1);
-					continue;
-				}
-			#endif
+				using ( new CVEvent( "VT Loader Task" ) ) {
+
+					VTAddress address = default(VTAddress);
+					KeyValuePair<int,VTAddress> result;
+
+					if (!requestQueue.TryDequeue(out result)) {
+						//Thread.Sleep(1);
+						continue;
+					} else {
+						address = result.Value;
+					}
 
 					
-				var fileName = address.GetFileNameWithoutExtension(".tile");
+					var fileName = address.GetFileNameWithoutExtension(".tile");
 
-				//Log.Message("...vt tile load : {0}", fileName );
+					//Log.Message("...vt tile load : {0}", fileName );
 
-				try {
+					try {
 					
-					var tile = new VTTile( address );
-					tile.Read( storage.OpenFile( fileName, FileMode.Open, FileAccess.Read ) );
+						using ( new CVEvent( "Reading Tile" ) ) 
+						{
+							var tile = VTTilePool.Alloc(address);
 
-					loadedTiles.Enqueue( tile );
+							tile.Read( storage.OpenFile( fileName, FileMode.Open, FileAccess.Read ) );
 
-				} catch ( IOException ioex ) {
+							loadedTiles.Enqueue( tile );
+						}
 
-					var tile = new VTTile( address );
-					tile.Clear( Color.Magenta );
+					} catch ( OutOfMemoryException oome ) {
 
-					loadedTiles.Enqueue( tile );
+						//var tile = new VTTile( address );
+						//tile.Clear( Color.Magenta );
 
-					Log.Warning("{0}", ioex );
+						//loadedTiles.Enqueue( tile );
+
+						Log.Error("VTTileLoader : {0}", oome.Message );
+						Thread.Sleep(500);
+
+					} catch ( IOException ioex ) {
+
+						//var tile = new VTTile( address );
+						//tile.Clear( Color.Magenta );
+
+						//loadedTiles.Enqueue( tile );
+
+						Log.Error("VTTileLoader : {0}", ioex.Message );
+						Thread.Sleep(50);
+					}
 				}
-
 			}
 		}
 

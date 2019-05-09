@@ -694,35 +694,41 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		public void ResetStates ()
 		{
-			lock (this.DeviceContext) {
-				deviceContext.ClearState();
+			using ( new CVEvent( "Reset GPU states" ) ) {
 
-				SetTargets( null );
-				SetupVertexInput( null, null );
-				SetupVertexOutput( null, 0 );
+				lock ( this.DeviceContext ) {
 
-				PixelShaderResources	.Clear();
-				VertexShaderResources 	.Clear();
-				GeometryShaderResources .Clear();
-				ComputeShaderResources 	.Clear();
-				DomainShaderResources 	.Clear();
-				HullShaderResources 	.Clear();
+					using ( new CVEvent( "deviceContext.ClearState" ) ) {
+						deviceContext.ClearState();
+					}
 
-				PixelShaderSamplers		.Clear();
-				VertexShaderSamplers	.Clear();
-				GeometryShaderSamplers	.Clear();
-				ComputeShaderSamplers	.Clear();
-				DomainShaderSamplers	.Clear();
-				HullShaderSamplers		.Clear();
+					SetTargets( null );
+					SetupVertexInput( null, null );
+					SetupVertexOutput( null, 0 );
 
-				PixelShaderConstants	.Clear();
-				VertexShaderConstants	.Clear();
-				GeometryShaderConstants	.Clear();
-				ComputeShaderConstants	.Clear();
-				DomainShaderConstants	.Clear();
-				HullShaderConstants		.Clear();
+					PixelShaderResources.Clear();
+					VertexShaderResources.Clear();
+					GeometryShaderResources.Clear();
+					ComputeShaderResources.Clear();
+					DomainShaderResources.Clear();
+					HullShaderResources.Clear();
 
-				PipelineState	=	null;
+					PixelShaderSamplers.Clear();
+					VertexShaderSamplers.Clear();
+					GeometryShaderSamplers.Clear();
+					ComputeShaderSamplers.Clear();
+					DomainShaderSamplers.Clear();
+					HullShaderSamplers.Clear();
+
+					PixelShaderConstants.Clear();
+					VertexShaderConstants.Clear();
+					GeometryShaderConstants.Clear();
+					ComputeShaderConstants.Clear();
+					DomainShaderConstants.Clear();
+					HullShaderConstants.Clear();
+
+					PipelineState   =   null;
+				}
 			}
 		}
 

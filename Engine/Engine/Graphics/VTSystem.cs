@@ -343,33 +343,43 @@ namespace Fusion.Engine.Graphics {
 		void UpdatePageTable ()
 		{
 			int tableSize	=	VTConfig.VirtualPageCount;
+			PageGpu[] pages;
 
 			using (new PixEvent("UpdatePageTable")) {
-				
-				var pages = tileCache.GetGpuPageData();
 
-				if (pages.Any()) {
-					PageData.SetData( pages );
+				var device = Game.GraphicsDevice;
+				device.ResetStates();
+
+
+				using ( new CVEvent( "GetGpuPageData" ) ) {
+					pages = tileCache.GetGpuPageData();
+				}
+
+				
+				using ( new CVEvent( "SetData" ) ) {
+					if ( pages.Any() ) {
+						PageData.SetData( pages );
+					}
 				}
 
 				for (int mip=0; mip<VTConfig.MipCount; mip++) {
 
-					Params.SetData( new Int4( pages.Length, mip, 0,0 ) );
+					using ( new CVEvent( "Dispatch Pass" ) ) {
 
-					var device = Game.GraphicsDevice;
-					device.ResetStates();
-														
-					device.PipelineState	=	factory[0];
+						Params.SetData( new Int4( pages.Length, mip, 0,0 ) );
 
-					device.ComputeShaderConstants[0]	=	Params;
-					device.ComputeShaderResources[0]	=	PageData;
-					device.SetCSRWTexture( 0, PageTable.GetSurface(mip) );
+						device.PipelineState	=	factory[0];
 
-					int targetSize	=	tableSize >> mip;
-					int groupCountX	=	MathUtil.IntDivUp( targetSize, BlockSizeX );
-					int groupCountY	=	MathUtil.IntDivUp( targetSize, BlockSizeX );
+						device.ComputeShaderConstants[0]	=	Params;
+						device.ComputeShaderResources[0]	=	PageData;
+						device.SetCSRWTexture( 0, PageTable.GetSurface(mip) );
 
-					device.Dispatch( groupCountX, groupCountY, 1 );
+						int targetSize	=	tableSize >> mip;
+						int groupCountX	=	MathUtil.IntDivUp( targetSize, BlockSizeX );
+						int groupCountY	=	MathUtil.IntDivUp( targetSize, BlockSizeY );
+
+						device.Dispatch( groupCountX, groupCountY, 1 );
+					}
 				}
 			}
 		}
@@ -414,8 +424,8 @@ namespace Fusion.Engine.Graphics {
 				//	Distinct :
 				//	
 				feedbackTree = feedbackTree
-				//	.Where( p0 => cache.Contains(p0) )
 					.Distinct()
+					//.Where( p0 => tileCache.Contains(p0) )
 					.OrderByDescending( p1 => p1.MipLevel )
 					.ToList();//*/
 
@@ -450,6 +460,9 @@ namespace Fusion.Engine.Graphics {
 				//	Put into cache :
 				//
 				if (tileCache!=null && tileLoader!=null) {
+
+					int counter = 0;
+
 					foreach ( var addr in feedbackTree ) {
 				
 						int physAddr;
@@ -459,6 +472,12 @@ namespace Fusion.Engine.Graphics {
 							//Log.Message("...vt tile cache: {0} --> {1}", addr, physAddr );
 
 							tileLoader.RequestTile( addr );
+
+							counter++;
+						}
+
+						if (counter>MaxPPF) {
+							break;
 						}
 					}
 				}
@@ -513,6 +532,7 @@ namespace Fusion.Engine.Graphics {
 								WriteTileToPhysicalTexture( tile, rect.X, rect.Y );
 							}
 
+							VTTilePool.Recycle( tile );
 						}
 
 					}
@@ -553,35 +573,38 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="rect"></param>
 		void WriteTileToPhysicalTexture ( VTTile tile, int x, int y )
 		{
-			#if false
+			using ( new PixEvent("WriteTileToPhysicalTexture")) 
+			{
+				#if false
 
-			var mipRect	=	new Rectangle( rect.X/2, rect.Y/2, rect.Width/2, rect.Height/2 );
+				var mipRect	=	new Rectangle( rect.X/2, rect.Y/2, rect.Width/2, rect.Height/2 );
 
-			PhysicalPages0.SetData( 0, rect,	 tile.GetGpuData(0, 0) );
-			PhysicalPages1.SetData( 0, rect,	 tile.GetGpuData(1, 0) );
-			PhysicalPages2.SetData( 0, rect,	 tile.GetGpuData(2, 0) );
+				PhysicalPages0.SetData( 0, rect,	 tile.GetGpuData(0, 0) );
+				PhysicalPages1.SetData( 0, rect,	 tile.GetGpuData(1, 0) );
+				PhysicalPages2.SetData( 0, rect,	 tile.GetGpuData(2, 0) );
 
-			PhysicalPages0.SetData( 1, mipRect, tile.GetGpuData(0, 1) );
-			PhysicalPages1.SetData( 1, mipRect, tile.GetGpuData(1, 1) );
-			PhysicalPages2.SetData( 1, mipRect, tile.GetGpuData(2, 1) );
+				PhysicalPages0.SetData( 1, mipRect, tile.GetGpuData(0, 1) );
+				PhysicalPages1.SetData( 1, mipRect, tile.GetGpuData(1, 1) );
+				PhysicalPages2.SetData( 1, mipRect, tile.GetGpuData(2, 1) );
 
-			#else
+				#else
 
-			StagingTileSrgb		.SetData		( 0, tile.GetGpuData(0, 0) );
-			StagingTileSrgb		.CopyToTexture	( PhysicalPages0, 0, x, y );
-			StagingTile			.SetData		( 0, tile.GetGpuData(1, 0) );
-			StagingTile			.CopyToTexture	( PhysicalPages1, 0, x, y );
-			StagingTile			.SetData		( 0, tile.GetGpuData(2, 0) );
-			StagingTile			.CopyToTexture	( PhysicalPages2, 0, x, y );
+				StagingTileSrgb		.SetData		( 0, tile.GetGpuData(0, 0) );
+				StagingTileSrgb		.CopyToTexture	( PhysicalPages0, 0, x, y );
+				StagingTile			.SetData		( 0, tile.GetGpuData(1, 0) );
+				StagingTile			.CopyToTexture	( PhysicalPages1, 0, x, y );
+				StagingTile			.SetData		( 0, tile.GetGpuData(2, 0) );
+				StagingTile			.CopyToTexture	( PhysicalPages2, 0, x, y );
 
-			StagingTileSrgbMip	.SetData		( 0, tile.GetGpuData(0, 1) );
-			StagingTileSrgbMip	.CopyToTexture	( PhysicalPages0, 1, x/2, y/2 );
-			StagingTileMip		.SetData		( 0, tile.GetGpuData(1, 1) );
-			StagingTileMip		.CopyToTexture	( PhysicalPages1, 1, x/2, y/2 );
-			StagingTileMip		.SetData		( 0, tile.GetGpuData(2, 1) );
-			StagingTileMip		.CopyToTexture	( PhysicalPages2, 1, x/2, y/2 );
+				StagingTileSrgbMip	.SetData		( 0, tile.GetGpuData(0, 1) );
+				StagingTileSrgbMip	.CopyToTexture	( PhysicalPages0, 1, x/2, y/2 );
+				StagingTileMip		.SetData		( 0, tile.GetGpuData(1, 1) );
+				StagingTileMip		.CopyToTexture	( PhysicalPages1, 1, x/2, y/2 );
+				StagingTileMip		.SetData		( 0, tile.GetGpuData(2, 1) );
+				StagingTileMip		.CopyToTexture	( PhysicalPages2, 1, x/2, y/2 );
 
-			#endif
+				#endif
+			}
 		}
 	}
 }

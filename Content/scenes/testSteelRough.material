@@ -1,9 +1,0 @@
-[General]
-Transparent = false
-
-[Textures]
-BaseColor = test\testSteelRough_BaseColor.png
-NormalMap = test\testSteelRough_NormalMap.png
-Metallic  = test\testSteelRough_Metallic.png
-Roughness = test\testSteelRough_Roughness.png
-Emission  = 

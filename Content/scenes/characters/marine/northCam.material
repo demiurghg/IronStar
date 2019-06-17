@@ -1,9 +1,0 @@
-[General]
-Transparent = false
-
-[Textures]
-BaseColor = ..\..\textures\northCam.tga
-NormalMap = 
-Metallic  = 
-Roughness = 
-Emission  = 

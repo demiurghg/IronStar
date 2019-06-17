@@ -1,9 +1,0 @@
-[General]
-Transparent = false
-
-[Textures]
-BaseColor = test\testMachinery_BaseColor.png
-NormalMap = test\testMachinery_NormalMap.png
-Metallic  = test\testMachinery_Metallic.png
-Roughness = test\testMachinery_Roughness.png
-Emission  = 

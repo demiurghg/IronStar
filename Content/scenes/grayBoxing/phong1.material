@@ -4,9 +4,9 @@ Emission     = 0, 0, 0, 0
 MaskEmission = False
 
 [Textures]
-BaseColor = ..\textures\floorHeavy.tga
-NormalMap = ..\textures\floorHeavy_local.tga
-Metallic  = ..\textures\floorHeavy_m.tga
-Roughness = ..\textures\floorHeavy_r.tga
+BaseColor = ..\base_floor\floor_set\floor_tiles_low_floor_tiles.png
+NormalMap = ..\base_floor\floor_set\floor_tiles_low_floor_tiles_nm.png
+Metallic  = ..\base_floor\floor_set\floor_tiles_low_floor_tiles_m.png
+Roughness = ..\base_floor\floor_set\floor_tiles_low_floor_tiles_r.png
 Emission  = 
-Occlusion = 
+Occlusion = ..\base_floor\floor_set\floor_tiles_low_floor_tiles_ao.png

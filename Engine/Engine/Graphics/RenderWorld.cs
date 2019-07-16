@@ -394,14 +394,18 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		void UpdateInstanceAndLightMapping ()
 		{
-			foreach ( var instance in Instances ) {
-				if (instance.Group==InstanceGroup.Static) {
-					instance.LightMapScaleOffset = irradianceMap.GetRegionMadScaleOffset( instance.LightMapGuid );
+			if (irradianceMap!=null) {
+				foreach ( var instance in Instances ) {
+					if (instance.Group==InstanceGroup.Static) {
+						instance.LightMapScaleOffset = irradianceMap.GetRegionMadScaleOffset( instance.LightMapGuid );
+					}
 				}
 			}
 
-			foreach ( var lpb in LightSet.LightProbes ) {
-				lpb.ImageIndex	= irradianceCache.GetLightProbeIndex( lpb.Guid );
+			if (irradianceCache!=null) {
+				foreach ( var lpb in LightSet.LightProbes ) {
+					lpb.ImageIndex	= irradianceCache.GetLightProbeIndex( lpb.Guid );
+				}
 			}
 		}
 	
@@ -561,7 +565,7 @@ namespace Fusion.Engine.Graphics {
 				using ( new PixEvent( "Frame Postprocessing" ) ) {
 					//	compose, tonemap, bloob and color grade :
 					rs.HdrFilter.ComposeHdrImage( viewHdrFrame );
-					rs.HdrFilter.TonemapHdrImage( gameTime, HdrSettings, viewHdrFrame );
+					rs.HdrFilter.TonemapHdrImage( gameTime, HdrSettings, viewHdrFrame, Camera );
 
 
 					//	apply FXAA

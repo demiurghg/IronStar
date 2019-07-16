@@ -8,15 +8,12 @@ using Fusion.Engine.Frames;
 using Fusion.Engine.Frames.Layouts;
 
 namespace IronStar.UI.Controls.Dialogs {
-	public static class MessageBox {
+	public class MessageBox : Panel{
 
-		[Obsolete("Use FrameProcessor.ShowDialog")]
-		static void ShowDialog ( Frame owner, string headerText, string message, Color textColor, int numButtons, Action accept, Action reject, string acceptText="Accept", string rejectText="Reject" )
+		public MessageBox ( FrameProcessor frames, string headerText, string message, Color textColor, int numButtons, Action accept, Action reject, string acceptText="Accept", string rejectText="Reject" )
+		 : base(frames, 0, 0, 400, 240) 
 		{
-			var frames	=	owner.Frames;
-			var panel	=	new Panel( frames, 0, 0, 400, 240 );
-
-			panel.AllowDrag			=	true;
+			AllowDrag			=	true;
 
 			var layout		=	new PageLayout();
 			layout.AddRow( MenuTheme.ElementHeight, new float[] { -1 } );
@@ -24,7 +21,7 @@ namespace IronStar.UI.Controls.Dialogs {
 			layout.AddRow( MenuTheme.ElementHeight, new float[] { 0.5f, 0.5f } );
 			layout.Margin	=	4;
 
-			panel.Layout	=	layout;
+			Layout	=	layout;
 
 			//	Header :
 
@@ -37,7 +34,7 @@ namespace IronStar.UI.Controls.Dialogs {
 			header.Padding		=	0;
 			header.BorderBottom	=	1;
 
-			panel.Add( header );
+			Add( header );
 
 			//	Message text :
 
@@ -51,56 +48,56 @@ namespace IronStar.UI.Controls.Dialogs {
 			label.MarginTop		=	10;
 			//label.TextAlignment	=	Alignment.MiddleLeft;
 
-			panel.Add( label );
+			Add( label );
 
 			//	Buttons :
 
 			if (numButtons==2) {
 				var acceptBtn		=	new Button(frames, acceptText, 0,0,0,0, 
 					() => {
-						panel.Close();
+						Close();
 						accept?.Invoke();
 					}
 				);
 
 				var rejectBtn	=	new Button(frames, rejectText, 0,0,0,0, 
 					() => {
-						panel.Close();
+						Close();
 						reject?.Invoke();
 					}
 				);
 
-				panel.Add( acceptBtn );
-				panel.Add( rejectBtn );
+				Add( acceptBtn );
+				Add( rejectBtn );
 			}
 			if (numButtons==1) {
 				var acceptBtn		=	new Button(frames, acceptText, 0,0,0,0, 
 					() => {
-						panel.Close();
+						Close();
 						accept?.Invoke();
 					}
 				);
-				panel.Add( acceptBtn );
+				Add( acceptBtn );
 			}
-
-			frames.ShowDialogCentered( panel );
 		}
 
 
 		public static void ShowError ( Frame owner, string header, string message, Action accept )
 		{
-			ShowDialog( owner, header, message, MenuTheme.ColorNegative, 1, accept, null );
+			owner.Frames.ShowDialogCentered( new MessageBox( owner.Frames, header, message, MenuTheme.ColorNegative, 1, accept, null ) );
+			//ShowDialog( owner, header, message, MenuTheme.ColorNegative, 1, accept, null );
 		}
 
 
 		public static void ShowQuestion ( Frame owner, string header, string message, Action accept, Action reject )
 		{
-			ShowDialog( owner, header, message, MenuTheme.TextColorNormal, 2, accept, reject );
+			owner.Frames.ShowDialogCentered( new MessageBox( owner.Frames, header, message, MenuTheme.TextColorNormal, 2, accept, reject ) );
 		}
+
 
 		public static void ShowQuestion ( Frame owner, string header, string message, Action accept, Action reject, string acceptText, string rejectText )
 		{
-			ShowDialog( owner, header, message, MenuTheme.TextColorNormal, 2, accept, reject, acceptText, rejectText );
+			owner.Frames.ShowDialogCentered( new MessageBox( owner.Frames, header, message, MenuTheme.TextColorNormal, 2, accept, reject, acceptText, rejectText ) );
 		}
 	}
 }

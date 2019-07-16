@@ -104,7 +104,7 @@ namespace IronStar.UI {
 			int width			=	0;
 
 			frame.Add( new BigButton(Frames, "Game"			, 0,0, width, height, SelectLevel ) );
-			frame.Add( new BigButton(Frames, "Map Editor"	, 0,0, width, height, ()=>Game.Invoker.ExecuteString("map testMonsters /edit") ) );
+			frame.Add( new BigButton(Frames, "Map Editor"	, 0,0, width, height, EditLevel ) );
 			frame.Add( new BigButton(Frames, "Options"		, 0,0, width, height, OptionsDialog ) );
 			frame.Add( new BigButton(Frames, "Credits"		, 0,0, width, height, ()=>Log.Message("Game") ) );
 			frame.Add( new BigButton(Frames, "Exit"			, 0,0, width, height, ExitDialog ) );
@@ -116,6 +116,12 @@ namespace IronStar.UI {
 		void SelectLevel ()
 		{
 			Frames.ShowDialogCentered( new LevelBox(Frames) );
+		}
+
+
+		void EditLevel ()
+		{
+			Frames.ShowDialogCentered( new RunEditorBox(Frames) );
 		}
 
 

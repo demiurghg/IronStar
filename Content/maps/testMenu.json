@@ -5,33 +5,29 @@
     "Gravity": 16.0,
     "SkyTrubidity": 5.0,
     "SunAltitude": 15.0,
+    "SkyIntensity": 1.0,
     "SunAzimuth": -45.0,
     "SunIntensity": 30.0,
     "FogDistance": 1000.0,
     "FogHeight": 0.05,
-    "FogColor": "10, 10, 10, 0",
-    "CharacterHeight": 2.0,
-    "CharacterSize": 1.2,
-    "WalkableSlope": 45.0,
-    "StepHeight": 45.0,
-    "RecastCellHeight": 0.25,
-    "RecastCellSize": 0.25,
-    "IrradianceVolume": {
-      "$type": "Fusion.Core.Mathematics.BoundingBox, Fusion",
-      "Minimum": "-64, -32, -64",
-      "Maximum": "64, 32, 64"
-    },
-    "AmbientLevel": "0, 0, 0, 0"
+    "FogColor": "10, 10, 10, 0"
   },
   "Nodes": {
     "$type": "IronStar.Mapping.MapNodeCollection, IronStar",
     "$values": [
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
+        "NodeGuid": "0579f62d-033c-4a70-9608-dbdb7a090de3",
         "ScenePath": "scenes\\q3t5.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
         "GlowIntensity": 100.0,
+        "LightMapSize": "lightMap32",
+        "Dynamic": false,
+        "UseCollisionMesh": false,
+        "UseCustomNodes": false,
+        "CustomVisibleNode": "",
+        "CustomCollisionNode": "",
         "Visible": true,
         "Frozen": false,
         "TranslateX": -3.0,
@@ -43,6 +39,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "5664c738-eed5-4f5a-b915-94c46e669b79",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.FuncFXFactory, IronStar",

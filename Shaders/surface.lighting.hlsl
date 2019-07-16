@@ -10,6 +10,15 @@
 #include "surface.cubemap.hlsl"
 #include "shl1.fxi"
 
+float3 SaturateColor ( float3 rgbVal, float factor )
+{
+	float3 grey = dot(float3(0.25,0.25,0.50),rgbVal);
+	float3 ret = grey + factor * (rgbVal-grey);	
+	return ret;
+}
+
+
+
 
 float computeSpecOcclusion ( float NdotV , float AO , float roughness )
 {
@@ -118,6 +127,7 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	roughness	=	clamp( roughness, 1.0f / 512.0f, 1 );
 	#endif
 	
+	//roughness = 0.2f;
 	//diffuse = 0.5f;
 
 	//----------------------------------------------------------------------------------------------
@@ -252,26 +262,30 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		irradianceR		=	IrradianceMapR.Sample( SamplerLinear, lmCoord );
 		irradianceG		=	IrradianceMapG.Sample( SamplerLinear, lmCoord );
 		irradianceB		=	IrradianceMapB.Sample( SamplerLinear, lmCoord );
+		float	lightR	=	EvalSHL1Smooth( irradianceR, normalize(normal) );
+		float	lightG	=	EvalSHL1Smooth( irradianceG, normalize(normal) );
+		float	lightB	=	EvalSHL1Smooth( irradianceB, normalize(normal) );//*/
+		ambientDiffuse	=	float3( lightR, lightG, lightB );
 	#endif
 	#ifdef IRRADIANCE_VOLUME
 		volumeCoord		=	mul(float4(worldPos.xyz,1), Stage.OcclusionGridMatrix );
 		irradianceR		=	IrradianceVolumeR.Sample( SamplerLinear, volumeCoord );
 		irradianceG		=	IrradianceVolumeG.Sample( SamplerLinear, volumeCoord );
 		irradianceB		=	IrradianceVolumeB.Sample( SamplerLinear, volumeCoord );
+		float	lightR	=	EvalSHL1Smooth( irradianceR, normalize(normal) );
+		float	lightG	=	EvalSHL1Smooth( irradianceG, normalize(normal) );
+		float	lightB	=	EvalSHL1Smooth( irradianceB, normalize(normal) );//*/
+		ambientDiffuse	=	SaturateColor( float3( lightR, lightG, lightB ), 1.3f );
 	#endif
 	
 	/*float	lightR		=	max(0, irradianceR.x + dot( normal, irradianceR.wyz ));
 	float	lightG		=	max(0, irradianceG.x + dot( normal, irradianceG.wyz ));
 	float	lightB		=	max(0, irradianceB.x + dot( normal, irradianceB.wyz ));//*/
 	
-	float	lightR		=	EvalSHL1Smooth( irradianceR, normalize(normal) );
-	float	lightG		=	EvalSHL1Smooth( irradianceG, normalize(normal) );
-	float	lightB		=	EvalSHL1Smooth( irradianceB, normalize(normal) );//*/
 	
-	ambientDiffuse		=	float3( lightR, lightG, lightB );
 
 	#ifdef IRRADIANCE_MAP
-	ambientLuminance	=	saturate((irradianceR.x + irradianceG.x + irradianceB.x)/3);
+	ambientLuminance	=	saturate((lightR.x + lightG.x + lightB.x)/3);
 	#endif
 	#ifdef IRRADIANCE_VOLUME
 	ambientLuminance	=	1;
@@ -308,8 +322,8 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 	float	selfOcclusion	=	saturate( dot( normalize(normal.xyz), normalize(input.Normal.xyz) ) );
 	float	NoV 			= 	dot(viewDirN, normal.xyz);
 	float2 	ab				=	EnvLut.SampleLevel( SamplerLinearClamp, float2(roughness, 1-NoV), 0 ).xy;
-	float	ssaoFactorDiff	=	pow(ssaoFactor, 2);
-	float	ssaoFactorSpec	=	pow(ssaoFactor, 4);
+	float	ssaoFactorDiff	=	pow(ssaoFactor, 2);// < 0.7 ? 0 : 1;
+	float	ssaoFactorSpec	=	pow(ssaoFactor, 4);// < 0.7 ? 0 : 1;
 	
 #ifndef DIFFUSE_ONLY	
 	[loop]
@@ -333,7 +347,13 @@ float3 ComputeClusteredLighting ( PSInput input, Texture3D<uint2> clusterTable, 
 		//float3	diffTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(normal.xyz, imageIndex), LightProbeDiffuseMip).rgb;
 		float		mipLevel	=	(sqrt(roughness) * LightProbeMaxSpecularMip);
 		
-		float3	specTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflectVector, imageIndex), mipLevel ).rgb;
+		float3	specTerm	=	RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflectVector, imageIndex), mipLevel ).rgb / 2;
+		float3	specTermLL	=	dot( float3(0.3,0.5,0.2), RadianceCache.SampleLevel( SamplerLinearClamp, float4(reflectVector, imageIndex), 1 ).rgb );
+		
+		/*if (input.Position.x>640) {
+			specTerm = specTerm / 5 * SaturateColor(ambientDiffuse, 1.0f);
+			//specTerm = dot( float3(0.3,0.5,0.2), specTerm ) / 5 * SaturateColor(ambientDiffuse, 1.5f);
+		}*/
 		
 		ambientReflection	=	lerp( ambientReflection, specTerm, factor );
 	}

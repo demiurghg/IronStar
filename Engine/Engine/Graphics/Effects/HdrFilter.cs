@@ -175,6 +175,8 @@ namespace Fusion.Engine.Graphics {
 			public	uint	NoiseX;
 			public	uint	NoiseY;
 			public	float	VignetteAmount;
+			public	float	LinDepthScale;
+			public	float	LinDepthBias;
 		}
 
 
@@ -380,7 +382,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="target">LDR target.</param>
 		/// <param name="hdrImage">HDR source image.</param>
-		public void TonemapHdrImage ( GameTime gameTime, HdrSettings settings, HdrFrame hdrFrame )
+		public void TonemapHdrImage ( GameTime gameTime, HdrSettings settings, HdrFrame hdrFrame, Camera camera )
 		{
 			frameCounter++;
 
@@ -443,6 +445,8 @@ namespace Fusion.Engine.Graphics {
 				paramsData.NoiseX				=	0;
 				paramsData.NoiseY				=	0;
 				paramsData.VignetteAmount		=	Vignette;
+				paramsData.LinDepthBias			=	camera.LinearizeDepthBias;
+				paramsData.LinDepthScale		=	camera.LinearizeDepthScale;
 
 				paramsCB.SetData( paramsData );
 				device.PixelShaderConstants[0]		=	paramsCB;
@@ -483,6 +487,7 @@ namespace Fusion.Engine.Graphics {
 				device.PixelShaderResources[5]	=	noiseTex[frameCounter % 8].Srv;
 				device.PixelShaderResources[6]	=	vignetteTex.Srv;
 				device.PixelShaderResources[9]	=	histogramBuffer;
+				device.PixelShaderResources[10]	=	hdrFrame.DepthBuffer;
 				device.PixelShaderSamplers[0]	=	SamplerState.LinearClamp;
 
 				Flags op = Flags.LINEAR;

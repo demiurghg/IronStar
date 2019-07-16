@@ -294,6 +294,7 @@ Texture2D			BloomMask2			: register(t4);
 Texture2D			NoiseTexture		: register(t5);
 Texture2D			VignmetteTexture	: register(t6);
 ByteAddressBuffer 	Histogram			: register(t9);
+Texture2D			DepthBuffer 		: register(t10);
 
 
 float3 LinearToSRGB(float3 LinearRGB) {
@@ -428,6 +429,25 @@ float3 ShowHistogram ( uint x, uint y, float3 image, float lumActual, float lumA
 	return 	image;
 }
 
+float LinearizeDepth(float z)
+{
+	float a	=	Params.LinDepthScale;
+	float b = 	Params.LinDepthBias;
+	return 1.0f / (z * a + b);
+}
+
+
+float3 CellShading(float3 a)
+{
+	float3 lum = abs(dot( a, float3(0.3,0.5,0.2))) + 0.0001;
+	float3 chr = a / lum;
+	if (lum.r>0.66) lum = 1.0 * float3(1,1,1.0f); else
+	if (lum.r>0.33) lum = 0.8 * float3(1,1,1.0f); else
+	if (lum.r>0.11) lum = 0.7 * float3(1,1,1.0f); else
+		lum = 0.5;
+	
+	return chr * lum;
+}
 
 float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 {
@@ -452,11 +472,20 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	float	luminanceEV	=	MasuredLuminance.Load(int3(0,0,0)).r;
 	float	noiseDither	=	NoiseTexture.Load( int3(xpos%64,ypos%64,0) ).r;
 	float3	vignette	=	VignmetteTexture.SampleLevel( LinearSampler, uv, 0 ).rgb;
-			vignette	=	lerp( float3(1,1,1), vignette, Params.VignetteAmount );
+			vignette	=	lerp( float3(1,1,1), vignette, 0*Params.VignetteAmount );
 	
 	float 	luminanceAdaptEV		=	((luminanceEV - Params.EVMin) * Params.EVRangeInverse) * (Params.AdaptEVMax - Params.AdaptEVMin) + Params.AdaptEVMin;
 	float	luminanceAdaptLinear	=	EVToLuminance( luminanceAdaptEV );
 	float	luminanceLinear			=	EVToLuminance( luminanceEV );
+
+	/* contour 
+	float	depth0		=	sqrt(LinearizeDepth(DepthBuffer.Load( int3(xpos+0, ypos+0, 0) ).r));
+	float	depth1		=	sqrt(LinearizeDepth(DepthBuffer.Load( int3(xpos+1, ypos+0, 0) ).r));
+	float	depth2		=	sqrt(LinearizeDepth(DepthBuffer.Load( int3(xpos+1, ypos+1, 0) ).r));
+	float	depth3		=	sqrt(LinearizeDepth(DepthBuffer.Load( int3(xpos+0, ypos+1, 0) ).r));
+	float delta = abs(depth0-depth2) + abs(depth1-depth3);
+	float contour = 1 - delta;
+	//*/
 
 	float3	bloom		=	( bloom0 * 1.000f  
 							+ bloom1 * 2.000f  
@@ -503,9 +532,11 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	float3	colorHighlights	=	tonemapped * highlights	* tintHighlights ;
 	
 	float3 	colorGraded		=	(colorShadows + colorMidtones + colorHighlights);
-	colorGraded				=	ColorSaturation( colorGraded, 0.8 );
+	colorGraded				=	ColorSaturation( colorGraded, 0.75 );
 	
 	//colorGraded 	=	tonemapped;
+	
+	//colorGraded		=	CellShading(colorGraded) * contour + noiseDither*0.1;
 	
 	//
 	//	Apply dithering :

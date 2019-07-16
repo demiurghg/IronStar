@@ -417,13 +417,20 @@ namespace Fusion.Engine.Frames {
 		public virtual void Close ()
 		{
 			if (Frames.IsModalFrame(this)) {
-				if (Frames.IsTopLevelModalFrame(this)) {
+
+				while (Frames.ModalFrame!=this) {
+					Frames.PopModalFrame( Frames.ModalFrame );
+				}
+
+				Frames.PopModalFrame(this);
+
+				/*if (Frames.IsTopLevelModalFrame(this)) {
 					Frames.PopModalFrame(this);
 					return;
 				} else {
 					Log.Warning("Frames : Can not close non top level modal frame");
 					return;
-				}
+				} */
 			} else {
 				Parent?.Remove(this);
 			}

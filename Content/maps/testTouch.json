@@ -5,33 +5,29 @@
     "Gravity": 16.0,
     "SkyTrubidity": 4.25,
     "SunAltitude": 30.0,
+    "SkyIntensity": 1.0,
     "SunAzimuth": -45.0,
     "SunIntensity": 30.0,
     "FogDistance": 1000.0,
     "FogHeight": 0.05,
-    "FogColor": "10, 10, 10, 0",
-    "CharacterHeight": 2.0,
-    "CharacterSize": 1.2,
-    "WalkableSlope": 45.0,
-    "StepHeight": 45.0,
-    "RecastCellHeight": 0.25,
-    "RecastCellSize": 0.25,
-    "IrradianceVolume": {
-      "$type": "Fusion.Core.Mathematics.BoundingBox, Fusion",
-      "Minimum": "-64, -32, -64",
-      "Maximum": "64, 32, 64"
-    },
-    "AmbientLevel": "0, 0, 0, 0"
+    "FogColor": "10, 10, 10, 0"
   },
   "Nodes": {
     "$type": "IronStar.Mapping.MapNodeCollection, IronStar",
     "$values": [
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
+        "NodeGuid": "9b25980e-acb7-4eb5-a912-0b9d03f9a866",
         "ScenePath": "scenes\\q3t5.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
         "GlowIntensity": 100.0,
+        "LightMapSize": "lightMap32",
+        "Dynamic": false,
+        "UseCollisionMesh": false,
+        "UseCustomNodes": false,
+        "CustomVisibleNode": "",
+        "CustomCollisionNode": "",
         "Visible": true,
         "Frozen": false,
         "TranslateX": -3.0,
@@ -43,6 +39,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "dd81590d-3e35-49c5-b5dc-271aab39cfc3",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.StartPointFactory, IronStar",
@@ -60,6 +57,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "3ddb9ddd-0806-4a60-bb9a-b3373dcf9ad8",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -77,6 +75,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "da694050-1e13-4c04-b405-9fa12eea1c6d",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",

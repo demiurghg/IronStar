@@ -28,5 +28,7 @@ struct PARAMS {
 	uint       NoiseX;                        // offset:   68
 	uint       NoiseY;                        // offset:   72
 	float      VignetteAmount;                // offset:   76
+	float      LinDepthScale;                 // offset:   80
+	float      LinDepthBias;                  // offset:   84
 };
 

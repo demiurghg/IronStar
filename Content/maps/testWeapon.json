@@ -5,33 +5,29 @@
     "Gravity": 16.0,
     "SkyTrubidity": 6.5,
     "SunAltitude": 60.0,
+    "SkyIntensity": 1.0,
     "SunAzimuth": -75.0,
     "SunIntensity": 140.0,
     "FogDistance": 200.0,
     "FogHeight": 0.05,
-    "FogColor": "10, 10, 10, 0",
-    "CharacterHeight": 2.0,
-    "CharacterSize": 1.2,
-    "WalkableSlope": 45.0,
-    "StepHeight": 45.0,
-    "RecastCellHeight": 0.25,
-    "RecastCellSize": 0.25,
-    "IrradianceVolume": {
-      "$type": "Fusion.Core.Mathematics.BoundingBox, Fusion",
-      "Minimum": "-64, -32, -64",
-      "Maximum": "64, 32, 64"
-    },
-    "AmbientLevel": "0, 0, 0, 0"
+    "FogColor": "10, 10, 10, 0"
   },
   "Nodes": {
     "$type": "IronStar.Mapping.MapNodeCollection, IronStar",
     "$values": [
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
+        "NodeGuid": "8f8cf936-47ca-4ad4-b53f-e1cfc063d6dc",
         "ScenePath": "scenes\\q3t5",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
         "GlowIntensity": 100.0,
+        "LightMapSize": "lightMap32",
+        "Dynamic": false,
+        "UseCollisionMesh": false,
+        "UseCustomNodes": false,
+        "CustomVisibleNode": "",
+        "CustomCollisionNode": "",
         "Visible": true,
         "Frozen": false,
         "TranslateX": -3.0,
@@ -43,6 +39,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "cef9380c-29e1-4fe0-8fe2-54bba8516944",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -60,6 +57,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "dc00f48f-9744-40ba-9983-38927890be71",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.StartPointFactory, IronStar",
@@ -77,6 +75,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "a88ea8e1-f7d3-45e9-af60-c58230264d97",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.FuncFXFactory, IronStar",
@@ -99,6 +98,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "4cb28946-ead9-42f7-b0fe-626fc969febb",
         "TargetName": "box1",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -116,6 +116,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "6ae19dcf-28f9-4a3b-96e4-f84673baac4a",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.FuncFXFactory, IronStar",
@@ -138,6 +139,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "eec6b787-2f15-42f4-9129-8b43b0242af3",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -155,6 +157,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "0ee2fa36-78cd-473d-af7f-fb4ae35dd525",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.FuncFXFactory, IronStar",
@@ -177,6 +180,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "380077a2-3a34-4667-b8e8-b10d776742aa",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -194,6 +198,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "ddf844e0-e747-43ad-afa2-b44b850692d3",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -211,6 +216,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "8beeea1c-169f-4469-bfef-60ffc64dc0cf",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -228,6 +234,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "eacae1e5-27ee-4e72-91a6-0e2214df84e1",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -245,6 +252,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "18c45160-333f-4458-9fb0-b844390f94fb",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -262,6 +270,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "b391afdd-7670-46b9-80bf-2a4cc50858b8",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -279,6 +288,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "2ffe7e00-20ff-4c2b-a284-2544e79df048",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -296,6 +306,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "7db54307-3199-47aa-b51c-b58d074f200b",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -313,6 +324,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "c0c5d371-110e-457b-9b44-267a583ab5c1",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -330,6 +342,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "6510250e-16ee-4e67-bfe7-91793291817b",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -347,6 +360,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "dee20c54-b3a1-41f9-a20e-dca32482ca92",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -364,6 +378,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "3f43880a-534e-4ee6-9e45-838400230298",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -381,6 +396,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "2284c88c-6f3c-4c34-acfb-8f826c4b4f0b",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -398,6 +414,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "50cc1f9c-e18d-4d37-aba4-f1423520c811",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -415,6 +432,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "5e98f23f-00ee-4ba2-85f2-45b54e105004",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -432,6 +450,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "64638e17-de48-4945-9696-5e5628c4bc8d",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -449,6 +468,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "bd31c01f-d3ae-4b14-bac4-338b9dd58813",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -466,6 +486,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "dd364174-eb09-44fe-89e6-9167e81399a8",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -483,6 +504,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "2b774a7a-7de9-4511-a5d3-42a107b71710",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -500,6 +522,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "498e0db8-6edb-4d7b-8a87-5525df972c2c",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -517,6 +540,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "87708910-d692-41ab-bc38-21c8dc9e9fc5",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -534,6 +558,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "30266ad0-9fc8-4089-8f7b-fb33d74ca39b",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -551,6 +576,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "baa7b3b9-df11-43b4-9656-625901370233",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -568,6 +594,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "87f10720-e760-453a-bc1e-8a09c75d8818",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -585,6 +612,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "3dc57983-fcaa-40e1-b659-94da0108f8aa",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -602,6 +630,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "6cb66792-cdb9-430c-a625-9eb8ccf9b041",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -619,6 +648,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "0e7b4dd9-506f-47ce-ac67-d4345e8d66e3",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -636,6 +666,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "07791985-3f4a-4711-bec5-730a99454239",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -653,6 +684,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "4f39c72e-4fb8-4084-8ad8-993e322455d1",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -670,6 +702,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "d946820d-269d-4c99-baa6-dd16452c1ad3",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -687,6 +720,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "bec09e3a-035d-40e9-9e01-709b2db38a30",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -704,6 +738,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "5e97ab5c-4a69-47a5-9434-269809ef791a",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -721,6 +756,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "11f17531-1447-4cc7-8ad9-d0db69c0ae71",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -738,6 +774,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "dd0403ae-f84e-4e6a-ad2d-3dfb07137173",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -755,6 +792,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "76dfee31-54bd-4bea-8203-fa2408b08b9c",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -772,6 +810,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "dfc438e3-4002-402c-b8ad-9f1ff91581ed",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -789,6 +828,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "d35f8456-e35d-4a83-846f-fb12295372c3",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -806,6 +846,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "553f3b7b-5a13-428e-96f3-56052862b58f",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -823,6 +864,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "ce0d265c-2bb1-4105-8a13-0780d8f6f626",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -840,6 +882,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "e2396416-f5ad-408f-92b9-bdf094ac6792",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -857,6 +900,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "e0d094d9-ebc6-4b9d-ab8f-c323eb615845",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -874,6 +918,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "8a3572d9-babb-4d03-bb69-cafa4e99a040",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -891,6 +936,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "5b4ac648-1aad-4d98-89db-83c44eae8e73",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -908,6 +954,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "f71f75e3-c691-4979-8ac4-b9d2812e1d0b",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -925,6 +972,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "c786059b-73f5-4327-b9e2-743766a0a3b8",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -942,6 +990,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "63b04d92-854d-424d-acc5-fdd63d74a109",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -959,6 +1008,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "527fb2a9-7d47-410a-a358-d60f9995af4f",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -976,6 +1026,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "4c796600-e15a-4e37-b5f6-d704a6883827",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -993,6 +1044,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "6dffe975-7c80-4712-94ff-cd891a7ab61d",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1010,6 +1062,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "16045f08-38cd-4575-a835-8b4db1186374",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1027,6 +1080,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "42c7beb8-224a-4880-95ba-ca9eb8fc3f14",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1044,6 +1098,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "ab061bed-7878-4d81-b6a8-eae7fc0913e3",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1061,6 +1116,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "32d8fd29-311a-482c-8ffb-a4fcb927f18b",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1078,6 +1134,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "09347217-030c-4e4f-86aa-eaaf516ef3c5",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1095,6 +1152,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "6c021347-be9a-44fa-b4c9-835672b453ad",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1112,6 +1170,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "6fc8a0f6-cdca-448c-b2aa-355ea85bb6c8",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1129,6 +1188,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "a2b9d0ac-e6e5-49d2-b8b9-62622942cac4",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1146,6 +1206,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "af4b43fa-d25b-41ad-8fae-91cf4c445832",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1163,6 +1224,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "bb89d63b-2959-432f-b1bd-ee33b71c427e",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1180,6 +1242,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "aeb9bc13-97d4-4f5d-9eca-84589df10a8c",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1197,6 +1260,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "96372f07-ffd9-486e-b722-c21421ada1cd",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1214,6 +1278,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "5850b846-4afb-4b86-ba48-2d697102f2a2",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1231,6 +1296,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "4266ff6c-87c0-4927-a148-21f2d248f428",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1248,6 +1314,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "56df8828-c712-434f-9965-39c959738fb9",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1265,6 +1332,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "8aa84af0-dc58-45f7-b152-3f8857947dc2",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1282,6 +1350,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "529e3318-a197-41df-8961-93873f8088df",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1299,6 +1368,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "29273bf9-690b-42e0-8ec2-8b7ade23662b",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1316,6 +1386,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "c05dbb1b-79ea-4d91-91ac-65a88bcd23f2",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1333,6 +1404,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "55c4791d-4146-4d71-97c5-a3d4bbe0b53e",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1350,6 +1422,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "6fea48f9-b428-4ff9-b308-2b6be9ec24df",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1367,6 +1440,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "12d79ce8-bc82-4a7f-a006-33eec0f484cf",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1384,6 +1458,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "c41bbec0-3260-4af1-bc87-38c686f737c6",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1401,6 +1476,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "46b3a6d6-eeb0-4841-acf6-0d441525e89d",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1418,6 +1494,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "bb42a41e-7db6-441c-9893-51e01c6910eb",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1435,6 +1512,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "e80a3d04-ac2d-41c5-9591-9dc106484dc9",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1452,6 +1530,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "5d9b1204-e9a6-47df-be0f-d804d2668a1f",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1469,6 +1548,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "2591414c-4d0f-426d-9c96-e6e8d26fa937",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1486,6 +1566,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "7c52485d-f38d-4efb-90c0-609a046c65c7",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1503,6 +1584,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "eab49810-9384-4f8c-add4-56edd553d64a",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.TriggerAreaFactory, IronStar",
@@ -1525,6 +1607,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "d4d94344-1b31-4f71-8705-f738ae7a8d86",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1542,6 +1625,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "11404f91-7654-4dcb-9742-471e72bd582f",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1559,6 +1643,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "62110f05-c2a4-4c4e-98db-04915ad896d5",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1576,6 +1661,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "0646185c-b119-4319-9320-4c863aae8d2d",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1593,6 +1679,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "06ff7725-6608-453c-a6c9-959e14785b76",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1610,6 +1697,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "e081aaf3-7147-4640-8aad-ee83f5e99ad0",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1627,6 +1715,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "a7eca09e-ae78-4c79-b7cb-2fd033dc4f6b",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1644,6 +1733,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "b38e3c1c-185e-435f-bfeb-e87f99cf93b9",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1661,6 +1751,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "7ccbe436-fe78-4b93-aac6-aa3fb3f3147c",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1678,6 +1769,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "d2af1d5d-bc93-43ab-bb4c-366d8493072b",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1695,6 +1787,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "6133830b-2f02-4afb-9e89-0475734f16bb",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1712,6 +1805,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "60e91433-421e-4005-8eff-f2388eb88afd",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1729,6 +1823,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "d3c6f00e-fd99-41b4-b225-44a61bdaf522",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1746,6 +1841,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "be9f9eab-192a-4374-a421-291094441e57",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1763,6 +1859,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "84fd4eaf-dc50-4597-8de6-fc762e331ff8",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1780,6 +1877,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "0f9a5c27-610f-4770-ae23-072ee1799949",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1797,6 +1895,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "478aefb3-6230-431d-b1ee-8c0af4ac9391",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1814,6 +1913,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "ee156fb5-b74b-4b5f-bbf2-7aa06464fe68",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1831,6 +1931,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "9fee9856-3493-4378-a29f-8929df7ace6e",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1848,6 +1949,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "c1faa5d5-1600-48de-ba6a-843296260947",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1865,6 +1967,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "d9370eaf-ccf4-4cb9-92b7-618ae357fd4e",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1882,6 +1985,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "fb497d52-fff1-43ae-8f81-9d174425a5f6",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1899,6 +2003,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "b4b8e3cd-0c22-4a63-9188-1b9f199905ea",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1916,6 +2021,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "19a7061f-dab2-4015-99b5-00b28d9eb1df",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1933,6 +2039,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "2c7c1cbc-d21c-4c6b-ac62-57693b4b52de",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1950,6 +2057,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "27a68851-b8c0-47da-bdb1-45c3ce8829d8",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1967,6 +2075,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "f9bd0dbc-baea-4a81-923f-1a7293ab8ab7",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -1984,6 +2093,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "bb161cff-c7e8-4d7b-80e7-2d51e8218d83",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2001,6 +2111,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "e74ec196-9670-423d-b400-189e697399fe",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2018,6 +2129,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "cb102119-7e79-45ee-94f3-9001e9f634a4",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2035,6 +2147,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "ae1aada5-9f04-4450-8f21-fc9dbc2863c2",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2052,6 +2165,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "a401828b-7150-4d7f-a089-67c610cbd163",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2069,6 +2183,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "b573d4ff-517e-44a7-9187-e114e37035f5",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2086,6 +2201,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "eb8525aa-59c9-427e-a139-bd3aec9676f3",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2103,6 +2219,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "b627fc1e-d439-4145-8d69-179788cccf33",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2120,6 +2237,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "7570ff09-7d0a-413e-8685-fa4aed16dda8",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2137,6 +2255,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "b211c261-0714-43b9-a4a9-e56026b822c2",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2154,6 +2273,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "e57838d8-e572-4bc0-a5be-646337ca3867",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2171,6 +2291,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "1fdf457a-898b-4f1e-9264-5de1f9a1c3ff",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2188,6 +2309,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "376f016f-45d7-477f-be27-85ee9b547e0b",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2205,6 +2327,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "c9578e9b-8f90-47fa-a6f4-d87245f03f63",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2222,6 +2345,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "af269660-45bd-4623-b834-43ebbb09c93b",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2239,6 +2363,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "f0f61b76-ae6d-42d6-9ec5-cc7a23606424",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2256,6 +2381,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "7504cf82-ab19-422d-adb4-ad2eac91b4ee",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2273,6 +2399,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "179b4ef4-df95-4275-8a6f-69bad9232314",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2290,6 +2417,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "9bdac2dd-b6be-444b-b244-a3a17d9d4cdb",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2307,6 +2435,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "4f8315fe-cce0-426f-824e-effd905fd39e",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2324,6 +2453,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "33c6ec5d-e750-406f-ac4d-03a2e534e030",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2341,6 +2471,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "a04e1a22-9397-4d4c-ba87-3b47cb848935",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2358,6 +2489,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "d4a6e14c-dff0-4b26-a856-cf34870d9a3c",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2375,6 +2507,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "257fc4b2-d42a-4470-9031-ae53d2c66c64",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2392,6 +2525,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "8832e8e4-c43e-4ded-a1c8-18ab1521a61a",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2409,6 +2543,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "2b5ed583-9d9c-46ae-8bfd-4d69d01e2eee",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2426,6 +2561,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "cfa395c7-c835-49b2-b021-0432a3f76435",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2443,6 +2579,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "40032d65-6415-4726-bdf7-b6eca0cd938a",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2460,6 +2597,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "fa0acb73-05b2-4124-9feb-73e07cbd5ca9",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2477,6 +2615,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "b2ee3381-6df9-4262-a736-88c3e163a8a3",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2494,6 +2633,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "1e4bb0dd-d38a-476f-ad7a-3d53023a68db",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2511,6 +2651,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "cb314ba5-1b15-48b1-b74f-628ff1a3c172",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2528,6 +2669,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "1e614e01-750f-47af-bdad-0b8f5cb8b4c5",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2545,6 +2687,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "51e51dfb-9919-4f63-88d4-ff3d3027bc90",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2562,6 +2705,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "a3a730e8-2815-4eb8-b43d-1ada2dee9b29",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2579,6 +2723,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "2faa51c7-e061-46eb-b4f2-6da5e8af3853",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2596,6 +2741,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "705e2a1f-7f78-4039-82ea-7e0777e4b359",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2613,6 +2759,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "faf74881-cb46-4dce-b0b3-f284c9607903",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2630,6 +2777,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "ade8dbbb-91a9-4caa-8b4a-8fc2145f8dc5",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2647,6 +2795,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "bee8c763-64fc-4732-b55a-2d3991e9ed2b",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.FuncFXFactory, IronStar",
@@ -2669,6 +2818,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapSound, IronStar",
+        "NodeGuid": "d875b3ed-b8a3-4c3e-b6dd-e7b1ad7a9224",
         "SoundEvent": "env/fire",
         "ReverbLevel": 1.0,
         "Visible": true,
@@ -2682,6 +2832,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapReverb, IronStar",
+        "NodeGuid": "a43209d4-bf57-4944-b3af-e4d997ff7d1e",
         "ReverbPreset": "plain",
         "MinimumDistance": 10.0,
         "MaximumDistance": 20.0,
@@ -2696,6 +2847,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "76c2c6e6-e200-4abb-ad21-665a98d7c37d",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2713,6 +2865,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "344e47b9-a1f9-4724-ac80-dd0a211472f4",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.FuncFXFactory, IronStar",
@@ -2735,6 +2888,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "e2bd35aa-6416-4b81-9cf0-e3ec547e827d",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2752,6 +2906,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "373ce1e4-ba54-4abd-8089-a83e1ce3cede",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.FuncFXFactory, IronStar",
@@ -2774,6 +2929,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "e4cedd70-69b8-436f-b96c-b141ca469f75",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2791,6 +2947,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "6853efaa-fea8-425a-8631-ad7168c3de0c",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.FuncFXFactory, IronStar",
@@ -2813,6 +2970,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "a632cc99-64f1-4eb4-b695-072ade59c775",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2830,6 +2988,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "b373abc5-7153-4140-8cba-d4ccb09858ed",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2847,6 +3006,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "02feb4de-c8e0-4632-ad7c-485dfd30bef6",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2864,6 +3024,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "879303a8-1ae8-421f-8d97-48ae31910847",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2881,6 +3042,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "b0c1cc93-2737-4b11-a288-2c4faad60a7e",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2898,6 +3060,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "c4ac8a5a-586d-4878-a77b-703baf97dac1",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2915,6 +3078,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "075975cf-4471-43b5-9fa9-ffa8ddfcf55e",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2932,6 +3096,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "6dda33df-d7f2-4328-a617-c9230f1667ed",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2949,6 +3114,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "f1a923b2-e7d4-4449-8542-678ed97348e1",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2966,6 +3132,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "62e7bc16-0689-4c0f-9632-0e6874b96c47",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -2983,6 +3150,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "a0b7fadf-f7d4-4764-b90c-a96fbd9e76e2",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3000,6 +3168,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "13050989-29fb-47f3-bfc2-bfb596722276",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3017,6 +3186,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "0a73cfb4-ee39-48bf-ad8a-b8c53b41478f",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3034,6 +3204,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "999cf336-ee0a-451a-9734-ea75c11cf495",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3051,6 +3222,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "f126da88-9529-4a09-a45c-f5d4e2163dcb",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3068,6 +3240,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "594573b8-13c6-46ec-8726-6db4df0fc923",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3085,6 +3258,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "459ae0f6-30d8-45e9-bf5e-244bafbe5822",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3102,6 +3276,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "268aa207-fc2c-4d8b-98b9-e3048d1eb6a8",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3119,6 +3294,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "04a2f844-023c-4552-816e-ada2aa042c9f",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3136,6 +3312,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "1a47001e-d9b1-4a19-aef6-6dde87575a1c",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3153,6 +3330,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "d0226883-1098-4aab-b1f6-fda16ef7b7be",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3170,6 +3348,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "a753c03f-20df-4f4f-bee2-568571c6fb74",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3187,6 +3366,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "c6649c5b-2b89-4e4f-81dc-c3af060c7047",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3204,6 +3384,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "0afe6c50-b153-43a4-b893-f97396c18850",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3221,6 +3402,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "77e24726-6f49-47b1-8341-16e0c91085ae",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3238,6 +3420,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "0fe996a8-f3e0-4c6c-807b-d39dcc920dfd",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3255,6 +3438,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "5bf44bbf-b59f-44f8-9bf7-6bebed254a7a",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3272,6 +3456,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "93175437-9674-45db-9c4a-6a491c134812",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3289,6 +3474,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "6f673e84-96dd-4699-b254-8a2e5096ead0",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3306,6 +3492,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "349927a9-e081-43ca-a312-35ad891fa740",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3323,6 +3510,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "8ded7d95-d3fb-44ff-85ac-ed527a876f0e",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3340,6 +3528,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "e84d8e03-e91c-4a9b-8e34-8d348102c4de",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3357,6 +3546,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "4ec5a450-4125-4c7a-8ec1-13f55f3579c1",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3374,6 +3564,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "1d6f0973-c4a5-4471-ada9-1714d7d837aa",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3391,6 +3582,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "f27b368a-5faa-406d-945e-c9e101ea8857",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3408,6 +3600,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "74c0a0f8-0f89-425b-8247-87bf991e8427",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3425,6 +3618,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "97106a99-24ce-4f2f-8f41-f12c2b24a5b7",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3442,6 +3636,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "56d2ca67-512d-4aba-8834-d496d0eab7fd",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3459,6 +3654,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "5b4f5f12-3a2c-457a-9c3e-cfb67c249163",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3476,6 +3672,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "33b527e1-d87c-4f7c-a976-3977d96c3553",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3493,6 +3690,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "1c20feb3-f788-4deb-8f09-a23ac80bc5da",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3510,6 +3708,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "707cf1df-52f3-4793-8f22-88b9d8c61ac3",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3527,6 +3726,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "2b02ce6f-e677-425d-80af-3bf96be82343",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3544,6 +3744,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "1461e699-3967-4f53-8424-8a71b210bb8e",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3561,6 +3762,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "7f5094d4-8743-443b-82ec-609b3aef7144",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3578,6 +3780,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "f208e828-95ff-4e65-a7de-8a6baa0e4e1b",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3595,6 +3798,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "7b12ad11-ff43-4f61-9e0e-58be711bb0f5",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3612,6 +3816,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "bbba4f59-2be7-476a-8485-3705ebd39162",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3629,6 +3834,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "ad82e0dd-62e3-4c41-9cae-2009b6fbe13d",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3646,6 +3852,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "99235c10-09b0-4e25-996c-e728a9f44222",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3663,6 +3870,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "052a8f83-d3a3-4e6f-ac69-4ea86b2eaa6c",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3680,6 +3888,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "53bd0495-c8cd-4266-a1dd-fef4bbe5eb4e",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3697,6 +3906,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "1ac9bf1b-1bd7-445f-87cf-d1bd34445f9d",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3714,6 +3924,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "76bc32c7-5382-4f56-9c5a-33b8eea133a3",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3731,6 +3942,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "6e97d8c5-e2d3-4ed8-beb7-00bdc51dae2a",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3748,6 +3960,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "1eaf2dfe-90f6-46ab-abe1-5a2919be876e",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3765,6 +3978,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "ffb2df58-a5d9-43b2-9eaa-5e7801373cfd",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3782,6 +3996,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "0d2aa1b7-927f-49b8-a953-4bd074adebb5",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3799,6 +4014,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "bc890260-14aa-4a7d-ad9f-547d1f4fc65e",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3816,6 +4032,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "5a91c924-e97a-4163-acfc-2755bf2c9b3e",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3833,6 +4050,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "46522e1d-a60d-42bf-b4e8-1766bf9de9be",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3850,6 +4068,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "2e46cd22-32b0-4ff9-b95c-6dc1c892ec12",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3867,6 +4086,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "36741538-212b-40f7-9de9-2413c1bcb988",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3884,6 +4104,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "c6be3136-fe45-4497-9f24-fb863d1962de",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3901,6 +4122,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "d801fc22-bad1-4b04-b77b-b60b7d656371",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3918,6 +4140,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "3b6af963-51ab-4c20-b66f-4d524fb4f69f",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3935,6 +4158,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "bdbb143f-24c0-45a6-af3f-6810ba37170e",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3952,6 +4176,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "6c91b8aa-fc8d-4396-a11d-a563894bd790",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3969,6 +4194,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "756ab4f6-06c4-45f7-a0b1-e55a27cc50a8",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -3986,6 +4212,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "a2d5316e-633e-4723-87a6-44ba994fdc07",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4003,6 +4230,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "bff2d116-342b-48eb-8e48-c0bbaa17032f",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4020,6 +4248,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "be46c3b5-60c5-4b5d-ae2f-2f71ebd8ef1c",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4037,6 +4266,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "72978676-47b7-47c5-adcd-4a1d35253696",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4054,6 +4284,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "7f6d393c-2a09-4af9-a043-0514de03cd88",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4071,6 +4302,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "a1fb53c8-9954-4f23-8c1e-6691f7f03865",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4088,6 +4320,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "267c34ad-a872-4930-a644-45df3db5849b",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4105,6 +4338,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "2a5a30b0-9692-4fb3-a641-a96d0ae9fce5",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4122,6 +4356,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "d95cc654-13ab-4c24-9770-8914d5ac1709",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4139,6 +4374,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "685cdc57-6674-494e-9ae6-c95006c43962",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4156,6 +4392,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "e18e6c62-adcb-43a1-a830-b870c7e41c23",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4173,6 +4410,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "c4fae6db-5e87-4a12-95eb-f385968a151c",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4190,6 +4428,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "5f1b1fcf-d1ad-4a90-8258-b4279069cbdf",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4207,6 +4446,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "750d4195-4b42-454b-8efd-2e196ada5f18",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4224,6 +4464,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "a378d52b-9184-4d87-b1cd-023fc946fab3",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4241,6 +4482,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "57ecd7eb-6021-4af0-95fc-4f03592e67de",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4258,6 +4500,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "2bd81754-3fd3-4704-a97f-88ae3d70cedf",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4275,6 +4518,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "51be7fdb-e297-40b8-a19c-f574b736abaa",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4292,6 +4536,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "0bf32c08-3d9c-4c2e-aa42-ddb06b63c583",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4309,6 +4554,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "f0b64c9a-97ce-4cde-a373-a9bb5d5576b7",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4326,6 +4572,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "01e5bdac-ec52-4020-96e6-f64f4099bf08",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4343,6 +4590,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "03c7a831-079a-4a3d-aa8a-02996eea35b9",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4360,6 +4608,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "bc5616dc-73dc-4178-ae2a-c4360e04817f",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4377,6 +4626,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "1579606b-5b59-49c6-b956-028b55d54859",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4394,6 +4644,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "7ad61d9f-c695-4bee-a9f7-3371ea1e12c1",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4411,6 +4662,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "7a3b358d-77d6-4745-97d1-3cfcf175d7e9",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4428,6 +4680,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "f9343a7b-3bef-40e4-b619-e635fa9cd3ff",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4445,6 +4698,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "fb554cb0-638a-4060-b1da-c903e347eb24",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4462,6 +4716,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "0d381249-41e2-418c-8e83-e6f55677a17e",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4479,6 +4734,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "561b2c66-ebbb-4b71-9ba4-4fafb4034545",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4496,6 +4752,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "0d44d690-7fc2-43ad-8f4a-22a4e7b0e654",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4513,6 +4770,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "ef97a2dd-5d3a-4c95-a49f-7219341dcf1c",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4530,6 +4788,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "a244b05f-7bdf-4a16-818d-b5f2f52238cd",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4547,6 +4806,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "526b92f6-3959-4559-83fd-a64f8f53b7c6",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4564,6 +4824,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "75e4c258-1431-4e00-9805-ec1c4584c596",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4581,6 +4842,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "2f4ae470-db42-4e92-8799-e51acd95d690",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4598,6 +4860,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "accd8590-d2b9-4daa-9328-23fc314a18f2",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4615,6 +4878,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "f91c5bb6-30b5-4414-a86d-42a1fe7a4cde",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4632,6 +4896,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "733621f1-6bd3-4987-b72b-1fa5abd95995",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4649,6 +4914,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "f9bdcfa0-7a54-48a6-935f-7c9d915b2f6e",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4666,6 +4932,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "08d81391-6272-475c-8ae9-e2947a0714c0",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4683,6 +4950,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "631b1e4c-1205-4f5a-ae11-4fb000089db2",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4700,6 +4968,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "1d9d2d05-8284-4ddb-9819-23f19d46caa1",
         "TargetName": "",
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4717,6 +4986,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "bbe57ec6-9ee9-4a1b-a8fa-493fee722526",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4734,6 +5004,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "351bc86c-c4fe-439d-a023-5871303c4428",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
@@ -4751,6 +5022,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "e93862e1-ab38-4e1e-bb16-2fcf536a9a2d",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",

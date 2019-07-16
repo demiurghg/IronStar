@@ -67,6 +67,8 @@
   <ItemGroup>
     <Compile Include="SFX\Animators\CameraAnimator.cs" />
     <Compile Include="SinglePlayer\MissionContext.cs" />
+    <Compile Include="UI\Controls\Dialogs\TextBoxDialog.cs" />
+    <Compile Include="UI\Controls\Dialogs\RunEditorBox.cs" />
     <Compile Include="UI\HUD\HudColors.cs" />
     <Compile Include="UI\HUD\HudWeapon.cs" />
     <Compile Include="UI\HUD\HudHealth.cs" />

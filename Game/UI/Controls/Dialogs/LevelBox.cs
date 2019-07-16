@@ -10,11 +10,15 @@ using IronStar.UI.Controls.Advanced;
 using Fusion.Engine.Graphics;
 using Fusion.Core.Shell;
 using Fusion;
+using System.IO;
 
 namespace IronStar.UI.Controls.Dialogs {
 	public class LevelBox : Panel {
 
 		Frame gallery;
+
+		string selectedMap = null;
+		Frame buttonStart;
 
 		public LevelBox ( FrameProcessor frames ) : base(frames, 0,0,900-68,600-4)
 		{
@@ -56,10 +60,11 @@ namespace IronStar.UI.Controls.Dialogs {
 
 			//	OK/Cancel buttons :
 
-			var buttonStart		=	new Button( frames, "Start",		0,0,0,0, StartSelectedLevel );
-			var buttonCreate	=	new Button( frames, "Create",		0,0,0,0, ()=> { Log.Warning("Not implemented"); } );
-			var buttonEmpty		=	Frame.CreateEmptyFrame( frames );
-			var buttonCancel	=	new Button( frames, "Cancel", 0,0,0,0, ()=> { Close(); } );
+				buttonStart			=	new Button( frames, "Start",		0,0,0,0, StartSelectedLevel );
+				buttonStart.Enabled	=	false;
+				buttonStart.OverallColor = new Color(255,255,255,128);
+
+			var buttonCancel		=	new Button( frames, "Cancel", 0,0,0,0, ()=> { Close(); } );
 
 			//	Construct all :
 
@@ -69,8 +74,8 @@ namespace IronStar.UI.Controls.Dialogs {
 				scrollBox.Add( gallery );
 
 			this.Add( buttonCancel );
-			this.Add( buttonEmpty );
-			this.Add( buttonCreate );
+			this.Add( CreateEmptyFrame( frames ) );
+			this.Add( CreateEmptyFrame( frames ) );
 			this.Add( buttonStart );
 		}
 
@@ -78,32 +83,61 @@ namespace IronStar.UI.Controls.Dialogs {
 		void StartSelectedLevel ()
 		{
 			Close();
-			Game.Invoker.ExecuteString("map testMonsters");
+			Game.Invoker.ExecuteString("map " + selectedMap);
 		}
+
 
 
 		void PopulateGallery ()
 		{
-			Random rand = new Random();
+			Random rand =	new Random();
 
-			for (int i=0; i<12; i++) {
+			var content			=	Frames.Game.Content;
+			var defaultPreveiw	=	content.Load<DiscTexture>( @"maps\thumbnails\default" );
+
+
+			foreach ( var fileName in content.EnumerateAssets("maps") ) {
+
+				var mapName				=	Path.GetFileNameWithoutExtension(fileName);
+				var levelImage			=	new Frame( Frames, 0,0,0,0, mapName.ToUpperInvariant(), Color.Black );
+
+				DiscTexture	mapPreview;
 				
-				var levelImage			=	new Frame( Frames, 0,0,0,0, "Level 01", Color.Black );
-				var imagePath			=	@"ui\levelArt\level0" + rand.Next(1,6).ToString();
+				if (!content.TryLoad( @"maps\thumbnails\" + mapName, out mapPreview ) ) {
+					mapPreview = defaultPreveiw;
+				}
 
-				levelImage.Image		=	Frames.Game.Content.Load<DiscTexture>( imagePath );
+				levelImage.Image		=	mapPreview;
 				levelImage.ImageMode	=	FrameImageMode.Stretched;
 
 				levelImage.Font			=	MenuTheme.SmallFont;
 				levelImage.Padding		=	MenuTheme.SmallContentPadding;
+				levelImage.BorderColor	=	MenuTheme.SelectColor;
 
-				levelImage.TextAlignment	=	Alignment.BottomCenter;
+				levelImage.TextAlignment	=	Alignment.BottomLeft;
 
-				levelImage.StatusChanged+=LevelImage_StatusChanged;
+				levelImage.StatusChanged	+=	LevelImage_StatusChanged;
+
+				levelImage.Click			+= 	(s,e) => { 
+					selectedMap = mapName;
+					buttonStart.Enabled = true;
+					buttonStart.Text	= "Start";
+					buttonStart.OverallColor = Color.White;
+				};
+
+				levelImage.Tick += (s,e) => {
+					if (mapName==selectedMap) {
+						levelImage.Border = 2;
+					} else {
+						levelImage.Border = 0;
+					}
+				};
 
 				gallery.Add( levelImage );
 			}
 		}
+
+
 
 		private void LevelImage_StatusChanged( object sender, StatusEventArgs e )
 		{

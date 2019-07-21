@@ -114,6 +114,11 @@ Fusion::Engine::Graphics::Scene ^ FbxLoader::LoadScene( string ^filename, bool i
 	scene->TimeMode  = ConvertTimeMode( timeMode );
 
 	//---------------------------------------------
+	Console::WriteLine("Triangulating...");
+
+	if (!fbxGConv->Triangulate( fbxScene, true, false )) {
+		Log::Warning("Failed to triangulate scene!");
+	}
 
 	Console::WriteLine("Traversing hierarchy...");
 
@@ -306,9 +311,6 @@ void Native::Fbx::FbxLoader::HandleMesh( Fusion::Engine::Graphics::Scene ^scene,
 	scene->Meshes->Add( nodeMesh );
 	node->MeshIndex = scene->Meshes->Count-1;
 
-	if (!fbxMesh->IsTriangleMesh()) {
-		fbxMesh = fbxGConv->TriangulateMesh( fbxMesh );
-	}
 
 	Matrix^ meshTransform = Matrix::Identity;
 	array<Int4>		^skinIndices = gcnew array<Int4>	(fbxMesh->GetControlPointsCount());

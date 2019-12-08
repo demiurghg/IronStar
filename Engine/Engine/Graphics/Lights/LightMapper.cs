@@ -414,15 +414,17 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			var directLight		=	Color4.Zero;
 			var ray				=	new RtcRay();
+			var bias			=	normal / 16.0f;
 
-			if (true) {
+			position			+=	bias;
+
+			if (true) 
+			{
 				var nDotL	=	 Math.Max( 0, Vector3.Dot( dirLightDir, normal ) );
 
-
-				var bias	=	normal / 16.0f;
-
-				if (nDotL>0) {
-					EmbreeExtensions.UpdateRay( ref ray, position + bias, dirLightDir, 0, 9999 );
+				if (nDotL>0) 
+				{
+					EmbreeExtensions.UpdateRay( ref ray, position, dirLightDir, 0, 9999 );
 
 					var shadow	=	 scene.Occluded( ray ) ? 0 : 1;
 		 
@@ -430,23 +432,54 @@ namespace Fusion.Engine.Graphics.Lights {
 				}
 			}
 
-			foreach ( var ol in lightSet.OmniLights ) {
+			foreach ( var ol in lightSet.OmniLights ) 
+			{
+				var dir			=	ol.Position - position;
+				var dist		=	dir.Length();
+				var dirN		=	dir.Normalized();
+				var falloff		=	MathUtil.Clamp( 1 - dir.Length() / ol.RadiusOuter, 0, 1 );
+					falloff		*=	falloff;
 
-				var dir		=	ol.Position - position;
-				var dirN	=	dir.Normalized();
-				var falloff	=	MathUtil.Clamp( 1 - dir.Length() / ol.RadiusOuter, 0, 1 );
-					falloff *=	falloff;
+				var falloff2	=	MathUtil.Clamp( 1 - dir.Length() / ol.RadiusOuter / 3, 0, 1 );
 
-				var nDotL	=	Math.Max( 0, Vector3.Dot( dirN, normal ) );
+				var nDotL		=	Math.Max( 0, Vector3.Dot( dirN, normal ) );
 
-				if ( falloff * nDotL > 0 ) {
+				if ( falloff * falloff2 * nDotL > 0 ) {
 
 					EmbreeExtensions.UpdateRay( ref ray, position, dir, 0, 1 );
-					var shadow	=	 1;//scene.Occluded( ray ) ? 0 : 1;
+					var shadow	=	 scene.Occluded( ray ) ? 0 : 1;
 		 
 					directLight	+=	nDotL * falloff * shadow * ol.Intensity;
 				}
 
+			}
+
+			foreach ( var sl in lightSet.SpotLights ) 
+			{
+				var dir			=	sl.Position - position;
+				var dist		=	dir.Length();
+				var dirN		=	dir.Normalized();
+				var falloff		=	MathUtil.Clamp( 1 - dir.Length() / sl.RadiusOuter, 0, 1 );
+					falloff		*=	falloff;
+
+				var falloff2	=	MathUtil.Clamp( 1 - dir.Length() / sl.RadiusOuter / 3, 0, 1 );
+
+				var nDotL		=	Math.Max( 0, Vector3.Dot( dirN, normal ) );
+
+				var viewProj	=	sl.SpotView * sl.Projection;
+				var projPos		=	Vector3.TransformCoordinate( position, viewProj );
+				var axialDist	=	new Vector2( projPos.X, projPos.Y ).Length();
+
+				if (axialDist<1) 
+				{
+					if ( falloff * falloff2 * nDotL > 0 ) 
+					{
+						EmbreeExtensions.UpdateRay( ref ray, position, dir, 0, 1 );
+						var shadow	=	 scene.Occluded( ray ) ? 0 : 1;
+		 
+						directLight	+=	nDotL * falloff * shadow * sl.Intensity;
+					}
+				}
 			}
 
 			return directLight;

@@ -699,7 +699,7 @@ namespace Fusion.Engine.Graphics {
 						filter	=	false;
 						break; 
 					case QualityLevel.Medium:	
-						samples	=	256;
+						samples	=	1024;
 						bias	=	0;
 						filter	=	true;
 						break; 

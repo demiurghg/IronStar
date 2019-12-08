@@ -13,9 +13,10 @@ namespace Fusion.Drivers.Graphics {
 	/// </summary>
 	public sealed class ShaderResourceCollection : GraphicsResource {
 
-		readonly ShaderResource[]	resources;	
 		readonly CommonShaderStage	stage;
 		readonly DeviceContext	deviceContext;
+
+		readonly ShaderResourceView[] clearArray;
 
 		/// <summary>
 		/// 
@@ -23,9 +24,13 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="device"></param>
 		internal ShaderResourceCollection ( GraphicsDevice device, CommonShaderStage stage ) : base(device)
 		{
-			resources	=	new ShaderResource[ Count ];
 			this.stage	=	stage;
 			deviceContext	=	device.DeviceContext;
+
+			clearArray	=	Enumerable
+				.Range( 0, CommonShaderStage.InputResourceRegisterCount )
+				.Select( i => (ShaderResourceView)null )
+				.ToArray();
 		}
 
 
@@ -46,9 +51,7 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		public void Clear ()
 		{
-			for (int i=0; i<Count; i++) {
-				this[i] = null;
-			}
+			stage.SetShaderResources( 0, clearArray );
 		}
 	
 
@@ -60,13 +63,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <returns></returns>
 		public ShaderResource this[int index] {
 			set {
-				lock (deviceContext) {
-					resources[ index ] = value;
-					stage.SetShaderResource( index, (value==null) ? null : value.SRV );
-				}
-			}
-			get {
-				return resources[ index ];
+				stage.SetShaderResource( index, (value==null) ? null : value.SRV );
 			}
 		}
 	}

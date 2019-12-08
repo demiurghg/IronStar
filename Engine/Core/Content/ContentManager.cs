@@ -210,7 +210,7 @@ namespace Fusion.Core.Content {
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
-		public Stream OpenStream ( string assetPath )
+		public AssetStream OpenStream ( string assetPath )
 		{
 			var realName =  GetRealAssetFileName( assetPath );
 
@@ -294,12 +294,17 @@ namespace Fusion.Core.Content {
 
 
 			//
-			//	load content and add to dictionary :
+			//	load content :
 			//
 			Log.Message("Loading : {0}", assetPath );
-			using (var stream = OpenStream(assetPath) ) {
+			using (var stream = OpenStream(assetPath) ) 
+			{
+				if (!typeof(T).IsAssignableFrom( stream.ContentType )) {
+					//throw new ContentException(string.Format("Requested type {0} is not assignable from {1} (content)", typeof(T), stream.ContentType));
+					Log.Warning("Requested type {0} is not assignable from {1} (content)", typeof(T), stream.ContentType);
+				}
+
 				item = new Item() {
-					
 					Object		= loader.Load( this, stream, typeof(T), assetPath, GetAssetStorage(assetPath) ),
 					LoadTime	= File.GetLastWriteTime( GetRealAssetFileName( assetPath ) ),
 				};

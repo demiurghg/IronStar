@@ -5,12 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using Fusion.Core.Shell;
-using Fusion.Engine.Audio;
 
 namespace Fusion.Build.Processors {
 
-	[AssetProcessor("Sounds", "No description")]
-	public class SoundProcessor : AssetProcessor {
+	[AssetProcessor("Text", "Copies file to target directory as string asset")]
+	public class TextProcessor : AssetProcessor {
 		
 		/// <summary>
 		/// 
@@ -20,7 +19,7 @@ namespace Fusion.Build.Processors {
 		public override void Process ( AssetSource assetFile, BuildContext context )
 		{
 			using ( var sourceStream = assetFile.OpenSourceStream() ) {
-				using ( var targetStream = assetFile.OpenTargetStream(typeof(SoundBank)) ) {
+				using ( var targetStream = assetFile.OpenTargetStream(typeof(string)) ) {
 					sourceStream.CopyTo( targetStream );
 				}
 			}

@@ -51,10 +51,14 @@ scenes/weapon2/*.fbx /geom /report /anim  /retarget:scenes\weapon2\weapon_common
 [Lua]
 *.lua
 
+[Json]
+*.json
+
+[Text]
+*.txt
+
 [Copy]
 *.ini
-*.txt
-*.json
 *.bank
 *.irrmap
 *.irrvol

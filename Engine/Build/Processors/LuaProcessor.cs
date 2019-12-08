@@ -41,7 +41,7 @@ namespace Fusion.Build.Processors {
 
 			File.WriteAllText(reportPath, "<pre>" + stdout + "</per>");
 
-			using ( var target = assetFile.OpenTargetStream() ) {
+			using ( var target = assetFile.OpenTargetStream( typeof(byte[]) ) ) {
 				context.CopyFileTo( destPath, target );
 			}
 		}

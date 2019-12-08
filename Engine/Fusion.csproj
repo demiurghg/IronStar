@@ -142,6 +142,8 @@
     <Compile Include="Build\Processors\AssetProcessor.cs" />
     <Compile Include="Build\Processors\AssetProcessorAttribute.cs" />
     <Compile Include="Build\Processors\AssetProcessorBinding.cs" />
+    <Compile Include="Build\Processors\TextProcessor.cs" />
+    <Compile Include="Build\Processors\JsonProcessor.cs" />
     <Compile Include="Build\Processors\LuaProcessor.cs" />
     <Compile Include="Build\Processors\CopyProcessor.cs" />
     <Compile Include="Build\Processors\FontProcessor.cs" />
@@ -447,7 +449,6 @@
     </Compile>
     <Compile Include="Engine\Audio\SoundEvent.cs" />
     <Compile Include="Engine\Audio\SoundEventInstance.cs" />
-    <Compile Include="Engine\Audio\SoundBankLoader.cs" />
     <Compile Include="Engine\Audio\SoundSystem.Config.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -49,7 +49,7 @@ namespace Fusion.Build.Processors {
 
 
 			//	patch font description and add children (e.g. "secondary") content :
-			using ( var stream = assetFile.OpenTargetStream() ) {
+			using ( var stream = assetFile.OpenTargetStream(typeof(SpriteFont)) ) {
 
 				using ( var sw = new BinaryWriter( stream ) ) {
 

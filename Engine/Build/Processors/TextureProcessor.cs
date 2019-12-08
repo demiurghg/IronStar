@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using Fusion.Core.Shell;
+using Fusion.Engine.Graphics;
 
 namespace Fusion.Build.Processors {
 
@@ -66,7 +67,7 @@ namespace Fusion.Build.Processors {
 
 			RunNVCompress( context, src, dst, NoMips, Fast, ToNormal, Color, Alpha, Normal, Compression );
 
-			using ( var target = assetFile.OpenTargetStream() ) {
+			using ( var target = assetFile.OpenTargetStream( typeof(DiscTexture) ) ) {
 				context.CopyFileTo( dst, target );
 			}
 		}

@@ -13,6 +13,7 @@ using FMOD;
 using FMOD.Studio;
 using Fusion.Core.Input;
 using Fusion.Core.Mathematics;
+using Fusion.Core.Content;
 
 namespace Fusion.Engine.Audio {
 	public sealed partial class SoundSystem : GameComponent {
@@ -50,6 +51,12 @@ namespace Fusion.Engine.Audio {
 			FmodExt.ERRCHECK( lowlevel.loadPlugin("fmod_distance_filter", out plugin ) );
         }
 
+
+		public SoundBank LoadSoundBank ( ContentManager content, string path )
+		{
+			var data = content.Load<byte[]>(path);
+			return new SoundBank( this, data );
+		}
 
 
 		/// <summary>

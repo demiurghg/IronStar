@@ -12,6 +12,7 @@ using System.Xml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using System.Runtime.CompilerServices;
 
 namespace Fusion.Core {
 	/// <summary>
@@ -19,8 +20,22 @@ namespace Fusion.Core {
 	/// </summary>
 	public class JsonFactory : GameComponent {
 
-		readonly JsonSerializerSettings settings;
+		static readonly JsonSerializerSettings settings;
 
+		public static JsonSerializerSettings SerialiazationSettings {
+			get { return settings; }
+		}
+
+
+		static JsonFactory()
+		{
+			settings = new JsonSerializerSettings();
+			settings.Formatting = Newtonsoft.Json.Formatting.Indented;
+			settings.Converters.Add( new StringEnumConverter { CamelCaseText = true } );
+			settings.ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor;
+			settings.TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple; 
+			settings.TypeNameHandling = TypeNameHandling.All;
+		}
 
 
 		/// <summary>
@@ -29,12 +44,6 @@ namespace Fusion.Core {
 		/// <param name="game"></param>
 		public JsonFactory( Game game ) : base(game)
 		{
-			settings = new JsonSerializerSettings();
-			settings.Formatting = Newtonsoft.Json.Formatting.Indented;
-			settings.Converters.Add( new StringEnumConverter { CamelCaseText = true } );
-			settings.ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor;
-			settings.TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple; 
-			settings.TypeNameHandling = TypeNameHandling.All;
 		}
 
 
@@ -52,11 +61,12 @@ namespace Fusion.Core {
 		/// </summary>
 		/// <param name="stream"></param>
 		/// <returns></returns>
+		[MethodImpl(MethodImplOptions.NoOptimization|MethodImplOptions.NoInlining)]
 		public object ImportJson ( Stream stream )
 		{
-			using ( var reader = new StreamReader( stream ) ) {
+			using ( var reader = new StreamReader( stream ) ) 
+			{
 				var text = reader.ReadToEnd();
-
 				return JsonConvert.DeserializeObject(text, settings);
 			}
 		}

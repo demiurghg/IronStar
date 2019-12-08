@@ -122,7 +122,7 @@ namespace Fusion.Build.Mapping {
 				//	Write asset :
 				//
 				using ( var stream = tileStorage.OpenWrite( targetMegatexture ) ) {
-					using ( var assetStream = AssetStream.OpenWrite( stream, "", new[] {""} ) ) {
+					using ( var assetStream = AssetStream.OpenWrite( stream, "", new[] {""}, typeof(VirtualTexture) ) ) {
 						using ( var sw = new BinaryWriter( assetStream ) ) {
 							sw.Write( pageTable.SourceTextures.Count );
 

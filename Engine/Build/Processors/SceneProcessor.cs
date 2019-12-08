@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Fusion.Core.Shell;
 using Fusion.Drivers.Graphics;
+using Fusion.Engine.Graphics;
 
 namespace Fusion.Build.Processors {
 
@@ -95,7 +96,7 @@ namespace Fusion.Build.Processors {
 
 			context.RunTool( "FScene.exe", cmdLine );
 
-			using ( var target = assetFile.OpenTargetStream(dependencies) ) {
+			using ( var target = assetFile.OpenTargetStream( dependencies, typeof( Scene ) ) ) {
 				context.CopyFileTo( destPath, target );
 			}
 		}

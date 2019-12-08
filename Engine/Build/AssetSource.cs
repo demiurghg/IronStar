@@ -274,14 +274,14 @@ namespace Fusion.Build {
 		/// </summary>
 		/// <param name="dependencies"></param>
 		/// <returns></returns>
-		public Stream OpenTargetStream ( IEnumerable<string> dependencies )
+		public Stream OpenTargetStream ( IEnumerable<string> dependencies, Type targetType )
 		{
 			var dir = Path.GetDirectoryName( FullTargetPath );
 
 			Directory.CreateDirectory( dir );
 
 			var args	=	string.Join(" ", BuildArguments);
-			return AssetStream.OpenWrite( FullTargetPath, args, dependencies.Concat( new[]{ KeyPath } ).Distinct().ToArray() );
+			return AssetStream.OpenWrite( FullTargetPath, args, dependencies.Concat( new[]{ KeyPath } ).Distinct().ToArray(), targetType );
 		}
 
 
@@ -302,9 +302,9 @@ namespace Fusion.Build {
 		/// </summary>
 		/// <param name="dependencies"></param>
 		/// <returns></returns>
-		public Stream OpenTargetStream ()
+		public Stream OpenTargetStream ( Type type )
 		{
-			return OpenTargetStream( new string[0] );
+			return OpenTargetStream( new string[0], type );
 		}
 
 

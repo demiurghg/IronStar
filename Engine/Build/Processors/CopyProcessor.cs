@@ -8,7 +8,7 @@ using Fusion.Core.Shell;
 
 namespace Fusion.Build.Processors {
 
-	[AssetProcessor("Copy", "Copies file to target directory without processing")]
+	[AssetProcessor("Copy", "Copies file to target directory as byte array asset")]
 	public class CopyProcessor : AssetProcessor {
 		
 		/// <summary>
@@ -19,7 +19,7 @@ namespace Fusion.Build.Processors {
 		public override void Process ( AssetSource assetFile, BuildContext context )
 		{
 			using ( var sourceStream = assetFile.OpenSourceStream() ) {
-				using ( var targetStream = assetFile.OpenTargetStream() ) {
+				using ( var targetStream = assetFile.OpenTargetStream(typeof(byte[])) ) {
 					sourceStream.CopyTo( targetStream );
 				}
 			}

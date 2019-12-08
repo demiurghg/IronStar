@@ -102,12 +102,12 @@ namespace IronStar {
 
 			Mouse.SetCursorImage( Properties.Resources.cursor );
 			
-
-			Content.Load<SoundBank>(@"audio\desktop\master.strings"	);
-			Content.Load<SoundBank>(@"audio\desktop\master"			);
-			Content.Load<SoundBank>(@"audio\desktop\env"			);
-			Content.Load<SoundBank>(@"audio\desktop\music"			);
-			Content.Load<SoundBank>(@"audio\desktop\vo"				);
+			var ss = this.GetService<SoundSystem>();
+			ss.LoadSoundBank(Content, @"audio\desktop\master.strings"	);
+			ss.LoadSoundBank(Content, @"audio\desktop\master"			);
+			ss.LoadSoundBank(Content, @"audio\desktop\env"				);
+			ss.LoadSoundBank(Content, @"audio\desktop\music"			);
+			ss.LoadSoundBank(Content, @"audio\desktop\vo"				);
 
 			// HACK : preload editor fonts...
 			ColorTheme.NormalFont	=	Content.Load<SpriteFont>(@"fonts\editorOpenSans");
@@ -116,6 +116,7 @@ namespace IronStar {
 
 			Keyboard.KeyDown +=Keyboard_KeyDown;
 		}
+
 
 
 		private void Keyboard_KeyDown( object sender, KeyEventArgs e )

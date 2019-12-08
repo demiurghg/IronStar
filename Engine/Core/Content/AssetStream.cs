@@ -9,7 +9,7 @@ using System.IO.Compression;
 namespace Fusion.Core.Content {
 	public class AssetStream : Stream {
 
-		const string AssetSignature	=	"AST1";
+		const string AssetSignature	=	"AST2";
 		const string DataSignature	=	"DATA";
 
 
@@ -40,9 +40,9 @@ namespace Fusion.Core.Content {
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
-		public static AssetStream OpenWrite ( Stream targetStream, string buildParameters, string[] dependencies )
+		public static AssetStream OpenWrite ( Stream targetStream, string buildParameters, string[] dependencies, Type targetType )
 		{
-			return new AssetStream( targetStream, buildParameters, dependencies );
+			return new AssetStream( targetStream, buildParameters, dependencies, targetType );
 		}
 
 
@@ -53,10 +53,10 @@ namespace Fusion.Core.Content {
 		/// <param name="buildParameters"></param>
 		/// <param name="dependencies"></param>
 		/// <returns></returns>
-		public static AssetStream OpenWrite ( string fullTargetPath, string buildParameters, string[] dependencies )
+		public static AssetStream OpenWrite ( string fullTargetPath, string buildParameters, string[] dependencies, Type targetType )
 		{
 			var targetStream = File.Open( fullTargetPath, FileMode.Create, FileAccess.Write );
-			return new AssetStream( targetStream, buildParameters, dependencies );
+			return new AssetStream( targetStream, buildParameters, dependencies, targetType );
 		}
 
 
@@ -122,6 +122,14 @@ namespace Fusion.Core.Content {
 		}
 
 
+		/// <summary>
+		/// Gets the fully qualified type name
+		/// </summary>
+		public Type ContentType {
+			get; private set;
+		}
+
+
 		Stream zipStream;
 		Stream fileStream;
 
@@ -132,7 +140,7 @@ namespace Fusion.Core.Content {
 		/// <param name="path"></param>
 		/// <param name="buildParameters"></param>
 		/// <param name="dependencies"></param>
-		private AssetStream ( Stream fileStream, string buildParameters, string[] dependencies )
+		private AssetStream ( Stream fileStream, string buildParameters, string[] dependencies, Type outputType )
 		{
 			mode	=	Mode.Write;
 			
@@ -164,6 +172,7 @@ namespace Fusion.Core.Content {
 
 			using (var writer = new BinaryWriter(fileStream, Encoding.UTF8, true) ) {
 				writer.Write( ContentUtils.MakeFourCC( AssetSignature ) );
+				writer.Write( outputType.AssemblyQualifiedName );
 				writer.Write( BuildParameters );
 				writer.Write( Dependencies.Length );
 				foreach ( var dep in Dependencies ) {
@@ -194,10 +203,12 @@ namespace Fusion.Core.Content {
 					throw new IOException("Bad asset file signature. " + AssetSignature + " is expected. Rebuild content.");
 				}
 
-				BuildParameters	=	reader.ReadString();
+				ContentType			=	Type.GetType( reader.ReadString() );
 
-				int depsCount	=	reader.ReadInt32();
-				Dependencies	=	new string[ depsCount ];
+				BuildParameters		=	reader.ReadString();
+
+				int depsCount		=	reader.ReadInt32();
+				Dependencies		=	new string[ depsCount ];
 
 				for (int i=0; i<depsCount; i++) {
 					Dependencies[i] = reader.ReadString();

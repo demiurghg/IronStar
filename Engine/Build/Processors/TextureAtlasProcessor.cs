@@ -86,7 +86,9 @@ namespace Fusion.Build.Processors {
 			//
 			//	Write binary blob (text + dds texture):
 			//
-			using ( var fs = assetFile.OpenTargetStream(dependencies) ) {
+			var atlasType = typeof(Fusion.Engine.Graphics.TextureAtlas);
+
+			using ( var fs = assetFile.OpenTargetStream(dependencies, atlasType) ) {
 				using ( var bw = new BinaryWriter( fs ) ) {
 
 					int offset = 0;

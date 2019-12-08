@@ -244,7 +244,7 @@ namespace Fusion.Build.Processors {
 			//
 			//	Write ubershader :
 			//
-			using ( var fs = assetFile.OpenTargetStream(include.Includes) ) {
+			using ( var fs = assetFile.OpenTargetStream(include.Includes, typeof(Ubershader) ) ) {
 
 				using ( var bw = new BinaryWriter( fs ) ) {
 

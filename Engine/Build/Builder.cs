@@ -35,6 +35,11 @@ namespace Fusion.Build {
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public static string MapName;
+
 		public int Total { get; private set; }
 		public int Ignored { get; private set; }
 		public int Succeded { get; private set; }

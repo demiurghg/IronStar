@@ -57,7 +57,7 @@ namespace Fusion.Drivers.Graphics {
 		public bool FullScreen  { 
 			get { return display.Fullscreen; } 
 			set { 
-				lock (deviceContext) {
+				if (true) { // lock (deviceContext) {
 					display.Fullscreen = value; 
 				}
 			} 
@@ -377,7 +377,7 @@ namespace Fusion.Drivers.Graphics {
 			Log.Message("Display bounds changed: {0} {1}", DisplayBounds.Width, DisplayBounds.Height );
 
 			if (DisplayBoundsChanged!=null) {
-				lock (deviceContext) {
+				if (true) { // lock (deviceContext) {
 					DisplayBoundsChanged( this, EventArgs.Empty );
 				}
 			}
@@ -401,7 +401,7 @@ namespace Fusion.Drivers.Graphics {
 		{
 			syncInterval	=	MathUtil.Clamp( syncInterval, 0, 3 );
 
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				if (requestScreenShotPath != null ) {
 
 					var path = requestScreenShotPath;
@@ -454,7 +454,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="indexBuffer">Index buffers to apply.</param>
 		public void SetupVertexInput ( VertexBuffer[] vertexBuffers, int[] offsets, IndexBuffer indexBuffer )
 		{
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				if (indexBuffer!=null) {
 					deviceContext.InputAssembler.SetIndexBuffer( indexBuffer.Buffer, DXGI.Format.R32_UInt, 0 );
 				} else {	
@@ -497,7 +497,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="vertexFirstIndex"></param>
 		public void Draw ( int vertexCount, int firstIndex )
 		{					
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				ApplyGpuState();
 				//deviceContext.InputAssembler.PrimitiveTopology	=	Converter.Convert( primitive );
 				deviceContext.Draw( vertexCount, firstIndex );
@@ -512,7 +512,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="vertexFirstIndex"></param>
 		public void DrawAuto ()
 		{									 
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				ApplyGpuState();
 				//deviceContext.InputAssembler.PrimitiveTopology	=	Converter.Convert( primitive );
 				deviceContext.DrawAuto();
@@ -531,7 +531,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="startInstanceLocation"></param>
 		public void DrawInstanced ( int vertexCountPerInstance, int instanceCount, int startVertexLocation, int startInstanceLocation )
 		{
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				ApplyGpuState();
 				//deviceContext.InputAssembler.PrimitiveTopology	=	Converter.Convert( primitive );
 				deviceContext.DrawInstanced( vertexCountPerInstance, instanceCount, startVertexLocation, startInstanceLocation );
@@ -548,7 +548,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="baseVertexOffset"></param>
 		public void DrawIndexed ( int indexCount, int firstIndex, int baseVertexOffset )
 		{
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				ApplyGpuState();
 				//deviceContext.InputAssembler.PrimitiveTopology	=	Converter.Convert( primitive );
 				deviceContext.DrawIndexed( indexCount, firstIndex,	baseVertexOffset );
@@ -565,7 +565,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="baseVertexOffset"></param>
 		public void DrawInstancedIndexed ( int indexCountPerInstance, int instanceCount, int startIndexLocation, int baseVertexLocation, int startInstanceLocation )
 		{
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				ApplyGpuState();
 				deviceContext.DrawIndexedInstanced( indexCountPerInstance, instanceCount, startIndexLocation, baseVertexLocation, startInstanceLocation );
 			}
@@ -581,7 +581,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="threadGroupCountZ"></param>
 		public void Dispatch( int threadGroupCountX, int threadGroupCountY = 1, int threadGroupCountZ = 1 )
 		{
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				ApplyGpuState();
 				deviceContext.Dispatch( threadGroupCountX, threadGroupCountY, threadGroupCountZ ); 
 			}
@@ -597,7 +597,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="threadGroupCountZ"></param>
 		public void Dispatch( Int3 totalSize, Int3 blockSize )
 		{
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				ApplyGpuState();
 				int tgx	=	MathUtil.IntDivRoundUp( totalSize.X, blockSize.X );
 				int tgy	=	MathUtil.IntDivRoundUp( totalSize.Y, blockSize.Y );
@@ -615,7 +615,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="threadGroupCountZ"></param>
 		public void Dispatch( Int2 totalSize, Int2 blockSize )
 		{
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				ApplyGpuState();
 				int tgx	=	MathUtil.IntDivRoundUp( totalSize.X, blockSize.X );
 				int tgy	=	MathUtil.IntDivRoundUp( totalSize.Y, blockSize.Y );
@@ -651,7 +651,7 @@ namespace Fusion.Drivers.Graphics {
 		public void SetupVertexOutput ( VertexBuffer[] vertexBuffers, int[] offsets )
 		{
 			if (vertexBuffers==null || offsets==null ) {
-				lock (deviceContext) {
+				if (true) { // lock (deviceContext) {
 					deviceContext.StreamOutput.SetTargets( null );
 				}
 				return;
@@ -675,7 +675,7 @@ namespace Fusion.Drivers.Graphics {
 
 			var outputBinding		=	vertexBuffers.Zip( offsets, (vb,offset) => new StreamOutputBufferBinding( vb.Buffer, offset ) ).ToArray();
 
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				deviceContext.StreamOutput.SetTargets( outputBinding );
 			}
 		}
@@ -720,12 +720,12 @@ namespace Fusion.Drivers.Graphics {
 					//DomainShaderSamplers.Clear();
 					//HullShaderSamplers.Clear();
 
-					PixelShaderConstants.Clear();
-					VertexShaderConstants.Clear();
-					GeometryShaderConstants.Clear();
-					ComputeShaderConstants.Clear();
-					DomainShaderConstants.Clear();
-					HullShaderConstants.Clear();
+					//PixelShaderConstants.Clear();
+					//VertexShaderConstants.Clear();
+					//GeometryShaderConstants.Clear();
+					//ComputeShaderConstants.Clear();
+					//DomainShaderConstants.Clear();
+					//HullShaderConstants.Clear();
 
 					PipelineState   =   null;
 				}
@@ -751,7 +751,7 @@ namespace Fusion.Drivers.Graphics {
 		{
 			SetTargets( BackbufferDepth, BackbufferColor );
 
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				deviceContext.Rasterizer.SetViewport( SharpDXHelper.Convert( new ViewportF( 0,0, BackbufferColor.Width, BackbufferColor.Height ) ) );
 			}
 		}
@@ -796,7 +796,7 @@ namespace Fusion.Drivers.Graphics {
 			}
 
 
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 
 				this.depthStencilSurface	=	depthStencil;
 				renderTargets.CopyTo( renderTargetSurfaces, 0 );
@@ -857,7 +857,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="stencil"></param>
 		public void Clear ( DepthStencilSurface surface, float depth = 1, byte stencil = 0 )
 		{
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				deviceContext.ClearDepthStencilView( surface.DSV, DepthStencilClearFlags.Depth|DepthStencilClearFlags.Stencil, depth, stencil );
 			}
 		}
@@ -871,7 +871,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="color"></param>
 		public void Clear ( RenderTargetSurface surface, Color4 color )
 		{
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				deviceContext.ClearRenderTargetView( surface.RTV, SharpDXHelper.Convert( color ) );
 			}
 		}
@@ -885,7 +885,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="values"></param>
 		public void Clear ( StructuredBuffer buffer, Int4 values )
 		{
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				deviceContext.ClearUnorderedAccessView( buffer.UAV, SharpDXHelper.Convert( values ) );
 			}
 		}
@@ -899,7 +899,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="values"></param>
 		public void Clear ( ByteAddressBuffer buffer, Int4 values )
 		{
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				deviceContext.ClearUnorderedAccessView( buffer.UAV, SharpDXHelper.Convert( values ) );
 			}
 		}
@@ -937,7 +937,7 @@ namespace Fusion.Drivers.Graphics {
 				throw new GraphicsException( "Could not resolve: destination surface is multisampled");
 			}
 
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				deviceContext.ResolveSubresource( source.Resource, source.Subresource, destination.Resource, destination.Subresource, Converter.Convert( source.Format ) );
 			}
 		}
@@ -981,7 +981,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="h"></param>
 		public void SetViewport ( ViewportF viewport )
 		{
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				deviceContext.Rasterizer.SetViewport( SharpDXHelper.Convert( viewport ) );
 			}
 		}
@@ -995,7 +995,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="h"></param>
 		public void SetViewport ( RenderTargetSurface surface )
 		{
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				SetViewport( 0, 0, surface.Width, surface.Height );
 			}
 		}
@@ -1016,7 +1016,7 @@ namespace Fusion.Drivers.Graphics {
 				throw new GraphicsException("Could not bind RW buffer at register " + register.ToString() + " (max 8)");
 			}
 
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				DeviceContext.ComputeShader.SetUnorderedAccessView( register, buffer==null?null:buffer.UAV, initialCount ); 
 			}
 		}
@@ -1037,7 +1037,7 @@ namespace Fusion.Drivers.Graphics {
 				throw new GraphicsException("Could not bind RW buffer at register " + register.ToString() + " (max 8)");
 			}
 
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				DeviceContext.ComputeShader.SetUnorderedAccessView( register, buffer==null?null:buffer.UAV, initialCount ); 
 			}
 		}
@@ -1058,7 +1058,7 @@ namespace Fusion.Drivers.Graphics {
 				throw new GraphicsException("Could not bind RW buffer at register " + register.ToString() + " (max 8)");
 			}
 
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				DeviceContext.OutputMerger.SetUnorderedAccessView ( register, buffer==null?null:buffer.UAV, initialCount ); 
 			}
 		}
@@ -1079,7 +1079,7 @@ namespace Fusion.Drivers.Graphics {
 				throw new GraphicsException("Could not bind RW texture at register " + register.ToString() + " (max 8)");
 			}
 
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				DeviceContext.ComputeShader.SetUnorderedAccessView( register, surface==null?null:surface.UAV, -1 ); 
 			}
 		}
@@ -1099,7 +1099,7 @@ namespace Fusion.Drivers.Graphics {
 				throw new GraphicsException("Could not bind RW texture at register " + register.ToString() + " (max 8)");
 			}
 
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				DeviceContext.ComputeShader.SetUnorderedAccessView( register, volume?.Uav, -1 ); 
 			}
 		}
@@ -1120,7 +1120,7 @@ namespace Fusion.Drivers.Graphics {
 				throw new GraphicsException("Could not bind RW texture at register " + register.ToString() + " (max 8)");
 			}
 
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				DeviceContext.OutputMerger.SetUnorderedAccessView ( register, surface==null?null:surface.UAV, -1 ); 
 			}
 		}
@@ -1138,7 +1138,7 @@ namespace Fusion.Drivers.Graphics {
 				throw new GraphicsException("Could not bind RW texture at register " + register.ToString() + " (max 8)");
 			}
 
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				DeviceContext.OutputMerger.SetUnorderedAccessView ( register, tex3D==null?null:tex3D.Uav, -1 ); 
 			}
 		}
@@ -1156,7 +1156,7 @@ namespace Fusion.Drivers.Graphics {
 				throw new GraphicsException("Could not bind RW texture at register " + register.ToString() + " (max 8)");
 			}
 
-			lock (deviceContext) {
+			if (true) { // lock (deviceContext) {
 				DeviceContext.ComputeShader.SetUnorderedAccessView ( register, volumeTexture==null?null:volumeTexture.UAV, -1 ); 
 			}
 		}

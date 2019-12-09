@@ -20,7 +20,7 @@ using Fusion.Core.Shell;
 
 namespace IronStar.Core {
 
-	public abstract class EntityFactory : JsonObject {
+	public abstract class EntityFactory : JsonContent {
 
 		public abstract Entity Spawn ( uint id, short clsid, GameWorld world );
 

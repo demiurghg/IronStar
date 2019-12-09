@@ -176,6 +176,7 @@
     <Compile Include="Core\FpsCounter.cs" />
     <Compile Include="Core\GameComponentCollectionEventArgs.cs" />
     <Compile Include="Core\IExitable.cs" />
+    <Compile Include="Core\JsonLoader.cs" />
     <Compile Include="Core\Mathematics\Byte3.cs" />
     <Compile Include="Core\Mathematics\HSVColor.cs" />
     <Compile Include="Core\Mathematics\Range.cs" />

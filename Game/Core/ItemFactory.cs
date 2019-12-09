@@ -9,7 +9,7 @@ using Fusion.Core;
 
 namespace IronStar.Core {
 
-	public abstract class ItemFactory : JsonObject {
+	public abstract class ItemFactory : JsonContent {
 
 		public string NiceName { get; set; } = "#UNNAMED_ITEM";
 

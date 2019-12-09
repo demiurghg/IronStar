@@ -8,12 +8,12 @@ using Fusion.Core;
 using Fusion.Core.Content;
 using Fusion.Core.Extensions;
 
-namespace IronStar {
+namespace Fusion.Core {
 
-	public class JsonObject {
+	public class JsonContent {
 	}
 
-	[ContentLoader( typeof( JsonObject ) )]
+	[ContentLoader(typeof(JsonContent))]
 	public sealed class JsonLoader : ContentLoader {
 
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )

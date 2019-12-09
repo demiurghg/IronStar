@@ -15,7 +15,7 @@ using IronStar.Core;
 
 namespace IronStar.SFX {
 
-	public abstract class AnimatorFactory : JsonObject {
+	public abstract class AnimatorFactory : JsonContent {
 
 		public abstract Animator Create ( GameWorld world, Entity entity, ModelInstance model );
 	}

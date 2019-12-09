@@ -14,7 +14,7 @@ namespace IronStar.Core {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class Item : JsonObject {
+	public class Item : JsonContent {
 		
 		public readonly uint ID;
 

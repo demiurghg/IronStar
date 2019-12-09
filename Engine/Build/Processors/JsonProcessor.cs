@@ -28,10 +28,11 @@ namespace Fusion.Build.Processors {
 			{
 				using ( var streamReader = new StreamReader( sourceStream ) ) 
 				{
-					var inputText = streamReader.ReadToEnd();
-					var jsonObj = JsonConvert.DeserializeObject(inputText, settings);
+					var inputText	= streamReader.ReadToEnd();
+					var jsonObj		= JsonConvert.DeserializeObject(inputText, settings);
+					var targetType	= jsonObj.GetType();
 
-					using ( var targetStream = assetFile.OpenTargetStream(jsonObj.GetType()) ) 
+					using ( var targetStream = assetFile.OpenTargetStream(targetType) ) 
 					{
 						settings.Formatting	=	Formatting.None;
 						var outputText		= JsonConvert.SerializeObject( jsonObj, settings );

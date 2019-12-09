@@ -123,7 +123,7 @@ namespace Fusion.Core.Content {
 
 
 		/// <summary>
-		/// Gets the fully qualified type name
+		/// Gets the fully qualified type name of content
 		/// </summary>
 		public Type ContentType {
 			get; private set;

@@ -96,7 +96,6 @@
     <Compile Include="Core\ItemFactory.cs" />
     <Compile Include="Items\Weapon.cs" />
     <Compile Include="Items\WeaponFactory.cs" />
-    <Compile Include="JsonLoader.cs" />
     <Compile Include="Mapping\Map.Recast2.cs" />
     <Compile Include="Mapping\MapReverb.cs" />
     <Compile Include="Mapping\MapSound.cs" />

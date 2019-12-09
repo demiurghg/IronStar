@@ -233,13 +233,23 @@ namespace Fusion.Core.Content {
 		/// <returns></returns>
 		ContentLoader GetLoader( Type type )
 		{
-			// try get loader that absolutly meets desired type
+			//	attempt to find content loader by its type :
+			//if (type.IsSubclassOf( typeof(ContentLoader)) {
+			//	foreach ( var loader in loaders ) {
+			//		if (loader.GetType()==type) {
+			//			return loader;
+			//		}
+			//	}
+			//}
+
+			// try get loader that absolutly meets desired type :
 			foreach ( var loader in loaders ) {
 				if (loader.TargetType==type) {
 					return loader;
 				}
 			}
 
+			//	try to get subclass loader :
 			foreach ( var loader in loaders ) {
 				if (type.IsSubclassOf( loader.TargetType ) ) {
 					return loader;
@@ -260,37 +270,22 @@ namespace Fusion.Core.Content {
 		/// <returns></returns>
 		public T Load<T> ( string assetPath )
 		{
-			if ( string.IsNullOrWhiteSpace(assetPath) ) {
+			if ( string.IsNullOrWhiteSpace(assetPath) ) 
+			{
 				throw new ArgumentException("Asset path can not be null, empty or whitespace.");
 			}
 
-			Item item;
+			var item = new Item();
 
 			//
-			//	search for already loaded object :
+			//	search for already loaded object, otherwice continue loading in non-blocking mode.
 			//
-			lock (lockObject) {
-				//	try to find object in dictionary :
-				if ( content.TryGetValue( assetPath, out item ) ) {
-				
-					if (item.Object is T) {
-
-						var time = File.GetLastWriteTime( GetRealAssetFileName( assetPath ) );
-
-						if ( time > item.LoadTime ) {
-							content.Remove(	assetPath );
-						} else {
-							return (T)item.Object;
-						}
-				
-					} else {
-						throw new ContentException( string.Format("'{0}' is not '{1}'", assetPath, typeof(T) ) );
-					}
+			lock (lockObject) 
+			{
+				if (TryGetExisting<T>(assetPath, ref item)) {
+					return (T)item.Object;
 				}
 			}
-
-
-			ContentLoader loader	=	GetLoader( typeof(T) );
 
 
 			//
@@ -299,12 +294,16 @@ namespace Fusion.Core.Content {
 			Log.Message("Loading : {0}", assetPath );
 			using (var stream = OpenStream(assetPath) ) 
 			{
-				if (!typeof(T).IsAssignableFrom( stream.ContentType )) {
+				var loader	=	GetLoader( stream.ContentType );
+
+				if (!typeof(T).IsAssignableFrom( stream.ContentType )) 
+				{
 					//throw new ContentException(string.Format("Requested type {0} is not assignable from {1} (content)", typeof(T), stream.ContentType));
-					Log.Warning("Requested type {0} is not assignable from {1} (content)", typeof(T), stream.ContentType);
+					Log.Error("Requested type {0} is not assignable from {1} (content)", typeof(T), stream.ContentType);
 				}
 
-				item = new Item() {
+				item = new Item() 
+				{
 					Object		= loader.Load( this, stream, typeof(T), assetPath, GetAssetStorage(assetPath) ),
 					LoadTime	= File.GetLastWriteTime( GetRealAssetFileName( assetPath ) ),
 				};
@@ -314,25 +313,62 @@ namespace Fusion.Core.Content {
 			//
 			//	check for content again and add it.
 			//
-			lock (lockObject) {
-				Item anotherItem;
+			lock (lockObject) 
+			{
+				Item anotherItem = new Item();
 
-				//	put object to dispose list :
-				toDispose.Add( item.Object );
-
-				//	content item already loaded in another thread.
-				if ( content.TryGetValue( assetPath, out anotherItem ) ) {
-					if (item.Object is IDisposable) {
-						(item.Object as IDisposable).Dispose();
-					}
-
+				if ( TryGetExisting<T>( assetPath, ref anotherItem ) ) 
+				{
+					(item.Object as IDisposable)?.Dispose();
 					return (T)anotherItem.Object;
-
-				} else {
+				}
+				else
+				{
+					//	put object to content- and dispose lists :
+					toDispose.Add( item.Object );
 					content.Add( assetPath, item );
 					return (T)item.Object;
 				}
 			}
+		}
+
+
+
+		/// <summary>
+		/// Gets existing object
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="assetPath"></param>
+		/// <returns></returns>
+		bool TryGetExisting<T>( string assetPath, ref Item item )
+		{
+			//	try to find object in dictionary :
+			if ( content.TryGetValue( assetPath, out item ) ) {
+				
+				if (item.Object is T) 
+				{
+					var time = File.GetLastWriteTime( GetRealAssetFileName( assetPath ) );
+
+					if ( time > item.LoadTime ) 
+					{
+						//	content file was updates since last load
+						//	need to load it again, so remove it for a while
+						//	indeed, old object will be kept until Unload() called
+						content.Remove(	assetPath );
+						return false;
+					} 
+					else 
+					{
+						return true;
+					}
+				} 
+				else 
+				{
+					throw new ContentException( string.Format("'{0}' is not '{1}'", assetPath, typeof(T) ) );
+				}
+			}
+
+			return false;
 		}
 
 

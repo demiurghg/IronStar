@@ -18,7 +18,7 @@ using Fusion.Engine.Graphics;
 using Fusion.Core.Shell;
 
 namespace IronStar.SFX {
-	public class ModelFactory : JsonObject, IPrecachable {
+	public class ModelFactory : JsonContent, IPrecachable {
 
 		[AECategory( "Appearance" )]
 		[Description( "Path to FBX scene" )]

@@ -60,6 +60,6 @@ scenes/weapon2/*.fbx /geom /report /anim  /retarget:scenes\weapon2\weapon_common
 [Copy]
 *.ini
 *.bank
-*.irrmap
-*.irrvol
-*.irrcache
+*.irrmap /class:"Fusion.Engine.Graphics.Lights.IrradianceMap"
+*.irrvol /class:"Fusion.Engine.Graphics.Lights.IrradianceVolume"
+*.irrcache /class:"Fusion.Engine.Graphics.Lights.IrradianceCache"

@@ -274,6 +274,7 @@ namespace Fusion.Build {
 			//
 			//	Build everything :
 			//
+			Log.Message("Building assets...");
 			foreach ( var assetSource in assetSources ) {
 				
 				var proc = assetSource.CreateProcessor();
@@ -285,6 +286,7 @@ namespace Fusion.Build {
 			//
 			//	Build megatexture
 			//
+			Log.Message("Building megatexture...");
 			BuildMegatexture( ref result );
 
 

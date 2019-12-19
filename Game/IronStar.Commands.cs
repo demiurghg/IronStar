@@ -151,7 +151,8 @@ namespace IronStar {
 
 			public override object Execute ()
 			{
-				Builder.SafeBuild( Force, Clean, new string[0] );
+				throw new NotImplementedException();
+				// >>>>>>>>>> Builder.SafeBuild( Force, Clean, new string[0] );
 				game.Reload();	
 				return null;		
 			}
@@ -162,7 +163,8 @@ namespace IronStar {
 		class ContentFileCommand : CommandNoHistory {
 			public override object Execute()
 			{
-				return Builder.Options.ContentIniFile;
+				throw new NotImplementedException();
+				//>>>>>>>>return Builder.Options.ContentIniFile;
 			}
 		}
 
@@ -181,7 +183,8 @@ namespace IronStar {
 
 			public override object Execute() 
 			{
-				Builder.OpenReport( ReportFile );
+				throw new NotImplementedException();
+				//>>>>>>>>Builder.OpenReport( ReportFile );
 				return null;
 			}
 

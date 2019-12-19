@@ -84,7 +84,8 @@ namespace IronStar.Editor {
 
 			SetupWorkspace();
 
-			fullPath	=	Builder.GetFullPath(@"maps\" + map + Ext);
+			throw new NotImplementedException();
+			fullPath	=	null;//Builder.GetFullPath(@"maps\" + map + Ext);
 		}
 
 
@@ -141,7 +142,8 @@ namespace IronStar.Editor {
 		/// </summary>
 		public void SaveMapAs ( string newMapName )
 		{
-			fullPath	=	Builder.GetFullPath(@"maps\" + newMapName + Ext);
+			throw new NotImplementedException();
+			fullPath	=	null;//>>>>>>>Builder.GetFullPath(@"maps\" + newMapName + Ext);
 			mapName		=	newMapName;
 
 			Log.Message("Saving map: {0}", fullPath);
@@ -183,7 +185,8 @@ namespace IronStar.Editor {
 
 				rs.RenderWorld.ClearWorld();
 
-				Builder.SafeBuild(false, null, null);
+				throw new NotImplementedException();
+				//>>>>>>>Builder.SafeBuild(false, null, null);
 			}
 		}
 

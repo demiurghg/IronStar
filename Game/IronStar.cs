@@ -122,7 +122,8 @@ namespace IronStar {
 		private void Keyboard_KeyDown( object sender, KeyEventArgs e )
 		{
 			if (e.Key==Keys.F5) {
-				Builder.SafeBuild(false, null, null);
+				throw new NotImplementedException();
+				// >>>>>>> Builder.SafeBuild(false, null, null);
 				Reload();	
 			}
 

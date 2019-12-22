@@ -24,6 +24,7 @@ using Fusion.Core.Mathematics;
 using Fusion.Scripting;
 using Fusion.Build.Processors;
 using Fusion.Engine.Audio;
+using Fusion.Engine.Graphics.Ubershaders;
 
 namespace IronStar {
 
@@ -51,7 +52,7 @@ namespace IronStar {
 			//
 			//	Run game :
 			//
-			using (var game = new IronStar()) {
+			using (var game = new IronStar(builder)) {
 
 				//	enable and disable debug direct3d device :
 				game.RenderSystem.UseDebugDevice = false;
@@ -79,14 +80,15 @@ namespace IronStar {
 			var uiTextureProcessor      =   new TextureProcessor();
 			var colorMapProcessor       =   new TextureProcessor();
 			var normalMapProcessor      =   new TextureProcessor();
-			var staticModelProcessor    =   new SceneProcessor( true, false, 0, true, "" );
+			var staticModelProcessor    =   new SceneProcessor( true,  true, 0, true, "" );
 			var animationProcessor      =   new SceneProcessor( false, true, 0, true, "" );
-			var weaponModelProcessor    =   new SceneProcessor( true,  true, 0, true, @"scenes\weapon\baseAnimation.fbx" );
+			var weaponModelProcessor    =   new SceneProcessor( true,  true, 0, true, @"scenes\weapon2\weapon_common.fbx" );
 			var jsonClassProcessor      =   new JsonProcessor();
 			var textProcessor           =   new TextProcessor();
 			var luaProcessor            =   new LuaProcessor();
 			var fontProcessor           =   new FontProcessor();
 			var textureAtlasProcessor   =   new TextureAtlasProcessor();
+			var ubershaderProcessor		=	new UbershaderProcessor();
        
 			var copyFmodBank            =   new CopyProcessor(typeof(SoundBank));
        
@@ -113,22 +115,28 @@ namespace IronStar {
 				.Ignore("_kitbash/*"    )
 				.Ignore("*.wav"         )
 				.Ignore("*.ogg"         )
+				.Ignore("*.auto.hlsl"         )
            
 				.ToolsDirectory(@"..\..\..\..\Engine\SDKs")
 				.ToolsDirectory(@"..\..\..\..\Engine\Native\FScene\bin\x64\Release")
 				.ToolsDirectory(@"..\..\..\..\Engine\SDKs\KopiLua\Luac\bin\x64\Release")
 
 				.InputDirectory(@"..\..\..\..\Engine\Shaders")
+
+				.Generate( new UbershaderGenerator() )
+
+				.Process("*.hlsl"               , ubershaderProcessor )
            
 				.Process("*.tga"                , uiTextureProcessor )
 				.Process("*.png"                , uiTextureProcessor )
 				.Process("*.jpg"                , uiTextureProcessor )
            
+				.Process("*.bmfc"               , fontProcessor )
 				.Process("*.atlas"              , textureAtlasProcessor )
            
 				.Process("*.fbx"                , staticModelProcessor )
 				.Process("*anim_*.fbx"          , animationProcessor )
-				.Process("scenes/weapon2/*.fbx" , staticModelProcessor )
+				.Process("scenes/weapon2/*.fbx" , weaponModelProcessor )
            
 				.Process("*.lua"                , luaProcessor )
            

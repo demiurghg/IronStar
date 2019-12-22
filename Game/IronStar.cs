@@ -27,10 +27,13 @@ namespace IronStar {
 	partial class IronStar : Game
 	{
 		const string ConfigFile = "Config.ini";
+		readonly Builder2 builder;
 
 		[MethodImpl(MethodImplOptions.NoOptimization)]
-		public IronStar() : base("IronStar", "IronStar")
+		public IronStar(Builder2 builder) : base("IronStar", "IronStar")
 		{
+			this.builder	=	builder;
+
 			this.Exiting += IronStarGame_Exiting;
 			this.Components.ComponentAdded += Components_ComponentAdded;
 			this.Components.ComponentRemoved += Components_ComponentRemoved;
@@ -56,7 +59,7 @@ namespace IronStar {
 			Invoker.RegisterCommand("killServer",		() => new KillServerCommand(this) );
 			Invoker.RegisterCommand("connect",			() => new ConnectCommand(this) );
 			Invoker.RegisterCommand("disconnect",		() => new DisconnectCommand(this) );
-			Invoker.RegisterCommand("contentBuild",		() => new ContentBuildCommand(this) );
+			Invoker.RegisterCommand("contentBuild",		() => new ContentBuildCommand(this, builder) );
 			Invoker.RegisterCommand("contentFile",		() => new ContentFileCommand() );
 			Invoker.RegisterCommand("contentReport",	() => new ContentReportCommand() );
 		}
@@ -122,8 +125,7 @@ namespace IronStar {
 		private void Keyboard_KeyDown( object sender, KeyEventArgs e )
 		{
 			if (e.Key==Keys.F5) {
-				throw new NotImplementedException();
-				// >>>>>>> Builder.SafeBuild(false, null, null);
+				builder.Build();
 				Reload();	
 			}
 

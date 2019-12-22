@@ -96,6 +96,9 @@ namespace IronStar {
        
 				.InputDirectory(@"..\..\..\..\Content")
 				.TempDirectory (@"..\..\..\..\Temp")
+
+				.Generate( new UbershaderGenerator() )
+				.Generate( new VTGenerator(@"..\..\..\..\Content") )
        
 				.Ignore("*.ma"          )
 				.Ignore("*.psd"         )
@@ -123,8 +126,6 @@ namespace IronStar {
 
 				.InputDirectory(@"..\..\..\..\Engine\Shaders")
 
-				.Generate( new UbershaderGenerator() )
-
 				.Process("*.hlsl"               , ubershaderProcessor )
            
 				.Process("*.tga"                , uiTextureProcessor )
@@ -141,7 +142,7 @@ namespace IronStar {
 				.Process("*.lua"                , luaProcessor )
            
 				.Process("*.json"               , jsonClassProcessor )
-           
+
 				.Copy<SoundBank>("*.bank")
            
 				//.Copy<IrradianceMap>("*.irrmap"  )

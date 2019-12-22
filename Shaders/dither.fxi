@@ -1,9 +1,0 @@
-
-
-
-static const float dither[4][4] = {{0,8,2,10},{12,4,14,6},{3,11,1,9},{15,7,13,5}};
-
-float BayerDitherAlpha4x4 ( float a, int2 xy )
-{
-	return a + ((dither[xy.x%4][xy.y%4]/16.0f) * 2 - 1);
-}

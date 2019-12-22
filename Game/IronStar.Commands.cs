@@ -133,8 +133,10 @@ namespace IronStar {
 
 
 
-		class ContentBuildCommand : CommandNoHistory {
+		class ContentBuildCommand : CommandNoHistory 
+		{
 			Game	 game;
+			Builder2 builder;
 			
 			[CommandLineParser.Option]
 			[CommandLineParser.Name("force")]
@@ -144,15 +146,28 @@ namespace IronStar {
 			[CommandLineParser.Name("clean")]
 			public string Clean { get; set; }
 
-			public ContentBuildCommand ( Game game )
+			public ContentBuildCommand ( Game game, Builder2 builder )
 			{
-				this.game	=	game;
+				this.game		=	game;
+				this.builder	=	builder;
 			}
 
 			public override object Execute ()
 			{
-				Builder.SafeBuild( Force, Clean, new string[0] );
+				if (Force) 
+				{
+					builder.RebuildAll();
+				}
+				else if (!string.IsNullOrWhiteSpace(Clean)) 
+				{
+					builder.Rebuild(Clean);
+				}
+				else 
+				{
+					builder.Build();
+				}
 				game.Reload();	
+
 				return null;		
 			}
 		}
@@ -162,7 +177,8 @@ namespace IronStar {
 		class ContentFileCommand : CommandNoHistory {
 			public override object Execute()
 			{
-				return Builder.Options.ContentIniFile;
+				throw new NotImplementedException();
+				//>>>>>>>>return Builder.Options.ContentIniFile;
 			}
 		}
 
@@ -181,7 +197,8 @@ namespace IronStar {
 
 			public override object Execute() 
 			{
-				Builder.OpenReport( ReportFile );
+				throw new NotImplementedException();
+				//>>>>>>>>Builder.OpenReport( ReportFile );
 				return null;
 			}
 

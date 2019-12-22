@@ -33,3 +33,6 @@ function func(dtime)
 end
 
 libwpn.generic_weapon_animator( model, entity, config, func )
+
+
+

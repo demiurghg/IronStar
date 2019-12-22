@@ -205,7 +205,8 @@ namespace IronStar.Editor.Controls {
 		void SaveTargetObjectAndBuild ()
 		{
 			SaveTargetObject();
-			Builder.SafeBuild();
+			throw new NotImplementedException();
+			// Builder.SafeBuild(); <<<<<<<<<<<
 			Game.Reload();
 		}
 

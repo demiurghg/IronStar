@@ -2,10 +2,10 @@
     xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
     <ItemGroup>
-        <FModFiles 			Include="$(ProjectDir)..\SDKs\FMOD\api\lowlevel\lib\*.dll;"/>
-        <FModStudioFiles   	Include="$(ProjectDir)..\SDKs\FMOD\api\studio\lib\*.dll;"/>
-        <FModPlugIns		Include="$(ProjectDir)..\SDKs\FMOD\plugins\fmod\*.dll;"/>
-        <EmbreeFiles 		Include="$(ProjectDir)..\SDKs\Embree\lib\*.dll;"/>
+        <FModFiles 			Include="$(ProjectDir)..\Engine\SDKs\FMOD\api\lowlevel\lib\*.dll;"/>
+        <FModStudioFiles   	Include="$(ProjectDir)..\Engine\SDKs\FMOD\api\studio\lib\*.dll;"/>
+        <FModPlugIns		Include="$(ProjectDir)..\Engine\SDKs\FMOD\plugins\fmod\*.dll;"/>
+        <EmbreeFiles 		Include="$(ProjectDir)..\Engine\SDKs\Embree\lib\*.dll;"/>
     </ItemGroup>
 
 	<Target Name="AfterBuild">

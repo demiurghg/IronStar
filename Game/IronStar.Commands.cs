@@ -136,7 +136,7 @@ namespace IronStar {
 		class ContentBuildCommand : CommandNoHistory 
 		{
 			Game	 game;
-			Builder2 builder;
+			Builder builder;
 			
 			[CommandLineParser.Option]
 			[CommandLineParser.Name("force")]
@@ -146,7 +146,7 @@ namespace IronStar {
 			[CommandLineParser.Name("clean")]
 			public string Clean { get; set; }
 
-			public ContentBuildCommand ( Game game, Builder2 builder )
+			public ContentBuildCommand ( Game game, Builder builder )
 			{
 				this.game		=	game;
 				this.builder	=	builder;

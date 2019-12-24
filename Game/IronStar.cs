@@ -27,10 +27,10 @@ namespace IronStar {
 	partial class IronStar : Game
 	{
 		const string ConfigFile = "Config.ini";
-		readonly Builder2 builder;
+		readonly Builder builder;
 
 		[MethodImpl(MethodImplOptions.NoOptimization)]
-		public IronStar(Builder2 builder) : base("IronStar", "IronStar")
+		public IronStar(Builder builder) : base("IronStar", "IronStar")
 		{
 			this.builder	=	builder;
 
@@ -39,6 +39,8 @@ namespace IronStar {
 			this.Components.ComponentRemoved += Components_ComponentRemoved;
 
 			this.Config.LoadSettings(ConfigFile);
+
+			this.Services.AddService( builder );
 
 			this.AddServiceAndComponent( 100, new RenderSystem(this, true) );
 			this.AddServiceAndComponent( 200, new SoundSystem(this) );

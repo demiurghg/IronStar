@@ -102,8 +102,8 @@ namespace IronStar.UI.Controls.Dialogs {
 
 		bool AcceptMapName( string name )
 		{
-			throw new NotImplementedException();
-			var mapDir	=	(string)null;//>>>>>>>>>>Path.Combine( Builder.FullInputDirectory, "maps" );
+			var builder = Game.Services.GetService<Builder>();
+			var mapDir	=	Path.Combine( builder.GetBaseInputDirectory(), "maps" );
 
 			if ( string.IsNullOrWhiteSpace(name) ) {
 				MessageBox.ShowError(this, "New map", "Map name could not be empty", null);
@@ -127,8 +127,8 @@ namespace IronStar.UI.Controls.Dialogs {
 			Random rand =	new Random();
 
 			var content			=	Frames.Game.Content;
-			throw new NotImplementedException();
-			var mapDir			=	(string)null;//>>>>>>>>Path.Combine( Builder.FullInputDirectory, "maps" );
+			var builder			=	Game.Services.GetService<Builder>();
+			var mapDir			=	Path.Combine( builder.GetBaseInputDirectory(), "maps" );
 			var defaultPreveiw	=	content.Load<DiscTexture>( @"maps\thumbnails\default" );
 
 

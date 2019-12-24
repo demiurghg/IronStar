@@ -75,7 +75,7 @@ namespace IronStar {
 		}
 
 
-		static Builder2 CreateBuilder()
+		static Builder CreateBuilder()
 		{
 			var uiTextureProcessor      =   new TextureProcessor();
 			var colorMapProcessor       =   new TextureProcessor();
@@ -92,7 +92,7 @@ namespace IronStar {
        
 			var copyFmodBank            =   new CopyProcessor(typeof(SoundBank));
        
-			var builder =   new Builder2("Content")
+			var builder =   new Builder("Content")
        
 				.InputDirectory(@"..\..\..\..\Content")
 				.TempDirectory (@"..\..\..\..\Temp")

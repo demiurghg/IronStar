@@ -84,8 +84,7 @@ namespace IronStar.Editor {
 
 			SetupWorkspace();
 
-			throw new NotImplementedException();
-			fullPath	=	null;//Builder.GetFullPath(@"maps\" + map + Ext);
+			fullPath	=	Path.Combine( Game.GetService<Builder>().GetBaseInputDirectory(), map + Ext );
 		}
 
 

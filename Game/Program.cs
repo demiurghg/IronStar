@@ -89,17 +89,17 @@ namespace IronStar {
 			var fontProcessor           =   new FontProcessor();
 			var textureAtlasProcessor   =   new TextureAtlasProcessor();
 			var ubershaderProcessor		=	new UbershaderProcessor();
-       
+
 			var copyFmodBank            =   new CopyProcessor(typeof(SoundBank));
-       
+
 			var builder =   new Builder("Content")
-       
+
 				.InputDirectory(@"..\..\..\..\Content")
 				.TempDirectory (@"..\..\..\..\Temp")
 
 				.Generate( new UbershaderGenerator() )
 				.Generate( new VTGenerator(@"..\..\..\..\Content") )
-       
+
 				.Ignore("*.ma"          )
 				.Ignore("*.psd"         )
 				.Ignore("*_highPoly.fbx")
@@ -119,7 +119,7 @@ namespace IronStar {
 				.Ignore("*.wav"         )
 				.Ignore("*.ogg"         )
 				.Ignore("*.auto.hlsl"         )
-           
+
 				.ToolsDirectory(@"..\..\..\..\Engine\SDKs")
 				.ToolsDirectory(@"..\..\..\..\Engine\Native\FScene\bin\x64\Release")
 				.ToolsDirectory(@"..\..\..\..\Engine\SDKs\KopiLua\Luac\bin\x64\Release")
@@ -127,24 +127,24 @@ namespace IronStar {
 				.InputDirectory(@"..\..\..\..\Engine\Shaders")
 
 				.Process("*.hlsl"               , ubershaderProcessor )
-           
+
 				.Process("*.tga"                , uiTextureProcessor )
 				.Process("*.png"                , uiTextureProcessor )
 				.Process("*.jpg"                , uiTextureProcessor )
-           
+
 				.Process("*.bmfc"               , fontProcessor )
 				.Process("*.atlas"              , textureAtlasProcessor )
-           
+
 				.Process("*.fbx"                , staticModelProcessor )
 				.Process("*anim_*.fbx"          , animationProcessor )
 				.Process("scenes/weapon2/*.fbx" , weaponModelProcessor )
-           
+
 				.Process("*.lua"                , luaProcessor )
-           
+
 				.Process("*.json"               , jsonClassProcessor )
 
 				.Copy<SoundBank>("*.bank")
-           
+
 				//.Copy<IrradianceMap>("*.irrmap"  )
 				//.Copy<IrradianceMap>("*.irrvol"  )
 				//.Copy<IrradianceMap>("*.irrcache")

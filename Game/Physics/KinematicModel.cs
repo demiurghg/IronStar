@@ -23,6 +23,7 @@ using BEPUphysics.EntityStateManagement;
 using Fusion;
 using BEPUphysics.Paths.PathFollowing;
 using BEPUphysics.CollisionShapes.ConvexShapes;
+using Fusion.Engine.Graphics.Scenes;
 
 namespace IronStar.Physics {
 	public class KinematicModel {

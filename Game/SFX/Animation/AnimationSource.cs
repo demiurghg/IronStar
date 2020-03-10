@@ -7,6 +7,7 @@ using Fusion;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Graphics;
+using Fusion.Engine.Graphics.Scenes;
 
 namespace IronStar.SFX {
 

@@ -20,6 +20,7 @@ using IronStar.Entities;
 using IronStar.Entities.Players;
 using IronStar.SFX;
 using Fusion.Core.Extensions;
+using Fusion.Engine.Graphics.Scenes;
 
 namespace IronStar.Views {
 	public class GameCamera {

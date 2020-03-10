@@ -7,6 +7,7 @@ using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
 using Fusion.Engine.Graphics;
+using Fusion.Engine.Graphics.Scenes;
 using IronStar.Core;
 using Fusion;
 

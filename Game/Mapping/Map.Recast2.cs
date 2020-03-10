@@ -13,6 +13,7 @@ using IronStar.Core;
 using Fusion.Core;
 using Fusion.Core.Extensions;
 using Fusion.Engine.Graphics;
+using Fusion.Engine.Graphics.Scenes;
 using BEPUphysics.BroadPhaseEntries;
 using Fusion.Core.Mathematics;
 using Fusion;

@@ -11,6 +11,7 @@ using IronStar.Core;
 using Fusion.Engine.Common;
 using IronStar.SFX;
 using Fusion.Engine.Graphics;
+using Fusion.Engine.Graphics.Scenes;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Graphics;
+using Fusion.Engine.Graphics.Scenes;
 
 namespace IronStar.SFX {
 	public class AnimationClip {

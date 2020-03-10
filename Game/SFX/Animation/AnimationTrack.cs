@@ -8,6 +8,7 @@ using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Graphics;
 using Fusion.Scripting;
+using Fusion.Engine.Graphics.Scenes;
 using KopiLua;
 
 namespace IronStar.SFX {

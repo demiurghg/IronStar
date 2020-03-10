@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fusion.Engine.Graphics;
+using Fusion.Engine.Graphics.Scenes;
 
 namespace IronStar.SFX.Animation {
 	public class AnimationTakeFX {

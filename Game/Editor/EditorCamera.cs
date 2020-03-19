@@ -106,8 +106,8 @@ namespace IronStar.Editor {
 		public bool IsInRectangle ( Vector3 point, Rectangle rect )
 		{
 			var vp		=	rs.DisplayBounds;
-			var view	=	rs.RenderWorld.Camera.GetViewMatrix(StereoEye.Mono);
-			var proj	=	rs.RenderWorld.Camera.GetProjectionMatrix(StereoEye.Mono);
+			var view	=	rs.RenderWorld.Camera.ViewMatrix;
+			var proj	=	rs.RenderWorld.Camera.ProjectionMatrix;
 			var vPoint	=	Vector3.TransformCoordinate( point, GetViewMatrix() );
 
 			if (vPoint.Z>0) {
@@ -142,9 +142,10 @@ namespace IronStar.Editor {
 
 			var aspect	=	vp.Width / (float)vp.Height;
 
-			rs.RenderWorld.Camera.SetupCameraFov( view, fovr, 0.125f, 4096, 1, 0, aspect );
+			rs.RenderWorld.Camera.SetView( view );
+			rs.RenderWorld.Camera.SetPerspectiveFov( fovr, 0.125f, 4096, aspect );
 
-			var camMatrix	=	rs.RenderWorld.Camera.GetCameraMatrix(StereoEye.Mono);
+			var camMatrix	=	rs.RenderWorld.Camera.CameraMatrix;
 
 			ss.SetListener( camMatrix.TranslationVector, camMatrix.Forward, camMatrix.Up, Vector3.Zero );
 		}

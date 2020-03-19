@@ -163,9 +163,9 @@ namespace IronStar.SFX {
 
 			var worldMatrix = Matrix.RotationQuaternion( q ) * Matrix.Translation( p );
 
-			if ( fpvEnabled ) {
-				var playerCameraMatrix	=	modelManager.rw.Camera.GetCameraMatrix(Fusion.Drivers.Graphics.StereoEye.Mono);
-				
+			if ( fpvEnabled ) 
+			{
+				var playerCameraMatrix	=	modelManager.rw.Camera.CameraMatrix;
 				worldMatrix				= 	playerCameraMatrix;
 			}
 

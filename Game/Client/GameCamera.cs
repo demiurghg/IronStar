@@ -143,12 +143,14 @@ namespace IronStar.Views {
 
 			var cameraPos	=	camMatrix.TranslationVector;
 
-			var cameraFwd	=	cameraPos + camMatrix.Forward;
+			var cameraFwd	=	camMatrix.Forward;
 			var cameraUp	=	camMatrix.Up;
 			#endif
 
-			rw.Camera		.SetupCameraFov( cameraPos, cameraFwd, cameraUp, MathUtil.Rad(currentFov),  0.125f/2.0f, 6144, 2, 0.05f, aspect );
-			rw.WeaponCamera	.SetupCameraFov( cameraPos, cameraFwd, cameraUp, MathUtil.Rad(75),			0.125f/2.0f, 6144, 2, 0.05f, aspect );
+			rw.Camera		.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
+			rw.WeaponCamera	.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
+			rw.Camera		.SetPerspectiveFov( MathUtil.Rad(currentFov),  0.125f/2.0f, 6144, aspect );
+			rw.WeaponCamera	.SetPerspectiveFov( MathUtil.Rad(75),			0.125f/2.0f, 6144, aspect );
 
 			//
 			//	Set player listener :

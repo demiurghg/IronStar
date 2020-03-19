@@ -35,8 +35,6 @@ namespace IronStar.Entities {
 
 		static Random rand = new Random();
 
-		public int Health;
-
 		readonly DynamicBox box;
 
 		readonly bool	explodeOnTrigger;

@@ -17,6 +17,7 @@ using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
 using BEPUphysics.NarrowPhaseSystems.Pairs;
 using BEPUphysics.CollisionRuleManagement;
+using Fusion;
 
 namespace IronStar.Physics {
 	public class PhysicsManager {
@@ -113,9 +114,14 @@ namespace IronStar.Physics {
 			}
 
 			var dt	=	elapsedTime;
-			physSpace.TimeStepSettings.MaximumTimeStepsPerFrame = 6;
+			physSpace.TimeStepSettings.MaximumTimeStepsPerFrame = 5;
 			physSpace.TimeStepSettings.TimeStepDuration = 1.0f/60.0f;
-			physSpace.Update(dt);
+			var steps = physSpace.Update(dt);
+
+			if (steps!=1) 
+			{
+				//Log.Warning("{0} steps of physics simulation", steps);
+			}
 
 			//	update touch events :
 			foreach ( var touchEvent in touchEvents ) {

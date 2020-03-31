@@ -30,6 +30,7 @@ namespace IronStar.Editor {
 	/// </summary>
 	public partial class MapEditor : GameComponent {
 
+		const string Dir = "maps";
 		const string Ext = ".json";
 
 		public static readonly BoundingBox DefaultBox = new BoundingBox( Vector3.One * (-0.25f), Vector3.One * 0.25f );
@@ -84,9 +85,19 @@ namespace IronStar.Editor {
 
 			SetupWorkspace();
 
-			fullPath	=	Path.Combine( Game.GetService<Builder>().GetBaseInputDirectory(), map + Ext );
+			fullPath	=	GetFullMapPath(map);
 		}
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="map"></param>
+		/// <returns></returns>
+		string GetFullMapPath( string map )
+		{
+			return	Path.Combine( Game.GetService<Builder>().GetBaseInputDirectory(), Dir, map + Ext );
+		}
 
 
 		/// <summary>
@@ -141,8 +152,7 @@ namespace IronStar.Editor {
 		/// </summary>
 		public void SaveMapAs ( string newMapName )
 		{
-			throw new NotImplementedException();
-			fullPath	=	null;//>>>>>>>Builder.GetFullPath(@"maps\" + newMapName + Ext);
+			fullPath	=	GetFullMapPath(newMapName);
 			mapName		=	newMapName;
 
 			Log.Message("Saving map: {0}", fullPath);
@@ -184,8 +194,7 @@ namespace IronStar.Editor {
 
 				rs.RenderWorld.ClearWorld();
 
-				throw new NotImplementedException();
-				//>>>>>>>Builder.SafeBuild(false, null, null);
+				Game.GetService<Builder>().Build();
 			}
 		}
 

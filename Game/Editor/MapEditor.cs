@@ -143,6 +143,10 @@ namespace IronStar.Editor {
 			Log.Message("Saving map: {0}", fullPath);
 			File.Delete( fullPath );
 
+			var previewPath = Path.Combine( Path.GetDirectoryName( fullPath ), "thumbnails", Path.GetFileNameWithoutExtension( fullPath ) );
+
+			Game.GetService<RenderSystem>().MakePreviewScreenshot( previewPath );
+
 			Game.GetService<JsonFactory>().ExportJson( File.OpenWrite( fullPath ), map );
 		}
 
@@ -155,10 +159,7 @@ namespace IronStar.Editor {
 			fullPath	=	GetFullMapPath(newMapName);
 			mapName		=	newMapName;
 
-			Log.Message("Saving map: {0}", fullPath);
-			File.Delete( fullPath );
-
-			Game.GetService<JsonFactory>().ExportJson( File.OpenWrite( fullPath ), map );
+			SaveMap();
 		}
 
 
@@ -186,7 +187,7 @@ namespace IronStar.Editor {
 				FeedSelection();
 
 				UnregisterCommands();
-				SaveMap();
+				//SaveMap();
 
 				workspace?.CloseWorkspace();
 

@@ -23,7 +23,7 @@ namespace IronStar.UI.Controls.Dialogs {
 			colorPicker.X	=	x;
 			colorPicker.Y	=	y;
 
-			fp.PushModalFrame( colorPicker );
+			fp.ShowDialog( colorPicker );
 
 			colorPicker.ConstrainFrame(10);
 		}

@@ -88,6 +88,7 @@ namespace IronStar.Editor {
 			}
 
 			FeedSelection();
+			Do();
 		}
 
 
@@ -249,6 +250,7 @@ namespace IronStar.Editor {
 				}
 
 				FeedSelection();
+				Do();
 
 				marqueeSelecting = false;
 			}

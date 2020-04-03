@@ -65,6 +65,10 @@ namespace IronStar.Editor {
 			upperShelf.AddLButton("FCS", @"editor\iconFocus",		()=> FocusSelection() );
 
 			upperShelf.AddLSplitter();
+			upperShelf.AddLButton("UNDO", null,	() => Undo() );
+			upperShelf.AddLButton("REDO", null,	() => Redo() );
+
+			upperShelf.AddLSplitter();
 			upperShelf.AddFatLButton("Palette", null, ()=> workspace.TogglePalette( entityPalette ) );
 			upperShelf.AddFatLButton("Assets", null, ()=> assetExplorer.Visible = !assetExplorer.Visible );
 
@@ -72,7 +76,8 @@ namespace IronStar.Editor {
 			upperShelf.AddFatLButton("Unfreeze\rAll", null, ()=> UnfreezeAll() );
 
 			upperShelf.AddLSplitter();
-			upperShelf.AddLButton("BUILD\rRELOAD", @"editor\iconBuild", ()=> Game.Invoker.ExecuteString("contentBuild") );
+			upperShelf.AddLButton("BUILD\rRELOAD", @"editor\iconBuild",     ()=> Game.Invoker.ExecuteString("contentBuild") );
+			upperShelf.AddLButton("MAKE\rSCRSHT", @"editor\iconScreenshot", ()=> GeneratePreview(true) );
 
 			upperShelf.AddRButton("ENV"				, null						, ()=> workspace.FeedProperties(map.Environment) );
 			upperShelf.AddRButton("SCR"				, null						, ()=> Game.Invoker.ExecuteString("screenshot") );

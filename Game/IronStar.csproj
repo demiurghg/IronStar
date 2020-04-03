@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Editor\MapEditor.History.cs" />
     <Compile Include="SFX\Animators\CameraAnimator.cs" />
     <Compile Include="SinglePlayer\MissionContext.cs" />
     <Compile Include="UI\Controls\Dialogs\TextBoxDialog.cs" />

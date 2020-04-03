@@ -53,7 +53,6 @@ namespace IronStar.Editor {
 			}
 		}
 
-		readonly Stack<MapNode[]> selectionStack = new Stack<MapNode[]>();
 		readonly List<MapNode> selection = new List<MapNode>();
 
 		Map	map = null;
@@ -143,11 +142,23 @@ namespace IronStar.Editor {
 			Log.Message("Saving map: {0}", fullPath);
 			File.Delete( fullPath );
 
-			var previewPath = Path.Combine( Path.GetDirectoryName( fullPath ), "thumbnails", Path.GetFileNameWithoutExtension( fullPath ) );
-
-			Game.GetService<RenderSystem>().MakePreviewScreenshot( previewPath );
+			GeneratePreview(false);
 
 			Game.GetService<JsonFactory>().ExportJson( File.OpenWrite( fullPath ), map );
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void GeneratePreview (bool forceCreate)
+		{
+			var previewPath = Path.Combine( Path.GetDirectoryName( fullPath ), "thumbnails", Path.GetFileNameWithoutExtension( fullPath ) );
+
+			if (!File.Exists(previewPath) || forceCreate) 
+			{
+				Game.GetService<RenderSystem>().MakePreviewScreenshot( previewPath );
+			}
 		}
 
 
@@ -216,21 +227,10 @@ namespace IronStar.Editor {
 		}
 
 
-		public void PushSelection ()
-		{
-			selectionStack.Push( selection.ToArray() );
-		}
-
-
-		public void PopSelection ()
-		{
-			selection.Clear();
-			selection.AddRange( selectionStack.Pop() );
-		}
-
 		public void ClearSelection ()
 		{
 			selection.Clear();
+			Do();
 		}
 
 
@@ -240,6 +240,7 @@ namespace IronStar.Editor {
 			Map.Nodes.Add( newNode );
 			newNode.SpawnNode( World );
 			Select( newNode );
+			Do();
 		}
 
 
@@ -255,6 +256,7 @@ namespace IronStar.Editor {
 			selection.Add( node );
 
 			FeedSelection();
+			Do();
 		}
 
 
@@ -271,6 +273,8 @@ namespace IronStar.Editor {
 
 			ClearSelection();
 			FeedSelection();
+
+			Do();
 		}
 
 
@@ -296,6 +300,8 @@ namespace IronStar.Editor {
 			selection.AddRange( newItems );
 
 			FeedSelection();
+
+			Do();
 		}
 
 
@@ -361,6 +367,7 @@ namespace IronStar.Editor {
 					}
 				}
 			}
+			Do();
 		}
 
 
@@ -376,6 +383,8 @@ namespace IronStar.Editor {
 			if (target is MapEnvironment) {
 				map.UpdateEnvironment(world);
 			}
+		
+			Do();
 		}
 
 
@@ -497,6 +506,7 @@ namespace IronStar.Editor {
 			foreach ( var node in map.Nodes ) {
 				node.Frozen = false;
 			}
+			Do();
 		}
 
 
@@ -509,6 +519,7 @@ namespace IronStar.Editor {
 				node.Frozen = true;
 			}
 			ClearSelection();
+			Do();
 		}
 
 

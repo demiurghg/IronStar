@@ -378,6 +378,8 @@ namespace IronStar.Editor.Controls {
 			editor.camera.StopManipulation( e.X, e.Y );
 			editor.manipulator.StopManipulation( e.X, e.Y );
 			editor.StopMarqueeSelection( e.X, e.Y );
+
+			editor.Do();
 		}
 	}
 }

@@ -331,8 +331,7 @@ namespace IronStar.Editor.Controls {
 				panel.Close();
 			};
 
-			frames.PushModalFrame( panel, owner );
-			panel.CenterFrame();
+			frames.ShowDialogCentered( panel, owner );
 		}
 	}
 }

@@ -172,7 +172,7 @@ namespace IronStar.UI.Controls {
 
 			BackColor	=	MenuTheme.ButtonColorPushed;
 
-			Frames.PushModalFrame( dropDownList );
+			Frames.ShowDialog( dropDownList );
 			dropDownList.ConstrainFrame(0);
 		}
 
@@ -180,8 +180,7 @@ namespace IronStar.UI.Controls {
 
 		void CloseDropDownList()
 		{
-			Frames.PopModalFrame( dropDownList );
-
+			Frames.ShowDialog( dropDownList );
 			SetFrameStatus( FrameStatus.None );
 		}
 
@@ -209,7 +208,7 @@ namespace IronStar.UI.Controls {
 		{
 			var frame = (Frame)sender;
 
-			if (Frames.ModalFrame!=dropDownList) {
+			if (Frames.ContextRootFrame!=dropDownList) {
 				switch ( e.Status ) {
 					case FrameStatus.None:		frame.ForeColor	=	MenuTheme.TextColorNormal;	break;
 					case FrameStatus.Hovered:	frame.ForeColor	=	MenuTheme.TextColorHovered;break;

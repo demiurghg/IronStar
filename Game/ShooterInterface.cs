@@ -155,18 +155,18 @@ namespace IronStar {
 			switch (e.State) {
 				
 				case MissionState.StandBy:
-					frames.ModalFrame.Close();
+					frames.ContextRootFrame.Close();
 					frames.ShowFullscreenFrame( mainMenu );
 				break;
 
 				case MissionState.Loading:
-					frames.ModalFrame.Close();
+					frames.ContextRootFrame.Close();
 					frames.ShowFullscreenFrame( loadingScreen );
 					loadingScreen.StatusText	=	"LOADING";
 				break;
 
 				case MissionState.Waiting:
-					frames.ModalFrame.Close();
+					frames.ContextRootFrame.Close();
 					frames.ShowFullscreenFrame( loadingScreen );
 					loadingScreen.StatusText	=	"Press [ENTER] to continue... ";
 				break;
@@ -176,12 +176,12 @@ namespace IronStar {
 				break;
 
 				case MissionState.Active:
-					frames.ModalFrame.Close();
+					frames.ContextRootFrame.Close();
 					frames.ShowFullscreenFrame( hudFrame );
 				break;
 
 				case MissionState.Paused:
-					frames.ModalFrame.Close();
+					frames.ContextRootFrame.Close();
 					frames.ShowDialogCentered( pauseMenu );
 				break;
 

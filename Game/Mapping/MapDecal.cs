@@ -121,44 +121,32 @@ namespace IronStar.Mapping {
 				return;
 			}
 
-			decal	=	new Decal();
-
 			var rw	=	world.Game.RenderSystem.RenderWorld;
 			var ls	=	rw.LightSet;
 
-			ResetNode( world );
+			decal	=	new Decal();
+
+			decal.DecalMatrix		=	Matrix.Scaling( Width/2, Height/2, Depth/2 ) * WorldMatrix;
+			decal.DecalMatrixInverse=	Matrix.Invert( decal.DecalMatrix );
+									
+			decal.Emission			=	EmissionColor.ToColor4() * EmissionIntensity;
+			decal.BaseColor			=	new Color4( BaseColor.R/255.0f, BaseColor.G/255.0f, BaseColor.B/255.0f, 1 );
+			
+			decal.Metallic			=	Metallic;
+			decal.Roughness			=	Roughness;
+			decal.ImageRectangle	=	ls.DecalAtlas.GetNormalizedRectangleByName( ImageName );
+			decal.ImageSize			=	ls.DecalAtlas.GetAbsoluteRectangleByName( ImageName ).Size;
+
+			//decal.ImageRectangle	=	ls.DecalAtlas.GetClipByName( ImageName ).FirstIndex
+
+			decal.ColorFactor		=	ColorFactor;
+			decal.SpecularFactor	=	SpecularFactor;
+			decal.NormalMapFactor	=	NormalMapFactor;
+			decal.FalloffFactor		=	FalloffFactor;
+
+			decal.Group				=	InstanceGroup.Static;
 
 			world.Game.RenderSystem.RenderWorld.LightSet.Decals.Add( decal );
-		}
-
-
-
-		public override void ResetNode( GameWorld world )
-		{
-			if (decal!=null) {
-				var rw	=	world.Game.RenderSystem.RenderWorld;
-				var ls	=	rw.LightSet;
-
-				decal.DecalMatrix		=	Matrix.Scaling( Width/2, Height/2, Depth/2 ) * WorldMatrix;
-				decal.DecalMatrixInverse=	Matrix.Invert( decal.DecalMatrix );
-									
-				decal.Emission			=	EmissionColor.ToColor4() * EmissionIntensity;
-				decal.BaseColor			=	new Color4( BaseColor.R/255.0f, BaseColor.G/255.0f, BaseColor.B/255.0f, 1 );
-			
-				decal.Metallic			=	Metallic;
-				decal.Roughness			=	Roughness;
-				decal.ImageRectangle	=	ls.DecalAtlas.GetNormalizedRectangleByName( ImageName );
-				decal.ImageSize			=	ls.DecalAtlas.GetAbsoluteRectangleByName( ImageName ).Size;
-
-				//decal.ImageRectangle	=	ls.DecalAtlas.GetClipByName( ImageName ).FirstIndex
-
-				decal.ColorFactor		=	ColorFactor;
-				decal.SpecularFactor	=	SpecularFactor;
-				decal.NormalMapFactor	=	NormalMapFactor;
-				decal.FalloffFactor		=	FalloffFactor;
-
-				decal.Group				=	InstanceGroup.Static;
-			}
 		}
 
 

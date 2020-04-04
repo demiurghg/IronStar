@@ -117,15 +117,6 @@ namespace IronStar.Mapping {
 
 			light		=	new SpotLight();
 
-			ResetNode( world );
-
-			world.Game.RenderSystem.RenderWorld.LightSet.SpotLights.Add( light );
-		}
-
-
-
-		public override void ResetNode( GameWorld world )
-		{
 			light.Intensity		=	LightColor.ToColor4() * LightIntensity;
 			light.SpotView		=	SpotView;
 			light.Position		=	TranslateVector;
@@ -141,14 +132,14 @@ namespace IronStar.Mapping {
 			light.SlopeBias		=	SlopeBias;
 
 			light.LightStyle	=	LightStyle;
-		}
 
+			world.Game.RenderSystem.RenderWorld.LightSet.SpotLights.Add( light );
+		}
 
 
 		public override void ActivateNode()
 		{
 		}
-
 
 
 		public override void UseNode()

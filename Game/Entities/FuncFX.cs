@@ -44,8 +44,10 @@ namespace IronStar.Entities {
 
 			atom		=	world.Atoms[ fx ];
 
-			if (fxMode==FuncFXMode.Persistent) {
+			if (fxMode==FuncFXMode.Persistent && enabled) {
 				Sfx = atom;
+			} else {
+				Sfx = 0;
 			}
 		}
 
@@ -72,18 +74,25 @@ namespace IronStar.Entities {
 
 			float elapsedTime = gameTime.ElapsedSec;
 
-			if (fxMode==FuncFXMode.AutoTrigger) {
-				
-				if (enabled) {
+			if (fxMode==FuncFXMode.AutoTrigger) 
+			{
+				if (enabled) 
+				{
 					timer -= elapsedTime;
 
-					if (timer<0) {
+					if (timer<0) 
+					{
 						World.SpawnFX( fx, 0, Position, LinearVelocity, Rotation );
 						timer = rand.NextFloat( minInterval, maxInterval );
 					}
 				} else {
 					timer = 0;
 				}
+			}
+
+			if (fxMode==FuncFXMode.Persistent)
+			{
+				Sfx = enabled ? atom : (short)0;
 			}
 		}
 

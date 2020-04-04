@@ -65,8 +65,8 @@ namespace IronStar.Editor {
 			upperShelf.AddLButton("FCS", @"editor\iconFocus",		()=> FocusSelection() );
 
 			upperShelf.AddLSplitter();
-			upperShelf.AddLButton("UNDO", null,	() => Undo() );
-			upperShelf.AddLButton("REDO", null,	() => Redo() );
+			upperShelf.AddLButton("Undo", null,	() => Undo() );
+			upperShelf.AddLButton("Redo", null,	() => Redo() );
 
 			upperShelf.AddLSplitter();
 			upperShelf.AddFatLButton("Palette", null, ()=> workspace.TogglePalette( entityPalette ) );
@@ -77,7 +77,7 @@ namespace IronStar.Editor {
 
 			upperShelf.AddLSplitter();
 			upperShelf.AddLButton("BUILD\rRELOAD", @"editor\iconBuild",     ()=> Game.Invoker.ExecuteString("contentBuild") );
-			upperShelf.AddLButton("MAKE\rSCRSHT", @"editor\iconScreenshot", ()=> GeneratePreview(true) );
+			upperShelf.AddLButton("MAKE\rSCRSHT", @"editor\iconScreenshot", ()=> GeneratePreview() );
 
 			upperShelf.AddRButton("ENV"				, null						, ()=> workspace.FeedProperties(map.Environment) );
 			upperShelf.AddRButton("SCR"				, null						, ()=> Game.Invoker.ExecuteString("screenshot") );
@@ -88,7 +88,7 @@ namespace IronStar.Editor {
 			//- LOWER SHELF ------------------------------------------------------------
 
 			lowerShelf.AddLButton("PLAY\r[SPACE]",	@"editor\iconSimulate2",() => EnableSimulation = !EnableSimulation );
-			lowerShelf.AddLButton("RESET\r[ESC]" ,	@"editor\iconReset2",	() => ResetWorld(true) );
+			lowerShelf.AddLButton("RESET\r[ESC]" ,	@"editor\iconReset2",	() => ResetWorld() );
 			lowerShelf.AddLButton("BAKE\r[B]"	 ,	@"editor\iconBake",		() => BakeToEntity() );
 			lowerShelf.AddLSplitter();				 
 			lowerShelf.AddLButton("ACT\n[ENTER]" ,	@"editor\iconActivate", () => ActivateSelected() );
@@ -163,8 +163,8 @@ namespace IronStar.Editor {
 			workspace.AddHotkey( Keys.U			, ModKeys.Ctrl, () => DuplicateSelection() );
 
 			workspace.AddHotkey( Keys.Space		, ModKeys.None, () => EnableSimulation = !EnableSimulation );
-			workspace.AddHotkey( Keys.Escape	, ModKeys.None, () => ResetWorld(true) );
-			workspace.AddHotkey( Keys.K			, ModKeys.None, () => ResetWorld(true) );
+			workspace.AddHotkey( Keys.Escape	, ModKeys.None, () => ResetWorld() );
+			workspace.AddHotkey( Keys.K			, ModKeys.None, () => ResetSelected() );
 			workspace.AddHotkey( Keys.B			, ModKeys.None, () => BakeToEntity() );
 			workspace.AddHotkey( Keys.Enter		, ModKeys.None, () => ActivateSelected() );
 			workspace.AddHotkey( Keys.U			, ModKeys.None, () => UseSelected() );

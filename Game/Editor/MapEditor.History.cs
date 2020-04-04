@@ -88,10 +88,10 @@ namespace IronStar.Editor {
 		void LoadSnapshot(HistorySnapshot snapshot)
 		{
 			map.Nodes.Clear();
-			ResetWorld(true);
+			ResetWorld();
 
 			map = (Map)Game.GetService<JsonFactory>().ImportJsonString( snapshot.SerializedMap );
-			ResetWorld(true);
+			ResetWorld();
 
 			selection.Clear();
 			selection.AddRange( snapshot.SelectedNodes.Select( guid => GetNodeByGuid(guid) ) );

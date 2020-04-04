@@ -119,7 +119,7 @@ namespace IronStar.Editor {
 			world.SimulateWorld( GameTime.MSec16 );
 			world.PresentWorld( GameTime.MSec16, 1, null, null );
 
-			ResetWorld(true);
+			ResetWorld();
 
 			RegisterCommands();
 
@@ -129,7 +129,7 @@ namespace IronStar.Editor {
 
 		private void Game_Reloading( object sender, EventArgs e )
 		{
-			ResetWorld(true);
+			ResetWorld();
 		}
 
 
@@ -142,8 +142,6 @@ namespace IronStar.Editor {
 			Log.Message("Saving map: {0}", fullPath);
 			File.Delete( fullPath );
 
-			GeneratePreview(false);
-
 			Game.GetService<JsonFactory>().ExportJson( File.OpenWrite( fullPath ), map );
 		}
 
@@ -151,14 +149,10 @@ namespace IronStar.Editor {
 		/// <summary>
 		/// 
 		/// </summary>
-		public void GeneratePreview (bool forceCreate)
+		public void GeneratePreview ()
 		{
 			var previewPath = Path.Combine( Path.GetDirectoryName( fullPath ), "thumbnails", Path.GetFileNameWithoutExtension( fullPath ) );
-
-			if (!File.Exists(previewPath) || forceCreate) 
-			{
-				Game.GetService<RenderSystem>().MakePreviewScreenshot( previewPath );
-			}
+			Game.GetService<RenderSystem>().MakePreviewScreenshot( previewPath );
 		}
 
 
@@ -305,11 +299,25 @@ namespace IronStar.Editor {
 		}
 
 
+		public void ResetSelected()
+		{
+			if (manipulator.IsManipulating) {
+				return;
+			}
+
+			foreach ( var node in Selection )
+			{
+				node.KillNode(world);
+				node.SpawnNode(world);
+			}
+
+		}
+
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public void ResetWorld (bool hardResetSelection)
+		public void ResetWorld ()
 		{
 			if (manipulator.IsManipulating) {
 				return;
@@ -317,28 +325,19 @@ namespace IronStar.Editor {
 
 			EnableSimulation = false;
 
-
+			//	kill node's entities
 			foreach ( var node in map.Nodes ) {
-				node.ResetNode( world );
+				node.KillNode(world);
 			}
-
-			if (hardResetSelection) {
-				
-				//	kill node's entities
-				foreach ( var node in map.Nodes ) {
-					node.KillNode(world);
-				}
 	
-				//	kill temporaly created entities
-				world.KillAll();
+			//	kill entities created by other 
+			//	entities during simualtion
+			world.KillAll();
 
-				//	spawn entities again
-				foreach ( var node in map.Nodes ) {
-					node.SpawnNode(world);
-				}
+			//	spawn entities again
+			foreach ( var node in map.Nodes ) {
+				node.SpawnNode(world);
 			}
-
-
 
 			world.SimulateWorld( GameTime.Zero );
 		}

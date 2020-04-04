@@ -66,18 +66,6 @@ namespace IronStar.Mapping {
 
 
 
-		public override void ResetNode( GameWorld world )
-		{
-			soundInstance?.Set3DParameters( TranslateVector );
-
-			if (soundEvent!=null && soundEvent.Path!=SoundEvent) {
-				KillNode(world);
-				SpawnNode(world);
-			}
-		}
-
-
-
 		public override void ActivateNode()
 		{
 		}

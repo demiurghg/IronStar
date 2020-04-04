@@ -23,6 +23,8 @@ namespace IronStar.Entities {
 		DetectorArea area;
 		TriggerFilter filter;
 		readonly string target; 
+		readonly bool once;
+		bool enabled;
 
 		public TriggerArea( uint id, short clsid, GameWorld world, TriggerAreaFactory factory ) : base( id, clsid, world, factory )
 		{
@@ -31,6 +33,8 @@ namespace IronStar.Entities {
 			var d	=	factory.Depth;
 
 			target	=	factory.Target;
+			once	=	factory.Once;
+			enabled	=	true;
 
 			filter	=	factory.TriggerFilter;
 
@@ -51,7 +55,15 @@ namespace IronStar.Entities {
 
 		void ActivateTargets ()
 		{
-			World.ActivateTargets( this, target );
+			if (enabled) 
+			{
+				World.ActivateTargets( this, target );
+
+				if (once)
+				{
+					enabled = false;
+				}
+			}
 		}
 
 
@@ -76,6 +88,7 @@ namespace IronStar.Entities {
 		public float  Height { get; set; } = 1;
 		public float  Depth  { get; set; } = 1;
 		public Color  Color { get; set; } =	Color.Red;
+		public bool Once { get; set; } = false;
 
 		public string Target { get; set; } = "";
 

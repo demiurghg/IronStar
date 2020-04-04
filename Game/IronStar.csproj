@@ -136,7 +136,6 @@
     <Compile Include="Core\Entity.cs" />
     <Compile Include="Core\GameWorld.Atoms.cs" />
     <Compile Include="Core\GameWorld.AI.cs" />
-    <Compile Include="Core\IEntity.cs" />
     <Compile Include="Core\IStorable.cs" />
     <Compile Include="Core\SnapshotHeader.cs" />
     <Compile Include="Editor\Manipulators\HandleIntersection.cs" />

@@ -57,14 +57,6 @@ namespace IronStar.Mapping {
 
 
 
-		public override void ResetNode( GameWorld world )
-		{
-			KillNode(world);
-			SpawnNode(world);
-		}
-
-
-
 		public override void ActivateNode()
 		{
 		}

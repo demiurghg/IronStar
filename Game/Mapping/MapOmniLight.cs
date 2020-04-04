@@ -59,7 +59,12 @@ namespace IronStar.Mapping {
 		{
 			light		=	new OmniLight();
 
-			ResetNode( world );
+			light.Intensity		=	LightColor.ToColor4() * LightIntensity;
+			light.Position		=	WorldMatrix.TranslationVector;
+			light.RadiusOuter	=	OuterRadius;
+			light.RadiusInner	=	InnerRadius;
+			light.LightStyle	=	LightStyle;
+			light.Ambient		=	Ambient;
 
 			world.Game.RenderSystem.RenderWorld.LightSet.OmniLights.Add( light );
 		}
@@ -92,18 +97,6 @@ namespace IronStar.Mapping {
 			} else {
 				dr.DrawSphere( transform.TranslationVector, InnerRadius, dispColor );
 			}
-		}
-
-
-
-		public override void ResetNode( GameWorld world )
-		{
-			light.Intensity		=	LightColor.ToColor4() * LightIntensity;
-			light.Position		=	WorldMatrix.TranslationVector;
-			light.RadiusOuter	=	OuterRadius;
-			light.RadiusInner	=	InnerRadius;
-			light.LightStyle	=	LightStyle;
-			light.Ambient		=	Ambient;
 		}
 
 

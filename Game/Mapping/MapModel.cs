@@ -251,36 +251,6 @@ namespace IronStar.Mapping {
 
 
 
-		public override void ResetNode( GameWorld world )
-		{
-			KillNode( world );
-			SpawnNode( world );
-
-			/*if (scene==null) {
-				return;
-			}
-
-			for (int i=0; i<scene.Nodes.Count; i++) {
-
-				var collidable = collidables[i];
-
-				if (collidable!=null) {
-					var q = MathConverter.Convert( RotateQuaternion );
-					var p = MathConverter.Convert( TranslateVector );
-
-					collidable.WorldTransform = new BEPUTransform( q, p );
-				}
-
-				var instance = instances[i];
-
-				if (instance!=null) {
-					instances[i].World = transforms[ i ] * WorldMatrix;
-				}
-			} */
-		}
-
-
-
 		public override void KillNode( GameWorld world )
 		{
 			var rs = world.Game.RenderSystem;

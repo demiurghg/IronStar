@@ -217,7 +217,11 @@ namespace IronStar.Mapping {
 		/// Resets entity
 		/// </summary>
 		/// <param name="world"></param>
-		public abstract void ResetNode ( GameWorld world );
+		public void ResetNode ( GameWorld world )
+		{
+			KillNode( world );
+			SpawnNode( world );
+		}
 
 		/// <summary>
 		/// Eliminates object

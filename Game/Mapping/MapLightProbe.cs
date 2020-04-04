@@ -71,7 +71,11 @@ namespace IronStar.Mapping {
 
 			light	=	new LightProbe( NodeGuid, lightSet.AllocImageIndex() );
 
-			ResetNode( world );
+			light.ProbeMatrix		=	ComputeProbeMatrix();
+			light.BoundingBox		=	GetBoundingBox();
+			light.NormalizedWidth	=	Math.Max( 0, Width  - ShellWidth  ) / Width	;
+			light.NormalizedHeight	=	Math.Max( 0, Height - ShellHeight ) / Height	;
+			light.NormalizedDepth	=	Math.Max( 0, Depth  - ShellDepth  ) / Depth	;
 
 			lightSet.LightProbes.Add( light );
 		}
@@ -123,19 +127,6 @@ namespace IronStar.Mapping {
 				dr.DrawSphere( WorldMatrix.TranslationVector, 1.0f, color, 16 );
 			} else {
 				dr.DrawSphere( WorldMatrix.TranslationVector, 1.0f, color, 16 );
-			}
-		}
-
-
-
-		public override void ResetNode( GameWorld world )
-		{
-			if (light!=null) {
-				light.ProbeMatrix		=	ComputeProbeMatrix();
-				light.BoundingBox		=	GetBoundingBox();
-				light.NormalizedWidth	=	Math.Max( 0, Width  - ShellWidth  ) / Width	;
-				light.NormalizedHeight	=	Math.Max( 0, Height - ShellHeight ) / Height	;
-				light.NormalizedDepth	=	Math.Max( 0, Depth  - ShellDepth  ) / Depth	;
 			}
 		}
 

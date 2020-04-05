@@ -25,6 +25,7 @@ using Fusion.Scripting;
 using Fusion.Build.Processors;
 using Fusion.Engine.Audio;
 using Fusion.Engine.Graphics.Ubershaders;
+using Fusion.Engine.Graphics.Lights;
 
 namespace IronStar {
 
@@ -145,9 +146,9 @@ namespace IronStar {
 
 				.Copy<SoundBank>("*.bank")
 
-				//.Copy<IrradianceMap>("*.irrmap"  )
-				//.Copy<IrradianceMap>("*.irrvol"  )
-				//.Copy<IrradianceMap>("*.irrcache")
+				.Copy<IrradianceMap>	("*.irrmap"  )
+				.Copy<IrradianceVolume>	("*.irrvol"  )
+				.Copy<IrradianceCache>	("*.irrcache")
 				;
 
 			return builder;       

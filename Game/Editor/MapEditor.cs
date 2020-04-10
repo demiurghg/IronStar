@@ -114,7 +114,7 @@ namespace IronStar.Editor {
 				this.map = new Map();
 			}
 
-			world			=	new GameWorld( Game, this.map, Content, new LocalMessageService(), new Guid(), true );
+			world			=	new GameWorld( Game, mapName, this.map, Content, new LocalMessageService(), new Guid(), true );
 
 			world.SimulateWorld( GameTime.MSec16 );
 			world.PresentWorld( GameTime.MSec16, 1, null, null );

@@ -38,7 +38,7 @@ namespace IronStar.SinglePlayer {
 					var map				=	context.Content.Load<Mapping.Map>(@"maps\" + context.MapName);
 					var msgsvc			=	new LocalMessageService();
 
-					context.GameWorld	=	new GameWorld( context.Game, map, context.Content, msgsvc, userGuid, false );
+					context.GameWorld	=	new GameWorld( context.Game, context.MapName, map, context.Content, msgsvc, userGuid, false );
 
 					context.Camera		=	new GameCamera( context.GameWorld, userGuid ); 
 					context.Input		=	new GameInput( context.Game );

@@ -1,0 +1,209 @@
+#ifndef __LS_SHADOWS_FXI__
+#define __LS_SHADOWS_FXI__
+
+#include "ls_brdf.fxi"
+#include "dither.fxi"
+
+/*------------------------------------------------------------------------------
+	Usage:
+	CASCADE_SHADOWS_FILTER		--	enabled shadow filtering
+	CASCADE_SHADOWS_PARTICLES	--	enabled particle shadows
+	CASCADE_DITHER_TRANSITION	--	enabled cascade transition dithering
+------------------------------------------------------------------------------*/
+
+struct SHADOW_RESOURCES
+{
+	SamplerComparisonState 	ShadowSampler; 
+	SamplerState 			LinearSampler;
+	Texture2D<float4>		ShadowMap;
+	Texture2D<float4>		ShadowMask;
+};
+
+
+struct CASCADE 
+{
+	float4 	Projection;
+	float4 	ScaleOffset;
+	float3	Gradient;
+	float	Fade;
+	float4	Color;
+	float2 	TexCoord;
+	float	Depth;
+};
+
+
+float ProjectShadow ( float4 worldPos, float4x4 viewProjection, out float4 projection )
+{	
+	float4 temp = 	mul( worldPos, viewProjection );
+	temp.xy 	/= 	temp.w;
+	temp.w   	= 	1;
+	
+	projection	=	temp;
+	
+	return	max(abs(projection.x), abs(projection.y));//length(temp.xy);
+}
+
+
+float2 GetTextureSize( Texture2D tex )
+{
+	float w, h;
+	tex.GetDimensions( w, h );
+	return float2( w, h );
+}
+
+
+void SelectCascade( GEOMETRY geometry, CASCADE_SHADOW stage, float2 vpos, float dither, out CASCADE cascade )
+{
+	cascade.Projection 	= 	float4(0,0,0,0);
+	cascade.ScaleOffset = 	float4(0,0,0,0);
+	cascade.Gradient	= 	float3(0,0,0);
+	cascade.Fade   		= 	1;
+		
+	float	bias		= 	(1 - dither) + dither2( vpos.x, vpos.y ) * dither;
+	
+	float4	worldPos	=	float4(geometry.position, 1);
+	float4	normal		=	float4(geometry.normal, 0);
+	float4 	projection	=	float4(0,0,0,0);
+
+	//	select cascade :
+	if ( ProjectShadow( worldPos, stage.CascadeViewProjection3, projection ) < 1 ) {
+		cascade.Projection 	=	projection;
+		cascade.ScaleOffset	=	stage.CascadeScaleOffset3;
+		cascade.Gradient	=	mul( normal, stage.CascadeGradientMatrix3 ).xyz;
+		cascade.Color		=	float4(1,1,1,1);
+		cascade.Fade		=	min(1, max(abs(projection.x), abs(projection.y)));
+	}
+	
+	if ( ProjectShadow( worldPos, stage.CascadeViewProjection2, projection ) < bias ) {
+		cascade.Projection 	=	projection;
+		cascade.ScaleOffset	=	stage.CascadeScaleOffset2;
+		cascade.Gradient	=	mul( normal, stage.CascadeGradientMatrix2 ).xyz;
+		cascade.Color		=	float4(0,1,0,1);
+	}
+	
+	if ( ProjectShadow( worldPos, stage.CascadeViewProjection1, projection ) < bias ) {
+		cascade.Projection 	=	projection;
+		cascade.ScaleOffset	=	stage.CascadeScaleOffset1;
+		cascade.Gradient	=	mul( normal, stage.CascadeGradientMatrix1 ).xyz;
+		cascade.Color		=	float4(1,0,0,1);
+	}
+	
+	if ( ProjectShadow( worldPos, stage.CascadeViewProjection0, projection ) < bias ) {
+		cascade.Projection 	=	projection;
+		cascade.ScaleOffset	=	stage.CascadeScaleOffset0;
+		cascade.Gradient	=	mul( normal, stage.CascadeGradientMatrix0 ).xyz;
+		cascade.Color		=	float4(1,1,1,1);
+	}
+	
+	float	epsilon			=	1 / 8192.0f / 4.0f;
+	float2	depthClamp		=	0.001f;
+			
+	cascade.Gradient		=	normalize( cascade.Gradient );
+	cascade.Gradient		/=	( cascade.Gradient.z + epsilon );
+	cascade.Gradient.xy		=	clamp( cascade.Gradient.xy, -depthClamp, depthClamp );
+	
+	cascade.TexCoord		=	mad( cascade.Projection.xy, cascade.ScaleOffset.xy, cascade.ScaleOffset.zw );
+	cascade.Depth			= 	cascade.Projection.z;
+}
+
+
+static const float2 shadowSamplePattern5x[5] = 
+{
+	float2( 0, 0 ) / 8.0f,
+	float2(-2,-6 ) / 8.0f,
+	float2( 6,-2 ) / 8.0f,
+	float2(-6, 2 ) / 8.0f,
+	float2( 2, 6 ) / 8.0f
+};
+
+static const float2 shadowSamplePattern9x[9] = 
+{
+	float2( 0, 0 ) / 8.0f,
+	float2( 1,-3 ) / 8.0f,
+	float2(-1, 3 ) / 8.0f,
+	float2( 5, 1 ) / 8.0f,
+	float2(-3,-5 ) / 8.0f,
+	float2(-5,-5 ) / 8.0f,
+	float2(-7,-1 ) / 8.0f,
+	float2( 3, 7 ) / 8.0f,
+	float2( 7,-7 ) / 8.0f
+};
+
+
+float3	ComputeCascadedShadows ( GEOMETRY geometry, float2 vpos, CASCADE_SHADOW stage, SHADOW_RESOURCES rc, float filter ) 
+{
+	float2 csmSizeRcp	=	1.0f / GetTextureSize( rc.ShadowMap );
+
+	CASCADE cascade;
+	float   transition	=	filter ? 0.05f : 0;
+	SelectCascade( geometry, stage, vpos, transition, cascade );
+	
+	float3	shadow			=	0;
+	
+	if (filter)
+	{
+		[unroll]
+		for( int i=0; i<5; i++ ) 
+		{
+			float 	x	=	shadowSamplePattern5x[i].x;
+			float	y	=	shadowSamplePattern5x[i].y;
+			float	z	=	cascade.Depth + dot( cascade.Gradient.xy, float2(x,y) );
+			float	sh	=	rc.ShadowMap.SampleCmpLevelZero( rc.ShadowSampler, cascade.TexCoord + csmSizeRcp * float2(x,y), z ).r;
+			shadow		+=	sh;
+		}
+		shadow /= 5;
+	} 
+	else
+	{
+		shadow = rc.ShadowMap.SampleCmpLevelZero( rc.ShadowSampler, cascade.TexCoord, cascade.Depth );
+	}
+	
+	shadow *= rc.ShadowMask.SampleLevel( rc.LinearSampler, cascade.TexCoord, 0 ).rgb;
+	
+	return lerp(shadow, 1, saturate(cascade.Fade*16-15));
+}
+
+
+float3 ComputeSpotShadow ( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc, bool filter )
+{
+	float2 smSizeRcp	=	1.0f / GetTextureSize( rc.ShadowMap );
+	float4 scaleOffset	=	light.ShadowScaleOffset;
+	float4 lsPos		=	mul(float4(geometry.position,1), light.ViewProjection);
+	float  shadowDepth	=	lsPos.z / light.IntensityFar.w;
+		   lsPos.xyz	= 	lsPos.xyz / lsPos.w;
+		   
+	float3 shadow		=	0;
+	
+	[branch]
+	if ( abs(lsPos.x)<1 && abs(lsPos.y)<1 && abs(lsPos.z)<1 ) // TODO : replace with "all()"
+	{
+		lsPos.xy		=	mad( lsPos.xy, scaleOffset.xy, scaleOffset.zw );
+				
+		float	accumulatedShadow	=	0;
+				
+		//	TODO : num taps <--> shadow quality
+		//	TODO : kernel size <--> shadow region size
+		if (!filter) 
+		{
+			accumulatedShadow	=	rc.ShadowMap.SampleCmpLevelZero( rc.ShadowSampler, lsPos.xy, shadowDepth ).r;
+		} 
+		else 
+		{
+			[unroll]
+			for( int i=0; i<5; i++ ) 
+			{
+				float2	smcoord	=	mad( shadowSamplePattern5x[i], smSizeRcp.xy, lsPos.xy);
+				float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, smcoord, shadowDepth ).r;
+				accumulatedShadow += shadow;
+			}
+		}
+		accumulatedShadow 	/= 	25.0f;
+
+		shadow		=	accumulatedShadow * rc.ShadowMask.SampleLevel( rc.LinearSampler, lsPos.xy, 0 ).rgb;
+	}
+	
+	return shadow;
+}
+
+
+#endif

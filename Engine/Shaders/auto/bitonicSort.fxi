@@ -1,0 +1,24 @@
+// ---------------- CONSTANT VALUES ---------------- //
+
+static const int NumberOfElements = 65536;
+static const int BitonicBlockSize = 256;
+static const int TransposeBlockSize = 16;
+static const int MatrixWidth = 256;
+static const int MatrixHeight = 256;
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// Fusion.Engine.Graphics.BitonicSort+SORT_DATA
+// Marshal.SizeOf = 16
+struct SORT_DATA {
+	uint       Level;                         // offset:    0
+	uint       LevelMask;                     // offset:    4
+	uint       Width;                         // offset:    8
+	uint       Height;                        // offset:   12
+};
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+cbuffer __buffer0 : register(b0) {
+	SORT_DATA SortData : packoffset(c0);
+};

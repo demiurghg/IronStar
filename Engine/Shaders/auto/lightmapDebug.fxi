@@ -1,0 +1,65 @@
+// ---------------- CONSTANT VALUES ---------------- //
+
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// Fusion.Engine.Graphics.GpuData+CAMERA
+// Marshal.SizeOf = 352
+struct CAMERA {
+	float4x4   Projection;                    // offset:    0
+	float4x4   View;                          // offset:   64
+	float4x4   ViewProjection;                // offset:  128
+	float4x4   ViewInverted;                  // offset:  192
+	float4     CameraForward;                 // offset:  256
+	float4     CameraRight;                   // offset:  272
+	float4     CameraUp;                      // offset:  288
+	float4     CameraPosition;                // offset:  304
+	float      LinearizeDepthScale;           // offset:  320
+	float      LinearizeDepthBias;            // offset:  324
+	float      FarDistance;                   // offset:  328
+	float      Pad0;                          // offset:  332
+	float      CameraTangentX;                // offset:  336
+	float      CameraTangentY;                // offset:  340
+	float      Pad1;                          // offset:  344
+	float      Pad2;                          // offset:  348
+};
+
+// Fusion.Engine.Graphics.Lights.LightMapDebugger+DEBUG_PARAMS
+// Marshal.SizeOf = 96
+struct DEBUG_PARAMS {
+	float4x4   VolumeTransform;               // offset:    0
+	float      LightProbeSize;                // offset:   64
+	float      LightProbeMipLevel;            // offset:   68
+	float      Dummy1;                        // offset:   72
+	float      Dummy2;                        // offset:   76
+	uint       VolumeWidth;                   // offset:   80
+	uint       VolumeHeight;                  // offset:   84
+	uint       VolumeDepth;                   // offset:   88
+	float      VolumeStride;                  // offset:   92
+};
+
+// Fusion.Engine.Graphics.SceneRenderer+LIGHTPROBE
+// Marshal.SizeOf = 96
+struct LIGHTPROBE {
+	float4x4   MatrixInv;                     // offset:    0
+	float4     Position;                      // offset:   64
+	uint       ImageIndex;                    // offset:   80
+	float      NormalizedWidth;               // offset:   84
+	float      NormalizedHeight;              // offset:   88
+	float      NormalizedDepth;               // offset:   92
+};
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+cbuffer __buffer0 : register(b0) {
+	CAMERA Camera : packoffset(c0);
+};
+cbuffer __buffer1 : register(b1) {
+	DEBUG_PARAMS Params : packoffset(c0);
+};
+SamplerState                   Sampler                        : register(s0);
+Texture3D<float4>              LightVolumeR                   : register(t0);
+Texture3D<float4>              LightVolumeG                   : register(t1);
+Texture3D<float4>              LightVolumeB                   : register(t2);
+TextureCubeArray<float4>       LightProbes                    : register(t3);
+StructuredBuffer<LIGHTPROBE>   LightProbeData                 : register(t4);

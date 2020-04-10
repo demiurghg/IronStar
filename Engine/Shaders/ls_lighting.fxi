@@ -1,0 +1,102 @@
+#ifndef __LS_LIGHTING_FXI__
+#define __LS_LIGHTING_FXI__
+
+/*------------------------------------------------------------------------------
+	LIGHTING
+	
+	LIGHTING_DIFFUSE_ONLY	--	skip specular component
+------------------------------------------------------------------------------*/
+
+/*------------------------------------------------------------------------------
+	Lighting functions :
+------------------------------------------------------------------------------*/
+
+void ComputeDiffuseSpecular( inout SURFACE surface )
+{
+	// pow3 help to reduce white fringes in metallic PBR pipeline:
+	float3  insulatorF0	=	float3(0.04f,0.04f,0.04f);
+	surface.diffuse 	=	pow( lerp( pow(abs(surface.baseColor), 1/3.0), float3(0,0,0),                		 surface.metallic ), 3 );
+	surface.specular  	=	pow( lerp( pow(abs(insulatorF0		), 1/3.0), pow(abs(surface.baseColor), 1/3.0f),  surface.metallic ), 3 );
+}
+
+
+void ComputeDiffuseOnly( inout SURFACE surface )
+{
+	surface.specular	=	0;
+	surface.diffuse		=	surface.baseColor;
+}
+
+
+FLUX ComputeDirectLightFlux( DIRECT_LIGHT directLight )
+{
+	FLUX flux;
+	flux.direction	=	normalize(directLight.DirectLightDirection.xyz);
+	flux.intensity	=	directLight.DirectLightIntensity.xyz;
+	flux.divergency	=	0; // #TODO - angular size
+	return flux;
+}
+
+
+FLUX ComputePointLightFlux( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc )
+{
+	uint type 	= 	light.LightType & 0x0000FFFF;
+	uint shape	= 	light.LightType & 0xFFFF0000;	
+	
+	float3 position		=	light.PositionRadius.xyz;
+	float  radius		=	light.PositionRadius.w;
+	float3 intensity	=	light.IntensityFar.rgb;
+	float  sourceRadius	=	light.SourceRadius;
+	float3 lightDir		= 	geometry.position - position;
+	float  falloff		= 	LinearFalloff( length(lightDir), radius );
+	float2 smSizeRcp	=	1.0f / GetTextureSize( rc.ShadowMap );
+		
+	FLUX flux;
+	flux.direction		=	normalize( lightDir );
+	flux.intensity		=	intensity * falloff;
+	flux.divergency		=	0;
+	
+	[branch]
+	if (type==LightTypeOmni) 
+	{
+		//	TODO : IES profiles
+	} 
+	else if (type==LightTypeSpotShadow) 
+	{
+		flux.intensity		*=	ComputeSpotShadow( geometry, light, rc, true );
+	}
+	
+	return flux;
+}
+
+
+float3	ComputeLighting( FLUX flux, GEOMETRY geometry, SURFACE surface, CAMERA camera )
+{
+	float3	viewDir		=	normalize( Camera.CameraPosition.xyz - geometry.position.xyz );
+	float3 	lightDir	=	-flux.direction;
+	float  	nDotL		= 	max( 0, dot(surface.normal, lightDir) );
+	
+	float3	totalLight	=	0;
+	
+	totalLight.rgb 		+= 	Lambert ( surface.normal.xyz, lightDir, flux.intensity, surface.diffuse );
+
+	#ifndef LIGHTING_DIFFUSE_ONLY	
+	totalLight.rgb 		+= 	nDotL * CookTorrance( surface.normal.xyz, viewDir, lightDir, flux.intensity, surface.specular, surface.roughness, 0.01f );
+	#endif
+	
+	return totalLight;
+}
+
+
+float3	ComputeLighting( FLUX flux, GEOMETRY geometry, MEDIUM medium, CAMERA camera )
+{
+	float scatter	=	1.0f;
+	float a 		= 	1.0f - 0.5f*scatter;
+	float b 		= 	1.0f - a;
+	
+	return flux.intensity
+			* max( 0, dot( -flux.direction, geometry.normal ) * a + b )
+			* medium.Color;
+}
+
+
+#endif

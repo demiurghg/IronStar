@@ -1,0 +1,8 @@
+// ---------------- CONSTANT VALUES ---------------- //
+
+static const int BlockSize = 16;
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// ---------------- SHADER RESOURCES ---------------- //
+

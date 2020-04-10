@@ -1,0 +1,48 @@
+#ifndef __LS_BRDF_FXI__
+#define __LS_BRDF_FXI__
+
+/*------------------------------------------------------------------------------
+	BRDF structures :
+------------------------------------------------------------------------------*/
+
+struct FLUX
+{
+	float3	direction;		//	light flux direction, opposite to direction to light, normalized
+	float3	intensity;		//	light intensity by R,G,B components
+	float	divergency;		//	light divergency to approximate finite size lights
+};
+
+struct SURFACE
+{
+	float3	baseColor;		//	base color or albedo
+	float3	normal;			//	world-space normal of the surface in given point
+	float3 	emission;		//	emissive lighting component
+	
+	float	roughness;		//	roughness
+	float	metallic;		//	metallic
+	float	occlusion;		//	ambient occlusion factor
+	
+	float3	diffuse;		//	[derived] call ComputeDiffuseSpecular to recalc
+	float3	specular;		//	[derived] call ComputeDiffuseSpecular to recalc
+
+	float	alpha;			//	Alpha transparency
+};
+
+struct MEDIUM
+{
+	float3	Color;
+};
+
+struct GEOMETRY
+{
+	float3	position;		//	world-space position
+	float3 	normal;			//	world-space geometry (vertex interpolated) normal
+};
+
+
+/*------------------------------------------------------------------------------
+	BRDF functions :
+------------------------------------------------------------------------------*/
+
+
+#endif

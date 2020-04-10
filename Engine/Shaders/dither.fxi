@@ -1,0 +1,26 @@
+
+#ifndef __DITHER_FXI__
+#define __DITHER_FXI__
+
+static const float bayer_dither_matrix4[4][4] = {{1,9,3,11},{13,5,15,7},{4,12,2,10},{16,8,14,16}};
+static const float bayer_dither_matrix2[2][2] = {{0,2},{3,1}};
+
+
+//
+//	returns normalized Bayer matrix value 2x2
+//
+float dither2( int xpos, int ypos )
+{
+	return bayer_dither_matrix2[xpos&1][ypos&1]/4.0f;
+}
+
+
+//
+//	returns normalized Bayer matrix value 4x4
+//
+float dither4( int xpos, int ypos )
+{
+	return bayer_dither_matrix4[xpos%4][ypos%4]/16.0f;
+}
+
+#endif

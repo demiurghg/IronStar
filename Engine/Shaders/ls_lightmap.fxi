@@ -1,0 +1,57 @@
+#ifndef __LS_LIGHTMAP_FXI__
+#define __LS_LIGHTMAP_FXI__
+
+#include "shl1.fxi"
+
+struct LIGHTMAP_RESOURCES
+{
+	SamplerState		Sampler;
+	Texture2D<float4>	IrradianceMapR;
+	Texture2D<float4>	IrradianceMapG;
+	Texture2D<float4>	IrradianceMapB;
+	Texture3D<float4>	IrradianceVolumeR;
+	Texture3D<float4>	IrradianceVolumeG;
+	Texture3D<float4>	IrradianceVolumeB;
+};
+
+float3	EvaluateLightmap ( LIGHTMAP_RESOURCES lightmap, SURFACE surface, float2 lightMapCoord )
+{
+	float3	worldNormal	=	normalize(surface.normal);
+	float4 	irradianceR	=	lightmap.IrradianceMapR.Sample( lightmap.Sampler, lightMapCoord );
+	float4 	irradianceG	=	lightmap.IrradianceMapG.Sample( lightmap.Sampler, lightMapCoord );
+	float4 	irradianceB	=	lightmap.IrradianceMapB.Sample( lightmap.Sampler, lightMapCoord );
+	float	lightR		=	EvalSHL1Smooth( irradianceR, worldNormal );
+	float	lightG		=	EvalSHL1Smooth( irradianceG, worldNormal );
+	float	lightB		=	EvalSHL1Smooth( irradianceB, worldNormal );
+	return	float3( lightR, lightG, lightB ) * surface.diffuse * 3.14;
+}
+
+
+float3	EvaluateLightVolume ( LIGHTMAP_RESOURCES lightmap, SURFACE surface, float3 volumeCoord )
+{
+	float3	worldNormal	=	normalize(surface.normal);
+	float4 	irradianceR	=	lightmap.IrradianceVolumeR.Sample( lightmap.Sampler, volumeCoord );
+	float4 	irradianceG	=	lightmap.IrradianceVolumeG.Sample( lightmap.Sampler, volumeCoord );
+	float4 	irradianceB	=	lightmap.IrradianceVolumeB.Sample( lightmap.Sampler, volumeCoord );
+	float	lightR		=	EvalSHL1Smooth( irradianceR, worldNormal );
+	float	lightG		=	EvalSHL1Smooth( irradianceG, worldNormal );
+	float	lightB		=	EvalSHL1Smooth( irradianceB, worldNormal );
+	return	float3( lightR, lightG, lightB ) * surface.diffuse * 3.14;
+}
+
+
+float3	EvaluateLightVolume ( LIGHTMAP_RESOURCES lightmap, float3 normal, float3 volumeCoord )
+{
+	float3	worldNormal	=	normalize(normal);
+	float4 	irradianceR	=	lightmap.IrradianceVolumeR.Sample( lightmap.Sampler, volumeCoord );
+	float4 	irradianceG	=	lightmap.IrradianceVolumeG.Sample( lightmap.Sampler, volumeCoord );
+	float4 	irradianceB	=	lightmap.IrradianceVolumeB.Sample( lightmap.Sampler, volumeCoord );
+	float	lightR		=	EvalSHL1Smooth( irradianceR, worldNormal );
+	float	lightG		=	EvalSHL1Smooth( irradianceG, worldNormal );
+	float	lightB		=	EvalSHL1Smooth( irradianceB, worldNormal );
+	return	float3( lightR, lightG, lightB ) * 3.14;
+}
+
+
+
+#endif

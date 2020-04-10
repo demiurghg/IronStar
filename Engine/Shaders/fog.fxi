@@ -1,0 +1,38 @@
+
+/*-----------------------------------------------------------------------------
+	General stuff :
+-----------------------------------------------------------------------------*/
+
+
+//
+//	http://www.iquilezles.org/www/articles/fog/fog.htm
+//
+float3 ApplyGroundFog( float3  rgb, float3 fogColor, float fogD, float fogH, float dist, float3  rayOrigin, float3 rayDir )
+{
+	float b = fogD;
+	float c = fogH;
+	float h = max(rayOrigin.y, 0);
+    float fogAmount = -c * exp(h*b) * ( 1.0-exp( dist*rayDir.y*b ) ) / rayDir.y;
+    return lerp( rgb, fogColor, saturate(fogAmount) );
+}
+
+
+
+float3 ApplyFogColor ( float3 color, float density, float dist, float3 fogColor )
+{
+	return lerp( fogColor, color, exp(density*dist) );
+}
+
+float3 ApplyFogColor ( float3 source, TextureCube fogSource, SamplerState samplerState, float density, float3 targetPoint, float3 viewPoint )
+{
+	float3 	dir  		=	targetPoint - viewPoint;
+	float 	dist 		=	length(dir);
+	float3	fogColor	=	fogSource.Sample( samplerState, -dir ).rgb;
+	
+	return lerp( fogColor, source, exp(density*dist) );
+}
+
+float ApplyFogAlpha ( float density, float dist )
+{
+	return exp(-density*dist);
+}

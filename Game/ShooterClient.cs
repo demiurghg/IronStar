@@ -60,8 +60,9 @@ namespace IronStar {
 
 		public void Initialize( string serverInfo )
 		{
-			map		=   content.Load<Map>( @"maps\" + serverInfo );
-			world	=	new GameWorld( game, map, content, msgsvc, userGuid, false );
+			var mapName		=	serverInfo;
+			map				=   content.Load<Map>( @"maps\" + mapName );
+			world			=	new GameWorld( game, mapName, map, content, msgsvc, userGuid, false );
 
 			world.EntitySpawned += World_EntitySpawned;
 

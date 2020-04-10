@@ -1,0 +1,109 @@
+#ifndef __LS_CUBEMAP_FXI__
+#define __LS_CUBEMAP_FXI__
+
+//
+//	https://seblagarde.wordpress.com/2012/09/29/image-based-lighting-approaches-and-parallax-corrected-cubemap/
+//
+
+float3 SpecularParallaxCubeMap( float3 PositionWS, float3 CameraWS, float3 NormalWS, float3 CubemapPositionWS, float4x4 WorldToLocal )
+{
+	float3 DirectionWS = normalize(PositionWS - CameraWS);
+	float3 ReflDirectionWS = reflect(DirectionWS, NormalWS);
+
+	// Intersection with OBB convertto unit box space
+	// Transform in local unit parallax cube space (scaled and rotated)
+	float3 RayLS 		= mul( float4(ReflDirectionWS,0), WorldToLocal ).xyz;
+	float3 PositionLS 	= mul( float4(PositionWS,1), WorldToLocal ).xyz;
+
+	float3 Unitary = float3(1.0f, 1.0f, 1.0f);
+	float3 FirstPlaneIntersect  = (Unitary - PositionLS) / RayLS;
+	float3 SecondPlaneIntersect = (-Unitary - PositionLS) / RayLS;
+	float3 FurthestPlane = max(FirstPlaneIntersect, SecondPlaneIntersect);
+	float Distance = min(FurthestPlane.x, min(FurthestPlane.y, FurthestPlane.z));
+
+	// Use Distance in WS directly to recover intersection
+	float3 IntersectPositionWS = PositionWS + ReflDirectionWS * Distance;
+	
+	ReflDirectionWS = IntersectPositionWS - CubemapPositionWS;
+
+	return ReflDirectionWS;
+}
+
+
+
+float3 DiffuseParallaxCubeMap( float3 PositionWS, float3 CameraWS, float3 NormalWS, float3 CubemapPositionWS, float4x4 WorldToLocal )
+{
+	return NormalWS ;
+	float3 ReflDirectionWS = NormalWS;
+
+	// Intersection with OBB convertto unit box space
+	// Transform in local unit parallax cube space (scaled and rotated)
+	float3 RayLS 		= mul( float4(ReflDirectionWS,0), WorldToLocal ).xyz;
+	float3 PositionLS 	= mul( float4(PositionWS,1), WorldToLocal ).xyz;
+
+	float3 Unitary = float3(1.0f, 1.0f, 1.0f);
+	float3 FirstPlaneIntersect  = (Unitary - PositionLS) / RayLS;
+	float3 SecondPlaneIntersect = (-Unitary - PositionLS) / RayLS;
+	float3 FurthestPlane = max(FirstPlaneIntersect, SecondPlaneIntersect);
+	float Distance = min(FurthestPlane.x, min(FurthestPlane.y, FurthestPlane.z));
+
+	// Use Distance in WS directly to recover intersection
+	float3 IntersectPositionWS = PositionWS + ReflDirectionWS * Distance;
+	
+	ReflDirectionWS = IntersectPositionWS - CubemapPositionWS;
+
+	return ReflDirectionWS;
+}
+
+
+struct LIGHTPROBE_RESOURCES
+{
+	SamplerState		Sampler;		///	Must be linear-clamp
+	TextureCubeArray	RadianceCache;	///	Array of environment cubemaps
+	Texture2D			EnvironmentLut;	///	Prefiltered cubemap LUT
+};
+
+
+float4 ComputeEnvironmentLighting ( LIGHTPROBE probe, GEOMETRY geometry, SURFACE surface, CAMERA camera, LIGHTPROBE_RESOURCES rc )
+{
+	float3	viewDirN		=	normalize( camera.CameraPosition.xyz - geometry.position.xyz);
+	
+	float3	reflectDir		=	reflect( -viewDirN, surface.normal.xyz );
+	float	selfOcclusion	=	saturate( dot( normalize(surface.normal.xyz), normalize(geometry.normal.xyz) ) );
+	float	NoV 			= 	dot(viewDirN, surface.normal.xyz);
+	float2 	ab				=	rc.EnvironmentLut.SampleLevel( rc.Sampler, float2(surface.roughness, 1-NoV), 0 ).xy;
+	
+	float3		innerRange	=	float3( probe.NormalizedWidth, probe.NormalizedHeight, probe.NormalizedDepth );
+	float4x4	lpbMatrixI	=	probe.MatrixInv;
+	float3		cubePos		=	mul(float4(geometry.position,1), lpbMatrixI ).xyz;
+	float3 		cubeMapPos	=	probe.Position.xyz;
+	uint   		imageIndex	=	probe.ImageIndex;
+	float3		cameraPos	=	camera.CameraPosition.xyz;
+		
+	float3 		randColor	=	float3( (imageIndex/2)%2, (imageIndex/4)%2, (imageIndex/8)%2 );
+		
+	float3		factor3		=	abs(cubePos);
+				factor3		=	(factor3 - innerRange) / (float3(1,1,1) - innerRange);
+	float		factor		=	1 - saturate( max(factor3.x, max(factor3.y, factor3.z)) );
+		
+	float3	reflectVector	=	SpecularParallaxCubeMap( geometry.position, cameraPos, surface.normal, cubeMapPos, lpbMatrixI ) * float3(-1,1,1);
+	float3	diffuseVector	=	DiffuseParallaxCubeMap ( geometry.position, cameraPos, surface.normal, cubeMapPos, lpbMatrixI );
+	
+	float	mipLevel		=	(sqrt(surface.roughness) * LightProbeMaxSpecularMip);
+			
+	float3	diffTerm		=	rc.RadianceCache.SampleLevel( rc.Sampler, float4(surface.normal.xyz, imageIndex), LightProbeDiffuseMip).rgb;
+	float3	specTerm		=	rc.RadianceCache.SampleLevel( rc.Sampler, float4(reflectVector,      imageIndex), mipLevel ).rgb;
+	
+			specTerm		=	specTerm * mad( surface.specular, ab.x, ab.y ) * selfOcclusion;
+			
+	return float4( specTerm, factor );
+}		
+
+
+
+
+
+
+
+
+#endif

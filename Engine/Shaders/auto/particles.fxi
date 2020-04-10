@@ -1,0 +1,172 @@
+// ---------------- CONSTANT VALUES ---------------- //
+
+static const int BLOCK_SIZE = 256;
+static const int MAX_INJECTED = 4096;
+static const int MAX_PARTICLES = 65536;
+static const int MAX_IMAGES = 512;
+static const uint ParticleFX_Hard = 0;
+static const uint ParticleFX_HardLit = 1;
+static const uint ParticleFX_HardLitShadow = 2;
+static const uint ParticleFX_Soft = 3;
+static const uint ParticleFX_SoftLit = 4;
+static const uint ParticleFX_SoftLitShadow = 5;
+static const uint ParticleFX_Distortive = 6;
+static const uint LightmapRegionSize = 1024;
+static const uint LightmapWidth = 4096;
+static const uint LightmapHeight = 2048;
+static const uint LightTypeOmni = 1;
+static const uint LightTypeSpotShadow = 3;
+static const uint LightSpotShapeRound = 131072;
+static const uint LightSpotShapeSquare = 65536;
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// Fusion.Engine.Graphics.ParticleStream+PARAMS
+// Marshal.SizeOf = 1024
+struct PARAMS {
+	float4x4   OcclusionGridMatrix;           // offset:    0
+	float4     Gravity;                       // offset:   64
+	float4     LightMapSize;                  // offset:   80
+	float4     SkyAmbientLevel;               // offset:   96
+	float4     FogColor;                      // offset:  112
+	float      FogAttenuation;                // offset:  128
+	int        MaxParticles;                  // offset:  132
+	float      DeltaTime;                     // offset:  136
+	uint       DeadListSize;                  // offset:  140
+	float      CocScale;                      // offset:  144
+	float      CocBias;                       // offset:  148
+	uint       IntegrationSteps;              // offset:  152
+};
+
+// Fusion.Engine.Graphics.GpuData+CAMERA
+// Marshal.SizeOf = 352
+struct CAMERA {
+	float4x4   Projection;                    // offset:    0
+	float4x4   View;                          // offset:   64
+	float4x4   ViewProjection;                // offset:  128
+	float4x4   ViewInverted;                  // offset:  192
+	float4     CameraForward;                 // offset:  256
+	float4     CameraRight;                   // offset:  272
+	float4     CameraUp;                      // offset:  288
+	float4     CameraPosition;                // offset:  304
+	float      LinearizeDepthScale;           // offset:  320
+	float      LinearizeDepthBias;            // offset:  324
+	float      FarDistance;                   // offset:  328
+	float      Pad0;                          // offset:  332
+	float      CameraTangentX;                // offset:  336
+	float      CameraTangentY;                // offset:  340
+	float      Pad1;                          // offset:  344
+	float      Pad2;                          // offset:  348
+};
+
+// Fusion.Engine.Graphics.GpuData+DIRECT_LIGHT
+// Marshal.SizeOf = 48
+struct DIRECT_LIGHT {
+	float4     DirectLightDirection;          // offset:    0
+	float4     DirectLightIntensity;          // offset:   16
+	float      DirectLightAngularSize;        // offset:   32
+	float      Pad0;                          // offset:   36
+	float      Pad1;                          // offset:   40
+	float      Pad2;                          // offset:   44
+};
+
+// Fusion.Engine.Graphics.ShadowMap+CASCADE_SHADOW
+// Marshal.SizeOf = 576
+struct CASCADE_SHADOW {
+	float4x4   CascadeViewProjection0;        // offset:    0
+	float4x4   CascadeViewProjection1;        // offset:   64
+	float4x4   CascadeViewProjection2;        // offset:  128
+	float4x4   CascadeViewProjection3;        // offset:  192
+	float4x4   CascadeGradientMatrix0;        // offset:  256
+	float4x4   CascadeGradientMatrix1;        // offset:  320
+	float4x4   CascadeGradientMatrix2;        // offset:  384
+	float4x4   CascadeGradientMatrix3;        // offset:  448
+	float4     CascadeScaleOffset0;           // offset:  512
+	float4     CascadeScaleOffset1;           // offset:  528
+	float4     CascadeScaleOffset2;           // offset:  544
+	float4     CascadeScaleOffset3;           // offset:  560
+};
+
+// Fusion.Engine.Graphics.Particle
+// Marshal.SizeOf = 128
+struct Particle {
+	float3     Position;                      // offset:    0
+	float3     Velocity;                      // offset:   12
+	float3     Acceleration;                  // offset:   24
+	float3     Color;                         // offset:   36
+	float      Alpha;                         // offset:   48
+	float      Roughness;                     // offset:   52
+	float      Metallic;                      // offset:   56
+	float      Intensity;                     // offset:   60
+	float      Scattering;                    // offset:   64
+	float      BeamFactor;                    // offset:   68
+	float      Gravity;                       // offset:   72
+	float      Damping;                       // offset:   76
+	float      Size0;                         // offset:   80
+	float      Size1;                         // offset:   84
+	float      Rotation0;                     // offset:   88
+	float      Rotation1;                     // offset:   92
+	float      LifeTime;                      // offset:   96
+	float      TimeLag;                       // offset:  100
+	float      FadeIn;                        // offset:  104
+	float      FadeOut;                       // offset:  108
+	int        ImageIndex;                    // offset:  112
+	int        ImageCount;                    // offset:  116
+	int        WeaponIndex;                   // offset:  120
+	uint       Effects;                       // offset:  124
+};
+
+// Fusion.Engine.Graphics.SceneRenderer+LIGHT
+// Marshal.SizeOf = 120
+struct LIGHT {
+	float4x4   ViewProjection;                // offset:    0
+	float4     PositionRadius;                // offset:   64
+	float4     IntensityFar;                  // offset:   80
+	float4     ShadowScaleOffset;             // offset:   96
+	uint       LightType;                     // offset:  112
+	float      SourceRadius;                  // offset:  116
+};
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+cbuffer __buffer0 : register(b0) {
+	PARAMS Params : packoffset(c0);
+};
+cbuffer __buffer1 : register(b1) {
+	CAMERA Camera : packoffset(c0);
+};
+cbuffer __buffer2 : register(b2) {
+	CAMERA CameraWeapon : packoffset(c0);
+};
+cbuffer __buffer3 : register(b3) {
+	float4 Images[512] : packoffset(c0);
+};
+cbuffer __buffer4 : register(b4) {
+	DIRECT_LIGHT DirectLight : packoffset(c0);
+};
+cbuffer __buffer5 : register(b5) {
+	CASCADE_SHADOW CascadeShadow : packoffset(c0);
+};
+SamplerState                   LinearSampler                  : register(s0);
+SamplerComparisonState         ShadowSampler                  : register(s1);
+Texture2D<float4>              Texture                        : register(t0);
+StructuredBuffer<Particle>     injectionBuffer                : register(t1);
+StructuredBuffer<Particle>     particleBufferGS               : register(t2);
+StructuredBuffer<float4>       sortParticleBufferGS           : register(t3);
+Texture2D<float4>              DepthValues                    : register(t5);
+Texture2D<float4>              ColorTemperature               : register(t6);
+Texture3D<uint2>               ClusterArray                   : register(t7);
+Buffer<uint>                   ClusterIndexBuffer             : register(t8);
+StructuredBuffer<LIGHT>        ClusterLightBuffer             : register(t9);
+Texture2D<float4>              ShadowMap                      : register(t10);
+Texture2D<float4>              LightMap                       : register(t11);
+Texture2D<float4>              ShadowMask                     : register(t12);
+Texture3D<float4>              IrradianceVolumeR              : register(t14);
+Texture3D<float4>              IrradianceVolumeG              : register(t15);
+Texture3D<float4>              IrradianceVolumeB              : register(t16);
+StructuredBuffer<float4>       lightMapRegionsGS              : register(t18);
+RWStructuredBuffer<Particle>   particleBuffer                 : register(u0);
+ConsumeStructuredBuffer<uint>  deadParticleIndicesPull        : register(u1);
+AppendStructuredBuffer<uint>   deadParticleIndicesPush        : register(u1);
+RWStructuredBuffer<float2>     sortParticleBuffer             : register(u2);
+RWStructuredBuffer<float4>     lightMapRegions                : register(u3);

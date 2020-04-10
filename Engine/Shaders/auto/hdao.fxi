@@ -1,0 +1,55 @@
+// ---------------- CONSTANT VALUES ---------------- //
+
+static const int BlockSizeX = 32;
+static const int BlockSizeY = 32;
+static const int InterleaveBlockSizeX = 16;
+static const int InterleaveBlockSizeY = 16;
+static const int PatternSize = 256;
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// Fusion.Engine.Graphics.SsaoFilter+HdaoParams
+// Marshal.SizeOf = 80
+struct HdaoParams {
+	float4     InputSize;                     // offset:    0
+	float      CameraTangentX;                // offset:   16
+	float      CameraTangentY;                // offset:   20
+	float      LinDepthScale;                 // offset:   24
+	float      LinDepthBias;                  // offset:   28
+	float      FadeoutDistance;               // offset:   32
+	float      DiscardDistance;               // offset:   36
+	float      RejectRadius;                  // offset:   40
+	float      RejectRadiusRcp;               // offset:   44
+	int2       WriteOffset;                   // offset:   48
+	float      Dummy;                         // offset:   56
+};
+
+// Fusion.Engine.Graphics.GpuData+CAMERA
+// Marshal.SizeOf = 352
+struct CAMERA {
+	float4x4   Projection;                    // offset:    0
+	float4x4   View;                          // offset:   64
+	float4x4   ViewProjection;                // offset:  128
+	float4x4   ViewInverted;                  // offset:  192
+	float4     CameraForward;                 // offset:  256
+	float4     CameraRight;                   // offset:  272
+	float4     CameraUp;                      // offset:  288
+	float4     CameraPosition;                // offset:  304
+	float      LinearizeDepthScale;           // offset:  320
+	float      LinearizeDepthBias;            // offset:  324
+	float      FarDistance;                   // offset:  328
+	float      Pad0;                          // offset:  332
+	float      CameraTangentX;                // offset:  336
+	float      CameraTangentY;                // offset:  340
+	float      Pad1;                          // offset:  344
+	float      Pad2;                          // offset:  348
+};
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+cbuffer __buffer0 : register(b0) {
+	HdaoParams hdaoParams : packoffset(c0);
+};
+cbuffer __buffer1 : register(b1) {
+	CAMERA Camera : packoffset(c0);
+};

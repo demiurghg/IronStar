@@ -82,7 +82,7 @@ namespace IronStar.Core {
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
-		public GameWorld( Game game, Map map, ContentManager content, IMessageService msgsvc, Guid userGuid, bool editor )
+		public GameWorld( Game game, string mapName, Map map, ContentManager content, IMessageService msgsvc, Guid userGuid, bool editor )
 		{
 			MessageService	=	msgsvc;
 
@@ -123,9 +123,9 @@ namespace IronStar.Core {
 				mapNode.SpawnNode(this);
 			}
 
-			rw.IrradianceMap		=	Content.Load(@"test_lightmap",	(IrradianceMap)null );
-			rw.IrradianceVolume		=	Content.Load(@"test_lightvol",	(IrradianceVolume)null );
-			rw.IrradianceCache		=	Content.Load(@"test_lightcache",(IrradianceCache)null );
+			rw.IrradianceCache		=	Content.Load(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrcache"	), (IrradianceCache)null );
+			rw.IrradianceVolume		=	Content.Load(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrvol"	), (IrradianceVolume)null );
+			rw.IrradianceMap		=	Content.Load(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrmap"	), (IrradianceMap)null );
 
 			map.UpdateEnvironment(this);
 		}

@@ -1,0 +1,79 @@
+#ifndef __LS_CLUSTERS_FXI__
+#define __LS_CLUSTERS_FXI__
+
+/*------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------*/
+
+
+struct CLUSTER
+{
+	uint Index;			///	starting index of light/decal data
+	uint NumLights;		///	number of light indices
+	uint NumDecals;		///	number of decals
+	uint NumProbes;		///	number of light-probes
+};
+
+
+struct CLUSTER_RESOURCES
+{
+	Texture3D<uint2>				ClusterArray;
+	Buffer<uint>					IndexBuffer;
+	StructuredBuffer<LIGHT> 		LightBuffer;
+	#ifndef NO_DECALS
+	StructuredBuffer<DECAL> 		DecalBuffer;
+	#endif
+	#ifndef NO_CUBEMAPS
+	StructuredBuffer<LIGHTPROBE> 	LightProbeBuffer;
+	#endif
+};
+
+
+CLUSTER GetCluster( CLUSTER_RESOURCES rc, float4 projectedPosition )
+{
+	float2 	scale	=	float2( 0.5f, -0.5f ) * float2(16,8) / projectedPosition.w;
+	float2 	bias	=	float2( 0.5f,  0.5f ) * float2(16,8);
+
+	float 	slice	= 	(1 - exp(-projectedPosition.w*0.015625f)) * 24;
+	float2	segment	=	mad( projectedPosition.xy, scale, bias );
+	
+	int3 	loadUVW	=	int3( segment, slice );
+	
+	uint2	rawData	=	rc.ClusterArray.Load( int4(loadUVW,0) ).rg;
+	
+	CLUSTER	data;
+	
+	data.Index		=	rawData.r;
+	data.NumDecals	=	(rawData.g & 0x00FFF000) >> 12;
+	data.NumLights	=	(rawData.g & 0x00000FFF) >> 0;
+	data.NumProbes	=	(rawData.g & 0xFF000000) >> 24;
+	
+	return data;
+}
+
+
+LIGHT GetLight( CLUSTER_RESOURCES rc, CLUSTER cluster, int lightIndex )
+{
+	uint base 	= 	cluster.Index;
+	uint idx 	= 	rc.IndexBuffer.Load( base + lightIndex );
+	return rc.LightBuffer[idx];
+}
+
+#ifndef NO_DECALS
+DECAL GetDecal( CLUSTER_RESOURCES rc, CLUSTER cluster, int decalIndex )
+{
+	uint base 	= 	cluster.Index + cluster.NumLights;
+	uint idx 	=	rc.IndexBuffer.Load( base + decalIndex );
+	return rc.DecalBuffer[idx];
+}
+#endif
+
+#ifndef NO_CUBEMAPS
+LIGHTPROBE GetLightProbe( CLUSTER_RESOURCES rc, CLUSTER cluster, int lightIndex )
+{
+	uint base 	= 	cluster.Index + cluster.NumLights + cluster.NumDecals;
+	uint idx 	=	rc.IndexBuffer.Load( base + lightIndex );
+	return rc.LightProbeBuffer[idx];
+}
+#endif
+#endif

@@ -1,0 +1,22 @@
+#ifndef __LS_CORE_FXI__
+#define __LS_CORE_FXI__
+
+/*------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------*/
+
+#include "ls_clusters.fxi"
+#include "ls_brdf.fxi"
+#include "ls_shadows.fxi"
+#include "ls_lighting.fxi"
+#include "ls_lightmap.fxi"
+
+#ifndef NO_DECALS
+#include "ls_decals.fxi"
+#endif
+
+#ifndef NO_CUBEMAPS
+#include "ls_cubemap.fxi"
+#endif
+
+#endif

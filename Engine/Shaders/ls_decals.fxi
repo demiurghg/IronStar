@@ -1,0 +1,56 @@
+#ifndef __LS_DECALS_FXI__
+#define __LS_DECALS_FXI__
+
+
+struct DECAL_RESOURCES
+{
+	Texture2D		DecalImages;
+	SamplerState	DecalSampler;
+};
+
+
+SURFACE ApplyDecal( GEOMETRY geometry, SURFACE surface, CAMERA camera, DECAL decal, DECAL_RESOURCES rc, uint group )
+{
+	float3	viewDir			=	Camera.CameraPosition.xyz - geometry.position.xyz;
+	float	viewDistance	=	length( viewDir );
+	float3	viewDirN		=	normalize( viewDir );
+
+	float	decalSlope		=	dot( viewDirN, geometry.normal );
+	float	decalBaseMip	=	log2( viewDistance / decalSlope );
+
+	float4x4 decalMatrixI	=	decal.DecalMatrixInv;
+	float3	 decalColor		=	decal.BaseColorMetallic.rgb;
+	float3	 glowColor		=	decal.EmissionRoughness.rgb;
+	float	 decalR			=	decal.EmissionRoughness.a * decal.EmissionRoughness.a;
+	float	 decalM			=	decal.BaseColorMetallic.a;
+	float4	 scaleOffset	=	decal.ImageScaleOffset;
+	float	 falloff		=	decal.FalloffFactor;
+	float 	 mipDecalBias	=	decal.MipBias;
+	
+	float3	 worldPos		=	geometry.position;
+	
+	float4 decalPos	=	mul(float4(worldPos,1), decalMatrixI);
+	
+	if ( abs(decalPos.x)<1 && abs(decalPos.y)<1 && abs(decalPos.z)<1 && group==decal.AssignmentGroup ) 
+	{
+		float2 uv			=	mad(decalPos.xy, scaleOffset.xy, scaleOffset.zw); 
+	
+		float4 decalImage	= 	rc.DecalImages.SampleLevel( rc.DecalSampler, uv, decalBaseMip + mipDecalBias );
+		float3 localNormal  = 	normalize(decalImage.xyz * 2 - 1);
+		float3 decalNormal	=	localNormal.x * decal.BasisX.xyz + localNormal.y * decal.BasisY.xyz + localNormal.z * decal.BasisZ.xyz;
+		float factor		=	pow(abs(decalImage.a), 2.2f) * saturate(falloff - abs(decalPos.z)*falloff);
+		
+		surface.emission	+=	 glowColor * factor;
+	
+		surface.baseColor 	= lerp( surface.baseColor.rgb, 	decalColor,  decal.ColorFactor 		* factor );
+		surface.roughness 	= lerp( surface.roughness, 		decalR, 	 decal.SpecularFactor 	* factor );
+		surface.metallic 	= lerp( surface.metallic,  		decalM, 	 decal.SpecularFactor 	* factor );
+		surface.normal		= lerp( surface.normal, 		decalNormal, decal.NormalMapFactor 	* factor );
+		
+		surface.alpha		=	surface.alpha;
+	}
+	
+	return surface;
+}
+
+#endif

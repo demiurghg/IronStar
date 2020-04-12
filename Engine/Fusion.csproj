@@ -196,9 +196,8 @@
     <Compile Include="Core\Shell\ArgList.cs" />
     <Compile Include="Core\Shell\CommandNoHistory.cs" />
     <Compile Include="Core\Shell\Invoker.Names.cs" />
+    <Compile Include="Core\Shell\Invoker.Toggle.cs" />
     <Compile Include="Core\Shell\Invoker.Wait.cs" />
-    <Compile Include="Core\Shell\Invoker.Redo.cs" />
-    <Compile Include="Core\Shell\Invoker.Undo.cs" />
     <Compile Include="Core\Shell\Invoker.Get.cs" />
     <Compile Include="Core\Shell\Invoker.Helper.cs" />
     <Compile Include="Core\Shell\Invoker.Set.cs" />

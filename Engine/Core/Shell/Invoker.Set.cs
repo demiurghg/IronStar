@@ -16,7 +16,7 @@ using Fusion.Core.Mathematics;
 namespace Fusion.Core.Shell {
 	public partial class Invoker {
 
-		class Set : ICommand {
+		class Toggle : ICommand {
 
 			readonly Invoker invoker;
 
@@ -24,27 +24,7 @@ namespace Fusion.Core.Shell {
 			[CommandLineParser.Name("variable")]
 			public string Variable { get; set; }
 
-			[CommandLineParser.Required]
-			[CommandLineParser.Name("value")]
-			public string Value { get; set; }
-
-			[CommandLineParser.Option]
-			[CommandLineParser.Name("historyOff")]
-			public bool HistoryOff { get; set; }
-
-			string oldValue = null;
-
-
-			public Set ( Invoker invoker, string variable, string value )
-			{
-				this.invoker	=	invoker;
-				this.Value		=	value;
-				this.Variable	=	variable;
-				this.HistoryOff	=	false;
-			}
-
-			
-			public Set ( Invoker invoker )
+			public Toggle ( Invoker invoker )
 			{
 				this.invoker = invoker;
 			}
@@ -52,22 +32,10 @@ namespace Fusion.Core.Shell {
 
 			public object Execute()
 			{
-				if (IsHistoryOn()) {
-					oldValue = invoker.GetComponentProperty(Variable);
-				}
+				var value = invoker.GetComponentProperty(Variable);
 
-				invoker.SetComponentProperty( Variable, Value );
+				invoker.SetComponentProperty( Variable, (!StringConverter.ToBoolean(value)).ToString() );
 				return null;
-			}
-
-			public bool IsHistoryOn()
-			{
-				return !HistoryOff;
-			}
-
-			public void Rollback()
-			{
-				invoker.SetComponentProperty( Variable, oldValue );
 			}
 		}
 	}

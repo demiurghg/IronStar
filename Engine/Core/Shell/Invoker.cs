@@ -23,8 +23,6 @@ namespace Fusion.Core.Shell {
 		public delegate ICommand CommandCreator ();
 
 		readonly object lockObject = new object();
-		readonly Stack<ICommand> undoStack	= new Stack<ICommand>(1024);
-		readonly Stack<ICommand> redoStack	= new Stack<ICommand>(1024);
 		readonly Queue<ICommand> cmdQueue	= new Queue<ICommand>(1024);
 		readonly Dictionary<string,CommandEntry> commandsRegistry = new Dictionary<string, CommandEntry>();
 
@@ -34,44 +32,16 @@ namespace Fusion.Core.Shell {
 		}
 
 
-		class TestCommand : ICommand {
-			
-			[CommandLineParser.Required()]
-			[CommandLineParser.Name("name")]
-			public string Name { get; set; } = "";
-
-			[CommandLineParser.Option]
-			[CommandLineParser.Name("mode")]
-			public StereoMode Mode { get; set; } = StereoMode.Disabled;
-
-			public object Execute()
-			{
-				return string.Format("{0} {1}", Name, Mode );
-			}
-
-			public bool IsHistoryOn()
-			{
-				return false;
-			}
-
-			public void Rollback()
-			{
-			}
-		}
-
 		/// <summary>
 		/// 
 		/// </summary>
 		public Invoker ( Game game )
 		{
 			this.Game = game; // optional ComponentCollection???
-			RegisterCommand("set",  ()=>new Set(this)		);
-			RegisterCommand("get",  ()=>new Get(this)		);
-			RegisterCommand("undo", ()=>new UndoCmd(this)	);
-			RegisterCommand("redo", ()=>new RedoCmd(this)	);
-			RegisterCommand("wait", ()=>new WaitCmd(this)	);
-
-			RegisterCommand("test", () => new TestCommand() );
+			RegisterCommand("set",		()=>new Set(this)		);
+			RegisterCommand("get",		()=>new Get(this)		);
+			RegisterCommand("wait",		()=>new WaitCmd(this)	);
+			RegisterCommand("toggle",	()=>new Toggle(this)	);
 
 			Game.Components.ComponentAdded   += (s,e) => FlushNameCache();
 			Game.Components.ComponentRemoved += (s,e) => FlushNameCache();
@@ -206,11 +176,6 @@ namespace Fusion.Core.Shell {
 			lock (lockObject) {
 
 				var result = command.Execute();
-
-				if (command.IsHistoryOn()) {
-					redoStack.Clear();
-					undoStack.Push(command);
-				}
 
 				return result;
 			}
@@ -351,73 +316,5 @@ namespace Fusion.Core.Shell {
 				}
 			}
 		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="count"></param>
-		public bool Undo ( int count )
-		{
-			lock (lockObject) {
-
-				for (int i=0; i<count; i++) {
-
-					if (undoStack.Any()) {
-					
-						var cmd = undoStack.Pop();
-						cmd.Rollback();
-						redoStack.Push(cmd);
-
-					} else {
-						return false;
-					}
-				}
-			}
-
-			return true;
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="count"></param>
-		public bool Redo ( int count )
-		{
-			lock (lockObject) {
-
-				for (int i=0; i<count; i++) {
-
-					if (redoStack.Any()) {
-					
-						var cmd = redoStack.Pop();
-						cmd.Execute();
-						undoStack.Push(cmd);
-
-					} else {
-						return false;
-					}
-				}
-			}
-
-			return true;
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public void ClearHistory ()
-		{
-			lock (lockObject) {
-				undoStack.Clear();
-				redoStack.Clear();
-			}
-		}
-
 	}
 }

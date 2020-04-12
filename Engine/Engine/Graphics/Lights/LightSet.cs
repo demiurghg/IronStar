@@ -147,7 +147,10 @@ namespace Fusion.Engine.Graphics {
 		[Obsolete]
 		public void FreeImageIndex( int index )
 		{
-			imageIndices[index] = false;
+			if (index>=0 && index<imageIndices.Count)
+			{
+				imageIndices[index] = false;
+			}
 		}
 
 

@@ -120,7 +120,6 @@ float4 PSMain( PSInput input ) : SV_Target0
 	
 	float3 coord		=	mul(float4(surfacePos.xyz,1), Params.VolumeTransform ).xyz;
 	float3 lighting		=	EvaluateLightVolume( rc, surfaceNormal, coord ); 
-		   lighting		=	ColorSaturation( lighting, 2 );
 	float  whiteDiffuse	=	SRGBToLinear( 0.5f );
 	return float4(lighting * whiteDiffuse,1);
 #endif

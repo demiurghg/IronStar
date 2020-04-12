@@ -19,8 +19,6 @@ namespace Fusion.Core.Shell {
 		class Batch : ICommand {
 
 			readonly ICommand[] commands;
-			bool firstRun = true;
-
 			
 			public Batch ( ICommand[] commands )
 			{									
@@ -42,27 +40,10 @@ namespace Fusion.Core.Shell {
 
 					var cmd = commands[i];
 
-					if (cmd.IsHistoryOn() || firstRun) {
-						cmd.Execute();
-					}
+					cmd.Execute();
 				}
-				firstRun = false;
+
 				return null;
-			}
-
-
-			public void Rollback()
-			{
-				int length = commands.Length;
-
-				for (int i=length-1; i>=0; i--) {
-
-					var cmd = commands[i];
-
-					if (cmd.IsHistoryOn() || firstRun) {
-						cmd.Rollback();
-					}
-				}
 			}
 		}
 	}

@@ -7,7 +7,5 @@ using System.Threading.Tasks;
 namespace Fusion.Core.Shell {
 	public interface ICommand {
 		object  Execute();
-		void	Rollback();
-		bool	IsHistoryOn();
 	}
 }

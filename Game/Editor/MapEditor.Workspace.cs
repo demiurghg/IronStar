@@ -94,11 +94,13 @@ namespace IronStar.Editor {
 			lowerShelf.AddLButton("ACT\n[ENTER]" ,	@"editor\iconActivate", () => ActivateSelected() );
 			lowerShelf.AddLButton("USE\n[U]"	 ,	@"editor\iconUse"	,	() => UseSelected() );
 
+			lowerShelf.AddLSplitter();				 
 			lowerShelf.AddFatLButton("Build\nNavMesh"	 ,	null,	() => this.Map.BuildNavMesh(Content) );
-			lowerShelf.AddFatLButton("buildrad\nlow"	 ,	null,	() => Game.Invoker.ExecuteString("buildrad low") );
-			lowerShelf.AddFatLButton("buildrad\nmedium"	 ,	null,	() => Game.Invoker.ExecuteString("buildrad medium") );
-			lowerShelf.AddFatLButton("buildrad\nhigh"	 ,	null,	() => Game.Invoker.ExecuteString("buildrad high") );
-			lowerShelf.AddFatLButton("buildrad\nultra"	 ,	null,	() => Game.Invoker.ExecuteString("buildrad ultra") );
+
+			lowerShelf.AddLSplitter();				 
+			lowerShelf.AddFatLButton("Bake\nLightmap"		,	null,	BakeLightMap	 );
+			lowerShelf.AddFatLButton("Bake\nLight Volume"	,	null,	BakeLightVolume  );
+			lowerShelf.AddFatLButton("Bake\nLight Probes"	,	null,	BakeLightProbes  );
 
 			//--------------------------------------------------------------------------
 
@@ -159,6 +161,12 @@ namespace IronStar.Editor {
 			workspace.AddHotkey( Keys.E			, ModKeys.None, () => Manipulator = new RotateTool(this) );
 			workspace.AddHotkey( Keys.T			, ModKeys.None, () => TargetSelection() );
 			
+			workspace.AddHotkey( Keys.D1		, ModKeys.None, ResetViewMode );
+			workspace.AddHotkey( Keys.D2		, ModKeys.None, ToggleDiffuse );
+			workspace.AddHotkey( Keys.D3		, ModKeys.None, ToggleSpecular );
+			workspace.AddHotkey( Keys.D4		, ModKeys.None, ToggleLightProbes );
+			workspace.AddHotkey( Keys.D5		, ModKeys.None, ToggleLightVolume );
+			
 			workspace.AddHotkey( Keys.Delete	, ModKeys.None, () => DeleteSelection() );
 			workspace.AddHotkey( Keys.U			, ModKeys.Ctrl, () => DuplicateSelection() );
 
@@ -188,6 +196,60 @@ namespace IronStar.Editor {
 			workspace.AddHotkey( Keys.OemCloseBrackets, ModKeys.None, () => CameraFov -= 10 );
 
 			workspace.AddHotkey( Keys.F11		, ModKeys.None, () => Game.Invoker.ExecuteString("screenshot") );
+		}
+
+
+		void ResetViewMode ()
+		{
+			Game.Invoker.ExecuteString("LightMapDebugger.ShowLightProbes False");
+			Game.Invoker.ExecuteString("LightMapDebugger.ShowLightVolume False");
+			Game.Invoker.ExecuteString("VTSystem.ShowDiffuse False");
+			Game.Invoker.ExecuteString("VTSystem.ShowSpecular False");
+			Game.Invoker.ExecuteString("vtrestart");
+		}
+
+
+		void ToggleDiffuse()
+		{
+			Game.Invoker.ExecuteString("toggle VTSystem.ShowDiffuse");
+			Game.Invoker.ExecuteString("vtrestart");
+		}
+
+
+		void ToggleSpecular()
+		{
+			Game.Invoker.ExecuteString("toggle VTSystem.ShowSpecular");
+			Game.Invoker.ExecuteString("vtrestart");
+		}
+
+
+		void ToggleLightProbes()
+		{
+			Game.Invoker.ExecuteString("toggle LightMapDebugger.ShowLightProbes");
+		}
+
+
+		void ToggleLightVolume()
+		{
+			Game.Invoker.ExecuteString("toggle LightMapDebugger.ShowLightVolume");
+		}
+
+
+		void BakeLightMap()
+		{
+			Game.Invoker.ExecuteString(string.Format("buildrad {0} Medium /map", mapName));
+		}
+
+
+		void BakeLightVolume()
+		{
+			Game.Invoker.ExecuteString(string.Format("buildrad {0} Medium /vol", mapName));
+		}
+
+
+		void BakeLightProbes()
+		{
+			Game.Invoker.ExecuteString(string.Format("buildrad {0} Medium /cube", mapName));
 		}
 
 

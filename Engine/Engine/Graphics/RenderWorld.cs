@@ -764,8 +764,12 @@ namespace Fusion.Engine.Graphics {
 						break; 
 				}
 
+				int w	=	RenderSystem.LightVolumeWidth;
+				int h	=	RenderSystem.LightVolumeHeight;
+				int d	=	RenderSystem.LightVolumeDepth;
+
 				//using ( var irrVol = rs.LightManager.LightMap.BakeIrradianceVolume( Instances, LightSet, samples, 64,32,64, 8 ) ) {
-				using ( var irrVol = rs.LightManager.LightMap.BakeIrradianceVolume( Instances, LightSet, samples, 32,16,32, 32 ) ) 
+				using ( var irrVol = rs.LightManager.LightMap.BakeIrradianceVolume( Instances, LightSet, samples, w,h,d, 16 ) ) 
 				{
 					using ( var stream = File.OpenWrite( pathIrrVol ) ) 
 					{

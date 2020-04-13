@@ -667,9 +667,9 @@ namespace Fusion.Engine.Graphics {
 
 					if (flags.HasFlag(Flags.LIGHTMAP) || flags.HasFlag(Flags.HARD)) 
 					{
-						device.GfxResources[ regIrradianceVolumeR ]	= 	rs.RenderWorld.IrradianceVolume.IrradianceTextureRed	;
-						device.GfxResources[ regIrradianceVolumeG ]	= 	rs.RenderWorld.IrradianceVolume.IrradianceTextureGreen	;
-						device.GfxResources[ regIrradianceVolumeB ]	= 	rs.RenderWorld.IrradianceVolume.IrradianceTextureBlue	;
+						device.GfxResources[ regIrradianceVolumeR ]	= 	rs.RenderWorld.IrradianceVolume.LightVolumeR	;
+						device.GfxResources[ regIrradianceVolumeG ]	= 	rs.RenderWorld.IrradianceVolume.LightVolumeG	;
+						device.GfxResources[ regIrradianceVolumeB ]	= 	rs.RenderWorld.IrradianceVolume.LightVolumeB	;
 					}
 
 					device.GfxResources[ 18 ]	=	lightMapRegions;

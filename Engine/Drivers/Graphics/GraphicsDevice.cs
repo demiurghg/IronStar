@@ -305,11 +305,6 @@ namespace Fusion.Drivers.Graphics {
 
 				image.PerpixelProcessing( color => new Color( color.R, color.G, color.B, (byte)255 ) );
 
-				image = image.DownsampleBilinear();
-				image = image.DownsampleBilinear();
-				image = image.DownsampleBilinear(256,144);
-
-
 				using ( var stream = File.OpenWrite( path ) )
 				{
 					Image.SaveTga( image, stream );

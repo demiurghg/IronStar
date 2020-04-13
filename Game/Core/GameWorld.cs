@@ -75,6 +75,7 @@ namespace IronStar.Core {
 		public SnapshotHeader snapshotHeader = new SnapshotHeader();
 
 		Map map;
+		string mapName;
 
 
 
@@ -92,6 +93,7 @@ namespace IronStar.Core {
 			this.Game		=	game;
 			this.map		=	map;
 			this.UserGuid	=	userGuid;
+			this.mapName	=	mapName;
 
 			entities		=	new EntityCollection();
 			items			=	new ItemCollection(this);
@@ -123,15 +125,24 @@ namespace IronStar.Core {
 				mapNode.SpawnNode(this);
 			}
 
-			rw.IrradianceCache		=	Content.Load(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrcache"	), (IrradianceCache)null );
-			rw.IrradianceVolume		=	Content.Load(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrvol"	), (IrradianceVolume)null );
-			rw.IrradianceMap		=	Content.Load(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrmap"	), (IrradianceMap)null );
+			Game.Reloading +=Game_Reloading;
+
+			Game_Reloading(this, EventArgs.Empty);
 
 			map.UpdateEnvironment(this);
 		}
 
 
+		private void Game_Reloading( object sender, EventArgs e )
+		{
+			var rw					=	Game.RenderSystem.RenderWorld;
 
+			rw.IrradianceCache		=	Content.Load(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrcache"	), (IrradianceCache)null );
+			rw.IrradianceVolume		=	Content.Load(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrvol"	), (IrradianceVolume)null );
+			rw.IrradianceMap		=	Content.Load(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrmap"	), (IrradianceMap)null );
+		}
+
+		
 		public void RefreshWorld ()
 		{
 			//navMesh			=	map.BuildNavMesh( content );
@@ -147,6 +158,8 @@ namespace IronStar.Core {
 			if (disposing) {
 
 				Content?.Dispose();
+
+				Game.Reloading-=Game_Reloading;
 
 				Game.RenderSystem.RenderWorld.ClearWorld();
 

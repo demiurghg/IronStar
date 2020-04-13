@@ -50,13 +50,9 @@ namespace Fusion.Engine.Graphics.Lights {
 		public GenericVolume<SHL1>	IrradianceGreen	 { get { return irradianceG; } }
 		public GenericVolume<SHL1>	IrradianceBlue	 { get { return irradianceB; } }
 
-		internal Texture3D	IrradianceTextureRed	{ get { return irradianceTextureR; } }
-		internal Texture3D	IrradianceTextureGreen	{ get { return irradianceTextureG; } }
-		internal Texture3D	IrradianceTextureBlue	{ get { return irradianceTextureB; } }
-		
-		Texture3D	irradianceTextureR;
-		Texture3D	irradianceTextureG;
-		Texture3D	irradianceTextureB;
+		internal Texture3D	LightVolumeR	{ get { return rs.LightMapResources.LightVolumeR; } }
+		internal Texture3D	LightVolumeG	{ get { return rs.LightMapResources.LightVolumeG; } }
+		internal Texture3D	LightVolumeB	{ get { return rs.LightMapResources.LightVolumeB; } }
 
 		public Matrix WorldPosToTexCoord {
 			get {
@@ -82,10 +78,6 @@ namespace Fusion.Engine.Graphics.Lights {
 			irradianceG	=	new GenericVolume<SHL1>( width, height, depth );
 			irradianceB	=	new GenericVolume<SHL1>( width, height, depth );
 			temporary	=	new GenericVolume<SHL1>( width, height, depth );
-
-			irradianceTextureR	=	new Texture3D( rs.Device, ColorFormat.Rgba16F, width, height, depth ); 
-			irradianceTextureG	=	new Texture3D( rs.Device, ColorFormat.Rgba16F, width, height, depth ); 
-			irradianceTextureB	=	new Texture3D( rs.Device, ColorFormat.Rgba16F, width, height, depth ); 
 		}
 
 
@@ -98,20 +90,20 @@ namespace Fusion.Engine.Graphics.Lights {
 				
 				reader.ExpectFourCC("IRV1", "irradiance map format. IRM1 expected.");
 
-				width	=	reader.ReadInt32();
-				height	=	reader.ReadInt32();
-				depth	=	reader.ReadInt32();
+				reader.ReadInt32();
+				reader.ReadInt32();
+				reader.ReadInt32();
+
+				width	=	RenderSystem.LightVolumeWidth;
+				height	=	RenderSystem.LightVolumeHeight;
+				depth	=	RenderSystem.LightVolumeDepth;
 				stride	=	reader.ReadSingle();
 
 				reader.ExpectFourCC("VOL1", "irradiance map format. MAP1 expected.");
-
-				irradianceTextureR	=	new Texture3D( rs.Device, ColorFormat.Rgba16F, width, height, depth ); 
-				irradianceTextureG	=	new Texture3D( rs.Device, ColorFormat.Rgba16F, width, height, depth ); 
-				irradianceTextureB	=	new Texture3D( rs.Device, ColorFormat.Rgba16F, width, height, depth ); 
 				
-				irradianceTextureR.SetData( reader.Read<Half4>( width * height * depth ) );
-				irradianceTextureG.SetData( reader.Read<Half4>( width * height * depth ) );
-				irradianceTextureB.SetData( reader.Read<Half4>( width * height * depth ) );
+				LightVolumeR.SetData( reader.Read<Half4>( width * height * depth ) );
+				LightVolumeG.SetData( reader.Read<Half4>( width * height * depth ) );
+				LightVolumeB.SetData( reader.Read<Half4>( width * height * depth ) );
 			}
 		}
 
@@ -140,9 +132,6 @@ namespace Fusion.Engine.Graphics.Lights {
 		protected override void Dispose( bool disposing )
 		{
 			if (disposing) {
-				SafeDispose( ref irradianceTextureR );
-				SafeDispose( ref irradianceTextureG );
-				SafeDispose( ref irradianceTextureB );
 			}
 
 			base.Dispose( disposing );
@@ -152,9 +141,9 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		public void UpdateGPUTextures ()
 		{
-			irradianceTextureR.SetData( irradianceR.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
-			irradianceTextureG.SetData( irradianceG.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
-			irradianceTextureB.SetData( irradianceB.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
+			LightVolumeR.SetData( irradianceR.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
+			LightVolumeG.SetData( irradianceG.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
+			LightVolumeB.SetData( irradianceB.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
 		}
 
 

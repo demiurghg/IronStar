@@ -258,6 +258,8 @@ namespace Fusion.Engine.Graphics.Lights {
 				}
 			}
 
+			irrVolume.UpdateGPUTextures();
+
 			return irrVolume;
 		}
 
@@ -626,5 +628,14 @@ namespace Fusion.Engine.Graphics.Lights {
 			scene.UnmapBuffer( id, BufferType.VertexBuffer );
 			scene.UnmapBuffer( id, BufferType.IndexBuffer );
 		}
+
+
+		/*-----------------------------------------------------------------------------------------------
+		 * 
+		 * Voxelization stuff
+		 * 
+		-----------------------------------------------------------------------------------------------*/
+
+
 	}
 }

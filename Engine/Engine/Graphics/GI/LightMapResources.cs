@@ -20,13 +20,21 @@ namespace Fusion.Engine.Graphics.Lights {
 
 	public class LightMapResources : DisposableBase {
 
-		internal Texture2D	IrradianceTextureRed	{ get { return irradianceTextureR; } }
-		internal Texture2D	IrradianceTextureGreen	{ get { return irradianceTextureG; } }
-		internal Texture2D	IrradianceTextureBlue	{ get { return irradianceTextureB; } }
+		internal Texture2D	LightMapR		{ get { return lightMapR; } }
+		internal Texture2D	LightMapG		{ get { return lightMapG; } }
+		internal Texture2D	LightMapB		{ get { return lightMapB; } }
 		
-		Texture2D	irradianceTextureR;
-		Texture2D	irradianceTextureG;
-		Texture2D	irradianceTextureB;
+		internal Texture3D	LightVolumeR	{ get { return lightVolumeR; } }
+		internal Texture3D	LightVolumeG	{ get { return lightVolumeG; } }
+		internal Texture3D	LightVolumeB	{ get { return lightVolumeB; } }
+		
+		Texture2D	lightMapR;
+		Texture2D	lightMapG;
+		Texture2D	lightMapB;
+
+		Texture3D	lightVolumeR;
+		Texture3D	lightVolumeG;
+		Texture3D	lightVolumeB;
 
 		internal TextureCubeArray	IrradianceCubeMaps	{ get { return irradianceCubeMaps; } }
 		TextureCubeArray irradianceCubeMaps;
@@ -34,15 +42,23 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		public LightMapResources ( RenderSystem rs )
 		{
-			int lmSize	=	RenderSystem.LightmapSize;
+			int lmSize		=	RenderSystem.LightmapSize;
 
-			irradianceTextureR	=	new Texture2D( rs.Device, lmSize, lmSize, ColorFormat.Rgba16F, false ); 
-			irradianceTextureG	=	new Texture2D( rs.Device, lmSize, lmSize, ColorFormat.Rgba16F, false ); 
-			irradianceTextureB	=	new Texture2D( rs.Device, lmSize, lmSize, ColorFormat.Rgba16F, false ); 
+			lightMapR		=	new Texture2D( rs.Device, lmSize, lmSize, ColorFormat.Rgba16F, false ); 
+			lightMapG		=	new Texture2D( rs.Device, lmSize, lmSize, ColorFormat.Rgba16F, false ); 
+			lightMapB		=	new Texture2D( rs.Device, lmSize, lmSize, ColorFormat.Rgba16F, false ); 
 
-			int size	=	RenderSystem.LightProbeSize;
-			int mips	=	RenderSystem.LightProbeMaxMips;
-			int length	=	RenderSystem.MaxEnvLights;
+			int w			=	RenderSystem.LightVolumeWidth;
+			int h			=	RenderSystem.LightVolumeHeight;
+			int d			=	RenderSystem.LightVolumeDepth;
+
+			lightVolumeR	=	new Texture3D( rs.Device, ColorFormat.Rgba16F, w,h,d ); 
+			lightVolumeG	=	new Texture3D( rs.Device, ColorFormat.Rgba16F, w,h,d ); 
+			lightVolumeB	=	new Texture3D( rs.Device, ColorFormat.Rgba16F, w,h,d ); 
+
+			int size		=	RenderSystem.LightProbeSize;
+			int mips		=	RenderSystem.LightProbeMaxMips;
+			int length		=	RenderSystem.MaxEnvLights;
 
 			irradianceCubeMaps	=	new TextureCubeArray( rs.Device, size, length, ColorFormat.Rgba16F, mips );
 		}
@@ -52,9 +68,13 @@ namespace Fusion.Engine.Graphics.Lights {
 		{
 			if (disposing)
 			{
-				SafeDispose( ref irradianceTextureR );
-				SafeDispose( ref irradianceTextureG );
-				SafeDispose( ref irradianceTextureB );
+				SafeDispose( ref lightMapR );
+				SafeDispose( ref lightMapG );
+				SafeDispose( ref lightMapB );
+
+				SafeDispose( ref lightVolumeR );
+				SafeDispose( ref lightVolumeG );
+				SafeDispose( ref lightVolumeB );
 
 				SafeDispose( ref irradianceCubeMaps );
 			}

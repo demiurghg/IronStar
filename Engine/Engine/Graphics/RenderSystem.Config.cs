@@ -17,6 +17,10 @@ namespace Fusion.Engine.Graphics {
 
 		public const int	LightmapSize				=	2048;
 
+		public const int	LightVolumeWidth			=	64;
+		public const int	LightVolumeHeight			=	32;
+		public const int	LightVolumeDepth			=	64;
+
 		public const int	PreviewWidth				=	320;
 		public const int	PreviewHeight				=	180;
 

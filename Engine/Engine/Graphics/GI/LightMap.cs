@@ -43,9 +43,9 @@ namespace Fusion.Engine.Graphics.Lights {
 		public GenericImage<SHL1>	IrradianceGreen	 { get { return irradianceG; } }
 		public GenericImage<SHL1>	IrradianceBlue	 { get { return irradianceB; } }
 
-		internal Texture2D	IrradianceTextureRed	{ get { return rs.LightMapResources.IrradianceTextureRed; } }
-		internal Texture2D	IrradianceTextureGreen	{ get { return rs.LightMapResources.IrradianceTextureGreen; } }
-		internal Texture2D	IrradianceTextureBlue	{ get { return rs.LightMapResources.IrradianceTextureBlue; } }
+		internal Texture2D	IrradianceTextureRed	{ get { return rs.LightMapResources.LightMapR; } }
+		internal Texture2D	IrradianceTextureGreen	{ get { return rs.LightMapResources.LightMapG; } }
+		internal Texture2D	IrradianceTextureBlue	{ get { return rs.LightMapResources.LightMapB; } }
 
 
 		readonly Dictionary<Guid,Rectangle> regions = new Dictionary<Guid, Rectangle>();

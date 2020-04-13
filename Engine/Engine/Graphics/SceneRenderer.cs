@@ -243,9 +243,9 @@ namespace Fusion.Engine.Graphics {
 			device.GfxResources[ regIrradianceMapG			]	=	rs.RenderWorld.IrradianceMap?.IrradianceTextureGreen;
 			device.GfxResources[ regIrradianceMapB			]	=	rs.RenderWorld.IrradianceMap?.IrradianceTextureBlue;
 
-			device.GfxResources[ regIrradianceVolumeR		]	=	rs.RenderWorld.IrradianceVolume.IrradianceTextureRed;
-			device.GfxResources[ regIrradianceVolumeG		]	=	rs.RenderWorld.IrradianceVolume.IrradianceTextureGreen;
-			device.GfxResources[ regIrradianceVolumeB		]	=	rs.RenderWorld.IrradianceVolume.IrradianceTextureBlue;
+			device.GfxResources[ regIrradianceVolumeR		]	=	rs.RenderWorld.IrradianceVolume.LightVolumeR;
+			device.GfxResources[ regIrradianceVolumeG		]	=	rs.RenderWorld.IrradianceVolume.LightVolumeG;
+			device.GfxResources[ regIrradianceVolumeB		]	=	rs.RenderWorld.IrradianceVolume.LightVolumeB;
 
 			device.GfxResources[ regRadianceCache			]	=	rs.RenderWorld.IrradianceCache.IrradianceCubeMaps;
 			device.GfxResources[ regEnvLut					]	=	envLut.Srv;

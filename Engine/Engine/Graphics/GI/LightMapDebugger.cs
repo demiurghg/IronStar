@@ -156,9 +156,9 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			device.GfxSamplers[ regSampler ]			=	SamplerState.LinearWrap;
 
-			device.GfxResources[ regLightVolumeR	]	=	lightVolume.IrradianceTextureRed;
-			device.GfxResources[ regLightVolumeG	]	=	lightVolume.IrradianceTextureGreen;
-			device.GfxResources[ regLightVolumeB	]	=	lightVolume.IrradianceTextureBlue;
+			device.GfxResources[ regLightVolumeR	]	=	lightVolume.LightVolumeR;
+			device.GfxResources[ regLightVolumeG	]	=	lightVolume.LightVolumeG;
+			device.GfxResources[ regLightVolumeB	]	=	lightVolume.LightVolumeB;
 
 			device.GfxResources[ regLightProbes		]	=	rs.LightMapResources.IrradianceCubeMaps;
 			device.GfxResources[ regLightProbeData	]	=	rs.LightManager.LightGrid.ProbeDataGpu;

@@ -26,32 +26,44 @@ namespace IronStar.Mapping {
 
 
 		[Category("Light probe")]
-		[AEValueRange(0,128,4,0.25f)]
+		[AEValueRange(0,256,8,0.25f)]
 		public float Width  { get; set; } = 16;
 
 		[Category("Light probe")]
-		[AEValueRange(0,128,4,0.25f)]
+		[AEValueRange(0,256,8,0.25f)]
 		public float Height { get; set; } = 16;
 
 		[Category("Light probe")]
-		[AEValueRange(0,128,4,0.25f)]
+		[AEValueRange(0,256,8,0.25f)]
 		public float Depth  { get; set; } = 16;
 
 		[Category("Light probe")]
 		[AEDisplayName("Transition Width")]
 		[AEValueRange(0.25f,32,1,0.25f)]
-		public float ShellWidth  { get; set; } = 2f;
+		public float ShellWidth  { get; set; } = 8f;
 
 		[Category("Light probe")]
 		[AEDisplayName("Transition Height")]
 		[AEValueRange(0.25f,32,1,0.25f)]
-		public float ShellHeight  { get; set; } = 2f;
+		public float ShellHeight  { get; set; } = 8f;
 
 		[Category("Light probe")]
 		[AEDisplayName("Transition Depth")]
 		[AEValueRange(0.25f,32,1,0.25f)]
-		public float ShellDepth  { get; set; } = 2f;
+		public float ShellDepth  { get; set; } = 8f;
 
+
+		[AECommand]
+		public void MakeGlobal()
+		{
+			TranslateVector	=	Vector3.Up * 512;
+			RotatePitch		=	0;
+			RotateRoll		=	0;
+			RotateYaw		=	0;
+			Width	=	2048;
+			Height	=	2048;
+			Depth	=	2048;
+		}
 
 		LightProbe	light;
 

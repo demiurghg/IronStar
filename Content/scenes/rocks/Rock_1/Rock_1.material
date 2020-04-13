@@ -7,6 +7,6 @@ MaskEmission = False
 BaseColor = Rock_1_Tex\Rock_1_Base_Color.jpg
 NormalMap = Rock_1_Tex\Rock_1_Normal_DirectX.jpg
 Metallic  = 
-Roughness = 
+Roughness = Rock_1_Tex\Rock_1_Glossiness.jpg
 Emission  = 
 Occlusion = Rock_1_Tex\Rock_1_Mixed_AO.jpg

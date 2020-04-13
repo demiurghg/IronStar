@@ -8,6 +8,6 @@ InvertYNormal = True
 BaseColor = Rock_8_Tex\Rock_8_Base_Color.jpg
 NormalMap = Rock_8_Tex\Rock_8_Normal_DirectX.jpg
 Metallic  = 
-Roughness = 
+Roughness = Rock_8_Tex/Rock_8_Glossiness.jpg
 Emission  = 
 Occlusion = Rock_8_Tex\Rock_8_Mixed_AO.jpg

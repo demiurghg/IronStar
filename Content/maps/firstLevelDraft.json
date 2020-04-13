@@ -3674,6 +3674,26 @@
         "RotateYaw": 42.67402,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapLightProbe, IronStar",
+        "NodeGuid": "6f08b675-1ccb-42c1-9837-a30bc01ccbfd",
+        "InnerRadius": 1.0,
+        "OuterRadius": 2.0,
+        "Width": 88.0,
+        "Height": 72.0,
+        "Depth": 80.0,
+        "ShellWidth": 4.0,
+        "ShellHeight": 2.0,
+        "ShellDepth": 7.0,
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -222.0,
+        "TranslateY": 30.0,
+        "TranslateZ": 339.0,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
       }
     ]
   }

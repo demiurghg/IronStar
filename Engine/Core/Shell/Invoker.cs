@@ -199,7 +199,7 @@ namespace Fusion.Core.Shell {
 		/// </summary>
 		/// <param name="commandLine"></param>
 		/// <returns></returns>
-		public object ExecuteString ( string commandLine )
+		public object ExecuteStringImmediate ( string commandLine )
 		{
 			lock (lockObject) {
 				return Execute( ParseCommand( commandLine ) );
@@ -213,7 +213,7 @@ namespace Fusion.Core.Shell {
 		/// </summary>
 		/// <param name="commandLine"></param>
 		/// <returns></returns>
-		public void ExecuteStringDeferred ( params string[] commands )
+		public void ExecuteString ( params string[] commands )
 		{
 			lock (lockObject) {
 				foreach (var command in commands ) {

@@ -83,7 +83,7 @@ namespace IronStar.Editor {
 			upperShelf.AddRButton("SCR"				, null						, ()=> Game.Invoker.ExecuteString("screenshot") );
 			upperShelf.AddRButton("CONFIG"			, @"editor\iconComponents"	, ()=> workspace.TogglePalette( componentPalette ) );
 			upperShelf.AddRButton("EDITOR\rCONFIG"	, @"editor\iconSettings"	, ()=> workspace.FeedProperties(this) );
-			upperShelf.AddRButton("EXIT"			, @"editor\iconExit"		, ()=> Game.Invoker.ExecuteStringDeferred("editorSave", "wait", "killEditor") );
+			upperShelf.AddRButton("EXIT"			, @"editor\iconExit"		, ()=> Game.Invoker.ExecuteString("editorSave", "wait", "killEditor") );
  
 			//- LOWER SHELF ------------------------------------------------------------
 
@@ -237,19 +237,19 @@ namespace IronStar.Editor {
 
 		void BakeLightMap()
 		{
-			Game.Invoker.ExecuteString(string.Format("buildrad {0} Medium /map", mapName));
+			Game.Invoker.ExecuteString(string.Format("buildrad {0} Medium /map", mapName), "contentBuild");
 		}
 
 
 		void BakeLightVolume()
 		{
-			Game.Invoker.ExecuteString(string.Format("buildrad {0} Medium /vol", mapName));
+			Game.Invoker.ExecuteString(string.Format("buildrad {0} Medium /vol", mapName), "contentBuild");
 		}
 
 
 		void BakeLightProbes()
 		{
-			Game.Invoker.ExecuteString(string.Format("buildrad {0} Medium /cube", mapName));
+			Game.Invoker.ExecuteString(string.Format("buildrad {0} Medium /cube", mapName), "contentBuild");
 		}
 
 

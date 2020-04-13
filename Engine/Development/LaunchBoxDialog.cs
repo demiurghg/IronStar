@@ -138,7 +138,7 @@ namespace Fusion.Development {
 
 		private void openContent_Click ( object sender, EventArgs e )
 		{
-			var file = game.Invoker.ExecuteString("contentFile") as string;
+			var file = game.Invoker.ExecuteStringImmediate("contentFile") as string;
 			ShellExecute(file);
 		}
 
@@ -146,7 +146,7 @@ namespace Fusion.Development {
 
 		private void openContentDir_Click ( object sender, EventArgs e )
 		{
-			var file = game.Invoker.ExecuteString("contentFile") as string;
+			var file = game.Invoker.ExecuteStringImmediate("contentFile") as string;
 			ShellExecute(Path.GetDirectoryName(file));
 		}
 

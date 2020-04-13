@@ -334,7 +334,7 @@ namespace Fusion.Engine.Tools {
 				var cmd  = editBox.Text;
 				Log.Message("]{0}", cmd);
 
-				Game.Invoker.ExecuteStringDeferred(cmd);
+				Game.Invoker.ExecuteString(cmd);
 
 			} catch ( CommandLineParserException pe ) {
 				Log.Error(pe.Message);

@@ -73,7 +73,7 @@ namespace IronStar.Mapping {
 		public LightMapSize LightMapSize { get; set; } = LightMapSize.LightMap32;
 
 		[AECategory( "Light Mapping" )]
-		public bool Dynamic { get; set; } = false;
+		public bool UseLightVolume { get; set; } = false;
 
 		[AECategory( "Physics" )]
 		public bool UseCollisionMesh { get; set; } = false;
@@ -200,7 +200,7 @@ namespace IronStar.Mapping {
 				if (meshIndex>=0) {
 					instances[i] = new MeshInstance( rs, scene, scene.Meshes[meshIndex] );
 					instances[i].World			=	transforms[ i ] * Matrix.Scaling( Scale ) * WorldMatrix;
-					instances[i].Group			=	Dynamic ? InstanceGroup.Dynamic : InstanceGroup.Static;
+					instances[i].Group			=	UseLightVolume ? InstanceGroup.Kinematic : InstanceGroup.Static;
 					instances[i].LightMapSize	=	new Size2( (int)LightMapSize, (int)LightMapSize );
 					instances[i].LightMapGuid	=	this.NodeGuid;
 					rs.RenderWorld.Instances.Add( instances[i] );

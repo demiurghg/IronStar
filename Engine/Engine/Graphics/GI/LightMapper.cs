@@ -588,9 +588,7 @@ namespace Fusion.Engine.Graphics.Lights {
 			var scene		=	new RtcScene( rtc, sceneFlags, algFlags );
 
 			foreach ( var instance in instances ) {
-				if (instance.Group==InstanceGroup.Static || instance.Group==InstanceGroup.Kinematic) {
-					AddMeshInstance( scene, instance );
-				}
+				AddMeshInstance( scene, instance );
 			}
 
 			scene.Commit();

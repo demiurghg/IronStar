@@ -349,7 +349,7 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="lightSet"></param>
-		public void RenderShadowMaps ( GameTime gameTime, Camera camera, RenderSystem rs, RenderWorld renderWorld, LightSet lightSet )
+		public void RenderShadowMaps ( GameTime gameTime, Camera camera, RenderSystem rs, RenderWorld renderWorld, LightSet lightSet, InstanceGroup group = InstanceGroup.NotWeapon )
 		{
 			//
 			//	Allocate shadow map regions :
@@ -392,7 +392,6 @@ namespace Fusion.Engine.Graphics {
 				device.Clear( depthBuffer.Surface, 1, 0 );
 				device.Clear( colorBuffer.Surface, Color4.White );
 
-				InstanceGroup mask	=	InstanceGroup.All & ~InstanceGroup.Weapon;
 				var shadowCamera	=	renderWorld.ShadowCamera;
 
 				foreach ( var cascade in cascades ) {
@@ -402,7 +401,7 @@ namespace Fusion.Engine.Graphics {
 					shadowCamera.SetView( cascade.ViewMatrix );
 					shadowCamera.SetProjection( cascade.ProjectionMatrix );
 
-					rs.SceneRenderer.RenderShadowMap( contextSolid,  renderWorld, mask );
+					rs.SceneRenderer.RenderShadowMap( contextSolid,  renderWorld, group );
 				}
 
 				foreach ( var spot in lights ) {
@@ -412,7 +411,7 @@ namespace Fusion.Engine.Graphics {
 					shadowCamera.SetView( spot.SpotView );
 					shadowCamera.SetProjection( spot.Projection );
 
-					rs.SceneRenderer.RenderShadowMap( contextSolid, renderWorld, mask );
+					rs.SceneRenderer.RenderShadowMap( contextSolid, renderWorld, group );
 				}
 			}
 

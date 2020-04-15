@@ -634,13 +634,14 @@ namespace Fusion.Engine.Graphics {
 						rs.LightManager.LightGrid.UpdateLightSetVisibility( mono, camera, LightSet );
 
 						//	allocated and render shadows :
-						rs.LightManager.ShadowMap.RenderShadowMaps( time, camera, rs, this, LightSet );
+						var groups = InstanceGroup.Static | InstanceGroup.Kinematic;
+						rs.LightManager.ShadowMap.RenderShadowMaps( time, camera, rs, this, LightSet, groups );
 
 						//	clusterize light set :
 						rs.LightManager.LightGrid.ClusterizeLightSet( mono, camera, LightSet );
 
 						//	render solid static geometry :
-						rs.SceneRenderer.RenderLightProbeRadiance( context, this, InstanceGroup.Static );
+						rs.SceneRenderer.RenderLightProbeRadiance( context, this, groups );
 					
 						//	render sky :
 						rs.Sky.Render( camera, mono, depth, color, SkySettings, true );

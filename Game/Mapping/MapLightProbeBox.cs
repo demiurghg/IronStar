@@ -16,14 +16,7 @@ using Fusion.Core.Shell;
 
 namespace IronStar.Mapping {
 
-	public class MapLightProbe : MapNode {
-		
-		[Category("Light probe")]
-		public float InnerRadius { get; set; } = 1;
-		
-		[Category("Light probe")]
-		public float OuterRadius { get; set; } = 2;
-
+	public class MapLightProbeBox : MapNode {
 
 		[Category("Light probe")]
 		[AEValueRange(0,256,8,0.25f)]
@@ -71,7 +64,7 @@ namespace IronStar.Mapping {
 		/// <summary>
 		/// 
 		/// </summary>
-		public MapLightProbe ()
+		public MapLightProbeBox ()
 		{
 		}
 
@@ -83,10 +76,12 @@ namespace IronStar.Mapping {
 
 			light	=	new LightProbe( NodeGuid, lightSet.AllocImageIndex() );
 
+			light.Mode				=	LightProbeMode.CubeReflection;
+
 			light.ProbeMatrix		=	ComputeProbeMatrix();
 			light.BoundingBox		=	GetBoundingBox();
 			light.NormalizedWidth	=	Math.Max( 0, Width  - ShellWidth  ) / Width	;
-			light.NormalizedHeight	=	Math.Max( 0, Height - ShellHeight ) / Height	;
+			light.NormalizedHeight	=	Math.Max( 0, Height - ShellHeight ) / Height;
 			light.NormalizedDepth	=	Math.Max( 0, Depth  - ShellDepth  ) / Depth	;
 
 			lightSet.LightProbes.Add( light );
@@ -123,21 +118,14 @@ namespace IronStar.Mapping {
 		{
 			dr.DrawPoint( WorldMatrix.TranslationVector, 2.0f, color, 1 );
 
-			//var bbox1	=	new BoundingBox( Width, Height, Depth );
-			//var bbox2	=	new BoundingBox( 0.5f, 0.5f, 0.5f );
-
-			//if (selected) {
-			//	dr.DrawBox( bbox1, WorldMatrix, color );
-			//	dr.D
-			//} else {
-			//	dr.DrawBox( bbox2, WorldMatrix, color );
-			//}
-
-			if (selected) {
+			if (selected) 
+			{
 				var box = new BoundingBox( 2, 2, 2 );
 				dr.DrawBox( box, ComputeProbeMatrix(), Color.Cyan ); 
 				dr.DrawSphere( WorldMatrix.TranslationVector, 1.0f, color, 16 );
-			} else {
+			} 
+			else 
+			{
 				dr.DrawSphere( WorldMatrix.TranslationVector, 1.0f, color, 16 );
 			}
 		}
@@ -153,7 +141,7 @@ namespace IronStar.Mapping {
 
 		public override MapNode DuplicateNode( GameWorld world )
 		{
-			var newNode = (MapLightProbe)MemberwiseClone();
+			var newNode = (MapLightProbeBox)MemberwiseClone();
 			newNode.light = null;
 			newNode.NodeGuid = Guid.NewGuid();
 			return newNode;

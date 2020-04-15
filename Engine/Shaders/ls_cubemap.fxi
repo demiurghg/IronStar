@@ -68,10 +68,11 @@ float4 ComputeEnvironmentLighting ( LIGHTPROBE probe, GEOMETRY geometry, SURFACE
 {
 	float3	viewDirN		=	normalize( camera.CameraPosition.xyz - geometry.position.xyz);
 	
-	float3	reflectDir		=	reflect( -viewDirN, surface.normal.xyz );
 	float	selfOcclusion	=	saturate( dot( normalize(surface.normal.xyz), normalize(geometry.normal.xyz) ) );
 	float	NoV 			= 	dot(viewDirN, surface.normal.xyz);
 	float2 	ab				=	rc.EnvironmentLut.SampleLevel( rc.Sampler, float2(surface.roughness, 1-NoV), 0 ).xy;
+
+	bool 		boxReflect	=	probe.Position.w > 0;
 	
 	float3		innerRange	=	float3( probe.NormalizedWidth, probe.NormalizedHeight, probe.NormalizedDepth );
 	float4x4	lpbMatrixI	=	probe.MatrixInv;
@@ -82,18 +83,21 @@ float4 ComputeEnvironmentLighting ( LIGHTPROBE probe, GEOMETRY geometry, SURFACE
 		
 	float3 		randColor	=	float3( (imageIndex/2)%2, (imageIndex/4)%2, (imageIndex/8)%2 );
 		
-	float3		factor3		=	abs(cubePos);
+	float3		factor3		=	boxReflect ? abs(cubePos) : length(cubePos);
 				factor3		=	(factor3 - innerRange) / (float3(1,1,1) - innerRange);
 	float		factor		=	1 - saturate( max(factor3.x, max(factor3.y, factor3.z)) );
 		
-	float3	reflectVector	=	SpecularParallaxCubeMap( geometry.position, cameraPos, surface.normal, cubeMapPos, lpbMatrixI ) * float3(-1,1,1);
-	float3	diffuseVector	=	DiffuseParallaxCubeMap ( geometry.position, cameraPos, surface.normal, cubeMapPos, lpbMatrixI );
+		
+	float3	reflectVector	=	reflect( -viewDirN, surface.normal.xyz ) * float3(-1,1,1);
+	
+	if (boxReflect)
+	{
+		reflectVector		=	SpecularParallaxCubeMap( geometry.position, cameraPos, surface.normal, cubeMapPos, lpbMatrixI ) * float3(-1,1,1);
+	}
 	
 	float	mipLevel		=	(sqrt(surface.roughness) * LightProbeMaxSpecularMip);
-			
-	float3	diffTerm		=	rc.RadianceCache.SampleLevel( rc.Sampler, float4(surface.normal.xyz, imageIndex), LightProbeDiffuseMip).rgb;
-	float3	specTerm		=	rc.RadianceCache.SampleLevel( rc.Sampler, float4(reflectVector,      imageIndex), mipLevel ).rgb;
-	
+	float3	specTerm		=	rc.RadianceCache.SampleLevel( rc.Sampler, float4(reflectVector, imageIndex), mipLevel ).rgb;
+		
 			specTerm		=	specTerm * mad( surface.specular, ab.x, ab.y ) * selfOcclusion;
 			
 	return float4( specTerm, factor );

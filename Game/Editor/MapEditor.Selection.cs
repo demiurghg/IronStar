@@ -33,7 +33,7 @@ namespace IronStar.Editor {
 			if (node is MapModel)			return LayerGeometry;
 			if (node is MapDecal)			return LayerDecals;
 
-			if (node is MapLightProbe)		return LayerLightProbes;
+			if (node is MapLightProbeBox)		return LayerLightProbes;
 			if (node is MapOmniLight)		return LayerLightSet;
 			if (node is MapSpotLight)		return LayerLightSet;
 

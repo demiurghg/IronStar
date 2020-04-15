@@ -8,15 +8,30 @@ using Fusion.Core;
 using Fusion.Drivers.Graphics;
 using Fusion.Engine.Common;
 
-namespace Fusion.Engine.Graphics {
-	public class LightProbe {
+namespace Fusion.Engine.Graphics 
+{
 
+	public enum LightProbeMode
+	{
+		SphereReflection,
+		CubeReflection,
+	}
+
+	public class LightProbe 
+	{
 		public readonly Guid Guid;
+
+		public LightProbeMode	Mode { get; set; } = LightProbeMode.CubeReflection;
 
 		/// <summary>
 		/// Environment light position
 		/// </summary>
 		public Matrix	ProbeMatrix { get; set; }
+
+		/// <summary>
+		/// Spherical light probe radius :
+		/// </summary>
+		public float	Radius;
 
 		public float	NormalizedWidth { get; set; }
 		public float	NormalizedHeight { get; set; }

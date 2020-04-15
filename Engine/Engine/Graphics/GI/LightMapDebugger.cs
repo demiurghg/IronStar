@@ -37,6 +37,9 @@ namespace Fusion.Engine.Graphics.Lights {
 		[Config]
 		public bool DrawLightProbeCubes { get; set; } = false;
 
+		[ShaderDefine]
+		const int MaxLightProbes = RenderSystem.MaxEnvLights;
+
 
 		static FXConstantBuffer<GpuData.CAMERA>				regCamera			=	new CRegister(0, "Camera");
 		static FXConstantBuffer<DEBUG_PARAMS>				regParams			=	new CRegister(1, "Params");

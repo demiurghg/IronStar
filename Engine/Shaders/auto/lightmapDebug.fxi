@@ -1,5 +1,6 @@
 // ---------------- CONSTANT VALUES ---------------- //
 
+static const int MaxLightProbes = 256;
 
 // ---------------- DATA STRUCTURES ---------------- //
 

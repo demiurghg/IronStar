@@ -345,23 +345,49 @@ namespace Fusion.Engine.Graphics {
 				Vector4 min, max;
 				lpb.Visible	=	false;
 
-				if ( Extents.GetBasisExtent( view, proj, vp, lpb.ProbeMatrix, false, out min, out max ) ) {
+				if ( lpb.Mode==LightProbeMode.CubeReflection)
+				{
+					if ( Extents.GetBasisExtent( view, proj, vp, lpb.ProbeMatrix, false, out min, out max ) ) 
+					{
+						min.Z	=	GetGridSlice( -min.Z );
+						max.Z	=	GetGridSlice( -max.Z );
 
-					min.Z	=	GetGridSlice( -min.Z );
-					max.Z	=	GetGridSlice( -max.Z );
+						TestExtent( min, max, new Color(0,0,255,64) );
 
-					TestExtent( min, max, new Color(0,0,255,64) );
+						lpb.Visible		=	true;
 
-					lpb.Visible		=	true;
+						lpb.MaxExtent.X	=	Math.Min( Width,  (int)Math.Ceiling( max.X * Width  ) );
+						lpb.MaxExtent.Y	=	Math.Min( Height, (int)Math.Ceiling( max.Y * Height ) );
+						lpb.MaxExtent.Z	=	Math.Min( Depth,  (int)Math.Ceiling( max.Z * Depth  ) );
 
-					lpb.MaxExtent.X	=	Math.Min( Width,  (int)Math.Ceiling( max.X * Width  ) );
-					lpb.MaxExtent.Y	=	Math.Min( Height, (int)Math.Ceiling( max.Y * Height ) );
-					lpb.MaxExtent.Z	=	Math.Min( Depth,  (int)Math.Ceiling( max.Z * Depth  ) );
+						lpb.MinExtent.X	=	Math.Max( 0, (int)Math.Floor( min.X * Width  ) );
+						lpb.MinExtent.Y	=	Math.Max( 0, (int)Math.Floor( min.Y * Height ) );
+						lpb.MinExtent.Z	=	Math.Max( 0, (int)Math.Floor( min.Z * Depth  ) );
+					}
+				} 
+				else if ( lpb.Mode==LightProbeMode.SphereReflection)
+				{
+					if ( Extents.GetSphereExtent( view, proj, lpb.ProbeMatrix.TranslationVector, vp, lpb.Radius, false, out min, out max ) ) 
+					{
+						min.Z	=	GetGridSlice( min.Z );
+						max.Z	=	GetGridSlice( max.Z );
 
-					lpb.MinExtent.X	=	Math.Max( 0, (int)Math.Floor( min.X * Width  ) );
-					lpb.MinExtent.Y	=	Math.Max( 0, (int)Math.Floor( min.Y * Height ) );
-					lpb.MinExtent.Z	=	Math.Max( 0, (int)Math.Floor( min.Z * Depth  ) );
+						lpb.Visible		=	true;
+
+						lpb.MaxExtent.X	=	Math.Min( Width,  (int)Math.Ceiling( max.X * Width  ) );
+						lpb.MaxExtent.Y	=	Math.Min( Height, (int)Math.Ceiling( max.Y * Height ) );
+						lpb.MaxExtent.Z	=	Math.Min( Depth,  (int)Math.Ceiling( max.Z * Depth  ) );
+
+						lpb.MinExtent.X	=	Math.Max( 0, (int)Math.Floor( min.X * Width  ) );
+						lpb.MinExtent.Y	=	Math.Max( 0, (int)Math.Floor( min.Y * Height ) );
+						lpb.MinExtent.Z	=	Math.Max( 0, (int)Math.Floor( min.Z * Depth  ) );
+					}
 				}
+				else
+				{
+					throw new InvalidOperationException("Bad light probe mode");
+				}
+
 			}
 		}
 

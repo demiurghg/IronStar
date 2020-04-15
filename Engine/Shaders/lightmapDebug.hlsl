@@ -43,6 +43,7 @@ PSInput VSMain( VSInput input, uint instanceId : SV_InstanceID )
 #ifdef SHOW_LIGHTPROBES
 	float   size		=	Params.LightProbeSize;
 	float3	lpbPos		=	LightProbeData[ instanceId ].Position.xyz;
+			size		=	size * LightProbeData[ instanceId ].Position.w;
 #endif	
 
 #ifdef SHOW_LIGHTVOLUME
@@ -95,6 +96,12 @@ float4 PSMain( PSInput input ) : SV_Target0
 	float3  surfacePos		=	input.WorldPos;
 	float3	surfaceNormal	=	normalize(input.Normal);
 	float	imageIndex		=	input.ImageIndex;
+	float3	tint			=	float3(1,1,1);
+	
+	if (imageIndex>=MaxLightProbes)
+	{
+		tint = float3(1,0,0);
+	}
 	
 	float3	viewDir			=	cameraPos - surfacePos;
 	
@@ -108,7 +115,7 @@ float4 PSMain( PSInput input ) : SV_Target0
 	
 	float4	lightProbe		=	LightProbes.SampleLevel( Sampler, float4(reflectDir, imageIndex), Params.LightProbeMipLevel ).rgba;
 
-	return float4(lightProbe.rgb,1);
+	return float4(lightProbe.rgb * tint,1);
 #endif
 
 #ifdef SHOW_LIGHTVOLUME

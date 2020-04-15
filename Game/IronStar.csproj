@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Editor\MapEditor.History.cs" />
+    <Compile Include="Mapping\MapLightProbeBox.cs" />
     <Compile Include="SFX\Animators\CameraAnimator.cs" />
     <Compile Include="SinglePlayer\MissionContext.cs" />
     <Compile Include="UI\Controls\Dialogs\TextBoxDialog.cs" />
@@ -178,7 +179,7 @@
     <Compile Include="Mapping\MapEntity.cs" />
     <Compile Include="Mapping\MapEnvironment.cs" />
     <Compile Include="Mapping\MapModel.cs" />
-    <Compile Include="Mapping\MapLightProbe.cs" />
+    <Compile Include="Mapping\MapLightProbeSphere.cs" />
     <Compile Include="Mapping\MapNodeCollection.cs" />
     <Compile Include="Mapping\MapSpotLight.cs" />
     <Compile Include="Mapping\MapOmniLight.cs" />

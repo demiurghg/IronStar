@@ -138,7 +138,10 @@ namespace Fusion.Engine.Graphics {
 		{
 			int r = imageIndices.IndexOf(false);
 
-			imageIndices[r] = true;
+			if (r>=0) 
+			{
+				imageIndices[r] = true;
+			}
 
 			return r;
 		}

@@ -260,13 +260,14 @@ namespace IronStar.Editor {
 
 			var entityTypes	=	Misc.GetAllSubclassesOf( typeof(EntityFactory), false );
 
-			palette.AddButton( "Decal"			,	() => CreateNodeUI( new MapDecal		() ) );
-			palette.AddButton( "Static Model"	,	() => CreateNodeUI( new MapModel		() ) );
-			palette.AddButton( "Light Probe"	,	() => CreateNodeUI( new MapLightProbe	() ) );
-			palette.AddButton( "Omni Light"		,	() => CreateNodeUI( new MapOmniLight	() ) );
-			palette.AddButton( "Spot Light"		,	() => CreateNodeUI( new MapSpotLight	() ) );
-			palette.AddButton( "Sound"			,	() => CreateNodeUI( new MapSound		() ) );
-			palette.AddButton( "Reverb Zone"	,	() => CreateNodeUI( new MapReverb		() ) );
+			palette.AddButton( "Static Model"			,	() => CreateNodeUI( new MapModel			() ) );
+			palette.AddButton( "Decal"					,	() => CreateNodeUI( new MapDecal			() ) );
+			palette.AddButton( "Light Probe (Spherical)",	() => CreateNodeUI( new MapLightProbeSphere	() ) );
+			palette.AddButton( "Light Probe (Box)"		,	() => CreateNodeUI( new MapLightProbeBox	() ) );
+			palette.AddButton( "Omni Light"				,	() => CreateNodeUI( new MapOmniLight		() ) );
+			palette.AddButton( "Spot Light"				,	() => CreateNodeUI( new MapSpotLight		() ) );
+			palette.AddButton( "Sound"					,	() => CreateNodeUI( new MapSound			() ) );
+			palette.AddButton( "Reverb Zone"			,	() => CreateNodeUI( new MapReverb			() ) );
 
 			palette.AddSplitter();
 

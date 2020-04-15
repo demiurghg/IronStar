@@ -133,7 +133,7 @@ namespace Fusion.Engine.Graphics {
 		[StructLayout(LayoutKind.Sequential)]
 		public struct LIGHTPROBE {	
 			public Matrix	MatrixInv;
-			public Vector4	Position;
+			public Vector4	Position;	  //	negative W means using spherical reflection
 			public uint		ImageIndex;
 			public float	NormalizedWidth	;
 			public float	NormalizedHeight;
@@ -143,7 +143,7 @@ namespace Fusion.Engine.Graphics {
 			{
 				#region Update structure fields from LightProbe object
 				MatrixInv			=	Matrix.Invert(light.ProbeMatrix);
-				Position			=	new Vector4( light.ProbeMatrix.TranslationVector, 1 );
+				Position			=	new Vector4( light.ProbeMatrix.TranslationVector, light.Mode==LightProbeMode.CubeReflection ? 1 : -1 );
 				ImageIndex			=	(uint)light.ImageIndex;
 				NormalizedWidth		=	light.NormalizedWidth	;
 				NormalizedHeight	=	light.NormalizedHeight	;

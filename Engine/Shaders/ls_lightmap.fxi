@@ -23,7 +23,7 @@ float3	EvaluateLightmap ( LIGHTMAP_RESOURCES lightmap, SURFACE surface, float2 l
 	float	lightR		=	EvalSHL1Smooth( irradianceR, worldNormal );
 	float	lightG		=	EvalSHL1Smooth( irradianceG, worldNormal );
 	float	lightB		=	EvalSHL1Smooth( irradianceB, worldNormal );
-	return	float3( lightR, lightG, lightB ) * surface.diffuse * 3.14;
+	return	float3( lightR, lightG, lightB ) * surface.diffuse / 3.14;
 }
 
 

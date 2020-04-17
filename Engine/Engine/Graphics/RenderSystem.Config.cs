@@ -186,6 +186,15 @@ namespace Fusion.Engine.Graphics {
 		public bool ShowLightCounters { get; set; }
 
 		/// <summary>
+		/// Shows counters
+		/// </summary>
+		[Config]
+		public bool SkipDirectLighting { get; set; } = false;
+
+		[Config]
+		public bool BakeDirectLighting { get; set; } = false;
+
+		/// <summary>
 		/// 
 		/// </summary>
 		[Config]	

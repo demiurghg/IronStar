@@ -24,6 +24,7 @@ namespace Fusion.Engine.Graphics.Lights
 		public readonly GenericImage<Vector3>	Position;
 		public readonly GenericImage<Vector3>	PositionOld;
 		public readonly GenericImage<Vector3>	Normal;
+		public readonly GenericImage<Color4>	DirectLight;
 		public readonly GenericImage<Bool>		Coverage;
 
 		public readonly GenericImage<SHL1>		IrradianceR;
@@ -51,6 +52,7 @@ namespace Fusion.Engine.Graphics.Lights
 			PositionOld		=	new GenericImage<Vector3>	( size, size, Vector3.Zero );
 			Normal			=	new GenericImage<Vector3>	( size, size, Vector3.Zero );
 			Coverage		=	new GenericImage<Bool>		( size, size, false );
+			DirectLight		=	new GenericImage<Color4>	( size, size, Color4.Zero );
 
 			IrradianceR		=	new GenericImage<SHL1>( size, size );
 			IrradianceG		=	new GenericImage<SHL1>( size, size );

@@ -166,6 +166,7 @@ namespace IronStar.Editor {
 			workspace.AddHotkey( Keys.D3		, ModKeys.None, ToggleSpecular );
 			workspace.AddHotkey( Keys.D4		, ModKeys.None, ToggleLightProbes );
 			workspace.AddHotkey( Keys.D5		, ModKeys.None, ToggleLightVolume );
+			workspace.AddHotkey( Keys.D6		, ModKeys.None, ToggleDirectLighting );
 			
 			workspace.AddHotkey( Keys.Delete	, ModKeys.None, () => DeleteSelection() );
 			workspace.AddHotkey( Keys.U			, ModKeys.Ctrl, () => DuplicateSelection() );
@@ -205,6 +206,7 @@ namespace IronStar.Editor {
 			Game.Invoker.ExecuteString("LightMapDebugger.ShowLightVolume False");
 			Game.Invoker.ExecuteString("VTSystem.ShowDiffuse False");
 			Game.Invoker.ExecuteString("VTSystem.ShowSpecular False");
+			Game.Invoker.ExecuteString("RenderSystem.SkipDirectLighting False");
 			Game.Invoker.ExecuteString("vtrestart");
 		}
 
@@ -232,6 +234,12 @@ namespace IronStar.Editor {
 		void ToggleLightVolume()
 		{
 			Game.Invoker.ExecuteString("toggle LightMapDebugger.ShowLightVolume");
+		}
+
+
+		void ToggleDirectLighting()
+		{
+			Game.Invoker.ExecuteString("toggle RenderSystem.SkipDirectLighting");
 		}
 
 

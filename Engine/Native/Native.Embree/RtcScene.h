@@ -214,7 +214,7 @@ namespace Native {
 				dst.HitNormal.Y =	src->Ng[1];
 				dst.HitNormal.Z =	src->Ng[2];
 				dst.HitU		=	src->u;
-				dst.HitU		=	src->v;
+				dst.HitV		=	src->v;
 				dst.InstanceId	=	src->instID;				
 				dst.PrimitiveId	=	src->primID;				
 				dst.GeometryId	=	src->geomID;	

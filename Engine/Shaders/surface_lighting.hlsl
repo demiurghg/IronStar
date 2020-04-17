@@ -92,6 +92,8 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 		totalLight	+=	ComputeLighting( flux, geometry, surface, Camera );
 	}
 	
+	totalLight *= Stage.DirectLightFactor;
+	
 	float3	ambientDiffuse		=	float3(0,0,0);
 	float3	ambientSpecular		=	float3(0,0,0);
 	

@@ -101,6 +101,8 @@ namespace Fusion.Engine.Graphics {
 			get; set;
 		}
 
+		public Rectangle BakingLMRegion;
+
 		/// <summary>
 		/// Tag
 		/// </summary>

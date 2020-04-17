@@ -208,6 +208,7 @@ namespace Fusion.Engine.Graphics {
 			cbDataStage.ViewportSize			=	new Vector4( width, height, 1.0f / width, 1.0f / height );
 			cbDataStage.DepthBias				=	context.DepthBias;
 			cbDataStage.SlopeBias				=	context.SlopeBias;
+			cbDataStage.DirectLightFactor		=	rs.SkipDirectLighting ? 0 : 1;
 
 			constBufferStage.SetData( ref cbDataStage );
 

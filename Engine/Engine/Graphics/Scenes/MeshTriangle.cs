@@ -80,6 +80,17 @@ namespace Fusion.Engine.Graphics.Scenes {
 		}
 
 
+		public static Vector3 EvaluateBarycentric( Vector3 a, Vector3 b, Vector3 c, float u, float v )
+		{
+			return a + u * ( b - a ) + v * ( c - a );
+		}
+
+
+		public static Vector2 EvaluateBarycentric( Vector2 a, Vector2 b, Vector2 c, float u, float v )
+		{
+			return a + u * ( b - a ) + v * ( c - a );
+		}
+
 
 		public bool Equals(MeshTriangle other) 
 		{

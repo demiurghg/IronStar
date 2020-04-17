@@ -65,6 +65,7 @@ struct STAGE {
 	float      SsaoWeight;                    // offset:  124
 	float      SlopeBias;                     // offset:  128
 	float      DepthBias;                     // offset:  132
+	float      DirectLightFactor;             // offset:  136
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+INSTANCE

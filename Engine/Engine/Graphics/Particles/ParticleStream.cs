@@ -430,7 +430,14 @@ namespace Fusion.Engine.Graphics {
 			//	fill constant data :
 			PARAMS param		=	new PARAMS();
 
-			param.OcclusionGridMatrix		=	rs.RenderWorld.IrradianceVolume.WorldPosToTexCoord;
+			var occlusionMatrix = Matrix.Identity;
+
+			if (rs.RenderWorld.IrradianceVolume!=null)
+			{
+				occlusionMatrix = rs.RenderWorld.IrradianceVolume.WorldPosToTexCoord;
+			}
+
+			param.OcclusionGridMatrix		=	occlusionMatrix;
 			param.SkyAmbientLevel			=	rs.RenderWorld.SkySettings.AmbientLevel;
 			param.FogColor					=	renderWorld.FogSettings.Color;
 			param.FogAttenuation			=	renderWorld.FogSettings.DistanceAttenuation;
@@ -667,9 +674,9 @@ namespace Fusion.Engine.Graphics {
 
 					if (flags.HasFlag(Flags.LIGHTMAP) || flags.HasFlag(Flags.HARD)) 
 					{
-						device.GfxResources[ regIrradianceVolumeR ]	= 	rs.RenderWorld.IrradianceVolume.LightVolumeR	;
-						device.GfxResources[ regIrradianceVolumeG ]	= 	rs.RenderWorld.IrradianceVolume.LightVolumeG	;
-						device.GfxResources[ regIrradianceVolumeB ]	= 	rs.RenderWorld.IrradianceVolume.LightVolumeB	;
+						device.GfxResources[ regIrradianceVolumeR ]	= 	rs.RenderWorld.IrradianceVolume?.LightVolumeR	;
+						device.GfxResources[ regIrradianceVolumeG ]	= 	rs.RenderWorld.IrradianceVolume?.LightVolumeG	;
+						device.GfxResources[ regIrradianceVolumeB ]	= 	rs.RenderWorld.IrradianceVolume?.LightVolumeB	;
 					}
 
 					device.GfxResources[ 18 ]	=	lightMapRegions;

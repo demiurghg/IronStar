@@ -22,7 +22,7 @@ namespace IronStar.Editor {
 
 
 		public Vector3	Target		=	Vector3.Zero;
-		public float	Distance	=	30;
+		public float	Distance	=	120;
 		public float	Yaw			=	45;
 		public float	Pitch		=	-30;
 		public float	Fov			=	90;

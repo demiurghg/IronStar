@@ -14,6 +14,8 @@ struct LIGHTMAP_RESOURCES
 	Texture3D<float4>	IrradianceVolumeB;
 };
 
+static const float GI_SCALE = 3.1415f;
+
 float3	EvaluateLightmap ( LIGHTMAP_RESOURCES lightmap, SURFACE surface, float2 lightMapCoord )
 {
 	float3	worldNormal	=	normalize(surface.normal);
@@ -23,7 +25,7 @@ float3	EvaluateLightmap ( LIGHTMAP_RESOURCES lightmap, SURFACE surface, float2 l
 	float	lightR		=	EvalSHL1Smooth( irradianceR, worldNormal );
 	float	lightG		=	EvalSHL1Smooth( irradianceG, worldNormal );
 	float	lightB		=	EvalSHL1Smooth( irradianceB, worldNormal );
-	return	float3( lightR, lightG, lightB ) * surface.diffuse / 3.14;
+	return	float3( lightR, lightG, lightB ) * surface.diffuse * GI_SCALE;
 }
 
 
@@ -36,7 +38,7 @@ float3	EvaluateLightVolume ( LIGHTMAP_RESOURCES lightmap, SURFACE surface, float
 	float	lightR		=	EvalSHL1Smooth( irradianceR, worldNormal );
 	float	lightG		=	EvalSHL1Smooth( irradianceG, worldNormal );
 	float	lightB		=	EvalSHL1Smooth( irradianceB, worldNormal );
-	return	float3( lightR, lightG, lightB ) * surface.diffuse * 3.14;
+	return	float3( lightR, lightG, lightB ) * surface.diffuse * GI_SCALE;
 }
 
 
@@ -49,7 +51,7 @@ float3	EvaluateLightVolume ( LIGHTMAP_RESOURCES lightmap, float3 normal, float3 
 	float	lightR		=	EvalSHL1Smooth( irradianceR, worldNormal );
 	float	lightG		=	EvalSHL1Smooth( irradianceG, worldNormal );
 	float	lightB		=	EvalSHL1Smooth( irradianceB, worldNormal );
-	return	float3( lightR, lightG, lightB ) * 3.14;
+	return	float3( lightR, lightG, lightB ) * GI_SCALE;
 }
 
 

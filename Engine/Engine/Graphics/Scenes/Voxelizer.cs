@@ -44,10 +44,10 @@ namespace Fusion.Engine.Graphics.Scenes
 			var vp01	=	new Vector2( axisA( v01 ), axisB( v01 ) );
 			var vp02	=	new Vector2( axisA( v02 ), axisB( v02 ) );
 
-			float x0	=	(float)Math.Floor( Min3( axisA(p0), axisA(p1), axisA(p2) ) ) - step;
-			float x1	=	(float)Math.Floor( Max3( axisA(p0), axisA(p1), axisA(p2) ) ) + step;
-			float y0	=	(float)Math.Floor( Min3( axisB(p0), axisB(p1), axisB(p2) ) ) - step;
-			float y1	=	(float)Math.Floor( Max3( axisB(p0), axisB(p1), axisB(p2) ) ) + step;
+			float x0	=	(float)Math.Floor( MathUtil.Min3( axisA(p0), axisA(p1), axisA(p2) ) ) - step;
+			float x1	=	(float)Math.Floor( MathUtil.Max3( axisA(p0), axisA(p1), axisA(p2) ) ) + step;
+			float y0	=	(float)Math.Floor( MathUtil.Min3( axisB(p0), axisB(p1), axisB(p2) ) ) - step;
+			float y1	=	(float)Math.Floor( MathUtil.Max3( axisB(p0), axisB(p1), axisB(p2) ) ) + step;
 
 			for ( float x = x0; x <= x1; x += step ) {
 				for ( float y = y0; y <= y1; y += step ) {
@@ -80,9 +80,6 @@ namespace Fusion.Engine.Graphics.Scenes
 		}
 
 
-
-		static float Max3 ( float a, float b, float c ) { return Math.Max( a, Math.Max( b, c ) ); }
-		static float Min3 ( float a, float b, float c ) { return Math.Min( a, Math.Min( b, c ) ); }
 
 		/// <summary>
 		/// ax + by = c

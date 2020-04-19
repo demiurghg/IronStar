@@ -245,19 +245,19 @@ namespace IronStar.Editor {
 
 		void BakeLightMap()
 		{
-			Game.Invoker.ExecuteString(string.Format("buildrad {0} Medium /map", mapName), "contentBuild");
+			Game.Invoker.ExecuteString(string.Format("buildrad {0} Low /map", mapName), "contentBuild");
 		}
 
 
 		void BakeLightVolume()
 		{
-			Game.Invoker.ExecuteString(string.Format("buildrad {0} Medium /vol", mapName), "contentBuild");
+			Game.Invoker.ExecuteString(string.Format("buildrad {0} Low /vol", mapName), "contentBuild");
 		}
 
 
 		void BakeLightProbes()
 		{
-			Game.Invoker.ExecuteString(string.Format("buildrad {0} Medium /cube", mapName), "contentBuild");
+			Game.Invoker.ExecuteString(string.Format("buildrad {0} Low /cube", mapName), "contentBuild");
 		}
 
 

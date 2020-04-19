@@ -139,6 +139,38 @@ namespace Fusion.Engine.Imaging {
 		}
 
 
+
+		/// <summary>
+		/// Fills image with 
+		/// </summary>
+		/// <param name="seed"></param>
+		/// <param name="monochrome"></param>
+		public void FillRect ( Rectangle rect, TColor color )
+		{
+			for (int i=rect.Left; i<=rect.Right; i++)
+			{
+				for (int j=rect.Top; j<rect.Bottom; j++)
+				{
+					this[i,j] = color;
+				}
+			}
+		}
+
+
+
+		public GenericImage<TOutputColor> Convert<TOutputColor>( Func<TColor, TOutputColor> convert ) where TOutputColor: struct
+		{
+			var outputImage = new GenericImage<TOutputColor>( Width, Height );
+
+			for (int i=0; i<outputImage.RawImageData.Length; i++)
+			{
+				outputImage.RawImageData[i] = convert( RawImageData[i] );
+			}
+
+			return outputImage;
+		}
+
+
 		/// <summary>
 		/// Samples image at given coordinates with wraping addressing mode
 		/// </summary>

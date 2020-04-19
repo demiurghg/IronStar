@@ -198,17 +198,23 @@ namespace Fusion.Engine.Graphics {
 			var width	=	context.Viewport.Width;
 			var height	=	context.Viewport.Height;
 
-			cbDataStage.OcclusionGridMatrix		=	rs.RenderWorld.IrradianceVolume.WorldPosToTexCoord;
-			cbDataStage.VTGradientScaler		=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;
-			cbDataStage.FogColor				=	rs.RenderWorld.FogSettings.Color;
-			cbDataStage.FogAttenuation			=	rs.RenderWorld.FogSettings.DistanceAttenuation;
-			cbDataStage.SkyAmbientLevel			=	rs.RenderWorld.SkySettings.AmbientLevel;
-			cbDataStage.VTPageScaleRCP			=	rs.VTSystem.PageScaleRCP;
-			cbDataStage.SsaoWeight				=	instanceGroup.HasFlag(InstanceGroup.Weapon) ? 0 : 1;
-			cbDataStage.ViewportSize			=	new Vector4( width, height, 1.0f / width, 1.0f / height );
-			cbDataStage.DepthBias				=	context.DepthBias;
-			cbDataStage.SlopeBias				=	context.SlopeBias;
-			cbDataStage.DirectLightFactor		=	rs.SkipDirectLighting ? 0 : 1;
+			var occlusionMatrix = Matrix.Identity;
+			if (rs.RenderWorld.IrradianceVolume!=null)
+			{
+				occlusionMatrix = rs.RenderWorld.IrradianceVolume.WorldPosToTexCoord;
+			}
+
+			cbDataStage.OcclusionGridMatrix	=	occlusionMatrix;
+			cbDataStage.VTGradientScaler	=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;
+			cbDataStage.FogColor			=	rs.RenderWorld.FogSettings.Color;
+			cbDataStage.FogAttenuation		=	rs.RenderWorld.FogSettings.DistanceAttenuation;
+			cbDataStage.SkyAmbientLevel		=	rs.RenderWorld.SkySettings.AmbientLevel;
+			cbDataStage.VTPageScaleRCP		=	rs.VTSystem.PageScaleRCP;
+			cbDataStage.SsaoWeight			=	instanceGroup.HasFlag(InstanceGroup.Weapon) ? 0 : 1;
+			cbDataStage.ViewportSize		=	new Vector4( width, height, 1.0f / width, 1.0f / height );
+			cbDataStage.DepthBias			=	context.DepthBias;
+			cbDataStage.SlopeBias			=	context.SlopeBias;
+			cbDataStage.DirectLightFactor	=	rs.SkipDirectLighting ? 0 : 1;
 
 			constBufferStage.SetData( ref cbDataStage );
 
@@ -244,11 +250,11 @@ namespace Fusion.Engine.Graphics {
 			device.GfxResources[ regIrradianceMapG			]	=	rs.RenderWorld.IrradianceMap?.IrradianceTextureGreen;
 			device.GfxResources[ regIrradianceMapB			]	=	rs.RenderWorld.IrradianceMap?.IrradianceTextureBlue;
 
-			device.GfxResources[ regIrradianceVolumeR		]	=	rs.RenderWorld.IrradianceVolume.LightVolumeR;
-			device.GfxResources[ regIrradianceVolumeG		]	=	rs.RenderWorld.IrradianceVolume.LightVolumeG;
-			device.GfxResources[ regIrradianceVolumeB		]	=	rs.RenderWorld.IrradianceVolume.LightVolumeB;
+			device.GfxResources[ regIrradianceVolumeR		]	=	rs.RenderWorld.IrradianceVolume?.LightVolumeR;
+			device.GfxResources[ regIrradianceVolumeG		]	=	rs.RenderWorld.IrradianceVolume?.LightVolumeG;
+			device.GfxResources[ regIrradianceVolumeB		]	=	rs.RenderWorld.IrradianceVolume?.LightVolumeB;
 
-			device.GfxResources[ regRadianceCache			]	=	rs.RenderWorld.IrradianceCache.IrradianceCubeMaps;
+			device.GfxResources[ regRadianceCache			]	=	rs.RenderWorld.IrradianceCache?.IrradianceCubeMaps;
 			device.GfxResources[ regEnvLut					]	=	envLut.Srv;
 			device.GfxResources[ regClusterLightProbeBuffer	]	=	rs.LightManager.LightGrid.ProbeDataGpu;
 

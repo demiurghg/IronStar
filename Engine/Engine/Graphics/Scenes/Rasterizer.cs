@@ -10,6 +10,15 @@ namespace Fusion.Engine.Graphics.Scenes
 {
 	public static class Rasterizer
 	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="coords">Coordnates</param>
+		/// <param name="s">Barycentric coordinates</param>
+		/// <param name="t">Barycentric coordinates</param>
+		/// <param name="coverage">Indicates, that trianles should not overlap</param>
+		public delegate void Interpolate(Int2 coords, float s, float t, bool coverage);
+
 
 		public static void RasterizeTriangle ( Vector2 A, Vector2 B, Vector2 C, Action<Int2,float,float> interpolate )
 		{
@@ -39,8 +48,7 @@ namespace Fusion.Engine.Graphics.Scenes
 		}
 
 
-
-		public static void RasterizeTriangleConservative ( Vector2 A, Vector2 B, Vector2 C, Action<Int2,float,float,bool> interpolate )
+		public static void RasterizeTriangleConservative ( Vector2 A, Vector2 B, Vector2 C, Interpolate interpolate )
 		{
 			/*RasterizeLineDDA ( A, B, (p,f) => interpolate(p,   f, 0) );
 			RasterizeLineDDA ( A, C, (p,f) => interpolate(p,   0, f) );

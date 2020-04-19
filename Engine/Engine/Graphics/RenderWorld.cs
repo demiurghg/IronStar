@@ -143,9 +143,7 @@ namespace Fusion.Engine.Graphics {
 		VirtualTexture		virtualTexture = null;
 		IrradianceMap		irradianceMap = null;	
 		IrradianceVolume	irradianceVolume = null;
-		IrradianceVolume	irradianceVolumeDefault = null;
 		IrradianceCache		irradianceCache = null;
-		IrradianceCache		irradianceCacheDefault = null;
 
 		/// <summary>
 		/// Sets and gets virtual texture for entire world
@@ -195,7 +193,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public IrradianceVolume IrradianceVolume {
 			get {
-				return irradianceVolume ?? irradianceVolumeDefault;
+				return irradianceVolume;
 			}
 			set {
 				if (irradianceVolume!=value) {
@@ -210,7 +208,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public IrradianceCache IrradianceCache {
 			get {
-				return irradianceCache ?? irradianceCacheDefault;
+				return irradianceCache;
 			}
 			set {
 				if (irradianceCache!=value) {
@@ -273,11 +271,6 @@ namespace Fusion.Engine.Graphics {
 			LightProbeHdr		=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba16F,	RenderSystem.LightProbeSize, RenderSystem.LightProbeMaxMips ); 
 			LightProbeHdrTemp	=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba16F,	RenderSystem.LightProbeSize, RenderSystem.LightProbeMaxMips ); 
 
-			irradianceVolumeDefault	=	new IrradianceVolume( rs, 4, 4, 4, 1024 );
-			irradianceVolumeDefault.FillAmbient( Color4.White );
-
-			irradianceCacheDefault	=	new IrradianceCache( rs );
-
 			Resize( width, height );
 		}
 
@@ -297,9 +290,6 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref cubemapCamera );
 				
 				SafeDispose( ref particleSystem );
-
-				SafeDispose( ref irradianceVolumeDefault );
-				SafeDispose( ref irradianceCacheDefault );
 
 				SafeDispose( ref debug );
 

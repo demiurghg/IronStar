@@ -25,7 +25,13 @@ namespace Fusion.Engine.Graphics.Lights
 		public readonly GenericImage<Vector3>	PositionOld;
 		public readonly GenericImage<Vector3>	Normal;
 		public readonly GenericImage<Color4>	DirectLight;
-		public readonly GenericImage<Bool>		Coverage;
+		public readonly GenericImage<float>		Area;
+		public readonly GenericImage<bool>		Coverage;
+
+		public readonly GenericImage<int>		SampleCount;
+		public			GenericImage<byte>		SampleGrade;
+		public			GenericImage<byte>		PatchSizes;
+		public			GenericImage<int>		Contribution;
 
 		public readonly GenericImage<SHL1>		IrradianceR;
 		public readonly GenericImage<SHL1>		IrradianceG;
@@ -51,8 +57,14 @@ namespace Fusion.Engine.Graphics.Lights
 			Position		=	new GenericImage<Vector3>	( size, size, Vector3.Zero );
 			PositionOld		=	new GenericImage<Vector3>	( size, size, Vector3.Zero );
 			Normal			=	new GenericImage<Vector3>	( size, size, Vector3.Zero );
-			Coverage		=	new GenericImage<Bool>		( size, size, false );
+			Area			=	new GenericImage<float>		( size, size, 0 );
 			DirectLight		=	new GenericImage<Color4>	( size, size, Color4.Zero );
+			Coverage		=	new GenericImage<bool>		( size, size, false );
+
+			SampleCount		=	new GenericImage<int>		( size, size, 0 );
+			SampleGrade		=	new GenericImage<byte>		( size, size, 0 );
+			PatchSizes		=	new GenericImage<byte>		( size, size, 0 );
+			Contribution	=	new GenericImage<int>		( size, size, 0 );
 
 			IrradianceR		=	new GenericImage<SHL1>( size, size );
 			IrradianceG		=	new GenericImage<SHL1>( size, size );
@@ -61,7 +73,49 @@ namespace Fusion.Engine.Graphics.Lights
 		}
 			
 
+		public bool IsRegionCollapsable( Rectangle rect )
+		{
+			for (int i=rect.Left; i<=rect.Right; i++)
+			{
+				for (int j=rect.Top; j<rect.Bottom; j++)
+				{
+					if (Albedo[i,j].A==0)
+					{
+						return false;
+					}
+				}
+			}
+			return true;
+		}
 
+
+
+		public void ComputePatchSizes()
+		{
+			for ( byte sz = 1; sz <=32; sz*=2 )
+			{
+				ComputePatchSize(sz);
+			}
+		}
+
+
+		void ComputePatchSize(byte size)
+		{
+			int w = Albedo.Width;
+			int h = Albedo.Height;
+
+			for (int i=0; i<w; i+=size)
+			{
+				for (int j=0; j<w; j+=size)
+				{
+					var rect = new Rectangle(i,j,size,size);
+					if (IsRegionCollapsable(rect))
+					{
+						PatchSizes.FillRect( rect, size );
+					}
+				}
+			}
+		}
 
 
 		/// <summary>

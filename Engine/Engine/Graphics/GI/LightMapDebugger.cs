@@ -143,27 +143,30 @@ namespace Fusion.Engine.Graphics.Lights {
 			paramData.LightProbeSize		=	LightProbeSize;
 			paramData.LightProbeMipLevel	=	LightProbeMipLevel;
 
-			paramData.VolumeTransform		=	lightVolume.WorldPosToTexCoord;
-			paramData.VolumeWidth			=	(uint)lightVolume.Width;
-			paramData.VolumeHeight			=	(uint)lightVolume.Height;
-			paramData.VolumeDepth			=	(uint)lightVolume.Depth;
-			paramData.VolumeStride			=	lightVolume.Stride;
+			int volumeElementCount			=	1;
 
-			int volumeElementCount			=	lightVolume.Width * lightVolume.Height * lightVolume.Depth;
+			if (lightVolume!=null)
+			{
+				paramData.VolumeTransform	=	lightVolume.WorldPosToTexCoord;
+				paramData.VolumeWidth		=	(uint)lightVolume.Width;
+				paramData.VolumeHeight		=	(uint)lightVolume.Height;
+				paramData.VolumeDepth		=	(uint)lightVolume.Depth;
+				paramData.VolumeStride		=	lightVolume.Stride;
+				volumeElementCount			=	lightVolume.Width * lightVolume.Height * lightVolume.Depth;
+			}
 
 			cbParams.SetData( paramData );
-
 
 			device.GfxConstants[ regCamera ]			=   camera.CameraData;
 			device.GfxConstants[ regParams ]			=	cbParams;
 
 			device.GfxSamplers[ regSampler ]			=	SamplerState.LinearWrap;
 
-			device.GfxResources[ regLightVolumeR	]	=	lightVolume.LightVolumeR;
-			device.GfxResources[ regLightVolumeG	]	=	lightVolume.LightVolumeG;
-			device.GfxResources[ regLightVolumeB	]	=	lightVolume.LightVolumeB;
+			device.GfxResources[ regLightVolumeR	]	=	lightVolume?.LightVolumeR;
+			device.GfxResources[ regLightVolumeG	]	=	lightVolume?.LightVolumeG;
+			device.GfxResources[ regLightVolumeB	]	=	lightVolume?.LightVolumeB;
 
-			device.GfxResources[ regLightProbes		]	=	rs.LightMapResources.IrradianceCubeMaps;
+			device.GfxResources[ regLightProbes		]	=	rs.LightMapResources?.IrradianceCubeMaps;
 			device.GfxResources[ regLightProbeData	]	=	rs.LightManager.LightGrid.ProbeDataGpu;
 
 			if (ShowLightProbes)

@@ -531,13 +531,12 @@ namespace Fusion.Engine.Graphics.Lights {
 							if (weight>0.01f)
 							{
 								lmAddrList.Add( GetLMAddress( coords, patchSize ) );
+
+								var directLight	=	GetDirectRadiance( instances, ref ray );
+								irradiance.Add( directLight * invSampleCount * (-dirDotN), dir );
 							}
 						}
 
-						var directLight	=	GetDirectRadiance( instances, ref ray );
-						//var directLight	=	ComputeDirectLight( scene, lightSet, hitPoint, hitNormal );
-
-						irradiance.Add( directLight * invSampleCount * (-dirDotN), dir );
 					}
 				}
 			} 
@@ -695,10 +694,10 @@ namespace Fusion.Engine.Graphics.Lights {
 					var area	=	ComputeLightMapTexelArea( p0, p1, p2,  d0, d1, d2 );
 					var bias	=	n * 1 / 16.0f;
 
-					Rasterizer.RasterizeTriangleConservative( d0, d1, d2, 
+					Rasterizer.RasterizeTriangleConservative( d0, d1, d2, //Rasterizer.Samples8x,
 						(xy,s,t,coverage) => 
 						{
-							if (!lightmap.Coverage[xy]) 
+							if (lightmap.Coverage[xy]==0) 
 							{
 								lightmap.Albedo	 [xy] =	albedo;
 								lightmap.Position[xy] = InterpolatePosition	( p0, p1, p2, s, t ) + bias;
@@ -708,7 +707,7 @@ namespace Fusion.Engine.Graphics.Lights {
 							}
 							else
 							{
-								if (coverage) 
+								if (coverage!=0) 
 								{
 									//Log.Warning("LM coverage conflict: {0}", xy );
 								}

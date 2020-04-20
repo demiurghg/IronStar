@@ -24,9 +24,11 @@ namespace Fusion.Engine.Graphics.Lights
 		public readonly GenericImage<Vector3>	Position;
 		public readonly GenericImage<Vector3>	PositionOld;
 		public readonly GenericImage<Vector3>	Normal;
-		public readonly GenericImage<Color4>	DirectLight;
+		public			GenericImage<Color4>	DirectLight { get { return DirectLightArray[0]; } }
 		public readonly GenericImage<float>		Area;
-		public readonly GenericImage<bool>		Coverage;
+		public readonly GenericImage<byte>		Coverage;
+
+		public readonly GenericImage<Color4>[]	DirectLightArray;
 
 		public readonly GenericImage<int>		SampleCount;
 		public			GenericImage<byte>		SampleGrade;
@@ -58,13 +60,21 @@ namespace Fusion.Engine.Graphics.Lights
 			PositionOld		=	new GenericImage<Vector3>	( size, size, Vector3.Zero );
 			Normal			=	new GenericImage<Vector3>	( size, size, Vector3.Zero );
 			Area			=	new GenericImage<float>		( size, size, 0 );
-			DirectLight		=	new GenericImage<Color4>	( size, size, Color4.Zero );
-			Coverage		=	new GenericImage<bool>		( size, size, false );
+			Coverage		=	new GenericImage<byte>		( size, size, 0 );
 
 			SampleCount		=	new GenericImage<int>		( size, size, 0 );
 			SampleGrade		=	new GenericImage<byte>		( size, size, 0 );
 			PatchSizes		=	new GenericImage<byte>		( size, size, 0 );
 			Contribution	=	new GenericImage<int>		( size, size, 0 );
+
+			DirectLightArray	=	new[] {
+				new GenericImage<Color4>( size /  1, size /  1 ),
+				new GenericImage<Color4>( size /  2, size /  2 ),
+				new GenericImage<Color4>( size /  4, size /  4 ),
+				new GenericImage<Color4>( size /  8, size /  8 ),
+				new GenericImage<Color4>( size / 16, size / 16 ),
+				new GenericImage<Color4>( size / 32, size / 32 ),
+			};
 
 			IrradianceR		=	new GenericImage<SHL1>( size, size );
 			IrradianceG		=	new GenericImage<SHL1>( size, size );
@@ -117,6 +127,11 @@ namespace Fusion.Engine.Graphics.Lights
 			}
 		}
 
+
+		void ComputePatchRadiance()
+		{
+			
+		}
 
 		/// <summary>
 		/// Bilateral blur

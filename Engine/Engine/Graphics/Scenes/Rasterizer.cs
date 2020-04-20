@@ -8,6 +8,10 @@ using Fusion.Core.Mathematics;
 
 namespace Fusion.Engine.Graphics.Scenes 
 {
+	/// <summary>
+	/// For sample patterns, see:
+	/// https://docs.microsoft.com/en-us/windows/win32/api/d3d11/ne-d3d11-d3d11_standard_multisample_quality_levels
+	/// </summary>
 	public static class Rasterizer
 	{
 		/// <summary>
@@ -17,10 +21,35 @@ namespace Fusion.Engine.Graphics.Scenes
 		/// <param name="s">Barycentric coordinates</param>
 		/// <param name="t">Barycentric coordinates</param>
 		/// <param name="coverage">Indicates, that trianles should not overlap</param>
-		public delegate void Interpolate(Int2 coords, float s, float t, bool coverage);
+		public delegate void Interpolate(Int2 coords, float s, float t, byte coverage);
+
+		public static readonly Vector2[] Samples1x = GenerateSamples( 0, 0 );
+		public static readonly Vector2[] Samples2x = GenerateSamples( 4, 4, -4,-4  );
+		public static readonly Vector2[] Samples4x = GenerateSamples(-2,-6,  6,-2, -6, 2,  2, 6 );
+		public static readonly Vector2[] Samples8x = GenerateSamples( 1,-3, -1, 3,  5, 1, -3,-5,   -5, 5, -7,-1,  3, 7,  7,-7 );
+
+		static Vector2[] GenerateSamples( params int[] samples )
+		{
+			var fracOffsets = new Vector2[ samples.Length / 2 ];
+			
+			for (int i=0; i<samples.Length/2; i++)
+			{
+				float x = samples[i*2+0] / 16.0f + 0.5f;
+				float y = samples[i*2+1] / 16.0f + 0.5f;
+				fracOffsets[i] = new Vector2(x,y);
+			}
+			return fracOffsets;
+		}
 
 
-		public static void RasterizeTriangle ( Vector2 A, Vector2 B, Vector2 C, Action<Int2,float,float> interpolate )
+		static void ComputeBarycentric( ref Vector2 ab, ref Vector2 ac, ref Vector2 q, out float s, out float t )
+		{
+			s = crossProduct(q, ac) / crossProduct(ab, ac);
+			t = crossProduct(ab, q) / crossProduct(ab, ac);
+		}
+
+
+		public static void RasterizeTriangle ( Vector2 A, Vector2 B, Vector2 C, Interpolate interpolate )
 		{
 			int maxX = (int)( Math.Ceiling	(Math.Max(A.X, Math.Max(B.X, C.X))) );
 			int minX = (int)( Math.Floor	(Math.Min(A.X, Math.Min(B.X, C.X))) );
@@ -29,6 +58,7 @@ namespace Fusion.Engine.Graphics.Scenes
 
 			Vector2 ab	=	new Vector2(B.X - A.X, B.Y - A.Y);
 			Vector2 ac	=	new Vector2(C.X - A.X, C.Y - A.Y);
+			float s, t;
 
 			for (int x = minX; x <= maxX; x++)
 			{
@@ -36,12 +66,52 @@ namespace Fusion.Engine.Graphics.Scenes
 				{
 					Vector2 q = new Vector2(x - A.X + 0.5f, y - A.Y + 0.5f);
 
-					float s = crossProduct(q, ac) / crossProduct(ab, ac);
-					float t = crossProduct(ab, q) / crossProduct(ab, ac);
+					ComputeBarycentric( ref ab, ref ac, ref q, out s, out t ); 
 
-					if ( (s >= 0) && (t >= 0) && (s + t <= 1))
+					if ( (s >= 0) && (t >= 0) && (s + t <= 1) )
 					{
-						interpolate( new Int2(x,y), s, t );
+						interpolate( new Int2(x,y), s, t, 0xFF );
+					}
+				}
+			}
+		}
+
+
+		public static void RasterizeTriangleMsaa ( Vector2 A, Vector2 B, Vector2 C, Vector2[] samples, Interpolate interpolate )
+		{
+			int maxX = (int)( Math.Ceiling	(Math.Max(A.X, Math.Max(B.X, C.X))) );
+			int minX = (int)( Math.Floor	(Math.Min(A.X, Math.Min(B.X, C.X))) );
+			int maxY = (int)( Math.Ceiling	(Math.Max(A.Y, Math.Max(B.Y, C.Y))) );
+			int minY = (int)( Math.Floor	(Math.Min(A.Y, Math.Min(B.Y, C.Y))) );
+
+			Vector2 ab	=	new Vector2(B.X - A.X, B.Y - A.Y);
+			Vector2 ac	=	new Vector2(C.X - A.X, C.Y - A.Y);
+			float s, t;
+			float cs, ct;
+			byte coverage = 0;
+
+			for (int x = minX; x <= maxX; x++)
+			{
+				for (int y = minY; y <= maxY; y++)
+				{
+					//	compute barycentric coordinates for pixel centroid:
+					Vector2 q = new Vector2(x - A.X + 0.5f, y - A.Y + 0.5f);
+					ComputeBarycentric( ref ab, ref ac, ref q, out cs, out ct ); 
+
+					for (int k=0; k<samples.Length; k++)
+					{
+						q = new Vector2(x - A.X + samples[k].X, y - A.Y +  + samples[k].Y);
+						ComputeBarycentric( ref ab, ref ac, ref q, out s, out t ); 
+	
+						if ( (s >= 0) && (t >= 0) && (s + t <= 1) )
+						{
+							coverage++;
+						}
+					}
+
+					if (coverage>0)
+					{
+						interpolate( new Int2(x,y), cs, ct, coverage );
 					}
 				}
 			}
@@ -77,19 +147,19 @@ namespace Fusion.Engine.Graphics.Scenes
 
 					if ( (s >= 0) && (t >= 0) && (s + t <= 1) )
 					{
-						interpolate( new Int2(x,y), s, t, true );
+						interpolate( new Int2(x,y), s, t, 0xFF );
 					}
 					else if ( pixel.Contains( A ) )
 					{
-						interpolate( new Int2(x,y), s, t, false );
+						interpolate( new Int2(x,y), s, t, 0 );
 					}
 					else if ( pixel.Contains( B ) ) 
 					{
-						interpolate( new Int2(x,y), s, t, false );
+						interpolate( new Int2(x,y), s, t, 0 );
 					}
 					else if ( pixel.Contains( C ) ) 
 					{
-						interpolate( new Int2(x,y), s, t, false );
+						interpolate( new Int2(x,y), s, t, 0 );
 					}
 					else
 					{
@@ -97,7 +167,7 @@ namespace Fusion.Engine.Graphics.Scenes
 							|| LineRectangleIntersection( pixel, B, C ) 
 							|| LineRectangleIntersection( pixel, C, A ) )
 						{
-							interpolate( new Int2(x,y), s, t, false );
+							interpolate( new Int2(x,y), s, t, 0 );
 						}
 					}
 				}

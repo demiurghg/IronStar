@@ -234,6 +234,23 @@ namespace Fusion.Engine.Imaging {
 		}
 
 
+		/// <summary>
+		/// Samples image at given coordinates with wraping addressing mode
+		/// </summary>
+		/// <param name="u"></param>
+		/// <param name="v"></param>
+		/// <returns></returns>
+		public TColor SampleMip ( int x, int y, Func<TColor,TColor,TColor,TColor,TColor> combineFunc )
+		{
+			var c00 = RawImageData[ Address( x*2+0, y*2+0, true ) ];
+			var c01 = RawImageData[ Address( x*2+0, y*2+1, true ) ];
+			var c10 = RawImageData[ Address( x*2+1, y*2+0, true ) ];
+			var c11 = RawImageData[ Address( x*2+1, y*2+1, true ) ];
+
+			return combineFunc( c00, c01, c10, c11 );
+		}
+
+
 
 		/// <summary>
 		/// Samples average of four neighbouring texels with given top-left corener with clamp addressing mode

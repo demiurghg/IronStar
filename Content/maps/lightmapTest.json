@@ -22,7 +22,7 @@
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
         "GlowIntensity": 100.0,
-        "LightMapSize": "lightMap256",
+        "LightMapSize": "lightMap512",
         "UseLightVolume": false,
         "UseCollisionMesh": false,
         "UseCustomNodes": false,
@@ -50,11 +50,24 @@
         "Frozen": false,
         "TranslateX": 0.0,
         "TranslateY": 0.0,
-        "TranslateZ": 0.0,
+        "TranslateZ": -12.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
       }
     ]
+  },
+  "RadiositySettings": {
+    "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
+    "LightGridWidth": 32,
+    "LightGridHeight": 16,
+    "LightGridDepth": 32,
+    "LightGridStep": 16.0,
+    "NormalOffsetBias": 0.25,
+    "LightMapSampleCount": 128,
+    "LightGridSampleCount": 64,
+    "MaxPatches": 32,
+    "RadianceThreshold": 0.02,
+    "DebugLightmaps": true
   }
 }

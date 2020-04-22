@@ -528,12 +528,14 @@
     <Compile Include="Engine\Graphics\ForwardSolidContext.cs" />
     <Compile Include="Engine\Graphics\ForwardTransparentContext.cs" />
     <Compile Include="Engine\Graphics\ForwardZPassContext.cs" />
-    <Compile Include="Engine\Graphics\GI\LightMapDebugger.cs" />
+    <Compile Include="Engine\Graphics\GI\GIDebugger.cs" />
     <Compile Include="Engine\Graphics\GI\LightMapper.Rtc.cs" />
+    <Compile Include="Engine\Graphics\GI\LightMapper.Lighting.cs" />
     <Compile Include="Engine\Graphics\GI\LightMapper.Utils.cs" />
     <Compile Include="Engine\Graphics\GI\LightMapper.Misc.cs" />
     <Compile Include="Engine\Graphics\GI\LightMapResources.cs" />
     <Compile Include="Engine\Graphics\GI\LightMapGroup.cs" />
+    <Compile Include="Engine\Graphics\GI\RadiositySettings.cs" />
     <Compile Include="Engine\Graphics\GpuData.cs" />
     <Compile Include="Engine\Graphics\HdrFrame.cs" />
     <Compile Include="Engine\Graphics\ICameraDataProvider.cs" />
@@ -550,7 +552,7 @@
     <Compile Include="Engine\Graphics\Lights\LightGrid.cs" />
     <Compile Include="Engine\Graphics\Lights\CubeMapFilter.cs" />
     <Compile Include="Engine\Graphics\Lights\LightManager.cs" />
-    <Compile Include="Engine\Graphics\GI\LightMapStaging.cs" />
+    <Compile Include="Engine\Graphics\GI\LightMapGBuffer.cs" />
     <Compile Include="Engine\Graphics\Lights\LightProbe.cs" />
     <Compile Include="Engine\Graphics\Lights\LightProbeContext.cs" />
     <Compile Include="Engine\Graphics\Lights\LightSet.cs" />
@@ -639,6 +641,7 @@
     <Compile Include="Engine\Graphics\VTSystem.cs" />
     <Compile Include="Engine\Graphics\VTTileCache.cs" />
     <Compile Include="Engine\Graphics\VTTileLoader.cs" />
+    <Compile Include="Engine\Imaging\GenericImageMips.cs" />
     <Compile Include="Engine\Imaging\GenericVolume.cs" />
     <Compile Include="Engine\Imaging\GenericImage.cs" />
     <Compile Include="Engine\Imaging\Image.cs" />

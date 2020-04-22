@@ -68,7 +68,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		Random rand		=	new Random();
 		
-		LightMapStaging lightmapGBuffer;
+		LightMapGBuffer lightmapGBuffer;
 
 
 		MeshInstance[] SelectOccludingInstances ( IEnumerable<MeshInstance> instances )
@@ -83,7 +83,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// <summary>
 		/// Update lightmap
 		/// </summary>
-		public IrradianceMap BakeIrradianceMap ( IEnumerable<MeshInstance> instances2, LightSet lightSet, int numSamples, bool filter, int sizeBias )
+		public IrradianceMap BakeIrradianceMap ( IEnumerable<MeshInstance> instances2, LightSet lightSet, int numSamples, int bias )
 		{
 			var hammersley		=	Hammersley.GenerateSphereUniform(numSamples);
 			var instances		=	SelectOccludingInstances( instances2 );
@@ -99,22 +99,42 @@ namespace Fusion.Engine.Graphics.Lights {
 					.GroupBy( 
 						instance => instance.LightMapGuid, // guid
 						instance => instance,              // instance
-						(guid,inst) => new LightMapGroup( inst.First().LightMapSize.Width, guid, inst )
+						(guid,inst) => new LightMapGroup( inst.First().LightMapSize.Width, guid, inst, bias )
 					)
 					.ToArray();
 
-			foreach ( var lmGroup in lmGroups ) {
+			/*foreach ( var lmGroup in lmGroups ) {
 				Log.Message("...{0} : {1}x{2}", lmGroup.Guid, lmGroup.Region.Width, lmGroup.Region.Height );
 				totalSizeInPixels += (lmGroup.Region.Width + lmGroup.Region.Height);
-			}
+			} */
 
 
-			Allocator2D allocator = new Allocator2D( RenderSystem.LightmapSize );
+			int lightMapSize = 256;
 
-			foreach ( var group in lmGroups ) {
-				var addr = allocator.Alloc( group.Region.Width, "");
-				group.Region.X = addr.X;
-				group.Region.Y = addr.Y;
+			Allocator2D allocator;		
+
+			while (true)
+			{
+				try {
+
+					allocator = new Allocator2D( lightMapSize );
+
+					foreach ( var group in lmGroups ) {
+						var addr = allocator.Alloc( group.Region.Width, "");
+						group.Region.X = addr.X;
+						group.Region.Y = addr.Y;
+					}
+
+					break;
+				} 
+				catch ( OutOfMemoryException oom )
+				{
+					lightMapSize *= 2;
+					if (lightMapSize>4096)
+					{
+						throw new OutOfMemoryException("Light map is too big (4096x4096)", oom);
+					}
+				}
 			}
 
 			Log.Message("Completed: {0} %", totalSizeInPixels / (float)(RenderSystem.LightmapSize * RenderSystem.LightmapSize) );
@@ -124,7 +144,7 @@ namespace Fusion.Engine.Graphics.Lights {
 			Log.Message("Allocating buffers...");
 
 			var irradianceMap	=	new IrradianceMap( rs, allocator.Width, allocator.Height );
-			lightmapGBuffer		=	new LightMapStaging( allocator.Width );
+			lightmapGBuffer		=	new LightMapGBuffer( allocator.Width );
 
 			foreach ( var group in lmGroups ) {
 				irradianceMap.AddRegion( group.Guid, group.Region );
@@ -155,7 +175,6 @@ namespace Fusion.Engine.Graphics.Lights {
 					{
 						var p = lightmapGBuffer.Position[i,j];
 						var n = lightmapGBuffer.Normal[i,j];
-						lightmapGBuffer.PositionOld[i,j] = p;
 
 						p = FixGeometryOverlap( scene, p, n );
 
@@ -164,23 +183,9 @@ namespace Fusion.Engine.Graphics.Lights {
 
 					//--------------------------------------
 
-					Log.Message("Direct light ray tracing...");
+					Log.Message("Searching for radiating patches...");
 
-					ForEachLightMapPixel( lmGroups, (i,j) => 
-					{
-						var p = lightmapGBuffer.Position[i,j];
-						var n = lightmapGBuffer.Normal[i,j];
-
-						var c = ComputeDirectLight(	scene, lightSet, p, n );
-
-						lightmapGBuffer.DirectLight[i,j] = c;
-					}, true);
-
-					//--------------------------------------
-
-					Log.Message("Indirect light ray tracing: 1-st bounce");
-
-					ForEachLightMapPixel( lmGroups, (i,j) => 
+					/*ForEachLightMapPixel( lmGroups, (i,j) => 
 					{
 						var p = lightmapGBuffer.Position[i,j];
 						var n = lightmapGBuffer.Normal[i,j];
@@ -189,37 +194,7 @@ namespace Fusion.Engine.Graphics.Lights {
 						int contribCount = 0;
 
 						if (c.A>0) {
-							var r	=	ComputeIndirectLight( out contribCount, scene, instances, hammersley, lightSet, p, n );
-							irradianceMap.IrradianceRed		[i,j]	+=	r.Red;
-							irradianceMap.IrradianceGreen	[i,j]	+=	r.Green;
-							irradianceMap.IrradianceBlue	[i,j]	+=	r.Blue;
-							lightmapGBuffer.Contribution	[i,j]	=	contribCount;
-						} else {
-							irradianceMap.IrradianceRed		[i,j]	+=	SHL1.Zero;
-							irradianceMap.IrradianceGreen	[i,j]	+=	SHL1.Zero;
-							irradianceMap.IrradianceBlue	[i,j]	+=	SHL1.Zero;
-						}
-					}, true);
-
-					/*ForEachLightMapPixel( lmGroups, (i,j) => 
-					{
-						var color = new Color4(0,0,0,1);
-						color.Red	=	irradianceMap.IrradianceRed[i,j][0];
-						color.Green	=	irradianceMap.IrradianceGreen[i,j][0];
-						color.Blue	=	irradianceMap.IrradianceBlue[i,j][0];
-						lightmapGBuffer.DirectLight[i,j]	=	color;
-					});
-
-					Log.Message("Indirect light ray tracing: 2-nd bounce");
-
-					ForEachLightMapPixel( lmGroups, (i,j) => 
-					{
-						var p = lightmapGBuffer.Position[i,j];
-						var n = lightmapGBuffer.Normal[i,j];
-						var c = lightmapGBuffer.Albedo[i,j];
-
-						if (c.A>0) {
-							var r	=	ComputeRadiance( scene, instances, hammersley, lightSet, p, n );
+							var r	=	GatherRadiosityPatches( out contribCount, scene, instances, hammersley, lightSet, p, n );
 							irradianceMap.IrradianceRed		[i,j]	+=	r.Red;
 							irradianceMap.IrradianceGreen	[i,j]	+=	r.Green;
 							irradianceMap.IrradianceBlue	[i,j]	+=	r.Blue;
@@ -228,43 +203,28 @@ namespace Fusion.Engine.Graphics.Lights {
 							irradianceMap.IrradianceGreen	[i,j]	+=	SHL1.Zero;
 							irradianceMap.IrradianceBlue	[i,j]	+=	SHL1.Zero;
 						}
-					}, true);  */
+					}, true);	   */
 				}
 			}
 
-			//--------------------------------------
+			//Log.Message("Dilate radiance...");
 
-			if (rs.BakeDirectLighting)
-			{
-				ForEachLightMapPixel( lmGroups, (i,j) => 
-				{
-					irradianceMap.IrradianceRed[i,j]	+=	new SHL1( lightmapGBuffer.DirectLight[i,j].Red	 ,0,0,0);
-					irradianceMap.IrradianceGreen[i,j]	+=	new SHL1( lightmapGBuffer.DirectLight[i,j].Green ,0,0,0);
-					irradianceMap.IrradianceBlue[i,j]	+=	new SHL1( lightmapGBuffer.DirectLight[i,j].Blue  ,0,0,0);
-				});
-			}
-
-			Log.Message("Dilate radiance...");
-
-			irradianceMap.DilateRadiance( lightmapGBuffer.Albedo );
-
-			if (filter) {
-				lightmapGBuffer.BlurRadianceBilateral();
-			}
+			//irradianceMap.DilateRadiance( lightmapGBuffer.Albedo );
 			
-			//--------------------------------------
+			////--------------------------------------
 
-			Log.Message("Uploading lightmap to GPU...");
+			//Log.Message("Uploading lightmap to GPU...");
 
-			irradianceMap.UpdateGPUTextures();
+			//irradianceMap.UpdateGPUTextures();
+
+
+			Log.Message("Generating patch LODs...");
+			lightmapGBuffer.GeneratePatchLods();
+
+			Log.Message("Saving debug images...");
+			lightmapGBuffer.SaveDebugImages();
 
 			Log.Message("Completed.");
-
-
-			lightmapGBuffer.SampleGrade	=	lightmapGBuffer.SampleCount.Convert( GradeSampleCount );
-			SaveDebugImage( lightmapGBuffer.SampleCount	.Convert( count => new Color( count, count, count,       255 ) ), "sample_count" );
-			SaveDebugImage( lightmapGBuffer.Contribution.Convert( count => new Color( count, count, count,       255 ) ), "rad_contrib"  );
-			SaveDebugImage( lightmapGBuffer.PatchSizes	.Convert( size  => new Color(  size,  size,  size, (byte)255 ) ), "sample_patch" );
 
 			return irradianceMap;
 		}
@@ -317,7 +277,7 @@ namespace Fusion.Engine.Graphics.Lights {
 								var n = Vector3.Zero;
 								int dummy;
 
-								var r	=	ComputeIndirectLight( out dummy, scene, instances, hammersley, lightSet, p, n, -0*stride/2.0f );
+								var r	=	GatherRadiosityPatches( out dummy, scene, instances, hammersley, lightSet, p, n, -0*stride/2.0f );
 								irrVolume.IrradianceRed	 [i,j,k]	=	r.Red;
 								irrVolume.IrradianceGreen[i,j,k]	=	r.Green;
 								irrVolume.IrradianceBlue [i,j,k]	=	r.Blue;
@@ -409,30 +369,6 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 
 
-		/// <summary>
-		/// Gets direct luminance in lightmap hit point
-		/// </summary>
-		/// <param name="instances"></param>
-		/// <param name="ray"></param>
-		/// <returns></returns>
-		Color4 GetDirectRadiance( MeshInstance[] instances, ref RtcRay ray )
-		{
-			Int2 coords;
-			
-			if (!GetLightMapCoordinates( instances, ref ray, out coords ))
-			{
-				return Color4.Zero;
-			}
-
-			var albedo	=	lightmapGBuffer.Albedo[ coords ];
-			var light	=	lightmapGBuffer.DirectLight[ coords ];
-
-			lightmapGBuffer.SampleCount[ coords ]++;
-
-			return light * albedo.ToColor4();
-		}
-
-
 		uint GetLMAddress( Int2 coords, int patchSize )
 		{
 			if (coords.X<0 || coords.Y<0 || coords.X>=RenderSystem.LightmapSize || coords.Y>=RenderSystem.LightmapSize )
@@ -463,7 +399,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// <summary>
 		/// Computes indirect radiance in given point
 		/// </summary>
-		Irradiance ComputeIndirectLight ( out int contribCount, RtcScene scene, MeshInstance[] instances, Vector3[] randomPoints, LightSet lightSet, Vector3 position, Vector3 normal, float bias=0 )
+		Irradiance GatherRadiosityPatches ( out int contribCount, RtcScene scene, MeshInstance[] instances, Vector3[] randomPoints, LightSet lightSet, Vector3 position, Vector3 normal, float bias=0 )
 		{
 			var sampleCount		=	randomPoints.Length;
 			var invSampleCount	=	1.0f / sampleCount;
@@ -520,7 +456,7 @@ namespace Fusion.Engine.Graphics.Lights {
 						if (GetLightMapCoordinates( instances, ref ray, out coords ))
 						{
 							var distance	=	ray.TFar; // we assume, that dir is normalized
-							var patchSize	=	lightmapGBuffer.PatchSizes[ coords ];
+							var patchSize	=	lightmapGBuffer.PatchSize[ coords ];
 							var maxPachSize	=	GetMaximumPatchSize( ray.TFar );
 								patchSize	=	Math.Min( patchSize, maxPachSize );
 							var patchArea	=	lightmapGBuffer.Area[ coords ] * patchSize * patchSize;
@@ -531,9 +467,6 @@ namespace Fusion.Engine.Graphics.Lights {
 							if (weight>0.01f)
 							{
 								lmAddrList.Add( GetLMAddress( coords, patchSize ) );
-
-								var directLight	=	GetDirectRadiance( instances, ref ray );
-								irradiance.Add( directLight * invSampleCount * (-dirDotN), dir );
 							}
 						}
 
@@ -548,93 +481,11 @@ namespace Fusion.Engine.Graphics.Lights {
 
 
 		/// <summary>
-		/// Compute direct light in given point
-		/// </summary>
-		Color4 ComputeDirectLight ( RtcScene scene, LightSet lightSet, Vector3 position, Vector3 normal )
-		{
-			var dirLightDir		=	-(lightSet.DirectLight.Direction).Normalized();
-			var dirLightColor	=	lightSet.DirectLight.Intensity;
-
-			var directLight		=	Color4.Zero;
-			var ray				=	new RtcRay();
-			var bias			=	normal / 16.0f;
-
-			position			+=	bias;
-
-			if (true) 
-			{
-				var nDotL	=	 Math.Max( 0, Vector3.Dot( dirLightDir, normal ) );
-
-				if (nDotL>0) 
-				{
-					EmbreeExtensions.UpdateRay( ref ray, position, dirLightDir, 0, 9999 );
-
-					var shadow	=	 scene.Occluded( ray ) ? 0 : 1;
-		 
-					directLight	+=	nDotL * dirLightColor * shadow;
-				}
-			}
-
-			foreach ( var ol in lightSet.OmniLights ) 
-			{
-				var dir			=	ol.Position - position;
-				var dist		=	dir.Length();
-				var dirN		=	dir.Normalized();
-				var falloff		=	MathUtil.Clamp( 1 - dir.Length() / ol.RadiusOuter, 0, 1 );
-					falloff		*=	falloff;
-
-				var falloff2	=	MathUtil.Clamp( 1 - dir.Length() / ol.RadiusOuter / 3, 0, 1 );
-
-				var nDotL		=	Math.Max( 0, Vector3.Dot( dirN, normal ) );
-
-				if ( falloff * falloff2 * nDotL > 0 ) {
-
-					EmbreeExtensions.UpdateRay( ref ray, position, dir, 0, 1 );
-					var shadow	=	 scene.Occluded( ray ) ? 0 : 1;
-		 
-					directLight	+=	nDotL * falloff * shadow * ol.Intensity;
-				}
-
-			}
-
-			foreach ( var sl in lightSet.SpotLights ) 
-			{
-				var dir			=	sl.Position - position;
-				var dist		=	dir.Length();
-				var dirN		=	dir.Normalized();
-				var falloff		=	MathUtil.Clamp( 1 - dir.Length() / sl.RadiusOuter, 0, 1 );
-					falloff		*=	falloff;
-
-				var falloff2	=	MathUtil.Clamp( 1 - dir.Length() / sl.RadiusOuter / 3, 0, 1 );
-
-				var nDotL		=	Math.Max( 0, Vector3.Dot( dirN, normal ) );
-
-				var viewProj	=	sl.SpotView * sl.Projection;
-				var projPos		=	Vector3.TransformCoordinate( position, viewProj );
-				var axialDist	=	new Vector2( projPos.X, projPos.Y ).Length();
-
-				if (axialDist<1) 
-				{
-					if ( falloff * falloff2 * nDotL > 0 ) 
-					{
-						EmbreeExtensions.UpdateRay( ref ray, position, dir, 0, 1 );
-						var shadow	=	 scene.Occluded( ray ) ? 0 : 1;
-		 
-						directLight	+=	nDotL * falloff * shadow * sl.Intensity;
-					}
-				}
-			}
-
-			return directLight;
-		}
-
-
-		/// <summary>
 		/// Rasterizes LM texcoords to lightmap
 		/// </summary>
 		/// <param name="lightmap"></param>
 		/// <param name="instance"></param>
-		void RasterizeInstance ( LightMapStaging lightmap, MeshInstance instance, Rectangle viewport )
+		void RasterizeInstance ( LightMapGBuffer lightmap, MeshInstance instance, Rectangle viewport )
 		{
 			var mesh		=	instance.Mesh;
 
@@ -716,9 +567,6 @@ namespace Fusion.Engine.Graphics.Lights {
 					);
 				}
 			}
-
-			SaveDebugImage( lightmap.Albedo, "albedo" );
-			SaveDebugImage( lightmap.Area.Convert( a => new Color(a/256.0f) ), "area" );
 		}
 	}
 }

@@ -191,9 +191,6 @@ namespace Fusion.Engine.Graphics {
 		[Config]
 		public bool SkipDirectLighting { get; set; } = false;
 
-		[Config]
-		public bool BakeDirectLighting { get; set; } = false;
-
 		/// <summary>
 		/// 
 		/// </summary>

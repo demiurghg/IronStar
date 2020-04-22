@@ -17,6 +17,7 @@ using BEPUphysics.BroadPhaseEntries;
 using Fusion.Core.Mathematics;
 using Fusion;
 using Newtonsoft.Json;
+using Fusion.Engine.Graphics.GI;
 
 namespace IronStar.Mapping {
 	public partial class Map : IPrecachable {
@@ -36,12 +37,19 @@ namespace IronStar.Mapping {
 
 
 		/// <summary>
+		/// List of nodes
+		/// </summary>
+		public RadiositySettings RadiositySettings { get; set; }
+
+
+		/// <summary>
 		/// 
 		/// </summary>
 		public Map ()
 		{
-			Nodes		=	new MapNodeCollection();
-			Environment	=	new MapEnvironment();
+			Nodes				=	new MapNodeCollection();
+			Environment			=	new MapEnvironment();
+			RadiositySettings	=	new RadiositySettings();
 		}
 
 

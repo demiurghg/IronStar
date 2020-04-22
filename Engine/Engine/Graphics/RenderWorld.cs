@@ -724,11 +724,11 @@ namespace Fusion.Engine.Graphics {
 						break; 
 				}
 
-				using ( var irrMap = rs.LightManager.LightMap.BakeIrradianceMap( Instances, LightSet, samples, filter, bias ) ) 
+				using ( var irrMap = rs.LightManager.LightMap.BakeIrradianceMap( Instances, LightSet, samples, bias ) ) 
 				{
 					using ( var stream = File.OpenWrite( pathIrrMap ) ) 
 					{
-						irrMap.WriteToStream( stream );
+						//irrMap.WriteToStream( stream );
 					}
 				}
 			}

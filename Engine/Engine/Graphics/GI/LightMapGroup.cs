@@ -23,9 +23,19 @@ namespace Fusion.Engine.Graphics.Lights
 	/// </summary>
 	class LightMapGroup 
 	{
-		public LightMapGroup ( int size, Guid guid, IEnumerable<MeshInstance> instances )
+		public LightMapGroup ( int size, Guid guid, IEnumerable<MeshInstance> instances, int bias )
 		{
 			Guid		=	guid;
+
+			if (bias>0)
+			{
+				size *= 2;
+			}
+			if (bias<0)
+			{
+				size /= 2;
+			}
+
 			Region		=	new Rectangle(0,0,size,size);
 			Instances	=	instances.ToArray();
 		}

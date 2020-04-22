@@ -57,13 +57,6 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 
 
-		void SaveDebugImage( GenericImage<Color> image, string name )
-		{
-			var colorImage = new Image( image );
-			Image.SaveTga( colorImage, name + ".tga" );
-		}
-
-
 		Color InterpolateColor ( Color c0, Color c1, Color c2, float s, float t )
 		{
 			float q = 1 - s - t;

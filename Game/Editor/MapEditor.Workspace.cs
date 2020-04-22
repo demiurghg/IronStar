@@ -76,8 +76,9 @@ namespace IronStar.Editor {
 			upperShelf.AddFatLButton("Unfreeze\rAll", null, ()=> UnfreezeAll() );
 
 			upperShelf.AddLSplitter();
-			upperShelf.AddLButton("BUILD\rRELOAD", @"editor\iconBuild",     ()=> Game.Invoker.ExecuteString("contentBuild") );
-			upperShelf.AddLButton("MAKE\rSCRSHT", @"editor\iconScreenshot", ()=> GeneratePreview() );
+			upperShelf.AddLButton("BUILD\rRELOAD"	, @"editor\iconBuild",		()=> Game.Invoker.ExecuteString("contentBuild") );
+			upperShelf.AddLButton("MAKE\rSCRSHT"	, @"editor\iconScreenshot", ()=> GeneratePreview() );
+			upperShelf.AddLButton("RAD\rCFG"		, @"editor\iconRadCfg",		()=> workspace.FeedProperties( map.RadiositySettings ) );
 
 			upperShelf.AddRButton("ENV"				, null						, ()=> workspace.FeedProperties(map.Environment) );
 			upperShelf.AddRButton("SCR"				, null						, ()=> Game.Invoker.ExecuteString("screenshot") );

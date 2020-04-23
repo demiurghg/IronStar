@@ -141,14 +141,6 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 
 
-		public void DilateRadiance ( GenericImage<Color> albedo )
-		{
-			irradianceR.Dilate( temporary, (xy) => albedo[xy].A > 0 );
-			irradianceG.Dilate( temporary, (xy) => albedo[xy].A > 0 );
-			irradianceB.Dilate( temporary, (xy) => albedo[xy].A > 0 );
-		}
-
-
 		public void FillAmbient ( Color4 ambient )
 		{
 			irradianceR.Fill( new SHL1( ambient.Red,	0,0,0 ) );

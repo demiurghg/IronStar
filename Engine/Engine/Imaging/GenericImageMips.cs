@@ -70,7 +70,7 @@ namespace Fusion.Engine.Imaging {
 
 		public TColor this[int x, int y] {
 			get {
-				return TopLevelMip.Sample(x, y, false);
+				return TopLevelMip.GetPixel(x, y, false);
 			}
 			
 			set {
@@ -82,7 +82,7 @@ namespace Fusion.Engine.Imaging {
 
 		public TColor this[Int2 xy] {
 			get {
-				return TopLevelMip.Sample(xy.X, xy.Y, false);
+				return TopLevelMip.GetPixel(xy.X, xy.Y, false);
 			}
 			
 			set {

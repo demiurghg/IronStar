@@ -648,6 +648,7 @@
     <Compile Include="Engine\Imaging\Image.Jpeg.cs" />
     <Compile Include="Engine\Imaging\Image.Png.cs" />
     <Compile Include="Engine\Imaging\Image.Tga.cs" />
+    <Compile Include="Engine\Imaging\Sampler.cs" />
     <Compile Include="Engine\Media\MediaState.cs" />
     <Compile Include="Engine\Media\Video.cs" />
     <Compile Include="Engine\Media\VideoPlayer.cs" />

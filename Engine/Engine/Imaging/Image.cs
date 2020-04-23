@@ -56,9 +56,11 @@ namespace Fusion.Engine.Imaging {
 
 			RawImageData	=	new byte[Width*Height*4];
 
-			for (int i=0; i<PixelCount; i++) {
-				SetPixelLinear( i, image.RawImageData[i] );
-			}
+			image.RawImageData.CopyTo( RawImageData, 0 );
+			//for (int i=0; i<PixelCount; i++) 
+			//{
+			//	SetPixelLinear( i, image.RawImageData[i] );
+			//}
 		}
 
 

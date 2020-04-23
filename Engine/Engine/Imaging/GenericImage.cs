@@ -4,19 +4,25 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using Fusion.Core.Mathematics;
+using System.Runtime.InteropServices;
 
+namespace Fusion.Engine.Imaging 
+{
+	public partial class GenericImage<TColor> 
+	{
 
-namespace Fusion.Engine.Imaging {
-	public partial class GenericImage<TColor> {
+		readonly int width;
+		readonly int height;
+		readonly int pixelSize;
+		readonly byte[] rawImageData;
 
-		public int	Width	{ get; protected set; }
-		public int	Height	{ get; protected set; }
-
-		public TColor[]	RawImageData { get; protected set; }
+		public int		Width	{ get { return width; } }
+		public int		Height	{ get { return height; } }
+		public byte[]	RawImageData { get { return rawImageData; } }
 
 		public object Tag { get; set; }
-		
 
+		
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -24,18 +30,17 @@ namespace Fusion.Engine.Imaging {
 		/// <param name="height">Image height</param>
 		public GenericImage ( int width, int height )
 		{
-			RawImageData	=	new TColor[width*height];
-
-			Width	=	width;
-			Height	=	height;
-
-			if (Width<=0) {
+			if (width<=0) {
 				throw new ArgumentOutOfRangeException("Image width must be > 0");
 			}
 
-			if (Height<=0) {
+			if (height<=0) {
 				throw new ArgumentOutOfRangeException("Image height must be > 0");
 			}
+
+			this.width		=	width;
+			this.height		=	height;
+			rawImageData	=	AllocRawImage( width, height, out pixelSize );
 		}
 
 
@@ -48,24 +53,29 @@ namespace Fusion.Engine.Imaging {
 		/// <param name="fillColor">Color to fill image</param>
 		public GenericImage ( int width, int height, TColor fillColor )
 		{
-			RawImageData	=	new TColor[width*height];
-
-			Width	=	width;
-			Height	=	height;
-
-			if (Width<=0) {
+			if (width<=0) {
 				throw new ArgumentOutOfRangeException("Image width must be > 0");
 			}
 
-			if (Height<=0) {
+			if (height<=0) {
 				throw new ArgumentOutOfRangeException("Image height must be > 0");
 			}
 
-			for (int i=0; i<RawImageData.Length; i++) {
-				RawImageData[i]	=	fillColor;
-			}
+			this.width		=	width;
+			this.height		=	height;
+			rawImageData	=	AllocRawImage( width, height, out pixelSize );
+
+			Fill( fillColor );
 		}
 
+
+
+		byte[] AllocRawImage( int width, int height, out int pixelSize )
+		{
+			pixelSize	=	Marshal.SizeOf(typeof(TColor));
+			int length	=	width * height * pixelSize;
+			return new byte[length];
+		}
 
 
 
@@ -76,16 +86,16 @@ namespace Fusion.Engine.Imaging {
 		/// <param name="v"></param>
 		/// <param name="wrap"></param>
 		/// <returns></returns>
-		public int Address ( int x, int y, bool wrap = true )
+		int GetByteAddress ( int x, int y, bool wrap = true )
 		{
 			if (wrap) {
-				x =	Wrap( x, Width );
-				y =	Wrap( y, Height );
+				x	=	Wrap( x, Width );
+				y	=	Wrap( y, Height );
 			} else {
 				x	=	Clamp( x, 0, Width - 1 );
 				y	=	Clamp( y, 0, Height - 1 );
 			}
-			return x + y * Width;
+			return ( x + y * Width ) * pixelSize;
 		}
 
 
@@ -135,7 +145,13 @@ namespace Fusion.Engine.Imaging {
 		/// <param name="monochrome"></param>
 		public void Fill ( TColor color )
 		{
-			PerpixelProcessing( p => color );
+			for (int i=0; i<=width; i++)
+			{
+				for (int j=0; j<height; j++)
+				{
+					this[i,j] = color;
+				}
+			}
 		}
 
 
@@ -162,9 +178,12 @@ namespace Fusion.Engine.Imaging {
 		{
 			var outputImage = new GenericImage<TOutputColor>( Width, Height );
 
-			for (int i=0; i<outputImage.RawImageData.Length; i++)
+			for (int x=0; x<Width; x++)
 			{
-				outputImage.RawImageData[i] = convert( RawImageData[i] );
+				for (int y=0; y<Height; y++)
+				{
+					outputImage.SetPixel( x, y, convert( Sample( x, y ) ) );
+				}
 			}
 
 			return outputImage;
@@ -177,41 +196,39 @@ namespace Fusion.Engine.Imaging {
 		/// <param name="u"></param>
 		/// <param name="v"></param>
 		/// <returns></returns>
-		public TColor SampleWrap ( int x, int y )
+		public TColor Sample ( int x, int y, bool wrap = true)
 		{
-			x = Wrap(x, Width);
-			y = Wrap(y, Height);
-			var a = x + y * Width;
-			return RawImageData[ a ];
-		}
-
-
-		/// <summary>
-		/// Samples image at given coordinates with clamping addressing mode
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <returns></returns>
-		public TColor SampleClamp ( int x, int y )
-		{
-			x	=	Clamp( x, 0, Width - 1 );
-			y	=	Clamp( y, 0, Height - 1 );
-			var a = x + y * Width;
-			return RawImageData[ a ];
+			unsafe 
+			{
+				int addr = GetByteAddress( x, y );
+				fixed (byte *ptr = &rawImageData[addr])
+				{
+					return (TColor)Marshal.PtrToStructure( new IntPtr(ptr), typeof(TColor) );
+				}
+			}
 		}
 
 
 
 		/// <summary>
-		/// Samples image at given coordinates with wraping addressing mode
+		/// Writes pixel to image
 		/// </summary>
 		/// <param name="u"></param>
 		/// <param name="v"></param>
-		/// <returns></returns>
-		public TColor Sample ( int x, int y, bool wrap = true)
+		/// <param name="color"></param>
+		/// <param name="wrap"></param>
+		public void SetPixel ( int x, int y, TColor value, bool wrap = true )
 		{
-			return RawImageData[ Address( x, y, wrap ) ];
+			unsafe 
+			{
+				int addr = GetByteAddress( x, y );
+				fixed (byte *ptr = &rawImageData[addr])
+				{
+					Marshal.StructureToPtr( value, new IntPtr(ptr), true );
+				}
+			}
 		}
+
 
 
 		/// <summary>
@@ -222,10 +239,10 @@ namespace Fusion.Engine.Imaging {
 		/// <returns></returns>
 		public TColor SampleMip ( int x, int y, Func<TColor,TColor,float,TColor> lerpFunc )
 		{
-			var c00 = RawImageData[ Address( x*2+0, y*2+0, true ) ];
-			var c01 = RawImageData[ Address( x*2+0, y*2+1, true ) ];
-			var c10 = RawImageData[ Address( x*2+1, y*2+0, true ) ];
-			var c11 = RawImageData[ Address( x*2+1, y*2+1, true ) ];
+			var c00 = Sample( x*2+0, y*2+0 );
+			var c01 = Sample( x*2+0, y*2+1 );
+			var c10 = Sample( x*2+1, y*2+0 );
+			var c11 = Sample( x*2+1, y*2+1 );
 
 			var c0x	= lerpFunc( c00, c01, 0.5f );
 			var c1x	= lerpFunc( c10, c11, 0.5f );
@@ -242,10 +259,10 @@ namespace Fusion.Engine.Imaging {
 		/// <returns></returns>
 		public TColor SampleMip ( int x, int y, Func<TColor,TColor,TColor,TColor,TColor> combineFunc )
 		{
-			var c00 = RawImageData[ Address( x*2+0, y*2+0, true ) ];
-			var c01 = RawImageData[ Address( x*2+0, y*2+1, true ) ];
-			var c10 = RawImageData[ Address( x*2+1, y*2+0, true ) ];
-			var c11 = RawImageData[ Address( x*2+1, y*2+1, true ) ];
+			var c00 = Sample( x*2+0, y*2+0 );
+			var c01 = Sample( x*2+0, y*2+1 );
+			var c10 = Sample( x*2+1, y*2+0 );
+			var c11 = Sample( x*2+1, y*2+1 );
 
 			return combineFunc( c00, c01, c10, c11 );
 		}
@@ -260,10 +277,10 @@ namespace Fusion.Engine.Imaging {
 		/// <returns></returns>
 		public TColor SampleQ4Clamp ( int x, int y, Func<TColor,TColor,float,TColor> lerpFunc )
 		{
-			var c00 = RawImageData[ Address( x+0, y+0, false ) ];
-			var c01 = RawImageData[ Address( x+0, y+1, false ) ];
-			var c10 = RawImageData[ Address( x+1, y+0, false ) ];
-			var c11 = RawImageData[ Address( x+1, y+1, false ) ];
+			var c00 = Sample( x+0, y+0 );
+			var c01 = Sample( x+0, y+1 );
+			var c10 = Sample( x+1, y+0 );
+			var c11 = Sample( x+1, y+1 );
 
 			var c0x	= lerpFunc( c00, c01, 0.5f );
 			var c1x	= lerpFunc( c10, c11, 0.5f );
@@ -358,19 +375,6 @@ namespace Fusion.Engine.Imaging {
 		}
 
 
-		/// <summary>
-		/// Writes pixel to image
-		/// </summary>
-		/// <param name="u"></param>
-		/// <param name="v"></param>
-		/// <param name="color"></param>
-		/// <param name="wrap"></param>
-		public void SetPixel ( int x, int y, TColor value, bool wrap = true )
-		{
-			RawImageData[ Address( x, y, wrap ) ] = value;
-		}
-
-
 		
 		/// <summary>
 		/// Does perpixel processing with given function
@@ -390,9 +394,9 @@ namespace Fusion.Engine.Imaging {
 		/// <param name="procFunc"></param>
 		public void PerpixelProcessing ( Func<TColor, TColor> procFunc )
 		{
-			for (int i=0; i<RawImageData.Length; i++) {
-				RawImageData[i] = procFunc( RawImageData[i] );
-			}
+			for (int x=0; x<Width; x++) 
+			for (int y=0; y<Height; y++)  
+				SetPixel(x,y, procFunc( Sample( x,y ) ) );
 		}
 
 

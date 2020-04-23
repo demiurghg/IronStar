@@ -68,7 +68,7 @@ namespace Fusion.Engine.Imaging {
 					image.SetPixelLinear( i, color );
 				}
 			} else {
-				throw new NotSupportedException( string.Format("PNG format {0} is not supported", format) );
+				throw new NotSupportedException( string.Format("JPG format {0} is not supported", format) );
 			}
 
 			return image;

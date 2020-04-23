@@ -119,9 +119,9 @@ namespace Fusion.Engine.Graphics.Lights {
 				writer.Write( width );
 				writer.Write( height );
 
-				writer.Write( irradianceR.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
-				writer.Write( irradianceG.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
-				writer.Write( irradianceB.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
+				writer.Write( irradianceR.Convert( sh => sh.ToHalf4() ).RawImageData );
+				writer.Write( irradianceG.Convert( sh => sh.ToHalf4() ).RawImageData );
+				writer.Write( irradianceB.Convert( sh => sh.ToHalf4() ).RawImageData );
 			}
 		}
 
@@ -135,9 +135,9 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		public void UpdateGPUTextures ()
 		{
-			IrradianceTextureRed	.SetData( irradianceR.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
-			IrradianceTextureGreen	.SetData( irradianceG.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
-			IrradianceTextureBlue	.SetData( irradianceB.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
+			IrradianceTextureRed	.SetData( irradianceR.Convert( sh => sh.ToHalf4() ).RawImageData );
+			IrradianceTextureGreen	.SetData( irradianceG.Convert( sh => sh.ToHalf4() ).RawImageData );
+			IrradianceTextureBlue	.SetData( irradianceB.Convert( sh => sh.ToHalf4() ).RawImageData );
 		}
 
 

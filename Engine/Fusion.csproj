@@ -641,6 +641,7 @@
     <Compile Include="Engine\Graphics\VTSystem.cs" />
     <Compile Include="Engine\Graphics\VTTileCache.cs" />
     <Compile Include="Engine\Graphics\VTTileLoader.cs" />
+    <Compile Include="Engine\Imaging\ImageLib.cs" />
     <Compile Include="Engine\Imaging\GenericImageMips.cs" />
     <Compile Include="Engine\Imaging\GenericVolume.cs" />
     <Compile Include="Engine\Imaging\GenericImage.cs" />

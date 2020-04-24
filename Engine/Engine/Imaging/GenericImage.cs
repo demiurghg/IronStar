@@ -5,29 +5,38 @@ using System.Text;
 using System.IO;
 using Fusion.Core.Mathematics;
 using System.Runtime.InteropServices;
+using Fusion.Core.Utils;
 
 namespace Fusion.Engine.Imaging 
 {
 	public partial class GenericImage<TColor> 
 	{
+		public static readonly uint FourCC	= 0x494d4730; // IMG0
+		public static readonly uint TypeCrc;
+		
+		static GenericImage()
+		{
+			TypeCrc	=	Crc32.ComputeChecksum( Encoding.UTF8.GetBytes(typeof(TColor).ToString()));
+		}
+		
+		public delegate TColor MipGenFunc(TColor c00, TColor c01, TColor c10, TColor c11);
 
 		readonly int width;
 		readonly int height;
 		readonly int pixelSize;
 		readonly byte[] rawImageData;
+		readonly Int3[] mipDimensions;
 
 		public int		Width	{ get { return width; } }
 		public int		Height	{ get { return height; } }
 		public byte[]	RawImageData { get { return rawImageData; } }
+		public int		PixelCount { get { return width * height; } }
 
 		public object Tag { get; set; }
 
+
 		
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="width">Image width</param>
-		/// <param name="height">Image height</param>
+
 		public GenericImage ( int width, int height )
 		{
 			if (width<=0) {
@@ -40,17 +49,11 @@ namespace Fusion.Engine.Imaging
 
 			this.width		=	width;
 			this.height		=	height;
-			rawImageData	=	AllocRawImage( width, height, out pixelSize );
+			rawImageData	=	AllocRawImage( out pixelSize );
 		}
 
 
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="width">Image width</param>
-		/// <param name="height">Image height</param>
-		/// <param name="fillColor">Color to fill image</param>
 		public GenericImage ( int width, int height, TColor fillColor )
 		{
 			if (width<=0) {
@@ -63,14 +66,14 @@ namespace Fusion.Engine.Imaging
 
 			this.width		=	width;
 			this.height		=	height;
-			rawImageData	=	AllocRawImage( width, height, out pixelSize );
+			rawImageData	=	AllocRawImage( out pixelSize );
 
 			Fill( fillColor );
 		}
 
 
 
-		byte[] AllocRawImage( int width, int height, out int pixelSize )
+		byte[] AllocRawImage( out int pixelSize )
 		{
 			pixelSize	=	Marshal.SizeOf(typeof(TColor));
 			int length	=	width * height * pixelSize;
@@ -79,13 +82,6 @@ namespace Fusion.Engine.Imaging
 
 
 
-		/// <summary>
-		/// Returns address of pixel with given coordinates and adressing mode
-		/// </summary>
-		/// <param name="u"></param>
-		/// <param name="v"></param>
-		/// <param name="wrap"></param>
-		/// <returns></returns>
 		int GetByteAddress ( int x, int y )
 		{
 			if (x<0 || x>=width ) throw new ArgumentOutOfRangeException(string.Format("X = {0} is out of range [0, {1})", x, width));
@@ -95,14 +91,13 @@ namespace Fusion.Engine.Imaging
 		}
 
 
-
 		/// <summary>
 		/// Gets pixel at given coordinates
 		/// </summary>
 		/// <param name="u"></param>
 		/// <param name="v"></param>
 		/// <returns></returns>
-		public TColor GetPixel ( int x, int y, bool wrap = true)
+		public TColor GetPixel ( int x, int y )
 		{
 			unsafe 
 			{
@@ -123,7 +118,7 @@ namespace Fusion.Engine.Imaging
 		/// <param name="v"></param>
 		/// <param name="color"></param>
 		/// <param name="wrap"></param>
-		public void SetPixel ( int x, int y, TColor value, bool wrap = true )
+		public void SetPixel ( int x, int y, TColor value )
 		{
 			unsafe 
 			{
@@ -144,11 +139,11 @@ namespace Fusion.Engine.Imaging
 		/// <returns></returns>
 		public TColor this[Int2 xy] {
 			get {
-				return GetPixel(xy.X, xy.Y, false);
+				return GetPixel(xy.X, xy.Y);
 			}
 			
 			set {
-				SetPixel(xy.X, xy.Y, value, false);
+				SetPixel(xy.X, xy.Y, value);
 			}	
 
 		}
@@ -162,15 +157,26 @@ namespace Fusion.Engine.Imaging
 		/// <returns></returns>
 		public TColor this[int x, int y] {
 			get {
-				return GetPixel(x, y, false);
+				return GetPixel(x, y);
 			}
 			
 			set {
-				SetPixel(x,y, value, false);
+				SetPixel(x,y, value);
 			}	
 
 		}
 
+
+		public void SetPixelLinear( int index, TColor color )
+		{
+			SetPixel( index % Width, index / Height, color );
+		}
+
+
+		public TColor GetPixelLinear( int index )
+		{
+			return GetPixel( index % Width, index / Height );
+		}
 
 		/*------------------------------------------------------------------------------------------
 		 *	Simple image processing
@@ -292,6 +298,98 @@ namespace Fusion.Engine.Imaging
 					SetPixel(x,y, procFunc( GetPixel( x,y ) ) );
 				}
 			}
+		}
+
+
+		/*------------------------------------------------------------------------------------------
+		 *	Mip generator
+		-----------------------------------------------------------------------------------------*/
+
+		public void GenerateMipLevel( GenericImage<TColor> targetImage, MipGenFunc mipGenFunc  )
+		{
+			var dstWidth  = Math.Min( targetImage.Width,  Width  / 2 );
+			var dstHeight = Math.Min( targetImage.Height, Height / 2 );
+
+			for (int x=0; x<dstWidth; x++)
+			{
+				for (int y=0; y<dstHeight; y++)
+				{
+					var c00	=	GetPixel( x*2+0, y*2+0 );
+					var c01	=	GetPixel( x*2+0, y*2+1 );
+					var c10	=	GetPixel( x*2+1, y*2+0 );
+					var c11	=	GetPixel( x*2+1, y*2+1 );
+
+					targetImage.SetPixel( x, y, mipGenFunc( c00, c01, c10, c11 ) );
+				}
+			}
+		}
+
+
+		public GenericImage<TColor> GenerateMipLevel( MipGenFunc mipGenFunc  )
+		{
+			var mipImage = new GenericImage<TColor>( width / 2, height / 2 );
+
+			GenerateMipLevel( mipImage, mipGenFunc );
+
+			return mipImage;
+		}
+	
+
+		/*------------------------------------------------------------------------------------------
+		 *	Image I/O
+		-----------------------------------------------------------------------------------------*/
+
+		public void WriteStream( Stream stream )
+		{
+			stream.Write( BitConverter.GetBytes(FourCC)	, 0, 4 );	
+			stream.Write( BitConverter.GetBytes(TypeCrc), 0, 4 );	
+			stream.Write( BitConverter.GetBytes(Width)	, 0, 4 );	
+			stream.Write( BitConverter.GetBytes(Height)	, 0, 4 );	
+
+			stream.Write( RawImageData, 0, RawImageData.Length );
+		}
+
+
+		static void ReadHeader( Stream stream, out int width, out int height )
+		{
+			var header	=	new byte[16];
+			stream.Read( header, 0, 16 );
+
+			var magic   =   BitConverter.ToUInt32( header,  0 );
+			var type    =   BitConverter.ToUInt32( header,  4 );
+				width   =   BitConverter.ToInt32 ( header,  8 );
+				height  =   BitConverter.ToInt32 ( header, 12 );
+
+			if ( magic  != FourCC ) throw new IOException( "Bad FourCC, IMG0 expected" );
+			if ( type   != TypeCrc ) throw new IOException( "Bad type CRC32" );
+		}
+
+
+		public void ReadStream( Stream stream )
+		{
+			int width, height;
+			ReadHeader( stream, out width, out height );
+
+			if ( width  != Width ) throw new IOException( string.Format( "Bad image width {0}, expected {1}", width, Width ) );
+			if ( height != Height ) throw new IOException( string.Format( "Bad image рушпре {0}, expected {1}", height, Height ) );
+
+			var read = stream.Read( RawImageData, 0, RawImageData.Length );
+
+			if ( read!=RawImageData.Length ) throw new IOException("Corrupted image");
+		}
+
+
+		static GenericImage<TColor> FromStream( Stream stream )
+		{
+			int width, height;
+			ReadHeader( stream, out width, out height );
+
+			var image	=	new GenericImage<TColor>( width, height );
+			var read	=	stream.Read( image.RawImageData, 0, image.RawImageData.Length );
+
+			if ( read!=image.RawImageData.Length ) throw new IOException("Corrupted image");
+
+			return image;
 		}
 
 	}

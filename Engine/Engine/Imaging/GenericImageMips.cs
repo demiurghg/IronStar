@@ -52,7 +52,7 @@ namespace Fusion.Engine.Imaging {
 
 			for (int mip=0; mip<mipCount; mip++)
 			{
-				images[mip]	= new GenericImage<TColor>( width >> mip, height >> mip, fillColor );	
+				images[mip]	= new GenericImage<TColor>( width >> mip, height >> mip );	
 			}
 		}
 
@@ -70,11 +70,11 @@ namespace Fusion.Engine.Imaging {
 
 		public TColor this[int x, int y] {
 			get {
-				return TopLevelMip.GetPixel(x, y, false);
+				return TopLevelMip.GetPixel(x, y);
 			}
 			
 			set {
-				TopLevelMip.SetPixel(x,y, value, false);
+				TopLevelMip.SetPixel(x,y, value);
 			}	
 
 		}
@@ -82,11 +82,11 @@ namespace Fusion.Engine.Imaging {
 
 		public TColor this[Int2 xy] {
 			get {
-				return TopLevelMip.GetPixel(xy.X, xy.Y, false);
+				return TopLevelMip.GetPixel(xy.X, xy.Y);
 			}
 			
 			set {
-				TopLevelMip.SetPixel(xy.X, xy.Y, value, false);
+				TopLevelMip.SetPixel(xy.X, xy.Y, value);
 			}	
 
 		}

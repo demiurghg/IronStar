@@ -267,21 +267,15 @@ namespace Fusion.Engine.Graphics {
 
 			var renderTarget	=	Device.Display.BackbufferColor;
 			var path			=	Path.ChangeExtension(requestPreviewPath, ".tga");
-			var image			=	new Image( renderTarget.Width, renderTarget.Height, new Color(255,0,128,255) );
+			var image			=	new GenericImage<Color>( renderTarget.Width, renderTarget.Height, new Color(255,0,128,255) );
 
 			renderTarget.GetData( image.RawImageData );
-			image.PerpixelProcessing( color => new Color( color.R, color.G, color.B, (byte)255 ) );
-
-			while ( image.Width > PreviewWidth * 2 || image.Height > PreviewHeight * 2 )
-			{
-				image = image.DownsampleBilinear();
-			}
-
-			image = image.DownsampleBilinear(PreviewWidth, PreviewHeight);
+			ImageLib.SetAlpha( image, 255 );
+			image = ImageLib.Downsample( image, PreviewWidth, PreviewHeight );
 
 			using ( var stream = File.OpenWrite( path ) )
 			{
-				Image.SaveTga( image, stream );
+				ImageLib.SaveTga( image, stream );
 			}
 
 			requestPreviewPath = null;

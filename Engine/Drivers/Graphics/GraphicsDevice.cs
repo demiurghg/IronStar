@@ -300,14 +300,14 @@ namespace Fusion.Drivers.Graphics {
 				var path = Path.ChangeExtension(requestScreenShotPath, ".tga");
 				requestScreenShotPath = null;
 
-				var image = new Image( BackbufferColor.Width, BackbufferColor.Height, new Color(255,0,128,255) );
+				var image = new GenericImage<Color>( BackbufferColor.Width, BackbufferColor.Height, new Color(255,0,128,255) );
 				BackbufferColor.GetData( image.RawImageData );
 
-				image.PerpixelProcessing( color => new Color( color.R, color.G, color.B, (byte)255 ) );
+				ImageLib.SetAlpha( image, 255 );
 
 				using ( var stream = File.OpenWrite( path ) )
 				{
-					Image.SaveTga( image, stream );
+					ImageLib.SaveTga( image, stream );
 				}
 			}
 

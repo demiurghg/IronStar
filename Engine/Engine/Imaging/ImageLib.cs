@@ -33,6 +33,51 @@ namespace Fusion.Engine.Imaging
 		}
 
 
+		static public Color AverageFourSamples( Color c00, Color c01, Color c10, Color c11 )
+		{
+			var c0x	= Color.Lerp( c00, c01, 0.5f );
+			var c1x	= Color.Lerp( c10, c11, 0.5f );
+
+			return Color.Lerp( c0x, c1x, 0.5f );
+		}
+
+
+		public static GenericImage<Color> Downsample( GenericImage<Color> srcColor, int newWidth, int newHeight )
+		{
+			GenericImage<Color> tempImage = srcColor;
+
+			while ( tempImage.Width > newWidth * 2 || tempImage.Height > newHeight * 2 )
+			{
+				tempImage = tempImage.GenerateMipLevel( AverageFourSamples );
+			}
+
+			var outputImage = new GenericImage<Color>( newWidth, newHeight );
+
+			for (int x=0; x<newWidth; x++) 
+			{
+				for (int y=0; y<newHeight; y++)
+				{
+					var fx = x / (float)newWidth;
+					var fy = y / (float)newHeight;
+					outputImage.SetPixel(x, y, tempImage.SampleLinearClamp(fx, fy, Color.Lerp));
+				}
+			}
+
+			return outputImage;
+		}
+
+
+		public static void SetAlpha ( GenericImage<Color> image, byte alpha )
+		{
+			image.PerpixelProcessing( color => new Color( color.R, color.G, color.B, (byte)255 ) );
+		}
+
+
+		public static void SetAlpha ( GenericImage<Color4> image, float alpha )
+		{
+			image.PerpixelProcessing( color => new Color4( color.Red, color.Green, color.Blue, alpha ) );
+		}
+
 		/*-----------------------------------------------------------------------------------------
 		 *	TGA Loading/Saving
 		-----------------------------------------------------------------------------------------*/

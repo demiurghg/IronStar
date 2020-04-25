@@ -21,6 +21,7 @@ namespace Fusion.Engine.Imaging
 		}
 		
 		public delegate TColor MipGenFunc(TColor c00, TColor c01, TColor c10, TColor c11);
+		public delegate TColor LerpFunc(TColor c0, TColor c1, float t);
 
 		readonly int width;
 		readonly int height;
@@ -304,6 +305,54 @@ namespace Fusion.Engine.Imaging
 					SetPixel(x,y, procFunc( GetPixel( x,y ) ) );
 				}
 			}
+		}
+
+
+		/*------------------------------------------------------------------------------------------
+		 *	Sampling :
+		-----------------------------------------------------------------------------------------*/
+
+		public static int Clamp ( int x, int min, int max ) 
+		{
+			if (x <  min) return min;
+			if (x >= max) return max-1;
+			return x;
+		}
+
+
+		public static int Wrap ( int x, int wrapSize ) 
+		{
+			if ( x<0 ) {
+				x = x % wrapSize + wrapSize;
+			}
+			return	x % wrapSize;
+		}
+
+
+		public static float Frac ( float x )
+		{
+			return x < 0 ? x%1+1 : x%1;
+		}
+
+
+		public TColor SampleLinearClamp( float x, float y, LerpFunc lerpFunc )
+		{
+			var	tx	=	Frac( x * Width );
+			var	ty	=	Frac( y * Height );
+			int	x0	=	Clamp( (int)(x * Width)			, 0, Width );
+			int	x1	=	Clamp( (int)(x * Width + 1)		, 0, Width );
+			int	y0	=	Clamp( (int)(y * Height)		, 0, Height );
+			int	y1	=	Clamp( (int)(y * Height + 1)	, 0, Height );
+			
+			//   xy
+			var v00	=	GetPixel( x0, y0 );
+			var v01	=	GetPixel( x0, y1 );
+			var v10	=	GetPixel( x1, y0 );
+			var v11	=	GetPixel( x1, y1 );
+
+			var v0x	=	lerpFunc( v00, v01, ty );
+			var v1x	=	lerpFunc( v10, v11, ty );
+			return		lerpFunc( v0x, v1x, tx );
 		}
 
 

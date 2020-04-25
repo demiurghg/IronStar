@@ -72,8 +72,7 @@ namespace Fusion.Engine.Graphics {
 		/// <returns></returns>
 		static public UserTexture CreateFromTga ( RenderSystem rs, Stream stream, bool forceSRgb )
 		{
-			Image image =	Image.LoadTga( stream );
-
+			var image	=	ImageLib.LoadTga( stream );
 			var texture	=	new Texture2D( rs.Device, image.Width, image.Height, ColorFormat.Rgba8, false, forceSRgb );
 
 			texture.SetData( image.RawImageData );
@@ -85,7 +84,7 @@ namespace Fusion.Engine.Graphics {
 
 		public void UpdateFromTga  ( Stream stream )
 		{
-			Image image =	Image.LoadTga( stream );
+			var image	=	ImageLib.LoadTga( stream );
 
 			if ( image.Width!=Width || image.Height != Height ) {
 				texture.SetData( image.RawImageData );

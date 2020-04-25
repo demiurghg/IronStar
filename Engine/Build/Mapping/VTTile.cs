@@ -68,7 +68,7 @@ namespace Fusion.Build.Mapping {
 		/// <param name="a"></param>
 		/// <param name="b"></param>
 		/// <param name="c"></param>
-		public VTTile ( VTAddress address, Image a, Image b, Image c )
+		public VTTile ( VTAddress address, GenericImage<Color> a, GenericImage<Color> b, GenericImage<Color> c )
 		{
 			this.address	=	address;
 
@@ -82,9 +82,9 @@ namespace Fusion.Build.Mapping {
 				throw new ArgumentException("Image width and height must be equal " + VTConfig.PageBorderWidth ); 
 			}
 
-			colorData		=	a.ToGenericImage();
-			normalData		=	b.ToGenericImage();
-			specularData	=	c.ToGenericImage();
+			colorData		=	a;
+			normalData		=	b;
+			specularData	=	c;
 
 			var size		=	VTConfig.PageSizeBordered;
 

@@ -78,6 +78,31 @@ namespace Fusion.Engine.Imaging
 			image.PerpixelProcessing( color => new Color4( color.Red, color.Green, color.Blue, alpha ) );
 		}
 
+
+		public static Color ComputeAverageColor ( GenericImage<Color> image )
+		{
+			Color4 average = Color4.Zero;
+
+			for (int x=0; x<image.Width; x++) {
+				for (int y=0; y<image.Height; y++) {
+
+					var c = image.GetPixel(x,y);
+
+					average.Red		+= c.R;
+					average.Green	+= c.G;
+					average.Blue	+= c.B;
+					average.Alpha	+= c.A;
+				}
+			}
+
+			average.Red		/= (image.RawImageData.Length * 255.0f);
+			average.Green	/= (image.RawImageData.Length * 255.0f);
+			average.Blue	/= (image.RawImageData.Length * 255.0f);
+			average.Alpha	/= (image.RawImageData.Length * 255.0f);
+
+			return new Color( average.Red, average.Green, average.Blue, average.Alpha );
+		}
+
 		/*-----------------------------------------------------------------------------------------
 		 *	TGA Loading/Saving
 		-----------------------------------------------------------------------------------------*/

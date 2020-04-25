@@ -356,11 +356,38 @@ namespace Fusion.Engine.Imaging
 		}
 
 
+		public TColor SampleWrap ( int x, int y )
+		{
+			int sx = Wrap( x, Width );
+			int sy = Wrap( y, Height );
+			return GetPixel( sx, sy );
+		}
+
+
+		public TColor SampleClamp ( int x, int y )
+		{
+			int sx = Clamp( x, 0, Width );
+			int sy = Clamp( y, 0, Height );
+			return GetPixel( sx, sy );
+		}
+
+
+		public TColor SampleMip ( int x, int y, MipGenFunc mipGenFunc )
+		{
+			var c00 = GetPixel( x*2+0, y*2+0 );
+			var c01 = GetPixel( x*2+0, y*2+1 );
+			var c10 = GetPixel( x*2+1, y*2+0 );
+			var c11 = GetPixel( x*2+1, y*2+1 );
+
+			return mipGenFunc( c00, c01, c10, c11 );
+		}
+
+
 		/*------------------------------------------------------------------------------------------
 		 *	Mip generator
 		-----------------------------------------------------------------------------------------*/
 
-		public void GenerateMipLevel( GenericImage<TColor> targetImage, MipGenFunc mipGenFunc  )
+		public void GenerateMipLevel( GenericImage<TColor> targetImage, MipGenFunc mipGenFunc )
 		{
 			var dstWidth  = Math.Min( targetImage.Width,  Width  / 2 );
 			var dstHeight = Math.Min( targetImage.Height, Height / 2 );

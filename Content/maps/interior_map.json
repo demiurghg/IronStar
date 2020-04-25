@@ -23,7 +23,7 @@
         "GlowColor": "255, 0, 0, 255",
         "GlowIntensity": 100.0,
         "LightMapSize": "lightMap128",
-        "Dynamic": false,
+        "UseLightVolume": false,
         "UseCollisionMesh": false,
         "UseCustomNodes": false,
         "CustomVisibleNode": "",
@@ -284,9 +284,6 @@
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
         "NodeGuid": "1c888bf5-6375-4e26-b2c3-4d8393553048",
-        "LightProbeMode": "cubeReflection",
-        "InnerRadius": 1.0,
-        "OuterRadius": 2.0,
         "Width": 144.0,
         "Height": 56.0,
         "Depth": 184.0,
@@ -813,5 +810,18 @@
         "RotateRoll": 0.0
       }
     ]
+  },
+  "RadiositySettings": {
+    "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
+    "LightGridWidth": 32,
+    "LightGridHeight": 16,
+    "LightGridDepth": 32,
+    "LightGridStep": 16.0,
+    "NormalOffsetBias": 0.25,
+    "LightMapSampleCount": 128,
+    "LightGridSampleCount": 64,
+    "MaxPatches": 32,
+    "RadianceThreshold": 0.02,
+    "DebugLightmaps": false
   }
 }

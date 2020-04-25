@@ -416,11 +416,11 @@ namespace Fusion.Build.Mapping {
 		/// </summary>
 		void GenerateFallbackImage ( IBuildContext buildContext, VTTextureTable pageTable, int sourceMipLevel, IStorage storage )
 		{
-			int		pageSize		=	VTConfig.PageSize;
-			int		numPages		=	VTConfig.VirtualPageCount >> sourceMipLevel;
-			int		fallbackSize	=	VTConfig.TextureSize >> sourceMipLevel;
+			int	pageSize		=	VTConfig.PageSize;
+			int	numPages		=	VTConfig.VirtualPageCount >> sourceMipLevel;
+			int	fallbackSize	=	VTConfig.TextureSize >> sourceMipLevel;
 
-			Image fallbackImage =	new Image( fallbackSize, fallbackSize, Color.Black );
+			var fallbackImage	=	new GenericImage<Color>( fallbackSize, fallbackSize, Color.Black );
 
 			for ( int pageX=0; pageX<numPages; pageX++) {
 				for ( int pageY=0; pageY<numPages; pageY++) {
@@ -434,13 +434,13 @@ namespace Fusion.Build.Mapping {
 							int u = pageX * pageSize + x;
 							int v = pageY * pageSize + y;
 
-							fallbackImage.SetPixel( u, v, image.Sample( x, y ) );
+							fallbackImage.SetPixel( u, v, image.GetPixel( x, y ) );
 						}
 					}
 				}
 			}
 
-			Image.SaveTga( fallbackImage, storage.OpenWrite("fallback.tga") );
+			ImageLib.SaveTga( fallbackImage, storage.OpenWrite("fallback.tga") );
 		}
 
 
@@ -453,7 +453,7 @@ namespace Fusion.Build.Mapping {
 		/// <param name="image10"></param>
 		/// <param name="image11"></param>
 		/// <returns></returns>
-		Image MipImages ( Image image00, Image image01, Image image10, Image image11 )
+		GenericImage<Color> MipImages ( GenericImage<Color> image00, GenericImage<Color> image01, GenericImage<Color> image10, GenericImage<Color> image11 )
 		{
 			const int pageSize = VTConfig.PageSize;
 
@@ -470,29 +470,29 @@ namespace Fusion.Build.Mapping {
 				throw new ArgumentException("Bad image size");
 			}
 
-			var image = new Image( pageSize, pageSize, Color.Black );
+			var image = new GenericImage<Color>( pageSize, pageSize, Color.Black );
 
 			for ( int i=0; i<pageSize/2; i++) {
 				for ( int j=0; j<pageSize/2; j++) {
-					image.SetPixel( i,j, image00.SampleMip( i, j ) );
+					image.SetPixel( i,j, image00.SampleMip( i, j, ImageLib.AverageFourSamples ) );
 				}
 			}
 
 			for ( int i=pageSize/2; i<pageSize; i++) {
 				for ( int j=pageSize/2; j<pageSize; j++) {
-					image.SetPixel( i,j, image11.SampleMip( i, j ) );
+					image.SetPixel( i,j, image11.SampleMip( i, j, ImageLib.AverageFourSamples ) );
 				}
 			}
 
 			for ( int i=0; i<pageSize/2; i++) {
 				for ( int j=pageSize/2; j<pageSize; j++) {
-					image.SetPixel( i,j, image01.SampleMip( i, j ) );
+					image.SetPixel( i,j, image01.SampleMip( i, j, ImageLib.AverageFourSamples ) );
 				}
 			}
 
 			for ( int i=pageSize/2; i<pageSize; i++) {
 				for ( int j=0; j<pageSize/2; j++) {
-					image.SetPixel( i,j, image10.SampleMip( i, j ) );
+					image.SetPixel( i,j, image10.SampleMip( i, j, ImageLib.AverageFourSamples ) );
 				}
 			}
 

@@ -121,17 +121,17 @@ namespace Fusion.Build.Mapping {
 		/// <param name="address"></param>
 		/// <param name="baseDir"></param>
 		/// <returns></returns>
-		public Image LoadPage ( VTAddress address, IStorage storage )
+		public GenericImage<Color> LoadPage ( VTAddress address, IStorage storage )
 		{
 			if (pages.Contains(address)) {
 				
 				var path	=	address.GetFileNameWithoutExtension("C.tga");
-				var image	=	Image.LoadTga( storage.OpenRead(path) );
+				var image	=	ImageLib.LoadTga( storage.OpenRead(path) );
 
 				return image;
 
 			} else {
-				return new Image( VTConfig.PageSize, VTConfig.PageSize, Color.Black );
+				return new GenericImage<Color>( VTConfig.PageSize, VTConfig.PageSize, Color.Black );
 			}
 		}
 
@@ -145,11 +145,11 @@ namespace Fusion.Build.Mapping {
 		/// <param name="address"></param>
 		/// <param name="baseDir"></param>
 		/// <param name="image"></param>
-		public void SavePage ( VTAddress address, IStorage storage, Image image, string postFix )
+		public void SavePage ( VTAddress address, IStorage storage, GenericImage<Color> image, string postFix )
 		{
 			var name	=	address.GetFileNameWithoutExtension(postFix) + ".tga";
 
-			Image.SaveTga( image, storage.OpenWrite(name) );
+			ImageLib.SaveTga( image, storage.OpenWrite(name) );
 		}
 
 

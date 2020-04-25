@@ -199,14 +199,14 @@ namespace Fusion.Build.Mapping {
 
 			using ( var stream = File.OpenRead( fullPath ) ) {
 				if ( ext==".tga" ) {
-					var header = Image.TakeTga( stream );
+					var header = ImageLib.TakeTga( stream );
 					return new Size2( header.width, header.height );
 				} else
 				if ( ext==".png" ) {
-					return Image.TakePngSize( stream );
+					return ImageLib.TakePngSize( stream );
 				} else
 				if ( ext==".jpg" ) {
-					return Image.TakeJpgSize( stream );
+					return ImageLib.TakeJpgSize( stream );
 				} else {
 					throw new BuildException("Material " + mtrlName + " must refer TGA, JPG or PNG image");
 				}
@@ -250,7 +250,7 @@ namespace Fusion.Build.Mapping {
 			var emission		=	LoadTexture( Emission,	Color.Black );
 			var	occlusion		=	LoadTexture( Occlusion,	Color.White );
 
-			AverageColor		=	colorMap.ComputeAverageColor();
+			AverageColor		=	ImageLib.ComputeAverageColor( colorMap );
 
 			var pageCountX	=	colorMap.Width / pageSize;
 			var pageCountY	=	colorMap.Height / pageSize;
@@ -258,9 +258,9 @@ namespace Fusion.Build.Mapping {
 			for (int x=0; x<pageCountX; x++) {
 				for (int y=0; y<pageCountY; y++) {
 
-					var pageC	=	new Image(pageSizeBorder, pageSizeBorder); 
-					var pageN	=	new Image(pageSizeBorder, pageSizeBorder); 
-					var pageS	=	new Image(pageSizeBorder, pageSizeBorder); 
+					var pageC	=	new GenericImage<Color>(pageSizeBorder, pageSizeBorder); 
+					var pageN	=	new GenericImage<Color>(pageSizeBorder, pageSizeBorder); 
+					var pageS	=	new GenericImage<Color>(pageSizeBorder, pageSizeBorder); 
 					
 					for ( int i=0; i<pageSizeBorder; i++) {
 						for ( int j=0; j<pageSizeBorder; j++) {
@@ -268,12 +268,12 @@ namespace Fusion.Build.Mapping {
 							int srcX		=	(x)*pageSize + i - border;
 							int srcY		=	(y)*pageSize + j - border;
 
-							var c	=	colorMap .Sample( srcX, srcY );
-							var n	=	normalMap.Sample( srcX, srcY );
-							var r	=	roughness.Sample( srcX, srcY ).R;
-							var m	=	metallic .Sample( srcX, srcY ).R;
-							var e	=	emission .Sample( srcX, srcY ).R;
-							var o	=	occlusion.Sample( srcX, srcY ).R;
+							var c	=	colorMap .SampleWrap( srcX, srcY );
+							var n	=	normalMap.SampleWrap( srcX, srcY );
+							var r	=	roughness.SampleWrap( srcX, srcY ).R;
+							var m	=	metallic .SampleWrap( srcX, srcY ).R;
+							var e	=	emission .SampleWrap( srcX, srcY ).R;
+							var o	=	occlusion.SampleWrap( srcX, srcY ).R;
 
 							if (MaskEmission) {
 								c	=	Color.Lerp( c, Color.Black, MathUtil.Clamp(e/255.0f * 8, 0, 1) );
@@ -332,26 +332,26 @@ namespace Fusion.Build.Mapping {
 		/// <param name="postfix"></param>
 		/// <param name="defaultColor"></param>
 		/// <returns></returns>
-		Image LoadTexture ( string texturePath, Color defaultColor ) 
+		GenericImage<Color> LoadTexture ( string texturePath, Color defaultColor ) 
 		{
 			if ( string.IsNullOrWhiteSpace(texturePath) || !context.ContentFileExists( texturePath ) ) {
-				return new Image( Width, Height, defaultColor );
+				return new GenericImage<Color>( Width, Height, defaultColor );
 			}
 
 			var fullPath    =   context.ResolveContentPath( texturePath );
 			var ext         =   Path.GetExtension(texturePath).ToLowerInvariant();
 
-			Image image		=	null;
+			GenericImage<Color> image		=	null;
 
 			using ( var stream = File.OpenRead( fullPath ) ) {
 				if ( ext==".tga" ) {
-					image = Image.LoadTga( stream );
+					image = ImageLib.LoadTga( stream );
 				} else
 				if ( ext==".png" ) {
-					image = Image.LoadPng( stream );
+					image = ImageLib.LoadPng( stream );
 				} else
 				if ( ext==".jpg" ) {
-					image = Image.LoadJpg( stream );
+					image = ImageLib.LoadJpg( stream );
 				} else {
 					throw new BuildException( "Only TGA, JPG or PNG images are supported." );
 				}
@@ -359,7 +359,7 @@ namespace Fusion.Build.Mapping {
 
 			if ( image.Width!=Width || image.Height!=image.Height ) {
 				Log.Warning( "Size of {0} is not equal to size of {1}. Default image is used.", texturePath, Name );
-				return new Image( Width, Height, defaultColor );
+				return new GenericImage<Color>( Width, Height, defaultColor );
 			}
 
 			return image;

@@ -19,7 +19,7 @@ namespace Fusion.Engine.Imaging
 		 *	Sampling
 		-----------------------------------------------------------------------------------------*/
 
-		static public Color SampleQ4( GenericImage<Color> image, int x, int y )
+		static public Color SampleQ4( Image<Color> image, int x, int y )
 		{
 			var c00 = image.GetPixel( x+0, y+0 );
 			var c01 = image.GetPixel( x+0, y+1 );
@@ -42,16 +42,16 @@ namespace Fusion.Engine.Imaging
 		}
 
 
-		public static GenericImage<Color> Downsample( GenericImage<Color> srcColor, int newWidth, int newHeight )
+		public static Image<Color> Downsample( Image<Color> srcColor, int newWidth, int newHeight )
 		{
-			GenericImage<Color> tempImage = srcColor;
+			Image<Color> tempImage = srcColor;
 
 			while ( tempImage.Width > newWidth * 2 || tempImage.Height > newHeight * 2 )
 			{
 				tempImage = tempImage.GenerateMipLevel( AverageFourSamples );
 			}
 
-			var outputImage = new GenericImage<Color>( newWidth, newHeight );
+			var outputImage = new Image<Color>( newWidth, newHeight );
 
 			for (int x=0; x<newWidth; x++) 
 			{
@@ -67,19 +67,19 @@ namespace Fusion.Engine.Imaging
 		}
 
 
-		public static void SetAlpha ( GenericImage<Color> image, byte alpha )
+		public static void SetAlpha ( Image<Color> image, byte alpha )
 		{
 			image.PerpixelProcessing( color => new Color( color.R, color.G, color.B, (byte)255 ) );
 		}
 
 
-		public static void SetAlpha ( GenericImage<Color4> image, float alpha )
+		public static void SetAlpha ( Image<Color4> image, float alpha )
 		{
 			image.PerpixelProcessing( color => new Color4( color.Red, color.Green, color.Blue, alpha ) );
 		}
 
 
-		public static Color ComputeAverageColor ( GenericImage<Color> image )
+		public static Color ComputeAverageColor ( Image<Color> image )
 		{
 			Color4 average = Color4.Zero;
 
@@ -124,7 +124,7 @@ namespace Fusion.Engine.Imaging
 		}
 
 
-		public static void SaveTga ( GenericImage<Color> image, Stream stream )
+		public static void SaveTga ( Image<Color> image, Stream stream )
 		{
 			using (var bw = new BinaryWriter(stream)) {
 
@@ -158,7 +158,7 @@ namespace Fusion.Engine.Imaging
 		}
 
 
-		public static void SaveTga ( GenericImage<Color> image, string path )
+		public static void SaveTga ( Image<Color> image, string path )
 		{
 			using ( var fs = File.Open( path, FileMode.Create ) ) {
 				SaveTga( image, fs );
@@ -198,7 +198,7 @@ namespace Fusion.Engine.Imaging
 		}
 
 
-		public static GenericImage<Color> LoadTga ( Stream stream )
+		public static Image<Color> LoadTga ( Stream stream )
 		{
 			using (var br = new BinaryReader( stream )) {
 				
@@ -229,7 +229,7 @@ namespace Fusion.Engine.Imaging
 				int h = header.height;
 				int bytePerPixel = header.bitsperpixel / 8;
 
-				var	image	= new GenericImage<Color>( w, h );
+				var	image	= new Image<Color>( w, h );
 				var	data	= new byte[ w * h * bytePerPixel ];
 
 				//	skip ID :
@@ -297,7 +297,7 @@ namespace Fusion.Engine.Imaging
 
 
 
-		public static GenericImage<Color> LoadJpg ( Stream stream )
+		public static Image<Color> LoadJpg ( Stream stream )
 		{
 			var decoder = new JpegBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
 			var bitmapSource = decoder.Frames[0];
@@ -313,7 +313,7 @@ namespace Fusion.Engine.Imaging
 			bitmapSource.CopyPixels( Int32Rect.Empty, pixels, stride, 0 );
 
 
-			var image   =   new GenericImage<Color>( bitmapSource.PixelWidth, bitmapSource.PixelHeight, Color.Black );
+			var image   =   new Image<Color>( bitmapSource.PixelWidth, bitmapSource.PixelHeight, Color.Black );
 
 
 			if (format==PixelFormats.Bgr24) 
@@ -364,7 +364,7 @@ namespace Fusion.Engine.Imaging
 		}
 
 
-		public static GenericImage<Color> LoadPng ( Stream stream )
+		public static Image<Color> LoadPng ( Stream stream )
 		{
 			PngBitmapDecoder decoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
 			BitmapSource bitmapSource = decoder.Frames[0];
@@ -380,7 +380,7 @@ namespace Fusion.Engine.Imaging
 			bitmapSource.CopyPixels( Int32Rect.Empty, pixels, stride, 0 );
 
 
-			var image   =   new GenericImage<Color>( bitmapSource.PixelWidth, bitmapSource.PixelHeight, Color.Black );
+			var image   =   new Image<Color>( bitmapSource.PixelWidth, bitmapSource.PixelHeight, Color.Black );
 
 
 			if (format==PixelFormats.Bgr24) 

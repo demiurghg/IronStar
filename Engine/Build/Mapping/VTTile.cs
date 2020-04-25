@@ -32,13 +32,13 @@ namespace Fusion.Build.Mapping {
 			}
 		}
 
-		GenericImage<Color>	colorData;
-		GenericImage<Color>	normalData;
-		GenericImage<Color>	specularData;
+		Image<Color>	colorData;
+		Image<Color>	normalData;
+		Image<Color>	specularData;
 
-		GenericImage<Color>	colorDataMip;
-		GenericImage<Color>	normalDataMip;
-		GenericImage<Color>	specularDataMip;
+		Image<Color>	colorDataMip;
+		Image<Color>	normalDataMip;
+		Image<Color>	specularDataMip;
 
 
 
@@ -51,12 +51,12 @@ namespace Fusion.Build.Mapping {
 		{
 			this.address	=	address;
 			var size		=	VTConfig.PageSizeBordered;
-			colorData		=	new GenericImage<Color>	(size, size);
-			normalData		=	new GenericImage<Color>	(size, size);
-			specularData	=	new GenericImage<Color>	(size, size);
-			colorDataMip	=	new GenericImage<Color>	(size/2, size/2);
-			normalDataMip	=	new GenericImage<Color>	(size/2, size/2);
-			specularDataMip	=	new GenericImage<Color>	(size/2, size/2);
+			colorData		=	new Image<Color>	(size, size);
+			normalData		=	new Image<Color>	(size, size);
+			specularData	=	new Image<Color>	(size, size);
+			colorDataMip	=	new Image<Color>	(size/2, size/2);
+			normalDataMip	=	new Image<Color>	(size/2, size/2);
+			specularDataMip	=	new Image<Color>	(size/2, size/2);
 		}
 
 
@@ -68,7 +68,7 @@ namespace Fusion.Build.Mapping {
 		/// <param name="a"></param>
 		/// <param name="b"></param>
 		/// <param name="c"></param>
-		public VTTile ( VTAddress address, GenericImage<Color> a, GenericImage<Color> b, GenericImage<Color> c )
+		public VTTile ( VTAddress address, Image<Color> a, Image<Color> b, Image<Color> c )
 		{
 			this.address	=	address;
 
@@ -88,9 +88,9 @@ namespace Fusion.Build.Mapping {
 
 			var size		=	VTConfig.PageSizeBordered;
 
-			colorDataMip	=	new GenericImage<Color>	(size/2, size/2);
-			normalDataMip	=	new GenericImage<Color>	(size/2, size/2);
-			specularDataMip	=	new GenericImage<Color>	(size/2, size/2);
+			colorDataMip	=	new Image<Color>	(size/2, size/2);
+			normalDataMip	=	new Image<Color>	(size/2, size/2);
+			specularDataMip	=	new Image<Color>	(size/2, size/2);
 		}
 
 

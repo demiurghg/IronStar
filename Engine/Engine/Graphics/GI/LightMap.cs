@@ -32,16 +32,16 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		readonly RenderSystem rs;
 
-		readonly GenericImage<SHL1>	irradianceR;
-		readonly GenericImage<SHL1>	irradianceG;
-		readonly GenericImage<SHL1>	irradianceB;
-		readonly GenericImage<SHL1>	temporary;
+		readonly Image<SHL1>	irradianceR;
+		readonly Image<SHL1>	irradianceG;
+		readonly Image<SHL1>	irradianceB;
+		readonly Image<SHL1>	temporary;
 		readonly int width;
 		readonly int height;
 
-		public GenericImage<SHL1>	IrradianceRed	 { get { return irradianceR; } }
-		public GenericImage<SHL1>	IrradianceGreen	 { get { return irradianceG; } }
-		public GenericImage<SHL1>	IrradianceBlue	 { get { return irradianceB; } }
+		public Image<SHL1>	IrradianceRed	 { get { return irradianceR; } }
+		public Image<SHL1>	IrradianceGreen	 { get { return irradianceG; } }
+		public Image<SHL1>	IrradianceBlue	 { get { return irradianceB; } }
 
 		internal Texture2D	IrradianceTextureRed	{ get { return rs.LightMapResources.LightMapR; } }
 		internal Texture2D	IrradianceTextureGreen	{ get { return rs.LightMapResources.LightMapG; } }
@@ -58,10 +58,10 @@ namespace Fusion.Engine.Graphics.Lights {
 			this.width	=	width;
 			this.height	=	height;
 
-			irradianceR	=	new GenericImage<SHL1>( width, height );
-			irradianceG	=	new GenericImage<SHL1>( width, height );
-			irradianceB	=	new GenericImage<SHL1>( width, height );
-			temporary	=	new GenericImage<SHL1>( width, height );
+			irradianceR	=	new Image<SHL1>( width, height );
+			irradianceG	=	new Image<SHL1>( width, height );
+			irradianceB	=	new Image<SHL1>( width, height );
+			temporary	=	new Image<SHL1>( width, height );
 		}
 
 

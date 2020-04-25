@@ -24,8 +24,8 @@ namespace Fusion.Engine.Graphics.Lights
 		public readonly GenericImageMips<Vector3>	Position;
 		public readonly GenericImageMips<Vector3>	Normal;
 		public readonly GenericImageMips<float>		Area;
-		public readonly GenericImage<byte>			Coverage;
-		public readonly GenericImage<byte>			PatchSize;
+		public readonly Image<byte>			Coverage;
+		public readonly Image<byte>			PatchSize;
 
 		readonly Allocator2D					allocator;
 		
@@ -46,8 +46,8 @@ namespace Fusion.Engine.Graphics.Lights
 			Normal			=	new GenericImageMips<Vector3>	( size, size, RadiositySettings.MapPatchLevels, Vector3.Zero	);
 			Area			=	new GenericImageMips<float>		( size, size, RadiositySettings.MapPatchLevels, 0 );
 
-			Coverage		=	new GenericImage	<byte>		( size, size, 0 );
-			PatchSize		=	new GenericImage	<byte>		( size, size, 0 );
+			Coverage		=	new Image	<byte>		( size, size, 0 );
+			PatchSize		=	new Image	<byte>		( size, size, 0 );
 		}
 			
 
@@ -177,7 +177,7 @@ namespace Fusion.Engine.Graphics.Lights
 		
 
 
-		void SaveDebugImage( GenericImage<Color> image, string name )
+		void SaveDebugImage( Image<Color> image, string name )
 		{
 			ImageLib.SaveTga( image, name + ".tga" );
 		}

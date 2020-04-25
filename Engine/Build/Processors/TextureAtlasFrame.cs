@@ -15,10 +15,10 @@ namespace Fusion.Build.Processors {
 	public class TextureAtlasFrame {
 
 		readonly string name;
-		GenericImage<Color> image;
+		Image<Color> image;
 
 		public string Name { get { return name; } }
-		public GenericImage<Color> Image { get { return image; } }
+		public Image<Color> Image { get { return image; } }
 
 		public Point Location;
 
@@ -70,7 +70,7 @@ namespace Fusion.Build.Processors {
 		/// Writes sub image to the target image
 		/// </summary>
 		/// <param name="targetImage"></param>
-		public void WriteSubimage ( GenericImage<Color> targetImage )
+		public void WriteSubimage ( Image<Color> targetImage )
 		{
 			Image.CopySubImageTo( 0,0, Image.Width, Image.Height, Location.X, Location.Y, targetImage );
 			//targetImage.Copy( Location.X, Location.Y, Image );

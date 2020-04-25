@@ -300,7 +300,7 @@ namespace Fusion.Drivers.Graphics {
 				var path = Path.ChangeExtension(requestScreenShotPath, ".tga");
 				requestScreenShotPath = null;
 
-				var image = new GenericImage<Color>( BackbufferColor.Width, BackbufferColor.Height, new Color(255,0,128,255) );
+				var image = new Image<Color>( BackbufferColor.Width, BackbufferColor.Height, new Color(255,0,128,255) );
 				BackbufferColor.GetData( image.RawImageData );
 
 				ImageLib.SetAlpha( image, 255 );

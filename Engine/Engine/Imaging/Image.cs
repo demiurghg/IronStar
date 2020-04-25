@@ -4,453 +4,320 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using Fusion.Core.Mathematics;
+using System.Runtime.InteropServices;
+using Fusion.Core.Utils;
+using SharpDX;
 
+namespace Fusion.Engine.Imaging 
+{
+	public partial class Image<TColor> where TColor: struct 
+	{
+		public static readonly uint FourCC	= 0x494d4730; // IMG0
+		public static readonly uint TypeCrc;
+		
+		static Image()
+		{
+			TypeCrc	=	Crc32.ComputeChecksum( Encoding.UTF8.GetBytes(typeof(TColor).ToString()));
+		}
+		
+		public delegate TColor MipGenFunc(TColor c00, TColor c01, TColor c10, TColor c11);
+		public delegate TColor LerpFunc(TColor c0, TColor c1, float t);
 
-namespace Fusion.Engine.Imaging {
-	public partial class Image {
+		readonly int width;
+		readonly int height;
+		readonly int pixelSize;
+		readonly byte[] rawImageData;
+		readonly Int3[] mipDimensions;
+		readonly DataStream stream;
+		readonly bool isColor;
 
-		public int	Width	{ get; protected set; }
-		public int	Height	{ get; protected set; }
-
-		public byte[]	RawImageData { get; protected set; }
+		public int		Width	{ get { return width; } }
+		public int		Height	{ get { return height; } }
+		public byte[]	RawImageData { get { return rawImageData; } }
+		public int		PixelCount { get { return width * height; } }
 
 		public object Tag { get; set; }
 
-		public int PixelCount {
-			get {
-				return Width * Height;
-			}
-		}
+
 		
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="width">Image width</param>
-		/// <param name="height">Image height</param>
 		public Image ( int width, int height )
 		{
-			RawImageData	=	new byte[width*height*4];
-
-			Width	=	width;
-			Height	=	height;
-
-			if (Width<=0) {
+			if (width<=0) {
 				throw new ArgumentOutOfRangeException("Image width must be > 0");
 			}
 
-			if (Height<=0) {
+			if (height<=0) {
 				throw new ArgumentOutOfRangeException("Image height must be > 0");
 			}
+
+			this.width		=	width;
+			this.height		=	height;
+			this.isColor	=	typeof(TColor) == typeof(Color);
+			rawImageData	=	AllocRawImage( out pixelSize );
 		}
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="image"></param>
-		public Image ( GenericImage<Color> image )
+
+		public Image ( int width, int height, TColor fillColor )
 		{
-			Width			=	image.Width;
-			Height			=	image.Height;
-
-			RawImageData	=	new byte[Width*Height*4];
-
-			image.RawImageData.CopyTo( RawImageData, 0 );
-			//for (int i=0; i<PixelCount; i++) 
-			//{
-			//	SetPixelLinear( i, image.RawImageData[i] );
-			//}
-		}
-
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="width">Image width</param>
-		/// <param name="height">Image height</param>
-		/// <param name="fillColor">Color to fill image</param>
-		public Image ( int width, int height, Color fillColor )
-		{
-			RawImageData	=	new byte[width*height*4];
-
-			Width	=	width;
-			Height	=	height;
-
-			if (Width<=0) {
+			if (width<=0) {
 				throw new ArgumentOutOfRangeException("Image width must be > 0");
 			}
 
-			if (Height<=0) {
+			if (height<=0) {
 				throw new ArgumentOutOfRangeException("Image height must be > 0");
 			}
 
-			for (int i=0; i<PixelCount; i++) {
-				SetPixelLinear( i, fillColor );
-			}
+			this.width		=	width;
+			this.height		=	height;
+			this.isColor	=	typeof(TColor) == typeof(Color);
+			rawImageData	=	AllocRawImage( out pixelSize );
+
+			Fill( fillColor );
 		}
 
 
 
-
-		/// <summary>
-		/// Returns address of pixel with given coordinates and adressing mode
-		/// </summary>
-		/// <param name="u"></param>
-		/// <param name="v"></param>
-		/// <param name="wrap"></param>
-		/// <returns></returns>
-		public int ComputeByteAddress ( int x, int y )
+		byte[] AllocRawImage( out int pixelSize )
 		{
-			x	=	Clamp( x, 0, Width - 1 );
-			y	=	Clamp( y, 0, Height - 1 );
+			pixelSize	=	Marshal.SizeOf(typeof(TColor));
+			int length	=	width * height * pixelSize;
 
-			return (x + y * Width) * 4;
+			var data	=	new byte[length];
+
+			return data;
 		}
 
 
 
-		/// <summary>
-		/// Fills image with 
-		/// </summary>
-		/// <param name="seed"></param>
-		/// <param name="monochrome"></param>
-		public void Fill ( Color color )
+		int GetByteAddress ( int x, int y )
 		{
-			PerpixelProcessing( p => color );
+			if (x<0 || x>=width ) throw new ArgumentOutOfRangeException(string.Format("X = {0} is out of range [0, {1})", x, width));
+			if (y<0 || y>=height) throw new ArgumentOutOfRangeException(string.Format("Y = {0} is out of range [0, {1})", y, height));
+
+			return ( x + y * Width ) * pixelSize;
 		}
 
 
 		/// <summary>
-		/// Fills image with 
-		/// </summary>
-		/// <param name="seed"></param>
-		/// <param name="monochrome"></param>
-		public void Tint ( Color color )
-		{
-			PerpixelProcessing( p => p * color );
-		}
-
-
-		/// <summary>
-		/// Samples image at given coordinates with wraping addressing mode
+		/// Gets pixel at given coordinates
 		/// </summary>
 		/// <param name="u"></param>
 		/// <param name="v"></param>
 		/// <returns></returns>
-		public Color Sample ( int x, int y )
+		public TColor GetPixel ( int x, int y )
 		{
-			x = Clamp(x, 0, Width);
-			y = Clamp(y, 0, Height);
-
-			var addr = ComputeByteAddress(x,y);
-
-			var r	 = RawImageData[ addr + 0 ];
-			var g	 = RawImageData[ addr + 1 ];
-			var b	 = RawImageData[ addr + 2 ];
-			var a	 = RawImageData[ addr + 3 ];
-
-			return new Color(r,g,b,a);
-		}
-
-
-
-		/// <summary>
-		/// Samples image at given coordinates with wraping addressing mode
-		/// </summary>
-		/// <param name="u"></param>
-		/// <param name="v"></param>
-		/// <returns></returns>
-		public Color Sample ( float x, float y )
-		{
-			var	tx	=	Frac( x * Width );
-			var	ty	=	Frac( y * Height );
-			int	x0	=	Wrap( (int)(x * Width)		, Width );
-			int	x1	=	Wrap( (int)(x * Width + 1)	, Width );
-			int	y0	=	Wrap( (int)(y * Height)		, Height );
-			int	y1	=	Wrap( (int)(y * Height + 1) , Height );
-			
-			//   xy
-			var v00	=	Sample( x0, y0 );
-			var v01	=	Sample( x0, y1 );
-			var v10	=	Sample( x1, y0 );
-			var v11	=	Sample( x1, y1 );
-
-			var v0x	=	Color.Lerp( v00, v01, ty );
-			var v1x	=	Color.Lerp( v10, v11, ty );
-			return		Color.Lerp( v0x, v1x, tx );
-		}
-
-
-
-		/// <summary>
-		/// Samples image at given coordinates with wraping addressing mode
-		/// </summary>
-		/// <param name="u"></param>
-		/// <param name="v"></param>
-		/// <returns></returns>
-		public Color SampleMip ( int x, int y, bool wrap = true)
-		{
-			var c00 = Sample( x*2+0, y*2+0 );
-			var c01 = Sample( x*2+0, y*2+1 );
-			var c10 = Sample( x*2+1, y*2+0 );
-			var c11 = Sample( x*2+1, y*2+1 );
-
-			var c0x	= Color.Lerp( c00, c01, 0.5f );
-			var c1x	= Color.Lerp( c10, c11, 0.5f );
-
-			return Color.Lerp( c0x, c1x, 0.5f );
-		}
-
-
-
-		/// <summary>
-		/// Samples average of four neighbouring texels with given top-left corener with clamp addressing mode
-		/// </summary>
-		/// <param name="u"></param>
-		/// <param name="v"></param>
-		/// <returns></returns>
-		public Color SampleQ4Clamp ( int x, int y )
-		{
-			var c00 = Sample( x+0, y+0 );
-			var c01 = Sample( x+0, y+1 );
-			var c10 = Sample( x+1, y+0 );
-			var c11 = Sample( x+1, y+1 );
-
-			var c0x	= Color.Lerp( c00, c01, 0.5f );
-			var c1x	= Color.Lerp( c10, c11, 0.5f );
-
-			return Color.Lerp( c0x, c1x, 0.5f );
-		}
-
-
-		public GenericImage<Color> ToGenericImage()
-		{
-			var image = new GenericImage<Color>( Width, Height );
-
-			RawImageData.CopyTo( image.RawImageData, 0 );
-
-			return image;
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="img"></param>
-		public void Copy ( int offsetX, int offsetY, Image img )
-		{
-			for (int x=0; x<img.Width; x++) {
-				for (int y=0; y<img.Height; y++) {
-					SetPixel( offsetX + x, offsetY + y, img.Sample( x, y ) );
-				}
-			}
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="img"></param>
-		public void CopySubImageTo ( int srcX, int srcY, int srcWidth, int srcHeight, int dstX, int dstY, Image destination )
-		{
-			for (int x=0; x<srcWidth; x++) {
-				for (int y=0; y<srcHeight; y++) {
-					destination.SetPixel( dstX + x, dstY + y, Sample( srcX+x, srcY+y ) );
-				}
-			}
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="w"></param>
-		/// <param name="h"></param>
-		/// <param name="color"></param>
-		public void DrawRectangle ( int x, int y, int w, int h, Color color )
-		{
-			for (var i=x; i<x+w; i++) {
-				for (var j=y; j<y+h; j++) {
-					SetPixel( i,j, color );	
-				}
-			}
-		}
-
-
-
-		/// <summary>
-		/// Create half-sized image using bilinear filtering
-		/// </summary>
-		/// <returns></returns>
-		public Image DownsampleBilinear ()
-		{
-			var image = new Image( Width/2, Height/2 );
-
-			image.PerpixelProcessing( (x,y,c) => this.SampleMip( x,y ) );
-
-			return image;
-		}
-
-
-
-		/// <summary>
-		/// Create half-sized image using bilinear filtering
-		/// </summary>
-		/// <returns></returns>
-		public Image DownsampleBilinear (int newWidth, int newHeight)
-		{
-			var image = new Image( newWidth, newHeight );
-
-			for (int x=0; x<newWidth; x++) 
+			unsafe 
 			{
-				for (int y=0; y<newHeight; y++)
+				fixed (byte *ptr = &rawImageData[ GetByteAddress( x, y ) ])
 				{
-					var fx = x / (float)newWidth;
-					var fy = y / (float)newHeight;
-					image.SetPixel(x, y, Sample(fx, fy));
+					return Utilities.Read<TColor>( new IntPtr(ptr) );
+				}
+			}
+		}
+
+
+
+		/// <summary>
+		/// Sets pixel at given coordinates
+		/// </summary>
+		/// <param name="u"></param>
+		/// <param name="v"></param>
+		/// <param name="color"></param>
+		/// <param name="wrap"></param>
+		public void SetPixel ( int x, int y, TColor value )
+		{
+			unsafe 
+			{
+				fixed (byte *ptr = &rawImageData[ GetByteAddress( x, y ) ])
+				{
+					Utilities.Write<TColor>( new IntPtr(ptr), ref value );
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Sets and gets pixel color at given coordinates.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		public TColor this[Int2 xy] {
+			get {
+				return GetPixel(xy.X, xy.Y);
+			}
+			
+			set {
+				SetPixel(xy.X, xy.Y, value);
+			}	
+
+		}
+
+
+		/// <summary>
+		/// Sets and gets pixel color at given coordinates.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		public TColor this[int x, int y] {
+			get {
+				return GetPixel(x, y);
+			}
+			
+			set {
+				SetPixel(x,y, value);
+			}	
+
+		}
+
+
+		public void SetPixelLinear( int index, TColor color )
+		{
+			SetPixel( index % Width, index / Height, color );
+		}
+
+
+		public TColor GetPixelLinear( int index )
+		{
+			return GetPixel( index % Width, index / Height );
+		}
+
+		/*------------------------------------------------------------------------------------------
+		 *	Simple image processing
+		 *	More complex image processing and drawing must be placed in separate classes.
+		-----------------------------------------------------------------------------------------*/
+
+		/// <summary>
+		/// Converts image to another image format
+		/// </summary>
+		/// <typeparam name="TOutputColor"></typeparam>
+		/// <param name="convert"></param>
+		/// <returns></returns>
+		public Image<TOutputColor> Convert<TOutputColor>( Func<TColor, TOutputColor> convert ) where TOutputColor: struct
+		{
+			var outputImage = new Image<TOutputColor>( Width, Height );
+
+			for (int x=0; x<Width; x++)
+			{
+				for (int y=0; y<Height; y++)
+				{
+					outputImage.SetPixel( x, y, convert( GetPixel( x, y ) ) );
 				}
 			}
 
-			return image;
-		}
-
-
-
-		public void SetPixel ( int x, int y, Color value )
-		{
-			int addr = ComputeByteAddress( x, y );
-
-			RawImageData[ addr + 0 ]	=	value.R;
-			RawImageData[ addr + 1 ]	=	value.G;
-			RawImageData[ addr + 2 ]	=	value.B;
-			RawImageData[ addr + 3 ]	=	value.A;
-		}
-
-
-		public void SetPixel ( int x, int y, byte gray )
-		{
-			int addr = ComputeByteAddress( x, y );
-
-			RawImageData[ addr + 0 ]	=	gray;
-			RawImageData[ addr + 1 ]	=	gray;
-			RawImageData[ addr + 2 ]	=	gray;
-			RawImageData[ addr + 3 ]	=	255;
-		}
-
-
-		public void SetPixel ( int x, int y, byte r, byte g, byte b, byte a )
-		{
-			int addr = ComputeByteAddress( x, y );
-
-			RawImageData[ addr + 0 ]	=	r;
-			RawImageData[ addr + 1 ]	=	g;
-			RawImageData[ addr + 2 ]	=	b;
-			RawImageData[ addr + 3 ]	=	a;
-		}
-
-
-		public void SetPixel ( int x, int y, byte r, byte g, byte b )
-		{
-			int addr = ComputeByteAddress( x, y );
-
-			RawImageData[ addr + 0 ]	=	r;
-			RawImageData[ addr + 1 ]	=	g;
-			RawImageData[ addr + 2 ]	=	b;
-			RawImageData[ addr + 3 ]	=	255;
-		}
-
-
-		public void SetPixelLinear( int pixelIndex, Color color )
-		{
-			RawImageData[ pixelIndex * 4 + 0 ] = color.R;
-			RawImageData[ pixelIndex * 4 + 1 ] = color.G;
-			RawImageData[ pixelIndex * 4 + 2 ] = color.B;
-			RawImageData[ pixelIndex * 4 + 3 ] = color.A;
-		}
-
-
-		public Color GetPixelLinear( int pixelIndex )
-		{
-			var r = RawImageData[ pixelIndex * 4 + 0 ];
-			var g = RawImageData[ pixelIndex * 4 + 1 ];
-			var b = RawImageData[ pixelIndex * 4 + 2 ];
-			var a = RawImageData[ pixelIndex * 4 + 3 ];
-			return new Color(r,g,b,a);
+			return outputImage;
 		}
 
 
 		/// <summary>
-		/// Does perpixel processing with given function
+		/// Copies give image to another image. 
+		/// If target image is smaller than original, bottom right part of the image will be cropped.
 		/// </summary>
-		/// <param name="procFunc"></param>
-		public void PerpixelProcessing ( Func<Color, Color> procFunc )
+		public void CopyTo ( Image<TColor> destination )
 		{
-			for (int i=0; i<PixelCount; i++) {
-				SetPixelLinear( i, procFunc( GetPixelLinear(i) ) );
+			var w = Math.Min( Width, destination.Width );
+			var h = Math.Min( Height, destination.Height );
+
+			for (int x=0; x<w; x++) {
+				for (int y=0; y<h; y++) {
+					destination[x,y] = this[x,y];
+				}
 			}
 		}
 
-		
+
+		/// <summary>
+		/// Copy subimage of the given image to another image in provided coordinates.
+		/// </summary>
+		public void CopySubImageTo ( int srcX, int srcY, int srcWidth, int srcHeight, int dstX, int dstY, Image<TColor> destination )
+		{
+			#warning add boundry checks!
+			for (int x=0; x<srcWidth; x++) 
+			{
+				for (int y=0; y<srcHeight; y++) 
+				{
+					destination.SetPixel( dstX + x, dstY + y, GetPixel( srcX+x, srcY+y ) );
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Fills entire image with given color
+		/// </summary>
+		public void Fill ( TColor color )
+		{
+			for (int i=0; i<width; i++)
+			{
+				for (int j=0; j<height; j++)
+				{
+					this[i,j] = color;
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Fills provided image rectangle with given color
+		/// </summary>
+		public void FillRect ( Rectangle rect, TColor color )
+		{
+			#warning add boundry checks!
+			for (int i=rect.Left; i<rect.Right; i++)
+			{
+				for (int j=rect.Top; j<rect.Bottom; j++)
+				{
+					this[i,j] = color;
+				}
+			}
+		}
+
+
 		/// <summary>
 		/// Does perpixel processing with given function
 		/// </summary>
 		/// <param name="procFunc"></param>
-		public void PerpixelProcessing ( Func<int, int, Color, Color> procFunc )
+		public void PerpixelProcessing ( Func<int, int, TColor, TColor> procFunc )
 		{
 			for (int x=0; x<Width; x++) 
-			for (int y=0; y<Height; y++)  
-				SetPixel(x,y, procFunc( x, y, Sample( x,y ) ) );
-		}
-
-
-
-		public Color ComputeAverageColor ()
-		{
-			Color4 average = Color4.Zero;
-
-			for (int x=0; x<Width; x++) {
-				for (int y=0; y<Height; y++) {
-
-					var c = Sample(x,y);
-
-					average.Red		+= c.R;
-					average.Green	+= c.G;
-					average.Blue	+= c.B;
-					average.Alpha	+= c.A;
+			{
+				for (int y=0; y<Height; y++)  
+				{
+					SetPixel(x,y, procFunc( x, y, GetPixel( x,y ) ) );
 				}
 			}
-
-			average.Red		/= (RawImageData.Length * 255.0f);
-			average.Green	/= (RawImageData.Length * 255.0f);
-			average.Blue	/= (RawImageData.Length * 255.0f);
-			average.Alpha	/= (RawImageData.Length * 255.0f);
-
-			return new Color( average.Red, average.Green, average.Blue, average.Alpha );
 		}
 
-		/*-----------------------------------------------------------------------------------------
-		 * 
-		 *	Simple Math :
-		 * 
+
+		/// <summary>
+		/// Does perpixel processing with given function
+		/// </summary>
+		/// <param name="procFunc"></param>
+		public void PerpixelProcessing ( Func<TColor, TColor> procFunc )
+		{
+			for (int x=0; x<Width; x++) 
+			{
+				for (int y=0; y<Height; y++)  
+				{
+					SetPixel(x,y, procFunc( GetPixel( x,y ) ) );
+				}
+			}
+		}
+
+
+		/*------------------------------------------------------------------------------------------
+		 *	Sampling :
 		-----------------------------------------------------------------------------------------*/
 
 		public static int Clamp ( int x, int min, int max ) 
 		{
-			if (x < min) return min;
-			if (x > max) return max;
+			if (x <  min) return min;
+			if (x >= max) return max-1;
 			return x;
 		}
-
 
 
 		public static int Wrap ( int x, int wrapSize ) 
@@ -462,18 +329,151 @@ namespace Fusion.Engine.Imaging {
 		}
 
 
-
 		public static float Frac ( float x )
 		{
 			return x < 0 ? x%1+1 : x%1;
 		}
 
 
-
-		public static float Lerp ( float a, float b, float x ) 
+		public TColor SampleLinearClamp( float x, float y, LerpFunc lerpFunc )
 		{
-			return a*(1-x) + b*x;
+			var	tx	=	Frac( x * Width );
+			var	ty	=	Frac( y * Height );
+			int	x0	=	Clamp( (int)(x * Width)			, 0, Width );
+			int	x1	=	Clamp( (int)(x * Width + 1)		, 0, Width );
+			int	y0	=	Clamp( (int)(y * Height)		, 0, Height );
+			int	y1	=	Clamp( (int)(y * Height + 1)	, 0, Height );
+			
+			//   xy
+			var v00	=	GetPixel( x0, y0 );
+			var v01	=	GetPixel( x0, y1 );
+			var v10	=	GetPixel( x1, y0 );
+			var v11	=	GetPixel( x1, y1 );
+
+			var v0x	=	lerpFunc( v00, v01, ty );
+			var v1x	=	lerpFunc( v10, v11, ty );
+			return		lerpFunc( v0x, v1x, tx );
 		}
+
+
+		public TColor SampleWrap ( int x, int y )
+		{
+			int sx = Wrap( x, Width );
+			int sy = Wrap( y, Height );
+			return GetPixel( sx, sy );
+		}
+
+
+		public TColor SampleClamp ( int x, int y )
+		{
+			int sx = Clamp( x, 0, Width );
+			int sy = Clamp( y, 0, Height );
+			return GetPixel( sx, sy );
+		}
+
+
+		public TColor SampleMip ( int x, int y, MipGenFunc mipGenFunc )
+		{
+			var c00 = GetPixel( x*2+0, y*2+0 );
+			var c01 = GetPixel( x*2+0, y*2+1 );
+			var c10 = GetPixel( x*2+1, y*2+0 );
+			var c11 = GetPixel( x*2+1, y*2+1 );
+
+			return mipGenFunc( c00, c01, c10, c11 );
+		}
+
+
+		/*------------------------------------------------------------------------------------------
+		 *	Mip generator
+		-----------------------------------------------------------------------------------------*/
+
+		public void GenerateMipLevel( Image<TColor> targetImage, MipGenFunc mipGenFunc )
+		{
+			var dstWidth  = Math.Min( targetImage.Width,  Width  / 2 );
+			var dstHeight = Math.Min( targetImage.Height, Height / 2 );
+
+			for (int x=0; x<dstWidth; x++)
+			{
+				for (int y=0; y<dstHeight; y++)
+				{
+					var c00	=	GetPixel( x*2+0, y*2+0 );
+					var c01	=	GetPixel( x*2+0, y*2+1 );
+					var c10	=	GetPixel( x*2+1, y*2+0 );
+					var c11	=	GetPixel( x*2+1, y*2+1 );
+
+					targetImage.SetPixel( x, y, mipGenFunc( c00, c01, c10, c11 ) );
+				}
+			}
+		}
+
+
+		public Image<TColor> GenerateMipLevel( MipGenFunc mipGenFunc  )
+		{
+			var mipImage = new Image<TColor>( width / 2, height / 2 );
+
+			GenerateMipLevel( mipImage, mipGenFunc );
+
+			return mipImage;
+		}
+	
+
+		/*------------------------------------------------------------------------------------------
+		 *	Image I/O
+		-----------------------------------------------------------------------------------------*/
+
+		public void WriteStream( Stream stream )
+		{
+			stream.Write( BitConverter.GetBytes(FourCC)	, 0, 4 );	
+			stream.Write( BitConverter.GetBytes(TypeCrc), 0, 4 );	
+			stream.Write( BitConverter.GetBytes(Width)	, 0, 4 );	
+			stream.Write( BitConverter.GetBytes(Height)	, 0, 4 );	
+
+			stream.Write( RawImageData, 0, RawImageData.Length );
+		}
+
+
+		static void ReadHeader( Stream stream, out int width, out int height )
+		{
+			var header	=	new byte[16];
+			stream.Read( header, 0, 16 );
+
+			var magic   =   BitConverter.ToUInt32( header,  0 );
+			var type    =   BitConverter.ToUInt32( header,  4 );
+				width   =   BitConverter.ToInt32 ( header,  8 );
+				height  =   BitConverter.ToInt32 ( header, 12 );
+
+			if ( magic  != FourCC ) throw new IOException( "Bad FourCC, IMG0 expected" );
+			if ( type   != TypeCrc ) throw new IOException( "Bad type CRC32" );
+		}
+
+
+		public void ReadStream( Stream stream )
+		{
+			int width, height;
+			ReadHeader( stream, out width, out height );
+
+			if ( width  != Width ) throw new IOException( string.Format( "Bad image width {0}, expected {1}", width, Width ) );
+			if ( height != Height ) throw new IOException( string.Format( "Bad image рушпре {0}, expected {1}", height, Height ) );
+
+			var read = stream.Read( RawImageData, 0, RawImageData.Length );
+
+			if ( read!=RawImageData.Length ) throw new IOException("Corrupted image");
+		}
+
+
+		static Image<TColor> FromStream( Stream stream )
+		{
+			int width, height;
+			ReadHeader( stream, out width, out height );
+
+			var image	=	new Image<TColor>( width, height );
+			var read	=	stream.Read( image.RawImageData, 0, image.RawImageData.Length );
+
+			if ( read!=image.RawImageData.Length ) throw new IOException("Corrupted image");
+
+			return image;
+		}
+
 	}
 
 }

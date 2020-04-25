@@ -9,10 +9,10 @@ using Fusion.Core.Mathematics;
 namespace Fusion.Engine.Imaging {
 	public partial class GenericImageMips<TColor> where TColor: struct {
 
-		readonly GenericImage<TColor>[] images;
+		readonly Image<TColor>[] images;
 
 
-		public GenericImage<TColor> TopLevelMip 
+		public Image<TColor> TopLevelMip 
 		{
 			get 
 			{
@@ -48,16 +48,16 @@ namespace Fusion.Engine.Imaging {
 
 			mipCount = Math.Min( mipCount, maxMip );
 
-			images = new GenericImage<TColor>[mipCount];
+			images = new Image<TColor>[mipCount];
 
 			for (int mip=0; mip<mipCount; mip++)
 			{
-				images[mip]	= new GenericImage<TColor>( width >> mip, height >> mip );	
+				images[mip]	= new Image<TColor>( width >> mip, height >> mip );	
 			}
 		}
 
 
-		public GenericImage<TColor> this[int mip] 
+		public Image<TColor> this[int mip] 
 		{
 			get 
 			{
@@ -92,7 +92,7 @@ namespace Fusion.Engine.Imaging {
 		}
 
 
-		public static implicit operator GenericImage<TColor>(GenericImageMips<TColor> image) 
+		public static implicit operator Image<TColor>(GenericImageMips<TColor> image) 
 		{
 			return image[0];
 		}

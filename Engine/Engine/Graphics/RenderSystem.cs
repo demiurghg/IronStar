@@ -267,7 +267,7 @@ namespace Fusion.Engine.Graphics {
 
 			var renderTarget	=	Device.Display.BackbufferColor;
 			var path			=	Path.ChangeExtension(requestPreviewPath, ".tga");
-			var image			=	new GenericImage<Color>( renderTarget.Width, renderTarget.Height, new Color(255,0,128,255) );
+			var image			=	new Image<Color>( renderTarget.Width, renderTarget.Height, new Color(255,0,128,255) );
 
 			renderTarget.GetData( image.RawImageData );
 			ImageLib.SetAlpha( image, 255 );

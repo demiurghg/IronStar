@@ -121,7 +121,7 @@ namespace Fusion.Build.Mapping {
 		/// <param name="address"></param>
 		/// <param name="baseDir"></param>
 		/// <returns></returns>
-		public GenericImage<Color> LoadPage ( VTAddress address, IStorage storage )
+		public Image<Color> LoadPage ( VTAddress address, IStorage storage )
 		{
 			if (pages.Contains(address)) {
 				
@@ -131,7 +131,7 @@ namespace Fusion.Build.Mapping {
 				return image;
 
 			} else {
-				return new GenericImage<Color>( VTConfig.PageSize, VTConfig.PageSize, Color.Black );
+				return new Image<Color>( VTConfig.PageSize, VTConfig.PageSize, Color.Black );
 			}
 		}
 
@@ -145,7 +145,7 @@ namespace Fusion.Build.Mapping {
 		/// <param name="address"></param>
 		/// <param name="baseDir"></param>
 		/// <param name="image"></param>
-		public void SavePage ( VTAddress address, IStorage storage, GenericImage<Color> image, string postFix )
+		public void SavePage ( VTAddress address, IStorage storage, Image<Color> image, string postFix )
 		{
 			var name	=	address.GetFileNameWithoutExtension(postFix) + ".tga";
 

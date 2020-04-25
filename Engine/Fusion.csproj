@@ -645,7 +645,7 @@
     <Compile Include="Engine\Imaging\ImageLib.cs" />
     <Compile Include="Engine\Imaging\GenericImageMips.cs" />
     <Compile Include="Engine\Imaging\GenericVolume.cs" />
-    <Compile Include="Engine\Imaging\GenericImage.cs" />
+    <Compile Include="Engine\Imaging\Image.cs" />
     <Compile Include="Engine\Imaging\Sampler.cs" />
     <Compile Include="Engine\Media\MediaState.cs" />
     <Compile Include="Engine\Media\Video.cs" />

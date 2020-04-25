@@ -258,9 +258,9 @@ namespace Fusion.Build.Mapping {
 			for (int x=0; x<pageCountX; x++) {
 				for (int y=0; y<pageCountY; y++) {
 
-					var pageC	=	new GenericImage<Color>(pageSizeBorder, pageSizeBorder); 
-					var pageN	=	new GenericImage<Color>(pageSizeBorder, pageSizeBorder); 
-					var pageS	=	new GenericImage<Color>(pageSizeBorder, pageSizeBorder); 
+					var pageC	=	new Image<Color>(pageSizeBorder, pageSizeBorder); 
+					var pageN	=	new Image<Color>(pageSizeBorder, pageSizeBorder); 
+					var pageS	=	new Image<Color>(pageSizeBorder, pageSizeBorder); 
 					
 					for ( int i=0; i<pageSizeBorder; i++) {
 						for ( int j=0; j<pageSizeBorder; j++) {
@@ -332,16 +332,16 @@ namespace Fusion.Build.Mapping {
 		/// <param name="postfix"></param>
 		/// <param name="defaultColor"></param>
 		/// <returns></returns>
-		GenericImage<Color> LoadTexture ( string texturePath, Color defaultColor ) 
+		Image<Color> LoadTexture ( string texturePath, Color defaultColor ) 
 		{
 			if ( string.IsNullOrWhiteSpace(texturePath) || !context.ContentFileExists( texturePath ) ) {
-				return new GenericImage<Color>( Width, Height, defaultColor );
+				return new Image<Color>( Width, Height, defaultColor );
 			}
 
 			var fullPath    =   context.ResolveContentPath( texturePath );
 			var ext         =   Path.GetExtension(texturePath).ToLowerInvariant();
 
-			GenericImage<Color> image		=	null;
+			Image<Color> image		=	null;
 
 			using ( var stream = File.OpenRead( fullPath ) ) {
 				if ( ext==".tga" ) {
@@ -359,7 +359,7 @@ namespace Fusion.Build.Mapping {
 
 			if ( image.Width!=Width || image.Height!=image.Height ) {
 				Log.Warning( "Size of {0} is not equal to size of {1}. Default image is used.", texturePath, Name );
-				return new GenericImage<Color>( Width, Height, defaultColor );
+				return new Image<Color>( Width, Height, defaultColor );
 			}
 
 			return image;

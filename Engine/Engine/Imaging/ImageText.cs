@@ -15,7 +15,7 @@ namespace Fusion.Engine.Imaging
 {
 	public static class ImageText
 	{
-		static GenericImage<Color> fontImage;
+		static Image<Color> fontImage;
 
 		static ImageText()
 		{
@@ -26,7 +26,7 @@ namespace Fusion.Engine.Imaging
 		}
 
 
-		public static void DrawText ( GenericImage<Color> target, int x, int y, string text )
+		public static void DrawText ( Image<Color> target, int x, int y, string text )
 		{
 			for (int i=0; i<text.Length; i++) {
 

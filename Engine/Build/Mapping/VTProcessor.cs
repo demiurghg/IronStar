@@ -420,7 +420,7 @@ namespace Fusion.Build.Mapping {
 			int	numPages		=	VTConfig.VirtualPageCount >> sourceMipLevel;
 			int	fallbackSize	=	VTConfig.TextureSize >> sourceMipLevel;
 
-			var fallbackImage	=	new GenericImage<Color>( fallbackSize, fallbackSize, Color.Black );
+			var fallbackImage	=	new Image<Color>( fallbackSize, fallbackSize, Color.Black );
 
 			for ( int pageX=0; pageX<numPages; pageX++) {
 				for ( int pageY=0; pageY<numPages; pageY++) {
@@ -453,7 +453,7 @@ namespace Fusion.Build.Mapping {
 		/// <param name="image10"></param>
 		/// <param name="image11"></param>
 		/// <returns></returns>
-		GenericImage<Color> MipImages ( GenericImage<Color> image00, GenericImage<Color> image01, GenericImage<Color> image10, GenericImage<Color> image11 )
+		Image<Color> MipImages ( Image<Color> image00, Image<Color> image01, Image<Color> image10, Image<Color> image11 )
 		{
 			const int pageSize = VTConfig.PageSize;
 
@@ -470,7 +470,7 @@ namespace Fusion.Build.Mapping {
 				throw new ArgumentException("Bad image size");
 			}
 
-			var image = new GenericImage<Color>( pageSize, pageSize, Color.Black );
+			var image = new Image<Color>( pageSize, pageSize, Color.Black );
 
 			for ( int i=0; i<pageSize/2; i++) {
 				for ( int j=0; j<pageSize/2; j++) {

@@ -347,7 +347,7 @@ namespace Fusion.Build.Mapping {
 		/// <param name="w"></param>
 		/// <param name="h"></param>
 		/// <param name="color"></param>
-		static void DrawRectangle ( GenericImage<Color> image, int x, int y, int w, int h, Color color, bool clear )
+		static void DrawRectangle ( Image<Color> image, int x, int y, int w, int h, Color color, bool clear )
 		{
 			for (var i=x; i<x+w; i++) {
 				for (var j=y; j<y+h; j++) {
@@ -379,7 +379,7 @@ namespace Fusion.Build.Mapping {
 			}
 
 			var alloc	= new Allocator2D(size);
-			var image	= new GenericImage<Color>(size,size, Color.Black);
+			var image	= new Image<Color>(size,size, Color.Black);
 			var rand	= new Random();
 
 			var list    = new List<Int2>();

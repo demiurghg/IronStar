@@ -70,7 +70,7 @@ namespace Fusion.Build.Processors {
 			//
 			//	Create image and fill it with atlas elements :
 			//	
-			var targetImage	=	new GenericImage<Color>( atlas.Width, atlas.Height );
+			var targetImage	=	new Image<Color>( atlas.Width, atlas.Height );
 			targetImage.Fill( atlas.FillColor );
 
 			foreach ( var frame in frames ) {

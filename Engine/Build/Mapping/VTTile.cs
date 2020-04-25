@@ -32,13 +32,13 @@ namespace Fusion.Build.Mapping {
 			}
 		}
 
-		Image	colorData;
-		Image	normalData;
-		Image	specularData;
+		GenericImage<Color>	colorData;
+		GenericImage<Color>	normalData;
+		GenericImage<Color>	specularData;
 
-		Image	colorDataMip;
-		Image	normalDataMip;
-		Image	specularDataMip;
+		GenericImage<Color>	colorDataMip;
+		GenericImage<Color>	normalDataMip;
+		GenericImage<Color>	specularDataMip;
 
 
 
@@ -51,12 +51,12 @@ namespace Fusion.Build.Mapping {
 		{
 			this.address	=	address;
 			var size		=	VTConfig.PageSizeBordered;
-			colorData		=	new Image(size, size);
-			normalData		=	new Image(size, size);
-			specularData	=	new Image(size, size);
-			colorDataMip	=	new Image(size/2, size/2);
-			normalDataMip	=	new Image(size/2, size/2);
-			specularDataMip	=	new Image(size/2, size/2);
+			colorData		=	new GenericImage<Color>	(size, size);
+			normalData		=	new GenericImage<Color>	(size, size);
+			specularData	=	new GenericImage<Color>	(size, size);
+			colorDataMip	=	new GenericImage<Color>	(size/2, size/2);
+			normalDataMip	=	new GenericImage<Color>	(size/2, size/2);
+			specularDataMip	=	new GenericImage<Color>	(size/2, size/2);
 		}
 
 
@@ -82,15 +82,15 @@ namespace Fusion.Build.Mapping {
 				throw new ArgumentException("Image width and height must be equal " + VTConfig.PageBorderWidth ); 
 			}
 
-			colorData		=	a;
-			normalData		=	b;
-			specularData	=	c;
+			colorData		=	a.ToGenericImage();
+			normalData		=	b.ToGenericImage();
+			specularData	=	c.ToGenericImage();
 
 			var size		=	VTConfig.PageSizeBordered;
 
-			colorDataMip	=	new Image(size/2, size/2);
-			normalDataMip	=	new Image(size/2, size/2);
-			specularDataMip	=	new Image(size/2, size/2);
+			colorDataMip	=	new GenericImage<Color>	(size/2, size/2);
+			normalDataMip	=	new GenericImage<Color>	(size/2, size/2);
+			specularDataMip	=	new GenericImage<Color>	(size/2, size/2);
 		}
 
 
@@ -158,9 +158,9 @@ namespace Fusion.Build.Mapping {
 			//if (x>max) throw new ArgumentException("x > " + max.ToString() );
 			//if (y>max) throw new ArgumentException("x > " + max.ToString() );
 
-			c	=	colorData.SampleQ4Clamp( x, y );
-			n	=	normalData.SampleQ4Clamp( x, y );
-			s	=	specularData.SampleQ4Clamp( x, y );
+			c	=	ImageLib.SampleQ4(colorData, x, y );
+			n	=	ImageLib.SampleQ4(normalData, x, y );
+			s	=	ImageLib.SampleQ4(specularData, x, y );
 		}
 
 
@@ -257,7 +257,7 @@ namespace Fusion.Build.Mapping {
 
 		public void WriteDebug ( Stream stream )
 		{
-			Image.SaveTga( colorData, stream );
+			ImageLib.SaveTga( colorData, stream );
 		}
 		
 
@@ -298,23 +298,9 @@ namespace Fusion.Build.Mapping {
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="text"></param>
-		public void DrawText ( Image font, int x, int y, string text )
+		public void DrawText ( int x, int y, string text )
 		{
-			if (font==null) {
-				return;
-			}
-
-			for (int i=0; i<text.Length; i++) {
-
-				var ch		=	((int)text[i]) & 0xFF;
-
-				int srcX	=	(ch % 16) * 8;
-				int srcY	=	(ch / 16) * 8;
-				int dstX	=	x + i * 8;
-				int dstY	=	y;
-
-				font.CopySubImageTo( srcX, srcY, 9,8, dstX, dstY, colorData );
-			}
+			ImageText.DrawText( colorData, x, y, text );
 		}
 
 
@@ -381,8 +367,8 @@ namespace Fusion.Build.Mapping {
 			int count	= mipColors.Length;
 			int mip		= address.MipLevel;
 
-			colorData	.Tint( mipColors[ (mip+0) % count ] );
-			colorDataMip.Tint( mipColors[ (mip+1) % count ] );
+			colorData	.PerpixelProcessing( color => color * mipColors[ (mip+0) % count ] );
+			colorDataMip.PerpixelProcessing( color => color * mipColors[ (mip+1) % count ] );
 
 			if (border) {
 				DrawBorder();

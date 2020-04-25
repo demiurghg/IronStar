@@ -508,9 +508,9 @@ namespace Fusion.Engine.Graphics {
 								}
 
 								if (ShowTileAddress) {	
-									tile.DrawText( fontImage, 16,16, tile.VirtualAddress.ToString() );
-									tile.DrawText( fontImage, 16,32, string.Format("{0} {1}", rect.X/sz, rect.Y/sz ) );
-									tile.DrawText( fontImage, 16,48, Math.Floor(stopwatch.Elapsed.TotalMilliseconds).ToString() );
+									tile.DrawText( 16,16, tile.VirtualAddress.ToString() );
+									tile.DrawText( 16,32, string.Format("{0} {1}", rect.X/sz, rect.Y/sz ) );
+									tile.DrawText( 16,48, Math.Floor(stopwatch.Elapsed.TotalMilliseconds).ToString() );
 								}
 
 								if (ShowTileBorder) {

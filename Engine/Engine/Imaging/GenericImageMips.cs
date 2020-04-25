@@ -7,7 +7,7 @@ using Fusion.Core.Mathematics;
 
 
 namespace Fusion.Engine.Imaging {
-	public partial class GenericImageMips<TColor> {
+	public partial class GenericImageMips<TColor> where TColor: struct {
 
 		readonly GenericImage<TColor>[] images;
 

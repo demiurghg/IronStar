@@ -224,6 +224,16 @@ namespace Fusion.Engine.Imaging {
 		}
 
 
+		public GenericImage<Color> ToGenericImage()
+		{
+			var image = new GenericImage<Color>( Width, Height );
+
+			RawImageData.CopyTo( image.RawImageData, 0 );
+
+			return image;
+		}
+
+
 
 		/// <summary>
 		/// 

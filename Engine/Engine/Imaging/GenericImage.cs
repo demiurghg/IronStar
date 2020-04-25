@@ -6,10 +6,11 @@ using System.IO;
 using Fusion.Core.Mathematics;
 using System.Runtime.InteropServices;
 using Fusion.Core.Utils;
+using SharpDX;
 
 namespace Fusion.Engine.Imaging 
 {
-	public partial class GenericImage<TColor> 
+	public partial class GenericImage<TColor> where TColor: struct 
 	{
 		public static readonly uint FourCC	= 0x494d4730; // IMG0
 		public static readonly uint TypeCrc;
@@ -26,6 +27,8 @@ namespace Fusion.Engine.Imaging
 		readonly int pixelSize;
 		readonly byte[] rawImageData;
 		readonly Int3[] mipDimensions;
+		readonly DataStream stream;
+		readonly bool isColor;
 
 		public int		Width	{ get { return width; } }
 		public int		Height	{ get { return height; } }
@@ -49,6 +52,7 @@ namespace Fusion.Engine.Imaging
 
 			this.width		=	width;
 			this.height		=	height;
+			this.isColor	=	typeof(TColor) == typeof(Color);
 			rawImageData	=	AllocRawImage( out pixelSize );
 		}
 
@@ -66,6 +70,7 @@ namespace Fusion.Engine.Imaging
 
 			this.width		=	width;
 			this.height		=	height;
+			this.isColor	=	typeof(TColor) == typeof(Color);
 			rawImageData	=	AllocRawImage( out pixelSize );
 
 			Fill( fillColor );
@@ -77,7 +82,10 @@ namespace Fusion.Engine.Imaging
 		{
 			pixelSize	=	Marshal.SizeOf(typeof(TColor));
 			int length	=	width * height * pixelSize;
-			return new byte[length];
+
+			var data	=	new byte[length];
+
+			return data;
 		}
 
 
@@ -101,10 +109,9 @@ namespace Fusion.Engine.Imaging
 		{
 			unsafe 
 			{
-				int addr = GetByteAddress( x, y );
-				fixed (byte *ptr = &rawImageData[addr])
+				fixed (byte *ptr = &rawImageData[ GetByteAddress( x, y ) ])
 				{
-					return (TColor)Marshal.PtrToStructure( new IntPtr(ptr), typeof(TColor) );
+					return Utilities.Read<TColor>( new IntPtr(ptr) );
 				}
 			}
 		}
@@ -122,10 +129,9 @@ namespace Fusion.Engine.Imaging
 		{
 			unsafe 
 			{
-				int addr = GetByteAddress( x, y );
-				fixed (byte *ptr = &rawImageData[addr])
+				fixed (byte *ptr = &rawImageData[ GetByteAddress( x, y ) ])
 				{
-					Marshal.StructureToPtr( value, new IntPtr(ptr), true );
+					Utilities.Write<TColor>( new IntPtr(ptr), ref value );
 				}
 			}
 		}

@@ -15,6 +15,23 @@ namespace Fusion.Engine.Imaging
 {
 	public static class ImageLib
 	{
+		/*-----------------------------------------------------------------------------------------
+		 *	Sampling
+		-----------------------------------------------------------------------------------------*/
+
+		static public Color SampleQ4( GenericImage<Color> image, int x, int y )
+		{
+			var c00 = image.GetPixel( x+0, y+0 );
+			var c01 = image.GetPixel( x+0, y+1 );
+			var c10 = image.GetPixel( x+1, y+0 );
+			var c11 = image.GetPixel( x+1, y+1 );
+
+			var c0x	= Color.Lerp( c00, c01, 0.5f );
+			var c1x	= Color.Lerp( c10, c11, 0.5f );
+
+			return Color.Lerp( c0x, c1x, 0.5f );
+		}
+
 
 		/*-----------------------------------------------------------------------------------------
 		 *	TGA Loading/Saving

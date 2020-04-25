@@ -70,7 +70,7 @@ namespace Fusion.Build.Processors {
 			//
 			//	Create image and fill it with atlas elements :
 			//	
-			var targetImage	=	new Image( atlas.Width, atlas.Height );
+			var targetImage	=	new GenericImage<Color>( atlas.Width, atlas.Height );
 			targetImage.Fill( atlas.FillColor );
 
 			foreach ( var frame in frames ) {
@@ -82,7 +82,7 @@ namespace Fusion.Build.Processors {
 			//
 			var tgaOutput	=	context.GetTempFileFullPath( assetFile.KeyPath, ".tga" );
 			var ddsOutput	=	context.GetTempFileFullPath( assetFile.KeyPath, ".dds" );
-			Image.SaveTga( targetImage, tgaOutput );
+			ImageLib.SaveTga( targetImage, tgaOutput );
 
 			var compression =	atlas.Compression ? TextureCompression.BC3 : TextureCompression.RGB;
 			TextureProcessor.RunNVCompress( context, tgaOutput, ddsOutput, !atlas.Mips, false, false, true, true, false, compression );

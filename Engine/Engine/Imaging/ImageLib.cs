@@ -75,7 +75,7 @@ namespace Fusion.Engine.Imaging
 
 				for (int y=0; y<image.Height; y++)
 				{
-					for (int x=0; y<image.Width; x++)
+					for (int x=0; x<image.Width; x++)
 					{
 						var c = image.GetPixel( x, y );
 						bw.Write(c.B);

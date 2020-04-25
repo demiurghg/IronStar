@@ -161,14 +161,6 @@ namespace Fusion.Engine.Graphics {
 		Ubershader		shader;
 		StateFactory	factory;
 
-		Image	fontImage;
-
-		public Image FontImage {
-			get {
-				return fontImage;
-			}
-		}
-
 		enum Flags {
 			None  = 0,
 		}
@@ -316,8 +308,6 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="baseDir"></param>
 		public void Start ( VirtualTexture vt )
 		{
-			fontImage			=	Imaging.Image.LoadTga( new MemoryStream( Fusion.Properties.Resources.conchars ) );
-
 			stopwatch.Restart();
 		}
 

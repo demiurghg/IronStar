@@ -15,10 +15,10 @@ namespace Fusion.Build.Processors {
 	public class TextureAtlasFrame {
 
 		readonly string name;
-		Image image;
+		GenericImage<Color> image;
 
 		public string Name { get { return name; } }
-		public Image Image { get { return image; } }
+		public GenericImage<Color> Image { get { return image; } }
 
 		public Point Location;
 
@@ -52,13 +52,13 @@ namespace Fusion.Build.Processors {
 
 			using ( var stream = File.OpenRead( fullPath ) ) {
 				if ( ext==".tga" ) {
-					image = Image.LoadTga( stream );
+					image = ImageLib.LoadTga( stream );
 				} else
 				if ( ext==".png" ) {
-					image = Image.LoadPng( stream );
+					image = ImageLib.LoadPng( stream );
 				} else
 				if ( ext==".jpg" ) {
-					image = Image.LoadJpg( stream );
+					image = ImageLib.LoadJpg( stream );
 				} else {
 					throw new BuildException( "Only TGA, JPG or PNG images are supported." );
 				}
@@ -70,9 +70,10 @@ namespace Fusion.Build.Processors {
 		/// Writes sub image to the target image
 		/// </summary>
 		/// <param name="targetImage"></param>
-		public void WriteSubimage ( Image targetImage )
+		public void WriteSubimage ( GenericImage<Color> targetImage )
 		{
-			targetImage.Copy( Location.X, Location.Y, Image );
+			Image.CopySubImageTo( 0,0, Image.Width, Image.Height, Location.X, Location.Y, targetImage );
+			//targetImage.Copy( Location.X, Location.Y, Image );
 		}
 	}
 

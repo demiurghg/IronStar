@@ -347,11 +347,11 @@ namespace Fusion.Build.Mapping {
 		/// <param name="w"></param>
 		/// <param name="h"></param>
 		/// <param name="color"></param>
-		static void DrawRectangle ( Image image, int x, int y, int w, int h, Color color, bool clear )
+		static void DrawRectangle ( GenericImage<Color> image, int x, int y, int w, int h, Color color, bool clear )
 		{
 			for (var i=x; i<x+w; i++) {
 				for (var j=y; j<y+h; j++) {
-					var c = image.Sample(i,j);
+					var c = image.GetPixel(i,j);
 
 					if (!clear && c!=Color.Black) {
 						Log.Warning("Overlap!");
@@ -379,7 +379,7 @@ namespace Fusion.Build.Mapping {
 			}
 
 			var alloc	= new Allocator2D(size);
-			var image	= new Image(size,size, Color.Black);
+			var image	= new GenericImage<Color>(size,size, Color.Black);
 			var rand	= new Random();
 
 			var list    = new List<Int2>();
@@ -429,7 +429,7 @@ namespace Fusion.Build.Mapping {
 					var imagePath = Path.Combine(dir, string.Format("allocTest{0,4:D4}.tga", i));
 					var stackPath = Path.Combine(dir, string.Format("allocTest{0,4:D4}.stk", i));
 
-					Image.SaveTga( image, imagePath );
+					ImageLib.SaveTga( image, imagePath );
 
 					if (reloadState) {
 

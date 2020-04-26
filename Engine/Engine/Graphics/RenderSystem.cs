@@ -38,7 +38,7 @@ namespace Fusion.Engine.Graphics {
 		internal Sky				Sky				{ get { return Game.GetService< Sky				 >(); } }
 		internal Fog				Fog				{ get { return Game.GetService< Fog				 >(); } }
 		internal LightMapDebugger	LightMapDebugger{ get { return Game.GetService< LightMapDebugger >(); } }
-		internal Radiosity			Radiosity		{ get { return Game.GetService< Radiosity		 >(); } }
+		public Radiosity			Radiosity		{ get { return Game.GetService< Radiosity		 >(); } }
 
 		/// <summary>
 		/// Gets render counters.

@@ -50,7 +50,14 @@ namespace Fusion.Engine.Graphics.GI
 					lightMap	=	value;
 					fullRefresh	=	true;
 
-					if (radiance.Width!=lightMap.Width || radiance.Height!=lightMap.Height)
+					if (lightMap!=null) 
+					{
+						if (radiance.Width!=lightMap.Width || radiance.Height!=lightMap.Height)
+						{
+							CreateLightMaps( lightMap.Width, lightMap.Height );
+						}
+					}
+					else
 					{
 						CreateLightMaps( lightMap.Width, lightMap.Height );
 					}

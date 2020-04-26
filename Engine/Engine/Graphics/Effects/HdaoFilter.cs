@@ -31,7 +31,7 @@ namespace Fusion.Engine.Graphics {
 	[RequireShader("hdao", true)]
 	internal partial class SsaoFilter : RenderComponent 
 	{
-		static FXConstantBuffer<HdaoParams>				regParams	=	new CRegister( 0, "hdaoParams" );
+		static FXConstantBuffer<HdaoParams>		regParams	=	new CRegister( 0, "hdaoParams" );
 		static FXConstantBuffer<GpuData.CAMERA>	regCamera	=	new CRegister( 1, "Camera" );
 
 		Ubershader		shader;

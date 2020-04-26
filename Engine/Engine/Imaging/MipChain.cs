@@ -7,7 +7,7 @@ using Fusion.Core.Mathematics;
 
 
 namespace Fusion.Engine.Imaging {
-	public partial class GenericImageMips<TColor> where TColor: struct {
+	public partial class MipChain<TColor> where TColor: struct {
 
 		readonly Image<TColor>[] images;
 
@@ -33,7 +33,7 @@ namespace Fusion.Engine.Imaging {
 		}
 
 
-		public GenericImageMips( int width, int height, int mipCount, TColor fillColor )
+		public MipChain( int width, int height, int mipCount, TColor fillColor )
 		{
 			if (width<0) throw new ArgumentOutOfRangeException("width < 0");
 			if (height<0) throw new ArgumentOutOfRangeException("height < 0");
@@ -92,7 +92,7 @@ namespace Fusion.Engine.Imaging {
 		}
 
 
-		public static implicit operator Image<TColor>(GenericImageMips<TColor> image) 
+		public static implicit operator Image<TColor>(MipChain<TColor> image) 
 		{
 			return image[0];
 		}

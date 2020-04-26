@@ -141,7 +141,7 @@ namespace Fusion.Engine.Graphics {
 
 
 		VirtualTexture		virtualTexture = null;
-		IrradianceMap		irradianceMap = null;	
+		LightMap			irradianceMap = null;	
 		IrradianceVolume	irradianceVolume = null;
 		IrradianceCache		irradianceCache = null;
 
@@ -161,27 +161,6 @@ namespace Fusion.Engine.Graphics {
 						rs.VTSystem.Stop();
 						rs.VTSystem.Start(value);
 						virtualTexture = value;
-					}
-				}
-			}
-		}
-
-
-		/// <summary>
-		/// Sets anf gets irradiance map
-		/// </summary>
-		public IrradianceMap IrradianceMap {
-			get {
-				return irradianceMap;
-			}
-			set {
-				if (irradianceMap!=value) {
-					irradianceMap = value;
-
-					foreach ( var instance in Instances ) {
-						if (instance.Group==InstanceGroup.Static) {
-							instance.LightMapScaleOffset = irradianceMap.GetRegionMadScaleOffset( instance.LightMapGuid );
-						}
 					}
 				}
 			}
@@ -463,8 +442,9 @@ namespace Fusion.Engine.Graphics {
 					//	single pass for stereo rendering :
 					if ( stereoEye!=StereoEye.Right ) {
 
-						//	Disabled, due to static lightmaps etc...
+						//	#TODO -- restore dynamic light-probes
 						//  RelightLightProbes();
+						rs.Radiosity.Render( gameTime );
 
 						//	simulate particles BEFORE lighting
 						//	to make particle lit (position is required) and 
@@ -724,12 +704,11 @@ namespace Fusion.Engine.Graphics {
 						break; 
 				}
 
-				using ( var irrMap = rs.LightManager.LightMap.BakeIrradianceMap( Instances, LightSet, samples, bias ) ) 
+				var irrMap = rs.LightManager.LightMap.BakeLightMap( Instances, LightSet, samples, bias );
+
+				using ( var stream = File.OpenWrite( pathIrrMap ) ) 
 				{
-					using ( var stream = File.OpenWrite( pathIrrMap ) ) 
-					{
-						//irrMap.WriteToStream( stream );
-					}
+					irrMap.WriteStream( stream );
 				}
 			}
 

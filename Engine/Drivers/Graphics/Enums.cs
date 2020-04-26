@@ -77,6 +77,7 @@ namespace Fusion.Drivers.Graphics {
 	/// </summary>
 	public enum ColorFormat {
 		Unknown,
+		R32,
 		R32F,
 		R16F,
 		Rg16F,
@@ -337,6 +338,7 @@ namespace Fusion.Drivers.Graphics {
 		public static int SizeOf( ColorFormat format )
 		{
 			switch ( format ) {
+				case ColorFormat.R32		: return 4;
 				case ColorFormat.R32F		: return 4;
 				case ColorFormat.R16F		: return 2;
 				case ColorFormat.Rg16F		: return 4;
@@ -386,6 +388,7 @@ namespace Fusion.Drivers.Graphics {
 		public static Format Convert ( ColorFormat format )
 		{
 			switch ( format ) {
+				case ColorFormat.R32		: return Format.R32_UInt;
 				case ColorFormat.R32F		: return Format.R32_Float;
 				case ColorFormat.R16F		: return Format.R16_Float;
 				case ColorFormat.Rg16F		: return Format.R16G16_Float;

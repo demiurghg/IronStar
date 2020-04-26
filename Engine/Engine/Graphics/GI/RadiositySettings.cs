@@ -10,7 +10,7 @@ namespace Fusion.Engine.Graphics.GI
 {
 	public class RadiositySettings
 	{
-		public const int MapPatchLevels = 7;
+		public const int MapPatchLevels = 6;
 
 		/// <summary>
 		///	Number of light-gird elements along X-axis

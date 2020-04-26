@@ -12,44 +12,83 @@ using System.Diagnostics;
 using Fusion.Engine.Imaging;
 using Fusion.Build.Mapping;
 using Fusion.Engine.Graphics.GI;
+using System.IO;
+using Fusion.Core.Content;
 
 namespace Fusion.Engine.Graphics.Lights 
 {
-	public class LightMapGBuffer 
+	public class LightMapContent 
 	{
 		public readonly int Width;
 		public readonly int Height;
 
-		public readonly GenericImageMips<Color>		Albedo;
-		public readonly GenericImageMips<Vector3>	Position;
-		public readonly GenericImageMips<Vector3>	Normal;
-		public readonly GenericImageMips<float>		Area;
+		public readonly MipChain<Color>		Albedo;
+		public readonly MipChain<Vector3>	Position;
+		public readonly MipChain<Vector3>	Normal;
+		public readonly MipChain<float>		Area;
 		public readonly Image<byte>			Coverage;
 		public readonly Image<byte>			PatchSize;
+		public readonly Image<Vector3>		Sky;
+		public readonly Image<uint>			IndexMap;
+		public readonly List<uint>			Indices;
 
-		readonly Allocator2D					allocator;
+		readonly Allocator2D				allocator;
+
+		public IDictionary<Guid,Rectangle>	Regions { get { return regions; } }
+		readonly Dictionary<Guid, Rectangle> regions = new Dictionary<Guid, Rectangle>();
+		readonly Dictionary<string, uint> indexDict = new Dictionary<string, uint>();
 		
 		/// <summary>
 		/// Creates instance of the lightmap g-buffer :
 		/// </summary>
 		/// <param name="w"></param>
 		/// <param name="h"></param>
-		public LightMapGBuffer( int size ) 
+		public LightMapContent( int size ) 
 		{
 			Width			=	size;
 			Height			=	size;
 
 			allocator		=	new Allocator2D( size );
 
-			Albedo			=	new GenericImageMips<Color>		( size, size, RadiositySettings.MapPatchLevels, Color.Zero	);
-			Position		=	new GenericImageMips<Vector3>	( size, size, RadiositySettings.MapPatchLevels, Vector3.Zero	);
-			Normal			=	new GenericImageMips<Vector3>	( size, size, RadiositySettings.MapPatchLevels, Vector3.Zero	);
-			Area			=	new GenericImageMips<float>		( size, size, RadiositySettings.MapPatchLevels, 0 );
+			Albedo			=	new MipChain<Color>		( size, size, RadiositySettings.MapPatchLevels, Color.Zero	);
+			Position		=	new MipChain<Vector3>	( size, size, RadiositySettings.MapPatchLevels, Vector3.Zero	);
+			Normal			=	new MipChain<Vector3>	( size, size, RadiositySettings.MapPatchLevels, Vector3.Zero	);
+			Area			=	new MipChain<float>		( size, size, RadiositySettings.MapPatchLevels, 0 );
 
-			Coverage		=	new Image	<byte>		( size, size, 0 );
-			PatchSize		=	new Image	<byte>		( size, size, 0 );
+			Sky				=	new Image<Vector3>		( size, size, Vector3.Zero );
+			IndexMap		=	new Image<uint>			( size, size, 0 );
+			Indices			=	new List<uint>			();
+
+			Coverage		=	new Image<byte>			( size, size, 0 );
+			PatchSize		=	new Image<byte>			( size, size, 0 );
 		}
 			
+
+		public uint AddFormFactorPatchIndices( uint[] patches )
+		{
+			patches	=	patches.Distinct().OrderBy( k => k ).ToArray();
+			var key	=	string.Join("-", patches.Select( p => p.ToString() ) );
+
+			uint index;
+			int offset;
+			int count;
+
+			if (indexDict.TryGetValue(key, out index)) 
+			{
+				return index;
+			}
+			else
+			{
+				offset	= Indices.Count;
+				count	= patches.Length;
+				index	= Radiosity.GetLMIndex( offset, count );
+				Indices.AddRange( patches );
+				Indices.Add(0xAAAAAAAA);
+				indexDict.Add( key, index );
+				return index;
+			}
+		}
+
 
 		public bool IsRegionCollapsable( Rectangle rect )
 		{
@@ -195,16 +234,90 @@ namespace Fusion.Engine.Graphics.Lights
 		}
 
 
+		Color EncodeSkyRGB8( Vector3 n )
+		{
+			n = (n + Vector3.One) * 0.5f;
+			return new Color( 
+				MathUtil.Lerp( (byte)0, (byte)255, n.X ),
+				MathUtil.Lerp( (byte)0, (byte)255, n.Y ),
+				MathUtil.Lerp( (byte)0, (byte)255, n.Z ),
+				(byte)255 );
+		}
+
+
 		public void SaveDebugImages()
 		{
+			File.WriteAllText( "rad_indices.txt", string.Join("\r\n", Indices.Select( idx=>idx.ToString("X8") ) ) );
+
 			SaveDebugImage( PatchSize.Convert( size => new Color(size,size,size,(byte)255) ), "rad_patchSize" );
+
+			SaveDebugImage( Sky.Convert( EncodeSkyRGB8 ), "rad_sky" );
+			SaveDebugImage( IndexMap.Convert( idx => new Color(idx) ), "rad_index_map" );
 
 			for (int mip=0; mip<RadiositySettings.MapPatchLevels; mip++)
 			{
 				var prefix = "_" + mip.ToString();
-				SaveDebugImage( Albedo[mip]									, "rad_albedo" + prefix );
-				SaveDebugImage( Normal[mip].Convert( EncodeNormalRGB8 )		, "rad_normal" + prefix );
+				SaveDebugImage( Albedo[mip]										, "rad_albedo" + prefix );
+				SaveDebugImage( Normal[mip].Convert( EncodeNormalRGB8 )			, "rad_normal" + prefix );
 				SaveDebugImage( Area[mip].Convert( a => new Color(a/256.0f))	, "rad_area"   + prefix );
+			}
+		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Lightmap Import :
+		-----------------------------------------------------------------------------------------*/
+
+		public void WriteStream ( Stream stream )
+		{
+			using ( var writer = new BinaryWriter( stream ) )
+			{
+				const int mips = RadiositySettings.MapPatchLevels;
+
+				//	write header :
+				writer.WriteFourCC("RAD1");
+
+				writer.Write( Width );
+				writer.Write( Height );
+
+				//	write regions :
+				writer.WriteFourCC("RGN1");
+
+				writer.Write( Regions.Count );
+				foreach ( var pair in Regions ) {
+					writer.Write( pair.Key );
+					writer.Write( pair.Value );
+				}
+
+				//	write gbuffer :
+				writer.WriteFourCC("GBF1");
+
+				writer.WriteFourCC("POS1");
+				for (int i=0; i<mips; i++) Position[i].WriteStream( stream );
+
+				writer.WriteFourCC("NRM1");
+				for (int i=0; i<mips; i++) Normal[i].Convert( EncodeNormalRGB8 ).WriteStream( stream );
+
+				writer.WriteFourCC("ALB1");
+				for (int i=0; i<mips; i++) Albedo[i].WriteStream( stream );
+
+				writer.WriteFourCC("ARE1");
+				for (int i=0; i<mips; i++) Area[i].WriteStream( stream );
+
+				writer.WriteFourCC("SKY1");
+				Sky.Convert( EncodeSkyRGB8 ).WriteStream( stream );
+
+				//	write index map
+				writer.WriteFourCC("MAP1");
+				IndexMap.WriteStream( stream );
+
+				// #TODO #LIGHTMAPS - write volume indices
+				writer.WriteFourCC("VOL1");
+
+				//	write indices
+				writer.WriteFourCC("IDX1");
+				writer.Write( Indices.Count );
+				writer.Write( Indices.ToArray() );
 			}
 		}
 

@@ -7,16 +7,19 @@ using Fusion.Core.Mathematics;
 using System.Runtime.InteropServices;
 using Fusion.Core.Utils;
 using SharpDX;
+using Fusion.Core;
+using Fusion.Core.Content;
 
 namespace Fusion.Engine.Imaging 
 {
 	public partial class Image<TColor> where TColor: struct 
 	{
-		public static readonly uint FourCC	= 0x494d4730; // IMG0
+		public static readonly uint FourCC;
 		public static readonly uint TypeCrc;
 		
 		static Image()
 		{
+			FourCC	=	ContentUtils.MakeFourCC("IMG0");
 			TypeCrc	=	Crc32.ComputeChecksum( Encoding.UTF8.GetBytes(typeof(TColor).ToString()));
 		}
 		
@@ -27,9 +30,8 @@ namespace Fusion.Engine.Imaging
 		readonly int height;
 		readonly int pixelSize;
 		readonly byte[] rawImageData;
-		readonly Int3[] mipDimensions;
-		readonly DataStream stream;
-		readonly bool isColor;
+
+		Image<TColor>[]	mipChain;
 
 		public int		Width	{ get { return width; } }
 		public int		Height	{ get { return height; } }
@@ -53,7 +55,6 @@ namespace Fusion.Engine.Imaging
 
 			this.width		=	width;
 			this.height		=	height;
-			this.isColor	=	typeof(TColor) == typeof(Color);
 			rawImageData	=	AllocRawImage( out pixelSize );
 		}
 
@@ -71,12 +72,10 @@ namespace Fusion.Engine.Imaging
 
 			this.width		=	width;
 			this.height		=	height;
-			this.isColor	=	typeof(TColor) == typeof(Color);
 			rawImageData	=	AllocRawImage( out pixelSize );
 
 			Fill( fillColor );
 		}
-
 
 
 		byte[] AllocRawImage( out int pixelSize )
@@ -461,7 +460,7 @@ namespace Fusion.Engine.Imaging
 		}
 
 
-		static Image<TColor> FromStream( Stream stream )
+		public static Image<TColor> FromStream( Stream stream )
 		{
 			int width, height;
 			ReadHeader( stream, out width, out height );
@@ -473,7 +472,6 @@ namespace Fusion.Engine.Imaging
 
 			return image;
 		}
-
 	}
 
 }

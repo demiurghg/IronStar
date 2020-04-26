@@ -146,7 +146,7 @@ namespace IronStar {
 
 				.Copy<SoundBank>("*.bank")
 
-				.Copy<IrradianceMap>	("*.irrmap"  )
+				.Copy<LightMap>			("*.irrmap"  )
 				.Copy<IrradianceVolume>	("*.irrvol"  )
 				.Copy<IrradianceCache>	("*.irrcache")
 				;

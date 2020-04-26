@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 using Fusion.Engine.Graphics.Scenes;
 using System.IO;
+using Fusion.Engine.Graphics.GI;
 
 namespace Fusion.Engine.Graphics.Lights {
 
@@ -68,7 +69,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		Random rand		=	new Random();
 		
-		LightMapGBuffer lightmapGBuffer;
+		LightMapContent lightmapGBuffer;
 
 
 		MeshInstance[] SelectOccludingInstances ( IEnumerable<MeshInstance> instances )
@@ -83,7 +84,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// <summary>
 		/// Update lightmap
 		/// </summary>
-		public IrradianceMap BakeIrradianceMap ( IEnumerable<MeshInstance> instances2, LightSet lightSet, int numSamples, int bias )
+		public LightMapContent BakeLightMap ( IEnumerable<MeshInstance> instances2, LightSet lightSet, int numSamples, int bias )
 		{
 			var hammersley		=	Hammersley.GenerateSphereUniform(numSamples);
 			var instances		=	SelectOccludingInstances( instances2 );
@@ -102,12 +103,6 @@ namespace Fusion.Engine.Graphics.Lights {
 						(guid,inst) => new LightMapGroup( inst.First().LightMapSize.Width, guid, inst, bias )
 					)
 					.ToArray();
-
-			/*foreach ( var lmGroup in lmGroups ) {
-				Log.Message("...{0} : {1}x{2}", lmGroup.Guid, lmGroup.Region.Width, lmGroup.Region.Height );
-				totalSizeInPixels += (lmGroup.Region.Width + lmGroup.Region.Height);
-			} */
-
 
 			int lightMapSize = 256;
 
@@ -143,11 +138,10 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			Log.Message("Allocating buffers...");
 
-			var irradianceMap	=	new IrradianceMap( rs, allocator.Width, allocator.Height );
-			lightmapGBuffer		=	new LightMapGBuffer( allocator.Width );
+			lightmapGBuffer		=	new LightMapContent( allocator.Width );
 
 			foreach ( var group in lmGroups ) {
-				irradianceMap.AddRegion( group.Guid, group.Region );
+				lightmapGBuffer.Regions.Add( group.Guid, group.Region );
 			}
 
 			//-------------------------------------------------
@@ -185,38 +179,29 @@ namespace Fusion.Engine.Graphics.Lights {
 
 					Log.Message("Searching for radiating patches...");
 
-					/*ForEachLightMapPixel( lmGroups, (i,j) => 
+					ForEachLightMapPixel( lmGroups, (i,j) => 
 					{
 						var p = lightmapGBuffer.Position[i,j];
 						var n = lightmapGBuffer.Normal[i,j];
 						var c = lightmapGBuffer.Albedo[i,j];
 
-						int contribCount = 0;
+						if (c.A>0) 
+						{
+							var r = GatherRadiosityPatches( scene, instances, hammersley, lightSet, p, n );
 
-						if (c.A>0) {
-							var r	=	GatherRadiosityPatches( out contribCount, scene, instances, hammersley, lightSet, p, n );
-							irradianceMap.IrradianceRed		[i,j]	+=	r.Red;
-							irradianceMap.IrradianceGreen	[i,j]	+=	r.Green;
-							irradianceMap.IrradianceBlue	[i,j]	+=	r.Blue;
-						} else {
-							irradianceMap.IrradianceRed		[i,j]	+=	SHL1.Zero;
-							irradianceMap.IrradianceGreen	[i,j]	+=	SHL1.Zero;
-							irradianceMap.IrradianceBlue	[i,j]	+=	SHL1.Zero;
+							lightmapGBuffer.Sky		[i,j]	=	r.Sky;
+							lightmapGBuffer.IndexMap[i,j]	=	lightmapGBuffer.AddFormFactorPatchIndices( r.Patches );
+						} 
+						else 
+						{
+							lightmapGBuffer.Sky		[i,j]	=	Vector3.Zero;
+							lightmapGBuffer.IndexMap[i,j]	=	0;
 						}
-					}, true);	   */
+					}, true);
 				}
 			}
 
-			//Log.Message("Dilate radiance...");
-
-			//irradianceMap.DilateRadiance( lightmapGBuffer.Albedo );
-			
-			////--------------------------------------
-
-			//Log.Message("Uploading lightmap to GPU...");
-
-			//irradianceMap.UpdateGPUTextures();
-
+			//--------------------------------------
 
 			Log.Message("Generating patch LODs...");
 			lightmapGBuffer.GeneratePatchLods();
@@ -226,7 +211,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			Log.Message("Completed.");
 
-			return irradianceMap;
+			return lightmapGBuffer;
 		}
 
 
@@ -275,12 +260,8 @@ namespace Fusion.Engine.Graphics.Lights {
 
 								var p = new Vector3(x,y,z);
 								var n = Vector3.Zero;
-								int dummy;
 
-								var r	=	GatherRadiosityPatches( out dummy, scene, instances, hammersley, lightSet, p, n, -0*stride/2.0f );
-								irrVolume.IrradianceRed	 [i,j,k]	=	r.Red;
-								irrVolume.IrradianceGreen[i,j,k]	=	r.Green;
-								irrVolume.IrradianceBlue [i,j,k]	=	r.Blue;
+								var r	=	GatherRadiosityPatches( scene, instances, hammersley, lightSet, p, n, -0*stride/2.0f );
 							}
 						}
 					}
@@ -369,21 +350,6 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 
 
-		uint GetLMAddress( Int2 coords, int patchSize )
-		{
-			if (coords.X<0 || coords.Y<0 || coords.X>=RenderSystem.LightmapSize || coords.Y>=RenderSystem.LightmapSize )
-			{
-				return 0xFFFFFFFF;
-			}
-			uint x		= (uint)(coords.X / patchSize) & 0xFFF;
-			uint y		= (uint)(coords.Y / patchSize) & 0xFFF;
-			uint mip	= (uint)MathUtil.LogBase2( patchSize ) & 0xFF;
-
-			return (mip << 24) | (x << 12) | (y);
-		}
-
-
-
 		byte GetMaximumPatchSize( float distance )
 		{
 			if (distance< 2) return  1;
@@ -396,17 +362,22 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 
 
+		class GatheringResults 
+		{
+			public uint[]	Patches;
+			public Vector3	Sky;
+		}
+
+
 		/// <summary>
 		/// Computes indirect radiance in given point
 		/// </summary>
-		Irradiance GatherRadiosityPatches ( out int contribCount, RtcScene scene, MeshInstance[] instances, Vector3[] randomPoints, LightSet lightSet, Vector3 position, Vector3 normal, float bias=0 )
+		GatheringResults GatherRadiosityPatches ( RtcScene scene, MeshInstance[] instances, Vector3[] randomPoints, LightSet lightSet, Vector3 position, Vector3 normal, float bias=0 )
 		{
 			var sampleCount		=	randomPoints.Length;
 			var invSampleCount	=	1.0f / sampleCount;
+			var	result			=	new GatheringResults();
 
-			var skyAmbient		=	rs.RenderWorld.SkySettings.AmbientLevel;
-
-			var irradiance		=	new Irradiance();
 			var normalLength	=	normal.Length();
 
 			//---------------------------------
@@ -432,16 +403,15 @@ namespace Fusion.Engine.Graphics.Lights {
 					
 				//-------------------------------------------
 				//	ray hits nothing, so this is sky light :
-				if (!intersect && dir.Y>0) {
-					irradiance.Add( skyAmbient * invSampleCount * 0.5f, dir );
+				if (!intersect && dir.Y>0) 
+				{
+					result.Sky	+=	dir * invSampleCount;
 				}
 
 				//-------------------------------------------
 				//	trying to find direct light :
-				if (intersect) {
-														
-					var albedo		=	GetAlbedo( instances, ref ray );
-
+				if (intersect) 
+				{
 					var origin		=	EmbreeExtensions.Convert( ray.Origin );
 					var direction	=	EmbreeExtensions.Convert( ray.Direction );
 					var hitPoint	=	origin + direction * (ray.TFar);
@@ -466,7 +436,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 							if (weight>0.01f)
 							{
-								lmAddrList.Add( GetLMAddress( coords, patchSize ) );
+								lmAddrList.Add( Radiosity.GetLMAddress( coords, patchSize ) );
 							}
 						}
 
@@ -474,9 +444,9 @@ namespace Fusion.Engine.Graphics.Lights {
 				}
 			} 
 
-			contribCount = lmAddrList.Distinct().Count();
+			result.Patches	=	lmAddrList.ToArray();
 
-			return irradiance;
+			return result;
 		}
 
 
@@ -485,7 +455,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		/// <param name="lightmap"></param>
 		/// <param name="instance"></param>
-		void RasterizeInstance ( LightMapGBuffer lightmap, MeshInstance instance, Rectangle viewport )
+		void RasterizeInstance ( LightMapContent lightmap, MeshInstance instance, Rectangle viewport )
 		{
 			var mesh		=	instance.Mesh;
 

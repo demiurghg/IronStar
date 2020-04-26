@@ -535,6 +535,7 @@
     <Compile Include="Engine\Graphics\GI\LightMapper.Misc.cs" />
     <Compile Include="Engine\Graphics\GI\LightMapResources.cs" />
     <Compile Include="Engine\Graphics\GI\LightMapGroup.cs" />
+    <Compile Include="Engine\Graphics\GI\Radiosity.cs" />
     <Compile Include="Engine\Graphics\GI\RadiositySettings.cs" />
     <Compile Include="Engine\Graphics\GpuData.cs" />
     <Compile Include="Engine\Graphics\HdrFrame.cs" />
@@ -552,7 +553,7 @@
     <Compile Include="Engine\Graphics\Lights\LightGrid.cs" />
     <Compile Include="Engine\Graphics\Lights\CubeMapFilter.cs" />
     <Compile Include="Engine\Graphics\Lights\LightManager.cs" />
-    <Compile Include="Engine\Graphics\GI\LightMapGBuffer.cs" />
+    <Compile Include="Engine\Graphics\GI\LightMapContent.cs" />
     <Compile Include="Engine\Graphics\Lights\LightProbe.cs" />
     <Compile Include="Engine\Graphics\Lights\LightProbeContext.cs" />
     <Compile Include="Engine\Graphics\Lights\LightSet.cs" />
@@ -643,7 +644,7 @@
     <Compile Include="Engine\Graphics\VTTileLoader.cs" />
     <Compile Include="Engine\Imaging\ImageText.cs" />
     <Compile Include="Engine\Imaging\ImageLib.cs" />
-    <Compile Include="Engine\Imaging\GenericImageMips.cs" />
+    <Compile Include="Engine\Imaging\MipChain.cs" />
     <Compile Include="Engine\Imaging\GenericVolume.cs" />
     <Compile Include="Engine\Imaging\Image.cs" />
     <Compile Include="Engine\Imaging\Sampler.cs" />

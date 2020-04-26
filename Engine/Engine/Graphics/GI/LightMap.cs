@@ -15,139 +15,135 @@ using Fusion.Build.Mapping;
 using System.Threading.Tasks;
 using System.IO;
 using Fusion.Core.Content;
+using Fusion.Engine.Graphics.GI;
 
 namespace Fusion.Engine.Graphics.Lights {
 
-	[ContentLoader(typeof(IrradianceMap))]
+	// #TODO -- rename to FormFactorLoader
+	[ContentLoader(typeof(LightMap))]
 	public class IrradianceMapLoader : ContentLoader {
 
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 		{
-			return new IrradianceMap( content.Game.RenderSystem, stream );
+			return new LightMap( content.Game.RenderSystem, stream );
 		}
 	}
 
-
-	public class IrradianceMap : DisposableBase {
+	// #TODO -- rename to FormFactor
+	public class LightMap : DisposableBase {
 
 		readonly RenderSystem rs;
 
-		readonly Image<SHL1>	irradianceR;
-		readonly Image<SHL1>	irradianceG;
-		readonly Image<SHL1>	irradianceB;
-		readonly Image<SHL1>	temporary;
-		readonly int width;
-		readonly int height;
+		readonly int	width;
+		readonly int	height;
 
-		public Image<SHL1>	IrradianceRed	 { get { return irradianceR; } }
-		public Image<SHL1>	IrradianceGreen	 { get { return irradianceG; } }
-		public Image<SHL1>	IrradianceBlue	 { get { return irradianceB; } }
+		public int Width { get { return width; } }
+		public int Height { get { return height; } }
 
-		internal Texture2D	IrradianceTextureRed	{ get { return rs.LightMapResources.LightMapR; } }
-		internal Texture2D	IrradianceTextureGreen	{ get { return rs.LightMapResources.LightMapG; } }
-		internal Texture2D	IrradianceTextureBlue	{ get { return rs.LightMapResources.LightMapB; } }
+		//	#TODO -- make private and gain access through properties:
+		internal Texture2D			albedo		;
+		internal Texture2D			position	;
+		internal Texture2D			normal		;
+		internal Texture2D			area		;
+		internal Texture2D			sky			;
+		internal Texture2D			indexMap	;
+		internal Texture3D			indexVol	;
+		internal FormattedBuffer	indices		;
 
+		internal Texture2D	IrradianceTextureRed	{ get { return albedo; } }
+		internal Texture2D	IrradianceTextureGreen	{ get { return normal; } }
+		internal Texture2D	IrradianceTextureBlue	{ get { return sky; } }
 
 		readonly Dictionary<Guid,Rectangle> regions = new Dictionary<Guid, Rectangle>();
-		
 
-		public IrradianceMap ( RenderSystem rs, int width, int height )
+
+
+		public LightMap ( RenderSystem rs, Stream stream )
 		{
 			this.rs		=	rs;
 
-			this.width	=	width;
-			this.height	=	height;
-
-			irradianceR	=	new Image<SHL1>( width, height );
-			irradianceG	=	new Image<SHL1>( width, height );
-			irradianceB	=	new Image<SHL1>( width, height );
-			temporary	=	new Image<SHL1>( width, height );
-		}
-
-
-
-		public IrradianceMap ( RenderSystem rs, Stream stream )
-		{
-			this.rs		=	rs;
-
-			using ( var reader = new BinaryReader( stream ) ) 
+			using ( var reader = new BinaryReader( stream ) )
 			{
-				reader.ExpectFourCC("IRM1", "irradiance map format. IRM1 expected.");
-				reader.ExpectFourCC("RGN1", "irradiance map format. RGN1 expected.");
+				const int mips = RadiositySettings.MapPatchLevels;
 
-				int count = reader.ReadInt32();
-
-				for ( int i=0; i<count; i++ ) 
-				{
-					var guid	= reader.Read<Guid>();
-					var region	= reader.Read<Rectangle>();
-					regions.Add( guid, region );
-				}
-
-				reader.ExpectFourCC("MAP1", "irradiance map format. MAP1 expected.");
+				//	write header :
+				reader.ExpectFourCC("RAD1", "bad lightmap format");
 
 				width	=	reader.ReadInt32();
 				height	=	reader.ReadInt32();
 
-				width	=	RenderSystem.LightmapSize;
-				height	=	RenderSystem.LightmapSize;
+				albedo		=	new Texture2D( rs.Device, width, height, ColorFormat.Rgba8,		mips,	false );
+				position	=	new Texture2D( rs.Device, width, height, ColorFormat.Rgb32F,	mips,	false );
+				normal		=	new Texture2D( rs.Device, width, height, ColorFormat.Rgba8,		mips,	false );
+				area		=	new Texture2D( rs.Device, width, height, ColorFormat.R32F,		mips,	false );
+				sky			=	new Texture2D( rs.Device, width, height, ColorFormat.Rgba8,		1,		false );
+				indexMap	=	new Texture2D( rs.Device, width, height, ColorFormat.R32,		1,		false );
+				// #TODO #LIGHTMAP -- create volume
 
-				IrradianceTextureRed	.SetData( reader.Read<Half4>( width * height ) );
-				IrradianceTextureGreen	.SetData( reader.Read<Half4>( width * height ) );
-				IrradianceTextureBlue	.SetData( reader.Read<Half4>( width * height ) );
-			}
-		}
+				//	read regions :
+				reader.ExpectFourCC("RGN1", "bad lightmap format");
 
+				int regionCount = reader.ReadInt32();
+				regions		=	new Dictionary<Guid, Rectangle>();
 
-
-		public void WriteToStream ( Stream stream )
-		{
-			using ( var writer = new BinaryWriter( stream ) ) {
-
-				writer.WriteFourCC("IRM1");
-
-				writer.WriteFourCC("RGN1");
-
-				writer.Write( regions.Count );
-				foreach ( var pair in regions ) {
-					writer.Write( pair.Key );
-					writer.Write( pair.Value );
+				for (int i=0; i<regionCount; i++)
+				{
+					regions.Add( reader.Read<Guid>(), reader.Read<Rectangle>() );
 				}
 
-				writer.WriteFourCC("MAP1");
+				//	write gbuffer :
+				reader.ExpectFourCC("GBF1", "bad lightmap format");
 
-				writer.Write( width );
-				writer.Write( height );
+				reader.ExpectFourCC("POS1", "bad lightmap format");
+				for (int i=0; i<mips; i++) position.SetData( i, Image<Vector3>.FromStream(stream).RawImageData );
 
-				writer.Write( irradianceR.Convert( sh => sh.ToHalf4() ).RawImageData );
-				writer.Write( irradianceG.Convert( sh => sh.ToHalf4() ).RawImageData );
-				writer.Write( irradianceB.Convert( sh => sh.ToHalf4() ).RawImageData );
+				reader.ExpectFourCC("NRM1", "bad lightmap format");
+				for (int i=0; i<mips; i++) normal.SetData( i, Image<Color>.FromStream(stream).RawImageData );
+
+				reader.ExpectFourCC("ALB1", "bad lightmap format");
+				for (int i=0; i<mips; i++) albedo.SetData( i, Image<Color>.FromStream(stream).RawImageData );
+
+				reader.ExpectFourCC("ARE1", "bad lightmap format");
+				for (int i=0; i<mips; i++) area.SetData( i, Image<float>.FromStream(stream).RawImageData );
+
+				reader.ExpectFourCC("SKY1", "bad lightmap format");
+				sky.SetData( Image<Color>.FromStream(stream).RawImageData );
+
+				//	write index map
+				reader.ExpectFourCC("MAP1", "bad lightmap format");
+				indexMap.SetData( Image<uint>.FromStream(stream).RawImageData );
+
+				// #TODO #LIGHTMAPS - write volume indices
+				reader.ExpectFourCC("VOL1", "bad lightmap format");
+
+				//	write indices
+				reader.ExpectFourCC("IDX1", "bad lightmap format");
+				int numIndices = reader.ReadInt32();
+
+				indices	=	new FormattedBuffer( rs.Device, Drivers.Graphics.VertexFormat.UInt, numIndices, StructuredBufferFlags.None );
+				indices.SetData( reader.Read<uint>(numIndices) );
 			}
 		}
+
 
 
 		protected override void Dispose( bool disposing )
 		{
+			if (disposing)
+			{
+				SafeDispose( ref albedo		);
+				SafeDispose( ref position	);
+				SafeDispose( ref normal		);
+				SafeDispose( ref area		);
+				SafeDispose( ref sky		);	
+				SafeDispose( ref indexMap	);
+				SafeDispose( ref indexVol	);
+				SafeDispose( ref indices	);
+			}
+
 			base.Dispose( disposing );
 		}
 
-
-
-		public void UpdateGPUTextures ()
-		{
-			IrradianceTextureRed	.SetData( irradianceR.Convert( sh => sh.ToHalf4() ).RawImageData );
-			IrradianceTextureGreen	.SetData( irradianceG.Convert( sh => sh.ToHalf4() ).RawImageData );
-			IrradianceTextureBlue	.SetData( irradianceB.Convert( sh => sh.ToHalf4() ).RawImageData );
-		}
-
-
-		public void FillAmbient ( Color4 ambient )
-		{
-			irradianceR.Fill( new SHL1( ambient.Red,	0,0,0 ) );
-			irradianceG.Fill( new SHL1( ambient.Green,	0,0,0 ) );
-			irradianceB.Fill( new SHL1( ambient.Blue,	0,0,0 ) );
-			UpdateGPUTextures();
-		}
 
 
 		public void AddRegion( Guid guid, Rectangle region )

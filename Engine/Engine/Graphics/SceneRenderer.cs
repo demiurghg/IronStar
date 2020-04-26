@@ -246,9 +246,9 @@ namespace Fusion.Engine.Graphics {
 			device.GfxResources[ regShadowMapParticles		]	=	rs.LightManager.ShadowMap.ParticleShadow;
 			device.GfxResources[ regAmbientOcclusion		]	=	rs.RenderWorld.HdrFrame.AOBuffer.GetShaderResource(0);
 
-			device.GfxResources[ regIrradianceMapR			]	=	rs.RenderWorld.IrradianceMap?.IrradianceTextureRed;
-			device.GfxResources[ regIrradianceMapG			]	=	rs.RenderWorld.IrradianceMap?.IrradianceTextureGreen;
-			device.GfxResources[ regIrradianceMapB			]	=	rs.RenderWorld.IrradianceMap?.IrradianceTextureBlue;
+			device.GfxResources[ regIrradianceMapR			]	=	rs.Radiosity.IrradianceR;
+			device.GfxResources[ regIrradianceMapG			]	=	rs.Radiosity.IrradianceG;
+			device.GfxResources[ regIrradianceMapB			]	=	rs.Radiosity.IrradianceB;
 
 			device.GfxResources[ regIrradianceVolumeR		]	=	rs.RenderWorld.IrradianceVolume?.LightVolumeR;
 			device.GfxResources[ regIrradianceVolumeG		]	=	rs.RenderWorld.IrradianceVolume?.LightVolumeG;

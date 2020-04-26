@@ -276,3 +276,4 @@ paket-files/
 *.irrcache
 *.irrmap
 *.irrvol
+*.rff

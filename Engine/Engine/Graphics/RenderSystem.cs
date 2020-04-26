@@ -15,6 +15,7 @@ using Fusion.Engine.Graphics.Lights;
 using Fusion.Engine.Imaging;
 using BEPUphysics.Paths;
 using System.IO;
+using Fusion.Engine.Graphics.GI;
 
 namespace Fusion.Engine.Graphics {
 
@@ -37,6 +38,7 @@ namespace Fusion.Engine.Graphics {
 		internal Sky				Sky				{ get { return Game.GetService< Sky				 >(); } }
 		internal Fog				Fog				{ get { return Game.GetService< Fog				 >(); } }
 		internal LightMapDebugger	LightMapDebugger{ get { return Game.GetService< LightMapDebugger >(); } }
+		internal Radiosity			Radiosity		{ get { return Game.GetService< Radiosity		 >(); } }
 
 		/// <summary>
 		/// Gets render counters.
@@ -123,6 +125,8 @@ namespace Fusion.Engine.Graphics {
 			Game.AddServiceAndComponent( new BitonicSort		( this ) );
 			Game.AddServiceAndComponent( new VTSystem			( this ) );
 			Game.AddServiceAndComponent( new LightMapDebugger	( this ) );
+
+			Game.AddServiceAndComponent( new Radiosity			( this ) );
 
 			Device.DisplayBoundsChanged += (s,e) => {
 				DisplayBoundsChanged?.Invoke( s, e );

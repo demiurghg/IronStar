@@ -1,0 +1,68 @@
+// ---------------- CONSTANT VALUES ---------------- //
+
+static const int BlockSizeX = 16;
+static const int BlockSizeY = 16;
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// Fusion.Engine.Graphics.GI.Radiosity+RADIOSITY
+// Marshal.SizeOf = 64
+struct RADIOSITY {
+	uint       RegionX;                       // offset:    0
+	uint       RegionY;                       // offset:    4
+	uint       RegionWidth;                   // offset:    8
+	uint       RegionHeight;                  // offset:   12
+	float      SkyFactor;                     // offset:   16
+	float      BounceFactor;                  // offset:   20
+};
+
+// Fusion.Engine.Graphics.ShadowMap+CASCADE_SHADOW
+// Marshal.SizeOf = 576
+struct CASCADE_SHADOW {
+	float4x4   CascadeViewProjection0;        // offset:    0
+	float4x4   CascadeViewProjection1;        // offset:   64
+	float4x4   CascadeViewProjection2;        // offset:  128
+	float4x4   CascadeViewProjection3;        // offset:  192
+	float4x4   CascadeGradientMatrix0;        // offset:  256
+	float4x4   CascadeGradientMatrix1;        // offset:  320
+	float4x4   CascadeGradientMatrix2;        // offset:  384
+	float4x4   CascadeGradientMatrix3;        // offset:  448
+	float4     CascadeScaleOffset0;           // offset:  512
+	float4     CascadeScaleOffset1;           // offset:  528
+	float4     CascadeScaleOffset2;           // offset:  544
+	float4     CascadeScaleOffset3;           // offset:  560
+};
+
+// Fusion.Engine.Graphics.GpuData+DIRECT_LIGHT
+// Marshal.SizeOf = 48
+struct DIRECT_LIGHT {
+	float4     DirectLightDirection;          // offset:    0
+	float4     DirectLightIntensity;          // offset:   16
+	float      DirectLightAngularSize;        // offset:   32
+	float      Pad0;                          // offset:   36
+	float      Pad1;                          // offset:   40
+	float      Pad2;                          // offset:   44
+};
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+cbuffer __buffer0 : register(b0) {
+	RADIOSITY Radiosity : packoffset(c0);
+};
+cbuffer __buffer1 : register(b1) {
+	CASCADE_SHADOW CascadeShadow : packoffset(c0);
+};
+cbuffer __buffer2 : register(b2) {
+	DIRECT_LIGHT DirectLight : packoffset(c0);
+};
+Texture2D<float4>              Position                       : register(t0);
+Texture2D<float4>              Albedo                         : register(t1);
+Texture2D<float4>              Normal                         : register(t2);
+Texture2D<float4>              Area                           : register(t3);
+Texture2D<uint>                IndexMap                       : register(t4);
+Buffer<uint>                   Indices                        : register(t5);
+Texture2D<uint>                Radiance                       : register(t6);
+RWTexture2D<float4>            RadianceUav                    : register(u0);
+RWTexture2D<float4>            IrradianceR                    : register(u1);
+RWTexture2D<float4>            IrradianceG                    : register(u2);
+RWTexture2D<float4>            IrradianceB                    : register(u3);

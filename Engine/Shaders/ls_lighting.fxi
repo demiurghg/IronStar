@@ -11,6 +11,15 @@
 	Lighting functions :
 ------------------------------------------------------------------------------*/
 
+float LightFalloff( float dist, float max_range )
+{
+	float fade = 0;
+	fade = saturate(1 - (dist / max_range));
+	fade *= fade;
+	return fade;
+}
+
+
 void ComputeDiffuseSpecular( inout SURFACE surface )
 {
 	// pow3 help to reduce white fringes in metallic PBR pipeline:
@@ -47,7 +56,7 @@ FLUX ComputePointLightFlux( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc 
 	float3 intensity	=	light.IntensityFar.rgb;
 	float  sourceRadius	=	light.SourceRadius;
 	float3 lightDir		= 	geometry.position - position;
-	float  falloff		= 	LinearFalloff( length(lightDir), radius );
+	float  falloff		= 	LightFalloff( length(lightDir), radius );
 	float2 smSizeRcp	=	1.0f / GetTextureSize( rc.ShadowMap );
 		
 	FLUX flux;
@@ -77,13 +86,22 @@ float3	ComputeLighting( FLUX flux, GEOMETRY geometry, SURFACE surface, CAMERA ca
 	
 	float3	totalLight	=	0;
 	
-	totalLight.rgb 		+= 	Lambert ( surface.normal.xyz, lightDir, flux.intensity, surface.diffuse );
+	totalLight.rgb 		+= 	nDotL * Lambert ( flux.intensity, surface.diffuse );
 
 	#ifndef LIGHTING_DIFFUSE_ONLY	
 	totalLight.rgb 		+= 	nDotL * CookTorrance( surface.normal.xyz, viewDir, lightDir, flux.intensity, surface.specular, surface.roughness, 0.01f );
 	#endif
 	
 	return totalLight;
+}
+
+
+float3	ComputeLighting( FLUX flux, GEOMETRY geometry, float3 albedo )
+{
+	float3 	lightDir	=	-flux.direction;
+	float  	nDotL		= 	max( 0, dot(geometry.normal, lightDir) );
+	
+	return 	nDotL * Lambert ( flux.intensity, albedo );
 }
 
 

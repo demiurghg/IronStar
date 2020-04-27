@@ -154,7 +154,7 @@ namespace Fusion.Development {
 
 		private void buildContent_Click ( object sender, EventArgs e )
 		{
-			game.Invoker.ExecuteString("contentBuild");
+			game.Invoker.ExecuteStringImmediate("contentBuild");
 		}
 
 
@@ -170,7 +170,7 @@ namespace Fusion.Development {
 
 			if (r==DialogResult.Yes) 
 			{				
-				game.Invoker.ExecuteString("contentBuild /force");
+				game.Invoker.ExecuteStringImmediate("contentBuild /force");
 			}
 		}
 

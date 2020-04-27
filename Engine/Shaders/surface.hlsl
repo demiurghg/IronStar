@@ -44,7 +44,6 @@ struct GBuffer {
 
 #include "auto/surface.fxi"
 
-#include "brdf.fxi"
 #include "gamma.fxi"
 #include "shl1.fxi"
 

@@ -242,8 +242,8 @@ namespace Fusion.Engine.Graphics {
 			device.GfxResources[ regClusterDecalBuffer		]	=	rs.LightManager.LightGrid.DecalDataGpu;						
 
 			device.GfxResources[ regDecalImages				]	=	rs.RenderWorld.LightSet?.DecalAtlas?.Texture?.Srv;
-			device.GfxResources[ regShadowMap				]	=	rs.LightManager.ShadowMap.ColorBuffer;
-			device.GfxResources[ regShadowMapParticles		]	=	rs.LightManager.ShadowMap.ParticleShadow;
+			device.GfxResources[ regShadowMap				]	=	rs.LightManager.ShadowMap.ShadowTexture;
+			device.GfxResources[ regShadowMapParticles		]	=	rs.LightManager.ShadowMap.ParticleShadowTexture;
 			device.GfxResources[ regAmbientOcclusion		]	=	rs.RenderWorld.HdrFrame.AOBuffer.GetShaderResource(0);
 
 			device.GfxResources[ regIrradianceMapR			]	=	rs.Radiosity.IrradianceR;

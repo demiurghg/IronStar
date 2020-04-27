@@ -57,9 +57,9 @@ namespace Fusion.Engine.Graphics {
 		/// Gets color shadow map buffer.
 		/// Actually stores depth value.
 		/// </summary>
-		public RenderTarget2D ColorBuffer {
+		public RenderTarget2D ShadowTexture {
 			get {
-				return colorBuffer;
+				return shadowTexture;
 			}
 		}
 
@@ -69,7 +69,7 @@ namespace Fusion.Engine.Graphics {
 		/// Gets color shadow map buffer.
 		/// Actually stores depth value.
 		/// </summary>
-		public RenderTarget2D ParticleShadow {
+		public RenderTarget2D ParticleShadowTexture {
 			get {
 				return prtShadow;
 			}
@@ -91,7 +91,7 @@ namespace Fusion.Engine.Graphics {
 		readonly int	maxRegionSize;
 		readonly int	minRegionSize;
 		DepthStencil2D	depthBuffer;
-		RenderTarget2D	colorBuffer;
+		RenderTarget2D	shadowTexture;
 		RenderTarget2D	prtShadow;
 		ConstantBuffer	constCascadeShadow;
 
@@ -122,7 +122,7 @@ namespace Fusion.Engine.Graphics {
 
 			allocator			=	new Allocator2D(shadowMapSize);
 
-			colorBuffer			=	new RenderTarget2D( device, ColorFormat.R32F,		shadowMapSize, shadowMapSize );
+			shadowTexture			=	new RenderTarget2D( device, ColorFormat.R32F,		shadowMapSize, shadowMapSize );
 			depthBuffer			=	new DepthStencil2D( device, DepthFormat.D24S8,		shadowMapSize, shadowMapSize );
 			prtShadow			=	new RenderTarget2D( device, ColorFormat.Rgba8_sRGB,	shadowMapSize, shadowMapSize );
 
@@ -143,7 +143,7 @@ namespace Fusion.Engine.Graphics {
 		protected override void Dispose ( bool disposing )
 		{
 			if (disposing) {
-				SafeDispose( ref colorBuffer );
+				SafeDispose( ref shadowTexture );
 				SafeDispose( ref depthBuffer );
 				SafeDispose( ref prtShadow );
 			}
@@ -159,7 +159,7 @@ namespace Fusion.Engine.Graphics {
 		public void Clear ()
 		{
 			device.Clear( depthBuffer.Surface, 1, 0 );
-			device.Clear( colorBuffer.Surface, Color4.White );
+			device.Clear( shadowTexture.Surface, Color4.White );
 			device.Clear( prtShadow.Surface, Color4.White );
 		}
 
@@ -390,13 +390,13 @@ namespace Fusion.Engine.Graphics {
 			using (new PixEvent("Shadow Maps")) {
 
 				device.Clear( depthBuffer.Surface, 1, 0 );
-				device.Clear( colorBuffer.Surface, Color4.White );
+				device.Clear( shadowTexture.Surface, Color4.White );
 
 				var shadowCamera	=	renderWorld.ShadowCamera;
 
 				foreach ( var cascade in cascades ) {
 
-					var contextSolid  = new ShadowContext( shadowCamera, cascade, depthBuffer.Surface, colorBuffer.Surface );
+					var contextSolid  = new ShadowContext( shadowCamera, cascade, depthBuffer.Surface, shadowTexture.Surface );
 
 					shadowCamera.SetView( cascade.ViewMatrix );
 					shadowCamera.SetProjection( cascade.ProjectionMatrix );
@@ -406,7 +406,7 @@ namespace Fusion.Engine.Graphics {
 
 				foreach ( var spot in lights ) {
 
-					var contextSolid  = new ShadowContext( shadowCamera, spot, depthBuffer.Surface, colorBuffer.Surface );
+					var contextSolid  = new ShadowContext( shadowCamera, spot, depthBuffer.Surface, shadowTexture.Surface );
 
 					shadowCamera.SetView( spot.SpotView );
 					shadowCamera.SetProjection( spot.Projection );

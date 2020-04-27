@@ -45,7 +45,7 @@ float3 ComputeClusteredLighting ( float3 worldPos )
 		if (type==LightTypeOmni) {
 			
 			float3 lightDir		= 	position - worldPos.xyz;
-			float  falloff		= 	LinearFalloff( length(lightDir), radius );
+			float  falloff		= 	LightFalloff( length(lightDir), radius );
 			
 			totalLight.rgb 		+= 	falloff * intensity;
 			
@@ -67,7 +67,7 @@ float3 ComputeClusteredLighting ( float3 worldPos )
 						//accumulatedShadow	*=	ShadowMask.SampleLevel( Sampler, lsPos.xy, 0 ).rgb;
 						
 				float3 	lightDir	= 	position - worldPos.xyz;
-				float3 	falloff		= 	LinearFalloff( length(lightDir), radius ) * accumulatedShadow;
+				float3 	falloff		= 	LightFalloff( length(lightDir), radius ) * accumulatedShadow;
 				
 				totalLight.rgb 		+= 	falloff * intensity;
 			}

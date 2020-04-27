@@ -3,8 +3,6 @@
 	Clustered lighting rendering :
 -----------------------------------------------------------------------------*/
 
-#include "brdf.fxi"
-
 #define NO_DECALS
 #define NO_CUBEMAPS
 #include "ls_core.fxi"

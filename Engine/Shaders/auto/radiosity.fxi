@@ -2,8 +2,33 @@
 
 static const int BlockSizeX = 16;
 static const int BlockSizeY = 16;
+static const uint LightTypeOmni = 1;
+static const uint LightTypeSpotShadow = 3;
+static const uint LightSpotShapeRound = 131072;
+static const uint LightSpotShapeSquare = 65536;
 
 // ---------------- DATA STRUCTURES ---------------- //
+
+// Fusion.Engine.Graphics.GpuData+CAMERA
+// Marshal.SizeOf = 352
+struct CAMERA {
+	float4x4   Projection;                    // offset:    0
+	float4x4   View;                          // offset:   64
+	float4x4   ViewProjection;                // offset:  128
+	float4x4   ViewInverted;                  // offset:  192
+	float4     CameraForward;                 // offset:  256
+	float4     CameraRight;                   // offset:  272
+	float4     CameraUp;                      // offset:  288
+	float4     CameraPosition;                // offset:  304
+	float      LinearizeDepthScale;           // offset:  320
+	float      LinearizeDepthBias;            // offset:  324
+	float      FarDistance;                   // offset:  328
+	float      Pad0;                          // offset:  332
+	float      CameraTangentX;                // offset:  336
+	float      CameraTangentY;                // offset:  340
+	float      Pad1;                          // offset:  344
+	float      Pad2;                          // offset:  348
+};
 
 // Fusion.Engine.Graphics.GI.Radiosity+RADIOSITY
 // Marshal.SizeOf = 64
@@ -44,15 +69,29 @@ struct DIRECT_LIGHT {
 	float      Pad2;                          // offset:   44
 };
 
+// Fusion.Engine.Graphics.SceneRenderer+LIGHT
+// Marshal.SizeOf = 120
+struct LIGHT {
+	float4x4   ViewProjection;                // offset:    0
+	float4     PositionRadius;                // offset:   64
+	float4     IntensityFar;                  // offset:   80
+	float4     ShadowScaleOffset;             // offset:   96
+	uint       LightType;                     // offset:  112
+	float      SourceRadius;                  // offset:  116
+};
+
 // ---------------- SHADER RESOURCES ---------------- //
 
 cbuffer __buffer0 : register(b0) {
-	RADIOSITY Radiosity : packoffset(c0);
+	CAMERA Camera : packoffset(c0);
 };
 cbuffer __buffer1 : register(b1) {
-	CASCADE_SHADOW CascadeShadow : packoffset(c0);
+	RADIOSITY Radiosity : packoffset(c0);
 };
 cbuffer __buffer2 : register(b2) {
+	CASCADE_SHADOW CascadeShadow : packoffset(c0);
+};
+cbuffer __buffer3 : register(b3) {
 	DIRECT_LIGHT DirectLight : packoffset(c0);
 };
 Texture2D<float4>              Position                       : register(t0);
@@ -61,7 +100,12 @@ Texture2D<float4>              Normal                         : register(t2);
 Texture2D<float4>              Area                           : register(t3);
 Texture2D<uint>                IndexMap                       : register(t4);
 Buffer<uint>                   Indices                        : register(t5);
-Texture2D<uint>                Radiance                       : register(t6);
+Texture2D<float4>              Radiance                       : register(t6);
+Texture2D<float4>              ShadowMap                      : register(t7);
+Texture2D<float4>              ShadowMask                     : register(t8);
+StructuredBuffer<LIGHT>        Lights                         : register(t9);
+SamplerState                   LinearSampler                  : register(s0);
+SamplerComparisonState         ShadowSampler                  : register(s1);
 RWTexture2D<float4>            RadianceUav                    : register(u0);
 RWTexture2D<float4>            IrradianceR                    : register(u1);
 RWTexture2D<float4>            IrradianceG                    : register(u2);

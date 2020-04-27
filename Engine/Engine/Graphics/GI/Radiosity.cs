@@ -22,10 +22,15 @@ namespace Fusion.Engine.Graphics.GI
 		[ShaderDefine]	const int BlockSizeX = 16;
 		[ShaderDefine]	const int BlockSizeY = 16;
 
+		[ShaderDefine]	const uint LightTypeOmni		=	SceneRenderer.LightTypeOmni;
+		[ShaderDefine]	const uint LightTypeSpotShadow	=	SceneRenderer.LightTypeSpotShadow;
+		[ShaderDefine]	const uint LightSpotShapeRound	=	SceneRenderer.LightSpotShapeRound;
+		[ShaderDefine]	const uint LightSpotShapeSquare	=	SceneRenderer.LightSpotShapeSquare;
 
-		static FXConstantBuffer<RADIOSITY>					regRadiosity		=	new CRegister(0, "Radiosity"		);
-		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow	=	new CRegister(1, "CascadeShadow"	);
-		static FXConstantBuffer<GpuData.DIRECT_LIGHT>		regDirectLight		=	new CRegister(2, "DirectLight"		);
+		static FXConstantBuffer<GpuData.CAMERA>				regCamera			=	new CRegister(0, "Camera"		);
+		static FXConstantBuffer<RADIOSITY>					regRadiosity		=	new CRegister(1, "Radiosity"		);
+		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow	=	new CRegister(2, "CascadeShadow"	);
+		static FXConstantBuffer<GpuData.DIRECT_LIGHT>		regDirectLight		=	new CRegister(3, "DirectLight"		);
 
 		static FXTexture2D<Vector4>							regPosition			=	new TRegister(0, "Position"			);
 		static FXTexture2D<Vector4>							regAlbedo			=	new TRegister(1, "Albedo"			);
@@ -33,7 +38,13 @@ namespace Fusion.Engine.Graphics.GI
 		static FXTexture2D<Vector4>							regArea				=	new TRegister(3, "Area"				);
 		static FXTexture2D<uint>							regIndexMap			=	new TRegister(4, "IndexMap"			);
 		static FXBuffer<uint>								regIndices			=	new TRegister(5, "Indices"			);
-		static FXTexture2D<uint>							regRadiance			=	new TRegister(6, "Radiance"			);
+		static FXTexture2D<Vector4>							regRadiance			=	new TRegister(6, "Radiance"			);
+		static FXTexture2D<Vector4>							regShadowMap		=	new TRegister(7, "ShadowMap"		);
+		static FXTexture2D<Vector4>							regShadowMask		=	new TRegister(8, "ShadowMask"		);
+		static FXStructuredBuffer<SceneRenderer.LIGHT>		regLights			=	new TRegister(9, "Lights"			);
+
+		static FXSamplerState								regSamplerLinear	=	new SRegister(0, "LinearSampler"	);
+		static FXSamplerComparisonState						regSamplerShadow	=	new SRegister(1, "ShadowSampler"	);
 
 		static FXRWTexture2D<Vector4>						regRadianceUav		=	new URegister(0, "RadianceUav"	);
 		static FXRWTexture2D<Vector4>						regIrradianceR		=	new URegister(1, "IrradianceR"	);
@@ -181,18 +192,48 @@ namespace Fusion.Engine.Graphics.GI
 			{
 				device.ResetStates();
 
-				device.ComputeResources[ regPosition	]	=	lightMap.position	;
-				device.ComputeResources[ regAlbedo		]	=	lightMap.albedo		;
-				device.ComputeResources[ regNormal		]	=	lightMap.normal		;
-				device.ComputeResources[ regArea		]	=	lightMap.area		;
-				device.ComputeResources[ regIndexMap	]	=	lightMap.indexMap	;
-				device.ComputeResources[ regIndices		]	=	lightMap.indices	;
+				device.ComputeConstants[ regCamera			]	=	rs.RenderWorld.Camera.CameraData;
+				device.ComputeConstants[ regRadiosity		]	=	null;
+				device.ComputeConstants[ regCascadeShadow	]	=	rs.LightManager.ShadowMap.GetCascadeShadowConstantBuffer();
+				device.ComputeConstants[ regDirectLight		]	=	rs.LightManager.DirectLightData;
 
-				device.PipelineState	=	factory[ (int)Flags.LIGHTING ];			
+				device.ComputeResources[ regPosition		]	=	lightMap.position	;
+				device.ComputeResources[ regAlbedo			]	=	lightMap.albedo		;
+				device.ComputeResources[ regNormal			]	=	lightMap.normal		;
+				device.ComputeResources[ regArea			]	=	lightMap.area		;
+				device.ComputeResources[ regIndexMap		]	=	lightMap.indexMap	;
+				device.ComputeResources[ regIndices			]	=	lightMap.indices	;
+
+				device.ComputeSamplers[ regSamplerShadow	]	=	SamplerState.ShadowSampler;
+				device.ComputeSamplers[ regSamplerLinear	]	=	SamplerState.LinearClamp;
+
+				device.ComputeResources[ regShadowMap		]	=	rs.LightManager.ShadowMap.ShadowTexture;
+				device.ComputeResources[ regShadowMask		]	=	rs.LightManager.ShadowMap.ParticleShadowTexture;
+
+				using ( new PixEvent( "Lighting" ) )
+				{
+					device.PipelineState    =   factory[(int)Flags.LIGHTING];			
 				
-				device.SetComputeUnorderedAccess( regRadianceUav, radiance.Surface.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regRadianceUav, radiance.Surface.UnorderedAccess );
 					
-				device.Dispatch( new Int2( lightMap.Width, lightMap.Height ), new Int2( BlockSizeX, BlockSizeY ) );
+					device.Dispatch( new Int2( lightMap.Width, lightMap.Height ), new Int2( BlockSizeX, BlockSizeY ) );
+				}
+
+				using ( new PixEvent( "Collapse" ) )
+				{
+					device.PipelineState    =   factory[(int)Flags.COLLAPSE];			
+
+					for (int mip=1; mip<RadiositySettings.MapPatchLevels; mip++)
+					{
+						device.SetComputeUnorderedAccess( regRadianceUav,		radiance.GetSurface( mip ).UnorderedAccess );
+						device.ComputeResources			[ regRadiance	]	=	radiance.GetShaderResource( mip - 1 );
+
+						int width	=	lightMap.Width >> mip;
+						int height	=	lightMap.Width >> mip;
+
+						device.Dispatch( new Int2( width, height ), new Int2( BlockSizeX, BlockSizeY ) );
+					}
+				}
 			}
 		}
 

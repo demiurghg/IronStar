@@ -242,7 +242,7 @@ namespace Fusion.Engine.Graphics {
 				device.ComputeResources[0]    =   colorData;
 				device.ComputeResources[1]    =   normalData;
 				device.ComputeResources[2]    =   rs.Sky.SkyCube;
-				device.ComputeResources[3]	=	shadowMap.ColorBuffer;
+				device.ComputeResources[3]	=	shadowMap.ShadowTexture;
 				device.ComputeResources[4]	=	null;
 				device.ComputeResources[5]	=	null;
 				device.ComputeSamplers[0]		=	SamplerState.PointClamp;

@@ -186,7 +186,7 @@ namespace Fusion.Engine.Graphics {
 			device.ComputeResources[1]		=	rs.LightManager.LightGrid.GridTexture;
 			device.ComputeResources[2]		=	rs.LightManager.LightGrid.IndexDataGpu;
 			device.ComputeResources[3]		=	rs.LightManager.LightGrid.LightDataGpu;
-			device.ComputeResources[4]		=	rs.LightManager.ShadowMap.ColorBuffer;
+			device.ComputeResources[4]		=	rs.LightManager.ShadowMap.ShadowTexture;
 		}
 
 

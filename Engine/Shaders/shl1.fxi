@@ -37,4 +37,19 @@ float EvalSHL1Smooth( float4 shl, float3 ndir )
 	//return (0.5 + dot(L1n,ndir)) * 2 * L0;
 }
 
+
+float4 SHL1EvaluateDiffuse ( float intensity, float3 normalizedDir )
+{
+	float4 sh;
+	float3 p = normalizedDir;
+	
+	sh.x = intensity;
+	sh.y = intensity * p.y;
+	sh.z = intensity * p.z;
+	sh.w = intensity * p.x;
+
+	return sh;
+}
+
+
 #endif

@@ -371,10 +371,13 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		void UpdateInstanceAndLightMapping ()
 		{
-			if (irradianceMap!=null) {
-				foreach ( var instance in Instances ) {
-					if (instance.Group==InstanceGroup.Static) {
-						instance.LightMapScaleOffset = irradianceMap.GetRegionMadScaleOffset( instance.LightMapGuid );
+			if (rs.Radiosity.LightMap!=null) 
+			{
+				foreach ( var instance in Instances ) 
+				{
+					if (instance.Group==InstanceGroup.Static) 
+					{
+						instance.LightMapScaleOffset = rs.Radiosity.LightMap.GetRegionMadScaleOffset( instance.LightMapGuid );
 					}
 				}
 			}

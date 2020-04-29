@@ -101,10 +101,10 @@ namespace Fusion.Engine.Graphics.GI
 		}
 
 
-		public RenderTarget2D Radiance		{ get { return radiance; } }
-		public RenderTarget2D IrradianceR	{ get { return irradianceR; } }
-		public RenderTarget2D IrradianceG	{ get { return irradianceG; } }
-		public RenderTarget2D IrradianceB	{ get { return irradianceB; } }
+		public ShaderResource Radiance		{ get { return radiance; } }
+		public ShaderResource IrradianceR	{ get { return irradianceR; } }
+		public ShaderResource IrradianceG	{ get { return irradianceG; } }
+		public ShaderResource IrradianceB	{ get { return irradianceB; } }
 
 
 		RenderTarget2D	radiance	;
@@ -210,6 +210,7 @@ namespace Fusion.Engine.Graphics.GI
 				device.ComputeResources[ regShadowMap		]	=	rs.LightManager.ShadowMap.ShadowTexture;
 				device.ComputeResources[ regShadowMask		]	=	rs.LightManager.ShadowMap.ParticleShadowTexture;
 
+
 				using ( new PixEvent( "Lighting" ) )
 				{
 					device.PipelineState    =   factory[(int)Flags.LIGHTING];			
@@ -218,6 +219,7 @@ namespace Fusion.Engine.Graphics.GI
 					
 					device.Dispatch( new Int2( lightMap.Width, lightMap.Height ), new Int2( BlockSizeX, BlockSizeY ) );
 				}
+
 
 				using ( new PixEvent( "Collapse" ) )
 				{
@@ -234,6 +236,23 @@ namespace Fusion.Engine.Graphics.GI
 						device.Dispatch( new Int2( width, height ), new Int2( BlockSizeX, BlockSizeY ) );
 					}
 				}
+
+
+				using ( new PixEvent( "Integrate" ) )
+				{
+					device.PipelineState    =   factory[(int)Flags.INTEGRATE];			
+
+					device.SetComputeUnorderedAccess( regRadianceUav,		null );
+					device.SetComputeUnorderedAccess( regIrradianceR,		irradianceR.Surface.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regIrradianceG,		irradianceG.Surface.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regIrradianceB,		irradianceB.Surface.UnorderedAccess );
+					device.ComputeResources			[ regRadiance	]	=	radiance.GetShaderResource( 0 );
+
+					int width	=	lightMap.Width;
+					int height	=	lightMap.Width;
+
+					device.Dispatch( new Int2( lightMap.Width, lightMap.Height ), new Int2( BlockSizeX, BlockSizeY ) );
+				}
 			}
 		}
 
@@ -243,6 +262,15 @@ namespace Fusion.Engine.Graphics.GI
 		/*-----------------------------------------------------------------------------------------
 		 *	Utils :
 		-----------------------------------------------------------------------------------------*/
+
+		public static string DecodeLMAddressDebug( uint lmAddr )
+		{
+			if (lmAddr==0xFFFFFFFF) return "------------------------";
+			uint 	lmMip		=	(lmAddr >> 24) & 0xFF;
+			uint 	lmX			=	(lmAddr >> 12) & 0xFFF;
+			uint 	lmY			=	(lmAddr >>  0) & 0xFFF;
+			return string.Format("{0,2} [{1,4} {2,4}]", lmMip, lmX, lmY );
+		}
 
 		public static uint GetLMAddress( Int2 coords, int patchSize )
 		{
@@ -254,6 +282,21 @@ namespace Fusion.Engine.Graphics.GI
 			uint x		= (uint)(coords.X / patchSize) & 0xFFF;
 			uint y		= (uint)(coords.Y / patchSize) & 0xFFF;
 			uint mip	= (uint)MathUtil.LogBase2( patchSize ) & 0xFF;
+
+			return (mip << 24) | (x << 12) | (y);
+		}
+
+
+		public static uint GetLMAddress( Int3 coords )
+		{
+			if (coords.X<0 || coords.Y<0 || coords.X>=RenderSystem.LightmapSize || coords.Y>=RenderSystem.LightmapSize )
+			{
+				return 0xFFFFFFFF;
+			}
+
+			uint x		= (uint)(coords.X) & 0xFFF;
+			uint y		= (uint)(coords.Y) & 0xFFF;
+			uint mip	= (uint)(coords.Z);
 
 			return (mip << 24) | (x << 12) | (y);
 		}

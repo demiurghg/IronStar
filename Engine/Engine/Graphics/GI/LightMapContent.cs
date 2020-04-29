@@ -17,73 +17,71 @@ using Fusion.Core.Content;
 
 namespace Fusion.Engine.Graphics.Lights 
 {
-	public class LightMapContent 
+	public class LightMapContent
 	{
 		public readonly int Width;
 		public readonly int Height;
 
-		public readonly MipChain<Color>		Albedo;
-		public readonly MipChain<Vector3>	Position;
-		public readonly MipChain<Vector3>	Normal;
-		public readonly MipChain<float>		Area;
-		public readonly Image<byte>			Coverage;
-		public readonly Image<byte>			PatchSize;
-		public readonly Image<Vector3>		Sky;
-		public readonly Image<uint>			IndexMap;
-		public readonly List<uint>			Indices;
+		public readonly MipChain<Color>     Albedo;
+		public readonly MipChain<Vector3>   Position;
+		public readonly MipChain<Vector3>   Normal;
+		public readonly MipChain<float>     Area;
+		public readonly Image<byte>         Coverage;
+		public readonly Image<Vector3>      Sky;
+		public readonly Image<uint>         IndexMap;
+		public readonly List<uint>          Indices;
 
-		readonly Allocator2D				allocator;
+		readonly Allocator2D                allocator;
 
-		public IDictionary<Guid,Rectangle>	Regions { get { return regions; } }
+		public IDictionary<Guid, Rectangle> Regions { get { return regions; } }
 		readonly Dictionary<Guid, Rectangle> regions = new Dictionary<Guid, Rectangle>();
 		readonly Dictionary<string, uint> indexDict = new Dictionary<string, uint>();
-		
+
 		/// <summary>
 		/// Creates instance of the lightmap g-buffer :
 		/// </summary>
 		/// <param name="w"></param>
 		/// <param name="h"></param>
-		public LightMapContent( int size ) 
+		public LightMapContent( int size )
 		{
-			Width			=	size;
-			Height			=	size;
+			Width           =   size;
+			Height          =   size;
 
-			allocator		=	new Allocator2D( size );
+			allocator       =   new Allocator2D( size );
 
-			Albedo			=	new MipChain<Color>		( size, size, RadiositySettings.MapPatchLevels, Color.Zero	);
-			Position		=	new MipChain<Vector3>	( size, size, RadiositySettings.MapPatchLevels, Vector3.Zero	);
-			Normal			=	new MipChain<Vector3>	( size, size, RadiositySettings.MapPatchLevels, Vector3.Zero	);
-			Area			=	new MipChain<float>		( size, size, RadiositySettings.MapPatchLevels, 0 );
+			Albedo          =   new MipChain<Color>( size, size, RadiositySettings.MapPatchLevels, Color.Zero );
+			Position        =   new MipChain<Vector3>( size, size, RadiositySettings.MapPatchLevels, Vector3.Zero );
+			Normal          =   new MipChain<Vector3>( size, size, RadiositySettings.MapPatchLevels, Vector3.Zero );
+			Area            =   new MipChain<float>( size, size, RadiositySettings.MapPatchLevels, 0 );
 
-			Sky				=	new Image<Vector3>		( size, size, Vector3.Zero );
-			IndexMap		=	new Image<uint>			( size, size, 0 );
-			Indices			=	new List<uint>			();
+			Sky             =   new Image<Vector3>( size, size, Vector3.Zero );
+			IndexMap        =   new Image<uint>( size, size, 0 );
+			Indices         =   new List<uint>();
 
-			Coverage		=	new Image<byte>			( size, size, 0 );
-			PatchSize		=	new Image<byte>			( size, size, 0 );
+			Coverage        =   new Image<byte>( size, size, 0 );
 		}
-			
+
 
 		public uint AddFormFactorPatchIndices( uint[] patches )
 		{
-			patches	=	patches.Distinct().OrderBy( k => k ).ToArray();
-			var key	=	string.Join("-", patches.Select( p => p.ToString() ) );
+			patches =   patches.Distinct().OrderBy( k => k ).ToArray();
+			var key =   string.Join("-", patches.Select( p => p.ToString() ) );
 
 			uint index;
 			int offset;
 			int count;
 
-			if (indexDict.TryGetValue(key, out index)) 
+			if ( indexDict.TryGetValue( key, out index ) )
 			{
 				return index;
 			}
 			else
 			{
-				offset	= Indices.Count;
-				count	= patches.Length;
-				index	= Radiosity.GetLMIndex( offset, count );
+				offset  = Indices.Count;
+				count   = patches.Length;
+				index   = Radiosity.GetLMIndex( offset, count );
 				Indices.AddRange( patches );
-				Indices.Add(0xAAAAAAAA);
+				Indices.Add( 0xFFFFFFFF );
 				indexDict.Add( key, index );
 				return index;
 			}
@@ -92,11 +90,11 @@ namespace Fusion.Engine.Graphics.Lights
 
 		public bool IsRegionCollapsable( Rectangle rect )
 		{
-			for (int i=rect.Left; i<=rect.Right; i++)
+			for ( int i = rect.Left; i<=rect.Right; i++ )
 			{
-				for (int j=rect.Top; j<rect.Bottom; j++)
+				for ( int j = rect.Top; j<rect.Bottom; j++ )
 				{
-					if (Albedo[i,j].A==0)
+					if ( Albedo[i, j].A==0 )
 					{
 						return false;
 					}
@@ -107,33 +105,33 @@ namespace Fusion.Engine.Graphics.Lights
 
 
 
-		public void ComputePatchSizes()
+		public bool SelectPatch( Int2 coord, float dist, out Int3 selectedPatch )
 		{
-			for ( byte sz = 1; sz <=32; sz*=2 )
+			selectedPatch		=	new Int3( coord.X, coord.Y, 0 );
+			Int3	patch		=	new Int3( coord.X, coord.Y, 0 );
+			
+			float halfSphArea	=	2 * MathUtil.Pi * dist * dist;
+			float areaThreshold	=	halfSphArea / 5.0f;
+
+			if (Albedo[selectedPatch].A==0)
 			{
-				ComputePatchSize(sz);
+				return false;
 			}
-		}
-
-
-		void ComputePatchSize(byte size)
-		{
-			int w = Albedo.Width;
-			int h = Albedo.Height;
-
-			for (int i=0; i<w; i+=size)
+			
+			for (int mip=0; mip<RadiositySettings.MapPatchLevels; mip++)
 			{
-				for (int j=0; j<w; j+=size)
-				{
-					var rect = new Rectangle(i,j,size,size);
-					if (IsRegionCollapsable(rect))
-					{
-						PatchSize.FillRect( rect, size );
-					}
-				}
-			}
-		}
+				patch.X =	coord.X >> mip;
+				patch.Y =	coord.Y >> mip;
+				patch.Z	=	mip;
 
+				if (Albedo[patch].A==0) break;
+				if (Area[patch]>4*dist*dist) break;
+
+				selectedPatch	=	patch;
+			}
+
+			return true;
+		}
 
 
 		Color AverageColor( Color c0, Color c1, Color c2, Color c3 )
@@ -199,7 +197,7 @@ namespace Fusion.Engine.Graphics.Lights
 						{
 							Albedo[dstMip][i,j]		=	AverageColor( c00, c11, c01, c10 );
 							Normal[dstMip][i,j]		=	AverageVector( n00, n01, n10, n11 ).Normalized();
-							Position[dstMip][i,j]	=	AverageVector( n00, n01, n10, n11 );
+							Position[dstMip][i,j]	=	AverageVector( p00, p01, p10, p11 );
 							Area[dstMip][i,j]		=	a00 + a01 + a10 + a11;
 						}
 						else
@@ -247,9 +245,7 @@ namespace Fusion.Engine.Graphics.Lights
 
 		public void SaveDebugImages()
 		{
-			File.WriteAllText( "rad_indices.txt", string.Join("\r\n", Indices.Select( idx=>idx.ToString("X8") ) ) );
-
-			SaveDebugImage( PatchSize.Convert( size => new Color(size,size,size,(byte)255) ), "rad_patchSize" );
+			File.WriteAllText( "rad_indices.txt", string.Join("\r\n", Indices.Select( idx=>Radiosity.DecodeLMAddressDebug(idx) ) ) );
 
 			SaveDebugImage( Sky.Convert( EncodeSkyRGB8 ), "rad_sky" );
 			SaveDebugImage( IndexMap.Convert( idx => new Color(idx) ), "rad_index_map" );

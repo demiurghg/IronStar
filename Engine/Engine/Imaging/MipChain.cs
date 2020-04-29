@@ -92,6 +92,17 @@ namespace Fusion.Engine.Imaging {
 		}
 
 
+		public TColor this[Int3 xyz] {
+			get {
+				return this[xyz.Z][xyz.X, xyz.Y];
+			}
+			
+			set {
+				this[xyz.Z].SetPixel(xyz.X, xyz.Y, value);
+			}	
+		}
+
+
 		public static implicit operator Image<TColor>(MipChain<TColor> image) 
 		{
 			return image[0];

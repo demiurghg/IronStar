@@ -8,6 +8,7 @@ using Fusion.Engine.Graphics.Ubershaders;
 using Native.Embree;
 using System.Runtime.InteropServices;
 using Fusion.Core;
+using Fusion.Core.Extensions;
 using System.Diagnostics;
 using Fusion.Engine.Imaging;
 using Fusion.Core.Configuration;
@@ -104,7 +105,7 @@ namespace Fusion.Engine.Graphics.Lights {
 					)
 					.ToArray();
 
-			int lightMapSize = 256;
+			int lightMapSize = 32;
 
 			Allocator2D allocator;		
 
@@ -155,7 +156,8 @@ namespace Fusion.Engine.Graphics.Lights {
 				}
 			}
 
-			lightmapGBuffer.ComputePatchSizes();
+			Log.Message("Generating patch LODs...");
+			lightmapGBuffer.GeneratePatchLods();
 
 			//--------------------------------------
 
@@ -202,9 +204,6 @@ namespace Fusion.Engine.Graphics.Lights {
 			}
 
 			//--------------------------------------
-
-			Log.Message("Generating patch LODs...");
-			lightmapGBuffer.GeneratePatchLods();
 
 			Log.Message("Saving debug images...");
 			lightmapGBuffer.SaveDebugImages();
@@ -352,12 +351,12 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		byte GetMaximumPatchSize( float distance )
 		{
-			if (distance< 2) return  1;
-			if (distance< 4) return  2;
-			if (distance< 8) return  4;
-			if (distance<16) return  8;
-			if (distance<32) return 16;
-			if (distance<64) return 32;
+			if (distance< 2*2) return  1;
+			if (distance< 4*2) return  2;
+			if (distance< 8*2) return  4;
+			if (distance<16*2) return  8;
+			if (distance<32*2) return 16;
+			if (distance<64*2) return 32;
 			return 32;
 		}
 
@@ -381,12 +380,13 @@ namespace Fusion.Engine.Graphics.Lights {
 			var normalLength	=	normal.Length();
 
 			//---------------------------------
+			var randVector		=	rand.NextVector3(-Vector3.One, Vector3.One).Normalized();
 
 			var lmAddrList = new List<uint>();
 
 			for ( int i = 0; i<sampleCount; i++ ) {
 
-				var dir		= randomPoints[i];
+				var dir		= Vector3.Reflect( -randomPoints[i], randVector );
 
 				var nDotL	= Vector3.Dot( dir, normal );
 
@@ -413,6 +413,7 @@ namespace Fusion.Engine.Graphics.Lights {
 				if (intersect) 
 				{
 					var origin		=	EmbreeExtensions.Convert( ray.Origin );
+					var distance	=	ray.TFar; // we assume, that dir is normalized
 					var direction	=	EmbreeExtensions.Convert( ray.Direction );
 					var hitPoint	=	origin + direction * (ray.TFar);
 					var hitNormal	=	(-1) * EmbreeExtensions.Convert( ray.HitNormal ).Normalized();
@@ -422,21 +423,21 @@ namespace Fusion.Engine.Graphics.Lights {
 					if (dirDotN<0) // we hit front side of the face
 					{
 						Int2 coords;
+						Int3 patch;
 
 						if (GetLightMapCoordinates( instances, ref ray, out coords ))
 						{
-							var distance	=	ray.TFar; // we assume, that dir is normalized
-							var patchSize	=	lightmapGBuffer.PatchSize[ coords ];
-							var maxPachSize	=	GetMaximumPatchSize( ray.TFar );
-								patchSize	=	Math.Min( patchSize, maxPachSize );
-							var patchArea	=	lightmapGBuffer.Area[ coords ] * patchSize * patchSize;
-
-							var halfSphArea	=	2 * MathUtil.Pi * distance * distance;
-							var weight		=	patchArea * Math.Abs(dirDotN) / (halfSphArea + 0.001f);
-
-							if (weight>0.01f)
+							if (lightmapGBuffer.SelectPatch( coords, distance, out patch ) )
 							{
-								lmAddrList.Add( Radiosity.GetLMAddress( coords, patchSize ) );
+								float area	=	lightmapGBuffer.Area[patch];
+								var weight	=	area * Math.Abs(dirDotN) / (distance * distance);
+
+								lmAddrList.Add( Radiosity.GetLMAddress( patch ) );
+								
+								if (weight>0.01f)
+								{
+									lmAddrList.Add( Radiosity.GetLMAddress( patch ) );
+								}
 							}
 						}
 

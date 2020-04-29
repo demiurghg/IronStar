@@ -38,7 +38,8 @@ void CSMain(
 	
 	GEOMETRY	geometry;
 	geometry.position		=	Position[ loadXY ].xyz;
-	geometry.normal			=	Normal	[ loadXY ].xyz;
+	geometry.normal			=	Normal	[ loadXY ].xyz * 2 - 1;
+	geometry.normal			=	normalize( geometry.normal );
 	
 	float4 	albedo			=	Albedo	[ loadXY ].rgba;
 	
@@ -93,4 +94,68 @@ void CSMain(
 /*------------------------------------------------------------------------------
 	Gather light from all visible patches :
 ------------------------------------------------------------------------------*/
+
+#ifdef INTEGRATE
+
+[numthreads(BlockSizeX,BlockSizeY,1)] 
+void CSMain( 
+	uint3 groupId : SV_GroupID, 
+	uint3 groupThreadId : SV_GroupThreadID, 
+	uint  groupIndex: SV_GroupIndex, 
+	uint3 dispatchThreadId : SV_DispatchThreadID) 
+{
+	int2	loadXY		=	dispatchThreadId.xy;
+	int2	storeXY		=	dispatchThreadId.xy;
+
+	uint 	offsetCount	=	IndexMap[ loadXY ];
+	uint 	offset		=	offsetCount >> 8;
+	uint 	count		=	offsetCount & 0xFF;
+	uint	begin		=	offset;
+	uint	end			=	offset + count;
+	
+	float3	targetPoint	=	Position[ loadXY ];
+	float4	irradianceR	=	float4( 0, 0, 0, 0 );
+	float4	irradianceG	=	float4( 0, 0, 0, 0 );
+	float4	irradianceB	=	float4( 0, 0, 0, 0 );
+	float3 	totalLight	=	float4(0,0,0,0);
+	
+	for (uint index=begin; index<end; index++)
+	{
+		uint 	lmAddr		=	Indices[ index ];
+		uint 	lmMip		=	(lmAddr >> 24) & 0xFF;
+		uint 	lmX			=	(lmAddr >> 12) & 0xFFF;
+		uint 	lmY			=	(lmAddr >>  0) & 0xFFF;
+		int3	loadUVm		=	int3( lmX, lmY, lmMip );
+			
+		float3 	radiance	=	Radiance.Load( loadUVm ).rgb;
+		float3 	normal		=	Normal.Load( loadUVm ).xyz * 2 - 1;
+				normal		=	normalize(normal);
+		float3 	position	=	Position.Load( loadUVm ).xyz;
+		float	area		=	Area.Load( loadUVm ).x;
+				
+		float3 	lightDir	=	targetPoint - position;
+		float	lightDist	=	length( lightDir );
+		float3 	lightDirN	=	normalize( lightDir );
+		float	nDotL		=	max( 0, dot( normal, lightDirN ) );
+		
+		//if (lightDist<0.1) area = 0;
+		
+		float3	light		=	radiance * nDotL * area / ( area + lightDist * lightDist );
+		totalLight			+=	light;
+		
+		irradianceR			+=	SHL1EvaluateDiffuse( light.r, -lightDirN );
+		irradianceG			+=	SHL1EvaluateDiffuse( light.g, -lightDirN );
+		irradianceB			+=	SHL1EvaluateDiffuse( light.b, -lightDirN );
+	}
+	
+	IrradianceR[ storeXY.xy ]	=	irradianceR;
+	IrradianceG[ storeXY.xy ]	=	irradianceG;
+	IrradianceB[ storeXY.xy ]	=	irradianceB;
+
+	// IrradianceR[ storeXY.xy ]	=	float4( totalLight.r, 0,0,0 );
+	// IrradianceG[ storeXY.xy ]	=	float4( totalLight.g, 0,0,0 );
+	// IrradianceB[ storeXY.xy ]	=	float4( totalLight.b, 0,0,0 );
+}
+
+#endif
 

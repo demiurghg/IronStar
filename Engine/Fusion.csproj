@@ -535,6 +535,7 @@
     <Compile Include="Engine\Graphics\GI\LightMapper.Misc.cs" />
     <Compile Include="Engine\Graphics\GI\LightMapResources.cs" />
     <Compile Include="Engine\Graphics\GI\LightMapGroup.cs" />
+    <Compile Include="Engine\Graphics\GI\PatchIndex.cs" />
     <Compile Include="Engine\Graphics\GI\Radiosity.cs" />
     <Compile Include="Engine\Graphics\GI\RadiositySettings.cs" />
     <Compile Include="Engine\Graphics\GpuData.cs" />

@@ -82,7 +82,9 @@ float3	ComputeLighting( FLUX flux, GEOMETRY geometry, SURFACE surface, CAMERA ca
 {
 	float3	viewDir		=	normalize( Camera.CameraPosition.xyz - geometry.position.xyz );
 	float3 	lightDir	=	-flux.direction;
-	float  	nDotL		= 	max( 0, dot(surface.normal, lightDir) );
+	float  	nDotL		= 	saturate( dot(surface.normal, lightDir) );
+	float  	nDotLGeom	= 	saturate( dot(geometry.normal, lightDir) * 10 );
+			nDotL		*=	nDotLGeom;
 	
 	float3	totalLight	=	0;
 	

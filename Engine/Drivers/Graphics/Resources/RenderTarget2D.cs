@@ -167,9 +167,18 @@ namespace Fusion.Drivers.Graphics {
 				texDesc.BindFlags |= BindFlags.UnorderedAccess;
 			}
 
+			var	srvDesc	=	new ShaderResourceViewDescription();
+				srvDesc.Dimension					=	ShaderResourceViewDimension.Texture2D;
+				srvDesc.Format						=	Converter.Convert( format );
+				srvDesc.Texture2D.MipLevels			=	MipCount;
+				srvDesc.Texture2D.MostDetailedMip	=	0;
+
+			if (enableRWBuffer) {
+				texDesc.BindFlags |= BindFlags.UnorderedAccess;
+			}
 
 			tex2D	=	new D3D.Texture2D( device.Device, texDesc );
-			SRV		=	new ShaderResourceView( device.Device, tex2D );
+			SRV		=	new ShaderResourceView( device.Device, tex2D, srvDesc );
 
 
 
@@ -192,7 +201,7 @@ namespace Fusion.Drivers.Graphics {
 				var rtv	=	new RenderTargetView( device.Device, tex2D, rtvDesc );
 
 				
-				var srvDesc = new ShaderResourceViewDescription();
+				srvDesc = new ShaderResourceViewDescription();
 					srvDesc.Dimension					=	ShaderResourceViewDimension.Texture2D;
 					srvDesc.Format						=	Converter.Convert( format );
 					srvDesc.Texture2D.MipLevels			=	1;

@@ -17,36 +17,6 @@ using Fusion.Core.Content;
 
 namespace Fusion.Engine.Graphics.Lights 
 {
-	public class PatchIndex 
-	{
-		public static readonly PatchIndex Empty = new PatchIndex(0xFFFFFFFF, 0);
-
-		public PatchIndex( uint index, float weight )
-		{
-			Index	=	index;
-			Weight	=	weight;
-
-			var c		=	Radiosity.DecodeLMAddress( index );
-			MipIndex	=	Radiosity.EncodeLMAddress( new Int3( c.X/2, c.Y/2, c.Z+1 ) );
-		}
-		public uint Index;
-		public float Weight;
-
-		public uint MipIndex;
-
-		public override string ToString()
-		{
-			if (Index==0xFFFFFFFF) 
-			{	
-				return string.Format("--------------- {0} ", Weight);
-			}
-
-			uint 	lmMip		=	(Index >> 24) & 0xFF;
-			uint 	lmX			=	(Index >> 12) & 0xFFF;
-			uint 	lmY			=	(Index >>  0) & 0xFFF;
-			return string.Format("{0,2} [{1,4} {2,4}] {3}", lmMip, lmX, lmY, Weight );
-		}
-	}
 
 
 	public class LightMapContent
@@ -95,84 +65,50 @@ namespace Fusion.Engine.Graphics.Lights
 
 
 
-		public IEnumerable<PatchIndex> MergeAdjacentPatches( IEnumerable<PatchIndex> patches, RadiositySettings settings )
-		{
-			var groups = patches.GroupBy( p => p.MipIndex );
-			var result = new List<PatchIndex>();
+		//public IEnumerable<PatchIndex> MergeAdjacentPatches( IEnumerable<PatchIndex> patches, RadiositySettings settings )
+		//{
+		//	var groups = patches.GroupBy( p => p.MipIndex );
+		//	var result = new List<PatchIndex>();
 
-			foreach ( var group in groups )
-			{
-				if (group.Count()>=4)
-				{
-					var w = group.Aggregate( 0f, (a,p) => a + p.Weight );
-					var c = group.First().MipIndex;
+		//	foreach ( var group in groups )
+		//	{
+		//		if (group.Count()>=4)
+		//		{
+		//			var w = group.Aggregate( 0f, (a,p) => a + p.Weight );
+		//			var c = group.First().MipIndex;
 
-					if (w>settings.MergeThreshold)
-					{
-						result.AddRange( group );
-					} 
-					else
-					{
-						result.Add( new PatchIndex( c, w ) );
-					}
-				}
-				else
-				{
-					result.AddRange( group );
-				}
-			}
+		//			if (w>settings.MergeThreshold)
+		//			{
+		//				result.AddRange( group );
+		//			} 
+		//			else
+		//			{
+		//				result.Add( new PatchIndex( c, w ) );
+		//			}
+		//		}
+		//		else
+		//		{
+		//			result.AddRange( group );
+		//		}
+		//	}
 
-			return result;
-		}
-
-
-		
+		//	return result;
+		//}
 
 
 		public uint AddFormFactorPatchIndices( IEnumerable<PatchIndex> patches, RadiositySettings settings )
 		{
-			//patches		=	patches.DistinctBy( p1 => p1.Index );
-
-			/*patches		=	MergeAdjacentPatches( patches, settings );
-			patches		=	MergeAdjacentPatches( patches, settings );
-			patches		=	MergeAdjacentPatches( patches, settings );
-			patches		=	MergeAdjacentPatches( patches, settings );
-			patches		=	MergeAdjacentPatches( patches, settings );
-
-			patches		=	patches.OrderByDescending( p0 => p0.Weight )
-							.Where( p1 => p1.Weight > settings.RadianceThreshold )
-							.Take(settings.MaxPatches)
-							.ToArray();	 */
+			patches = patches
+					.GroupBy( p0 => p0.Coords )
+					.Select( g0 => new PatchIndex( g0.First().Coords, g0.Aggregate( 0, (hits,patch) => hits + patch.Hits, totalHits => Math.Min(totalHits,31) ) ) );//*/
 
 			int offset		=	Indices.Count;
 			int count		=	patches.Count();
-			var totalArea	=	patches.Sum( p => p.Weight );
 
 			Indices.AddRange( patches );
-			Indices.Add( new PatchIndex( 0xFFFFFFFF, totalArea ) );
+			Indices.Add( PatchIndex.Empty );
 
 			return Radiosity.GetLMIndex( offset, count );
-			/*patches =   patches.Distinct().OrderBy( k => k ).ToArray();
-			var key =   string.Join("-", patches.Select( p => p.ToString() ) );
-
-			uint index;
-			int offset;
-			int count;
-
-			if ( indexDict.TryGetValue( key, out index ) )
-			{
-				return index;
-			}
-			else
-			{
-				offset  = Indices.Count;
-				count   = patches.Length;
-				index   = Radiosity.GetLMIndex( offset, count );
-				Indices.AddRange( patches );
-				Indices.Add( 0xFFFFFFFF );
-				indexDict.Add( key, index );
-				return index;
-			}	*/
 		}
 
 
@@ -193,7 +129,7 @@ namespace Fusion.Engine.Graphics.Lights
 
 
 
-		public bool SelectPatch( Int2 coord, float dist, RadiositySettings settings, out Int3 selectedPatch )
+		public bool SelectPatch( Int2 coord, float dist, float nDotV, RadiositySettings settings, out Int3 selectedPatch )
 		{
 			selectedPatch		=	new Int3( coord.X, coord.Y, 0 );
 			Int3	patch		=	new Int3( coord.X, coord.Y, 0 );
@@ -203,18 +139,16 @@ namespace Fusion.Engine.Graphics.Lights
 				return false;
 			}
 
-			//return true;
-			
-			for (int mip=0; mip<RadiositySettings.MapPatchLevels; mip++)
+			for (int mip=1; mip<RadiositySettings.MapPatchLevels; mip++)
 			{
-				patch.X =	coord.X >> mip;
-				patch.Y =	coord.Y >> mip;
+				patch.X =	patch.X / 2;
+				patch.Y =	patch.Y / 2;
 				patch.Z	=	mip;
 
 				var areaThreshold	=	 dist*dist * settings.PatchThreshold;
 
 				if ( Albedo[patch].A==0 ) break;
-				if ( Area[patch] > areaThreshold ) break;
+				if ( Area[patch] * nDotV > areaThreshold ) break;
 
 				selectedPatch	=	patch;
 			}

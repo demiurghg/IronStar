@@ -65,6 +65,10 @@ namespace Fusion.Engine.Imaging {
 				if (mip>=images.Length) throw new ArgumentOutOfRangeException("mip >= max mips");
 				return images[mip];
 			}
+			set 
+			{
+				images[mip] = value;
+			}
 		}
 
 

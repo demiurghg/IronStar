@@ -176,6 +176,11 @@ namespace Fusion.Engine.Graphics.GI
 		}
 
 
+		[Config]
+		public int DebugX { get; set; } = 0;
+
+		[Config]
+		public int DebugY { get; set; } = 0;
 
 		/*-----------------------------------------------------------------------------------------
 		 *	Radiosity rendering :
@@ -187,6 +192,8 @@ namespace Fusion.Engine.Graphics.GI
 			{
 				return;
 			}
+
+			lightMap.DebugDraw( DebugX, DebugY, rs.RenderWorld.Debug );
 
 			using ( new PixEvent( "Radiosity" ) )
 			{
@@ -246,7 +253,7 @@ namespace Fusion.Engine.Graphics.GI
 					device.SetComputeUnorderedAccess( regIrradianceR,		irradianceR.Surface.UnorderedAccess );
 					device.SetComputeUnorderedAccess( regIrradianceG,		irradianceG.Surface.UnorderedAccess );
 					device.SetComputeUnorderedAccess( regIrradianceB,		irradianceB.Surface.UnorderedAccess );
-					device.ComputeResources			[ regRadiance	]	=	radiance.GetShaderResource( 0 );
+					device.ComputeResources			[ regRadiance	]	=	radiance;
 
 					int width	=	lightMap.Width;
 					int height	=	lightMap.Height;
@@ -276,21 +283,6 @@ namespace Fusion.Engine.Graphics.GI
 			uint 	lmY			=	(lmAddr >>  0) & 0xFFF;
 			return string.Format("{0,2} [{1,4} {2,4}]", lmMip, lmX, lmY );
 		}
-
-		public static uint EncodeLMAddress( Int2 coords, int patchSize )
-		{
-			if (coords.X<0 || coords.Y<0 || coords.X>=RenderSystem.LightmapSize || coords.Y>=RenderSystem.LightmapSize )
-			{
-				return 0xFFFFFFFF;
-			}
-
-			uint x		= (uint)(coords.X / patchSize) & 0xFFF;
-			uint y		= (uint)(coords.Y / patchSize) & 0xFFF;
-			uint mip	= (uint)MathUtil.LogBase2( patchSize ) & 0xFF;
-
-			return (mip << 24) | (x << 12) | (y);
-		}
-
 
 		public static uint EncodeLMAddress( Int3 coords )
 		{

@@ -49,6 +49,8 @@ void CSMain(
 	float3 	lighting		=	ComputeLighting( flux, geometry, albedo.rgb );
 	
 	RadianceUav[ storeXY.xy ]	=	float4(shadow * lighting, albedo.a );
+	
+	//if (all(storeXY.xy==int2(2,3))) RadianceUav[ storeXY.xy ] = float4(0,0,1000,1);
 }
 
 #endif
@@ -81,9 +83,9 @@ void CSMain(
 	float4 lighting10	=	Radiance	[ loadXY10 ];
 	float4 lighting11	=	Radiance	[ loadXY11 ];
 	
-	float4 lighting		=	0.25f * ( lighting00 + lighting01 + lighting10 + lighting11 );
+	float4 lighting		=	0.25 * ( lighting00 + lighting01 + lighting10 + lighting11 );
 	
-	float4 factor		=	all(float4(lighting00.a, lighting01.a, lighting10.a, lighting11.a));
+	float	 factor		=	all(float4(lighting00.a, lighting01.a, lighting10.a, lighting11.a));
 
 	RadianceUav[ storeXY.xy ]	=	float4(lighting) * factor;
 }
@@ -113,21 +115,22 @@ void CSMain(
 	uint	begin		=	offset;
 	uint	end			=	offset + count;
 	
-	float3	targetPoint	=	Position[ loadXY ];
+	float3	targetPoint	=	Position[ loadXY ].xyz;
 	float4	irradianceR	=	float4( 0, 0, 0, 0 );
 	float4	irradianceG	=	float4( 0, 0, 0, 0 );
 	float4	irradianceB	=	float4( 0, 0, 0, 0 );
-	float3 	totalLight	=	float4(0,0,0,0);
+	float3 	totalLight	=	float3(0,0,0);
 	
 	for (uint index=begin; index<end; index++)
 	{
 		uint 	lmAddr		=	Indices[ index ];
-		uint 	lmMip		=	(lmAddr >> 24) & 0xFF;
-		uint 	lmX			=	(lmAddr >> 12) & 0xFFF;
-		uint 	lmY			=	(lmAddr >>  0) & 0xFFF;
+		uint 	lmX			=	(lmAddr >> 20) & 0xFFF;
+		uint 	lmY			=	(lmAddr >>  8) & 0xFFF;
+		uint 	lmMip		=	(lmAddr >>  5) & 0x007;
+		uint 	hitCount	=	(lmAddr >>  0) & 0x01F;
 		int3	loadUVm		=	int3( lmX, lmY, lmMip );
 			
-		float3 	radiance	=	Radiance.Load( loadUVm ).rgb;
+		float4 	radiance	=	Radiance.Load( loadUVm ).rgba;
 		float3 	normal		=	Normal.Load( loadUVm ).xyz * 2 - 1;
 				normal		=	normalize(normal);
 		float3 	position	=	Position.Load( loadUVm ).xyz;
@@ -141,8 +144,11 @@ void CSMain(
 		//if (lightDist<0.1) area = 0;
 		
 		//float3	light		=	radiance * nDotL * area / ( area + lightDist * lightDist );
-		float3	light		=	radiance * nDotL / 128;
+		float	bias		=	pow(2, lmMip*2);
+		float3	light		=	radiance.rgb * nDotL / 256.0f * hitCount;	
 		totalLight			+=	light;
+		
+		//if (radiance.a==0) light = float3(0,0,1);
 		
 		irradianceR			+=	SHL1EvaluateDiffuse( light.r, -lightDirN );
 		irradianceG			+=	SHL1EvaluateDiffuse( light.g, -lightDirN );
@@ -153,9 +159,9 @@ void CSMain(
 	IrradianceG[ storeXY.xy ]	=	irradianceG;
 	IrradianceB[ storeXY.xy ]	=	irradianceB;
 
-	// IrradianceR[ storeXY.xy ]	=	float4( totalLight.r, 0,0,0 );
-	// IrradianceG[ storeXY.xy ]	=	float4( totalLight.g, 0,0,0 );
-	// IrradianceB[ storeXY.xy ]	=	float4( totalLight.b, 0,0,0 );
+	/*IrradianceR[ storeXY.xy ]	=	float4( totalLight.r, 0,0,0 );
+	IrradianceG[ storeXY.xy ]	=	float4( totalLight.g, 0,0,0 );
+	IrradianceB[ storeXY.xy ]	=	float4( totalLight.b, 0,0,0 );*/
 }
 
 #endif

@@ -105,7 +105,7 @@ namespace Fusion.Engine.Graphics.Lights {
 					)
 					.ToArray();
 
-			int lightMapSize = 32;
+			int lightMapSize = 256;
 
 			Allocator2D allocator;		
 
@@ -427,9 +427,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 						if (GetLightMapCoordinates( instances, ref ray, out coords ))
 						{
-							
-
-							if (lightmapGBuffer.SelectPatch( coords, distance, settings, out patch ) )
+							if (lightmapGBuffer.SelectPatch( coords, distance, dirDotN, settings, out patch ) )
 							{
 								var area	=	lightmapGBuffer.Area	[ patch ];
 								var ppos	=	lightmapGBuffer.Position[ patch ];
@@ -440,7 +438,10 @@ namespace Fusion.Engine.Graphics.Lights {
 								var weight	=	area * pDotL * Radiosity.Falloff(pdist) / 4.0f / MathUtil.Pi;
 								var index	=	Radiosity.EncodeLMAddress( patch );
 
-								lmAddrList.Add( new PatchIndex( index, weight ) );
+								if (weight>settings.RadianceThreshold) 
+								{
+									lmAddrList.Add( new PatchIndex( patch, 1 ) );
+								}
 							}
 						}
 

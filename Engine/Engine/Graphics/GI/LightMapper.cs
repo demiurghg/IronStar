@@ -85,9 +85,9 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// <summary>
 		/// Update lightmap
 		/// </summary>
-		public LightMapContent BakeLightMap ( IEnumerable<MeshInstance> instances2, LightSet lightSet, int numSamples, int bias )
+		public LightMapContent BakeLightMap ( IEnumerable<MeshInstance> instances2, LightSet lightSet, RadiositySettings settings )
 		{
-			var hammersley		=	Hammersley.GenerateSphereUniform(numSamples);
+			var hammersley		=	Hammersley.GenerateSphereUniform(settings.LightMapSampleCount);
 			var instances		=	SelectOccludingInstances( instances2 );
 
 			//-------------------------------------------------
@@ -101,7 +101,7 @@ namespace Fusion.Engine.Graphics.Lights {
 					.GroupBy( 
 						instance => instance.LightMapGuid, // guid
 						instance => instance,              // instance
-						(guid,inst) => new LightMapGroup( inst.First().LightMapSize.Width, guid, inst, bias )
+						(guid,inst) => new LightMapGroup( inst.First().LightMapSize.Width, guid, inst, 0 )
 					)
 					.ToArray();
 
@@ -189,10 +189,10 @@ namespace Fusion.Engine.Graphics.Lights {
 
 						if (c.A>0) 
 						{
-							var r = GatherRadiosityPatches( scene, instances, hammersley, lightSet, p, n );
+							var r = GatherRadiosityPatches( scene, instances, hammersley, lightSet, p, n, settings );
 
 							lightmapGBuffer.Sky		[i,j]	=	r.Sky;
-							lightmapGBuffer.IndexMap[i,j]	=	lightmapGBuffer.AddFormFactorPatchIndices( r.Patches );
+							lightmapGBuffer.IndexMap[i,j]	=	lightmapGBuffer.AddFormFactorPatchIndices( r.Patches, settings );
 						} 
 						else 
 						{
@@ -260,7 +260,7 @@ namespace Fusion.Engine.Graphics.Lights {
 								var p = new Vector3(x,y,z);
 								var n = Vector3.Zero;
 
-								var r	=	GatherRadiosityPatches( scene, instances, hammersley, lightSet, p, n, -0*stride/2.0f );
+								//var r	=	GatherRadiosityPatches( scene, instances, hammersley, lightSet, p, n, -0*stride/2.0f );
 							}
 						}
 					}
@@ -363,15 +363,15 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		class GatheringResults 
 		{
-			public uint[]	Patches;
-			public Vector3	Sky;
+			public PatchIndex[]	Patches;
+			public Vector3		Sky;
 		}
 
 
 		/// <summary>
 		/// Computes indirect radiance in given point
 		/// </summary>
-		GatheringResults GatherRadiosityPatches ( RtcScene scene, MeshInstance[] instances, Vector3[] randomPoints, LightSet lightSet, Vector3 position, Vector3 normal, float bias=0 )
+		GatheringResults GatherRadiosityPatches ( RtcScene scene, MeshInstance[] instances, Vector3[] randomPoints, LightSet lightSet, Vector3 position, Vector3 normal, RadiositySettings settings, float bias=0 )
 		{
 			var sampleCount		=	randomPoints.Length;
 			var invSampleCount	=	1.0f / sampleCount;
@@ -382,7 +382,7 @@ namespace Fusion.Engine.Graphics.Lights {
 			//---------------------------------
 			var randVector		=	rand.NextVector3(-Vector3.One, Vector3.One).Normalized();
 
-			var lmAddrList = new List<uint>();
+			var lmAddrList = new List<PatchIndex>();
 
 			for ( int i = 0; i<sampleCount; i++ ) {
 
@@ -418,26 +418,29 @@ namespace Fusion.Engine.Graphics.Lights {
 					var hitPoint	=	origin + direction * (ray.TFar);
 					var hitNormal	=	(-1) * EmbreeExtensions.Convert( ray.HitNormal ).Normalized();
 
-					var dirDotN		=	Vector3.Dot( hitNormal, direction );
+					var dirDotN		=	Vector3.Dot( hitNormal, -direction );
 
-					if (dirDotN<0) // we hit front side of the face
+					if (dirDotN>0) // we hit front side of the face
 					{
 						Int2 coords;
 						Int3 patch;
 
 						if (GetLightMapCoordinates( instances, ref ray, out coords ))
 						{
-							if (lightmapGBuffer.SelectPatch( coords, distance, out patch ) )
-							{
-								float area	=	lightmapGBuffer.Area[patch];
-								var weight	=	area * Math.Abs(dirDotN) / (distance * distance);
+							
 
-								lmAddrList.Add( Radiosity.GetLMAddress( patch ) );
-								
-								if (weight>0.01f)
-								{
-									lmAddrList.Add( Radiosity.GetLMAddress( patch ) );
-								}
+							if (lightmapGBuffer.SelectPatch( coords, distance, settings, out patch ) )
+							{
+								var area	=	lightmapGBuffer.Area	[ patch ];
+								var ppos	=	lightmapGBuffer.Position[ patch ];
+								var pnormal	=	lightmapGBuffer.Normal	[ patch ].Normalized();
+								var pdir	=	Vector3.Normalize( origin - ppos );
+								var pdist	=	Vector3.Distance( ppos, origin );
+								var pDotL	=	Vector3.Dot( pdir, pnormal );
+								var weight	=	area * pDotL * Radiosity.Falloff(pdist) / 4.0f / MathUtil.Pi;
+								var index	=	Radiosity.EncodeLMAddress( patch );
+
+								lmAddrList.Add( new PatchIndex( index, weight ) );
 							}
 						}
 

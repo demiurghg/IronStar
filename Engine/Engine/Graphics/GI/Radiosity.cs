@@ -230,8 +230,8 @@ namespace Fusion.Engine.Graphics.GI
 						device.SetComputeUnorderedAccess( regRadianceUav,		radiance.GetSurface( mip ).UnorderedAccess );
 						device.ComputeResources			[ regRadiance	]	=	radiance.GetShaderResource( mip - 1 );
 
-						int width	=	lightMap.Width >> mip;
-						int height	=	lightMap.Width >> mip;
+						int width	=	lightMap.Width  >> mip;
+						int height	=	lightMap.Height >> mip;
 
 						device.Dispatch( new Int2( width, height ), new Int2( BlockSizeX, BlockSizeY ) );
 					}
@@ -249,7 +249,7 @@ namespace Fusion.Engine.Graphics.GI
 					device.ComputeResources			[ regRadiance	]	=	radiance.GetShaderResource( 0 );
 
 					int width	=	lightMap.Width;
-					int height	=	lightMap.Width;
+					int height	=	lightMap.Height;
 
 					device.Dispatch( new Int2( lightMap.Width, lightMap.Height ), new Int2( BlockSizeX, BlockSizeY ) );
 				}
@@ -263,6 +263,11 @@ namespace Fusion.Engine.Graphics.GI
 		 *	Utils :
 		-----------------------------------------------------------------------------------------*/
 
+		public static float Falloff( float distance )
+		{
+			return 1 / (0.0001f + distance + distance);
+		}
+
 		public static string DecodeLMAddressDebug( uint lmAddr )
 		{
 			if (lmAddr==0xFFFFFFFF) return "------------------------";
@@ -272,7 +277,7 @@ namespace Fusion.Engine.Graphics.GI
 			return string.Format("{0,2} [{1,4} {2,4}]", lmMip, lmX, lmY );
 		}
 
-		public static uint GetLMAddress( Int2 coords, int patchSize )
+		public static uint EncodeLMAddress( Int2 coords, int patchSize )
 		{
 			if (coords.X<0 || coords.Y<0 || coords.X>=RenderSystem.LightmapSize || coords.Y>=RenderSystem.LightmapSize )
 			{
@@ -287,7 +292,7 @@ namespace Fusion.Engine.Graphics.GI
 		}
 
 
-		public static uint GetLMAddress( Int3 coords )
+		public static uint EncodeLMAddress( Int3 coords )
 		{
 			if (coords.X<0 || coords.Y<0 || coords.X>=RenderSystem.LightmapSize || coords.Y>=RenderSystem.LightmapSize )
 			{
@@ -299,6 +304,18 @@ namespace Fusion.Engine.Graphics.GI
 			uint mip	= (uint)(coords.Z);
 
 			return (mip << 24) | (x << 12) | (y);
+		}
+
+
+		public static Int3 DecodeLMAddress( uint index )
+		{
+			if (index==0xFFFFFFFF) return new Int3(-1,-1,-1);
+
+			uint 	lmMip		=	(index >> 24) & 0xFF;
+			uint 	lmX			=	(index >> 12) & 0xFFF;
+			uint 	lmY			=	(index >>  0) & 0xFFF;
+
+			return new Int3( (int)lmX, (int)lmY, (int)lmMip );
 		}
 
 

@@ -4,9 +4,9 @@
     "$type": "IronStar.Mapping.MapEnvironment, IronStar",
     "Gravity": 48.0,
     "SkyTrubidity": 2.0,
-    "SunAltitude": 39.0,
+    "SunAltitude": 44.0,
     "SkyIntensity": 0.0,
-    "SunAzimuth": -45.0,
+    "SunAzimuth": 161.0,
     "SunIntensity": 500.0,
     "FogDistance": 500000.0,
     "FogHeight": 0.05,
@@ -22,7 +22,7 @@
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
         "GlowIntensity": 100.0,
-        "LightMapSize": "lightMap512",
+        "LightMapSize": "lightMap256",
         "UseLightVolume": false,
         "UseCollisionMesh": false,
         "UseCustomNodes": false,
@@ -66,8 +66,10 @@
     "NormalOffsetBias": 0.25,
     "LightMapSampleCount": 128,
     "LightGridSampleCount": 64,
-    "MaxPatches": 32,
-    "RadianceThreshold": 0.02,
+    "MaxPatches": 128,
+    "RadianceThreshold": 0.0001,
+    "PatchThreshold": 0.0001,
+    "MergeThreshold": 0.0001,
     "DebugLightmaps": true
   }
 }

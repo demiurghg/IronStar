@@ -246,6 +246,7 @@ namespace IronStar.Editor {
 
 		void BakeLightMap()
 		{
+			rs.RenderWorld.BuildRadiosityFormFactor( mapName, map.RadiositySettings );
 			Game.Invoker.ExecuteString(string.Format("buildrad {0} Low /map", mapName), "contentBuild");
 		}
 

@@ -17,6 +17,38 @@ using Fusion.Core.Content;
 
 namespace Fusion.Engine.Graphics.Lights 
 {
+	public class PatchIndex 
+	{
+		public static readonly PatchIndex Empty = new PatchIndex(0xFFFFFFFF, 0);
+
+		public PatchIndex( uint index, float weight )
+		{
+			Index	=	index;
+			Weight	=	weight;
+
+			var c		=	Radiosity.DecodeLMAddress( index );
+			MipIndex	=	Radiosity.EncodeLMAddress( new Int3( c.X/2, c.Y/2, c.Z+1 ) );
+		}
+		public uint Index;
+		public float Weight;
+
+		public uint MipIndex;
+
+		public override string ToString()
+		{
+			if (Index==0xFFFFFFFF) 
+			{	
+				return string.Format("--------------- {0} ", Weight);
+			}
+
+			uint 	lmMip		=	(Index >> 24) & 0xFF;
+			uint 	lmX			=	(Index >> 12) & 0xFFF;
+			uint 	lmY			=	(Index >>  0) & 0xFFF;
+			return string.Format("{0,2} [{1,4} {2,4}] {3}", lmMip, lmX, lmY, Weight );
+		}
+	}
+
+
 	public class LightMapContent
 	{
 		public readonly int Width;
@@ -27,9 +59,9 @@ namespace Fusion.Engine.Graphics.Lights
 		public readonly MipChain<Vector3>   Normal;
 		public readonly MipChain<float>     Area;
 		public readonly Image<byte>         Coverage;
-		public readonly Image<Vector3>      Sky;
-		public readonly Image<uint>         IndexMap;
-		public readonly List<uint>          Indices;
+		public readonly Image<Vector3>		Sky;
+		public readonly Image<uint>			IndexMap;
+		public readonly List<PatchIndex>	Indices;
 
 		readonly Allocator2D                allocator;
 
@@ -56,15 +88,71 @@ namespace Fusion.Engine.Graphics.Lights
 
 			Sky             =   new Image<Vector3>( size, size, Vector3.Zero );
 			IndexMap        =   new Image<uint>( size, size, 0 );
-			Indices         =   new List<uint>();
+			Indices         =   new List<PatchIndex>();
 
 			Coverage        =   new Image<byte>( size, size, 0 );
 		}
 
 
-		public uint AddFormFactorPatchIndices( uint[] patches )
+
+		public IEnumerable<PatchIndex> MergeAdjacentPatches( IEnumerable<PatchIndex> patches, RadiositySettings settings )
 		{
-			patches =   patches.Distinct().OrderBy( k => k ).ToArray();
+			var groups = patches.GroupBy( p => p.MipIndex );
+			var result = new List<PatchIndex>();
+
+			foreach ( var group in groups )
+			{
+				if (group.Count()>=4)
+				{
+					var w = group.Aggregate( 0f, (a,p) => a + p.Weight );
+					var c = group.First().MipIndex;
+
+					if (w>settings.MergeThreshold)
+					{
+						result.AddRange( group );
+					} 
+					else
+					{
+						result.Add( new PatchIndex( c, w ) );
+					}
+				}
+				else
+				{
+					result.AddRange( group );
+				}
+			}
+
+			return result;
+		}
+
+
+		
+
+
+		public uint AddFormFactorPatchIndices( IEnumerable<PatchIndex> patches, RadiositySettings settings )
+		{
+			//patches		=	patches.DistinctBy( p1 => p1.Index );
+
+			/*patches		=	MergeAdjacentPatches( patches, settings );
+			patches		=	MergeAdjacentPatches( patches, settings );
+			patches		=	MergeAdjacentPatches( patches, settings );
+			patches		=	MergeAdjacentPatches( patches, settings );
+			patches		=	MergeAdjacentPatches( patches, settings );
+
+			patches		=	patches.OrderByDescending( p0 => p0.Weight )
+							.Where( p1 => p1.Weight > settings.RadianceThreshold )
+							.Take(settings.MaxPatches)
+							.ToArray();	 */
+
+			int offset		=	Indices.Count;
+			int count		=	patches.Count();
+			var totalArea	=	patches.Sum( p => p.Weight );
+
+			Indices.AddRange( patches );
+			Indices.Add( new PatchIndex( 0xFFFFFFFF, totalArea ) );
+
+			return Radiosity.GetLMIndex( offset, count );
+			/*patches =   patches.Distinct().OrderBy( k => k ).ToArray();
 			var key =   string.Join("-", patches.Select( p => p.ToString() ) );
 
 			uint index;
@@ -84,7 +172,7 @@ namespace Fusion.Engine.Graphics.Lights
 				Indices.Add( 0xFFFFFFFF );
 				indexDict.Add( key, index );
 				return index;
-			}
+			}	*/
 		}
 
 
@@ -105,18 +193,17 @@ namespace Fusion.Engine.Graphics.Lights
 
 
 
-		public bool SelectPatch( Int2 coord, float dist, out Int3 selectedPatch )
+		public bool SelectPatch( Int2 coord, float dist, RadiositySettings settings, out Int3 selectedPatch )
 		{
 			selectedPatch		=	new Int3( coord.X, coord.Y, 0 );
 			Int3	patch		=	new Int3( coord.X, coord.Y, 0 );
-			
-			float halfSphArea	=	2 * MathUtil.Pi * dist * dist;
-			float areaThreshold	=	halfSphArea / 5.0f;
 
 			if (Albedo[selectedPatch].A==0)
 			{
 				return false;
 			}
+
+			//return true;
 			
 			for (int mip=0; mip<RadiositySettings.MapPatchLevels; mip++)
 			{
@@ -124,8 +211,10 @@ namespace Fusion.Engine.Graphics.Lights
 				patch.Y =	coord.Y >> mip;
 				patch.Z	=	mip;
 
-				if (Albedo[patch].A==0) break;
-				if (Area[patch]>4*dist*dist) break;
+				var areaThreshold	=	 dist*dist * settings.PatchThreshold;
+
+				if ( Albedo[patch].A==0 ) break;
+				if ( Area[patch] > areaThreshold ) break;
 
 				selectedPatch	=	patch;
 			}
@@ -245,7 +334,7 @@ namespace Fusion.Engine.Graphics.Lights
 
 		public void SaveDebugImages()
 		{
-			File.WriteAllText( "rad_indices.txt", string.Join("\r\n", Indices.Select( idx=>Radiosity.DecodeLMAddressDebug(idx) ) ) );
+			File.WriteAllText( "rad_indices.txt", string.Join("\r\n", Indices.Select( idx=>idx.ToString() ) ) );
 
 			SaveDebugImage( Sky.Convert( EncodeSkyRGB8 ), "rad_sky" );
 			SaveDebugImage( IndexMap.Convert( idx => new Color(idx) ), "rad_index_map" );
@@ -313,7 +402,7 @@ namespace Fusion.Engine.Graphics.Lights
 				//	write indices
 				writer.WriteFourCC("IDX1");
 				writer.Write( Indices.Count );
-				writer.Write( Indices.ToArray() );
+				writer.Write( Indices.Select(idx=>idx.Index).ToArray() );
 			}
 		}
 

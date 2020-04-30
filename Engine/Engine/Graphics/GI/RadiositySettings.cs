@@ -74,6 +74,20 @@ namespace Fusion.Engine.Graphics.GI
 		public float RadianceThreshold { get; set; } = 0.02f;
 
 		/// <summary>
+		///	Threshold to discard patch: L = cos(theta) / (patchSize + R^2) * patchSize^2
+		/// </summary>
+		[Category("Light Map")]
+		[AEDisplayName("Patch Threshold")]
+		public float PatchThreshold { get; set; } = 0.125f;
+
+		/// <summary>
+		///	Threshold to discard patch: L = cos(theta) / (patchSize + R^2) * patchSize^2
+		/// </summary>
+		[Category("Light Map")]
+		[AEDisplayName("Merge Threshold")]
+		public float MergeThreshold { get; set; } = 0.25f;
+
+		/// <summary>
 		///	Produce debugging images for albedo, normals, etc
 		/// </summary>
 		public bool DebugLightmaps { get; set; } = false;

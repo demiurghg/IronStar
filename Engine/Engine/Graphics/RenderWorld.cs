@@ -14,6 +14,7 @@ using Fusion.Core.Shell;
 using Fusion.Core.Extensions;
 using Fusion.Engine.Graphics.Lights;
 using Fusion.Build;
+using Fusion.Engine.Graphics.GI;
 
 namespace Fusion.Engine.Graphics {
 
@@ -675,48 +676,6 @@ namespace Fusion.Engine.Graphics {
 
 			//----------------------------------------
 
-			if (map) 
-			{
-				sw.Start();
-
-				var samples	= 0;
-				var filter	= false;
-				var bias	= 0;
-
-				switch (quality) 
-				{
-					case QualityLevel.Low:	
-						samples	=	256;
-						bias	=	0;
-						filter	=	true;
-						break; 
-					case QualityLevel.Medium:	
-						samples	=	1024;
-						bias	=	0;
-						filter	=	true;
-						break; 
-					case QualityLevel.High:	
-						samples	=	1024;
-						bias	=	0;
-						filter	=	false;
-						break; 
-					case QualityLevel.Ultra:	
-						samples	=	2048;
-						bias	=	1;
-						filter	=	false;
-						break; 
-				}
-
-				var irrMap = rs.LightManager.LightMap.BakeLightMap( Instances, LightSet, samples, bias );
-
-				using ( var stream = File.OpenWrite( pathIrrMap ) ) 
-				{
-					irrMap.WriteStream( stream );
-				}
-			}
-
-			//----------------------------------------
-
 			if (volume) 
 			{
 				var samples	= 0;
@@ -749,6 +708,33 @@ namespace Fusion.Engine.Graphics {
 						irrVol.WriteToStream( stream );
 					}
 				}
+			}
+
+		}
+
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="gameTime"></param>
+		public void BuildRadiosityFormFactor ( string mapName, RadiositySettings settings )
+		{
+			var sw				=	new Stopwatch();
+			var device			=	Game.GraphicsDevice;
+			var builder			=	Game.GetService<Builder>();
+			var basePath		=	builder.GetBaseInputDirectory();
+
+			var pathIrrCache	=	Path.Combine(basePath, RenderSystem.LightmapPath, Path.ChangeExtension( mapName + "_irrcache", ".irrcache"	) );
+			var pathIrrMap		=	Path.Combine(basePath, RenderSystem.LightmapPath, Path.ChangeExtension( mapName + "_irrmap"	 , ".irrmap"	) );
+			var pathIrrVol		=	Path.Combine(basePath, RenderSystem.LightmapPath, Path.ChangeExtension( mapName + "_irrvol"	 , ".irrvol"	) );
+
+			var irrMap = rs.LightManager.LightMap.BakeLightMap( Instances, LightSet, settings );
+
+			using ( var stream = File.OpenWrite( pathIrrMap ) ) 
+			{
+				irrMap.WriteStream( stream );
 			}
 
 		}

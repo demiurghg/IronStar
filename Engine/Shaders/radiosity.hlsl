@@ -140,7 +140,8 @@ void CSMain(
 		
 		//if (lightDist<0.1) area = 0;
 		
-		float3	light		=	radiance * nDotL * area / ( area + lightDist * lightDist );
+		//float3	light		=	radiance * nDotL * area / ( area + lightDist * lightDist );
+		float3	light		=	radiance * nDotL / 128;
 		totalLight			+=	light;
 		
 		irradianceR			+=	SHL1EvaluateDiffuse( light.r, -lightDirN );

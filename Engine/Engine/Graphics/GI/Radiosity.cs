@@ -13,6 +13,7 @@ using Fusion.Engine.Common;
 using Fusion.Engine.Graphics.Ubershaders;
 using Fusion.Core;
 using Fusion.Engine.Graphics.Lights;
+using Fusion.Core.Shell;
 
 namespace Fusion.Engine.Graphics.GI
 {
@@ -86,6 +87,9 @@ namespace Fusion.Engine.Graphics.GI
 			DILATE		=	0x002,
 			COLLAPSE	=	0x004,
 			INTEGRATE	=	0x008,
+			DENOISE		=	0x010,
+			PASS1		=	0x020,
+			PASS2		=	0x040,
 		}
 
 		[StructLayout(LayoutKind.Sequential, Pack=4, Size=64)]
@@ -108,6 +112,7 @@ namespace Fusion.Engine.Graphics.GI
 
 
 		RenderTarget2D	radiance	;
+		RenderTarget2D	tempRadiance;
 		RenderTarget2D	irradianceR ;
 		RenderTarget2D	irradianceG ;
 		RenderTarget2D	irradianceB ;
@@ -115,6 +120,25 @@ namespace Fusion.Engine.Graphics.GI
 		ConstantBuffer	cbRadiocity	;
 		Ubershader		shader;
 		StateFactory	factory;
+
+
+
+		[Config]
+		[AECategory("Debug rays")]
+		public int DebugX { get; set; } = 0;
+
+		[Config]
+		[AECategory("Debug rays")]
+		public int DebugY { get; set; } = 0;
+
+		[Config]
+		[AECategory("Radiosity")]
+		public bool SkipDilation { get; set; } = false;
+
+		[Config]
+		[AECategory("Radiosity")]
+		public bool SkipDenoising { get; set; } = false;
+
 
 
 		public Radiosity( RenderSystem rs ) : base(rs)
@@ -153,10 +177,11 @@ namespace Fusion.Engine.Graphics.GI
 			SafeDispose( ref irradianceG );
 			SafeDispose( ref irradianceB );
 
-			radiance	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, true,  true );
-			irradianceR =	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
-			irradianceG =	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
-			irradianceB =	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
+			radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, true,  true );
+			tempRadiance	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, true,  true );
+			irradianceR		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
+			irradianceG		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
+			irradianceB		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
 		}
 
 
@@ -164,23 +189,17 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			if (disposing)
 			{
-				SafeDispose( ref cbRadiocity );
+				SafeDispose( ref cbRadiocity	);
 
-				SafeDispose( ref radiance	 );
-				SafeDispose( ref irradianceR );
-				SafeDispose( ref irradianceG );
-				SafeDispose( ref irradianceB );
+				SafeDispose( ref radiance		);
+				SafeDispose( ref tempRadiance	);
+				SafeDispose( ref irradianceR	);
+				SafeDispose( ref irradianceG	);
+				SafeDispose( ref irradianceB	);
 			}
 
 			base.Dispose( disposing );
 		}
-
-
-		[Config]
-		public int DebugX { get; set; } = 0;
-
-		[Config]
-		public int DebugY { get; set; } = 0;
 
 		/*-----------------------------------------------------------------------------------------
 		 *	Radiosity rendering :
@@ -260,10 +279,24 @@ namespace Fusion.Engine.Graphics.GI
 
 					device.Dispatch( new Int2( lightMap.Width, lightMap.Height ), new Int2( BlockSizeX, BlockSizeY ) );
 				}
+
+
+				using ( new PixEvent( "Dilation" ) )
+				{
+					if (!SkipDilation)
+					{
+						rs.DilateFilter.DilateByMaskAlpha( tempRadiance, irradianceR, lightMap.albedo, 0, 1 );
+						tempRadiance.CopyTo( irradianceR );
+
+						rs.DilateFilter.DilateByMaskAlpha( tempRadiance, irradianceG, lightMap.albedo, 0, 1 );
+						tempRadiance.CopyTo( irradianceG );
+
+						rs.DilateFilter.DilateByMaskAlpha( tempRadiance, irradianceB, lightMap.albedo, 0, 1 );
+						tempRadiance.CopyTo( irradianceB );
+					}
+				}
 			}
 		}
-
-
 
 
 		/*-----------------------------------------------------------------------------------------

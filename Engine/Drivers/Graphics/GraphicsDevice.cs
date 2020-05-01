@@ -940,6 +940,5 @@ namespace Fusion.Drivers.Graphics {
 				DeviceContext.OutputMerger.SetUnorderedAccessView ( register, tex3D==null?null:tex3D.Uav, -1 ); 
 			}
 		}
-
 	}
 }

@@ -407,6 +407,15 @@ namespace Fusion.Drivers.Graphics {
         }
 
 
+		public void CopyTo ( RenderTarget2D destination )
+		{
+			if (destination.Width  != Width ) throw new ArgumentException("destination.Width != Width" );
+			if (destination.Height != Height) throw new ArgumentException("destination.Height != Height");
+			if (destination.Format != Format) throw new ArgumentException("destination.Format != Format");
+
+			device.DeviceContext.CopySubresourceRegion( tex2D, 0, null, destination.tex2D, 0 );
+		}
+
 
 		/// <summary>
 		/// Gets a copy of 2D texture data, specifying a start index and number of elements.

@@ -28,6 +28,7 @@ namespace Fusion.Engine.Graphics {
 		internal Filter2			Filter2			{ get { return Game.GetService< Filter2			 >(); } }
 		internal BlurFilter			Blur			{ get { return Game.GetService< BlurFilter		 >(); } }
 		internal BilateralFilter	BilateralFilter	{ get { return Game.GetService< BilateralFilter	 >(); } }
+		internal DilateFilter		DilateFilter	{ get { return Game.GetService< DilateFilter	 >(); } }
 		internal SsaoFilter			SsaoFilter		{ get { return Game.GetService< SsaoFilter		 >(); } }
 		internal BitonicSort		BitonicSort		{ get { return Game.GetService< BitonicSort		 >(); } }
 		internal HdrFilter			HdrFilter		{ get { return Game.GetService< HdrFilter		 >(); } }
@@ -115,6 +116,7 @@ namespace Fusion.Engine.Graphics {
 			Game.AddServiceAndComponent( new CubeMapFilter		( this ) );
 			Game.AddServiceAndComponent( new BlurFilter			( this ) );
 			Game.AddServiceAndComponent( new BilateralFilter	( this ) );
+			Game.AddServiceAndComponent( new DilateFilter		( this ) );
 			Game.AddServiceAndComponent( new SsaoFilter			( this ) );
 			Game.AddServiceAndComponent( new HdrFilter			( this ) );
 			//Game.AddServiceAndComponent( new DofFilter			( this ) );

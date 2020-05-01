@@ -26,8 +26,8 @@ namespace Fusion.Engine.Graphics
 	[RequireShader("bilateral", true)]
 	internal class BilateralFilter : RenderComponent {
 
-		static FXConstantBuffer<FilterParams>			regParams	=	new CRegister( 0, "filterParams" );
-		static FXConstantBuffer<GpuData.CAMERA>	regCamera	=	new CRegister( 1, "Camera" );
+		static FXConstantBuffer<FilterParams>		regParams	=	new CRegister( 0, "filterParams" );
+		static FXConstantBuffer<GpuData.CAMERA>		regCamera	=	new CRegister( 1, "Camera" );
 
 		[Flags]
 		enum Flags : int {
@@ -107,7 +107,7 @@ namespace Fusion.Engine.Graphics
 
 		/*-----------------------------------------------------------------------------------------------
 		 * 
-		 *	Base filters
+		 *	Bilateral filter
 		 * 
 		-----------------------------------------------------------------------------------------------*/
 

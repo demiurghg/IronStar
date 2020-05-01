@@ -205,9 +205,12 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			//--------------------------------------
 
-			Log.Message("Saving debug images...");
-			lightmapGBuffer.SaveDebugImages();
-
+			if (settings.DebugLightmaps)
+			{
+				Log.Message("Saving debug images...");
+				lightmapGBuffer.SaveDebugImages();
+			}
+	
 			Log.Message("Completed.");
 
 			return lightmapGBuffer;

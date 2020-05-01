@@ -1,7 +1,6 @@
 
 #if 0
 $ubershader 	LIGHTING
-$ubershader		DILATE
 $ubershader 	COLLAPSE
 $ubershader 	INTEGRATE
 #endif
@@ -58,6 +57,72 @@ void CSMain(
 /*------------------------------------------------------------------------------
 	Dilate ligting results :
 ------------------------------------------------------------------------------*/
+
+#ifdef DILATE
+
+[numthreads(BlockSizeX,BlockSizeY,1)] 
+void CSMain( 
+	uint3 groupId : SV_GroupID, 
+	uint3 groupThreadId : SV_GroupThreadID, 
+	uint  groupIndex: SV_GroupIndex, 
+	uint3 dispatchThreadId : SV_DispatchThreadID) 
+{
+	int2	loadXY		=	dispatchThreadId.xy + int2( 0, 0);
+	int2	loadXY_T	=	dispatchThreadId.xy + int2( 0, 1);
+	int2	loadXY_B	=	dispatchThreadId.xy + int2( 0,-1);
+	int2	loadXY_R	=	dispatchThreadId.xy + int2( 1, 0);
+	int2	loadXY_L	=	dispatchThreadId.xy + int2(-1, 0);
+	int2	storeXY		=	dispatchThreadId.xy;
+	
+	float4	albedo_T	=	Albedo[ loadXY_T ];
+	float4	albedo_B	=	Albedo[ loadXY_B ];
+	float4	albedo_R	=	Albedo[ loadXY_R ];
+	float4	albedo_L	=	Albedo[ loadXY_L ];
+	
+	float4	irrad_T		=	Albedo[ loadXY_T ];
+	float4	irrad_B		=	Albedo[ loadXY_B ];
+	float4	irrad_R		=	Albedo[ loadXY_R ];
+	float4	irrad_L		=	Albedo[ loadXY_L ];
+	
+	
+	
+	float4 lighting		=	0.25 * ( lighting00 + lighting01 + lighting10 + lighting11 );
+	
+	float	 factor		=	all(float4(lighting00.a, lighting01.a, lighting10.a, lighting11.a));
+
+	RadianceUav[ storeXY.xy ]	=	float4(lighting) * factor;
+}
+
+#endif
+
+/*#ifdef DENOISE
+
+[numthreads(BlockSizeX,BlockSizeY,1)] 
+void CSMain( 
+	uint3 groupId : SV_GroupID, 
+	uint3 groupThreadId : SV_GroupThreadID, 
+	uint  groupIndex: SV_GroupIndex, 
+	uint3 dispatchThreadId : SV_DispatchThreadID) 
+{
+	int2	loadXY00	=	dispatchThreadId.xy * 2 + int2(0,0);
+	int2	loadXY01	=	dispatchThreadId.xy * 2 + int2(0,1);
+	int2	loadXY10	=	dispatchThreadId.xy * 2 + int2(1,0);
+	int2	loadXY11	=	dispatchThreadId.xy * 2 + int2(1,1);
+	int2	storeXY		=	dispatchThreadId.xy;
+	
+	float4 lighting00	=	Radiance	[ loadXY00 ];
+	float4 lighting01	=	Radiance	[ loadXY01 ];
+	float4 lighting10	=	Radiance	[ loadXY10 ];
+	float4 lighting11	=	Radiance	[ loadXY11 ];
+	
+	float4 lighting		=	0.25 * ( lighting00 + lighting01 + lighting10 + lighting11 );
+	
+	float	 factor		=	all(float4(lighting00.a, lighting01.a, lighting10.a, lighting11.a));
+
+	RadianceUav[ storeXY.xy ]	=	float4(lighting) * factor;
+}
+
+#endif*/
 
 /*------------------------------------------------------------------------------
 	Collapse lighting buffer to patches :

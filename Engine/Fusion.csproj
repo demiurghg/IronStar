@@ -503,6 +503,7 @@
     <Compile Include="Engine\Frames\TouchProcessor.cs" />
     <Compile Include="Engine\Frames\Utils.cs" />
     <Compile Include="Engine\Graphics\Camera.cs" />
+    <Compile Include="Engine\Graphics\Effects\DilateFilter.cs" />
     <Compile Include="Engine\Graphics\Effects\BilateralFilter.cs" />
     <Compile Include="Engine\Graphics\Effects\BitonicSort.cs" />
     <Compile Include="Engine\Graphics\Effects\BlurFilter.cs" />

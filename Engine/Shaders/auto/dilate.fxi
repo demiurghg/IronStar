@@ -1,0 +1,24 @@
+// ---------------- CONSTANT VALUES ---------------- //
+
+static const int BilateralBlockSizeX = 16;
+static const int BilateralBlockSizeY = 16;
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// Fusion.Engine.Graphics.DilateFilter+DILATE
+// Marshal.SizeOf = 16
+struct DILATE {
+	float      Threshold;                     // offset:    0
+	float      GainMask;                      // offset:    4
+	float      reserved2;                     // offset:    8
+	float      reserved3;                     // offset:   12
+};
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+cbuffer __buffer0 : register(b0) {
+	DILATE Dilate : packoffset(c0);
+};
+Texture2D<float4>              Source                         : register(t0);
+Texture2D<float4>              Mask                           : register(t1);
+RWTexture2D<float4>            Target                         : register(u0);

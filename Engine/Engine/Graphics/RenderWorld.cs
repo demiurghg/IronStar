@@ -446,10 +446,6 @@ namespace Fusion.Engine.Graphics {
 					//	single pass for stereo rendering :
 					if ( stereoEye!=StereoEye.Right ) {
 
-						//	#TODO -- restore dynamic light-probes
-						//  RelightLightProbes();
-						rs.Radiosity.Render( gameTime );
-
 						//	simulate particles BEFORE lighting
 						//	to make particle lit (position is required) and 
 						//	get simulated particles for shadows.
@@ -461,6 +457,13 @@ namespace Fusion.Engine.Graphics {
 
 						//	allocated and render shadows :
 						rs.LightManager.ShadowMap.RenderShadowMaps( gameTime, Camera, rs, this, LightSet );
+
+						//	render sky-cube
+						rs.Sky.RenderSkyCube( SkySettings );
+
+						//	#TODO -- restore dynamic light-probes
+						//  compute radiosity using shadowmaps
+						rs.Radiosity.Render( gameTime );
 
 						//	clusterize light set :
 						rs.LightManager.LightGrid.ClusterizeLightSet( stereoEye, Camera, LightSet );
@@ -495,7 +498,6 @@ namespace Fusion.Engine.Graphics {
 					ParticleSystem.RenderHard( gameTime, Camera, stereoEye, viewHdrFrame );
 
 					rs.Sky.Render( Camera, stereoEye, viewHdrFrame, SkySettings );
-					rs.Sky.RenderFogTable( SkySettings );
 
 					using ( new PixEvent( "Background downsample" ) ) {
 						var hdrFrame = viewHdrFrame;

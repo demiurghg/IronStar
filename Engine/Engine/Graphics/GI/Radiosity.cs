@@ -18,7 +18,7 @@ using Fusion.Core.Shell;
 namespace Fusion.Engine.Graphics.GI
 {
 	[RequireShader("radiosity", true)]
-	public class Radiosity : RenderComponent
+	public partial class Radiosity : RenderComponent
 	{
 		[ShaderDefine]	const int BlockSizeX = 16;
 		[ShaderDefine]	const int BlockSizeY = 16;
@@ -28,29 +28,31 @@ namespace Fusion.Engine.Graphics.GI
 		[ShaderDefine]	const uint LightSpotShapeRound	=	SceneRenderer.LightSpotShapeRound;
 		[ShaderDefine]	const uint LightSpotShapeSquare	=	SceneRenderer.LightSpotShapeSquare;
 
-		static FXConstantBuffer<GpuData.CAMERA>				regCamera			=	new CRegister(0, "Camera"		);
-		static FXConstantBuffer<RADIOSITY>					regRadiosity		=	new CRegister(1, "Radiosity"		);
-		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow	=	new CRegister(2, "CascadeShadow"	);
-		static FXConstantBuffer<GpuData.DIRECT_LIGHT>		regDirectLight		=	new CRegister(3, "DirectLight"		);
+		static FXConstantBuffer<GpuData.CAMERA>				regCamera			=	new CRegister( 0, "Camera"		);
+		static FXConstantBuffer<RADIOSITY>					regRadiosity		=	new CRegister( 1, "Radiosity"		);
+		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow	=	new CRegister( 2, "CascadeShadow"	);
+		static FXConstantBuffer<GpuData.DIRECT_LIGHT>		regDirectLight		=	new CRegister( 3, "DirectLight"		);
+																								   
+		static FXTexture2D<Vector4>							regPosition			=	new TRegister( 0, "Position"			);
+		static FXTexture2D<Vector4>							regAlbedo			=	new TRegister( 1, "Albedo"			);
+		static FXTexture2D<Vector4>							regNormal			=	new TRegister( 2, "Normal"			);
+		static FXTexture2D<Vector4>							regArea				=	new TRegister( 3, "Area"				);
+		static FXTexture2D<uint>							regIndexMap			=	new TRegister( 4, "IndexMap"			);
+		static FXBuffer<uint>								regIndices			=	new TRegister( 5, "Indices"			);
+		static FXTexture2D<Vector4>							regRadiance			=	new TRegister( 6, "Radiance"			);
+		static FXTexture2D<Vector4>							regShadowMap		=	new TRegister( 7, "ShadowMap"		);
+		static FXTexture2D<Vector4>							regShadowMask		=	new TRegister( 8, "ShadowMask"		);
+		static FXStructuredBuffer<SceneRenderer.LIGHT>		regLights			=	new TRegister( 9, "Lights"			);
+		static FXTexture2D<Vector4>							regSky				=	new TRegister(10, "Sky"				);
+		static FXTextureCube<Vector4>						regSkyBox			=	new TRegister(11, "SkyBox"			);
 
-		static FXTexture2D<Vector4>							regPosition			=	new TRegister(0, "Position"			);
-		static FXTexture2D<Vector4>							regAlbedo			=	new TRegister(1, "Albedo"			);
-		static FXTexture2D<Vector4>							regNormal			=	new TRegister(2, "Normal"			);
-		static FXTexture2D<Vector4>							regArea				=	new TRegister(3, "Area"				);
-		static FXTexture2D<uint>							regIndexMap			=	new TRegister(4, "IndexMap"			);
-		static FXBuffer<uint>								regIndices			=	new TRegister(5, "Indices"			);
-		static FXTexture2D<Vector4>							regRadiance			=	new TRegister(6, "Radiance"			);
-		static FXTexture2D<Vector4>							regShadowMap		=	new TRegister(7, "ShadowMap"		);
-		static FXTexture2D<Vector4>							regShadowMask		=	new TRegister(8, "ShadowMask"		);
-		static FXStructuredBuffer<SceneRenderer.LIGHT>		regLights			=	new TRegister(9, "Lights"			);
-
-		static FXSamplerState								regSamplerLinear	=	new SRegister(0, "LinearSampler"	);
-		static FXSamplerComparisonState						regSamplerShadow	=	new SRegister(1, "ShadowSampler"	);
-
-		static FXRWTexture2D<Vector4>						regRadianceUav		=	new URegister(0, "RadianceUav"	);
-		static FXRWTexture2D<Vector4>						regIrradianceR		=	new URegister(1, "IrradianceR"	);
-		static FXRWTexture2D<Vector4>						regIrradianceG		=	new URegister(2, "IrradianceG"	);
-		static FXRWTexture2D<Vector4>						regIrradianceB		=	new URegister(3, "IrradianceB"	);
+		static FXSamplerState								regSamplerLinear	=	new SRegister( 0, "LinearSampler"	);
+		static FXSamplerComparisonState						regSamplerShadow	=	new SRegister( 1, "ShadowSampler"	);
+																								   
+		static FXRWTexture2D<Vector4>						regRadianceUav		=	new URegister( 0, "RadianceUav"	);
+		static FXRWTexture2D<Vector4>						regIrradianceR		=	new URegister( 1, "IrradianceR"	);
+		static FXRWTexture2D<Vector4>						regIrradianceG		=	new URegister( 2, "IrradianceG"	);
+		static FXRWTexture2D<Vector4>						regIrradianceB		=	new URegister( 3, "IrradianceB"	);
 
 		public LightMap LightMap
 		{
@@ -101,7 +103,7 @@ namespace Fusion.Engine.Graphics.GI
 			public uint		RegionHeight;
 
 			public float	SkyFactor;
-			public float	BounceFactor;
+			public float	IndirectFactor;
 		}
 
 
@@ -117,42 +119,9 @@ namespace Fusion.Engine.Graphics.GI
 		RenderTarget2D	irradianceG ;
 		RenderTarget2D	irradianceB ;
 
-		ConstantBuffer	cbRadiocity	;
+		ConstantBuffer	cbRadiosity	;
 		Ubershader		shader;
 		StateFactory	factory;
-
-
-
-		[Config]
-		[AECategory("Debug rays")]
-		public int DebugX { get; set; } = 0;
-
-		[Config]
-		[AECategory("Debug rays")]
-		public int DebugY { get; set; } = 0;
-
-		[Config]
-		[AECategory("Radiosity")]
-		public bool SkipDilation { get; set; } = false;
-
-		[Config]
-		[AECategory("Radiosity")]
-		public bool SkipDenoising { get; set; } = false;
-
-		[Config]
-		[AECategory("Bilateral Filter")]
-		[AEValueRange(0,10,0.1f,0.01f)]
-		public float ColorFactor { get; set; } = 0.5f;
-
-		[Config]
-		[AECategory("Bilateral Filter")]
-		[AEValueRange(0,10,0.1f,0.01f)]
-		public float AlphaFactor { get; set; } = 0.5f;
-
-		[Config]
-		[AECategory("Bilateral Filter")]
-		[AEValueRange(0,10,0.1f,0.01f)]
-		public float FalloffFactor { get; set; } = 0.5f;
 
 
 
@@ -165,7 +134,7 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			base.Initialize();
 
-			cbRadiocity	=	new ConstantBuffer( rs.Device, typeof(RADIOSITY) );
+			cbRadiosity	=	new ConstantBuffer( rs.Device, typeof(RADIOSITY) );
 
 			CreateLightMaps(16,16);
 
@@ -204,7 +173,7 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			if (disposing)
 			{
-				SafeDispose( ref cbRadiocity	);
+				SafeDispose( ref cbRadiosity	);
 
 				SafeDispose( ref radiance		);
 				SafeDispose( ref tempRadiance	);
@@ -233,8 +202,15 @@ namespace Fusion.Engine.Graphics.GI
 			{
 				device.ResetStates();
 
+				var radiosity = new RADIOSITY();
+
+				radiosity.SkyFactor			=	SkyFactor;
+				radiosity.IndirectFactor	=	IndirectFactor;
+
+				cbRadiosity.SetData( radiosity );
+
 				device.ComputeConstants[ regCamera			]	=	rs.RenderWorld.Camera.CameraData;
-				device.ComputeConstants[ regRadiosity		]	=	null;
+				device.ComputeConstants[ regRadiosity		]	=	cbRadiosity;
 				device.ComputeConstants[ regCascadeShadow	]	=	rs.LightManager.ShadowMap.GetCascadeShadowConstantBuffer();
 				device.ComputeConstants[ regDirectLight		]	=	rs.LightManager.DirectLightData;
 
@@ -250,6 +226,9 @@ namespace Fusion.Engine.Graphics.GI
 
 				device.ComputeResources[ regShadowMap		]	=	rs.LightManager.ShadowMap.ShadowTexture;
 				device.ComputeResources[ regShadowMask		]	=	rs.LightManager.ShadowMap.ParticleShadowTexture;
+
+				device.ComputeResources[ regSkyBox			]	=	rs.Sky.SkyCube;
+				device.ComputeResources[ regSky				]	=	lightMap.sky;
 
 
 				using ( new PixEvent( "Lighting" ) )

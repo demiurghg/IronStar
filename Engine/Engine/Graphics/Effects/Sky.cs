@@ -86,7 +86,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public override void Initialize() 
 		{
-			skyCube		=	new RenderTargetCube( device, ColorFormat.Rgba16F, 64, 0 );
+			skyCube		=	new RenderTargetCube( device, ColorFormat.Rgba16F, 32, 0 );
 			skyConstsCB	=	new ConstantBuffer( device, typeof(SkyConsts) );
 
 			LoadContent();
@@ -175,7 +175,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Renders fog look-up table
 		/// </summary>
-		internal void RenderFogTable( SkySettings settings )
+		internal void RenderSkyCube( SkySettings settings )
 		{
 			using ( new PixEvent("Fog Table") ) {
 				var	sunPos		= settings.SunPosition;
@@ -198,7 +198,8 @@ namespace Fusion.Engine.Graphics {
 				skyConstsData.Temperature	= Temperature.Get( settings.SunTemperature ); 
 				skyConstsData.SkyIntensity	= settings.SkyIntensity;
 
-				for( int i = 0; i < 6; ++i ) {
+				for( int i = 0; i < 6; ++i ) 
+				{
 					device.SetTargets( null, SkyCube.GetSurface(0, (CubeFace)i ) );
 
 					SkyCube.SetViewport();

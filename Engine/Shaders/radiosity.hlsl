@@ -186,6 +186,16 @@ void CSMain(
 	float4	irradianceB	=	float4( 0, 0, 0, 0 );
 	float3 	totalLight	=	float3(0,0,0);
 	
+	
+	float3	skyDir		=	Sky[ loadXY ].xyz * 2 - 1;
+	float	skyFactor	=	length( skyDir ) * Radiosity.SkyFactor;
+	float3	skyColor	=	SkyBox.SampleLevel( LinearSampler, skyDir.xyz, 0 ).rgb * skyFactor;
+	
+	irradianceR			+=	SHL1EvaluateDiffuse( skyColor.r, normalize(skyDir.xyz) );
+	irradianceG			+=	SHL1EvaluateDiffuse( skyColor.g, normalize(skyDir.xyz) );
+	irradianceB			+=	SHL1EvaluateDiffuse( skyColor.b, normalize(skyDir.xyz) );
+	
+	
 	for (uint index=begin; index<end; index++)
 	{
 		uint 	lmAddr		=	Indices[ index ];
@@ -210,7 +220,7 @@ void CSMain(
 		
 		//float3	light		=	radiance * nDotL * area / ( area + lightDist * lightDist );
 		float	bias		=	pow(2, lmMip*2);
-		float3	light		=	radiance.rgb * nDotL / 256.0f * hitCount;	
+		float3	light		=	radiance.rgb * nDotL / 128.0f * hitCount * Radiosity.IndirectFactor;	
 		totalLight			+=	light;
 		
 		//if (radiance.a==0) light = float3(0,0,1);

@@ -38,7 +38,7 @@ struct RADIOSITY {
 	uint       RegionWidth;                   // offset:    8
 	uint       RegionHeight;                  // offset:   12
 	float      SkyFactor;                     // offset:   16
-	float      BounceFactor;                  // offset:   20
+	float      IndirectFactor;                // offset:   20
 };
 
 // Fusion.Engine.Graphics.ShadowMap+CASCADE_SHADOW
@@ -104,6 +104,8 @@ Texture2D<float4>              Radiance                       : register(t6);
 Texture2D<float4>              ShadowMap                      : register(t7);
 Texture2D<float4>              ShadowMask                     : register(t8);
 StructuredBuffer<LIGHT>        Lights                         : register(t9);
+Texture2D<float4>              Sky                            : register(t10);
+TextureCube<float4>            SkyBox                         : register(t11);
 SamplerState                   LinearSampler                  : register(s0);
 SamplerComparisonState         ShadowSampler                  : register(s1);
 RWTexture2D<float4>            RadianceUav                    : register(u0);

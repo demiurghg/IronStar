@@ -139,6 +139,21 @@ namespace Fusion.Engine.Graphics.GI
 		[AECategory("Radiosity")]
 		public bool SkipDenoising { get; set; } = false;
 
+		[Config]
+		[AECategory("Bilateral Filter")]
+		[AEValueRange(0,10,0.1f,0.01f)]
+		public float ColorFactor { get; set; } = 0.5f;
+
+		[Config]
+		[AECategory("Bilateral Filter")]
+		[AEValueRange(0,10,0.1f,0.01f)]
+		public float AlphaFactor { get; set; } = 0.5f;
+
+		[Config]
+		[AECategory("Bilateral Filter")]
+		[AEValueRange(0,10,0.1f,0.01f)]
+		public float FalloffFactor { get; set; } = 0.5f;
+
 
 
 		public Radiosity( RenderSystem rs ) : base(rs)
@@ -207,7 +222,7 @@ namespace Fusion.Engine.Graphics.GI
 
 		public void Render ( GameTime gameTime )
 		{
-			if (lightMap==null)
+			if (lightMap==null || lightMap.albedo==null)
 			{
 				return;
 			}
@@ -293,6 +308,16 @@ namespace Fusion.Engine.Graphics.GI
 
 						rs.DilateFilter.DilateByMaskAlpha( tempRadiance, irradianceB, lightMap.albedo, 0, 1 );
 						tempRadiance.CopyTo( irradianceB );
+					}
+				}
+
+				using ( new PixEvent( "Bilateral Filter" ) )
+				{
+					if (!SkipDenoising)
+					{
+						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceR, tempRadiance, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceG, tempRadiance, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceB, tempRadiance, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
 					}
 				}
 			}

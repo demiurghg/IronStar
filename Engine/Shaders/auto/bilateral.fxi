@@ -6,10 +6,12 @@ static const int BilateralBlockSizeY = 16;
 // ---------------- DATA STRUCTURES ---------------- //
 
 // Fusion.Engine.Graphics.BilateralFilter+FilterParams
-// Marshal.SizeOf = 16
+// Marshal.SizeOf = 64
 struct FilterParams {
-	float      DepthFactor;                   // offset:    0
-	float      ColorFactor;                   // offset:    4
+	float4     LumaVector;                    // offset:    0
+	float      MaskFactor;                    // offset:   16
+	float      ColorFactor;                   // offset:   20
+	float      GaussFalloff;                  // offset:   24
 };
 
 // Fusion.Engine.Graphics.GpuData+CAMERA

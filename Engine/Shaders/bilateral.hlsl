@@ -1,5 +1,5 @@
 #if 0
-$ubershader	DEPTH HORIZONTAL|VERTICAL
+$ubershader DOUBLE_PASS	MASK_DEPTH|MASK_ALPHA HORIZONTAL|VERTICAL
 #endif
 
 #include "auto/bilateral.fxi"
@@ -13,18 +13,38 @@ float LinearizeDepth(float z)
 	return 1.0f / (z * a + b);
 }
 
-Texture2D 	hdao 	: register(t0); 
-Texture2D 	depth  	: register(t1); 
-RWTexture2D<float4> target  : register(u0); 
+Texture2D 	Source 	: register(t0); 
+Texture2D 	Mask  	: register(t1); 
+RWTexture2D<float4> Target  : register(u0); 
 
+#ifdef DOUBLE_PASS
 #ifdef HORIZONTAL
-groupshared float2 cachedData[BilateralBlockSizeY][BilateralBlockSizeX*2];
+groupshared float4 cachedData[BilateralBlockSizeY][BilateralBlockSizeX*2];
+groupshared float2 cachedMask[BilateralBlockSizeY][BilateralBlockSizeX*2];
 #endif
 
 #ifdef VERTICAL
-groupshared float2 cachedData[BilateralBlockSizeY*2][BilateralBlockSizeX];
+groupshared float4 cachedData[BilateralBlockSizeY*2][BilateralBlockSizeX];
+groupshared float2 cachedMask[BilateralBlockSizeY*2][BilateralBlockSizeX];
+#endif
 #endif
 
+
+float ExtractMaskFactor( float4 mask )
+{
+#ifdef MASK_DEPTH
+	return LinearizeDepth ( mask.r );
+#endif	
+#ifdef MASK_ALPHA
+	return mask.a;
+#endif	
+	return 0;
+}
+
+float ExtractLumaFactor( float4 color )
+{
+	return dot( color, filterParams.LumaVector );
+}
 
 
 [numthreads(BilateralBlockSizeX,BilateralBlockSizeY,1)] 
@@ -59,7 +79,7 @@ void CSMain(
 	int texWidth;
 	int texHeight;
 	
-	hdao.GetDimensions( texWidth, texHeight );
+	Source.GetDimensions( texWidth, texHeight );
 	
 	[unroll]
 	for (int i=0; i<2; i++) {
@@ -71,9 +91,13 @@ void CSMain(
 
 		loadPoint.xy	=	clamp( loadPoint.xy, int2(0,0), int2(texWidth,texHeight) );
 		
-		float 	d		=	LinearizeDepth ( depth.Load(loadPoint).r );
-		float 	ao		=	hdao.Load( loadPoint ).r;
-		cachedData[ storePoint.y ][ storePoint.x ] = float2( ao, d );
+		float4	color	=	Source .Load( loadPoint );
+		float4	mask	=	Mask.Load( loadPoint );
+		
+		float 	lf		=	ExtractLumaFactor( color );
+		float 	mf		=	ExtractMaskFactor( mask );
+		cachedMask[ storePoint.y ][ storePoint.x ]  = float2( lf, mf );
+		cachedData[ storePoint.y ][ storePoint.x ]  = color;
 	}
 	
 	GroupMemoryBarrierWithGroupSync();
@@ -82,11 +106,11 @@ void CSMain(
 	//	bilateral filter :
 	//---------------------------------------------
 	
-	float accumValue 	= 0;
-	float accumWeight	= 0;
+	float4 accumValue 	= 0;
+	float  accumWeight	= 0;
 	
-	float 	depthCenter		=	LinearizeDepth ( depth.Load( centerPoint ).r );
-	float	hdaoCenter		=	hdao.Load( centerPoint ).x;
+	float 	maskCenter		=	ExtractMaskFactor( Mask  .Load( centerPoint ) );
+	float	lumaCenter		=	ExtractLumaFactor( Source.Load( centerPoint ) );
 	
 	[unroll]
 	for (int t=-7; t<=7; t++) {
@@ -98,27 +122,29 @@ void CSMain(
 		int3 offset 	= int3(t,0,0);
 		#endif
 		
+		float	k			=	filterParams.GaussFalloff;
+		float	falloff		=	t*t * k*k;
+		
 		int2	loadPoint	=	int2(overlapX,overlapY) + groupThreadId.xy + offset.xy;
 	
-		float2	depthAO		=	cachedData[ loadPoint.y ][ loadPoint.x ].xy;
-		float 	localDepth	=	depthAO.y;
-		float	localHdao	=	depthAO.x;
-
-		float	deltaD		=	localDepth - depthCenter;
-		float	powerD		=	deltaD * deltaD * filterParams.DepthFactor;
-
-		float	deltaC		=	hdaoCenter - localHdao;
-		float 	powerC		=	deltaC * deltaC * filterParams.ColorFactor;
+		float4	localColor	=	cachedData[ loadPoint.y ][ loadPoint.x ];
+		float2	localMask	=	cachedMask[ loadPoint.y ][ loadPoint.x ];
 		
-		float	weight		=	exp( - powerD - powerC );
+		float	deltaL		=	localMask.x - lumaCenter;
+		float	deltaM		=	localMask.y - maskCenter;
+		
+		float 	powerL		=	deltaL * deltaL * filterParams.ColorFactor;
+		float	powerM		=	deltaM * deltaM * filterParams.MaskFactor;
+		
+		float	weight		=	exp( - powerL - powerM - falloff );
 		
 		accumWeight			+=	weight;
-		accumValue 			+=	localHdao * weight;
-	}
+		accumValue 			+=	localColor * weight;
+	}//*/
 	
-	float	result			=	accumValue / accumWeight;
+	float4	result			=	accumValue / accumWeight;
 	
-	target[location.xy]		=	result;
+	Target[location.xy]		=	result;
 }
 
 //-------------------------------------------------------------------------------

@@ -255,7 +255,7 @@ namespace Fusion.Engine.Graphics {
 					float depthFactor = BilateralDepthFactor;
 					float colorFactor = BilateralColorFactor;
 
-					rs.BilateralFilter.RenderBilateralFilter( camera, occlusionMap, temporaryMap, depthBuffer, depthFactor, colorFactor );
+					rs.BilateralFilter.FilterSSAOByDepth( camera, occlusionMap, temporaryMap, depthBuffer, depthFactor, colorFactor, BilateralFalloff );
 				}
 			}
 		}

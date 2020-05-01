@@ -25,9 +25,10 @@ namespace Fusion.Engine.Graphics {
 		[AECategory("HDAO")] [Config] public float	AcceptRadius { get; set; } = 0.01f;
 		[AECategory("HDAO")] [Config] public float	RejectRadius { get; set; } = 1.00f;
 
-		[AECategory("Bilateral Filter")] [Config] public bool		SkipBilateralFilter { get; set; } = false;
-		[AECategory("Bilateral Filter")] [Config] public float	BilateralDepthFactor { get; set; } = 100;
-		[AECategory("Bilateral Filter")] [Config] public float	BilateralColorFactor { get; set; } = 8;
+		[AECategory("Bilateral Filter")] [Config] public bool	SkipBilateralFilter { get; set; } = false;
+		[AECategory("Bilateral Filter")] [Config] public float	BilateralDepthFactor { get; set; } = 2;
+		[AECategory("Bilateral Filter")] [Config] public float	BilateralColorFactor { get; set; } = 0;
+		[AECategory("Bilateral Filter")] [Config] public float	BilateralFalloff { get; set; } = 0.2f;
 
 	}
 }

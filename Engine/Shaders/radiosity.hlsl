@@ -18,6 +18,9 @@ $ubershader 	INTEGRATE
 
 #ifdef LIGHTING
 
+// small addition to tell lit and unlit areas
+static const float3 LightEpsilon = float3( 0.001f, 0.001f, 0.001f );
+
 [numthreads(BlockSizeX,BlockSizeY,1)] 
 void CSMain( 
 	uint3 groupId : SV_GroupID, 
@@ -49,7 +52,9 @@ void CSMain(
 	FLUX	flux			=	ComputeDirectLightFlux( DirectLight );
 	float3 	lighting		=	ComputeLighting( flux, geometry, albedo.rgb );
 	
-	RadianceUav[ storeXY.xy ]	=	float4(shadow * lighting + indirect, albedo.a );
+			lighting		=	(lighting * shadow + indirect + LightEpsilon) * albedo.a;
+	
+	RadianceUav[ storeXY.xy ]	=	float4(lighting, albedo.a );
 }
 
 #endif
@@ -84,10 +89,8 @@ void CSMain(
 	float4	irrad_R		=	Albedo[ loadXY_R ];
 	float4	irrad_L		=	Albedo[ loadXY_L ];
 	
-	
-	
 	float4 lighting		=	0.25 * ( lighting00 + lighting01 + lighting10 + lighting11 );
-	
+
 	float	 factor		=	all(float4(lighting00.a, lighting01.a, lighting10.a, lighting11.a));
 
 	RadianceUav[ storeXY.xy ]	=	float4(lighting) * factor;
@@ -121,7 +124,8 @@ void CSMain(
 	
 	float4 lighting		=	0.25 * ( lighting00 + lighting01 + lighting10 + lighting11 );
 	
-	float	 factor		=	all(float4(lighting00.a, lighting01.a, lighting10.a, lighting11.a));
+	//	we use at least non-zero lighting value to collapse patches
+	float	 factor		=	all(float4(lighting00.r, lighting01.r, lighting10.r, lighting11.r));
 
 	RadianceUav[ storeXY.xy ]	=	float4(lighting) * factor;
 }

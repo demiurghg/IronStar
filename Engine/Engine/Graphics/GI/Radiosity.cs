@@ -169,7 +169,7 @@ namespace Fusion.Engine.Graphics.GI
 			SafeDispose( ref irradianceL2 );
 			SafeDispose( ref irradianceL3 );
 
-			radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F,	width, height, true,  true );
+			radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	width, height, true,  true );
 			tempHDR			=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	width, height, false, true );
 			tempLDR			=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	width, height, false, true );
 			irradianceL0	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	width, height, false, true );

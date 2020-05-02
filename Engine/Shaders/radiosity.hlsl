@@ -164,6 +164,13 @@ void CSMain(
 
 #ifdef INTEGRATE
 
+void AddLightMap( inout float3 lmcolor, inout float3 lmdir, float3 color, float3 dir )
+{
+	float lum = dot(float3(0.3f,0.5f,0.2f), lmcolor)+0;
+	lmdir	+=	normalize(dir) * lum;
+	lmcolor += 	color;
+}
+
 [numthreads(BlockSizeX,BlockSizeY,1)] 
 void CSMain( 
 	uint3 groupId : SV_GroupID, 
@@ -181,20 +188,15 @@ void CSMain(
 	uint	end			=	offset + count;
 	
 	float3	targetPoint	=	Position[ loadXY ].xyz;
-	float4	irradianceR	=	float4( 0, 0, 0, 0 );
-	float4	irradianceG	=	float4( 0, 0, 0, 0 );
-	float4	irradianceB	=	float4( 0, 0, 0, 0 );
-	float3 	totalLight	=	float3(0,0,0);
-	
+
+	float3	lightmapColor	=	float3(0,0,0);
+	float3	lightmapDir		=	float3(0,0,0);
 	
 	float3	skyDir		=	Sky[ loadXY ].xyz * 2 - 1;
 	float	skyFactor	=	length( skyDir ) * Radiosity.SkyFactor;
 	float3	skyColor	=	SkyBox.SampleLevel( LinearSampler, skyDir.xyz, 0 ).rgb * skyFactor;
 	
-	irradianceR			+=	SHL1EvaluateDiffuse( skyColor.r, normalize(skyDir.xyz) );
-	irradianceG			+=	SHL1EvaluateDiffuse( skyColor.g, normalize(skyDir.xyz) );
-	irradianceB			+=	SHL1EvaluateDiffuse( skyColor.b, normalize(skyDir.xyz) );
-	
+	AddLightMap( lightmapColor, lightmapDir, skyColor, skyDir );
 	
 	for (uint index=begin; index<end; index++)
 	{
@@ -216,27 +218,14 @@ void CSMain(
 		float3 	lightDirN	=	normalize( lightDir );
 		float	nDotL		=	max( 0, dot( normal, lightDirN ) );
 		
-		//if (lightDist<0.1) area = 0;
-		
-		//float3	light		=	radiance * nDotL * area / ( area + lightDist * lightDist );
 		float	bias		=	pow(2, lmMip*2);
 		float3	light		=	radiance.rgb * nDotL / 128.0f * hitCount * Radiosity.IndirectFactor;	
-		totalLight			+=	light;
 		
-		//if (radiance.a==0) light = float3(0,0,1);
-		
-		irradianceR			+=	SHL1EvaluateDiffuse( light.r, -lightDirN );
-		irradianceG			+=	SHL1EvaluateDiffuse( light.g, -lightDirN );
-		irradianceB			+=	SHL1EvaluateDiffuse( light.b, -lightDirN );
-	}
+		AddLightMap( lightmapColor, lightmapDir, light, -lightDirN * float3(1,0.2f,1) );
+	}//*/
 	
-	IrradianceR[ storeXY.xy ]	=	irradianceR;
-	IrradianceG[ storeXY.xy ]	=	irradianceG;
-	IrradianceB[ storeXY.xy ]	=	irradianceB;
-
-	/*IrradianceR[ storeXY.xy ]	=	float4( totalLight.r, 0,0,0 );
-	IrradianceG[ storeXY.xy ]	=	float4( totalLight.g, 0,0,0 );
-	IrradianceB[ storeXY.xy ]	=	float4( totalLight.b, 0,0,0 );*/
+	LightmapColor[ storeXY.xy ]	=	float4( lightmapColor, 1 );
+	LightmapDir	 [ storeXY.xy ]	=	float4( normalize(lightmapDir)*0.5f + 0.5f, 1 );
 }
 
 #endif

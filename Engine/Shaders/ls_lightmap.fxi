@@ -19,13 +19,18 @@ static const float GI_SCALE = 3.1415f;
 float3	EvaluateLightmap ( LIGHTMAP_RESOURCES lightmap, SURFACE surface, float2 lightMapCoord )
 {
 	float3	worldNormal	=	normalize(surface.normal);
-	float4 	irradianceR	=	lightmap.IrradianceMapR.Sample( lightmap.Sampler, lightMapCoord );
-	float4 	irradianceG	=	lightmap.IrradianceMapG.Sample( lightmap.Sampler, lightMapCoord );
-	float4 	irradianceB	=	lightmap.IrradianceMapB.Sample( lightmap.Sampler, lightMapCoord );
-	float	lightR		=	EvalSHL1Smooth( irradianceR, worldNormal );
-	float	lightG		=	EvalSHL1Smooth( irradianceG, worldNormal );
-	float	lightB		=	EvalSHL1Smooth( irradianceB, worldNormal );
-	return	float3( lightR, lightG, lightB ) * surface.diffuse * GI_SCALE;
+	float3 	lightColor	=	lightmap.IrradianceMapR.Sample( lightmap.Sampler, lightMapCoord ).rgb;
+	float3 	lightDir	=	lightmap.IrradianceMapG.Sample( lightmap.Sampler, lightMapCoord ).xyz * 2 - 1;
+	
+	float	nDotL		=	saturate( dot( worldNormal, lightDir ) );
+	
+	return lightColor * nDotL * surface.diffuse * GI_SCALE;
+	
+	// float4 	irradianceB	=	lightmap.IrradianceMapB.Sample( lightmap.Sampler, lightMapCoord );
+	// float	lightR		=	EvalSHL1Smooth( irradianceR, worldNormal );
+	// float	lightG		=	EvalSHL1Smooth( irradianceG, worldNormal );
+	// float	lightB		=	EvalSHL1Smooth( irradianceB, worldNormal );
+	// return	float3( lightR, lightG, lightB ) * surface.diffuse * GI_SCALE;
 }
 
 

@@ -49,10 +49,9 @@ namespace Fusion.Engine.Graphics.GI
 		static FXSamplerState								regSamplerLinear	=	new SRegister( 0, "LinearSampler"	);
 		static FXSamplerComparisonState						regSamplerShadow	=	new SRegister( 1, "ShadowSampler"	);
 																								   
-		static FXRWTexture2D<Vector4>						regRadianceUav		=	new URegister( 0, "RadianceUav"	);
-		static FXRWTexture2D<Vector4>						regIrradianceR		=	new URegister( 1, "IrradianceR"	);
-		static FXRWTexture2D<Vector4>						regIrradianceG		=	new URegister( 2, "IrradianceG"	);
-		static FXRWTexture2D<Vector4>						regIrradianceB		=	new URegister( 3, "IrradianceB"	);
+		static FXRWTexture2D<Vector4>						regRadianceUav		=	new URegister( 0, "RadianceUav"		);
+		static FXRWTexture2D<Vector4>						relLightmapColor	=	new URegister( 1, "LightmapColor"	);
+		static FXRWTexture2D<Vector4>						regLightmapDir		=	new URegister( 2, "LightmapDir"		);
 
 		public LightMap LightMap
 		{
@@ -108,16 +107,15 @@ namespace Fusion.Engine.Graphics.GI
 
 
 		public ShaderResource Radiance		{ get { return radiance; } }
-		public ShaderResource IrradianceR	{ get { return irradianceR; } }
-		public ShaderResource IrradianceG	{ get { return irradianceG; } }
-		public ShaderResource IrradianceB	{ get { return irradianceB; } }
+		public ShaderResource LightmapColor	{ get { return lightmapColor; } }
+		public ShaderResource LightmapDir	{ get { return lightmapDir; } }
 
 
 		RenderTarget2D	radiance	;
-		RenderTarget2D	tempRadiance;
-		RenderTarget2D	irradianceR ;
-		RenderTarget2D	irradianceG ;
-		RenderTarget2D	irradianceB ;
+		RenderTarget2D	tempColor;
+		RenderTarget2D	tempDir;
+		RenderTarget2D	lightmapColor ;
+		RenderTarget2D	lightmapDir ;
 
 		ConstantBuffer	cbRadiosity	;
 		Ubershader		shader;
@@ -156,16 +154,17 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			Log.Message("Radiosity : created new radiance/irradiance maps : {0}x{1}", width, height );
 
-			SafeDispose( ref radiance	 );
-			SafeDispose( ref irradianceR );
-			SafeDispose( ref irradianceG );
-			SafeDispose( ref irradianceB );
+			SafeDispose( ref radiance		);
+			SafeDispose( ref tempColor		);
+			SafeDispose( ref tempDir		);
+			SafeDispose( ref lightmapColor	);
+			SafeDispose( ref lightmapDir	);
 
-			radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, true,  true );
-			tempRadiance	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, true,  true );
-			irradianceR		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
-			irradianceG		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
-			irradianceB		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
+			radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10F,	width, height, true,  true );
+			tempColor		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10F,	width, height, false, true );
+			tempDir			=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,		width, height, false, true );
+			lightmapColor	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10F,	width, height, false, true );
+			lightmapDir		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,		width, height, false, true );
 		}
 
 
@@ -176,10 +175,10 @@ namespace Fusion.Engine.Graphics.GI
 				SafeDispose( ref cbRadiosity	);
 
 				SafeDispose( ref radiance		);
-				SafeDispose( ref tempRadiance	);
-				SafeDispose( ref irradianceR	);
-				SafeDispose( ref irradianceG	);
-				SafeDispose( ref irradianceB	);
+				SafeDispose( ref tempColor		);
+				SafeDispose( ref tempDir		);
+				SafeDispose( ref lightmapColor	);
+				SafeDispose( ref lightmapDir	);
 			}
 
 			base.Dispose( disposing );
@@ -263,9 +262,8 @@ namespace Fusion.Engine.Graphics.GI
 					device.PipelineState    =   factory[(int)Flags.INTEGRATE];			
 
 					device.SetComputeUnorderedAccess( regRadianceUav,		null );
-					device.SetComputeUnorderedAccess( regIrradianceR,		irradianceR.Surface.UnorderedAccess );
-					device.SetComputeUnorderedAccess( regIrradianceG,		irradianceG.Surface.UnorderedAccess );
-					device.SetComputeUnorderedAccess( regIrradianceB,		irradianceB.Surface.UnorderedAccess );
+					device.SetComputeUnorderedAccess( relLightmapColor,		lightmapColor.Surface.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regLightmapDir,		lightmapDir.Surface.UnorderedAccess );
 					device.ComputeResources			[ regRadiance	]	=	radiance;
 
 					int width	=	lightMap.Width;
@@ -275,28 +273,26 @@ namespace Fusion.Engine.Graphics.GI
 				}
 
 
-				using ( new PixEvent( "Dilation" ) )
-				{
-					if (!SkipDilation)
-					{
-						rs.DilateFilter.DilateByMaskAlpha( tempRadiance, irradianceR, lightMap.albedo, 0, 1 );
-						tempRadiance.CopyTo( irradianceR );
-
-						rs.DilateFilter.DilateByMaskAlpha( tempRadiance, irradianceG, lightMap.albedo, 0, 1 );
-						tempRadiance.CopyTo( irradianceG );
-
-						rs.DilateFilter.DilateByMaskAlpha( tempRadiance, irradianceB, lightMap.albedo, 0, 1 );
-						tempRadiance.CopyTo( irradianceB );
-					}
-				}
-
 				using ( new PixEvent( "Bilateral Filter" ) )
 				{
 					if (!SkipDenoising)
 					{
-						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceR, tempRadiance, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceG, tempRadiance, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceB, tempRadiance, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+						rs.BilateralFilter.FilterSHL1ByAlpha( lightmapColor	, tempColor	, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+						rs.BilateralFilter.FilterSHL1ByAlpha( lightmapDir	, tempDir	, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+						//rs.BilateralFilter.FilterSHL1ByAlpha( irradianceB, tempRadiance, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+					}
+				}
+
+
+				using ( new PixEvent( "Dilation" ) )
+				{
+					if (!SkipDilation)
+					{
+						rs.DilateFilter.DilateByMaskAlpha( tempColor, lightmapColor, lightMap.albedo, 0, 1 );
+						tempColor.CopyTo( lightmapColor );
+
+						rs.DilateFilter.DilateByMaskAlpha( tempDir, lightmapDir, lightMap.albedo, 0, 1 );
+						tempDir.CopyTo( lightmapDir );
 					}
 				}
 			}

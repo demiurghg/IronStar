@@ -109,6 +109,5 @@ TextureCube<float4>            SkyBox                         : register(t11);
 SamplerState                   LinearSampler                  : register(s0);
 SamplerComparisonState         ShadowSampler                  : register(s1);
 RWTexture2D<float4>            RadianceUav                    : register(u0);
-RWTexture2D<float4>            IrradianceR                    : register(u1);
-RWTexture2D<float4>            IrradianceG                    : register(u2);
-RWTexture2D<float4>            IrradianceB                    : register(u3);
+RWTexture2D<float4>            LightmapColor                  : register(u1);
+RWTexture2D<float4>            LightmapDir                    : register(u2);

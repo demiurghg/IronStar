@@ -49,16 +49,16 @@ namespace Fusion.Engine.Graphics.GI
 		[Config]
 		[AECategory("Bilateral Filter")]
 		[AEValueRange(0,10,0.1f,0.01f)]
-		public float ColorFactor { get; set; } = 0.5f;
+		public float ColorFactor { get; set; } = 1f;
 
 		[Config]
 		[AECategory("Bilateral Filter")]
-		[AEValueRange(0,10,0.1f,0.01f)]
-		public float AlphaFactor { get; set; } = 0.5f;
+		[AEValueRange(0,10,1f,0.01f)]
+		public float AlphaFactor { get; set; } = 10f;
 
 		[Config]
 		[AECategory("Bilateral Filter")]
-		[AEValueRange(0,10,0.1f,0.01f)]
+		[AEValueRange(0,10,1f,0.01f)]
 		public float FalloffFactor { get; set; } = 0.5f;
 
 

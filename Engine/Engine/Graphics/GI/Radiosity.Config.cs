@@ -47,6 +47,11 @@ namespace Fusion.Engine.Graphics.GI
 		public float IndirectFactor { get; set; } = 1;
 
 		[Config]
+		[AECategory("Radiosity")]
+		[AEValueRange(0,1,0.1f,0.01f)]
+		public float SecondBounce { get; set; } = 0.5f;
+
+		[Config]
 		[AECategory("Bilateral Filter")]
 		[AEValueRange(0,10,0.1f,0.01f)]
 		public float ColorFactor { get; set; } = 1f;

@@ -42,10 +42,13 @@ void CSMain(
 	
 	float4 	albedo			=	Albedo	[ loadXY ].rgba;
 	
+	float3	indirect		=	Radiance[ loadXY ].rgb;
+	
 	float3 	shadow			=	ComputeCascadedShadows( geometry, float2(0,0), CascadeShadow, shadowRc, false );
 	
 	FLUX	flux			=	ComputeDirectLightFlux( DirectLight );
 	float3 	lighting		=	ComputeLighting( flux, geometry, albedo.rgb );
+			lighting		+=	indirect * Radiosity.SecondBounce;
 	
 	RadianceUav[ storeXY.xy ]	=	float4(shadow * lighting, albedo.a );
 	
@@ -162,6 +165,14 @@ void CSMain(
 	Gather light from all visible patches :
 ------------------------------------------------------------------------------*/
 
+void StoreLightmap( int2 xy, float4 shR, float4 shG, float4 shB )
+{
+	IrradianceL0[ xy ]	=	float4( shR.x, shG.x, shB.x, 0 );
+	IrradianceL1[ xy ]	=	float4( shR.y, shG.y, shB.y, 0 );
+	IrradianceL2[ xy ]	=	float4( shR.z, shG.z, shB.z, 0 );
+	IrradianceL3[ xy ]	=	float4( shR.w, shG.w, shB.w, 0 );
+}
+
 #ifdef INTEGRATE
 
 [numthreads(BlockSizeX,BlockSizeY,1)] 
@@ -189,7 +200,7 @@ void CSMain(
 	
 	float3	skyDir		=	Sky[ loadXY ].xyz * 2 - 1;
 	float	skyFactor	=	length( skyDir ) * Radiosity.SkyFactor;
-	float3	skyColor	=	SkyBox.SampleLevel( LinearSampler, skyDir.xyz, 0 ).rgb * skyFactor;
+	float3	skyColor	=	SkyBox.SampleLevel( LinearSampler, skyDir.xyz, 0 ).rgb * skyFactor * skyFactor;
 	
 	irradianceR			+=	SHL1EvaluateDiffuse( skyColor.r, normalize(skyDir.xyz) );
 	irradianceG			+=	SHL1EvaluateDiffuse( skyColor.g, normalize(skyDir.xyz) );
@@ -230,9 +241,10 @@ void CSMain(
 		irradianceB			+=	SHL1EvaluateDiffuse( light.b, -lightDirN );
 	}
 	
-	IrradianceR[ storeXY.xy ]	=	irradianceR;
-	IrradianceG[ storeXY.xy ]	=	irradianceG;
-	IrradianceB[ storeXY.xy ]	=	irradianceB;
+	StoreLightmap( storeXY.xy, irradianceR, irradianceG, irradianceB );
+	// IrradianceR[ storeXY.xy ]	=	irradianceR;
+	// IrradianceG[ storeXY.xy ]	=	irradianceG;
+	// IrradianceB[ storeXY.xy ]	=	irradianceB;
 
 	/*IrradianceR[ storeXY.xy ]	=	float4( totalLight.r, 0,0,0 );
 	IrradianceG[ storeXY.xy ]	=	float4( totalLight.g, 0,0,0 );

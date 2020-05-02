@@ -33,13 +33,13 @@ namespace Fusion.Engine.Graphics.GI
 		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow	=	new CRegister( 2, "CascadeShadow"	);
 		static FXConstantBuffer<GpuData.DIRECT_LIGHT>		regDirectLight		=	new CRegister( 3, "DirectLight"		);
 																								   
-		static FXTexture2D<Vector4>							regPosition			=	new TRegister( 0, "Position"			);
+		static FXTexture2D<Vector4>							regPosition			=	new TRegister( 0, "Position"		);
 		static FXTexture2D<Vector4>							regAlbedo			=	new TRegister( 1, "Albedo"			);
 		static FXTexture2D<Vector4>							regNormal			=	new TRegister( 2, "Normal"			);
-		static FXTexture2D<Vector4>							regArea				=	new TRegister( 3, "Area"				);
-		static FXTexture2D<uint>							regIndexMap			=	new TRegister( 4, "IndexMap"			);
+		static FXTexture2D<Vector4>							regArea				=	new TRegister( 3, "Area"			);
+		static FXTexture2D<uint>							regIndexMap			=	new TRegister( 4, "IndexMap"		);
 		static FXBuffer<uint>								regIndices			=	new TRegister( 5, "Indices"			);
-		static FXTexture2D<Vector4>							regRadiance			=	new TRegister( 6, "Radiance"			);
+		static FXTexture2D<Vector4>							regRadiance			=	new TRegister( 6, "Radiance"		);
 		static FXTexture2D<Vector4>							regShadowMap		=	new TRegister( 7, "ShadowMap"		);
 		static FXTexture2D<Vector4>							regShadowMask		=	new TRegister( 8, "ShadowMask"		);
 		static FXStructuredBuffer<SceneRenderer.LIGHT>		regLights			=	new TRegister( 9, "Lights"			);
@@ -49,10 +49,11 @@ namespace Fusion.Engine.Graphics.GI
 		static FXSamplerState								regSamplerLinear	=	new SRegister( 0, "LinearSampler"	);
 		static FXSamplerComparisonState						regSamplerShadow	=	new SRegister( 1, "ShadowSampler"	);
 																								   
-		static FXRWTexture2D<Vector4>						regRadianceUav		=	new URegister( 0, "RadianceUav"	);
-		static FXRWTexture2D<Vector4>						regIrradianceR		=	new URegister( 1, "IrradianceR"	);
-		static FXRWTexture2D<Vector4>						regIrradianceG		=	new URegister( 2, "IrradianceG"	);
-		static FXRWTexture2D<Vector4>						regIrradianceB		=	new URegister( 3, "IrradianceB"	);
+		static FXRWTexture2D<Vector4>						regRadianceUav		=	new URegister( 0, "RadianceUav"		);
+		static FXRWTexture2D<Vector4>						regIrradianceL0		=	new URegister( 1, "IrradianceL0"	);
+		static FXRWTexture2D<Vector4>						regIrradianceL1		=	new URegister( 2, "IrradianceL1"	);
+		static FXRWTexture2D<Vector4>						regIrradianceL2		=	new URegister( 3, "IrradianceL2"	);
+		static FXRWTexture2D<Vector4>						regIrradianceL3		=	new URegister( 4, "IrradianceL3"	);
 
 		public LightMap LightMap
 		{
@@ -104,20 +105,23 @@ namespace Fusion.Engine.Graphics.GI
 
 			public float	SkyFactor;
 			public float	IndirectFactor;
+			public float	SecondBounce;
 		}
 
 
 		public ShaderResource Radiance		{ get { return radiance; } }
-		public ShaderResource IrradianceR	{ get { return irradianceR; } }
-		public ShaderResource IrradianceG	{ get { return irradianceG; } }
-		public ShaderResource IrradianceB	{ get { return irradianceB; } }
+		public ShaderResource IrradianceL0	{ get { return irradianceL0; } }
+		public ShaderResource IrradianceL1	{ get { return irradianceL1; } }
+		public ShaderResource IrradianceL2	{ get { return irradianceL2; } }
+		public ShaderResource IrradianceL3	{ get { return irradianceL3; } }
 
 
 		RenderTarget2D	radiance	;
 		RenderTarget2D	tempRadiance;
-		RenderTarget2D	irradianceR ;
-		RenderTarget2D	irradianceG ;
-		RenderTarget2D	irradianceB ;
+		RenderTarget2D	irradianceL0;
+		RenderTarget2D	irradianceL1;
+		RenderTarget2D	irradianceL2;
+		RenderTarget2D	irradianceL3;
 
 		ConstantBuffer	cbRadiosity	;
 		Ubershader		shader;
@@ -157,15 +161,17 @@ namespace Fusion.Engine.Graphics.GI
 			Log.Message("Radiosity : created new radiance/irradiance maps : {0}x{1}", width, height );
 
 			SafeDispose( ref radiance	 );
-			SafeDispose( ref irradianceR );
-			SafeDispose( ref irradianceG );
-			SafeDispose( ref irradianceB );
+			SafeDispose( ref irradianceL0 );
+			SafeDispose( ref irradianceL1 );
+			SafeDispose( ref irradianceL2 );
+			SafeDispose( ref irradianceL3 );
 
 			radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, true,  true );
 			tempRadiance	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, true,  true );
-			irradianceR		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
-			irradianceG		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
-			irradianceB		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
+			irradianceL0	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
+			irradianceL1	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
+			irradianceL2	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
+			irradianceL3	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
 		}
 
 
@@ -177,9 +183,10 @@ namespace Fusion.Engine.Graphics.GI
 
 				SafeDispose( ref radiance		);
 				SafeDispose( ref tempRadiance	);
-				SafeDispose( ref irradianceR	);
-				SafeDispose( ref irradianceG	);
-				SafeDispose( ref irradianceB	);
+				SafeDispose( ref irradianceL0	);
+				SafeDispose( ref irradianceL1	);
+				SafeDispose( ref irradianceL2	);
+				SafeDispose( ref irradianceL3	);
 			}
 
 			base.Dispose( disposing );
@@ -206,6 +213,7 @@ namespace Fusion.Engine.Graphics.GI
 
 				radiosity.SkyFactor			=	SkyFactor;
 				radiosity.IndirectFactor	=	IndirectFactor;
+				radiosity.SecondBounce		=	SecondBounce;
 
 				cbRadiosity.SetData( radiosity );
 
@@ -220,6 +228,7 @@ namespace Fusion.Engine.Graphics.GI
 				device.ComputeResources[ regArea			]	=	lightMap.area		;
 				device.ComputeResources[ regIndexMap		]	=	lightMap.indexMap	;
 				device.ComputeResources[ regIndices			]	=	lightMap.indices	;
+				device.ComputeResources[ regRadiance		]	=	irradianceL0		;
 
 				device.ComputeSamplers[ regSamplerShadow	]	=	SamplerState.ShadowSampler;
 				device.ComputeSamplers[ regSamplerLinear	]	=	SamplerState.LinearClamp;
@@ -263,9 +272,10 @@ namespace Fusion.Engine.Graphics.GI
 					device.PipelineState    =   factory[(int)Flags.INTEGRATE];			
 
 					device.SetComputeUnorderedAccess( regRadianceUav,		null );
-					device.SetComputeUnorderedAccess( regIrradianceR,		irradianceR.Surface.UnorderedAccess );
-					device.SetComputeUnorderedAccess( regIrradianceG,		irradianceG.Surface.UnorderedAccess );
-					device.SetComputeUnorderedAccess( regIrradianceB,		irradianceB.Surface.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regIrradianceL0,		irradianceL0.Surface.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regIrradianceL1,		irradianceL1.Surface.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regIrradianceL2,		irradianceL2.Surface.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regIrradianceL3,		irradianceL3.Surface.UnorderedAccess );
 					device.ComputeResources			[ regRadiance	]	=	radiance;
 
 					int width	=	lightMap.Width;
@@ -279,9 +289,10 @@ namespace Fusion.Engine.Graphics.GI
 				{
 					if (!SkipDenoising)
 					{
-						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceR, tempRadiance, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceG, tempRadiance, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceB, tempRadiance, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL0, tempRadiance, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL1, tempRadiance, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL2, tempRadiance, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL3, tempRadiance, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
 					}
 				}
 
@@ -289,14 +300,10 @@ namespace Fusion.Engine.Graphics.GI
 				{
 					if (!SkipDilation)
 					{
-						rs.DilateFilter.DilateByMaskAlpha( tempRadiance, irradianceR, lightMap.albedo, 0, 1 );
-						tempRadiance.CopyTo( irradianceR );
-
-						rs.DilateFilter.DilateByMaskAlpha( tempRadiance, irradianceG, lightMap.albedo, 0, 1 );
-						tempRadiance.CopyTo( irradianceG );
-
-						rs.DilateFilter.DilateByMaskAlpha( tempRadiance, irradianceB, lightMap.albedo, 0, 1 );
-						tempRadiance.CopyTo( irradianceB );
+						rs.DilateFilter.DilateByMaskAlpha( tempRadiance, irradianceL0, lightMap.albedo, 0, 1 );		tempRadiance.CopyTo( irradianceL0 );
+						rs.DilateFilter.DilateByMaskAlpha( tempRadiance, irradianceL1, lightMap.albedo, 0, 1 );		tempRadiance.CopyTo( irradianceL1 );
+						rs.DilateFilter.DilateByMaskAlpha( tempRadiance, irradianceL2, lightMap.albedo, 0, 1 );		tempRadiance.CopyTo( irradianceL2 );
+						rs.DilateFilter.DilateByMaskAlpha( tempRadiance, irradianceL3, lightMap.albedo, 0, 1 );		tempRadiance.CopyTo( irradianceL3 );
 					}
 				}
 			}

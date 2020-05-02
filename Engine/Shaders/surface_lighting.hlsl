@@ -28,9 +28,10 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 	
 	LIGHTMAP_RESOURCES rcLightMap;
 	rcLightMap.Sampler				=	SamplerLightmap;
-	rcLightMap.IrradianceMapR		=	IrradianceMapR;
-	rcLightMap.IrradianceMapG		=	IrradianceMapG;
-	rcLightMap.IrradianceMapB		=	IrradianceMapB;
+	rcLightMap.IrradianceMapL0		=	IrradianceMapL0;
+	rcLightMap.IrradianceMapL1		=	IrradianceMapL1;
+	rcLightMap.IrradianceMapL2		=	IrradianceMapL2;
+	rcLightMap.IrradianceMapL3		=	IrradianceMapL3;
 	rcLightMap.IrradianceVolumeR	=	IrradianceVolumeR;
 	rcLightMap.IrradianceVolumeG	=	IrradianceVolumeG;
 	rcLightMap.IrradianceVolumeB	=	IrradianceVolumeB;

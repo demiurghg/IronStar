@@ -46,15 +46,16 @@ namespace Fusion.Engine.Graphics {
 		static FXTexture2D<Vector4>				regShadowMapParticles	=	new TRegister(12, "ShadowMapParticles"	);
 		static FXTexture2D<Vector4>				regAmbientOcclusion		=	new TRegister(13, "AmbientOcclusion"	);
 
-		static FXTexture2D<Vector4>				regIrradianceMapR		=	new TRegister(14, "IrradianceMapR"		);
-		static FXTexture2D<Vector4>				regIrradianceMapG		=	new TRegister(15, "IrradianceMapG"		);
-		static FXTexture2D<Vector4>				regIrradianceMapB		=	new TRegister(16, "IrradianceMapB"		);
-		static FXTexture3D<Vector4>				regIrradianceVolumeR	=	new TRegister(17, "IrradianceVolumeR"	);
-		static FXTexture3D<Vector4>				regIrradianceVolumeG	=	new TRegister(18, "IrradianceVolumeG"	);
-		static FXTexture3D<Vector4>				regIrradianceVolumeB	=	new TRegister(19, "IrradianceVolumeB"	);
+		static FXTexture2D<Vector4>				regIrradianceMapL0		=	new TRegister(14, "IrradianceMapL0"		);
+		static FXTexture2D<Vector4>				regIrradianceMapL1		=	new TRegister(15, "IrradianceMapL1"		);
+		static FXTexture2D<Vector4>				regIrradianceMapL2		=	new TRegister(16, "IrradianceMapL2"		);
+		static FXTexture2D<Vector4>				regIrradianceMapL3		=	new TRegister(17, "IrradianceMapL3"		);
+		static FXTexture3D<Vector4>				regIrradianceVolumeR	=	new TRegister(18, "IrradianceVolumeR"	);
+		static FXTexture3D<Vector4>				regIrradianceVolumeG	=	new TRegister(19, "IrradianceVolumeG"	);
+		static FXTexture3D<Vector4>				regIrradianceVolumeB	=	new TRegister(20, "IrradianceVolumeB"	);
 
-		static FXTextureCubeArray<Vector4>		regRadianceCache		=	new TRegister(20, "RadianceCache"		);
-		static FXTexture2D<Vector4>				regEnvLut				=	new TRegister(21, "EnvLut"				);
+		static FXTextureCubeArray<Vector4>		regRadianceCache		=	new TRegister(21, "RadianceCache"		);
+		static FXTexture2D<Vector4>				regEnvLut				=	new TRegister(22, "EnvLut"				);
 											   
 		static FXSamplerState					regSamplerLinear		=	new SRegister( 0, "SamplerLinear"		);
 		static FXSamplerState					regSamplerPoint			=	new SRegister( 1, "SamplerPoint"		);
@@ -246,9 +247,10 @@ namespace Fusion.Engine.Graphics {
 			device.GfxResources[ regShadowMapParticles		]	=	rs.LightManager.ShadowMap.ParticleShadowTexture;
 			device.GfxResources[ regAmbientOcclusion		]	=	rs.RenderWorld.HdrFrame.AOBuffer.GetShaderResource(0);
 
-			device.GfxResources[ regIrradianceMapR			]	=	rs.Radiosity.IrradianceR;
-			device.GfxResources[ regIrradianceMapG			]	=	rs.Radiosity.IrradianceG;
-			device.GfxResources[ regIrradianceMapB			]	=	rs.Radiosity.IrradianceB;
+			device.GfxResources[ regIrradianceMapL0			]	=	rs.Radiosity.IrradianceL0;
+			device.GfxResources[ regIrradianceMapL1			]	=	rs.Radiosity.IrradianceL1;
+			device.GfxResources[ regIrradianceMapL2			]	=	rs.Radiosity.IrradianceL2;
+			device.GfxResources[ regIrradianceMapL3			]	=	rs.Radiosity.IrradianceL3;
 
 			device.GfxResources[ regIrradianceVolumeR		]	=	rs.RenderWorld.IrradianceVolume?.LightVolumeR;
 			device.GfxResources[ regIrradianceVolumeG		]	=	rs.RenderWorld.IrradianceVolume?.LightVolumeG;

@@ -21,10 +21,14 @@ float3	EvaluateLightmap ( LIGHTMAP_RESOURCES lightmap, SURFACE surface, float2 l
 {
 	float3	normal	=	normalize(surface.normal);
 	
-	float4 	shL0	=	lightmap.IrradianceMapL0.Sample( lightmap.Sampler, lightMapCoord );
-	float4 	shL1	=	lightmap.IrradianceMapL1.Sample( lightmap.Sampler, lightMapCoord );
-	float4 	shL2	=	lightmap.IrradianceMapL2.Sample( lightmap.Sampler, lightMapCoord );
-	float4 	shL3	=	lightmap.IrradianceMapL3.Sample( lightmap.Sampler, lightMapCoord );
+	float3 	shL0	=	lightmap.IrradianceMapL0.Sample( lightmap.Sampler, lightMapCoord ).rgb;
+	float3 	shL1	=	lightmap.IrradianceMapL1.Sample( lightmap.Sampler, lightMapCoord ).rgb * 2 - 1;
+	float3 	shL2	=	lightmap.IrradianceMapL2.Sample( lightmap.Sampler, lightMapCoord ).rgb * 2 - 1;
+	float3 	shL3	=	lightmap.IrradianceMapL3.Sample( lightmap.Sampler, lightMapCoord ).rgb * 2 - 1;
+	
+	shL1	*=	shL0;
+	shL2	*=	shL0;
+	shL3	*=	shL0;
 	
 	float4	irrR	=	float4( shL0.r, shL1.r, shL2.r, shL3.r );
 	float4	irrG	=	float4( shL0.g, shL1.g, shL2.g, shL3.g );

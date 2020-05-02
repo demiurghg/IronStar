@@ -48,7 +48,7 @@ namespace Fusion.Engine.Graphics.GI
 
 		[Config]
 		[AECategory("Radiosity")]
-		[AEValueRange(0,1,0.1f,0.01f)]
+		[AEValueRange(0,2,0.1f,0.01f)]
 		public float SecondBounce { get; set; } = 0.5f;
 
 		[Config]

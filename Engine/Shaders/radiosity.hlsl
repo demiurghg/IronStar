@@ -42,17 +42,14 @@ void CSMain(
 	
 	float4 	albedo			=	Albedo	[ loadXY ].rgba;
 	
-	float3	indirect		=	Radiance[ loadXY ].rgb;
+	float3	indirect		=	Radiance[ loadXY ].rgb * Radiosity.SecondBounce * albedo.rgb;
 	
 	float3 	shadow			=	ComputeCascadedShadows( geometry, float2(0,0), CascadeShadow, shadowRc, false );
 	
 	FLUX	flux			=	ComputeDirectLightFlux( DirectLight );
 	float3 	lighting		=	ComputeLighting( flux, geometry, albedo.rgb );
-			lighting		+=	indirect * Radiosity.SecondBounce;
 	
-	RadianceUav[ storeXY.xy ]	=	float4(shadow * lighting, albedo.a );
-	
-	//if (all(storeXY.xy==int2(2,3))) RadianceUav[ storeXY.xy ] = float4(0,0,1000,1);
+	RadianceUav[ storeXY.xy ]	=	float4(shadow * lighting + indirect, albedo.a );
 }
 
 #endif
@@ -98,35 +95,6 @@ void CSMain(
 
 #endif
 
-/*#ifdef DENOISE
-
-[numthreads(BlockSizeX,BlockSizeY,1)] 
-void CSMain( 
-	uint3 groupId : SV_GroupID, 
-	uint3 groupThreadId : SV_GroupThreadID, 
-	uint  groupIndex: SV_GroupIndex, 
-	uint3 dispatchThreadId : SV_DispatchThreadID) 
-{
-	int2	loadXY00	=	dispatchThreadId.xy * 2 + int2(0,0);
-	int2	loadXY01	=	dispatchThreadId.xy * 2 + int2(0,1);
-	int2	loadXY10	=	dispatchThreadId.xy * 2 + int2(1,0);
-	int2	loadXY11	=	dispatchThreadId.xy * 2 + int2(1,1);
-	int2	storeXY		=	dispatchThreadId.xy;
-	
-	float4 lighting00	=	Radiance	[ loadXY00 ];
-	float4 lighting01	=	Radiance	[ loadXY01 ];
-	float4 lighting10	=	Radiance	[ loadXY10 ];
-	float4 lighting11	=	Radiance	[ loadXY11 ];
-	
-	float4 lighting		=	0.25 * ( lighting00 + lighting01 + lighting10 + lighting11 );
-	
-	float	 factor		=	all(float4(lighting00.a, lighting01.a, lighting10.a, lighting11.a));
-
-	RadianceUav[ storeXY.xy ]	=	float4(lighting) * factor;
-}
-
-#endif*/
-
 /*------------------------------------------------------------------------------
 	Collapse lighting buffer to patches :
 ------------------------------------------------------------------------------*/
@@ -167,10 +135,10 @@ void CSMain(
 
 void StoreLightmap( int2 xy, float4 shR, float4 shG, float4 shB )
 {
-	IrradianceL0[ xy ]	=	float4( shR.x, shG.x, shB.x, 0 );
-	IrradianceL1[ xy ]	=	float4( shR.y, shG.y, shB.y, 0 );
-	IrradianceL2[ xy ]	=	float4( shR.z, shG.z, shB.z, 0 );
-	IrradianceL3[ xy ]	=	float4( shR.w, shG.w, shB.w, 0 );
+	IrradianceL0[ xy ]	=	float4( shR.x		, shG.x			, shB.x			, 0 );
+	IrradianceL1[ xy ]	=	float4( shR.y/shR.x , shG.y/shG.x	, shB.y/shB.x	, 0 ) * 0.5f + 0.5f;
+	IrradianceL2[ xy ]	=	float4( shR.z/shR.x , shG.z/shG.x	, shB.z/shB.x	, 0 ) * 0.5f + 0.5f;
+	IrradianceL3[ xy ]	=	float4( shR.w/shR.x , shG.w/shG.x	, shB.w/shB.x	, 0 ) * 0.5f + 0.5f;
 }
 
 #ifdef INTEGRATE

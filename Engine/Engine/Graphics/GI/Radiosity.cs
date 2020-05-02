@@ -117,7 +117,8 @@ namespace Fusion.Engine.Graphics.GI
 
 
 		RenderTarget2D	radiance	;
-		RenderTarget2D	tempRadiance;
+		RenderTarget2D	tempHDR;
+		RenderTarget2D	tempLDR;
 		RenderTarget2D	irradianceL0;
 		RenderTarget2D	irradianceL1;
 		RenderTarget2D	irradianceL2;
@@ -161,17 +162,20 @@ namespace Fusion.Engine.Graphics.GI
 			Log.Message("Radiosity : created new radiance/irradiance maps : {0}x{1}", width, height );
 
 			SafeDispose( ref radiance	 );
+			SafeDispose( ref tempHDR	 );
+			SafeDispose( ref tempLDR	 );
 			SafeDispose( ref irradianceL0 );
 			SafeDispose( ref irradianceL1 );
 			SafeDispose( ref irradianceL2 );
 			SafeDispose( ref irradianceL3 );
 
-			radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, true,  true );
-			tempRadiance	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, true,  true );
-			irradianceL0	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
-			irradianceL1	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
-			irradianceL2	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
-			irradianceL3	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F, width, height, false, true );
+			radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba16F,	width, height, true,  true );
+			tempHDR			=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	width, height, false, true );
+			tempLDR			=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	width, height, false, true );
+			irradianceL0	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	width, height, false, true );
+			irradianceL1	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	width, height, false, true );
+			irradianceL2	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	width, height, false, true );
+			irradianceL3	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	width, height, false, true );
 		}
 
 
@@ -182,7 +186,8 @@ namespace Fusion.Engine.Graphics.GI
 				SafeDispose( ref cbRadiosity	);
 
 				SafeDispose( ref radiance		);
-				SafeDispose( ref tempRadiance	);
+				SafeDispose( ref tempHDR		);
+				SafeDispose( ref tempLDR		);
 				SafeDispose( ref irradianceL0	);
 				SafeDispose( ref irradianceL1	);
 				SafeDispose( ref irradianceL2	);
@@ -289,10 +294,10 @@ namespace Fusion.Engine.Graphics.GI
 				{
 					if (!SkipDenoising)
 					{
-						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL0, tempRadiance, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL1, tempRadiance, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL2, tempRadiance, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL3, tempRadiance, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL0, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL1, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL2, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL3, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
 					}
 				}
 
@@ -300,10 +305,10 @@ namespace Fusion.Engine.Graphics.GI
 				{
 					if (!SkipDilation)
 					{
-						rs.DilateFilter.DilateByMaskAlpha( tempRadiance, irradianceL0, lightMap.albedo, 0, 1 );		tempRadiance.CopyTo( irradianceL0 );
-						rs.DilateFilter.DilateByMaskAlpha( tempRadiance, irradianceL1, lightMap.albedo, 0, 1 );		tempRadiance.CopyTo( irradianceL1 );
-						rs.DilateFilter.DilateByMaskAlpha( tempRadiance, irradianceL2, lightMap.albedo, 0, 1 );		tempRadiance.CopyTo( irradianceL2 );
-						rs.DilateFilter.DilateByMaskAlpha( tempRadiance, irradianceL3, lightMap.albedo, 0, 1 );		tempRadiance.CopyTo( irradianceL3 );
+						rs.DilateFilter.DilateByMaskAlpha( tempHDR, irradianceL0, lightMap.albedo, 0, 1 );		tempHDR.CopyTo( irradianceL0 );
+						rs.DilateFilter.DilateByMaskAlpha( tempLDR, irradianceL1, lightMap.albedo, 0, 1 );		tempLDR.CopyTo( irradianceL1 );
+						rs.DilateFilter.DilateByMaskAlpha( tempLDR, irradianceL2, lightMap.albedo, 0, 1 );		tempLDR.CopyTo( irradianceL2 );
+						rs.DilateFilter.DilateByMaskAlpha( tempLDR, irradianceL3, lightMap.albedo, 0, 1 );		tempLDR.CopyTo( irradianceL3 );
 					}
 				}
 			}

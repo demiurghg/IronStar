@@ -51,7 +51,6 @@
     "MaxPatches": 128,
     "RadianceThreshold": 0.01,
     "PatchThreshold": 0.5,
-    "MergeThreshold": 2.5E-05,
     "DebugLightmaps": false
   }
 }

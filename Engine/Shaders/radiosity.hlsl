@@ -147,6 +147,10 @@ void StoreLightmap( int2 xy, float4 shR, float4 shG, float4 shB )
 
 #ifdef INTEGRATE
 
+groupshared float3 radiance_cache[2048];
+
+uint uintDivUp( uint a, uint b ) { return (a % b != 0) ? (a / b + 1) : (a / b); }
+
 [numthreads(BlockSizeX,BlockSizeY,1)] 
 void CSMain( 
 	uint3 groupId : SV_GroupID, 
@@ -154,6 +158,36 @@ void CSMain(
 	uint  groupIndex: SV_GroupIndex, 
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
+	//	upload cache
+	uint 	cacheIndex	=	Tiles[ groupId.xy ].x;
+	uint 	cacheCount	=	Tiles[ groupId.xy ].y;
+	uint	stride		=	BlockSizeX * BlockSizeY;
+	
+	GroupMemoryBarrierWithGroupSync();
+
+	for (uint base=0; base<2048; base+=stride)
+	{
+		uint offset = groupThreadId.x + groupThreadId.y * BlockSizeX;
+		uint addr   = cacheIndex + base + offset;
+		
+		if (base+offset < cacheCount)
+		{
+			uint 	lmAddr		=	Cache[ addr ];
+			uint 	lmX			=	(lmAddr >> 20) & 0xFFF;
+			uint 	lmY			=	(lmAddr >>  8) & 0xFFF;
+			uint 	lmMip		=	(lmAddr >>  5) & 0x007;
+			int3	loadUVm		=	int3( lmX, lmY, lmMip );
+			float3 	radiance	=	Radiance.Load( loadUVm ).rgb;
+			radiance_cache[ base+offset ] = float3(1000,0,0);
+		}
+		else
+		{
+			radiance_cache[ base+offset ] = float3(0,0,10000);
+		}
+	}//*/
+	
+	GroupMemoryBarrierWithGroupSync();
+	
 	int2	loadXY		=	dispatchThreadId.xy;
 	int2	storeXY		=	dispatchThreadId.xy;
 
@@ -163,12 +197,9 @@ void CSMain(
 	uint	begin		=	offset;
 	uint	end			=	offset + count;
 	
-	float3	targetPoint	=	Position[ loadXY ].xyz;
 	float4	irradianceR	=	float4( 0, 0, 0, 0 );
 	float4	irradianceG	=	float4( 0, 0, 0, 0 );
 	float4	irradianceB	=	float4( 0, 0, 0, 0 );
-	float3 	totalLight	=	float3(0,0,0);
-	
 	
 	float3	skyDir		=	Sky[ loadXY ].xyz * 2 - 1;
 	float	skyFactor	=	length( skyDir ) * Radiosity.SkyFactor;
@@ -178,46 +209,24 @@ void CSMain(
 	irradianceG			+=	SHL1EvaluateDiffuse( skyColor.g, normalize(skyDir.xyz) );
 	irradianceB			+=	SHL1EvaluateDiffuse( skyColor.b, normalize(skyDir.xyz) );
 	
-	
 	for (uint index=begin; index<end; index++)
 	{
 		uint 	lmAddr		=	Indices[ index ];
-		uint 	lmX			=	(lmAddr >> 20) & 0xFFF;
-		uint 	lmY			=	(lmAddr >>  8) & 0xFFF;
-		uint 	lmMip		=	(lmAddr >>  5) & 0x007;
-		uint 	hitCount	=	(lmAddr >>  0) & 0x01F;
-		int3	loadUVm		=	int3( lmX, lmY, lmMip );
-			
-		float4 	radiance	=	Radiance.Load( loadUVm ).rgba;
-		float3 	normal		=	Normal.Load( loadUVm ).xyz * 2 - 1;
-				normal		=	normalize(normal);
-		float3 	position	=	Position.Load( loadUVm ).xyz;
-		float	area		=	Area.Load( loadUVm ).x;
-				
-		float3 	lightDir	=	targetPoint - position;
-		float	lightDist	=	length( lightDir );
-		float3 	lightDirN	=	normalize( lightDir );
+		uint 	cacheIndex	=	(lmAddr >> 12) & 0xFFF;
+		uint 	direction	=	(lmAddr >>  6) & 0x03F;
+		uint 	hitCount	=	1;//(lmAddr >>  0) & 0x03F;
 		
-		// 	there no need to use nDotL since hitCount already contains this information.
-		//	bigger slope angle — less rays hits this patch
-		//	float	nDotL		=	1;max( 0, dot( normal, lightDirN ) );
-		
-		float	bias		=	pow(2, lmMip*2);
-		float3	light		=	radiance.rgb * nDotL / 128.0f * hitCount * Radiosity.IndirectFactor / bias;	
+		float3 	radiance	=	radiance_cache[ cacheIndex ];
+		float3 	lightDirN	=	float3(0,1,0);
+
+		float3	light		=	radiance.rgb / 128.0f * hitCount * Radiosity.IndirectFactor;	
 		
 		irradianceR			+=	SHL1EvaluateDiffuse( light.r, -lightDirN );
 		irradianceG			+=	SHL1EvaluateDiffuse( light.g, -lightDirN );
 		irradianceB			+=	SHL1EvaluateDiffuse( light.b, -lightDirN );
-	}
+	}//*/
 	
 	StoreLightmap( storeXY.xy, irradianceR, irradianceG, irradianceB );
-	// IrradianceR[ storeXY.xy ]	=	irradianceR;
-	// IrradianceG[ storeXY.xy ]	=	irradianceG;
-	// IrradianceB[ storeXY.xy ]	=	irradianceB;
-
-	/*IrradianceR[ storeXY.xy ]	=	float4( totalLight.r, 0,0,0 );
-	IrradianceG[ storeXY.xy ]	=	float4( totalLight.g, 0,0,0 );
-	IrradianceB[ storeXY.xy ]	=	float4( totalLight.b, 0,0,0 );*/
 }
 
 #endif

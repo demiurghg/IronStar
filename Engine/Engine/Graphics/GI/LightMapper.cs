@@ -218,6 +218,9 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			stopwatch.Stop();
 
+			Log.Message("Generating tiled data...");
+			lightmapGBuffer.GenerateTiledData();
+
 			Log.Message("Completed:");
 
 			var sampleCount =  lightmapGBuffer.IndexMap.GetLinearData()
@@ -228,8 +231,6 @@ namespace Fusion.Engine.Graphics.Lights {
 			Log.Message("   average samples : {0}", sampleCount.Average( s => s ) );
 			Log.Message("   max samples     : {0}", sampleCount.Max( s => s ) );
 			Log.Message("   min samples     : {0}", sampleCount.Min( s => s ) );
-
-			lightmapGBuffer.AnalyzeTiles();
 
 			Log.Message("----------------");
 

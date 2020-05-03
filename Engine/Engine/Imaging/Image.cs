@@ -328,6 +328,23 @@ namespace Fusion.Engine.Imaging
 		}
 
 
+		/// <summary>
+		/// Performes per-pixel processing in Z-order
+		/// </summary>
+		/// <param name="func"></param>
+		public void ForeachPixelInZOrder( Func<Int2, TColor, TColor> func )
+		{
+			uint length = (uint)(Width * Height);
+
+			for (uint i=0; i<length; i++)
+			{
+				var xy = MortonCode.Decode2(i);
+
+				this[ xy ] = func( xy, this[ xy ] );
+			}
+		}
+
+
 		/*------------------------------------------------------------------------------------------
 		 *	Sampling :
 		-----------------------------------------------------------------------------------------*/

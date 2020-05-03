@@ -21,6 +21,8 @@ namespace Fusion.Engine.Graphics.Lights
 
 	public class LightMapContent
 	{
+		const int TileSize = RadiositySettings.TileSize;	
+
 		public readonly int Width;
 		public readonly int Height;
 
@@ -32,6 +34,10 @@ namespace Fusion.Engine.Graphics.Lights
 		public readonly Image<Vector3>		Sky;
 		public readonly Image<uint>			IndexMap;
 		public readonly List<PatchIndex>	Indices;
+		public readonly Image<Int2>			Tiles;
+
+		public readonly List<PatchIndex>		TileCache;
+		public readonly List<PatchCachedIndex>	CachedIndices;
 
 		readonly Allocator2D                allocator;
 
@@ -55,17 +61,21 @@ namespace Fusion.Engine.Graphics.Lights
 			Position        =   new MipChain<Vector3>( size, size, RadiositySettings.MapPatchLevels, Vector3.Zero );
 			Normal          =   new MipChain<Vector3>( size, size, RadiositySettings.MapPatchLevels, Vector3.Zero );
 			Area            =   new MipChain<float>( size, size, RadiositySettings.MapPatchLevels, 0 );
+			Tiles			=	new Image<Int2>( size / RadiositySettings.TileSize, size / RadiositySettings.TileSize, Int2.Zero );
 
 			Sky             =   new Image<Vector3>( size, size, Vector3.Zero );
 			IndexMap        =   new Image<uint>( size, size, 0 );
 			Indices         =   new List<PatchIndex>();
+
+			TileCache		=	new List<PatchIndex>();
+			CachedIndices	=	new List<PatchCachedIndex>();;
 
 			Coverage        =   new Image<byte>( size, size, 0 );
 		}
 
 
 
-		public PatchIndex[] GetTilePatches( int x, int y, int w, int h, out int total )
+		public PatchIndex[] GetTilePatches( int x, int y, int w, int h )
 		{
 			var patchList = new List<PatchIndex>();
 
@@ -86,8 +96,6 @@ namespace Fusion.Engine.Graphics.Lights
 				}
 			}
 
-			total = patchList.Count;
-
 			return patchList
 				.Distinct()
 				.OrderByDescending( p0 => p0.Mip )
@@ -95,65 +103,59 @@ namespace Fusion.Engine.Graphics.Lights
 		}
 
 
-		public void AnalyzeTiles()
+
+		public void GenerateTiledData()
 		{
-			const int tileSize = 8;
-			Console.WriteLine();
-			
+			const int tileSize = RadiositySettings.TileSize;
+
 			for (int ty=0; ty<Height/tileSize; ty++)
 			{
 				for (int tx=0; tx<Width/tileSize; tx++)
 				{
-					int total = 0;
-					var patches = GetTilePatches( tx * tileSize, ty * tileSize, tileSize, tileSize, out total );
+					var patches =	GetTilePatches( tx * tileSize, ty * tileSize, tileSize, tileSize );
 
-					if (total!=0)	Console.Write("{0,4}", patches.Length);
-					else Console.Write("    ");
+					var offset	=	TileCache.Count;
+					var count	=	patches.Length;
+
+					TileCache.AddRange( patches );
+
+					Tiles[ tx, ty ] = new Int2( offset, count );
 				}
-				Console.WriteLine();
-
-				for (int tx=0; tx<Width/tileSize; tx++)
-				{
-					int total = 0;
-					var patches = GetTilePatches( tx * tileSize, ty * tileSize, tileSize, tileSize, out total );
-
-					if (total!=0)	Console.Write("{0,4}", 100*patches.Length/total);
-					else Console.Write("    ");
-				}
-				Console.WriteLine();
-				Console.WriteLine();
 			}
+
+			IndexMap.ForeachPixelInZOrder( RemapPatchIndicesToCache );
 		}
 
-		//public IEnumerable<PatchIndex> MergeAdjacentPatches( IEnumerable<PatchIndex> patches, RadiositySettings settings )
-		//{
-		//	var groups = patches.GroupBy( p => p.MipIndex );
-		//	var result = new List<PatchIndex>();
 
-		//	foreach ( var group in groups )
-		//	{
-		//		if (group.Count()>=4)
-		//		{
-		//			var w = group.Aggregate( 0f, (a,p) => a + p.Weight );
-		//			var c = group.First().MipIndex;
+		uint RemapPatchIndicesToCache( Int2 xy, uint index )
+		{
+			var	offset		=	index >> 8;
+			var	count		=	index & 0xFF;
 
-		//			if (w>settings.MergeThreshold)
-		//			{
-		//				result.AddRange( group );
-		//			} 
-		//			else
-		//			{
-		//				result.Add( new PatchIndex( c, w ) );
-		//			}
-		//		}
-		//		else
-		//		{
-		//			result.AddRange( group );
-		//		}
-		//	}
+			int cacheIndex	=	Tiles[ xy.X / TileSize, xy.Y / TileSize ].X;
+			int cacheCount	=	Tiles[ xy.X / TileSize, xy.Y / TileSize ].Y;
 
-		//	return result;
-		//}
+			var newOffset	=	CachedIndices.Count;
+			var newCount	=	(int)count;
+			
+			for (uint i=offset; i<offset+count; i++)
+			{
+				var patchIndexCached = GeneratePatchCacheIndex( cacheIndex, cacheCount, Indices[(int)i] );
+				CachedIndices.Add( patchIndexCached );
+			}
+
+			return Radiosity.GetLMIndex( newOffset, newCount );
+		}
+
+
+		PatchCachedIndex GeneratePatchCacheIndex ( int cacheIndex, int cacheCount, PatchIndex originIndex )
+		{
+			int index = TileCache.IndexOf( originIndex, cacheIndex, cacheCount );
+
+			if (index<0) Log.Warning("GeneratePatchCacheIndex -- something wrong!");
+
+			return new PatchCachedIndex( index, 0, originIndex.Hits );
+		}
 
 
 		public uint AddFormFactorPatchIndices( IEnumerable<PatchIndex> patches, RadiositySettings settings )
@@ -400,10 +402,19 @@ namespace Fusion.Engine.Graphics.Lights
 				// #TODO #LIGHTMAPS - write volume indices
 				writer.WriteFourCC("VOL1");
 
+				//	write tiled cache data :
+				writer.WriteFourCC("TILE");
+				Tiles.WriteStream( stream );
+
+				writer.Write( TileCache.Count );
+				writer.Write( TileCache.Select( a => a.Index ).ToArray() );
+
+				writer.Write( CachedIndices.Count );
+				writer.Write( CachedIndices.Select( a => a.GpuIndex ).ToArray() );
 				//	write indices
-				writer.WriteFourCC("IDX1");
-				writer.Write( Indices.Count );
-				writer.Write( Indices.Select(idx=>idx.Index).ToArray() );
+				//writer.WriteFourCC("IDX1");
+				//writer.Write( Indices.Count );
+				//writer.Write( Indices.Select(idx=>idx.Index).ToArray() );
 			}
 		}
 

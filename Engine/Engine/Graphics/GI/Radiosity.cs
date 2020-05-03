@@ -20,8 +20,8 @@ namespace Fusion.Engine.Graphics.GI
 	[RequireShader("radiosity", true)]
 	public partial class Radiosity : RenderComponent
 	{
-		[ShaderDefine]	const int BlockSizeX = 16;
-		[ShaderDefine]	const int BlockSizeY = 16;
+		[ShaderDefine]	const int BlockSizeX = RadiositySettings.TileSize;
+		[ShaderDefine]	const int BlockSizeY = RadiositySettings.TileSize;
 
 		[ShaderDefine]	const uint LightTypeOmni		=	SceneRenderer.LightTypeOmni;
 		[ShaderDefine]	const uint LightTypeSpotShadow	=	SceneRenderer.LightTypeSpotShadow;
@@ -36,15 +36,16 @@ namespace Fusion.Engine.Graphics.GI
 		static FXTexture2D<Vector4>							regPosition			=	new TRegister( 0, "Position"		);
 		static FXTexture2D<Vector4>							regAlbedo			=	new TRegister( 1, "Albedo"			);
 		static FXTexture2D<Vector4>							regNormal			=	new TRegister( 2, "Normal"			);
-		static FXTexture2D<Vector4>							regArea				=	new TRegister( 3, "Area"			);
+		static FXTexture2D<UInt2>							regTiles			=	new TRegister( 3, "Tiles"			);
 		static FXTexture2D<uint>							regIndexMap			=	new TRegister( 4, "IndexMap"		);
 		static FXBuffer<uint>								regIndices			=	new TRegister( 5, "Indices"			);
-		static FXTexture2D<Vector4>							regRadiance			=	new TRegister( 6, "Radiance"		);
-		static FXTexture2D<Vector4>							regShadowMap		=	new TRegister( 7, "ShadowMap"		);
-		static FXTexture2D<Vector4>							regShadowMask		=	new TRegister( 8, "ShadowMask"		);
-		static FXStructuredBuffer<SceneRenderer.LIGHT>		regLights			=	new TRegister( 9, "Lights"			);
-		static FXTexture2D<Vector4>							regSky				=	new TRegister(10, "Sky"				);
-		static FXTextureCube<Vector4>						regSkyBox			=	new TRegister(11, "SkyBox"			);
+		static FXBuffer<uint>								regCache			=	new TRegister( 6, "Cache"			);
+		static FXTexture2D<Vector4>							regRadiance			=	new TRegister( 7, "Radiance"		);
+		static FXTexture2D<Vector4>							regShadowMap		=	new TRegister( 8, "ShadowMap"		);
+		static FXTexture2D<Vector4>							regShadowMask		=	new TRegister( 9, "ShadowMask"		);
+		static FXStructuredBuffer<SceneRenderer.LIGHT>		regLights			=	new TRegister(10, "Lights"			);
+		static FXTexture2D<Vector4>							regSky				=	new TRegister(11, "Sky"				);
+		static FXTextureCube<Vector4>						regSkyBox			=	new TRegister(12, "SkyBox"			);
 
 		static FXSamplerState								regSamplerLinear	=	new SRegister( 0, "LinearSampler"	);
 		static FXSamplerComparisonState						regSamplerShadow	=	new SRegister( 1, "ShadowSampler"	);
@@ -230,9 +231,10 @@ namespace Fusion.Engine.Graphics.GI
 				device.ComputeResources[ regPosition		]	=	lightMap.position	;
 				device.ComputeResources[ regAlbedo			]	=	lightMap.albedo		;
 				device.ComputeResources[ regNormal			]	=	lightMap.normal		;
-				device.ComputeResources[ regArea			]	=	lightMap.area		;
+				device.ComputeResources[ regTiles			]	=	lightMap.tiles		;
 				device.ComputeResources[ regIndexMap		]	=	lightMap.indexMap	;
 				device.ComputeResources[ regIndices			]	=	lightMap.indices	;
+				device.ComputeResources[ regCache			]	=	lightMap.cache		;
 				device.ComputeResources[ regRadiance		]	=	irradianceL0		;
 
 				device.ComputeSamplers[ regSamplerShadow	]	=	SamplerState.ShadowSampler;

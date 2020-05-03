@@ -1,7 +1,7 @@
 // ---------------- CONSTANT VALUES ---------------- //
 
-static const int BlockSizeX = 16;
-static const int BlockSizeY = 16;
+static const int BlockSizeX = 8;
+static const int BlockSizeY = 8;
 static const uint LightTypeOmni = 1;
 static const uint LightTypeSpotShadow = 3;
 static const uint LightSpotShapeRound = 131072;
@@ -98,15 +98,16 @@ cbuffer __buffer3 : register(b3) {
 Texture2D<float4>              Position                       : register(t0);
 Texture2D<float4>              Albedo                         : register(t1);
 Texture2D<float4>              Normal                         : register(t2);
-Texture2D<float4>              Area                           : register(t3);
+Texture2D<uint2>               Tiles                          : register(t3);
 Texture2D<uint>                IndexMap                       : register(t4);
 Buffer<uint>                   Indices                        : register(t5);
-Texture2D<float4>              Radiance                       : register(t6);
-Texture2D<float4>              ShadowMap                      : register(t7);
-Texture2D<float4>              ShadowMask                     : register(t8);
-StructuredBuffer<LIGHT>        Lights                         : register(t9);
-Texture2D<float4>              Sky                            : register(t10);
-TextureCube<float4>            SkyBox                         : register(t11);
+Buffer<uint>                   Cache                          : register(t6);
+Texture2D<float4>              Radiance                       : register(t7);
+Texture2D<float4>              ShadowMap                      : register(t8);
+Texture2D<float4>              ShadowMask                     : register(t9);
+StructuredBuffer<LIGHT>        Lights                         : register(t10);
+Texture2D<float4>              Sky                            : register(t11);
+TextureCube<float4>            SkyBox                         : register(t12);
 SamplerState                   LinearSampler                  : register(s0);
 SamplerComparisonState         ShadowSampler                  : register(s1);
 RWTexture2D<float4>            RadianceUav                    : register(u0);

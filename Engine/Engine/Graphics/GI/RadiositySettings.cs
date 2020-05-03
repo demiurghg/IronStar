@@ -11,6 +11,8 @@ namespace Fusion.Engine.Graphics.GI
 	public class RadiositySettings
 	{
 		public const int MapPatchLevels = 6;
+		public const int TileSize = 8;
+		public const int MaxPatchesPerTile = 2048;
 
 		/// <summary>
 		///	Number of light-gird elements along X-axis

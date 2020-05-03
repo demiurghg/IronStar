@@ -48,18 +48,15 @@ namespace Fusion.Engine.Graphics.Lights {
 		internal Texture2D			sky			;
 		internal Texture2D			indexMap	;
 		internal Texture3D			indexVol	;
+		internal Texture2D			tiles		;
 		internal FormattedBuffer	indices		;
+		internal FormattedBuffer	cache		;
 
 		internal Texture2D	IrradianceTextureRed	{ get { return albedo; } }
 		internal Texture2D	IrradianceTextureGreen	{ get { return normal; } }
 		internal Texture2D	IrradianceTextureBlue	{ get { return sky; } }
 
 		readonly Dictionary<Guid,Rectangle> regions = new Dictionary<Guid, Rectangle>();
-
-		MipChain<Vector3>	position_cpu;
-		MipChain<Color>		normals_cpu;
-		Image<uint>			indexmap_cpu;
-		uint[]				indices_cpu	;
 
 
 
@@ -71,18 +68,21 @@ namespace Fusion.Engine.Graphics.Lights {
 			{
 				const int mips = RadiositySettings.MapPatchLevels;
 
-				//	write header :
+				//	read header :
 				reader.ExpectFourCC("RAD1", "bad lightmap format");
 
-				width	=	reader.ReadInt32();
-				height	=	reader.ReadInt32();
+				width		=	reader.ReadInt32();
+				height		=	reader.ReadInt32();
+				int tilesX	=	width / RadiositySettings.TileSize;
+				int tilesY	=	width / RadiositySettings.TileSize;
 
-				albedo		=	new Texture2D( rs.Device, width, height, ColorFormat.Rgba8,		mips,	false );
-				position	=	new Texture2D( rs.Device, width, height, ColorFormat.Rgb32F,	mips,	false );
-				normal		=	new Texture2D( rs.Device, width, height, ColorFormat.Rgba8,		mips,	false );
-				area		=	new Texture2D( rs.Device, width, height, ColorFormat.R32F,		mips,	false );
-				sky			=	new Texture2D( rs.Device, width, height, ColorFormat.Rgba8,		1,		false );
-				indexMap	=	new Texture2D( rs.Device, width, height, ColorFormat.R32,		1,		false );
+				albedo		=	new Texture2D( rs.Device, width,  height, ColorFormat.Rgba8,	mips,	false );
+				position	=	new Texture2D( rs.Device, width,  height, ColorFormat.Rgb32F,	mips,	false );
+				normal		=	new Texture2D( rs.Device, width,  height, ColorFormat.Rgba8,	mips,	false );
+				area		=	new Texture2D( rs.Device, width,  height, ColorFormat.R32F,		mips,	false );
+				sky			=	new Texture2D( rs.Device, width,  height, ColorFormat.Rgba8,	1,		false );
+				indexMap	=	new Texture2D( rs.Device, width,  height, ColorFormat.R32,		1,		false );
+				tiles		=	new Texture2D( rs.Device, tilesX, tilesY, ColorFormat.Rg32,		1,		false );
 				// #TODO #LIGHTMAP -- create volume
 
 				//	read regions :
@@ -96,24 +96,14 @@ namespace Fusion.Engine.Graphics.Lights {
 					regions.Add( reader.Read<Guid>(), reader.Read<Rectangle>() );
 				}
 
-				//	write gbuffer :
+				//	read gbuffer :
 				reader.ExpectFourCC("GBF1", "bad lightmap format");
 
 				reader.ExpectFourCC("POS1", "bad lightmap format");
-				position_cpu = new MipChain<Vector3>( width, height, mips, Vector3.Zero );
-				for (int i=0; i<mips; i++) 
-				{
-					position_cpu[i]	=	Image<Vector3>.FromStream(stream);
-					position.SetData( i, position_cpu[i].RawImageData );
-				}
+				for (int i=0; i<mips; i++) position.SetData( i, Image<Vector3>.FromStream(stream).RawImageData );
 
 				reader.ExpectFourCC("NRM1", "bad lightmap format");
-				normals_cpu	=	new MipChain<Color>( width, height, mips, Color.Zero );
-				for (int i=0; i<mips; i++) 
-				{	
-					normals_cpu[i]	=	Image<Color>.FromStream(stream);
-					normal.SetData( i, normals_cpu[i].RawImageData );
-				}
+				for (int i=0; i<mips; i++) normal.SetData( i, Image<Color>.FromStream(stream).RawImageData );
 
 				reader.ExpectFourCC("ALB1", "bad lightmap format");
 				for (int i=0; i<mips; i++) albedo.SetData( i, Image<Color>.FromStream(stream).RawImageData );
@@ -124,24 +114,30 @@ namespace Fusion.Engine.Graphics.Lights {
 				reader.ExpectFourCC("SKY1", "bad lightmap format");
 				sky.SetData( Image<Color>.FromStream(stream).RawImageData );
 
-				//	write index map
+				//	read index map
 				reader.ExpectFourCC("MAP1", "bad lightmap format");
-				indexmap_cpu	=	Image<uint>.FromStream(stream);
-				indexMap.SetData( indexmap_cpu.RawImageData );
+				indexMap.SetData( Image<uint>.FromStream(stream).RawImageData );
 
 				// #TODO #LIGHTMAPS - write volume indices
 				reader.ExpectFourCC("VOL1", "bad lightmap format");
 
-				//	write indices
-				reader.ExpectFourCC("IDX1", "bad lightmap format");
-				int numIndices = reader.ReadInt32();
+				//	read indices
+				reader.ExpectFourCC("TILE", "bad lightmap format");
+				tiles.SetData( Image<Int2>.FromStream( stream ).RawImageData );
 
-				indices	=	new FormattedBuffer( rs.Device, Drivers.Graphics.VertexFormat.UInt, numIndices, StructuredBufferFlags.None );
-				indices_cpu	=	reader.Read<uint>(numIndices);
-				indices.SetData( indices_cpu );
+				cache	=	ReadUintBufferFromStream( reader );
+				indices	=	ReadUintBufferFromStream( reader );
 			}
 		}
 
+
+		FormattedBuffer ReadUintBufferFromStream( BinaryReader reader )
+		{
+			int count	=	reader.ReadInt32();
+			var buffer	=	new FormattedBuffer( rs.Device, Drivers.Graphics.VertexFormat.UInt, count, StructuredBufferFlags.None );
+			buffer.SetData( reader.Read<uint>(count) );
+			return buffer;
+		}
 
 
 		protected override void Dispose( bool disposing )
@@ -155,6 +151,8 @@ namespace Fusion.Engine.Graphics.Lights {
 				SafeDispose( ref sky		);	
 				SafeDispose( ref indexMap	);
 				SafeDispose( ref indexVol	);
+				SafeDispose( ref tiles		);
+				SafeDispose( ref cache		);
 				SafeDispose( ref indices	);
 			}
 
@@ -207,28 +205,28 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		public void DebugDraw( int x, int y, DebugRender dr )
 		{
-			x	=	MathUtil.Clamp( x, 0, width-1 );
-			y	=	MathUtil.Clamp( y, 0, height-1 );
+			//x	=	MathUtil.Clamp( x, 0, width-1 );
+			//y	=	MathUtil.Clamp( y, 0, height-1 );
 
-			var recvPatch	=	new Int2(x,y);
+			//var recvPatch	=	new Int2(x,y);
 
-			var indexCount	=	indexmap_cpu[ recvPatch ];
-			var offset		=	indexCount >> 8;
-			var count		=	indexCount & 0xFF;
-			var	begin		=	offset;
-			var	end			=	offset + count;
+			//var indexCount	=	indexmap_cpu[ recvPatch ];
+			//var offset		=	indexCount >> 8;
+			//var count		=	indexCount & 0xFF;
+			//var	begin		=	offset;
+			//var	end			=	offset + count;
 
-			var origin		=	position_cpu[ recvPatch ];
+			//var origin		=	position_cpu[ recvPatch ];
 				
-			for (var i = begin; i<end; i++)
-			{
-				var radPatch	=	new PatchIndex( indices_cpu[ i ] );
-				var patchCoord	=	new Int3( radPatch.X, radPatch.Y, radPatch.Mip );
+			//for (var i = begin; i<end; i++)
+			//{
+			//	var radPatch	=	new PatchIndex( indices_cpu[ i ] );
+			//	var patchCoord	=	new Int3( radPatch.X, radPatch.Y, radPatch.Mip );
 
-				var pos			=	position_cpu[ patchCoord ];
+			//	var pos			=	position_cpu[ patchCoord ];
 
-				dr.DrawLine( origin, pos, colors[ radPatch.Mip ] );
-			}
+			//	dr.DrawLine( origin, pos, colors[ radPatch.Mip ] );
+			//}
 		}
 	}
 }

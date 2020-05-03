@@ -90,7 +90,11 @@ namespace Fusion.Engine.Graphics.Lights {
 			var hammersley		=	Hammersley.GenerateSphereUniform(settings.LightMapSampleCount);
 			var instances		=	SelectOccludingInstances( instances2 );
 
+			var stopwatch		=	new Stopwatch();
+			stopwatch.Start();
+
 			//-------------------------------------------------
+			Log.Message("-------- Building radiosity form-factor --------");
 
 			Log.Message("Allocaing lightmap regions...");
 
@@ -105,7 +109,7 @@ namespace Fusion.Engine.Graphics.Lights {
 					)
 					.ToArray();
 
-			int lightMapSize = 256;
+			int lightMapSize = 128;
 
 			Allocator2D allocator;		
 
@@ -211,7 +215,23 @@ namespace Fusion.Engine.Graphics.Lights {
 				lightmapGBuffer.SaveDebugImages();
 			}
 	
-			Log.Message("Completed.");
+
+			stopwatch.Stop();
+
+			Log.Message("Completed:");
+
+			var sampleCount =  lightmapGBuffer.IndexMap.GetLinearData()
+				.Select( index => index & 0xFF )
+				.Where( count => count!=0 );
+
+			Log.Message("   time            : {0}", stopwatch);
+			Log.Message("   average samples : {0}", sampleCount.Average( s => s ) );
+			Log.Message("   max samples     : {0}", sampleCount.Max( s => s ) );
+			Log.Message("   min samples     : {0}", sampleCount.Min( s => s ) );
+
+			lightmapGBuffer.AnalyzeTiles();
+
+			Log.Message("----------------");
 
 			return lightmapGBuffer;
 		}

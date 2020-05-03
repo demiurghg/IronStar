@@ -182,6 +182,7 @@
     <Compile Include="Core\JsonLoader.cs" />
     <Compile Include="Core\Mathematics\Byte3.cs" />
     <Compile Include="Core\Mathematics\HSVColor.cs" />
+    <Compile Include="Core\Mathematics\MortonCode.cs" />
     <Compile Include="Core\Mathematics\UInt4.cs" />
     <Compile Include="Core\Mathematics\UInt3.cs" />
     <Compile Include="Core\Mathematics\UInt2.cs" />

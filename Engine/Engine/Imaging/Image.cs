@@ -99,6 +99,27 @@ namespace Fusion.Engine.Imaging
 		}
 
 
+
+		public TColor[] GetLinearData()
+		{
+			var data = new TColor[width*height];
+
+			unsafe 
+			{
+				for (int i=0; i<width*height; i++)
+				{
+					fixed (byte *ptr = &rawImageData[ i * pixelSize ])
+					{
+						data[i]	=	Utilities.Read<TColor>( new IntPtr(ptr) );
+					}
+				}
+			}
+
+			return data;
+		}
+
+
+
 		/// <summary>
 		/// Gets pixel at given coordinates
 		/// </summary>

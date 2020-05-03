@@ -295,6 +295,11 @@ namespace Fusion.Drivers.Graphics {
 		{
 			syncInterval	=	MathUtil.Clamp( syncInterval, 0, 3 );
 
+			if (!Game.IsActive)
+			{
+				syncInterval = 3;
+			}
+
 			if (requestScreenShotPath != null ) 
 			{
 				var path = Path.ChangeExtension(requestScreenShotPath, ".tga");

@@ -6,7 +6,7 @@
     "SkyTrubidity": 4.5,
     "SunAltitude": 0.0,
     "SkyIntensity": 1.1,
-    "SunAzimuth": -108.0,
+    "SunAzimuth": 105.0,
     "SunIntensity": 500.0,
     "FogDistance": 500000.0,
     "FogHeight": 0.05,
@@ -67,7 +67,7 @@
     "LightMapSampleCount": 512,
     "LightGridSampleCount": 64,
     "MaxPatches": 128,
-    "RadianceThreshold": 0.01,
+    "RadianceThreshold": 0.02,
     "PatchThreshold": 0.5,
     "DebugLightmaps": false
   }

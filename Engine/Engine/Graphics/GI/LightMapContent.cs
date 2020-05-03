@@ -65,6 +65,66 @@ namespace Fusion.Engine.Graphics.Lights
 
 
 
+		public PatchIndex[] GetTilePatches( int x, int y, int w, int h, out int total )
+		{
+			var patchList = new List<PatchIndex>();
+
+			for (int j=y; j<y+h; j++)
+			{
+				for (int i=x; i<x+w; i++)
+				{
+					var	offsetCount	=	IndexMap[ i,j ];
+					var	offset		=	offsetCount >> 8;
+					var	count		=	offsetCount & 0xFF;
+					var	begin		=	offset;
+					var	end			=	offset + count;
+					
+					for (uint index=begin; index<end; index++)
+					{
+						 patchList.Add( Indices[(int)index] );
+					}
+				}
+			}
+
+			total = patchList.Count;
+
+			return patchList
+				.Distinct()
+				.OrderByDescending( p0 => p0.Mip )
+				.ToArray();
+		}
+
+
+		public void AnalyzeTiles()
+		{
+			const int tileSize = 8;
+			Console.WriteLine();
+			
+			for (int ty=0; ty<Height/tileSize; ty++)
+			{
+				for (int tx=0; tx<Width/tileSize; tx++)
+				{
+					int total = 0;
+					var patches = GetTilePatches( tx * tileSize, ty * tileSize, tileSize, tileSize, out total );
+
+					if (total!=0)	Console.Write("{0,4}", patches.Length);
+					else Console.Write("    ");
+				}
+				Console.WriteLine();
+
+				for (int tx=0; tx<Width/tileSize; tx++)
+				{
+					int total = 0;
+					var patches = GetTilePatches( tx * tileSize, ty * tileSize, tileSize, tileSize, out total );
+
+					if (total!=0)	Console.Write("{0,4}", 100*patches.Length/total);
+					else Console.Write("    ");
+				}
+				Console.WriteLine();
+				Console.WriteLine();
+			}
+		}
+
 		//public IEnumerable<PatchIndex> MergeAdjacentPatches( IEnumerable<PatchIndex> patches, RadiositySettings settings )
 		//{
 		//	var groups = patches.GroupBy( p => p.MipIndex );
@@ -100,7 +160,13 @@ namespace Fusion.Engine.Graphics.Lights
 		{
 			patches = patches
 					.GroupBy( p0 => p0.Coords )
-					.Select( g0 => new PatchIndex( g0.First().Coords, g0.Aggregate( 0, (hits,patch) => hits + patch.Hits, totalHits => Math.Min(totalHits,31) ) ) );//*/
+					.Select( g0 => 
+						new PatchIndex( 
+							g0.First().Coords, 
+							g0.Aggregate( 0, (hits,patch) => hits + patch.Hits, 
+							totalHits => Math.Min(totalHits,31) ) 
+						) 
+					);//*/
 
 			int offset		=	Indices.Count;
 			int count		=	patches.Count();
@@ -110,6 +176,7 @@ namespace Fusion.Engine.Graphics.Lights
 
 			return Radiosity.GetLMIndex( offset, count );
 		}
+
 
 
 		public bool IsRegionCollapsable( Rectangle rect )

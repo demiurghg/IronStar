@@ -197,16 +197,13 @@ void CSMain(
 		float3 	lightDir	=	targetPoint - position;
 		float	lightDist	=	length( lightDir );
 		float3 	lightDirN	=	normalize( lightDir );
-		float	nDotL		=	max( 0, dot( normal, lightDirN ) );
 		
-		//if (lightDist<0.1) area = 0;
+		// 	there no need to use nDotL since hitCount already contains this information.
+		//	bigger slope angle — less rays hits this patch
+		//	float	nDotL		=	1;max( 0, dot( normal, lightDirN ) );
 		
-		//float3	light		=	radiance * nDotL * area / ( area + lightDist * lightDist );
 		float	bias		=	pow(2, lmMip*2);
-		float3	light		=	radiance.rgb * nDotL / 128.0f * hitCount * Radiosity.IndirectFactor;	
-		totalLight			+=	light;
-		
-		//if (radiance.a==0) light = float3(0,0,1);
+		float3	light		=	radiance.rgb * nDotL / 128.0f * hitCount * Radiosity.IndirectFactor / bias;	
 		
 		irradianceR			+=	SHL1EvaluateDiffuse( light.r, -lightDirN );
 		irradianceG			+=	SHL1EvaluateDiffuse( light.g, -lightDirN );

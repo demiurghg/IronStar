@@ -37,6 +37,19 @@ namespace Fusion.Engine.Graphics.Lights {
 			{
 				var r = group.Region;
 
+				#if true
+				var x = r.Left;
+				var y = r.Top;
+				var w = r.Right - r.Left;
+				var h = r.Right - r.Left;
+				var length = (uint)(w * h);
+
+				for (uint i=0; i<length; i++)
+				{
+					var xy = MortonCode.Decode2(i);
+					action(xy.X + x, xy.Y + y);
+				}
+				#else
 				for ( int i=r.Left; i<r.Right; i++ ) 
 				{
 					for ( int j=r.Top; j<r.Bottom; j++ ) 
@@ -53,6 +66,7 @@ namespace Fusion.Engine.Graphics.Lights {
 						action(i,j);
 					}
 				}
+				#endif
 			}
 		}
 

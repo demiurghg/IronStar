@@ -180,6 +180,21 @@ static const float3 dir_lut[64] = {
 	float3( -0.35f, -0.94f,  0.03f ),	float3(  0.25f, -0.97f, -0.02f ),
 };
 
+float3 DecodeDirection (uint dir)
+{
+	uint	ux	=	( dir >> 3 ) & 0x7;
+	uint	uy	=	( dir >> 0 ) & 0x7;
+
+	float	fx	=	ux / 8.0f;
+	float	fy	=	uy / 8.0f;
+	
+    float4 	nn 	=	float4(fx,fy,0,0) * float4(2,2,0,0) + float4(-1,-1,1,-1);
+    float l 	=	- dot(nn.xyz,nn.xyw);
+    nn.z 		= 	l * 2 - 1;
+    nn.xy 		*= 	sqrt(abs(l)) * 2;
+    return normalize(nn.xyz);
+}
+
 #ifdef INTEGRATE
 
 groupshared float3 radiance_cache[2048];
@@ -252,9 +267,9 @@ void CSMain(
 		uint 	hitCount	=	(lmAddr >>  0) & 0x03F;
 		
 		float3 	radiance	=	radiance_cache[ cacheIndex ];
-		float3 	lightDirN	=	dir_lut[ direction ];
+		float3 	lightDirN	=	DecodeDirection( direction );
 
-		float3	light		=	radiance.rgb / 128.0f * hitCount * Radiosity.IndirectFactor;	
+		float3	light		=	radiance.rgb / 256.0f * hitCount * Radiosity.IndirectFactor;	
 		
 		irradianceR			+=	SHL1EvaluateDiffuse( light.r, lightDirN );
 		irradianceG			+=	SHL1EvaluateDiffuse( light.g, lightDirN );

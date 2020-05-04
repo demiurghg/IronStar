@@ -19,6 +19,42 @@ namespace Fusion.Engine.Graphics.GI
 {
 	public partial class Radiosity
 	{
+		public static int EncodeDirection( Vector3 dir )
+		{
+			dir.Normalize();
+			var xy = new Vector2( dir.X, dir.Y );
+				xy.Normalize();
+				xy		*= (float)Math.Sqrt( -dir.Z * 0.5f + 0.5f );
+				xy.X	=	xy.X * 0.5f + 0.5f;
+				xy.Y	=	xy.Y * 0.5f + 0.5f;
+			
+			uint ux	=	(uint)(xy.X * 8) & 0x7;
+			uint uy	=	(uint)(xy.Y * 8) & 0x7;
+
+			return (int)(ux << 3 | uy);
+		}
+
+
+		public Vector3 DecodeDirection( int dir )
+		{
+			if (dir>63) Log.Warning("bad direction");
+
+			uint	ux	=	(uint)(( dir >> 3 ) & 0x7);
+			uint	uy	=	(uint)(( dir >> 0 ) & 0x7);
+
+			float	fx	=	ux / 8.0f;
+			float	fy	=	uy / 8.0f;
+
+			Vector4	nn	=	new Vector4(fx,fy,0,0) * new Vector4(2,2,0,0) + new Vector4(-1,-1,1,-1);
+			float	l	=	- ( nn.X * nn.X + nn.Y * nn.Y + nn.Z * nn.W );
+			nn.Z		=	2 * l - 1;
+			nn.X		*=	(float)Math.Sqrt( l ) * 2;
+			nn.Y		*=	(float)Math.Sqrt( l ) * 2;
+
+			return new Vector3( nn.X, nn.Y, nn.Z );
+		}
+
+
 		public static int GetDirectionLutIndex ( Vector3 dir )
 		{
 			dir.Normalize();

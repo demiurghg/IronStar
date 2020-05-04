@@ -211,6 +211,15 @@ namespace Fusion.Engine.Graphics.GI
 
 			lightMap.DebugDraw( DebugX, DebugY, rs.RenderWorld.Debug );
 
+			for (int i=0; i<64; i++)
+			{
+				var n = DecodeDirection(i);
+				var u = EncodeDirection(n);
+					n = DecodeDirection(u);
+
+				rs.RenderWorld.Debug.DrawLine( Vector3.Zero, n * 20, Color.Orange );
+			}
+
 
 			using ( new PixEvent( "Radiosity" ) )
 			{

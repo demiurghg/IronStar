@@ -159,7 +159,7 @@ namespace Fusion.Engine.Graphics.Lights
 				var globalIndex =	TileCache[ index + cacheIndex ];
 				var emitPos		=	Position[ originIndex.Coords ];
 
-				var dirIndex	=	Radiosity.GetDirectionLutIndex( emitPos - recvPos );
+				var dirIndex	=	Radiosity.EncodeDirection( emitPos - recvPos );
 
 				if ( globalIndex.Coords == originIndex.Coords )
 				{

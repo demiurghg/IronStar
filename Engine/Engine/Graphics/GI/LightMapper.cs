@@ -109,7 +109,7 @@ namespace Fusion.Engine.Graphics.Lights {
 					)
 					.ToArray();
 
-			int lightMapSize = 128;
+			int lightMapSize = 32;
 
 			Allocator2D allocator;		
 
@@ -387,7 +387,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		class GatheringResults 
 		{
-			public PatchIndex[]	Patches;
+			public PatchGlobalIndex[]	Patches;
 			public Vector3		Sky;
 		}
 
@@ -406,7 +406,7 @@ namespace Fusion.Engine.Graphics.Lights {
 			//---------------------------------
 			var randVector		=	rand.NextVector3(-Vector3.One, Vector3.One).Normalized();
 
-			var lmAddrList = new List<PatchIndex>();
+			var lmAddrList = new List<PatchGlobalIndex>();
 
 			for ( int i = 0; i<sampleCount; i++ ) {
 
@@ -464,7 +464,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 								if (weight>settings.RadianceThreshold) 
 								{
-									lmAddrList.Add( new PatchIndex( patch, 1 ) );
+									lmAddrList.Add( new PatchGlobalIndex( patch, 1 ) );
 								}
 							}
 						}

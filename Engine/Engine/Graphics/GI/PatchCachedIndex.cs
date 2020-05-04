@@ -26,8 +26,8 @@ namespace Fusion.Engine.Graphics.GI
 			get 
 			{
 				uint uCacheIndex	=	(uint)(CacheIndex & 0xFFF);
-				uint uDirection		=	(uint)(CacheIndex & 0x3F);
-				uint uHitCount		=	(uint)(CacheIndex & 0x3F);
+				uint uDirection		=	(uint)(Direction  & 0x3F);
+				uint uHitCount		=	(uint)(HitCount	  & 0x3F);
 
 				return ( uCacheIndex << 12 ) | ( uDirection << 6 ) | ( uHitCount << 0);
 			}

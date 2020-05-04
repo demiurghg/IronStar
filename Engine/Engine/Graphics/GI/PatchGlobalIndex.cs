@@ -7,11 +7,11 @@ using Fusion.Core.Mathematics;
 
 namespace Fusion.Engine.Graphics.GI
 {
-	public struct PatchIndex 
+	public struct PatchGlobalIndex 
 	{
-		public static readonly PatchIndex Empty = new PatchIndex(0,0,0,0);
+		public static readonly PatchGlobalIndex Empty = new PatchGlobalIndex(0,0,0,0);
 
-		public PatchIndex( int x, int y, int mip, int hits )
+		public PatchGlobalIndex( int x, int y, int mip, int hits )
 		{
 			if ( x    < 0 || x    >= 4096 ) throw new ArgumentOutOfRangeException("x"	, x		, "0 <= x < 4096");
 			if ( y    < 0 || y    >= 4096 ) throw new ArgumentOutOfRangeException("y"	, y		, "0 <= y < 4096");
@@ -27,18 +27,18 @@ namespace Fusion.Engine.Graphics.GI
 		}
 
 
-		public PatchIndex( uint index )
+		public PatchGlobalIndex( uint index )
 		{
 			Index	=	index;
 		}
 
 
-		public PatchIndex( Int2 xy, int mip, int hits ) : this( xy.X, xy.Y, mip, hits )
+		public PatchGlobalIndex( Int2 xy, int mip, int hits ) : this( xy.X, xy.Y, mip, hits )
 		{
 		}
 
 
-		public PatchIndex( Int3 xyz, int hits ) : this( xyz.X, xyz.Y, xyz.Z, hits )
+		public PatchGlobalIndex( Int3 xyz, int hits ) : this( xyz.X, xyz.Y, xyz.Z, hits )
 		{
 		}
 

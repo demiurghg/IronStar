@@ -33,10 +33,10 @@ namespace Fusion.Engine.Graphics.Lights
 		public readonly Image<byte>         Coverage;
 		public readonly Image<Vector3>		Sky;
 		public readonly Image<uint>			IndexMap;
-		public readonly List<PatchIndex>	Indices;
+		public readonly List<PatchGlobalIndex>	Indices;
 		public readonly Image<Int2>			Tiles;
 
-		public readonly List<PatchIndex>		TileCache;
+		public readonly List<PatchGlobalIndex>		TileCache;
 		public readonly List<PatchCachedIndex>	CachedIndices;
 
 		readonly Allocator2D                allocator;
@@ -65,9 +65,9 @@ namespace Fusion.Engine.Graphics.Lights
 
 			Sky             =   new Image<Vector3>( size, size, Vector3.Zero );
 			IndexMap        =   new Image<uint>( size, size, 0 );
-			Indices         =   new List<PatchIndex>();
+			Indices         =   new List<PatchGlobalIndex>();
 
-			TileCache		=	new List<PatchIndex>();
+			TileCache		=	new List<PatchGlobalIndex>();
 			CachedIndices	=	new List<PatchCachedIndex>();;
 
 			Coverage        =   new Image<byte>( size, size, 0 );
@@ -75,9 +75,9 @@ namespace Fusion.Engine.Graphics.Lights
 
 
 
-		public PatchIndex[] GetTilePatches( int x, int y, int w, int h )
+		public PatchGlobalIndex[] GetTilePatches( int x, int y, int w, int h )
 		{
-			var patchList = new List<PatchIndex>();
+			var patchList = new List<PatchGlobalIndex>();
 
 			for (int j=y; j<y+h; j++)
 			{
@@ -97,7 +97,7 @@ namespace Fusion.Engine.Graphics.Lights
 			}
 
 			return patchList
-				.Distinct()
+				.DistinctBy( p => p.Coords )
 				.OrderByDescending( p0 => p0.Mip )
 				.ToArray();
 		}
@@ -127,6 +127,7 @@ namespace Fusion.Engine.Graphics.Lights
 		}
 
 
+
 		uint RemapPatchIndicesToCache( Int2 xy, uint index )
 		{
 			var	offset		=	index >> 8;
@@ -137,10 +138,12 @@ namespace Fusion.Engine.Graphics.Lights
 
 			var newOffset	=	CachedIndices.Count;
 			var newCount	=	(int)count;
+
+			var recvPos		=	Position[ xy ];
 			
 			for (uint i=offset; i<offset+count; i++)
 			{
-				var patchIndexCached = GeneratePatchCacheIndex( cacheIndex, cacheCount, Indices[(int)i] );
+				var patchIndexCached = GeneratePatchCacheIndex( recvPos, cacheIndex, cacheCount, Indices[(int)i] );
 				CachedIndices.Add( patchIndexCached );
 			}
 
@@ -148,22 +151,35 @@ namespace Fusion.Engine.Graphics.Lights
 		}
 
 
-		PatchCachedIndex GeneratePatchCacheIndex ( int cacheIndex, int cacheCount, PatchIndex originIndex )
+
+		PatchCachedIndex GeneratePatchCacheIndex ( Vector3 recvPos, int cacheIndex, int cacheCount, PatchGlobalIndex originIndex )
 		{
-			int index = TileCache.IndexOf( originIndex, cacheIndex, cacheCount );
+			for (int index = 0; index < cacheCount; index ++)
+			{
+				var globalIndex =	TileCache[ index + cacheIndex ];
+				var emitPos		=	Position[ originIndex.Coords ];
 
-			if (index<0) Log.Warning("GeneratePatchCacheIndex -- something wrong!");
+				var dirIndex	=	Radiosity.GetDirectionLutIndex( emitPos - recvPos );
 
-			return new PatchCachedIndex( index, 0, originIndex.Hits );
+				if ( globalIndex.Coords == originIndex.Coords )
+				{
+					return new PatchCachedIndex( index, dirIndex, originIndex.Hits );
+				}
+			}
+
+			Log.Warning("GeneratePatchCacheIndex -- something wrong!");
+
+			return new PatchCachedIndex( 0,0,0 );
 		}
 
 
-		public uint AddFormFactorPatchIndices( IEnumerable<PatchIndex> patches, RadiositySettings settings )
+
+		public uint AddFormFactorPatchIndices( IEnumerable<PatchGlobalIndex> patches, RadiositySettings settings )
 		{
 			patches = patches
 					.GroupBy( p0 => p0.Coords )
 					.Select( g0 => 
-						new PatchIndex( 
+						new PatchGlobalIndex( 
 							g0.First().Coords, 
 							g0.Aggregate( 0, (hits,patch) => hits + patch.Hits, 
 							totalHits => Math.Min(totalHits,31) ) 
@@ -174,7 +190,7 @@ namespace Fusion.Engine.Graphics.Lights
 			int count		=	patches.Count();
 
 			Indices.AddRange( patches );
-			Indices.Add( PatchIndex.Empty );
+			Indices.Add( PatchGlobalIndex.Empty );
 
 			return Radiosity.GetLMIndex( offset, count );
 		}
@@ -226,6 +242,7 @@ namespace Fusion.Engine.Graphics.Lights
 		}
 
 
+
 		Color AverageColor( Color c0, Color c1, Color c2, Color c3 )
 		{
 			return Color.Lerp( 
@@ -235,6 +252,7 @@ namespace Fusion.Engine.Graphics.Lights
 		}
 
 
+
 		Vector3 AverageVector( Vector3 v0, Vector3 v1, Vector3 v2, Vector3 v3 )
 		{
 			return Vector3.Lerp( 
@@ -242,6 +260,7 @@ namespace Fusion.Engine.Graphics.Lights
 				Vector3.Lerp( v2, v3, 0.5f ),
 				0.5f);
 		}
+
 
 
 		public void GeneratePatchLods ()
@@ -312,6 +331,7 @@ namespace Fusion.Engine.Graphics.Lights
 		}
 
 
+
 		Color EncodeNormalRGB8( Vector3 n )
 		{
 			n.Normalize();
@@ -324,6 +344,7 @@ namespace Fusion.Engine.Graphics.Lights
 		}
 
 
+
 		Color EncodeSkyRGB8( Vector3 n )
 		{
 			n = (n + Vector3.One) * 0.5f;
@@ -333,6 +354,7 @@ namespace Fusion.Engine.Graphics.Lights
 				MathUtil.Lerp( (byte)0, (byte)255, n.Z ),
 				(byte)255 );
 		}
+
 
 
 		public void SaveDebugImages()

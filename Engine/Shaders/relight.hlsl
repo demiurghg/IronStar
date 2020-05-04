@@ -159,7 +159,7 @@ void CSMain(
 #ifdef PREFILTER
 
 #include "hammersley.fxi"
-#include "brdf.fxi"
+#include "ls_brdf.fxi"
 
 float3 ImportanceSampleGGX( float2 E, float roughness, float3 N )
 {
@@ -181,10 +181,10 @@ float3 ImportanceSampleGGX( float2 E, float roughness, float3 N )
 	return TangentX * H.x + TangentY * H.y + N * H.z;
 }
 
-float Lambert( float3 N, float3 H )
+/*float Lambert( float3 N, float3 H )
 {
 	return max(0, dot(N,H));
-}
+}*/
 
 float3 PoissonBeckmann ( float x, float y, float size, float roughness )
 {	

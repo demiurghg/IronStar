@@ -4,10 +4,10 @@
     "$type": "IronStar.Mapping.MapEnvironment, IronStar",
     "Gravity": 48.0,
     "SkyTrubidity": 8.0,
-    "SunAltitude": 45.0,
+    "SunAltitude": 0.0,
     "SkyIntensity": 1.0,
-    "SunAzimuth": 90.0,
-    "SunIntensity": 500.0,
+    "SunAzimuth": 0.0,
+    "SunIntensity": 0.0,
     "FogDistance": 800000.0,
     "FogHeight": 0.05,
     "FogColor": "10, 10, 10, 0"

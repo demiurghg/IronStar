@@ -145,6 +145,41 @@ void StoreLightmap( int2 xy, float4 shR, float4 shG, float4 shB )
 	IrradianceL3[ xy ]	=	float4( shR.w/shR.x , shG.w/shG.x	, shB.w/shB.x	, 0 ) * 0.5f + 0.5f;
 }
 
+static const float3 dir_lut[64] = {
+	float3(  0.00f,  1.00f,  0.00f ),	float3( -0.25f,  0.97f,  0.00f ),
+	float3(  0.00f,  0.94f,  0.35f ),	float3(  0.00f,  0.91f, -0.42f ),
+	float3(  0.34f,  0.88f,  0.34f ),	float3( -0.38f,  0.84f, -0.38f ),
+	float3( -0.41f,  0.81f,  0.41f ),	float3(  0.44f,  0.78f, -0.44f ),
+	float3(  0.61f,  0.75f,  0.25f ),	float3( -0.64f,  0.72f, -0.27f ),
+	float3( -0.28f,  0.69f,  0.67f ),	float3(  0.29f,  0.66f, -0.70f ),
+	float3(  0.30f,  0.63f,  0.72f ),	float3( -0.31f,  0.59f, -0.74f ),
+	float3( -0.76f,  0.56f,  0.32f ),	float3(  0.78f,  0.53f, -0.32f ),
+	float3(  0.85f,  0.50f,  0.17f ),	float3( -0.87f,  0.47f, -0.17f ),
+	float3( -0.18f,  0.44f,  0.88f ),	float3(  0.18f,  0.41f, -0.90f ),
+	float3(  0.52f,  0.38f,  0.77f ),	float3( -0.52f,  0.34f, -0.78f ),
+	float3( -0.79f,  0.31f,  0.53f ),	float3(  0.80f,  0.28f, -0.53f ),
+	float3(  0.81f,  0.25f,  0.54f ),	float3( -0.81f,  0.22f, -0.54f ),
+	float3( -0.55f,  0.19f,  0.82f ),	float3(  0.55f,  0.16f, -0.82f ),
+	float3(  0.19f,  0.13f,  0.97f ),	float3( -0.19f,  0.09f, -0.98f ),
+	float3( -0.98f,  0.06f,  0.19f ),	float3(  0.98f,  0.03f, -0.19f ),
+	float3(  1.00f,  0.00f,  0.10f ),	float3( -0.99f, -0.03f, -0.10f ),
+	float3( -0.10f, -0.06f,  0.99f ),	float3(  0.10f, -0.09f, -0.99f ),
+	float3(  0.63f, -0.13f,  0.77f ),	float3( -0.63f, -0.16f, -0.76f ),
+	float3( -0.76f, -0.19f,  0.62f ),	float3(  0.75f, -0.22f, -0.62f ),
+	float3(  0.85f, -0.25f,  0.46f ),	float3( -0.85f, -0.28f, -0.45f ),
+	float3( -0.45f, -0.31f,  0.84f ),	float3(  0.44f, -0.34f, -0.83f ),
+	float3(  0.27f, -0.38f,  0.89f ),	float3( -0.27f, -0.41f, -0.87f ),
+	float3( -0.86f, -0.44f,  0.26f ),	float3(  0.85f, -0.47f, -0.26f ),
+	float3(  0.83f, -0.50f,  0.25f ),	float3( -0.81f, -0.53f, -0.25f ),
+	float3( -0.24f, -0.56f,  0.79f ),	float3(  0.23f, -0.59f, -0.77f ),
+	float3(  0.37f, -0.63f,  0.69f ),	float3( -0.36f, -0.66f, -0.67f ),
+	float3( -0.64f, -0.69f,  0.34f ),	float3(  0.61f, -0.72f, -0.33f ),
+	float3(  0.51f, -0.75f,  0.42f ),	float3( -0.48f, -0.78f, -0.40f ),
+	float3( -0.37f, -0.81f,  0.45f ),	float3(  0.34f, -0.84f, -0.41f ),
+	float3(  0.05f, -0.88f,  0.48f ),	float3( -0.04f, -0.91f, -0.42f ),
+	float3( -0.35f, -0.94f,  0.03f ),	float3(  0.25f, -0.97f, -0.02f ),
+};
+
 #ifdef INTEGRATE
 
 groupshared float3 radiance_cache[2048];
@@ -178,7 +213,7 @@ void CSMain(
 			uint 	lmMip		=	(lmAddr >>  5) & 0x007;
 			int3	loadUVm		=	int3( lmX, lmY, lmMip );
 			float3 	radiance	=	Radiance.Load( loadUVm ).rgb;
-			radiance_cache[ base+offset ] = float3(1000,0,0);
+			radiance_cache[ base+offset ] = radiance;
 		}
 		else
 		{
@@ -214,16 +249,16 @@ void CSMain(
 		uint 	lmAddr		=	Indices[ index ];
 		uint 	cacheIndex	=	(lmAddr >> 12) & 0xFFF;
 		uint 	direction	=	(lmAddr >>  6) & 0x03F;
-		uint 	hitCount	=	1;//(lmAddr >>  0) & 0x03F;
+		uint 	hitCount	=	(lmAddr >>  0) & 0x03F;
 		
 		float3 	radiance	=	radiance_cache[ cacheIndex ];
-		float3 	lightDirN	=	float3(0,1,0);
+		float3 	lightDirN	=	dir_lut[ direction ];
 
 		float3	light		=	radiance.rgb / 128.0f * hitCount * Radiosity.IndirectFactor;	
 		
-		irradianceR			+=	SHL1EvaluateDiffuse( light.r, -lightDirN );
-		irradianceG			+=	SHL1EvaluateDiffuse( light.g, -lightDirN );
-		irradianceB			+=	SHL1EvaluateDiffuse( light.b, -lightDirN );
+		irradianceR			+=	SHL1EvaluateDiffuse( light.r, lightDirN );
+		irradianceG			+=	SHL1EvaluateDiffuse( light.g, lightDirN );
+		irradianceB			+=	SHL1EvaluateDiffuse( light.b, lightDirN );
 	}//*/
 	
 	StoreLightmap( storeXY.xy, irradianceR, irradianceG, irradianceB );

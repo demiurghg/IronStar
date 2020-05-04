@@ -211,6 +211,7 @@ namespace Fusion.Engine.Graphics.GI
 
 			lightMap.DebugDraw( DebugX, DebugY, rs.RenderWorld.Debug );
 
+
 			using ( new PixEvent( "Radiosity" ) )
 			{
 				device.ResetStates();

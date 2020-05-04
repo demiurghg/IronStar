@@ -69,6 +69,7 @@
     "MaxPatches": 128,
     "RadianceThreshold": 0.02,
     "PatchThreshold": 0.5,
+    "UseWhiteDiffuse": true,
     "DebugLightmaps": false
   }
 }

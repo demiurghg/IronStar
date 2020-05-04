@@ -90,6 +90,12 @@ namespace Fusion.Engine.Graphics.GI
 		///	Produce debugging images for albedo, normals, etc
 		/// </summary>
 		[AECategory("Debug")]
+		public bool UseWhiteDiffuse { get; set; } = false;
+
+		/// <summary>
+		///	Produce debugging images for albedo, normals, etc
+		/// </summary>
+		[AECategory("Debug")]
 		public bool DebugLightmaps { get; set; } = false;
 	}
 }

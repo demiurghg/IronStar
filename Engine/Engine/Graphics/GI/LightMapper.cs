@@ -156,7 +156,7 @@ namespace Fusion.Engine.Graphics.Lights {
 			foreach ( var group in lmGroups ) {
 				foreach ( var instance in group.Instances ) {
 					instance.BakingLMRegion = group.Region;
-					RasterizeInstance( lightmapGBuffer, instance, group.Region );
+					RasterizeInstance( lightmapGBuffer, instance, group.Region, settings );
 				}
 			}
 
@@ -484,7 +484,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		/// <param name="lightmap"></param>
 		/// <param name="instance"></param>
-		void RasterizeInstance ( LightMapContent lightmap, MeshInstance instance, Rectangle viewport )
+		void RasterizeInstance ( LightMapContent lightmap, MeshInstance instance, Rectangle viewport, RadiositySettings settings )
 		{
 			var mesh		=	instance.Mesh;
 
@@ -515,7 +515,7 @@ namespace Fusion.Engine.Graphics.Lights {
 			foreach ( var subset in instance.Subsets )
 			{
 				var segment =	rs.RenderWorld.VirtualTexture.GetTextureSegmentInfo( subset.Name );
-				var albedo	=	segment.AverageColor;
+				var albedo	=	settings.UseWhiteDiffuse ? new Color(0.5f) : segment.AverageColor;
 				albedo.A	=	255;
 
 				for (int i=subset.StartPrimitive; i<subset.StartPrimitive+subset.PrimitiveCount; i++) 

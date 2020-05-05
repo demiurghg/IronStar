@@ -102,7 +102,7 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 		float3	shadow	=	ComputeCascadedShadows( geometry, vpos, CascadeShadow, rcShadow, true ); 
 		
 		FLUX flux		=	ComputeDirectLightFlux( DirectLight );
-		totalLight		+=	ComputeLighting( flux, geometry, surface, Camera ) * shadow;
+		totalLight		+=	ComputeLighting( flux, geometry, surface, Camera ) * shadow * Stage.DirectLightFactor;
 	}
 	
 	//----------------------------------------------------------------------------------------------
@@ -115,10 +115,8 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 		LIGHT light	=	GetLight( rcCluster, cluster, i );
 		
 		FLUX flux	=	ComputePointLightFlux( geometry, light, rcShadow );
-		totalLight	+=	ComputeLighting( flux, geometry, surface, Camera );
+		totalLight	+=	ComputeLighting( flux, geometry, surface, Camera ) * Stage.DirectLightFactor;
 	}
-	
-	totalLight *= Stage.DirectLightFactor;
 	
 	float3	ambientDiffuse		=	float3(0,0,0);
 	float3	ambientSpecular		=	float3(0,0,0);

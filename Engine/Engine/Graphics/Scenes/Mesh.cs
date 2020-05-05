@@ -292,11 +292,27 @@ namespace Fusion.Engine.Graphics.Scenes {
 						continue;
 					}
 
-					UpdateAdjacency( i, j ); 					
+					UpdateAdjacency( i, j );
 				}
 			}
 		}
 
+
+		public bool IsTrianglesAdjacent( int triIndexA, int triIndexB )
+		{
+			if (AdjacentVertices==null) throw new InvalidOperationException("AdjacentVertices is null -- build adjacency info first");
+			if (AdjacentTriangles==null) throw new InvalidOperationException("AdjacentTriangles is null -- build adjacency info first");
+			int length = AdjacentVertices.Length;
+			var triCount = Triangles.Count;
+
+			if (triIndexA<0 || triIndexA>=triCount) throw new ArgumentOutOfRangeException(nameof(triIndexA), triIndexA, "value must be less then triangle count: " + triCount.ToString());
+			if (triIndexB<0 || triIndexB>=triCount) throw new ArgumentOutOfRangeException(nameof(triIndexB), triIndexB, "value must be less then triangle count: " + triCount.ToString());
+
+			return 	AdjacentTriangles[triIndexA*3+0]==triIndexB
+				||	AdjacentTriangles[triIndexA*3+1]==triIndexB
+				||	AdjacentTriangles[triIndexA*3+2]==triIndexB
+				;
+		}
 
 
 		bool UpdateAdjacency( int indexA, int indexB )

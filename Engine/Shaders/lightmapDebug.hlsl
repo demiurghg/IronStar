@@ -29,7 +29,7 @@ struct PSInput {
 
 
 #include "ls_brdf.fxi"
-#include "ls_lightmap.fxi"
+//#include "ls_lightmap.fxi"
 
 PSInput VSMain( VSInput input, uint instanceId : SV_InstanceID )
 {
@@ -119,14 +119,14 @@ float4 PSMain( PSInput input ) : SV_Target0
 #endif
 
 #ifdef SHOW_LIGHTVOLUME
-	LIGHTMAP_RESOURCES rc;
+	/*LIGHTMAP_RESOURCES rc;
 	rc.IrradianceVolumeR	=	LightVolumeR;
 	rc.IrradianceVolumeG	=	LightVolumeG;
 	rc.IrradianceVolumeB	=	LightVolumeB;
 	rc.Sampler				=	Sampler;
 	
-	float3 coord		=	mul(float4(surfacePos.xyz,1), Params.VolumeTransform ).xyz;
-	float3 lighting		=	EvaluateLightVolume( rc, surfaceNormal, coord ); 
+	float3 coord		=	mul(float4(surfacePos.xyz,1), Params.VolumeTransform ).xyz;*/
+	float3 lighting		=	float3(1,0,2);//EvaluateLightVolume( rc, surfaceNormal, coord ); 
 	float  whiteDiffuse	=	SRGBToLinear( 0.5f );
 	return float4(lighting * whiteDiffuse,1);
 #endif

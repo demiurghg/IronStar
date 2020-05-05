@@ -167,7 +167,7 @@ namespace Fusion.Engine.Graphics
 
 
 		/// <summary>
-		/// Performs good-old StretchRect to destination buffer with blending.
+		/// 
 		/// </summary>
 		/// <param name="dst"></param>
 		/// <param name="src"></param>
@@ -183,17 +183,31 @@ namespace Fusion.Engine.Graphics
 
 
 		/// <summary>
-		/// Performs good-old StretchRect to destination buffer with blending.
+		/// 
 		/// </summary>
 		/// <param name="dst"></param>
 		/// <param name="src"></param>
 		/// <param name="filter"></param>
 		/// <param name="rect"></param>
-		public void FilterSHL1ByAlpha ( RenderTarget2D radiance, RenderTarget2D temp, ShaderResource albedo, float intensityFactor, float alphaFactor, float falloff )
+		public void FilterSHL1ByAlphaDoublePass ( RenderTarget2D radiance, RenderTarget2D temp, ShaderResource albedo, float intensityFactor, float alphaFactor, float falloff )
 		{
 			Color4 luma = new Color4(0.4f, 0.2f, 0.2f, 0.2f);
 			BilateralPass( Flags.DOUBLE_PASS | Flags.HORIZONTAL | Flags.MASK_ALPHA, temp  , null, radiance, albedo, intensityFactor, alphaFactor, falloff, luma );
 			BilateralPass( Flags.DOUBLE_PASS | Flags.VERTICAL   | Flags.MASK_ALPHA, radiance, null, temp  , albedo, intensityFactor, alphaFactor, falloff, luma );
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="dst"></param>
+		/// <param name="src"></param>
+		/// <param name="filter"></param>
+		/// <param name="rect"></param>
+		public void FilterSHL1ByAlphaSinglePass ( RenderTarget2D target, RenderTarget2D source, ShaderResource albedo, float intensityFactor, float alphaFactor, float falloff )
+		{
+			Color4 luma = new Color4(0.4f, 0.2f, 0.2f, 0.2f);
+			BilateralPass( Flags.SINGLE_PASS | Flags.MASK_ALPHA, target, null, source, albedo, intensityFactor, alphaFactor, falloff, luma );
 		}
 
 

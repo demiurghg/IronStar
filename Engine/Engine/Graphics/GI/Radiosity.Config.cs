@@ -53,18 +53,31 @@ namespace Fusion.Engine.Graphics.GI
 
 		[Config]
 		[AECategory("Bilateral Filter")]
-		[AEValueRange(0,10,0.1f,0.01f)]
-		public float ColorFactor { get; set; } = 1f;
+		[AEDisplayName("Weight SH L0")]
+		[AEValueRange(0, 1, 0.1f, 0.01f)]
+		public float WeightIntensitySHL0 { get; set; } = 1f;
 
 		[Config]
 		[AECategory("Bilateral Filter")]
-		[AEValueRange(0,10,1f,0.01f)]
-		public float AlphaFactor { get; set; } = 10f;
+		[AEDisplayName("Weight SH L1")]
+		[AEValueRange(0, 1, 0.1f, 0.01f)]
+		public float WeightDirectionSHL1 { get; set; } = 0f;
+		//[Config]
+		//[AECategory("Bilateral Filter")]
+		//[AEValueRange(0,10,1f,0.01f)]
+		//public float AlphaFactor { get; set; } = 10f;
 
 		[Config]
 		[AECategory("Bilateral Filter")]
-		[AEValueRange(0,10,1f,0.01f)]
-		public float FalloffFactor { get; set; } = 0.5f;
+		[AEDisplayName("Falloff SH L0")]
+		[AEValueRange(0, 1, 0.1f, 0.01f)]
+		public float FalloffIntensitySHL0 { get; set; } = 0.5f;
+
+		[Config]
+		[AECategory("Bilateral Filter")]
+		[AEDisplayName("Falloff SH L1")]
+		[AEValueRange(0, 1, 0.1f, 0.01f)]
+		public float FalloffDirectionSHL1 { get; set; } = 0.25f;
 
 
 	}

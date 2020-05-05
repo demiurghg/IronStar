@@ -1,5 +1,6 @@
 #if 0
 $ubershader DOUBLE_PASS	MASK_DEPTH|MASK_ALPHA HORIZONTAL|VERTICAL
+$ubershader SINGLE_PASS	MASK_DEPTH|MASK_ALPHA
 #endif
 
 #include "auto/bilateral.fxi"
@@ -16,18 +17,6 @@ float LinearizeDepth(float z)
 Texture2D 	Source 	: register(t0); 
 Texture2D 	Mask  	: register(t1); 
 RWTexture2D<float4> Target  : register(u0); 
-
-#ifdef DOUBLE_PASS
-#ifdef HORIZONTAL
-groupshared float4 cachedData[BilateralBlockSizeY][BilateralBlockSizeX*2];
-groupshared float2 cachedMask[BilateralBlockSizeY][BilateralBlockSizeX*2];
-#endif
-
-#ifdef VERTICAL
-groupshared float4 cachedData[BilateralBlockSizeY*2][BilateralBlockSizeX];
-groupshared float2 cachedMask[BilateralBlockSizeY*2][BilateralBlockSizeX];
-#endif
-#endif
 
 
 float ExtractMaskFactor( float4 mask )
@@ -46,6 +35,24 @@ float ExtractLumaFactor( float4 color )
 	return dot( color, filterParams.LumaVector );
 }
 
+
+//-------------------------------------------------------------------------------
+//	DOUBLE PASS 
+//-------------------------------------------------------------------------------
+
+#ifdef DOUBLE_PASS
+#ifdef HORIZONTAL
+groupshared float4 cachedData[BilateralBlockSizeY][BilateralBlockSizeX*2];
+groupshared float2 cachedMask[BilateralBlockSizeY][BilateralBlockSizeX*2];
+#endif
+
+#ifdef VERTICAL
+groupshared float4 cachedData[BilateralBlockSizeY*2][BilateralBlockSizeX];
+groupshared float2 cachedMask[BilateralBlockSizeY*2][BilateralBlockSizeX];
+#endif
+#endif
+
+#ifdef DOUBLE_PASS
 
 [numthreads(BilateralBlockSizeX,BilateralBlockSizeY,1)] 
 void CSMain( 
@@ -147,5 +154,60 @@ void CSMain(
 	Target[location.xy]		=	result;
 }
 
+#endif
+
+//-------------------------------------------------------------------------------
+//	SINGLE PASS 
 //-------------------------------------------------------------------------------
 
+#ifdef SINGLE_PASS
+
+[numthreads(BilateralBlockSizeX,BilateralBlockSizeY,1)] 
+void CSMain( 
+	uint3 groupId : SV_GroupID, 
+	uint3 groupThreadId : SV_GroupThreadID, 
+	uint  groupIndex: SV_GroupIndex, 
+	uint3 dispatchThreadId : SV_DispatchThreadID) 
+{
+	int2 location		=	dispatchThreadId.xy;
+	
+	float4 accumValue 	= 0;
+	float  accumWeight	= 0;
+	int3   centerPoint	= int3( location.xy, 0 );
+	
+	float 	maskCenter		=	ExtractMaskFactor( Mask  .Load( centerPoint ) );
+	float	lumaCenter		=	ExtractLumaFactor( Source.Load( centerPoint ) );
+	
+	//[unroll]
+	for (int y=-2; y<=2; y++) {
+		for (int x=-2; x<=2; x++) {
+	
+			float	k			=	filterParams.GaussFalloff;
+			float	falloff		=	(x*x+y*y) * k*k;
+			int2 	offset 		= 	int2(x,y);
+			
+			int3	loadPoint	=	int3(location.xy + offset.xy, 0);
+		
+			float4	localColor	=	Source.Load( loadPoint );
+			float	localLuma	=	ExtractLumaFactor( localColor );
+			float	localMask	=	ExtractMaskFactor( Mask.Load( loadPoint ) );
+			
+			float	deltaL		=	localLuma - lumaCenter;
+			float	deltaM		=	localMask - maskCenter;
+			
+			float 	powerL		=	deltaL * deltaL * filterParams.ColorFactor;
+			float	powerM		=	deltaM * deltaM * filterParams.MaskFactor;
+			
+			float	weight		=	exp( - powerL - powerM - falloff );
+			
+			accumWeight			+=	weight;
+			accumValue 			+=	localColor * weight;
+		}//*/
+	}
+	
+	float4	result			=	accumValue / accumWeight;
+	
+	Target[location.xy]		=	result;
+}
+
+#endif

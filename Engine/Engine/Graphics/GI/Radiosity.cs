@@ -303,30 +303,79 @@ namespace Fusion.Engine.Graphics.GI
 				}
 
 
-				using ( new PixEvent( "Bilateral Filter" ) )
+				using ( new PixEvent( "Denoising/Dilation" ) )
 				{
-					if (!SkipDenoising)
-					{
-						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL0, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL1, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL2, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-						rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL3, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-					}
+					FilterLightmap( irradianceL0, tempHDR, lightMap.albedo, WeightIntensitySHL0, 20, FalloffIntensitySHL0 );
+					FilterLightmap( irradianceL1, tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
+					FilterLightmap( irradianceL2, tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
+					FilterLightmap( irradianceL3, tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
 				}
+				//{
+				//	if (!SkipDenoising)
+				//	{
+				//		rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL0, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+				//		rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL1, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+				//		rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL2, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+				//		rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL3, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+				//	}
+				//}
 
-				using ( new PixEvent( "Dilation" ) )
-				{
-					if (!SkipDilation)
-					{
-						rs.DilateFilter.DilateByMaskAlpha( tempHDR, irradianceL0, lightMap.albedo, 0, 1 );		tempHDR.CopyTo( irradianceL0 );
-						rs.DilateFilter.DilateByMaskAlpha( tempLDR, irradianceL1, lightMap.albedo, 0, 1 );		tempLDR.CopyTo( irradianceL1 );
-						rs.DilateFilter.DilateByMaskAlpha( tempLDR, irradianceL2, lightMap.albedo, 0, 1 );		tempLDR.CopyTo( irradianceL2 );
-						rs.DilateFilter.DilateByMaskAlpha( tempLDR, irradianceL3, lightMap.albedo, 0, 1 );		tempLDR.CopyTo( irradianceL3 );
-					}
-				}
+				//using ( new PixEvent( "Dilation" ) )
+				//{
+				//	if (!SkipDilation)
+				//	{
+				//		rs.DilateFilter.DilateByMaskAlpha( tempHDR, irradianceL0, lightMap.albedo, 0, 1 );		tempHDR.CopyTo( irradianceL0 );
+				//		rs.DilateFilter.DilateByMaskAlpha( tempLDR, irradianceL1, lightMap.albedo, 0, 1 );		tempLDR.CopyTo( irradianceL1 );
+				//		rs.DilateFilter.DilateByMaskAlpha( tempLDR, irradianceL2, lightMap.albedo, 0, 1 );		tempLDR.CopyTo( irradianceL2 );
+				//		rs.DilateFilter.DilateByMaskAlpha( tempLDR, irradianceL3, lightMap.albedo, 0, 1 );		tempLDR.CopyTo( irradianceL3 );
+				//	}
+				//}
+
+				//using ( new PixEvent( "Bilateral Filter" ) )
+				//{
+				//	if (!SkipDenoising)
+				//	{
+				//		rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL0, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+				//		rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL1, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+				//		rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL2, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+				//		rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL3, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
+				//	}
+				//}
+
+				//using ( new PixEvent( "Dilation" ) )
+				//{
+				//	if (!SkipDilation)
+				//	{
+				//		rs.DilateFilter.DilateByMaskAlpha( tempHDR, irradianceL0, lightMap.albedo, 0, 1 );		tempHDR.CopyTo( irradianceL0 );
+				//		rs.DilateFilter.DilateByMaskAlpha( tempLDR, irradianceL1, lightMap.albedo, 0, 1 );		tempLDR.CopyTo( irradianceL1 );
+				//		rs.DilateFilter.DilateByMaskAlpha( tempLDR, irradianceL2, lightMap.albedo, 0, 1 );		tempLDR.CopyTo( irradianceL2 );
+				//		rs.DilateFilter.DilateByMaskAlpha( tempLDR, irradianceL3, lightMap.albedo, 0, 1 );		tempLDR.CopyTo( irradianceL3 );
+				//	}
+				//}
 			}
 		}
 
+
+		void FilterLightmap( RenderTarget2D irradiance, RenderTarget2D temp, ShaderResource albedo, float lumaFactor, float alphaFactor, float falloff )
+		{
+			if (!SkipDenoising)
+			{
+				rs.BilateralFilter.FilterSHL1ByAlphaSinglePass( temp, irradiance, albedo, lumaFactor, alphaFactor, falloff ); 
+			}
+			else 
+			{
+				irradiance.CopyTo( temp );
+			}
+
+			if (!SkipDilation)
+			{
+				rs.DilateFilter.DilateByMaskAlpha( irradiance, temp, albedo, 0, 1 );
+			}
+			else
+			{
+				temp.CopyTo( irradiance );
+			}
+		}
 
 		/*-----------------------------------------------------------------------------------------
 		 *	Utils :

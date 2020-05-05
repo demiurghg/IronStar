@@ -5,7 +5,7 @@
     "Gravity": 48.0,
     "SkyTrubidity": 8.0,
     "SunAltitude": 26.0,
-    "SkyIntensity": 0.0,
+    "SkyIntensity": 1.0,
     "SunAzimuth": 1.0,
     "SunIntensity": 500.0,
     "FogDistance": 800000.0,
@@ -51,6 +51,7 @@
     "MaxPatches": 128,
     "RadianceThreshold": 0.02,
     "PatchThreshold": 0.5,
+    "UseWhiteDiffuse": false,
     "DebugLightmaps": false
   }
 }

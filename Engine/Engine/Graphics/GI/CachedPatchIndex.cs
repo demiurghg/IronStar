@@ -7,13 +7,13 @@ using Fusion.Core.Mathematics;
 
 namespace Fusion.Engine.Graphics.GI
 {
-	public struct PatchCachedIndex 
+	public struct CachedPatchIndex 
 	{
 		public readonly int CacheIndex;
 		public readonly int Direction;
 		public readonly int HitCount;
 
-		public PatchCachedIndex( int cacheIndex, int direction, int hitCount )
+		public CachedPatchIndex( int cacheIndex, int direction, int hitCount )
 		{
 			CacheIndex	=	cacheIndex;
 			Direction	=	direction;

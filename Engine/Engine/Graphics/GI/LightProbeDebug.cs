@@ -20,7 +20,7 @@ using Fusion.Engine.Graphics.Scenes;
 namespace Fusion.Engine.Graphics.Lights {
 
 	[RequireShader("lightmapDebug",true)]
-	public class LightMapDebugger : RenderComponent, IPipelineStateProvider {
+	public class LightProbeDebug : RenderComponent, IPipelineStateProvider {
 
 		[Config]
 		public float LightProbeSize { get; set; } = 5.0f;
@@ -88,7 +88,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 
 
-		public LightMapDebugger ( RenderSystem rs ) : base(rs)
+		public LightProbeDebug ( RenderSystem rs ) : base(rs)
 		{
 		}
 

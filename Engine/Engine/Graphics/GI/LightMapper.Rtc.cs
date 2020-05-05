@@ -64,7 +64,6 @@ namespace Fusion.Engine.Graphics.Lights {
 								.ToArray();
 
 			var id		=	scene.NewTriangleMesh( GeometryFlags.Static, indices.Length/3, vertices.Length );
-			Log.Message("{0}", id);
 
 			var pVerts	=	scene.MapBuffer( id, BufferType.VertexBuffer );
 			var pInds	=	scene.MapBuffer( id, BufferType.IndexBuffer );

@@ -7,38 +7,36 @@ using Fusion.Core.Mathematics;
 
 namespace Fusion.Engine.Graphics.GI
 {
-	public struct PatchGlobalIndex 
+	public struct GlobalPatchIndex 
 	{
-		public static readonly PatchGlobalIndex Empty = new PatchGlobalIndex(0,0,0,0);
+		public static readonly GlobalPatchIndex Empty = new GlobalPatchIndex(0,0,0);
 
-		public PatchGlobalIndex( int x, int y, int mip, int hits )
+		public GlobalPatchIndex( int x, int y, int mip )
 		{
 			if ( x    < 0 || x    >= 4096 ) throw new ArgumentOutOfRangeException("x"	, x		, "0 <= x < 4096");
 			if ( y    < 0 || y    >= 4096 ) throw new ArgumentOutOfRangeException("y"	, y		, "0 <= y < 4096");
 			if ( mip  < 0 || mip  >= 8    ) throw new ArgumentOutOfRangeException("mip"	, mip	, "0 <= mip < 8");
-			if ( hits < 0 || hits >= 32   ) throw new ArgumentOutOfRangeException("hits", hits	, "0 <= hits < 32");
 
 			uint ux		= (uint)(x)		& 0xFFF;
 			uint uy		= (uint)(y)		& 0xFFF;
 			uint umip	= (uint)(mip)	& 0x7;
-			uint uhits	= (uint)(hits)	& 0x1F;
 
-			Index = (ux << 20) | (uy << 8) | (umip << 5) | (uhits);
+			Index = (ux << 20) | (uy << 8) | (umip << 5);
 		}
 
 
-		public PatchGlobalIndex( uint index )
+		public GlobalPatchIndex( uint index )
 		{
 			Index	=	index;
 		}
 
 
-		public PatchGlobalIndex( Int2 xy, int mip, int hits ) : this( xy.X, xy.Y, mip, hits )
+		public GlobalPatchIndex( Int2 xy, int mip ) : this( xy.X, xy.Y, mip )
 		{
 		}
 
 
-		public PatchGlobalIndex( Int3 xyz, int hits ) : this( xyz.X, xyz.Y, xyz.Z, hits )
+		public GlobalPatchIndex( Int3 xyz ) : this( xyz.X, xyz.Y, xyz.Z )
 		{
 		}
 
@@ -64,12 +62,6 @@ namespace Fusion.Engine.Graphics.GI
 		}
 
 
-		public int Hits
-		{
-			get { return (int)( ( Index >> 0 ) & 0x1F ); }
-		}
-
-
 		public Int3 Coords
 		{
 			get { return new Int3( X, Y, Mip ); }
@@ -78,15 +70,10 @@ namespace Fusion.Engine.Graphics.GI
 
 		public override string ToString()
 		{
-			if (Hits==0) 
-			{	
-				return string.Format("--------");
-			}
-
 			uint 	lmMip		=	(Index >> 24) & 0xFF;
 			uint 	lmX			=	(Index >> 12) & 0xFFF;
 			uint 	lmY			=	(Index >>  0) & 0xFFF;
-			return string.Format("{0,2} [{1,4} {2,4}] {3}", Mip, X, Y, Hits );
+			return string.Format("{0,2} [{1,4} {2,4}]", Mip, X, Y );
 		}
 	}
 }

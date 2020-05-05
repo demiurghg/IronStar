@@ -74,11 +74,6 @@ namespace Fusion.Engine.Graphics {
 		}
 		ShadowMap shadowMap;
 
-		public LightMapper LightMap {
-			get { return lightmap; }
-		}
-		LightMapper lightmap;
-
 		public ConstantBuffer DirectLightData {
 			get { return cbDirectLightData; }
 		}
@@ -126,8 +121,6 @@ namespace Fusion.Engine.Graphics {
 
 			shadowMap	=	new ShadowMap( rs, rs.ShadowQuality );
 
-			lightmap	=	new LightMapper( rs );
-
 			cbRelightParams		=	new ConstantBuffer( rs.Device, typeof(RELIGHT_PARAMS) );
 			cbLightProbeData	=	new ConstantBuffer( rs.Device, typeof(LIGHTPROBE_DATA), RenderSystem.LightProbeBatchSize );
 			cbDirectLightData	=	new ConstantBuffer( rs.Device, typeof(GpuData.DIRECT_LIGHT) );
@@ -163,7 +156,6 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref factory );
 				SafeDispose( ref lightGrid );
 				SafeDispose( ref shadowMap );
-				SafeDispose( ref lightmap );
 				SafeDispose( ref cbDirectLightData );
 			}
 
@@ -196,8 +188,6 @@ namespace Fusion.Engine.Graphics {
 				spot.Timer += (uint)gameTime.Elapsed.TotalMilliseconds;
 				if (spot.Timer<0) spot.Timer = 0;
 			}
-
-			lightmap.Update( gameTime );
 
 			//	update direct light CB :
 			GpuData.DIRECT_LIGHT directLightData =	new GpuData.DIRECT_LIGHT();

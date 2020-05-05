@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
 using Fusion.Engine.Graphics.Scenes;
 using System.IO;
+using Fusion.Engine.Graphics.GI;
 
 namespace Fusion.Engine.Graphics.Lights {
 
@@ -37,7 +38,6 @@ namespace Fusion.Engine.Graphics.Lights {
 			{
 				var r = group.Region;
 
-				#if true
 				var x = r.Left;
 				var y = r.Top;
 				var w = r.Right - r.Left;
@@ -49,24 +49,30 @@ namespace Fusion.Engine.Graphics.Lights {
 					var xy = MortonCode.Decode2(i);
 					action(xy.X + x, xy.Y + y);
 				}
-				#else
-				for ( int i=r.Left; i<r.Right; i++ ) 
+			}
+		}
+
+
+
+		void ForEachLightMapTile( IEnumerable<LightMapGroup> lmGroups, Action<int,int> action )
+		{
+			const int tileSize = RadiositySettings.TileSize;
+
+			foreach ( var group in lmGroups )
+			{
+				var r = group.Region;
+
+				var x = ( r.Left ) / tileSize;
+				var y = ( r.Top  ) / tileSize;
+				var w = ( r.Right - r.Left ) / tileSize;
+				var h = ( r.Right - r.Left ) / tileSize;
+				var length = (uint)(w * h);
+
+				for (uint i=0; i<length; i++)
 				{
-					for ( int j=r.Top; j<r.Bottom; j++ ) 
-					{
-						count++;
-
-						if (count>one20th && showLog)
-						{
-							progress++;
-							Log.Message("...{0}/{1}", progress, 10 );
-							count = 0;
-						}
-
-						action(i,j);
-					}
+					var xy = MortonCode.Decode2(i);
+					action(xy.X + x, xy.Y + y);
 				}
-				#endif
 			}
 		}
 

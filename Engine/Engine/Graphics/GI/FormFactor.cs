@@ -18,9 +18,7 @@ using Fusion.Build;
 
 namespace Fusion.Engine.Graphics.Lights 
 {
-
-
-	public class LightMapContent
+	public class FormFactor
 	{
 		const int TileSize = RadiositySettings.TileSize;	
 
@@ -34,11 +32,11 @@ namespace Fusion.Engine.Graphics.Lights
 		public readonly Image<byte>         Coverage;
 		public readonly Image<Vector3>		Sky;
 		public readonly Image<uint>			IndexMap;
-		public readonly List<PatchGlobalIndex>	Indices;
+		public readonly List<GlobalPatchIndex>	Indices;
 		public readonly Image<Int2>			Tiles;
 
-		public readonly List<PatchGlobalIndex>		TileCache;
-		public readonly List<PatchCachedIndex>	CachedIndices;
+		public readonly List<GlobalPatchIndex>		TileCache;
+		public readonly List<CachedPatchIndex>	CachedIndices;
 
 		readonly Allocator2D                allocator;
 
@@ -51,7 +49,7 @@ namespace Fusion.Engine.Graphics.Lights
 		/// </summary>
 		/// <param name="w"></param>
 		/// <param name="h"></param>
-		public LightMapContent( int size )
+		public FormFactor( int size )
 		{
 			Width           =   size;
 			Height          =   size;
@@ -66,141 +64,36 @@ namespace Fusion.Engine.Graphics.Lights
 
 			Sky             =   new Image<Vector3>( size, size, Vector3.Zero );
 			IndexMap        =   new Image<uint>( size, size, 0 );
-			Indices         =   new List<PatchGlobalIndex>();
+			Indices         =   new List<GlobalPatchIndex>();
 
-			TileCache		=	new List<PatchGlobalIndex>();
-			CachedIndices	=	new List<PatchCachedIndex>();;
+			TileCache		=	new List<GlobalPatchIndex>();
+			CachedIndices	=	new List<CachedPatchIndex>();;
 
 			Coverage        =   new Image<byte>( size, size, 0 );
 		}
 
 
 
-		public PatchGlobalIndex[] GetTilePatches( int x, int y, int w, int h )
+		public Int2 AddGlobalPatchIndices ( IEnumerable<GlobalPatchIndex> indices )
 		{
-			var patchList = new List<PatchGlobalIndex>();
+			int offset	=	TileCache.Count;
+			int count	=	indices.Count();
 
-			for (int j=y; j<y+h; j++)
-			{
-				for (int i=x; i<x+w; i++)
-				{
-					var	offsetCount	=	IndexMap[ i,j ];
-					var	offset		=	offsetCount >> 8;
-					var	count		=	offsetCount & 0xFF;
-					var	begin		=	offset;
-					var	end			=	offset + count;
-					
-					for (uint index=begin; index<end; index++)
-					{
-						 patchList.Add( Indices[(int)index] );
-					}
-				}
-			}
+			TileCache.AddRange( indices );
 
-			return patchList
-				.DistinctBy( p => p.Coords )
-				.OrderByDescending( p0 => p0.Mip )
-				.ToArray();
+			return new Int2( offset, count );
 		}
 
 
-
-		public void GenerateTiledData()
+		public uint AddCachedPatchIndices ( IEnumerable<CachedPatchIndex> indices )
 		{
-			const int tileSize = RadiositySettings.TileSize;
-			const int maxCacheSize = RadiositySettings.MaxPatchesPerTile;
+			int offset	=	CachedIndices.Count;
+			int count	=	indices.Count();
 
-			for (int ty=0; ty<Height/tileSize; ty++)
-			{
-				for (int tx=0; tx<Width/tileSize; tx++)
-				{
-					var patches =	GetTilePatches( tx * tileSize, ty * tileSize, tileSize, tileSize );
-
-					var offset	=	TileCache.Count;
-					var count	=	patches.Length;
-
-					if (count>maxCacheSize)
-					{
-						throw new BuildException(string.Format("No enough place in per-tile patch cache: {0} >= {1}", count, maxCacheSize));
-					}
-
-					TileCache.AddRange( patches );
-
-					Tiles[ tx, ty ] = new Int2( offset, count );
-				}
-			}
-
-			IndexMap.ForeachPixelInZOrder( RemapPatchIndicesToCache );
-		}
-
-
-
-		uint RemapPatchIndicesToCache( Int2 xy, uint index )
-		{
-			var	offset		=	index >> 8;
-			var	count		=	index & 0xFF;
-
-			int cacheIndex	=	Tiles[ xy.X / TileSize, xy.Y / TileSize ].X;
-			int cacheCount	=	Tiles[ xy.X / TileSize, xy.Y / TileSize ].Y;
-
-			var newOffset	=	CachedIndices.Count;
-			var newCount	=	(int)count;
-
-			var recvPos		=	Position[ xy ];
-			
-			for (uint i=offset; i<offset+count; i++)
-			{
-				var patchIndexCached = GeneratePatchCacheIndex( recvPos, cacheIndex, cacheCount, Indices[(int)i] );
-				CachedIndices.Add( patchIndexCached );
-			}
-
-			return Radiosity.GetLMIndex( newOffset, newCount );
-		}
-
-
-
-		PatchCachedIndex GeneratePatchCacheIndex ( Vector3 recvPos, int cacheIndex, int cacheCount, PatchGlobalIndex originIndex )
-		{
-			for (int index = 0; index < cacheCount; index ++)
-			{
-				var globalIndex =	TileCache[ index + cacheIndex ];
-				var emitPos		=	Position[ originIndex.Coords ];
-
-				if ( globalIndex.Coords == originIndex.Coords )
-				{
-					var dirIndex	=	Radiosity.EncodeDirection( emitPos - recvPos );
-					return new PatchCachedIndex( index, dirIndex, originIndex.Hits );
-				}
-			}
-
-			Log.Warning("GeneratePatchCacheIndex -- something wrong!");
-
-			return new PatchCachedIndex( 0,0,0 );
-		}
-
-
-
-		public uint AddFormFactorPatchIndices( IEnumerable<PatchGlobalIndex> patches, RadiositySettings settings )
-		{
-			patches = patches
-					.GroupBy( p0 => p0.Coords )
-					.Select( g0 => 
-						new PatchGlobalIndex( 
-							g0.First().Coords, 
-							g0.Aggregate( 0, (hits,patch) => hits + patch.Hits, 
-							totalHits => Math.Min(totalHits,31) ) 
-						) 
-					);//*/
-
-			int offset		=	Indices.Count;
-			int count		=	patches.Count();
-
-			Indices.AddRange( patches );
-			Indices.Add( PatchGlobalIndex.Empty );
+			CachedIndices.AddRange( indices );
 
 			return Radiosity.GetLMIndex( offset, count );
 		}
-
 
 
 		public bool IsRegionCollapsable( Rectangle rect )

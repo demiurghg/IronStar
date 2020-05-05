@@ -657,7 +657,6 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="gameTime"></param>
 		public void BuildRadiance ( QualityLevel quality, string mapName, bool map, bool volume, bool cubes )
 		{
-			var sw				=	new Stopwatch();
 			var device			=	Game.GraphicsDevice;
 			var builder			=	Game.GetService<Builder>();
 			var basePath		=	builder.GetBaseInputDirectory();
@@ -666,8 +665,6 @@ namespace Fusion.Engine.Graphics {
 			var pathIrrMap		=	Path.Combine(basePath, RenderSystem.LightmapPath, Path.ChangeExtension( mapName + "_irrmap"	 , ".irrmap"	) );
 			var pathIrrVol		=	Path.Combine(basePath, RenderSystem.LightmapPath, Path.ChangeExtension( mapName + "_irrvol"	 , ".irrvol"	) );
 
-			//----------------------------------------
-
 			if (cubes) 
 			{
 				using ( var stream = File.OpenWrite( pathIrrCache ) ) 
@@ -675,43 +672,6 @@ namespace Fusion.Engine.Graphics {
 					CaptureRadiance( stream );
 				}
 			}
-
-			//----------------------------------------
-
-			if (volume) 
-			{
-				var samples	= 0;
-
-				switch (quality) 
-				{
-					case QualityLevel.Low:	
-						samples	=	64;
-						break; 
-					case QualityLevel.Medium:	
-						samples	=	128;
-						break; 
-					case QualityLevel.High:	
-						samples	=	256;
-						break; 
-					case QualityLevel.Ultra:	
-						samples	=	512;
-						break; 
-				}
-
-				int w	=	RenderSystem.LightVolumeWidth;
-				int h	=	RenderSystem.LightVolumeHeight;
-				int d	=	RenderSystem.LightVolumeDepth;
-
-				//using ( var irrVol = rs.LightManager.LightMap.BakeIrradianceVolume( Instances, LightSet, samples, 64,32,64, 8 ) ) {
-				using ( var irrVol = rs.LightManager.LightMap.BakeIrradianceVolume( Instances, LightSet, samples, w,h,d, 16 ) ) 
-				{
-					using ( var stream = File.OpenWrite( pathIrrVol ) ) 
-					{
-						irrVol.WriteToStream( stream );
-					}
-				}
-			}
-
 		}
 
 
@@ -723,6 +683,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="gameTime"></param>
 		public void BuildRadiosityFormFactor ( string mapName, RadiositySettings settings )
 		{
+			var lightmapper		=	new LightMapper( rs, settings, Instances );
+
 			var sw				=	new Stopwatch();
 			var device			=	Game.GraphicsDevice;
 			var builder			=	Game.GetService<Builder>();
@@ -732,7 +694,7 @@ namespace Fusion.Engine.Graphics {
 			var pathIrrMap		=	Path.Combine(basePath, RenderSystem.LightmapPath, Path.ChangeExtension( mapName + "_irrmap"	 , ".irrmap"	) );
 			var pathIrrVol		=	Path.Combine(basePath, RenderSystem.LightmapPath, Path.ChangeExtension( mapName + "_irrvol"	 , ".irrvol"	) );
 
-			var irrMap = rs.LightManager.LightMap.BakeLightMap( Instances, LightSet, settings );
+			var irrMap = lightmapper.BakeLightMap();
 
 			using ( var stream = File.OpenWrite( pathIrrMap ) ) 
 			{

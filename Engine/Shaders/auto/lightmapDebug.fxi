@@ -25,7 +25,7 @@ struct CAMERA {
 	float      Pad2;                          // offset:  348
 };
 
-// Fusion.Engine.Graphics.Lights.LightMapDebugger+DEBUG_PARAMS
+// Fusion.Engine.Graphics.Lights.LightProbeDebug+DEBUG_PARAMS
 // Marshal.SizeOf = 96
 struct DEBUG_PARAMS {
 	float4x4   VolumeTransform;               // offset:    0

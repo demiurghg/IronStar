@@ -21,24 +21,26 @@ using Fusion.Engine.Graphics.GI;
 
 namespace Fusion.Engine.Graphics.Lights {
 
-	internal partial class LightMapper : RenderComponent {
+	internal partial class LightMapper : DisposableBase {
+
+		readonly RadiositySettings settings;
+		readonly Vector3[] hammersley;
+		readonly MeshInstance[] instances;
+		readonly RenderSystem rs;
+
+		FormFactor formFactor;
 
 		/// <summary>
 		/// Creates instance of the Lightmap
 		/// </summary>
-		public LightMapper(RenderSystem rs) : base(rs)
+		public LightMapper( RenderSystem rs, RadiositySettings settings, IEnumerable<MeshInstance> instances )
 		{
-			LoadContent();
-
-			Game.Reloading += (s,e) => LoadContent();
-		}
-
-
-		/// <summary>
-		/// Loads content if necessary
-		/// </summary>
-		void LoadContent ()
-		{
+			this.rs			=	rs;
+			this.settings	=	settings;
+			hammersley		=	Hammersley.GenerateSphereUniform(settings.LightMapSampleCount);
+			this.instances	=	instances
+					.Where( inst => inst.Group==InstanceGroup.Static || inst.Group==InstanceGroup.Kinematic )
+					.ToArray();
 		}
 
 
@@ -54,14 +56,6 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 
 
-		/// <summary>
-		/// Updates stuff
-		/// </summary>
-		public void Update ( GameTime gameTime )
-		{
-		}
-
-
 		/*-----------------------------------------------------------------------------------------
 		 * 
 		 *	Lightmap stuff
@@ -70,30 +64,17 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		Random rand		=	new Random();
 		
-		LightMapContent lightmapGBuffer;
-
-
-		MeshInstance[] SelectOccludingInstances ( IEnumerable<MeshInstance> instances )
-		{
-			return instances
-					.Where( inst => inst.Group==InstanceGroup.Static || inst.Group==InstanceGroup.Kinematic )
-					.ToArray();
-		}
-
-
 
 		/// <summary>
 		/// Update lightmap
 		/// </summary>
-		public LightMapContent BakeLightMap ( IEnumerable<MeshInstance> instances2, LightSet lightSet, RadiositySettings settings )
+		public FormFactor BakeLightMap ()
 		{
-			var hammersley		=	Hammersley.GenerateSphereUniform(settings.LightMapSampleCount);
-			var instances		=	SelectOccludingInstances( instances2 );
-
 			var stopwatch		=	new Stopwatch();
 			stopwatch.Start();
 
 			//-------------------------------------------------
+			Log.Message("");
 			Log.Message("-------- Building radiosity form-factor --------");
 
 			Log.Message("Allocaing lightmap regions...");
@@ -143,10 +124,10 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			Log.Message("Allocating buffers...");
 
-			lightmapGBuffer		=	new LightMapContent( allocator.Width );
+			formFactor		=	new FormFactor( allocator.Width );
 
 			foreach ( var group in lmGroups ) {
-				lightmapGBuffer.Regions.Add( group.Guid, group.Region );
+				formFactor.Regions.Add( group.Guid, group.Region );
 			}
 
 			//-------------------------------------------------
@@ -156,12 +137,12 @@ namespace Fusion.Engine.Graphics.Lights {
 			foreach ( var group in lmGroups ) {
 				foreach ( var instance in group.Instances ) {
 					instance.BakingLMRegion = group.Region;
-					RasterizeInstance( lightmapGBuffer, instance, group.Region, settings );
+					RasterizeInstance( formFactor, instance, group.Region, settings );
 				}
 			}
 
 			Log.Message("Generating patch LODs...");
-			lightmapGBuffer.GeneratePatchLods();
+			formFactor.GeneratePatchLods();
 
 			//--------------------------------------
 
@@ -173,37 +154,19 @@ namespace Fusion.Engine.Graphics.Lights {
 
 					ForEachLightMapPixel( lmGroups, (i,j) => 
 					{
-						var p = lightmapGBuffer.Position[i,j];
-						var n = lightmapGBuffer.Normal[i,j];
+						var p = formFactor.Position[i,j];
+						var n = formFactor.Normal[i,j];
 
 						p = FixGeometryOverlap( scene, p, n );
 
-						lightmapGBuffer.Position[i,j] = p;
+						formFactor.Position[i,j] = p;
 					}, true);
 
 					//--------------------------------------
 
 					Log.Message("Searching for radiating patches...");
 
-					ForEachLightMapPixel( lmGroups, (i,j) => 
-					{
-						var p = lightmapGBuffer.Position[i,j];
-						var n = lightmapGBuffer.Normal[i,j];
-						var c = lightmapGBuffer.Albedo[i,j];
-
-						if (c.A>0) 
-						{
-							var r = GatherRadiosityPatches( scene, instances, hammersley, lightSet, p, n, settings );
-
-							lightmapGBuffer.Sky		[i,j]	=	r.Sky;
-							lightmapGBuffer.IndexMap[i,j]	=	lightmapGBuffer.AddFormFactorPatchIndices( r.Patches, settings );
-						} 
-						else 
-						{
-							lightmapGBuffer.Sky		[i,j]	=	Vector3.Zero;
-							lightmapGBuffer.IndexMap[i,j]	=	0;
-						}
-					}, true);
+					ForEachLightMapTile( lmGroups, (tx,ty) => BakeTile( scene, tx, ty ) );
 				}
 			}
 
@@ -212,26 +175,22 @@ namespace Fusion.Engine.Graphics.Lights {
 			if (settings.DebugLightmaps)
 			{
 				Log.Message("Saving debug images...");
-				lightmapGBuffer.SaveDebugImages();
+				formFactor.SaveDebugImages();
 			}
 	
+			Log.Message("Generating tiled data...");
+			//formFactor.GenerateTiledData();
 
 			stopwatch.Stop();
+			Log.Message("Completed : build time : {0}", stopwatch.Elapsed.ToString());
 
-			Log.Message("Generating tiled data...");
-			lightmapGBuffer.GenerateTiledData();
-
-			Log.Message("Completed:");
-
-			var sampleCount =  lightmapGBuffer.IndexMap.GetLinearData()
+			var sampleCount =  formFactor.IndexMap.GetLinearData()
 				.Select( index => index & 0xFF )
 				.Where( count => count!=0 );
 
-			var cachedSamples = lightmapGBuffer.Tiles.GetLinearData()
+			var cachedSamples = formFactor.Tiles.GetLinearData()
 				.Select( cached => cached.Y )
 				.Where( count => count!=0 );
-
-			Log.Message("   build time             : {0}", stopwatch.Elapsed.ToString());
 
 			Log.Message("   average cached samples : {0:0.00}", cachedSamples.Average( s => s ) );
 			Log.Message("   max cached samples     : {0}", cachedSamples.Max( s => s ) );
@@ -239,19 +198,76 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			Log.Message("----------------");
 
-			return lightmapGBuffer;
+			return formFactor;
 		}
 
 
-		byte GradeSampleCount(int samples)
+
+		/// <summary>
+		/// 
+		/// </summary>
+		void BakeTile ( RtcScene scene, int tileX, int tileY )
 		{
-			if (samples>128) return 0;
-			if (samples> 64) return 1;
-			if (samples> 32) return 2;
-			if (samples> 16) return 3;
-			if (samples>  8) return 4;
-			if (samples>  4) return 5;
-			return 255;
+			int tileSize			=	RadiositySettings.TileSize;
+			var offset				=	new Int2( tileX * tileSize, tileY * tileSize );
+			var gatheringResults	=	new GatheringResults[tileSize*tileSize];
+
+			for (uint i=0; i<tileSize*tileSize; i++)
+			{
+				var xy = MortonCode.Decode2( i ) + offset;
+
+				var p = formFactor.Position[xy];
+				var n = formFactor.Normal[xy];
+				var c = formFactor.Albedo[xy];
+
+				gatheringResults[i]	=	(c.A > 0) ? GatherRadiosityPatches( scene, p, n ) : null;
+			}
+
+			//	merge all hit patches (thir coords) and upload cache-line to formfactor
+			//	retrieving (offset, count) of uploaded cache-line
+			var globalPatches	=	gatheringResults
+				.Where( results0 => results0 != null )
+				.SelectMany( results1 => results1.Patches )
+				.DistinctBy( patch => patch.Coords )
+				.ToArray();
+
+			formFactor.Tiles[tileX,tileY]	=	formFactor.AddGlobalPatchIndices( globalPatches );
+
+			for (uint i=0; i<tileSize*tileSize; i++)
+			{
+				var xy = MortonCode.Decode2( i ) + offset;
+
+				if (gatheringResults[i]==null)
+				{
+					formFactor.IndexMap[xy] = 0;
+					formFactor.Sky[xy] = Vector3.Zero;
+				}
+				else
+				{
+					var cachedPatches	=	gatheringResults[i].Patches	
+						.GroupBy( patch0 => patch0.Coords )
+						.Select( group => new { 
+							Patch = group.First(), 
+							Hits = group.Count(),
+							Dir = Radiosity.EncodeDirection( formFactor.Position[ group.First().Coords ] - gatheringResults[i].Origin )
+						} )
+						.Select( patch1 => new CachedPatchIndex( GetPatchIndexInCache(globalPatches, patch1.Patch), patch1.Dir, patch1.Hits ) )
+						.ToArray();
+
+					formFactor.IndexMap[xy] = formFactor.AddCachedPatchIndices( cachedPatches );
+					formFactor.Sky[xy]		= gatheringResults[i].Sky;
+				}
+			}
+		}
+
+
+		int GetPatchIndexInCache( GlobalPatchIndex[] cacheLine, GlobalPatchIndex patch )
+		{
+			for (int i=0; i<cacheLine.Length; i++)
+			{
+				if (cacheLine[i].Index == patch.Index) return i;
+			}
+			return -1;
 		}
 
 
@@ -260,6 +276,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		public IrradianceVolume BakeIrradianceVolume (	IEnumerable<MeshInstance> instances2, LightSet lightSet, int numSamples, int w, int h, int d, float stride )
 		{
+			#if false
 			var instances	=	SelectOccludingInstances( instances2 );
 			var hammersley	=	Hammersley.GenerateSphereUniform(numSamples);
 			var irrVolume	=	new IrradianceVolume( rs, w,h,d, stride );
@@ -297,8 +314,9 @@ namespace Fusion.Engine.Graphics.Lights {
 			}
 
 			irrVolume.UpdateGPUTextures();
+			#endif
 
-			return irrVolume;
+			return null; //irrVolume;
 		}
 
 
@@ -339,7 +357,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// <summary>
 		/// Gets integer coordinates where ray hist lightmap
 		/// </summary>
-		bool GetLightMapCoordinates( MeshInstance[] instances, ref RtcRay ray, out Int2 coord )
+		bool GetLightMapCoordinates( ref RtcRay ray, out Int2 coord )
 		{
 			var geomId	=	ray.GeometryId;
 			var primId	=	ray.PrimitiveId;
@@ -378,44 +396,34 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 
 
-		byte GetMaximumPatchSize( float distance )
-		{
-			if (distance< 2*2) return  1;
-			if (distance< 4*2) return  2;
-			if (distance< 8*2) return  4;
-			if (distance<16*2) return  8;
-			if (distance<32*2) return 16;
-			if (distance<64*2) return 32;
-			return 32;
-		}
-
-
 		class GatheringResults 
 		{
-			public PatchGlobalIndex[]	Patches;
-			public Vector3		Sky;
+			public GatheringResults( Vector3 origin ) { Origin = origin; }
+			public readonly Vector3	Origin;
+			public Vector3	Sky;
+			public GlobalPatchIndex[]	Patches;
 		}
 
 
 		/// <summary>
 		/// Computes indirect radiance in given point
 		/// </summary>
-		GatheringResults GatherRadiosityPatches ( RtcScene scene, MeshInstance[] instances, Vector3[] randomPoints, LightSet lightSet, Vector3 position, Vector3 normal, RadiositySettings settings, float bias=0 )
+		GatheringResults GatherRadiosityPatches ( RtcScene scene, Vector3 position, Vector3 normal, float bias=0 )
 		{
-			var sampleCount		=	randomPoints.Length;
+			var sampleCount		=	hammersley.Length;
 			var invSampleCount	=	1.0f / sampleCount;
-			var	result			=	new GatheringResults();
+			var	result			=	new GatheringResults(position);
 
 			var normalLength	=	normal.Length();
 
 			//---------------------------------
 			var randVector		=	rand.NextVector3(-Vector3.One, Vector3.One).Normalized();
 
-			var lmAddrList = new List<PatchGlobalIndex>();
+			var lmAddrList = new List<GlobalPatchIndex>();
 
 			for ( int i = 0; i<sampleCount; i++ ) {
 
-				var dir		= Vector3.Reflect( -randomPoints[i], randVector );
+				var dir		= Vector3.Reflect( -hammersley[i], randVector );
 
 				var nDotL	= Vector3.Dot( dir, normal );
 
@@ -454,22 +462,21 @@ namespace Fusion.Engine.Graphics.Lights {
 						Int2 coords;
 						Int3 patch;
 
-						if (GetLightMapCoordinates( instances, ref ray, out coords ))
+						if (GetLightMapCoordinates( ref ray, out coords ))
 						{
-							if (lightmapGBuffer.SelectPatch( coords, distance, dirDotN, settings, out patch ) )
+							if (formFactor.SelectPatch( coords, distance, dirDotN, settings, out patch ) )
 							{
-								var area	=	lightmapGBuffer.Area	[ patch ];
-								var ppos	=	lightmapGBuffer.Position[ patch ];
-								var pnormal	=	lightmapGBuffer.Normal	[ patch ].Normalized();
+								var area	=	formFactor.Area	[ patch ];
+								var ppos	=	formFactor.Position[ patch ];
+								var pnormal	=	formFactor.Normal	[ patch ].Normalized();
 								var pdir	=	Vector3.Normalize( origin - ppos );
 								var pdist	=	Vector3.Distance( ppos, origin );
 								var pDotL	=	Vector3.Dot( pdir, pnormal );
 								var weight	=	area * pDotL * Radiosity.Falloff(pdist) / 4.0f / MathUtil.Pi;
-								var index	=	Radiosity.EncodeLMAddress( patch );
 
 								if (weight>settings.RadianceThreshold) 
 								{
-									lmAddrList.Add( new PatchGlobalIndex( patch, 1 ) );
+									lmAddrList.Add( new GlobalPatchIndex( patch ) );
 								}
 							}
 						}
@@ -489,7 +496,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		/// <param name="lightmap"></param>
 		/// <param name="instance"></param>
-		void RasterizeInstance ( LightMapContent lightmap, MeshInstance instance, Rectangle viewport, RadiositySettings settings )
+		void RasterizeInstance ( FormFactor lightmap, MeshInstance instance, Rectangle viewport, RadiositySettings settings )
 		{
 			var mesh		=	instance.Mesh;
 

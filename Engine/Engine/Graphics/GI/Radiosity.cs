@@ -386,41 +386,6 @@ namespace Fusion.Engine.Graphics.GI
 			return 1 / (0.0001f + distance + distance);
 		}
 
-		public static string DecodeLMAddressDebug( uint lmAddr )
-		{
-			if (lmAddr==0xFFFFFFFF) return "------------------------";
-			uint 	lmMip		=	(lmAddr >> 24) & 0xFF;
-			uint 	lmX			=	(lmAddr >> 12) & 0xFFF;
-			uint 	lmY			=	(lmAddr >>  0) & 0xFFF;
-			return string.Format("{0,2} [{1,4} {2,4}]", lmMip, lmX, lmY );
-		}
-
-		public static uint EncodeLMAddress( Int3 coords )
-		{
-			if (coords.X<0 || coords.Y<0 || coords.X>=RenderSystem.LightmapSize || coords.Y>=RenderSystem.LightmapSize )
-			{
-				return 0xFFFFFFFF;
-			}
-
-			uint x		= (uint)(coords.X) & 0xFFF;
-			uint y		= (uint)(coords.Y) & 0xFFF;
-			uint mip	= (uint)(coords.Z);
-
-			return (mip << 24) | (x << 12) | (y);
-		}
-
-
-		public static Int3 DecodeLMAddress( uint index )
-		{
-			if (index==0xFFFFFFFF) return new Int3(-1,-1,-1);
-
-			uint 	lmMip		=	(index >> 24) & 0xFF;
-			uint 	lmX			=	(index >> 12) & 0xFFF;
-			uint 	lmY			=	(index >>  0) & 0xFFF;
-
-			return new Int3( (int)lmX, (int)lmY, (int)lmMip );
-		}
-
 
 		public static uint GetLMIndex( int offset, int count )
 		{

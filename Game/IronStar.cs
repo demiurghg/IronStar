@@ -151,7 +151,7 @@ namespace IronStar {
 
 			if (e.Key==Keys.F1) {
 
-				var frames = this.GetService<FrameProcessor>();
+				/*var frames = this.GetService<FrameProcessor>();
 				var parent = frames.RootFrame;
 				
 				if (assetExplorer==null) {
@@ -164,7 +164,7 @@ namespace IronStar {
 					assetExplorer.Visible = true;
 					frames.TargetFrame	= assetExplorer;
 					
-				}
+				} */
 			}
 
 		}

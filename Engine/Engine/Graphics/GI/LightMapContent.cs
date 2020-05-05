@@ -14,6 +14,7 @@ using Fusion.Build.Mapping;
 using Fusion.Engine.Graphics.GI;
 using System.IO;
 using Fusion.Core.Content;
+using Fusion.Build;
 
 namespace Fusion.Engine.Graphics.Lights 
 {
@@ -107,6 +108,7 @@ namespace Fusion.Engine.Graphics.Lights
 		public void GenerateTiledData()
 		{
 			const int tileSize = RadiositySettings.TileSize;
+			const int maxCacheSize = RadiositySettings.MaxPatchesPerTile;
 
 			for (int ty=0; ty<Height/tileSize; ty++)
 			{
@@ -116,6 +118,11 @@ namespace Fusion.Engine.Graphics.Lights
 
 					var offset	=	TileCache.Count;
 					var count	=	patches.Length;
+
+					if (count>maxCacheSize)
+					{
+						throw new BuildException(string.Format("No enough place in per-tile patch cache: {0} >= {1}", count, maxCacheSize));
+					}
 
 					TileCache.AddRange( patches );
 

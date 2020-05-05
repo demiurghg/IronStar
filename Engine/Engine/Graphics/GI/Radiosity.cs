@@ -20,8 +20,9 @@ namespace Fusion.Engine.Graphics.GI
 	[RequireShader("radiosity", true)]
 	public partial class Radiosity : RenderComponent
 	{
-		[ShaderDefine]	const int BlockSizeX = RadiositySettings.TileSize;
-		[ShaderDefine]	const int BlockSizeY = RadiositySettings.TileSize;
+		[ShaderDefine]	const int BlockSizeX		=	RadiositySettings.TileSize;
+		[ShaderDefine]	const int BlockSizeY		=	RadiositySettings.TileSize;
+		[ShaderDefine]	const int PatchCacheSize	=	RadiositySettings.MaxPatchesPerTile;
 
 		[ShaderDefine]	const uint LightTypeOmni		=	SceneRenderer.LightTypeOmni;
 		[ShaderDefine]	const uint LightTypeSpotShadow	=	SceneRenderer.LightTypeSpotShadow;

@@ -227,10 +227,15 @@ namespace Fusion.Engine.Graphics.Lights {
 				.Select( index => index & 0xFF )
 				.Where( count => count!=0 );
 
-			Log.Message("   time            : {0}", stopwatch);
-			Log.Message("   average samples : {0}", sampleCount.Average( s => s ) );
-			Log.Message("   max samples     : {0}", sampleCount.Max( s => s ) );
-			Log.Message("   min samples     : {0}", sampleCount.Min( s => s ) );
+			var cachedSamples = lightmapGBuffer.Tiles.GetLinearData()
+				.Select( cached => cached.Y )
+				.Where( count => count!=0 );
+
+			Log.Message("   build time             : {0}", stopwatch.Elapsed.ToString());
+
+			Log.Message("   average cached samples : {0:0.00}", cachedSamples.Average( s => s ) );
+			Log.Message("   max cached samples     : {0}", cachedSamples.Max( s => s ) );
+			Log.Message("   min cached samples     : {0}", cachedSamples.Min( s => s ) );
 
 			Log.Message("----------------");
 

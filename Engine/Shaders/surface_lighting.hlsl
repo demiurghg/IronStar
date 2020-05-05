@@ -68,7 +68,32 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 #endif
 
 	//----------------------------------------------------------------------------------------------
-	//	Compute diect light :
+	//	Ambient occlusion :
+	//----------------------------------------------------------------------------------------------
+
+#if defined (TRANSPARENT) || defined(DIFFUSE_ONLY)
+	float 	ssaoFactor	=	1;
+#else
+	float 	ssaoFactor	=	SRGBToLinear( AmbientOcclusion.Load( int3( input.Position.xy, 0 ) ).r );
+	ssaoFactor	=	lerp( 1, ssaoFactor, Stage.SsaoWeight );
+	ssaoFactor	*=	surface.occlusion;
+#endif	
+
+	//----------------------------------------------------------------------------------------------
+	//	Lightmaps :
+	//----------------------------------------------------------------------------------------------
+	
+	#ifdef IRRADIANCE_MAP
+		totalLight	+= 	EvaluateLightmap( rcLightMap, geometry, surface, Camera, lmCoord );
+		totalLight	*=	ssaoFactor;
+	#endif
+	#ifdef IRRADIANCE_VOLUME
+		float3 volumeCoord		=	mul(float4(geometry.position.xyz,1), Stage.OcclusionGridMatrix ).xyz;
+		totalLight				+=	EvaluateLightVolume( rcLightMap, surface, volumeCoord );
+	#endif
+
+	//----------------------------------------------------------------------------------------------
+	//	Compute direct light :
 	//----------------------------------------------------------------------------------------------
 
 	if (1) 
@@ -98,32 +123,6 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 	float3	ambientDiffuse		=	float3(0,0,0);
 	float3	ambientSpecular		=	float3(0,0,0);
 	
-	//----------------------------------------------------------------------------------------------
-	//	Lightmaps :
-	//----------------------------------------------------------------------------------------------
-	
-	#ifdef IRRADIANCE_MAP
-		ambientDiffuse			=	EvaluateLightmap( rcLightMap, surface, lmCoord );
-	#endif
-	#ifdef IRRADIANCE_VOLUME
-		float3 volumeCoord		=	mul(float4(geometry.position.xyz,1), Stage.OcclusionGridMatrix ).xyz;
-		ambientDiffuse			=	EvaluateLightVolume( rcLightMap, surface, volumeCoord );
-	#endif
-	
-	//----------------------------------------------------------------------------------------------
-	//	Ambient occlusion :
-	//----------------------------------------------------------------------------------------------
-#ifdef TRANSPARENT
-	float 	ssaoFactor	=	1;
-#else
-	float 	ssaoFactor	=	SRGBToLinear( AmbientOcclusion.Load( int3( input.Position.xy, 0 ) ).r );
-#endif	
-	ssaoFactor	=	lerp( 1, ssaoFactor, Stage.SsaoWeight );
-	ssaoFactor	*=	surface.occlusion;
-	
-#ifdef DIFFUSE_ONLY	
-	ssaoFactor = 1;
-#endif	
 	//----------------------------------------------------------------------------------------------
 	//	Reflection :
 	//----------------------------------------------------------------------------------------------

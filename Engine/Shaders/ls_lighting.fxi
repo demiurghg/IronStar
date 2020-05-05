@@ -78,7 +78,7 @@ FLUX ComputePointLightFlux( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc 
 }
 
 
-float3	ComputeLighting( FLUX flux, GEOMETRY geometry, SURFACE surface, CAMERA camera )
+float3	ComputeLighting( FLUX flux, GEOMETRY geometry, SURFACE surface, CAMERA camera, bool diffuse=true, bool specular=true )
 {
 	float3	viewDir		=	normalize( Camera.CameraPosition.xyz - geometry.position.xyz );
 	float3 	lightDir	=	-flux.direction;
@@ -88,10 +88,16 @@ float3	ComputeLighting( FLUX flux, GEOMETRY geometry, SURFACE surface, CAMERA ca
 	
 	float3	totalLight	=	0;
 	
-	totalLight.rgb 		+= 	nDotL * Lambert ( flux.intensity, surface.diffuse );
+	if (diffuse)
+	{
+		totalLight.rgb 		+= 	nDotL * Lambert ( flux.intensity, surface.diffuse );
+	}
 
 	#ifndef LIGHTING_DIFFUSE_ONLY	
-	totalLight.rgb 		+= 	nDotL * CookTorrance( surface.normal.xyz, viewDir, lightDir, flux.intensity, surface.specular, surface.roughness, 0.01f );
+	if (specular)
+	{
+		totalLight.rgb 		+= 	nDotL * CookTorrance( surface.normal.xyz, viewDir, lightDir, flux.intensity, surface.specular, surface.roughness, 0.01f );
+	}
 	#endif
 	
 	return totalLight;

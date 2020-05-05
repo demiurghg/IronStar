@@ -17,15 +17,29 @@ struct LIGHTMAP_RESOURCES
 
 static const float GI_SCALE = 3.1415f;
 
-float3	EvaluateLightmap ( LIGHTMAP_RESOURCES lightmap, SURFACE surface, float2 lightMapCoord )
+float3	EvaluateLightmap ( LIGHTMAP_RESOURCES lightmap, GEOMETRY geometry, SURFACE surface, CAMERA camera, float2 lightMapCoord )
 {
 	float3	normal	=	normalize(surface.normal);
+	float3 	light	=	0;
 	
+	//	unpacking SH lightmaps :
 	float3 	shL0	=	lightmap.IrradianceMapL0.Sample( lightmap.Sampler, lightMapCoord ).rgb;
 	float3 	shL1	=	lightmap.IrradianceMapL1.Sample( lightmap.Sampler, lightMapCoord ).rgb * 2 - 1;
 	float3 	shL2	=	lightmap.IrradianceMapL2.Sample( lightmap.Sampler, lightMapCoord ).rgb * 2 - 1;
 	float3 	shL3	=	lightmap.IrradianceMapL3.Sample( lightmap.Sampler, lightMapCoord ).rgb * 2 - 1;
-	
+
+	//	specular approximation :
+	float3 	luma	=	float3(0.3,0.5,0.2);
+	float3	dir		=	float3( dot(shL3,luma), dot(shL1,luma), dot(shL2,luma) );
+	float	len		=	length(dir) + 0.001f;
+			dir		=	-dir / len;
+			
+	FLUX flux;
+	flux.direction	=	dir;
+	flux.intensity	=	shL0;
+	light			+=	ComputeLighting( flux, geometry, surface, Camera, false, true );
+
+	//	diffuse SH evaluation :
 	shL1	*=	shL0;
 	shL2	*=	shL0;
 	shL3	*=	shL0;
@@ -37,7 +51,10 @@ float3	EvaluateLightmap ( LIGHTMAP_RESOURCES lightmap, SURFACE surface, float2 l
 	float	lightR	=	EvalSHL1Smooth( irrR, normal );
 	float	lightG	=	EvalSHL1Smooth( irrG, normal );
 	float	lightB	=	EvalSHL1Smooth( irrB, normal );
-	return	float3( lightR, lightG, lightB ) * surface.diffuse * GI_SCALE;
+	
+	light			+=	float3( lightR, lightG, lightB ) * surface.diffuse * GI_SCALE;
+	
+	return light;
 }
 
 

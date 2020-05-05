@@ -155,7 +155,7 @@ namespace IronStar.Editor {
 			//- HOTKEYS ----------------------------------------------------------------
 
 			workspace.AddHotkey( Keys.F			, ModKeys.None,	() => FocusSelection() );
-			workspace.AddHotkey( Keys.F2		, ModKeys.None, () => rs.VSyncInterval = (rs.VSyncInterval==1) ? 0 : 1 );
+			//workspace.AddHotkey( Keys.F2		, ModKeys.None, () => rs.VSyncInterval = (rs.VSyncInterval==1) ? 0 : 1 );
 			
 			workspace.AddHotkey( Keys.Q			, ModKeys.None, () => Manipulator = new NullTool(this) );
 			workspace.AddHotkey( Keys.W			, ModKeys.None, () => Manipulator = new MoveTool(this) );

@@ -36,6 +36,8 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		readonly int	width;
 		readonly int	height;
+		readonly int	tilesX;
+		readonly int	tilesY;
 
 		public int Width { get { return width; } }
 		public int Height { get { return height; } }
@@ -51,6 +53,12 @@ namespace Fusion.Engine.Graphics.Lights {
 		internal Texture2D			tiles		;
 		internal FormattedBuffer	indices		;
 		internal FormattedBuffer	cache		;
+
+		internal Texture2D			bboxMin		;
+		internal Texture2D			bboxMax		;
+
+		Image<Vector3> bboxMinCpu;
+		Image<Vector3> bboxMaxCpu;
 
 		internal Texture2D	IrradianceTextureRed	{ get { return albedo; } }
 		internal Texture2D	IrradianceTextureGreen	{ get { return normal; } }
@@ -73,8 +81,8 @@ namespace Fusion.Engine.Graphics.Lights {
 
 				width		=	reader.ReadInt32();
 				height		=	reader.ReadInt32();
-				int tilesX	=	width / RadiositySettings.TileSize;
-				int tilesY	=	width / RadiositySettings.TileSize;
+				tilesX		=	width / RadiositySettings.TileSize;
+				tilesY		=	height / RadiositySettings.TileSize;
 
 				albedo		=	new Texture2D( rs.Device, width,  height, ColorFormat.Rgba8,	mips,	false );
 				position	=	new Texture2D( rs.Device, width,  height, ColorFormat.Rgb32F,	mips,	false );
@@ -83,6 +91,8 @@ namespace Fusion.Engine.Graphics.Lights {
 				sky			=	new Texture2D( rs.Device, width,  height, ColorFormat.Rgba8,	1,		false );
 				indexMap	=	new Texture2D( rs.Device, width,  height, ColorFormat.R32,		1,		false );
 				tiles		=	new Texture2D( rs.Device, tilesX, tilesY, ColorFormat.Rg32,		1,		false );
+				bboxMax		=	new Texture2D( rs.Device, tilesX, tilesY, ColorFormat.Rgb32F,	1,		false );
+				bboxMin		=	new Texture2D( rs.Device, tilesX, tilesY, ColorFormat.Rgb32F,	1,		false );
 				// #TODO #LIGHTMAP -- create volume
 
 				//	read regions :
@@ -127,6 +137,12 @@ namespace Fusion.Engine.Graphics.Lights {
 
 				cache	=	ReadUintBufferFromStream( reader );
 				indices	=	ReadUintBufferFromStream( reader );
+
+				reader.ExpectFourCC("BBOX", "bad lightmap format");
+				bboxMinCpu	=	Image<Vector3>.FromStream( stream );
+				bboxMaxCpu	=	Image<Vector3>.FromStream( stream );
+				bboxMin.SetData( bboxMinCpu.RawImageData );
+				bboxMax.SetData( bboxMaxCpu.RawImageData );
 			}
 		}
 
@@ -154,6 +170,8 @@ namespace Fusion.Engine.Graphics.Lights {
 				SafeDispose( ref tiles		);
 				SafeDispose( ref cache		);
 				SafeDispose( ref indices	);
+				SafeDispose( ref bboxMin	);
+				SafeDispose( ref bboxMax	);
 			}
 
 			base.Dispose( disposing );
@@ -192,19 +210,24 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 
 
-		Color[] colors = new[]
-		{
-			Color.White,
-			Color.Orange,
-			Color.Red,
-			Color.Blue,
-			Color.Magenta,
-			Color.Black,
-		};
+		static Random rand = new Random();
+		Color[] colors = Enumerable.Range(0,64).Select( i => rand.NextColor() ).ToArray();
 
 
 		public void DebugDraw( int x, int y, DebugRender dr )
 		{
+			int counter = 0;
+
+			/*for (int i=0; i<tilesX; i++)
+			{
+				for (int j=0; j<tilesY; j++)
+				{
+					var min = bboxMinCpu[i,j];
+					var max = bboxMaxCpu[i,j];
+					dr.DrawBox( new BoundingBox(min, max), Matrix.Identity, colors[ counter % colors.Length ], 2 );
+					counter++;
+				}
+			} */
 			//x	=	MathUtil.Clamp( x, 0, width-1 );
 			//y	=	MathUtil.Clamp( y, 0, height-1 );
 

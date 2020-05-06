@@ -22,7 +22,7 @@ namespace Fusion.Engine.Graphics.GI
 	{
 		[ShaderDefine]	const int BlockSizeX		=	RadiositySettings.TileSize;
 		[ShaderDefine]	const int BlockSizeY		=	RadiositySettings.TileSize;
-		[ShaderDefine]	const int PatchCacheSize	=	RadiositySettings.MaxPatchesPerTile;
+		[ShaderDefine]	const uint PatchCacheSize	=	RadiositySettings.MaxPatchesPerTile;
 
 		[ShaderDefine]	const uint LightTypeOmni		=	SceneRenderer.LightTypeOmni;
 		[ShaderDefine]	const uint LightTypeSpotShadow	=	SceneRenderer.LightTypeSpotShadow;
@@ -33,6 +33,7 @@ namespace Fusion.Engine.Graphics.GI
 		static FXConstantBuffer<RADIOSITY>					regRadiosity		=	new CRegister( 1, "Radiosity"		);
 		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow	=	new CRegister( 2, "CascadeShadow"	);
 		static FXConstantBuffer<GpuData.DIRECT_LIGHT>		regDirectLight		=	new CRegister( 3, "DirectLight"		);
+		static FXConstantBuffer<Plane>						regFrustumPlanes	=	new CRegister( 4,6, "FrustumPlanes"	);
 																								   
 		static FXTexture2D<Vector4>							regPosition			=	new TRegister( 0, "Position"		);
 		static FXTexture2D<Vector4>							regAlbedo			=	new TRegister( 1, "Albedo"			);
@@ -47,6 +48,8 @@ namespace Fusion.Engine.Graphics.GI
 		static FXStructuredBuffer<SceneRenderer.LIGHT>		regLights			=	new TRegister(10, "Lights"			);
 		static FXTexture2D<Vector4>							regSky				=	new TRegister(11, "Sky"				);
 		static FXTextureCube<Vector4>						regSkyBox			=	new TRegister(12, "SkyBox"			);
+		static FXTexture2D<Vector4>							regBBoxMin			=	new TRegister(13, "BBoxMin"			);
+		static FXTexture2D<Vector4>							regBBoxMax			=	new TRegister(14, "BBoxMax"			);
 
 		static FXSamplerState								regSamplerLinear	=	new SRegister( 0, "LinearSampler"	);
 		static FXSamplerComparisonState						regSamplerShadow	=	new SRegister( 1, "ShadowSampler"	);
@@ -212,15 +215,6 @@ namespace Fusion.Engine.Graphics.GI
 
 			lightMap.DebugDraw( DebugX, DebugY, rs.RenderWorld.Debug );
 
-			for (int i=0; i<64; i++)
-			{
-				var n = DecodeDirection(i);
-				var u = EncodeDirection(n);
-					n = DecodeDirection(u);
-
-				rs.RenderWorld.Debug.DrawLine( Vector3.Zero, n * 20, Color.Orange );
-			}
-
 
 			using ( new PixEvent( "Radiosity" ) )
 			{
@@ -238,6 +232,7 @@ namespace Fusion.Engine.Graphics.GI
 				device.ComputeConstants[ regRadiosity		]	=	cbRadiosity;
 				device.ComputeConstants[ regCascadeShadow	]	=	rs.LightManager.ShadowMap.GetCascadeShadowConstantBuffer();
 				device.ComputeConstants[ regDirectLight		]	=	rs.LightManager.DirectLightData;
+				device.ComputeConstants[ regFrustumPlanes	]	=	rs.RenderWorld.Camera.FrustumPlanes;
 
 				device.ComputeResources[ regPosition		]	=	lightMap.position	;
 				device.ComputeResources[ regAlbedo			]	=	lightMap.albedo		;
@@ -256,6 +251,9 @@ namespace Fusion.Engine.Graphics.GI
 
 				device.ComputeResources[ regSkyBox			]	=	rs.Sky.SkyCube;
 				device.ComputeResources[ regSky				]	=	lightMap.sky;
+
+				device.ComputeResources[ regBBoxMin			]	=	lightMap.bboxMin;
+				device.ComputeResources[ regBBoxMax			]	=	lightMap.bboxMax;
 
 
 				using ( new PixEvent( "Lighting" ) )
@@ -310,48 +308,6 @@ namespace Fusion.Engine.Graphics.GI
 					FilterLightmap( irradianceL2, tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
 					FilterLightmap( irradianceL3, tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
 				}
-				//{
-				//	if (!SkipDenoising)
-				//	{
-				//		rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL0, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-				//		rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL1, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-				//		rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL2, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-				//		rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL3, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-				//	}
-				//}
-
-				//using ( new PixEvent( "Dilation" ) )
-				//{
-				//	if (!SkipDilation)
-				//	{
-				//		rs.DilateFilter.DilateByMaskAlpha( tempHDR, irradianceL0, lightMap.albedo, 0, 1 );		tempHDR.CopyTo( irradianceL0 );
-				//		rs.DilateFilter.DilateByMaskAlpha( tempLDR, irradianceL1, lightMap.albedo, 0, 1 );		tempLDR.CopyTo( irradianceL1 );
-				//		rs.DilateFilter.DilateByMaskAlpha( tempLDR, irradianceL2, lightMap.albedo, 0, 1 );		tempLDR.CopyTo( irradianceL2 );
-				//		rs.DilateFilter.DilateByMaskAlpha( tempLDR, irradianceL3, lightMap.albedo, 0, 1 );		tempLDR.CopyTo( irradianceL3 );
-				//	}
-				//}
-
-				//using ( new PixEvent( "Bilateral Filter" ) )
-				//{
-				//	if (!SkipDenoising)
-				//	{
-				//		rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL0, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-				//		rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL1, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-				//		rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL2, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-				//		rs.BilateralFilter.FilterSHL1ByAlpha( irradianceL3, tempHDR, lightMap.albedo, ColorFactor, AlphaFactor, FalloffFactor );
-				//	}
-				//}
-
-				//using ( new PixEvent( "Dilation" ) )
-				//{
-				//	if (!SkipDilation)
-				//	{
-				//		rs.DilateFilter.DilateByMaskAlpha( tempHDR, irradianceL0, lightMap.albedo, 0, 1 );		tempHDR.CopyTo( irradianceL0 );
-				//		rs.DilateFilter.DilateByMaskAlpha( tempLDR, irradianceL1, lightMap.albedo, 0, 1 );		tempLDR.CopyTo( irradianceL1 );
-				//		rs.DilateFilter.DilateByMaskAlpha( tempLDR, irradianceL2, lightMap.albedo, 0, 1 );		tempLDR.CopyTo( irradianceL2 );
-				//		rs.DilateFilter.DilateByMaskAlpha( tempLDR, irradianceL3, lightMap.albedo, 0, 1 );		tempLDR.CopyTo( irradianceL3 );
-				//	}
-				//}
 			}
 		}
 

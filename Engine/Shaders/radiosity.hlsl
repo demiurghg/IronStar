@@ -12,6 +12,8 @@ $ubershader 	INTEGRATE
 
 #include "ls_core.fxi"
 
+#include "collision.fxi"
+
 /*------------------------------------------------------------------------------
 	Compute direct lighting :
 ------------------------------------------------------------------------------*/
@@ -163,6 +165,7 @@ float3 DecodeDirection (uint dir)
 #ifdef INTEGRATE
 
 groupshared float3 radiance_cache[PatchCacheSize];
+groupshared bool skip_tile_processing = false;
 
 uint uintDivUp( uint a, uint b ) { return (a % b != 0) ? (a / b + 1) : (a / b); }
 
@@ -173,6 +176,17 @@ void CSMain(
 	uint  groupIndex: SV_GroupIndex, 
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
+	//	culling :
+	float3 bboxMin		=	BBoxMin[ groupId.xy ].xyz;
+	float3 bboxMax		=	BBoxMax[ groupId.xy ].xyz;
+
+	if (groupIndex<6)
+	{
+		if (IsAABBOutsidePlane( FrustumPlanes[groupIndex], bboxMin, bboxMax )) skip_tile_processing = true;
+	}
+	
+	GroupMemoryBarrierWithGroupSync();
+
 	//	upload cache
 	uint 	cacheIndex	=	Tiles[ groupId.xy ].x;
 	uint 	cacheCount	=	Tiles[ groupId.xy ].y;
@@ -224,6 +238,7 @@ void CSMain(
 	irradianceG			+=	SHL1EvaluateDiffuse( skyColor.g, normalize(skyDir.xyz) );
 	irradianceB			+=	SHL1EvaluateDiffuse( skyColor.b, normalize(skyDir.xyz) );
 	
+	if (!skip_tile_processing)
 	for (uint index=begin; index<end; index++)
 	{
 		uint 	lmAddr		=	Indices[ index ];

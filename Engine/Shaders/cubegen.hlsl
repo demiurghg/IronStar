@@ -17,13 +17,7 @@ RWTexture2DArray<float4>  	Target			: 	register(u0);
 
 #ifdef PREFILTER
 
-#include "brdf.fxi"
-
-float Lambert( float3 N, float3 H )
-{
-	return max(0, dot(N,H));
-}
-
+#include "ls_brdf.fxi"
 
 float4	PrefilterFace ( float3 dir, uint2 location, float2 dxy )
 {

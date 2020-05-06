@@ -1,0 +1,80 @@
+#ifndef __COLLISION_FXI__
+#define __COLLISION_FXI__
+
+
+static const uint COLLISION_INTERSECT	= 0; 
+static const uint COLLISION_INSIDE 		= 1; 
+static const uint COLLISION_OUTSIDE 	= 2; 
+
+uint FrustumAABBIntersect( float4 planes[6], float3 mins, float3 maxs )
+{
+	float3 vmin, vmax; 
+	uint ret = COLLISION_INSIDE;
+	
+	// X axis 
+	for (int i=0; i<6; i++) 
+	{
+		float4 plane = planes[i];
+		
+		if(plane.x > 0) { 
+			vmin.x = mins.x; 
+			vmax.x = maxs.x; 
+		} else { 
+			vmin.x = maxs.x; 
+			vmax.x = mins.x; 
+		} 
+		// Y axis 
+		if(plane.y > 0) { 
+			vmin.y = mins.y; 
+			vmax.y = maxs.y; 
+		} else { 
+			vmin.y = maxs.y; 
+			vmax.y = mins.y; 
+		} 
+		// Z axis 
+		if(plane.z > 0) { 
+			vmin.z = mins.z; 
+			vmax.z = maxs.z; 
+		} else { 
+			vmin.z = maxs.z; 
+			vmax.z = mins.z; 
+		} 
+		
+		if (dot(plane.xyz, vmin) + plane.w > 0) return COLLISION_OUTSIDE;
+		if (dot(plane.xyz, vmax) + plane.w >= 0) ret = COLLISION_INTERSECT;
+	}
+	return ret;
+}
+
+bool IsAABBOutsidePlane( float4 plane, float3 mins, float3 maxs )
+{
+	float3 vmin, vmax; 
+	// X axis 
+	if(plane.x > 0) { 
+		vmin.x = mins.x; 
+		vmax.x = maxs.x; 
+	} else { 
+		vmin.x = maxs.x; 
+		vmax.x = mins.x; 
+	} 
+	// Y axis 
+	if(plane.y > 0) { 
+		vmin.y = mins.y; 
+		vmax.y = maxs.y; 
+	} else { 
+		vmin.y = maxs.y; 
+		vmax.y = mins.y; 
+	} 
+	// Z axis 
+	if(plane.z > 0) { 
+		vmin.z = mins.z; 
+		vmax.z = maxs.z; 
+	} else { 
+		vmin.z = maxs.z; 
+		vmax.z = mins.z; 
+	} 
+	return (dot(plane.xyz, vmin) + plane.w > 0);
+}
+
+
+#endif

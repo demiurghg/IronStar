@@ -25,6 +25,9 @@ namespace Fusion.Engine.Graphics.Lights
 		public readonly int Width;
 		public readonly int Height;
 
+		public readonly int TileX;
+		public readonly int TileY;
+
 		public readonly MipChain<Color>     Albedo;
 		public readonly MipChain<Vector3>   Position;
 		public readonly MipChain<Vector3>   Normal;
@@ -34,6 +37,8 @@ namespace Fusion.Engine.Graphics.Lights
 		public readonly Image<uint>			IndexMap;
 		public readonly List<GlobalPatchIndex>	Indices;
 		public readonly Image<Int2>			Tiles;
+		public readonly Image<Vector3>		BBoxMin;
+		public readonly Image<Vector3>		BBoxMax;
 
 		public readonly List<GlobalPatchIndex>		TileCache;
 		public readonly List<CachedPatchIndex>	CachedIndices;
@@ -54,16 +59,21 @@ namespace Fusion.Engine.Graphics.Lights
 			Width           =   size;
 			Height          =   size;
 
+			TileX			=	Width / TileSize;
+			TileY			=	Height / TileSize;
+
 			allocator       =   new Allocator2D( size );
 
-			Albedo          =   new MipChain<Color>( size, size, RadiositySettings.MapPatchLevels, Color.Zero );
-			Position        =   new MipChain<Vector3>( size, size, RadiositySettings.MapPatchLevels, Vector3.Zero );
-			Normal          =   new MipChain<Vector3>( size, size, RadiositySettings.MapPatchLevels, Vector3.Zero );
-			Area            =   new MipChain<float>( size, size, RadiositySettings.MapPatchLevels, 0 );
-			Tiles			=	new Image<Int2>( size / RadiositySettings.TileSize, size / RadiositySettings.TileSize, Int2.Zero );
+			Albedo          =   new MipChain<Color>		( size,  size,  RadiositySettings.MapPatchLevels, Color.Zero );
+			Position        =   new MipChain<Vector3>	( size,  size,  RadiositySettings.MapPatchLevels, Vector3.Zero );
+			Normal          =   new MipChain<Vector3>	( size,  size,  RadiositySettings.MapPatchLevels, Vector3.Zero );
+			Area            =   new MipChain<float>		( size,  size,  RadiositySettings.MapPatchLevels, 0 );
+			Tiles			=	new Image<Int2>			( TileX, TileY, Int2.Zero );
+			BBoxMin			=	new Image<Vector3>		( TileX, TileY, Vector3.Zero );
+			BBoxMax			=	new Image<Vector3>		( TileX, TileY, Vector3.Zero );
 
-			Sky             =   new Image<Vector3>( size, size, Vector3.Zero );
-			IndexMap        =   new Image<uint>( size, size, 0 );
+			Sky             =   new Image<Vector3>		( size, size, Vector3.Zero );
+			IndexMap        =   new Image<uint>			( size, size, 0 );
 			Indices         =   new List<GlobalPatchIndex>();
 
 			TileCache		=	new List<GlobalPatchIndex>();
@@ -96,6 +106,7 @@ namespace Fusion.Engine.Graphics.Lights
 		}
 
 
+
 		public bool IsRegionCollapsable( Rectangle rect )
 		{
 			for ( int i = rect.Left; i<=rect.Right; i++ )
@@ -109,6 +120,41 @@ namespace Fusion.Engine.Graphics.Lights
 				}
 			}
 			return true;
+		}
+
+
+
+		public void ComputeBoundingBoxes()
+		{
+
+			for (int tx=0; tx<TileX; tx++)
+			{
+				for (int ty=0; ty<TileY; ty++)
+				{
+					var coords = new List<Vector3>( TileX * TileY );
+					var maxArea = 0f;
+
+					for (int x=0; x<TileSize; x++)
+					{
+						for (int y=0; y<TileSize; y++)
+						{
+							var xy = new Int2( tx*TileSize+x, ty*TileSize+y );
+							if (Albedo[xy].A>0)
+							{
+								maxArea = Math.Max( Area[xy], maxArea );
+								coords.Add( Position[ xy ] );
+							}
+						}
+					}
+
+					var margin	=	Vector3.One * (float)Math.Sqrt( maxArea );
+					var bbox	= BoundingBox.FromPoints( coords );
+						bbox	= new BoundingBox( bbox.Minimum - margin, bbox.Maximum + margin );
+
+					BBoxMin[ tx, ty ] = bbox.Minimum;
+					BBoxMax[ tx, ty ] = bbox.Maximum;
+				}
+			}
 		}
 
 
@@ -332,6 +378,10 @@ namespace Fusion.Engine.Graphics.Lights
 
 				writer.Write( CachedIndices.Count );
 				writer.Write( CachedIndices.Select( a => a.GpuIndex ).ToArray() );
+
+				writer.WriteFourCC("BBOX");
+				BBoxMin.WriteStream( stream );
+				BBoxMax.WriteStream( stream );
 				//	write indices
 				//writer.WriteFourCC("IDX1");
 				//writer.Write( Indices.Count );

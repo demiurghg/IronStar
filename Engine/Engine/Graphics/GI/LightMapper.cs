@@ -178,8 +178,8 @@ namespace Fusion.Engine.Graphics.Lights {
 				formFactor.SaveDebugImages();
 			}
 	
-			Log.Message("Generating tiled data...");
-			//formFactor.GenerateTiledData();
+			Log.Message("Generating bounding boxes...");
+			formFactor.ComputeBoundingBoxes();
 
 			stopwatch.Stop();
 			Log.Message("Completed : build time : {0}", stopwatch.Elapsed.ToString());

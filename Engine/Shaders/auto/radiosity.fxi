@@ -2,7 +2,7 @@
 
 static const int BlockSizeX = 8;
 static const int BlockSizeY = 8;
-static const int PatchCacheSize = 512;
+static const uint PatchCacheSize = 512;
 static const uint LightTypeOmni = 1;
 static const uint LightTypeSpotShadow = 3;
 static const uint LightSpotShapeRound = 131072;
@@ -96,6 +96,9 @@ cbuffer __buffer2 : register(b2) {
 cbuffer __buffer3 : register(b3) {
 	DIRECT_LIGHT DirectLight : packoffset(c0);
 };
+cbuffer __buffer4 : register(b4) {
+	float4 FrustumPlanes[6] : packoffset(c0);
+};
 Texture2D<float4>              Position                       : register(t0);
 Texture2D<float4>              Albedo                         : register(t1);
 Texture2D<float4>              Normal                         : register(t2);
@@ -109,6 +112,8 @@ Texture2D<float4>              ShadowMask                     : register(t9);
 StructuredBuffer<LIGHT>        Lights                         : register(t10);
 Texture2D<float4>              Sky                            : register(t11);
 TextureCube<float4>            SkyBox                         : register(t12);
+Texture2D<float4>              BBoxMin                        : register(t13);
+Texture2D<float4>              BBoxMax                        : register(t14);
 SamplerState                   LinearSampler                  : register(s0);
 SamplerComparisonState         ShadowSampler                  : register(s1);
 RWTexture2D<float4>            RadianceUav                    : register(u0);

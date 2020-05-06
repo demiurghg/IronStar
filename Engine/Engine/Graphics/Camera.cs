@@ -36,10 +36,12 @@ namespace Fusion.Engine.Graphics
 
 		private Matrix	cameraMatrix;
 
-		private bool			dirty	=	true;
-		GpuData.CAMERA		constData;
-		ConstantBuffer			constBuffer;
-		BoundingFrustum			boundingFrustum;
+		private bool		dirty	=	true;
+		GpuData.CAMERA		cameraData;
+		ConstantBuffer		cbCamera;
+		ConstantBuffer		cbPlanes;
+		BoundingFrustum		boundingFrustum;
+		Plane[]				frustumPlanes;
 
 		public readonly string	Name;
 
@@ -51,8 +53,13 @@ namespace Fusion.Engine.Graphics
 		{
 			Name		=	name;
 
-			constData	=	new GpuData.CAMERA();
-			constBuffer	=	new ConstantBuffer( rs.Device, typeof(GpuData.CAMERA) );
+			frustumPlanes	=	new Plane[6];
+
+			cameraData	=	new GpuData.CAMERA();
+			cbPlanes	=	new ConstantBuffer( rs.Device, typeof(Plane), 6 );
+
+			cameraData	=	new GpuData.CAMERA();
+			cbCamera	=	new ConstantBuffer( rs.Device, typeof(GpuData.CAMERA) );
 
 			SetView(Matrix.Identity);
 			SetProjection(Matrix.Identity);
@@ -63,7 +70,8 @@ namespace Fusion.Engine.Graphics
 		{
 			if (disposing)
 			{
-				SafeDispose( ref constBuffer );
+				SafeDispose( ref cbCamera );
+				SafeDispose( ref cbPlanes );
 			}
 
 			base.Dispose( disposing );
@@ -109,25 +117,33 @@ namespace Fusion.Engine.Graphics
 
 			boundingFrustum					=	new BoundingFrustum( inputViewMatrix * inputProjMatrix );	
 
-			constData.View					=	ViewMatrix;
-			constData.Projection			=	ProjectionMatrix;
+			cameraData.View					=	ViewMatrix;
+			cameraData.Projection			=	ProjectionMatrix;
 
-			constData.ViewProjection		=	viewProjMatrix;
-			constData.ViewInverted			=	cameraMatrix;
+			cameraData.ViewProjection		=	viewProjMatrix;
+			cameraData.ViewInverted			=	cameraMatrix;
 			
-			constData.CameraForward			=	new Vector4( cameraMatrix.Forward	, 0 );
-			constData.CameraRight			=	new Vector4( cameraMatrix.Right		, 0 );
-			constData.CameraUp				=	new Vector4( cameraMatrix.Up		, 0 );
-			constData.CameraPosition		=	new Vector4( cameraMatrix.TranslationVector	, 1 );
+			cameraData.CameraForward			=	new Vector4( cameraMatrix.Forward	, 0 );
+			cameraData.CameraRight			=	new Vector4( cameraMatrix.Right		, 0 );
+			cameraData.CameraUp				=	new Vector4( cameraMatrix.Up		, 0 );
+			cameraData.CameraPosition		=	new Vector4( cameraMatrix.TranslationVector	, 1 );
 
-			constData.FarDistance			=	isPerspective ? zf : 1;
-			constData.LinearizeDepthBias	=	1 / zn;
-			constData.LinearizeDepthScale	=	1 / zf - 1 / zn;
+			cameraData.FarDistance			=	isPerspective ? zf : 1;
+			cameraData.LinearizeDepthBias	=	1 / zn;
+			cameraData.LinearizeDepthScale	=	1 / zf - 1 / zn;
 
-			constData.CameraTangentX		=	w / zn / 2.0f;
-			constData.CameraTangentY		=	h / zn / 2.0f;
+			cameraData.CameraTangentX		=	w / zn / 2.0f;
+			cameraData.CameraTangentY		=	h / zn / 2.0f;
 
-			constBuffer.SetData( ref constData );
+
+			for (int i=0; i<6; i++)
+			{
+				var plane			=	boundingFrustum.GetPlane(i);
+				frustumPlanes[i]	=	plane * (-1);
+			}
+
+			cbPlanes.SetData( frustumPlanes );
+			cbCamera.SetData( ref cameraData );
 			
 			dirty	=	false;
 		}
@@ -138,7 +154,16 @@ namespace Fusion.Engine.Graphics
 			get 
 			{ 
 				UpdateCameraStateIfNecessary();
-				return constBuffer; 
+				return cbCamera; 
+			}
+		}
+
+		public ConstantBuffer FrustumPlanes
+		{
+			get 
+			{ 
+				UpdateCameraStateIfNecessary();
+				return cbPlanes; 
 			}
 		}
 

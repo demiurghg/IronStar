@@ -856,6 +856,13 @@ namespace Fusion.Drivers.Graphics {
 			}
 		}
 
+
+		public void SetScissorRect ( Rectangle rect )
+		{
+			deviceContext.Rasterizer.SetScissorRectangle( rect.Left, rect.Top, rect.Right, rect.Bottom );
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>

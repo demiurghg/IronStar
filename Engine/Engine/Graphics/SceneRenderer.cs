@@ -151,7 +151,7 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			if (flags.HasFlag( SurfaceFlags.SHADOW )) {
-				ps.RasterizerState = RasterizerState.CullNone;
+				ps.RasterizerState = RasterizerState.ShadowsCW;
 			}
 
 			if (flags.HasFlag( SurfaceFlags.TRANSPARENT)) {
@@ -194,6 +194,7 @@ namespace Fusion.Engine.Graphics {
 
 			context.SetupRenderTargets( device );
 			device.SetViewport( context.Viewport );
+			device.SetScissorRect( context.Viewport.Bounds );
 			
 			var fog		=	rs.RenderWorld.FogSettings;
 			var width	=	context.Viewport.Width;

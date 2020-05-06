@@ -29,6 +29,7 @@ namespace Fusion.Drivers.Graphics {
 		public static RasterizerState CullCCW		{ get; private set; }
 		public static RasterizerState Wireframe		{ get; private set; }
 		public static RasterizerState WireframeBias	{ get; private set; }
+		public static RasterizerState ShadowsCW		{ get; private set; }
 
 
 		/// <summary>
@@ -53,6 +54,9 @@ namespace Fusion.Drivers.Graphics {
 			CullCCW			=	Create( CullMode.CullCCW ); 
 			Wireframe		=	Create( CullMode.CullNone, FillMode.Wireframe ); 
 			WireframeBias	=	Create( CullMode.CullNone, FillMode.Wireframe, -5, -1 ); 
+			
+			ShadowsCW		=	Create( CullMode.CullCW, FillMode.Solid, 0,0 ); 
+			ShadowsCW.ScissorEnabled = true;
 		}
 
 

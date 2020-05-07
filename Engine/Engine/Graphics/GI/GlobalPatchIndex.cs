@@ -9,57 +9,47 @@ namespace Fusion.Engine.Graphics.GI
 {
 	public struct GlobalPatchIndex 
 	{
-		public static readonly GlobalPatchIndex Empty = new GlobalPatchIndex(0,0,0);
+		public int X;
+		public int Y;
+		public int Mip;
+		public float Factor;
 
-		public GlobalPatchIndex( int x, int y, int mip )
+
+		public GlobalPatchIndex( int x, int y, int mip, float factor )
 		{
-			if ( x    < 0 || x    >= 4096 ) throw new ArgumentOutOfRangeException("x"	, x		, "0 <= x < 4096");
-			if ( y    < 0 || y    >= 4096 ) throw new ArgumentOutOfRangeException("y"	, y		, "0 <= y < 4096");
-			if ( mip  < 0 || mip  >= 8    ) throw new ArgumentOutOfRangeException("mip"	, mip	, "0 <= mip < 8");
-
-			uint ux		= (uint)(x)		& 0xFFF;
-			uint uy		= (uint)(y)		& 0xFFF;
-			uint umip	= (uint)(mip)	& 0x7;
-
-			Index = (ux << 20) | (uy << 8) | (umip << 5);
+			X		=	x;
+			Y		=	y;
+			Mip		=	mip;
+			Factor	=	factor;
 		}
 
 
-		public GlobalPatchIndex( uint index )
+		public uint Index 
 		{
-			Index	=	index;
+			get 
+			{
+				if ( X    < 0 || X    >= 4096 ) throw new ArgumentOutOfRangeException("x"	, X		, "0 <= x < 4096");
+				if ( Y    < 0 || Y    >= 4096 ) throw new ArgumentOutOfRangeException("y"	, Y		, "0 <= y < 4096");
+				if ( Mip  < 0 || Mip  >= 8    ) throw new ArgumentOutOfRangeException("mip"	, Mip	, "0 <= mip < 8");
+
+				uint ux		= (uint)(X)		& 0xFFF;
+				uint uy		= (uint)(Y)		& 0xFFF;
+				uint umip	= (uint)(Mip)	& 0x7;
+
+				return (ux << 20) | (uy << 8) | (umip << 5);
+			}
 		}
 
 
-		public GlobalPatchIndex( Int2 xy, int mip ) : this( xy.X, xy.Y, mip )
+		public GlobalPatchIndex( Int2 xy, int mip, float factor ) : this( xy.X, xy.Y, mip, factor )
 		{
 		}
 
 
-		public GlobalPatchIndex( Int3 xyz ) : this( xyz.X, xyz.Y, xyz.Z )
+		public GlobalPatchIndex( Int3 xyz, float factor ) : this( xyz.X, xyz.Y, xyz.Z, factor )
 		{
 		}
 
-
-		public readonly uint Index;
-		
-
-		public int X
-		{
-			get { return (int)( ( Index >> 20 ) & 0xFFF ); }
-		}
-
-
-		public int Y
-		{
-			get { return (int)( ( Index >> 8 ) & 0xFFF ); }
-		}
-
-
-		public int Mip
-		{
-			get { return (int)( ( Index >> 5 ) & 0x7 ); }
-		}
 
 
 		public Int3 Coords

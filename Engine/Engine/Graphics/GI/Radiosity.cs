@@ -50,6 +50,7 @@ namespace Fusion.Engine.Graphics.GI
 		static FXTextureCube<Vector4>						regSkyBox			=	new TRegister(12, "SkyBox"			);
 		static FXTexture2D<Vector4>							regBBoxMin			=	new TRegister(13, "BBoxMin"			);
 		static FXTexture2D<Vector4>							regBBoxMax			=	new TRegister(14, "BBoxMax"			);
+		static FXTexture2D<uint>							regCullMask			=	new TRegister(15, "CullMask"		);
 
 		static FXSamplerState								regSamplerLinear	=	new SRegister( 0, "LinearSampler"	);
 		static FXSamplerComparisonState						regSamplerShadow	=	new SRegister( 1, "ShadowSampler"	);
@@ -59,6 +60,7 @@ namespace Fusion.Engine.Graphics.GI
 		static FXRWTexture2D<Vector4>						regIrradianceL1		=	new URegister( 2, "IrradianceL1"	);
 		static FXRWTexture2D<Vector4>						regIrradianceL2		=	new URegister( 3, "IrradianceL2"	);
 		static FXRWTexture2D<Vector4>						regIrradianceL3		=	new URegister( 4, "IrradianceL3"	);
+		static FXRWTexture2D<uint>							regCullMaskUav		=	new URegister( 5, "CullMaskUav"		);
 
 		public LightMap LightMap
 		{
@@ -95,9 +97,7 @@ namespace Fusion.Engine.Graphics.GI
 			DILATE		=	0x002,
 			COLLAPSE	=	0x004,
 			INTEGRATE	=	0x008,
-			DENOISE		=	0x010,
-			PASS1		=	0x020,
-			PASS2		=	0x040,
+			CULL_TILES	=	0x010,
 		}
 
 		[StructLayout(LayoutKind.Sequential, Pack=4, Size=64)]
@@ -128,6 +128,7 @@ namespace Fusion.Engine.Graphics.GI
 		RenderTarget2D	irradianceL1;
 		RenderTarget2D	irradianceL2;
 		RenderTarget2D	irradianceL3;
+		RenderTarget2D	cullMask;
 
 		ConstantBuffer	cbRadiosity	;
 		Ubershader		shader;
@@ -173,6 +174,10 @@ namespace Fusion.Engine.Graphics.GI
 			SafeDispose( ref irradianceL1 );
 			SafeDispose( ref irradianceL2 );
 			SafeDispose( ref irradianceL3 );
+			SafeDispose( ref cullMask	 );
+
+			int tileX	=	width / RadiositySettings.TileSize;
+			int tileY	=	height / RadiositySettings.TileSize;
 
 			radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	width, height, true,  true );
 			tempHDR			=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	width, height, false, true );
@@ -181,6 +186,7 @@ namespace Fusion.Engine.Graphics.GI
 			irradianceL1	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	width, height, false, true );
 			irradianceL2	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	width, height, false, true );
 			irradianceL3	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	width, height, false, true );
+			cullMask		=	new RenderTarget2D( rs.Device, ColorFormat.R32,		tileX, tileY,  false, true );
 		}
 
 
@@ -197,6 +203,7 @@ namespace Fusion.Engine.Graphics.GI
 				SafeDispose( ref irradianceL1	);
 				SafeDispose( ref irradianceL2	);
 				SafeDispose( ref irradianceL3	);
+				SafeDispose( ref cullMask		);
 			}
 
 			base.Dispose( disposing );
@@ -256,12 +263,22 @@ namespace Fusion.Engine.Graphics.GI
 				device.ComputeResources[ regBBoxMax			]	=	lightMap.bboxMax;
 
 
+				//using ( new PixEvent( "Culling" ) )
+				//{
+				//	device.PipelineState    =   factory[(int)Flags.CULL_TILES];
+
+				//	device.SetComputeUnorderedAccess( regCullMaskUav, cullMask.Surface.UnorderedAccess );
+
+				//	device.Dispatch( new Int2( cullMask.Width, cullMask.Height ), new Int2( BlockSizeX, BlockSizeY ) );
+				//}
+
+
 				using ( new PixEvent( "Lighting" ) )
 				{
-					device.PipelineState    =   factory[(int)Flags.LIGHTING];			
-				
+					device.PipelineState    =   factory[(int)Flags.LIGHTING];
+
 					device.SetComputeUnorderedAccess( regRadianceUav, radiance.Surface.UnorderedAccess );
-					
+
 					device.Dispatch( new Int2( lightMap.Width, lightMap.Height ), new Int2( BlockSizeX, BlockSizeY ) );
 				}
 

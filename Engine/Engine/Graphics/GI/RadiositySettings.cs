@@ -82,6 +82,14 @@ namespace Fusion.Engine.Graphics.GI
 		///	Threshold to discard patch: L = cos(theta) / (patchSize + R^2) * patchSize^2
 		/// </summary>
 		[AECategory("Light Map")]
+		[AEDisplayName("Distance Discard")]
+		[AEValueRange( 0, 500, 10f, 1f )]
+		public float DistanceDiscard { get; set; } = 200;
+
+		/// <summary>
+		///	Threshold to discard patch: L = cos(theta) / (patchSize + R^2) * patchSize^2
+		/// </summary>
+		[AECategory("Light Map")]
 		[AEDisplayName("Patch Threshold")]
 		[AEValueRange(0,2,0.1f,0.01f)]
 		public float PatchThreshold { get; set; } = 0.4f;

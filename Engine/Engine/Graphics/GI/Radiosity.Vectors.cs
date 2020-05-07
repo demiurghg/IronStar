@@ -28,10 +28,10 @@ namespace Fusion.Engine.Graphics.GI
 				xy.X	=	xy.X * 0.5f + 0.5f;
 				xy.Y	=	xy.Y * 0.5f + 0.5f;
 			
-			uint ux	=	(uint)(xy.X * 8) & 0x7;
-			uint uy	=	(uint)(xy.Y * 8) & 0x7;
+			uint ux	=	(uint)(xy.X * 32) & 0x1F;
+			uint uy	=	(uint)(xy.Y * 32) & 0x1F;
 
-			return (int)(ux << 3 | uy);
+			return (int)(ux << 5 | uy);
 		}
 
 

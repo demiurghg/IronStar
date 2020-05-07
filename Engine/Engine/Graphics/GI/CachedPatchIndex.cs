@@ -11,13 +11,13 @@ namespace Fusion.Engine.Graphics.GI
 	{
 		public readonly int CacheIndex;
 		public readonly int Direction;
-		public readonly int HitCount;
+		public readonly float Factor;
 
-		public CachedPatchIndex( int cacheIndex, int direction, int hitCount )
+		public CachedPatchIndex( int cacheIndex, int direction, float factor )
 		{
 			CacheIndex	=	cacheIndex;
 			Direction	=	direction;
-			HitCount	=	hitCount;
+			Factor		=	factor;
 		}
 
 
@@ -25,11 +25,11 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			get 
 			{
-				uint uCacheIndex	=	(uint)(CacheIndex & 0xFFF);
-				uint uDirection		=	(uint)(Direction  & 0x3F);
-				uint uHitCount		=	(uint)(HitCount	  & 0x3F);
+				uint uCacheIndex	=	(uint)(CacheIndex		) & 0xFFF;	//	12 bit
+				uint uDirection		=	(uint)(Direction		) & 0x3FF;	//	10 bit
+				uint uFactor		=	(uint)(Factor * 1023.0f	) & 0x3FF;	//	10 bit
 
-				return ( uCacheIndex << 12 ) | ( uDirection << 6 ) | ( uHitCount << 0);
+				return ( uCacheIndex << 20 ) | ( uDirection << 10 ) | ( uFactor << 0);
 			}
 		}
 	}

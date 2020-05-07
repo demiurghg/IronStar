@@ -244,14 +244,23 @@ namespace Fusion.Engine.Graphics.Lights {
 				}
 				else
 				{
+					//var cachedPatches	=	gatheringResults[i].Patches	
+					//	.GroupBy( patch0 => patch0.Coords )
+					//	.Select( group => new { 
+					//		Patch = group.First(), 
+					//		Factor = group.Aggregate( 0f, (a0,p) => a0 + p.Factor, a1 => MathUtil.Clamp( a1, 0, 1 ) ),
+					//		Dir = Radiosity.EncodeDirection( formFactor.Position[ group.First().Coords ] - gatheringResults[i].Origin )
+					//	} )
+					//	.Select( patch1 => new CachedPatchIndex( GetPatchIndexInCache(globalPatches, patch1.Patch), patch1.Dir, patch1.Factor ) )
+					//	.ToArray();
+					var origin	=	gatheringResults[i].Origin;
+
 					var cachedPatches	=	gatheringResults[i].Patches	
-						.GroupBy( patch0 => patch0.Coords )
-						.Select( group => new { 
-							Patch = group.First(), 
-							Hits = group.Count(),
-							Dir = Radiosity.EncodeDirection( formFactor.Position[ group.First().Coords ] - gatheringResults[i].Origin )
-						} )
-						.Select( patch1 => new CachedPatchIndex( GetPatchIndexInCache(globalPatches, patch1.Patch), patch1.Dir, patch1.Hits ) )
+						.DistinctBy( patch0 => patch0.Coords )
+						.Select( patch1 => new CachedPatchIndex( 
+							GetPatchIndexInCache(globalPatches, patch1), 
+							Radiosity.EncodeDirection( formFactor.Position[ patch1.Coords ] - origin ), 
+							patch1.Factor ) )
 						.ToArray();
 
 					formFactor.IndexMap[xy] = formFactor.AddCachedPatchIndices( cachedPatches );
@@ -466,17 +475,17 @@ namespace Fusion.Engine.Graphics.Lights {
 						{
 							if (formFactor.SelectPatch( coords, distance, dirDotN, settings, out patch ) )
 							{
-								var area	=	formFactor.Area	[ patch ];
-								var ppos	=	formFactor.Position[ patch ];
+								var area	=	formFactor.Area		[ patch ];
+								var ppos	=	formFactor.Position	[ patch ];
 								var pnormal	=	formFactor.Normal	[ patch ].Normalized();
 								var pdir	=	Vector3.Normalize( origin - ppos );
 								var pdist	=	Vector3.Distance( ppos, origin );
-								var pDotL	=	Vector3.Dot( pdir, pnormal );
-								var weight	=	area * pDotL * Radiosity.Falloff(pdist) / 4.0f / MathUtil.Pi;
+								var pDotL	=	Math.Max( 0, Vector3.Dot( pdir, pnormal ) );
+								var weight	=	area * pDotL * Radiosity.Falloff(pdist) / 2.0f / MathUtil.Pi;
 
-								if (weight>settings.RadianceThreshold) 
+								if ( pdist < settings.DistanceDiscard && weight > settings.RadianceThreshold ) 
 								{
-									lmAddrList.Add( new GlobalPatchIndex( patch ) );
+									lmAddrList.Add( new GlobalPatchIndex( patch, weight ) );
 								}
 							}
 						}

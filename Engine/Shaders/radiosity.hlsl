@@ -14,6 +14,7 @@ $ubershader 	INTEGRATE
 
 #include "collision.fxi"
 
+
 /*------------------------------------------------------------------------------
 	Compute direct lighting :
 ------------------------------------------------------------------------------*/
@@ -124,12 +125,12 @@ void CSMain(
 	float4 lighting10	=	Radiance	[ loadXY10 ];
 	float4 lighting11	=	Radiance	[ loadXY11 ];
 	
-	float4 lighting		=	0.25 * ( lighting00 + lighting01 + lighting10 + lighting11 );
+	float4 lighting		=	0.25f * ( lighting00 + lighting01 + lighting10 + lighting11 );
 	
 	//	we use at least non-zero lighting value to collapse patches
 	float	 factor		=	all(float4(lighting00.r, lighting01.r, lighting10.r, lighting11.r));
 
-	RadianceUav[ storeXY.xy ]	=	float4(lighting) * factor;
+	RadianceUav[ storeXY.xy ]	=	float4(lighting) * (factor > 0 ? 1 : 0) ;
 }
 
 #endif
@@ -149,11 +150,11 @@ void StoreLightmap( int2 xy, float4 shR, float4 shG, float4 shB )
 
 float3 DecodeDirection (uint dir)
 {
-	uint	ux	=	( dir >> 3 ) & 0x7;
-	uint	uy	=	( dir >> 0 ) & 0x7;
+	uint	ux	=	( dir >> 5 ) & 0x1F;
+	uint	uy	=	( dir >> 0 ) & 0x1F;
 
-	float	fx	=	ux / 8.0f;
-	float	fy	=	uy / 8.0f;
+	float	fx	=	ux / 32.0f;
+	float	fy	=	uy / 32.0f;
 	
     float4 	nn 	=	float4(fx,fy,0,0) * float4(2,2,0,0) + float4(-1,-1,1,-1);
     float l 	=	- dot(nn.xyz,nn.xyw);
@@ -242,14 +243,15 @@ void CSMain(
 	for (uint index=begin; index<end; index++)
 	{
 		uint 	lmAddr		=	Indices[ index ];
-		uint 	cacheIndex	=	(lmAddr >> 12) & 0xFFF;
-		uint 	direction	=	(lmAddr >>  6) & 0x03F;
-		uint 	hitCount	=	(lmAddr >>  0) & 0x03F;
+		uint 	cacheIndex	=	(lmAddr >> 20) & 0xFFF;
+		uint 	direction	=	(lmAddr >> 10) & 0x3FF;
+		uint 	factor		=	(lmAddr >>  0) & 0x3FF;
 		
 		float3 	radiance	=	radiance_cache[ cacheIndex ];
 		float3 	lightDirN	=	DecodeDirection( direction );
+		float	ffactor		=	(factor+1) / 1024.0f;
 
-		float3	light		=	radiance.rgb / 256.0f * hitCount * Radiosity.IndirectFactor;	
+		float3	light		=	radiance.rgb * ffactor * Radiosity.IndirectFactor;	
 		
 		irradianceR			+=	SHL1EvaluateDiffuse( light.r, lightDirN );
 		irradianceG			+=	SHL1EvaluateDiffuse( light.g, lightDirN );

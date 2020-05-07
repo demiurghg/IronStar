@@ -20,6 +20,18 @@ namespace Fusion.Engine.Graphics.Lights
 {
 	public class FormFactor
 	{
+		public struct BakeSettings
+		{
+			public int LightMapSampleCount;
+			public int LightVolumeSampleCount;
+			public int Resereved1;
+			public int Resereved2;
+			public int Resereved3;
+			public int Resereved4;
+			public int Resereved5;
+			public int Resereved6;
+		}
+
 		const int TileSize = RadiositySettings.TileSize;	
 
 		public readonly int Width;
@@ -49,12 +61,14 @@ namespace Fusion.Engine.Graphics.Lights
 		readonly Dictionary<Guid, Rectangle> regions = new Dictionary<Guid, Rectangle>();
 		readonly Dictionary<string, uint> indexDict = new Dictionary<string, uint>();
 
+		public readonly BakeSettings bakeSettings;
+
 		/// <summary>
 		/// Creates instance of the lightmap g-buffer :
 		/// </summary>
 		/// <param name="w"></param>
 		/// <param name="h"></param>
-		public FormFactor( int size )
+		public FormFactor( int size, RadiositySettings settings )
 		{
 			Width           =   size;
 			Height          =   size;
@@ -80,6 +94,10 @@ namespace Fusion.Engine.Graphics.Lights
 			CachedIndices	=	new List<CachedPatchIndex>();;
 
 			Coverage        =   new Image<byte>( size, size, 0 );
+
+			bakeSettings	=	new BakeSettings();
+			bakeSettings.LightMapSampleCount	=	settings.LightMapSampleCount;
+			bakeSettings.LightVolumeSampleCount	=	settings.LightGridSampleCount;
 		}
 
 
@@ -175,7 +193,7 @@ namespace Fusion.Engine.Graphics.Lights
 				patch.Y =	patch.Y / 2;
 				patch.Z	=	mip;
 
-				var areaThreshold	=	 dist*dist * settings.PatchThreshold;
+				var areaThreshold	=	MathUtil.TwoPi * dist*dist * settings.PatchThreshold;
 
 				if ( Albedo[patch].A==0 ) break;
 				if ( Area[patch] * nDotV > areaThreshold ) break;
@@ -334,6 +352,8 @@ namespace Fusion.Engine.Graphics.Lights
 
 				writer.Write( Width );
 				writer.Write( Height );
+
+				writer.Write( bakeSettings );
 
 				//	write regions :
 				writer.WriteFourCC("RGN1");

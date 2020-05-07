@@ -76,10 +76,19 @@ namespace Fusion.Engine.Graphics.GI
 		[AECategory("Light Map")]
 		[AEDisplayName("Radiance Threshold")]
 		[AEValueRange( 0, 0.1f, 0.01f, 0.001f )]
-		public float RadianceThreshold { get; set; } = 0.02f;
+		public float RadianceThreshold { get; set; } = 0.01f;
 
 		/// <summary>
 		///	Threshold to discard patch: L = cos(theta) / (patchSize + R^2) * patchSize^2
+		/// </summary>
+		[AECategory("Light Map")]
+		[AEDisplayName("Discard Distance")]
+		[AEValueRange( 0, 500f, 100f, 10f )]
+		public float DiscardDistance { get; set; } = 200;
+
+		/// <summary>
+		///	Patch approx projection area on unit sphere is greated then	PatchThreshold
+		///	will be dropped in favor of smaller one
 		/// </summary>
 		[AECategory("Light Map")]
 		[AEDisplayName("Patch Threshold")]

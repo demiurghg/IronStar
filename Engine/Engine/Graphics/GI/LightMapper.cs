@@ -124,7 +124,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			Log.Message("Allocating buffers...");
 
-			formFactor		=	new FormFactor( allocator.Width );
+			formFactor		=	new FormFactor( allocator.Width, settings );
 
 			foreach ( var group in lmGroups ) {
 				formFactor.Regions.Add( group.Guid, group.Region );
@@ -472,9 +472,9 @@ namespace Fusion.Engine.Graphics.Lights {
 								var pdir	=	Vector3.Normalize( origin - ppos );
 								var pdist	=	Vector3.Distance( ppos, origin );
 								var pDotL	=	Vector3.Dot( pdir, pnormal );
-								var weight	=	area * pDotL * Radiosity.Falloff(pdist) / 4.0f / MathUtil.Pi;
+								var weight	=	area * pDotL * Radiosity.Falloff(pdist) / 2.0f / MathUtil.Pi;
 
-								if (weight>settings.RadianceThreshold) 
+								if ( weight > settings.RadianceThreshold && pdist < settings.DiscardDistance ) 
 								{
 									lmAddrList.Add( new GlobalPatchIndex( patch ) );
 								}

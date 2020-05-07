@@ -3,12 +3,12 @@
   "Environment": {
     "$type": "IronStar.Mapping.MapEnvironment, IronStar",
     "Gravity": 48.0,
-    "SkyTrubidity": 2.25,
-    "SunAltitude": 30.0,
+    "SkyTrubidity": 2.0,
+    "SunAltitude": 15.0,
     "SkyIntensity": 1.0,
-    "SunAzimuth": -55.0,
+    "SunAzimuth": -45.0,
     "SunIntensity": 500.0,
-    "FogDistance": 80000.0,
+    "FogDistance": 8000000.0,
     "FogHeight": 0.05,
     "FogColor": "10, 10, 10, 0"
   },
@@ -3720,12 +3720,13 @@
     "LightGridDepth": 32,
     "LightGridStep": 16.0,
     "NormalOffsetBias": 0.25,
-    "LightMapSampleCount": 512,
+    "LightMapSampleCount": 256,
     "LightGridSampleCount": 64,
     "MaxPatches": 32,
-    "RadianceThreshold": 0.03,
+    "RadianceThreshold": 0.01,
+    "DiscardDistance": 200.0,
     "PatchThreshold": 0.5,
-    "UseWhiteDiffuse": false,
+    "UseWhiteDiffuse": true,
     "DebugLightmaps": false
   }
 }

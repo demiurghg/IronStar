@@ -223,7 +223,7 @@ namespace Fusion.Engine.Graphics.GI
 				var radiosity = new RADIOSITY();
 
 				radiosity.SkyFactor			=	SkyFactor;
-				radiosity.IndirectFactor	=	IndirectFactor;
+				radiosity.IndirectFactor	=	IndirectFactor / lightMap.BakeSettings.LightMapSampleCount;
 				radiosity.SecondBounce		=	SecondBounce;
 
 				cbRadiosity.SetData( radiosity );

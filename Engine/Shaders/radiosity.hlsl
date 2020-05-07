@@ -249,7 +249,7 @@ void CSMain(
 		float3 	radiance	=	radiance_cache[ cacheIndex ];
 		float3 	lightDirN	=	DecodeDirection( direction );
 
-		float3	light		=	radiance.rgb / 256.0f * hitCount * Radiosity.IndirectFactor;	
+		float3	light		=	radiance.rgb * hitCount * Radiosity.IndirectFactor;	
 		
 		irradianceR			+=	SHL1EvaluateDiffuse( light.r, lightDirN );
 		irradianceG			+=	SHL1EvaluateDiffuse( light.g, lightDirN );

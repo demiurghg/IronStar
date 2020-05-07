@@ -66,6 +66,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		readonly Dictionary<Guid,Rectangle> regions = new Dictionary<Guid, Rectangle>();
 
+		public readonly FormFactor.BakeSettings BakeSettings;
 
 
 		public LightMap ( RenderSystem rs, Stream stream )
@@ -83,6 +84,8 @@ namespace Fusion.Engine.Graphics.Lights {
 				height		=	reader.ReadInt32();
 				tilesX		=	width / RadiositySettings.TileSize;
 				tilesY		=	height / RadiositySettings.TileSize;
+
+				BakeSettings=	reader.Read<FormFactor.BakeSettings>();
 
 				albedo		=	new Texture2D( rs.Device, width,  height, ColorFormat.Rgba8,	mips,	false );
 				position	=	new Texture2D( rs.Device, width,  height, ColorFormat.Rgb32F,	mips,	false );

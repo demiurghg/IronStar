@@ -31,8 +31,6 @@ namespace Fusion.Engine.Imaging
 		readonly int pixelSize;
 		readonly byte[] rawImageData;
 
-		Image<TColor>[]	mipChain;
-
 		public int		Width	{ get { return width; } }
 		public int		Height	{ get { return height; } }
 		public byte[]	RawImageData { get { return rawImageData; } }
@@ -490,7 +488,7 @@ namespace Fusion.Engine.Imaging
 			ReadHeader( stream, out width, out height );
 
 			if ( width  != Width ) throw new IOException( string.Format( "Bad image width {0}, expected {1}", width, Width ) );
-			if ( height != Height ) throw new IOException( string.Format( "Bad image рушпре {0}, expected {1}", height, Height ) );
+			if ( height != Height ) throw new IOException( string.Format( "Bad image height {0}, expected {1}", height, Height ) );
 
 			var read = stream.Read( RawImageData, 0, RawImageData.Length );
 

@@ -651,7 +651,7 @@
     <Compile Include="Engine\Imaging\ImageText.cs" />
     <Compile Include="Engine\Imaging\ImageLib.cs" />
     <Compile Include="Engine\Imaging\MipChain.cs" />
-    <Compile Include="Engine\Imaging\GenericVolume.cs" />
+    <Compile Include="Engine\Imaging\Volume.cs" />
     <Compile Include="Engine\Imaging\Image.cs" />
     <Compile Include="Engine\Imaging\Sampler.cs" />
     <Compile Include="Engine\Media\MediaState.cs" />

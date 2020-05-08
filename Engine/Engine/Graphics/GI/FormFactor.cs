@@ -20,25 +20,34 @@ namespace Fusion.Engine.Graphics.Lights
 {
 	public class FormFactor
 	{
-		public struct BakeSettings
+		public struct Header
 		{
-			public int LightMapSampleCount;
-			public int LightVolumeSampleCount;
-			public int Resereved1;
-			public int Resereved2;
-			public int Resereved3;
-			public int Resereved4;
-			public int Resereved5;
-			public int Resereved6;
+			public int		Width;
+			public int		Height;
+			public int		LightMapSampleCount;
+			public int		Reserved0;
+
+			public int		VolumeWidth;
+			public int		VolumeHeight;
+			public int		VolumeDepth;
+			public int		VolumeStride;
+			public Vector3	VolumePosition;
+			public float	VolumeSampleCount;
 		}
 
-		const int TileSize = RadiositySettings.TileSize;	
+		const int TileSize		= RadiositySettings.TileSize;	
+		const int ClusterSize	= RadiositySettings.ClusterSize;	
 
-		public readonly int Width;
-		public readonly int Height;
+		public int Width		{ get { return header.Width; } }
+		public int Height		{ get { return header.Height; } }
 
-		public readonly int TileX;
-		public readonly int TileY;
+		public int VolumeWidth	{ get { return header.VolumeWidth; } }
+		public int VolumeHeight	{ get { return header.VolumeHeight; } }
+		public int VolumeDepth	{ get { return header.VolumeDepth; } }
+		public int VolumeStride	{ get { return header.VolumeStride; } }
+
+		public int TileX { get { return Width  / TileSize; } }
+		public int TileY { get { return Height / TileSize; } }
 
 		public readonly MipChain<Color>     Albedo;
 		public readonly MipChain<Vector3>   Position;
@@ -52,6 +61,9 @@ namespace Fusion.Engine.Graphics.Lights
 		public readonly Image<Vector3>		BBoxMin;
 		public readonly Image<Vector3>		BBoxMax;
 
+		public readonly Volume<Int2>		Clusters;
+		public readonly Volume<uint>		IndexVolume;
+
 		public readonly List<GlobalPatchIndex>		TileCache;
 		public readonly List<CachedPatchIndex>	CachedIndices;
 
@@ -61,7 +73,7 @@ namespace Fusion.Engine.Graphics.Lights
 		readonly Dictionary<Guid, Rectangle> regions = new Dictionary<Guid, Rectangle>();
 		readonly Dictionary<string, uint> indexDict = new Dictionary<string, uint>();
 
-		public readonly BakeSettings bakeSettings;
+		public readonly Header header;
 
 		/// <summary>
 		/// Creates instance of the lightmap g-buffer :
@@ -70,13 +82,22 @@ namespace Fusion.Engine.Graphics.Lights
 		/// <param name="h"></param>
 		public FormFactor( int size, RadiositySettings settings )
 		{
-			Width           =   size;
-			Height          =   size;
-
-			TileX			=	Width / TileSize;
-			TileY			=	Height / TileSize;
-
 			allocator       =   new Allocator2D( size );
+
+			header	=	new Header();
+
+			header.Width				=	size;
+			header.Height				=	size;
+			header.LightMapSampleCount	=	settings.LightMapSampleCount;
+			header.Reserved0			=	0;
+
+			header.VolumeWidth			=	settings.LightGridWidth;
+			header.VolumeHeight			=	settings.LightGridHeight;
+			header.VolumeDepth			=	settings.LightGridDepth;
+			header.VolumeStride			=	settings.LightGridStep;
+			header.VolumePosition		=	Vector3.Zero;
+			header.VolumeSampleCount	=	settings.LightGridSampleCount;
+
 
 			Albedo          =   new MipChain<Color>		( size,  size,  RadiositySettings.MapPatchLevels, Color.Zero );
 			Position        =   new MipChain<Vector3>	( size,  size,  RadiositySettings.MapPatchLevels, Vector3.Zero );
@@ -95,9 +116,8 @@ namespace Fusion.Engine.Graphics.Lights
 
 			Coverage        =   new Image<byte>( size, size, 0 );
 
-			bakeSettings	=	new BakeSettings();
-			bakeSettings.LightMapSampleCount	=	settings.LightMapSampleCount;
-			bakeSettings.LightVolumeSampleCount	=	settings.LightGridSampleCount;
+			IndexVolume		=	new Volume<uint>( VolumeWidth,				 VolumeHeight,				 VolumeDepth );
+			Clusters		=	new Volume<Int2>( VolumeWidth / ClusterSize, VolumeHeight / ClusterSize, VolumeDepth / ClusterSize );
 		}
 
 
@@ -348,12 +368,9 @@ namespace Fusion.Engine.Graphics.Lights
 				const int mips = RadiositySettings.MapPatchLevels;
 
 				//	write header :
-				writer.WriteFourCC("RAD1");
+				writer.WriteFourCC("RAD2");
 
-				writer.Write( Width );
-				writer.Write( Height );
-
-				writer.Write( bakeSettings );
+				writer.Write( header );
 
 				//	write regions :
 				writer.WriteFourCC("RGN1");
@@ -382,30 +399,27 @@ namespace Fusion.Engine.Graphics.Lights
 				writer.WriteFourCC("SKY1");
 				Sky.Convert( EncodeSkyRGB8 ).WriteStream( stream );
 
-				//	write index map
-				writer.WriteFourCC("MAP1");
-				IndexMap.WriteStream( stream );
-
-				// #TODO #LIGHTMAPS - write volume indices
-				writer.WriteFourCC("VOL1");
-
 				//	write tiled cache data :
 				writer.WriteFourCC("TILE");
-				Tiles.WriteStream( stream );
-
 				writer.Write( TileCache.Count );
 				writer.Write( TileCache.Select( a => a.Index ).ToArray() );
-
 				writer.Write( CachedIndices.Count );
 				writer.Write( CachedIndices.Select( a => a.GpuIndex ).ToArray() );
 
+				//	write tile & index map
+				writer.WriteFourCC("MAP1");
+				Tiles.WriteStream( stream );
+				IndexMap.WriteStream( stream );
+
+				//	bounding boxes :
 				writer.WriteFourCC("BBOX");
 				BBoxMin.WriteStream( stream );
 				BBoxMax.WriteStream( stream );
-				//	write indices
-				//writer.WriteFourCC("IDX1");
-				//writer.Write( Indices.Count );
-				//writer.Write( Indices.Select(idx=>idx.Index).ToArray() );
+
+				//	write cluster & index volumes
+				writer.WriteFourCC("VOL1");
+				Clusters.WriteStream( stream );
+				IndexVolume.WriteStream( stream );
 			}
 		}
 

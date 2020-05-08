@@ -213,7 +213,15 @@ namespace Fusion.Engine.Graphics.GI
 				return;
 			}
 
-			lightMap.DebugDraw( DebugX, DebugY, rs.RenderWorld.Debug );
+			var dr = rs.RenderWorld.Debug;
+
+			for (uint i=0; i<511; i++)
+			{
+				var p0 = MortonCode.Decode3(MortonCode.Code3(MortonCode.Decode3(i  )));
+				var p1 = MortonCode.Decode3(MortonCode.Code3(MortonCode.Decode3(i+1)));
+				dr.DrawLine( new Vector3( p0.X * 8, p0.Y * 8, p0.Z * 8 ), new Vector3( p1.X * 8, p1.Y * 8, p1.Z * 8 ), Color.Orange, Color.Orange, 1, 1 );
+			}
+			//lightMap.DebugDraw( DebugX, DebugY, rs.RenderWorld.Debug );
 
 
 			using ( new PixEvent( "Radiosity" ) )
@@ -223,7 +231,7 @@ namespace Fusion.Engine.Graphics.GI
 				var radiosity = new RADIOSITY();
 
 				radiosity.SkyFactor			=	SkyFactor;
-				radiosity.IndirectFactor	=	IndirectFactor / lightMap.BakeSettings.LightMapSampleCount;
+				radiosity.IndirectFactor	=	IndirectFactor / lightMap.Header.LightMapSampleCount;
 				radiosity.SecondBounce		=	SecondBounce;
 
 				cbRadiosity.SetData( radiosity );

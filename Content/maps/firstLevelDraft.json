@@ -3712,21 +3712,5 @@
         "RotateRoll": 0.0
       }
     ]
-  },
-  "RadiositySettings": {
-    "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
-    "LightGridWidth": 32,
-    "LightGridHeight": 16,
-    "LightGridDepth": 32,
-    "LightGridStep": 16.0,
-    "NormalOffsetBias": 0.25,
-    "LightMapSampleCount": 256,
-    "LightGridSampleCount": 64,
-    "MaxPatches": 32,
-    "RadianceThreshold": 0.01,
-    "DiscardDistance": 200.0,
-    "PatchThreshold": 0.5,
-    "UseWhiteDiffuse": true,
-    "DebugLightmaps": false
   }
 }

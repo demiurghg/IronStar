@@ -32,10 +32,10 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		readonly RenderSystem rs;
 
-		readonly GenericVolume<SHL1>	irradianceR;
-		readonly GenericVolume<SHL1>	irradianceG;
-		readonly GenericVolume<SHL1>	irradianceB;
-		readonly GenericVolume<SHL1>	temporary;
+		readonly Volume<SHL1>	irradianceR;
+		readonly Volume<SHL1>	irradianceG;
+		readonly Volume<SHL1>	irradianceB;
+		readonly Volume<SHL1>	temporary;
 		readonly int width;
 		readonly int height;
 		readonly int depth;
@@ -46,9 +46,9 @@ namespace Fusion.Engine.Graphics.Lights {
 		public int Depth { get { return depth; } }
 		public float Stride { get { return stride; } }
 
-		public GenericVolume<SHL1>	IrradianceRed	 { get { return irradianceR; } }
-		public GenericVolume<SHL1>	IrradianceGreen	 { get { return irradianceG; } }
-		public GenericVolume<SHL1>	IrradianceBlue	 { get { return irradianceB; } }
+		public Volume<SHL1>	IrradianceRed	 { get { return irradianceR; } }
+		public Volume<SHL1>	IrradianceGreen	 { get { return irradianceG; } }
+		public Volume<SHL1>	IrradianceBlue	 { get { return irradianceB; } }
 
 		internal Texture3D	LightVolumeR	{ get { return rs.LightMapResources.LightVolumeR; } }
 		internal Texture3D	LightVolumeG	{ get { return rs.LightMapResources.LightVolumeG; } }
@@ -74,10 +74,10 @@ namespace Fusion.Engine.Graphics.Lights {
 			this.depth	=	depth;
 			this.stride	=	stride;
 
-			irradianceR	=	new GenericVolume<SHL1>( width, height, depth );
-			irradianceG	=	new GenericVolume<SHL1>( width, height, depth );
-			irradianceB	=	new GenericVolume<SHL1>( width, height, depth );
-			temporary	=	new GenericVolume<SHL1>( width, height, depth );
+			irradianceR	=	new Volume<SHL1>( width, height, depth );
+			irradianceG	=	new Volume<SHL1>( width, height, depth );
+			irradianceB	=	new Volume<SHL1>( width, height, depth );
+			temporary	=	new Volume<SHL1>( width, height, depth );
 		}
 
 
@@ -111,21 +111,22 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		public void WriteToStream ( Stream stream )
 		{
-			using ( var writer = new BinaryWriter( stream ) ) {
+			throw new NotImplementedException();
+			//using ( var writer = new BinaryWriter( stream ) ) {
 
-				writer.WriteFourCC("IRV1");
+			//	writer.WriteFourCC("IRV1");
 
-				writer.Write( width );
-				writer.Write( height );
-				writer.Write( depth );
-				writer.Write( stride );
+			//	writer.Write( width );
+			//	writer.Write( height );
+			//	writer.Write( depth );
+			//	writer.Write( stride );
 
-				writer.WriteFourCC("VOL1");
+			//	writer.WriteFourCC("VOL1");
 
-				writer.Write( irradianceR.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
-				writer.Write( irradianceG.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
-				writer.Write( irradianceB.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
-			}
+			//	writer.Write( irradianceR.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
+			//	writer.Write( irradianceG.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
+			//	writer.Write( irradianceB.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
+			//}
 		}
 
 
@@ -141,17 +142,18 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		public void UpdateGPUTextures ()
 		{
-			LightVolumeR.SetData( irradianceR.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
-			LightVolumeG.SetData( irradianceG.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
-			LightVolumeB.SetData( irradianceB.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
+			throw new NotImplementedException();
+			//LightVolumeR.SetData( irradianceR.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
+			//LightVolumeG.SetData( irradianceG.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
+			//LightVolumeB.SetData( irradianceB.RawImageData.Select( sh => sh.ToHalf4() ).ToArray() );
 		}
 
 
 		public void FillAmbient ( Color4 ambient )
 		{
-			irradianceR.Fill( new SHL1( ambient.Red,	0,0,0 ) );
-			irradianceG.Fill( new SHL1( ambient.Green,	0,0,0 ) );
-			irradianceB.Fill( new SHL1( ambient.Blue,	0,0,0 ) );
+			//irradianceR.Fill( new SHL1( ambient.Red,	0,0,0 ) );
+			//irradianceG.Fill( new SHL1( ambient.Green,	0,0,0 ) );
+			//irradianceB.Fill( new SHL1( ambient.Blue,	0,0,0 ) );
 			UpdateGPUTextures();
 		}
 	}

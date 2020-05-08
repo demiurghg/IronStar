@@ -12,6 +12,7 @@ namespace Fusion.Engine.Graphics.GI
 	{
 		public const int MapPatchLevels = 6;
 		public const int TileSize = 8;
+		public const int ClusterSize = 4;
 		public const int MaxPatchesPerTile = 512;
 
 		/// <summary>
@@ -40,7 +41,7 @@ namespace Fusion.Engine.Graphics.GI
 		/// </summary>
 		[AECategory("Light Grid")]
 		[AEDisplayName("LightGrid Step")]
-		public float LightGridStep { get; set; } = 16;
+		public int LightGridStep { get; set; } = 16;
 
 
 		/// <summary>

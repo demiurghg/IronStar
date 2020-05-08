@@ -164,9 +164,13 @@ namespace Fusion.Engine.Graphics.Lights {
 
 					//--------------------------------------
 
-					Log.Message("Searching for radiating patches...");
-
+					Log.Message("Building lightmap form-factor...");
 					ForEachLightMapTile( lmGroups, (tx,ty) => BakeTile( scene, tx, ty ) );
+
+					//--------------------------------------
+
+					Log.Message("Building volumetric form-factor...");
+					//ForEachLightMapTile( lmGroups, (tx,ty) => BakeCluster( scene, tx, ty ) );
 				}
 			}
 
@@ -268,6 +272,67 @@ namespace Fusion.Engine.Graphics.Lights {
 				if (cacheLine[i].Index == patch.Index) return i;
 			}
 			return -1;
+		}
+
+
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		void BakeCluster ( RtcScene scene, int clusterX, int clusterY, int clusterZ )
+		{
+			//int clusterSize			=	RadiositySettings.ClusterSize;
+			//var offset				=	new Int3( clusterX * clusterSize, clusterY * clusterSize, clusterZ * clusterSize );
+			//var gatheringResults	=	new GatheringResults[tileSize*tileSize];
+
+			//for (uint i=0; i<tileSize*tileSize*clusterSize; i++)
+			//{
+			//	var xy = MortonCode.Decode2( i ) + offset;
+
+			//	var p = formFactor.Position[xy];
+			//	var n = formFactor.Normal[xy];
+			//	var c = formFactor.Albedo[xy];
+
+			//	gatheringResults[i]	=	(c.A > 0) ? GatherRadiosityPatches( scene, p, n ) : null;
+			//}
+
+			////	merge all hit patches (thir coords) and upload cache-line to formfactor
+			////	retrieving (offset, count) of uploaded cache-line
+			//var globalPatches	=	gatheringResults
+			//	.Where( results0 => results0 != null )
+			//	.SelectMany( results1 => results1.Patches )
+			//	.DistinctBy( patch => patch.Coords )
+			//	.ToArray();
+
+			//formFactor.Tiles[tileX,tileY]	=	formFactor.AddGlobalPatchIndices( globalPatches );
+
+			//for (uint i=0; i<tileSize*tileSize; i++)
+			//{
+			//	var xy = MortonCode.Decode2( i ) + offset;
+
+			//	if (gatheringResults[i]==null)
+			//	{
+			//		formFactor.IndexMap[xy] = 0;
+			//		formFactor.Sky[xy] = Vector3.Zero;
+			//	}
+			//	else
+			//	{
+			//		var cachedPatches	=	gatheringResults[i].Patches	
+			//			.GroupBy( patch0 => patch0.Coords )
+			//			.Select( group => new { 
+			//				Patch = group.First(), 
+			//				Hits = group.Count(),
+			//				Dir = Radiosity.EncodeDirection( formFactor.Position[ group.First().Coords ] - gatheringResults[i].Origin )
+			//			} )
+			//			.Select( patch1 => new CachedPatchIndex( GetPatchIndexInCache(globalPatches, patch1.Patch), patch1.Dir, patch1.Hits ) )
+			//			.ToArray();
+
+			//		formFactor.IndexMap[xy] = formFactor.AddCachedPatchIndices( cachedPatches );
+			//		formFactor.Sky[xy]		= gatheringResults[i].Sky;
+			//	}
+			//}
 		}
 
 

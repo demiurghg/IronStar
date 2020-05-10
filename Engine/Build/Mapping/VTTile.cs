@@ -118,10 +118,10 @@ namespace Fusion.Build.Mapping {
 		public void MakeWhiteDiffuse()
 		{
 			colorData.Fill( Color.Gray );
-			specularData.PerpixelProcessing( spec => new Color( (byte)255, (byte)0, (byte)0, spec.A ) );
+			specularData.ForEachPixel( spec => new Color( (byte)255, (byte)0, (byte)0, spec.A ) );
 
 			colorDataMip?.Fill( Color.Gray );
-			specularDataMip?.PerpixelProcessing( spec => new Color( (byte)255, (byte)0, (byte)0, spec.A ) );
+			specularDataMip?.ForEachPixel( spec => new Color( (byte)255, (byte)0, (byte)0, spec.A ) );
 		}
 
 
@@ -132,10 +132,10 @@ namespace Fusion.Build.Mapping {
 		public void MakeGlossyMetal()
 		{
 			colorData.Fill( Color.Gray );
-			specularData.PerpixelProcessing( spec => new Color( (byte)0, (byte)255, (byte)0, spec.A ) );
+			specularData.ForEachPixel( spec => new Color( (byte)0, (byte)255, (byte)0, spec.A ) );
 
 			colorDataMip?.Fill( Color.Gray );
-			specularDataMip?.PerpixelProcessing( spec => new Color( (byte)0, (byte)255, (byte)0, spec.A ) );
+			specularDataMip?.ForEachPixel( spec => new Color( (byte)0, (byte)255, (byte)0, spec.A ) );
 		}
 
 
@@ -367,8 +367,8 @@ namespace Fusion.Build.Mapping {
 			int count	= mipColors.Length;
 			int mip		= address.MipLevel;
 
-			colorData	.PerpixelProcessing( color => color * mipColors[ (mip+0) % count ] );
-			colorDataMip.PerpixelProcessing( color => color * mipColors[ (mip+1) % count ] );
+			colorData	.ForEachPixel( color => color * mipColors[ (mip+0) % count ] );
+			colorDataMip.ForEachPixel( color => color * mipColors[ (mip+1) % count ] );
 
 			if (border) {
 				DrawBorder();

@@ -103,10 +103,10 @@ namespace Fusion.Engine.Graphics.Ubershaders {
 			var handles = type
 				.GetFields(BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic)
 				.Where( fi0 => fi0.FieldType.IsSubclassOf( typeof(FXHandle) ) )
-				.Select( fi1 => (FXHandle)fi1.GetValue(null) )
+				.Select( fi1 => new { Handle = (FXHandle)fi1.GetValue(null), Define = fi1.GetCustomAttribute<ShaderIfDefAttribute>()?.Define } )
 				.ToArray();
 		
-			var structs =  FXHandle.GatherStructureTypes( handles );
+			var structs		=	FXHandle.GatherStructureTypes( handles.Select( h => h.Handle ) );
 			
 			AppendSplitter(sb, "Data Structures");
 
@@ -115,12 +115,27 @@ namespace Fusion.Engine.Graphics.Ubershaders {
 				ReflectStructure( sb, structure );
 			}
 			
-
 			AppendSplitter(sb, "Shader Resources");
 
-			foreach ( var handle in handles )
+			var groupedHandles = handles
+				.GroupBy( h0 => h0.Define )
+				.Select( g0 => new { Defines = g0.First().Define, Handles = g0.Select(h1 => h1.Handle).ToArray() } )
+				.ToArray();
+
+			foreach ( var group in groupedHandles )
 			{
-				sb.AppendLine( handle.GetDeclaration() );
+				if (group.Defines!=null) 
+				{
+					var ifdef = string.Join( " || ", group.Defines.Split(' ',',','|').Select( def => "defined(" + def + ")" ) );
+					sb.AppendLine("#if " + ifdef);
+				}
+
+				foreach ( var handle in group.Handles )
+				{
+					sb.AppendLine( handle.GetDeclaration() );
+				}
+
+				if (group.Defines!=null) sb.AppendLine("#endif");
 			}
 		}
 

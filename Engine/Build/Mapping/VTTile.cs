@@ -132,10 +132,10 @@ namespace Fusion.Build.Mapping {
 		public void MakeGlossyMetal()
 		{
 			colorData.Fill( Color.Gray );
-			specularData.ForEachPixel( spec => new Color( (byte)0, (byte)255, (byte)0, spec.A ) );
+			specularData.ForEachPixel( spec => new Color( spec.R, (byte)255, (byte)0, spec.A ) );
 
 			colorDataMip?.Fill( Color.Gray );
-			specularDataMip?.ForEachPixel( spec => new Color( (byte)0, (byte)255, (byte)0, spec.A ) );
+			specularDataMip?.ForEachPixel( spec => new Color( spec.R, (byte)255, (byte)0, spec.A ) );
 		}
 
 

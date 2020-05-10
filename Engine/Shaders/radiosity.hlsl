@@ -49,7 +49,7 @@ void CSMain(
 	shadowRc.ShadowMap		=	ShadowMap		;
 	shadowRc.ShadowMask		=	ShadowMask		;
 	
-	float4 	albedo			=	Albedo	[ loadXY ].rgba;
+	float4 	albedo			=	pow( Albedo	[ loadXY ].rgba, 1/2.2f );
 	float3	indirect		=	Radiance[ loadXY ].rgb * Radiosity.SecondBounce * albedo.rgb;
 	float3	position		=	Position[ loadXY ].xyz;
 	float3	normal			=	Normal	[ loadXY ].xyz * 2 - 1;

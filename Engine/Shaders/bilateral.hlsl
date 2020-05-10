@@ -1,9 +1,11 @@
 #if 0
-$ubershader DOUBLE_PASS	MASK_DEPTH|MASK_ALPHA HORIZONTAL|VERTICAL
 $ubershader SINGLE_PASS	MASK_DEPTH|MASK_ALPHA
+$ubershader DOUBLE_PASS	MASK_DEPTH|MASK_ALPHA HORIZONTAL|VERTICAL
 #endif
 
 #include "auto/bilateral.fxi"
+
+#include "float16.fxi"
 
 //-------------------------------------------------------------------------------
 
@@ -35,6 +37,11 @@ float ExtractLumaFactor( float4 color )
 	return dot( color, filterParams.LumaVector );
 }
 
+float ExtractLumaFactor( float3 color )
+{
+	return dot( color, filterParams.LumaVector.xyz );
+}
+
 
 //-------------------------------------------------------------------------------
 //	DOUBLE PASS 
@@ -42,19 +49,19 @@ float ExtractLumaFactor( float4 color )
 
 #ifdef DOUBLE_PASS
 #ifdef HORIZONTAL
-groupshared float4 cachedData[BilateralBlockSizeY][BilateralBlockSizeX*2];
-groupshared float2 cachedMask[BilateralBlockSizeY][BilateralBlockSizeX*2];
+groupshared float4 cachedData[BlockSize16][BlockSize16*2];
+groupshared float2 cachedMask[BlockSize16][BlockSize16*2];
 #endif
 
 #ifdef VERTICAL
-groupshared float4 cachedData[BilateralBlockSizeY*2][BilateralBlockSizeX];
-groupshared float2 cachedMask[BilateralBlockSizeY*2][BilateralBlockSizeX];
+groupshared float4 cachedData[BlockSize16*2][BlockSize16];
+groupshared float2 cachedMask[BlockSize16*2][BlockSize16];
 #endif
 #endif
 
 #ifdef DOUBLE_PASS
 
-[numthreads(BilateralBlockSizeX,BilateralBlockSizeY,1)] 
+[numthreads(BlockSize16,BlockSize16,1)] 
 void CSMain( 
 	uint3 groupId : SV_GroupID, 
 	uint3 groupThreadId : SV_GroupThreadID, 
@@ -62,11 +69,11 @@ void CSMain(
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
 	int2 location		=	dispatchThreadId.xy;
-	int2 blockSize		=	int2(BilateralBlockSizeX,BilateralBlockSizeY);
+	int2 blockSize		=	int2(BlockSize16,BlockSize16);
 	int3 centerPoint	=	int3( location.xy, 0 );
 	
 	#ifdef HORIZONTAL
-	int overlapX 	=	((BilateralBlockSizeX)/2);
+	int overlapX 	=	((BlockSize16)/2);
 	int overlapY 	=	0;
 	int2 scale		=	int2(2,1);
 	int2 bias		=	int2(1,0);
@@ -74,7 +81,7 @@ void CSMain(
 	
 	#ifdef VERTICAL
 	int overlapX 	=	0;
-	int overlapY 	=	((BilateralBlockSizeY)/2);
+	int overlapY 	=	((BlockSize16)/2);
 	int2 scale		=	int2(1,2);
 	int2 bias		=	int2(0,1);
 	#endif
@@ -162,7 +169,20 @@ void CSMain(
 
 #ifdef SINGLE_PASS
 
-[numthreads(BilateralBlockSizeX,BilateralBlockSizeY,1)] 
+groupshared uint2 cache[16][16];
+
+void CacheStore( uint2 location, float4 value )
+{
+	cache[ location.y ][ location.x ]	=	pack_color4( value );
+}
+
+
+float4 CacheLoad( uint2 location )
+{
+	return unpack_color4( cache[ location.y ][ location.x ] );
+}
+
+[numthreads(BlockSize8,BlockSize8,1)] 
 void CSMain( 
 	uint3 groupId : SV_GroupID, 
 	uint3 groupThreadId : SV_GroupThreadID, 
@@ -171,26 +191,52 @@ void CSMain(
 {
 	int2 location		=	dispatchThreadId.xy;
 	
-	float4 accumValue 	= 0;
+	float3 accumValue 	= 0;
 	float  accumWeight	= 0;
 	int3   centerPoint	= int3( location.xy, 0 );
 	
-	float 	maskCenter		=	ExtractMaskFactor( Mask  .Load( centerPoint ) );
-	float	lumaCenter		=	ExtractLumaFactor( Source.Load( centerPoint ) );
+	//	load cache :
+	uint2 offset = uint2( 4, 4 );
+	uint2 scale  = uint2( BlockSize8, BlockSize8 );
 	
+	// for (uint i=0; i<3; i++) // 144 / 64 round up
+	// {
+		// uint  	base	=	i * BlockSize8 * BlockSize8;
+		// uint  	addr	=	base + groupIndex;
+		// uint2 	xy		=	uint2( addr%12, addr/12 );
+		// uint3 	uv 		=	uint3( groupId.xy*scale + xy - offset, 0 );
+		// float3	source	=	Source.Load( uv ).rgb;
+		// float	mask	=	ExtractMaskFactor( Mask.Load( uv ) );
+		// CacheStore( xy, float4( source, mask ) );
+	// }
+	
+	uint3 uv00	 = uint3( groupId.xy*scale + groupThreadId.xy*2 + uint2(0,0) - offset, 0 );
+	uint3 uv01	 = uint3( groupId.xy*scale + groupThreadId.xy*2 + uint2(0,1) - offset, 0 );
+	uint3 uv10	 = uint3( groupId.xy*scale + groupThreadId.xy*2 + uint2(1,0) - offset, 0 );
+	uint3 uv11	 = uint3( groupId.xy*scale + groupThreadId.xy*2 + uint2(1,1) - offset, 0 );
+	
+	CacheStore( groupThreadId.xy*2 + uint2(0,0), float4( Source.Load( uv00 ).rgb, ExtractMaskFactor( Mask.Load( uv00 ) ) ) );
+	CacheStore( groupThreadId.xy*2 + uint2(0,1), float4( Source.Load( uv01 ).rgb, ExtractMaskFactor( Mask.Load( uv01 ) ) ) );
+	CacheStore( groupThreadId.xy*2 + uint2(1,0), float4( Source.Load( uv10 ).rgb, ExtractMaskFactor( Mask.Load( uv10 ) ) ) );
+	CacheStore( groupThreadId.xy*2 + uint2(1,1), float4( Source.Load( uv11 ).rgb, ExtractMaskFactor( Mask.Load( uv11 ) ) ) );
+	
+	GroupMemoryBarrierWithGroupSync();
+	
+	float4	valueCenter	=	CacheLoad( groupThreadId.xy + offset );
+	float	lumaCenter	=	ExtractLumaFactor( valueCenter );
+	float	maskCenter	=	valueCenter.a;
+
 	//[unroll]
 	for (int y=-2; y<=2; y++) {
 		for (int x=-2; x<=2; x++) {
 	
 			float	k			=	filterParams.GaussFalloff;
 			float	falloff		=	(x*x+y*y) * k*k;
-			int2 	offset 		= 	int2(x,y);
 			
-			int3	loadPoint	=	int3(location.xy + offset.xy, 0);
-		
-			float4	localColor	=	Source.Load( loadPoint );
+			float4 	localValue	=	CacheLoad( groupThreadId.xy + offset + int2(x,y) );
+			float3	localColor	=	localValue.rgb;
 			float	localLuma	=	ExtractLumaFactor( localColor );
-			float	localMask	=	ExtractMaskFactor( Mask.Load( loadPoint ) );
+			float	localMask	=	localValue.a;
 			
 			float	deltaL		=	localLuma - lumaCenter;
 			float	deltaM		=	localMask - maskCenter;
@@ -205,9 +251,9 @@ void CSMain(
 		}//*/
 	}
 	
-	float4	result			=	accumValue / accumWeight;
+	float3	result			=	accumValue / accumWeight;
 	
-	Target[location.xy]		=	result;
+	Target[location.xy]		=	float4( result, 0 );
 }
 
 #endif

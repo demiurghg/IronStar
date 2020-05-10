@@ -1,0 +1,42 @@
+#ifndef __FLOAT16_FXI__
+#define __FLOAT16_FXI__
+
+uint2 pack_color( float3 color )
+{
+	uint2 result;
+	result.x	=	f32tof16( color.r ) | (f32tof16( color.g ) << 16 );
+	result.y	=	f32tof16( color.b );
+	return result;
+}
+
+float3 unpack_color( uint2 color )
+{
+	float3 result;
+	result.r	=	f16tof32( color.x );
+	result.g	=	f16tof32( color.x >> 16 );
+	result.b	=	f16tof32( color.y );
+	
+	return result;
+}
+
+
+uint2 pack_color4( float4 color )
+{
+	uint2 result;
+	result.x	=	f32tof16( color.r ) | (f32tof16( color.g ) << 16 );
+	result.y	=	f32tof16( color.b ) | (f32tof16( color.a ) << 16 );
+	return result;
+}
+
+float4 unpack_color4( uint2 color )
+{
+	float4 result;
+	result.r	=	f16tof32( color.x );
+	result.g	=	f16tof32( color.x >> 16 );
+	result.b	=	f16tof32( color.y );
+	result.a	=	f16tof32( color.y >> 16 );
+	
+	return result;
+}
+
+#endif

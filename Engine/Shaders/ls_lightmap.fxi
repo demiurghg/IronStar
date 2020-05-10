@@ -37,7 +37,7 @@ float3 	EvaluateSHL( float3 shL0, float3 shL1, float3 shL2, float3 shL3, GEOMETR
 	FLUX flux;
 	flux.direction	=	dir;
 	flux.intensity	=	shL0;
-	light			+=	ComputeLighting( flux, geometry, surface, Camera, false, true );
+	light			+=	ComputeLighting( flux, geometry, surface, Camera, false, true ) * 2;
 	
 	//	diffuse SH evaluation :
 	shL1	*=	shL0;

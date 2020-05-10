@@ -1,7 +1,7 @@
 // ---------------- CONSTANT VALUES ---------------- //
 
-static const int BilateralBlockSizeX = 16;
-static const int BilateralBlockSizeY = 16;
+static const int BlockSize16 = 16;
+static const int BlockSize8 = 8;
 
 // ---------------- DATA STRUCTURES ---------------- //
 

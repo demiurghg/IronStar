@@ -41,10 +41,10 @@ namespace Fusion.Engine.Graphics
 
 
 		[ShaderDefine]
-		const int BilateralBlockSizeX = 16;
+		const int BlockSize16 = 16;
 
 		[ShaderDefine]
-		const int BilateralBlockSizeY = 16;
+		const int BlockSize8 = 8;
 
 
 		[ShaderStructure()]
@@ -145,9 +145,11 @@ namespace Fusion.Engine.Graphics
 			filterData.GaussFalloff		=	falloff;
 			filterData.ColorFactor		=   colorFactor;
 			cbuffer.SetData( ref filterData );
+
+			int blockSize	=	flags.HasFlag( Flags.DOUBLE_PASS ) ? BlockSize16 : BlockSize8;
 					
-			int tgx = MathUtil.IntDivRoundUp( target.Width,  BilateralBlockSizeX );
-			int tgy = MathUtil.IntDivRoundUp( target.Height, BilateralBlockSizeY );
+			int tgx = MathUtil.IntDivRoundUp( target.Width,  blockSize );
+			int tgy = MathUtil.IntDivRoundUp( target.Height, blockSize );
 			int tgz = 1;
 
 			//	HORIZONTAL pass :

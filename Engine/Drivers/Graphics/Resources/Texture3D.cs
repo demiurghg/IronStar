@@ -77,8 +77,26 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="data"></param>
         public void SetData<T>(T[] data) where T: struct
 		{
-			int stride = Converter.SizeOf( format );
-			device.DeviceContext.UpdateSubresource(data, tex3D, 0, Width*stride, Height*Width*stride);
+			var elementSizeInByte = Marshal.SizeOf(typeof(T));
+			var dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+			try
+			{
+				var dataPtr		=	(IntPtr)(dataHandle.AddrOfPinnedObject().ToInt64());
+
+				int rowPitch	=	Converter.SizeOf(this.format) * Width;
+				int slicePitch	=	rowPitch * Height; // For 3D texture: Size of 2D image.
+				var box			=	new DataBox(dataPtr, rowPitch, slicePitch);
+
+				int subresourceIndex = 0;
+
+				var region		=	new ResourceRegion(0, 0, 0, Width, Height, Depth);
+
+				device.DeviceContext.UpdateSubresource(box, tex3D, subresourceIndex, region);
+			}
+			finally
+			{
+				dataHandle.Free();
+			}
 		}
 	}
 }

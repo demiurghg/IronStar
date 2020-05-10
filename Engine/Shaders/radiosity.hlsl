@@ -13,6 +13,7 @@ $ubershader 	INTEGRATE3
 
 #define SKIP_MOST_DETAILED_CASCADES
 #include "ls_core.fxi"
+#include "gamma.fxi"
 
 #include "collision.fxi"
 
@@ -40,8 +41,8 @@ void CSMain(
 	uint  groupIndex: SV_GroupIndex, 
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
-	int2	loadXY		=	dispatchThreadId.xy;
-	int2	storeXY		=	dispatchThreadId.xy;
+	int2	loadXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
+	int2	storeXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
 	
 	SHADOW_RESOURCES	shadowRc;
 	shadowRc.ShadowSampler	=	ShadowSampler	; 
@@ -49,42 +50,51 @@ void CSMain(
 	shadowRc.ShadowMap		=	ShadowMap		;
 	shadowRc.ShadowMask		=	ShadowMask		;
 	
-	float4 	albedo			=	pow( Albedo	[ loadXY ].rgba, 1/2.2f );
-	float3	indirect		=	Radiance[ loadXY ].rgb * Radiosity.SecondBounce * albedo.rgb;
-	float3	position		=	Position[ loadXY ].xyz;
-	float3	normal			=	Normal	[ loadXY ].xyz * 2 - 1;
-			normal			=	normalize( normal );
-	float	size			=	Radiosity.ShadowFilter;
-
-	//	reconstruct basis ?
-	float3  tangentX, tangentY;
-	ReconstructBasis( normal, tangentX, tangentY );
+	float4 	albedo			=	Albedo[ loadXY ].rgba;
+	albedo.rgb				=	LinearToSRGB( albedo.rgb );
 	
-	float3 		shadow = 0;
-	GEOMETRY	geometry;
-	geometry.position	=	position;
-	geometry.normal		=	normal;
-
-	float2 sample_pattern[] = {
-		float2( 0.25f, 0.75f ),		float2(-0.75f, 0.25f ),
-		float2(-0.25f,-0.75f ),		float2( 0.75f,-0.25f ),
-		float2( 0.00f, 0.00f )
-	};
-
-	for (int i=0; i<5; i++)
+	if (albedo.a>0)
 	{
-		float3 offset = tangentX * sample_pattern[i].x * size;
-					  + tangentY * sample_pattern[i].y * size;
-		geometry.position = position + offset;
-		shadow += 0.2*ComputeCascadedShadows( geometry, float2(0,0), CascadeShadow, shadowRc, false );
+		float3	indirect		=	Radiance[ loadXY ].rgb * Radiosity.SecondBounce * albedo.rgb;
+		float3	position		=	Position[ loadXY ].xyz;
+		float3	normal			=	Normal	[ loadXY ].xyz * 2 - 1;
+				normal			=	normalize( normal );
+		float	size			=	Radiosity.ShadowFilter;
+
+		//	reconstruct basis ?
+		float3  tangentX, tangentY;
+		ReconstructBasis( normal, tangentX, tangentY );
+		
+		float3 		shadow = 0;
+		GEOMETRY	geometry;
+		geometry.position	=	position;
+		geometry.normal		=	normal;
+
+		float2 sample_pattern[] = {
+			float2( 0.25f, 0.75f ),		float2(-0.75f, 0.25f ),
+			float2(-0.25f,-0.75f ),		float2( 0.75f,-0.25f ),
+			float2( 0.00f, 0.00f )
+		};
+
+		for (int i=0; i<5; i++)
+		{
+			float3 offset = tangentX * sample_pattern[i].x * size;
+						  + tangentY * sample_pattern[i].y * size;
+			geometry.position = position + offset;
+			shadow += 0.2*ComputeCascadedShadows( geometry, float2(0,0), CascadeShadow, shadowRc, false );
+		}
+		
+		FLUX	flux			=	ComputeDirectLightFlux( DirectLight );
+		float3 	lighting		=	ComputeLighting( flux, geometry, albedo.rgb );
+		
+				lighting		=	(lighting * shadow + indirect + LightEpsilon) * albedo.a;
+		
+		RadianceUav[ storeXY.xy ]	=	float4(lighting, albedo.a );
 	}
-	
-	FLUX	flux			=	ComputeDirectLightFlux( DirectLight );
-	float3 	lighting		=	ComputeLighting( flux, geometry, albedo.rgb );
-	
-			lighting		=	(lighting * shadow + indirect + LightEpsilon) * albedo.a;
-	
-	RadianceUav[ storeXY.xy ]	=	float4(lighting, albedo.a );
+	else
+	{
+		RadianceUav[ storeXY.xy ]	=	float4(0,0,0,0);
+	}
 }
 
 #endif
@@ -141,11 +151,11 @@ void CSMain(
 	uint  groupIndex: SV_GroupIndex, 
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
-	int2	loadXY00	=	dispatchThreadId.xy * 2 + int2(0,0);
-	int2	loadXY01	=	dispatchThreadId.xy * 2 + int2(0,1);
-	int2	loadXY10	=	dispatchThreadId.xy * 2 + int2(1,0);
-	int2	loadXY11	=	dispatchThreadId.xy * 2 + int2(1,1);
-	int2	storeXY		=	dispatchThreadId.xy;
+	int2	loadXY00	=	(dispatchThreadId.xy + Radiosity.RegionXY) * 2 + int2(0,0);
+	int2	loadXY01	=	(dispatchThreadId.xy + Radiosity.RegionXY) * 2 + int2(0,1);
+	int2	loadXY10	=	(dispatchThreadId.xy + Radiosity.RegionXY) * 2 + int2(1,0);
+	int2	loadXY11	=	(dispatchThreadId.xy + Radiosity.RegionXY) * 2 + int2(1,1);
+	int2	storeXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
 	
 	float4 lighting00	=	Radiance	[ loadXY00 ];
 	float4 lighting01	=	Radiance	[ loadXY01 ];
@@ -228,9 +238,13 @@ void CSMain(
 	uint  groupIndex: SV_GroupIndex, 
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
+	uint2 	tileLoadXY	=	groupId.xy + Radiosity.RegionXY/8;
+	int2	loadXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
+	int2	storeXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
+	
 	//	culling :
-	float3 bboxMin		=	BBoxMin[ groupId.xy ].xyz;
-	float3 bboxMax		=	BBoxMax[ groupId.xy ].xyz;
+	float3 bboxMin		=	BBoxMin[ tileLoadXY ].xyz;
+	float3 bboxMax		=	BBoxMax[ tileLoadXY ].xyz;
 
 	if (groupIndex<6)
 	{
@@ -240,8 +254,8 @@ void CSMain(
 	GroupMemoryBarrierWithGroupSync();
 
 	//	upload cache
-	uint 	cacheIndex	=	Tiles[ groupId.xy ].x;
-	uint 	cacheCount	=	Tiles[ groupId.xy ].y;
+	uint 	cacheIndex	=	Tiles[ tileLoadXY ].x;
+	uint 	cacheCount	=	Tiles[ tileLoadXY ].y;
 	uint	stride		=	TileSize * TileSize;
 	
 	GroupMemoryBarrierWithGroupSync();
@@ -268,9 +282,6 @@ void CSMain(
 	}//*/
 	
 	GroupMemoryBarrierWithGroupSync();
-	
-	int2	loadXY		=	dispatchThreadId.xy;
-	int2	storeXY		=	dispatchThreadId.xy;
 
 	uint 	offsetCount	=	IndexMap[ loadXY ];
 	uint 	offset		=	offsetCount >> 8;

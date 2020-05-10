@@ -101,8 +101,7 @@ namespace Fusion.Engine.Graphics.GI
 		[StructLayout(LayoutKind.Sequential, Pack=4, Size=64)]
 		struct RADIOSITY
 		{
-			public uint		RegionX;
-			public uint		RegionY;
+			public UInt2	RegionXY;
 			public uint		RegionWidth;
 			public uint		RegionHeight;
 
@@ -167,6 +166,8 @@ namespace Fusion.Engine.Graphics.GI
 		 *	Radiosity rendering :
 		-----------------------------------------------------------------------------------------*/
 
+		int counter = 0;
+
 		public void Render ( GameTime gameTime )
 		{
 			if (lightMap==null || lightMap.albedo==null)
@@ -174,134 +175,162 @@ namespace Fusion.Engine.Graphics.GI
 				return;
 			}
 
-			//var dr = rs.RenderWorld.Debug;
-			//for (uint i=0; i<511; i++)
-			//{
-			//	var p0 = MortonCode.Decode3(MortonCode.Code3(MortonCode.Decode3(i  )));
-			//	var p1 = MortonCode.Decode3(MortonCode.Code3(MortonCode.Decode3(i+1)));
-			//	dr.DrawLine( new Vector3( p0.X * 8, p0.Y * 8, p0.Z * 8 ), new Vector3( p1.X * 8, p1.Y * 8, p1.Z * 8 ), Color.Orange, Color.Orange, 1, 1 );
-			//}
-			////lightMap.DebugDraw( DebugX, DebugY, rs.RenderWorld.Debug );
-
+			device.ResetStates();
 
 			using ( new PixEvent( "Radiosity" ) )
 			{
-				device.ResetStates();
+				SetupShaderResources();
 
-				var radiosity = new RADIOSITY();
+				int regSize =	256;
+				int regX	=	lightMap.Width  / regSize;
+				int regY	=	lightMap.Height / regSize;
+				int x		=	counter % regX * regSize;
+				int y		=	counter / regX * regSize;
+				int w		=	regSize;
+				int h		=	regSize;
 
-				radiosity.SkyFactor			=	SkyFactor;
-				radiosity.IndirectFactor	=	IndirectFactor / lightMap.Header.LightMapSampleCount;
-				radiosity.SecondBounce		=	SecondBounce;
-				radiosity.ShadowFilter		=	ShadowFilterRadius;
+				counter		=	(counter + 1) % (regX * regY);
 
-				cbRadiosity.SetData( radiosity );
+				RenderRegion( new Rectangle(x, y, w, h) );
+				//RenderRegion( new Rectangle(0,0, lightMap.Width, lightMap.Height) );
 
-				device.ComputeConstants[ regCamera			]	=	rs.RenderWorld.Camera.CameraData;
-				device.ComputeConstants[ regRadiosity		]	=	cbRadiosity;
-				device.ComputeConstants[ regCascadeShadow	]	=	rs.LightManager.ShadowMap.GetCascadeShadowConstantBuffer();
-				device.ComputeConstants[ regDirectLight		]	=	rs.LightManager.DirectLightData;
-				device.ComputeConstants[ regFrustumPlanes	]	=	rs.RenderWorld.Camera.FrustumPlanes;
-
-				device.ComputeResources[ regPosition		]	=	lightMap.position	;
-				device.ComputeResources[ regAlbedo			]	=	lightMap.albedo		;
-				device.ComputeResources[ regNormal			]	=	lightMap.normal		;
-				device.ComputeResources[ regTiles			]	=	lightMap.tiles		;
-				device.ComputeResources[ regIndexMap		]	=	lightMap.indexMap	;
-				device.ComputeResources[ regIndices			]	=	lightMap.indices	;
-				device.ComputeResources[ regCache			]	=	lightMap.cache		;
-				device.ComputeResources[ regRadiance		]	=	lightMap.irradianceL0		;
-
-				device.ComputeSamplers[ regSamplerShadow	]	=	SamplerState.ShadowSampler;
-				device.ComputeSamplers[ regSamplerLinear	]	=	SamplerState.LinearClamp;
-
-				device.ComputeResources[ regShadowMap		]	=	rs.LightManager.ShadowMap.ShadowTexture;
-				device.ComputeResources[ regShadowMask		]	=	rs.LightManager.ShadowMap.ParticleShadowTexture;
-
-				device.ComputeResources[ regSkyBox			]	=	rs.Sky.SkyCube;
-				device.ComputeResources[ regSky				]	=	lightMap.sky;
-
-				device.ComputeResources[ regBBoxMin			]	=	lightMap.bboxMin;
-				device.ComputeResources[ regBBoxMax			]	=	lightMap.bboxMax;
-
-				device.ComputeResources[ regClusters		]	=	lightMap.clusters;
-				device.ComputeResources[ regIndexVolume		]	=	lightMap.indexVol;
-				device.ComputeResources[ regSkyVolume		]	=	lightMap.skyVol;
-
-
-				using ( new PixEvent( "Lighting" ) )
-				{
-					device.PipelineState    =   factory[(int)Flags.LIGHTING];			
-				
-					device.SetComputeUnorderedAccess( regRadianceUav, lightMap.radiance.Surface.UnorderedAccess );
-					
-					device.Dispatch( new Int2( lightMap.Width, lightMap.Height ), new Int2( TileSize, TileSize ) );
-				}
-
-
-				using ( new PixEvent( "Collapse" ) )
-				{
-					device.PipelineState    =   factory[(int)Flags.COLLAPSE];			
-
-					for (int mip=1; mip<RadiositySettings.MapPatchLevels; mip++)
-					{
-						device.SetComputeUnorderedAccess( regRadianceUav,		lightMap.radiance.GetSurface( mip ).UnorderedAccess );
-						device.ComputeResources			[ regRadiance	]	=	lightMap.radiance.GetShaderResource( mip - 1 );
-
-						int width	=	lightMap.Width  >> mip;
-						int height	=	lightMap.Height >> mip;
-
-						device.Dispatch( new Int2( width, height ), new Int2( TileSize, TileSize ) );
-					}
-				}
-
-
-				using ( new PixEvent( "Integrate Map" ) )
-				{
-					device.PipelineState    =   factory[(int)Flags.INTEGRATE2];			
-
-					device.SetComputeUnorderedAccess( regRadianceUav,		null );
-					device.SetComputeUnorderedAccess( regIrradianceL0,		lightMap.irradianceL0.Surface.UnorderedAccess );
-					device.SetComputeUnorderedAccess( regIrradianceL1,		lightMap.irradianceL1.Surface.UnorderedAccess );
-					device.SetComputeUnorderedAccess( regIrradianceL2,		lightMap.irradianceL2.Surface.UnorderedAccess );
-					device.SetComputeUnorderedAccess( regIrradianceL3,		lightMap.irradianceL3.Surface.UnorderedAccess );
-					device.ComputeResources			[ regRadiance	]	=	lightMap.radiance;
-
-					int width	=	lightMap.Width;
-					int height	=	lightMap.Height;
-
-					device.Dispatch( new Int2( lightMap.Width, lightMap.Height ), new Int2( TileSize, TileSize ) );
-				}
-
-
-				using ( new PixEvent( "Integrate Volume" ) )
-				{
-					device.PipelineState    =   factory[(int)Flags.INTEGRATE3];			
-
-					device.SetComputeUnorderedAccess( regRadianceUav,		null );
-					device.SetComputeUnorderedAccess( regLightVolumeL0,		lightMap.lightVolumeL0.UnorderedAccess );
-					device.SetComputeUnorderedAccess( regLightVolumeL1,		lightMap.lightVolumeL1.UnorderedAccess );
-					device.SetComputeUnorderedAccess( regLightVolumeL2,		lightMap.lightVolumeL2.UnorderedAccess );
-					device.SetComputeUnorderedAccess( regLightVolumeL3,		lightMap.lightVolumeL3.UnorderedAccess );
-					device.ComputeResources			[ regRadiance	]	=	lightMap.radiance;
-
-					int width	=	lightMap.indexVol.Width;
-					int height	=	lightMap.indexVol.Height;
-					int depth	=	lightMap.indexVol.Depth;
-
-					device.Dispatch( new Int3( width, height, depth ), new Int3( ClusterSize, ClusterSize, ClusterSize ) );
-				}
-
-
-				using ( new PixEvent( "Denoising/Dilation" ) )
-				{
-					FilterLightmap( lightMap.irradianceL0, lightMap.tempHDR, lightMap.albedo, WeightIntensitySHL0, 20, FalloffIntensitySHL0 );
-					FilterLightmap( lightMap.irradianceL1, lightMap.tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
-					FilterLightmap( lightMap.irradianceL2, lightMap.tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
-					FilterLightmap( lightMap.irradianceL3, lightMap.tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
-				}
+				IntegrateLightVolume();
 			}
 		}
+
+
+		
+		void SetupShaderResources()
+		{
+			device.ComputeConstants[ regCamera			]	=	rs.RenderWorld.Camera.CameraData;
+			device.ComputeConstants[ regRadiosity		]	=	cbRadiosity;
+			device.ComputeConstants[ regCascadeShadow	]	=	rs.LightManager.ShadowMap.GetCascadeShadowConstantBuffer();
+			device.ComputeConstants[ regDirectLight		]	=	rs.LightManager.DirectLightData;
+			device.ComputeConstants[ regFrustumPlanes	]	=	rs.RenderWorld.Camera.FrustumPlanes;
+
+			device.ComputeResources[ regPosition		]	=	lightMap.position	;
+			device.ComputeResources[ regAlbedo			]	=	lightMap.albedo		;
+			device.ComputeResources[ regNormal			]	=	lightMap.normal		;
+			device.ComputeResources[ regTiles			]	=	lightMap.tiles		;
+			device.ComputeResources[ regIndexMap		]	=	lightMap.indexMap	;
+			device.ComputeResources[ regIndices			]	=	lightMap.indices	;
+			device.ComputeResources[ regCache			]	=	lightMap.cache		;
+			device.ComputeResources[ regRadiance		]	=	lightMap.irradianceL0		;
+
+			device.ComputeSamplers[ regSamplerShadow	]	=	SamplerState.ShadowSampler;
+			device.ComputeSamplers[ regSamplerLinear	]	=	SamplerState.LinearClamp;
+
+			device.ComputeResources[ regShadowMap		]	=	rs.LightManager.ShadowMap.ShadowTexture;
+			device.ComputeResources[ regShadowMask		]	=	rs.LightManager.ShadowMap.ParticleShadowTexture;
+
+			device.ComputeResources[ regSkyBox			]	=	rs.Sky.SkyCube;
+			device.ComputeResources[ regSky				]	=	lightMap.sky;
+
+			device.ComputeResources[ regBBoxMin			]	=	lightMap.bboxMin;
+			device.ComputeResources[ regBBoxMax			]	=	lightMap.bboxMax;
+
+			device.ComputeResources[ regClusters		]	=	lightMap.clusters;
+			device.ComputeResources[ regIndexVolume		]	=	lightMap.indexVol;
+			device.ComputeResources[ regSkyVolume		]	=	lightMap.skyVol;
+		}
+
+
+
+		void DispatchRegion( Rectangle region, int mip = 0 )
+		{
+			var radiosity = new RADIOSITY();
+
+			int x		=	region.X >> mip;
+			int y		=	region.Y >> mip;
+			int width	=	region.Width >> mip;
+			int height	=	region.Height >> mip;
+
+			radiosity.RegionXY			=	new UInt2((uint)x, (uint)y);
+			radiosity.RegionWidth		=	(uint)width;
+			radiosity.RegionHeight		=	(uint)height;
+
+			radiosity.SkyFactor			=	SkyFactor;
+			radiosity.IndirectFactor	=	IndirectFactor / lightMap.Header.LightMapSampleCount;
+			radiosity.SecondBounce		=	SecondBounce;
+			radiosity.ShadowFilter		=	ShadowFilterRadius;
+
+			cbRadiosity.SetData( radiosity );
+
+			device.Dispatch( new Int2( width, height ), new Int2( TileSize, TileSize ) );
+		}
+
+
+
+		void RenderRegion( Rectangle region )
+		{
+			using ( new PixEvent( "Lighting" ) )
+			{
+				device.PipelineState    =   factory[(int)Flags.LIGHTING];			
+				
+				device.SetComputeUnorderedAccess( regRadianceUav, lightMap.radiance.Surface.UnorderedAccess );
+					
+				DispatchRegion( region );
+			}
+
+			using ( new PixEvent( "Collapse" ) )
+			{
+				device.PipelineState    =   factory[(int)Flags.COLLAPSE];			
+
+				for (int mip=1; mip<RadiositySettings.MapPatchLevels; mip++)
+				{
+					device.SetComputeUnorderedAccess( regRadianceUav,		lightMap.radiance.GetSurface( mip ).UnorderedAccess );
+					device.ComputeResources			[ regRadiance	]	=	lightMap.radiance.GetShaderResource( mip - 1 );
+
+					DispatchRegion( region, mip );
+				}
+			}
+
+			using ( new PixEvent( "Integrate Map" ) )
+			{
+				device.PipelineState    =   factory[(int)Flags.INTEGRATE2];			
+
+				device.SetComputeUnorderedAccess( regRadianceUav,		null );
+				device.SetComputeUnorderedAccess( regIrradianceL0,		lightMap.irradianceL0.Surface.UnorderedAccess );
+				device.SetComputeUnorderedAccess( regIrradianceL1,		lightMap.irradianceL1.Surface.UnorderedAccess );
+				device.SetComputeUnorderedAccess( regIrradianceL2,		lightMap.irradianceL2.Surface.UnorderedAccess );
+				device.SetComputeUnorderedAccess( regIrradianceL3,		lightMap.irradianceL3.Surface.UnorderedAccess );
+				device.ComputeResources			[ regRadiance	]	=	lightMap.radiance;
+
+				DispatchRegion( region );
+			}
+
+			using ( new PixEvent( "Denoising/Dilation" ) )
+			{
+				FilterLightmap( lightMap.irradianceL0, lightMap.tempHDR, lightMap.albedo, WeightIntensitySHL0, 20, FalloffIntensitySHL0 );
+				FilterLightmap( lightMap.irradianceL1, lightMap.tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
+				FilterLightmap( lightMap.irradianceL2, lightMap.tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
+				FilterLightmap( lightMap.irradianceL3, lightMap.tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
+			}
+		}
+
+
+
+		void IntegrateLightVolume()
+		{
+			using ( new PixEvent( "Integrate Volume" ) )
+			{
+				device.PipelineState    =   factory[(int)Flags.INTEGRATE3];			
+
+				device.SetComputeUnorderedAccess( regRadianceUav,		null );
+				device.SetComputeUnorderedAccess( regLightVolumeL0,		lightMap.lightVolumeL0.UnorderedAccess );
+				device.SetComputeUnorderedAccess( regLightVolumeL1,		lightMap.lightVolumeL1.UnorderedAccess );
+				device.SetComputeUnorderedAccess( regLightVolumeL2,		lightMap.lightVolumeL2.UnorderedAccess );
+				device.SetComputeUnorderedAccess( regLightVolumeL3,		lightMap.lightVolumeL3.UnorderedAccess );
+				device.ComputeResources			[ regRadiance	]	=	lightMap.radiance;
+
+				int width	=	lightMap.indexVol.Width;
+				int height	=	lightMap.indexVol.Height;
+				int depth	=	lightMap.indexVol.Depth;
+
+				device.Dispatch( new Int3( width, height, depth ), new Int3( ClusterSize, ClusterSize, ClusterSize ) );
+			}
+		}
+
 
 
 		void FilterLightmap( RenderTarget2D irradiance, RenderTarget2D temp, ShaderResource albedo, float lumaFactor, float alphaFactor, float falloff )

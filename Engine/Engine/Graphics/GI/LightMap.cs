@@ -86,6 +86,9 @@ namespace Fusion.Engine.Graphics.Lights {
 		public FormFactor.Header Header { get { return header; } }
 
 
+		public IEnumerable<Rectangle> Regions { get { return regions.Select( r => r.Value ); } }
+
+
 		public LightMap ( RenderSystem rs, Stream stream )
 		{
 			this.rs		=	rs;

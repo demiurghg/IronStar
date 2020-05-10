@@ -109,6 +109,7 @@ namespace Fusion.Engine.Graphics.GI
 			public float	SkyFactor;
 			public float	IndirectFactor;
 			public float	SecondBounce;
+			public float	ShadowFilter;
 		}
 
 		public ShaderResource Radiance		{ get { return lightMap?.radiance;		} }
@@ -192,6 +193,7 @@ namespace Fusion.Engine.Graphics.GI
 				radiosity.SkyFactor			=	SkyFactor;
 				radiosity.IndirectFactor	=	IndirectFactor / lightMap.Header.LightMapSampleCount;
 				radiosity.SecondBounce		=	SecondBounce;
+				radiosity.ShadowFilter		=	ShadowFilterRadius;
 
 				cbRadiosity.SetData( radiosity );
 

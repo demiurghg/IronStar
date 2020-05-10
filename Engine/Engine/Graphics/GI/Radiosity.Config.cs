@@ -52,6 +52,11 @@ namespace Fusion.Engine.Graphics.GI
 		public float SecondBounce { get; set; } = 0.5f;
 
 		[Config]
+		[AECategory("Radiosity")]
+		[AEValueRange(0,10,1f,0.01f)]
+		public float ShadowFilterRadius { get; set; } = 5f;
+
+		[Config]
 		[AECategory("Bilateral Filter")]
 		[AEDisplayName("Weight SH L0")]
 		[AEValueRange(0, 1, 0.1f, 0.01f)]

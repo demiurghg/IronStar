@@ -59,7 +59,7 @@ void SelectCascade( GEOMETRY geometry, CASCADE_SHADOW stage, float2 vpos, float 
 	cascade.Gradient	= 	float3(0,0,0);
 	cascade.Fade   		= 	1;
 		
-	float	bias		= 	(1 - dither) + dither2( vpos.x, vpos.y ) * dither;
+	float	bias		= 	(dither==0) ? 0.99f : ((1 - dither) + dither2( vpos.x, vpos.y ) * dither);
 	
 	float4	worldPos	=	float4(geometry.position, 1);
 	float4	normal		=	float4(geometry.normal, 0);
@@ -81,6 +81,7 @@ void SelectCascade( GEOMETRY geometry, CASCADE_SHADOW stage, float2 vpos, float 
 		cascade.Color		=	float4(0,1,0,1);
 	}
 	
+	#ifndef SKIP_MOST_DETAILED_CASCADES
 	if ( ProjectShadow( worldPos, stage.CascadeViewProjection1, projection ) < bias ) {
 		cascade.Projection 	=	projection;
 		cascade.ScaleOffset	=	stage.CascadeScaleOffset1;
@@ -94,6 +95,7 @@ void SelectCascade( GEOMETRY geometry, CASCADE_SHADOW stage, float2 vpos, float 
 		cascade.Gradient	=	mul( normal, stage.CascadeGradientMatrix0 ).xyz;
 		cascade.Color		=	float4(1,1,1,1);
 	}
+	#endif
 	
 	float	epsilon			=	1 / 8192.0f / 4.0f;
 	float2	depthClamp		=	0.001f;

@@ -11,6 +11,7 @@ $ubershader 	INTEGRATE3
 #define NO_DECALS
 #define NO_CUBEMAPS
 
+#define SKIP_MOST_DETAILED_CASCADES
 #include "ls_core.fxi"
 
 #include "collision.fxi"
@@ -24,6 +25,14 @@ $ubershader 	INTEGRATE3
 // small addition to tell lit and unlit areas
 static const float3 LightEpsilon = float3( 0.001f, 0.001f, 0.001f );
 
+void ReconstructBasis(float3 normal, out float3 tangentX, out float3 tangentY)
+{
+	tangentX = abs(normal.x>0.7) ? float3(0,0,1) : float3(1,0,0);
+	tangentY = normalize( cross(normal, tangentX) );
+	tangentX = normalize( cross(tangentY, normal) );
+}
+
+
 [numthreads(TileSize,TileSize,1)] 
 void CSMain( 
 	uint3 groupId : SV_GroupID, 
@@ -34,23 +43,41 @@ void CSMain(
 	int2	loadXY		=	dispatchThreadId.xy;
 	int2	storeXY		=	dispatchThreadId.xy;
 	
-	
 	SHADOW_RESOURCES	shadowRc;
 	shadowRc.ShadowSampler	=	ShadowSampler	; 
 	shadowRc.LinearSampler	=	LinearSampler	;
 	shadowRc.ShadowMap		=	ShadowMap		;
 	shadowRc.ShadowMask		=	ShadowMask		;
 	
-	GEOMETRY	geometry;
-	geometry.position		=	Position[ loadXY ].xyz;
-	geometry.normal			=	Normal	[ loadXY ].xyz * 2 - 1;
-	geometry.normal			=	normalize( geometry.normal );
-	
 	float4 	albedo			=	Albedo	[ loadXY ].rgba;
-	
 	float3	indirect		=	Radiance[ loadXY ].rgb * Radiosity.SecondBounce * albedo.rgb;
+	float3	position		=	Position[ loadXY ].xyz;
+	float3	normal			=	Normal	[ loadXY ].xyz * 2 - 1;
+			normal			=	normalize( normal );
+	float	size			=	Radiosity.ShadowFilter;
+
+	//	reconstruct basis ?
+	float3  tangentX, tangentY;
+	ReconstructBasis( normal, tangentX, tangentY );
 	
-	float3 	shadow			=	ComputeCascadedShadows( geometry, float2(0,0), CascadeShadow, shadowRc, false );
+	float3 		shadow = 0;
+	GEOMETRY	geometry;
+	geometry.position	=	position;
+	geometry.normal		=	normal;
+
+	float2 sample_pattern[] = {
+		float2( 0.25f, 0.75f ),		float2(-0.75f, 0.25f ),
+		float2(-0.25f,-0.75f ),		float2( 0.75f,-0.25f ),
+		float2( 0.00f, 0.00f )
+	};
+
+	for (int i=0; i<5; i++)
+	{
+		float3 offset = tangentX * sample_pattern[i].x * size;
+					  + tangentY * sample_pattern[i].y * size;
+		geometry.position = position + offset;
+		shadow += 0.2*ComputeCascadedShadows( geometry, float2(0,0), CascadeShadow, shadowRc, false );
+	}
 	
 	FLUX	flux			=	ComputeDirectLightFlux( DirectLight );
 	float3 	lighting		=	ComputeLighting( flux, geometry, albedo.rgb );
@@ -191,7 +218,6 @@ void StoreLightmap( int2 xy, float4 shR, float4 shG, float4 shB )
 }
 
 groupshared uint2 radiance_cache[ PatchCacheSize ];
-
 
 groupshared bool skip_tile_processing = false;
 

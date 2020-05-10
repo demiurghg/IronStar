@@ -2,7 +2,7 @@
 
 static const int TileSize = 8;
 static const int ClusterSize = 4;
-static const uint PatchCacheSize = 512;
+static const uint PatchCacheSize = 768;
 static const uint LightTypeOmni = 1;
 static const uint LightTypeSpotShadow = 3;
 static const uint LightSpotShapeRound = 131072;

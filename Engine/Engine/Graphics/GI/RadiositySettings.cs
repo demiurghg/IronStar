@@ -13,7 +13,7 @@ namespace Fusion.Engine.Graphics.GI
 		public const int MapPatchLevels = 6;
 		public const int TileSize = 8;
 		public const int ClusterSize = 4;
-		public const int MaxPatchesPerTile = 512;
+		public const int MaxPatchesPerTile = 768;
 
 		/// <summary>
 		///	Number of light-gird elements along X-axis

@@ -395,7 +395,7 @@ namespace Fusion.Engine.Graphics.GI
 
 		Vector4 GetVolumeDimension()
 		{
-			return lightMap==null ? new Vector4(1,1,1,1) : new Vector4(	lightMap.Header.VolumeWidth, lightMap.Header.VolumeWidth, lightMap.Header.VolumeDepth, 1 );
+			return lightMap==null ? new Vector4(1,1,1,1) : new Vector4(	lightMap.Header.VolumeWidth, lightMap.Header.VolumeHeight, lightMap.Header.VolumeDepth, 1 );
 		}
 
 
@@ -406,7 +406,7 @@ namespace Fusion.Engine.Graphics.GI
 
 		public Vector4 GetWorldToVoxelOffset()
 		{
-			return (-1) * GetVoxelToWorldOffset() / GetVoxelToWorldScale() / GetVolumeDimension();
+			return ( (-1) * GetVoxelToWorldOffset() / GetVoxelToWorldScale() + Vector4.One * 0.5f ) / GetVolumeDimension();
 		}
 	}
 }

@@ -233,8 +233,17 @@ namespace Fusion.Engine.Graphics.Lights {
 			var globalPatches	=	gatheringResults
 				.Where( results0 => results0 != null )
 				.SelectMany( results1 => results1.Patches )
-				.DistinctBy( patch => patch.Coords )
+				.GroupBy( patch0 => patch0.Coords )
+				.OrderBy( group0 => group0.Count() )
+				.Select( group1 => group1.First() )
+				//.DistinctBy( patch => patch.Coords )
 				.ToArray();
+
+			if (globalPatches.Length>=RadiositySettings.MaxPatchesPerTile)
+			{
+				Log.Warning("Tile [{0}, {1}] exceeded patch cache: {2} > {3}. Extra patches are ignored.", tileX, tileY, globalPatches.Length, RadiositySettings.MaxPatchesPerTile);
+				globalPatches = globalPatches.Take( RadiositySettings.MaxPatchesPerTile ).ToArray();
+			}
 
 			formFactor.Tiles[tileX,tileY]	=	formFactor.AddGlobalPatchIndices( globalPatches );
 
@@ -345,57 +354,6 @@ namespace Fusion.Engine.Graphics.Lights {
 			{
 				BakeCluster( scene, i,j,k );
 			});
-		}
-
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public IrradianceVolume BakeIrradianceVolume (	IEnumerable<MeshInstance> instances2, LightSet lightSet, int numSamples, int w, int h, int d, float stride )
-		{
-			#if false
-			var instances	=	SelectOccludingInstances( instances2 );
-			var hammersley	=	Hammersley.GenerateSphereUniform(numSamples);
-			var irrVolume	=	new IrradianceVolume( rs, w,h,d, stride );
-
-			using ( var rtc = new Rtc() ) {
-
-				using ( var scene = BuildRtcScene( rtc, instances ) ) {
-
-					scene.Commit();
-
-					Log.Message("Indirect light ray tracing...");
-
-					Log.Message("   WHD: {0}x{1}x{2} @ {3}", irrVolume.Width, irrVolume.Height, irrVolume.Depth, irrVolume.Stride );
-
-					for ( int i=0; i<irrVolume.Width; i++ ) {
-
-						Log.Message("... tracing : {0}/{1}", i, irrVolume.Width );
-
-						for ( int j=0; j<irrVolume.Height; j++ ) {
-
-							for ( int k=0; k<irrVolume.Depth; k++ ) {
-
-								var x = ( i-w/2f ) * stride + stride/2;
-								var y = ( j-h/2f ) * stride + stride/2;
-								var z = ( k-d/2f ) * stride + stride/2;
-
-								var p = new Vector3(x,y,z);
-								var n = Vector3.Zero;
-
-								//var r	=	GatherRadiosityPatches( scene, instances, hammersley, lightSet, p, n, -0*stride/2.0f );
-							}
-						}
-					}
-				}
-			}
-
-			irrVolume.UpdateGPUTextures();
-			#endif
-
-			return null; //irrVolume;
 		}
 
 

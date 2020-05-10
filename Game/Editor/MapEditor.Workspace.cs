@@ -228,13 +228,13 @@ namespace IronStar.Editor {
 
 		void ToggleLightProbes()
 		{
-			Game.Invoker.ExecuteString("toggle LightMapDebugger.ShowLightProbes");
+			Game.Invoker.ExecuteString("toggle LightProbeDebug.ShowLightProbes");
 		}
 
 
 		void ToggleLightVolume()
 		{
-			Game.Invoker.ExecuteString("toggle LightMapDebugger.ShowLightVolume");
+			Game.Invoker.ExecuteString("toggle LightProbeDebug.ShowLightVolume");
 		}
 
 

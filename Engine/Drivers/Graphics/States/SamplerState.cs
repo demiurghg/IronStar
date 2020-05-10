@@ -71,6 +71,9 @@ namespace Fusion.Drivers.Graphics {
 		public static SamplerState VTAnisotropicIndex	{ get; private set; }
 		public static SamplerState VTTrilinearIndex		{ get; private set; }
 
+		public static SamplerState LightmapSamplerLinear{ get; private set; }
+		public static SamplerState LightmapSamplerPoint	{ get; private set; }
+
 		D3DSamplerState	state;
 
 
@@ -102,6 +105,9 @@ namespace Fusion.Drivers.Graphics {
 			
 			VTAnisotropicIndex	=	Create( Filter.Anisotropic,		AddressMode.Clamp, new Color4(1f), ComparisonFunc.Always, VTConfig.MaxMipLevel, 4 );
 			VTTrilinearIndex	=	Create( Filter.MinMagMipLinear, AddressMode.Clamp, new Color4(1f), ComparisonFunc.Always, VTConfig.MaxMipLevel );
+
+			LightmapSamplerLinear	=	Create( Filter.MinMagMipLinear, AddressMode.Border, new Color4(0f), ComparisonFunc.Always );
+			LightmapSamplerPoint	=	Create( Filter.MinMagMipPoint,  AddressMode.Border, new Color4(0f), ComparisonFunc.Always );
 		}
 
 

@@ -155,6 +155,25 @@ float3 DecodeDirection (uint dir)
     return normalize(nn.xyz);
 }
 
+uint2 pack_color( float3 color )
+{
+	uint2 result;
+	result.x	=	f32tof16( color.r ) | (f32tof16( color.g ) << 16 );
+	result.y	=	f32tof16( color.b ) | (0xFFFFF << 16);
+	return result;
+}
+
+float3 unpack_color( uint2 color )
+{
+	float3 result;
+	result.r	=	f16tof32( color.x );
+	result.g	=	f16tof32( color.x >> 16 );
+	result.b	=	f16tof32( color.y );
+	
+	return result;
+}
+
+
 uint uintDivUp( uint a, uint b ) { return (a % b != 0) ? (a / b + 1) : (a / b); }
 
 /*------------------------------------------------------------------------------
@@ -171,7 +190,9 @@ void StoreLightmap( int2 xy, float4 shR, float4 shG, float4 shB )
 	IrradianceL3[ xy ]	=	float4( shR.w/shR.x , shG.w/shG.x	, shB.w/shB.x	, 0 ) * 0.5f + 0.5f;
 }
 
-groupshared float3 radiance_cache[PatchCacheSize];
+groupshared uint2 radiance_cache[ PatchCacheSize ];
+
+
 groupshared bool skip_tile_processing = false;
 
 [numthreads(TileSize,TileSize,1)] 
@@ -212,11 +233,11 @@ void CSMain(
 			uint 	lmMip		=	(lmAddr >>  5) & 0x007;
 			int3	loadUVm		=	int3( lmX, lmY, lmMip );
 			float3 	radiance	=	Radiance.Load( loadUVm ).rgb;
-			radiance_cache[ base+offset ] = radiance;
+			radiance_cache[ base+offset ] = pack_color(radiance);
 		}
 		else
 		{
-			radiance_cache[ base+offset ] = float3(0,0,10000);
+			radiance_cache[ base+offset ] = pack_color(float3(10,0,5));
 		}
 	}//*/
 	
@@ -228,6 +249,7 @@ void CSMain(
 	uint 	offsetCount	=	IndexMap[ loadXY ];
 	uint 	offset		=	offsetCount >> 8;
 	uint 	count		=	offsetCount & 0xFF;
+	
 	uint	begin		=	offset;
 	uint	end			=	offset + count;
 	
@@ -244,24 +266,26 @@ void CSMain(
 	irradianceB			+=	SHL1EvaluateDiffuse( skyColor.b, normalize(skyDir.xyz) );
 	
 	if (!skip_tile_processing)
-	for (uint index=begin; index<end; index++)
 	{
-		uint 	lmAddr		=	Indices[ index ];
-		uint 	cacheIndex	=	(lmAddr >> 12) & 0xFFF;
-		uint 	direction	=	(lmAddr >>  6) & 0x03F;
-		uint 	hitCount	=	(lmAddr >>  0) & 0x03F;
-		
-		float3 	radiance	=	radiance_cache[ cacheIndex ];
-		float3 	lightDirN	=	DecodeDirection( direction );
+		for (uint index=begin; index<end; index++)
+		{
+			uint 	lmAddr		=	Indices[ index ];
+			uint 	cacheIndex	=	(lmAddr >> 12) & 0xFFF;
+			uint 	direction	=	(lmAddr >>  6) & 0x03F;
+			uint 	hitCount	=	(lmAddr >>  0) & 0x03F;
+			
+			float3 	radiance	=	unpack_color( radiance_cache[ cacheIndex ] );
+			float3 	lightDirN	=	DecodeDirection( direction );
 
-		float3	light		=	radiance.rgb * hitCount * Radiosity.IndirectFactor;	
-		
-		irradianceR			+=	SHL1EvaluateDiffuse( light.r, lightDirN );
-		irradianceG			+=	SHL1EvaluateDiffuse( light.g, lightDirN );
-		irradianceB			+=	SHL1EvaluateDiffuse( light.b, lightDirN );
-	}//*/
+			float3	light		=	radiance.rgb * hitCount * Radiosity.IndirectFactor;	
+			
+			irradianceR			+=	SHL1EvaluateDiffuse( light.r, lightDirN );
+			irradianceG			+=	SHL1EvaluateDiffuse( light.g, lightDirN );
+			irradianceB			+=	SHL1EvaluateDiffuse( light.b, lightDirN );
+		}
 	
-	StoreLightmap( storeXY.xy, irradianceR, irradianceG, irradianceB );
+		StoreLightmap( storeXY.xy, irradianceR, irradianceG, irradianceB );
+	}
 }
 
 #endif
@@ -280,7 +304,7 @@ void StoreLightVolume( int3 xyz, float4 shR, float4 shG, float4 shB )
 	LightVolumeL3[ xyz ]	=	float4( shR.w/shR.x , shG.w/shG.x	, shB.w/shB.x	, 0 ) * 0.5f + 0.5f;
 }
 
-groupshared float3 radiance_cache[PatchCacheSize];
+groupshared uint2 radiance_cache[PatchCacheSize];
 
 [numthreads(ClusterSize,ClusterSize,ClusterSize)] 
 void CSMain( 
@@ -311,11 +335,11 @@ void CSMain(
 			uint 	lmMip		=	(lmAddr >>  5) & 0x007;
 			int3	loadUVm		=	int3( lmX, lmY, lmMip );
 			float3 	radiance	=	Radiance.Load( loadUVm ).rgb;
-			radiance_cache[ base+offset ] = radiance;
+			radiance_cache[ base+offset ] = pack_color(radiance);
 		}
 		else
 		{
-			radiance_cache[ base+offset ] = float3(0,0,10000);
+			radiance_cache[ base+offset ] = pack_color(float3(10,0,5));
 		}
 	}//*/
 	
@@ -350,7 +374,7 @@ void CSMain(
 		uint 	direction	=	(lmAddr >>  6) & 0x03F;
 		uint 	hitCount	=	(lmAddr >>  0) & 0x03F;
 		
-		float3 	radiance	=	radiance_cache[ cacheIndex ];
+		float3 	radiance	=	unpack_color( radiance_cache[ cacheIndex ] );
 		float3 	lightDirN	=	DecodeDirection( direction );
 
 		float3	light		=	radiance.rgb * hitCount * Radiosity.IndirectFactor;	

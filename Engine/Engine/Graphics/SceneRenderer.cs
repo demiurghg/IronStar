@@ -268,7 +268,7 @@ namespace Fusion.Engine.Graphics {
 
 			device.GfxSamplers[ regSamplerLinear		]	=	rs.VTSystem.UseAnisotropic ? SamplerState.VTAnisotropic : SamplerState.VTTrilinear;
 			device.GfxSamplers[ regSamplerPoint			]	=	SamplerState.PointClamp;
-			device.GfxSamplers[ regSamplerLightmap		]	=	rs.UsePointLightmapSampling ? SamplerState.PointWrap : SamplerState.LinearWrap;
+			device.GfxSamplers[ regSamplerLightmap		]	=	rs.UsePointLightmapSampling ? SamplerState.LightmapSamplerPoint : SamplerState.LightmapSamplerLinear;
 			device.GfxSamplers[ regDecalSampler			]	=	SamplerState.LinearClamp4Mips;
 			device.GfxSamplers[ regParticleSampler		]	=	SamplerState.LinearClamp;
 			device.GfxSamplers[ regMipSampler			]	=	rs.VTSystem.UseAnisotropic ? SamplerState.VTAnisotropicIndex : SamplerState.VTTrilinearIndex;

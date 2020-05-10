@@ -121,6 +121,12 @@ namespace Fusion.Engine.Graphics.Lights {
 				irradianceL2	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	Width, Height, false, true );
 				irradianceL3	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	Width, Height, false, true );
 
+				rs.Device.Clear( radiance.Surface,		Color4.Zero );
+				rs.Device.Clear( irradianceL0.Surface,	Color4.Zero );
+				rs.Device.Clear( irradianceL1.Surface,	Color4.Zero );
+				rs.Device.Clear( irradianceL2.Surface,	Color4.Zero );
+				rs.Device.Clear( irradianceL3.Surface,	Color4.Zero );
+
 				lightVolumeL0	=	new Texture3DCompute( rs.Device, ColorFormat.Rg11B10,	VolumeWidth, VolumeHeight, VolumeDepth );
 				lightVolumeL1	=	new Texture3DCompute( rs.Device, ColorFormat.Rgba8,		VolumeWidth, VolumeHeight, VolumeDepth );
 				lightVolumeL2	=	new Texture3DCompute( rs.Device, ColorFormat.Rgba8,		VolumeWidth, VolumeHeight, VolumeDepth );

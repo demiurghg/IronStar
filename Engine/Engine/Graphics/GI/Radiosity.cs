@@ -20,8 +20,8 @@ namespace Fusion.Engine.Graphics.GI
 	[RequireShader("radiosity", true)]
 	public partial class Radiosity : RenderComponent
 	{
-		[ShaderDefine]	const int BlockSizeX		=	RadiositySettings.TileSize;
-		[ShaderDefine]	const int BlockSizeY		=	RadiositySettings.TileSize;
+		[ShaderDefine]	const int TileSize			=	RadiositySettings.TileSize;
+		[ShaderDefine]	const int ClusterSize		=	RadiositySettings.ClusterSize;
 		[ShaderDefine]	const uint PatchCacheSize	=	RadiositySettings.MaxPatchesPerTile;
 
 		[ShaderDefine]	const uint LightTypeOmni		=	SceneRenderer.LightTypeOmni;
@@ -50,37 +50,34 @@ namespace Fusion.Engine.Graphics.GI
 		static FXTextureCube<Vector4>						regSkyBox			=	new TRegister(12, "SkyBox"			);
 		static FXTexture2D<Vector4>							regBBoxMin			=	new TRegister(13, "BBoxMin"			);
 		static FXTexture2D<Vector4>							regBBoxMax			=	new TRegister(14, "BBoxMax"			);
+		static FXTexture3D<UInt2>							regClusters			=	new TRegister(15, "Clusters"		);
+		static FXTexture3D<uint>							regIndexVolume		=	new TRegister(16, "IndexVolume"		);
+		static FXTexture3D<Vector4>							regSkyVolume		=	new TRegister(17, "SkyVolume"		);
 
 		static FXSamplerState								regSamplerLinear	=	new SRegister( 0, "LinearSampler"	);
 		static FXSamplerComparisonState						regSamplerShadow	=	new SRegister( 1, "ShadowSampler"	);
-																								   
-		static FXRWTexture2D<Vector4>						regRadianceUav		=	new URegister( 0, "RadianceUav"		);
-		static FXRWTexture2D<Vector4>						regIrradianceL0		=	new URegister( 1, "IrradianceL0"	);
-		static FXRWTexture2D<Vector4>						regIrradianceL1		=	new URegister( 2, "IrradianceL1"	);
-		static FXRWTexture2D<Vector4>						regIrradianceL2		=	new URegister( 3, "IrradianceL2"	);
-		static FXRWTexture2D<Vector4>						regIrradianceL3		=	new URegister( 4, "IrradianceL3"	);
+											
+		[ShaderIfDef("LIGHTING,COLLAPSE,DILATE")]	
+		static FXRWTexture2D<Vector4>	regRadianceUav		=	new URegister( 0, "RadianceUav"		);
+
+		[ShaderIfDef("INTEGRATE2")] static FXRWTexture2D<Vector4>	regIrradianceL0		=	new URegister( 0, "IrradianceL0"	);
+		[ShaderIfDef("INTEGRATE2")] static FXRWTexture2D<Vector4>	regIrradianceL1		=	new URegister( 1, "IrradianceL1"	);
+		[ShaderIfDef("INTEGRATE2")] static FXRWTexture2D<Vector4>	regIrradianceL2		=	new URegister( 2, "IrradianceL2"	);
+		[ShaderIfDef("INTEGRATE2")] static FXRWTexture2D<Vector4>	regIrradianceL3		=	new URegister( 3, "IrradianceL3"	);
+
+		[ShaderIfDef("INTEGRATE3")] static FXRWTexture3D<Vector4>	regLightVolumeL0	=	new URegister( 0, "LightVolumeL0"	);
+		[ShaderIfDef("INTEGRATE3")] static FXRWTexture3D<Vector4>	regLightVolumeL1	=	new URegister( 1, "LightVolumeL1"	);
+		[ShaderIfDef("INTEGRATE3")] static FXRWTexture3D<Vector4>	regLightVolumeL2	=	new URegister( 2, "LightVolumeL2"	);
+		[ShaderIfDef("INTEGRATE3")] static FXRWTexture3D<Vector4>	regLightVolumeL3	=	new URegister( 3, "LightVolumeL3"	);
 
 		public LightMap LightMap
 		{
 			get { return lightMap; }
-			set 
-			{
+			set {
 				if (lightMap!=value)
 				{
 					lightMap	=	value;
 					fullRefresh	=	true;
-
-					if (lightMap!=null) 
-					{
-						if (radiance.Width!=lightMap.Width || radiance.Height!=lightMap.Height)
-						{
-							CreateLightMaps( lightMap.Width, lightMap.Height );
-						}
-					}
-					else
-					{
-						CreateLightMaps( lightMap.Width, lightMap.Height );
-					}
 				}
 			}
 		}
@@ -94,10 +91,11 @@ namespace Fusion.Engine.Graphics.GI
 			LIGHTING	=	0x001,
 			DILATE		=	0x002,
 			COLLAPSE	=	0x004,
-			INTEGRATE	=	0x008,
-			DENOISE		=	0x010,
-			PASS1		=	0x020,
-			PASS2		=	0x040,
+			INTEGRATE2	=	0x008,
+			INTEGRATE3	=	0x010,
+			DENOISE		=	0x020,
+			PASS1		=	0x040,
+			PASS2		=	0x080,
 		}
 
 		[StructLayout(LayoutKind.Sequential, Pack=4, Size=64)]
@@ -113,21 +111,15 @@ namespace Fusion.Engine.Graphics.GI
 			public float	SecondBounce;
 		}
 
-
-		public ShaderResource Radiance		{ get { return radiance; } }
-		public ShaderResource IrradianceL0	{ get { return irradianceL0; } }
-		public ShaderResource IrradianceL1	{ get { return irradianceL1; } }
-		public ShaderResource IrradianceL2	{ get { return irradianceL2; } }
-		public ShaderResource IrradianceL3	{ get { return irradianceL3; } }
-
-
-		RenderTarget2D	radiance	;
-		RenderTarget2D	tempHDR;
-		RenderTarget2D	tempLDR;
-		RenderTarget2D	irradianceL0;
-		RenderTarget2D	irradianceL1;
-		RenderTarget2D	irradianceL2;
-		RenderTarget2D	irradianceL3;
+		public ShaderResource Radiance		{ get { return lightMap?.radiance;		} }
+		public ShaderResource IrradianceL0	{ get { return lightMap?.irradianceL0;	} }
+		public ShaderResource IrradianceL1	{ get { return lightMap?.irradianceL1;	} }
+		public ShaderResource IrradianceL2	{ get { return lightMap?.irradianceL2;	} }
+		public ShaderResource IrradianceL3	{ get { return lightMap?.irradianceL3;	} }
+		public ShaderResource LightVolumeL0	{ get { return lightMap?.lightVolumeL0;	} }
+		public ShaderResource LightVolumeL1	{ get { return lightMap?.lightVolumeL1;	 } }
+		public ShaderResource LightVolumeL2	{ get { return lightMap?.lightVolumeL2;	 } }
+		public ShaderResource LightVolumeL3	{ get { return lightMap?.lightVolumeL3;	 } }
 
 		ConstantBuffer	cbRadiosity	;
 		Ubershader		shader;
@@ -146,8 +138,6 @@ namespace Fusion.Engine.Graphics.GI
 
 			cbRadiosity	=	new ConstantBuffer( rs.Device, typeof(RADIOSITY) );
 
-			CreateLightMaps(16,16);
-
 			LoadContent();
 
 			Game.Reloading += (s,e) => LoadContent();
@@ -162,41 +152,11 @@ namespace Fusion.Engine.Graphics.GI
 
 
 
-		public void CreateLightMaps ( int width, int height )
-		{
-			Log.Message("Radiosity : created new radiance/irradiance maps : {0}x{1}", width, height );
-
-			SafeDispose( ref radiance	 );
-			SafeDispose( ref tempHDR	 );
-			SafeDispose( ref tempLDR	 );
-			SafeDispose( ref irradianceL0 );
-			SafeDispose( ref irradianceL1 );
-			SafeDispose( ref irradianceL2 );
-			SafeDispose( ref irradianceL3 );
-
-			radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	width, height, true,  true );
-			tempHDR			=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	width, height, false, true );
-			tempLDR			=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	width, height, false, true );
-			irradianceL0	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	width, height, false, true );
-			irradianceL1	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	width, height, false, true );
-			irradianceL2	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	width, height, false, true );
-			irradianceL3	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	width, height, false, true );
-		}
-
-
 		protected override void Dispose( bool disposing )
 		{
 			if (disposing)
 			{
 				SafeDispose( ref cbRadiosity	);
-
-				SafeDispose( ref radiance		);
-				SafeDispose( ref tempHDR		);
-				SafeDispose( ref tempLDR		);
-				SafeDispose( ref irradianceL0	);
-				SafeDispose( ref irradianceL1	);
-				SafeDispose( ref irradianceL2	);
-				SafeDispose( ref irradianceL3	);
 			}
 
 			base.Dispose( disposing );
@@ -213,15 +173,14 @@ namespace Fusion.Engine.Graphics.GI
 				return;
 			}
 
-			var dr = rs.RenderWorld.Debug;
-
-			for (uint i=0; i<511; i++)
-			{
-				var p0 = MortonCode.Decode3(MortonCode.Code3(MortonCode.Decode3(i  )));
-				var p1 = MortonCode.Decode3(MortonCode.Code3(MortonCode.Decode3(i+1)));
-				dr.DrawLine( new Vector3( p0.X * 8, p0.Y * 8, p0.Z * 8 ), new Vector3( p1.X * 8, p1.Y * 8, p1.Z * 8 ), Color.Orange, Color.Orange, 1, 1 );
-			}
-			//lightMap.DebugDraw( DebugX, DebugY, rs.RenderWorld.Debug );
+			//var dr = rs.RenderWorld.Debug;
+			//for (uint i=0; i<511; i++)
+			//{
+			//	var p0 = MortonCode.Decode3(MortonCode.Code3(MortonCode.Decode3(i  )));
+			//	var p1 = MortonCode.Decode3(MortonCode.Code3(MortonCode.Decode3(i+1)));
+			//	dr.DrawLine( new Vector3( p0.X * 8, p0.Y * 8, p0.Z * 8 ), new Vector3( p1.X * 8, p1.Y * 8, p1.Z * 8 ), Color.Orange, Color.Orange, 1, 1 );
+			//}
+			////lightMap.DebugDraw( DebugX, DebugY, rs.RenderWorld.Debug );
 
 
 			using ( new PixEvent( "Radiosity" ) )
@@ -249,7 +208,7 @@ namespace Fusion.Engine.Graphics.GI
 				device.ComputeResources[ regIndexMap		]	=	lightMap.indexMap	;
 				device.ComputeResources[ regIndices			]	=	lightMap.indices	;
 				device.ComputeResources[ regCache			]	=	lightMap.cache		;
-				device.ComputeResources[ regRadiance		]	=	irradianceL0		;
+				device.ComputeResources[ regRadiance		]	=	lightMap.irradianceL0		;
 
 				device.ComputeSamplers[ regSamplerShadow	]	=	SamplerState.ShadowSampler;
 				device.ComputeSamplers[ regSamplerLinear	]	=	SamplerState.LinearClamp;
@@ -263,14 +222,18 @@ namespace Fusion.Engine.Graphics.GI
 				device.ComputeResources[ regBBoxMin			]	=	lightMap.bboxMin;
 				device.ComputeResources[ regBBoxMax			]	=	lightMap.bboxMax;
 
+				device.ComputeResources[ regClusters		]	=	lightMap.clusters;
+				device.ComputeResources[ regIndexVolume		]	=	lightMap.indexVol;
+				device.ComputeResources[ regSkyVolume		]	=	lightMap.skyVol;
+
 
 				using ( new PixEvent( "Lighting" ) )
 				{
 					device.PipelineState    =   factory[(int)Flags.LIGHTING];			
 				
-					device.SetComputeUnorderedAccess( regRadianceUav, radiance.Surface.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regRadianceUav, lightMap.radiance.Surface.UnorderedAccess );
 					
-					device.Dispatch( new Int2( lightMap.Width, lightMap.Height ), new Int2( BlockSizeX, BlockSizeY ) );
+					device.Dispatch( new Int2( lightMap.Width, lightMap.Height ), new Int2( TileSize, TileSize ) );
 				}
 
 
@@ -280,41 +243,60 @@ namespace Fusion.Engine.Graphics.GI
 
 					for (int mip=1; mip<RadiositySettings.MapPatchLevels; mip++)
 					{
-						device.SetComputeUnorderedAccess( regRadianceUav,		radiance.GetSurface( mip ).UnorderedAccess );
-						device.ComputeResources			[ regRadiance	]	=	radiance.GetShaderResource( mip - 1 );
+						device.SetComputeUnorderedAccess( regRadianceUav,		lightMap.radiance.GetSurface( mip ).UnorderedAccess );
+						device.ComputeResources			[ regRadiance	]	=	lightMap.radiance.GetShaderResource( mip - 1 );
 
 						int width	=	lightMap.Width  >> mip;
 						int height	=	lightMap.Height >> mip;
 
-						device.Dispatch( new Int2( width, height ), new Int2( BlockSizeX, BlockSizeY ) );
+						device.Dispatch( new Int2( width, height ), new Int2( TileSize, TileSize ) );
 					}
 				}
 
 
-				using ( new PixEvent( "Integrate" ) )
+				using ( new PixEvent( "Integrate Map" ) )
 				{
-					device.PipelineState    =   factory[(int)Flags.INTEGRATE];			
+					device.PipelineState    =   factory[(int)Flags.INTEGRATE2];			
 
 					device.SetComputeUnorderedAccess( regRadianceUav,		null );
-					device.SetComputeUnorderedAccess( regIrradianceL0,		irradianceL0.Surface.UnorderedAccess );
-					device.SetComputeUnorderedAccess( regIrradianceL1,		irradianceL1.Surface.UnorderedAccess );
-					device.SetComputeUnorderedAccess( regIrradianceL2,		irradianceL2.Surface.UnorderedAccess );
-					device.SetComputeUnorderedAccess( regIrradianceL3,		irradianceL3.Surface.UnorderedAccess );
-					device.ComputeResources			[ regRadiance	]	=	radiance;
+					device.SetComputeUnorderedAccess( regIrradianceL0,		lightMap.irradianceL0.Surface.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regIrradianceL1,		lightMap.irradianceL1.Surface.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regIrradianceL2,		lightMap.irradianceL2.Surface.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regIrradianceL3,		lightMap.irradianceL3.Surface.UnorderedAccess );
+					device.ComputeResources			[ regRadiance	]	=	lightMap.radiance;
 
 					int width	=	lightMap.Width;
 					int height	=	lightMap.Height;
 
-					device.Dispatch( new Int2( lightMap.Width, lightMap.Height ), new Int2( BlockSizeX, BlockSizeY ) );
+					device.Dispatch( new Int2( lightMap.Width, lightMap.Height ), new Int2( TileSize, TileSize ) );
+				}
+
+
+				using ( new PixEvent( "Integrate Volume" ) )
+				{
+					device.PipelineState    =   factory[(int)Flags.INTEGRATE3];			
+
+					device.SetComputeUnorderedAccess( regRadianceUav,		null );
+					device.SetComputeUnorderedAccess( regLightVolumeL0,		lightMap.lightVolumeL0.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regLightVolumeL1,		lightMap.lightVolumeL1.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regLightVolumeL2,		lightMap.lightVolumeL2.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regLightVolumeL3,		lightMap.lightVolumeL3.UnorderedAccess );
+					device.ComputeResources			[ regRadiance	]	=	lightMap.radiance;
+
+					int width	=	lightMap.indexVol.Width;
+					int height	=	lightMap.indexVol.Height;
+					int depth	=	lightMap.indexVol.Depth;
+
+					device.Dispatch( new Int3( width, height, depth ), new Int3( ClusterSize, ClusterSize, ClusterSize ) );
 				}
 
 
 				using ( new PixEvent( "Denoising/Dilation" ) )
 				{
-					FilterLightmap( irradianceL0, tempHDR, lightMap.albedo, WeightIntensitySHL0, 20, FalloffIntensitySHL0 );
-					FilterLightmap( irradianceL1, tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
-					FilterLightmap( irradianceL2, tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
-					FilterLightmap( irradianceL3, tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
+					FilterLightmap( lightMap.irradianceL0, lightMap.tempHDR, lightMap.albedo, WeightIntensitySHL0, 20, FalloffIntensitySHL0 );
+					FilterLightmap( lightMap.irradianceL1, lightMap.tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
+					FilterLightmap( lightMap.irradianceL2, lightMap.tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
+					FilterLightmap( lightMap.irradianceL3, lightMap.tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
 				}
 			}
 		}
@@ -360,5 +342,71 @@ namespace Fusion.Engine.Graphics.GI
 
 
 
+		public static Matrix ComputeWorldToVoxelMatrix( int width, int height, int depth, int stride, Vector3 origin )
+		{
+			var translation0	=	Matrix.Translation( width / 2.0f * stride, height / 2.0f * stride, depth / 2.0f * stride );
+			var translation1	=	Matrix.Translation( origin );
+
+			var scaling0		=	Matrix.Scaling( 1.0f / width, 1.0f / height, 1.0f / depth );
+			var scaling1		=	Matrix.Scaling( 1.0f / stride );
+
+			return	translation0 * translation1 * scaling0 * scaling1;
+		}
+
+
+		public static Vector3 VoxelToWorld( Int3 voxel, FormFactor.Header header )
+		{
+			var result = new Vector4(voxel.X, voxel.Y, voxel.Z, 0) * GetVoxelToWorldScale(header) + GetVoxelToWorldOffset(header);
+			return new Vector3( result.X, result.Y, result.Z );
+		}
+
+
+		static public Vector4 GetVoxelToWorldScale( FormFactor.Header header )
+		{
+			float s = header.VolumeStride;
+			return new Vector4( s, s, s, 0 );
+		}
+
+
+		static public Vector4 GetVoxelToWorldOffset( FormFactor.Header header )
+		{
+			float s = header.VolumeStride;
+			float w = header.VolumeWidth;
+			float h = header.VolumeHeight;
+			float d = header.VolumeDepth;
+			float x = header.VolumePosition.X - (s*w/2) + s/2;
+			float y = header.VolumePosition.Y -         + s/2;
+			float z = header.VolumePosition.Z - (s*d/2) + s/2;
+			return new Vector4( x, y, z, 0 );
+		}
+
+
+		public Vector4 GetVoxelToWorldScale()
+		{
+			return lightMap==null ? new Vector4(1,1,1,1) : GetVoxelToWorldScale(lightMap.Header);
+		}
+
+
+		public Vector4 GetVoxelToWorldOffset()
+		{
+			return lightMap==null ? new Vector4(0,0,0,0) : GetVoxelToWorldOffset(lightMap.Header);
+		}
+
+
+		Vector4 GetVolumeDimension()
+		{
+			return lightMap==null ? new Vector4(1,1,1,1) : new Vector4(	lightMap.Header.VolumeWidth, lightMap.Header.VolumeWidth, lightMap.Header.VolumeDepth, 1 );
+		}
+
+
+		public Vector4 GetWorldToVoxelScale()
+		{
+			return Vector4.One / GetVoxelToWorldScale() / GetVolumeDimension();
+		}
+
+		public Vector4 GetWorldToVoxelOffset()
+		{
+			return (-1) * GetVoxelToWorldOffset() / GetVoxelToWorldScale() / GetVolumeDimension();
+		}
 	}
 }

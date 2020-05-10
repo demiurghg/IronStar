@@ -41,6 +41,28 @@ struct GEOMETRY
 	float3 	normal;			//	world-space geometry (vertex interpolated) normal
 };
 
+SURFACE CreateDiffuseSurface(float3 color, float3 normal)
+{
+	SURFACE surf;
+	surf.baseColor	=	color;
+	surf.normal		=	normal;
+	surf.emission	=	0;	
+	surf.roughness	=	1;	
+	surf.metallic	=	0;	
+	surf.occlusion	=	1;	
+	surf.diffuse	=	color;
+	surf.specular	=	0;	
+	surf.alpha		=	1;	
+	return surf;
+}
+
+GEOMETRY CreateGeometry( float3 p, float3 n )
+{
+	GEOMETRY g;
+	g.position 	= p;
+	g.normal	= n;
+	return g;
+}
 
 /*------------------------------------------------------------------------------
 	BRDF functions :

@@ -67,7 +67,8 @@ namespace Fusion.Engine.Graphics {
 		[StructLayout(LayoutKind.Sequential, Pack=4, Size=256)]
 		struct STAGE 
 		{
-			public Matrix	OcclusionGridMatrix		;
+			public Vector4	WorldToVoxelScale		;
+			public Vector4	WorldToVoxelOffset		;
 			
 			public Color4	SkyAmbientLevel			;
 			public Color4	FogColor				;

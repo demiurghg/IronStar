@@ -1,7 +1,7 @@
 // ---------------- CONSTANT VALUES ---------------- //
 
-static const int BlockSizeX = 8;
-static const int BlockSizeY = 8;
+static const int TileSize = 8;
+static const int ClusterSize = 4;
 static const uint PatchCacheSize = 512;
 static const uint LightTypeOmni = 1;
 static const uint LightTypeSpotShadow = 3;
@@ -114,10 +114,23 @@ Texture2D<float4>              Sky                            : register(t11);
 TextureCube<float4>            SkyBox                         : register(t12);
 Texture2D<float4>              BBoxMin                        : register(t13);
 Texture2D<float4>              BBoxMax                        : register(t14);
+Texture3D<uint2>               Clusters                       : register(t15);
+Texture3D<uint>                IndexVolume                    : register(t16);
+Texture3D<float4>              SkyVolume                      : register(t17);
 SamplerState                   LinearSampler                  : register(s0);
 SamplerComparisonState         ShadowSampler                  : register(s1);
+#if defined(LIGHTING) || defined(COLLAPSE) || defined(DILATE)
 RWTexture2D<float4>            RadianceUav                    : register(u0);
-RWTexture2D<float4>            IrradianceL0                   : register(u1);
-RWTexture2D<float4>            IrradianceL1                   : register(u2);
-RWTexture2D<float4>            IrradianceL2                   : register(u3);
-RWTexture2D<float4>            IrradianceL3                   : register(u4);
+#endif
+#if defined(INTEGRATE2)
+RWTexture2D<float4>            IrradianceL0                   : register(u0);
+RWTexture2D<float4>            IrradianceL1                   : register(u1);
+RWTexture2D<float4>            IrradianceL2                   : register(u2);
+RWTexture2D<float4>            IrradianceL3                   : register(u3);
+#endif
+#if defined(INTEGRATE3)
+RWTexture3D<float4>            LightVolumeL0                  : register(u0);
+RWTexture3D<float4>            LightVolumeL1                  : register(u1);
+RWTexture3D<float4>            LightVolumeL2                  : register(u2);
+RWTexture3D<float4>            LightVolumeL3                  : register(u3);
+#endif

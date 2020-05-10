@@ -10,24 +10,20 @@ struct LIGHTMAP_RESOURCES
 	Texture2D<float4>	IrradianceMapL1;
 	Texture2D<float4>	IrradianceMapL2;
 	Texture2D<float4>	IrradianceMapL3;
-	Texture3D<float4>	IrradianceVolumeR;
-	Texture3D<float4>	IrradianceVolumeG;
-	Texture3D<float4>	IrradianceVolumeB;
+	Texture3D<float4>	IrradianceVolumeL0;
+	Texture3D<float4>	IrradianceVolumeL1;
+	Texture3D<float4>	IrradianceVolumeL2;
+	Texture3D<float4>	IrradianceVolumeL3;
 };
 
 static const float GI_SCALE = 3.1415f;
 
-float3	EvaluateLightmap ( LIGHTMAP_RESOURCES lightmap, GEOMETRY geometry, SURFACE surface, CAMERA camera, float2 lightMapCoord )
+
+float3 	EvaluateSHL( float3 shL0, float3 shL1, float3 shL2, float3 shL3, GEOMETRY geometry, SURFACE surface, CAMERA camera )
 {
 	float3	normal	=	normalize(surface.normal);
 	float3 	light	=	0;
 	
-	//	unpacking SH lightmaps :
-	float3 	shL0	=	lightmap.IrradianceMapL0.Sample( lightmap.Sampler, lightMapCoord ).rgb;
-	float3 	shL1	=	lightmap.IrradianceMapL1.Sample( lightmap.Sampler, lightMapCoord ).rgb * 2 - 1;
-	float3 	shL2	=	lightmap.IrradianceMapL2.Sample( lightmap.Sampler, lightMapCoord ).rgb * 2 - 1;
-	float3 	shL3	=	lightmap.IrradianceMapL3.Sample( lightmap.Sampler, lightMapCoord ).rgb * 2 - 1;
-
 	//	specular approximation :
 	float3 	luma	=	float3(0.3,0.5,0.2);
 	float3	dir		=	float3( dot(shL3,luma), dot(shL1,luma), dot(shL2,luma) );
@@ -58,31 +54,36 @@ float3	EvaluateLightmap ( LIGHTMAP_RESOURCES lightmap, GEOMETRY geometry, SURFAC
 }
 
 
-float3	EvaluateLightVolume ( LIGHTMAP_RESOURCES lightmap, SURFACE surface, float3 volumeCoord )
+float3	EvaluateLightmap ( LIGHTMAP_RESOURCES lightmap, GEOMETRY geometry, SURFACE surface, CAMERA camera, float2 lightMapCoord )
 {
-	float3	worldNormal	=	normalize(surface.normal);
-	float4 	irradianceR	=	lightmap.IrradianceVolumeR.Sample( lightmap.Sampler, volumeCoord );
-	float4 	irradianceG	=	lightmap.IrradianceVolumeG.Sample( lightmap.Sampler, volumeCoord );
-	float4 	irradianceB	=	lightmap.IrradianceVolumeB.Sample( lightmap.Sampler, volumeCoord );
-	float	lightR		=	EvalSHL1Smooth( irradianceR, worldNormal );
-	float	lightG		=	EvalSHL1Smooth( irradianceG, worldNormal );
-	float	lightB		=	EvalSHL1Smooth( irradianceB, worldNormal );
-	return	float3( lightR, lightG, lightB ) * surface.diffuse * GI_SCALE;
+	float3 	shL0	=	lightmap.IrradianceMapL0.SampleLevel( lightmap.Sampler, lightMapCoord, 0 ).rgb;
+	float3 	shL1	=	lightmap.IrradianceMapL1.SampleLevel( lightmap.Sampler, lightMapCoord, 0 ).rgb * 2 - 1;
+	float3 	shL2	=	lightmap.IrradianceMapL2.SampleLevel( lightmap.Sampler, lightMapCoord, 0 ).rgb * 2 - 1;
+	float3 	shL3	=	lightmap.IrradianceMapL3.SampleLevel( lightmap.Sampler, lightMapCoord, 0 ).rgb * 2 - 1;
+
+	return EvaluateSHL( shL0, shL1, shL2, shL3, geometry, surface, Camera );
 }
 
 
-float3	EvaluateLightVolume ( LIGHTMAP_RESOURCES lightmap, float3 normal, float3 volumeCoord )
+float3	EvaluateLightVolume ( LIGHTMAP_RESOURCES lightmap, GEOMETRY geometry, SURFACE surface, CAMERA camera, float3 volumeCoord )
 {
-	float3	worldNormal	=	normalize(normal);
-	float4 	irradianceR	=	lightmap.IrradianceVolumeR.Sample( lightmap.Sampler, volumeCoord );
-	float4 	irradianceG	=	lightmap.IrradianceVolumeG.Sample( lightmap.Sampler, volumeCoord );
-	float4 	irradianceB	=	lightmap.IrradianceVolumeB.Sample( lightmap.Sampler, volumeCoord );
-	float	lightR		=	EvalSHL1Smooth( irradianceR, worldNormal );
-	float	lightG		=	EvalSHL1Smooth( irradianceG, worldNormal );
-	float	lightB		=	EvalSHL1Smooth( irradianceB, worldNormal );
-	return	float3( lightR, lightG, lightB ) * GI_SCALE;
+	float3 	shL0	=	lightmap.IrradianceVolumeL0.SampleLevel( lightmap.Sampler, volumeCoord, 0 ).rgb;
+	float3 	shL1	=	lightmap.IrradianceVolumeL1.SampleLevel( lightmap.Sampler, volumeCoord, 0 ).rgb * 2 - 1;
+	float3 	shL2	=	lightmap.IrradianceVolumeL2.SampleLevel( lightmap.Sampler, volumeCoord, 0 ).rgb * 2 - 1;
+	float3 	shL3	=	lightmap.IrradianceVolumeL3.SampleLevel( lightmap.Sampler, volumeCoord, 0 ).rgb * 2 - 1;
+
+	return EvaluateSHL( shL0, shL1, shL2, shL3, geometry, surface, Camera );
 }
 
+float3	EvaluateLightVolume ( LIGHTMAP_RESOURCES lightmap, GEOMETRY geometry, SURFACE surface, CAMERA camera, uint3 voxelIndex )
+{
+	float3 	shL0	=	lightmap.IrradianceVolumeL0[ voxelIndex ].rgb;
+	float3 	shL1	=	lightmap.IrradianceVolumeL1[ voxelIndex ].rgb * 2 - 1;
+	float3 	shL2	=	lightmap.IrradianceVolumeL2[ voxelIndex ].rgb * 2 - 1;
+	float3 	shL3	=	lightmap.IrradianceVolumeL3[ voxelIndex ].rgb * 2 - 1;
+
+	return EvaluateSHL( shL0, shL1, shL2, shL3, geometry, surface, Camera );
+}
 
 
 #endif

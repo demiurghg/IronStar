@@ -55,17 +55,18 @@ struct DIRECT_LIGHT {
 // Fusion.Engine.Graphics.SceneRenderer+STAGE
 // Marshal.SizeOf = 256
 struct STAGE {
-	float4x4   OcclusionGridMatrix;           // offset:    0
-	float4     SkyAmbientLevel;               // offset:   64
-	float4     FogColor;                      // offset:   80
-	float4     ViewportSize;                  // offset:   96
-	float      FogAttenuation;                // offset:  112
-	float      VTPageScaleRCP;                // offset:  116
-	float      VTGradientScaler;              // offset:  120
-	float      SsaoWeight;                    // offset:  124
-	float      SlopeBias;                     // offset:  128
-	float      DepthBias;                     // offset:  132
-	float      DirectLightFactor;             // offset:  136
+	float4     WorldToVoxelScale;             // offset:    0
+	float4     WorldToVoxelOffset;            // offset:   16
+	float4     SkyAmbientLevel;               // offset:   32
+	float4     FogColor;                      // offset:   48
+	float4     ViewportSize;                  // offset:   64
+	float      FogAttenuation;                // offset:   80
+	float      VTPageScaleRCP;                // offset:   84
+	float      VTGradientScaler;              // offset:   88
+	float      SsaoWeight;                    // offset:   92
+	float      SlopeBias;                     // offset:   96
+	float      DepthBias;                     // offset:  100
+	float      DirectLightFactor;             // offset:  104
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+INSTANCE
@@ -186,11 +187,12 @@ Texture2D<float4>              IrradianceMapL0                : register(t14);
 Texture2D<float4>              IrradianceMapL1                : register(t15);
 Texture2D<float4>              IrradianceMapL2                : register(t16);
 Texture2D<float4>              IrradianceMapL3                : register(t17);
-Texture3D<float4>              IrradianceVolumeR              : register(t18);
-Texture3D<float4>              IrradianceVolumeG              : register(t19);
-Texture3D<float4>              IrradianceVolumeB              : register(t20);
-TextureCubeArray<float4>       RadianceCache                  : register(t21);
-Texture2D<float4>              EnvLut                         : register(t22);
+Texture3D<float4>              IrradianceVolumeL0             : register(t18);
+Texture3D<float4>              IrradianceVolumeL1             : register(t19);
+Texture3D<float4>              IrradianceVolumeL2             : register(t20);
+Texture3D<float4>              IrradianceVolumeL3             : register(t21);
+TextureCubeArray<float4>       RadianceCache                  : register(t22);
+Texture2D<float4>              EnvLut                         : register(t23);
 SamplerState                   SamplerLinear                  : register(s0);
 SamplerState                   SamplerPoint                   : register(s1);
 SamplerState                   SamplerLightmap                : register(s2);

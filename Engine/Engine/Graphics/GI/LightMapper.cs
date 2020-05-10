@@ -170,6 +170,7 @@ namespace Fusion.Engine.Graphics.Lights {
 					//--------------------------------------
 
 					Log.Message("Building volumetric form-factor...");
+					BakeLightVolume( scene );
 					//ForEachLightMapTile( lmGroups, (tx,ty) => BakeCluster( scene, tx, ty ) );
 				}
 			}
@@ -283,57 +284,70 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		void BakeCluster ( RtcScene scene, int clusterX, int clusterY, int clusterZ )
 		{
-			//int clusterSize			=	RadiositySettings.ClusterSize;
-			//var offset				=	new Int3( clusterX * clusterSize, clusterY * clusterSize, clusterZ * clusterSize );
-			//var gatheringResults	=	new GatheringResults[tileSize*tileSize];
+			int clusterSize			=	RadiositySettings.ClusterSize;
+			int totalVoxels			=	clusterSize * clusterSize * clusterSize;
+			var offset				=	new Int3( clusterX * clusterSize, clusterY * clusterSize, clusterZ * clusterSize );
+			var gatheringResults	=	new GatheringResults[totalVoxels];
 
-			//for (uint i=0; i<tileSize*tileSize*clusterSize; i++)
-			//{
-			//	var xy = MortonCode.Decode2( i ) + offset;
+			for (uint i=0; i<totalVoxels; i++)
+			{
+				var xyz = MortonCode.Decode3( i ) + offset;
+				var p = Radiosity.VoxelToWorld( xyz, formFactor.header );
+				var n = Vector3.Zero;
 
-			//	var p = formFactor.Position[xy];
-			//	var n = formFactor.Normal[xy];
-			//	var c = formFactor.Albedo[xy];
+				gatheringResults[i]	=	GatherRadiosityPatches( scene, p, n );
+			}
 
-			//	gatheringResults[i]	=	(c.A > 0) ? GatherRadiosityPatches( scene, p, n ) : null;
-			//}
+			//	merge all hit patches (thir coords) and upload cache-line to formfactor
+			//	retrieving (offset, count) of uploaded cache-line
+			var globalPatches	=	gatheringResults
+				.Where( results0 => results0 != null )
+				.SelectMany( results1 => results1.Patches )
+				.DistinctBy( patch => patch.Coords )
+				.ToArray();
 
-			////	merge all hit patches (thir coords) and upload cache-line to formfactor
-			////	retrieving (offset, count) of uploaded cache-line
-			//var globalPatches	=	gatheringResults
-			//	.Where( results0 => results0 != null )
-			//	.SelectMany( results1 => results1.Patches )
-			//	.DistinctBy( patch => patch.Coords )
-			//	.ToArray();
+			formFactor.Clusters[clusterX,clusterY,clusterZ]	=	formFactor.AddGlobalPatchIndices( globalPatches );
 
-			//formFactor.Tiles[tileX,tileY]	=	formFactor.AddGlobalPatchIndices( globalPatches );
+			for (uint i=0; i<totalVoxels; i++)
+			{
+				var xyz = MortonCode.Decode3( i ) + offset;
 
-			//for (uint i=0; i<tileSize*tileSize; i++)
-			//{
-			//	var xy = MortonCode.Decode2( i ) + offset;
+				if (gatheringResults[i]==null)
+				{
+					formFactor.IndexVolume[xyz] = 0;
+					formFactor.SkyVolume[xyz] = Vector3.Zero;
+				}
+				else
+				{
+					var cachedPatches	=	gatheringResults[i].Patches	
+						.GroupBy( patch0 => patch0.Coords )
+						.Select( group => new { 
+							Patch = group.First(), 
+							Hits = group.Count(),
+							Dir = Radiosity.EncodeDirection( formFactor.Position[ group.First().Coords ] - gatheringResults[i].Origin )
+						} )
+						.Select( patch1 => new CachedPatchIndex( GetPatchIndexInCache(globalPatches, patch1.Patch), patch1.Dir, patch1.Hits ) )
+						.ToArray();
 
-			//	if (gatheringResults[i]==null)
-			//	{
-			//		formFactor.IndexMap[xy] = 0;
-			//		formFactor.Sky[xy] = Vector3.Zero;
-			//	}
-			//	else
-			//	{
-			//		var cachedPatches	=	gatheringResults[i].Patches	
-			//			.GroupBy( patch0 => patch0.Coords )
-			//			.Select( group => new { 
-			//				Patch = group.First(), 
-			//				Hits = group.Count(),
-			//				Dir = Radiosity.EncodeDirection( formFactor.Position[ group.First().Coords ] - gatheringResults[i].Origin )
-			//			} )
-			//			.Select( patch1 => new CachedPatchIndex( GetPatchIndexInCache(globalPatches, patch1.Patch), patch1.Dir, patch1.Hits ) )
-			//			.ToArray();
-
-			//		formFactor.IndexMap[xy] = formFactor.AddCachedPatchIndices( cachedPatches );
-			//		formFactor.Sky[xy]		= gatheringResults[i].Sky;
-			//	}
-			//}
+					formFactor.IndexVolume[xyz]	=	formFactor.AddCachedPatchIndices( cachedPatches );
+					formFactor.SkyVolume[xyz]	=	gatheringResults[i].Sky;
+				}
+			}
 		}
+
+
+
+		void BakeLightVolume( RtcScene scene )
+		{
+			const int clusterSize = RadiositySettings.ClusterSize;
+
+			formFactor.Clusters.ForEachVoxel( (i,j,k,c) =>
+			{
+				BakeCluster( scene, i,j,k );
+			});
+		}
+
+
 
 
 		/// <summary>
@@ -480,6 +494,8 @@ namespace Fusion.Engine.Graphics.Lights {
 			var	result			=	new GatheringResults(position);
 
 			var normalLength	=	normal.Length();
+
+			var ignoreNormal	=	normal.Length() < 0.001f;
 
 			//---------------------------------
 			var randVector		=	rand.NextVector3(-Vector3.One, Vector3.One).Normalized();

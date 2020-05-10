@@ -20,6 +20,7 @@ using Fusion.Engine.Graphics.Scenes;
 namespace Fusion.Engine.Graphics.Lights {
 
 	[RequireShader("lightmapDebug",true)]
+	[ShaderSharedStructure(typeof(GpuData.DIRECT_LIGHT))]
 	public class LightProbeDebug : RenderComponent, IPipelineStateProvider {
 
 		[Config]
@@ -40,22 +41,29 @@ namespace Fusion.Engine.Graphics.Lights {
 		[ShaderDefine]
 		const int MaxLightProbes = RenderSystem.MaxEnvLights;
 
+		static FXStructure<GpuData.DIRECT_LIGHT>		stub0	=	0;
+		static FXStructure<SceneRenderer.LIGHT>			stub1	=	0;
+		static FXStructure<SceneRenderer.LIGHTPROBE>	stub2	=	0;
+		static FXStructure<SceneRenderer.DECAL>			stub3	=	0;
+		static FXStructure<ShadowMap.CASCADE_SHADOW>	stub4	=	0;
 
 		static FXConstantBuffer<GpuData.CAMERA>				regCamera			=	new CRegister(0, "Camera");
 		static FXConstantBuffer<DEBUG_PARAMS>				regParams			=	new CRegister(1, "Params");
 		static FXSamplerState								regSampler			=	new SRegister(0, "Sampler"); 
 		
-		static FXTexture3D<Vector4>							regLightVolumeR		=	new TRegister(0, "LightVolumeR");
-		static FXTexture3D<Vector4>							regLightVolumeG		=	new TRegister(1, "LightVolumeG");
-		static FXTexture3D<Vector4>							regLightVolumeB		=	new TRegister(2, "LightVolumeB");
+		static FXTexture3D<Vector4>							regLightVolumeL0		=	new TRegister(0, "LightVolumeL0");
+		static FXTexture3D<Vector4>							regLightVolumeL1		=	new TRegister(1, "LightVolumeL1");
+		static FXTexture3D<Vector4>							regLightVolumeL2		=	new TRegister(2, "LightVolumeL2");
+		static FXTexture3D<Vector4>							regLightVolumeL3		=	new TRegister(3, "LightVolumeL3");
 		
-		static FXTextureCubeArray<Vector4>					regLightProbes		=	new TRegister(3, "LightProbes");
-		static FXStructuredBuffer<SceneRenderer.LIGHTPROBE> regLightProbeData	=	new TRegister(4, "LightProbeData");
+		static FXTextureCubeArray<Vector4>					regLightProbes		=	new TRegister(4, "LightProbes");
+		static FXStructuredBuffer<SceneRenderer.LIGHTPROBE> regLightProbeData	=	new TRegister(5, "LightProbeData");
 
 		[StructLayout(LayoutKind.Sequential, Pack=4)]
 		struct DEBUG_PARAMS 
 		{
-			public Matrix	VolumeTransform;
+			public Vector4	VoxelToWorldScale;
+			public Vector4	VoxelToWorldOffset;
 
 			public float	LightProbeSize;
 			public float	LightProbeMipLevel;
@@ -138,21 +146,22 @@ namespace Fusion.Engine.Graphics.Lights {
 			device.SetTargets( hdrFrame.DepthBuffer.Surface, hdrFrame.HdrBuffer.Surface );
 
 			var paramData	= new DEBUG_PARAMS();
-			var lightVolume	= rs.RenderWorld.IrradianceVolume;
+			var lightmap	= rs.Radiosity.LightMap;
 
 			paramData.LightProbeSize		=	LightProbeSize;
 			paramData.LightProbeMipLevel	=	LightProbeMipLevel;
 
 			int volumeElementCount			=	1;
 
-			if (lightVolume!=null)
+			if (lightmap!=null)
 			{
-				paramData.VolumeTransform	=	lightVolume.WorldPosToTexCoord;
-				paramData.VolumeWidth		=	(uint)lightVolume.Width;
-				paramData.VolumeHeight		=	(uint)lightVolume.Height;
-				paramData.VolumeDepth		=	(uint)lightVolume.Depth;
-				paramData.VolumeStride		=	lightVolume.Stride;
-				volumeElementCount			=	lightVolume.Width * lightVolume.Height * lightVolume.Depth;
+				paramData.VoxelToWorldScale		=	rs.Radiosity.GetVoxelToWorldScale();
+				paramData.VoxelToWorldOffset	=	rs.Radiosity.GetVoxelToWorldOffset();
+				paramData.VolumeWidth			=	(uint)lightmap.Header.VolumeWidth;
+				paramData.VolumeHeight			=	(uint)lightmap.Header.VolumeHeight;
+				paramData.VolumeDepth			=	(uint)lightmap.Header.VolumeDepth;
+				paramData.VolumeStride			=	lightmap.Header.VolumeStride;
+				volumeElementCount				=	lightmap.Header.VolumeWidth * lightmap.Header.VolumeHeight * lightmap.Header.VolumeDepth;
 			}
 
 			cbParams.SetData( paramData );
@@ -162,9 +171,10 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			device.GfxSamplers[ regSampler ]			=	SamplerState.LinearWrap;
 
-			device.GfxResources[ regLightVolumeR	]	=	lightVolume?.LightVolumeR;
-			device.GfxResources[ regLightVolumeG	]	=	lightVolume?.LightVolumeG;
-			device.GfxResources[ regLightVolumeB	]	=	lightVolume?.LightVolumeB;
+			device.GfxResources[ regLightVolumeL0	]	=	rs.Radiosity.LightVolumeL0;
+			device.GfxResources[ regLightVolumeL1	]	=	rs.Radiosity.LightVolumeL1;
+			device.GfxResources[ regLightVolumeL2	]	=	rs.Radiosity.LightVolumeL2;
+			device.GfxResources[ regLightVolumeL3	]	=	rs.Radiosity.LightVolumeL3;
 
 			device.GfxResources[ regLightProbes		]	=	rs.LightMapResources?.IrradianceCubeMaps;
 			device.GfxResources[ regLightProbeData	]	=	rs.LightManager.LightGrid.ProbeDataGpu;

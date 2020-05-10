@@ -4,6 +4,74 @@ static const int MaxLightProbes = 256;
 
 // ---------------- DATA STRUCTURES ---------------- //
 
+// Fusion.Engine.Graphics.GpuData+DIRECT_LIGHT
+// Marshal.SizeOf = 48
+struct DIRECT_LIGHT {
+	float4     DirectLightDirection;          // offset:    0
+	float4     DirectLightIntensity;          // offset:   16
+	float      DirectLightAngularSize;        // offset:   32
+	float      Pad0;                          // offset:   36
+	float      Pad1;                          // offset:   40
+	float      Pad2;                          // offset:   44
+};
+
+// Fusion.Engine.Graphics.SceneRenderer+LIGHT
+// Marshal.SizeOf = 120
+struct LIGHT {
+	float4x4   ViewProjection;                // offset:    0
+	float4     PositionRadius;                // offset:   64
+	float4     IntensityFar;                  // offset:   80
+	float4     ShadowScaleOffset;             // offset:   96
+	uint       LightType;                     // offset:  112
+	float      SourceRadius;                  // offset:  116
+};
+
+// Fusion.Engine.Graphics.SceneRenderer+LIGHTPROBE
+// Marshal.SizeOf = 96
+struct LIGHTPROBE {
+	float4x4   MatrixInv;                     // offset:    0
+	float4     Position;                      // offset:   64
+	uint       ImageIndex;                    // offset:   80
+	float      NormalizedWidth;               // offset:   84
+	float      NormalizedHeight;              // offset:   88
+	float      NormalizedDepth;               // offset:   92
+};
+
+// Fusion.Engine.Graphics.SceneRenderer+DECAL
+// Marshal.SizeOf = 184
+struct DECAL {
+	float4x4   DecalMatrixInv;                // offset:    0
+	float4     BasisX;                        // offset:   64
+	float4     BasisY;                        // offset:   80
+	float4     BasisZ;                        // offset:   96
+	float4     EmissionRoughness;             // offset:  112
+	float4     ImageScaleOffset;              // offset:  128
+	float4     BaseColorMetallic;             // offset:  144
+	float      ColorFactor;                   // offset:  160
+	float      SpecularFactor;                // offset:  164
+	float      NormalMapFactor;               // offset:  168
+	float      FalloffFactor;                 // offset:  172
+	uint       AssignmentGroup;               // offset:  176
+	float      MipBias;                       // offset:  180
+};
+
+// Fusion.Engine.Graphics.ShadowMap+CASCADE_SHADOW
+// Marshal.SizeOf = 576
+struct CASCADE_SHADOW {
+	float4x4   CascadeViewProjection0;        // offset:    0
+	float4x4   CascadeViewProjection1;        // offset:   64
+	float4x4   CascadeViewProjection2;        // offset:  128
+	float4x4   CascadeViewProjection3;        // offset:  192
+	float4x4   CascadeGradientMatrix0;        // offset:  256
+	float4x4   CascadeGradientMatrix1;        // offset:  320
+	float4x4   CascadeGradientMatrix2;        // offset:  384
+	float4x4   CascadeGradientMatrix3;        // offset:  448
+	float4     CascadeScaleOffset0;           // offset:  512
+	float4     CascadeScaleOffset1;           // offset:  528
+	float4     CascadeScaleOffset2;           // offset:  544
+	float4     CascadeScaleOffset3;           // offset:  560
+};
+
 // Fusion.Engine.Graphics.GpuData+CAMERA
 // Marshal.SizeOf = 352
 struct CAMERA {
@@ -26,31 +94,26 @@ struct CAMERA {
 };
 
 // Fusion.Engine.Graphics.Lights.LightProbeDebug+DEBUG_PARAMS
-// Marshal.SizeOf = 96
+// Marshal.SizeOf = 64
 struct DEBUG_PARAMS {
-	float4x4   VolumeTransform;               // offset:    0
-	float      LightProbeSize;                // offset:   64
-	float      LightProbeMipLevel;            // offset:   68
-	float      Dummy1;                        // offset:   72
-	float      Dummy2;                        // offset:   76
-	uint       VolumeWidth;                   // offset:   80
-	uint       VolumeHeight;                  // offset:   84
-	uint       VolumeDepth;                   // offset:   88
-	float      VolumeStride;                  // offset:   92
-};
-
-// Fusion.Engine.Graphics.SceneRenderer+LIGHTPROBE
-// Marshal.SizeOf = 96
-struct LIGHTPROBE {
-	float4x4   MatrixInv;                     // offset:    0
-	float4     Position;                      // offset:   64
-	uint       ImageIndex;                    // offset:   80
-	float      NormalizedWidth;               // offset:   84
-	float      NormalizedHeight;              // offset:   88
-	float      NormalizedDepth;               // offset:   92
+	float4     VoxelToWorldScale;             // offset:    0
+	float4     VoxelToWorldOffset;            // offset:   16
+	float      LightProbeSize;                // offset:   32
+	float      LightProbeMipLevel;            // offset:   36
+	float      Dummy1;                        // offset:   40
+	float      Dummy2;                        // offset:   44
+	uint       VolumeWidth;                   // offset:   48
+	uint       VolumeHeight;                  // offset:   52
+	uint       VolumeDepth;                   // offset:   56
+	float      VolumeStride;                  // offset:   60
 };
 
 // ---------------- SHADER RESOURCES ---------------- //
+
+
+
+
+
 
 cbuffer __buffer0 : register(b0) {
 	CAMERA Camera : packoffset(c0);
@@ -59,8 +122,9 @@ cbuffer __buffer1 : register(b1) {
 	DEBUG_PARAMS Params : packoffset(c0);
 };
 SamplerState                   Sampler                        : register(s0);
-Texture3D<float4>              LightVolumeR                   : register(t0);
-Texture3D<float4>              LightVolumeG                   : register(t1);
-Texture3D<float4>              LightVolumeB                   : register(t2);
-TextureCubeArray<float4>       LightProbes                    : register(t3);
-StructuredBuffer<LIGHTPROBE>   LightProbeData                 : register(t4);
+Texture3D<float4>              LightVolumeL0                  : register(t0);
+Texture3D<float4>              LightVolumeL1                  : register(t1);
+Texture3D<float4>              LightVolumeL2                  : register(t2);
+Texture3D<float4>              LightVolumeL3                  : register(t3);
+TextureCubeArray<float4>       LightProbes                    : register(t4);
+StructuredBuffer<LIGHTPROBE>   LightProbeData                 : register(t5);

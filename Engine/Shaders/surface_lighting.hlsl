@@ -32,9 +32,10 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 	rcLightMap.IrradianceMapL1		=	IrradianceMapL1;
 	rcLightMap.IrradianceMapL2		=	IrradianceMapL2;
 	rcLightMap.IrradianceMapL3		=	IrradianceMapL3;
-	rcLightMap.IrradianceVolumeR	=	IrradianceVolumeR;
-	rcLightMap.IrradianceVolumeG	=	IrradianceVolumeG;
-	rcLightMap.IrradianceVolumeB	=	IrradianceVolumeB;
+	rcLightMap.IrradianceVolumeL0	=	IrradianceVolumeL0;
+	rcLightMap.IrradianceVolumeL1	=	IrradianceVolumeL1;
+	rcLightMap.IrradianceVolumeL2	=	IrradianceVolumeL2;
+	rcLightMap.IrradianceVolumeL3	=	IrradianceVolumeL3;
 	
 	DECAL_RESOURCES	rcDecals;
 	rcDecals.DecalImages			=	DecalImages;
@@ -88,8 +89,8 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 		totalLight	*=	ssaoFactor;
 	#endif
 	#ifdef IRRADIANCE_VOLUME
-		float3 volumeCoord		=	mul(float4(geometry.position.xyz,1), Stage.OcclusionGridMatrix ).xyz;
-		totalLight				+=	EvaluateLightVolume( rcLightMap, surface, volumeCoord );
+		float3 volumeCoord	=	mad( float4(geometry.position.xyz, 1), Stage.WorldToVoxelScale, Stage.WorldToVoxelOffset ).xyz;
+		totalLight			+=	EvaluateLightVolume( rcLightMap, geometry, surface, Camera, volumeCoord );
 	#endif
 
 	//----------------------------------------------------------------------------------------------

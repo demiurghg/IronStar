@@ -63,6 +63,7 @@ namespace Fusion.Engine.Graphics.Lights
 
 		public readonly Volume<Int2>		Clusters;
 		public readonly Volume<uint>		IndexVolume;
+		public readonly Volume<Vector3>		SkyVolume;
 
 		public readonly List<GlobalPatchIndex>		TileCache;
 		public readonly List<CachedPatchIndex>	CachedIndices;
@@ -116,8 +117,9 @@ namespace Fusion.Engine.Graphics.Lights
 
 			Coverage        =   new Image<byte>( size, size, 0 );
 
-			IndexVolume		=	new Volume<uint>( VolumeWidth,				 VolumeHeight,				 VolumeDepth );
-			Clusters		=	new Volume<Int2>( VolumeWidth / ClusterSize, VolumeHeight / ClusterSize, VolumeDepth / ClusterSize );
+			IndexVolume		=	new Volume<uint>	( VolumeWidth,				 VolumeHeight,				 VolumeDepth );
+			Clusters		=	new Volume<Int2>	( VolumeWidth / ClusterSize, VolumeHeight / ClusterSize, VolumeDepth / ClusterSize );
+			SkyVolume		=	new Volume<Vector3>	( VolumeWidth,				 VolumeHeight,				 VolumeDepth );
 		}
 
 
@@ -354,6 +356,16 @@ namespace Fusion.Engine.Graphics.Lights
 				SaveDebugImage( Normal[mip].Convert( EncodeNormalRGB8 )			, "rad_normal" + prefix );
 				SaveDebugImage( Area[mip].Convert( a => new Color(a/256.0f))	, "rad_area"   + prefix );
 			}
+
+			var rand = new Random();
+			SkyVolume.ForEachVoxel( (i,j,k,c) => rand.NextVector3OnSphere() );
+
+			int z = 0;
+			foreach (var slice in SkyVolume.Convert(EncodeSkyRGB8).GetSlices())
+			{
+				SaveDebugImage( slice, "sky" + z.ToString() );
+				z++;
+			}
 		}
 
 
@@ -420,6 +432,7 @@ namespace Fusion.Engine.Graphics.Lights
 				writer.WriteFourCC("VOL1");
 				Clusters.WriteStream( stream );
 				IndexVolume.WriteStream( stream );
+				SkyVolume.Convert( EncodeSkyRGB8 ).WriteStream( stream );
 			}
 		}
 

@@ -193,7 +193,7 @@ float3 ComputeSpotShadow ( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc, 
 			for( int i=0; i<5; i++ ) 
 			{
 				float2	smcoord	=	mad( shadowSamplePattern5x[i], smSizeRcp.xy, lsPos.xy);
-				float	shadow	=	ShadowMap.SampleCmpLevelZero( ShadowSampler, smcoord, shadowDepth ).r;
+				float	shadow	=	rc.ShadowMap.SampleCmpLevelZero( rc.ShadowSampler, smcoord, shadowDepth ).r;
 				accumulatedShadow += shadow;
 			}
 		}

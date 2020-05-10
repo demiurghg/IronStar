@@ -63,6 +63,22 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		internal Texture3D			indexVol	;
 		internal Texture3D			clusters	;
+		internal Texture3D			skyVol		;
+
+		internal RenderTarget2D		radiance	;
+		internal RenderTarget2D		tempHDR		;
+		internal RenderTarget2D		tempLDR		;
+		internal RenderTarget2D		irradianceL0;
+		internal RenderTarget2D		irradianceL1;
+		internal RenderTarget2D		irradianceL2;
+		internal RenderTarget2D		irradianceL3;
+
+		internal Texture3DCompute	lightVolumeL0;
+		internal Texture3DCompute	lightVolumeL1;
+		internal Texture3DCompute	lightVolumeL2;
+		internal Texture3DCompute	lightVolumeL3;
+
+
 
 		readonly Dictionary<Guid,Rectangle> regions = new Dictionary<Guid, Rectangle>();
 
@@ -81,21 +97,34 @@ namespace Fusion.Engine.Graphics.Lights {
 				//	read header :
 				reader.ExpectFourCC("RAD2", "bad lightmap format");
 
-				header		=	reader.Read<FormFactor.Header>();
+				header			=	reader.Read<FormFactor.Header>();
 
-				albedo		=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	mips,	false );
-				position	=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgb32F,	mips,	false );
-				normal		=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	mips,	false );
-				area		=	new Texture2D( rs.Device, Width,  Height, ColorFormat.R32F,		mips,	false );
-				sky			=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	1,		false );
-				indexMap	=	new Texture2D( rs.Device, Width,  Height, ColorFormat.R32,		1,		false );
-				tiles		=	new Texture2D( rs.Device, tilesX, tilesY, ColorFormat.Rg32,		1,		false );
-				bboxMax		=	new Texture2D( rs.Device, tilesX, tilesY, ColorFormat.Rgb32F,	1,		false );
-				bboxMin		=	new Texture2D( rs.Device, tilesX, tilesY, ColorFormat.Rgb32F,	1,		false );
+				albedo			=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	mips,	false );
+				position		=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgb32F,	mips,	false );
+				normal			=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	mips,	false );
+				area			=	new Texture2D( rs.Device, Width,  Height, ColorFormat.R32F,		mips,	false );
+				sky				=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	1,		false );
+				indexMap		=	new Texture2D( rs.Device, Width,  Height, ColorFormat.R32,		1,		false );
+				tiles			=	new Texture2D( rs.Device, tilesX, tilesY, ColorFormat.Rg32,		1,		false );
+				bboxMax			=	new Texture2D( rs.Device, tilesX, tilesY, ColorFormat.Rgb32F,	1,		false );
+				bboxMin			=	new Texture2D( rs.Device, tilesX, tilesY, ColorFormat.Rgb32F,	1,		false );
 
-				clusters	=	new Texture3D( rs.Device, ColorFormat.Rg32, clusterX, clusterY, clusterZ );
-				clusters	=	new Texture3D( rs.Device, ColorFormat.Rg32, VolumeWidth, VolumeHeight, VolumeDepth );
-				// #TODO #LIGHTMAP -- create volume
+				clusters		=	new Texture3D( rs.Device, ColorFormat.Rg32,  clusterX, clusterY, clusterZ );
+				indexVol		=	new Texture3D( rs.Device, ColorFormat.R32,	 VolumeWidth, VolumeHeight, VolumeDepth );
+				skyVol			=	new Texture3D( rs.Device, ColorFormat.Rgba8, VolumeWidth, VolumeHeight, VolumeDepth );
+
+				radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	Width, Height, true,  true );
+				tempHDR			=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	Width, Height, false, true );
+				tempLDR			=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	Width, Height, false, true );
+				irradianceL0	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	Width, Height, false, true );
+				irradianceL1	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	Width, Height, false, true );
+				irradianceL2	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	Width, Height, false, true );
+				irradianceL3	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	Width, Height, false, true );
+
+				lightVolumeL0	=	new Texture3DCompute( rs.Device, ColorFormat.Rg11B10,	VolumeWidth, VolumeHeight, VolumeDepth );
+				lightVolumeL1	=	new Texture3DCompute( rs.Device, ColorFormat.Rgba8,		VolumeWidth, VolumeHeight, VolumeDepth );
+				lightVolumeL2	=	new Texture3DCompute( rs.Device, ColorFormat.Rgba8,		VolumeWidth, VolumeHeight, VolumeDepth );
+				lightVolumeL3	=	new Texture3DCompute( rs.Device, ColorFormat.Rgba8,		VolumeWidth, VolumeHeight, VolumeDepth );
 
 				//	read regions :
 				reader.ExpectFourCC("RGN1", "bad lightmap format");
@@ -144,6 +173,9 @@ namespace Fusion.Engine.Graphics.Lights {
 				// #TODO #LIGHTMAPS - write volume indices
 				reader.ExpectFourCC("VOL1", "bad lightmap format");
 
+				clusters.SetData( Volume<Int2>.FromStream( stream ).RawImageData );
+				indexVol.SetData( Volume<uint>.FromStream( stream ).RawImageData );
+				skyVol	.SetData( Volume<Color>.FromStream( stream ).RawImageData );
 			}
 		}
 
@@ -167,12 +199,28 @@ namespace Fusion.Engine.Graphics.Lights {
 				SafeDispose( ref area		);
 				SafeDispose( ref sky		);	
 				SafeDispose( ref indexMap	);
-				SafeDispose( ref indexVol	);
 				SafeDispose( ref tiles		);
 				SafeDispose( ref cache		);
 				SafeDispose( ref indices	);
 				SafeDispose( ref bboxMin	);
 				SafeDispose( ref bboxMax	);
+
+				SafeDispose( ref indexVol	);
+				SafeDispose( ref skyVol		);
+				SafeDispose( ref clusters	);
+
+				SafeDispose( ref radiance		);
+				SafeDispose( ref tempHDR		);	
+				SafeDispose( ref tempLDR		);	
+				SafeDispose( ref irradianceL0	);
+				SafeDispose( ref irradianceL1	);
+				SafeDispose( ref irradianceL2	);
+				SafeDispose( ref irradianceL3	);
+				
+				SafeDispose( ref lightVolumeL0	);
+				SafeDispose( ref lightVolumeL1	);
+				SafeDispose( ref lightVolumeL2	);
+				SafeDispose( ref lightVolumeL3	);
 			}
 
 			base.Dispose( disposing );

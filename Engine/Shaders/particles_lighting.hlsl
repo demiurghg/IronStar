@@ -65,9 +65,10 @@ float3 ComputeClusteredLighting ( float3 worldPos, float3 normal, float3 color, 
 	
 	LIGHTMAP_RESOURCES rcLightMap;
 	rcLightMap.Sampler				=	LinearSampler;
-	rcLightMap.IrradianceVolumeR	=	IrradianceVolumeR;
-	rcLightMap.IrradianceVolumeG	=	IrradianceVolumeG;
-	rcLightMap.IrradianceVolumeB	=	IrradianceVolumeB;
+	rcLightMap.IrradianceVolumeL0	=	IrradianceVolumeL0;
+	rcLightMap.IrradianceVolumeL1	=	IrradianceVolumeL1;
+	rcLightMap.IrradianceVolumeL2	=	IrradianceVolumeL2;
+	rcLightMap.IrradianceVolumeL3	=	IrradianceVolumeL3;
 
 	float4 projPos			=	mul( float4(worldPos,1), Camera.ViewProjection );
 	
@@ -110,13 +111,14 @@ float3 ComputeClusteredLighting ( float3 worldPos, float3 normal, float3 color, 
 	
 	//----------------------------------------------------------------------------------------------
 	
-	float3	samplePoint		=	mul( float4(worldPos, 1), Params.OcclusionGridMatrix ).xyz;
+	float3	samplePoint		=	mad( float4(worldPos, 1), Params.WorldToVoxelScale, Params.WorldToVoxelOffset ).xyz;
 	
-	float4	irradianceR		=	IrradianceVolumeR.SampleLevel( LinearSampler, samplePoint, 0 ).rgba;
-	float4	irradianceG		=	IrradianceVolumeG.SampleLevel( LinearSampler, samplePoint, 0 ).rgba;
-	float4	irradianceB		=	IrradianceVolumeB.SampleLevel( LinearSampler, samplePoint, 0 ).rgba;
+	float4	irradianceL0	=	IrradianceVolumeL0.SampleLevel( LinearSampler, samplePoint, 0 ).rgba;
+	float4	irradianceL1	=	IrradianceVolumeL1.SampleLevel( LinearSampler, samplePoint, 0 ).rgba;
+	float4	irradianceL2	=	IrradianceVolumeL2.SampleLevel( LinearSampler, samplePoint, 0 ).rgba;
+	float4	irradianceL3	=	IrradianceVolumeL3.SampleLevel( LinearSampler, samplePoint, 0 ).rgba;
 	
-	totalLight.rgb			+=	float3( irradianceR.x, irradianceG.x, irradianceB.x ) * color.rgb;
+	totalLight.rgb			+=	float3( irradianceL0.rgb ) * color.rgb;
 	
 	return totalLight;
 }

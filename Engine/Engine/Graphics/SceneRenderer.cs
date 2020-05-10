@@ -50,12 +50,13 @@ namespace Fusion.Engine.Graphics {
 		static FXTexture2D<Vector4>				regIrradianceMapL1		=	new TRegister(15, "IrradianceMapL1"		);
 		static FXTexture2D<Vector4>				regIrradianceMapL2		=	new TRegister(16, "IrradianceMapL2"		);
 		static FXTexture2D<Vector4>				regIrradianceMapL3		=	new TRegister(17, "IrradianceMapL3"		);
-		static FXTexture3D<Vector4>				regIrradianceVolumeR	=	new TRegister(18, "IrradianceVolumeR"	);
-		static FXTexture3D<Vector4>				regIrradianceVolumeG	=	new TRegister(19, "IrradianceVolumeG"	);
-		static FXTexture3D<Vector4>				regIrradianceVolumeB	=	new TRegister(20, "IrradianceVolumeB"	);
+		static FXTexture3D<Vector4>				regIrradianceVolumeL0	=	new TRegister(18, "IrradianceVolumeL0"	);
+		static FXTexture3D<Vector4>				regIrradianceVolumeL1	=	new TRegister(19, "IrradianceVolumeL1"	);
+		static FXTexture3D<Vector4>				regIrradianceVolumeL2	=	new TRegister(20, "IrradianceVolumeL2"	);
+		static FXTexture3D<Vector4>				regIrradianceVolumeL3	=	new TRegister(21, "IrradianceVolumeL3"	);
 
-		static FXTextureCubeArray<Vector4>		regRadianceCache		=	new TRegister(21, "RadianceCache"		);
-		static FXTexture2D<Vector4>				regEnvLut				=	new TRegister(22, "EnvLut"				);
+		static FXTextureCubeArray<Vector4>		regRadianceCache		=	new TRegister(22, "RadianceCache"		);
+		static FXTexture2D<Vector4>				regEnvLut				=	new TRegister(23, "EnvLut"				);
 											   
 		static FXSamplerState					regSamplerLinear		=	new SRegister( 0, "SamplerLinear"		);
 		static FXSamplerState					regSamplerPoint			=	new SRegister( 1, "SamplerPoint"		);
@@ -206,7 +207,8 @@ namespace Fusion.Engine.Graphics {
 				occlusionMatrix = rs.RenderWorld.IrradianceVolume.WorldPosToTexCoord;
 			}
 
-			cbDataStage.OcclusionGridMatrix	=	occlusionMatrix;
+			cbDataStage.WorldToVoxelOffset	=	rs.Radiosity.GetWorldToVoxelOffset();
+			cbDataStage.WorldToVoxelScale	=	rs.Radiosity.GetWorldToVoxelScale();
 			cbDataStage.VTGradientScaler	=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;
 			cbDataStage.FogColor			=	rs.RenderWorld.FogSettings.Color;
 			cbDataStage.FogAttenuation		=	rs.RenderWorld.FogSettings.DistanceAttenuation;
@@ -253,9 +255,10 @@ namespace Fusion.Engine.Graphics {
 			device.GfxResources[ regIrradianceMapL2			]	=	rs.Radiosity.IrradianceL2;
 			device.GfxResources[ regIrradianceMapL3			]	=	rs.Radiosity.IrradianceL3;
 
-			device.GfxResources[ regIrradianceVolumeR		]	=	rs.RenderWorld.IrradianceVolume?.LightVolumeR;
-			device.GfxResources[ regIrradianceVolumeG		]	=	rs.RenderWorld.IrradianceVolume?.LightVolumeG;
-			device.GfxResources[ regIrradianceVolumeB		]	=	rs.RenderWorld.IrradianceVolume?.LightVolumeB;
+			device.GfxResources[ regIrradianceVolumeL0		]	=	rs.Radiosity.LightVolumeL0;
+			device.GfxResources[ regIrradianceVolumeL1		]	=	rs.Radiosity.LightVolumeL1;
+			device.GfxResources[ regIrradianceVolumeL2		]	=	rs.Radiosity.LightVolumeL2;
+			device.GfxResources[ regIrradianceVolumeL3		]	=	rs.Radiosity.LightVolumeL3;
 
 			device.GfxResources[ regRadianceCache			]	=	rs.RenderWorld.IrradianceCache?.IrradianceCubeMaps;
 			device.GfxResources[ regEnvLut					]	=	envLut.Srv;

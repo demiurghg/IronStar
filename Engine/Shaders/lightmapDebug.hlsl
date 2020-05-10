@@ -23,13 +23,24 @@ struct PSInput {
 	float3	Normal 		: TEXCOORD0;
 	float3 	WorldPos	: TEXCOORD1;
 	float	ImageIndex	: TEXCOORD2;
+	
+	nointerpolation 
+	uint3	VoxelIndex	: TEXCOORD3;
 };
 
 #include "auto/lightmapDebug.fxi"
 
+static const uint LightTypeOmni = 1;
+static const uint LightTypeOmniShadow = 2;
+static const uint LightTypeSpotShadow = 3;
+static const uint LightTypeAmbient = 4;
+static const uint LightSpotShapeSquare = 65536;
+static const uint LightSpotShapeRound = 131072;
+static const uint LightProbeSize = 128;
+static const uint LightProbeMaxSpecularMip = 5;
+static const uint LightProbeDiffuseMip = 6;
 
-#include "ls_brdf.fxi"
-//#include "ls_lightmap.fxi"
+#include "ls_core.fxi"
 
 PSInput VSMain( VSInput input, uint instanceId : SV_InstanceID )
 {
@@ -38,6 +49,7 @@ PSInput VSMain( VSInput input, uint instanceId : SV_InstanceID )
 	float4x4	projection	=	Camera.Projection;
 	float4x4 	view		=	Camera.View;
 	float4x4	world		=	float4x4( 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 );
+	uint3		voxelIndex	=	uint3(0,0,0);
 
 	//float3	lpbPos		=	float3( 0, 0, instanceId );
 #ifdef SHOW_LIGHTPROBES
@@ -51,25 +63,25 @@ PSInput VSMain( VSInput input, uint instanceId : SV_InstanceID )
 	uint	width		=	Params.VolumeWidth;
 	uint	height		=	Params.VolumeHeight;
 	uint	depth		=	Params.VolumeDepth;
-	float 	offset_x	=	(width  * Params.VolumeStride) / 2;
-	float 	offset_y	=	(height * Params.VolumeStride) / 2;
-	float 	offset_z	=	(depth  * Params.VolumeStride) / 2;
-	float	index_x		=	( instanceId % width		  ) * Params.VolumeStride;
-	float	index_y		=	( instanceId / width % height ) * Params.VolumeStride;
-	float	index_z		=	( instanceId / width / height ) * Params.VolumeStride;
-	float3	lpbPos		=	float3( index_x - offset_x, index_y - offset_y, index_z - offset_z );
+	uint	index_x		=	( instanceId % width		  );
+	uint	index_y		=	( instanceId / width % height );
+	uint	index_z		=	( instanceId / width / height );
+			voxelIndex	=	uint3(index_x,index_y,index_z);
+			
+	float3	lpbPos		=	mad( float3(index_x,index_y,index_z), Params.VoxelToWorldScale.xyz, Params.VoxelToWorldOffset.xyz );
 #endif	
 	
 	float4 	pos			=	float4( input.Position * size + lpbPos, 1 	);
 	float4	wPos		=	mul( pos,  world 	);
 	float4	vPos		=	mul( wPos, view 		);
 	float4	pPos		=	mul( vPos, projection 	);
-	float4	normal		=	mul( float4(input.Normal,0	), world );
+	float4	normal		=	mul( float4(input.Normal, 0 ), world );
 	
 	output.Position 	= 	pPos;
 	output.Color 		= 	input.Color;
 	output.Normal		= 	normal.xyz;
 	output.WorldPos		=	lpbPos;
+	output.VoxelIndex	=	voxelIndex;
 	
 	output.ImageIndex	=	LightProbeData[ instanceId ].ImageIndex;
 	
@@ -103,31 +115,42 @@ float4 PSMain( PSInput input ) : SV_Target0
 		tint = float3(1,0,0);
 	}
 	
-	float3	viewDir			=	cameraPos - surfacePos;
+	SURFACE 	surf	=	CreateDiffuseSurface( SRGBToLinear(float3(0.5,0.5,0.5)), surfaceNormal );
+	GEOMETRY	geom	=	CreateGeometry( surfacePos, surfaceNormal );
+
+	float3	viewDir		=	cameraPos - surfacePos;
 	
 #ifdef SHOW_LIGHTPROBES
 	#ifdef SPHERES
-	float3	reflectDir		=	reflect( -viewDir, surfaceNormal ) * float3(-1,1,1);
+	float3	reflectDir	=	reflect( -viewDir, surfaceNormal ) * float3(-1,1,1);
 	#endif
 	#ifdef CUBES
-	float3	reflectDir		=	surfaceNormal * float3(-1,1,1);
+	float3	reflectDir	=	surfaceNormal * float3(-1,1,1);
 	#endif
 	
-	float4	lightProbe		=	LightProbes.SampleLevel( Sampler, float4(reflectDir, imageIndex), Params.LightProbeMipLevel ).rgba;
+	float4	lightProbe	=	LightProbes.SampleLevel( Sampler, float4(reflectDir, imageIndex), Params.LightProbeMipLevel ).rgba;
 
 	return float4(lightProbe.rgb * tint,1);
 #endif
 
 #ifdef SHOW_LIGHTVOLUME
-	/*LIGHTMAP_RESOURCES rc;
-	rc.IrradianceVolumeR	=	LightVolumeR;
-	rc.IrradianceVolumeG	=	LightVolumeG;
-	rc.IrradianceVolumeB	=	LightVolumeB;
+	LIGHTMAP_RESOURCES rc;
+	rc.IrradianceVolumeL0	=	LightVolumeL0;
+	rc.IrradianceVolumeL1	=	LightVolumeL1;
+	rc.IrradianceVolumeL2	=	LightVolumeL2;
+	rc.IrradianceVolumeL3	=	LightVolumeL3;
 	rc.Sampler				=	Sampler;
 	
-	float3 coord		=	mul(float4(surfacePos.xyz,1), Params.VolumeTransform ).xyz;*/
-	float3 lighting		=	float3(1,0,2);//EvaluateLightVolume( rc, surfaceNormal, coord ); 
-	float  whiteDiffuse	=	SRGBToLinear( 0.5f );
-	return float4(lighting * whiteDiffuse,1);
+	float3 lighting		=	EvaluateLightVolume( rc, geom, surf, Camera, input.VoxelIndex ); 
+	return float4(lighting,1);
 #endif
 }
+
+
+
+
+
+
+
+
+

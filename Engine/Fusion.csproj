@@ -627,6 +627,7 @@
     <Compile Include="Engine\Graphics\Textures\UserTexture.cs" />
     <Compile Include="Engine\Graphics\Ubershaders\RequireShaderAttribute.cs" />
     <Compile Include="Engine\Graphics\Ubershaders\ShaderConstantBufferAttribute.cs" />
+    <Compile Include="Engine\Graphics\Ubershaders\ShaderIfDefAttribute.cs" />
     <Compile Include="Engine\Graphics\Ubershaders\ShaderDefineAttribute.cs" />
     <Compile Include="Engine\Graphics\Ubershaders\FXHandle.cs" />
     <Compile Include="Engine\Graphics\Ubershaders\ShaderResourceAttribute.cs" />

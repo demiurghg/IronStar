@@ -24,18 +24,19 @@ static const uint LightSpotShapeSquare = 65536;
 // Fusion.Engine.Graphics.ParticleStream+PARAMS
 // Marshal.SizeOf = 1024
 struct PARAMS {
-	float4x4   OcclusionGridMatrix;           // offset:    0
-	float4     Gravity;                       // offset:   64
-	float4     LightMapSize;                  // offset:   80
-	float4     SkyAmbientLevel;               // offset:   96
-	float4     FogColor;                      // offset:  112
-	float      FogAttenuation;                // offset:  128
-	int        MaxParticles;                  // offset:  132
-	float      DeltaTime;                     // offset:  136
-	uint       DeadListSize;                  // offset:  140
-	float      CocScale;                      // offset:  144
-	float      CocBias;                       // offset:  148
-	uint       IntegrationSteps;              // offset:  152
+	float4     WorldToVoxelScale;             // offset:    0
+	float4     WorldToVoxelOffset;            // offset:   16
+	float4     Gravity;                       // offset:   32
+	float4     LightMapSize;                  // offset:   48
+	float4     SkyAmbientLevel;               // offset:   64
+	float4     FogColor;                      // offset:   80
+	float      FogAttenuation;                // offset:   96
+	int        MaxParticles;                  // offset:  100
+	float      DeltaTime;                     // offset:  104
+	uint       DeadListSize;                  // offset:  108
+	float      CocScale;                      // offset:  112
+	float      CocBias;                       // offset:  116
+	uint       IntegrationSteps;              // offset:  120
 };
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
@@ -161,9 +162,10 @@ StructuredBuffer<LIGHT>        ClusterLightBuffer             : register(t9);
 Texture2D<float4>              ShadowMap                      : register(t10);
 Texture2D<float4>              LightMap                       : register(t11);
 Texture2D<float4>              ShadowMask                     : register(t12);
-Texture3D<float4>              IrradianceVolumeR              : register(t14);
-Texture3D<float4>              IrradianceVolumeG              : register(t15);
-Texture3D<float4>              IrradianceVolumeB              : register(t16);
+Texture3D<float4>              IrradianceVolumeL0             : register(t14);
+Texture3D<float4>              IrradianceVolumeL1             : register(t15);
+Texture3D<float4>              IrradianceVolumeL2             : register(t16);
+Texture3D<float4>              IrradianceVolumeL3             : register(t17);
 StructuredBuffer<float4>       lightMapRegionsGS              : register(t18);
 RWStructuredBuffer<Particle>   particleBuffer                 : register(u0);
 ConsumeStructuredBuffer<uint>  deadParticleIndicesPull        : register(u1);

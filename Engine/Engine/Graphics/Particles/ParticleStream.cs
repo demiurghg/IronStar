@@ -46,9 +46,10 @@ namespace Fusion.Engine.Graphics {
 		static FXTexture2D<Vector4>							regLightMap					=	new TRegister(11, "LightMap"				);
 		static FXTexture2D<Vector4>							regShadowMask				=	new TRegister(12, "ShadowMask"				);
 
-		static FXTexture3D<Vector4>							regIrradianceVolumeR		=	new TRegister(14, "IrradianceVolumeR"		);
-		static FXTexture3D<Vector4>							regIrradianceVolumeG		=	new TRegister(15, "IrradianceVolumeG"		);
-		static FXTexture3D<Vector4>							regIrradianceVolumeB		=	new TRegister(16, "IrradianceVolumeB"		);
+		static FXTexture3D<Vector4>							regIrradianceVolumeL0		=	new TRegister(14, "IrradianceVolumeL0"		);
+		static FXTexture3D<Vector4>							regIrradianceVolumeL1		=	new TRegister(15, "IrradianceVolumeL1"		);
+		static FXTexture3D<Vector4>							regIrradianceVolumeL2		=	new TRegister(16, "IrradianceVolumeL2"		);
+		static FXTexture3D<Vector4>							regIrradianceVolumeL3		=	new TRegister(17, "IrradianceVolumeL3"		);
 																											
 		static FXStructuredBuffer<Vector4>					reglightMapRegionsGS		=	new TRegister(18, "lightMapRegionsGS"		);
 																															
@@ -164,7 +165,8 @@ namespace Fusion.Engine.Graphics {
 		[StructLayout(LayoutKind.Sequential, Size=1024)]
 		[ShaderStructure]
 		struct PARAMS {
-			public Matrix	OcclusionGridMatrix		;
+			public Vector4	WorldToVoxelScale;
+			public Vector4	WorldToVoxelOffset;
 			public Vector4	Gravity;
 			public Vector4	LightMapSize;
 			public Color4	SkyAmbientLevel;
@@ -437,13 +439,14 @@ namespace Fusion.Engine.Graphics {
 				occlusionMatrix = rs.RenderWorld.IrradianceVolume.WorldPosToTexCoord;
 			}
 
-			param.OcclusionGridMatrix		=	occlusionMatrix;
-			param.SkyAmbientLevel			=	rs.RenderWorld.SkySettings.AmbientLevel;
-			param.FogColor					=	renderWorld.FogSettings.Color;
-			param.FogAttenuation			=	renderWorld.FogSettings.DistanceAttenuation;
-			param.MaxParticles		=	0;
-			param.DeltaTime			=	deltaTime;
-			param.Gravity			=	new Vector4( this.Gravity, 0 );
+			param.WorldToVoxelOffset	=	rs.Radiosity.GetWorldToVoxelOffset();
+			param.WorldToVoxelScale		=	rs.Radiosity.GetWorldToVoxelScale();
+			param.SkyAmbientLevel		=	rs.RenderWorld.SkySettings.AmbientLevel;
+			param.FogColor				=	renderWorld.FogSettings.Color;
+			param.FogAttenuation		=	renderWorld.FogSettings.DistanceAttenuation;
+			param.MaxParticles			=	0;
+			param.DeltaTime				=	deltaTime;
+			param.Gravity				=	new Vector4( this.Gravity, 0 );
 
 			if (useLightmap) {
 				param.LightMapSize	=	new Vector4( Lightmap.Width, Lightmap.Height, 1.0f/Lightmap.Width, 1.0f/Lightmap.Height );
@@ -674,9 +677,10 @@ namespace Fusion.Engine.Graphics {
 
 					if (flags.HasFlag(Flags.LIGHTMAP) || flags.HasFlag(Flags.HARD)) 
 					{
-						device.GfxResources[ regIrradianceVolumeR ]	= 	rs.RenderWorld.IrradianceVolume?.LightVolumeR	;
-						device.GfxResources[ regIrradianceVolumeG ]	= 	rs.RenderWorld.IrradianceVolume?.LightVolumeG	;
-						device.GfxResources[ regIrradianceVolumeB ]	= 	rs.RenderWorld.IrradianceVolume?.LightVolumeB	;
+						device.GfxResources[ regIrradianceVolumeL0 ]	= 	rs.Radiosity.LightVolumeL0	;
+						device.GfxResources[ regIrradianceVolumeL1 ]	= 	rs.Radiosity.LightVolumeL1	;
+						device.GfxResources[ regIrradianceVolumeL2 ]	= 	rs.Radiosity.LightVolumeL2	;
+						device.GfxResources[ regIrradianceVolumeL3 ]	= 	rs.Radiosity.LightVolumeL3	;
 					}
 
 					device.GfxResources[ 18 ]	=	lightMapRegions;

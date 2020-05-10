@@ -78,7 +78,7 @@ namespace Fusion.Engine.Imaging {
 			y	=	Clamp( y, 0, Height - 1 );
 			z	=	Clamp( z, 0, Depth - 1 );
 
-			return x + y * Width + z * Width * Height;
+			return ( x + y * Width + z * Width * Height ) * voxelSize;
 		}
 
 
@@ -195,6 +195,59 @@ namespace Fusion.Engine.Imaging {
 		}
 		
 
+		public void ForEachVoxel( Func<int,int,int,TColor,TColor> func )
+		{
+			for (int k=0; k<Depth; k++)
+			{
+				for (int j=0; j<height; j++)
+				{
+					for (int i=0; i<width; i++)
+					{
+						SetVoxel(i,j,k, func(i,j,k, GetVoxel(i,j,k)));
+					}
+				}
+			}
+		}
+
+
+		public void ForEachVoxel( Action<int,int,int,TColor> action )
+		{
+			for (int k=0; k<Depth; k++)
+			{
+				for (int j=0; j<height; j++)
+				{
+					for (int i=0; i<width; i++)
+					{
+						action(i,j,k,	this[i,j,k]);
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Converts image to another image format
+		/// </summary>
+		/// <typeparam name="TOutputColor"></typeparam>
+		/// <param name="convert"></param>
+		/// <returns></returns>
+		public Volume<TOutputColor> Convert<TOutputColor>( Func<TColor, TOutputColor> convert ) where TOutputColor: struct
+		{
+			var outputImage = new Volume<TOutputColor>( Width, Height, Depth );
+
+			for (int k=0; k<Depth; k++)
+			{
+				for (int j=0; j<height; j++)
+				{
+					for (int i=0; i<width; i++)
+					{
+						outputImage.SetVoxel( i, j, k, convert( GetVoxel( i, j, k ) ) );
+					}
+				}
+			}
+
+			return outputImage;
+		}
+
 		/*-----------------------------------------------------------------------------------------
 		 *	Simple Math :
 		-----------------------------------------------------------------------------------------*/
@@ -231,6 +284,26 @@ namespace Fusion.Engine.Imaging {
 		}
 
 
+		public Image<TColor> GetSlice( int z )
+		{
+			if (z<0 || z>=Depth) throw new ArgumentOutOfRangeException(nameof(z), z, "slice Z-coord is out of range");
+
+			var image = new Image<TColor>( Width, Height );
+
+			image.ForEachPixel( (x,y,c) => this[x,y,z] );
+
+			return image;
+		}
+
+
+		public Image<TColor>[] GetSlices()
+		{
+			return Enumerable
+				.Range(0,Depth)
+				.Select( z => GetSlice(z) )
+				.ToArray();
+		}
+
 		/*------------------------------------------------------------------------------------------
 		 *	Image I/O
 		-----------------------------------------------------------------------------------------*/
@@ -249,16 +322,16 @@ namespace Fusion.Engine.Imaging {
 
 		static void ReadHeader( Stream stream, out int width, out int height, out int depth )
 		{
-			var header	=	new byte[16];
-			stream.Read( header, 0, 16 );
+			var header	=	new byte[20];
+			stream.Read( header, 0, 20 );
 
 			var magic   =   BitConverter.ToUInt32( header,  0 );
 			var type    =   BitConverter.ToUInt32( header,  4 );
 				width   =   BitConverter.ToInt32 ( header,  8 );
 				height  =   BitConverter.ToInt32 ( header, 12 );
-				depth	=   BitConverter.ToInt32 ( header, 12 );
+				depth	=   BitConverter.ToInt32 ( header, 16 );
 
-			if ( magic  != FourCC ) throw new IOException( "Bad FourCC, IMG0 expected" );
+			if ( magic  != FourCC ) throw new IOException( "Bad FourCC, " + FourCC + " expected" );
 			if ( type   != TypeCrc ) throw new IOException( "Bad type CRC32" );
 		}
 
@@ -270,7 +343,7 @@ namespace Fusion.Engine.Imaging {
 
 			if ( width  != Width ) throw new IOException( string.Format( "Bad image width {0}, expected {1}", width, Width ) );
 			if ( height != Height ) throw new IOException( string.Format( "Bad image height {0}, expected {1}", height, Height ) );
-			if ( height != Height ) throw new IOException( string.Format( "Bad image depth {0}, expected {1}", height, Height ) );
+			if ( depth != Depth ) throw new IOException( string.Format( "Bad image depth {0}, expected {1}", depth, Depth ) );
 
 			var read = stream.Read( RawImageData, 0, RawImageData.Length );
 

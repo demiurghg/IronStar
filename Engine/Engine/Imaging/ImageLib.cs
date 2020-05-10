@@ -69,13 +69,13 @@ namespace Fusion.Engine.Imaging
 
 		public static void SetAlpha ( Image<Color> image, byte alpha )
 		{
-			image.PerpixelProcessing( color => new Color( color.R, color.G, color.B, (byte)255 ) );
+			image.ForEachPixel( color => new Color( color.R, color.G, color.B, (byte)255 ) );
 		}
 
 
 		public static void SetAlpha ( Image<Color4> image, float alpha )
 		{
-			image.PerpixelProcessing( color => new Color4( color.Red, color.Green, color.Blue, alpha ) );
+			image.ForEachPixel( color => new Color4( color.Red, color.Green, color.Blue, alpha ) );
 		}
 
 

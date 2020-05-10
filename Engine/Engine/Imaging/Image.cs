@@ -298,7 +298,7 @@ namespace Fusion.Engine.Imaging
 		/// Does perpixel processing with given function
 		/// </summary>
 		/// <param name="procFunc"></param>
-		public void PerpixelProcessing ( Func<int, int, TColor, TColor> procFunc )
+		public void ForEachPixel ( Func<int, int, TColor, TColor> procFunc )
 		{
 			for (int x=0; x<Width; x++) 
 			{
@@ -314,7 +314,7 @@ namespace Fusion.Engine.Imaging
 		/// Does perpixel processing with given function
 		/// </summary>
 		/// <param name="procFunc"></param>
-		public void PerpixelProcessing ( Func<TColor, TColor> procFunc )
+		public void ForEachPixel ( Func<TColor, TColor> procFunc )
 		{
 			for (int x=0; x<Width; x++) 
 			{

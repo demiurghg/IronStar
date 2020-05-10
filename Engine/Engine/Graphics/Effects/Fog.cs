@@ -105,8 +105,8 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public override void Initialize() 
 		{
-			fog3d0		=	new Texture3DCompute( device, FogSizeX, FogSizeY, FogSizeZ );
-			fog3d1		=	new Texture3DCompute( device, FogSizeX, FogSizeY, FogSizeZ );
+			fog3d0		=	new Texture3DCompute( device, ColorFormat.Rgba16F, FogSizeX, FogSizeY, FogSizeZ );
+			fog3d1		=	new Texture3DCompute( device, ColorFormat.Rgba16F, FogSizeX, FogSizeY, FogSizeZ );
 
 			paramsCB	=	new ConstantBuffer( device, typeof(PARAMS) );
 

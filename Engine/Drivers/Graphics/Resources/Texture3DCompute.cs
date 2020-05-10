@@ -32,12 +32,18 @@ namespace Fusion.Drivers.Graphics {
 			}
 		}
 
+		UnorderedAccess unorderedAccess;
+		internal UnorderedAccess UnorderedAccess {
+			get {
+				return unorderedAccess; 
+			}
+		}
 
 		/// <summary>
 		/// Creates texture
 		/// </summary>
 		/// <param name="device"></param>
-		public Texture3DCompute ( GraphicsDevice device, int width, int height, int depth ) : base( device )
+		public Texture3DCompute ( GraphicsDevice device, ColorFormat format, int width, int height, int depth ) : base( device )
 		{
 			this.Width		=	width;
 			this.Height		=	height;
@@ -46,7 +52,7 @@ namespace Fusion.Drivers.Graphics {
 			var texDesc = new Texture3DDescription();
 			texDesc.BindFlags		=	BindFlags.ShaderResource|BindFlags.UnorderedAccess;
 			texDesc.CpuAccessFlags	=	CpuAccessFlags.None;
-			texDesc.Format			=	DXGI.Format.R16G16B16A16_Float;;
+			texDesc.Format			=	Converter.Convert( format );
 			texDesc.Height			=	Height;
 			texDesc.MipLevels		=	1;
 			texDesc.OptionFlags		=	ResourceOptionFlags.None;
@@ -57,6 +63,8 @@ namespace Fusion.Drivers.Graphics {
 			tex3D	=	new D3D.Texture3D( device.Device, texDesc );
 			SRV		=	new D3D.ShaderResourceView( device.Device, tex3D );
 			uav		=	new D3D.UnorderedAccessView( device.Device, tex3D );
+
+			unorderedAccess	=	new UnorderedAccess( device, uav );
 		}
 
 
@@ -94,7 +102,8 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="data"></param>
         public void SetData<T>(T[] data) where T: struct
 		{
-			device.DeviceContext.UpdateSubresource(data, tex3D, 0, Width*8, Height*Width*8);
+			throw new NotImplementedException();
+			//device.DeviceContext.UpdateSubresource(data, tex3D, 0, Width*8, Height*Width*8);
 		}
 	}
 }

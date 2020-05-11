@@ -52,6 +52,8 @@ namespace Fusion.Engine.Graphics
 		struct FilterParams 
 		{
 			public	Color4	LumaVector;
+			public	UInt2	SourceXY;
+			public	UInt2	TargetXY;
 			public	float	MaskFactor;
 			public	float	ColorFactor;
 			public	float	GaussFalloff;
@@ -115,7 +117,7 @@ namespace Fusion.Engine.Graphics
 		 * 
 		-----------------------------------------------------------------------------------------------*/
 
-		void BilateralPass ( Flags flags, RenderTarget2D target, Camera camera, ShaderResource source, ShaderResource mask, float colorFactor, float maskFactor, float falloff, Color4 lumaVector )
+		void BilateralPass ( Flags flags, RenderTarget2D target, Rectangle targetRect, Camera camera, ShaderResource source, ShaderResource mask, Rectangle sourceRect, float colorFactor, float maskFactor, float falloff, Color4 lumaVector )
 		{
 			device.ResetStates();
 
@@ -128,33 +130,29 @@ namespace Fusion.Engine.Graphics
 			if (mask==null) {
 				throw new ArgumentNullException("mask");
 			}
-			//if (camera==null) {
-			//	throw new ArgumentNullException("camera");
-			//}
 
-			if (target.Width!=source.Width || target.Width!=source.Width) {
-				throw new ArgumentException("target and source size are not the same");
-			}
-			if (target.Width!=mask.Width || target.Width!=mask.Width) {
-				throw new ArgumentException("target and mask size are not the same");
-			}
+			targetRect	=	Rectangle.Intersect( targetRect, new Rectangle(0,0, target.Width, target.Height) );
+			sourceRect	=	Rectangle.Intersect( sourceRect, new Rectangle(0,0, source.Width, source.Height) );
 
-			var filterData              =   new FilterParams();
-			filterData.LumaVector		=	lumaVector;
-			filterData.MaskFactor		=   maskFactor;
-			filterData.GaussFalloff		=	falloff;
-			filterData.ColorFactor		=   colorFactor;
+			int width	=	Math.Min( targetRect.Width, sourceRect.Width );
+			int height	=	Math.Min( targetRect.Height, sourceRect.Height );
+
+			var filterData          =   new FilterParams();
+			filterData.TargetXY		=	new UInt2( (uint)targetRect.X, (uint)targetRect.Y );
+			filterData.SourceXY		=	new UInt2( (uint)sourceRect.X, (uint)sourceRect.Y );
+			filterData.LumaVector	=	lumaVector;
+			filterData.MaskFactor	=   maskFactor;
+			filterData.GaussFalloff	=	falloff;
+			filterData.ColorFactor	=   colorFactor;
 			cbuffer.SetData( ref filterData );
 
 			int blockSize	=	flags.HasFlag( Flags.DOUBLE_PASS ) ? BlockSize16 : BlockSize8;
 					
-			int tgx = MathUtil.IntDivRoundUp( target.Width,  blockSize );
-			int tgy = MathUtil.IntDivRoundUp( target.Height, blockSize );
+			int tgx = MathUtil.IntDivRoundUp( width,  blockSize );
+			int tgy = MathUtil.IntDivRoundUp( height, blockSize );
 			int tgz = 1;
 
 			//	HORIZONTAL pass :
-			device.ResetStates();
-
 			device.ComputeResources[0]    =   source;
 			device.ComputeResources[1]    =   mask;
 
@@ -178,8 +176,9 @@ namespace Fusion.Engine.Graphics
 		public void FilterSSAOByDepth ( Camera camera, RenderTarget2D target, RenderTarget2D temp, ShaderResource depth, float depthFactor, float colorFactor, float falloff )
 		{
 			Color4 luma = new Color4(1,0,0,0);
-			BilateralPass( Flags.DOUBLE_PASS | Flags.HORIZONTAL | Flags.MASK_DEPTH, temp  , camera, target, depth, colorFactor, depthFactor, falloff, luma );
-			BilateralPass( Flags.DOUBLE_PASS | Flags.VERTICAL   | Flags.MASK_DEPTH, target, camera, temp  , depth, colorFactor, depthFactor, falloff, luma );
+			var region = new Rectangle(0,0,16384,16384);
+			BilateralPass( Flags.DOUBLE_PASS | Flags.HORIZONTAL | Flags.MASK_DEPTH, temp  , region, camera, target, depth, region, colorFactor, depthFactor, falloff, luma );
+			BilateralPass( Flags.DOUBLE_PASS | Flags.VERTICAL   | Flags.MASK_DEPTH, target, region, camera, temp  , depth, region, colorFactor, depthFactor, falloff, luma );
 		}
 
 
@@ -194,8 +193,9 @@ namespace Fusion.Engine.Graphics
 		public void FilterSHL1ByAlphaDoublePass ( RenderTarget2D radiance, RenderTarget2D temp, ShaderResource albedo, float intensityFactor, float alphaFactor, float falloff )
 		{
 			Color4 luma = new Color4(0.4f, 0.2f, 0.2f, 0.2f);
-			BilateralPass( Flags.DOUBLE_PASS | Flags.HORIZONTAL | Flags.MASK_ALPHA, temp  , null, radiance, albedo, intensityFactor, alphaFactor, falloff, luma );
-			BilateralPass( Flags.DOUBLE_PASS | Flags.VERTICAL   | Flags.MASK_ALPHA, radiance, null, temp  , albedo, intensityFactor, alphaFactor, falloff, luma );
+			var region = new Rectangle(0,0,16384,16384);
+			BilateralPass( Flags.DOUBLE_PASS | Flags.HORIZONTAL | Flags.MASK_ALPHA, temp    , region, null, radiance, albedo, region, intensityFactor, alphaFactor, falloff, luma );
+			BilateralPass( Flags.DOUBLE_PASS | Flags.VERTICAL   | Flags.MASK_ALPHA, radiance, region, null, temp    , albedo, region, intensityFactor, alphaFactor, falloff, luma );
 		}
 
 
@@ -206,10 +206,10 @@ namespace Fusion.Engine.Graphics
 		/// <param name="src"></param>
 		/// <param name="filter"></param>
 		/// <param name="rect"></param>
-		public void FilterSHL1ByAlphaSinglePass ( RenderTarget2D target, RenderTarget2D source, ShaderResource albedo, float intensityFactor, float alphaFactor, float falloff )
+		public void FilterSHL1ByAlphaSinglePass ( RenderTarget2D target, Rectangle targetRect, RenderTarget2D source, ShaderResource albedo, Rectangle sourceRect, float intensityFactor, float alphaFactor, float falloff )
 		{
 			Color4 luma = new Color4(0.4f, 0.2f, 0.2f, 0.2f);
-			BilateralPass( Flags.SINGLE_PASS | Flags.MASK_ALPHA, target, null, source, albedo, intensityFactor, alphaFactor, falloff, luma );
+			BilateralPass( Flags.SINGLE_PASS | Flags.MASK_ALPHA, target, targetRect, null, source, albedo, sourceRect, intensityFactor, alphaFactor, falloff, luma );
 		}
 
 

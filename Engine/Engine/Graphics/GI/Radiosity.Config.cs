@@ -19,22 +19,9 @@ namespace Fusion.Engine.Graphics.GI
 {
 	public partial class Radiosity
 	{
-
-		[Config]
-		[AECategory("Debug rays")]
-		public int DebugX { get; set; } = 0;
-
-		[Config]
-		[AECategory("Debug rays")]
-		public int DebugY { get; set; } = 0;
-
 		[Config]
 		[AECategory("Radiosity")]
-		public bool SkipDilation { get; set; } = false;
-
-		[Config]
-		[AECategory("Radiosity")]
-		public bool SkipDenoising { get; set; } = false;
+		public bool SkipFiltering { get; set; } = false;
 
 		[Config]
 		[AECategory("Radiosity")]
@@ -84,6 +71,16 @@ namespace Fusion.Engine.Graphics.GI
 		[AEValueRange(0, 1, 0.1f, 0.01f)]
 		public float FalloffDirectionSHL1 { get; set; } = 0.25f;
 
+		[Config]
+		[AECategory("Performance")]
+		[AEDisplayName("Lock Region")]
+		public bool LockRegion { get; set; } = false;
+
+		[Config]
+		[AECategory("Performance")]
+		[AEDisplayName("Max RPF")]
+		[AEValueRange(0,8,1,1)]
+		public int MaxRPF { get; set; } = 1;
 
 	}
 }

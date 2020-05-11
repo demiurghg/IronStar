@@ -66,8 +66,6 @@ namespace Fusion.Engine.Graphics.Lights {
 		internal Texture3D			skyVol		;
 
 		internal RenderTarget2D		radiance	;
-		internal RenderTarget2D		tempHDR		;
-		internal RenderTarget2D		tempLDR		;
 		internal RenderTarget2D		irradianceL0;
 		internal RenderTarget2D		irradianceL1;
 		internal RenderTarget2D		irradianceL2;
@@ -117,8 +115,6 @@ namespace Fusion.Engine.Graphics.Lights {
 				skyVol			=	new Texture3D( rs.Device, ColorFormat.Rgba8, VolumeWidth, VolumeHeight, VolumeDepth );
 
 				radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	Width, Height, true,  true );
-				tempHDR			=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	Width, Height, false, true );
-				tempLDR			=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	Width, Height, false, true );
 				irradianceL0	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	Width, Height, false, true );
 				irradianceL1	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	Width, Height, false, true );
 				irradianceL2	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	Width, Height, false, true );
@@ -219,8 +215,6 @@ namespace Fusion.Engine.Graphics.Lights {
 				SafeDispose( ref clusters	);
 
 				SafeDispose( ref radiance		);
-				SafeDispose( ref tempHDR		);	
-				SafeDispose( ref tempLDR		);	
 				SafeDispose( ref irradianceL0	);
 				SafeDispose( ref irradianceL1	);
 				SafeDispose( ref irradianceL2	);

@@ -21,10 +21,10 @@ $ubershader 	INTEGRATE3
 	Compute direct lighting :
 ------------------------------------------------------------------------------*/
 
-#ifdef LIGHTING
-
 // small addition to tell lit and unlit areas
 static const float3 LightEpsilon = float3( 0.001f, 0.001f, 0.001f );
+
+#ifdef LIGHTING
 
 void ReconstructBasis(float3 normal, out float3 tangentX, out float3 tangentY)
 {
@@ -221,6 +221,7 @@ uint uintDivUp( uint a, uint b ) { return (a % b != 0) ? (a / b + 1) : (a / b); 
 
 void StoreLightmap( int2 xy, float4 shR, float4 shG, float4 shB )
 {
+	shR.xyz += LightEpsilon;
 	IrradianceL0[ xy ]	=	float4( shR.x		, shG.x			, shB.x			, 0 );
 	IrradianceL1[ xy ]	=	float4( shR.y/shR.x , shG.y/shG.x	, shB.y/shB.x	, 0 ) * 0.5f + 0.5f;
 	IrradianceL2[ xy ]	=	float4( shR.z/shR.x , shG.z/shG.x	, shB.z/shB.x	, 0 ) * 0.5f + 0.5f;
@@ -242,6 +243,7 @@ void CSMain(
 	int2	loadXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
 	int2	storeXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
 	
+	#if 0
 	//	culling :
 	float3 bboxMin		=	BBoxMin[ tileLoadXY ].xyz;
 	float3 bboxMax		=	BBoxMax[ tileLoadXY ].xyz;
@@ -252,6 +254,7 @@ void CSMain(
 	}
 	
 	GroupMemoryBarrierWithGroupSync();
+	#endif
 
 	//	upload cache
 	uint 	cacheIndex	=	Tiles[ tileLoadXY ].x;
@@ -335,6 +338,7 @@ void CSMain(
 
 void StoreLightVolume( int3 xyz, float4 shR, float4 shG, float4 shB )
 {
+	shR.xyz += LightEpsilon;
 	LightVolumeL0[ xyz ]	=	float4( shR.x		, shG.x			, shB.x			, 0 );
 	LightVolumeL1[ xyz ]	=	float4( shR.y/shR.x , shG.y/shG.x	, shB.y/shB.x	, 0 ) * 0.5f + 0.5f;
 	LightVolumeL2[ xyz ]	=	float4( shR.z/shR.x , shG.z/shG.x	, shB.z/shB.x	, 0 ) * 0.5f + 0.5f;

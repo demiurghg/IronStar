@@ -6,12 +6,16 @@ static const int BilateralBlockSizeY = 16;
 // ---------------- DATA STRUCTURES ---------------- //
 
 // Fusion.Engine.Graphics.DilateFilter+DILATE
-// Marshal.SizeOf = 16
+// Marshal.SizeOf = 64
 struct DILATE {
-	float      Threshold;                     // offset:    0
-	float      GainMask;                      // offset:    4
-	float      reserved2;                     // offset:    8
-	float      reserved3;                     // offset:   12
+	uint2      SourceXY;                      // offset:    0
+	uint2      TargetXY;                      // offset:    8
+	uint2      MaskXY;                        // offset:   16
+	uint2      Dummy;                         // offset:   24
+	float      Threshold;                     // offset:   32
+	float      GainMask;                      // offset:   36
+	float      reserved2;                     // offset:   40
+	float      reserved3;                     // offset:   44
 };
 
 // ---------------- SHADER RESOURCES ---------------- //

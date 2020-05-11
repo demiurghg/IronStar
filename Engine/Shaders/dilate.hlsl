@@ -29,21 +29,22 @@ void CSMain(
 	int2	loadXY_B	=	dispatchThreadId.xy + int2( 0,-1);
 	int2	loadXY_R	=	dispatchThreadId.xy + int2( 1, 0);
 	int2	loadXY_L	=	dispatchThreadId.xy + int2(-1, 0);
-	int2	storeXY		=	dispatchThreadId.xy;
 	
-	float 	mask_C		=	ExtractMask( Mask[ loadXY_C ] );
-	float	mask_T		=	ExtractMask( Mask[ loadXY_T ] );
-	float	mask_B		=	ExtractMask( Mask[ loadXY_B ] );
-	float	mask_R		=	ExtractMask( Mask[ loadXY_R ] );
-	float	mask_L		=	ExtractMask( Mask[ loadXY_L ] );
+	int2	storeXY		=	dispatchThreadId.xy + Dilate.TargetXY ;
+	
+	float 	mask_C		=	ExtractMask( Mask[ loadXY_C + Dilate.MaskXY ] );
+	float	mask_T		=	ExtractMask( Mask[ loadXY_T + Dilate.MaskXY ] );
+	float	mask_B		=	ExtractMask( Mask[ loadXY_B + Dilate.MaskXY ] );
+	float	mask_R		=	ExtractMask( Mask[ loadXY_R + Dilate.MaskXY ] );
+	float	mask_L		=	ExtractMask( Mask[ loadXY_L + Dilate.MaskXY ] );
 	float 	mask_Total	=	mask_T + mask_B + mask_R + mask_L;
 	float	rcp_mask	=	1.0f / mask_Total;
 	
-	float4	source_C	=	Source[ loadXY_C ];
-	float4	source_T	=	Source[ loadXY_T ];
-	float4	source_B	=	Source[ loadXY_B ];
-	float4	source_R	=	Source[ loadXY_R ];
-	float4	source_L	=	Source[ loadXY_L ];
+	float4	source_C	=	Source[ loadXY_C + Dilate.SourceXY ];
+	float4	source_T	=	Source[ loadXY_T + Dilate.SourceXY ];
+	float4	source_B	=	Source[ loadXY_B + Dilate.SourceXY ];
+	float4	source_R	=	Source[ loadXY_R + Dilate.SourceXY ];
+	float4	source_L	=	Source[ loadXY_L + Dilate.SourceXY ];
 
 	if ( mask_C > EPSILON || mask_Total < EPSILON )
 	{

@@ -189,11 +189,12 @@ void CSMain(
 	uint  groupIndex: SV_GroupIndex, 
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
-	int2 location		=	dispatchThreadId.xy;
+	int2 loadXY		=	dispatchThreadId.xy + filterParams.SourceXY;
+	int2 storeXY	=	dispatchThreadId.xy + filterParams.TargetXY;
 	
 	float3 accumValue 	= 0;
 	float  accumWeight	= 0;
-	int3   centerPoint	= int3( location.xy, 0 );
+	int3   centerPoint	= int3( loadXY.xy, 0 );
 	
 	//	load cache :
 	uint2 offset = uint2( 4, 4 );
@@ -210,10 +211,10 @@ void CSMain(
 		// CacheStore( xy, float4( source, mask ) );
 	// }
 	
-	uint3 uv00	 = uint3( groupId.xy*scale + groupThreadId.xy*2 + uint2(0,0) - offset, 0 );
-	uint3 uv01	 = uint3( groupId.xy*scale + groupThreadId.xy*2 + uint2(0,1) - offset, 0 );
-	uint3 uv10	 = uint3( groupId.xy*scale + groupThreadId.xy*2 + uint2(1,0) - offset, 0 );
-	uint3 uv11	 = uint3( groupId.xy*scale + groupThreadId.xy*2 + uint2(1,1) - offset, 0 );
+	uint3 uv00	 = uint3( groupId.xy*scale + groupThreadId.xy*2 + uint2(0,0) + filterParams.SourceXY - offset, 0 );
+	uint3 uv01	 = uint3( groupId.xy*scale + groupThreadId.xy*2 + uint2(0,1) + filterParams.SourceXY - offset, 0 );
+	uint3 uv10	 = uint3( groupId.xy*scale + groupThreadId.xy*2 + uint2(1,0) + filterParams.SourceXY - offset, 0 );
+	uint3 uv11	 = uint3( groupId.xy*scale + groupThreadId.xy*2 + uint2(1,1) + filterParams.SourceXY - offset, 0 );
 	
 	CacheStore( groupThreadId.xy*2 + uint2(0,0), float4( Source.Load( uv00 ).rgb, ExtractMaskFactor( Mask.Load( uv00 ) ) ) );
 	CacheStore( groupThreadId.xy*2 + uint2(0,1), float4( Source.Load( uv01 ).rgb, ExtractMaskFactor( Mask.Load( uv01 ) ) ) );
@@ -253,7 +254,7 @@ void CSMain(
 	
 	float3	result			=	accumValue / accumWeight;
 	
-	Target[location.xy]		=	float4( result, 0 );
+	Target[storeXY.xy]		=	float4( result, 0 );
 }
 
 #endif

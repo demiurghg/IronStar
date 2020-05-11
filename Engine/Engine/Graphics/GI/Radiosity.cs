@@ -20,6 +20,8 @@ namespace Fusion.Engine.Graphics.GI
 	[RequireShader("radiosity", true)]
 	public partial class Radiosity : RenderComponent
 	{
+		const int RegionSize = 256;
+
 		[ShaderDefine]	const int TileSize			=	RadiositySettings.TileSize;
 		[ShaderDefine]	const int ClusterSize		=	RadiositySettings.ClusterSize;
 		[ShaderDefine]	const uint PatchCacheSize	=	RadiositySettings.MaxPatchesPerTile;
@@ -125,6 +127,8 @@ namespace Fusion.Engine.Graphics.GI
 		Ubershader		shader;
 		StateFactory	factory;
 
+		RenderTarget2D	tempHDR;
+		RenderTarget2D	tempLDR;
 
 
 		public Radiosity( RenderSystem rs ) : base(rs)
@@ -137,6 +141,9 @@ namespace Fusion.Engine.Graphics.GI
 			base.Initialize();
 
 			cbRadiosity	=	new ConstantBuffer( rs.Device, typeof(RADIOSITY) );
+
+			tempHDR		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10, RegionSize, RegionSize, true );
+			tempLDR		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,   RegionSize, RegionSize, true );
 
 			LoadContent();
 
@@ -156,6 +163,8 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			if (disposing)
 			{
+				SafeDispose( ref tempHDR );
+				SafeDispose( ref tempLDR );
 				SafeDispose( ref cbRadiosity	);
 			}
 
@@ -165,6 +174,13 @@ namespace Fusion.Engine.Graphics.GI
 		/*-----------------------------------------------------------------------------------------
 		 *	Radiosity rendering :
 		-----------------------------------------------------------------------------------------*/
+
+		[AECommand]
+		public void AdvanceRegion()
+		{
+			counter++;
+		}
+
 
 		int counter = 0;
 
@@ -181,15 +197,18 @@ namespace Fusion.Engine.Graphics.GI
 			{
 				SetupShaderResources();
 
-				int regSize =	256;
+
+				int regSize =	RegionSize;
 				int regX	=	lightMap.Width  / regSize;
 				int regY	=	lightMap.Height / regSize;
+
+				counter		=	(counter) % (regX * regY);
 				int x		=	counter % regX * regSize;
 				int y		=	counter / regX * regSize;
 				int w		=	regSize;
 				int h		=	regSize;
 
-				counter		=	(counter + 1) % (regX * regY);
+				if (!LockRegion) counter++;
 
 				RenderRegion( new Rectangle(x, y, w, h) );
 				//RenderRegion( new Rectangle(0,0, lightMap.Width, lightMap.Height) );
@@ -301,10 +320,10 @@ namespace Fusion.Engine.Graphics.GI
 
 			using ( new PixEvent( "Denoising/Dilation" ) )
 			{
-				FilterLightmap( lightMap.irradianceL0, lightMap.tempHDR, lightMap.albedo, WeightIntensitySHL0, 20, FalloffIntensitySHL0 );
-				FilterLightmap( lightMap.irradianceL1, lightMap.tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
-				FilterLightmap( lightMap.irradianceL2, lightMap.tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
-				FilterLightmap( lightMap.irradianceL3, lightMap.tempLDR, lightMap.albedo, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
+				FilterLightmap( lightMap.irradianceL0, tempHDR, lightMap.albedo, region, WeightIntensitySHL0, 20, FalloffIntensitySHL0 );
+				FilterLightmap( lightMap.irradianceL1, tempLDR, lightMap.albedo, region, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
+				FilterLightmap( lightMap.irradianceL2, tempLDR, lightMap.albedo, region, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
+				FilterLightmap( lightMap.irradianceL3, tempLDR, lightMap.albedo, region, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
 			}
 		}
 
@@ -333,24 +352,13 @@ namespace Fusion.Engine.Graphics.GI
 
 
 
-		void FilterLightmap( RenderTarget2D irradiance, RenderTarget2D temp, ShaderResource albedo, float lumaFactor, float alphaFactor, float falloff )
+		void FilterLightmap( RenderTarget2D irradiance, RenderTarget2D temp, ShaderResource albedo, Rectangle region, float lumaFactor, float alphaFactor, float falloff )
 		{
-			if (!SkipDenoising)
+			if (!SkipFiltering)
 			{
-				rs.BilateralFilter.FilterSHL1ByAlphaSinglePass( temp, irradiance, albedo, lumaFactor, alphaFactor, falloff ); 
-			}
-			else 
-			{
-				irradiance.CopyTo( temp );
-			}
-
-			if (!SkipDilation)
-			{
-				rs.DilateFilter.DilateByMaskAlpha( irradiance, temp, albedo, 0, 1 );
-			}
-			else
-			{
-				temp.CopyTo( irradiance );
+				var tempRegion = new Rectangle( 0,0, RegionSize, RegionSize );
+				rs.BilateralFilter.FilterSHL1ByAlphaSinglePass( temp, tempRegion, irradiance, albedo, region, lumaFactor, alphaFactor, falloff ); 
+				rs.DilateFilter.DilateByMaskAlpha( irradiance, region, temp, tempRegion, albedo, region, 0, 1 );
 			}
 		}
 

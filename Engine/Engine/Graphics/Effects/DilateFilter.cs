@@ -38,9 +38,13 @@ namespace Fusion.Engine.Graphics
 
 
 		[ShaderStructure()]
-		[StructLayout(LayoutKind.Sequential, Pack=4, Size=16)]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=64)]
 		struct DILATE 
 		{
+			public	UInt2	SourceXY;
+			public	UInt2	TargetXY;
+			public	UInt2	MaskXY;
+			public	UInt2	Dummy;
 			public	float	Threshold;
 			public	float	GainMask;
 			public	float	reserved2;
@@ -105,7 +109,7 @@ namespace Fusion.Engine.Graphics
 		 * 
 		-----------------------------------------------------------------------------------------------*/
 
-		void DilateGeneric ( Flags flags, RenderTarget2D target, ShaderResource source, ShaderResource mask, float threshold, float maskGain )
+		void DilateGeneric ( Flags flags, RenderTarget2D target, Rectangle targetRect, ShaderResource source, Rectangle sourceRect, ShaderResource mask, Rectangle maskRect, float threshold, float maskGain )
 		{ 
 			device.ResetStates();
 
@@ -118,25 +122,26 @@ namespace Fusion.Engine.Graphics
 			if (mask==null) {
 				throw new ArgumentNullException("mask");
 			}
-			if (target.Width!=source.Width || target.Height!=source.Height) {
-				throw new ArgumentException("target and source buffer msut be the same size");
-			}
-			if (target.Width!=mask.Width || target.Height!=mask.Height) {
-				throw new ArgumentException("target and mask buffer msut be the same size");
-			}
+
+			targetRect	=	Rectangle.Intersect( targetRect, new Rectangle(0,0, target.Width, target.Height) );
+			sourceRect	=	Rectangle.Intersect( sourceRect, new Rectangle(0,0, source.Width, source.Height) );
+
+			int width	=	Math.Min( targetRect.Width, sourceRect.Width );
+			int height	=	Math.Min( targetRect.Height, sourceRect.Height );
 
 			var filterData			=	new DILATE();
+			filterData.TargetXY		=	new UInt2( (uint)targetRect.X, (uint)targetRect.Y );
+			filterData.SourceXY		=	new UInt2( (uint)sourceRect.X, (uint)sourceRect.Y );
+			filterData.MaskXY		=	new UInt2( (uint)maskRect.X,   (uint)maskRect.Y );
 			filterData.Threshold	=	threshold;
 			filterData.GainMask		=	maskGain;
 			filterData.reserved2	=	0;
 			filterData.reserved3	=	0;
 			cbuffer.SetData( ref filterData );
 					
-			int tgx = MathUtil.IntDivRoundUp( target.Width,  BilateralBlockSizeX );
-			int tgy = MathUtil.IntDivRoundUp( target.Height, BilateralBlockSizeY );
+			int tgx = MathUtil.IntDivRoundUp( width,  BilateralBlockSizeX );
+			int tgy = MathUtil.IntDivRoundUp( height, BilateralBlockSizeY );
 			int tgz = 1;
-
-			device.ResetStates();
 
 			device.ComputeResources[ regSource	]	=	source;
 			device.ComputeResources[ regMask	]	=	mask;
@@ -157,9 +162,9 @@ namespace Fusion.Engine.Graphics
 		/// <param name="src"></param>
 		/// <param name="filter"></param>
 		/// <param name="rect"></param>
-		public void DilateByMaskAlpha ( RenderTarget2D target, ShaderResource source, ShaderResource mask, float threshold, float maskGain )
+		public void DilateByMaskAlpha ( RenderTarget2D target, Rectangle targetRect, ShaderResource source, Rectangle sourceRect, ShaderResource mask, Rectangle maskRect, float threshold, float maskGain )
 		{
-			DilateGeneric( Flags.MASK_ALPHA, target, source, mask, threshold, maskGain );
+			DilateGeneric( Flags.MASK_ALPHA, target, targetRect, source, sourceRect, mask, maskRect, threshold, maskGain );
 		}
 
 

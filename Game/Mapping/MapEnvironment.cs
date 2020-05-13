@@ -17,7 +17,7 @@ namespace IronStar.Mapping {
 		public float Gravity { get; set; } = 48;
 
 		[AECategory( "Sky" )]
-		[AEValueRange(2,8,0.25f,0.125f)]
+		[AEValueRange(2,8,0.25f,0.01f)]
 		public float SkyTrubidity {
 			get {
 				return turbidity;
@@ -29,7 +29,7 @@ namespace IronStar.Mapping {
 		float turbidity = 2;
 
 		[AECategory( "Sky" )]
-		[AEValueRange(0,90,15,1)]
+		[AEValueRange(0,90,15,0.01f)]
 		public float SunAltitude { get; set; } = 45;
 
 		[AECategory( "Sky" )]
@@ -37,7 +37,7 @@ namespace IronStar.Mapping {
 		public float SkyIntensity { get; set; } = 1;
 
 		[AECategory( "Sky" )]
-		[AEValueRange(-180,180,15,1)]
+		[AEValueRange(-180,180,15,0.1f)]
 		public float SunAzimuth { get; set; } = 45;
 
 		[AECategory( "Sky" )]

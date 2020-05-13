@@ -341,10 +341,51 @@ namespace Fusion.Engine.Graphics.Lights
 		}
 
 
+		Int2 DebugDrawTileInfo( int x, int y, Int2 tileData )
+		{
+			var ts = RadiositySettings.TileSize;
+
+			if (tileData.Y<1) return tileData;
+
+			var testImage = new Image<Color>(tileData.Y, ts*ts, Color.Black);
+
+			int row = 0;
+
+			for (uint i=0; i<ts*ts; i++)
+			{
+				var xy = MortonCode.Decode2(i) + new Int2( x * ts, y * ts );
+
+				var addr = IndexMap[xy];
+				var offset = addr >> 8;
+				var count = addr & 0xFF;
+
+				if (count==0) continue;
+
+				for (uint j=offset; j<offset+count; j++)
+				{
+					var cpatch	= CachedIndices[(int)j];
+					var hits	= (byte)cpatch.HitCount;
+					var normal	= (byte)cpatch.Direction;
+
+					testImage[cpatch.CacheIndex, row] = new Color( hits*8, 0, normal*4, (byte)255 );
+				}
+
+				row++;
+			}
+
+			testImage = testImage.Crop( new Rectangle( 0,0,testImage.Width, row), Color.Black);
+
+			SaveDebugImage( testImage, string.Format("tile_{0:00}_{1:00}_{2:0000}", x, y, tileData.Y) );
+
+			return tileData;
+		}
+
 
 		public void SaveDebugImages()
 		{
-			File.WriteAllText( "rad_indices.txt", string.Join("\r\n", Indices.Select( idx=>idx.ToString() ) ) );
+			Tiles.ForEachPixel( DebugDrawTileInfo );
+			
+			//File.WriteAllText( "rad_indices.txt", string.Join("\r\n", Indices.Select( idx=>idx.ToString() ) ) );
 
 			SaveDebugImage( Sky.Convert( EncodeSkyRGB8 ), "rad_sky" );
 			SaveDebugImage( IndexMap.Convert( idx => new Color(idx) ), "rad_index_map" );

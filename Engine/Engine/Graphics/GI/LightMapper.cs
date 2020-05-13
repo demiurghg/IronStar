@@ -193,9 +193,17 @@ namespace Fusion.Engine.Graphics.Lights {
 				.Select( index => index & 0xFF )
 				.Where( count => count!=0 );
 
+			var lightMapTexels	=	sampleCount.Count();
+
 			var cachedSamples = formFactor.Tiles.GetLinearData()
 				.Select( cached => cached.Y )
 				.Where( count => count!=0 );
+
+			Log.Message("   lightmap texels        : {0} / {1}", lightMapTexels, formFactor.IndexMap.Width * formFactor.IndexMap.Height );
+
+			Log.Message("   average samples        : {0:0.00}", sampleCount.Average( s => s ) );
+			Log.Message("   max samples            : {0}", sampleCount.Max( s => s ) );
+			Log.Message("   min samples            : {0}", sampleCount.Min( s => s ) );
 
 			Log.Message("   average cached samples : {0:0.00}", cachedSamples.Average( s => s ) );
 			Log.Message("   max cached samples     : {0}", cachedSamples.Max( s => s ) );
@@ -234,7 +242,8 @@ namespace Fusion.Engine.Graphics.Lights {
 				.Where( results0 => results0 != null )
 				.SelectMany( results1 => results1.Patches )
 				.GroupBy( patch0 => patch0.Coords )
-				.OrderBy( group0 => group0.Count() )
+				.OrderByDescending( group0 => group0.Count() )
+				.Where( group1 => group1.Count() > 3 ) // prune lonely patches, since they do not affect picture too much
 				.Select( group1 => group1.First() )
 				//.DistinctBy( patch => patch.Coords )
 				.ToArray();
@@ -266,6 +275,8 @@ namespace Fusion.Engine.Graphics.Lights {
 							Dir = Radiosity.EncodeDirection( formFactor.Position[ group.First().Coords ] - gatheringResults[i].Origin )
 						} )
 						.Select( patch1 => new CachedPatchIndex( GetPatchIndexInCache(globalPatches, patch1.Patch), patch1.Dir, patch1.Hits ) )
+						.Where( cpi0 => cpi0.CacheIndex >= 0 )
+						.OrderBy( cpi1 => cpi1.CacheIndex )
 						.ToArray();
 
 					formFactor.IndexMap[xy] = formFactor.AddCachedPatchIndices( cachedPatches );
@@ -312,7 +323,11 @@ namespace Fusion.Engine.Graphics.Lights {
 			var globalPatches	=	gatheringResults
 				.Where( results0 => results0 != null )
 				.SelectMany( results1 => results1.Patches )
-				.DistinctBy( patch => patch.Coords )
+				.GroupBy( patch0 => patch0.Coords )
+				.OrderByDescending( group0 => group0.Count() )
+				.Where( group1 => group1.Count() > 3 ) // prune lonely patches, since they do not affect picture too much
+				.Select( group1 => group1.First() )
+				//.DistinctBy( patch => patch.Coords )
 				.ToArray();
 
 			formFactor.Clusters[clusterX,clusterY,clusterZ]	=	formFactor.AddGlobalPatchIndices( globalPatches );

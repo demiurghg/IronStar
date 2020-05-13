@@ -117,7 +117,7 @@ namespace Fusion.Engine.Graphics
 		 * 
 		-----------------------------------------------------------------------------------------------*/
 
-		void BilateralPass ( Flags flags, RenderTarget2D target, Rectangle targetRect, Camera camera, ShaderResource source, ShaderResource mask, Rectangle sourceRect, float colorFactor, float maskFactor, float falloff, Color4 lumaVector )
+		void BilateralPass ( Flags flags, RenderTarget2D target, Rectangle targetRect, Camera camera, ShaderResource source, Rectangle sourceRect, ShaderResource mask, Rectangle maskRect, float colorFactor, float maskFactor, float falloff, Color4 lumaVector )
 		{
 			device.ResetStates();
 
@@ -177,8 +177,8 @@ namespace Fusion.Engine.Graphics
 		{
 			Color4 luma = new Color4(1,0,0,0);
 			var region = new Rectangle(0,0,16384,16384);
-			BilateralPass( Flags.DOUBLE_PASS | Flags.HORIZONTAL | Flags.MASK_DEPTH, temp  , region, camera, target, depth, region, colorFactor, depthFactor, falloff, luma );
-			BilateralPass( Flags.DOUBLE_PASS | Flags.VERTICAL   | Flags.MASK_DEPTH, target, region, camera, temp  , depth, region, colorFactor, depthFactor, falloff, luma );
+			BilateralPass( Flags.DOUBLE_PASS | Flags.HORIZONTAL | Flags.MASK_DEPTH, temp  , region, camera, target, region, depth, region, colorFactor, depthFactor, falloff, luma );
+			BilateralPass( Flags.DOUBLE_PASS | Flags.VERTICAL   | Flags.MASK_DEPTH, target, region, camera, temp  , region, depth, region, colorFactor, depthFactor, falloff, luma );
 		}
 
 
@@ -194,8 +194,8 @@ namespace Fusion.Engine.Graphics
 		{
 			Color4 luma = new Color4(0.4f, 0.2f, 0.2f, 0.2f);
 			var region = new Rectangle(0,0,16384,16384);
-			BilateralPass( Flags.DOUBLE_PASS | Flags.HORIZONTAL | Flags.MASK_ALPHA, temp    , region, null, radiance, albedo, region, intensityFactor, alphaFactor, falloff, luma );
-			BilateralPass( Flags.DOUBLE_PASS | Flags.VERTICAL   | Flags.MASK_ALPHA, radiance, region, null, temp    , albedo, region, intensityFactor, alphaFactor, falloff, luma );
+			BilateralPass( Flags.DOUBLE_PASS | Flags.HORIZONTAL | Flags.MASK_ALPHA, temp    , region, null, radiance, region, albedo, region, intensityFactor, alphaFactor, falloff, luma );
+			BilateralPass( Flags.DOUBLE_PASS | Flags.VERTICAL   | Flags.MASK_ALPHA, radiance, region, null, temp    , region, albedo, region, intensityFactor, alphaFactor, falloff, luma );
 		}
 
 
@@ -209,7 +209,7 @@ namespace Fusion.Engine.Graphics
 		public void FilterSHL1ByAlphaSinglePass ( RenderTarget2D target, Rectangle targetRect, RenderTarget2D source, ShaderResource albedo, Rectangle sourceRect, float intensityFactor, float alphaFactor, float falloff )
 		{
 			Color4 luma = new Color4(0.4f, 0.2f, 0.2f, 0.2f);
-			BilateralPass( Flags.SINGLE_PASS | Flags.MASK_ALPHA, target, targetRect, null, source, albedo, sourceRect, intensityFactor, alphaFactor, falloff, luma );
+			BilateralPass( Flags.SINGLE_PASS | Flags.MASK_ALPHA, target, targetRect, null, source, sourceRect, albedo, sourceRect, intensityFactor, alphaFactor, falloff, luma );
 		}
 
 

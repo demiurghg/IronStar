@@ -452,6 +452,25 @@ namespace Fusion.Engine.Imaging
 		}
 	
 
+		public Image<TColor> Crop( Rectangle rect, TColor fill )
+		{
+			var result = new Image<TColor>( rect.Width, rect.Height, fill );
+
+			for (int y=rect.Top; y<rect.Bottom; y++)
+			{
+				if (y<0 || y>=Height) continue;
+
+				for (int x=rect.Left; x<rect.Right; x++)
+				{
+					if (x<0 || x>=Width) continue;
+
+					result[ x-rect.X, y-rect.Y ] = this[x,y];
+				}
+			}
+
+			return result;
+		}
+
 		/*------------------------------------------------------------------------------------------
 		 *	Image I/O
 		-----------------------------------------------------------------------------------------*/

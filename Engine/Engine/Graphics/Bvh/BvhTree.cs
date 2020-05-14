@@ -16,13 +16,12 @@ namespace Fusion.Engine.Graphics.Bvh
 						Primitive = p0, 
 						BoundingBox = bboxSelector(p0), 
 						Centroid = centroidSelector(p0),
-						ZOrder = ComputeZOrder( centroidSelector(p0)
-					})
+						ZOrder = ComputeZOrder( centroidSelector(p0) ) })
 					.OrderBy( p1 => p1.ZOrder )
 					.ToArray();
 
 			
-
+			throw new NotImplementedException();
 		}
 
 

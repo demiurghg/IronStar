@@ -7,24 +7,161 @@ using Fusion.Core.Mathematics;
 
 namespace Fusion.Engine.Graphics.Bvh
 {
-	public static class BvhTree
+	public class BvhTree<TPrimitive>
 	{
-		public static BvhNode<T> Construct<T> ( IEnumerable<T> primitives, Func<T,BoundingBox> bboxSelector, Func<T,Vector3> centroidSelector )
+		sealed class SortedPrimitive
 		{
-			var sortedData	=	primitives
-					.Select( p0 => new { 
-						Primitive = p0, 
-						BoundingBox = bboxSelector(p0), 
-						Centroid = centroidSelector(p0),
-						ZOrder = ComputeZOrder( centroidSelector(p0) ) })
+			public SortedPrimitive( TPrimitive primitive, BoundingBox bbox, Vector3 centroid )
+			{
+				Primitive	=	primitive;
+				BoundingBox	=	bbox;	
+				Centroid	=	centroid;
+				ZOrder		=	ComputeZOrder( centroid );
+			}
+
+			public readonly TPrimitive Primitive;
+			public readonly BoundingBox BoundingBox;
+			public readonly Vector3 Centroid;
+			public readonly ulong ZOrder;
+		}
+
+
+		sealed class Node
+		{
+			public readonly bool IsLeaf;
+			public Node Left;
+			public Node Right;
+			public TPrimitive Primitive;
+			public BoundingBox BoundingBox;
+
+			Node() {}
+
+			public Node ( TPrimitive primitive, BoundingBox bbox )
+			{
+				IsLeaf		=	true;
+				Primitive	=	primitive;
+				BoundingBox	=	bbox;
+			}
+
+			public Node ( Node left, Node right )
+			{
+				IsLeaf		=	false;
+				Primitive	=	default(TPrimitive);
+				Left		=	left;
+				Right		=	right;
+			}
+		}
+
+
+		/// <summary>
+		/// Create BVH-tree from collection of primitives.
+		/// </summary>
+		public BvhTree( IEnumerable<TPrimitive> primitives, Func<TPrimitive,BoundingBox> bboxSelector, Func<TPrimitive,Vector3> centroidSelector )
+		{
+			var sortedPrimitives	=	primitives
+					.Select( p0 => new SortedPrimitive( p0, bboxSelector(p0), centroidSelector(p0) ) ) 
 					.OrderBy( p1 => p1.ZOrder )
 					.ToArray();
+
+			var highestBit	=	sortedPrimitives.Max( p => MathUtil.LogBase2( p.ZOrder ) );
+
+			var root = GenerateHierarchyRecursive( sortedPrimitives, 0, sortedPrimitives.Length-1 );
+
+			ComputeBoundingBoxRecursive( root );
 
 			
 			throw new NotImplementedException();
 		}
 
+										
 
+		/// <summary>
+		/// https://devblogs.nvidia.com/thinking-parallel-part-iii-tree-construction-gpu/
+		/// </summary>
+		Node GenerateHierarchyRecursive( SortedPrimitive[] primitives, int first, int last )
+		{
+			// Single object => create a leaf node.
+			if (first==last)
+			{
+				return new Node( primitives[first].Primitive, primitives[first].BoundingBox );
+			}
+
+			// Determine where to split the range.
+			int split = FindSplit( primitives, first, last );
+
+			// Process the resulting sub-ranges recursively.
+			Node left	=	GenerateHierarchyRecursive( primitives, first, split );
+			Node right	=	GenerateHierarchyRecursive( primitives, split+1, last );
+
+			return new Node( left, right );
+		}
+
+
+
+		/// <summary>
+		/// https://devblogs.nvidia.com/thinking-parallel-part-iii-tree-construction-gpu/
+		/// </summary>
+		int FindSplit( SortedPrimitive[] primitives, int first, int last )
+		{
+			ulong firstCode	=	primitives[first].ZOrder;
+			ulong lastCode	=	primitives[last ].ZOrder;
+
+			// Identical Morton codes => split the range in the middle.
+			if (firstCode==lastCode)
+			{
+				return (first+last)/2;
+			}
+
+			// Calculate the number of highest bits that are the same
+			// for all objects, using the count-leading-zeros intrinsic.
+			int commonPrefix = BitUtils.CountLeadingZeros(firstCode ^ lastCode);
+
+			// Use binary search to find where the next bit differs.
+			// Specifically, we are looking for the highest object that
+			// shares more than commonPrefix bits with the first one.
+			int split = first; // initial guess
+			int step = last - first;
+
+			do
+			{
+				step = (step + 1) >> 1; // exponential decrease
+				int newSplit = split + step; // proposed new position
+
+				if (newSplit < last)
+				{
+					ulong splitCode = primitives[newSplit].ZOrder;
+					int splitPrefix = BitUtils.CountLeadingZeros(firstCode ^ splitCode);
+
+					if (splitPrefix > commonPrefix)
+					{
+						split = newSplit; // accept proposal
+					}
+				}
+			}
+			while (step > 1);
+
+			return split;
+		}
+
+
+		/// <summary>
+		/// Computes bounding box for given node
+		/// </summary>
+		/// <param name="node"></param>
+		void ComputeBoundingBoxRecursive( Node node )
+		{
+			if (node.IsLeaf) return;
+
+			ComputeBoundingBoxRecursive( node.Left );
+			ComputeBoundingBoxRecursive( node.Right );
+
+			node.BoundingBox = BoundingBox.Merge( node.Left.BoundingBox, node.Right.BoundingBox );
+		}
+
+
+		/// <summary>
+		/// Compute Z-order for given point
+		/// </summary>
 		static ulong ComputeZOrder ( Vector3 point )
 		{
 			const int scale = 128;
@@ -45,8 +182,9 @@ namespace Fusion.Engine.Graphics.Bvh
 		/// <param name="root">Root of BVH tree</param>
 		/// <param name="selector"></param>
 		/// <returns></returns>
-		public static IEnumerable<T> Traverse<T>( BvhNode<T> root, Func<T,BoundingBox,ContainmentType> selector )
+		public IEnumerable<TPrimitive> Traverse( Func<TPrimitive,BoundingBox,ContainmentType> selector )
 		{
+			//List<
 			throw new NotImplementedException();
 		}
 	}

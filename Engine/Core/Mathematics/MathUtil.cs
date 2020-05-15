@@ -568,6 +568,22 @@ namespace Fusion.Core.Mathematics
 
 
 		/// <summary>
+		/// Finds integer log base 2 of an integer (aka the position of the highest bit set)
+		/// </summary>
+		/// <param name="x"></param>
+		/// <returns></returns>
+		static public int LogBase2 ( ulong x ) {  
+			ulong v = x;	// 32-bit word to find the log base 2 of
+			int r = 0;			// r will be lg(v)
+
+			while ((v>>=1)!=0) {
+				r++;
+			}
+			return r;
+		}
+
+
+		/// <summary>
 		/// http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
 		/// </summary>
 		/// <param name="v"></param>

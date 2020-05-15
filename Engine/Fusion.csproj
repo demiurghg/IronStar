@@ -503,6 +503,7 @@
     <Compile Include="Engine\Frames\MouseProcessor.cs" />
     <Compile Include="Engine\Frames\TouchProcessor.cs" />
     <Compile Include="Engine\Frames\Utils.cs" />
+    <Compile Include="Engine\Graphics\Bvh\BvhNode.cs" />
     <Compile Include="Engine\Graphics\Camera.cs" />
     <Compile Include="Engine\Graphics\Effects\DilateFilter.cs" />
     <Compile Include="Engine\Graphics\Effects\BilateralFilter.cs" />
@@ -530,6 +531,7 @@
     <Compile Include="Engine\Graphics\ForwardSolidContext.cs" />
     <Compile Include="Engine\Graphics\ForwardTransparentContext.cs" />
     <Compile Include="Engine\Graphics\ForwardZPassContext.cs" />
+    <Compile Include="Engine\Graphics\Bvh\BvhTree.cs" />
     <Compile Include="Engine\Graphics\GI\LightProbeDebug.cs" />
     <Compile Include="Engine\Graphics\GI\LightMapper.Rtc.cs" />
     <Compile Include="Engine\Graphics\GI\LightMapper.Lighting.cs" />

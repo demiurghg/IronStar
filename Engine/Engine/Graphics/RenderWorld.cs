@@ -129,7 +129,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Gets collection of mesh instances.
 		/// </summary>
-		public ICollection<MeshInstance> Instances {
+		public ICollection<RenderInstance> Instances {
 			get; private set;
 		}
 
@@ -239,7 +239,7 @@ namespace Fusion.Engine.Graphics {
 			DofSettings		=	new DofSettings();
 			FogSettings		=	new FogSettings();
 
-			Instances		=	new List<MeshInstance>();
+			Instances		=	new List<RenderInstance>();
 			LightSet		=	new LightSet( Game.RenderSystem );
 
 			debug			=	new DebugRender( Game );

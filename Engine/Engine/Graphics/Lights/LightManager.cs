@@ -171,7 +171,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="gameTime"></param>
 		/// <param name="lightSet"></param>
-		public void Update ( GameTime gameTime, LightSet lightSet, IEnumerable<MeshInstance> instances )
+		public void Update ( GameTime gameTime, LightSet lightSet, IEnumerable<RenderInstance> instances )
 		{
 			if (shadowMap.ShadowQuality!=rs.ShadowQuality) {
 				SafeDispose( ref shadowMap );

@@ -286,7 +286,7 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		bool SetupInstance ( SurfaceFlags stageFlag, IRenderContext context, MeshInstance instance )
+		bool SetupInstance ( SurfaceFlags stageFlag, IRenderContext context, RenderInstance instance )
 		{
 			bool aniso	=	rs.VTSystem.UseAnisotropic ;
 
@@ -348,7 +348,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="stereoEye"></param>
 		/// <param name="context"></param>
 		/// <param name="rw"></param>
-		void RenderGeneric ( string eventName, GameTime gameTime, StereoEye stereoEye, SurfaceFlags surfFlags, IRenderContext context, IEnumerable<MeshInstance> instances, InstanceGroup instanceGroup )
+		void RenderGeneric ( string eventName, GameTime gameTime, StereoEye stereoEye, SurfaceFlags surfFlags, IRenderContext context, IEnumerable<RenderInstance> instances, InstanceGroup instanceGroup )
 		{
 			using ( new PixEvent(eventName) ) 
 			{

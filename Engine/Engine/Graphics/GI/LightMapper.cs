@@ -25,7 +25,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		readonly RadiositySettings settings;
 		readonly Vector3[] hammersley;
-		readonly MeshInstance[] instances;
+		readonly RenderInstance[] instances;
 		readonly RenderSystem rs;
 
 		FormFactor formFactor;
@@ -33,7 +33,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// <summary>
 		/// Creates instance of the Lightmap
 		/// </summary>
-		public LightMapper( RenderSystem rs, RadiositySettings settings, IEnumerable<MeshInstance> instances )
+		public LightMapper( RenderSystem rs, RadiositySettings settings, IEnumerable<RenderInstance> instances )
 		{
 			this.rs			=	rs;
 			this.settings	=	settings;
@@ -550,7 +550,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		/// <param name="lightmap"></param>
 		/// <param name="instance"></param>
-		void RasterizeInstance ( FormFactor lightmap, MeshInstance instance, Rectangle viewport, RadiositySettings settings )
+		void RasterizeInstance ( FormFactor lightmap, RenderInstance instance, Rectangle viewport, RadiositySettings settings )
 		{
 			var mesh		=	instance.Mesh;
 

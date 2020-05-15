@@ -49,7 +49,7 @@ namespace IronStar.SFX {
 
 		Matrix[] globalTransforms;
 		Matrix[] animSnapshot;
-		MeshInstance[] meshInstances;
+		RenderInstance[] meshInstances;
 		AnimationComposer composer;
 
 		public bool Killed {
@@ -138,13 +138,13 @@ namespace IronStar.SFX {
 			scene.ComputeAbsoluteTransforms( globalTransforms );
 			scene.ComputeAbsoluteTransforms( animSnapshot );
 			
-			meshInstances	=	new MeshInstance[ scene.Nodes.Count ];
+			meshInstances	=	new RenderInstance[ scene.Nodes.Count ];
 
 			for ( int i=0; i<scene.Nodes.Count; i++ ) {
 				var meshIndex = scene.Nodes[i].MeshIndex;
 				
 				if (meshIndex>=0) {
-					meshInstances[i]		= new MeshInstance( modelManager.rs, scene, scene.Meshes[meshIndex] );
+					meshInstances[i]		= new RenderInstance( modelManager.rs, scene, scene.Meshes[meshIndex] );
 					meshInstances[i].Group	= InstanceGroup.Dynamic;
 					meshInstances[i].Color	= Color4.Zero;
 					modelManager.rw.Instances.Add( meshInstances[i] );

@@ -26,7 +26,7 @@ namespace Fusion.Engine.Graphics {
 	/// <summary>
 	/// Represnets mesh instance
 	/// </summary>
-	public class MeshInstance {
+	public class RenderInstance {
 
 		public InstanceGroup Group {
 			get; set;
@@ -133,7 +133,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="rs"></param>
 		/// <param name="mesh"></param>
-		public MeshInstance ( RenderSystem rs, Scene scene, Mesh mesh )
+		public RenderInstance ( RenderSystem rs, Scene scene, Mesh mesh )
 		{
 			Group		=	InstanceGroup.Static;
 			World		=	Matrix.Identity;
@@ -170,7 +170,7 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		public static MeshInstance FromScene ( RenderSystem rs, ContentManager content, string pathNode )
+		public static RenderInstance FromScene ( RenderSystem rs, ContentManager content, string pathNode )
 		{
 			if (string.IsNullOrWhiteSpace(pathNode)) {
 				return null;
@@ -200,7 +200,7 @@ namespace Fusion.Engine.Graphics {
 				mesh	=	scene.Meshes[ node.MeshIndex ];
 			}
 
-			return new MeshInstance( rs, scene, mesh );
+			return new RenderInstance( rs, scene, mesh );
 		}
 	}
 }

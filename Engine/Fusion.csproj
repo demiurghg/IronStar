@@ -180,6 +180,7 @@
     <Compile Include="Core\GameComponentCollectionEventArgs.cs" />
     <Compile Include="Core\IExitable.cs" />
     <Compile Include="Core\JsonLoader.cs" />
+    <Compile Include="Core\Mathematics\BitUtils.cs" />
     <Compile Include="Core\Mathematics\Byte3.cs" />
     <Compile Include="Core\Mathematics\HSVColor.cs" />
     <Compile Include="Core\Mathematics\MortonCode.cs" />
@@ -573,7 +574,7 @@
     <Compile Include="Engine\Graphics\Lights\ShadowMap.cs" />
     <Compile Include="Engine\Graphics\Lights\SpotLight.cs" />
     <Compile Include="Engine\Graphics\MathConverter.cs" />
-    <Compile Include="Engine\Graphics\MeshInstance.cs" />
+    <Compile Include="Engine\Graphics\RenderInstance.cs" />
     <Compile Include="Engine\Graphics\Particles\IParticleDataProvider.cs" />
     <Compile Include="Engine\Graphics\Particles\Particle.cs" />
     <Compile Include="Engine\Graphics\Particles\ParticleStream.cs" />

@@ -90,7 +90,7 @@ namespace IronStar.Mapping {
 
 
 		Scene			scene		= null;
-		MeshInstance[]	instances	= null;
+		RenderInstance[]	instances	= null;
 		StaticMesh[]	collidables = null;
 		Matrix[]		transforms	= null;
 		DebugModel[]	debugModels = null;
@@ -118,7 +118,7 @@ namespace IronStar.Mapping {
 
 			transforms	=	new Matrix[ scene.Nodes.Count ];
 			collidables	=	new StaticMesh[ scene.Nodes.Count ];
-			instances	=	new MeshInstance[ scene.Nodes.Count ];
+			instances	=	new RenderInstance[ scene.Nodes.Count ];
 			debugModels	=	new DebugModel[ scene.Nodes.Count ];
 
 			scene.ComputeAbsoluteTransforms( transforms );
@@ -198,7 +198,7 @@ namespace IronStar.Mapping {
 				}
 				
 				if (meshIndex>=0) {
-					instances[i] = new MeshInstance( rs, scene, scene.Meshes[meshIndex] );
+					instances[i] = new RenderInstance( rs, scene, scene.Meshes[meshIndex] );
 					instances[i].World			=	transforms[ i ] * Matrix.Scaling( Scale ) * WorldMatrix;
 					instances[i].Group			=	UseLightVolume ? InstanceGroup.Kinematic : InstanceGroup.Static;
 					instances[i].LightMapSize	=	new Size2( (int)LightMapSize, (int)LightMapSize );

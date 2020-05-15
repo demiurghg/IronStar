@@ -23,7 +23,7 @@ namespace Fusion.Engine.Graphics.Lights
 	/// </summary>
 	class LightMapGroup 
 	{
-		public LightMapGroup ( int size, Guid guid, IEnumerable<MeshInstance> instances, int bias )
+		public LightMapGroup ( int size, Guid guid, IEnumerable<RenderInstance> instances, int bias )
 		{
 			Guid		=	guid;
 
@@ -41,6 +41,6 @@ namespace Fusion.Engine.Graphics.Lights
 		}
 		public Rectangle Region;
 		public readonly Guid Guid;
-		public readonly MeshInstance[] Instances;
+		public readonly RenderInstance[] Instances;
 	}
 }

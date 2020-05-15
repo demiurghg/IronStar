@@ -29,7 +29,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// <param name="ray"></param>
 		/// <returns></returns>
 		[Obsolete]
-		Color4 GetAlbedo ( MeshInstance[] instances, ref RtcRay ray )
+		Color4 GetAlbedo ( RenderInstance[] instances, ref RtcRay ray )
 		{
 			var geomId	=	ray.GeometryId;
 			var primId	=	ray.PrimitiveId;

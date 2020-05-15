@@ -27,7 +27,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// <param name="rtc"></param>
 		/// <param name="instances"></param>
 		/// <returns></returns>
-		RtcScene BuildRtcScene ( Rtc rtc, IEnumerable<MeshInstance> instances )
+		RtcScene BuildRtcScene ( Rtc rtc, IEnumerable<RenderInstance> instances )
 		{
 			Log.Message("Generating RTC scene...");
 
@@ -49,7 +49,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// <summary>
 		/// Adds mesh instance to the RTC scene
 		/// </summary>
-		void AddMeshInstance ( RtcScene scene, MeshInstance instance )
+		void AddMeshInstance ( RtcScene scene, RenderInstance instance )
 		{
 			var mesh		=	instance.Mesh;
 

@@ -59,6 +59,13 @@ namespace Fusion.Engine.Graphics.Scenes {
 			weight		=	(float)( floatFrame - prevFrame );
 		}
 
+
+
+		/// <summary>
+		/// Fixes Maya's rotated by 180 degrees camera matrix
+		/// </summary>
+		/// <param name="globalTransform"></param>
+		/// <returns></returns>
 		public static Matrix FixGlobalCameraMatrix ( Matrix globalTransform )
 		{
 			return Matrix.RotationY( -MathUtil.PiOverTwo ) * globalTransform;

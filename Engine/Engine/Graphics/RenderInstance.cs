@@ -22,6 +22,8 @@ namespace Fusion.Engine.Graphics {
 		NotWeapon	=	~Weapon,
 		All			=	0xFFFFFFFF,
 	}
+
+
 	
 	/// <summary>
 	/// Represnets mesh instance
@@ -50,6 +52,10 @@ namespace Fusion.Engine.Graphics {
 		/// Gets and sets mesh.
 		/// </summary>
 		public Mesh Mesh {
+			get; private set;
+		}
+
+		public BoundingBox LocalBoundingBox {
 			get; private set;
 		}
 
@@ -160,6 +166,7 @@ namespace Fusion.Engine.Graphics {
 					.ToArray();
 			}
 
+			LocalBoundingBox = mesh.ComputeBoundingBox();
 
 			Subsets	=	mesh.Subsets.Select( subset => new Subset() { 
 					Name			= scene.Materials[subset.MaterialIndex].Name, 
@@ -168,6 +175,16 @@ namespace Fusion.Engine.Graphics {
 				}).ToArray();
 		}
 
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public BoundingBox ComputeWorldBoundingBox()
+		{
+			return BoundingBox.FromPoints( LocalBoundingBox.GetCorners().Select( p => Vector3.TransformCoordinate( p, World ) ) );
+		}
 
 
 		public static RenderInstance FromScene ( RenderSystem rs, ContentManager content, string pathNode )

@@ -15,6 +15,16 @@ namespace Fusion.Engine.Graphics
 {
 	public class RenderList : List<RenderInstance>
 	{
-		
+		public RenderList()
+		{
+		}
+
+		public RenderList(int capacity) : base(capacity)
+		{		
+		}
+
+		public RenderList(IEnumerable<RenderInstance> collection) : base(collection)
+		{
+		}
 	}
 }

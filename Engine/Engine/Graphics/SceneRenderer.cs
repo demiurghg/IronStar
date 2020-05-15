@@ -396,28 +396,28 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		internal void RenderForwardSolid ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderWorld rw, InstanceGroup mask )
+		internal void RenderForwardSolid ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderList renderList, InstanceGroup mask )
 		{	
 			var context		=	new ForwardSolidContext( camera, frame );
-			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
+			var instances	=	renderList.Where( inst => (inst.Group & mask) != 0 );
 
 			RenderGeneric("RenderForwardSolid", gameTime, stereoEye, SurfaceFlags.FORWARD, context, instances, mask );
 		}
 
 
-		internal void RenderForwardTransparent ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderWorld rw, InstanceGroup mask )
+		internal void RenderForwardTransparent ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderList renderList, InstanceGroup mask )
 		{		
 			var context		=	new ForwardTransparentContext( camera, frame );
-			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
+			var instances	=	renderList.Where( inst => (inst.Group & mask) != 0 );
 
 			RenderGeneric("RenderForwardTransparent", gameTime, stereoEye, SurfaceFlags.FORWARD, context, instances, mask );
 		}
 
 
-		internal void RenderZPass ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderWorld rw, InstanceGroup mask )
+		internal void RenderZPass ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderList renderList, InstanceGroup mask )
 		{		
-			var context	=	new ForwardZPassContext( camera, frame );
-			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
+			var context		=	new ForwardZPassContext( camera, frame );
+			var instances	=	renderList.Where( inst => (inst.Group & mask) != 0 );
 
 			RenderGeneric("RenderZPass", gameTime, stereoEye, SurfaceFlags.ZPASS, context, instances, mask );
 		}

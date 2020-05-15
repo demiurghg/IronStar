@@ -53,24 +53,28 @@ namespace Fusion.Engine.Graphics.Bvh
 		}
 
 
+		readonly Node root;
+
+
 		/// <summary>
 		/// Create BVH-tree from collection of primitives.
 		/// </summary>
 		public BvhTree( IEnumerable<TPrimitive> primitives, Func<TPrimitive,BoundingBox> bboxSelector, Func<TPrimitive,Vector3> centroidSelector )
 		{
+			if (!primitives.Any())
+			{
+				root = null;
+				return;
+			}
+
 			var sortedPrimitives	=	primitives
 					.Select( p0 => new SortedPrimitive( p0, bboxSelector(p0), centroidSelector(p0) ) ) 
 					.OrderBy( p1 => p1.ZOrder )
 					.ToArray();
 
-			var highestBit	=	sortedPrimitives.Max( p => MathUtil.LogBase2( p.ZOrder ) );
-
-			var root = GenerateHierarchyRecursive( sortedPrimitives, 0, sortedPrimitives.Length-1 );
+			root = GenerateHierarchyRecursive( sortedPrimitives, 0, sortedPrimitives.Length-1 );
 
 			ComputeBoundingBoxRecursive( root );
-
-			
-			throw new NotImplementedException();
 		}
 
 										
@@ -175,6 +179,18 @@ namespace Fusion.Engine.Graphics.Bvh
 		}
 
 
+		class StackEntry
+		{
+			public StackEntry( Node node, bool trivialAccept )
+			{
+				Node = node;
+				TrivialAccept  = trivialAccept;
+			}
+			public Node Node;
+			public bool TrivialAccept;
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -182,10 +198,60 @@ namespace Fusion.Engine.Graphics.Bvh
 		/// <param name="root">Root of BVH tree</param>
 		/// <param name="selector"></param>
 		/// <returns></returns>
-		public IEnumerable<TPrimitive> Traverse( Func<TPrimitive,BoundingBox,ContainmentType> selector )
+		public IEnumerable<TPrimitive> Traverse( Func<BoundingBox,ContainmentType> selector )
 		{
-			//List<
-			throw new NotImplementedException();
+			if (root==null)	return new List<TPrimitive>();
+
+			Stack<StackEntry> stack = new Stack<StackEntry>();
+			List<TPrimitive> result = new List<TPrimitive>();
+
+			stack.Push( new StackEntry(root,false) );
+
+			while ( stack.Any() ) 
+			{
+				var current = stack.Pop();
+
+				if (current.Node==null) continue;
+
+				var containment		= current.TrivialAccept ? ContainmentType.Contains : selector( current.Node.BoundingBox );
+				var trivialAccept	= containment == ContainmentType.Contains;
+
+				if (containment!=ContainmentType.Disjoint)
+				{
+					if (current.Node.IsLeaf)
+					{
+						result.Add( current.Node.Primitive );
+					}
+					else
+					{
+						stack.Push( new StackEntry( current.Node.Right, trivialAccept ) );
+						stack.Push( new StackEntry( current.Node.Left,  trivialAccept ) );
+					}
+				}
+			}
+
+			return result;
 		}
+
+
+		public void Traverse( Action<TPrimitive,BoundingBox> action )
+		{
+			var stack = new Stack<Node>();
+
+			stack.Push( root );
+
+			while ( stack.Any() ) 
+			{
+				var current = stack.Pop();
+
+				if (current==null) continue;
+
+				action( current.Primitive, current.BoundingBox );
+
+				stack.Push( current.Right );
+				stack.Push( current.Left );
+			}
+		}
+
 	}
 }

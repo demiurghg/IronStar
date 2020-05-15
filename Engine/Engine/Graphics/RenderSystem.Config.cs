@@ -229,5 +229,9 @@ namespace Fusion.Engine.Graphics {
 		{
 			RenderWorld.ParticleSystem.KillParticles();
 		}
+
+		[AECategory("Visibility")]  [Config]	public bool LockVisibility { get; set; } = false;
+		[AECategory("Visibility")]  [Config]	public bool SkipFrustumCulling { get; set; } = false;
+		[AECategory("Visibility")]  [Config]	public bool ShowBoundingBoxes { get; set; } = false;
 	}
 }

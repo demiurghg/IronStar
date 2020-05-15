@@ -15,6 +15,7 @@ using Fusion.Core.Extensions;
 using Fusion.Engine.Graphics.Lights;
 using Fusion.Build;
 using Fusion.Engine.Graphics.GI;
+using Fusion.Engine.Graphics.Bvh;
 
 namespace Fusion.Engine.Graphics {
 
@@ -397,6 +398,48 @@ namespace Fusion.Engine.Graphics {
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
+		RenderList	rlMainView = new RenderList(5000);
+
+
+		Color DebugBBoxColor( BoundingBox box )
+		{
+			var containment = camera.Frustum.Contains( box );
+			switch (containment)
+			{
+				case ContainmentType.Disjoint: return Color.Red;
+				case ContainmentType.Intersects: return Color.Blue;
+				case ContainmentType.Contains: return Color.Lime;
+			}
+			return Color.Black;
+		}
+
+
+		void UpdateVisibility()
+		{
+			if (rs.LockVisibility) return;
+
+			var sceneBvhTree	=	new BvhTree<RenderInstance>( 
+				Instances, //.Where( inst0 => inst0.Group!=InstanceGroup.Weapon ), 
+				inst1 => inst1.ComputeWorldBoundingBox(), 
+				inst2 => inst2.World.TranslationVector );
+
+			if (rs.ShowBoundingBoxes)
+			{
+				sceneBvhTree.Traverse( (inst,bbox) => Debug.DrawBox( bbox, DebugBBoxColor(bbox) ) );
+			}
+
+			if (rs.SkipFrustumCulling)
+			{
+				rlMainView.Clear();
+				rlMainView.AddRange( Instances );
+			}
+			else
+			{
+				rlMainView.Clear();
+				rlMainView.AddRange( sceneBvhTree.Traverse( (bbox) => camera.Frustum.Contains( bbox ) ) );
+			}
+		}
+
 
 		/*-----------------------------------------------------------------------------------------
 		 * 
@@ -418,6 +461,8 @@ namespace Fusion.Engine.Graphics {
 			var viewport	=	new Viewport( 0,0, targetSurface.Width, targetSurface.Height );
 
 			UpdateInstanceAndLightMapping();
+
+			UpdateVisibility();
 
 			//	Render HDR stuff: mesh instances, 
 			//	special effects, sky, water, light etc. 
@@ -480,18 +525,18 @@ namespace Fusion.Engine.Graphics {
 				using ( new PixEvent( "Frame Scene Rendering" ) ) {
 
 					//	Z-pass without weapon :
-					rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, this, InstanceGroup.NotWeapon );
+					rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, rlMainView, InstanceGroup.NotWeapon );
 
 					//	Ambient occlusion :
 					rs.SsaoFilter.Render( stereoEye, Camera, viewHdrFrame );
 
 					//	Z-pass weapon :
-					rs.SceneRenderer.RenderZPass( gameTime, stereoEye, WeaponCamera, viewHdrFrame, this, InstanceGroup.Weapon );
+					rs.SceneRenderer.RenderZPass( gameTime, stereoEye, WeaponCamera, viewHdrFrame, rlMainView, InstanceGroup.Weapon );
 
 					//------------------------------------------------------------
 					//	Forward+
-					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera		, viewHdrFrame, this, InstanceGroup.NotWeapon );
-					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, WeaponCamera	, viewHdrFrame, this, InstanceGroup.Weapon );
+					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera		, viewHdrFrame, rlMainView, InstanceGroup.NotWeapon );
+					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, WeaponCamera	, viewHdrFrame, rlMainView, InstanceGroup.Weapon );
 
 					rs.LightMapDebugger.Render( Camera, viewHdrFrame );
 
@@ -517,7 +562,7 @@ namespace Fusion.Engine.Graphics {
 						blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 3 );
 					}
 
-					rs.SceneRenderer.RenderForwardTransparent( gameTime, stereoEye, Camera, viewHdrFrame, this, InstanceGroup.All );
+					rs.SceneRenderer.RenderForwardTransparent( gameTime, stereoEye, Camera, viewHdrFrame, rlMainView, InstanceGroup.All );
 					rs.SceneRenderer.GatherVTFeedbackAndUpdate( gameTime, viewHdrFrame );
 
 					ParticleSystem.RenderSoft( gameTime, Camera, stereoEye, viewHdrFrame );

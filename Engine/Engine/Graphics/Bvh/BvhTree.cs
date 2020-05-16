@@ -11,15 +11,15 @@ namespace Fusion.Engine.Graphics.Bvh
 	{
 		sealed class SortedPrimitive
 		{
-			public SortedPrimitive( TPrimitive primitive, BoundingBox bbox, Vector3 centroid )
+			public SortedPrimitive( int primitiveIndex, BoundingBox bbox, Vector3 centroid )
 			{
-				Primitive	=	primitive;
-				BoundingBox	=	bbox;	
-				Centroid	=	centroid;
-				ZOrder		=	ComputeZOrder( centroid );
+				PrimitiveIndex	=	primitiveIndex;
+				BoundingBox		=	bbox;	
+				Centroid		=	centroid;
+				ZOrder			=	ComputeZOrder( centroid );
 			}
 
-			public readonly TPrimitive Primitive;
+			public readonly int PrimitiveIndex;
 			public readonly BoundingBox BoundingBox;
 			public readonly Vector3 Centroid;
 			public readonly ulong ZOrder;
@@ -29,46 +29,59 @@ namespace Fusion.Engine.Graphics.Bvh
 		sealed class Node
 		{
 			public readonly bool IsLeaf;
-			public Node Left;
-			public Node Right;
-			public TPrimitive Primitive;
+			public readonly int PrimitiveIndex;
+			public readonly Node Left;
+			public readonly Node Right;
 			public BoundingBox BoundingBox;
 
 			Node() {}
 
-			public Node ( TPrimitive primitive, BoundingBox bbox )
+			public Node ( int primitiveIndex, BoundingBox bbox )
 			{
-				IsLeaf		=	true;
-				Primitive	=	primitive;
-				BoundingBox	=	bbox;
+				IsLeaf			=	true;
+				PrimitiveIndex	=	primitiveIndex;
+				BoundingBox		=	bbox;
 			}
 
 			public Node ( Node left, Node right )
 			{
-				IsLeaf		=	false;
-				Primitive	=	default(TPrimitive);
-				Left		=	left;
-				Right		=	right;
+				IsLeaf			=	false;
+				PrimitiveIndex	=	-1;
+				Left			=	left;
+				Right			=	right;
 			}
 		}
 
 
+		/*-----------------------------------------------------------------------------------------
+		 *	BVH construction
+		-----------------------------------------------------------------------------------------*/
+
 		readonly Node root;
+		readonly TPrimitive[] primitives;
+
+		public TPrimitive[] Primitives { get { return primitives; } }
 
 
 		/// <summary>
 		/// Create BVH-tree from collection of primitives.
 		/// </summary>
-		public BvhTree( IEnumerable<TPrimitive> primitives, Func<TPrimitive,BoundingBox> bboxSelector, Func<TPrimitive,Vector3> centroidSelector )
+		public BvhTree( IEnumerable<TPrimitive> primitiveCollection, Func<TPrimitive,BoundingBox> bboxSelector, Func<TPrimitive,Vector3> centroidSelector )
 		{
-			if (!primitives.Any())
+			if (!primitiveCollection.Any())
 			{
 				root = null;
+				primitives = null;
 				return;
 			}
 
-			var sortedPrimitives	=	primitives
-					.Select( p0 => new SortedPrimitive( p0, bboxSelector(p0), centroidSelector(p0) ) ) 
+			primitives	=	primitiveCollection.ToArray();
+
+			var sortedPrimitives	=	Enumerable.Range(0, primitives.Length)
+					.Select( index => new SortedPrimitive( 
+						index, 
+						bboxSelector( primitives[ index ] ), 
+						centroidSelector( primitives[ index ] ) ) ) 
 					.OrderBy( p1 => p1.ZOrder )
 					.ToArray();
 
@@ -82,20 +95,21 @@ namespace Fusion.Engine.Graphics.Bvh
 		/// <summary>
 		/// https://devblogs.nvidia.com/thinking-parallel-part-iii-tree-construction-gpu/
 		/// </summary>
-		Node GenerateHierarchyRecursive( SortedPrimitive[] primitives, int first, int last )
+		Node GenerateHierarchyRecursive( SortedPrimitive[] sortedPrimitives, int first, int last )
 		{
 			// Single object => create a leaf node.
 			if (first==last)
 			{
-				return new Node( primitives[first].Primitive, primitives[first].BoundingBox );
+				int primitiveIndex	=	sortedPrimitives[first].PrimitiveIndex;
+				return new Node(primitiveIndex, sortedPrimitives[first].BoundingBox );
 			}
 
 			// Determine where to split the range.
-			int split = FindSplit( primitives, first, last );
+			int split = FindSplit( sortedPrimitives, first, last );
 
 			// Process the resulting sub-ranges recursively.
-			Node left	=	GenerateHierarchyRecursive( primitives, first, split );
-			Node right	=	GenerateHierarchyRecursive( primitives, split+1, last );
+			Node left	=	GenerateHierarchyRecursive( sortedPrimitives, first, split );
+			Node right	=	GenerateHierarchyRecursive( sortedPrimitives, split+1, last );
 
 			return new Node( left, right );
 		}
@@ -178,6 +192,62 @@ namespace Fusion.Engine.Graphics.Bvh
 			return MortonCode.Code3Uint64( intPoint );
 		}
 
+		/*-----------------------------------------------------------------------------------------
+		 *	Compact BVH construction
+		-----------------------------------------------------------------------------------------*/
+
+		/*TCompactData[] FlattenTree<TCompactData>( Func<uint,TPrimitive,TCompactData> selector ) where TCompactData: struct
+		{
+			var linearTree = new TCompactData[ Count() ];
+
+			var stack = new Stack<Node>();
+
+			stack.Push( root );
+
+			while ( stack.Any() ) 
+			{
+				var current = stack.Pop();
+
+				if (current==null) continue;
+
+				stack.Push( current.Right );
+				stack.Push( current.Left );
+			}
+			
+
+			return result;
+		}
+
+
+		int FlattenBVHTreeRecursive<TCompactData>(TCompactData[] linearNodes, Func<uint,TPrimitive,TCompactData> selector, Node node, ref int offset) where TCompactData: struct
+		{
+			linearNode->bounds = node->bounds;
+
+			var linearNode = selector( 
+			linearNode.
+			
+			int currentOffset = offset++;
+			
+			if (node->nPrimitives > 0) 
+			{
+				linearNode->primitivesOffset = node->firstPrimOffset;
+				linearNode->nPrimitives = node->nPrimitives;
+			} 
+			else 
+			{
+				linearNode->axis = node->splitAxis;
+				linearNode->nPrimitives = 0;
+				flattenBVHTree(node->children[0], offset);
+				linearNode->secondChildOffset =
+				flattenBVHTree(node->children[1], offset);
+			}
+
+			return currentOffset;
+		}			   */
+
+		/*-----------------------------------------------------------------------------------------
+		 *	BVH traversal
+		-----------------------------------------------------------------------------------------*/
 
 		class StackEntry
 		{
@@ -220,7 +290,8 @@ namespace Fusion.Engine.Graphics.Bvh
 				{
 					if (current.Node.IsLeaf)
 					{
-						result.Add( current.Node.Primitive );
+						var primitive = primitives[ current.Node.PrimitiveIndex ];
+						result.Add( primitive );
 					}
 					else
 					{
@@ -246,12 +317,37 @@ namespace Fusion.Engine.Graphics.Bvh
 
 				if (current==null) continue;
 
-				action( current.Primitive, current.BoundingBox );
+				var primitive = primitives[ current.PrimitiveIndex ];
+				action( primitive, current.BoundingBox );
 
 				stack.Push( current.Right );
 				stack.Push( current.Left );
 			}
 		}
 
+
+		public int Count()
+		{
+			int count = 0;
+			var stack = new Stack<Node>();
+
+			stack.Push( root );
+
+			while ( stack.Any() ) 
+			{
+				var current = stack.Pop();
+
+				if (current==null) continue;
+
+				count++;
+
+				stack.Push( current.Right );
+				stack.Push( current.Left );
+			}
+
+			return count;
+		}
+
 	}
 }
+

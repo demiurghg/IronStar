@@ -196,54 +196,38 @@ namespace Fusion.Engine.Graphics.Bvh
 		 *	Compact BVH construction
 		-----------------------------------------------------------------------------------------*/
 
-		/*TCompactData[] FlattenTree<TCompactData>( Func<uint,TPrimitive,TCompactData> selector ) where TCompactData: struct
+		public delegate TFlatData FlattenDataSelector<TFlatData>( bool isLeaf, uint index, BoundingBox bbox ) where TFlatData: struct;
+
+		TFlatData[] FlattenTree<TFlatData>( FlattenDataSelector<TFlatData> selector ) where TFlatData: struct
 		{
-			var linearTree = new TCompactData[ Count() ];
+			var flatTree = new TFlatData[ Count() ];
 
-			var stack = new Stack<Node>();
+			int offset = 0;
+			FlattenBVHTreeRecursive( flatTree, selector, root, ref offset );
 
-			stack.Push( root );
-
-			while ( stack.Any() ) 
-			{
-				var current = stack.Pop();
-
-				if (current==null) continue;
-
-				stack.Push( current.Right );
-				stack.Push( current.Left );
-			}
-			
-
-			return result;
+			return flatTree;
 		}
 
 
-		int FlattenBVHTreeRecursive<TCompactData>(TCompactData[] linearNodes, Func<uint,TPrimitive,TCompactData> selector, Node node, ref int offset) where TCompactData: struct
-		{
-			linearNode->bounds = node->bounds;
 
-			var linearNode = selector( 
-			linearNode.
-			
+		int FlattenBVHTreeRecursive<TFlatData>(TFlatData[] flatTree, FlattenDataSelector<TFlatData> selector, Node node, ref int offset) where TFlatData: struct
+		{
 			int currentOffset = offset++;
 			
-			if (node->nPrimitives > 0) 
+			if (node.IsLeaf) 
 			{
-				linearNode->primitivesOffset = node->firstPrimOffset;
-				linearNode->nPrimitives = node->nPrimitives;
+				flatTree[ currentOffset ] =	selector( true, (uint)node.PrimitiveIndex, node.BoundingBox );
 			} 
 			else 
 			{
-				linearNode->axis = node->splitAxis;
-				linearNode->nPrimitives = 0;
-				flattenBVHTree(node->children[0], offset);
-				linearNode->secondChildOffset =
-				flattenBVHTree(node->children[1], offset);
+									FlattenBVHTreeRecursive( flatTree, selector, node.Left,  ref offset);
+				int rightIndex	=	FlattenBVHTreeRecursive( flatTree, selector, node.Right, ref offset);
+
+				flatTree[ currentOffset ] = selector( false, (uint)rightIndex, node.BoundingBox );
 			}
 
 			return currentOffset;
-		}			   */
+		}
 
 		/*-----------------------------------------------------------------------------------------
 		 *	BVH traversal

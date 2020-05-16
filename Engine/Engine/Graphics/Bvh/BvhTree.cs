@@ -198,7 +198,7 @@ namespace Fusion.Engine.Graphics.Bvh
 
 		public delegate TFlatData FlattenDataSelector<TFlatData>( bool isLeaf, uint index, BoundingBox bbox ) where TFlatData: struct;
 
-		TFlatData[] FlattenTree<TFlatData>( FlattenDataSelector<TFlatData> selector ) where TFlatData: struct
+		public TFlatData[] FlattenTree<TFlatData>( FlattenDataSelector<TFlatData> selector ) where TFlatData: struct
 		{
 			var flatTree = new TFlatData[ Count() ];
 

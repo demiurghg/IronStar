@@ -319,7 +319,7 @@ namespace Fusion.Core.Mathematics
         /// <param name="points">The points that will be contained by the box.</param>
         /// <returns>The newly constructed bounding box.</returns>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="points"/> is <c>null</c>.</exception>
-        public static BoundingBox FromPoints(Vector3[] points)
+        public static BoundingBox FromPoints(params Vector3[] points)
         {
             if (points == null)
                 throw new ArgumentNullException("points");

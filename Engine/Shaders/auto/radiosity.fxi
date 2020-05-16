@@ -82,6 +82,24 @@ struct LIGHT {
 	float      SourceRadius;                  // offset:  116
 };
 
+// Fusion.Engine.Graphics.GI.Radiosity+Triangle
+// Marshal.SizeOf = 64
+struct Triangle {
+	float4     Point0;                        // offset:    0
+	float4     Point1;                        // offset:   16
+	float4     Point2;                        // offset:   32
+	float4     PlaneEq;                       // offset:   48
+};
+
+// Fusion.Engine.Graphics.GI.Radiosity+BvhNode
+// Marshal.SizeOf = 40
+struct BvhNode {
+	float4     MinBound;                      // offset:    0
+	float4     MaxBound;                      // offset:   16
+	uint       Index;                         // offset:   32
+	uint       IsLeaf;                        // offset:   36
+};
+
 // ---------------- SHADER RESOURCES ---------------- //
 
 cbuffer __buffer0 : register(b0) {
@@ -117,6 +135,8 @@ Texture2D<float4>              BBoxMax                        : register(t14);
 Texture3D<uint2>               Clusters                       : register(t15);
 Texture3D<uint>                IndexVolume                    : register(t16);
 Texture3D<float4>              SkyVolume                      : register(t17);
+StructuredBuffer<Triangle>     RtTriangles                    : register(t20);
+StructuredBuffer<BvhNode>      RtBvhTree                      : register(t21);
 SamplerState                   LinearSampler                  : register(s0);
 SamplerComparisonState         ShadowSampler                  : register(s1);
 #if defined(LIGHTING) || defined(COLLAPSE) || defined(DILATE)
@@ -133,4 +153,7 @@ RWTexture3D<float4>            LightVolumeL0                  : register(u0);
 RWTexture3D<float4>            LightVolumeL1                  : register(u1);
 RWTexture3D<float4>            LightVolumeL2                  : register(u2);
 RWTexture3D<float4>            LightVolumeL3                  : register(u3);
+#endif
+#if defined(RAYTRACE)
+RWTexture2D<float4>            RaytraceImage                  : register(u0);
 #endif

@@ -4,6 +4,7 @@ $ubershader 	LIGHTING
 $ubershader 	COLLAPSE
 $ubershader 	INTEGRATE2
 $ubershader 	INTEGRATE3
+$ubershader		RAYTRACE
 #endif
 
 #include "auto/radiosity.fxi"
@@ -430,7 +431,24 @@ void CSMain(
 
 #endif
 
+/*------------------------------------------------------------------------------
+	Raytrace test 
+------------------------------------------------------------------------------*/
 
+#ifdef RAYTRACE
+
+[numthreads(TileSize,TileSize,1)] 
+void CSMain( 
+	uint3 groupId : SV_GroupID, 
+	uint3 groupThreadId : SV_GroupThreadID, 
+	uint  groupIndex: SV_GroupIndex, 
+	uint3 dispatchThreadId : SV_DispatchThreadID) 
+{
+	uint2 storeXY	=	dispatchThreadId.xy;
+	RaytraceImage[ storeXY ] = float4(1,0,0.5f,1);
+}
+
+#endif
 
 
 

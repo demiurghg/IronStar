@@ -14,6 +14,7 @@ using Fusion.Engine.Graphics.Ubershaders;
 using Fusion.Core;
 using Fusion.Engine.Graphics.Lights;
 using Fusion.Core.Shell;
+using Fusion.Engine.Graphics.Bvh;
 
 namespace Fusion.Engine.Graphics.GI
 {
@@ -56,6 +57,9 @@ namespace Fusion.Engine.Graphics.GI
 		static FXTexture3D<uint>							regIndexVolume		=	new TRegister(16, "IndexVolume"		);
 		static FXTexture3D<Vector4>							regSkyVolume		=	new TRegister(17, "SkyVolume"		);
 
+		static FXStructuredBuffer<Triangle>					regRtTriangles		=	new TRegister(20, "RtTriangles"		);
+		static FXStructuredBuffer<BvhNode>					regRtBvhTree		=	new TRegister(21, "RtBvhTree"		);
+
 		static FXSamplerState								regSamplerLinear	=	new SRegister( 0, "LinearSampler"	);
 		static FXSamplerComparisonState						regSamplerShadow	=	new SRegister( 1, "ShadowSampler"	);
 											
@@ -71,6 +75,8 @@ namespace Fusion.Engine.Graphics.GI
 		[ShaderIfDef("INTEGRATE3")] static FXRWTexture3D<Vector4>	regLightVolumeL1	=	new URegister( 1, "LightVolumeL1"	);
 		[ShaderIfDef("INTEGRATE3")] static FXRWTexture3D<Vector4>	regLightVolumeL2	=	new URegister( 2, "LightVolumeL2"	);
 		[ShaderIfDef("INTEGRATE3")] static FXRWTexture3D<Vector4>	regLightVolumeL3	=	new URegister( 3, "LightVolumeL3"	);
+
+		[ShaderIfDef("RAYTRACE")]   static FXRWTexture2D<Vector4>	regRaytraceImage	=	new URegister( 0, "RaytraceImage"	);
 
 		public LightMap LightMap
 		{
@@ -98,6 +104,7 @@ namespace Fusion.Engine.Graphics.GI
 			DENOISE		=	0x020,
 			PASS1		=	0x040,
 			PASS2		=	0x080,
+			RAYTRACE	=	0x100,
 		}
 
 		[StructLayout(LayoutKind.Sequential, Pack=4, Size=64)]
@@ -132,6 +139,11 @@ namespace Fusion.Engine.Graphics.GI
 		RenderTarget2D	tempHDR1;
 		RenderTarget2D	tempLDR1;
 
+		public RenderTarget2D	raytracedImage;
+
+		StructuredBuffer	sbPrimitives;
+		StructuredBuffer	sbBvhTree;
+
 
 		public Radiosity( RenderSystem rs ) : base(rs)
 		{
@@ -148,6 +160,8 @@ namespace Fusion.Engine.Graphics.GI
 			tempLDR0		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,   RegionSize, RegionSize, true );
 			tempHDR1		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10, RegionSize, RegionSize, true );
 			tempLDR1		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,   RegionSize, RegionSize, true );
+
+			raytracedImage	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10, 320, 200,true );
 
 			LoadContent();
 
@@ -167,6 +181,9 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			if (disposing)
 			{
+				SafeDispose( ref sbBvhTree );
+				SafeDispose( ref sbPrimitives );
+
 				SafeDispose( ref tempHDR0 );
 				SafeDispose( ref tempLDR0 );
 				SafeDispose( ref tempHDR1 );
@@ -175,6 +192,118 @@ namespace Fusion.Engine.Graphics.GI
 			}
 
 			base.Dispose( disposing );
+		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Ray-tracing stuff :
+		-----------------------------------------------------------------------------------------*/
+
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=64)]
+		public struct Triangle
+		{
+			public Triangle( Vector3 p0, Vector3 p1, Vector3 p2 )
+			{
+				Point0	=	new Vector4( p0, 1 );
+				Point1	=	new Vector4( p1, 1 );
+				Point2	=	new Vector4( p2, 1 );
+
+				PlaneEq	=	new Vector4( new Plane( p0, p1, p2 ).ToArray() );
+			}
+			public Vector4 Point0;
+			public Vector4 Point1; 
+			public Vector4 Point2;
+			public Vector4 PlaneEq;
+
+			public BoundingBox ComputeBBox()
+			{
+				return BoundingBox.FromPoints( 
+					new Vector3( Point0.X, Point0.Y, Point0.Z ),
+					new Vector3( Point1.X, Point1.Y, Point1.Z ),
+					new Vector3( Point2.X, Point2.Y, Point2.Z ) );
+			}
+
+			public Vector3 ComputeCentroid()
+			{
+				return 
+					( new Vector3( Point0.X, Point0.Y, Point0.Z )
+					+ new Vector3( Point1.X, Point1.Y, Point1.Z )
+					+ new Vector3( Point2.X, Point2.Y, Point2.Z ) ) / 3.0f;
+			}
+		}
+
+
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=40)]
+		public struct BvhNode
+		{
+			public BvhNode ( bool isLeaf, uint index, BoundingBox bbox )
+			{
+				MinBound	=	new Vector4( bbox.Minimum, 1 );
+				MaxBound	=	new Vector4( bbox.Maximum, 1 );
+				IsLeaf		=	isLeaf ? 1u : 0;
+				Index		=	index;
+			}
+
+			public Vector4 MinBound;
+			public Vector4 MaxBound;
+			public uint Index;
+			public uint IsLeaf;
+		}
+
+
+		public void BuildAccelerationStructure()
+		{
+			Log.Message("Build acceleration structure");
+
+			var instances	=	rs.RenderWorld.Instances.Where( inst => inst.Group==InstanceGroup.Static ).ToArray();
+			var tris		=	new List<Triangle>();
+			var totalTris	=	0;
+
+			foreach ( var instance in instances )
+			{
+				totalTris = GetRenderInstanceTriangles( tris, instance );
+			}
+
+			var bvhTree	=	new BvhTree<Triangle>( tris, prim => prim.ComputeBBox(), prim => prim.ComputeCentroid() );
+			var flatTree =	bvhTree.FlattenTree( (isLeaf,index,bbox) => new BvhNode( isLeaf, index, bbox ) );
+
+
+			SafeDispose( ref sbBvhTree );
+			SafeDispose( ref sbPrimitives );
+
+			sbPrimitives	=	new StructuredBuffer( rs.Device, typeof(Triangle), bvhTree.Primitives.Length,	StructuredBufferFlags.None );
+			sbBvhTree		=	new StructuredBuffer( rs.Device, typeof(BvhNode),  flatTree.Length,				StructuredBufferFlags.None );
+
+			Log.Message("Done");
+		}
+
+
+		int GetRenderInstanceTriangles( List<Triangle> tris, RenderInstance instance )
+		{
+			if (instance.Mesh==null)
+			{
+				return 0;
+			}
+
+			var mesh		=	instance.Mesh;
+
+			var indices		=	mesh.GetIndices();
+			var positions	=	mesh.Vertices
+								.Select( v1 => Vector3.TransformCoordinate( v1.Position, instance.World ) )
+								.ToArray();
+
+			var numTris		=	indices.Length / 3;
+
+			for (int i=0; i<numTris; i++)
+			{
+				var p0	=	positions[ indices[ i*3+0 ] ];
+				var p1	=	positions[ indices[ i*3+1 ] ];
+				var p2	=	positions[ indices[ i*3+2 ] ];
+
+				tris.Add( new Triangle( p0, p1, p2 ) );
+			}
+
+			return numTris;
 		}
 
 		/*-----------------------------------------------------------------------------------------
@@ -203,6 +332,7 @@ namespace Fusion.Engine.Graphics.GI
 			{
 				SetupShaderResources();
 
+				TestRayTracing();
 
 				int regSize =	RegionSize;
 				int regX	=	lightMap.Width  / regSize;
@@ -225,7 +355,6 @@ namespace Fusion.Engine.Graphics.GI
 		}
 
 
-		
 		void SetupShaderResources()
 		{
 			device.ComputeConstants[ regCamera			]	=	rs.RenderWorld.Camera.CameraData;
@@ -259,6 +388,24 @@ namespace Fusion.Engine.Graphics.GI
 			device.ComputeResources[ regIndexVolume		]	=	lightMap.indexVol;
 			device.ComputeResources[ regSkyVolume		]	=	lightMap.skyVol;
 		}
+
+
+		void TestRayTracing()
+		{
+			using ( new PixEvent( "Ray Tracing" ) )
+			{
+				device.PipelineState    =   factory[(int)Flags.RAYTRACE];		
+				
+				device.SetComputeUnorderedAccess( regRaytraceImage, raytracedImage.Surface.UnorderedAccess );	
+
+				int width  = raytracedImage.Width;
+				int height = raytracedImage.Height;
+
+				device.Dispatch( new Int2( width, height ), new Int2( TileSize, TileSize ) );
+			}
+		}
+
+		
 
 
 

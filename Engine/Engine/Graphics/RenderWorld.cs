@@ -400,6 +400,10 @@ namespace Fusion.Engine.Graphics {
 
 		RenderList	rlMainView = new RenderList(5000);
 
+		BvhTree<RenderInstance> sceneBvhTree = null;
+
+		public BvhTree<RenderInstance> SceneBvhTree { get { return sceneBvhTree; } }
+
 
 		Color DebugBBoxColor( BoundingBox box )
 		{
@@ -416,12 +420,12 @@ namespace Fusion.Engine.Graphics {
 
 		void UpdateVisibility()
 		{
-			if (rs.LockVisibility) return;
-
-			var sceneBvhTree	=	new BvhTree<RenderInstance>( 
+			sceneBvhTree	=	new BvhTree<RenderInstance>( 
 				Instances, //.Where( inst0 => inst0.Group!=InstanceGroup.Weapon ), 
 				inst1 => inst1.ComputeWorldBoundingBox(), 
 				inst2 => inst2.World.TranslationVector );
+
+			if (rs.LockVisibility) return;
 
 			if (rs.ShowBoundingBoxes)
 			{

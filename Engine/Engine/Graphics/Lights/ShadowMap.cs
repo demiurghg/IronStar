@@ -385,7 +385,13 @@ namespace Fusion.Engine.Graphics {
 			//
 			//	Render shadow maps regions :
 			//
-			var instances = renderWorld.Instances;
+			var sceneBvhTree = renderWorld.SceneBvhTree;
+			var shadowRenderList = new RenderList(500);
+
+			if (sceneBvhTree==null)
+			{
+				return;	// nothing to render
+			}
 
 			using (new PixEvent("Shadow Maps")) {
 
@@ -401,7 +407,10 @@ namespace Fusion.Engine.Graphics {
 					shadowCamera.SetView( cascade.ViewMatrix );
 					shadowCamera.SetProjection( cascade.ProjectionMatrix );
 
-					rs.SceneRenderer.RenderShadowMap( contextSolid,  renderWorld, group );
+					shadowRenderList.Clear();
+					shadowRenderList.AddRange( sceneBvhTree.Traverse( bbox => shadowCamera.Frustum.Contains( bbox ) ) );
+
+					rs.SceneRenderer.RenderShadowMap( contextSolid,  shadowRenderList, group );
 				}
 
 				foreach ( var spot in lights ) {
@@ -411,7 +420,10 @@ namespace Fusion.Engine.Graphics {
 					shadowCamera.SetView( spot.SpotView );
 					shadowCamera.SetProjection( spot.Projection );
 
-					rs.SceneRenderer.RenderShadowMap( contextSolid, renderWorld, group );
+					shadowRenderList.Clear();
+					shadowRenderList.AddRange( sceneBvhTree.Traverse( bbox => shadowCamera.Frustum.Contains( bbox ) ) );
+
+					rs.SceneRenderer.RenderShadowMap( contextSolid, shadowRenderList, group );
 				}
 			}
 

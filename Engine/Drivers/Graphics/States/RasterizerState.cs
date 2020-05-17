@@ -77,7 +77,7 @@ namespace Fusion.Drivers.Graphics {
 			rs.MsaaEnabled		=	false;
 			rs.FillMode			=	fillMode;
 			rs.DepthClipEnabled	=	true;
-			rs.ScissorEnabled	=	false;
+			rs.ScissorEnabled	=	true;
 			return rs;
 		}
 	}

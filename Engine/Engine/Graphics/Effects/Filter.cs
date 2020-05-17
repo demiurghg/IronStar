@@ -281,9 +281,12 @@ namespace Fusion.Engine.Graphics
 
 
 
-		void SetViewport ( RenderTargetSurface dst )
+		void SetViewport ( RenderTargetSurface dst, Rectangle? dstRect = null )
 		{
-			device.SetViewport( 0,0, dst.Width, dst.Height );
+			var rect = dstRect.HasValue ? dstRect.Value : new Rectangle( 0, 0, dst.Width, dst.Height );
+
+			device.SetScissorRect( rect );
+			device.SetViewport	 ( new Viewport(rect) );
 		}
 
 
@@ -293,7 +296,7 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		/// <param name="dst">target to copy to</param>
 		/// <param name="src">target to copy from</param>
-		public void Copy( RenderTargetSurface dst, ShaderResource src )
+		public void Copy( RenderTargetSurface dst, ShaderResource src, Rectangle? dstRect = null )
 		{
 			SetDefaultRenderStates();
 
@@ -302,7 +305,7 @@ namespace Fusion.Engine.Graphics
 				if ( dst == null ) {
 					device.RestoreBackbuffer();
 				} else {
-					SetViewport( dst );
+					SetViewport( dst, dstRect );
 					device.SetTargets( null, dst );
 				}
 

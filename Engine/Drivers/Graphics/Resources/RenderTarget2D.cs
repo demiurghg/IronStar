@@ -44,6 +44,11 @@ namespace Fusion.Drivers.Graphics {
 		ShaderResource[]		mipSrvs;
 			
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public Rectangle Bounds { get { return new Rectangle( 0, 0, Width, Height ); } }
+
 
 		/// <summary>
 		/// Creates render target

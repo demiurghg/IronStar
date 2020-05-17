@@ -177,7 +177,8 @@ namespace Fusion.Engine.Graphics
 			using( new PixEvent("StretchRect") ) {
 
 				device.SetTargets( null, dst );
-				device.SetViewport( dstRegion.X, dstRegion.Y, dstRegion.Width, dstRegion.Height );
+				device.SetScissorRect( dstRegion );
+				device.SetViewport( dstRegion );
 
 				device.PipelineState			=	factory[ (int)(ShaderFlags.RENDER_BORDER) ];
 

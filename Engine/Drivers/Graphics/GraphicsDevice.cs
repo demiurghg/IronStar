@@ -835,6 +835,20 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="y"></param>
 		/// <param name="w"></param>
 		/// <param name="h"></param>
+		public void SetViewport ( Rectangle bounds )
+		{
+			SetViewport( new ViewportF( bounds.X, bounds.Y, bounds.Width, bounds.Height ) );
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="w"></param>
+		/// <param name="h"></param>
 		public void SetViewport ( Viewport viewport )
 		{
 			SetViewport( new ViewportF( viewport.X, viewport.Y, viewport.Width, viewport.Height, viewport.MinDepth, viewport.MaxDepth ) );

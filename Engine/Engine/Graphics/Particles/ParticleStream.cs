@@ -644,6 +644,7 @@ namespace Fusion.Engine.Graphics {
 				{
 					//	target and viewport :
 					device.SetTargets( depthTarget, colorTarget );
+					device.SetScissorRect( viewport.Bounds );
 					device.SetViewport( viewport );
 
 					//	sampler & textures :

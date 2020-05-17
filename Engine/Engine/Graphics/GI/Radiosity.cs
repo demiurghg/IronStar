@@ -15,6 +15,7 @@ using Fusion.Core;
 using Fusion.Engine.Graphics.Lights;
 using Fusion.Core.Shell;
 using Fusion.Engine.Graphics.Bvh;
+using System.Diagnostics;
 
 namespace Fusion.Engine.Graphics.GI
 {
@@ -254,6 +255,8 @@ namespace Fusion.Engine.Graphics.GI
 		public void BuildAccelerationStructure()
 		{
 			Log.Message("Build acceleration structure");
+			var sw = new Stopwatch();
+			sw.Start();
 
 			var instances	=	rs.RenderWorld.Instances.Where( inst => inst.Group==InstanceGroup.Static ).ToArray();
 			var tris		=	new List<Triangle>();
@@ -274,7 +277,8 @@ namespace Fusion.Engine.Graphics.GI
 			sbPrimitives	=	new StructuredBuffer( rs.Device, typeof(Triangle), bvhTree.Primitives.Length,	StructuredBufferFlags.None );
 			sbBvhTree		=	new StructuredBuffer( rs.Device, typeof(BvhNode),  flatTree.Length,				StructuredBufferFlags.None );
 
-			Log.Message("Done");
+			sw.Stop();
+			Log.Message("Done: {0} ms", sw.ElapsedMilliseconds);
 		}
 
 

@@ -477,6 +477,8 @@ namespace Fusion.Engine.Graphics {
 				//	Tonemap and compose :
 				//
 				device.SetTargets( null, hdrFrame.FinalColor );
+				device.SetViewport( hdrFrame.FinalColor.Bounds );
+				device.SetScissorRect( hdrFrame.FinalColor.Bounds );
 
 				device.GfxResources[0]	=	hdrFrame.FinalHdrImage;// averageLum;
 				device.GfxResources[1]	=	hdrFrame.MeasuredNew;// averageLum;

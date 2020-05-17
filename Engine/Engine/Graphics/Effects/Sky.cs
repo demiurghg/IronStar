@@ -203,6 +203,7 @@ namespace Fusion.Engine.Graphics {
 					device.SetTargets( null, SkyCube.GetSurface(0, (CubeFace)i ) );
 
 					SkyCube.SetViewport();
+					device.SetScissorRect( new Rectangle( 0, 0, SkyCube.Width, SkyCube.Height ) );
 
 					skyConstsData.MatrixWVP = cubeWVPS[i];
 	

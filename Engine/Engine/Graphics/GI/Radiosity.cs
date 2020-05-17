@@ -162,7 +162,7 @@ namespace Fusion.Engine.Graphics.GI
 			tempHDR1		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10, RegionSize, RegionSize, true );
 			tempLDR1		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,   RegionSize, RegionSize, true );
 
-			raytracedImage	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10, 320, 200,true );
+			raytracedImage	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10, 256, 256,true );
 
 			LoadContent();
 

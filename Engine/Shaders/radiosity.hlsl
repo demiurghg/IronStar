@@ -437,14 +437,26 @@ void CSMain(
 
 #ifdef RAYTRACE
 
+uint wang_hash(uint seed)
+{
+    seed = (seed ^ 61) ^ (seed >> 16);
+    seed *= 9;
+    seed = seed ^ (seed >> 4);
+    seed *= 0x27d4eb2d;
+    seed = seed ^ (seed >> 15);
+    return seed;
+}
+
 RAY CreateRay( uint2 xy )
 {
-	float 	x 	=	( xy.x )		/ 320.0 * 2 - 1;
-	float 	y 	=	( 200-xy.y ) 	/ 200.0 * 2 - 1;
+	float 	x 	=	( xy.x )		/ 256.0 * 2 - 1;
+	float 	y 	=	( 256-xy.y ) 	/ 256.0 * 2 - 1;
+	float 	z	=	(wang_hash( 199*xy.x + 2999*xy.y ) & 0xF) / 64.0f + 1.0f;
 	float3 	p 	=	Camera.CameraPosition.xyz;
-	float3  d 	=	Camera.CameraForward.xyz + Camera.CameraRight.xyz * x + Camera.CameraUp.xyz * y;
+	float3  d 	=	Camera.CameraForward.xyz * z + Camera.CameraRight.xyz * x + Camera.CameraUp.xyz * y;
 	return ConstructRay( p, normalize(d) );
 }
+
 
 
 #define STACKSIZE			64
@@ -493,7 +505,7 @@ void CSMain(
 					{
 						if (result.w>t)
 						{
-							result.xyz 	= lerp(result, tri.PlaneEq.xyz*0.5+0.5, 1);
+							result.xyz 	= lerp(result.xyz, tri.PlaneEq.xyz*0.5+0.5, 1);
 							result.w	= t;
 						}
 					}

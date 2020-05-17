@@ -570,30 +570,6 @@ namespace Fusion.Engine.Graphics {
 					rs.SceneRenderer.GatherVTFeedbackAndUpdate( gameTime, viewHdrFrame );
 
 					ParticleSystem.RenderSoft( gameTime, Camera, stereoEye, viewHdrFrame );
-
-					//------------------------------------------------------------
-
-					switch (rs.ShowGBuffer) {
-						case 1  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.Normals ); return;
-						case 2  : rs.Filter.CopyColor( targetSurface,	rs.Radiosity.raytracedImage ); return;
-						//case 3  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.GBuffer1 ); return;
-						//case 4  : rs.Filter.CopyAlpha( targetSurface,	viewHdrFrame.GBuffer1 ); return;
-						case 5  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.HdrBuffer ); return;
-						case 6  : rs.Filter.Copy( targetSurface,		viewHdrFrame.AOBuffer ); return;
-						case 7  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ParticleShadowTexture ); return;
-						case 8  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ShadowTexture ); return;
-						case 9  : rs.Filter.StretchRect( targetSurface, ParticleSystem.SoftStream.Lightmap ); return;
-						case 10 : rs.Filter.StretchRect( targetSurface, viewHdrFrame.FeedbackBufferRB, SamplerState.PointClamp ); return;
-					}
-
-					if (rs.VTSystem.ShowPhysicalTextures) {
-						rs.Filter.StretchRect( targetSurface, rs.VTSystem.PhysicalPages0 );
-						return;
-					}
-					if (rs.VTSystem.ShowPageTexture) {
-						rs.Filter.Copy( targetSurface, rs.VTSystem.PageTable );
-						return;
-					}
 				}
 
 
@@ -613,9 +589,38 @@ namespace Fusion.Engine.Graphics {
 
 				//	draw debug lines :
 				Debug.Render( targetSurface, viewHdrFrame.DepthBuffer.Surface, Camera );
+
+				//	draw debug images
+				DrawDebugImages( viewport, targetSurface );
 			}
 		}
 
+
+
+		void DrawDebugImages( Viewport viewport, RenderTargetSurface targetSurface )
+		{
+			switch (rs.ShowGBuffer) {
+				case 1  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.Normals ); return;
+				case 2  : rs.Filter.StretchRect( targetSurface,	rs.Radiosity.raytracedImage, new Rectangle(900,100,320,200) ); break;
+				//case 3  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.GBuffer1 ); return;
+				//case 4  : rs.Filter.CopyAlpha( targetSurface,	viewHdrFrame.GBuffer1 ); return;
+				case 5  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.HdrBuffer ); return;
+				case 6  : rs.Filter.Copy( targetSurface,		viewHdrFrame.AOBuffer ); return;
+				case 7  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ParticleShadowTexture ); return;
+				case 8  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ShadowTexture ); return;
+				case 9  : rs.Filter.StretchRect( targetSurface, ParticleSystem.SoftStream.Lightmap ); return;
+				case 10 : rs.Filter.StretchRect( targetSurface, viewHdrFrame.FeedbackBufferRB, SamplerState.PointClamp ); return;
+			}
+
+			if (rs.VTSystem.ShowPhysicalTextures) {
+				rs.Filter.StretchRect( targetSurface, rs.VTSystem.PhysicalPages0 );
+				return;
+			}
+			if (rs.VTSystem.ShowPageTexture) {
+				rs.Filter.Copy( targetSurface, rs.VTSystem.PageTable );
+				return;
+			}
+		}
 
 
 		/// <summary>

@@ -256,6 +256,8 @@ namespace Fusion.Engine.Graphics {
 				//rs.DepthStencilState = depthBuffer==null? DepthStencilState.None : DepthStencilState.Default ;
 
 				device.SetTargets( depth, color );
+				device.SetViewport( color.Bounds );
+				device.SetScissorRect( color.Bounds );
 
 				var viewMatrix = camera.ViewMatrix;
 				var projMatrix = camera.ProjectionMatrix;

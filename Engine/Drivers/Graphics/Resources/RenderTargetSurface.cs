@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using SharpDX;
 using SharpDX.Direct3D11;
 using Fusion.Core;
+using Fusion.Core.Mathematics;
 
 namespace Fusion.Drivers.Graphics {
 
@@ -21,6 +22,8 @@ namespace Fusion.Drivers.Graphics {
 		public int			Height			{ get; private set; }
 		public ColorFormat	Format			{ get; private set; }
 		public int			SampleCount		{ get; private set; }
+
+		public Rectangle	Bounds			{ get { return new Rectangle( 0,0, Width, Height ); } }
 
 		public UnorderedAccess UnorderedAccess { get { return unorderedAccess; } }
 		UnorderedAccess unorderedAccess;

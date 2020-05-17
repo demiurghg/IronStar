@@ -167,6 +167,11 @@ namespace Fusion.Engine.Graphics
 		 * 
 		-----------------------------------------------------------------------------------------------*/
 
+		public void StretchRect( RenderTargetSurface dst, ShaderResource src, Rectangle dstRect )
+		{
+			StretchRect( dst, src, null, false, dstRect );
+		}
+
 		/// <summary>
 		/// Performs good-old StretchRect to destination buffer with blending.
 		/// </summary>
@@ -174,13 +179,13 @@ namespace Fusion.Engine.Graphics
 		/// <param name="src"></param>
 		/// <param name="filter"></param>
 		/// <param name="rect"></param>
-		public void StretchRect( RenderTargetSurface dst, ShaderResource src, SamplerState filter = null, bool flipToCubeFace = false )
+		public void StretchRect( RenderTargetSurface dst, ShaderResource src, SamplerState filter = null, bool flipToCubeFace = false, Rectangle? dstRect = null )
 		{
 			SetDefaultRenderStates();
 
 			using( new PixEvent("StretchRect") ) {
 
-				SetViewport(dst);
+				SetViewport(dst, dstRect);
 				device.SetTargets( null, dst );
 
 				if (flipToCubeFace) {
@@ -296,7 +301,7 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		/// <param name="dst">target to copy to</param>
 		/// <param name="src">target to copy from</param>
-		public void Copy( RenderTargetSurface dst, ShaderResource src, Rectangle? dstRect = null )
+		public void Copy( RenderTargetSurface dst, ShaderResource src )
 		{
 			SetDefaultRenderStates();
 
@@ -305,12 +310,12 @@ namespace Fusion.Engine.Graphics
 				if ( dst == null ) {
 					device.RestoreBackbuffer();
 				} else {
-					SetViewport( dst, dstRect );
+					SetViewport( dst );
 					device.SetTargets( null, dst );
 				}
 
-				device.PipelineState            =   factory[(int)ShaderFlags.COPY];
-				device.GfxResources[0]  = src;
+				device.PipelineState	=	factory[(int)ShaderFlags.COPY];
+				device.GfxResources[0]	=	src;
 
 				device.Draw( 3, 0 );
 			}

@@ -634,6 +634,9 @@ namespace Fusion.Drivers.Graphics {
 		{
 			SetTargets( BackbufferDepth, BackbufferColor );
 
+			SetScissorRect( BackbufferColor.Bounds );
+			SetViewport( BackbufferColor.Bounds );
+
 			if (true) { // lock (deviceContext) {
 				deviceContext.Rasterizer.SetViewport( SharpDXHelper.Convert( new ViewportF( 0,0, BackbufferColor.Width, BackbufferColor.Height ) ) );
 			}
@@ -711,9 +714,9 @@ namespace Fusion.Drivers.Graphics {
 					deviceContext.OutputMerger.SetTargets( dsv, rtvs );
 				}
 
-				if (w>0 && h>0) {
+				/*if (w>0 && h>0) {
 					SetViewport( 0, 0, w, h );
-				}
+				} */
 			}
 		}
 

@@ -352,6 +352,8 @@ namespace Fusion.Engine.Graphics {
 				//	Tonemap and compose :
 				//
 				device.SetTargets( null, hdrFrame.FinalHdrImage );
+				device.SetViewport( hdrFrame.FinalHdrImage.Bounds );
+				device.SetScissorRect( hdrFrame.FinalHdrImage.Bounds );
 
 				device.GfxSamplers[0]	=	SamplerState.LinearClamp;
 				device.GfxSamplers[1]	=	SamplerState.AnisotropicClamp;

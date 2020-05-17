@@ -121,6 +121,8 @@ namespace Fusion.Engine.Graphics {
 			device.ResetStates();
 			//device.RestoreBackbuffer();
 			device.SetTargets( null, surface );
+			device.SetViewport( surface.Bounds );
+			device.SetScissorRect( surface.Bounds );
 
 			DrawSpritesRecursive( gameTime, stereoEye, surface, layers, Matrix.Identity, new Color4(1f,1f,1f,1f) );
 		}

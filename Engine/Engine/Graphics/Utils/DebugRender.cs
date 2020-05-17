@@ -199,6 +199,8 @@ namespace Fusion.Engine.Graphics {
 			dev.ResetStates();
 
 			dev.SetTargets( depthBuffer, colorBuffer );
+			dev.SetViewport( colorBuffer.Bounds );
+			dev.SetScissorRect( colorBuffer.Bounds );
 
 			var a = camera.ProjectionMatrix.M11;
 			var b = camera.ProjectionMatrix.M22;

@@ -6,6 +6,11 @@ static const uint COLLISION_INTERSECT	= 0;
 static const uint COLLISION_INSIDE 		= 1; 
 static const uint COLLISION_OUTSIDE 	= 2; 
 
+
+/*------------------------------------------------------------------------------
+	Frustum / AABB intersection
+------------------------------------------------------------------------------*/
+
 uint FrustumAABBIntersect( float4 planes[6], float3 mins, float3 maxs )
 {
 	float3 vmin, vmax; 
@@ -76,5 +81,143 @@ bool IsAABBOutsidePlane( float4 plane, float3 mins, float3 maxs )
 	return (dot(plane.xyz, vmin) + plane.w > 0);
 }
 
+/*------------------------------------------------------------------------------
+	Ray
+------------------------------------------------------------------------------*/
+
+struct RAY
+{
+	float3 orig;
+	float3 dir;
+};
+
+
+RAY ConstructRay( float3 origin, float3 dir )
+{
+	RAY r;
+	r.orig	=	origin;
+	r.dir	=	dir;
+	return r;
+}
+
+/*------------------------------------------------------------------------------
+	Ray / AABB intersection
+------------------------------------------------------------------------------*/
+
+void swap(inout float a, inout float b)
+{
+	float t = a;
+	a = b;
+	b = t;
+}
+
+
+//
+//	https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection
+//
+bool RayAABBIntersection(RAY r, float3 aabbMin, float3 aabbMax, out float tmin, out float tmax) 
+{ 
+    tmin = (aabbMin.x - r.orig.x) / r.dir.x; 
+    tmax = (aabbMax.x - r.orig.x) / r.dir.x; 
+ 
+    if (tmin > tmax) swap(tmin, tmax); 
+ 
+    float tymin = (aabbMin.y - r.orig.y) / r.dir.y; 
+    float tymax = (aabbMax.y - r.orig.y) / r.dir.y; 
+ 
+    if (tymin > tymax) swap(tymin, tymax); 
+ 
+    if ((tmin > tymax) || (tymin > tmax)) 
+        return false; 
+ 
+    if (tymin > tmin) 
+        tmin = tymin; 
+ 
+    if (tymax < tmax) 
+        tmax = tymax; 
+ 
+    float tzmin = (aabbMin.z - r.orig.z) / r.dir.z; 
+    float tzmax = (aabbMax.z - r.orig.z) / r.dir.z; 
+ 
+    if (tzmin > tzmax) swap(tzmin, tzmax); 
+ 
+    if ((tmin > tzmax) || (tzmin > tmax)) 
+        return false; 
+ 
+    if (tzmin > tmin) 
+        tmin = tzmin; 
+ 
+    if (tzmax < tmax) 
+        tmax = tzmax; 
+ 
+    return true; 
+} 
+
+
+/*------------------------------------------------------------------------------
+	Ray / Triangle intersection
+------------------------------------------------------------------------------*/
+
+#define EPSILON 0.00001
+
+float3 Barycentric(float3 p, float3 a, float3 b, float3 c )
+{
+    float3 v0 = b - a; 
+	float3 v1 = c - a; 
+	float3 v2 = p - a;
+    float d00 = dot(v0, v0);
+    float d01 = dot(v0, v1);
+    float d11 = dot(v1, v1);
+    float d20 = dot(v2, v0);
+    float d21 = dot(v2, v1);
+    float denom = d00 * d11 - d01 * d01;
+    float v = (d11 * d20 - d01 * d21) / denom;
+    float w = (d00 * d21 - d01 * d20) / denom;
+    float u = 1.0f - v - w;
+	return float3(u,v,w);
+}
+
+bool RayTriangleIntersection( RAY r, float3 a, float3 b, float3 c, float4 plane, out float t, out float2 uv )
+{
+	t = 0;
+	uv = float2(0,0);
+	
+	// 	ray and triangle are parallel 
+	//	or ray comes from behind:
+	if ( dot(r.dir, plane.xyz) > EPSILON )
+	{
+		return false;
+	}
+	
+	t = - (plane.w + dot(r.orig, plane.xyz)) / dot(r.dir, plane.xyz);
+	
+	if (t<0)
+	{
+		return false;
+	}
+
+	float3 p 	=	r.orig + r.dir * t;
+	
+	uv = Barycentric( p, a, b, c ).xy;
+	
+	if (uv.x<0 || uv.y<0 || uv.x + uv.y>1 )
+	{
+		return false;
+	}
+	
+	return true;
+}
+
+
+
+
+
+
 
 #endif
+
+
+
+
+
+

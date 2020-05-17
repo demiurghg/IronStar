@@ -277,6 +277,9 @@ namespace Fusion.Engine.Graphics.GI
 			sbPrimitives	=	new StructuredBuffer( rs.Device, typeof(Triangle), bvhTree.Primitives.Length,	StructuredBufferFlags.None );
 			sbBvhTree		=	new StructuredBuffer( rs.Device, typeof(BvhNode),  flatTree.Length,				StructuredBufferFlags.None );
 
+			sbPrimitives.SetData( bvhTree.Primitives );
+			sbBvhTree.SetData( flatTree );
+
 			sw.Stop();
 			Log.Message("Done: {0} ms", sw.ElapsedMilliseconds);
 		}
@@ -391,6 +394,9 @@ namespace Fusion.Engine.Graphics.GI
 			device.ComputeResources[ regClusters		]	=	lightMap.clusters;
 			device.ComputeResources[ regIndexVolume		]	=	lightMap.indexVol;
 			device.ComputeResources[ regSkyVolume		]	=	lightMap.skyVol;
+
+			device.ComputeResources[ regRtTriangles		]	=	this.sbPrimitives;
+			device.ComputeResources[ regRtBvhTree		]	=	this.sbBvhTree;
 		}
 
 

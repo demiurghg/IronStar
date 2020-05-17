@@ -437,6 +437,22 @@ void CSMain(
 
 #ifdef RAYTRACE
 
+RAY CreateRay( uint2 xy )
+{
+	float 	x 	=	( xy.x )		/ 320.0 * 2 - 1;
+	float 	y 	=	( 200-xy.y ) 	/ 200.0 * 2 - 1;
+	float3 	p 	=	Camera.CameraPosition.xyz;
+	float3  d 	=	Camera.CameraForward.xyz + Camera.CameraRight.xyz * x + Camera.CameraUp.xyz * y;
+	return ConstructRay( p, normalize(d) );
+}
+
+
+#define STACKSIZE			64
+#define STACKPUSH(index) 	stack[stackIndex++] = index
+#define STACKPOP 			stack[--stackIndex]
+#define STACKEMPTY			(stackIndex==0)
+#define STACKGUARD			if (stackIndex>=STACKSIZE) return;
+
 [numthreads(TileSize,TileSize,1)] 
 void CSMain( 
 	uint3 groupId : SV_GroupID, 
@@ -445,7 +461,53 @@ void CSMain(
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
 	uint2 storeXY	=	dispatchThreadId.xy;
-	RaytraceImage[ storeXY ] = float4(1,0,0.5f,1);
+	RAY ray			=	CreateRay( dispatchThreadId.xy );
+	
+	float4 result	=	float4(0,0,0,9999999);
+	
+	uint stack[STACKSIZE];
+	uint stackIndex = 0;
+	uint maxIndex = 0;
+	STACKPUSH(0);
+	
+	while (!STACKEMPTY)
+	{
+		STACKGUARD
+		
+		maxIndex = max(maxIndex, stackIndex);
+		
+		uint current = STACKPOP;
+		BvhNode node = RtBvhTree[current];
+		float tmin, tmax;
+		
+		if ( RayAABBIntersection( ray, node.MinBound.xyz, node.MaxBound.xyz, tmin, tmax ) )
+		{
+			if (tmax>0)
+			{
+				if (node.IsLeaf) 
+				{
+					Triangle tri = RtTriangles[ node.Index ];
+					float t;
+					float2 uv;
+					if ( RayTriangleIntersection( ray, tri.Point0.xyz, tri.Point1.xyz, tri.Point2.xyz, tri.PlaneEq, t, uv ) )
+					{
+						if (result.w>t)
+						{
+							result.xyz 	= lerp(result, tri.PlaneEq.xyz*0.5+0.5, 1);
+							result.w	= t;
+						}
+					}
+				}
+				else
+				{
+					STACKPUSH(node.Index);
+					STACKPUSH(current+1);
+				}
+			}
+		}
+	}
+	
+	RaytraceImage[ storeXY ] = float4(result.rgb,1);
 }
 
 #endif

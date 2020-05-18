@@ -494,7 +494,7 @@ void CSMain(
 		
 		if ( RayAABBIntersection( ray, node.MinBound.xyz, node.MaxBound.xyz, tmin, tmax ) )
 		{
-			if (tmax>0)
+			if (tmax>0 && tmax < result.w) 
 			{
 				if (node.IsLeaf) 
 				{

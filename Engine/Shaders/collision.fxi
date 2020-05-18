@@ -88,17 +88,24 @@ bool IsAABBOutsidePlane( float4 plane, float3 mins, float3 maxs )
 struct RAY
 {
 	float3 orig;
+	float3 invdir;
 	float3 dir;
+	// int3   dirsign;
 };
 
 
 RAY ConstructRay( float3 origin, float3 dir )
 {
 	RAY r;
-	r.orig	=	origin;
-	r.dir	=	dir;
+	r.orig		=	origin;
+	r.dir		=	dir;
+	r.invdir	=	1.0f / dir;
+	// r.dirsign.x	=	( dir.x < 0 ) ? 1 : 0;
+	// r.dirsign.y	=	( dir.y < 0 ) ? 1 : 0;
+	// r.dirsign.z	=	( dir.z < 0 ) ? 1 : 0;
 	return r;
 }
+
 
 /*------------------------------------------------------------------------------
 	Ray / AABB intersection
@@ -117,40 +124,77 @@ void swap(inout float a, inout float b)
 //
 bool RayAABBIntersection(RAY r, float3 aabbMin, float3 aabbMax, out float tmin, out float tmax) 
 { 
-    tmin = (aabbMin.x - r.orig.x) / r.dir.x; 
-    tmax = (aabbMax.x - r.orig.x) / r.dir.x; 
- 
-    if (tmin > tmax) swap(tmin, tmax); 
- 
-    float tymin = (aabbMin.y - r.orig.y) / r.dir.y; 
-    float tymax = (aabbMax.y - r.orig.y) / r.dir.y; 
- 
-    if (tymin > tymax) swap(tymin, tymax); 
- 
-    if ((tmin > tymax) || (tymin > tmax)) 
-        return false; 
- 
-    if (tymin > tmin) 
-        tmin = tymin; 
- 
-    if (tymax < tmax) 
-        tmax = tymax; 
- 
-    float tzmin = (aabbMin.z - r.orig.z) / r.dir.z; 
-    float tzmax = (aabbMax.z - r.orig.z) / r.dir.z; 
- 
-    if (tzmin > tzmax) swap(tzmin, tzmax); 
- 
-    if ((tmin > tzmax) || (tzmin > tmax)) 
-        return false; 
- 
-    if (tzmin > tmin) 
-        tmin = tzmin; 
- 
-    if (tzmax < tmax) 
-        tmax = tzmax; 
- 
-    return true; 
+	#if 1
+		tmin = (aabbMin.x - r.orig.x) * r.invdir.x; 
+		tmax = (aabbMax.x - r.orig.x) * r.invdir.x; 
+	 
+		if (tmin > tmax) swap(tmin, tmax); 
+	 
+		float tymin = (aabbMin.y - r.orig.y) * r.invdir.y; 
+		float tymax = (aabbMax.y - r.orig.y) * r.invdir.y; 
+	 
+		if (tymin > tymax) swap(tymin, tymax); 
+	 
+		if ((tmin > tymax) || (tymin > tmax)) 
+			return false; 
+	 
+		if (tymin > tmin) 
+			tmin = tymin; 
+	 
+		if (tymax < tmax) 
+			tmax = tymax; 
+	 
+		float tzmin = (aabbMin.z - r.orig.z) * r.invdir.z; 
+		float tzmax = (aabbMax.z - r.orig.z) * r.invdir.z; 
+	 
+		if (tzmin > tzmax) swap(tzmin, tzmax); 
+	 
+		if ((tmin > tzmax) || (tzmin > tmax)) 
+			return false; 
+	 
+		if (tzmin > tmin) 
+			tmin = tzmin; 
+	 
+		if (tzmax < tmax) 
+			tmax = tzmax; 
+	 
+		return true; 
+	#else
+		tmin = (aabbMin.x - r.orig.x) / r.dir.x; 
+		tmax = (aabbMax.x - r.orig.x) / r.dir.x; 
+	 
+		if (tmin > tmax) swap(tmin, tmax); 
+	 
+		float tymin = (aabbMin.y - r.orig.y) / r.dir.y; 
+		float tymax = (aabbMax.y - r.orig.y) / r.dir.y; 
+	 
+		if (tymin > tymax) swap(tymin, tymax); 
+	 
+		if ((tmin > tymax) || (tymin > tmax)) 
+			return false; 
+	 
+		if (tymin > tmin) 
+			tmin = tymin; 
+	 
+		if (tymax < tmax) 
+			tmax = tymax; 
+	 
+		float tzmin = (aabbMin.z - r.orig.z) / r.dir.z; 
+		float tzmax = (aabbMax.z - r.orig.z) / r.dir.z; 
+	 
+		if (tzmin > tzmax) swap(tzmin, tzmax); 
+	 
+		if ((tmin > tzmax) || (tzmin > tmax)) 
+			return false; 
+	 
+		if (tzmin > tmin) 
+			tmin = tzmin; 
+	 
+		if (tzmax < tmax) 
+			tmax = tzmax; 
+	 
+		return true; 
+	#endif
 } 
 
 

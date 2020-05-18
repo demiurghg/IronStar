@@ -234,21 +234,28 @@ namespace Fusion.Engine.Graphics.GI
 		}
 
 
-		[StructLayout(LayoutKind.Sequential, Pack=4, Size=40)]
+		//[StructLayout(LayoutKind.Sequential, Pack=4, Size=16)]
 		public struct BvhNode
 		{
 			public BvhNode ( bool isLeaf, uint index, BoundingBox bbox )
 			{
-				MinBound	=	new Vector4( bbox.Minimum, 1 );
-				MaxBound	=	new Vector4( bbox.Maximum, 1 );
-				IsLeaf		=	isLeaf ? 1u : 0;
-				Index		=	index;
+				Half3	bboxMin		=	bbox.Minimum;
+				Half3	bboxMax		=	bbox.Maximum;
+
+				uint	leadBit		=	isLeaf ? 0x80000000u : 0;
+				uint	indexBits	=	index  & 0x7FFFFFFFu;
+
+				PackedMinMaxIndex.X	=	(uint)(( bboxMin.X.RawValue << 16 ) | ( bboxMin.Y.RawValue ));
+				PackedMinMaxIndex.Y	=	(uint)(( bboxMin.Z.RawValue << 16 ) | ( bboxMax.X.RawValue ));
+				PackedMinMaxIndex.Z	=	(uint)(( bboxMax.Y.RawValue << 16 ) | ( bboxMax.Z.RawValue ));
+				PackedMinMaxIndex.W	=	leadBit | indexBits;
 			}
 
-			public Vector4 MinBound;
-			public Vector4 MaxBound;
-			public uint Index;
-			public uint IsLeaf;
+			//[ minX ][ minY ]
+			//[ minZ ][ maxX ]
+			//[ maxY ][ maxZ ]
+			//[ IsLeaf:Index ]
+			public UInt4	PackedMinMaxIndex;
 		}
 
 

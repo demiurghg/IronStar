@@ -92,12 +92,9 @@ struct Triangle {
 };
 
 // Fusion.Engine.Graphics.GI.Radiosity+BvhNode
-// Marshal.SizeOf = 40
+// Marshal.SizeOf = 16
 struct BvhNode {
-	float4     MinBound;                      // offset:    0
-	float4     MaxBound;                      // offset:   16
-	uint       Index;                         // offset:   32
-	uint       IsLeaf;                        // offset:   36
+	uint4      PackedMinMaxIndex;             // offset:    0
 };
 
 // ---------------- SHADER RESOURCES ---------------- //

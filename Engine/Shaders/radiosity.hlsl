@@ -457,6 +457,17 @@ RAY CreateRay( uint2 xy )
 	return ConstructRay( p, normalize(d) );
 }
 
+void UnpackBVHNode( BvhNode node, out float3 minBound, out float3 maxBound, out uint index, out uint isLeaf )
+{
+	minBound.x	=	f16tof32( node.PackedMinMaxIndex.x >> 16 );
+	minBound.y	=	f16tof32( node.PackedMinMaxIndex.x >>  0 );
+	minBound.z	=	f16tof32( node.PackedMinMaxIndex.y >> 16 );
+	maxBound.x	=	f16tof32( node.PackedMinMaxIndex.y >>  0 );
+	maxBound.y	=	f16tof32( node.PackedMinMaxIndex.z >> 16 );
+	maxBound.z	=	f16tof32( node.PackedMinMaxIndex.z >>  0 );
+	isLeaf		=	node.PackedMinMaxIndex.w & 0x80000000;
+	index		=	node.PackedMinMaxIndex.w & 0x7FFFFFFF;
+}
 
 
 #define STACKSIZE			64
@@ -491,16 +502,21 @@ void CSMain(
 		uint current = STACKPOP;
 		BvhNode node = RtBvhTree[current];
 		float tmin, tmax;
+		float3 minBound, maxBound;
+		uint index, isLeaf;
 		
-		if ( RayAABBIntersection( ray, node.MinBound.xyz, node.MaxBound.xyz, tmin, tmax ) )
+		UnpackBVHNode( node, minBound, maxBound, index, isLeaf );
+		
+		if ( RayAABBIntersection( ray, minBound, maxBound, tmin, tmax ) )
 		{
 			if (tmax>0 && tmax < result.w) 
 			{
-				if (node.IsLeaf) 
+				if (isLeaf) 
 				{
-					Triangle tri = RtTriangles[ node.Index ];
+					Triangle tri = RtTriangles[ index ];
 					float t;
 					float2 uv;
+					
 					if ( RayTriangleIntersection( ray, tri.Point0.xyz, tri.Point1.xyz, tri.Point2.xyz, tri.PlaneEq, t, uv ) )
 					{
 						if (result.w>t)
@@ -512,7 +528,7 @@ void CSMain(
 				}
 				else
 				{
-					STACKPUSH(node.Index);
+					STACKPUSH(index);
 					STACKPUSH(current+1);
 				}
 			}

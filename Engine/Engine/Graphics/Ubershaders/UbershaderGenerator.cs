@@ -373,9 +373,9 @@ namespace Fusion.Engine.Graphics.Ubershaders {
 			if (type==typeof( Vector3 ))	return true;
 			if (type==typeof( Vector4 ))	return true;
 			if (type==typeof( Plane ))		return true;
-			if (type==typeof( Half ))		return true;
+			//if (type==typeof( Half ))		return true;
 			if (type==typeof( Half2 ))		return true;
-			if (type==typeof( Half3 ))		return true;
+			//if (type==typeof( Half3 ))		return true;
 			if (type==typeof( Half4 ))		return true;
 			if (type==typeof( Int2 ))		return true;
 			if (type==typeof( Int3 ))		return true;
@@ -399,10 +399,11 @@ namespace Fusion.Engine.Graphics.Ubershaders {
 			if (type==typeof( Vector3 )) return "float3";
 			if (type==typeof( Vector4 )) return "float4";
 			if (type==typeof( Plane )) return "float4";
-			if (type==typeof( Half )) return  "half";
-			if (type==typeof( Half2 )) return "half2";
-			if (type==typeof( Half3 )) return "half3";
-			if (type==typeof( Half4 )) return "half4";
+			//if (type==typeof( Half )) return  "half";
+			//if (type==typeof( Half2 )) return "half2";
+			//if (type==typeof( Half3 )) return "half3";
+			if (type==typeof( Half2 )) return "uint";
+			if (type==typeof( Half4 )) return "uint2";
 			if (type==typeof( Int2 )) return "int2";
 			if (type==typeof( Int3 )) return "int3";
 			if (type==typeof( Int4 )) return "int4";

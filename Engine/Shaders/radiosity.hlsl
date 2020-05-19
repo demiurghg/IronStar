@@ -449,9 +449,9 @@ uint wang_hash(uint seed)
 
 RAY CreateRay( uint2 xy )
 {
-	float 	x 	=	( xy.x )		/ 256.0 * 2 - 1;
-	float 	y 	=	( 256-xy.y ) 	/ 256.0 * 2 - 1;
-	float 	z	=	(wang_hash( 199*xy.x + 2999*xy.y ) & 0xF) / 64.0f + 1.0f;
+	float 	x 	=	( xy.x )		/ 800.0 * 2 - 1;
+	float 	y 	=	( 600-xy.y ) 	/ 600.0 * 2 - 1;
+	float 	z	=	1;//(wang_hash( 199*xy.x + 2999*xy.y ) & 0xF) / 64.0f + 1.0f;
 	float3 	p 	=	Camera.CameraPosition.xyz;
 	float3  d 	=	Camera.CameraForward.xyz * z + Camera.CameraRight.xyz * x + Camera.CameraUp.xyz * y;
 	return ConstructRay( p, normalize(d) );
@@ -469,8 +469,7 @@ void UnpackBVHNode( BvhNode node, out float3 minBound, out float3 maxBound, out 
 	index		=	node.PackedMinMaxIndex.w & 0x7FFFFFFF;
 }
 
-
-#define STACKSIZE			64
+#define STACKSIZE			32
 #define STACKPUSH(index) 	stack[stackIndex++] = index
 #define STACKPOP 			stack[--stackIndex]
 #define STACKEMPTY			(stackIndex==0)
@@ -485,6 +484,7 @@ void CSMain(
 {
 	uint2 storeXY	=	dispatchThreadId.xy;
 	RAY ray			=	CreateRay( dispatchThreadId.xy );
+	uint dummy;
 	
 	float4 result	=	float4(0,0,0,9999999);
 	
@@ -509,19 +509,20 @@ void CSMain(
 		
 		if ( RayAABBIntersection( ray, minBound, maxBound, tmin, tmax ) )
 		{
-			if (tmax>0 && tmax < result.w) 
+			if (tmax>0 && tmin < result.w) 
 			{
 				if (isLeaf) 
 				{
 					Triangle tri = RtTriangles[ index ];
+					
 					float t;
 					float2 uv;
-					
+	
 					if ( RayTriangleIntersection( ray, tri.Point0.xyz, tri.Point1.xyz, tri.Point2.xyz, tri.PlaneEq, t, uv ) )
 					{
 						if (result.w>t)
 						{
-							result.xyz 	= lerp(result.xyz, tri.PlaneEq.xyz*0.5+0.5, 1);
+							result.xyz 	= lerp(result.xyz, (tri.PlaneEq.xyz*0.5+0.5) * float3(uv,1), 1);
 							result.w	= t;
 						}
 					}
@@ -534,6 +535,8 @@ void CSMain(
 			}
 		}
 	}
+	
+	GroupMemoryBarrierWithGroupSync();
 	
 	RaytraceImage[ storeXY ] = float4(result.rgb,1);
 }

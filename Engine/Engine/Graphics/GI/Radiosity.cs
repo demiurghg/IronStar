@@ -162,7 +162,7 @@ namespace Fusion.Engine.Graphics.GI
 			tempHDR1		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10, RegionSize, RegionSize, true );
 			tempLDR1		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,   RegionSize, RegionSize, true );
 
-			raytracedImage	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10, 256, 256,true );
+			raytracedImage	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10, 800, 600,true );
 
 			LoadContent();
 
@@ -239,8 +239,9 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			public BvhNode ( bool isLeaf, uint index, BoundingBox bbox )
 			{
-				Half3	bboxMin		=	bbox.Minimum;
-				Half3	bboxMax		=	bbox.Maximum;
+				// expand bbox to solve f16-precision issues :
+				Half3	bboxMin		=	( bbox.Minimum - Vector3.One * 0.05f );
+				Half3	bboxMax		=	( bbox.Maximum + Vector3.One * 0.05f );
 
 				uint	leadBit		=	isLeaf ? 0x80000000u : 0;
 				uint	indexBits	=	index  & 0x7FFFFFFFu;

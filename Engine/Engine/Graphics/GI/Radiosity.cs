@@ -206,7 +206,7 @@ namespace Fusion.Engine.Graphics.GI
 			{
 				SetupShaderResources();
 
-				rs.RayTracer.TestRayTracing();
+				//rs.RayTracer.TestRayTracing();
 
 				int regSize =	RegionSize;
 				int regX	=	lightMap.Width  / regSize;

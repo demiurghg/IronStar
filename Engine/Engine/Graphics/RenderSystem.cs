@@ -40,6 +40,7 @@ namespace Fusion.Engine.Graphics {
 		internal Fog				Fog				{ get { return Game.GetService< Fog				 >(); } }
 		internal LightProbeDebug	LightMapDebugger{ get { return Game.GetService< LightProbeDebug	 >(); } }
 		public Radiosity			Radiosity		{ get { return Game.GetService< Radiosity		 >(); } }
+		public RayTracer			RayTracer		{ get { return Game.GetService< RayTracer		 >(); } }
 
 		/// <summary>
 		/// Gets render counters.
@@ -129,6 +130,7 @@ namespace Fusion.Engine.Graphics {
 			Game.AddServiceAndComponent( new LightProbeDebug	( this ) );
 
 			Game.AddServiceAndComponent( new Radiosity			( this ) );
+			Game.AddServiceAndComponent( new RayTracer			( this ) );
 
 			Device.DisplayBoundsChanged += (s,e) => {
 				DisplayBoundsChanged?.Invoke( s, e );

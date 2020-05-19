@@ -1,0 +1,52 @@
+// ---------------- CONSTANT VALUES ---------------- //
+
+static const int TileSize = 8;
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// Fusion.Engine.Graphics.GpuData+CAMERA
+// Marshal.SizeOf = 352
+struct CAMERA {
+	float4x4   Projection;                    // offset:    0
+	float4x4   View;                          // offset:   64
+	float4x4   ViewProjection;                // offset:  128
+	float4x4   ViewInverted;                  // offset:  192
+	float4     CameraForward;                 // offset:  256
+	float4     CameraRight;                   // offset:  272
+	float4     CameraUp;                      // offset:  288
+	float4     CameraPosition;                // offset:  304
+	float      LinearizeDepthScale;           // offset:  320
+	float      LinearizeDepthBias;            // offset:  324
+	float      FarDistance;                   // offset:  328
+	float      Pad0;                          // offset:  332
+	float      CameraTangentX;                // offset:  336
+	float      CameraTangentY;                // offset:  340
+	float      Pad1;                          // offset:  344
+	float      Pad2;                          // offset:  348
+};
+
+// Fusion.Engine.Graphics.GI.RayTracer+Triangle
+// Marshal.SizeOf = 64
+struct Triangle {
+	float4     Point0;                        // offset:    0
+	float4     Point1;                        // offset:   16
+	float4     Point2;                        // offset:   32
+	float4     PlaneEq;                       // offset:   48
+};
+
+// Fusion.Engine.Graphics.GI.RayTracer+BvhNode
+// Marshal.SizeOf = 16
+struct BvhNode {
+	uint4      PackedMinMaxIndex;             // offset:    0
+};
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+cbuffer __buffer0 : register(b0) {
+	CAMERA Camera : packoffset(c0);
+};
+StructuredBuffer<Triangle>     RtTriangles                    : register(t20);
+StructuredBuffer<BvhNode>      RtBvhTree                      : register(t21);
+#if defined(RAYTRACE)
+RWTexture2D<float4>            RaytraceImage                  : register(u0);
+#endif

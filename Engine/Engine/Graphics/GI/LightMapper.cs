@@ -24,7 +24,8 @@ namespace Fusion.Engine.Graphics.Lights {
 	internal partial class LightMapper : DisposableBase {
 
 		readonly RadiositySettings settings;
-		readonly Vector3[] hammersley;
+		readonly Vector3[] hammersleySphere;
+		readonly Vector3[] hammersleyCosine;
 		readonly RenderInstance[] instances;
 		readonly RenderSystem rs;
 
@@ -35,10 +36,13 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		public LightMapper( RenderSystem rs, RadiositySettings settings, IEnumerable<RenderInstance> instances )
 		{
-			this.rs			=	rs;
-			this.settings	=	settings;
-			hammersley		=	Hammersley.GenerateSphereUniform(settings.LightMapSampleCount);
-			this.instances	=	instances
+			this.rs				=	rs;
+			this.settings		=	settings;
+			hammersleySphere	=	Hammersley.GenerateSphereUniform(settings.LightMapSampleCount);
+			hammersleyCosine	=	Hammersley.GenerateHemisphereCosine(settings.LightMapSampleCount)
+									.Select( v => new Vector3( v.X, v.Z, -v.Y ) )
+									.ToArray();
+			this.instances		=	instances
 					.Where( inst => inst.Group==InstanceGroup.Static || inst.Group==InstanceGroup.Kinematic )
 					.ToArray();
 		}
@@ -462,22 +466,27 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		GatheringResults GatherRadiosityPatches ( RtcScene scene, Vector3 position, Vector3 normal, float bias=0 )
 		{
-			var sampleCount		=	hammersley.Length;
+			var sampleCount		=	hammersleySphere.Length;
 			var invSampleCount	=	1.0f / sampleCount;
 			var	result			=	new GatheringResults(position);
 
 			var normalLength	=	normal.Length();
 
-			var ignoreNormal	=	normal.Length() < 0.001f;
+			var omniDirect		=	normal.Length() < 0.001f;
 
 			//---------------------------------
 			var randVector		=	rand.NextVector3(-Vector3.One, Vector3.One).Normalized();
 
 			var lmAddrList = new List<GlobalPatchIndex>();
 
+			var pointSet	=	omniDirect ? hammersleySphere : hammersleyCosine;
+			var localBasis	=	omniDirect ? Matrix.Identity : MathUtil.ComputeAimedBasis( normal ) * Matrix.RotationAxis( normal, rand.NextFloat( 0, MathUtil.TwoPi ) );
+
+
 			for ( int i = 0; i<sampleCount; i++ ) {
 
-				var dir		= Vector3.Reflect( -hammersley[i], randVector );
+				//var dir		=	Vector3.TransformNormal( pointSet[i], localBasis );
+				var dir		= Vector3.Reflect( -hammersleySphere[i], randVector );
 
 				var nDotL	= Vector3.Dot( dir, normal );
 

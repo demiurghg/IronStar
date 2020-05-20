@@ -141,7 +141,7 @@ float4 PSMain( PSInput input ) : SV_Target0
 	rc.IrradianceVolumeL3	=	LightVolumeL3;
 	rc.Sampler				=	Sampler;
 	
-	float3 lighting		=	EvaluateLightVolume( rc, geom, surf, Camera, input.VoxelIndex ); 
+	float3 lighting		=	EvaluateLightVolume( rc, geom, surf, Camera, input.VoxelIndex ); // * 4 * 3.14; 
 	return float4(lighting,1);
 #endif
 }

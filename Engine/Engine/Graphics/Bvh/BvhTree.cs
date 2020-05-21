@@ -301,8 +301,11 @@ namespace Fusion.Engine.Graphics.Bvh
 
 				if (current==null) continue;
 
-				var primitive = primitives[ current.PrimitiveIndex ];
-				action( primitive, current.BoundingBox );
+				if (current.PrimitiveIndex>=0)
+				{
+					var primitive = primitives[ current.PrimitiveIndex ];
+					action( primitive, current.BoundingBox );
+				}
 
 				stack.Push( current.Right );
 				stack.Push( current.Left );

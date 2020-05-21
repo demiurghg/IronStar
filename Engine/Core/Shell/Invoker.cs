@@ -215,9 +215,18 @@ namespace Fusion.Core.Shell {
 		/// <returns></returns>
 		public void ExecuteString ( params string[] commands )
 		{
-			lock (lockObject) {
-				foreach (var command in commands ) {
-					cmdQueue.Enqueue( ParseCommand( command ) );
+			lock (lockObject) 
+			{
+				try 
+				{
+					foreach (var command in commands ) 
+					{
+						cmdQueue.Enqueue( ParseCommand( command ) );
+					}
+				} 
+				catch ( InvokerException e )
+				{
+					Log.Error( e.Message );
 				}
 			}
 		}

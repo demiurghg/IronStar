@@ -108,7 +108,8 @@ namespace Fusion.Engine.Graphics
 
 		void SetViewport ( RenderTargetSurface dst )
 		{
-			device.SetViewport( 0,0, dst.Width, dst.Height );
+			device.SetViewport( dst.Bounds );
+			device.SetScissorRect( dst.Bounds );
 		}
 
 
@@ -146,7 +147,8 @@ namespace Fusion.Engine.Graphics
 			using( new PixEvent("StretchRect") ) {
 
 				device.SetTargets( null, dst );
-				device.SetViewport( dstRegion.X, dstRegion.Y, dstRegion.Width, dstRegion.Height );
+				device.SetViewport( dstRegion );
+				device.SetScissorRect( dstRegion );
 
 				device.PipelineState	=	factory[ (int)(ShaderFlags.RENDER_QUAD) ];
 
@@ -214,7 +216,8 @@ namespace Fusion.Engine.Graphics
 			using( new PixEvent("StretchRect") ) {
 
 				device.SetTargets( null, dst );
-				device.SetViewport( dstRegion.X, dstRegion.Y, dstRegion.Width, dstRegion.Height );
+				device.SetScissorRect( dstRegion );
+				device.SetViewport( dstRegion );
 
 				device.PipelineState			=	factory[ (int)(ShaderFlags.RENDER_SPOT) ];
 

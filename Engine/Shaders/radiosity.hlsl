@@ -23,7 +23,7 @@ $ubershader		RAYTRACE
 ------------------------------------------------------------------------------*/
 
 // small addition to tell lit and unlit areas
-static const float3 LightEpsilon = float3( 0.001f, 0.001f, 0.001f );
+static const float3 LightEpsilon = float3( 0.0001f, 0.0001f, 0.0001f );
 
 #ifdef LIGHTING
 
@@ -180,11 +180,11 @@ void CSMain(
 
 float3 DecodeDirection (uint dir)
 {
-	uint	ux	=	( dir >> 3 ) & 0x7;
-	uint	uy	=	( dir >> 0 ) & 0x7;
+	uint	ux	=	( dir >> 6 ) & 0x3F;
+	uint	uy	=	( dir >> 0 ) & 0x3F;
 
-	float	fx	=	ux / 8.0f;
-	float	fy	=	uy / 8.0f;
+	float	fx	=	ux / 64.0f;
+	float	fy	=	uy / 64.0f;
 	
     float4 	nn 	=	float4(fx,fy,0,0) * float4(2,2,0,0) + float4(-1,-1,1,-1);
     float l 	=	- dot(nn.xyz,nn.xyw);
@@ -260,6 +260,7 @@ void CSMain(
 	//	upload cache
 	uint 	cacheIndex	=	Tiles[ tileLoadXY ].x;
 	uint 	cacheCount	=	Tiles[ tileLoadXY ].y;
+	uint	cacheBase	=	Tiles[ tileLoadXY ].z;
 	uint	stride		=	TileSize * TileSize;
 	
 	GroupMemoryBarrierWithGroupSync();
@@ -288,8 +289,8 @@ void CSMain(
 	GroupMemoryBarrierWithGroupSync();
 
 	uint 	offsetCount	=	IndexMap[ loadXY ];
-	uint 	offset		=	offsetCount >> 8;
-	uint 	count		=	offsetCount & 0xFF;
+	uint 	offset		=	(offsetCount >> 8) + cacheBase;
+	uint 	count		=	(offsetCount & 0xFF);
 	
 	uint	begin		=	offset;
 	uint	end			=	offset + count;
@@ -311,9 +312,9 @@ void CSMain(
 		for (uint index=begin; index<end; index++)
 		{
 			uint 	lmAddr		=	Indices[ index ];
-			uint 	cacheIndex	=	(lmAddr >> 12) & 0xFFF;
-			uint 	direction	=	(lmAddr >>  6) & 0x03F;
-			uint 	hitCount	=	(lmAddr >>  0) & 0x03F;
+			uint 	cacheIndex	=	(lmAddr >> 20) & 0xFFF;
+			uint 	direction	=	(lmAddr >>  8) & 0xFFF;
+			uint 	hitCount	=	(lmAddr >>  0) & 0x0FF;
 			
 			float3 	radiance	=	unpack_color( radiance_cache[ cacheIndex ] );
 			float3 	lightDirN	=	DecodeDirection( direction );
@@ -332,7 +333,7 @@ void CSMain(
 #endif
 
 /*------------------------------------------------------------------------------
-	Integrate 2D-lightmap :
+	Integrate 3D-lightmap :
 ------------------------------------------------------------------------------*/
 
 #ifdef INTEGRATE3
@@ -358,6 +359,7 @@ void CSMain(
 	//	upload cache
 	uint 	cacheIndex	=	Clusters[ groupId.xyz ].x;
 	uint 	cacheCount	=	Clusters[ groupId.xyz ].y;
+	uint	cacheBase	=	Clusters[ groupId.xyz ].z;
 	uint	stride		=	ClusterSize * ClusterSize * ClusterSize;
 	
 	GroupMemoryBarrierWithGroupSync();
@@ -391,7 +393,7 @@ void CSMain(
 	int3	storeXYZ	=	dispatchThreadId.xyz;
 
 	uint 	offsetCount	=	IndexVolume[ loadXYZ ];
-	uint 	offset		=	offsetCount >> 8;
+	uint 	offset		=	(offsetCount >> 8) + cacheBase;
 	uint 	count		=	offsetCount & 0xFF;
 	uint	begin		=	offset;
 	uint	end			=	offset + count;
@@ -412,9 +414,9 @@ void CSMain(
 	for (uint index=begin; index<end; index++)
 	{
 		uint 	lmAddr		=	Indices[ index ];
-		uint 	cacheIndex	=	(lmAddr >> 12) & 0xFFF;
-		uint 	direction	=	(lmAddr >>  6) & 0x03F;
-		uint 	hitCount	=	(lmAddr >>  0) & 0x03F;
+		uint 	cacheIndex	=	(lmAddr >> 20) & 0xFFF;
+		uint 	direction	=	(lmAddr >>  8) & 0xFFF;
+		uint 	hitCount	=	(lmAddr >>  0) & 0x0FF;
 		
 		float3 	radiance	=	unpack_color( radiance_cache[ cacheIndex ] );
 		float3 	lightDirN	=	DecodeDirection( direction );

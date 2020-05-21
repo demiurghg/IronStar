@@ -42,7 +42,7 @@ namespace Fusion.Engine.Graphics.GI
 		static FXTexture2D<Vector4>							regPosition			=	new TRegister( 0, "Position"		);
 		static FXTexture2D<Vector4>							regAlbedo			=	new TRegister( 1, "Albedo"			);
 		static FXTexture2D<Vector4>							regNormal			=	new TRegister( 2, "Normal"			);
-		static FXTexture2D<UInt2>							regTiles			=	new TRegister( 3, "Tiles"			);
+		static FXTexture2D<UInt4>							regTiles			=	new TRegister( 3, "Tiles"			);
 		static FXTexture2D<uint>							regIndexMap			=	new TRegister( 4, "IndexMap"		);
 		static FXBuffer<uint>								regIndices			=	new TRegister( 5, "Indices"			);
 		static FXBuffer<uint>								regCache			=	new TRegister( 6, "Cache"			);
@@ -54,7 +54,7 @@ namespace Fusion.Engine.Graphics.GI
 		static FXTextureCube<Vector4>						regSkyBox			=	new TRegister(12, "SkyBox"			);
 		static FXTexture2D<Vector4>							regBBoxMin			=	new TRegister(13, "BBoxMin"			);
 		static FXTexture2D<Vector4>							regBBoxMax			=	new TRegister(14, "BBoxMax"			);
-		static FXTexture3D<UInt2>							regClusters			=	new TRegister(15, "Clusters"		);
+		static FXTexture3D<UInt4>							regClusters			=	new TRegister(15, "Clusters"		);
 		static FXTexture3D<uint>							regIndexVolume		=	new TRegister(16, "IndexVolume"		);
 		static FXTexture3D<Vector4>							regSkyVolume		=	new TRegister(17, "SkyVolume"		);
 

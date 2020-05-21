@@ -94,7 +94,9 @@ namespace Fusion.Engine.Graphics.Lights {
 					)
 					.ToArray();
 
-			int lightMapSize = 32;
+			//	minimum size of the lightmap 
+			//	must be equal size of the update region
+			int lightMapSize = RadiositySettings.UpdateRegionSize;
 
 			Allocator2D allocator;		
 
@@ -259,6 +261,7 @@ namespace Fusion.Engine.Graphics.Lights {
 			}
 
 			formFactor.Tiles[tileX,tileY]	=	formFactor.AddGlobalPatchIndices( globalPatches );
+			int baseAddress = formFactor.Tiles[tileX,tileY].Z;
 
 			for (uint i=0; i<tileSize*tileSize; i++)
 			{
@@ -283,7 +286,7 @@ namespace Fusion.Engine.Graphics.Lights {
 						.OrderBy( cpi1 => cpi1.CacheIndex )
 						.ToArray();
 
-					formFactor.IndexMap[xy] = formFactor.AddCachedPatchIndices( cachedPatches );
+					formFactor.IndexMap[xy] = formFactor.AddCachedPatchIndices( cachedPatches, baseAddress );
 					formFactor.Sky[xy]		= gatheringResults[i].Sky;
 				}
 			}
@@ -329,12 +332,13 @@ namespace Fusion.Engine.Graphics.Lights {
 				.SelectMany( results1 => results1.Patches )
 				.GroupBy( patch0 => patch0.Coords )
 				.OrderByDescending( group0 => group0.Count() )
-				.Where( group1 => group1.Count() > 3 ) // prune lonely patches, since they do not affect picture too much
+				//.Where( group1 => group1.Count() > 3 ) // prune lonely patches, since they do not affect picture too much
 				.Select( group1 => group1.First() )
 				//.DistinctBy( patch => patch.Coords )
 				.ToArray();
 
 			formFactor.Clusters[clusterX,clusterY,clusterZ]	=	formFactor.AddGlobalPatchIndices( globalPatches );
+			int baseAddress = formFactor.Clusters[clusterX,clusterY,clusterZ].Z;
 
 			for (uint i=0; i<totalVoxels; i++)
 			{
@@ -357,7 +361,7 @@ namespace Fusion.Engine.Graphics.Lights {
 						.Select( patch1 => new CachedPatchIndex( GetPatchIndexInCache(globalPatches, patch1.Patch), patch1.Dir, patch1.Hits ) )
 						.ToArray();
 
-					formFactor.IndexVolume[xyz]	=	formFactor.AddCachedPatchIndices( cachedPatches );
+					formFactor.IndexVolume[xyz]	=	formFactor.AddCachedPatchIndices( cachedPatches, baseAddress );
 					formFactor.SkyVolume[xyz]	=	gatheringResults[i].Sky;
 				}
 			}

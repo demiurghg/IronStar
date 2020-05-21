@@ -107,7 +107,7 @@ float3	ComputeLighting( FLUX flux, GEOMETRY geometry, SURFACE surface, CAMERA ca
 float3	ComputeLighting( FLUX flux, GEOMETRY geometry, float3 albedo )
 {
 	float3 	lightDir	=	-flux.direction;
-	float  	nDotL		= 	max( 0, dot(geometry.normal, lightDir) );
+	float  	nDotL		= 	max( 0, dot(geometry.normal, lightDir) - 1.0f / 255.0f );
 	
 	return 	nDotL * Lambert ( flux.intensity, albedo );
 }

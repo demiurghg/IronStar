@@ -35,6 +35,7 @@ namespace Fusion.Engine.Graphics.Lights
 			public float	VolumeSampleCount;
 		}
 
+		const int RegionSize	= RadiositySettings.UpdateRegionSize;
 		const int TileSize		= RadiositySettings.TileSize;	
 		const int ClusterSize	= RadiositySettings.ClusterSize;	
 
@@ -57,13 +58,15 @@ namespace Fusion.Engine.Graphics.Lights
 		public readonly Image<Vector3>		Sky;
 		public readonly Image<uint>			IndexMap;
 		public readonly List<GlobalPatchIndex>	Indices;
-		public readonly Image<Int2>			Tiles;
+		public readonly Image<Int4>			Tiles;
 		public readonly Image<Vector3>		BBoxMin;
 		public readonly Image<Vector3>		BBoxMax;
 
-		public readonly Volume<Int2>		Clusters;
+		public readonly Volume<Int4>		Clusters;
 		public readonly Volume<uint>		IndexVolume;
 		public readonly Volume<Vector3>		SkyVolume;
+
+		public readonly Image<Color>[]		FormFactorPages;
 
 		public readonly List<GlobalPatchIndex>		TileCache;
 		public readonly List<CachedPatchIndex>	CachedIndices;
@@ -99,12 +102,16 @@ namespace Fusion.Engine.Graphics.Lights
 			header.VolumePosition		=	Vector3.Zero;
 			header.VolumeSampleCount	=	settings.LightGridSampleCount;
 
+			int ffPageCount		=	(size / RegionSize) * (size / RegionSize);
+			FormFactorPages		=	Enumerable.Range( 0, ffPageCount )
+									.Select( i => new Image<Color>( RegionSize, RegionSize, Color.Black ) )
+									.ToArray();
 
 			Albedo          =   new MipChain<Color>		( size,  size,  RadiositySettings.MapPatchLevels, Color.Zero );
 			Position        =   new MipChain<Vector3>	( size,  size,  RadiositySettings.MapPatchLevels, Vector3.Zero );
 			Normal          =   new MipChain<Vector3>	( size,  size,  RadiositySettings.MapPatchLevels, Vector3.Zero );
 			Area            =   new MipChain<float>		( size,  size,  RadiositySettings.MapPatchLevels, 0 );
-			Tiles			=	new Image<Int2>			( TileX, TileY, Int2.Zero );
+			Tiles			=	new Image<Int4>			( TileX, TileY, Int4.Zero );
 			BBoxMin			=	new Image<Vector3>		( TileX, TileY, Vector3.Zero );
 			BBoxMax			=	new Image<Vector3>		( TileX, TileY, Vector3.Zero );
 
@@ -118,26 +125,27 @@ namespace Fusion.Engine.Graphics.Lights
 			Coverage        =   new Image<byte>( size, size, 0 );
 
 			IndexVolume		=	new Volume<uint>	( VolumeWidth,				 VolumeHeight,				 VolumeDepth );
-			Clusters		=	new Volume<Int2>	( VolumeWidth / ClusterSize, VolumeHeight / ClusterSize, VolumeDepth / ClusterSize );
+			Clusters		=	new Volume<Int4>	( VolumeWidth / ClusterSize, VolumeHeight / ClusterSize, VolumeDepth / ClusterSize );
 			SkyVolume		=	new Volume<Vector3>	( VolumeWidth,				 VolumeHeight,				 VolumeDepth );
 		}
 
 
 
-		public Int2 AddGlobalPatchIndices ( IEnumerable<GlobalPatchIndex> indices )
+		public Int4 AddGlobalPatchIndices ( IEnumerable<GlobalPatchIndex> indices )
 		{
-			int offset	=	TileCache.Count;
-			int count	=	indices.Count();
+			int offset		=	TileCache.Count;
+			int count		=	indices.Count();
+			int baseAddr	=	CachedIndices.Count;
 
 			TileCache.AddRange( indices );
 
-			return new Int2( offset, count );
+			return new Int4( offset, count, baseAddr, 0 );
 		}
 
 
-		public uint AddCachedPatchIndices ( IEnumerable<CachedPatchIndex> indices )
+		public uint AddCachedPatchIndices ( IEnumerable<CachedPatchIndex> indices, int baseAddress )
 		{
-			int offset	=	CachedIndices.Count;
+			int offset	=	CachedIndices.Count - baseAddress;
 			int count	=	indices.Count();
 
 			CachedIndices.AddRange( indices );
@@ -321,11 +329,7 @@ namespace Fusion.Engine.Graphics.Lights
 		{
 			n.Normalize();
 			n = (n + Vector3.One) * 0.5f;
-			return new Color( 
-				MathUtil.Lerp( (byte)0, (byte)255, n.X ),
-				MathUtil.Lerp( (byte)0, (byte)255, n.Y ),
-				MathUtil.Lerp( (byte)0, (byte)255, n.Z ),
-				(byte)255 );
+			return new Color( n.X, n.Y, n.Z, 0.0f );
 		}
 
 
@@ -341,7 +345,7 @@ namespace Fusion.Engine.Graphics.Lights
 		}
 
 
-		Int2 DebugDrawTileInfo( int x, int y, Int2 tileData )
+		Int4 DebugDrawTileInfo( int x, int y, Int4 tileData )
 		{
 			var ts = RadiositySettings.TileSize;
 
@@ -383,7 +387,7 @@ namespace Fusion.Engine.Graphics.Lights
 
 		public void SaveDebugImages()
 		{
-			Tiles.ForEachPixel( DebugDrawTileInfo );
+			//Tiles.ForEachPixel( DebugDrawTileInfo );
 			
 			//File.WriteAllText( "rad_indices.txt", string.Join("\r\n", Indices.Select( idx=>idx.ToString() ) ) );
 

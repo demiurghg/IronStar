@@ -102,7 +102,7 @@ cbuffer __buffer4 : register(b4) {
 Texture2D<float4>              Position                       : register(t0);
 Texture2D<float4>              Albedo                         : register(t1);
 Texture2D<float4>              Normal                         : register(t2);
-Texture2D<uint2>               Tiles                          : register(t3);
+Texture2D<uint4>               Tiles                          : register(t3);
 Texture2D<uint>                IndexMap                       : register(t4);
 Buffer<uint>                   Indices                        : register(t5);
 Buffer<uint>                   Cache                          : register(t6);
@@ -114,7 +114,7 @@ Texture2D<float4>              Sky                            : register(t11);
 TextureCube<float4>            SkyBox                         : register(t12);
 Texture2D<float4>              BBoxMin                        : register(t13);
 Texture2D<float4>              BBoxMax                        : register(t14);
-Texture3D<uint2>               Clusters                       : register(t15);
+Texture3D<uint4>               Clusters                       : register(t15);
 Texture3D<uint>                IndexVolume                    : register(t16);
 Texture3D<float4>              SkyVolume                      : register(t17);
 SamplerState                   LinearSampler                  : register(s0);

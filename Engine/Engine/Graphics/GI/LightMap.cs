@@ -19,9 +19,8 @@ using Fusion.Engine.Graphics.GI;
 
 namespace Fusion.Engine.Graphics.Lights {
 
-	// #TODO -- rename to FormFactorLoader
 	[ContentLoader(typeof(LightMap))]
-	public class IrradianceMapLoader : ContentLoader {
+	public class FormFactorLoader : ContentLoader {
 
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 		{
@@ -106,13 +105,13 @@ namespace Fusion.Engine.Graphics.Lights {
 				area			=	new Texture2D( rs.Device, Width,  Height, ColorFormat.R32F,		mips,	false );
 				sky				=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	1,		false );
 				indexMap		=	new Texture2D( rs.Device, Width,  Height, ColorFormat.R32,		1,		false );
-				tiles			=	new Texture2D( rs.Device, tilesX, tilesY, ColorFormat.Rg32,		1,		false );
+				tiles			=	new Texture2D( rs.Device, tilesX, tilesY, ColorFormat.Rgba32,	1,		false );
 				bboxMax			=	new Texture2D( rs.Device, tilesX, tilesY, ColorFormat.Rgb32F,	1,		false );
 				bboxMin			=	new Texture2D( rs.Device, tilesX, tilesY, ColorFormat.Rgb32F,	1,		false );
 
-				clusters		=	new Texture3D( rs.Device, ColorFormat.Rg32,  clusterX, clusterY, clusterZ );
-				indexVol		=	new Texture3D( rs.Device, ColorFormat.R32,	 VolumeWidth, VolumeHeight, VolumeDepth );
-				skyVol			=	new Texture3D( rs.Device, ColorFormat.Rgba8, VolumeWidth, VolumeHeight, VolumeDepth );
+				clusters		=	new Texture3D( rs.Device, ColorFormat.Rgba32,	clusterX, clusterY, clusterZ );
+				indexVol		=	new Texture3D( rs.Device, ColorFormat.R32,		VolumeWidth, VolumeHeight, VolumeDepth );
+				skyVol			=	new Texture3D( rs.Device, ColorFormat.Rgba8,	VolumeWidth, VolumeHeight, VolumeDepth );
 
 				radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	Width, Height, true,  true );
 				irradianceL0	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	Width, Height, false, true );
@@ -167,7 +166,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 				//	read index map
 				reader.ExpectFourCC("MAP1", "bad lightmap format");
-				tiles.SetData( Image<Int2>.FromStream( stream ).RawImageData );
+				tiles.SetData( Image<Int4>.FromStream( stream ).RawImageData );
 				indexMap.SetData( Image<uint>.FromStream(stream).RawImageData );
 
 				//	read bounding boxes :
@@ -178,7 +177,7 @@ namespace Fusion.Engine.Graphics.Lights {
 				// #TODO #LIGHTMAPS - write volume indices
 				reader.ExpectFourCC("VOL1", "bad lightmap format");
 
-				clusters.SetData( Volume<Int2>.FromStream( stream ).RawImageData );
+				clusters.SetData( Volume<Int4>.FromStream( stream ).RawImageData );
 				indexVol.SetData( Volume<uint>.FromStream( stream ).RawImageData );
 				skyVol	.SetData( Volume<Color>.FromStream( stream ).RawImageData );
 			}

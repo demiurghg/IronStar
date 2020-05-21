@@ -28,10 +28,10 @@ namespace Fusion.Engine.Graphics.GI
 				xy.X	=	xy.X * 0.5f + 0.5f;
 				xy.Y	=	xy.Y * 0.5f + 0.5f;
 			
-			uint ux	=	(uint)(xy.X * 8) & 0x7;
-			uint uy	=	(uint)(xy.Y * 8) & 0x7;
+			uint ux	=	(uint)(xy.X * 64) & 0x3F;
+			uint uy	=	(uint)(xy.Y * 64) & 0x3F;
 
-			return (int)(ux << 3 | uy);
+			return (int)(ux << 6 | uy);
 		}
 
 
@@ -39,11 +39,11 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			if (dir>63) Log.Warning("bad direction");
 
-			uint	ux	=	(uint)(( dir >> 3 ) & 0x7);
-			uint	uy	=	(uint)(( dir >> 0 ) & 0x7);
+			uint	ux	=	(uint)(( dir >> 6 ) & 0x3F);
+			uint	uy	=	(uint)(( dir >> 0 ) & 0x3F);
 
-			float	fx	=	ux / 8.0f;
-			float	fy	=	uy / 8.0f;
+			float	fx	=	ux / 64.0f;
+			float	fy	=	uy / 64.0f;
 
 			Vector4	nn	=	new Vector4(fx,fy,0,0) * new Vector4(2,2,0,0) + new Vector4(-1,-1,1,-1);
 			float	l	=	- ( nn.X * nn.X + nn.Y * nn.Y + nn.Z * nn.W );

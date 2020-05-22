@@ -81,6 +81,68 @@ bool IsAABBOutsidePlane( float4 plane, float3 mins, float3 maxs )
 	return (dot(plane.xyz, vmin) + plane.w > 0);
 }
 
+
+float4 NormalizePlane( float4 plane )
+{
+	float len = length(plane.xyz);
+	return plane / len;
+}
+
+void GetPlanesForMatrix ( float4x4 vpMatrix, out float4 planes[6] )
+{
+	float4 left, right, top, bottom, near, far;
+
+	// Left plane
+	left.x = vpMatrix._14 + vpMatrix._11;
+	left.y = vpMatrix._24 + vpMatrix._21;
+	left.z = vpMatrix._34 + vpMatrix._31;
+	left.w = vpMatrix._44 + vpMatrix._41;
+	left = NormalizePlane(left);
+
+	// right plane
+	right.x = vpMatrix._14 - vpMatrix._11;
+	right.y = vpMatrix._24 - vpMatrix._21;
+	right.z = vpMatrix._34 - vpMatrix._31;
+	right.w = vpMatrix._44 - vpMatrix._41;
+	right = NormalizePlane(right);
+
+	// top plane
+	top.x = vpMatrix._14 - vpMatrix._12;
+	top.y = vpMatrix._24 - vpMatrix._22;
+	top.z = vpMatrix._34 - vpMatrix._32;
+	top.w = vpMatrix._44 - vpMatrix._42;
+	top = NormalizePlane(top);
+
+	// bottom plane
+	bottom.x = vpMatrix._14 + vpMatrix._12;
+	bottom.y = vpMatrix._24 + vpMatrix._22;
+	bottom.z = vpMatrix._34 + vpMatrix._32;
+	bottom.w = vpMatrix._44 + vpMatrix._42;
+	bottom = NormalizePlane(bottom);
+
+	// near plane
+	near.x = vpMatrix._13;
+	near.y = vpMatrix._23;
+	near.z = vpMatrix._33;
+	near.w = vpMatrix._43;
+	near = NormalizePlane(near);
+
+	// far plane
+	far.x = vpMatrix._14 - vpMatrix._13;
+	far.y = vpMatrix._24 - vpMatrix._23;
+	far.z = vpMatrix._34 - vpMatrix._33;
+	far.w = vpMatrix._44 - vpMatrix._43;
+	far = NormalizePlane(far);
+	
+	planes[0]	=	left;
+	planes[1] 	=	right;
+	planes[2]	=	top;
+	planes[3] 	=	bottom;
+	planes[4]	=	near;
+	planes[5] 	=	far;
+}
+
+
 /*------------------------------------------------------------------------------
 	Ray
 ------------------------------------------------------------------------------*/

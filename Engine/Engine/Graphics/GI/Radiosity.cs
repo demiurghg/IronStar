@@ -252,6 +252,8 @@ namespace Fusion.Engine.Graphics.GI
 			device.ComputeResources[ regShadowMap		]	=	rs.LightManager.ShadowMap.ShadowTexture;
 			device.ComputeResources[ regShadowMask		]	=	rs.LightManager.ShadowMap.ParticleShadowTexture;
 
+			device.ComputeResources[ regLights			]	=	rs.LightManager.LightGrid.LightDataGpu;
+
 			device.ComputeResources[ regSkyBox			]	=	rs.Sky.SkyCube;
 			device.ComputeResources[ regSky				]	=	lightMap.sky;
 

@@ -66,16 +66,33 @@ void CSMain(
 		float3  tangentX, tangentY;
 		ReconstructBasis( normal, tangentX, tangentY );
 		
-		float3 		shadow = 0;
 		GEOMETRY	geometry;
 		geometry.position	=	position;
 		geometry.normal		=	normal;
 
+		float3 totalLight 	=	0;
+
+		//-----------------------------
+		// compute spot lights :
+		//-----------------------------
+		
+		for (int index=0; index<2; index++)
+		{
+			LIGHT light =	Lights[index];
+			FLUX  flux 	=	ComputePointLightFlux( geometry, light, shadowRc );
+			totalLight 	+= 	ComputeLighting( flux, geometry, albedo.rgb );
+		}
+		
+
+		//-----------------------------
+		// compute direct light :
+		//-----------------------------
 		float2 sample_pattern[] = {
 			float2( 0.25f, 0.75f ),		float2(-0.75f, 0.25f ),
 			float2(-0.25f,-0.75f ),		float2( 0.75f,-0.25f ),
 			float2( 0.00f, 0.00f )
 		};
+		float3 		shadow = 0;
 
 		for (int i=0; i<5; i++)
 		{
@@ -85,12 +102,13 @@ void CSMain(
 			shadow += 0.2*ComputeCascadedShadows( geometry, float2(0,0), CascadeShadow, shadowRc, false );
 		}
 		
-		FLUX	flux			=	ComputeDirectLightFlux( DirectLight );
-		float3 	lighting		=	ComputeLighting( flux, geometry, albedo.rgb );
+		FLUX	flux	=	ComputeDirectLightFlux( DirectLight );
+		totalLight		+=	ComputeLighting( flux, geometry, albedo.rgb ) * shadow;
 		
-				lighting		=	(lighting * shadow + indirect + LightEpsilon) * albedo.a;
+		totalLight		+=	indirect;
+		totalLight		+=	LightEpsilon;
 		
-		RadianceUav[ storeXY.xy ]	=	float4(lighting, albedo.a );
+		RadianceUav[ storeXY.xy ]	=	float4(totalLight * albedo.a, albedo.a );
 	}
 	else
 	{

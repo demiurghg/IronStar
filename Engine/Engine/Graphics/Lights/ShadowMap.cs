@@ -358,7 +358,7 @@ namespace Fusion.Engine.Graphics {
 
 			var lights = lightSet
 					.SpotLights
-					.Where ( light0 => light0.Visible )
+					.Where ( light0 => light0.Visible || light0.EnableGI )
 					.OrderBy( light1 => light1.DetailLevel )
 					.ToArray();
 

@@ -239,7 +239,7 @@ namespace Fusion.Engine.Graphics.Lights {
 				var n = formFactor.Normal[xy];
 				var c = formFactor.Albedo[xy];
 
-				gatheringResults[i]	=	(c.A > 0) ? GatherRadiosityPatches( scene, p, n ) : null;
+				gatheringResults[i]	=	(c.A > 0) ? GatherRadiosityPatches( scene, xy, p, n ) : null;
 			}
 
 			//	merge all hit patches (thir coords) and upload cache-line to formfactor
@@ -322,7 +322,7 @@ namespace Fusion.Engine.Graphics.Lights {
 				var p = Radiosity.VoxelToWorld( xyz, formFactor.header );
 				var n = Vector3.Zero;
 
-				gatheringResults[i]	=	GatherRadiosityPatches( scene, p, n );
+				gatheringResults[i]	=	GatherRadiosityPatches( scene, Int2.Zero, p, n );
 			}
 
 			//	merge all hit patches (thir coords) and upload cache-line to formfactor
@@ -468,7 +468,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// <summary>
 		/// Computes indirect radiance in given point
 		/// </summary>
-		GatheringResults GatherRadiosityPatches ( RtcScene scene, Vector3 position, Vector3 normal, float bias=0 )
+		GatheringResults GatherRadiosityPatches ( RtcScene scene, Int2 xy, Vector3 position, Vector3 normal, float bias=0 )
 		{
 			var sampleCount		=	hammersleySphere.Length;
 			var invSampleCount	=	1.0f / sampleCount;
@@ -480,6 +480,11 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			//---------------------------------
 			var randVector		=	rand.NextVector3(-Vector3.One, Vector3.One).Normalized();
+			//var randVector		=	new Vector3(0,0,0);
+			//randVector.X		=	MathUtil.Lerp( -1f, 1f, (xy.X % 4) / 3.0f );
+			//randVector.Y		=	MathUtil.Lerp( -1f, 1f, (xy.Y % 4) / 3.0f );
+			////randVector.Z		=	MathUtil.Lerp( -1f, 1f, (xy.X + xy.Y) % 2 );
+			//randVector.Normalize();
 
 			var lmAddrList = new List<GlobalPatchIndex>();
 
@@ -490,7 +495,8 @@ namespace Fusion.Engine.Graphics.Lights {
 			for ( int i = 0; i<sampleCount; i++ ) {
 
 				//var dir		=	Vector3.TransformNormal( pointSet[i], localBasis );
-				var dir		= Vector3.Reflect( -hammersleySphere[i], randVector );
+				var dir		=	Vector3.Reflect( -hammersleySphere[i], randVector );
+				//var dir		=	hammersleySphere[i];
 
 				var nDotL	= Vector3.Dot( dir, normal );
 

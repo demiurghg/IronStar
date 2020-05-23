@@ -510,12 +510,12 @@ namespace Fusion.Engine.Graphics {
 						//	render sky-cube
 						rs.Sky.RenderSkyCube( SkySettings );
 
+						//	clusterize light set :
+						rs.LightManager.LightGrid.ClusterizeLightSet( stereoEye, Camera, LightSet );
+
 						//	#TODO -- restore dynamic light-probes
 						//  compute radiosity using shadowmaps
 						rs.Radiosity.Render( gameTime );
-
-						//	clusterize light set :
-						rs.LightManager.LightGrid.ClusterizeLightSet( stereoEye, Camera, LightSet );
 
 						//	render particle lighting :
 						ParticleSystem.RenderLight( gameTime, Camera );

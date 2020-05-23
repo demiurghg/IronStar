@@ -10,6 +10,7 @@ using Fusion.Engine.Common;
 using Fusion.Drivers.Graphics;
 using System.Runtime.InteropServices;
 using Fusion.Engine.Graphics.Lights;
+using Fusion.Engine.Graphics.GI;
 
 
 namespace Fusion.Engine.Graphics {
@@ -19,6 +20,8 @@ namespace Fusion.Engine.Graphics {
 		public const int MaxDecals			= 4096;
 		public const int MaxLightProbes	= 256;
 		public const int IndexTableSize	= 256 * 512;
+		// to cull all light in single pass :
+		public const int MaxRadLights	= RadiositySettings.TileSize * RadiositySettings.TileSize;
 
 		public readonly Game Game;
 		public readonly int Width;
@@ -34,19 +37,21 @@ namespace Fusion.Engine.Graphics {
 		StructuredBuffer lightBuffer;
 		StructuredBuffer decalBuffer;
 		StructuredBuffer probeBuffer;
+		StructuredBuffer radLtBuffer;
 
 		readonly SceneRenderer.LIGHTINDEX[]	lightGrid;
 		readonly SceneRenderer.LIGHT[]		lightData;
+		readonly SceneRenderer.LIGHT[]		radLtData;
 		readonly SceneRenderer.DECAL[]		decalData;
 		readonly SceneRenderer.LIGHTPROBE[]	probeData;
 		readonly uint[]						indexData;
 
 		internal Texture3D GridTexture { get { return gridTexture;	} }
-		internal StructuredBuffer LightDataGpu { get { return lightBuffer; } }
-		internal StructuredBuffer ProbeDataGpu { get { return probeBuffer; } }
-		internal StructuredBuffer DecalDataGpu { get { return decalBuffer; } }
-		internal FormattedBuffer  IndexDataGpu { get { return indexBuffer; } }
-
+		internal StructuredBuffer LightDataGpu	{ get { return lightBuffer; } }
+		internal StructuredBuffer ProbeDataGpu	{ get { return probeBuffer; } }
+		internal StructuredBuffer DecalDataGpu	{ get { return decalBuffer; } }
+		internal FormattedBuffer  IndexDataGpu	{ get { return indexBuffer; } }
+		internal StructuredBuffer RadLtDataGpu	{ get { return radLtBuffer; } }
 
 		static float GetGridSlice ( float z )
 		{
@@ -71,12 +76,14 @@ namespace Fusion.Engine.Graphics {
 
 			gridTexture		=	new Texture3D( rs.Device, ColorFormat.Rg32, width, height, depth );
 			lightBuffer		=	new StructuredBuffer( rs.Device, typeof(SceneRenderer.LIGHT),		MaxLights,		StructuredBufferFlags.None );
+			radLtBuffer		=	new StructuredBuffer( rs.Device, typeof(SceneRenderer.LIGHT),		MaxRadLights,	StructuredBufferFlags.None );
 			decalBuffer		=	new StructuredBuffer( rs.Device, typeof(SceneRenderer.DECAL),		MaxDecals,		StructuredBufferFlags.None );
 			probeBuffer		=	new StructuredBuffer( rs.Device, typeof(SceneRenderer.LIGHTPROBE),	MaxLightProbes, StructuredBufferFlags.None );
 			indexBuffer		=	new FormattedBuffer( rs.Device, Drivers.Graphics.VertexFormat.UInt, IndexTableSize, StructuredBufferFlags.None ); 
 
 			lightGrid		=	new SceneRenderer.LIGHTINDEX[GridLinearSize];
 			lightData		=	new SceneRenderer.LIGHT[MaxLights];
+			radLtData		=	new SceneRenderer.LIGHT[MaxRadLights];
 			decalData		=	new SceneRenderer.DECAL[MaxDecals];
 			probeData		=	new SceneRenderer.LIGHTPROBE[MaxLightProbes];
 			indexData		=	new uint[ IndexTableSize ];
@@ -535,11 +542,33 @@ namespace Fusion.Engine.Graphics {
 			}
 
 
+			//	update GI ligths :
+			index = 0;
+
+			for (int i=0; i<MaxRadLights; i++) radLtData[i].ClearLight();
+
+			foreach ( var sl in lightSet.SpotLights ) 
+			{ 
+				if ( sl.EnableGI )
+				{
+					radLtData[index].FromSpotLight( sl ); 
+					index++;
+
+					if (index>=MaxLights)
+					{
+						Log.Warning("Too much GI lights");
+						break;
+					}
+				}
+			}
+
+
 			using ( new PixEvent( "Update cluster structures" ) ) {
 				LightDataGpu.UpdateData	( lightData );
 				DecalDataGpu.UpdateData	( decalData );
 				IndexDataGpu.UpdateData	( indexData );
 				ProbeDataGpu.UpdateData	( probeData );
+				RadLtDataGpu.UpdateData	( radLtData );
 				gridTexture	.SetData	( lightGrid );
 			}
 		}

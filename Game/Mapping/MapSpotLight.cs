@@ -61,6 +61,10 @@ namespace IronStar.Mapping {
 
 
 
+		[AECategory("Global Illumination")]
+		[AEDisplayName("Enable GI")]
+		public bool EnableGI { get; set; } = false;
+
 		[AECategory("Spot Shadow")]
 		[AEDisplayName("Spot Mask")]
 		[AEAtlasImage("spots/spots")]
@@ -68,6 +72,7 @@ namespace IronStar.Mapping {
 		
 		[AECategory("Spot Shadow")]
 		[AEDisplayName("Shadow LOD Bias")]
+		[AEValueRange(0, 8, 1, 1)]
 		public int LodBias { get; set; } = 0;
 		
 		[AECategory("Spot Shadow")]
@@ -132,6 +137,8 @@ namespace IronStar.Mapping {
 			light.SlopeBias		=	SlopeBias;
 
 			light.LightStyle	=	LightStyle;
+
+			light.EnableGI		=	EnableGI;
 
 			world.Game.RenderSystem.RenderWorld.LightSet.SpotLights.Add( light );
 		}

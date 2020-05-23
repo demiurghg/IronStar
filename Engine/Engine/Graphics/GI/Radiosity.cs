@@ -28,6 +28,7 @@ namespace Fusion.Engine.Graphics.GI
 		[ShaderDefine]	const int ClusterSize		=	RadiositySettings.ClusterSize;
 		[ShaderDefine]	const uint PatchCacheSize	=	RadiositySettings.MaxPatchesPerTile;
 
+		[ShaderDefine]	const uint LightTypeNone		=	SceneRenderer.LightTypeNone;
 		[ShaderDefine]	const uint LightTypeOmni		=	SceneRenderer.LightTypeOmni;
 		[ShaderDefine]	const uint LightTypeSpotShadow	=	SceneRenderer.LightTypeSpotShadow;
 		[ShaderDefine]	const uint LightSpotShapeRound	=	SceneRenderer.LightSpotShapeRound;
@@ -252,7 +253,7 @@ namespace Fusion.Engine.Graphics.GI
 			device.ComputeResources[ regShadowMap		]	=	rs.LightManager.ShadowMap.ShadowTexture;
 			device.ComputeResources[ regShadowMask		]	=	rs.LightManager.ShadowMap.ParticleShadowTexture;
 
-			device.ComputeResources[ regLights			]	=	rs.LightManager.LightGrid.LightDataGpu;
+			device.ComputeResources[ regLights			]	=	rs.LightManager.LightGrid.RadLtDataGpu;
 
 			device.ComputeResources[ regSkyBox			]	=	rs.Sky.SkyCube;
 			device.ComputeResources[ regSky				]	=	lightMap.sky;

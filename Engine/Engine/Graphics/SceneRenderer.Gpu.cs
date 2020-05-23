@@ -46,6 +46,7 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine]	public const int VTMaxMip			=	VTConfig.MaxMipLevel;
 		[ShaderDefine]	public const int VTMipSelectorScale	=	(VTConfig.PageSize >> VTMaxMip) * VTConfig.VirtualPageCount;
 
+		[ShaderDefine]	public const uint LightTypeNone			=	0;
 		[ShaderDefine]	public const uint LightTypeOmni			=	1;
 		[ShaderDefine]	public const uint LightTypeOmniShadow	=	2;
 		[ShaderDefine]	public const uint LightTypeSpotShadow	=	3;
@@ -166,6 +167,16 @@ namespace Fusion.Engine.Graphics {
 			public Vector4	ShadowScaleOffset;
 			public uint		LightType;
 			public float	SourceRadius;
+
+			public void ClearLight()
+			{
+				LightType			=	LightTypeNone;
+				PositionRadius		=	new Vector4(0,0,0,1);
+				IntensityFar		=	new Vector4(0,0,0,1);
+				ViewProjection		=	Matrix.Identity;
+				ShadowScaleOffset	=	Vector4.Zero;
+				SourceRadius		=	0;
+			}
 
 			public void FromOmniLight ( OmniLight light ) 
 			{

@@ -79,8 +79,13 @@ void CSMain(
 		for (int index=0; index<2; index++)
 		{
 			LIGHT light =	Lights[index];
-			FLUX  flux 	=	ComputePointLightFlux( geometry, light, shadowRc );
-			totalLight 	+= 	ComputeLighting( flux, geometry, albedo.rgb );
+			
+			[branch]
+			if (light.LightType!=LightTypeNone)
+			{
+				FLUX  flux 	=	ComputePointLightFlux( geometry, light, shadowRc );
+				totalLight 	+= 	ComputeLighting( flux, geometry, albedo.rgb );
+			}
 		}
 		
 

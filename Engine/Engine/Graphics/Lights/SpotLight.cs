@@ -85,6 +85,11 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public LightStyle LightStyle;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public bool EnableGI;
+
 
 		internal bool		Visible = true;
 		internal int		DetailLevel;   

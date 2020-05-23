@@ -79,7 +79,7 @@ namespace Fusion.Engine.Graphics {
 			radLtBuffer		=	new StructuredBuffer( rs.Device, typeof(SceneRenderer.LIGHT),		MaxRadLights,	StructuredBufferFlags.None );
 			decalBuffer		=	new StructuredBuffer( rs.Device, typeof(SceneRenderer.DECAL),		MaxDecals,		StructuredBufferFlags.None );
 			probeBuffer		=	new StructuredBuffer( rs.Device, typeof(SceneRenderer.LIGHTPROBE),	MaxLightProbes, StructuredBufferFlags.None );
-			indexBuffer		=	new FormattedBuffer( rs.Device, Drivers.Graphics.VertexFormat.UInt, IndexTableSize, StructuredBufferFlags.None ); 
+			indexBuffer		=	new FormattedBuffer( rs.Device, Drivers.Graphics.VertexFormat.UInt,	IndexTableSize, StructuredBufferFlags.None ); 
 
 			lightGrid		=	new SceneRenderer.LIGHTINDEX[GridLinearSize];
 			lightData		=	new SceneRenderer.LIGHT[MaxLights];
@@ -131,6 +131,8 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref lightBuffer );
 				SafeDispose( ref probeBuffer );
 				SafeDispose( ref decalBuffer );
+
+				SafeDispose( ref radLtBuffer );
 			}
 
 			base.Dispose( disposing );

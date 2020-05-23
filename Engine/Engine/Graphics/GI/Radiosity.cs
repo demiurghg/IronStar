@@ -22,7 +22,7 @@ namespace Fusion.Engine.Graphics.GI
 	[RequireShader("radiosity", true)]
 	public partial class Radiosity : RenderComponent
 	{
-		const int RegionSize = 256;
+		const int RegionSize = 512;
 
 		[ShaderDefine]	const int TileSize			=	RadiositySettings.TileSize;
 		[ShaderDefine]	const int ClusterSize		=	RadiositySettings.ClusterSize;
@@ -264,6 +264,7 @@ namespace Fusion.Engine.Graphics.GI
 			device.ComputeResources[ regClusters		]	=	lightMap.clusters;
 			device.ComputeResources[ regIndexVolume		]	=	lightMap.indexVol;
 			device.ComputeResources[ regSkyVolume		]	=	lightMap.skyVol;
+
 		}
 
 

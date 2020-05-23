@@ -35,6 +35,10 @@ void ReconstructBasis(float3 normal, out float3 tangentX, out float3 tangentY)
 }
 
 
+groupshared uint light_indices[ TileSize * TileSize ];
+groupshared uint light_count = 0;
+
+
 [numthreads(TileSize,TileSize,1)] 
 void CSMain( 
 	uint3 groupId : SV_GroupID, 
@@ -42,6 +46,10 @@ void CSMain(
 	uint  groupIndex: SV_GroupIndex, 
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
+	uint2 	tileLoadXY	=	groupId.xy + Radiosity.RegionXY/8;
+	float3 	bboxMin		=	BBoxMin[ tileLoadXY ].xyz;
+	float3 	bboxMax		=	BBoxMax[ tileLoadXY ].xyz;
+
 	int2	loadXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
 	int2	storeXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
 	
@@ -53,6 +61,36 @@ void CSMain(
 	
 	float4 	albedo			=	Albedo[ loadXY ].rgba;
 	albedo.rgb				=	LinearToSRGB( albedo.rgb );
+	
+	//---------------------------------
+	
+	if (1)
+	{
+		uint 	light_index		=	groupIndex;
+		LIGHT 	light			=	Lights[light_index];
+		uint 	current_index;
+		
+		float4 planes[6], left, right, top, bottom, near, far;
+		
+		GetFrustumPlanesFromMatrix( light.ViewProjection, left, right, top, bottom, near, far );
+		
+		planes[0]	=	(-1) * left;
+		planes[1] 	=	(-1) * right;
+		planes[2]	=	(-1) * top;
+		planes[3] 	=	(-1) * bottom;
+		planes[4]	=	(-1) * near;
+		planes[5] 	=	(-1) * far;
+
+		if ( light.LightType!=LightTypeNone && FrustumAABBIntersect( planes, bboxMin, bboxMax )!=COLLISION_OUTSIDE )
+		{
+			InterlockedAdd( light_count, 1, current_index );
+			light_indices[ current_index ] = light_index;
+		}
+	}
+	
+	GroupMemoryBarrierWithGroupSync();
+	
+	//---------------------------------
 	
 	if (albedo.a>0)
 	{
@@ -76,22 +114,18 @@ void CSMain(
 		// compute spot lights :
 		//-----------------------------
 		
-		for (int index=0; index<2; index++)
+		for (uint index=0; index<light_count; index++)
 		{
-			LIGHT light =	Lights[index];
+			LIGHT light =	Lights[ light_indices[ index ] ];
 			
-			[branch]
-			if (light.LightType!=LightTypeNone)
-			{
-				FLUX  flux 	=	ComputePointLightFlux( geometry, light, shadowRc );
-				totalLight 	+= 	ComputeLighting( flux, geometry, albedo.rgb );
-			}
+			FLUX  flux 	=	ComputePointLightFlux( geometry, light, shadowRc );
+			totalLight 	+= 	ComputeLighting( flux, geometry, albedo.rgb );
 		}
-		
 
 		//-----------------------------
 		// compute direct light :
 		//-----------------------------
+		
 		float2 sample_pattern[] = {
 			float2( 0.25f, 0.75f ),		float2(-0.75f, 0.25f ),
 			float2(-0.25f,-0.75f ),		float2( 0.75f,-0.25f ),
@@ -326,6 +360,10 @@ void CSMain(
 	float	skyFactor	=	length( skyDir ) * Radiosity.SkyFactor;
 	float3	skyColor	=	SkyBox.SampleLevel( LinearSampler, skyDir.xyz, 0 ).rgb * skyFactor * skyFactor;
 	
+	// irradianceR			+=	SHL1EvaluateDiffuse( Radiance[loadXY].r, float3(0,0,0) );
+	// irradianceG			+=	SHL1EvaluateDiffuse( Radiance[loadXY].g, float3(0,0,0) );
+	// irradianceB			+=	SHL1EvaluateDiffuse( Radiance[loadXY].b, float3(0,0,0) );
+
 	irradianceR			+=	SHL1EvaluateDiffuse( skyColor.r, normalize(skyDir.xyz) );
 	irradianceG			+=	SHL1EvaluateDiffuse( skyColor.g, normalize(skyDir.xyz) );
 	irradianceB			+=	SHL1EvaluateDiffuse( skyColor.b, normalize(skyDir.xyz) );

@@ -100,8 +100,7 @@ namespace IronStar.Editor {
 
 			lowerShelf.AddLSplitter();				 
 			lowerShelf.AddFatLButton("Bake\nLightmap"		,	null,	BakeLightMap	 );
-			lowerShelf.AddFatLButton("Bake\nLight Volume"	,	null,	BakeLightVolume  );
-			lowerShelf.AddFatLButton("Bake\nLight Probes"	,	null,	BakeLightProbes  );
+			lowerShelf.AddFatLButton("Capture\nLight Probes",	null,	BakeLightProbes  );
 
 			//--------------------------------------------------------------------------
 
@@ -247,19 +246,12 @@ namespace IronStar.Editor {
 		void BakeLightMap()
 		{
 			rs.RenderWorld.BuildRadiosityFormFactor( mapName, map.RadiositySettings );
-			Game.Invoker.ExecuteString(string.Format("buildrad {0} Low /map", mapName), "contentBuild");
-		}
-
-
-		void BakeLightVolume()
-		{
-			Game.Invoker.ExecuteString(string.Format("buildrad {0} Low /vol", mapName), "contentBuild");
 		}
 
 
 		void BakeLightProbes()
 		{
-			Game.Invoker.ExecuteString(string.Format("buildrad {0} Low /cube", mapName), "contentBuild");
+			Game.Invoker.ExecuteString(string.Format("buildrad {0}", mapName), "contentBuild");
 		}
 
 

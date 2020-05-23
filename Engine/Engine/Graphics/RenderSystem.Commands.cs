@@ -61,25 +61,9 @@ namespace Fusion.Engine.Graphics {
 			[CommandLineParser.Name("mapname")]
 			public string MapName { get; set; }
 
-			[CommandLineParser.Required]
-			[CommandLineParser.Name("quality")]
-			public QualityLevel QualityLevel { get; set; }
-
-			[CommandLineParser.Option]
-			[CommandLineParser.Name("all")]
-			public bool All { get; set; }
-
 			[CommandLineParser.Option]
 			[CommandLineParser.Name("map")]
 			public bool Map { get; set; }
-
-			[CommandLineParser.Option]
-			[CommandLineParser.Name("vol")]
-			public bool Volume { get; set; }
-
-			[CommandLineParser.Option]
-			[CommandLineParser.Name("cube")]
-			public bool Cubes { get; set; }
 
 			readonly RenderSystem rs;
 			
@@ -89,7 +73,7 @@ namespace Fusion.Engine.Graphics {
 			
 			public override object Execute()
 			{
-				rs.RenderWorld?.BuildRadiance( QualityLevel, MapName, Map||All, Volume||All, Cubes||All );
+				rs.RenderWorld?.CaptureRadiance( MapName );
 
 				return null;
 			}

@@ -80,17 +80,36 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 	ssaoFactor	*=	surface.occlusion;
 #endif	
 
+	
+	//----------------------------------------------------------------------------------------------
+	//	Reflection :
+	//----------------------------------------------------------------------------------------------
+	
+	float4 reflection = float4(0,0,0,0);
+	
+#ifndef DIFFUSE_ONLY	
+	[loop]
+	for (i=0; i<cluster.NumProbes; i++) 
+	{
+		LIGHTPROBE	probe		=	GetLightProbe( rcCluster, cluster, i );
+		float4		envLight	=	ComputeEnvironmentLighting( probe, geometry, surface, Camera, rcLightProbe );
+		reflection				=	lerp( reflection, float4(envLight.rgb,1), envLight.a );
+	}
+	
+	totalLight.rgb	=	reflection.rgb * ssaoFactor;
+#endif	
+
 	//----------------------------------------------------------------------------------------------
 	//	Lightmaps :
 	//----------------------------------------------------------------------------------------------
 	
 	#ifdef IRRADIANCE_MAP
-		totalLight	+= 	EvaluateLightmap( rcLightMap, geometry, surface, Camera, lmCoord );
+		totalLight	+= 	EvaluateLightmap( reflection.a, rcLightMap, geometry, surface, Camera, lmCoord );
 		totalLight	*=	ssaoFactor;
 	#endif
 	#ifdef IRRADIANCE_VOLUME
 		float3 volumeCoord	=	mad( float4(geometry.position.xyz, 1), Stage.WorldToVoxelScale, Stage.WorldToVoxelOffset ).xyz;
-		totalLight			+=	EvaluateLightVolume( rcLightMap, geometry, surface, Camera, volumeCoord );
+		totalLight			+=	EvaluateLightVolume( reflection.a, rcLightMap, geometry, surface, Camera, volumeCoord );
 		totalLight			*=	ssaoFactor;
 	#endif
 
@@ -120,28 +139,7 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 		totalLight	+=	ComputeLighting( flux, geometry, surface, Camera ) * Stage.DirectLightFactor;
 	}
 	
-	float3	ambientDiffuse		=	float3(0,0,0);
-	float3	ambientSpecular		=	float3(0,0,0);
-	
 	//----------------------------------------------------------------------------------------------
-	//	Reflection :
-	//----------------------------------------------------------------------------------------------
-	
-#ifndef DIFFUSE_ONLY	
-	[loop]
-	for (i=0; i<cluster.NumProbes; i++) 
-	{
-		LIGHTPROBE	probe		=	GetLightProbe( rcCluster, cluster, i );
-		float4		envLight	=	ComputeEnvironmentLighting( probe, geometry, surface, Camera, rcLightProbe );
-		
-		ambientSpecular			=	lerp( ambientSpecular, envLight.rgb, envLight.a );
-	}
-#endif	
-
-	//----------------------------------------------------------------------------------------------
-	
-	totalLight.xyz	+=	ambientDiffuse	* ssaoFactor;
-	totalLight.xyz	+=	ambientSpecular * ssaoFactor;
 	
 	totalLight.xyz	+=	surface.emission;
 

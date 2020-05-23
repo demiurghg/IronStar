@@ -679,7 +679,7 @@ namespace Fusion.Engine.Graphics {
 				
 					Game.GetService<CubeMapFilter>().PrefilterLightProbe( LightProbeHdr, LightProbeHdrTemp );
 
-					IrradianceCache.UpdateLightProbe( lightProbe.Guid, LightProbeHdrTemp ); 
+					//IrradianceCache.UpdateLightProbe( lightProbe.Guid, LightProbeHdrTemp ); 
 
 					var bufferSize		=	RenderSystem.LightProbeSize * RenderSystem.LightProbeSize;
 					var stagingBuffer	=	new Half4[ bufferSize ];
@@ -709,22 +709,17 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void BuildRadiance ( QualityLevel quality, string mapName, bool map, bool volume, bool cubes )
+		public void CaptureRadiance ( string mapName )
 		{
 			var device			=	Game.GraphicsDevice;
 			var builder			=	Game.GetService<Builder>();
 			var basePath		=	builder.GetBaseInputDirectory();
 
 			var pathIrrCache	=	Path.Combine(basePath, RenderSystem.LightmapPath, Path.ChangeExtension( mapName + "_irrcache", ".irrcache"	) );
-			var pathIrrMap		=	Path.Combine(basePath, RenderSystem.LightmapPath, Path.ChangeExtension( mapName + "_irrmap"	 , ".irrmap"	) );
-			var pathIrrVol		=	Path.Combine(basePath, RenderSystem.LightmapPath, Path.ChangeExtension( mapName + "_irrvol"	 , ".irrvol"	) );
 
-			if (cubes) 
+			using ( var stream = File.OpenWrite( pathIrrCache ) ) 
 			{
-				using ( var stream = File.OpenWrite( pathIrrCache ) ) 
-				{
-					CaptureRadiance( stream );
-				}
+				CaptureRadiance( stream );
 			}
 		}
 
@@ -744,9 +739,7 @@ namespace Fusion.Engine.Graphics {
 			var builder			=	Game.GetService<Builder>();
 			var basePath		=	builder.GetBaseInputDirectory();
 
-			var pathIrrCache	=	Path.Combine(basePath, RenderSystem.LightmapPath, Path.ChangeExtension( mapName + "_irrcache", ".irrcache"	) );
 			var pathIrrMap		=	Path.Combine(basePath, RenderSystem.LightmapPath, Path.ChangeExtension( mapName + "_irrmap"	 , ".irrmap"	) );
-			var pathIrrVol		=	Path.Combine(basePath, RenderSystem.LightmapPath, Path.ChangeExtension( mapName + "_irrvol"	 , ".irrvol"	) );
 
 			var irrMap = lightmapper.BakeLightMap();
 

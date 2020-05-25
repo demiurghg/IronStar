@@ -556,7 +556,7 @@
     <Compile Include="Engine\Graphics\Lights\Extents.cs" />
     <Compile Include="Engine\Graphics\Lights\ICSMController.cs" />
     <Compile Include="Engine\Graphics\GI\Irradiance.cs" />
-    <Compile Include="Engine\Graphics\GI\LightCache.cs" />
+    <Compile Include="Engine\Graphics\GI\LightProbeGBufferCache.cs" />
     <Compile Include="Engine\Graphics\GI\LightVolume.cs" />
     <Compile Include="Engine\Graphics\GI\LightMap.cs" />
     <Compile Include="Engine\Graphics\Lights\LightGrid.cs" />

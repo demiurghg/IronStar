@@ -102,10 +102,10 @@ namespace Fusion.Drivers.Graphics {
 			batchCubeSurfaces	=	new RenderTargetSurface	[batchCount, MipCount];
 			batchCubeResources	=	new ShaderResource		[batchCount, MipCount];
 
-			for ( int batchIndex=0; batchIndex<batchCount; batchIndex++ ) {
-				
-				for ( int mip=0; mip<MipCount; mip++ ) {
-
+			for ( int batchIndex=0; batchIndex<batchCount; batchIndex++ ) 
+			{
+				for ( int mip=0; mip<MipCount; mip++ ) 
+				{
 					int mipSize = Math.Max(1, size >> mip);
 
 					var srvDesc = new ShaderResourceViewDescription();
@@ -137,10 +137,10 @@ namespace Fusion.Drivers.Graphics {
 			}
 
 
-			for ( int index=0; index<count; index++ ) {
-				
-				for ( int mip=0; mip<MipCount; mip++ ) {
-
+			for ( int index=0; index<count; index++ ) 
+			{
+				for ( int mip=0; mip<MipCount; mip++ ) 
+				{
 					int mipSize = Math.Max(1, size >> mip);
 
 					//var srvDesc = new ShaderResourceViewDescription();
@@ -165,9 +165,7 @@ namespace Fusion.Drivers.Graphics {
 					var uav	=	new UnorderedAccessView( device.Device, texCubeArray, uavDesc );
 
 					singleCubeSurfaces[index,mip]	=	new RenderTargetSurface( device, null, uav, texCubeArray, -1, format, mipSize, mipSize, 1 );
-
 				}
-
 			}
 		}
 

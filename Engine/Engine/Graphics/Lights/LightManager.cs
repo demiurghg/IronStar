@@ -24,21 +24,22 @@ namespace Fusion.Engine.Graphics {
 	{
 		static FXConstantBuffer<RELIGHT_PARAMS> regParams = new CRegister( 0, "RelightParams" );
 		
+		static FXTextureCubeArray<Vector4>	regGBufferColorData		=	new TRegister(0, "GBufferColorData"		);
+		static FXTextureCubeArray<Vector4>	regGBufferNormalData	=	new TRegister(1, "GBufferNormalData"	);
+		static FXTexture2D<Vector4>			regLightMap				=	new TRegister(2, "LightMap"				);
+		static FXTextureCube<Vector4>		regSkyCube				=	new TRegister(3, "SkyCube"				);
 
-		[ShaderDefine]
-		const int BlockSizeX = 16;
+		static FXSamplerState				regPointSampler			= 	new SRegister(0, "PointSampler"			);
+		static FXSamplerState				regLinearSampler		= 	new SRegister(1, "LinearSampler"		);
+		static FXSamplerComparisonState		regShadowSampler		= 	new SRegister(2, "ShadowSampler"		);
 
-		[ShaderDefine]
-		const int BlockSizeY = 16;
+		static FXRWTexture2DArray<Vector4>	regTargetCube			=	new URegister(0, "TargetCube"			); 
 
-		[ShaderDefine]
-		const int PrefilterBlockSizeX = 8;
-
-		[ShaderDefine]
-		const int PrefilterBlockSizeY = 8;
-
-		[ShaderDefine]
-		const int LightProbeSize = RenderSystem.LightProbeSize;
+		[ShaderDefine]	 const int BlockSizeX = 16;
+		[ShaderDefine]	 const int BlockSizeY = 16;
+		[ShaderDefine]	 const int PrefilterBlockSizeX = 8;
+		[ShaderDefine]	 const int PrefilterBlockSizeY = 8;
+		[ShaderDefine]	 const int LightProbeSize = RenderSystem.LightProbeSize;
 
 
 		[ShaderStructure()]
@@ -206,43 +207,77 @@ namespace Fusion.Engine.Graphics {
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
+		public void RelightLightProbes ( LightSet lightSet )
+		{
+			var cubeMapFilter	=	Game.GetService<CubeMapFilter>();
+
+			var gbufferColor	=	rs.LightMapResources.LightProbeColorArray;
+			var gbufferMapping	=	rs.LightMapResources.LightProbeMappingArray;
+			var radianceArray	=	rs.LightMapResources.LightProbeRadianceArray;
+			var radianceTemp	=	rs.LightMapResources.LightProbeRadiance;
+
+			using ( new PixEvent( "Relight Light Probes" ) )
+			{
+				foreach ( var lightProbe in lightSet.LightProbes )
+				{
+					//var target = radianceArray.GetBatchCubeSurface( lightProbe.ImageIndex, 0 ).UnorderedAccess;
+					RelightLightProbe( gbufferColor, gbufferMapping, lightProbe, radianceTemp.GetCubeSurface(0).UnorderedAccess );
+
+					radianceTemp.BuildMipmaps();
+
+					for (int mip=0; mip<RenderSystem.LightProbeMaxMips-1; mip++)
+					{
+						var size		=	RenderSystem.LightProbeSize >> mip; 
+						var roughness	=	mip / (float)(RenderSystem.LightProbeMaxSpecularMip);
+						var source		=	radianceTemp.GetCubeShaderResource( mip );
+						var target		=	radianceArray.GetBatchCubeSurface ( lightProbe.ImageIndex, mip );
+						cubeMapFilter.PrefilterLightProbe( source, target.UnorderedAccess, size, mip, roughness );
+					}
+				}
+			}
+
+
+			/*using ( new PixEvent( "Prefilter Light Probes" ) )
+			{
+				for (int mip=0; mip<RenderSystem.LightProbeMaxMips-1; mip++)
+				{
+					foreach ( var lightProbe in lightSet.LightProbes )
+					{
+						var size		=	RenderSystem.LightProbeSize >> ( mip + 1 ); 
+						var roughness	=	mip / (float)(RenderSystem.LightProbeMaxSpecularMip);
+						var source		=	radianceArray.GetBatchCubeShaderResource( lightProbe.ImageIndex, mip );
+						var target		=	radianceArray.GetBatchCubeSurface		( lightProbe.ImageIndex, mip + 1 );
+						cubeMapFilter.PrefilterLightProbe( source, target.UnorderedAccess, size, mip+1, roughness );
+					}
+				}
+			}	*/
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>
-		public void RelightLightProbe ( TextureCubeArrayRW colorData, TextureCubeArrayRW normalData, LightProbe lightProbe, LightSet lightSet, Color4 skyAmbient, TextureCubeArrayRW target )
+		public void RelightLightProbe ( TextureCubeArray colorData, TextureCubeArray normalData, LightProbe lightProbe, UnorderedAccess target )
 		{
-			using ( new PixEvent( "RelightLightProbe" ) ) {
+			using ( new PixEvent( "LightProbe #" + lightProbe.ImageIndex.ToString() ) ) {
 
 				var relightParams	=	new RELIGHT_PARAMS();
-				/*var lightProbeData	=	new LIGHTPROBE_DATA[ RenderSystem.LightProbeBatchSize ];*/
 
-				var cubeIndex	=	lightProbe.ImageIndex;
-
-				relightParams.CubeIndex				=	lightProbe.ImageIndex;
-				relightParams.LightProbePosition	=	new Vector4( lightProbe.ProbeMatrix.TranslationVector, 1 );
-				relightParams.ShadowViewProjection	=	shadowMap.GetLessDetailedCascade().ViewProjectionMatrix;
-				relightParams.DirectLightDirection	=	new Vector4( lightSet.DirectLight.Direction, 0 );
-				relightParams.DirectLightIntensity	=	lightSet.DirectLight.Intensity;
-				relightParams.SkyAmbient			=	skyAmbient;
-				relightParams.ShadowRegion			=	shadowMap.GetLessDetailedCascade().ShadowScaleOffset;
-
+				relightParams.CubeIndex		=	lightProbe.ImageIndex;
 				cbRelightParams.SetData( ref relightParams );
-				/*cbLightProbeData.SetData( lightProbeData );*/
 
-				device.ComputeResources[0]    =   colorData;
-				device.ComputeResources[1]    =   normalData;
-				device.ComputeResources[2]    =   rs.Sky.SkyCube;
-				device.ComputeResources[3]	=	shadowMap.ShadowTexture;
-				device.ComputeResources[4]	=	null;
-				device.ComputeResources[5]	=	null;
-				device.ComputeSamplers[0]		=	SamplerState.PointClamp;
-				device.ComputeSamplers[1]		=	SamplerState.LinearWrap;
-				device.ComputeSamplers[2]		=	SamplerState.ShadowSamplerPoint;
-				
-				device.ComputeConstants[0]	=	cbRelightParams;
-				/*device.ComputeShaderConstants[1]	=	cbLightProbeData;*/
+
+				device.ComputeConstants	[ regParams				]	=	cbRelightParams;
+
+				device.ComputeResources	[ regGBufferColorData	]	=	colorData;
+				device.ComputeResources	[ regGBufferNormalData	]	=	normalData;
+				device.ComputeResources	[ regLightMap			]	=	rs.Radiosity.Radiance;
+				device.ComputeResources	[ regSkyCube			]	=	rs.Sky.SkyCube;
+				device.ComputeSamplers	[ regPointSampler		]	=	SamplerState.PointClamp;
+				device.ComputeSamplers	[ regLinearSampler		]	=	SamplerState.LinearWrap;
+				device.ComputeSamplers	[ regShadowSampler		]	=	SamplerState.ShadowSamplerPoint;
 					
-				device.SetComputeUnorderedAccess( 0, target.GetSingleCubeSurface( cubeIndex, 0 ).UnorderedAccess );
+				device.SetComputeUnorderedAccess( regTargetCube, target );
 				
 				device.PipelineState = factory[(int)Flags.RELIGHT];
 

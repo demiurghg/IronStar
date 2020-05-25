@@ -24,19 +24,20 @@ namespace Fusion.Engine.Graphics {
 	{
 		static FXConstantBuffer<PARAMS> regParams = new CRegister( 0, "Params" );
 
-		[ShaderDefine]
-		const int BlockSizeX = 16;
+		static FXSamplerState				regLinearSampler	= 	new SRegister(0, "LinearSampler");
+		static FXTextureCube<Vector4>		regSource			=	new TRegister(0, "Source"		);
+		static FXRWTexture2DArray<Vector4>	regTarget			= 	new URegister(0, "Target"		); 
 
 		[ShaderDefine]
-		const int BlockSizeY = 16;
+		const int BlockSize = 8;
 
 		[ShaderStructure()]
 		[StructLayout(LayoutKind.Sequential, Pack=4, Size=64)]
 		struct PARAMS {
 			public	float	Roughness;
 			public	float	MipLevel;
-			public	float	Dummy1;
-			public	float	Dummy2;
+			public	float	TargetSize;
+			public	float	SourceSize;
 		}
 
 
@@ -47,7 +48,13 @@ namespace Fusion.Engine.Graphics {
 		
 
 		enum Flags {
-			PREFILTER			=	0x0001,
+			PREFILTER	=	0x0001,
+
+			MIP1		=	0x0010,
+			MIP2		=	0x0020,
+			MIP3		=	0x0040,
+			MIP4		=	0x0080,
+			MIP5		=	0x0100,
 		}
 		
 
@@ -117,60 +124,44 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="lightSet"></param>
 		/// <param name="target"></param>
-		public void PrefilterLightProbe ( RenderTargetCube source, RenderTargetCube target )
+		public void PrefilterLightProbe ( ShaderResource source, UnorderedAccess target, int size, int mip, float roughness )
 		{
 			device.ResetStates();
 
-			int mipCount	=	RenderSystem.LightProbeMaxMips;
-			int maxMip		=	RenderSystem.LightProbeMaxSpecularMip;
-
 			if (source==null) throw new ArgumentNullException("source");
 			if (target==null) throw new ArgumentNullException("target");
-			if (source.Width!=target.Width) {
-				throw new ArgumentException("source.Width != target.Width");
+
+			Flags flag = Flags.PREFILTER|Flags.MIP1;
+
+			switch (mip)
+			{
+				case 1: flag = Flags.PREFILTER | Flags.MIP1; break;
+				case 2: flag = Flags.PREFILTER | Flags.MIP2; break;
+				case 3: flag = Flags.PREFILTER | Flags.MIP3; break;
+				case 4: flag = Flags.PREFILTER | Flags.MIP4; break;
+				case 5: flag = Flags.PREFILTER | Flags.MIP5; break;
 			}
-			if (source.Height!=target.Height) {
-				throw new ArgumentException("source.Height != target.Height");
-			}
-			if (source.MipCount!=target.MipCount) {
-				throw new ArgumentException("source.Height != target.Height");
-			}
 
-			int initialSize	=	source.Width;
-			//int mipCount	=	Math.Min( source.MipCount, maxMip );
+			device.PipelineState = factory[(int)flag];
 
-			source.BuildMipmaps();
-			
-			using ( new PixEvent( "PrefilterLightProbes" ) ) {
+			var data = new PARAMS();
+			data.Roughness	=	roughness;
+			data.MipLevel	=	mip;
+			data.SourceSize	=	size * 2;
+			data.TargetSize	=	size;
+			cbuffer.SetData( ref data ); 
 
-
-				//
-				//	prefilter specular :
-				//
-				for (int mip=0; mip<mipCount; mip++) {
-
-					var flag		=	Flags.PREFILTER;
-					var roughness	=	MathUtil.Clamp( mip / (float)maxMip, 0, 1 );
-					
-					device.PipelineState = factory[(int)flag];
-
-					var data = new Vector4(roughness,mip,0,0);
-					cbuffer.SetData( ref data ); 
-
-					device.ComputeSamplers[0]		=	SamplerState.LinearWrap;
-					device.ComputeResources[0]	=	source;
-					device.ComputeConstants[0]	=	cbuffer;
+			device.ComputeSamplers	[ regLinearSampler	]	=	SamplerState.LinearWrap;
+			device.ComputeResources	[ regSource			]	=	source;
+			device.ComputeConstants	[ regTarget			]	=	cbuffer;
 				
-					device.SetComputeUnorderedAccess( 0, target.GetCubeSurface( mip ).UnorderedAccess );
+			device.SetComputeUnorderedAccess( 0, target );
 
-					int size	=	initialSize >> mip;
-					int tgx		=	MathUtil.IntDivRoundUp( size, BlockSizeX );
-					int tgy		=	MathUtil.IntDivRoundUp( size, BlockSizeY );
-					int tgz		=	1;
+			int tgx		=	MathUtil.IntDivRoundUp( size, BlockSize );
+			int tgy		=	MathUtil.IntDivRoundUp( size, BlockSize );
+			int tgz		=	1;
 
-					device.Dispatch( tgx, tgy, tgz );
-				}
-			}
+			device.Dispatch( tgx, tgy, tgz );
 		}
 	}
 }

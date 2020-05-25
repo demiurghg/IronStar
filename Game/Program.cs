@@ -148,7 +148,7 @@ namespace IronStar {
 
 				.Copy<LightMap>			("*.irrmap"  )
 				.Copy<IrradianceVolume>	("*.irrvol"  )
-				.Copy<IrradianceCache>	("*.irrcache")
+				.Copy<LightProbeGBufferCache>	("*.irrcache")
 				;
 
 			return builder;       

@@ -10,20 +10,22 @@ using Fusion.Core.Content;
 
 namespace Fusion.Engine.Graphics.Lights {
 
-	[ContentLoader(typeof(IrradianceCache))]
+	[ContentLoader(typeof(LightProbeGBufferCache))]
 	public class IrradianceCacheLoader : ContentLoader {
 
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 		{
-			return new IrradianceCache( content.Game.RenderSystem, stream );
+			return new LightProbeGBufferCache( content.Game.RenderSystem, stream );
 		}
 	}
 
 
-	public class IrradianceCache : DisposableBase {
+	public class LightProbeGBufferCache : DisposableBase {
 
 		readonly RenderSystem rs;
-		internal TextureCubeArray	IrradianceCubeMaps	{ get { return rs.LightMapResources.IrradianceCubeMaps; } }
+		internal ShaderResource		Radiance		{ get { return rs.LightMapResources.LightProbeRadianceArray; } }
+		internal TextureCubeArray	GBufferColor	{ get { return rs.LightMapResources.LightProbeColorArray; } }
+		internal TextureCubeArray	GBufferMapping	{ get { return rs.LightMapResources.LightProbeMappingArray; } }
 
 		readonly Dictionary<Guid,int> probes = new Dictionary<Guid,int>();
 
@@ -35,7 +37,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		/// <param name="rs"></param>
 		/// <param name="stream"></param>
-		public IrradianceCache ( RenderSystem rs )
+		public LightProbeGBufferCache ( RenderSystem rs )
 		{
 			this.rs		=	rs;
 		}
@@ -47,23 +49,22 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		/// <param name="rs"></param>
 		/// <param name="stream"></param>
-		public IrradianceCache ( RenderSystem rs, Stream stream )
+		public LightProbeGBufferCache ( RenderSystem rs, Stream stream )
 		{
 			this.rs		=	rs;
 
 			using ( var reader = new BinaryReader( stream ) ) 
 			{
-				reader.ExpectFourCC("IRC1", "irradiance cache format");
+				reader.ExpectFourCC("IRC2", "light probe G-buffer");
 
 				CubeCount	=	reader.ReadInt32();
 
 				int size	=	RenderSystem.LightProbeSize;
-				int mips	=	RenderSystem.LightProbeMaxMips;
-				var buffer	=	new Half4[ size * size ];
+				var buffer	=	new Color[ size * size ];
 
 				for ( int cubeId = 0; cubeId < CubeCount; cubeId++ ) 
 				{
-					reader.ExpectFourCC("CUBE", "irradiance cache cubemap");
+					reader.ExpectFourCC("CUBE", "light probe G-buffer");
 
 					var guid	=	reader.Read<Guid>();
 
@@ -71,17 +72,15 @@ namespace Fusion.Engine.Graphics.Lights {
 					
 					for (int face=0; face<6; face++) 
 					{
-						for (int mip=0; mip<mips; mip++) 
-						{
-							int mipSize		= size >> mip;
-							int dataSize	= mipSize * mipSize;
+						int mipSize		= size;
+						int dataSize	= mipSize * mipSize;
 
-							reader.Read( buffer, dataSize );
+						reader.Read( buffer, dataSize );
+						GBufferColor.SetData( cubeId, (CubeFace)face, 0, buffer );
 
-							IrradianceCubeMaps.SetData( cubeId, (CubeFace)face, mip, buffer );
-						}
+						reader.Read( buffer, dataSize );
+						GBufferMapping.SetData( cubeId, (CubeFace)face, 0, buffer );
 					}
-
 				}
 			}
 		}
@@ -90,7 +89,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		protected override void Dispose( bool disposing )
 		{
 			if (disposing)
-			 {
+			{
 			}
 
 			base.Dispose( disposing );
@@ -129,7 +128,7 @@ namespace Fusion.Engine.Graphics.Lights {
 				return;
 			}
 
-			IrradianceCubeMaps.CopyFromRenderTargetCube( index, renderTargetCube );
+			GBufferColor.CopyFromRenderTargetCube( index, renderTargetCube );
 		}
 	}
 }

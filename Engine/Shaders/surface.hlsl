@@ -413,21 +413,18 @@ float4 PSMain( PSInput input, float4 vpos : SV_POSITION ) : SV_TARGET0
 
 struct LPGBuffer {
 	float4	color 	: SV_Target0;
-	float4	normal	: SV_Target1;
+	float2	mapping	: SV_Target1;
 };
 
 LPGBuffer PSMain( PSInput input )
 {	
-	LPGBuffer	output;
+	float4	feedback;
+	SURFACE surface		=	SampleVirtualTexture( input, feedback );
 
-	float 	dist	=	abs( input.ProjPos.w );
-	float4	dist_e	=	EncodeRGBE8( float3(dist,0,0) );
+	LPGBuffer	output;
 	
-	float3	color	=	pow(0.5, 2.2f);
-	float3	normal	=	normalize(input.Normal.xyz) * 0.5f + 0.5f;
-	
-	output.color	=	float4( color , dist_e.r );
-	output.normal	=	float4( normal, dist_e.w );
+	output.color	=	float4(surface.baseColor, 1);
+	output.mapping	=	input.LMCoord.xy;
 
 	return output;
 }

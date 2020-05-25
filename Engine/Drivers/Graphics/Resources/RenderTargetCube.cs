@@ -229,12 +229,12 @@ namespace Fusion.Drivers.Graphics {
 			int startIndex		=	0;
 			int elementCount	=	data.Length;
 
-            if (data == null || data.Length == 0) {
-                throw new ArgumentException("data cannot be null");
+			if (data == null || data.Length == 0) {
+				throw new ArgumentException("data cannot be null");
 			}
-            
+			
 			if (data.Length < startIndex + elementCount) {
-                throw new ArgumentException("The data passed has a length of " + data.Length + " but " + elementCount + " pixels have been requested.");
+				throw new ArgumentException("The data passed has a length of " + data.Length + " but " + elementCount + " pixels have been requested.");
 			}
 
 			var d3dContext = device.DeviceContext;
@@ -243,38 +243,38 @@ namespace Fusion.Drivers.Graphics {
 			lock (d3dContext) {
 
 				//
-                // Copy the data from the GPU to the staging texture.
+				// Copy the data from the GPU to the staging texture.
 				//
-                int elementsInRow	= Resource.CalculateMipSize( level, Width );
-                int rows			= Resource.CalculateMipSize( level, Height );
+				int elementsInRow	= Resource.CalculateMipSize( level, Width );
+				int rows			= Resource.CalculateMipSize( level, Height );
 
 				int subres	=	CalcSubresource( level, (int)face, MipCount );
 
-                d3dContext.CopySubresourceRegion( texCube, subres, null, staging, subres, 0, 0, 0);
+				d3dContext.CopySubresourceRegion( texCube, subres, null, staging, subres, 0, 0, 0);
 
-                // Copy the data to the array :
-                DataStream stream;
-                var databox = d3dContext.MapSubresource(staging, subres, D3D.MapMode.Read, D3D.MapFlags.None, out stream);
+				// Copy the data to the array :
+				DataStream stream;
+				var databox = d3dContext.MapSubresource(staging, subres, D3D.MapMode.Read, D3D.MapFlags.None, out stream);
 
-                // Some drivers may add pitch to rows.
-                // We need to copy each row separatly and skip trailing zeros.
-                var currentIndex	=	startIndex;
-                var elementSize		=	Marshal.SizeOf(typeof(T));
-                    
+				// Some drivers may add pitch to rows.
+				// We need to copy each row separatly and skip trailing zeros.
+				var currentIndex	=	startIndex;
+				var elementSize		=	Marshal.SizeOf(typeof(T));
+					
 				for (var row = 0; row < rows; row++) {
 
-                    stream.ReadRange(data, currentIndex, elementsInRow);
-                    stream.Seek(databox.RowPitch - (elementSize * elementsInRow), SeekOrigin.Current);
-                    currentIndex += elementsInRow;
+					stream.ReadRange(data, currentIndex, elementsInRow);
+					stream.Seek(databox.RowPitch - (elementSize * elementsInRow), SeekOrigin.Current);
+					currentIndex += elementsInRow;
 
-                }
+				}
 
 				d3dContext.UnmapSubresource( staging, subres );
 
-                stream.Dispose();
+				stream.Dispose();
 
 				return elementsInRow * rows;
-            }
+			}
 		}
 
 

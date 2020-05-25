@@ -1,7 +1,6 @@
 // ---------------- CONSTANT VALUES ---------------- //
 
-static const int BlockSizeX = 16;
-static const int BlockSizeY = 16;
+static const int BlockSize = 8;
 
 // ---------------- DATA STRUCTURES ---------------- //
 
@@ -10,8 +9,8 @@ static const int BlockSizeY = 16;
 struct PARAMS {
 	float      Roughness;                     // offset:    0
 	float      MipLevel;                      // offset:    4
-	float      Dummy1;                        // offset:    8
-	float      Dummy2;                        // offset:   12
+	float      TargetSize;                    // offset:    8
+	float      SourceSize;                    // offset:   12
 };
 
 // ---------------- SHADER RESOURCES ---------------- //
@@ -19,3 +18,6 @@ struct PARAMS {
 cbuffer __buffer0 : register(b0) {
 	PARAMS Params : packoffset(c0);
 };
+SamplerState                   LinearSampler                  : register(s0);
+TextureCube<float4>            Source                         : register(t0);
+RWTexture2DArray<float4>       Target                         : register(u0);

@@ -137,8 +137,7 @@ namespace IronStar.Core {
 		{
 			var rw					=	Game.RenderSystem.RenderWorld;
 
-			rw.IrradianceCache		=	Content.Load(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrcache"	), (IrradianceCache)null );
-			rw.IrradianceVolume		=	Content.Load(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrvol"	), (IrradianceVolume)null );
+			rw.IrradianceCache		=	Content.Load(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrcache"	), (LightProbeGBufferCache)null );
 			Game.RenderSystem.Radiosity.LightMap	=	Content.Load(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrmap"), (LightMap)null );
 
 			//Game.RenderSystem.RayTracer.BuildAccelerationStructure();

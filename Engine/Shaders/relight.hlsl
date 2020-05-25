@@ -1,24 +1,10 @@
 #if 0
 $ubershader 	RELIGHT
-$ubershader		PREFILTER (SPECULAR ROUGHNESS_025|ROUGHNESS_050|ROUGHNESS_075|ROUGHNESS_100)|DIFFUSE|AMBIENT
+--$ubershader		PREFILTER (SPECULAR ROUGHNESS_025|ROUGHNESS_050|ROUGHNESS_075|ROUGHNESS_100)|DIFFUSE|AMBIENT
 #endif
 
 #include "auto/relight.fxi"
 #include "rgbe.fxi"
-
-TextureCubeArray	GBufferColorData		:	register(t0);
-TextureCubeArray	GBufferNormalData		:	register(t1);
-TextureCubeArray	SkyEnvironment			:	register(t2);
-Texture2D			ShadowMap				:	register(t3);
-TextureCubeArray	LightProbe				:	register(t4);
-Texture3D			OcclusionGrid			:	register(t5);
-
-SamplerState			PointSampler		: 	register(s0);
-SamplerState			LinearSampler		: 	register(s1);
-SamplerComparisonState	ShadowSampler		: 	register(s2);
-
-
-RWTexture2DArray<float4>  TargetCube : register(u0); 
 
 /*-----------------------------------------------------------------------------
 	TODO:
@@ -50,64 +36,22 @@ RWTexture2DArray<float4>  TargetCube : register(u0);
 -----------------------------------------------------------------------------*/
 
 #ifdef RELIGHT
-float ComputeShadow ( float3 worldPos )
-{	
-	float4 scaleOffset	=	RelightParams.ShadowRegion;
-	float4 projectedPos = 	mul( float4(worldPos,1), RelightParams.ShadowViewProjection );
-	projectedPos.xy 	/= 	projectedPos.w;
-	projectedPos.w   	= 	1;
-	
-	float2	shadowUV	=	mad( projectedPos.xy, scaleOffset.xy, scaleOffset.zw );
-	float   depthCmp	= 	projectedPos.z;
-
-	float	shadow		=	ShadowMap.SampleCmpLevelZero( ShadowSampler, shadowUV, depthCmp ).r;
-	
-	return	shadow;
-	
-	//max(abs(projection.x), abs(projection.y));//length(temp.xy);
-}
 
 
 float4	ComputeLight ( float3 dir )
 {
 	float	cubeId		=	RelightParams.CubeIndex;
-	float4	gbuf0		=	GBufferColorData .SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
-	float4	gbuf1		=	GBufferNormalData.SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
-	float4	sky			=	SkyEnvironment.SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
-		
-	float	dist		=	DecodeRGBE8( float4( gbuf0.w, 0, 0, gbuf1.w ) );
-	float3	worldPos	=	float3(-1,1,1) * dir * dist + RelightParams.LightProbePosition.xyz;
+	float4	color		=	GBufferColorData .SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
+	float4	mapping		=	GBufferNormalData.SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
+	float4	sky			=	SkyCube.SampleLevel( LinearSampler, dir * float3(-1,1,1), 0 );
 	
-	float3	color		=	gbuf0.rgb;
-	float3	normal		=	normalize(gbuf1.xyz * 2 - 1);
+	float3	lightmap	=	LightMap.SampleLevel( LinearSampler, mapping.xy, 0 ).rgb;
 	
-	float	skyFactor	=	(gbuf0.xyz==float3(0,0,0)) ? 1 : 0;
-	
-	float3	lightDir	=	-normalize( RelightParams.DirectLightDirection.xyz );
-	float3	lightColor	=	RelightParams.DirectLightIntensity.rgb;
-	
-	float	shadow		=	ComputeShadow( worldPos + normal * 0.05f );
-	
-	float3	samplePos		=	worldPos + normal*0.25 + float3(1,1,1)/2;
-	float3	aogridCoords	=	samplePos.xyz/float3(128,64,128);
-	float4	aogridValue		=	OcclusionGrid.SampleLevel( LinearSampler, aogridCoords, 0 ).rgba;
-			aogridValue.xyz	=	aogridValue.xyz * 2 - 1;
-	float 	skyOcclusion	=	length( aogridValue.xyz ) * (normal.y+1)/2;
-	
-	float3	lighting	=	saturate(dot(normal, lightDir)) * color * lightColor * shadow;
-			lighting	=	lighting + color * RelightParams.SkyAmbient * skyOcclusion;
-	
-	//return float4(frac(pos/5.0f), 0);
-	
-	return float4( lerp(lighting, sky.rgb, skyFactor), 1-skyFactor );
+	float3	result		=	lerp( color.rgb * lightmap * 2, sky.rgb, 1 - color.a );
+
+	return float4( result, 1 );
 }
 
-static const float2 offsets[4] = {
-	float2( 0.25f, 0.25f ),
-	float2(-0.25f, 0.25f ),
-	float2(-0.25f,-0.25f ),
-	float2( 0.25f,-0.25f ),
-};
 
 [numthreads(BlockSizeX,BlockSizeY,1)] 
 void CSMain( 
@@ -120,24 +64,22 @@ void CSMain(
 	
 	float4 	face[6] 	= 	{ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0 };
 
-	for (int i=0; i<4; i++) {
-		float u	=	2 * (location.x+0.25f + offsets[i].x) / (float)LightProbeSize - 1;
-		float v	=	2 * (location.y+0.25f + offsets[i].y) / (float)LightProbeSize - 1;
+	float u	=	2 * (location.x + 0 * 0.25f) / (float)LightProbeSize - 1;
+	float v	=	2 * (location.y + 0 * 0.25f) / (float)LightProbeSize - 1;
 
-		face[0]	+=	ComputeLight( float3( -1, -v, -u ) );
-		face[1]	+=	ComputeLight( float3(  1, -v,  u ) );
-		face[2]	+=	ComputeLight( float3( -u,  1,  v ) );
-		face[3]	+=	ComputeLight( float3( -u, -1, -v ) );
-		face[4]	+=	ComputeLight( float3( -u, -v,  1 ) );
-		face[5]	+=	ComputeLight( float3(  u, -v, -1 ) );
-	}
+	face[0]	+=	ComputeLight( float3(  1, -v, -u ) );
+	face[1]	+=	ComputeLight( float3( -1, -v,  u ) );
+	face[2]	+=	ComputeLight( float3(  u,  1,  v ) );
+	face[3]	+=	ComputeLight( float3(  u, -1, -v ) );
+	face[4]	+=	ComputeLight( float3(  u, -v,  1 ) );
+	face[5]	+=	ComputeLight( float3( -u, -v, -1 ) );
 	
-	TargetCube[int3(location.xy,0)]	=	face[0] / 4.0f;
-	TargetCube[int3(location.xy,1)]	=	face[1] / 4.0f;
-	TargetCube[int3(location.xy,2)]	=	face[2] / 4.0f;
-	TargetCube[int3(location.xy,3)]	=	face[3] / 4.0f;
-	TargetCube[int3(location.xy,4)]	=	face[4] / 4.0f;
-	TargetCube[int3(location.xy,5)]	=	face[5] / 4.0f;
+	TargetCube[int3(location.xy,0)]	=	face[0];
+	TargetCube[int3(location.xy,1)]	=	face[1];
+	TargetCube[int3(location.xy,2)]	=	face[2];
+	TargetCube[int3(location.xy,3)]	=	face[3];
+	TargetCube[int3(location.xy,4)]	=	face[4];
+	TargetCube[int3(location.xy,5)]	=	face[5];
 	
 	// if (location.x==21 & location.y==21) {
 		// TargetCube[int3(location.xy,0)]	=	float4(1000,1000,1000,1);

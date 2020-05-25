@@ -145,7 +145,7 @@ namespace Fusion.Engine.Graphics {
 		VirtualTexture		virtualTexture = null;
 		LightMap			irradianceMap = null;	
 		IrradianceVolume	irradianceVolume = null;
-		IrradianceCache		irradianceCache = null;
+		LightProbeGBufferCache		irradianceCache = null;
 
 		/// <summary>
 		/// Sets and gets virtual texture for entire world
@@ -187,7 +187,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Sets anf gets irradiance map
 		/// </summary>
-		public IrradianceCache IrradianceCache {
+		public LightProbeGBufferCache IrradianceCache {
 			get {
 				return irradianceCache;
 			}
@@ -203,9 +203,9 @@ namespace Fusion.Engine.Graphics {
 
 		internal HdrFrame HdrFrame { get { return viewHdrFrame; } }
 
-		internal DepthStencil2D		LightProbeDepth;
-		internal RenderTargetCube	LightProbeHdr;
-		internal RenderTargetCube	LightProbeHdrTemp;
+		//internal DepthStencil2D		LightProbeDepth;
+		//internal RenderTargetCube	LightProbeHdr;
+		//internal RenderTargetCube	LightProbeHdrTemp;
 
 
 
@@ -247,10 +247,9 @@ namespace Fusion.Engine.Graphics {
 			
 			particleSystem	=	new ParticleSystem( Game.RenderSystem, this );
 
-			LightProbeDepth		=	new DepthStencil2D		( Game.GraphicsDevice, DepthFormat.D24S8,	RenderSystem.LightProbeSize, RenderSystem.LightProbeSize );
-
-			LightProbeHdr		=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba16F,	RenderSystem.LightProbeSize, RenderSystem.LightProbeMaxMips ); 
-			LightProbeHdrTemp	=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba16F,	RenderSystem.LightProbeSize, RenderSystem.LightProbeMaxMips ); 
+			//LightProbeDepth		=	new DepthStencil2D		( Game.GraphicsDevice, DepthFormat.D24S8,	RenderSystem.LightProbeSize, RenderSystem.LightProbeSize );
+			//LightProbeHdr		=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba16F,	RenderSystem.LightProbeSize, RenderSystem.LightProbeMaxMips ); 
+			//LightProbeHdrTemp	=	new RenderTargetCube	( Game.GraphicsDevice, ColorFormat.Rgba16F,	RenderSystem.LightProbeSize, RenderSystem.LightProbeMaxMips ); 
 
 			Resize( width, height );
 		}
@@ -274,9 +273,9 @@ namespace Fusion.Engine.Graphics {
 
 				SafeDispose( ref debug );
 
-				SafeDispose( ref LightProbeDepth	);
-				SafeDispose( ref LightProbeDepth	);
-				SafeDispose( ref LightProbeHdr		);
+				//SafeDispose( ref LightProbeDepth	);
+				//SafeDispose( ref LightProbeDepth	);
+				//SafeDispose( ref LightProbeHdr		);
 				
 				SafeDispose( ref viewHdrFrame );
 
@@ -517,6 +516,9 @@ namespace Fusion.Engine.Graphics {
 						//  compute radiosity using shadowmaps
 						rs.Radiosity.Render( gameTime );
 
+						//	relight cubemaps :
+						rs.LightManager.RelightLightProbes( LightSet );
+
 						//	render particle lighting :
 						ParticleSystem.RenderLight( gameTime, Camera );
 
@@ -527,6 +529,9 @@ namespace Fusion.Engine.Graphics {
 
 
 				using ( new PixEvent( "Frame Scene Rendering" ) ) {
+
+					//var ms = new MemoryStream();
+					//CaptureRadiance( ms );
 
 					//	Z-pass without weapon :
 					rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, rlMainView, InstanceGroup.NotWeapon );
@@ -636,63 +641,61 @@ namespace Fusion.Engine.Graphics {
 
 			using ( var writer = new BinaryWriter(stream) ) {
 
-				writer.WriteFourCC("IRC1");
+				writer.WriteFourCC("IRC2");
 				writer.Write( LightSet.LightProbes.Count );
 
+				var lmRc =	rs.LightMapResources;
 
 				foreach ( var lightProbe in LightSet.LightProbes ) {
 
-					Log.Message("...{0}", lightProbe.Guid );
+					using ( new PixEvent( "Rende Cube" ) )
+					{
 
-					for (int i=0; i<6; i++) {
+						Log.Message( "...{0}", lightProbe.Guid );
 
-						var face	=	(CubeFace)i;
-						var depth	=	LightProbeDepth.Surface;
-						var color	=	LightProbeHdr.GetSurface( 0, face );
-						var camera	=	cubemapCamera;
-						var time	=	GameTime.Zero;
-						var mono	=	StereoEye.Mono;
+						for (int i=0; i<6; i++) {
 
-						camera.SetupCameraCubeFaceLH( lightProbe.ProbeMatrix.TranslationVector, face, 0.125f, 4096 );
+							var face	=	(CubeFace)i;
+							var depth	=	lmRc.LightProbeDepth.GetSurface();
+							var color	=	lmRc.LightProbeColor.GetSurface( 0, face );
+							var normal	=	lmRc.LightProbeMapping.GetSurface( 0, face );
+							var camera	=	cubemapCamera;
+							var time	=	GameTime.Zero;
+							var mono	=	StereoEye.Mono;
+
+							camera.SetupCameraCubeFaceLH( lightProbe.ProbeMatrix.TranslationVector, face, 0.125f, 4096 );
 					
-						device.Clear( depth );
-						device.Clear( color, Color4.Black );
+							device.Clear( depth );
+							device.Clear( color,  Color4.Zero );
+							device.Clear( normal, Color4.Zero );
 
-						var context	=	new LightProbeContext( rs, camera, depth, color, null );
+							var context	=	new LightProbeContext( rs, camera, depth, color, normal );
+							var groups	=	InstanceGroup.Static | InstanceGroup.Kinematic;
 
-						//	render g-buffer :
-						rs.LightManager.LightGrid.UpdateLightSetVisibility( mono, camera, LightSet );
-
-						//	allocated and render shadows :
-						var groups = InstanceGroup.Static | InstanceGroup.Kinematic;
-						rs.LightManager.ShadowMap.RenderShadowMaps( time, camera, rs, this, LightSet, groups );
-
-						//	clusterize light set :
-						rs.LightManager.LightGrid.ClusterizeLightSet( mono, camera, LightSet );
-
-						//	render solid static geometry :
-						rs.SceneRenderer.RenderLightProbeRadiance( context, this, groups );
-					
-						//	render sky :
-						rs.Sky.Render( camera, mono, depth, color, SkySettings, true );
+							//	render gbuffer albedo and lightmap coords:
+							rs.SceneRenderer.RenderLightProbeGBuffer( context, this, groups );
+						}
 					}
 				
-					Game.GetService<CubeMapFilter>().PrefilterLightProbe( LightProbeHdr, LightProbeHdrTemp );
+					//Game.GetService<CubeMapFilter>().PrefilterLightProbe( LightProbeHdr, LightProbeHdrTemp );
 
 					//IrradianceCache.UpdateLightProbe( lightProbe.Guid, LightProbeHdrTemp ); 
 
 					var bufferSize		=	RenderSystem.LightProbeSize * RenderSystem.LightProbeSize;
-					var stagingBuffer	=	new Half4[ bufferSize ];
+					var stagingBuffer	=	new Color[ bufferSize ];
+					int count;
 
 					writer.WriteFourCC("CUBE");
 
 					writer.Write( lightProbe.Guid );
 
-					for (int face=0; face<6; face++) {
-						for (int mip=0; mip<RenderSystem.LightProbeMaxMips; mip++) {
-							int count = LightProbeHdrTemp.GetData( (CubeFace)face, mip, stagingBuffer );
-							writer.Write( stagingBuffer, count );
-						}
+					for (int face=0; face<6; face++) 
+					{
+						count = lmRc.LightProbeColor.GetData( (CubeFace)face, 0, stagingBuffer );
+						writer.Write( stagingBuffer, count );
+
+						count = lmRc.LightProbeMapping.GetData( (CubeFace)face, 0, stagingBuffer );
+						writer.Write( stagingBuffer, count );
 					}
 				}
 			}

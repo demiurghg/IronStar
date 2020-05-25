@@ -27,3 +27,11 @@ struct RELIGHT_PARAMS {
 cbuffer __buffer0 : register(b0) {
 	RELIGHT_PARAMS RelightParams : packoffset(c0);
 };
+TextureCubeArray<float4>       GBufferColorData               : register(t0);
+TextureCubeArray<float4>       GBufferNormalData              : register(t1);
+Texture2D<float4>              LightMap                       : register(t2);
+TextureCube<float4>            SkyCube                        : register(t3);
+SamplerState                   PointSampler                   : register(s0);
+SamplerState                   LinearSampler                  : register(s1);
+SamplerComparisonState         ShadowSampler                  : register(s2);
+RWTexture2DArray<float4>       TargetCube                     : register(u0);

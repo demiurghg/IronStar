@@ -60,7 +60,7 @@ namespace Fusion.Drivers.Graphics {
 			texDesc.ArraySize		=	6;
 			texDesc.BindFlags		=	BindFlags.ShaderResource;
 			texDesc.CpuAccessFlags	=	CpuAccessFlags.None;
-			texDesc.Format			=	MakeTypeless( Converter.Convert( format ) );
+			texDesc.Format			=	Converter.Convert( format );
 			texDesc.Height			=	Height;
 			texDesc.MipLevels		=	mipCount;
 			texDesc.OptionFlags		=	ResourceOptionFlags.TextureCube;

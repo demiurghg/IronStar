@@ -179,7 +179,7 @@ namespace Fusion.Engine.Graphics.Lights {
 			device.GfxResources[ regLightVolumeL2	]	=	rs.Radiosity.LightVolumeL2;
 			device.GfxResources[ regLightVolumeL3	]	=	rs.Radiosity.LightVolumeL3;
 
-			device.GfxResources[ regLightProbes		]	=	rs.LightMapResources?.IrradianceCubeMaps;
+			device.GfxResources[ regLightProbes		]	=	rs.LightMapResources?.LightProbeRadianceArray;
 			device.GfxResources[ regLightProbeData	]	=	rs.LightManager.LightGrid.ProbeDataGpu;
 
 			if (ShowLightProbes)

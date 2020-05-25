@@ -36,8 +36,21 @@ namespace Fusion.Engine.Graphics.Lights {
 		Texture3D	lightVolumeG;
 		Texture3D	lightVolumeB;
 
-		internal TextureCubeArray	IrradianceCubeMaps	{ get { return irradianceCubeMaps; } }
-		TextureCubeArray irradianceCubeMaps;
+		internal TextureCubeArray	LightProbeColorArray	{ get { return lightProbeColorArray; } }
+		internal TextureCubeArray	LightProbeMappingArray	{ get { return lightProbeMappingArray; } }
+		internal TextureCubeArrayRW	LightProbeRadianceArray	{ get { return lightProbeRadianceArray; } }
+		TextureCubeArray	lightProbeColorArray;
+		TextureCubeArray	lightProbeMappingArray;
+		TextureCubeArrayRW	lightProbeRadianceArray;
+
+		internal RenderTargetCube	LightProbeColor		{ get { return lightProbeColor; } }
+		internal RenderTargetCube	LightProbeMapping	{ get { return lightProbeMapping; } }
+		internal DepthStencil2D		LightProbeDepth		{ get { return lightProbeDepth; } }
+		internal RenderTargetCube	LightProbeRadiance	{ get { return lightProbeRadiance; } }
+		RenderTargetCube			lightProbeColor;
+		RenderTargetCube			lightProbeMapping;
+		DepthStencil2D				lightProbeDepth;
+		RenderTargetCube			lightProbeRadiance;
 
 
 		public LightMapResources ( RenderSystem rs )
@@ -60,7 +73,13 @@ namespace Fusion.Engine.Graphics.Lights {
 			int mips		=	RenderSystem.LightProbeMaxMips;
 			int length		=	RenderSystem.MaxEnvLights;
 
-			irradianceCubeMaps	=	new TextureCubeArray( rs.Device, size, length, ColorFormat.Rgba16F, mips );
+			lightProbeColorArray	=	new TextureCubeArray	( rs.Device, size, length, ColorFormat.Rgba8, 1			);
+			lightProbeMappingArray	=	new TextureCubeArray	( rs.Device, size, length, ColorFormat.Rg16_UNorm, 1	);
+			lightProbeRadianceArray	=	new TextureCubeArrayRW	( rs.Device, size, length, ColorFormat.Rg11B10, true, 1	);
+			lightProbeColor			=	new RenderTargetCube	( rs.Device, ColorFormat.Rgba8,			size		);
+			lightProbeMapping		=	new RenderTargetCube	( rs.Device, ColorFormat.Rg16_UNorm,	size		);
+			lightProbeRadiance		=	new RenderTargetCube	( rs.Device, ColorFormat.Rg11B10,		size, mips	);
+			lightProbeDepth			=	new DepthStencil2D		( rs.Device, DepthFormat.D24S8,			size, size	);
 		}
 
 
@@ -76,7 +95,11 @@ namespace Fusion.Engine.Graphics.Lights {
 				SafeDispose( ref lightVolumeG );
 				SafeDispose( ref lightVolumeB );
 
-				SafeDispose( ref irradianceCubeMaps );
+				SafeDispose( ref lightProbeColorArray	 );
+				SafeDispose( ref lightProbeMappingArray	 );
+				SafeDispose( ref lightProbeRadianceArray );
+				SafeDispose( ref lightProbeColor		 );
+				SafeDispose( ref lightProbeMapping		 );
 			}
 
 			base.Dispose( disposing );

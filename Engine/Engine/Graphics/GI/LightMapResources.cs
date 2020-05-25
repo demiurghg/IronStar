@@ -73,12 +73,15 @@ namespace Fusion.Engine.Graphics.Lights {
 			int mips		=	RenderSystem.LightProbeMaxMips;
 			int length		=	RenderSystem.MaxEnvLights;
 
+			var hdrFormat	=	ColorFormat.Rgba16F;
+			//var hdrFormat	=	ColorFormat.Rg11B10;
+
 			lightProbeColorArray	=	new TextureCubeArray	( rs.Device, size, length, ColorFormat.Rgba8, 1			);
 			lightProbeMappingArray	=	new TextureCubeArray	( rs.Device, size, length, ColorFormat.Rg16_UNorm, 1	);
-			lightProbeRadianceArray	=	new TextureCubeArrayRW	( rs.Device, size, length, ColorFormat.Rg11B10, true, 1	);
+			lightProbeRadianceArray	=	new TextureCubeArrayRW	( rs.Device, size, length, hdrFormat, true, 1	);
 			lightProbeColor			=	new RenderTargetCube	( rs.Device, ColorFormat.Rgba8,			size		);
 			lightProbeMapping		=	new RenderTargetCube	( rs.Device, ColorFormat.Rg16_UNorm,	size		);
-			lightProbeRadiance		=	new RenderTargetCube	( rs.Device, ColorFormat.Rg11B10,		size, mips	);
+			lightProbeRadiance		=	new RenderTargetCube	( rs.Device, hdrFormat,					size, mips	);
 			lightProbeDepth			=	new DepthStencil2D		( rs.Device, DepthFormat.D24S8,			size, size	);
 		}
 

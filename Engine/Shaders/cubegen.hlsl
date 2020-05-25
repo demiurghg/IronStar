@@ -198,7 +198,8 @@ https://research.activision.com/publications/archives/fast-filtering-of-reflecti
 
 #ifdef PREFILTER
 
-#include "cubegen.coeffs.hlsl"
+#include "hammersley.fxi"
+#include "ls_brdf.fxi"
 
 #define trilinear 	LinearSampler
 #define tex_in		Source
@@ -222,57 +223,8 @@ https://research.activision.com/publications/archives/fast-filtering-of-reflecti
 #define NUM_TAPS 8
 #define BASE_RESOLUTION 128
 
-void get_dir( out float3 dir, in float2 uv, in int face )
+bool GetFaceLocalAddress( uint id, out uint level, out uint2 xy, out float2 uv )
 {
-	switch ( face )
-	{
-	case 0:
-		dir[0] = 1;
-		dir[1] = uv[1];
-		dir[2] = -uv[0];
-		break;
-	case 1:
-		dir[0] = -1;
-		dir[1] = uv[1];
-		dir[2] = uv[0];
-		break;
-	case 2:
-		dir[0] = uv[0];
-		dir[1] = 1;
-		dir[2] = -uv[1];
-		break;
-	case 3:
-		dir[0] = uv[0];
-		dir[1] = -1;
-		dir[2] = uv[1];
-		break;
-	case 4:
-		dir[0] = uv[0];
-		dir[1] = uv[1];
-		dir[2] = 1;
-		break;
-	default:
-		dir[0] = -uv[0];
-		dir[1] = uv[1];
-		dir[2] = -1;
-		break;
-	}
-}
-
-#define GROUP_SIZE 64
-[numthreads( GROUP_SIZE, 1, 1 )]
-void CSMain( uint3 id : SV_DispatchThreadID )
-{
-	// INPUT: 
-	// id.x = the linear address of the texel (ignoring face)
-	// id.y = the face
-	// -> use to index output texture
-	// id.x = texel x
-	// id.y = texel y
-	// id.z = face
-
-	// determine which texel this is
-	int level = 0;
 	if ( id.x < ( 128 * 128 ) )
 	{
 		level = 0;
@@ -309,173 +261,188 @@ void CSMain( uint3 id : SV_DispatchThreadID )
 	}
 	else
 	{
-		return;
+		xy = uint2(0,0);
+		uv = float2(0,0);
+		return false;
 	}
+	
+	uint size 	= 	BASE_RESOLUTION >> level;
+	xy.x		=	id % size;
+	xy.y		=	id / size;
+	
+	uv.x 		= 	 ( (float)xy.x * 2.0f + 1.0f ) / (float)size - 1.0f;
+	uv.y 		= 	-( (float)xy.y * 2.0f + 1.0f ) / (float)size + 1.0f;	
+	
+	return true;
+}
 
-	//SetSGPR( level );
-
-	// determine dir / pos for the texel
-	float3 dir, adir, frameZ;
+float3 GetFaceDirection( in float2 uv, in uint face )
+{
+	switch ( face )
 	{
-		id.z = id.y;
-		int res = BASE_RESOLUTION >> level;
-		id.y = id.x / res;
-		id.x -= id.y * res;
-
-		float2 uv;
-		uv.x = ( (float)id.x * 2.0f + 1.0f ) / (float)res - 1.0f;
-		uv.y = -( (float)id.y * 2.0f + 1.0f ) / (float)res + 1.0f;
-
-		get_dir( dir, uv, id.z );
-		frameZ = normalize( dir );
-
-		adir[0] = abs( dir[0] );
-		adir[1] = abs( dir[1] );
-		adir[2] = abs( dir[2] );
+		case 0:	 return float3(     1, 	uv.y,	-uv.x );	
+		case 1:	 return float3(    -1, 	uv.y,	 uv.x );	
+		case 2:	 return float3(  uv.x, 	   1,	-uv.y );	
+		case 3:	 return float3(  uv.x, 	  -1,	 uv.y );	
+		case 4:	 return float3(  uv.x, 	uv.y,	    1 );		
+		default: return float3( -uv.x, 	uv.y,	   -1 );		
 	}
+}
 
-	// GGX gather colors
-	float4 color = 0;
-	for ( int axis = 0; axis < 3; axis++ )
+float3 GetUpVector( in uint face )
+{
+	switch ( face )
 	{
-		const int otherAxis0 = 1 - ( axis & 1 ) - ( axis >> 1 );
-		const int otherAxis1 = 2 - ( axis >> 1 );
+		case 0:	 return float3(  0,  1,  0 );	
+		case 1:	 return float3(  0,  1,  0 );	
+		case 2:	 return float3(  0,  0, -1 );	
+		case 3:	 return float3(  0,  0,  1 );	
+		case 4:	 return float3(  0,  1,  0 );		
+		default: return float3(  0,  1,  0 );		
+	}
+}
 
-		float frameweight = ( max( adir[otherAxis0], adir[otherAxis1] ) - .75f ) / .25f;
-		if ( frameweight > 0 )
+//#define REFERENCE	
+
+static const uint sample_count = 7;
+static const float kernel_size[7] = { 
+	1.7f / 128.0f, 
+	4.5f /  64.0f, 
+	1.5f /  32.0f, 
+	1.5f /  16.0f, 
+	1.5f /   8.0f, 
+	1.5f /   4.0f, 
+	1.5f /   2.0f
+};
+static const float4 samples[7][7] = {
+	{ float4( 0.000f, 0.000f, 0.0f, 1.0000f ),
+	  float4( 1.000f, 0.000f, 0.5f, 0.0015f ),
+	  float4( 0.500f, 0.866f, 0.5f, 0.0015f ),
+	  float4(-0.500f, 0.866f, 0.5f, 0.0015f ),
+	  float4(-1.000f, 0.000f, 0.5f, 0.0015f ),
+	  float4(-0.500f,-0.866f, 0.5f, 0.0015f ),
+	  float4( 0.500f,-0.866f, 0.5f, 0.0015f ) },
+	                              
+	{ float4( 0.000f, 0.000f, 1.1f, 1.0000f ),
+	  float4( 1.000f, 0.000f, 2.3f, 0.1000f ),
+	  float4( 0.500f, 0.866f, 2.3f, 0.1000f ),
+	  float4(-0.500f, 0.866f, 2.3f, 0.1000f ),
+	  float4(-1.000f, 0.000f, 2.3f, 0.1000f ),
+	  float4(-0.500f,-0.866f, 2.3f, 0.1000f ),
+	  float4( 0.500f,-0.866f, 2.3f, 0.1000f ) },
+	                              
+	{ float4( 0.000f, 0.000f, 0.2 , 1 ),
+	  float4( 1.000f, 0.000f, 0.5f, 1 ),
+	  float4( 0.500f, 0.866f, 0.5f, 1 ),
+	  float4(-0.500f, 0.866f, 0.5f, 1 ),
+	  float4(-1.000f, 0.000f, 0.5f, 1 ),
+	  float4(-0.500f,-0.866f, 0.5f, 1 ),
+	  float4( 0.500f,-0.866f, 0.5f, 1 ) },
+	                              
+	{ float4( 0.000f, 0.000f, 0.2 , 1 ),
+	  float4( 1.000f, 0.000f, 0.5f, 1 ),
+	  float4( 0.500f, 0.866f, 0.5f, 1 ),
+	  float4(-0.500f, 0.866f, 0.5f, 1 ),
+	  float4(-1.000f, 0.000f, 0.5f, 1 ),
+	  float4(-0.500f,-0.866f, 0.5f, 1 ),
+	  float4( 0.500f,-0.866f, 0.5f, 1 ) },
+	                              
+	{ float4( 0.000f, 0.000f, 0.2 , 1 ),
+	  float4( 1.000f, 0.000f, 0.5f, 1 ),
+	  float4( 0.500f, 0.866f, 0.5f, 1 ),
+	  float4(-0.500f, 0.866f, 0.5f, 1 ),
+	  float4(-1.000f, 0.000f, 0.5f, 1 ),
+	  float4(-0.500f,-0.866f, 0.5f, 1 ),
+	  float4( 0.500f,-0.866f, 0.5f, 1 ) },
+	                              
+	{ float4( 0.000f, 0.000f, 0.2 , 1 ),
+	  float4( 1.000f, 0.000f, 0.5f, 1 ),
+	  float4( 0.500f, 0.866f, 0.5f, 1 ),
+	  float4(-0.500f, 0.866f, 0.5f, 1 ),
+	  float4(-1.000f, 0.000f, 0.5f, 1 ),
+	  float4(-0.500f,-0.866f, 0.5f, 1 ),
+	  float4( 0.500f,-0.866f, 0.5f, 1 ) },
+	                              
+	{ float4( 0.000f, 0.000f, 0.2 , 1 ),
+	  float4( 1.000f, 0.000f, 0.5f, 1 ),
+	  float4( 0.500f, 0.866f, 0.5f, 1 ),
+	  float4(-0.500f, 0.866f, 0.5f, 1 ),
+	  float4(-1.000f, 0.000f, 0.5f, 1 ),
+	  float4(-0.500f,-0.866f, 0.5f, 1 ),
+	  float4( 0.500f,-0.866f, 0.5f, 1 ) },
+};
+
+#define GROUP_SIZE 64
+[numthreads( GROUP_SIZE, 1, 1 )]
+void CSMain( uint3 id : SV_DispatchThreadID )
+{
+	float2 uv;
+	uint2 xy;
+	uint level;
+	uint face = id.y;
+	
+	GetFaceLocalAddress( id.x, level, xy, uv );
+	
+	uint3 storeXYf		=	uint3( xy.xy, face );
+	float4 color		=	0;//tex_in.SampleLevel( LinearSampler, GetFaceDirection( uv, face ), level ); 
+	float roughness		=	lerp(0.05f, 0.99f, level/6.0f);
+	
+	float3	direction	=	normalize( GetFaceDirection( uv, face ) );
+	float3	upVector	=	GetUpVector( face );
+	float3  tangentX	=	normalize( cross( direction, upVector ) );
+	float3 	tangentY	=	normalize( cross( direction, tangentX ) );
+	
+#ifndef REFERENCE	
+
+	if (false/*level==0*/)
+	{
+		color	=	tex_in.SampleLevel( LinearSampler, direction, 0 ).rgba * 1
+				+	tex_in.SampleLevel( LinearSampler, direction, 1 ).rgba * 0.006
+				+	tex_in.SampleLevel( LinearSampler, direction, 2 ).rgba * 0.002
+				;
+	}
+	else
+	{
+		for (uint i=0; i<sample_count; i++)
 		{
-			// determine frame
-#if 0
-			float3 UpVector = 0;
-			UpVector[axis] = 1;
-#else
-			float3 UpVector;
-			switch ( axis )
-			{
-			case 0:
-				UpVector = float3( 1, 0, 0 );
-				break;
-			case 1:
-				UpVector = float3( 0, 1, 0 );
-				break;
-			default:
-				UpVector = float3( 0, 0, 1 );
-				break;
-			}
-#endif
-			float3 frameX = normalize( cross( UpVector, frameZ ) );
-			float3 frameY = cross( frameZ, frameX );
-
-			// calculate parametrization for polynomial
-			float Nx = dir[otherAxis0];
-			float Ny = dir[otherAxis1];
-			float Nz = adir[axis];
-
-			float NmaxXY = max( abs( Ny ), abs( Nx ) );
-			Nx /= NmaxXY;
-			Ny /= NmaxXY;
-
-			float theta;
-			if ( Ny < Nx )
-			{
-				if ( Ny <= -.999 )
-					theta = Nx;
-				else
-					theta = Ny;
-			}
-			else
-			{
-				if ( Ny >= .999 )
-					theta = -Nx;
-				else
-					theta = -Ny;
-			}
-
-			float phi;
-			if ( Nz <= -.999 )
-				phi = -NmaxXY;
-			else if ( Nz >= .999 )
-				phi = NmaxXY;
-			else
-				phi = Nz;
-
-			float theta2 = theta*theta;
-			float phi2 = phi*phi;
-
-			// sample
-			for ( int iSuperTap = 0; iSuperTap < NUM_TAPS / 4; iSuperTap++ )
-			{
-				const int index = ( NUM_TAPS / 4 ) * axis + iSuperTap;
-				float4 coeffsDir0[3];
-				float4 coeffsDir1[3];
-				float4 coeffsDir2[3];
-				float4 coeffsLevel[3];
-				float4 coeffsWeight[3];
-
-				for ( int iCoeff = 0; iCoeff < 3; iCoeff++ )
-				{
-					coeffsDir0[iCoeff] = coeffs[level][0][iCoeff][index];
-					coeffsDir1[iCoeff] = coeffs[level][1][iCoeff][index];
-					coeffsDir2[iCoeff] = coeffs[level][2][iCoeff][index];
-					coeffsLevel[iCoeff] = coeffs[level][3][iCoeff][index];
-					coeffsWeight[iCoeff] = coeffs[level][4][iCoeff][index];
-				}
-
-				for ( int iSubTap = 0; iSubTap < 4; iSubTap++ )
-				{
-					// determine sample attributes (dir, weight, level)
-					float3 sample_dir
-						= frameX * ( coeffsDir0[0][iSubTap] + coeffsDir0[1][iSubTap] * theta2 + coeffsDir0[2][iSubTap] * phi2 )
-						+ frameY * ( coeffsDir1[0][iSubTap] + coeffsDir1[1][iSubTap] * theta2 + coeffsDir1[2][iSubTap] * phi2 )
-						+ frameZ * ( coeffsDir2[0][iSubTap] + coeffsDir2[1][iSubTap] * theta2 + coeffsDir2[2][iSubTap] * phi2 );
-
-					float sample_level = coeffsLevel[0][iSubTap] + coeffsLevel[1][iSubTap] * theta2 + coeffsLevel[2][iSubTap] * phi2;
-
-					float sample_weight = coeffsWeight[0][iSubTap] + coeffsWeight[1][iSubTap] * theta2 + coeffsWeight[2][iSubTap] * phi2;
-					sample_weight *= frameweight;
-
-					// adjust for jacobian
-					sample_dir /= max( abs( sample_dir[0] ), max( abs( sample_dir[1] ), abs( sample_dir[2] ) ) );
-					sample_level += 0.75f * log2( dot( sample_dir, sample_dir ) );
-
-					// sample cubemap
-					color.xyz += tex_in.SampleLevel( trilinear, sample_dir, sample_level ).xyz * sample_weight;
-					color.w += sample_weight;
-				}
-			}
+			float   size		=	kernel_size[level];
+			float4	smpl		=	samples[level][i];
+			float3  localDir	=	normalize( direction + ( smpl.x * tangentX + smpl.y * tangentY ) * size );
+			//float	weight		=	NDF( roughness, direction, localDir );
+			float	weight		=	smpl.w;
+			color.rgb			+=	tex_in.SampleLevel( LinearSampler, localDir, level + smpl.z ).rgb * weight;
+			color.a				+=	weight;
 		}
+		/*float sampleCount	=	(2*range+1);
+		color /= sampleCount;
+		color /= sampleCount;*/
+		color /= color.w;
+	}
+
+#else
+	int range = 20;
+	float dxy = rcp( (float)(BASE_RESOLUTION >> level) ) * 1.5;
+	
+	for (int x=-range; x<=range; x++)
+	for (int y=-range; y<=range; y++)
+	{
+		float3  localDir	=	normalize( direction + ( x * tangentX + y * tangentY ) * dxy );
+		float	weight		=	NDF( roughness, direction, localDir );
+		color.rgb			+=	tex_in.SampleLevel( LinearSampler, localDir, level ).rgb * weight;
+		color.a				+=	weight;
 	}
 	color /= color.w;
-
-	// write color
-	color.x = max( 0, color.x );
-	color.y = max( 0, color.y );
-	color.z = max( 0, color.z );
-	color.w = 1;
-
+#endif
+	
 	switch ( level )
 	{
-	case 0:
-		tex_out0[id] = color;
-		break;
-	case 1:
-		tex_out1[id] = color;
-		break;
-	case 2:
-		tex_out2[id] = color;
-		break;
-	case 3:
-		tex_out3[id] = color;
-		break;
-	case 4:
-		tex_out4[id] = color;
-		break;
-	case 5:
-		tex_out5[id] = color;
-		break;
-	default:
-		tex_out6[id] = color;
-		break;
+		case 0:	 tex_out0[storeXYf] = color; break;
+		case 1:	 tex_out1[storeXYf] = color; break;
+		case 2:	 tex_out2[storeXYf] = color; break;
+		case 3:	 tex_out3[storeXYf] = color; break;
+		case 4:	 tex_out4[storeXYf] = color; break;
+		case 5:	 tex_out5[storeXYf] = color; break;
+		default: tex_out6[storeXYf] = color; break;
 	}
 }
 

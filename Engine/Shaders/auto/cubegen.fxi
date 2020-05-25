@@ -20,4 +20,15 @@ cbuffer __buffer0 : register(b0) {
 };
 SamplerState                   LinearSampler                  : register(s0);
 TextureCube<float4>            Source                         : register(t0);
+#if defined(DOWNSAMPLE)
 RWTexture2DArray<float4>       Target                         : register(u0);
+#endif
+#if defined(PREFILTER)
+RWTexture2DArray<float4>       Target0                        : register(u0);
+RWTexture2DArray<float4>       Target1                        : register(u1);
+RWTexture2DArray<float4>       Target2                        : register(u2);
+RWTexture2DArray<float4>       Target3                        : register(u3);
+RWTexture2DArray<float4>       Target4                        : register(u4);
+RWTexture2DArray<float4>       Target5                        : register(u5);
+RWTexture2DArray<float4>       Target6                        : register(u6);
+#endif

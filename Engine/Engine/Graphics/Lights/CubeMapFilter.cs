@@ -26,7 +26,16 @@ namespace Fusion.Engine.Graphics {
 
 		static FXSamplerState				regLinearSampler	= 	new SRegister(0, "LinearSampler");
 		static FXTextureCube<Vector4>		regSource			=	new TRegister(0, "Source"		);
-		static FXRWTexture2DArray<Vector4>	regTarget			= 	new URegister(0, "Target"		); 
+
+		[ShaderIfDef("DOWNSAMPLE")]	static FXRWTexture2DArray<Vector4>	regTarget	= 	new URegister(0, "Target"	); 
+									 		
+		[ShaderIfDef("PREFILTER")]	static FXRWTexture2DArray<Vector4>	regTarget0	= 	new URegister(0, "Target0"	); 
+		[ShaderIfDef("PREFILTER")]	static FXRWTexture2DArray<Vector4>	regTarget1	= 	new URegister(1, "Target1"	); 
+		[ShaderIfDef("PREFILTER")]	static FXRWTexture2DArray<Vector4>	regTarget2	= 	new URegister(2, "Target2"	); 
+		[ShaderIfDef("PREFILTER")]	static FXRWTexture2DArray<Vector4>	regTarget3	= 	new URegister(3, "Target3"	); 
+		[ShaderIfDef("PREFILTER")]	static FXRWTexture2DArray<Vector4>	regTarget4	= 	new URegister(4, "Target4"	); 
+		[ShaderIfDef("PREFILTER")]	static FXRWTexture2DArray<Vector4>	regTarget5	= 	new URegister(5, "Target5"	); 
+		[ShaderIfDef("PREFILTER")]	static FXRWTexture2DArray<Vector4>	regTarget6	= 	new URegister(6, "Target6"	); 
 
 		[ShaderDefine]
 		const int BlockSize = 8;
@@ -48,13 +57,8 @@ namespace Fusion.Engine.Graphics {
 		
 
 		enum Flags {
-			PREFILTER	=	0x0001,
-
-			MIP1		=	0x0010,
-			MIP2		=	0x0020,
-			MIP3		=	0x0040,
-			MIP4		=	0x0080,
-			MIP5		=	0x0100,
+			DOWNSAMPLE	=	0x0001,
+			PREFILTER	=	0x0002,
 		}
 		
 
@@ -118,47 +122,75 @@ namespace Fusion.Engine.Graphics {
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
+		public void GenerateCubeMipLevel( RenderTargetCube cubemap )
+		{
+			device.ResetStates();
+
+			if (cubemap==null) throw new ArgumentNullException("cubemap");
+
+			using ( new PixEvent( "GenerateCubeMipLevel" ) )
+			{
+				for ( int mip = 0; mip<cubemap.MipCount-1; mip++ )
+				{
+					device.PipelineState = factory[(int)Flags.DOWNSAMPLE];
+
+					var source	=	cubemap.GetCubeShaderResource(mip);
+					var target	=	cubemap.GetCubeSurface( mip + 1 ).UnorderedAccess;
+					var size	=	cubemap.Width >> ( mip + 1 );
+
+					device.SetComputeUnorderedAccess( regTarget, target );
+
+					device.ComputeSamplers	[ regLinearSampler	]	=	SamplerState.LinearWrap;
+					device.ComputeResources	[ regSource			]	=	source;
+
+
+					int tgx		=	MathUtil.IntDivRoundUp( size, 8 );
+					int tgy		=	MathUtil.IntDivRoundUp( size, 8 );
+					int tgz		=	6; // for each face
+
+					device.Dispatch( tgx, tgy, tgz );
+				}
+			}
+		}
+
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="lightSet"></param>
 		/// <param name="target"></param>
-		public void PrefilterLightProbe ( ShaderResource source, UnorderedAccess target, int size, int mip, float roughness )
+		public void PrefilterLightProbe ( RenderTargetCube source, TextureCubeArrayRW targetArray, int targetIndex )
 		{
-			device.ResetStates();
+			if (targetIndex<0) return;
+			
+			if (source		==null) throw new ArgumentNullException("source");
+			if (targetArray	==null) throw new ArgumentNullException("targetArray");
 
-			if (source==null) throw new ArgumentNullException("source");
-			if (target==null) throw new ArgumentNullException("target");
+			device.PipelineState = factory[(int)Flags.PREFILTER];
 
-			Flags flag = Flags.PREFILTER|Flags.MIP1;
-
-			switch (mip)
-			{
-				case 1: flag = Flags.PREFILTER | Flags.MIP1; break;
-				case 2: flag = Flags.PREFILTER | Flags.MIP2; break;
-				case 3: flag = Flags.PREFILTER | Flags.MIP3; break;
-				case 4: flag = Flags.PREFILTER | Flags.MIP4; break;
-				case 5: flag = Flags.PREFILTER | Flags.MIP5; break;
-			}
-
-			device.PipelineState = factory[(int)flag];
-
-			var data = new PARAMS();
-			data.Roughness	=	roughness;
-			data.MipLevel	=	mip;
-			data.SourceSize	=	size * 2;
-			data.TargetSize	=	size;
-			cbuffer.SetData( ref data ); 
+			var target0	=	targetArray.GetSingleCubeSurface( targetIndex, 0 );
+			var target1	=	targetArray.GetSingleCubeSurface( targetIndex, 1 );
+			var target2	=	targetArray.GetSingleCubeSurface( targetIndex, 2 );
+			var target3	=	targetArray.GetSingleCubeSurface( targetIndex, 3 );
+			var target4	=	targetArray.GetSingleCubeSurface( targetIndex, 4 );
+			var target5	=	targetArray.GetSingleCubeSurface( targetIndex, 5 );
+			var target6	=	targetArray.GetSingleCubeSurface( targetIndex, 6 );
+				
+			device.SetComputeUnorderedAccess( 0, target0.UnorderedAccess );
+			device.SetComputeUnorderedAccess( 1, target1.UnorderedAccess );
+			device.SetComputeUnorderedAccess( 2, target2.UnorderedAccess );
+			device.SetComputeUnorderedAccess( 3, target3.UnorderedAccess );
+			device.SetComputeUnorderedAccess( 4, target4.UnorderedAccess );
+			device.SetComputeUnorderedAccess( 5, target5.UnorderedAccess );
+			device.SetComputeUnorderedAccess( 6, target6.UnorderedAccess );
 
 			device.ComputeSamplers	[ regLinearSampler	]	=	SamplerState.LinearWrap;
 			device.ComputeResources	[ regSource			]	=	source;
 			device.ComputeConstants	[ regTarget			]	=	cbuffer;
-				
-			device.SetComputeUnorderedAccess( 0, target );
 
-			int tgx		=	MathUtil.IntDivRoundUp( size, BlockSize );
-			int tgy		=	MathUtil.IntDivRoundUp( size, BlockSize );
+			int size	=	128*128 + 64*64 + 32*32 + 16*16 + 8*8 + 4*4 + 2*2;
+			int tgx		=	MathUtil.IntDivRoundUp( size, 64 );
+			int tgy		=	6; // num faces
 			int tgz		=	1;
 
 			device.Dispatch( tgx, tgy, tgz );

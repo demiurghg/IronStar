@@ -220,19 +220,21 @@ namespace Fusion.Engine.Graphics {
 			{
 				foreach ( var lightProbe in lightSet.LightProbes )
 				{
+					if (lightProbe.ImageIndex<0)
+					{
+						//	skip non-assigned cubemaps
+						continue;
+					}
+
 					//var target = radianceArray.GetBatchCubeSurface( lightProbe.ImageIndex, 0 ).UnorderedAccess;
 					RelightLightProbe( gbufferColor, gbufferMapping, lightProbe, radianceTemp.GetCubeSurface(0).UnorderedAccess );
 
-					radianceTemp.BuildMipmaps();
+					cubeMapFilter.GenerateCubeMipLevel( radianceTemp );
+					//radianceTemp.BuildMipmaps();
 
-					for (int mip=0; mip<RenderSystem.LightProbeMaxMips-1; mip++)
-					{
-						var size		=	RenderSystem.LightProbeSize >> mip; 
-						var roughness	=	mip / (float)(RenderSystem.LightProbeMaxSpecularMip);
-						var source		=	radianceTemp.GetCubeShaderResource( mip );
-						var target		=	radianceArray.GetBatchCubeSurface ( lightProbe.ImageIndex, mip );
-						cubeMapFilter.PrefilterLightProbe( source, target.UnorderedAccess, size, mip, roughness );
-					}
+					rs.Device.ResetStates();
+
+					cubeMapFilter.PrefilterLightProbe( radianceTemp, radianceArray, lightProbe.ImageIndex );
 				}
 			}
 

@@ -4,19 +4,10 @@ static const int BlockSize = 8;
 
 // ---------------- DATA STRUCTURES ---------------- //
 
-// Fusion.Engine.Graphics.CubeMapFilter+PARAMS
-// Marshal.SizeOf = 64
-struct PARAMS {
-	float      Roughness;                     // offset:    0
-	float      MipLevel;                      // offset:    4
-	float      TargetSize;                    // offset:    8
-	float      SourceSize;                    // offset:   12
-};
-
 // ---------------- SHADER RESOURCES ---------------- //
 
 cbuffer __buffer0 : register(b0) {
-	PARAMS Params : packoffset(c0);
+	float4 FilterData[140] : packoffset(c0);
 };
 SamplerState                   LinearSampler                  : register(s0);
 TextureCube<float4>            Source                         : register(t0);

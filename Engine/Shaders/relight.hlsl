@@ -67,7 +67,7 @@ void CSMain(
 	float u	=	2 * (location.x + 0 * 0.25f) / (float)LightProbeSize - 1;
 	float v	=	2 * (location.y + 0 * 0.25f) / (float)LightProbeSize - 1;
 	
-	float4 brightPoint = (location.x == 90) && (location.y==30) ? float4(500,400,100,1) : float4(0,0,0,0);
+	//float4 brightPoint = (location.x == 90) && (location.y==30) ? float4(500,400,100,1) : float4(0,0,0,0);
 
 	face[0]	+=	ComputeLight( float3(  1, -v, -u ) );
 	face[1]	+=	ComputeLight( float3( -1, -v,  u ) );
@@ -76,7 +76,7 @@ void CSMain(
 	face[4]	+=	ComputeLight( float3(  u, -v,  1 ) );
 	face[5]	+=	ComputeLight( float3( -u, -v, -1 ) );
 	
-	TargetCube[int3(location.xy,0)]	=	face[0] + brightPoint;
+	TargetCube[int3(location.xy,0)]	=	face[0];// + brightPoint;
 	TargetCube[int3(location.xy,1)]	=	face[1];
 	TargetCube[int3(location.xy,2)]	=	face[2];
 	TargetCube[int3(location.xy,3)]	=	face[3];

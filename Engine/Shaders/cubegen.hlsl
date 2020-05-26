@@ -1,6 +1,6 @@
 #if 0
 $ubershader 	DOWNSAMPLE
-$ubershader		PREFILTER
+$ubershader		PREFILTER +REFERENCE..DIFFERENCE
 #endif
 
 #include "auto/cubegen.fxi"
@@ -225,6 +225,9 @@ https://research.activision.com/publications/archives/fast-filtering-of-reflecti
 
 bool GetFaceLocalAddress( uint id, out uint level, out uint2 xy, out float2 uv )
 {
+	xy = uint2(0,0);
+	uv = float2(0,0);
+	
 	if ( id.x < ( 128 * 128 ) )
 	{
 		level = 0;
@@ -261,8 +264,6 @@ bool GetFaceLocalAddress( uint id, out uint level, out uint2 xy, out float2 uv )
 	}
 	else
 	{
-		xy = uint2(0,0);
-		uv = float2(0,0);
 		return false;
 	}
 	
@@ -304,73 +305,6 @@ float3 GetUpVector( in uint face )
 
 //#define REFERENCE	
 
-static const uint sample_count = 7;
-static const float kernel_size[7] = { 
-	1.7f / 128.0f, 
-	4.5f /  64.0f, 
-	1.5f /  32.0f, 
-	1.5f /  16.0f, 
-	1.5f /   8.0f, 
-	1.5f /   4.0f, 
-	1.5f /   2.0f
-};
-static const float4 samples[7][7] = {
-	{ float4( 0.000f, 0.000f, 0.0f, 1.0000f ),
-	  float4( 1.000f, 0.000f, 0.5f, 0.0015f ),
-	  float4( 0.500f, 0.866f, 0.5f, 0.0015f ),
-	  float4(-0.500f, 0.866f, 0.5f, 0.0015f ),
-	  float4(-1.000f, 0.000f, 0.5f, 0.0015f ),
-	  float4(-0.500f,-0.866f, 0.5f, 0.0015f ),
-	  float4( 0.500f,-0.866f, 0.5f, 0.0015f ) },
-	                              
-	{ float4( 0.000f, 0.000f, 1.1f, 1.0000f ),
-	  float4( 1.000f, 0.000f, 2.3f, 0.1000f ),
-	  float4( 0.500f, 0.866f, 2.3f, 0.1000f ),
-	  float4(-0.500f, 0.866f, 2.3f, 0.1000f ),
-	  float4(-1.000f, 0.000f, 2.3f, 0.1000f ),
-	  float4(-0.500f,-0.866f, 2.3f, 0.1000f ),
-	  float4( 0.500f,-0.866f, 2.3f, 0.1000f ) },
-	                              
-	{ float4( 0.000f, 0.000f, 0.2 , 1 ),
-	  float4( 1.000f, 0.000f, 0.5f, 1 ),
-	  float4( 0.500f, 0.866f, 0.5f, 1 ),
-	  float4(-0.500f, 0.866f, 0.5f, 1 ),
-	  float4(-1.000f, 0.000f, 0.5f, 1 ),
-	  float4(-0.500f,-0.866f, 0.5f, 1 ),
-	  float4( 0.500f,-0.866f, 0.5f, 1 ) },
-	                              
-	{ float4( 0.000f, 0.000f, 0.2 , 1 ),
-	  float4( 1.000f, 0.000f, 0.5f, 1 ),
-	  float4( 0.500f, 0.866f, 0.5f, 1 ),
-	  float4(-0.500f, 0.866f, 0.5f, 1 ),
-	  float4(-1.000f, 0.000f, 0.5f, 1 ),
-	  float4(-0.500f,-0.866f, 0.5f, 1 ),
-	  float4( 0.500f,-0.866f, 0.5f, 1 ) },
-	                              
-	{ float4( 0.000f, 0.000f, 0.2 , 1 ),
-	  float4( 1.000f, 0.000f, 0.5f, 1 ),
-	  float4( 0.500f, 0.866f, 0.5f, 1 ),
-	  float4(-0.500f, 0.866f, 0.5f, 1 ),
-	  float4(-1.000f, 0.000f, 0.5f, 1 ),
-	  float4(-0.500f,-0.866f, 0.5f, 1 ),
-	  float4( 0.500f,-0.866f, 0.5f, 1 ) },
-	                              
-	{ float4( 0.000f, 0.000f, 0.2 , 1 ),
-	  float4( 1.000f, 0.000f, 0.5f, 1 ),
-	  float4( 0.500f, 0.866f, 0.5f, 1 ),
-	  float4(-0.500f, 0.866f, 0.5f, 1 ),
-	  float4(-1.000f, 0.000f, 0.5f, 1 ),
-	  float4(-0.500f,-0.866f, 0.5f, 1 ),
-	  float4( 0.500f,-0.866f, 0.5f, 1 ) },
-	                              
-	{ float4( 0.000f, 0.000f, 0.2 , 1 ),
-	  float4( 1.000f, 0.000f, 0.5f, 1 ),
-	  float4( 0.500f, 0.866f, 0.5f, 1 ),
-	  float4(-0.500f, 0.866f, 0.5f, 1 ),
-	  float4(-1.000f, 0.000f, 0.5f, 1 ),
-	  float4(-0.500f,-0.866f, 0.5f, 1 ),
-	  float4( 0.500f,-0.866f, 0.5f, 1 ) },
-};
 
 #define GROUP_SIZE 64
 [numthreads( GROUP_SIZE, 1, 1 )]
@@ -392,8 +326,6 @@ void CSMain( uint3 id : SV_DispatchThreadID )
 	float3  tangentX	=	normalize( cross( direction, upVector ) );
 	float3 	tangentY	=	normalize( cross( direction, tangentX ) );
 	
-#ifndef REFERENCE	
-
 	if (false/*level==0*/)
 	{
 		color	=	tex_in.SampleLevel( LinearSampler, direction, 0 ).rgba * 1
@@ -403,24 +335,21 @@ void CSMain( uint3 id : SV_DispatchThreadID )
 	}
 	else
 	{
-		for (uint i=0; i<sample_count; i++)
+		uint count = level==0 ? 7 : 19;
+		for (uint i=0; i<count; i++)
 		{
-			float   size		=	kernel_size[level];
-			float4	smpl		=	samples[level][i];
-			float3  localDir	=	normalize( direction + ( smpl.x * tangentX + smpl.y * tangentY ) * size );
-			//float	weight		=	NDF( roughness, direction, localDir );
-			float	weight		=	smpl.w;
-			color.rgb			+=	tex_in.SampleLevel( LinearSampler, localDir, level + smpl.z ).rgb * weight;
-			color.a				+=	weight;
+			float4	filter		=	FilterData[20 * level + i];
+			float3  localDir	=	normalize( direction + ( filter.x * tangentX + filter.y * tangentY ) );
+			color.rgb			+=	tex_in.SampleLevel( LinearSampler, localDir, level + filter.z ).rgb * filter.w;
+			color.a				+=	filter.w;
 		}
-		/*float sampleCount	=	(2*range+1);
-		color /= sampleCount;
-		color /= sampleCount;*/
+
 		color /= color.w;
 	}
 
-#else
-	int range = 20;
+#ifdef REFERENCE
+	int range = 7;
+	float4 refColor;
 	float dxy = rcp( (float)(BASE_RESOLUTION >> level) ) * 1.5;
 	
 	for (int x=-range; x<=range; x++)
@@ -428,10 +357,20 @@ void CSMain( uint3 id : SV_DispatchThreadID )
 	{
 		float3  localDir	=	normalize( direction + ( x * tangentX + y * tangentY ) * dxy );
 		float	weight		=	NDF( roughness, direction, localDir );
-		color.rgb			+=	tex_in.SampleLevel( LinearSampler, localDir, level ).rgb * weight;
-		color.a				+=	weight;
+		refColor.rgb			+=	tex_in.SampleLevel( LinearSampler, localDir, level ).rgb * weight;
+		refColor.a				+=	weight;
 	}
-	color /= color.w;
+	refColor /= refColor.w;
+	
+	#ifndef DIFFERENCE
+		color = refColor;
+	#else
+		float lumFast = dot( color.rgb,    float3(0.3f,0.5f,0.2f));
+		float lumRef  = dot( refColor.rgb, float3(0.3f,0.5f,0.2f));
+		float diff	  = lumFast - lumRef;
+		color	=	float4(5,0,0,1) * max(0,diff) + float4(0,0,15,1) * max(0,-diff);
+	#endif
+	
 #endif
 	
 	switch ( level )

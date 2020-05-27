@@ -52,7 +52,7 @@ float3 	EvaluateSHL( float3 shL0, float3 shL1, float3 shL2, float3 shL3, float r
 	float	lightG	=	EvalSHL1Smooth( irrG, normal );
 	float	lightB	=	EvalSHL1Smooth( irrB, normal );
 	
-	light			+=	float3( lightR, lightG, lightB ) * surface.diffuse * GI_SCALE;
+	light			+=	float3( lightR, lightG, lightB ) * surface.diffuse;
 	
 	return light;
 }

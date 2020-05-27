@@ -5,6 +5,7 @@ $ubershader 	RELIGHT
 
 #include "auto/relight.fxi"
 #include "rgbe.fxi"
+#include "gamma.fxi"
 
 /*-----------------------------------------------------------------------------
 	TODO:
@@ -42,12 +43,13 @@ float4	ComputeLight ( float3 dir )
 {
 	float	cubeId		=	RelightParams.CubeIndex;
 	float4	color		=	GBufferColorData .SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
+			//color.rgb	=	LinearToSRGB( color.rgb );
 	float4	mapping		=	GBufferNormalData.SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
 	float4	sky			=	SkyCube.SampleLevel( LinearSampler, dir * float3(-1,1,1), 0 );
 	
 	float3	lightmap	=	LightMap.SampleLevel( LinearSampler, mapping.xy, 0 ).rgb;
 	
-	float3	result		=	lerp( color.rgb * lightmap * 2, sky.rgb, 1 - color.a );
+	float3	result		=	lerp( color.rgb * lightmap, sky.rgb, 1 - color.a );
 
 	return float4( result, 1 );
 }

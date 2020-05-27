@@ -60,7 +60,6 @@ void CSMain(
 	shadowRc.ShadowMask		=	ShadowMask		;
 	
 	float4 	albedo			=	Albedo[ loadXY ].rgba;
-	albedo.rgb				=	LinearToSRGB( albedo.rgb );
 	
 	//---------------------------------
 	
@@ -94,7 +93,7 @@ void CSMain(
 	
 	if (albedo.a>0)
 	{
-		float3	indirect		=	Radiance[ loadXY ].rgb * Radiosity.SecondBounce * albedo.rgb;
+		float3	indirect		=	Radiance[ loadXY ].rgb * Radiosity.SecondBounce;
 		float3	position		=	Position[ loadXY ].xyz;
 		float3	normal			=	Normal	[ loadXY ].xyz * 2 - 1;
 				normal			=	normalize( normal );
@@ -109,6 +108,7 @@ void CSMain(
 		geometry.normal		=	normal;
 
 		float3 totalLight 	=	0;
+		float3 whiteAlbedo	=	float3(1,1,1);
 
 		//-----------------------------
 		// compute spot lights :
@@ -119,7 +119,7 @@ void CSMain(
 			LIGHT light =	Lights[ light_indices[ index ] ];
 			
 			FLUX  flux 	=	ComputePointLightFlux( geometry, light, shadowRc );
-			totalLight 	+= 	ComputeLighting( flux, geometry, albedo.rgb );
+			totalLight 	+= 	ComputeLighting( flux, geometry, whiteAlbedo );
 		}
 
 		//-----------------------------
@@ -142,7 +142,7 @@ void CSMain(
 		}
 		
 		FLUX	flux	=	ComputeDirectLightFlux( DirectLight );
-		totalLight		+=	ComputeLighting( flux, geometry, albedo.rgb ) * shadow;
+		totalLight		+=	ComputeLighting( flux, geometry, whiteAlbedo ) * shadow;
 		
 		totalLight		+=	indirect;
 		totalLight		+=	LightEpsilon;
@@ -335,7 +335,9 @@ void CSMain(
 			uint 	lmMip		=	(lmAddr >>  5) & 0x007;
 			int3	loadUVm		=	int3( lmX, lmY, lmMip );
 			float3 	radiance	=	Radiance.Load( loadUVm ).rgb;
-			radiance_cache[ base+offset ] = pack_color(radiance);
+			float3 	color		=	Albedo.Load( loadUVm ).rgb;
+					//color		=	LinearToSRGB( color );
+			radiance_cache[ base+offset ] = pack_color(radiance * color);
 		}
 		else
 		{

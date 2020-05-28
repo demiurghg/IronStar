@@ -104,12 +104,12 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 	//----------------------------------------------------------------------------------------------
 	
 	#ifdef IRRADIANCE_MAP
-		totalLight	+= 	EvaluateLightmap( reflection.a, rcLightMap, geometry, surface, Camera, lmCoord );
+		totalLight	+= 	EvaluateLightmap( reflection.a, rcLightMap, geometry, surface, Camera, lmCoord ) * Stage.IndirectLightFactor;
 		totalLight	*=	ssaoFactor;
 	#endif
 	#ifdef IRRADIANCE_VOLUME
 		float3 volumeCoord	=	mad( float4(geometry.position.xyz, 1), Stage.WorldToVoxelScale, Stage.WorldToVoxelOffset ).xyz;
-		totalLight			+=	EvaluateLightVolume( reflection.a, rcLightMap, geometry, surface, Camera, volumeCoord );
+		totalLight			+=	EvaluateLightVolume( reflection.a, rcLightMap, geometry, surface, Camera, volumeCoord ) * Stage.IndirectLightFactor;
 		totalLight			*=	ssaoFactor;
 	#endif
 

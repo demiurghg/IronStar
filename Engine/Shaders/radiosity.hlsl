@@ -24,6 +24,7 @@ $ubershader		RAYTRACE
 
 // small addition to tell lit and unlit areas
 static const float3 LightEpsilon = float3( 0.0001f, 0.0001f, 0.0001f );
+static const float3 WhiteColor = float3( 0.875f, 0.875f, 0.875f );
 
 #ifdef LIGHTING
 
@@ -336,7 +337,7 @@ void CSMain(
 			int3	loadUVm		=	int3( lmX, lmY, lmMip );
 			float3 	radiance	=	Radiance.Load( loadUVm ).rgb;
 			float3 	color		=	Albedo.Load( loadUVm ).rgb;
-					//color		=	LinearToSRGB( color );
+					color		=	lerp( WhiteColor, color, Radiosity.ColorBounce );
 			radiance_cache[ base+offset ] = pack_color(radiance * color);
 		}
 		else
@@ -442,7 +443,9 @@ void CSMain(
 			uint 	lmMip		=	(lmAddr >>  5) & 0x007;
 			int3	loadUVm		=	int3( lmX, lmY, lmMip );
 			float3 	radiance	=	Radiance.Load( loadUVm ).rgb;
-			radiance_cache[ base+offset ] = pack_color(radiance);
+			float3 	color		=	Albedo.Load( loadUVm ).rgb;
+					color		=	lerp( WhiteColor, color, Radiosity.ColorBounce );
+			radiance_cache[ base+offset ] = pack_color(radiance * color);
 		}
 		else
 		{

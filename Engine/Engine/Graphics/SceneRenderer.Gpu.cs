@@ -84,6 +84,7 @@ namespace Fusion.Engine.Graphics {
 			public float	DepthBias				;
 
 			public float	DirectLightFactor		;
+			public float	IndirectLightFactor		;
 		}
 
 

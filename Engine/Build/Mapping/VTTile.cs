@@ -117,10 +117,10 @@ namespace Fusion.Build.Mapping {
 		/// <param name="color"></param>
 		public void MakeWhiteDiffuse()
 		{
-			colorData.Fill( Color.Gray );
+			colorData.Fill( PbrReference.DielectricMax );
 			specularData.ForEachPixel( spec => new Color( (byte)255, (byte)0, (byte)0, spec.A ) );
 
-			colorDataMip?.Fill( Color.Gray );
+			colorDataMip?.Fill( PbrReference.DielectricMax );
 			specularDataMip?.ForEachPixel( spec => new Color( (byte)255, (byte)0, (byte)0, spec.A ) );
 		}
 

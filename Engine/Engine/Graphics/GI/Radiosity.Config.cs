@@ -25,6 +25,11 @@ namespace Fusion.Engine.Graphics.GI
 
 		[Config]
 		[AECategory("Radiosity")]
+		[AEValueRange(0,10,0.5f,0.01f)]
+		public float MasterIntensity { get; set; } = 1;
+
+		[Config]
+		[AECategory("Radiosity")]
 		[AEValueRange(0,5,1f,0.01f)]
 		public float SkyFactor { get; set; } = 1;
 
@@ -37,6 +42,11 @@ namespace Fusion.Engine.Graphics.GI
 		[AECategory("Radiosity")]
 		[AEValueRange(0,2,0.1f,0.01f)]
 		public float SecondBounce { get; set; } = 0.5f;
+
+		[Config]
+		[AECategory("Radiosity")]
+		[AEValueRange(0,1,0.25f,0.01f)]
+		public float ColorBounce { get; set; } = 1.0f;
 
 		[Config]
 		[AECategory("Radiosity")]

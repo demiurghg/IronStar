@@ -9,17 +9,12 @@ static const int LightProbeSize = 128;
 // ---------------- DATA STRUCTURES ---------------- //
 
 // Fusion.Engine.Graphics.LightManager+RELIGHT_PARAMS
-// Marshal.SizeOf = 192
+// Marshal.SizeOf = 64
 struct RELIGHT_PARAMS {
-	float4x4   ShadowViewProjection;          // offset:    0
-	float4     LightProbePosition;            // offset:   64
-	float4     DirectLightIntensity;          // offset:   80
-	float4     DirectLightDirection;          // offset:   96
-	float4     ShadowRegion;                  // offset:  112
-	float4     SkyAmbient;                    // offset:  128
-	float      CubeIndex;                     // offset:  144
-	float      Roughness;                     // offset:  148
-	float      TargetSize;                    // offset:  152
+	uint       CubeIndex;                     // offset:    0
+	float      RadiosityLevel;                // offset:    4
+	float      Dummy0;                        // offset:    8
+	float      Dummy1;                        // offset:   12
 };
 
 // ---------------- SHADER RESOURCES ---------------- //
@@ -29,8 +24,9 @@ cbuffer __buffer0 : register(b0) {
 };
 TextureCubeArray<float4>       GBufferColorData               : register(t0);
 TextureCubeArray<float4>       GBufferNormalData              : register(t1);
-Texture2D<float4>              LightMap                       : register(t2);
-TextureCube<float4>            SkyCube                        : register(t3);
+Texture2D<float4>              LightMap0                      : register(t2);
+Texture2D<float4>              LightMap1                      : register(t3);
+TextureCube<float4>            SkyCube                        : register(t4);
 SamplerState                   PointSampler                   : register(s0);
 SamplerState                   LinearSampler                  : register(s1);
 SamplerComparisonState         ShadowSampler                  : register(s2);

@@ -42,6 +42,7 @@ struct RADIOSITY {
 	float      IndirectFactor;                // offset:   20
 	float      SecondBounce;                  // offset:   24
 	float      ShadowFilter;                  // offset:   28
+	float      ColorBounce;                   // offset:   32
 };
 
 // Fusion.Engine.Graphics.ShadowMap+CASCADE_SHADOW

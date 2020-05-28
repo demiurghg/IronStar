@@ -16,6 +16,7 @@ using BEPUphysics;
 using BEPUphysics.BroadPhaseEntries;
 using Native.Embree;
 using Fusion.Engine.Graphics.Lights;
+using Fusion.Engine.Graphics.GI;
 
 namespace Fusion.Engine.Graphics {
 
@@ -26,8 +27,9 @@ namespace Fusion.Engine.Graphics {
 		
 		static FXTextureCubeArray<Vector4>	regGBufferColorData		=	new TRegister(0, "GBufferColorData"		);
 		static FXTextureCubeArray<Vector4>	regGBufferNormalData	=	new TRegister(1, "GBufferNormalData"	);
-		static FXTexture2D<Vector4>			regLightMap				=	new TRegister(2, "LightMap"				);
-		static FXTextureCube<Vector4>		regSkyCube				=	new TRegister(3, "SkyCube"				);
+		static FXTexture2D<Vector4>			regLightMap0			=	new TRegister(2, "LightMap0"			);
+		static FXTexture2D<Vector4>			regLightMap1			=	new TRegister(3, "LightMap1"			);
+		static FXTextureCube<Vector4>		regSkyCube				=	new TRegister(4, "SkyCube"				);
 
 		static FXSamplerState				regPointSampler			= 	new SRegister(0, "PointSampler"			);
 		static FXSamplerState				regLinearSampler		= 	new SRegister(1, "LinearSampler"		);
@@ -43,17 +45,12 @@ namespace Fusion.Engine.Graphics {
 
 
 		[ShaderStructure()]
-		[StructLayout(LayoutKind.Sequential, Pack=4, Size=192)]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=64)]
 		struct RELIGHT_PARAMS {
-			public	Matrix	ShadowViewProjection;
-			public	Vector4	LightProbePosition;
-			public	Color4	DirectLightIntensity;
-			public	Vector4	DirectLightDirection;
-			public	Vector4	ShadowRegion;
-			public	Color4	SkyAmbient;
-			public	float	CubeIndex;
-			public	float	Roughness;
-			public	float	TargetSize;
+			public	uint	CubeIndex;
+			public	float	RadiosityLevel;
+			public	float	Dummy0;
+			public	float	Dummy1;
 		}
 
 
@@ -261,11 +258,17 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public void RelightLightProbe ( TextureCubeArray colorData, TextureCubeArray normalData, LightProbe lightProbe, UnorderedAccess target )
 		{
-			using ( new PixEvent( "LightProbe #" + lightProbe.ImageIndex.ToString() ) ) {
+			//	skip unassigned cubemaps :
+			if (lightProbe.ImageIndex<0) return;
+			
+			using ( new PixEvent( "LightProbe #" + lightProbe.ImageIndex.ToString() ) ) 
+			{
 
 				var relightParams	=	new RELIGHT_PARAMS();
+				var radiosity		=	Game.GetService<Radiosity>();
 
-				relightParams.CubeIndex		=	lightProbe.ImageIndex;
+				relightParams.CubeIndex			=	(uint)lightProbe.ImageIndex;
+				relightParams.RadiosityLevel	=	radiosity.MasterIntensity - radiosity.SecondBounce;
 				cbRelightParams.SetData( ref relightParams );
 
 
@@ -273,7 +276,8 @@ namespace Fusion.Engine.Graphics {
 
 				device.ComputeResources	[ regGBufferColorData	]	=	colorData;
 				device.ComputeResources	[ regGBufferNormalData	]	=	normalData;
-				device.ComputeResources	[ regLightMap			]	=	rs.Radiosity.Radiance;
+				device.ComputeResources	[ regLightMap0			]	=	rs.Radiosity.Radiance;
+				device.ComputeResources	[ regLightMap1			]	=	rs.Radiosity.IrradianceL0;
 				device.ComputeResources	[ regSkyCube			]	=	rs.Sky.SkyCube;
 				device.ComputeSamplers	[ regPointSampler		]	=	SamplerState.PointClamp;
 				device.ComputeSamplers	[ regLinearSampler		]	=	SamplerState.LinearWrap;

@@ -95,7 +95,7 @@ float4 ComputeEnvironmentLighting ( LIGHTPROBE probe, GEOMETRY geometry, SURFACE
 		reflectVector		=	SpecularParallaxCubeMap( geometry.position, cameraPos, surface.normal, cubeMapPos, lpbMatrixI ) * float3(-1,1,1);
 	}
 	
-	float	mipLevel		=	saturate(sqrt(surface.roughness)) * LightProbeMaxSpecularMip;
+	float	mipLevel		=	saturate(surface.roughness) * LightProbeMaxSpecularMip;
 	float3	specTerm		=	rc.RadianceCache.SampleLevel( rc.Sampler, float4(reflectVector, imageIndex), mipLevel ).rgb;
 		
 			specTerm		=	specTerm * mad( surface.specular, ab.x, ab.y ) * selfOcclusion;

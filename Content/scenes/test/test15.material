@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = False
+
+[Textures]
+BaseColor = pbrTestTextures/pbrTest_test15.png
+NormalMap = pbrTestTextures/pbrTest_test15_nm.png
+Metallic  = pbrTestTextures/pbrTest_test15_m.png
+Roughness = pbrTestTextures/pbrTest_test15_r.png
+Emission  = 
+Occlusion = 

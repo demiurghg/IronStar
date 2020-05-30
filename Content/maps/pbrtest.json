@@ -7,7 +7,7 @@
     "SunAltitude": 60.0,
     "SkyIntensity": 0.0,
     "SunAzimuth": 45.0,
-    "SunIntensity": 500.0,
+    "SunIntensity": 0.0,
     "FogDistance": 100000.0,
     "FogHeight": 0.05,
     "FogColor": "10, 10, 10, 0"
@@ -359,7 +359,7 @@
         "LightColor": "255, 169, 91, 255",
         "LightIntensity": 230.0,
         "OuterRadius": 100.0,
-        "InnerRadius": 0.1,
+        "InnerRadius": 8.0,
         "NearPlane": 0.125,
         "FarPlane": 100.0,
         "FovVertical": 75.0,

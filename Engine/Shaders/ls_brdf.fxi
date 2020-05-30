@@ -124,19 +124,22 @@ float GTerm ( float roughness, float3 N, float3 V )
 }
 
 
-float NDF ( float roughness, float3 N, float3 H )
+float NDF ( float roughness, float3 N, float3 H, float d )
 {
 	float a 	= 	roughness * roughness;
 	float a2	=	a * a;
+	//float ndh	=	dot(N,H);
 	float ndh	=	dot(N,H);
+		  d     =   min( d, sqrt(1-ndh*ndh) );
+	      ndh	=	saturate( ndh * sqrt(1-d*d) + sqrt(1-ndh*ndh)*d );
 	float ndh2	=	ndh * ndh;
-	float ndh4	=	ndh2 * ndh2;
 	
-	//	Beckmann :
-	//return exp( ( ndh2-1 )/( a2 * ndh2 ) ) / ( PI * a2 * ndh4 );
+	//	energy conservation :
+	float a1		=	saturate( a + 0.66f * d );
+	float factor	=	sqr( a / a1 );
 	
 	//	GGX :
-	return a2 / ( PI * sqr( ndh2 * (a2-1) + 1 ) );
+	return factor * a2 / ( PI * sqr( ndh2 * (a2-1) + 1 ) );
 }
 
 
@@ -152,8 +155,9 @@ float NDF ( float roughness, float3 N, float3 H )
 	http://blog.selfshadow.com/publications/s2013-shading-course/hoffman/s2013_pbs_physics_math_slides.pdf
 -----------------------------------------------------------------------------*/
 
-float3	CookTorrance( float3 N, float3 V, float3 L, float3 I, float3 F, float roughness, float sourceRadius )
+float3	CookTorrance( float3 N, float3 V, float3 L, float3 I, float3 F, float roughness, float divergency )
 {
+	#if 0
 	float3	r				=	normalize(reflect(V,N));
 	float3	centerToRay		=	dot(L,r)*r-L;
 	float3	closestPoint	=	L + centerToRay * saturate( sourceRadius / length(centerToRay) );
@@ -162,16 +166,20 @@ float3	CookTorrance( float3 N, float3 V, float3 L, float3 I, float3 F, float rou
 	float	factor	=	sqr( roughness / mm );
 
 			L	=	normalize(closestPoint);
+	#else
+	float factor	=	1;
+	#endif
 
 			L	=	normalize(L);
 			V	=	normalize(V);
 	float3	H	=	normalize(V+L);
 	
 	float	epsilon	=	0.0009765625;
+			roughness += epsilon * 16;
 	
 	float	G		=	GTerm( roughness, N,V,H,L );
 	
-	float	D		=	NDF( roughness, N,H );
+	float	D		=	NDF( roughness, N,H, divergency );
 
 			F		=	Fresnel( dot(V,H), F );
 						  

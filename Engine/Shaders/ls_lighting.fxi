@@ -41,7 +41,7 @@ FLUX ComputeDirectLightFlux( DIRECT_LIGHT directLight )
 	FLUX flux;
 	flux.direction	=	normalize(directLight.DirectLightDirection.xyz);
 	flux.intensity	=	directLight.DirectLightIntensity.xyz;
-	flux.divergency	=	0; // #TODO - angular size
+	flux.divergency	=	0.03f; // #TODO - angular size
 	return flux;
 }
 
@@ -62,7 +62,7 @@ FLUX ComputePointLightFlux( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc 
 	FLUX flux;
 	flux.direction		=	normalize( lightDir );
 	flux.intensity		=	intensity * falloff;
-	flux.divergency		=	0;
+	flux.divergency		=	1 * sourceRadius / (0.01 + length(lightDir)); 
 	
 	[branch]
 	if (type==LightTypeOmni) 
@@ -82,6 +82,7 @@ float3	ComputeLighting( FLUX flux, GEOMETRY geometry, SURFACE surface, CAMERA ca
 {
 	float3	viewDir		=	normalize( Camera.CameraPosition.xyz - geometry.position.xyz );
 	float3 	lightDir	=	-flux.direction;
+	float3	viewReflect	=	reflect(-viewDir, surface.normal);
 	float  	nDotL		= 	saturate( dot(surface.normal, lightDir) );
 	float  	nDotLGeom	= 	saturate( dot(geometry.normal, lightDir) * 10 );
 			nDotL		*=	nDotLGeom;
@@ -96,7 +97,7 @@ float3	ComputeLighting( FLUX flux, GEOMETRY geometry, SURFACE surface, CAMERA ca
 	#ifndef LIGHTING_DIFFUSE_ONLY	
 	if (specular)
 	{
-		totalLight.rgb 		+= 	nDotL * CookTorrance( surface.normal.xyz, viewDir, lightDir, flux.intensity, surface.specular, surface.roughness, 0.01f );
+		totalLight.rgb 		+= 	nDotL * CookTorrance( surface.normal.xyz, viewDir, lightDir, flux.intensity, surface.specular, surface.roughness, flux.divergency );
 	}
 	#endif
 	

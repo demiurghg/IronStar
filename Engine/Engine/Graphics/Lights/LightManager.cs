@@ -17,6 +17,7 @@ using BEPUphysics.BroadPhaseEntries;
 using Native.Embree;
 using Fusion.Engine.Graphics.Lights;
 using Fusion.Engine.Graphics.GI;
+using Fusion.Core.Shell;
 
 namespace Fusion.Engine.Graphics {
 
@@ -98,6 +99,8 @@ namespace Fusion.Engine.Graphics {
 			ROUGHNESS_100	=	0x0800,
 		}
 		
+		[Config]
+		public int MaxLPPF { get; set; } = 8;
 
 
 		/// <summary>
@@ -204,7 +207,7 @@ namespace Fusion.Engine.Graphics {
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
-		public void RelightLightProbes ( LightSet lightSet )
+		public void RelightLightProbes ( LightSet lightSet, Camera camera )
 		{
 			var cubeMapFilter	=	Game.GetService<CubeMapFilter>();
 
@@ -213,15 +216,25 @@ namespace Fusion.Engine.Graphics {
 			var radianceArray	=	rs.LightMapResources.LightProbeRadianceArray;
 			var radianceTemp	=	rs.LightMapResources.LightProbeRadiance;
 
+			var frustum			=	camera.Frustum;
+
+			foreach ( var lightProbe in lightSet.LightProbes )
+			{
+				ScoreLightProbe( lightProbe, ref frustum );
+			}
+
+			var lightProbesToRelight = lightSet.LightProbes
+				.OrderByDescending( lpb => lpb.RelightScore )
+				.Take( MaxLPPF )
+				.ToArray();
+
 			using ( new PixEvent( "Relight Light Probes" ) )
 			{
-				foreach ( var lightProbe in lightSet.LightProbes )
+				foreach ( var lightProbe in lightProbesToRelight )
 				{
-					if (lightProbe.ImageIndex<0)
-					{
-						//	skip non-assigned cubemaps
-						continue;
-					}
+					lightProbe.RelightScore *= 0.5f;
+
+					if (lightProbe.ImageIndex<0) continue;
 
 					//var target = radianceArray.GetBatchCubeSurface( lightProbe.ImageIndex, 0 ).UnorderedAccess;
 					RelightLightProbe( gbufferColor, gbufferMapping, lightProbe, radianceTemp.GetCubeSurface(0).UnorderedAccess );
@@ -234,23 +247,25 @@ namespace Fusion.Engine.Graphics {
 					cubeMapFilter.PrefilterLightProbe( radianceTemp, radianceArray, lightProbe.ImageIndex );
 				}
 			}
-
-
-			/*using ( new PixEvent( "Prefilter Light Probes" ) )
-			{
-				for (int mip=0; mip<RenderSystem.LightProbeMaxMips-1; mip++)
-				{
-					foreach ( var lightProbe in lightSet.LightProbes )
-					{
-						var size		=	RenderSystem.LightProbeSize >> ( mip + 1 ); 
-						var roughness	=	mip / (float)(RenderSystem.LightProbeMaxSpecularMip);
-						var source		=	radianceArray.GetBatchCubeShaderResource( lightProbe.ImageIndex, mip );
-						var target		=	radianceArray.GetBatchCubeSurface		( lightProbe.ImageIndex, mip + 1 );
-						cubeMapFilter.PrefilterLightProbe( source, target.UnorderedAccess, size, mip+1, roughness );
-					}
-				}
-			}	*/
 		}
+
+
+
+		public void ScoreLightProbe( LightProbe lightProbe, ref BoundingFrustum frustum )
+		{
+			lightProbe.RelightScore++;
+
+			if ( frustum.Contains( lightProbe.BoundingBox ) == ContainmentType.Disjoint )
+			{
+				lightProbe.RelightScore *= 0.25f;
+			}
+
+			if (lightProbe.ImageIndex<0)
+			{
+				lightProbe.RelightScore = 0;
+			}
+		}
+
 
 
 		/// <summary>

@@ -47,6 +47,8 @@ namespace Fusion.Engine.Graphics
 		internal Int3	MinExtent;
 		internal Int3	MaxExtent;
 
+		internal float	RelightScore;
+
 		/// <summary>
 		/// Bounding box for sorting
 		/// </summary>

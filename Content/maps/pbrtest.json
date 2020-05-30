@@ -5,7 +5,7 @@
     "Gravity": 48.0,
     "SkyTrubidity": 6.5,
     "SunAltitude": 60.0,
-    "SkyIntensity": 1.0,
+    "SkyIntensity": 0.0,
     "SunAzimuth": 45.0,
     "SunIntensity": 500.0,
     "FogDistance": 100000.0,
@@ -58,7 +58,7 @@
       {
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "NodeGuid": "40a615bd-1b8f-4891-9cd3-7e41451b3731",
-        "Radius": 16.0,
+        "Radius": 32.0,
         "Transition": 8.0,
         "Visible": true,
         "Frozen": false,
@@ -72,7 +72,7 @@
       {
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "NodeGuid": "f8b35f84-765a-48f5-a308-12548abde092",
-        "Radius": 16.0,
+        "Radius": 32.0,
         "Transition": 8.0,
         "Visible": true,
         "Frozen": false,
@@ -86,7 +86,7 @@
       {
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "NodeGuid": "c4d4a7f0-ea20-43e0-8439-36b69fcc3b9c",
-        "Radius": 16.0,
+        "Radius": 32.0,
         "Transition": 8.0,
         "Visible": true,
         "Frozen": false,
@@ -100,7 +100,7 @@
       {
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "NodeGuid": "0b70ca76-edbf-4943-9b22-09b021b94430",
-        "Radius": 16.0,
+        "Radius": 32.0,
         "Transition": 8.0,
         "Visible": true,
         "Frozen": false,
@@ -114,7 +114,7 @@
       {
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "NodeGuid": "e04df525-73db-40d8-bbc9-55152c06f81e",
-        "Radius": 16.0,
+        "Radius": 32.0,
         "Transition": 8.0,
         "Visible": true,
         "Frozen": false,
@@ -128,7 +128,7 @@
       {
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "NodeGuid": "307d4a59-5ea0-4462-9391-998358708336",
-        "Radius": 16.0,
+        "Radius": 32.0,
         "Transition": 8.0,
         "Visible": true,
         "Frozen": false,

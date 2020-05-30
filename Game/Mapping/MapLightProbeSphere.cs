@@ -62,9 +62,9 @@ namespace IronStar.Mapping {
 			light.ProbeMatrix		=	ComputeProbeMatrix();
 			light.BoundingBox		=	GetBoundingBox();
 			light.Radius			=	Radius;
-			light.NormalizedWidth	=	Math.Max( 0, Radius / 2.0f - Transition ) / (Radius / 2.0f) ;
-			light.NormalizedHeight	=	Math.Max( 0, Radius / 2.0f - Transition ) / (Radius / 2.0f) ;
-			light.NormalizedDepth	=	Math.Max( 0, Radius / 2.0f - Transition ) / (Radius / 2.0f) ;
+			light.NormalizedWidth	=	Math.Max( 0, Radius * 2.0f - 2*Transition ) / (Radius * 2.0f) ;
+			light.NormalizedHeight	=	Math.Max( 0, Radius * 2.0f - 2*Transition ) / (Radius * 2.0f) ;
+			light.NormalizedDepth	=	Math.Max( 0, Radius * 2.0f - 2*Transition ) / (Radius * 2.0f) ;
 
 			lightSet.LightProbes.Add( light );
 		}

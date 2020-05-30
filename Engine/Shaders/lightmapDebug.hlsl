@@ -115,7 +115,7 @@ float4 PSMain( PSInput input ) : SV_Target0
 		tint = float3(1,0,0);
 	}
 	
-	SURFACE 	surf	=	CreateDiffuseSurface( SRGBToLinear(float3(0.5,0.5,0.5)), surfaceNormal );
+	SURFACE 	surf	=	CreateDiffuseSurface( float3(1,1,1), surfaceNormal );
 	GEOMETRY	geom	=	CreateGeometry( surfacePos, surfaceNormal );
 
 	float3	viewDir		=	cameraPos - surfacePos;

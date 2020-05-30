@@ -80,9 +80,9 @@ namespace IronStar.Mapping {
 
 			light.ProbeMatrix		=	ComputeProbeMatrix();
 			light.BoundingBox		=	GetBoundingBox();
-			light.NormalizedWidth	=	Math.Max( 0, Width  - ShellWidth  ) / Width	;
-			light.NormalizedHeight	=	Math.Max( 0, Height - ShellHeight ) / Height;
-			light.NormalizedDepth	=	Math.Max( 0, Depth  - ShellDepth  ) / Depth	;
+			light.NormalizedWidth	=	Math.Max( 0, Width  - 2*ShellWidth  ) / Width	;
+			light.NormalizedHeight	=	Math.Max( 0, Height - 2*ShellHeight ) / Height;
+			light.NormalizedDepth	=	Math.Max( 0, Depth  - 2*ShellDepth  ) / Depth	;
 
 			lightSet.LightProbes.Add( light );
 		}

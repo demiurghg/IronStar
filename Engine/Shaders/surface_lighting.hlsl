@@ -99,6 +99,8 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 	totalLight.rgb	=	reflection.rgb * ssaoFactor;
 #endif	
 
+	//totalLight.rgb += frac(reflection.a * 10)*10;
+
 	//----------------------------------------------------------------------------------------------
 	//	Lightmaps :
 	//----------------------------------------------------------------------------------------------

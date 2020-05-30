@@ -22,7 +22,7 @@ namespace Fusion.Engine.Graphics.GI
 	[RequireShader("radiosity", true)]
 	public partial class Radiosity : RenderComponent
 	{
-		const int RegionSize = 512;
+		const int RegionSize = 128;
 
 		[ShaderDefine]	const int TileSize			=	RadiositySettings.TileSize;
 		[ShaderDefine]	const int ClusterSize		=	RadiositySettings.ClusterSize;
@@ -207,24 +207,27 @@ namespace Fusion.Engine.Graphics.GI
 
 			using ( new PixEvent( "Radiosity" ) )
 			{
-				SetupShaderResources();
-
 				//rs.RayTracer.TestRayTracing();
 
-				int regSize =	RegionSize;
-				int regX	=	lightMap.Width  / regSize;
-				int regY	=	lightMap.Height / regSize;
+				for (int i=0; i<MaxRPF; i++)
+				{
+					SetupShaderResources();
+	
+					int regSize =	RegionSize;
+					int regX	=	lightMap.Width  / regSize;
+					int regY	=	lightMap.Height / regSize;
 
-				counter		=	(counter) % (regX * regY);
-				int x		=	counter % regX * regSize;
-				int y		=	counter / regX * regSize;
-				int w		=	regSize;
-				int h		=	regSize;
+					int regId	=	(counter) % (regX * regY);
 
-				if (!LockRegion) counter++;
+					int x		=	regId % regX * regSize;
+					int y		=	regId / regX * regSize;
+					int w		=	regSize;
+					int h		=	regSize;
 
-				RenderRegion( new Rectangle(x, y, w, h) );
-				//RenderRegion( new Rectangle(0,0, lightMap.Width, lightMap.Height) );
+					if (!LockRegion) counter++;
+
+					RenderRegion( new Rectangle(x, y, w, h) );
+				}
 
 				SetupShaderResources();
 				IntegrateLightVolume();

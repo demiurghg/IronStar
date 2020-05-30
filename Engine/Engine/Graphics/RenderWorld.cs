@@ -528,11 +528,8 @@ namespace Fusion.Engine.Graphics {
 				}
 
 
-				using ( new PixEvent( "Frame Scene Rendering" ) ) {
-
-					//var ms = new MemoryStream();
-					//CaptureRadiance( ms );
-
+				using ( new PixEvent( "Frame Scene Rendering" ) ) 
+				{
 					//	Z-pass without weapon :
 					rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, rlMainView, InstanceGroup.NotWeapon );
 
@@ -648,7 +645,7 @@ namespace Fusion.Engine.Graphics {
 
 				foreach ( var lightProbe in LightSet.LightProbes ) {
 
-					using ( new PixEvent( "Rende Cube" ) )
+					using ( new PixEvent( "Render Cube" ) )
 					{
 
 						Log.Message( "...{0}", lightProbe.Guid );

@@ -64,6 +64,11 @@ GEOMETRY CreateGeometry( float3 p, float3 n )
 	return g;
 }
 
+float ClampRoughness( float r )
+{
+	return clamp( r, 1.0f / 16.0f, 1 );
+}
+
 /*------------------------------------------------------------------------------
 	BRDF functions :
 ------------------------------------------------------------------------------*/
@@ -128,18 +133,21 @@ float NDF ( float roughness, float3 N, float3 H, float d )
 {
 	float a 	= 	roughness * roughness;
 	float a2	=	a * a;
-	//float ndh	=	dot(N,H);
 	float ndh	=	dot(N,H);
-		  d     =   min( d, sqrt(1-ndh*ndh) );
-	      ndh	=	saturate( ndh * sqrt(1-d*d) + sqrt(1-ndh*ndh)*d );
-	float ndh2	=	ndh * ndh;
 	
+#if 0
+	// simulate finite-size light sources:
+	d	=	min( d, sqrt(1-ndh*ndh) );
+	ndh	=	saturate( ndh * sqrt(1-d*d) + sqrt(1-ndh*ndh)*d );
 	//	energy conservation :
 	float a1		=	saturate( a + 0.66f * d );
 	float factor	=	sqr( a / a1 );
-	
-	//	GGX :
+	float ndh2	=	ndh * ndh;
 	return factor * a2 / ( PI * sqr( ndh2 * (a2-1) + 1 ) );
+#else
+	float ndh2	=	ndh * ndh;
+	return a2 / ( PI * sqr( ndh2 * (a2-1) + 1 ) );
+#endif
 }
 
 
@@ -157,25 +165,11 @@ float NDF ( float roughness, float3 N, float3 H, float d )
 
 float3	CookTorrance( float3 N, float3 V, float3 L, float3 I, float3 F, float roughness, float divergency )
 {
-	#if 0
-	float3	r				=	normalize(reflect(V,N));
-	float3	centerToRay		=	dot(L,r)*r-L;
-	float3	closestPoint	=	L + centerToRay * saturate( sourceRadius / length(centerToRay) );
-	
-	float	mm		=	saturate( roughness + sourceRadius/2/length(L) );
-	float	factor	=	sqr( roughness / mm );
-
-			L	=	normalize(closestPoint);
-	#else
-	float factor	=	1;
-	#endif
-
 			L	=	normalize(L);
 			V	=	normalize(V);
 	float3	H	=	normalize(V+L);
 	
 	float	epsilon	=	0.0009765625;
-			roughness += epsilon * 16;
 	
 	float	G		=	GTerm( roughness, N,V,H,L );
 	
@@ -183,7 +177,7 @@ float3	CookTorrance( float3 N, float3 V, float3 L, float3 I, float3 F, float rou
 
 			F		=	Fresnel( dot(V,H), F );
 						  
-	return max(0, I * F * D * G / (4*abs(dot(N,L))*dot(V,N)+epsilon)) * factor;
+	return max(0, I * F * D * G / (4*abs(dot(N,L))*dot(V,N)+epsilon));
 }
 
 #endif

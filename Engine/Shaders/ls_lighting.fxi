@@ -78,6 +78,20 @@ FLUX ComputePointLightFlux( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc 
 }
 
 
+float4 TubeLight( float3 lightDirNorm, float3 viewReflectNorm, float roughness, float divergency )
+{
+	float  	a				=	roughness * roughness;
+	float 	a1				=	saturate( a + 0.66f * divergency );
+	float  	energyFactor	=	sqr( a / a1 );
+	
+	float3 	lightToRay		=	( viewReflectNorm - lightDirNorm );
+	float	lightToRayLen	=	min( length( lightToRay ), divergency );
+	float3 	lightDirFS		=	normalize( viewReflectNorm - lightDirNorm ) * lightToRayLen + lightDirNorm;
+	
+	return float4( lightDirFS, energyFactor );
+}
+
+
 float3	ComputeLighting( FLUX flux, GEOMETRY geometry, SURFACE surface, CAMERA camera, bool diffuse=true, bool specular=true )
 {
 	float3	viewDir		=	normalize( Camera.CameraPosition.xyz - geometry.position.xyz );
@@ -97,7 +111,9 @@ float3	ComputeLighting( FLUX flux, GEOMETRY geometry, SURFACE surface, CAMERA ca
 	#ifndef LIGHTING_DIFFUSE_ONLY	
 	if (specular)
 	{
-		totalLight.rgb 		+= 	nDotL * CookTorrance( surface.normal.xyz, viewDir, lightDir, flux.intensity, surface.specular, surface.roughness, flux.divergency );
+		float  roughness	=	ClampRoughness( surface.roughness );
+		float4 tubeLight	=	TubeLight( lightDir, viewReflect, roughness, flux.divergency );
+		totalLight.rgb 		+= 	nDotL * CookTorrance( surface.normal.xyz, viewDir, tubeLight.xyz, flux.intensity * tubeLight.w, surface.specular, roughness, flux.divergency );
 	}
 	#endif
 	

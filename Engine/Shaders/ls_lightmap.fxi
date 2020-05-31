@@ -35,10 +35,12 @@ float3 	EvaluateSHL( float3 shL0, float3 shL1, float3 shL2, float3 shL3, float r
 	surface.roughness	=	lerp( surface.roughness, 1, saturate(1 - len * len) );
 	
 	FLUX flux;
-	flux.direction	=	dir;
-	flux.intensity	=	shL0;
-	flux.divergency	=	0.2;
-	light			+=	ComputeLighting( flux, geometry, surface, Camera, false, true ) * 4 * 3.14f * (1-reflectionAmount);
+	flux.intensity		=	shL0;
+	flux.direction		=	dir;
+	flux.direction1		=	dir;
+	flux.divergency		=	0.2;
+	flux.divergency1	=	0.2;
+	light				+=	ComputeLighting( flux, geometry, surface, Camera, false, true ) * 4 * 3.14f * (1-reflectionAmount);
 	
 	//	diffuse SH evaluation :
 	shL1	*=	shL0;

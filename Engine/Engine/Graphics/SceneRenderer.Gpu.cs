@@ -163,29 +163,28 @@ namespace Fusion.Engine.Graphics {
 		public struct LIGHT {	
 			//public Matrix	WorldMatrix;
 			public Matrix	ViewProjection;
-			public Vector4	PositionRadius;
+			public Vector4	Position0LightRange;
+			public Vector4	Position1TubeRadius;
 			public Vector4	IntensityFar;
 			public Vector4	ShadowScaleOffset;
 			public uint		LightType;
-			public float	SourceRadius;
 
 			public void ClearLight()
 			{
 				LightType			=	LightTypeNone;
-				PositionRadius		=	new Vector4(0,0,0,1);
-				IntensityFar		=	new Vector4(0,0,0,1);
+				Position0LightRange	=	new Vector4( 0,0,0,0 );
+				Position1TubeRadius	=	new Vector4( 0,0,0,0 );
 				ViewProjection		=	Matrix.Identity;
 				ShadowScaleOffset	=	Vector4.Zero;
-				SourceRadius		=	0;
 			}
 
 			public void FromOmniLight ( OmniLight light ) 
 			{
 				#region Update structure fields from OmniLight object
-				LightType		=	light.Ambient ? LightTypeAmbient : LightTypeOmni;
-				PositionRadius	=	new Vector4( light.Position, light.RadiusOuter );
-				IntensityFar	=	new Vector4( light.Intensity2.Red, light.Intensity2.Green, light.Intensity2.Blue, 0 );
-				SourceRadius	=	light.RadiusInner;
+				LightType			=	light.Ambient ? LightTypeAmbient : LightTypeOmni;
+				Position0LightRange	=	new Vector4( light.Position0, light.RadiusOuter );
+				Position1TubeRadius	=	new Vector4( light.Position1, light.RadiusInner );
+				IntensityFar		=	new Vector4( light.Intensity2.Red, light.Intensity2.Green, light.Intensity2.Blue, 0 );
 				#endregion
 			}
 
@@ -194,11 +193,11 @@ namespace Fusion.Engine.Graphics {
 				#region Update structure fields from SpotLight object
 
 				LightType			=	LightTypeSpotShadow;
-				PositionRadius		=	new Vector4( light.Position, light.RadiusOuter );
+				Position0LightRange	=	new Vector4( light.Position, light.RadiusOuter );
+				Position1TubeRadius	=	new Vector4( light.Position, light.RadiusInner );
 				IntensityFar		=	new Vector4( light.Intensity2.Red, light.Intensity2.Green, light.Intensity2.Blue, light.Projection.GetFarPlaneDistance() );
 				ViewProjection		=	light.SpotView * light.Projection;
 				ShadowScaleOffset	=	light.ShadowScaleOffset;
-				SourceRadius		=	light.RadiusInner;
 				#endregion
 			}
 		}

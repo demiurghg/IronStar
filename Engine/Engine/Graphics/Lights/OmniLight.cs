@@ -17,7 +17,12 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Omni-light position
 		/// </summary>
-		public Vector3	Position;
+		public Vector3	Position0;
+		
+		/// <summary>
+		/// Omni-light position
+		/// </summary>
+		public Vector3	Position1;
 
 		/// <summary>
 		/// Omni-light intensity
@@ -54,12 +59,16 @@ namespace Fusion.Engine.Graphics {
 		internal Int3	MaxExtent;
 
 
+		public Vector3 CenterPosition { get { return 0.5f * Position0 + 0.5f * Position1; } }
+
+
 		/// <summary>
 		/// 
 		/// </summary>
 		public OmniLight ()
 		{
-			Position	=	Vector3.Zero;
+			Position0	=	Vector3.Zero;
+			Position1	=	Vector3.Zero;
 			Intensity	=	Color4.Zero;
 			RadiusInner	=	0;
 			RadiusOuter	=	1;
@@ -74,7 +83,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="radius"></param>
 		public OmniLight ( Vector3 position, Color4 color, float radius )
 		{
-			Position	=	position;
+			Position0	=	position;
+			Position1	=	position;
 			Intensity	=	color;
 			RadiusInner	=	0;
 			RadiusOuter	=	radius;

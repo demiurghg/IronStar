@@ -25,7 +25,11 @@ namespace IronStar.Mapping {
 		
 		[AECategory("Omni-light")]
 		[AEValueRange(0, 50, 1, 0.125f)]
-		public float InnerRadius { get; set; } = 0.125f;
+		public float TubeRadius { get; set; } = 0.125f;
+
+		[AECategory("Omni-light")]
+		[AEValueRange(0, 8, 1, 0.125f)]
+		public float TubeLength { get; set; } = 0.0f;
 
 		[AECategory("Omni-light")]
 		public LightStyle LightStyle { get; set; } = LightStyle.Default;
@@ -60,9 +64,10 @@ namespace IronStar.Mapping {
 			light		=	new OmniLight();
 
 			light.Intensity		=	LightColor.ToColor4() * LightIntensity;
-			light.Position		=	WorldMatrix.TranslationVector;
+			light.Position0		=	WorldMatrix.TranslationVector + WorldMatrix.Right * TubeLength * 0.5f;
+			light.Position1		=	WorldMatrix.TranslationVector + WorldMatrix.Left  * TubeLength * 0.5f;
 			light.RadiusOuter	=	OuterRadius;
-			light.RadiusInner	=	InnerRadius;
+			light.RadiusInner	=	TubeRadius;
 			light.LightStyle	=	LightStyle;
 			light.Ambient		=	Ambient;
 
@@ -91,11 +96,18 @@ namespace IronStar.Mapping {
 
 			dr.DrawPoint( transform.TranslationVector, 1, color, 1 );
 
+			var position	=	WorldMatrix.TranslationVector;
+			var position0	=	WorldMatrix.TranslationVector + WorldMatrix.Right * TubeLength * 0.5f;
+			var position1	=	WorldMatrix.TranslationVector + WorldMatrix.Left  * TubeLength * 0.5f;
+
 			if (selected) {
-				dr.DrawSphere( transform.TranslationVector, InnerRadius, dispColor );
-				dr.DrawSphere( transform.TranslationVector, OuterRadius, dispColor );
+				dr.DrawSphere( position0, TubeRadius,  dispColor );
+				dr.DrawSphere( position1, TubeRadius,  dispColor );
+				dr.DrawSphere( position,  OuterRadius, dispColor );
 			} else {
-				dr.DrawSphere( transform.TranslationVector, InnerRadius, dispColor );
+				dr.DrawSphere( position0, TubeRadius, dispColor );
+				dr.DrawSphere( position1, TubeRadius, dispColor );
+				dr.DrawLine( position0, position1, dispColor, dispColor, 3, 3 );
 			}
 		}
 

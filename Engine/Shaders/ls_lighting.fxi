@@ -39,9 +39,11 @@ void ComputeDiffuseOnly( inout SURFACE surface )
 FLUX ComputeDirectLightFlux( DIRECT_LIGHT directLight )
 {
 	FLUX flux;
-	flux.direction	=	normalize(directLight.DirectLightDirection.xyz);
-	flux.intensity	=	directLight.DirectLightIntensity.xyz;
-	flux.divergency	=	0.03f; // #TODO - angular size
+	flux.intensity		=	directLight.DirectLightIntensity.xyz;
+	flux.direction		=	normalize(directLight.DirectLightDirection.xyz);
+	flux.divergency		=	0.03f; // #TODO - angular size
+	flux.direction1		=	normalize(directLight.DirectLightDirection.xyz);
+	flux.divergency1	=	0.03f; // #TODO - angular size
 	return flux;
 }
 
@@ -51,18 +53,25 @@ FLUX ComputePointLightFlux( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc 
 	uint type 	= 	light.LightType & 0x0000FFFF;
 	uint shape	= 	light.LightType & 0xFFFF0000;	
 	
-	float3 position		=	light.PositionRadius.xyz;
-	float  radius		=	light.PositionRadius.w;
+	float3 position		=	light.Position0LightRange.xyz;
+	float3 position1	=	light.Position1TubeRadius.xyz;
+	float  radius		=	light.Position0LightRange.w;
+	float  tubeRadius	=	light.Position1TubeRadius.w;
+
 	float3 intensity	=	light.IntensityFar.rgb;
-	float  sourceRadius	=	light.SourceRadius;
-	float3 lightDir		= 	geometry.position - position;
-	float  falloff		= 	LightFalloff( length(lightDir), radius );
+
+	float3 lightDir0	= 	geometry.position - position - float3(3,3,3);
+	float3 lightDir1	= 	geometry.position - position + float3(3,3,3);
+	float3 avgDir		=	0.5f * lightDir0 + 0.5f * lightDir1;
+	float  falloff		= 	LightFalloff( length(avgDir), radius );
 	float2 smSizeRcp	=	1.0f / GetTextureSize( rc.ShadowMap );
 		
 	FLUX flux;
-	flux.direction		=	normalize( lightDir );
 	flux.intensity		=	intensity * falloff;
-	flux.divergency		=	1 * sourceRadius / (0.01 + length(lightDir)); 
+	flux.direction		=	normalize( lightDir0 );
+	flux.direction1		=	normalize( lightDir1 );
+	flux.divergency		=	1 * tubeRadius / (0.01 + length(lightDir0)); 
+	flux.divergency1	=	1 * tubeRadius / (0.01 + length(lightDir1)); 
 	
 	[branch]
 	if (type==LightTypeOmni) 
@@ -78,15 +87,21 @@ FLUX ComputePointLightFlux( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc 
 }
 
 
-float4 TubeLight( float3 lightDirNorm, float3 viewReflectNorm, float roughness, float divergency )
+float4 TubeLight( float3 L0, float3 L1, float d0, float d1, float3 R, float r )
 {
-	float  	a				=	roughness * roughness;
-	float 	a1				=	saturate( a + 0.66f * divergency );
-	float  	energyFactor	=	sqr( a / a1 );
+	float3 	Ld	=	L1 - L0;
+	float 	t	=	saturate( (dot(L0, Ld) * dot(R, L0) - dot(L0, L0) * dot(R, Ld)) / ( dot(L0, Ld) * dot(R, Ld) - dot(Ld, Ld) * dot(R, L0) + 0.001 ) );
+
+	float3	L	=	L0 + t * Ld;
+	float 	d	=	lerp( d0, d1, t );
+
+	float  	a				=	r * r; // roughness^2
+	float 	a1				=	saturate( a + 0.66f * d );
+	float  	energyFactor	=	sqr( a / a1 ) * (a/a1);
 	
-	float3 	lightToRay		=	( viewReflectNorm - lightDirNorm );
-	float	lightToRayLen	=	min( length( lightToRay ), divergency );
-	float3 	lightDirFS		=	normalize( viewReflectNorm - lightDirNorm ) * lightToRayLen + lightDirNorm;
+	float3 	lightToRay		=	( R - L );
+	float	lightToRayLen	=	min( length( lightToRay ), d );
+	float3 	lightDirFS		=	normalize( R - L ) * lightToRayLen + L;
 	
 	return float4( lightDirFS, energyFactor );
 }
@@ -96,6 +111,7 @@ float3	ComputeLighting( FLUX flux, GEOMETRY geometry, SURFACE surface, CAMERA ca
 {
 	float3	viewDir		=	normalize( Camera.CameraPosition.xyz - geometry.position.xyz );
 	float3 	lightDir	=	-flux.direction;
+	float3 	lightDir1	=	-flux.direction1;
 	float3	viewReflect	=	reflect(-viewDir, surface.normal);
 	float  	nDotL		= 	saturate( dot(surface.normal, lightDir) );
 	float  	nDotLGeom	= 	saturate( dot(geometry.normal, lightDir) * 10 );
@@ -112,7 +128,7 @@ float3	ComputeLighting( FLUX flux, GEOMETRY geometry, SURFACE surface, CAMERA ca
 	if (specular)
 	{
 		float  roughness	=	ClampRoughness( surface.roughness );
-		float4 tubeLight	=	TubeLight( lightDir, viewReflect, roughness, flux.divergency );
+		float4 tubeLight	=	TubeLight( lightDir, lightDir1, flux.divergency, flux.divergency1, viewReflect, roughness );
 		totalLight.rgb 		+= 	nDotL * CookTorrance( surface.normal.xyz, viewDir, tubeLight.xyz, flux.intensity * tubeLight.w, surface.specular, roughness, flux.divergency );
 	}
 	#endif

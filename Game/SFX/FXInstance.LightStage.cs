@@ -56,7 +56,8 @@ namespace IronStar.SFX {
 				this.stageDesc		=	stageDesc;
 				this.overallScale	=	instance.overallScale;
 
-				light.Position		=	FXFactory.GetPosition( stageDesc.OffsetDirection, stageDesc.OffsetFactor, fxEvent );
+				light.Position0		=	FXFactory.GetPosition( stageDesc.OffsetDirection, stageDesc.OffsetFactor, fxEvent );
+				light.Position1		=	FXFactory.GetPosition( stageDesc.OffsetDirection, stageDesc.OffsetFactor, fxEvent );
 
 				light.RadiusInner	=	stageDesc.InnerRadius * overallScale;
 				light.RadiusOuter	=	stageDesc.OuterRadius * overallScale;
@@ -106,7 +107,8 @@ namespace IronStar.SFX {
 
 				UpdateLightStyle();
 
-				light.Position      =   FXFactory.GetPosition( stageDesc.OffsetDirection, stageDesc.OffsetFactor, fxEvent );
+				light.Position0      =   FXFactory.GetPosition( stageDesc.OffsetDirection, stageDesc.OffsetFactor, fxEvent );
+				light.Position1      =   FXFactory.GetPosition( stageDesc.OffsetDirection, stageDesc.OffsetFactor, fxEvent );
 			}
 
 

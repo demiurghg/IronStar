@@ -51,7 +51,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			foreach ( var ol in lightSet.OmniLights ) 
 			{
-				var dir			=	ol.Position - position;
+				var dir			=	ol.CenterPosition - position;
 				var dist		=	dir.Length();
 				var dirN		=	dir.Normalized();
 				var falloff		=	MathUtil.Clamp( 1 - dir.Length() / ol.RadiusOuter, 0, 1 );

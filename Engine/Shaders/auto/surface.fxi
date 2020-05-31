@@ -109,14 +109,14 @@ struct CASCADE_SHADOW {
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHT
-// Marshal.SizeOf = 120
+// Marshal.SizeOf = 132
 struct LIGHT {
 	float4x4   ViewProjection;                // offset:    0
-	float4     PositionRadius;                // offset:   64
-	float4     IntensityFar;                  // offset:   80
-	float4     ShadowScaleOffset;             // offset:   96
-	uint       LightType;                     // offset:  112
-	float      SourceRadius;                  // offset:  116
+	float4     Position0LightRange;           // offset:   64
+	float4     Position1TubeRadius;           // offset:   80
+	float4     IntensityFar;                  // offset:   96
+	float4     ShadowScaleOffset;             // offset:  112
+	uint       LightType;                     // offset:  128
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+DECAL

@@ -9,9 +9,11 @@
 
 struct FLUX
 {
-	float3	direction;		//	light flux direction, opposite to direction to light, normalized
 	float3	intensity;		//	light intensity by R,G,B components
+	float3	direction;		//	light flux direction, opposite to direction to light, normalized
 	float	divergency;		//	light divergency to approximate finite size lights
+	float3	direction1;		//	light flux direction, opposite to direction to light, normalized
+	float	divergency1;	//	light divergency to approximate finite size lights
 };
 
 struct SURFACE

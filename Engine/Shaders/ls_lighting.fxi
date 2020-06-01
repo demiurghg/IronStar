@@ -60,12 +60,13 @@ FLUX ComputePointLightFlux( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc 
 
 	float3 intensity	=	light.IntensityFar.rgb;
 
-	float3 lightDir0	= 	geometry.position - position - float3(3,3,3);
-	float3 lightDir1	= 	geometry.position - position + float3(3,3,3);
+	float3 lightDir0	= 	geometry.position - position;
+	float3 lightDir1	= 	geometry.position - position1;
 	float3 avgDir		=	0.5f * lightDir0 + 0.5f * lightDir1;
 	float  falloff		= 	LightFalloff( length(avgDir), radius );
 	float2 smSizeRcp	=	1.0f / GetTextureSize( rc.ShadowMap );
 		
+			
 	FLUX flux;
 	flux.intensity		=	intensity * falloff;
 	flux.direction		=	normalize( lightDir0 );
@@ -90,10 +91,15 @@ FLUX ComputePointLightFlux( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc 
 float4 TubeLight( float3 L0, float3 L1, float d0, float d1, float3 R, float r )
 {
 	float3 	Ld	=	L1 - L0;
-	float 	t	=	saturate( (dot(L0, Ld) * dot(R, L0) - dot(L0, L0) * dot(R, Ld)) / ( dot(L0, Ld) * dot(R, Ld) - dot(Ld, Ld) * dot(R, L0) + 0.001 ) );
+	//float 	t	=	saturate( (dot(L0, Ld) * dot(R, L0) - dot(L0, L0) * dot(R, Ld)) / ( dot(L0, Ld) * dot(R, Ld) - dot(Ld, Ld) * dot(R, L0) + 0.00001 ) );
+	
+	float t_num 	=	dot(R, L0) * dot(Ld, R) - dot(Ld, L0);
+	float t_denom 	=	dot(Ld, Ld) - dot(Ld, R) * dot(Ld, R);
+	float t 		=	saturate(t_num / t_denom);	
+
 
 	float3	L	=	L0 + t * Ld;
-	float 	d	=	lerp( d0, d1, t );
+	float 	d	=	lerp( d0,d1,t );
 
 	float  	a				=	r * r; // roughness^2
 	float 	a1				=	saturate( a + 0.66f * d );
@@ -110,8 +116,9 @@ float4 TubeLight( float3 L0, float3 L1, float d0, float d1, float3 R, float r )
 float3	ComputeLighting( FLUX flux, GEOMETRY geometry, SURFACE surface, CAMERA camera, bool diffuse=true, bool specular=true )
 {
 	float3	viewDir		=	normalize( Camera.CameraPosition.xyz - geometry.position.xyz );
-	float3 	lightDir	=	-flux.direction;
+	float3 	lightDir0	=	-flux.direction;
 	float3 	lightDir1	=	-flux.direction1;
+	float3 	lightDir	=	0.5f * (lightDir0 + lightDir1);
 	float3	viewReflect	=	reflect(-viewDir, surface.normal);
 	float  	nDotL		= 	saturate( dot(surface.normal, lightDir) );
 	float  	nDotLGeom	= 	saturate( dot(geometry.normal, lightDir) * 10 );
@@ -128,8 +135,8 @@ float3	ComputeLighting( FLUX flux, GEOMETRY geometry, SURFACE surface, CAMERA ca
 	if (specular)
 	{
 		float  roughness	=	ClampRoughness( surface.roughness );
-		float4 tubeLight	=	TubeLight( lightDir, lightDir1, flux.divergency, flux.divergency1, viewReflect, roughness );
-		totalLight.rgb 		+= 	nDotL * CookTorrance( surface.normal.xyz, viewDir, tubeLight.xyz, flux.intensity * tubeLight.w, surface.specular, roughness, flux.divergency );
+		float4 tubeLight	=	TubeLight( lightDir0, lightDir1, flux.divergency, flux.divergency1, viewReflect, roughness );
+		totalLight.rgb 		+= 	nDotL * CookTorrance( surface.normal.xyz, viewDir, tubeLight.xyz, flux.intensity * tubeLight.w, surface.specular, roughness );
 	}
 	#endif
 	

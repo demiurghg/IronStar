@@ -318,7 +318,15 @@ namespace Fusion.Build.Processors {
 						Includes.Add(fileName);
 					}
 
-					return new MemoryStream( File.ReadAllBytes( buildContext.ResolveContentPath( fileName ) ) );
+					try 
+					{
+						return new MemoryStream( File.ReadAllBytes( buildContext.ResolveContentPath( fileName ) ) );
+					}
+					catch (Exception e)
+					{
+						Log.Error( e.Message );
+						return null;
+					}
 					///return File.Open( , FileMode.Open, FileAccess.Read, FileShare.Read );
 				}
 			}
@@ -503,17 +511,21 @@ namespace Fusion.Build.Processors {
 			if ( MatrixPacking==ShaderMatrixPacking.ColumnMajor )	sb.Append("/Zpc ");
 			if ( MatrixPacking==ShaderMatrixPacking.RowMajor )	sb.Append("/Zpr ");
 
-			foreach ( var def in defines.Split(new[]{' ','\t'}, StringSplitOptions.RemoveEmptyEntries) ) {
+			foreach ( var def in defines.Split(new[]{' ','\t'}, StringSplitOptions.RemoveEmptyEntries) ) 
+			{
 				sb.AppendFormat("/D{0}=1 ", def);
 			}
 
 			sb.Append("\"" + sourceFile + "\"");
 
-			try {
+			try 
+			{
 				
 				buildContext.RunTool("fxc_1.exe", sb.ToString());
 
-			} catch ( ToolException tx ) {
+			} 
+			catch ( ToolException tx ) 
+			{
 				///	entry point not fount - that is ok.
 				if (tx.Message.Contains("error X3501")) {
 					Log.Debug("No entry point '{0}'. That is ok.", entryPoint );

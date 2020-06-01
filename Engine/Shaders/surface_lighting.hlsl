@@ -3,6 +3,151 @@
 	Clustered lighting rendering :
 -----------------------------------------------------------------------------*/
 
+float3 ClosestToPoint( float3 L, float3 r, float radius)
+{
+	// r must be normalized
+	float3	centerToRay		=	dot(L,r)*r-L;
+	float3	closestPoint	=	L + centerToRay * saturate( radius / length(centerToRay) );
+	return closestPoint;
+}
+
+
+float4 ComputeDiffuseTubeMRP( float3 L0, float3 L1, float3 n, float r )
+{
+	float 	a 	=	length( L0 );
+	float 	b 	=	length( L1 );
+	float 	t 	=	a / (b+a);
+	float3 	mrp	=	L0 + t*(L1-L0);
+	
+	float	factor	=	1 / (1 + r / length(mrp));
+	
+	return float4( ClosestToPoint( mrp, n, r ), factor );
+}
+
+
+float4 ComputeSpecularTubeMRP( float3 L0, float3 L1, float3 normal, float3 view, float radius, float3 mrp, float roughness )
+{
+	float3	R		=	normalize( reflect(-normalize(view), normal) );
+	float3 	Ld		=	L1 - L0;
+	
+	/*float t_num 	=	dot(L0, Ld) * dot(R, L0) - dot(L0, L0) * dot(R, Ld);
+	float t_denom 	=	dot(L0, Ld) * dot(R, Ld) - dot(Ld, Ld) * dot(R, L0);*/
+	float 	t_num 	=	dot(R, L0) * dot(Ld, R) - dot(Ld, L0);
+	float 	t_denom =	dot(Ld, Ld) - dot(Ld, R) * dot(Ld, R);//*/
+	float 	t 		=	saturate(t_num / t_denom);	
+	float3	L		=	L0 + t * Ld;
+	
+	float	a		=	roughness * roughness;
+	float 	a1		=	saturate( a + 0.3333f * radius / length(L) );
+	float  	factor	=	sqr( a / a1 );
+
+	return float4( ClosestToPoint( L, R, radius ), factor );
+}
+
+
+float3 ComputePointLight( LIGHT light, CAMERA camera, GEOMETRY geometry, SURFACE surface, SHADOW_RESOURCES rc, bool diffuse, bool specular )
+{
+	uint type 	= 	light.LightType & 0x0000FFFF;
+	uint shape	= 	light.LightType & 0xFFFF0000;	
+	
+	float3	viewDir		=	camera.CameraPosition.xyz - geometry.position;
+	float3 	position0	=	light.Position0LightRange.xyz;
+	float3 	position1	=	light.Position1TubeRadius.xyz;
+	float  	lightRange	=	light.Position0LightRange.w;
+	float  	tubeRadius	=	light.Position1TubeRadius.w;
+	float3 	intensity	=	light.IntensityFar.rgb;
+	
+	float3 	lightDir0	= 	position0 - geometry.position;
+	float3 	lightDir1	= 	position1 - geometry.position;
+		
+	float3 	lighting	=	0;
+	float	roughness	=	ClampRoughness( surface.roughness );
+	
+	float4 	diffuseMPR	=	ComputeDiffuseTubeMRP( lightDir0, lightDir1, surface.normal, tubeRadius );
+	float3  tint;
+	float4 	specularMRP	=	ComputeSpecularTubeMRP( lightDir0, lightDir1, surface.normal, viewDir, tubeRadius, diffuseMPR, roughness );
+	float3 	lightDir	=	diffuseMPR;
+	
+	float	falloff		=	LightFalloff( length(lightDir), lightRange );
+	float	nDotL		=	saturate( dot( surface.normal, normalize( lightDir ) ) );
+	float	nDotLSpec	=	saturate( dot( surface.normal, normalize( specularMRP.xyz ) ) );
+	
+	//	diffuse :
+	lighting	+=	nDotL * falloff * Lambert( intensity * diffuseMPR.w, surface.diffuse );
+	
+	//	specular :
+	lighting	+=	nDotLSpec * falloff * CookTorrance( surface.normal.xyz, viewDir, specularMRP.xyz, intensity * specularMRP.w, surface.specular, roughness );
+	
+	[branch]
+	if (type==LightTypeOmni) 
+	{
+		//	TODO : IES profiles
+	} 
+	else if (type==LightTypeSpotShadow) 
+	{
+		lighting		*=	ComputeSpotShadow( geometry, light, rc, true );
+	}
+	
+	return lighting;
+}
+
+
+/*float4 TubeLight( float3 L0, float3 L1, float d0, float d1, float3 R, float r )
+{
+	float3 	Ld	=	L1 - L0;
+	//float 	t	=	saturate( (dot(L0, Ld) * dot(R, L0) - dot(L0, L0) * dot(R, Ld)) / ( dot(L0, Ld) * dot(R, Ld) - dot(Ld, Ld) * dot(R, L0) + 0.00001 ) );
+	
+	float t_num 	=	dot(R, L0) * dot(Ld, R) - dot(Ld, L0);
+	float t_denom 	=	dot(Ld, Ld) - dot(Ld, R) * dot(Ld, R);
+	float t 		=	saturate(t_num / t_denom);	
+
+
+	float3	L	=	L0 + t * Ld;
+	float 	d	=	lerp( d0,d1,t );
+
+	float  	a				=	r * r; // roughness^2
+	float 	a1				=	saturate( a + 0.66f * d );
+	float  	energyFactor	=	sqr( a / a1 ) * (a/a1);
+	
+	float3 	lightToRay		=	( R - L );
+	float	lightToRayLen	=	min( length( lightToRay ), d );
+	float3 	lightDirFS		=	normalize( R - L ) * lightToRayLen + L;
+	
+	return float4( lightDirFS, energyFactor );
+}*/
+
+
+/*float3	ComputeLighting( FLUX flux, GEOMETRY geometry, SURFACE surface, CAMERA camera, bool diffuse=true, bool specular=true )
+{
+	float3	viewDir		=	normalize( Camera.CameraPosition.xyz - geometry.position.xyz );
+	float3 	lightDir0	=	-flux.direction;
+	float3 	lightDir1	=	-flux.direction1;
+	float3 	lightDir	=	0.5f * (lightDir0 + lightDir1);
+	float3	viewReflect	=	reflect(-viewDir, surface.normal);
+	float  	nDotL		= 	saturate( dot(surface.normal, lightDir) );
+	float  	nDotLGeom	= 	saturate( dot(geometry.normal, lightDir) * 10 );
+			nDotL		*=	nDotLGeom;
+	
+	float3	totalLight	=	0;
+	
+	if (diffuse)
+	{
+		totalLight.rgb 		+= 	nDotL * Lambert ( flux.intensity, surface.diffuse );
+	}
+
+	#ifndef LIGHTING_DIFFUSE_ONLY	
+	if (specular)
+	{
+		float  roughness	=	ClampRoughness( surface.roughness );
+		float4 tubeLight	=	TubeLight( lightDir0, lightDir1, flux.divergency, flux.divergency1, viewReflect, roughness );
+		totalLight.rgb 		+= 	nDotL * CookTorrance( surface.normal.xyz, viewDir, tubeLight.xyz, flux.intensity * tubeLight.w, surface.specular, roughness, flux.divergency );
+	}
+	#endif
+	
+	return totalLight;
+}*/
+
+
 //
 //	ComputeClusteredLighting
 //	
@@ -136,9 +281,7 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 	for (i=0; i<cluster.NumLights; i++) 
 	{
 		LIGHT light	=	GetLight( rcCluster, cluster, i );
-		
-		FLUX flux	=	ComputePointLightFlux( geometry, light, rcShadow );
-		totalLight	+=	ComputeLighting( flux, geometry, surface, Camera ) * Stage.DirectLightFactor;
+		totalLight	+=	ComputePointLight( light, Camera, geometry, surface, rcShadow, true, true );
 	}
 	
 	//----------------------------------------------------------------------------------------------

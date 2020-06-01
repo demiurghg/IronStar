@@ -140,6 +140,17 @@ namespace Fusion.Drivers.Graphics {
 
 
 
+		/// <summary>
+		/// Checks whether given combination supported
+		/// </summary>
+		/// <param name="combination"></param>
+		/// <returns></returns>
+		public bool IsCombinationSupported( int combination )
+		{
+			return pipelineStates.ContainsKey( combination );
+		}
+
+
 		Type combinerEnum;
 
 

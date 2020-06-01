@@ -20,15 +20,15 @@ namespace IronStar.Mapping {
 	public class MapOmniLight : MapNode {
 
 		[AECategory("Omni-light")]
-		[AEValueRange(0, 50, 1, 0.125f)]
+		[AEValueRange(0, 100, 1, 0.125f)]
 		public float OuterRadius { get; set; } = 5;
 		
 		[AECategory("Omni-light")]
-		[AEValueRange(0, 50, 1, 0.125f)]
+		[AEValueRange(0, 8, 1, 0.125f)]
 		public float TubeRadius { get; set; } = 0.125f;
 
 		[AECategory("Omni-light")]
-		[AEValueRange(0, 8, 1, 0.125f)]
+		[AEValueRange(0, 32, 1, 0.125f)]
 		public float TubeLength { get; set; } = 0.0f;
 
 		[AECategory("Omni-light")]

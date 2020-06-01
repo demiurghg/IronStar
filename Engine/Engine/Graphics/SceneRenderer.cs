@@ -309,6 +309,11 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 
+			if (!factory.IsCombinationSupported( flag ))
+			{
+				return false;
+			}
+
 			device.PipelineState	=	factory[ flag ];
 
 			cbDataInstance.Group	=	(int)instance.Group;

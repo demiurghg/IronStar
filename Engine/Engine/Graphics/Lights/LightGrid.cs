@@ -193,7 +193,10 @@ namespace Fusion.Engine.Graphics {
 				Vector4 min, max;
 				ol.Visible	=	false;
 
-				if ( Extents.GetSphereExtent( view, proj, ol.CenterPosition, vp, ol.RadiusOuter, false, out min, out max ) ) {
+				float length	=	Vector3.Distance( ol.Position0, ol.Position1 );
+				float radius	=	ol.RadiusOuter + ol.RadiusInner + length;
+
+				if ( Extents.GetSphereExtent( view, proj, ol.CenterPosition, vp, radius, false, out min, out max ) ) {
 
 					min.Z	=	GetGridSlice( min.Z );
 					max.Z	=	GetGridSlice( max.Z );

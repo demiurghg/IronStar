@@ -165,7 +165,7 @@ float NDF ( float roughness, float3 N, float3 H, float d )
 	http://blog.selfshadow.com/publications/s2013-shading-course/hoffman/s2013_pbs_physics_math_slides.pdf
 -----------------------------------------------------------------------------*/
 
-float3	CookTorrance( float3 N, float3 V, float3 L, float3 I, float3 F, float roughness, float divergency )
+float3	CookTorrance( float3 N, float3 V, float3 L, float3 I, float3 F, float roughness )
 {
 			L	=	normalize(L);
 			V	=	normalize(V);
@@ -175,7 +175,7 @@ float3	CookTorrance( float3 N, float3 V, float3 L, float3 I, float3 F, float rou
 	
 	float	G		=	GTerm( roughness, N,V,H,L );
 	
-	float	D		=	NDF( roughness, N,H, divergency );
+	float	D		=	NDF( roughness, N,H, 0 );
 
 			F		=	Fresnel( dot(V,H), F );
 						  

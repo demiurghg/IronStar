@@ -220,6 +220,7 @@ namespace Fusion.Engine.Graphics {
 			cbDataStage.SlopeBias			=	context.SlopeBias;
 			cbDataStage.DirectLightFactor	=	rs.SkipDirectLighting ? 0 : 1;
 			cbDataStage.IndirectLightFactor	=	rs.Radiosity.MasterIntensity;
+			cbDataStage.ShowLightComplexity	=	rs.ShowLightComplexity ? 1 : 0;
 
 			constBufferStage.SetData( ref cbDataStage );
 

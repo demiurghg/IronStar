@@ -73,7 +73,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			foreach ( var sl in lightSet.SpotLights ) 
 			{
-				var dir			=	sl.Position - position;
+				var dir			=	sl.CenterPosition - position;
 				var dist		=	dir.Length();
 				var dirN		=	dir.Normalized();
 				var falloff		=	MathUtil.Clamp( 1 - dir.Length() / sl.RadiusOuter, 0, 1 );

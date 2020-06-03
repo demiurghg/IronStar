@@ -185,6 +185,13 @@ namespace Fusion.Engine.Graphics {
 		[Config]
 		public bool ShowLightCounters { get; set; }
 
+
+		/// <summary>
+		/// Shows counters
+		/// </summary>
+		[Config]
+		public bool ShowLightComplexity { get; set; }
+
 		/// <summary>
 		/// Shows counters
 		/// </summary>

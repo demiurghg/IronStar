@@ -190,7 +190,7 @@ namespace Fusion.Engine.Graphics {
 
 			foreach ( var ol in lightSet.OmniLights ) {
 
-				Vector4 min, max;
+				Vector3 min, max;
 				ol.Visible	=	false;
 
 				float length	=	Vector3.Distance( ol.Position0, ol.Position1 );
@@ -198,8 +198,8 @@ namespace Fusion.Engine.Graphics {
 
 				if ( Extents.GetSphereExtent( view, proj, ol.CenterPosition, vp, radius, false, out min, out max ) ) {
 
-					min.Z	=	GetGridSlice( min.Z );
-					max.Z	=	GetGridSlice( max.Z );
+					min.Z	=	GetGridSlice( -min.Z );
+					max.Z	=	GetGridSlice( -max.Z );
 
 					ol.Visible		=	true;
 
@@ -228,15 +228,21 @@ namespace Fusion.Engine.Graphics {
 
 			foreach ( var sl in lightSet.SpotLights ) {
 
-				Vector4 min, max;
+				Vector3 min, max, minF, maxF, minS, maxS;
 				sl.Visible	=	false;
 
 				var frustum	=	new BoundingFrustum( sl.SpotView * sl.Projection );
 
-				if ( Extents.GetSphereExtent( view, proj, sl.Position, vp, sl.RadiusOuter, false, out min, out max ) ) {
+				bool visibleAsFrustum	=	Extents.GetFrustumExtent( view, proj, vp, frustum, false, out minF, out maxF );
+				bool visibleAsSphere	=	Extents.GetSphereExtent( view, proj, sl.CenterPosition, vp, sl.RadiusOuter, false, out minS, out maxS );
 
-					min.Z	=	GetGridSlice( min.Z );
-					max.Z	=	GetGridSlice( max.Z );
+				if ( visibleAsFrustum && visibleAsSphere )
+				{ //*/
+					min		=	Vector3.Max( minF, minS );
+					max		=	Vector3.Min( maxF, maxS );
+
+					min.Z	=	GetGridSlice( -min.Z );
+					max.Z	=	GetGridSlice( -max.Z );
 
 					sl.Visible		=	true;
 
@@ -270,7 +276,7 @@ namespace Fusion.Engine.Graphics {
 			var corners		=	frustum.GetCorners();
 
 			//	get frustum center of mass
-			var centerMass	= 	( spotLight.Position + corners[4] + corners[5] + corners[6] + corners[7] ) / 5.0f;
+			var centerMass	= 	( spotLight.CenterPosition + corners[4] + corners[5] + corners[6] + corners[7] ) / 5.0f;
 
 			//	get size of light spot
 			var spotSize	=	Vector3.Distance( corners[4], corners[6] ) + 0.01f;
@@ -304,7 +310,7 @@ namespace Fusion.Engine.Graphics {
 
 			foreach ( var dcl in lightSet.Decals ) {
 
-				Vector4 min, max;
+				Vector3 min, max;
 				dcl.Visible	=	false;
 
 				if ( Extents.GetBasisExtent( view, proj, vp, dcl.DecalMatrix, false, out min, out max ) ) {
@@ -329,7 +335,7 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		void TestExtent ( Vector4 min, Vector4 max, Color color )
+		void TestExtent ( Vector3 min, Vector3 max, Color color )
 		{
 			if (rs.ShowExtents) {
 				var vp	=	rs.DisplayBounds;
@@ -354,7 +360,7 @@ namespace Fusion.Engine.Graphics {
 
 			foreach ( var lpb in lightSet.LightProbes ) {
 
-				Vector4 min, max;
+				Vector3 min, max;
 				lpb.Visible	=	false;
 
 				if ( lpb.Mode==LightProbeMode.CubeReflection)
@@ -381,8 +387,8 @@ namespace Fusion.Engine.Graphics {
 				{
 					if ( Extents.GetSphereExtent( view, proj, lpb.ProbeMatrix.TranslationVector, vp, lpb.Radius, false, out min, out max ) ) 
 					{
-						min.Z	=	GetGridSlice( min.Z );
-						max.Z	=	GetGridSlice( max.Z );
+						min.Z	=	GetGridSlice( -min.Z );
+						max.Z	=	GetGridSlice( -max.Z );
 
 						lpb.Visible		=	true;
 

@@ -46,6 +46,17 @@ namespace Fusion.Engine.Graphics.Lights {
 		}
 
 
+		static Vector3 MakePoint( Vector4 p, bool projectZ )
+		{
+			if (projectZ)
+			{
+				return new Vector3( p.X/p.W, p.Y/p.W, p.Z/p.W );
+			}
+			else
+			{
+				return new Vector3( p.X/p.W, p.Y/p.W, Math.Abs(p.W) );
+			}
+		}
 
 		/// <summary>
 		/// 
@@ -56,9 +67,9 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// <param name="min"></param>
 		/// <param name="max"></param>
 		/// <returns></returns>
-		public static bool GetFrustumExtent ( Matrix view, Matrix projection, Rectangle viewport, BoundingFrustum frustum, out Vector4 min, out Vector4 max )
+		public static bool GetFrustumExtent ( Matrix view, Matrix projection, Rectangle viewport, BoundingFrustum frustum, bool projectZ, out Vector3 min, out Vector3 max )
 		{
-			min = max	=	Vector4.Zero;
+			min = max	=	Vector3.Zero;
 
 			var znear	=	projection.M34 * projection.M43 / projection.M33;
 			
@@ -92,17 +103,27 @@ namespace Fusion.Engine.Graphics.Lights {
 			var projPoints = new List<Vector4>();
 			
 			foreach ( var line in lines ) {
-				projPoints.Add( Vector4.Transform( line.A, projection ).MakePoint() );
-				projPoints.Add( Vector4.Transform( line.B, projection ).MakePoint() );
+				projPoints.Add( Vector4.Transform( line.A, projection ) );
+				projPoints.Add( Vector4.Transform( line.B, projection ) );
 			}
 
-			min.X	=	projPoints.Min( p => p.X );
-			min.Y	=	projPoints.Max( p => p.Y );
-			min.Z	=	projPoints.Min( p => p.Z );
+			if (projectZ) {
+				min.X	=	projPoints.Min( p => p.X / p.W );
+				min.Y	=	projPoints.Max( p => p.Y / p.W );
+				min.Z	=	projPoints.Min( p => p.Z / p.W );
 
-			max.X	=	projPoints.Max( p => p.X );
-			max.Y	=	projPoints.Min( p => p.Y );
-			max.Z	=	projPoints.Max( p => p.Z );
+				max.X	=	projPoints.Max( p => p.X / p.W );
+				max.Y	=	projPoints.Min( p => p.Y / p.W );
+				max.Z	=	projPoints.Max( p => p.Z / p.W );
+			} else {
+				min.X	=	projPoints.Min( p => p.X / p.W );
+				min.Y	=	projPoints.Max( p => p.Y / p.W );
+				min.Z	=	projPoints.Min( p => p.W );
+
+				max.X	=	projPoints.Max( p => p.X / p.W );
+				max.Y	=	projPoints.Min( p => p.Y / p.W );
+				max.Z	=	projPoints.Max( p => p.W );
+			}
 
 			min.X	=	( min.X *  0.5f + 0.5f ) * viewport.Width;
 			min.Y	=	( min.Y * -0.5f + 0.5f ) * viewport.Height;
@@ -137,9 +158,9 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// <param name="min"></param>
 		/// <param name="max"></param>
 		/// <returns></returns>
-		public static bool GetBasisExtent ( Matrix view, Matrix projection, Rectangle viewport, Matrix basis, bool projectZ, out Vector4 min, out Vector4 max )
+		public static bool GetBasisExtent ( Matrix view, Matrix projection, Rectangle viewport, Matrix basis, bool projectZ, out Vector3 min, out Vector3 max )
 		{
-			min = max	=	Vector4.Zero;
+			min = max	=	Vector3.Zero;
 
 			var znear	=	projection.M34 * projection.M43 / projection.M33;
 			
@@ -226,9 +247,9 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// <param name="min"></param>
 		/// <param name="max"></param>
 		/// <returns></returns>
-		public static bool GetSphereExtent ( Matrix view, Matrix projection, Vector3 position, Rectangle vp, float radius, bool projectZ, out Vector4 min, out Vector4 max )
+		public static bool GetSphereExtent ( Matrix view, Matrix projection, Vector3 position, Rectangle vp, float radius, bool projectZ, out Vector3 min, out Vector3 max )
 		{
-			min = max	=	Vector4.Zero;
+			min = max	=	Vector3.Zero;
 
 			var znear	=	projection.M34 * projection.M43 / projection.M33;
 			var nearW	=	projection.M11;
@@ -255,8 +276,8 @@ namespace Fusion.Engine.Graphics.Lights {
 				min.Z	=	Vector3.TransformCoordinate( new Vector3(0,0, Math.Min( viewPos.Z + radius, znear )), projection ).Z;
 				max.Z	=	Vector3.TransformCoordinate( new Vector3(0,0, Math.Min( viewPos.Z - radius, znear )), projection ).Z;
 			} else {
-				min.Z	=	Math.Min( viewPos.Z + radius, znear );
-				max.Z	=	Math.Min( viewPos.Z - radius, znear );
+				min.Z	=	Math.Max( Math.Abs(viewPos.Z) - radius, znear );
+				max.Z	=	Math.Max( Math.Abs(viewPos.Z) + radius, znear );
 			}
 
 			if (!r0) {

@@ -31,9 +31,14 @@ namespace Fusion.Engine.Graphics {
 		public Matrix	Projection;
 
 		/// <summary>
-		/// Spot-light position
+		/// Omni-light position
 		/// </summary>
-		public Vector3	Position;
+		public Vector3	Position0;
+		
+		/// <summary>
+		/// Omni-light position
+		/// </summary>
+		public Vector3	Position1;
 
 		/// <summary>
 		/// Spot-light intensity.
@@ -89,6 +94,8 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		public bool EnableGI;
+
+		public Vector3 CenterPosition { get { return 0.5f * Position0 + 0.5f * Position1; } }
 
 
 		internal bool		Visible = true;

@@ -85,6 +85,8 @@ namespace Fusion.Engine.Graphics {
 
 			public float	DirectLightFactor		;
 			public float	IndirectLightFactor		;
+
+			public float	ShowLightComplexity		;
 		}
 
 
@@ -193,8 +195,8 @@ namespace Fusion.Engine.Graphics {
 				#region Update structure fields from SpotLight object
 
 				LightType			=	LightTypeSpotShadow;
-				Position0LightRange	=	new Vector4( light.Position, light.RadiusOuter );
-				Position1TubeRadius	=	new Vector4( light.Position, light.RadiusInner );
+				Position0LightRange	=	new Vector4( light.Position0, light.RadiusOuter );
+				Position1TubeRadius	=	new Vector4( light.Position1, light.RadiusInner );
 				IntensityFar		=	new Vector4( light.Intensity2.Red, light.Intensity2.Green, light.Intensity2.Blue, light.Projection.GetFarPlaneDistance() );
 				ViewProjection		=	light.SpotView * light.Projection;
 				ShadowScaleOffset	=	light.ShadowScaleOffset;

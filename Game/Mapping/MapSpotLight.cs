@@ -36,9 +36,14 @@ namespace IronStar.Mapping {
 		public float OuterRadius { get; set; } = 5;
 		
 		[AECategory("Spot Shape")]
-		[AEDisplayName("Inner Radius")]
+		[AEDisplayName("Tube Radius")]
 		[AEValueRange(0, 50, 1, 0.125f)]
-		public float InnerRadius { get; set; } = 0.1f;
+		public float TubeRadius { get; set; } = 0.125f;
+		
+		[AECategory("Spot Shape")]
+		[AEDisplayName("Tube Length")]
+		[AEValueRange(0, 50, 1, 0.125f)]
+		public float TubeLength { get; set; } = 0.0f;
 		
 		[AECategory("Spot Shape")]
 		[AEValueRange(0, 4, 1/4f, 1/64f)]
@@ -124,10 +129,11 @@ namespace IronStar.Mapping {
 
 			light.Intensity		=	LightColor.ToColor4() * LightIntensity;
 			light.SpotView		=	SpotView;
-			light.Position		=	TranslateVector;
+			light.Position0		=	TranslateVector + WorldMatrix.Left  * TubeLength * 0.5f;
+			light.Position1		=	TranslateVector + WorldMatrix.Right * TubeLength * 0.5f;
 			light.Projection	=	SpotProjection;
 			light.RadiusOuter	=	OuterRadius;
-			light.RadiusInner	=	InnerRadius;
+			light.RadiusInner	=	TubeRadius;
 
 			light.SpotMaskName	=	SpotMaskName;
 
@@ -160,31 +166,43 @@ namespace IronStar.Mapping {
 			var transform	=	WorldMatrix;
 			var dispColor   =	LightColor;
 
-			dr.DrawPoint( transform.TranslationVector, 1, color, 2 );
-			dr.DrawSphere( transform.TranslationVector, InnerRadius, dispColor );
+			dr.DrawPoint( transform.TranslationVector, 1, color, 1 );
 
-			if (selected) {
-				
+			var position	=	WorldMatrix.TranslationVector;
+			var position0	=	WorldMatrix.TranslationVector + WorldMatrix.Right * TubeLength * 0.5f;
+			var position1	=	WorldMatrix.TranslationVector + WorldMatrix.Left  * TubeLength * 0.5f;
+
+			if (selected) 
+			{
+				dr.DrawSphere( position0, TubeRadius,  dispColor );
+				dr.DrawSphere( position1, TubeRadius,  dispColor );
+				dr.DrawSphere( position,  OuterRadius, dispColor );
+
 				var frustum = new BoundingFrustum( SpotView * SpotProjection );
 				
 				var points  = frustum.GetCorners();
 
-				dr.DrawLine( points[0], points[1], color );
-				dr.DrawLine( points[1], points[2], color );
-				dr.DrawLine( points[2], points[3], color );
-				dr.DrawLine( points[3], points[0], color );
+				dr.DrawLine( points[0], points[1], dispColor );
+				dr.DrawLine( points[1], points[2], dispColor );
+				dr.DrawLine( points[2], points[3], dispColor );
+				dr.DrawLine( points[3], points[0], dispColor );
 
-				dr.DrawLine( points[4], points[5], color );
-				dr.DrawLine( points[5], points[6], color );
-				dr.DrawLine( points[6], points[7], color );
-				dr.DrawLine( points[7], points[4], color );
+				dr.DrawLine( points[4], points[5], dispColor );
+				dr.DrawLine( points[5], points[6], dispColor );
+				dr.DrawLine( points[6], points[7], dispColor );
+				dr.DrawLine( points[7], points[4], dispColor );
 
-				dr.DrawLine( points[0], points[4], color );
-				dr.DrawLine( points[1], points[5], color );
-				dr.DrawLine( points[2], points[6], color );
-				dr.DrawLine( points[3], points[7], color );
+				dr.DrawLine( points[0], points[4], dispColor );
+				dr.DrawLine( points[1], points[5], dispColor );
+				dr.DrawLine( points[2], points[6], dispColor );
+				dr.DrawLine( points[3], points[7], dispColor );
 
-			} else {
+			} 
+			else 
+			{
+				dr.DrawSphere( position0, TubeRadius, dispColor );
+				dr.DrawSphere( position1, TubeRadius, dispColor );
+				dr.DrawLine( position0, position1, dispColor, dispColor, 3, 3 );
 			}
 		}
 

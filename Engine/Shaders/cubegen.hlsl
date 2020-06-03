@@ -356,7 +356,7 @@ void CSMain( uint3 id : SV_DispatchThreadID )
 	for (int y=-range; y<=range; y++)
 	{
 		float3  localDir	=	normalize( direction + ( x * tangentX + y * tangentY ) * dxy );
-		float	weight		=	NDF( roughness, direction, localDir, 0 );
+		float	weight		=	1;//NDF( roughness, direction, localDir, 0 );
 		refColor.rgb			+=	tex_in.SampleLevel( LinearSampler, localDir, level ).rgb * weight;
 		refColor.a				+=	weight;
 	}

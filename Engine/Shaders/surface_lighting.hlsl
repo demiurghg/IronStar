@@ -92,61 +92,6 @@ float3 ComputePointLight( LIGHT light, CAMERA camera, GEOMETRY geometry, SURFACE
 }
 
 
-/*float4 TubeLight( float3 L0, float3 L1, float d0, float d1, float3 R, float r )
-{
-	float3 	Ld	=	L1 - L0;
-	//float 	t	=	saturate( (dot(L0, Ld) * dot(R, L0) - dot(L0, L0) * dot(R, Ld)) / ( dot(L0, Ld) * dot(R, Ld) - dot(Ld, Ld) * dot(R, L0) + 0.00001 ) );
-	
-	float t_num 	=	dot(R, L0) * dot(Ld, R) - dot(Ld, L0);
-	float t_denom 	=	dot(Ld, Ld) - dot(Ld, R) * dot(Ld, R);
-	float t 		=	saturate(t_num / t_denom);	
-
-
-	float3	L	=	L0 + t * Ld;
-	float 	d	=	lerp( d0,d1,t );
-
-	float  	a				=	r * r; // roughness^2
-	float 	a1				=	saturate( a + 0.66f * d );
-	float  	energyFactor	=	sqr( a / a1 ) * (a/a1);
-	
-	float3 	lightToRay		=	( R - L );
-	float	lightToRayLen	=	min( length( lightToRay ), d );
-	float3 	lightDirFS		=	normalize( R - L ) * lightToRayLen + L;
-	
-	return float4( lightDirFS, energyFactor );
-}*/
-
-
-/*float3	ComputeLighting( FLUX flux, GEOMETRY geometry, SURFACE surface, CAMERA camera, bool diffuse=true, bool specular=true )
-{
-	float3	viewDir		=	normalize( Camera.CameraPosition.xyz - geometry.position.xyz );
-	float3 	lightDir0	=	-flux.direction;
-	float3 	lightDir1	=	-flux.direction1;
-	float3 	lightDir	=	0.5f * (lightDir0 + lightDir1);
-	float3	viewReflect	=	reflect(-viewDir, surface.normal);
-	float  	nDotL		= 	saturate( dot(surface.normal, lightDir) );
-	float  	nDotLGeom	= 	saturate( dot(geometry.normal, lightDir) * 10 );
-			nDotL		*=	nDotLGeom;
-	
-	float3	totalLight	=	0;
-	
-	if (diffuse)
-	{
-		totalLight.rgb 		+= 	nDotL * Lambert ( flux.intensity, surface.diffuse );
-	}
-
-	#ifndef LIGHTING_DIFFUSE_ONLY	
-	if (specular)
-	{
-		float  roughness	=	ClampRoughness( surface.roughness );
-		float4 tubeLight	=	TubeLight( lightDir0, lightDir1, flux.divergency, flux.divergency1, viewReflect, roughness );
-		totalLight.rgb 		+= 	nDotL * CookTorrance( surface.normal.xyz, viewDir, tubeLight.xyz, flux.intensity * tubeLight.w, surface.specular, roughness, flux.divergency );
-	}
-	#endif
-	
-	return totalLight;
-}*/
-
 
 //
 //	ComputeClusteredLighting
@@ -189,6 +134,7 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 	CLUSTER cluster			=	GetCluster( rcCluster, input.ProjPos );
 
 	uint i;
+	uint light_complexity	=	0;
 	float3 	totalLight		=	0;
 
 	GEOMETRY geometry 		= 	(GEOMETRY)0;
@@ -206,6 +152,7 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 		DECAL decal = GetDecal( rcCluster, cluster, i );
 		
 		surface = ApplyDecal( geometry, surface, Camera, decal, rcDecals, Instance.Group );
+		light_complexity++;
 	}
 	
 	ComputeDiffuseSpecular( surface );
@@ -239,6 +186,7 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 		LIGHTPROBE	probe		=	GetLightProbe( rcCluster, cluster, i );
 		float4		envLight	=	ComputeEnvironmentLighting( probe, geometry, surface, Camera, rcLightProbe );
 		reflection				=	lerp( reflection, float4(envLight.rgb,1), envLight.a );
+		light_complexity++;
 	}
 	
 	totalLight.rgb	=	reflection.rgb * ssaoFactor;
@@ -282,11 +230,14 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 	{
 		LIGHT light	=	GetLight( rcCluster, cluster, i );
 		totalLight	+=	ComputePointLight( light, Camera, geometry, surface, rcShadow, true, true );
+		light_complexity++;
 	}
 	
 	//----------------------------------------------------------------------------------------------
 	
 	totalLight.xyz	+=	surface.emission;
+	
+	totalLight.xyz 	+=	Stage.ShowLightComplexity * light_complexity * float3(1,0,0.5f) * 0.25f;
 
 	//----------------------------------------------------------------------------------------------
 

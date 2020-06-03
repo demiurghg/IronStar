@@ -96,64 +96,6 @@ float3	Fresnel( float c, float3 Fn )
 	Geometry attenuation term :
 -----------------------------------------------------------------------------*/
 
-float GTerm ( float roughness, float3 N, float3 V, float3 H, float3 L ) 
-{
-	float	NoH	=	max( 0.0001, dot(N,H) );
-	float	NoV	=	max( 0.0001, dot(N,V) );
-	float	NoL	=	max( 0.0001, dot(N,L) );
-	float	VoH	=	max( 0.0001, dot(V,H) );
-#if 0
-	float	g1	=	2 * NoH * NoV / VoH;
-	float	g2	=	2 * NoH * NoL / VoH;
-	float 	G	=	min(1, min(g1, g2));
-	return G; 
-#elif 1
-	float k = roughness * sqrt(2/3.141592f);
-    return ( NoL / (NoL * (1-k) + k) ) * ( NoV / (NoV * (1-k) + k) );
-#else
-	float a = roughness * roughness;
-	float a2 = a*a;
-
-	float G_SmithV = NoV + sqrt( NoV * (NoV - NoV * a2) + a2 );
-	float G_SmithL = NoL + sqrt( NoL * (NoL - NoL * a2) + a2 );
-	return saturate(rcp( G_SmithV * G_SmithL ));
-#endif
-}
-
-float GTerm ( float roughness, float3 N, float3 V ) 
-{
-	return 1-roughness;
-	float k = roughness * sqrt(2/3.141592f);
-	// return 1 / (k+1) / (k+1);
-	float G = 1 / (k+1) / (k+1);
-	return lerp( G, 1, 0 );
-	//return GTerm(roughness, N, V, 0, normalize(V*2+N) );
-}
-
-
-float NDF ( float roughness, float3 N, float3 H, float d )
-{
-	float a 	= 	roughness * roughness;
-	float a2	=	a * a;
-	float ndh	=	dot(N,H);
-	
-#if 0
-	// simulate finite-size light sources:
-	d	=	min( d, sqrt(1-ndh*ndh) );
-	ndh	=	saturate( ndh * sqrt(1-d*d) + sqrt(1-ndh*ndh)*d );
-	//	energy conservation :
-	float a1		=	saturate( a + 0.66f * d );
-	float factor	=	sqr( a / a1 );
-	float ndh2	=	ndh * ndh;
-	return factor * a2 / ( PI * sqr( ndh2 * (a2-1) + 1 ) );
-#else
-	float ndh2	=	ndh * ndh;
-	return a2 / ( PI * sqr( ndh2 * (a2-1) + 1 ) );
-#endif
-}
-
-
-
 /*-----------------------------------------------------------------------------
 	Specular lighting :
 
@@ -165,21 +107,52 @@ float NDF ( float roughness, float3 N, float3 H, float d )
 	http://blog.selfshadow.com/publications/s2013-shading-course/hoffman/s2013_pbs_physics_math_slides.pdf
 -----------------------------------------------------------------------------*/
 
-float3	CookTorrance( float3 N, float3 V, float3 L, float3 I, float3 F, float roughness )
+float D_GGX(float NoH, float a) 
+{
+    float a2 	=	a * a;
+    float f 	=	(NoH * a2 - NoH) * NoH + 1.0;
+    return a2 / (PI * f * f);
+}
+
+float3 F_Schlick(float u, float3 f0) 
+{
+    return f0 + (float3(1,1,1) - f0) * pow(1.0 - u, 5.0);
+}
+
+float G_SchlickBeckmann(float u, float a) 
+{
+	float k = a * sqrt(2/3.141592f);
+    return ( u / (u * (1-k) + k) );
+}
+
+float G_GGX( float u, float a )
+{
+	float a2 = a*a;
+	return 2 * u / ( u + sqrt(a2 + (1-a2) * u * u ) );
+}
+
+
+float3	CookTorrance( float3 N, float3 V, float3 L, float3 I, float3 F, float perceptualRoughness )
 {
 			L	=	normalize(L);
 			V	=	normalize(V);
 	float3	H	=	normalize(V+L);
 	
-	float	epsilon	=	0.0009765625;
+	float	eps	=	1e-5f;
+    float 	NoV	= 	abs  	(dot(N, V)) + 1e-5;
+    float 	NoL	= 	saturate(dot(N, L));
+    float 	NoH	= 	saturate(dot(N, H));
+    float 	LoH	= 	saturate(dot(L, H));	
 	
-	float	G		=	GTerm( roughness, N,V,H,L );
-	
-	float	D		=	NDF( roughness, N,H, 0 );
+    float roughness = perceptualRoughness * perceptualRoughness;
 
-			F		=	Fresnel( dot(V,H), F );
-						  
-	return max(0, I * F * D * G / (4*abs(dot(N,L))*dot(V,N)+epsilon));
+    float 	D	=	D_GGX(NoH, roughness);
+			F	=	F_Schlick(LoH, F);
+    float 	G1	=	G_GGX(NoV, roughness);
+    float 	G2	=	G_GGX(NoL, roughness);
+	float 	G	=	G1 * G2;
+
+	return max(0, I * F * D * G / ( 4 * NoV * NoL + eps ) );
 }
 
 #endif

@@ -7,46 +7,6 @@
 #define NO_CUBEMAPS
 #include "ls_core.fxi"
 
-// // // // #ifdef SOFT_LIGHTING
-// // // // float3 ComputeLight ( float3 intensity, float3 dir, float3 vdir, float3 normal, float3 color, float scatter, float roughness, float metallic )
-// // // // {
-	// // // // float a = 1.0 - 0.5*scatter;
-	// // // // float b = 1 - a;
-	// // // // return intensity * max( 0, dot( dir, normal ) * a + b );
-// // // // }
-// // // // #endif
-
-// // // // #ifdef HARD_LIGHTING
-// // // // float3 ComputeLight ( float3 intensity, float3 dir, float3 vdir, float3 normal, float3 color, float scatter, float roughness, float metallic )
-// // // // {
-	// // // // float 	a 			= 	1.0 - 0.5*scatter;
-	// // // // float 	b 			= 	1 - a;
-	// // // // float3	diffuse 	=	lerp( color, float3(0,0,0), metallic );
-	// // // // float3	specular  	=	lerp( float3(0.04f,0.04f,0.04f), color, metallic );
-			// // // // roughness	=	sqrt(roughness);
-			
-	// // // // float	nDotL		=	max(0, dot(dir, normal));
-	// // // // float	nDotLSoft	=	max(0, dot(dir, normal) * a + b);
-			
-	// // // // return 	intensity * nDotLSoft * diffuse
-		// // // // +	nDotL * CookTorrance( normal, vdir, dir, intensity, specular, roughness, 0.05 )
-		// // // // ;
-// // // // }
-// // // // #endif
-
-float3 ComputeParticleLighting( FLUX flux, GEOMETRY geometry, SURFACE surface, MEDIUM medium, CAMERA camera )
-{
-	float3 lighting = 0;
-#ifdef SOFT_LIGHTING
-	lighting	=	ComputeLighting( flux, geometry, medium, camera );
-#endif	
-#ifdef HARD_LIGHTING
-	lighting	=	ComputeLighting( flux, geometry, surface, camera );
-#endif
-	return lighting;
-}
-
-
 //
 //	ComputeClusteredLighting
 //	
@@ -78,9 +38,6 @@ float3 ComputeClusteredLighting ( float3 worldPos, float3 normal, float3 color, 
 	geometry.position		=	worldPos;
 	geometry.normal			=	normal;
 	
-	MEDIUM medium;
-	medium.Color			=	color;
-	
 	SURFACE	surface 		= 	(SURFACE)0;
 	surface.normal			=	normal;
 	surface.baseColor		=	color;
@@ -89,37 +46,76 @@ float3 ComputeClusteredLighting ( float3 worldPos, float3 normal, float3 color, 
 	surface.occlusion		=	1;
 	surface.emission		=	float3(0,0,0);
 	
+	ComputeDiffuseSpecular( surface );
+	
 	uint i;
-	float3 totalLight	=	0;
+	LIGHTING totalLight		=	(LIGHTING)0;
 	
 	//----------------------------------------------------------------------------------------------
+	//	Lightmaps :
+	//----------------------------------------------------------------------------------------------
+	
+	float3	volumeCoord	=	mad( float4(worldPos, 1), Params.WorldToVoxelScale, Params.WorldToVoxelOffset ).xyz;
+	LIGHTING lightmap	=	EvaluateLightVolume( 0.5, rcLightMap, geometry, surface, Camera, volumeCoord );
+	
+	AccumulateLighting( totalLight, lightmap, Params.IndirectLightFactor );
 
-	float3	shadow		=	ComputeCascadedShadows( geometry, float2(0,0), CascadeShadow, rcShadow, false ); 
-	FLUX	flux		=	ComputeDirectLightFlux( DirectLight );
-	totalLight			+=	shadow * ComputeParticleLighting( flux, geometry, surface, medium, Camera );
+	//----------------------------------------------------------------------------------------------
+	//	Compute direct light :
+	//----------------------------------------------------------------------------------------------
+	
+	if (1)
+	{
+		LIGHTING lighting = ComputeDirectLight( DirectLight, Camera, geometry, surface, CascadeShadow, rcShadow, float2(1,1) );
+		AccumulateLighting( totalLight, lighting, Params.DirectLightFactor );
+	}
 
+	//----------------------------------------------------------------------------------------------
+	//	Compute point lights :
 	//----------------------------------------------------------------------------------------------
 
 	[loop]
 	for (i=0; i<cluster.NumLights; i++) 
 	{
-		LIGHT light	=	GetLight( rcCluster, cluster, i );
-		
-		FLUX flux	=	ComputePointLightFlux( geometry, light, rcShadow );
-		totalLight	+=	ComputeParticleLighting( flux, geometry, surface, medium, Camera );
+		LIGHT 		light		=	GetLight( rcCluster, cluster, i );
+		LIGHTING	lighting	=	ComputePointLight( light, Camera, geometry, surface, rcShadow );
+		AccumulateLighting( totalLight, lighting, Params.DirectLightFactor );
 	}
 	
 	//----------------------------------------------------------------------------------------------
 	
-	float3	samplePoint		=	mad( float4(worldPos, 1), Params.WorldToVoxelScale, Params.WorldToVoxelOffset ).xyz;
+	return 	totalLight.diffuse
+		+ 	totalLight.transmissive
+		+	totalLight.specular
+		;//*/
+	
+	
+	//----------------------------------------------------------------------------------------------
+
+	// float3	shadow		=	ComputeCascadedShadows( geometry, float2(0,0), CascadeShadow, rcShadow ); 
+	// FLUX	flux		=	ComputeDirectLightFlux( DirectLight );
+	// totalLight			+=	shadow * ComputeParticleLighting( flux, geometry, surface, medium, Camera );
+
+	//----------------------------------------------------------------------------------------------
+
+	// [loop]
+	// for (i=0; i<cluster.NumLights; i++) 
+	// {
+		// LIGHT light	=	GetLight( rcCluster, cluster, i );
+		
+		// FLUX flux	=	ComputePointLightFlux( geometry, light, rcShadow );
+		// totalLight	+=	ComputeParticleLighting( flux, geometry, surface, medium, Camera );
+	// }
+	
+	//----------------------------------------------------------------------------------------------
+	
+	/*float3	samplePoint		=	mad( float4(worldPos, 1), Params.WorldToVoxelScale, Params.WorldToVoxelOffset ).xyz;
 	
 	float4	irradianceL0	=	IrradianceVolumeL0.SampleLevel( LinearSampler, samplePoint, 0 ).rgba;
 	float4	irradianceL1	=	IrradianceVolumeL1.SampleLevel( LinearSampler, samplePoint, 0 ).rgba;
 	float4	irradianceL2	=	IrradianceVolumeL2.SampleLevel( LinearSampler, samplePoint, 0 ).rgba;
 	float4	irradianceL3	=	IrradianceVolumeL3.SampleLevel( LinearSampler, samplePoint, 0 ).rgba;
 	
-	totalLight.rgb			+=	float3( irradianceL0.rgb ) * color.rgb;
-	
-	return totalLight;
+	return	float3( irradianceL0.rgb ) * color.rgb;*/
 }
 

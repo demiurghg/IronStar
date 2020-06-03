@@ -6,9 +6,9 @@
 
 /*------------------------------------------------------------------------------
 	Usage:
-	CASCADE_SHADOWS_FILTER		--	enabled shadow filtering
-	CASCADE_SHADOWS_PARTICLES	--	enabled particle shadows
-	CASCADE_DITHER_TRANSITION	--	enabled cascade transition dithering
+	SHADOW_FILTER		--	enabled shadow filtering
+	SHADOW_PARTICLES	--	enabled particle shadows
+	SHADOW_TRANSITION	--	enabled cascade transition dithering
 ------------------------------------------------------------------------------*/
 
 struct SHADOW_RESOURCES
@@ -132,33 +132,36 @@ static const float2 shadowSamplePattern9x[9] =
 };
 
 
-float3	ComputeCascadedShadows ( GEOMETRY geometry, float2 vpos, CASCADE_SHADOW stage, SHADOW_RESOURCES rc, float filter ) 
+float3	ComputeCascadedShadows ( GEOMETRY geometry, float2 vpos, CASCADE_SHADOW stage, SHADOW_RESOURCES rc ) 
 {
 	float2 csmSizeRcp	=	1.0f / GetTextureSize( rc.ShadowMap );
 
 	CASCADE cascade;
-	float   transition	=	filter ? 0.05f : 0;
+	
+#ifdef SHADOW_TRANSITION
+	float   transition	=	0.05f;
+#else
+	float   transition	=	0;
+#endif	
+
 	SelectCascade( geometry, stage, vpos, transition, cascade );
 	
-	float3	shadow			=	0;
+	float3	shadow		=	0;
 	
-	if (filter)
+#ifdef SHADOW_FILTER
+	[unroll]
+	for( int i=0; i<5; i++ ) 
 	{
-		[unroll]
-		for( int i=0; i<5; i++ ) 
-		{
-			float 	x	=	shadowSamplePattern5x[i].x;
-			float	y	=	shadowSamplePattern5x[i].y;
-			float	z	=	cascade.Depth + dot( cascade.Gradient.xy, float2(x,y) );
-			float	sh	=	rc.ShadowMap.SampleCmpLevelZero( rc.ShadowSampler, cascade.TexCoord + csmSizeRcp * float2(x,y), z ).r;
-			shadow		+=	sh;
-		}
-		shadow /= 5;
-	} 
-	else
-	{
-		shadow = rc.ShadowMap.SampleCmpLevelZero( rc.ShadowSampler, cascade.TexCoord, cascade.Depth );
+		float 	x	=	shadowSamplePattern5x[i].x;
+		float	y	=	shadowSamplePattern5x[i].y;
+		float	z	=	cascade.Depth + dot( cascade.Gradient.xy, float2(x,y) );
+		float	sh	=	rc.ShadowMap.SampleCmpLevelZero( rc.ShadowSampler, cascade.TexCoord + csmSizeRcp * float2(x,y), z ).r;
+		shadow		+=	sh;
 	}
+	shadow /= 5;
+#else	
+	shadow = rc.ShadowMap.SampleCmpLevelZero( rc.ShadowSampler, cascade.TexCoord, cascade.Depth );
+#endif
 	
 	shadow *= rc.ShadowMask.SampleLevel( rc.LinearSampler, cascade.TexCoord, 0 ).rgb;
 	
@@ -166,7 +169,7 @@ float3	ComputeCascadedShadows ( GEOMETRY geometry, float2 vpos, CASCADE_SHADOW s
 }
 
 
-float3 ComputeSpotShadow ( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc, bool filter )
+float3 ComputeSpotShadow ( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc )
 {
 	float2 smSizeRcp	=	1.0f / GetTextureSize( rc.ShadowMap );
 	float4 scaleOffset	=	light.ShadowScaleOffset;
@@ -185,12 +188,7 @@ float3 ComputeSpotShadow ( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc, 
 				
 		//	TODO : num taps <--> shadow quality
 		//	TODO : kernel size <--> shadow region size
-		if (!filter) 
-		{
-			accumulatedShadow	=	rc.ShadowMap.SampleCmpLevelZero( rc.ShadowSampler, lsPos.xy, shadowDepth ).r;
-		} 
-		else 
-		{
+		#ifdef SHADOW_FILTER
 			[unroll]
 			for( int i=0; i<5; i++ ) 
 			{
@@ -198,8 +196,10 @@ float3 ComputeSpotShadow ( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc, 
 				float	shadow	=	rc.ShadowMap.SampleCmpLevelZero( rc.ShadowSampler, smcoord, shadowDepth ).r;
 				accumulatedShadow += shadow;
 			}
-		}
-		accumulatedShadow 	/= 	25.0f;
+			accumulatedShadow 	/= 	5.0f;
+		#else
+			accumulatedShadow	=	rc.ShadowMap.SampleCmpLevelZero( rc.ShadowSampler, lsPos.xy, shadowDepth ).r;
+		#endif
 
 		shadow		=	accumulatedShadow * rc.ShadowMask.SampleLevel( rc.LinearSampler, lsPos.xy, 0 ).rgb;
 	}

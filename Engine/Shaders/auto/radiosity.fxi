@@ -121,7 +121,7 @@ Texture3D<uint>                IndexVolume                    : register(t16);
 Texture3D<float4>              SkyVolume                      : register(t17);
 SamplerState                   LinearSampler                  : register(s0);
 SamplerComparisonState         ShadowSampler                  : register(s1);
-#if defined(LIGHTING) || defined(COLLAPSE) || defined(DILATE)
+#if defined(ILLUMINATE) || defined(COLLAPSE) || defined(DILATE)
 RWTexture2D<float4>            RadianceUav                    : register(u0);
 #endif
 #if defined(INTEGRATE2)

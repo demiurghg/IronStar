@@ -1,6 +1,6 @@
 
 #if 0
-$ubershader 	LIGHTING
+$ubershader 	ILLUMINATE
 $ubershader 	COLLAPSE
 $ubershader 	INTEGRATE2
 $ubershader 	INTEGRATE3
@@ -26,7 +26,7 @@ $ubershader		RAYTRACE
 static const float3 LightEpsilon = float3( 0.0001f, 0.0001f, 0.0001f );
 static const float3 WhiteColor = float3( 0.875f, 0.875f, 0.875f );
 
-#ifdef LIGHTING
+#ifdef ILLUMINATE
 
 void ReconstructBasis(float3 normal, out float3 tangentX, out float3 tangentY)
 {
@@ -108,8 +108,8 @@ void CSMain(
 		geometry.position	=	position;
 		geometry.normal		=	normal;
 
-		float3 totalLight 	=	0;
-		float3 whiteAlbedo	=	float3(1,1,1);
+		LIGHTING totalLight	=	(LIGHTING)0;
+		SURFACE  surface	=	CreateDiffuseSurface( float3(1,1,1), normal );
 
 		//-----------------------------
 		// compute spot lights :
@@ -117,17 +117,17 @@ void CSMain(
 		
 		for (uint index=0; index<light_count; index++)
 		{
-			LIGHT light =	Lights[ light_indices[ index ] ];
+			LIGHT light 		=	Lights[ light_indices[ index ] ];
+			LIGHTING lighting	=	ComputePointLight( light, Camera, geometry, surface, shadowRc );
 			
-			FLUX  flux 	=	ComputePointLightFlux( geometry, light, shadowRc );
-			totalLight 	+= 	ComputeLighting( flux, geometry, whiteAlbedo );
+			AccumulateLighting( totalLight, lighting, 1 );
 		}
 
 		//-----------------------------
 		// compute direct light :
 		//-----------------------------
 		
-		float2 sample_pattern[] = {
+		/*float2 sample_pattern[] = {
 			float2( 0.25f, 0.75f ),		float2(-0.75f, 0.25f ),
 			float2(-0.25f,-0.75f ),		float2( 0.75f,-0.25f ),
 			float2( 0.00f, 0.00f )
@@ -139,16 +139,20 @@ void CSMain(
 			float3 offset = tangentX * sample_pattern[i].x * size;
 						  + tangentY * sample_pattern[i].y * size;
 			geometry.position = position + offset;
-			shadow += 0.2*ComputeCascadedShadows( geometry, float2(0,0), CascadeShadow, shadowRc, false );
+			shadow += 0.2*ComputeCascadedShadows( geometry, float2(0,0), CascadeShadow, shadowRc );
+		}*/
+		
+		if (1) 
+		{
+			LIGHTING lighting	=	ComputeDirectLight( DirectLight, Camera, geometry, surface, CascadeShadow, shadowRc, loadXY );
+			
+			AccumulateLighting( totalLight, lighting, 1 );
 		}
 		
-		FLUX	flux	=	ComputeDirectLightFlux( DirectLight );
-		totalLight		+=	ComputeLighting( flux, geometry, whiteAlbedo ) * shadow;
+		totalLight.diffuse	+=	indirect;
+		totalLight.diffuse	+=	LightEpsilon;
 		
-		totalLight		+=	indirect;
-		totalLight		+=	LightEpsilon;
-		
-		RadianceUav[ storeXY.xy ]	=	float4(totalLight * albedo.a, albedo.a );
+		RadianceUav[ storeXY.xy ]	=	float4(totalLight.diffuse * albedo.a, albedo.a );
 	}
 	else
 	{

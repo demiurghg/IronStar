@@ -162,7 +162,7 @@ namespace Fusion.Engine.Graphics {
 //       int MaxParticles;              // Offset:  216
 //       float DeltaTime;               // Offset:  220
 //       uint DeadListSize;             // Offset:  224
-		[StructLayout(LayoutKind.Sequential, Size=1024)]
+		[StructLayout(LayoutKind.Sequential, Size=512)]
 		[ShaderStructure]
 		struct PARAMS {
 			public Vector4	WorldToVoxelScale;
@@ -178,6 +178,8 @@ namespace Fusion.Engine.Graphics {
 			public float	CocScale;
 			public float	CocBias;
 			public uint		IntegrationSteps;
+			public float	IndirectLightFactor;
+			public float	DirectLightFactor;
 		} 
 
 		Random rand = new Random();
@@ -456,6 +458,9 @@ namespace Fusion.Engine.Graphics {
 			param.CocBias			=	renderWorld.DofSettings.CocBias;
 			param.CocScale			=	renderWorld.DofSettings.CocScale;
 			param.IntegrationSteps	=	stepCount;
+
+			param.IndirectLightFactor	=	rs.Radiosity.MasterIntensity;
+			param.DirectLightFactor		=	rs.SkipDirectLighting ? 0 : 1;
 
 			if (flags==Flags.INJECTION) 
 			{

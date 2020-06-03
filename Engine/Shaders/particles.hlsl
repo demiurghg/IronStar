@@ -594,7 +594,7 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 		for (int i=0; i<count; i++) {
 			float 		t	=	(((i / (float)count)*2-1) * sz) * 0.5 + 0.5;
 			float3 		pos = 	input.ViewPosSZ.xyz + t * Camera.CameraForward.xyz * input.ViewPosSZ.w;
-			lighting 		+= 	ComputeClusteredLighting( pos, normalize(input.Normal), 1, scatter, 0, 0 ) / count;
+			lighting 		+= 	ComputeClusteredLighting( pos, normalize(input.Normal), 1, scatter, 0.5, 0 ) / count;
 		}
 		return float4(lighting,1);
 	#endif

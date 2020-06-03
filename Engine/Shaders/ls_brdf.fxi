@@ -16,6 +16,14 @@ struct FLUX
 	float	divergency1;	//	light divergency to approximate finite size lights
 };
 
+struct LIGHTING
+{
+	float3	emissive;
+	float3	diffuse;
+	float3	specular;
+	float3	transmissive;
+};
+
 struct SURFACE
 {
 	float3	baseColor;		//	base color or albedo
@@ -42,6 +50,23 @@ struct GEOMETRY
 	float3	position;		//	world-space position
 	float3 	normal;			//	world-space geometry (vertex interpolated) normal
 };
+
+
+void InitLighting( out LIGHTING lighting )
+{
+	lighting.emissive		=	float3(0,0,0);
+	lighting.diffuse		=	float3(0,0,0);
+	lighting.specular		=	float3(0,0,0);
+	lighting.transmissive	=	float3(0,0,0);
+}
+
+void AccumulateLighting( inout LIGHTING total, LIGHTING lighting, float scale )
+{
+	total.emissive		+=	lighting.emissive * scale;
+	total.diffuse		+=	lighting.diffuse * scale;
+	total.specular		+=	lighting.specular * scale;
+	total.transmissive	+=	lighting.transmissive * scale;
+}
 
 SURFACE CreateDiffuseSurface(float3 color, float3 normal)
 {

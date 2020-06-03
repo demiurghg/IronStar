@@ -52,6 +52,9 @@ struct GBuffer {
 #include "gamma.fxi"
 #include "shl1.fxi"
 
+#define SHADOW_FILTER
+#define SHADOW_TRANSITION
+
 #include "ls_core.fxi"
 
 #include "fog.fxi"

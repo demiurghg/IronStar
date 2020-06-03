@@ -22,7 +22,7 @@ static const uint LightSpotShapeSquare = 65536;
 // ---------------- DATA STRUCTURES ---------------- //
 
 // Fusion.Engine.Graphics.ParticleStream+PARAMS
-// Marshal.SizeOf = 1024
+// Marshal.SizeOf = 512
 struct PARAMS {
 	float4     WorldToVoxelScale;             // offset:    0
 	float4     WorldToVoxelOffset;            // offset:   16
@@ -37,6 +37,8 @@ struct PARAMS {
 	float      CocScale;                      // offset:  112
 	float      CocBias;                       // offset:  116
 	uint       IntegrationSteps;              // offset:  120
+	float      IndirectLightFactor;           // offset:  124
+	float      DirectLightFactor;             // offset:  128
 };
 
 // Fusion.Engine.Graphics.GpuData+CAMERA

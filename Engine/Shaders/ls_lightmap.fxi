@@ -19,28 +19,22 @@ struct LIGHTMAP_RESOURCES
 static const float GI_SCALE = 3.1415f;
 
 
-float3 	EvaluateSHL( float3 shL0, float3 shL1, float3 shL2, float3 shL3, float reflectionAmount, GEOMETRY geometry, SURFACE surface, CAMERA camera )
+LIGHTING EvaluateSHL( float3 shL0, float3 shL1, float3 shL2, float3 shL3, float reflectionAmount, GEOMETRY geometry, SURFACE surface, CAMERA camera )
 {
-	float3	normal	=	normalize(surface.normal);
-	float3 	light	=	0;
+	float3		normal	=	normalize(surface.normal);
+	LIGHTING 	light	=	(LIGHTING)0;
 	
 	//	specular approximation :
 	float3 	luma	=	float3(0.3,0.5,0.2);
 	float3	dir		=	float3( dot(shL3,luma), dot(shL1,luma), dot(shL2,luma) );
 	float	len		=	length(dir) + 0.001f;
-			dir		=	-dir / len;
+			dir		=	dir / len;
 			
-	float roughness	=	surface.roughness;
-			
-	surface.roughness	=	lerp( surface.roughness, 1, saturate(1 - len * len) );
+	float 	roughness	=	lerp( surface.roughness, 1, saturate(1 - len * len) );
 	
-	FLUX flux;
-	flux.intensity		=	shL0;
-	flux.direction		=	dir;
-	flux.direction1		=	dir;
-	flux.divergency		=	0.2;
-	flux.divergency1	=	0.2;
-	light				+=	ComputeLighting( flux, geometry, surface, Camera, false, true ) * 4 * 3.14f * (1-reflectionAmount);
+	float3 	viewDir		=	normalize( camera.CameraPosition.xyz - geometry.position.xyz );
+	float	nDotL		=	saturate( dot( normal, dir ) );
+	light.specular		=	nDotL * CookTorrance( normal, viewDir, dir, shL0.rgb, surface.specular, roughness ) * 4 * 3.1415 * (1-reflectionAmount); 
 	
 	//	diffuse SH evaluation :
 	shL1	*=	shL0;
@@ -50,18 +44,18 @@ float3 	EvaluateSHL( float3 shL0, float3 shL1, float3 shL2, float3 shL3, float r
 	float4	irrR	=	float4( shL0.r, shL1.r, shL2.r, shL3.r );
 	float4	irrG	=	float4( shL0.g, shL1.g, shL2.g, shL3.g );
 	float4	irrB	=	float4( shL0.b, shL1.b, shL2.b, shL3.b );
-	
+		
 	float	lightR	=	EvalSHL1Smooth( irrR, normal );
 	float	lightG	=	EvalSHL1Smooth( irrG, normal );
 	float	lightB	=	EvalSHL1Smooth( irrB, normal );
 	
-	light			+=	float3( lightR, lightG, lightB ) * surface.diffuse;
+	light.diffuse	=	float3( lightR, lightG, lightB ) * surface.diffuse;
 	
 	return light;
 }
 
 
-float3	EvaluateLightmap ( float reflectionAmount, LIGHTMAP_RESOURCES lightmap, GEOMETRY geometry, SURFACE surface, CAMERA camera, float2 lightMapCoord )
+LIGHTING	EvaluateLightmap ( float reflectionAmount, LIGHTMAP_RESOURCES lightmap, GEOMETRY geometry, SURFACE surface, CAMERA camera, float2 lightMapCoord )
 {
 	float3 	shL0	=	lightmap.IrradianceMapL0.SampleLevel( lightmap.Sampler, lightMapCoord, 0 ).rgb;
 	float3 	shL1	=	lightmap.IrradianceMapL1.SampleLevel( lightmap.Sampler, lightMapCoord, 0 ).rgb * 2 - 1;
@@ -72,7 +66,7 @@ float3	EvaluateLightmap ( float reflectionAmount, LIGHTMAP_RESOURCES lightmap, G
 }
 
 
-float3	EvaluateLightVolume ( float reflectionAmount, LIGHTMAP_RESOURCES lightmap, GEOMETRY geometry, SURFACE surface, CAMERA camera, float3 volumeCoord )
+LIGHTING	EvaluateLightVolume ( float reflectionAmount, LIGHTMAP_RESOURCES lightmap, GEOMETRY geometry, SURFACE surface, CAMERA camera, float3 volumeCoord )
 {
 	float3 	shL0	=	lightmap.IrradianceVolumeL0.SampleLevel( lightmap.Sampler, volumeCoord, 0 ).rgb;
 	float3 	shL1	=	lightmap.IrradianceVolumeL1.SampleLevel( lightmap.Sampler, volumeCoord, 0 ).rgb * 2 - 1;
@@ -82,7 +76,7 @@ float3	EvaluateLightVolume ( float reflectionAmount, LIGHTMAP_RESOURCES lightmap
 	return EvaluateSHL( shL0, shL1, shL2, shL3, reflectionAmount, geometry, surface, Camera );
 }
 
-float3	EvaluateLightVolume ( LIGHTMAP_RESOURCES lightmap, GEOMETRY geometry, SURFACE surface, CAMERA camera, uint3 voxelIndex )
+LIGHTING	EvaluateLightVolume ( LIGHTMAP_RESOURCES lightmap, GEOMETRY geometry, SURFACE surface, CAMERA camera, uint3 voxelIndex )
 {
 	float3 	shL0	=	lightmap.IrradianceVolumeL0[ voxelIndex ].rgb;
 	float3 	shL1	=	lightmap.IrradianceVolumeL1[ voxelIndex ].rgb * 2 - 1;

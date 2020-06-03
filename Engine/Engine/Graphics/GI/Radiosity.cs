@@ -62,7 +62,7 @@ namespace Fusion.Engine.Graphics.GI
 		static FXSamplerState								regSamplerLinear	=	new SRegister( 0, "LinearSampler"	);
 		static FXSamplerComparisonState						regSamplerShadow	=	new SRegister( 1, "ShadowSampler"	);
 											
-		[ShaderIfDef("LIGHTING,COLLAPSE,DILATE")]	
+		[ShaderIfDef("ILLUMINATE,COLLAPSE,DILATE")]	
 		static FXRWTexture2D<Vector4>	regRadianceUav		=	new URegister( 0, "RadianceUav"		);
 
 		[ShaderIfDef("INTEGRATE2")] static FXRWTexture2D<Vector4>	regIrradianceL0		=	new URegister( 0, "IrradianceL0"	);
@@ -93,7 +93,7 @@ namespace Fusion.Engine.Graphics.GI
 
 		enum Flags 
 		{	
-			LIGHTING	=	0x001,
+			ILLUMINATE	=	0x001,
 			DILATE		=	0x002,
 			COLLAPSE	=	0x004,
 			INTEGRATE2	=	0x008,
@@ -305,7 +305,7 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			using ( new PixEvent( "Lighting" ) )
 			{
-				device.PipelineState    =   factory[(int)Flags.LIGHTING];			
+				device.PipelineState    =   factory[(int)Flags.ILLUMINATE];			
 				
 				device.SetComputeUnorderedAccess( regRadianceUav, lightMap.radiance.Surface.UnorderedAccess );
 					

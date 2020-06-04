@@ -4,7 +4,7 @@
     "$type": "IronStar.Mapping.MapEnvironment, IronStar",
     "Gravity": 48.0,
     "SkyTrubidity": 2.0,
-    "SunAltitude": 0.0,
+    "SunAltitude": 15.0,
     "SkyIntensity": 1.0,
     "SunAzimuth": -45.0,
     "SunIntensity": 500.0,

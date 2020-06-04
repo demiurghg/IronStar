@@ -277,3 +277,4 @@ paket-files/
 *.irrmap
 *.irrvol
 *.rff
+*.painter_lock

@@ -156,6 +156,26 @@ float G_GGX( float u, float a )
 	return 2 * u / ( u + sqrt(a2 + (1-a2) * u * u ) );
 }
 
+float G_Implicit(float NoV, float NoL, float a)
+{
+	return NoV * NoL;
+}
+
+float G_SmithGGXCorrelated(float NoV, float NoL, float a) 
+{
+    float a2 = a * a;
+    float GGXL = NoV * sqrt((-NoL * a2 + NoL) * NoL + a2);
+    float GGXV = NoL * sqrt((-NoV * a2 + NoV) * NoV + a2);
+    return 0.5 / (GGXV + GGXL);
+}
+
+float G_CookTorrance(float NoV, float NoL, float NoH, float a)
+{
+	float g1 = 2 * (NoV * NoL)/NoH;
+	float g2 = 2 * (NoV * NoL)/NoH;
+	float g  = min(g1,g2);
+	return min(1,g);
+}
 
 float3	CookTorrance( float3 N, float3 V, float3 L, float3 I, float3 F, float perceptualRoughness )
 {
@@ -163,8 +183,8 @@ float3	CookTorrance( float3 N, float3 V, float3 L, float3 I, float3 F, float per
 			V	=	normalize(V);
 	float3	H	=	normalize(V+L);
 	
-	float	eps	=	1e-5f;
-    float 	NoV	= 	abs  	(dot(N, V)) + 1e-5;
+	float	eps	=	1e-4f;
+    float 	NoV	= 	abs  	(dot(N, V)) + eps;
     float 	NoL	= 	saturate(dot(N, L));
     float 	NoH	= 	saturate(dot(N, H));
     float 	LoH	= 	saturate(dot(L, H));	
@@ -173,9 +193,17 @@ float3	CookTorrance( float3 N, float3 V, float3 L, float3 I, float3 F, float per
 
     float 	D	=	D_GGX(NoH, roughness);
 			F	=	F_Schlick(LoH, F);
-    float 	G1	=	G_GGX(NoV, roughness);
-    float 	G2	=	G_GGX(NoL, roughness);
-	float 	G	=	G1 * G2;
+
+	// using perceptualRoughness lead to better image quality :
+	// float 	G1	=	G_GGX(NoV, perceptualRoughness);
+    // float 	G2	=	G_GGX(NoL, perceptualRoughness);
+	// float 	G	=	G1 * G2;
+
+	// float 	G	=	G_SmithGGXCorrelated(NoV,NoL,roughness);
+	// float 	G	=	G_Implicit(NoV,NoL,roughness);
+	
+	//	best visual quality, and still PBR:
+	float		G	=	G_CookTorrance(NoV,NoL,NoH,roughness);
 
 	return max(0, I * F * D * G / ( 4 * NoV * NoL + eps ) );
 }

@@ -80,6 +80,7 @@ namespace Fusion.Drivers.Graphics {
 		R32,
 		R32F,
 		R16F,
+		Rg8,
 		Rg16F,
 		Rg32F,
 		Rg32,
@@ -344,6 +345,7 @@ namespace Fusion.Drivers.Graphics {
 				case ColorFormat.R32		: return 4;
 				case ColorFormat.R32F		: return 4;
 				case ColorFormat.R16F		: return 2;
+				case ColorFormat.Rg8		: return 2;
 				case ColorFormat.Rg16F		: return 4;
 				case ColorFormat.Rg32		: return 8;
 				case ColorFormat.Rg32F		: return 8;
@@ -397,6 +399,7 @@ namespace Fusion.Drivers.Graphics {
 				case ColorFormat.R32		: return Format.R32_UInt;
 				case ColorFormat.R32F		: return Format.R32_Float;
 				case ColorFormat.R16F		: return Format.R16_Float;
+				case ColorFormat.Rg8		: return Format.R8G8_UNorm;
 				case ColorFormat.Rg16F		: return Format.R16G16_Float;
 				case ColorFormat.Rg32F		: return Format.R32G32_Float;
 				case ColorFormat.Rg32		: return Format.R32G32_UInt;

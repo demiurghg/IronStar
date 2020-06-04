@@ -578,6 +578,9 @@ namespace Fusion.Engine.Graphics {
 				using ( new PixEvent( "Frame Postprocessing" ) ) {
 					//	compose, tonemap, bloob and color grade :
 					rs.HdrFilter.ComposeHdrImage( viewHdrFrame );
+
+					rs.DofFilter.RenderDof( viewHdrFrame );
+
 					rs.HdrFilter.TonemapHdrImage( gameTime, HdrSettings, viewHdrFrame, Camera );
 
 

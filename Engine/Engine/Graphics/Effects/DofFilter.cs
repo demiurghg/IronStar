@@ -11,31 +11,72 @@ using Fusion.Drivers.Graphics;
 using System.Runtime.InteropServices;
 using Fusion.Engine.Graphics;
 using Fusion.Engine.Graphics.Ubershaders;
+using Fusion.Core.Shell;
+
+namespace Fusion.Engine.Graphics 
+{
+	[RequireShader("dof", true)]
+	internal class DofFilter : RenderComponent 
+	{
+		[Config]
+		public bool Enabled { get; set; } = false;
+
+		[Config]
+		[AEValueRange(0, 8, 0.5f, 0.01f)]
+		public float Aperture { get; set; } = 1;
+
+		[Config]
+		[AEValueRange(0.5f, 100, 0.5f, 0.01f)]
+		public float FocalDistance { get; set; } = 10;
+
+
+		[ShaderDefine]
+		const uint BlockSize = 8;
+
+		static FXConstantBuffer<GpuData.CAMERA>			regCamera			=	new CRegister( 0, "Camera"		);
+		static FXConstantBuffer<DOF_DATA>				regDOF				=	new CRegister( 1, "Dof"			);
+
+		static FXSamplerState							regLinearClamp		=	new SRegister( 0, "LinearClamp"	);
+
+		[ShaderIfDef("COMPUTE_COC")]	static FXTexture2D<float>				regDepthBuffer		=	new TRegister( 0, "DepthBuffer"		);
+		[ShaderIfDef("COMPUTE_COC")]	static FXRWTexture2D<Vector4>			regCocTarget		=	new URegister( 0, "CocTarget"		);
+
+		[ShaderIfDef("EXTRACT,BLUR,COMPOSE")]	static FXTexture2D<Vector4>		regCocTexture		=	new TRegister( 0, "CocTexture"		);
+
+		[ShaderIfDef("EXTRACT,COMPOSE")]		static FXTexture2D<Vector4>		regHdrSource		=	new TRegister( 1, "HdrSource"		);
+		[ShaderIfDef("EXTRACT")]				static FXRWTexture2D<Vector4>	regBackground		=	new URegister( 0, "Background"		);
+		[ShaderIfDef("EXTRACT")]				static FXRWTexture2D<Vector4>	regForeground		=	new URegister( 1, "Foreground"		);
+
+		[ShaderIfDef("BLUR")]					static FXTexture2D<Vector4>		regBokehSource		=	new TRegister( 2, "BokehSource"		);
+		[ShaderIfDef("BLUR")]					static FXRWTexture2D<Vector4>	regBokehTarget		=	new URegister( 1, "BokehTarget"		);
+
+		[ShaderIfDef("COMPOSE")]				static FXTexture2D<Vector4>		regBokehBackground	=	new TRegister( 2, "BokehBackground"		);
+		[ShaderIfDef("COMPOSE")]				static FXTexture2D<Vector4>		regBokehForeground	=	new TRegister( 3, "BokehForeground"		);
+		[ShaderIfDef("COMPOSE")]				static FXRWTexture2D<Vector4>	regHdrTarget		=	new URegister( 0, "HdrTarget"			);
 
 
 
-namespace Fusion.Engine.Graphics {
-
-	[RequireShader("dof")]
-	internal class DofFilter : RenderComponent {
-
+		
 		Ubershader		shader;
-		ConstantBuffer	paramsCB;
 		StateFactory	factory;
+		ConstantBuffer	cbDof;
 
 
-		[StructLayout(LayoutKind.Explicit, Size=16)]
-		struct Params {
-			[FieldOffset( 0)]	public	float	LinearDepthScale;
-			[FieldOffset( 4)]	public	float 	LinearDepthBias;
-			[FieldOffset( 8)]	public	float	CocScale;
-			[FieldOffset(12)]	public	float	CocBias;
+		[StructLayout(LayoutKind.Sequential,Size = 64)]
+		struct DOF_DATA {
+			public	float	Aperture;
+			public	float	FocalDistance;
 		}
 
 
-		enum Flags {	
-			COC_TO_ALPHA	=	0x001,
-			DEPTH_OF_FIELD	=	0x002,
+		enum Flags 
+		{	
+			COMPUTE_COC		=	0x0001,
+			BLUR			=	0x0002,
+			EXTRACT			=	0x0004,
+			BACKGROUND		=	0x0008,
+			FOREGROUND		=	0x0010,
+			APPLY_DOF		=	0x0020,
 		}
 
 		/// <summary>
@@ -53,7 +94,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public override void Initialize ()
 		{
-			paramsCB	=	new ConstantBuffer( Game.GraphicsDevice, typeof(Params) );
+			cbDof	=	new ConstantBuffer( Game.GraphicsDevice, typeof(DOF_DATA) );
 
 			LoadContent();
 
@@ -68,29 +109,8 @@ namespace Fusion.Engine.Graphics {
 		void LoadContent ()
 		{
 			shader	=	Game.Content.Load<Ubershader>("dof");
-			factory	=	shader.CreateFactory( typeof(Flags), (ps,i) => EnumAction(ps, (Flags)i ) );
+			factory	=	shader.CreateFactory( typeof(Flags) );
 		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="ps"></param>
-		/// <param name="flag"></param>
-		void EnumAction ( PipelineState ps, Flags flag )
-		{
-			ps.BlendState			=	BlendState.Opaque;
-			ps.DepthStencilState	=	DepthStencilState.None;
-			ps.Primitive			=	Primitive.TriangleList;
-			ps.VertexInputElements	=	VertexInputElement.Empty;
-
-			if (flag==Flags.COC_TO_ALPHA) {
-				ps.BlendState			=	BlendState.AlphaOnly;
-			}
-		}
-
-
 
 
 		/// <summary>
@@ -100,7 +120,7 @@ namespace Fusion.Engine.Graphics {
 		protected override void Dispose ( bool disposing )
 		{
 			if (disposing) {
-				SafeDispose( ref paramsCB	 );
+				SafeDispose( ref cbDof );
 			}
 
 			base.Dispose( disposing );
@@ -111,65 +131,46 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Applies DOF effect
 		/// </summary>
-		public void Render ( GameTime gameTime, RenderTarget2D temp, RenderTarget2D hdrImage, ShaderResource depthBuffer, RenderWorld renderWorld )
+		public void RenderDof ( HdrFrame hdrFrame )
 		{
-			if (!renderWorld.DofSettings.Enabled) {
+			if (!Enabled) 
+			{
 				return;
 			}
 
-			var device	=	Game.GraphicsDevice;
-			var filter	=	Game.RenderSystem.Filter;
+			using ( new PixEvent( "DOF" ) )
+			{
+				device.ResetStates();
 
-			device.ResetStates();
+				var width	=	hdrFrame.HdrBuffer.Width;
+				var height	=	hdrFrame.HdrBuffer.Height;
+				var dofData	=	new DOF_DATA();
 
+				dofData.Aperture		=	Aperture;
+				dofData.FocalDistance	=	FocalDistance;
 
-			//
-			//	Setup parameters :
-			//
-			var paramsData	=	new Params();
-			paramsData.LinearDepthBias	=	renderWorld.Camera.LinearizeDepthBias;
-			paramsData.LinearDepthScale	=	renderWorld.Camera.LinearizeDepthScale;	
-			paramsData.CocBias			=	renderWorld.DofSettings.CocBias;
-			paramsData.CocScale			=	renderWorld.DofSettings.CocScale;
+				cbDof.SetData( ref dofData );
 
-			paramsCB.SetData( ref paramsData );
-			device.PixelShaderConstants[0]	=	paramsCB;
-
-			//
-			//	Compute COC and write it in alpha channel :
-			//
-			device.SetTargets( (DepthStencilSurface)null, hdrImage.Surface );
-
-			device.PixelShaderResources[0]	=	depthBuffer;
-			device.PipelineState			=	factory[ (int)(Flags.COC_TO_ALPHA) ];
-				
-			device.Draw( 3, 0 );
-
-
-			//
-			//	Perform DOF :
-			//
-			device.SetTargets( null, temp );
-
-			device.PixelShaderResources[0]	=	hdrImage;
-			device.PixelShaderSamplers[0]	=	SamplerState.LinearClamp;
-			device.VertexShaderResources[0]	=	hdrImage;
-			device.VertexShaderSamplers[0]	=	SamplerState.LinearClamp;
-
-			device.PipelineState			=	factory[ (int)(Flags.DEPTH_OF_FIELD) ];
-				
-			device.Draw( 3, 0 );
+				device.ComputeSamplers[ regLinearClamp ]	=	SamplerState.LinearClamp;
 			
-			device.ResetStates();
+				//	compute COC :
+				device.SetComputeUnorderedAccess( regCocTarget,			hdrFrame.DofCOC.Surface.UnorderedAccess );
+				device.ComputeResources			[ regDepthBuffer ] =	hdrFrame.DepthBuffer;
 
-
-			//
-			//	Copy DOFed image back to source :
-			//
-			filter.Copy( hdrImage.Surface, temp );
+				ComputePass( Flags.COMPUTE_COC, width, height, 1 );
+			}
 		}
 
 
+		void ComputePass( Flags combination, int width, int height, int divider )
+		{
+			int tgx		=	MathUtil.IntDivRoundUp( MathUtil.IntDivRoundUp( width , divider ), (int)BlockSize );	
+			int tgy		=	MathUtil.IntDivRoundUp( MathUtil.IntDivRoundUp( height, divider ), (int)BlockSize );	
+			int tgz		=	1;
 
+			device.PipelineState	=	factory[ (int)combination ];
+
+			device.Dispatch( tgx, tgy, tgz );
+		}
 	}
 }

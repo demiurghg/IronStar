@@ -44,6 +44,10 @@ namespace Fusion.Engine.Graphics {
 		public RenderTarget2D	Bloom0				;
 		public RenderTarget2D	Bloom1				;
 
+		public RenderTarget2D	DofCOC				;
+		public RenderTarget2D	DofBackground		;
+		public RenderTarget2D	DofForeground		;
+
 		public RenderTarget2D	HalfDepthBuffer		;
 
 		public RenderTarget2D	TempColorFull0		;
@@ -98,6 +102,10 @@ namespace Fusion.Engine.Graphics {
 
 			Bloom0				=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	bloomWidth,	bloomHeight,true, true );
 			Bloom1				=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	bloomWidth,	bloomHeight,true, true );
+
+			DofCOC				=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rg8,		width,		height,		false, true );
+			DofForeground		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rg8,		width/2,	height/2,	false, true );
+			DofBackground		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rg8,		width/2,	height/2,	false, true );
 
 			TempColorFull0		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height, 	true, true );
 			TempColorFull1		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height, 	true, true );
@@ -186,6 +194,10 @@ namespace Fusion.Engine.Graphics {
 				
 				SafeDispose( ref Bloom0					);
 				SafeDispose( ref Bloom1					);
+				
+				SafeDispose( ref DofCOC					);
+				SafeDispose( ref DofBackground			);
+				SafeDispose( ref DofForeground			);
 				
 				SafeDispose( ref TempColorFull0			);
 				SafeDispose( ref TempColorFull1			);

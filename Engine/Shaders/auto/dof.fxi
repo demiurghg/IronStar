@@ -1,0 +1,66 @@
+// ---------------- CONSTANT VALUES ---------------- //
+
+static const uint BlockSize = 8;
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// Fusion.Engine.Graphics.GpuData+CAMERA
+// Marshal.SizeOf = 352
+struct CAMERA {
+	float4x4   Projection;                    // offset:    0
+	float4x4   View;                          // offset:   64
+	float4x4   ViewProjection;                // offset:  128
+	float4x4   ViewInverted;                  // offset:  192
+	float4     CameraForward;                 // offset:  256
+	float4     CameraRight;                   // offset:  272
+	float4     CameraUp;                      // offset:  288
+	float4     CameraPosition;                // offset:  304
+	float      LinearizeDepthScale;           // offset:  320
+	float      LinearizeDepthBias;            // offset:  324
+	float      FarDistance;                   // offset:  328
+	float      Pad0;                          // offset:  332
+	float      CameraTangentX;                // offset:  336
+	float      CameraTangentY;                // offset:  340
+	float      Pad1;                          // offset:  344
+	float      Pad2;                          // offset:  348
+};
+
+// Fusion.Engine.Graphics.DofFilter+DOF_DATA
+// Marshal.SizeOf = 64
+struct DOF_DATA {
+	float      Aperture;                      // offset:    0
+	float      FocalDistance;                 // offset:    4
+};
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+cbuffer __buffer0 : register(b0) {
+	CAMERA Camera : packoffset(c0);
+};
+cbuffer __buffer1 : register(b1) {
+	DOF_DATA Dof : packoffset(c0);
+};
+SamplerState                   LinearClamp                    : register(s0);
+#if defined(COMPUTE_COC)
+Texture2D<float>               DepthBuffer                    : register(t0);
+RWTexture2D<float4>            CocTarget                      : register(u0);
+#endif
+#if defined(EXTRACT) || defined(BLUR) || defined(COMPOSE)
+Texture2D<float4>              CocTexture                     : register(t0);
+#endif
+#if defined(EXTRACT) || defined(COMPOSE)
+Texture2D<float4>              HdrSource                      : register(t1);
+#endif
+#if defined(EXTRACT)
+RWTexture2D<float4>            Background                     : register(u0);
+RWTexture2D<float4>            Foreground                     : register(u1);
+#endif
+#if defined(BLUR)
+Texture2D<float4>              BokehSource                    : register(t2);
+RWTexture2D<float4>            BokehTarget                    : register(u1);
+#endif
+#if defined(COMPOSE)
+Texture2D<float4>              BokehBackground                : register(t2);
+Texture2D<float4>              BokehForeground                : register(t3);
+RWTexture2D<float4>            HdrTarget                      : register(u0);
+#endif

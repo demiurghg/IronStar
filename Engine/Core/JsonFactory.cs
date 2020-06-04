@@ -20,21 +20,17 @@ namespace Fusion.Core {
 	/// </summary>
 	public class JsonFactory : GameComponent {
 
-		static readonly JsonSerializerSettings settings;
-
-		public static JsonSerializerSettings SerialiazationSettings {
-			get { return settings; }
-		}
-
-
-		static JsonFactory()
+		public static JsonSerializerSettings CreateSettings( bool idented )
 		{
-			settings = new JsonSerializerSettings();
+			var settings = new JsonSerializerSettings();
+
 			settings.Formatting = Newtonsoft.Json.Formatting.Indented;
 			settings.Converters.Add( new StringEnumConverter { CamelCaseText = true } );
 			settings.ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor;
 			settings.TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple; 
 			settings.TypeNameHandling = TypeNameHandling.All;
+
+			return settings;
 		}
 
 
@@ -61,9 +57,10 @@ namespace Fusion.Core {
 		/// </summary>
 		/// <param name="stream"></param>
 		/// <returns></returns>
-		[MethodImpl(MethodImplOptions.NoOptimization|MethodImplOptions.NoInlining)]
 		public object ImportJson ( Stream stream )
 		{
+			var settings = CreateSettings(true);
+
 			using ( var reader = new StreamReader( stream ) ) 
 			{
 				var text = reader.ReadToEnd();
@@ -80,6 +77,8 @@ namespace Fusion.Core {
 		/// <param name="obj"></param>
 		public void ExportJson ( Stream stream, object obj )
 		{
+			var settings = CreateSettings(true);
+
 			var text = JsonConvert.SerializeObject(obj, settings);
 
 			using ( var writer = new StreamWriter( stream ) ) {
@@ -90,12 +89,14 @@ namespace Fusion.Core {
 
 		public string ExportJsonString( object obj )
 		{
+			var settings = CreateSettings(true);
 			return JsonConvert.SerializeObject(obj, settings);
 		}
 
 		
 		public object ImportJsonString( string text )
 		{
+			var settings = CreateSettings(true);
 			return JsonConvert.DeserializeObject(text, settings);
 		}
 

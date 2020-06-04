@@ -816,7 +816,7 @@
     "LightGridWidth": 32,
     "LightGridHeight": 16,
     "LightGridDepth": 32,
-    "LightGridStep": 16.0,
+    "LightGridStep": 16,
     "NormalOffsetBias": 0.25,
     "LightMapSampleCount": 128,
     "LightGridSampleCount": 64,

@@ -22,8 +22,12 @@ namespace Fusion.Engine.Graphics
 		public bool Enabled { get; set; } = false;
 
 		[Config]
-		[AEValueRange(0, 8, 0.5f, 0.01f)]
-		public float Aperture { get; set; } = 1;
+		[AEValueRange(35, 70, 5f, 1f)]
+		public float FilmFormat { get; set; } = 35;
+
+		[Config]
+		[AEValueRange(1.4f, 22, 0.1f, 0.01f)]
+		public float FNumber { get; set; } = 1;
 
 		[Config]
 		[AEValueRange(0.5f, 100, 0.5f, 0.01f)]
@@ -64,8 +68,10 @@ namespace Fusion.Engine.Graphics
 
 		[StructLayout(LayoutKind.Sequential,Size = 64)]
 		struct DOF_DATA {
-			public	float	Aperture;
+			public	float	ApertureDiameter;
+			public	float	FocalLength;
 			public	float	FocalDistance;
+			public	float	PixelDensity;
 		}
 
 
@@ -76,7 +82,7 @@ namespace Fusion.Engine.Graphics
 			EXTRACT			=	0x0004,
 			BACKGROUND		=	0x0008,
 			FOREGROUND		=	0x0010,
-			APPLY_DOF		=	0x0020,
+			COMPOSE			=	0x0020,
 		}
 
 		/// <summary>
@@ -131,7 +137,7 @@ namespace Fusion.Engine.Graphics
 		/// <summary>
 		/// Applies DOF effect
 		/// </summary>
-		public void RenderDof ( HdrFrame hdrFrame )
+		public void RenderDof ( Camera camera, HdrFrame hdrFrame )
 		{
 			if (!Enabled) 
 			{
@@ -142,22 +148,52 @@ namespace Fusion.Engine.Graphics
 			{
 				device.ResetStates();
 
-				var width	=	hdrFrame.HdrBuffer.Width;
-				var height	=	hdrFrame.HdrBuffer.Height;
+				var width	=	hdrFrame.HdrTarget.Width;
+				var height	=	hdrFrame.HdrTarget.Height;
 				var dofData	=	new DOF_DATA();
 
-				dofData.Aperture		=	Aperture;
-				dofData.FocalDistance	=	FocalDistance;
+				float focalLength			=	0.5f * FilmFormat * camera.ProjectionMatrix.M11;
+				float focalDistance			=	FocalDistance;
+				float apertureDiameter		=	focalLength / FNumber;
+
+				dofData.FocalLength			=	focalLength;
+				dofData.ApertureDiameter	=	apertureDiameter;
+				dofData.FocalDistance		=	focalDistance;
+				dofData.PixelDensity		=	width / FilmFormat;
 
 				cbDof.SetData( ref dofData );
 
-				device.ComputeSamplers[ regLinearClamp ]	=	SamplerState.LinearClamp;
+
+				device.ComputeConstants	[ regCamera		]	=	camera.CameraData;
+				device.ComputeConstants	[ regDOF		]	=	cbDof;
+				device.ComputeSamplers	[ regLinearClamp ]	=	SamplerState.LinearClamp;
 			
 				//	compute COC :
-				device.SetComputeUnorderedAccess( regCocTarget,			hdrFrame.DofCOC.Surface.UnorderedAccess );
-				device.ComputeResources			[ regDepthBuffer ] =	hdrFrame.DepthBuffer;
+				device.SetComputeUnorderedAccess( regCocTarget,				hdrFrame.DofCOC.Surface.UnorderedAccess );
+				device.SetComputeUnorderedAccess( 1,						null );
+				device.ComputeResources			[ regDepthBuffer ]		=	hdrFrame.DepthBuffer;
 
 				ComputePass( Flags.COMPUTE_COC, width, height, 1 );
+			
+				//	extract layers :
+				device.SetComputeUnorderedAccess( regBackground,			hdrFrame.DofBackground.Surface.UnorderedAccess );
+				device.SetComputeUnorderedAccess( regForeground,			hdrFrame.DofForeground.Surface.UnorderedAccess );
+				device.ComputeResources			[ regCocTexture ]		=	hdrFrame.DofCOC;
+				device.ComputeResources			[ regHdrSource ]		=	hdrFrame.HdrTarget;
+
+				ComputePass( Flags.EXTRACT, width, height, 2 );
+
+				hdrFrame.SwapHdrTargets();
+			
+				//	compose :
+				device.SetComputeUnorderedAccess( regHdrTarget,				hdrFrame.HdrTarget.Surface.UnorderedAccess );
+				device.SetComputeUnorderedAccess( 1,						null );
+				device.ComputeResources			[ regCocTexture		 ]	=	hdrFrame.DofCOC;
+				device.ComputeResources			[ regHdrSource		 ]	=	hdrFrame.HdrSource;
+				device.ComputeResources			[ regBokehBackground ]	=	hdrFrame.DofBackground;
+				device.ComputeResources			[ regBokehForeground ]	=	hdrFrame.DofForeground;
+
+				ComputePass( Flags.COMPOSE, width, height, 1 );
 			}
 		}
 

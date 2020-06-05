@@ -16,7 +16,7 @@ namespace Fusion.Engine.Graphics {
 
 		public override void SetupRenderTargets ( GraphicsDevice device )
 		{
-			device.SetTargets( hdrFrame.DepthBuffer.Surface, hdrFrame.HdrBuffer.Surface, hdrFrame.FeedbackBuffer.Surface );
+			device.SetTargets( hdrFrame.DepthBuffer.Surface, hdrFrame.HdrTarget.Surface, hdrFrame.FeedbackBuffer.Surface );
 		}
 	
 		public override bool RequireShadows {

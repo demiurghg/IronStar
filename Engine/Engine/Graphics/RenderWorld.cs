@@ -554,7 +554,7 @@ namespace Fusion.Engine.Graphics {
 						var hdrFrame = viewHdrFrame;
 						var filter	 = rs.Filter;
 						var blur	 = rs.Blur;
-						filter.StretchRect( hdrFrame.Bloom0.Surface, hdrFrame.HdrBuffer, SamplerState.LinearClamp );
+						filter.StretchRect( hdrFrame.Bloom0.Surface, hdrFrame.HdrTarget, SamplerState.LinearClamp );
 						hdrFrame.Bloom0.BuildMipmaps();
 
 						//filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 0 );
@@ -579,7 +579,7 @@ namespace Fusion.Engine.Graphics {
 					//	compose, tonemap, bloob and color grade :
 					rs.HdrFilter.ComposeHdrImage( viewHdrFrame );
 
-					rs.DofFilter.RenderDof( viewHdrFrame );
+					rs.DofFilter.RenderDof( Camera, viewHdrFrame );
 
 					rs.HdrFilter.TonemapHdrImage( gameTime, HdrSettings, viewHdrFrame, Camera );
 
@@ -607,9 +607,9 @@ namespace Fusion.Engine.Graphics {
 			switch (rs.ShowGBuffer) {
 				case 1  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.Normals ); return;
 				case 2  : rs.Filter.StretchRect( targetSurface,	rs.RayTracer.raytracedImage, new Rectangle(1280-800-64,720-600-64,800,600) ); break;
-				//case 3  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.GBuffer1 ); return;
-				//case 4  : rs.Filter.CopyAlpha( targetSurface,	viewHdrFrame.GBuffer1 ); return;
-				case 5  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.HdrBuffer ); return;
+				case 3  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.DofCOC ); return;
+				case 4  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.DofForeground ); return;
+				case 5  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.HdrTarget ); return;
 				case 6  : rs.Filter.Copy( targetSurface,		viewHdrFrame.AOBuffer ); return;
 				case 7  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ParticleShadowTexture ); return;
 				case 8  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ShadowTexture ); return;

@@ -143,10 +143,10 @@ namespace Fusion.Engine.Graphics.Lights {
 		internal void Render ( Camera camera, HdrFrame hdrFrame )
 		{
 			device.ResetStates();
-			device.SetTargets( hdrFrame.DepthBuffer.Surface, hdrFrame.HdrBuffer.Surface );
+			device.SetTargets( hdrFrame.DepthBuffer.Surface, hdrFrame.HdrTarget.Surface );
 
-			device.SetViewport( hdrFrame.HdrBuffer.Bounds );
-			device.SetScissorRect( hdrFrame.HdrBuffer.Bounds );
+			device.SetViewport( hdrFrame.HdrTarget.Bounds );
+			device.SetScissorRect( hdrFrame.HdrTarget.Bounds );
 
 			var paramData	= new DEBUG_PARAMS();
 			var lightmap	= rs.Radiosity.LightMap;

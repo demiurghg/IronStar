@@ -785,7 +785,7 @@ namespace Fusion.Engine.Graphics {
 			var view		=	camera.ViewMatrix;
 			var projection	=	camera.ProjectionMatrix;
 
-			var colorTarget	=	viewFrame.HdrBuffer.Surface;
+			var colorTarget	=	viewFrame.HdrTarget.Surface;
 			var depthTarget	=	viewFrame.DepthBuffer.Surface;
 
 			var viewport	=	new Viewport( 0, 0, colorTarget.Width, colorTarget.Height );

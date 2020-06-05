@@ -347,18 +347,20 @@ namespace Fusion.Engine.Graphics {
 			device.ResetStates();
 
 			using ( new PixEvent("HDR Composition") ) {
+				
+				hdrFrame.SwapHdrTargets();
 
 				//
 				//	Tonemap and compose :
 				//
-				device.SetTargets( null, hdrFrame.FinalHdrImage );
-				device.SetViewport( hdrFrame.FinalHdrImage.Bounds );
-				device.SetScissorRect( hdrFrame.FinalHdrImage.Bounds );
+				device.SetTargets( null, hdrFrame.HdrTarget );
+				device.SetViewport( hdrFrame.HdrTarget.Bounds );
+				device.SetScissorRect( hdrFrame.HdrTarget.Bounds );
 
 				device.GfxSamplers[0]	=	SamplerState.LinearClamp;
 				device.GfxSamplers[1]	=	SamplerState.AnisotropicClamp;
 
-				device.GfxResources[0]	=	hdrFrame.HdrBuffer;
+				device.GfxResources[0]	=	hdrFrame.HdrSource;
 				device.GfxResources[1]	=	hdrFrame.HdrBufferGlass;
 				device.GfxResources[2]	=	hdrFrame.DistortionGlass;
 				device.GfxResources[3]	=	hdrFrame.DistortionBuffer;
@@ -393,21 +395,21 @@ namespace Fusion.Engine.Graphics {
 			var filter	=	Game.RenderSystem.Filter;
 			var blur	=	Game.RenderSystem.Blur;
 
-			int imageWidth	=	hdrFrame.FinalHdrImage.Width;
-			int imageHeight	=	hdrFrame.FinalHdrImage.Height;
+			int imageWidth	=	hdrFrame.HdrTarget.Width;
+			int imageHeight	=	hdrFrame.HdrTarget.Height;
 
 			using ( new PixEvent("HDR Postprocessing") ) {
 
 				//
 				//	Rough downsampling of source HDR-image :
 				//
-				filter.StretchRect( averageLum.Surface, hdrFrame.FinalHdrImage, SamplerState.PointClamp );
+				filter.StretchRect( averageLum.Surface, hdrFrame.HdrTarget, SamplerState.PointClamp );
 				averageLum.BuildMipmaps();
 
 				//
 				//	Make bloom :
 				//
-				filter.StretchRect( hdrFrame.Bloom0.Surface, hdrFrame.FinalHdrImage, SamplerState.LinearClamp );
+				filter.StretchRect( hdrFrame.Bloom0.Surface, hdrFrame.HdrTarget, SamplerState.LinearClamp );
 				hdrFrame.Bloom0.BuildMipmaps();
 
 				#if false
@@ -457,7 +459,7 @@ namespace Fusion.Engine.Graphics {
 				//	Measure and adapt :
 				//
 				device.Clear( histogramBuffer, Int4.Zero );
-				device.ComputeResources[0]	=	hdrFrame.FinalHdrImage;
+				device.ComputeResources[0]	=	hdrFrame.HdrTarget;
 				device.SetComputeUnorderedAccess( 0, histogramBuffer.UnorderedAccess );
 
 				device.PipelineState		=	factory[ (int)(Flags.COMPUTE_HISTOGRAM) ];
@@ -482,7 +484,7 @@ namespace Fusion.Engine.Graphics {
 				device.SetViewport( hdrFrame.FinalColor.Bounds );
 				device.SetScissorRect( hdrFrame.FinalColor.Bounds );
 
-				device.GfxResources[0]	=	hdrFrame.FinalHdrImage;// averageLum;
+				device.GfxResources[0]	=	hdrFrame.HdrTarget;// averageLum;
 				device.GfxResources[1]	=	hdrFrame.MeasuredNew;// averageLum;
 				device.GfxResources[2]	=	hdrFrame.Bloom0;// averageLum;
 				device.GfxResources[3]	=	settings.DirtMask1==null ? whiteTex.Srv : settings.DirtMask1.Srv;

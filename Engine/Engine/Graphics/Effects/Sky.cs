@@ -229,7 +229,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="settings"></param>
 		internal void Render( Camera camera, StereoEye stereoEye, HdrFrame frame, SkySettings settings )
 		{
-			Render( camera, stereoEye, frame.DepthBuffer.Surface, frame.HdrBuffer.Surface, settings );
+			Render( camera, stereoEye, frame.DepthBuffer.Surface, frame.HdrTarget.Surface, settings );
 		}
 
 

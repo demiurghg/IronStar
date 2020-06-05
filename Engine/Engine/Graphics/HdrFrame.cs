@@ -19,14 +19,22 @@ namespace Fusion.Engine.Graphics {
 		public const int FeedbackBufferWidth	=	80;
 		public const int FeedbackBufferHeight	=	60;
 
+		public RenderTarget2D	HdrTarget { get { return hdrBuffer0; } }
+		public RenderTarget2D	HdrSource { get { return hdrBuffer1; } }	
+
+		public void SwapHdrTargets()
+		{
+			Misc.Swap( ref hdrBuffer0, ref hdrBuffer1 );
+		}
+
+		RenderTarget2D	hdrBuffer0;
+		RenderTarget2D	hdrBuffer1;
+
 		public FeedbackBuffer	FeedbackBufferRB	;
 
 		public RenderTarget2D	FinalColor			;	
 		public RenderTarget2D	TempColor			;
 
-		public RenderTarget2D	FinalHdrImage		;
-
-		public RenderTarget2D	HdrBuffer			;	
 		public DepthStencil2D	DepthBuffer			;	
 		public RenderTarget2D	HdrBufferGlass		;	
 		public RenderTarget2D	DistortionGlass		;	
@@ -47,6 +55,7 @@ namespace Fusion.Engine.Graphics {
 		public RenderTarget2D	DofCOC				;
 		public RenderTarget2D	DofBackground		;
 		public RenderTarget2D	DofForeground		;
+		public RenderTarget2D	DofBokehTemp		;
 
 		public RenderTarget2D	HalfDepthBuffer		;
 
@@ -82,9 +91,9 @@ namespace Fusion.Engine.Graphics {
 			FinalColor			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, false );
 			TempColor			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, false );
 
-			FinalHdrImage		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width,		height,		false, false );
+			hdrBuffer0			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width,		height,		false, true );
+			hdrBuffer1			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width,		height,		false, true );
 
-			HdrBuffer			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width,		height,		true,  false );
 			DepthBuffer			=	new DepthStencil2D( game.GraphicsDevice, DepthFormat.D24S8,		width,		height,		1 );
 			HdrBufferGlass		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width,		height,		true,  false );
 			DistortionGlass		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, false );
@@ -104,8 +113,9 @@ namespace Fusion.Engine.Graphics {
 			Bloom1				=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	bloomWidth,	bloomHeight,true, true );
 
 			DofCOC				=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rg8,		width,		height,		false, true );
-			DofForeground		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rg8,		width/2,	height/2,	false, true );
-			DofBackground		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rg8,		width/2,	height/2,	false, true );
+			DofForeground		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width/2,	height/2,	false, true );
+			DofBackground		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width/2,	height/2,	false, true );
+			DofBokehTemp		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width/2,	height/2,	false, true );
 
 			TempColorFull0		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height, 	true, true );
 			TempColorFull1		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height, 	true, true );
@@ -127,10 +137,10 @@ namespace Fusion.Engine.Graphics {
 
 		public void Clear ()
 		{
-			var device = HdrBuffer.GraphicsDevice;
+			var device = HdrTarget.GraphicsDevice;
 
 			device.Clear( DepthBuffer.Surface,		1, 0 );
-			device.Clear( HdrBuffer.Surface,		Color4.Black );
+			device.Clear( HdrTarget.Surface,		Color4.Black );
 
 			device.Clear( FeedbackBuffer.Surface,	Color4.Black );
 
@@ -150,15 +160,6 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		public void CopySolidDepthToTransparent ()
-		{
-			var device = HdrBuffer.GraphicsDevice;
-
-			//device.Gr
-		}
-
-
-
 		public void SwapFinalColor ()
 		{
 			Misc.Swap( ref FinalColor, ref TempColor );
@@ -174,9 +175,9 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref FinalColor				);
 				SafeDispose( ref TempColor				);
 				
-				SafeDispose( ref FinalHdrImage			);
+				SafeDispose( ref hdrBuffer0				);
+				SafeDispose( ref hdrBuffer1				);
 				
-				SafeDispose( ref HdrBuffer				);
 				SafeDispose( ref DepthBuffer			);
 				SafeDispose( ref HdrBufferGlass			);
 				SafeDispose( ref DistortionGlass		);
@@ -198,6 +199,7 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref DofCOC					);
 				SafeDispose( ref DofBackground			);
 				SafeDispose( ref DofForeground			);
+				SafeDispose( ref DofBokehTemp			);
 				
 				SafeDispose( ref TempColorFull0			);
 				SafeDispose( ref TempColorFull1			);

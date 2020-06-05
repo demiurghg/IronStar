@@ -28,8 +28,10 @@ struct CAMERA {
 // Fusion.Engine.Graphics.DofFilter+DOF_DATA
 // Marshal.SizeOf = 64
 struct DOF_DATA {
-	float      Aperture;                      // offset:    0
-	float      FocalDistance;                 // offset:    4
+	float      ApertureDiameter;              // offset:    0
+	float      FocalLength;                   // offset:    4
+	float      FocalDistance;                 // offset:    8
+	float      PixelDensity;                  // offset:   12
 };
 
 // ---------------- SHADER RESOURCES ---------------- //

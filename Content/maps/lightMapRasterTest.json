@@ -1,1 +1,86 @@
-{"$type":"IronStar.Mapping.Map, IronStar","Environment":{"$type":"IronStar.Mapping.MapEnvironment, IronStar","Gravity":48.0,"SkyTrubidity":8.0,"SunAltitude":30.0,"SkyIntensity":1.0,"SunAzimuth":180.0,"SunIntensity":500.0,"FogDistance":800000.0,"FogHeight":0.05,"FogColor":"10, 10, 10, 0"},"Nodes":{"$type":"IronStar.Mapping.MapNodeCollection, IronStar","$values":[{"$type":"IronStar.Mapping.MapModel, IronStar","NodeGuid":"b2ca0c3f-ac3e-4057-9635-ab8540aff262","ScenePath":"scenes\\grayBoxing\\radiosityBug.fbx","Scale":1.0,"GlowColor":"255, 0, 0, 255","GlowIntensity":100.0,"LightMapSize":"lightMap64","UseLightVolume":false,"UseCollisionMesh":false,"UseCustomNodes":false,"CustomVisibleNode":"","CustomCollisionNode":"","Visible":true,"Frozen":false,"TranslateX":0.0,"TranslateY":0.0,"TranslateZ":0.0,"RotateYaw":0.0,"RotatePitch":0.0,"RotateRoll":0.0}]},"RadiositySettings":{"$type":"Fusion.Engine.Graphics.GI.RadiositySettings, Fusion","LightGridWidth":8,"LightGridHeight":4,"LightGridDepth":8,"LightGridStep":4,"NormalOffsetBias":0.25,"LightMapSampleCount":512,"LightGridSampleCount":64,"MaxPatches":128,"RadianceThreshold":0.01,"DiscardDistance":400.0,"PatchThreshold":1.0,"UseWhiteDiffuse":false,"DebugLightmaps":false}}
+{
+  "$type": "IronStar.Mapping.Map, IronStar",
+  "Environment": {
+    "$type": "IronStar.Mapping.MapEnvironment, IronStar",
+    "Gravity": 48.0,
+    "SkyTrubidity": 8.0,
+    "SunAltitude": 30.0,
+    "SkyIntensity": 1.0,
+    "SunAzimuth": 180.0,
+    "SunIntensity": 500.0,
+    "FogDistance": 800000.0,
+    "FogHeight": 0.05,
+    "FogColor": "10, 10, 10, 0"
+  },
+  "Nodes": {
+    "$type": "IronStar.Mapping.MapNodeCollection, IronStar",
+    "$values": [
+      {
+        "$type": "IronStar.Mapping.MapModel, IronStar",
+        "NodeGuid": "b2ca0c3f-ac3e-4057-9635-ab8540aff262",
+        "ScenePath": "scenes\\grayBoxing\\radiosityBug.fbx",
+        "Scale": 1.0,
+        "GlowColor": "255, 0, 0, 255",
+        "GlowIntensity": 100.0,
+        "LightMapSize": "lightMap64",
+        "UseLightVolume": false,
+        "UseCollisionMesh": false,
+        "UseCustomNodes": false,
+        "CustomVisibleNode": "",
+        "CustomCollisionNode": "",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.0,
+        "TranslateY": 0.0,
+        "TranslateZ": 0.0,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
+        "NodeGuid": "41e9a368-83dc-42f2-859f-394ffe1dd736",
+        "Radius": 32.0,
+        "Transition": 8.0,
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.0,
+        "TranslateY": 6.189819,
+        "TranslateZ": 0.0,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
+        "NodeGuid": "3ff697b0-7155-49e7-bac9-95de64bc999b",
+        "Radius": 6.75,
+        "Transition": 6.0,
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.0,
+        "TranslateY": 0.8608322,
+        "TranslateZ": 0.0,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      }
+    ]
+  },
+  "RadiositySettings": {
+    "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
+    "LightGridWidth": 8,
+    "LightGridHeight": 4,
+    "LightGridDepth": 8,
+    "LightGridStep": 4,
+    "NormalOffsetBias": 0.25,
+    "LightMapSampleCount": 512,
+    "LightGridSampleCount": 64,
+    "MaxPatches": 128,
+    "RadianceThreshold": 0.01,
+    "DiscardDistance": 400.0,
+    "PatchThreshold": 1.0,
+    "UseWhiteDiffuse": false,
+    "DebugLightmaps": false
+  }
+}

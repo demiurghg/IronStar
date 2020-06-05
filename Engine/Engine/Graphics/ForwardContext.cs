@@ -42,7 +42,7 @@ namespace Fusion.Engine.Graphics {
 
 		public Viewport Viewport { 
 			get {
-				return new Viewport( 0,0, hdrFrame.HdrBuffer.Width, hdrFrame.HdrBuffer.Height );
+				return new Viewport( 0,0, hdrFrame.HdrTarget.Width, hdrFrame.HdrTarget.Height );
 			}
 		}
 

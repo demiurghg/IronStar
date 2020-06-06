@@ -20,6 +20,10 @@ namespace Fusion.Engine.Graphics.Lights {
 
 	public class LightMapResources : DisposableBase {
 
+		//const ColorFormat HdrFormat = ColorFormat.Rgba16F;
+		const ColorFormat HdrFormat = ColorFormat.Rg11B10;
+
+
 		internal Texture2D	LightMapR		{ get { return lightMapR; } }
 		internal Texture2D	LightMapG		{ get { return lightMapG; } }
 		internal Texture2D	LightMapB		{ get { return lightMapB; } }
@@ -73,15 +77,13 @@ namespace Fusion.Engine.Graphics.Lights {
 			int mips		=	RenderSystem.LightProbeMaxMips;
 			int length		=	RenderSystem.MaxEnvLights;
 
-			var hdrFormat	=	ColorFormat.Rgba16F;
-			//var hdrFormat	=	ColorFormat.Rg11B10;
 
-			lightProbeColorArray	=	new TextureCubeArray	( rs.Device, size, length, ColorFormat.Rgba8, 1			);
-			lightProbeMappingArray	=	new TextureCubeArray	( rs.Device, size, length, ColorFormat.Rg16_UNorm, 1	);
-			lightProbeRadianceArray	=	new TextureCubeArrayRW	( rs.Device, size, length, hdrFormat, true, 1	);
+			lightProbeColorArray	=	new TextureCubeArray	( rs.Device, size, length, ColorFormat.Rgba8,		1		);
+			lightProbeMappingArray	=	new TextureCubeArray	( rs.Device, size, length, ColorFormat.Rg16_UNorm,	1		);
+			lightProbeRadianceArray	=	new TextureCubeArrayRW	( rs.Device, size, length, HdrFormat,				true, 1	);
 			lightProbeColor			=	new RenderTargetCube	( rs.Device, ColorFormat.Rgba8,			size		);
 			lightProbeMapping		=	new RenderTargetCube	( rs.Device, ColorFormat.Rg16_UNorm,	size		);
-			lightProbeRadiance		=	new RenderTargetCube	( rs.Device, hdrFormat,					size, mips	);
+			lightProbeRadiance		=	new RenderTargetCube	( rs.Device, HdrFormat,					size, mips	);
 			lightProbeDepth			=	new DepthStencil2D		( rs.Device, DepthFormat.D24S8,			size, size	);
 		}
 

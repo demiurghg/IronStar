@@ -1,5 +1,6 @@
 // ---------------- CONSTANT VALUES ---------------- //
 
+static const uint BokehShapeSize = 19;
 static const uint BlockSize = 8;
 
 // ---------------- DATA STRUCTURES ---------------- //
@@ -42,12 +43,15 @@ cbuffer __buffer0 : register(b0) {
 cbuffer __buffer1 : register(b1) {
 	DOF_DATA Dof : packoffset(c0);
 };
+cbuffer __buffer2 : register(b2) {
+	float4 BokehShape[19] : packoffset(c0);
+};
 SamplerState                   LinearClamp                    : register(s0);
 #if defined(COMPUTE_COC)
 Texture2D<float>               DepthBuffer                    : register(t0);
 RWTexture2D<float4>            CocTarget                      : register(u0);
 #endif
-#if defined(EXTRACT) || defined(BLUR) || defined(COMPOSE)
+#if defined(EXTRACT) || defined(BOKEH) || defined(COMPOSE)
 Texture2D<float4>              CocTexture                     : register(t0);
 #endif
 #if defined(EXTRACT) || defined(COMPOSE)
@@ -57,9 +61,9 @@ Texture2D<float4>              HdrSource                      : register(t1);
 RWTexture2D<float4>            Background                     : register(u0);
 RWTexture2D<float4>            Foreground                     : register(u1);
 #endif
-#if defined(BLUR)
+#if defined(BOKEH)
 Texture2D<float4>              BokehSource                    : register(t2);
-RWTexture2D<float4>            BokehTarget                    : register(u1);
+RWTexture2D<float4>            BokehTarget                    : register(u0);
 #endif
 #if defined(COMPOSE)
 Texture2D<float4>              BokehBackground                : register(t2);

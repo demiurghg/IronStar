@@ -18,6 +18,9 @@ namespace Fusion.Engine.Graphics
 	[RequireShader("dof", true)]
 	internal class DofFilter : RenderComponent 
 	{
+		[ShaderDefine]
+		const uint BokehShapeSize = 19;
+
 		[Config]
 		public bool Enabled { get; set; } = false;
 
@@ -33,26 +36,31 @@ namespace Fusion.Engine.Graphics
 		[AEValueRange(0.5f, 100, 0.5f, 0.01f)]
 		public float FocalDistance { get; set; } = 10;
 
+		[Config]
+		[AEValueRange(0, 360, 10f, 1f)]
+		public float DiaphragmAngle { get; set; } = 15;
+
 
 		[ShaderDefine]
 		const uint BlockSize = 8;
 
 		static FXConstantBuffer<GpuData.CAMERA>			regCamera			=	new CRegister( 0, "Camera"		);
 		static FXConstantBuffer<DOF_DATA>				regDOF				=	new CRegister( 1, "Dof"			);
+		static FXConstantBuffer<Vector4>				regBokehShape		=	new CRegister( 2, (int)BokehShapeSize, "BokehShape"	);
 
 		static FXSamplerState							regLinearClamp		=	new SRegister( 0, "LinearClamp"	);
 
 		[ShaderIfDef("COMPUTE_COC")]	static FXTexture2D<float>				regDepthBuffer		=	new TRegister( 0, "DepthBuffer"		);
 		[ShaderIfDef("COMPUTE_COC")]	static FXRWTexture2D<Vector4>			regCocTarget		=	new URegister( 0, "CocTarget"		);
 
-		[ShaderIfDef("EXTRACT,BLUR,COMPOSE")]	static FXTexture2D<Vector4>		regCocTexture		=	new TRegister( 0, "CocTexture"		);
+		[ShaderIfDef("EXTRACT,BOKEH,COMPOSE")]	static FXTexture2D<Vector4>		regCocTexture		=	new TRegister( 0, "CocTexture"		);
 
 		[ShaderIfDef("EXTRACT,COMPOSE")]		static FXTexture2D<Vector4>		regHdrSource		=	new TRegister( 1, "HdrSource"		);
 		[ShaderIfDef("EXTRACT")]				static FXRWTexture2D<Vector4>	regBackground		=	new URegister( 0, "Background"		);
 		[ShaderIfDef("EXTRACT")]				static FXRWTexture2D<Vector4>	regForeground		=	new URegister( 1, "Foreground"		);
 
-		[ShaderIfDef("BLUR")]					static FXTexture2D<Vector4>		regBokehSource		=	new TRegister( 2, "BokehSource"		);
-		[ShaderIfDef("BLUR")]					static FXRWTexture2D<Vector4>	regBokehTarget		=	new URegister( 1, "BokehTarget"		);
+		[ShaderIfDef("BOKEH")]					static FXTexture2D<Vector4>		regBokehSource		=	new TRegister( 2, "BokehSource"		);
+		[ShaderIfDef("BOKEH")]					static FXRWTexture2D<Vector4>	regBokehTarget		=	new URegister( 0, "BokehTarget"		);
 
 		[ShaderIfDef("COMPOSE")]				static FXTexture2D<Vector4>		regBokehBackground	=	new TRegister( 2, "BokehBackground"		);
 		[ShaderIfDef("COMPOSE")]				static FXTexture2D<Vector4>		regBokehForeground	=	new TRegister( 3, "BokehForeground"		);
@@ -64,6 +72,8 @@ namespace Fusion.Engine.Graphics
 		Ubershader		shader;
 		StateFactory	factory;
 		ConstantBuffer	cbDof;
+		ConstantBuffer	cbBokehShape;
+		Vector4[]		shapeData = new Vector4[BokehShapeSize];
 
 
 		[StructLayout(LayoutKind.Sequential,Size = 64)]
@@ -78,11 +88,13 @@ namespace Fusion.Engine.Graphics
 		enum Flags 
 		{	
 			COMPUTE_COC		=	0x0001,
-			BLUR			=	0x0002,
-			EXTRACT			=	0x0004,
-			BACKGROUND		=	0x0008,
-			FOREGROUND		=	0x0010,
-			COMPOSE			=	0x0020,
+			EXTRACT			=	0x0002,
+			BACKGROUND		=	0x0010,
+			FOREGROUND		=	0x0020,
+			BOKEH			=	0x0100,
+			PASS1			=	0x0200,
+			PASS2			=	0x0400,
+			COMPOSE			=	0x1000,
 		}
 
 		/// <summary>
@@ -100,7 +112,8 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		public override void Initialize ()
 		{
-			cbDof	=	new ConstantBuffer( Game.GraphicsDevice, typeof(DOF_DATA) );
+			cbDof			=	new ConstantBuffer( Game.GraphicsDevice, typeof(DOF_DATA) );
+			cbBokehShape	=	new ConstantBuffer( Game.GraphicsDevice, typeof(Vector4), (int)BokehShapeSize );
 
 			LoadContent();
 
@@ -127,9 +140,45 @@ namespace Fusion.Engine.Graphics
 		{
 			if (disposing) {
 				SafeDispose( ref cbDof );
+				SafeDispose( ref cbBokehShape );
 			}
 
 			base.Dispose( disposing );
+		}
+
+
+		void UpdateBokehShape( float angle )
+		{
+			shapeData[ 0]		=	new Vector4(  0,  0, 0, 0 );
+
+			shapeData[ 1]		=	new Vector4(  2,  0, 0, 0 );
+			shapeData[ 2]		=	new Vector4(  1,  2, 0, 0 );
+			shapeData[ 3]		=	new Vector4( -1,  2, 0, 0 );
+			shapeData[ 4]		=	new Vector4( -2,  0, 0, 0 );
+			shapeData[ 5]		=	new Vector4( -1, -2, 0, 0 );
+			shapeData[ 6]		=	new Vector4(  1, -2, 0, 0 );
+
+			shapeData[ 7]		=	new Vector4(  4,  0, 0, 0 );
+			shapeData[ 8]		=	new Vector4(  3,  2, 0, 0 );
+			shapeData[ 9]		=	new Vector4(  2,  4, 0, 0 );
+			shapeData[10]		=	new Vector4(  0,  4, 0, 0 );
+			shapeData[11]		=	new Vector4( -2,  4, 0, 0 );
+			shapeData[12]		=	new Vector4( -3,  2, 0, 0 );
+			shapeData[13]		=	new Vector4( -4,  0, 0, 0 );
+			shapeData[14]		=	new Vector4( -3, -2, 0, 0 );
+			shapeData[15]		=	new Vector4( -2, -4, 0, 0 );
+			shapeData[16]		=	new Vector4(  0, -4, 0, 0 );
+			shapeData[17]		=	new Vector4(  2, -4, 0, 0 );
+			shapeData[18]		=	new Vector4(  3, -2, 0, 0 );
+
+			var transform		=	Matrix.Scaling( 0.25f, 0.2165f, 1 );// * Matrix.RotationZ( angle );
+
+			for (int i=0; i<shapeData.Length; i++)
+			{
+				shapeData[i] = Vector4.Transform( shapeData[i], transform );
+			}
+
+			cbBokehShape.SetData( shapeData );
 		}
 
 
@@ -163,9 +212,11 @@ namespace Fusion.Engine.Graphics
 
 				cbDof.SetData( ref dofData );
 
+				UpdateBokehShape( MathUtil.DegreesToRadians( DiaphragmAngle ) );
 
 				device.ComputeConstants	[ regCamera		]	=	camera.CameraData;
 				device.ComputeConstants	[ regDOF		]	=	cbDof;
+				device.ComputeConstants	[ regBokehShape	]	=	cbBokehShape;
 				device.ComputeSamplers	[ regLinearClamp ]	=	SamplerState.LinearClamp;
 			
 				//	compute COC :
@@ -183,11 +234,17 @@ namespace Fusion.Engine.Graphics
 
 				ComputePass( Flags.EXTRACT, width, height, 2 );
 
+				using ( new PixEvent( "Bokeh" ) ) 
+				{
+					//	blur :
+					BokehPass( Flags.BOKEH|Flags.PASS1, hdrFrame.DofBokehTemp, hdrFrame.DofBackground, hdrFrame.DofCOC );
+					BokehPass( Flags.BOKEH|Flags.PASS2, hdrFrame.DofBackground, hdrFrame.DofBokehTemp, hdrFrame.DofCOC );
+				}
+
+				//	compose :
 				hdrFrame.SwapHdrTargets();
 			
-				//	compose :
 				device.SetComputeUnorderedAccess( regHdrTarget,				hdrFrame.HdrTarget.Surface.UnorderedAccess );
-				device.SetComputeUnorderedAccess( 1,						null );
 				device.ComputeResources			[ regCocTexture		 ]	=	hdrFrame.DofCOC;
 				device.ComputeResources			[ regHdrSource		 ]	=	hdrFrame.HdrSource;
 				device.ComputeResources			[ regBokehBackground ]	=	hdrFrame.DofBackground;
@@ -195,6 +252,17 @@ namespace Fusion.Engine.Graphics
 
 				ComputePass( Flags.COMPOSE, width, height, 1 );
 			}
+		}
+
+
+		void BokehPass( Flags combination, RenderTarget2D target, ShaderResource source, ShaderResource coc )
+		{
+			device.SetComputeUnorderedAccess( regBokehTarget,			target.Surface.UnorderedAccess );
+			device.SetComputeUnorderedAccess( 1,						null );
+			device.ComputeResources			[ regCocTexture ]		=	coc;
+			device.ComputeResources			[ regBokehSource ]		=	source;
+
+			ComputePass( combination, target.Width, target.Height, 1 );
 		}
 
 

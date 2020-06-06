@@ -155,7 +155,7 @@ SamplerComparisonState         ShadowSampler                  : register(s1);
 Texture2D<float4>              Texture                        : register(t0);
 StructuredBuffer<Particle>     injectionBuffer                : register(t1);
 StructuredBuffer<Particle>     particleBufferGS               : register(t2);
-StructuredBuffer<float4>       sortParticleBufferGS           : register(t3);
+StructuredBuffer<float2>       sortParticleBufferGS           : register(t3);
 Texture2D<float4>              DepthValues                    : register(t5);
 Texture2D<float4>              ColorTemperature               : register(t6);
 Texture3D<uint2>               ClusterArray                   : register(t7);

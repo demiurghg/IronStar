@@ -220,17 +220,21 @@ namespace Fusion.Engine.Graphics
 				device.ComputeSamplers	[ regLinearClamp ]	=	SamplerState.LinearClamp;
 			
 				//	compute COC :
-				device.SetComputeUnorderedAccess( regCocTarget,				hdrFrame.DofCOC.Surface.UnorderedAccess );
-				device.SetComputeUnorderedAccess( 1,						null );
-				device.ComputeResources			[ regDepthBuffer ]		=	hdrFrame.DepthBuffer;
+				device.SetComputeUnorderedAccess( regCocTarget,	hdrFrame.DofCOC.Surface.UnorderedAccess );
+				device.SetComputeUnorderedAccess( 1,			null );
+
+				device.ComputeResources.Clear();
+				device.ComputeResources[ regDepthBuffer ]		=	hdrFrame.DepthBuffer;
 
 				ComputePass( Flags.COMPUTE_COC, width, height, 1 );
 			
 				//	extract layers :
-				device.SetComputeUnorderedAccess( regBackground,			hdrFrame.DofBackground.Surface.UnorderedAccess );
-				device.SetComputeUnorderedAccess( regForeground,			hdrFrame.DofForeground.Surface.UnorderedAccess );
-				device.ComputeResources			[ regCocTexture ]		=	hdrFrame.DofCOC;
-				device.ComputeResources			[ regHdrSource ]		=	hdrFrame.HdrTarget;
+				device.SetComputeUnorderedAccess( regBackground,	hdrFrame.DofBackground.Surface.UnorderedAccess );
+				device.SetComputeUnorderedAccess( regForeground,	hdrFrame.DofForeground.Surface.UnorderedAccess );
+	
+				device.ComputeResources.Clear();
+				device.ComputeResources[ regCocTexture ]		=	hdrFrame.DofCOC;
+				device.ComputeResources[ regHdrSource ]		=	hdrFrame.HdrTarget;
 
 				ComputePass( Flags.EXTRACT, width, height, 2 );
 
@@ -244,11 +248,13 @@ namespace Fusion.Engine.Graphics
 				//	compose :
 				hdrFrame.SwapHdrTargets();
 			
-				device.SetComputeUnorderedAccess( regHdrTarget,				hdrFrame.HdrTarget.Surface.UnorderedAccess );
-				device.ComputeResources			[ regCocTexture		 ]	=	hdrFrame.DofCOC;
-				device.ComputeResources			[ regHdrSource		 ]	=	hdrFrame.HdrSource;
-				device.ComputeResources			[ regBokehBackground ]	=	hdrFrame.DofBackground;
-				device.ComputeResources			[ regBokehForeground ]	=	hdrFrame.DofForeground;
+				device.SetComputeUnorderedAccess( regHdrTarget,	hdrFrame.HdrTarget.Surface.UnorderedAccess );
+	
+				device.ComputeResources.Clear();
+				device.ComputeResources[ regCocTexture		]	=	hdrFrame.DofCOC;
+				device.ComputeResources[ regHdrSource		]	=	hdrFrame.HdrSource;
+				device.ComputeResources[ regBokehBackground	]	=	hdrFrame.DofBackground;
+				device.ComputeResources[ regBokehForeground	]	=	hdrFrame.DofForeground;
 
 				ComputePass( Flags.COMPOSE, width, height, 1 );
 			}
@@ -257,10 +263,13 @@ namespace Fusion.Engine.Graphics
 
 		void BokehPass( Flags combination, RenderTarget2D target, ShaderResource source, ShaderResource coc )
 		{
-			device.SetComputeUnorderedAccess( regBokehTarget,			target.Surface.UnorderedAccess );
-			device.SetComputeUnorderedAccess( 1,						null );
-			device.ComputeResources			[ regCocTexture ]		=	coc;
-			device.ComputeResources			[ regBokehSource ]		=	source;
+			device.ComputeResources.Clear();
+			device.SetComputeUnorderedAccess( regBokehTarget,	target.Surface.UnorderedAccess );
+			device.SetComputeUnorderedAccess( 1,				null );
+
+			device.ComputeResources.Clear();
+			device.ComputeResources[ regCocTexture ]	=	coc;
+			device.ComputeResources[ regBokehSource ]	=	source;
 
 			ComputePass( combination, target.Width, target.Height, 1 );
 		}

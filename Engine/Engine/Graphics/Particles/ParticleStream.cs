@@ -35,7 +35,7 @@ namespace Fusion.Engine.Graphics {
 		static FXTexture2D<Vector4>							regTexture 					=	new TRegister( 0, "Texture" 				);
 		static FXStructuredBuffer<Particle>					reginjectionBuffer			=	new TRegister( 1, "injectionBuffer"			);
 		static FXStructuredBuffer<Particle>					regparticleBufferGS			=	new TRegister( 2, "particleBufferGS"		);
-		static FXStructuredBuffer<Vector4>					regsortParticleBufferGS		=	new TRegister( 3, "sortParticleBufferGS"	);
+		static FXStructuredBuffer<Vector2>					regsortParticleBufferGS		=	new TRegister( 3, "sortParticleBufferGS"	);
 		static FXTexture2D<Vector4>							regDepthValues				=	new TRegister( 5, "DepthValues"				);
 		static FXTexture2D<Vector4>							regColorTemperature			=	new TRegister( 6, "ColorTemperature"		);
 																										   	

@@ -381,6 +381,7 @@ namespace Fusion.Engine.Graphics {
 
 			ComputeCascadeMatricies( camera, lightSet, size, 0, factor, depth );
 
+			device.ResetStates();
 
 			//
 			//	Render shadow maps regions :

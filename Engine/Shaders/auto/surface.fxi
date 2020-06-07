@@ -1,5 +1,9 @@
 // ---------------- CONSTANT VALUES ---------------- //
 
+static const int LightClusterGridWidth = 16;
+static const int LightClusterGridHeight = 8;
+static const int LightClusterGridDepth = 24;
+static const float LightClusterExpScale = 0.015625;
 static const int VTVirtualPageCount = 1024;
 static const int VTPageSize = 128;
 static const int VTMaxMip = 6;
@@ -12,12 +16,23 @@ static const uint LightTypeAmbient = 4;
 static const uint LightSpotShapeSquare = 65536;
 static const uint LightSpotShapeRound = 131072;
 static const uint LightProbeSize = 128;
-static const uint LightProbeMaxSpecularMip = 6;
-static const uint LightProbeDiffuseMip = 7;
+static const uint LightProbeMaxMips = 6;
+static const uint LightProbeMaxMip = 6;
+static const uint LightProbeMaxSpecularMip = 5;
 static const uint InstanceGroupStatic = 1;
 static const uint InstanceGroupDynamic = 4;
 static const uint InstanceGroupCharacter = 8;
 static const uint InstanceGroupWeapon = 16;
+static const int FogGridWidth = 128;
+static const int FogGridHeight = 64;
+static const int FogGridDepth = 192;
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+// ---------------- CONSTANT VALUES ---------------- //
+
 
 // ---------------- DATA STRUCTURES ---------------- //
 
@@ -196,6 +211,7 @@ Texture3D<float4>              IrradianceVolumeL2             : register(t20);
 Texture3D<float4>              IrradianceVolumeL3             : register(t21);
 TextureCubeArray<float4>       RadianceCache                  : register(t22);
 Texture2D<float4>              EnvLut                         : register(t23);
+Texture3D<float4>              FogVolume                      : register(t24);
 SamplerState                   SamplerLinear                  : register(s0);
 SamplerState                   SamplerPoint                   : register(s1);
 SamplerState                   SamplerLightmap                : register(s2);

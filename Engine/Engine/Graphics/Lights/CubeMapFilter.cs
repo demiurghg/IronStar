@@ -197,7 +197,7 @@ namespace Fusion.Engine.Graphics {
 
 			data[ mip * 20 ] = new Vector4( 0, 0, b0, w0 );
 
-			int size = RenderSystem.LightProbeSize >> mip;
+			int size = (int)(RenderSystem.LightProbeSize >> mip);
 			float dxy  =  1.0f / size;
 
 			for (int i=0; i<6; i++)

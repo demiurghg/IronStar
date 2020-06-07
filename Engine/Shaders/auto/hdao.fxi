@@ -1,5 +1,38 @@
 // ---------------- CONSTANT VALUES ---------------- //
 
+static const int LightClusterGridWidth = 16;
+static const int LightClusterGridHeight = 8;
+static const int LightClusterGridDepth = 24;
+static const float LightClusterExpScale = 0.015625;
+static const int VTVirtualPageCount = 1024;
+static const int VTPageSize = 128;
+static const int VTMaxMip = 6;
+static const int VTMipSelectorScale = 2048;
+static const uint LightTypeNone = 0;
+static const uint LightTypeOmni = 1;
+static const uint LightTypeOmniShadow = 2;
+static const uint LightTypeSpotShadow = 3;
+static const uint LightTypeAmbient = 4;
+static const uint LightSpotShapeSquare = 65536;
+static const uint LightSpotShapeRound = 131072;
+static const uint LightProbeSize = 128;
+static const uint LightProbeMaxMips = 6;
+static const uint LightProbeMaxMip = 6;
+static const uint LightProbeMaxSpecularMip = 5;
+static const uint InstanceGroupStatic = 1;
+static const uint InstanceGroupDynamic = 4;
+static const uint InstanceGroupCharacter = 8;
+static const uint InstanceGroupWeapon = 16;
+static const int FogGridWidth = 128;
+static const int FogGridHeight = 64;
+static const int FogGridDepth = 192;
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+// ---------------- CONSTANT VALUES ---------------- //
+
 static const int BlockSizeX = 32;
 static const int BlockSizeY = 32;
 static const int InterleaveBlockSizeX = 16;

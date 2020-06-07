@@ -68,7 +68,6 @@ float4 ComputeEnvironmentLighting ( LIGHTPROBE probe, GEOMETRY geometry, SURFACE
 {
 	float3	viewDirN		=	normalize( camera.CameraPosition.xyz - geometry.position.xyz);
 	
-	float	selfOcclusion	=	saturate( dot( normalize(surface.normal.xyz), normalize(geometry.normal.xyz) ) );
 	float	NoV 			= 	dot(viewDirN, surface.normal.xyz);
 	float2 	ab				=	rc.EnvironmentLut.SampleLevel( rc.Sampler, float2(surface.roughness, 1-NoV), 0 ).xy;
 
@@ -88,12 +87,15 @@ float4 ComputeEnvironmentLighting ( LIGHTPROBE probe, GEOMETRY geometry, SURFACE
 	float		factor		=	1 - saturate( max(factor3.x, max(factor3.y, factor3.z)) );
 		
 		
-	float3	reflectVector	=	reflect( -viewDirN, surface.normal.xyz ) * float3(-1,1,1);
+	float3	reflectVector	=	reflect( -viewDirN, surface.normal.xyz );
+	float	selfOcclusion	=	saturate( dot( geometry.normal.xyz, reflectVector ) /*+ surface.roughness*/ + 0.5f );
 	
 	if (boxReflect)
 	{
-		reflectVector		=	SpecularParallaxCubeMap( geometry.position, cameraPos, surface.normal, cubeMapPos, lpbMatrixI ) * float3(-1,1,1);
+		reflectVector		=	SpecularParallaxCubeMap( geometry.position, cameraPos, surface.normal, cubeMapPos, lpbMatrixI );
 	}
+	
+	reflectVector			*=	float3(-1,1,1);
 	
 	float	mipLevel		=	saturate(surface.roughness) * LightProbeMaxSpecularMip;
 	float3	specTerm		=	rc.RadianceCache.SampleLevel( rc.Sampler, float4(reflectVector, imageIndex), mipLevel ).rgb;

@@ -43,6 +43,8 @@ namespace Fusion.Engine.Graphics.Ubershaders {
 					var fullPath			=   context.ResolveContentPath( nameExt, out baseDir );
 					var assetSrc			=   new AssetSource( nameExt, baseDir, context.FullOutputDirectory, new UbershaderProcessor(), context );
 
+					headerTextBuilder.Append( GenerateVirtualHeader( typeof(RenderSystem), null ) );
+
 					foreach ( var shader in shaderGroup )
 					{
 						if ( shader.ShaderAttr.AutoGenerateHeader )

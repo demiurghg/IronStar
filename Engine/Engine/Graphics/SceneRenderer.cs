@@ -57,6 +57,7 @@ namespace Fusion.Engine.Graphics {
 
 		static FXTextureCubeArray<Vector4>		regRadianceCache		=	new TRegister(22, "RadianceCache"		);
 		static FXTexture2D<Vector4>				regEnvLut				=	new TRegister(23, "EnvLut"				);
+		static FXTexture3D<Vector4>				regFogVolume			=	new TRegister(24, "FogVolume"			);
 											   
 		static FXSamplerState					regSamplerLinear		=	new SRegister( 0, "SamplerLinear"		);
 		static FXSamplerState					regSamplerPoint			=	new SRegister( 1, "SamplerPoint"		);
@@ -265,6 +266,7 @@ namespace Fusion.Engine.Graphics {
 			device.GfxResources[ regRadianceCache			]	=	rs.RenderWorld.IrradianceCache?.Radiance;
 			device.GfxResources[ regEnvLut					]	=	envLut.Srv;
 			device.GfxResources[ regClusterLightProbeBuffer	]	=	rs.LightManager.LightGrid.ProbeDataGpu;
+			device.GfxResources[ regFogVolume				]	=	rs.Fog.FogGrid;
 
 			//-----------------------------
 

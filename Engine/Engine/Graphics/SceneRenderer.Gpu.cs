@@ -41,28 +41,6 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		[ShaderDefine]	public const int VTVirtualPageCount	=	VTConfig.VirtualPageCount;
-		[ShaderDefine]	public const int VTPageSize			=	VTConfig.PageSize;
-		[ShaderDefine]	public const int VTMaxMip			=	VTConfig.MaxMipLevel;
-		[ShaderDefine]	public const int VTMipSelectorScale	=	(VTConfig.PageSize >> VTMaxMip) * VTConfig.VirtualPageCount;
-
-		[ShaderDefine]	public const uint LightTypeNone			=	0;
-		[ShaderDefine]	public const uint LightTypeOmni			=	1;
-		[ShaderDefine]	public const uint LightTypeOmniShadow	=	2;
-		[ShaderDefine]	public const uint LightTypeSpotShadow	=	3;
-		[ShaderDefine]	public const uint LightTypeAmbient		=	4;
-		[ShaderDefine]	public const uint LightSpotShapeSquare	=	0x00010000;
-		[ShaderDefine]	public const uint LightSpotShapeRound	=	0x00020000;
-
-		[ShaderDefine]	public const uint LightProbeSize			=	RenderSystem.LightProbeSize;
-		[ShaderDefine]	public const uint LightProbeMaxSpecularMip	=	RenderSystem.LightProbeMaxSpecularMip;
-		[ShaderDefine]	public const uint LightProbeDiffuseMip		=	RenderSystem.LightProbeMaxMips;
-
-		[ShaderDefine]	public const uint InstanceGroupStatic		=	(int)InstanceGroup.Static;
-		[ShaderDefine]	public const uint InstanceGroupDynamic		=	(int)InstanceGroup.Dynamic;
-		[ShaderDefine]	public const uint InstanceGroupCharacter	=	(int)InstanceGroup.Character;
-		[ShaderDefine]	public const uint InstanceGroupWeapon		=	(int)InstanceGroup.Weapon;
-
 
 		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential, Pack=4, Size=256)]
@@ -173,7 +151,7 @@ namespace Fusion.Engine.Graphics {
 
 			public void ClearLight()
 			{
-				LightType			=	LightTypeNone;
+				LightType			=	RenderSystem.LightTypeNone;
 				Position0LightRange	=	new Vector4( 0,0,0,0 );
 				Position1TubeRadius	=	new Vector4( 0,0,0,0 );
 				ViewProjection		=	Matrix.Identity;
@@ -183,7 +161,7 @@ namespace Fusion.Engine.Graphics {
 			public void FromOmniLight ( OmniLight light ) 
 			{
 				#region Update structure fields from OmniLight object
-				LightType			=	light.Ambient ? LightTypeAmbient : LightTypeOmni;
+				LightType			=	light.Ambient ? RenderSystem.LightTypeAmbient : RenderSystem.LightTypeOmni;
 				Position0LightRange	=	new Vector4( light.Position0, light.RadiusOuter );
 				Position1TubeRadius	=	new Vector4( light.Position1, light.RadiusInner );
 				IntensityFar		=	new Vector4( light.Intensity2.Red, light.Intensity2.Green, light.Intensity2.Blue, 0 );
@@ -194,7 +172,7 @@ namespace Fusion.Engine.Graphics {
 			{
 				#region Update structure fields from SpotLight object
 
-				LightType			=	LightTypeSpotShadow;
+				LightType			=	RenderSystem.LightTypeSpotShadow;
 				Position0LightRange	=	new Vector4( light.Position0, light.RadiusOuter );
 				Position1TubeRadius	=	new Vector4( light.Position1, light.RadiusInner );
 				IntensityFar		=	new Vector4( light.Intensity2.Red, light.Intensity2.Green, light.Intensity2.Blue, light.Projection.GetFarPlaneDistance() );

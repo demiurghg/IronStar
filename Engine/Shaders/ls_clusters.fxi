@@ -31,10 +31,10 @@ struct CLUSTER_RESOURCES
 
 CLUSTER GetCluster( CLUSTER_RESOURCES rc, float4 projectedPosition )
 {
-	float2 	scale	=	float2( 0.5f, -0.5f ) * float2(16,8) / projectedPosition.w;
-	float2 	bias	=	float2( 0.5f,  0.5f ) * float2(16,8);
+	float2 	scale	=	float2( 0.5f, -0.5f ) * float2(LightClusterGridWidth,LightClusterGridHeight) / projectedPosition.w;
+	float2 	bias	=	float2( 0.5f,  0.5f ) * float2(LightClusterGridWidth,LightClusterGridHeight);
 
-	float 	slice	= 	(1 - exp(-projectedPosition.w*0.015625f)) * 24;
+	float 	slice	= 	(1 - exp(-projectedPosition.w * LightClusterExpScale)) * LightClusterGridDepth;
 	float2	segment	=	mad( projectedPosition.xy, scale, bias );
 	
 	int3 	loadUVW	=	int3( segment, slice );

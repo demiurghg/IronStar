@@ -1,17 +1,157 @@
 // ---------------- CONSTANT VALUES ---------------- //
 
+static const int LightClusterGridWidth = 16;
+static const int LightClusterGridHeight = 8;
+static const int LightClusterGridDepth = 24;
+static const float LightClusterExpScale = 0.015625;
+static const int VTVirtualPageCount = 1024;
+static const int VTPageSize = 128;
+static const int VTMaxMip = 6;
+static const int VTMipSelectorScale = 2048;
+static const uint LightTypeNone = 0;
+static const uint LightTypeOmni = 1;
+static const uint LightTypeOmniShadow = 2;
+static const uint LightTypeSpotShadow = 3;
+static const uint LightTypeAmbient = 4;
+static const uint LightSpotShapeSquare = 65536;
+static const uint LightSpotShapeRound = 131072;
+static const uint LightProbeSize = 128;
+static const uint LightProbeMaxMips = 6;
+static const uint LightProbeMaxMip = 6;
+static const uint LightProbeMaxSpecularMip = 5;
+static const uint InstanceGroupStatic = 1;
+static const uint InstanceGroupDynamic = 4;
+static const uint InstanceGroupCharacter = 8;
+static const uint InstanceGroupWeapon = 16;
+static const int FogGridWidth = 128;
+static const int FogGridHeight = 64;
+static const int FogGridDepth = 192;
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+// ---------------- CONSTANT VALUES ---------------- //
+
 static const int FogSizeX = 128;
 static const int FogSizeY = 64;
 static const int FogSizeZ = 192;
 static const int BlockSizeX = 4;
 static const int BlockSizeY = 4;
 static const int BlockSizeZ = 4;
-static const uint LightTypeOmni = 1;
-static const uint LightTypeSpotShadow = 3;
-static const uint LightSpotShapeRound = 131072;
-static const uint LightSpotShapeSquare = 65536;
 
 // ---------------- DATA STRUCTURES ---------------- //
 
+// Fusion.Engine.Graphics.Fog+PARAMS
+// Marshal.SizeOf = 1024
+struct PARAMS {
+	float4x4   View;                          // offset:    0
+	float4x4   Projection;                    // offset:   64
+	float4x4   ViewProjection;                // offset:  128
+	float4x4   CameraMatrix;                  // offset:  192
+	float4x4   InvertedViewMatrix;            // offset:  256
+	float4x4   CascadeViewProjection0;        // offset:  320
+	float4x4   CascadeViewProjection1;        // offset:  384
+	float4x4   CascadeViewProjection2;        // offset:  448
+	float4x4   CascadeViewProjection3;        // offset:  512
+	float4     CascadeScaleOffset0;           // offset:  576
+	float4     CascadeScaleOffset1;           // offset:  592
+	float4     CascadeScaleOffset2;           // offset:  608
+	float4     CascadeScaleOffset3;           // offset:  624
+	float4     DirectLightDirection;          // offset:  640
+	float4     DirectLightIntensity;          // offset:  656
+	float4     CameraForward;                 // offset:  672
+	float4     CameraRight;                   // offset:  688
+	float4     CameraUp;                      // offset:  704
+	float4     CameraPosition;                // offset:  720
+	float      CameraTangentX;                // offset:  736
+	float      CameraTangentY;                // offset:  740
+};
+
+// Fusion.Engine.Graphics.GpuData+CAMERA
+// Marshal.SizeOf = 352
+struct CAMERA {
+	float4x4   Projection;                    // offset:    0
+	float4x4   View;                          // offset:   64
+	float4x4   ViewProjection;                // offset:  128
+	float4x4   ViewInverted;                  // offset:  192
+	float4     CameraForward;                 // offset:  256
+	float4     CameraRight;                   // offset:  272
+	float4     CameraUp;                      // offset:  288
+	float4     CameraPosition;                // offset:  304
+	float      LinearizeDepthScale;           // offset:  320
+	float      LinearizeDepthBias;            // offset:  324
+	float      FarDistance;                   // offset:  328
+	float      Pad0;                          // offset:  332
+	float      CameraTangentX;                // offset:  336
+	float      CameraTangentY;                // offset:  340
+	float      Pad1;                          // offset:  344
+	float      Pad2;                          // offset:  348
+};
+
+// Fusion.Engine.Graphics.GpuData+DIRECT_LIGHT
+// Marshal.SizeOf = 48
+struct DIRECT_LIGHT {
+	float4     DirectLightDirection;          // offset:    0
+	float4     DirectLightIntensity;          // offset:   16
+	float      DirectLightAngularSize;        // offset:   32
+	float      Pad0;                          // offset:   36
+	float      Pad1;                          // offset:   40
+	float      Pad2;                          // offset:   44
+};
+
+// Fusion.Engine.Graphics.ShadowMap+CASCADE_SHADOW
+// Marshal.SizeOf = 576
+struct CASCADE_SHADOW {
+	float4x4   CascadeViewProjection0;        // offset:    0
+	float4x4   CascadeViewProjection1;        // offset:   64
+	float4x4   CascadeViewProjection2;        // offset:  128
+	float4x4   CascadeViewProjection3;        // offset:  192
+	float4x4   CascadeGradientMatrix0;        // offset:  256
+	float4x4   CascadeGradientMatrix1;        // offset:  320
+	float4x4   CascadeGradientMatrix2;        // offset:  384
+	float4x4   CascadeGradientMatrix3;        // offset:  448
+	float4     CascadeScaleOffset0;           // offset:  512
+	float4     CascadeScaleOffset1;           // offset:  528
+	float4     CascadeScaleOffset2;           // offset:  544
+	float4     CascadeScaleOffset3;           // offset:  560
+};
+
+// Fusion.Engine.Graphics.SceneRenderer+LIGHT
+// Marshal.SizeOf = 132
+struct LIGHT {
+	float4x4   ViewProjection;                // offset:    0
+	float4     Position0LightRange;           // offset:   64
+	float4     Position1TubeRadius;           // offset:   80
+	float4     IntensityFar;                  // offset:   96
+	float4     ShadowScaleOffset;             // offset:  112
+	uint       LightType;                     // offset:  128
+};
+
 // ---------------- SHADER RESOURCES ---------------- //
 
+cbuffer __buffer0 : register(b0) {
+	PARAMS Fog : packoffset(c0);
+};
+cbuffer __buffer1 : register(b1) {
+	CAMERA Camera : packoffset(c0);
+};
+cbuffer __buffer4 : register(b4) {
+	DIRECT_LIGHT DirectLight : packoffset(c0);
+};
+cbuffer __buffer5 : register(b5) {
+	CASCADE_SHADOW CascadeShadow : packoffset(c0);
+};
+SamplerState                   LinearClamp                    : register(s0);
+SamplerComparisonState         ShadowSampler                  : register(s1);
+Texture3D<float4>              FogSource                      : register(t0);
+Texture3D<uint2>               ClusterArray                   : register(t2);
+Buffer<uint>                   ClusterIndexBuffer             : register(t3);
+StructuredBuffer<LIGHT>        ClusterLightBuffer             : register(t4);
+Texture2D<float4>              ShadowMap                      : register(t5);
+Texture2D<float4>              ShadowMask                     : register(t6);
+Texture3D<float4>              IrradianceVolumeL0             : register(t10);
+Texture3D<float4>              IrradianceVolumeL1             : register(t11);
+Texture3D<float4>              IrradianceVolumeL2             : register(t12);
+Texture3D<float4>              IrradianceVolumeL3             : register(t13);
+RWTexture3D<float4>            FogTarget                      : register(u0);

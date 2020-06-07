@@ -8,10 +8,43 @@ using Fusion.Engine.Common;
 using Fusion.Core.Configuration;
 using System.ComponentModel;
 using Fusion.Core.Shell;
+using Fusion.Engine.Graphics.Ubershaders;
 
 namespace Fusion.Engine.Graphics {
 
 	public partial class RenderSystem : GameComponent {
+
+		[ShaderDefine] public const int		LightClusterGridWidth		=	16;
+		[ShaderDefine] public const int		LightClusterGridHeight		=	 8;
+		[ShaderDefine] public const int		LightClusterGridDepth		=	24;
+		[ShaderDefine] public const float	LightClusterExpScale		=	0.015625f;
+
+		[ShaderDefine]	public const int	VTVirtualPageCount			=	VTConfig.VirtualPageCount;
+		[ShaderDefine]	public const int	VTPageSize					=	VTConfig.PageSize;
+		[ShaderDefine]	public const int	VTMaxMip					=	VTConfig.MaxMipLevel;
+		[ShaderDefine]	public const int	VTMipSelectorScale			=	(VTConfig.PageSize >> VTMaxMip) * VTConfig.VirtualPageCount;
+
+		[ShaderDefine]	public const uint	LightTypeNone				=	0;
+		[ShaderDefine]	public const uint	LightTypeOmni				=	1;
+		[ShaderDefine]	public const uint	LightTypeOmniShadow			=	2;
+		[ShaderDefine]	public const uint	LightTypeSpotShadow			=	3;
+		[ShaderDefine]	public const uint	LightTypeAmbient			=	4;
+		[ShaderDefine]	public const uint	LightSpotShapeSquare		=	0x00010000;
+		[ShaderDefine]	public const uint	LightSpotShapeRound			=	0x00020000;
+
+		[ShaderDefine]	public const uint	LightProbeSize				=	128;
+		[ShaderDefine]	public const uint	LightProbeMaxMips			=	6;
+		[ShaderDefine]	public const uint	LightProbeMaxMip			=	6;
+		[ShaderDefine]	public const uint	LightProbeMaxSpecularMip	=	LightProbeMaxMip - 1;
+
+		[ShaderDefine]	public const uint	InstanceGroupStatic			=	(int)InstanceGroup.Static;
+		[ShaderDefine]	public const uint	InstanceGroupDynamic		=	(int)InstanceGroup.Dynamic;
+		[ShaderDefine]	public const uint	InstanceGroupCharacter		=	(int)InstanceGroup.Character;
+		[ShaderDefine]	public const uint	InstanceGroupWeapon			=	(int)InstanceGroup.Weapon;
+
+		[ShaderDefine]	public const int	FogGridWidth				=	8 * LightClusterGridWidth	;
+		[ShaderDefine]	public const int	FogGridHeight				=	8 * LightClusterGridHeight	;
+		[ShaderDefine]	public const int	FogGridDepth				=	8 * LightClusterGridDepth	;
 
 		public const string LightmapPath = @"maps\lightmaps";
 
@@ -23,10 +56,6 @@ namespace Fusion.Engine.Graphics {
 
 		public const int	PreviewWidth				=	320;
 		public const int	PreviewHeight				=	180;
-
-		public const int	LightProbeSize				= 128;
-		public const int	LightProbeMaxMips			= 7;
-		public const int	LightProbeMaxSpecularMip	= LightProbeMaxMips-1;
 
 		public const int	LightProbeBatchSize			= 32;
 

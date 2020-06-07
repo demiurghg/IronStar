@@ -4,27 +4,6 @@ $ubershader 	COMPUTE|INTEGRATE
 
 #include "auto/fog.fxi"
 
-/*-----------------------------------------------------------------------------
-	Samplers and buffers :
------------------------------------------------------------------------------*/
-
-// SamplerState				Sampler			: 	register(s0);
-// SamplerComparisonState		ShadowSampler	: 	register(s1);
-
-// Texture3D<float4> 			Source  			:	register(t0); 
-// RWTexture3D<float4> 		Target  			:	register(u0); 
-
-// Texture3D<uint2>			ClusterTable		: 	register(t1);
-// Buffer<uint>				LightIndexTable		: 	register(t2);
-// StructuredBuffer<LIGHT>		LightDataTable		:	register(t3);
-// Texture2D					ShadowMap			:	register(t4);
-// Texture2D					ShadowMask			:	register(t5);
-
-// cbuffer CB1 : register(b0) { 
-	// PARAMS Params; 
-// };
-
-//#include "fog.lighting.hlsl"
 
 /*-----------------------------------------------------------------------------
 	Compute flux through the fog :

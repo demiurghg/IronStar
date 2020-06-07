@@ -59,7 +59,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 				CubeCount	=	reader.ReadInt32();
 
-				int size	=	RenderSystem.LightProbeSize;
+				int size	=	(int)RenderSystem.LightProbeSize;
 				var buffer	=	new Color[ size * size ];
 
 				for ( int cubeId = 0; cubeId < CubeCount; cubeId++ ) 

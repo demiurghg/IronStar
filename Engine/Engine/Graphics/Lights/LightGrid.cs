@@ -53,7 +53,7 @@ namespace Fusion.Engine.Graphics {
 		internal FormattedBuffer  IndexDataGpu	{ get { return indexBuffer; } }
 		internal StructuredBuffer RadLtDataGpu	{ get { return radLtBuffer; } }
 
-		static float GetGridSlice ( float z )
+		public static float GetGridSlice ( float z )
 		{
 			return 1 - (float)Math.Exp( 0.015625f * ( z ) );
 		}

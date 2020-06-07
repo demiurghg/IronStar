@@ -73,9 +73,9 @@ namespace Fusion.Engine.Graphics.Lights {
 			lightVolumeG	=	new Texture3D( rs.Device, ColorFormat.Rgba16F, w,h,d ); 
 			lightVolumeB	=	new Texture3D( rs.Device, ColorFormat.Rgba16F, w,h,d ); 
 
-			int size		=	RenderSystem.LightProbeSize;
-			int mips		=	RenderSystem.LightProbeMaxMips;
-			int length		=	RenderSystem.MaxEnvLights;
+			int size		=	(int)RenderSystem.LightProbeSize;
+			int mips		=	(int)RenderSystem.LightProbeMaxMips;
+			int length		=	(int)RenderSystem.MaxEnvLights;
 
 
 			lightProbeColorArray	=	new TextureCubeArray	( rs.Device, size, length, ColorFormat.Rgba8,		1		);

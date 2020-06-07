@@ -539,6 +539,9 @@ namespace Fusion.Engine.Graphics {
 					//	Z-pass weapon :
 					rs.SceneRenderer.RenderZPass( gameTime, stereoEye, WeaponCamera, viewHdrFrame, rlMainView, InstanceGroup.Weapon );
 
+					//	render fog :
+					rs.Fog.RenderFog( Camera, LightSet, FogSettings );
+
 					//------------------------------------------------------------
 					//	Forward+
 					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera		, viewHdrFrame, rlMainView, InstanceGroup.NotWeapon );

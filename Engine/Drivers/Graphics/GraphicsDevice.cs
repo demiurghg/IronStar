@@ -492,6 +492,21 @@ namespace Fusion.Drivers.Graphics {
 		}
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="threadGroupCountX"></param>
+		/// <param name="threadGroupCountY"></param>
+		/// <param name="threadGroupCountZ"></param>
+		public void Dispatch( uint threadGroupCountX, uint threadGroupCountY = 1, uint threadGroupCountZ = 1 )
+		{
+			if (true) { // lock (deviceContext) {
+				ApplyGpuState();
+				deviceContext.Dispatch( (int)threadGroupCountX, (int)threadGroupCountY, (int)threadGroupCountZ ); 
+			}
+		}
+
+
 
 		/// <summary>
 		/// 

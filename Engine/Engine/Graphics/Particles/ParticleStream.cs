@@ -85,11 +85,6 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine]	public const uint LightmapWidth			=	LightmapRegionSize * 4;
 		[ShaderDefine]	public const uint LightmapHeight		=	LightmapRegionSize * 2;
 
-		[ShaderDefine]	public const uint LightTypeOmni			=	SceneRenderer.LightTypeOmni;
-		[ShaderDefine]	public const uint LightTypeSpotShadow	=	SceneRenderer.LightTypeSpotShadow;
-		[ShaderDefine]	public const uint LightSpotShapeRound	=	SceneRenderer.LightSpotShapeRound;
-		[ShaderDefine]	public const uint LightSpotShapeSquare	=	SceneRenderer.LightSpotShapeSquare;
-
 		bool toMuchInjectedParticles = false;
 
 		int					injectionCount = 0;

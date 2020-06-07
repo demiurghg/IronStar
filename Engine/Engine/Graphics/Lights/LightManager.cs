@@ -42,7 +42,6 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine]	 const int BlockSizeY = 16;
 		[ShaderDefine]	 const int PrefilterBlockSizeX = 8;
 		[ShaderDefine]	 const int PrefilterBlockSizeY = 8;
-		[ShaderDefine]	 const int LightProbeSize = RenderSystem.LightProbeSize;
 
 
 		[ShaderStructure()]
@@ -118,7 +117,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public override void Initialize()
 		{
-			lightGrid	=	new LightGrid( rs, 16, 8, 24 );
+			lightGrid	=	new LightGrid( rs, RenderSystem.LightClusterGridWidth, RenderSystem.LightClusterGridHeight, RenderSystem.LightClusterGridDepth );
 
 			shadowMap	=	new ShadowMap( rs, rs.ShadowQuality );
 
@@ -302,95 +301,13 @@ namespace Fusion.Engine.Graphics {
 				
 				device.PipelineState = factory[(int)Flags.RELIGHT];
 
-				int size	=	RenderSystem.LightProbeSize;
+				int size	=	(int)RenderSystem.LightProbeSize;
 					
 				int tgx		=	MathUtil.IntDivRoundUp( size, BlockSizeX );
 				int tgy		=	MathUtil.IntDivRoundUp( size, BlockSizeY );
 				int tgz		=	1;
 
 				device.Dispatch( tgx, tgy, tgz );
-			}
-		}
-
-
-
-		public void PrefilterLightProbesAll( LightSet lightSet, TextureCubeArrayRW target )
-		{
-			int batchCount = RenderSystem.MaxEnvLights / RenderSystem.LightProbeBatchSize;
-
-			for ( int batch = 0; batch < batchCount; batch++ ) {
-				PrefilterLightProbes( lightSet, target, batch );
-			}
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="lightSet"></param>
-		/// <param name="target"></param>
-		public void PrefilterLightProbes ( LightSet lightSet, TextureCubeArrayRW target, int counter )
-		{
-			device.ResetStates();
-			
-			using ( new PixEvent( "PrefilterLightProbes" ) ) {
-
-				int batchCount = RenderSystem.MaxEnvLights / RenderSystem.LightProbeBatchSize;
-
-				//for ( int i=0; i<batchCount; i++ ) {
-
-				int batchIndex = counter % batchCount;
-
-				device.ComputeSamplers[0]		=	SamplerState.PointClamp;
-				device.ComputeSamplers[1]		=	SamplerState.LinearWrap;
-				device.ComputeSamplers[2]		=	SamplerState.ShadowSamplerPoint;
-
-				//
-				//	prefilter specular :
-				//
-				for (int mip=1; mip<=RenderSystem.LightProbeMaxSpecularMip; mip++) {
-
-					Flags flag;
-
-					switch (mip) {
-						case 1:	 flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_025; break;
-						case 2:	 flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_050; break;
-						case 3:	 flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_075; break;
-						case 4:	 flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_100; break;
-						default: flag = Flags.PREFILTER | Flags.SPECULAR | Flags.ROUGHNESS_100;	break;
-					}
-					
-					device.PipelineState = factory[(int)flag];
-				
-					device.SetComputeUnorderedAccess( 0, target.GetBatchCubeSurface( batchIndex, mip ).UnorderedAccess );
-
-					device.ComputeResources[4]	=	target.GetBatchCubeShaderResource( batchIndex, mip - 1 );
-
-					int size	=	RenderSystem.LightProbeSize >> mip;
-					int tgx		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeX );
-					int tgy		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeY );
-					int tgz		=	RenderSystem.LightProbeBatchSize;
-
-					device.Dispatch( tgx, tgy, tgz );
-				}
-
-				//
-				//	prefilter diffuse :
-				//
-				if (true) {
-					device.PipelineState = factory[(int)(Flags.PREFILTER | Flags.DIFFUSE)];
-
-					device.SetComputeUnorderedAccess( 0, target.GetBatchCubeSurface( batchIndex, RenderSystem.LightProbeMaxMips ).UnorderedAccess );
-
-					device.ComputeResources[4]	=	target.GetBatchCubeShaderResource( batchIndex, 3 );
-
-					int size	=	RenderSystem.LightProbeSize;
-					int tgx		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeX );
-					int tgy		=	MathUtil.IntDivRoundUp( size, PrefilterBlockSizeY );
-					int tgz		=	RenderSystem.LightProbeBatchSize;
-
-					device.Dispatch( tgx, tgy, tgz );
-				}
 			}
 		}
 	}

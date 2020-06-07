@@ -29,17 +29,6 @@ struct PSInput {
 };
 
 #include "auto/lightmapDebug.fxi"
-
-static const uint LightTypeOmni = 1;
-static const uint LightTypeOmniShadow = 2;
-static const uint LightTypeSpotShadow = 3;
-static const uint LightTypeAmbient = 4;
-static const uint LightSpotShapeSquare = 65536;
-static const uint LightSpotShapeRound = 131072;
-static const uint LightProbeSize = 128;
-static const uint LightProbeMaxSpecularMip = 5;
-static const uint LightProbeDiffuseMip = 6;
-
 #include "ls_core.fxi"
 
 PSInput VSMain( VSInput input, uint instanceId : SV_InstanceID )

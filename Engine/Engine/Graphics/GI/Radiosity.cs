@@ -28,12 +28,6 @@ namespace Fusion.Engine.Graphics.GI
 		[ShaderDefine]	const int ClusterSize		=	RadiositySettings.ClusterSize;
 		[ShaderDefine]	const uint PatchCacheSize	=	RadiositySettings.MaxPatchesPerTile;
 
-		[ShaderDefine]	const uint LightTypeNone		=	SceneRenderer.LightTypeNone;
-		[ShaderDefine]	const uint LightTypeOmni		=	SceneRenderer.LightTypeOmni;
-		[ShaderDefine]	const uint LightTypeSpotShadow	=	SceneRenderer.LightTypeSpotShadow;
-		[ShaderDefine]	const uint LightSpotShapeRound	=	SceneRenderer.LightSpotShapeRound;
-		[ShaderDefine]	const uint LightSpotShapeSquare	=	SceneRenderer.LightSpotShapeSquare;
-
 		static FXConstantBuffer<GpuData.CAMERA>				regCamera			=	new CRegister( 0, "Camera"		);
 		static FXConstantBuffer<RADIOSITY>					regRadiosity		=	new CRegister( 1, "Radiosity"		);
 		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow	=	new CRegister( 2, "CascadeShadow"	);

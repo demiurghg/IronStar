@@ -109,7 +109,7 @@ namespace Fusion.Engine.Graphics
 			float zn	=	Math.Abs( m43 / m33 );
 			float zf	=	zn * m43 / ( m43 + zn );
 			float w		=	2 * zn / inputProjMatrix.M11;
-			float h		=	2 * zn / inputProjMatrix.M11;
+			float h		=	2 * zn / inputProjMatrix.M22;
 
 
 			bool isPerspective				=	inputProjMatrix.M44 == 0;

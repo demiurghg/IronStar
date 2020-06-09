@@ -1,0 +1,23 @@
+#ifndef __LS_FOG_FXI__
+#define __LS_FOG_FXI__
+
+/*------------------------------------------------------------------------------
+	FOG
+------------------------------------------------------------------------------*/
+
+float3 ApplyVolumetricFog( float3 color, float4 projectedPosition, SamplerState linearClamp, Texture3D<float4> fogTexture )
+{
+	float2 	scale	=	float2( 0.5f, -0.5f ) * float2(1, 1) / projectedPosition.w;
+	float2 	bias	=	float2( 0.5f,  0.5f ) * float2(1, 1);
+
+	float 	slice	= 	(1 - exp(-projectedPosition.w * FogGridExpScale));// * FogGridDepth;
+	float2	segment	=	mad( projectedPosition.xy, scale, bias );
+	
+	float3 	loadUVW	=	float3( segment, slice );
+	
+	float4	fogData	=	fogTexture.SampleLevel( linearClamp, loadUVW, 0 ).rgba;
+	
+	return lerp( color, fogData.rgb, fogData.a );
+}
+
+#endif

@@ -55,8 +55,11 @@ namespace Fusion.Engine.Graphics {
 
 		public static float GetGridSlice ( float z )
 		{
-			return 1 - (float)Math.Exp( 0.015625f * ( z ) );
+			var k = RenderSystem.LightClusterExpScale;
+				z = Math.Abs( z );
+			return 1 - (float)Math.Exp( - k * z );
 		}
+
 
 
 		/// <summary>
@@ -198,8 +201,8 @@ namespace Fusion.Engine.Graphics {
 
 				if ( Extents.GetSphereExtent( view, proj, ol.CenterPosition, vp, radius, false, out min, out max ) ) {
 
-					min.Z	=	GetGridSlice( -min.Z );
-					max.Z	=	GetGridSlice( -max.Z );
+					min.Z	=	GetGridSlice( min.Z );
+					max.Z	=	GetGridSlice( max.Z );
 
 					ol.Visible		=	true;
 
@@ -241,8 +244,8 @@ namespace Fusion.Engine.Graphics {
 					min		=	Vector3.Max( minF, minS );
 					max		=	Vector3.Min( maxF, maxS );
 
-					min.Z	=	GetGridSlice( -min.Z );
-					max.Z	=	GetGridSlice( -max.Z );
+					min.Z	=	GetGridSlice( min.Z );
+					max.Z	=	GetGridSlice( max.Z );
 
 					sl.Visible		=	true;
 
@@ -315,8 +318,8 @@ namespace Fusion.Engine.Graphics {
 
 				if ( Extents.GetBasisExtent( view, proj, vp, dcl.DecalMatrix, false, out min, out max ) ) {
 
-					min.Z	=	GetGridSlice( -min.Z );
-					max.Z	=	GetGridSlice( -max.Z );
+					min.Z	=	GetGridSlice( min.Z );
+					max.Z	=	GetGridSlice( max.Z );
 
 					TestExtent( min, max, new Color(255,0,0,64) );
 
@@ -367,8 +370,8 @@ namespace Fusion.Engine.Graphics {
 				{
 					if ( Extents.GetBasisExtent( view, proj, vp, lpb.ProbeMatrix, false, out min, out max ) ) 
 					{
-						min.Z	=	GetGridSlice( -min.Z );
-						max.Z	=	GetGridSlice( -max.Z );
+						min.Z	=	GetGridSlice( min.Z );
+						max.Z	=	GetGridSlice( max.Z );
 
 						TestExtent( min, max, new Color(0,0,255,64) );
 
@@ -387,8 +390,8 @@ namespace Fusion.Engine.Graphics {
 				{
 					if ( Extents.GetSphereExtent( view, proj, lpb.ProbeMatrix.TranslationVector, vp, lpb.Radius, false, out min, out max ) ) 
 					{
-						min.Z	=	GetGridSlice( -min.Z );
-						max.Z	=	GetGridSlice( -max.Z );
+						min.Z	=	GetGridSlice( min.Z );
+						max.Z	=	GetGridSlice( max.Z );
 
 						lpb.Visible		=	true;
 

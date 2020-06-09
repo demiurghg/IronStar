@@ -88,34 +88,5 @@ float3 ComputeClusteredLighting ( float3 worldPos, float3 normal, float3 color, 
 		+ 	totalLight.transmissive
 		+	totalLight.specular
 		;//*/
-	
-	
-	//----------------------------------------------------------------------------------------------
-
-	// float3	shadow		=	ComputeCascadedShadows( geometry, float2(0,0), CascadeShadow, rcShadow ); 
-	// FLUX	flux		=	ComputeDirectLightFlux( DirectLight );
-	// totalLight			+=	shadow * ComputeParticleLighting( flux, geometry, surface, medium, Camera );
-
-	//----------------------------------------------------------------------------------------------
-
-	// [loop]
-	// for (i=0; i<cluster.NumLights; i++) 
-	// {
-		// LIGHT light	=	GetLight( rcCluster, cluster, i );
-		
-		// FLUX flux	=	ComputePointLightFlux( geometry, light, rcShadow );
-		// totalLight	+=	ComputeParticleLighting( flux, geometry, surface, medium, Camera );
-	// }
-	
-	//----------------------------------------------------------------------------------------------
-	
-	/*float3	samplePoint		=	mad( float4(worldPos, 1), Params.WorldToVoxelScale, Params.WorldToVoxelOffset ).xyz;
-	
-	float4	irradianceL0	=	IrradianceVolumeL0.SampleLevel( LinearSampler, samplePoint, 0 ).rgba;
-	float4	irradianceL1	=	IrradianceVolumeL1.SampleLevel( LinearSampler, samplePoint, 0 ).rgba;
-	float4	irradianceL2	=	IrradianceVolumeL2.SampleLevel( LinearSampler, samplePoint, 0 ).rgba;
-	float4	irradianceL3	=	IrradianceVolumeL3.SampleLevel( LinearSampler, samplePoint, 0 ).rgba;
-	
-	return	float3( irradianceL0.rgb ) * color.rgb;*/
 }
 

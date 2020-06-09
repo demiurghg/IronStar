@@ -51,6 +51,8 @@ LIGHTING EvaluateSHL( float3 shL0, float3 shL1, float3 shL2, float3 shL3, float 
 	
 	light.diffuse	=	float3( lightR, lightG, lightB ) * surface.diffuse;
 	
+	light.transmissive	=	surface.baseColor * shL0;
+	
 	return light;
 }
 

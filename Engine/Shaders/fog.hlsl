@@ -3,6 +3,7 @@ $ubershader 	COMPUTE|INTEGRATE
 #endif
 
 #include "auto/fog.fxi"
+#include "fog_lighting.hlsl"
 
 
 /*-----------------------------------------------------------------------------
@@ -18,30 +19,31 @@ void CSMain(
 	uint  groupIndex: SV_GroupIndex, 
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
-	// int3 location		=	dispatchThreadId.xyz;
-	// int3 blockSize		=	int3(BlockSizeX,BlockSizeY,BlockSizeZ);
+	int3 location		=	dispatchThreadId.xyz;
+	int3 blockSize		=	int3(BlockSizeX,BlockSizeY,BlockSizeZ);
 	
-	// float value = (location.x + location.y + location.z)&1;
+	float value = (location.x + location.y + location.z)&1;
 	
-	// float3	normLocation	=	(location.xyz + float3(0.5f,0.5f,0.5f)) / float3(FogSizeX, FogSizeY, FogSizeZ);
+	float3	normLocation	=	(location.xyz + float3(0.5f,0.5f,0.5f)) / float3(FogSizeX, FogSizeY, FogSizeZ);
 	
-	// float	tangentX		=	lerp( -Params.CameraTangentX,  Params.CameraTangentX, normLocation.x );
-	// float	tangentY		=	lerp(  Params.CameraTangentY, -Params.CameraTangentY, normLocation.y );
+	float	tangentX		=	lerp( -Camera.CameraTangentX,  Camera.CameraTangentX, normLocation.x );
+	float	tangentY		=	lerp(  Camera.CameraTangentY, -Camera.CameraTangentY, normLocation.y );
 	
-	// float	viewDistance	=	-log(1-normLocation.z)/0.03;
+	float	vsDistance		=	-log(1-normLocation.z)/FogGridExpScale;
 
-	// float4	viewPos			=	float4( viewDistance * tangentX, viewDistance * tangentY, -viewDistance, 1 );
+	float4	vsPosition		=	float4( vsDistance * tangentX, vsDistance * tangentY, -vsDistance, 1 );
 	
-	// float3	worldPos		=	mul( viewPos, Params.CameraMatrix );
+	float3	wsPosition		=	mul( vsPosition, Camera.ViewInverted ).xyz;
+	float3	cameraPos		=	Camera.CameraPosition.xyz;
 	
-	// float	density			=	0.01 * min(1, exp(-0.2*worldPos.y));
-	// float3	emission		=	ComputeClusteredLighting( worldPos ) * density;
+	float	density			=	0.005 * min(1, 1*exp(-0.04*(wsPosition.y-15))) + 0.0001;
+	float3	normal			=	normalize( wsPosition - cameraPos );
+	float3	emission		=	ComputeClusteredLighting( wsPosition, normal, float3(1,1,1)*1, 1, 1 );
 
-	// //Target[ location.xyz ] = float4(frac(worldPos.yyy/5), 1);
-	// //Target[ location.xyz ] = float4(normLocation, 1);
 	
-	// Target[ location.xyz ] = float4(emission, density);
-	//Target[ location.xyz ] = frac(viewDistance/10);
+	FogTarget[ location.xyz ] = float4(emission * density, density);
+	
+	//FogTarget[ location.xyz ] = float4( frac(2*normLocation.xy), 0, 1 );
 }
 
 #endif
@@ -59,28 +61,28 @@ void CSMain(
 	uint  groupIndex: SV_GroupIndex, 
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
-	// int3 location		=	dispatchThreadId.xyz;
+	int2 	location		=	dispatchThreadId.xy;
+	float	invDepthSlices	=	1.0f / FogGridDepth;
 	
-	// float4 value = Source[ int3( location.xy, 0 ) ];
-	// Target[ int3( location.xy, 0 ) ] = value;
+	float4	accumScatteringTransmittance	=	float4(0,0,0,1);
 	
-	// float	transparency	=	1;
-	
-	// float3	illumination	=	value.rgb;
-	
-	// for ( int i=1; i<FogSizeZ; i++ ) {
+	for ( int slice=0; slice<FogGridDepth; slice++ ) {
 		
-		// float4 	src		=	Source[ int3( location.xy, i ) ];
-				// value	=	lerp( value, src, src.a );//*/
-				
-		// transparency	*=	exp(-1 * src.a);
+		float	frontDistance			=	- log( 1 - (slice+0.0000f) * invDepthSlices ) / FogGridExpScale;
+		float	backDistance			=	- log( 1 - (slice+0.9999f) * invDepthSlices ) / FogGridExpScale;
+		float	stepLength				=	abs(backDistance - frontDistance);
 		
-		// illumination	+=	src.rgb;
-				
-		// float4	temp	=	float4( illumination, 1 - transparency );
+		float4 	scatteringExtinction	=	FogSource[ int3( location.xy, slice ) ];
+		float	transmittance			=	exp( -scatteringExtinction.a * stepLength );
+		
+		accumScatteringTransmittance.rgb	+=	scatteringExtinction.rgb * accumScatteringTransmittance.a;
+		accumScatteringTransmittance.a		*=	transmittance;
 
-		// Target[ int3( location.xy, i ) ]	=	temp;
-	// }
+		float4	storedValue		=	float4( accumScatteringTransmittance.rgb, 1 - accumScatteringTransmittance.a );
+		FogTarget[ int3( location.xy, slice ) ]	=	storedValue;
+		
+		//FogTarget[ int3( location.xy, slice ) ]	=	float4( scatteringExtinction.rgb, 1 );
+	}
 }
 
 #endif

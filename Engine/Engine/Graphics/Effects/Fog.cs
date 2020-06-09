@@ -33,7 +33,7 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine]
 		const int BlockSizeZ	=	4;
 
-		static FXConstantBuffer<PARAMS>						regFog						=	new CRegister( 0, "Fog"						);
+		static FXConstantBuffer<FOG_DATA>					regFog						=	new CRegister( 0, "Fog"						);
 		static FXConstantBuffer<GpuData.CAMERA>				regCamera					=	new CRegister( 1, "Camera"					);
 		static FXConstantBuffer<GpuData.DIRECT_LIGHT>		regDirectLight				=	new CRegister( 4, "DirectLight"				);
 		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow			=	new CRegister( 5, "CascadeShadow"			);
@@ -65,22 +65,22 @@ namespace Fusion.Engine.Graphics {
 
 		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential, Pack=4, Size=64)]
-		struct FOG_DATA {
-			public float 	Dummy;
+		struct FOG_DATA 
+		{
+			public Vector4	WorldToVoxelScale;
+			public Vector4	WorldToVoxelOffset;
+			public float	DirectLightFactor;
+			public float	IndirectLightFactor;
 		}
-
 
 		Ubershader			shader;
 		StateFactory		factory;
 		ConstantBuffer		cbFog;
-		Texture3DCompute	fog3d0;
-		Texture3DCompute	fog3d1;
+		Texture3DCompute	fogDensity;
+		Texture3DCompute	scatteredLight;
+		Texture3DCompute	integratedLight;
 
-		public ShaderResource FogGrid {
-			get {
-				return fog3d0;
-			}
-		}
+		public ShaderResource FogGrid { get { return integratedLight; } }
 
 
 		/// <summary>
@@ -98,8 +98,9 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public override void Initialize() 
 		{
-			fog3d0	=	new Texture3DCompute( device, ColorFormat.Rgba16F, FogSizeX, FogSizeY, FogSizeZ );
-			fog3d1	=	new Texture3DCompute( device, ColorFormat.Rgba16F, FogSizeX, FogSizeY, FogSizeZ );
+			fogDensity		=	new Texture3DCompute( device, ColorFormat.Rgba8,	FogSizeX, FogSizeY, FogSizeZ );
+			scatteredLight	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	FogSizeX, FogSizeY, FogSizeZ );
+			integratedLight	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	FogSizeX, FogSizeY, FogSizeZ );
 
 			cbFog	=	new ConstantBuffer( device, typeof(FOG_DATA) );
 
@@ -127,8 +128,8 @@ namespace Fusion.Engine.Graphics {
 		protected override void Dispose( bool disposing )
 		{
 			if( disposing ) {
-				SafeDispose( ref fog3d0 );
-				SafeDispose( ref fog3d1 );
+				SafeDispose( ref scatteredLight );
+				SafeDispose( ref integratedLight );
 				SafeDispose( ref cbFog );
 			}
 			base.Dispose( disposing );
@@ -145,7 +146,10 @@ namespace Fusion.Engine.Graphics {
 		{
 			var fogData		=	new FOG_DATA();
 
-			fogData.Dummy	=	0;
+			fogData.WorldToVoxelOffset	=	rs.Radiosity.GetWorldToVoxelOffset();
+			fogData.WorldToVoxelScale	=	rs.Radiosity.GetWorldToVoxelScale();
+			fogData.IndirectLightFactor	=	rs.Radiosity.MasterIntensity;
+			fogData.DirectLightFactor	=	rs.SkipDirectLighting ? 0 : 1;
 
 			cbFog.SetData( fogData );
 
@@ -161,13 +165,12 @@ namespace Fusion.Engine.Graphics {
 			device.ComputeResources[ regLightIndexTable		]	=	rs.LightManager.LightGrid.IndexDataGpu		;
 			device.ComputeResources[ regLightDataTable		]	=	rs.LightManager.LightGrid.LightDataGpu		;
 			device.ComputeResources[ regShadowMap			]	=	rs.LightManager.ShadowMap.ShadowTexture		;
-
 			device.ComputeResources[ regShadowMask			]	=	rs.LightManager.ShadowMap.ParticleShadowTexture	;
 		
-			device.ComputeResources[ regIrradianceVolumeL0 ]	= 	rs.Radiosity.LightVolumeL0	;
-			device.ComputeResources[ regIrradianceVolumeL1 ]	= 	rs.Radiosity.LightVolumeL1	;
-			device.ComputeResources[ regIrradianceVolumeL2 ]	= 	rs.Radiosity.LightVolumeL2	;
-			device.ComputeResources[ regIrradianceVolumeL3 ]	= 	rs.Radiosity.LightVolumeL3	;
+			device.ComputeResources[ regIrradianceVolumeL0	]	= 	rs.Radiosity.LightVolumeL0	;
+			device.ComputeResources[ regIrradianceVolumeL1	]	= 	rs.Radiosity.LightVolumeL1	;
+			device.ComputeResources[ regIrradianceVolumeL2	]	= 	rs.Radiosity.LightVolumeL2	;
+			device.ComputeResources[ regIrradianceVolumeL3	]	= 	rs.Radiosity.LightVolumeL3	;
 		}
 
 
@@ -186,6 +189,9 @@ namespace Fusion.Engine.Graphics {
 
 					device.PipelineState	=	factory[ (int)FogFlags.COMPUTE ];
 
+					device.SetComputeUnorderedAccess( regFogTarget,		scatteredLight.UnorderedAccess );
+
+					
 					var gx	=	MathUtil.IntDivUp( FogSizeX, BlockSizeX );
 					var gy	=	MathUtil.IntDivUp( FogSizeY, BlockSizeY );
 					var gz	=	MathUtil.IntDivUp( FogSizeZ, BlockSizeZ );
@@ -198,13 +204,14 @@ namespace Fusion.Engine.Graphics {
 
 					device.ResetStates();		  
 			
+					SetupParameters( camera, lightSet, settings );
+
 					device.PipelineState	=	factory[ (int)FogFlags.INTEGRATE ];
 
-					device.ComputeResources[0]	=	fog3d1;
-					device.ComputeConstants[0]	=	cbFog;
+					device.SetComputeUnorderedAccess( regFogTarget,			integratedLight.UnorderedAccess );
+					device.ComputeResources			[ regFogSource ]	=	scatteredLight;
 
-					device.SetCSRWTexture( 0, fog3d0 );
-
+					
 					var gx	=	MathUtil.IntDivUp( FogSizeX, BlockSizeX );
 					var gy	=	MathUtil.IntDivUp( FogSizeY, BlockSizeY );
 					var gz	=	1;

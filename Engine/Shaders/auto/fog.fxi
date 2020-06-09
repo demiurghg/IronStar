@@ -26,6 +26,7 @@ static const uint InstanceGroupWeapon = 16;
 static const int FogGridWidth = 128;
 static const int FogGridHeight = 64;
 static const int FogGridDepth = 192;
+static const float FogGridExpScale = 0.0015;
 
 // ---------------- DATA STRUCTURES ---------------- //
 
@@ -42,30 +43,13 @@ static const int BlockSizeZ = 4;
 
 // ---------------- DATA STRUCTURES ---------------- //
 
-// Fusion.Engine.Graphics.Fog+PARAMS
-// Marshal.SizeOf = 1024
-struct PARAMS {
-	float4x4   View;                          // offset:    0
-	float4x4   Projection;                    // offset:   64
-	float4x4   ViewProjection;                // offset:  128
-	float4x4   CameraMatrix;                  // offset:  192
-	float4x4   InvertedViewMatrix;            // offset:  256
-	float4x4   CascadeViewProjection0;        // offset:  320
-	float4x4   CascadeViewProjection1;        // offset:  384
-	float4x4   CascadeViewProjection2;        // offset:  448
-	float4x4   CascadeViewProjection3;        // offset:  512
-	float4     CascadeScaleOffset0;           // offset:  576
-	float4     CascadeScaleOffset1;           // offset:  592
-	float4     CascadeScaleOffset2;           // offset:  608
-	float4     CascadeScaleOffset3;           // offset:  624
-	float4     DirectLightDirection;          // offset:  640
-	float4     DirectLightIntensity;          // offset:  656
-	float4     CameraForward;                 // offset:  672
-	float4     CameraRight;                   // offset:  688
-	float4     CameraUp;                      // offset:  704
-	float4     CameraPosition;                // offset:  720
-	float      CameraTangentX;                // offset:  736
-	float      CameraTangentY;                // offset:  740
+// Fusion.Engine.Graphics.Fog+FOG_DATA
+// Marshal.SizeOf = 64
+struct FOG_DATA {
+	float4     WorldToVoxelScale;             // offset:    0
+	float4     WorldToVoxelOffset;            // offset:   16
+	float      DirectLightFactor;             // offset:   32
+	float      IndirectLightFactor;           // offset:   36
 };
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
@@ -131,7 +115,7 @@ struct LIGHT {
 // ---------------- SHADER RESOURCES ---------------- //
 
 cbuffer __buffer0 : register(b0) {
-	PARAMS Fog : packoffset(c0);
+	FOG_DATA Fog : packoffset(c0);
 };
 cbuffer __buffer1 : register(b1) {
 	CAMERA Camera : packoffset(c0);

@@ -1,10 +1,16 @@
 
 #ifdef _UBERSHADER
-$ubershader FORWARD RIGID +ANISOTROPIC +TRANSPARENT IRRADIANCE_MAP|IRRADIANCE_VOLUME
+$ubershader FORWARD RIGID ANISOTROPIC +TRANSPARENT IRRADIANCE_MAP|IRRADIANCE_VOLUME
 $ubershader SHADOW RIGID +TRANSPARENT
 $ubershader ZPASS RIGID
 $ubershader GBUFFER RIGID
-$ubershader RADIANCE RIGID IRRADIANCE_MAP|IRRADIANCE_VOLUME
+// $ubershader RADIANCE RIGID IRRADIANCE_MAP|IRRADIANCE_VOLUME
+
+// $ubershader FORWARD RIGID +ANISOTROPIC +TRANSPARENT IRRADIANCE_MAP|IRRADIANCE_VOLUME
+// $ubershader SHADOW RIGID +TRANSPARENT
+// $ubershader ZPASS RIGID
+// $ubershader GBUFFER RIGID
+// $ubershader RADIANCE RIGID IRRADIANCE_MAP|IRRADIANCE_VOLUME
 #endif
 
 
@@ -51,8 +57,7 @@ struct GBuffer {
 #define SHADOW_TRANSITION
 
 #include "ls_core.fxi"
-
-#include "fog.fxi"
+#include "ls_fog.fxi"
 
 
 #ifdef RADIANCE
@@ -353,7 +358,8 @@ GBuffer PSMain( PSInput input )
 	
 	//	Fog :
 	float	dist	=	distance( input.WorldPos.xyz, Camera.CameraPosition.xyz ); 
-	float3	final	=	ApplyFogColor( lighting, Stage.FogAttenuation, dist, Stage.FogColor.rgb );
+	float3	final	=	ApplyVolumetricFog( lighting, input.ProjPos, SamplerLinearClamp, FogVolume );
+	//float3	final	=	ApplyVolumetricFog( lighting, input.ProjPos, SamplerPoint/*SamplerLinearClamp*/, FogVolume );
 	
 	output.hdr			=	float4( final, surface.alpha );
 	output.feedback		=	feedback;
@@ -378,8 +384,7 @@ float4 PSMain( PSInput input ) : SV_TARGET0
 	float3 	lighting	=	ComputeClusteredLighting( input, Stage.ViewportSize.xy, surface, triNormal, input.LMCoord );
 	
 	//	Apply fog :
-	float	dist	=	distance( input.WorldPos.xyz, Camera.CameraPosition.xyz ); 
-	float3	final	=	lighting;//ApplyFogColor( lighting, Stage.FogAttenuation, dist, Stage.FogColor );
+	float3	final	=	ApplyVolumetricFog( lighting, input.ProjPos, SamplerLinearClamp, FogVolume );
 	
 	return	float4( final, 1 );
 }

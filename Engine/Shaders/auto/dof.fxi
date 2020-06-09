@@ -26,6 +26,7 @@ static const uint InstanceGroupWeapon = 16;
 static const int FogGridWidth = 128;
 static const int FogGridHeight = 64;
 static const int FogGridDepth = 192;
+static const float FogGridExpScale = 0.0015;
 
 // ---------------- DATA STRUCTURES ---------------- //
 

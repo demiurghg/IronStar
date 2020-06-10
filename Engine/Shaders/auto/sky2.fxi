@@ -1,0 +1,95 @@
+// ---------------- CONSTANT VALUES ---------------- //
+
+static const int LightClusterGridWidth = 16;
+static const int LightClusterGridHeight = 8;
+static const int LightClusterGridDepth = 24;
+static const float LightClusterExpScale = 0.015625;
+static const int VTVirtualPageCount = 1024;
+static const int VTPageSize = 128;
+static const int VTMaxMip = 6;
+static const int VTMipSelectorScale = 2048;
+static const uint LightTypeNone = 0;
+static const uint LightTypeOmni = 1;
+static const uint LightTypeOmniShadow = 2;
+static const uint LightTypeSpotShadow = 3;
+static const uint LightTypeAmbient = 4;
+static const uint LightSpotShapeSquare = 65536;
+static const uint LightSpotShapeRound = 131072;
+static const uint LightProbeSize = 128;
+static const uint LightProbeMaxMips = 6;
+static const uint LightProbeMaxMip = 6;
+static const uint LightProbeMaxSpecularMip = 5;
+static const uint InstanceGroupStatic = 1;
+static const uint InstanceGroupDynamic = 4;
+static const uint InstanceGroupCharacter = 8;
+static const uint InstanceGroupWeapon = 16;
+static const int FogGridWidth = 128;
+static const int FogGridHeight = 64;
+static const int FogGridDepth = 192;
+static const float FogGridExpScale = 0.0015;
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+// ---------------- CONSTANT VALUES ---------------- //
+
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// Fusion.Engine.Graphics.Sky2+SKY_DATA
+// Marshal.SizeOf = 160
+struct SKY_DATA {
+	float4     BetaRayleigh;                  // offset:    0
+	float4     BetaMie;                       // offset:   16
+	float      PlanetRadius;                  // offset:   32
+	float      AtmosphereRadius;              // offset:   36
+	float      RayleighHeight;                // offset:   40
+	float      MieHeight;                     // offset:   44
+	float      MieExcentricity;               // offset:   48
+	float      SkySphereSize;                 // offset:   52
+};
+
+// Fusion.Engine.Graphics.GpuData+CAMERA
+// Marshal.SizeOf = 352
+struct CAMERA {
+	float4x4   Projection;                    // offset:    0
+	float4x4   View;                          // offset:   64
+	float4x4   ViewProjection;                // offset:  128
+	float4x4   ViewInverted;                  // offset:  192
+	float4     CameraForward;                 // offset:  256
+	float4     CameraRight;                   // offset:  272
+	float4     CameraUp;                      // offset:  288
+	float4     CameraPosition;                // offset:  304
+	float      LinearizeDepthScale;           // offset:  320
+	float      LinearizeDepthBias;            // offset:  324
+	float      FarDistance;                   // offset:  328
+	float      Pad0;                          // offset:  332
+	float      CameraTangentX;                // offset:  336
+	float      CameraTangentY;                // offset:  340
+	float      Pad1;                          // offset:  344
+	float      Pad2;                          // offset:  348
+};
+
+// Fusion.Engine.Graphics.GpuData+DIRECT_LIGHT
+// Marshal.SizeOf = 48
+struct DIRECT_LIGHT {
+	float4     DirectLightDirection;          // offset:    0
+	float4     DirectLightIntensity;          // offset:   16
+	float      DirectLightAngularSize;        // offset:   32
+	float      Pad0;                          // offset:   36
+	float      Pad1;                          // offset:   40
+	float      Pad2;                          // offset:   44
+};
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+cbuffer __buffer0 : register(b0) {
+	SKY_DATA Sky : packoffset(c0);
+};
+cbuffer __buffer1 : register(b1) {
+	CAMERA Camera : packoffset(c0);
+};
+cbuffer __buffer2 : register(b2) {
+	DIRECT_LIGHT DirectLight : packoffset(c0);
+};

@@ -98,7 +98,7 @@ float3 ComputeClusteredLighting ( float3 worldPos, float3 normal, float3 color, 
 	
 	float3	volumeCoord	=	mad( float4(worldPos, 1), Fog.WorldToVoxelScale, Fog.WorldToVoxelOffset ).xyz;
 	LIGHTING lightmap	=	EvaluateLightVolume( 0, rcLightMap, geometry, surface, Camera, volumeCoord );
-	lightmap.transmissive *= 3.15 * 4 * 3.15;
+	lightmap.transmissive *= 3.15 * 4;
 	
 	AccumulateLighting( totalLight, lightmap, Fog.IndirectLightFactor );
 

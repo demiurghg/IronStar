@@ -12,6 +12,14 @@ $ubershader 	COMPUTE|INTEGRATE
 
 #ifdef COMPUTE
 
+static const float3 aaPattern[4] = 
+{
+	float3( 0.75f,  0.25f, 0.0f ),
+	float3(-0.75f, -0.25f, 0.0f ),
+	float3( 0.25f, -0.75f, 0.0f ),
+	float3(-0.25f,  0.75f, 0.0f ),
+};
+
 [numthreads(BlockSizeX,BlockSizeY,BlockSizeZ)] 
 void CSMain( 
 	uint3 groupId : SV_GroupID, 
@@ -24,7 +32,8 @@ void CSMain(
 	
 	float value = (location.x + location.y + location.z)&1;
 	
-	float3	normLocation	=	(location.xyz + float3(0.5f,0.5f,0.5f)) / float3(FogSizeX, FogSizeY, FogSizeZ);
+	uint 	patternIdx		=	location.z % 4;
+	float3	normLocation	=	(location.xyz + float3(0.5f,0.5f,0.5f) + aaPattern[patternIdx]*0.5f) / float3(FogSizeX, FogSizeY, FogSizeZ);
 	
 	float	tangentX		=	lerp( -Camera.CameraTangentX,  Camera.CameraTangentX, normLocation.x );
 	float	tangentY		=	lerp(  Camera.CameraTangentY, -Camera.CameraTangentY, normLocation.y );
@@ -36,7 +45,7 @@ void CSMain(
 	float3	wsPosition		=	mul( vsPosition, Camera.ViewInverted ).xyz;
 	float3	cameraPos		=	Camera.CameraPosition.xyz;
 	
-	float	density			=	0.005 * min(1, 1*exp(-0.04*(wsPosition.y-15))) + 0.0001;
+	float	density			=	0;//0.007 * min(1, 1*exp(-0.05*(wsPosition.y-15))) + 0.0001;
 	float3	normal			=	normalize( wsPosition - cameraPos );
 	float3	emission		=	ComputeClusteredLighting( wsPosition, normal, float3(1,1,1)*1, 1, 1 );
 

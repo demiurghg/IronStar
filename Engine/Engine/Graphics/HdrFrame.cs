@@ -49,6 +49,8 @@ namespace Fusion.Engine.Graphics {
 		public RenderTarget2D	ParticleVelocity	;
 		public RenderTarget2D	DistortionBuffer	;
 
+		public RenderTarget2D	Sky					;
+
 		public RenderTarget2D	Bloom0				;
 		public RenderTarget2D	Bloom1				;
 
@@ -85,6 +87,11 @@ namespace Fusion.Engine.Graphics {
 			int bloomWidth		=	( width/2  ) & 0xFFF0;
 			int bloomHeight		=	( height/2 ) & 0xFFF0;
 
+			int width8			=	MathUtil.IntDivRoundUp( width,  8 );
+			int height8			=	MathUtil.IntDivRoundUp( height, 8 );
+			int width4			=	MathUtil.IntDivRoundUp( width,  4 );
+			int height4			=	MathUtil.IntDivRoundUp( height, 4 );
+
 
 			FeedbackBufferRB	=	new FeedbackBuffer( game.GraphicsDevice,						fbbw,		fbbh		  );
 
@@ -108,6 +115,8 @@ namespace Fusion.Engine.Graphics {
 			ParticleVelocity	=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, false );
 
 			HalfDepthBuffer		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rg32F,		width/2,	height/2,	false, false );
+
+			Sky					=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width4,		height4,	true );
 
 			Bloom0				=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	bloomWidth,	bloomHeight,true, true );
 			Bloom1				=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	bloomWidth,	bloomHeight,true, true );
@@ -177,6 +186,8 @@ namespace Fusion.Engine.Graphics {
 				
 				SafeDispose( ref hdrBuffer0				);
 				SafeDispose( ref hdrBuffer1				);
+
+				SafeDispose( ref Sky );
 				
 				SafeDispose( ref DepthBuffer			);
 				SafeDispose( ref HdrBufferGlass			);

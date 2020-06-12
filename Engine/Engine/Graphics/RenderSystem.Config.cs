@@ -42,6 +42,11 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine]	public const uint	InstanceGroupCharacter		=	(int)InstanceGroup.Character;
 		[ShaderDefine]	public const uint	InstanceGroupWeapon			=	(int)InstanceGroup.Weapon;
 
+		[ShaderDefine]	public const int	APGridWidth					=	32;
+		[ShaderDefine]	public const int	APGridHeight				=	24;
+		[ShaderDefine]	public const int	APGridDepth					=	32;
+		[ShaderDefine]	public const float	APGridExpScale				=	0.0015f;
+
 		[ShaderDefine]	public const int	FogGridWidth				=	8 * LightClusterGridWidth	;
 		[ShaderDefine]	public const int	FogGridHeight				=	8 * LightClusterGridHeight	;
 		[ShaderDefine]	public const int	FogGridDepth				=	8 * LightClusterGridDepth	;

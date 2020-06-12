@@ -23,6 +23,10 @@ static const uint InstanceGroupStatic = 1;
 static const uint InstanceGroupDynamic = 4;
 static const uint InstanceGroupCharacter = 8;
 static const uint InstanceGroupWeapon = 16;
+static const int APGridWidth = 32;
+static const int APGridHeight = 24;
+static const int APGridDepth = 32;
+static const float APGridExpScale = 0.0015;
 static const int FogGridWidth = 128;
 static const int FogGridHeight = 64;
 static const int FogGridDepth = 192;
@@ -34,6 +38,9 @@ static const float FogGridExpScale = 0.0015;
 
 // ---------------- CONSTANT VALUES ---------------- //
 
+static const uint BLOCK_SIZE = 8;
+static const uint LUT_WIDTH = 128;
+static const uint LUT_HEIGHT = 128;
 
 // ---------------- DATA STRUCTURES ---------------- //
 
@@ -42,12 +49,17 @@ static const float FogGridExpScale = 0.0015;
 struct SKY_DATA {
 	float4     BetaRayleigh;                  // offset:    0
 	float4     BetaMie;                       // offset:   16
-	float      PlanetRadius;                  // offset:   32
-	float      AtmosphereRadius;              // offset:   36
-	float      RayleighHeight;                // offset:   40
-	float      MieHeight;                     // offset:   44
-	float      MieExcentricity;               // offset:   48
-	float      SkySphereSize;                 // offset:   52
+	float4     SunIntensity;                  // offset:   32
+	float      SunAzimuth;                    // offset:   48
+	float      SunAltitude;                   // offset:   52
+	float      PlanetRadius;                  // offset:   56
+	float      AtmosphereRadius;              // offset:   60
+	float      RayleighHeight;                // offset:   64
+	float      MieHeight;                     // offset:   68
+	float      MieExcentricity;               // offset:   72
+	float      SkySphereSize;                 // offset:   76
+	float      ViewHeight;                    // offset:   80
+	float      SkyExposure;                   // offset:   84
 };
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
@@ -93,3 +105,9 @@ cbuffer __buffer1 : register(b1) {
 cbuffer __buffer2 : register(b2) {
 	DIRECT_LIGHT DirectLight : packoffset(c0);
 };
+Texture2D<float4>              Lut                            : register(t0);
+SamplerState                   LinearClamp                    : register(s0);
+SamplerState                   PointClamp                     : register(s1);
+#if defined(LUT)
+RWTexture2D<float4>            LutUav                         : register(u0);
+#endif

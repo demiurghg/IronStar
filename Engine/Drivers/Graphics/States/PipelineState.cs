@@ -278,7 +278,7 @@ namespace Fusion.Drivers.Graphics {
 
 
 			
-			if (VertexInputElements==null) {
+			if (VertexInputElements==null || vs==null) {
 				inputLayout =	null ;
 			} else {
 				inputLayout	=	new InputLayout( device.Device, VertexShader.Bytecode, VertexInputElement.Convert( VertexInputElements ) );

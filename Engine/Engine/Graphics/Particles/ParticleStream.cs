@@ -438,7 +438,7 @@ namespace Fusion.Engine.Graphics {
 
 			param.WorldToVoxelOffset	=	rs.Radiosity.GetWorldToVoxelOffset();
 			param.WorldToVoxelScale		=	rs.Radiosity.GetWorldToVoxelScale();
-			param.SkyAmbientLevel		=	rs.RenderWorld.SkySettings.AmbientLevel;
+			param.SkyAmbientLevel		=	new Color4(8,0,4,1);
 			param.FogColor				=	renderWorld.FogSettings.Color;
 			param.FogAttenuation		=	renderWorld.FogSettings.DistanceAttenuation;
 			param.MaxParticles			=	0;

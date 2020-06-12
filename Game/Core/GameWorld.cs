@@ -247,16 +247,12 @@ namespace IronStar.Core {
 			rw.HdrSettings.DirtAmount			= 0.0f;
 			rw.HdrSettings.KeyValue				= 0.18f;
 
-			rw.SkySettings.SunPosition			=	snapshotHeader.SunDirection;
-			rw.SkySettings.SunLightIntensity	=	snapshotHeader.SunIntensity;
-			rw.SkySettings.SkyTurbidity			=	snapshotHeader.Turbidity;
-			rw.SkySettings.SkyIntensity			=	snapshotHeader.SkyIntensity;
-
 			rw.FogSettings.VisibilityDistance	=	snapshotHeader.FogDistance;
 			rw.FogSettings.Color				=	snapshotHeader.FogColor;
 
-			rw.LightSet.DirectLight.Direction	=	rw.SkySettings.SunLightDirection;
-			rw.LightSet.DirectLight.Intensity	=	rw.SkySettings.SunLightColor;
+			var rs	=	Game.GetService<RenderSystem>();
+			rw.LightSet.DirectLight.Direction	=	-rs.Sky.GetSunDirection();
+			rw.LightSet.DirectLight.Intensity	=	 rs.Sky.GetSunIntensity();	
 		}
 
 

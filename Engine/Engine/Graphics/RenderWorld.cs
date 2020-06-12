@@ -85,13 +85,6 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Gets sky settings.
 		/// </summary>
-		public SkySettings SkySettings {
-			get; private set;
-		}
-
-		/// <summary>
-		/// Gets sky settings.
-		/// </summary>
 		public FogSettings FogSettings {
 			get; private set;
 		}
@@ -236,7 +229,6 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			HdrSettings		=	new HdrSettings();
-			SkySettings		=	new SkySettings();
 			DofSettings		=	new DofSettings();
 			FogSettings		=	new FogSettings();
 
@@ -507,7 +499,7 @@ namespace Fusion.Engine.Graphics {
 						rs.LightManager.ShadowMap.RenderShadowMaps( gameTime, Camera, rs, this, LightSet );
 
 						//	render sky-cube
-						rs.Sky.RenderSkyCube( SkySettings );
+						rs.Sky.RenderSkyCube();
 
 						//	clusterize light set :
 						rs.LightManager.LightGrid.ClusterizeLightSet( stereoEye, Camera, LightSet );
@@ -530,6 +522,10 @@ namespace Fusion.Engine.Graphics {
 
 				using ( new PixEvent( "Frame Scene Rendering" ) ) 
 				{
+					//	render sky and fog :
+					rs.Sky.Render( Camera, stereoEye, viewHdrFrame );
+					rs.Fog.RenderFog( Camera, LightSet, FogSettings );
+
 					//	Z-pass without weapon :
 					rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, rlMainView, InstanceGroup.NotWeapon );
 
@@ -539,9 +535,6 @@ namespace Fusion.Engine.Graphics {
 					//	Z-pass weapon :
 					rs.SceneRenderer.RenderZPass( gameTime, stereoEye, WeaponCamera, viewHdrFrame, rlMainView, InstanceGroup.Weapon );
 
-					//	render fog :
-					rs.Fog.RenderFog( Camera, LightSet, FogSettings );
-
 					//------------------------------------------------------------
 					//	Forward+
 					rs.SceneRenderer.RenderForwardSolid( gameTime, stereoEye, Camera		, viewHdrFrame, rlMainView, InstanceGroup.NotWeapon );
@@ -550,8 +543,6 @@ namespace Fusion.Engine.Graphics {
 					rs.LightMapDebugger.Render( Camera, viewHdrFrame );
 
 					ParticleSystem.RenderHard( gameTime, Camera, stereoEye, viewHdrFrame );
-
-					rs.Sky.Render( Camera, stereoEye, viewHdrFrame, SkySettings );
 
 					using ( new PixEvent( "Background downsample" ) ) {
 						var hdrFrame = viewHdrFrame;
@@ -578,14 +569,14 @@ namespace Fusion.Engine.Graphics {
 				}
 
 
-				using ( new PixEvent( "Frame Postprocessing" ) ) {
-					//	compose, tonemap, bloob and color grade :
+				using ( new PixEvent( "Frame Postprocessing" ) ) 
+				{
+					//	compose, tonemap, bloom and color grade :
 					rs.HdrFilter.ComposeHdrImage( viewHdrFrame );
 
 					rs.DofFilter.RenderDof( Camera, viewHdrFrame );
 
 					rs.HdrFilter.TonemapHdrImage( gameTime, HdrSettings, viewHdrFrame, Camera );
-
 
 					//	apply FXAA
 					if (rs.UseFXAA) {

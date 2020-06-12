@@ -158,24 +158,9 @@ namespace Fusion.Engine.Graphics {
 
 
 		/// <summary>
-		/// Selects colorspace in ubershader.
-		/// </summary>
-		/// <param name="flags"></param>
-		/// <param name="settings"></param>
-		void ApplyColorSpace ( ref SkyFlags flags, SkySettings settings )
-		{	
-			switch (settings.RgbSpace) {
-				case RgbSpace.CIE_RGB	: flags |= SkyFlags.CIERGB;	break;
-				case RgbSpace.sRGB		: flags |= SkyFlags.SRGB;	break;
-			}
-		}
-
-
-
-		/// <summary>
 		/// Renders fog look-up table
 		/// </summary>
-		internal void RenderSkyCube( SkySettings settings )
+		internal void RenderSkyCube()
 		{
 			using ( new PixEvent("Fog Table") ) {
 				var	sunPos		= settings.SunPosition;
@@ -227,7 +212,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="stereoEye"></param>
 		/// <param name="frame"></param>
 		/// <param name="settings"></param>
-		internal void Render( Camera camera, StereoEye stereoEye, HdrFrame frame, SkySettings settings )
+		internal void Render( Camera camera, StereoEye stereoEye, HdrFrame frame )
 		{
 			Render( camera, stereoEye, frame.DepthBuffer.Surface, frame.HdrTarget.Surface, settings );
 		}
@@ -238,7 +223,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="rendCtxt"></param>
 		/// <param name="techName"></param>
-		internal void Render( Camera camera, StereoEye stereoEye, DepthStencilSurface depth, RenderTargetSurface color, SkySettings settings, bool noSun = false )
+		internal void Render( Camera camera, StereoEye stereoEye, DepthStencilSurface depth, RenderTargetSurface color, bool noSun = false )
 		{
 			using ( new PixEvent("Sky Rendering") ) {
 				var scale		=	Matrix.Scaling( settings.SkySphereSize );

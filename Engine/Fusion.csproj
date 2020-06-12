@@ -522,9 +522,7 @@
     <Compile Include="Engine\Graphics\Effects\HdrSettings.cs" />
     <Compile Include="Engine\Graphics\Effects\PoissonDiscGenerator.cs" />
     <Compile Include="Engine\Graphics\Effects\Sky2.cs" />
-    <Compile Include="Engine\Graphics\Effects\Sky.cs" />
     <Compile Include="Engine\Graphics\Effects\SkyModel.cs" />
-    <Compile Include="Engine\Graphics\Effects\SkySettings.cs" />
     <Compile Include="Engine\Graphics\Effects\SkySphere.cs" />
     <Compile Include="Engine\Graphics\Effects\HdaoFilter.Config.cs" />
     <Compile Include="Engine\Graphics\Effects\HdaoFilter.cs" />

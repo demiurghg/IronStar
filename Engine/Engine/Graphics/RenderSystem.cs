@@ -36,7 +36,7 @@ namespace Fusion.Engine.Graphics {
 		internal LightManager		LightManager	{ get { return Game.GetService< LightManager	 >(); } }
 		internal SceneRenderer		SceneRenderer	{ get { return Game.GetService< SceneRenderer	 >(); } }
 		internal VTSystem			VTSystem		{ get { return Game.GetService< VTSystem		 >(); } }
-		internal Sky2				Sky				{ get { return Game.GetService< Sky2			 >(); } }
+		public   Sky2				Sky				{ get { return Game.GetService< Sky2			 >(); } }
 		internal Fog				Fog				{ get { return Game.GetService< Fog				 >(); } }
 		internal LightProbeDebug	LightMapDebugger{ get { return Game.GetService< LightProbeDebug	 >(); } }
 		public Radiosity			Radiosity		{ get { return Game.GetService< Radiosity		 >(); } }

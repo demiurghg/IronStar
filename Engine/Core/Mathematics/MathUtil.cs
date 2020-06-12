@@ -1136,6 +1136,11 @@ namespace Fusion.Core.Mathematics
 			return seed;
 		}
 
+		public static float Exp2 ( float power )
+		{
+			return (float)Math.Pow(2, power);
+		}
+
 
 		static public float Max3 ( float a, float b, float c ) { return Math.Max( a, Math.Max( b, c ) ); }
 		static public float Min3 ( float a, float b, float c ) { return Math.Min( a, Math.Min( b, c ) ); }

@@ -19,8 +19,8 @@ namespace Fusion.Engine.Graphics {
 	[RequireShader("sky2", true)]
 	public class Sky2 : RenderComponent 
 	{
-		[ShaderDefine] const uint BLOCK_SIZE	=	8;
-		[ShaderDefine] const uint LUT_WIDTH		=	128;
+		[ShaderDefine] const uint BLOCK_SIZE	=	16;
+		[ShaderDefine] const uint LUT_WIDTH		=	256;
 		[ShaderDefine] const uint LUT_HEIGHT	=	128;
 
 		public Color4	BetaRayleigh		{ get { return new Color4( 3.8e-6f, 13.5e-6f, 33.1e-6f, 0 ); } }	
@@ -376,7 +376,7 @@ namespace Fusion.Engine.Graphics {
 			{
 				using ( new PixEvent( "Lut" ) )
 				{
-					device.ResetStates();
+					/*device.ResetStates();
 
 					Setup( Flags.LUT, camera, color.Bounds );
 
@@ -386,7 +386,15 @@ namespace Fusion.Engine.Graphics {
 					uint tgy	=	MathUtil.IntDivRoundUp( LUT_HEIGHT, BLOCK_SIZE );
 					uint tgz	=	MathUtil.IntDivRoundUp( LUT_WIDTH,	BLOCK_SIZE );
 
-					device.Dispatch( tgx, tgy, tgz );
+					device.Dispatch( tgx, tgy, tgz );*/
+
+					device.ResetStates();
+
+					device.SetTargets( null, lutSky.Surface );
+
+					Setup( Flags.LUT, camera, color.Bounds );
+
+					device.Draw( 3, 0 );
 				}
 
 

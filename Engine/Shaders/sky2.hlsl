@@ -152,7 +152,6 @@ float HorizonAngle()
 	return -acos(cosA);
 }
 
-
 float Azimuth ( float3 rayDir )
 {
 	float  rayDirLen	=	length(rayDir.xz);
@@ -169,7 +168,6 @@ float3 RayFromAngles( float az, float al )
 	float	z		=	-cos(az) * cos(al);
 	return float3(x,y,z);
 }
-
 
 float3 ComputeSkyColor( float3 rayDir, float sunAzimuth, float sunAltitude )
 {
@@ -191,7 +189,6 @@ float3 ComputeSkyColor( float3 rayDir, float sunAzimuth, float sunAltitude )
 	
 	return computeIncidentLight( origin, rayDir, sunDir, tmin, tmax ) * Sky.SkyExposure;
 }
-
 
 /*-------------------------------------------------------------------------------------------------
 	SKY LUT
@@ -222,19 +219,18 @@ float AltitudeToLut( float x, float b )
 
 #if defined(LUT)
 
-[numthreads(BLOCK_SIZE,BLOCK_SIZE,1)] 
-void CSMain( 
-	uint3 groupId : SV_GroupID, 
-	uint3 groupThreadId : SV_GroupThreadID, 
-	uint  groupIndex: SV_GroupIndex, 
-	uint3 dispatchThreadId : SV_DispatchThreadID) 
+float4 VSMain(uint VertexID : SV_VertexID) : SV_POSITION
 {
-	int2	loadXY		=	dispatchThreadId.xy;
-	int2	storeXY		=	dispatchThreadId.xy;
+	return float4((VertexID == 0) ? 3.0f : -1.0f, (VertexID == 2) ? 3.0f : -1.0f, 1.0f, 1.0f);
+}
+
+
+float4 PSMain( float4 vpos : SV_POSITION ) : SV_TARGET0
+{
+	int2	loadXY		=	int2(vpos.xy);
 	
 	float2	signedUV	=	2 * loadXY / float2( LUT_WIDTH-1, LUT_HEIGHT-1 ) - float2(1, 1);
 
-	//float	
 	float	horizon		=	HorizonAngle();
 	float	azimuth		=	PI 	  * signedUV.x;
 	float	altitude	=	LutToAltitude( signedUV.y, horizon / HalfPI ) * HalfPI;
@@ -242,8 +238,8 @@ void CSMain(
 	float3	rayDir		=	RayFromAngles( azimuth, altitude );
 	
 	float3	skyColor	=	ComputeSkyColor( rayDir, 0, Sky.SunAltitude );
-	LutUav[ storeXY ]	=	float4( skyColor, 1 );
-	
+
+	return float4( skyColor, 1 );
 	
 	// plot map function :
 	//LutUav[ storeXY ]	=	MapLut( signedUV.x, horizon/HalfPI ) > signedUV.y ? 0 : 1;
@@ -287,7 +283,7 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 
 	float2	normUV		=	signedUV * 0.5 + 0.5f;
 	
-	float3 	skyColor	= 	Lut.SampleLevel( LinearClamp, normUV, 0 );
+	float3 	skyColor	= 	Lut.SampleLevel( LinearClamp, normUV, 0 ).rgb;
 	
 	return 	float4( skyColor, 1 );
 }

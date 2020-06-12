@@ -38,8 +38,8 @@ static const float FogGridExpScale = 0.0015;
 
 // ---------------- CONSTANT VALUES ---------------- //
 
-static const uint BLOCK_SIZE = 8;
-static const uint LUT_WIDTH = 128;
+static const uint BLOCK_SIZE = 16;
+static const uint LUT_WIDTH = 256;
 static const uint LUT_HEIGHT = 128;
 
 // ---------------- DATA STRUCTURES ---------------- //

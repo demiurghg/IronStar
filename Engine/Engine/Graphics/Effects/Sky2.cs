@@ -48,6 +48,16 @@ namespace Fusion.Engine.Graphics {
 		public float SunTemperature { get; set; } = 5700;
 
 		[Config]	
+		[AECategory("Sun")]
+		[AEValueRange(-5, 16, 1, 1)]
+		public float SunBrightnessEv { get; set; } = 12;
+
+		[Config]	
+		[AECategory("Sun")]
+		[AEValueRange(0, 5, 0.1f, 0.01f)]
+		public float SunAngularSize { get; set; } = 1;
+
+		[Config]	
 		[AECategory("Atmosphere")]
 		[AEValueRange(500, 12000, 500, 10)]
 		public float PlanetRadius { get; set; } = 6360;
@@ -123,8 +133,8 @@ namespace Fusion.Engine.Graphics {
 		static FXConstantBuffer<GpuData.CAMERA>					regCamera			=	new CRegister( 1, "Camera"		);
 		static FXConstantBuffer<GpuData.DIRECT_LIGHT>			regDirectLight		=	new CRegister( 2, "DirectLight"	);
 
-		[ShaderIfDef("LUT")] static FXRWTexture2D<Vector4>		regLutUav			=	new URegister( 0, "LutUav"		);
-		static FXTexture2D<Vector4>								regLut				=	new TRegister( 0, "Lut"			);
+		static FXTexture2D<Vector4>								regLutEmission		=	new TRegister( 0, "LutEmission"		);
+		static FXTexture2D<Vector4>								regLutExtinction	=	new TRegister( 1, "LutExtinction"	);
 
 		static FXSamplerState		regLinearClamp	 =	new SRegister(0, "LinearClamp" );
 		static FXSamplerState		regPointClamp	=	new SRegister(1, "PointClamp" );
@@ -145,6 +155,9 @@ namespace Fusion.Engine.Graphics {
 			public Color4	BetaMie;
 
 			public Color4	SunIntensity;
+			public Color4	SunBrightness; // 
+
+			public Vector4	SunDirection;
 
 			public float	SunAzimuth;
 			public float	SunAltitude;
@@ -174,7 +187,8 @@ namespace Fusion.Engine.Graphics {
 		Camera			cubeCamera;
 		SamplerState	skyLutSampler;
 
-		RenderTarget2D	lutSky;
+		RenderTarget2D	lutSkyEmission;
+		RenderTarget2D	lutSkyExtinction;
 
 		public Vector3	SkyAmbientLevel { get; protected set; }
 
@@ -208,7 +222,13 @@ namespace Fusion.Engine.Graphics {
 			float	y		=	 sinAlt;
 			float	z		=	-cosAz * cosAlt;
 
-			return new Vector3( x, y, z );
+			return new Vector3( x, y, z ).Normalized();
+		}
+
+
+		public Vector4 GetSunDirection4()
+		{
+			return new Vector4( GetSunDirection(), 0 );
 		}
 
 
@@ -220,7 +240,24 @@ namespace Fusion.Engine.Graphics {
 		{
 			float	scale	=	MathUtil.Exp2( SunIntensityEv );
 			Color4	color	=	Temperature.GetColor( (int)SunTemperature );
-			return 	color * scale;
+			color *= scale;
+			return 	color;
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public Color4 GetSunBrightness()
+		{
+			float	scale	=	MathUtil.Exp2( SunBrightnessEv );
+			Color4	color	=	Temperature.GetColor( (int)SunTemperature );
+			color *= scale;
+
+			color.Alpha		=	MathUtil.DegreesToRadians( SunAngularSize );
+
+			return 	color;
 		}
 
 
@@ -238,7 +275,8 @@ namespace Fusion.Engine.Graphics {
 
 			Game.Reloading += (s,e) => LoadContent();
 
-			lutSky			=	new RenderTarget2D( device, ColorFormat.Rgba16F, (int)LUT_WIDTH, (int)LUT_HEIGHT, false, true );
+			lutSkyEmission		=	new RenderTarget2D( device, ColorFormat.Rgba16F, (int)LUT_WIDTH, (int)LUT_HEIGHT, false, true );
+			lutSkyExtinction	=	new RenderTarget2D( device, ColorFormat.Rgba16F, (int)LUT_WIDTH, (int)LUT_HEIGHT, false, true );
 
 			var skySphere	=	SkySphere.GetVertices(5).Select( v => new SkyVertex{ Vertex = v } ).ToArray();
 			skyVB			=	new VertexBuffer( Game.GraphicsDevice, typeof(SkyVertex), skySphere.Length );
@@ -292,7 +330,8 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref skyCube );
 				SafeDispose( ref cbSky );
 				SafeDispose( ref cubeCamera );
-				SafeDispose( ref lutSky );
+				SafeDispose( ref lutSkyEmission );
+				SafeDispose( ref lutSkyExtinction );
 				SafeDispose( ref skyLutSampler );
 			}
 			base.Dispose( disposing );
@@ -314,7 +353,9 @@ namespace Fusion.Engine.Graphics {
 			skyData.MieExcentricity		=	MieExcentricity;
 			skyData.SkySphereSize		=	SkySphereSize;
 			skyData.ViewHeight			=	ViewHeight;
-			skyData.SunIntensity		=	new Color4(1,1,1,1) * MathUtil.Exp2( SunIntensityEv );
+			skyData.SunIntensity		=	GetSunIntensity();
+			skyData.SunBrightness		=	GetSunBrightness();
+			skyData.SunDirection		=	GetSunDirection4();
 			skyData.SunAltitude			=	MathUtil.DegreesToRadians( SunAltitude );
 			skyData.SunAzimuth			=	MathUtil.DegreesToRadians( SunAzimuth );
 			skyData.SkyExposure			=	MathUtil.Exp2( SkyExposure );
@@ -360,7 +401,7 @@ namespace Fusion.Engine.Graphics {
 
 			if (ShowLut)
 			{
-				rs.Filter.StretchRect( frame.HdrTarget.Surface, lutSky );
+				rs.Filter.StretchRect( frame.HdrTarget.Surface, lutSkyEmission );
 			}
 		}
 
@@ -376,21 +417,9 @@ namespace Fusion.Engine.Graphics {
 			{
 				using ( new PixEvent( "Lut" ) )
 				{
-					/*device.ResetStates();
-
-					Setup( Flags.LUT, camera, color.Bounds );
-
-					device.SetComputeUnorderedAccess( regLutUav, lutSky.Surface.UnorderedAccess );
-
-					uint tgx	=	MathUtil.IntDivRoundUp( LUT_WIDTH,	BLOCK_SIZE );
-					uint tgy	=	MathUtil.IntDivRoundUp( LUT_HEIGHT, BLOCK_SIZE );
-					uint tgz	=	MathUtil.IntDivRoundUp( LUT_WIDTH,	BLOCK_SIZE );
-
-					device.Dispatch( tgx, tgy, tgz );*/
-
 					device.ResetStates();
 
-					device.SetTargets( null, lutSky.Surface );
+					device.SetTargets( null, lutSkyEmission.Surface, lutSkyExtinction.Surface );
 
 					Setup( Flags.LUT, camera, color.Bounds );
 
@@ -403,7 +432,8 @@ namespace Fusion.Engine.Graphics {
 					device.ResetStates();
 
 					device.SetTargets( null, color );
-					device.GfxResources[ regLut ] = lutSky;
+					device.GfxResources[ regLutEmission		] =	lutSkyEmission;
+					device.GfxResources[ regLutExtinction	] =	lutSkyExtinction;
 
 					Setup( Flags.SKY, camera, color.Bounds );
 
@@ -421,7 +451,9 @@ namespace Fusion.Engine.Graphics {
 						cubeCamera.SetupCameraCubeFaceLH( Vector3.Zero, (CubeFace)i, 0.125f, 10000 );
 
 						device.SetTargets( null, SkyCube.GetSurface(0, (CubeFace)i ) );
-						device.GfxResources[ regLut ] = lutSky;
+
+						device.GfxResources[ regLutEmission		] =	lutSkyEmission;
+						device.GfxResources[ regLutExtinction	] =	lutSkyExtinction;
 
 						Setup( Flags.FOG, cubeCamera, new Rectangle( 0, 0, SkyCube.Width, SkyCube.Height ) );
 

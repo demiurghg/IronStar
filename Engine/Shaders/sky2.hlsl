@@ -18,6 +18,12 @@ struct VS_OUTPUT {
 	float3 rayDir		: COLOR1;
 };
 
+struct SCATTERING
+{
+	float3	emission;		//	sky emission in given point
+	float3	extinction;		//	sky transparency in given point
+};
+
 #define PS_INPUT VS_OUTPUT
 
 #define PI 3.141592f
@@ -66,7 +72,7 @@ bool RayIntersectsAtmosphere( float3 origin, float3 dir )
 	return raySphereIntersect( origin, dir, Sky.AtmosphereRadius, t0, t1 ) && t1 > 0;
 }
 
-float3 computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin, float tmax)
+SCATTERING computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin, float tmax)
 { 
 	float 	atmosphereRadius	=	Sky.AtmosphereRadius;
 	float 	earthRadius			=	Sky.PlanetRadius;
@@ -78,8 +84,12 @@ float3 computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin, 
 	float3	betaR				=	Sky.BetaRayleigh.xyz;
 	float3	betaM				=	Sky.BetaMie.xyz;
 
+	SCATTERING scattering;
+	scattering.emission		=	0;
+	scattering.extinction	=	1;
+	
     float t0, t1; 
-    if (!raySphereIntersect(orig, dir, atmosphereRadius, t0, t1) || t1 < 0) return float3(0,0,0); 
+    if (!raySphereIntersect(orig, dir, atmosphereRadius, t0, t1) || t1 < 0) return scattering; 
     if (t0 > tmin && t0 > 0) tmin = t0; 
     if (t1 < tmax) tmax = t1; 
     uint numSamples = 16; 
@@ -129,7 +139,10 @@ float3 computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin, 
         tCurrent += segmentLength; 
     } 
  
-    return (sumR * betaR * phaseR + sumM * betaM * phaseM) * DirectLight.DirectLightIntensity.rgb; 
+	scattering.emission		=	(sumR * betaR * phaseR + sumM * betaM * phaseM) * DirectLight.DirectLightIntensity.rgb;
+	scattering.extinction	=	exp( - opticalDepthR * betaR - opticalDepthM * betaM * 1.1f );
+ 
+    return scattering; 
 }
 
 
@@ -169,25 +182,41 @@ float3 RayFromAngles( float az, float al )
 	return float3(x,y,z);
 }
 
-float3 ComputeSkyColor( float3 rayDir, float sunAzimuth, float sunAltitude )
+struct SKY_LUT
+{
+	float4	emission;		//	sky emission in given point
+	float4	extinction;		//	sky transparency in given point
+};
+
+SKY_LUT ComputeSkyColor( float3 rayDir, float sunAzimuth, float sunAltitude )
 {
 	float3 	origin	=	float3( 0, Sky.PlanetRadius + Sky.ViewHeight, 0 );
 	float3	sunDir	=	RayFromAngles( sunAzimuth, sunAltitude );
 
 	float	tmin, tmax;
+	float 	opacity;
 
 	if ( raySphereIntersect(origin, rayDir, Sky.PlanetRadius, tmin, tmax) && tmax > 0 )
 	{
 		tmax	=	tmin;
 		tmin	=	0;
+		opacity	=	0;
 	}
 	else
 	{
 		tmin	=	0;
 		tmax	=	1000000;
+		opacity	=	1;
 	}
 	
-	return computeIncidentLight( origin, rayDir, sunDir, tmin, tmax ) * Sky.SkyExposure;
+	SCATTERING	scattering;
+	scattering		=	computeIncidentLight( origin, rayDir, sunDir, tmin, tmax );
+	
+	SKY_LUT	lut;
+	lut.emission	=	float4( scattering.emission * Sky.SkyExposure, 0 );
+	lut.extinction	=	float4( scattering.extinction * opacity, 1 );
+	
+	return lut;
 }
 
 /*-------------------------------------------------------------------------------------------------
@@ -225,7 +254,7 @@ float4 VSMain(uint VertexID : SV_VertexID) : SV_POSITION
 }
 
 
-float4 PSMain( float4 vpos : SV_POSITION ) : SV_TARGET0
+SKY_LUT PSMain( float4 vpos : SV_POSITION ) : SV_TARGET0
 {
 	int2	loadXY		=	int2(vpos.xy);
 	
@@ -237,15 +266,9 @@ float4 PSMain( float4 vpos : SV_POSITION ) : SV_TARGET0
 	
 	float3	rayDir		=	RayFromAngles( azimuth, altitude );
 	
-	float3	skyColor	=	ComputeSkyColor( rayDir, 0, Sky.SunAltitude );
+	SKY_LUT	lut			=	ComputeSkyColor( rayDir, 0, Sky.SunAltitude );
 
-	return float4( skyColor, 1 );
-	
-	// plot map function :
-	//LutUav[ storeXY ]	=	MapLut( signedUV.x, horizon/HalfPI ) > signedUV.y ? 0 : 1;
-
-	//	plot altitude :
-	//LutUav[ storeXY ]	=	float4( altitude, 0, -altitude, 1 );
+	return lut;
 }
 
 #endif
@@ -283,9 +306,25 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 
 	float2	normUV		=	signedUV * 0.5 + 0.5f;
 	
-	float3 	skyColor	= 	Lut.SampleLevel( LinearClamp, normUV, 0 ).rgb;
+	float4 	skyEmission		= 	LutEmission  .SampleLevel( LinearClamp, normUV, 0 );
+	float4 	skyExtinction	= 	LutExtinction.SampleLevel( LinearClamp, normUV, 0 );
 	
-	return 	float4( skyColor, 1 );
+	float3	sunLimb			=	0;
+	
+	#ifdef SKY
+		
+		float 	cosSun	=	saturate( dot(normalize(input.rayDir), Sky.SunDirection.xyz ) );
+		float 	sinSun	=	sqrt( 1 - cosSun * cosSun );
+		
+		float4 	sun		=	Sky.SunBrightness;
+		
+		float	factor	=	saturate( 1 - pow(sinSun / sun.a,4) );
+		
+		sunLimb	=	sun.rgb * skyExtinction.rgb * factor;
+		
+	#endif
+	
+	return 	skyEmission + float4(sunLimb,0);
 }
 
 #endif

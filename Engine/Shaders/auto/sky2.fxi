@@ -50,16 +50,18 @@ struct SKY_DATA {
 	float4     BetaRayleigh;                  // offset:    0
 	float4     BetaMie;                       // offset:   16
 	float4     SunIntensity;                  // offset:   32
-	float      SunAzimuth;                    // offset:   48
-	float      SunAltitude;                   // offset:   52
-	float      PlanetRadius;                  // offset:   56
-	float      AtmosphereRadius;              // offset:   60
-	float      RayleighHeight;                // offset:   64
-	float      MieHeight;                     // offset:   68
-	float      MieExcentricity;               // offset:   72
-	float      SkySphereSize;                 // offset:   76
-	float      ViewHeight;                    // offset:   80
-	float      SkyExposure;                   // offset:   84
+	float4     SunBrightness;                 // offset:   48
+	float4     SunDirection;                  // offset:   64
+	float      SunAzimuth;                    // offset:   80
+	float      SunAltitude;                   // offset:   84
+	float      PlanetRadius;                  // offset:   88
+	float      AtmosphereRadius;              // offset:   92
+	float      RayleighHeight;                // offset:   96
+	float      MieHeight;                     // offset:  100
+	float      MieExcentricity;               // offset:  104
+	float      SkySphereSize;                 // offset:  108
+	float      ViewHeight;                    // offset:  112
+	float      SkyExposure;                   // offset:  116
 };
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
@@ -105,9 +107,7 @@ cbuffer __buffer1 : register(b1) {
 cbuffer __buffer2 : register(b2) {
 	DIRECT_LIGHT DirectLight : packoffset(c0);
 };
-Texture2D<float4>              Lut                            : register(t0);
+Texture2D<float4>              LutEmission                    : register(t0);
+Texture2D<float4>              LutExtinction                  : register(t1);
 SamplerState                   LinearClamp                    : register(s0);
 SamplerState                   PointClamp                     : register(s1);
-#if defined(LUT)
-RWTexture2D<float4>            LutUav                         : register(u0);
-#endif

@@ -236,13 +236,113 @@ namespace Fusion.Engine.Graphics {
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public Color4 GetSunIntensity()
+		public Color4 GetSunIntensity( bool horizonDarken = false )
 		{
 			float	scale	=	MathUtil.Exp2( SunIntensityEv );
 			Color4	color	=	Temperature.GetColor( (int)SunTemperature );
 			color *= scale;
+
+			if (horizonDarken)
+			{
+				var origin	=	Vector3.Up * ( PlanetRadius * 1000 + ViewHeight );
+				var dir		=	GetSunDirection();
+				color		*=	ComputeAtmosphereAbsorption( origin, dir );
+			}
+
 			return 	color;
 		}
+
+
+		Color4 ComputeAtmosphereAbsorption( Vector3 origin, Vector3 direction )
+		{
+			var	distance		=	0f;
+			var	numSamples		=	16;
+			var	Hr				=	RayleighHeight;
+			var	Hm				=	MieHeight;
+
+			var	opticalDepthR 	=	0f;
+			var	opticalDepthM 	=	0f; 
+
+			var	betaR			=	BetaRayleigh * MathUtil.Exp2( RayleighScale );
+			var	betaM			=	BetaMie		 * MathUtil.Exp2( MieScale );
+
+			if ( RayAtmosphereIntersection( origin, direction, out distance) )
+			{
+				for (int i=0; i<numSamples; i++)
+				{
+					var segmentLength	=	distance / numSamples;	
+					var localDistance	=	segmentLength * ( i + 0.5f );
+					var samplePosition	=	origin + direction * localDistance;
+					var height			=	samplePosition.Length() - PlanetRadius * 1000;
+					float hr			=	(float)Math.Exp(-height / Hr) * segmentLength; 
+					float hm			=	(float)Math.Exp(-height / Hm) * segmentLength; 
+					opticalDepthR		+=	hr; 
+					opticalDepthM		+=	hm; 
+				}
+
+				var totalOpticalDepth	=	new Color4();
+
+				totalOpticalDepth.Red	=	opticalDepthR * betaR.Red	 + opticalDepthM * 1.1f * betaM.Red		;
+				totalOpticalDepth.Green	=	opticalDepthR * betaR.Green	 + opticalDepthM * 1.1f * betaM.Green	;
+				totalOpticalDepth.Blue	=	opticalDepthR * betaR.Blue	 + opticalDepthM * 1.1f * betaM.Blue	;
+
+				return new Color4( 
+					(float)Math.Exp( -totalOpticalDepth.Red ),
+					(float)Math.Exp( -totalOpticalDepth.Green ),
+					(float)Math.Exp( -totalOpticalDepth.Blue ),
+					1
+				);
+			}
+			else
+			{
+				return new Color4(1,1,1,1);
+			}
+		}
+
+
+		bool RayAtmosphereIntersection( Vector3 origin, Vector3 dir, out float dist )
+		{
+			float t0, t1;
+
+			if (!RaySphereIntersect( origin, dir, (PlanetRadius + AtmosphereHeight) * 1000, out t0, out t1 ) && t1<0)
+			{
+				dist = 0;
+				return false;
+			}
+			else
+			{
+				dist = t1;
+				return true;
+			}
+		}
+
+
+		bool RaySphereIntersect(Vector3 origin, Vector3 dir, float radius, out float t0, out float t1 )
+		{
+			t0 = t1 = 0;
+	
+			var	r0	=	origin;			// - r0: ray origin
+			var	rd	=	dir;			// - rd: normalized ray direction
+			var	s0	=	Vector3.Zero;	// - s0: sphere center
+			var	sr	=	radius;			// - sr: sphere radius
+
+			float 	a 		= Vector3.Dot(rd, rd);
+			Vector3	s0_r0 	= r0 - s0;
+			float 	b 		= 2.0f * Vector3.Dot(rd, s0_r0);
+			float 	c 		= Vector3.Dot(s0_r0, s0_r0) - (sr * sr);
+	
+			float	D		=	b*b - 4.0f*a*c;
+	
+			if (D<0)
+			{
+				return false;
+			}
+	
+			t0	=	(-b - (float)Math.Sqrt(D))/(2.0f*a);
+			t1	=	(-b + (float)Math.Sqrt(D))/(2.0f*a);
+			return true;
+		}
+
 
 
 		/// <summary>
@@ -353,7 +453,7 @@ namespace Fusion.Engine.Graphics {
 			skyData.MieExcentricity		=	MieExcentricity;
 			skyData.SkySphereSize		=	SkySphereSize;
 			skyData.ViewHeight			=	ViewHeight;
-			skyData.SunIntensity		=	GetSunIntensity();
+			skyData.SunIntensity		=	GetSunIntensity(false);
 			skyData.SunBrightness		=	GetSunBrightness();
 			skyData.SunDirection		=	GetSunDirection4();
 			skyData.SunAltitude			=	MathUtil.DegreesToRadians( SunAltitude );

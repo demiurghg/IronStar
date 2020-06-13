@@ -92,27 +92,31 @@ SCATTERING computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tm
     if (!raySphereIntersect(orig, dir, atmosphereRadius, t0, t1) || t1 < 0) return scattering; 
     if (t0 > tmin && t0 > 0) tmin = t0; 
     if (t1 < tmax) tmax = t1; 
-    uint numSamples = 16; 
-    uint numSamplesLight = 8; 
-    float segmentLength = (tmax - tmin) / numSamples; 
-    float tCurrent = tmin; 
-    float3 sumR = 0; // rayleigh contribution 
-	float3 sumM = 0; // mie contribution 
-    float opticalDepthR = 0, opticalDepthM = 0; 
-    float mu = dot(dir, sunDirection); // mu in the paper which is the cosine of the angle between the sun direction and the ray direction 
-    float phaseR = 3.f / (16.f * M_PI) * (1 + mu * mu); 
-    float phaseM = 3.f / (8.f * M_PI) * ((1.f - g * g) * (1.f + mu * mu)) / ((2.f + g * g) * pow(1.f + g * g - 2.f * g * mu, 1.5f)); 
+	
+    uint 	numSamples 		= 16; 
+    uint 	numSamplesLight = 8; 
+    float 	segmentLength 	= (tmax - tmin) / numSamples; 
+    float 	tCurrent 		= tmin; 
+    float3	sumR 			= 0; // rayleigh contribution 
+	float3 	sumM 			= 0; // mie contribution 
+    float 	opticalDepthR 	= 0;
+	float	opticalDepthM 	= 0; 
+    float 	mu 				= dot(dir, sunDirection); // mu in the paper which is the cosine of the angle between the sun direction and the ray direction 
+    float 	phaseR 			= 3.f / (16.f * M_PI) * (1 + mu * mu); 
+    float 	phaseM 			= 3.f / (8.f * M_PI) * ((1.f - g * g) * (1.f + mu * mu)) / ((2.f + g * g) * pow(1.f + g * g - 2.f * g * mu, 1.5f)); 
 
     for (uint i = 0; i < numSamples; ++i) 
 	{ 
         float3 samplePosition = orig + (tCurrent + segmentLength * 0.5f) * dir; 
         float height = length(samplePosition) - earthRadius; 
+
         // compute optical depth for light
         float hr = exp(-height / Hr) * segmentLength; 
         float hm = exp(-height / Hm) * segmentLength; 
         opticalDepthR += hr; 
         opticalDepthM += hm; 
-        // light optical depth
+    
+		// light optical depth
         float t0Light, t1Light; 
         raySphereIntersect(samplePosition, sunDirection, atmosphereRadius, t0Light, t1Light); 
         float segmentLengthLight = t1Light / numSamplesLight, tCurrentLight = 0; 
@@ -139,7 +143,7 @@ SCATTERING computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tm
         tCurrent += segmentLength; 
     } 
  
-	scattering.emission		=	(sumR * betaR * phaseR + sumM * betaM * phaseM) * DirectLight.DirectLightIntensity.rgb;
+	scattering.emission		=	(sumR * betaR * phaseR + sumM * betaM * phaseM) * Sky.SunIntensity.rgb;
 	scattering.extinction	=	exp( - opticalDepthR * betaR - opticalDepthM * betaM * 1.1f );
  
     return scattering; 

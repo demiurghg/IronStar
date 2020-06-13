@@ -252,7 +252,7 @@ namespace IronStar.Core {
 
 			var rs	=	Game.GetService<RenderSystem>();
 			rw.LightSet.DirectLight.Direction	=	-rs.Sky.GetSunDirection();
-			rw.LightSet.DirectLight.Intensity	=	 rs.Sky.GetSunIntensity();	
+			rw.LightSet.DirectLight.Intensity	=	 rs.Sky.GetSunIntensity(true);	
 		}
 
 

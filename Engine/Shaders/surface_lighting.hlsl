@@ -148,7 +148,6 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 	return 	totalLight.emissive
 		+ 	totalLight.diffuse
 		+ 	totalLight.specular
-		+ 	totalLight.transmissive
 		;
 }
 

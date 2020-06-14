@@ -18,12 +18,11 @@ struct VS_OUTPUT {
 	float3 rayDir		: COLOR1;
 };
 
-struct SKY_ST
+struct SCATTERING
 {
-	float4	scattering		: SV_TARGET0;		//	sky emission in given point
-	float4	transmittance	: SV_TARGET1;		//	sky transparency in given point
+	float3	emission;		//	sky emission in given point
+	float3	extinction;		//	sky transparency in given point
 };
-
 
 #define PS_INPUT VS_OUTPUT
 
@@ -35,7 +34,7 @@ struct SKY_ST
 	Atmospheric Scattering Model :
 -------------------------------------------------------------------------------------------------*/
 
-bool RaySphereIntersect(float3 origin, float3 dir, float radius, out float t0, out float t1 )
+bool raySphereIntersect(float3 origin, float3 dir, float radius, out float t0, out float t1 )
 {
 	t0 = t1 = 0;
 	
@@ -50,133 +49,122 @@ bool RaySphereIntersect(float3 origin, float3 dir, float radius, out float t0, o
     float 	c 		= dot(s0_r0, s0_r0) - (sr * sr);
 	
 	float	D		=	b*b - 4.0*a*c;
-
-	//	no intersection at all
-	if (D<0) return false;
+	
+	if (D<0)
+	{
+        return false;
+    }
 	
     t0	=	(-b - sqrt(D))/(2.0*a);
     t1	=	(-b + sqrt(D))/(2.0*a);
-	
-	//	sphere is behind the ray
-	if (t0<0 && t1<0) return false;
-	
-	//	clamp t0
-	t0	=	max(0, t0);
-	
 	return true;
 }
 
 bool RayIntersectsPlanet( float3 origin, float3 dir )
 {
 	float t0, t1;
-	return RaySphereIntersect( origin, dir, Sky.PlanetRadius, t0, t1 );
+	return raySphereIntersect( origin, dir, Sky.PlanetRadius, t0, t1 ) && t1 > 0;
 }
 
 bool RayIntersectsAtmosphere( float3 origin, float3 dir )
 {
 	float t0, t1;
-	return RaySphereIntersect( origin, dir, Sky.AtmosphereRadius, t0, t1 );
+	return raySphereIntersect( origin, dir, Sky.AtmosphereRadius, t0, t1 ) && t1 > 0;
 }
 
-
-float3 ComputeIndcidentSunLight( float3 samplePosition, float3 sunDirection )
+float3 ComputeIndcidentSunLight( float3 p0, float3 p1 )
 {
-	float t0, t1;
-	int numSamples = 64;
 	
-	//	no intersection, sun light comes without attenuation :
-	if (!RaySphereIntersect(samplePosition, sunDirection, Sky.AtmosphereRadius, t0, t1))
-	{
-		return Sky.SunIntensity.rgb;
-	}
-	
-	float3	p0	=	samplePosition + sunDirection * t0;
-	float3	p1	=	samplePosition + sunDirection * t1;
-	
-	//	computes amount of attenuated sun light 
-	//	coming at given point p0.
-	float 	opticalLength	=	distance( p0, p1 ) / numSamples;
-	float 	opticalDepthR	=	0;
-	float 	opticalDepthM	=	0;
-	float3	betaR			=	Sky.BetaRayleigh.xyz;
-	float3	betaM			=	Sky.BetaMie.xyz;
-	
-	for (int i=0; i<numSamples; i++)
-	{
-		float3 	pos = 	lerp( p0, p1, (i + 0.5f) / numSamples );
-		float  	h	=	length( pos ) - Sky.PlanetRadius;
-		float	hR	=	exp(-h / Sky.RayleighHeight);
-		float	hM	=	exp(-h / Sky.MieHeight);
-		
-		opticalDepthR	+=	hR * opticalLength;
-		opticalDepthM	+=	hM * opticalLength;
-	}
-	
-    float3 tau	=	betaR * (opticalDepthR) + betaM * 1.1f * (opticalDepthM); 
-	
-	return exp( -tau ) * Sky.SunIntensity.rgb;
 }
 
-
-SKY_ST computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin, float tmax)
+SCATTERING computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin, float tmax)
 { 
+	float 	atmosphereRadius	=	Sky.AtmosphereRadius;
+	float 	earthRadius			=	Sky.PlanetRadius;
+	float3	sunDirection		=	sunDir;
 	float	M_PI				=	3.141592f;
+	float	Hr					=	Sky.RayleighHeight;
+	float	Hm					=	Sky.MieHeight;
     float 	g 					= 	Sky.MieExcentricity; 
 	float3	betaR				=	Sky.BetaRayleigh.xyz;
 	float3	betaM				=	Sky.BetaMie.xyz;
 
-	SKY_ST st;
-	st.scattering		=	0;
-	st.transmittance	=	1;
+	SCATTERING scattering;
+	scattering.emission		=	0;
+	scattering.extinction	=	1;
 	
     float t0, t1; 
-    if (!RaySphereIntersect(orig, dir, Sky.AtmosphereRadius, t0, t1)) return st; 
+    if (!raySphereIntersect(orig, dir, atmosphereRadius, t0, t1) || t1 < 0) return scattering; 
+    if (t0 > tmin && t0 > 0) tmin = t0; 
+    if (t1 < tmax) tmax = t1; 
 	
-	t0	=	clamp( t0, tmin, tmax );
-	t1	=	clamp( t1, tmin, tmax );
-	
-    uint 	numSamples 	= 	16; 
-	float3 	p0			=	orig + dir * t0;
-	float3 	p1			=	orig + dir * t1;
-	 
-    float 	segmentLength 	= distance(p0, p1) / numSamples; 
+    uint 	numSamples 		= 16; 
+    uint 	numSamplesLight = 8; 
+    float 	segmentLength 	= (tmax - tmin) / numSamples; 
+    float 	tCurrent 		= tmin; 
+    float3	sumR 			= 0; // rayleigh contribution 
+	float3 	sumM 			= 0; // mie contribution 
+	float	sumAR			= 0;
+	float	sumAM			= 0;
     float 	opticalDepthR 	= 0;
 	float	opticalDepthM 	= 0; 
-    float 	mu 				= dot(dir, sunDir); // cosine of the angle between the sun direction and the ray direction 
+    float 	mu 				= dot(dir, sunDirection); // mu in the paper which is the cosine of the angle between the sun direction and the ray direction 
     float 	phaseR 			= 3.f / (16.f * M_PI) * (1 + mu * mu); 
     float 	phaseM 			= 3.f / (8.f * M_PI) * ((1.f - g * g) * (1.f + mu * mu)) / ((2.f + g * g) * pow(1.f + g * g - 2.f * g * mu, 1.5f)); 
-	
-	float3 ambient		=	SkyCube.SampleLevel( LinearClamp, float3(0,1,0), 0 ).rgb;
 
     for (uint i = 0; i < numSamples; ++i) 
 	{ 
-        float3 	pos 	=	lerp( p0, p1, (i+0.5) / numSamples ); 
-        float 	height 	=	length(pos) - Sky.PlanetRadius; 
+        float3 samplePosition = orig + (tCurrent + segmentLength * 0.31f) * dir; 
+        float height = length(samplePosition) - earthRadius; 
 
-        float 	hr 		= 	exp(-height / Sky.RayleighHeight) * segmentLength; 
-        float 	hm 		= 	exp(-height / Sky.MieHeight		) * segmentLength; 
+        // compute optical depth for light
+        float hr = exp(-height / Hr) * segmentLength; 
+        float hm = exp(-height / Hm) * segmentLength; 
+        opticalDepthR += hr; 
+        opticalDepthM += hm; 
+    
+		// light optical depth
+        float t0Light, t1Light; 
+        raySphereIntersect(samplePosition, sunDirection, atmosphereRadius, t0Light, t1Light); 
 		
-		float3	extinction		=	hr * betaR + hm * betaM * 1.1f;
-		float3	extinctionClamp	=	clamp( extinction, 0.0000001, 1 );
-		float3	transmittance	=	exp( - extinction );
+        float segmentLengthLight = t1Light / numSamplesLight;
+		float tCurrentLight 	 = 0; 
+        float opticalDepthLightR = 0;
+		float opticalDepthLightM = 0; 
+		uint j;
 		
-		float3	luminance		=	ComputeIndcidentSunLight( pos, sunDir );
-		float3	scattering		=	luminance * (hr * phaseR * betaR + hm * phaseM * betaM);
+        for (j = 0; j < numSamplesLight; ++j) 
+		{ 
+            float3 samplePositionLight = samplePosition + (tCurrentLight + segmentLengthLight * 0.31f) * sunDirection; 
+            float heightLight 	= length(samplePositionLight) - earthRadius; 
+            if (heightLight < 0) break; 
+            opticalDepthLightR 	+=	exp(-heightLight / Hr) * segmentLengthLight; 
+            opticalDepthLightM 	+=	exp(-heightLight / Hm) * segmentLengthLight; 
+            tCurrentLight 		+=	segmentLengthLight; 
+        } 
+        if (j == numSamplesLight) 
+		{ 
+            float3 tau 			= 	betaR * (opticalDepthR + opticalDepthLightR) + betaM * 0.9f * (opticalDepthM + opticalDepthLightM); 
+            float3 attenuation	=	float3(exp(-tau .x), exp(-tau .y), exp(-tau .z)); 
+            sumR  += attenuation * hr; 
+            sumM  += attenuation * hm; 
+        } 
 		
-		float3	ambientLuminance	=	ambient * Sky.AmbientLevel;
-				scattering			+=	ambientLuminance * (hr * betaR + hm * betaM);
-
-		#if 0
-			st.scattering.rgb		+=	scattering * st.transmittance;
-			st.transmittance.rgb	*=	transmittance;
-		#else
-			float3	integScatt		=	( scattering - scattering * transmittance ) / extinctionClamp;
-			st.scattering.rgb		+=	st.transmittance * integScatt;
-			st.transmittance.rgb	*=	transmittance;
-		#endif
-	} 
+		float3 tauA			= 	betaR * (opticalDepthR) + betaM * 1.1f * (opticalDepthM); 
+		float3 attenuationA	=	float3(exp(-tauA.x), exp(-tauA.y), exp(-tauA.z)); 
+		sumAR += attenuationA * hr; 
+		sumAM += attenuationA * hm; 
+		
+        tCurrent += segmentLength; 
+    } 
  
-    return st; 
+	float3 ambient			=	1*SkyCube.SampleLevel( LinearClamp, float3(0.0,1,0.0), 0 ).rgb;
+	scattering.emission		=	(sumR  * betaR * phaseR + sumM * betaM * phaseM) * Sky.SunIntensity.rgb;
+	scattering.emission		+=	(sumAR * betaR + sumAM * betaM) * ambient * 0.6;
+	
+	scattering.extinction	=	exp( - opticalDepthR * betaR - opticalDepthM * betaM * 1.1f );
+ 
+    return scattering; 
 }
 
 
@@ -216,31 +204,39 @@ float3 RayFromAngles( float az, float al )
 	return float3(x,y,z);
 }
 
-SKY_ST ComputeSkyColor( float3 rayDir, float sunAzimuth, float sunAltitude )
+struct SKY_LUT
 {
-	// add 2 meters to prevent raycast against planet surface
-	float3 	origin	=	float3( 0, Sky.PlanetRadius + Sky.ViewHeight + 2, 0 );
+	float4	emission;		//	sky emission in given point
+	float4	extinction;		//	sky transparency in given point
+};
+
+SKY_LUT ComputeSkyColor( float3 rayDir, float sunAzimuth, float sunAltitude )
+{
+	float3 	origin	=	float3( 0, Sky.PlanetRadius + Sky.ViewHeight, 0 );
 	float3	sunDir	=	RayFromAngles( sunAzimuth, sunAltitude );
 
 	float	tmin, tmax;
-	float 	trans;
+	float 	opacity;
 
-	if ( RaySphereIntersect(origin, rayDir, Sky.PlanetRadius, tmin, tmax) )
+	if ( raySphereIntersect(origin, rayDir, Sky.PlanetRadius, tmin, tmax) && tmax > 0 )
 	{
 		tmax	=	tmin;
 		tmin	=	0;
-		trans	=	0;
+		opacity	=	0;
 	}
 	else
 	{
 		tmin	=	0;
 		tmax	=	1000000;
-		trans	=	1;
+		opacity	=	1;
 	}
 	
-	SKY_ST	lut			=	computeIncidentLight( origin, rayDir, sunDir, tmin, tmax );
-	lut.scattering		*=	Sky.SkyExposure;
-	lut.transmittance	*=	trans;
+	SCATTERING	scattering;
+	scattering		=	computeIncidentLight( origin, rayDir, sunDir, tmin, tmax );
+	
+	SKY_LUT	lut;
+	lut.emission	=	float4( scattering.emission * Sky.SkyExposure, 0 );
+	lut.extinction	=	float4( scattering.extinction * opacity, 1 );
 	
 	return lut;
 }
@@ -280,7 +276,7 @@ float4 VSMain(uint VertexID : SV_VertexID) : SV_POSITION
 }
 
 
-SKY_ST PSMain( float4 vpos : SV_POSITION )
+SKY_LUT PSMain( float4 vpos : SV_POSITION ) : SV_TARGET0
 {
 	int2	loadXY		=	int2(vpos.xy);
 	
@@ -292,7 +288,9 @@ SKY_ST PSMain( float4 vpos : SV_POSITION )
 	
 	float3	rayDir		=	RayFromAngles( azimuth, altitude );
 	
-	return	ComputeSkyColor( rayDir, 0, Sky.SunAltitude );
+	SKY_LUT	lut			=	ComputeSkyColor( rayDir, 0, Sky.SunAltitude );
+
+	return lut;
 }
 
 #endif
@@ -323,8 +321,6 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 	float 	altitude	=	HorizonAngle( input.rayDir );
 	float	azimuth		=	Azimuth( input.rayDir ) - Sky.SunAzimuth;
 	
-	//return ComputeSkyColor( input.rayDir, Sky.SunAzimuth, Sky.SunAltitude ).emission;
-	
 	float2 	signedUV;
 	
 	signedUV.x			=	azimuth / PI;
@@ -332,8 +328,8 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 
 	float2	normUV		=	signedUV * 0.5 + 0.5f;
 	
-	float4 	skyScattering		= 	LutScattering	.SampleLevel( LinearClamp, normUV, 0 );
-	float4 	skyTransmittance	= 	LutTransmittance.SampleLevel( LinearClamp, normUV, 0 );
+	float4 	skyEmission		= 	LutEmission  .SampleLevel( LinearClamp, normUV, 0 );
+	float4 	skyExtinction	= 	LutExtinction.SampleLevel( LinearClamp, normUV, 0 );
 	
 	float3	sunLimb			=	0;
 	
@@ -346,11 +342,11 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 		
 		float	factor	=	saturate( 1 - pow(sinSun / sun.a,4) );
 		
-		sunLimb	=	sun.rgb * skyTransmittance.rgb * factor;
+		sunLimb	=	sun.rgb * skyExtinction.rgb * factor;
 		
 	#endif
 	
-	return 	skyScattering + float4(sunLimb,0);
+	return 	skyEmission + float4(sunLimb,0);
 }
 
 #endif

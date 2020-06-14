@@ -99,12 +99,18 @@ namespace Fusion.Engine.Graphics {
 		[Config]	
 		[AECategory("Tweaks")]
 		[AEValueRange(-8, 8, 1, 0.1f)]
+		public float RayleighScale { get; set; } = 0;
+
+		[Config]	
+		[AECategory("Tweaks")]
+		[AEValueRange(-8, 8, 1, 0.1f)]
 		public float MieScale { get; set; } = 0;
 		
 		[Config]	
 		[AECategory("Tweaks")]
-		[AEValueRange(-8, 8, 1, 0.1f)]
-		public float RayleighScale { get; set; } = 0;
+		[AEValueRange(0, 1, 0.1f, 0.001f)]
+		public float AmbientLevel { get; set; } = 0;
+		
 
 		[AECategory("Debug")]
 		public bool ShowLut { get; set; } = false;
@@ -129,12 +135,13 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		static FXConstantBuffer<SKY_DATA>						regSky				=	new CRegister( 0, "Sky"			);
-		static FXConstantBuffer<GpuData.CAMERA>					regCamera			=	new CRegister( 1, "Camera"		);
-		static FXConstantBuffer<GpuData.DIRECT_LIGHT>			regDirectLight		=	new CRegister( 2, "DirectLight"	);
+		static FXConstantBuffer<SKY_DATA>				regSky				=	new CRegister( 0, "Sky"			);
+		static FXConstantBuffer<GpuData.CAMERA>			regCamera			=	new CRegister( 1, "Camera"		);
+		static FXConstantBuffer<GpuData.DIRECT_LIGHT>	regDirectLight		=	new CRegister( 2, "DirectLight"	);
 
-		static FXTexture2D<Vector4>								regLutEmission		=	new TRegister( 0, "LutEmission"		);
-		static FXTexture2D<Vector4>								regLutExtinction	=	new TRegister( 1, "LutExtinction"	);
+		static FXTexture2D<Vector4>						regLutScattering	=	new TRegister( 0, "LutScattering"		);
+		static FXTexture2D<Vector4>						regLutTransmittance	=	new TRegister( 1, "LutTransmittance"	);
+		static FXTextureCube<Vector4>					regSkyCube			=	new TRegister( 2, "SkyCube"			);
 
 		static FXSamplerState		regLinearClamp	 =	new SRegister(0, "LinearClamp" );
 		static FXSamplerState		regPointClamp	=	new SRegister(1, "PointClamp" );
@@ -171,6 +178,8 @@ namespace Fusion.Engine.Graphics {
 			public float	SkySphereSize;
 			public float	ViewHeight;
 			public float	SkyExposure;
+
+			public float	AmbientLevel;
 		}
 
 
@@ -459,6 +468,7 @@ namespace Fusion.Engine.Graphics {
 			skyData.SunAltitude			=	MathUtil.DegreesToRadians( SunAltitude );
 			skyData.SunAzimuth			=	MathUtil.DegreesToRadians( SunAzimuth );
 			skyData.SkyExposure			=	MathUtil.Exp2( SkyExposure );
+			skyData.AmbientLevel		=	AmbientLevel;
 
 			cbSky.SetData( skyData );
 
@@ -521,6 +531,8 @@ namespace Fusion.Engine.Graphics {
 
 					device.SetTargets( null, lutSkyEmission.Surface, lutSkyExtinction.Surface );
 
+					device.GfxResources[ regSkyCube ] = skyCube;
+
 					Setup( Flags.LUT, camera, color.Bounds );
 
 					device.Draw( 3, 0 );
@@ -532,8 +544,8 @@ namespace Fusion.Engine.Graphics {
 					device.ResetStates();
 
 					device.SetTargets( null, color );
-					device.GfxResources[ regLutEmission		] =	lutSkyEmission;
-					device.GfxResources[ regLutExtinction	] =	lutSkyExtinction;
+					device.GfxResources[ regLutScattering		] =	lutSkyEmission;
+					device.GfxResources[ regLutTransmittance	] =	lutSkyExtinction;
 
 					Setup( Flags.SKY, camera, color.Bounds );
 
@@ -552,8 +564,8 @@ namespace Fusion.Engine.Graphics {
 
 						device.SetTargets( null, SkyCube.GetSurface(0, (CubeFace)i ) );
 
-						device.GfxResources[ regLutEmission		] =	lutSkyEmission;
-						device.GfxResources[ regLutExtinction	] =	lutSkyExtinction;
+						device.GfxResources[ regLutScattering		] =	lutSkyEmission;
+						device.GfxResources[ regLutTransmittance	] =	lutSkyExtinction;
 
 						Setup( Flags.FOG, cubeCamera, new Rectangle( 0, 0, SkyCube.Width, SkyCube.Height ) );
 

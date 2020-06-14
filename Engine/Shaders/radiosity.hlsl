@@ -365,7 +365,7 @@ void CSMain(
 	
 	float3	skyDir		=	Sky[ loadXY ].xyz * 2 - 1;
 	float	skyFactor	=	length( skyDir ) * Radiosity.SkyFactor;
-	float3	skyColor	=	SkyBox.SampleLevel( LinearSampler, skyDir.xyz, 0 ).rgb * skyFactor * skyFactor;
+	float3	skyColor	=	SkyBox.SampleLevel( LinearSampler, skyDir.xyz * float3(-1,1,1), 0 ).rgb * skyFactor * skyFactor;
 	
 	// irradianceR			+=	SHL1EvaluateDiffuse( Radiance[loadXY].r, float3(0,0,0) );
 	// irradianceG			+=	SHL1EvaluateDiffuse( Radiance[loadXY].g, float3(0,0,0) );

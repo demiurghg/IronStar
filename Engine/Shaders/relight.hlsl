@@ -18,7 +18,7 @@ float4	ComputeLight ( float3 dir )
 	float	cubeId		=	RelightParams.CubeIndex;
 	float4	color		=	GBufferColorData .SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
 	float4	mapping		=	GBufferNormalData.SampleLevel( PointSampler, float4( dir,  cubeId ), 0 );
-	float4	sky			=	SkyCube.SampleLevel( LinearSampler, dir * float3(-1,1,1), 0 );
+	float4	sky			=	SkyCube.SampleLevel( LinearSampler, dir * float3(1,1,1), 0 );
 	
 	float3	lightmap0	=	LightMap0.SampleLevel( LinearSampler, mapping.xy, 0 ).rgb;
 	float3	lightmap1	=	LightMap1.SampleLevel( LinearSampler, mapping.xy, 0 ).rgb;

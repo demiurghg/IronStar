@@ -45,12 +45,11 @@ void CSMain(
 	float3	wsPosition		=	mul( vsPosition, Camera.ViewInverted ).xyz;
 	float3	cameraPos		=	Camera.CameraPosition.xyz;
 	
-	float	density			=	0;//0.007 * min(1, 1*exp(-0.05*(wsPosition.y-15))) + 0.0001;
-	float3	normal			=	normalize( wsPosition - cameraPos );
-	float3	emission		=	ComputeClusteredLighting( wsPosition, normal, float3(1,1,1)*1, 1, 1 );
-
+	float	density			=	150.0f * min(1, 1*exp(-0.05*(wsPosition.y-10))) + 0.000;
 	
-	FogTarget[ location.xyz ] = float4(emission * density, density);
+	float4	emission		=	ComputeClusteredLighting( wsPosition, density );
+	
+	FogTarget[ location.xyz ] = emission;
 	
 	//FogTarget[ location.xyz ] = float4( frac(2*normLocation.xy), 0, 1 );
 }

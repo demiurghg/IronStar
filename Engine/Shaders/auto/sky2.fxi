@@ -62,6 +62,7 @@ struct SKY_DATA {
 	float      SkySphereSize;                 // offset:  108
 	float      ViewHeight;                    // offset:  112
 	float      SkyExposure;                   // offset:  116
+	float      AmbientLevel;                  // offset:  120
 };
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
@@ -107,7 +108,8 @@ cbuffer __buffer1 : register(b1) {
 cbuffer __buffer2 : register(b2) {
 	DIRECT_LIGHT DirectLight : packoffset(c0);
 };
-Texture2D<float4>              LutEmission                    : register(t0);
-Texture2D<float4>              LutExtinction                  : register(t1);
+Texture2D<float4>              LutScattering                  : register(t0);
+Texture2D<float4>              LutTransmittance               : register(t1);
+TextureCube<float4>            SkyCube                        : register(t2);
 SamplerState                   LinearClamp                    : register(s0);
 SamplerState                   PointClamp                     : register(s1);

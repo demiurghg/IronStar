@@ -51,8 +51,6 @@ LIGHTING EvaluateSHL( float3 shL0, float3 shL1, float3 shL2, float3 shL3, float 
 	
 	light.diffuse	=	float3( lightR, lightG, lightB ) * surface.diffuse;
 	
-	light.transmissive	=	surface.baseColor * shL0;
-	
 	return light;
 }
 
@@ -77,6 +75,18 @@ LIGHTING	EvaluateLightVolume ( float reflectionAmount, LIGHTMAP_RESOURCES lightm
 
 	return EvaluateSHL( shL0, shL1, shL2, shL3, reflectionAmount, geometry, surface, Camera );
 }
+
+
+float3	EvaluateLightVolume ( LIGHTMAP_RESOURCES lightmap, float3 volumeCoord )
+{
+	float3 	shL0	=	lightmap.IrradianceVolumeL0.SampleLevel( lightmap.Sampler, volumeCoord, 0 ).rgb;
+	float3 	shL1	=	lightmap.IrradianceVolumeL1.SampleLevel( lightmap.Sampler, volumeCoord, 0 ).rgb * 2 - 1;
+	float3 	shL2	=	lightmap.IrradianceVolumeL2.SampleLevel( lightmap.Sampler, volumeCoord, 0 ).rgb * 2 - 1;
+	float3 	shL3	=	lightmap.IrradianceVolumeL3.SampleLevel( lightmap.Sampler, volumeCoord, 0 ).rgb * 2 - 1;
+
+	return shL0;
+}
+
 
 LIGHTING	EvaluateLightVolume ( LIGHTMAP_RESOURCES lightmap, GEOMETRY geometry, SURFACE surface, CAMERA camera, uint3 voxelIndex )
 {

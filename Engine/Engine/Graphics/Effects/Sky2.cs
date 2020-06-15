@@ -111,11 +111,6 @@ namespace Fusion.Engine.Graphics {
 		[AEValueRange(0, 1, 0.1f, 0.001f)]
 		public float AmbientLevel { get; set; } = 0;
 		
-		[Config]	
-		[AECategory("Tweaks")]
-		[AEValueRange(8, 256, 8, 1)]
-		public float NumSamples { get; set; } = 0;
-		
 
 
 		[AECategory("Debug")]
@@ -161,7 +156,7 @@ namespace Fusion.Engine.Graphics {
 		}
 
 		[ShaderStructure]
-		[StructLayout(LayoutKind.Sequential, Size=160)]
+		[StructLayout(LayoutKind.Sequential, Size=128)]
 		struct SKY_DATA 
 		{
 			public Color4	BetaRayleigh;	
@@ -186,7 +181,6 @@ namespace Fusion.Engine.Graphics {
 			public float	SkyExposure;
 
 			public float	AmbientLevel;
-			public uint		NumSamples;
 		}
 
 
@@ -272,7 +266,7 @@ namespace Fusion.Engine.Graphics {
 		Color4 ComputeAtmosphereAbsorption( Vector3 origin, Vector3 direction )
 		{
 			var	distance		=	0f;
-			var	numSamples		=	16;
+			var	numSamples		=	64;
 			var	Hr				=	RayleighHeight;
 			var	Hm				=	MieHeight;
 
@@ -425,7 +419,10 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="flags"></param>
 		void EnumFunc ( PipelineState ps, Flags flags )
 		{
-			ps.VertexInputElements	=	VertexInputElement.FromStructure<SkyVertex>();
+			if (flags!=Flags.LUT)
+			{
+				ps.VertexInputElements	=	VertexInputElement.FromStructure<SkyVertex>();
+			}
 
 			//	do not cull triangles for both for RH and LH coordinates 
 			//	for direct view and cubemaps.
@@ -476,7 +473,6 @@ namespace Fusion.Engine.Graphics {
 			skyData.SunAzimuth			=	MathUtil.DegreesToRadians( SunAzimuth );
 			skyData.SkyExposure			=	MathUtil.Exp2( SkyExposure );
 			skyData.AmbientLevel		=	AmbientLevel;
-			skyData.NumSamples			=	(uint)NumSamples;
 
 			cbSky.SetData( skyData );
 

@@ -39,13 +39,13 @@ static const float FogGridExpScale = 0.0015;
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const uint BLOCK_SIZE = 16;
-static const uint LUT_WIDTH = 256;
+static const uint LUT_WIDTH = 128;
 static const uint LUT_HEIGHT = 128;
 
 // ---------------- DATA STRUCTURES ---------------- //
 
 // Fusion.Engine.Graphics.Sky2+SKY_DATA
-// Marshal.SizeOf = 160
+// Marshal.SizeOf = 128
 struct SKY_DATA {
 	float4     BetaRayleigh;                  // offset:    0
 	float4     BetaMie;                       // offset:   16
@@ -63,7 +63,6 @@ struct SKY_DATA {
 	float      ViewHeight;                    // offset:  112
 	float      SkyExposure;                   // offset:  116
 	float      AmbientLevel;                  // offset:  120
-	uint       NumSamples;                    // offset:  124
 };
 
 // Fusion.Engine.Graphics.GpuData+CAMERA

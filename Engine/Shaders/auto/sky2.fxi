@@ -63,6 +63,7 @@ struct SKY_DATA {
 	float      ViewHeight;                    // offset:  112
 	float      SkyExposure;                   // offset:  116
 	float      AmbientLevel;                  // offset:  120
+	uint       NumSamples;                    // offset:  124
 };
 
 // Fusion.Engine.Graphics.GpuData+CAMERA

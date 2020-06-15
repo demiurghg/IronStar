@@ -82,7 +82,8 @@ bool RayIntersectsAtmosphere( float3 origin, float3 dir )
 float3 ComputeIndcidentSunLight( float3 samplePosition, float3 sunDirection )
 {
 	float t0, t1;
-	int numSamples = 64;
+	int numSamples = 3; // is enough for half numerical solution
+						// fully numerical solution requires about 64 samples
 	
 	//	no intersection, sun light comes without attenuation :
 	if (!RaySphereIntersect(samplePosition, sunDirection, Sky.AtmosphereRadius, t0, t1))
@@ -95,15 +96,16 @@ float3 ComputeIndcidentSunLight( float3 samplePosition, float3 sunDirection )
 	
 	//	computes amount of attenuated sun light 
 	//	coming at given point p0.
-	float 	opticalLength	=	distance( p0, p1 ) / numSamples;
+	float 	opticalLength	=	 distance( p0, p1 ) / numSamples;
 	float 	opticalDepthR	=	0;
 	float 	opticalDepthM	=	0;
 	float3	betaR			=	Sky.BetaRayleigh.xyz;
 	float3	betaM			=	Sky.BetaMie.xyz;
 	
+	#if 0
 	for (int i=0; i<numSamples; i++)
 	{
-		float3 	pos = 	lerp( p0, p1, (i + 0.5f) / numSamples );
+		float3 	pos = 	lerp( p0, p1, (i+0.5)/numSamples );
 		float  	h	=	length( pos ) - Sky.PlanetRadius;
 		float	hR	=	exp(-h / Sky.RayleighHeight);
 		float	hM	=	exp(-h / Sky.MieHeight);
@@ -111,11 +113,51 @@ float3 ComputeIndcidentSunLight( float3 samplePosition, float3 sunDirection )
 		opticalDepthR	+=	hR * opticalLength;
 		opticalDepthM	+=	hM * opticalLength;
 	}
+	#else
+	//	integrate transmittance numerically using
+	//	analytically calculated integral for each segment
+	for (int i=0; i<numSamples; i++)
+	{
+		float3 	pos0	= 	lerp( p0, p1, (i+0)/(float)numSamples );
+		float3 	pos1	= 	lerp( p0, p1, (i+1)/(float)numSamples );
+		float  	h0		=	length( pos0 ) - Sky.PlanetRadius;
+		float  	h1		=	length( pos1 ) - Sky.PlanetRadius;
+		float	k		=	( h1 - h0 ) / opticalLength;
+		float	hR0		=	exp(-h0 / Sky.RayleighHeight);
+		float	hM0		=	exp(-h0 / Sky.MieHeight);
+		float	hR1		=	exp(-h1 / Sky.RayleighHeight);
+		float	hM1		=	exp(-h1 / Sky.MieHeight);
+		
+		if (abs(k)>0.001f)
+		{
+			//	integral exp(ax+b) = 1/a * exp(ax+b)
+			//	a = k / H
+			//	k = dh / dS
+			opticalDepthR	+=	(-1) * (hR1 - hR0) * Sky.RayleighHeight / k;
+			opticalDepthM	+=	(-1) * (hM1 - hM0) * Sky.MieHeight	    / k;
+		}
+		else
+		{
+			//	prevent division by zero, when height difference is small :
+			opticalDepthR	+=	hR0 * opticalLength;
+			opticalDepthM	+=	hM0 * opticalLength;
+		}
+	}
+	#endif
 	
     float3 tau	=	betaR * (opticalDepthR) + betaM * 1.1f * (opticalDepthM); 
 	
 	return exp( -tau ) * Sky.SunIntensity.rgb;
 }
+
+
+#if 0
+float t(float i) { return pow((i+0.5f) / Sky.NumSamples, 1); }
+float q(float i) { return t(i+0.5f) - t(i-0.5f); }
+#else
+float t(float i) { return (i+0.5f) / Sky.NumSamples; }
+float q(float i) { return 1.0f / Sky.NumSamples; }
+#endif
 
 
 SKY_ST computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin, float tmax)
@@ -135,7 +177,7 @@ SKY_ST computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin, 
 	t0	=	clamp( t0, tmin, tmax );
 	t1	=	clamp( t1, tmin, tmax );
 	
-    uint 	numSamples 	= 	16; 
+    uint 	numSamples 	= 	Sky.NumSamples; 
 	float3 	p0			=	orig + dir * t0;
 	float3 	p1			=	orig + dir * t1;
 	 
@@ -146,11 +188,11 @@ SKY_ST computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin, 
     float 	phaseR 			= 3.f / (16.f * M_PI) * (1 + mu * mu); 
     float 	phaseM 			= 3.f / (8.f * M_PI) * ((1.f - g * g) * (1.f + mu * mu)) / ((2.f + g * g) * pow(1.f + g * g - 2.f * g * mu, 1.5f)); 
 	
-	float3 ambient		=	SkyCube.SampleLevel( LinearClamp, float3(0,1,0), 0 ).rgb;
+	float3 ambient		=	0;//*SkyCube.SampleLevel( LinearClamp, dir + float3(0,1,0), 0 ).rgb;
 
     for (uint i = 0; i < numSamples; ++i) 
 	{ 
-        float3 	pos 	=	lerp( p0, p1, (i+0.5) / numSamples ); 
+        float3 	pos 	=	lerp( p0, p1, t(i) ); 
         float 	height 	=	length(pos) - Sky.PlanetRadius; 
 
         float 	hr 		= 	exp(-height / Sky.RayleighHeight) * segmentLength; 

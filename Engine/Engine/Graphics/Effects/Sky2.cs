@@ -73,7 +73,7 @@ namespace Fusion.Engine.Graphics {
 		public float RayleighHeight { get; set; } = 8000;
 		
 		[Config]	
-		[AEValueRange(1, 2000, 500, 10)]
+		[AEValueRange(1, 5000, 200, 10)]
 		[AECategory("Atmosphere")]
 		public float MieHeight { get; set; } = 1200;
 		
@@ -111,6 +111,12 @@ namespace Fusion.Engine.Graphics {
 		[AEValueRange(0, 1, 0.1f, 0.001f)]
 		public float AmbientLevel { get; set; } = 0;
 		
+		[Config]	
+		[AECategory("Tweaks")]
+		[AEValueRange(8, 256, 8, 1)]
+		public float NumSamples { get; set; } = 0;
+		
+
 
 		[AECategory("Debug")]
 		public bool ShowLut { get; set; } = false;
@@ -180,6 +186,7 @@ namespace Fusion.Engine.Graphics {
 			public float	SkyExposure;
 
 			public float	AmbientLevel;
+			public uint		NumSamples;
 		}
 
 
@@ -469,6 +476,7 @@ namespace Fusion.Engine.Graphics {
 			skyData.SunAzimuth			=	MathUtil.DegreesToRadians( SunAzimuth );
 			skyData.SkyExposure			=	MathUtil.Exp2( SkyExposure );
 			skyData.AmbientLevel		=	AmbientLevel;
+			skyData.NumSamples			=	(uint)NumSamples;
 
 			cbSky.SetData( skyData );
 

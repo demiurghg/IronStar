@@ -20,7 +20,7 @@ namespace Fusion.Engine.Graphics {
 	public class Sky2 : RenderComponent 
 	{
 		[ShaderDefine] const uint BLOCK_SIZE	=	16;
-		[ShaderDefine] const uint LUT_WIDTH		=	256;
+		[ShaderDefine] const uint LUT_WIDTH		=	128;
 		[ShaderDefine] const uint LUT_HEIGHT	=	128;
 
 		public Color4	BetaRayleigh		{ get { return new Color4( 3.8e-6f, 13.5e-6f, 33.1e-6f, 0 ); } }	
@@ -400,8 +400,8 @@ namespace Fusion.Engine.Graphics {
 
 			skyLutSampler	=	new SamplerState();
 			skyLutSampler.Filter	=	Drivers.Graphics.Filter.MinMagMipLinear;
-			skyLutSampler.AddressU	=	Drivers.Graphics.AddressMode.Wrap;
-			skyLutSampler.AddressV	=	Drivers.Graphics.AddressMode.Clamp;
+			skyLutSampler.AddressU	=	Drivers.Graphics.AddressMode.Mirror;
+			skyLutSampler.AddressV	=	Drivers.Graphics.AddressMode.Mirror;
 			skyLutSampler.AddressW	=	Drivers.Graphics.AddressMode.Wrap;
 		}
 

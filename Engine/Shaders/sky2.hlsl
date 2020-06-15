@@ -27,9 +27,9 @@ struct SKY_ST
 
 #define PS_INPUT VS_OUTPUT
 
-#define PI 3.141592f
+#define PI 					3.141592f
+#define HalfPI 				(3.141592f / 2.0f)
 
-#define HalfPI (3.141592f / 2.0f)
 
 /*-------------------------------------------------------------------------------------------------
 	Atmospheric Scattering Model :
@@ -120,8 +120,8 @@ float3 ComputeIndcidentSunLight( float3 samplePosition, float3 sunDirection )
 	{
 		float3 	pos0	= 	lerp( p0, p1, (i+0)/(float)numSamples );
 		float3 	pos1	= 	lerp( p0, p1, (i+1)/(float)numSamples );
-		float  	h0		=	length( pos0 ) - Sky.PlanetRadius;
-		float  	h1		=	length( pos1 ) - Sky.PlanetRadius;
+		float  	h0		=	max( 0, length( pos0 ) - Sky.PlanetRadius );
+		float  	h1		=	max( 0, length( pos1 ) - Sky.PlanetRadius );
 		float	k		=	( h1 - h0 ) / opticalLength;
 		float	hR0		=	exp(-h0 / Sky.RayleighHeight);
 		float	hM0		=	exp(-h0 / Sky.MieHeight);
@@ -151,12 +151,13 @@ float3 ComputeIndcidentSunLight( float3 samplePosition, float3 sunDirection )
 }
 
 
-#if 0
-float t(float i) { return pow((i+0.5f) / Sky.NumSamples, 1); }
+#if 1
+static const uint numIntegrationSamlpes = 48;
+float t(float i) { return pow((i+0.5f) / numIntegrationSamlpes, 2); }
 float q(float i) { return t(i+0.5f) - t(i-0.5f); }
 #else
-float t(float i) { return (i+0.5f) / Sky.NumSamples; }
-float q(float i) { return 1.0f / Sky.NumSamples; }
+float t(float i) { return (i+0.5f) / numIntegrationSamlpes; }
+float q(float i) { return 1.0f / numIntegrationSamlpes; }
 #endif
 
 
@@ -177,26 +178,25 @@ SKY_ST computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin, 
 	t0	=	clamp( t0, tmin, tmax );
 	t1	=	clamp( t1, tmin, tmax );
 	
-    uint 	numSamples 	= 	Sky.NumSamples; 
 	float3 	p0			=	orig + dir * t0;
 	float3 	p1			=	orig + dir * t1;
 	 
-    float 	segmentLength 	= distance(p0, p1) / numSamples; 
+    float 	segmentLength 	= distance(p0, p1); 
     float 	opticalDepthR 	= 0;
 	float	opticalDepthM 	= 0; 
     float 	mu 				= dot(dir, sunDir); // cosine of the angle between the sun direction and the ray direction 
     float 	phaseR 			= 3.f / (16.f * M_PI) * (1 + mu * mu); 
-    float 	phaseM 			= 3.f / (8.f * M_PI) * ((1.f - g * g) * (1.f + mu * mu)) / ((2.f + g * g) * pow(1.f + g * g - 2.f * g * mu, 1.5f)); 
+    float 	phaseM 			= 3.f / (8.f * M_PI) * ((1.f - g * g) * (1.f + mu * mu)) / ((2.f + g * g) * pow(abs(1.f + g * g - 2.f * g * mu), 1.5f)); 
 	
 	float3 ambient		=	0;//*SkyCube.SampleLevel( LinearClamp, dir + float3(0,1,0), 0 ).rgb;
 
-    for (uint i = 0; i < numSamples; ++i) 
+    for (uint i = 0; i < numIntegrationSamlpes; ++i) 
 	{ 
         float3 	pos 	=	lerp( p0, p1, t(i) ); 
         float 	height 	=	length(pos) - Sky.PlanetRadius; 
 
-        float 	hr 		= 	exp(-height / Sky.RayleighHeight) * segmentLength; 
-        float 	hm 		= 	exp(-height / Sky.MieHeight		) * segmentLength; 
+        float 	hr 		= 	exp(-height / Sky.RayleighHeight) * segmentLength * q(i); 
+        float 	hm 		= 	exp(-height / Sky.MieHeight		) * segmentLength * q(i); 
 		
 		float3	extinction		=	hr * betaR + hm * betaM * 1.1f;
 		float3	extinctionClamp	=	clamp( extinction, 0.0000001, 1 );
@@ -213,7 +213,7 @@ SKY_ST computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin, 
 			st.transmittance.rgb	*=	transmittance;
 		#else
 			float3	integScatt		=	( scattering - scattering * transmittance ) / extinctionClamp;
-			st.scattering.rgb		+=	st.transmittance * integScatt;
+			st.scattering.rgb		+=	st.transmittance.rgb * integScatt;
 			st.transmittance.rgb	*=	transmittance;
 		#endif
 	} 
@@ -326,10 +326,11 @@ SKY_ST PSMain( float4 vpos : SV_POSITION )
 {
 	int2	loadXY		=	int2(vpos.xy);
 	
-	float2	signedUV	=	2 * loadXY / float2( LUT_WIDTH-1, LUT_HEIGHT-1 ) - float2(1, 1);
+	float2	normUV		=	loadXY / float2( LUT_WIDTH-1, LUT_HEIGHT-1 );
+	float2	signedUV	=	2 * normUV - float2(1, 1);
 
 	float	horizon		=	HorizonAngle();
-	float	azimuth		=	PI 	  * signedUV.x;
+	float	azimuth		=	PI 	  * normUV.x;
 	float	altitude	=	LutToAltitude( signedUV.y, horizon / HalfPI ) * HalfPI;
 	
 	float3	rayDir		=	RayFromAngles( azimuth, altitude );
@@ -367,12 +368,10 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 	
 	//return ComputeSkyColor( input.rayDir, Sky.SunAzimuth, Sky.SunAltitude ).emission;
 	
-	float2 	signedUV;
+	float2 	normUV;
 	
-	signedUV.x			=	azimuth / PI;
-	signedUV.y			=	AltitudeToLut( altitude / HalfPI, horizon / HalfPI );
-
-	float2	normUV		=	signedUV * 0.5 + 0.5f;
+	normUV.x			=	azimuth / PI;
+	normUV.y			=	AltitudeToLut( altitude / HalfPI, horizon / HalfPI ) * 0.5f + 0.5f;
 	
 	float4 	skyScattering		= 	LutScattering	.SampleLevel( LinearClamp, normUV, 0 );
 	float4 	skyTransmittance	= 	LutTransmittance.SampleLevel( LinearClamp, normUV, 0 );

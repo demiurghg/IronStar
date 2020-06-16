@@ -28,15 +28,15 @@ namespace Fusion.Engine.Graphics {
 		static FXSamplerState				regLinearSampler	= 	new SRegister(0, "LinearSampler");
 		static FXTextureCube<Vector4>		regSource			=	new TRegister(0, "Source"		);
 
-		[ShaderIfDef("DOWNSAMPLE")]	static FXRWTexture2DArray<Vector4>	regTarget	= 	new URegister(0, "Target"	); 
+		[ShaderIfDef("DOWNSAMPLE,DIFFUSE")]	static FXRWTexture2DArray<Vector4>	regTarget	= 	new URegister(0, "Target"	); 
 									 		
-		[ShaderIfDef("PREFILTER")]	static FXRWTexture2DArray<Vector4>	regTarget0	= 	new URegister(0, "Target0"	); 
-		[ShaderIfDef("PREFILTER")]	static FXRWTexture2DArray<Vector4>	regTarget1	= 	new URegister(1, "Target1"	); 
-		[ShaderIfDef("PREFILTER")]	static FXRWTexture2DArray<Vector4>	regTarget2	= 	new URegister(2, "Target2"	); 
-		[ShaderIfDef("PREFILTER")]	static FXRWTexture2DArray<Vector4>	regTarget3	= 	new URegister(3, "Target3"	); 
-		[ShaderIfDef("PREFILTER")]	static FXRWTexture2DArray<Vector4>	regTarget4	= 	new URegister(4, "Target4"	); 
-		[ShaderIfDef("PREFILTER")]	static FXRWTexture2DArray<Vector4>	regTarget5	= 	new URegister(5, "Target5"	); 
-		[ShaderIfDef("PREFILTER")]	static FXRWTexture2DArray<Vector4>	regTarget6	= 	new URegister(6, "Target6"	); 
+		[ShaderIfDef("PREFILTER")]			static FXRWTexture2DArray<Vector4>	regTarget0	= 	new URegister(0, "Target0"	); 
+		[ShaderIfDef("PREFILTER")]			static FXRWTexture2DArray<Vector4>	regTarget1	= 	new URegister(1, "Target1"	); 
+		[ShaderIfDef("PREFILTER")]			static FXRWTexture2DArray<Vector4>	regTarget2	= 	new URegister(2, "Target2"	); 
+		[ShaderIfDef("PREFILTER")]			static FXRWTexture2DArray<Vector4>	regTarget3	= 	new URegister(3, "Target3"	); 
+		[ShaderIfDef("PREFILTER")]			static FXRWTexture2DArray<Vector4>	regTarget4	= 	new URegister(4, "Target4"	); 
+		[ShaderIfDef("PREFILTER")]			static FXRWTexture2DArray<Vector4>	regTarget5	= 	new URegister(5, "Target5"	); 
+		[ShaderIfDef("PREFILTER")]			static FXRWTexture2DArray<Vector4>	regTarget6	= 	new URegister(6, "Target6"	); 
 
 		[ShaderDefine]
 		const int BlockSize = 8;
@@ -58,6 +58,7 @@ namespace Fusion.Engine.Graphics {
 			PREFILTER	=	0x0002,
 			REFERENCE	=	0x0004,
 			DIFFERENCE	=	0x0008,
+			DIFFUSE		=	0x0010,
 		}
 		
 
@@ -219,7 +220,7 @@ namespace Fusion.Engine.Graphics {
 
 		/*-----------------------------------------------------------------------------------------
 		 * 
-		 *	Light probe relighting :
+		 *	Light probe prefiltering :
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
@@ -251,6 +252,34 @@ namespace Fusion.Engine.Graphics {
 
 					device.Dispatch( tgx, tgy, tgz );
 				}
+			}
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="cubemap"></param>
+		public void PrefilterDiffuse ( RenderTargetCube target, RenderTargetCube source, int sourceMipLevel )
+		{
+			device.ResetStates();
+
+			using ( new PixEvent( "PrefilterDiffuse" ) )
+			{
+				device.PipelineState = factory[(int)Flags.DIFFUSE];
+
+				int size	=	target.Width;
+
+				device.SetComputeUnorderedAccess( regTarget, target.GetCubeSurface(0).UnorderedAccess );
+
+				device.ComputeSamplers	[ regLinearSampler	]	=	SamplerState.LinearWrap;
+				device.ComputeResources	[ regSource			]	=	source.GetCubeShaderResource( sourceMipLevel );
+
+				int tgx		=	MathUtil.IntDivRoundUp( size, 8 );
+				int tgy		=	MathUtil.IntDivRoundUp( size, 8 );
+				int tgz		=	6; // for each face
+
+				device.Dispatch( tgx, tgy, tgz );
 			}
 		}
 

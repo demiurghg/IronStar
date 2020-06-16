@@ -1,6 +1,7 @@
 #if 0
 $ubershader 	DOWNSAMPLE
 $ubershader		PREFILTER +REFERENCE..DIFFERENCE
+$ubershader		DIFFUSE
 #endif
 
 #include "auto/cubegen.fxi"
@@ -188,6 +189,58 @@ void CSMain( uint3 id : SV_DispatchThreadID )
 
 		tex_lo_res[id] = color;
 	}
+}
+
+#endif
+
+/*-----------------------------------------------------------------------------
+https://www.iue.tuwien.ac.at/phd/ertl/node100.html
+-----------------------------------------------------------------------------*/
+
+#ifdef DIFFUSE
+
+#include "hammersley.fxi"
+
+#define NUM_DIFFUSE_SAMPLES 32
+
+[numthreads( 8, 8, 1 )]
+void CSMain( uint3 id : SV_DispatchThreadID )
+{
+	uint2 	location	=	id.xy;
+	uint	faceId		=	id.z;
+	uint	width, height, numFaces;
+	
+	Target.GetDimensions( width, height, numFaces );
+	
+	float4 	face[6] 	= 	{ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0 };
+
+	float u	=	mad( (location.x) / (float)(width -1), 2, - 1);
+	float v	=	mad( (location.y) / (float)(height-1), 2, - 1);
+	
+	float3	dir = float3(0,0,0);
+
+	switch (faceId)
+	{
+		case 0 : dir = normalize(float3(  1, -v, -u )); break;
+		case 1 : dir = normalize(float3( -1, -v,  u )); break;
+		case 2 : dir = normalize(float3(  u,  1,  v )); break;
+		case 3 : dir = normalize(float3(  u, -1, -v )); break;
+		case 4 : dir = normalize(float3(  u, -v,  1 )); break;
+		case 5 : dir = normalize(float3( -u, -v, -1 )); break;
+	}
+	
+	float4 accumColor = 0;
+	
+	for (int i=0; i<NUM_DIFFUSE_SAMPLES; i++)
+	{
+		float3	sample_dir	=	normalize(hammersley_sphere_uniform( i, NUM_DIFFUSE_SAMPLES ));
+		float	nDorL		=	saturate( dot( sample_dir, dir ) );
+		accumColor			+=	nDorL * Source.SampleLevel( LinearSampler, sample_dir, 0 );
+	}
+	
+	accumColor /= NUM_DIFFUSE_SAMPLES;
+	
+	Target[int3(location.xy,faceId)]	=	accumColor;
 }
 
 #endif

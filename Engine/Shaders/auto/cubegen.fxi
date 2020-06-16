@@ -49,7 +49,7 @@ cbuffer __buffer0 : register(b0) {
 };
 SamplerState                   LinearSampler                  : register(s0);
 TextureCube<float4>            Source                         : register(t0);
-#if defined(DOWNSAMPLE)
+#if defined(DOWNSAMPLE) || defined(DIFFUSE)
 RWTexture2DArray<float4>       Target                         : register(u0);
 #endif
 #if defined(PREFILTER)

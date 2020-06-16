@@ -36,6 +36,15 @@ float3 internal_hammersley_sphere_uniform(float u, float v)
 }
 
 
+float3 hammersley_sphere_cosine(float u, float v) 
+{
+	float phi = v * 2.0f * 3.141592f;
+	float cosTheta = sqrt(1.0f - 2*u);
+	float sinTheta = sqrt(1.0f - cosTheta * cosTheta);
+	return float3(cos(phi) * sinTheta, cosTheta, sin(phi) * sinTheta);
+}
+
+
 float3 hammersley_sphere_uniform(int i, int n) 
 {
 	float2 xy = hammersley2d(i, n);

@@ -254,7 +254,7 @@ namespace Fusion.Engine.Graphics.GI
 
 			device.ComputeResources[ regLights			]	=	rs.LightManager.LightGrid.RadLtDataGpu;
 
-			device.ComputeResources[ regSkyBox			]	=	rs.Sky.SkyCube;
+			device.ComputeResources[ regSkyBox			]	=	rs.Sky.SkyCubeDiffuse;
 			device.ComputeResources[ regSky				]	=	lightMap.sky;
 
 			device.ComputeResources[ regBBoxMin			]	=	lightMap.bboxMin;

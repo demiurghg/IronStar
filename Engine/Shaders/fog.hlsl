@@ -45,7 +45,7 @@ void CSMain(
 	float3	wsPosition		=	mul( vsPosition, Camera.ViewInverted ).xyz;
 	float3	cameraPos		=	Camera.CameraPosition.xyz;
 	
-	float	density			=	150.0f * min(1, 1*exp(-0.05*(wsPosition.y-10))) + 0.000;
+	float	density			=	0.0f * min(1, 1*exp(-0.05*(wsPosition.y-10))) + 0.000;
 	
 	float4	emission		=	ComputeClusteredLighting( wsPosition, density );
 	

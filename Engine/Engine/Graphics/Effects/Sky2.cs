@@ -108,6 +108,10 @@ namespace Fusion.Engine.Graphics {
 		
 		[Config]	
 		[AECategory("Tweaks")]
+		public Color MieColor { get; set; } = Color.White;
+		
+		[Config]	
+		[AECategory("Tweaks")]
 		[AEValueRange(0, 1, 0.1f, 0.001f)]
 		public float AmbientLevel { get; set; } = 0;
 		
@@ -205,6 +209,9 @@ namespace Fusion.Engine.Graphics {
 		internal RenderTargetCube	SkyCube { get { return skyCube; } }
 		RenderTargetCube			skyCube;
 
+		internal RenderTargetCube	SkyCubeDiffuse { get { return skyCubeDiffuse; } }
+		RenderTargetCube			skyCubeDiffuse;
+
 
 
 		/// <summary>
@@ -274,7 +281,7 @@ namespace Fusion.Engine.Graphics {
 			var	opticalDepthM 	=	0f; 
 
 			var	betaR			=	BetaRayleigh * MathUtil.Exp2( RayleighScale );
-			var	betaM			=	BetaMie		 * MathUtil.Exp2( MieScale );
+			var	betaM			=	BetaMie		 * MathUtil.Exp2( MieScale ) * MieColor;
 
 			if ( RayAtmosphereIntersection( origin, direction, out distance) )
 			{
@@ -376,10 +383,11 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public override void Initialize() 
 		{
-			skyData		=	new SKY_DATA();
-			skyCube		=	new RenderTargetCube( device, ColorFormat.Rgba16F, 32, 0 );
-			cbSky		=	new ConstantBuffer( device, typeof(SKY_DATA) );
-			cubeCamera	=	new Camera( rs, "SkyCubeCamera" );
+			skyData			=	new SKY_DATA();
+			skyCube			=	new RenderTargetCube( device, ColorFormat.Rgba16F, 128, 5 );
+			skyCubeDiffuse	=	new RenderTargetCube( device, ColorFormat.Rgba16F,   8, 0 );
+			cbSky			=	new ConstantBuffer( device, typeof(SKY_DATA) );
+			cubeCamera		=	new Camera( rs, "SkyCubeCamera" );
 
 			LoadContent();
 
@@ -441,6 +449,7 @@ namespace Fusion.Engine.Graphics {
 			if( disposing ) {
 				SafeDispose( ref skyVB );
 				SafeDispose( ref skyCube );
+				SafeDispose( ref skyCubeDiffuse );
 				SafeDispose( ref cbSky );
 				SafeDispose( ref cubeCamera );
 				SafeDispose( ref lutSkyEmission );
@@ -576,6 +585,9 @@ namespace Fusion.Engine.Graphics {
 						device.SetupVertexInput( skyVB, null );
 						device.Draw( skyVB.Capacity, 0 );
 					}
+
+					Game.GetService<CubeMapFilter>().GenerateCubeMipLevel( skyCube );
+					Game.GetService<CubeMapFilter>().PrefilterDiffuse( skyCubeDiffuse, skyCube, 4 );
 				}
 			}
 		}

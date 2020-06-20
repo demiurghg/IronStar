@@ -5,6 +5,6 @@ InvertYNormal = False
 [Textures]
 BaseColor = color.png
 NormalMap = local_normals.png
+Roughness = roughness.png
 Metallic  = 
-Roughness = 
 Emission  = 

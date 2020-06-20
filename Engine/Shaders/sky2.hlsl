@@ -19,10 +19,11 @@ struct VS_OUTPUT {
 	float3 rayDir		: COLOR1;
 };
 
-struct SKY_ST
+struct SKY_STC
 {
 	float4	scattering		: SV_TARGET0;		//	sky emission in given point
 	float4	transmittance	: SV_TARGET1;		//	sky transparency in given point
+	float4	cirrusClouds	: SV_TARGET2;		//	cirrus lighting and extiction
 };
 
 
@@ -80,20 +81,10 @@ bool RayIntersectsAtmosphere( float3 origin, float3 dir )
 }
 
 
-float3 ComputeIndcidentSunLight( float3 samplePosition, float3 sunDirection )
+float3 ComputeLightExtincation( float3 p0, float3 p1 )
 {
-	float t0, t1;
 	int numSamples = 3; // is enough for half numerical solution
 						// fully numerical solution requires about 64 samples
-	
-	//	no intersection, sun light comes without attenuation :
-	if (!RaySphereIntersect(samplePosition, sunDirection, Sky.AtmosphereRadius, t0, t1))
-	{
-		return Sky.SunIntensity.rgb;
-	}
-	
-	float3	p0	=	samplePosition + sunDirection * t0;
-	float3	p1	=	samplePosition + sunDirection * t1;
 	
 	//	computes amount of attenuated sun light 
 	//	coming at given point p0.
@@ -148,7 +139,23 @@ float3 ComputeIndcidentSunLight( float3 samplePosition, float3 sunDirection )
 	
     float3 tau	=	betaR * (opticalDepthR) + betaM * 1.1f * (opticalDepthM); 
 	
-	return exp( -tau ) * Sky.SunIntensity.rgb;
+	return exp( -tau );
+}
+
+
+float3 ComputeIndcidentSunLight( float3 samplePosition, float3 sunDirection )
+{
+	float t0, t1;
+	//	no intersection, sun light comes without attenuation :
+	if (!RaySphereIntersect(samplePosition, sunDirection, Sky.AtmosphereRadius, t0, t1))
+	{
+		return Sky.SunIntensity.rgb;
+	}
+	
+	float3	p0	=	samplePosition + sunDirection * t0;
+	float3	p1	=	samplePosition + sunDirection * t1;
+
+	return ComputeLightExtincation( p0, p1 ) * Sky.SunIntensity.rgb;
 }
 
 
@@ -167,16 +174,17 @@ float3 SampleAmbient( float3 dir )
 	return	SkyCube.SampleLevel( LinearWrap, dir, 0 ).rgb;
 }
 
-SKY_ST computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin, float tmax)
+SKY_STC computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin, float tmax)
 { 
 	float	M_PI				=	3.141592f;
     float 	g 					= 	Sky.MieExcentricity; 
 	float3	betaR				=	Sky.BetaRayleigh.xyz;
 	float3	betaM				=	Sky.BetaMie.xyz;
 
-	SKY_ST st;
+	SKY_STC st;
 	st.scattering		=	0;
 	st.transmittance	=	1;
+	st.cirrusClouds		=	0;
 	
     float t0, t1; 
     if (!RaySphereIntersect(orig, dir, Sky.AtmosphereRadius, t0, t1)) return st; 
@@ -229,6 +237,79 @@ SKY_ST computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin, 
 
 
 /*-------------------------------------------------------------------------------------------------
+	CLOUDS :
+-------------------------------------------------------------------------------------------------*/
+
+float3 ComputeCirrusCloudsCoords( float3 rayDir )
+{
+	// add 2 meters to prevent raycast against planet surface
+	float tmin, tmax;
+	float3 	origin	=	float3( 0, Sky.PlanetRadius + Sky.ViewHeight, 0 );
+
+	if ( RaySphereIntersect(origin, rayDir, Sky.PlanetRadius + Sky.CirrusHeight, tmin, tmax) )
+	{
+		if (tmin>0) tmax = tmin;
+		float3	hitPos	=	origin + rayDir * tmax;
+		float2	duv 	=	float2( Sky.CirrusScrollU, Sky.CirrusScrollV );
+		float2	uv		=	hitPos.xz * Sky.CirrusScale + duv;
+		float	dist	=	tmax;
+		return float3( uv, dist );
+	}
+	else
+	{
+		return float3(0,0,-1);
+	}
+}
+
+
+float CirrusPhaseFunction(float3 rayDir, float3 sunDir)
+{
+	float c	=	dot(rayDir, sunDir);
+	float s = 	sqrt( 1 - c * c );
+
+	//float e = 	2.65f * exp(-10 * s) + 0.91f * c - 0.583f;*/
+
+	c = mad(c, 0.5f, 0.5f);
+	float e = 1.5 * exp(-75*(1-c)) + 0.5*exp(-25*c) + 1.2f*c - 1.2f;
+	
+	return pow(10,e);
+}
+
+
+float4 ComputeCirrusClouds(float3 rayDir, float3 sunDir )
+{
+	float tmin, tmax;
+	float3 	origin	=	float3( 0, Sky.PlanetRadius + Sky.ViewHeight + 2, 0 );
+	
+	if ( RayIntersectsPlanet( origin, rayDir ) )
+	{
+		return float4(0,0,0,0);
+	}
+
+	if ( RaySphereIntersect(origin, rayDir, Sky.PlanetRadius + Sky.CirrusHeight, tmin, tmax) )
+	{
+		float3	hitPos	=	origin + rayDir * tmax;
+		float	dist	=	tmax;
+		
+		float	phase	=	CirrusPhaseFunction( rayDir, sunDir );
+		
+		float3	ambient	=	SampleAmbient( rayDir );
+		
+		float3	light	=	ComputeIndcidentSunLight( hitPos, sunDir ) * phase;
+				light	+=	ambient * Sky.AmbientLevel;
+				
+		float3	extinct	=	ComputeLightExtincation( origin, hitPos );
+				light	*=	extinct;
+				
+		return float4( light, extinct.b ); // assume green is average extinction coefficient
+	}
+	else
+	{
+		return float4(0,0,0,0);
+	}
+}
+
+/*-------------------------------------------------------------------------------------------------
 	Sky :
 -------------------------------------------------------------------------------------------------*/
 
@@ -264,7 +345,7 @@ float3 RayFromAngles( float az, float al )
 	return float3(x,y,z);
 }
 
-SKY_ST ComputeSkyColor( float3 rayDir, float sunAzimuth, float sunAltitude )
+SKY_STC ComputeSkyColor( float3 rayDir, float sunAzimuth, float sunAltitude )
 {
 	// add 2 meters to prevent raycast against planet surface
 	float3 	origin	=	float3( 0, Sky.PlanetRadius + Sky.ViewHeight + 2, 0 );
@@ -286,12 +367,15 @@ SKY_ST ComputeSkyColor( float3 rayDir, float sunAzimuth, float sunAltitude )
 		trans	=	1;
 	}
 	
-	SKY_ST	lut			=	computeIncidentLight( origin, rayDir, sunDir, tmin, tmax );
+	SKY_STC	lut			=	computeIncidentLight( origin, rayDir, sunDir, tmin, tmax );
 	lut.scattering		*=	Sky.SkyExposure;
 	lut.transmittance	*=	trans;
 	
+	lut.cirrusClouds	=	ComputeCirrusClouds( rayDir, sunDir );
+	
 	return lut;
 }
+
 
 /*-------------------------------------------------------------------------------------------------
 	SKY LUT
@@ -328,7 +412,7 @@ float4 VSMain(uint VertexID : SV_VertexID) : SV_POSITION
 }
 
 
-SKY_ST PSMain( float4 vpos : SV_POSITION )
+SKY_STC PSMain( float4 vpos : SV_POSITION )
 {
 	int2	loadXY		=	int2(vpos.xy);
 	
@@ -341,44 +425,12 @@ SKY_ST PSMain( float4 vpos : SV_POSITION )
 	
 	float3	rayDir		=	RayFromAngles( azimuth, altitude );
 	
-	return	ComputeSkyColor( rayDir, 0, Sky.SunAltitude );
+	SKY_STC	skyLut		=	ComputeSkyColor( rayDir, 0, Sky.SunAltitude );
+	
+	return skyLut;
 }
 
 #endif
-
-
-
-/*-------------------------------------------------------------------------------------------------
-	CLOUDS :
--------------------------------------------------------------------------------------------------*/
-
-float3 ComputeCirrusCloudsCoords( float3 rayDir )
-{
-	// add 2 meters to prevent raycast against planet surface
-	float tmin, tmax;
-	float3 	origin	=	float3( 0, Sky.PlanetRadius + Sky.ViewHeight, 0 );
-
-	if ( RaySphereIntersect(origin, rayDir, Sky.PlanetRadius + Sky.CirrusHeight, tmin, tmax) )
-	{
-		float3	hitPos	=	origin + rayDir * tmax;
-		float2	uv		=	hitPos.xz / 40000;
-		float	dist	=	tmax;
-		return float3( uv, dist );
-	}
-	else
-	{
-		return float3(0,0,-1);
-	}
-}
-
-float CirrusPhaseFunction(float3 rayDir)
-{
-	float3 sunDir	=	Sky.SunDirection.xyz;
-	float c	=	dot(rayDir, sunDir);
-	float s = 	sqrt( 1 - c * c );
-	float e = 	2.65f * exp(-10 * s) + 0.91f * c - 0.583f;
-	return pow(10,e);
-}
 
 /*-------------------------------------------------------------------------------------------------
 	SKY/FOG Pixel/Vertex shaders
@@ -421,6 +473,7 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 	
 	float4 	skyScattering		= 	LutScattering	.SampleLevel( LutSampler, normUV, 0 );
 	float4 	skyTransmittance	= 	LutTransmittance.SampleLevel( LutSampler, normUV, 0 );
+	float4 	skyCirrusClouds		= 	LutCirrus		.SampleLevel( LutSampler, normUV, 0 );
 
 	//-----------------------------------------
 	//	compute sun color :
@@ -449,16 +502,19 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 	//-----------------------------------------
 	
 	float3 	cirrusCoords	=	ComputeCirrusCloudsCoords( input.rayDir );
+	
+	//return float4( frac(cirrusCoords.xy) * 10, 0, 1 );
+	
 	float	cirrusTexture	=	CirrusClouds.Sample( LinearWrap, cirrusCoords.xy ).r;
 	float	coverage		=	max(0.01f, Sky.CirrusCoverage);
 			cirrusTexture	=	smoothstep(1-coverage, 1, cirrusTexture);
 			cirrusTexture	*=	Sky.CirrusDensity;
-	float	cloudFactor		=	( altitude > horizon ) ? 0.9f : 0;
-	float	cloudPhase		=	CirrusPhaseFunction(input.rayDir);
-	float	cloudAmbient	=	SampleAmbient(input.rayDir);
-	float3	cloudGlow		=	cirrusTexture * cloudFactor * ( cloudPhase * DirectLight.DirectLightIntensity.rgb + cloudAmbient );
+			
+	float3	cloudGlow		=	skyCirrusClouds.rgb * cirrusTexture.r / 1.1f;
 
-	skyScattering.rgb 		= 	lerp( skyScattering.rgb, cloudGlow.rgb, cirrusTexture.r * cirrusTexture.r );
+	skyScattering.rgb 		= 	lerp( skyScattering.rgb, cloudGlow.rgb, cirrusTexture.r * cirrusTexture.r * skyCirrusClouds.a );
+	
+	//skyScattering.rgb		=	skyCirrusClouds.rgb;
 	
 	// result :
 	return skyScattering;

@@ -523,7 +523,7 @@ namespace Fusion.Engine.Graphics {
 				using ( new PixEvent( "Frame Scene Rendering" ) ) 
 				{
 					//	render sky and fog :
-					rs.Sky.Render( Camera, stereoEye, viewHdrFrame );
+					rs.Sky.Render( gameTime, Camera, stereoEye, viewHdrFrame );
 					rs.Fog.RenderFog( Camera, LightSet, FogSettings );
 
 					//	Z-pass without weapon :

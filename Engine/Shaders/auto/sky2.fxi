@@ -52,23 +52,24 @@ struct SKY_DATA {
 	float4     SunIntensity;                  // offset:   32
 	float4     SunBrightness;                 // offset:   48
 	float4     SunDirection;                  // offset:   64
-	float      SunAzimuth;                    // offset:   80
-	float      SunAltitude;                   // offset:   84
-	float      PlanetRadius;                  // offset:   88
-	float      AtmosphereRadius;              // offset:   92
-	float      RayleighHeight;                // offset:   96
-	float      MieHeight;                     // offset:  100
-	float      MieExcentricity;               // offset:  104
-	float      SkySphereSize;                 // offset:  108
-	float      ViewHeight;                    // offset:  112
-	float      SkyExposure;                   // offset:  116
-	float      AmbientLevel;                  // offset:  120
-	float      CirrusHeight;                  // offset:  124
-	float      CirrusCoverage;                // offset:  128
-	float      CirrusDensity;                 // offset:  132
-	float      CirrusScale;                   // offset:  136
-	float      CirrusVelocityU;               // offset:  140
-	float      CirrusVelocityV;               // offset:  144
+	float4     ViewOrigin;                    // offset:   80
+	float      SunAzimuth;                    // offset:   96
+	float      SunAltitude;                   // offset:  100
+	float      PlanetRadius;                  // offset:  104
+	float      AtmosphereRadius;              // offset:  108
+	float      RayleighHeight;                // offset:  112
+	float      MieHeight;                     // offset:  116
+	float      MieExcentricity;               // offset:  120
+	float      SkySphereSize;                 // offset:  124
+	float      ViewHeight;                    // offset:  128
+	float      SkyExposure;                   // offset:  132
+	float      AmbientLevel;                  // offset:  136
+	float      CirrusHeight;                  // offset:  140
+	float      CirrusCoverage;                // offset:  144
+	float      CirrusDensity;                 // offset:  148
+	float      CirrusScale;                   // offset:  152
+	float      CirrusScrollU;                 // offset:  156
+	float      CirrusScrollV;                 // offset:  160
 };
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
@@ -116,7 +117,8 @@ cbuffer __buffer2 : register(b2) {
 };
 Texture2D<float4>              LutScattering                  : register(t0);
 Texture2D<float4>              LutTransmittance               : register(t1);
-TextureCube<float4>            SkyCube                        : register(t2);
+Texture2D<float4>              LutCirrus                      : register(t2);
+TextureCube<float4>            SkyCube                        : register(t3);
 Texture2D<float4>              CirrusClouds                   : register(t5);
 SamplerState                   LutSampler                     : register(s0);
 SamplerState                   LinearWrap                     : register(s1);

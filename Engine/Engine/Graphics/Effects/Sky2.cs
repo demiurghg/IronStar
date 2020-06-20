@@ -130,8 +130,8 @@ namespace Fusion.Engine.Graphics {
 		
 		[Config]	
 		[AECategory("Cirrus Clouds")]
-		[AEValueRange(0, 10, 1, 0.1f)]
-		[AEDisplayName("Cirrus Height (m)")]
+		[AEValueRange(0, 1, 0.1f, 0.01f)]
+		[AEDisplayName("Cirrus Density")]
 		public float CirrusDensity { get; set; } = 1;
 		
 		[Config]	
@@ -141,19 +141,21 @@ namespace Fusion.Engine.Graphics {
 		public float CirrusSize { get; set; } = 24;
 		
 		[Config]	
-		[AECategory("Cirrus Clouds")]
-		[AEDisplayName("Cirrus Velocity (km/h)")]
-		[AEValueRange(160, 240, 10f, 1f)]
-		public float CirrusVelocity { get; set; } = 240;
+		[AECategory("Wind")]
+		[AEDisplayName("Wind Speed (km/h)")]
+		[AEValueRange(0, 500, 10f, 1f)]
+		public float WindVelocity { get; set; } = 240;
 		
 		[Config]	
-		[AECategory("Cirrus Clouds")]
-		[AEDisplayName("Cirrus Course")]
+		[AECategory("Wind")]
+		[AEDisplayName("Wind Direction")]
 		[AEValueRange(-180, 180, 5f, 1f)]
-		public float CirrusCourse { get; set; } = 0;
+		public float WindDirection { get; set; } = 0;
 		
 		[AECategory("Debug")]
 		public bool ShowLut { get; set; } = false;
+
+		Vector2 currentCloudOffset = Vector2.Zero;
 
 		[AECommand]
 		public void Earth()
@@ -172,6 +174,14 @@ namespace Fusion.Engine.Graphics {
 			MieScale			= 0;
 			RayleighScale		= 0;
 			SkyExposure			= 0;
+
+			SunAngularSize		=	0.8f;
+
+			CirrusHeight		=	10000;
+			CirrusCoverage		=	0.5f;
+			CirrusDensity		=	0.5f;
+			WindVelocity		=	240;
+			CirrusSize			=	50;
 		}
 
 
@@ -181,7 +191,8 @@ namespace Fusion.Engine.Graphics {
 
 		static FXTexture2D<Vector4>						regLutScattering	=	new TRegister( 0, "LutScattering"	);
 		static FXTexture2D<Vector4>						regLutTransmittance	=	new TRegister( 1, "LutTransmittance");
-		static FXTextureCube<Vector4>					regSkyCube			=	new TRegister( 2, "SkyCube"			);
+		static FXTexture2D<Vector4>						regLutCirrus		=	new TRegister( 2, "LutCirrus"		);
+		static FXTextureCube<Vector4>					regSkyCube			=	new TRegister( 3, "SkyCube"			);
 
 		static FXTexture2D<Vector4>						regCirrusClouds		=	new TRegister( 5, "CirrusClouds"	);
 
@@ -207,6 +218,7 @@ namespace Fusion.Engine.Graphics {
 			public Color4	SunBrightness; // 
 
 			public Vector4	SunDirection;
+			public Vector4	ViewOrigin;
 
 			public float	SunAzimuth;
 			public float	SunAltitude;
@@ -227,8 +239,8 @@ namespace Fusion.Engine.Graphics {
 			public float	CirrusCoverage;
 			public float	CirrusDensity;
 			public float	CirrusScale;
-			public float	CirrusVelocityU;
-			public float	CirrusVelocityV;
+			public float	CirrusScrollU;
+			public float	CirrusScrollV;
 		}
 
 
@@ -247,6 +259,7 @@ namespace Fusion.Engine.Graphics {
 
 		RenderTarget2D	lutSkyEmission;
 		RenderTarget2D	lutSkyExtinction;
+		RenderTarget2D	lutCirrus;
 
 		public Vector3	SkyAmbientLevel { get; protected set; }
 
@@ -444,6 +457,7 @@ namespace Fusion.Engine.Graphics {
 
 			lutSkyEmission		=	new RenderTarget2D( device, ColorFormat.Rgba16F, (int)LUT_WIDTH, (int)LUT_HEIGHT, false, true );
 			lutSkyExtinction	=	new RenderTarget2D( device, ColorFormat.Rgba16F, (int)LUT_WIDTH, (int)LUT_HEIGHT, false, true );
+			lutCirrus			=	new RenderTarget2D( device, ColorFormat.Rgba16F, (int)LUT_WIDTH, (int)LUT_HEIGHT, false, true );
 
 			var skySphere	=	SkySphere.GetVertices(5).Select( v => new SkyVertex{ Vertex = v } ).ToArray();
 			skyVB			=	new VertexBuffer( Game.GraphicsDevice, typeof(SkyVertex), skySphere.Length );
@@ -533,13 +547,14 @@ namespace Fusion.Engine.Graphics {
 			skyData.SunAzimuth			=	MathUtil.DegreesToRadians( SunAzimuth );
 			skyData.SkyExposure			=	MathUtil.Exp2( SkyExposure );
 			skyData.AmbientLevel		=	AmbientLevel;
+			skyData.ViewOrigin			=	new Vector4( Vector3.Up, 0 ) * (skyData.PlanetRadius + skyData.ViewHeight + 2); // 2 meters to prevent self occlusion
 
 			skyData.CirrusCoverage		=	CirrusCoverage;
 			skyData.CirrusHeight		=	CirrusHeight;
-			skyData.CirrusScale			=	1.0f / CirrusSize;
+			skyData.CirrusScale			=	1.0f / CirrusSize / 1000.0f;
 			skyData.CirrusDensity		=	CirrusDensity;
-			skyData.CirrusVelocityU		=	0;
-			skyData.CirrusVelocityV		=	0;
+			skyData.CirrusScrollU		=	currentCloudOffset.X * skyData.CirrusScale;
+			skyData.CirrusScrollV		=	currentCloudOffset.Y * skyData.CirrusScale;
 
 			cbSky.SetData( skyData );
 
@@ -576,9 +591,9 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="stereoEye"></param>
 		/// <param name="frame"></param>
 		/// <param name="settings"></param>
-		internal void Render( Camera camera, StereoEye stereoEye, HdrFrame frame )
+		internal void Render( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame frame )
 		{
-			Render( camera, stereoEye, frame.HdrTarget.Surface );
+			Render( gameTime, camera, stereoEye, frame.HdrTarget.Surface );
 
 			if (ShowLut)
 			{
@@ -587,20 +602,34 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+
+		void UpdateCloudPosition( GameTime gameTime )
+		{
+			float	v	=	WindVelocity / 3.6f; // to m/s
+			float dU	=	(float)Math.Cos( MathUtil.DegreesToRadians( WindDirection ) ) * gameTime.ElapsedSec * v;
+			float dV	=	(float)Math.Sin( MathUtil.DegreesToRadians( WindDirection ) ) * gameTime.ElapsedSec * v;
+
+			currentCloudOffset.X	+=	dU;
+			currentCloudOffset.Y	+=	dV;
+		}
+
+
 		/// <summary>
 		/// Renders sky with specified technique
 		/// </summary>
 		/// <param name="rendCtxt"></param>
 		/// <param name="techName"></param>
-		internal void Render( Camera camera, StereoEye stereoEye, RenderTargetSurface color, bool noSun = false )
+		internal void Render( GameTime gameTime, Camera camera, StereoEye stereoEye, RenderTargetSurface color, bool noSun = false )
 		{
+			UpdateCloudPosition( gameTime );
+
 			using ( new PixEvent("Sky Rendering") ) 
 			{
 				using ( new PixEvent( "Lut" ) )
 				{
 					device.ResetStates();
 
-					device.SetTargets( null, lutSkyEmission.Surface, lutSkyExtinction.Surface );
+					device.SetTargets( null, lutSkyEmission.Surface, lutSkyExtinction.Surface, lutCirrus.Surface );
 
 					device.GfxResources[ regSkyCube ] = skyCubeDiffuse;
 
@@ -617,7 +646,9 @@ namespace Fusion.Engine.Graphics {
 					device.SetTargets( null, color );
 					device.GfxResources[ regLutScattering		] =	lutSkyEmission;
 					device.GfxResources[ regLutTransmittance	] =	lutSkyExtinction;
+					device.GfxResources[ regLutCirrus			] =	lutCirrus;
 					device.GfxResources[ regCirrusClouds		] = texCirrusClouds.Srv;
+					device.GfxResources[ regSkyCube				] = skyCubeDiffuse;
 
 					Setup( Flags.SKY, camera, color.Bounds );
 
@@ -638,6 +669,9 @@ namespace Fusion.Engine.Graphics {
 
 						device.GfxResources[ regLutScattering		] =	lutSkyEmission;
 						device.GfxResources[ regLutTransmittance	] =	lutSkyExtinction;
+						device.GfxResources[ regLutCirrus			] =	lutCirrus;
+						device.GfxResources[ regCirrusClouds		] = texCirrusClouds.Srv;
+						device.GfxResources[ regSkyCube				] = skyCubeDiffuse;
 
 						Setup( Flags.FOG, cubeCamera, new Rectangle( 0, 0, SkyCube.Width, SkyCube.Height ) );
 

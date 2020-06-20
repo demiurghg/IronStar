@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Fusion.Core.Mathematics;
 using Color = Fusion.Core.Mathematics.Color;
+using Fusion.Engine.Noise;
 
 namespace Fusion.Engine.Imaging 
 {
@@ -102,6 +103,52 @@ namespace Fusion.Engine.Imaging
 
 			return new Color( average.Red, average.Green, average.Blue, average.Alpha );
 		}
+
+
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Noise generation :
+		-----------------------------------------------------------------------------------------*/
+
+		static float cos(float a) { return (float)Math.Cos(a); }
+		static float sin(float a) { return (float)Math.Sin(a); }
+		const float pi = MathUtil.Pi;
+
+
+		public static Image<Color> GenerateOpenSimplexNoise( int width, int height, int octaves, float scale, float persistance )
+		{
+			var image = new Image<Color>( width, height );
+			var noise = new OpenSimplexNoise();
+
+			image.ForEachPixel( (x,y,c) => 
+			{ 
+				float v = 0;
+				float f = 1;
+				float a = 1;
+
+				for (int i=0; i<octaves; i++)
+				{
+					float	s	=	x/(float)width;
+					float	t	=	y/(float)height;
+
+					float	nx	=	f * cos(s*2*pi);
+					float	ny	=	f * cos(t*2*pi);
+					float	nz	=	f * sin(s*2*pi);
+					float	nw	=	f * sin(t*2*pi);
+
+					v += a * (float)noise.Evaluate( nx, ny, nz, nw );
+					a *= persistance;
+					f *= 2;
+				}
+
+				v = v * 0.5f + 0.5f;
+
+				return new Color( v, v, v );
+			});
+
+			return image;
+		}
+
 
 		/*-----------------------------------------------------------------------------------------
 		 *	TGA Loading/Saving

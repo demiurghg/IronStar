@@ -81,6 +81,7 @@ namespace IronStar {
 			var uiTextureProcessor      =   new TextureProcessor();
 			var colorMapProcessor       =   new TextureProcessor();
 			var normalMapProcessor      =   new TextureProcessor();
+			var bc3TextureProcessor     =   new TextureProcessor(TextureCompression.BC3, true);
 			var staticModelProcessor    =   new SceneProcessor( true,  true, 0, true, "" );
 			var animationProcessor      =   new SceneProcessor( false, true, 0, true, "" );
 			var weaponModelProcessor    =   new SceneProcessor( true,  true, 0, true, @"scenes\weapon2\weapon_common.fbx" );
@@ -132,6 +133,8 @@ namespace IronStar {
 				.Process("*.tga"                , uiTextureProcessor )
 				.Process("*.png"                , uiTextureProcessor )
 				.Process("*.jpg"                , uiTextureProcessor )
+
+				.Process("sky/*.tga"            , bc3TextureProcessor )
 
 				.Process("*.bmfc"               , fontProcessor )
 				.Process("*.atlas"              , textureAtlasProcessor )

@@ -56,6 +56,16 @@ namespace Fusion.Build.Processors {
 		}
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		public TextureProcessor ( TextureCompression compression, bool mips )
+		{
+			Compression	=	compression;
+			NoMips		=	!mips;
+		}
+
+
 		public override string GenerateParametersHash()
 		{
 			return ContentUtils.CalculateMD5Hash(

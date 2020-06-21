@@ -143,7 +143,7 @@ namespace IronStar.Editor {
 			var aspect	=	vp.Width / (float)vp.Height;
 
 			rs.RenderWorld.Camera.SetView( view );
-			rs.RenderWorld.Camera.SetPerspectiveFov( fovr, 0.125f, 4096, aspect );
+			rs.RenderWorld.Camera.SetPerspectiveFov( fovr, 0.25f, 12288, aspect );
 
 			var camMatrix	=	rs.RenderWorld.Camera.CameraMatrix;
 

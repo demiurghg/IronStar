@@ -12,13 +12,24 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using Fusion.Core.Extensions;
 using Fusion.Engine.Graphics.Ubershaders;
-
+using Fusion.Core.Shell;
 
 namespace Fusion.Engine.Graphics {
 
 	[RequireShader("fog", true)]
 	[ShaderSharedStructure(typeof(SceneRenderer.LIGHT), typeof(SceneRenderer.LIGHTINDEX))]
-	internal partial class Fog : RenderComponent {
+	internal partial class Fog : RenderComponent 
+	{
+		[Config]	
+		[AECategory("Fog")]
+		[AEValueRange(0, 0.1f, 0.01f, 0.001f)]
+		public float FogDensity { get; set; } = 0;
+
+		[Config]	
+		[AECategory("Fog")]
+		[AEValueRange(0, 1000, 50, 1)]
+		public float FogHeight { get; set; } = 50;
+
 
 		[ShaderDefine]	const int FogSizeX	=	RenderSystem.FogGridWidth;
 		[ShaderDefine]	const int FogSizeY	=	RenderSystem.FogGridHeight;
@@ -34,9 +45,10 @@ namespace Fusion.Engine.Graphics {
 		const int BlockSizeZ	=	4;
 
 		static FXConstantBuffer<FOG_DATA>					regFog						=	new CRegister( 0, "Fog"						);
-		static FXConstantBuffer<GpuData.CAMERA>				regCamera					=	new CRegister( 1, "Camera"					);
-		static FXConstantBuffer<GpuData.DIRECT_LIGHT>		regDirectLight				=	new CRegister( 4, "DirectLight"				);
-		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow			=	new CRegister( 5, "CascadeShadow"			);
+		static FXConstantBuffer<Sky2.SKY_DATA>				regSky						=	new CRegister( 1, "Sky"						);
+		static FXConstantBuffer<GpuData.CAMERA>				regCamera					=	new CRegister( 2, "Camera"					);
+		static FXConstantBuffer<GpuData.DIRECT_LIGHT>		regDirectLight				=	new CRegister( 3, "DirectLight"				);
+		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow			=	new CRegister( 4, "CascadeShadow"			);
 
 		static FXSamplerState								regLinearClamp				=	new SRegister( 0, "LinearClamp"				);
 		static FXSamplerComparisonState						regShadowSampler			=	new SRegister( 1, "ShadowSampler"			);
@@ -64,13 +76,18 @@ namespace Fusion.Engine.Graphics {
 
 
 		[ShaderStructure]
-		[StructLayout(LayoutKind.Sequential, Pack=4, Size=64)]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=256)]
 		struct FOG_DATA 
 		{
 			public Vector4	WorldToVoxelScale;
 			public Vector4	WorldToVoxelOffset;
 			public float	DirectLightFactor;
 			public float	IndirectLightFactor;
+			public float	Dummy0;
+			public float	Dummy1;
+
+			public float	FogDensity;
+			public float	FogHeight;
 		}
 
 		Ubershader			shader;
@@ -151,9 +168,14 @@ namespace Fusion.Engine.Graphics {
 			fogData.IndirectLightFactor	=	rs.Radiosity.MasterIntensity;
 			fogData.DirectLightFactor	=	rs.SkipDirectLighting ? 0 : 1;
 
+			fogData.FogDensity			=	FogDensity;
+			fogData.FogHeight			=	FogHeight;
+
+
 			cbFog.SetData( fogData );
 
 			device.ComputeConstants	[ regFog				]	=	cbFog;
+			device.ComputeConstants	[ regSky				]	=	rs.Sky.SkyData;
 			device.ComputeConstants	[ regCamera				]	=	camera.CameraData;
 			device.ComputeConstants	[ regDirectLight		]	=	rs.LightManager.DirectLightData;
 			device.ComputeConstants	[ regCascadeShadow		]	=	rs.LightManager.ShadowMap.GetCascadeShadowConstantBuffer();

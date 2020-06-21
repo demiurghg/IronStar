@@ -50,7 +50,7 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine]	public const int	FogGridWidth				=	8 * LightClusterGridWidth	;
 		[ShaderDefine]	public const int	FogGridHeight				=	8 * LightClusterGridHeight	;
 		[ShaderDefine]	public const int	FogGridDepth				=	8 * LightClusterGridDepth	;
-		[ShaderDefine]	public const float	FogGridExpScale				=	0.0015f;
+		[ShaderDefine]	public const float	FogGridExpScale				=	0.0005f;
 
 		public const string LightmapPath = @"maps\lightmaps";
 

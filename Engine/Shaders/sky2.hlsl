@@ -37,6 +37,16 @@ struct SKY_STC
 	Atmospheric Scattering Model :
 -------------------------------------------------------------------------------------------------*/
 
+float3 Rayleigh( float mu )
+{
+    return 3.f / (16.f * PI) * (1 + mu * mu); 
+}
+
+float3 Mie( float mu, float g )
+{
+    return 3.f / (8.f * PI) * ((1.f - g * g) * (1.f + mu * mu)) / ((2.f + g * g) * pow(abs(1.f + g * g - 2.f * g * mu), 1.5f)); 
+}
+
 bool RaySphereIntersect(float3 origin, float3 dir, float radius, out float t0, out float t1 )
 {
 	t0 = t1 = 0;
@@ -168,10 +178,9 @@ float t(float i) { return (i+0.5f) / numIntegrationSamlpes; }
 float q(float i) { return 1.0f / numIntegrationSamlpes; }
 #endif
 
-
 float3 SampleAmbient( float3 dir )
 {
-	return	SkyCube.SampleLevel( LinearWrap, dir, 0 ).rgb;
+	return Sky.AmbientLevel.rgb;
 }
 
 SKY_STC computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin, float tmax)
@@ -219,7 +228,7 @@ SKY_STC computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin,
 		float3	luminance		=	ComputeIndcidentSunLight( pos, sunDir );
 		float3	scattering		=	luminance * (hr * phaseR * betaR + hm * phaseM * betaM);
 		
-		float3	ambientLuminance	=	ambient * Sky.AmbientLevel;
+		float3	ambientLuminance	=	SampleAmbient(dir);
 				scattering			+=	ambientLuminance * (hr * betaR + hm * betaM);
 
 		#if 0
@@ -293,10 +302,8 @@ float4 ComputeCirrusClouds(float3 rayDir, float3 sunDir )
 		
 		float	phase	=	CirrusPhaseFunction( rayDir, sunDir );
 		
-		float3	ambient	=	SampleAmbient( rayDir );
-		
 		float3	light	=	ComputeIndcidentSunLight( hitPos, sunDir ) * phase;
-				light	+=	ambient * Sky.AmbientLevel;
+				light	+=	SampleAmbient( rayDir );
 				
 		float3	extinct	=	ComputeLightExtincation( origin, hitPos );
 				light	*=	extinct;
@@ -432,6 +439,7 @@ SKY_STC PSMain( float4 vpos : SV_POSITION )
 
 #endif
 
+
 /*-------------------------------------------------------------------------------------------------
 	SKY/FOG Pixel/Vertex shaders
 -------------------------------------------------------------------------------------------------*/
@@ -513,8 +521,6 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 	float3	cloudGlow		=	skyCirrusClouds.rgb * cirrusTexture.r / 1.1f;
 
 	skyScattering.rgb 		= 	lerp( skyScattering.rgb, cloudGlow.rgb, cirrusTexture.r * cirrusTexture.r * skyCirrusClouds.a );
-	
-	//skyScattering.rgb		=	skyCirrusClouds.rgb;
 	
 	// result :
 	return skyScattering;

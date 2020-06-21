@@ -9,8 +9,6 @@
 
 
 static const float  M_PI			=	3.141592f;
-static const float3	BetaRayleigh	=	float3( 3.8e-6f, 13.5e-6f, 33.1e-6f );
-static const float3	BetaMie			=	float3( 21e-6f, 21e-6f, 21e-6f );
 
 
 
@@ -22,11 +20,11 @@ float3 Rayleigh( float mu )
 
 float3 Mie( float mu, float g )
 {
-    return 3.f / (8.f * M_PI) * ((1.f - g * g) * (1.f + mu * mu)) / ((2.f + g * g) * pow(1.f + g * g - 2.f * g * mu, 1.5f)); 
+    return 3.f / (8.f * M_PI) * ((1.f - g * g) * (1.f + mu * mu)) / ((2.f + g * g) * pow(abs(1.f + g * g - 2.f * g * mu), 1.5f)); 
 }
 
 
-float4 ComputeDirectLight2( GEOMETRY geometry, DIRECT_LIGHT directLight, CAMERA camera, CASCADE_SHADOW cascadeShadow, SHADOW_RESOURCES rc, float2 vpos, float density )
+float3 ComputeDirectLight2( GEOMETRY geometry, DIRECT_LIGHT directLight, CAMERA camera, CASCADE_SHADOW cascadeShadow, SHADOW_RESOURCES rc, float2 vpos )
 {
 	float3	viewDir		=	camera.CameraPosition.xyz - geometry.position;
 	float3 	lightDir	=	normalize(-directLight.DirectLightDirection.xyz);
@@ -35,11 +33,9 @@ float4 ComputeDirectLight2( GEOMETRY geometry, DIRECT_LIGHT directLight, CAMERA 
 	float3	shadow		=	ComputeCascadedShadows( geometry, vpos, cascadeShadow, rc ); 
 
 	float	mu			=	dot( normalize(viewDir), -lightDir );
-	float	phaseM		=	Mie( mu, 0.76f );
-	float3 	emission	=	intensity * shadow * density * phaseM * BetaMie;
-	float	extinction	=	density * BetaMie.r * 1.1f;
+	float3	phaseM		=	Mie( mu, 0.76f );
 	
-	return float4(emission, extinction);
+	return	intensity * shadow * phaseM;
 }
 
 
@@ -77,6 +73,8 @@ float4 ComputeClusteredLighting ( float3 worldPos, float density )
 	uint i;
 	float4 totalLight = 0;
 	
+	//float3	betaM		=	Sky.BetaMie.rgb;
+	
 	//----------------------------------------------------------------------------------------------
 	//	Lightmaps :
 	//----------------------------------------------------------------------------------------------
@@ -84,7 +82,8 @@ float4 ComputeClusteredLighting ( float3 worldPos, float density )
 	float3	volumeCoord	=	mad( float4(worldPos, 1), Fog.WorldToVoxelScale, Fog.WorldToVoxelOffset ).xyz;
 	float3 	lightmap	=	EvaluateLightVolume( rcLightMap, volumeCoord );
 	
-	totalLight.rgb	+=	lightmap * BetaMie * 3.14 * 4;
+	totalLight.rgb		+=	lightmap * 3.14 * 3;//Sky.AmbientLevel;
+	//totalLight.rgb		+=	Sky.AmbientLevel;
 
 	//----------------------------------------------------------------------------------------------
 	//	Compute direct light :
@@ -92,7 +91,7 @@ float4 ComputeClusteredLighting ( float3 worldPos, float density )
 	
 	if (1)
 	{
-		totalLight.rgba += ComputeDirectLight2( geometry, DirectLight, Camera, CascadeShadow, rcShadow, float2(1,1), density );
+		totalLight.rgb += ComputeDirectLight2( geometry, DirectLight, Camera, CascadeShadow, rcShadow, float2(1,1) );
 	}
 
 	//----------------------------------------------------------------------------------------------
@@ -108,6 +107,10 @@ float4 ComputeClusteredLighting ( float3 worldPos, float density )
 	}//*/
 	
 	//----------------------------------------------------------------------------------------------
+	
+	totalLight.rgb	*=	density;
+	totalLight.a	=	density;
+	
 	
 	return 	totalLight;
 }

@@ -149,7 +149,7 @@ namespace IronStar.Views {
 
 			rw.Camera		.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
 			rw.WeaponCamera	.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
-			rw.Camera		.SetPerspectiveFov( MathUtil.Rad(currentFov),  0.125f/2.0f, 6144, aspect );
+			rw.Camera		.SetPerspectiveFov( MathUtil.Rad(currentFov),  0.125f/2.0f, 12288, aspect );
 			rw.WeaponCamera	.SetPerspectiveFov( MathUtil.Rad(75),			0.125f/2.0f, 6144, aspect );
 
 			//

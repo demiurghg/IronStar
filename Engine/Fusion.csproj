@@ -521,6 +521,7 @@
     </Compile>
     <Compile Include="Engine\Graphics\Effects\HdrSettings.cs" />
     <Compile Include="Engine\Graphics\Effects\PoissonDiscGenerator.cs" />
+    <Compile Include="Engine\Graphics\Effects\Sky2.Model.cs" />
     <Compile Include="Engine\Graphics\Effects\Sky2.cs" />
     <Compile Include="Engine\Graphics\Effects\SkyModel.cs" />
     <Compile Include="Engine\Graphics\Effects\SkySphere.cs" />

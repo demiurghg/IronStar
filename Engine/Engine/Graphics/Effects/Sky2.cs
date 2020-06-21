@@ -18,14 +18,14 @@ using Fusion.Engine.Imaging;
 namespace Fusion.Engine.Graphics {
 
 	[RequireShader("sky2", true)]
-	public class Sky2 : RenderComponent 
+	public partial class Sky2 : RenderComponent 
 	{
 		[ShaderDefine] const uint BLOCK_SIZE	=	16;
 		[ShaderDefine] const uint LUT_WIDTH		=	128;
 		[ShaderDefine] const uint LUT_HEIGHT	=	128;
 
-		public Color4	BetaRayleigh		{ get { return new Color4( 3.8e-6f, 13.5e-6f, 33.1e-6f, 0 ); } }	
-		public Color4	BetaMie				{ get { return new Color4( 21e-6f ); } }
+		public static Color4	BetaRayleigh		{ get { return new Color4( 3.8e-6f, 13.5e-6f, 33.1e-6f, 0 ); } }	
+		public static Color4	BetaMie				{ get { return new Color4( 21e-6f ); } }
 
 		[Config]	
 		[AECategory("Sun")]
@@ -46,7 +46,7 @@ namespace Fusion.Engine.Graphics {
 		[Config]	
 		[AECategory("Sun")]
 		[AEValueRange(1500, 27000, 100, 1)]
-		public float SunTemperature { get; set; } = 5700;
+		public float SunTemperature { get; set; } = 5900;
 
 		[Config]	
 		[AECategory("Sun")]
@@ -152,6 +152,23 @@ namespace Fusion.Engine.Graphics {
 		[AEValueRange(-180, 180, 5f, 1f)]
 		public float WindDirection { get; set; } = 0;
 		
+		[Config]	
+		[AECategory("Fog")]
+		[AEDisplayName("Fog Height")]
+		[AEValueRange(0, 1, 0.01f, 0.001f)]
+		public float FogDensity { get; set; } = 0;
+		
+		[Config]	
+		[AECategory("Fog")]
+		[AEDisplayName("Fog Height")]
+		[AEValueRange(0, 200, 5f, 1f)]
+		public float FogHeight { get; set; } = 0;
+		
+		[AECategory("Fog")]
+		[AEDisplayName("Fog Color")]
+		[AEValueRange(0, 1, 0.01f, 0.001f)]
+		public Color FogColor { get; set; } = new Color(220,220,220,255);
+		
 		[AECategory("Debug")]
 		public bool ShowLut { get; set; } = false;
 
@@ -163,7 +180,7 @@ namespace Fusion.Engine.Graphics {
 			//SunAltitude			= 45;
 			//SunAzimuth			= 45;
 			SunIntensityEv		= 8;
-			SunTemperature		= 5700;
+			SunTemperature		= 5900;
 			PlanetRadius		= 6360;
 			AtmosphereHeight	= 80;
 			RayleighHeight		= 8000;
@@ -209,7 +226,7 @@ namespace Fusion.Engine.Graphics {
 
 		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential, Size=256)]
-		struct SKY_DATA 
+		public struct SKY_DATA 
 		{
 			public Color4	BetaRayleigh;	
 			public Color4	BetaMie;
@@ -220,8 +237,12 @@ namespace Fusion.Engine.Graphics {
 			public Vector4	SunDirection;
 			public Vector4	ViewOrigin;
 
+			public Color4	AmbientLevel;
+
 			public float	SunAzimuth;
 			public float	SunAltitude;
+			public float	Dummy0;
+			public float	Dummy1;
 
 			public float 	PlanetRadius;
 			public float	AtmosphereRadius;
@@ -233,14 +254,18 @@ namespace Fusion.Engine.Graphics {
 			public float	ViewHeight;
 			public float	SkyExposure;
 
-			public float	AmbientLevel;
-
 			public float	CirrusHeight;
 			public float	CirrusCoverage;
 			public float	CirrusDensity;
 			public float	CirrusScale;
+
 			public float	CirrusScrollU;
 			public float	CirrusScrollV;
+			public float	Dummy2;
+			public float	Dummy3;
+
+			public Color4	FogDensity;
+			public float	FogHeight;
 		}
 
 
@@ -271,6 +296,11 @@ namespace Fusion.Engine.Graphics {
 
 		DiscTexture	texCirrusClouds;
 
+		public Color4 AmbientColor { get { return ambientColor; } }
+		Color4 ambientColor = Color4.Zero;
+
+
+		public ConstantBuffer SkyData { get { return cbSky; } }
 
 
 		/// <summary>
@@ -279,161 +309,6 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="rs"></param>
 		public Sky2 ( RenderSystem rs ) : base( rs )
 		{
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public Vector3 GetSunDirection()
-		{
-			float	cosAlt	=	(float)Math.Cos( MathUtil.DegreesToRadians( SunAltitude ) );
-			float	sinAlt	=	(float)Math.Sin( MathUtil.DegreesToRadians( SunAltitude ) );
-
-			float	cosAz	=	(float)Math.Cos( MathUtil.DegreesToRadians( SunAzimuth ) );
-			float	sinAz	=	(float)Math.Sin( MathUtil.DegreesToRadians( SunAzimuth ) );
-
-			float	x		=	 sinAz * cosAlt;
-			float	y		=	 sinAlt;
-			float	z		=	-cosAz * cosAlt;
-
-			return new Vector3( x, y, z ).Normalized();
-		}
-
-
-		public Vector4 GetSunDirection4()
-		{
-			return new Vector4( GetSunDirection(), 0 );
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public Color4 GetSunIntensity( bool horizonDarken = false )
-		{
-			float	scale	=	MathUtil.Exp2( SunIntensityEv );
-			Color4	color	=	Temperature.GetColor( (int)SunTemperature );
-			color *= scale;
-
-			if (horizonDarken)
-			{
-				var origin	=	Vector3.Up * ( PlanetRadius * 1000 + ViewHeight );
-				var dir		=	GetSunDirection();
-				color		*=	ComputeAtmosphereAbsorption( origin, dir );
-			}
-
-			return 	color;
-		}
-
-
-		Color4 ComputeAtmosphereAbsorption( Vector3 origin, Vector3 direction )
-		{
-			var	distance		=	0f;
-			var	numSamples		=	64;
-			var	Hr				=	RayleighHeight;
-			var	Hm				=	MieHeight;
-
-			var	opticalDepthR 	=	0f;
-			var	opticalDepthM 	=	0f; 
-
-			var	betaR			=	BetaRayleigh * MathUtil.Exp2( RayleighScale );
-			var	betaM			=	BetaMie		 * MathUtil.Exp2( MieScale ) * MieColor;
-
-			if ( RayAtmosphereIntersection( origin, direction, out distance) )
-			{
-				for (int i=0; i<numSamples; i++)
-				{
-					var segmentLength	=	distance / numSamples;	
-					var localDistance	=	segmentLength * ( i + 0.5f );
-					var samplePosition	=	origin + direction * localDistance;
-					var height			=	samplePosition.Length() - PlanetRadius * 1000;
-					float hr			=	(float)Math.Exp(-height / Hr) * segmentLength; 
-					float hm			=	(float)Math.Exp(-height / Hm) * segmentLength; 
-					opticalDepthR		+=	hr; 
-					opticalDepthM		+=	hm; 
-				}
-
-				var totalOpticalDepth	=	new Color4();
-
-				totalOpticalDepth.Red	=	opticalDepthR * betaR.Red	 + opticalDepthM * 1.1f * betaM.Red		;
-				totalOpticalDepth.Green	=	opticalDepthR * betaR.Green	 + opticalDepthM * 1.1f * betaM.Green	;
-				totalOpticalDepth.Blue	=	opticalDepthR * betaR.Blue	 + opticalDepthM * 1.1f * betaM.Blue	;
-
-				return new Color4( 
-					(float)Math.Exp( -totalOpticalDepth.Red ),
-					(float)Math.Exp( -totalOpticalDepth.Green ),
-					(float)Math.Exp( -totalOpticalDepth.Blue ),
-					1
-				);
-			}
-			else
-			{
-				return new Color4(1,1,1,1);
-			}
-		}
-
-
-		bool RayAtmosphereIntersection( Vector3 origin, Vector3 dir, out float dist )
-		{
-			float t0, t1;
-
-			if (!RaySphereIntersect( origin, dir, (PlanetRadius + AtmosphereHeight) * 1000, out t0, out t1 ) && t1<0)
-			{
-				dist = 0;
-				return false;
-			}
-			else
-			{
-				dist = t1;
-				return true;
-			}
-		}
-
-
-		bool RaySphereIntersect(Vector3 origin, Vector3 dir, float radius, out float t0, out float t1 )
-		{
-			t0 = t1 = 0;
-	
-			var	r0	=	origin;			// - r0: ray origin
-			var	rd	=	dir;			// - rd: normalized ray direction
-			var	s0	=	Vector3.Zero;	// - s0: sphere center
-			var	sr	=	radius;			// - sr: sphere radius
-
-			float 	a 		= Vector3.Dot(rd, rd);
-			Vector3	s0_r0 	= r0 - s0;
-			float 	b 		= 2.0f * Vector3.Dot(rd, s0_r0);
-			float 	c 		= Vector3.Dot(s0_r0, s0_r0) - (sr * sr);
-	
-			float	D		=	b*b - 4.0f*a*c;
-	
-			if (D<0)
-			{
-				return false;
-			}
-	
-			t0	=	(-b - (float)Math.Sqrt(D))/(2.0f*a);
-			t1	=	(-b + (float)Math.Sqrt(D))/(2.0f*a);
-			return true;
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public Color4 GetSunBrightness()
-		{
-			float	scale	=	MathUtil.Exp2( SunBrightnessEv );
-			Color4	color	=	Temperature.GetColor( (int)SunTemperature );
-			color *= scale;
-
-			color.Alpha		=	MathUtil.DegreesToRadians( SunAngularSize );
-
-			return 	color;
 		}
 
 
@@ -459,7 +334,7 @@ namespace Fusion.Engine.Graphics {
 			lutSkyExtinction	=	new RenderTarget2D( device, ColorFormat.Rgba16F, (int)LUT_WIDTH, (int)LUT_HEIGHT, false, true );
 			lutCirrus			=	new RenderTarget2D( device, ColorFormat.Rgba16F, (int)LUT_WIDTH, (int)LUT_HEIGHT, false, true );
 
-			var skySphere	=	SkySphere.GetVertices(5).Select( v => new SkyVertex{ Vertex = v } ).ToArray();
+			var skySphere	=	SkySphere.GetVertices(3).Select( v => new SkyVertex{ Vertex = v } ).ToArray();
 			skyVB			=	new VertexBuffer( Game.GraphicsDevice, typeof(SkyVertex), skySphere.Length );
 			skyVB.SetData( skySphere );
 
@@ -546,7 +421,7 @@ namespace Fusion.Engine.Graphics {
 			skyData.SunAltitude			=	MathUtil.DegreesToRadians( SunAltitude );
 			skyData.SunAzimuth			=	MathUtil.DegreesToRadians( SunAzimuth );
 			skyData.SkyExposure			=	MathUtil.Exp2( SkyExposure );
-			skyData.AmbientLevel		=	AmbientLevel;
+			skyData.AmbientLevel		=	AmbientColor;
 			skyData.ViewOrigin			=	new Vector4( Vector3.Up, 0 ) * (skyData.PlanetRadius + skyData.ViewHeight + 2); // 2 meters to prevent self occlusion
 
 			skyData.CirrusCoverage		=	CirrusCoverage;
@@ -555,6 +430,9 @@ namespace Fusion.Engine.Graphics {
 			skyData.CirrusDensity		=	CirrusDensity;
 			skyData.CirrusScrollU		=	currentCloudOffset.X * skyData.CirrusScale;
 			skyData.CirrusScrollV		=	currentCloudOffset.Y * skyData.CirrusScale;
+
+			skyData.FogDensity			=	FogColor.ToColor4() * FogDensity;
+			skyData.FogHeight			=	FogHeight;
 
 			cbSky.SetData( skyData );
 
@@ -623,6 +501,9 @@ namespace Fusion.Engine.Graphics {
 		{
 			UpdateCloudPosition( gameTime );
 
+			ambientColor = ComputeZenithColor() * AmbientLevel;
+
+
 			using ( new PixEvent("Sky Rendering") ) 
 			{
 				using ( new PixEvent( "Lut" ) )
@@ -648,7 +529,7 @@ namespace Fusion.Engine.Graphics {
 					device.GfxResources[ regLutTransmittance	] =	lutSkyExtinction;
 					device.GfxResources[ regLutCirrus			] =	lutCirrus;
 					device.GfxResources[ regCirrusClouds		] = texCirrusClouds.Srv;
-					device.GfxResources[ regSkyCube				] = skyCubeDiffuse;
+					device.GfxResources[ regSkyCube				] = skyCube;
 
 					Setup( Flags.SKY, camera, color.Bounds );
 

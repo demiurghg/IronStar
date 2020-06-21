@@ -30,7 +30,7 @@ static const float APGridExpScale = 0.0015;
 static const int FogGridWidth = 128;
 static const int FogGridHeight = 64;
 static const int FogGridDepth = 192;
-static const float FogGridExpScale = 0.0015;
+static const float FogGridExpScale = 0.0005;
 
 // ---------------- DATA STRUCTURES ---------------- //
 

@@ -30,7 +30,7 @@ static const float APGridExpScale = 0.0015;
 static const int FogGridWidth = 128;
 static const int FogGridHeight = 64;
 static const int FogGridDepth = 192;
-static const float FogGridExpScale = 0.0015;
+static const float FogGridExpScale = 0.0005;
 
 // ---------------- DATA STRUCTURES ---------------- //
 
@@ -53,23 +53,29 @@ struct SKY_DATA {
 	float4     SunBrightness;                 // offset:   48
 	float4     SunDirection;                  // offset:   64
 	float4     ViewOrigin;                    // offset:   80
-	float      SunAzimuth;                    // offset:   96
-	float      SunAltitude;                   // offset:  100
-	float      PlanetRadius;                  // offset:  104
-	float      AtmosphereRadius;              // offset:  108
-	float      RayleighHeight;                // offset:  112
-	float      MieHeight;                     // offset:  116
-	float      MieExcentricity;               // offset:  120
-	float      SkySphereSize;                 // offset:  124
-	float      ViewHeight;                    // offset:  128
-	float      SkyExposure;                   // offset:  132
-	float      AmbientLevel;                  // offset:  136
-	float      CirrusHeight;                  // offset:  140
-	float      CirrusCoverage;                // offset:  144
-	float      CirrusDensity;                 // offset:  148
-	float      CirrusScale;                   // offset:  152
-	float      CirrusScrollU;                 // offset:  156
-	float      CirrusScrollV;                 // offset:  160
+	float4     AmbientLevel;                  // offset:   96
+	float      SunAzimuth;                    // offset:  112
+	float      SunAltitude;                   // offset:  116
+	float      Dummy0;                        // offset:  120
+	float      Dummy1;                        // offset:  124
+	float      PlanetRadius;                  // offset:  128
+	float      AtmosphereRadius;              // offset:  132
+	float      RayleighHeight;                // offset:  136
+	float      MieHeight;                     // offset:  140
+	float      MieExcentricity;               // offset:  144
+	float      SkySphereSize;                 // offset:  148
+	float      ViewHeight;                    // offset:  152
+	float      SkyExposure;                   // offset:  156
+	float      CirrusHeight;                  // offset:  160
+	float      CirrusCoverage;                // offset:  164
+	float      CirrusDensity;                 // offset:  168
+	float      CirrusScale;                   // offset:  172
+	float      CirrusScrollU;                 // offset:  176
+	float      CirrusScrollV;                 // offset:  180
+	float      Dummy2;                        // offset:  184
+	float      Dummy3;                        // offset:  188
+	float4     FogDensity;                    // offset:  192
+	float      FogHeight;                     // offset:  208
 };
 
 // Fusion.Engine.Graphics.GpuData+CAMERA

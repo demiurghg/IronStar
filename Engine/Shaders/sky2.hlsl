@@ -170,8 +170,8 @@ float3 ComputeIndcidentSunLight( float3 samplePosition, float3 sunDirection )
 
 
 #if 1
-static const uint numIntegrationSamlpes = 48;
-float t(float i) { return pow((i+0.5f) / numIntegrationSamlpes, 2); }
+static const uint numIntegrationSamlpes = 64;
+float t(float i) { return pow((i+0.5f) / numIntegrationSamlpes, 3); }
 float q(float i) { return t(i+0.5f) - t(i-0.5f); }
 #else
 float t(float i) { return (i+0.5f) / numIntegrationSamlpes; }

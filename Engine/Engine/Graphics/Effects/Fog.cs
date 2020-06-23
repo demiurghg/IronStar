@@ -168,8 +168,10 @@ namespace Fusion.Engine.Graphics {
 			fogData.IndirectLightFactor	=	rs.Radiosity.MasterIntensity;
 			fogData.DirectLightFactor	=	rs.SkipDirectLighting ? 0 : 1;
 
-			fogData.FogDensity			=	FogDensity;
-			fogData.FogHeight			=	FogHeight;
+			//fogData.FogDensity			=	FogDensity;
+			//fogData.FogHeight			=	FogHeight;
+			fogData.FogDensity			=	MathUtil.Exp2( rs.Sky.MieScale ) * Sky2.BetaMie.Red;
+			fogData.FogHeight			=	rs.Sky.MieHeight;
 
 
 			cbFog.SetData( fogData );

@@ -45,7 +45,7 @@ void CSMain(
 	float3	wsPosition		=	mul( vsPosition, Camera.ViewInverted ).xyz;
 	float3	cameraPos		=	Camera.CameraPosition.xyz;
 	
-	float	density			=	Fog.FogDensity * min(1, exp(-(wsPosition.y)/Fog.FogHeight));
+	float	density			=	Fog.FogDensity * min(1, exp(-(wsPosition.y)/Fog.FogHeight/3));
 	
 	float4	emission		=	ComputeClusteredLighting( wsPosition, density );
 	
@@ -83,11 +83,11 @@ void CSMain(
 		
 		float4 	scatteringExtinction	=	FogSource[ int3( location.xy, slice ) ];
 		
-		float3	extinction				=	scatteringExtinction.a;
+		float3	extinction				=	scatteringExtinction.a * stepLength;
 		float3	extinctionClamp			=	clamp( extinction, 0.0000001, 1 );
-		float	transmittance			=	exp( -scatteringExtinction.a );
+		float	transmittance			=	exp( -extinction );
 		
-		float3	scattering				=	scatteringExtinction.rgb;
+		float3	scattering				=	scatteringExtinction.rgb * stepLength;
 		
 		float3	integScatt				=	( scattering - scattering * transmittance ) / extinctionClamp;
 		accumScattering					+=	accumTransmittance * integScatt;

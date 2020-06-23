@@ -39,6 +39,50 @@ float3 ComputeDirectLight2( GEOMETRY geometry, DIRECT_LIGHT directLight, CAMERA 
 }
 
 
+float3 ComputePointLight2( LIGHT light, CAMERA camera, GEOMETRY geometry, SHADOW_RESOURCES rc )
+{
+	float3 lighting = float3(0,0,0);
+	
+	uint type 	= 	light.LightType & 0x0000FFFF;
+	uint shape	= 	light.LightType & 0xFFFF0000;	
+	
+	float3	viewDir		=	camera.CameraPosition.xyz - geometry.position;
+	float3 	position0	=	light.Position0LightRange.xyz;
+	float3 	position1	=	light.Position1TubeRadius.xyz;
+	float  	lightRange	=	light.Position0LightRange.w;
+	float  	tubeRadius	=	light.Position1TubeRadius.w;
+	float3 	intensity	=	light.IntensityFar.rgb;
+	
+	float3 	lightDir0	= 	position0 - geometry.position;
+	float3 	lightDir1	= 	position1 - geometry.position;
+		
+	float4 	diffuseMPR	=	ComputeDiffuseTubeMRP( lightDir0, lightDir1, viewDir, tubeRadius );
+	float3 	lightDir	=	lightDir0;// diffuseMPR.xyz;
+	
+	float	falloff		=	LightFalloff( length(lightDir), lightRange );
+	
+	float3 	shadow		=	float3(1,1,1);
+
+	float	mu			=	dot( normalize(viewDir), -normalize(lightDir) );
+	float3	phaseM		=	Mie( mu, 0.76f );
+
+	[branch]
+	if (type==LightTypeOmni) 
+	{
+		//	TODO : IES profiles
+	} 
+	else if (type==LightTypeSpotShadow) 
+	{
+		shadow	=	ComputeSpotShadow( geometry, light, rc );
+	}
+
+	lighting	=	shadow * falloff * phaseM * intensity;
+	
+	return lighting;
+}
+
+
+
 //
 //	ComputeClusteredLighting
 //	
@@ -82,8 +126,8 @@ float4 ComputeClusteredLighting ( float3 worldPos, float density )
 	float3	volumeCoord	=	mad( float4(worldPos, 1), Fog.WorldToVoxelScale, Fog.WorldToVoxelOffset ).xyz;
 	float3 	lightmap	=	EvaluateLightVolume( rcLightMap, volumeCoord );
 	
-	totalLight.rgb		+=	lightmap * 3.14 * 3;//Sky.AmbientLevel;
-	//totalLight.rgb		+=	Sky.AmbientLevel;
+	//totalLight.rgb		+=	lightmap * 3.14 * 5;//Sky.AmbientLevel;
+	totalLight.rgb		+=	Sky.AmbientLevel;
 
 	//----------------------------------------------------------------------------------------------
 	//	Compute direct light :
@@ -98,12 +142,11 @@ float4 ComputeClusteredLighting ( float3 worldPos, float density )
 	//	Compute point lights :
 	//----------------------------------------------------------------------------------------------
 
-	/*[loop]
+	[loop]
 	for (i=0; i<cluster.NumLights; i++) 
 	{
-		LIGHT 		light		=	GetLight( rcCluster, cluster, i );
-		LIGHTING	lighting	=	ComputePointLight( light, Camera, geometry, surface, rcShadow );
-		AccumulateLighting( totalLight, lighting, Fog.DirectLightFactor );
+		LIGHT 		light	=	GetLight( rcCluster, cluster, i );
+		totalLight.rgb		+=	ComputePointLight2( light, Camera, geometry, rcShadow );
 	}//*/
 	
 	//----------------------------------------------------------------------------------------------

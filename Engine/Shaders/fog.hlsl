@@ -12,12 +12,16 @@ $ubershader 	COMPUTE|INTEGRATE
 
 #ifdef COMPUTE
 
-static const float3 aaPattern[4] = 
+static const float3 aaPattern[8] = 
 {
-	float3( 0.75f,  0.25f, 0.0f ),
-	float3(-0.75f, -0.25f, 0.0f ),
-	float3( 0.25f, -0.75f, 0.0f ),
-	float3(-0.25f,  0.75f, 0.0f ),
+	float3( 0.75f,  0.25f, 0.000f ),
+	float3(-0.75f, -0.25f, 0.125f ),
+	float3( 0.25f, -0.75f, 0.250f ),
+	float3(-0.25f,  0.75f, 0.375f ),
+	float3( 0.75f,  0.25f, 0.500f ),
+	float3(-0.75f, -0.25f, 0.625f ),
+	float3( 0.25f, -0.75f, 0.750f ),
+	float3(-0.25f,  0.75f, 0.875f ),
 };
 
 [numthreads(BlockSizeX,BlockSizeY,BlockSizeZ)] 
@@ -27,13 +31,16 @@ void CSMain(
 	uint  groupIndex: SV_GroupIndex, 
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
+	float4 emission = 0;
+
 	uint3 location		=	dispatchThreadId.xyz;
 	int3 blockSize		=	int3(BlockSizeX,BlockSizeY,BlockSizeZ);
 	
 	float value = (location.x + location.y + location.z)&1;
 	
+	float3	offset			=	0.5f;
 	uint 	patternIdx		=	location.z % 4;
-	float3	normLocation	=	(location.xyz + float3(0.5f,0.5f,0.5f) + aaPattern[patternIdx]*0.5f) / float3(FogSizeX, FogSizeY, FogSizeZ);
+	float3	normLocation	=	(location.xyz + offset) / float3(FogSizeX, FogSizeY, FogSizeZ);
 	
 	float	tangentX		=	lerp( -Camera.CameraTangentX,  Camera.CameraTangentX, normLocation.x );
 	float	tangentY		=	lerp(  Camera.CameraTangentY, -Camera.CameraTangentY, normLocation.y );
@@ -47,7 +54,7 @@ void CSMain(
 	
 	float	density			=	Fog.FogDensity * min(1, exp(-(wsPosition.y)/Fog.FogHeight/3));
 	
-	float4	emission		=	ComputeClusteredLighting( wsPosition, density );
+	emission				+=	ComputeClusteredLighting( wsPosition, density );
 	
 	FogTarget[ location.xyz ] = emission;
 	

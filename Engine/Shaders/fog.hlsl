@@ -12,16 +12,25 @@ $ubershader 	COMPUTE|INTEGRATE
 
 #ifdef COMPUTE
 
-static const float3 aaPattern[8] = 
+static const float3 aaPattern[16] = 
 {
-	float3( 0.75f,  0.25f, 0.000f ),
-	float3(-0.75f, -0.25f, 0.125f ),
-	float3( 0.25f, -0.75f, 0.250f ),
-	float3(-0.25f,  0.75f, 0.375f ),
-	float3( 0.75f,  0.25f, 0.500f ),
-	float3(-0.75f, -0.25f, 0.625f ),
-	float3( 0.25f, -0.75f, 0.750f ),
-	float3(-0.25f,  0.75f, 0.875f ),
+	float3( 0.75f,  0.25f, -3.5f / 8.0f ),
+	float3(-0.75f, -0.25f,  2.5f / 8.0f ),
+	float3( 0.25f, -0.75f, -1.5f / 8.0f ),
+	float3(-0.25f,  0.75f,  0.5f / 8.0f ),
+	float3( 0.75f,  0.25f, -0.5f / 8.0f ),
+	float3(-0.75f, -0.25f,  1.5f / 8.0f ),
+	float3( 0.25f, -0.75f, -2.5f / 8.0f ),
+	float3(-0.25f,  0.75f,  3.5f / 8.0f ),
+	
+	float3( 0.75f,  0.25f, -3.5f / 8.0f ) * float3(0.7,0.7,-1),
+	float3(-0.75f, -0.25f,  2.5f / 8.0f ) * float3(0.7,0.7,-1),
+	float3( 0.25f, -0.75f, -1.5f / 8.0f ) * float3(0.7,0.7,-1),
+	float3(-0.25f,  0.75f,  0.5f / 8.0f ) * float3(0.7,0.7,-1),
+	float3( 0.75f,  0.25f, -0.5f / 8.0f ) * float3(0.7,0.7,-1),
+	float3(-0.75f, -0.25f,  1.5f / 8.0f ) * float3(0.7,0.7,-1),
+	float3( 0.25f, -0.75f, -2.5f / 8.0f ) * float3(0.7,0.7,-1),
+	float3(-0.25f,  0.75f,  3.5f / 8.0f ) * float3(0.7,0.7,-1),
 };
 
 [numthreads(BlockSizeX,BlockSizeY,BlockSizeZ)] 
@@ -33,13 +42,13 @@ void CSMain(
 {
 	float4 emission = 0;
 
-	uint3 location		=	dispatchThreadId.xyz;
-	int3 blockSize		=	int3(BlockSizeX,BlockSizeY,BlockSizeZ);
+	uint3 	location		=	dispatchThreadId.xyz;
+	int3 	blockSize		=	int3(BlockSizeX,BlockSizeY,BlockSizeZ);
 	
-	float value = (location.x + location.y + location.z)&1;
+	float3	historyLocation	=	(location.xyz + 0.5f) / float3(FogSizeX, FogSizeY, FogSizeZ);
+	float4	fogHistory		=	FogHistory.SampleLevel( LinearClamp, historyLocation, 0 );
 	
-	float3	offset			=	0.5f;
-	uint 	patternIdx		=	location.z % 4;
+	float3	offset			=	aaPattern[ Fog.FrameCount % 8 ] * float3(0.5f,0.5f,1.0f);// + float3(0.5f,0.5f,0.5f);
 	float3	normLocation	=	(location.xyz + offset) / float3(FogSizeX, FogSizeY, FogSizeZ);
 	
 	float	tangentX		=	lerp( -Camera.CameraTangentX,  Camera.CameraTangentX, normLocation.x );
@@ -56,9 +65,8 @@ void CSMain(
 	
 	emission				+=	ComputeClusteredLighting( wsPosition, density );
 	
-	FogTarget[ location.xyz ] = emission;
-	
-	//FogTarget[ location.xyz ] = float4( frac(2*normLocation.xy), 0, 1 );
+	//	to prevent Nan-history :
+	FogTarget[ location.xyz ] = Fog.HistoryFactor==0 ? emission : lerp( emission, fogHistory, Fog.HistoryFactor );
 }
 
 #endif
@@ -91,7 +99,7 @@ void CSMain(
 		float4 	scatteringExtinction	=	FogSource[ int3( location.xy, slice ) ];
 		
 		float3	extinction				=	scatteringExtinction.a * stepLength;
-		float3	extinctionClamp			=	clamp( extinction, 0.0000001, 1 );
+		float3	extinctionClamp			=	clamp( extinction, 0.000001, 1 );
 		float	transmittance			=	exp( -extinction );
 		
 		float3	scattering				=	scatteringExtinction.rgb * stepLength;

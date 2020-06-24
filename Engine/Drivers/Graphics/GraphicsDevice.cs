@@ -785,6 +785,18 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		/// <param name="buffer"></param>
 		/// <param name="values"></param>
+		public void Clear ( UnorderedAccess uav, Int4 values )
+		{
+			deviceContext.ClearUnorderedAccessView( uav.Uav, SharpDXHelper.Convert( values ) );
+		}
+
+
+
+		/// <summary>
+		/// Fills structured buffer with given values
+		/// </summary>
+		/// <param name="buffer"></param>
+		/// <param name="values"></param>
 		public void Clear ( ByteAddressBuffer buffer, Int4 values )
 		{
 			if (true) { // lock (deviceContext) {

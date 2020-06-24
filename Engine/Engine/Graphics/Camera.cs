@@ -44,6 +44,13 @@ namespace Fusion.Engine.Graphics
 		Plane[]				frustumPlanes;
 
 		public readonly string	Name;
+		public uint frameCounter = 0;
+
+		public bool DiscardHistory 
+		{
+			// #HACK
+			get { return frameCounter<2; } 
+		}
 
 
 		/// <summary>
@@ -102,6 +109,7 @@ namespace Fusion.Engine.Graphics
 				return;
 			}
 
+			frameCounter++;
 			//	decompose perspective matrix :
 
 			float m43	=	inputProjMatrix.M43;
@@ -129,11 +137,21 @@ namespace Fusion.Engine.Graphics
 			cameraData.CameraPosition		=	new Vector4( cameraMatrix.TranslationVector	, 1 );
 
 			cameraData.FarDistance			=	isPerspective ? zf : 1;
-			cameraData.LinearizeDepthBias	=	1 / zn;
-			cameraData.LinearizeDepthScale	=	1 / zf - 1 / zn;
 
-			cameraData.CameraTangentX		=	w / zn / 2.0f;
-			cameraData.CameraTangentY		=	h / zn / 2.0f;
+			if (isPerspective)
+			{
+				cameraData.LinearizeDepthBias	=	1 / zn;
+				cameraData.LinearizeDepthScale	=	1 / zf - 1 / zn;
+				cameraData.CameraTangentX		=	w / zn / 2.0f;
+				cameraData.CameraTangentY		=	h / zn / 2.0f;
+			}
+			else
+			{
+				cameraData.LinearizeDepthBias	=	0;
+				cameraData.LinearizeDepthScale	=	1;
+				cameraData.CameraTangentX		=	0;
+				cameraData.CameraTangentY		=	0;
+			}
 
 
 			for (int i=0; i<6; i++)

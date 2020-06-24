@@ -52,12 +52,13 @@ static const int BlockSizeZ = 4;
 struct FOG_DATA {
 	float4     WorldToVoxelScale;             // offset:    0
 	float4     WorldToVoxelOffset;            // offset:   16
-	float      DirectLightFactor;             // offset:   32
-	float      IndirectLightFactor;           // offset:   36
-	float      Dummy0;                        // offset:   40
-	float      Dummy1;                        // offset:   44
-	float      FogDensity;                    // offset:   48
-	float      FogHeight;                     // offset:   52
+	float4     SampleOffset;                  // offset:   32
+	float      DirectLightFactor;             // offset:   48
+	float      IndirectLightFactor;           // offset:   52
+	float      HistoryFactor;                 // offset:   56
+	uint       FrameCount;                    // offset:   60
+	float      FogDensity;                    // offset:   64
+	float      FogHeight;                     // offset:   68
 };
 
 // Fusion.Engine.Graphics.Sky2+SKY_DATA
@@ -174,6 +175,7 @@ cbuffer __buffer4 : register(b4) {
 SamplerState                   LinearClamp                    : register(s0);
 SamplerComparisonState         ShadowSampler                  : register(s1);
 Texture3D<float4>              FogSource                      : register(t0);
+Texture3D<float4>              FogHistory                     : register(t1);
 Texture3D<uint2>               ClusterArray                   : register(t2);
 Buffer<uint>                   ClusterIndexBuffer             : register(t3);
 StructuredBuffer<LIGHT>        ClusterLightBuffer             : register(t4);

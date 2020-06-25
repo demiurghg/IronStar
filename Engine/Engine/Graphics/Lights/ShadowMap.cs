@@ -329,6 +329,12 @@ namespace Fusion.Engine.Graphics {
 			data.CascadeScaleOffset2		=	this.GetCascade( 2 ).ShadowScaleOffset;
 			data.CascadeScaleOffset3		=	this.GetCascade( 3 ).ShadowScaleOffset;
 
+			if (float.IsNaN(data.CascadeViewProjection0.M11))
+			{
+				//	bad data, reset 
+				data = new CASCADE_SHADOW();
+			}
+
 			constCascadeShadow.SetData(ref data);			
 
 			return constCascadeShadow;

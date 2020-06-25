@@ -45,24 +45,25 @@ static const uint PatchCacheSize = 768;
 // ---------------- DATA STRUCTURES ---------------- //
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
-// Marshal.SizeOf = 352
+// Marshal.SizeOf = 416
 struct CAMERA {
 	float4x4   Projection;                    // offset:    0
 	float4x4   View;                          // offset:   64
 	float4x4   ViewProjection;                // offset:  128
 	float4x4   ViewInverted;                  // offset:  192
-	float4     CameraForward;                 // offset:  256
-	float4     CameraRight;                   // offset:  272
-	float4     CameraUp;                      // offset:  288
-	float4     CameraPosition;                // offset:  304
-	float      LinearizeDepthScale;           // offset:  320
-	float      LinearizeDepthBias;            // offset:  324
-	float      FarDistance;                   // offset:  328
-	float      Pad0;                          // offset:  332
-	float      CameraTangentX;                // offset:  336
-	float      CameraTangentY;                // offset:  340
-	float      Pad1;                          // offset:  344
-	float      Pad2;                          // offset:  348
+	float4x4   ReprojectionMatrix;            // offset:  256
+	float4     CameraForward;                 // offset:  320
+	float4     CameraRight;                   // offset:  336
+	float4     CameraUp;                      // offset:  352
+	float4     CameraPosition;                // offset:  368
+	float      LinearizeDepthScale;           // offset:  384
+	float      LinearizeDepthBias;            // offset:  388
+	float      FarDistance;                   // offset:  392
+	float      Pad0;                          // offset:  396
+	float      CameraTangentX;                // offset:  400
+	float      CameraTangentY;                // offset:  404
+	float      Pad1;                          // offset:  408
+	float      Pad2;                          // offset:  412
 };
 
 // Fusion.Engine.Graphics.GI.Radiosity+RADIOSITY

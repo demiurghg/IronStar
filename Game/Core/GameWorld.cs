@@ -107,6 +107,7 @@ namespace IronStar.Core {
 
 			//	setup rendering stuff :
 			var rw					=	Game.RenderSystem.RenderWorld;
+			rw.ClearWorld();
 
 			rw.VirtualTexture		=	Content.Load<VirtualTexture>("*megatexture");
 			fxPlayback				=	new SFX.FXPlayback( this );

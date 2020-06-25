@@ -43,15 +43,10 @@ namespace Fusion.Engine.Graphics
 		BoundingFrustum		boundingFrustum;
 		Plane[]				frustumPlanes;
 
+		Matrix				historyViewProjection;
+
 		public readonly string	Name;
 		public uint frameCounter = 0;
-
-		public bool DiscardHistory 
-		{
-			// #HACK
-			get { return frameCounter<2; } 
-		}
-
 
 		/// <summary>
 		/// 
@@ -136,6 +131,8 @@ namespace Fusion.Engine.Graphics
 			cameraData.CameraUp				=	new Vector4( cameraMatrix.Up		, 0 );
 			cameraData.CameraPosition		=	new Vector4( cameraMatrix.TranslationVector	, 1 );
 
+			cameraData.ReprojectionMatrix	=	ComputeReprojectionMatrix();
+
 			cameraData.FarDistance			=	isPerspective ? zf : 1;
 
 			if (isPerspective)
@@ -167,6 +164,15 @@ namespace Fusion.Engine.Graphics
 		}
 
 
+		Matrix ComputeReprojectionMatrix()
+		{
+			return historyViewProjection;
+			//var currentVP = ViewMatrix * ProjectionMatrix;
+			//var historyVP = historyViewProjection;
+			//return Matrix.Invert( currentVP ) * historyVP;
+		}
+
+
 		public ConstantBuffer CameraData
 		{
 			get 
@@ -184,6 +190,14 @@ namespace Fusion.Engine.Graphics
 				return cbPlanes; 
 			}
 		}
+
+
+		public void UpdateHistory( GameTime gameTime )
+		{
+			historyViewProjection = ViewMatrix * ProjectionMatrix;
+			dirty = true;
+		}
+
 
 		/*-----------------------------------------------------------------------------------------------
 		 * 

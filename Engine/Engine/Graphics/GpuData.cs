@@ -19,6 +19,8 @@ namespace Fusion.Engine.Graphics
 			public Matrix	ViewProjection;   
 			public Matrix	ViewInverted;
 
+			public Matrix	ReprojectionMatrix;
+
 			public Vector4	CameraForward;
 			public Vector4	CameraRight;
 			public Vector4	CameraUp;

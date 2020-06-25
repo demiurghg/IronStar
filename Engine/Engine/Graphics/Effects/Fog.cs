@@ -195,7 +195,7 @@ namespace Fusion.Engine.Graphics {
 			fogData.FogHeight			=	rs.Sky.MieHeight;
 
 			fogData.SampleOffset		=	random.NextVector4( Vector4.Zero, Vector4.One );
-			fogData.HistoryFactor		=	camera.DiscardHistory ? 0 : HistoryFactor;
+			fogData.HistoryFactor		=	HistoryFactor;
 			fogData.FrameCount			=	frameCounter;
 
 

@@ -465,6 +465,9 @@ namespace Fusion.Engine.Graphics {
 
 			//	fill alpha with one value :
 			rs.Filter.FillAlphaOne( targetSurface );
+
+			//	update camera history matricies :
+			Camera.UpdateHistory(gameTime);
 		}
 
 

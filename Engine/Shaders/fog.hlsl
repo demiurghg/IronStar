@@ -4,6 +4,7 @@ $ubershader 	COMPUTE|INTEGRATE
 
 #include "auto/fog.fxi"
 #include "fog_lighting.hlsl"
+#include "ls_fog.fxi"
 
 
 /*-----------------------------------------------------------------------------
@@ -33,6 +34,53 @@ static const float3 aaPattern[16] =
 	float3(-0.25f,  0.75f,  3.5f / 8.0f ) * float3(0.7,0.7,-1),
 };
 
+
+float3 GetWorldPosition( float3 gridLocation )
+{
+	float3	normLocation	=	gridLocation.xyz / float3(FogSizeX, FogSizeY, FogSizeZ);
+	
+	float	tangentX		=	lerp( -Camera.CameraTangentX,  Camera.CameraTangentX, normLocation.x );
+	float	tangentY		=	lerp(  Camera.CameraTangentY, -Camera.CameraTangentY, normLocation.y );
+	
+	float	vsDistance		=	-log(1-normLocation.z)/FogGridExpScale;
+
+	float4	vsPosition		=	float4( vsDistance * tangentX, vsDistance * tangentY, -vsDistance, 1 );
+	float3	wsPosition		=	mul( vsPosition, Camera.ViewInverted ).xyz;
+	
+	return wsPosition;
+}
+
+
+float ClipHistory( float4 ppPosition )
+{
+	float3	deviceCoords	=	ppPosition.xyz / ppPosition.w;
+	
+	float	maxX			=	1.0f - 0.5f / FogSizeX;
+	float	maxY			=	1.0f - 0.5f / FogSizeY;
+	float	minZ			=	1.0f / FogSizeZ;
+	
+	if (abs(deviceCoords.x)>maxX || abs(deviceCoords.y)>maxY || deviceCoords.z>1 || deviceCoords.z<=minZ)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
+
+float4 GetFogHistory( float3 wsPosition, out float factor )
+{
+	float4 	ppPosition	=	mul( float4(wsPosition,1), Camera.ReprojectionMatrix );
+	float4	fogData		=	SampleVolumetricFog( ppPosition, LinearClamp, FogHistory );
+	
+	factor = ClipHistory( ppPosition ) * Fog.HistoryFactor;
+	
+	return fogData;
+}
+
+
 [numthreads(BlockSizeX,BlockSizeY,BlockSizeZ)] 
 void CSMain( 
 	uint3 groupId : SV_GroupID, 
@@ -43,22 +91,14 @@ void CSMain(
 	float4 emission = 0;
 
 	uint3 	location		=	dispatchThreadId.xyz;
-	int3 	blockSize		=	int3(BlockSizeX,BlockSizeY,BlockSizeZ);
-	
-	float3	historyLocation	=	(location.xyz + 0.5f) / float3(FogSizeX, FogSizeY, FogSizeZ);
-	float4	fogHistory		=	FogHistory.SampleLevel( LinearClamp, historyLocation, 0 );
-	
-	float3	offset			=	aaPattern[ Fog.FrameCount % 8 ] * float3(0.5f,0.5f,1.0f);// + float3(0.5f,0.5f,0.5f);
-	float3	normLocation	=	(location.xyz + offset) / float3(FogSizeX, FogSizeY, FogSizeZ);
-	
-	float	tangentX		=	lerp( -Camera.CameraTangentX,  Camera.CameraTangentX, normLocation.x );
-	float	tangentY		=	lerp(  Camera.CameraTangentY, -Camera.CameraTangentY, normLocation.y );
-	
-	float	vsDistance		=	-log(1-normLocation.z)/FogGridExpScale;
 
-	float4	vsPosition		=	float4( vsDistance * tangentX, vsDistance * tangentY, -vsDistance, 1 );
+	float	historyFactor	=	1;
+	float3	wsPositionPrev	=	GetWorldPosition( location.xyz + float3(0.5,0.5,0.5) );
+	float4	fogHistory		=	GetFogHistory( wsPositionPrev, historyFactor );
 	
-	float3	wsPosition		=	mul( vsPosition, Camera.ViewInverted ).xyz;
+	float3	offset			=	aaPattern[ Fog.FrameCount % 8 ] * float3(0.5f,0.5f,1.0f) + float3(0.5,0.5,0.5);
+	float3 	wsPosition		=	GetWorldPosition( location.xyz + offset );
+	
 	float3	cameraPos		=	Camera.CameraPosition.xyz;
 	
 	float	density			=	Fog.FogDensity * min(1, exp(-(wsPosition.y)/Fog.FogHeight/3));
@@ -66,7 +106,7 @@ void CSMain(
 	emission				+=	ComputeClusteredLighting( wsPosition, density );
 	
 	//	to prevent Nan-history :
-	FogTarget[ location.xyz ] = Fog.HistoryFactor==0 ? emission : lerp( emission, fogHistory, Fog.HistoryFactor );
+	FogTarget[ location.xyz ] = historyFactor==0 ? emission : lerp( emission, fogHistory, historyFactor );
 }
 
 #endif

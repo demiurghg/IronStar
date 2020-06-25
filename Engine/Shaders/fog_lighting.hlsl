@@ -24,6 +24,12 @@ float3 Mie( float mu, float g )
 }
 
 
+bool IsNan(float a)
+{
+	return (a < 0.0 || a > 0.0 || a == 0.0) ? true : false;
+}
+
+
 float3 ComputeDirectLight2( GEOMETRY geometry, DIRECT_LIGHT directLight, CAMERA camera, CASCADE_SHADOW cascadeShadow, SHADOW_RESOURCES rc, float2 vpos )
 {
 	float3	viewDir		=	camera.CameraPosition.xyz - geometry.position;
@@ -33,6 +39,7 @@ float3 ComputeDirectLight2( GEOMETRY geometry, DIRECT_LIGHT directLight, CAMERA 
 	float3	shadow		=	ComputeCascadedShadows( geometry, vpos, cascadeShadow, rc ); 
 
 	float	mu			=	dot( normalize(viewDir), -lightDir );
+			mu			=	isnan(mu) ? 0 : mu; // temporal fix for fist frame
 	float3	phaseM		=	Mie( mu, 0.76f );
 	
 	return	intensity * shadow * phaseM;

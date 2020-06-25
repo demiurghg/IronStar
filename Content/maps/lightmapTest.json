@@ -131,7 +131,7 @@
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
         "NodeGuid": "674c0219-c92d-4913-90a6-24211bc7d88f",
         "LightColor": "255, 156, 73, 255",
-        "LightIntensity": 300.0,
+        "LightIntensity": 940.0,
         "OuterRadius": 100.0,
         "TubeRadius": 0.125,
         "TubeLength": 0.0,

@@ -13,25 +13,16 @@ $ubershader 	COMPUTE|INTEGRATE
 
 #ifdef COMPUTE
 
-static const float3 aaPattern[16] = 
+static const float3 aaPattern[8] = 
 {
-	float3( 0.75f,  0.25f, -3.5f / 8.0f ),
-	float3(-0.75f, -0.25f,  2.5f / 8.0f ),
-	float3( 0.25f, -0.75f, -1.5f / 8.0f ),
-	float3(-0.25f,  0.75f,  0.5f / 8.0f ),
-	float3( 0.75f,  0.25f, -0.5f / 8.0f ),
-	float3(-0.75f, -0.25f,  1.5f / 8.0f ),
-	float3( 0.25f, -0.75f, -2.5f / 8.0f ),
-	float3(-0.25f,  0.75f,  3.5f / 8.0f ),
-	
-	float3( 0.75f,  0.25f, -3.5f / 8.0f ) * float3(0.7,0.7,-1),
-	float3(-0.75f, -0.25f,  2.5f / 8.0f ) * float3(0.7,0.7,-1),
-	float3( 0.25f, -0.75f, -1.5f / 8.0f ) * float3(0.7,0.7,-1),
-	float3(-0.25f,  0.75f,  0.5f / 8.0f ) * float3(0.7,0.7,-1),
-	float3( 0.75f,  0.25f, -0.5f / 8.0f ) * float3(0.7,0.7,-1),
-	float3(-0.75f, -0.25f,  1.5f / 8.0f ) * float3(0.7,0.7,-1),
-	float3( 0.25f, -0.75f, -2.5f / 8.0f ) * float3(0.7,0.7,-1),
-	float3(-0.25f,  0.75f,  3.5f / 8.0f ) * float3(0.7,0.7,-1),
+	float3(  1, -3, -7 ) / 8.0f,
+	float3( -1,  3,  5 ) / 8.0f,
+	float3(  5,  1, -3 ) / 8.0f,
+	float3( -3, -5,  1 ) / 8.0f,
+	float3( -5,  5, -1 ) / 8.0f,
+	float3( -7, -1,  3 ) / 8.0f,
+	float3(  3,  7, -5 ) / 8.0f,
+	float3(  7, -7,  7 ) / 8.0f,
 };
 
 
@@ -59,7 +50,7 @@ float ClipHistory( float4 ppPosition )
 	float	maxY			=	1.0f - 0.5f / FogSizeY;
 	float	minZ			=	1.0f / FogSizeZ;
 	
-	if (abs(deviceCoords.x)>maxX || abs(deviceCoords.y)>maxY || deviceCoords.z>1 || deviceCoords.z<=minZ)
+	if (abs(deviceCoords.x)>maxX || abs(deviceCoords.y)>maxY || deviceCoords.z>1 || deviceCoords.z<=0.1f )
 	{
 		return 0;
 	}
@@ -96,12 +87,12 @@ void CSMain(
 	float3	wsPositionPrev	=	GetWorldPosition( location.xyz + float3(0.5,0.5,0.5) );
 	float4	fogHistory		=	GetFogHistory( wsPositionPrev, historyFactor );
 	
-	float3	offset			=	aaPattern[ Fog.FrameCount % 8 ] * float3(0.5f,0.5f,1.0f) + float3(0.5,0.5,0.5);
+	float3	offset			=	aaPattern[ Fog.FrameCount % 8 ] * 0 * float3(0.5f,0.5f,0.5f) + float3(0.5,0.5,0.5);
 	float3 	wsPosition		=	GetWorldPosition( location.xyz + offset );
 	
 	float3	cameraPos		=	Camera.CameraPosition.xyz;
 	
-	float	density			=	Fog.FogDensity * min(1, exp(-(wsPosition.y)/Fog.FogHeight/3));
+	float	density			=	4*Fog.FogDensity * min(1, exp(-(wsPosition.y)/Fog.FogHeight*25));
 	
 	emission				+=	ComputeClusteredLighting( wsPosition, density );
 	

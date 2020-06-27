@@ -88,7 +88,7 @@ void CSMain(
 	float3	wsPositionPrev	=	GetWorldPosition( location.xyz + float3(0.5,0.5,0.5) );
 	float4	fogHistory		=	GetFogHistory( wsPositionPrev, historyFactor );
 	
-	float3	offset			=	aaPattern[ Fog.FrameCount % 8 ] * 0 * float3(0.5f,0.5f,0.5f) + float3(0.5,0.5,0.5);
+	float3	offset			=	aaPattern[ Fog.FrameCount % 8 ] * float3(0.5f,0.5f,0.5f) + float3(0.5,0.5,0.5);
 	float3 	wsPosition		=	GetWorldPosition( location.xyz + offset );
 	
 	float3	cameraPos		=	Camera.CameraPosition.xyz;

@@ -469,9 +469,9 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="stereoEye"></param>
 		/// <param name="frame"></param>
 		/// <param name="settings"></param>
-		internal void Render( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame frame )
+		internal void RenderSky( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame frame )
 		{
-			Render( gameTime, camera, stereoEye, frame.HdrTarget.Surface );
+			RenderSky( gameTime, camera, stereoEye, frame.HdrTarget.Surface );
 
 			if (ShowLut)
 			{
@@ -497,72 +497,84 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="rendCtxt"></param>
 		/// <param name="techName"></param>
-		internal void Render( GameTime gameTime, Camera camera, StereoEye stereoEye, RenderTargetSurface color, bool noSun = false )
+		internal void RenderSkyLut( GameTime gameTime, Camera camera )
 		{
 			UpdateCloudPosition( gameTime );
 
 			ambientColor = ComputeZenithColor() * AmbientLevel;
 
-
-			using ( new PixEvent("Sky Rendering") ) 
+			using ( new PixEvent("Sky LUT") ) 
 			{
-				using ( new PixEvent( "Lut" ) )
+				device.ResetStates();
+
+				device.SetTargets( null, lutSkyEmission.Surface, lutSkyExtinction.Surface, lutCirrus.Surface );
+
+				device.GfxResources[ regSkyCube ] = skyCubeDiffuse;
+
+				Setup( Flags.LUT, camera, new Rectangle(0,0, (int)LUT_WIDTH, (int)LUT_HEIGHT) );
+
+				device.Draw( 3, 0 );
+			}
+		}
+
+
+		/// <summary>
+		/// Renders sky with specified technique
+		/// </summary>
+		/// <param name="rendCtxt"></param>
+		/// <param name="techName"></param>
+		internal void RenderSky( GameTime gameTime, Camera camera, StereoEye stereoEye, RenderTargetSurface color )
+		{
+			using ( new PixEvent( "Sky" ) )
+			{
+				device.ResetStates();
+
+				device.SetTargets( null, color );
+				device.GfxResources[ regLutScattering		] =	lutSkyEmission;
+				device.GfxResources[ regLutTransmittance	] =	lutSkyExtinction;
+				device.GfxResources[ regLutCirrus			] =	lutCirrus;
+				device.GfxResources[ regCirrusClouds		] = texCirrusClouds.Srv;
+				device.GfxResources[ regSkyCube				] = skyCube;
+
+				Setup( Flags.SKY, camera, color.Bounds );
+
+				device.SetupVertexInput( skyVB, null );
+				device.Draw( skyVB.Capacity, 0 );
+			}
+		}
+
+
+		/// <summary>
+		/// Renders sky with specified technique
+		/// </summary>
+		/// <param name="rendCtxt"></param>
+		/// <param name="techName"></param>
+		internal void RenderSkyCube( GameTime gameTime, Camera camera )
+		{
+			using ( new PixEvent( "SkyCube" ) )
+			{
+				device.ResetStates();
+
+				for( int i = 0; i < 6; ++i ) 
 				{
-					device.ResetStates();
+					cubeCamera.SetupCameraCubeFaceLH( Vector3.Zero, (CubeFace)i, 0.125f, 10000 );
 
-					device.SetTargets( null, lutSkyEmission.Surface, lutSkyExtinction.Surface, lutCirrus.Surface );
+					device.SetTargets( null, SkyCube.GetSurface(0, (CubeFace)i ) );
 
-					device.GfxResources[ regSkyCube ] = skyCubeDiffuse;
-
-					Setup( Flags.LUT, camera, color.Bounds );
-
-					device.Draw( 3, 0 );
-				}
-
-
-				using ( new PixEvent( "Sky" ) )
-				{
-					device.ResetStates();
-
-					device.SetTargets( null, color );
 					device.GfxResources[ regLutScattering		] =	lutSkyEmission;
 					device.GfxResources[ regLutTransmittance	] =	lutSkyExtinction;
 					device.GfxResources[ regLutCirrus			] =	lutCirrus;
 					device.GfxResources[ regCirrusClouds		] = texCirrusClouds.Srv;
-					device.GfxResources[ regSkyCube				] = skyCube;
+					device.GfxResources[ regSkyCube				] = skyCubeDiffuse;
 
-					Setup( Flags.SKY, camera, color.Bounds );
+					Setup( Flags.FOG, cubeCamera, new Rectangle( 0, 0, SkyCube.Width, SkyCube.Height ) );
 
 					device.SetupVertexInput( skyVB, null );
 					device.Draw( skyVB.Capacity, 0 );
 				}
 
-
-				using ( new PixEvent( "SkyCube" ) )
-				{
-					device.ResetStates();
-
-					for( int i = 0; i < 6; ++i ) 
-					{
-						cubeCamera.SetupCameraCubeFaceLH( Vector3.Zero, (CubeFace)i, 0.125f, 10000 );
-
-						device.SetTargets( null, SkyCube.GetSurface(0, (CubeFace)i ) );
-
-						device.GfxResources[ regLutScattering		] =	lutSkyEmission;
-						device.GfxResources[ regLutTransmittance	] =	lutSkyExtinction;
-						device.GfxResources[ regLutCirrus			] =	lutCirrus;
-						device.GfxResources[ regCirrusClouds		] = texCirrusClouds.Srv;
-						device.GfxResources[ regSkyCube				] = skyCubeDiffuse;
-
-						Setup( Flags.FOG, cubeCamera, new Rectangle( 0, 0, SkyCube.Width, SkyCube.Height ) );
-
-						device.SetupVertexInput( skyVB, null );
-						device.Draw( skyVB.Capacity, 0 );
-					}
-
-					Game.GetService<CubeMapFilter>().GenerateCubeMipLevel( skyCube );
-					Game.GetService<CubeMapFilter>().PrefilterDiffuse( skyCubeDiffuse, skyCube, 4 );
-				}
+				Game.GetService<CubeMapFilter>().GenerateCubeMipLevel( skyCube );
+				Game.GetService<CubeMapFilter>().PrefilterDiffuse( skyCubeDiffuse, skyCube, 4 );
 			}
 		}
 	}

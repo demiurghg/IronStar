@@ -227,12 +227,6 @@ float Ramp(float f_in, float f_out, float t)
 }
 
 
-float ApplyFog( float4 worldPos )
-{
-	float dist = distance( Camera.CameraPosition.xyz, worldPos.xyz );
-	return 1 - exp( dist * Params.FogAttenuation );
-}
-
 #include "temperature.fxi"
 
 float3 ComputeVelocity ( float3 position, float3 velocity )
@@ -378,7 +372,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p0.ViewPosSZ = float4( pos0.xyz, 1/sz );
 	p0.Color 	 = color;
 	p0.LMFactor	 = 0;
-	p0.FogSRM	 = float4( ApplyFog( wpos0 ), prt.Scattering, prt.Roughness, prt.Metallic );
+	p0.FogSRM	 = float4( 0, prt.Scattering, prt.Roughness, prt.Metallic );
 	p0.WorldPos	 = wpos0.xyz;
 	p0.Tangent	 = rt;
 	p0.Binormal	 = -up;
@@ -390,7 +384,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p1.ViewPosSZ = float4( pos1.xyz, 1/sz );
 	p1.Color 	 = color;
 	p1.LMFactor	 = 0;
-	p1.FogSRM	 = float4( ApplyFog( wpos1 ), prt.Scattering, prt.Roughness, prt.Metallic );
+	p1.FogSRM	 = float4( 0, prt.Scattering, prt.Roughness, prt.Metallic );
 	p1.WorldPos	 = wpos1.xyz;
 	p1.Tangent	 = rt;
 	p1.Binormal	 = -up;
@@ -402,7 +396,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p2.ViewPosSZ = float4( pos2.xyz, 1/sz );
 	p2.Color 	 = color;
 	p2.LMFactor	 = 0;
-	p2.FogSRM	 = float4( ApplyFog( wpos2 ), prt.Scattering, prt.Roughness, prt.Metallic );
+	p2.FogSRM	 = float4( 0, prt.Scattering, prt.Roughness, prt.Metallic );
 	p2.WorldPos	 = wpos2.xyz;
 	p2.Tangent	 = rt;
 	p2.Binormal	 = -up;
@@ -414,7 +408,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p3.ViewPosSZ = float4( pos3.xyz, 1/sz );
 	p3.Color 	 = color;
 	p3.LMFactor	 = 0;
-	p3.FogSRM	 = float4( ApplyFog( wpos3 ), prt.Scattering, prt.Roughness, prt.Metallic );
+	p3.FogSRM	 = float4( 0, prt.Scattering, prt.Roughness, prt.Metallic );
 	p3.WorldPos	 = wpos3.xyz;
 	p3.Tangent	 = rt;
 	p3.Binormal	 = -up;
@@ -499,7 +493,7 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 		color.rgba 		*= 	softFactor;
 		color.rgb  		*= 	light.rgb;
 		
-		color.rgb		=	lerp( color.rgb, Params.FogColor.xyz, input.FogSRM.x );
+		color.rgb		=	lerp( color.rgb, float3(0,0,0), input.FogSRM.x );
 		
 		return color;
 	#endif
@@ -532,7 +526,7 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 			finalColor	=	baseColor;
 		}
 		
-		finalColor		=	lerp( finalColor, Params.FogColor.rgb, input.FogSRM.x );
+		finalColor		=	lerp( finalColor, float3(0,0,0), input.FogSRM.x );
 		
 		clip( alpha - ( 1 - input.Color.a ) );
 		

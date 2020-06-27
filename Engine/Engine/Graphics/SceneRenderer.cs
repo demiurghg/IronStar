@@ -28,6 +28,7 @@ namespace Fusion.Engine.Graphics {
 		static FXConstantBuffer<SUBSET>						regSubset			= new CRegister( 4, "Subset"			);
 		static FXConstantBuffer<Matrix>						regBones			= new CRegister( 5, MaxBones, "Bones"	);
 		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow	= new CRegister( 6, "CascadeShadow"		);
+		static FXConstantBuffer<Fog.FOG_DATA>				regFog				= new CRegister( 7, "Fog"				);
 
 		static FXTexture2D<Vector4>				regTexture0				=	new TRegister( 0, "Texture0"			);
 		static FXTexture2D<Vector4>				regTexture1				=	new TRegister( 1, "Texture1"			);
@@ -198,7 +199,6 @@ namespace Fusion.Engine.Graphics {
 			device.SetViewport( context.Viewport );
 			device.SetScissorRect( context.Viewport.Bounds );
 			
-			var fog		=	rs.RenderWorld.FogSettings;
 			var width	=	context.Viewport.Width;
 			var height	=	context.Viewport.Height;
 
@@ -211,8 +211,6 @@ namespace Fusion.Engine.Graphics {
 			cbDataStage.WorldToVoxelOffset	=	rs.Radiosity.GetWorldToVoxelOffset();
 			cbDataStage.WorldToVoxelScale	=	rs.Radiosity.GetWorldToVoxelScale();
 			cbDataStage.VTGradientScaler	=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;
-			cbDataStage.FogColor			=	rs.RenderWorld.FogSettings.Color;
-			cbDataStage.FogAttenuation		=	rs.RenderWorld.FogSettings.DistanceAttenuation;
 			cbDataStage.SkyAmbientLevel		=	new Color4(8,0,4,1);
 			cbDataStage.VTPageScaleRCP		=	rs.VTSystem.PageScaleRCP;
 			cbDataStage.SsaoWeight			=	instanceGroup.HasFlag(InstanceGroup.Weapon) ? 0 : 1;
@@ -234,6 +232,7 @@ namespace Fusion.Engine.Graphics {
 			device.GfxConstants[ regSubset			]	= constBufferSubset;
 			device.GfxConstants[ regBones			]	= constBufferBones;
 			device.GfxConstants[ regCascadeShadow	]	= rs.LightManager.ShadowMap.UpdateCascadeShadowConstantBuffer();
+			device.GfxConstants[ regFog				]	= rs.Fog.FogData;
 
 			//-----------------------------
 

@@ -145,19 +145,7 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-//       row_major float4x4 View;       // Offset:    0
-//       row_major float4x4 Projection; // Offset:   64
-//       float4 CameraForward;          // Offset:  128
-//       float4 CameraRight;            // Offset:  144
-//       float4 CameraUp;               // Offset:  160
-//       float4 CameraPosition;         // Offset:  176
-//       float4 Gravity;                // Offset:  192
-//       float LinearizeDepthA;         // Offset:  208
-//       float LinearizeDepthB;         // Offset:  212
-//       int MaxParticles;              // Offset:  216
-//       float DeltaTime;               // Offset:  220
-//       uint DeadListSize;             // Offset:  224
-		[StructLayout(LayoutKind.Sequential, Size=512)]
+		[StructLayout(LayoutKind.Sequential, Size=128)]
 		[ShaderStructure]
 		struct PARAMS {
 			public Vector4	WorldToVoxelScale;
@@ -165,8 +153,6 @@ namespace Fusion.Engine.Graphics {
 			public Vector4	Gravity;
 			public Vector4	LightMapSize;
 			public Color4	SkyAmbientLevel;
-			public Color4	FogColor;
-			public float	FogAttenuation;
 			public int		MaxParticles;
 			public float	DeltaTime;
 			public uint		DeadListSize;
@@ -439,8 +425,6 @@ namespace Fusion.Engine.Graphics {
 			param.WorldToVoxelOffset	=	rs.Radiosity.GetWorldToVoxelOffset();
 			param.WorldToVoxelScale		=	rs.Radiosity.GetWorldToVoxelScale();
 			param.SkyAmbientLevel		=	new Color4(8,0,4,1);
-			param.FogColor				=	renderWorld.FogSettings.Color;
-			param.FogAttenuation		=	renderWorld.FogSettings.DistanceAttenuation;
 			param.MaxParticles			=	0;
 			param.DeltaTime				=	deltaTime;
 			param.Gravity				=	new Vector4( this.Gravity, 0 );

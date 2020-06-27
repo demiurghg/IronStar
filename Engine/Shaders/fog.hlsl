@@ -1,5 +1,6 @@
 #if 0
-$ubershader 	COMPUTE|INTEGRATE
+$ubershader COMPUTE
+$ubershader INTEGRATE +SHOW_SLICE
 #endif
 
 #include "auto/fog.fxi"
@@ -28,12 +29,12 @@ static const float3 aaPattern[8] =
 
 float3 GetWorldPosition( float3 gridLocation )
 {
-	float3	normLocation	=	gridLocation.xyz / float3(FogSizeX, FogSizeY, FogSizeZ);
+	float3	normLocation	=	gridLocation.xyz * Fog.FogSizeInv.xyz;
 	
 	float	tangentX		=	lerp( -Camera.CameraTangentX,  Camera.CameraTangentX, normLocation.x );
 	float	tangentY		=	lerp(  Camera.CameraTangentY, -Camera.CameraTangentY, normLocation.y );
 	
-	float	vsDistance		=	-log(1-normLocation.z)/FogGridExpScale;
+	float	vsDistance		=	log(1-normLocation.z)/Fog.FogGridExpK;
 
 	float4	vsPosition		=	float4( vsDistance * tangentX, vsDistance * tangentY, -vsDistance, 1 );
 	float3	wsPosition		=	mul( vsPosition, Camera.ViewInverted ).xyz;
@@ -46,9 +47,9 @@ float ClipHistory( float4 ppPosition )
 {
 	float3	deviceCoords	=	ppPosition.xyz / ppPosition.w;
 	
-	float	maxX			=	1.0f - 0.5f / FogSizeX;
-	float	maxY			=	1.0f - 0.5f / FogSizeY;
-	float	minZ			=	1.0f / FogSizeZ;
+	float	maxX			=	1.0f - 0.5f * Fog.FogSizeInv.x;
+	float	maxY			=	1.0f - 0.5f * Fog.FogSizeInv.y;
+	float	minZ			=	1.0f * Fog.FogSizeInv.z;
 	
 	if (abs(deviceCoords.x)>maxX || abs(deviceCoords.y)>maxY || deviceCoords.z>1 || deviceCoords.z<=0.1f )
 	{
@@ -64,7 +65,7 @@ float ClipHistory( float4 ppPosition )
 float4 GetFogHistory( float3 wsPosition, out float factor )
 {
 	float4 	ppPosition	=	mul( float4(wsPosition,1), Camera.ReprojectionMatrix );
-	float4	fogData		=	SampleVolumetricFog( ppPosition, LinearClamp, FogHistory );
+	float4	fogData		=	SampleVolumetricFog( Fog, ppPosition, LinearClamp, FogHistory );
 	
 	factor = ClipHistory( ppPosition ) * Fog.HistoryFactor;
 	
@@ -116,15 +117,15 @@ void CSMain(
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
 	int2 	location		=	dispatchThreadId.xy;
-	float	invDepthSlices	=	1.0f / FogGridDepth;
+	float	invDepthSlices	=	Fog.FogSizeInv.z;
 	
 	float3	accumScattering		=	float3(0,0,0);
 	float	accumTransmittance	=	1;
 	
-	for ( int slice=0; slice<FogGridDepth; slice++ ) {
+	for ( uint slice=0; slice<Fog.FogSizeZ; slice++ ) {
 		
-		float	frontDistance			=	- log( 1 - (slice+0.0000f) * invDepthSlices ) / FogGridExpScale;
-		float	backDistance			=	- log( 1 - (slice+0.9999f) * invDepthSlices ) / FogGridExpScale;
+		float	frontDistance			=	log( 1 - (slice+0.0000f) * invDepthSlices ) / Fog.FogGridExpK;
+		float	backDistance			=	log( 1 - (slice+0.9999f) * invDepthSlices ) / Fog.FogGridExpK;
 		float	stepLength				=	abs(backDistance - frontDistance);
 		
 		float4 	scatteringExtinction	=	FogSource[ int3( location.xy, slice ) ];
@@ -142,10 +143,12 @@ void CSMain(
 		float4	storedValue		=	float4( accumScattering.rgb, 1 - accumTransmittance );
 		FogTarget[ int3( location.xy, slice ) ]	=	storedValue;
 		
-		//FogTarget[ int3( location.xy, slice ) ]	=	float4( scatteringExtinction.rgb * 1000, 1 );
+		#ifdef SHOW_SLICE
+			FogTarget[ int3( location.xy, slice ) ]	=	float4(2,1,0, slice % 2);
+			if (slice==Fog.FogSizeZ-1) FogTarget[ int3( location.xy, slice ) ]	=	float4(4,0,0,1);
+		#endif
 	}
 }
 
 #endif
-
 

@@ -515,7 +515,6 @@
     <Compile Include="Engine\Graphics\Effects\Filter2.cs" />
     <Compile Include="Engine\Graphics\Effects\Fog.cs" />
     <Compile Include="Engine\Graphics\Effects\Fog.Gpu.cs" />
-    <Compile Include="Engine\Graphics\Effects\FogSettings.cs" />
     <Compile Include="Engine\Graphics\Effects\HdrFilter.cs">
       <SubType>Code</SubType>
     </Compile>

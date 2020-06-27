@@ -23,14 +23,6 @@ static const uint InstanceGroupStatic = 1;
 static const uint InstanceGroupDynamic = 4;
 static const uint InstanceGroupCharacter = 8;
 static const uint InstanceGroupWeapon = 16;
-static const int APGridWidth = 32;
-static const int APGridHeight = 24;
-static const int APGridDepth = 32;
-static const float APGridExpScale = 0.0015;
-static const int FogGridWidth = 128;
-static const int FogGridHeight = 64;
-static const int FogGridDepth = 192;
-static const float FogGridExpScale = 0.0005;
 
 // ---------------- DATA STRUCTURES ---------------- //
 
@@ -56,23 +48,21 @@ static const uint LightmapHeight = 2048;
 // ---------------- DATA STRUCTURES ---------------- //
 
 // Fusion.Engine.Graphics.ParticleStream+PARAMS
-// Marshal.SizeOf = 512
+// Marshal.SizeOf = 128
 struct PARAMS {
 	float4     WorldToVoxelScale;             // offset:    0
 	float4     WorldToVoxelOffset;            // offset:   16
 	float4     Gravity;                       // offset:   32
 	float4     LightMapSize;                  // offset:   48
 	float4     SkyAmbientLevel;               // offset:   64
-	float4     FogColor;                      // offset:   80
-	float      FogAttenuation;                // offset:   96
-	int        MaxParticles;                  // offset:  100
-	float      DeltaTime;                     // offset:  104
-	uint       DeadListSize;                  // offset:  108
-	float      CocScale;                      // offset:  112
-	float      CocBias;                       // offset:  116
-	uint       IntegrationSteps;              // offset:  120
-	float      IndirectLightFactor;           // offset:  124
-	float      DirectLightFactor;             // offset:  128
+	int        MaxParticles;                  // offset:   80
+	float      DeltaTime;                     // offset:   84
+	uint       DeadListSize;                  // offset:   88
+	float      CocScale;                      // offset:   92
+	float      CocBias;                       // offset:   96
+	uint       IntegrationSteps;              // offset:  100
+	float      IndirectLightFactor;           // offset:  104
+	float      DirectLightFactor;             // offset:  108
 };
 
 // Fusion.Engine.Graphics.GpuData+CAMERA

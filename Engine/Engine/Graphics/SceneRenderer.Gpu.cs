@@ -50,13 +50,12 @@ namespace Fusion.Engine.Graphics {
 			public Vector4	WorldToVoxelOffset		;
 			
 			public Color4	SkyAmbientLevel			;
-			public Color4	FogColor				;
 			public Vector4	ViewportSize			;
 			
-			public float	FogAttenuation			;	
 			public float	VTPageScaleRCP			;
 			public float	VTGradientScaler		;
 			public float	SsaoWeight				;
+			public float	ShowLightComplexity		;
 
 			public float	SlopeBias				;
 			public float	DepthBias				;
@@ -64,7 +63,6 @@ namespace Fusion.Engine.Graphics {
 			public float	DirectLightFactor		;
 			public float	IndirectLightFactor		;
 
-			public float	ShowLightComplexity		;
 		}
 
 

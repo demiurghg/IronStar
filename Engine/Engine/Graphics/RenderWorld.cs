@@ -85,13 +85,6 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Gets sky settings.
 		/// </summary>
-		public FogSettings FogSettings {
-			get; private set;
-		}
-
-		/// <summary>
-		/// Gets sky settings.
-		/// </summary>
 		public DofSettings DofSettings {
 			get; private set;
 		}
@@ -230,7 +223,6 @@ namespace Fusion.Engine.Graphics {
 
 			HdrSettings		=	new HdrSettings();
 			DofSettings		=	new DofSettings();
-			FogSettings		=	new FogSettings();
 
 			Instances		=	new List<RenderInstance>();
 			LightSet		=	new LightSet( Game.RenderSystem );
@@ -527,7 +519,7 @@ namespace Fusion.Engine.Graphics {
 				{
 					//	render sky and fog :
 					rs.Sky.Render( gameTime, Camera, stereoEye, viewHdrFrame );
-					rs.Fog.RenderFog( Camera, LightSet, FogSettings );
+					rs.Fog.RenderFogVolume( Camera, LightSet );
 
 					//	Z-pass without weapon :
 					rs.SceneRenderer.RenderZPass( gameTime, stereoEye, Camera, viewHdrFrame, rlMainView, InstanceGroup.NotWeapon );

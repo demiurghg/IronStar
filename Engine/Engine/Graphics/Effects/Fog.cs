@@ -35,15 +35,30 @@ namespace Fusion.Engine.Graphics {
 		[AEValueRange(0, 1, 0.1f, 0.01f)]
 		public float HistoryFactor { get; set; } = 0.8f;
 
-		[Config]	
-		[AECategory("Fog")]
-		[AEValueRange(1, 256, 16, 1)]
-		public float NumSamples { get; set; } = 64;
+		[Config]
+		[AECategory("Fog Grid")]
+		public int FogGridSizeX	{ get { return fogSizeX; } set { fogSizeX = MathUtil.Clamp(value, 8, 256 ); } }
+		[Config]
+		[AECategory("Fog Grid")]
+		public int FogGridSizeY	{ get { return fogSizeY; } set { fogSizeY = MathUtil.Clamp(value, 8, 256 ); } }
+		[Config]
+		[AECategory("Fog Grid")]
+		public int FogGridSizeZ { get { return fogSizeZ; } set { fogSizeZ = MathUtil.Clamp(value, 8, 256 ); } }
+		int fogSizeX = 128;
+		int fogSizeY = 96;
+		int fogSizeZ = 192;
 
+		[Config]
+		[AECategory("Fog Grid")]
+		public bool ShowSlices { get; set; }
 
-		[ShaderDefine]	const int FogSizeX	=	RenderSystem.FogGridWidth;
-		[ShaderDefine]	const int FogSizeY	=	RenderSystem.FogGridHeight;
-		[ShaderDefine]	const int FogSizeZ	=	RenderSystem.FogGridDepth;
+		[Config]
+		[AECategory("Fog Grid")]
+		[AEValueRange(1, 5000, 100f, 1f)]
+		public float FogGridHalfDepth { get { return fogGridHalfDepth; } set { fogGridHalfDepth = MathUtil.Clamp( value, 1, 5000 ); } }
+		float fogGridHalfDepth = 300.0f;
+
+		float FogGridExpK { get { return (float)Math.Log(0.5f) / fogGridHalfDepth; } }
 
 		[ShaderDefine]
 		const int BlockSizeX	=	4;
@@ -83,21 +98,28 @@ namespace Fusion.Engine.Graphics {
 		{
 			COMPUTE		= 0x0001,
 			INTEGRATE	= 0x0002,
+			SHOW_SLICE	= 0x0004,
 		}
 
 
 		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential, Pack=4, Size=256)]
-		struct FOG_DATA 
+		public struct FOG_DATA 
 		{
 			public Vector4	WorldToVoxelScale;
 			public Vector4	WorldToVoxelOffset;
 			public Vector4	SampleOffset;
+
+			public Vector4	FogSizeInv;
+
+			public uint		FogSizeX;
+			public uint		FogSizeY;
+			public uint		FogSizeZ;
+			public float	FogGridExpK;
 			public float	DirectLightFactor;
 			public float	IndirectLightFactor;
 			public float	HistoryFactor;
 			public uint		FrameCount;
-
 			public float	FogDensity;
 			public float	FogHeight;
 		}
@@ -113,6 +135,7 @@ namespace Fusion.Engine.Graphics {
 		Random				random = new Random();
 
 		public ShaderResource FogGrid { get { return integratedLight; } }
+		public ConstantBuffer FogData { get { return cbFog; } }
 
 
 		/// <summary>
@@ -130,13 +153,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public override void Initialize() 
 		{
-			fogDensity		=	new Texture3DCompute( device, ColorFormat.Rgba8,	FogSizeX, FogSizeY, FogSizeZ );
-			scatteredLight0	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	FogSizeX, FogSizeY, FogSizeZ );
-			scatteredLight1	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	FogSizeX, FogSizeY, FogSizeZ );
-			integratedLight	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	FogSizeX, FogSizeY, FogSizeZ );
-
-			device.Clear( scatteredLight0.UnorderedAccess, Int4.Zero );
-			device.Clear( scatteredLight1.UnorderedAccess, Int4.Zero );
+			CreateVolumeResources();
 
 			cbFog	=	new ConstantBuffer( device, typeof(FOG_DATA) );
 
@@ -154,6 +171,25 @@ namespace Fusion.Engine.Graphics {
 		{
 			shader		=	Game.Content.Load<Ubershader>("fog");
 			factory		=	shader.CreateFactory( typeof(FogFlags) );
+
+			CreateVolumeResources();
+		}
+
+
+		void CreateVolumeResources()
+		{
+			SafeDispose( ref fogDensity		 );
+			SafeDispose( ref scatteredLight0 );
+			SafeDispose( ref scatteredLight1 );
+			SafeDispose( ref integratedLight );
+
+			fogDensity		=	new Texture3DCompute( device, ColorFormat.Rgba8,	fogSizeX, fogSizeY, fogSizeZ );
+			scatteredLight0	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	fogSizeX, fogSizeY, fogSizeZ );
+			scatteredLight1	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	fogSizeX, fogSizeY, fogSizeZ );
+			integratedLight	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	fogSizeX, fogSizeY, fogSizeZ );
+
+			device.Clear( scatteredLight0.UnorderedAccess, Int4.Zero );
+			device.Clear( scatteredLight1.UnorderedAccess, Int4.Zero );
 		}
 
 
@@ -180,7 +216,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="camera"></param>
 		/// <param name="settings"></param>
-		void SetupParameters ( Camera camera, LightSet lightSet, FogSettings settings, ShaderResource fogHistory )
+		void SetupParameters ( Camera camera, LightSet lightSet, ShaderResource fogHistory )
 		{
 			var fogData		=	new FOG_DATA();
 
@@ -189,8 +225,13 @@ namespace Fusion.Engine.Graphics {
 			fogData.IndirectLightFactor	=	rs.Radiosity.MasterIntensity;
 			fogData.DirectLightFactor	=	rs.SkipDirectLighting ? 0 : 1;
 
-			//fogData.FogDensity			=	FogDensity;
-			//fogData.FogHeight			=	FogHeight;
+			fogData.FogSizeInv			=	new Vector4( 1.0f / fogSizeX, 1.0f / fogSizeY, 1.0f / fogSizeZ, 0 );
+			fogData.FogGridExpK			=	FogGridExpK;
+
+			fogData.FogSizeX			=	(uint)fogSizeX;
+			fogData.FogSizeY			=	(uint)fogSizeY;
+			fogData.FogSizeZ			=	(uint)fogSizeZ;
+
 			fogData.FogDensity			=	MathUtil.Exp2( rs.Sky.MieScale ) * Sky2.BetaMie.Red;
 			fogData.FogHeight			=	rs.Sky.MieHeight;
 
@@ -210,41 +251,40 @@ namespace Fusion.Engine.Graphics {
 			device.ComputeSamplers	[ regLinearClamp		]	=	SamplerState.LinearClamp;
 			device.ComputeSamplers	[ regShadowSampler		]	=	SamplerState.ShadowSampler;
 		
-			device.ComputeResources[ regFogHistory			]	=	fogHistory;
-			device.ComputeResources[ regClusterTable		]	=	rs.LightManager.LightGrid.GridTexture		;
-			device.ComputeResources[ regLightIndexTable		]	=	rs.LightManager.LightGrid.IndexDataGpu		;
-			device.ComputeResources[ regLightDataTable		]	=	rs.LightManager.LightGrid.LightDataGpu		;
-			device.ComputeResources[ regShadowMap			]	=	rs.LightManager.ShadowMap.ShadowTexture		;
-			device.ComputeResources[ regShadowMask			]	=	rs.LightManager.ShadowMap.ParticleShadowTexture	;
+			device.ComputeResources	[ regFogHistory			]	=	fogHistory;
+			device.ComputeResources	[ regClusterTable		]	=	rs.LightManager.LightGrid.GridTexture		;
+			device.ComputeResources	[ regLightIndexTable	]	=	rs.LightManager.LightGrid.IndexDataGpu		;
+			device.ComputeResources	[ regLightDataTable		]	=	rs.LightManager.LightGrid.LightDataGpu		;
+			device.ComputeResources	[ regShadowMap			]	=	rs.LightManager.ShadowMap.ShadowTexture		;
+			device.ComputeResources	[ regShadowMask			]	=	rs.LightManager.ShadowMap.ParticleShadowTexture	;
 		
-			device.ComputeResources[ regIrradianceVolumeL0	]	= 	rs.Radiosity.LightVolumeL0	;
-			device.ComputeResources[ regIrradianceVolumeL1	]	= 	rs.Radiosity.LightVolumeL1	;
-			device.ComputeResources[ regIrradianceVolumeL2	]	= 	rs.Radiosity.LightVolumeL2	;
-			device.ComputeResources[ regIrradianceVolumeL3	]	= 	rs.Radiosity.LightVolumeL3	;
+			device.ComputeResources	[ regIrradianceVolumeL0	]	= 	rs.Radiosity.LightVolumeL0	;
+			device.ComputeResources	[ regIrradianceVolumeL1	]	= 	rs.Radiosity.LightVolumeL1	;
+			device.ComputeResources	[ regIrradianceVolumeL2	]	= 	rs.Radiosity.LightVolumeL2	;
+			device.ComputeResources	[ regIrradianceVolumeL3	]	= 	rs.Radiosity.LightVolumeL3	;
 		}
-
 
 		/// <summary>
 		/// Renders fog look-up table
 		/// </summary>
-		internal void RenderFog( Camera camera, LightSet lightSet, FogSettings settings )
+		internal void RenderFogVolume( Camera camera, LightSet lightSet )
 		{
-			using ( new PixEvent("Fog") ) {
+			using ( new PixEvent("Fog Volume") ) {
 				
 				using ( new PixEvent("Lighting") ) {
 
 					device.ResetStates();		  
 			
-					SetupParameters( camera, lightSet, settings, scatteredLight1 );
+					SetupParameters( camera, lightSet, scatteredLight1 );
 
 					device.PipelineState	=	factory[ (int)FogFlags.COMPUTE ];
 
 					device.SetComputeUnorderedAccess( regFogTarget, scatteredLight0.UnorderedAccess );
 
 					
-					var gx	=	MathUtil.IntDivUp( FogSizeX, BlockSizeX );
-					var gy	=	MathUtil.IntDivUp( FogSizeY, BlockSizeY );
-					var gz	=	MathUtil.IntDivUp( FogSizeZ, BlockSizeZ );
+					var gx	=	MathUtil.IntDivUp( FogGridSizeX, BlockSizeX );
+					var gy	=	MathUtil.IntDivUp( FogGridSizeY, BlockSizeY );
+					var gz	=	MathUtil.IntDivUp( FogGridSizeZ, BlockSizeZ );
 
 					device.Dispatch( gx, gy, gz );
 				}
@@ -254,16 +294,20 @@ namespace Fusion.Engine.Graphics {
 
 					device.ResetStates();		  
 			
-					SetupParameters( camera, lightSet, settings, null );
+					SetupParameters( camera, lightSet, null );
 
-					device.PipelineState	=	factory[ (int)FogFlags.INTEGRATE ];
+					FogFlags flags = FogFlags.INTEGRATE;
+
+					if (ShowSlices) flags |= FogFlags.SHOW_SLICE;
+
+					device.PipelineState	=	factory[ (int)flags ];
 
 					device.SetComputeUnorderedAccess( regFogTarget,			integratedLight.UnorderedAccess );
 					device.ComputeResources			[ regFogSource ]	=	scatteredLight0;
 
 					
-					var gx	=	MathUtil.IntDivUp( FogSizeX, BlockSizeX );
-					var gy	=	MathUtil.IntDivUp( FogSizeY, BlockSizeY );
+					var gx	=	MathUtil.IntDivUp( FogGridSizeX, BlockSizeX );
+					var gy	=	MathUtil.IntDivUp( FogGridSizeY, BlockSizeY );
 					var gz	=	1;
 
 					device.Dispatch( gx, gy, gz );

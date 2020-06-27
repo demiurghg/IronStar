@@ -5,12 +5,12 @@
 	FOG
 ------------------------------------------------------------------------------*/
 
-float4 SampleVolumetricFog( float4 projectedPosition, SamplerState linearClamp, Texture3D<float4> fogTexture )
+float4 SampleVolumetricFog( FOG_DATA fog, float4 projectedPosition, SamplerState linearClamp, Texture3D<float4> fogTexture )
 {
 	float2 	scale	=	float2( 0.5f, -0.5f ) * float2(1.0, 1.0) / projectedPosition.w;
 	float2 	bias	=	float2( 0.5f,  0.5f );
 
-	float 	slice	= 	(1 - exp(-projectedPosition.w * FogGridExpScale));// * FogGridDepth;
+	float 	slice	= 	(1 - exp(abs(projectedPosition.w) * fog.FogGridExpK));// * FogGridDepth;
 	float2	segment	=	mad( projectedPosition.xy, scale, bias );
 	
 	float3 	loadUVW	=	float3( segment, slice );
@@ -21,9 +21,9 @@ float4 SampleVolumetricFog( float4 projectedPosition, SamplerState linearClamp, 
 }
 
 
-float3 ApplyVolumetricFog( float3 color, float4 projectedPosition, SamplerState linearClamp, Texture3D<float4> fogTexture )
+float3 ApplyVolumetricFog( FOG_DATA fog, float3 color, float4 projectedPosition, SamplerState linearClamp, Texture3D<float4> fogTexture )
 {
-	float4	fogData	=	SampleVolumetricFog( projectedPosition, linearClamp, fogTexture );
+	float4	fogData	=	SampleVolumetricFog( fog, projectedPosition, linearClamp, fogTexture );
 	
 	return lerp( color, fogData.rgb, fogData.a );
 }

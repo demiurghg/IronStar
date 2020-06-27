@@ -130,7 +130,7 @@ float3 ComputeLightExtincation( float3 p0, float3 p1 )
 		float	hR1		=	exp(-h1 / Sky.RayleighHeight);
 		float	hM1		=	exp(-h1 / Sky.MieHeight);
 		
-		if (abs(k)>0.001f)
+		if (abs(k)>0.01f)
 		{
 			//	integral exp(ax+b) = 1/a * exp(ax+b)
 			//	a = k / H
@@ -375,6 +375,8 @@ SKY_STC ComputeSkyColor( float3 rayDir, float sunAzimuth, float sunAltitude )
 		trans	=	1;
 	}
 	
+	tmax = min(tmax, 1000000);
+	
 	SKY_STC	lut			=	computeIncidentLight( origin, rayDir, sunDir, tmin, tmax );
 	lut.scattering		*=	Sky.SkyExposure;
 	lut.transmittance	*=	trans;
@@ -488,10 +490,7 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 	//	compute sun color :
 	//-----------------------------------------
 	
-	float3	sunLimb			=	0;
-	
 	#ifdef SKY
-		
 		float 	cosSun	=	saturate( dot(normalize(input.rayDir), Sky.SunDirection.xyz ) );
 		float 	sinSun	=	sqrt( 1 - cosSun * cosSun );
 		
@@ -499,13 +498,20 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 		
 		float	factor	=	saturate( 1 - pow(sinSun / sun.a,4) );
 		
-		sunLimb	=	sun.rgb * skyTransmittance.rgb * factor;
-		
+		skyScattering.rgb	+=	sun.rgb * skyTransmittance.rgb * factor;
 	#endif
 	
-	skyScattering += float4(sunLimb,0);
-
-
+	//-----------------------------------------
+	//	apply ground fog :
+	//-----------------------------------------
+	
+	#ifdef SKY
+		float3 	fogUVW	=	float3( input.position.xy * Sky.ViewportSize.zw, 1 );
+		float4	fogData	=	FogGrid.SampleLevel( LinearClamp, fogUVW, 0 );
+	
+		skyScattering.rgb = lerp( skyScattering.rgb, fogData.rgb, fogData.a );
+	#endif
+	
 	//-----------------------------------------
 	//	compute cirrus clouds :
 	//-----------------------------------------

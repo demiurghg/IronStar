@@ -210,11 +210,13 @@ namespace Fusion.Engine.Graphics {
 		static FXTexture2D<Vector4>						regLutTransmittance	=	new TRegister( 1, "LutTransmittance");
 		static FXTexture2D<Vector4>						regLutCirrus		=	new TRegister( 2, "LutCirrus"		);
 		static FXTextureCube<Vector4>					regSkyCube			=	new TRegister( 3, "SkyCube"			);
+		static FXTexture3D<Vector4>						regFogGrid			=	new TRegister( 4, "FogGrid"			);
 
 		static FXTexture2D<Vector4>						regCirrusClouds		=	new TRegister( 5, "CirrusClouds"	);
 
 		static FXSamplerState		regLutSampler	 =	new SRegister(0, "LutSampler" );
 		static FXSamplerState		regLinearWrap	=	new SRegister(1, "LinearWrap" );
+		static FXSamplerState		regLinearClamp	=	new SRegister(2, "LinearClamp" );
 		
 		[Flags]
 		enum Flags : int
@@ -238,6 +240,7 @@ namespace Fusion.Engine.Graphics {
 			public Vector4	ViewOrigin;
 
 			public Color4	AmbientLevel;
+			public Vector4	ViewportSize;
 
 			public float	SunAzimuth;
 			public float	SunAltitude;
@@ -433,6 +436,7 @@ namespace Fusion.Engine.Graphics {
 
 			skyData.FogDensity			=	FogColor.ToColor4() * FogDensity;
 			skyData.FogHeight			=	FogHeight;
+			skyData.ViewportSize		=	new Vector4( viewport.Width, viewport.Height, 1.0f / viewport.Width, 1.0f / viewport.Height );
 
 			cbSky.SetData( skyData );
 
@@ -444,6 +448,8 @@ namespace Fusion.Engine.Graphics {
 			device.ComputeSamplers	[ regLutSampler		]	=	skyLutSampler;
 			device.GfxSamplers		[ regLinearWrap		]	=	SamplerState.LinearWrap;
 			device.ComputeSamplers	[ regLinearWrap		]	=	SamplerState.LinearWrap;
+			device.GfxSamplers		[ regLinearClamp	]	=	SamplerState.LinearClamp;
+			device.ComputeSamplers	[ regLinearClamp	]	=	SamplerState.LinearClamp;
 
 			device.ComputeConstants	[ regSky			]	=	cbSky;
 			device.ComputeConstants	[ regCamera			]	=	camera.CameraData;
@@ -535,6 +541,7 @@ namespace Fusion.Engine.Graphics {
 				device.GfxResources[ regLutCirrus			] =	lutCirrus;
 				device.GfxResources[ regCirrusClouds		] = texCirrusClouds.Srv;
 				device.GfxResources[ regSkyCube				] = skyCube;
+				device.GfxResources[ regFogGrid				] = rs.Fog.FogGrid;
 
 				Setup( Flags.SKY, camera, color.Bounds );
 

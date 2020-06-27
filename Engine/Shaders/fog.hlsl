@@ -85,15 +85,15 @@ void CSMain(
 	uint3 	location		=	dispatchThreadId.xyz;
 
 	float	historyFactor	=	1;
-	float3	wsPositionPrev	=	GetWorldPosition( location.xyz + float3(0.5,0.5,0.5) );
-	float4	fogHistory		=	GetFogHistory( wsPositionPrev, historyFactor );
+	float3	wsPositionNJ	=	GetWorldPosition( location.xyz + float3(0.5,0.5,0.5) );
+	float4	fogHistory		=	GetFogHistory( wsPositionNJ, historyFactor );
 	
 	float3	offset			=	aaPattern[ Fog.FrameCount % 8 ] * float3(0.5f,0.5f,0.5f) + float3(0.5,0.5,0.5);
 	float3 	wsPosition		=	GetWorldPosition( location.xyz + offset );
 	
 	float3	cameraPos		=	Camera.CameraPosition.xyz;
 	
-	float	density			=	4*Fog.FogDensity * min(1, exp(-(wsPosition.y)/Fog.FogHeight*25));
+	float	density			=	1*Fog.FogDensity * min(1, exp(-(wsPositionNJ.y)/Fog.FogHeight));
 	
 	emission				+=	ComputeClusteredLighting( wsPosition, density );
 	

@@ -40,7 +40,7 @@ float3 ComputeDirectLight2( GEOMETRY geometry, DIRECT_LIGHT directLight, CAMERA 
 
 	float	mu			=	dot( normalize(viewDir), -lightDir );
 			mu			=	isnan(mu) ? 0 : mu; // temporal fix for fist frame
-	float3	phaseM		=	Mie( mu, 0.6f );
+	float3	phaseM		=	Mie( mu, 0.76f );
 	
 	return	intensity * shadow * phaseM;
 }

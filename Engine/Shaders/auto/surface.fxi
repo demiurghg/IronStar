@@ -137,6 +137,7 @@ struct FOG_DATA {
 	uint       FrameCount;                    // offset:   92
 	float      FogDensity;                    // offset:   96
 	float      FogHeight;                     // offset:  100
+	float      FogScale;                      // offset:  104
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHT

@@ -85,6 +85,7 @@ namespace Fusion.Engine.Graphics {
 		static FXStructuredBuffer<SceneRenderer.LIGHT>		regLightDataTable			=	new TRegister( 4, "ClusterLightBuffer"		);
 		static FXTexture2D<Vector4>							regShadowMap				=	new TRegister( 5, "ShadowMap"				);
 		static FXTexture2D<Vector4>							regShadowMask				=	new TRegister( 6, "ShadowMask"				);
+		static FXTexture3D<Vector4>							regLutAP					=	new TRegister( 7, "LutAP"					);
 
 		static FXTexture3D<Vector4>							regIrradianceVolumeL0		=	new TRegister(10, "IrradianceVolumeL0"		);
 		static FXTexture3D<Vector4>							regIrradianceVolumeL1		=	new TRegister(11, "IrradianceVolumeL1"		);
@@ -92,6 +93,7 @@ namespace Fusion.Engine.Graphics {
 		static FXTexture3D<Vector4>							regIrradianceVolumeL3		=	new TRegister(13, "IrradianceVolumeL3"		);
 
 		static FXRWTexture3D<Vector4>						regFogTarget				=	new URegister(0, "FogTarget"				);
+		static FXRWTexture2D<Vector4>						regSkyFogLut				=	new URegister(1, "SkyFogLut"				);
 
 		[Flags]
 		enum FogFlags : int
@@ -122,6 +124,7 @@ namespace Fusion.Engine.Graphics {
 			public uint		FrameCount;
 			public float	FogDensity;
 			public float	FogHeight;
+			public float	FogScale;
 		}
 
 		Ubershader			shader;
@@ -131,11 +134,13 @@ namespace Fusion.Engine.Graphics {
 		Texture3DCompute	scatteredLight0;
 		Texture3DCompute	scatteredLight1;
 		Texture3DCompute	integratedLight;
+		RenderTarget2D		skyFogLut;
 		uint				frameCounter;
 		Random				random = new Random();
 
-		public ShaderResource FogGrid { get { return integratedLight; } }
-		public ConstantBuffer FogData { get { return cbFog; } }
+		public ShaderResource FogGrid	{ get { return integratedLight; } }
+		public ShaderResource SkyFogLut	{ get { return skyFogLut; } }
+		public ConstantBuffer FogData	{ get { return cbFog; } }
 
 
 		/// <summary>
@@ -178,7 +183,8 @@ namespace Fusion.Engine.Graphics {
 
 		void CreateVolumeResources()
 		{
-			SafeDispose( ref fogDensity		 );
+			SafeDispose( ref fogDensity );
+			SafeDispose( ref skyFogLut );
 			SafeDispose( ref scatteredLight0 );
 			SafeDispose( ref scatteredLight1 );
 			SafeDispose( ref integratedLight );
@@ -187,6 +193,7 @@ namespace Fusion.Engine.Graphics {
 			scatteredLight0	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	fogSizeX, fogSizeY, fogSizeZ );
 			scatteredLight1	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	fogSizeX, fogSizeY, fogSizeZ );
 			integratedLight	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	fogSizeX, fogSizeY, fogSizeZ );
+			skyFogLut		=	new RenderTarget2D  ( device, ColorFormat.Rgba16F,	fogSizeX, fogSizeY, true );
 
 			device.Clear( scatteredLight0.UnorderedAccess, Int4.Zero );
 			device.Clear( scatteredLight1.UnorderedAccess, Int4.Zero );
@@ -201,9 +208,12 @@ namespace Fusion.Engine.Graphics {
 		{
 			if( disposing ) 
 			{
+				SafeDispose( ref fogDensity );
+				SafeDispose( ref skyFogLut );
 				SafeDispose( ref scatteredLight0 );
 				SafeDispose( ref scatteredLight1 );
 				SafeDispose( ref integratedLight );
+
 				SafeDispose( ref cbFog );
 			}
 			base.Dispose( disposing );
@@ -234,6 +244,7 @@ namespace Fusion.Engine.Graphics {
 
 			fogData.FogDensity			=	MathUtil.Exp2( rs.Sky.MieScale ) * Sky2.BetaMie.Red;
 			fogData.FogHeight			=	rs.Sky.MieHeight;
+			fogData.FogScale			=	MathUtil.Exp2( rs.Sky.APScale );
 
 			fogData.SampleOffset		=	random.NextVector4( Vector4.Zero, Vector4.One );
 			fogData.HistoryFactor		=	HistoryFactor;
@@ -257,6 +268,7 @@ namespace Fusion.Engine.Graphics {
 			device.ComputeResources	[ regLightDataTable		]	=	rs.LightManager.LightGrid.LightDataGpu		;
 			device.ComputeResources	[ regShadowMap			]	=	rs.LightManager.ShadowMap.ShadowTexture		;
 			device.ComputeResources	[ regShadowMask			]	=	rs.LightManager.ShadowMap.ParticleShadowTexture	;
+			device.ComputeResources	[ regLutAP				]	=	rs.Sky.LutAP;
 		
 			device.ComputeResources	[ regIrradianceVolumeL0	]	= 	rs.Radiosity.LightVolumeL0	;
 			device.ComputeResources	[ regIrradianceVolumeL1	]	= 	rs.Radiosity.LightVolumeL1	;
@@ -303,8 +315,8 @@ namespace Fusion.Engine.Graphics {
 					device.PipelineState	=	factory[ (int)flags ];
 
 					device.SetComputeUnorderedAccess( regFogTarget,			integratedLight.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regSkyFogLut,			skyFogLut.Surface.UnorderedAccess );
 					device.ComputeResources			[ regFogSource ]	=	scatteredLight0;
-
 					
 					var gx	=	MathUtil.IntDivUp( FogGridSizeX, BlockSizeX );
 					var gy	=	MathUtil.IntDivUp( FogGridSizeY, BlockSizeY );

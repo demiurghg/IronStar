@@ -42,6 +42,9 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine]	public const uint	InstanceGroupCharacter		=	(int)InstanceGroup.Character;
 		[ShaderDefine]	public const uint	InstanceGroupWeapon			=	(int)InstanceGroup.Weapon;
 
+		public static float MetersToGameUnit( float v ) { return v / 0.32f; }
+		public static float GameUnitToMeters( float v ) { return v * 0.32f; }
+
 		public const string LightmapPath = @"maps\lightmaps";
 
 		public const int	LightmapSize				=	2048;

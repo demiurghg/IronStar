@@ -88,12 +88,13 @@ void CSMain(
 	float3	wsPositionNJ	=	GetWorldPosition( location.xyz + float3(0.5,0.5,0.5) );
 	float4	fogHistory		=	GetFogHistory( wsPositionNJ, historyFactor );
 	
-	float3	offset			=	aaPattern[ Fog.FrameCount % 8 ] * float3(0.5f,0.5f,0.5f) + float3(0.5,0.5,0.5);
+	float3	offset			=	aaPattern[ Fog.FrameCount % 8 ] * 1 * float3(0.25f,0.25f,0.5f) + float3(0.5,0.5,0.5);
 	float3 	wsPosition		=	GetWorldPosition( location.xyz + offset );
 	
 	float3	cameraPos		=	Camera.CameraPosition.xyz;
 	
-	float	density			=	1*Fog.FogDensity * min(1, exp(-(wsPositionNJ.y)/Fog.FogHeight));
+	float	fadeout			=	pow( saturate( 1 - location.z * Fog.FogSizeInv.z ), 4 );
+	float	density			=	fadeout * Fog.FogDensity * min(1, exp(-(wsPositionNJ.y)/Fog.FogHeight));
 	
 	emission				+=	ComputeClusteredLighting( wsPosition, density );
 	
@@ -109,6 +110,19 @@ void CSMain(
 
 #ifdef INTEGRATE
 
+float GetCellLengthScale( uint2 location )
+{
+	float2	normLocation	=	location.xy * Fog.FogSizeInv.xy;
+	
+	float	tangentX	=	lerp( -Camera.CameraTangentX,  Camera.CameraTangentX, normLocation.x );
+	float	tangentY	=	lerp(  Camera.CameraTangentY, -Camera.CameraTangentY, normLocation.y );
+	
+	float4	vsRay		=	float4( tangentX, tangentY, -1, 0 );
+	
+	return	length( vsRay );
+}
+
+
 [numthreads(BlockSizeX,BlockSizeY,1)] 
 void CSMain( 
 	uint3 groupId : SV_GroupID, 
@@ -116,7 +130,7 @@ void CSMain(
 	uint  groupIndex: SV_GroupIndex, 
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
-	int2 	location		=	dispatchThreadId.xy;
+	uint2 	location		=	dispatchThreadId.xy;
 	float	invDepthSlices	=	Fog.FogSizeInv.z;
 	
 	float3	accumScattering		=	float3(0,0,0);
@@ -124,14 +138,23 @@ void CSMain(
 	
 	for ( uint slice=0; slice<Fog.FogSizeZ; slice++ ) {
 		
+		float	apWeight				=	saturate( ((float)slice - Fog.FogSizeZ/4) * 4 * invDepthSlices );
+		
+		uint3	loadXYZ					=	uint3( location.xy, slice );
+		uint3	storeXYZ				=	uint3( location.xy, slice );
+		float3	loadUVW					=	loadXYZ * Fog.FogSizeInv.xyz;
+		
+		float4	aerialPerspective		=	LutAP.SampleLevel( LinearClamp, loadUVW, 0 );
+				aerialPerspective.a		=	1 - aerialPerspective.a;
+		
 		float	frontDistance			=	log( 1 - (slice+0.0000f) * invDepthSlices ) / Fog.FogGridExpK;
 		float	backDistance			=	log( 1 - (slice+0.9999f) * invDepthSlices ) / Fog.FogGridExpK;
-		float	stepLength				=	abs(backDistance - frontDistance);
+		float	stepLength				=	abs(backDistance - frontDistance) * GetCellLengthScale( location ) * Fog.FogScale;
 		
-		float4 	scatteringExtinction	=	FogSource[ int3( location.xy, slice ) ];
+		float4 	scatteringExtinction	=	FogSource[ loadXYZ ];
 		
-		float3	extinction				=	scatteringExtinction.a * stepLength;
-		float3	extinctionClamp			=	clamp( extinction, 0.000001, 1 );
+		float	extinction				=	scatteringExtinction.a * stepLength;
+		float	extinctionClamp			=	clamp( extinction, 0.000001, 1 );
 		float	transmittance			=	exp( -extinction );
 		
 		float3	scattering				=	scatteringExtinction.rgb * stepLength;
@@ -140,14 +163,24 @@ void CSMain(
 		accumScattering					+=	accumTransmittance * integScatt;
 		accumTransmittance				*=	transmittance;
 		
-		float4	storedValue		=	float4( accumScattering.rgb, 1 - accumTransmittance );
-		FogTarget[ int3( location.xy, slice ) ]	=	storedValue;
+		float3	totalScattering			=	lerp( accumScattering.rgb, aerialPerspective.rgb, apWeight );
+		float	totalTransmittance		=	accumTransmittance  * aerialPerspective.a;
+		
+		float4	storedValue		=	float4( totalScattering.rgb, 1 - totalTransmittance );
+
+		FogTarget[ storeXYZ ]	=	lerp( float4( accumScattering, 1 - accumTransmittance ), aerialPerspective, apWeight );
+		//FogTarget[ storeXYZ ]	=	storedValue;
 		
 		#ifdef SHOW_SLICE
-			FogTarget[ int3( location.xy, slice ) ]	=	float4(2,1,0, slice % 2);
-			if (slice==Fog.FogSizeZ-1) FogTarget[ int3( location.xy, slice ) ]	=	float4(4,0,0,1);
+			float4 	areaFog	=	float4(4,4,0, slice % 2);
+			float4 	areaAP	=	float4(0,0,8, slice % 2);
+			FogTarget[ int3( location.xy, slice ) ]	=	lerp( areaFog, areaAP, apWeight );
+			if (slice>=Fog.FogSizeZ-6) FogTarget[ int3( location.xy, slice ) ]	=	float4(8,0,0,1);
 		#endif
 	}
+	
+	// 	integrated fog for sky only, because sky already has aerial perspective itself :
+	SkyFogLut[ location.xy ] = float4( accumScattering.rgb, 1 - accumTransmittance );
 }
 
 #endif

@@ -24,6 +24,10 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine] const uint LUT_WIDTH		=	128;
 		[ShaderDefine] const uint LUT_HEIGHT	=	128;
 
+		[ShaderDefine] const uint AP_WIDTH		=	32;
+		[ShaderDefine] const uint AP_HEIGHT		=	32;
+		[ShaderDefine] const uint AP_DEPTH		=	16;
+
 		public static Color4	BetaRayleigh		{ get { return new Color4( 3.8e-6f, 13.5e-6f, 33.1e-6f, 0 ); } }	
 		public static Color4	BetaMie				{ get { return new Color4( 21e-6f ); } }
 
@@ -80,7 +84,7 @@ namespace Fusion.Engine.Graphics {
 		
 		[Config]	
 		[AEValueRange(0, 200000, 1000, 10)]
-		public float ViewHeight { get; set; } = 0;
+		public float ViewElevation { get; set; } = 0;
 
 		[Config]	
 		[AECategory("Atmosphere")]
@@ -110,6 +114,11 @@ namespace Fusion.Engine.Graphics {
 		[Config]	
 		[AECategory("Tweaks")]
 		public Color MieColor { get; set; } = Color.White;
+		
+		[Config]	
+		[AECategory("Tweaks")]
+		[AEValueRange(0, 5, 1, 0.1f)]
+		public float APScale { get; set; } = 0;
 		
 		[Config]	
 		[AECategory("Tweaks")]
@@ -152,23 +161,6 @@ namespace Fusion.Engine.Graphics {
 		[AEValueRange(-180, 180, 5f, 1f)]
 		public float WindDirection { get; set; } = 0;
 		
-		[Config]	
-		[AECategory("Fog")]
-		[AEDisplayName("Fog Height")]
-		[AEValueRange(0, 1, 0.01f, 0.001f)]
-		public float FogDensity { get; set; } = 0;
-		
-		[Config]	
-		[AECategory("Fog")]
-		[AEDisplayName("Fog Height")]
-		[AEValueRange(0, 200, 5f, 1f)]
-		public float FogHeight { get; set; } = 0;
-		
-		[AECategory("Fog")]
-		[AEDisplayName("Fog Color")]
-		[AEValueRange(0, 1, 0.01f, 0.001f)]
-		public Color FogColor { get; set; } = new Color(220,220,220,255);
-		
 		[AECategory("Debug")]
 		public bool ShowLut { get; set; } = false;
 
@@ -185,7 +177,7 @@ namespace Fusion.Engine.Graphics {
 			AtmosphereHeight	= 80;
 			RayleighHeight		= 8000;
 			MieHeight			= 1200;
-			ViewHeight			= 0;
+			ViewElevation			= 0;
 			MieExcentricity		= 0.76f;
 			SkySphereSize		= 10f;
 			MieScale			= 0;
@@ -205,25 +197,30 @@ namespace Fusion.Engine.Graphics {
 		static FXConstantBuffer<SKY_DATA>				regSky				=	new CRegister( 0, "Sky"			);
 		static FXConstantBuffer<GpuData.CAMERA>			regCamera			=	new CRegister( 1, "Camera"		);
 		static FXConstantBuffer<GpuData.DIRECT_LIGHT>	regDirectLight		=	new CRegister( 2, "DirectLight"	);
+		static FXConstantBuffer<Fog.FOG_DATA>			regFog				=	new CRegister( 3, "Fog"	);
 
 		static FXTexture2D<Vector4>						regLutScattering	=	new TRegister( 0, "LutScattering"	);
 		static FXTexture2D<Vector4>						regLutTransmittance	=	new TRegister( 1, "LutTransmittance");
 		static FXTexture2D<Vector4>						regLutCirrus		=	new TRegister( 2, "LutCirrus"		);
 		static FXTextureCube<Vector4>					regSkyCube			=	new TRegister( 3, "SkyCube"			);
-		static FXTexture3D<Vector4>						regFogGrid			=	new TRegister( 4, "FogGrid"			);
+		static FXTexture2D<Vector4>						regFogLut			=	new TRegister( 4, "FogLut"			);
 
 		static FXTexture2D<Vector4>						regCirrusClouds		=	new TRegister( 5, "CirrusClouds"	);
 
-		static FXSamplerState		regLutSampler	 =	new SRegister(0, "LutSampler" );
+		[ShaderIfDef("LUT_AP")]
+		static FXRWTexture3D<Vector4>					regLutAP			=	new URegister( 0, "LutAP"			);
+
+		static FXSamplerState		regLutSampler	=	new SRegister(0, "LutSampler" );
 		static FXSamplerState		regLinearWrap	=	new SRegister(1, "LinearWrap" );
 		static FXSamplerState		regLinearClamp	=	new SRegister(2, "LinearClamp" );
 		
 		[Flags]
 		enum Flags : int
 		{
-			SKY		= 1 << 0,
-			FOG		= 1 << 1,
-			LUT		= 1 << 2,
+			SKY_VIEW		= 1 << 0,
+			SKY_CUBE		= 1 << 1,
+			LUT_SKY			= 1 << 2,
+			LUT_AP			= 1 << 3,
 		}
 
 		[ShaderStructure]
@@ -244,7 +241,7 @@ namespace Fusion.Engine.Graphics {
 
 			public float	SunAzimuth;
 			public float	SunAltitude;
-			public float	Dummy0;
+			public float	APScale;
 			public float	Dummy1;
 
 			public float 	PlanetRadius;
@@ -266,9 +263,6 @@ namespace Fusion.Engine.Graphics {
 			public float	CirrusScrollV;
 			public float	Dummy2;
 			public float	Dummy3;
-
-			public Color4	FogDensity;
-			public float	FogHeight;
 		}
 
 
@@ -277,17 +271,19 @@ namespace Fusion.Engine.Graphics {
 			public Vector4 Vertex;
 		}
 
-		VertexBuffer	skyVB;
-		Ubershader		sky;
-		ConstantBuffer	cbSky;
-		SKY_DATA		skyData;
-		StateFactory	factory;
-		Camera			cubeCamera;
-		SamplerState	skyLutSampler;
+		VertexBuffer		skyVB;
+		Ubershader			sky;
+		ConstantBuffer		cbSky;
+		SKY_DATA			skyData;
+		StateFactory		factory;
+		Camera				cubeCamera;
+		SamplerState		skyLutSampler;
 
-		RenderTarget2D	lutSkyEmission;
-		RenderTarget2D	lutSkyExtinction;
-		RenderTarget2D	lutCirrus;
+		RenderTarget2D		lutSkyEmission;
+		RenderTarget2D		lutSkyExtinction;
+		RenderTarget2D		lutCirrus;
+
+		Texture3DCompute	lutAerial;
 
 		public Vector3	SkyAmbientLevel { get; protected set; }
 
@@ -296,6 +292,8 @@ namespace Fusion.Engine.Graphics {
 
 		internal RenderTargetCube	SkyCubeDiffuse { get { return skyCubeDiffuse; } }
 		RenderTargetCube			skyCubeDiffuse;
+
+		internal Texture3DCompute	LutAP { get { return lutAerial; } }
 
 		DiscTexture	texCirrusClouds;
 
@@ -333,9 +331,10 @@ namespace Fusion.Engine.Graphics {
 
 			Game.Reloading += (s,e) => LoadContent();
 
-			lutSkyEmission		=	new RenderTarget2D( device, ColorFormat.Rgba16F, (int)LUT_WIDTH, (int)LUT_HEIGHT, false, true );
-			lutSkyExtinction	=	new RenderTarget2D( device, ColorFormat.Rgba16F, (int)LUT_WIDTH, (int)LUT_HEIGHT, false, true );
-			lutCirrus			=	new RenderTarget2D( device, ColorFormat.Rgba16F, (int)LUT_WIDTH, (int)LUT_HEIGHT, false, true );
+			lutSkyEmission		=	new RenderTarget2D( device, ColorFormat.Rgba16F,	(int)LUT_WIDTH, (int)LUT_HEIGHT, false, true );
+			lutSkyExtinction	=	new RenderTarget2D( device, ColorFormat.Rgba16F,	(int)LUT_WIDTH, (int)LUT_HEIGHT, false, true );
+			lutCirrus			=	new RenderTarget2D( device, ColorFormat.Rgba16F,	(int)LUT_WIDTH, (int)LUT_HEIGHT, false, true );
+			lutAerial			=	new Texture3DCompute( device, ColorFormat.Rgba16F, 	(int)AP_WIDTH, (int)AP_HEIGHT, (int)AP_DEPTH );
 
 			var skySphere	=	SkySphere.GetVertices(3).Select( v => new SkyVertex{ Vertex = v } ).ToArray();
 			skyVB			=	new VertexBuffer( Game.GraphicsDevice, typeof(SkyVertex), skySphere.Length );
@@ -370,7 +369,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="flags"></param>
 		void EnumFunc ( PipelineState ps, Flags flags )
 		{
-			if (flags!=Flags.LUT)
+			if (flags!=Flags.LUT_SKY)
 			{
 				ps.VertexInputElements	=	VertexInputElement.FromStructure<SkyVertex>();
 			}
@@ -379,7 +378,7 @@ namespace Fusion.Engine.Graphics {
 			//	for direct view and cubemaps.
 			ps.RasterizerState		=	RasterizerState.CullNone; 
 			ps.BlendState			=	BlendState.Opaque;
-			ps.DepthStencilState	=	flags.HasFlag(Flags.FOG) ? DepthStencilState.None : DepthStencilState.None;
+			ps.DepthStencilState	=	flags.HasFlag(Flags.SKY_CUBE) ? DepthStencilState.None : DepthStencilState.None;
 		}
 
 
@@ -389,7 +388,8 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
-			if( disposing ) {
+			if( disposing ) 
+			{
 				SafeDispose( ref skyVB );
 				SafeDispose( ref skyCube );
 				SafeDispose( ref skyCubeDiffuse );
@@ -398,6 +398,7 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref lutSkyEmission );
 				SafeDispose( ref lutSkyExtinction );
 				SafeDispose( ref skyLutSampler );
+				SafeDispose( ref lutAerial );
 			}
 			base.Dispose( disposing );
 		}
@@ -409,6 +410,11 @@ namespace Fusion.Engine.Graphics {
 			device.SetViewport( viewport );
 			device.SetScissorRect( viewport );
 
+			var upVector		=	new Vector4( Vector3.Up, 0 );
+			var apScale			=	MathUtil.Exp2( APScale );
+			var eleveation		=	( PlanetRadius * 1000 + ViewElevation + 2 ) + Math.Max( 0, RenderSystem.GameUnitToMeters( camera.CameraPosition.Y ) );
+			var viewOrigin		=	upVector * eleveation;
+
 			skyData.BetaRayleigh		=	BetaRayleigh * MathUtil.Exp2( RayleighScale );	
 			skyData.BetaMie				=	BetaMie		 * MathUtil.Exp2( MieScale );
 			skyData.PlanetRadius		=	( PlanetRadius ) * 1000	;
@@ -417,7 +423,7 @@ namespace Fusion.Engine.Graphics {
 			skyData.MieHeight			=	MieHeight;
 			skyData.MieExcentricity		=	MieExcentricity;
 			skyData.SkySphereSize		=	SkySphereSize;
-			skyData.ViewHeight			=	ViewHeight;
+			skyData.ViewHeight			=	ViewElevation;
 			skyData.SunIntensity		=	GetSunIntensity(false);
 			skyData.SunBrightness		=	GetSunBrightness();
 			skyData.SunDirection		=	GetSunDirection4();
@@ -425,7 +431,8 @@ namespace Fusion.Engine.Graphics {
 			skyData.SunAzimuth			=	MathUtil.DegreesToRadians( SunAzimuth );
 			skyData.SkyExposure			=	MathUtil.Exp2( SkyExposure );
 			skyData.AmbientLevel		=	AmbientColor;
-			skyData.ViewOrigin			=	new Vector4( Vector3.Up, 0 ) * (skyData.PlanetRadius + skyData.ViewHeight + 2); // 2 meters to prevent self occlusion
+			skyData.ViewOrigin			=	viewOrigin;
+			skyData.APScale				=	apScale;
 
 			skyData.CirrusCoverage		=	CirrusCoverage;
 			skyData.CirrusHeight		=	CirrusHeight;
@@ -434,8 +441,6 @@ namespace Fusion.Engine.Graphics {
 			skyData.CirrusScrollU		=	currentCloudOffset.X * skyData.CirrusScale;
 			skyData.CirrusScrollV		=	currentCloudOffset.Y * skyData.CirrusScale;
 
-			skyData.FogDensity			=	FogColor.ToColor4() * FogDensity;
-			skyData.FogHeight			=	FogHeight;
 			skyData.ViewportSize		=	new Vector4( viewport.Width, viewport.Height, 1.0f / viewport.Width, 1.0f / viewport.Height );
 
 			cbSky.SetData( skyData );
@@ -443,6 +448,12 @@ namespace Fusion.Engine.Graphics {
 			device.GfxConstants		[ regSky			]	=	cbSky;
 			device.GfxConstants		[ regCamera			]	=	camera.CameraData;
 			device.GfxConstants		[ regDirectLight	]	=	rs.LightManager.DirectLightData;
+			device.GfxConstants		[ regFog			]	=	rs.Fog.FogData;
+
+			device.ComputeConstants	[ regSky			]	=	cbSky;
+			device.ComputeConstants	[ regCamera			]	=	camera.CameraData;
+			device.ComputeConstants	[ regDirectLight	]	=	rs.LightManager.DirectLightData;
+			device.ComputeConstants	[ regFog			]	=	rs.Fog.FogData;
 
 			device.GfxSamplers		[ regLutSampler		]	=	skyLutSampler;
 			device.ComputeSamplers	[ regLutSampler		]	=	skyLutSampler;
@@ -450,10 +461,6 @@ namespace Fusion.Engine.Graphics {
 			device.ComputeSamplers	[ regLinearWrap		]	=	SamplerState.LinearWrap;
 			device.GfxSamplers		[ regLinearClamp	]	=	SamplerState.LinearClamp;
 			device.ComputeSamplers	[ regLinearClamp	]	=	SamplerState.LinearClamp;
-
-			device.ComputeConstants	[ regSky			]	=	cbSky;
-			device.ComputeConstants	[ regCamera			]	=	camera.CameraData;
-			device.ComputeConstants	[ regDirectLight	]	=	rs.LightManager.DirectLightData;
 
 			device.PipelineState	=	factory[(int)flags];
 		}
@@ -513,13 +520,25 @@ namespace Fusion.Engine.Graphics {
 			{
 				device.ResetStates();
 
+				//	Sky LUT :
+
 				device.SetTargets( null, lutSkyEmission.Surface, lutSkyExtinction.Surface, lutCirrus.Surface );
 
 				device.GfxResources[ regSkyCube ] = skyCubeDiffuse;
 
-				Setup( Flags.LUT, camera, new Rectangle(0,0, (int)LUT_WIDTH, (int)LUT_HEIGHT) );
+				Setup( Flags.LUT_SKY, camera, new Rectangle(0,0, (int)LUT_WIDTH, (int)LUT_HEIGHT) );
 
 				device.Draw( 3, 0 );
+
+				//	AP LUT :
+
+				Setup( Flags.LUT_AP, camera, new Rectangle(0,0, (int)LUT_WIDTH, (int)LUT_HEIGHT) );
+				device.SetComputeUnorderedAccess( regLutAP, LutAP.UnorderedAccess );
+
+				uint tgx = MathUtil.IntDivRoundUp( AP_WIDTH,  8 );
+				uint tgy = MathUtil.IntDivRoundUp( AP_HEIGHT, 8 );
+				uint tgz = MathUtil.IntDivRoundUp( AP_DEPTH,  1 );
+				device.Dispatch( tgx, tgy, tgz );
 			}
 		}
 
@@ -541,9 +560,9 @@ namespace Fusion.Engine.Graphics {
 				device.GfxResources[ regLutCirrus			] =	lutCirrus;
 				device.GfxResources[ regCirrusClouds		] = texCirrusClouds.Srv;
 				device.GfxResources[ regSkyCube				] = skyCube;
-				device.GfxResources[ regFogGrid				] = rs.Fog.FogGrid;
+				device.GfxResources[ regFogLut				] = rs.Fog.SkyFogLut;
 
-				Setup( Flags.SKY, camera, color.Bounds );
+				Setup( Flags.SKY_VIEW, camera, color.Bounds );
 
 				device.SetupVertexInput( skyVB, null );
 				device.Draw( skyVB.Capacity, 0 );
@@ -574,7 +593,7 @@ namespace Fusion.Engine.Graphics {
 					device.GfxResources[ regCirrusClouds		] = texCirrusClouds.Srv;
 					device.GfxResources[ regSkyCube				] = skyCubeDiffuse;
 
-					Setup( Flags.FOG, cubeCamera, new Rectangle( 0, 0, SkyCube.Width, SkyCube.Height ) );
+					Setup( Flags.SKY_CUBE, cubeCamera, new Rectangle( 0, 0, SkyCube.Width, SkyCube.Height ) );
 
 					device.SetupVertexInput( skyVB, null );
 					device.Draw( skyVB.Capacity, 0 );

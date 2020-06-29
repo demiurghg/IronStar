@@ -53,6 +53,7 @@ struct FOG_DATA {
 	uint       FrameCount;                    // offset:   92
 	float      FogDensity;                    // offset:   96
 	float      FogHeight;                     // offset:  100
+	float      FogScale;                      // offset:  104
 };
 
 // Fusion.Engine.Graphics.Sky2+SKY_DATA
@@ -68,7 +69,7 @@ struct SKY_DATA {
 	float4     ViewportSize;                  // offset:  112
 	float      SunAzimuth;                    // offset:  128
 	float      SunAltitude;                   // offset:  132
-	float      Dummy0;                        // offset:  136
+	float      APScale;                       // offset:  136
 	float      Dummy1;                        // offset:  140
 	float      PlanetRadius;                  // offset:  144
 	float      AtmosphereRadius;              // offset:  148
@@ -86,8 +87,6 @@ struct SKY_DATA {
 	float      CirrusScrollV;                 // offset:  196
 	float      Dummy2;                        // offset:  200
 	float      Dummy3;                        // offset:  204
-	float4     FogDensity;                    // offset:  208
-	float      FogHeight;                     // offset:  224
 };
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
@@ -177,8 +176,10 @@ Buffer<uint>                   ClusterIndexBuffer             : register(t3);
 StructuredBuffer<LIGHT>        ClusterLightBuffer             : register(t4);
 Texture2D<float4>              ShadowMap                      : register(t5);
 Texture2D<float4>              ShadowMask                     : register(t6);
+Texture3D<float4>              LutAP                          : register(t7);
 Texture3D<float4>              IrradianceVolumeL0             : register(t10);
 Texture3D<float4>              IrradianceVolumeL1             : register(t11);
 Texture3D<float4>              IrradianceVolumeL2             : register(t12);
 Texture3D<float4>              IrradianceVolumeL3             : register(t13);
 RWTexture3D<float4>            FogTarget                      : register(u0);
+RWTexture2D<float4>            SkyFogLut                      : register(u1);

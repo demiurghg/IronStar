@@ -70,7 +70,7 @@ namespace Fusion.Engine.Graphics
 
 		public Vector3 GetViewOrigin()
 		{
-			return Vector3.Up * (PlanetRadius * 1000 + Math.Max( 2, ViewHeight ) );
+			return Vector3.Up * (PlanetRadius * 1000 + Math.Max( 2, ViewElevation ) );
 		}
 
 
@@ -86,7 +86,7 @@ namespace Fusion.Engine.Graphics
 
 			if (horizonDarken)
 			{
-				var origin	=	Vector3.Up * ( PlanetRadius * 1000 + ViewHeight );
+				var origin	=	Vector3.Up * ( PlanetRadius * 1000 + ViewElevation );
 				var dir		=	GetSunDirection();
 				color		*=	ComputeAtmosphereAbsorption( origin, dir );
 			}

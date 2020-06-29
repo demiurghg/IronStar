@@ -1,7 +1,9 @@
 
 #if 0
-$ubershader SKY|FOG
-$ubershader	LUT
+$ubershader SKY_VIEW
+$ubershader SKY_CUBE
+$ubershader	LUT_SKY
+$ubershader	LUT_AP
 #endif
 
 #include "auto/sky2.fxi"
@@ -170,13 +172,17 @@ float3 ComputeIndcidentSunLight( float3 samplePosition, float3 sunDirection )
 
 
 #if 1
-static const uint numIntegrationSamlpes = 64;
-float t(float i) { return pow((i+0.5f) / numIntegrationSamlpes, 3); }
-float q(float i) { return (t(i+0.5f) - t(i-0.5f)); }
+	#ifdef LUT_AP 
+	static const uint numIntegrationSamlpes = 64;
+	#else
+	static const uint numIntegrationSamlpes = 64;
+	#endif
+	float t(float i) { return pow((i+0.5f) / numIntegrationSamlpes, 3); }
+	float q(float i) { return (t(i+0.5f) - t(i-0.5f)); }
 #else
-static const uint numIntegrationSamlpes = 2048;
-float t(float i) { return (i+0.5f) / numIntegrationSamlpes; }
-float q(float i) { return 1.0f / numIntegrationSamlpes; }
+	static const uint numIntegrationSamlpes = 2048;
+	float t(float i) { return (i+0.5f) / numIntegrationSamlpes; }
+	float q(float i) { return 1.0f / numIntegrationSamlpes; }
 #endif
 
 float3 SampleAmbient( float3 dir )
@@ -186,10 +192,10 @@ float3 SampleAmbient( float3 dir )
 
 SKY_STC computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin, float tmax)
 { 
-	float	M_PI				=	3.141592f;
-    float 	g 					= 	Sky.MieExcentricity; 
-	float3	betaR				=	Sky.BetaRayleigh.xyz;
-	float3	betaM				=	Sky.BetaMie.xyz;
+	float	M_PI		=	3.141592f;
+    float 	g 			= 	Sky.MieExcentricity; 
+	float3	betaR		=	Sky.BetaRayleigh.xyz;
+	float3	betaM		=	Sky.BetaMie.xyz;
 
 	SKY_STC st;
 	st.scattering		=	0;
@@ -217,7 +223,7 @@ SKY_STC computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin,
     for (uint i = 0; i < numIntegrationSamlpes; ++i) 
 	{ 
         float3 	pos 	=	lerp( p0, p1, t(i) ); 
-        float 	height 	=	length(pos) - Sky.PlanetRadius; 
+        float 	height 	=	max(0, length(pos) - Sky.PlanetRadius); 
 
         float 	hr 		= 	exp(-height / Sky.RayleighHeight) * segmentLength * q(i); 
         float 	hm 		= 	exp(-height / Sky.MieHeight		) * segmentLength * q(i); 
@@ -232,14 +238,9 @@ SKY_STC computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin,
 		float3	ambientLuminance	=	SampleAmbient(dir);
 				scattering			+=	ambientLuminance * (hr * betaR + hm * betaM);
 
-		#if 0
-			st.scattering.rgb		+=	scattering * st.transmittance;
-			st.transmittance.rgb	*=	transmittance;
-		#else
-			float3	integScatt		=	( scattering - scattering * transmittance ) / extinctionClamp;
-			st.scattering.rgb		+=	st.transmittance.rgb * integScatt;
-			st.transmittance.rgb	*=	transmittance;
-		#endif
+		float3	integScatt		=	( scattering - scattering * transmittance ) / extinctionClamp;
+		st.scattering.rgb		+=	st.transmittance.rgb * integScatt;
+		st.transmittance.rgb	*=	transmittance;
 	} 
  
     return st; 
@@ -254,7 +255,7 @@ float3 ComputeCirrusCloudsCoords( float3 rayDir )
 {
 	// add 2 meters to prevent raycast against planet surface
 	float tmin, tmax;
-	float3 	origin	=	float3( 0, Sky.PlanetRadius + Sky.ViewHeight, 0 );
+	float3 	origin	=	Sky.ViewOrigin.xyz;
 
 	if ( RaySphereIntersect(origin, rayDir, Sky.PlanetRadius + Sky.CirrusHeight, tmin, tmax) )
 	{
@@ -289,7 +290,7 @@ float CirrusPhaseFunction(float3 rayDir, float3 sunDir)
 float4 ComputeCirrusClouds(float3 rayDir, float3 sunDir )
 {
 	float tmin, tmax;
-	float3 	origin	=	float3( 0, Sky.PlanetRadius + Sky.ViewHeight + 2, 0 );
+	float3 	origin	=	Sky.ViewOrigin.xyz;
 	
 	if ( RayIntersectsPlanet( origin, rayDir ) )
 	{
@@ -355,8 +356,7 @@ float3 RayFromAngles( float az, float al )
 
 SKY_STC ComputeSkyColor( float3 rayDir, float sunAzimuth, float sunAltitude )
 {
-	// add 2 meters to prevent raycast against planet surface
-	float3 	origin	=	float3( 0, Sky.PlanetRadius + Sky.ViewHeight + 2, 0 );
+	float3 	origin	=	Sky.ViewOrigin.xyz;
 	float3	sunDir	=	RayFromAngles( sunAzimuth, sunAltitude );
 
 	float	tmin, tmax;
@@ -364,7 +364,7 @@ SKY_STC ComputeSkyColor( float3 rayDir, float sunAzimuth, float sunAltitude )
 
 	if ( RaySphereIntersect(origin, rayDir, Sky.PlanetRadius, tmin, tmax) )
 	{
-		tmax	=	tmin;
+		tmax	=	tmin * Sky.APScale;
 		tmin	=	0;
 		trans	=	0;
 	}
@@ -414,7 +414,7 @@ float AltitudeToLut( float x, float b )
 	else	 return Dequantize( (x+1)/(1+b)-1 );
 }
 
-#if defined(LUT)
+#if defined(LUT_SKY)
 
 float4 VSMain(uint VertexID : SV_VertexID) : SV_POSITION
 {
@@ -444,10 +444,63 @@ SKY_STC PSMain( float4 vpos : SV_POSITION )
 
 
 /*-------------------------------------------------------------------------------------------------
+	AERIAL Perspective Lut
+-------------------------------------------------------------------------------------------------*/
+
+#ifdef LUT_AP
+
+float3 GetAPRayDir( float2 location, out float distScale )
+{
+	float2	normLocation	=	(location.xy + 0.5f) / float2( AP_WIDTH, AP_HEIGHT );
+	
+	float	tangentX	=	lerp( -Camera.CameraTangentX,  Camera.CameraTangentX, normLocation.x );
+	float	tangentY	=	lerp(  Camera.CameraTangentY, -Camera.CameraTangentY, normLocation.y );
+	
+	float4	vsRay		=	float4( tangentX, tangentY, -1, 0 );
+	
+	distScale			=	length( vsRay );
+	
+	float3	wsRay		=	mul( vsRay, Camera.ViewInverted ).xyz;
+	
+	return normalize(wsRay);
+}
+
+
+[numthreads(8,8,1)] 
+void CSMain( 
+	uint3 groupId : SV_GroupID, 
+	uint3 groupThreadId : SV_GroupThreadID, 
+	uint  groupIndex: SV_GroupIndex, 
+	uint3 dispatchThreadId : SV_DispatchThreadID) 
+{
+	int3 	location		=	dispatchThreadId.xyz;
+	float	invDepthSlices	=	Fog.FogSizeInv.z;
+	float	distScale		=	0;
+	float3	rayDir			=	GetAPRayDir( location.xy, distScale );
+	
+	float3	accumScattering		=	float3(0,0,0);
+	float	accumTransmittance	=	1;
+	
+	uint 	slice		=	location.z;
+
+	float 	normSlice	=	(slice + 0.0f) / AP_DEPTH;
+	float	rayTMax		=	Sky.APScale * log( 1 - normSlice ) / Fog.FogGridExpK * distScale * 0.32;
+	
+	SKY_STC	skyStc		=	computeIncidentLight( Sky.ViewOrigin.xyz, rayDir, Sky.SunDirection.xyz, 0, rayTMax );
+	
+	float3 	scattering		=	skyStc.scattering.rgb;
+	//float	transmittance	=	dot( skyStc.transmittance.rgb, float3(0.3f,0.5f,0.2f) );
+	float	transmittance	=	skyStc.transmittance.b;
+	LutAP[ location ]		=	float4( scattering, transmittance );
+}
+
+#endif
+
+/*-------------------------------------------------------------------------------------------------
 	SKY/FOG Pixel/Vertex shaders
 -------------------------------------------------------------------------------------------------*/
 
-#if defined(SKY) || defined(FOG)
+#if defined(SKY_VIEW) || defined(SKY_CUBE)
 
 VS_OUTPUT VSMain( VS_INPUT input )
 {
@@ -487,10 +540,11 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 	float4 	skyCirrusClouds		= 	LutCirrus		.SampleLevel( LutSampler, normUV, 0 );
 
 	//-----------------------------------------
-	//	compute sun color :
+	//	compute sun color (sky view only):
 	//-----------------------------------------
 	
-	#ifdef SKY
+	#if 1
+	#ifdef SKY_VIEW
 		float 	cosSun	=	saturate( dot(normalize(input.rayDir), Sky.SunDirection.xyz ) );
 		float 	sinSun	=	sqrt( 1 - cosSun * cosSun );
 		
@@ -502,12 +556,12 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 	#endif
 	
 	//-----------------------------------------
-	//	apply ground fog :
+	//	apply ground fog (sky view only) :
 	//-----------------------------------------
 	
-	#ifdef SKY
-		float3 	fogUVW	=	float3( input.position.xy * Sky.ViewportSize.zw, 1 );
-		float4	fogData	=	FogGrid.SampleLevel( LinearClamp, fogUVW, 0 );
+	#ifdef SKY_VIEW
+		float2 	fogUV	=	float2( input.position.xy * Sky.ViewportSize.zw );
+		float4	fogData	=	FogLut.SampleLevel( LinearClamp, fogUV, 0 );
 	
 		skyScattering.rgb = lerp( skyScattering.rgb, fogData.rgb, fogData.a );
 	#endif
@@ -528,6 +582,7 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 	float3	cloudGlow		=	skyCirrusClouds.rgb * cirrusTexture.r / 1.1f;
 
 	skyScattering.rgb 		= 	lerp( skyScattering.rgb, cloudGlow.rgb, cirrusTexture.r * cirrusTexture.r * skyCirrusClouds.a );
+	#endif
 	
 	// result :
 	return skyScattering;

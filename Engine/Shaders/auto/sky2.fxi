@@ -33,6 +33,9 @@ static const uint InstanceGroupWeapon = 16;
 static const uint BLOCK_SIZE = 16;
 static const uint LUT_WIDTH = 128;
 static const uint LUT_HEIGHT = 128;
+static const uint AP_WIDTH = 32;
+static const uint AP_HEIGHT = 32;
+static const uint AP_DEPTH = 16;
 
 // ---------------- DATA STRUCTURES ---------------- //
 
@@ -49,7 +52,7 @@ struct SKY_DATA {
 	float4     ViewportSize;                  // offset:  112
 	float      SunAzimuth;                    // offset:  128
 	float      SunAltitude;                   // offset:  132
-	float      Dummy0;                        // offset:  136
+	float      APScale;                       // offset:  136
 	float      Dummy1;                        // offset:  140
 	float      PlanetRadius;                  // offset:  144
 	float      AtmosphereRadius;              // offset:  148
@@ -67,8 +70,6 @@ struct SKY_DATA {
 	float      CirrusScrollV;                 // offset:  196
 	float      Dummy2;                        // offset:  200
 	float      Dummy3;                        // offset:  204
-	float4     FogDensity;                    // offset:  208
-	float      FogHeight;                     // offset:  224
 };
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
@@ -104,6 +105,26 @@ struct DIRECT_LIGHT {
 	float      Pad2;                          // offset:   44
 };
 
+// Fusion.Engine.Graphics.Fog+FOG_DATA
+// Marshal.SizeOf = 256
+struct FOG_DATA {
+	float4     WorldToVoxelScale;             // offset:    0
+	float4     WorldToVoxelOffset;            // offset:   16
+	float4     SampleOffset;                  // offset:   32
+	float4     FogSizeInv;                    // offset:   48
+	uint       FogSizeX;                      // offset:   64
+	uint       FogSizeY;                      // offset:   68
+	uint       FogSizeZ;                      // offset:   72
+	float      FogGridExpK;                   // offset:   76
+	float      DirectLightFactor;             // offset:   80
+	float      IndirectLightFactor;           // offset:   84
+	float      HistoryFactor;                 // offset:   88
+	uint       FrameCount;                    // offset:   92
+	float      FogDensity;                    // offset:   96
+	float      FogHeight;                     // offset:  100
+	float      FogScale;                      // offset:  104
+};
+
 // ---------------- SHADER RESOURCES ---------------- //
 
 cbuffer __buffer0 : register(b0) {
@@ -115,12 +136,18 @@ cbuffer __buffer1 : register(b1) {
 cbuffer __buffer2 : register(b2) {
 	DIRECT_LIGHT DirectLight : packoffset(c0);
 };
+cbuffer __buffer3 : register(b3) {
+	FOG_DATA Fog : packoffset(c0);
+};
 Texture2D<float4>              LutScattering                  : register(t0);
 Texture2D<float4>              LutTransmittance               : register(t1);
 Texture2D<float4>              LutCirrus                      : register(t2);
 TextureCube<float4>            SkyCube                        : register(t3);
-Texture3D<float4>              FogGrid                        : register(t4);
+Texture2D<float4>              FogLut                         : register(t4);
 Texture2D<float4>              CirrusClouds                   : register(t5);
 SamplerState                   LutSampler                     : register(s0);
 SamplerState                   LinearWrap                     : register(s1);
 SamplerState                   LinearClamp                    : register(s2);
+#if defined(LUT_AP)
+RWTexture3D<float4>            LutAP                          : register(u0);
+#endif

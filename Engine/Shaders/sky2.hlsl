@@ -485,13 +485,16 @@ void CSMain(
 
 	float 	normSlice	=	(slice + 0.0f) / AP_DEPTH;
 	float	rayTMax		=	Sky.APScale * log( 1 - normSlice ) / Fog.FogGridExpK * distScale * 0.32;
+	float	falloff		=	1;
 	
 	SKY_STC	skyStc		=	computeIncidentLight( Sky.ViewOrigin.xyz, rayDir, Sky.SunDirection.xyz, 0, rayTMax );
 	
 	float3 	scattering		=	skyStc.scattering.rgb;
 	//float	transmittance	=	dot( skyStc.transmittance.rgb, float3(0.3f,0.5f,0.2f) );
 	float	transmittance	=	skyStc.transmittance.b;
-	LutAP[ location ]		=	float4( scattering, transmittance );
+	LutAP[ location ]		=	float4( scattering * falloff, lerp(1, transmittance, falloff) );
+	
+	//if (slice==0) LutAP[ location ] = float4(0,0,0,1);
 }
 
 #endif
@@ -563,7 +566,7 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 		float2 	fogUV	=	float2( input.position.xy * Sky.ViewportSize.zw );
 		float4	fogData	=	FogLut.SampleLevel( LinearClamp, fogUV, 0 );
 	
-		skyScattering.rgb = lerp( skyScattering.rgb, fogData.rgb, fogData.a );
+		skyScattering.rgb = skyScattering.rgb * fogData.a + fogData.rgb;
 	#endif
 	
 	//-----------------------------------------

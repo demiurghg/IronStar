@@ -134,7 +134,7 @@ float4 ComputeClusteredLighting ( float3 worldPos, float density )
 	float3 	lightmap	=	EvaluateLightVolume( rcLightMap, volumeCoord );
 	
 	totalLight.rgb		+=	lightmap * 1.14;//Sky.AmbientLevel;
-	totalLight.rgb		+=	Sky.AmbientLevel;
+	//totalLight.rgb		+=	Sky.AmbientLevel;
 
 	//----------------------------------------------------------------------------------------------
 	//	Compute direct light :

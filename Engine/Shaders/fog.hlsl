@@ -7,6 +7,7 @@ $ubershader INTEGRATE +SHOW_SLICE
 #include "fog_lighting.hlsl"
 #include "ls_fog.fxi"
 
+#define GAME_UNIT 0.32f
 
 /*-----------------------------------------------------------------------------
 	Compute flux through the fog :
@@ -94,7 +95,7 @@ void CSMain(
 	float3	cameraPos		=	Camera.CameraPosition.xyz;
 	
 	float	fadeout			=	pow( saturate( 1 - location.z * Fog.FogSizeInv.z ), 4 );
-	float	density			=	fadeout * Fog.FogDensity * min(1, exp(-(wsPositionNJ.y)/Fog.FogHeight));
+	float	density			=	fadeout * Fog.FogDensity * min(1, exp(-(wsPositionNJ.y*GAME_UNIT)/Fog.FogHeight));
 	
 	emission				+=	ComputeClusteredLighting( wsPosition, density );
 	
@@ -135,41 +136,50 @@ void CSMain(
 	
 	float3	accumScattering		=	float3(0,0,0);
 	float	accumTransmittance	=	1;
+	float3	skyFogScattering	=	float3(0,0,0);
+	float	skyFogTransmittance	=	1;
 	
-	for ( uint slice=0; slice<Fog.FogSizeZ; slice++ ) {
-		
-		float	apWeight				=	saturate( ((float)slice - Fog.FogSizeZ/4) * 4 * invDepthSlices );
-		
+	for ( uint slice=0; slice<Fog.FogSizeZ; slice++ ) 
+	{
+		//	Compute texture coords :
 		uint3	loadXYZ					=	uint3( location.xy, slice );
 		uint3	storeXYZ				=	uint3( location.xy, slice );
 		float3	loadUVW					=	loadXYZ * Fog.FogSizeInv.xyz;
-		
+
+		//	Sample AP LUT :
+		float	apWeight				=	saturate( ((float)slice - Fog.FogSizeZ/4) * 3 * invDepthSlices );
 		float4	aerialPerspective		=	LutAP.SampleLevel( LinearClamp, loadUVW, 0 );
-				aerialPerspective.a		=	1 - aerialPerspective.a;
 		
+		//	Sample FOG grid :
 		float	frontDistance			=	log( 1 - (slice+0.0000f) * invDepthSlices ) / Fog.FogGridExpK;
 		float	backDistance			=	log( 1 - (slice+0.9999f) * invDepthSlices ) / Fog.FogGridExpK;
-		float	stepLength				=	abs(backDistance - frontDistance) * GetCellLengthScale( location ) * Fog.FogScale;
+		float	stepLength				=	abs(backDistance - frontDistance) * GetCellLengthScale( location ) * Fog.FogScale * GAME_UNIT;
 		
 		float4 	scatteringExtinction	=	FogSource[ loadXYZ ];
 		
+		//	Compute integral segment :
 		float	extinction				=	scatteringExtinction.a * stepLength;
 		float	extinctionClamp			=	clamp( extinction, 0.000001, 1 );
 		float	transmittance			=	exp( -extinction );
-		
-		float3	scattering				=	scatteringExtinction.rgb * stepLength;
-		
+		float3	scattering				=	scatteringExtinction.rgb * stepLength * (1 - apWeight);
 		float3	integScatt				=	( scattering - scattering * transmittance ) / extinctionClamp;
-		accumScattering					+=	accumTransmittance * integScatt;
+		
+		//	Integrate FOG with AP :
+		accumScattering					+=	accumTransmittance * integScatt * aerialPerspective.a;
 		accumTransmittance				*=	transmittance;
-		
-		float3	totalScattering			=	lerp( accumScattering.rgb, aerialPerspective.rgb, apWeight );
-		float	totalTransmittance		=	accumTransmittance  * aerialPerspective.a;
-		
-		float4	storedValue		=	float4( totalScattering.rgb, 1 - totalTransmittance );
 
-		FogTarget[ storeXYZ ]	=	lerp( float4( accumScattering, 1 - accumTransmittance ), aerialPerspective, apWeight );
-		//FogTarget[ storeXYZ ]	=	storedValue;
+		//	Integrate FOG without AP :
+		skyFogScattering				+=	accumTransmittance * integScatt;
+		skyFogTransmittance				*=	transmittance;
+		
+		//	Store scattering and inv transmittance :
+		float4	integratedFog			=	float4( aerialPerspective.rgb * apWeight, 1 - apWeight * (1 - aerialPerspective.a) );
+		
+				//	Apply FOG over AP :
+				integratedFog.rgb		*=	skyFogTransmittance;
+				integratedFog.rgb		+=	skyFogScattering;
+				
+		FogTarget[ storeXYZ ]			=	integratedFog;
 		
 		#ifdef SHOW_SLICE
 			float4 	areaFog	=	float4(4,4,0, slice % 2);
@@ -179,8 +189,8 @@ void CSMain(
 		#endif
 	}
 	
-	// 	integrated fog for sky only, because sky already has aerial perspective itself :
-	SkyFogLut[ location.xy ] = float4( accumScattering.rgb, 1 - accumTransmittance );
+	// 	integrated FOG for sky only, because sky already has aerial perspective itself :
+	SkyFogLut[ location.xy ] 	=	float4( skyFogScattering.rgb, skyFogTransmittance );
 }
 
 #endif

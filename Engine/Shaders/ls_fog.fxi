@@ -25,7 +25,7 @@ float3 ApplyVolumetricFog( FOG_DATA fog, float3 color, float4 projectedPosition,
 {
 	float4	fogData	=	SampleVolumetricFog( fog, projectedPosition, linearClamp, fogTexture );
 	
-	return lerp( color, fogData.rgb, fogData.a );
+	return fogData.rgb + color * fogData.a;
 }
 
 #endif

@@ -139,47 +139,59 @@ void CSMain(
 	float3	skyFogScattering	=	float3(0,0,0);
 	float	skyFogTransmittance	=	1;
 	
-	for ( uint slice=0; slice<Fog.FogSizeZ; slice++ ) 
+	bool 	applyFog = false;//location.x > 64;
+
+	//	Zero slice is always transparent :
+	FogTarget[ int3( location.xy, 0 ) ]	=	float4(0,0,0,1);
+	
+	//	Integrate all other slices :
+	for ( uint slice=1; slice<Fog.FogSizeZ; slice++ ) 
 	{
 		//	Compute texture coords :
-		uint3	loadXYZ					=	uint3( location.xy, slice );
-		uint3	storeXYZ				=	uint3( location.xy, slice );
-		float3	loadUVW					=	loadXYZ * Fog.FogSizeInv.xyz;
+		uint3	loadXYZ				=	uint3( location.xy, slice );
+		uint3	storeXYZ			=	uint3( location.xy, slice );
+		float3	loadUVW				=	(loadXYZ + float3(0.5,0.5,0.5)) * Fog.FogSizeInv.xyz;
+		//	...apply texel distribution (see sky2.hlsl):
+		loadUVW.z = pow(loadUVW.z, 1.0f / 1.5f);
 
 		//	Sample AP LUT :
-		float	apWeight				=	saturate( ((float)slice - Fog.FogSizeZ/4) * 3 * invDepthSlices );
-		float4	aerialPerspective		=	LutAP.SampleLevel( LinearClamp, loadUVW, 0 );
+		float	apWeight			=	applyFog ? smoothstep( 32,128, slice ) : 1;// saturate( ((float)slice - Fog.FogSizeZ/3) * 5 * invDepthSlices );
+		float4	aerialPerspective	=	LutAP.SampleLevel( LinearClamp, loadUVW, 0 );
 		
 		//	Sample FOG grid :
-		float	frontDistance			=	log( 1 - (slice+0.0000f) * invDepthSlices ) / Fog.FogGridExpK;
-		float	backDistance			=	log( 1 - (slice+0.9999f) * invDepthSlices ) / Fog.FogGridExpK;
-		float	stepLength				=	abs(backDistance - frontDistance) * GetCellLengthScale( location ) * Fog.FogScale * GAME_UNIT;
+		float	frontDistance		=	log( 1 - (slice+0.0000f) * invDepthSlices ) / Fog.FogGridExpK;
+		float	backDistance		=	log( 1 - (slice+0.9999f) * invDepthSlices ) / Fog.FogGridExpK;
+		float	stepLength			=	abs(backDistance - frontDistance) * GetCellLengthScale( location ) * Fog.FogScale * GAME_UNIT;
 		
 		float4 	scatteringExtinction	=	FogSource[ loadXYZ ];
 		
 		//	Compute integral segment :
-		float	extinction				=	scatteringExtinction.a * stepLength;
-		float	extinctionClamp			=	clamp( extinction, 0.000001, 1 );
-		float	transmittance			=	exp( -extinction );
-		float3	scattering				=	scatteringExtinction.rgb * stepLength * (1 - apWeight);
-		float3	integScatt				=	( scattering - scattering * transmittance ) / extinctionClamp;
+		float	extinction			=	scatteringExtinction.a * stepLength;
+		float	extinctionClamp		=	clamp( extinction, 0.000001, 1 );
+		float	transmittance		=	exp( -extinction );
+		float3	scattering			=	scatteringExtinction.rgb * stepLength * (1 - apWeight);
+		float3	integScatt			=	( scattering - scattering * transmittance ) / extinctionClamp;
 		
 		//	Integrate FOG with AP :
-		accumScattering					+=	accumTransmittance * integScatt * aerialPerspective.a;
-		accumTransmittance				*=	transmittance;
+		accumScattering				+=	accumTransmittance * integScatt * aerialPerspective.a;
+		accumTransmittance			*=	transmittance;
 
 		//	Integrate FOG without AP :
-		skyFogScattering				+=	accumTransmittance * integScatt;
-		skyFogTransmittance				*=	transmittance;
+		skyFogScattering			+=	accumTransmittance * integScatt;
+		skyFogTransmittance			*=	transmittance;
 		
 		//	Store scattering and inv transmittance :
-		float4	integratedFog			=	float4( aerialPerspective.rgb * apWeight, 1 - apWeight * (1 - aerialPerspective.a) );
+		float4	integratedFog		=	float4( aerialPerspective.rgb * apWeight, 1 - apWeight * (1 - aerialPerspective.a) );
 		
-				//	Apply FOG over AP :
-				integratedFog.rgb		*=	skyFogTransmittance;
-				integratedFog.rgb		+=	skyFogScattering;
+			//	Apply FOG over AP :
+			if (applyFog)
+			{
+				integratedFog.rgb	*=	skyFogTransmittance;
+				integratedFog.rgb	+=	skyFogScattering;
+				integratedFog.a		*=	skyFogTransmittance;
+			}
 				
-		FogTarget[ storeXYZ ]			=	integratedFog;
+		FogTarget[ storeXYZ ]		=	integratedFog;
 		
 		#ifdef SHOW_SLICE
 			float4 	areaFog	=	float4(4,4,0, slice % 2);
@@ -189,8 +201,9 @@ void CSMain(
 		#endif
 	}
 	
-	// 	integrated FOG for sky only, because sky already has aerial perspective itself :
-	SkyFogLut[ location.xy ] 	=	float4( skyFogScattering.rgb, skyFogTransmittance );
+	// 	integrated FOG for sky only, 
+	//	because sky already has aerial perspective itself :
+	SkyFogLut[ location.xy ] 		=	(applyFog) ? float4( skyFogScattering.rgb*0, skyFogTransmittance ) : float4( 0,0,0,1 );
 }
 
 #endif

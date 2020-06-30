@@ -32,7 +32,7 @@
         "Frozen": false,
         "TranslateX": 0.0,
         "TranslateY": 32.0,
-        "TranslateZ": 0.0,
+        "TranslateZ": 12.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
@@ -45,8 +45,8 @@
         "Visible": true,
         "Frozen": false,
         "TranslateX": 0.0,
-        "TranslateY": 50.0,
-        "TranslateZ": 0.0,
+        "TranslateY": 48.0,
+        "TranslateZ": 8.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
@@ -86,7 +86,7 @@
         "Frozen": false,
         "TranslateX": 0.0,
         "TranslateY": 44.0,
-        "TranslateZ": 0.0,
+        "TranslateZ": 12.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
@@ -149,11 +149,34 @@
         "SlopeBias": 2.0,
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 2.0,
-        "TranslateY": 50.0,
-        "TranslateZ": 34.0,
+        "TranslateX": 0.0,
+        "TranslateY": 48.0,
+        "TranslateZ": 48.0,
         "RotateYaw": 0.0,
         "RotatePitch": -15.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "e50839fa-8332-458f-810b-80330963b401",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.FuncFXFactory, IronStar",
+          "FX": "fireCrashSite",
+          "FXMode": "persistent",
+          "Once": false,
+          "Start": true,
+          "MinInterval": 1,
+          "MaxInterval": 1
+        },
+        "FactoryName": "UTw3bFtd",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.0,
+        "TranslateY": 16.0,
+        "TranslateZ": -536.0,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
         "RotateRoll": 0.0
       }
     ]

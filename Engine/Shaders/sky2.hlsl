@@ -484,6 +484,9 @@ void CSMain(
 	uint 	slice		=	location.z;
 
 	float 	normSlice	=	(slice + 0.0f) / AP_DEPTH;
+			//	...apply texel distribution (see fog.hlsl):
+			normSlice	=	pow(normSlice, 1.5f);
+			
 	float	rayTMax		=	Sky.APScale * log( 1 - normSlice ) / Fog.FogGridExpK * distScale * 0.32;
 	float	falloff		=	1;
 	
@@ -494,7 +497,7 @@ void CSMain(
 	float	transmittance	=	skyStc.transmittance.b;
 	LutAP[ location ]		=	float4( scattering * falloff, lerp(1, transmittance, falloff) );
 	
-	//if (slice==0) LutAP[ location ] = float4(0,0,0,1);
+	//LutAP[ location ] = float4(0,0,0,slice&1);
 }
 
 #endif

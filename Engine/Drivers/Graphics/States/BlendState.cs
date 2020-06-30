@@ -60,7 +60,7 @@ namespace Fusion.Drivers.Graphics {
 			AlphaBlendOffScreen	=	Create( ColorChannels.All,	
 										Blend.SrcAlpha,		
 										Blend.InvSrcAlpha,	
-										Blend.One, 
+										Blend.Zero, 
 										Blend.InvSrcAlpha	
 									);
 

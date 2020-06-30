@@ -10,7 +10,7 @@ $ubershader DRAW SOFT|HARD|DUDV|VELOCITY|HARD_SHADOW|SOFT_SHADOW|LIGHTMAP
 #include "auto/particles.fxi"
 #include "gamma.fxi"
 
-#include "fog.fxi"
+#include "ls_fog.fxi"
 
 //-----------------------------------------------
 //	UAVs :
@@ -195,6 +195,7 @@ struct GSOutput {
 	float2	LMCoord	  : TEXCOORD1;
 	float4  ViewPosSZ : TEXCOORD2;
 	float4	Color     : COLOR0;
+	float4	Fog	      : COLOR1;
 	float	LMFactor  : TEXCOORD3;
 	float4	FogSRM	  : TEXCOORD4;
 	float3	WorldPos  : TEXCOORD5;
@@ -376,6 +377,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p0.WorldPos	 = wpos0.xyz;
 	p0.Tangent	 = rt;
 	p0.Binormal	 = -up;
+	p0.Fog		 = SampleVolumetricFog( Fog, p0.Position, LinearSampler, FogVolume );
 	
 	p1.Position	 = mul( pos1, projection );
 	p1.Normal	 = normal1;
@@ -388,6 +390,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p1.WorldPos	 = wpos1.xyz;
 	p1.Tangent	 = rt;
 	p1.Binormal	 = -up;
+	p1.Fog		 = SampleVolumetricFog( Fog, p1.Position, LinearSampler, FogVolume );
 	
 	p2.Position	 = mul( pos2, projection );
 	p2.Normal	 = normal2;
@@ -400,6 +403,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p2.WorldPos	 = wpos2.xyz;
 	p2.Tangent	 = rt;
 	p2.Binormal	 = -up;
+	p2.Fog		 = SampleVolumetricFog( Fog, p2.Position, LinearSampler, FogVolume );
 	
 	p3.Position	 = mul( pos3, projection );
 	p3.Normal	 = normal3;
@@ -412,6 +416,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p3.WorldPos	 = wpos3.xyz;
 	p3.Tangent	 = rt;
 	p3.Binormal	 = -up;
+	p3.Fog		 = SampleVolumetricFog( Fog, p3.Position, LinearSampler, FogVolume );
 	
 	#if defined(SOFT)
 	if (prt.Effects==ParticleFX_SoftLit || prt.Effects==ParticleFX_SoftLitShadow) {
@@ -467,6 +472,11 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 
 #include "dither.fxi"
 
+float3 ApplyFog( float3 color, float4 fog )
+{
+	return color * fog.a + fog.rgb;
+}
+
 float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 {
 	#if defined(SOFT) || defined(DUDV)
@@ -493,7 +503,8 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 		color.rgba 		*= 	softFactor;
 		color.rgb  		*= 	light.rgb;
 		
-		color.rgb		=	lerp( color.rgb, float3(0,0,0), input.FogSRM.x );
+		color.rgb		=	ApplyFog( color.rgb, input.Fog );
+		color.a			*	input.Fog.a;
 		
 		return color;
 	#endif
@@ -526,7 +537,7 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 			finalColor	=	baseColor;
 		}
 		
-		finalColor		=	lerp( finalColor, float3(0,0,0), input.FogSRM.x );
+		finalColor		=	ApplyFog( finalColor, input.Fog );
 		
 		clip( alpha - ( 1 - input.Color.a ) );
 		

@@ -115,6 +115,26 @@ struct CASCADE_SHADOW {
 	float4     CascadeScaleOffset3;           // offset:  560
 };
 
+// Fusion.Engine.Graphics.Fog+FOG_DATA
+// Marshal.SizeOf = 256
+struct FOG_DATA {
+	float4     WorldToVoxelScale;             // offset:    0
+	float4     WorldToVoxelOffset;            // offset:   16
+	float4     SampleOffset;                  // offset:   32
+	float4     FogSizeInv;                    // offset:   48
+	uint       FogSizeX;                      // offset:   64
+	uint       FogSizeY;                      // offset:   68
+	uint       FogSizeZ;                      // offset:   72
+	float      FogGridExpK;                   // offset:   76
+	float      DirectLightFactor;             // offset:   80
+	float      IndirectLightFactor;           // offset:   84
+	float      HistoryFactor;                 // offset:   88
+	uint       FrameCount;                    // offset:   92
+	float      FogDensity;                    // offset:   96
+	float      FogHeight;                     // offset:  100
+	float      FogScale;                      // offset:  104
+};
+
 // Fusion.Engine.Graphics.Particle
 // Marshal.SizeOf = 128
 struct Particle {
@@ -175,6 +195,9 @@ cbuffer __buffer4 : register(b4) {
 cbuffer __buffer5 : register(b5) {
 	CASCADE_SHADOW CascadeShadow : packoffset(c0);
 };
+cbuffer __buffer6 : register(b6) {
+	FOG_DATA Fog : packoffset(c0);
+};
 SamplerState                   LinearSampler                  : register(s0);
 SamplerComparisonState         ShadowSampler                  : register(s1);
 Texture2D<float4>              Texture                        : register(t0);
@@ -189,6 +212,7 @@ StructuredBuffer<LIGHT>        ClusterLightBuffer             : register(t9);
 Texture2D<float4>              ShadowMap                      : register(t10);
 Texture2D<float4>              LightMap                       : register(t11);
 Texture2D<float4>              ShadowMask                     : register(t12);
+Texture3D<float4>              FogVolume                      : register(t13);
 Texture3D<float4>              IrradianceVolumeL0             : register(t14);
 Texture3D<float4>              IrradianceVolumeL1             : register(t15);
 Texture3D<float4>              IrradianceVolumeL2             : register(t16);

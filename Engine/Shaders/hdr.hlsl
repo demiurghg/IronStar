@@ -268,7 +268,8 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	#endif
 
 	//	Compose solid+transparent and soft particles :
-	float3	hdrImageFinal	=	lerp( hdrImageSolid.rgb, softPrtFront.rgb, softPrtFront.a );
+	float3 hdrImageFinal		=	hdrImageSolid.rgb * softPrtFront.a + softPrtFront.rgb;
+	//float3	hdrImageFinal	=	lerp( hdrImageSolid.rgb, softPrtFront.rgb, softPrtFront.a );
 	
 	return float4( hdrImageFinal * float3(1,1,1), 1 );
 }

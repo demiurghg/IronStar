@@ -28,6 +28,7 @@ namespace Fusion.Engine.Graphics {
 		static FXConstantBuffer<Vector4>					regImages				=	new CRegister( 3, MAX_IMAGES, "Images"		);
 		static FXConstantBuffer<GpuData.DIRECT_LIGHT>		regDirectLight			=	new CRegister( 4, "DirectLight"				);
 		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow		=	new CRegister( 5, "CascadeShadow"			);
+		static FXConstantBuffer<Fog.FOG_DATA>				regFog					=	new CRegister( 6, "Fog"						);
 
 		static FXSamplerState								regSampler					=	new SRegister( 0, "LinearSampler"			);
 		static FXSamplerComparisonState						regShadowSampler			=	new SRegister( 1, "ShadowSampler"			);
@@ -46,12 +47,14 @@ namespace Fusion.Engine.Graphics {
 		static FXTexture2D<Vector4>							regLightMap					=	new TRegister(11, "LightMap"				);
 		static FXTexture2D<Vector4>							regShadowMask				=	new TRegister(12, "ShadowMask"				);
 
+		static FXTexture3D<Vector4>							regFogVolume				=	new TRegister(13, "FogVolume"				);
+
 		static FXTexture3D<Vector4>							regIrradianceVolumeL0		=	new TRegister(14, "IrradianceVolumeL0"		);
 		static FXTexture3D<Vector4>							regIrradianceVolumeL1		=	new TRegister(15, "IrradianceVolumeL1"		);
 		static FXTexture3D<Vector4>							regIrradianceVolumeL2		=	new TRegister(16, "IrradianceVolumeL2"		);
 		static FXTexture3D<Vector4>							regIrradianceVolumeL3		=	new TRegister(17, "IrradianceVolumeL3"		);
 																											
-		static FXStructuredBuffer<Vector4>					reglightMapRegionsGS		=	new TRegister(18, "lightMapRegionsGS"		);
+		static FXStructuredBuffer<Vector4>					regLightMapRegionsGS		=	new TRegister(18, "lightMapRegionsGS"		);
 																															
 		static FXRWStructuredBuffer<Particle>				regparticleBuffer			=	new URegister( 0, "particleBuffer"			);
 		static FXConsumeStructuredBuffer<uint>				regdeadParticleIndicesPull	=	new URegister( 1, "deadParticleIndicesPull"	);
@@ -473,6 +476,9 @@ namespace Fusion.Engine.Graphics {
 
 			device.ComputeConstants	[ regCascadeShadow	]	=	rs.LightManager.ShadowMap.GetCascadeShadowConstantBuffer();
 			device.GfxConstants		[ regCascadeShadow	]	=	rs.LightManager.ShadowMap.GetCascadeShadowConstantBuffer();
+
+			device.ComputeConstants	[ regFog			]	=	rs.Fog.FogData;
+			device.GfxConstants		[ regFog			]	=	rs.Fog.FogData;
 		}
 
 
@@ -641,6 +647,7 @@ namespace Fusion.Engine.Graphics {
 					device.GfxResources[ regsortParticleBufferGS]	=	sortParticlesBuffer ;
 					device.GfxResources[ regDepthValues			]	=	depthValues			;
 					device.GfxResources[ regColorTemperature	]	=	ps.ColorTempMap.Srv ;
+					device.GfxResources[ regFogVolume			]	=	rs.Fog.FogGrid;
 
 					if (flags.HasFlag(Flags.LIGHTMAP) || flags.HasFlag(Flags.HARD)) 
 					{
@@ -668,7 +675,7 @@ namespace Fusion.Engine.Graphics {
 						device.GfxResources[ regIrradianceVolumeL3 ]	= 	rs.Radiosity.LightVolumeL3	;
 					}
 
-					device.GfxResources[ 18 ]	=	lightMapRegions;
+					device.GfxResources[ regLightMapRegionsGS ]	=	lightMapRegions;
 
 					//	setup PS :
 					device.PipelineState	=	factory[ (int)flags ];
@@ -699,6 +706,8 @@ namespace Fusion.Engine.Graphics {
 			var depthSource	=	viewFrame.DepthBuffer;
 
 			var viewport	=	new Viewport( 0, 0, colorTarget.Width, colorTarget.Height );
+
+			device.Clear( colorTarget, new Color4(0,0,0,1) );
 
 			RenderGeneric( "Soft Particles", gameTime, camera, viewport, colorTarget, null, depthSource, Flags.DRAW|Flags.SOFT );
 		}

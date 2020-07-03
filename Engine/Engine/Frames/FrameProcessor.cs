@@ -172,24 +172,27 @@ namespace Fusion.Engine.Frames {
 
 
 
-		public void ShowDialog ( Frame dialog, Frame owner = null )
+		public UIContext ShowDialog ( Frame dialog, Frame owner = null )
 		{
-			stack.PushUIContext( dialog, dialog, owner );
+			var context = stack.PushUIContext( dialog, dialog, owner );
 			dialog.ConstrainFrame( 0 );
+			return context;
 		}
 
 
-		public void ShowDialogCentered ( Frame dialog, Frame owner = null )
+		public UIContext ShowDialogCentered ( Frame dialog, Frame owner = null )
 		{
-			stack.PushUIContext( dialog, dialog, owner );
+			var context = stack.PushUIContext( dialog, dialog, owner );
 			dialog.CenterFrame();
+			return context;
 		}
 
 
-		public void ShowFullscreenFrame ( Frame fullscrFrame, Frame owner = null )
+		public UIContext ShowFullscreenFrame ( Frame fullscrFrame, Frame owner = null )
 		{
-			stack.PushUIContext( fullscrFrame, fullscrFrame, owner );
+			var context = stack.PushUIContext( fullscrFrame, fullscrFrame, owner );
 			fullscrFrame.ExpandFrame(0);
+			return context;
 		}
 
 

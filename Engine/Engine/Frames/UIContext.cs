@@ -22,10 +22,10 @@ namespace Fusion.Engine.Frames {
 	/// Holds current root frame and current target frame.
 	/// No events should passed behind the root frame.
 	/// </summary>
-	class UIContext {
+	public class UIContext {
 
-		public readonly Frame Root;
-		public Frame Target;
+		internal readonly Frame Root;
+		internal Frame Target;
 
 		public UIContext( Frame modal, Frame target )
 		{

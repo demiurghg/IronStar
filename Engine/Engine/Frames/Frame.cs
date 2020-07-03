@@ -416,22 +416,19 @@ namespace Fusion.Engine.Frames {
 		/// </summary>
 		public virtual void Close ()
 		{
-			if (Frames.IsModalFrame(this)) {
-
+			if (Frames.IsModalFrame(this)) 
+			{
+				throw new InvalidOperationException("Use PopUIContext to close modal frame");
+				#if false
 				while (Frames.ContextRootFrame!=this) {
 					Frames.Stack.PopUIContext( Frames.ContextRootFrame );
 				}
 
 				Frames.Stack.PopUIContext(this);
-
-				/*if (Frames.IsTopLevelModalFrame(this)) {
-					Frames.PopModalFrame(this);
-					return;
-				} else {
-					Log.Warning("Frames : Can not close non top level modal frame");
-					return;
-				} */
-			} else {
+				#endif
+			} 
+			else 
+			{
 				Parent?.Remove(this);
 			}
 		}

@@ -26,6 +26,7 @@ namespace Fusion.Widgets {
 		Frame dropDownList;
 
 		readonly int minDropDownWidth;
+		UIContext context;
 
 		/// <summary>
 		/// 
@@ -169,7 +170,7 @@ namespace Fusion.Widgets {
 
 			dropDownList.Width	=	Math.Max( this.Width, minDropDownWidth );
 
-			Frames.ShowDialog( dropDownList );
+			context = Frames.ShowDialog( dropDownList );
 
 			dropDownList.ConstrainFrame(0);
 		}
@@ -178,7 +179,7 @@ namespace Fusion.Widgets {
 
 		void CloseDropDownList()
 		{
-			Frames.Stack.PopUIContext( dropDownList );
+			Frames.Stack.PopUIContext( ref context );
 		}
 
 

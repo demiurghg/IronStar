@@ -33,6 +33,7 @@ namespace IronStar {
 		HudFrame		hudFrame;
 		PauseMenu		pauseMenu;
 
+		UIContext		uiContext;
 
         /// <summary>
         /// Creates instance of ShooterDemoUserInterface
@@ -71,7 +72,7 @@ namespace IronStar {
 			pauseMenu				=	new PauseMenu( frames );
 
 			//	push empty frame :
-			frames.ShowFullscreenFrame( Frame.CreateBlackFrame(frames) );
+			uiContext = frames.ShowFullscreenFrame( Frame.CreateBlackFrame(frames) );
 		}
 
 
@@ -155,19 +156,19 @@ namespace IronStar {
 			switch (e.State) {
 				
 				case MissionState.StandBy:
-					frames.ContextRootFrame.Close();
-					frames.ShowFullscreenFrame( mainMenu );
+					frames.Stack.PopUIContext( ref uiContext );
+					uiContext = frames.ShowFullscreenFrame( mainMenu );
 				break;
 
 				case MissionState.Loading:
-					frames.ContextRootFrame.Close();
-					frames.ShowFullscreenFrame( loadingScreen );
+					frames.Stack.PopUIContext( ref uiContext );
+					uiContext = frames.ShowFullscreenFrame( loadingScreen );
 					loadingScreen.StatusText	=	"LOADING";
 				break;
 
 				case MissionState.Waiting:
-					frames.ContextRootFrame.Close();
-					frames.ShowFullscreenFrame( loadingScreen );
+					frames.Stack.PopUIContext( ref uiContext );
+					uiContext = frames.ShowFullscreenFrame( loadingScreen );
 					loadingScreen.StatusText	=	"Press [ENTER] to continue... ";
 				break;
 
@@ -176,13 +177,13 @@ namespace IronStar {
 				break;
 
 				case MissionState.Active:
-					frames.ContextRootFrame.Close();
-					frames.ShowFullscreenFrame( hudFrame );
+					frames.Stack.PopUIContext( ref uiContext );
+					uiContext = frames.ShowFullscreenFrame( hudFrame );
 				break;
 
 				case MissionState.Paused:
-					frames.ContextRootFrame.Close();
-					frames.ShowDialogCentered( pauseMenu );
+					frames.Stack.PopUIContext( ref uiContext );
+					uiContext = frames.ShowDialogCentered( pauseMenu );
 				break;
 
 				case MissionState.Debriefing:

@@ -27,6 +27,8 @@ namespace IronStar.UI.Controls {
 
 		readonly int minDropDownWidth;
 
+		UIContext context;
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -172,7 +174,8 @@ namespace IronStar.UI.Controls {
 
 			BackColor	=	MenuTheme.ButtonColorPushed;
 
-			Frames.ShowDialog( dropDownList );
+			context		=	Frames.ShowDialog( dropDownList );
+
 			dropDownList.ConstrainFrame(0);
 		}
 
@@ -180,7 +183,7 @@ namespace IronStar.UI.Controls {
 
 		void CloseDropDownList()
 		{
-			Frames.Stack.PopUIContext( dropDownList );
+			Frames.Stack.PopUIContext( ref context );
 		}
 
 

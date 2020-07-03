@@ -67,7 +67,8 @@ namespace Fusion.Engine.Frames {
 		/// <param name="modalFrame"></param>
 		/// <param name="targetFrame"></param>
 		/// <param name="ownerFrame"></param>
-		public void PushUIContext ( Frame modalFrame, Frame targetFrame, Frame ownerFrame )
+		//	#TODO #UI -- PushUIContext must return UIContext object, the only object to close context
+		public UIContext PushUIContext ( Frame modalFrame, Frame targetFrame, Frame ownerFrame )
 		{
 			if (modalFrame.Parent!=null) {
 				throw new InvalidOperationException("PushModalFrame : frame must not be added to another frame");
@@ -75,9 +76,17 @@ namespace Fusion.Engine.Frames {
 
 			(ownerFrame ?? frames.RootFrame).Add( modalFrame );
 
+			//	deactivate top context's frames :
 			modalFrames.Peek().Root?.OnDeactivate();
-			modalFrames.Push( new UIContext( modalFrame, targetFrame ) );
+
+			//	create and push new context
+			var context = new UIContext( modalFrame, targetFrame );
+			modalFrames.Push( context );
+
+			//	activate top context's frames :
 			modalFrames.Peek().Root?.OnActivate();
+
+			return context;
 		}
 
 
@@ -85,15 +94,21 @@ namespace Fusion.Engine.Frames {
 		/// Pop given modal frame from stack
 		/// </summary>
 		/// <param name="modalFrame"></param>
-		public void PopUIContext ( Frame modalFrame )
+		public bool PopUIContext ( ref UIContext uiContext )
 		{
-			if (modalFrames.Peek().Root!=modalFrame) {
-				throw new InvalidOperationException("PopModalFrame : can not pop not top-level modal frame");
+			if (modalFrames.Any() && modalFrames.Peek()==uiContext)
+			{
+				modalFrames.Peek().Root?.OnDeactivate();
+				modalFrames.Pop().Root?.Close();
+				modalFrames.Peek().Root?.OnActivate();
+
+				uiContext = null;
+
+				return true;
 			}
 
-			modalFrames.Peek().Root?.OnDeactivate();
-			modalFrames.Pop().Root?.Close();
-			modalFrames.Peek().Root?.OnActivate();
+			Log.Warning("PopUIContext: Attempt to close non top-level UIContext");
+			return false;
 		}
 
 

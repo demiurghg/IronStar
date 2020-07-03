@@ -8,9 +8,13 @@ using Fusion.Engine.Frames;
 using Fusion.Engine.Frames.Layouts;
 
 namespace IronStar.UI.Controls.Dialogs {
-	public class MessageBox : Panel{
+	public class MessageBox : Panel
+	{
+		public event EventHandler Accept;
+		public event EventHandler Reject;
 
-		public MessageBox ( FrameProcessor frames, string headerText, string message, Color textColor, int numButtons, Action accept, Action reject, string acceptText="Accept", string rejectText="Reject" )
+
+		public MessageBox ( FrameProcessor frames, string headerText, string message, Color textColor, int numButtons, string acceptText="Accept", string rejectText="Reject" )
 		 : base(frames, 0, 0, 400, 240) 
 		{
 			AllowDrag			=	true;
@@ -53,18 +57,12 @@ namespace IronStar.UI.Controls.Dialogs {
 			//	Buttons :
 
 			if (numButtons==2) {
-				var acceptBtn		=	new Button(frames, acceptText, 0,0,0,0, 
-					() => {
-						Close();
-						accept?.Invoke();
-					}
+				var acceptBtn	=	new Button(frames, acceptText, 0,0,0,0, 
+					() => Accept?.Invoke(this, EventArgs.Empty)
 				);
 
 				var rejectBtn	=	new Button(frames, rejectText, 0,0,0,0, 
-					() => {
-						Close();
-						reject?.Invoke();
-					}
+					() => Reject?.Invoke(this, EventArgs.Empty)
 				);
 
 				Add( acceptBtn );
@@ -72,10 +70,7 @@ namespace IronStar.UI.Controls.Dialogs {
 			}
 			if (numButtons==1) {
 				var acceptBtn		=	new Button(frames, acceptText, 0,0,0,0, 
-					() => {
-						Close();
-						accept?.Invoke();
-					}
+					() => Accept?.Invoke(this, EventArgs.Empty)
 				);
 				Add( acceptBtn );
 			}
@@ -84,20 +79,28 @@ namespace IronStar.UI.Controls.Dialogs {
 
 		public static void ShowError ( Frame owner, string header, string message, Action accept )
 		{
-			owner.Frames.ShowDialogCentered( new MessageBox( owner.Frames, header, message, MenuTheme.ColorNegative, 1, accept, null ) );
-			//ShowDialog( owner, header, message, MenuTheme.ColorNegative, 1, accept, null );
+			var box		=	new MessageBox( owner.Frames, header, message, MenuTheme.ColorNegative, 1 );
+			var ctxt	=	owner.Frames.ShowDialogCentered( box );
+			box.Accept += (e,a) => { owner.Frames.Stack.PopUIContext(ref ctxt); accept?.Invoke(); };
+			box.Reject += (e,a) => { owner.Frames.Stack.PopUIContext(ref ctxt); };
 		}
 
 
 		public static void ShowQuestion ( Frame owner, string header, string message, Action accept, Action reject )
 		{
-			owner.Frames.ShowDialogCentered( new MessageBox( owner.Frames, header, message, MenuTheme.TextColorNormal, 2, accept, reject ) );
+			var box		=	new MessageBox( owner.Frames, header, message, MenuTheme.TextColorNormal, 2 );
+			var ctxt	=	owner.Frames.ShowDialogCentered( box );
+			box.Accept += (e,a) => { owner.Frames.Stack.PopUIContext(ref ctxt); accept?.Invoke(); };
+			box.Reject += (e,a) => { owner.Frames.Stack.PopUIContext(ref ctxt); reject?.Invoke(); };
 		}
 
 
 		public static void ShowQuestion ( Frame owner, string header, string message, Action accept, Action reject, string acceptText, string rejectText )
 		{
-			owner.Frames.ShowDialogCentered( new MessageBox( owner.Frames, header, message, MenuTheme.TextColorNormal, 2, accept, reject, acceptText, rejectText ) );
+			var box		=	new MessageBox( owner.Frames, header, message, MenuTheme.TextColorNormal, 2, acceptText, rejectText );
+			var ctxt	=	owner.Frames.ShowDialogCentered( box );
+			box.Accept += (e,a) => { owner.Frames.Stack.PopUIContext(ref ctxt); accept?.Invoke(); };
+			box.Reject += (e,a) => { owner.Frames.Stack.PopUIContext(ref ctxt); reject?.Invoke(); };
 		}
 	}
 }

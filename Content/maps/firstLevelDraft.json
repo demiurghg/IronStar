@@ -535,12 +535,12 @@
         "FactoryName": "zKikEl0r",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -368.0,
-        "TranslateY": 24.6519241,
-        "TranslateZ": -100.715424,
-        "RotateYaw": 20.57692,
-        "RotatePitch": 4.922316,
-        "RotateRoll": 170.009888
+        "TranslateX": -367.933838,
+        "TranslateY": 9.345811,
+        "TranslateZ": -100.71003,
+        "RotateYaw": 21.1709137,
+        "RotatePitch": 4.14287,
+        "RotateRoll": 169.559921
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",

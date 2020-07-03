@@ -14,8 +14,19 @@ using FMOD.Studio;
 using Fusion.Core.Input;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Content;
+using Fusion.Core.Extensions;
 
 namespace Fusion.Engine.Audio {
+
+	[ContentLoader(typeof(SoundBank))]
+	public sealed class SoundBankLoader : ContentLoader
+	{
+		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
+		{
+			return new SoundBank( content.Game.SoundSystem, stream.ReadAllBytes() );
+		}
+	}
+
 	public sealed partial class SoundSystem : GameComponent {
 
 		internal FMOD.Studio.System system;
@@ -54,8 +65,7 @@ namespace Fusion.Engine.Audio {
 
 		public SoundBank LoadSoundBank ( ContentManager content, string path )
 		{
-			var data = content.Load<byte[]>(path);
-			return new SoundBank( this, data );
+			return content.Load<SoundBank>( path );
 		}
 
 

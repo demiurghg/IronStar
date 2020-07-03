@@ -596,9 +596,9 @@
         "FalloffFactor": 0.75,
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 28.0,
+        "TranslateX": 32.0,
         "TranslateY": 0.0,
-        "TranslateZ": 2.0,
+        "TranslateZ": 0.0,
         "RotateYaw": 0.0,
         "RotatePitch": -90.0,
         "RotateRoll": -60.0
@@ -645,6 +645,29 @@
         "TranslateX": -148.0,
         "TranslateY": 40.0,
         "TranslateZ": -122.0,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "4c8f26e8-b997-4ebe-b552-71b7e2d00e1c",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.Entities.FuncFXFactory, IronStar",
+          "FX": "fireCrashSite",
+          "FXMode": "persistent",
+          "Once": false,
+          "Start": true,
+          "MinInterval": 1,
+          "MaxInterval": 1
+        },
+        "FactoryName": "03UPjanq",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.0,
+        "TranslateY": 0.0,
+        "TranslateZ": 0.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0

@@ -180,8 +180,7 @@ namespace IronStar.UI.Controls {
 
 		void CloseDropDownList()
 		{
-			Frames.ShowDialog( dropDownList );
-			SetFrameStatus( FrameStatus.None );
+			Frames.Stack.PopUIContext( dropDownList );
 		}
 
 

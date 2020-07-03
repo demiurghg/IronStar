@@ -85,14 +85,23 @@ namespace Fusion.Engine.Graphics {
 		static FXStructuredBuffer<SceneRenderer.LIGHT>		regLightDataTable			=	new TRegister( 4, "ClusterLightBuffer"		);
 		static FXTexture2D<Vector4>							regShadowMap				=	new TRegister( 5, "ShadowMap"				);
 		static FXTexture2D<Vector4>							regShadowMask				=	new TRegister( 6, "ShadowMask"				);
-		static FXTexture3D<Vector4>							regLutAP					=	new TRegister( 7, "LutAP"					);
+		static FXTexture3D<Vector4>							regLutAP0					=	new TRegister( 7, "LutAP0"					);
+		static FXTexture3D<Vector4>							regLutAP1					=	new TRegister( 8, "LutAP1"					);
+		static FXTexture3D<Vector4>							regShadow					=	new TRegister( 9, "FogShadowSource"			);
+		static FXTexture3D<Vector4>							regShadowHistory			=	new TRegister(10, "FogShadowHistory"		);
 
-		static FXTexture3D<Vector4>							regIrradianceVolumeL0		=	new TRegister(10, "IrradianceVolumeL0"		);
-		static FXTexture3D<Vector4>							regIrradianceVolumeL1		=	new TRegister(11, "IrradianceVolumeL1"		);
-		static FXTexture3D<Vector4>							regIrradianceVolumeL2		=	new TRegister(12, "IrradianceVolumeL2"		);
-		static FXTexture3D<Vector4>							regIrradianceVolumeL3		=	new TRegister(13, "IrradianceVolumeL3"		);
+		static FXTexture3D<Vector4>							regIrradianceVolumeL0		=	new TRegister(11, "IrradianceVolumeL0"		);
+		static FXTexture3D<Vector4>							regIrradianceVolumeL1		=	new TRegister(12, "IrradianceVolumeL1"		);
+		static FXTexture3D<Vector4>							regIrradianceVolumeL2		=	new TRegister(13, "IrradianceVolumeL2"		);
+		static FXTexture3D<Vector4>							regIrradianceVolumeL3		=	new TRegister(14, "IrradianceVolumeL3"		);
 
+		[ShaderIfDef("INTEGRATE,COMPUTE")]
 		static FXRWTexture3D<Vector4>						regFogTarget				=	new URegister(0, "FogTarget"				);
+
+		[ShaderIfDef("COMPUTE")]
+		static FXRWTexture3D<Vector4>						regFogShadowTarget			=	new URegister(1, "FogShadowTarget"			);
+
+		[ShaderIfDef("INTEGRATE")]
 		static FXRWTexture2D<Vector4>						regSkyFogLut				=	new URegister(1, "SkyFogLut"				);
 
 		[Flags]
@@ -133,6 +142,8 @@ namespace Fusion.Engine.Graphics {
 		Texture3DCompute	fogDensity;
 		Texture3DCompute	scatteredLight0;
 		Texture3DCompute	scatteredLight1;
+		Texture3DCompute	volumeShadow;
+		Texture3DCompute	shadowHistory;
 		Texture3DCompute	integratedLight;
 		RenderTarget2D		skyFogLut;
 		uint				frameCounter;
@@ -188,12 +199,16 @@ namespace Fusion.Engine.Graphics {
 			SafeDispose( ref scatteredLight0 );
 			SafeDispose( ref scatteredLight1 );
 			SafeDispose( ref integratedLight );
+			SafeDispose( ref volumeShadow );
 
 			fogDensity		=	new Texture3DCompute( device, ColorFormat.Rgba8,	fogSizeX, fogSizeY, fogSizeZ );
 			scatteredLight0	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	fogSizeX, fogSizeY, fogSizeZ );
 			scatteredLight1	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	fogSizeX, fogSizeY, fogSizeZ );
 			integratedLight	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	fogSizeX, fogSizeY, fogSizeZ );
 			skyFogLut		=	new RenderTarget2D  ( device, ColorFormat.Rgba16F,	fogSizeX, fogSizeY, true );
+
+			volumeShadow	=	new Texture3DCompute( device, ColorFormat.Rg16F,	fogSizeX, fogSizeY, fogSizeZ );
+			shadowHistory	=	new Texture3DCompute( device, ColorFormat.Rg16F,	fogSizeX, fogSizeY, fogSizeZ );
 
 			device.Clear( scatteredLight0.UnorderedAccess, Int4.Zero );
 			device.Clear( scatteredLight1.UnorderedAccess, Int4.Zero );
@@ -213,6 +228,8 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref scatteredLight0 );
 				SafeDispose( ref scatteredLight1 );
 				SafeDispose( ref integratedLight );
+				SafeDispose( ref volumeShadow );
+				SafeDispose( ref shadowHistory );
 
 				SafeDispose( ref cbFog );
 			}
@@ -268,7 +285,9 @@ namespace Fusion.Engine.Graphics {
 			device.ComputeResources	[ regLightDataTable		]	=	rs.LightManager.LightGrid.LightDataGpu		;
 			device.ComputeResources	[ regShadowMap			]	=	rs.LightManager.ShadowMap.ShadowTexture		;
 			device.ComputeResources	[ regShadowMask			]	=	rs.LightManager.ShadowMap.ParticleShadowTexture	;
-			device.ComputeResources	[ regLutAP				]	=	rs.Sky.LutAP;
+			device.ComputeResources	[ regLutAP0				]	=	rs.Sky.LutAP0;
+			device.ComputeResources	[ regLutAP1				]	=	rs.Sky.LutAP1;
+			device.ComputeResources	[ regShadowHistory		]	=	shadowHistory;
 		
 			device.ComputeResources	[ regIrradianceVolumeL0	]	= 	rs.Radiosity.LightVolumeL0	;
 			device.ComputeResources	[ regIrradianceVolumeL1	]	= 	rs.Radiosity.LightVolumeL1	;
@@ -291,8 +310,8 @@ namespace Fusion.Engine.Graphics {
 
 					device.PipelineState	=	factory[ (int)FogFlags.COMPUTE ];
 
-					device.SetComputeUnorderedAccess( regFogTarget, scatteredLight0.UnorderedAccess );
-
+					device.SetComputeUnorderedAccess( regFogTarget,			scatteredLight0.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regFogShadowTarget,	volumeShadow.UnorderedAccess );
 					
 					var gx	=	MathUtil.IntDivUp( FogGridSizeX, BlockSizeX );
 					var gy	=	MathUtil.IntDivUp( FogGridSizeY, BlockSizeY );
@@ -314,18 +333,20 @@ namespace Fusion.Engine.Graphics {
 
 					device.PipelineState	=	factory[ (int)flags ];
 
-					device.SetComputeUnorderedAccess( regFogTarget,			integratedLight.UnorderedAccess );
-					device.SetComputeUnorderedAccess( regSkyFogLut,			skyFogLut.Surface.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regFogTarget,		integratedLight.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regSkyFogLut,		skyFogLut.Surface.UnorderedAccess );
 					device.ComputeResources			[ regFogSource ]	=	scatteredLight0;
+					device.ComputeResources			[ regShadow ]		=	volumeShadow;
 					
-					var gx	=	MathUtil.IntDivUp( FogGridSizeX, BlockSizeX );
-					var gy	=	MathUtil.IntDivUp( FogGridSizeY, BlockSizeY );
+					var gx	=	MathUtil.IntDivUp( FogGridSizeX, 8 );
+					var gy	=	MathUtil.IntDivUp( FogGridSizeY, 8 );
 					var gz	=	1;
 
 					device.Dispatch( gx, gy, gz );
 				}
 
 				Misc.Swap( ref scatteredLight0, ref scatteredLight1 );
+				Misc.Swap( ref shadowHistory, ref volumeShadow );
 				frameCounter++;
 			}
 		}

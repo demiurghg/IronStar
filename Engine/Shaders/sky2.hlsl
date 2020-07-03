@@ -28,6 +28,13 @@ struct SKY_STC
 	float4	cirrusClouds	: SV_TARGET2;		//	cirrus lighting and extiction
 };
 
+struct SKY_SST
+{
+	float4	scattering0		;		//	direct light scattering
+	float4	scattering1		;		//	indirect light scattering
+	float4	transmittance	;		//	transmittance
+};
+
 
 #define PS_INPUT VS_OUTPUT
 
@@ -190,17 +197,17 @@ float3 SampleAmbient( float3 dir )
 	return Sky.AmbientLevel.rgb;
 }
 
-SKY_STC computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin, float tmax)
+SKY_SST computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin, float tmax)
 { 
 	float	M_PI		=	3.141592f;
     float 	g 			= 	Sky.MieExcentricity; 
 	float3	betaR		=	Sky.BetaRayleigh.xyz;
 	float3	betaM		=	Sky.BetaMie.xyz;
 
-	SKY_STC st;
-	st.scattering		=	0;
+	SKY_SST st;
+	st.scattering0		=	0;
+	st.scattering1		=	0;
 	st.transmittance	=	1;
-	st.cirrusClouds		=	0;
 	
     float t0, t1; 
     if (!RaySphereIntersect(orig, dir, Sky.AtmosphereRadius, t0, t1)) return st; 
@@ -233,13 +240,14 @@ SKY_STC computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin,
 		float3	transmittance	=	exp( - extinction );
 		
 		float3	luminance		=	ComputeIndcidentSunLight( pos, sunDir );
-		float3	scattering		=	luminance * (hr * phaseR * betaR + hm * phaseM * betaM);
-		
-		float3	ambientLuminance	=	SampleAmbient(dir);
-				scattering			+=	ambientLuminance * (hr * betaR + hm * betaM);
+		float3	scattering0		=	luminance * (hr * phaseR * betaR + hm * phaseM * betaM);
+		float3	scattering1		=	SampleAmbient(dir) * (hr * betaR + hm * betaM);
 
-		float3	integScatt		=	( scattering - scattering * transmittance ) / extinctionClamp;
-		st.scattering.rgb		+=	st.transmittance.rgb * integScatt;
+		float3	integScatt0		=	( scattering0 - scattering0 * transmittance ) / extinctionClamp;
+		float3	integScatt1		=	( scattering1 - scattering1 * transmittance ) / extinctionClamp;
+		
+		st.scattering0.rgb		+=	st.transmittance.rgb * integScatt0;
+		st.scattering1.rgb		+=	st.transmittance.rgb * integScatt1;
 		st.transmittance.rgb	*=	transmittance;
 	} 
  
@@ -377,10 +385,11 @@ SKY_STC ComputeSkyColor( float3 rayDir, float sunAzimuth, float sunAltitude )
 	
 	tmax = min(tmax, 1000000);
 	
-	SKY_STC	lut			=	computeIncidentLight( origin, rayDir, sunDir, tmin, tmax );
-	lut.scattering		*=	Sky.SkyExposure;
-	lut.transmittance	*=	trans;
+	SKY_SST	sst			=	computeIncidentLight( origin, rayDir, sunDir, tmin, tmax );
+	SKY_STC	lut			=	(SKY_STC)0;
 	
+	lut.scattering		=	( sst.scattering0 + sst.scattering1 ) * Sky.SkyExposure;
+	lut.transmittance	=	( sst.transmittance * trans );
 	lut.cirrusClouds	=	ComputeCirrusClouds( rayDir, sunDir );
 	
 	return lut;
@@ -488,16 +497,11 @@ void CSMain(
 			normSlice	=	pow(normSlice, 1.5f);
 			
 	float	rayTMax		=	Sky.APScale * log( 1 - normSlice ) / Fog.FogGridExpK * distScale * 0.32;
-	float	falloff		=	1;
 	
-	SKY_STC	skyStc		=	computeIncidentLight( Sky.ViewOrigin.xyz, rayDir, Sky.SunDirection.xyz, 0, rayTMax );
+	SKY_SST	skySst		=	computeIncidentLight( Sky.ViewOrigin.xyz, rayDir, Sky.SunDirection.xyz, 0, rayTMax );
 	
-	float3 	scattering		=	skyStc.scattering.rgb;
-	//float	transmittance	=	dot( skyStc.transmittance.rgb, float3(0.3f,0.5f,0.2f) );
-	float	transmittance	=	skyStc.transmittance.b;
-	LutAP[ location ]		=	float4( scattering * falloff, lerp(1, transmittance, falloff) );
-	
-	//LutAP[ location ] = float4(0,0,0,slice&1);
+	LutAP0[ location ]		=	float4( skySst.scattering0.rgb, skySst.transmittance.b );
+	LutAP1[ location ]		=	float4( skySst.scattering1.rgb, skySst.transmittance.b );
 }
 
 #endif

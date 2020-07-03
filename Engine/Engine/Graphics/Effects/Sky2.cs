@@ -207,8 +207,8 @@ namespace Fusion.Engine.Graphics {
 
 		static FXTexture2D<Vector4>						regCirrusClouds		=	new TRegister( 5, "CirrusClouds"	);
 
-		[ShaderIfDef("LUT_AP")]
-		static FXRWTexture3D<Vector4>					regLutAP			=	new URegister( 0, "LutAP"			);
+		[ShaderIfDef("LUT_AP")]	static FXRWTexture3D<Vector4>	regLutAP0	=	new URegister( 0, "LutAP0"			);
+		[ShaderIfDef("LUT_AP")]	static FXRWTexture3D<Vector4>	regLutAP1	=	new URegister( 1, "LutAP1"			);
 
 		static FXSamplerState		regLutSampler	=	new SRegister(0, "LutSampler" );
 		static FXSamplerState		regLinearWrap	=	new SRegister(1, "LinearWrap" );
@@ -283,7 +283,8 @@ namespace Fusion.Engine.Graphics {
 		RenderTarget2D		lutSkyExtinction;
 		RenderTarget2D		lutCirrus;
 
-		Texture3DCompute	lutAerial;
+		Texture3DCompute	lutAerial0;
+		Texture3DCompute	lutAerial1;
 
 		public Vector3	SkyAmbientLevel { get; protected set; }
 
@@ -293,7 +294,8 @@ namespace Fusion.Engine.Graphics {
 		internal RenderTargetCube	SkyCubeDiffuse { get { return skyCubeDiffuse; } }
 		RenderTargetCube			skyCubeDiffuse;
 
-		internal Texture3DCompute	LutAP { get { return lutAerial; } }
+		internal Texture3DCompute	LutAP0 { get { return lutAerial0; } }
+		internal Texture3DCompute	LutAP1 { get { return lutAerial1; } }
 
 		DiscTexture	texCirrusClouds;
 
@@ -334,7 +336,8 @@ namespace Fusion.Engine.Graphics {
 			lutSkyEmission		=	new RenderTarget2D( device, ColorFormat.Rgba16F,	(int)LUT_WIDTH, (int)LUT_HEIGHT, false, true );
 			lutSkyExtinction	=	new RenderTarget2D( device, ColorFormat.Rgba16F,	(int)LUT_WIDTH, (int)LUT_HEIGHT, false, true );
 			lutCirrus			=	new RenderTarget2D( device, ColorFormat.Rgba16F,	(int)LUT_WIDTH, (int)LUT_HEIGHT, false, true );
-			lutAerial			=	new Texture3DCompute( device, ColorFormat.Rgba16F, 	(int)AP_WIDTH, (int)AP_HEIGHT, (int)AP_DEPTH );
+			lutAerial0			=	new Texture3DCompute( device, ColorFormat.Rgba16F, 	(int)AP_WIDTH, (int)AP_HEIGHT, (int)AP_DEPTH );
+			lutAerial1			=	new Texture3DCompute( device, ColorFormat.Rgba16F, 	(int)AP_WIDTH, (int)AP_HEIGHT, (int)AP_DEPTH );
 
 			var skySphere	=	SkySphere.GetVertices(3).Select( v => new SkyVertex{ Vertex = v } ).ToArray();
 			skyVB			=	new VertexBuffer( Game.GraphicsDevice, typeof(SkyVertex), skySphere.Length );
@@ -398,7 +401,8 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref lutSkyEmission );
 				SafeDispose( ref lutSkyExtinction );
 				SafeDispose( ref skyLutSampler );
-				SafeDispose( ref lutAerial );
+				SafeDispose( ref lutAerial0 );
+				SafeDispose( ref lutAerial1 );
 			}
 			base.Dispose( disposing );
 		}
@@ -533,7 +537,8 @@ namespace Fusion.Engine.Graphics {
 				//	AP LUT :
 
 				Setup( Flags.LUT_AP, camera, new Rectangle(0,0, (int)LUT_WIDTH, (int)LUT_HEIGHT) );
-				device.SetComputeUnorderedAccess( regLutAP, LutAP.UnorderedAccess );
+				device.SetComputeUnorderedAccess( regLutAP0, LutAP0.UnorderedAccess );
+				device.SetComputeUnorderedAccess( regLutAP1, LutAP1.UnorderedAccess );
 
 				uint tgx = MathUtil.IntDivRoundUp( AP_WIDTH,  8 );
 				uint tgy = MathUtil.IntDivRoundUp( AP_HEIGHT, 8 );

@@ -406,13 +406,13 @@ void CSMain(
 
 #ifdef INTEGRATE3
 
-void StoreLightVolume( int3 xyz, float4 shR, float4 shG, float4 shB )
+void StoreLightVolume( int3 xyz, float4 shR, float4 shG, float4 shB, float skyFactor )
 {
 	shR.xyz += LightEpsilon;
-	LightVolumeL0[ xyz ]	=	float4( shR.x		, shG.x			, shB.x			, 0 );
-	LightVolumeL1[ xyz ]	=	float4( shR.y/shR.x , shG.y/shG.x	, shB.y/shB.x	, 0 ) * 0.5f + 0.5f;
-	LightVolumeL2[ xyz ]	=	float4( shR.z/shR.x , shG.z/shG.x	, shB.z/shB.x	, 0 ) * 0.5f + 0.5f;
-	LightVolumeL3[ xyz ]	=	float4( shR.w/shR.x , shG.w/shG.x	, shB.w/shB.x	, 0 ) * 0.5f + 0.5f;
+	LightVolumeL0[ xyz ]	=	float4( float3( shR.x		, shG.x			, shB.x		 	)				, 0 );
+	LightVolumeL1[ xyz ]	=	float4( float3( shR.y/shR.x , shG.y/shG.x	, shB.y/shB.x	) * 0.5f + 0.5f	, skyFactor );
+	LightVolumeL2[ xyz ]	=	float4( float3( shR.z/shR.x , shG.z/shG.x	, shB.z/shB.x	) * 0.5f + 0.5f	, 0 );
+	LightVolumeL3[ xyz ]	=	float4( float3( shR.w/shR.x , shG.w/shG.x	, shB.w/shB.x	) * 0.5f + 0.5f	, 0 );
 }
 
 groupshared uint2 radiance_cache[PatchCacheSize];
@@ -498,7 +498,7 @@ void CSMain(
 		irradianceB			+=	SHL1EvaluateDiffuse( light.b, lightDirN );
 	}//*/
 
-	StoreLightVolume( storeXYZ, irradianceR, irradianceG, irradianceB );
+	StoreLightVolume( storeXYZ, irradianceR, irradianceG, irradianceB, skyFactor );
 }
 
 #endif

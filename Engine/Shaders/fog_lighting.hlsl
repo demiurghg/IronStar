@@ -90,10 +90,38 @@ float3 ComputePointLight2( LIGHT light, CAMERA camera, GEOMETRY geometry, SHADOW
 
 
 
+float2 ComputeSkyShadow( float3 worldPos )
+{
+	SHADOW_RESOURCES		rcShadow;
+	rcShadow.ShadowSampler	=	ShadowSampler;
+	rcShadow.ShadowMap		=	ShadowMap;
+	rcShadow.LinearSampler	=	LinearClamp;
+	rcShadow.ShadowMask		=	ShadowMask;
+
+	LIGHTMAP_RESOURCES rcLightMap;
+	rcLightMap.Sampler				=	LinearClamp;
+	rcLightMap.IrradianceVolumeL0	=	IrradianceVolumeL0;
+	rcLightMap.IrradianceVolumeL1	=	IrradianceVolumeL1;
+	rcLightMap.IrradianceVolumeL2	=	IrradianceVolumeL2;
+	rcLightMap.IrradianceVolumeL3	=	IrradianceVolumeL3;
+
+	GEOMETRY geometry 	= 	(GEOMETRY)0;
+	geometry.position	=	worldPos;
+	geometry.normal		=	float3(0,0,0);
+
+	float	shadow		=	ComputeCascadedShadows( geometry, float2(1,1), CascadeShadow, rcShadow ).r; 
+
+	float3	volumeCoord	=	mad( float4(worldPos, 1), Fog.WorldToVoxelScale, Fog.WorldToVoxelOffset ).xyz;
+	float 	skyFactor	=	IrradianceVolumeL1.SampleLevel( LinearClamp, volumeCoord, 0 ).a;
+	
+	return float2( shadow, pow(skyFactor*2,2));
+}
+
+
 //
 //	ComputeClusteredLighting
 //	
-float4 ComputeClusteredLighting ( float3 worldPos, float density )
+float3 ComputeClusteredLighting ( float3 worldPos )
 {
 	SHADOW_RESOURCES		rcShadow;
 	rcShadow.ShadowSampler	=	ShadowSampler;
@@ -122,9 +150,7 @@ float4 ComputeClusteredLighting ( float3 worldPos, float density )
 	geometry.normal			=	float3(0,0,0);
 	
 	uint i;
-	float4 totalLight = 0;
-	
-	//float3	betaM		=	Sky.BetaMie.rgb;
+	float3 totalLight = 0;
 	
 	//----------------------------------------------------------------------------------------------
 	//	Lightmaps :
@@ -133,14 +159,13 @@ float4 ComputeClusteredLighting ( float3 worldPos, float density )
 	float3	volumeCoord	=	mad( float4(worldPos, 1), Fog.WorldToVoxelScale, Fog.WorldToVoxelOffset ).xyz;
 	float3 	lightmap	=	EvaluateLightVolume( rcLightMap, volumeCoord );
 	
-	//totalLight.rgb		+=	lightmap * 1.14;//Sky.AmbientLevel;
-	totalLight.rgb		+=	Sky.AmbientLevel;
+	//totalLight.rgb		+=	lightmap;
 
 	//----------------------------------------------------------------------------------------------
 	//	Compute direct light :
 	//----------------------------------------------------------------------------------------------
 	
-	if (1)
+	if (0)
 	{
 		totalLight.rgb += ComputeDirectLight2( geometry, DirectLight, Camera, CascadeShadow, rcShadow, float2(1,1) );
 	}
@@ -157,10 +182,6 @@ float4 ComputeClusteredLighting ( float3 worldPos, float density )
 	}//*/
 	
 	//----------------------------------------------------------------------------------------------
-	
-	totalLight.rgb	*=	density;
-	totalLight.a	=	density * 1.1f;
-	
 	
 	return 	totalLight;
 }

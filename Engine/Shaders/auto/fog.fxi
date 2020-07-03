@@ -176,10 +176,20 @@ Buffer<uint>                   ClusterIndexBuffer             : register(t3);
 StructuredBuffer<LIGHT>        ClusterLightBuffer             : register(t4);
 Texture2D<float4>              ShadowMap                      : register(t5);
 Texture2D<float4>              ShadowMask                     : register(t6);
-Texture3D<float4>              LutAP                          : register(t7);
-Texture3D<float4>              IrradianceVolumeL0             : register(t10);
-Texture3D<float4>              IrradianceVolumeL1             : register(t11);
-Texture3D<float4>              IrradianceVolumeL2             : register(t12);
-Texture3D<float4>              IrradianceVolumeL3             : register(t13);
+Texture3D<float4>              LutAP0                         : register(t7);
+Texture3D<float4>              LutAP1                         : register(t8);
+Texture3D<float4>              FogShadowSource                : register(t9);
+Texture3D<float4>              FogShadowHistory               : register(t10);
+Texture3D<float4>              IrradianceVolumeL0             : register(t11);
+Texture3D<float4>              IrradianceVolumeL1             : register(t12);
+Texture3D<float4>              IrradianceVolumeL2             : register(t13);
+Texture3D<float4>              IrradianceVolumeL3             : register(t14);
+#if defined(INTEGRATE) || defined(COMPUTE)
 RWTexture3D<float4>            FogTarget                      : register(u0);
+#endif
+#if defined(COMPUTE)
+RWTexture3D<float4>            FogShadowTarget                : register(u1);
+#endif
+#if defined(INTEGRATE)
 RWTexture2D<float4>            SkyFogLut                      : register(u1);
+#endif

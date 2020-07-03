@@ -3547,7 +3547,7 @@
         "TranslateX": -264.0,
         "TranslateY": -880.0,
         "TranslateZ": 0.0,
-        "RotateYaw": 0.0,
+        "RotateYaw": -180.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
       },

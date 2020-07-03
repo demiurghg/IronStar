@@ -149,5 +149,6 @@ SamplerState                   LutSampler                     : register(s0);
 SamplerState                   LinearWrap                     : register(s1);
 SamplerState                   LinearClamp                    : register(s2);
 #if defined(LUT_AP)
-RWTexture3D<float4>            LutAP                          : register(u0);
+RWTexture3D<float4>            LutAP0                         : register(u0);
+RWTexture3D<float4>            LutAP1                         : register(u1);
 #endif

@@ -91,6 +91,18 @@ namespace Fusion.Engine.Frames {
 
 
 		/// <summary>
+		/// Pushes modal frame onto stack
+		/// </summary>
+		/// <param name="modalFrame"></param>
+		/// <param name="targetFrame"></param>
+		/// <param name="ownerFrame"></param>
+		public UIContext PushUIContext ( Frame modalFrame )
+		{
+			return PushUIContext( modalFrame, modalFrame, null );
+		}
+
+
+		/// <summary>
 		/// Pop given modal frame from stack
 		/// </summary>
 		/// <param name="modalFrame"></param>
@@ -109,6 +121,33 @@ namespace Fusion.Engine.Frames {
 
 			Log.Warning("PopUIContext: Attempt to close non top-level UIContext");
 			return false;
+		}
+
+
+		bool PopUIContext( UIContext uiContext )
+		{
+			return PopUIContext( ref uiContext );
+		}
+
+
+		internal bool UnwindAllUIContextsUpToModalFrameInclusive ( Frame modalFrame )
+		{
+			if (IsModalFrame(modalFrame)) 
+			{
+				while (true)
+				{
+					var top = modalFrames.Peek();
+					PopUIContext(top);
+
+					if (top.Root==modalFrame) break;
+				}
+
+				return true;
+			} 
+			else
+			{
+				return false;
+			}
 		}
 
 

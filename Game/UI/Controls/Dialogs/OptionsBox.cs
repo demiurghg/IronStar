@@ -10,9 +10,10 @@ using IronStar.UI.Controls.Advanced;
 using Fusion.Engine.Graphics;
 using Fusion.Core.Shell;
 
-namespace IronStar.UI.Controls.Dialogs {
-	public static class OptionsBox {
-
+namespace IronStar.UI.Controls.Dialogs 
+{
+	public static class OptionsBox 
+	{
 		[Obsolete("Use FrameProcessor.ShowDialog")]
 		static public void ShowDialog ( Frame owner, object video, object audio, object gameplay, object controls )
 		{
@@ -60,8 +61,8 @@ namespace IronStar.UI.Controls.Dialogs {
 
 			//	OK/Cancel buttons :
 
-			var buttonOK		=	new Button( owner.Frames, "OK",		0,0,0,0, ()=> { grid.CommitChanges(); panel.Close(); } );
-			var buttonCancel	=	new Button( owner.Frames, "Cancel", 0,0,0,0, ()=> { panel.Close(); } );
+			var buttonOK		=	new Button( owner.Frames, "OK",		0,0,0,0, null );
+			var buttonCancel	=	new Button( owner.Frames, "Cancel", 0,0,0,0, null );
 
 			//	Construct all :
 
@@ -80,7 +81,10 @@ namespace IronStar.UI.Controls.Dialogs {
 
 			//	Settle option's box :
 
-			frames.ShowDialogCentered( panel );
+			var ctxt = frames.ShowDialogCentered( panel );
+
+			buttonOK.Click		+= (s,e) => { frames.Stack.PopUIContext( ref ctxt ); grid.CommitChanges(); };
+			buttonCancel.Click	+= (s,e) => { frames.Stack.PopUIContext( ref ctxt ); };
 		}
 	}
 }

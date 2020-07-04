@@ -115,7 +115,7 @@ namespace IronStar.UI {
 
 		void SelectLevel ()
 		{
-			Frames.ShowDialogCentered( new LevelBox(Frames) );
+			LevelBox.Show(Frames);
 		}
 
 

@@ -196,6 +196,12 @@ namespace Fusion.Engine.Frames {
 		}
 
 
+		public void CloseDialog( ref UIContext context )
+		{
+			stack.PopUIContext( ref context );
+		}
+
+
 		internal bool IsModalFrame ( Frame frame )
 		{
 			return stack.IsModalFrame( frame );

@@ -7,9 +7,10 @@ using Fusion.Core.Mathematics;
 using Fusion.Engine.Frames;
 using Fusion.Engine.Frames.Layouts;
 
-namespace IronStar.UI.Controls.Dialogs {
-	public class TextBoxDialog : Panel{
-
+namespace IronStar.UI.Controls.Dialogs 
+{
+	public class TextBoxDialog : Panel
+	{
 		public TextBoxDialog ( FrameProcessor frames, string headerText, string messageText, string defaultText, Func<string,bool> accept )
 		 : base(frames, 0, 0, 400, 240) 
 		{

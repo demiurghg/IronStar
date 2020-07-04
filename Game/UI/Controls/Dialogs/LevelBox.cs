@@ -20,6 +20,16 @@ namespace IronStar.UI.Controls.Dialogs {
 		string selectedMap = null;
 		Frame buttonStart;
 
+		public class MapAcceptEventArgs : EventArgs
+		{
+			public MapAcceptEventArgs(string map) { MapName=map; }
+			public readonly string MapName;
+		}
+
+		public event EventHandler Reject;
+		public event EventHandler<MapAcceptEventArgs> Accept;
+
+
 		public LevelBox ( FrameProcessor frames ) : base(frames, 0,0,900-68,600-4)
 		{
 			var layout		=	new PageLayout();
@@ -60,11 +70,11 @@ namespace IronStar.UI.Controls.Dialogs {
 
 			//	OK/Cancel buttons :
 
-				buttonStart			=	new Button( frames, "Start",		0,0,0,0, StartSelectedLevel );
+				buttonStart			=	new Button( frames, "Start",		0,0,0,0, ()=>Accept?.Invoke( this, new MapAcceptEventArgs(selectedMap)) );
 				buttonStart.Enabled	=	false;
 				buttonStart.OverallColor = new Color(255,255,255,128);
 
-			var buttonCancel		=	new Button( frames, "Cancel", 0,0,0,0, ()=> { Close(); } );
+			var buttonCancel		=	new Button( frames, "Cancel", 0,0,0,0, ()=>Reject?.Invoke( this, EventArgs.Empty ) );
 
 			//	Construct all :
 
@@ -77,6 +87,24 @@ namespace IronStar.UI.Controls.Dialogs {
 			this.Add( CreateEmptyFrame( frames ) );
 			this.Add( CreateEmptyFrame( frames ) );
 			this.Add( buttonStart );
+		}
+
+
+		static public void Show ( FrameProcessor fp )
+		{
+			var box		=	new LevelBox(fp);
+			var ctxt	=	fp.ShowDialogCentered( box );
+			
+			box.Accept += (s,e) => 
+			{
+				fp.Stack.PopUIContext( ref ctxt );
+				fp.Game.Invoker.ExecuteString("map " + e.MapName);
+			};
+			
+			box.Reject += (s,e) => 
+			{
+				fp.Stack.PopUIContext( ref ctxt );
+			};
 		}
 
 

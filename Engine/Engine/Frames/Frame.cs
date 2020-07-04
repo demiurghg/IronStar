@@ -416,18 +416,7 @@ namespace Fusion.Engine.Frames {
 		/// </summary>
 		public virtual void Close ()
 		{
-			if (Frames.IsModalFrame(this)) 
-			{
-				throw new InvalidOperationException("Use PopUIContext to close modal frame");
-				#if false
-				while (Frames.ContextRootFrame!=this) {
-					Frames.Stack.PopUIContext( Frames.ContextRootFrame );
-				}
-
-				Frames.Stack.PopUIContext(this);
-				#endif
-			} 
-			else 
+			if (!Frames.Stack.UnwindAllUIContextsUpToModalFrameInclusive(this))
 			{
 				Parent?.Remove(this);
 			}

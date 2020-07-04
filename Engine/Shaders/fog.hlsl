@@ -118,7 +118,7 @@ float2 GetShadowHistory( float3 wsPosition, out float factor )
 	
 	factor = ClipHistory( ppPosition ) * Fog.HistoryFactor;
 	
-	return fogData.xy;
+	return saturate(fogData.xy);
 }
 
 
@@ -163,7 +163,8 @@ void CSMain(
 	float4	fogST			=	float4( integScatt, 1 /* transmittance w/o atmospheric fog */ );
 	
 	//	to prevent NaN-history :
-	FogTarget[ location.xyz ] = historyFactor==0 ? fogST : lerp( fogST, fogHistory, historyFactor );
+	float4 factor			=	float4( historyFactor, historyFactor, historyFactor, 0 );
+	FogTarget[ location.xyz ] = historyFactor==0 ? fogST : lerp( fogST, fogHistory, factor );
 	
 	//	Compute sky shadow and ambient occlusion :
 	float2 	skyShadow	=	ComputeSkyShadow( wsPosition );
@@ -213,6 +214,8 @@ void CSMain(
 
 		//	Sample AP LUT :
 		float2	skyShadow		=	FogShadowSource[ loadXYZ ].rg;
+				skyShadow.g		=	1 - (1-skyShadow.g) * apST0.a;
+		
 		float	apWeight		=	GetAPBlendFactor( slice );
 		float	fogWeight		=	1 - apWeight;
 		float4	apST0			=	LutAP0.SampleLevel( LinearClamp, loadUVW, 0 );

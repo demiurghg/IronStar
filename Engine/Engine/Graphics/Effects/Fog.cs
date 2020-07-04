@@ -32,8 +32,13 @@ namespace Fusion.Engine.Graphics {
 
 		[Config]	
 		[AECategory("Fog")]
-		[AEValueRange(0, 1, 0.1f, 0.01f)]
-		public float HistoryFactor { get; set; } = 0.8f;
+		[AEValueRange(0, 0.98f, 0.1f, 0.01f)]
+		public float HistoryFactor 
+		{ 
+			get { return historyFactor; }
+			set { historyFactor = MathUtil.Clamp( value, 0, 0.98f ); }
+		}
+		float historyFactor = 0.8f;
 
 		[Config]
 		[AECategory("Fog Grid")]
@@ -210,8 +215,10 @@ namespace Fusion.Engine.Graphics {
 			volumeShadow	=	new Texture3DCompute( device, ColorFormat.Rg16F,	fogSizeX, fogSizeY, fogSizeZ );
 			shadowHistory	=	new Texture3DCompute( device, ColorFormat.Rg16F,	fogSizeX, fogSizeY, fogSizeZ );
 
-			device.Clear( scatteredLight0.UnorderedAccess, Int4.Zero );
-			device.Clear( scatteredLight1.UnorderedAccess, Int4.Zero );
+			int floatOne	=	0;//BitConverter.ToInt32( BitConverter.GetBytes(1.0f), 0 );
+
+			device.Clear( scatteredLight0.UnorderedAccess, new Int4(0,0,0,floatOne) );
+			device.Clear( scatteredLight1.UnorderedAccess, new Int4(0,0,0,floatOne) );
 		}
 
 

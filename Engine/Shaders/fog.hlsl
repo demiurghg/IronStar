@@ -214,7 +214,6 @@ void CSMain(
 
 		//	Sample AP LUT :
 		float2	skyShadow		=	FogShadowSource[ loadXYZ ].rg;
-				skyShadow.g		=	1 - (1-skyShadow.g) * apST0.a;
 		
 		float	apWeight		=	GetAPBlendFactor( slice );
 		float	fogWeight		=	1 - apWeight;

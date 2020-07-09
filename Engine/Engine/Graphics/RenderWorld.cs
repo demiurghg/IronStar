@@ -74,21 +74,6 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-
-		/// <summary>
-		/// Gets HDR settings.
-		/// </summary>
-		public HdrSettings HdrSettings {
-			get; private set;
-		}
-
-		/// <summary>
-		/// Gets sky settings.
-		/// </summary>
-		public DofSettings DofSettings {
-			get; private set;
-		}
-
 		/// <summary>
 		/// Gets view light set.
 		/// This value is already initialized when View object is created.
@@ -220,9 +205,6 @@ namespace Fusion.Engine.Graphics {
 			if (height<=0) {
 				height	=	vp.Height;
 			}
-
-			HdrSettings		=	new HdrSettings();
-			DofSettings		=	new DofSettings();
 
 			Instances		=	new List<RenderInstance>();
 			LightSet		=	new LightSet( Game.RenderSystem );
@@ -573,7 +555,7 @@ namespace Fusion.Engine.Graphics {
 
 					rs.DofFilter.RenderDof( Camera, viewHdrFrame );
 
-					rs.HdrFilter.TonemapHdrImage( gameTime, HdrSettings, viewHdrFrame, Camera );
+					rs.HdrFilter.TonemapHdrImage( gameTime, viewHdrFrame, Camera );
 
 					//	apply FXAA
 					if (rs.UseFXAA) {

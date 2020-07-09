@@ -510,7 +510,6 @@
     <Compile Include="Engine\Graphics\Effects\BitonicSort.cs" />
     <Compile Include="Engine\Graphics\Effects\BlurFilter.cs" />
     <Compile Include="Engine\Graphics\Effects\DofFilter.cs" />
-    <Compile Include="Engine\Graphics\Effects\DofSettings.cs" />
     <Compile Include="Engine\Graphics\Effects\Filter.cs" />
     <Compile Include="Engine\Graphics\Effects\Filter2.cs" />
     <Compile Include="Engine\Graphics\Effects\Fog.cs" />
@@ -518,7 +517,6 @@
     <Compile Include="Engine\Graphics\Effects\HdrFilter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Engine\Graphics\Effects\HdrSettings.cs" />
     <Compile Include="Engine\Graphics\Effects\PoissonDiscGenerator.cs" />
     <Compile Include="Engine\Graphics\Effects\Sky2.Model.cs" />
     <Compile Include="Engine\Graphics\Effects\Sky2.cs" />

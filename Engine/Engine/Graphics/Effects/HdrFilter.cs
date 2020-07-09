@@ -16,7 +16,16 @@ using Fusion.Engine.Graphics.Ubershaders;
 using Fusion.Core.Shell;
 
 
-namespace Fusion.Engine.Graphics {
+namespace Fusion.Engine.Graphics 
+{
+	public enum TonemappingOperator 
+	{
+		Linear,
+		Reinhard,
+		Filmic,
+	}
+
+
 	[RequireShader("hdr", true)]
 	internal class HdrFilter : RenderComponent 
 	{
@@ -387,7 +396,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="target">LDR target.</param>
 		/// <param name="hdrImage">HDR source image.</param>
-		public void TonemapHdrImage ( GameTime gameTime, HdrSettings settings, HdrFrame hdrFrame, Camera camera )
+		public void TonemapHdrImage ( GameTime gameTime, HdrFrame hdrFrame, Camera camera )
 		{
 			frameCounter++;
 
@@ -421,11 +430,11 @@ namespace Fusion.Engine.Graphics {
 				blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 4 );
 				device.ResetStates();
 				#else
-				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, settings.GaussBlurSigma, 0 );
-				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, settings.GaussBlurSigma, 1 );
-				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, settings.GaussBlurSigma, 2 );
-				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, settings.GaussBlurSigma, 3 );
-				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, settings.GaussBlurSigma, 4 );
+				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 0 );
+				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 1 );
+				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 2 );
+				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 3 );
+				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 4 );
 				#endif
 
 				//
@@ -487,8 +496,8 @@ namespace Fusion.Engine.Graphics {
 				device.GfxResources[0]	=	hdrFrame.HdrTarget;// averageLum;
 				device.GfxResources[1]	=	hdrFrame.MeasuredNew;// averageLum;
 				device.GfxResources[2]	=	hdrFrame.Bloom0;// averageLum;
-				device.GfxResources[3]	=	settings.DirtMask1==null ? whiteTex.Srv : settings.DirtMask1.Srv;
-				device.GfxResources[4]	=	settings.DirtMask2==null ? whiteTex.Srv : settings.DirtMask2.Srv;
+				device.GfxResources[3]	=	null;
+				device.GfxResources[4]	=	null;
 				device.GfxResources[5]	=	noiseTex[frameCounter % 8].Srv;
 				device.GfxResources[6]	=	vignetteTex.Srv;
 				device.GfxResources[9]	=	histogramBuffer;

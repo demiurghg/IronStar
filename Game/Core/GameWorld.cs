@@ -241,13 +241,6 @@ namespace IronStar.Core {
 			modelManager.Update( gameTime, lerpFactor, gameCamera, userCmd );
 			fxPlayback.Update( gameTime, lerpFactor );
 
-			//
-			//	update environment :
-			//
-			rw.HdrSettings.BloomAmount			= 0.1f;
-			rw.HdrSettings.DirtAmount			= 0.0f;
-			rw.HdrSettings.KeyValue				= 0.18f;
-
 			var rs	=	Game.GetService<RenderSystem>();
 			rw.LightSet.DirectLight.Direction	=	-rs.Sky.GetSunDirection();
 			rw.LightSet.DirectLight.Intensity	=	 rs.Sky.GetSunIntensity(true);	

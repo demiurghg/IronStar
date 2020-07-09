@@ -437,8 +437,8 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			param.MaxParticles		=	MAX_PARTICLES;
-			param.CocBias			=	renderWorld.DofSettings.CocBias;
-			param.CocScale			=	renderWorld.DofSettings.CocScale;
+			param.CocBias			=	0;
+			param.CocScale			=	0;
 			param.IntegrationSteps	=	stepCount;
 
 			param.IndirectLightFactor	=	rs.Radiosity.MasterIntensity;

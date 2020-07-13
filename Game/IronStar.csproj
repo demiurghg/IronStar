@@ -66,12 +66,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\EntityComponent.cs" />
+    <Compile Include="ECS\Bag.cs" />
+    <Compile Include="ECS\BagEnumerator.cs" />
     <Compile Include="ECS\BitSet.cs" />
     <Compile Include="ECS\Component.cs" />
-    <Compile Include="ECS\EntityState.cs" />
+    <Compile Include="ECS\ComponentCollection.cs" />
+    <Compile Include="ECS\EntityCollection.cs" />
     <Compile Include="ECS\Entity.cs" />
+    <Compile Include="ECS\FixedList.cs" />
     <Compile Include="ECS\GameState.cs" />
+    <Compile Include="ECS\IdGenerator.cs" />
     <Compile Include="ECS\ISystem.cs" />
+    <Compile Include="ECS\SystemCollection.cs" />
     <Compile Include="Editor\MapEditor.History.cs" />
     <Compile Include="Mapping\MapLightProbeBox.cs" />
     <Compile Include="SFX\Animators\CameraAnimator.cs" />

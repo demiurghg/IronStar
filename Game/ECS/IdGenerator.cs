@@ -9,10 +9,11 @@ namespace IronStar.ECS
 {
 	public static class IdGenerator
 	{
-		static int counter = 0;
+		static int counter = 1;
 	
 		public static uint Next()
 		{
+			if (counter>int.MaxValue-1000) throw new ArgumentOutOfRangeException();
 			return (uint)Interlocked.Increment( ref counter );
 		}
 	}

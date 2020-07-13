@@ -11,17 +11,9 @@ namespace IronStar.ECS
 	{
 		/// <summary>
 		/// Owner entity ID
+		/// Components are able to migrate from entity to entity
 		/// </summary>
-		public readonly uint OwnerId; 
-
-		/// <summary>
-		/// Component constructor
-		/// </summary>
-		/// <param name="ownerId"></param>
-		public Component ( uint ownerId )
-		{
-			this.OwnerId	=	ownerId;
-		}
+		public uint OwnerId = 0; 
 
 
 		/// <summary>

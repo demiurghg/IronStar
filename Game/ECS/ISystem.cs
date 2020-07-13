@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Fusion.Core;
 
 namespace IronStar.ECS
 {
 	public interface ISystem
 	{
-		void Process ( Entity entity );
+		void Update ( GameState gs, GameTime gameTime );
 	}
 }

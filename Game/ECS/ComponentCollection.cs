@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace IronStar.ECS
 {
-	class ComponentCollection
+	class ComponentCollection : FixedList<Bag<Component>>
 	{
+		public ComponentCollection() : base((int)BitSet.MaxBits)
+		{
+		}
 	}
 }

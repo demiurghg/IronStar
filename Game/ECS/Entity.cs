@@ -9,16 +9,19 @@ namespace IronStar.ECS
 {
 	public sealed class Entity
 	{
-		/// <summary>
-		/// Entity updated once on gamestate startup.
-		/// </summary>
-		public const int	Static	=	0;	
-
+		public const int MaxEntities		=	16384;
+		internal const uint	IndexMask		=	0x0003FFFF;
+		internal const uint	GenerationMask	=	0x7FFC0000;
+		internal const uint	EntityBitCheck	=	0x80000000;
+		internal const int	GenerationShift	=	18;
 
 		/// <summary>
 		/// Unique entity ID
 		/// </summary>
 		public readonly uint Id;
+
+		public uint Index { get { return Id & IndexMask; } }
+		public uint Generation { get { return (Id >> GenerationShift) & GenerationMask; } }
 
 		/// <summary>
 		/// Entity position :

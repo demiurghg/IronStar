@@ -451,6 +451,7 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	//	Read images :
 	//
 	float3	hdrImage	=	FinalHdrImage	.SampleLevel( LinearSampler, uv, 0 ).rgb;
+	
 	float3	bloom0		=	BloomTexture  	.SampleLevel( LinearSampler, uv, 0 ).rgb;
 	float3	bloom1		=	BloomTexture  	.SampleLevel( LinearSampler, uv, 1 ).rgb;
 	float3	bloom2		=	BloomTexture  	.SampleLevel( LinearSampler, uv, 2 ).rgb;
@@ -479,20 +480,21 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 		bloom = 0;
 	}
 					
-	bloom	*=	bloomMask.rgb;
+	//bloom	*=	bloomMask.rgb;
 	
-	hdrImage			=	lerp( hdrImage * bloomMask.rgb, bloom, saturate(bloomMask.a * Params.DirtAmount + Params.BloomAmount));
+	hdrImage	=	lerp( hdrImage, bloom, Params.BloomAmount );
 	
-	hdrImage			*=	vignette;
+	hdrImage	*=	vignette;
 
 	//
 	//	Tonemapping :
 	//	
-	float3	exposured	=	Params.KeyValue * hdrImage / luminanceAdaptLinear;
-			exposured.r	=	EvalLogContrastFunc( exposured.r, 0.18, 1.2f );
-			exposured.g	=	EvalLogContrastFunc( exposured.g, 0.18, 1.2f );
-			exposured.b	=	EvalLogContrastFunc( exposured.b, 0.18, 1.2f );
+	float3	exposured	=	Params.KeyValue * hdrImage;// / luminanceAdaptLinear;
+			// exposured.r	=	EvalLogContrastFunc( exposured.r, 0.18, 1.2f );
+			// exposured.g	=	EvalLogContrastFunc( exposured.g, 0.18, 1.2f );
+			// exposured.b	=	EvalLogContrastFunc( exposured.b, 0.18, 1.2f );
 	float3	tonemapped	=	Tonemap( exposured );
+
 
 	
 	//

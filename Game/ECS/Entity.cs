@@ -9,19 +9,12 @@ namespace IronStar.ECS
 {
 	public sealed class Entity
 	{
-		public const int MaxEntities		=	16384;
-		internal const uint	IndexMask		=	0x0003FFFF;
-		internal const uint	GenerationMask	=	0x7FFC0000;
-		internal const uint	EntityBitCheck	=	0x80000000;
-		internal const int	GenerationShift	=	18;
+		readonly GameState gs;
 
 		/// <summary>
 		/// Unique entity ID
 		/// </summary>
 		public readonly uint Id;
-
-		public uint Index { get { return Id & IndexMask; } }
-		public uint Generation { get { return (Id >> GenerationShift) & GenerationMask; } }
 
 		/// <summary>
 		/// Entity position :
@@ -49,8 +42,9 @@ namespace IronStar.ECS
 		/// <param name="id"></param>
 		/// <param name="position"></param>
 		/// <param name="rotation"></param>
-		public Entity ( uint id, Vector3 position, Quaternion rotation )
+		public Entity ( GameState gs, uint id, Vector3 position, Quaternion rotation )
 		{
+			this.gs			=	gs;
 			this.Id			=	id;
 			this.Mapping	=	new BitSet(0);
 			this.Position	=	position;
@@ -60,17 +54,44 @@ namespace IronStar.ECS
 		/// <summary>
 		/// Entity constructor
 		/// </summary>
-		/// <param name="id"></param>
-		public Entity ( uint id, Vector3 position ) : this( id, position, Quaternion.Identity )
+		public Entity ( GameState gs, uint id, Vector3 position ) : this( gs, id, position, Quaternion.Identity )
 		{
 		}
 
 		/// <summary>
 		/// Entity constructor
 		/// </summary>
-		/// <param name="id"></param>
-		public Entity ( uint id ) : this( id, Vector3.Zero, Quaternion.Identity )
+		public Entity ( GameState gs, uint id ) : this( gs, id, Vector3.Zero, Quaternion.Identity )
 		{
+		}
+
+
+		/// <summary>
+		/// Adds component to given entity
+		/// </summary>
+		public void AddComponent( IComponent component )
+		{
+			gs.AddEntityComponent( this, component );
+		}
+
+
+		/// <summary>
+		/// Removes component from given entity
+		/// </summary>
+		public void RemoveComponent( IComponent component )
+		{
+			gs.RemoveEntityComponent( this, component );
+		}
+
+
+		/// <summary>
+		/// Gets entity's component by its index and type
+		/// </summary>
+		/// <typeparam name="TComponent">Component type</typeparam>
+		/// <returns>Entity's component</returns>
+		public TComponent GetComponent<TComponent>() where TComponent: IComponent
+		{
+			return gs.GetEntityComponent<TComponent>(this);
 		}
 	}
 }

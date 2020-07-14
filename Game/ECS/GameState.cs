@@ -22,8 +22,6 @@ namespace IronStar.ECS
 		readonly Bag<Entity>	spawned;
 		readonly HashSet<uint>	killed;
 
-		readonly FixedList<Type> componentTypes;
-
 		readonly GameServiceContainer services;
 		GameServiceContainer Services { get { return services; } }
 
@@ -42,8 +40,6 @@ namespace IronStar.ECS
 
 			spawned			=	new Bag<Entity>();
 			killed			=	new HashSet<uint>();
-
-			componentTypes	=	new FixedList<Type>( (int)BitSet.MaxBits );
 
 			services		=	new GameServiceContainer();
 		}
@@ -96,7 +92,7 @@ namespace IronStar.ECS
 
 		public Entity Spawn ( Vector3 position, Quaternion rotation )
 		{
-			var entity = new Entity( IdGenerator.Next(), position, rotation );
+			var entity = new Entity( this, IdGenerator.Next(), position, rotation );
 			
 			spawned.Add( entity );
 
@@ -119,62 +115,33 @@ namespace IronStar.ECS
 		void KillInternal( uint id )
 		{
 			entities.Remove( id );
-
-			foreach ( var componentType in components )
-			{
-				componentType.RemoveAll( component => component.OwnerId == id );
-			}
+			components.RemoveAllComponents( id );
 		}
 
 		/*-----------------------------------------------------------------------------------------------
 		 *	Component stuff :
 		-----------------------------------------------------------------------------------------------*/
 
-		int RegisterComponentType( Type componentType )
-		{
-			int index = componentTypes.IndexOf( componentType );
-
-			if (index<0)
-			{
-				index = componentTypes.Add( componentType ); 
-			}
-
-			return index;
-		}
-
-		public bool Attach ( Entity entity, Component component )
+		public void AddEntityComponent ( Entity entity, IComponent component )
 		{
 			if (entity==null) throw new ArgumentNullException("entity");
 			if (component==null) throw new ArgumentNullException("component");
 
-			int typeId = RegisterComponentType( component.GetType() );
-
-			if (entity.Mapping[typeId])
-			{
-				Log.Warning("Component type '{0}' is already attached to entity #{1}", component.GetType(), entity.Id );
-				return false;
-			}
-			else
-			{
-				entity.Mapping[typeId]	= true;
-				component.OwnerId	= entity.Id;
-				components[typeId].Add( component );
-				return true;
-			}
+			components.AddComponent( entity.Id, component );
 		}
 
 
-		public bool Detach( Component component )
+		public TComponent GetEntityComponent<TComponent>( Entity entity ) where TComponent: IComponent
+		{
+			return components.GetComponent<TComponent>( entity.Id );
+		}
+
+
+		public void RemoveEntityComponent( Entity entity, IComponent component )
 		{
 			if (component==null) throw new ArgumentNullException("component");
 
-			int typeId		=	RegisterComponentType( component.GetType() );
-			var entity	=	entities[ component.OwnerId ];
-			
-			entity.Mapping[typeId]	=	false;
-
-			component.OwnerId = 0;
-			return components[typeId].Remove( component );
+			components.RemoveComponent( entity.Id, component );
 		}
 
 		/*-----------------------------------------------------------------------------------------------
@@ -188,55 +155,57 @@ namespace IronStar.ECS
 			systems.Add( system );
 		}
 
+
 		/*-----------------------------------------------------------------------------------------------
-		 *	Queries :
+		 *	System stuff :
 		-----------------------------------------------------------------------------------------------*/
 
-		BitSet CreateMask( Type t1, Type t2, Type t3 )
+		readonly EntityComponentComparer entityComponentComparer = new EntityComponentComparer();
+
+		class EntityComponentComparer : IEqualityComparer<KeyValuePair<uint, IComponent>>
 		{
-			int bit1	=	componentTypes.IndexOf( t1 );
-			int bit2	=	componentTypes.IndexOf( t2 );
-			int bit3	=	componentTypes.IndexOf( t3 );
-
-			var result	=	new BitSet();
-
-			if (bit1>=0) result[bit1] = true;
-			if (bit2>=0) result[bit2] = true;
-			if (bit3>=0) result[bit3] = true;
-
-			return result;
+			public bool Equals( KeyValuePair<uint, IComponent> x, KeyValuePair<uint, IComponent> y ) {  return x.Key == y.Key; }
+			public int GetHashCode( KeyValuePair<uint, IComponent> obj ) { return obj.Key.GetHashCode(); }
 		}
 
-		public struct Query<TComponent>
+		public IEnumerable<Entity> QueryEntities<TComponent>() 
+		where TComponent: IComponent
 		{
-			public Entity Entity;
-			public TComponent Component; 
+			var	s1	=	components[typeof(TComponent)];
+			
+			return s1
+				.Select( keyValue => entities[ keyValue.Key ] )
+				.ToArray(); 
 		}
 
-		public struct Query<TComponent1,TComponent2>
+
+		public IEnumerable<Entity> QueryEntities<TComponent1, TComponent2>() 
+		where TComponent1: IComponent 
+		where TComponent2: IComponent
 		{
-			public Entity Entity;
-			public TComponent1 Component1; 
-			public TComponent2 Component2; 
+			var	s1	=	components[typeof(TComponent1)];
+			var	s2	=	components[typeof(TComponent2)];
+
+			return s1.Intersect( s2, entityComponentComparer )
+				.Select( keyValue => entities[ keyValue.Key ] )
+				.ToArray(); 
 		}
 
-		public struct Query<TComponent1,TComponent2,TComponent3>
-		{
-			public Entity Entity;
-			public TComponent1 Component1; 
-			public TComponent2 Component2; 
-			public TComponent3 Component3; 
-		}
 
-		public Bag<Query<TComponent>> Gather<TComponent>()
+		public IEnumerable<Entity> QueryEntities<TComponent1, TComponent2, TComponent3>() 
+		where TComponent1: IComponent 
+		where TComponent2: IComponent
+		where TComponent3: IComponent
 		{
-			throw new NotImplementedException();
-			var bag = new Bag<Query<TComponent>>();
+			var	s1	=	components[typeof(TComponent1)];
+			var	s2	=	components[typeof(TComponent2)];
+			var	s3	=	components[typeof(TComponent3)];
 
-			foreach ( var e in entities )
-			{
-				
-			}
+			return s1
+				.Intersect( s2, entityComponentComparer )
+				.Intersect( s2, entityComponentComparer )
+				.Select( keyValue => entities[ keyValue.Key ] )
+				.ToArray(); 
 		}
 
 	}

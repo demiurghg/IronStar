@@ -9,33 +9,33 @@ namespace IronStar.ECS
 {
 	public class Component : IComponent
 	{
-		private uint entityId = 0;
-		public uint EntityID { get { return entityId; } }
+		private Entity entity = null;
+		public Entity Entity { get { return entity; } }
 
-		public void Added( uint entityId )
+		public virtual void Added( GameState gs, Entity entity )
 		{
-			if (this.entityId!=0 || entityId==0)
+			if (this.entity!=null || entity==null)
 			{
-				throw new InvalidOperationException("Component.Added : bad entity ID");
+				throw new InvalidOperationException("Component.Added : inconsistent entity and component");
 			}
 
-			this.entityId = entityId;
+			this.entity = entity;
 		}
 
-		public void Removed( uint entityId )
+		public virtual void Removed( GameState gs, Entity entity )
 		{
-			if (this.entityId!=entityId)
+			if (this.entity!=entity)
 			{
-				throw new InvalidOperationException("Component.Removed : bad entity ID");
+				throw new InvalidOperationException("Component.Removed : inconsistent entity and component");
 			}
-			this.entityId = 0;
+			this.entity = null;
 		}
 
-		public void Load( Stream stream )
+		public virtual void Load( GameState gs, Stream stream )
 		{
 		}
 
-		public void Save( Stream stream )
+		public virtual void Save( GameState gs, Stream stream )
 		{
 		}
 	}

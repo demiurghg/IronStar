@@ -14,7 +14,7 @@ namespace IronStar.ECS
 		/// <summary>
 		/// Unique entity ID
 		/// </summary>
-		public readonly uint Id;
+		public readonly uint ID;
 
 		/// <summary>
 		/// Entity position :
@@ -45,7 +45,7 @@ namespace IronStar.ECS
 		public Entity ( GameState gs, uint id, Vector3 position, Quaternion rotation )
 		{
 			this.gs			=	gs;
-			this.Id			=	id;
+			this.ID			=	id;
 			this.Mapping	=	new BitSet(0);
 			this.Position	=	position;
 			this.Rotation	=	rotation;

@@ -82,6 +82,11 @@
     <Compile Include="ECS\SystemCollection.cs" />
     <Compile Include="Editor\MapEditor.History.cs" />
     <Compile Include="Mapping\MapLightProbeBox.cs" />
+    <Compile Include="Physics2\CharacterControllerComponent.cs" />
+    <Compile Include="Physics2\DynamicBoxComponent.cs" />
+    <Compile Include="Physics2\GravityComponent.cs" />
+    <Compile Include="Physics2\PhysicsEngineSystem.cs" />
+    <Compile Include="Physics\KinematicModel.cs" />
     <Compile Include="SFX\Animators\CameraAnimator.cs" />
     <Compile Include="SinglePlayer\MissionContext.cs" />
     <Compile Include="UI\Controls\Dialogs\TextBoxDialog.cs" />
@@ -199,7 +204,6 @@
     <Compile Include="Mapping\MapNode.cs" />
     <Compile Include="Mapping\Map.cs" />
     <Compile Include="Physics\CharacterController.cs" />
-    <Compile Include="Physics\KinematicModel.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

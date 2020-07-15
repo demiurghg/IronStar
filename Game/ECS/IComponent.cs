@@ -13,24 +13,24 @@ namespace IronStar.ECS
 		/// Called when component has been added to entity
 		/// </summary>
 		/// <param name="entityId">Entity that component has been added to</param>
-		void Added( uint entityId );
+		void Added( GameState gs, Entity entity );
 
 		/// <summary>
 		/// Called when component has been removed from entity
 		/// </summary>
 		/// <param name="entityId">Entity that component has been removed from</param>
-		void Removed( uint entityId );
+		void Removed( GameState gs, Entity entity );
 
 		/// <summary>
 		/// Saves all component data to stream
 		/// </summary>
 		/// <param name="stream"></param>
-		void Save( Stream stream );
+		void Save( GameState gs, Stream stream );
 
 		/// <summary>
 		/// Loads component data from stream
 		/// </summary>
 		/// <param name="stream"></param>
-		void Load( Stream stream );
+		void Load( GameState gs, Stream stream );
 	}
 }

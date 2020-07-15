@@ -23,7 +23,7 @@ namespace IronStar.ECS
 		readonly HashSet<uint>	killed;
 
 		readonly GameServiceContainer services;
-		GameServiceContainer Services { get { return services; } }
+		public GameServiceContainer Services { get { return services; } }
 
 
 		/// <summary>
@@ -73,7 +73,7 @@ namespace IronStar.ECS
 		{
 			foreach ( var e in spawned )
 			{
-				entities.Add( e.Id, e );
+				entities.Add( e.ID, e );
 			}
 
 			foreach ( var system in systems )
@@ -85,6 +85,17 @@ namespace IronStar.ECS
 			{
 				KillInternal(id);
 			}
+		}
+
+
+		/// <summary>
+		/// Gets gamestate's service
+		/// </summary>
+		/// <typeparam name="TService"></typeparam>
+		/// <returns></returns>
+		public TService GetService<TService>() where TService: class
+		{
+			return Services.GetService<TService>();
 		}
 
 
@@ -108,6 +119,12 @@ namespace IronStar.ECS
 		}
 
 
+		public Entity GetEntity( uint id )
+		{
+			return entities[id];
+		}
+
+
 		public void Kill ( uint id )
 		{
 			killed.Add( id );
@@ -116,9 +133,10 @@ namespace IronStar.ECS
 
 		void KillInternal( uint id )
 		{
+			var entity = entities[ id ];
 			entities.Remove( id );
 
-			components.RemoveAllComponents( id, c => c.Removed(id) );
+			components.RemoveAllComponents( id, c => c.Removed(this, entity) );
 		}
 
 
@@ -141,14 +159,14 @@ namespace IronStar.ECS
 			if (entity==null) throw new ArgumentNullException("entity");
 			if (component==null) throw new ArgumentNullException("component");
 
-			components.AddComponent( entity.Id, component );
-			component.Added( entity.Id );
+			components.AddComponent( entity.ID, component );
+			component.Added( this, entity );
 		}
 
 
 		public TComponent GetEntityComponent<TComponent>( Entity entity ) where TComponent: IComponent
 		{
-			return components.GetComponent<TComponent>( entity.Id );
+			return components.GetComponent<TComponent>( entity.ID );
 		}
 
 
@@ -157,8 +175,8 @@ namespace IronStar.ECS
 			if (entity==null) throw new ArgumentNullException("entity");
 			if (component==null) throw new ArgumentNullException("component");
 
-			component.Removed( entity.Id );
-			components.RemoveComponent( entity.Id, component );
+			component.Removed( this, entity );
+			components.RemoveComponent( entity.ID, component );
 		}
 
 		/*-----------------------------------------------------------------------------------------------
@@ -169,6 +187,7 @@ namespace IronStar.ECS
 		{
 			if (system==null) throw new ArgumentNullException("system");
 
+			services.AddService( system.GetType(), system );
 			systems.Add( system );
 		}
 
@@ -184,6 +203,12 @@ namespace IronStar.ECS
 			public bool Equals( KeyValuePair<uint, IComponent> x, KeyValuePair<uint, IComponent> y ) {  return x.Key == y.Key; }
 			public int GetHashCode( KeyValuePair<uint, IComponent> obj ) { return obj.Key.GetHashCode(); }
 		}
+
+		public IEnumerable<TComponent> QueryComponents<TComponent>() where TComponent: IComponent
+		{
+			return components[typeof(TComponent)].Select( kv => (TComponent)kv.Value ).ToArray();
+		}
+
 
 		public IEnumerable<Entity> QueryEntities<TComponent>() 
 		where TComponent: IComponent

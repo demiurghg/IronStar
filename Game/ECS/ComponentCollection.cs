@@ -28,21 +28,32 @@ namespace IronStar.ECS
 
 		public void AddComponent( uint entityId, IComponent component )
 		{
+			if (component==null) throw new ArgumentNullException("component");
+			if (entityId==0) throw new ArgumentNullException("entityId");
+
 			this[component.GetType()].Add( entityId, component );
 		}
 
 
 		public void RemoveComponent( uint entityId, IComponent component )
 		{
+			if (component==null) throw new ArgumentNullException("component");
+			if (entityId==0) throw new ArgumentNullException("entityId");
+
 			this[component.GetType()].Remove( entityId );
 		}
 
 
-		public void RemoveAllComponents( uint entityId )
+		public void RemoveAllComponents( uint entityId, Action<IComponent> action )
 		{
 			foreach ( var dict in this )
 			{
-				dict.Value.Remove( entityId );
+				IComponent component;
+				if ( dict.Value.TryGetValue( entityId, out component ) )
+				{
+					dict.Value.Remove( entityId );
+					action( component );
+				}
 			}
 		}
 

@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="Core\EntityComponent.cs" />
     <Compile Include="ECS\ComponentCollection.cs" />
+    <Compile Include="ECS\Component.cs" />
     <Compile Include="ECS\Utils\Bag.cs" />
     <Compile Include="ECS\Utils\BagEnumerator.cs" />
     <Compile Include="ECS\Utils\BitSet.cs" />

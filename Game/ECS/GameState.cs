@@ -53,6 +53,8 @@ namespace IronStar.ECS
 		{
 			if (disposing)
 			{
+				KillAllInternal();
+
 				foreach ( var system in systems )
 				{
 					(system as IDisposable)?.Dispose();
@@ -115,7 +117,19 @@ namespace IronStar.ECS
 		void KillInternal( uint id )
 		{
 			entities.Remove( id );
-			components.RemoveAllComponents( id );
+
+			components.RemoveAllComponents( id, c => c.Removed(id) );
+		}
+
+
+		void KillAllInternal()
+		{
+			var killList = entities.Keys.ToArray();
+
+			foreach ( var id in killList )
+			{
+				KillInternal(id);
+			}
 		}
 
 		/*-----------------------------------------------------------------------------------------------
@@ -128,6 +142,7 @@ namespace IronStar.ECS
 			if (component==null) throw new ArgumentNullException("component");
 
 			components.AddComponent( entity.Id, component );
+			component.Added( entity.Id );
 		}
 
 
@@ -139,8 +154,10 @@ namespace IronStar.ECS
 
 		public void RemoveEntityComponent( Entity entity, IComponent component )
 		{
+			if (entity==null) throw new ArgumentNullException("entity");
 			if (component==null) throw new ArgumentNullException("component");
 
+			component.Removed( entity.Id );
 			components.RemoveComponent( entity.Id, component );
 		}
 

@@ -162,7 +162,7 @@ namespace Fusion.Engine.Graphics {
 				LightType			=	light.Ambient ? RenderSystem.LightTypeAmbient : RenderSystem.LightTypeOmni;
 				Position0LightRange	=	new Vector4( light.Position0, light.RadiusOuter );
 				Position1TubeRadius	=	new Vector4( light.Position1, light.RadiusInner );
-				IntensityFar		=	new Vector4( light.Intensity2.Red, light.Intensity2.Green, light.Intensity2.Blue, 0 );
+				IntensityFar		=	new Vector4( light.Intensity.Red, light.Intensity.Green, light.Intensity.Blue, 0 );
 				#endregion
 			}
 
@@ -173,7 +173,7 @@ namespace Fusion.Engine.Graphics {
 				LightType			=	RenderSystem.LightTypeSpotShadow;
 				Position0LightRange	=	new Vector4( light.Position0, light.RadiusOuter );
 				Position1TubeRadius	=	new Vector4( light.Position1, light.RadiusInner );
-				IntensityFar		=	new Vector4( light.Intensity2.Red, light.Intensity2.Green, light.Intensity2.Blue, light.Projection.GetFarPlaneDistance() );
+				IntensityFar		=	new Vector4( light.Intensity.Red, light.Intensity.Green, light.Intensity.Blue, light.Projection.GetFarPlaneDistance() );
 				ViewProjection		=	light.SpotView * light.Projection;
 				ShadowScaleOffset	=	light.ShadowScaleOffset;
 				#endregion

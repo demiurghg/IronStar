@@ -58,6 +58,12 @@ namespace IronStar.ECS
 		}
 
 
+		public void ClearComponentsOfType<TComponent>()
+		{
+			this[typeof(TComponent)].Clear();
+		}
+
+
 		public TComponent GetComponent<TComponent>( uint entityId ) where TComponent: IComponent
 		{
 			IComponent result;

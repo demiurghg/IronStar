@@ -71,20 +71,26 @@ namespace IronStar.ECS
 		/// <param name="gameTime"></param>
 		public void Update ( GameTime gameTime )
 		{
+			//	add all spawned entities :
 			foreach ( var e in spawned )
 			{
 				entities.Add( e.ID, e );
 			}
 
+			//	run sysytems :
 			foreach ( var system in systems )
 			{
 				system.Update( this, gameTime );
 			}
 
+			//	kill entities marked to kill :
 			foreach ( var id in killed )
 			{
 				KillInternal(id);
 			}
+
+			//	clear teleport component :
+			components.ClearComponentsOfType<Teleport>();
 		}
 
 
@@ -103,19 +109,13 @@ namespace IronStar.ECS
 		 *	Entity stuff :
 		-----------------------------------------------------------------------------------------------*/
 
-		public Entity Spawn ( Vector3 position, Quaternion rotation )
+		public Entity Spawn ()
 		{
-			var entity = new Entity( this, IdGenerator.Next(), position, rotation );
+			var entity = new Entity( this, IdGenerator.Next() );
 			
 			spawned.Add( entity );
 
 			return entity;
-		}
-
-
-		public Entity Spawn ( Vector3 position )
-		{
-			return Spawn( position, Quaternion.Identity );
 		}
 
 
@@ -245,7 +245,27 @@ namespace IronStar.ECS
 
 			return s1
 				.Intersect( s2, entityComponentComparer )
+				.Intersect( s3, entityComponentComparer )
+				.Select( keyValue => entities[ keyValue.Key ] )
+				.ToArray(); 
+		}
+
+
+		public IEnumerable<Entity> QueryEntities<TComponent1, TComponent2, TComponent3, TComponent4>() 
+		where TComponent1: IComponent 
+		where TComponent2: IComponent
+		where TComponent3: IComponent
+		where TComponent4: IComponent
+		{
+			var	s1	=	components[typeof(TComponent1)];
+			var	s2	=	components[typeof(TComponent2)];
+			var	s3	=	components[typeof(TComponent3)];
+			var	s4	=	components[typeof(TComponent4)];
+
+			return s1
 				.Intersect( s2, entityComponentComparer )
+				.Intersect( s3, entityComponentComparer )
+				.Intersect( s4, entityComponentComparer )
 				.Select( keyValue => entities[ keyValue.Key ] )
 				.ToArray(); 
 		}

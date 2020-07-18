@@ -30,11 +30,6 @@ namespace Fusion.Engine.Graphics {
 		public Color4	Intensity;
 
 		/// <summary>
-		/// Spot-light intensity.
-		/// </summary>
-		public Color4	Intensity2 { get { return Intensity * LightStyleController.RunLightStyle((int)Timer, LightStyle); } }
-
-		/// <summary>
 		/// Omni-light inner radius.
 		/// </summary>
 		public float	RadiusInner;

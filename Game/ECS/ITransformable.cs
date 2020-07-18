@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IronStar.ECS;
+using Fusion.Core.Mathematics;
 
-namespace IronStar.Physics2
+namespace IronStar.ECS
 {
-	public class Gravity : Component
+	public interface ITransformable
 	{
-		public float Magnitude = 48;
+		void SetTransform( Matrix transform );
 	}
 }

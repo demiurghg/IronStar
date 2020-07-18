@@ -91,25 +91,6 @@ namespace IronStar.SFX2
 		}
 
 
-		public Matrix ComputeWorldMatrix ()
-		{
-			var q	=	Entity.Rotation;
-			var p	=	Entity.Position;
-
-			var worldMatrix = Matrix.RotationQuaternion( q ) * Matrix.Translation( p );
-
-			/*
-			if ( fpvEnabled ) 
-			{
-				var playerCameraMatrix	=	modelManager.rw.Camera.CameraMatrix;
-				worldMatrix				= 	playerCameraMatrix;
-			}
-			*/
-
-			return worldMatrix;
-		}
-		
-
 		void UpdateInternal ( Matrix worldMatrix, Matrix[] nodeTransforms )
 		{
 			if (scene==null || scene==EmptyScene) return;
@@ -143,7 +124,8 @@ namespace IronStar.SFX2
 			if (string.IsNullOrWhiteSpace(scenePath)) 
 			{
 				scene	=	EmptyScene;
-			} else 
+			} 
+			else 
 			{
 				scene	=	content.Load<Scene>( scenePath );
 			}
@@ -176,7 +158,7 @@ namespace IronStar.SFX2
 
 		public void UnloadScene(GameState gs)
 		{
-			var rs			=	gs.GetService<RenderSystem>();
+			var rs	=	gs.GetService<RenderSystem>();
 
 			if (meshInstances!=null)
 			{

@@ -28,7 +28,7 @@ using IronStar.ECS;
 
 namespace IronStar.Physics2 
 {
-	public class DynamicBox : Component
+	public class DynamicBox : Component, IMotionState
 	{
 		float	width;
 		float	height;
@@ -53,9 +53,7 @@ namespace IronStar.Physics2
 
 			physics	=	gs.GetService<PhysicsEngineSystem>();
 
-			var ms			=	new MotionState();
-			ms.Orientation	=	MathConverter.Convert( entity.Rotation );
-			ms.Position		=	MathConverter.Convert( entity.Position );
+			var ms					=	new MotionState();
 
 			box						=	new Box( ms, width, height, depth, mass );
 			box.PositionUpdateMode	=	PositionUpdateMode.Continuous;
@@ -82,15 +80,6 @@ namespace IronStar.Physics2
 		}
 
 
-		public void Teleport ( Vector3 position, Quaternion orient )
-		{
-			box.Position		=	MathConverter.Convert( position );
-			box.Orientation		=	MathConverter.Convert( orient );
-			box.AngularVelocity	=	MathConverter.Convert( Vector3.Zero );
-			box.LinearVelocity	=	MathConverter.Convert( Vector3.Zero );
-		}
-
-
 		public void Kick ( Vector3 kickImpulse, Vector3 kickPoint )
 		{
 			var i = MathConverter.Convert( kickImpulse );
@@ -99,31 +88,31 @@ namespace IronStar.Physics2
 		}
 
 
-		public Vector3 Position {
-			get {
-				return MathConverter.Convert( box.Position );
-			}
+		public Vector3 Position 
+		{
+			get { return MathConverter.Convert( box.Position ); }
+			set { box.Position = MathConverter.Convert( value ); }
 		}
 
 
-		public Quaternion Orientation {
-			get {
-				return MathConverter.Convert( box.Orientation );
-			}
+		public Quaternion Rotation 
+		{
+			get { return MathConverter.Convert( box.Orientation ); }
+			set { box.Orientation = MathConverter.Convert( value ); }
 		}
 
 
-		public Vector3 LinearVelocity {
-			get {
-				return MathConverter.Convert( box.LinearVelocity );
-			}
+		public Vector3 LinearVelocity 
+		{
+			get { return MathConverter.Convert( box.LinearVelocity ); }
+			set { box.LinearVelocity = MathConverter.Convert( value ); }
 		}
 
 
-		public Vector3 AngularVelocity {
-			get {
-				return MathConverter.Convert( box.AngularVelocity );
-			}
+		public Vector3 AngularVelocity 
+		{
+			get { return MathConverter.Convert( box.AngularVelocity ); }
+			set { box.AngularVelocity = MathConverter.Convert( value ); }
 		}
 
 	}

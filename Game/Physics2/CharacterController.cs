@@ -25,7 +25,7 @@ using IronStar.ECS;
 
 namespace IronStar.Physics2 
 {
-	public class CharacterController : Component
+	public class CharacterController : Component, IMotionState
 	{
 		BEPUCharacterController controller;
 
@@ -62,7 +62,9 @@ namespace IronStar.Physics2
 
 			physics		=	gs.GetService<PhysicsEngineSystem>();
 
-			var pos		=	MathConverter.Convert( e.Position + heightStanding );
+			var t		=	e.GetComponent<Transform>();
+
+			var pos		=	MathConverter.Convert( t.Position + heightStanding );
 
 			controller = new BEPUCharacterController( pos, 
 						height			:	heightStanding,
@@ -144,21 +146,46 @@ namespace IronStar.Physics2
 		}
 
 
+
+
 		public Vector3 Position 
 		{
-			get { return MathConverter.Convert( controller.Body.Position ) - (IsCrouching ? offsetCrouch : offsetStanding); }
+			get 
+			{ 
+				var offset = IsCrouching ? offsetCrouch : offsetStanding;
+				return MathConverter.Convert( controller.Body.Position ) - offset; 
+			}
+			set 
+			{ 
+				var offset = IsCrouching ? offsetCrouch : offsetStanding;
+				controller.Body.Position = MathConverter.Convert( value + offset ); 
+				controller.SupportFinder.ClearSupportData();
+			}
+		}
+
+
+		public Quaternion Rotation 
+		{
+			get { return Quaternion.Identity; }
+			set { /* do nothing */ }
 		}
 
 
 		public Vector3 LinearVelocity 
 		{
 			get { return MathConverter.Convert( controller.Body.LinearVelocity ); }
+			set 
+			{ 
+				controller.Body.LinearVelocity = MathConverter.Convert( value ); 
+				controller.SupportFinder.ClearSupportData();
+			}
 		}
 
 
 		public Vector3 AngularVelocity 
 		{
-			get { return MathConverter.Convert( controller.Body.AngularVelocity ); }
+			get { return Vector3.Zero; }
+			set { /* do nothing */ }
 		}
 
 

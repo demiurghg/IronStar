@@ -53,9 +53,13 @@ namespace IronStar.Physics2
 		{
 			UpdateGravity( gs );
 
+			TeleportDynamicObjects<DynamicBox>(gs);
+			TeleportDynamicObjects<CharacterController>(gs);
+
 			UpdateSimulation( gameTime.ElapsedSec );
 
-			UpdateEntityPositions( gs );
+			UpdateDynamicObjects<DynamicBox>(gs);
+			UpdateDynamicObjects<CharacterController>(gs);
 
 			UpdateTouchEvents();
 		}
@@ -64,27 +68,44 @@ namespace IronStar.Physics2
 		void UpdateGravity( GameState gs )
 		{
 			var gravity					=	gs.QueryComponents<Gravity>().FirstOrDefault();
-			var gravityMagnitude		=	gravity==null ? 0 : gravity.Gravity;
+			var gravityMagnitude		=	gravity==null ? 0 : gravity.Magnitude;
 			var gravityVector			=	Vector3.Down * gravityMagnitude;
 			Space.ForceUpdater.Gravity	=	MathConverter.Convert( gravityVector );
 		}
 
 
-		void UpdateEntityPositions( GameState gs )
+		void UpdateDynamicObjects<TObject>( GameState gs ) where TObject: IMotionState, IComponent
 		{
-			var chars	=	gs.QueryComponents<CharacterController>();
-			var boxes	=	gs.QueryComponents<DynamicBox>();
+			var entities	=	gs.QueryEntities<TObject,Transform,Velocity>();
 
-			foreach ( var ch in chars ) 
+			foreach ( var e in entities ) 
 			{
-				ch.Entity.Position	=	ch.Position;
-				ch.Entity.Rotation	=	Quaternion.Identity;
+				var obj	=	e.GetComponent<TObject>();
+				var t	=	e.GetComponent<Transform>();
+				var v	=	e.GetComponent<Velocity>();
+
+				t.Position	=	obj.Position;
+				t.Rotation	=	obj.Rotation;
+				v.Linear	=	obj.LinearVelocity;
+				v.Angular	=	obj.AngularVelocity;
 			}
+		}
 
-			foreach ( var box in boxes ) 
+
+		void TeleportDynamicObjects<TObject>( GameState gs ) where TObject: IMotionState, IComponent
+		{
+			var entities	=	gs.QueryEntities<Teleport,TObject,Transform,Velocity>();
+
+			foreach ( var e in entities ) 
 			{
-				box.Entity.Position	=	box.Position;
-				box.Entity.Rotation	=	box.Orientation;
+				var box	=	e.GetComponent<TObject>();
+				var t	=	e.GetComponent<Transform>();
+				var v	=	e.GetComponent<Velocity>();
+
+				t.Position	=	box.Position;
+				t.Rotation	=	box.Rotation;
+				v.Linear	=	box.LinearVelocity;
+				v.Angular	=	box.AngularVelocity;
 			}
 		}
 
@@ -108,7 +129,8 @@ namespace IronStar.Physics2
 
 		public void UpdateTouchEvents()
 		{
-			foreach ( var touchEvent in touchEvents ) {
+			foreach ( var touchEvent in touchEvents ) 
+			{
 				Log.Warning("UpdateTouchEvents -- not implemented");
 				//touchEvent.Item1?.Touch( touchEvent.Item2, Vector3.Zero );
 			}

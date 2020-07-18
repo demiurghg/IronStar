@@ -88,9 +88,9 @@ namespace IronStar.Physics2
 		}
 
 
-		public override void Removed( GameState gs, Entity e )
+		public override void Removed( GameState gs )
 		{
-			base.Removed( gs, e );
+			base.Removed( gs );
 
 			physics.Space.Remove( controller );
 		}

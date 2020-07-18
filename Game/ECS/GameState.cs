@@ -25,6 +25,8 @@ namespace IronStar.ECS
 		readonly GameServiceContainer services;
 		public GameServiceContainer Services { get { return services; } }
 
+		readonly Bag<IComponent>	sleeping;
+
 
 		/// <summary>
 		/// Game state constructor
@@ -40,6 +42,7 @@ namespace IronStar.ECS
 
 			spawned			=	new Bag<Entity>();
 			killed			=	new HashSet<uint>();
+			sleeping		=	new Bag<IComponent>();
 
 			services		=	new GameServiceContainer();
 		}
@@ -54,6 +57,8 @@ namespace IronStar.ECS
 			if (disposing)
 			{
 				KillAllInternal();
+
+				foreach ( var s in sleeping ) s.Removed(this);
 
 				foreach ( var system in systems )
 				{
@@ -91,6 +96,7 @@ namespace IronStar.ECS
 
 			//	clear teleport component :
 			components.ClearComponentsOfType<Teleport>();
+			MakeStaticEntitiesSleeping();
 		}
 
 
@@ -136,7 +142,7 @@ namespace IronStar.ECS
 			var entity = entities[ id ];
 			entities.Remove( id );
 
-			components.RemoveAllComponents( id, c => c.Removed(this, entity) );
+			components.RemoveAllComponents( id, c => c.Removed(this) );
 		}
 
 
@@ -147,6 +153,19 @@ namespace IronStar.ECS
 			foreach ( var id in killList )
 			{
 				KillInternal(id);
+			}
+		}
+
+
+		void MakeStaticEntitiesSleeping()
+		{
+			var ents = QueryEntities<Static>();
+
+			foreach ( var e in ents ) 
+			{
+				//	do not call Removed, this will keep statefull objects alive
+				components.RemoveAllComponents( e.ID, c => sleeping.Add(c) );
+				entities.Remove( e.ID );
 			}
 		}
 
@@ -175,7 +194,7 @@ namespace IronStar.ECS
 			if (entity==null) throw new ArgumentNullException("entity");
 			if (component==null) throw new ArgumentNullException("component");
 
-			component.Removed( this, entity );
+			component.Removed( this );
 			components.RemoveComponent( entity.ID, component );
 		}
 

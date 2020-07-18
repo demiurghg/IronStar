@@ -22,13 +22,9 @@ namespace IronStar.ECS
 			this.entity = entity;
 		}
 
-		public virtual void Removed( GameState gs, Entity entity )
+		public virtual void Removed( GameState gs )
 		{
-			if (this.entity!=entity)
-			{
-				throw new InvalidOperationException("Component.Removed : inconsistent entity and component");
-			}
-			this.entity = null;
+			entity = null;
 		}
 
 		public virtual void Load( GameState gs, Stream stream )

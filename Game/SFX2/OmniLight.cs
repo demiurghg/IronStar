@@ -82,10 +82,10 @@ namespace IronStar.SFX2
 		}
 
 
-		public override void Removed( GameState gs, Entity entity )
+		public override void Removed( GameState gs )
 		{
 			lightSet.OmniLights.Remove ( light );
-			base.Removed( gs, entity );
+			base.Removed( gs );
 		}
 
 

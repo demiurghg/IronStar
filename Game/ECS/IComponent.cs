@@ -19,7 +19,7 @@ namespace IronStar.ECS
 		/// Called when component has been removed from entity
 		/// </summary>
 		/// <param name="entityId">Entity that component has been removed from</param>
-		void Removed( GameState gs, Entity entity );
+		void Removed( GameState gs );
 
 		/// <summary>
 		/// Saves all component data to stream

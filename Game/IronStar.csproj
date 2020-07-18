@@ -83,6 +83,7 @@
     <Compile Include="ECS\Utils\IdGenerator.cs" />
     <Compile Include="ECS\ISystem.cs" />
     <Compile Include="ECS\SystemCollection.cs" />
+    <Compile Include="ECS\Static.cs" />
     <Compile Include="ECS\Velocity.cs" />
     <Compile Include="Editor\MapEditor.History.cs" />
     <Compile Include="Mapping\MapLightProbeBox.cs" />

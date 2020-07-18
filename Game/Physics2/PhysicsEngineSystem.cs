@@ -14,8 +14,8 @@ using Fusion;
 
 namespace IronStar.Physics2
 {
-	public class PhysicsEngineSystem : ISystem {
-
+	public class PhysicsEngineSystem : ISystem 
+	{
 		Space physSpace = new Space();
 
 		HashSet<Tuple<Entity,Entity>> touchEvents;
@@ -63,7 +63,7 @@ namespace IronStar.Physics2
 
 		void UpdateGravity( GameState gs )
 		{
-			var gravity					=	gs.QueryComponents<GravityComponent>().FirstOrDefault();
+			var gravity					=	gs.QueryComponents<Gravity>().FirstOrDefault();
 			var gravityMagnitude		=	gravity==null ? 0 : gravity.Gravity;
 			var gravityVector			=	Vector3.Down * gravityMagnitude;
 			Space.ForceUpdater.Gravity	=	MathConverter.Convert( gravityVector );
@@ -72,8 +72,8 @@ namespace IronStar.Physics2
 
 		void UpdateEntityPositions( GameState gs )
 		{
-			var chars	=	gs.QueryComponents<CharacterControllerComponent>();
-			var boxes	=	gs.QueryComponents<DynamicBoxComponent>();
+			var chars	=	gs.QueryComponents<CharacterController>();
+			var boxes	=	gs.QueryComponents<DynamicBox>();
 
 			foreach ( var ch in chars ) 
 			{

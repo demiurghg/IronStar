@@ -7,7 +7,7 @@ using IronStar.ECS;
 
 namespace IronStar.Physics2
 {
-	public class GravityComponent : Component
+	public class Gravity : Component
 	{
 		public float Gravity = 48;
 	}

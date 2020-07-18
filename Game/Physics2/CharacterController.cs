@@ -25,7 +25,7 @@ using IronStar.ECS;
 
 namespace IronStar.Physics2 
 {
-	public class CharacterControllerComponent : Component
+	public class CharacterController : Component
 	{
 		BEPUCharacterController controller;
 
@@ -43,7 +43,7 @@ namespace IronStar.Physics2
 		PhysicsEngineSystem	physics;
 
 
-		public CharacterControllerComponent ( float heightStanding, float heightCrouching, float radius, float speedStanding, float speedCrouching, float speedJump, float mass, float stepHeight )
+		public CharacterController ( float heightStanding, float heightCrouching, float radius, float speedStanding, float speedCrouching, float speedJump, float mass, float stepHeight )
 		{
 			this.heightStanding		=	heightStanding	;
 			this.heightCrouching	=	heightCrouching	;

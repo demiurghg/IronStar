@@ -28,7 +28,7 @@ using IronStar.ECS;
 
 namespace IronStar.Physics2 
 {
-	public class DynamicBoxComponent : Component
+	public class DynamicBox : Component
 	{
 		float	width;
 		float	height;
@@ -38,7 +38,7 @@ namespace IronStar.Physics2
 		PhysicsEngineSystem	physics;
 		Box box;
 
-		public DynamicBoxComponent ( float width, float height, float depth, float mass )
+		public DynamicBox ( float width, float height, float depth, float mass )
 		{
 			this.width	=	width	;
 			this.height	=	height	;

@@ -11,6 +11,7 @@ using BEPUphysics.CollisionRuleManagement;
 using IronStar.ECS;
 using Fusion.Core;
 using Fusion;
+using IronStar.Gameplay;
 
 namespace IronStar.Physics2
 {
@@ -56,6 +57,8 @@ namespace IronStar.Physics2
 			TeleportDynamicObjects<DynamicBox>(gs);
 			TeleportDynamicObjects<CharacterController>(gs);
 
+			UpdateCharacterUserCommands(gs);
+
 			UpdateSimulation( gameTime.ElapsedSec );
 
 			UpdateDynamicObjects<DynamicBox>(gs);
@@ -71,6 +74,20 @@ namespace IronStar.Physics2
 			var gravityMagnitude		=	gravity==null ? 0 : gravity.Magnitude;
 			var gravityVector			=	Vector3.Down * gravityMagnitude;
 			Space.ForceUpdater.Gravity	=	MathConverter.Convert( gravityVector );
+		}
+
+
+		void UpdateCharacterUserCommands( GameState gs )
+		{
+			var entities	=	gs.QueryEntities<CharacterController,UserCommand2>();
+
+			foreach ( var e in entities )
+			{
+				var uc	=	e.GetComponent<UserCommand2>();
+				var ch	=	e.GetComponent<CharacterController>();
+
+				ch.Movement	=	uc.MovementVector;
+			}
 		}
 
 

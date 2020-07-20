@@ -70,6 +70,7 @@
     <Compile Include="ECS\Component.cs" />
     <Compile Include="ECS\ITransformable.cs" />
     <Compile Include="ECS\Teleport.cs" />
+    <Compile Include="ECS\IEntityTemplate.cs" />
     <Compile Include="ECS\Transform.cs" />
     <Compile Include="ECS\Utils\Bag.cs" />
     <Compile Include="ECS\Utils\BagEnumerator.cs" />
@@ -86,6 +87,10 @@
     <Compile Include="ECS\Static.cs" />
     <Compile Include="ECS\Velocity.cs" />
     <Compile Include="Editor\MapEditor.History.cs" />
+    <Compile Include="Gameplay\PlayerSystem.cs" />
+    <Compile Include="Gameplay\UserCommand.cs" />
+    <Compile Include="Gameplay\PlayerController.cs" />
+    <Compile Include="Gameplay\PlayerStart.cs" />
     <Compile Include="Mapping\MapLightProbeBox.cs" />
     <Compile Include="Physics2\CharacterController.cs" />
     <Compile Include="Physics2\IMotionState.cs" />
@@ -322,9 +327,7 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AI\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="cursor.cur" />
   </ItemGroup>

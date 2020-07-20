@@ -128,7 +128,16 @@ namespace IronStar.Physics2
 		}
 
 
-		public void Move ( Vector3 move )
+		public Vector3 Movement
+		{
+			set 
+			{
+				Move( value );
+			}
+		}
+
+
+		void Move ( Vector3 move )
 		{
 			var jump	=	move.Y > 0.5f;
 			var crouch	=	move.Y < -0.5f;

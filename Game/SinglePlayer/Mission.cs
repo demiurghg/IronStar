@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 using Fusion;
 using Fusion.Core;
 
-namespace IronStar.SinglePlayer {
-	public partial class Mission : GameComponent {
+namespace IronStar.SinglePlayer 
+{
+	public partial class Mission : GameComponent 
+	{
 
 		/// <summary>
 		/// Sets and gets current mission state.

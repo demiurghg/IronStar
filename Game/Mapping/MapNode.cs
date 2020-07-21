@@ -13,6 +13,7 @@ using IronStar.SFX;
 using Fusion.Core.Shell;
 using Fusion.Engine.Common;
 using Newtonsoft.Json;
+using IronStar.ECS;
 
 namespace IronStar.Mapping {
 	public abstract class MapNode {
@@ -195,6 +196,9 @@ namespace IronStar.Mapping {
 				hardDirty = false;
 			} */
 		}
+
+
+		public virtual void SpawnNodeECS( GameState gs ) {}
 
 
 		/// <summary>

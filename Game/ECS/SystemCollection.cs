@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IronStar.ECS
 {
-	class SystemCollection : FixedList<ISystem>
+	class SystemCollection : List<ISystem>
 	{
 		const int MaxSystems = (int)BitSet.MaxBits;
 

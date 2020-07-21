@@ -17,6 +17,7 @@ using BEPUphysics.BroadPhaseEntries;
 using BEPUTransform = BEPUutilities.AffineTransform;
 using Fusion.Core.Shell;
 using Fusion.Engine.Graphics.Scenes;
+using IronStar.ECS;
 
 namespace IronStar.Mapping {
 
@@ -211,6 +212,14 @@ namespace IronStar.Mapping {
 		}
 
 
+
+		public override void SpawnNodeECS( GameState gs )
+		{
+			var e = gs.Spawn();
+			e.AddComponent( new ECS.Static() );
+			e.AddComponent( new ECS.Transform( TranslateVector, RotateQuaternion ) );
+			e.AddComponent( new SFX2.RenderModel( ScenePath, Matrix.Scaling( Scale ), Color.White, 1, SFX2.RMFlags.None ) );
+		}
 
 
 		public override void ActivateNode()

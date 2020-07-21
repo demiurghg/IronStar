@@ -24,8 +24,9 @@ namespace IronStar.SFX2
 {
 	[Flags]
 	public enum RMFlags
-	{
-		FirstPointView,
+	{	
+		None			=	0x0000,
+		FirstPointView	=	0x0001,
 	}
 
 	public partial class RenderModel : Component
@@ -127,7 +128,7 @@ namespace IronStar.SFX2
 			} 
 			else 
 			{
-				scene	=	content.Load<Scene>( scenePath );
+				scene	=	content.Load( scenePath, EmptyScene );
 			}
 
 			globalTransforms	=	new Matrix[ scene.Nodes.Count ];

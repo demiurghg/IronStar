@@ -18,6 +18,7 @@ using Fusion.Core.Mathematics;
 using Fusion;
 using Newtonsoft.Json;
 using Fusion.Engine.Graphics.GI;
+using IronStar.ECS;
 
 namespace IronStar.Mapping {
 	public partial class Map : IPrecachable {
@@ -124,6 +125,15 @@ namespace IronStar.Mapping {
 					Log.Warning("Map : bad translation Z : {0}", n.TranslateZ );
 					n.TranslateZ = 0;
 				}
+			}
+		}
+
+
+		internal void ActivateGameState( GameState gs )
+		{
+			foreach ( var node in Nodes )
+			{
+				node.SpawnNodeECS( gs );
 			}
 		}
 	}

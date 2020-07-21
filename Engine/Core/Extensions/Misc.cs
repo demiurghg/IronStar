@@ -301,6 +301,29 @@ namespace Fusion.Core.Extensions {
 
 
 
+
+		/// <summary>
+		/// Searches all loaded assemblies for all public subclasses of given type
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static Type[] GatherInterfaceImplementations ( Type type )
+		{	
+			List<Type> types = new List<Type>();
+
+			foreach ( var a in AppDomain.CurrentDomain.GetAssemblies() ) {
+
+				foreach ( var t in a.GetLoadableTypes() ) {
+
+					if (type.IsAssignableFrom(t) && t!=type && !t.IsInterface && !t.IsAbstract) {
+						types.Add(t);						
+					}
+				}
+			}
+
+			return types.ToArray();
+		}
+
 		/// <summary>
 		/// Saves object to Xml file 
 		/// </summary>

@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Core\EntityComponent.cs" />
     <Compile Include="ECS\ComponentCollection.cs" />
     <Compile Include="ECS\Component.cs" />
@@ -78,7 +79,6 @@
     <Compile Include="ECS\IComponent.cs" />
     <Compile Include="ECS\EntityCollection.cs" />
     <Compile Include="ECS\Entity.cs" />
-    <Compile Include="ECS\Utils\FixedList.cs" />
     <Compile Include="ECS\GameState.cs" />
     <Compile Include="ECS\Utils\HashFunc.cs" />
     <Compile Include="ECS\Utils\IdGenerator.cs" />
@@ -167,7 +167,6 @@
     <Compile Include="SFX\FXPlayback.Trails.cs" />
     <Compile Include="SFX\ModelInstance.Lua.cs" />
     <Compile Include="SFX\ModelInstance.cs" />
-    <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Client\GameInput.cs" />
     <Compile Include="UI\HUD\HudFrame.cs" />
     <Compile Include="Core\Entity.cs" />
@@ -209,7 +208,6 @@
     <Compile Include="IronStar.cs" />
     <Compile Include="Core\Item.cs" />
     <Compile Include="LocalMessageService.cs" />
-    <Compile Include="Mapping\LightPreset.cs" />
     <Compile Include="Mapping\MapDecal.cs" />
     <Compile Include="Mapping\MapEntity.cs" />
     <Compile Include="Mapping\MapEnvironment.cs" />

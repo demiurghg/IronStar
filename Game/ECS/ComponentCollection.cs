@@ -19,7 +19,7 @@ namespace IronStar.ECS
 
 		public ComponentCollection () : base(64)
 		{
-			foreach ( var componentType in Misc.GetAllSubclassesOf( typeof(IComponent) ) )
+			foreach ( var componentType in Misc.GatherInterfaceImplementations( typeof(IComponent) ) )
 			{
 				Add( componentType, new Dictionary<uint, IComponent>(128) );
 			}

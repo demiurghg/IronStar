@@ -38,7 +38,7 @@ namespace IronStar.SinglePlayer {
 			public void Exit()
 			{
 				context.Content.Unload();
-				context.GameWorld.Dispose();
+				context.GameState.Dispose();
 				context.Mission.State = new StandBy( context.Mission );
 			}
 
@@ -51,7 +51,8 @@ namespace IronStar.SinglePlayer {
 
 			public void Update( GameTime gameTime )
 			{
-				context.GameWorld.PresentWorld( gameTime, 1, context.Camera, context.Command );
+				context.GameState.Update( gameTime );
+				//context.GameState.PresentWorld( gameTime, 1, context.Camera, context.Command );
 			}
 		}
 	}

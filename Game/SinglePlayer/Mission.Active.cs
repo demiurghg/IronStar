@@ -6,21 +6,50 @@ using System.Threading.Tasks;
 using Fusion;
 using Fusion.Core;
 using Fusion.Core.Content;
+using Fusion.Engine.Graphics;
 using IronStar.Client;
 using IronStar.Core;
-using IronStar.Views;
+using IronStar.ECS;
 
 namespace IronStar.SinglePlayer {
 
-	partial class Mission {
+	partial class Mission 
+	{
+		static GameState CreateGameState( Game game, ContentManager content, string mapName )
+		{
+			var map	=	content.Load<Mapping.Map>(@"maps\" + mapName);
+			var gs	=	new GameState(game);
 
-		class Active : IMissionState {
+			var rw	=	game.RenderSystem.RenderWorld;
+			rw.VirtualTexture		=	content.Load<VirtualTexture>("*megatexture");
+			rw.LightSet.SpotAtlas	=	content.Load<TextureAtlas>(@"spots\spots|srgb");
+			rw.LightSet.DecalAtlas	=	content.Load<TextureAtlas>(@"decals\decals");
 
-			public bool IsContinuable {
+
+			gs.Services.AddService( content );
+			gs.Services.AddService( game.RenderSystem );
+
+			gs.AddSystem( new Physics2.PhysicsEngineSystem() );
+			gs.AddSystem( new SFX2.RenderModelSystem(game) );
+			gs.AddSystem( new SFX2.LightingSystem(game) );
+
+			map.ActivateGameState(gs);
+
+			return gs;
+		}
+
+
+
+
+		class Active : IMissionState 
+		{
+			public bool IsContinuable 
+			{
 				get { return false;	}
 			}
 
-			public MissionState State {
+			public MissionState State 
+			{
 				get { return MissionState.Active; }
 			}
 
@@ -33,20 +62,17 @@ namespace IronStar.SinglePlayer {
 				this.context	=	context;
 				var userGuid	=	context.UserGuid;
 
-				if (context.GameWorld==null) {
+				if (context.GameState==null) {
 
 					var map				=	context.Content.Load<Mapping.Map>(@"maps\" + context.MapName);
 					var msgsvc			=	new LocalMessageService();
 
-					context.GameWorld	=	new GameWorld( context.Game, context.MapName, map, context.Content, msgsvc, userGuid, false );
-
-					context.Camera		=	new GameCamera( context.GameWorld, userGuid ); 
+					context.GameState	=	CreateGameState( context.Game, context.Content, context.MapName );
 					context.Input		=	new GameInput( context.Game );
 					context.Command		=	new UserCommand();
 
-					var player			=	context.GameWorld.SpawnPlayer( userGuid, "Unnamed Player");
-					context.Command.SetAnglesFromQuaternion( player.Rotation );
-
+					/*var player			=	context.GameState.SpawnPlayer( userGuid, "Unnamed Player");
+					context.Command.SetAnglesFromQuaternion( player.Rotation );*/
 				}
 			}
 
@@ -76,14 +102,16 @@ namespace IronStar.SinglePlayer {
 
 			public void Update( GameTime gameTime )
 			{
-				context.Input.Update( gameTime, context.GameWorld, ref context.Command );
+				context.GameState.Update( gameTime );
 
-				context.GameWorld.FeedPlayerCommand( context.UserGuid, context.Command );
-				context.GameWorld.SimulateWorld( gameTime );
+				/*context.Input.Update( gameTime, context.GameState, ref context.Command );
+
+				context.GameState.FeedPlayerCommand( context.UserGuid, context.Command );
+				context.GameState.SimulateWorld( gameTime );
 
 				context.Camera.Update( gameTime, 0, context.Command );
 
-				context.GameWorld.PresentWorld( gameTime, 0, context.Camera, context.Command );
+				context.GameState.PresentWorld( gameTime, 0, context.Camera, context.Command );*/
 			}
 		}
 	}

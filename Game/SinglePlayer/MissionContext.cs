@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 using Fusion.Core;
 using Fusion.Core.Content;
 using IronStar.Client;
-using IronStar.Core;
-using IronStar.Views;
+using IronStar.ECS;
 
 namespace IronStar.SinglePlayer {
 	public class MissionContext {
@@ -18,8 +17,7 @@ namespace IronStar.SinglePlayer {
 		public readonly Guid UserGuid;
 		public readonly ContentManager Content;
 
-		public GameWorld	GameWorld	=	null;
-		public GameCamera	Camera		=	null;
+		public GameState	GameState	=	null;
 		public GameInput	Input		=	null;
 		public UserCommand	Command		=	null;
 

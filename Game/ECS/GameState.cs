@@ -27,6 +27,8 @@ namespace IronStar.ECS
 
 		readonly Bag<IComponent>	sleeping;
 
+		readonly Type[] componentTypes;
+
 
 		/// <summary>
 		/// Game state constructor
@@ -77,10 +79,8 @@ namespace IronStar.ECS
 		public void Update ( GameTime gameTime )
 		{
 			//	add all spawned entities :
-			foreach ( var e in spawned )
-			{
-				entities.Add( e.ID, e );
-			}
+			foreach ( var e in spawned ) { entities.Add( e.ID, e );	}
+			spawned.Clear();
 
 			//	run sysytems :
 			foreach ( var system in systems )
@@ -89,10 +89,8 @@ namespace IronStar.ECS
 			}
 
 			//	kill entities marked to kill :
-			foreach ( var id in killed )
-			{
-				KillInternal(id);
-			}
+			foreach ( var id in killed ) { KillInternal(id); }
+			killed.Clear();
 
 			//	clear teleport component :
 			components.ClearComponentsOfType<Teleport>();

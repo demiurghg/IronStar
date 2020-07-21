@@ -39,7 +39,7 @@ namespace IronStar.ECS
 		}
 
 		/// <summary>
-		/// Utility to transform all existing ITransformable components
+		/// Utility to transform existing ITransformable components of given type
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="gs"></param>

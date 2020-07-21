@@ -24,7 +24,7 @@ using IronStar.ECS;
 
 namespace IronStar.SFX2 
 {
-	public class RenderModelSystem : ISystem 
+	public class RenderModelSystem : ISystem
 	{
 		readonly Game	game;
 		public readonly RenderSystem rs;
@@ -41,11 +41,6 @@ namespace IronStar.SFX2
 		}
 
 
-		public void Intialize( GameState gs )
-		{
-		}
-
-
 		public void Update( GameState gs, GameTime gameTime )
 		{
 			var entities = gs.QueryEntities<RenderModel,Transform>();
@@ -57,11 +52,6 @@ namespace IronStar.SFX2
 
 				rm.SetTransform( t.TransformMatrix );
 			}
-		}
-
-		
-		public void Shutdown( GameState gs )
-		{
 		}
 	}
 }

@@ -8,6 +8,7 @@ using Fusion.Core.Extensions;
 using Fusion.Core.Mathematics;
 using System.Reflection;
 using Fusion;
+using System.Runtime.Remoting;
 
 namespace IronStar.ECS
 {
@@ -27,7 +28,7 @@ namespace IronStar.ECS
 
 		readonly Bag<IComponent>	sleeping;
 
-		readonly Type[] componentTypes;
+		readonly EntityFactoryCollection factories;
 
 
 		/// <summary>
@@ -47,6 +48,14 @@ namespace IronStar.ECS
 			sleeping		=	new Bag<IComponent>();
 
 			services		=	new GameServiceContainer();
+
+			factories		=	new EntityFactoryCollection(
+									Misc.GetAllClassesWithAttribute<EntityFactoryAttribute>()
+										.ToDictionary( 
+											t0 => t0.GetAttribute<EntityFactoryAttribute>().ClassName,
+											t1 => (EntityFactory)Activator.CreateInstance(t1)
+										)
+									);
 		}
 
 
@@ -123,6 +132,12 @@ namespace IronStar.ECS
 		}
 
 
+		public Entity Spawn( string classname )
+		{
+			return factories[classname].Spawn(this);
+		}
+
+
 		public Entity GetEntity( uint id )
 		{
 			return entities[id];
@@ -165,6 +180,30 @@ namespace IronStar.ECS
 				components.RemoveAllComponents( e.ID, c => sleeping.Add(c) );
 				entities.Remove( e.ID );
 			}
+		}
+
+		/*-----------------------------------------------------------------------------------------------
+		 *	Movement stuff :
+		-----------------------------------------------------------------------------------------------*/
+
+		public bool Teleport( Entity e, Vector3 position, Quaternion rotation )
+		{
+			var t = e.GetComponent<Transform>();
+
+			if (t!=null)
+			{
+				t.Position	=	position;
+				t.Rotation	=	rotation;
+				
+				if (!e.ContainsComponent<Teleport>())
+				{
+					e.AddComponent(new Teleport());
+				}
+				
+				return true;
+			}
+
+			return false;
 		}
 
 		/*-----------------------------------------------------------------------------------------------

@@ -10,16 +10,27 @@ namespace IronStar.Gameplay
 {
 	public class PlayerSystem : ISystem
 	{
-		public void Intialize( GameState gs )
-		{
-		}
-
-		public void Shutdown( GameState gs )
-		{
-		}
-
 		public void Update( GameState gs, GameTime gameTime )
 		{
+			UpdatePlayerSpawn( gs );
+		}
+
+
+		public void UpdatePlayerSpawn ( GameState gs )
+		{
+			var ps = gs.QueryComponents<PlayerStart>().FirstOrDefault();
+
+			if (ps==null)
+			{
+				throw new GameException("Missing PlayerStart entity component");
+			}
+
+			if (!ps.PlayerSpawned)
+			{
+				ps.PlayerSpawned = true;
+
+				var e = gs.Spawn("PLAYER");
+			}
 		}
 	}
 }

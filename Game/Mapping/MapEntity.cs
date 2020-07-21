@@ -63,6 +63,11 @@ namespace IronStar.Mapping {
 		}
 
 
+		public override void SpawnNodeECS( ECS.GameState gs )
+		{
+			Factory.SpawnECS(gs);
+		}
+
 
 		public override void ActivateNode()
 		{

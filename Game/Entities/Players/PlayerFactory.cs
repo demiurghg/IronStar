@@ -29,6 +29,12 @@ namespace IronStar.Entities.Players {
 		}
 
 
+		public override void SpawnECS( ECS.GameState gs )
+		{
+			Log.Warning("SpawnECS -- {0}", GetType().Name);
+		}
+
+
 		[Category("General")]
 		public int MaxHealth { get; set; } = 100;
 

@@ -41,11 +41,6 @@ namespace IronStar.SFX2
 		}
 
 
-		public void Intialize( GameState gs )
-		{
-		}
-
-
 		public void Update( GameState gs, GameTime gameTime )
 		{
 			var rs	=	gs.GetService<RenderSystem>();
@@ -53,11 +48,6 @@ namespace IronStar.SFX2
 			rw.LightSet.DirectLight.Intensity	=	 rs.Sky.GetSunIntensity(true);	
 
 			Transform.UpdateTransformables<OmniLight>(gs);
-		}
-
-		
-		public void Shutdown( GameState gs )
-		{
 		}
 	}
 }

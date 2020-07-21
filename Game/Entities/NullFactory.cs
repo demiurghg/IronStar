@@ -28,6 +28,11 @@ namespace IronStar.Entities {
 
 	public class NullFactory : EntityFactory {
 
+		public override void SpawnECS( ECS.GameState gs )
+		{
+			Log.Warning("SpawnECS -- {0}", GetType().Name);
+		}
+
 		public override Entity Spawn( uint id, short clsid, GameWorld world )
 		{
 			return new NullEntity( id, clsid, world, this );

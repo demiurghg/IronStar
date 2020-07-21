@@ -46,6 +46,13 @@ namespace IronStar.Entities {
 		}
 
 
+		public override void SpawnECS( ECS.GameState gs )
+		{
+			var e = gs.Spawn();
+			e.AddComponent( new Gameplay.PlayerStart() );
+		}
+
+
 		public override void Draw( DebugRender dr, Matrix transform, Color color, bool selected )
 		{
 			var p0 = transform.TranslationVector;

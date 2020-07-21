@@ -47,6 +47,17 @@ namespace IronStar.ECS
 
 
 		/// <summary>
+		/// Indicates that given entity containts component of given type.
+		/// </summary>
+		/// <typeparam name="TComponent"></typeparam>
+		/// <returns></returns>
+		public bool ContainsComponent<TComponent>() where TComponent: IComponent
+		{
+			return GetComponent<TComponent>() != null;
+		}
+
+
+		/// <summary>
 		/// Gets entity's component by its index and type
 		/// </summary>
 		/// <typeparam name="TComponent">Component type</typeparam>

@@ -145,6 +145,11 @@ namespace IronStar.Entities {
 		public int MaxInterval { get; set; } = 1;
 
 
+		public override void SpawnECS( ECS.GameState gs )
+		{
+			Log.Warning("SpawnECS -- {0}", GetType().Name);
+		}
+
 
 		public override Entity Spawn( uint id, short clsid, GameWorld world )
 		{

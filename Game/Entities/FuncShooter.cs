@@ -112,9 +112,10 @@ namespace IronStar.Entities {
 		public bool Start { get; set; }
 
 
-		public override void SpawnECS( ECS.GameState gs )
+		public override ECS.Entity SpawnECS( ECS.GameState gs )
 		{
 			Log.Warning("SpawnECS -- {0}", GetType().Name);
+			return null;
 		}
 
 		public override Entity Spawn( uint id, short clsid, GameWorld world )

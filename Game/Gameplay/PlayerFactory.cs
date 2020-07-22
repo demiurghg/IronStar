@@ -15,6 +15,7 @@ namespace IronStar.Gameplay
 			var e = gs.Spawn();
 
 			e.AddComponent( new PlayerController() );
+			e.AddComponent( new Transform() );
 
 			return e;
 		}

@@ -89,6 +89,8 @@
     <Compile Include="ECS\Velocity.cs" />
     <Compile Include="Editor\MapEditor.History.cs" />
     <Compile Include="Gameplay\PlayerFactory.cs" />
+    <Compile Include="Gameplay\CameraSystem.cs" />
+    <Compile Include="Gameplay\PlayerCamera.cs" />
     <Compile Include="Gameplay\PlayerSystem.cs" />
     <Compile Include="Gameplay\UserCommand.cs" />
     <Compile Include="Gameplay\PlayerController.cs" />

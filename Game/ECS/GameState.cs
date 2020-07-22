@@ -138,6 +138,14 @@ namespace IronStar.ECS
 		}
 
 
+		public Entity Spawn( string classname, Vector3 position, Quaternion rotation )
+		{
+			var e = Spawn(classname);
+			Teleport( e, position, rotation );
+			return e;
+		}
+
+
 		public Entity GetEntity( uint id )
 		{
 			return entities[id];

@@ -14,6 +14,17 @@ namespace IronStar.ECS
 		/// </summary>
 		/// <param name="p"></param>
 		/// <param name="r"></param>
+		public Transform ()
+		{
+			Position	=	Vector3.Zero;
+			Rotation	=	Quaternion.Identity;
+		}
+
+		/// <summary>
+		/// Creates new transform
+		/// </summary>
+		/// <param name="p"></param>
+		/// <param name="r"></param>
 		public Transform ( Vector3 p, Quaternion r )
 		{
 			Position	=	p;

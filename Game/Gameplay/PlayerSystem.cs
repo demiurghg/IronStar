@@ -18,18 +18,20 @@ namespace IronStar.Gameplay
 
 		public void UpdatePlayerSpawn ( GameState gs )
 		{
-			var ps = gs.QueryComponents<PlayerStart>().FirstOrDefault();
+			var e	=	gs.QueryEntities<PlayerStart,Transform>().FirstOrDefault();
 
-			if (ps==null)
+			if (e==null)
 			{
-				throw new GameException("Missing PlayerStart entity component");
+				return;
 			}
+
+			var t	=	e.GetComponent<Transform>();
+			var ps	=	e.GetComponent<PlayerStart>();
 
 			if (!ps.PlayerSpawned)
 			{
 				ps.PlayerSpawned = true;
-
-				var e = gs.Spawn("PLAYER");
+				gs.Spawn("PLAYER", t.Position, t.Rotation);
 			}
 		}
 	}

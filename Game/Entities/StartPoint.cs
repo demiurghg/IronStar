@@ -46,10 +46,12 @@ namespace IronStar.Entities {
 		}
 
 
-		public override void SpawnECS( ECS.GameState gs )
+		public override ECS.Entity SpawnECS( ECS.GameState gs )
 		{
 			var e = gs.Spawn();
 			e.AddComponent( new Gameplay.PlayerStart() );
+			e.AddComponent( new ECS.Transform() );
+			return e;
 		}
 
 

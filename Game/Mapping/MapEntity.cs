@@ -65,7 +65,12 @@ namespace IronStar.Mapping {
 
 		public override void SpawnNodeECS( ECS.GameState gs )
 		{
-			Factory.SpawnECS(gs);
+			var e = Factory.SpawnECS(gs);
+
+			if (e!=null)
+			{
+				gs.Teleport( e, TranslateVector, RotateQuaternion );
+			}
 		}
 
 

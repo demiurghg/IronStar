@@ -23,7 +23,7 @@ namespace IronStar.Core {
 	public abstract class EntityFactory : JsonContent {
 
 		public abstract Entity Spawn ( uint id, short clsid, GameWorld world );
-		public abstract void SpawnECS( ECS.GameState gs );
+		public abstract ECS.Entity SpawnECS( ECS.GameState gs );
 
 		/// <summary>
 		/// Draws entity in editor

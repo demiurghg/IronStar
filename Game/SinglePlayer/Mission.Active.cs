@@ -32,6 +32,8 @@ namespace IronStar.SinglePlayer {
 			gs.AddSystem( new Physics2.PhysicsEngineSystem() );
 			gs.AddSystem( new SFX2.RenderModelSystem(game) );
 			gs.AddSystem( new SFX2.LightingSystem(game) );
+			gs.AddSystem( new Gameplay.CameraSystem() );
+			gs.AddSystem( new Gameplay.PlayerSystem() );
 
 			map.ActivateGameState(gs);
 

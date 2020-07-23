@@ -31,10 +31,16 @@ namespace IronStar.Gameplay
 
 			var aspect	=	(vp.Width) / (float)vp.Height;
 
-			rw.Camera		.SetView( Matrix.Invert( t.TransformMatrix ) );
-			rw.WeaponCamera	.SetView( Matrix.Invert( t.TransformMatrix ) );
+			var camMatrix	=	t.TransformMatrix;
 
-			rw.Camera		.SetPerspectiveFov( MathUtil.Rad(120),  0.125f/2.0f, 12288, aspect );
+			var cameraPos	=	camMatrix.TranslationVector + Vector3.Up * 5.5f;
+			var cameraFwd	=	camMatrix.Forward;
+			var cameraUp	=	camMatrix.Up;
+
+			rw.Camera		.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
+			rw.WeaponCamera	.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
+
+			rw.Camera		.SetPerspectiveFov( MathUtil.Rad(90),  0.125f/2.0f, 12288, aspect );
 			rw.WeaponCamera	.SetPerspectiveFov( MathUtil.Rad(75),	0.125f/2.0f, 6144, aspect );
 		}
 	}

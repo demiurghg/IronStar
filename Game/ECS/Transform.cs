@@ -18,6 +18,7 @@ namespace IronStar.ECS
 		{
 			Position	=	Vector3.Zero;
 			Rotation	=	Quaternion.Identity;
+			Scaling		=	Vector3.One;
 		}
 
 		/// <summary>
@@ -29,12 +30,42 @@ namespace IronStar.ECS
 		{
 			Position	=	p;
 			Rotation	=	r;
+			Scaling		=	Vector3.One;
+		}
+
+		/// <summary>
+		/// Creates new transform
+		/// </summary>
+		/// <param name="p"></param>
+		/// <param name="r"></param>
+		public Transform ( Vector3 p, Quaternion r, Vector3 s )
+		{
+			Position	=	p;
+			Rotation	=	r;
+			Scaling		=	s;
+		}
+
+		/// <summary>
+		/// Creates new transform
+		/// </summary>
+		/// <param name="p"></param>
+		/// <param name="r"></param>
+		public Transform ( Vector3 p, Quaternion r, float s )
+		{
+			Position	=	p;
+			Rotation	=	r;
+			Scaling		=	new Vector3(s,s,s);
 		}
 
 		/// <summary>
 		/// Entity position :
 		/// </summary>
-		public Vector3		Position;
+		public Vector3	Position;
+
+		/// <summary>
+		/// Entity scaling
+		/// </summary>
+		public Vector3	Scaling;
 
 		/// <summary>
 		/// Entity rotation
@@ -46,7 +77,7 @@ namespace IronStar.ECS
 		/// </summary>
 		public Matrix TransformMatrix 
 		{
-			get { return Matrix.RotationQuaternion( Rotation ) * Matrix.Translation( Position ); }
+			get { return Matrix.Scaling( Scaling ) * Matrix.RotationQuaternion( Rotation ) * Matrix.Translation( Position ); }
 		}
 
 		/// <summary>

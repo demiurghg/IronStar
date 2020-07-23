@@ -217,7 +217,7 @@ namespace IronStar.Mapping {
 		{
 			var e = gs.Spawn();
 			e.AddComponent( new ECS.Static() );
-			e.AddComponent( new ECS.Transform( TranslateVector, RotateQuaternion ) );
+			e.AddComponent( new ECS.Transform( TranslateVector, RotateQuaternion, Scale ) );
 			e.AddComponent( new SFX2.RenderModel( ScenePath, Matrix.Scaling( Scale ), Color.White, 1, SFX2.RMFlags.None ) );
 		}
 

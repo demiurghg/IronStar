@@ -42,10 +42,7 @@ namespace IronStar.SFX2
 
 		//	operational data :
 		Scene scene;
-
-		Matrix[] globalTransforms;
-		Matrix[] animSnapshot;
-		RenderInstance[] meshInstances;
+		SceneView<RenderInstance> sceneView;
 
 
 		public RenderModel ( string scenePath, Matrix transform, Color color, float intensity, RMFlags flags )
@@ -88,29 +85,7 @@ namespace IronStar.SFX2
 
 		public void SetTransform( Matrix worldMatrix )
 		{
-			UpdateInternal( worldMatrix, animSnapshot );
-		}
-
-
-		void UpdateInternal ( Matrix worldMatrix, Matrix[] nodeTransforms )
-		{
-			if (scene==null || scene==EmptyScene) return;
-
-			if (nodeTransforms==null) throw new ArgumentNullException("nodeTransforms");
-			if (scene.Nodes.Count>nodeTransforms.Length) throw new ArgumentException("nodeTransforms.Length < nodeCount");
-
-			var instGroup	=	rmFlags.HasFlag(RMFlags.FirstPointView) ? InstanceGroup.Weapon : InstanceGroup.Dynamic;
-			var glowColor	=	color.ToColor4() * MathUtil.Exp2( intensity );
-
-			for ( int i = 0; i<scene.Nodes.Count; i++ ) 
-			{
-				if (meshInstances[i]!=null) 
-				{
-					meshInstances[i].Group	=	instGroup;
-					meshInstances[i].World	=	nodeTransforms[i] * transform * worldMatrix;
-					meshInstances[i].Color	=	glowColor;
-				}
-			}
+			sceneView.SetTransform( (mesh,matrix) => mesh.World = matrix, worldMatrix );
 		}
 
 		/*-----------------------------------------------------------------------------------------------
@@ -119,41 +94,21 @@ namespace IronStar.SFX2
 
 		void LoadScene ( GameState gs )
 		{
-			var content		=	gs.GetService<ContentManager>();
-			var rs			=	gs.GetService<RenderSystem>();
-			
-			if (string.IsNullOrWhiteSpace(scenePath)) 
-			{
-				scene	=	EmptyScene;
-			} 
-			else 
-			{
-				scene	=	content.Load( scenePath, EmptyScene );
-			}
+			var content	=	gs.GetService<ContentManager>();
+			var rs		=	gs.GetService<RenderSystem>();
 
-			globalTransforms	=	new Matrix[ scene.Nodes.Count ];
-			animSnapshot		=	new Matrix[ scene.Nodes.Count ];
-			scene.ComputeAbsoluteTransforms( globalTransforms );
-			scene.ComputeAbsoluteTransforms( animSnapshot );
+			scene		=	string.IsNullOrWhiteSpace(scenePath) ? Scene.Empty : content.Load( scenePath, Scene.Empty );
 			
-			meshInstances	=	new RenderInstance[ scene.Nodes.Count ];
+			sceneView	=	new SceneView<RenderInstance>( scene, 
+							mesh => new RenderInstance( rs, scene, mesh ),
+							node => true 
+							);
 
-			for ( int i=0; i<scene.Nodes.Count; i++ ) 
-			{
-				var meshIndex = scene.Nodes[i].MeshIndex;
-				
-				if (meshIndex>=0) 
-				{
-					meshInstances[i]		= new RenderInstance( rs, scene, scene.Meshes[meshIndex] );
-					meshInstances[i].Group	= InstanceGroup.Dynamic;
-					meshInstances[i].Color	= Color4.Zero;
-					rs.RenderWorld.Instances.Add( meshInstances[i] );
-				}
-				else 
-				{
-					meshInstances[i] = null;
-				}
-			}
+			sceneView.ForEachMesh( mesh => {
+				mesh.Group	= InstanceGroup.Dynamic;
+				mesh.Color	= Color4.Zero;
+				rs.RenderWorld.Instances.Add( mesh );
+			});
 		}
 
 
@@ -161,13 +116,7 @@ namespace IronStar.SFX2
 		{
 			var rs	=	gs.GetService<RenderSystem>();
 
-			if (meshInstances!=null)
-			{
-				foreach ( var mesh in meshInstances )
-				{
-					rs.RenderWorld.Instances.Remove( mesh );
-				}
-			}
+			sceneView?.ForEachMesh( mesh => rs.RenderWorld.Instances.Remove( mesh ) );
 		}
 	}
 }

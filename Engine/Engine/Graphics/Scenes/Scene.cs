@@ -41,6 +41,8 @@ namespace Fusion.Engine.Graphics.Scenes {
 		List<Material>		materials	=	new List<Material>();
 		AnimationTakeCollection	takes		=	new AnimationTakeCollection();
 
+		public static readonly Scene Empty = new Scene();
+
 		int firstFrame = 0;
 		int lastFrame = 0;
 

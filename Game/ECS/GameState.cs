@@ -210,8 +210,11 @@ namespace IronStar.ECS
 				
 				return true;
 			}
-
-			return false;
+			else
+			{
+				Log.Warning("GameState : cann't teleport entity #{0} -- missing transform", e.ID);
+				return false;
+			}
 		}
 
 		/*-----------------------------------------------------------------------------------------------

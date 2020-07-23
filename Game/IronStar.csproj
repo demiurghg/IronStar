@@ -103,6 +103,7 @@
     <Compile Include="Physics2\DynamicBox.cs" />
     <Compile Include="Physics2\Gravity.cs" />
     <Compile Include="Physics2\PhysicsEngineSystem.cs" />
+    <Compile Include="Physics2\StaticCollisionModel.cs" />
     <Compile Include="Physics\KinematicModel.cs" />
     <Compile Include="SceneView.cs" />
     <Compile Include="SFX2\OmniLight.cs" />

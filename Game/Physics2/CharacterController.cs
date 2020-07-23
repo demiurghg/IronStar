@@ -62,11 +62,7 @@ namespace IronStar.Physics2
 
 			physics		=	gs.GetService<PhysicsEngineSystem>();
 
-			var t		=	e.GetComponent<Transform>();
-
-			var pos		=	MathConverter.Convert( t.Position + heightStanding );
-
-			controller = new BEPUCharacterController( pos, 
+			controller = new BEPUCharacterController( BEPUutilities.Vector3.Zero, 
 						height			:	heightStanding,
 						radius			:	radius,
 						crouchingHeight	:	heightCrouching,
@@ -155,8 +151,6 @@ namespace IronStar.Physics2
 		}
 
 
-
-
 		public Vector3 Position 
 		{
 			get 
@@ -175,8 +169,8 @@ namespace IronStar.Physics2
 
 		public Quaternion Rotation 
 		{
-			get { return Quaternion.Identity; }
-			set { /* do nothing */ }
+			get { return MathConverter.Convert( controller.Body.Orientation ); }
+			set { controller.Body.Orientation = MathConverter.Convert( value ); }
 		}
 
 

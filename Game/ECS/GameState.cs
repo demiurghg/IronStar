@@ -101,9 +101,8 @@ namespace IronStar.ECS
 			foreach ( var id in killed ) { KillInternal(id); }
 			killed.Clear();
 
-			//	clear teleport component :
-			components.ClearComponentsOfType<Teleport>();
-			MakeStaticEntitiesSleeping();
+			//	make static entities sleeping :
+ 			MakeStaticEntitiesSleeping();
 		}
 
 

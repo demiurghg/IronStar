@@ -10,5 +10,10 @@ namespace IronStar.Physics2
 	public class Gravity : Component
 	{
 		public float Magnitude = 48;
+
+		public Gravity( float g )
+		{
+			Magnitude	=	g;
+		}
 	}
 }

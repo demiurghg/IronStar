@@ -26,92 +26,106 @@ using BEPUphysics.PositionUpdating;
 using BEPUphysics.CollisionRuleManagement;
 using IronStar.ECS;
 using Fusion.Engine.Graphics.Scenes;
+using AffineTransform = BEPUutilities.AffineTransform;
 
 namespace IronStar.Physics2 
 {
-	public class StaticCollisionModel : Component, ITransformable
+	public class StaticCollisionModel : Component
 	{
 		public string ScenePath { get; set; } = "";
-		public bool UseCollisionMesh { get; set; } = false;
+		public string CollisionFilter { get; set; } = "";
+		public Matrix Transform { get; set; }
 
 
-		Scene			scene;
-		Matrix[]		transforms;
-		StaticMesh[]	collidables = null;
-
-		public StaticCollisionModel ()
+		public StaticCollisionModel ( string path, string prefix, Matrix transform )
 		{
+			ScenePath		=	path;
+			CollisionFilter	=	prefix;
+			Transform		=	transform;
 		}
 
 
 		public override void Added( GameState gs, Entity entity )
 		{
 			base.Added( gs, entity );
+
+			LoadScene(gs);
 		}
 
 
 		public override void Removed( GameState gs )
 		{
 			base.Removed( gs );
-		}
 
-
-		public void SetTransform( Matrix transform )
-		{
-			throw new NotImplementedException();
+			UnloadScene(gs);
 		}
 
 		/*-----------------------------------------------------------------------------------------------
 		 *	Scene management operations :
 		-----------------------------------------------------------------------------------------------*/
 
+		Scene			scene;
+		StaticMesh[]	staticMeshes;
+		Matrix[]		transforms;
+
 		void LoadScene ( GameState gs )
 		{
 			var content		=	gs.GetService<ContentManager>();
-			var rs			=	gs.GetService<RenderSystem>();
+			var physics		=	gs.GetService<PhysicsEngineSystem>();
 			
-			if (string.IsNullOrWhiteSpace(ScenePath)) 
-			{
-				scene	=	Scene.Empty;
-			} 
-			else 
-			{
-				scene	=	content.Load( ScenePath, Scene.Empty );
-			}
+			scene			=	string.IsNullOrWhiteSpace(ScenePath) ? Scene.Empty : content.Load( ScenePath, Scene.Empty );
 
-			transforms	=	new Matrix[ scene.Nodes.Count ];
-			scene.ComputeAbsoluteTransforms( globalTransforms );
-			
-			collidables		=	new StaticMesh[ scene.Nodes.Count ];
+			transforms		=	new Matrix[ scene.Nodes.Count ];
+			staticMeshes	=	new StaticMesh[ scene.Nodes.Count ];
+
+			scene.ComputeAbsoluteTransforms( transforms );
 
 			for ( int i=0; i<scene.Nodes.Count; i++ ) 
 			{
-				var meshIndex = scene.Nodes[i].MeshIndex;
-				
-				if (meshIndex>=0) 
+				var node	=	scene.Nodes[i];
+				int meshIdx	=	node.MeshIndex;
+
+				if (AcceptNode(node) && meshIdx>=0)
 				{
-					meshInstances[i]		= new RenderInstance( rs, scene, scene.Meshes[meshIndex] );
-					meshInstances[i].Group	= InstanceGroup.Dynamic;
-					meshInstances[i].Color	= Color4.Zero;
-					rs.RenderWorld.Instances.Add( meshInstances[i] );
+					staticMeshes[i]	=	CreateStaticMesh( scene.Meshes[ meshIdx ], transforms[i] );
+					physics.Space.Add( staticMeshes[i] );
 				}
-				else 
+				else
 				{
-					meshInstances[i] = null;
+					staticMeshes[i]	=	null;
 				}
 			}
+		}
+
+		
+		bool AcceptNode ( Node node )
+		{
+			if ( string.IsNullOrWhiteSpace( CollisionFilter) ) return true;
+
+			return node.Name.StartsWith( CollisionFilter );
+		}
+
+
+		StaticMesh CreateStaticMesh( Mesh mesh, Matrix transform )
+		{
+			var verts	=	mesh.Vertices.Select( v => MathConverter.Convert( v.Position ) ).ToArray();
+			var inds	=	mesh.GetIndices(0);
+
+			var aft		=	new AffineTransform() { Matrix = MathConverter.Convert(transform * Transform) };
+
+			return	new StaticMesh( verts, inds, aft );
 		}
 
 
 		public void UnloadScene(GameState gs)
 		{
-			var rs	=	gs.GetService<RenderSystem>();
+			var physics		=	gs.GetService<PhysicsEngineSystem>();
 
-			if (meshInstances!=null)
+			foreach ( var mesh in staticMeshes )
 			{
-				foreach ( var mesh in meshInstances )
-				{
-					rs.RenderWorld.Instances.Remove( mesh );
+				if (mesh!=null) 
+				{	
+					physics.Space.Remove( mesh );
 				}
 			}
 		}

@@ -118,11 +118,14 @@ namespace IronStar.Physics2
 				var box	=	e.GetComponent<TObject>();
 				var t	=	e.GetComponent<Transform>();
 				var v	=	e.GetComponent<Velocity>();
+				var tp	=	e.GetComponent<Teleport>();
 
-				t.Position	=	box.Position;
-				t.Rotation	=	box.Rotation;
-				v.Linear	=	box.LinearVelocity;
-				v.Angular	=	box.AngularVelocity;
+				box.Position		=	t.Position;
+				box.Rotation		=	t.Rotation;
+				box.LinearVelocity	=	v.Linear;
+				box.AngularVelocity	=	v.Angular;
+
+				e.RemoveComponent(tp);
 			}
 		}
 

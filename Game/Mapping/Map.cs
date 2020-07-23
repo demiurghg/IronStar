@@ -131,6 +131,9 @@ namespace IronStar.Mapping {
 
 		internal void ActivateGameState( GameState gs )
 		{
+			var g = gs.Spawn();
+			g.AddComponent( new Physics2.Gravity(48) );
+
 			foreach ( var node in Nodes )
 			{
 				node.SpawnNodeECS( gs );

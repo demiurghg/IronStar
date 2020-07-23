@@ -18,6 +18,7 @@ using BEPUTransform = BEPUutilities.AffineTransform;
 using Fusion.Core.Shell;
 using Fusion.Engine.Graphics.Scenes;
 using IronStar.ECS;
+using IronStar.Physics2;
 
 namespace IronStar.Mapping {
 
@@ -218,7 +219,8 @@ namespace IronStar.Mapping {
 			var e = gs.Spawn();
 			e.AddComponent( new ECS.Static() );
 			e.AddComponent( new ECS.Transform( TranslateVector, RotateQuaternion, Scale ) );
-			e.AddComponent( new SFX2.RenderModel( ScenePath, Matrix.Scaling( Scale ), Color.White, 1, SFX2.RMFlags.None ) );
+			e.AddComponent( new SFX2.RenderModel( ScenePath, Matrix.Identity, Color.White, 1, SFX2.RMFlags.None ) );
+			e.AddComponent( new StaticCollisionModel( ScenePath, UseCollisionMesh ? "cm_" : null, WorldMatrix ) );
 		}
 
 

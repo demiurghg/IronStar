@@ -23,7 +23,7 @@ namespace IronStar
 		readonly TMesh[]	meshes;
 
 
-		public SceneView( Scene scene, Func<Mesh, TMesh> meshSelector, Func<Node,bool> nodeFilter )
+		public SceneView( Scene scene, Func<Mesh,TMesh> meshSelector, Func<Node,bool> nodeFilter )
 		{
 			this.scene	=	scene;
 			transforms	=	new Matrix[ scene.Nodes.Count ];
@@ -33,9 +33,11 @@ namespace IronStar
 
 			for ( int i=0; i<scene.Nodes.Count; i++ ) 
 			{
-				var meshIndex	=	scene.Nodes[i].MeshIndex;
-				
-				meshes[i]		=	(meshIndex < 0) ? null : meshSelector( scene.Meshes[ meshIndex ] );
+				if (nodeFilter(scene.Nodes[i]))
+				{
+					var meshIndex	=	scene.Nodes[i].MeshIndex;
+					meshes[i]		=	(meshIndex < 0) ? null : meshSelector( scene.Meshes[ meshIndex ] );
+				}
 			}
 		}
 

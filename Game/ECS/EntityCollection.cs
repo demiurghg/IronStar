@@ -26,5 +26,27 @@ namespace IronStar.ECS
 		public EntityCollection() : base(InitialCapacity, new IDComparer())
 		{
 		}
+
+
+		public new Entity this[uint key]
+		{
+			get 
+			{
+				Entity e;
+				if ( TryGetValue(key, out e) )
+				{
+					return e;
+				}
+				else
+				{
+					return null;
+				}
+			}
+
+			set 
+			{
+				base[key] = value;
+			}
+		}
 	}
 }

@@ -167,10 +167,16 @@ namespace IronStar.Physics2
 		}
 
 
+		/// <summary>
+		/// Keep rotation as separate value, 
+		/// since character body always has identity rotation
+		/// </summary>
+		Quaternion rotation;
+
 		public Quaternion Rotation 
 		{
-			get { return MathConverter.Convert( controller.Body.Orientation ); }
-			set { controller.Body.Orientation = MathConverter.Convert( value ); }
+			get { return rotation; }
+			set { rotation = value; }
 		}
 
 

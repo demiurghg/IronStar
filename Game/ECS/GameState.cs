@@ -283,6 +283,7 @@ namespace IronStar.ECS
 			
 			return s1
 				.Select( keyValue => entities[ keyValue.Key ] )
+				.Where( e => e!=null )
 				.ToArray(); 
 		}
 
@@ -296,6 +297,7 @@ namespace IronStar.ECS
 
 			return s1.Intersect( s2, entityComponentComparer )
 				.Select( keyValue => entities[ keyValue.Key ] )
+				.Where( e => e!=null )
 				.ToArray(); 
 		}
 
@@ -313,6 +315,7 @@ namespace IronStar.ECS
 				.Intersect( s2, entityComponentComparer )
 				.Intersect( s3, entityComponentComparer )
 				.Select( keyValue => entities[ keyValue.Key ] )
+				.Where( e => e!=null )
 				.ToArray(); 
 		}
 
@@ -333,6 +336,7 @@ namespace IronStar.ECS
 				.Intersect( s3, entityComponentComparer )
 				.Intersect( s4, entityComponentComparer )
 				.Select( keyValue => entities[ keyValue.Key ] )
+				.Where( e => e!=null )
 				.ToArray(); 
 		}
 

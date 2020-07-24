@@ -9,8 +9,8 @@ using IronStar.ECS;
 namespace IronStar.Gameplay
 {
 	[Flags]
-	public enum UserAction : byte {
-
+	public enum UserAction : byte 
+	{
 		None			=	0x00,
 		Zoom			=	0x01,
 		Attack			=	0x02,
@@ -38,6 +38,16 @@ namespace IronStar.Gameplay
 
 		public float DYaw;
 		public float DPitch;
+
+		public void SetAnglesFromQuaternion( Quaternion q )
+		{
+			var m = Matrix.RotationQuaternion(q);
+			m.ToAngles( out Yaw, out Pitch, out Roll );
+
+			if (float.IsNaN(Yaw)	|| float.IsInfinity(Yaw)	) Yaw	= 0;
+			if (float.IsNaN(Pitch)	|| float.IsInfinity(Pitch)	) Pitch	= 0;
+			if (float.IsNaN(Roll)	|| float.IsInfinity(Roll)	) Roll	= 0;
+		}
 
 		public Quaternion Rotation
 		{

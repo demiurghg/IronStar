@@ -17,6 +17,7 @@ namespace IronStar.Gameplay
 
 			e.AddComponent( new PlayerController() );
 			e.AddComponent( new CharacterController(6,4,2, 24,9, 20, 10, 2.2f) );
+			e.AddComponent( new UserCommand2() );
 			e.AddComponent( new Transform() );
 			e.AddComponent( new Velocity() );
 

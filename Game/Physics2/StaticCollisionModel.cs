@@ -87,7 +87,7 @@ namespace IronStar.Physics2
 
 				if (AcceptNode(node) && meshIdx>=0)
 				{
-					staticMeshes[i]	=	CreateStaticMesh( scene.Meshes[ meshIdx ], transforms[i] );
+					staticMeshes[i]	=	CreateStaticMesh( scene.Meshes[ meshIdx ], transforms[i] * Transform );
 					physics.Space.Add( staticMeshes[i] );
 				}
 				else
@@ -111,7 +111,7 @@ namespace IronStar.Physics2
 			var verts	=	mesh.Vertices.Select( v => MathConverter.Convert( v.Position ) ).ToArray();
 			var inds	=	mesh.GetIndices(0);
 
-			var aft		=	new AffineTransform() { Matrix = MathConverter.Convert(transform * Transform) };
+			var aft		=	new AffineTransform() { Matrix = MathConverter.Convert(transform) };
 
 			return	new StaticMesh( verts, inds, aft );
 		}

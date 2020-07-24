@@ -220,7 +220,7 @@ namespace IronStar.Mapping {
 			e.AddComponent( new ECS.Static() );
 			e.AddComponent( new ECS.Transform( TranslateVector, RotateQuaternion, Scale ) );
 			e.AddComponent( new SFX2.RenderModel( ScenePath, Matrix.Identity, Color.White, 1, SFX2.RMFlags.None ) );
-			e.AddComponent( new StaticCollisionModel( ScenePath, UseCollisionMesh ? "cm_" : null, WorldMatrix ) );
+			e.AddComponent( new StaticCollisionModel( ScenePath, UseCollisionMesh ? "cm_" : null, Matrix.Scaling( Scale ) * WorldMatrix ) );
 		}
 
 

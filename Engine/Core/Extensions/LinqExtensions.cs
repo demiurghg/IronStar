@@ -109,5 +109,15 @@ namespace Fusion.Core.Extensions {
 		{
 			return source.OrderBy(x => rand.Next());
 		}
+
+
+		/// <summary>
+		/// Gets random value from source
+		/// </summary>
+		public static T RandomOrDefault<T>( this IEnumerable<T> source, Random rand )
+		{
+			var num = source.Count();
+			return source.ElementAt( rand.Next(0, num) );
+		}
 	}
 }

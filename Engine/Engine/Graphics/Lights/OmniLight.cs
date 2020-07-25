@@ -40,7 +40,7 @@ namespace Fusion.Engine.Graphics {
 		public float	RadiusOuter;
 
 		/// <summary>
-		/// Omni-light outer radius.
+		/// Omni-light animation style.
 		/// </summary>
 		public LightStyle	LightStyle;
 

@@ -41,7 +41,7 @@ namespace IronStar.SFX2
 			set 
 			{ 
 				lightColor	= value; 
-				light.Intensity = lightColor * MathUtil.Exp2( lightIntensity ); 
+				light.Intensity = lightColor.ToColor4() * MathUtil.Exp2( lightIntensity ); 
 			}
 		}
 
@@ -54,7 +54,7 @@ namespace IronStar.SFX2
 			set 
 			{ 
 				lightIntensity	= value; 
-				light.Intensity = lightColor * MathUtil.Exp2( lightIntensity ); 
+				light.Intensity = lightColor.ToColor4() * MathUtil.Exp2( lightIntensity ); 
 			}
 		}
 		

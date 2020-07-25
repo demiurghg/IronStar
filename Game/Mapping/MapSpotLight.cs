@@ -13,6 +13,7 @@ using Fusion.Development;
 using System.Drawing.Design;
 using Fusion;
 using Fusion.Core.Shell;
+using IronStar.ECS;
 
 namespace IronStar.Mapping {
 
@@ -147,6 +148,40 @@ namespace IronStar.Mapping {
 			light.EnableGI		=	EnableGI;
 
 			world.Game.RenderSystem.RenderWorld.LightSet.SpotLights.Add( light );
+		}
+
+
+		public override void SpawnNodeECS( GameState gs )
+		{
+			var e = gs.Spawn();
+
+			e.AddComponent( new Transform( TranslateVector, RotateQuaternion, 1 ) );
+			e.AddComponent( CreateSpotLight() );
+		}
+
+
+		SFX2.SpotLight CreateSpotLight()
+		{
+			var light = new SFX2.SpotLight();
+
+			light.TubeLength		=	TubeLength;
+			light.TubeRadius		=	TubeRadius;
+			light.OuterRadius		=	OuterRadius;
+			light.LightColor		=	LightColor;
+			light.LightIntensity	=	MathUtil.Log2( MathUtil.Clamp( LightIntensity, 1/64.0f, 1024 ) );
+
+			light.EnableGI			=	EnableGI;
+			light.SlopeBias			=	SlopeBias;
+			light.DepthBias			=	DepthBias;
+			light.SpotMaskName		=	SpotMaskName;
+			light.LodBias			=	LodBias;
+
+			light.FovHorizontal		=	FovHorizontal;
+			light.FovVertical		=	FovVertical;
+			light.FarPlane			=	FarPlane;
+			light.NearPlane			=	NearPlane;
+
+			return light;
 		}
 
 

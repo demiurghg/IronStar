@@ -1142,6 +1142,12 @@ namespace Fusion.Core.Mathematics
 		}
 
 
+		public static float Log2( float x )
+		{
+			return (float)( Math.Log(x,2) );
+		}
+
+
 		static public float Max3 ( float a, float b, float c ) { return Math.Max( a, Math.Max( b, c ) ); }
 		static public float Min3 ( float a, float b, float c ) { return Math.Min( a, Math.Min( b, c ) ); }
 

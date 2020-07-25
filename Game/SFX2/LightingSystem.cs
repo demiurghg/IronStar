@@ -48,6 +48,7 @@ namespace IronStar.SFX2
 			rw.LightSet.DirectLight.Intensity	=	 rs.Sky.GetSunIntensity(true);	
 
 			Transform.UpdateTransformables<OmniLight>(gs);
+			Transform.UpdateTransformables<SpotLight>(gs);
 		}
 	}
 }

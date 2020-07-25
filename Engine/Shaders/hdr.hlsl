@@ -489,7 +489,7 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	//
 	//	Tonemapping :
 	//	
-	float3	exposured	=	Params.KeyValue * hdrImage;// / luminanceAdaptLinear;
+	float3	exposured	=	Params.KeyValue * hdrImage / luminanceAdaptLinear;
 			// exposured.r	=	EvalLogContrastFunc( exposured.r, 0.18, 1.2f );
 			// exposured.g	=	EvalLogContrastFunc( exposured.g, 0.18, 1.2f );
 			// exposured.b	=	EvalLogContrastFunc( exposured.b, 0.18, 1.2f );

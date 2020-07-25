@@ -63,8 +63,10 @@ namespace IronStar.Gameplay
 		{
 			get 
 			{ 
-				return RotationMatrix.Forward * MoveForward 
-					+ RotationMatrix.Right * MoveRight 
+				var m = Matrix.RotationYawPitchRoll( Yaw, 0, 0 );
+
+				return m.Forward * MoveForward 
+					+ m.Right * MoveRight 
 					+ Vector3.Up * MoveUp;
 			}
 		}

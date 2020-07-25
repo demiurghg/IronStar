@@ -124,6 +124,9 @@ namespace IronStar.Gameplay
 				userCommand.Yaw         +=  userCommand.DYaw;
 				userCommand.Pitch       +=  userCommand.DPitch;
 				userCommand.Roll		=	0;
+
+				float limit				=	MathUtil.PiOverTwo * 0.95f;
+				userCommand.Pitch		=	MathUtil.Clamp( userCommand.Pitch, -limit, limit );
 			}
 			else 
 			{

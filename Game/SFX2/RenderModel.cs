@@ -40,6 +40,12 @@ namespace IronStar.SFX2
 		float	intensity;
 		RMFlags	rmFlags;
 
+		Size2	lightmapSize;
+		Guid	lightmapGuid;
+
+		bool	UseLightMap { get { return lightmapSize.Width>0 && lightmapSize.Height>0; } }
+		
+
 		//	operational data :
 		Scene scene;
 		SceneView<RenderInstance> sceneView;
@@ -51,6 +57,13 @@ namespace IronStar.SFX2
 			this.transform	=	transform	;
 			this.color		=	color		;
 			this.intensity	=	intensity	;
+		}
+
+
+		public void SetupLightmap( int width, int height, Guid regionGuid )
+		{
+			lightmapSize	=	new Size2( width, height );
+			lightmapGuid	=	regionGuid;
 		}
 
 
@@ -105,8 +118,10 @@ namespace IronStar.SFX2
 							);
 
 			sceneView.ForEachMesh( mesh => {
-				mesh.Group	= InstanceGroup.Dynamic;
+				mesh.Group	= UseLightMap ? InstanceGroup.Static : InstanceGroup.Kinematic;
 				mesh.Color	= Color4.Zero;
+				mesh.LightMapGuid = lightmapGuid;
+				mesh.LightMapSize = lightmapSize;
 				rs.RenderWorld.Instances.Add( mesh );
 			});
 		}

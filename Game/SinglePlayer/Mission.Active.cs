@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Fusion;
 using Fusion.Core;
 using Fusion.Core.Content;
 using Fusion.Engine.Graphics;
+using Fusion.Engine.Graphics.Lights;
 using IronStar.Client;
 using IronStar.Core;
 using IronStar.ECS;
@@ -25,6 +27,8 @@ namespace IronStar.SinglePlayer {
 			rw.LightSet.SpotAtlas	=	content.Load<TextureAtlas>(@"spots\spots|srgb");
 			rw.LightSet.DecalAtlas	=	content.Load<TextureAtlas>(@"decals\decals");
 
+			rw.IrradianceCache						=	content.Load(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrcache"	), (LightProbeGBufferCache)null );
+			game.RenderSystem.Radiosity.LightMap	=	content.Load(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrmap"), (LightMap)null );
 
 			gs.Services.AddService( content );
 			gs.Services.AddService( game.RenderSystem );

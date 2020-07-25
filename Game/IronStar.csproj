@@ -107,6 +107,7 @@
     <Compile Include="Physics2\StaticCollisionModel.cs" />
     <Compile Include="Physics\KinematicModel.cs" />
     <Compile Include="SceneView.cs" />
+    <Compile Include="SFX2\SpotLight.cs" />
     <Compile Include="SFX2\OmniLight.cs" />
     <Compile Include="SFX2\RenderModel.cs" />
     <Compile Include="SFX2\LightingSystem.cs" />

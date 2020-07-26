@@ -147,8 +147,14 @@ namespace IronStar.Entities {
 
 		public override ECS.Entity SpawnECS( ECS.GameState gs )
 		{
-			Log.Warning("SpawnECS -- {0}", GetType().Name);
-			return null;
+			Log.Warning("SpawnECS -- {0} -- (not implemented completely)", GetType().Name);
+			
+			var e = gs.Spawn();
+			e.AddComponent( new ECS.Velocity() );
+			e.AddComponent( new ECS.Transform() );
+			e.AddComponent( new FXComponent(FX,true) );
+
+			return e;
 		}
 
 

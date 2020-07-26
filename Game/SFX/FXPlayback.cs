@@ -16,9 +16,8 @@ using Fusion.Engine.Graphics;
 using IronStar.Core;
 using Fusion.Engine.Audio;
 
-
 namespace IronStar.SFX {
-	public partial class FXPlayback : DisposableBase {
+	public partial class FXPlayback : DisposableBase, ECS.ISystem {
 
 		TextureAtlas spriteSheet;
 
@@ -28,6 +27,7 @@ namespace IronStar.SFX {
 		public readonly RenderWorld	rw;
 		public readonly SoundSystem	ss;
 		public readonly GameWorld world;
+		public readonly ContentManager content;
 
 		List<FXInstance> runningSFXes = new List<FXInstance>();
 
@@ -40,10 +40,23 @@ namespace IronStar.SFX {
 		/// <param name="game"></param>
 		public FXPlayback ( GameWorld world )
 		{
-			this.world	=	world;
-			this.game	=	world.Game;
-			this.rw		=	game.RenderSystem.RenderWorld;
-			this.ss		=	game.SoundSystem;
+			this.world		=	world;
+			this.content	=	world.Content;
+			this.game		=	world.Game;
+			this.rw			=	game.RenderSystem.RenderWorld;
+			this.ss			=	game.SoundSystem;
+
+			Game_Reloading(this, EventArgs.Empty);
+			game.Reloading +=	Game_Reloading;
+		}
+
+
+		public FXPlayback ( Game game, ContentManager content )
+		{
+			this.content	=	content;
+			this.game		=	game;
+			this.rw			=	game.RenderSystem.RenderWorld;
+			this.ss			=	game.SoundSystem;
 
 			Game_Reloading(this, EventArgs.Empty);
 			game.Reloading +=	Game_Reloading;
@@ -69,7 +82,7 @@ namespace IronStar.SFX {
 		/// <param name="e"></param>
 		void Game_Reloading ( object sender, EventArgs e )
 		{
-			spriteSheet	=  world.Content.Load<TextureAtlas>(@"sprites\particles");
+			spriteSheet	=  content.Load<TextureAtlas>(@"sprites\particles");
 
 			rw.ParticleSystem.Images	=	spriteSheet;	
 		}
@@ -164,17 +177,8 @@ namespace IronStar.SFX {
 		/// 
 		/// </summary>
 		/// <param name="fxEvent"></param>
-		public FXInstance RunFX ( FXEvent fxEvent, bool looped )
+		public FXInstance RunFX ( string className, FXEvent fxEvent, bool looped, bool ecsDoNotAddToList = false )
 		{
-			var fxAtomID	=	fxEvent.FXAtom;
-
-			if (fxAtomID<0) {
-				Log.Warning("RunFX: negative atom ID");
-				return null;
-			}
-
-			var className = world.Atoms[ fxAtomID ];
-
 			if (className=="*trail_bullet") {
 				RunTrailBullet( fxEvent );
 				return null;
@@ -196,7 +200,7 @@ namespace IronStar.SFX {
 			}
 
 
-			var factory		=	world.Content.Load<FXFactory>( Path.Combine("fx", className), (FXFactory)null );
+			var factory		=	content.Load( Path.Combine("fx", className), (FXFactory)null );
 
 			if (factory==null) {
 				return null;
@@ -204,9 +208,56 @@ namespace IronStar.SFX {
 
 			var fxInstance	=	factory.CreateFXInstance( this, fxEvent, looped );
 
-			runningSFXes.Add( fxInstance );
+			if (!ecsDoNotAddToList) {
+				runningSFXes.Add( fxInstance );
+			}
 
 			return fxInstance;
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="fxEvent"></param>
+		public FXInstance RunFX ( FXEvent fxEvent, bool looped )
+		{
+			var fxAtomID	=	fxEvent.FXAtom;
+
+			if (fxAtomID<0) {
+				Log.Warning("RunFX: negative atom ID");
+				return null;
+			}
+
+			var className = world.Atoms[ fxAtomID ];
+
+			return RunFX( className, fxEvent, looped );
+		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 *	ECS stuff :
+		-----------------------------------------------------------------------------------------*/
+
+		public void Update( ECS.GameState gs, GameTime gameTime )
+		{
+			var entities = gs.QueryEntities<FXComponent,ECS.Transform,ECS.Velocity>();
+
+			foreach ( var e in entities )
+			{
+				var t	=	e.GetComponent<ECS.Transform>();
+				var v	=	e.GetComponent<ECS.Velocity>();
+				var fx	=	e.GetComponent<FXComponent>();
+
+				fx.SetTransform( t.TransformMatrix );
+				fx.UpdateFXState( gameTime );
+
+				if (fx.IsExhausted)
+				{
+					e.RemoveComponent(fx);
+				}
+			}
 		}
 	}
 }

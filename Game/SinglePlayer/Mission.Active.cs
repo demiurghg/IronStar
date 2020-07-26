@@ -12,6 +12,7 @@ using Fusion.Engine.Graphics.Lights;
 using IronStar.Client;
 using IronStar.Core;
 using IronStar.ECS;
+using IronStar.SFX;
 
 namespace IronStar.SinglePlayer {
 
@@ -34,6 +35,7 @@ namespace IronStar.SinglePlayer {
 			gs.Services.AddService( game.RenderSystem );
 
 			gs.AddSystem( new Physics2.PhysicsEngineSystem() );
+			gs.AddSystem( new FXPlayback(game, content) );
 			gs.AddSystem( new SFX2.RenderModelSystem(game) );
 			gs.AddSystem( new SFX2.LightingSystem(game) );
 			gs.AddSystem( new Gameplay.CameraSystem() );

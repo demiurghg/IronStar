@@ -35,7 +35,6 @@ namespace IronStar.SFX {
 
 		readonly List<Stage> stages = new List<Stage>();
 
-		private readonly short fxAtom;
 		private FXEvent	fxEvent;
 
 		protected readonly bool looped;
@@ -62,7 +61,6 @@ namespace IronStar.SFX {
 		/// <param name="fxEvent"></param>
 		public FXInstance( FXPlayback sfxSystem, FXEvent fxEvent, FXFactory fxFactory, bool looped )
 		{
-			this.fxAtom			=	fxEvent.FXAtom;
 			this.fxPlayback		=	sfxSystem;
 			this.rw				=	sfxSystem.rw;
 			this.ss				=	sfxSystem.ss;
@@ -123,6 +121,20 @@ namespace IronStar.SFX {
 			}
 
 			foreach ( var stage in stages ) {
+				stage.Update( dt, fxEvent );
+			}
+		}
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="elapsedTime"></param>
+		public void UpdateECS ( float dt )
+		{
+			foreach ( var stage in stages ) 
+			{
 				stage.Update( dt, fxEvent );
 			}
 		}

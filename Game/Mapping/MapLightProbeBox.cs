@@ -13,6 +13,7 @@ using Fusion.Development;
 using System.Drawing.Design;
 using Fusion;
 using Fusion.Core.Shell;
+using IronStar.ECS;
 
 namespace IronStar.Mapping {
 
@@ -87,6 +88,25 @@ namespace IronStar.Mapping {
 			lightSet.LightProbes.Add( light );
 		}
 
+
+
+		public override void SpawnNodeECS( GameState gs )
+		{
+			var e = gs.Spawn();
+			e.AddComponent( new ECS.Transform( TranslateVector, RotateQuaternion ) );
+
+			var light = new SFX2.LightProbeBox(NodeGuid);
+
+			light.Width			=	Width;
+			light.Height		=	Height;
+			light.Depth			=	Depth;
+			light.ShellWidth	=	ShellWidth;
+			light.ShellHeight	=	ShellHeight;
+			light.ShellDepth	=	ShellDepth;
+
+			e.AddComponent( light );
+			e.AddComponent( new Static() );
+		}
 
 
 		public override void ActivateNode()

@@ -49,6 +49,8 @@ namespace IronStar.SFX2
 
 			Transform.UpdateTransformables<OmniLight>(gs);
 			Transform.UpdateTransformables<SpotLight>(gs);
+			Transform.UpdateTransformables<LightProbeBox>(gs);
+			Transform.UpdateTransformables<LightProbeSphere>(gs);
 		}
 	}
 }

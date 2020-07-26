@@ -473,6 +473,7 @@ namespace Fusion.Engine.Graphics.Lights {
 			var sampleCount		=	hammersleySphere.Length;
 			var invSampleCount	=	1.0f / sampleCount;
 			var	result			=	new GatheringResults(position);
+			var skyFactor		=	0.0f;
 
 			var normalLength	=	normal.Length();
 
@@ -516,6 +517,7 @@ namespace Fusion.Engine.Graphics.Lights {
 				if (!intersect && dir.Y>0) 
 				{
 					result.Sky	+=	dir * invSampleCount;
+					skyFactor	+=	invSampleCount * 2; // because only half of points are in use
 				}
 
 				//-------------------------------------------
@@ -559,6 +561,9 @@ namespace Fusion.Engine.Graphics.Lights {
 			} 
 
 			result.Patches	=	lmAddrList.ToArray();
+
+			result.Sky.Normalize();
+			result.Sky *= skyFactor;
 
 			return result;
 		}

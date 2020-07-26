@@ -130,6 +130,13 @@ float4 PSMain( PSInput input ) : SV_Target0
 	rc.IrradianceVolumeL3	=	LightVolumeL3;
 	rc.Sampler				=	Sampler;
 	
+	float 	skyFactor	=	rc.IrradianceVolumeL1[ input.VoxelIndex ].a;
+	
+	if (surfaceNormal.y > 1-skyFactor)
+	{
+		return float4(1,1,1,1);
+	}
+	
 	LIGHTING lighting		=	EvaluateLightVolume( rc, geom, surf, Camera, input.VoxelIndex ); // * 4 * 3.14; 
 	return float4(lighting.diffuse,1);
 #endif

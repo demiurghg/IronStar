@@ -522,7 +522,7 @@ VS_OUTPUT VSMain( VS_INPUT input )
 	float3	rayDir	=	input.position.xyz;
 
 	output.rayDir	=	rayDir;
-	output.skyColor	= 	0;//ComputeSkyColor( input.position.xyz );
+	output.skyColor	= 	0;
 	output.cirrusUV	=	ComputeCirrusCloudsCoords( rayDir );
 	
 	return output;
@@ -533,8 +533,6 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 	float	horizon		=	HorizonAngle();
 	float 	altitude	=	HorizonAngle( input.rayDir );
 	float	azimuth		=	Azimuth( input.rayDir ) - Sky.SunAzimuth;
-	
-	//return ComputeSkyColor( input.rayDir, Sky.SunAzimuth, Sky.SunAltitude ).emission;
 	
 	//-----------------------------------------
 	//	sample LUT scattering :
@@ -553,7 +551,6 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 	//	compute sun color (sky view only):
 	//-----------------------------------------
 	
-	#if 1
 	#ifdef SKY_VIEW
 		float 	cosSun	=	saturate( dot(normalize(input.rayDir), Sky.SunDirection.xyz ) );
 		float 	sinSun	=	sqrt( 1 - cosSun * cosSun );
@@ -569,6 +566,7 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 	//	apply ground fog (sky view only) :
 	//-----------------------------------------
 	
+	#if 1
 	#ifdef SKY_VIEW
 		float2 	fogUV	=	float2( input.position.xy * Sky.ViewportSize.zw );
 		float4	fogData	=	FogLut.SampleLevel( LinearClamp, fogUV, 0 );

@@ -359,7 +359,6 @@ GBuffer PSMain( PSInput input )
 	//	Fog :
 	float	dist	=	distance( input.WorldPos.xyz, Camera.CameraPosition.xyz ); 
 	float3	final	=	ApplyVolumetricFog( Fog, lighting, input.ProjPos, SamplerLinearClamp, FogVolume );
-	//float3	final	=	ApplyVolumetricFog( lighting, input.ProjPos, SamplerPoint/*SamplerLinearClamp*/, FogVolume );
 	
 	output.hdr			=	float4( final, surface.alpha );
 	output.feedback		=	feedback;

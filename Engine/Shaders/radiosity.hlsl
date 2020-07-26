@@ -473,12 +473,13 @@ void CSMain(
 	float4	irradianceB	=	float4( 0, 0, 0, 0 );
 	
 	float3	skyDir		=	SkyVolume[ loadXYZ ].xyz * 2 - 1;
-	float	skyFactor	=	length( skyDir ) * Radiosity.SkyFactor;
+	float	skyFactor	=	length( skyDir );
 	float3	skyColor	=	SkyBox.SampleLevel( LinearSampler, skyDir.xyz, 0 ).rgb * skyFactor * skyFactor;
 	
-	irradianceR			+=	SHL1EvaluateDiffuse( skyColor.r, normalize(skyDir.xyz) );
+	//	TODO : FOG compute sky term separately:
+	/*irradianceR			+=	SHL1EvaluateDiffuse( skyColor.r, normalize(skyDir.xyz) );
 	irradianceG			+=	SHL1EvaluateDiffuse( skyColor.g, normalize(skyDir.xyz) );
-	irradianceB			+=	SHL1EvaluateDiffuse( skyColor.b, normalize(skyDir.xyz) );
+	irradianceB			+=	SHL1EvaluateDiffuse( skyColor.b, normalize(skyDir.xyz) );*/
 	
 	//if (!skip_tile_processing)
 	for (uint index=begin; index<end; index++)

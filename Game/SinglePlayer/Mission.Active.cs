@@ -13,6 +13,7 @@ using IronStar.Client;
 using IronStar.Core;
 using IronStar.ECS;
 using IronStar.SFX;
+using IronStar.Gameplay.Systems;
 
 namespace IronStar.SinglePlayer {
 
@@ -34,8 +35,14 @@ namespace IronStar.SinglePlayer {
 			gs.Services.AddService( content );
 			gs.Services.AddService( game.RenderSystem );
 
+			//	physics simulation :
 			gs.AddSystem( new Physics2.PhysicsEngineSystem() );
 			gs.AddSystem( new FXPlayback(game, content) );
+
+			//	game logic :
+			gs.AddSystem( new HealthSystem() );
+
+			//	rendering :
 			gs.AddSystem( new SFX2.RenderModelSystem(game) );
 			gs.AddSystem( new SFX2.LightingSystem(game) );
 			gs.AddSystem( new Gameplay.CameraSystem() );

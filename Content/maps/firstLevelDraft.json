@@ -356,11 +356,11 @@
         "Visible": true,
         "Frozen": false,
         "TranslateX": -360.997864,
-        "TranslateY": 6.96599054,
+        "TranslateY": 13.3336143,
         "TranslateZ": -84.0017853,
-        "RotateYaw": -60.08936,
-        "RotatePitch": -8.70405,
-        "RotateRoll": -95.8974
+        "RotateYaw": -15.0,
+        "RotatePitch": -15.0,
+        "RotateRoll": 0.0
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -3282,9 +3282,9 @@
         "LightIntensity": 470.0,
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -353.0,
-        "TranslateY": 9.0,
-        "TranslateZ": -63.0,
+        "TranslateX": -373.368927,
+        "TranslateY": 11.8966827,
+        "TranslateZ": -79.77365,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
@@ -3720,9 +3720,9 @@
         "SlopeBias": 2.0,
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -16.0,
-        "TranslateY": 80.0,
-        "TranslateZ": 128.0,
+        "TranslateX": -324.564026,
+        "TranslateY": 58.6398926,
+        "TranslateZ": -55.6019058,
         "RotateYaw": 0.0,
         "RotatePitch": -60.0,
         "RotateRoll": 0.0

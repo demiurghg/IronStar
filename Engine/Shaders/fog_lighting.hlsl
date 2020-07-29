@@ -114,8 +114,7 @@ float2 ComputeSkyShadow( float3 worldPos )
 	float3	volumeCoord	=	mad( float4(worldPos, 1), Fog.WorldToVoxelScale, Fog.WorldToVoxelOffset ).xyz;
 	float 	skyFactor	=	IrradianceVolumeL1.SampleLevel( LinearClamp, volumeCoord, 0 ).a;
 	
-	skyFactor =	 saturate(skyFactor*2);
-	skyFactor *= skyFactor;
+	skyFactor =	 saturate(skyFactor);
 	
 	//return float2( shadow, skyFactor );
 	return float2( shadow, skyFactor );

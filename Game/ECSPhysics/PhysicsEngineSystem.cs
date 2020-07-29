@@ -33,6 +33,12 @@ namespace IronStar.Physics2
 			}
 		}
 
+		public Aspect GetAspect ()
+		{
+			return new Aspect()
+					.Include<Transform,Velocity>()
+					.Single<CharacterController,DynamicBox>();
+		}
 
 		public PhysicsEngineSystem ()
 		{

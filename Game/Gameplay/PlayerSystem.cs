@@ -15,6 +15,12 @@ namespace IronStar.Gameplay
 		Random rand = new Random();
 
 
+		public Aspect GetAspect()
+		{
+			return Aspect.Empty();
+		}
+
+
 		public void Update( GameState gs, GameTime gameTime )
 		{
 			UpdatePlayerSpawn( gs );

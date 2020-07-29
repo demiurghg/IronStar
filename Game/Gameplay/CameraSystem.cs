@@ -13,6 +13,12 @@ namespace IronStar.Gameplay
 {
 	public class CameraSystem : ISystem
 	{
+		public Aspect GetAspect()
+		{
+			return Aspect.Empty();
+		}
+
+
 		public void Update( GameState gs, GameTime gameTime )
 		{
 			var	players	=	gs.QueryEntities<PlayerController,Transform,UserCommand2>();

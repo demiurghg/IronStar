@@ -7,12 +7,37 @@ using System.Threading.Tasks;
 
 namespace IronStar.ECS
 {
-	class SystemCollection : List<ISystem>
+	class SystemCollection : IEnumerable<ISystem>
 	{
-		const int MaxSystems = (int)BitSet.MaxBits;
+		readonly object lockObj = new object();
+		readonly List<SystemWrapper> systemWrappers;
 
-		public SystemCollection() : base(MaxSystems)
+		public SystemCollection()
 		{
+			systemWrappers	=	new List<SystemWrapper>( GameState.MaxSystems );
+		}
+			
+
+		public void Add( ISystem system )
+		{
+			lock (lockObj)
+			{
+				systemWrappers.Add( new SystemWrapper( system ) );
+			}
+		}
+
+
+		public IEnumerator<ISystem> GetEnumerator()
+		{
+			var systems = systemWrappers.Select( sw => sw.System ).ToArray();
+			return ((IEnumerable<ISystem>)systems).GetEnumerator();
+		}
+
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			var systems = systemWrappers.Select( sw => sw.System ).ToArray();
+			return systems.GetEnumerator();
 		}
 	}
 }

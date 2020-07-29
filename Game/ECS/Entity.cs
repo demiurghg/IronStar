@@ -16,6 +16,9 @@ namespace IronStar.ECS
 		/// </summary>
 		public readonly uint ID;
 
+		internal long ComponentMapping;
+		internal long SystemMapping;
+
 		/// <summary>
 		/// Entity constructor
 		/// </summary>

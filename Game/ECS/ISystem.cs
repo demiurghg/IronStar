@@ -10,6 +10,11 @@ namespace IronStar.ECS
 	public interface ISystem
 	{
 		/// <summary>
+		/// Gets system's aspect
+		/// </summary>
+		Aspect GetAspect ();
+
+		/// <summary>
 		/// Called each frame
 		/// </summary>
 		/// <param name="gs"></param>

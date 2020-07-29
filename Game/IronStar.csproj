@@ -67,10 +67,15 @@
   <ItemGroup>
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Core\EntityComponent.cs" />
+    <Compile Include="ECS\Aspect.cs" />
     <Compile Include="ECS\ComponentCollection.cs" />
     <Compile Include="ECS\Component.cs" />
+    <Compile Include="ECS\ECSTypeManager.cs" />
     <Compile Include="ECS\EntityFactoryCollection.cs" />
+    <Compile Include="ECS\GameState.VM.cs" />
     <Compile Include="ECS\ITransformable.cs" />
+    <Compile Include="ECS\SystemWrapper.cs" />
+    <Compile Include="ECS\SystemAttribute.cs" />
     <Compile Include="ECS\Teleport.cs" />
     <Compile Include="ECS\EntityFactory.cs" />
     <Compile Include="ECS\Transform.cs" />

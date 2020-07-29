@@ -11,6 +11,12 @@ namespace IronStar.Gameplay.Systems
 {
 	public class HealthSystem : ISystem
 	{
+		public Aspect GetAspect()
+		{
+			return Aspect.Empty();
+		}
+
+
 		public void Update( GameState gs, GameTime gameTime )
 		{
 			var healthComponents = gs.QueryComponents<HealthComponent>();

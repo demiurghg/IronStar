@@ -41,6 +41,12 @@ namespace IronStar.SFX2
 		}
 
 
+		public Aspect GetAspect()
+		{
+			return Aspect.Empty();
+		}
+
+
 		public void Update( GameState gs, GameTime gameTime )
 		{
 			var rs	=	gs.GetService<RenderSystem>();

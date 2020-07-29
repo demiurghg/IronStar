@@ -19,9 +19,9 @@ namespace IronStar.ECS
 
 		public ComponentCollection () : base(64)
 		{
-			foreach ( var componentType in Misc.GatherInterfaceImplementations( typeof(IComponent) ) )
+			foreach ( var componentType in ECSTypeManager.GetComponentTypes() )
 			{
-				Add( componentType, new Dictionary<uint, IComponent>(128) );
+				Add( componentType, new Dictionary<uint, IComponent>() );
 			}
 		}
 

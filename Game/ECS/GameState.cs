@@ -12,8 +12,11 @@ using System.Runtime.Remoting;
 
 namespace IronStar.ECS
 {
-	public class GameState : DisposableBase
+	public sealed partial class GameState : DisposableBase
 	{
+		public const int MaxSystems			=	BitSet.MaxBits;
+		public const int MaxComponentTypes	=	BitSet.MaxBits;
+
 		public readonly Game Game;
 
 		readonly EntityCollection		entities;
@@ -37,6 +40,8 @@ namespace IronStar.ECS
 		/// <param name="game"></param>
 		public GameState( Game game )
 		{
+			ECSTypeManager.Scan();
+
 			this.Game	=	game;
 
 			entities		=	new EntityCollection();

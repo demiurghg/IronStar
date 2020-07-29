@@ -9,14 +9,23 @@ namespace IronStar.ECS
 {
 	public struct BitSet
 	{
-		public const uint MaxBits = 32;
+		public const int MaxBits = 64;
 
-		uint bits;
+		long bits;
 
 
-		public BitSet( uint bits )
+		public BitSet( long bits )
 		{
 			this.bits = bits;
+		}
+
+
+		public static BitSet FromBitIndex(int index)
+		{
+			var bitSet = new BitSet();
+			bitSet.Clear();
+			bitSet[index] = true;
+			return bitSet;
 		}
 
 

@@ -21,6 +21,17 @@ namespace IronStar.Gameplay
 		}
 
 
+		public void Add( GameState gs, Entity e )
+		{
+			//throw new NotImplementedException();
+		}
+
+		public void Remove( GameState gs, Entity e )
+		{
+			//throw new NotImplementedException();
+		}
+
+
 		public void Update( GameState gs, GameTime gameTime )
 		{
 			UpdatePlayerSpawn( gs );

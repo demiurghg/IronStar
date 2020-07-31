@@ -17,6 +17,10 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
+		public void Add( GameState gs, Entity e ) {}
+		public void Remove( GameState gs, Entity e ) {}
+
+
 		public void Update( GameState gs, GameTime gameTime )
 		{
 			var healthComponents = gs.QueryComponents<HealthComponent>();

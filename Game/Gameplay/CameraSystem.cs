@@ -19,6 +19,10 @@ namespace IronStar.Gameplay
 		}
 
 
+		public void Add( GameState gs, Entity e ) {}
+		public void Remove( GameState gs, Entity e ) {}
+
+
 		public void Update( GameState gs, GameTime gameTime )
 		{
 			var	players	=	gs.QueryEntities<PlayerController,Transform,UserCommand2>();

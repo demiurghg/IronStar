@@ -14,22 +14,24 @@ namespace IronStar.ECS
 {
 	public sealed partial class GameState : DisposableBase
 	{
-		public const int MaxSystems			=	BitSet.MaxBits;
-		public const int MaxComponentTypes	=	BitSet.MaxBits;
+		public const int MaxSystems         =   BitSet.MaxBits;
+		public const int MaxComponentTypes  =   BitSet.MaxBits;
 
 		public readonly Game Game;
 
-		readonly EntityCollection		entities;
-		readonly SystemCollection		systems;
-		readonly ComponentCollection	components;
+		readonly EntityCollection       entities;
+		readonly SystemCollection       systems;
+		readonly ComponentCollection    components;
 
-		readonly Bag<Entity>	spawned;
-		readonly HashSet<uint>	killed;
+		readonly Bag<Entity>        spawned;
+		readonly HashSet<uint>      killed;
+
+		readonly HashSet<Entity>    refreshed;
 
 		readonly GameServiceContainer services;
 		public GameServiceContainer Services { get { return services; } }
 
-		readonly Bag<IComponent>	sleeping;
+		readonly Bag<IComponent>    sleeping;
 
 		readonly EntityFactoryCollection factories;
 
@@ -42,23 +44,24 @@ namespace IronStar.ECS
 		{
 			ECSTypeManager.Scan();
 
-			this.Game	=	game;
+			this.Game   =   game;
 
-			entities		=	new EntityCollection();
-			systems			=	new SystemCollection();
-			components		=	new ComponentCollection();
+			entities        =   new EntityCollection();
+			systems         =   new SystemCollection(this);
+			components      =   new ComponentCollection();
 
-			spawned			=	new Bag<Entity>();
-			killed			=	new HashSet<uint>();
-			sleeping		=	new Bag<IComponent>();
+			spawned         =   new Bag<Entity>();
+			killed          =   new HashSet<uint>();
+			sleeping        =   new Bag<IComponent>();
+			refreshed       =   new HashSet<Entity>();
 
-			services		=	new GameServiceContainer();
+			services        =   new GameServiceContainer();
 
-			factories		=	new EntityFactoryCollection(
+			factories       =   new EntityFactoryCollection(
 									Misc.GetAllClassesWithAttribute<EntityFactoryAttribute>()
-										.ToDictionary( 
+										.ToDictionary(
 											t0 => t0.GetAttribute<EntityFactoryAttribute>().ClassName,
-											t1 => (EntityFactory)Activator.CreateInstance(t1)
+											t1 => (EntityFactory)Activator.CreateInstance( t1 )
 										)
 									);
 		}
@@ -70,15 +73,15 @@ namespace IronStar.ECS
 		/// <param name="disposing"></param>
 		protected override void Dispose( bool disposing )
 		{
-			if (disposing)
+			if ( disposing )
 			{
 				KillAllInternal();
 
-				foreach ( var s in sleeping ) s.Removed(this);
+				foreach ( var s in sleeping ) s.Removed( this );
 
 				foreach ( var system in systems )
 				{
-					(system as IDisposable)?.Dispose();
+					( system as IDisposable )?.Dispose();
 				}
 			}
 
@@ -90,24 +93,30 @@ namespace IronStar.ECS
 		/// Updates game state
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void Update ( GameTime gameTime )
+		public void Update( GameTime gameTime )
 		{
 			//	add all spawned entities :
-			foreach ( var e in spawned ) { entities.Add( e.ID, e );	}
+			foreach ( var e in spawned )
+			{
+				entities.Add( e.ID, e );
+				Refresh( e );
+			}
 			spawned.Clear();
 
 			//	run sysytems :
 			foreach ( var system in systems )
 			{
-				system.Update( this, gameTime );
+				system.System.Update( this, gameTime );
 			}
 
 			//	kill entities marked to kill :
-			foreach ( var id in killed ) { KillInternal(id); }
+			foreach ( var id in killed ) { KillInternal( id ); }
 			killed.Clear();
 
+			RefreshEntities();
+
 			//	make static entities sleeping :
- 			MakeStaticEntitiesSleeping();
+			MakeStaticEntitiesSleeping();
 		}
 
 
@@ -116,7 +125,7 @@ namespace IronStar.ECS
 		/// </summary>
 		/// <typeparam name="TService"></typeparam>
 		/// <returns></returns>
-		public TService GetService<TService>() where TService: class
+		public TService GetService<TService>() where TService : class
 		{
 			return Services.GetService<TService>();
 		}
@@ -126,10 +135,10 @@ namespace IronStar.ECS
 		 *	Entity stuff :
 		-----------------------------------------------------------------------------------------------*/
 
-		public Entity Spawn ()
+		public Entity Spawn()
 		{
 			var entity = new Entity( this, IdGenerator.Next() );
-			
+
 			spawned.Add( entity );
 
 			return entity;
@@ -138,7 +147,7 @@ namespace IronStar.ECS
 
 		public Entity Spawn( string classname )
 		{
-			return factories[classname].Spawn(this);
+			return factories[classname].Spawn( this );
 		}
 
 
@@ -156,7 +165,7 @@ namespace IronStar.ECS
 		}
 
 
-		public void Kill ( uint id )
+		public void Kill( uint id )
 		{
 			killed.Add( id );
 		}
@@ -166,8 +175,9 @@ namespace IronStar.ECS
 		{
 			var entity = entities[ id ];
 			entities.Remove( id );
+			Refresh( entity );
 
-			components.RemoveAllComponents( id, c => c.Removed(this) );
+			components.RemoveAllComponents( id, c => c.Removed( this ) );
 		}
 
 
@@ -177,7 +187,7 @@ namespace IronStar.ECS
 
 			foreach ( var id in killList )
 			{
-				KillInternal(id);
+				KillInternal( id );
 			}
 		}
 
@@ -186,12 +196,31 @@ namespace IronStar.ECS
 		{
 			var ents = QueryEntities<Static>();
 
-			foreach ( var e in ents ) 
+			foreach ( var e in ents )
 			{
 				//	do not call Removed, this will keep statefull objects alive
-				components.RemoveAllComponents( e.ID, c => sleeping.Add(c) );
+				components.RemoveAllComponents( e.ID, c => sleeping.Add( c ) );
 				entities.Remove( e.ID );
 			}
+		}
+
+		void Refresh( Entity e )
+		{
+			refreshed.Add( e );
+		}
+
+
+		void RefreshEntities()
+		{
+			foreach ( var e in refreshed )
+			{
+				foreach ( var system in systems )
+				{
+					system.Changed(e);
+				}
+			}
+
+			refreshed.Clear();
 		}
 
 		/*-----------------------------------------------------------------------------------------------
@@ -231,13 +260,12 @@ namespace IronStar.ECS
 			if (component==null) throw new ArgumentNullException("component");
 
 			components.AddComponent( entity.ID, component );
+
+			entity.ComponentMapping |= ECSTypeManager.GetComponentBit( component.GetType() );
+
 			component.Added( this, entity );
-		}
-
-
-		public TComponent GetEntityComponent<TComponent>( Entity entity ) where TComponent: IComponent
-		{
-			return components.GetComponent<TComponent>( entity.ID );
+			
+			Refresh( entity );
 		}
 
 
@@ -247,8 +275,20 @@ namespace IronStar.ECS
 			if (component==null) throw new ArgumentNullException("component");
 
 			component.Removed( this );
+
+			entity.ComponentMapping &= ~ECSTypeManager.GetComponentBit( component.GetType() );
+
 			components.RemoveComponent( entity.ID, component );
+
+			Refresh( entity );
 		}
+
+
+		public TComponent GetEntityComponent<TComponent>( Entity entity ) where TComponent: IComponent
+		{
+			return components.GetComponent<TComponent>( entity.ID );
+		}
+
 
 		/*-----------------------------------------------------------------------------------------------
 		 *	System stuff :

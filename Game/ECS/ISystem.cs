@@ -15,6 +15,18 @@ namespace IronStar.ECS
 		Aspect GetAspect ();
 
 		/// <summary>
+		/// Called when system detects new entity with given aspect.
+		/// </summary>
+		/// <param name="e"></param>
+		void Add( GameState gs, Entity e );
+
+		/// <summary>
+		/// Called when system entity with given aspect is removed.
+		/// </summary>
+		/// <param name="e"></param>
+		void Remove( GameState gs, Entity e );
+
+		/// <summary>
 		/// Called each frame
 		/// </summary>
 		/// <param name="gs"></param>

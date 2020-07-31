@@ -15,6 +15,7 @@ using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
 using IronStar.Core;
 using Fusion.Engine.Audio;
+using IronStar.ECS;
 
 namespace IronStar.SFX {
 	public partial class FXPlayback : DisposableBase, ECS.ISystem {
@@ -78,6 +79,9 @@ namespace IronStar.SFX {
 			base.Dispose( disposing );
 		}
 
+
+		public void Add( GameState gs, ECS.Entity e ) {}
+		public void Remove( GameState gs, ECS.Entity e ) {}
 
 
 		/// <summary>

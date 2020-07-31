@@ -32,6 +32,9 @@ namespace IronStar.SFX2
 		public readonly ContentManager content;
 
 
+		Dictionary<uint,RenderModelView> renderModels = new Dictionary<uint, RenderModelView>();
+
+
 		public RenderModelSystem ( Game game )
 		{
 			this.game	=	game;
@@ -43,7 +46,24 @@ namespace IronStar.SFX2
 
 		public Aspect GetAspect()
 		{
-			return Aspect.Empty();
+			return new Aspect()
+				.Include<Transform>()
+				.Single<RenderModel>()
+				;
+		}
+
+
+		public void Add( GameState gs, Entity e )
+		{
+			var t	= e.GetComponent<Transform>();
+			var rm	= e.GetComponent<RenderModel>();
+
+			renderModels.Add( e.ID, new RenderModelView(gs,rm,t) );
+		}
+
+		public void Remove( GameState gs, Entity e )
+		{
+			//throw new NotImplementedException();
 		}
 
 

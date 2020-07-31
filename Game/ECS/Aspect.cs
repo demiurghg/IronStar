@@ -60,10 +60,10 @@ namespace IronStar.ECS
 			long mapping = e.ComponentMapping;
 
 			return (
-				( includeSet == 0 ) || ( includeSet  == (mapping & includeSet ) ) &&
-				( excludeSet == 0 ) || ( 0           == (mapping & excludeSet ) ) &&
-				( anySet     == 0 ) || ( 0           != (mapping & anySet     ) ) &&
-				( singleSet  == 0 ) || ( IsPowerOfTwo   (mapping & singleSet  ) )
+				( ( includeSet == 0 ) || ( includeSet  == (mapping & includeSet ) ) ) &&
+				( ( excludeSet == 0 ) || ( 0           == (mapping & excludeSet ) ) ) &&
+				( ( anySet     == 0 ) || ( 0           != (mapping & anySet     ) ) ) &&
+				( ( singleSet  == 0 ) || ( IsPowerOfTwo   (mapping & singleSet  ) ) )
 			);
 		}
 

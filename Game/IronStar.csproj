@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Core\EntityComponent.cs" />
+    <Compile Include="ECSGraphics\RenderModelView.cs" />
     <Compile Include="ECS\Aspect.cs" />
     <Compile Include="ECS\ComponentCollection.cs" />
     <Compile Include="ECS\Component.cs" />

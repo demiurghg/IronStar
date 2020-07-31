@@ -58,5 +58,15 @@ namespace IronStar.SFX2
 			Transform.UpdateTransformables<LightProbeBox>(gs);
 			Transform.UpdateTransformables<LightProbeSphere>(gs);
 		}
+
+		public void Add( GameState gs, Entity e )
+		{
+			//throw new NotImplementedException();
+		}
+
+		public void Remove( GameState gs, Entity e )
+		{
+			//throw new NotImplementedException();
+		}
 	}
 }

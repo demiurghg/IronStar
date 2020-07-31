@@ -34,16 +34,16 @@ namespace IronStar.SFX2
 		static readonly Scene EmptyScene = Scene.CreateEmptyScene();
 
 		//	pure component data :
-		string	scenePath;
-		Matrix	transform;
-		Color	color;
-		float	intensity;
-		RMFlags	rmFlags;
+		public string	scenePath;
+		public Matrix	transform;
+		public Color	color;
+		public float	intensity;
+		public RMFlags	rmFlags;
 
-		Size2	lightmapSize;
-		Guid	lightmapGuid;
+		public Size2	lightmapSize;
+		public Guid		lightmapGuid;
 
-		bool	UseLightMap { get { return lightmapSize.Width>0 && lightmapSize.Height>0; } }
+		public bool		UseLightMap { get { return lightmapSize.Width>0 && lightmapSize.Height>0; } }
 		
 
 		//	operational data :
@@ -70,14 +70,14 @@ namespace IronStar.SFX2
 		public override void Added( GameState gs, Entity entity )
 		{
 			base.Added( gs, entity );
-			LoadScene( gs );
+			//LoadScene( gs );
 		}
 
 
 		public override void Removed( GameState gs )
 		{
 			base.Removed( gs );
-			UnloadScene( gs );
+			//UnloadScene( gs );
 		}
 
 
@@ -98,7 +98,7 @@ namespace IronStar.SFX2
 
 		public void SetTransform( Matrix worldMatrix )
 		{
-			sceneView.SetTransform( (mesh,matrix) => mesh.World = matrix, worldMatrix );
+			//sceneView.SetTransform( (mesh,matrix) => mesh.World = matrix, worldMatrix );
 		}
 
 		/*-----------------------------------------------------------------------------------------------

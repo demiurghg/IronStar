@@ -67,14 +67,16 @@
   <ItemGroup>
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Core\EntityComponent.cs" />
+    <Compile Include="ECSGraphics\OmniLightSystem.cs" />
     <Compile Include="ECSGraphics\RenderModelView.cs" />
+    <Compile Include="ECSPhysics\PhysicsCore.cs" />
     <Compile Include="ECS\Aspect.cs" />
-    <Compile Include="ECS\ComponentCollection.cs" />
+    <Compile Include="ECS\Collections\ComponentCollection.cs" />
     <Compile Include="ECS\Component.cs" />
     <Compile Include="ECS\ECSTypeManager.cs" />
-    <Compile Include="ECS\EntityFactoryCollection.cs" />
-    <Compile Include="ECS\GameState.VM.cs" />
+    <Compile Include="ECS\Collections\EntityFactoryCollection.cs" />
     <Compile Include="ECS\ITransformable.cs" />
+    <Compile Include="ECS\ProcessingSystem.cs" />
     <Compile Include="ECS\SystemWrapper.cs" />
     <Compile Include="ECS\SystemAttribute.cs" />
     <Compile Include="ECS\Teleport.cs" />
@@ -84,13 +86,13 @@
     <Compile Include="ECS\Utils\BagEnumerator.cs" />
     <Compile Include="ECS\Utils\BitSet.cs" />
     <Compile Include="ECS\IComponent.cs" />
-    <Compile Include="ECS\EntityCollection.cs" />
+    <Compile Include="ECS\Collections\EntityCollection.cs" />
     <Compile Include="ECS\Entity.cs" />
     <Compile Include="ECS\GameState.cs" />
     <Compile Include="ECS\Utils\HashFunc.cs" />
     <Compile Include="ECS\Utils\IdGenerator.cs" />
     <Compile Include="ECS\ISystem.cs" />
-    <Compile Include="ECS\SystemCollection.cs" />
+    <Compile Include="ECS\Collections\SystemCollection.cs" />
     <Compile Include="ECS\Static.cs" />
     <Compile Include="ECS\Velocity.cs" />
     <Compile Include="Editor\MapEditor.History.cs" />

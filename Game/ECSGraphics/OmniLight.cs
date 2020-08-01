@@ -11,22 +11,20 @@ using Fusion.Core.Shell;
 
 namespace IronStar.SFX2
 {
-	public class OmniLight : Component, ITransformable
+	public class OmniLight : Component
 	{
 		[AECategory("Omni-light")]
 		[AEValueRange(0, 100, 1, 0.125f)]
 		public float OuterRadius 
 		{ 
-			get { return light.RadiusOuter; }
-			set { light.RadiusOuter = value; }
+			get; set; 
 		}
 		
 		[AECategory("Omni-light")]
 		[AEValueRange(0, 8, 1, 0.125f)]
 		public float TubeRadius 
 		{ 
-			get { return light.RadiusInner; }
-			set { light.RadiusInner = value; }
+			get; set; 
 		}
 
 		[AECategory("Omni-light")]
@@ -37,12 +35,7 @@ namespace IronStar.SFX2
 		[AEDisplayName("Light Color")]
 		public Color LightColor
 		{ 
-			get { return lightColor; }
-			set 
-			{ 
-				lightColor	= value; 
-				light.Intensity = lightColor.ToColor4() * MathUtil.Exp2( lightIntensity ); 
-			}
+			get; set; 
 		}
 
 		[AECategory("Light Color")]
@@ -50,15 +43,10 @@ namespace IronStar.SFX2
 		[AEValueRange(0, 12, 10, 1)]
 		public float LightIntensity 
 		{ 
-			get { return lightIntensity; }
-			set 
-			{ 
-				lightIntensity	= value; 
-				light.Intensity = lightColor.ToColor4() * MathUtil.Exp2( lightIntensity ); 
-			}
+			get; set; 
 		}
 		
-		Color lightColor = Color.White;
+		/*Color lightColor = Color.White;
 		float lightIntensity = 8;
 
 		RSOmniLight light;
@@ -93,6 +81,6 @@ namespace IronStar.SFX2
 		{
 			light.Position0	=	transform.TranslationVector + transform.Right * TubeLength * 0.5f;
 			light.Position1	=	transform.TranslationVector + transform.Left  * TubeLength * 0.5f;
-		}
+		}	  */
 	}
 }

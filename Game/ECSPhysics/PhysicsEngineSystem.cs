@@ -56,6 +56,18 @@ namespace IronStar.Physics2
 		public void Shutdown( GameState gs ) {}
 
 
+
+		public void Add( GameState gs, Entity e )
+		{
+			//throw new NotImplementedException();
+		}
+
+		public void Remove( GameState gs, Entity e )
+		{
+			//throw new NotImplementedException();
+		}
+
+
 		public void Update( GameState gs, GameTime gameTime )
 		{
 			UpdateGravity( gs );
@@ -171,17 +183,6 @@ namespace IronStar.Physics2
 
 			touchEvents.Add( new Tuple<Entity, Entity>( entity1, entity2 ) );
 			touchEvents.Add( new Tuple<Entity, Entity>( entity2, entity1 ) );
-		}
-
-		public void Add( GameState gs, Entity e )
-		{
-			//Log.Message("Entity "
-			//throw new Exception( "The method or operation is not implemented." );
-		}
-
-		public void Remove( GameState gs, Entity e )
-		{
-			//throw new Exception( "The method or operation is not implemented." );
 		}
 	}
 }

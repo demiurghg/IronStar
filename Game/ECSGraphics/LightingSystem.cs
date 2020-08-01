@@ -21,6 +21,9 @@ using IronStar.Items;
 using Fusion.Scripting;
 using KopiLua;
 using IronStar.ECS;
+using RSOmniLight = Fusion.Engine.Graphics.OmniLight;
+using RSSpotLight = Fusion.Engine.Graphics.SpotLight;
+using RSLightProbe = Fusion.Engine.Graphics.LightProbe;
 
 namespace IronStar.SFX2 
 {
@@ -43,7 +46,24 @@ namespace IronStar.SFX2
 
 		public Aspect GetAspect()
 		{
-			return Aspect.Empty();
+			return new Aspect()
+				.Include<Transform>()
+				.Single<OmniLight,SpotLight,LightProbeBox,LightProbeSphere>()
+				;
+		}
+
+
+		public void Add( GameState gs, Entity e )
+		{
+			//if (e.ContainsComponent<OmniLight>()) omniLights.
+		}
+
+
+		public void Remove( GameState gs, Entity e )
+		{
+			/*omniLights.Remove(e.ID);
+			spotLights.Remove(e.ID);
+			lightProbes.Remove(e.ID);*/
 		}
 
 
@@ -53,20 +73,10 @@ namespace IronStar.SFX2
 			rw.LightSet.DirectLight.Direction	=	-rs.Sky.GetSunDirection();
 			rw.LightSet.DirectLight.Intensity	=	 rs.Sky.GetSunIntensity(true);	
 
-			Transform.UpdateTransformables<OmniLight>(gs);
+			//Transform.UpdateTransformables<OmniLight>(gs);
 			Transform.UpdateTransformables<SpotLight>(gs);
 			Transform.UpdateTransformables<LightProbeBox>(gs);
 			Transform.UpdateTransformables<LightProbeSphere>(gs);
-		}
-
-		public void Add( GameState gs, Entity e )
-		{
-			//throw new NotImplementedException();
-		}
-
-		public void Remove( GameState gs, Entity e )
-		{
-			//throw new NotImplementedException();
 		}
 	}
 }

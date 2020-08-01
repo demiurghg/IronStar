@@ -103,6 +103,9 @@ namespace IronStar.ECS
 			}
 			spawned.Clear();
 
+			//	refresh entities and run systems :
+			RefreshEntities();
+
 			//	run sysytems :
 			foreach ( var system in systems )
 			{
@@ -112,8 +115,6 @@ namespace IronStar.ECS
 			//	kill entities marked to kill :
 			foreach ( var id in killed ) { KillInternal( id ); }
 			killed.Clear();
-
-			RefreshEntities();
 
 			//	make static entities sleeping :
 			MakeStaticEntitiesSleeping();

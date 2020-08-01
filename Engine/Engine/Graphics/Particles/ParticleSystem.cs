@@ -40,15 +40,17 @@ namespace Fusion.Engine.Graphics {
 		/// Default -9.8.
 		/// </summary>
 		public Vector3	Gravity { get; set; } = -9.81f * Vector3.Down;
-		
+
 
 		/// <summary>
 		/// Sets and gets images for particles.
 		/// This property must be set before particle injection.
 		/// To prevent interference between textures in atlas all images must be padded with 16 pixels.
 		/// </summary>
+		#warning Remove this property, pass TextureAtlas from outside as paramter of Render() function
 		public TextureAtlas Images {
 			get {
+				if (images!=null && images.Texture==null) return null;
 				return images;
 			}
 			set {

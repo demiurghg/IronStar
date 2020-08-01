@@ -181,7 +181,7 @@ namespace Fusion.Engine.Graphics {
 		
 
 		/// <summary>
-		/// Sets and gets images for particles.
+		/// Gets images for particles.
 		/// This property must be set before particle injection.
 		/// To prevent interference between textures in atlas all images must be padded with 16 pixels.
 		/// </summary>

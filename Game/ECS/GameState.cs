@@ -316,6 +316,16 @@ namespace IronStar.ECS
 			public int GetHashCode( KeyValuePair<uint, IComponent> obj ) { return obj.Key.GetHashCode(); }
 		}
 
+
+		public IEnumerable<Entity> QueryEntities( Aspect aspect )
+		{
+			return entities
+				.Where( e1 => aspect.Accept(e1.Value) )
+				.Select( e2 => e2.Value )
+				.ToArray();
+		}
+
+
 		public IEnumerable<TComponent> QueryComponents<TComponent>() where TComponent: IComponent
 		{
 			return components[typeof(TComponent)].Select( kv => (TComponent)kv.Value ).ToArray();

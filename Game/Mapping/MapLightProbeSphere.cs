@@ -56,7 +56,7 @@ namespace IronStar.Mapping {
 		{
 			var lightSet	=	world.Game.RenderSystem.RenderWorld.LightSet;
 
-			light	=	new LightProbe( NodeGuid, lightSet.AllocImageIndex() );
+			light	=	new LightProbe( NodeGuid );
 
 			light.Mode				=	LightProbeMode.SphereReflection;
 

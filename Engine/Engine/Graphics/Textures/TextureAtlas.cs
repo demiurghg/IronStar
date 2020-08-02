@@ -154,9 +154,12 @@ namespace Fusion.Engine.Graphics {
 		public TextureAtlasClip GetClipByName ( string clipName )
 		{
 			TextureAtlasClip clip;
-			if ( dictionary.TryGetValue(clipName, out clip) ) {
+			if ( clipName!=null && dictionary.TryGetValue(clipName, out clip) ) 
+			{
 				return clip;
-			} else {
+			} 
+			else 
+			{
 				return null;
 			}
 		}

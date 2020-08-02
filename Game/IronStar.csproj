@@ -67,6 +67,8 @@
   <ItemGroup>
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Core\EntityComponent.cs" />
+    <Compile Include="ECSGraphics\LightProbeSystem.cs" />
+    <Compile Include="ECSGraphics\SpotLightSystem.cs" />
     <Compile Include="ECSGraphics\OmniLightSystem.cs" />
     <Compile Include="ECSGraphics\RenderModelView.cs" />
     <Compile Include="ECSPhysics\PhysicsCore.cs" />

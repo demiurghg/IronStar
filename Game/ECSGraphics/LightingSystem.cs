@@ -29,54 +29,21 @@ namespace IronStar.SFX2
 {
 	public class LightingSystem : ISystem 
 	{
-		readonly Game	game;
-		public readonly RenderSystem rs;
-		public readonly RenderWorld	rw;
-		public readonly ContentManager content;
-
-
-		public LightingSystem ( Game game )
-		{
-			this.game	=	game;
-			this.rs		=	game.RenderSystem;
-			this.rw		=	game.RenderSystem.RenderWorld;
-			this.content=	game.Content;
-		}
-
-
 		public Aspect GetAspect()
 		{
-			return new Aspect()
-				.Include<Transform>()
-				.Single<OmniLight,SpotLight,LightProbeBox,LightProbeSphere>()
-				;
+			return Aspect.Empty();
 		}
 
 
-		public void Add( GameState gs, Entity e )
-		{
-			//if (e.ContainsComponent<OmniLight>()) omniLights.
-		}
-
-
-		public void Remove( GameState gs, Entity e )
-		{
-			/*omniLights.Remove(e.ID);
-			spotLights.Remove(e.ID);
-			lightProbes.Remove(e.ID);*/
-		}
+		public void Add( GameState gs, Entity e ) {}
+		public void Remove( GameState gs, Entity e ) {}
 
 
 		public void Update( GameState gs, GameTime gameTime )
 		{
 			var rs	=	gs.GetService<RenderSystem>();
-			rw.LightSet.DirectLight.Direction	=	-rs.Sky.GetSunDirection();
-			rw.LightSet.DirectLight.Intensity	=	 rs.Sky.GetSunIntensity(true);	
-
-			//Transform.UpdateTransformables<OmniLight>(gs);
-			Transform.UpdateTransformables<SpotLight>(gs);
-			Transform.UpdateTransformables<LightProbeBox>(gs);
-			Transform.UpdateTransformables<LightProbeSphere>(gs);
+			rs.RenderWorld.LightSet.DirectLight.Direction	=	-rs.Sky.GetSunDirection();
+			rs.RenderWorld.LightSet.DirectLight.Intensity	=	 rs.Sky.GetSunIntensity(true);	
 		}
 	}
 }

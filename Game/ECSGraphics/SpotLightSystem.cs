@@ -6,43 +6,43 @@ using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using IronStar.ECS;
 using Fusion.Engine.Graphics;
-using RSOmniLight = Fusion.Engine.Graphics.OmniLight;
+using RSSpotLight = Fusion.Engine.Graphics.SpotLight;
 using Fusion.Core.Shell;
 using Fusion.Core;
 
 namespace IronStar.SFX2
 {
-	public class OmniLightSystem : ProcessingSystem<RSOmniLight,OmniLight,Transform>
+	public class SpotLightSystem : ProcessingSystem<RSSpotLight,SpotLight,Transform>
 	{
-		Dictionary<uint,RSOmniLight> lights = new Dictionary<uint, RSOmniLight>();
+		Dictionary<uint,RSSpotLight> lights = new Dictionary<uint, RSSpotLight>();
 
 		readonly LightSet ls;
 
 		
-		public OmniLightSystem( RenderSystem rs )
+		public SpotLightSystem( RenderSystem rs )
 		{
 			this.ls	=	rs.RenderWorld.LightSet;
 		}
 
 		
-		public override RSOmniLight Create( OmniLight ol, Transform t )
+		public override RSSpotLight Create( SpotLight ol, Transform t )
 		{
-			var light = new RSOmniLight();
+			var light = new RSSpotLight();
 
 			Process( light, ol, t );
 
-			ls.OmniLights.Add( light );
-			return new RSOmniLight();
+			ls.SpotLights.Add( light );
+			return new RSSpotLight();
 		}
 
 		
-		public override void Destroy( RSOmniLight light )
+		public override void Destroy( RSSpotLight light )
 		{
-			ls.OmniLights.Remove( light );
+			ls.SpotLights.Remove( light );
 		}
 
 		
-		public override void Process( RSOmniLight light, OmniLight ol, Transform t )
+		public override void Process( RSSpotLight light, SpotLight ol, Transform t )
 		{
 			var transform		=	t.TransformMatrix;
 			light.Position0		=	transform.TranslationVector + transform.Right * ol.TubeLength * 0.5f;
@@ -51,6 +51,9 @@ namespace IronStar.SFX2
 			light.Intensity		=	ol.LightColor.ToColor4() *  MathUtil.Exp2( ol.LightIntensity );
 			light.RadiusInner	=	ol.TubeRadius;
 			light.RadiusOuter	=	ol.OuterRadius;
+
+			light.SpotView		=	Matrix.Invert( transform );
+			light.SpotMaskName	=	ol.SpotMaskName;
 		}
 	}
 }

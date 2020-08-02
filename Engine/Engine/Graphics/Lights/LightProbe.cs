@@ -70,10 +70,10 @@ namespace Fusion.Engine.Graphics
 		/// <param name="position"></param>
 		/// <param name="innerRadius"></param>
 		/// <param name="outerRadius"></param>
-		public LightProbe ( Guid guid, int imageIndex )
+		public LightProbe ( Guid guid )
 		{
 			this.Guid	=	guid;
-			ImageIndex	=	imageIndex;
+			ImageIndex	=	0;
 		}
 		
 	}

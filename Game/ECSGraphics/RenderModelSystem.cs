@@ -24,17 +24,14 @@ using IronStar.ECS;
 
 namespace IronStar.SFX2 
 {
-	public class RenderModelSystem : ISystem
+	public class RenderModelSystem : ProcessingSystem<RenderModelView,Transform,RenderModel>
 	{
 		readonly Game	game;
 		public readonly RenderSystem rs;
 		public readonly RenderWorld	rw;
 		public readonly ContentManager content;
 
-
-		Dictionary<uint,RenderModelView> renderModels = new Dictionary<uint, RenderModelView>();
-
-
+		
 		public RenderModelSystem ( Game game )
 		{
 			this.game	=	game;
@@ -44,40 +41,21 @@ namespace IronStar.SFX2
 		}
 
 
-		public Aspect GetAspect()
+		public override RenderModelView Create( GameState gs, Transform t, RenderModel rm )
 		{
-			return new Aspect()
-				.Include<Transform>()
-				.Single<RenderModel>()
-				;
+			return new RenderModelView( gs, rm, t );
 		}
 
-
-		public void Add( GameState gs, Entity e )
+		
+		public override void Destroy( GameState gs, RenderModelView model )
 		{
-			var t	= e.GetComponent<Transform>();
-			var rm	= e.GetComponent<RenderModel>();
-
-			renderModels.Add( e.ID, new RenderModelView(gs,rm,t) );
+			model?.Dispose();
 		}
 
-		public void Remove( GameState gs, Entity e )
+		
+		public override void Process( GameState gs, GameTime gameTime, RenderModelView model, Transform t, RenderModel rm )
 		{
-			//throw new NotImplementedException();
-		}
-
-
-		public void Update( GameState gs, GameTime gameTime )
-		{
-			var entities = gs.QueryEntities<RenderModel,Transform>();
-
-			foreach ( var e in entities )
-			{
-				var rm	=	e.GetComponent<RenderModel>();
-				var	t	=	e.GetComponent<Transform>();
-
-				rm.SetTransform( t.TransformMatrix );
-			}
+			model.SetTransform( t.TransformMatrix );
 		}
 	}
 }

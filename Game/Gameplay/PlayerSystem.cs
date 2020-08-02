@@ -17,7 +17,7 @@ namespace IronStar.Gameplay
 
 		public Aspect GetAspect()
 		{
-			return Aspect.Empty();
+			return Aspect.Empty;
 		}
 
 

@@ -40,7 +40,7 @@ namespace IronStar.SFX2
 			
 			sceneView	=	new SceneView<RenderInstance>( scene, 
 							mesh => new RenderInstance( rs, scene, mesh ),
-							node => true 
+							node => true
 							);
 
 			sceneView.ForEachMesh( mesh => {

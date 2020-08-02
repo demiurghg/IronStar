@@ -28,7 +28,7 @@ using IronStar.ECS;
 using Fusion.Engine.Graphics.Scenes;
 using AffineTransform = BEPUutilities.AffineTransform;
 
-namespace IronStar.Physics2 
+namespace IronStar.ECSPhysics 
 {
 	public class StaticCollisionModel : Component
 	{

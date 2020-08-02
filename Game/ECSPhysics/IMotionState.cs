@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 
-namespace IronStar.Physics2
+namespace IronStar.ECSPhysics
 {
 	interface IMotionState
 	{

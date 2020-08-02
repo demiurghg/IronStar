@@ -23,7 +23,7 @@ using BEPUphysics.NarrowPhaseSystems.Pairs;
 using IronStar.ECS;
 
 
-namespace IronStar.Physics2 
+namespace IronStar.ECSPhysics 
 {
 	public class CharacterController : Component, IMotionState
 	{

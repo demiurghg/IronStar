@@ -31,8 +31,6 @@ namespace IronStar.ECS
 		readonly GameServiceContainer services;
 		public GameServiceContainer Services { get { return services; } }
 
-		readonly Bag<IComponent>    sleeping;
-
 		readonly EntityFactoryCollection factories;
 
 
@@ -52,7 +50,6 @@ namespace IronStar.ECS
 
 			spawned         =   new Bag<Entity>();
 			killed          =   new HashSet<uint>();
-			sleeping        =   new Bag<IComponent>();
 			refreshed       =   new HashSet<Entity>();
 
 			services        =   new GameServiceContainer();
@@ -77,7 +74,7 @@ namespace IronStar.ECS
 			{
 				KillAllInternal();
 
-				foreach ( var s in sleeping ) s.Removed( this );
+				RefreshEntities();
 
 				foreach ( var system in systems )
 				{
@@ -115,9 +112,6 @@ namespace IronStar.ECS
 			//	kill entities marked to kill :
 			foreach ( var id in killed ) { KillInternal( id ); }
 			killed.Clear();
-
-			//	make static entities sleeping :
-			MakeStaticEntitiesSleeping();
 		}
 
 
@@ -174,11 +168,13 @@ namespace IronStar.ECS
 
 		void KillInternal( uint id )
 		{
-			var entity = entities[ id ];
-			entities.Remove( id );
-			Refresh( entity );
-
-			components.RemoveAllComponents( id, c => c.Removed( this ) );
+			Entity entity;
+			if (entities.TryGetValue(id, out entity))
+			{
+				entities.Remove( id );
+				RemoveAllEntityComponent( entity );
+				Refresh( entity );
+			}
 		}
 
 
@@ -192,18 +188,6 @@ namespace IronStar.ECS
 			}
 		}
 
-
-		void MakeStaticEntitiesSleeping()
-		{
-			var ents = QueryEntities<Static>();
-
-			foreach ( var e in ents )
-			{
-				//	do not call Removed, this will keep statefull objects alive
-				components.RemoveAllComponents( e.ID, c => sleeping.Add( c ) );
-				entities.Remove( e.ID );
-			}
-		}
 
 		void Refresh( Entity e )
 		{
@@ -284,6 +268,15 @@ namespace IronStar.ECS
 			Refresh( entity );
 		}
 
+
+		public void RemoveAllEntityComponent( Entity entity )
+		{
+			if (entity==null) throw new ArgumentNullException("entity");
+
+			entity.ComponentMapping = 0;
+			components.RemoveAllComponents( entity.ID, c => {} );
+			
+		}
 
 		public TComponent GetEntityComponent<TComponent>( Entity entity ) where TComponent: IComponent
 		{

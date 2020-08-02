@@ -31,8 +31,6 @@ namespace IronStar.SFX2
 
 	public partial class RenderModel : Component
 	{
-		static readonly Scene EmptyScene = Scene.CreateEmptyScene();
-
 		//	pure component data :
 		public string	scenePath;
 		public Matrix	transform;
@@ -67,71 +65,10 @@ namespace IronStar.SFX2
 		}
 
 
-		public override void Added( GameState gs, Entity entity )
-		{
-			base.Added( gs, entity );
-			//LoadScene( gs );
-		}
+		public override void Added( GameState gs, Entity entity ) {}
+		public override void Removed( GameState gs ) {}
+		public override void Load( GameState gs, Stream stream ) {}
+		public override void Save( GameState gs, Stream stream ) {}
 
-
-		public override void Removed( GameState gs )
-		{
-			base.Removed( gs );
-			//UnloadScene( gs );
-		}
-
-
-		public override void Load( GameState gs, Stream stream )
-		{
-			base.Load( gs, stream );
-		}
-
-
-		public override void Save( GameState gs, Stream stream )
-		{
-			base.Save( gs, stream );
-		}
-
-		/*-----------------------------------------------------------------------------------------------
-		 *	Transformation and animation :
-		-----------------------------------------------------------------------------------------------*/
-
-		public void SetTransform( Matrix worldMatrix )
-		{
-			//sceneView.SetTransform( (mesh,matrix) => mesh.World = matrix, worldMatrix );
-		}
-
-		/*-----------------------------------------------------------------------------------------------
-		 *	Scene management operations :
-		-----------------------------------------------------------------------------------------------*/
-
-		void LoadScene ( GameState gs )
-		{
-			var content	=	gs.GetService<ContentManager>();
-			var rs		=	gs.GetService<RenderSystem>();
-
-			scene		=	string.IsNullOrWhiteSpace(scenePath) ? Scene.Empty : content.Load( scenePath, Scene.Empty );
-			
-			sceneView	=	new SceneView<RenderInstance>( scene, 
-							mesh => new RenderInstance( rs, scene, mesh ),
-							node => true 
-							);
-
-			sceneView.ForEachMesh( mesh => {
-				mesh.Group	= UseLightMap ? InstanceGroup.Static : InstanceGroup.Kinematic;
-				mesh.Color	= Color4.Zero;
-				mesh.LightMapGuid = lightmapGuid;
-				mesh.LightMapSize = lightmapSize;
-				rs.RenderWorld.Instances.Add( mesh );
-			});
-		}
-
-
-		public void UnloadScene(GameState gs)
-		{
-			var rs	=	gs.GetService<RenderSystem>();
-
-			sceneView?.ForEachMesh( mesh => rs.RenderWorld.Instances.Remove( mesh ) );
-		}
 	}
 }

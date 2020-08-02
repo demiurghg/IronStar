@@ -28,9 +28,9 @@ namespace IronStar.ECS
 		}
 
 
-		public static Aspect Empty()
+		public static Aspect Empty 
 		{
-			return new Aspect();
+			get { return new Aspect(); }
 		}
 
 

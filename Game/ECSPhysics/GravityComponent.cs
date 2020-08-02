@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using IronStar.ECS;
 
-namespace IronStar.Physics2
+namespace IronStar.ECSPhysics
 {
-	public class Gravity : Component
+	public class GravityComponent : Component
 	{
 		public float Magnitude = 48;
 
-		public Gravity( float g )
+		public GravityComponent( float g )
 		{
 			Magnitude	=	g;
 		}

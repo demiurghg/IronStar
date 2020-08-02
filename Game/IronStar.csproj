@@ -121,7 +121,7 @@
     <Compile Include="ECSPhysics\IMotionState.cs" />
     <Compile Include="ECSPhysics\KinematicCollisionModel.cs" />
     <Compile Include="ECSPhysics\DynamicBox.cs" />
-    <Compile Include="ECSPhysics\Gravity.cs" />
+    <Compile Include="ECSPhysics\GravityComponent.cs" />
     <Compile Include="ECSPhysics\PhysicsEngineSystem.cs" />
     <Compile Include="ECSPhysics\StaticCollisionModel.cs" />
     <Compile Include="Physics\KinematicModel.cs" />

@@ -66,7 +66,7 @@ namespace IronStar.SFX {
 
 		public ECS.Aspect GetAspect()
 		{
-			return ECS.Aspect.Empty();
+			return ECS.Aspect.Empty;
 		}
 
 

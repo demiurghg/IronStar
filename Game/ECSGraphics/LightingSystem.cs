@@ -31,7 +31,7 @@ namespace IronStar.SFX2
 	{
 		public Aspect GetAspect()
 		{
-			return Aspect.Empty();
+			return Aspect.Empty;
 		}
 
 

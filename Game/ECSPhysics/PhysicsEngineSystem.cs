@@ -13,7 +13,7 @@ using Fusion.Core;
 using Fusion;
 using IronStar.Gameplay;
 
-namespace IronStar.Physics2
+namespace IronStar.ECSPhysics
 {
 	public class PhysicsEngineSystem : ISystem 
 	{
@@ -88,7 +88,7 @@ namespace IronStar.Physics2
 
 		void UpdateGravity( GameState gs )
 		{
-			var gravity					=	gs.QueryComponents<Gravity>().FirstOrDefault();
+			var gravity					=	gs.QueryComponents<GravityComponent>().FirstOrDefault();
 			var gravityMagnitude		=	gravity==null ? 0 : gravity.Magnitude;
 			var gravityVector			=	Vector3.Down * gravityMagnitude;
 			Space.ForceUpdater.Gravity	=	MathConverter.Convert( gravityVector );

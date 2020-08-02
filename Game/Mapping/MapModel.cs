@@ -18,7 +18,7 @@ using BEPUTransform = BEPUutilities.AffineTransform;
 using Fusion.Core.Shell;
 using Fusion.Engine.Graphics.Scenes;
 using IronStar.ECS;
-using IronStar.Physics2;
+using IronStar.ECSPhysics;
 
 namespace IronStar.Mapping {
 

@@ -26,7 +26,7 @@ using BEPUphysics.PositionUpdating;
 using BEPUphysics.CollisionRuleManagement;
 using IronStar.ECS;
 
-namespace IronStar.Physics2 
+namespace IronStar.ECSPhysics 
 {
 	public class DynamicBox : Component, IMotionState
 	{

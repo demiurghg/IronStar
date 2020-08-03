@@ -222,6 +222,7 @@ namespace IronStar.Mapping {
 			e.AddComponent( new StaticCollisionComponent() );
 
 			var rm		=	new SFX2.RenderModel( ScenePath, Matrix.Identity, Color.White, 1, SFX2.RMFlags.None );
+			rm.cmPrefix	=	UseCollisionMesh ? "cm_" : "";
 			var lmSize	=	UseLightVolume ? 0 : (int)LightMapSize;
 			rm.SetupLightmap( lmSize, lmSize, NodeGuid );
 			e.AddComponent( rm );

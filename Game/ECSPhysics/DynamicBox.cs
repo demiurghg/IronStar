@@ -28,92 +28,23 @@ using IronStar.ECS;
 
 namespace IronStar.ECSPhysics 
 {
-	public class DynamicBox : Component, IMotionState
+	public class DynamicBox : Component
 	{
-		float	width;
-		float	height;
-		float	depth;
-		float	mass;
+		public float	Width	{ get; set; } =	1;
+		public float	Height	{ get; set; } =	1;
+		public float	Depth	{ get; set; } =	1;
+		public float	Mass	{ get; set; } =	1;
 
-		PhysicsEngineSystem	physics;
-		Box box;
+		public DynamicBox()
+		{
+		}
 
 		public DynamicBox ( float width, float height, float depth, float mass )
 		{
-			this.width	=	width	;
-			this.height	=	height	;
-			this.depth	=	depth	;
-			this.mass	=	mass	;
+			this.Width	=	width	;
+			this.Height	=	height	;
+			this.Depth	=	depth	;
+			this.Mass	=	mass	;
 		}
-
-
-		public override void Added( GameState gs, Entity entity )
-		{
-			base.Added( gs, entity );
-
-			physics	=	gs.GetService<PhysicsEngineSystem>();
-
-			var ms					=	new MotionState();
-
-			box						=	new Box( ms, width, height, depth, mass );
-			box.PositionUpdateMode	=	PositionUpdateMode.Continuous;
-			box.Tag					=	this;
-
-			box.CollisionInformation.Events.InitialCollisionDetected += Events_InitialCollisionDetected;
-			box.CollisionInformation.CollisionRules.Group = physics.DymamicGroup;
-
-			physics.Space.Add( box );
-		}
-
-
-		public override void Removed( GameState gs )
-		{
-			base.Removed( gs );
-
-			physics.Space.Remove( box );
-		}
-
-
-		private void Events_InitialCollisionDetected( EntityCollidable sender, Collidable other, CollidablePairHandler pair )
-		{
-			physics.HandleTouch( pair );
-		}
-
-
-		public void Kick ( Vector3 kickImpulse, Vector3 kickPoint )
-		{
-			var i = MathConverter.Convert( kickImpulse );
-			var p = MathConverter.Convert( kickPoint );
-			box.ApplyImpulse( p, i );
-		}
-
-
-		public Vector3 Position 
-		{
-			get { return MathConverter.Convert( box.Position ); }
-			set { box.Position = MathConverter.Convert( value ); }
-		}
-
-
-		public Quaternion Rotation 
-		{
-			get { return MathConverter.Convert( box.Orientation ); }
-			set { box.Orientation = MathConverter.Convert( value ); }
-		}
-
-
-		public Vector3 LinearVelocity 
-		{
-			get { return MathConverter.Convert( box.LinearVelocity ); }
-			set { box.LinearVelocity = MathConverter.Convert( value ); }
-		}
-
-
-		public Vector3 AngularVelocity 
-		{
-			get { return MathConverter.Convert( box.AngularVelocity ); }
-			set { box.AngularVelocity = MathConverter.Convert( value ); }
-		}
-
 	}
 }

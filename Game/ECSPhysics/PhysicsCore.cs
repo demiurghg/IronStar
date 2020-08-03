@@ -56,7 +56,7 @@ namespace IronStar.ECSPhysics
 		{
 			UpdateGravity(gs);
 
-			UpdateSimulation( gameTime.ElapsedSec );
+			UpdateSimulation( gs, gameTime.ElapsedSec );
 		}
 
 
@@ -76,7 +76,7 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		void UpdateSimulation ( float elapsedTime )
+		void UpdateSimulation ( GameState gs, float elapsedTime )
 		{
 			if (elapsedTime==0)
 			 {
@@ -90,6 +90,12 @@ namespace IronStar.ECSPhysics
 			physSpace.TimeStepSettings.MaximumTimeStepsPerFrame = 5;
 			physSpace.TimeStepSettings.TimeStepDuration = 1.0f/60.0f;
 			var steps = physSpace.Update(dt);
+
+
+			foreach ( var transformFeeder in gs.GatherSystems<ITransformFeeder>() )
+			{
+				transformFeeder.FeedTransform(gs);
+			}
 		}
 	}
 }

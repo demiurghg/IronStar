@@ -25,7 +25,7 @@ namespace IronStar.SFX2
 		}
 
 		
-		public override RSOmniLight Create( Entity e, OmniLight ol, Transform t )
+		protected override RSOmniLight Create( Entity e, OmniLight ol, Transform t )
 		{
 			var light = new RSOmniLight();
 
@@ -36,13 +36,13 @@ namespace IronStar.SFX2
 		}
 
 		
-		public override void Destroy( Entity e, RSOmniLight light )
+		protected override void Destroy( Entity e, RSOmniLight light )
 		{
 			ls.OmniLights.Remove( light );
 		}
 
 		
-		public override void Process( Entity e, GameTime gameTime, RSOmniLight light, OmniLight ol, Transform t )
+		protected override void Process( Entity e, GameTime gameTime, RSOmniLight light, OmniLight ol, Transform t )
 		{
 			var transform		=	t.TransformMatrix;
 			light.Position0		=	transform.TranslationVector + transform.Right * ol.TubeLength * 0.5f;

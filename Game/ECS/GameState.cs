@@ -126,6 +126,21 @@ namespace IronStar.ECS
 		}
 
 
+		/// <summary>
+		/// Gets all system inherited from TSystem
+		/// </summary>
+		/// <typeparam name="TSystem"></typeparam>
+		/// <returns></returns>
+		public IEnumerable<TSystem> GatherSystems<TSystem>()
+		{
+			var type = typeof(TSystem);
+			return systems
+				.Where( sys1 => type.IsAssignableFrom( sys1.System.GetType() ) )
+				.Select( sys2 => (TSystem)sys2.System )
+				.ToArray();
+		}
+
+
 		/*-----------------------------------------------------------------------------------------------
 		 *	Entity stuff :
 		-----------------------------------------------------------------------------------------------*/

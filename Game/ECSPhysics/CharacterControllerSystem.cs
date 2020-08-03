@@ -25,10 +25,9 @@ using IronStar.Gameplay;
 
 namespace IronStar.ECSPhysics 
 {
-	public class CharacterControllerSystem : ProcessingSystem<BEPUCharacterController,CharacterController,Transform,Velocity>
+	public class CharacterControllerSystem : ProcessingSystem<BEPUCharacterController,CharacterController,Transform,Velocity>, ITransformFeeder
 	{
 		readonly PhysicsCore physics;
-
 
 		public CharacterControllerSystem( PhysicsCore physics )
 		{
@@ -36,7 +35,7 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		public override BEPUCharacterController Create( Entity e, CharacterController cc, Transform t, Velocity v )
+		protected override BEPUCharacterController Create( Entity e, CharacterController cc, Transform t, Velocity v )
 		{
 			var p	=	t.Position;
 
@@ -62,13 +61,35 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		public override void Destroy( Entity e, BEPUCharacterController ch )
+		protected override void Destroy( Entity e, BEPUCharacterController ch )
 		{
 			physics.Space.Remove(ch); 
 		}
 
 
-		public override void Process( Entity e, GameTime gameTime, BEPUCharacterController controller, CharacterController cc, Transform t, Velocity v )
+		public void FeedTransform( GameState gs )
+		{
+			ForEach( gs, GameTime.Zero, FeedControllerData );
+		}
+
+		
+		protected void FeedControllerData( Entity e, GameTime gameTime, BEPUCharacterController controller, CharacterController cc, Transform t, Velocity v )
+		{
+			var crouching	=	controller.StanceManager.CurrentStance == Stance.Crouching;
+			var traction	=	controller.SupportFinder.HasTraction;
+			var offset		=	crouching ? cc.offsetCrouch : cc.offsetStanding;
+			var position	=	MathConverter.Convert( controller.Body.Position ) - offset;
+
+			cc.IsCrouching	=	crouching;
+			cc.HasTraction	=	traction;
+			
+			t.Position	=	position;
+			v.Linear	=	MathConverter.Convert( controller.Body.LinearVelocity );
+			v.Angular	=	Vector3.Zero;
+		}
+
+
+		protected override void Process( Entity e, GameTime gameTime, BEPUCharacterController controller, CharacterController cc, Transform t, Velocity v )
 		{
 			var uc	=	e.GetComponent<UserCommand2>();
 
@@ -76,15 +97,6 @@ namespace IronStar.ECSPhysics
 			{
 				Move( controller, cc, uc.MovementVector );
 			}
-
-			var crouching	=	controller.StanceManager.CurrentStance == Stance.Crouching;
-			var traction	=	controller.SupportFinder.HasTraction;
-			var offset		=	crouching ? cc.offsetCrouch : cc.offsetStanding;
-			var position	=	MathConverter.Convert( controller.Body.Position ) - offset;
-			
-			t.Position	=	position;
-			v.Linear	=	MathConverter.Convert( controller.Body.LinearVelocity );
-			v.Angular	=	Vector3.Zero;
 		}
 
 
@@ -100,8 +112,5 @@ namespace IronStar.ECSPhysics
 
 			controller.TryToJump = jump;
 		}
-
-
-
 	}
 }

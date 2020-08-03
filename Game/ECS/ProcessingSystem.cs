@@ -52,9 +52,9 @@ namespace IronStar.ECS
 			}
 		}
 
-		public abstract TResource Create ( Entity entity, T1 component1 );
-		public abstract void Destroy ( Entity entity, TResource resource );
-		public abstract void Process( Entity entity, GameTime gameTime, TResource resource, T1 component1 );
+		protected abstract TResource Create ( Entity entity, T1 component1 );
+		protected abstract void Destroy ( Entity entity, TResource resource );
+		protected abstract void Process( Entity entity, GameTime gameTime, TResource resource, T1 component1 );
 	}
 
 
@@ -106,9 +106,9 @@ namespace IronStar.ECS
 			}
 		}
 
-		public abstract TResource Create ( Entity entity, T1 component1, T2 component2 );
-		public abstract void Destroy ( Entity entity, TResource resource );
-		public abstract void Process( Entity entity, GameTime gameTime, TResource resource, T1 component1, T2 component2 );
+		protected abstract TResource Create ( Entity entity, T1 component1, T2 component2 );
+		protected abstract void Destroy ( Entity entity, TResource resource );
+		protected abstract void Process( Entity entity, GameTime gameTime, TResource resource, T1 component1, T2 component2 );
 	}
 
 
@@ -149,7 +149,7 @@ namespace IronStar.ECS
 			}
 		}
 
-		public void Update( GameState gs, GameTime gameTime )
+		protected void ForEach( GameState gs, GameTime gameTime, Action<Entity,GameTime,TResource,T1,T2,T3> action )
 		{
 			var entities = gs.QueryEntities(aspect);
 
@@ -159,13 +159,18 @@ namespace IronStar.ECS
 				var c2	=	e.GetComponent<T2>();
 				var c3	=	e.GetComponent<T3>();
 				var rc	=	resources[ e.ID ];
-				Process( e, gameTime, rc, c1,c2,c3 );
+				action( e, gameTime, rc, c1,c2,c3 );
 			}
 		}
 
-		public abstract TResource Create ( Entity entity, T1 component1, T2 component2, T3 component3 );
-		public abstract void Destroy ( Entity entity, TResource resource );
-		public abstract void Process( Entity entity, GameTime gameTime, TResource resource, T1 component1, T2 component2, T3 component3 );
+		public void Update( GameState gs, GameTime gameTime )
+		{
+			ForEach( gs, gameTime, Process );
+		}
+
+		protected abstract TResource Create ( Entity entity, T1 component1, T2 component2, T3 component3 );
+		protected abstract void Destroy ( Entity entity, TResource resource );
+		protected abstract void Process( Entity entity, GameTime gameTime, TResource resource, T1 component1, T2 component2, T3 component3 );
 	}
 
 
@@ -223,8 +228,8 @@ namespace IronStar.ECS
 			}
 		}
 
-		public abstract TResource Create ( Entity entity, T1 component1, T2 component2, T3 component3, T4 component4 );
-		public abstract void Destroy ( Entity entity, TResource resource );
-		public abstract void Process( Entity entity, GameTime gameTime, TResource resource, T1 component1, T2 component2, T3 component3, T4 component4 );
+		protected abstract TResource Create ( Entity entity, T1 component1, T2 component2, T3 component3, T4 component4 );
+		protected abstract void Destroy ( Entity entity, TResource resource );
+		protected abstract void Process( Entity entity, GameTime gameTime, TResource resource, T1 component1, T2 component2, T3 component3, T4 component4 );
 	}
 }

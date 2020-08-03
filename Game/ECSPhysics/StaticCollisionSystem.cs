@@ -32,7 +32,7 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		public override CollisionModel Create( Entity e, StaticCollisionComponent sc, RenderModel rm, Transform t )
+		protected override CollisionModel Create( Entity e, StaticCollisionComponent sc, RenderModel rm, Transform t )
 		{
 			var content		=	e.gs.GetService<ContentManager>();
 			
@@ -66,7 +66,7 @@ namespace IronStar.ECSPhysics
 		}
 
 		
-		public override void Process( Entity e, GameTime gameTime, CollisionModel cm, StaticCollisionComponent sc, RenderModel rm, Transform t )
+		protected override void Process( Entity e, GameTime gameTime, CollisionModel cm, StaticCollisionComponent sc, RenderModel rm, Transform t )
 		{
 			/*var tm =  t.TransformMatrix;
 
@@ -83,7 +83,7 @@ namespace IronStar.ECSPhysics
 		}
 
 		
-		public override void Destroy( Entity e, CollisionModel cm )
+		protected override void Destroy( Entity e, CollisionModel cm )
 		{
 			foreach ( var m in cm.staticMeshes )
 			{

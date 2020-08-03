@@ -34,7 +34,7 @@ namespace IronStar.SFX2
 		}
 
 
-		public override RSLightProbe Create( Entity e, LightProbeSphere lpSph, LightProbeBox lpBox, Transform t )
+		protected override RSLightProbe Create( Entity e, LightProbeSphere lpSph, LightProbeBox lpBox, Transform t )
 		{
 			var guid = new Guid();;
 			if (lpSph!=null) guid = lpSph.guid;
@@ -49,13 +49,13 @@ namespace IronStar.SFX2
 		}
 
 
-		public override void Destroy( Entity e, RSLightProbe light )
+		protected override void Destroy( Entity e, RSLightProbe light )
 		{
 			ls.LightProbes.Remove( light );
 		}
 
 		
-		public override void Process( Entity e, GameTime gameTime, RSLightProbe light, LightProbeSphere lpSph, LightProbeBox lpBox, Transform t )
+		protected override void Process( Entity e, GameTime gameTime, RSLightProbe light, LightProbeSphere lpSph, LightProbeBox lpBox, Transform t )
 		{
 			var transform	=	t.TransformMatrix;
 

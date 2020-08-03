@@ -72,6 +72,8 @@
     <Compile Include="ECSGraphics\OmniLightSystem.cs" />
     <Compile Include="ECSGraphics\RenderModelView.cs" />
     <Compile Include="ECSPhysics\CharacterControllerSystem.cs" />
+    <Compile Include="ECSPhysics\DynamicCollisionSystem.cs" />
+    <Compile Include="ECSPhysics\ITransformFeeder.cs" />
     <Compile Include="ECSPhysics\PhysicsCore.cs" />
     <Compile Include="ECSPhysics\StaticCollisionSystem.cs" />
     <Compile Include="ECS\Aspect.cs" />
@@ -121,10 +123,8 @@
     <Compile Include="Mapping\MapLightProbeBox.cs" />
     <Compile Include="ECSPhysics\CharacterController.cs" />
     <Compile Include="ECSPhysics\IMotionState.cs" />
-    <Compile Include="ECSPhysics\KinematicCollisionModel.cs" />
     <Compile Include="ECSPhysics\DynamicBox.cs" />
     <Compile Include="ECSPhysics\GravityComponent.cs" />
-    <Compile Include="ECSPhysics\PhysicsEngineSystem.cs" />
     <Compile Include="ECSPhysics\StaticCollisionComponent.cs" />
     <Compile Include="Physics\KinematicModel.cs" />
     <Compile Include="SceneView.cs" />

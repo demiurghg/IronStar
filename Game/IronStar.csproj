@@ -71,6 +71,7 @@
     <Compile Include="ECSGraphics\SpotLightSystem.cs" />
     <Compile Include="ECSGraphics\OmniLightSystem.cs" />
     <Compile Include="ECSGraphics\RenderModelView.cs" />
+    <Compile Include="ECSPhysics\CharacterControllerSystem.cs" />
     <Compile Include="ECSPhysics\PhysicsCore.cs" />
     <Compile Include="ECSPhysics\StaticCollisionSystem.cs" />
     <Compile Include="ECS\Aspect.cs" />

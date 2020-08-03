@@ -41,19 +41,19 @@ namespace IronStar.SFX2
 		}
 
 
-		public override RenderModelView Create( GameState gs, Transform t, RenderModel rm )
+		public override RenderModelView Create( Entity e, Transform t, RenderModel rm )
 		{
-			return new RenderModelView( gs, rm, t );
+			return new RenderModelView( e.gs, rm, t );
 		}
 
 		
-		public override void Destroy( GameState gs, RenderModelView model )
+		public override void Destroy( Entity e, RenderModelView model )
 		{
 			model?.Dispose();
 		}
 
 		
-		public override void Process( GameState gs, GameTime gameTime, RenderModelView model, Transform t, RenderModel rm )
+		public override void Process( Entity e, GameTime gameTime, RenderModelView model, Transform t, RenderModel rm )
 		{
 			model.SetTransform( t.TransformMatrix );
 		}

@@ -25,24 +25,24 @@ namespace IronStar.SFX2
 		}
 
 		
-		public override RSSpotLight Create( GameState gs, SpotLight ol, Transform t )
+		public override RSSpotLight Create( Entity e, SpotLight ol, Transform t )
 		{
 			var light = new RSSpotLight();
 
-			Process( gs, GameTime.Zero, light, ol, t );
+			Process( e, GameTime.Zero, light, ol, t );
 
 			ls.SpotLights.Add( light );
 			return light;
 		}
 
 		
-		public override void Destroy( GameState gs, RSSpotLight light )
+		public override void Destroy( Entity e, RSSpotLight light )
 		{
 			ls.SpotLights.Remove( light );
 		}
 
 		
-		public override void Process( GameState gs, GameTime gameTime, RSSpotLight light, SpotLight ol, Transform t )
+		public override void Process( Entity e, GameTime gameTime, RSSpotLight light, SpotLight ol, Transform t )
 		{
 			var transform		=	t.TransformMatrix;
 			light.Position0		=	transform.TranslationVector + transform.Right * ol.TubeLength * 0.5f;

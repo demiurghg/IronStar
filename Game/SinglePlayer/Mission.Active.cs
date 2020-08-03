@@ -40,6 +40,7 @@ namespace IronStar.SinglePlayer {
 			gs.AddSystem( physicsCore );
 			gs.AddSystem( new ECSPhysics.StaticCollisionSystem(physicsCore) );
 			gs.AddSystem( new ECSPhysics.PhysicsEngineSystem(physicsCore) );
+			gs.AddSystem( new ECSPhysics.CharacterControllerSystem(physicsCore) );
 			gs.AddSystem( new FXPlayback(game, content) );
 
 			//	game logic :

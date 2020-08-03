@@ -26,7 +26,7 @@ namespace IronStar.ECS
 		public void Add( GameState gs, Entity e )
 		{
 			var c1	=	e.GetComponent<T1>();
-			var rc	=	Create( gs, c1 );
+			var rc	=	Create( e, c1 );
 			resources.Add( e.ID, rc );
 		}
 
@@ -36,7 +36,7 @@ namespace IronStar.ECS
 			if (resources.TryGetValue( e.ID, out rc))
 			{
 				resources.Remove( e.ID );
-				Destroy( gs, rc );
+				Destroy( e, rc );
 			}
 		}
 
@@ -48,13 +48,13 @@ namespace IronStar.ECS
 			{
 				var c1	=	e.GetComponent<T1>();
 				var rc	=	resources[ e.ID ];
-				Process( gs, gameTime, rc, c1 );
+				Process( e, gameTime, rc, c1 );
 			}
 		}
 
-		public abstract TResource Create ( GameState gs, T1 component1 );
-		public abstract void Destroy ( GameState gs, TResource resource );
-		public abstract void Process( GameState gs, GameTime gameTime, TResource resource, T1 component1 );
+		public abstract TResource Create ( Entity entity, T1 component1 );
+		public abstract void Destroy ( Entity entity, TResource resource );
+		public abstract void Process( Entity entity, GameTime gameTime, TResource resource, T1 component1 );
 	}
 
 
@@ -79,7 +79,7 @@ namespace IronStar.ECS
 		{
 			var c1	=	e.GetComponent<T1>();
 			var c2	=	e.GetComponent<T2>();
-			var rc	=	Create( gs, c1, c2 );
+			var rc	=	Create( e, c1, c2 );
 			resources.Add( e.ID, rc );
 		}
 
@@ -89,7 +89,7 @@ namespace IronStar.ECS
 			if (resources.TryGetValue( e.ID, out rc))
 			{
 				resources.Remove( e.ID );
-				Destroy( gs, rc );
+				Destroy( e, rc );
 			}
 		}
 
@@ -102,13 +102,13 @@ namespace IronStar.ECS
 				var c1	=	e.GetComponent<T1>();
 				var c2	=	e.GetComponent<T2>();
 				var rc	=	resources[ e.ID ];
-				Process( gs, gameTime, rc, c1, c2 );
+				Process( e, gameTime, rc, c1, c2 );
 			}
 		}
 
-		public abstract TResource Create ( GameState gs, T1 component1, T2 component2 );
-		public abstract void Destroy ( GameState gs, TResource resource );
-		public abstract void Process( GameState gs, GameTime gameTime, TResource resource, T1 component1, T2 component2 );
+		public abstract TResource Create ( Entity entity, T1 component1, T2 component2 );
+		public abstract void Destroy ( Entity entity, TResource resource );
+		public abstract void Process( Entity entity, GameTime gameTime, TResource resource, T1 component1, T2 component2 );
 	}
 
 
@@ -135,7 +135,7 @@ namespace IronStar.ECS
 			var c1	=	e.GetComponent<T1>();
 			var c2	=	e.GetComponent<T2>();
 			var c3	=	e.GetComponent<T3>();
-			var rc	=	Create( gs, c1,c2,c3 );
+			var rc	=	Create( e, c1,c2,c3 );
 			resources.Add( e.ID, rc );
 		}
 
@@ -145,7 +145,7 @@ namespace IronStar.ECS
 			if (resources.TryGetValue( e.ID, out rc))
 			{
 				resources.Remove( e.ID );
-				Destroy( gs, rc );
+				Destroy( e, rc );
 			}
 		}
 
@@ -159,13 +159,13 @@ namespace IronStar.ECS
 				var c2	=	e.GetComponent<T2>();
 				var c3	=	e.GetComponent<T3>();
 				var rc	=	resources[ e.ID ];
-				Process( gs, gameTime, rc, c1,c2,c3 );
+				Process( e, gameTime, rc, c1,c2,c3 );
 			}
 		}
 
-		public abstract TResource Create ( GameState gs, T1 component1, T2 component2, T3 component3 );
-		public abstract void Destroy ( GameState gs, TResource resource );
-		public abstract void Process( GameState gs, GameTime gameTime, TResource resource, T1 component1, T2 component2, T3 component3 );
+		public abstract TResource Create ( Entity entity, T1 component1, T2 component2, T3 component3 );
+		public abstract void Destroy ( Entity entity, TResource resource );
+		public abstract void Process( Entity entity, GameTime gameTime, TResource resource, T1 component1, T2 component2, T3 component3 );
 	}
 
 
@@ -194,7 +194,7 @@ namespace IronStar.ECS
 			var c2	=	e.GetComponent<T2>();
 			var c3	=	e.GetComponent<T3>();
 			var c4	=	e.GetComponent<T4>();
-			var rc	=	Create( gs, c1,c2,c3,c4 );
+			var rc	=	Create( e, c1,c2,c3,c4 );
 			resources.Add( e.ID, rc );
 		}
 
@@ -204,7 +204,7 @@ namespace IronStar.ECS
 			if (resources.TryGetValue( e.ID, out rc))
 			{
 				resources.Remove( e.ID );
-				Destroy( gs, rc );
+				Destroy( e, rc );
 			}
 		}
 
@@ -219,12 +219,12 @@ namespace IronStar.ECS
 				var c3	=	e.GetComponent<T3>();
 				var c4	=	e.GetComponent<T4>();
 				var rc	=	resources[ e.ID ];
-				Process( gs, gameTime, rc, c1,c2,c3,c4 );
+				Process( e, gameTime, rc, c1,c2,c3,c4 );
 			}
 		}
 
-		public abstract TResource Create ( GameState gs, T1 component1, T2 component2, T3 component3, T4 component4 );
-		public abstract void Destroy ( GameState gs, TResource resource );
-		public abstract void Process( GameState gs, GameTime gameTime, TResource resource, T1 component1, T2 component2, T3 component3, T4 component4 );
+		public abstract TResource Create ( Entity entity, T1 component1, T2 component2, T3 component3, T4 component4 );
+		public abstract void Destroy ( Entity entity, TResource resource );
+		public abstract void Process( Entity entity, GameTime gameTime, TResource resource, T1 component1, T2 component2, T3 component3, T4 component4 );
 	}
 }

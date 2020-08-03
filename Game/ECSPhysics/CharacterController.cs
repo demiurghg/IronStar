@@ -25,20 +25,20 @@ using IronStar.ECS;
 
 namespace IronStar.ECSPhysics 
 {
-	public class CharacterController : Component, IMotionState
+	public class CharacterController : Component
 	{
 		BEPUCharacterController controller;
 
-		float	heightStanding;
-		float	heightCrouching;
-		float	radius;
-		float	speedStanding;
-		float	speedCrouching;
-		float	speedJump;
-		float	stepHeight;
-		float	mass;
-		Vector3 offsetCrouch	{ get { return Vector3.Up * heightCrouching	/ 2; } }
-		Vector3 offsetStanding	{ get { return Vector3.Up * heightStanding	/ 2; } }
+		public float	heightStanding;
+		public float	heightCrouching;
+		public float	radius;
+		public float	speedStanding;
+		public float	speedCrouching;
+		public float	speedJump;
+		public float	stepHeight;
+		public float	mass;
+		public Vector3 offsetCrouch	{ get { return Vector3.Up * heightCrouching	/ 2; } }
+		public Vector3 offsetStanding	{ get { return Vector3.Up * heightStanding	/ 2; } }
 
 		PhysicsEngineSystem	physics;
 
@@ -56,156 +56,156 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		public override void Added( GameState gs, Entity e )
-		{
-			base.Added( gs, e );
+		//public override void Added( GameState gs, Entity e )
+		//{
+		//	base.Added( gs, e );
 
-			physics		=	gs.GetService<PhysicsEngineSystem>();
+		//	physics		=	gs.GetService<PhysicsEngineSystem>();
 
-			controller = new BEPUCharacterController( BEPUutilities.Vector3.Zero, 
-						height			:	heightStanding,
-						radius			:	radius,
-						crouchingHeight	:	heightCrouching,
-						standingSpeed	:	speedStanding,
-						crouchingSpeed	:	speedCrouching,
-						jumpSpeed		:	speedJump,
-						mass			:	mass
-					);
+		//	controller = new BEPUCharacterController( BEPUutilities.Vector3.Zero, 
+		//				height			:	heightStanding,
+		//				radius			:	radius,
+		//				crouchingHeight	:	heightCrouching,
+		//				standingSpeed	:	speedStanding,
+		//				crouchingSpeed	:	speedCrouching,
+		//				jumpSpeed		:	speedJump,
+		//				mass			:	mass
+		//			);
 
-			controller.StepManager.MaximumStepHeight	=	stepHeight;
+		//	controller.StepManager.MaximumStepHeight	=	stepHeight;
 
-			controller.Body.Tag	=	this;
-			controller.Tag		=	this;
+		//	controller.Body.Tag	=	this;
+		//	controller.Tag		=	this;
 
-			controller.Body.CollisionInformation.Events.InitialCollisionDetected +=Events_InitialCollisionDetected;
-			controller.Body.CollisionInformation.CollisionRules.Group = physics.CharacterGroup;
+		//	controller.Body.CollisionInformation.Events.InitialCollisionDetected +=Events_InitialCollisionDetected;
+		//	controller.Body.CollisionInformation.CollisionRules.Group = physics.CharacterGroup;
 
-			physics.Space.Add( controller );
-		}
-
-
-		public override void Removed( GameState gs )
-		{
-			base.Removed( gs );
-
-			physics.Space.Remove( controller );
-		}
+		//	physics.Space.Add( controller );
+		//}
 
 
-		private void Events_InitialCollisionDetected( EntityCollidable sender, Collidable other, CollidablePairHandler pair )
-		{
-			physics.HandleTouch( pair );
-		}
+		//public override void Removed( GameState gs )
+		//{
+		//	base.Removed( gs );
+
+		//	physics.Space.Remove( controller );
+		//}
 
 
-		public bool IsCrouching {
-			get {
-				return (controller.StanceManager.CurrentStance == Stance.Crouching);
-			}
-		}
+		//private void Events_InitialCollisionDetected( EntityCollidable sender, Collidable other, CollidablePairHandler pair )
+		//{
+		//	physics.HandleTouch( pair );
+		//}
 
 
-		public bool HasTraction {
-			get {
-				return controller.SupportFinder.HasTraction;
-			}
-		}
+		//public bool IsCrouching {
+		//	get {
+		//		return (controller.StanceManager.CurrentStance == Stance.Crouching);
+		//	}
+		//}
 
 
-		public void Teleport ( Vector3 position, Vector3 velocity )
-		{
-			var offset = IsCrouching ? offsetCrouch : offsetStanding;
-
-			controller.Body.Position		=	MathConverter.Convert( position + offset );
-			controller.Body.LinearVelocity	=	MathConverter.Convert( velocity );
-
-			//	https://forum.bepuentertainment.com/viewtopic.php?f=4&t=2389
-			controller.SupportFinder.ClearSupportData();
-		}
+		//public bool HasTraction {
+		//	get {
+		//		return controller.SupportFinder.HasTraction;
+		//	}
+		//}
 
 
-		public Vector3 Movement
-		{
-			set 
-			{
-				Move( value );
-			}
-		}
+		//public void Teleport ( Vector3 position, Vector3 velocity )
+		//{
+		//	var offset = IsCrouching ? offsetCrouch : offsetStanding;
+
+		//	controller.Body.Position		=	MathConverter.Convert( position + offset );
+		//	controller.Body.LinearVelocity	=	MathConverter.Convert( velocity );
+
+		//	//	https://forum.bepuentertainment.com/viewtopic.php?f=4&t=2389
+		//	controller.SupportFinder.ClearSupportData();
+		//}
 
 
-		void Move ( Vector3 move )
-		{
-			var jump	=	move.Y > 0.5f;
-			var crouch	=	move.Y < -0.5f;
-
-			if (controller==null) {
-				return;
-			}
-
-			controller.HorizontalMotionConstraint.MovementDirection = new BEPUutilities.Vector2( move.X, -move.Z );
-			controller.HorizontalMotionConstraint.TargetSpeed	=	crouch ? speedCrouching : speedStanding;
-
-			controller.StanceManager.DesiredStance	=	crouch ? Stance.Crouching : Stance.Standing;
-
-			controller.TryToJump = jump;
-		}
+		//public Vector3 Movement
+		//{
+		//	set 
+		//	{
+		//		Move( value );
+		//	}
+		//}
 
 
-		public Vector3 Position 
-		{
-			get 
-			{ 
-				var offset = IsCrouching ? offsetCrouch : offsetStanding;
-				return MathConverter.Convert( controller.Body.Position ) - offset; 
-			}
-			set 
-			{ 
-				var offset = IsCrouching ? offsetCrouch : offsetStanding;
-				controller.Body.Position = MathConverter.Convert( value + offset ); 
-				controller.SupportFinder.ClearSupportData();
-			}
-		}
+		//void Move ( Vector3 move )
+		//{
+		//	var jump	=	move.Y > 0.5f;
+		//	var crouch	=	move.Y < -0.5f;
+
+		//	if (controller==null) {
+		//		return;
+		//	}
+
+		//	controller.HorizontalMotionConstraint.MovementDirection = new BEPUutilities.Vector2( move.X, -move.Z );
+		//	controller.HorizontalMotionConstraint.TargetSpeed	=	crouch ? speedCrouching : speedStanding;
+
+		//	controller.StanceManager.DesiredStance	=	crouch ? Stance.Crouching : Stance.Standing;
+
+		//	controller.TryToJump = jump;
+		//}
 
 
-		/// <summary>
-		/// Keep rotation as separate value, 
-		/// since character body always has identity rotation
-		/// </summary>
-		Quaternion rotation;
-
-		public Quaternion Rotation 
-		{
-			get { return rotation; }
-			set { rotation = value; }
-		}
-
-
-		public Vector3 LinearVelocity 
-		{
-			get { return MathConverter.Convert( controller.Body.LinearVelocity ); }
-			set 
-			{ 
-				controller.Body.LinearVelocity = MathConverter.Convert( value ); 
-				controller.SupportFinder.ClearSupportData();
-			}
-		}
+		//public Vector3 Position 
+		//{
+		//	get 
+		//	{ 
+		//		var offset = IsCrouching ? offsetCrouch : offsetStanding;
+		//		return MathConverter.Convert( controller.Body.Position ) - offset; 
+		//	}
+		//	set 
+		//	{ 
+		//		var offset = IsCrouching ? offsetCrouch : offsetStanding;
+		//		controller.Body.Position = MathConverter.Convert( value + offset ); 
+		//		controller.SupportFinder.ClearSupportData();
+		//	}
+		//}
 
 
-		public Vector3 AngularVelocity 
-		{
-			get { return Vector3.Zero; }
-			set { /* do nothing */ }
-		}
+		///// <summary>
+		///// Keep rotation as separate value, 
+		///// since character body always has identity rotation
+		///// </summary>
+		//Quaternion rotation;
+
+		//public Quaternion Rotation 
+		//{
+		//	get { return rotation; }
+		//	set { rotation = value; }
+		//}
 
 
-		public void ApplyImpulse ( Vector3 kickImpulse, Vector3 kickPoint )
-		{
-			var c = controller;
+		//public Vector3 LinearVelocity 
+		//{
+		//	get { return MathConverter.Convert( controller.Body.LinearVelocity ); }
+		//	set 
+		//	{ 
+		//		controller.Body.LinearVelocity = MathConverter.Convert( value ); 
+		//		controller.SupportFinder.ClearSupportData();
+		//	}
+		//}
 
-			c.SupportFinder.ClearSupportData();
-			var i = MathConverter.Convert( kickImpulse );
-			var p = MathConverter.Convert( kickPoint );
-			c.Body.ApplyImpulse( p, i );
-		}
+
+		//public Vector3 AngularVelocity 
+		//{
+		//	get { return Vector3.Zero; }
+		//	set { /* do nothing */ }
+		//}
+
+
+		//public void ApplyImpulse ( Vector3 kickImpulse, Vector3 kickPoint )
+		//{
+		//	var c = controller;
+
+		//	c.SupportFinder.ClearSupportData();
+		//	var i = MathConverter.Convert( kickImpulse );
+		//	var p = MathConverter.Convert( kickPoint );
+		//	c.Body.ApplyImpulse( p, i );
+		//}
 	}
 }

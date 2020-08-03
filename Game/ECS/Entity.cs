@@ -9,7 +9,7 @@ namespace IronStar.ECS
 {
 	public sealed class Entity
 	{
-		readonly GameState gs;
+		public readonly GameState gs;
 
 		/// <summary>
 		/// Unique entity ID

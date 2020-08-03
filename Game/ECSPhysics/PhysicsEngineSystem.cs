@@ -75,14 +75,14 @@ namespace IronStar.ECSPhysics
 			UpdateGravity( gs );
 
 			TeleportDynamicObjects<DynamicBox>(gs);
-			TeleportDynamicObjects<CharacterController>(gs);
+			//TeleportDynamicObjects<CharacterController>(gs);
 
 			UpdateCharacterUserCommands(gs);
 
 			UpdateSimulation( gameTime.ElapsedSec );
 
 			UpdateDynamicObjects<DynamicBox>(gs);
-			UpdateDynamicObjects<CharacterController>(gs);
+			//UpdateDynamicObjects<CharacterController>(gs);
 
 			UpdateTouchEvents();
 		}
@@ -106,7 +106,7 @@ namespace IronStar.ECSPhysics
 				var uc	=	e.GetComponent<UserCommand2>();
 				var ch	=	e.GetComponent<CharacterController>();
 
-				ch.Movement	=	uc.MovementVector;
+				//ch.Movement	=	uc.MovementVector;
 			}
 		}
 

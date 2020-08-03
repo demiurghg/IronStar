@@ -16,6 +16,7 @@ using Fusion.Core.IniParser.Model;
 using Fusion.Engine.Graphics;
 using IronStar.Mapping;
 using System.Threading;
+using Fusion.Engine.Graphics.Lights;
 
 namespace IronStar.Core {
 
@@ -63,10 +64,12 @@ namespace IronStar.Core {
 				content.PrecacheSafe<TextureAtlas>(@"spots\spots");
 				content.PrecacheSafe<VirtualTexture>("*megatexture");
 
+				var mapName =  serverInfo;
 
-				var map = content.PrecacheSafe<Map>(@"maps\" + serverInfo );
+				content.PrecacheSafe<LightProbeGBufferCache>(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrcache"));
+				content.PrecacheSafe<LightMap>				(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrmap"));
 
-				Thread.Sleep(2000);
+				var map = content.PrecacheSafe<Map>(@"maps\" + mapName);
 			}
 		}
 

@@ -29,10 +29,13 @@ namespace IronStar.SinglePlayer {
 			readonly IContentPrecacher precacher;
 			readonly Task loadingTask;
 			readonly MissionContext context;
+			DateTime startLoadingTime;
 
 
 			public Loading ( Mission mission, string mapname )
 			{
+				startLoadingTime	=	DateTime.Now;
+
 				context			=	new MissionContext( mission, mapname );
 
 				precacher		=	new GameWorld.Precacher( context.Content, mapname );
@@ -50,9 +53,13 @@ namespace IronStar.SinglePlayer {
 
 			public void Update( GameTime gameTime )
 			{
-				if (loadingTask.IsCompleted) {
+				if (loadingTask.IsCompleted) 
+				{
+					var loadingTime = DateTime.Now - startLoadingTime;
+					Log.Message("Loading completed : {0}", loadingTime);
 
-					if (loadingTask.IsFaulted) {
+					if (loadingTask.IsFaulted) 
+					{
 						Log.Warning("-------- Precache error --------");
 						Log.Warning("{0}", loadingTask.Exception);
 						Log.Warning("");

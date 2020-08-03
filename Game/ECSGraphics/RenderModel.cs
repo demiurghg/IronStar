@@ -41,13 +41,9 @@ namespace IronStar.SFX2
 		public Size2	lightmapSize;
 		public Guid		lightmapGuid;
 
+		public string	cmPrefix;
+
 		public bool		UseLightMap { get { return lightmapSize.Width>0 && lightmapSize.Height>0; } }
-		
-
-		//	operational data :
-		Scene scene;
-		SceneView<RenderInstance> sceneView;
-
 
 		public RenderModel ( string scenePath, Matrix transform, Color color, float intensity, RMFlags flags )
 		{
@@ -62,6 +58,17 @@ namespace IronStar.SFX2
 		{
 			lightmapSize	=	new Size2( width, height );
 			lightmapGuid	=	regionGuid;
+		}
+
+
+		public bool AcceptCollisionNode ( Node node )
+		{	  
+			return (string.IsNullOrWhiteSpace(cmPrefix)) ? true : node.Name.StartsWith(cmPrefix);
+		}
+
+		public bool AcceptVisibleNode ( Node node )
+		{
+			return (string.IsNullOrWhiteSpace(cmPrefix)) ? true : !node.Name.StartsWith(cmPrefix);
 		}
 
 

@@ -72,6 +72,7 @@
     <Compile Include="ECSGraphics\OmniLightSystem.cs" />
     <Compile Include="ECSGraphics\RenderModelView.cs" />
     <Compile Include="ECSPhysics\PhysicsCore.cs" />
+    <Compile Include="ECSPhysics\StaticCollisionSystem.cs" />
     <Compile Include="ECS\Aspect.cs" />
     <Compile Include="ECS\Collections\ComponentCollection.cs" />
     <Compile Include="ECS\Component.cs" />
@@ -123,7 +124,7 @@
     <Compile Include="ECSPhysics\DynamicBox.cs" />
     <Compile Include="ECSPhysics\GravityComponent.cs" />
     <Compile Include="ECSPhysics\PhysicsEngineSystem.cs" />
-    <Compile Include="ECSPhysics\StaticCollisionModel.cs" />
+    <Compile Include="ECSPhysics\StaticCollisionComponent.cs" />
     <Compile Include="Physics\KinematicModel.cs" />
     <Compile Include="SceneView.cs" />
     <Compile Include="ECSGraphics\LightProbeSphere.cs" />

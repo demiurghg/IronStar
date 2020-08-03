@@ -30,41 +30,16 @@ using AffineTransform = BEPUutilities.AffineTransform;
 
 namespace IronStar.ECSPhysics 
 {
-	public class StaticCollisionModel : Component
+	public class StaticCollisionComponent : Component
 	{
-		public string ScenePath { get; set; } = "";
-		public string CollisionFilter { get; set; } = "";
-		public Matrix Transform { get; set; }
-
-
-		public StaticCollisionModel ( string path, string prefix, Matrix transform )
-		{
-			ScenePath		=	path;
-			CollisionFilter	=	prefix;
-			Transform		=	transform;
-		}
-
-
-		public override void Added( GameState gs, Entity entity )
-		{
-			base.Added( gs, entity );
-
-			LoadScene(gs);
-		}
-
-
-		public override void Removed( GameState gs )
-		{
-			base.Removed( gs );
-
-			UnloadScene(gs);
-		}
+		public override void Added( GameState gs, Entity entity ) {}
+		public override void Removed( GameState gs ) {}
 
 		/*-----------------------------------------------------------------------------------------------
 		 *	Scene management operations :
 		-----------------------------------------------------------------------------------------------*/
 
-		Scene			scene;
+		/*Scene			scene;
 		StaticMesh[]	staticMeshes;
 		Matrix[]		transforms;
 
@@ -128,6 +103,6 @@ namespace IronStar.ECSPhysics
 					physics.Space.Remove( mesh );
 				}
 			}
-		}
+		}	*/
 	}
 }

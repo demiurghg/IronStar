@@ -36,8 +36,10 @@ namespace IronStar.SinglePlayer {
 			gs.Services.AddService( game.RenderSystem );
 
 			//	physics simulation :
-			gs.AddSystem( new ECSPhysics.PhysicsCore() );
-			gs.AddSystem( new ECSPhysics.PhysicsEngineSystem() );
+			var physicsCore = new ECSPhysics.PhysicsCore();
+			gs.AddSystem( physicsCore );
+			gs.AddSystem( new ECSPhysics.StaticCollisionSystem(physicsCore) );
+			gs.AddSystem( new ECSPhysics.PhysicsEngineSystem(physicsCore) );
 			gs.AddSystem( new FXPlayback(game, content) );
 
 			//	game logic :

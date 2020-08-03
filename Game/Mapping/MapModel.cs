@@ -218,9 +218,8 @@ namespace IronStar.Mapping {
 		{
 			var e = gs.Spawn();
 
-			e.AddComponent( new ECS.Static() );
 			e.AddComponent( new ECS.Transform( TranslateVector, RotateQuaternion, Scale ) );
-			e.AddComponent( new StaticCollisionModel( ScenePath, UseCollisionMesh ? "cm_" : null, Matrix.Scaling( Scale ) * WorldMatrix ) );
+			e.AddComponent( new StaticCollisionComponent() );
 
 			var rm		=	new SFX2.RenderModel( ScenePath, Matrix.Identity, Color.White, 1, SFX2.RMFlags.None );
 			var lmSize	=	UseLightVolume ? 0 : (int)LightMapSize;

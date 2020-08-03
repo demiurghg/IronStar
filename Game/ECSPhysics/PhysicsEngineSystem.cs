@@ -17,8 +17,6 @@ namespace IronStar.ECSPhysics
 {
 	public class PhysicsEngineSystem : ISystem 
 	{
-		Space physSpace = new Space();
-
 		HashSet<Tuple<Entity,Entity>> touchEvents;
 
 		public CollisionGroup StaticGroup		= new CollisionGroup();
@@ -27,9 +25,11 @@ namespace IronStar.ECSPhysics
 		public CollisionGroup PickupGroup		= new CollisionGroup();
 		public CollisionGroup CharacterGroup	= new CollisionGroup();
 
+		readonly PhysicsCore physicsCore;
+
 		public Space Space {
 			get {
-				return physSpace;
+				return physicsCore.Space;
 			}
 		}
 
@@ -40,8 +40,10 @@ namespace IronStar.ECSPhysics
 					.Single<CharacterController,DynamicBox>();
 		}
 
-		public PhysicsEngineSystem ()
+		public PhysicsEngineSystem (PhysicsCore physicsCore)
 		{
+			this.physicsCore	=	physicsCore;
+
 			touchEvents	=	new HashSet<Tuple<Entity, Entity>>();
 
 			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( StaticGroup,	CharacterGroup ), CollisionRule.Normal );
@@ -152,16 +154,16 @@ namespace IronStar.ECSPhysics
 		{
 			if (elapsedTime==0)
 			 {
-				physSpace.TimeStepSettings.MaximumTimeStepsPerFrame = 1;
-				physSpace.TimeStepSettings.TimeStepDuration = 1/1024.0f;
-				physSpace.Update(1/1024.0f);
+				Space.TimeStepSettings.MaximumTimeStepsPerFrame = 1;
+				Space.TimeStepSettings.TimeStepDuration = 1/1024.0f;
+				Space.Update(1/1024.0f);
 				return;
 			}
 
 			var dt	=	elapsedTime;
-			physSpace.TimeStepSettings.MaximumTimeStepsPerFrame = 5;
-			physSpace.TimeStepSettings.TimeStepDuration = 1.0f/60.0f;
-			var steps = physSpace.Update(dt);
+			Space.TimeStepSettings.MaximumTimeStepsPerFrame = 5;
+			Space.TimeStepSettings.TimeStepDuration = 1.0f/60.0f;
+			var steps = Space.Update(dt);
 		}
 
 

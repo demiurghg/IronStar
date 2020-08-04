@@ -35,7 +35,7 @@ namespace IronStar.SFX {
 
 		readonly List<Stage> stages = new List<Stage>();
 
-		private FXEvent	fxEvent;
+		public FXEvent	fxEvent;
 
 		protected readonly bool looped;
 
@@ -112,7 +112,7 @@ namespace IronStar.SFX {
 		/// <param name="elapsedTime"></param>
 		public void Update ( float dt, float lerpFactor )
 		{
-			var ent = fxPlayback.world.GetEntity( fxEvent.EntityID );
+			var ent = fxPlayback.world?.GetEntity( fxEvent.EntityID );
 
 			if (ent!=null) {
 				fxEvent.Origin		=	ent.LerpPosition( 1 );

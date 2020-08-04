@@ -18,7 +18,8 @@ using Fusion.Engine.Audio;
 using IronStar.ECS;
 
 namespace IronStar.SFX {
-	public partial class FXPlayback : DisposableBase, ECS.ISystem {
+	public partial class FXPlayback : ProcessingSystem<FXInstance, FXComponent, Transform>
+	{
 
 		TextureAtlas spriteSheet;
 
@@ -249,24 +250,30 @@ namespace IronStar.SFX {
 		 *	ECS stuff :
 		-----------------------------------------------------------------------------------------*/
 
-		public void Update( ECS.GameState gs, GameTime gameTime )
+		protected override FXInstance Create( ECS.Entity entity, FXComponent fx, Transform t )
 		{
-			var entities = gs.QueryEntities<FXComponent,ECS.Transform,ECS.Velocity>();
+			var fxEvent			=	new FXEvent();
+			fxEvent.Origin		=	t.Position;
+			fxEvent.Rotation	=	t.Rotation;
+			fxEvent.Scale		=	(t.Scaling.X + t.Scaling.Y + t.Scaling.Z) / 3.0f;
 
-			foreach ( var e in entities )
-			{
-				var t	=	e.GetComponent<ECS.Transform>();
-				var v	=	e.GetComponent<ECS.Velocity>();
-				var fx	=	e.GetComponent<FXComponent>();
+			return RunFX( fx.FXName, fxEvent, fx.Looped, true ); 
+		}
 
-				fx.SetTransform( t.TransformMatrix );
-				fx.UpdateFXState( gameTime );
+		protected override void Destroy( ECS.Entity entity, FXInstance fxInstance )
+		{
+			fxInstance.Kill();
+		}
 
-				if (fx.IsExhausted)
-				{
-					e.RemoveComponent(fx);
-				}
-			}
+		protected override void Process( ECS.Entity entity, GameTime gameTime, FXInstance fxInstance, FXComponent fx, Transform t )
+		{
+			fxInstance.fxEvent.Origin	=	t.Position;
+			fxInstance.fxEvent.Rotation	=	t.Rotation;
+			fxInstance.fxEvent.Scale	=	(t.Scaling.X + t.Scaling.Y + t.Scaling.Z) / 3.0f;
+			var velocityComponent		=	entity.GetComponent<Velocity>();
+			fxInstance.fxEvent.Velocity	=	velocityComponent==null ? Vector3.Zero : velocityComponent.Linear;
+
+			fxInstance.Update( gameTime.ElapsedSec, 0 ); 
 		}
 	}
 }

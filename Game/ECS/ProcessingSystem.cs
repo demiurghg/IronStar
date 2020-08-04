@@ -7,7 +7,7 @@ using Fusion.Core;
 
 namespace IronStar.ECS
 {
-	public abstract class ProcessingSystem<TResource,T1> : ISystem 
+	public abstract class ProcessingSystem<TResource,T1> : DisposableBase, ISystem 
 	where T1: IComponent
 	{
 		private readonly Dictionary<uint,TResource> resources = new Dictionary<uint, TResource>();
@@ -58,7 +58,7 @@ namespace IronStar.ECS
 	}
 
 
-	public abstract class ProcessingSystem<TResource,T1,T2> : ISystem 
+	public abstract class ProcessingSystem<TResource,T1,T2> : DisposableBase, ISystem 
 	where T1: IComponent
 	where T2: IComponent
 	{

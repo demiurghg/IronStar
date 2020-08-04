@@ -19,7 +19,7 @@ using Fusion.Engine.Audio;
 
 
 namespace IronStar.SFX {
-	public partial class FXPlayback : DisposableBase {
+	public partial class FXPlayback {
 
 		Random rand = new Random();
 

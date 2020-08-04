@@ -10,18 +10,6 @@ namespace IronStar.ECS
 	public interface IComponent
 	{
 		/// <summary>
-		/// Called when component has been added to entity
-		/// </summary>
-		/// <param name="entityId">Entity that component has been added to</param>
-		void Added( GameState gs, Entity entity );
-
-		/// <summary>
-		/// Called when component has been removed from entity
-		/// </summary>
-		/// <param name="entityId">Entity that component has been removed from</param>
-		void Removed( GameState gs );
-
-		/// <summary>
 		/// Saves all component data to stream
 		/// </summary>
 		/// <param name="stream"></param>

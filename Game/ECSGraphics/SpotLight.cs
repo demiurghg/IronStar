@@ -11,7 +11,7 @@ using Fusion.Core.Shell;
 
 namespace IronStar.SFX2
 {
-	public class SpotLight : Component, ITransformable
+	public class SpotLight : Component
 	{
 		[AECategory("Spot-light")]
 		[AEValueRange(0, 100, 1, 0.125f)]

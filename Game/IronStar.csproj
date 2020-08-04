@@ -81,11 +81,9 @@
     <Compile Include="ECS\Component.cs" />
     <Compile Include="ECS\ECSTypeManager.cs" />
     <Compile Include="ECS\Collections\EntityFactoryCollection.cs" />
-    <Compile Include="ECS\ITransformable.cs" />
     <Compile Include="ECS\ProcessingSystem.cs" />
     <Compile Include="ECS\SystemWrapper.cs" />
     <Compile Include="ECS\SystemAttribute.cs" />
-    <Compile Include="ECS\Teleport.cs" />
     <Compile Include="ECS\EntityFactory.cs" />
     <Compile Include="ECS\Transform.cs" />
     <Compile Include="ECS\Utils\Bag.cs" />

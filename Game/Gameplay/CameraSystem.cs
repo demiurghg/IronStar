@@ -42,6 +42,7 @@ namespace IronStar.Gameplay
 		void SetupPlayerCamera( GameState gs, Entity e )
 		{
 			var t	=	e.GetComponent<Transform>();
+			var v	=	e.GetComponent<Velocity>();
 			var uc	=	e.GetComponent<UserCommand2>();
 
 			var	rs	=	gs.GetService<RenderSystem>();
@@ -52,15 +53,18 @@ namespace IronStar.Gameplay
 			var aspect	=	(vp.Width) / (float)vp.Height;
 
 			var camMatrix	=	uc.RotationMatrix;
-			var cameraPos	=	t.Position + Vector3.Up * 5.5f;
+			var cameraPos	=	t.Position + Vector3.Up * 5.5f;	// #TODO #CAMERA -- get camera height
 			var cameraFwd	=	camMatrix.Forward;
 			var cameraUp	=	camMatrix.Up;
+			var velocity	=	v==null ? Vector3.Zero : v.Linear;
 
 			rw.Camera		.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
 			rw.WeaponCamera	.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
 
 			rw.Camera		.SetPerspectiveFov( MathUtil.Rad(90),  0.125f/2.0f, 12288, aspect );
 			rw.WeaponCamera	.SetPerspectiveFov( MathUtil.Rad(75),	0.125f/2.0f, 6144, aspect );
+
+			sw.SetListener( cameraPos, cameraFwd, cameraUp, velocity );
 		}
 	}
 }

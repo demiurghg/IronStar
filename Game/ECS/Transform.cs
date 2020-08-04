@@ -79,21 +79,5 @@ namespace IronStar.ECS
 		{
 			get { return Matrix.Scaling( Scaling ) * Matrix.RotationQuaternion( Rotation ) * Matrix.Translation( Position ); }
 		}
-
-		/// <summary>
-		/// Utility to transform existing ITransformable components of given type
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="gs"></param>
-		public static void UpdateTransformables<T>( GameState gs ) where T: ITransformable, IComponent
-		{
-			var entities = gs.QueryEntities<T,Transform>();
-
-			foreach ( var e in entities )
-			{
-				var t = e.GetComponent<Transform>();
-				e.GetComponent<T>().SetTransform( t.TransformMatrix );
-			}
-		}
 	}
 }

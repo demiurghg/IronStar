@@ -164,7 +164,9 @@ namespace IronStar.ECS
 		public Entity Spawn( string classname, Vector3 position, Quaternion rotation )
 		{
 			var e = Spawn(classname);
+
 			Teleport( e, position, rotation );
+			
 			return e;
 		}
 
@@ -229,23 +231,19 @@ namespace IronStar.ECS
 
 		public bool Teleport( Entity e, Vector3 position, Quaternion rotation )
 		{
-			var t = e.GetComponent<Transform>();
+			// #TODO -- force refresh entity to destroy and create again
 
-			if (t!=null)
+			var transform = e.GetComponent<Transform>();
+
+			if (transform!=null)
 			{
-				t.Position	=	position;
-				t.Rotation	=	rotation;
-				
-				if (!e.ContainsComponent<Teleport>())
-				{
-					e.AddComponent(new Teleport());
-				}
-				
+				transform.Position	=	position;
+				transform.Rotation	=	rotation;
 				return true;
 			}
 			else
 			{
-				Log.Warning("GameState : cann't teleport entity #{0} -- missing transform", e.ID);
+				Log.Warning("Spawn(classname,position,rotation) : missing transform component");
 				return false;
 			}
 		}
@@ -263,8 +261,6 @@ namespace IronStar.ECS
 
 			entity.ComponentMapping |= ECSTypeManager.GetComponentBit( component.GetType() );
 
-			component.Added( this, entity );
-			
 			Refresh( entity );
 		}
 
@@ -273,8 +269,6 @@ namespace IronStar.ECS
 		{
 			if (entity==null) throw new ArgumentNullException("entity");
 			if (component==null) throw new ArgumentNullException("component");
-
-			component.Removed( this );
 
 			entity.ComponentMapping &= ~ECSTypeManager.GetComponentBit( component.GetType() );
 

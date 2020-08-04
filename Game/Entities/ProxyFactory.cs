@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fusion;
+using Fusion.Core.Content;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Shell;
 using Fusion.Engine.Graphics;
@@ -57,8 +58,15 @@ namespace IronStar.Entities {
 
 		public override ECS.Entity SpawnECS( ECS.GameState gs )
 		{
-			Log.Warning("SpawnECS -- {0}", GetType().Name);
-			return null;
+			if (string.IsNullOrWhiteSpace(Classname)) 
+			{
+				Log.Warning("ProxyFactory: classname is null or white space, null-entity spawned");
+				return null;
+			}
+
+			var content = gs.GetService<ContentManager>();
+			factory = content.Load(@"entities\" + classname, (EntityFactory)null );
+			return factory?.SpawnECS(gs);
 		}
 
 

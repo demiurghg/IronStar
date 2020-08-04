@@ -29,6 +29,7 @@ namespace IronStar.SFX2
 		RenderSystem rs;
 		Scene scene;
 		SceneView<RenderInstance> sceneView;
+		Matrix preTransform;
 
 
 		public RenderModelView ( GameState gs, RenderModel rm, Transform t )
@@ -42,6 +43,8 @@ namespace IronStar.SFX2
 							mesh => new RenderInstance( rs, scene, mesh ),
 							node => rm.AcceptVisibleNode( node )
 							);
+
+			preTransform	=	rm.transform;
 
 			sceneView.ForEachMesh( mesh => {
 				mesh.Group	= rm.UseLightMap ? InstanceGroup.Static : InstanceGroup.Kinematic;
@@ -68,7 +71,7 @@ namespace IronStar.SFX2
 
 		public void SetTransform( Matrix worldMatrix )
 		{
-			sceneView.SetTransform( (mesh,matrix) => mesh.World = matrix, worldMatrix );
+			sceneView.SetTransform( (mesh,matrix) => mesh.World = matrix, preTransform * worldMatrix );
 		}
 	}
 }

@@ -90,8 +90,14 @@ namespace IronStar.Entities {
 
 		public override ECS.Entity SpawnECS( ECS.GameState gs )
 		{
-			Log.Warning("SpawnECS -- {0}", GetType().Name);
-			return null;
+			var e = gs.Spawn();
+
+			e.AddComponent( new ECS.Transform() );
+			e.AddComponent( new ECS.Velocity() );
+			e.AddComponent( new ECSPhysics.DynamicBox( Width, Height, Depth, Mass ) );
+			e.AddComponent( new SFX2.RenderModel("scenes\\boxes\\box_low.fbx", Matrix.Scaling(3), new Color(48, 96, 255), 7, SFX2.RMFlags.None ) );
+
+			return e;
 		}
 
 

@@ -76,6 +76,7 @@
     <Compile Include="ECSPhysics\ITransformFeeder.cs" />
     <Compile Include="ECSPhysics\PhysicsCore.cs" />
     <Compile Include="ECSPhysics\StaticCollisionSystem.cs" />
+    <Compile Include="ECSPhysics\TouchDetector.cs" />
     <Compile Include="ECS\Aspect.cs" />
     <Compile Include="ECS\Collections\ComponentCollection.cs" />
     <Compile Include="ECS\Component.cs" />

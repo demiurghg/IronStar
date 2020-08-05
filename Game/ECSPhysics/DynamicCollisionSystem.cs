@@ -51,12 +51,18 @@ namespace IronStar.ECSPhysics
 			cbox.PositionUpdateMode	=	PositionUpdateMode.Continuous;
 			cbox.Tag				=	entity;
 
-			//cbox.CollisionInformation.Events.InitialCollisionDetected += Events_InitialCollisionDetected;
+			cbox.CollisionInformation.Events.InitialCollisionDetected +=Events_InitialCollisionDetected;
 			cbox.CollisionInformation.CollisionRules.Group = physics.DymamicGroup;
 
 			physics.Space.Add( cbox );
 
 			return cbox;
+		}
+
+
+		private void Events_InitialCollisionDetected( EntityCollidable sender, Collidable other, CollidablePairHandler pair )
+		{
+			physics.HandleTouch( pair );
 		}
 
 		

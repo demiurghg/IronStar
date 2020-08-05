@@ -54,10 +54,16 @@ namespace IronStar.ECSPhysics
 
 			physics.Space.Add( ch );
 
-			//controller.Body.CollisionInformation.Events.InitialCollisionDetected +=Events_InitialCollisionDetected;
+			ch.Body.CollisionInformation.Events.InitialCollisionDetected +=Events_InitialCollisionDetected;
 			ch.Body.CollisionInformation.CollisionRules.Group = physics.CharacterGroup;
 
 			return ch;
+		}
+
+
+		private void Events_InitialCollisionDetected( EntityCollidable sender, Collidable other, CollidablePairHandler pair )
+		{
+			physics.HandleTouch( pair );
 		}
 
 

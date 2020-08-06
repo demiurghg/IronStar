@@ -28,6 +28,7 @@ namespace IronStar.Entities {
 
 
 		string classname = "";
+		string classnameEcs = "";
 		bool dirty = true;
 		EntityFactory factory = null;
 
@@ -58,15 +59,15 @@ namespace IronStar.Entities {
 
 		public override ECS.Entity SpawnECS( ECS.GameState gs )
 		{
-			if (string.IsNullOrWhiteSpace(Classname)) 
+			if (!string.IsNullOrWhiteSpace(classname))
+			{
+				return gs.Spawn( classname );
+			}
+			else
 			{
 				Log.Warning("ProxyFactory: classname is null or white space, null-entity spawned");
 				return null;
 			}
-
-			var content = gs.GetService<ContentManager>();
-			factory = content.Load(@"entities\" + classname, (EntityFactory)null );
-			return factory?.SpawnECS(gs);
 		}
 
 

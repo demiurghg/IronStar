@@ -39,7 +39,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
+          "Classname": "boxExplosive",
+          "ClassnameECS": ""
         },
         "FactoryName": "FP0u8Li0",
         "Visible": true,
@@ -57,7 +58,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
+          "Classname": "boxExplosive",
+          "ClassnameECS": ""
         },
         "FactoryName": "h7YWnDrI",
         "Visible": true,
@@ -75,7 +77,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
+          "Classname": "boxExplosive",
+          "ClassnameECS": ""
         },
         "FactoryName": "ma2cNZ5B",
         "Visible": true,
@@ -93,7 +96,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammo_machinegun2"
+          "Classname": "ammo_machinegun2",
+          "ClassnameECS": ""
         },
         "FactoryName": "DdKodTxu",
         "Visible": true,
@@ -129,7 +133,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammo_plasmagun"
+          "Classname": "ammo_plasmagun",
+          "ClassnameECS": ""
         },
         "FactoryName": "M0fiP76r",
         "Visible": true,
@@ -147,7 +152,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammo_rocket_launcher"
+          "Classname": "ammo_rocket_launcher",
+          "ClassnameECS": ""
         },
         "FactoryName": "ZbjOz0Vv",
         "Visible": true,
@@ -165,7 +171,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammo_machinegun"
+          "Classname": "ammo_machinegun",
+          "ClassnameECS": "AMMO_MACHINEGUN"
         },
         "FactoryName": "aBdQM9rs",
         "Visible": true,
@@ -183,7 +190,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammo_machinegun"
+          "Classname": "ammo_machinegun",
+          "ClassnameECS": ""
         },
         "FactoryName": "jvciYE2u",
         "Visible": true,
@@ -201,7 +209,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammo_machinegun2"
+          "Classname": "ammo_machinegun2",
+          "ClassnameECS": ""
         },
         "FactoryName": "L5zAUEDf",
         "Visible": true,
@@ -219,7 +228,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammo_plasmagun"
+          "Classname": "ammo_plasmagun",
+          "ClassnameECS": ""
         },
         "FactoryName": "nrwWpYXQ",
         "Visible": true,
@@ -237,7 +247,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammo_rocket_launcher"
+          "Classname": "ammo_rocket_launcher",
+          "ClassnameECS": ""
         },
         "FactoryName": "v8ssD5ei",
         "Visible": true,
@@ -255,7 +266,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammo_machinegun"
+          "Classname": "ammo_machinegun",
+          "ClassnameECS": ""
         },
         "FactoryName": "b47XVAMG",
         "Visible": true,
@@ -273,7 +285,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammo_machinegun"
+          "Classname": "ammo_machinegun",
+          "ClassnameECS": ""
         },
         "FactoryName": "8UbU1PiF",
         "Visible": true,
@@ -314,7 +327,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammo_shotgun"
+          "Classname": "ammo_shotgun",
+          "ClassnameECS": ""
         },
         "FactoryName": "ImK8leLT",
         "Visible": true,
@@ -332,7 +346,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "ammo_shotgun"
+          "Classname": "ammo_shotgun",
+          "ClassnameECS": ""
         },
         "FactoryName": "dkfCGSqQ",
         "Visible": true,
@@ -350,7 +365,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "weapon_machinegun"
+          "Classname": "weapon_machinegun",
+          "ClassnameECS": ""
         },
         "FactoryName": "3fHWd6sq",
         "Visible": true,
@@ -368,7 +384,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "weapon_machinegun2"
+          "Classname": "weapon_machinegun2",
+          "ClassnameECS": ""
         },
         "FactoryName": "B9qcNNKI",
         "Visible": true,
@@ -386,7 +403,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "weapon_plasmagun"
+          "Classname": "weapon_plasmagun",
+          "ClassnameECS": ""
         },
         "FactoryName": "3mqRb6YB",
         "Visible": true,
@@ -404,7 +422,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "weapon_railgun"
+          "Classname": "weapon_railgun",
+          "ClassnameECS": ""
         },
         "FactoryName": "WIGn4K88",
         "Visible": true,
@@ -422,7 +441,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "weapon_rocketlauncher"
+          "Classname": "weapon_rocketlauncher",
+          "ClassnameECS": ""
         },
         "FactoryName": "v5UziC28",
         "Visible": true,
@@ -440,7 +460,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "weapon_shotgun"
+          "Classname": "weapon_shotgun",
+          "ClassnameECS": ""
         },
         "FactoryName": "3rIcqo6q",
         "Visible": true,
@@ -458,7 +479,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "monster_marine"
+          "Classname": "monster_marine",
+          "ClassnameECS": ""
         },
         "FactoryName": "TdB5nkG8",
         "Visible": true,
@@ -476,7 +498,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "monster_marine"
+          "Classname": "monster_marine",
+          "ClassnameECS": ""
         },
         "FactoryName": "vgU4ORoR",
         "Visible": true,
@@ -494,7 +517,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "monster_marine"
+          "Classname": "monster_marine",
+          "ClassnameECS": ""
         },
         "FactoryName": "oIemYhEw",
         "Visible": true,
@@ -512,7 +536,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "monster_marine"
+          "Classname": "monster_marine",
+          "ClassnameECS": ""
         },
         "FactoryName": "zKoREzIQ",
         "Visible": true,
@@ -530,7 +555,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
+          "Classname": "boxExplosive",
+          "ClassnameECS": ""
         },
         "FactoryName": "zKikEl0r",
         "Visible": true,
@@ -548,7 +574,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
+          "Classname": "boxExplosive",
+          "ClassnameECS": ""
         },
         "FactoryName": "bDA2O9yB",
         "Visible": true,
@@ -566,7 +593,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
+          "Classname": "boxExplosive",
+          "ClassnameECS": ""
         },
         "FactoryName": "Ev9zhdXn",
         "Visible": true,
@@ -584,7 +612,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "powerup_medkit"
+          "Classname": "powerup_medkit",
+          "ClassnameECS": ""
         },
         "FactoryName": "QGbHiOBT",
         "Visible": true,
@@ -602,7 +631,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "powerup_armor"
+          "Classname": "powerup_armor",
+          "ClassnameECS": ""
         },
         "FactoryName": "8SAyX90j",
         "Visible": true,
@@ -620,7 +650,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "powerup_armor"
+          "Classname": "powerup_armor",
+          "ClassnameECS": ""
         },
         "FactoryName": "1iAyFPUu",
         "Visible": true,
@@ -706,7 +737,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "monster_marine"
+          "Classname": "monster_marine",
+          "ClassnameECS": ""
         },
         "FactoryName": "8cFvIluQ",
         "Visible": true,
@@ -769,7 +801,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "monster_marine"
+          "Classname": "monster_marine",
+          "ClassnameECS": ""
         },
         "FactoryName": "0bUFiLSU",
         "Visible": true,
@@ -1374,7 +1407,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
+          "Classname": "boxExplosive",
+          "ClassnameECS": ""
         },
         "FactoryName": "y26ADa5z",
         "Visible": true,
@@ -1392,7 +1426,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
+          "Classname": "boxExplosive",
+          "ClassnameECS": ""
         },
         "FactoryName": "77YIWWq1",
         "Visible": true,
@@ -1410,7 +1445,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
+          "Classname": "boxExplosive",
+          "ClassnameECS": ""
         },
         "FactoryName": "1FKTR2G6",
         "Visible": true,
@@ -2416,7 +2452,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
+          "Classname": "boxExplosive",
+          "ClassnameECS": ""
         },
         "FactoryName": "RzWuBMt3",
         "Visible": true,
@@ -2434,7 +2471,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
+          "Classname": "boxExplosive",
+          "ClassnameECS": ""
         },
         "FactoryName": "BIH9stc8",
         "Visible": true,
@@ -3295,7 +3333,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "powerup_medkit"
+          "Classname": "powerup_medkit",
+          "ClassnameECS": ""
         },
         "FactoryName": "WVHSDMXZ",
         "Visible": true,
@@ -3313,7 +3352,8 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.Entities.ProxyFactory, IronStar",
-          "Classname": "powerup_medkit"
+          "Classname": "powerup_medkit",
+          "ClassnameECS": ""
         },
         "FactoryName": "vFd8a8rE",
         "Visible": true,

@@ -157,7 +157,17 @@ namespace IronStar.ECS
 
 		public Entity Spawn( string classname )
 		{
-			return factories[classname].Spawn( this );
+			EntityFactory factory;
+
+			if (factories.TryGetValue( classname, out factory ))
+			{
+				return factory.Spawn(this);
+			}
+			else
+			{
+				Log.Warning("Factory {0} not found. Empty entity is spawned", classname);
+				return Spawn();;
+			}
 		}
 
 

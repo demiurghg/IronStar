@@ -67,6 +67,9 @@
   <ItemGroup>
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Core\EntityComponent.cs" />
+    <Compile Include="ECSFactories\WeaponFactory.cs" />
+    <Compile Include="ECSFactories\BoxFactory.cs" />
+    <Compile Include="ECSFactories\AmmoFactory.cs" />
     <Compile Include="ECSGraphics\LightProbeSystem.cs" />
     <Compile Include="ECSGraphics\SpotLightSystem.cs" />
     <Compile Include="ECSGraphics\OmniLightSystem.cs" />
@@ -109,7 +112,7 @@
     <Compile Include="Gameplay\Components\InventoryComponent.cs" />
     <Compile Include="Gameplay\Components\PowerupComponent.cs" />
     <Compile Include="Gameplay\PlayerInput.cs" />
-    <Compile Include="Gameplay\PlayerFactory.cs" />
+    <Compile Include="ECSFactories\PlayerFactory.cs" />
     <Compile Include="Gameplay\CameraSystem.cs" />
     <Compile Include="Gameplay\PlayerCamera.cs" />
     <Compile Include="Gameplay\PlayerSystem.cs" />

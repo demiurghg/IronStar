@@ -19,8 +19,6 @@ namespace IronStar.Gameplay.Components
 		public PowerUpType Type;
 		public int Amount;
 
-		public void Added( GameState gs, Entity entity ) {}
-		public void Removed( GameState gs ) {}
 		public void Load( GameState gs, Stream stream ) {}
 		public void Save( GameState gs, Stream stream ) {}
 	}

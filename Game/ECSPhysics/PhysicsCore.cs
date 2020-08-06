@@ -126,8 +126,7 @@ namespace IronStar.ECSPhysics
 					e2.ID.ToString() 
 					);
 
-				e1?.GetComponent<TouchDetector>()?.AddTouch( e2 );
-				e2?.GetComponent<TouchDetector>()?.AddTouch( e1 );
+				e1.GetComponent<TouchDetector>()?.AddTouch( e2 );
 			}
 
 			touchEvents.Clear();

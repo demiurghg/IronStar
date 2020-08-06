@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using IronStar.ECS;
 using IronStar.ECSPhysics;
+using IronStar.Gameplay;
 
-namespace IronStar.Gameplay
+namespace IronStar.ECSFactories
 {
 	[EntityFactory("PLAYER")]
 	public class PlayerFactory : EntityFactory

@@ -13,6 +13,7 @@ using Fusion.Core;
 using Fusion;
 using IronStar.Gameplay;
 using Fusion.Core.Extensions;
+using BEPUCollisionGroup = BEPUphysics.CollisionRuleManagement.CollisionGroup;
 
 namespace IronStar.ECSPhysics
 {
@@ -27,11 +28,11 @@ namespace IronStar.ECSPhysics
 
 		HashSet<Tuple<Entity,Entity>> touchEvents;
 
-		public CollisionGroup StaticGroup		= new CollisionGroup();
-		public CollisionGroup KinematicGroup	= new CollisionGroup();
-		public CollisionGroup DymamicGroup		= new CollisionGroup();
-		public CollisionGroup PickupGroup		= new CollisionGroup();
-		public CollisionGroup CharacterGroup	= new CollisionGroup();
+		public readonly BEPUCollisionGroup StaticGroup		= new BEPUCollisionGroup();
+		public readonly BEPUCollisionGroup KinematicGroup	= new BEPUCollisionGroup();
+		public readonly BEPUCollisionGroup DymamicGroup		= new BEPUCollisionGroup();
+		public readonly BEPUCollisionGroup PickupGroup		= new BEPUCollisionGroup();
+		public readonly BEPUCollisionGroup CharacterGroup	= new BEPUCollisionGroup();
 		
 		public PhysicsCore ()
 		{
@@ -42,6 +43,20 @@ namespace IronStar.ECSPhysics
 			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( CharacterGroup, DymamicGroup   ), CollisionRule.Normal );
 			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( PickupGroup,	StaticGroup    ), CollisionRule.Normal );
 			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( PickupGroup,	CharacterGroup ), CollisionRule.NoSolver );
+		}
+
+
+		public BEPUCollisionGroup GetCollisionGroup( CollisionGroup group )
+		{
+			switch (group)
+			{
+				case CollisionGroup.StaticGroup		: return StaticGroup	;
+				case CollisionGroup.KinematicGroup	: return KinematicGroup	;
+				case CollisionGroup.DymamicGroup	: return DymamicGroup	;
+				case CollisionGroup.PickupGroup		: return PickupGroup	;
+				case CollisionGroup.CharacterGroup	: return CharacterGroup	;
+				default: throw new ArgumentException("group");
+			}
 		}
 
 		public Aspect GetAspect()

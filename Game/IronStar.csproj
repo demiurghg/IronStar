@@ -75,6 +75,7 @@
     <Compile Include="ECSGraphics\OmniLightSystem.cs" />
     <Compile Include="ECSGraphics\RenderModelView.cs" />
     <Compile Include="ECSPhysics\CharacterControllerSystem.cs" />
+    <Compile Include="ECSPhysics\CollisionGroup.cs" />
     <Compile Include="ECSPhysics\DynamicCollisionSystem.cs" />
     <Compile Include="ECSPhysics\ITransformFeeder.cs" />
     <Compile Include="ECSPhysics\PhysicsCore.cs" />

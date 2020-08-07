@@ -52,7 +52,7 @@ namespace IronStar.ECSPhysics
 			cbox.Tag				=	entity;
 
 			cbox.CollisionInformation.Events.InitialCollisionDetected +=Events_InitialCollisionDetected;
-			cbox.CollisionInformation.CollisionRules.Group = physics.DymamicGroup;
+			cbox.CollisionInformation.CollisionRules.Group = physics.GetCollisionGroup( box.Group );
 
 			physics.Space.Add( cbox );
 

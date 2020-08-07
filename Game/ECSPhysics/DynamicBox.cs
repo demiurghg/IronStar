@@ -30,10 +30,11 @@ namespace IronStar.ECSPhysics
 {
 	public class DynamicBox : Component
 	{
-		public float	Width	{ get; set; } =	1;
-		public float	Height	{ get; set; } =	1;
-		public float	Depth	{ get; set; } =	1;
-		public float	Mass	{ get; set; } =	1;
+		public float			Width	{ get; set; } =	1;
+		public float			Height	{ get; set; } =	1;
+		public float			Depth	{ get; set; } =	1;
+		public float			Mass	{ get; set; } =	1;
+		public CollisionGroup	Group	{ get; set; } = CollisionGroup.StaticGroup;
 
 		public DynamicBox()
 		{

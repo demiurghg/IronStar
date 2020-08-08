@@ -31,7 +31,7 @@ namespace IronStar.ECSFactories
 		{
 			var e = gs.Spawn();
 
-			e.AddComponent( new PickupComponent() );
+			e.AddComponent( new PickupComponent("pickupWeapon") );
 			e.AddComponent( new TouchDetector() );
 			e.AddComponent( new RenderModel( modelName, Matrix.Scaling( modelScale ), Color.White, 5, RMFlags.None ) );
 

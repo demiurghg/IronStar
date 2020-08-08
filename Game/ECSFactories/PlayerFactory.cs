@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using IronStar.ECS;
 using IronStar.ECSPhysics;
 using IronStar.Gameplay;
+using IronStar.Gameplay.Components;
 
 namespace IronStar.ECSFactories
 {
@@ -21,6 +22,8 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new UserCommand2() );
 			e.AddComponent( new Transform() );
 			e.AddComponent( new Velocity() );
+
+			e.AddComponent( new InventoryComponent() );
 
 			return e;
 		}

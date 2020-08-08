@@ -12,11 +12,23 @@ namespace IronStar.ECS
 		/// <summary>
 		/// Linear velocity 
 		/// </summary>
-		public Vector3	Linear;
+		public Vector3	Linear	=	Vector3.Zero;
 
 		/// <summary>
 		/// Angular velocity
 		/// </summary>
-		public Vector3	Angular;
+		public Vector3	Angular	=	Vector3.Zero;
+
+
+		public Velocity()
+		{
+		}
+
+
+		public Velocity( Vector3 v )
+		{
+			Linear	=	v;
+			Angular	=	Vector3.Zero;
+		}
 	}
 }

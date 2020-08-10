@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Core\EntityComponent.cs" />
+    <Compile Include="ECSFactories\PowerupFactory.cs" />
     <Compile Include="ECSFactories\WeaponFactory.cs" />
     <Compile Include="ECSFactories\BoxFactory.cs" />
     <Compile Include="ECSFactories\AmmoFactory.cs" />

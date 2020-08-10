@@ -40,6 +40,29 @@ namespace IronStar.Gameplay.Components
 		}
 
 
+		public bool RemoveItem( Entity item )
+		{
+			if (item==null) return false;
+			return RemoveItem( item.ID );
+		}
+
+
+		public Entity FindItem ( GameState gs, Aspect itemAspect )
+		{
+			foreach ( var itemId in itemIDs )
+			{
+				var e = gs.GetEntity( itemId );
+
+				if (itemAspect.Accept(e))
+				{
+					return e;
+				}
+			}
+
+			return null;
+		}
+
+
 		public void Added( GameState gs, Entity entity ) {}
 		public void Removed( GameState gs ) {}
 		public void Load( GameState gs, Stream stream ) {}

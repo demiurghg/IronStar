@@ -136,11 +136,6 @@ namespace IronStar.ECSPhysics
 				var e1	=	pair.Item1;
 				var e2	=	pair.Item2;
 
-				Log.Message("{0} touches {1}", 
-					e1.ID.ToString(),
-					e2.ID.ToString() 
-					);
-
 				e1.GetComponent<TouchDetector>()?.AddTouch( e2 );
 			}
 

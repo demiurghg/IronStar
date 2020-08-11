@@ -45,12 +45,24 @@ namespace IronStar.SFX2
 
 		public bool		UseLightMap { get { return lightmapSize.Width>0 && lightmapSize.Height>0; } }
 
+
+		public RenderModel ()
+		{
+		}
+
+
 		public RenderModel ( string scenePath, Matrix transform, Color color, float intensity, RMFlags flags )
 		{
 			this.scenePath	=	scenePath	;
 			this.transform	=	transform	;
 			this.color		=	color		;
 			this.intensity	=	intensity	;
+		}
+
+
+		public RenderModel ( string scenePath, float scale, Color color, float intensity, RMFlags flags )
+		:this( scenePath, Matrix.Scaling(scale), color, intensity, flags )
+		{
 		}
 
 

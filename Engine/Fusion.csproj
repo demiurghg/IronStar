@@ -167,6 +167,7 @@
     <Compile Include="Core\Binding\ValueBindingException.cs" />
     <Compile Include="Core\Collection\Octree.cs" />
     <Compile Include="Core\Content\AssetInfo.cs" />
+    <Compile Include="Core\Content\ContentAttribute.cs" />
     <Compile Include="Core\Content\IniLoader.cs" />
     <Compile Include="Core\Content\IPrecachable.cs" />
     <Compile Include="Core\Extensions\EmbreeExtensions.cs" />

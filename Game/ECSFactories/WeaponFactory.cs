@@ -12,20 +12,15 @@ using IronStar.SFX2;
 
 namespace IronStar.ECSFactories
 {
-	public class WeaponFactory : EntityFactory
+	public abstract class WeaponFactory : EntityFactory
 	{
-		readonly string modelName		=	"";
-		readonly float	modelScale		=	1.0f;
-		readonly int	ammoCapacity	=	10;
-		readonly int	ammoCount		=	10;
+		public static readonly Color MachinegunColor		=	new Color( 250, 80, 20 ); 
+		public static readonly Color ShotgunColor			=	new Color( 250, 80, 20 ); 
+		public static readonly Color RocketLauncherColor	=	new Color( 250, 80, 20 ); 
+		public static readonly Color RailgunColor			=	new Color( 107, 136, 255 );
+		public static readonly Color PlasmagunColor			=	new Color( 107, 136, 255 );
 
-		protected WeaponFactory( int capacity, int count, float scale, string model )
-		{
-			modelName		=	model;
-			modelScale		=	scale;
-			ammoCapacity	=	capacity;
-			ammoCount		=	count;
-		}
+		public static readonly float GlowIntensity			=	7;
 
 		public override Entity Spawn( GameState gs )
 		{
@@ -33,9 +28,7 @@ namespace IronStar.ECSFactories
 
 			e.AddComponent( new PickupComponent("pickupWeapon") );
 			e.AddComponent( new TouchDetector() );
-			e.AddComponent( new RenderModel( modelName, Matrix.Scaling( modelScale ), Color.White, 5, RMFlags.None ) );
 
-			e.AddComponent( new DynamicBox( 0.66f, 0.72f, 0.66f, 1.0f ) );
 
 			e.AddComponent( new Transform() );
 			e.AddComponent( new Velocity() );
@@ -46,9 +39,97 @@ namespace IronStar.ECSFactories
 
 
 	[EntityFactory("WEAPON_MACHINEGUN")]
-	public class WeaponMachinegunFactory : AmmoFactory
+	public class WeaponMachinegunFactory : WeaponFactory
 	{
-		public WeaponMachinegunFactory():
-		base( 50, 50, 0.03f, "scenes\\weapon2\\assault_rifle\\assault_rifle_ammo" ) {}
+		public override Entity Spawn( GameState gs )
+		{
+			var e = base.Spawn( gs );
+
+			e.AddComponent( WeaponComponent.BeamWeapon( 7, 5.0f, 1, 2.0f,	100,	"AMMO_MACHINEGUN", "*trail_bullet", "machinegunHit", "machinegunMuzzle" ) );
+			e.AddComponent( new RenderModel("scenes\\weapon2\\assault_rifle\\assault_rifle_view", 0.03f, MachinegunColor, GlowIntensity, RMFlags.None ) );
+			e.AddComponent( new DynamicBox( 0.66f, 0.72f, 0.66f, 1.0f ) );
+
+			return e;
+		}
+	}
+
+
+	[EntityFactory("WEAPON_MACHINEGUN2")]
+	public class WeaponMachinegun2Factory : WeaponFactory
+	{
+		public override Entity Spawn( GameState gs )
+		{
+			var e = base.Spawn( gs );
+
+			e.AddComponent( WeaponComponent.BeamWeapon( 5, 3.0f, 1, 1.0f,	100,	"AMMO_MACHINEGUN", "*trail_bullet", "machinegunHit", "machinegunMuzzle" ) );
+			e.AddComponent( new RenderModel("scenes\\weapon2\\battle_rifle\\battle_rifle_world", 0.03f, MachinegunColor, GlowIntensity, RMFlags.None ) );
+			e.AddComponent( new DynamicBox( 0.66f, 0.72f, 0.66f, 1.0f ) );
+
+			return e;
+		}
+	}
+
+
+	[EntityFactory("WEAPON_SHOTGUN")]
+	public class WeaponShotgunFactory : WeaponFactory
+	{
+		public override Entity Spawn( GameState gs )
+		{
+			var e = base.Spawn( gs );
+
+			e.AddComponent( WeaponComponent.BeamWeapon( 5, 3.0f, 1, 1.0f,	750,	"AMMO_SHOTGUN", null, "shotgunHit", "shotgunMuzzle" ) );
+			e.AddComponent( new RenderModel("scenes\\weapon2\\canister_rifle\\canister_rifle_view", 0.03f, ShotgunColor, GlowIntensity, RMFlags.None ) );
+			e.AddComponent( new DynamicBox( 0.66f, 0.72f, 0.66f, 1.0f ) );
+
+			return e;
+		}
+	}
+
+
+	[EntityFactory("WEAPON_PLASMAGUN")]
+	public class WeaponPlasmagunFactory : WeaponFactory
+	{
+		public override Entity Spawn( GameState gs )
+		{
+			var e = base.Spawn( gs );
+
+			e.AddComponent( WeaponComponent.ProjectileWeapon( 10, 5, 100, "PLASMA", "AMMO_PLASMAGUN", "" ) );
+			e.AddComponent( new RenderModel("scenes\\weapon2\\plasma_rifle\\plasma_rifle_world", 0.03f, PlasmagunColor, GlowIntensity, RMFlags.None ) );
+			e.AddComponent( new DynamicBox( 0.66f, 0.72f, 0.66f, 1.0f ) );
+
+			return e;
+		}
+	}
+
+
+	[EntityFactory("WEAPON_ROCKET_LAUNCHER")]
+	public class WeaponRocketLauncherFactory : WeaponFactory
+	{
+		public override Entity Spawn( GameState gs )
+		{
+			var e = base.Spawn( gs );
+
+			e.AddComponent( WeaponComponent.ProjectileWeapon( 100, 15, 1500, "ROCKET", "AMMO_ROCKET_LAUNCHER", "" ) );
+			e.AddComponent( new RenderModel("scenes\\weapon2\\rocket_launcher\\rocket_launcher_world", 0.036f, RocketLauncherColor, GlowIntensity, RMFlags.None ) );
+			e.AddComponent( new DynamicBox( 0.66f, 0.72f, 0.66f, 1.0f ) );
+
+			return e;
+		}
+	}
+
+
+	[EntityFactory("WEAPON_RAILGUN")]
+	public class WeaponRailgunFactory : WeaponFactory
+	{
+		public override Entity Spawn( GameState gs )
+		{
+			var e = base.Spawn( gs );
+
+			e.AddComponent( WeaponComponent.BeamWeapon( 100, 250, 1, 1.0f,	1500,	"AMMO_RAILGUN", "*trail_gauss", "railHit", "railMuzzle" ) );
+			e.AddComponent( new RenderModel("scenes\\weapon2\\gauss_rifle\\gauss_rifle_world", 0.03f, RailgunColor, GlowIntensity, RMFlags.None ) );
+			e.AddComponent( new DynamicBox( 0.66f, 0.72f, 0.66f, 1.0f ) );
+
+			return e;
+		}
 	}
 }

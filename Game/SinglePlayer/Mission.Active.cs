@@ -44,6 +44,7 @@ namespace IronStar.SinglePlayer {
 			gs.AddSystem( new FXPlayback(game, content) );
 
 			//	game logic :
+			gs.AddSystem( new WeaponSystem() );
 			gs.AddSystem( new HealthSystem() );
 			gs.AddSystem( new PickupSystem() );
 

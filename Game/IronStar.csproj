@@ -106,9 +106,12 @@
     <Compile Include="ECS\Static.cs" />
     <Compile Include="ECS\Velocity.cs" />
     <Compile Include="Editor\MapEditor.History.cs" />
+    <Compile Include="Gameplay\Components\AmmoType.cs" />
+    <Compile Include="Gameplay\Components\ArmamentComponent.cs" />
     <Compile Include="Gameplay\Components\PickupComponent.cs" />
     <Compile Include="Gameplay\Components\KeyComponent.cs" />
     <Compile Include="Gameplay\Components\AmmoComponent.cs" />
+    <Compile Include="Gameplay\Components\ProjectileComponent.cs" />
     <Compile Include="Gameplay\Components\WeaponComponent.cs" />
     <Compile Include="Gameplay\Components\HealthComponent.cs" />
     <Compile Include="Gameplay\Components\InventoryComponent.cs" />
@@ -120,6 +123,8 @@
     <Compile Include="Gameplay\PlayerSystem.cs" />
     <Compile Include="Gameplay\Systems\PickupSystem.cs" />
     <Compile Include="Gameplay\Systems\HealthSystem.cs" />
+    <Compile Include="Gameplay\Systems\ProjectileSystem.cs" />
+    <Compile Include="Gameplay\Systems\WeaponSystem.cs" />
     <Compile Include="Gameplay\UserCommand.cs" />
     <Compile Include="Gameplay\PlayerController.cs" />
     <Compile Include="Gameplay\PlayerStart.cs" />

@@ -8,15 +8,6 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
-	public enum AmmoType
-	{
-		Bullets,
-		Shells,
-		Cells,
-		Rockets,
-		Grenades,
-	}
-
 	public class AmmoComponent : IComponent
 	{
 		public AmmoType	AmmoType;

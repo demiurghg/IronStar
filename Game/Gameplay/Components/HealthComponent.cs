@@ -10,6 +10,9 @@ namespace IronStar.Gameplay.Components
 {
 	public class HealthComponent : IComponent
 	{
+		public readonly int MaxHealth = 100;
+		public readonly int MaxArmor  = 100;
+
 		public int Health { get; set; }
 		public int Armor { get; set; }
 

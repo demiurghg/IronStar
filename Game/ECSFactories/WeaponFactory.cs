@@ -47,7 +47,7 @@ namespace IronStar.ECSFactories
 
 			e.AddComponent( WeaponComponent.BeamWeapon( 7, 5.0f, 1, 2.0f,	100,	"AMMO_MACHINEGUN", "*trail_bullet", "machinegunHit", "machinegunMuzzle" ) );
 			e.AddComponent( new RenderModel("scenes\\weapon2\\assault_rifle\\assault_rifle_view", 0.03f, MachinegunColor, GlowIntensity, RMFlags.None ) );
-			e.AddComponent( new DynamicBox( 0.66f, 0.72f, 0.66f, 1.0f ) );
+			e.AddComponent( new DynamicBox( 0.54f, 1.2f, 4.5f, 5.0f ) );
 
 			return e;
 		}
@@ -63,7 +63,7 @@ namespace IronStar.ECSFactories
 
 			e.AddComponent( WeaponComponent.BeamWeapon( 5, 3.0f, 1, 1.0f,	100,	"AMMO_MACHINEGUN", "*trail_bullet", "machinegunHit", "machinegunMuzzle" ) );
 			e.AddComponent( new RenderModel("scenes\\weapon2\\battle_rifle\\battle_rifle_world", 0.03f, MachinegunColor, GlowIntensity, RMFlags.None ) );
-			e.AddComponent( new DynamicBox( 0.66f, 0.72f, 0.66f, 1.0f ) );
+			e.AddComponent( new DynamicBox( 0.54f, 1.2f, 4.5f, 5.0f ) );
 
 			return e;
 		}
@@ -79,7 +79,7 @@ namespace IronStar.ECSFactories
 
 			e.AddComponent( WeaponComponent.BeamWeapon( 5, 3.0f, 1, 1.0f,	750,	"AMMO_SHOTGUN", null, "shotgunHit", "shotgunMuzzle" ) );
 			e.AddComponent( new RenderModel("scenes\\weapon2\\canister_rifle\\canister_rifle_view", 0.03f, ShotgunColor, GlowIntensity, RMFlags.None ) );
-			e.AddComponent( new DynamicBox( 0.66f, 0.72f, 0.66f, 1.0f ) );
+			e.AddComponent( new DynamicBox( 0.54f, 1.2f, 4.5f, 5.0f ) );
 
 			return e;
 		}
@@ -95,7 +95,7 @@ namespace IronStar.ECSFactories
 
 			e.AddComponent( WeaponComponent.ProjectileWeapon( 10, 5, 100, "PLASMA", "AMMO_PLASMAGUN", "" ) );
 			e.AddComponent( new RenderModel("scenes\\weapon2\\plasma_rifle\\plasma_rifle_world", 0.03f, PlasmagunColor, GlowIntensity, RMFlags.None ) );
-			e.AddComponent( new DynamicBox( 0.66f, 0.72f, 0.66f, 1.0f ) );
+			e.AddComponent( new DynamicBox( 0.9f, 1.2f, 4.5f, 6.0f ) );
 
 			return e;
 		}
@@ -111,7 +111,7 @@ namespace IronStar.ECSFactories
 
 			e.AddComponent( WeaponComponent.ProjectileWeapon( 100, 15, 1500, "ROCKET", "AMMO_ROCKET_LAUNCHER", "" ) );
 			e.AddComponent( new RenderModel("scenes\\weapon2\\rocket_launcher\\rocket_launcher_world", 0.036f, RocketLauncherColor, GlowIntensity, RMFlags.None ) );
-			e.AddComponent( new DynamicBox( 0.66f, 0.72f, 0.66f, 1.0f ) );
+			e.AddComponent( new DynamicBox( 0.9f, 1.0f, 6.0f, 7.0f ) );
 
 			return e;
 		}
@@ -127,7 +127,7 @@ namespace IronStar.ECSFactories
 
 			e.AddComponent( WeaponComponent.BeamWeapon( 100, 250, 1, 1.0f,	1500,	"AMMO_RAILGUN", "*trail_gauss", "railHit", "railMuzzle" ) );
 			e.AddComponent( new RenderModel("scenes\\weapon2\\gauss_rifle\\gauss_rifle_world", 0.03f, RailgunColor, GlowIntensity, RMFlags.None ) );
-			e.AddComponent( new DynamicBox( 0.66f, 0.72f, 0.66f, 1.0f ) );
+			e.AddComponent( new DynamicBox( 1.8f, 0.9f, 5.1f, 7.0f ) );
 
 			return e;
 		}

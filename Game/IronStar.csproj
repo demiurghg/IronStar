@@ -71,7 +71,9 @@
     <Compile Include="ECSFactories\WeaponFactory.cs" />
     <Compile Include="ECSFactories\BoxFactory.cs" />
     <Compile Include="ECSFactories\AmmoFactory.cs" />
+    <Compile Include="ECSGraphics\FPVComponent.cs" />
     <Compile Include="ECSGraphics\LightProbeSystem.cs" />
+    <Compile Include="ECSGraphics\RenderModelFPVSystem.cs" />
     <Compile Include="ECSGraphics\SpotLightSystem.cs" />
     <Compile Include="ECSGraphics\OmniLightSystem.cs" />
     <Compile Include="ECSGraphics\RenderModelView.cs" />
@@ -107,7 +109,6 @@
     <Compile Include="ECS\Velocity.cs" />
     <Compile Include="Editor\MapEditor.History.cs" />
     <Compile Include="Gameplay\Components\AmmoType.cs" />
-    <Compile Include="Gameplay\Components\ArmamentComponent.cs" />
     <Compile Include="Gameplay\Components\PickupComponent.cs" />
     <Compile Include="Gameplay\Components\KeyComponent.cs" />
     <Compile Include="Gameplay\Components\AmmoComponent.cs" />

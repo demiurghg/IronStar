@@ -32,7 +32,7 @@ namespace IronStar.SFX2
 		Matrix preTransform;
 
 
-		public RenderModelView ( GameState gs, RenderModel rm, Transform t )
+		public RenderModelView ( GameState gs, RenderModel rm, Matrix tm )
 		{
 			var content	=	gs.GetService<ContentManager>();
 			rs			=	gs.GetService<RenderSystem>();
@@ -54,7 +54,7 @@ namespace IronStar.SFX2
 				rs.RenderWorld.Instances.Add( mesh );
 			});
 
-			SetTransform( t.TransformMatrix );
+			SetTransform( tm );
 		}
 
 

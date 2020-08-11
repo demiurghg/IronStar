@@ -10,6 +10,8 @@ namespace IronStar.Gameplay.Components
 {
 	public class InventoryComponent : IComponent
 	{
+		public uint ActiveWeaponID = 0;
+
 		readonly List<uint> itemIDs = new List<uint>();
 
 		public bool AddItem( uint id )

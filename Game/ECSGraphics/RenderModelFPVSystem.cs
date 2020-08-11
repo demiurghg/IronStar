@@ -21,10 +21,11 @@ using IronStar.Items;
 using Fusion.Scripting;
 using KopiLua;
 using IronStar.ECS;
+using IronStar.ECSGraphics;
 
 namespace IronStar.SFX2 
 {
-	public class RenderModelSystem : ProcessingSystem<RenderModelView,Transform,RenderModel>
+	public class RenderModelFPVSystem : ProcessingSystem<RenderModelView,FPVComponent,RenderModel>
 	{
 		readonly Game	game;
 		public readonly RenderSystem rs;
@@ -32,7 +33,7 @@ namespace IronStar.SFX2
 		public readonly ContentManager content;
 
 		
-		public RenderModelSystem ( Game game )
+		public RenderModelFPVSystem ( Game game )
 		{
 			this.game	=	game;
 			this.rs		=	game.RenderSystem;
@@ -41,9 +42,9 @@ namespace IronStar.SFX2
 		}
 
 
-		protected override RenderModelView Create( Entity e, Transform t, RenderModel rm )
+		protected override RenderModelView Create( Entity e, FPVComponent t, RenderModel rm )
 		{
-			return new RenderModelView( e.gs, rm, t.TransformMatrix );
+			return new RenderModelView( e.gs, rm, rw.Camera.CameraMatrix );
 		}
 
 		
@@ -53,9 +54,9 @@ namespace IronStar.SFX2
 		}
 
 		
-		protected override void Process( Entity e, GameTime gameTime, RenderModelView model, Transform t, RenderModel rm )
+		protected override void Process( Entity e, GameTime gameTime, RenderModelView model, FPVComponent t, RenderModel rm )
 		{
-			model.SetTransform( t.TransformMatrix );
+			model.SetTransform( rw.Camera.CameraMatrix );
 		}
 	}
 }

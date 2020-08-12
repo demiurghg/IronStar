@@ -268,7 +268,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Physics\PhysicsManager.cs" />
-    <Compile Include="SFX\Animation\AnimBlendUtils.cs" />
+    <Compile Include="Animation\AnimUtils.cs" />
     <Compile Include="SFX\FXFactory.Utils.cs" />
     <Compile Include="SFX\FXFactory.cs" />
     <Compile Include="SFX\ModelFactory.cs" />

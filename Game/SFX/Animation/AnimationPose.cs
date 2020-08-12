@@ -10,6 +10,7 @@ using Fusion.Engine.Graphics;
 using Fusion.Engine.Graphics.Scenes;
 using Fusion.Scripting;
 using KopiLua;
+using IronStar.Animation;
 
 namespace IronStar.SFX {
 
@@ -87,12 +88,12 @@ namespace IronStar.SFX {
 				if (additive) {
 
 					take.GetDeltaKey( Frame, nodeIndex, out src );
-					dst = AnimBlendUtils.Lerp( dst, dst * src, weight );
+					dst = AnimUtils.Lerp( dst, dst * src, weight );
 
 				} else {
 
 					take.GetKey( Frame, nodeIndex, out src );
-					dst = AnimBlendUtils.Lerp( dst, src, weight );
+					dst = AnimUtils.Lerp( dst, src, weight );
 
 				}
 

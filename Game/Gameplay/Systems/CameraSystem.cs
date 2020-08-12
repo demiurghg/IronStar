@@ -63,7 +63,7 @@ namespace IronStar.Gameplay
 			rw.Camera		.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
 			rw.WeaponCamera	.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
 
-			rw.Camera		.SetPerspectiveFov( MathUtil.Rad(90),  0.125f/2.0f, 12288, aspect );
+			rw.Camera		.SetPerspectiveFov( MathUtil.Rad(90),	0.125f/2.0f, 12288, aspect );
 			rw.WeaponCamera	.SetPerspectiveFov( MathUtil.Rad(75),	0.125f/2.0f, 6144, aspect );
 
 			sw.SetListener( cameraPos, cameraFwd, cameraUp, velocity );

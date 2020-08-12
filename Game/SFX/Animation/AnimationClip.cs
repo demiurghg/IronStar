@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Graphics;
 using Fusion.Engine.Graphics.Scenes;
+using IronStar.Animation;
 
 namespace IronStar.SFX {
 	public class AnimationClip {
@@ -58,11 +59,11 @@ namespace IronStar.SFX {
 			if (additive) {
 
 				sample	=	sample * refPose[node];
-				return	AnimBlendUtils.Lerp( transform, transform * sample, weight );
+				return	AnimUtils.Lerp( transform, transform * sample, weight );
 
 			} else {
 
-				return AnimBlendUtils.Lerp( transform, sample, weight );
+				return AnimUtils.Lerp( transform, sample, weight );
 
 			}
 

@@ -10,6 +10,8 @@ using Fusion.Engine.Graphics;
 using Fusion.Scripting;
 using Fusion.Engine.Graphics.Scenes;
 using KopiLua;
+using IronStar.Animation;
+using IronStar.Animation;
 
 namespace IronStar.SFX {
 
@@ -80,7 +82,7 @@ namespace IronStar.SFX {
 					Take.GetKey( next, node, out nextT );
 				}
 
-				transform = AnimBlendUtils.Lerp( prevT, nextT, weight );
+				transform = AnimUtils.Lerp( prevT, nextT, weight );
 			}
 		}
 
@@ -184,12 +186,12 @@ namespace IronStar.SFX {
 				if (additive) {
 
 					currentAnim.GetKey( nodeIndex, trackTime, true, out src );
-					dst = AnimBlendUtils.Lerp( dst, dst * src, weight );
+					dst = AnimUtils.Lerp( dst, dst * src, weight );
 
 				} else {
 
 					currentAnim.GetKey( nodeIndex, trackTime, false, out src );
-					dst = AnimBlendUtils.Lerp( dst, src, weight );
+					dst = AnimUtils.Lerp( dst, src, weight );
 
 				}
 

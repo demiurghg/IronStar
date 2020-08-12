@@ -27,8 +27,6 @@ namespace IronStar.ECSPhysics
 {
 	public class CharacterController : Component
 	{
-		BEPUCharacterController controller;
-
 		public float	heightStanding;
 		public float	heightCrouching;
 		public float	radius;
@@ -43,6 +41,8 @@ namespace IronStar.ECSPhysics
 		public bool		IsCrouching;
 		public bool		HasTraction;
 
+		public Vector3	PovOffset { get { return Vector3.Up * CalcPovHeight(); } }
+
 		public CharacterController ( float heightStanding, float heightCrouching, float radius, float speedStanding, float speedCrouching, float speedJump, float mass, float stepHeight )
 		{
 			this.heightStanding		=	heightStanding	;
@@ -53,6 +53,14 @@ namespace IronStar.ECSPhysics
 			this.speedJump			=	speedJump		;
 			this.stepHeight			=	stepHeight		;
 			this.mass				=	mass			;
+		}
+
+
+		float CalcPovHeight()
+		{
+			float topEyeOffset	=	heightStanding / 6.0f / 2.0f;
+
+			return (IsCrouching ? heightCrouching : heightStanding) - topEyeOffset;
 		}
 	}
 }

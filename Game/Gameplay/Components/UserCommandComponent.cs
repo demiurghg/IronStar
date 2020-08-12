@@ -22,7 +22,7 @@ namespace IronStar.Gameplay
 		Jump			=	0x80,
 	}	
 
-	public class UserCommand2 : Component
+	public class UserCommandComponent : Component
 	{
 		public float Yaw;
 		public float Pitch;

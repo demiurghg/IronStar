@@ -41,7 +41,7 @@ namespace IronStar.Gameplay
 
 		public void UpdatePlayerSpawn ( GameState gs )
 		{
-			var e	=	gs.QueryEntities<PlayerStart,Transform>().RandomOrDefault(rand);
+			var e	=	gs.QueryEntities<PlayerStartComponent,Transform>().RandomOrDefault(rand);
 
 			if (e==null)
 			{
@@ -50,14 +50,14 @@ namespace IronStar.Gameplay
 			}
 
 			var t	=	e.GetComponent<Transform>();
-			var ps	=	e.GetComponent<PlayerStart>();
+			var ps	=	e.GetComponent<PlayerStartComponent>();
 
 			if (!ps.PlayerSpawned)
 			{
 				ps.PlayerSpawned = true;
 
 				var player = gs.Spawn("PLAYER", t.Position, t.Rotation);
-				player.GetComponent<UserCommand2>().SetAnglesFromQuaternion( t.Rotation );
+				player.GetComponent<UserCommandComponent>().SetAnglesFromQuaternion( t.Rotation );
 			}
 		}
 
@@ -65,11 +65,11 @@ namespace IronStar.Gameplay
 		public void UpdatePlayerInput ( GameState gs, GameTime gameTime )
 		{
 			var playerInput	=	gs.Game.GetService<PlayerInput>();
-			var players		=	gs.QueryEntities<PlayerController,UserCommand2>();
+			var players		=	gs.QueryEntities<PlayerComponent,UserCommandComponent>();
 
 			foreach ( var player in players )
 			{
-				var uc	=	player.GetComponent<UserCommand2>();
+				var uc	=	player.GetComponent<UserCommandComponent>();
 				playerInput.UpdateUserInput( gameTime, uc );
 			}
 		}

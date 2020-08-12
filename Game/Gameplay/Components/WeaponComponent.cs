@@ -31,6 +31,14 @@ namespace IronStar.Gameplay.Components
 		public string	AmmoClass		=	"";
 		public int		AmmoConsumption	=	1;
 		
+		public bool		IsBeamWeapon { get { return ProjectileClass==null; } }
+
+
+		public TimeSpan Timer;
+		public WeaponState State;
+		public bool rqAttack;
+		public int Counter;
+
 
 		public void Load( GameState gs, Stream stream )	{}
 		public void Save( GameState gs, Stream stream )	{}

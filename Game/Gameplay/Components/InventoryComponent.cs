@@ -10,9 +10,11 @@ namespace IronStar.Gameplay.Components
 {
 	public class InventoryComponent : IComponent
 	{
-		public uint ActiveWeaponID = 0;
+		public uint ActiveItemID = 0;
+		public uint PendingItemID = 0;
 
 		readonly List<uint> itemIDs = new List<uint>();
+
 
 		public bool AddItem( uint id )
 		{
@@ -65,8 +67,6 @@ namespace IronStar.Gameplay.Components
 		}
 
 
-		public void Added( GameState gs, Entity entity ) {}
-		public void Removed( GameState gs ) {}
 		public void Load( GameState gs, Stream stream ) {}
 		public void Save( GameState gs, Stream stream ) {}
 	}

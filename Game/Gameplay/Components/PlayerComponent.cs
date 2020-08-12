@@ -8,8 +8,8 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay
 {
-	public class PlayerStart : Component
+	public class PlayerComponent : Component
 	{
-		public bool PlayerSpawned = false;
+		
 	}
 }

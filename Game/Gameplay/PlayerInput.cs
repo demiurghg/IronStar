@@ -69,7 +69,7 @@ namespace IronStar.Gameplay
 		}
 
 
-		public void UpdateUserInput ( GameTime gameTime, UserCommand2 userCommand )
+		public void UpdateUserInput ( GameTime gameTime, UserCommandComponent userCommand )
 		{
 			var flags	=	UserAction.None;
 			var console	=	Game.GetService<GameConsole>();

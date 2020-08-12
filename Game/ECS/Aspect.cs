@@ -57,6 +57,8 @@ namespace IronStar.ECS
 
 		public bool Accept( Entity e )
 		{
+			if (e==null) return false;
+
 			long mapping = e.ComponentMapping;
 
 			return (

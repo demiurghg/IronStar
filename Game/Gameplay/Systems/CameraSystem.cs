@@ -8,6 +8,7 @@ using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Graphics;
 using IronStar.ECS;
+using IronStar.ECSPhysics;
 
 namespace IronStar.Gameplay
 {
@@ -25,7 +26,7 @@ namespace IronStar.Gameplay
 
 		public void Update( GameState gs, GameTime gameTime )
 		{
-			var	players	=	gs.QueryEntities<PlayerController,Transform,UserCommand2>();
+			var	players	=	gs.QueryEntities<PlayerComponent,Transform,UserCommandComponent,CharacterController>();
 
 			if (players.Count()>1)
 			{
@@ -43,7 +44,8 @@ namespace IronStar.Gameplay
 		{
 			var t	=	e.GetComponent<Transform>();
 			var v	=	e.GetComponent<Velocity>();
-			var uc	=	e.GetComponent<UserCommand2>();
+			var uc	=	e.GetComponent<UserCommandComponent>();
+			var ch	=	e.GetComponent<CharacterController>();
 
 			var	rs	=	gs.GetService<RenderSystem>();
 			var rw	=	rs.RenderWorld;
@@ -53,7 +55,7 @@ namespace IronStar.Gameplay
 			var aspect	=	(vp.Width) / (float)vp.Height;
 
 			var camMatrix	=	uc.RotationMatrix;
-			var cameraPos	=	t.Position + Vector3.Up * 5.5f;	// #TODO #CAMERA -- get camera height
+			var cameraPos	=	t.Position + ch.PovOffset;
 			var cameraFwd	=	camMatrix.Forward;
 			var cameraUp	=	camMatrix.Up;
 			var velocity	=	v==null ? Vector3.Zero : v.Linear;

@@ -97,7 +97,7 @@ namespace IronStar.ECSPhysics
 
 		protected override void Process( Entity e, GameTime gameTime, BEPUCharacterController controller, CharacterController cc, Transform t, Velocity v )
 		{
-			var uc	=	e.GetComponent<UserCommand2>();
+			var uc	=	e.GetComponent<UserCommandComponent>();
 
 			if (uc!=null)
 			{

@@ -9,6 +9,7 @@ using Fusion.Core.Mathematics;
 using Fusion.Engine.Graphics;
 using IronStar.ECS;
 using IronStar.ECSPhysics;
+using IronStar.Animation;
 
 namespace IronStar.Gameplay
 {

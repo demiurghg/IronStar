@@ -113,6 +113,7 @@
     <Compile Include="Gameplay\Components\KeyComponent.cs" />
     <Compile Include="Gameplay\Components\AmmoComponent.cs" />
     <Compile Include="Gameplay\Components\ProjectileComponent.cs" />
+    <Compile Include="Gameplay\Components\StepComponent.cs" />
     <Compile Include="Gameplay\Components\WeaponComponent.cs" />
     <Compile Include="Gameplay\Components\HealthComponent.cs" />
     <Compile Include="Gameplay\Components\InventoryComponent.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Gameplay\Systems\PickupSystem.cs" />
     <Compile Include="Gameplay\Systems\HealthSystem.cs" />
     <Compile Include="Gameplay\Systems\ProjectileSystem.cs" />
+    <Compile Include="Gameplay\Systems\StepSystem.cs" />
     <Compile Include="Gameplay\Systems\WeaponSystem.cs" />
     <Compile Include="Gameplay\Components\UserCommandComponent.cs" />
     <Compile Include="Gameplay\Components\PlayerComponent.cs" />

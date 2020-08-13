@@ -71,6 +71,7 @@
     <Compile Include="ECSFactories\WeaponFactory.cs" />
     <Compile Include="ECSFactories\BoxFactory.cs" />
     <Compile Include="ECSFactories\AmmoFactory.cs" />
+    <Compile Include="ECSGraphics\AnimationComponent.cs" />
     <Compile Include="ECSGraphics\FPVComponent.cs" />
     <Compile Include="ECSGraphics\LightProbeSystem.cs" />
     <Compile Include="ECSGraphics\RenderModelFPVSystem.cs" />

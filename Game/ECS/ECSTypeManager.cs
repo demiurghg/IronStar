@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Extensions;
+using Fusion.Core.Mathematics;
 
 namespace IronStar.ECS
 {
@@ -56,6 +57,20 @@ namespace IronStar.ECS
 		{
 			int index = systemTypes.IndexOf( systemType );
 			return index < 0 ? 0 : (1 << index);
+		}
+
+
+		public static Type GetComponentType( long bit )
+		{
+			int index = MathUtil.LogBase2( (ulong)bit );
+			return componentTypes[index];
+		}
+
+
+		public static Type GetSystemType( long bit )
+		{
+			int index = MathUtil.LogBase2( (ulong)bit );
+			return systemTypes[index];
 		}
 	}
 }

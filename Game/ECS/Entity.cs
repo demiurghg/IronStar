@@ -87,5 +87,30 @@ namespace IronStar.ECS
 		{
 			return gs.GetEntityComponent<TComponent>(this);
 		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			var sb = new StringBuilder();
+			sb.AppendFormat("#{0}:", ID);
+			
+			for (int shl=0; shl<64; shl++) 
+			{
+				long bit = ((long)1) << shl;
+
+				if ((bit & ComponentMapping) != 0)
+				{
+					var type = ECSTypeManager.GetComponentType( 1u << shl );
+					var name = type.Name.Replace("Component","");
+					sb.AppendFormat("[" + name + "]");
+				}
+			}
+
+			return sb.ToString();
+		}
 	}
 }

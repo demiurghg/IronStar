@@ -37,9 +37,8 @@ namespace IronStar.Gameplay.Systems
 
 				foreach ( var touchEntity in touchDetector )
 				{
-					if ( AcceptItem( touchEntity, pickupItem ) )
+					if ( PickItemUp( gs, touchEntity, pickupItem ) )
 					{
-						PickItemUp( gs, touchEntity, pickupItem );
 						break;
 					}
 				}
@@ -47,35 +46,46 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		void PickItemUp( GameState gs, Entity recipient, Entity pickupItem )
+		bool PickItemUp( GameState gs, Entity recipient, Entity pickupItem )
 		{
+			var inventory	=	recipient.GetComponent<InventoryComponent>();
 			var transform	=	recipient.GetComponent<Transform>();
 			var pickup		=	pickupItem.GetComponent<PickupComponent>();
 
+			//	recipient has no inventory, skip:
+			if (inventory==null)
+			{
+				return false;
+			}
+
+			//	no trnasform, no pickup item :
 			if (transform==null || pickup==null)
 			{
 				Log.Warning("Item {0} can not be picked up by {1}", pickupItem.ID, recipient.ID );
-				return;
+				return false;
 			}
 
 			pickupItem.RemoveComponent<Transform>();
 
+			inventory.AddItem( pickupItem.ID );
+
 			FXPlayback.SpawnFX( gs, pickup.FXName, 0, transform.Position );
-		}
 
+			Log.Message("Pickup: {0}", pickupItem);
 
-		bool AcceptItem( Entity recipient, Entity item )
-		{
-			var inventory = recipient.GetComponent<InventoryComponent>();
+			//	activate weapon :
+			var weapon		=	pickupItem.GetComponent<WeaponComponent>();
 
-			if (inventory!=null)
+			if (weapon!=null)
 			{
-				return inventory.AddItem( item.ID );
+				if (!gs.Exists(inventory.ActiveItemID))
+				{
+					inventory.ActiveItemID = pickupItem.ID;
+				}
 			}
-			else
-			{
-				return false;
-			}
+
+
+			return true;
 		}
 	}
 }

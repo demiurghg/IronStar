@@ -42,6 +42,12 @@ namespace IronStar
 		}
 
 
+		public Matrix GetAbsoluteTransform(int nodeIndex)
+		{
+			return transforms[nodeIndex];
+		}
+
+
 		public void SetTransform( Action<TMesh,Matrix> transformAction, Matrix worldMatrix )
 		{
 			for ( int i=0; i<meshes.Length; i++ )

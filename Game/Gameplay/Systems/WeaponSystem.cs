@@ -55,6 +55,12 @@ namespace IronStar.Gameplay.Systems
 		void UpdateWeaponFSM (GameTime gameTime, bool attack, InventoryComponent inventory, Entity weaponEntity )
 		{
 			var weapon	=	weaponEntity.GetComponent<WeaponComponent>();
+
+			if ( weapon.Timer > TimeSpan.Zero ) 
+			{
+				weapon.Timer = weapon.Timer - gameTime.Elapsed;
+			}
+
 			var timeout	=	weapon.Timer <= TimeSpan.Zero;
 
 			Log.Message("...{0}", weapon.State.ToString());

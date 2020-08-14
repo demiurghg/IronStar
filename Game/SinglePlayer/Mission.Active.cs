@@ -52,12 +52,13 @@ namespace IronStar.SinglePlayer {
 			gs.AddSystem( new StepSystem() );
 
 			//	rendering :
+			gs.AddSystem( new Gameplay.CameraSystem() );
+			gs.AddSystem( new FPVWeaponSystem(game) );
 			gs.AddSystem( new SFX2.RenderModelSystem(game) );
 			gs.AddSystem( new SFX2.OmniLightSystem(game.RenderSystem) );
 			gs.AddSystem( new SFX2.SpotLightSystem(game.RenderSystem) );
 			gs.AddSystem( new SFX2.LightProbeSystem(game.RenderSystem) );
 			gs.AddSystem( new SFX2.LightingSystem() );
-			gs.AddSystem( new Gameplay.CameraSystem() );
 			gs.AddSystem( new Gameplay.PlayerSystem() );
 
 			map.ActivateGameState(gs);

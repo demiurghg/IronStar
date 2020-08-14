@@ -30,6 +30,7 @@ namespace IronStar.SFX2
 		Scene scene;
 		SceneView<RenderInstance> sceneView;
 		Matrix preTransform;
+		Matrix cameraTransform;
 
 
 		public RenderModelView ( GameState gs, RenderModel rm, Matrix tm )
@@ -45,6 +46,7 @@ namespace IronStar.SFX2
 							);
 
 			preTransform	=	rm.transform;
+			cameraTransform	=	Matrix.Identity;
 
 			sceneView.ForEachMesh( mesh => {
 				mesh.Group	= rm.UseLightMap ? InstanceGroup.Static : InstanceGroup.Kinematic;
@@ -55,6 +57,34 @@ namespace IronStar.SFX2
 			});
 
 			SetTransform( tm );
+		}
+
+
+		public void SetFPVEnabled( bool enabled, string cameraNode )
+		{
+			if (enabled) 
+			{
+				var fpvCameraIndex		=	scene.GetNodeIndex( cameraNode );
+
+				if (fpvCameraIndex<0) 
+				{	
+					Log.Warning("Camera node {0} does not exist", cameraNode);
+					cameraTransform	=	Matrix.Identity;
+				} 
+				else 
+				{
+					var fpvCameraMatrix	=	Scene.FixGlobalCameraMatrix( sceneView.GetAbsoluteTransform( fpvCameraIndex ) );
+					var fpvViewMatrix	=	Matrix.Invert( fpvCameraMatrix );
+					cameraTransform		=	fpvViewMatrix;
+				}
+
+				sceneView.ForEachMesh( mesh => mesh.Group = InstanceGroup.Weapon );
+			}
+			else
+			{
+				sceneView.ForEachMesh( mesh => mesh.Group = InstanceGroup.Dynamic );
+				cameraTransform	=	Matrix.Identity;
+			}
 		}
 
 
@@ -71,7 +101,7 @@ namespace IronStar.SFX2
 
 		public void SetTransform( Matrix worldMatrix )
 		{
-			sceneView.SetTransform( (mesh,matrix) => mesh.World = matrix, preTransform * worldMatrix );
+			sceneView.SetTransform( (mesh,matrix) => mesh.World = matrix, cameraTransform * preTransform * worldMatrix );
 		}
 	}
 }

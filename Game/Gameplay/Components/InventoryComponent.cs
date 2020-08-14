@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Fusion;
 using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
@@ -25,6 +26,7 @@ namespace IronStar.Gameplay.Components
 			} 
 			else
 			{
+				Log.Warning("InventoryComponent : attempt to put the same entity twice");
 				return false;
 			}
 		}
@@ -39,6 +41,7 @@ namespace IronStar.Gameplay.Components
 			} 
 			else
 			{
+				Log.Warning("InventoryComponent : attempt to remove non-existing entity");
 				return false;
 			}
 		}

@@ -87,7 +87,7 @@ namespace IronStar.Gameplay.Systems
 			if (model!=null)
 			{
 				renderModel	=	new RenderModelInstance( gs, model, rw.Camera.CameraMatrix, CameraNodeName );
-				//composer	=	new AnimationComposer("", renderModel, renderModel.Scene, 
+				composer	=	new AnimationComposer( gs.GetService<SFX.FXPlayback>(), renderModel, renderModel.Scene );
 			}
 		}
 

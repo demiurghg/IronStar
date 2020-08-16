@@ -9,6 +9,7 @@ using IronStar.ECS;
 using IronStar.ECSPhysics;
 using IronStar.Gameplay.Components;
 using IronStar.SFX2;
+using IronStar.Animation;
 
 namespace IronStar.Gameplay.Systems
 {
@@ -26,7 +27,8 @@ namespace IronStar.Gameplay.Systems
 
 		readonly Aspect weaponAspect	=	new Aspect().Include<WeaponComponent>();
 
-		RenderModelView	renderModel = null;
+		AnimationComposer composer;
+		RenderModelInstance	renderModel = null;
 		Entity activeWeapon = null;
 
 
@@ -66,7 +68,10 @@ namespace IronStar.Gameplay.Systems
 					ChangeWeaponModel( gs, model );
 				}
 
-				renderModel?.SetTransform( rw.Camera.CameraMatrix );
+				if (renderModel!=null)
+				{
+					renderModel.WorldMatrix = rw.Camera.CameraMatrix;
+				}
 			}
 		}
 
@@ -77,11 +82,12 @@ namespace IronStar.Gameplay.Systems
 			var rw = rs.RenderWorld;
 
 			renderModel?.Dispose();
+			composer	=	null;
 
 			if (model!=null)
 			{
-				renderModel	=	new RenderModelView( gs, model, rw.Camera.CameraMatrix );
-				renderModel.SetFPVEnabled(true, CameraNodeName);
+				renderModel	=	new RenderModelInstance( gs, model, rw.Camera.CameraMatrix, CameraNodeName );
+				//composer	=	new AnimationComposer("", renderModel, renderModel.Scene, 
 			}
 		}
 

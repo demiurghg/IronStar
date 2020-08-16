@@ -25,7 +25,7 @@ using IronStar.ECSGraphics;
 
 namespace IronStar.SFX2 
 {
-	public class RenderModelFPVSystem : ProcessingSystem<RenderModelView,FPVComponent,RenderModel>
+	public class RenderModelFPVSystem : ProcessingSystem<RenderModelInstance,FPVComponent,RenderModel>
 	{
 		readonly Game	game;
 		public readonly RenderSystem rs;
@@ -42,21 +42,21 @@ namespace IronStar.SFX2
 		}
 
 
-		protected override RenderModelView Create( Entity e, FPVComponent t, RenderModel rm )
+		protected override RenderModelInstance Create( Entity e, FPVComponent t, RenderModel rm )
 		{
-			return new RenderModelView( e.gs, rm, rw.Camera.CameraMatrix );
+			return new RenderModelInstance( e.gs, rm, rw.Camera.CameraMatrix );
 		}
 
 		
-		protected override void Destroy( Entity e, RenderModelView model )
+		protected override void Destroy( Entity e, RenderModelInstance model )
 		{
 			model?.Dispose();
 		}
 
 		
-		protected override void Process( Entity e, GameTime gameTime, RenderModelView model, FPVComponent t, RenderModel rm )
+		protected override void Process( Entity e, GameTime gameTime, RenderModelInstance model, FPVComponent t, RenderModel rm )
 		{
-			model.SetTransform( rw.Camera.CameraMatrix );
+			model.WorldMatrix = rw.Camera.CameraMatrix;
 		}
 	}
 }

@@ -20,12 +20,13 @@ using IronStar.ECS;
 namespace IronStar.SFX {
 	public partial class FXPlayback : ProcessingSystem<FXInstance, FXComponent, Transform>
 	{
-
 		TextureAtlas spriteSheet;
 
 		readonly TextureAtlasClip	EmptyClip	=	new TextureAtlasClip("*null", -1, 0 );
 
-		readonly Game			game;
+		public Game Game { get {  return game; } }
+
+		readonly Game	game;
 		public readonly RenderWorld	rw;
 		public readonly SoundSystem	ss;
 		public readonly GameWorld world;

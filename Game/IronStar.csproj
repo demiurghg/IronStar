@@ -65,6 +65,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Animation\AnimationClip.cs" />
+    <Compile Include="Animation\AnimationComposer.cs" />
+    <Compile Include="Animation\AnimationPose.cs" />
+    <Compile Include="Animation\AnimationSource.cs" />
+    <Compile Include="Animation\AnimationStack.cs" />
+    <Compile Include="Animation\AnimationTrack.cs" />
+    <Compile Include="Animation\IAnimationProvider.cs" />
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Core\EntityComponent.cs" />
     <Compile Include="ECSFactories\PowerupFactory.cs" />
@@ -78,7 +85,7 @@
     <Compile Include="ECSGraphics\RenderModelFPVSystem.cs" />
     <Compile Include="ECSGraphics\SpotLightSystem.cs" />
     <Compile Include="ECSGraphics\OmniLightSystem.cs" />
-    <Compile Include="ECSGraphics\RenderModelView.cs" />
+    <Compile Include="ECSGraphics\RenderModelInstance.cs" />
     <Compile Include="ECSPhysics\CharacterControllerSystem.cs" />
     <Compile Include="ECSPhysics\CollisionGroup.cs" />
     <Compile Include="ECSPhysics\DynamicCollisionSystem.cs" />

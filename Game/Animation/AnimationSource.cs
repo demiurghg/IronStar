@@ -1,0 +1,56 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Fusion;
+using Fusion.Core;
+using Fusion.Core.Mathematics;
+using Fusion.Engine.Graphics;
+using Fusion.Engine.Graphics.Scenes;
+
+namespace IronStar.Animation 
+{
+	public abstract class AnimationSource : IAnimationProvider
+	{
+		public float Weight { get; set; } = 1;
+
+		readonly protected AnimationBlendMode blendMode;
+		
+		readonly protected string channel;
+		readonly protected Scene scene;
+		readonly protected int nodeCount;
+		readonly protected int[] channelIndices;
+		readonly protected int channelIndex;
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="blendMode"></param>
+		public AnimationSource( Scene scene, string channel, AnimationBlendMode blendMode )
+		{
+			this.channel	=	channel;
+			this.blendMode	=	blendMode;
+			this.scene		=	scene;
+			nodeCount		=	scene.Nodes.Count;
+
+			channelIndex	=	scene.GetNodeIndex( channel );
+
+			if (channelIndex<0) {
+				Log.Warning("Channel joint '{0}' does not exist", channel );
+			}
+
+			channelIndices	=	scene.GetChannelNodeIndices( channelIndex );
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="time"></param>
+		/// <param name="destination"></param>
+		public abstract bool Evaluate ( GameTime gameTime, Matrix[] destination );
+	}
+}

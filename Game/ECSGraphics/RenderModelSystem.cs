@@ -24,7 +24,7 @@ using IronStar.ECS;
 
 namespace IronStar.SFX2 
 {
-	public class RenderModelSystem : ProcessingSystem<RenderModelView,Transform,RenderModel>
+	public class RenderModelSystem : ProcessingSystem<RenderModelInstance,Transform,RenderModel>
 	{
 		readonly Game	game;
 		public readonly RenderSystem rs;
@@ -41,21 +41,21 @@ namespace IronStar.SFX2
 		}
 
 
-		protected override RenderModelView Create( Entity e, Transform t, RenderModel rm )
+		protected override RenderModelInstance Create( Entity e, Transform t, RenderModel rm )
 		{
-			return new RenderModelView( e.gs, rm, t.TransformMatrix );
+			return new RenderModelInstance( e.gs, rm, t.TransformMatrix );
 		}
 
 		
-		protected override void Destroy( Entity e, RenderModelView model )
+		protected override void Destroy( Entity e, RenderModelInstance model )
 		{
 			model?.Dispose();
 		}
 
 		
-		protected override void Process( Entity e, GameTime gameTime, RenderModelView model, Transform t, RenderModel rm )
+		protected override void Process( Entity e, GameTime gameTime, RenderModelInstance model, Transform t, RenderModel rm )
 		{
-			model.SetTransform( t.TransformMatrix );
+			model.WorldMatrix = t.TransformMatrix;
 		}
 	}
 }

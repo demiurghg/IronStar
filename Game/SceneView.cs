@@ -18,9 +18,10 @@ namespace IronStar
 	/// <typeparam name="TMesh"></typeparam>
 	public class SceneView<TMesh> where TMesh: class
 	{
-		readonly Scene		scene;
-		readonly Matrix[]	transforms;
-		readonly TMesh[]	meshes;
+		public readonly Scene		scene;
+		public readonly Matrix[]	transforms;
+		public readonly TMesh[]		meshes;
+
 
 
 		public SceneView( Scene scene, Func<Mesh,TMesh> meshSelector, Func<Node,bool> nodeFilter )

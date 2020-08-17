@@ -54,6 +54,12 @@ namespace IronStar.SFX2
 		}
 
 
+		public Matrix[] FlattenTransforms
+		{
+			get { return sceneView.transforms; }
+		}
+
+
 		/// <summary>
 		/// Creates instance of render model
 		/// </summary>

@@ -130,6 +130,7 @@
     <Compile Include="Gameplay\PlayerInput.cs" />
     <Compile Include="ECSFactories\PlayerFactory.cs" />
     <Compile Include="Gameplay\Systems\CameraSystem.cs" />
+    <Compile Include="Gameplay\Systems\FPVWeaponAnimator.cs" />
     <Compile Include="Gameplay\Systems\FPVWeaponSystem.cs" />
     <Compile Include="Gameplay\Systems\PlayerSystem.cs" />
     <Compile Include="Gameplay\Systems\PickupSystem.cs" />

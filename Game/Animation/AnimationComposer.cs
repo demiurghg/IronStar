@@ -53,16 +53,17 @@ namespace IronStar.Animation
 
 
 		/// <summary>
-		/// 
+		/// Updates entire composer states and all underlaying tracks, sounds and particle effects.
+		/// Generates absolute/flat model-space transformations :
 		/// </summary>
-		/// <param name="entity"></param>
 		/// <param name="gameTime"></param>
-		public void Update ( GameTime gameTime, Matrix[] transforms )
+		/// <param name="transforms"></param>
+		public void Update ( GameTime gameTime, Matrix[] flatTransforms )
 		{
-			if (transforms==null) {
+			if (flatTransforms==null) {
 				throw new ArgumentNullException("transforms");
 			}
-			if (transforms.Length!=scene.Nodes.Count) {
+			if (flatTransforms.Length!=scene.Nodes.Count) {
 				throw new ArgumentOutOfRangeException("transforms.Length != scene.Nodes.Count");
 			}
 
@@ -86,14 +87,14 @@ namespace IronStar.Animation
 			//--------------------------------
 			//	compute global transforms 
 			//	required for FX and IK :
-			scene.ComputeAbsoluteTransforms( localTransforms, transforms );
+			scene.ComputeAbsoluteTransforms( localTransforms, flatTransforms );
 
 			//--------------------------------
 			//	update FX :
 			foreach ( var fxInstance in fxInstances ) {
 				Vector3 p, s;
 				Quaternion q;
-				Matrix jointWorld = transforms[ fxInstance.JointIndex ] * model.PreTransform * model.WorldMatrix;
+				Matrix jointWorld = flatTransforms[ fxInstance.JointIndex ] * model.PreTransform * model.WorldMatrix;
 				jointWorld.Decompose( out s, out q, out p );
 				fxInstance.Move( p, Vector3.Zero, q );
 			}
@@ -127,7 +128,7 @@ namespace IronStar.Animation
 
 			if (jointId<0) 
 			{
-				Log.Warning("Bad joint name: {0}", joint);
+				Log.Warning("SequenceFX: Bad joint name: {0}", joint);
 				return;
 			}
 
@@ -136,10 +137,12 @@ namespace IronStar.Animation
 			
 			var instance = fxPlayback.RunFX( fxName, fxEvent, false, true );
 
-			instance.JointIndex	=	jointId;
-			instance.WeaponFX	=	model.IsFPVModel;
-
-			fxInstances.Add( instance );
+			if (instance!=null)
+			{
+				instance.JointIndex	=	jointId;
+				instance.WeaponFX	=	model.IsFPVModel;
+				fxInstances.Add( instance );
+			}
 		}
 
 

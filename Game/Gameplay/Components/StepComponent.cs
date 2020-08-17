@@ -4,11 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Fusion.Core.Mathematics;
 using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
-	class StepComponent : IComponent
+	public class StepComponent : IComponent
 	{
 		public bool		Jumped;
 		public bool		Landed;
@@ -19,6 +20,9 @@ namespace IronStar.Gameplay.Components
 		public float	StepTimer;
 		public float	StepFraction;
 		public bool		Traction;
+
+		public Vector3	GroundVelocity;
+		public float	FallVelocity;
 
 		public void Load( GameState gs, Stream stream )
 		{

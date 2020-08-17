@@ -36,13 +36,21 @@ namespace IronStar.Animation
 			this.scene		=	scene;
 			nodeCount		=	scene.Nodes.Count;
 
-			channelIndex	=	scene.GetNodeIndex( channel );
-
-			if (channelIndex<0) {
-				Log.Warning("Channel joint '{0}' does not exist", channel );
+			if (string.IsNullOrEmpty(channel))
+			{
+				channelIndex	=	0;
+				channelIndices	=	scene.GetChannelNodeIndices(-1);
 			}
+			else
+			{
+				channelIndex	=	scene.GetNodeIndex( channel );
 
-			channelIndices	=	scene.GetChannelNodeIndices( channelIndex );
+				if (channelIndex<0) {
+					Log.Warning("Channel joint '{0}' does not exist", channel );
+				}
+
+				channelIndices	=	scene.GetChannelNodeIndices( channelIndex );
+			}
 		}
 
 

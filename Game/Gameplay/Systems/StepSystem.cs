@@ -38,7 +38,10 @@ namespace IronStar.Gameplay.Systems
 				var controller	=	e.GetComponent<CharacterController>();
 				var velocity3D	=	e.GetComponent<Velocity>().Linear;
 
-				var velocity	=	new Vector2( velocity3D.X, velocity3D.Z ).Length();
+				step.FallVelocity	=	velocity3D.Y;
+				step.GroundVelocity	=	new Vector3( velocity3D.X, 0, velocity3D.Z );
+
+				var velocity		=	step.GroundVelocity.Length();
 
 				//
 				//	update striding/stepping :

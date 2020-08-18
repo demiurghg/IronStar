@@ -41,19 +41,19 @@ namespace IronStar.SinglePlayer {
 			gs.AddSystem( new ECSPhysics.DynamicCollisionSystem(physicsCore) );
 			gs.AddSystem( new ECSPhysics.CharacterControllerSystem(physicsCore) );
 			gs.AddSystem( physicsCore );
-			gs.AddSystem( new FXPlayback(game, content) );
 
 			//	game logic :
-			gs.AddSystem( new WeaponSystem() );
 			gs.AddSystem( new HealthSystem() );
 			gs.AddSystem( new PickupSystem() );
+			gs.AddSystem( new WeaponSystem() );
 
 			//	animation systems :
 			gs.AddSystem( new StepSystem() );
-
-			//	rendering :
 			gs.AddSystem( new Gameplay.CameraSystem() );
 			gs.AddSystem( new FPVWeaponSystem(game) );
+			gs.AddSystem( new FXPlayback(game, content) );
+
+			//	rendering :
 			gs.AddSystem( new SFX2.RenderModelSystem(game) );
 			gs.AddSystem( new SFX2.OmniLightSystem(game.RenderSystem) );
 			gs.AddSystem( new SFX2.SpotLightSystem(game.RenderSystem) );

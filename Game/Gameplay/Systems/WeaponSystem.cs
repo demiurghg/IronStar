@@ -23,6 +23,7 @@ namespace IronStar.Gameplay.Systems
 		
 		public void Update( GameState gs, GameTime gameTime )
 		{
+			//	update player's weapon :
 			UpdatePlayerWeapon( gs, gameTime );
 		}
 
@@ -33,16 +34,26 @@ namespace IronStar.Gameplay.Systems
 
 			foreach ( var player in players )
 			{
-				var inventory		=	player.GetComponent<InventoryComponent>();
-				var userCmd			=	player.GetComponent<UserCommandComponent>();
-				var weaponEntity	=	gs.GetEntity( inventory.ActiveItemID );
+				var inventory	=	player.GetComponent<InventoryComponent>();
+				var userCmd		=	player.GetComponent<UserCommandComponent>();
 
-				if (weaponAspect.Accept(weaponEntity))
+				if (inventory.HasPendingWeapon && inventory.ActiveWeaponID==0)
 				{
-					var weapon = weaponEntity.GetComponent<WeaponComponent>();
-					var attack = userCmd.Action.HasFlag( UserAction.Attack );
+					inventory.FinalizeWeaponSwitch();
+				}
 					
-					UpdateWeaponFSM( gameTime, attack, inventory, weaponEntity );
+				var activeItem	=	gs.GetEntity( inventory.ActiveWeaponID );
+
+				//	is active item weapon?
+				if (weaponAspect.Accept(activeItem))
+				{
+					var weapon = activeItem.GetComponent<WeaponComponent>();
+					var attack = userCmd.Action.HasFlag( UserAction.Attack );
+
+					AdvanceWeaponTimer( gameTime, activeItem );
+					UpdateWeaponFSM( gameTime, attack, inventory, activeItem );
+					UpdateWeaponFSM( gameTime, attack, inventory, activeItem );
+					UpdateWeaponFSM( gameTime, attack, inventory, activeItem );
 				}
 			}
 		}
@@ -51,8 +62,8 @@ namespace IronStar.Gameplay.Systems
 		/*-----------------------------------------------------------------------------------------------
 		 * Weapon state
 		-----------------------------------------------------------------------------------------------*/
-
-		void UpdateWeaponFSM (GameTime gameTime, bool attack, InventoryComponent inventory, Entity weaponEntity )
+		
+		void AdvanceWeaponTimer( GameTime gameTime, Entity weaponEntity )
 		{
 			var weapon	=	weaponEntity.GetComponent<WeaponComponent>();
 
@@ -60,10 +71,15 @@ namespace IronStar.Gameplay.Systems
 			{
 				weapon.Timer = weapon.Timer - gameTime.Elapsed;
 			}
+		}
 
+
+		void UpdateWeaponFSM (GameTime gameTime, bool attack, InventoryComponent inventory, Entity weaponEntity )
+		{
+			var weapon	=	weaponEntity.GetComponent<WeaponComponent>();
 			var timeout	=	weapon.Timer <= TimeSpan.Zero;
 
-			Log.Message("...{0}", weapon.State.ToString());
+			if (weapon.State!=WeaponState.Idle) Log.Message("...{0}", weapon.State.ToString());
 
 			switch (weapon.State) 
 			{
@@ -81,7 +97,7 @@ namespace IronStar.Gameplay.Systems
 							weapon.Timer += weapon.TimeNoAmmo;
 						}
 					}
-					if (inventory.PendingItemID!=0) 
+					if (inventory.HasPendingWeapon) 
 					{
 						weapon.State =  WeaponState.Drop;	
 						weapon.Timer =  weapon.TimeDrop;
@@ -132,8 +148,7 @@ namespace IronStar.Gameplay.Systems
 				case WeaponState.Drop:	
 					if (timeout) 
 					{
-						inventory.ActiveItemID		=	inventory.PendingItemID;
-						inventory.PendingItemID		=	0;
+						inventory.FinalizeWeaponSwitch();
 						weapon.State = WeaponState.Inactive;
 						weapon.Timer = TimeSpan.Zero;
 					}
@@ -156,7 +171,7 @@ namespace IronStar.Gameplay.Systems
 					break;
 
 				case WeaponState.Inactive:	
-					if (inventory.ActiveItemID == weaponEntity.ID) 
+					if (inventory.ActiveWeaponID == weaponEntity.ID) 
 					{
 						weapon.State = WeaponState.Raise;
 						weapon.Timer = weapon.TimeRaise;

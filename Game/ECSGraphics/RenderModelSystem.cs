@@ -55,7 +55,7 @@ namespace IronStar.SFX2
 		
 		protected override void Process( Entity e, GameTime gameTime, RenderModelInstance model, Transform t, RenderModel rm )
 		{
-			model.WorldMatrix = t.TransformMatrix;
+			model.SetTransform( t.TransformMatrix );
 		}
 	}
 }

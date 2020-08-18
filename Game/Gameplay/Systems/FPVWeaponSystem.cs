@@ -81,7 +81,7 @@ namespace IronStar.Gameplay.Systems
 				var inventory		=	playerEntity.GetComponent<InventoryComponent>();
 				var steps			=	playerEntity.GetComponent<StepComponent>();
 
-				var weaponEntity	=	gs.GetEntity( inventory.ActiveItemID );
+				var weaponEntity	=	gs.GetEntity( inventory.ActiveWeaponID );
 				var weapon			=	weaponEntity?.GetComponent<WeaponComponent>();
 				var	model			=	weaponEntity?.GetComponent<RenderModel>();
 
@@ -93,7 +93,7 @@ namespace IronStar.Gameplay.Systems
 
 				if (renderModel!=null)
 				{
-					renderModel.WorldMatrix = rw.Camera.CameraMatrix;
+					renderModel.SetTransform( rw.Camera.CameraMatrix );
 					animator.Update( gameTime, weapon, steps );  
 				}
 			}
@@ -115,7 +115,5 @@ namespace IronStar.Gameplay.Systems
 				animator	=	new WeaponAnimator(fx, renderModel); 
 			}
 		}
-
-
 	}
 }

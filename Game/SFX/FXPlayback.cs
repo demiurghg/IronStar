@@ -140,7 +140,7 @@ namespace IronStar.SFX {
 		/// Updates visible meshes
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void Update ( GameTime gameTime, float lerpFactor )
+		public void Update ( GameTime gameTime )
 		{
 			const float dt = 1/60.0f;
 			timeAccumulator	+= gameTime.ElapsedSec;
@@ -149,7 +149,7 @@ namespace IronStar.SFX {
 
 				foreach ( var sfx in runningSFXes ) {
 
-					sfx.Update( dt, lerpFactor );
+					sfx.Update( dt );
 
 					if (sfx.IsExhausted) {
 						sfx.Kill();
@@ -219,9 +219,7 @@ namespace IronStar.SFX {
 
 			var fxInstance	=	factory.CreateFXInstance( this, fxEvent, looped );
 
-			if (!ecsDoNotAddToList) {
-				runningSFXes.Add( fxInstance );
-			}
+			runningSFXes.Add( fxInstance );
 
 			return fxInstance;
 		}
@@ -266,6 +264,13 @@ namespace IronStar.SFX {
 			fxInstance.Kill();
 		}
 
+		public override void Update( GameState gs, GameTime gameTime )
+		{
+			base.Update( gs, gameTime );
+
+			Update( gameTime );
+		}
+
 		protected override void Process( ECS.Entity entity, GameTime gameTime, FXInstance fxInstance, FXComponent fx, Transform t )
 		{
 			fxInstance.fxEvent.Origin	=	t.Position;
@@ -274,7 +279,7 @@ namespace IronStar.SFX {
 			var velocityComponent		=	entity.GetComponent<Velocity>();
 			fxInstance.fxEvent.Velocity	=	velocityComponent==null ? Vector3.Zero : velocityComponent.Linear;
 
-			fxInstance.Update( gameTime.ElapsedSec, 0 ); 
+			//fxInstance.Update( gameTime.ElapsedSec ); 
 		}
 	}
 }

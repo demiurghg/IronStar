@@ -59,7 +59,7 @@ namespace IronStar.Gameplay.Systems
 
 		RenderModelInstance	model;
 
-		WeaponState oldWeaponState;
+		WeaponState oldWeaponState = WeaponState.Overheat;
 		int stepCounter = 0;
 		int stepTimer = 0;
 		bool stepFired = false;
@@ -124,6 +124,8 @@ namespace IronStar.Gameplay.Systems
 			{
 				Log.Message("{0}", weaponState );
 
+				//model.Visible = false;//weaponState!=WeaponState.Inactive;
+
 				if ( weaponState == WeaponState.Cooldown || weaponState == WeaponState.Cooldown2 ) 
 				{
 					trackWeapon.Sequence( ANIM_COOLDOWN, true, false );
@@ -133,7 +135,7 @@ namespace IronStar.Gameplay.Systems
 					var shakeAmpl = Math.Abs(rand.GaussDistribution(0,0.5f));
 					RunShakeAnimation( shakeName, shakeAmpl );
 
-					composer.SequenceFX( SFX_MUZZLE, JOINT_MUZZLE, 0.05f );	 // #TODO #FX #ANIMATION -- remove hardcoded FX scale
+					composer.SequenceFX( weapon.MuzzleFX, JOINT_MUZZLE, 1 );
 				}
 
 
@@ -173,7 +175,7 @@ namespace IronStar.Gameplay.Systems
 		{
 			var dt			=	gameTime.ElapsedSec;
 
-			var fallVelocity	=	steps.FallVelocity;
+			var fallVelocity	=	Math.Abs(steps.FallVelocity);
 			var groundVelocity	=	steps.GroundVelocity;
 
 
@@ -210,35 +212,19 @@ namespace IronStar.Gameplay.Systems
 			poseTilt.Weight	=	Math.Abs( tiltFactor );
 			poseTilt.Frame	=	(tiltFactor > 0) ? 1 : 2;
 
+			var stepWeight	=	Math.Min( 1, groundVelocity.Length() / 10.0f ) * 0.5f;
+
 			//	step animation :
 			if (steps.LeftStep) 
 			{
-				stepTimer += gameTime.Milliseconds;
+				composer.SequenceSound( SOUND_STEP );
+				RunShakeAnimation( ANIM_WALKLEFT, stepWeight);
+			}
 
-				var weight	=	Math.Min( 1, groundVelocity.Length() / 10.0f ) * 0.5f;
-
-				if (stepTimer > 50 && !stepFired) 
-				{
-					stepCounter++;
-
-					stepFired = true;
-
-					composer.SequenceSound( SOUND_STEP );
-
-					if ((stepCounter & 1) == 0) {
-						RunShakeAnimation( ANIM_WALKRIGHT, weight);
-					} else {
-						RunShakeAnimation( ANIM_WALKLEFT, weight);
-					}
-				}
-
-				if (stepTimer>300) {
-					stepFired = false;
-					stepTimer = 0;
-				}
-
-			} else {
-				stepTimer = 0;
+			if (steps.RightStep)
+			{
+				composer.SequenceSound( SOUND_STEP );
+				RunShakeAnimation( ANIM_WALKRIGHT, stepWeight);
 			}
 		}
 		

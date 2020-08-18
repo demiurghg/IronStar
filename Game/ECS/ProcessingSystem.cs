@@ -40,7 +40,7 @@ namespace IronStar.ECS
 			}
 		}
 
-		public void Update( GameState gs, GameTime gameTime )
+		public virtual void Update( GameState gs, GameTime gameTime )
 		{
 			var entities = gs.QueryEntities(aspect);
 
@@ -93,7 +93,7 @@ namespace IronStar.ECS
 			}
 		}
 
-		public void Update( GameState gs, GameTime gameTime )
+		public virtual void Update( GameState gs, GameTime gameTime )
 		{
 			var entities = gs.QueryEntities(aspect);
 
@@ -163,7 +163,7 @@ namespace IronStar.ECS
 			}
 		}
 
-		public void Update( GameState gs, GameTime gameTime )
+		public virtual void Update( GameState gs, GameTime gameTime )
 		{
 			ForEach( gs, gameTime, Process );
 		}
@@ -213,7 +213,7 @@ namespace IronStar.ECS
 			}
 		}
 
-		public void Update( GameState gs, GameTime gameTime )
+		public virtual void Update( GameState gs, GameTime gameTime )
 		{
 			var entities = gs.QueryEntities(aspect);
 

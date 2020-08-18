@@ -73,15 +73,14 @@ namespace IronStar.Gameplay.Systems
 
 			Log.Message("Pickup: {0}", pickupItem);
 
+			//
 			//	activate weapon :
+			//
 			var weapon		=	pickupItem.GetComponent<WeaponComponent>();
 
 			if (weapon!=null)
 			{
-				if (!gs.Exists(inventory.ActiveItemID))
-				{
-					inventory.ActiveItemID = pickupItem.ID;
-				}
+				inventory.SwitchWeapon( pickupItem.ID );
 			}
 
 

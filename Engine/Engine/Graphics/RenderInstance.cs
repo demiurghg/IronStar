@@ -30,6 +30,8 @@ namespace Fusion.Engine.Graphics {
 	/// </summary>
 	public class RenderInstance {
 
+		public bool Visible = true;
+
 		public InstanceGroup Group {
 			get; set;
 		}

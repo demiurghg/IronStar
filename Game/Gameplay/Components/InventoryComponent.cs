@@ -11,10 +11,31 @@ namespace IronStar.Gameplay.Components
 {
 	public class InventoryComponent : IComponent
 	{
-		public uint ActiveItemID = 0;
-		public uint PendingItemID = 0;
-
+		uint activeWeaponID = 0;
+		uint pendingWeaponID = 0;
 		readonly List<uint> itemIDs = new List<uint>();
+
+
+		public uint ActiveWeaponID { get { return activeWeaponID; } }
+		public bool HasPendingWeapon { get { return pendingWeaponID!=0; } }
+
+
+		public bool SwitchWeapon( uint id )
+		{
+			if (itemIDs.Contains(id)) 
+			{
+				pendingWeaponID	=	id;
+				return true;
+			}
+			else return false;
+		}
+
+
+		public void FinalizeWeaponSwitch()
+		{
+			activeWeaponID	=	pendingWeaponID;
+			pendingWeaponID	=	0;
+		}
 
 
 		public bool AddItem( uint id )

@@ -110,7 +110,7 @@ namespace IronStar.SFX {
 		/// 
 		/// </summary>
 		/// <param name="elapsedTime"></param>
-		public void Update ( float dt, float lerpFactor )
+		public void Update ( float dt )
 		{
 			var ent = fxPlayback.world?.GetEntity( fxEvent.EntityID );
 

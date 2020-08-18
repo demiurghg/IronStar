@@ -239,7 +239,7 @@ namespace IronStar.Core {
 
 
 			modelManager.Update( gameTime, lerpFactor, gameCamera, userCmd );
-			fxPlayback.Update( gameTime, lerpFactor );
+			fxPlayback.Update( gameTime );
 
 			var rs	=	Game.GetService<RenderSystem>();
 			rw.LightSet.DirectLight.Direction	=	-rs.Sky.GetSunDirection();

@@ -94,7 +94,7 @@ namespace IronStar.SFX2
 				SetFPVEnabled();
 			}
 
-			WorldMatrix = tm ;
+			SetTransform( tm );
 		}
 
 
@@ -135,23 +135,38 @@ namespace IronStar.SFX2
 		}
 	
 
-		/// <summary>
-		/// Sets and gets model's world matrix
-		/// </summary>
-		public Matrix WorldMatrix 
+		public bool Visible
 		{
-			get
+			get 
 			{
-				return worldMatrix;
+				return visible;
 			}
 
 			set 
 			{
-				worldMatrix = value;
-				sceneView.SetTransform( (mesh,matrix) => mesh.World = matrix, cameraTransform * preTransform * worldMatrix );
+				if (visible!=value)
+				{
+					sceneView.ForEachMesh( mesh => mesh.Visible = value );
+					visible = value;
+				}
 			}
 		}
 
-		Matrix worldMatrix = Matrix.Identity;
+		bool visible = true;
+		
+
+
+		/// <summary>
+		/// Sets model's world transform
+		/// </summary>
+		/// <param name="worldMatrix"></param>
+		public void SetTransform( Matrix worldMatrix )
+		{
+			ModelFeatureWorldMatrix	= cameraTransform * preTransform * worldMatrix;
+			sceneView.SetTransform( (mesh,matrix) => mesh.World = matrix, ModelFeatureWorldMatrix );
+		}
+
+
+		public Matrix ModelFeatureWorldMatrix { get; private set; } = Matrix.Identity;
 	}
 }

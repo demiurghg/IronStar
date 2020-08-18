@@ -94,7 +94,7 @@ namespace IronStar.Animation
 			foreach ( var fxInstance in fxInstances ) {
 				Vector3 p, s;
 				Quaternion q;
-				Matrix jointWorld = flatTransforms[ fxInstance.JointIndex ] * model.PreTransform * model.WorldMatrix;
+				Matrix jointWorld = flatTransforms[ fxInstance.JointIndex ] * model.ModelFeatureWorldMatrix;
 				jointWorld.Decompose( out s, out q, out p );
 				fxInstance.Move( p, Vector3.Zero, q );
 			}
@@ -104,7 +104,7 @@ namespace IronStar.Animation
 			//--------------------------------
 			//	update sound :
 			foreach ( var sound in soundInstances ) {
-				Vector3 position = 	model.WorldMatrix.TranslationVector;
+				Vector3 position = 	model.ModelFeatureWorldMatrix.TranslationVector;
 				sound.Set3DParameters( position );
 			}
 
@@ -135,7 +135,7 @@ namespace IronStar.Animation
 			var fxEvent			=	new FXEvent();
 				fxEvent.Scale	=	scale;
 			
-			var instance = fxPlayback.RunFX( fxName, fxEvent, false, true );
+			var instance = fxPlayback.RunFX( fxName, fxEvent, false, false /* -- this is not ECS FX! */ );
 
 			if (instance!=null)
 			{
@@ -166,7 +166,7 @@ namespace IronStar.Animation
 				var soundEvent		=	ss.GetEvent( soundEventName );
 				var soundInstance	=	soundEvent.CreateInstance();
 				
-				soundInstance.Set3DParameters( model.WorldMatrix.TranslationVector );
+				soundInstance.Set3DParameters( model.ModelFeatureWorldMatrix.TranslationVector );
 				soundInstance.ReverbLevel = 1;
 				soundInstance.Start();
 				

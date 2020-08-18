@@ -291,6 +291,8 @@ namespace Fusion.Engine.Graphics {
 
 		bool SetupInstance ( SurfaceFlags stageFlag, IRenderContext context, RenderInstance instance )
 		{
+			if (!instance.Visible) return false;
+
 			bool aniso	=	rs.VTSystem.UseAnisotropic ;
 
 			int flag = (int)( stageFlag | SurfaceFlags.RIGID );

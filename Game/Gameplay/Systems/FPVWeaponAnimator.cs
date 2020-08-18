@@ -106,6 +106,7 @@ namespace IronStar.Gameplay.Systems
 			UpdateMovements(gameTime, steps);
 
 			composer.Update( gameTime, model.FlattenTransforms ); 
+			model.CommitJointTransform();
 		}
 
 
@@ -124,8 +125,10 @@ namespace IronStar.Gameplay.Systems
 			{
 				Log.Message("{0}", weaponState );
 
-				//model.Visible = false;//weaponState!=WeaponState.Inactive;
+				//	hide inactive weapon :
+				model.Visible = weaponState!=WeaponState.Inactive;
 
+				//	recoil & cooldown :
 				if ( weaponState == WeaponState.Cooldown || weaponState == WeaponState.Cooldown2 ) 
 				{
 					trackWeapon.Sequence( ANIM_COOLDOWN, true, false );
@@ -138,22 +141,22 @@ namespace IronStar.Gameplay.Systems
 					composer.SequenceFX( weapon.MuzzleFX, JOINT_MUZZLE, 1 );
 				}
 
-
+				//	idle animation :
 				if ( weaponState == WeaponState.Idle ) {
 					trackWeapon.Sequence( ANIM_IDLE, false, true );
 				}
 
-
+				//	raising
 				if ( weaponState == WeaponState.Raise ) {
 					trackWeapon.Sequence( ANIM_RAISE, true, false );
 				}
 
-
+				//	dropping
 				if ( weaponState == WeaponState.Drop ) {
 					trackWeapon.Sequence( ANIM_DROP, true, false );
 				}
 
-
+				//	no ammo animation :
 				if ( weaponState == WeaponState.NoAmmo ) {
 
 					composer.SequenceSound( SOUND_NO_AMMO );

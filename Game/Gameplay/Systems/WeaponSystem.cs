@@ -52,8 +52,6 @@ namespace IronStar.Gameplay.Systems
 
 					AdvanceWeaponTimer( gameTime, activeItem );
 					UpdateWeaponFSM( gameTime, attack, inventory, activeItem );
-					UpdateWeaponFSM( gameTime, attack, inventory, activeItem );
-					UpdateWeaponFSM( gameTime, attack, inventory, activeItem );
 				}
 			}
 		}
@@ -79,7 +77,7 @@ namespace IronStar.Gameplay.Systems
 			var weapon	=	weaponEntity.GetComponent<WeaponComponent>();
 			var timeout	=	weapon.Timer <= TimeSpan.Zero;
 
-			if (weapon.State!=WeaponState.Idle) Log.Message("...{0}", weapon.State.ToString());
+			/*if (weapon.State!=WeaponState.Idle)*/ Log.Message("...{0}", weapon.State.ToString());
 
 			switch (weapon.State) 
 			{

@@ -91,11 +91,8 @@ namespace IronStar.Gameplay.Systems
 					activeWeapon = weaponEntity;
 				}
 
-				if (renderModel!=null)
-				{
-					renderModel.SetTransform( rw.Camera.CameraMatrix );
-					animator.Update( gameTime, weapon, steps );  
-				}
+				renderModel?.SetTransform( rw.Camera.CameraMatrix );
+				animator?.Update( gameTime, weapon, steps );  
 			}
 		}
 

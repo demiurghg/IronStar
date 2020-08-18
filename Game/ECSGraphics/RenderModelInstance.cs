@@ -30,7 +30,6 @@ namespace IronStar.SFX2
 		Scene scene;
 		SceneView<RenderInstance> sceneView;
 		Matrix preTransform;
-		Matrix cameraTransform;
 		readonly string fpvCameraNode;
 		readonly bool fpvEnabled;
 
@@ -79,7 +78,6 @@ namespace IronStar.SFX2
 							);
 
 			preTransform	=	rm.transform;
-			cameraTransform	=	Matrix.Identity;
 
 			sceneView.ForEachMesh( mesh => {
 				mesh.Group	= rm.UseLightMap ? InstanceGroup.Static : InstanceGroup.Kinematic;
@@ -108,13 +106,12 @@ namespace IronStar.SFX2
 			if (fpvCameraIndex<0) 
 			{	
 				Log.Warning("Camera node '{0}' does not exist", fpvCameraNode);
-				cameraTransform	=	Matrix.Identity;
 			} 
 			else 
 			{
 				var fpvCameraMatrix	=	Scene.FixGlobalCameraMatrix( sceneView.GetAbsoluteTransform( fpvCameraIndex ) );
 				var fpvViewMatrix	=	Matrix.Invert( fpvCameraMatrix );
-				cameraTransform		=	fpvViewMatrix;
+				preTransform		=	fpvViewMatrix * preTransform;
 			}
 
 			sceneView.ForEachMesh( mesh => mesh.Group = InstanceGroup.Weapon );
@@ -162,7 +159,13 @@ namespace IronStar.SFX2
 		/// <param name="worldMatrix"></param>
 		public void SetTransform( Matrix worldMatrix )
 		{
-			ModelFeatureWorldMatrix	= cameraTransform * preTransform * worldMatrix;
+			ModelFeatureWorldMatrix	= preTransform * worldMatrix;
+			sceneView.SetTransform( (mesh,matrix) => mesh.World = matrix, ModelFeatureWorldMatrix );
+		}
+
+
+		public void CommitJointTransform()
+		{
 			sceneView.SetTransform( (mesh,matrix) => mesh.World = matrix, ModelFeatureWorldMatrix );
 		}
 

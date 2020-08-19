@@ -7,18 +7,30 @@ using Fusion.Core;
 using IronStar.ECS;
 using IronStar.Gameplay.Components;
 using Fusion;
+using IronStar.ECSPhysics;
+using Fusion.Core.Mathematics;
 
 namespace IronStar.Gameplay.Systems
 {
 	class WeaponSystem : ISystem
 	{
+		const float BEAM_RANGE	=	8192;
+
 		public void Add( GameState gs, Entity e ) {}
 		public void Remove( GameState gs, Entity e ) {}
 		public Aspect GetAspect() { return Aspect.Empty; }
+		public readonly PhysicsCore physics;
 
 
 		Aspect weaponAspect			=	new Aspect().Include<WeaponComponent>();
-		Aspect armedPlayerAspect	=	new Aspect().Include<InventoryComponent,PlayerComponent,UserCommandComponent>();
+		Aspect armedPlayerAspect	=	new Aspect().Include<InventoryComponent,PlayerComponent,UserCommandComponent,CharacterController>()
+													.Include<Transform>();
+
+
+		public WeaponSystem( PhysicsCore physics )
+		{
+			this.physics	=	physics;
+		}
 
 		
 		public void Update( GameState gs, GameTime gameTime )
@@ -34,8 +46,12 @@ namespace IronStar.Gameplay.Systems
 
 			foreach ( var player in players )
 			{
+				var transform	=	player.GetComponent<Transform>();
 				var inventory	=	player.GetComponent<InventoryComponent>();
 				var userCmd		=	player.GetComponent<UserCommandComponent>();
+				var chctrl		=	player.GetComponent<CharacterController>();
+
+				var povTransform	=	userCmd.RotationMatrix * Matrix.Translation(transform.Position + chctrl.PovOffset);
 
 				if (inventory.HasPendingWeapon && inventory.ActiveWeaponID==0)
 				{
@@ -51,7 +67,7 @@ namespace IronStar.Gameplay.Systems
 					var attack = userCmd.Action.HasFlag( UserAction.Attack );
 
 					AdvanceWeaponTimer( gameTime, activeItem );
-					UpdateWeaponFSM( gameTime, attack, inventory, activeItem );
+					UpdateWeaponFSM( gameTime, attack, povTransform, player, inventory, activeItem );
 				}
 			}
 		}
@@ -72,12 +88,10 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		void UpdateWeaponFSM (GameTime gameTime, bool attack, InventoryComponent inventory, Entity weaponEntity )
+		void UpdateWeaponFSM (GameTime gameTime, bool attack, Matrix povTransform, Entity attacker, InventoryComponent inventory, Entity weaponEntity )
 		{
 			var weapon	=	weaponEntity.GetComponent<WeaponComponent>();
 			var timeout	=	weapon.Timer <= TimeSpan.Zero;
-
-			/*if (weapon.State!=WeaponState.Idle)*/ Log.Message("...{0}", weapon.State.ToString());
 
 			switch (weapon.State) 
 			{
@@ -105,7 +119,7 @@ namespace IronStar.Gameplay.Systems
 				case WeaponState.Warmup:	
 					if (timeout) 
 					{
-						Fire(weapon);
+						Fire(weapon, povTransform, attacker);
 
 						weapon.Counter++;
 						
@@ -188,13 +202,15 @@ namespace IronStar.Gameplay.Systems
 		/// <summary>
 		/// 
 		/// </summary>
-		bool Fire ( WeaponComponent weapon )
+		bool Fire ( WeaponComponent weapon, Matrix povTransform, Entity attacker )
 		{
+			var gs = attacker.gs;
+
 			if (weapon.IsBeamWeapon) 
 			{
 				for (int i=0; i<weapon.ProjectileCount; i++) 
 				{
-					FireBeam( weapon );
+					FireBeam( gs, weapon, povTransform, attacker );
 				}
 				return true;
 			} 
@@ -202,7 +218,7 @@ namespace IronStar.Gameplay.Systems
 			{
 				for (int i=0; i<weapon.ProjectileCount; i++) 
 				{
-					FireProjectile( weapon );
+					FireProjectile( gs, weapon, povTransform, attacker );
 				}
 				return true;
 			}
@@ -215,31 +231,32 @@ namespace IronStar.Gameplay.Systems
 		/// <param name="attacker"></param>
 		/// <param name="shooter"></param>
 		/// <param name="world"></param>
-		void FireBeam ( WeaponComponent weapon )
+		void FireBeam ( GameState gs, WeaponComponent weapon, Matrix povTransform, Entity attacker )
 		{
-			Log.Message("** FIRE BEAM **");
-			/*var p = attacker.GetActualPOV();
-			var q = attacker.Rotation;
-			var d = -GetFireDirection(q);
+			var p = povTransform.TranslationVector;
+			var d = povTransform.Forward.Normalized();
 
 			Vector3 hitNormal;
 			Vector3 hitPoint;
 			Entity  hitEntity;
 
-			var r = world.RayCastAgainstAll( p, p + d * beamLength, out hitNormal, out hitPoint, out hitEntity, attacker );
+			var r = physics.RayCastAgainstAll( p, p + d * BEAM_RANGE, out hitNormal, out hitPoint, out hitEntity, attacker );
 
-			if (r) {
-
-				world.SpawnFX( hitFX, 0, hitPoint, hitNormal );
-				world.InflictDamage( hitEntity, attacker.ID, damage, DamageType.BulletHit, d * impulse, hitPoint );
-			} else {
-				hitPoint = p + d * beamLength;
+			if (r) 
+			{
+				SFX.FXPlayback.SpawnFX(	gs, weapon.BeamHitFX, 0, hitPoint, hitNormal );
+				PhysicsCore.ApplyImpulse( hitEntity, hitPoint, d * weapon.Impulse );
+				//world.InflictDamage( hitEntity, attacker.ID, damage, DamageType.BulletHit, d * impulse, hitPoint );
+			} 
+			else 
+			{
+				hitPoint = p + d * BEAM_RANGE;
 			}
 
 			//	run trail FX:
 			var beamOrigin	 =	p;
 			var beamVelocity =	hitPoint - p;
-			world.SpawnFX( beamFX, 0, beamOrigin, beamVelocity, q );   */
+			SFX.FXPlayback.SpawnFX(	gs, weapon.BeamTrailFX, 0, beamOrigin, beamVelocity, d );
 		}
 
 
@@ -250,7 +267,7 @@ namespace IronStar.Gameplay.Systems
 		/// <param name="attacker"></param>
 		/// <param name="world"></param>
 		/// <param name="origin"></param>
-		void FireProjectile ( WeaponComponent weapon )
+		void FireProjectile ( GameState gs, WeaponComponent weapon, Matrix povTransform, Entity attacker )
 		{
 			Log.Message("** FIRE PROJECTILE **");
 

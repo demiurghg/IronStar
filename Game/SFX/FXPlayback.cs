@@ -256,6 +256,13 @@ namespace IronStar.SFX {
 			fxEvent.Rotation	=	t.Rotation;
 			fxEvent.Scale		=	(t.Scaling.X + t.Scaling.Y + t.Scaling.Z) / 3.0f;
 
+			var velocity		=	entity.GetComponent<Velocity>();
+
+			if (velocity!=null)
+			{
+				fxEvent.Velocity = velocity.Linear;
+			}
+
 			return RunFX( fx.FXName, fxEvent, fx.Looped, true ); 
 		}
 
@@ -273,12 +280,16 @@ namespace IronStar.SFX {
 
 		protected override void Process( ECS.Entity entity, GameTime gameTime, FXInstance fxInstance, FXComponent fx, Transform t )
 		{
-			fxInstance.fxEvent.Origin	=	t.Position;
-			fxInstance.fxEvent.Rotation	=	t.Rotation;
-			fxInstance.fxEvent.Scale	=	(t.Scaling.X + t.Scaling.Y + t.Scaling.Z) / 3.0f;
-			var velocityComponent		=	entity.GetComponent<Velocity>();
-			fxInstance.fxEvent.Velocity	=	velocityComponent==null ? Vector3.Zero : velocityComponent.Linear;
+			if (fxInstance!=null)
+			{
+				fxInstance.fxEvent.Origin	=	t.Position;
+				fxInstance.fxEvent.Rotation	=	t.Rotation;
+				fxInstance.fxEvent.Scale	=	(t.Scaling.X + t.Scaling.Y + t.Scaling.Z) / 3.0f;
+				var velocityComponent		=	entity.GetComponent<Velocity>();
+				fxInstance.fxEvent.Velocity	=	velocityComponent==null ? Vector3.Zero : velocityComponent.Linear;
+			}
 
+			//	#TODO #FX -- kill exhausted FXs
 			//fxInstance.Update( gameTime.ElapsedSec ); 
 		}
 	}

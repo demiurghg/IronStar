@@ -17,7 +17,7 @@ using BEPUCollisionGroup = BEPUphysics.CollisionRuleManagement.CollisionGroup;
 
 namespace IronStar.ECSPhysics
 {
-	public class PhysicsCore : ISystem
+	public partial class PhysicsCore : ISystem
 	{
 		Space physSpace = new Space();
 
@@ -140,6 +140,23 @@ namespace IronStar.ECSPhysics
 			}
 
 			touchEvents.Clear();
+		}
+
+
+		public static void ApplyImpulse( Entity entity, Vector3 location, Vector3 impulse )
+		{
+			if (entity==null) return;
+
+			if (!entity.ContainsComponent<ImpulseComponent>())
+			{
+				entity.AddComponent( new ImpulseComponent(location, impulse) );
+			}
+			else
+			{
+				var impulseComponent		= 	entity.GetComponent<ImpulseComponent>();
+				impulseComponent.Impulse	=	impulse;
+				impulseComponent.Location	=	location;
+			}
 		}
 
 

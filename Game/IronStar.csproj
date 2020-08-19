@@ -88,7 +88,9 @@
     <Compile Include="ECSPhysics\CharacterControllerSystem.cs" />
     <Compile Include="ECSPhysics\CollisionGroup.cs" />
     <Compile Include="ECSPhysics\DynamicCollisionSystem.cs" />
+    <Compile Include="ECSPhysics\ImpulseComponent.cs" />
     <Compile Include="ECSPhysics\ITransformFeeder.cs" />
+    <Compile Include="ECSPhysics\PhysicsCore.Casting.cs" />
     <Compile Include="ECSPhysics\PhysicsCore.cs" />
     <Compile Include="ECSPhysics\StaticCollisionSystem.cs" />
     <Compile Include="ECSPhysics\TouchDetector.cs" />

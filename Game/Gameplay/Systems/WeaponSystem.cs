@@ -9,12 +9,15 @@ using IronStar.Gameplay.Components;
 using Fusion;
 using IronStar.ECSPhysics;
 using Fusion.Core.Mathematics;
+using Fusion.Core.Extensions;
 
 namespace IronStar.Gameplay.Systems
 {
 	class WeaponSystem : ISystem
 	{
 		const float BEAM_RANGE	=	8192;
+
+		Random rand = new Random();
 
 		public void Add( GameState gs, Entity e ) {}
 		public void Remove( GameState gs, Entity e ) {}
@@ -234,7 +237,8 @@ namespace IronStar.Gameplay.Systems
 		void FireBeam ( GameState gs, WeaponComponent weapon, Matrix povTransform, Entity attacker )
 		{
 			var p = povTransform.TranslationVector;
-			var d = povTransform.Forward.Normalized();
+			var q = Quaternion.RotationMatrix( povTransform );
+			var d = -GetFireDirection( q, weapon.Spread );
 
 			Vector3 hitNormal;
 			Vector3 hitPoint;
@@ -293,28 +297,14 @@ namespace IronStar.Gameplay.Systems
 
 
 
-		/// <summary>
-		/// Gets firing direction
-		/// </summary>
-		/// <param name="rotation"></param>
-		/// <returns></returns>
-		/*
-		Vector3 GetFireDirection ( Quaternion rotation )
+		Vector3 GetFireDirection ( Quaternion rotation, float spreadAngle )
 		{ 
-			var spreadVector	= GetSpreadVector( angularSpread );
+			var spreadVector	= GetSpreadVector( spreadAngle );
 			var rotationMatrix	= Matrix.RotationQuaternion( rotation );
 			return Vector3.TransformNormal( spreadVector, rotationMatrix ).Normalized();
 		}
-		*/
 
 
-
-		/// <summary>
-		/// Gets radial spread vector
-		/// </summary>
-		/// <param name="spreadAngle"></param>
-		/// <returns></returns>
-		/*
 		Vector3 GetSpreadVector ( float spreadAngle )
 		{
 			var randomAngle	 = MathUtil.DegreesToRadians( spreadAngle );
@@ -331,6 +321,5 @@ namespace IronStar.Gameplay.Systems
 
 			return new Vector3( x, y, -z );
 		}
-		*/
 	}
 }

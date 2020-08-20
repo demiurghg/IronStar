@@ -34,7 +34,7 @@ namespace IronStar.Gameplay
 
 		public UserAction Action;
 
-		public short Weapon;
+		public string Weapon;
 
 		public float DYaw;
 		public float DPitch;

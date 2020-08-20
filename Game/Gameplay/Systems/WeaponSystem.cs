@@ -60,6 +60,8 @@ namespace IronStar.Gameplay.Systems
 				{
 					inventory.FinalizeWeaponSwitch();
 				}
+
+				SwitchWeapon( gs, userCmd, inventory );
 					
 				var activeItem	=	gs.GetEntity( inventory.ActiveWeaponID );
 
@@ -73,6 +75,27 @@ namespace IronStar.Gameplay.Systems
 					UpdateWeaponFSM( gameTime, attack, povTransform, player, inventory, activeItem );
 				}
 			}
+		}
+
+		
+		bool SwitchWeapon( GameState gs, UserCommandComponent userCmd, InventoryComponent inventory )
+		{
+			if (userCmd.Weapon!=null)
+			{
+				foreach ( var eid in inventory )
+				{
+					var e = gs.GetEntity(eid); 
+					var n = e?.GetComponent<NameComponent>()?.Name;
+
+					if (n==userCmd.Weapon)
+					{
+						inventory.SwitchWeapon(eid);
+						return true;
+					}
+				}
+			}
+
+			return false;
 		}
 
 

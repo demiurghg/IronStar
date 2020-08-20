@@ -120,6 +120,7 @@
     <Compile Include="ECS\Static.cs" />
     <Compile Include="ECS\Velocity.cs" />
     <Compile Include="Editor\MapEditor.History.cs" />
+    <Compile Include="Gameplay\Components\NameComponent.cs" />
     <Compile Include="Gameplay\Components\AmmoType.cs" />
     <Compile Include="Gameplay\Components\PickupComponent.cs" />
     <Compile Include="Gameplay\Components\KeyComponent.cs" />

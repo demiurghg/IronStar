@@ -98,16 +98,16 @@ namespace IronStar.Gameplay
 			if (Game.Keyboard.IsKeyDown( MeleeAttack	)) flags |= UserAction.MeleeAtack;
 			if (Game.Keyboard.IsKeyDown( ReloadWeapon	)) flags |= UserAction.ReloadWeapon;
 
-			userCommand.Weapon = 0;
+			userCommand.Weapon = null;
 
-			if (Game.Keyboard.IsKeyDown( Weapon1	)) userCommand.Weapon = 1;
-			if (Game.Keyboard.IsKeyDown( Weapon2	)) userCommand.Weapon = 2;
-			if (Game.Keyboard.IsKeyDown( Weapon3	)) userCommand.Weapon = 3;
-			if (Game.Keyboard.IsKeyDown( Weapon4	)) userCommand.Weapon = 4;
-			if (Game.Keyboard.IsKeyDown( Weapon5	)) userCommand.Weapon = 5;
-			if (Game.Keyboard.IsKeyDown( Weapon6	)) userCommand.Weapon = 6;
-			if (Game.Keyboard.IsKeyDown( Weapon7	)) userCommand.Weapon = 7;
-			if (Game.Keyboard.IsKeyDown( Weapon8	)) userCommand.Weapon = 8;
+			if (Game.Keyboard.IsKeyDown( Weapon1	)) userCommand.Weapon = "MACHINEGUN"	;
+			if (Game.Keyboard.IsKeyDown( Weapon2	)) userCommand.Weapon = "MACHINEGUN2"	;
+			if (Game.Keyboard.IsKeyDown( Weapon3	)) userCommand.Weapon = "SHOTGUN"		;
+			if (Game.Keyboard.IsKeyDown( Weapon4	)) userCommand.Weapon = "PLASMAGUN"		;
+			if (Game.Keyboard.IsKeyDown( Weapon5	)) userCommand.Weapon = "ROCKETLAUNCHER";
+			if (Game.Keyboard.IsKeyDown( Weapon6	)) userCommand.Weapon = "MACHINEGUN"	;
+			if (Game.Keyboard.IsKeyDown( Weapon7	)) userCommand.Weapon = "RAILGUN"		;
+			if (Game.Keyboard.IsKeyDown( Weapon8	)) userCommand.Weapon = "MACHINEGUN"	;
 
 			//	http://eliteownage.com/mousesensitivity.html 
 			//	Q3A: 16200 dot per 360 turn:

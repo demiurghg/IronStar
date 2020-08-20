@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,7 +10,7 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
-	public class InventoryComponent : IComponent
+	public class InventoryComponent : IComponent, IEnumerable<uint>
 	{
 		uint activeWeaponID = 0;
 		uint pendingWeaponID = 0;
@@ -22,7 +23,7 @@ namespace IronStar.Gameplay.Components
 
 		public bool SwitchWeapon( uint id )
 		{
-			if (itemIDs.Contains(id)) 
+			if (itemIDs.Contains(id) && activeWeaponID!=id) 
 			{
 				pendingWeaponID	=	id;
 				return true;
@@ -93,5 +94,15 @@ namespace IronStar.Gameplay.Components
 
 		public void Load( GameState gs, Stream stream ) {}
 		public void Save( GameState gs, Stream stream ) {}
+
+		public IEnumerator<uint> GetEnumerator()
+		{
+			return ( (IEnumerable<uint>)itemIDs ).GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return ( (IEnumerable<uint>)itemIDs ).GetEnumerator();
+		}
 	}
 }

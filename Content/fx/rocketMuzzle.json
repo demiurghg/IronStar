@@ -71,7 +71,7 @@
     "Velocity": {
       "$type": "IronStar.SFX.FXVelocity, IronStar",
       "Direction": "localForward",
-      "LinearDistribution": "linear",
+      "LinearDistribution": "gauss",
       "LinearVelocityMin": 0.0,
       "LinearVelocityMax": 24.0,
       "RadialDistribution": "gauss",

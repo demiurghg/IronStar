@@ -1,5 +1,6 @@
 {
   "$type": "IronStar.SFX.FXFactory, IronStar",
+  "OverallScale": 0.5,
   "Period": 0.1,
   "SoundStage": {
     "$type": "IronStar.SFX.FXSoundStage, IronStar",
@@ -29,7 +30,7 @@
     "Enabled": true,
     "Sprite": "fire",
     "Effect": "soft",
-    "Count": 50,
+    "Count": 35,
     "Period": 1.0,
     "Timing": {
       "$type": "IronStar.SFX.FXTiming, IronStar",
@@ -39,7 +40,7 @@
       "FadeOut": 0.1
     },
     "Color": "255, 129, 40, 255",
-    "Alpha": 0.5,
+    "Alpha": 1.0,
     "Roughness": 0.5,
     "Metallic": 0.0,
     "Intensity": 1500.0,
@@ -52,7 +53,7 @@
     },
     "Shape": {
       "$type": "IronStar.SFX.FXShape, IronStar",
-      "Size0": 0.5,
+      "Size0": 0.8,
       "Size1": 0.2,
       "EnableRotation": true,
       "InitialAngle": 360.0,
@@ -70,12 +71,12 @@
     "Velocity": {
       "$type": "IronStar.SFX.FXVelocity, IronStar",
       "Direction": "localForward",
-      "LinearDistribution": "gauss",
+      "LinearDistribution": "linear",
       "LinearVelocityMin": 0.0,
-      "LinearVelocityMax": 8.0,
+      "LinearVelocityMax": 24.0,
       "RadialDistribution": "gauss",
       
-      "RadialVelocity": 0.5,
+      "RadialVelocity": 1.5,
       "Advection": 0.0
     },
     "Acceleration": {
@@ -151,9 +152,9 @@
   "ParticleStage3": {
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
     "Enabled": true,
-    "Sprite": "smoke",
+    "Sprite": "explosionSmoke2",
     "Effect": "softLitShadow",
-    "Count": 35,
+    "Count": 15,
     "Period": 1.0,
     "Timing": {
       "$type": "IronStar.SFX.FXTiming, IronStar",
@@ -172,11 +173,11 @@
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "gauss",
       "MinLifetime": 0.3,
-      "MaxLifetime": 0.4
+      "MaxLifetime": 0.5
     },
     "Shape": {
       "$type": "IronStar.SFX.FXShape, IronStar",
-      "Size0": 0.2,
+      "Size0": 0.3,
       "Size1": 0.5,
       "EnableRotation": true,
       "InitialAngle": 360.0,
@@ -194,18 +195,18 @@
     "Velocity": {
       "$type": "IronStar.SFX.FXVelocity, IronStar",
       "Direction": "localForward",
-      "LinearDistribution": "uniform",
+      "LinearDistribution": "gauss",
       "LinearVelocityMin": 0.0,
-      "LinearVelocityMax": 0.0,
+      "LinearVelocityMax": 15.0,
       "RadialDistribution": "gauss",
       
-      "RadialVelocity": 3.0,
+      "RadialVelocity": 10.0,
       "Advection": 0.0
     },
     "Acceleration": {
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
-      "GravityFactor": -0.5,
-      "Damping": 6.0,
+      "GravityFactor": -0.1,
+      "Damping": 5.0,
       "DragForce": 0.0,
       "Turbulence": 0.0
     }

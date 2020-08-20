@@ -18,13 +18,15 @@ namespace IronStar.ECSFactories
 		readonly float	modelScale		=	1.0f;
 		readonly int	ammoCapacity	=	10;
 		readonly int	ammoCount		=	10;
+		readonly string ammoName		=	"";
 
-		protected AmmoFactory( int capacity, int count, float scale, string model )
+		protected AmmoFactory( string name, int capacity, int count, float scale, string model )
 		{
 			modelName		=	model;
 			modelScale		=	scale;
 			ammoCapacity	=	capacity;
 			ammoCount		=	count;
+			ammoName		=	name;
 		}
 
 		public override Entity Spawn( GameState gs )
@@ -36,6 +38,8 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new RenderModel( modelName, Matrix.Scaling( modelScale ), Color.White, 5, RMFlags.None ) );
 
 			e.AddComponent( new DynamicBox( 0.66f, 0.72f, 0.66f, 1.0f ) { Group = CollisionGroup.PickupGroup } );
+			e.AddComponent( new AmmoComponent(ammoCount, ammoCapacity) );
+			e.AddComponent( new NameComponent(ammoName) );
 
 			e.AddComponent( new Transform() );
 			e.AddComponent( new Velocity() );
@@ -49,41 +53,41 @@ namespace IronStar.ECSFactories
 	public class AmmoMachinegunFactory : AmmoFactory
 	{
 		public AmmoMachinegunFactory():
-		base( 50, 50, 0.03f, "scenes\\weapon2\\assault_rifle\\assault_rifle_ammo" ) {}
+		base( "BULLETS", 200, 50, 0.03f, "scenes\\weapon2\\assault_rifle\\assault_rifle_ammo" ) {}
 	}
 
 	[EntityFactory("AMMO_MACHINEGUN2")]
 	public class AmmoMachinegun2Factory : AmmoFactory
 	{
 		public AmmoMachinegun2Factory():
-		base( 50, 50, 0.03f, "scenes\\weapon2\\battle_rifle\\battle_rifle_ammo" ) {}
+		base( "BULLETS", 200, 50, 0.03f, "scenes\\weapon2\\battle_rifle\\battle_rifle_ammo" ) {}
 	}
 
 	[EntityFactory("AMMO_PLASMAGUN")]
 	public class AmmoPlasmagunFactory : AmmoFactory
 	{
 		public AmmoPlasmagunFactory():
-		base( 50, 50, 0.03f, "scenes\\weapon2\\plasma_rifle\\plasma_rifle_ammo" ) {}
+		base( "CELLS", 200, 50, 0.03f, "scenes\\weapon2\\plasma_rifle\\plasma_rifle_ammo" ) {}
 	}
 
 	[EntityFactory("AMMO_RAILGUN")]
 	public class AmmoRailgunFactory : AmmoFactory
 	{
 		public AmmoRailgunFactory():
-		base( 10, 10, 0.06f, "scenes\\items\\medkit\\medkit10" ) {} // <----- WTF?
+		base( "SLUGS", 50, 10, 0.06f, "scenes\\items\\medkit\\medkit10" ) {} // <----- WTF?
 	}
 
 	[EntityFactory("AMMO_ROCKETLAUNCHER")]
 	public class AmmoRocketLauncherFactory : AmmoFactory
 	{
 		public AmmoRocketLauncherFactory():
-		base( 10, 10, 0.042f, "scenes\\weapon2\\rocket_launcher\\rocket_ammo" ) {}
+		base( "ROCKETS", 50, 10, 0.042f, "scenes\\weapon2\\rocket_launcher\\rocket_ammo" ) {}
 	}
 
 	[EntityFactory("AMMO_SHOTGUN")]
 	public class AmmoShotgunFactory : AmmoFactory
 	{
 		public AmmoShotgunFactory():
-		base( 10, 10, 0.03f, "scenes\\weapon2\\canister_rifle\\canister_rifle_ammo" ) {}
+		base( "SHELLS", 50, 10, 0.03f, "scenes\\weapon2\\canister_rifle\\canister_rifle_ammo" ) {}
 	}
 }

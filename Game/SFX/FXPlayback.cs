@@ -268,7 +268,7 @@ namespace IronStar.SFX {
 
 		protected override void Destroy( ECS.Entity entity, FXInstance fxInstance )
 		{
-			fxInstance.Kill();
+			fxInstance?.Kill();
 		}
 
 		public override void Update( GameState gs, GameTime gameTime )

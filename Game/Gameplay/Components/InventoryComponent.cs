@@ -92,6 +92,23 @@ namespace IronStar.Gameplay.Components
 		}
 
 
+		public Entity FindItem ( GameState gs, string name )
+		{
+			foreach ( var itemId in itemIDs )
+			{
+				var e = gs.GetEntity( itemId );
+				var n = e?.GetComponent<NameComponent>()?.Name;
+
+				if (n==name)
+				{
+					return e;
+				}
+			}
+
+			return null;
+		}
+
+
 		public void Load( GameState gs, Stream stream ) {}
 		public void Save( GameState gs, Stream stream ) {}
 

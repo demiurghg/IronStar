@@ -8,13 +8,20 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
-	public class AmmoComponent : IComponent
+	public class NameComponent : IComponent
 	{
-		public AmmoType	AmmoType;
-		public int		Count;
+		public string	Name;
 
-		public void Added( GameState gs, Entity entity ) {	}
-		public void Removed( GameState gs )	{	}
+		public NameComponent()
+		{
+			Name = "";
+		}
+
+		public NameComponent(string name)
+		{
+			Name = name;
+		}
+
 		public void Load( GameState gs, Stream stream )	{	}
 		public void Save( GameState gs, Stream stream )	{	}
 	}

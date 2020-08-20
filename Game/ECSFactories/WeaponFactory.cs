@@ -79,7 +79,7 @@ namespace IronStar.ECSFactories
 			var e = base.Spawn( gs );
 
 			e.AddComponent( new NameComponent("SHOTGUN") );
-			e.AddComponent( WeaponComponent.BeamWeapon( 5, 3.0f, 1, 1.0f,	750,	"AMMO_SHOTGUN", null, "shotgunHit", "shotgunMuzzle" ) );
+			e.AddComponent( WeaponComponent.BeamWeapon( 10, 1.0f, 10, 3.0f,	750,	"AMMO_SHOTGUN", null, "shotgunHit", "shotgunMuzzle" ) );
 			e.AddComponent( new RenderModel("scenes\\weapon2\\canister_rifle\\canister_rifle_view", 0.03f, ShotgunColor, GlowIntensity, RMFlags.None ) );
 			e.AddComponent( new DynamicBox( 0.54f, 1.2f, 4.5f, 5.0f ) );
 

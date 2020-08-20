@@ -18,12 +18,13 @@ namespace IronStar.Gameplay.Systems
 		public void Remove( GameState gs, Entity e ) {}
 		public Aspect GetAspect() { return Aspect.Empty; }
 
-		readonly Aspect itemAspect;
+		readonly Aspect itemAspect		=	new Aspect().Include<PickupComponent,TouchDetector>();
+		readonly Aspect weaponAspect	=	new Aspect().Include<WeaponComponent>().Exclude<AmmoComponent>();
+		readonly Aspect ammoAspect		=	new Aspect().Include<AmmoComponent,NameComponent>().Exclude<WeaponComponent>();
 
 		
 		public PickupSystem()
 		{
-			itemAspect	=	new Aspect().Include<PickupComponent,TouchDetector>();
 		}
 
 
@@ -51,6 +52,7 @@ namespace IronStar.Gameplay.Systems
 			var inventory	=	recipient.GetComponent<InventoryComponent>();
 			var transform	=	recipient.GetComponent<Transform>();
 			var pickup		=	pickupItem.GetComponent<PickupComponent>();
+			var name		=	pickupItem.GetComponent<NameComponent>()?.Name;
 
 			//	recipient has no inventory, skip:
 			if (inventory==null)
@@ -72,6 +74,11 @@ namespace IronStar.Gameplay.Systems
 			FXPlayback.SpawnFX( gs, pickup.FXName, 0, transform.Position );
 
 			Log.Message("Pickup: {0}", pickupItem);
+
+			//
+			//	add ammo :
+			//
+			var ammo	=	 pickupItem.GetComponent<AmmoComponent>();
 
 			//
 			//	activate weapon :

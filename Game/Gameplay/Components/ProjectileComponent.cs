@@ -16,19 +16,22 @@ namespace IronStar.Gameplay.Components
 		public float	Impulse;
 		public Vector3	Direction;
 
+		public string	ExplosionFX;
 		public float	Velocity;
 		public float	Radius;
 		public float	LifeTime;
+		public int		Steps = 0;
 
 		public ProjectileComponent()
 		{
 		}
 
-		public ProjectileComponent( float velocity, float radius, float lifetime )
+		public ProjectileComponent( float velocity, float radius, float lifetime, string explosionFX )
 		{
 			Velocity	=	velocity;
 			Radius		=	radius;
 			LifeTime	=	lifetime;
+			ExplosionFX	=	explosionFX;
 		}
 
 		public void Load( GameState gs, Stream stream )	{}

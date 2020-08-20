@@ -122,7 +122,7 @@ namespace IronStar.Gameplay.Systems
 				case WeaponState.Warmup:	
 					if (timeout) 
 					{
-						Fire(weapon, povTransform, attacker);
+						Fire(gameTime, weapon, povTransform, attacker);
 
 						weapon.Counter++;
 						
@@ -205,7 +205,7 @@ namespace IronStar.Gameplay.Systems
 		/// <summary>
 		/// 
 		/// </summary>
-		bool Fire ( WeaponComponent weapon, Matrix povTransform, Entity attacker )
+		bool Fire ( GameTime gameTime, WeaponComponent weapon, Matrix povTransform, Entity attacker )
 		{
 			var gs = attacker.gs;
 
@@ -221,7 +221,7 @@ namespace IronStar.Gameplay.Systems
 			{
 				for (int i=0; i<weapon.ProjectileCount; i++) 
 				{
-					FireProjectile( gs, weapon, povTransform, attacker );
+					FireProjectile( gs, gameTime, weapon, povTransform, attacker );
 				}
 				return true;
 			}
@@ -271,9 +271,10 @@ namespace IronStar.Gameplay.Systems
 		/// <param name="attacker"></param>
 		/// <param name="world"></param>
 		/// <param name="origin"></param>
-		void FireProjectile ( GameState gs, WeaponComponent weapon, Matrix povTransform, Entity attacker )
+		void FireProjectile ( GameState gs, GameTime gameTime, WeaponComponent weapon, Matrix povTransform, Entity attacker )
 		{
-			var p = povTransform.TranslationVector;
+			var v = attacker.GetComponent<Velocity>();
+			var p = povTransform.TranslationVector + v.Linear * gameTime.ElapsedSec;
 			var q = Quaternion.RotationMatrix( povTransform );
 			var d = -GetFireDirection( q, weapon.Spread );
 

@@ -102,14 +102,14 @@ namespace IronStar.ECSFactories
 	}
 
 
-	[EntityFactory("WEAPON_ROCKET_LAUNCHER")]
+	[EntityFactory("WEAPON_ROCKETLAUNCHER")]
 	public class WeaponRocketLauncherFactory : WeaponFactory
 	{
 		public override Entity Spawn( GameState gs )
 		{
 			var e = base.Spawn( gs );
 
-			e.AddComponent( WeaponComponent.ProjectileWeapon( 100, 15, 1500, "ROCKET", "AMMO_ROCKET_LAUNCHER", "" ) );
+			e.AddComponent( WeaponComponent.ProjectileWeapon( 100, 15, 1500, "ROCKET", "AMMO_ROCKET_LAUNCHER", "rocketMuzzle" ) );
 			e.AddComponent( new RenderModel("scenes\\weapon2\\rocket_launcher\\rocket_launcher_view", 0.036f, RocketLauncherColor, GlowIntensity, RMFlags.None ) );
 			e.AddComponent( new DynamicBox( 0.9f, 1.0f, 6.0f, 7.0f ) );
 

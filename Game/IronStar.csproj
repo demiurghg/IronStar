@@ -75,6 +75,7 @@
     <Compile Include="Client\GameCamera.cs" />
     <Compile Include="Core\EntityComponent.cs" />
     <Compile Include="ECSFactories\PowerupFactory.cs" />
+    <Compile Include="ECSFactories\ProjectileFactory.cs" />
     <Compile Include="ECSFactories\WeaponFactory.cs" />
     <Compile Include="ECSFactories\BoxFactory.cs" />
     <Compile Include="ECSFactories\AmmoFactory.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="ECS\Component.cs" />
     <Compile Include="ECS\ECSTypeManager.cs" />
     <Compile Include="ECS\Collections\EntityFactoryCollection.cs" />
+    <Compile Include="ECS\StatelessSystem.cs" />
     <Compile Include="ECS\ProcessingSystem.cs" />
     <Compile Include="ECS\SystemWrapper.cs" />
     <Compile Include="ECS\SystemAttribute.cs" />

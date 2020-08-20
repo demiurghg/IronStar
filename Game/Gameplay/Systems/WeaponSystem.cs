@@ -250,7 +250,7 @@ namespace IronStar.Gameplay.Systems
 			{
 				SFX.FXPlayback.SpawnFX(	gs, weapon.BeamHitFX, 0, hitPoint, hitNormal );
 				PhysicsCore.ApplyImpulse( hitEntity, hitPoint, d * weapon.Impulse );
-				//world.InflictDamage( hitEntity, attacker.ID, damage, DamageType.BulletHit, d * impulse, hitPoint );
+				HealthSystem.ApplyDamage( hitEntity, weapon.Damage );
 			} 
 			else 
 			{
@@ -273,26 +273,23 @@ namespace IronStar.Gameplay.Systems
 		/// <param name="origin"></param>
 		void FireProjectile ( GameState gs, WeaponComponent weapon, Matrix povTransform, Entity attacker )
 		{
-			Log.Message("** FIRE PROJECTILE **");
+			var p = povTransform.TranslationVector;
+			var q = Quaternion.RotationMatrix( povTransform );
+			var d = -GetFireDirection( q, weapon.Spread );
 
-			/*var e = world.Spawn( projectile ) as Projectile;
+			var e = gs.Spawn( weapon.ProjectileClass );
 
-			if (e==null) {
-				Log.Warning("Unknown projectile class: {0}", projectile);
-				return;
-			}
+			var projectile	=	e.GetComponent<ProjectileComponent>();
+			var transform	=	e.GetComponent<Transform>();
 
-			var p = attacker.GetActualPOV();
-			var q = attacker.Rotation;
-			var d = GetFireDirection(q);
+			projectile.Damage		=	weapon.Damage;
+			projectile.Impulse		=	weapon.Impulse;
+			projectile.SenderID		=	attacker.ID;
+			projectile.Direction	=	d;
 
-			e.ParentID	=	attacker.ID;
-			e.Teleport( p, q );
-
-			e.HitDamage		=	damage;
-			e.HitImpulse	=	impulse;
-
-			e.FixServerLag(2/60.0f); */
+			transform.Position	=	povTransform.TranslationVector;
+			transform.Scaling	=	Vector3.One;
+			transform.Rotation	=	q;
 		}
 
 

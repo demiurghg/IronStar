@@ -25,6 +25,13 @@ namespace IronStar.Gameplay.Systems
 		readonly Aspect powerupAspect			= new Aspect().Include<PowerupComponent>();
 
 
+		public static void ApplyDamage( Entity target, int damage )
+		{
+			var health = target?.GetComponent<HealthComponent>();
+			health?.InflictDamage( damage );
+		}
+
+
 		public void Update( GameState gs, GameTime gameTime )
 		{
 			UpdatePowerups( gs, gameTime );

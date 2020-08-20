@@ -77,7 +77,14 @@ namespace IronStar.ECS
 		/// </summary>
 		public Matrix TransformMatrix 
 		{
-			get { return Matrix.Scaling( Scaling ) * Matrix.RotationQuaternion( Rotation ) * Matrix.Translation( Position ); }
+			get 
+			{ 
+				return Matrix.Scaling( Scaling ) * Matrix.RotationQuaternion( Rotation ) * Matrix.Translation( Position ); 
+			}
+			set 
+			{
+				value.Decompose( out Scaling, out Rotation, out Position );
+			}
 		}
 	}
 }

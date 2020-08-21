@@ -38,6 +38,22 @@ namespace IronStar.SFX {
 		}
 
 
+		public static ECS.Entity SpawnFX( GameState gs, string fxName, ECS.Entity originEntity )
+		{
+			var transform	=	originEntity.GetComponent<Transform>();
+
+			if (transform!=null)
+			{
+				return SpawnFX( gs, fxName, 0, transform.Position, Vector3.Zero, transform.Rotation );
+			}
+			else
+			{
+				Log.Warning("SpawnFX: FX has no transform component");
+				return null;
+			}
+		}
+
+
 		public static ECS.Entity SpawnFX( GameState gs, string fxName, uint parentID, Vector3 origin, Vector3 velocity, Vector3 forward )
 		{
 			var m = MathUtil.ComputeAimedBasis( forward );

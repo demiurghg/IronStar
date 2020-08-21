@@ -18,9 +18,10 @@ namespace IronStar.Gameplay.Systems
 		public void Remove( GameState gs, Entity e ) {}
 		public Aspect GetAspect() { return Aspect.Empty; }
 
-		readonly Aspect itemAspect		=	new Aspect().Include<PickupComponent,TouchDetector>();
-		readonly Aspect weaponAspect	=	new Aspect().Include<WeaponComponent>().Exclude<AmmoComponent>();
-		readonly Aspect ammoAspect		=	new Aspect().Include<AmmoComponent,NameComponent>().Exclude<WeaponComponent>();
+		readonly Aspect itemAspect		=	new Aspect().Include<PickupComponent,TouchDetector,Transform>();
+		readonly Aspect weaponAspect	=	new Aspect().Include<PickupComponent,WeaponComponent>().Exclude<AmmoComponent>();
+		readonly Aspect ammoAspect		=	new Aspect().Include<PickupComponent,AmmoComponent,NameComponent>().Exclude<WeaponComponent>();
+		readonly Aspect inventoryAspect	=	new Aspect().Include<InventoryComponent,Transform>();
 
 		
 		public PickupSystem()
@@ -38,7 +39,7 @@ namespace IronStar.Gameplay.Systems
 
 				foreach ( var touchEntity in touchDetector )
 				{
-					if ( PickItemUp( gs, touchEntity, pickupItem ) )
+					if ( inventoryAspect.Accept(touchEntity) && PickItemUp( gs, touchEntity, pickupItem ) )
 					{
 						break;
 					}
@@ -53,43 +54,43 @@ namespace IronStar.Gameplay.Systems
 			var transform	=	recipient.GetComponent<Transform>();
 			var pickup		=	pickupItem.GetComponent<PickupComponent>();
 			var name		=	pickupItem.GetComponent<NameComponent>()?.Name;
-
-			//	recipient has no inventory, skip:
-			if (inventory==null)
-			{
-				return false;
-			}
-
-			//	no trnasform, no pickup item :
-			if (transform==null || pickup==null)
-			{
-				Log.Warning("Item {0} can not be picked up by {1}", pickupItem.ID, recipient.ID );
-				return false;
-			}
-
-			pickupItem.RemoveComponent<Transform>();
-
-			inventory.AddItem( pickupItem.ID );
-
-			FXPlayback.SpawnFX( gs, pickup.FXName, 0, transform.Position );
-
-			Log.Message("Pickup: {0}", pickupItem);
-
-			//
-			//	add ammo :
-			//
-			var ammo	=	 pickupItem.GetComponent<AmmoComponent>();
-
-			//
-			//	activate weapon :
-			//
+			var ammo		=	pickupItem.GetComponent<AmmoComponent>();
 			var weapon		=	pickupItem.GetComponent<WeaponComponent>();
 
-			if (weapon!=null)
+			if ( weaponAspect.Accept( pickupItem ) )
 			{
-				inventory.SwitchWeapon( pickupItem.ID );
+				if ( !inventory.ContainsItem( gs, name ) )
+				{
+					inventory.AddItem( pickupItem.ID );
+					inventory.SwitchWeapon( pickupItem.ID );
+				}
+				else 
+				{
+					return false;
+				}
+			}
+			else if ( ammoAspect.Accept( pickupItem ) )
+			{
+				var existingAmmoEntity = inventory.FindItem( gs, name );
+
+				if (existingAmmoEntity!=null)
+				{
+					existingAmmoEntity.GetComponent<AmmoComponent>().Count += ammo.Count;
+					gs.Kill(pickupItem.ID);
+				}
+				else
+				{
+					inventory.AddItem( pickupItem.ID );
+				}
+			}
+			else 
+			{
+				inventory.AddItem( pickupItem.ID );
 			}
 
+			FXPlayback.SpawnFX( gs, pickup.FXName, pickupItem );
+			pickupItem.RemoveComponent<Transform>();
+			Log.Message("Pickup: {0}", name ?? "");
 
 			return true;
 		}

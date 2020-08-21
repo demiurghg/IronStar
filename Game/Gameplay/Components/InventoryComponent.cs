@@ -92,6 +92,18 @@ namespace IronStar.Gameplay.Components
 		}
 
 
+		public bool ContainsItem( GameState gs, string name )
+		{
+			return FindItem(gs, name) != null;
+		}
+
+
+		public bool ContainsItem( GameState gs, Aspect itemAspect )
+		{
+			return FindItem(gs, itemAspect) != null;
+		}
+
+
 		public Entity FindItem ( GameState gs, string name )
 		{
 			foreach ( var itemId in itemIDs )

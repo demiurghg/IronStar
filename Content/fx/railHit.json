@@ -27,7 +27,7 @@
   },
   "ParticleStage1": {
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
-    "Enabled": true,
+    "Enabled": false,
     "Sprite": "fire2",
     "Effect": "soft",
     "Count": 30,
@@ -97,7 +97,7 @@
     "Period": 1.0,
     "Timing": {
       "$type": "IronStar.SFX.FXTiming, IronStar",
-      "Delay": 0.15,
+      "Delay": 0.0,
       "Bunch": 0.0,
       "FadeIn": 0.1,
       "FadeOut": 0.2
@@ -108,21 +108,21 @@
     "Metallic": 0.0,
     "Intensity": 1100.0,
     "Scattering": 0.0,
-    "BeamFactor": 1.0,
+    "BeamFactor": 5.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
-      "Distribution": "uniform",
+      "Distribution": "gauss",
       "MinLifetime": 0.3,
-      "MaxLifetime": 0.7
+      "MaxLifetime": 0.8
     },
     "Shape": {
       "$type": "IronStar.SFX.FXShape, IronStar",
-      "Size0": 0.2,
+      "Size0": 0.4,
       "Size1": 0.0,
       "EnableRotation": true,
       "InitialAngle": 360.0,
-      "MinAngularVelocity": 0.0,
-      "MaxAngularVelocity": 0.0
+      "MinAngularVelocity": 30.0,
+      "MaxAngularVelocity": 40.0
     },
     "Position": {
       "$type": "IronStar.SFX.FXPosition, IronStar",
@@ -137,10 +137,10 @@
       "Direction": "localForward",
       "LinearDistribution": "gauss",
       "LinearVelocityMin": 0.0,
-      "LinearVelocityMax": 8.0,
+      "LinearVelocityMax": 12.0,
       "RadialDistribution": "gauss",
       
-      "RadialVelocity": 2.0,
+      "RadialVelocity": 6.0,
       "Advection": 0.0
     },
     "Acceleration": {
@@ -180,8 +180,8 @@
     },
     "Shape": {
       "$type": "IronStar.SFX.FXShape, IronStar",
-      "Size0": 3.0,
-      "Size1": 0.1,
+      "Size0": 0.5,
+      "Size1": 1.0,
       "EnableRotation": true,
       "InitialAngle": 360.0,
       "MinAngularVelocity": 0.0,
@@ -279,7 +279,7 @@
   },
   "ParticleStage5": {
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
-    "Enabled": true,
+    "Enabled": false,
     "Sprite": "explosionSmoke2",
     "Effect": "softLitShadow",
     "Count": 15,

@@ -131,6 +131,8 @@ namespace IronStar.SFX {
 			var up = m.Up;
 			var rt = m.Right;
 
+			color		=	new Color(255, 171, 148, 255).ToColor3();
+
 			for (int i=0; i<count; i++) {
 
 				var t		=	i * 0.1f;
@@ -161,7 +163,7 @@ namespace IronStar.SFX {
 				p.TimeLag		=	-0.1f;
 				p.LifeTime		=	rand.GaussDistribution(0.5f, 0.3f);
 
-				p.Intensity		=	5000;
+				p.Intensity		=	rand.NextFloat(2000, 5000);
 				p.Color			=	color;
 				p.Alpha			=	1;
 				p.FadeIn		=	0.1f;
@@ -173,7 +175,7 @@ namespace IronStar.SFX {
 
 				p.Rotation0		=	rand.NextFloat(0,360);
 				p.Rotation1		=	p.Rotation0;
-				p.Size0			=	0.1f;
+				p.Size0			=	0.3f;
 				p.Size1			=	0.0f;
 
 				rw.ParticleSystem.InjectParticle( p );

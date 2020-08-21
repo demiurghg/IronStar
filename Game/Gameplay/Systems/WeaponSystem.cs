@@ -118,13 +118,14 @@ namespace IronStar.Gameplay.Systems
 		{
 			var weapon	=	weaponEntity.GetComponent<WeaponComponent>();
 			var timeout	=	weapon.Timer <= TimeSpan.Zero;
+			var gs		=	weaponEntity.gs;
 
 			switch (weapon.State) 
 			{
 				case WeaponState.Idle:	
 					if (attack) 
 					{
-						if (TryConsumeAmmo(inventory, weapon)) 
+						if (TryConsumeAmmo(gs, inventory, weapon)) 
 						{
 							weapon.State =  WeaponState.Warmup;	
 							weapon.Timer += weapon.TimeWarmup;
@@ -219,9 +220,25 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		bool TryConsumeAmmo( InventoryComponent inventory, WeaponComponent weapon )
+		bool TryConsumeAmmo( GameState gs, InventoryComponent inventory, WeaponComponent weapon )
 		{
-			return true;
+			var ammoEntity	=	inventory.FindItem( gs, weapon.AmmoClass );
+			var ammo		=	ammoEntity?.GetComponent<AmmoComponent>();
+
+			if (ammoEntity==null || ammo==null) 
+			{
+				return false;
+			}
+
+			if (ammo.Count >= weapon.AmmoConsumption)
+			{
+				ammo.Count -= weapon.AmmoConsumption;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 

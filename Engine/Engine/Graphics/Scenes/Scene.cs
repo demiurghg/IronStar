@@ -172,6 +172,11 @@ namespace Fusion.Engine.Graphics.Scenes {
 		}
 
 
+		public Scene( TimeMode timeMode )
+		{
+			this.TimeMode	=	timeMode;
+		}
+
 
 		/// <summary>
 		/// Creates empty scene

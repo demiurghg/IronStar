@@ -15,11 +15,16 @@ namespace IronStar.Gameplay.Components
 		public bool		Landed;
 		public bool		LeftStep;
 		public bool		RightStep;
+		public bool		Crouched;
+		public bool		Standed;
+		public bool		RecoilLight;
+		public bool		RecoilHeavy;
 
 		public int		Counter;
 		public float	StepTimer;
 		public float	StepFraction;
-		public bool		Traction;
+		public bool		HasTraction;
+		public bool		IsCrouching;
 
 		public Vector3	GroundVelocity;
 		public float	FallVelocity;

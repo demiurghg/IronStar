@@ -7,31 +7,31 @@ using System.Threading.Tasks;
 
 namespace IronStar.Animation 
 {
-	public class AnimationStack : IEnumerable<IAnimationProvider>
+	public class AnimationStack : IEnumerable<ITransformProvider>
 	{
-		readonly List<IAnimationProvider> stack;
+		readonly List<ITransformProvider> stack;
 
 		public AnimationStack()
 		{
-			stack	=	new List<IAnimationProvider>();
+			stack	=	new List<ITransformProvider>();
 		}
 
 
-		public void Add( IAnimationProvider animationProvider )
+		public void Add( ITransformProvider animationProvider )
 		{
 			stack.Add( animationProvider );
 		}
 
 		
-		public IEnumerator<IAnimationProvider> GetEnumerator()
+		public IEnumerator<ITransformProvider> GetEnumerator()
 		{
-			return ( (IEnumerable<IAnimationProvider>)stack ).GetEnumerator();
+			return ( (IEnumerable<ITransformProvider>)stack ).GetEnumerator();
 		}
 
 		
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return ( (IEnumerable<IAnimationProvider>)stack ).GetEnumerator();
+			return ( (IEnumerable<ITransformProvider>)stack ).GetEnumerator();
 		}
 	}
 }

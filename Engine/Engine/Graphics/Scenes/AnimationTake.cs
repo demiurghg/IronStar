@@ -70,6 +70,12 @@ namespace Fusion.Engine.Graphics.Scenes {
 
 			this.animData	=	new Matrix[ nodeCount * frameCount ];
 			this.animDelta	=	new Matrix[ nodeCount * frameCount ];
+
+			for ( int i=0; i<animData.Length; i++)
+			{
+				animData[i]		=	Matrix.Identity;
+				animDelta[i]	=	Matrix.Identity;
+			}
 		}
 
 
@@ -193,7 +199,7 @@ namespace Fusion.Engine.Graphics.Scenes {
 		/// <summary>
 		/// 
 		/// </summary>
-		void ComputeDeltaAnimation ()
+		public void ComputeDeltaAnimation ()
 		{
 			var initialPose = new Matrix[ NodeCount ];
 			Evaluate( FirstFrame, AnimationWrapMode.Clamp, initialPose );
@@ -208,6 +214,19 @@ namespace Fusion.Engine.Graphics.Scenes {
 					animDelta[ addr ] = initialPose[node] * animData[ addr ];
 				}
 			}
+		}
+
+
+		public void RecordTake( int node, Func<int,float,Matrix> action )
+		{
+			float d = 1.0f / frameCount;
+
+			for (int i=firstFrame; i<=lastFrame; i++)
+			{
+				SetKey( i, node, action(i, i*d) );
+			}
+
+			ComputeDeltaAnimation();
 		}
 
 

@@ -146,7 +146,6 @@ namespace IronStar.Animation
 		}
 
 
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -176,6 +175,25 @@ namespace IronStar.Animation
 			{
 				Log.Warning( e.Message );
 			}
+		}
+
+
+		public TakeSequencer GetAdditiveIdleSequencer()
+		{
+			foreach ( var track in tracks )
+			{
+				if ( track is TakeSequencer )
+				{
+					var sequencer = (TakeSequencer)track;
+					
+					if (!sequencer.IsPlaying && sequencer.blendMode==AnimationBlendMode.Additive)
+					{
+						return sequencer;
+					}
+				}
+			}
+
+			return null;
 		}
 	}
 }

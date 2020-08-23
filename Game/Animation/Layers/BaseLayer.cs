@@ -11,11 +11,12 @@ using Fusion.Engine.Graphics.Scenes;
 
 namespace IronStar.Animation 
 {
-	public abstract class AnimationSource : IAnimationProvider
+	public abstract class BaseLayer : ITransformProvider
 	{
+		public abstract bool IsPlaying { get; }
 		public float Weight { get; set; } = 1;
 
-		readonly protected AnimationBlendMode blendMode;
+		readonly public AnimationBlendMode blendMode;
 		
 		readonly protected string channel;
 		readonly protected Scene scene;
@@ -29,7 +30,7 @@ namespace IronStar.Animation
 		/// </summary>
 		/// <param name="name"></param>
 		/// <param name="blendMode"></param>
-		public AnimationSource( Scene scene, string channel, AnimationBlendMode blendMode )
+		public BaseLayer( Scene scene, string channel, AnimationBlendMode blendMode )
 		{
 			this.channel	=	channel;
 			this.blendMode	=	blendMode;

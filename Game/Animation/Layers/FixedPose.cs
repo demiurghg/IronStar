@@ -14,12 +14,12 @@ using IronStar.Animation;
 
 namespace IronStar.Animation 
 {
-	public class AnimationPose : AnimationSource 
+	public class AnimationPose : BaseLayer 
 	{
-
 		int frameFrom = 0;
 		int frameTo = 0;
 
+		public override bool IsPlaying { get { return true; } }
 
 		public int Frame 
 		{ 
@@ -95,12 +95,12 @@ namespace IronStar.Animation
 				if (additive) 
 				{
 					take.GetDeltaKey( Frame, nodeIndex, out src );
-					dst = AnimUtils.Lerp( dst, dst * src, weight );
+					dst = AnimationUtils.Lerp( dst, dst * src, weight );
 				} 
 				else 
 				{
 					take.GetKey( Frame, nodeIndex, out src );
-					dst = AnimUtils.Lerp( dst, src, weight );
+					dst = AnimationUtils.Lerp( dst, src, weight );
 				}
 
 				destination[nodeIndex] = dst;

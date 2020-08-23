@@ -68,10 +68,18 @@ namespace IronStar.Gameplay.Systems
 				//
 				//	update traction, jumping and landing :
 				//
-				step.Jumped		=	 step.Traction && ( controller.HasTraction != step.Traction );
-				step.Landed		=	!step.Traction && ( controller.HasTraction != step.Traction );
+				step.Jumped			=	 step.HasTraction && ( controller.HasTraction != step.HasTraction );
+				step.Landed			=	!step.HasTraction && ( controller.HasTraction != step.HasTraction );
 
-				step.Traction	=	controller.HasTraction;
+				step.HasTraction	=	controller.HasTraction;
+
+				//
+				//	update stances :
+				//
+				step.Crouched		=	 step.IsCrouching && ( controller.IsCrouching != step.IsCrouching );
+				step.Standed		=	!step.IsCrouching && ( controller.IsCrouching != step.IsCrouching );
+
+				step.IsCrouching	=	controller.IsCrouching;
 
 				//
 				//	debug :

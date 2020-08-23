@@ -45,17 +45,17 @@ namespace IronStar.Gameplay.Systems
 
 		readonly Random rand = new Random();
 
-		AnimationTrack		trackWeapon;
-		AnimationTrack		trackBarrel;
-		AnimationTrack		trackShake0;
-		AnimationTrack		trackShake1;
-		AnimationTrack		trackShake2;
-		AnimationTrack		trackShake3;
+		TakeSequencer		trackWeapon;
+		TakeSequencer		trackBarrel;
+		TakeSequencer		trackShake0;
+		TakeSequencer		trackShake1;
+		TakeSequencer		trackShake2;
+		TakeSequencer		trackShake3;
 		AnimationPose		poseTilt;
 
 		AnimationComposer	composer;
 
-		AnimationTrack[]	shakeTracks;
+		TakeSequencer[]	shakeTracks;
 
 		RenderModelInstance	model;
 
@@ -73,12 +73,12 @@ namespace IronStar.Gameplay.Systems
 			this.model	=	model;
 			composer	=	new AnimationComposer( fxPlayback, model, model.Scene );
 
-			trackWeapon	=	new AnimationTrack( model.Scene, null, AnimationBlendMode.Override );
+			trackWeapon	=	new TakeSequencer( model.Scene, null, AnimationBlendMode.Override );
 
-			trackShake0	=	new AnimationTrack( model.Scene, null, AnimationBlendMode.Additive );
-			trackShake1	=	new AnimationTrack( model.Scene, null, AnimationBlendMode.Additive );
-			trackShake2	=	new AnimationTrack( model.Scene, null, AnimationBlendMode.Additive );
-			trackShake3	=	new AnimationTrack( model.Scene, null, AnimationBlendMode.Additive );
+			trackShake0	=	new TakeSequencer( model.Scene, null, AnimationBlendMode.Additive );
+			trackShake1	=	new TakeSequencer( model.Scene, null, AnimationBlendMode.Additive );
+			trackShake2	=	new TakeSequencer( model.Scene, null, AnimationBlendMode.Additive );
+			trackShake3	=	new TakeSequencer( model.Scene, null, AnimationBlendMode.Additive );
 
 			poseTilt	=	new AnimationPose( model.Scene, null, ANIM_TILT, AnimationBlendMode.Additive );
 			poseTilt.Weight = 0;
@@ -92,7 +92,7 @@ namespace IronStar.Gameplay.Systems
 			composer.Tracks.Add( trackShake3 );
 			composer.Tracks.Add( poseTilt );
 
-			trackWeapon.Sequence( ANIM_IDLE, true, true );
+			trackWeapon.Sequence( ANIM_IDLE, SequenceMode.Immediate|SequenceMode.Looped );
 		}
 
 
@@ -102,7 +102,7 @@ namespace IronStar.Gameplay.Systems
 		/// </summary>
 		public void Update ( GameTime gameTime, WeaponComponent weapon, StepComponent steps )
 		{
-			UpdateWeaponStates(gameTime, weapon);
+			UpdateWeaponStates(gameTime, weapon, steps);
 			UpdateMovements(gameTime, steps);
 
 			composer.Update( gameTime, model.FlattenTransforms ); 
@@ -114,12 +114,17 @@ namespace IronStar.Gameplay.Systems
 		/// <summary>
 		/// 
 		/// </summary>
-		void UpdateWeaponStates ( GameTime gameTime, WeaponComponent weapon )
+		void UpdateWeaponStates ( GameTime gameTime, WeaponComponent weapon, StepComponent steps )
 		{
 			var weaponState	=	weapon.State;
 
 			var fireEvent	=	oldWeaponState != weaponState;
 			oldWeaponState	=	weaponState;
+
+			bool	recoil	=	fireEvent && ( weaponState == WeaponState.Cooldown || weaponState == WeaponState.Cooldown2 );
+			bool	heavy	=	weapon.TimeCooldown > TimeSpan.FromMilliseconds(400);
+			steps.RecoilHeavy	=	 recoil && heavy;
+			steps.RecoilLight	=	 recoil && !heavy;
 
 			if (fireEvent) 
 			{
@@ -131,7 +136,8 @@ namespace IronStar.Gameplay.Systems
 				//	recoil & cooldown :
 				if ( weaponState == WeaponState.Cooldown || weaponState == WeaponState.Cooldown2 ) 
 				{
-					trackWeapon.Sequence( ANIM_COOLDOWN, true, false );
+
+					trackWeapon.Sequence( ANIM_COOLDOWN, SequenceMode.Immediate );
 					//trackWeapon.Frame ++;
 
 					var shakeName = ANIM_SHAKE + rand.Next(6).ToString();
@@ -143,17 +149,17 @@ namespace IronStar.Gameplay.Systems
 
 				//	idle animation :
 				if ( weaponState == WeaponState.Idle ) {
-					trackWeapon.Sequence( ANIM_IDLE, false, true );
+					trackWeapon.Sequence( ANIM_IDLE, SequenceMode.Looped );
 				}
 
 				//	raising
 				if ( weaponState == WeaponState.Raise ) {
-					trackWeapon.Sequence( ANIM_RAISE, true, false );
+					trackWeapon.Sequence( ANIM_RAISE, SequenceMode.Immediate );
 				}
 
 				//	dropping
 				if ( weaponState == WeaponState.Drop ) {
-					trackWeapon.Sequence( ANIM_DROP, true, false );
+					trackWeapon.Sequence( ANIM_DROP, SequenceMode.Immediate );
 				}
 
 				//	no ammo animation :
@@ -188,7 +194,7 @@ namespace IronStar.Gameplay.Systems
 				composer.SequenceSound( SOUND_LANDING );
 				Log.Message("{0}", oldVelocity);
 
-				float w = MathUtil.Clamp( oldVelocity / 20.0f, 0, 1 );
+				float w = MathUtil.Clamp( oldVelocity / 20.0f, 0, 0.5f );
 
 				RunShakeAnimation( ANIM_LANDING, w );
 			}
@@ -240,11 +246,11 @@ namespace IronStar.Gameplay.Systems
 		/// <param name="weight"></param>
 		void RunShakeAnimation ( string name, float weight )
 		{
-			var track	=	shakeTracks.FirstOrDefault( tr => !tr.Busy );
+			var track	=	shakeTracks.FirstOrDefault( tr => !tr.IsPlaying );
 
 			if (track!=null) {
 				track.Weight = weight;
-				track.Sequence( name, true, false );
+				track.Sequence( name, SequenceMode.Immediate );
 			}
 		}
 	}

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 
 namespace IronStar.Animation {
-	static class AnimUtils 
+	static class AnimationUtils 
 	{
 		public static float SmoothStep( float x )
 		{
@@ -74,7 +74,7 @@ namespace IronStar.Animation {
 		}
 
 
-		public static float KickStep ( float x )
+		public static float KickCurve ( float x )
 		{
 			if (x<0) return 0;
 			if (x>1) return 1;
@@ -88,6 +88,22 @@ namespace IronStar.Animation {
 			else
 			{
 				return 1 - SmoothStep( ( x - p ) / ( 1 - p ) );
+			}
+		}
+
+
+		public static float BellCurve ( float x )
+		{
+			if (x<0) return 0;
+			if (x>1) return 1;
+
+			if (x<0.5f) 
+			{	
+				return SmoothStep(2*x);
+			}
+			else
+			{
+				return SmoothStep(2-2*x);
 			}
 		}
 

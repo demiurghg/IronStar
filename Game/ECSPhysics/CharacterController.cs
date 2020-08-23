@@ -56,11 +56,17 @@ namespace IronStar.ECSPhysics
 		}
 
 
+		public static float CalcPovHeight(float standHeight, float crouchHeight, bool crouching)
+		{
+			float topEyeOffset	=	standHeight / 6.0f / 2.0f;
+
+			return (crouching ? crouchHeight : standHeight) - topEyeOffset;
+		}
+
+
 		float CalcPovHeight()
 		{
-			float topEyeOffset	=	heightStanding / 6.0f / 2.0f;
-
-			return (IsCrouching ? heightCrouching : heightStanding) - topEyeOffset;
+			return CalcPovHeight( heightStanding, heightCrouching, IsCrouching );
 		}
 	}
 }

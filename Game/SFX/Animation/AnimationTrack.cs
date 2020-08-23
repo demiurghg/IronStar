@@ -82,7 +82,7 @@ namespace IronStar.SFX {
 					Take.GetKey( next, node, out nextT );
 				}
 
-				transform = AnimUtils.Lerp( prevT, nextT, weight );
+				transform = AnimationUtils.Lerp( prevT, nextT, weight );
 			}
 		}
 
@@ -186,12 +186,12 @@ namespace IronStar.SFX {
 				if (additive) {
 
 					currentAnim.GetKey( nodeIndex, trackTime, true, out src );
-					dst = AnimUtils.Lerp( dst, dst * src, weight );
+					dst = AnimationUtils.Lerp( dst, dst * src, weight );
 
 				} else {
 
 					currentAnim.GetKey( nodeIndex, trackTime, false, out src );
-					dst = AnimUtils.Lerp( dst, src, weight );
+					dst = AnimationUtils.Lerp( dst, src, weight );
 
 				}
 

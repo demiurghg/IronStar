@@ -8,13 +8,18 @@ using Fusion.Core.Mathematics;
 
 namespace IronStar.Animation
 {
-	public interface IAnimationProvider
+	public interface ITransformProvider
 	{
 		/// <summary>
 		/// Gets and sets animation weight
 		/// Zero means that no animation is applied over destination matrix array when Evaluate is called.
 		/// </summary>
 		float Weight { get; set; }
+
+		/// <summary>
+		/// Indicates that given transform provide is active.
+		/// </summary>
+		bool IsPlaying { get; }
 
 		/// <summary>
 		/// Evaluates animation, apply animation over destination data and and advances animation if needed.

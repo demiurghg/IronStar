@@ -88,12 +88,12 @@ namespace IronStar.SFX {
 				if (additive) {
 
 					take.GetDeltaKey( Frame, nodeIndex, out src );
-					dst = AnimUtils.Lerp( dst, dst * src, weight );
+					dst = AnimationUtils.Lerp( dst, dst * src, weight );
 
 				} else {
 
 					take.GetKey( Frame, nodeIndex, out src );
-					dst = AnimUtils.Lerp( dst, src, weight );
+					dst = AnimationUtils.Lerp( dst, src, weight );
 
 				}
 

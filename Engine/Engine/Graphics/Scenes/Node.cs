@@ -61,6 +61,26 @@ namespace Fusion.Engine.Graphics.Scenes {
 		}
 
 
+		/// <summary>
+		/// Creates instance of the node.
+		/// </summary>
+		public Node (string name) : this()
+		{
+			Name	=	name;
+		}
+
+
+		
+		/// <summary>
+		/// Creates instance of the node.
+		/// </summary>
+		public Node (string name, int parentIndex) : this()
+		{
+			Name		=	name;
+			ParentIndex	=	parentIndex;
+		}
+
+
 		
 		public bool Equals ( Node other )
 		{

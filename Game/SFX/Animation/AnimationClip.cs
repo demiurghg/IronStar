@@ -59,11 +59,11 @@ namespace IronStar.SFX {
 			if (additive) {
 
 				sample	=	sample * refPose[node];
-				return	AnimUtils.Lerp( transform, transform * sample, weight );
+				return	AnimationUtils.Lerp( transform, transform * sample, weight );
 
 			} else {
 
-				return AnimUtils.Lerp( transform, sample, weight );
+				return AnimationUtils.Lerp( transform, sample, weight );
 
 			}
 

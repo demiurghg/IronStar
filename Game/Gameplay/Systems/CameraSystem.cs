@@ -19,9 +19,14 @@ namespace IronStar.Gameplay
 {
 	public class CameraSystem : ISystem
 	{
+		const string SOUND_LANDING	=	"player/landing"	;
+		const string SOUND_STEP		=	"player/step"		;
+		const string SOUND_JUMP		=	"player/jump"		;
+
 		const int	MAX_SHAKES	=	15;
 
-		Random	rand = new Random();
+		readonly Random	rand = new Random();
+		readonly SFX.FXPlayback fxPlayback;
 
 		Scene cameraScene;
 		AnimationComposer	composer;
@@ -34,12 +39,13 @@ namespace IronStar.Gameplay
 		bool isCrouching	=	false;
 		bool hasTraction	=	true;
 
-		public CameraSystem()
+		public CameraSystem(SFX.FXPlayback fxPlayback)
 		{
-			cameraScene	=	CreateCameraScene( 6, 4, 0 );
-			animData	=	new Matrix[2];
+			this.fxPlayback	=	fxPlayback;
+			cameraScene		=	CreateCameraScene( 6, 4, 0 );
+			animData		=	new Matrix[2];
 
-			composer	=	new AnimationComposer( null, null, cameraScene );
+			composer	=	new AnimationComposer( fxPlayback, null, cameraScene );
 			mainTrack	=	new TakeSequencer( cameraScene, null, AnimationBlendMode.Override );
 			shake0		=	new TakeSequencer( cameraScene, null, AnimationBlendMode.Additive );
 			shake1		=	new TakeSequencer( cameraScene, null, AnimationBlendMode.Additive );
@@ -97,17 +103,19 @@ namespace IronStar.Gameplay
 
 			var aspect	=	(vp.Width) / (float)vp.Height;
 
-			UpdateAnimationState(step);
-
-			composer.Update( gameTime, animData );
-			//cameraScene.ComputeAbsoluteTransforms( animData, animData );
-			var animatedCameraMatrix = animData[1];
-
-			//	update stuff :
+			//	update matricies :
 			var translate	=	Matrix.Translation( t.Position );
 			var rotateYaw	=	Matrix.RotationYawPitchRoll( uc.Yaw, 0, 0 );
 			var rotatePR	=	Matrix.RotationYawPitchRoll( 0, uc.Pitch, uc.Roll );
 
+			//	animate :
+			UpdateAnimationState(step);
+
+			composer.Update( gameTime, rotateYaw * translate, animData );
+			//cameraScene.ComputeAbsoluteTransforms( animData, animData );
+			var animatedCameraMatrix = animData[1];
+
+			//	update stuff :
 			var camMatrix	=	rotatePR * animatedCameraMatrix * rotateYaw * translate;
 
 			var cameraPos	=	camMatrix.TranslationVector;
@@ -142,6 +150,11 @@ namespace IronStar.Gameplay
 
 			if (steps.RecoilLight) PlayShake(null, rand.NextFloat(0.2f,0.4f) );
 			if (steps.RecoilHeavy) PlayShake(null, rand.NextFloat(0.8f,1.2f) );
+
+			if (steps.LeftStep)  composer.SequenceSound( SOUND_STEP );
+			if (steps.RightStep) composer.SequenceSound( SOUND_STEP );
+			if (steps.Landed)	 composer.SequenceSound( SOUND_LANDING );
+			//if (steps.Jumped) composer.SequenceSound( SOUND_STEP );
 		}
 
 

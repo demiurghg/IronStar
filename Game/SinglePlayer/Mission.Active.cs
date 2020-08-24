@@ -37,6 +37,7 @@ namespace IronStar.SinglePlayer {
 
 			//	physics simulation :
 			var physicsCore = new ECSPhysics.PhysicsCore();
+			var fxPlayback	= new FXPlayback(game, content);
 			gs.AddSystem( new ECSPhysics.StaticCollisionSystem(physicsCore) );
 			gs.AddSystem( new ECSPhysics.DynamicCollisionSystem(physicsCore) );
 			gs.AddSystem( new ECSPhysics.CharacterControllerSystem(physicsCore) );
@@ -50,9 +51,9 @@ namespace IronStar.SinglePlayer {
 
 			//	animation systems :
 			gs.AddSystem( new StepSystem() );
-			gs.AddSystem( new Gameplay.CameraSystem() );
+			gs.AddSystem( new Gameplay.CameraSystem(fxPlayback) );
 			gs.AddSystem( new FPVWeaponSystem(game) );
-			gs.AddSystem( new FXPlayback(game, content) );
+			gs.AddSystem( fxPlayback );
 
 			//	rendering :
 			gs.AddSystem( new SFX2.RenderModelSystem(game) );

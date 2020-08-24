@@ -187,7 +187,6 @@ namespace IronStar.Gameplay.Systems
 			var fallVelocity	=	Math.Abs(steps.FallVelocity);
 			var groundVelocity	=	steps.GroundVelocity;
 
-
 			//	landing animation :
 			if (steps.Landed) 
 			{

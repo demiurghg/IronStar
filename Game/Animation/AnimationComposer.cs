@@ -31,6 +31,7 @@ namespace IronStar.Animation
 		readonly FXPlayback fxPlayback;
 		readonly Matrix[] localTransforms;
 		readonly RenderModelInstance model;
+		readonly Queue<string> soundQueue;
 
 		List<FXInstance> fxInstances = new List<FXInstance>(32);
 		List<SoundEventInstance> soundInstances = new List<SoundEventInstance>(32);
@@ -47,8 +48,15 @@ namespace IronStar.Animation
 			this.scene		=	scene;
 			this.tracks		=	new AnimationStack();
 			this.fxPlayback	=	fxPlayback;
+			this.soundQueue	=	new Queue<string>();
 
 			localTransforms	=	new Matrix[scene.Nodes.Count];
+		}
+
+
+		public void Update ( GameTime gameTime, Matrix[] flatTransforms )
+		{
+			Update( gameTime, model.ModelFeatureWorldMatrix, flatTransforms );
 		}
 
 
@@ -58,7 +66,7 @@ namespace IronStar.Animation
 		/// </summary>
 		/// <param name="gameTime"></param>
 		/// <param name="transforms"></param>
-		public void Update ( GameTime gameTime, Matrix[] flatTransforms )
+		public void Update ( GameTime gameTime, Matrix worldTransform, Matrix[] flatTransforms )
 		{
 			if (flatTransforms==null) {
 				throw new ArgumentNullException("transforms");
@@ -94,7 +102,7 @@ namespace IronStar.Animation
 			foreach ( var fxInstance in fxInstances ) {
 				Vector3 p, s;
 				Quaternion q;
-				Matrix jointWorld = flatTransforms[ fxInstance.JointIndex ] * model.ModelFeatureWorldMatrix;
+				Matrix jointWorld = flatTransforms[ fxInstance.JointIndex ] * worldTransform;
 				jointWorld.Decompose( out s, out q, out p );
 				fxInstance.Move( p, Vector3.Zero, q );
 			}
@@ -103,8 +111,14 @@ namespace IronStar.Animation
 
 			//--------------------------------
 			//	update sound :
-			foreach ( var sound in soundInstances ) {
-				Vector3 position = 	model.ModelFeatureWorldMatrix.TranslationVector;
+			while ( soundQueue.Any() )
+			{
+				SequenceSound( soundQueue.Dequeue(), worldTransform );
+			}
+
+			foreach ( var sound in soundInstances ) 
+			{
+				Vector3 position = 	worldTransform.TranslationVector;
 				sound.Set3DParameters( position );
 			}
 
@@ -146,12 +160,17 @@ namespace IronStar.Animation
 		}
 
 
+		public void SequenceSound( string soundEventName )
+		{
+			soundQueue.Enqueue( soundEventName );
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="fxname"></param>
 		/// <param name="joint"></param>
-		public void SequenceSound ( string soundEventName )
+		void SequenceSound ( string soundEventName, Matrix worldMatrix )
 		{
 			try 
 			{
@@ -165,7 +184,7 @@ namespace IronStar.Animation
 				var soundEvent		=	ss.GetEvent( soundEventName );
 				var soundInstance	=	soundEvent.CreateInstance();
 				
-				soundInstance.Set3DParameters( model.ModelFeatureWorldMatrix.TranslationVector );
+				soundInstance.Set3DParameters( worldMatrix.TranslationVector );
 				soundInstance.ReverbLevel = 1;
 				soundInstance.Start();
 				

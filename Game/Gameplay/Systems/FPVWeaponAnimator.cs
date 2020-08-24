@@ -194,7 +194,7 @@ namespace IronStar.Gameplay.Systems
 				composer.SequenceSound( SOUND_LANDING );
 				Log.Message("{0}", oldVelocity);
 
-				float w = MathUtil.Clamp( oldVelocity / 20.0f, 0, 0.5f );
+				float w = MathUtil.Clamp( oldVelocity / 30.0f, 0, 0.5f );
 
 				RunShakeAnimation( ANIM_LANDING, w );
 			}

@@ -76,8 +76,8 @@ namespace IronStar.Gameplay.Systems
 				//
 				//	update stances :
 				//
-				step.Crouched		=	 step.IsCrouching && ( controller.IsCrouching != step.IsCrouching );
-				step.Standed		=	!step.IsCrouching && ( controller.IsCrouching != step.IsCrouching );
+				step.Crouched		=	 controller.IsCrouching && ( controller.IsCrouching != step.IsCrouching );
+				step.Standed		=	!controller.IsCrouching && ( controller.IsCrouching != step.IsCrouching );
 
 				step.IsCrouching	=	controller.IsCrouching;
 

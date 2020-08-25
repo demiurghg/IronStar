@@ -117,7 +117,8 @@ namespace Fusion.Core.Extensions {
 		public static T RandomOrDefault<T>( this IEnumerable<T> source, Random rand )
 		{
 			var num = source.Count();
-			return source.ElementAt( rand.Next(0, num) );
+
+			return num==0 ? default(T) : source.ElementAt( rand.Next(0, num) );
 		}
 	}
 }

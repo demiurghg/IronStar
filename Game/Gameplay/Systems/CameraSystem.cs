@@ -39,6 +39,10 @@ namespace IronStar.Gameplay
 		bool isCrouching	=	false;
 		bool hasTraction	=	true;
 
+
+		public bool Enabled { get; set; } = true;
+
+
 		public CameraSystem(SFX.FXPlayback fxPlayback)
 		{
 			this.fxPlayback	=	fxPlayback;
@@ -74,16 +78,19 @@ namespace IronStar.Gameplay
 
 		public void Update( GameState gs, GameTime gameTime )
 		{
-			var	players	=	gs.QueryEntities<PlayerComponent,Transform,UserCommandComponent,CharacterController>();
-
-			if (players.Count()>1)
+			if (Enabled)
 			{
-				Log.Warning("CameraSystem.Update -- multiple players detected");
-			}
+				var	players	=	gs.QueryEntities<PlayerComponent,Transform,UserCommandComponent,CharacterController>();
 
-			foreach ( var player in players)
-			{
-				SetupPlayerCamera(gameTime, gs, player);
+				if (players.Count()>1)
+				{
+					Log.Warning("CameraSystem.Update -- multiple players detected");
+				}
+
+				foreach ( var player in players)
+				{
+					SetupPlayerCamera(gameTime, gs, player);
+				}
 			}
 		}
 

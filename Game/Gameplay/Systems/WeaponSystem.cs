@@ -222,6 +222,8 @@ namespace IronStar.Gameplay.Systems
 
 		bool TryConsumeAmmo( GameState gs, InventoryComponent inventory, WeaponComponent weapon )
 		{
+			return true;
+
 			var ammoEntity	=	inventory.FindItem( gs, weapon.AmmoClass );
 			var ammo		=	ammoEntity?.GetComponent<AmmoComponent>();
 

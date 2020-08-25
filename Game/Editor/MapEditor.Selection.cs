@@ -129,30 +129,18 @@ namespace IronStar.Editor {
 			var to		=	ray.Position + ray.Direction.Normalized() * 3000;
 			var n		=	Vector3.Zero;
 
-			hitPoint	=	Vector3.Zero;
-			distance	=	0;
-			#warning RESTORE: // world.RayCastEditor( from, to, out n, out hitPoint, out distance );
-			object obj		=	null; // world.RayCastEditor( from, to, out n, out hitPoint, out distance );
+			var phys	=	gameState.GetService<ECSPhysics.PhysicsCore>();
 
-			if (obj==null) {
+			ECS.Entity entity	=	phys.RayCastEditor( from, to, out n, out hitPoint, out distance );
+
+			if (entity!=null) 
+			{
+				return map.Nodes.FirstOrDefault( node => node.HasEntity(entity) && IsSelectable(node) );
+			}
+			else
+			{
 				return null;
 			}
-
-			if (obj is Entity) {
-				var entity = obj as Entity;
-				return map
-					.Nodes
-					.Select( n1 => n1 as MapEntity )
-					.Where( n2 => n2 != null )
-					.FirstOrDefault( n3 => n3.Entity == entity && IsSelectable(n3) );
-			}
-
-			if (obj is MapNode) {
-				var node = obj as MapNode;
-				return IsSelectable(node) ? node : null;
-			}
-
-			return null;
 		}
 
 

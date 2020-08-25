@@ -25,8 +25,9 @@ namespace IronStar {
 	{
 		public static GameState CreateGameState( Game game, ContentManager content, string mapName, Mapping.Map mapContent = null )
 		{
-			var map	=	mapContent ?? content.Load<Mapping.Map>(@"maps\" + mapName);
-			var gs	=	new GameState(game);
+			var isEditor	=	mapContent!=null;
+			var map			=	mapContent ?? content.Load<Mapping.Map>(@"maps\" + mapName);
+			var gs			=	new GameState(game);
 
 			var rw	=	game.RenderSystem.RenderWorld;
 			rw.VirtualTexture		=	content.Load<VirtualTexture>("*megatexture");
@@ -66,6 +67,13 @@ namespace IronStar {
 			gs.AddSystem( new SFX2.LightProbeSystem(game.RenderSystem) );
 			gs.AddSystem( new SFX2.LightingSystem() );
 			gs.AddSystem( new Gameplay.PlayerSystem() );
+
+
+			if (isEditor)
+			{
+				gs.GetService<Gameplay.CameraSystem>().Enabled = false;
+			}
+
 
 			map.ActivateGameState(gs);
 

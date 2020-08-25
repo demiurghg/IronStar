@@ -73,7 +73,7 @@ namespace IronStar.ECSPhysics
 		/// <param name="normal"></param>
 		/// <param name="pos"></param>
 		/// <returns></returns>
-		public object RayCastEditor ( Vector3 from, Vector3 to, out Vector3 normal, out Vector3 pos, out float distance )
+		public Entity RayCastEditor ( Vector3 from, Vector3 to, out Vector3 normal, out Vector3 pos, out float distance )
 		{
 			var dir		=	to - from;
 			var dist	=	dir.Length();
@@ -103,9 +103,10 @@ namespace IronStar.ECSPhysics
 			if (convexMesh!=null) {
 				return convexMesh.Entity.Tag as Entity;
 			}
-			/*if (staticMesh!=null) {
-				return staticMesh.Tag as MapNode;
-			}					 */
+			
+			if (staticMesh!=null) {
+				return staticMesh.Tag as Entity;
+			}
 
 			return null;
 		}

@@ -53,7 +53,8 @@ namespace IronStar.ECSPhysics
 
 				if (rm.AcceptCollisionNode(node) && meshIdx>=0)
 				{
-					cm.staticMeshes[i]	=	CreateStaticMesh( scene.Meshes[ meshIdx ], cm.transforms[i] * transform );
+					cm.staticMeshes[i]		=	CreateStaticMesh( scene.Meshes[ meshIdx ], cm.transforms[i] * transform );
+					cm.staticMeshes[i].Tag	=	e;
 					physics.Space.Add( cm.staticMeshes[i] );
 				}
 				else

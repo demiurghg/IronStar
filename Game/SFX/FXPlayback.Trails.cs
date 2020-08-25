@@ -131,7 +131,7 @@ namespace IronStar.SFX {
 			var up = m.Up;
 			var rt = m.Right;
 
-			color		=	new Color(255, 171, 148, 255).ToColor3();
+			//color		=	new Color(255, 171, 148, 255).ToColor3();
 
 			for (int i=0; i<count; i++) {
 

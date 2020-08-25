@@ -213,6 +213,11 @@ namespace IronStar.Mapping {
 			SpawnNodeECS(gs);
 		}
 
+		public bool HasEntity( ECS.Entity entity )
+		{
+			return ecsEntity!=null && ecsEntity==entity;
+		}
+
 
 		/// <summary>
 		/// Creates instance of map object

@@ -63,9 +63,11 @@ namespace IronStar.Editor {
 			}
 		}
 
-		GameWorld world;
+		ECS.GameState	gameState;
+		public ECS.GameState GameState { get {  return gameState; } }
+		/*GameWorld world;
 
-		public GameWorld World { get { return world; } }
+		public GameWorld World { get { return world; } }*/
 
 
 		/// <summary>
@@ -114,10 +116,11 @@ namespace IronStar.Editor {
 				this.map = new Map();
 			}
 
-			world			=	new GameWorld( Game, mapName, this.map, Content, new LocalMessageService(), new Guid(), true );
+			gameState	=	IronStar.CreateGameState( Game, Content, mapName, map );
+			gameState.Update( GameTime.MSec16 );
 
-			world.SimulateWorld( GameTime.MSec16 );
-			world.PresentWorld( GameTime.MSec16, 1, null, null );
+			//world.SimulateWorld( GameTime.MSec16 );
+			//world.PresentWorld( GameTime.MSec16, 1, null, null );
 
 			ResetWorld();
 
@@ -196,7 +199,7 @@ namespace IronStar.Editor {
 
 				workspace?.CloseWorkspace();
 
-				world?.Dispose();
+				gameState?.Dispose();
 
 				rs.RenderWorld.ClearWorld();
 
@@ -232,7 +235,7 @@ namespace IronStar.Editor {
 		public void CreateNodeUI ( MapNode newNode )
 		{
 			Map.Nodes.Add( newNode );
-			newNode.SpawnNode( World );
+			newNode.SpawnNodeECS( GameState );
 			Select( newNode );
 			Do();
 		}
@@ -261,7 +264,7 @@ namespace IronStar.Editor {
 			}
 
 			foreach ( var se in selection ) {
-				se.KillNode( world );
+				se.KillNodeECS( gameState );
 				map.Nodes.Remove( se );
 			}
 
@@ -280,13 +283,14 @@ namespace IronStar.Editor {
 			}
 
 			var newItems = selection
-				.Select( item => item.DuplicateNode( World ) )
+				#warning REMOVE PARAMETER
+				.Select( item => item.DuplicateNode(null) )
 				.ToArray();
 
 			Map.Nodes.AddRange( newItems );
 
 			foreach ( var newItem in newItems ) {
-				newItem.SpawnNode(world);
+				newItem.SpawnNodeECS(gameState);
 			}
 
 			ClearSelection();
@@ -307,8 +311,7 @@ namespace IronStar.Editor {
 
 			foreach ( var node in Selection )
 			{
-				node.KillNode(world);
-				node.SpawnNode(world);
+				node.ResetNodeECS(GameState);
 			}
 
 		}
@@ -327,19 +330,19 @@ namespace IronStar.Editor {
 
 			//	kill node's entities
 			foreach ( var node in map.Nodes ) {
-				node.KillNode(world);
+				node.KillNodeECS(gameState);
 			}
 	
 			//	kill entities created by other 
 			//	entities during simualtion
-			world.KillAll();
+			gameState.KillAll();
 
 			//	spawn entities again
 			foreach ( var node in map.Nodes ) {
-				node.SpawnNode(world);
+				node.SpawnNodeECS(gameState);
 			}
 
-			world.SimulateWorld( GameTime.Zero );
+			gameState.Update( GameTime.Zero );
 		}
 
 
@@ -377,12 +380,8 @@ namespace IronStar.Editor {
 		public void SelectedPropertyChange ( object target )
 		{
 			var mapNode = target as MapNode;
-			mapNode?.ResetNode( World );
+			mapNode?.ResetNodeECS( gameState );
 
-			if (target is MapEnvironment) {
-				map.UpdateEnvironment(world);
-			}
-		
 			Do();
 		}
 
@@ -438,24 +437,12 @@ namespace IronStar.Editor {
 
 			var dr = rs.RenderWorld.Debug;
 
-			//dr.DrawBox( map.Environment.IrradianceVolume, Color.Cyan );
-
-			//
-			//	Update nodes :
-			//
-			foreach ( var item in map.Nodes ) {
-				item.Update( gameTime, world );
-			}
-
 			map.Validate();
 
 			//
 			//	Simulate & present world
 			//
-			if (EnableSimulation) {
-				world.SimulateWorld( gameTime );
-			}
-			world.PresentWorld( gameTime, 1, null, null );
+			gameState.Update( gameTime );
 
 			//	draw stuff :
 			if (DrawGrid) {
@@ -470,7 +457,7 @@ namespace IronStar.Editor {
 				var color = IsSelectable( item ) ? Utils.WireColor : Utils.GridColor;
 
 				if (IsVisible(item)) {
-					item.DrawNode( world, dr, color, false ); 
+					#warning RESTORE: item.DrawNode( world, dr, color, false ); 
 				}
 			}
 
@@ -487,7 +474,7 @@ namespace IronStar.Editor {
 
 				if (IsVisible(item)) {
 					dr.DrawBasis( item.WorldMatrix, 0.5f, 3 );
-					item.DrawNode( world, dr, color, true ); 
+					#warning RESTORE: item.DrawNode( world, dr, color, true ); 
 				}
 			}
 

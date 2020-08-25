@@ -205,7 +205,7 @@ namespace IronStar.Mapping {
 		}
 
 
-		public override MapNode DuplicateNode( GameWorld world )
+		public override MapNode DuplicateNode(GameWorld world)
 		{
 			var newNode = (MapDecal)MemberwiseClone();
 			newNode.decal = null;

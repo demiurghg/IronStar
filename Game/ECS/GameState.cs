@@ -193,6 +193,12 @@ namespace IronStar.ECS
 		}
 
 
+		public void Kill( Entity e )
+		{
+			if (e!=null) killed.Add( e.ID );
+		}
+
+
 		void KillInternal( uint id )
 		{
 			Entity entity;
@@ -213,6 +219,13 @@ namespace IronStar.ECS
 			{
 				KillInternal( id );
 			}
+		}
+
+
+		public void KillAll()
+		{
+			KillAllInternal();
+			RefreshEntities();
 		}
 
 

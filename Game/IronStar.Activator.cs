@@ -23,9 +23,9 @@ using System.IO;
 namespace IronStar {
 	partial class IronStar : Game
 	{
-		public static GameState CreateGameState( Game game, ContentManager content, string mapName )
+		public static GameState CreateGameState( Game game, ContentManager content, string mapName, Mapping.Map mapContent = null )
 		{
-			var map	=	content.Load<Mapping.Map>(@"maps\" + mapName);
+			var map	=	mapContent ?? content.Load<Mapping.Map>(@"maps\" + mapName);
 			var gs	=	new GameState(game);
 
 			var rw	=	game.RenderSystem.RenderWorld;

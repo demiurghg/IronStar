@@ -216,16 +216,16 @@ namespace IronStar.Mapping {
 
 		public override void SpawnNodeECS( GameState gs )
 		{
-			var e = gs.Spawn();
+			ecsEntity = gs.Spawn();
 
-			e.AddComponent( new ECS.Transform( TranslateVector, RotateQuaternion, Scale ) );
-			e.AddComponent( new StaticCollisionComponent() );
+			ecsEntity.AddComponent( new ECS.Transform( TranslateVector, RotateQuaternion, Scale ) );
+			ecsEntity.AddComponent( new StaticCollisionComponent() );
 
 			var rm		=	new SFX2.RenderModel( ScenePath, Matrix.Identity, Color.White, 1, SFX2.RMFlags.None );
 			rm.cmPrefix	=	UseCollisionMesh ? "cm_" : "";
 			var lmSize	=	UseLightVolume ? 0 : (int)LightMapSize;
 			rm.SetupLightmap( lmSize, lmSize, NodeGuid );
-			e.AddComponent( rm );
+			ecsEntity.AddComponent( rm );
 		}
 
 

@@ -252,7 +252,7 @@ namespace IronStar.Editor {
 						case Rotation.Roll : target.RotateRoll  = Snap( angles[i] + angle, snapValue, snapEnable ); break;
 					}
 
-					target.ResetNode( this.editor.World );
+					target.ResetNodeECS( this.editor.GameState );
 				}
 			}
 		}

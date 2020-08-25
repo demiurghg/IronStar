@@ -92,8 +92,8 @@ namespace IronStar.Mapping {
 
 		public override void SpawnNodeECS( GameState gs )
 		{
-			var e = gs.Spawn();
-			e.AddComponent( new ECS.Transform( TranslateVector, RotateQuaternion ) );
+			ecsEntity = gs.Spawn();
+			ecsEntity.AddComponent( new ECS.Transform( TranslateVector, RotateQuaternion ) );
 
 			var light = new SFX2.LightProbeBox(NodeGuid);
 
@@ -104,8 +104,8 @@ namespace IronStar.Mapping {
 			light.ShellHeight	=	ShellHeight;
 			light.ShellDepth	=	ShellDepth;
 
-			e.AddComponent( light );
-			e.AddComponent( new Static() );
+			ecsEntity.AddComponent( light );
+			ecsEntity.AddComponent( new Static() );
 		}
 
 

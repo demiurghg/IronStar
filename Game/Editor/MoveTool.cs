@@ -193,7 +193,7 @@ namespace IronStar.Editor {
 						target.TranslateVector = pos + (currentPoint - initialPoint);
 					}
 
-					target.ResetNode( this.editor.World );
+					target.ResetNodeECS( this.editor.GameState );
 				}
 			}
 		}

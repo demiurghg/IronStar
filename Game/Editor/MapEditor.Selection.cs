@@ -129,7 +129,10 @@ namespace IronStar.Editor {
 			var to		=	ray.Position + ray.Direction.Normalized() * 3000;
 			var n		=	Vector3.Zero;
 
-			var obj = world.RayCastEditor( from, to, out n, out hitPoint, out distance );
+			hitPoint	=	Vector3.Zero;
+			distance	=	0;
+			#warning RESTORE: // world.RayCastEditor( from, to, out n, out hitPoint, out distance );
+			object obj		=	null; // world.RayCastEditor( from, to, out n, out hitPoint, out distance );
 
 			if (obj==null) {
 				return null;

@@ -148,6 +148,7 @@
     <Compile Include="Gameplay\Components\PlayerStartComponent.cs" />
     <Compile Include="GameException.cs" />
     <Compile Include="Gameplay\WeaponState.cs" />
+    <Compile Include="IronStar.Activator.cs" />
     <Compile Include="Mapping\MapLightProbeBox.cs" />
     <Compile Include="ECSPhysics\CharacterController.cs" />
     <Compile Include="ECSPhysics\IMotionState.cs" />

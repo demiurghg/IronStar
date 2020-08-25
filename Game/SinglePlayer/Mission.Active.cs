@@ -19,58 +19,6 @@ namespace IronStar.SinglePlayer {
 
 	partial class Mission 
 	{
-		static GameState CreateGameState( Game game, ContentManager content, string mapName )
-		{
-			var map	=	content.Load<Mapping.Map>(@"maps\" + mapName);
-			var gs	=	new GameState(game);
-
-			var rw	=	game.RenderSystem.RenderWorld;
-			rw.VirtualTexture		=	content.Load<VirtualTexture>("*megatexture");
-			rw.LightSet.SpotAtlas	=	content.Load<TextureAtlas>(@"spots\spots|srgb");
-			rw.LightSet.DecalAtlas	=	content.Load<TextureAtlas>(@"decals\decals");
-
-			rw.IrradianceCache						=	content.Load(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrcache"	), (LightProbeGBufferCache)null );
-			game.RenderSystem.Radiosity.LightMap	=	content.Load(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrmap"), (LightMap)null );
-
-			gs.Services.AddService( content );
-			gs.Services.AddService( game.RenderSystem );
-
-			//	physics simulation :
-			var physicsCore = new ECSPhysics.PhysicsCore();
-			var fxPlayback	= new FXPlayback(game, content);
-			gs.AddSystem( new ECSPhysics.StaticCollisionSystem(physicsCore) );
-			gs.AddSystem( new ECSPhysics.DynamicCollisionSystem(physicsCore) );
-			gs.AddSystem( new ECSPhysics.CharacterControllerSystem(physicsCore) );
-			gs.AddSystem( physicsCore );
-
-			//	game logic :
-			gs.AddSystem( new HealthSystem() );
-			gs.AddSystem( new PickupSystem() );
-			gs.AddSystem( new WeaponSystem(physicsCore) );
-			gs.AddSystem( new ProjectileSystem(physicsCore) );
-
-			//	animation systems :
-			gs.AddSystem( new StepSystem() );
-			gs.AddSystem( new Gameplay.CameraSystem(fxPlayback) );
-			gs.AddSystem( new FPVWeaponSystem(game) );
-			gs.AddSystem( fxPlayback );
-
-			//	rendering :
-			gs.AddSystem( new SFX2.RenderModelSystem(game) );
-			gs.AddSystem( new SFX2.OmniLightSystem(game.RenderSystem) );
-			gs.AddSystem( new SFX2.SpotLightSystem(game.RenderSystem) );
-			gs.AddSystem( new SFX2.LightProbeSystem(game.RenderSystem) );
-			gs.AddSystem( new SFX2.LightingSystem() );
-			gs.AddSystem( new Gameplay.PlayerSystem() );
-
-			map.ActivateGameState(gs);
-
-			return gs;
-		}
-
-
-
-
 		class Active : IMissionState 
 		{
 			public bool IsContinuable 
@@ -97,7 +45,7 @@ namespace IronStar.SinglePlayer {
 					var map				=	context.Content.Load<Mapping.Map>(@"maps\" + context.MapName);
 					var msgsvc			=	new LocalMessageService();
 
-					context.GameState	=	CreateGameState( context.Game, context.Content, context.MapName );
+					context.GameState	=	IronStar.CreateGameState( context.Game, context.Content, context.MapName );
 					context.Input		=	new GameInput( context.Game );
 					context.Command		=	new UserCommand();
 

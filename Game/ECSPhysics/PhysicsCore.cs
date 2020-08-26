@@ -26,6 +26,8 @@ namespace IronStar.ECSPhysics
 			get { return physSpace; }
 		}
 
+		public bool Enabled { get; set; } = false;
+
 		HashSet<Tuple<Entity,Entity>> touchEvents;
 
 		public readonly BEPUCollisionGroup StaticGroup		= new BEPUCollisionGroup();
@@ -72,11 +74,14 @@ namespace IronStar.ECSPhysics
 		{
 			UpdateGravity(gs);
 
-			UpdateSimulation( gs, gameTime.ElapsedSec );
+			if (Enabled)
+			{
+				UpdateSimulation( gs, gameTime.ElapsedSec );
 
-			UpdateTransforms(gs);
+				UpdateTransforms(gs);
 
-			UpdateTouchEvents(gs);
+				UpdateTouchEvents(gs);
+			}
 		}
 
 

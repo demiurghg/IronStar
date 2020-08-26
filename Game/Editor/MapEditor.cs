@@ -22,6 +22,7 @@ using IronStar.Core;
 using IronStar.Editor.Controls;
 using IronStar.Editor.Manipulators;
 using Fusion.Engine.Frames;
+using IronStar.ECSPhysics;
 
 namespace IronStar.Editor {
 
@@ -352,19 +353,26 @@ namespace IronStar.Editor {
 		/// </summary>
 		public void BakeToEntity ()
 		{
-			if (manipulator.IsManipulating) {
+			if (manipulator.IsManipulating) 
+			{
 				return;
 			}
 
-			foreach ( var se in selection ) {
-				var entity = (se as MapEntity)?.Entity;
-				if (entity!=null) {
-					try {
-						se.TranslateVector	=	entity.Position;
-						se.RotateQuaternion	=	entity.Rotation;
-					} catch ( Exception e ) {
+			foreach ( var se in selection ) 
+			{
+				var transform = (se as MapEntity)?.EcsEntity?.GetComponent<ECS.Transform>();
+
+				if (transform!=null) 
+				{
+					try 
+					{
+						se.TranslateVector	=	transform.Position;
+						se.RotateQuaternion	=	transform.Rotation;
+					} 
+					catch ( Exception e ) 
+					{
 						Log.Error("Failed to bake: {0}", e.Message);
-						se.TranslateVector	=	entity.Position;
+						se.TranslateVector	=	transform.Position;
 						se.RotateQuaternion	=	Quaternion.Identity;
 					}
 				}
@@ -417,7 +425,20 @@ namespace IronStar.Editor {
 		}
 
 
-		public bool EnableSimulation { get; set; } = false;
+		public bool EnableSimulation 
+		{ 
+			get 
+			{ 
+				return enableSimulation; 
+			}
+			set 
+			{ 
+				enableSimulation = value;
+				gameState.GetService<PhysicsCore>().Enabled = enableSimulation;
+			}
+		}
+		bool enableSimulation;
+
 
 		/*-----------------------------------------------------------------------------------------
 		 * 

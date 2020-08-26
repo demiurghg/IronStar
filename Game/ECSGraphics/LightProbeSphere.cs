@@ -37,7 +37,5 @@ namespace IronStar.SFX2
 
 		public void Save( GameState gs, Stream stream ) {}
 		public void Load( GameState gs, Stream stream ) {}
-		public void Added( GameState gs, Entity entity ) {}
-		public void Removed( GameState gs ) {}
 	}
 }

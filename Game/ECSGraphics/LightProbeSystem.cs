@@ -45,7 +45,8 @@ namespace IronStar.SFX2
 			Process( e, GameTime.Zero, light, lpSph, lpBox, t );
 
 			ls.LightProbes.Add( light );
-			return new RSLightProbe();
+
+			return light;
 		}
 
 

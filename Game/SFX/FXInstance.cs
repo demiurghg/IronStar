@@ -75,6 +75,7 @@ namespace IronStar.SFX {
 
 			AddLightStage( fxFactory.LightStage, fxEvent, looped );
 			AddSoundStage( fxFactory.SoundStage, fxEvent, looped );
+			AddDecalStage( fxFactory.DecalStage, fxEvent, looped );
 		}
 
 
@@ -217,6 +218,17 @@ namespace IronStar.SFX {
 			}
 
 			var stage = new LightStage( this, stageDesc, fxEvent, looped );
+			stages.Add( stage );
+		}
+
+
+		public void AddDecalStage ( FXDecalStage stageDesc, FXEvent fxEvent, bool looped )
+		{
+			if (!stageDesc.Enabled) {
+				return;
+			}
+
+			var stage = new DecalStage( this, stageDesc, fxEvent, looped );
 			stages.Add( stage );
 		}
 

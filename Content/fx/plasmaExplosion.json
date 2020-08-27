@@ -23,9 +23,23 @@
     "OffsetDirection": "none",
     "OffsetFactor": 0.0
   },
-  "CameraShake": {
-    "$type": "IronStar.SFX.FXCameraShake, IronStar",
-    "Enabled": false
+  "DecalStage": {
+    "$type": "IronStar.SFX.FXDecalStage, IronStar",
+    "Size": 5,
+    "Depth": -3,
+    "Enabled": true,
+    "SurfaceLifetime": 7.0,
+    "SurfaceDecal": "bulletHit",
+    "BaseColor": "0,0,0,255",
+    "Roughness": 1,
+    "Metallic": 0.0,
+    "ColorFactor": 1.0,
+    "SpecularFactor": 0.0,
+    "NormalMapFactor": 0.0,
+    "EmissionLifetime": 1.7,
+    "EmissionColor": "107, 136, 255, 255",
+    "EmissionIntensity": 15.0,
+    "EmissionDecal": "bulletHitGlow"
   },
   "ParticleStage1": {
     "$type": "IronStar.SFX.FXParticleStage, IronStar",

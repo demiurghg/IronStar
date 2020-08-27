@@ -21,8 +21,6 @@ using Fusion.Engine.Audio;
 namespace IronStar.SFX {
 	public partial class FXPlayback {
 
-		Random rand = new Random();
-
 		float sin ( float a ) { return (float)Math.Sin(a*6.28f); }
 		float cos ( float a ) { return (float)Math.Cos(a*6.28f); }
 

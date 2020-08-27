@@ -41,7 +41,7 @@ namespace IronStar.SFX {
 
 		[AECategory( "Misc Stages" )]
 		[AEExpandable]
-		public FXCameraShake CameraShake { get; set; } = new FXCameraShake();
+		public FXDecalStage DecalStage { get; set; } = new FXDecalStage();
 
 		[AECategory( "Particle Stages" )]
 		[AEExpandable]
@@ -477,61 +477,65 @@ namespace IronStar.SFX {
 
 
 
-	public class FXDecal {
-
-		[XmlAttribute]
+	public class FXDecalStage
+	{
 		[Description( "Size of the decal" )]
 		public float Size { get; set; } = 0.5f;
 
-		[XmlAttribute]
 		[Description( "Depth of the decal" )]
 		public float Depth { get; set; } = 0.25f;
 
-		[XmlAttribute]
+		[Description( "Enables and disables decals" )]
+		public bool Enabled { get; set; } = false;
+
+		[AECategory("Hard-surface Decal")]
 		[Description( "Decal lifetime" )]
-		public float LifetimeNormal { get; set; } = 2.0f;
+		public float SurfaceLifetime { get; set; } = 2.0f;
 
-		[XmlAttribute]
+		[AECategory("Hard-surface Decal")]
+		[Description( "Surface decal texture name" )]
+		[Editor( typeof( SpriteFileLocationEditor ), typeof( UITypeEditor ) )]
+		public string SurfaceDecal { get; set; } = "";
+
+		[AECategory("Hard-surface Decal")]
+		public Color BaseColor { get; set;} = new Color(128,128,128,255);
+
+		[AECategory("Hard-surface Decal")]
+		[AEValueRange(0, 1, 1/4f, 1/128f)]
+		public float Roughness { get; set;}= 0.5f;
+
+		[AECategory("Hard-surface Decal")]
+		[AEValueRange(0, 1, 1/4f, 1/128f)]
+		public float Metallic { get; set;} = 0.5f;
+
+		[AECategory("Hard-surface Decal")]
+		[AEValueRange(0, 1, 1/4f, 1/128f)]
+		public float ColorFactor { get; set;} = 1.0f;
+
+		[AECategory("Hard-surface Decal")]
+		[AEValueRange(0, 1, 1/4f, 1/128f)]
+		public float SpecularFactor { get; set;} = 1.0f;
+
+		[AECategory("Hard-surface Decal")]
+		[AEValueRange(0, 1, 1/4f, 1/128f)]
+		public float NormalMapFactor { get; set;} = 1.0f;
+
+
+		[AECategory("Emission Decal")]
 		[Description( "Decal lifetime" )]
-		public float LifetimeGlow { get; set; } = 2.0f;
+		public float EmissionLifetime { get; set; } = 2.0f;
 
-		[Description( "Color decal texture name" )]
-		[Editor( typeof( SpriteFileLocationEditor ), typeof( UITypeEditor ) )]
-		public string ColorDecal { get; set; } = "";
+		[AECategory("Emission Decal")]
+		public Color EmissionColor { get; set;} = Color.Black;
 
-		[Description( "Normal map decal texture name" )]
-		[Editor( typeof( SpriteFileLocationEditor ), typeof( UITypeEditor ) )]
-		public string NormalDecal { get; set; } = "";
+		[AECategory("Emission Decal")]
+		public float EmissionIntensity { get; set;} = 7;
 
-		[Description( "Roughness decal texture name" )]
-		[Editor( typeof( SpriteFileLocationEditor ), typeof( UITypeEditor ) )]
-		public string RoughnessDecal { get; set; } = "";
-
-		[Description( "Metallic decal texture name" )]
-		[Editor( typeof( SpriteFileLocationEditor ), typeof( UITypeEditor ) )]
-		public string MetalDecal { get; set; } = "";
-
+		[AECategory("Emission Decal")]
 		[Description( "Emission decal texture name" )]
 		[Editor( typeof( SpriteFileLocationEditor ), typeof( UITypeEditor ) )]
 		public string EmissionDecal { get; set; } = "";
 
-		public override string ToString()
-		{
-			if ( Enabled ) {
-				return string.Format( "Enabled" );
-			} else {
-				return string.Format( "Disabled" );
-			}
-		}
-
-		[XmlAttribute]
-		[Description( "Enables and disables decals" )]
-		public bool Enabled { get; set; } = false;
-	}
-
-
-
-	public class FXCameraShake {
 
 		public override string ToString()
 		{
@@ -541,10 +545,5 @@ namespace IronStar.SFX {
 				return string.Format( "Disabled" );
 			}
 		}
-
-		[XmlAttribute]
-		[Description( "Enables and disables camera shake stage" )]
-		public bool Enabled { get; set; } = false;
-
 	}
 }

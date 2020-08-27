@@ -38,7 +38,7 @@ SURFACE ApplyDecal( GEOMETRY geometry, SURFACE surface, CAMERA camera, DECAL dec
 		float4 decalImage	= 	rc.DecalImages.SampleLevel( rc.DecalSampler, uv, decalBaseMip + mipDecalBias );
 		float3 localNormal  = 	normalize(decalImage.xyz * 2 - 1);
 		float3 decalNormal	=	localNormal.x * decal.BasisX.xyz + localNormal.y * decal.BasisY.xyz + localNormal.z * decal.BasisZ.xyz;
-		float factor		=	saturate(decalImage.a*2);// * saturate(falloff - abs(decalPos.z)*falloff);
+		float factor		=	saturate(decalImage.a);// * saturate(falloff - abs(decalPos.z)*falloff);
 		
 		surface.emission	+=	 glowColor * factor;
 	

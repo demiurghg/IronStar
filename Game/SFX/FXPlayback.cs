@@ -31,6 +31,7 @@ namespace IronStar.SFX {
 		public readonly SoundSystem	ss;
 		public readonly GameWorld world;
 		public readonly ContentManager content;
+		readonly static Random rand = new Random();
 
 		List<FXInstance> runningSFXes = new List<FXInstance>();
 

@@ -70,6 +70,8 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 	ComputeDiffuseOnly( surface );
 #endif
 
+	float3 factor	 = saturate( surface.baseColor.rgb * 50 );
+
 	//----------------------------------------------------------------------------------------------
 	//	Ambient occlusion :
 	//----------------------------------------------------------------------------------------------
@@ -146,8 +148,8 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 	//----------------------------------------------------------------------------------------------
 
 	return 	totalLight.emissive
-		+ 	totalLight.diffuse
-		+ 	totalLight.specular
+		+ 	totalLight.diffuse * factor
+		+ 	totalLight.specular * factor
 		;
 }
 

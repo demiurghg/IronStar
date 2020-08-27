@@ -24,7 +24,7 @@ void ComputeDiffuseSpecular( inout SURFACE surface )
 	// pow3 help to reduce white fringes in metallic PBR pipeline:
 	float3  insulatorF0	=	float3(0.04f,0.04f,0.04f);
 	surface.diffuse 	=	pow( lerp( pow(abs(surface.baseColor), 1/3.0), float3(0,0,0),                		 surface.metallic ), 3 );
-	surface.specular  	=	pow( lerp( pow(abs(insulatorF0		), 1/3.0), pow(abs(surface.baseColor), 1/3.0f),  surface.metallic ), 3 );
+	surface.specular  	=	pow( lerp( pow(abs(insulatorF0		 ), 1/3.0), pow(abs(surface.baseColor), 1/3.0f),  surface.metallic ), 3 );
 }
 
 void ComputeDiffuseOnly( inout SURFACE surface )

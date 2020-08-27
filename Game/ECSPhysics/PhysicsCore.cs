@@ -26,7 +26,7 @@ namespace IronStar.ECSPhysics
 			get { return physSpace; }
 		}
 
-		public bool Enabled { get; set; } = false;
+		public bool Enabled { get; set; } = true;
 
 		HashSet<Tuple<Entity,Entity>> touchEvents;
 

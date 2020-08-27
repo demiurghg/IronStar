@@ -189,7 +189,7 @@ float3	CookTorrance( float3 N, float3 V, float3 L, float3 I, float3 F, float per
     float 	NoH	= 	saturate(dot(N, H));
     float 	LoH	= 	saturate(dot(L, H));	
 	
-    float roughness = perceptualRoughness * perceptualRoughness;
+    float  roughness = perceptualRoughness * perceptualRoughness;
 
     float 	D	=	D_GGX(NoH, roughness);
 			F	=	F_Schlick(LoH, F);

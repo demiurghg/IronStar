@@ -345,6 +345,32 @@ namespace Fusion.Core.Content {
 
 
 		/// <summary>
+		/// Creates custom asset in content manager, that could be accessed everywhere.
+		/// If asset with given name already exists, just skips it and show warning.
+		/// </summary>
+		/// <param name="name">Asset's name</param>
+		/// <param name="asset">Asset's object</param>
+		public void RegisterAsset ( string name, object asset )
+		{
+			if (name==null) throw new ArgumentNullException(nameof(name));
+			if (asset==null) throw new ArgumentNullException(nameof(asset));
+
+			lock (lockObject)
+			{
+				if (!content.ContainsKey(name))
+				{
+					toDispose.Add(asset);
+					content.Add( name, new Item() { LoadTime = DateTime.Now, Object = asset } );
+				}
+				else
+				{
+					Log.Warning("RegisterAsset: asset {0} of type {1} already exists", name, asset.GetType().Name );
+				}
+			}
+		}
+
+
+		/// <summary>
 		/// Gets existing object
 		/// </summary>
 		/// <typeparam name="T"></typeparam>

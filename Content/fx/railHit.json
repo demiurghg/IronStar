@@ -296,8 +296,8 @@
     "Enabled": true,
     "Sprite": "explosionSmoke2",
     "Effect": "softLitShadow",
-    "Count": 9,
-    "Period": 3.0,
+    "Count": 11,
+    "Period": 2.5,
     "Timing": {
       "$type": "IronStar.SFX.FXTiming, IronStar",
       "Delay": 0.0,

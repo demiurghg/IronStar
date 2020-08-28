@@ -43,7 +43,7 @@
     "Alpha": 0.4,
     "Roughness": 0.5,
     "Metallic": 0.0,
-    "Intensity": 500.0,
+    "Intensity": 400.0,
     "Scattering": 0.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
@@ -91,7 +91,7 @@
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
     "Enabled": true,
     "Sprite": "bulletSpark",
-    "Effect": "hard",
+    "Effect": "soft",
     "Count": 100,
     "Period": 1.0,
     "Timing": {
@@ -101,13 +101,13 @@
       "FadeIn": 0.1,
       "FadeOut": 0.2
     },
-    "Color": "148, 171, 255, 255",
+    "Color": "107, 136, 255, 255",
     "Alpha": 0.5,
     "Roughness": 0.5,
     "Metallic": 0.0,
-    "Intensity": 1100.0,
+    "Intensity": 500.0,
     "Scattering": 0.0,
-	"BeamFactor": 0.0,
+	"BeamFactor": 3.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "uniform",
@@ -116,7 +116,7 @@
     },
     "Shape": {
       "$type": "IronStar.SFX.FXShape, IronStar",
-      "Size0": 0.2,
+      "Size0": 0.4,
       "Size1": 0.0,
       "EnableRotation": true,
       "InitialAngle": 360.0,
@@ -168,7 +168,7 @@
     "Alpha": 1.0,
     "Roughness": 0.5,
     "Metallic": 0.0,
-    "Intensity": 3000.0,
+    "Intensity": 1000.0,
     "Scattering": 0.0,
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",

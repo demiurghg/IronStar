@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core;
 using Fusion.Core.Content;
-using IronStar.Client;
 using IronStar.ECS;
 
 namespace IronStar.SinglePlayer {
@@ -18,8 +17,6 @@ namespace IronStar.SinglePlayer {
 		public readonly ContentManager Content;
 
 		public GameState	GameState	=	null;
-		public GameInput	Input		=	null;
-		public UserCommand	Command		=	null;
 
 		public MissionContext ( Mission mission, string map )
 		{

@@ -13,7 +13,6 @@ using Fusion.Core.Input;
 using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
-using IronStar.Core;
 using Fusion.Engine.Audio;
 using IronStar.ECS;
 
@@ -29,30 +28,12 @@ namespace IronStar.SFX {
 		readonly Game	game;
 		public readonly RenderWorld	rw;
 		public readonly SoundSystem	ss;
-		public readonly GameWorld world;
 		public readonly ContentManager content;
 		readonly static Random rand = new Random();
 
 		List<FXInstance> runningSFXes = new List<FXInstance>();
 
 		float timeAccumulator = 0;
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="game"></param>
-		public FXPlayback ( GameWorld world )
-		{
-			this.world		=	world;
-			this.content	=	world.Content;
-			this.game		=	world.Game;
-			this.rw			=	game.RenderSystem.RenderWorld;
-			this.ss			=	game.SoundSystem;
-
-			Game_Reloading(this, EventArgs.Empty);
-			game.Reloading +=	Game_Reloading;
-		}
 
 
 		public FXPlayback ( Game game, ContentManager content )
@@ -231,7 +212,7 @@ namespace IronStar.SFX {
 		/// 
 		/// </summary>
 		/// <param name="fxEvent"></param>
-		public FXInstance RunFX ( FXEvent fxEvent, bool looped )
+		/*public FXInstance RunFX ( FXEvent fxEvent, bool looped )
 		{
 			var fxAtomID	=	fxEvent.FXAtom;
 
@@ -243,7 +224,7 @@ namespace IronStar.SFX {
 			var className = world.Atoms[ fxAtomID ];
 
 			return RunFX( className, fxEvent, looped );
-		}
+		}		 */
 
 
 		/*-----------------------------------------------------------------------------------------

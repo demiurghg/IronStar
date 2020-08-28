@@ -17,7 +17,6 @@ using Fusion.Engine.Graphics;
 using IronStar.Mapping;
 using Fusion.Build;
 using BEPUphysics;
-using IronStar.Core;
 
 namespace IronStar.Editor {
 

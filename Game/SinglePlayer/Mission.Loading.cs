@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core;
-using IronStar.Core;
 using Fusion.Core.Content;
 using IronStar.Mapping;
 using Fusion.Engine.Client;
@@ -38,7 +37,7 @@ namespace IronStar.SinglePlayer {
 
 				context			=	new MissionContext( mission, mapname );
 
-				precacher		=	new GameWorld.Precacher( context.Content, mapname );
+				precacher		=	new Precacher( context.Content, mapname );
 				loadingTask		=	new Task( ()=> precacher.LoadContent() );
 				loadingTask.Start();
 				

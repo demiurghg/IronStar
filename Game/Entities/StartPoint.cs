@@ -13,10 +13,9 @@ using Fusion.Core.Input;
 using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
-using IronStar.Core;
 using System.ComponentModel;
 
-namespace IronStar.Entities {
+namespace IronStar {
 
 	public enum StartPointType {
 		SinglePlayer,
@@ -24,27 +23,9 @@ namespace IronStar.Entities {
 	}
 
 
-	public class StartPoint : Entity {
-
-		public readonly StartPointType StartPointType;
-
-		public StartPoint( uint id, short clsid, GameWorld world, StartPointFactory factory ) : base( id, clsid, world, factory )
-		{
-			StartPointType = factory.StartPointType;
-		}
-	}
-
-
-
-	public class StartPointFactory : EntityFactory {
+	public class StartPointFactory : EntityFactoryContent {
 
 		public StartPointType StartPointType { get; set; }
-
-		public override Entity Spawn( uint id, short clsid, GameWorld world )
-		{
-			return new StartPoint( id, clsid, world, this );
-		}
-
 
 		public override ECS.Entity SpawnECS( ECS.GameState gs )
 		{

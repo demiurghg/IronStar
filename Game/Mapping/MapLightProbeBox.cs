@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Fusion.Core.Mathematics;
-using IronStar.Core;
 using Fusion.Engine.Graphics;
 using IronStar.SFX;
 using Fusion.Development;
@@ -71,25 +70,6 @@ namespace IronStar.Mapping {
 
 
 
-		public override void SpawnNode( GameWorld world )
-		{
-			var lightSet	=	world.Game.RenderSystem.RenderWorld.LightSet;
-
-			light	=	new LightProbe( NodeGuid );
-
-			light.Mode				=	LightProbeMode.CubeReflection;
-
-			light.ProbeMatrix		=	ComputeProbeMatrix();
-			light.BoundingBox		=	GetBoundingBox();
-			light.NormalizedWidth	=	Math.Max( 0, Width  - 2*ShellWidth  ) / Width	;
-			light.NormalizedHeight	=	Math.Max( 0, Height - 2*ShellHeight ) / Height;
-			light.NormalizedDepth	=	Math.Max( 0, Depth  - 2*ShellDepth  ) / Depth	;
-
-			lightSet.LightProbes.Add( light );
-		}
-
-
-
 		public override void SpawnNodeECS( GameState gs )
 		{
 			ecsEntity = gs.Spawn();
@@ -109,18 +89,6 @@ namespace IronStar.Mapping {
 		}
 
 
-		public override void ActivateNode()
-		{
-		}
-
-
-
-		public override void UseNode()
-		{
-		}
-
-
-
 		private Matrix ComputeProbeMatrix ()
 		{
 			return Matrix.Scaling( Width/2.0f, Height/2.0f, Depth/2.0f ) * WorldMatrix;
@@ -134,32 +102,7 @@ namespace IronStar.Mapping {
 		}
 
 
-		public override void DrawNode( GameWorld world, DebugRender dr, Color color, bool selected )
-		{
-			dr.DrawPoint( WorldMatrix.TranslationVector, 2.0f, color, 1 );
-
-			if (selected) 
-			{
-				var box = new BoundingBox( 2, 2, 2 );
-				dr.DrawBox( box, ComputeProbeMatrix(), Color.Cyan ); 
-				dr.DrawSphere( WorldMatrix.TranslationVector, 1.0f, color, 16 );
-			} 
-			else 
-			{
-				dr.DrawSphere( WorldMatrix.TranslationVector, 1.0f, color, 16 );
-			}
-		}
-
-
-
-		public override void KillNode( GameWorld world )
-		{
-			world.Game.RenderSystem.RenderWorld.LightSet.FreeImageIndex( light.ImageIndex );
-			world.Game.RenderSystem.RenderWorld.LightSet.LightProbes.Remove( light );
-		}
-
-
-		public override MapNode DuplicateNode( GameWorld world )
+		public override MapNode DuplicateNode()
 		{
 			var newNode = (MapLightProbeBox)MemberwiseClone();
 			newNode.light = null;

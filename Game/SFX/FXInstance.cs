@@ -14,7 +14,6 @@ using Fusion.Core.Input;
 using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
-using IronStar.Core;
 using Fusion.Engine.Audio;
 
 
@@ -113,15 +112,8 @@ namespace IronStar.SFX {
 		/// <param name="elapsedTime"></param>
 		public void Update ( float dt )
 		{
-			var ent = fxPlayback.world?.GetEntity( fxEvent.EntityID );
-
-			if (ent!=null) {
-				fxEvent.Origin		=	ent.LerpPosition( 1 );
-				fxEvent.Rotation	=	ent.LerpRotation( 1 );
-				fxEvent.Velocity	=	ent.LinearVelocity;
-			}
-
-			foreach ( var stage in stages ) {
+			foreach ( var stage in stages ) 
+			{
 				stage.Update( dt, fxEvent );
 			}
 		}

@@ -13,7 +13,6 @@ using Fusion.Core;
 using Fusion.Core.Shell;
 using Fusion.Core.Utils;
 using Fusion.Engine.Imaging;
-using IronStar.Core;
 using IronStar.Mapping;
 using Fusion.Core.Extensions;
 using Fusion.Build.Mapping;

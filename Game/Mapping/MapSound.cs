@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Fusion.Core.Mathematics;
-using IronStar.Core;
 using Fusion.Engine.Graphics;
 using Fusion.Engine.Audio;
 using IronStar.SFX;
@@ -129,7 +128,7 @@ namespace IronStar.Mapping {
 		}
 
 
-		public override MapNode DuplicateNode( GameWorld world )
+		public override MapNode DuplicateNode()
 		{
 			var newNode = (MapSound)MemberwiseClone();
 			newNode.soundEvent		= null;

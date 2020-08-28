@@ -8,7 +8,6 @@ using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
 using Fusion.Engine.Graphics;
 using Fusion.Engine.Graphics.Scenes;
-using IronStar.Core;
 using IronStar.Animation;
 using Fusion;
 using IronStar.SFX2;

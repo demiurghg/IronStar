@@ -13,11 +13,9 @@ using Fusion.Core.Input;
 using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
-using IronStar.Core;
 using BEPUphysics;
 using BEPUphysics.Character;
 using Fusion.Engine.Frames;
-using IronStar.Entities.Players;
 
 namespace IronStar.UI.HUD {
 	public class HudWeapon : Frame {

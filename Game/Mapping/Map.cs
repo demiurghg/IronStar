@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.Reflection;
 using Native.Fbx;
-using IronStar.Entities;
 using Fusion.Core.Content;
 using System.IO;
-using IronStar.Core;
 using Fusion.Core;
 using Fusion.Core.Extensions;
 using Fusion.Engine.Graphics;
@@ -61,26 +59,6 @@ namespace IronStar.Mapping {
 		public void Precache( ContentManager content )
 		{
 			//content.Precache<Scene>( ScenePath );
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="gameWorld"></param>
-		[Obsolete]
-		public void UpdateEnvironment ( GameWorld gameWorld )
-		{
-			#warning move to entities!
-			gameWorld.Physics.Gravity			=	Environment.Gravity;
-
-			gameWorld.snapshotHeader.FogDistance	=	Environment.FogDistance;
-			gameWorld.snapshotHeader.FogColor		=	Environment.FogColor;
-			gameWorld.snapshotHeader.Gravity		=	Environment.Gravity;
-			gameWorld.snapshotHeader.SunIntensity	=	Environment.SunIntensity;
-			gameWorld.snapshotHeader.SunDirection	=	Environment.SunPosition;
-			gameWorld.snapshotHeader.Turbidity		=	Environment.SkyTrubidity;
-			gameWorld.snapshotHeader.SkyIntensity	=	Environment.SkyIntensity;
 		}
 
 

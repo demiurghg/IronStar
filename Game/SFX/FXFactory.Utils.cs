@@ -9,7 +9,6 @@ using Fusion.Core.Utils;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
 using System.IO;
-using IronStar.Core;
 using BEPUphysics;
 using BEPUphysics.Character;
 using Fusion.Core.IniParser.Model;

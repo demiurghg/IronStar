@@ -10,7 +10,6 @@ using Fusion.Engine.Frames.Layouts;
 using IronStar.Mapping;
 using Fusion.Core.Extensions;
 using Fusion.Core;
-using IronStar.Core;
 using Fusion.Engine.Common;
 using Fusion;
 using Fusion.Build;
@@ -80,7 +79,7 @@ namespace IronStar.Editor.Controls {
 
 			this.Anchor			=	FrameAnchor.All;
 
-			this.entityTypes	=	Misc.GetAllSubclassesOf( typeof(EntityFactory), false );
+			this.entityTypes	=	Misc.GetAllSubclassesOf( typeof(EntityFactoryContent), false );
 
 			//
 			//	setup controls :

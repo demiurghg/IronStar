@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Fusion.Core.Mathematics;
-using IronStar.Core;
 using Fusion.Engine.Graphics;
 using IronStar.SFX;
 using Fusion.Development;
@@ -60,23 +59,6 @@ namespace IronStar.Mapping {
 
 
 
-		public override void SpawnNode( GameWorld world )
-		{
-			light		=	new OmniLight();
-
-			light.Intensity		=	LightColor.ToColor4() * LightIntensity;
-			light.Position0		=	WorldMatrix.TranslationVector + WorldMatrix.Right * TubeLength * 0.5f;
-			light.Position1		=	WorldMatrix.TranslationVector + WorldMatrix.Left  * TubeLength * 0.5f;
-			light.RadiusOuter	=	OuterRadius;
-			light.RadiusInner	=	TubeRadius;
-			light.LightStyle	=	LightStyle;
-			light.Ambient		=	Ambient;
-
-			world.Game.RenderSystem.RenderWorld.LightSet.OmniLights.Add( light );
-		}
-
-
-
 		public override void SpawnNodeECS( GameState gs )
 		{
 			ecsEntity = gs.Spawn();
@@ -100,50 +82,7 @@ namespace IronStar.Mapping {
 		}
 
 
-		public override void ActivateNode()
-		{
-		}
-
-
-
-		public override void UseNode()
-		{
-		}
-
-
-
-		public override void DrawNode( GameWorld world, DebugRender dr, Color color, bool selected )
-		{
-			var transform	=	WorldMatrix;
-
-			var dispColor   =	LightColor; 
-
-			dr.DrawPoint( transform.TranslationVector, 1, color, 1 );
-
-			var position	=	WorldMatrix.TranslationVector;
-			var position0	=	WorldMatrix.TranslationVector + WorldMatrix.Right * TubeLength * 0.5f;
-			var position1	=	WorldMatrix.TranslationVector + WorldMatrix.Left  * TubeLength * 0.5f;
-
-			if (selected) {
-				dr.DrawSphere( position0, TubeRadius,  dispColor );
-				dr.DrawSphere( position1, TubeRadius,  dispColor );
-				dr.DrawSphere( position,  OuterRadius, dispColor );
-			} else {
-				dr.DrawSphere( position0, TubeRadius, dispColor );
-				dr.DrawSphere( position1, TubeRadius, dispColor );
-				dr.DrawLine( position0, position1, dispColor, dispColor, 3, 3 );
-			}
-		}
-
-
-
-		public override void KillNode( GameWorld world )
-		{
-			world.Game.RenderSystem.RenderWorld.LightSet.OmniLights.Remove( light );
-		}
-
-
-		public override MapNode DuplicateNode( GameWorld world )
+		public override MapNode DuplicateNode()
 		{
 			var newNode = (MapOmniLight)MemberwiseClone();
 			newNode.light = null;

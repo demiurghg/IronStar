@@ -16,8 +16,6 @@ using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
 using Fusion.Engine.Audio;
 using BEPUphysics.BroadPhaseEntries;
-using IronStar.Views;
-using IronStar.Items;
 using Fusion.Scripting;
 using KopiLua;
 using IronStar.ECS;

@@ -221,19 +221,21 @@ namespace IronStar {
 
 		protected void StartServer ( string mapname, bool dedicated )
 		{
-			var sv = this.GetService<GameServer>();
-			var cl = this.GetService<GameClient>();
-			var nt = this.GetService<Network>();
+			throw new NotImplementedException();
 
-			var svInstance	=	new ShooterServer( sv, null, mapname );
+			//var sv = this.GetService<GameServer>();
+			//var cl = this.GetService<GameClient>();
+			//var nt = this.GetService<Network>();
 
-			if (dedicated) {
-				sv.Start( svInstance );
-			} else {
-				if (sv.Start( svInstance )) {
-					Connect( "127.0.0.1", nt.Port );
-				}
-			}
+			//var svInstance	=	new ShooterServer( sv, null, mapname );
+
+			//if (dedicated) {
+			//	sv.Start( svInstance );
+			//} else {
+			//	if (sv.Start( svInstance )) {
+			//		Connect( "127.0.0.1", nt.Port );
+			//	}
+			//}
 		}
 
 
@@ -246,14 +248,15 @@ namespace IronStar {
 
 		protected void Connect ( string host, int port )
 		{
-			var cl = this.GetService<GameClient>();
-			var nt = this.GetService<Network>();
+			throw new NotImplementedException();
+			//var cl = this.GetService<GameClient>();
+			//var nt = this.GetService<Network>();
 
-			var clInstance	=	new ShooterClient( cl, null, Guid.NewGuid() );
+			//var clInstance	=	null;//new ShooterClient( cl, null, Guid.NewGuid() );
 
-			if (!this.GetService<GameClient>().Connect(host, port, clInstance)) {
-				clInstance.Dispose();
-			}
+			//if (!this.GetService<GameClient>().Connect(host, port, clInstance)) {
+			//	clInstance.Dispose();
+			//}
 		}
 
 

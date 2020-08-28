@@ -13,29 +13,16 @@ using Fusion.Core.Input;
 using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
-using IronStar.Core;
 using BEPUphysics;
 using BEPUphysics.Character;
 using Fusion.Engine.Frames;
-using IronStar.Entities.Players;
 
-namespace IronStar.UI.HUD {
-	public class HudFrame : Frame {
-
-		readonly GameWorld	world;
-
-		public Player Player { 
-			get { return player; }
-			set {
-				if (player!=value) {
-					player = value;
-				}
-			}
-		}
-		Player player;
-
-		HudHealth hudHealth;
-		HudWeapon hudWeapon;
+namespace IronStar.UI.HUD 
+{
+	public class HudFrame : Frame 
+	{
+		//HudHealth hudHealth;
+		//HudWeapon hudWeapon;
 
 		Frame	crossHair;
 
@@ -74,8 +61,8 @@ namespace IronStar.UI.HUD {
 
 			this.Ghost			=	true;
 
-			hudHealth		=	new HudHealth( this,         40, h - 64 ); 
-			hudWeapon		=	new HudWeapon( this, w - 40-200, h - 64 );
+			//hudHealth		=	new HudHealth( this,         40, h - 64 ); 
+			//hudWeapon		=	new HudWeapon( this, w - 40-200, h - 64 );
 
 
 			crossHair			=	new Frame( Frames, w/2-32, h/2-32, 64,64,"", Color.Zero );
@@ -102,8 +89,8 @@ namespace IronStar.UI.HUD {
 			message.ShadowOffset=	new Vector2(1,1);
 
 
-			this.Add( hudHealth );
-			this.Add( hudWeapon );
+			//this.Add( hudHealth );
+			//this.Add( hudWeapon );
 
 			this.Add( warning );
 			this.Add( message );
@@ -111,14 +98,6 @@ namespace IronStar.UI.HUD {
 			message.Visible = true;
 
 			this.Add( crossHair );
-		}
-
-
-		public void SetPlayer ( Player player )
-		{
-			this.player			=	player;
-			hudHealth.Player	=	player;
-			hudWeapon.Player	=	player;
 		}
 	}
 }

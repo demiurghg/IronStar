@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Fusion.Core.Mathematics;
-using IronStar.Core;
 using Fusion.Engine.Graphics;
 using IronStar.SFX;
 using Fusion.Development;
@@ -122,35 +121,6 @@ namespace IronStar.Mapping {
 
 
 
-		public override void SpawnNode( GameWorld world )
-		{
-			var lightSet	=	world.Game.RenderSystem.RenderWorld.LightSet;
-
-			light		=	new SpotLight();
-
-			light.Intensity		=	LightColor.ToColor4() * LightIntensity;
-			light.SpotView		=	SpotView;
-			light.Position0		=	TranslateVector + WorldMatrix.Left  * TubeLength * 0.5f;
-			light.Position1		=	TranslateVector + WorldMatrix.Right * TubeLength * 0.5f;
-			light.Projection	=	SpotProjection;
-			light.RadiusOuter	=	OuterRadius;
-			light.RadiusInner	=	TubeRadius;
-
-			light.SpotMaskName	=	SpotMaskName;
-
-			light.LodBias		=	LodBias;
-
-			light.DepthBias		=	DepthBias;
-			light.SlopeBias		=	SlopeBias;
-
-			light.LightStyle	=	LightStyle;
-
-			light.EnableGI		=	EnableGI;
-
-			world.Game.RenderSystem.RenderWorld.LightSet.SpotLights.Add( light );
-		}
-
-
 		public override void SpawnNodeECS( GameState gs )
 		{
 			ecsEntity = gs.Spawn();
@@ -185,71 +155,53 @@ namespace IronStar.Mapping {
 		}
 
 
-		public override void ActivateNode()
-		{
-		}
+		//public override void DrawNode( GameWorld world, DebugRender dr, Color color, bool selected )
+		//{
+		//	var transform	=	WorldMatrix;
+		//	var dispColor   =	LightColor;
 
+		//	dr.DrawPoint( transform.TranslationVector, 1, color, 1 );
 
-		public override void UseNode()
-		{
-		}
+		//	var position	=	WorldMatrix.TranslationVector;
+		//	var position0	=	WorldMatrix.TranslationVector + WorldMatrix.Right * TubeLength * 0.5f;
+		//	var position1	=	WorldMatrix.TranslationVector + WorldMatrix.Left  * TubeLength * 0.5f;
 
+		//	if (selected) 
+		//	{
+		//		dr.DrawSphere( position0, TubeRadius,  dispColor );
+		//		dr.DrawSphere( position1, TubeRadius,  dispColor );
+		//		dr.DrawSphere( position,  OuterRadius, dispColor );
 
-
-		public override void DrawNode( GameWorld world, DebugRender dr, Color color, bool selected )
-		{
-			var transform	=	WorldMatrix;
-			var dispColor   =	LightColor;
-
-			dr.DrawPoint( transform.TranslationVector, 1, color, 1 );
-
-			var position	=	WorldMatrix.TranslationVector;
-			var position0	=	WorldMatrix.TranslationVector + WorldMatrix.Right * TubeLength * 0.5f;
-			var position1	=	WorldMatrix.TranslationVector + WorldMatrix.Left  * TubeLength * 0.5f;
-
-			if (selected) 
-			{
-				dr.DrawSphere( position0, TubeRadius,  dispColor );
-				dr.DrawSphere( position1, TubeRadius,  dispColor );
-				dr.DrawSphere( position,  OuterRadius, dispColor );
-
-				var frustum = new BoundingFrustum( SpotView * SpotProjection );
+		//		var frustum = new BoundingFrustum( SpotView * SpotProjection );
 				
-				var points  = frustum.GetCorners();
+		//		var points  = frustum.GetCorners();
 
-				dr.DrawLine( points[0], points[1], dispColor );
-				dr.DrawLine( points[1], points[2], dispColor );
-				dr.DrawLine( points[2], points[3], dispColor );
-				dr.DrawLine( points[3], points[0], dispColor );
+		//		dr.DrawLine( points[0], points[1], dispColor );
+		//		dr.DrawLine( points[1], points[2], dispColor );
+		//		dr.DrawLine( points[2], points[3], dispColor );
+		//		dr.DrawLine( points[3], points[0], dispColor );
 
-				dr.DrawLine( points[4], points[5], dispColor );
-				dr.DrawLine( points[5], points[6], dispColor );
-				dr.DrawLine( points[6], points[7], dispColor );
-				dr.DrawLine( points[7], points[4], dispColor );
+		//		dr.DrawLine( points[4], points[5], dispColor );
+		//		dr.DrawLine( points[5], points[6], dispColor );
+		//		dr.DrawLine( points[6], points[7], dispColor );
+		//		dr.DrawLine( points[7], points[4], dispColor );
 
-				dr.DrawLine( points[0], points[4], dispColor );
-				dr.DrawLine( points[1], points[5], dispColor );
-				dr.DrawLine( points[2], points[6], dispColor );
-				dr.DrawLine( points[3], points[7], dispColor );
+		//		dr.DrawLine( points[0], points[4], dispColor );
+		//		dr.DrawLine( points[1], points[5], dispColor );
+		//		dr.DrawLine( points[2], points[6], dispColor );
+		//		dr.DrawLine( points[3], points[7], dispColor );
 
-			} 
-			else 
-			{
-				dr.DrawSphere( position0, TubeRadius, dispColor );
-				dr.DrawSphere( position1, TubeRadius, dispColor );
-				dr.DrawLine( position0, position1, dispColor, dispColor, 3, 3 );
-			}
-		}
-
-
-
-		public override void KillNode( GameWorld world )
-		{
-			world.Game.RenderSystem.RenderWorld.LightSet.SpotLights.Remove( light );
-		}
+		//	} 
+		//	else 
+		//	{
+		//		dr.DrawSphere( position0, TubeRadius, dispColor );
+		//		dr.DrawSphere( position1, TubeRadius, dispColor );
+		//		dr.DrawLine( position0, position1, dispColor, dispColor, 3, 3 );
+		//	}
+		//}
 
 
-		public override MapNode DuplicateNode( GameWorld world )
+		public override MapNode DuplicateNode()
 		{
 			var newNode = (MapSpotLight)MemberwiseClone();
 			newNode.light = null;

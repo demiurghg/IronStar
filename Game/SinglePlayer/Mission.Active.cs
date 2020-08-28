@@ -9,8 +9,6 @@ using Fusion.Core;
 using Fusion.Core.Content;
 using Fusion.Engine.Graphics;
 using Fusion.Engine.Graphics.Lights;
-using IronStar.Client;
-using IronStar.Core;
 using IronStar.ECS;
 using IronStar.SFX;
 using IronStar.Gameplay.Systems;
@@ -46,11 +44,6 @@ namespace IronStar.SinglePlayer {
 					var msgsvc			=	new LocalMessageService();
 
 					context.GameState	=	IronStar.CreateGameState( context.Game, context.Content, context.MapName );
-					context.Input		=	new GameInput( context.Game );
-					context.Command		=	new UserCommand();
-
-					/*var player			=	context.GameState.SpawnPlayer( userGuid, "Unnamed Player");
-					context.Command.SetAnglesFromQuaternion( player.Rotation );*/
 				}
 			}
 

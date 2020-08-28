@@ -16,11 +16,7 @@ using IronStar.SFX;
 using Fusion.Core.IniParser.Model;
 using Fusion.Engine.Graphics;
 using IronStar.Mapping;
-using IronStar.Core;
-using IronStar.Client;
-using IronStar.Views;
 using Fusion.Engine.Frames;
-using IronStar.Entities.Players;
 
 namespace IronStar {
 	public partial class ShooterClient : DisposableBase, IClientInstance {

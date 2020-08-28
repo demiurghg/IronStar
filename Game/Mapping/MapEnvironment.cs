@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
-using IronStar.Core;
 using Fusion.Engine.Graphics;
 using Fusion.Core.Shell;
 using Newtonsoft.Json;

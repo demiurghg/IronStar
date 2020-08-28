@@ -9,10 +9,9 @@ using Fusion.Core.Content;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Shell;
 using Fusion.Engine.Graphics;
-using IronStar.Core;
 
-namespace IronStar.Entities {
-	public class ProxyFactory : EntityFactory {
+namespace IronStar {
+	public class ProxyFactory : EntityFactoryContent {
 
 		
 		[AEClassname("entities")]
@@ -30,31 +29,7 @@ namespace IronStar.Entities {
 		string classname = "";
 		string classnameEcs = "";
 		bool dirty = true;
-		EntityFactory factory = null;
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="entity"></param>
-		/// <param name="world"></param>
-		/// <returns></returns>
-		public override Entity Spawn( uint id, short clsid, GameWorld world )
-		{
-			if (string.IsNullOrWhiteSpace(Classname)) {
-				Log.Warning("ProxyFactory: classname is null or white space, null-entity spawned");
-				return null;
-			}
-
-			factory = world.GetFactoryByName(Classname);
-
-			if (factory==null) {
-				Log.Warning("ProxyFactory: failed to get entity factory for '{0}', null-entity spawned", Classname);
-				return null;
-			}
-
-			return factory.Spawn( id, clsid, world );
-		}
+		EntityFactoryContent factory = null;
 
 
 		public override ECS.Entity SpawnECS( ECS.GameState gs )

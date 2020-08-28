@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Fusion.Core.Mathematics;
 using Fusion.Core;
-using IronStar.Core;
 using Fusion.Engine.Graphics;
 using IronStar.SFX;
 using Fusion.Core.Shell;
@@ -24,11 +23,6 @@ namespace IronStar.Mapping {
 		/// Indicates that map object or entity should be updated without
 		/// </summary>
 		protected bool dirty = true;
-
-		/// <summary>
-		/// Indicates that map object must be fully recreated
-		/// </summary>
-		protected bool hardDirty = true;
 
 
 		/// <summary>
@@ -179,25 +173,6 @@ namespace IronStar.Mapping {
 		}
 
 
-		/// <summary>
-		/// Updates	node state.
-		/// Check dirty-flags and reset node if needed.
-		/// </summary>
-		/// <param name="gameTime"></param>
-		public virtual void Update ( GameTime gameTime, GameWorld world )
-		{
-			/*if (dirty) {
-				ResetNode(world);
-				dirty = false;
-			}
-			if (hardDirty) {
-				KillNode(world);
-				SpawnNode(world);
-				hardDirty = false;
-			} */
-		}
-
-
 		[JsonIgnore]
 		protected ECS.Entity ecsEntity = null;
 		public virtual void SpawnNodeECS( GameState gs ) {}
@@ -221,51 +196,9 @@ namespace IronStar.Mapping {
 			return ecsEntity!=null && ecsEntity==entity;
 		}
 
+		public abstract MapNode DuplicateNode ();
 
-		/// <summary>
-		/// Creates instance of map object
-		/// </summary>
-		/// <returns></returns>
-		public abstract void SpawnNode ( GameWorld world );
+		public virtual BoundingBox GetBoundingBox() { return new BoundingBox( 2, 2, 2 ); }
 
-		/// <summary>
-		/// Initiates entity activation
-		/// </summary>
-		public abstract void ActivateNode ();
-
-		/// <summary>
-		/// Initiates entity activation
-		/// </summary>
-		public abstract void UseNode ();
-
-		/// <summary>
-		/// Resets entity
-		/// </summary>
-		/// <param name="world"></param>
-		public void ResetNode ( GameWorld world )
-		{
-			KillNode( world );
-			SpawnNode( world );
-		}
-
-		/// <summary>
-		/// Eliminates object
-		/// </summary>
-		/// <param name="world"></param>
-		public abstract void KillNode ( GameWorld world );
-
-		/// <summary>
-		/// Creates copy of current node without activation
-		/// </summary>
-		/// <returns></returns>
-		public abstract MapNode DuplicateNode ( GameWorld world );
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="dr"></param>
-		public abstract void DrawNode ( GameWorld world, DebugRender dr, Color color, bool selected );
-
-		public abstract BoundingBox GetBoundingBox();
 	}
 }

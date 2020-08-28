@@ -14,7 +14,6 @@ using Fusion.Core.Input;
 using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
-using IronStar.Core;
 using BEPUphysics;
 using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.EntityStateManagement;
@@ -25,8 +24,8 @@ using Fusion.Core.Shell;
 //using BEPUphysics.
 
 
-namespace IronStar.Entities {
-	public class RigidBodyFactory : EntityFactory {
+namespace IronStar {
+	public class RigidBodyFactory : EntityFactoryContent {
 
 		[AECategory("Physics")]
 		public float  Width  { get; set; } = 1;
@@ -80,12 +79,6 @@ namespace IronStar.Entities {
 		[AECategory("Explosiveness")]
 		public float ExplosionRadius  { get; set; } = 3;
 
-
-
-		public override Entity Spawn( uint id, short clsid, GameWorld world )
-		{
-			return new RigidBody( id, clsid, world, this );
-		}
 
 
 		public override ECS.Entity SpawnECS( ECS.GameState gs )

@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Fusion.Core.Mathematics;
-using IronStar.Core;
 using Fusion.Engine.Graphics;
 using IronStar.SFX;
 using Newtonsoft.Json;
@@ -15,14 +14,6 @@ using Fusion.Core.Extensions;
 
 namespace IronStar.Mapping {
 	public class MapEntity : MapNode {
-
-
-		/// <summary>
-		/// for editor use only
-		/// </summary>
-		[XmlIgnore]
-		[JsonIgnore]
-		public Entity Entity = null;
 
 		/// <summary>
 		/// Entity target name
@@ -37,7 +28,7 @@ namespace IronStar.Mapping {
 		[Browsable(false)]
 		[AEExpandable]
 		[AECategory("Factory")]
-		public EntityFactory Factory { get; set; }
+		public EntityFactoryContent Factory { get; set; }
 
 		[AEIgnore]
 		public string FactoryName { get; set; }
@@ -52,17 +43,6 @@ namespace IronStar.Mapping {
 
 
 
-		public override void SpawnNode( GameWorld world )
-		{
-			Entity = world.Spawn( FactoryName );
-
-			if (Entity!=null) {
-				Entity.TargetName = TargetName;
-				Entity.Teleport( TranslateVector, RotateQuaternion );
-			}
-		}
-
-
 		public override void SpawnNodeECS( ECS.GameState gs )
 		{
 			ecsEntity = Factory.SpawnECS(gs);
@@ -74,66 +54,10 @@ namespace IronStar.Mapping {
 		}
 
 
-		public override void ActivateNode()
-		{
-			Entity?.Activate( null );
-		}
-
-
-
-		public override void UseNode()
-		{
-			Entity?.Use( null );
-		}
-
-
-
-		public override void DrawNode( GameWorld world, DebugRender dr, Color color, bool selected )
-		{
-			dr.DrawBasis( WorldMatrix, 1 );
-			Factory.Draw( dr, WorldMatrix, color, selected );
-
-			var factoryTarget	=	Factory.GetType().GetProperty("Target")?.GetValue(Factory) as string;
-
-			if (selected) {
-				if (Entity!=null) {
-
-					var targets = world.GetTargets(factoryTarget);
-
-					if (targets.Any()) {
-						dr.DrawBox( new BoundingBox(0.5f, 0.5f, 0.5f), WorldMatrix, Color.Yellow );
-					}
-
-					foreach ( var target in targets ) {
-
-						var dir	= target.Position - Entity.Position;
-						var len	= dir.Length();
-						var dirn= dir.Normalized();
-
-						var p0	= Entity.Position;
-						var p1	= target.Position;
-	
-						dr.DrawLine( p0, p1, Color.Yellow, Color.Yellow, 1, 1 );
-					}
-				}
-			}
-		}
-
-
-
-		public override void KillNode( GameWorld world )
-		{
-			if (Entity!=null) {
-				world.KillImmediatly( Entity.ID );
-			}
-		}
-
-
-		public override MapNode DuplicateNode( GameWorld world )
+		public override MapNode DuplicateNode()
 		{
 			var newNode = (MapEntity)MemberwiseClone();
 			newNode.Factory		= Factory.Duplicate();
-			newNode.Entity		= null;
 			newNode.FactoryName	= Misc.GenerateRandomString(8);
 			newNode.NodeGuid = Guid.NewGuid();
 			return newNode;

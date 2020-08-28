@@ -18,11 +18,10 @@ using System.Xml.Serialization;
 using IronStar.Editor;
 using Fusion.Core.Shell;
 
-namespace IronStar.Core {
+namespace IronStar {
 
-	public abstract class EntityFactory : JsonContent {
+	public abstract class EntityFactoryContent : JsonContent {
 
-		public abstract Entity Spawn ( uint id, short clsid, GameWorld world );
 		public abstract ECS.Entity SpawnECS( ECS.GameState gs );
 
 		/// <summary>
@@ -44,9 +43,9 @@ namespace IronStar.Core {
 
 
 
-		public virtual EntityFactory Duplicate ()
+		public virtual EntityFactoryContent Duplicate ()
 		{	
-			return (EntityFactory)MemberwiseClone();
+			return (EntityFactoryContent)MemberwiseClone();
 		}
 
 
@@ -55,7 +54,7 @@ namespace IronStar.Core {
 		public static Type[] GetFactoryTypes ()
 		{
 			if (factories==null) {
-				factories = Misc.GetAllSubclassesOf( typeof(EntityFactory) );
+				factories = Misc.GetAllSubclassesOf( typeof(EntityFactoryContent) );
 			}
 			return factories;
 		}

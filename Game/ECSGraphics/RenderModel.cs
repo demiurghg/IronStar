@@ -15,7 +15,6 @@ using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
 using Fusion.Engine.Graphics.Scenes;
 using Fusion.Engine.Audio;
-using IronStar.Views;
 using KopiLua;
 using Fusion.Scripting;
 using IronStar.ECS;

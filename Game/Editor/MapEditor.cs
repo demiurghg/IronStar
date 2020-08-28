@@ -18,7 +18,6 @@ using Fusion.Engine.Graphics;
 using IronStar.Mapping;
 using Fusion.Build;
 using BEPUphysics;
-using IronStar.Core;
 using IronStar.Editor.Controls;
 using IronStar.Editor.Manipulators;
 using Fusion.Engine.Frames;
@@ -285,7 +284,7 @@ namespace IronStar.Editor {
 
 			var newItems = selection
 				#warning REMOVE PARAMETER
-				.Select( item => item.DuplicateNode(null) )
+				.Select( item => item.DuplicateNode() )
 				.ToArray();
 
 			Map.Nodes.AddRange( newItems );
@@ -400,12 +399,14 @@ namespace IronStar.Editor {
 		/// </summary>
 		public void ActivateSelected ()
 		{
+			Log.Warning("MapEditor.ActivateSelected -- NOT IMPLEMENTED");
+
 			if (manipulator.IsManipulating) {
 				return;
 			}
 
 			foreach ( var se in selection ) {
-				se.ActivateNode();
+				//se.ActivateNode();
 			}
 		}
 
@@ -415,12 +416,14 @@ namespace IronStar.Editor {
 		/// </summary>
 		public void UseSelected ()
 		{
+			Log.Warning("MapEditor.UseSelected -- NOT IMPLEMENTED");
+
 			if (manipulator.IsManipulating) {
 				return;
 			}
 
 			foreach ( var se in selection ) {
-				se.UseNode();
+				//se.UseNode();
 			}
 		}
 

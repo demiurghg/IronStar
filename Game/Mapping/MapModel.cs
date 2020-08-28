@@ -6,13 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Fusion.Core.Mathematics;
-using IronStar.Core;
 using Fusion.Engine.Graphics;
 using IronStar.SFX;
 using Fusion.Development;
 using System.Drawing.Design;
 using Fusion;
-using IronStar.Physics;
 using BEPUphysics.BroadPhaseEntries;
 using BEPUTransform = BEPUutilities.AffineTransform;
 using Fusion.Core.Shell;
@@ -106,114 +104,6 @@ namespace IronStar.Mapping {
 		}
 
 
-
-		public override void SpawnNode( GameWorld world )
-		{
-			if (string.IsNullOrWhiteSpace(ScenePath)) {
-				return;
-			}
-
-			var rs		=	world.Game.RenderSystem;
-			var pm		=	world.Physics;
-
-			scene		=	world.Content.Load<Scene>( ScenePath, EmptyScene );
-
-			transforms	=	new Matrix[ scene.Nodes.Count ];
-			collidables	=	new StaticMesh[ scene.Nodes.Count ];
-			instances	=	new RenderInstance[ scene.Nodes.Count ];
-			debugModels	=	new DebugModel[ scene.Nodes.Count ];
-
-			scene.ComputeAbsoluteTransforms( transforms );
-
-			
-			//
-			//	add static collision mesh :
-			//
-			for ( int i=0; i<scene.Nodes.Count; i++ ) {
-
-				var node = scene.Nodes[i];
-
-				collidables[i] = null;
-
-				if (node.MeshIndex<0) {
-					continue;
-				}
-
-				if (UseCollisionMesh && !node.Name.StartsWith("cm_")) {
-					continue;
-				}
-
-				if (UseCustomNodes && node.Name!=CustomCollisionNode) {
-					continue;
-				}
-				
-				var mesh		=	scene.Meshes[ node.MeshIndex ];
-				var indices     =   mesh.GetIndices();
-				var vertices    =   mesh.Vertices
-									.Select( v1 => Vector3.TransformCoordinate( v1.Position, transforms[i] ) )
-									.Select( v2 => MathConverter.Convert( v2 ) )
-									.ToArray();
-
-				var dvertices    =   mesh.Vertices
-									.Select( v1 => v1.Position )
-									.ToArray();
-
-				if (world.EditorMode) {				
-					var debugModel		=	new DebugModel( rs.RenderWorld.Debug, dvertices, indices );
-					debugModel.World	=	transforms[ i ] * Matrix.Scaling( Scale ) * WorldMatrix;
-					debugModels[i]		=	debugModel;
-					rs.RenderWorld.Debug.DebugModels.Add( debugModel );
-				}
-				
-				var staticMesh = new StaticMesh( vertices, indices );
-				staticMesh.Sidedness = BEPUutilities.TriangleSidedness.Clockwise;
-
-				var q = MathConverter.Convert( RotateQuaternion );
-				var p = MathConverter.Convert( TranslateVector );
-				var s = MathConverter.Convert( new Vector3( Scale, Scale, Scale ) );
-				staticMesh.WorldTransform = new BEPUTransform( s, q, p );
-
-				staticMesh.CollisionRules.Group	=	world.Physics.StaticGroup;
-				staticMesh.Tag	=	this;
-
-				collidables[i] =	staticMesh;
-	
-				pm.PhysSpace.Add( staticMesh );
-			}
-
-
-			//
-			//	add visible mesh instance :
-			//
-			for ( int i=0; i<scene.Nodes.Count; i++ ) {
-
-				var meshIndex = scene.Nodes[i].MeshIndex;
-
-				var node = scene.Nodes[i];
-
-				if (UseCollisionMesh && node.Name.StartsWith("cm_")) {
-					continue;
-				}
-
-				if (UseCustomNodes && node.Name!=CustomVisibleNode) {
-					continue;
-				}
-				
-				if (meshIndex>=0) {
-					instances[i] = new RenderInstance( rs, scene, scene.Meshes[meshIndex] );
-					instances[i].World			=	transforms[ i ] * Matrix.Scaling( Scale ) * WorldMatrix;
-					instances[i].Group			=	UseLightVolume ? InstanceGroup.Kinematic : InstanceGroup.Static;
-					instances[i].LightMapSize	=	new Size2( (int)LightMapSize, (int)LightMapSize );
-					instances[i].LightMapGuid	=	this.NodeGuid;
-					rs.RenderWorld.Instances.Add( instances[i] );
-				} else {
-					instances[i] = null;
-				}
-			}
-		}
-
-
-
 		public override void SpawnNodeECS( GameState gs )
 		{
 			ecsEntity = gs.Spawn();
@@ -229,81 +119,7 @@ namespace IronStar.Mapping {
 		}
 
 
-		public override void ActivateNode()
-		{
-		}
-
-
-
-		public override void UseNode()
-		{
-		}
-
-
-
-		public override void DrawNode( GameWorld world, DebugRender dr, Color color, bool selected )
-		{
-			if (scenePathDirty) {
-				KillNode(world);
-				SpawnNode(world);
-				scenePathDirty = false;
-			}
-
-			dr.DrawBasis( WorldMatrix, 1, 2 );
-			
-			if (scene==EmptyScene) {
-				dr.DrawBox( TranslateVector, 2,2,2, Color.Red );
-			}
-
-			
-			if (debugModels!=null) {
-				foreach ( var debugModel in debugModels ) {
-					if (debugModel!=null) {
-						debugModel.Color	=	color;
-					}
-				}
-			}
-		}
-
-
-
-		public override void KillNode( GameWorld world )
-		{
-			var rs = world.Game.RenderSystem;
-			var pm = world.Physics;
-
-			if (instances!=null) {
-				foreach ( var instance in instances ) {
-					if ( instance!=null ) {
-						rs.RenderWorld.Instances.Remove( instance );
-					}
-				}
-			}
-
-			if (debugModels!=null) {
-				foreach ( var debugModel in debugModels ) {
-					if ( debugModel!=null ) {
-						rs.RenderWorld.Debug.DebugModels.Remove( debugModel );
-					}
-				}
-			}
-
-			if (collidables!=null) {
-				foreach ( var collidable in collidables ) {
-					if ( collidable!=null ) {
-						pm.PhysSpace.Remove( collidable );
-					}
-				}
-			}
-
-			instances	=	null;
-			collidables	=	null;
-			debugModels	=	null;
-		}
-
-
-
-		public override MapNode DuplicateNode( GameWorld world )
+		public override MapNode DuplicateNode()
 		{
 			var newNode = (MapModel)MemberwiseClone();
 			newNode.NodeGuid = Guid.NewGuid();

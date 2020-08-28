@@ -18,12 +18,10 @@ using Fusion.Engine.Graphics;
 using IronStar.Mapping;
 using Fusion.Build;
 using BEPUphysics;
-using IronStar.Core;
 using IronStar.Editor.Controls;
 using IronStar.Editor.Manipulators;
 using Fusion.Engine.Frames;
 using Fusion.Core.Input;
-using IronStar.Items;
 using Fusion.Widgets;
 
 namespace IronStar.Editor {
@@ -260,7 +258,7 @@ namespace IronStar.Editor {
 		{
 			var palette = new Palette( workspace.Frames, "Create Node", 0,0, 150,100 );
 
-			var entityTypes	=	Misc.GetAllSubclassesOf( typeof(EntityFactory), false );
+			var entityTypes	=	Misc.GetAllSubclassesOf( typeof(EntityFactoryContent), false );
 
 			palette.AddButton( "Static Model"			,	() => CreateNodeUI( new MapModel			() ) );
 			palette.AddButton( "Decal"					,	() => CreateNodeUI( new MapDecal			() ) );
@@ -268,8 +266,8 @@ namespace IronStar.Editor {
 			palette.AddButton( "Light Probe (Box)"		,	() => CreateNodeUI( new MapLightProbeBox	() ) );
 			palette.AddButton( "Omni Light"				,	() => CreateNodeUI( new MapOmniLight		() ) );
 			palette.AddButton( "Spot Light"				,	() => CreateNodeUI( new MapSpotLight		() ) );
-			palette.AddButton( "Sound"					,	() => CreateNodeUI( new MapSound			() ) );
-			palette.AddButton( "Reverb Zone"			,	() => CreateNodeUI( new MapReverb			() ) );
+			//palette.AddButton( "Sound"					,	() => CreateNodeUI( new MapSound			() ) );
+			//palette.AddButton( "Reverb Zone"			,	() => CreateNodeUI( new MapReverb			() ) );
 
 			palette.AddSplitter();
 
@@ -279,7 +277,7 @@ namespace IronStar.Editor {
 
 				Action action = () => { 
 					var mapEntity = new MapEntity();
-					mapEntity.Factory = (EntityFactory)Activator.CreateInstance(ent);
+					mapEntity.Factory = (EntityFactoryContent)Activator.CreateInstance(ent);
 					CreateNodeUI( mapEntity ); 
 				};
 
@@ -319,19 +317,19 @@ namespace IronStar.Editor {
 			var types = new List<Type>();
 
 			var typeFX			=	new[] { typeof(FXFactory) };
-			var typeEntities	=	Misc.GetAllSubclassesOf(typeof(EntityFactory), true);
-			var typeModels		=	Misc.GetAllSubclassesOf(typeof(ModelFactory), true);
-			var typeItems		=	Misc.GetAllSubclassesOf(typeof(ItemFactory), true);
-			var typeWeapon		=	Misc.GetAllSubclassesOf(typeof(Weapon), true);
-			var typeAnimation	=	Misc.GetAllSubclassesOf(typeof(AnimatorFactory), true);
+			var typeEntities	=	Misc.GetAllSubclassesOf(typeof(EntityFactoryContent), true);
+			//var typeModels		=	Misc.GetAllSubclassesOf(typeof(ModelFactory), true);
+			//var typeItems		=	Misc.GetAllSubclassesOf(typeof(ItemFactory), true);
+			//var typeWeapon		=	Misc.GetAllSubclassesOf(typeof(Weapon), true);
+			//var typeAnimation	=	Misc.GetAllSubclassesOf(typeof(AnimatorFactory), true);
 
 			var assetExplorer	=	new AssetExplorer2( parent, "fx", typeFX, 0,0, 500, 600 );
 
 			assetExplorer.AddToolButton( "FX"		,	() => assetExplorer.SetTargetClass( "fx"		, typeFX		) );
 			assetExplorer.AddToolButton( "Entities"	,	() => assetExplorer.SetTargetClass( "entities"	, typeEntities	) );
-			assetExplorer.AddToolButton( "Models"	,	() => assetExplorer.SetTargetClass( "models"	, typeModels	) );
-			assetExplorer.AddToolButton( "Items"	,	() => assetExplorer.SetTargetClass( "items"		, typeItems		) );
-			assetExplorer.AddToolButton( "Animation",	() => assetExplorer.SetTargetClass( "animation"	, typeAnimation	) );
+			//assetExplorer.AddToolButton( "Models"	,	() => assetExplorer.SetTargetClass( "models"	, typeModels	) );
+			//assetExplorer.AddToolButton( "Items"	,	() => assetExplorer.SetTargetClass( "items"		, typeItems		) );
+			//assetExplorer.AddToolButton( "Animation",	() => assetExplorer.SetTargetClass( "animation"	, typeAnimation	) );
 
 			return assetExplorer;			  
 		}

@@ -80,6 +80,7 @@ namespace IronStar.Gameplay.Systems
 			{
 				var inventory		=	playerEntity.GetComponent<InventoryComponent>();
 				var steps			=	playerEntity.GetComponent<StepComponent>();
+				var uc				=	playerEntity.GetComponent<UserCommandComponent>();
 
 				var weaponEntity	=	gs.GetEntity( inventory.ActiveWeaponID );
 				var weapon			=	weaponEntity?.GetComponent<WeaponComponent>();
@@ -92,7 +93,7 @@ namespace IronStar.Gameplay.Systems
 				}
 
 				renderModel?.SetTransform( rw.Camera.CameraMatrix );
-				animator?.Update( gameTime, weapon, steps );  
+				animator?.Update( gameTime, weapon, steps, uc );  
 			}
 		}
 

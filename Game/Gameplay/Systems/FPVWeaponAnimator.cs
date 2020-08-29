@@ -99,10 +99,10 @@ namespace IronStar.Gameplay.Systems
 		/// <summary>
 		/// 
 		/// </summary>
-		public void Update ( GameTime gameTime, WeaponComponent weapon, StepComponent steps )
+		public void Update ( GameTime gameTime, WeaponComponent weapon, StepComponent steps, UserCommandComponent uc )
 		{
 			UpdateWeaponStates(gameTime, weapon, steps);
-			UpdateMovements(gameTime, steps);
+			UpdateMovements(gameTime, steps, uc);
 
 			composer.Update( gameTime, model.FlattenTransforms ); 
 			model.CommitJointTransform();
@@ -179,7 +179,7 @@ namespace IronStar.Gameplay.Systems
 		/// <summary>
 		/// 
 		/// </summary>
-		void UpdateMovements ( GameTime gameTime, StepComponent steps )
+		void UpdateMovements ( GameTime gameTime, StepComponent steps, UserCommandComponent uc )
 		{
 			var dt			=	gameTime.ElapsedSec;
 
@@ -208,10 +208,10 @@ namespace IronStar.Gameplay.Systems
 
 			//	tilt :
 			float targetTilt	=	0;
-			//if (state.HasFlag(EntityState.StrafeRight)) targetTilt++;
-			//if (state.HasFlag(EntityState.StrafeLeft))  targetTilt--;
-			//if (state.HasFlag(EntityState.TurnRight)) targetTilt++;
-			//if (state.HasFlag(EntityState.TurnLeft))  targetTilt--;
+			if ( uc.MoveRight > 0 )	targetTilt++;
+			if ( uc.MoveRight < 0 )	targetTilt--;
+			if ( uc.DYaw < 0 )		targetTilt++;
+			if ( uc.DYaw > 0 )		targetTilt--;
 			targetTilt = MathUtil.Clamp( targetTilt, -1, 1 );
 
 			tiltFactor = MathUtil.Drift( tiltFactor, targetTilt, dt*2, dt*2 );

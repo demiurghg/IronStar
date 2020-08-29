@@ -11,11 +11,12 @@ using IronStar.SFX;
 using Fusion.Development;
 using System.Drawing.Design;
 using Fusion.Core.Shell;
+using IronStar.ECS;
+using IronStar.SFX2;
 
 namespace IronStar.Mapping {
-	public class MapDecal : MapNode {
-
-
+	public class MapDecal : MapNode 
+	{
 		[AECategory("Decal Image")]
 		[AEAtlasImage(@"decals/decals")]
 		public string ImageName { get; set; } = "";
@@ -113,6 +114,37 @@ namespace IronStar.Mapping {
 		}
 
 
+		public override void SpawnNodeECS( GameState gs )
+		{
+			ecsEntity = gs.Spawn();
+
+			ecsEntity.AddComponent( new Transform( TranslateVector, RotateQuaternion, 1 ) );
+			ecsEntity.AddComponent( CreateDecal() );
+			
+			base.SpawnNodeECS( gs );
+		}
+
+
+		DecalComponent CreateDecal()
+		{
+			var dc = new DecalComponent();
+
+			dc.ImageName			=	ImageName			;
+			dc.Width				=	Width				;
+			dc.Height				=	Height				;
+			dc.Depth				=	Depth				;
+			dc.EmissionColor		=	EmissionColor		;
+			dc.EmissionIntensity	=	EmissionIntensity	;
+			dc.BaseColor			=	BaseColor			;
+			dc.Roughness			=	Roughness			;
+			dc.Metallic				=	Metallic			;
+			dc.ColorFactor			=	ColorFactor			;
+			dc.SpecularFactor		=	SpecularFactor		;
+			dc.NormalMapFactor		=	NormalMapFactor		;
+			dc.FalloffFactor		=	FalloffFactor		;				   
+
+			return dc;
+		}
 
 		public override MapNode DuplicateNode()
 		{

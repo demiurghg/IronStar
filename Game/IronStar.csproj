@@ -82,6 +82,8 @@
     <Compile Include="ECSGraphics\AttachmentComponent.cs" />
     <Compile Include="ECSGraphics\FPVComponent.cs" />
     <Compile Include="ECSGraphics\LightProbeSystem.cs" />
+    <Compile Include="ECSGraphics\DecalComponent.cs" />
+    <Compile Include="ECSGraphics\DecalSystem.cs" />
     <Compile Include="ECSGraphics\SpotLightSystem.cs" />
     <Compile Include="ECSGraphics\OmniLightSystem.cs" />
     <Compile Include="ECSGraphics\RenderModelInstance.cs" />

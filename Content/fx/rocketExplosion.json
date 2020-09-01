@@ -11,15 +11,15 @@
   "LightStage": {
     "$type": "IronStar.SFX.FXLightStage, IronStar",
     "Enabled": true,
-    "Period": 0.2,
+    "Period": 0.5,
     "Intensity": 500.0,
     "Color": "255, 113, 26, 255",
     "InnerRadius": 0.0,
     "OuterRadius": 5.0,
-    "PulseString": "m",
+    "PulseString": "zlkjhgfedcbaaaaaa",
     "LightStyle": "const",
-    "OffsetDirection": "none",
-    "OffsetFactor": 0.0
+    "OffsetDirection": "localForward",
+    "OffsetFactor": 1.0
   },
   "CameraShake": {
     "$type": "IronStar.SFX.FXCameraShake, IronStar",

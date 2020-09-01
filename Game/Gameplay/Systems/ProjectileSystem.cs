@@ -25,6 +25,8 @@ namespace IronStar.Gameplay.Systems
 			this.physics	=	physics;
 		}
 
+		public override void Add( GameState gs, Entity e ) {}
+
 		protected override void Process( Entity entity, GameTime gameTime, Transform transform, Velocity velocity, ProjectileComponent projectile )
 		{
 			var gs = entity.gs;
@@ -50,6 +52,8 @@ namespace IronStar.Gameplay.Systems
 
 			if ( projectile.LifeTime <= 0 ) 
 			{
+				Explode( projectile.SenderID, null, origin, Vector3.Up, projectile );
+				FXPlayback.SpawnFX( gs, projectile.ExplosionFX, 0, origin, Vector3.Up );
 				gs.Kill( entity.ID );
 			}
 

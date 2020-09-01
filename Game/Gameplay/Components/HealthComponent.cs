@@ -8,6 +8,13 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
+	public enum HealthStatus
+	{
+		Alive,
+		JustDied,
+		Dead,
+	}
+
 	public class HealthComponent : IComponent
 	{
 		public readonly int MaxHealth = 100;
@@ -15,6 +22,8 @@ namespace IronStar.Gameplay.Components
 
 		public int Health { get; set; }
 		public int Armor { get; set; }
+
+		public string Action;
 
 		int accumulatedDamage;
 
@@ -24,15 +33,31 @@ namespace IronStar.Gameplay.Components
 			Armor	=	armor;
 		}
 
+		public HealthComponent( int health, int armor, string action )
+		{
+			Health	=	health;
+			Armor	=	armor;
+			Action	=	action;
+		}
+
 		public void InflictDamage( int damage )
 		{
 			accumulatedDamage	+=	damage;
 		}
 
-		public void ApplyDamage()
+		public HealthStatus ApplyDamage()
 		{
+			bool wasAlive = Health > 0;
+
 			Health -= accumulatedDamage;
 			accumulatedDamage = 0;
+
+			if (wasAlive && Health<=0)
+			{
+				return HealthStatus.JustDied;
+			}
+
+			return Health > 0 ? HealthStatus.Alive : HealthStatus.Dead;
 		}
 
 		public void Added( GameState gs, Entity entity ) {	}

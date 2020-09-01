@@ -10,15 +10,16 @@ using Fusion.Core.Extensions;
 
 namespace IronStar.ECS
 {
-	class EntityFactoryCollection : Dictionary<string,EntityFactory>
+	class EntityActionCollection : Dictionary<string,EntityAction>
 	{
-		public EntityFactoryCollection() : base( 
-				Misc.GetAllClassesWithAttribute<EntityFactoryAttribute>()
+		public EntityActionCollection() : base(
+				Fusion.Core.Extensions.Misc.GetAllClassesWithAttribute<EntityActionAttribute>()
 					.ToDictionary(
-						t0 => t0.GetAttribute<EntityFactoryAttribute>().ClassName,
-						t1 => (EntityFactory)Activator.CreateInstance( t1 )
+						t0 => t0.GetAttribute<EntityActionAttribute>().ActionName,
+						t1 => (EntityAction)Activator.CreateInstance( t1 )
 					), StringComparer.OrdinalIgnoreCase )
 		{
+			
 		}
 	}
 }

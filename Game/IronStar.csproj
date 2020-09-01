@@ -98,9 +98,11 @@
     <Compile Include="ECSPhysics\TouchDetector.cs" />
     <Compile Include="ECS\Aspect.cs" />
     <Compile Include="ECS\Collections\ComponentCollection.cs" />
+    <Compile Include="ECS\Collections\EntityActionCollection.cs" />
     <Compile Include="ECS\Component.cs" />
     <Compile Include="ECS\ECSTypeManager.cs" />
     <Compile Include="ECS\Collections\EntityFactoryCollection.cs" />
+    <Compile Include="ECS\EntityAction.cs" />
     <Compile Include="ECS\StatelessSystem.cs" />
     <Compile Include="ECS\ProcessingSystem.cs" />
     <Compile Include="ECS\SystemWrapper.cs" />

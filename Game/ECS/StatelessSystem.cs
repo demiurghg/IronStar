@@ -22,8 +22,8 @@ namespace IronStar.ECS
 			return new Aspect().Include<T1>();
 		}
 
-		public void Add( GameState gs, Entity e ) {}
-		public void Remove( GameState gs, Entity e ) {}
+		public virtual void Add( GameState gs, Entity e ) {}
+		public virtual void Remove( GameState gs, Entity e ) {}
 
 		public virtual void Update( GameState gs, GameTime gameTime )
 		{
@@ -56,8 +56,8 @@ namespace IronStar.ECS
 			return new Aspect().Include<T1,T2>();
 		}
 
-		public void Add( GameState gs, Entity e ) {}
-		public void Remove( GameState gs, Entity e ) {}
+		public virtual void Add( GameState gs, Entity e ) {}
+		public virtual void Remove( GameState gs, Entity e ) {}
 
 		public virtual void Update( GameState gs, GameTime gameTime )
 		{
@@ -92,8 +92,8 @@ namespace IronStar.ECS
 			return new Aspect().Include<T1,T2,T3>();
 		}
 
-		public void Add( GameState gs, Entity e ) {}
-		public void Remove( GameState gs, Entity e ) {}
+		public virtual void Add( GameState gs, Entity e ) {}
+		public virtual void Remove( GameState gs, Entity e ) {}
 
 		protected void ForEach( GameState gs, GameTime gameTime, Action<Entity,GameTime,T1,T2,T3> action )
 		{
@@ -135,8 +135,8 @@ namespace IronStar.ECS
 			return new Aspect().Include<T1,T2,T3,T4>();
 		}
 
-		public void Add( GameState gs, Entity e ) {}
-		public void Remove( GameState gs, Entity e ) {}
+		public virtual void Add( GameState gs, Entity e ) {}
+		public virtual void Remove( GameState gs, Entity e ) {}
 
 		public virtual void Update( GameState gs, GameTime gameTime )
 		{

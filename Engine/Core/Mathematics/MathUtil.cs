@@ -49,6 +49,11 @@ namespace Fusion.Core.Mathematics
 {
     public static class MathUtil
     {
+		/// <summary>
+		/// Random number generator for everyone
+		/// </summary>
+		public static readonly Random Random = new Random();
+
         /// <summary>
         /// The value for which all absolute numbers smaller than are considered equal to zero.
         /// </summary>

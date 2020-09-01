@@ -23,6 +23,7 @@ namespace IronStar.Gameplay.Systems
 
 		readonly Aspect healthInventoryAspect	= new Aspect().Include<InventoryComponent,HealthComponent>();
 		readonly Aspect powerupAspect			= new Aspect().Include<PowerupComponent>();
+		readonly Aspect healthAspect			= new Aspect().Include<HealthComponent>();
 
 
 		public static void ApplyDamage( Entity target, int damage )
@@ -61,11 +62,17 @@ namespace IronStar.Gameplay.Systems
 
 		void UpdateDamage( GameState gs, GameTime gameTime )
 		{
-			var healthComponents = gs.QueryComponents<HealthComponent>();
+			var entities = gs.QueryEntities(healthAspect);
 
-			foreach ( var h in healthComponents )
+			foreach ( var entity in entities )
 			{
-				h.ApplyDamage();
+				var health	=	entity.GetComponent<HealthComponent>();
+				var status	=	health.ApplyDamage();
+
+				if (status==HealthStatus.JustDied)
+				{
+					gs.Execute( health.Action, entity );
+				}
 			}
 		}
 	}

@@ -9,6 +9,8 @@ using IronStar.ECSPhysics;
 using IronStar.Gameplay;
 using IronStar.Gameplay.Components;
 using IronStar.SFX2;
+using IronStar.SFX;
+using Fusion.Core.Extensions;
 
 namespace IronStar.ECSFactories
 {
@@ -47,10 +49,31 @@ namespace IronStar.ECSFactories
 	}
 
 
+	[EntityAction( "EXPLODE_BOX" )]
+	public class ExplodeBoxAction : EntityAction
+	{
+		public override void Execute( GameState gs, Entity target )
+		{
+			float explosionTime = MathUtil.Random.NextFloat(0.1f, 0.5f);
+			target.AddComponent( new FXComponent("boxBurning", true) );
+			target.AddComponent( new ProjectileComponent(0, 7.5f, explosionTime, "boxExplosion", 100, 100) );
+		}
+	}
+
+
 	[EntityFactory("BOXEXPLOSIVE")]
 	public class BoxExplosiveFactory : BoxFactory
 	{
 		public BoxExplosiveFactory():
 		base( 3, 2.25f, 2.25f, 10, 3, "scenes\\boxes\\box_low.fbx" ) {}
+
+		public override Entity Spawn( GameState gs )
+		{
+			var e = base.Spawn( gs );
+
+			e.AddComponent( new HealthComponent(100, 0, "EXPLODE_BOX") );
+
+			return e;
+		}
 	}
 }

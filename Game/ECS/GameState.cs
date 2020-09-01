@@ -31,7 +31,9 @@ namespace IronStar.ECS
 		readonly GameServiceContainer services;
 		public GameServiceContainer Services { get { return services; } }
 
-		readonly EntityFactoryCollection factories;
+		readonly EntityFactoryCollection	factories;
+		readonly EntityActionCollection		actions;
+		readonly Queue<EntityAction>		actionQueue;
 
 
 		/// <summary>
@@ -44,23 +46,19 @@ namespace IronStar.ECS
 
 			this.Game   =   game;
 
-			entities        =   new EntityCollection();
-			systems         =   new SystemCollection(this);
-			components      =   new ComponentCollection();
+			entities	=	new EntityCollection();
+			systems		=	new SystemCollection(this);
+			components	=	new ComponentCollection();
 
-			spawned         =   new Bag<Entity>();
-			killed          =   new HashSet<uint>();
-			refreshed       =   new HashSet<Entity>();
+			spawned		=	new Bag<Entity>();
+			killed		=	new HashSet<uint>();
+			refreshed	=	new HashSet<Entity>();
 
-			services        =   new GameServiceContainer();
+			services	=	new GameServiceContainer();
 
-			factories       =   new EntityFactoryCollection(
-									Misc.GetAllClassesWithAttribute<EntityFactoryAttribute>()
-										.ToDictionary(
-											t0 => t0.GetAttribute<EntityFactoryAttribute>().ClassName,
-											t1 => (EntityFactory)Activator.CreateInstance( t1 )
-										)
-									);
+			factories	=	new EntityFactoryCollection();
+			actions		=	new EntityActionCollection();
+			actionQueue	=	new Queue<EntityAction>();
 		}
 
 
@@ -107,6 +105,7 @@ namespace IronStar.ECS
 			foreach ( var system in systems )
 			{
 				system.System.Update( this, gameTime );
+				RefreshEntities();
 			}
 
 			//	kill entities marked to kill :
@@ -140,6 +139,36 @@ namespace IronStar.ECS
 				.ToArray();
 		}
 
+
+		/*-----------------------------------------------------------------------------------------------
+		 *	Actions :
+		-----------------------------------------------------------------------------------------------*/
+
+		public bool Execute( string actionName, Entity target )
+		{
+			if (string.IsNullOrWhiteSpace(actionName)) 
+			{
+				return false;
+			}
+
+			EntityAction action;
+
+			if ( actions.TryGetValue( actionName, out action ) )
+			{
+				action.Execute( this, target );
+				return true;
+			}
+			{
+				Log.Warning("GameState:Execute -- no such action '{0}'", actionName);
+				return false;
+			}
+		}
+
+
+		void ExecuteActions()
+		{
+			// #TODO #ECS -- deferred action execution???
+		}
 
 		/*-----------------------------------------------------------------------------------------------
 		 *	Entity stuff :

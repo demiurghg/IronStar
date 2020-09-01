@@ -81,7 +81,6 @@
     <Compile Include="ECSGraphics\AnimationComponent.cs" />
     <Compile Include="ECSGraphics\AttachmentComponent.cs" />
     <Compile Include="ECSGraphics\FPVComponent.cs" />
-    <Compile Include="Editor\IEditorRenderable.cs" />
     <Compile Include="ECSGraphics\LightProbeSystem.cs" />
     <Compile Include="ECSGraphics\DecalComponent.cs" />
     <Compile Include="ECSGraphics\DecalSystem.cs" />
@@ -121,7 +120,6 @@
     <Compile Include="ECS\Collections\SystemCollection.cs" />
     <Compile Include="ECS\Static.cs" />
     <Compile Include="ECS\Velocity.cs" />
-    <Compile Include="Editor\IEditor.cs" />
     <Compile Include="Editor\MapEditor.History.cs" />
     <Compile Include="Editor\Systems\EditorEntityRenderSystem.cs" />
     <Compile Include="Editor\Systems\EditorModelRenderSystem.cs" />

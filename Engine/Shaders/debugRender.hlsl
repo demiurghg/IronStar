@@ -22,6 +22,9 @@ struct GS_IN {
 struct PS_IN {
 	float4 pos : SV_POSITION;
 	float4 col : COLOR;
+#ifdef MODEL
+	float4 ppos : TEXCOORD0;
+#endif	
 };
 
 /*------------------------------------------------------------------------------
@@ -40,13 +43,22 @@ PS_IN VSMain( VS_IN input )
 	
 	output.pos = ppos;
 	output.col = Batch.Color;
+	output.ppos= ppos;
 	
 	return output;
 }
 
 
-float4 PSMain( PS_IN input, float4 vpos : SV_Position ) : SV_Target
+float4 PSMain( PS_IN input, float4 vpos : SV_Position, out float depth : SV_Depth ) : SV_Target
 {
+	depth				=	abs(input.ppos.z / input.ppos.w);
+	
+	float biasScale0	=	1 - exp2(-24+2);
+	float biasScale1	=	1 - exp2(-24+10);
+	float biasScale		=	lerp( biasScale1, biasScale0, pow(depth,64) );
+	
+	depth =  depth * biasScale;
+	
 	return input.col.rgba;
 }
 

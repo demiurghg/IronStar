@@ -316,9 +316,16 @@ namespace IronStar.ECS
 			
 		}
 
+		
 		public TComponent GetEntityComponent<TComponent>( Entity entity ) where TComponent: IComponent
 		{
 			return components.GetComponent<TComponent>( entity.ID );
+		}
+
+		
+		public IComponent GetEntityComponent( Entity entity, Type componentType )
+		{
+			return components.GetComponent( entity.ID, componentType );
 		}
 
 

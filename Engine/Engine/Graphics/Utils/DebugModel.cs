@@ -17,6 +17,8 @@ namespace Fusion.Engine.Graphics {
 		IndexBuffer ib;
 		VertexBuffer vb;
 
+		public object Tag;
+
 		public IndexBuffer Indices { get { return ib; } }
 		public VertexBuffer Vertices { get { return vb; } }
 

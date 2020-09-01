@@ -66,15 +66,21 @@ namespace IronStar.ECS
 
 		public TComponent GetComponent<TComponent>( uint entityId ) where TComponent: IComponent
 		{
+			return (TComponent)GetComponent( entityId, typeof(TComponent) );
+		}
+
+
+		public IComponent GetComponent( uint entityId, Type componentType )
+		{
 			IComponent result;
 
-			if ( this[typeof(TComponent)].TryGetValue( entityId, out result ) )
+			if ( this[componentType].TryGetValue( entityId, out result ) )
 			{
-				return (TComponent)result;
+				return result;
 			}
 			else
 			{
-				return default(TComponent);
+				return null;
 			}
 		}
 	}

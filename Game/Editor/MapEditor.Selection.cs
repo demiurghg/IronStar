@@ -17,6 +17,7 @@ using Fusion.Engine.Graphics;
 using IronStar.Mapping;
 using Fusion.Build;
 using BEPUphysics;
+using IronStar.ECS;
 
 namespace IronStar.Editor {
 
@@ -51,6 +52,32 @@ namespace IronStar.Editor {
 			return (GetLayerStateForNode(node)==LayerState.Default) && !node.Frozen; 
 		}
 
+
+		public bool IsSelected( Entity entity )
+		{
+			return selection.Any( node => node.EcsEntity == entity );
+		}
+
+
+		public bool GetRenderProperties( Entity entity, out Color color, out bool selected )
+		{
+			var node	=	Map.Nodes.FirstOrDefault( n => n.EcsEntity == entity );
+
+			if (node!=null)
+			{
+				selected	=	selection.Contains(node);
+				color		=	selected ? Utils.WireColorSelected : ( IsSelectable(node) ? Utils.WireColor : Utils.GridColor );
+				color		=	(selection.LastOrDefault()==node) ? Color.White : color;
+
+				return IsVisible(node);
+			}
+			else
+			{
+				color		=	Color.Black;
+				selected	=	false;
+				return false;
+			}
+		}
 
 
 		/// <summary>

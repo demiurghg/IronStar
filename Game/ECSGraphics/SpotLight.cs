@@ -149,6 +149,16 @@ namespace IronStar.SFX2
 			light.Projection	=	Matrix.PerspectiveRH( w, h, n, f );
 		}
 
+
+		public Matrix ComputeSpotMatrix()
+		{
+			float n	=	NearPlane;
+			float f	=	FarPlane;
+			float w	=	(float)Math.Tan( MathUtil.DegreesToRadians( FovHorizontal/2 ) ) * NearPlane * 2;
+			float h	=	(float)Math.Tan( MathUtil.DegreesToRadians( FovVertical/2	) ) * NearPlane * 2;
+
+			return	Matrix.PerspectiveRH( w, h, n, f );
+		}
 		
 
 		Color lightColor = Color.White;

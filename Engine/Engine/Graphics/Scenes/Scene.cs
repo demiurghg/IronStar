@@ -283,6 +283,18 @@ namespace Fusion.Engine.Graphics.Scenes {
 
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public Matrix[] ComputeAbsoluteTransforms()
+		{
+			var transforms = new Matrix[Nodes.Count];
+			ComputeAbsoluteTransforms( transforms );
+			return transforms;
+		}
+
+
+		/// <summary>
 		/// Copies absolute transform to provided array.
 		/// </summary>
 		/// <param name="destination"></param>

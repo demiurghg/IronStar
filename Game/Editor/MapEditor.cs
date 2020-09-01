@@ -22,6 +22,7 @@ using IronStar.Editor.Controls;
 using IronStar.Editor.Manipulators;
 using Fusion.Engine.Frames;
 using IronStar.ECSPhysics;
+using IronStar.Editor.Systems;
 
 namespace IronStar.Editor {
 
@@ -117,6 +118,10 @@ namespace IronStar.Editor {
 			}
 
 			gameState	=	IronStar.CreateGameState( Game, Content, mapName, map );
+			gameState.AddSystem( new EditorEntityRenderSystem( this, rs.RenderWorld.Debug ) );
+			gameState.AddSystem( new EditorLightRenderSystem( this, rs.RenderWorld.Debug ) );
+			gameState.AddSystem( new EditorPhysicsRenderSystem( this, rs.RenderWorld.Debug ) );
+			gameState.AddSystem( new EditorModelRenderSystem( this, rs.RenderWorld.Debug ) );
 			gameState.Update( GameTime.MSec16 );
 
 			//world.SimulateWorld( GameTime.MSec16 );
@@ -178,7 +183,6 @@ namespace IronStar.Editor {
 		{
 			workspace?.FeedProperties( selection.FirstOrDefault() );
 		}
-
 
 
 		/// <summary>
@@ -471,35 +475,6 @@ namespace IronStar.Editor {
 			//	draw stuff :
 			if (DrawGrid) {
 				rs.RenderWorld.Debug.DrawGrid();
-			}
-
-			//
-			//	Draw unselected :
-			//
-			foreach ( var item in map.Nodes ) {
-
-				var color = IsSelectable( item ) ? Utils.WireColor : Utils.GridColor;
-
-				if (IsVisible(item)) {
-					#warning RESTORE: item.DrawNode( world, dr, color, false ); 
-				}
-			}
-
-			//
-			//	Draw selected :
-			//
-			foreach ( var item in selection ) {
-
-				var color = Utils.WireColorSelected;
-
-				if (selection.Last()!=item) {
-					color = Color.White;
-				}
-
-				if (IsVisible(item)) {
-					dr.DrawBasis( item.WorldMatrix, 0.5f, 3 );
-					#warning RESTORE: item.DrawNode( world, dr, color, true ); 
-				}
 			}
 
 			var mp = Game.Mouse.Position;

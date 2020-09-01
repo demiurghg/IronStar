@@ -9,9 +9,10 @@ using Fusion.Engine.Common;
 using Fusion;
 using IronStar.Mapping;
 
-namespace IronStar.Editor {
-	static class Utils {
-
+namespace IronStar.Editor 
+{
+	static class Utils 
+	{
 		readonly public static Color SelectColor		=	new Color(255,211,149);
 		readonly public static Color GridColor			=	new Color(64,64,64);
 		readonly public static Color WireColor			=	new Color(0,4,96);

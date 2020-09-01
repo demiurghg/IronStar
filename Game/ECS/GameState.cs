@@ -90,14 +90,6 @@ namespace IronStar.ECS
 		/// <param name="gameTime"></param>
 		public void Update( GameTime gameTime )
 		{
-			//	add all spawned entities :
-			foreach ( var e in spawned )
-			{
-				entities.Add( e.ID, e );
-				Refresh( e );
-			}
-			spawned.Clear();
-
 			//	refresh entities and run systems :
 			RefreshEntities();
 
@@ -107,13 +99,35 @@ namespace IronStar.ECS
 				system.System.Update( this, gameTime );
 				RefreshEntities();
 			}
+		}
+
+
+		void RefreshEntities()
+		{
+			//	spawn entities :
+			foreach ( var e in spawned ) 
+			{
+				entities.Add( e.ID, e );
+				Refresh( e );
+			}
+			spawned.Clear();
+
+			//	refresh component and system bindings :
+			foreach ( var e in refreshed )
+			{
+				foreach ( var system in systems )
+				{
+					system.Changed(e);
+				}
+			}
+			refreshed.Clear();
 
 			//	kill entities marked to kill :
 			foreach ( var id in killed ) { KillInternal( id ); }
 			killed.Clear();
 		}
 
-
+		
 		/// <summary>
 		/// Gets gamestate's service
 		/// </summary>
@@ -264,20 +278,6 @@ namespace IronStar.ECS
 		}
 
 
-		void RefreshEntities()
-		{
-			foreach ( var e in refreshed )
-			{
-				foreach ( var system in systems )
-				{
-					system.Changed(e);
-				}
-			}
-
-			refreshed.Clear();
-		}
-
-		
 		public bool Exists( uint id )
 		{
 			return entities.ContainsKey(id);

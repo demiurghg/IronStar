@@ -1,6 +1,0 @@
-{
-  "$type": "IronStar.Items.AmmoFactory, IronStar",
-  "Count": 50,
-  "MaxCount": 200,
-  "NiceName": "Slugs"
-}

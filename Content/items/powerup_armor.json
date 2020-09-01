@@ -1,6 +1,0 @@
-{
-  "$type": "IronStar.Items.PowerupFactory, IronStar",
-  "HealthBonus": 0,
-  "ArmorBonus": 50,
-  "NiceName": "Armor Repair Kit"
-}

@@ -24,21 +24,24 @@ SURFACE ApplyDecal( GEOMETRY geometry, SURFACE surface, CAMERA camera, DECAL dec
 	float	 decalR			=	decal.EmissionRoughness.a * decal.EmissionRoughness.a;
 	float	 decalM			=	decal.BaseColorMetallic.a;
 	float4	 scaleOffset	=	decal.ImageScaleOffset;
-	float	 falloff		=	decal.FalloffFactor;
+	float	 falloffFactor	=	decal.FalloffFactor;
 	float 	 mipDecalBias	=	decal.MipBias;
 	
 	float3	 worldPos		=	geometry.position;
 	
-	float4 decalPos	=	mul(float4(worldPos,1), decalMatrixI);
+	float4 decalPos			=	mul(float4(worldPos,1), decalMatrixI);
+	float	localZ			=	abs(decalPos.z);
+	float	falloff			=	saturate( ( 1 - localZ ) / ( 1 - falloffFactor ) );
+			falloff			*=	saturate( 3 * dot( normalize(decal.BasisZ.xyz), geometry.normal ) - 1 );
 	
 	if ( abs(decalPos.x)<1 && abs(decalPos.y)<1 && abs(decalPos.z)<1 && group==decal.AssignmentGroup ) 
 	{
 		float2 uv			=	mad(decalPos.xy, scaleOffset.xy, scaleOffset.zw); 
 	
-		float4 decalImage	= 	rc.DecalImages.SampleLevel( rc.DecalSampler, uv, decalBaseMip + mipDecalBias );
-		float3 localNormal  = 	normalize(decalImage.xyz * 2 - 1);
-		float3 decalNormal	=	localNormal.x * decal.BasisX.xyz + localNormal.y * decal.BasisY.xyz + localNormal.z * decal.BasisZ.xyz;
-		float factor		=	saturate(decalImage.a);// * saturate(falloff - abs(decalPos.z)*falloff);
+		float4 	decalImage	= 	rc.DecalImages.SampleLevel( rc.DecalSampler, uv, decalBaseMip + mipDecalBias );
+		float3 	localNormal = 	normalize(decalImage.xyz * 2 - 1);
+		float3 	decalNormal	=	localNormal.x * decal.BasisX.xyz + localNormal.y * decal.BasisY.xyz + localNormal.z * decal.BasisZ.xyz;
+		float 	factor		=	saturate(decalImage.a) * falloff;
 		
 		surface.emission	+=	 glowColor * factor;
 	

@@ -15,6 +15,7 @@ using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
 using Fusion.Engine.Audio;
 using IronStar.ECS;
+using IronStar.Gameplay.Components;
 
 namespace IronStar.SFX {
 	public partial class FXPlayback : ProcessingSystem<FXInstance, FXComponent, Transform>
@@ -170,7 +171,7 @@ namespace IronStar.SFX {
 		/// 
 		/// </summary>
 		/// <param name="fxEvent"></param>
-		public FXInstance RunFX ( string className, FXEvent fxEvent, bool looped, bool ecsDoNotAddToList = false )
+		public FXInstance RunFX ( string className, FXEvent fxEvent, bool looped, bool attached )
 		{
 			if (className=="*trail_bullet") {
 				RunTrailBullet( fxEvent );
@@ -199,7 +200,7 @@ namespace IronStar.SFX {
 				return null;
 			}
 
-			var fxInstance	=	factory.CreateFXInstance( this, fxEvent, looped );
+			var fxInstance	=	factory.CreateFXInstance( this, fxEvent, looped, attached );
 
 			runningSFXes.Add( fxInstance );
 
@@ -245,7 +246,9 @@ namespace IronStar.SFX {
 				fxEvent.Velocity = velocity.Linear;
 			}
 
-			return RunFX( fx.FXName, fxEvent, fx.Looped, true ); 
+			var attached	=	entity.ContainsComponent<AttachmentComponent>();
+
+			return RunFX( fx.FXName, fxEvent, fx.Looped, attached ); 
 		}
 
 		protected override void Destroy( ECS.Entity entity, FXInstance fxInstance )

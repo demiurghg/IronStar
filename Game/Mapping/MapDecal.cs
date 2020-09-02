@@ -99,7 +99,7 @@ namespace IronStar.Mapping {
 		/// Falloff factor [-1,1]
 		/// </summary>
 		[AECategory("Decal Material")]
-		[AEValueRange(0, 1, 1/4f, 1/128f)]
+		[AEValueRange(0, 1.0f, 1/4f, 1/128f)]
 		public float FalloffFactor { get; set;} = 0.5f;
 		
 

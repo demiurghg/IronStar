@@ -62,7 +62,7 @@ namespace IronStar.ECSFactories
 			var e = base.Spawn( gs );
 
 			e.AddComponent( new NameComponent("MACHINEGUN2") );
-			e.AddComponent( WeaponComponent.BeamWeapon( 5, 3.0f, 1, 1.0f,	100,	"AMMO_BULLETS", "*trail_bullet", "machinegunHit", "machinegunMuzzle" ) );
+			e.AddComponent( WeaponComponent.BeamWeapon( 5, 30.0f, 1, 1.0f,	100,	"AMMO_BULLETS", "*trail_bullet", "machinegunHit", "machinegunMuzzle" ) );
 			e.AddComponent( new RenderModel("scenes\\weapon2\\battle_rifle\\battle_rifle_view", 0.03f, MachinegunColor, GlowIntensity, RMFlags.None ) );
 			e.AddComponent( new DynamicBox( 0.54f, 1.2f, 4.5f, 5.0f ) );
 

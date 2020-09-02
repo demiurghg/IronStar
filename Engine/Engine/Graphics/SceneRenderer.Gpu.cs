@@ -212,7 +212,7 @@ namespace Fusion.Engine.Graphics {
 				ColorFactor			=	decal.ColorFactor;
 				SpecularFactor		=	decal.SpecularFactor;
 				NormalMapFactor		=	decal.NormalMapFactor;
-				FalloffFactor		=	decal.FalloffFactor;
+				FalloffFactor		=	MathUtil.Clamp( decal.FalloffFactor, 0, 0.99f );
 				ImageScaleOffset	=	decal.GetScaleOffset();
 				AssignmentGroup		=	(uint)decal.Group;
 

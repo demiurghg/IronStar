@@ -41,6 +41,24 @@ namespace IronStar.SFX {
 			float	intensityScale = 1;
 			int		counter;
 
+
+			void UpdateDecalTransform( FXEvent fxEvent )
+			{
+				var radius			=	stageDesc.Size;
+				var depth			=	stageDesc.Depth;
+
+				var scaling			=	Matrix.Scaling( radius / 2.0f, radius / 2.0f, -Math.Abs(depth / 2.0f) );
+				var decalMatrix		=	scaling * fxEvent.TransformMatrix;
+				var decalMatrixInv	=	Matrix.Invert( decalMatrix );
+
+				decalSurface.DecalMatrix			=	decalMatrix;
+				decalSurface.DecalMatrixInverse		=	decalMatrixInv;
+
+				decalEmission.DecalMatrix			=	decalMatrix;
+				decalEmission.DecalMatrixInverse	=	decalMatrixInv;
+			}
+
+
 			/// <summary>
 			/// 
 			/// </summary>
@@ -58,20 +76,8 @@ namespace IronStar.SFX {
 				this.overallScale	=	instance.overallScale;
 				this.maxLifeTime	=	Math.Max( stageDesc.EmissionLifetime, stageDesc.SurfaceLifetime );
 
-				var radius			=	stageDesc.Size;
-				var depth			=	stageDesc.Depth;
+				//----------------------------------------------
 
-				var rotation		=	Matrix.RotationQuaternion( fxEvent.Rotation );
-				var scaling			=	Matrix.Scaling( radius / 2.0f, radius / 2.0f, -Math.Abs(depth / 2.0f) );
-				var rotation2		=	Matrix.RotationAxis( rotation.Forward, rand.NextFloat( 0,MathUtil.TwoPi ) );
-				var translation		=	Matrix.Translation( fxEvent.Origin );
-				var decalMatrix		=	scaling * rotation * rotation2 * translation;
-
-				var decalMatrixInv	=	Matrix.Invert( decalMatrix );
-
-				decalSurface.DecalMatrix		=	decalMatrix;
-				decalSurface.DecalMatrixInverse	=	decalMatrixInv;
-									
 				decalSurface.Emission			=	Color4.Zero;
 				decalSurface.BaseColor			=	new Color4( stageDesc.BaseColor.R/255.0f, stageDesc.BaseColor.G/255.0f, stageDesc.BaseColor.B/255.0f, 1 );
 			
@@ -83,14 +89,12 @@ namespace IronStar.SFX {
 				decalSurface.ColorFactor		=	stageDesc.ColorFactor;
 				decalSurface.SpecularFactor		=	stageDesc.SpecularFactor;
 				decalSurface.NormalMapFactor	=	stageDesc.NormalMapFactor;
-				decalSurface.FalloffFactor		=	4.0f;
+				decalSurface.FalloffFactor		=	0.75f;
 
-				decalSurface.Group				=	InstanceGroup.Static;
+				decalSurface.Group				=	instance.Attached ? InstanceGroup.Kinematic : InstanceGroup.Static;
 
+				//----------------------------------------------
 
-				decalEmission.DecalMatrix		=	decalMatrix;
-				decalEmission.DecalMatrixInverse=	decalMatrixInv;
-									
 				decalEmission.Emission			=	Color4.Zero;
 				decalEmission.BaseColor			=	Color4.Zero;
 			
@@ -102,11 +106,16 @@ namespace IronStar.SFX {
 				decalEmission.ColorFactor		=	0;
 				decalEmission.SpecularFactor	=	0;
 				decalEmission.NormalMapFactor	=	0;
-				decalEmission.FalloffFactor		=	4.0f;
+				decalEmission.FalloffFactor		=	0.75f;
 
-				decalEmission.Group				=	InstanceGroup.Static;
+				decalEmission.Group				=	instance.Attached ? InstanceGroup.Kinematic : InstanceGroup.Static;
+
+				//----------------------------------------------
+
+				UpdateDecalTransform( fxEvent );
 
 				this.looped						=	looped;
+
 
 				instance.rw.LightSet.Decals.Add(decalSurface); 
 				instance.rw.LightSet.Decals.Add(decalEmission); 
@@ -146,7 +155,10 @@ namespace IronStar.SFX {
 
 				decalEmission.Emission		=	stageDesc.EmissionColor.ToColor4() * intensity;
 
+				//	update transform :
+				UpdateDecalTransform( fxEvent );
 
+				//	kill when exhausted :
 				if (timer>maxLifeTime) 
 				{
 					stopped = true;

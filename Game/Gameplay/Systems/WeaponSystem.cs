@@ -290,7 +290,7 @@ namespace IronStar.Gameplay.Systems
 
 			if (r) 
 			{
-				SFX.FXPlayback.SpawnFX(	gs, weapon.BeamHitFX, 0, hitPoint, hitNormal );
+				SFX.FXPlayback.AttachFX( gs, hitEntity, weapon.BeamHitFX, 0, hitPoint, hitNormal );
 				PhysicsCore.ApplyImpulse( hitEntity, hitPoint, d * weapon.Impulse );
 				HealthSystem.ApplyDamage( hitEntity, weapon.Damage );
 			} 
@@ -302,7 +302,8 @@ namespace IronStar.Gameplay.Systems
 			//	run trail FX:
 			var beamOrigin	 =	p;
 			var beamVelocity =	hitPoint - p;
-			SFX.FXPlayback.SpawnFX(	gs, weapon.BeamTrailFX, 0, beamOrigin, beamVelocity, d );
+			var basis		=	MathUtil.ComputeAimedBasis( d );
+			SFX.FXPlayback.SpawnFX(	gs, weapon.BeamTrailFX, 0, beamOrigin, beamVelocity, Quaternion.RotationMatrix(basis) );
 		}
 
 

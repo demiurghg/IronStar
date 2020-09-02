@@ -64,7 +64,7 @@ namespace IronStar.Gameplay.Systems
 				HealthSystem.ApplyDamage( hitEntity, projectile.Damage );
 
 				Explode( projectile.SenderID, hitEntity, hitPoint, hitNormal, projectile );
-				FXPlayback.SpawnFX( gs, projectile.ExplosionFX, 0, hitPoint, hitNormal );
+				FXPlayback.AttachFX( gs, hitEntity, projectile.ExplosionFX, 0, hitPoint, hitNormal );
 
 				transform.Position	=	hitPoint;
 				velocity.Linear		=	projectile.Velocity * dir;

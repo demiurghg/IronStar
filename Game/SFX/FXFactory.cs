@@ -63,9 +63,9 @@ namespace IronStar.SFX {
 		public FXParticleStage ParticleStage5 { get; set; } = new FXParticleStage();
 
 
-		public FXInstance CreateFXInstance( FXPlayback fxPlayback, FXEvent fxEvent, bool looped )
+		public FXInstance CreateFXInstance( FXPlayback fxPlayback, FXEvent fxEvent, bool looped, bool attached )
 		{
-			return new FXInstance( fxPlayback, fxEvent, this, looped );
+			return new FXInstance( fxPlayback, fxEvent, this, looped, attached );
 		}
 	}
 

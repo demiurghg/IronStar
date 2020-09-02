@@ -15,6 +15,7 @@ using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
 using Fusion.Engine.Audio;
 using IronStar.ECS;
+using IronStar.Gameplay.Systems;
 
 namespace IronStar.SFX {
 	public partial class FXPlayback
@@ -55,9 +56,10 @@ namespace IronStar.SFX {
 
 		public static ECS.Entity SpawnFX( GameState gs, string fxName, uint parentID, Vector3 origin, Vector3 velocity, Vector3 forward )
 		{
-			var m = MathUtil.ComputeAimedBasis( forward );
+			var r	=	Matrix.RotationAxis( forward, rand.NextFloat( 0,MathUtil.TwoPi ) );
+			var m	=	MathUtil.ComputeAimedBasis( forward );
 			
-			return SpawnFX( gs, fxName, parentID, origin, velocity, Quaternion.RotationMatrix(m) );
+			return SpawnFX( gs, fxName, parentID, origin, velocity, Quaternion.RotationMatrix(m*r) );
 		}
 
 
@@ -72,5 +74,17 @@ namespace IronStar.SFX {
 			return SpawnFX( gs, fxName, parentID, origin, Vector3.Zero, Quaternion.Identity );
 		}
 
+
+		public static ECS.Entity AttachFX( GameState gs, Entity target, string fxName, uint parentID, Vector3 origin, Vector3 forward )
+		{
+			var e = SpawnFX( gs, fxName, parentID, origin, Vector3.Zero, forward );
+
+			if (target!=null)
+			{
+				AttachmentSystem.Attach( e, target );
+			}
+
+			return e;
+		}
 	}
 }

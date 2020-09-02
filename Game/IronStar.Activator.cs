@@ -48,6 +48,8 @@ namespace IronStar {
 			gs.AddSystem( new ECSPhysics.CharacterControllerSystem(physicsCore) );
 			gs.AddSystem( physicsCore );
 
+			gs.AddSystem( new AttachmentSystem() );
+
 			//	game logic :
 			gs.AddSystem( new HealthSystem() );
 			gs.AddSystem( new PickupSystem() );

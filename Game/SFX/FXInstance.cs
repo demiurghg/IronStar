@@ -51,6 +51,7 @@ namespace IronStar.SFX {
 			set;
 		}
 
+		public readonly bool Attached;
 
 
 		/// <summary>
@@ -58,13 +59,14 @@ namespace IronStar.SFX {
 		/// </summary>
 		/// <param name="sfxSystem"></param>
 		/// <param name="fxEvent"></param>
-		public FXInstance( FXPlayback sfxSystem, FXEvent fxEvent, FXFactory fxFactory, bool looped )
+		public FXInstance( FXPlayback sfxSystem, FXEvent fxEvent, FXFactory fxFactory, bool looped, bool attached )
 		{
 			this.fxPlayback		=	sfxSystem;
 			this.rw				=	sfxSystem.rw;
 			this.ss				=	sfxSystem.ss;
 			this.fxEvent		=	fxEvent;
 			this.overallScale	=	fxFactory.OverallScale;
+			this.Attached		=	attached;
 
 			AddParticleStage( fxFactory.ParticleStage1, fxEvent, looped );
 			AddParticleStage( fxFactory.ParticleStage2, fxEvent, looped );

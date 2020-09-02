@@ -79,7 +79,6 @@
     <Compile Include="ECSFactories\BoxFactory.cs" />
     <Compile Include="ECSFactories\AmmoFactory.cs" />
     <Compile Include="ECSGraphics\AnimationComponent.cs" />
-    <Compile Include="ECSGraphics\AttachmentComponent.cs" />
     <Compile Include="ECSGraphics\FPVComponent.cs" />
     <Compile Include="ECSGraphics\LightProbeSystem.cs" />
     <Compile Include="ECSGraphics\DecalComponent.cs" />
@@ -133,6 +132,7 @@
     <Compile Include="Entities\ProxyFactory.cs" />
     <Compile Include="Entities\RigidBodyFactory.cs" />
     <Compile Include="Entities\StartPoint.cs" />
+    <Compile Include="Gameplay\Components\AttachmentComponent.cs" />
     <Compile Include="Gameplay\Components\NameComponent.cs" />
     <Compile Include="Gameplay\Components\AmmoType.cs" />
     <Compile Include="Gameplay\Components\PickupComponent.cs" />
@@ -146,6 +146,7 @@
     <Compile Include="Gameplay\Components\PowerupComponent.cs" />
     <Compile Include="Gameplay\PlayerInput.cs" />
     <Compile Include="ECSFactories\PlayerFactory.cs" />
+    <Compile Include="Gameplay\Systems\AttachmentSystem.cs" />
     <Compile Include="Gameplay\Systems\CameraSystem.cs" />
     <Compile Include="Gameplay\Systems\FPVWeaponAnimator.cs" />
     <Compile Include="Gameplay\Systems\FPVWeaponSystem.cs" />

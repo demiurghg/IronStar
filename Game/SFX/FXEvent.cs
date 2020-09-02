@@ -56,6 +56,15 @@ namespace IronStar.SFX {
 		}
 
 
+		public Matrix TransformMatrix
+		{
+			get 
+			{
+				return Matrix.Scaling( Scale ) * Matrix.RotationQuaternion( Rotation ) * Matrix.Translation( Origin );
+			}
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>

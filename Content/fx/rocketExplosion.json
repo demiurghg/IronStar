@@ -14,9 +14,9 @@
     "Period": 0.5,
     "Intensity": 500.0,
     "Color": "255, 113, 26, 255",
-    "InnerRadius": 0.0,
+    "InnerRadius": 1.0,
     "OuterRadius": 5.0,
-    "PulseString": "zlkjhgfedcbaaaaaa",
+    "PulseString": "zlkjhgfedcba",
     "LightStyle": "const",
     "OffsetDirection": "localForward",
     "OffsetFactor": 1.0
@@ -31,12 +31,12 @@
     "Sprite": "fire",
     "UseRandomImages": true,
     "Effect": "soft",
-    "Count": 50,
+    "Count": 30,
     "Period": 1.0,
     "Timing": {
       "$type": "IronStar.SFX.FXTiming, IronStar",
-      "Delay": 0.1,
-      "Bunch": 0.0,
+      "Delay": 0.0,
+      "Bunch": 0.1,
       "FadeIn": 0.1,
       "FadeOut": 0.7
     },
@@ -50,13 +50,13 @@
     "Lifetime": {
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "gauss",
-      "MinLifetime": 0.1,
+      "MinLifetime": 0.2,
       "MaxLifetime": 0.3
     },
     "Shape": {
       "$type": "IronStar.SFX.FXShape, IronStar",
       "Size0": 0.2,
-      "Size1": 1.5,
+      "Size1": 2.0,
       "EnableRotation": true,
       "InitialAngle": 360.0,
       "MinAngularVelocity": 0.0,
@@ -79,13 +79,13 @@
       "LinearVelocityMin": 1.0,
       "LinearVelocityMax": 3.0,
       "RadialDistribution": "gauss",
-      "RadialVelocity": 40.0,
+      "RadialVelocity": 70.0,
       "Advection": 0.0
     },
     "Acceleration": {
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
       "GravityFactor": 0.0,
-      "Damping": 6.0,
+      "Damping": 5.0,
       "DragForce": 1.0,
       "Turbulence": 1.0
     }

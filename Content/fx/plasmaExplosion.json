@@ -10,18 +10,16 @@
   },
   "LightStage": {
     "$type": "IronStar.SFX.FXLightStage, IronStar",
-    "Enabled": false,
-    "Period": 1.0,
+    "Enabled": true,
+    "Period": 0.5,
+    "Intensity": 100.0,
+    "Color": "107, 136, 255, 255",
     "InnerRadius": 0.0,
     "OuterRadius": 5.0,
-    "PulseString": "m",
+    "PulseString": "mlkjhgfedcba",
     "LightStyle": "const",
-    "LightType": "omni",
-    "SpotAngleX": 60.0,
-    "SpotAngleY": 60.0,
-    "LightMask": "",
-    "OffsetDirection": "none",
-    "OffsetFactor": 0.0
+    "OffsetDirection": "localForward",
+    "OffsetFactor": 1.0
   },
   "DecalStage": {
     "$type": "IronStar.SFX.FXDecalStage, IronStar",

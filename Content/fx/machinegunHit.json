@@ -12,14 +12,14 @@
     "$type": "IronStar.SFX.FXLightStage, IronStar",
     "Enabled": true,
     "Period": 0.1,
-    "Intensity": 300.0,
+    "Intensity": 200.0,
     "Color": "255, 156, 73, 255",
     "InnerRadius": 0.0,
     "OuterRadius": 1.0,
-    "PulseString": "m",
-    "LightStyle": "saw",
+    "PulseString": "mlkjhgfedcba",
+    "LightStyle": "const",
     "OffsetDirection": "localForward",
-    "OffsetFactor": 0.25
+    "OffsetFactor": 0.5
   },
   "DecalStage": {
     "$type": "IronStar.SFX.FXDecalStage, IronStar",

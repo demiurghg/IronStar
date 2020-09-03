@@ -42,7 +42,7 @@
         "NodeGuid": "a6819d03-460b-4673-a744-5e7b3fa56c89",
         "TargetName": null,
         "Factory": {
-          "$type": "IronStar.Entities.StartPointFactory, IronStar",
+          "$type": "IronStar.StartPointFactory, IronStar",
           "StartPointType": "singlePlayer"
         },
         "FactoryName": "YTd2a4Rx",

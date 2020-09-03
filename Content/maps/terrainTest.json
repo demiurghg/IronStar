@@ -78,7 +78,7 @@
         "NodeGuid": "5cccb6e4-ba6f-42c2-9f7a-075d454a64af",
         "TargetName": null,
         "Factory": {
-          "$type": "IronStar.Entities.StartPointFactory, IronStar",
+          "$type": "IronStar.StartPointFactory, IronStar",
           "StartPointType": "singlePlayer"
         },
         "FactoryName": "dyVIADoL",
@@ -125,29 +125,6 @@
         "TranslateX": -344.0,
         "TranslateY": 0.0,
         "TranslateZ": -332.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
-      },
-      {
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "e50839fa-8332-458f-810b-80330963b401",
-        "TargetName": null,
-        "Factory": {
-          "$type": "IronStar.Entities.FuncFXFactory, IronStar",
-          "FX": "fireCrashSite",
-          "FXMode": "persistent",
-          "Once": false,
-          "Start": true,
-          "MinInterval": 1,
-          "MaxInterval": 1
-        },
-        "FactoryName": "UTw3bFtd",
-        "Visible": true,
-        "Frozen": false,
-        "TranslateX": 0.0,
-        "TranslateY": 16.0,
-        "TranslateZ": -536.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0

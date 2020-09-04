@@ -9,6 +9,7 @@ using Fusion.Core.Mathematics;
 using System.Reflection;
 using Fusion;
 using System.Runtime.Remoting;
+using Fusion.Core.Content;
 
 namespace IronStar.ECS
 {
@@ -18,6 +19,7 @@ namespace IronStar.ECS
 		public const int MaxComponentTypes  =   BitSet.MaxBits;
 
 		public readonly Game Game;
+		public readonly ContentManager Content;
 
 		readonly EntityCollection       entities;
 		readonly SystemCollection       systems;
@@ -40,11 +42,12 @@ namespace IronStar.ECS
 		/// Game state constructor
 		/// </summary>
 		/// <param name="game"></param>
-		public GameState( Game game )
+		public GameState( Game game, ContentManager content )
 		{
 			ECSTypeManager.Scan();
 
-			this.Game   =   game;
+			this.Game		=	game;
+			this.Content	=	content;
 
 			entities	=	new EntityCollection();
 			systems		=	new SystemCollection(this);

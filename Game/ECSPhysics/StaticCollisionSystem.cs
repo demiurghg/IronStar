@@ -34,7 +34,7 @@ namespace IronStar.ECSPhysics
 
 		protected override CollisionModel Create( Entity e, StaticCollisionComponent sc, RenderModel rm, Transform t )
 		{
-			var content		=	e.gs.GetService<ContentManager>();
+			var content		=	e.gs.Content;
 			
 			var scene		=	string.IsNullOrWhiteSpace(rm.scenePath) ? Scene.Empty : content.Load( rm.scenePath, Scene.Empty );
 			var transform	=	t.TransformMatrix;

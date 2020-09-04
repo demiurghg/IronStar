@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\NavigationSystem.cs" />
     <Compile Include="Animation\AnimationComposer.cs" />
     <Compile Include="Animation\Layers\FixedPose.cs" />
     <Compile Include="Animation\Layers\BaseLayer.cs" />

@@ -19,6 +19,7 @@ using IronStar.Gameplay.Systems;
 using Fusion.Engine.Graphics.Lights;
 using Fusion.Core.Content;
 using System.IO;
+using IronStar.AI;
 
 namespace IronStar {
 	partial class IronStar : Game
@@ -27,7 +28,7 @@ namespace IronStar {
 		{
 			var isEditor	=	mapContent!=null;
 			var map			=	mapContent ?? content.Load<Mapping.Map>(@"maps\" + mapName);
-			var gs			=	new GameState(game);
+			var gs			=	new GameState(game, content);
 
 			var rw	=	game.RenderSystem.RenderWorld;
 			rw.VirtualTexture		=	content.Load<VirtualTexture>("*megatexture");
@@ -55,6 +56,9 @@ namespace IronStar {
 			gs.AddSystem( new PickupSystem() );
 			gs.AddSystem( new WeaponSystem(physicsCore) );
 			gs.AddSystem( new ProjectileSystem(physicsCore) );
+
+			//	AI :
+			gs.AddSystem( new NavigationSystem() );
 
 			//	animation systems :
 			gs.AddSystem( new StepSystem() );

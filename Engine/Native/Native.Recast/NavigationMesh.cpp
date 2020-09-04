@@ -5,7 +5,7 @@ using namespace Fusion;
 using namespace Fusion::Core::Mathematics;
 
 
-Native::NRecast::NavigationMesh::NavigationMesh( BuildConfig ^config, array<Vector3>^ vertices, array<int>^ indices )
+Native::NRecast::NavigationMesh::NavigationMesh( BuildConfig ^config, array<Vector3>^ vertices, array<int>^ indices, array<bool>^ walkables )
 {
 	m_ctx			=	0;
 	m_triareas		=	0;
@@ -114,6 +114,12 @@ Native::NRecast::NavigationMesh::NavigationMesh( BuildConfig ^config, array<Vect
 	// the are type for each of the meshes and rasterize them.
 	memset(m_triareas, 0, ntris * sizeof(unsigned char));
 	rcMarkWalkableTriangles(m_ctx, m_cfg->walkableSlopeAngle, verts, nverts, tris, ntris, m_triareas);
+
+	for (int i=0; i<ntris; i++)
+	{
+		m_triareas[i] = walkables[i] ? m_triareas[i] : (unsigned char)0;
+	}
+
 	if (!rcRasterizeTriangles(m_ctx, verts, nverts, tris, m_triareas, ntris, *m_solid, m_cfg->walkableClimb))
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not rasterize triangles.");

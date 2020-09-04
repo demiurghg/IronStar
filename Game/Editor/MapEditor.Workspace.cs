@@ -94,7 +94,7 @@ namespace IronStar.Editor {
 			lowerShelf.AddLButton("USE\n[U]"	 ,	@"editor\iconUse"	,	() => UseSelected() );
 
 			lowerShelf.AddLSplitter();				 
-			lowerShelf.AddFatLButton("Build\nNavMesh"	 ,	null,	() => this.Map.BuildNavMesh(Content) );
+			//lowerShelf.AddFatLButton("Build\nNavMesh"	 ,	null,	() => this.Map.BuildNavMesh(Content) );
 
 			lowerShelf.AddLSplitter();				 
 			lowerShelf.AddFatLButton("Bake\nLightmap"		,	null,	BakeLightMap	 );

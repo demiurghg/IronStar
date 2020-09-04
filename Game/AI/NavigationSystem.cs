@@ -45,7 +45,7 @@ namespace IronStar.AI
 		{
 			if (navMesh==null)
 			{
-				//navMesh	=	BuildNavmesh(gs);
+				navMesh	=	BuildNavmesh(gs);
 			}
 
 			DrawNavMesh( navMesh, gs.GetService<RenderSystem>().RenderWorld.Debug );
@@ -112,12 +112,13 @@ namespace IronStar.AI
 		{
 			Vector3[] verts;
 			int[] inds;
+			bool[] walks;
 
-			GetStaticGeometry( gs, out verts, out inds );
+			GetStaticGeometry( gs, out verts, out inds, out walks );
 
 			Log.Message("Building navigation mesh...");
 
-			GetStaticGeometry( gs, out verts, out inds );
+			GetStaticGeometry( gs, out verts, out inds, out walks );
 
 			var config = new BuildConfig();
 
@@ -140,22 +141,24 @@ namespace IronStar.AI
 			config.CellHeight		=	1.00f;
 			config.CellSize			=	1.00f;
 			//config.BBox				=	BoundingBox.FromPoints( verts );
-			config.BBox			=	new BoundingBox( Vector3.One * (-400), Vector3.One*400 );
+			config.BBox			=	new BoundingBox( Vector3.One * (-200), Vector3.One*200 );
 			config.MaxVertsPerPoly	=	6;
 
-			return new NavigationMesh( config, verts, inds );
+			return new NavigationMesh( config, verts, inds, walks );
 		}
 
 
-		public void GetStaticGeometry ( GameState gs, out Vector3[] verts, out int[] inds )
+		public void GetStaticGeometry ( GameState gs, out Vector3[] verts, out int[] inds, out bool[] walks )
 		{
 			var indices		=	new List<int>();
 			var vertices	=	new List<Vector3>();
+			var walkables	=	new List<bool>();
 
 			foreach ( var entity in gs.QueryEntities(navGeometryAspect) )
 			{
-				var transform	=	entity.GetComponent<Transform>();
-				var model		=	entity.GetComponent<RenderModel>();
+				var transform		=	entity.GetComponent<Transform>();
+				var model			=	entity.GetComponent<RenderModel>();
+				var staticCollision	=	entity.GetComponent<StaticCollisionComponent>();
 
 				if (!string.IsNullOrWhiteSpace( model.scenePath )) 
 				{
@@ -176,13 +179,16 @@ namespace IronStar.AI
 
 							indices.AddRange( mesh.GetIndices( vertices.Count ) );
 							vertices.AddRange( mesh.Vertices.Select( v1 => Vector3.TransformCoordinate( v1.Position, worldMatrix ) ) );
+
+							walkables.AddRange( Enumerable.Range( 0, mesh.TriangleCount ).Select( tri => staticCollision.Walkable ) );
 						}
 					}
 				}
 			}
 
-			verts = vertices.ToArray();
-			inds  = indices.ToArray();
+			verts	=	vertices.ToArray();
+			inds	=	indices.ToArray();
+			walks	=	walkables.ToArray();
 		}
 	}
 }

@@ -32,6 +32,8 @@ namespace IronStar.ECSPhysics
 {
 	public class StaticCollisionComponent : Component
 	{
+		public bool Walkable { get; set; } =  true;
+
 		public override void Added( GameState gs, Entity entity ) {}
 		public override void Removed( GameState gs ) {}
 

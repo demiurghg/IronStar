@@ -185,7 +185,6 @@
     <Compile Include="UI\Controls\Dialogs\RunEditorBox.cs" />
     <Compile Include="Editor\Controls\AssetExplorer2.cs" />
     <Compile Include="Editor\Controls\Workspace.cs" />
-    <Compile Include="Mapping\Map.Recast2.cs" />
     <Compile Include="SinglePlayer\Mission.Debriefing.cs" />
     <Compile Include="SinglePlayer\Mission.Loading.cs" />
     <Compile Include="SinglePlayer\Mission.Briefing.cs" />

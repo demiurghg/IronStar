@@ -26,7 +26,7 @@ namespace Native {
 			bool m_keepInterResults;
 
 		public:
-			NavigationMesh(BuildConfig ^config, array<Vector3>^ vertices, array<int>^ indices);
+			NavigationMesh(BuildConfig ^config, array<Vector3>^ vertices, array<int>^ indices, array<bool>^ walkables);
 
 			~NavigationMesh();
 

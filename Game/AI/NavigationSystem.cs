@@ -13,16 +13,41 @@ using IronStar.ECS;
 using IronStar.ECSPhysics;
 using IronStar.SFX2;
 using Native.NRecast;
+using System.ComponentModel;
 
 namespace IronStar.AI
 {
 	class NavigationSystem : ISystem
 	{
-		NavigationMesh navMesh = null;
+		bool				navMeshDirty	=	true;
+		NavigationMesh		navMesh			=	null;
+		BackgroundWorker	worker;
 
 		readonly Aspect	navGeometryAspect	=	new Aspect().Include<Transform,StaticCollisionComponent,RenderModel>();
 
-		
+
+		public NavigationSystem()
+		{
+			worker	=	new BackgroundWorker();
+			worker.DoWork   +=	Worker_DoWork;
+			worker.RunWorkerCompleted   +=Worker_RunWorkerCompleted;
+		}
+
+		private void Worker_RunWorkerCompleted( object sender, RunWorkerCompletedEventArgs e )
+		{
+			navMesh = (NavigationMesh)e.Result;
+		}
+
+		private void Worker_DoWork( object sender, DoWorkEventArgs e )
+		{
+			var buildData = (BuildData)e.Argument;
+			e.Result = BuildNavmesh( buildData );
+		}
+
+		/*-----------------------------------------------------------------------------------------
+		 *	System stuff
+		-----------------------------------------------------------------------------------------*/
+
 		public Aspect GetAspect()
 		{
 			return navGeometryAspect;
@@ -31,21 +56,22 @@ namespace IronStar.AI
 		
 		public void Add( GameState gs, Entity e )
 		{
-			navMesh = null;
+			navMeshDirty = true;
 		}
 
 		
 		public void Remove( GameState gs, Entity e )
 		{
-			navMesh = null;
+			navMeshDirty = true;
 		}
 
 		
 		public void Update( GameState gs, GameTime gameTime )
 		{
-			if (navMesh==null)
+			if (navMeshDirty && !worker.IsBusy)
 			{
-				navMesh	=	BuildNavmesh(gs);
+				worker.RunWorkerAsync( GetStaticGeometry(gs) );
+				navMeshDirty = false;
 			}
 
 			DrawNavMesh( navMesh, gs.GetService<RenderSystem>().RenderWorld.Debug );
@@ -108,17 +134,21 @@ namespace IronStar.AI
 		 *	Navmesh generation
 		-----------------------------------------------------------------------------------------*/
 
-		NavigationMesh BuildNavmesh( GameState gs )
+		class BuildData
+		{
+			public GameState gs;
+			public Vector3[] verts;
+			public int[] inds;
+			public bool[] walks;
+		}
+
+		NavigationMesh BuildNavmesh( BuildData bd )
 		{
 			Vector3[] verts;
 			int[] inds;
 			bool[] walks;
 
-			GetStaticGeometry( gs, out verts, out inds, out walks );
-
 			Log.Message("Building navigation mesh...");
-
-			GetStaticGeometry( gs, out verts, out inds, out walks );
 
 			var config = new BuildConfig();
 
@@ -141,14 +171,14 @@ namespace IronStar.AI
 			config.CellHeight		=	1.00f;
 			config.CellSize			=	1.00f;
 			//config.BBox				=	BoundingBox.FromPoints( verts );
-			config.BBox			=	new BoundingBox( Vector3.One * (-200), Vector3.One*200 );
+			config.BBox			=	new BoundingBox( Vector3.One * (-600), Vector3.One*600 );
 			config.MaxVertsPerPoly	=	6;
 
-			return new NavigationMesh( config, verts, inds, walks );
+			return new NavigationMesh( config, bd.verts, bd.inds, bd.walks );
 		}
 
 
-		public void GetStaticGeometry ( GameState gs, out Vector3[] verts, out int[] inds, out bool[] walks )
+		BuildData GetStaticGeometry ( GameState gs )
 		{
 			var indices		=	new List<int>();
 			var vertices	=	new List<Vector3>();
@@ -186,9 +216,13 @@ namespace IronStar.AI
 				}
 			}
 
-			verts	=	vertices.ToArray();
-			inds	=	indices.ToArray();
-			walks	=	walkables.ToArray();
+			var bd		=	new BuildData();
+			bd.gs		=	gs;
+			bd.verts	=	vertices.ToArray();
+			bd.inds		=	indices.ToArray();
+			bd.walks	=	walkables.ToArray();
+
+			return bd;
 		}
 	}
 }

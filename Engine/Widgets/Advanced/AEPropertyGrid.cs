@@ -202,16 +202,18 @@ namespace Fusion.Widgets.Advanced {
 							(val)=>AtlasSelector.ShowDialog( Frames, an, "", (fnm)=>setFunc(fnm) )
 						);
 					
-					} else if (pi.HasAttribute<AEClassnameAttribute>()) {
-
-						var dir		=	pi.GetAttribute<AEClassnameAttribute>().Directory;
-						var type	=	pi.PropertyType;
-						var value	=	pi.GetValue(obj).ToString();
-						var values	=	Game.Content.EnumerateAssets(dir).ToArray();
+					} 
+					else if (pi.HasAttribute<AEValueProviderAttribute>()) 
+					{
+						var provider	=	pi.GetAttribute<AEValueProviderAttribute>();
+						var type		=	pi.PropertyType;
+						var value		=	pi.GetValue(obj).ToString();
+						var values		=	provider.GetValues(Frames.Game);
 
 						AddDropDown( category, name, value, values, ()=>pi.GetValue(obj).ToString(), (val)=>setFunc(val) );
-
-					} else {
+					} 
+					else 
+					{
 						AddTextBox( category, name, ()=>(string)(pi.GetValue(obj)), (val)=>setFunc(val), null );
 					}
 				}

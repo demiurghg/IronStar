@@ -99,8 +99,8 @@
         "Visible": true,
         "Frozen": false,
         "TranslateX": -358.892273,
-        "TranslateY": -28.0053711,
-        "TranslateZ": -85.022934,
+        "TranslateY": -4.72931671,
+        "TranslateZ": -78.80559,
         "RotateYaw": -136.805374,
         "RotatePitch": -35.0474472,
         "RotateRoll": 31.692688
@@ -207,8 +207,8 @@
         "Visible": true,
         "Frozen": false,
         "TranslateX": -359.483582,
-        "TranslateY": -28.6578159,
-        "TranslateZ": -88.0162048,
+        "TranslateY": -5.38176155,
+        "TranslateZ": -81.79886,
         "RotateYaw": 9.892909,
         "RotatePitch": -14.923913,
         "RotateRoll": 52.476387
@@ -1158,8 +1158,8 @@
         "Visible": true,
         "Frozen": false,
         "TranslateX": -353.0,
-        "TranslateY": -32.0,
-        "TranslateZ": -60.0,
+        "TranslateY": -8.723946,
+        "TranslateZ": -53.7826538,
         "RotateYaw": -330.0,
         "RotatePitch": 0.0,
         "RotateRoll": -180.0
@@ -3341,7 +3341,7 @@
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
         "NodeGuid": "5d379fc0-6bb5-42fb-911b-b5044c427d9d",
         "Width": 128.0,
-        "Height": 128.0,
+        "Height": 256.0,
         "Depth": 128.0,
         "ShellWidth": 2.0,
         "ShellHeight": 2.0,
@@ -3349,8 +3349,8 @@
         "Visible": true,
         "Frozen": false,
         "TranslateX": 125.716919,
-        "TranslateY": 78.12073,
-        "TranslateZ": -292.6571,
+        "TranslateY": 85.85284,
+        "TranslateZ": -286.439758,
         "RotateYaw": 42.67402,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
@@ -3943,17 +3943,17 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
+          "Classname": "MONSTER_MARINE"
         },
         "FactoryName": "1l3WFU3X",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -359.2499,
-        "TranslateY": 7.572995,
-        "TranslateZ": -94.98513,
-        "RotateYaw": -86.78131,
-        "RotatePitch": -9.419101,
-        "RotateRoll": -1.19997144
+        "TranslateX": -295.1914,
+        "TranslateY": 7.863717,
+        "TranslateZ": -94.0425339,
+        "RotateYaw": -120.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
       },
       {
         "$type": "IronStar.Mapping.MapDecal, IronStar",
@@ -4029,6 +4029,42 @@
         "RotateYaw": 60.0,
         "RotatePitch": -90.0,
         "RotateRoll": 180.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
+        "NodeGuid": "951f9177-b983-473a-997b-cbdb6f5b8df2",
+        "Width": 128.0,
+        "Height": 256.0,
+        "Depth": 128.0,
+        "ShellWidth": 2.0,
+        "ShellHeight": 2.0,
+        "ShellDepth": 2.0,
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 46.04347,
+        "TranslateY": 85.85284,
+        "TranslateZ": -205.465149,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
+        "NodeGuid": "a839ba42-19ba-43f2-b149-bf05f82131da",
+        "Width": 128.0,
+        "Height": 256.0,
+        "Depth": 128.0,
+        "ShellWidth": 2.0,
+        "ShellHeight": 2.0,
+        "ShellDepth": 2.0,
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 46.04347,
+        "TranslateY": 85.85284,
+        "TranslateZ": -85.069725,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
       }
     ]
   },

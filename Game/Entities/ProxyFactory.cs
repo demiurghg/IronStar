@@ -5,16 +5,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fusion;
+using Fusion.Core;
 using Fusion.Core.Content;
+using Fusion.Core.Extensions;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Shell;
 using Fusion.Engine.Graphics;
+using IronStar.ECS;
 
-namespace IronStar {
-	public class ProxyFactory : EntityFactoryContent {
+namespace IronStar 
+{
+	class EntityFactoryListProviderAttribute : AEValueProviderAttribute
+	{
+		public override string[] GetValues( Game game )
+		{
+			return Misc
+				.GetAllClassesWithAttribute<EntityFactoryAttribute>()
+				.Select( classType => classType.GetCustomAttribute<EntityFactoryAttribute>().ClassName )
+				.OrderBy( className => className )
+				.ToArray();
+		}
+	}
 
-		
-		[AEClassname("entities")]
+
+	public class ProxyFactory : EntityFactoryContent 
+	{
+		[EntityFactoryListProvider]
 		public string Classname { 
 			get { return classname; }
 			set {

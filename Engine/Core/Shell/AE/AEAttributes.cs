@@ -79,12 +79,6 @@ namespace Fusion.Core.Shell {
 	}
 
 
-	public abstract class AEValueProviderAttribute : Attribute {
-		public abstract string[] GetValues ();
-	}
-
-
-
 	public enum AEFileNameMode {
 		NoExtension = 0x0001,
 		FileNameOnly = 0x0002,

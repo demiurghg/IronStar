@@ -23,6 +23,7 @@ using IronStar.Editor.Manipulators;
 using Fusion.Engine.Frames;
 using Fusion.Core.Input;
 using Fusion.Widgets;
+using IronStar.AI;
 
 namespace IronStar.Editor {
 
@@ -37,6 +38,7 @@ namespace IronStar.Editor {
 		void SetupWorkspace ()
 		{
 			var rs = Game.RenderSystem;
+			var ai = Game.GetService<AICore>();
 			//ColorTheme.Font	=	Content.Load<SpriteFont>(@"fonts\editorRoboto");
 			//ColorTheme.Font	=	Content.Load<SpriteFont>(@"fonts\editorArmata");
 
@@ -176,6 +178,7 @@ namespace IronStar.Editor {
 			workspace.AddHotkey( Keys.Enter		, ModKeys.None, () => ActivateSelected() );
 			workspace.AddHotkey( Keys.U			, ModKeys.None, () => UseSelected() );
 			workspace.AddHotkey( Keys.D			, ModKeys.Ctrl, () => DuplicateSelection() );
+			workspace.AddHotkey( Keys.N			, ModKeys.None, () => ai.ShowNavigationMesh = !ai.ShowNavigationMesh );
 
 
 			workspace.AddHotkey( Keys.J			, ModKeys.Ctrl, () => RotateToolSnapEnable = !RotateToolSnapEnable );

@@ -23,6 +23,7 @@ using Fusion.Core.Input;
 using Fusion.Widgets;
 using IronStar.SinglePlayer;
 using IronStar.Gameplay;
+using IronStar.AI;
 
 namespace IronStar {
 	partial class IronStar : Game
@@ -44,6 +45,7 @@ namespace IronStar {
 			this.Services.AddService( builder );
 
 			this.AddServiceAndComponent( 100, new RenderSystem(this, true) );
+			this.AddServiceAndComponent( 150, new AICore(this) );
 			this.AddServiceAndComponent( 200, new SoundSystem(this) );
 			this.AddServiceAndComponent( 300, new GameConsole( this ) );
 			this.AddServiceAndComponent( 350, new FrameProcessor(this) );

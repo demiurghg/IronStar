@@ -65,6 +65,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\AICore.cs" />
+    <Compile Include="AI\BehaviorTree\Context.cs" />
+    <Compile Include="AI\BehaviorTree\Executor.cs" />
+    <Compile Include="AI\BehaviorTree\Task.cs" />
+    <Compile Include="AI\BehaviorTree\Selector.cs" />
+    <Compile Include="AI\BehaviorTree\Sequence.cs" />
+    <Compile Include="AI\BehaviorTree\Root.cs" />
+    <Compile Include="AI\BehaviorTree\NodeCollection.cs" />
+    <Compile Include="AI\BehaviorTree\INode.cs" />
+    <Compile Include="AI\BehaviorTree\TaskStatus.cs" />
     <Compile Include="AI\NavigationSystem.cs" />
     <Compile Include="Animation\AnimationComposer.cs" />
     <Compile Include="Animation\Layers\FixedPose.cs" />
@@ -76,6 +86,7 @@
     <Compile Include="Animation\ITransformProvider.cs" />
     <Compile Include="ECSFactories\PowerupFactory.cs" />
     <Compile Include="ECSFactories\ProjectileFactory.cs" />
+    <Compile Include="ECSFactories\MonsterFactory.cs" />
     <Compile Include="ECSFactories\WeaponFactory.cs" />
     <Compile Include="ECSFactories\BoxFactory.cs" />
     <Compile Include="ECSFactories\AmmoFactory.cs" />

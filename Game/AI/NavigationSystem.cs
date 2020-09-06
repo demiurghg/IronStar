@@ -14,6 +14,7 @@ using IronStar.ECSPhysics;
 using IronStar.SFX2;
 using Native.NRecast;
 using System.ComponentModel;
+using Fusion.Core.Extensions;
 
 namespace IronStar.AI
 {
@@ -74,16 +75,16 @@ namespace IronStar.AI
 				navMeshDirty = false;
 			}
 
-			DrawNavMesh( navMesh, gs.GetService<RenderSystem>().RenderWorld.Debug );
+			DrawNavMesh( gs, navMesh, gs.GetService<RenderSystem>().RenderWorld.Debug );
 		}
 
 		/*-----------------------------------------------------------------------------------------
 		 *	Navmesh rendering
 		-----------------------------------------------------------------------------------------*/
 
-		public void DrawNavMesh( NavigationMesh mesh, DebugRender dr )
+		public void DrawNavMesh( GameState gs, NavigationMesh mesh, DebugRender dr )
 		{
-			if (mesh!=null) 
+			if (mesh!=null && gs.Game.GetService<AICore>().ShowNavigationMesh) 
 			{
 				var polyInds = new int[6];
 				var polyAdjs = new int[6];
@@ -113,7 +114,7 @@ namespace IronStar.AI
 
 						if (polyAdjs[edgeInd]>=0) 
 						{
-							lineWidth = 2;
+							lineWidth = 4;
 						}
 
 						dr.DrawLine( v0, v1, lineColor, lineColor, lineWidth, lineWidth );
@@ -154,9 +155,9 @@ namespace IronStar.AI
 
 			config.TileSize					=	0;
 			config.BorderSize				=	0;
-			config.CellSize					=	1.00f;
-			config.CellHeight				=	1.00f;
-			config.WalkableSlopeAngle		=	45.0f;
+			config.CellSize					=	2.00f;
+			config.CellHeight				=	2.00f;
+			config.WalkableSlopeAngle		=	30.0f;
 			config.WalkableHeight			=	6.0f;
 			config.WalkableClimb			=	1.0f;
 			config.WalkableRadius			=	1.0f;

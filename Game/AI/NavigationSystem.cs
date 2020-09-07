@@ -145,10 +145,6 @@ namespace IronStar.AI
 
 		NavigationMesh BuildNavmesh( BuildData bd )
 		{
-			Vector3[] verts;
-			int[] inds;
-			bool[] walks;
-
 			Log.Message("Building navigation mesh...");
 
 			var config = new BuildConfig();

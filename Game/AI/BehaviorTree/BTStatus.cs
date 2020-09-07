@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace IronStar.AI.BehaviorTree
 {
-	public class Context
+	public enum BTStatus
 	{
+		Undefined,
+		Success,
+		InProgress,
+		Failure,
 	}
 }

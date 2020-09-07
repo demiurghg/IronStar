@@ -3,26 +3,50 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Fusion;
+using Fusion.Core;
+using IronStar.ECS;
 
 namespace IronStar.AI.BehaviorTree
 {
-	public class Selector : INode
+	public sealed class Selector : NodeComposite
 	{
-		public readonly NodeCollection Nodes = new NodeCollection();
+		IEnumerator<BTNode> current;
 
-		public TaskStatus Execute(Context context)
+		public override void Initialize()
 		{
-			foreach ( var node in Nodes )
-			{
-				var status = node.Execute(context);
+			current = children.GetEnumerator();
+		}
 
-				if (status==TaskStatus.InProgress || status==TaskStatus.Success)
+
+		public override BTStatus Update(GameTime gameTime, Entity entity)
+		{
+			//	empty selector means that
+			//	all nodes are in failed state.
+			if (!children.Any()) 
+			{
+				Log.Warning("Selector: Empty selector -- force failure");
+				return BTStatus.Failure;
+			}
+
+			while (true)
+			{
+				var status = current.Current.Tick(gameTime, entity);
+
+				if (status!=BTStatus.Failure) 
 				{
 					return status;
 				}
+				else
+				{
+					if (!current.MoveNext())
+					{
+						return BTStatus.Failure;
+					}
+				}
 			}
 
-			return TaskStatus.Failure;
+			throw new InvalidOperationException("Selector: Unexpected loop exit");
 		}
 	}
 }

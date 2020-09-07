@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace IronStar.AI.BehaviorTree
 {
-	public class NodeCollection : List<INode>
+	public class NodeCollection : List<BTNode>
 	{
 	}
 }

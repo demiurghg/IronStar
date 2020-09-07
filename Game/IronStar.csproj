@@ -66,15 +66,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\AICore.cs" />
-    <Compile Include="AI\BehaviorTree\Context.cs" />
-    <Compile Include="AI\BehaviorTree\Executor.cs" />
-    <Compile Include="AI\BehaviorTree\Task.cs" />
+    <Compile Include="AI\BehaviorNodes\Print.cs" />
+    <Compile Include="AI\BehaviorNodes\Wait.cs" />
+    <Compile Include="AI\BehaviorTree\BTBuilder.cs" />
+    <Compile Include="AI\BehaviorTree\BTComponent.cs" />
+    <Compile Include="AI\BehaviorTree\BTAction.cs" />
+    <Compile Include="AI\BehaviorTree\Condition.cs" />
+    <Compile Include="AI\BehaviorTree\Decorator.cs" />
+    <Compile Include="AI\BehaviorNodes\Inverter.cs" />
+    <Compile Include="AI\BehaviorTree\NodeComposite.cs" />
     <Compile Include="AI\BehaviorTree\Selector.cs" />
     <Compile Include="AI\BehaviorTree\Sequence.cs" />
-    <Compile Include="AI\BehaviorTree\Root.cs" />
     <Compile Include="AI\BehaviorTree\NodeCollection.cs" />
-    <Compile Include="AI\BehaviorTree\INode.cs" />
-    <Compile Include="AI\BehaviorTree\TaskStatus.cs" />
+    <Compile Include="AI\BehaviorTree\BTNode.cs" />
+    <Compile Include="AI\BehaviorTree\BTStatus.cs" />
+    <Compile Include="AI\BehaviorSystem.cs" />
     <Compile Include="AI\NavigationSystem.cs" />
     <Compile Include="Animation\AnimationComposer.cs" />
     <Compile Include="Animation\Layers\FixedPose.cs" />

@@ -16,6 +16,7 @@ namespace IronStar.AI.BehaviorTree
 		public override void Initialize()
 		{
 			current = children.GetEnumerator();
+			current.MoveNext(); // point enumerator on the first element
 		}
 
 
@@ -29,7 +30,7 @@ namespace IronStar.AI.BehaviorTree
 				return BTStatus.Success;
 			}
 
-			while (current.MoveNext())
+			while (true)
 			{
 				var status = current.Current.Tick(gameTime, entity);
 
@@ -37,9 +38,14 @@ namespace IronStar.AI.BehaviorTree
 				{
 					return status;
 				}
+
+				if (!current.MoveNext())
+				{
+					return BTStatus.Success;
+				}
 			}
 
-			return BTStatus.Success;
+			throw new InvalidOperationException("Sequence -- Unexpected loop exit");
 		}
 	}
 }

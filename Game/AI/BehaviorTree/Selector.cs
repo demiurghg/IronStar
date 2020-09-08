@@ -16,6 +16,7 @@ namespace IronStar.AI.BehaviorTree
 		public override void Initialize()
 		{
 			current = children.GetEnumerator();
+			current.MoveNext(); // point enumerator on the first element
 		}
 
 
@@ -37,9 +38,14 @@ namespace IronStar.AI.BehaviorTree
 				{
 					return status;
 				}
+
+				if (!current.MoveNext())
+				{
+					return BTStatus.Failure;
+				}
 			}
 
-			return BTStatus.Failure;
+			throw new InvalidOperationException("Selector -- Unexpected loop exit");
 		}
 	}
 }

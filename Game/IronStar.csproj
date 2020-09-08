@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\AICore.cs" />
+    <Compile Include="AI\BehaviorNodes\Repeat.cs" />
     <Compile Include="AI\BehaviorNodes\Print.cs" />
     <Compile Include="AI\BehaviorNodes\Wait.cs" />
     <Compile Include="AI\BehaviorTree\BTBuilder.cs" />

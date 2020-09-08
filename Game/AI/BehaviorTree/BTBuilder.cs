@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IronStar.AI.BehaviorNodes;
 using IronStar.ECS;
 
 namespace IronStar.AI.BehaviorTree
@@ -14,12 +15,30 @@ namespace IronStar.AI.BehaviorTree
 		private readonly Stack<BTNode> parentStack = new Stack<BTNode>();
 
 
-		public BTBuilder Action( BTAction actionNode )
+		private BTBuilder Do( BTNode node )
 		{
 			if (parentStack.Count <= 0) throw new InvalidOperationException("Can not create an unnested ActionNode, it must be leaf node.");
 
-			parentStack.Peek().Attach(actionNode);
+			parentStack.Peek().Attach(node);
 			return this;
+		}
+
+
+		public BTBuilder Action( BTAction actionNode )
+		{
+			return Do( actionNode );
+		}
+
+
+		public BTBuilder Decorator( Decorator decoratorNode )
+		{
+			return Do( decoratorNode );
+		}
+
+
+		public BTBuilder Repeat( int count, BTNode node )
+		{
+			return Do( new Repeat( node, count ) );
 		}
 
 
@@ -81,14 +100,14 @@ namespace IronStar.AI.BehaviorTree
 		}
 
 
-		public BTNode Build()
+		public static implicit operator BTNode(BTBuilder builder)
 		{
-			if (currentNode == null)
+			if (builder.currentNode == null)
 			{
 				throw new InvalidOperationException("Can not create behavior tree with no nodes");
 			}
 
-			return currentNode;
+			return builder.currentNode;
 		}
 	}
 }

@@ -29,20 +29,15 @@ namespace IronStar.AI
 
 		protected override BTNode Create( Entity entity, BehaviorComponent component1 )
 		{
-			var btBuilder = new BTBuilder();
-
-			btBuilder
-				.Sequence()
-					.Action( new Print("Step1") )
-					.Action( new Wait(300) )
-					.Action( new Print("Step2") )
-					.Action( new Wait(100) )
-					.Action( new Print("Step3") )
-					.Action( new Wait(500) )
-				.End();
-
-
-			return btBuilder.Build();
+			return new BTBuilder()
+			.Sequence()
+				.Action( new Print("Step1") )
+				.Action( new Wait(500) )
+				.Action( new Print("Step2") )
+				.Action( new Wait(300) )
+				.Repeat( 3, new BTBuilder().Sequence().Action( new Wait(100) ).Action( new Print("...") ).End() )
+				.Action( new Wait(1000) )
+			.End();
 		}
 
 		protected override void Destroy( Entity entity, BehaviorTree.BTNode resource )

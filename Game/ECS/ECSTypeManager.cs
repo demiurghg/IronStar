@@ -49,14 +49,14 @@ namespace IronStar.ECS
 		public static long GetComponentBit( Type componentType )
 		{
 			int index = componentTypes.IndexOf( componentType );
-			return index < 0 ? 0 : (1 << index);
+			return index < 0L ? 0L : (1L << index);
 		}
 
 
 		public static long GetSystemBit( Type systemType )
 		{
 			int index = systemTypes.IndexOf( systemType );
-			return index < 0 ? 0 : (1 << index);
+			return index < 0L ? 0L : (1L << index);
 		}
 
 

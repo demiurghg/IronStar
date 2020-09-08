@@ -10,7 +10,7 @@ namespace IronStar.AI.BehaviorTree
 {
 	public abstract class NodeComposite : BTNode
 	{
-		protected NodeCollection children = null;
+		protected NodeCollection children = new NodeCollection();
 		
 		public override void Attach( BTNode node )
 		{

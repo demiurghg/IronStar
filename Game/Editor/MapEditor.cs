@@ -23,6 +23,7 @@ using IronStar.Editor.Manipulators;
 using Fusion.Engine.Frames;
 using IronStar.ECSPhysics;
 using IronStar.Editor.Systems;
+using IronStar.AI;
 
 namespace IronStar.Editor {
 
@@ -442,6 +443,7 @@ namespace IronStar.Editor {
 			{ 
 				enableSimulation = value;
 				gameState.GetService<PhysicsCore>().Enabled = enableSimulation;
+				gameState.GetService<BehaviorSystem>().Enabled = enableSimulation;
 			}
 		}
 		bool enableSimulation;

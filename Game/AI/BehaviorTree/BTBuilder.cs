@@ -32,7 +32,7 @@ namespace IronStar.AI.BehaviorTree
 		} 
 
 
-		public BTBuilder Sequence(string name)
+		public BTBuilder Sequence()
 		{
 			var sequenceNode = new Sequence();
 
@@ -46,7 +46,7 @@ namespace IronStar.AI.BehaviorTree
 		}
 
 
-		public BTBuilder Selector(string name)
+		public BTBuilder Selector()
 		{
 			var selectorNode = new Selector();
 

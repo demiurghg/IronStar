@@ -29,7 +29,7 @@ namespace IronStar.AI.BehaviorTree
 				return BTStatus.Success;
 			}
 
-			while (true)
+			while (current.MoveNext())
 			{
 				var status = current.Current.Tick(gameTime, entity);
 
@@ -37,16 +37,9 @@ namespace IronStar.AI.BehaviorTree
 				{
 					return status;
 				}
-				else
-				{
-					if (!current.MoveNext())
-					{
-						return BTStatus.Success;
-					}
-				}
 			}
 
-			throw new InvalidOperationException("Sequence: Unexpected loop exit");
+			return BTStatus.Success;
 		}
 	}
 }

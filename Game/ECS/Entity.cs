@@ -105,12 +105,36 @@ namespace IronStar.ECS
 				if ((bit & ComponentMapping) != 0)
 				{
 					var type = ECSTypeManager.GetComponentType( 1u << shl );
+					//var comp = gs.GetEntityComponent(this, type);
 					var name = type.Name.Replace("Component","");
 					sb.AppendFormat("[" + name + "]");
 				}
 			}
 
 			return sb.ToString();
+		}
+
+
+		public IComponent[] DebugComponentList
+		{
+			get 
+			{	
+				var list = new List<IComponent>();
+
+				for (int shl=0; shl<64; shl++) 
+				{
+					long bit = ((long)1) << shl;
+
+					if ((bit & ComponentMapping) != 0)
+					{
+						var type = ECSTypeManager.GetComponentType( 1u << shl );
+						var comp = gs.GetEntityComponent(this, type);
+						list.Add(comp);
+					}
+				}
+
+				return list.ToArray();
+			}
 		}
 	}
 }

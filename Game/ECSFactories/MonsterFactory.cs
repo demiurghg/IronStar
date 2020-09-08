@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
+using IronStar.AI;
 using IronStar.ECS;
 using IronStar.ECSPhysics;
 using IronStar.Gameplay;
@@ -26,6 +27,8 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new Transform() );
 			e.AddComponent( new Velocity() );
 			e.AddComponent( new StepComponent() );
+
+			e.AddComponent( new BehaviorComponent() );
 
 			e.AddComponent( new InventoryComponent() );
 

@@ -14,6 +14,7 @@ namespace IronStar.AI.BehaviorTree
 
 		public Decorator( BTNode node )
 		{
+			if (node==null) throw new ArgumentNullException(nameof(node));
 			Node	=	node;
 		}
 

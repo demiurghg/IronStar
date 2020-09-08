@@ -17,8 +17,6 @@ namespace IronStar.AI.BehaviorNodes
 
 		public override BTStatus Update( GameTime gameTime, Entity entity )
 		{
-			if (Node==null) return BTStatus.Failure;
-
 			var status = Node.Tick(gameTime, entity);
 
 			if (status==BTStatus.Success) return BTStatus.Failure;

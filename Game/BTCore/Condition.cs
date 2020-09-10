@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Fusion.Core;
 using IronStar.ECS;
 
-namespace IronStar.AI.BehaviorTree
+namespace IronStar.BTCore
 {
 	public abstract class Condition : BTAction
 	{

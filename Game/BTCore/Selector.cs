@@ -7,16 +7,17 @@ using Fusion;
 using Fusion.Core;
 using IronStar.ECS;
 
-namespace IronStar.AI.BehaviorTree
+namespace IronStar.BTCore
 {
 	public sealed class Selector : NodeComposite
 	{
 		IEnumerator<BTNode> current;
 
-		public override void Initialize()
+		public override bool Initialize(Entity entity)
 		{
 			current = children.GetEnumerator();
 			current.MoveNext(); // point enumerator on the first element
+			return true;
 		}
 
 

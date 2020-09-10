@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Fusion.Core;
 using IronStar.ECS;
 
-namespace IronStar.AI.BehaviorTree
+namespace IronStar.BTCore
 {
 	public abstract class BTNode
 	{
@@ -16,21 +16,24 @@ namespace IronStar.AI.BehaviorTree
 		{
 			if (status!=BTStatus.InProgress) 
 			{
-				Initialize();
+				if (!Initialize(entity))
+				{
+					return BTStatus.Failure;
+				}
 			}
 
 			status = Update( gameTime, entity );
 
 			if (status!=BTStatus.InProgress) 
 			{
-				Terminate(status);
+				Terminate(entity, status);
 			}
 
 			return status;
 		}
 
-		public virtual  void Initialize() {}
-		public virtual  void Terminate(BTStatus status) {}
+		public virtual  bool Initialize(Entity entity) { return true; }
+		public virtual  void Terminate(Entity entity, BTStatus status) {}
 		public abstract BTStatus Update(GameTime gameTime, Entity entity);
 		public abstract void Attach( BTNode node );
 		public virtual	void Cancel() {}

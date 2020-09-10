@@ -14,8 +14,10 @@ using IronStar.SFX2;
 using Native.NRecast;
 using System.ComponentModel;
 using Fusion.Core.Extensions;
-using IronStar.AI.BehaviorTree;
-using IronStar.AI.BehaviorNodes;
+using IronStar.BTCore;
+using IronStar.BTCore.Actions;
+using IronStar.BTCore.Decorators;
+using IronStar.AI.Actions;
 
 namespace IronStar.AI
 {
@@ -31,21 +33,20 @@ namespace IronStar.AI
 		{
 			return new BTBuilder()
 			.Sequence()
-				.Action( new Print("Step1") )
-				.Action( new Wait(500) )
-				.Action( new Print("Step2") )
-				.Action( new Wait(300) )
-				.Repeat( 3, new BTBuilder().Sequence().Action( new Wait(100) ).Action( new Print("...") ).End() )
-				.Action( new Wait(1000) )
+				.Action( new Print("Searching...") )
+				.Action( new Wait(1500, 2500) )
+				.Action( new ApproachPlayer() )
+				//.Repeat( 3, new BTBuilder().Sequence().Action( new Wait(100) ).Action( new Print("...") ).End() )
+				//.Action( new Wait(1000) )
 			.End();
 		}
 
-		protected override void Destroy( Entity entity, BehaviorTree.BTNode resource )
+		protected override void Destroy( Entity entity, BTNode resource )
 		{
 			//	do nothing.
 		}
 
-		protected override void Process( Entity entity, GameTime gameTime, BehaviorTree.BTNode behaviorTree, BehaviorComponent component1 )
+		protected override void Process( Entity entity, GameTime gameTime, BTNode behaviorTree, BehaviorComponent component1 )
 		{
 			if (Enabled)
 			{

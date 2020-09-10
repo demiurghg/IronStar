@@ -4,13 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IronStar.AI.BehaviorTree
+namespace IronStar.BTCore
 {
-	public enum BTStatus
+	public class NodeCollection : List<BTNode>
 	{
-		Undefined,
-		Success,
-		InProgress,
-		Failure,
 	}
 }

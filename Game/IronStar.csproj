@@ -65,22 +65,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AI\Actions\ApproachPlayer.cs" />
     <Compile Include="AI\AICore.cs" />
-    <Compile Include="AI\BehaviorNodes\Repeat.cs" />
-    <Compile Include="AI\BehaviorNodes\Print.cs" />
-    <Compile Include="AI\BehaviorNodes\Wait.cs" />
-    <Compile Include="AI\BehaviorTree\BTBuilder.cs" />
+    <Compile Include="AI\NavigationRouter.cs" />
+    <Compile Include="BTCore\Decorators\Repeat.cs" />
+    <Compile Include="BTCore\Actions\Print.cs" />
+    <Compile Include="BTCore\Actions\Wait.cs" />
+    <Compile Include="BTCore\BTBuilder.cs" />
     <Compile Include="AI\BehaviorComponent.cs" />
-    <Compile Include="AI\BehaviorTree\BTAction.cs" />
-    <Compile Include="AI\BehaviorTree\Condition.cs" />
-    <Compile Include="AI\BehaviorTree\Decorator.cs" />
-    <Compile Include="AI\BehaviorNodes\Inverter.cs" />
-    <Compile Include="AI\BehaviorTree\NodeComposite.cs" />
-    <Compile Include="AI\BehaviorTree\Selector.cs" />
-    <Compile Include="AI\BehaviorTree\Sequence.cs" />
-    <Compile Include="AI\BehaviorTree\NodeCollection.cs" />
-    <Compile Include="AI\BehaviorTree\BTNode.cs" />
-    <Compile Include="AI\BehaviorTree\BTStatus.cs" />
+    <Compile Include="BTCore\BTAction.cs" />
+    <Compile Include="BTCore\Condition.cs" />
+    <Compile Include="BTCore\Decorator.cs" />
+    <Compile Include="BTCore\Decorators\Inverter.cs" />
+    <Compile Include="BTCore\NodeComposite.cs" />
+    <Compile Include="BTCore\Selector.cs" />
+    <Compile Include="BTCore\Sequence.cs" />
+    <Compile Include="BTCore\NodeCollection.cs" />
+    <Compile Include="BTCore\BTNode.cs" />
+    <Compile Include="BTCore\BTStatus.cs" />
     <Compile Include="AI\BehaviorSystem.cs" />
     <Compile Include="AI\NavigationSystem.cs" />
     <Compile Include="Animation\AnimationComposer.cs" />
@@ -187,6 +189,7 @@
     <Compile Include="ECSPhysics\DynamicBox.cs" />
     <Compile Include="ECSPhysics\GravityComponent.cs" />
     <Compile Include="ECSPhysics\StaticCollisionComponent.cs" />
+    <Compile Include="Mathematics\Intersection.cs" />
     <Compile Include="SceneView.cs" />
     <Compile Include="ECSGraphics\LightProbeSphere.cs" />
     <Compile Include="ECSGraphics\LightProbeBox.cs" />

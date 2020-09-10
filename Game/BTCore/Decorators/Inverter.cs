@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core;
-using IronStar.AI.BehaviorTree;
+using IronStar.BTCore;
 using IronStar.ECS;
 
-namespace IronStar.AI.BehaviorNodes
+namespace IronStar.BTCore.Decorators
 {
 	public sealed class Inverter : Decorator
 	{

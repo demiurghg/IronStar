@@ -85,9 +85,15 @@ namespace IronStar.ECSPhysics
 			var traction	=	controller.SupportFinder.HasTraction;
 			var offset		=	crouching ? cc.offsetCrouch : cc.offsetStanding;
 			var position	=	MathConverter.Convert( controller.Body.Position ) - offset;
+			var uc			=	e.GetComponent<UserCommandComponent>();
 
 			cc.IsCrouching	=	crouching;
 			cc.HasTraction	=	traction;
+			
+			if (uc!=null)
+			{
+				t.Rotation	=	Quaternion.RotationYawPitchRoll( uc.Yaw, 0, 0 );
+			}
 			
 			t.Position	=	position;
 			v.Linear	=	MathConverter.Convert( controller.Body.LinearVelocity );

@@ -6,13 +6,15 @@ using System.Threading.Tasks;
 using Fusion.Core;
 using IronStar.ECS;
 
-namespace IronStar.AI.BehaviorTree
+namespace IronStar.BTCore
 {
-	public abstract class BTAction : BTNode
+	public abstract class NodeComposite : BTNode
 	{
+		protected NodeCollection children = new NodeCollection();
+		
 		public override void Attach( BTNode node )
 		{
-			throw new InvalidOperationException("Can not attach node to Action node");
+			children.Add( node );
 		}
 	}
 }

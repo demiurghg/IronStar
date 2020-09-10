@@ -13,6 +13,8 @@ namespace IronStar.ECSFactories
 	[EntityFactory("PLAYER")]
 	public class PlayerFactory : EntityFactory
 	{
+		public static readonly Aspect PlayerAspect = new Aspect().Include<PlayerComponent,Transform>();
+
 		public override Entity Spawn( GameState gs )
 		{
 			var e = gs.Spawn();

@@ -4,10 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using IronStar.AI.BehaviorNodes;
+using IronStar.BTCore.Actions;
+using IronStar.BTCore.Decorators;
 using IronStar.ECS;
 
-namespace IronStar.AI.BehaviorTree
+namespace IronStar.BTCore
 {
 	public sealed class BTBuilder
 	{

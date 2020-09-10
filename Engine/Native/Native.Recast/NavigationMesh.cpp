@@ -555,6 +555,52 @@ void Native::NRecast::NavigationMesh::GetPolygonAdjacencyIndices(int polyIndex, 
 }
 
 
+float frand()
+{
+	return rand() / (float)RAND_MAX;
+}
+
+void randBarycentric(float &a, float &b)
+{
+	do
+	{
+		a	=	frand();
+		b	=	frand();
+	} 
+	while (a + b > 1);
+}
+
+
+bool Native::NRecast::NavigationMesh::GetRandomReachablePoint(Vector3 originVector, float radius, Vector3 %resultVector)
+{
+	float extents[]	= { 2, 4, 2 };
+	float origin[]	= { originVector.X, originVector.Y, originVector.Z };
+	dtPolyRef originRef;
+	float result[] = {0,0,0};
+
+	resultVector	=	Vector3::Zero;
+
+	m_navQuery->findNearestPoly( origin, extents, m_queryFilter, &originRef, result );
+
+	const int MAX_POLYS = 256;
+	dtPolyRef resultPolys[MAX_POLYS];
+	int numPolys;
+
+	m_navQuery->findLocalNeighbourhood( originRef, origin, radius, m_queryFilter, resultPolys, nullptr, &numPolys, MAX_POLYS );
+
+	if (numPolys<=0)
+	{
+		return false;
+	}
+
+	auto randPoly = resultPolys[ rand() % numPolys ];
+
+	
+
+	return true;
+}
+
+
 array<Vector3>^ Native::NRecast::NavigationMesh::FindRoute(Vector3 startPoint, Vector3 endPoint)
 {
 	dtPolyRef startRef;

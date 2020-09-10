@@ -65,9 +65,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AI\Actions\ApproachPlayer.cs" />
+    <Compile Include="AI\Actions\MoveTo.cs" />
+    <Compile Include="AI\Actions\FindPlayer.cs" />
     <Compile Include="AI\AICore.cs" />
     <Compile Include="AI\NavigationRouter.cs" />
+    <Compile Include="BTCore\Blackboard.cs" />
     <Compile Include="BTCore\Decorators\Repeat.cs" />
     <Compile Include="BTCore\Actions\Print.cs" />
     <Compile Include="BTCore\Actions\Wait.cs" />

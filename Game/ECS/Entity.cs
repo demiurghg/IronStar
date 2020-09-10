@@ -136,5 +136,15 @@ namespace IronStar.ECS
 				return list.ToArray();
 			}
 		}
+
+
+		public Vector3 Location
+		{
+			get 
+			{
+				var transform = GetComponent<Transform>();
+				return (transform==null) ? Vector3.Zero : transform.Position;
+			}
+		}
 	}
 }

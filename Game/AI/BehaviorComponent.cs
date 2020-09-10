@@ -5,12 +5,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
+using IronStar.BTCore;
 using IronStar.ECS;
 
 namespace IronStar.AI
 {
 	public class BehaviorComponent : IComponent
 	{
+		public readonly Blackboard Blackboard;
+
+		public BehaviorComponent()
+		{
+			Blackboard	=	new Blackboard();
+		}
+		
 		public void Load( GameState gs, Stream stream )
 		{
 		}

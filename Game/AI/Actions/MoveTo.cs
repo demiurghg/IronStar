@@ -13,32 +13,33 @@ using IronStar.Gameplay;
 
 namespace IronStar.AI.Actions
 {
-	public class ApproachPlayer : BTAction
+	public class MoveTo : BTAction
 	{
-		Vector3 targetPoint;
-		Vector3 originPoint;
-		NavigationSystem navSystem;
-		int frames;
-
+		readonly string keyLocation;
 		Vector3[] route;
+
+
+		public MoveTo( string keyLocation )
+		{
+			this.keyLocation = keyLocation;
+		}
+
 
 		public override bool Initialize(Entity entity)
 		{
-			navSystem			=	entity.gs.GetService<NavigationSystem>();
-			var playerEntity	=	entity.gs.QueryEntities( PlayerFactory.PlayerAspect ).LastOrDefault();
+			var	navSystem	=	entity.gs.GetService<NavigationSystem>();
+			var blackboard	=	entity.GetComponent<BehaviorComponent>().Blackboard;
+			var targetPoint	=	Vector3.Zero;
+			var originPoint	=	entity.Location;
 
-			if (playerEntity!=null)
+			if (blackboard.TryGet( keyLocation, out targetPoint ))
 			{
-				targetPoint	=	playerEntity.GetComponent<Transform>().Position;	
-				originPoint	=	entity.GetComponent<Transform>().Position;
-
-				route		=	navSystem.FindRoute( originPoint, targetPoint );
-				frames		=	0;
-
+				route	=	navSystem.FindRoute( originPoint, targetPoint );
 				return route!=null;
 			}
 			else
 			{
+				route	=	null;
 				return false;
 			}
 		}
@@ -57,8 +58,6 @@ namespace IronStar.AI.Actions
 		
 		public override BTStatus Update( GameTime gameTime, Entity entity )
 		{
-			frames++;
-
 			var dr = entity.gs.Game.RenderSystem.RenderWorld.Debug;
 
 			for (int i=0; i<route.Length-1; i++)
@@ -80,9 +79,8 @@ namespace IronStar.AI.Actions
 			if (uc!=null)
 			{
 				var dir	=	targetPoint - originPoint;
-				// #TODO #AI #MONSTER -- flip view model
-				uc.Yaw	=	(float)Math.Atan2( dir.X, dir.Z );
-				uc.MoveForward = -1;
+				uc.Yaw	=	(float)Math.Atan2( -dir.X, -dir.Z );
+				uc.MoveForward = 1.0f;
 			}
 
 			return routeResult;

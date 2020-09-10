@@ -39,15 +39,29 @@ namespace IronStar.ECSPhysics
 		{
 			var p	=	t.Position;
 
-			var ch	=	new BEPUCharacterController( MathConverter.Convert(p + cc.offsetStanding*0.5f),
-							height			:	cc.heightStanding,
-							radius			:	cc.radius,
-							crouchingHeight	:	cc.heightCrouching,
-							standingSpeed	:	cc.speedStanding,
-							crouchingSpeed	:	cc.speedCrouching,
-							jumpSpeed		:	cc.speedJump,
-							mass			:	cc.mass
+			var ch	=	new BEPUCharacterController( MathConverter.Convert(p + cc.offsetStanding),
+							height				:	cc.height				,	
+							crouchingHeight		:	cc.crouchingHeight		,
+							proneHeight			:	cc.proneHeight			,
+							radius				:	cc.radius				,
+							margin				:	cc.margin				,
+							mass				:	cc.mass					,
+							maximumTractionSlope:	cc.maximumTractionSlope	,
+							maximumSupportSlope	:	cc.maximumSupportSlope	,
+							standingSpeed		:	cc.standingSpeed		,
+							crouchingSpeed		:	cc.crouchingSpeed		,
+							proneSpeed			:	cc.proneSpeed			,
+							tractionForce		:	cc.tractionForce		,
+							slidingSpeed		:	cc.slidingSpeed			,
+							slidingForce		:	cc.slidingForce			,
+							airSpeed			:	cc.airSpeed				,
+							airForce			:	cc.airForce				,
+							jumpSpeed			:	cc.jumpSpeed			,
+							slidingJumpSpeed	:	cc.slidingJumpSpeed		,
+							maximumGlueForce	:	cc.maximumGlueForce
 						);
+
+			ch.StepManager.MaximumStepHeight	=	cc.stepHeight;
 
 			ch.Tag			=	e;
 			ch.Body.Tag		=	e;
@@ -114,11 +128,17 @@ namespace IronStar.ECSPhysics
 
 		void Move ( BEPUCharacterController controller, CharacterController cc, Vector3 move )
 		{
-			var jump	=	move.Y > 0.5f;
-			var crouch	=	move.Y < -0.5f;
+			var jump		=	move.Y > 0.5f;
+			var crouch		=	move.Y < -0.5f;
 
-			controller.HorizontalMotionConstraint.MovementDirection = new BEPUutilities.Vector2( move.X, -move.Z );
-			controller.HorizontalMotionConstraint.TargetSpeed	=	crouch ? cc.speedCrouching : cc.speedStanding;
+			var moveDir		=	new BEPUutilities.Vector2( move.X, -move.Z );
+			var velScale	=	moveDir.Length();
+
+			controller.StandingSpeed	=	cc.standingSpeed * velScale;
+			controller.CrouchingSpeed	=	cc.crouchingSpeed * velScale;
+			controller.ProneSpeed		=	cc.proneSpeed * velScale;
+
+			controller.HorizontalMotionConstraint.MovementDirection	=	moveDir;
 
 			controller.StanceManager.DesiredStance	=	crouch ? Stance.Crouching : Stance.Standing;
 

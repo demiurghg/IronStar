@@ -199,7 +199,8 @@ cbuffer __buffer6 : register(b6) {
 	FOG_DATA Fog : packoffset(c0);
 };
 SamplerState                   LinearSampler                  : register(s0);
-SamplerComparisonState         ShadowSampler                  : register(s1);
+SamplerState                   FogSampler                     : register(s1);
+SamplerComparisonState         ShadowSampler                  : register(s2);
 Texture2D<float4>              Texture                        : register(t0);
 StructuredBuffer<Particle>     injectionBuffer                : register(t1);
 StructuredBuffer<Particle>     particleBufferGS               : register(t2);

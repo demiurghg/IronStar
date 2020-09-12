@@ -31,7 +31,8 @@ namespace Fusion.Engine.Graphics {
 		static FXConstantBuffer<Fog.FOG_DATA>				regFog					=	new CRegister( 6, "Fog"						);
 
 		static FXSamplerState								regSampler					=	new SRegister( 0, "LinearSampler"			);
-		static FXSamplerComparisonState						regShadowSampler			=	new SRegister( 1, "ShadowSampler"			);
+		static FXSamplerState								regFogSampler				=	new SRegister( 1, "FogSampler"			);
+		static FXSamplerComparisonState						regShadowSampler			=	new SRegister( 2, "ShadowSampler"			);
 																										   
 		static FXTexture2D<Vector4>							regTexture 					=	new TRegister( 0, "Texture" 				);
 		static FXStructuredBuffer<Particle>					reginjectionBuffer			=	new TRegister( 1, "injectionBuffer"			);
@@ -638,8 +639,9 @@ namespace Fusion.Engine.Graphics {
 					device.SetViewport( viewport );
 
 					//	sampler & textures :
-					device.GfxSamplers		[ regSampler ]	=	SamplerState.LinearClamp4Mips;
-					device.ComputeSamplers	[ regSampler ]	=	SamplerState.LinearClamp4Mips;
+					device.GfxSamplers		[ regSampler ]		=	SamplerState.LinearClamp4Mips;
+					device.GfxSamplers		[ regFogSampler ]	=	SamplerState.LinearClamp;
+					device.ComputeSamplers	[ regSampler ]		=	SamplerState.LinearClamp4Mips;
 
 					device.GfxResources[ regTexture 			]	=	Images==null? rs.WhiteTexture.Srv : Images.Texture.Srv;
 					device.GfxResources[ reginjectionBuffer		]	=	simulationBuffer	;

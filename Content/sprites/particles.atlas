@@ -5,7 +5,8 @@ Padding		= 16
 
 [Textures]
 testNum				=	testSprites\numTest*.tga
-bloodSpray01		=	bloodSpray01.tga, bloodSpray02.tga, bloodSpray03.tga
+blood				=	blood\blood*.tga
+bloodSpray01		=	bloodSpray01.tga
 bloodSpray02        =   bloodSpray02.tga
 bloodSpray03        =   bloodSpray03.tga
 bloodSpray04        =   bloodSpray04.tga

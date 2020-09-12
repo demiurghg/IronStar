@@ -560,42 +560,33 @@ float frand()
 	return rand() / (float)RAND_MAX;
 }
 
-void randBarycentric(float &a, float &b)
-{
-	do
-	{
-		a	=	frand();
-		b	=	frand();
-	} 
-	while (a + b > 1);
-}
 
 
-bool Native::NRecast::NavigationMesh::GetRandomReachablePoint(Vector3 originVector, float radius, Vector3 %resultVector)
+bool Native::NRecast::NavigationMesh::GetRandomReachablePoint(Vector3 centerPos, float radius, Vector3 %resultVector)
 {
-	float extents[]	= { 2, 4, 2 };
-	float origin[]	= { originVector.X, originVector.Y, originVector.Z };
-	dtPolyRef originRef;
-	float result[] = {0,0,0};
+	float extentsArray[]	= { 2, 4, 2 };
+	float centerPosArray[]	= { centerPos.X, centerPos.Y, centerPos.Z };
+	dtPolyRef startRef;
+	float randomPoint[] = {0,0,0};
 
 	resultVector	=	Vector3::Zero;
 
-	m_navQuery->findNearestPoly( origin, extents, m_queryFilter, &originRef, result );
+	dtPolyRef	randomRef;
+	dtStatus	status;
 
-	const int MAX_POLYS = 256;
-	dtPolyRef resultPolys[MAX_POLYS];
-	int numPolys;
+	//	find closest polygon and copy projected point to centerPosArray :
+	status = m_navQuery->findNearestPoly( centerPosArray, extentsArray, m_queryFilter, &startRef, centerPosArray );
 
-	m_navQuery->findLocalNeighbourhood( originRef, origin, radius, m_queryFilter, resultPolys, nullptr, &numPolys, MAX_POLYS );
+	if (dtStatusFailed(status)) return false;
 
-	if (numPolys<=0)
-	{
-		return false;
-	}
+	//	find random point around circle :
+	status = m_navQuery->findRandomPointAroundCircle( startRef, centerPosArray, radius, m_queryFilter, frand, &randomRef, randomPoint );
 
-	auto randPoly = resultPolys[ rand() % numPolys ];
+	if (dtStatusFailed(status)) return false;
 
-	
+	resultVector.X	=	randomPoint[0];
+	resultVector.Y	=	randomPoint[1];
+	resultVector.Z	=	randomPoint[2];
 
 	return true;
 }

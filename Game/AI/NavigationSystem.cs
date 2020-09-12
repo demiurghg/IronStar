@@ -87,6 +87,17 @@ namespace IronStar.AI
 			return navMesh?.FindRoute( startPoint, endPoint );
 		}
 
+		public Vector3 GetReachablePointInRadius( Vector3 startPoint, float maxRadius )
+		{
+			if (navMesh==null) return startPoint;
+
+			Vector3 result = startPoint;
+
+			navMesh.GetRandomReachablePoint( startPoint, maxRadius, ref result );
+
+			return result;
+		}
+
 		/*-----------------------------------------------------------------------------------------
 		 *	Navmesh rendering
 		-----------------------------------------------------------------------------------------*/

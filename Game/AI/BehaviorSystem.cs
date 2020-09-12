@@ -35,8 +35,9 @@ namespace IronStar.AI
 			.Sequence()
 				.Action( new Print("Searching...") )
 				.Action( new Wait(1500, 2500) )
-				.Action( new FindPlayer("playerLocation") )
-				.Action( new MoveTo("playerLocation") )
+				//.Action( new FindPlayer("playerLocation") )
+				.Action( new FindReachablePointInRadius("roamingPoint", 300) )
+				.Action( new MoveTo("roamingPoint") )
 				//.Repeat( 3, new BTBuilder().Sequence().Action( new Wait(100) ).Action( new Print("...") ).End() )
 				//.Action( new Wait(1000) )
 			.End();

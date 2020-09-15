@@ -11,24 +11,23 @@ using IronStar.ECSFactories;
 
 namespace IronStar.AI.Actions
 {
-	public class HasTarget : Decorator
+	public class HasTarget : Condition
 	{
 		public HasTarget( BTNode node ) : base( node )
 		{
 		}
 
-		public override BTStatus Update( GameTime gameTime, Entity entity )
+		public HasTarget( bool inverse, bool continuous, BTNode node ) : base( node )
+		{
+			InverseCondition	=	inverse;
+			Continuous			=	continuous;
+		}
+
+		public override bool Check( Entity entity )
 		{
 			var targetEntity = entity.GetBlackboard()?.GetEntry<Entity>("TargetEntity");
 
-			if (targetEntity==null)
-			{
-				return BTStatus.Failure;
-			}
-			else
-			{
-				return Node.Tick( gameTime, entity );
-			}
+			return targetEntity!=null;
 		}
 	}
 }

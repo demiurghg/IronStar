@@ -20,7 +20,7 @@ namespace IronStar.BTCore.Actions
 		}
 
 		
-		public override BTStatus Update( GameTime gameTime, Entity entity )
+		public override BTStatus Update( GameTime gameTime, Entity entity, bool cancel )
 		{
 			Log.Message("BT Print: #{0} -- {1}", entity.ID, message );
 

@@ -37,9 +37,14 @@ namespace IronStar.BTCore.Actions
 		}
 
 		
-		public override BTStatus Update( GameTime gameTime, Entity entity )
+		public override BTStatus Update( GameTime gameTime, Entity entity, bool cancel )
 		{
 			timer += gameTime.Elapsed;
+
+			if (cancel)
+			{
+				return BTStatus.Failure;
+			}
 
 			if (timer>=timeToWait)
 			{

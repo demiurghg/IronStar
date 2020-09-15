@@ -28,7 +28,7 @@ namespace IronStar.AI.Actions
 		}
 
 
-		public override BTStatus Update( GameTime gameTime, Entity entity )
+		public override BTStatus Update( GameTime gameTime, Entity entity, bool cancel )
 		{
 			var	navSystem		=	entity.gs.GetService<NavigationSystem>();
 			var blackboard		=	entity.GetBlackboard();

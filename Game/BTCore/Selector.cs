@@ -24,7 +24,7 @@ namespace IronStar.BTCore
 		}
 
 
-		public override BTStatus Update(GameTime gameTime, Entity entity)
+		public override BTStatus Update(GameTime gameTime, Entity entity, bool cancel)
 		{
 			//	empty selector means that
 			//	all nodes are in failed state.
@@ -36,7 +36,7 @@ namespace IronStar.BTCore
 
 			while (true)
 			{
-				var status = current.Current.Tick(gameTime, entity);
+				var status = current.Current.Tick(gameTime, entity, cancel);
 
 				if (status!=BTStatus.Failure) 
 				{

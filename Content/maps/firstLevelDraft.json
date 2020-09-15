@@ -676,24 +676,6 @@
         "RotateRoll": 0.0
       },
       {
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "b5805ecd-e479-4f83-b68d-2c5ad1735eb1",
-        "TargetName": null,
-        "Factory": {
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
-        },
-        "FactoryName": "0bUFiLSU",
-        "Visible": true,
-        "Frozen": false,
-        "TranslateX": -289.401978,
-        "TranslateY": 4.84459829,
-        "TranslateZ": -88.5057755,
-        "RotateYaw": -120.0,
-        "RotatePitch": 0.306266665,
-        "RotateRoll": -0.006032444
-      },
-      {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
         "NodeGuid": "e1026121-65ad-4bcf-8a76-a176b91de720",
         "Width": 64.0,
@@ -3854,24 +3836,6 @@
         "TranslateY": 85.85284,
         "TranslateZ": -85.069725,
         "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
-      },
-      {
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "0bbdfc5d-fc7e-4e0d-ac0f-618dfb11dbd7",
-        "TargetName": null,
-        "Factory": {
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
-        },
-        "FactoryName": "2MJ0N0mz",
-        "Visible": true,
-        "Frozen": false,
-        "TranslateX": -198.72525,
-        "TranslateY": 7.114172,
-        "TranslateZ": -184.684814,
-        "RotateYaw": 105.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
       },

@@ -611,7 +611,7 @@ array<Vector3>^ Native::NRecast::NavigationMesh::FindRoute(Vector3 startPoint, V
 	if (startRef==0) return nullptr;
 	if (endRef==0) return nullptr;
 
-	Log::Message("{0} {1}", startRef, endRef );
+	//Log::Message("{0} {1}", startRef, endRef );
 
 	//---------------------------------------------------------
 

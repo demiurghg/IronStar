@@ -15,9 +15,9 @@ namespace IronStar.BTCore.Decorators
 		{
 		}
 
-		public override BTStatus Update( GameTime gameTime, Entity entity )
+		public override BTStatus Update( GameTime gameTime, Entity entity, bool cancel )
 		{
-			var status = Node.Tick(gameTime, entity);
+			var status = Node.Tick(gameTime, entity, cancel);
 
 			if (status==BTStatus.Success) return BTStatus.Failure;
 			if (status==BTStatus.Failure) return BTStatus.Success;

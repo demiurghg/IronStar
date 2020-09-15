@@ -56,9 +56,14 @@ namespace IronStar.AI.Actions
 		}
 
 		
-		public override BTStatus Update( GameTime gameTime, Entity entity )
+		public override BTStatus Update( GameTime gameTime, Entity entity, bool cancel )
 		{
 			var dr = entity.gs.Game.RenderSystem.RenderWorld.Debug;
+
+			if (cancel)
+			{
+				return BTStatus.Failure;
+			}
 
 			for (int i=0; i<route.Length-1; i++)
 			{

@@ -12,7 +12,7 @@ namespace IronStar.BTCore
 	{
 		BTStatus status = BTStatus.Undefined;
 
-		internal BTStatus Tick (GameTime gameTime, Entity entity)
+		internal BTStatus Tick (GameTime gameTime, Entity entity, bool cancel)
 		{
 			if (status!=BTStatus.InProgress) 
 			{
@@ -22,7 +22,7 @@ namespace IronStar.BTCore
 				}
 			}
 
-			status = Update( gameTime, entity );
+			status = Update( gameTime, entity, cancel );
 
 			if (status!=BTStatus.InProgress) 
 			{
@@ -34,7 +34,7 @@ namespace IronStar.BTCore
 
 		public virtual  bool Initialize(Entity entity) { return true; }
 		public virtual  void Terminate(Entity entity, BTStatus status) {}
-		public abstract BTStatus Update(GameTime gameTime, Entity entity);
+		public abstract BTStatus Update(GameTime gameTime, Entity entity, bool cancel);
 		public abstract void Attach( BTNode node );
 		public virtual	void Cancel() {}
 	}

@@ -8,5 +8,12 @@ namespace IronStar.BTCore
 {
 	public class NodeCollection : List<BTNode>
 	{
+		public NodeCollection()
+		{
+		}
+
+		public NodeCollection( IEnumerable<BTNode> other ) : base(other)
+		{
+		}
 	}
 }

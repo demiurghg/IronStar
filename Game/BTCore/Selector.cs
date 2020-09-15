@@ -13,6 +13,9 @@ namespace IronStar.BTCore
 	{
 		IEnumerator<BTNode> current;
 
+		public Selector( params BTNode[] childNodes ) : base(childNodes) {}
+
+
 		public override bool Initialize(Entity entity)
 		{
 			current = children.GetEnumerator();
@@ -31,7 +34,7 @@ namespace IronStar.BTCore
 				return BTStatus.Failure;
 			}
 
-			while (current.MoveNext())
+			while (true)
 			{
 				var status = current.Current.Tick(gameTime, entity);
 

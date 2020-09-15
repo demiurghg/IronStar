@@ -13,6 +13,9 @@ namespace IronStar.BTCore
 	{
 		IEnumerator<BTNode> current = null;
 
+		public Sequence( params BTNode[] childNodes ) : base(childNodes) {}
+
+
 		public override bool Initialize(Entity entity)
 		{
 			current = children.GetEnumerator();

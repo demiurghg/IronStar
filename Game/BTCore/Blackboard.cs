@@ -36,7 +36,11 @@ namespace IronStar.BTCore
 
 			if (dictionary.TryGetValue(key, out obj))
 			{
-				if (obj.GetType()==typeof(T))
+				if (obj==null)
+				{
+					return false;
+				}
+				else if (obj.GetType()==typeof(T))
 				{
 					value = (T)obj;
 					return true;	
@@ -50,6 +54,14 @@ namespace IronStar.BTCore
 			{
 				return false;
 			}
+		}
+
+
+		public T GetEntry<T>( string key )
+		{
+			T value = default(T);
+			TryGet( key, out value );
+			return value;
 		}
 
 

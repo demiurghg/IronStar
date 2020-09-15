@@ -58,7 +58,8 @@ namespace IronStar {
 			gs.AddSystem( new ProjectileSystem(physicsCore) );
 
 			//	AI :
-			gs.AddSystem( new BehaviorSystem() );
+			gs.AddSystem( new PerceptionSystem(physicsCore) );
+			gs.AddSystem( new BehaviorSystem(physicsCore) );
 			gs.AddSystem( new NavigationSystem() );
 
 			//	animation systems :

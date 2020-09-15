@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using IronStar.BTCore;
 using IronStar.ECS;
+using IronStar.ECSFactories;
+using IronStar.ECSPhysics;
 
 namespace IronStar.AI
 {
@@ -24,6 +26,18 @@ namespace IronStar.AI
 		}
 
 
+		public static Entity[] GetPlayers( this GameState gs )
+		{
+			return gs.QueryEntities( PlayerFactory.PlayerAspect ).ToArray();
+		}
+
+
+		public static Entity GetPlayer( this GameState gs )
+		{
+			return gs.QueryEntities( PlayerFactory.PlayerAspect ).LastOrDefault();
+		}
+
+
 		public static Vector3 GetLocation( this Entity entity )
 		{
 			var transform = entity.GetComponent<Transform>();
@@ -34,6 +48,25 @@ namespace IronStar.AI
 			}
 
 			return transform.Position;
+		}
+
+
+		public static Vector3 GetPOV( this Entity entity )
+		{
+			var transform	=	entity.GetComponent<Transform>();
+			var controller	=	entity.GetComponent<CharacterController>();
+			
+			if (transform==null) 
+			{
+				throw new InvalidOperationException("Entity has no " + nameof(Transform) + " component");
+			}
+
+			if (controller==null) 
+			{
+				throw new InvalidOperationException("Entity has no " + nameof(CharacterController) + " component");
+			}
+
+			return transform.Position + controller.PovOffset;
 		}
 	}
 }

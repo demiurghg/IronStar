@@ -25,7 +25,7 @@ namespace IronStar.AI.Actions
 
 		public override BTStatus Update( GameTime gameTime, Entity entity )
 		{
-			var playerEntity	=	entity.gs.QueryEntities( PlayerFactory.PlayerAspect ).LastOrDefault();
+			var playerEntity	=	entity.gs.GetPlayer();
 
 			if (playerEntity!=null)
 			{

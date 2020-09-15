@@ -544,24 +544,44 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		public void DrawFrustum ( BoundingFrustum frustum, Color color )
+		public void DrawFrustum ( BoundingFrustum frustum, Color color, float scale = 1.0f, float width = 1 )
 		{
 			var points = frustum.GetCorners();
 
-			DrawLine( points[0], points[1], color );
-			DrawLine( points[1], points[2], color );
-			DrawLine( points[2], points[3], color );
-			DrawLine( points[3], points[0], color );
+			for (int i=0; i<4; i++)
+			{
+				points[i+4] = Vector3.Lerp( points[i], points[i+4], scale );
+			}
 
-			DrawLine( points[4], points[5], color );
-			DrawLine( points[5], points[6], color );
-			DrawLine( points[6], points[7], color );
-			DrawLine( points[7], points[4], color );
+			DrawLine( points[0], points[1], color, color, width, width );
+			DrawLine( points[1], points[2], color, color, width, width );
+			DrawLine( points[2], points[3], color, color, width, width );
+			DrawLine( points[3], points[0], color, color, width, width );
 
-			DrawLine( points[0], points[4], color );
-			DrawLine( points[1], points[5], color );
-			DrawLine( points[2], points[6], color );
-			DrawLine( points[3], points[7], color );
+			DrawLine( points[4], points[5], color, color, width, width );
+			DrawLine( points[5], points[6], color, color, width, width );
+			DrawLine( points[6], points[7], color, color, width, width );
+			DrawLine( points[7], points[4], color, color, width, width );
+
+			DrawLine( points[0], points[4], color, color, width, width );
+			DrawLine( points[1], points[5], color, color, width, width );
+			DrawLine( points[2], points[6], color, color, width, width );
+			DrawLine( points[3], points[7], color, color, width, width );
+
+			//	dr.DrawLine( points[0], points[1], dispColor );
+			//	dr.DrawLine( points[1], points[2], dispColor );
+			//	dr.DrawLine( points[2], points[3], dispColor );
+			//	dr.DrawLine( points[3], points[0], dispColor );
+
+			//	dr.DrawLine( points[4], points[5], dispColor );
+			//	dr.DrawLine( points[5], points[6], dispColor );
+			//	dr.DrawLine( points[6], points[7], dispColor );
+			//	dr.DrawLine( points[7], points[4], dispColor );
+
+			//	dr.DrawLine( points[0], points[4], dispColor );
+			//	dr.DrawLine( points[1], points[5], dispColor );
+			//	dr.DrawLine( points[2], points[6], dispColor );
+			//	dr.DrawLine( points[3], points[7], dispColor );
 		}
 
 

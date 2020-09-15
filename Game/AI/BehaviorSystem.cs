@@ -18,29 +18,59 @@ using IronStar.BTCore;
 using IronStar.BTCore.Actions;
 using IronStar.BTCore.Decorators;
 using IronStar.AI.Actions;
+using IronStar.Gameplay;
 
 namespace IronStar.AI
 {
 	class BehaviorSystem : ProcessingSystem<BTNode,BehaviorComponent>
 	{
 		public bool Enabled = true;
+		readonly PhysicsCore physics;
 
-		public BehaviorSystem()
+		public BehaviorSystem(PhysicsCore physics)
 		{
+			this.physics	=	physics;
 		}
 
 		protected override BTNode Create( Entity entity, BehaviorComponent component1 )
 		{
-			return new BTBuilder()
-			.Sequence()
-				.Action( new Print("Searching...") )
-				.Action( new Wait(1500, 2500) )
-				//.Action( new FindPlayer("playerLocation") )
-				.Action( new FindReachablePointInRadius("roamingPoint", 300) )
-				.Action( new MoveTo("roamingPoint") )
-				//.Repeat( 3, new BTBuilder().Sequence().Action( new Wait(100) ).Action( new Print("...") ).End() )
-				//.Action( new Wait(1000) )
-			.End();
+			var approach = 
+				new HasTarget( 
+					new Sequence(
+						new Print("Got him!"),
+						new FindPlayer("playerLocation"),
+						new MoveTo("playerLocation")
+					)
+				);
+
+			var roaming = 
+				new Inverter(
+					new HasTarget( 
+						new Sequence(
+							new Print("Searching"),
+							new Wait(1500, 2500),
+							new FindReachablePointInRadius("roamingPoint", 300),
+							new MoveTo("roamingPoint")
+						)
+					)
+				);
+
+			return new Selector( approach, roaming );
+			//return new BTBuilder()
+			//.Selector()
+			//	.Sequence()
+			//		.Decorator(
+			//	.End()
+			//	.Sequence()
+			//		.Action( new Print("Searching...") )
+			//		.Action(  )
+			//		//.Action( new FindPlayer("playerLocation") )
+			//		.Action( new FindReachablePointInRadius("roamingPoint", 300) )
+			//		.Action( new MoveTo("roamingPoint") )
+			//		//.Repeat( 3, new BTBuilder().Sequence().Action( new Wait(100) ).Action( new Print("...") ).End() )
+			//		//.Action( new Wait(1000) )
+			//	.End()
+			//.End();
 		}
 
 		protected override void Destroy( Entity entity, BTNode resource )

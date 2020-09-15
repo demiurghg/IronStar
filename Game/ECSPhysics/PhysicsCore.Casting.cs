@@ -112,6 +112,21 @@ namespace IronStar.ECSPhysics
 		}
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="from"></param>
+		/// <param name="to"></param>
+		/// <param name="skipEntity1"></param>
+		/// <param name="skipEntity2"></param>
+		/// <returns></returns>
+		public bool HasLineOfSight( Vector3 from, Vector3 to, Entity skipEntity1, Entity skipEntity2 )
+		{
+			Vector3 n, p;
+			Entity e;
+			return !RayCastAgainstAll( from, to, out n, out p, out e, skipEntity1, skipEntity2 );
+		}
+
 
 		/// <summary>
 		/// 
@@ -121,7 +136,7 @@ namespace IronStar.ECSPhysics
 		/// <param name="normal"></param>
 		/// <param name="pos"></param>
 		/// <returns></returns>
-		public bool RayCastAgainstAll ( Vector3 from, Vector3 to, out Vector3 normal, out Vector3 pos, out Entity hitEntity, Entity skipEntity = null )
+		public bool RayCastAgainstAll ( Vector3 from, Vector3 to, out Vector3 normal, out Vector3 pos, out Entity hitEntity, Entity skipEntity = null, Entity skipEntity2 = null )
 		{
 			hitEntity	=	null;
 			var dir		=	to - from;
@@ -149,6 +164,10 @@ namespace IronStar.ECSPhysics
 					}
 
 					if (hitEnt==skipEntity) {
+						return false;
+					}
+
+					if (hitEnt==skipEntity2) {
 						return false;
 					}
 

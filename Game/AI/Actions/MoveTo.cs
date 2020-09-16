@@ -10,13 +10,14 @@ using IronStar.BTCore;
 using IronStar.ECS;
 using IronStar.ECSFactories;
 using IronStar.Gameplay;
+using Native.NRecast;
 
 namespace IronStar.AI.Actions
 {
 	public class MoveTo : BTAction
 	{
 		readonly string keyLocation;
-		Vector3[] route;
+		NavigationRoute route;
 
 
 		public MoveTo( string keyLocation )
@@ -65,7 +66,7 @@ namespace IronStar.AI.Actions
 				return BTStatus.Failure;
 			}
 
-			for (int i=0; i<route.Length-1; i++)
+			for (int i=0; i<route.Count-1; i++)
 			{
 				var p0 = route[i];
 				var p1 = route[i+1];

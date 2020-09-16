@@ -11,17 +11,18 @@ using IronStar.ECSFactories;
 
 namespace IronStar.AI.Actions
 {
-	public class HasTarget : Condition
+	public class HasLineOfSight : Condition
 	{
-		public HasTarget( ConditionMode mode, BTNode node ) : base( mode, node )
+		public HasLineOfSight( ConditionMode mode, BTNode node ) : base( mode, node )
 		{
 		}
 
 		public override bool Check( Entity entity )
 		{
-			var targetEntity = entity.GetBlackboard()?.GetEntry<Entity>("TargetEntity");
+			var attackerEntity	=	entity;
+			var targetEntity	=	entity.GetBlackboard()?.GetEntry<Entity>("TargetEntity");
 
-			return targetEntity!=null;
+			return attackerEntity.HasLineOfSight( targetEntity );
 		}
 	}
 }

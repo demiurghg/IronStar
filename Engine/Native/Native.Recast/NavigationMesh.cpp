@@ -592,7 +592,7 @@ bool Native::NRecast::NavigationMesh::GetRandomReachablePoint(Vector3 centerPos,
 }
 
 
-array<Vector3>^ Native::NRecast::NavigationMesh::FindRoute(Vector3 startPoint, Vector3 endPoint)
+Native::NRecast::NavigationRoute ^Native::NRecast::NavigationMesh::FindRoute(Vector3 startPoint, Vector3 endPoint)
 {
 	dtPolyRef startRef;
 	dtPolyRef endRef;
@@ -647,10 +647,10 @@ array<Vector3>^ Native::NRecast::NavigationMesh::FindRoute(Vector3 startPoint, V
 
 	//------------------------------------------------------------
 
-	auto route = gcnew array<Vector3>( numStraightPath );
+	auto route = gcnew Native::NRecast::NavigationRoute( numStraightPath );
 
 	for ( int i=0; i<numStraightPath; i++ ) {
-		route[i] = Vector3( 
+		route->SetPoint( i,
 			straightPathPoints[i * 3 + 0],
 			straightPathPoints[i * 3 + 1],
 			straightPathPoints[i * 3 + 2]

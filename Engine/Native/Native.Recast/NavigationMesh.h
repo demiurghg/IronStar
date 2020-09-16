@@ -49,7 +49,7 @@ namespace Native {
 			void GetPolygonAdjacencyIndices(int polyIndex, array<int> ^indices);
 
 			bool GetRandomReachablePoint(Vector3 originVector, float radius, Vector3 %resultVector);
-			array<Vector3>^ FindRoute(Vector3 startPoint, Vector3 endPoint);
+			NavigationRoute ^FindRoute(Vector3 startPoint, Vector3 endPoint);
 
 		};
 	}

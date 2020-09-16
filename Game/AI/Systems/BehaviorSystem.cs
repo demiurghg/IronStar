@@ -35,22 +35,24 @@ namespace IronStar.AI
 		protected override BTNode Create( Entity entity, BehaviorComponent component1 )
 		{
 			var approach = 
-				new HasTarget(false, true, 
-					new Selector(
-						new Sequence(
-							new FindPlayer("playerLocation"),
-							new MoveTo("playerLocation")
-						),
-						new Sequence(
-							new FindReachablePointInRadius("combatLocation", 60),
-							new MoveTo("combatLocation"),
-							new Wait(500, 700)
+				new HasTarget(ConditionMode.Continuous,
+					new HasLineOfSight(ConditionMode.Continuous|ConditionMode.Inverse,
+						new Selector(
+							new Sequence(
+								new FindPlayer("playerLocation"),
+								new MoveTo("playerLocation")
+							),
+							new Sequence(
+								new FindReachablePointInRadius("combatLocation", 60),
+								new MoveTo("combatLocation"),
+								new Wait(500, 700)
+							)
 						)
 					)
 				);
 
 			var roaming = 
-				new HasTarget(true, true, 
+				new HasTarget(ConditionMode.Continuous|ConditionMode.Inverse,
 					new Sequence(
 						new FindReachablePointInRadius("roamingPoint", 300),
 						new MoveTo("roamingPoint"),

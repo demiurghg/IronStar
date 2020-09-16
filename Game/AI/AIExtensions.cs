@@ -61,12 +61,42 @@ namespace IronStar.AI
 				throw new InvalidOperationException("Entity has no " + nameof(Transform) + " component");
 			}
 
-			if (controller==null) 
+			if (controller!=null) 
 			{
-				throw new InvalidOperationException("Entity has no " + nameof(CharacterController) + " component");
+				return transform.Position + controller.PovOffset;
+			} 
+			else
+			{
+				return transform.Position;
+			}
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="attcker">Attacker entity.</param>
+		/// <param name="target">Target entity. Could be null, in such case always return false.</param>
+		/// <param name="maxDistance">Max distance. If distance between targets more than max distance target is considered hidden</param>
+		/// <returns></returns>
+		public static bool HasLineOfSight( this Entity attacker, Entity target, float maxDistance = float.MaxValue )
+		{
+			if (target==null) 
+			{
+				return false;
 			}
 
-			return transform.Position + controller.PovOffset;
+			var from	=	attacker.GetPOV();
+			var to		=	target.GetPOV();
+
+			if (Vector3.Distance(from,to) > maxDistance)
+			{
+				return false;
+			}
+			else
+			{
+				return attacker.gs.GetService<PhysicsCore>().HasLineOfSight( from, to, attacker, target );
+			}
 		}
 	}
 }

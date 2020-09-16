@@ -82,7 +82,7 @@ namespace IronStar.AI
 		 *	Navmesh queries :
 		-----------------------------------------------------------------------------------------*/
 
-		public Vector3[] FindRoute( Vector3 startPoint, Vector3 endPoint )
+		public NavigationRoute FindRoute( Vector3 startPoint, Vector3 endPoint )
 		{
 			return navMesh?.FindRoute( startPoint, endPoint );
 		}

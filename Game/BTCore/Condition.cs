@@ -8,13 +8,24 @@ using IronStar.ECS;
 
 namespace IronStar.BTCore
 {
+	[Flags]
+	public enum ConditionMode
+	{
+		Inverse		=	0x001,
+		Continuous	=	0x002,
+	}
+
 	public abstract class Condition : Decorator
 	{
-		public bool InverseCondition { get; set; } = false;
-		public bool Continuous { get; set; } = false;
+		readonly protected bool inverseCondition;
+		readonly protected bool continuous;
 
-		public Condition( BTNode node ) : base( node )
+		protected GameTime gameTime;
+
+		public Condition( ConditionMode mode, BTNode node ) : base( node )
 		{
+			inverseCondition	=	mode.HasFlag( ConditionMode.Inverse );
+			continuous			=	mode.HasFlag( ConditionMode.Continuous );
 		}
 
 
@@ -23,19 +34,21 @@ namespace IronStar.BTCore
 			bool condition;
 	
 			condition	=	Check(entity);
-			condition	=	InverseCondition ? !condition : condition;
+			condition	=	inverseCondition ? !condition : condition;
 
 			return condition;
 		}
 
 		public override BTStatus Update( GameTime gameTime, Entity entity, bool cancel )
 		{
-			if (Continuous)
+			this.gameTime	=	gameTime;
+
+			if (continuous)
 			{
 				bool condition;
 	
 				condition	=	Check(entity);
-				condition	=	InverseCondition ? !condition : condition;
+				condition	=	inverseCondition ? !condition : condition;
 
 				return Node.Tick( gameTime, entity, !condition );
 			}

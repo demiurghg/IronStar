@@ -3,17 +3,50 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Fusion.Core.Mathematics;
-using IronStar.BTCore;
-using IronStar.Mathematics;
 using Fusion;
+using Fusion.Core;
+using Fusion.Core.Content;
+using Fusion.Core.Mathematics;
+using Fusion.Engine.Graphics;
+using IronStar.ECS;
+using IronStar.ECSPhysics;
+using IronStar.SFX2;
 using Native.NRecast;
+using System.ComponentModel;
+using Fusion.Core.Extensions;
+using IronStar.BTCore;
+using IronStar.BTCore.Actions;
+using IronStar.BTCore.Decorators;
+using IronStar.AI.Actions;
+using IronStar.Gameplay;
+using IronStar.Mathematics;
 
 namespace IronStar.AI
 {
-	public static class NavigationRouter
+	class MovementSystem : StatelessSystem<Transform,MovementComponent,UserCommandComponent>
 	{
-		public static BTStatus FollowRoute( NavigationRoute route, Vector3 origin, float acceptanceRadius, float failureRadius, float leadingDistance, out Vector3 target )
+		public bool Enabled = true;
+		readonly PhysicsCore physics;
+
+		
+		public MovementSystem(PhysicsCore physics)
+		{
+			this.physics	=	physics;
+		}
+
+		
+		protected override void Process( Entity entity, GameTime gameTime, Transform transform, MovementComponent movement, UserCommandComponent command )
+		{
+			Vector3 targetPoint;
+
+			if (movement.Route!=null && movement.RoutingStatus==BTStatus.InProgress)
+			{
+				movement.RoutingStatus = FollowRoute( movement.Route, transform.Position, 1.0f, 10.0f, 3.0f, out targetPoint );
+			}
+		}
+
+
+		BTStatus FollowRoute( NavigationRoute route, Vector3 origin, float acceptanceRadius, float failureRadius, float leadingDistance, out Vector3 target )
 		{
 			float fraction = 0f;
 			float distance = 0f;
@@ -45,7 +78,7 @@ namespace IronStar.AI
 		}
 
 
-		static int GetClosestSegment( NavigationRoute route, Vector3 origin, out float distance, out float fraction )
+		int GetClosestSegment( NavigationRoute route, Vector3 origin, out float distance, out float fraction )
 		{
 			var closestSegment = 0;
 			distance = float.MaxValue;
@@ -68,6 +101,5 @@ namespace IronStar.AI
 
 			return closestSegment;
 		}
-		
 	}
 }

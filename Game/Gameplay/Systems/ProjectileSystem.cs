@@ -40,7 +40,7 @@ namespace IronStar.Gameplay.Systems
 
 			var origin	=	transform.Position;
 			var dir		=	projectile.Direction;
-			var target	=	origin + dir * projectile.Velocity * (first ? 4 * elapsedTime : elapsedTime);
+			var target	=	origin + dir * projectile.Velocity * (first ? 2 * elapsedTime : elapsedTime);
 
 			projectile.LifeTime -= elapsedTime;
 			projectile.Steps++;

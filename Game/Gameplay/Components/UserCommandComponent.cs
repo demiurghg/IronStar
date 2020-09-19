@@ -42,7 +42,12 @@ namespace IronStar.Gameplay
 		public void SetAnglesFromQuaternion( Quaternion q )
 		{
 			var m = Matrix.RotationQuaternion(q);
-			m.ToAngles( out Yaw, out Pitch, out Roll );
+			float yaw, pitch, roll;
+			m.ToAngles( out yaw, out pitch, out roll );
+
+			Yaw		=	yaw;
+			Pitch	=	pitch;
+			Roll	=	roll;
 
 			if (float.IsNaN(Yaw)	|| float.IsInfinity(Yaw)	) Yaw	= 0;
 			if (float.IsNaN(Pitch)	|| float.IsInfinity(Pitch)	) Pitch	= 0;
@@ -69,6 +74,39 @@ namespace IronStar.Gameplay
 					+ m.Right * MoveRight 
 					+ Vector3.Up * MoveUp;
 			}
+		}
+
+		
+		float ShortestAngle( float start, float end, float maxValue = -1 )
+		{
+			start			=	MathUtil.RadiansToDegrees(start);
+			end				=	MathUtil.RadiansToDegrees(end);
+			var shortest	=	((((end - start) % 360) + 540) % 360) - 180;
+
+			shortest		=	MathUtil.DegreesToRadians( shortest );
+
+			if (maxValue>=0)
+			{
+				shortest = Math.Sign(shortest) * Math.Min( maxValue, Math.Abs( shortest ) );
+			}
+
+			return shortest;
+		}
+
+
+		public void RotateTo( Vector3 originPoint, Vector3 targetPoint, float maxYawRate, float maxPitchRate )
+		{
+			if (originPoint==targetPoint) 
+			{
+				return;
+			}
+			
+			var dir				=	( targetPoint - originPoint ).Normalized();
+			var desiredYaw		=	(float)Math.Atan2( -dir.X, -dir.Z );
+			var desiredPitch	=	(float)Math.Asin( dir.Y );
+
+			Yaw		=	Yaw   + ShortestAngle( Yaw,	desiredYaw, maxYawRate );
+			Pitch	=	Pitch + ShortestAngle( Pitch, desiredPitch, maxPitchRate );
 		}
 	}
 }

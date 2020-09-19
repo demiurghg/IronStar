@@ -66,15 +66,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AI\Actions\FindReachablePointInRadius.cs" />
+    <Compile Include="AI\Actions\Attack.cs" />
     <Compile Include="AI\Actions\MoveTo.cs" />
     <Compile Include="AI\Actions\FindPlayer.cs" />
     <Compile Include="AI\AICore.cs" />
     <Compile Include="AI\AIExtensions.cs" />
     <Compile Include="AI\Decorators\HasLineOfSight.cs" />
+    <Compile Include="AI\Decorators\HasBlackboardValue.cs" />
     <Compile Include="AI\Decorators\HasTarget.cs" />
     <Compile Include="AI\Systems\PerceptionSystem.cs" />
     <Compile Include="AI\NavigationRouter.cs" />
     <Compile Include="BTCore\Blackboard.cs" />
+    <Compile Include="BTCore\Decorators\Success.cs" />
     <Compile Include="BTCore\Decorators\Repeat.cs" />
     <Compile Include="BTCore\Actions\Print.cs" />
     <Compile Include="BTCore\Actions\Wait.cs" />
@@ -161,6 +164,7 @@
     <Compile Include="Entities\RigidBodyFactory.cs" />
     <Compile Include="Entities\StartPoint.cs" />
     <Compile Include="Gameplay\Components\AttachmentComponent.cs" />
+    <Compile Include="Gameplay\Components\MonsterComponent.cs" />
     <Compile Include="Gameplay\Components\NameComponent.cs" />
     <Compile Include="Gameplay\Components\AmmoType.cs" />
     <Compile Include="Gameplay\Components\PickupComponent.cs" />

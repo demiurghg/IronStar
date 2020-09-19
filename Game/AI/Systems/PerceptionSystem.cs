@@ -62,7 +62,7 @@ namespace IronStar.AI
 						behavior.LastSeenTarget	=	player;
 					}
 
-					entity.GetBlackboard().SetEntry( "TargetEntity", behavior.LastSeenTarget );
+					entity.GetBlackboard().SetEntry( BehaviorSystem.KEY_TARGET_ENTITY, behavior.LastSeenTarget );
 
 
 					var color	=	visibility ? Color.Red : Color.Lime;

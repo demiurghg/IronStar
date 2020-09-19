@@ -32,35 +32,59 @@ namespace IronStar.AI
 			this.physics	=	physics;
 		}
 
+
+		public const string KEY_TARGET_ENTITY	=	"targetEntity";
+		public const string KEY_ROAMING_POINT	=	"roamingPoint";
+		public const string KEY_PLAYER_LOCATION	=	"playerLocation";
+		public const string KEY_COMBAT_LOCATION	=	"combatLocation";
+
+
 		protected override BTNode Create( Entity entity, BehaviorComponent component1 )
 		{
 			var approach = 
-				new HasTarget(ConditionMode.Continuous,
-					new HasLineOfSight(ConditionMode.Continuous|ConditionMode.Inverse,
+				new Success(
+					new HasLineOfSight( KEY_TARGET_ENTITY, ConditionMode.Continuous|ConditionMode.Inverse,
 						new Selector(
 							new Sequence(
-								new FindPlayer("playerLocation"),
-								new MoveTo("playerLocation")
+								new FindPlayer( KEY_PLAYER_LOCATION ),
+								new MoveTo( KEY_PLAYER_LOCATION )
 							),
 							new Sequence(
-								new FindReachablePointInRadius("combatLocation", 60),
-								new MoveTo("combatLocation"),
+								new FindReachablePointInRadius( KEY_COMBAT_LOCATION, 60),
+								new MoveTo( KEY_COMBAT_LOCATION ),
 								new Wait(500, 700)
 							)
 						)
 					)
 				);
 
-			var roaming = 
-				new HasTarget(ConditionMode.Continuous|ConditionMode.Inverse,
+			var attack = 
+				new HasLineOfSight( KEY_TARGET_ENTITY, ConditionMode.Continuous,
 					new Sequence(
-						new FindReachablePointInRadius("roamingPoint", 300),
-						new MoveTo("roamingPoint"),
-						new Wait(1500, 2500)
-					) 
+						new Attack( KEY_TARGET_ENTITY, 350, 750, 1.5f ),
+						new Wait( 300, 700 ),
+						new FindReachablePointInRadius( KEY_COMBAT_LOCATION, 15),
+						new MoveTo( KEY_COMBAT_LOCATION )
+					)
 				);
 
-			return new Selector( approach, roaming );
+			var roaming = 
+				new Sequence(
+					new FindReachablePointInRadius( KEY_ROAMING_POINT, 300 ),
+					new MoveTo( KEY_ROAMING_POINT ),
+					new Wait( 1500, 2500 )
+				);
+
+			return 
+				new Selector( 
+					new HasBlackboardValue<Entity>( KEY_TARGET_ENTITY, ConditionMode.Continuous, 
+						new Sequence(
+							approach, 
+							attack
+						)
+					),
+					new HasBlackboardValue<Entity>( KEY_TARGET_ENTITY, ConditionMode.Continuous|ConditionMode.Inverse, roaming )
+				);
 			//return new BTBuilder()
 			//.Selector()
 			//	.Sequence()

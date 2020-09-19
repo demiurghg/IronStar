@@ -28,6 +28,12 @@ namespace IronStar.BTCore.Actions
 			maxWaitTime	=	maxTime;
 		}
 
+
+		public float Fraction
+		{
+			get { return MathUtil.Clamp((float)(timer.TotalMilliseconds / timeToWait.TotalMilliseconds), 0, 1 ); }
+		}
+
 		
 		public override bool Initialize(Entity entity)
 		{

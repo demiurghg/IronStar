@@ -13,14 +13,17 @@ namespace IronStar.AI.Actions
 {
 	public class HasLineOfSight : Condition
 	{
-		public HasLineOfSight( ConditionMode mode, BTNode node ) : base( mode, node )
+		readonly string keyEntity;
+
+		public HasLineOfSight( string keyEntity, ConditionMode mode, BTNode node ) : base( mode, node )
 		{
+			this.keyEntity	=	keyEntity;
 		}
 
 		public override bool Check( Entity entity )
 		{
 			var attackerEntity	=	entity;
-			var targetEntity	=	entity.GetBlackboard()?.GetEntry<Entity>("TargetEntity");
+			var targetEntity	=	entity.GetBlackboard()?.GetEntry<Entity>(keyEntity);
 
 			return attackerEntity.HasLineOfSight( targetEntity );
 		}

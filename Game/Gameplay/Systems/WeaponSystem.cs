@@ -10,6 +10,7 @@ using Fusion;
 using IronStar.ECSPhysics;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
+using IronStar.AI;
 
 namespace IronStar.Gameplay.Systems
 {
@@ -26,7 +27,7 @@ namespace IronStar.Gameplay.Systems
 
 
 		Aspect weaponAspect			=	new Aspect().Include<WeaponComponent>();
-		Aspect armedPlayerAspect	=	new Aspect().Include<InventoryComponent,PlayerComponent,UserCommandComponent,CharacterController>()
+		Aspect armedEntityAspect	=	new Aspect().Include<InventoryComponent,UserCommandComponent,CharacterController>()
 													.Include<Transform>();
 
 
@@ -38,21 +39,14 @@ namespace IronStar.Gameplay.Systems
 		
 		public void Update( GameState gs, GameTime gameTime )
 		{
-			//	update player's weapon :
-			UpdatePlayerWeapon( gs, gameTime );
-		}
+			var entities = gs.QueryEntities( armedEntityAspect );
 
-
-		void UpdatePlayerWeapon( GameState gs, GameTime gameTime )
-		{
-			var players = gs.QueryEntities( armedPlayerAspect );
-
-			foreach ( var player in players )
+			foreach ( var entity in entities )
 			{
-				var transform	=	player.GetComponent<Transform>();
-				var inventory	=	player.GetComponent<InventoryComponent>();
-				var userCmd		=	player.GetComponent<UserCommandComponent>();
-				var chctrl		=	player.GetComponent<CharacterController>();
+				var transform	=	entity.GetComponent<Transform>();
+				var inventory	=	entity.GetComponent<InventoryComponent>();
+				var userCmd		=	entity.GetComponent<UserCommandComponent>();
+				var chctrl		=	entity.GetComponent<CharacterController>();
 
 				var povTransform	=	userCmd.RotationMatrix * Matrix.Translation(transform.Position + chctrl.PovOffset);
 
@@ -68,16 +62,16 @@ namespace IronStar.Gameplay.Systems
 				//	is active item weapon?
 				if (weaponAspect.Accept(activeItem))
 				{
-					var weapon = activeItem.GetComponent<WeaponComponent>();
-					var attack = userCmd.Action.HasFlag( UserAction.Attack );
+					var weapon	= activeItem.GetComponent<WeaponComponent>();
+					var attack	= userCmd.Action.HasFlag( UserAction.Attack );
 
 					AdvanceWeaponTimer( gameTime, activeItem );
-					UpdateWeaponFSM( gameTime, attack, povTransform, player, inventory, activeItem );
+					UpdateWeaponFSM( gameTime, attack, povTransform, entity, inventory, activeItem );
 				}
 			}
 		}
 
-		
+
 		bool SwitchWeapon( GameState gs, UserCommandComponent userCmd, InventoryComponent inventory )
 		{
 			if (userCmd.Weapon!=null)

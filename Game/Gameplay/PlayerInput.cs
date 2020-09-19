@@ -75,9 +75,9 @@ namespace IronStar.Gameplay
 			var frames	=	Game.GetService<FrameProcessor>();
 			var ui		=	Game.GetService<UserInterface>().Instance;
 			
-			userCommand.MoveForward	=	0;
-			userCommand.MoveRight	=	0;
-			userCommand.MoveUp		=	0;
+			userCommand.MoveForward		=	0;
+			userCommand.MoveRight		=	0;
+			userCommand.MoveUp			=	0;
 
 			if (Game.Keyboard.IsKeyDown( Keys.Escape	)) Game.GetService<Mission>().State.Pause();
 			
@@ -116,16 +116,16 @@ namespace IronStar.Gameplay
 
 			if (ui.AllowGameInput()) 
 			{
-				userCommand.DYaw		=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.X / 16200.0f;
-				userCommand.DPitch		=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.Y / 16200.0f * ( InvertMouse ? -1 : 1 );
+				userCommand.DYaw	=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.X / 16200.0f;
+				userCommand.DPitch	=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.Y / 16200.0f * ( InvertMouse ? -1 : 1 );
 
-				userCommand.Action		=	flags;
-				userCommand.Yaw         +=  userCommand.DYaw;
-				userCommand.Pitch       +=  userCommand.DPitch;
-				userCommand.Roll		=	0;
+				userCommand.Action	=	flags;
+				userCommand.Yaw		+=  userCommand.DYaw;
+				userCommand.Pitch	+=  userCommand.DPitch;
+				userCommand.Roll	=	0;
 
-				float limit				=	MathUtil.PiOverTwo * 0.95f;
-				userCommand.Pitch		=	MathUtil.Clamp( userCommand.Pitch, -limit, limit );
+				float limit					=	MathUtil.PiOverTwo * 0.95f;
+				userCommand.Pitch	=	MathUtil.Clamp( userCommand.Pitch, -limit, limit );
 			}
 			else 
 			{

@@ -16,6 +16,15 @@ namespace IronStar.ECSFactories
 	[EntityFactory("MONSTER_MARINE")]
 	public class MonsterMarineFactory : EntityFactory
 	{
+		void GiveWeapon(Entity monster, string weaponName)
+		{
+			var inventory	=	monster.GetComponent<InventoryComponent>();
+			var weapon		=	monster.gs.Spawn(weaponName);
+
+			inventory.AddItem( weapon.ID );
+			inventory.SwitchWeapon( weapon.ID );
+		}
+
 		public override Entity Spawn( GameState gs )
 		{
 			var e = gs.Spawn();
@@ -31,9 +40,10 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new Velocity() );
 			e.AddComponent( new StepComponent() );
 
+			e.AddComponent( new InventoryComponent() );
 			e.AddComponent( new BehaviorComponent() );
 
-			e.AddComponent( new InventoryComponent() );
+			GiveWeapon( e, "WEAPON_PLASMAGUN");
 
 			return e;
 		}

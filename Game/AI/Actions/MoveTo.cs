@@ -80,12 +80,12 @@ namespace IronStar.AI.Actions
 
 			dr.DrawLine( originPoint, targetPoint, Color.Orange, Color.Orange, 10, 1 );
 
-			var uc = entity.GetComponent<UserCommandComponent>();
+			var uc		=	entity.GetComponent<UserCommandComponent>();
+			var rateYaw	=	gameTime.ElapsedSec * MathUtil.TwoPi;
 
 			if (uc!=null)
 			{
-				var dir	=	targetPoint - originPoint;
-				uc.Yaw	=	(float)Math.Atan2( -dir.X, -dir.Z );
+				uc.RotateTo( originPoint, targetPoint, rateYaw, 0 );
 				uc.MoveForward = 1.0f;
 			}
 

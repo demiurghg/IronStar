@@ -87,10 +87,10 @@ namespace IronStar.SFX {
 
 			var	color		=	new Color(148, 171, 255, 255).ToColor3();
 
-			p.Size0			=	0.70f;
-			p.Size1			=	0.10f;
+			p.Size0			=	1.00f;
+			p.Size1			=	0.30f;
 
-			p.LifeTime		=	0.4f;
+			p.LifeTime		=	0.5f;
 			p.FadeIn		=	0.1f;
 			p.FadeOut		=	0.9f;
 				
@@ -105,29 +105,13 @@ namespace IronStar.SFX {
 
 			//----------------------------------
 
-			/*p.Size0			=	0.50f;
-			p.Size1			=	8.00f;
-
-			p.LifeTime		=	0.4f;
-			p.FadeIn		=	0.1f;
-			p.FadeOut		=	0.9f;
-				
-			p.Color			=	color;
-			p.Intensity		=	100;
-			p.Alpha			=	1;
-
-			p.ImageIndex	=	GetSpriteIndex("bulletTrace");
-
-			rw.ParticleSystem.InjectParticle( p );	//*/
-
-			//----------------------------------
-
 			int count = Math.Min((int)(fxEvent.Velocity.Length() * 4), 2000);
 
 			var m = Matrix.RotationQuaternion( fxEvent.Rotation );
 			var up = m.Up;
 			var rt = m.Right;
 
+			p.Effects		=	ParticleFX.Soft;
 			//color		=	new Color(255, 171, 148, 255).ToColor3();
 
 			for (int i=0; i<count; i++) {
@@ -163,7 +147,7 @@ namespace IronStar.SFX {
 				p.Intensity		=	rand.NextFloat(2000, 5000);
 				p.Color			=	color;
 				p.Alpha			=	1;
-				p.FadeIn		=	0.1f;
+				p.FadeIn		=	0.3f;
 				p.FadeOut		=	0.4f;			
 
 

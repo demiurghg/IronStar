@@ -161,7 +161,7 @@ namespace Fusion.Engine.Graphics {
 
 			UpdateOmniLightExtentsAndVisibility( view, proj, lightSet );
 			UpdateSpotLightExtentsAndVisibility( view, proj, lightSet, vpos );
-			UpdateDecalExtentsAndVisibility( view, proj, lightSet );
+			UpdateDecalExtentsAndVisibility( view, proj, lightSet, vpos );
 			UpdateLightProbeExtentsAndVisibility( view, proj, lightSet );
 		}
 
@@ -307,11 +307,18 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="view"></param>
 		/// <param name="proj"></param>
 		/// <param name="lightSet"></param>
-		void UpdateDecalExtentsAndVisibility ( Matrix view, Matrix proj, LightSet lightSet )
+		void UpdateDecalExtentsAndVisibility ( Matrix view, Matrix proj, LightSet lightSet, Vector3 viewPos )
 		{
 			var vp = new Rectangle(0,0,1,1);
 
 			foreach ( var dcl in lightSet.Decals ) {
+
+				var distance	=	Vector3.Distance( dcl.DecalMatrix.TranslationVector, viewPos )+0.1f;
+
+				if (dcl.CharacteristicSize / distance < 0.005f)
+				{
+					continue;
+				}
 
 				Vector3 min, max;
 				dcl.Visible	=	false;

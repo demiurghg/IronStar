@@ -51,11 +51,14 @@ namespace IronStar.SFX {
 				var decalMatrix		=	scaling * fxEvent.TransformMatrix;
 				var decalMatrixInv	=	Matrix.Invert( decalMatrix );
 
+
 				decalSurface.DecalMatrix			=	decalMatrix;
 				decalSurface.DecalMatrixInverse		=	decalMatrixInv;
+				decalSurface.CharacteristicSize		=	radius * 0.25f;
 
 				decalEmission.DecalMatrix			=	decalMatrix;
 				decalEmission.DecalMatrixInverse	=	decalMatrixInv;
+				decalEmission.CharacteristicSize	=	radius * 0.25f;
 			}
 
 

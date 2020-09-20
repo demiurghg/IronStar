@@ -46,6 +46,8 @@ namespace IronStar.SFX2
 		{
 			var transform			=	t.TransformMatrix;
 
+			decal.CharacteristicSize=	Math.Max( dc.Width, dc.Height );
+
 			decal.DecalMatrix		=	Matrix.Scaling( dc.Width/2, dc.Height/2, dc.Depth/2 ) * transform;
 			decal.DecalMatrixInverse=	Matrix.Invert( decal.DecalMatrix );
 									

@@ -74,6 +74,10 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public InstanceGroup Group = InstanceGroup.Static;
 
+		/// <summary>
+		/// Defines characteristic size of the decal, used to cull reletively small decals
+		/// </summary>
+		public float CharacteristicSize = 1;
 
 		internal bool	Visible;
 		internal Int3	MinExtent;

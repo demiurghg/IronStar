@@ -43,7 +43,18 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new InventoryComponent() );
 			e.AddComponent( new BehaviorComponent() );
 
-			GiveWeapon( e, "WEAPON_PLASMAGUN");
+			var weapons = new[]
+			{
+				"WEAPON_PLASMAGUN",
+				"WEAPON_MACHINEGUN",
+				"WEAPON_RAILGUN",
+				"WEAPON_RAILGUN",
+				"WEAPON_ROCKETLAUNCHER",
+				"WEAPON_ROCKETLAUNCHER",
+			};
+
+			//GiveWeapon( e, "WEAPON_PLASMAGUN");
+			GiveWeapon( e, weapons[ MathUtil.Random.Next(weapons.Length) ] );
 
 			return e;
 		}

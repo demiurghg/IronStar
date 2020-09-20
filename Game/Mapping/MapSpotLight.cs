@@ -91,9 +91,6 @@ namespace IronStar.Mapping {
 		public float SlopeBias { get; set; } = 2;
 
 
-		SpotLight	light;
-
-
 		Matrix SpotView {
 			get {
 				return	Matrix.Invert(WorldMatrix);
@@ -204,7 +201,6 @@ namespace IronStar.Mapping {
 		public override MapNode DuplicateNode()
 		{
 			var newNode = (MapSpotLight)MemberwiseClone();
-			newNode.light = null;
 			newNode.NodeGuid = Guid.NewGuid();
 			return newNode;
 		}

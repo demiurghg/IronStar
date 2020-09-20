@@ -16,6 +16,8 @@ namespace IronStar.AI.Actions
 {
 	public class MoveTo : BTAction
 	{
+		public static bool DebugRouteRender = false;
+
 		readonly string keyLocation;
 		NavigationRoute route;
 
@@ -66,11 +68,14 @@ namespace IronStar.AI.Actions
 				return BTStatus.Failure;
 			}
 
-			for (int i=0; i<route.Count-1; i++)
+			if (DebugRouteRender)
 			{
-				var p0 = route[i];
-				var p1 = route[i+1];
-				dr.DrawLine( p0, p1, Color.Red, Color.Red, 5, 5 );
+				for (int i=0; i<route.Count-1; i++)
+				{
+					var p0 = route[i];
+					var p1 = route[i+1];
+					dr.DrawLine( p0, p1, Color.Red, Color.Red, 5, 5 );
+				}
 			}
 
 			var originPoint	=	entity.GetComponent<Transform>().Position;
@@ -78,7 +83,10 @@ namespace IronStar.AI.Actions
 
 			var routeResult	=	NavigationRouter.FollowRoute( route, originPoint, 10, 7, 3, out targetPoint );
 
-			dr.DrawLine( originPoint, targetPoint, Color.Orange, Color.Orange, 10, 1 );
+			if (DebugRouteRender)
+			{
+				dr.DrawLine( originPoint, targetPoint, Color.Orange, Color.Orange, 10, 1 );
+			}
 
 			var uc		=	entity.GetComponent<UserCommandComponent>();
 			var rateYaw	=	gameTime.ElapsedSec * MathUtil.TwoPi;

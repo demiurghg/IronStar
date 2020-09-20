@@ -53,6 +53,7 @@ namespace IronStar.SFX2
 			light.RadiusOuter	=	ol.OuterRadius;
 
 			light.SpotView		=	Matrix.Invert( transform );
+			light.Projection	=	ol.ComputeSpotMatrix();
 			light.SpotMaskName	=	ol.SpotMaskName;
 		}
 	}

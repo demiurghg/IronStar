@@ -197,17 +197,26 @@ namespace Fusion.Engine.Graphics.Lights {
 				new Line( viewPoints[3], viewPoints[7] ),
 			};
 
-			lines = lines.Where( line => line.Clip(znear) ).ToArray();
+			//lines = lines.Where( line => line.Clip(znear) ).ToArray();
 
-			if (!lines.Any()) {
-				return false;
+			//if (!lines.Any()) {
+			//	return false;
+			//}
+
+			var projPoints = new List<Vector4>(24);
+			
+			foreach ( var line in lines ) 
+			{
+				if (line.Clip(znear))
+				{
+					projPoints.Add( Vector4.Transform( line.A, projection ) );
+					projPoints.Add( Vector4.Transform( line.B, projection ) );
+				}
 			}
 
-			var projPoints = new List<Vector4>();
-			
-			foreach ( var line in lines ) {
-				projPoints.Add( Vector4.Transform( line.A, projection ) );
-				projPoints.Add( Vector4.Transform( line.B, projection ) );
+			if (projPoints.Count==0)
+			{
+				return false;
 			}
 
 			if (projectZ) {

@@ -157,6 +157,7 @@ namespace Fusion.Engine.Graphics {
 
 		VTTileLoader	tileLoader;
 		VTTileCache		tileCache;
+		PageGpu[]		pageDataCpu;
 
 		Ubershader		shader;
 		StateFactory	factory;
@@ -248,6 +249,7 @@ namespace Fusion.Engine.Graphics {
 
 				PageTable			=	new RenderTarget2D( rs.Device, ColorFormat.Rgba32F, tableSize, tableSize, true, true );
 				PageData			=	new StructuredBuffer( rs.Device, typeof(PageGpu), maxTiles, StructuredBufferFlags.None );
+				pageDataCpu			=	new PageGpu[ maxTiles ];
 				Params				=	new ConstantBuffer( rs.Device, 16 );
 
 				tileCache			=	new VTTileCache( physPages, physicalSize );
@@ -348,7 +350,9 @@ namespace Fusion.Engine.Graphics {
 				
 				using ( new CVEvent( "SetData" ) ) {
 					if ( pages.Any() ) {
-						PageData.SetData( pages );
+						pages.CopyTo( pageDataCpu, 0 );
+						//PageData.SetData( pages );
+						PageData.UpdateData( pageDataCpu );
 					}
 				}
 

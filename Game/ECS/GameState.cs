@@ -392,7 +392,8 @@ namespace IronStar.ECS
 			return entities
 				.Where( e1 => aspect.Accept(e1.Value) )
 				.Select( e2 => e2.Value )
-				.ToArray();
+				//.ToArray()
+				;
 		}
 
 

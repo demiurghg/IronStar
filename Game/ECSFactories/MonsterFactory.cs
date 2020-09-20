@@ -21,6 +21,8 @@ namespace IronStar.ECSFactories
 			var inventory	=	monster.GetComponent<InventoryComponent>();
 			var weapon		=	monster.gs.Spawn(weaponName);
 
+			weapon.RemoveComponent<Transform>();
+
 			inventory.AddItem( weapon.ID );
 			inventory.SwitchWeapon( weapon.ID );
 		}

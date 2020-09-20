@@ -27,9 +27,27 @@ namespace IronStar.AI
 		public bool Enabled = true;
 		readonly PhysicsCore physics;
 
+		Entity player = null;
+		DebugRender dr;
+
+		public Entity Player
+		{
+			get { return player; }
+		}
+
+
 		public PerceptionSystem(PhysicsCore physics)
 		{
 			this.physics	=	physics;
+		}
+
+
+		public override void Update( GameState gs, GameTime gameTime )
+		{
+			player	=	gs.GetPlayer();
+			dr		=	gs.GetService<RenderSystem>().RenderWorld.Debug;
+
+			base.Update( gs, gameTime );
 		}
 
 
@@ -41,10 +59,6 @@ namespace IronStar.AI
 
 			if (Enabled)
 			{
-				var dr		=	entity.gs.GetService<RenderSystem>().RenderWorld.Debug;
-				var player	=	entity.gs.GetPlayer();
-
-
 				if (GetSensoricBoundingVolumes(entity, out pov, out frustum, out sphere))
 				{
 					bool hasLos = false;
@@ -64,10 +78,8 @@ namespace IronStar.AI
 
 					entity.GetBlackboard().SetEntry( BehaviorSystem.KEY_TARGET_ENTITY, behavior.LastSeenTarget );
 
-
-					var color	=	visibility ? Color.Red : Color.Lime;
-
 					/*
+					var color	=	visibility ? Color.Red : Color.Lime;
 					dr.DrawFrustum( frustum, color, 0.02f, 2 );
 					dr.DrawRing( Matrix.Translation(sphere.Center), sphere.Radius, Color.Green, 32, 2, 1 );
 					*/

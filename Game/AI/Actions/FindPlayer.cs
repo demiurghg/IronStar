@@ -25,7 +25,7 @@ namespace IronStar.AI.Actions
 
 		public override BTStatus Update( GameTime gameTime, Entity entity, bool cancel )
 		{
-			var playerEntity	=	entity.gs.GetPlayer();
+			var playerEntity	=	entity.gs.GetService<PerceptionSystem>().Player;
 
 			if (playerEntity!=null)
 			{

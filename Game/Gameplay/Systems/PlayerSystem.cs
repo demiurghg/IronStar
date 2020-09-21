@@ -39,9 +39,12 @@ namespace IronStar.Gameplay
 		}
 
 
+		Aspect startPointAspect = new Aspect().Include<PlayerStartComponent,Transform>();
+
+
 		public void UpdatePlayerSpawn ( GameState gs )
 		{
-			var e	=	gs.QueryEntities<PlayerStartComponent,Transform>().RandomOrDefault(rand);
+			var e	=	gs.QueryEntities(startPointAspect).RandomOrDefault(rand);
 
 			if (e==null)
 			{

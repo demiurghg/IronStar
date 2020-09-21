@@ -10,6 +10,7 @@ using System.Reflection;
 using Fusion;
 using System.Runtime.Remoting;
 using Fusion.Core.Content;
+using Fusion.Engine.Tools;
 
 namespace IronStar.ECS
 {
@@ -102,6 +103,8 @@ namespace IronStar.ECS
 				system.System.Update( this, gameTime );
 				RefreshEntities();
 			}
+
+			PrintState();
 		}
 
 
@@ -154,6 +157,32 @@ namespace IronStar.ECS
 				.Where( sys1 => type.IsAssignableFrom( sys1.System.GetType() ) )
 				.Select( sys2 => (TSystem)sys2.System )
 				.ToArray();
+		}
+
+
+
+		/*-----------------------------------------------------------------------------------------------
+		 *	Debug stuff :
+		-----------------------------------------------------------------------------------------------*/
+
+		public void PrintState()
+		{
+			var con = Game.GetService<GameConsole>();
+
+			con.DrawDebugText(Color.White, "-------- ECS Game State --------");
+
+			con.DrawDebugText(Color.White, "   entities : {0}", entities.Count );
+
+			foreach ( var componentType in ECSTypeManager.GetComponentTypes() )
+			{
+				Dictionary<uint,IComponent> componentDict;
+				if (components.TryGetValue( componentType, out componentDict ))
+				{
+					con.DrawDebugText(Color.White, "  component : {0} : {1}", componentType.Name.Replace("Component", ""), componentDict.Count );
+				}
+			}
+
+			con.DrawDebugText(Color.White, "--------------------------------");
 		}
 
 

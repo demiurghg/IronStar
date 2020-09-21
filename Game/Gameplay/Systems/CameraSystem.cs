@@ -75,12 +75,15 @@ namespace IronStar.Gameplay
 		public void Add( GameState gs, Entity e ) {}
 		public void Remove( GameState gs, Entity e ) {}
 
+		Aspect playerCameraAspect = new Aspect().Include<PlayerComponent,Transform>()
+												.Include<UserCommandComponent,CharacterController>();
+
 
 		public void Update( GameState gs, GameTime gameTime )
 		{
 			if (Enabled)
 			{
-				var	players	=	gs.QueryEntities<PlayerComponent,Transform,UserCommandComponent,CharacterController>();
+				var	players	=	gs.QueryEntities(playerCameraAspect);
 
 				if (players.Count()>1)
 				{

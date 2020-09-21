@@ -90,17 +90,18 @@ namespace IronStar.SFX {
 		/// <returns></returns>
 		public SoundEventInstance	CreateSoundEventInstance ( string path )
 		{
-			if (string.IsNullOrWhiteSpace(path)) {
+			if (string.IsNullOrWhiteSpace(path)) 
+			{
 				return null;
 			}
 
-			try {
+			try 
+			{
 				var soundEvent = ss.GetEvent( path );
-
 				return soundEvent.CreateInstance();
-
-			} catch ( SoundException se ) {
-
+			}
+			catch ( SoundException se ) 
+			{
 				Log.Warning(se.ToString());
 				return null;
 			}
@@ -128,13 +129,14 @@ namespace IronStar.SFX {
 			const float dt = 1/60.0f;
 			timeAccumulator	+= gameTime.ElapsedSec;
 
-			while ( timeAccumulator > dt ) {
-
-				foreach ( var sfx in runningSFXes ) {
-
+			while ( timeAccumulator > dt ) 
+			{
+				foreach ( var sfx in runningSFXes ) 
+				{
 					sfx.Update( dt );
 
-					if (sfx.IsExhausted) {
+					if (sfx.IsExhausted) 
+					{
 						sfx.Kill();
 					}
 				}
@@ -157,7 +159,8 @@ namespace IronStar.SFX {
 			var name	=	Path.GetFileName(spriteName);
 			var clip	=	spriteSheet.GetClipByName( spriteName );
 
-			if (clip==null) {
+			if (clip==null) 
+			{
 				Log.Warning("{0} not included to sprite sheet", spriteName);
 				return EmptyClip;
 			}
@@ -173,22 +176,26 @@ namespace IronStar.SFX {
 		/// <param name="fxEvent"></param>
 		public FXInstance RunFX ( string className, FXEvent fxEvent, bool looped, bool attached )
 		{
-			if (className=="*trail_bullet") {
+			if (className=="*trail_bullet") 
+			{
 				RunTrailBullet( fxEvent );
 				return null;
 			}
 
-			if (className=="*trail_gauss") {
+			if (className=="*trail_gauss") 
+			{
 				RunTrailGauss( fxEvent );
 				return null;
 			}
 
-			if (className=="*trail_laser") {
+			if (className=="*trail_laser") 
+			{
 				Log.Warning("\"*rail_trail\" is not implemented");
 				return null;
 			}
 
-			if (className==null) {
+			if (className==null) 
+			{
 				Log.Warning("RunFX: bad atom ID");
 				return null;
 			}
@@ -196,7 +203,8 @@ namespace IronStar.SFX {
 
 			var factory		=	content.Load( Path.Combine("fx", className), (FXFactory)null );
 
-			if (factory==null) {
+			if (factory==null) 
+			{
 				return null;
 			}
 
@@ -206,26 +214,6 @@ namespace IronStar.SFX {
 
 			return fxInstance;
 		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="fxEvent"></param>
-		/*public FXInstance RunFX ( FXEvent fxEvent, bool looped )
-		{
-			var fxAtomID	=	fxEvent.FXAtom;
-
-			if (fxAtomID<0) {
-				Log.Warning("RunFX: negative atom ID");
-				return null;
-			}
-
-			var className = world.Atoms[ fxAtomID ];
-
-			return RunFX( className, fxEvent, looped );
-		}		 */
 
 
 		/*-----------------------------------------------------------------------------------------
@@ -265,14 +253,26 @@ namespace IronStar.SFX {
 
 		protected override void Process( ECS.Entity entity, GameTime gameTime, FXInstance fxInstance, FXComponent fx, Transform t )
 		{
-			if (fxInstance!=null)
+			if ( fxInstance!=null )
 			{
-				fxInstance.fxEvent.Origin	=	t.Position;
-				fxInstance.fxEvent.Rotation	=	t.Rotation;
-				fxInstance.fxEvent.Scale	=	(t.Scaling.X + t.Scaling.Y + t.Scaling.Z) / 3.0f;
-				var velocityComponent		=	entity.GetComponent<Velocity>();
-				fxInstance.fxEvent.Velocity	=	velocityComponent==null ? Vector3.Zero : velocityComponent.Linear;
+				fxInstance.fxEvent.Origin   =   t.Position;
+				fxInstance.fxEvent.Rotation =   t.Rotation;
+				fxInstance.fxEvent.Scale    =   ( t.Scaling.X + t.Scaling.Y + t.Scaling.Z ) / 3.0f;
+				var velocityComponent       =   entity.GetComponent<Velocity>();
+				fxInstance.fxEvent.Velocity =   velocityComponent==null ? Vector3.Zero : velocityComponent.Linear;
+
+				if ( fxInstance.IsExhausted )
+				{
+					entity.gs.Kill( entity );
+				}
 			}
+			else
+			{
+				//	trails creates null FX-instances, 
+				//	so just delete entity:
+				entity.gs.Kill( entity );
+			}
+		
 
 			//	#TODO #FX -- kill exhausted FXs
 			//fxInstance.Update( gameTime.ElapsedSec ); 

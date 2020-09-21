@@ -41,6 +41,7 @@ namespace Fusion.Engine.Tools {
 		UserTexture	consoleFont;
 		SpriteLayer consoleLayer;
 		SpriteLayer editLayer;
+		SpriteLayer	debugTextLayer;
 		
 
 		float showFactor = 0;
@@ -62,6 +63,13 @@ namespace Fusion.Engine.Tools {
 		Suggestion suggestion = null;
 
 
+		class DebugString
+		{
+			public Color Color;
+			public string Text;
+		}
+
+		readonly List<DebugString> debugStrings = new List<DebugString>();
 
 
 		/// <summary>
@@ -91,9 +99,11 @@ namespace Fusion.Engine.Tools {
 
 			consoleLayer	=	new SpriteLayer( Game.RenderSystem, 1024 );
 			editLayer		=	new SpriteLayer( Game.RenderSystem, 1024 );
+			debugTextLayer	=	new SpriteLayer( Game.RenderSystem, 1024 );
 			consoleLayer.Order = LayerOrder;
 			consoleLayer.Layers.Add( editLayer );
 
+			rs.SpriteLayers.Add( debugTextLayer );
 			rs.SpriteLayers.Add( consoleLayer );
 
 			LoadContent();
@@ -181,6 +191,27 @@ namespace Fusion.Engine.Tools {
 		}
 
 
+		public void DrawDebugText( Color color, string frmt, params object[] args )
+		{
+			debugStrings.Add( new DebugString() { Color = color, Text = string.Format(frmt,args) } );
+		}
+
+
+		void DrawDebugText()
+		{
+			debugTextLayer.Clear();
+
+			for (int i=0; i<debugStrings.Count; i++)
+			{
+				var ds = debugStrings[i];
+				DrawString( debugTextLayer, 4+1, 4 + i*9+1, ds.Text, Color.Black );
+				DrawString( debugTextLayer, 4+0, 4 + i*9+0, ds.Text, ds.Color );
+			}
+
+			debugStrings.Clear();
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -188,6 +219,8 @@ namespace Fusion.Engine.Tools {
 		public override void Update ( GameTime gameTime )
 		{
 			var vp		=	Game.GraphicsDevice.DisplayBounds;
+
+			DrawDebugText();
 
 			RefreshConsoleLayer();
 

@@ -323,7 +323,7 @@ namespace Fusion.Engine.Graphics {
 				Vector3 min, max;
 				dcl.Visible	=	false;
 
-				if ( Extents.GetBasisExtent( view, proj, vp, dcl.DecalMatrix, false, out min, out max ) ) {
+				if ( Extents.GetBasisExtent( view, proj, vp, dcl.DecalMatrix, out min, out max ) ) {
 
 					min.Z	=	GetGridSlice( min.Z );
 					max.Z	=	GetGridSlice( max.Z );
@@ -375,7 +375,7 @@ namespace Fusion.Engine.Graphics {
 
 				if ( lpb.Mode==LightProbeMode.CubeReflection)
 				{
-					if ( Extents.GetBasisExtent( view, proj, vp, lpb.ProbeMatrix, false, out min, out max ) ) 
+					if ( Extents.GetBasisExtent( view, proj, vp, lpb.ProbeMatrix, out min, out max ) ) 
 					{
 						min.Z	=	GetGridSlice( min.Z );
 						max.Z	=	GetGridSlice( max.Z );

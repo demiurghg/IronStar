@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Fusion.Core.Extensions;
 using Fusion.Core.Mathematics;
 
 namespace Fusion.Engine.Graphics.Lights {
@@ -158,7 +159,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// <param name="min"></param>
 		/// <param name="max"></param>
 		/// <returns></returns>
-		public static bool GetBasisExtent ( Matrix view, Matrix projection, Rectangle viewport, Matrix basis, bool projectZ, out Vector3 min, out Vector3 max )
+		public static bool GetBasisExtent ( Matrix view, Matrix projection, Rectangle viewport, Matrix basis, out Vector3 min, out Vector3 max )
 		{
 			min = max	=	Vector3.Zero;
 
@@ -197,20 +198,14 @@ namespace Fusion.Engine.Graphics.Lights {
 				new Line( viewPoints[3], viewPoints[7] ),
 			};
 
-			//lines = lines.Where( line => line.Clip(znear) ).ToArray();
-
-			//if (!lines.Any()) {
-			//	return false;
-			//}
-
 			var projPoints = new List<Vector4>(24);
 			
-			foreach ( var line in lines ) 
+			for ( int i=0; i<lines.Length; i++ ) 
 			{
-				if (line.Clip(znear))
+				if (lines[i].Clip(znear))
 				{
-					projPoints.Add( Vector4.Transform( line.A, projection ) );
-					projPoints.Add( Vector4.Transform( line.B, projection ) );
+					projPoints.Add( Vector4.Transform( lines[i].A, projection ) );
+					projPoints.Add( Vector4.Transform( lines[i].B, projection ) );
 				}
 			}
 
@@ -219,22 +214,19 @@ namespace Fusion.Engine.Graphics.Lights {
 				return false;
 			}
 
-			if (projectZ) {
-				min.X	=	projPoints.Min( p => p.X / p.W );
-				min.Y	=	projPoints.Max( p => p.Y / p.W );
-				min.Z	=	projPoints.Min( p => p.Z / p.W );
+			min		=	 Vector3.One;
+			max		=	-Vector3.One;
 
-				max.X	=	projPoints.Max( p => p.X / p.W );
-				max.Y	=	projPoints.Min( p => p.Y / p.W );
-				max.Z	=	projPoints.Max( p => p.Z / p.W );
-			} else {
-				min.X	=	projPoints.Min( p => p.X / p.W );
-				min.Y	=	projPoints.Max( p => p.Y / p.W );
-				min.Z	=	projPoints.Min( p => p.W );
+			for (int i=0; i<projPoints.Count; i++)
+			{
+				var p	=	projPoints[i];
+				min.X	=	Math.Min( min.X, p.X / p.W );
+				min.Y	=	Math.Min( min.Y, p.Y / p.W );
+				min.Z	=	Math.Min( min.Z, p.W );
 
-				max.X	=	projPoints.Max( p => p.X / p.W );
-				max.Y	=	projPoints.Min( p => p.Y / p.W );
-				max.Z	=	projPoints.Max( p => p.W );
+				max.X	=	Math.Max( max.X, p.X / p.W );
+				max.Y	=	Math.Max( max.Y, p.Y / p.W );
+				max.Z	=	Math.Max( max.Z, p.W );
 			}
 
 			min.X	=	( min.X *  0.5f + 0.5f ) * viewport.Width;
@@ -242,6 +234,8 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			max.X	=	( max.X *  0.5f + 0.5f ) * viewport.Width;
 			max.Y	=	( max.Y * -0.5f + 0.5f ) * viewport.Height;
+
+			Misc.Swap( ref max.Y, ref min.Y );
 
 			return true;
 		} 

@@ -35,6 +35,11 @@ namespace IronStar {
 
 		UIContext		uiContext;
 
+		public HudFrame HudFrame
+		{
+			get { return hudFrame; }
+		}
+
         /// <summary>
         /// Creates instance of ShooterDemoUserInterface
         /// </summary>

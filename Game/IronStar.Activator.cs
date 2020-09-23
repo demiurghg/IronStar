@@ -20,6 +20,7 @@ using Fusion.Engine.Graphics.Lights;
 using Fusion.Core.Content;
 using System.IO;
 using IronStar.AI;
+using IronStar.UI.HUD;
 
 namespace IronStar {
 	partial class IronStar : Game
@@ -77,6 +78,9 @@ namespace IronStar {
 			gs.AddSystem( new SFX2.LightProbeSystem(game.RenderSystem) );
 			gs.AddSystem( new SFX2.LightingSystem() );
 			gs.AddSystem( new Gameplay.PlayerSystem() );
+
+			//	ui
+			gs.AddSystem( new HudSystem(game) );
 
 
 			if (isEditor)

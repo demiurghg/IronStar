@@ -27,7 +27,7 @@ namespace Fusion.Engine.Frames {
 		internal readonly Frame Root;
 		internal Frame Target;
 
-		public UIContext( Frame modal, Frame target )
+		internal UIContext( Frame modal, Frame target )
 		{
 			Root	=	modal;
 			Target	=	target;

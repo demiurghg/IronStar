@@ -182,6 +182,7 @@
     <Compile Include="Gameplay\Systems\CameraSystem.cs" />
     <Compile Include="Gameplay\Systems\FPVWeaponAnimator.cs" />
     <Compile Include="Gameplay\Systems\FPVWeaponSystem.cs" />
+    <Compile Include="Gameplay\Systems\InventorySystem.cs" />
     <Compile Include="Gameplay\Systems\PlayerSystem.cs" />
     <Compile Include="Gameplay\Systems\PickupSystem.cs" />
     <Compile Include="Gameplay\Systems\HealthSystem.cs" />
@@ -300,6 +301,7 @@
     <Compile Include="UI\Controls\TextBox.cs" />
     <Compile Include="UI\HUD\HudColors.cs" />
     <Compile Include="UI\HUD\HudFrame.cs" />
+    <Compile Include="UI\HUD\HudSystem.cs" />
     <Compile Include="UI\LoadingScreen.cs" />
     <Compile Include="UI\PauseMenu.cs" />
     <Compile Include="UI\MainMenu.cs" />

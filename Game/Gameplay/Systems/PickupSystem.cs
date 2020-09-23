@@ -21,7 +21,7 @@ namespace IronStar.Gameplay.Systems
 		readonly Aspect itemAspect		=	new Aspect().Include<PickupComponent,TouchDetector,Transform>();
 		readonly Aspect weaponAspect	=	new Aspect().Include<PickupComponent,WeaponComponent>().Exclude<AmmoComponent>();
 		readonly Aspect ammoAspect		=	new Aspect().Include<PickupComponent,AmmoComponent,NameComponent>().Exclude<WeaponComponent>();
-		readonly Aspect inventoryAspect	=	new Aspect().Include<InventoryComponent,Transform>();
+		readonly Aspect inventoryAspect	=	new Aspect().Include<PlayerComponent,InventoryComponent,Transform>();
 
 		
 		public PickupSystem()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Fusion.Core.Content;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Graphics;
 
@@ -18,6 +19,22 @@ namespace IronStar.UI.Controls {
 		public static SpriteFont HeaderFont = null;
 		public static SpriteFont SmallFont = null;
 		public static SpriteFont Monospaced = null;
+
+		internal static void LoadContent( ContentManager content )
+		{
+			BigFont		=	content.Load<SpriteFont>(@"fonts\amdrtg100");
+
+			NormalFont	=	content.Load<SpriteFont>(@"fonts\aldrich_16pt");
+			HeaderFont	=	content.Load<SpriteFont>(@"fonts\aldrich_24pt");
+			SmallFont	=	content.Load<SpriteFont>(@"fonts\aldrich_10pt");
+
+			//NormalFont	=	content.Load<SpriteFont>(@"fonts\armata20");
+			//HeaderFont	=	content.Load<SpriteFont>(@"fonts\armata28");
+			//SmallFont		=	content.Load<SpriteFont>(@"fonts\armata14");
+
+			ArrowDown	=	content.Load<DiscTexture>(@"ui\arrowDown");
+		}
+
 
 		public static DiscTexture ArrowDown = null;
 
@@ -38,6 +55,7 @@ namespace IronStar.UI.Controls {
 		//	Base metrics :
 		public static readonly int		CaptionHeight			=	15;
 		public static readonly int		ScrollSize				=	10;
+
 		public static readonly int		ElementHeight			=	40;
 		public static readonly int		Margin					=	4;
 		public static readonly int		SmallContentPadding		=	10;

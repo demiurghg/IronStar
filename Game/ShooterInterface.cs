@@ -64,11 +64,7 @@ namespace IronStar {
 
 			frames	=	Game.GetService<FrameProcessor>();
 
-			MenuTheme.BigFont		=	frames.Game.Content.Load<SpriteFont>(@"fonts\amdrtg100");
-			MenuTheme.NormalFont	=	frames.Game.Content.Load<SpriteFont>(@"fonts\armata20");
-			MenuTheme.HeaderFont	=	frames.Game.Content.Load<SpriteFont>(@"fonts\armata28");
-			MenuTheme.SmallFont		=	frames.Game.Content.Load<SpriteFont>(@"fonts\armata14");
-			MenuTheme.ArrowDown		=	frames.Game.Content.Load<DiscTexture>(@"ui\arrowDown");
+			MenuTheme.LoadContent( frames.Game.Content );
 
 
 			mainMenu				=	new MainMenu( frames );

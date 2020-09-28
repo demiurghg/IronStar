@@ -78,12 +78,12 @@ namespace IronStar.UI.HUD
 		{
 			base.Update( gameTime );
 
-			if (Player!=null) {
+			if (true /*Player!=null*/) {
 
 				Visible		=	true;
 
-				var health	=	Player.Health;
-				var armor	=	Player.Armor;
+				var health	=	87;
+				var armor	=	34;
 
 				numberArmor .Text = string.Format("{0}/{1}", armor , 100 );
 				numberHealth.Text = string.Format("{0}/{1}", health, 100 );

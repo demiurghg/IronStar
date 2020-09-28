@@ -20,7 +20,7 @@ using Fusion.Engine.Frames;
 namespace IronStar.UI.HUD {
 	public class HudWeapon : Frame {
 
-		public Player Player;
+		//public Player Player;
 
 		Frame numberAmmo;
 		Frame labelWeapon;
@@ -68,20 +68,20 @@ namespace IronStar.UI.HUD {
 		{
 			base.Update( gameTime );
 
-			var weapon  = Player?.GetCurrentWeapon();
+			//var weapon  = Player?.GetCurrentWeapon();
 
-			if (weapon!=null) {
+			if (true /*weapon!=null*/) {
 
 				Visible			=	true;
 
-				var weaponName	=	weapon.NiceName;
-				var ammo		=	weapon.GetPlayerAmmo();
+				var weaponName	=	"Machinegun"; // weapon.NiceName;
+				var ammo		=	"100";//weapon.GetPlayerAmmo();
 
-				var count		=	(ammo == null) ? 0 : ammo.Count;
-				var maxCount	=	(ammo == null) ? 0 : ammo.MaxCount;
+				//var count		=	(ammo == null) ? 0 : ammo.Count;
+				//var maxCount	=	(ammo == null) ? 0 : ammo.MaxCount;
 
-				labelWeapon .Text = string.Format("{0}"		, weaponName );
-				numberAmmo	.Text = string.Format("{0}/{1}"	, count, maxCount );
+				labelWeapon .Text = string.Format("{0}"		, "Machinegun" );
+				numberAmmo	.Text = string.Format("{0}/{1}"	, 115, 100 );
 
 			} else {
 

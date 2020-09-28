@@ -18,6 +18,8 @@ namespace IronStar.ECSFactories
 	{
 		void GiveWeapon(Entity monster, string weaponName)
 		{
+			return;
+
 			var inventory	=	monster.GetComponent<InventoryComponent>();
 			var weapon		=	monster.gs.Spawn(weaponName);
 

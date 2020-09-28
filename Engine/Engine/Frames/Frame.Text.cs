@@ -291,7 +291,7 @@ namespace Fusion.Engine.Frames {
 			var dx = TextOffsetX;
 			var dy = TextOffsetY;
 			var sx = TextOffsetX + ShadowOffset.X;
-			var sy = TextOffsetX + ShadowOffset.Y;
+			var sy = TextOffsetY + ShadowOffset.Y;
 
 
 			for ( int index = 0; index < textLines.Length; index ++ ) {

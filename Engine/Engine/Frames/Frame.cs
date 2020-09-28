@@ -1026,9 +1026,36 @@ namespace Fusion.Engine.Frames {
 		/// </summary>
 		/// <param name="width"></param>
 		/// <param name="?"></param>
-		protected virtual void Adjust ()
+		public virtual void Adjust (bool adjustWidth, bool adjustHeight)
 		{
-			throw new NotImplementedException();
+			int width	=	0;
+			int height	=	0;
+
+			if (Image!=null)
+			{
+				if (ImageMode==FrameImageMode.Aligned || ImageMode==FrameImageMode.Centered)
+				{
+					width	=	Math.Max( width,  Image.Width );
+					height	=	Math.Max( height, Image.Height );
+				}
+			}
+
+			if (Text!=null)
+			{
+				RefreshTextMetrics();
+				width	=	Math.Max( width,  textBlockSize.Width );
+				height	=	Math.Max( height, textBlockSize.Height );
+			}
+
+			if (adjustWidth)
+			{
+				Width	=	width + PaddingLeft + PaddingRight;
+			}
+
+			if (adjustHeight)
+			{
+				Height	=	height + PaddingTop + PaddingBottom;
+			}
 		}
 
 

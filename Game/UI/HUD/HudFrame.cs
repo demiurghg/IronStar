@@ -30,6 +30,7 @@ namespace IronStar.UI.HUD
 		Frame	message;
 		Frame	objective;
 
+
 			//crosshair		=	Game.Content.Load<DiscTexture>(@"hud\crosshairA");
 			//hudFont			=	Game.Content.Load<SpriteFont>(@"hud\hudFont");
 			//hudFontSmall	=	Game.Content.Load<SpriteFont>(@"hud\hudFontSmall");
@@ -61,43 +62,39 @@ namespace IronStar.UI.HUD
 
 			this.Ghost			=	true;
 
-			//hudHealth		=	new HudHealth( this,         40, h - 64 ); 
-			//hudWeapon		=	new HudWeapon( this, w - 40-200, h - 64 );
+			//crossHair			=	new Frame( Frames, w/2-32, h/2-32, 64,64,"", Color.Zero );
+			//crossHair.Image		=	Game.Content.Load<DiscTexture>(@"hud\crosshairA");
+			//crossHair.ImageMode	=	FrameImageMode.Centered;
+			//crossHair.ImageColor=	new Color(192,192,192,255);
+			//crossHair.Anchor	=	FrameAnchor.None;
 
 
-			crossHair			=	new Frame( Frames, w/2-32, h/2-32, 64,64,"", Color.Zero );
-			crossHair.Image		=	Game.Content.Load<DiscTexture>(@"hud\crosshairA");
-			crossHair.ImageMode	=	FrameImageMode.Centered;
-			crossHair.ImageColor=	new Color(192,192,192,255);
-			crossHair.Anchor	=	FrameAnchor.None;
+			//warning				=	new Frame( Frames, w/2-360, h/2+80, 720, 8, "", Color.Zero );
+			//warning.Anchor		=	FrameAnchor.None;
+			//warning.ForeColor	=	HudColors.WarningColor;
+			//warning.ShadowColor	=	HudColors.ShadowColor;
+			//warning.Text		=	"";//"Warning: Low health!";
+			//warning.TextAlignment=	Alignment.MiddleCenter;
+			//warning.ShadowOffset=	new Vector2(1,1);
+
+			//message				=	new Frame( Frames, w/2-360, h/2-88, 720, 8, "", Color.Zero );
+			//message.Anchor		=	FrameAnchor.None;
+			//message.ForeColor	=	HudColors.MessageColor;
+			//message.ShadowColor	=	HudColors.ShadowColor;
+			//message.Text		=	"";//"You need blue key";
+			//message.TextAlignment=	Alignment.MiddleCenter;
+			//message.ShadowOffset=	new Vector2(1,1);
 
 
-			warning				=	new Frame( Frames, w/2-360, h/2+80, 720, 8, "", Color.Zero );
-			warning.Anchor		=	FrameAnchor.None;
-			warning.ForeColor	=	HudColors.WarningColor;
-			warning.ShadowColor	=	HudColors.ShadowColor;
-			warning.Text		=	"";//"Warning: Low health!";
-			warning.TextAlignment=	Alignment.MiddleCenter;
-			warning.ShadowOffset=	new Vector2(1,1);
+			////this.Add( hudHealth );
+			////this.Add( hudWeapon );
 
-			message				=	new Frame( Frames, w/2-360, h/2-88, 720, 8, "", Color.Zero );
-			message.Anchor		=	FrameAnchor.None;
-			message.ForeColor	=	HudColors.MessageColor;
-			message.ShadowColor	=	HudColors.ShadowColor;
-			message.Text		=	"";//"You need blue key";
-			message.TextAlignment=	Alignment.MiddleCenter;
-			message.ShadowOffset=	new Vector2(1,1);
+			//this.Add( warning );
+			//this.Add( message );
+			//warning.Visible = true;
+			//message.Visible = true;
 
-
-			//this.Add( hudHealth );
-			//this.Add( hudWeapon );
-
-			this.Add( warning );
-			this.Add( message );
-			warning.Visible = true;
-			message.Visible = true;
-
-			this.Add( crossHair );
+			////this.Add( crossHair );
 		}
 	}
 }

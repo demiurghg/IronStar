@@ -167,6 +167,8 @@ namespace IronStar.ECS
 
 		public void PrintState()
 		{
+			return;
+
 			var con = Game.GetService<GameConsole>();
 
 			con.DrawDebugText(Color.White, "-------- ECS Game State --------");

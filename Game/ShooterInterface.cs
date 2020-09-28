@@ -65,6 +65,7 @@ namespace IronStar {
 			frames	=	Game.GetService<FrameProcessor>();
 
 			MenuTheme.LoadContent( frames.Game.Content );
+			HudColors.LoadContent( frames.Game.Content );
 
 
 			mainMenu				=	new MainMenu( frames );

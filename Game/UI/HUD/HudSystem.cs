@@ -24,6 +24,9 @@ namespace IronStar.UI.HUD
 		HudIndicator	health;
 		HudIndicator	armor;
 
+		HudItem			key0;
+		HudItem			key1;
+
 
 
 		public HudSystem ( Game game )
@@ -46,11 +49,16 @@ namespace IronStar.UI.HUD
 
 
 			//	create health bar :
-			health	=	new HudIndicator( ui, 64, h-116, 87, 100, "icon_health", Color.Red );
-			armor	=	new HudIndicator( ui, 64, h- 80, 34, 100, "icon_armor" , Color.Orange );
+			health	=	new HudIndicator( ui,  HudAlignment.Left,  64, h-116, 87, 100, @"ui\icons\icon_health", Color.Red );
+			armor	=	new HudIndicator( ui,  HudAlignment.Right, 64, h- 80, 34, 100, @"ui\icons\icon_armor" , Color.Orange );
+
+			key0	=	new HudItem( ui,  HudAlignment.Left, 64, h/2,		"RED\nKEYCARD", "USE TOOPEN\nRED DOORS", @"ui\icons\icon_keycard" , Color.Red );
+			key1	=	new HudItem( ui,  HudAlignment.Left, 64, h/2+32+4,	"BLUE\nKEYCARD", "USE TOOPEN\nBLUE DOORS", @"ui\icons\icon_keycard" , Color.Blue );
 
 			hudFrame.Add( health );
 			hudFrame.Add( armor );
+			hudFrame.Add( key0 );
+			hudFrame.Add( key1 );
 
 		}
 

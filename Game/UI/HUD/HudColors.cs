@@ -24,12 +24,14 @@ namespace IronStar.UI.HUD
 		public static SpriteFont NormalFont = null;
 		public static SpriteFont HeaderFont = null;
 		public static SpriteFont SmallFont = null;
+		public static SpriteFont TinyFont = null;
 
 		internal static void LoadContent( ContentManager content )
 		{
 			NormalFont	=	content.Load<SpriteFont>(@"fonts\aldrich_16pt");
 			HeaderFont	=	content.Load<SpriteFont>(@"fonts\aldrich_24pt");
 			SmallFont	=	content.Load<SpriteFont>(@"fonts\aldrich_12pt");
+			TinyFont	=	content.Load<SpriteFont>(@"fonts\aldrich_08pt");
 		}
 
 		public static Color TextColor		=	new Color(255,255,255,255);

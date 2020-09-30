@@ -301,6 +301,7 @@
     <Compile Include="UI\Controls\TextBox.cs" />
     <Compile Include="UI\HUD\HudColors.cs" />
     <Compile Include="UI\HUD\HudFrame.cs" />
+    <Compile Include="UI\HUD\HudItem.cs" />
     <Compile Include="UI\HUD\HudIndicator.cs" />
     <Compile Include="UI\HUD\HudSystem.cs" />
     <Compile Include="UI\LoadingScreen.cs" />

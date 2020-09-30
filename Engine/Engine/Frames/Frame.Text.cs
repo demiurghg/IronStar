@@ -26,6 +26,9 @@ namespace Fusion.Engine.Frames {
 		int			textCapHeight;
 		int			textLineHeight;
 		Size2		textBlockSize;
+		int			textLeading = -1;
+		int			leadingFix = 0;
+
 
 
 
@@ -74,6 +77,18 @@ namespace Fusion.Engine.Frames {
 			}
 		}
 
+		public int TextLeading 
+		{
+			get { return textLeading; }
+			set 
+			{
+				if (textLeading!=value)
+				{
+					textLeading	=	value;
+					textDirty	=	true;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Gets and sets text alignment
@@ -117,6 +132,17 @@ namespace Fusion.Engine.Frames {
 			textCapHeight	=	(Font==null) ? 8 : Font.CapHeight;
 			textLineHeight	=	(Font==null) ? 8 : Font.LineHeight;
 
+			if (textLeading>=0) 
+			{
+				leadingFix		= textLineHeight - textLeading;
+				textLineHeight	= textLeading;
+			}
+			else
+			{
+				leadingFix		=	0;
+			}
+		
+
 			textSizes		=	textLines
 								.Select( line => MeasureSingleLineString( textFont, line ) )
 								.ToArray();
@@ -139,7 +165,7 @@ namespace Fusion.Engine.Frames {
 				throw new ArgumentNullException("lineText");
 			}
 
-			int textWidth		=	8 * lineText.Length;
+			int textWidth	=	8 * lineText.Length;
 			int textHeight	=	8 * 1;
 
 			if (Font!=null) {
@@ -148,6 +174,8 @@ namespace Fusion.Engine.Frames {
 				textHeight	=	r.Height;
 				//textHeight	=	Font.CapHeight;
 			} 
+
+			if (textLeading>=0) textHeight = textLeading;
 
 			return new Size2( (int)textWidth, (int)textHeight );
 		}

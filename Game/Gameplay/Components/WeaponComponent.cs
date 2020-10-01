@@ -33,6 +33,8 @@ namespace IronStar.Gameplay.Components
 		
 		public bool		IsBeamWeapon { get { return ProjectileClass==null; } }
 
+		public int		HudAmmo;
+		public int		HudAmmoMax;
 
 		public TimeSpan Timer;
 		public WeaponState State;

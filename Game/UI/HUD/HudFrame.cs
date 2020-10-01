@@ -16,85 +16,107 @@ using Fusion.Engine.Graphics;
 using BEPUphysics;
 using BEPUphysics.Character;
 using Fusion.Engine.Frames;
+using Fusion.Engine.Frames.Layouts;
 
 namespace IronStar.UI.HUD 
 {
 	public class HudFrame : Frame 
 	{
-		//HudHealth hudHealth;
-		//HudWeapon hudWeapon;
+		public Frame			CrossHair	{ get { return crossHair; } }
+		public HudIndicator		Health		{ get { return health; } }
+		public HudIndicator		Armor		{ get { return armor; } }
+		public HudIndicator		Ammo		{ get { return ammo; } }
 
-		Frame	crossHair;
+		Frame			crossHair;
+		Frame			compass;
+		Frame			mission;
+		Frame			stats;
+		Frame			message;
+		Frame			subtitles;
+		Frame			target;
 
-		Frame	warning;
-		Frame	message;
-		Frame	objective;
+		HudIndicator	health;
+		HudIndicator	armor;
+		HudIndicator	ammo;
+		HudItem			key0;
+		HudItem			key1;
 
-
-			//crosshair		=	Game.Content.Load<DiscTexture>(@"hud\crosshairA");
-			//hudFont			=	Game.Content.Load<SpriteFont>(@"hud\hudFont");
-			//hudFontSmall	=	Game.Content.Load<SpriteFont>(@"hud\hudFontSmall");
-			//hudFontMicro	=	Game.Content.Load<SpriteFont>(@"hud\hudFontMicro");
-			//iconMachinegun	=	Game.Content.Load<DiscTexture>(@"hud\machinegun");
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="game"></param>
 		/// <param name="space"></param>
-		public HudFrame ( FrameProcessor fp ) : base( fp )
+		public HudFrame ( FrameProcessor ui ) : base( ui )
 		{
 			this.BackColor		=	Color.Zero;
 			this.BorderColor	=	Color.Zero;
 			this.Border			=	0;
-			this.Padding		=	0;
+			this.PaddingLeft	=	64;
+			this.PaddingRight	=	64;
+			this.PaddingTop		=	32;
+			this.PaddingBottom	=	32;
 
-			this.X				=	0;
-			this.Y				=	0;
-			this.Width			=	fp.RootFrame.Width;
-			this.Height			=	fp.RootFrame.Height;
+			this.X			=	0;
+			this.Y			=	0;
+			this.Width		=	ui.RootFrame.Width;
+			this.Height		=	ui.RootFrame.Height;
 
 			#warning USE PAGE LAYOUT!
-			int w				=	fp.RootFrame.Width;
-			int h				=	fp.RootFrame.Height;
+			//var layout		=	new PageLayout();
+			//this.Layout		=	layout;
 
-			this.Anchor			=	FrameAnchor.All;
+			int w			=	ui.RootFrame.Width;
+			int h			=	ui.RootFrame.Height;
 
-			this.Ghost			=	true;
+			this.Anchor		=	FrameAnchor.All;
 
-			//crossHair			=	new Frame( Frames, w/2-32, h/2-32, 64,64,"", Color.Zero );
-			//crossHair.Image		=	Game.Content.Load<DiscTexture>(@"hud\crosshairA");
-			//crossHair.ImageMode	=	FrameImageMode.Centered;
-			//crossHair.ImageColor=	new Color(192,192,192,255);
-			//crossHair.Anchor	=	FrameAnchor.None;
+			this.Ghost		=	true;
 
 
-			//warning				=	new Frame( Frames, w/2-360, h/2+80, 720, 8, "", Color.Zero );
-			//warning.Anchor		=	FrameAnchor.None;
-			//warning.ForeColor	=	HudColors.WarningColor;
-			//warning.ShadowColor	=	HudColors.ShadowColor;
-			//warning.Text		=	"";//"Warning: Low health!";
-			//warning.TextAlignment=	Alignment.MiddleCenter;
-			//warning.ShadowOffset=	new Vector2(1,1);
+			//	create placeholders :
+			compass				=	CreatePlaceholder( 384,  48, 512,  32, "COMPASS" );
+			mission				=	CreatePlaceholder(  64, 128, 320, 128, "MISSION GOALS" );
+			stats				=	CreatePlaceholder( 896, 128, 320,  64, "STATS" );
+			message				=	CreatePlaceholder( 448, 256, 384,  64, "MESSAGE" );
+			subtitles			=	CreatePlaceholder( 384, 544, 512,  96, "SUBTITLES" );
+			target				=	CreatePlaceholder( 448, 400, 384,  64, "TARGET" );
 
-			//message				=	new Frame( Frames, w/2-360, h/2-88, 720, 8, "", Color.Zero );
-			//message.Anchor		=	FrameAnchor.None;
-			//message.ForeColor	=	HudColors.MessageColor;
-			//message.ShadowColor	=	HudColors.ShadowColor;
-			//message.Text		=	"";//"You need blue key";
-			//message.TextAlignment=	Alignment.MiddleCenter;
-			//message.ShadowOffset=	new Vector2(1,1);
+			//	create crosshair :
+			crossHair			=	new Frame( ui, w/2-32, h/2-32, 64,64,"", Color.Zero );
+			crossHair.Image		=	Game.Content.Load<DiscTexture>(@"hud\crosshairA");
+			crossHair.ImageMode	=	FrameImageMode.Centered;
+			crossHair.ImageColor=	new Color(192,192,192,255);
+			crossHair.Anchor	=	FrameAnchor.None;
+
+			//	create indicators :
+			health	=	new HudIndicator( ui,  HudAlignment.Left,   128, 604,  87, 100, @"ui\icons\icon_health"	, HudColors.HealthColor );
+			armor	=	new HudIndicator( ui,  HudAlignment.Left,   128, 640,  34, 100, @"ui\icons\icon_armor"	, HudColors.ArmorColor );
+			ammo	=	new HudIndicator( ui,  HudAlignment.Right, 1024, 604, 156, 200, @"ui\icons\icon_bullets", HudColors.WeaponColor );
+
+			key0	=	new HudItem( ui,  HudAlignment.Left, 64, 360,	"RED\nKEYCARD", "USE TOOPEN\nRED DOORS", @"ui\icons\icon_keycard" , Color.Red );
+			key1	=	new HudItem( ui,  HudAlignment.Left, 64, 396,	"BLUE\nKEYCARD", "USE TOOPEN\nBLUE DOORS", @"ui\icons\icon_keycard" , Color.Blue );
+
+			Add( crossHair );
+			Add( health );
+			Add( armor );
+			Add( ammo );
+			Add( key0 );
+			Add( key1 );
+		}
 
 
-			////this.Add( hudHealth );
-			////this.Add( hudWeapon );
+		Frame CreatePlaceholder( int x, int y, int w, int h, string name )
+		{
+			var panel = new Frame( Frames, x, y, w, h, name, Color.Zero ) {
+				Border		=	1,
+				ForeColor	=	new Color(255,255,255, 64),
+				BorderColor	=	new Color(255,255,255, 64),
+			};
 
-			//this.Add( warning );
-			//this.Add( message );
-			//warning.Visible = true;
-			//message.Visible = true;
+			Add( panel );
 
-			////this.Add( crossHair );
+			return panel;
 		}
 	}
 }

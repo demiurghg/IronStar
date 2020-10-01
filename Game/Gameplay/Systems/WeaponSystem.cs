@@ -55,6 +55,7 @@ namespace IronStar.Gameplay.Systems
 					inventory.FinalizeWeaponSwitch();
 				}
 
+				//	tell inventory to switch to another weapon :
 				SwitchWeapon( gs, userCmd, inventory );
 					
 				var activeItem	=	gs.GetEntity( inventory.ActiveWeaponID );
@@ -64,6 +65,11 @@ namespace IronStar.Gameplay.Systems
 				{
 					var weapon	= activeItem.GetComponent<WeaponComponent>();
 					var attack	= userCmd.Action.HasFlag( UserAction.Attack );
+
+					var ammo	= GetAmmo( gs, inventory, weapon );
+
+					weapon.HudAmmo		=	ammo==null ? 0 : ammo.Count;
+					weapon.HudAmmoMax	=	200;
 
 					AdvanceWeaponTimer( gameTime, activeItem );
 					UpdateWeaponFSM( gameTime, attack, povTransform, entity, inventory, activeItem );
@@ -214,14 +220,19 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		bool TryConsumeAmmo( GameState gs, InventoryComponent inventory, WeaponComponent weapon )
+		AmmoComponent GetAmmo( GameState gs, InventoryComponent inventory, WeaponComponent weapon )
 		{
-			return true;
-
 			var ammoEntity	=	inventory.FindItem( gs, weapon.AmmoClass );
 			var ammo		=	ammoEntity?.GetComponent<AmmoComponent>();
+			return ammo;
+		}
 
-			if (ammoEntity==null || ammo==null) 
+
+		bool TryConsumeAmmo( GameState gs, InventoryComponent inventory, WeaponComponent weapon )
+		{
+			var ammo		=	GetAmmo( gs, inventory, weapon );
+
+			if (ammo==null) 
 			{
 				return false;
 			}

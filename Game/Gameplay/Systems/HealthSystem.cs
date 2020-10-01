@@ -49,12 +49,15 @@ namespace IronStar.Gameplay.Systems
 				var inventory	=	entity.GetComponent<InventoryComponent>();
 				var health		=	entity.GetComponent<HealthComponent>();
 				
-				var powerup		=	inventory.FindItem( gs, powerupAspect )?.GetComponent<PowerupComponent>();
+				var powerupEntity		=	inventory.FindItem( gs, powerupAspect );
+				var powerupComponent	=	powerupEntity?.GetComponent<PowerupComponent>();
 
-				if (powerup!=null)
+				if (powerupComponent!=null)
 				{
-					health.Health	+=	powerup.Health;
-					health.Armor	+=	powerup.Armor;
+					health.Health	+=	powerupComponent.Health;
+					health.Armor	+=	powerupComponent.Armor;
+
+					inventory.RemoveItem( powerupEntity );
 				}
 			}
 		}

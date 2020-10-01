@@ -159,8 +159,8 @@
     "Period": 1.0,
     "Timing": {
       "$type": "IronStar.SFX.FXTiming, IronStar",
-      "Delay": 0.1,
-      "Bunch": 0.2,
+      "Delay": 0.2,
+      "Bunch": 0.7,
       "FadeIn": 0.8,
       "FadeOut": 0.9
     },
@@ -179,7 +179,7 @@
     "Shape": {
       "$type": "IronStar.SFX.FXShape, IronStar",
       "Size0": 0.3,
-      "Size1": 0.5,
+      "Size1": 0.4,
       "EnableRotation": true,
       "InitialAngle": 360.0,
       "MinAngularVelocity": -45.0,
@@ -198,15 +198,15 @@
       "Direction": "localForward",
       "LinearDistribution": "uniform",
       "LinearVelocityMin": 0.0,
-      "LinearVelocityMax": 0.0,
+      "LinearVelocityMax": 2.0,
       "RadialDistribution": "gauss",
       
-      "RadialVelocity": 3.0,
+      "RadialVelocity": 1.0,
       "Advection": 0.0
     },
     "Acceleration": {
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
-      "GravityFactor": -0.5,
+      "GravityFactor": -0.2,
       "Damping": 6.0,
       "DragForce": 0.0,
       "Turbulence": 0.0

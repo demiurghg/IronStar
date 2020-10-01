@@ -49,7 +49,7 @@ namespace Fusion.Engine.Frames.Layouts {
 		/// Adds row to tha page layout:
 		///	Possible values both for row heights and column withs:
 		///		Greater than one - fixed size
-		///		Less than and greater or equal zero - relative size
+		///		Less than one and greater or equal zero - relative size
 		///		Zero - always mean zero
 		///		Negative value - free size
 		/// </summary>

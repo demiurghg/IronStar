@@ -20,6 +20,7 @@ namespace IronStar.ECSFactories
 			var e = gs.Spawn();
 
 			e.AddComponent( new PlayerComponent() );
+			e.AddComponent( new HealthComponent(100,0) );
 			e.AddComponent( new CharacterController(6,4,2, 24,9, 20, 10, 2.2f) );
 			e.AddComponent( new UserCommandComponent() );
 			e.AddComponent( new Transform() );

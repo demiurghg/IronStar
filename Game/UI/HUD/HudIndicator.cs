@@ -36,6 +36,7 @@ namespace IronStar.UI.HUD
 				{
 					this.value	=	value; 
 					big.Text	=	value.ToString();
+					MakeLayoutDirty();
 				}
 			}
 		}
@@ -49,6 +50,7 @@ namespace IronStar.UI.HUD
 				{
 					this.maxValue	=	value; 
 					small.Text		=	"/" + value.ToString();
+					MakeLayoutDirty();
 				}
 			}
 		}

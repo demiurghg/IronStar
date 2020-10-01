@@ -10,6 +10,8 @@ using Fusion.Engine.Common;
 using Fusion.Engine.Frames;
 using Fusion.Engine.Graphics;
 using IronStar.ECS;
+using IronStar.ECSFactories;
+using IronStar.Gameplay.Components;
 
 namespace IronStar.UI.HUD
 {
@@ -17,49 +19,13 @@ namespace IronStar.UI.HUD
 	{
 		readonly Game Game;
 
-		HudFrame hudFrame;
-
-		Frame	crossHair;
-
-		HudIndicator	health;
-		HudIndicator	armor;
-
-		HudItem			key0;
-		HudItem			key1;
-
+		readonly HudFrame hudFrame;
 
 
 		public HudSystem ( Game game )
 		{
 			this.Game	=	game;
 			hudFrame	=	(game.GetService<UserInterface>().Instance as ShooterInterface)?.HudFrame;
-
-			int w		=	hudFrame.Width;
-			int h		=	hudFrame.Height;
-			var ui		=	hudFrame.Frames;
-
-			//	create crosshair :
-			crossHair			=	new Frame( ui, w/2-32, h/2-32, 64,64,"", Color.Zero );
-			crossHair.Image		=	Game.Content.Load<DiscTexture>(@"hud\crosshairA");
-			crossHair.ImageMode	=	FrameImageMode.Centered;
-			crossHair.ImageColor=	new Color(192,192,192,255);
-			crossHair.Anchor	=	FrameAnchor.None;
-
-			hudFrame.Add( crossHair );
-
-
-			//	create health bar :
-			health	=	new HudIndicator( ui,  HudAlignment.Left,  64, h-116, 87, 100, @"ui\icons\icon_health", Color.Red );
-			armor	=	new HudIndicator( ui,  HudAlignment.Right, 64, h- 80, 34, 100, @"ui\icons\icon_armor" , Color.Orange );
-
-			key0	=	new HudItem( ui,  HudAlignment.Left, 64, h/2,		"RED\nKEYCARD", "USE TOOPEN\nRED DOORS", @"ui\icons\icon_keycard" , Color.Red );
-			key1	=	new HudItem( ui,  HudAlignment.Left, 64, h/2+32+4,	"BLUE\nKEYCARD", "USE TOOPEN\nBLUE DOORS", @"ui\icons\icon_keycard" , Color.Blue );
-
-			hudFrame.Add( health );
-			hudFrame.Add( armor );
-			hudFrame.Add( key0 );
-			hudFrame.Add( key1 );
-
 		}
 
 		public void Add( GameState gs, Entity e ) {}
@@ -68,6 +34,56 @@ namespace IronStar.UI.HUD
 
 		public void Update( GameState gs, GameTime gameTime )
 		{
+			var player	=	gs.QueryEntities(PlayerFactory.PlayerAspect).Last();
+
+			UpdateHealthStatus( gs, gameTime, player );
+			UpdateWeaponStatus( gs, gameTime, player );
+		}
+
+
+
+		void UpdateWeaponStatus( GameState gs, GameTime gameTime, Entity player )
+		{
+			var inventory	=	player?.GetComponent<InventoryComponent>();
+
+			if (inventory!=null)
+			{
+				var weapon	=	gs.GetEntity( inventory.ActiveWeaponID )?.GetComponent<WeaponComponent>();
+
+				if (weapon!=null)
+				{
+					hudFrame.Ammo.Visible	=	true;
+					hudFrame.Ammo.Value		=	weapon.HudAmmo;
+					hudFrame.Ammo.MaxValue	=	weapon.HudAmmoMax;
+				}
+				else
+				{
+					hudFrame.Ammo.Visible = false;
+				}
+			}
+		}
+
+
+		void UpdateHealthStatus( GameState gs, GameTime gameTime, Entity player )
+		{
+			var health	=	player?.GetComponent<HealthComponent>();
+
+			if (health!=null)
+			{
+				hudFrame.Health.Visible		=	true;
+				hudFrame.Armor.Visible		=	true;
+
+				hudFrame.Health.Value		=	health.Health;
+				hudFrame.Health.MaxValue	=	100;
+
+				hudFrame.Armor.Value		=	health.Armor;
+				hudFrame.Armor.MaxValue		=	100;
+			}
+			else
+			{
+				hudFrame.Health.Visible		=	false;
+				hudFrame.Armor.Visible		=	false;
+			}
 		}
 	}
 }

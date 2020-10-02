@@ -166,7 +166,6 @@
     <Compile Include="Gameplay\Components\AttachmentComponent.cs" />
     <Compile Include="Gameplay\Components\MonsterComponent.cs" />
     <Compile Include="Gameplay\Components\NameComponent.cs" />
-    <Compile Include="Gameplay\Components\AmmoType.cs" />
     <Compile Include="Gameplay\Components\PickupComponent.cs" />
     <Compile Include="Gameplay\Components\KeyComponent.cs" />
     <Compile Include="Gameplay\Components\AmmoComponent.cs" />
@@ -193,6 +192,7 @@
     <Compile Include="Gameplay\Components\PlayerComponent.cs" />
     <Compile Include="Gameplay\Components\PlayerStartComponent.cs" />
     <Compile Include="GameException.cs" />
+    <Compile Include="Gameplay\AmmoType.cs" />
     <Compile Include="Gameplay\WeaponState.cs" />
     <Compile Include="IronStar.Activator.cs" />
     <Compile Include="Mapping\MapLightProbeBox.cs" />

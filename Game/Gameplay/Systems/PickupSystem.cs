@@ -18,10 +18,11 @@ namespace IronStar.Gameplay.Systems
 		public void Remove( GameState gs, Entity e ) {}
 		public Aspect GetAspect() { return Aspect.Empty; }
 
-		readonly Aspect itemAspect		=	new Aspect().Include<PickupComponent,TouchDetector,Transform>();
-		readonly Aspect weaponAspect	=	new Aspect().Include<PickupComponent,WeaponComponent>().Exclude<AmmoComponent>();
-		readonly Aspect ammoAspect		=	new Aspect().Include<PickupComponent,AmmoComponent,NameComponent>().Exclude<WeaponComponent>();
+		readonly Aspect itemAspect		=	new Aspect().Include<PickupComponent,TouchDetector,Transform>().Single<WeaponComponent,AmmoComponent>();
+		readonly Aspect weaponAspect	=	new Aspect().Include<PickupComponent,TouchDetector,Transform,WeaponComponent>();
+		readonly Aspect ammoAspect		=	new Aspect().Include<PickupComponent,TouchDetector,Transform,AmmoComponent>();
 		readonly Aspect inventoryAspect	=	new Aspect().Include<PlayerComponent,InventoryComponent,Transform>();
+
 
 		
 		public PickupSystem()

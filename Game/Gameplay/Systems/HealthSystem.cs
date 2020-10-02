@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Fusion.Core;
 using IronStar.ECS;
 using IronStar.Gameplay.Components;
+using IronStar.ECSFactories;
+using IronStar.ECSPhysics;
+using IronStar.SFX;
 
 namespace IronStar.Gameplay.Systems
 {
@@ -21,9 +24,9 @@ namespace IronStar.Gameplay.Systems
 		public void Remove( GameState gs, Entity e ) {}
 
 
-		readonly Aspect healthInventoryAspect	= new Aspect().Include<InventoryComponent,HealthComponent>();
-		readonly Aspect powerupAspect			= new Aspect().Include<PowerupComponent>();
-		readonly Aspect healthAspect			= new Aspect().Include<HealthComponent>();
+		readonly Aspect playerAspect	= PlayerFactory.PlayerAspect;
+		readonly Aspect powerupAspect	= new Aspect().Include<PowerupComponent,PickupComponent,TouchDetector>();
+		readonly Aspect healthAspect	= new Aspect().Include<HealthComponent>();
 
 
 		public static void ApplyDamage( Entity target, int damage )
@@ -35,35 +38,51 @@ namespace IronStar.Gameplay.Systems
 
 		public void Update( GameState gs, GameTime gameTime )
 		{
-			UpdatePowerups( gs, gameTime );
-			UpdateDamage( gs, gameTime );
+			PickupPowerups( gs, gameTime );
+			ApplyDamage( gs, gameTime );
 		}
 
 
-		void UpdatePowerups( GameState gs, GameTime gameTime )
+		void PickupPowerups( GameState gs, GameTime gameTime )
 		{
-			var entities = gs.QueryEntities( healthInventoryAspect );
+			var powerupEntities	=	gs.QueryEntities( powerupAspect );
+			var playerEntity	=	gs.QueryEntities( playerAspect ).LastOrDefault();
+			var playerHealth	=	playerEntity?.GetComponent<HealthComponent>();
 
-			foreach ( var entity in entities )
+			if (playerHealth==null)
 			{
-				var inventory	=	entity.GetComponent<InventoryComponent>();
-				var health		=	entity.GetComponent<HealthComponent>();
-				
-				var powerupEntity		=	inventory.FindItem( gs, powerupAspect );
-				var powerupComponent	=	powerupEntity?.GetComponent<PowerupComponent>();
+				return;
+			}
 
-				if (powerupComponent!=null)
+			foreach ( var powerupEntity in powerupEntities )
+			{
+				var touch		=	powerupEntity.GetComponent<TouchDetector>();
+				var powerup		=	powerupEntity.GetComponent<PowerupComponent>();
+				var pickup		=	powerupEntity.GetComponent<PickupComponent>();
+
+				if (touch.Contains( playerEntity ))
 				{
-					health.Health	+=	powerupComponent.Health;
-					health.Armor	+=	powerupComponent.Armor;
+					bool containsHealth	=	powerup.Health > 0;
+					bool containsArmor	=	powerup.Armor > 0;
+					bool needHealth		=	playerHealth.Health < playerHealth.MaxHealth;
+					bool needArmor		=	playerHealth.Armor  < playerHealth.MaxArmor;
 
-					inventory.RemoveItem( powerupEntity );
+					bool shouldPickup	=	(needHealth && containsHealth) || (needArmor && containsArmor);
+
+					if (shouldPickup)
+					{
+						playerHealth.Health	=	Math.Min( playerHealth.Health + powerup.Health, playerHealth.MaxHealth );
+						playerHealth.Armor	=	Math.Min( playerHealth.Armor  + powerup.Armor , playerHealth.MaxArmor );
+
+						gs.Kill( powerupEntity );
+						FXPlayback.SpawnFX( gs, pickup?.FXName, powerupEntity );
+					}
 				}
 			}
 		}
 
 
-		void UpdateDamage( GameState gs, GameTime gameTime )
+		void ApplyDamage( GameState gs, GameTime gameTime )
 		{
 			var entities = gs.QueryEntities(healthAspect);
 

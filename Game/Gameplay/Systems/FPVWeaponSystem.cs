@@ -10,7 +10,6 @@ using IronStar.ECSPhysics;
 using IronStar.Gameplay.Components;
 using IronStar.SFX2;
 using IronStar.Animation;
-using IronStar.Gameplay.Assets;
 
 namespace IronStar.Gameplay.Systems
 {
@@ -93,13 +92,8 @@ namespace IronStar.Gameplay.Systems
 					activeWeapon = weaponEntity;
 				}
 
-				if (weapon!=null)
-				{
-					var desc		=	gs.Content.Load( weapon?.WeaponAsset, WeaponDescription.Default );
-
-					renderModel?.SetTransform( rw.Camera.CameraMatrix );
-					animator?.Update( gameTime, weapon, desc, steps, uc );  
-				}
+				renderModel?.SetTransform( rw.Camera.CameraMatrix );
+				animator?.Update( gameTime, weapon, steps, uc );  
 			}
 		}
 

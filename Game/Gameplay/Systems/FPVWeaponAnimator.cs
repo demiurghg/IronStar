@@ -12,7 +12,6 @@ using IronStar.Animation;
 using Fusion;
 using IronStar.SFX2;
 using IronStar.Gameplay.Components;
-using IronStar.Gameplay.Assets;
 
 namespace IronStar.Gameplay.Systems 
 {
@@ -100,9 +99,9 @@ namespace IronStar.Gameplay.Systems
 		/// <summary>
 		/// 
 		/// </summary>
-		public void Update ( GameTime gameTime, WeaponComponent weapon, WeaponDescription desc, StepComponent steps, UserCommandComponent uc )
+		public void Update ( GameTime gameTime, WeaponComponent weapon, StepComponent steps, UserCommandComponent uc )
 		{
-			UpdateWeaponStates(gameTime, weapon, desc, steps);
+			UpdateWeaponStates(gameTime, weapon, steps);
 			UpdateMovements(gameTime, steps, uc);
 
 			composer.Update( gameTime, model.FlattenTransforms ); 
@@ -114,7 +113,7 @@ namespace IronStar.Gameplay.Systems
 		/// <summary>
 		/// 
 		/// </summary>
-		void UpdateWeaponStates ( GameTime gameTime, WeaponComponent weapon, WeaponDescription desc, StepComponent steps )
+		void UpdateWeaponStates ( GameTime gameTime, WeaponComponent weapon, StepComponent steps )
 		{
 			var weaponState	=	weapon.State;
 
@@ -122,7 +121,7 @@ namespace IronStar.Gameplay.Systems
 			oldWeaponState	=	weaponState;
 
 			bool	recoil	=	fireEvent && ( weaponState == WeaponState.Cooldown || weaponState == WeaponState.Cooldown2 );
-			bool	heavy	=	desc.TimeCooldown > TimeSpan.FromMilliseconds(400);
+			bool	heavy	=	weapon.TimeCooldown > TimeSpan.FromMilliseconds(400);
 			steps.RecoilHeavy	=	 recoil && heavy;
 			steps.RecoilLight	=	 recoil && !heavy;
 
@@ -144,7 +143,7 @@ namespace IronStar.Gameplay.Systems
 					var shakeAmpl = Math.Abs(rand.GaussDistribution(0,0.5f));
 					RunShakeAnimation( shakeName, shakeAmpl );
 
-					composer.SequenceFX( desc.MuzzleFX, JOINT_MUZZLE, 1 );
+					composer.SequenceFX( weapon.MuzzleFX, JOINT_MUZZLE, 1 );
 				}
 
 				//	idle animation :

@@ -163,8 +163,6 @@
     <Compile Include="Entities\ProxyFactory.cs" />
     <Compile Include="Entities\RigidBodyFactory.cs" />
     <Compile Include="Entities\StartPoint.cs" />
-    <Compile Include="Gameplay\Assets\AmmoDescription.cs" />
-    <Compile Include="Gameplay\Assets\WeaponDescription.cs" />
     <Compile Include="Gameplay\Components\AttachmentComponent.cs" />
     <Compile Include="Gameplay\Components\MonsterComponent.cs" />
     <Compile Include="Gameplay\Components\NameComponent.cs" />

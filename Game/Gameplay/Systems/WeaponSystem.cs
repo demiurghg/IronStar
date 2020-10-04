@@ -11,7 +11,6 @@ using IronStar.ECSPhysics;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
 using IronStar.AI;
-using IronStar.Gameplay.Assets;
 
 namespace IronStar.Gameplay.Systems
 {
@@ -65,16 +64,15 @@ namespace IronStar.Gameplay.Systems
 				if (weaponAspect.Accept(activeItem))
 				{
 					var weapon	= activeItem.GetComponent<WeaponComponent>();
-					var desc	= gs.Content.Load( weapon.WeaponAsset, WeaponDescription.Default );
 					var attack	= userCmd.Action.HasFlag( UserAction.Attack );
 
-					var ammo	= GetAmmo( gs, inventory, desc );
+					var ammo	= GetAmmo( gs, inventory, weapon );
 
 					weapon.HudAmmo		=	ammo==null ? 0 : ammo.Count;
 					weapon.HudAmmoMax	=	200;
 
-					AdvanceWeaponTimer( gameTime, weapon );
-					UpdateWeaponFSM( gs, gameTime, activeItem.ID, attack, povTransform, entity, inventory, weapon, desc );
+					AdvanceWeaponTimer( gameTime, activeItem );
+					UpdateWeaponFSM( gameTime, attack, povTransform, entity, inventory, activeItem );
 				}
 			}
 		}
@@ -105,8 +103,10 @@ namespace IronStar.Gameplay.Systems
 		 * Weapon state
 		-----------------------------------------------------------------------------------------------*/
 		
-		void AdvanceWeaponTimer( GameTime gameTime, WeaponComponent weapon )
+		void AdvanceWeaponTimer( GameTime gameTime, Entity weaponEntity )
 		{
+			var weapon	=	weaponEntity.GetComponent<WeaponComponent>();
+
 			if ( weapon.Timer > TimeSpan.Zero ) 
 			{
 				weapon.Timer = weapon.Timer - gameTime.Elapsed;
@@ -114,37 +114,39 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		void UpdateWeaponFSM (GameState gs, GameTime gameTime, uint id, bool attack, Matrix povTransform, Entity attacker, InventoryComponent inventory, WeaponComponent weapon, WeaponDescription desc )
+		void UpdateWeaponFSM (GameTime gameTime, bool attack, Matrix povTransform, Entity attacker, InventoryComponent inventory, Entity weaponEntity )
 		{
+			var weapon	=	weaponEntity.GetComponent<WeaponComponent>();
 			var timeout	=	weapon.Timer <= TimeSpan.Zero;
+			var gs		=	weaponEntity.gs;
 
 			switch (weapon.State) 
 			{
 				case WeaponState.Idle:	
 					if (attack) 
 					{
-						if (TryConsumeAmmo(gs, inventory, weapon, desc)) 
+						if (TryConsumeAmmo(gs, inventory, weapon)) 
 						{
 							weapon.State =  WeaponState.Warmup;	
-							weapon.Timer += desc.TimeWarmup;
+							weapon.Timer += weapon.TimeWarmup;
 						} 
 						else 
 						{
 							weapon.State =  WeaponState.NoAmmo;	
-							weapon.Timer += desc.TimeNoAmmo;
+							weapon.Timer += weapon.TimeNoAmmo;
 						}
 					}
 					if (inventory.HasPendingWeapon) 
 					{
 						weapon.State =  WeaponState.Drop;	
-						weapon.Timer =  desc.TimeDrop;
+						weapon.Timer =  weapon.TimeDrop;
 					}
 					break;
 
 				case WeaponState.Warmup:	
 					if (timeout) 
 					{
-						Fire(gameTime, weapon, desc, povTransform, attacker);
+						Fire(gameTime, weapon, povTransform, attacker);
 
 						weapon.Counter++;
 						
@@ -157,7 +159,7 @@ namespace IronStar.Gameplay.Systems
 							weapon.State = WeaponState.Cooldown2;	
 						}
 
-						weapon.Timer += desc.TimeCooldown;
+						weapon.Timer += weapon.TimeCooldown;
 					}
 					break;
 
@@ -208,38 +210,36 @@ namespace IronStar.Gameplay.Systems
 					break;
 
 				case WeaponState.Inactive:	
-					if (inventory.ActiveWeaponID == id) 
+					if (inventory.ActiveWeaponID == weaponEntity.ID) 
 					{
 						weapon.State = WeaponState.Raise;
-						weapon.Timer = desc.TimeRaise;
+						weapon.Timer = weapon.TimeRaise;
 					}	
 					break;
 			}
 		}
 
 
-		AmmoComponent GetAmmo( GameState gs, InventoryComponent inventory, WeaponDescription desc )
+		AmmoComponent GetAmmo( GameState gs, InventoryComponent inventory, WeaponComponent weapon )
 		{
-			var ammoEntity	=	inventory.FindItem( gs, desc.AmmoClass );
+			var ammoEntity	=	inventory.FindItem( gs, weapon.AmmoClass );
 			var ammo		=	ammoEntity?.GetComponent<AmmoComponent>();
 			return ammo;
 		}
 
 
-		bool TryConsumeAmmo( GameState gs, InventoryComponent inventory, WeaponComponent weapon, WeaponDescription desc )
+		bool TryConsumeAmmo( GameState gs, InventoryComponent inventory, WeaponComponent weapon )
 		{
-			return true;
-
-			var ammo		=	GetAmmo( gs, inventory, desc );
+			var ammo		=	GetAmmo( gs, inventory, weapon );
 
 			if (ammo==null) 
 			{
 				return false;
 			}
 
-			if (ammo.Count >= desc.AmmoConsumption)
+			if (ammo.Count >= weapon.AmmoConsumption)
 			{
-				ammo.Count -= desc.AmmoConsumption;
+				ammo.Count -= weapon.AmmoConsumption;
 				return true;
 			}
 			else
@@ -252,23 +252,23 @@ namespace IronStar.Gameplay.Systems
 		/// <summary>
 		/// 
 		/// </summary>
-		bool Fire ( GameTime gameTime, WeaponComponent weapon, WeaponDescription desc, Matrix povTransform, Entity attacker )
+		bool Fire ( GameTime gameTime, WeaponComponent weapon, Matrix povTransform, Entity attacker )
 		{
 			var gs = attacker.gs;
 
-			if (desc.IsBeamWeapon) 
+			if (weapon.IsBeamWeapon) 
 			{
-				for (int i=0; i<desc.ProjectileCount; i++) 
+				for (int i=0; i<weapon.ProjectileCount; i++) 
 				{
-					FireBeam( gs, weapon, desc, povTransform, attacker );
+					FireBeam( gs, weapon, povTransform, attacker );
 				}
 				return true;
 			} 
 			else 
 			{
-				for (int i=0; i<desc.ProjectileCount; i++) 
+				for (int i=0; i<weapon.ProjectileCount; i++) 
 				{
-					FireProjectile( gs, gameTime, weapon, desc, povTransform, attacker );
+					FireProjectile( gs, gameTime, weapon, povTransform, attacker );
 				}
 				return true;
 			}
@@ -281,11 +281,11 @@ namespace IronStar.Gameplay.Systems
 		/// <param name="attacker"></param>
 		/// <param name="shooter"></param>
 		/// <param name="world"></param>
-		void FireBeam ( GameState gs, WeaponComponent weapon, WeaponDescription desc, Matrix povTransform, Entity attacker )
+		void FireBeam ( GameState gs, WeaponComponent weapon, Matrix povTransform, Entity attacker )
 		{
 			var p = povTransform.TranslationVector;
 			var q = Quaternion.RotationMatrix( povTransform );
-			var d = -GetFireDirection( q, desc.Spread );
+			var d = -GetFireDirection( q, weapon.Spread );
 
 			Vector3 hitNormal;
 			Vector3 hitPoint;
@@ -295,9 +295,9 @@ namespace IronStar.Gameplay.Systems
 
 			if (r) 
 			{
-				SFX.FXPlayback.AttachFX( gs, hitEntity, desc.BeamHitFX, 0, hitPoint, hitNormal );
-				PhysicsCore.ApplyImpulse( hitEntity, hitPoint, d * desc.Impulse );
-				HealthSystem.ApplyDamage( hitEntity, desc.Damage );
+				SFX.FXPlayback.AttachFX( gs, hitEntity, weapon.BeamHitFX, 0, hitPoint, hitNormal );
+				PhysicsCore.ApplyImpulse( hitEntity, hitPoint, d * weapon.Impulse );
+				HealthSystem.ApplyDamage( hitEntity, weapon.Damage );
 			} 
 			else 
 			{
@@ -308,7 +308,7 @@ namespace IronStar.Gameplay.Systems
 			var beamOrigin	 =	p;
 			var beamVelocity =	hitPoint - p;
 			var basis		=	MathUtil.ComputeAimedBasis( d );
-			SFX.FXPlayback.SpawnFX(	gs, desc.BeamTrailFX, 0, beamOrigin, beamVelocity, Quaternion.RotationMatrix(basis) );
+			SFX.FXPlayback.SpawnFX(	gs, weapon.BeamTrailFX, 0, beamOrigin, beamVelocity, Quaternion.RotationMatrix(basis) );
 		}
 
 
@@ -319,20 +319,20 @@ namespace IronStar.Gameplay.Systems
 		/// <param name="attacker"></param>
 		/// <param name="world"></param>
 		/// <param name="origin"></param>
-		void FireProjectile ( GameState gs, GameTime gameTime, WeaponComponent weapon, WeaponDescription desc, Matrix povTransform, Entity attacker )
+		void FireProjectile ( GameState gs, GameTime gameTime, WeaponComponent weapon, Matrix povTransform, Entity attacker )
 		{
 			var v = attacker.GetComponent<Velocity>();
 			var p = povTransform.TranslationVector + v.Linear * gameTime.ElapsedSec;
 			var q = Quaternion.RotationMatrix( povTransform );
-			var d = -GetFireDirection( q, desc.Spread );
+			var d = -GetFireDirection( q, weapon.Spread );
 
-			var e = gs.Spawn( desc.ProjectileClass );
+			var e = gs.Spawn( weapon.ProjectileClass );
 
 			var projectile	=	e.GetComponent<ProjectileComponent>();
 			var transform	=	e.GetComponent<Transform>();
 
-			projectile.Damage		=	desc.Damage;
-			projectile.Impulse		=	desc.Impulse;
+			projectile.Damage		=	weapon.Damage;
+			projectile.Impulse		=	weapon.Impulse;
 			projectile.SenderID		=	attacker.ID;
 			projectile.Direction	=	d;
 

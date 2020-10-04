@@ -1,6 +1,0 @@
-{
-  "$type"			: "IronStar.Gameplay.Assets.AmmoDescription, IronStar",
-  "Name"			: "Bullets",
-  "NiceName"		: "Bullets",
-  "MaxCapacity"		: 200,
-}

@@ -1,0 +1,22 @@
+{
+  "$type"			: "IronStar.Gameplay.Assets.WeaponDescription, IronStar",
+  "TimeWarmup"		: "00:00:00.0000000",
+  "TimeCooldown"	: "00:00:00.0500000",
+  "TimeOverheat"	: "00:00:00.0000000",
+  "TimeReload"		: "00:00:00.0000000",
+  "TimeDrop"		: "00:00:00.3500000",
+  "TimeRaise"		: "00:00:00.3500000",
+  "TimeNoAmmo"		: "00:00:00.2500000",
+  "Name"			: "Machinegun",
+  "NiceName"		: "Machinegun",
+  "BeamHitFX"		: "machinegunHit",
+  "BeamTrailFX"		: "*trail_bullet",
+  "MuzzleFX"		: "machinegunMuzzle",
+  "ProjectileClass"	: null,
+  "ProjectileCount"	: 1,
+  "Damage"			: 5,
+  "Impulse"			: 5.0,
+  "Spread"			: 1.0,
+  "AmmoClass"		: "AMMO_BULLETS",
+  "AmmoConsumption"	: 1
+}

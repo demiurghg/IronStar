@@ -110,7 +110,6 @@
     <Compile Include="ECSFactories\BoxFactory.cs" />
     <Compile Include="ECSFactories\AmmoFactory.cs" />
     <Compile Include="ECSGraphics\AnimationComponent.cs" />
-    <Compile Include="ECSGraphics\FPVComponent.cs" />
     <Compile Include="ECSGraphics\LightProbeSystem.cs" />
     <Compile Include="ECSGraphics\DecalComponent.cs" />
     <Compile Include="ECSGraphics\DecalSystem.cs" />
@@ -163,6 +162,9 @@
     <Compile Include="Entities\ProxyFactory.cs" />
     <Compile Include="Entities\RigidBodyFactory.cs" />
     <Compile Include="Entities\StartPoint.cs" />
+    <Compile Include="Gameplay\AmmoDesc.cs" />
+    <Compile Include="Gameplay\WeaponDesc.cs" />
+    <Compile Include="Gameplay\WeaponType.cs" />
     <Compile Include="Gameplay\Components\AttachmentComponent.cs" />
     <Compile Include="Gameplay\Components\MonsterComponent.cs" />
     <Compile Include="Gameplay\Components\NameComponent.cs" />

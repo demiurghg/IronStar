@@ -165,6 +165,7 @@
     <Compile Include="Core\Binding\IValueBinding.cs" />
     <Compile Include="Core\Binding\PropertyBinding.cs" />
     <Compile Include="Core\Binding\ValueBindingException.cs" />
+    <Compile Include="Core\Collection\EnumArray.cs" />
     <Compile Include="Core\Collection\Octree.cs" />
     <Compile Include="Core\Content\AssetInfo.cs" />
     <Compile Include="Core\Content\ContentAttribute.cs" />

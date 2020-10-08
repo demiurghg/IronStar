@@ -46,7 +46,7 @@ namespace IronStar.UI.HUD
 			get { return maxValue; }
 			set 
 			{ 
-				if (this.value!=value)
+				if (this.maxValue!=value)
 				{
 					this.maxValue	=	value; 
 					small.Text		=	"/" + value.ToString();
@@ -176,6 +176,14 @@ namespace IronStar.UI.HUD
 				BorderColor		=	color;
 			}
 
+
+			int GetBarWidth()
+			{
+				if (indicator.MaxValue==0 || indicator.Value==0) return 0;
+				return GlobalRectangle.Width * indicator.Value / indicator.MaxValue;
+			}
+
+
 			protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
 			{
 				base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
@@ -183,7 +191,7 @@ namespace IronStar.UI.HUD
 				var r			=	GlobalRectangle;
 					r.X			=	r.X + 1;
 					r.Width		=	r.Width - 2;
-				int barWidth	=	r.Width * indicator.Value / indicator.MaxValue;;
+				int barWidth	=	GetBarWidth();
 
 				var c1		=	color;
 				var c0		=	color;

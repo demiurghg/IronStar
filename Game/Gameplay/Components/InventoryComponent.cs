@@ -12,16 +12,11 @@ namespace IronStar.Gameplay.Components
 {
 	public class InventoryComponent : IComponent, IEnumerable<uint>
 	{
-		int bullets;
-		int shells;
-		int cells;
-		int slugs;
-		int rockets;
-		int grenades;
-
 		uint activeWeaponID = 0;
 		uint pendingWeaponID = 0;
 		readonly List<uint> itemIDs = new List<uint>();
+
+		public EntityRef ActiveWeapon;
 
 		public uint ActiveWeaponID { get { return activeWeaponID; } }
 		public bool HasPendingWeapon { get { return pendingWeaponID!=0; } }
@@ -42,36 +37,6 @@ namespace IronStar.Gameplay.Components
 		{
 			activeWeaponID	=	pendingWeaponID;
 			pendingWeaponID	=	0;
-		}
-
-
-		public int GetAmmo( AmmoType ammo )
-		{
-			switch (ammo)
-			{
-				case AmmoType.Bullets	: return bullets;
-				case AmmoType.Shells	: return shells	;
-				case AmmoType.Cells		: return cells	;
-				case AmmoType.Slugs		: return slugs	;
-				case AmmoType.Rockets	: return rockets;
-				case AmmoType.Grenades	: return grenades;
-			}
-			return 0;
-		}
-
-
-		public int GetMaxAmmo( AmmoType ammo )
-		{
-			switch (ammo)
-			{
-				case AmmoType.Bullets	: return 200;
-				case AmmoType.Shells	: return 50;
-				case AmmoType.Cells		: return 200;
-				case AmmoType.Slugs		: return 50;
-				case AmmoType.Rockets	: return 50;
-				case AmmoType.Grenades	: return 50;
-			}
-			return 0;
 		}
 
 
@@ -109,6 +74,29 @@ namespace IronStar.Gameplay.Components
 		{
 			if (item==null) return false;
 			return RemoveItem( item.ID );
+		}
+
+
+		public TComponent FindItem<TComponent>( GameState gs, Func<TComponent,bool> predicate )	where TComponent: IComponent
+		{
+			var aspect = new Aspect().Include<TComponent>();
+
+			foreach ( var itemId in itemIDs )
+			{
+				var e = gs.GetEntity( itemId );
+
+				if (aspect.Accept(e))
+				{
+					var c = e.GetComponent<TComponent>();
+
+					if (predicate(c))
+					{
+						return c;
+					}
+				}
+			}
+
+			return default(TComponent);
 		}
 
 

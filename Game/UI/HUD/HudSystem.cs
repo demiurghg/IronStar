@@ -49,12 +49,13 @@ namespace IronStar.UI.HUD
 			if (inventory!=null)
 			{
 				var weapon	=	gs.GetEntity( inventory.ActiveWeaponID )?.GetComponent<WeaponComponent>();
+				var ammo	=	inventory.FindItem<AmmoComponent>(gs, a => a.Name == weapon?.AmmoClass );
 
 				if (weapon!=null)
 				{
 					hudFrame.Ammo.Visible	=	true;
-					hudFrame.Ammo.Value		=	weapon.HudAmmo;
-					hudFrame.Ammo.MaxValue	=	weapon.HudAmmoMax;
+					hudFrame.Ammo.Value		=	ammo==null ? 0 : ammo.Count;
+					hudFrame.Ammo.MaxValue	=	ammo==null ? 0 : ammo.Capacity;
 				}
 				else
 				{

@@ -57,6 +57,13 @@ namespace Fusion.Core {
 		}
 
 
+		public static GameTime MSec1 {
+			get {
+				return new GameTime( 0, new TimeSpan(0,0,0,0,1), new TimeSpan(0,0,0,0,1) );
+			}
+		}
+
+
 		public static GameTime Zero {
 			get {
 				return new GameTime( 0, new TimeSpan(0,0,0,0,0), new TimeSpan(0,0,0,0,0) );

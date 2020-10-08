@@ -132,6 +132,7 @@
     <Compile Include="ECS\Component.cs" />
     <Compile Include="ECS\ECSTypeManager.cs" />
     <Compile Include="ECS\Collections\EntityFactoryCollection.cs" />
+    <Compile Include="ECS\EntityRef.cs" />
     <Compile Include="ECS\EntityAction.cs" />
     <Compile Include="ECS\StatelessSystem.cs" />
     <Compile Include="ECS\ProcessingSystem.cs" />

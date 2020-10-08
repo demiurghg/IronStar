@@ -36,8 +36,18 @@ namespace IronStar.Gameplay.Systems
 			this.physics	=	physics;
 		}
 
-		
+
 		public void Update( GameState gs, GameTime gameTime )
+		{
+			int msecs = gameTime.Milliseconds;
+			for (int i=0; i<msecs; i++)
+			{
+				UpdateInternal( gs, GameTime.MSec1 );
+			}
+		}
+
+		
+		void UpdateInternal( GameState gs, GameTime gameTime )
 		{
 			var entities = gs.QueryEntities( armedEntityAspect );
 
@@ -222,9 +232,7 @@ namespace IronStar.Gameplay.Systems
 
 		AmmoComponent GetAmmo( GameState gs, InventoryComponent inventory, WeaponComponent weapon )
 		{
-			var ammoEntity	=	inventory.FindItem( gs, weapon.AmmoClass );
-			var ammo		=	ammoEntity?.GetComponent<AmmoComponent>();
-			return ammo;
+			return	inventory.FindItem<AmmoComponent>( gs, a => a.Name == weapon.AmmoClass );
 		}
 
 

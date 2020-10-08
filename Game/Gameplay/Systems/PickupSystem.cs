@@ -9,6 +9,7 @@ using IronStar.ECS;
 using IronStar.ECSPhysics;
 using IronStar.Gameplay.Components;
 using IronStar.SFX;
+using Fusion.Core.Mathematics;
 
 namespace IronStar.Gameplay.Systems
 {
@@ -72,12 +73,15 @@ namespace IronStar.Gameplay.Systems
 			}
 			else if ( ammoAspect.Accept( pickupItem ) )
 			{
-				var existingAmmoEntity = inventory.FindItem( gs, name );
+				var existingAmmo = inventory.FindItem<AmmoComponent>( gs, a => a.Name == ammo.Name );
 
-				if (existingAmmoEntity!=null)
+				if (existingAmmo!=null)
 				{
-					existingAmmoEntity.GetComponent<AmmoComponent>().Count += ammo.Count;
-					gs.Kill(pickupItem.ID);
+					if (existingAmmo.Count < existingAmmo.Capacity)
+					{
+						existingAmmo.Count = MathUtil.Clamp( existingAmmo.Count + ammo.Count, 0, existingAmmo.Capacity );
+						gs.Kill(pickupItem.ID);
+					}
 				}
 				else
 				{

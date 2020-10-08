@@ -260,7 +260,9 @@ namespace IronStar.ECS
 
 		public Entity GetEntity( uint id )
 		{
-			return entities[id];
+			Entity e = null;
+			entities.TryGetValue( id, out e );
+			return e;
 		}
 
 

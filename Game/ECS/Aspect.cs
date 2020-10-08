@@ -19,6 +19,12 @@ namespace IronStar.ECS
 		}
 
 
+		public Aspect(Type type)
+		{
+			includeSet |= ECSTypeManager.GetComponentBit(type);
+		}
+
+
 		void Reset()
 		{
 			includeSet	= 0;

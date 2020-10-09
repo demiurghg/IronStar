@@ -60,7 +60,7 @@ namespace IronStar.Gameplay.Systems
 
 				var povTransform	=	userCmd.RotationMatrix * Matrix.Translation(transform.Position + chctrl.PovOffset);
 
-				if (inventory.HasPendingWeapon && inventory.ActiveWeaponID==0)
+				if (inventory.HasPendingWeapon && inventory.ActiveWeapon==null)
 				{
 					inventory.FinalizeWeaponSwitch();
 				}
@@ -68,12 +68,12 @@ namespace IronStar.Gameplay.Systems
 				//	tell inventory to switch to another weapon :
 				SwitchWeapon( gs, userCmd, inventory );
 					
-				var activeItem	=	gs.GetEntity( inventory.ActiveWeaponID );
+				var weaponEntity	=	inventory.ActiveWeapon;
 
 				//	is active item weapon?
-				if (weaponAspect.Accept(activeItem))
+				if (weaponAspect.Accept(weaponEntity))
 				{
-					var weapon	= activeItem.GetComponent<WeaponComponent>();
+					var weapon	= weaponEntity.GetComponent<WeaponComponent>();
 					var attack	= userCmd.Action.HasFlag( UserAction.Attack );
 
 					var ammo	= GetAmmo( gs, inventory, weapon );
@@ -81,8 +81,8 @@ namespace IronStar.Gameplay.Systems
 					weapon.HudAmmo		=	ammo==null ? 0 : ammo.Count;
 					weapon.HudAmmoMax	=	200;
 
-					AdvanceWeaponTimer( gameTime, activeItem );
-					UpdateWeaponFSM( gameTime, attack, povTransform, entity, inventory, activeItem );
+					AdvanceWeaponTimer( gameTime, weaponEntity );
+					UpdateWeaponFSM( gameTime, attack, povTransform, entity, inventory, weaponEntity );
 				}
 			}
 		}
@@ -92,14 +92,13 @@ namespace IronStar.Gameplay.Systems
 		{
 			if (userCmd.Weapon!=null)
 			{
-				foreach ( var eid in inventory )
+				foreach ( var e in inventory )
 				{
-					var e = gs.GetEntity(eid); 
 					var n = e?.GetComponent<NameComponent>()?.Name;
 
 					if (n==userCmd.Weapon)
 					{
-						inventory.SwitchWeapon(eid);
+						inventory.SwitchWeapon(e);
 						return true;
 					}
 				}
@@ -220,7 +219,7 @@ namespace IronStar.Gameplay.Systems
 					break;
 
 				case WeaponState.Inactive:	
-					if (inventory.ActiveWeaponID == weaponEntity.ID) 
+					if (inventory.ActiveWeapon == weaponEntity) 
 					{
 						weapon.State = WeaponState.Raise;
 						weapon.Timer = weapon.TimeRaise;

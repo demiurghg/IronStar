@@ -82,7 +82,7 @@ namespace IronStar.Gameplay.Systems
 				var steps			=	playerEntity.GetComponent<StepComponent>();
 				var uc				=	playerEntity.GetComponent<UserCommandComponent>();
 
-				var weaponEntity	=	gs.GetEntity( inventory.ActiveWeaponID );
+				var weaponEntity	=	inventory?.ActiveWeapon;
 				var weapon			=	weaponEntity?.GetComponent<WeaponComponent>();
 				var	model			=	weaponEntity?.GetComponent<RenderModel>();
 

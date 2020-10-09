@@ -10,23 +10,21 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
-	public class InventoryComponent : IComponent, IEnumerable<uint>
+	public class InventoryComponent : IComponent, IEnumerable<Entity>
 	{
-		uint activeWeaponID = 0;
-		uint pendingWeaponID = 0;
-		readonly List<uint> itemIDs = new List<uint>();
+		Entity activeWeapon = null;
+		Entity pendingWeapon = null;
+		readonly List<Entity> items = new List<Entity>();
 
-		public EntityRef ActiveWeapon;
-
-		public uint ActiveWeaponID { get { return activeWeaponID; } }
-		public bool HasPendingWeapon { get { return pendingWeaponID!=0; } }
+		public Entity ActiveWeapon { get { return activeWeapon; } }
+		public bool HasPendingWeapon { get { return pendingWeapon!=null; } }
 
 
-		public bool SwitchWeapon( uint id )
+		public bool SwitchWeapon( Entity weaponEntity )
 		{
-			if (itemIDs.Contains(id) && activeWeaponID!=id) 
+			if (items.Contains(weaponEntity) && activeWeapon!=weaponEntity) 
 			{
-				pendingWeaponID	=	id;
+				pendingWeapon	=	weaponEntity;
 				return true;
 			}
 			else return false;
@@ -35,16 +33,16 @@ namespace IronStar.Gameplay.Components
 
 		public void FinalizeWeaponSwitch()
 		{
-			activeWeaponID	=	pendingWeaponID;
-			pendingWeaponID	=	0;
+			activeWeapon	=	pendingWeapon;
+			pendingWeapon	=	null;
 		}
 
 
-		public bool AddItem( uint id )
+		public bool AddItem( Entity entity )
 		{
-			if (!itemIDs.Contains(id)) 
+			if (!items.Contains(entity)) 
 			{
-				itemIDs.Add(id);
+				items.Add(entity);
 				return true;
 			} 
 			else
@@ -55,11 +53,11 @@ namespace IronStar.Gameplay.Components
 		}
 
 
-		public bool RemoveItem( uint id )
+		public bool RemoveItem( Entity entity )
 		{
-			if (itemIDs.Contains(id)) 
+			if (items.Contains(entity)) 
 			{
-				itemIDs.Remove(id);
+				items.Remove(entity);
 				return true;
 			} 
 			else
@@ -70,21 +68,12 @@ namespace IronStar.Gameplay.Components
 		}
 
 
-		public bool RemoveItem( Entity item )
-		{
-			if (item==null) return false;
-			return RemoveItem( item.ID );
-		}
-
-
 		public TComponent FindItem<TComponent>( GameState gs, Func<TComponent,bool> predicate )	where TComponent: IComponent
 		{
 			var aspect = new Aspect().Include<TComponent>();
 
-			foreach ( var itemId in itemIDs )
+			foreach ( var e in items )
 			{
-				var e = gs.GetEntity( itemId );
-
 				if (aspect.Accept(e))
 				{
 					var c = e.GetComponent<TComponent>();
@@ -102,10 +91,8 @@ namespace IronStar.Gameplay.Components
 
 		public Entity FindItem ( GameState gs, Aspect itemAspect )
 		{
-			foreach ( var itemId in itemIDs )
+			foreach ( var e in items )
 			{
-				var e = gs.GetEntity( itemId );
-
 				if (itemAspect.Accept(e))
 				{
 					return e;
@@ -130,9 +117,8 @@ namespace IronStar.Gameplay.Components
 
 		public Entity FindItem ( GameState gs, string name )
 		{
-			foreach ( var itemId in itemIDs )
+			foreach ( var e in items )
 			{
-				var e = gs.GetEntity( itemId );
 				var n = e?.GetComponent<NameComponent>()?.Name;
 
 				if (n==name)
@@ -144,19 +130,17 @@ namespace IronStar.Gameplay.Components
 			return null;
 		}
 
-
-
 		public void Load( GameState gs, Stream stream ) {}
 		public void Save( GameState gs, Stream stream ) {}
 
-		public IEnumerator<uint> GetEnumerator()
+		public IEnumerator<Entity> GetEnumerator()
 		{
-			return ( (IEnumerable<uint>)itemIDs ).GetEnumerator();
+			return ( (IEnumerable<Entity>)items ).GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return ( (IEnumerable<uint>)itemIDs ).GetEnumerator();
+			return ( (IEnumerable<Entity>)items ).GetEnumerator();
 		}
 	}
 }

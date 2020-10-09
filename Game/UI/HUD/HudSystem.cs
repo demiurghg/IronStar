@@ -48,7 +48,7 @@ namespace IronStar.UI.HUD
 
 			if (inventory!=null)
 			{
-				var weapon	=	gs.GetEntity( inventory.ActiveWeaponID )?.GetComponent<WeaponComponent>();
+				var weapon	=	inventory.ActiveWeapon?.GetComponent<WeaponComponent>();
 				var ammo	=	inventory.FindItem<AmmoComponent>(gs, a => a.Name == weapon?.AmmoClass );
 
 				if (weapon!=null)
@@ -75,10 +75,10 @@ namespace IronStar.UI.HUD
 				hudFrame.Armor.Visible		=	true;
 
 				hudFrame.Health.Value		=	health.Health;
-				hudFrame.Health.MaxValue	=	100;
+				hudFrame.Health.MaxValue	=	health.MaxHealth;
 
 				hudFrame.Armor.Value		=	health.Armor;
-				hudFrame.Armor.MaxValue		=	100;
+				hudFrame.Armor.MaxValue		=	health.MaxArmor;
 			}
 			else
 			{

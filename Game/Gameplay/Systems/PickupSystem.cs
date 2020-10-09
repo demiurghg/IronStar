@@ -63,8 +63,8 @@ namespace IronStar.Gameplay.Systems
 			{
 				if ( !inventory.ContainsItem( gs, name ) )
 				{
-					inventory.AddItem( pickupItem.ID );
-					inventory.SwitchWeapon( pickupItem.ID );
+					inventory.AddItem( pickupItem );
+					inventory.SwitchWeapon( pickupItem );
 				}
 				else 
 				{
@@ -85,12 +85,12 @@ namespace IronStar.Gameplay.Systems
 				}
 				else
 				{
-					inventory.AddItem( pickupItem.ID );
+					inventory.AddItem( pickupItem );
 				}
 			}
 			else 
 			{
-				inventory.AddItem( pickupItem.ID );
+				inventory.AddItem( pickupItem );
 			}
 
 			FXPlayback.SpawnFX( gs, pickup.FXName, pickupItem );

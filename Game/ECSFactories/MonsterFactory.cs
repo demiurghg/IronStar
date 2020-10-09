@@ -25,8 +25,8 @@ namespace IronStar.ECSFactories
 
 			weapon.RemoveComponent<Transform>();
 
-			inventory.AddItem( weapon.ID );
-			inventory.SwitchWeapon( weapon.ID );
+			inventory.AddItem( weapon );
+			inventory.SwitchWeapon( weapon );
 		}
 
 		public override Entity Spawn( GameState gs )

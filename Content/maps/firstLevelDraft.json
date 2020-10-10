@@ -93,7 +93,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "ammo_machinegun2"
+          "Classname": "AMMO_BULLETS"
         },
         "FactoryName": "DdKodTxu",
         "Visible": true,
@@ -129,7 +129,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "ammo_plasmagun"
+          "Classname": "AMMO_CELLS"
         },
         "FactoryName": "M0fiP76r",
         "Visible": true,
@@ -147,7 +147,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "ammo_rocket_launcher"
+          "Classname": "AMMO_ROCKETS"
         },
         "FactoryName": "ZbjOz0Vv",
         "Visible": true,
@@ -165,7 +165,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "ammo_machinegun"
+          "Classname": "AMMO_BULLETS"
         },
         "FactoryName": "aBdQM9rs",
         "Visible": true,
@@ -183,7 +183,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "ammo_machinegun"
+          "Classname": "AMMO_BULLETS"
         },
         "FactoryName": "jvciYE2u",
         "Visible": true,
@@ -201,7 +201,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "ammo_machinegun2"
+          "Classname": "AMMO_BULLETS"
         },
         "FactoryName": "L5zAUEDf",
         "Visible": true,
@@ -219,7 +219,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "ammo_plasmagun"
+          "Classname": "AMMO_CELLS"
         },
         "FactoryName": "nrwWpYXQ",
         "Visible": true,
@@ -237,7 +237,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "ammo_rocket_launcher"
+          "Classname": "AMMO_ROCKETS"
         },
         "FactoryName": "v8ssD5ei",
         "Visible": true,
@@ -255,7 +255,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "ammo_machinegun"
+          "Classname": "AMMO_SLUGS"
         },
         "FactoryName": "b47XVAMG",
         "Visible": true,
@@ -273,7 +273,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "ammo_machinegun"
+          "Classname": "AMMO_BULLETS"
         },
         "FactoryName": "8UbU1PiF",
         "Visible": true,
@@ -314,7 +314,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "ammo_shotgun"
+          "Classname": "AMMO_SHELLS"
         },
         "FactoryName": "ImK8leLT",
         "Visible": true,
@@ -332,7 +332,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "ammo_shotgun"
+          "Classname": "AMMO_SHELLS"
         },
         "FactoryName": "dkfCGSqQ",
         "Visible": true,
@@ -4389,7 +4389,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "ammo_machinegun"
+          "Classname": "AMMO_BULLETS"
         },
         "FactoryName": "fHEYvMQm",
         "Visible": true,
@@ -4407,7 +4407,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "ammo_machinegun"
+          "Classname": "AMMO_BULLETS"
         },
         "FactoryName": "fz8dRLgl",
         "Visible": true,
@@ -4425,7 +4425,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "ammo_machinegun"
+          "Classname": "AMMO_BULLETS"
         },
         "FactoryName": "0sVvn3Ss",
         "Visible": true,
@@ -4443,7 +4443,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "ammo_machinegun"
+          "Classname": "AMMO_BULLETS"
         },
         "FactoryName": "5zw2H5fT",
         "Visible": true,

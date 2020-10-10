@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion;
 using Fusion.Core.Mathematics;
+using IronStar.Gameplay.Components;
 
 namespace IronStar.ECS
 {
@@ -145,6 +146,12 @@ namespace IronStar.ECS
 				var transform = GetComponent<Transform>();
 				return (transform==null) ? Vector3.Zero : transform.Position;
 			}
+		}
+
+
+		public string Name 
+		{
+			get { return GetComponent<NameComponent>()?.Name; }
 		}
 	}
 }

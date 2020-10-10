@@ -48,42 +48,35 @@ namespace IronStar.ECSFactories
 	}
 
 
-	[EntityFactory("AMMO_MACHINEGUN")]
+	[EntityFactory("AMMO_BULLETS")]
 	public class AmmoMachinegunFactory : AmmoFactory
 	{
 		public AmmoMachinegunFactory():
 		base( "AMMO_BULLETS", 200, 50, 0.03f, "scenes\\weapon2\\assault_rifle\\assault_rifle_ammo" ) {}
 	}
 
-	[EntityFactory("AMMO_MACHINEGUN2")]
-	public class AmmoMachinegun2Factory : AmmoFactory
-	{
-		public AmmoMachinegun2Factory():
-		base( "AMMO_BULLETS", 200, 50, 0.03f, "scenes\\weapon2\\battle_rifle\\battle_rifle_ammo" ) {}
-	}
-
-	[EntityFactory("AMMO_PLASMAGUN")]
+	[EntityFactory("AMMO_CELLS")]
 	public class AmmoPlasmagunFactory : AmmoFactory
 	{
 		public AmmoPlasmagunFactory():
 		base( "AMMO_CELLS", 200, 50, 0.03f, "scenes\\weapon2\\plasma_rifle\\plasma_rifle_ammo" ) {}
 	}
 
-	[EntityFactory("AMMO_RAILGUN")]
+	[EntityFactory("AMMO_SLUGS")]
 	public class AmmoRailgunFactory : AmmoFactory
 	{
 		public AmmoRailgunFactory():
 		base( "AMMO_SLUGS", 50, 10, 0.06f, "scenes\\items\\medkit\\medkit10" ) {} // <----- WTF?
 	}
 
-	[EntityFactory("AMMO_ROCKETLAUNCHER")]
+	[EntityFactory("AMMO_ROCKETS")]
 	public class AmmoRocketLauncherFactory : AmmoFactory
 	{
 		public AmmoRocketLauncherFactory():
 		base( "AMMO_ROCKETS", 50, 10, 0.042f, "scenes\\weapon2\\rocket_launcher\\rocket_ammo" ) {}
 	}
 
-	[EntityFactory("AMMO_SHOTGUN")]
+	[EntityFactory("AMMO_SHELLS")]
 	public class AmmoShotgunFactory : AmmoFactory
 	{
 		public AmmoShotgunFactory():

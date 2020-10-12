@@ -20,8 +20,8 @@ namespace IronStar.Gameplay.Systems
 		public Aspect GetAspect() { return Aspect.Empty; }
 
 		readonly Aspect itemAspect		=	new Aspect().Include<PickupComponent,TouchDetector,Transform>().Single<WeaponComponent,AmmoComponent>();
-		readonly Aspect weaponAspect	=	new Aspect().Include<PickupComponent,TouchDetector,Transform,WeaponComponent>();
-		readonly Aspect ammoAspect		=	new Aspect().Include<PickupComponent,TouchDetector,Transform,AmmoComponent>();
+		readonly Aspect weaponAspect	=	new Aspect().Include<PickupComponent,TouchDetector,Transform,WeaponComponent>().Include<NameComponent>();
+		readonly Aspect ammoAspect		=	new Aspect().Include<PickupComponent,TouchDetector,Transform,AmmoComponent>().Include<NameComponent>();
 		readonly Aspect inventoryAspect	=	new Aspect().Include<PlayerComponent,InventoryComponent,Transform>();
 
 
@@ -53,51 +53,97 @@ namespace IronStar.Gameplay.Systems
 		bool PickItemUp( GameState gs, Entity recipient, Entity pickupItem )
 		{
 			var inventory	=	recipient.GetComponent<InventoryComponent>();
-			var transform	=	recipient.GetComponent<Transform>();
 			var pickup		=	pickupItem.GetComponent<PickupComponent>();
-			var name		=	pickupItem.GetComponent<NameComponent>()?.Name;
-			var ammo		=	pickupItem.GetComponent<AmmoComponent>();
-			var weapon		=	pickupItem.GetComponent<WeaponComponent>();
 
-			if ( weaponAspect.Accept( pickupItem ) )
+				
+			if (   TryPickAsWeapon( gs, inventory, pickupItem )
+				|| TryPickAsAmmo( gs, inventory, pickupItem )
+			)
 			{
-				if ( !inventory.ContainsItem( gs, name ) )
+				FXPlayback.SpawnFX( gs, pickup.FXName, pickupItem );
+				pickupItem.RemoveComponent<Transform>();
+
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+
+
+		bool TryPickAsWeapon( GameState gs, InventoryComponent inventory, Entity weaponEntity )
+		{
+			if ( weaponAspect.Accept( weaponEntity ) )
+			{
+				var name	=	weaponEntity.GetComponent<NameComponent>()?.Name;
+				var weapon	=	weaponEntity.GetComponent<WeaponComponent>();
+
+				var existingWeaponEntity = inventory.FindItem<WeaponComponent,NameComponent>( gs, (w,n) => n.Name==name );
+
+				if ( existingWeaponEntity==null )
 				{
-					inventory.AddItem( pickupItem );
-					inventory.SwitchWeapon( pickupItem );
+					inventory.AddItem( weaponEntity );
+					inventory.SwitchWeapon( weaponEntity );
 				}
 				else 
 				{
-					return false;
+					inventory.SwitchWeapon( existingWeaponEntity );
+					gs.Kill( weaponEntity );
 				}
-			}
-			else if ( ammoAspect.Accept( pickupItem ) )
-			{
-				var existingAmmo = inventory.FindItem<AmmoComponent>( gs, a => a.Name == ammo.Name );
 
-				if (existingAmmo!=null)
+				var ammoEntity = gs.Spawn( weapon.AmmoClass );
+				
+				if (ammoEntity!=null)
 				{
-					if (existingAmmo.Count < existingAmmo.Capacity)
+					TryPickAsAmmo( gs, inventory, ammoEntity ); 
+				}
+
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+
+		bool TryPickAsAmmo( GameState gs, InventoryComponent inventory, Entity ammoEntity, bool forcePick = false )
+		{
+			if ( ammoAspect.Accept( ammoEntity ) )
+			{
+				var name = ammoEntity.GetComponent<NameComponent>().Name;
+				var ammo = ammoEntity.GetComponent<AmmoComponent>();
+
+				AmmoComponent existingAmmo;
+				NameComponent existingName;
+
+				var existingAmmoEntity = inventory.FindItem( gs, (a,n) => n.Name==name, out existingAmmo, out existingName );
+
+				if ( existingAmmoEntity!=null )
+				{
+					if ( existingAmmo.Count < existingAmmo.Capacity || forcePick )
 					{
 						existingAmmo.Count = MathUtil.Clamp( existingAmmo.Count + ammo.Count, 0, existingAmmo.Capacity );
-						gs.Kill(pickupItem.ID);
+						gs.Kill( ammoEntity );
+						return true;
+					}
+					else
+					{
+						return false;
 					}
 				}
 				else
 				{
-					inventory.AddItem( pickupItem );
+					inventory.AddItem( ammoEntity );
+					return true;
 				}
 			}
-			else 
+			else
 			{
-				inventory.AddItem( pickupItem );
+				return false;
 			}
-
-			FXPlayback.SpawnFX( gs, pickup.FXName, pickupItem );
-			pickupItem.RemoveComponent<Transform>();
-			Log.Message("Pickup: {0}", name ?? "");
-
-			return true;
 		}
 	}
 }

@@ -54,7 +54,7 @@ namespace IronStar.Gameplay.Systems
 			{
 				Explode( projectile.SenderID, null, origin, Vector3.Up, projectile );
 				FXPlayback.SpawnFX( gs, projectile.ExplosionFX, 0, origin, Vector3.Up );
-				gs.Kill( entity.ID );
+				gs.Kill( entity );
 			}
 
 			if ( physics.RayCastAgainstAll( origin, target, out hitNormal, out hitPoint, out hitEntity, parent ) ) 
@@ -69,7 +69,7 @@ namespace IronStar.Gameplay.Systems
 				transform.Position	=	hitPoint;
 				velocity.Linear		=	projectile.Velocity * dir;
 
-				gs.Kill( entity.ID );
+				gs.Kill( entity );
 			} 
 			else 
 			{

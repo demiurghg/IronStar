@@ -96,7 +96,7 @@ namespace IronStar.ECSFactories
 			var e = base.Spawn( gs );
 
 			e.AddComponent( new NameComponent("PLASMAGUN") );
-			e.AddComponent( WeaponComponent.ProjectileWeapon( 10, 5, 33, "PLASMA", "AMMO_CELLS", "plasmaMuzzle" ) );
+			e.AddComponent( WeaponComponent.ProjectileWeapon( 10, 5, 100, "PLASMA", "AMMO_CELLS", "plasmaMuzzle" ) );
 			e.AddComponent( new RenderModel("scenes\\weapon2\\plasma_rifle\\plasma_rifle_view", 0.03f, PlasmagunColor, GlowIntensity, RMFlags.None ) );
 			e.AddComponent( new DynamicBox( 0.9f, 1.2f, 4.5f, 6.0f ) );
 

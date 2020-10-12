@@ -27,7 +27,7 @@ namespace IronStar.ECS
 		readonly ComponentCollection    components;
 
 		readonly Bag<Entity>        spawned;
-		readonly HashSet<uint>      killed;
+		readonly HashSet<Entity>    killed;
 
 		readonly HashSet<Entity>    refreshed;
 
@@ -55,7 +55,7 @@ namespace IronStar.ECS
 			components	=	new ComponentCollection();
 
 			spawned		=	new Bag<Entity>();
-			killed		=	new HashSet<uint>();
+			killed		=	new HashSet<Entity>();
 			refreshed	=	new HashSet<Entity>();
 
 			services	=	new GameServiceContainer();
@@ -266,37 +266,37 @@ namespace IronStar.ECS
 		}
 
 
-		public void Kill( uint id )
-		{
-			killed.Add( id );
-		}
-
-
 		public void Kill( Entity e )
 		{
-			if (e!=null) killed.Add( e.ID );
+			if (e!=null) killed.Add( e );
 		}
 
 
-		void KillInternal( uint id )
+		void KillInternal( Entity entity )
 		{
-			Entity entity;
-			if (entities.TryGetValue(id, out entity))
+			if (entity!=null)
 			{
-				entities.Remove( id );
-				RemoveAllEntityComponent( entity );
-				Refresh( entity );
+				if ( entities.Remove( entity.ID ) )
+				{
+					RemoveAllEntityComponent( entity );
+					Refresh( entity );
+				}
+				else
+				{
+					RemoveAllEntityComponent( entity );
+					spawned.Remove( entity );
+				}
 			}
 		}
 
 
 		void KillAllInternal()
 		{
-			var killList = entities.Keys.ToArray();
+			var killList = entities.Values.ToArray();
 
-			foreach ( var id in killList )
+			foreach ( var e in killList )
 			{
-				KillInternal( id );
+				KillInternal( e );
 			}
 		}
 

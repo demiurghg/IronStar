@@ -231,7 +231,12 @@ namespace IronStar.Gameplay.Systems
 
 		AmmoComponent GetAmmo( GameState gs, InventoryComponent inventory, WeaponComponent weapon )
 		{
-			return	inventory.FindItem<AmmoComponent>( gs, a => a.Name == weapon.AmmoClass );
+			AmmoComponent ammo;
+			NameComponent name;
+			
+			inventory.FindItem<AmmoComponent,NameComponent>( gs, (a,n) => n.Name == weapon.AmmoClass, out ammo, out name );
+
+			return ammo;
 		}
 
 

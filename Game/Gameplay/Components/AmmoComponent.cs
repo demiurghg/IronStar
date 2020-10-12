@@ -10,12 +10,11 @@ namespace IronStar.Gameplay.Components
 {
 	public class AmmoComponent : IComponent
 	{
-		public string Name;
 		public int	Capacity;
 		public int	Count;
 
 		public AmmoComponent() {}
-		public AmmoComponent(string name, int count, int capacity) { Name = name; Count = count; Capacity = capacity; }
+		public AmmoComponent(int count, int capacity) { Count = count; Capacity = capacity; }
 
 		public void Load( GameState gs, Stream stream )	{	}
 		public void Save( GameState gs, Stream stream )	{	}

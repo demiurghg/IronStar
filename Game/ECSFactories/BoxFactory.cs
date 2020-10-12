@@ -54,7 +54,7 @@ namespace IronStar.ECSFactories
 	{
 		public override void Execute( GameState gs, Entity target )
 		{
-			float explosionTime = MathUtil.Random.NextFloat(0.1f, 0.5f)*0;
+			float explosionTime = MathUtil.Random.NextFloat(0.05f, 0.1f);
 			target.AddComponent( new FXComponent("boxBurning", true) );
 			target.AddComponent( new ProjectileComponent(0, 7.5f, explosionTime, "boxExplosion", 100, 100) );
 		}

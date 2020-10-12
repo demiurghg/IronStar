@@ -38,7 +38,8 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new RenderModel( modelName, Matrix.Scaling( modelScale ), Color.White, 5, RMFlags.None ) );
 
 			e.AddComponent( new DynamicBox( 0.66f, 0.72f, 0.66f, 1.0f ) { Group = CollisionGroup.PickupGroup } );
-			e.AddComponent( new AmmoComponent(ammoName, ammoCount, ammoCapacity) );
+			e.AddComponent( new AmmoComponent(ammoCount, ammoCapacity) );
+			e.AddComponent( new NameComponent(ammoName) );
 
 			e.AddComponent( new Transform() );
 			e.AddComponent( new Velocity() );

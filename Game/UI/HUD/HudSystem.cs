@@ -49,7 +49,10 @@ namespace IronStar.UI.HUD
 			if (inventory!=null)
 			{
 				var weapon	=	inventory.ActiveWeapon?.GetComponent<WeaponComponent>();
-				var ammo	=	inventory.FindItem<AmmoComponent>(gs, a => a.Name == weapon?.AmmoClass );
+
+				AmmoComponent ammo;
+				NameComponent ammoName;
+				inventory.FindItem(gs, (a,n) => n.Name == weapon?.AmmoClass, out ammo, out ammoName );
 
 				if (weapon!=null)
 				{

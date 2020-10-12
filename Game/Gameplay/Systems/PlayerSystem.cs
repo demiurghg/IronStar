@@ -7,6 +7,7 @@ using Fusion.Core;
 using Fusion.Core.Extensions;
 using IronStar.ECS;
 using Fusion;
+using IronStar.Gameplay.Components;
 
 namespace IronStar.Gameplay
 {
@@ -72,8 +73,11 @@ namespace IronStar.Gameplay
 
 			foreach ( var player in players )
 			{
-				var uc	=	player.GetComponent<UserCommandComponent>();
-				playerInput.UpdateUserInput( gameTime, uc );
+				var uc		=	player.GetComponent<UserCommandComponent>();
+				var health	=	player.GetComponent<HealthComponent>();
+				var alive	=	health==null ? true : health.Health > 0;
+
+				playerInput.UpdateUserInput( gameTime, uc, alive );
 			}
 		}
 	}

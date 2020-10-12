@@ -78,11 +78,11 @@ namespace IronStar.Animation
 				{
 					return;
 				}
-				if (currentAnim!=null && currentAnim.Take.Name == takeName) 
-				{
-					pendingAnim	=	null;
-					return;
-				}
+				//if (currentAnim!=null && currentAnim.Take.Name == takeName) 
+				//{
+				//	pendingAnim	=	null;
+				//	return;
+				//}
 			}
 
 			//	sequence take :

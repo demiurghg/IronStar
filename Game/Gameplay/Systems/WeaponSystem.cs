@@ -57,6 +57,9 @@ namespace IronStar.Gameplay.Systems
 				var inventory	=	entity.GetComponent<InventoryComponent>();
 				var userCmd		=	entity.GetComponent<UserCommandComponent>();
 				var chctrl		=	entity.GetComponent<CharacterController>();
+				var health		=	entity.GetComponent<HealthComponent>();
+
+				var isAlive		=	health==null ? true : health.Health>0;
 
 				var povTransform	=	userCmd.RotationMatrix * Matrix.Translation(transform.Position + chctrl.PovOffset);
 
@@ -67,11 +70,17 @@ namespace IronStar.Gameplay.Systems
 
 				//	tell inventory to switch to another weapon :
 				SwitchWeapon( gs, userCmd, inventory );
+
+				if (!isAlive)
+				{
+					inventory.SwitchWeapon(null);
+					inventory.FinalizeWeaponSwitch();
+				}
 					
 				var weaponEntity	=	inventory.ActiveWeapon;
 
 				//	is active item weapon?
-				if (weaponAspect.Accept(weaponEntity))
+				if (weaponAspect.Accept(weaponEntity) && isAlive)
 				{
 					var weapon	= weaponEntity.GetComponent<WeaponComponent>();
 					var attack	= userCmd.Action.HasFlag( UserAction.Attack );

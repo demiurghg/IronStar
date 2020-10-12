@@ -36,8 +36,7 @@ namespace IronStar.Gameplay
 		TakeSequencer		shake2;
 		TakeSequencer		shake3;
 		Matrix[]			animData;
-		bool isCrouching	=	false;
-		bool hasTraction	=	true;
+		bool				dead = false;
 
 
 		public bool Enabled { get; set; } = true;
@@ -100,11 +99,12 @@ namespace IronStar.Gameplay
 
 		void SetupPlayerCamera( GameTime gameTime, GameState gs, Entity e )
 		{
-			var t	=	e.GetComponent<Transform>();
-			var v	=	e.GetComponent<Velocity>();
-			var uc	=	e.GetComponent<UserCommandComponent>();
-			var ch	=	e.GetComponent<CharacterController>();
-			var step=	e.GetComponent<StepComponent>();
+			var t		=	e.GetComponent<Transform>();
+			var v		=	e.GetComponent<Velocity>();
+			var uc		=	e.GetComponent<UserCommandComponent>();
+			var ch		=	e.GetComponent<CharacterController>();
+			var step	=	e.GetComponent<StepComponent>();
+			var health	=	e.GetComponent<HealthComponent>();
 
 			var	rs	=	gs.GetService<RenderSystem>();
 			var rw	=	rs.RenderWorld;
@@ -119,7 +119,7 @@ namespace IronStar.Gameplay
 			var rotatePR	=	Matrix.RotationYawPitchRoll( 0, uc.Pitch, uc.Roll );
 
 			//	animate :
-			UpdateAnimationState(step);
+			UpdateAnimationState(step, health);
 
 			composer.Update( gameTime, rotateYaw * translate, animData );
 			//cameraScene.ComputeAbsoluteTransforms( animData, animData );
@@ -150,21 +150,30 @@ namespace IronStar.Gameplay
 		}
 
 
-		void UpdateAnimationState( StepComponent steps )
+		void UpdateAnimationState( StepComponent steps, HealthComponent health )
 		{
-			if (steps.Crouched)	mainTrack.Sequence( "crouch", SequenceMode.Hold|SequenceMode.DontPlayTwice );
-			if (steps.Standed)	mainTrack.Sequence( "stand" , SequenceMode.Hold|SequenceMode.DontPlayTwice );
+			if (health.Health<=0 && !dead)
+			{
+				dead = true;
+				mainTrack.Sequence("death", SequenceMode.Hold );
+			}
+
+			if (!dead)
+			{
+				if (steps.Crouched)	mainTrack.Sequence( "crouch", SequenceMode.Hold|SequenceMode.DontPlayTwice );
+				if (steps.Standed)	mainTrack.Sequence( "stand" , SequenceMode.Hold|SequenceMode.DontPlayTwice );
 			
-			if (steps.Landed) PlayShake("landing", 1.0f);
-			if (steps.Jumped) PlayShake("jump", 0.5f);
+				if (steps.Landed) PlayShake("landing", 1.0f);
+				if (steps.Jumped) PlayShake("jump", 0.5f);
 
-			if (steps.RecoilLight) PlayShake(null, rand.NextFloat(0.2f,0.4f) );
-			if (steps.RecoilHeavy) PlayShake(null, rand.NextFloat(0.8f,1.2f) );
+				if (steps.RecoilLight) PlayShake(null, rand.NextFloat(0.2f,0.4f) );
+				if (steps.RecoilHeavy) PlayShake(null, rand.NextFloat(0.8f,1.2f) );
 
-			if (steps.LeftStep)  composer.SequenceSound( SOUND_STEP );
-			if (steps.RightStep) composer.SequenceSound( SOUND_STEP );
-			if (steps.Landed)	 composer.SequenceSound( SOUND_LANDING );
-			//if (steps.Jumped) composer.SequenceSound( SOUND_STEP );
+				if (steps.LeftStep)  composer.SequenceSound( SOUND_STEP );
+				if (steps.RightStep) composer.SequenceSound( SOUND_STEP );
+				if (steps.Landed)	 composer.SequenceSound( SOUND_LANDING );
+				//if (steps.Jumped) composer.SequenceSound( SOUND_STEP );
+			}
 		}
 
 
@@ -189,12 +198,17 @@ namespace IronStar.Gameplay
 
 			var standEyeHeight	=	CharacterController.CalcPovHeight( standHeight, crouchHeight, false );
 			var crouchEyeHeight	=	CharacterController.CalcPovHeight( standHeight, crouchHeight, true );
+			var deadEyeHeight	=	0.33f;
 			var standTransform	=	Matrix.Translation( 0, standEyeHeight, 0 );
 			var crouchTransform	=	Matrix.Translation( 0, crouchEyeHeight, 0 );
 			var duckTransform	=	Matrix.RotationX( MathUtil.DegreesToRadians(1) );
 			var landTransform	=	Matrix.RotationX( -MathUtil.DegreesToRadians(5) );
 			var identity		=	Matrix.Identity;
 			camera.Transform	=	standTransform;
+
+			var deathTransform	=	Matrix.Translation( 0, deadEyeHeight, 0 )
+								*	Matrix.RotationX( MathUtil.DegreesToRadians(1) )
+								*	Matrix.RotationZ( MathUtil.DegreesToRadians(45) );
 			
 			scene.Nodes.Add( root );
 			scene.Nodes.Add( camera );
@@ -204,6 +218,8 @@ namespace IronStar.Gameplay
 			var takeCrouch	=	new AnimationTake("crouch"	, 2, 0, 15);
 			var takeLanding	=	new AnimationTake("landing"	, 2, 0, 30);
 			var takeJump	=	new AnimationTake("jump"	, 2, 0, 20);
+			var takeDeath	=	new AnimationTake("death"	, 2, 0, 20);
+
 			
 			takeStand.RecordTake( 1, 
 				(i,t) =>  AnimationUtils.Lerp( crouchTransform, standTransform, AnimationUtils.SlowFollowThrough(t) )
@@ -223,10 +239,15 @@ namespace IronStar.Gameplay
 				(i,t) =>  AnimationUtils.Lerp( identity, landTransform, -1*AnimationUtils.KickCurve(t) ) 
 			);
 
+			takeDeath	.RecordTake( 1, 
+				(i,t) =>  AnimationUtils.Lerp( standTransform, deathTransform, AnimationUtils.QuadraticStep(t) ) 
+			);
+
 			scene.Takes.Add( takeStand		);
 			scene.Takes.Add( takeCrouch		);
 			scene.Takes.Add( takeLanding	);
 			scene.Takes.Add( takeJump		);
+			scene.Takes.Add( takeDeath		);
 
 			Random rand = new Random(152445);
 

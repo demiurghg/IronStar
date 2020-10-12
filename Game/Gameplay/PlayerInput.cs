@@ -68,7 +68,7 @@ namespace IronStar.Gameplay
 		}
 
 
-		public void UpdateUserInput ( GameTime gameTime, UserCommandComponent userCommand )
+		public void UpdateUserInput ( GameTime gameTime, UserCommandComponent userCommand, bool isAlive )
 		{
 			var flags	=	UserAction.None;
 			var console	=	Game.GetService<GameConsole>();
@@ -81,6 +81,12 @@ namespace IronStar.Gameplay
 
 			if (Game.Keyboard.IsKeyDown( Keys.Escape	)) Game.GetService<Mission>().State.Pause();
 			
+			if (!isAlive) 
+			{
+				userCommand.Pitch *= 0.9f;
+				return;
+			}
+
 			if (Game.Keyboard.IsKeyDown( MoveForward	)) userCommand.MoveForward++;
 			if (Game.Keyboard.IsKeyDown( MoveBackward	)) userCommand.MoveForward--;
 			if (Game.Keyboard.IsKeyDown( StrafeRight	)) userCommand.MoveRight++;

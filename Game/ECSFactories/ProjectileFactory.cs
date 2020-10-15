@@ -20,7 +20,7 @@ namespace IronStar.ECSFactories
 		{
 			var e = gs.Spawn();
 
-			e.AddComponent( new ProjectileComponent(150, 0, 10, "plasmaExplosion") );
+			e.AddComponent( new ProjectileComponent(500, 0, 10, "plasmaExplosion") );
 			e.AddComponent( new FXComponent("plasmaTrail", true) );
 
 			e.AddComponent( new Transform() );
@@ -38,7 +38,7 @@ namespace IronStar.ECSFactories
 		{
 			var e = gs.Spawn();
 
-			e.AddComponent( new ProjectileComponent(150, 12, 10, "rocketExplosion") );
+			e.AddComponent( new ProjectileComponent(300, 12, 10, "rocketExplosion") );
 			e.AddComponent( new FXComponent("rocketTrail", true) );
 
 			e.AddComponent( new Transform() );

@@ -18,8 +18,6 @@ namespace IronStar.ECSFactories
 	{
 		void GiveWeapon(Entity monster, string weaponName)
 		{
-			return;
-
 			var inventory	=	monster.GetComponent<InventoryComponent>();
 			var weapon		=	monster.gs.Spawn(weaponName);
 
@@ -43,16 +41,17 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new Transform() );
 			e.AddComponent( new Velocity() );
 			e.AddComponent( new StepComponent() );
+			e.AddComponent( new HealthComponent(50,0) );
 
-			e.AddComponent( new InventoryComponent() );
+			e.AddComponent( new InventoryComponent(InventoryFlags.InfiniteAmmo) );
 			e.AddComponent( new BehaviorComponent() );
 
 			var weapons = new[]
 			{
-				"WEAPON_PLASMAGUN",
 				"WEAPON_MACHINEGUN",
-				"WEAPON_RAILGUN",
-				"WEAPON_RAILGUN",
+				"WEAPON_PLASMAGUN",
+				"WEAPON_PLASMAGUN",
+				"WEAPON_PLASMAGUN",
 				"WEAPON_ROCKETLAUNCHER",
 				"WEAPON_ROCKETLAUNCHER",
 			};

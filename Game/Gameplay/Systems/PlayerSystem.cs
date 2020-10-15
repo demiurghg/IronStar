@@ -8,6 +8,7 @@ using Fusion.Core.Extensions;
 using IronStar.ECS;
 using Fusion;
 using IronStar.Gameplay.Components;
+using IronStar.ECSPhysics;
 
 namespace IronStar.Gameplay
 {
@@ -36,14 +37,14 @@ namespace IronStar.Gameplay
 		public void Update( GameState gs, GameTime gameTime )
 		{
 			UpdatePlayerSpawn( gs );
-			UpdatePlayerInput( gs, gameTime );
+			UpdatePlayerState( gs, gameTime );
 		}
 
 
 		Aspect startPointAspect = new Aspect().Include<PlayerStartComponent,Transform>();
 
 
-		public void UpdatePlayerSpawn ( GameState gs )
+		void UpdatePlayerSpawn ( GameState gs )
 		{
 			var e	=	gs.QueryEntities(startPointAspect).RandomOrDefault(rand);
 
@@ -66,7 +67,7 @@ namespace IronStar.Gameplay
 		}
 
 
-		public void UpdatePlayerInput ( GameState gs, GameTime gameTime )
+		void UpdatePlayerState ( GameState gs, GameTime gameTime )
 		{
 			var playerInput	=	gs.Game.GetService<PlayerInput>();
 			var players		=	gs.QueryEntities<PlayerComponent,UserCommandComponent>();

@@ -68,6 +68,8 @@ namespace IronStar {
 			Invoker.RegisterCommand("contentBuild",		() => new ContentBuildCommand(this, builder) );
 			Invoker.RegisterCommand("contentFile",		() => new ContentFileCommand() );
 			Invoker.RegisterCommand("contentReport",	() => new ContentReportCommand() );
+
+			RegisterCheats();
 		}
 
 

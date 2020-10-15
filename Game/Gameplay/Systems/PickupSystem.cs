@@ -98,6 +98,7 @@ namespace IronStar.Gameplay.Systems
 				if (ammoEntity!=null)
 				{
 					TryPickAsAmmo( gs, inventory, ammoEntity ); 
+					ammoEntity.RemoveComponent<Transform>();
 				}
 
 				return true;

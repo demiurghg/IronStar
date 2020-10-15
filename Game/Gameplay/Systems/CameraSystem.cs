@@ -158,6 +158,12 @@ namespace IronStar.Gameplay
 				mainTrack.Sequence("death", SequenceMode.Hold );
 			}
 
+			if (health.LastDamage>0)
+			{
+				float amount = Math.Min(1, (float)Math.Sqrt( health.LastDamage / 100.0f ));
+				PlayShake( CreatePainAnimation(amount), rand.NextFloat(amount*0.8f,amount*1.2f) );
+			}
+
 			if (!dead)
 			{
 				if (steps.Crouched)	mainTrack.Sequence( "crouch", SequenceMode.Hold|SequenceMode.DontPlayTwice );
@@ -166,13 +172,41 @@ namespace IronStar.Gameplay
 				if (steps.Landed) PlayShake("landing", 1.0f);
 				if (steps.Jumped) PlayShake("jump", 0.5f);
 
-				if (steps.RecoilLight) PlayShake(null, rand.NextFloat(0.2f,0.4f) );
-				if (steps.RecoilHeavy) PlayShake(null, rand.NextFloat(0.8f,1.2f) );
+				if (steps.RecoilLight) PlayShake((string)null, rand.NextFloat(0.2f,0.4f) );
+				if (steps.RecoilHeavy) PlayShake((string)null, rand.NextFloat(0.8f,1.2f) );
 
 				if (steps.LeftStep)  composer.SequenceSound( SOUND_STEP );
 				if (steps.RightStep) composer.SequenceSound( SOUND_STEP );
 				if (steps.Landed)	 composer.SequenceSound( SOUND_LANDING );
 				//if (steps.Jumped) composer.SequenceSound( SOUND_STEP );
+			}
+		}
+
+
+		AnimationTake CreatePainAnimation( float amount )
+		{
+			var length	=	MathUtil.Lerp(15,30, amount);
+			var take	=	new AnimationTake("pain", 2, 0, length);
+
+			var maxPitch	=	MathUtil.DegreesToRadians( amount * 1  );
+			var maxYaw		=	MathUtil.DegreesToRadians( amount * 5  );
+			var maxRoll		=	MathUtil.DegreesToRadians( amount * 15 );
+			var identity	=	Matrix.Identity;
+			var shake		=	Matrix.RotationYawPitchRoll( rand.NextFloat(-maxYaw,maxYaw), rand.NextFloat(-maxPitch,maxPitch), rand.NextFloat(-maxRoll,maxRoll) );
+
+			take.RecordTake( 1, (f,t) => AnimationUtils.Lerp( identity, shake, AnimationUtils.KickCurve(t) ) );
+
+			return take;
+		}
+
+
+		void PlayShake( AnimationTake take, float weight )
+		{
+			var shakeTrack = composer.GetAdditiveIdleSequencer();
+			if (shakeTrack!=null)
+			{
+				shakeTrack.Sequence(take, SequenceMode.Immediate);
+				shakeTrack.Weight = weight;
 			}
 		}
 

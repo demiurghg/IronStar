@@ -52,37 +52,23 @@ namespace IronStar.Animation
 		}
 
 
-		public void Sequence ( string takeName, SequenceMode sequenceMode )
+		public void Sequence( AnimationTake take, SequenceMode sequenceMode )
 		{
 			var immediate	=	sequenceMode.HasFlag( SequenceMode.Immediate );
 			var looped		=	sequenceMode.HasFlag( SequenceMode.Looped );
 			var hold		=	sequenceMode.HasFlag( SequenceMode.Hold );
 			var noTwice		=	sequenceMode.HasFlag( SequenceMode.DontPlayTwice );
-			var take		=	scene.Takes[ takeName ];
 
 			//	looped and holds contradicts each other :
 			if (looped && hold) throw new ArgumentException("SequenceMode.Looped and SequenceMode.Hold are incompatible");
 
-			Log.Verbose(" seq : {0} {1} {2}", takeName, immediate ? "immediate":"", looped ? "looped":"" );
-
-			if (take==null) 
-			{
-				Log.Warning("Take '{0}' does not exist", takeName );
-				return;
-			}
-
 			//	dont place the same take twice
 			if (noTwice)
 			{
-				if (pendingAnim!=null && pendingAnim.Take.Name == takeName) 
+				if (pendingAnim!=null && pendingAnim.Take == take) 
 				{
 					return;
 				}
-				//if (currentAnim!=null && currentAnim.Take.Name == takeName) 
-				//{
-				//	pendingAnim	=	null;
-				//	return;
-				//}
 			}
 
 			//	sequence take :
@@ -98,6 +84,20 @@ namespace IronStar.Animation
 				var anim	=	new Animation ( currentAnim.End, take, scene.TimeMode, looped, hold );
 				pendingAnim	=	anim;
 			}
+		}
+
+
+		public void Sequence ( string takeName, SequenceMode sequenceMode )
+		{
+			var take	=	scene.Takes[ takeName ];
+
+			if (take==null) 
+			{
+				Log.Warning("Take '{0}' does not exist", takeName );
+				return;
+			}
+
+			Sequence( take, sequenceMode );
 		}
 
 

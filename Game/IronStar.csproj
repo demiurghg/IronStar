@@ -195,6 +195,7 @@
     <Compile Include="GameException.cs" />
     <Compile Include="Gameplay\AmmoType.cs" />
     <Compile Include="Gameplay\WeaponState.cs" />
+    <Compile Include="IronStar.Cheats.cs" />
     <Compile Include="IronStar.Activator.cs" />
     <Compile Include="Mapping\MapLightProbeBox.cs" />
     <Compile Include="ECSPhysics\CharacterController.cs" />
@@ -203,6 +204,7 @@
     <Compile Include="ECSPhysics\GravityComponent.cs" />
     <Compile Include="ECSPhysics\StaticCollisionComponent.cs" />
     <Compile Include="Mathematics\Intersection.cs" />
+    <Compile Include="Monsters\Systems\MonsterKillSystem.cs" />
     <Compile Include="SceneView.cs" />
     <Compile Include="ECSGraphics\LightProbeSphere.cs" />
     <Compile Include="ECSGraphics\LightProbeBox.cs" />
@@ -361,7 +363,9 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Monsters\Components\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="cursor.cur" />
   </ItemGroup>

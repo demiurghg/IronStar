@@ -76,4 +76,23 @@ namespace IronStar.ECSFactories
 			return e;
 		}
 	}
+
+
+	[EntityFactory("GIBLET")]
+	public class GibletFactory : BoxFactory
+	{
+		public GibletFactory():
+		base( 1, 1, 1, 0.3f, 2, "scenes\\boxes\\box_low.fbx" ) {}
+
+		public override Entity Spawn( GameState gs )
+		{
+			var e = base.Spawn( gs );
+
+			//e.AddComponent( new HealthComponent(2, 0, "EXPLODE_BOX") );
+			e.AddComponent( new FXComponent("bloodTrail", false) );
+			e.GetComponent<DynamicBox>().Group = CollisionGroup.PickupGroup;
+
+			return e;
+		}
+	}
 }

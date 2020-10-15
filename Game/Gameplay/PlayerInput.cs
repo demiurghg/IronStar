@@ -78,6 +78,7 @@ namespace IronStar.Gameplay
 			userCommand.MoveForward		=	0;
 			userCommand.MoveRight		=	0;
 			userCommand.MoveUp			=	0;
+			userCommand.Weapon			=	null;
 
 			if (Game.Keyboard.IsKeyDown( Keys.Escape	)) Game.GetService<Mission>().State.Pause();
 			
@@ -103,7 +104,6 @@ namespace IronStar.Gameplay
 			if (Game.Keyboard.IsKeyDown( MeleeAttack	)) flags |= UserAction.MeleeAtack;
 			if (Game.Keyboard.IsKeyDown( ReloadWeapon	)) flags |= UserAction.ReloadWeapon;
 
-			userCommand.Weapon = null;
 
 			if (Game.Keyboard.IsKeyDown( Weapon1	)) userCommand.Weapon = "MACHINEGUN"	;
 			if (Game.Keyboard.IsKeyDown( Weapon2	)) userCommand.Weapon = "MACHINEGUN2"	;

@@ -10,11 +10,25 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
+	public enum InventoryFlags
+	{
+		None			=	0x00,
+		InfiniteAmmo	=	0x01,
+	}
+
 	public class InventoryComponent : IComponent, IEnumerable<Entity>
 	{
+		public InventoryFlags Flags { get { return flags; } }
+		InventoryFlags flags;
+
 		Entity activeWeapon = null;
 		Entity pendingWeapon = null;
 		readonly List<Entity> items = new List<Entity>();
+
+		public InventoryComponent( InventoryFlags flags = InventoryFlags.None )
+		{
+			this.flags	=	flags;
+		}
 
 		/// <summary>
 		/// Gets active weapon entity. Could be null.

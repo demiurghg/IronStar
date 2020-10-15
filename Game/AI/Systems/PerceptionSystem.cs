@@ -19,6 +19,7 @@ using IronStar.BTCore.Actions;
 using IronStar.BTCore.Decorators;
 using IronStar.AI.Actions;
 using IronStar.Gameplay;
+using IronStar.Gameplay.Components;
 
 namespace IronStar.AI
 {
@@ -28,6 +29,7 @@ namespace IronStar.AI
 		readonly PhysicsCore physics;
 
 		Entity player = null;
+		bool playerAlive = false;
 		DebugRender dr;
 
 		public Entity Player
@@ -44,8 +46,9 @@ namespace IronStar.AI
 
 		public override void Update( GameState gs, GameTime gameTime )
 		{
-			player	=	gs.GetPlayer();
-			dr		=	gs.GetService<RenderSystem>().RenderWorld.Debug;
+			player		=	gs.GetPlayer();
+			playerAlive	=	IsPlayerAlive( player );
+			dr			=	gs.GetService<RenderSystem>().RenderWorld.Debug;
 
 			base.Update( gs, gameTime );
 		}
@@ -64,7 +67,7 @@ namespace IronStar.AI
 					bool hasLos = false;
 					bool visibility = false;
 					
-					if (player!=null)
+					if (player!=null && playerAlive)
 					{
 						var playerPos	=	player.GetPOV();
 						hasLos			=	physics.HasLineOfSight( pov, playerPos, entity, player );
@@ -74,6 +77,11 @@ namespace IronStar.AI
 					if (visibility)
 					{
 						behavior.LastSeenTarget	=	player;
+					}
+
+					if (!playerAlive)
+					{
+						behavior.LastSeenTarget	=	null;
 					}
 
 					entity.GetBlackboard().SetEntry( BehaviorSystem.KEY_TARGET_ENTITY, behavior.LastSeenTarget );
@@ -87,6 +95,13 @@ namespace IronStar.AI
 			}
 		}
 
+
+		bool IsPlayerAlive(Entity player)
+		{
+			var health = player?.GetComponent<HealthComponent>();
+			
+			return (health==null) || (health.Health > 0);
+		}
 
 		/*-----------------------------------------------------------------------------------------------
 		 *	Utilities :

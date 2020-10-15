@@ -553,11 +553,11 @@
         "FactoryName": "1iAyFPUu",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -419.0,
+        "TranslateX": -418.677124,
         "TranslateY": 25.0,
-        "TranslateZ": -88.0,
+        "TranslateZ": -89.51,
         "RotateYaw": -46.0588,
-        "RotatePitch": 5.29339632E-05,
+        "RotatePitch": -90.0,
         "RotateRoll": -90.00008
       },
       {
@@ -4508,6 +4508,29 @@
         "RotateYaw": -23.2362385,
         "RotatePitch": -0.3493629,
         "RotateRoll": -89.78562
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "ec0755b6-6cde-415d-83f0-21f44cb6b699",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.FuncFXFactory, IronStar",
+          "FX": "bloodTrail",
+          "FXMode": "persistent",
+          "Once": false,
+          "Start": false,
+          "MinInterval": 1,
+          "MaxInterval": 1
+        },
+        "FactoryName": "ac16V4JJ",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -418.748932,
+        "TranslateY": 24.5197487,
+        "TranslateZ": -89.49632,
+        "RotateYaw": 0.0,
+        "RotatePitch": 75.0,
+        "RotateRoll": 0.0
       }
     ]
   },

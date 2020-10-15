@@ -251,6 +251,11 @@ namespace IronStar.Gameplay.Systems
 
 		bool TryConsumeAmmo( GameState gs, InventoryComponent inventory, WeaponComponent weapon )
 		{
+			if (inventory.Flags.HasFlag(InventoryFlags.InfiniteAmmo))
+			{
+				return true;
+			}
+
 			var ammo		=	GetAmmo( gs, inventory, weapon );
 
 			if (ammo==null) 

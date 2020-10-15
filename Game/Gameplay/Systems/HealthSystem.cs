@@ -89,7 +89,9 @@ namespace IronStar.Gameplay.Systems
 			foreach ( var entity in entities )
 			{
 				var health	=	entity.GetComponent<HealthComponent>();
-				var status	=	health.ApplyDamage();
+				var godMode	=	entity.ContainsComponent<PlayerComponent>() && IronStar.IsGodMode;
+
+				var status	=	health.ApplyDamage(godMode);
 
 				if (status==HealthStatus.JustDied)
 				{

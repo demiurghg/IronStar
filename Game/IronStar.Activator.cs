@@ -21,6 +21,7 @@ using Fusion.Core.Content;
 using System.IO;
 using IronStar.AI;
 using IronStar.UI.HUD;
+using IronStar.Monsters.Systems;
 
 namespace IronStar {
 	partial class IronStar : Game
@@ -63,6 +64,7 @@ namespace IronStar {
 			gs.AddSystem( new PerceptionSystem(physicsCore) );
 			gs.AddSystem( new BehaviorSystem(physicsCore) );
 			gs.AddSystem( new NavigationSystem() );
+			gs.AddSystem( new MonsterKillSystem() );
 
 			//	animation systems :
 			gs.AddSystem( new StepSystem() );

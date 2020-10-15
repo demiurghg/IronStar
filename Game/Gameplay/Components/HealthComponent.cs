@@ -23,6 +23,8 @@ namespace IronStar.Gameplay.Components
 		public int Health { get; set; }
 		public int Armor { get; set; }
 
+		public int LastDamage { get; set; }
+
 		public string Action;
 
 		int accumulatedDamage;
@@ -45,11 +47,16 @@ namespace IronStar.Gameplay.Components
 			accumulatedDamage	+=	damage;
 		}
 
-		public HealthStatus ApplyDamage()
+		public HealthStatus ApplyDamage(bool protect)
 		{
-			bool wasAlive = Health > 0;
+			bool wasAlive	=	Health > 0;
+			LastDamage		=	accumulatedDamage;
 
-			Health -= accumulatedDamage;
+			if (!protect)
+			{
+				Health -= accumulatedDamage;
+			}
+
 			accumulatedDamage = 0;
 
 			if (wasAlive && Health<=0)

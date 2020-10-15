@@ -27,6 +27,8 @@ namespace IronStar.AI
 		public bool Enabled = true;
 		readonly PhysicsCore physics;
 
+		AITokenPool tokenPool = new AITokenPool(2, TimeSpan.FromMilliseconds(500) );
+
 		public BehaviorSystem(PhysicsCore physics)
 		{
 			this.physics	=	physics;
@@ -58,13 +60,18 @@ namespace IronStar.AI
 					)
 				);
 
+
+			var tacticalMove = new Sequence(
+					new FindReachablePointInRadius( KEY_COMBAT_LOCATION, 15),
+					new MoveTo( KEY_COMBAT_LOCATION )
+				);
+
 			var attack = 
 				new HasLineOfSight( KEY_TARGET_ENTITY, ConditionMode.Continuous,
 					new Sequence(
 						new Attack( KEY_TARGET_ENTITY, 350, 750, 1.5f ),
 						new Wait( 300, 700 ),
-						new FindReachablePointInRadius( KEY_COMBAT_LOCATION, 15),
-						new MoveTo( KEY_COMBAT_LOCATION )
+						tacticalMove
 					)
 				);
 
@@ -78,9 +85,14 @@ namespace IronStar.AI
 			return 
 				new Selector( 
 					new HasBlackboardValue<Entity>( KEY_TARGET_ENTITY, ConditionMode.Continuous, 
-						new Sequence(
-							approach, 
-							attack
+						new Selector(
+							new AcquireToken(tokenPool,
+								new Sequence(
+									approach, 
+									attack
+								)
+							),
+							tacticalMove
 						)
 					),
 					new HasBlackboardValue<Entity>( KEY_TARGET_ENTITY, ConditionMode.Continuous|ConditionMode.Inverse, roaming )
@@ -104,7 +116,15 @@ namespace IronStar.AI
 
 		protected override void Destroy( Entity entity, BTNode resource )
 		{
-			//	do nothing.
+			tokenPool.RestoreTokens(entity);
+		}
+
+
+		public override void Update( GameState gs, GameTime gameTime )
+		{
+			base.Update( gs, gameTime );
+
+			tokenPool.Update( gameTime );
 		}
 
 		protected override void Process( Entity entity, GameTime gameTime, BTNode behaviorTree, BehaviorComponent component1 )

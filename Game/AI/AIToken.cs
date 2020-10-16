@@ -16,6 +16,9 @@ namespace IronStar.AI
 		bool acquired;
 		Entity owner;
 
+		public Entity Owner { get { return owner; } }
+
+
 		public AIToken( TimeSpan cooldown )
 		{
 			this.cooldown	=	cooldown;
@@ -45,7 +48,11 @@ namespace IronStar.AI
 
 		public void Restore(Entity deadOwner)
 		{
-			if (owner==deadOwner) Release();
+			if (owner==deadOwner) 
+			{
+				Log.Message("Token restored");
+				Release();
+			}
 		}
 
 

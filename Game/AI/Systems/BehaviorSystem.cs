@@ -62,8 +62,9 @@ namespace IronStar.AI
 
 
 			var tacticalMove = new Sequence(
-					new FindReachablePointInRadius( KEY_COMBAT_LOCATION, 15),
-					new MoveTo( KEY_COMBAT_LOCATION )
+					new FindReachablePointInRadius( KEY_COMBAT_LOCATION, 30),
+					new MoveTo( KEY_COMBAT_LOCATION ),
+					new Wait(200,500)
 				);
 
 			var attack = 
@@ -89,6 +90,7 @@ namespace IronStar.AI
 							new AcquireToken(tokenPool,
 								new Sequence(
 									approach, 
+									new Wait(50,150),
 									attack
 								)
 							),
@@ -120,18 +122,43 @@ namespace IronStar.AI
 		}
 
 
+		
 		public override void Update( GameState gs, GameTime gameTime )
 		{
 			base.Update( gs, gameTime );
 
 			tokenPool.Update( gameTime );
+
+			DebugDrawTokens( gs );
 		}
 
-		protected override void Process( Entity entity, GameTime gameTime, BTNode behaviorTree, BehaviorComponent component1 )
+
+		protected override IEnumerable<Entity> OrderEntities( IEnumerable<Entity> entities )
+		{
+			return entities.Shuffle( MathUtil.Random );
+		}
+
+
+		protected override void Process( Entity entity, GameTime gameTime, BTNode behaviorTree, BehaviorComponent behavior )
 		{
 			if (Enabled)
 			{
 				behaviorTree.Tick( gameTime, entity, false );
+			}
+		}
+
+
+
+		void DebugDrawTokens( GameState gs )
+		{
+			var dr	=	gs.GetService<RenderSystem>().RenderWorld.Debug;
+
+			foreach ( var token in tokenPool )
+			{
+				if (token.Owner!=null)
+				{
+					dr.DrawRing( Matrix.Translation(token.Owner.Location), 2, Color.Orange, 32, 2, 1 );
+				}
 			}
 		}
 	}

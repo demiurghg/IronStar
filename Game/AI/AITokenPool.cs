@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ using IronStar.ECS;
 
 namespace IronStar.AI
 {
-	public class AITokenPool
+	public class AITokenPool : IEnumerable<AIToken>
 	{
 		AIToken[] tokens;
 
@@ -53,6 +54,16 @@ namespace IronStar.AI
 			}
 
 			return null;
+		}
+
+		public IEnumerator<AIToken> GetEnumerator()
+		{
+			return ( (IEnumerable<AIToken>)tokens ).GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return ( (IEnumerable<AIToken>)tokens ).GetEnumerator();
 		}
 	}
 }

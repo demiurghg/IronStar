@@ -94,19 +94,24 @@ namespace IronStar.Gameplay
 		}
 
 
-		public void RotateTo( Vector3 originPoint, Vector3 targetPoint, float maxYawRate, float maxPitchRate )
+		public float RotateTo( Vector3 originPoint, Vector3 targetPoint, float maxYawRate, float maxPitchRate )
 		{
 			if (originPoint==targetPoint) 
 			{
-				return;
+				return 0;
 			}
 			
 			var dir				=	( targetPoint - originPoint ).Normalized();
 			var desiredYaw		=	(float)Math.Atan2( -dir.X, -dir.Z );
 			var desiredPitch	=	(float)Math.Asin( dir.Y );
 
-			Yaw		=	Yaw   + ShortestAngle( Yaw,	desiredYaw, maxYawRate );
-			Pitch	=	Pitch + ShortestAngle( Pitch, desiredPitch, maxPitchRate );
+			var shortestYaw		=	ShortestAngle( Yaw,	desiredYaw, maxYawRate );
+			var shortestPitch	=	ShortestAngle( Pitch, desiredPitch, maxPitchRate );
+
+			Yaw		=	Yaw   + shortestYaw;
+			Pitch	=	Pitch + shortestPitch;
+
+			return Math.Abs( shortestYaw ) + Math.Abs( shortestPitch );
 		}
 	}
 }

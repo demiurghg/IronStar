@@ -25,7 +25,8 @@ namespace IronStar.AI.Actions
 		readonly int maxShots;
 		readonly float accuracy;
 
-		Entity targetEntity;
+		Entity	targetEntity;
+		bool	targetAcquired;
 
 		float	errorYaw0;
 		float	errorYaw1;
@@ -50,6 +51,8 @@ namespace IronStar.AI.Actions
 			errorYaw0		=	MathUtil.Random.NextFloat( -accuracy, accuracy );
 			errorPitch1		=	MathUtil.Random.NextFloat( -accuracy, accuracy );
 			errorYaw1		=	MathUtil.Random.NextFloat( -accuracy, accuracy );
+
+			targetAcquired	=	false;
 
 			return targetEntity!=null;
 		}
@@ -80,9 +83,14 @@ namespace IronStar.AI.Actions
 			float rateYaw	=	gameTime.ElapsedSec * MathUtil.TwoPi;
 			float ratePitch	=	gameTime.ElapsedSec * MathUtil.TwoPi;
 
-			uc.RotateTo( originPoint, targetPoint, rateYaw, ratePitch );
+			var error		=	uc.RotateTo( originPoint, targetPoint, rateYaw, ratePitch );
+
+			if (error<0.1f)
+			{
+				targetAcquired  = true;
+			}
 			
-			if (status==BTStatus.InProgress)
+			if (status==BTStatus.InProgress && targetAcquired)
 			{
 				uc.Action |= UserAction.Attack;
 			}

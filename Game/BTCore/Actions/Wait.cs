@@ -18,14 +18,14 @@ namespace IronStar.BTCore.Actions
 		readonly int minWaitTime;
 		readonly int maxWaitTime;
 
-		public Wait( int minTime, int maxTime )
+		public Wait( int minTimeMSec, int maxTimeMSec )
 		{
-			if (minTime<0) throw new ArgumentOutOfRangeException(nameof(minTime));
-			if (maxTime<0) throw new ArgumentOutOfRangeException(nameof(maxTime));
-			if (maxTime<minTime) throw new ArgumentOutOfRangeException(nameof(maxTime));
+			if (minTimeMSec<0) throw new ArgumentOutOfRangeException(nameof(minTimeMSec));
+			if (maxTimeMSec<0) throw new ArgumentOutOfRangeException(nameof(maxTimeMSec));
+			if (maxTimeMSec<minTimeMSec) throw new ArgumentOutOfRangeException(nameof(maxTimeMSec));
 
-			minWaitTime	=	minTime;
-			maxWaitTime	=	maxTime;
+			minWaitTime	=	minTimeMSec;
+			maxWaitTime	=	maxTimeMSec;
 		}
 
 

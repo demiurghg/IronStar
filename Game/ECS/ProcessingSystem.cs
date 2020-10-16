@@ -40,9 +40,14 @@ namespace IronStar.ECS
 			}
 		}
 
+		protected virtual IEnumerable<Entity> OrderEntities( IEnumerable<Entity> entities )
+		{
+			return entities;
+		}
+
 		public virtual void Update( GameState gs, GameTime gameTime )
 		{
-			var entities = gs.QueryEntities(aspect);
+			var entities = OrderEntities( gs.QueryEntities(aspect) );
 
 			foreach ( var e in entities )
 			{
@@ -93,9 +98,14 @@ namespace IronStar.ECS
 			}
 		}
 
+		protected virtual IEnumerable<Entity> OrderEntities( IEnumerable<Entity> entities )
+		{
+			return entities;
+		}
+
 		public virtual void Update( GameState gs, GameTime gameTime )
 		{
-			var entities = gs.QueryEntities(aspect);
+			var entities = OrderEntities( gs.QueryEntities(aspect) );
 
 			foreach ( var e in entities )
 			{
@@ -149,9 +159,14 @@ namespace IronStar.ECS
 			}
 		}
 
+		protected virtual IEnumerable<Entity> OrderEntities( IEnumerable<Entity> entities )
+		{
+			return entities;
+		}
+
 		protected void ForEach( GameState gs, GameTime gameTime, Action<Entity,GameTime,TResource,T1,T2,T3> action )
 		{
-			var entities = gs.QueryEntities(aspect);
+			var entities = OrderEntities( gs.QueryEntities(aspect) );
 
 			foreach ( var e in entities )
 			{
@@ -213,9 +228,14 @@ namespace IronStar.ECS
 			}
 		}
 
+		protected virtual IEnumerable<Entity> OrderEntities( IEnumerable<Entity> entities )
+		{
+			return entities;
+		}
+
 		public virtual void Update( GameState gs, GameTime gameTime )
 		{
-			var entities = gs.QueryEntities(aspect);
+			var entities = OrderEntities( gs.QueryEntities(aspect) );
 
 			foreach ( var e in entities )
 			{

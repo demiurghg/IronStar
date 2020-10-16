@@ -177,16 +177,16 @@
             <value>3</value>
         </property>
         <property name="minimumDistance">
-            <value>0.899999976</value>
+            <value>7.4000001</value>
         </property>
         <property name="maximumDistance">
-            <value>300</value>
+            <value>800</value>
         </property>
         <property name="extentMode">
             <value>1</value>
         </property>
         <property name="soundSize">
-            <value>0.849999964</value>
+            <value>4.80000019</value>
         </property>
         <property name="userStereoSeparation">
             <value>0</value>

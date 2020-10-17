@@ -90,7 +90,7 @@ namespace IronStar.AI
 							new AcquireToken(tokenPool,
 								new Sequence(
 									approach, 
-									new Wait(50,150),
+									new Wait(350,750),
 									attack
 								)
 							),

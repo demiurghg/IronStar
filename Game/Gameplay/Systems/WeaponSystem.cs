@@ -16,7 +16,9 @@ namespace IronStar.Gameplay.Systems
 {
 	class WeaponSystem : ISystem
 	{
-		const float BEAM_RANGE	=	8192;
+		const float BEAM_RANGE			=	8192;
+		const float SPREAD_INCREMENT	=	0.2f;
+		const float SPREAD_FADEOUT		=	0.2f;
 
 		Random rand = new Random();
 
@@ -90,6 +92,7 @@ namespace IronStar.Gameplay.Systems
 					weapon.HudAmmo		=	ammo==null ? 0 : ammo.Count;
 					weapon.HudAmmoMax	=	200;
 
+					FadeSpread( gameTime, weapon );
 					AdvanceWeaponTimer( gameTime, weaponEntity );
 					UpdateWeaponFSM( gameTime, attack, povTransform, entity, inventory, weaponEntity );
 				}
@@ -128,6 +131,16 @@ namespace IronStar.Gameplay.Systems
 			if ( weapon.Timer > TimeSpan.Zero ) 
 			{
 				weapon.Timer = weapon.Timer - gameTime.Elapsed;
+			}
+		}
+
+
+
+		void FadeSpread( GameTime gameTime, WeaponComponent weapon )
+		{
+			if (weapon.SpreadMode==SpreadMode.Variable)
+			{
+				weapon.Spread *= (float)Math.Pow( SPREAD_FADEOUT, Math.Min(1, gameTime.ElapsedSec) );
 			}
 		}
 
@@ -282,13 +295,14 @@ namespace IronStar.Gameplay.Systems
 		{
 			var gs = attacker.gs;
 
+			if (weapon.SpreadMode==SpreadMode.Const) weapon.Spread = weapon.MaxSpread;
+
 			if (weapon.IsBeamWeapon) 
 			{
 				for (int i=0; i<weapon.ProjectileCount; i++) 
 				{
 					FireBeam( gs, weapon, povTransform, attacker );
 				}
-				return true;
 			} 
 			else 
 			{
@@ -296,8 +310,15 @@ namespace IronStar.Gameplay.Systems
 				{
 					FireProjectile( gs, gameTime, weapon, povTransform, attacker );
 				}
-				return true;
 			}
+
+			if (weapon.SpreadMode==SpreadMode.Variable)
+			{
+				weapon.Spread	+=	weapon.MaxSpread * SPREAD_INCREMENT;
+				weapon.Spread	=	MathUtil.Clamp( weapon.Spread, 0, weapon.MaxSpread );
+			}
+
+			return true;
 		}
 
 
@@ -350,7 +371,7 @@ namespace IronStar.Gameplay.Systems
 			var v = attacker.GetComponent<Velocity>();
 			var p = povTransform.TranslationVector + v.Linear * gameTime.ElapsedSec;
 			var q = Quaternion.RotationMatrix( povTransform );
-			var d = -GetFireDirection( q, weapon.Spread );
+			var d = -GetFireDirection( q, weapon.MaxSpread );
 
 			var e = gs.Spawn( weapon.ProjectileClass );
 

@@ -54,7 +54,18 @@ namespace IronStar.Gameplay.Components
 
 			if (!protect)
 			{
-				Health -= accumulatedDamage;
+				int armorDamage		=	accumulatedDamage * 66 / 100;
+				int healthDamage	=	accumulatedDamage - armorDamage;
+
+				Armor	-=	armorDamage;
+
+				if (Armor<0) 
+				{
+					Health	+=	Armor;
+					Armor	=	0;
+				}
+
+				Health -= healthDamage;
 			}
 
 			accumulatedDamage = 0;

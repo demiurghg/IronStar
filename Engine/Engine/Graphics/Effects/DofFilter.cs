@@ -16,7 +16,7 @@ using Fusion.Core.Shell;
 namespace Fusion.Engine.Graphics 
 {
 	[RequireShader("dof", true)]
-	internal class DofFilter : RenderComponent 
+	public class DofFilter : RenderComponent 
 	{
 		[ShaderDefine]
 		const uint BokehShapeSize = 19;
@@ -186,7 +186,7 @@ namespace Fusion.Engine.Graphics
 		/// <summary>
 		/// Applies DOF effect
 		/// </summary>
-		public void RenderDof ( Camera camera, HdrFrame hdrFrame )
+		internal void RenderDof ( Camera camera, HdrFrame hdrFrame )
 		{
 			if (!Enabled) 
 			{

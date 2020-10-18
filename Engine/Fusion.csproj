@@ -512,6 +512,7 @@
     <Compile Include="Engine\Graphics\Effects\BilateralFilter.cs" />
     <Compile Include="Engine\Graphics\Effects\BitonicSort.cs" />
     <Compile Include="Engine\Graphics\Effects\BlurFilter.cs" />
+    <Compile Include="Engine\Graphics\Effects\GameFX.cs" />
     <Compile Include="Engine\Graphics\Effects\DofFilter.cs" />
     <Compile Include="Engine\Graphics\Effects\Filter.cs" />
     <Compile Include="Engine\Graphics\Effects\Filter2.cs" />

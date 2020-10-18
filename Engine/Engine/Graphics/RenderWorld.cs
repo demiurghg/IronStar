@@ -557,6 +557,10 @@ namespace Fusion.Engine.Graphics {
 
 					rs.HdrFilter.TonemapHdrImage( gameTime, viewHdrFrame, Camera );
 
+					if (rs.GameFX.Apply( gameTime, viewHdrFrame.TempColor, viewHdrFrame.FinalColor )) {
+						viewHdrFrame.SwapFinalColor();
+					}
+
 					//	apply FXAA
 					if (rs.UseFXAA) {
 						rs.Filter.Fxaa( targetSurface, viewHdrFrame.FinalColor );

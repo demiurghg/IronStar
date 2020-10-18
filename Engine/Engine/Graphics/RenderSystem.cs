@@ -32,7 +32,7 @@ namespace Fusion.Engine.Graphics {
 		internal SsaoFilter			SsaoFilter		{ get { return Game.GetService< SsaoFilter		 >(); } }
 		internal BitonicSort		BitonicSort		{ get { return Game.GetService< BitonicSort		 >(); } }
 		internal HdrFilter			HdrFilter		{ get { return Game.GetService< HdrFilter		 >(); } }
-		internal DofFilter			DofFilter		{ get { return Game.GetService< DofFilter		 >(); } }
+		public   DofFilter			DofFilter		{ get { return Game.GetService< DofFilter		 >(); } }
 		internal LightManager		LightManager	{ get { return Game.GetService< LightManager	 >(); } }
 		internal SceneRenderer		SceneRenderer	{ get { return Game.GetService< SceneRenderer	 >(); } }
 		internal VTSystem			VTSystem		{ get { return Game.GetService< VTSystem		 >(); } }
@@ -41,6 +41,7 @@ namespace Fusion.Engine.Graphics {
 		internal LightProbeDebug	LightMapDebugger{ get { return Game.GetService< LightProbeDebug	 >(); } }
 		public Radiosity			Radiosity		{ get { return Game.GetService< Radiosity		 >(); } }
 		public RayTracer			RayTracer		{ get { return Game.GetService< RayTracer		 >(); } }
+		public GameFX				GameFX			{ get { return Game.GetService< GameFX			 >(); } }
 
 		/// <summary>
 		/// Gets render counters.
@@ -119,8 +120,9 @@ namespace Fusion.Engine.Graphics {
 			Game.AddServiceAndComponent( new BilateralFilter	( this ) );
 			Game.AddServiceAndComponent( new DilateFilter		( this ) );
 			Game.AddServiceAndComponent( new SsaoFilter			( this ) );
-			Game.AddServiceAndComponent( new HdrFilter			( this ) );
 			Game.AddServiceAndComponent( new DofFilter			( this ) );
+			Game.AddServiceAndComponent( new HdrFilter			( this ) );
+			Game.AddServiceAndComponent( new GameFX				( this ) );
 			Game.AddServiceAndComponent( new LightManager		( this ) );
 			Game.AddServiceAndComponent( new SceneRenderer		( this ) );
 			Game.AddServiceAndComponent( new Sky2				( this ) );

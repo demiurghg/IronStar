@@ -219,6 +219,7 @@
     <Compile Include="SFX\FXComponent.cs" />
     <Compile Include="SFX\FXInstance.LightStage.cs" />
     <Compile Include="SFX\FXPlayback.SpawnFX.cs" />
+    <Compile Include="SFX\GameFXSystem.cs" />
     <Compile Include="SinglePlayer\MissionContext.cs" />
     <Compile Include="UI\Controls\Dialogs\TextBoxDialog.cs" />
     <Compile Include="UI\Controls\Dialogs\RunEditorBox.cs" />

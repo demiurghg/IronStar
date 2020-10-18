@@ -73,7 +73,6 @@ namespace IronStar.UI.HUD
 
 			this.Ghost		=	true;
 
-
 			//	create placeholders :
 			compass				=	CreatePlaceholder( 384,  48, 512,  32, "COMPASS" );
 			mission				=	CreatePlaceholder(  64, 128, 320, 128, "MISSION GOALS" );

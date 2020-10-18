@@ -604,6 +604,132 @@
         "RotateYaw": -225.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "448a3c8f-948a-4eac-9b85-351f18806289",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "MONSTER_MARINE"
+        },
+        "FactoryName": "vVOKeies",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -42.146965,
+        "TranslateY": 0.0,
+        "TranslateZ": -38.9151764,
+        "RotateYaw": -75.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "6dfc792b-ceda-482f-89a9-52797511a1e3",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "MONSTER_MARINE"
+        },
+        "FactoryName": "Jrp6lekC",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -42.146965,
+        "TranslateY": 0.0,
+        "TranslateZ": -56.129673,
+        "RotateYaw": -75.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "705c3384-da31-46da-823a-5eb04bfcd9f7",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "MONSTER_MARINE"
+        },
+        "FactoryName": "0JVWZrXa",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -42.146965,
+        "TranslateY": 0.0,
+        "TranslateZ": -74.1047,
+        "RotateYaw": -75.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "bee0c959-9393-46a0-9fc2-28ed6304cdbf",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "MONSTER_MARINE"
+        },
+        "FactoryName": "ePyxpQGc",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -22.6518478,
+        "TranslateY": 0.0,
+        "TranslateZ": -74.1047,
+        "RotateYaw": -75.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "0de54812-5430-4fc4-b095-2bffd6ff9442",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "MONSTER_MARINE"
+        },
+        "FactoryName": "kbYLA4f7",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -22.6518478,
+        "TranslateY": 0.0,
+        "TranslateZ": -55.37195,
+        "RotateYaw": -75.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "d97cf4d4-09ff-4214-a04e-350b679f8f2a",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "MONSTER_MARINE"
+        },
+        "FactoryName": "y0LdN3LL",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -22.6518478,
+        "TranslateY": 0.0,
+        "TranslateZ": -36.26701,
+        "RotateYaw": -75.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "da145cbc-ef23-4e2e-a01d-2c7b394d03ba",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "MONSTER_MARINE"
+        },
+        "FactoryName": "tQGQfUVu",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -22.6518478,
+        "TranslateY": 0.0,
+        "TranslateZ": -22.638979,
+        "RotateYaw": -75.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
       }
     ]
   },

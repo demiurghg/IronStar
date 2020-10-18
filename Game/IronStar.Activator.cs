@@ -82,6 +82,7 @@ namespace IronStar {
 			gs.AddSystem( new Gameplay.PlayerSystem() );
 
 			//	ui
+			gs.AddSystem( new GameFXSystem(game) );
 			gs.AddSystem( new HudSystem(game) );
 
 

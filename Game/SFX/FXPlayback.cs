@@ -178,8 +178,7 @@ namespace IronStar.SFX {
 		{
 			if (className=="*trail_bullet") 
 			{
-				RunTrailBullet( fxEvent );
-				return null;
+				return RunTrailBullet( fxEvent );
 			}
 
 			if (className=="*trail_gauss") 

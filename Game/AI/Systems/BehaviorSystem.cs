@@ -86,15 +86,12 @@ namespace IronStar.AI
 			return 
 				new Selector( 
 					new HasBlackboardValue<Entity>( KEY_TARGET_ENTITY, ConditionMode.Continuous, 
-						new Selector(
-							new AcquireToken(tokenPool,
-								new Sequence(
-									approach, 
-									new Wait(350,750),
-									attack
-								)
-							),
-							tacticalMove
+						new Sequence(
+							approach, 
+							new Selector(
+								new AcquireToken(tokenPool, new Sequence( new Wait(350,750), attack ) ),
+								tacticalMove
+							)
 						)
 					),
 					new HasBlackboardValue<Entity>( KEY_TARGET_ENTITY, ConditionMode.Continuous|ConditionMode.Inverse, roaming )

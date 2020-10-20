@@ -54,8 +54,11 @@ namespace IronStar.SFX {
 		}
 
 
+		static FXSoundStage	bulletTrailSoundStage	=	new FXSoundStage() { Enabled = true, FlybySound = true, Reverb = 1, Sound = "weapon/bulletTrail" };
+		static FXFactory	bulletTrailFactory		=	new FXFactory() { SoundStage = bulletTrailSoundStage };
 
-		public void RunTrailBullet ( FXEvent fxEvent )
+
+		public FXInstance RunTrailBullet ( FXEvent fxEvent )
 		{
 			if (true) {
 
@@ -73,6 +76,8 @@ namespace IronStar.SFX {
 				p.Alpha			=	1;
  
 				rw.ParticleSystem.InjectParticle( p );
+
+				return new FXInstance( this, fxEvent, bulletTrailFactory, false, false );
 			}
 		}
 

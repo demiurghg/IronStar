@@ -420,6 +420,9 @@ namespace IronStar.SFX {
 
 		[AEValueRange(0,1, 0.125f, 0.125f/16)]
 		public float Reverb { get; set; } = 1;
+
+		[Description( "Enables and disables sound stage" )]
+		public bool FlybySound { get; set; } = false;
 	}
 
 

@@ -14,6 +14,7 @@ using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
 using Fusion.Engine.Audio;
+using IronStar.Mathematics;
 
 
 namespace IronStar.SFX {
@@ -44,13 +45,48 @@ namespace IronStar.SFX {
 					return;
 				}
 
-				soundInstance.Set3DParameters( fxEvent.Origin, fxEvent.Velocity );
-				soundInstance.ReverbLevel = stageDesc.Reverb;
-				soundInstance.Start();
+				var position	=	fxEvent.Origin;
+				var velocity	=	fxEvent.Velocity;
+				bool playSound	=	true;
+
+				if (stageDesc.FlybySound)
+				{
+					position	=	GetWhooshPosition( instance, fxEvent, out playSound );
+					velocity	=	Vector3.Zero;
+				}
+
+				if (playSound)
+				{
+					soundInstance.Set3DParameters( position, velocity );
+					soundInstance.ReverbLevel = stageDesc.Reverb;
+					soundInstance.Start();
+				}
 
 				/*if (!looped) {	
 					soundInstance.Stop(false);
 				} */
+			}
+
+
+			Vector3 GetWhooshPosition( FXInstance instance, FXEvent fxEvent, out bool playSound )
+			{
+				var a	=	fxEvent.Origin;
+				var b	=	a + fxEvent.Velocity;
+				var c	=	instance.fxPlayback.Game.SoundSystem.ListenerPosition;
+				float d, t;
+
+				Intersection.DistancePointToLineSegment( a, b, c, out d, out t );
+
+				var d0	=	Vector3.Distance( a, c ) * 0.9f;
+				var d1	=	Vector3.Distance( b, c ) * 0.9f;
+				
+				//	play whoosh sound somehwere in between start and end point
+				playSound	=	d0 > d && d1 > d;
+
+				// push whoosh forward
+				//t = MathUtil.Lerp( 0.1f, 1, t );
+
+				return Vector3.Lerp( a, b, t );
 			}
 
 

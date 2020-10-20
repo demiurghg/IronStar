@@ -1,0 +1,62 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
+<project xmlns="http://audacity.sourceforge.net/xml/" projname="bullet_body_v2_data" version="1.3.0" audacityversion="2.4.2" sel0="0.1576417234" sel1="0.2470068027" vpos="0" h="0.0000000000" zoom="1186.2341772152" rate="44100.0" snapto="off" selectionformat="hh:mm:ss + milliseconds" frequencyformat="Hz" bandwidthformat="octaves">
+	<tags>
+		<tag name="COMMENTS" value="BULLET, IMPACT - BULLET IMPACT ON MUD Bullet Ricochets &amp; Bullet Foley"/>
+		<tag name="Subtitle" value="BULLET, IMPACT - BULLET IMPACT ON MUD Bullet Ricochets &amp; Bullet Foley"/>
+		<tag name="Original album" value="www.sound-ideas.com"/>
+		<tag name="Publisher" value="Sound Ideas"/>
+		<tag name="ARTIST" value="Guns SFX Library"/>
+		<tag name="GENRE" value="BULLET, IMPACT"/>
+	</tags>
+	<wavetrack name="bullet_body_01" isSelected="1" height="96" minimized="0" channel="2" linked="0" mute="1" solo="0" rate="44100" gain="1.0" pan="0.1" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="10893">
+				<waveblock start="0">
+					<simpleblockfile filename="e0808777.au" len="10893" min="-0.820892" max="0.811432" rms="0.13391"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="bullet_body_02" isSelected="0" height="85" minimized="0" channel="2" linked="0" mute="1" solo="0" rate="44100" gain="1.0" pan="0.1" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="10075">
+				<waveblock start="0">
+					<simpleblockfile filename="e08081d9.au" len="10075" min="-0.624573" max="0.76123" rms="0.087637"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="bullet_body_03" isSelected="0" height="75" minimized="0" channel="2" linked="0" mute="0" solo="1" rate="44100" gain="1.0" pan="0.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="8216">
+				<waveblock start="0">
+					<simpleblockfile filename="e08083e2.au" len="8216" min="-0.762634" max="0.815521" rms="0.146731"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="bullet_body_04" isSelected="0" height="75" minimized="0" channel="2" linked="0" mute="1" solo="0" rate="44100" gain="1.0" pan="0.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="8216">
+				<waveblock start="0">
+					<simpleblockfile filename="e0808cab.au" len="8216" min="-0.751953" max="0.720581" rms="0.111618"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="bullet_body_05" isSelected="0" height="100" minimized="0" channel="2" linked="0" mute="1" solo="0" rate="44100" gain="1.0" pan="-1.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="11748">
+				<waveblock start="0">
+					<simpleblockfile filename="e080890b.au" len="11748" min="-0.885101" max="0.848541" rms="0.339582"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+</project>

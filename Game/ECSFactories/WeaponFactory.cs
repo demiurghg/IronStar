@@ -113,7 +113,7 @@ namespace IronStar.ECSFactories
 			var e = base.Spawn( gs );
 
 			e.AddComponent( new NameComponent("ROCKETLAUNCHER") );
-			e.AddComponent( WeaponComponent.ProjectileWeapon( 100, 15, 1500, "ROCKET", "AMMO_ROCKETS", "rocketMuzzle" ) );
+			e.AddComponent( WeaponComponent.ProjectileWeapon( 100, 15, 750, "ROCKET", "AMMO_ROCKETS", "rocketMuzzle" ) );
 			e.AddComponent( new RenderModel("scenes\\weapon2\\rocket_launcher\\rocket_launcher_view", 0.036f, RocketLauncherColor, GlowIntensity, RMFlags.None ) );
 			e.AddComponent( new DynamicBox( 0.9f, 1.0f, 6.0f, 7.0f ) );
 

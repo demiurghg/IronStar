@@ -99,6 +99,8 @@ namespace Fusion.Engine.Audio {
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
+		public Vector3 ListenerPosition { get; private set; }
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -108,6 +110,8 @@ namespace Fusion.Engine.Audio {
 		public void SetListener ( Vector3 position, Vector3 forward, Vector3 up, Vector3 velocity )
 		{
 			FMOD.Studio._3D_ATTRIBUTES attrs;
+			
+			ListenerPosition	=	position;
 
 			attrs.forward	=	FmodExt.Convert( -forward	);
 			attrs.position	=	FmodExt.Convert( position	);

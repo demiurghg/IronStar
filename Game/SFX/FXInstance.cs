@@ -80,6 +80,19 @@ namespace IronStar.SFX {
 		}
 
 
+		public FXInstance( FXPlayback sfxSystem, FXEvent fxEvent, float scale, bool looped, bool attached, params Stage[] stages )
+		{
+			this.fxPlayback		=	sfxSystem;
+			this.rw				=	sfxSystem.rw;
+			this.ss				=	sfxSystem.ss;
+			this.fxEvent		=	fxEvent;
+			this.overallScale	=	scale;
+			this.Attached		=	attached;
+
+			this.stages.AddRange( stages );
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>

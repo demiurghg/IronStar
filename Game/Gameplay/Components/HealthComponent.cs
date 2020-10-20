@@ -22,6 +22,7 @@ namespace IronStar.Gameplay.Components
 
 		public int Health { get; set; }
 		public int Armor { get; set; }
+		public SurfaceType Surface { get; set; }
 
 		public int LastDamage { get; set; }
 
@@ -33,6 +34,7 @@ namespace IronStar.Gameplay.Components
 		{
 			Health	=	health;
 			Armor	=	armor;
+			Surface	=	SurfaceType.Flesh;
 		}
 
 		public HealthComponent( int health, int armor, string action )
@@ -42,10 +44,13 @@ namespace IronStar.Gameplay.Components
 			Action	=	action;
 		}
 
-		public void InflictDamage( int damage )
+		
+		public SurfaceType InflictDamage( int damage )
 		{
 			accumulatedDamage	+=	damage;
+			return (Armor>damage && Surface==SurfaceType.Flesh) ? SurfaceType.Armor : SurfaceType.Flesh;
 		}
+
 
 		public HealthStatus ApplyDamage(bool protect)
 		{

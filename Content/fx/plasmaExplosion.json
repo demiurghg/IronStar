@@ -241,7 +241,7 @@
       "FadeOut": 0.5
     },
     "Color": "255, 255, 255, 255",
-    "Alpha": 1.0,
+    "Alpha": 1,
     "Roughness": 0.5,
     "Metallic": 0.0,
     "Intensity": 100.0,

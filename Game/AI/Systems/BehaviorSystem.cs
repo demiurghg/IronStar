@@ -138,7 +138,7 @@ namespace IronStar.AI
 
 		protected override void Process( Entity entity, GameTime gameTime, BTNode behaviorTree, BehaviorComponent behavior )
 		{
-			if (Enabled)
+			if (Enabled && !IronStar.IsNoTarget)
 			{
 				behaviorTree.Tick( gameTime, entity, false );
 			}

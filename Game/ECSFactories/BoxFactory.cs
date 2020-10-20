@@ -71,7 +71,7 @@ namespace IronStar.ECSFactories
 		{
 			var e = base.Spawn( gs );
 
-			e.AddComponent( new HealthComponent(2, 0, "EXPLODE_BOX") );
+			e.AddComponent( new HealthComponent(2, 0, "EXPLODE_BOX") { Surface = SurfaceType.Metal } );
 
 			return e;
 		}

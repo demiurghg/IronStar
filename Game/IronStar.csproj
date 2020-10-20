@@ -181,6 +181,7 @@
     <Compile Include="Gameplay\Components\PowerupComponent.cs" />
     <Compile Include="Gameplay\PlayerInput.cs" />
     <Compile Include="ECSFactories\PlayerFactory.cs" />
+    <Compile Include="Gameplay\SurfaceType.cs" />
     <Compile Include="Gameplay\Systems\AttachmentSystem.cs" />
     <Compile Include="Gameplay\Systems\CameraSystem.cs" />
     <Compile Include="Gameplay\Systems\FPVWeaponAnimator.cs" />

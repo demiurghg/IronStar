@@ -14,33 +14,41 @@ using Fusion.Core.Shell;
 using IronStar.Editor;
 using Fusion.Build;
 using IronStar.SinglePlayer;
+using System.Reflection;
 
 namespace IronStar {
 	partial class IronStar : Game
 	{
 		public static bool IsGodMode = false;
+		public static bool IsInfiniteAmmo = false;
+		public static bool IsNoTarget = false;
 
 		void RegisterCheats()
 		{
-			Invoker.RegisterCommand("godMode"		, () => new God(this) );
+			Invoker.RegisterCommand("godMode"		, () => new God() );
+			Invoker.RegisterCommand("noTarget"		, () => new NoTarget() );
 		}
+
 
 		class God : CommandNoHistory 
 		{
-			readonly IronStar game;
-
-			public God ( IronStar game )
-			{
-				this.game	=	game;
-			}
-
 			public override object Execute()
 			{
 				IsGodMode = !IsGodMode;
 				Log.Message("God mode " + (IsGodMode ? "enabled" : "disabled"));
 				return null;
 			}
+		}
 
+
+		class NoTarget : CommandNoHistory 
+		{
+			public override object Execute()
+			{
+				IsNoTarget = !IsNoTarget;
+				Log.Message("AI " + (IsNoTarget ? "disabled" : "enabled"));
+				return null;
+			}
 		}
 	}
 }

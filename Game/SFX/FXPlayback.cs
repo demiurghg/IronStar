@@ -183,8 +183,7 @@ namespace IronStar.SFX {
 
 			if (className=="*trail_gauss") 
 			{
-				RunTrailGauss( fxEvent );
-				return null;
+				return RunTrailGauss( fxEvent );
 			}
 
 			if (className=="*trail_laser") 

@@ -342,9 +342,12 @@ namespace IronStar.Gameplay.Systems
 
 			if (r) 
 			{
-				SFX.FXPlayback.AttachFX( gs, hitEntity, weapon.BeamHitFX, 0, hitPoint, hitNormal );
+				SurfaceType surface = SurfaceType.Metal;
 				PhysicsCore.ApplyImpulse( hitEntity, hitPoint, d * weapon.Impulse );
-				HealthSystem.ApplyDamage( hitEntity, weapon.Damage );
+				HealthSystem.ApplyDamage( hitEntity, weapon.Damage, ref surface );
+
+				var hitFx = GetHitFXName( weapon.BeamHitFX, surface ); 
+				SFX.FXPlayback.AttachFX( gs, hitEntity, hitFx, 0, hitPoint, hitNormal );
 			} 
 			else 
 			{
@@ -356,6 +359,26 @@ namespace IronStar.Gameplay.Systems
 			var beamVelocity =	hitPoint - p;
 			var basis		=	MathUtil.ComputeAimedBasis( d );
 			SFX.FXPlayback.SpawnFX(	gs, weapon.BeamTrailFX, 0, beamOrigin, beamVelocity, Quaternion.RotationMatrix(basis) );
+		}
+
+
+
+		string GetHitFXName( string fxName, SurfaceType surface )
+		{
+			if (fxName!="bulletHit") 
+			{
+				return fxName;
+			}
+
+			switch (surface)
+			{
+				case SurfaceType.Metal	: return "bulletHit";
+				case SurfaceType.Sand	: return "bulletHit";
+				case SurfaceType.Rock	: return "bulletHit";
+				case SurfaceType.Flesh	: return "bulletHit_flesh";
+				case SurfaceType.Armor	: return "bulletHit";
+				default: return fxName;
+			}
 		}
 
 

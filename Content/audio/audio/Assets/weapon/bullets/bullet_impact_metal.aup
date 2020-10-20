@@ -1,0 +1,42 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
+<project xmlns="http://audacity.sourceforge.net/xml/" projname="bullet_impact_metal_data" version="1.3.0" audacityversion="2.4.2" sel0="0.0000000000" sel1="0.0000000000" vpos="0" h="0.0000000000" zoom="160.4666095890" rate="44100.0" snapto="off" selectionformat="hh:mm:ss + milliseconds" frequencyformat="Hz" bandwidthformat="octaves">
+	<tags>
+		<tag name="COMMENTS" value="GUN, BULLET - BULLET IMPACT INTO METAL Bullet Ricochets &amp; Bullet Foley"/>
+		<tag name="Subtitle" value="GUN, BULLET - BULLET IMPACT INTO METAL Bullet Ricochets &amp; Bullet Foley"/>
+		<tag name="Original album" value="www.sound-ideas.com"/>
+		<tag name="Publisher" value="Sound Ideas"/>
+		<tag name="ARTIST" value="Series 6000 Extension III"/>
+		<tag name="GENRE" value="GUN, BULLET"/>
+	</tags>
+	<wavetrack name="bullet_impact_metal_01" isSelected="0" height="150" minimized="0" channel="2" linked="0" mute="0" solo="0" rate="44100" gain="1.0" pan="0.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="16489">
+				<waveblock start="0">
+					<simpleblockfile filename="e0808cb7.au" len="16489" min="-0.787205" max="0.788178" rms="0.246572"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="bullet_impact_metal_02" isSelected="1" height="150" minimized="0" channel="2" linked="0" mute="0" solo="0" rate="44100" gain="1.0" pan="0.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="19787">
+				<waveblock start="0">
+					<simpleblockfile filename="e08088b9.au" len="19787" min="-0.661739" max="0.66243" rms="0.226849"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+	<wavetrack name="bullet_impact_metal_03" isSelected="0" height="150" minimized="0" channel="2" linked="0" mute="0" solo="0" rate="44100" gain="1.0" pan="0.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="19787">
+				<waveblock start="0">
+					<simpleblockfile filename="e0808fda.au" len="19787" min="-0.549395" max="0.549565" rms="0.189833"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="0"/>
+		</waveclip>
+	</wavetrack>
+</project>

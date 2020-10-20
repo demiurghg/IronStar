@@ -51,7 +51,7 @@ namespace IronStar.SFX {
 
 				if (stageDesc.FlybySound)
 				{
-					position	=	GetWhooshPosition( instance, fxEvent, out playSound );
+					position	=	GetFlybyPosition( instance, fxEvent, out playSound );
 					velocity	=	Vector3.Zero;
 				}
 
@@ -68,10 +68,11 @@ namespace IronStar.SFX {
 			}
 
 
-			Vector3 GetWhooshPosition( FXInstance instance, FXEvent fxEvent, out bool playSound )
+			Vector3 GetFlybyPosition( FXInstance instance, FXEvent fxEvent, out bool playSound )
 			{
 				var a	=	fxEvent.Origin;
 				var b	=	a + fxEvent.Velocity;
+				var l	=	Vector3.Distance( a, b );
 				var c	=	instance.fxPlayback.Game.SoundSystem.ListenerPosition;
 				float d, t;
 
@@ -80,8 +81,9 @@ namespace IronStar.SFX {
 				var d0	=	Vector3.Distance( a, c ) * 0.9f;
 				var d1	=	Vector3.Distance( b, c ) * 0.9f;
 				
-				//	play whoosh sound somehwere in between start and end point
-				playSound	=	d0 > d && d1 > d;
+				//	do not play whoosh sound too close 
+				//	to the origin of the ray to not confuse shooter :
+				playSound	=	( t * l ) > 5;
 
 				// push whoosh forward
 				//t = MathUtil.Lerp( 0.1f, 1, t );

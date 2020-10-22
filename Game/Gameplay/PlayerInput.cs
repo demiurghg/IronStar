@@ -84,7 +84,7 @@ namespace IronStar.Gameplay
 			
 			if (!isAlive) 
 			{
-				userCommand.Pitch *= 0.9f;
+				userCommand.DesiredPitch *= 0.9f;
 				return;
 			}
 
@@ -125,13 +125,13 @@ namespace IronStar.Gameplay
 				userCommand.DYaw	=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.X / 16200.0f;
 				userCommand.DPitch	=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.Y / 16200.0f * ( InvertMouse ? -1 : 1 );
 
-				userCommand.Action	=	flags;
-				userCommand.Yaw		+=  userCommand.DYaw;
-				userCommand.Pitch	+=  userCommand.DPitch;
-				userCommand.Roll	=	0;
+				userCommand.Action			=	flags;
+				userCommand.DesiredYaw		+=  userCommand.DYaw;
+				userCommand.DesiredPitch	+=  userCommand.DPitch;
+				userCommand.DesiredRoll		=	0;
 
 				float limit					=	MathUtil.PiOverTwo * 0.95f;
-				userCommand.Pitch	=	MathUtil.Clamp( userCommand.Pitch, -limit, limit );
+				userCommand.DesiredPitch	=	MathUtil.Clamp( userCommand.DesiredPitch, -limit, limit );
 			}
 			else 
 			{

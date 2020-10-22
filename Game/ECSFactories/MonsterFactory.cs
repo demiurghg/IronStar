@@ -50,13 +50,13 @@ namespace IronStar.ECSFactories
 
 			var weapons = new[]
 			{
-				//"WEAPON_RAILGUN",
-				//"WEAPON_MACHINEGUN",
+				"WEAPON_RAILGUN",
+				"WEAPON_MACHINEGUN",
 				"WEAPON_PLASMAGUN",
-				//"WEAPON_PLASMAGUN",
-				//"WEAPON_PLASMAGUN",
-				//"WEAPON_ROCKETLAUNCHER",
-				//"WEAPON_ROCKETLAUNCHER",
+				"WEAPON_PLASMAGUN",
+				"WEAPON_PLASMAGUN",
+				"WEAPON_ROCKETLAUNCHER",
+				"WEAPON_ROCKETLAUNCHER",
 			};
 
 			//GiveWeapon( e, "WEAPON_PLASMAGUN");

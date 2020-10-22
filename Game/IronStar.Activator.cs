@@ -68,6 +68,7 @@ namespace IronStar {
 
 			//	animation systems :
 			gs.AddSystem( new StepSystem() );
+			gs.AddSystem( new Gameplay.BobbingSystem() );
 			gs.AddSystem( new Gameplay.CameraSystem(fxPlayback) );
 			gs.AddSystem( new FPVWeaponSystem(game) );
 			gs.AddSystem( fxPlayback );

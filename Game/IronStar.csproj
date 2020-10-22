@@ -183,6 +183,7 @@
     <Compile Include="ECSFactories\PlayerFactory.cs" />
     <Compile Include="Gameplay\SurfaceType.cs" />
     <Compile Include="Gameplay\Systems\AttachmentSystem.cs" />
+    <Compile Include="Gameplay\Systems\BobbingSystem.cs" />
     <Compile Include="Gameplay\Systems\CameraSystem.cs" />
     <Compile Include="Gameplay\Systems\FPVWeaponAnimator.cs" />
     <Compile Include="Gameplay\Systems\FPVWeaponSystem.cs" />

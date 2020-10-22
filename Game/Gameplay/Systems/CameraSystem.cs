@@ -134,10 +134,6 @@ namespace IronStar.Gameplay
 			var cameraUp	=	camMatrix.Up;
 
 			//	update stuff :
-			/*var camMatrix	=	uc.RotationMatrix;
-			var cameraPos	=	t.Position + ch.PovOffset;
-			var cameraFwd	=	camMatrix.Forward;
-			var cameraUp	=	camMatrix.Up;*/
 			var velocity	=	v==null ? Vector3.Zero : v.Linear;
 
 			rw.Camera		.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
@@ -158,20 +154,11 @@ namespace IronStar.Gameplay
 				mainTrack.Sequence("death", SequenceMode.Hold );
 			}
 
-			if (health.LastDamage>0)
-			{
-				float amount = Math.Min(1, (float)Math.Sqrt( health.LastDamage / 100.0f ));
-				PlayShake( CreatePainAnimation(amount), rand.NextFloat(amount*0.8f,amount*1.2f) );
-			}
-
 			if (!dead)
 			{
 				if (steps.Crouched)	mainTrack.Sequence( "crouch", SequenceMode.Hold|SequenceMode.DontPlayTwice );
 				if (steps.Standed)	mainTrack.Sequence( "stand" , SequenceMode.Hold|SequenceMode.DontPlayTwice );
 			
-				if (steps.Landed) PlayShake("landing", 1.0f);
-				if (steps.Jumped) PlayShake("jump", 0.5f);
-
 				if (steps.RecoilLight) PlayShake((string)null, rand.NextFloat(0.2f,0.4f) );
 				if (steps.RecoilHeavy) PlayShake((string)null, rand.NextFloat(0.8f,1.2f) );
 
@@ -250,8 +237,6 @@ namespace IronStar.Gameplay
 			//	generate takes :
 			var takeStand	=	new AnimationTake("stand"	, 2, 0, 15);
 			var takeCrouch	=	new AnimationTake("crouch"	, 2, 0, 15);
-			var takeLanding	=	new AnimationTake("landing"	, 2, 0, 30);
-			var takeJump	=	new AnimationTake("jump"	, 2, 0, 20);
 			var takeDeath	=	new AnimationTake("death"	, 2, 0, 20);
 
 			
@@ -265,22 +250,12 @@ namespace IronStar.Gameplay
 						* AnimationUtils.Lerp( identity, duckTransform, -AnimationUtils.KickCurve(t) ) 
 			);
 
-			takeLanding	.RecordTake( 1, 
-				(i,t) =>  AnimationUtils.Lerp( identity, landTransform, AnimationUtils.KickCurve(t) ) 
-			);
-
-			takeJump	.RecordTake( 1, 
-				(i,t) =>  AnimationUtils.Lerp( identity, landTransform, -1*AnimationUtils.KickCurve(t) ) 
-			);
-
 			takeDeath	.RecordTake( 1, 
 				(i,t) =>  AnimationUtils.Lerp( standTransform, deathTransform, AnimationUtils.QuadraticStep(t) ) 
 			);
 
 			scene.Takes.Add( takeStand		);
 			scene.Takes.Add( takeCrouch		);
-			scene.Takes.Add( takeLanding	);
-			scene.Takes.Add( takeJump		);
 			scene.Takes.Add( takeDeath		);
 
 			Random rand = new Random(152445);

@@ -123,14 +123,12 @@ namespace IronStar.AI
 				return false;
 			}
 
-			var origin		=	transform.Position + cc.PovOffset;
-			var rotation	=	uc.Rotation;
-			var head		=	uc.RotationMatrix * Matrix.Translation( origin );
+			var head		=	uc.ComputePovTransform( transform.Position, cc.PovOffset );
 			var view		=	Matrix.Invert( head );
 
 			var proj		=	Matrix.PerspectiveFovRH( MathUtil.DegreesToRadians( behavior.VisibilityFov ), 2, 0.01f, behavior.VisibilityRange );
 
-			pov				=	origin;
+			pov				=	head.TranslationVector;
 			frustum			=	new BoundingFrustum( view * proj );
 			sphere			=	new BoundingSphere( transform.Position, behavior.HearingRange );
 

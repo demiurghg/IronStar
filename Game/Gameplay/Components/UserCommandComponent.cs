@@ -19,14 +19,22 @@ namespace IronStar.Gameplay
 		ReloadWeapon	=	0x10,
 		ThrowGrenade	=	0x20,
 		MeleeAtack		=	0x40,
-		Jump			=	0x80,
 	}	
 
 	public class UserCommandComponent : Component
 	{
-		public float Yaw;
-		public float Pitch;
-		public float Roll;
+		public float Yaw   { get { return DesiredYaw	+ BobYaw;	 } }
+		public float Pitch { get { return DesiredPitch	+ BobPitch;	 } }
+		public float Roll  { get { return DesiredRoll	+ BobRoll;	 } }
+
+		public float DesiredYaw;
+		public float DesiredPitch;
+		public float DesiredRoll;
+
+		public float BobYaw;
+		public float BobPitch;
+		public float BobRoll;
+		public float BobUp;
 
 		public float MoveForward;
 		public float MoveRight;
@@ -45,23 +53,29 @@ namespace IronStar.Gameplay
 			float yaw, pitch, roll;
 			m.ToAngles( out yaw, out pitch, out roll );
 
-			Yaw		=	yaw;
-			Pitch	=	pitch;
-			Roll	=	roll;
+			DesiredYaw		=	yaw;
+			DesiredPitch	=	pitch;
+			DesiredRoll		=	roll;
 
-			if (float.IsNaN(Yaw)	|| float.IsInfinity(Yaw)	) Yaw	= 0;
-			if (float.IsNaN(Pitch)	|| float.IsInfinity(Pitch)	) Pitch	= 0;
-			if (float.IsNaN(Roll)	|| float.IsInfinity(Roll)	) Roll	= 0;
+			if (float.IsNaN(Yaw)	|| float.IsInfinity(Yaw)	) DesiredYaw	= 0;
+			if (float.IsNaN(Pitch)	|| float.IsInfinity(Pitch)	) DesiredPitch	= 0;
+			if (float.IsNaN(Roll)	|| float.IsInfinity(Roll)	) DesiredRoll	= 0;
 		}
 
-		public Quaternion Rotation
+		private Quaternion Rotation
 		{
 			get { return Quaternion.RotationYawPitchRoll( Yaw, Pitch, Roll ); }
 		}
 
-		public Matrix RotationMatrix 
+		private Matrix RotationMatrix 
 		{
 			get { return Matrix.RotationQuaternion( Rotation ); }
+		}
+
+		public Matrix ComputePovTransform( Vector3 origin, Vector3 powOffset )
+		{
+			var bobUp = BobUp * Vector3.Up;
+			return RotationMatrix * Matrix.Translation(origin + powOffset + bobUp);
 		}
 
 		public Vector3 MovementVector
@@ -108,8 +122,8 @@ namespace IronStar.Gameplay
 			var shortestYaw		=	ShortestAngle( Yaw,	desiredYaw, maxYawRate );
 			var shortestPitch	=	ShortestAngle( Pitch, desiredPitch, maxPitchRate );
 
-			Yaw		=	Yaw   + shortestYaw;
-			Pitch	=	Pitch + shortestPitch;
+			DesiredYaw		=	DesiredYaw   + shortestYaw;
+			DesiredPitch	=	DesiredPitch + shortestPitch;
 
 			return Math.Abs( shortestYaw ) + Math.Abs( shortestPitch );
 		}

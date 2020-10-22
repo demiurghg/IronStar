@@ -63,7 +63,7 @@ namespace IronStar.Gameplay.Systems
 
 				var isAlive		=	health==null ? true : health.Health>0;
 
-				var povTransform	=	userCmd.RotationMatrix * Matrix.Translation(transform.Position + chctrl.PovOffset);
+				var povTransform	=	userCmd.ComputePovTransform(transform.Position, chctrl.PovOffset);
 
 				if (inventory.HasPendingWeapon && inventory.ActiveWeapon==null)
 				{

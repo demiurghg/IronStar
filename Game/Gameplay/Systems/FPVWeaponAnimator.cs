@@ -30,9 +30,6 @@ namespace IronStar.Gameplay.Systems
 		const string ANIM_RAISE		=	"raise"			;
 		const string ANIM_DROP		=	"drop"			;
 
-		const string SOUND_LANDING	=	"player/landing"	;
-		const string SOUND_STEP		=	"player/step"		;
-		const string SOUND_JUMP		=	"player/jump"		;
 		const string SOUND_NO_AMMO	=	"weapon/noAmmo"		;
 
 		const string JOINT_MUZZLE	=	"muzzle"			;
@@ -189,7 +186,6 @@ namespace IronStar.Gameplay.Systems
 			//	landing animation :
 			if (steps.Landed) 
 			{
-				composer.SequenceSound( SOUND_LANDING );
 				Log.Message("{0}", oldVelocity);
 
 				float w = MathUtil.Clamp( oldVelocity / 30.0f, 0, 0.5f );
@@ -202,7 +198,6 @@ namespace IronStar.Gameplay.Systems
 			//	jump animation :
 			if (steps.Jumped) 
 			{
-				composer.SequenceSound( SOUND_JUMP );
 				RunShakeAnimation( ANIM_JUMP, 1 );
 			}
 
@@ -224,13 +219,11 @@ namespace IronStar.Gameplay.Systems
 			//	step animation :
 			if (steps.LeftStep) 
 			{
-				composer.SequenceSound( SOUND_STEP );
 				RunShakeAnimation( ANIM_WALKLEFT, stepWeight);
 			}
 
 			if (steps.RightStep)
 			{
-				composer.SequenceSound( SOUND_STEP );
 				RunShakeAnimation( ANIM_WALKRIGHT, stepWeight);
 			}
 		}

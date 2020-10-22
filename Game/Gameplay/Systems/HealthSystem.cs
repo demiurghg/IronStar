@@ -29,24 +29,11 @@ namespace IronStar.Gameplay.Systems
 		readonly Aspect healthAspect	= new Aspect().Include<HealthComponent>();
 
 
-		public static void ApplyDamage( Entity target, int damage, ref SurfaceType surfaceType )
+		public static void ApplyDamage( Entity target, int damage, Entity attacker )
 		{
 			var health	=	target?.GetComponent<HealthComponent>();
-
-			if (health!=null)
-			{
-				surfaceType = health.InflictDamage( damage );
-			}
+			health?.InflictDamage( damage, attacker );
 		}
-
-
-		public static void ApplyDamage( Entity target, int damage )
-		{
-			var dummy = SurfaceType.Metal;
-			ApplyDamage( target, damage, ref dummy );
-		}
-
-
 
 
 		public void Update( GameState gs, GameTime gameTime )

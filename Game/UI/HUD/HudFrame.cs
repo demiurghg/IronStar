@@ -109,8 +109,8 @@ namespace IronStar.UI.HUD
 		{
 			var panel = new Frame( Frames, x, y, w, h, name, Color.Zero ) {
 				Border		=	1,
-				ForeColor	=	new Color(255,255,255, 64),
-				BorderColor	=	new Color(255,255,255, 64),
+				ForeColor	=	new Color(255,255,255, 0*64),
+				BorderColor	=	new Color(255,255,255, 0*64),
 			};
 
 			Add( panel );

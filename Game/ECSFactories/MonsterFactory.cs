@@ -44,18 +44,19 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new Velocity() );
 			e.AddComponent( new StepComponent() );
 			e.AddComponent( new HealthComponent(50,25) );
+			e.AddComponent( new MaterialComponent(MaterialType.Flesh) );
 
 			e.AddComponent( new InventoryComponent(InventoryFlags.InfiniteAmmo) );
 			e.AddComponent( new BehaviorComponent() );
 
 			var weapons = new[]
 			{
-				"WEAPON_RAILGUN",
+				//"WEAPON_RAILGUN",
 				"WEAPON_MACHINEGUN",
 				"WEAPON_PLASMAGUN",
-				"WEAPON_PLASMAGUN",
-				"WEAPON_PLASMAGUN",
-				"WEAPON_ROCKETLAUNCHER",
+				//"WEAPON_PLASMAGUN",
+				//"WEAPON_PLASMAGUN",
+				//"WEAPON_ROCKETLAUNCHER",
 				"WEAPON_ROCKETLAUNCHER",
 			};
 

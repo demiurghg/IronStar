@@ -26,6 +26,7 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new Transform() );
 			e.AddComponent( new Velocity() );
 			e.AddComponent( new StepComponent() );
+			e.AddComponent( new MaterialComponent(MaterialType.Flesh) );
 
 			e.AddComponent( new InventoryComponent() );
 

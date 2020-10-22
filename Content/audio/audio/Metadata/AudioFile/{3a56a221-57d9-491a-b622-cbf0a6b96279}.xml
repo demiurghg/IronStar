@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.01.10.00">
     <object class="AudioFile" id="{3a56a221-57d9-491a-b622-cbf0a6b96279}">
         <property name="assetPath">
-            <value>player/servo.ogg</value>
+            <value>player/steps/servo.ogg</value>
         </property>
         <property name="isStreaming">
             <value>true</value>

@@ -28,10 +28,7 @@ namespace IronStar.AI.Actions
 		Entity	targetEntity;
 		bool	targetAcquired;
 
-		float	errorYaw0;
-		float	errorYaw1;
-		float	errorPitch0;
-		float	errorPitch1;
+		Vector3	accuracyError;
 
 
 		public Attack( string keyEntity, int minTime, int maxTime, float accuracy )
@@ -47,10 +44,7 @@ namespace IronStar.AI.Actions
 			wait.Initialize(entity);
 			
 			targetEntity	=	entity.GetBlackboard()?.Get<Entity>(keyEntity);
-			errorPitch0		=	MathUtil.Random.NextFloat( -accuracy, accuracy );
-			errorYaw0		=	MathUtil.Random.NextFloat( -accuracy, accuracy );
-			errorPitch1		=	MathUtil.Random.NextFloat( -accuracy, accuracy );
-			errorYaw1		=	MathUtil.Random.NextFloat( -accuracy, accuracy );
+			accuracyError	=	MathUtil.Random.UniformRadialDistribution( 0, accuracy );
 
 			targetAcquired	=	false;
 
@@ -75,15 +69,17 @@ namespace IronStar.AI.Actions
 
 			var uc = entity.GetComponent<UserCommandComponent>();
 
-			var originPoint	=	entity.GetPOV();
-			var targetPoint	=	0.7f * targetEntity.GetPOV() + 0.3f * targetEntity.Location;
+			var originPoint		=	entity.GetPOV();
+			var targetPoint		=	0.7f * targetEntity.GetPOV() + 0.3f * targetEntity.Location;  
+			var distance		=	Vector3.Distance( originPoint, targetPoint );
+			var accuracyBias	=	accuracyError * distance;
 
 			var fraction	=	wait.Fraction;
 
 			float rateYaw	=	gameTime.ElapsedSec * MathUtil.TwoPi;
 			float ratePitch	=	gameTime.ElapsedSec * MathUtil.TwoPi;
 
-			var error		=	uc.RotateTo( originPoint, targetPoint, rateYaw, ratePitch );
+			var error		=	uc.RotateTo( originPoint, targetPoint + accuracyBias, rateYaw, ratePitch );
 
 			if (error<0.1f)
 			{

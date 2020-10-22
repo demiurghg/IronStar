@@ -48,11 +48,11 @@ namespace IronStar.Gameplay.Systems
 			Vector3 hitNormal, hitPoint;
 			Entity  hitEntity;
 
-			var parent	=	gs.GetEntity( projectile.SenderID );
+			var parent	=	projectile.Sender;
 
 			if ( projectile.LifeTime <= 0 ) 
 			{
-				Explode( projectile.SenderID, null, origin, Vector3.Up, projectile );
+				Explode( projectile.Sender, null, origin, Vector3.Up, projectile );
 				FXPlayback.SpawnFX( gs, projectile.ExplosionFX, 0, origin, Vector3.Up );
 				gs.Kill( entity );
 			}
@@ -61,9 +61,9 @@ namespace IronStar.Gameplay.Systems
 			{
 				//	inflict damage to hit object:
 				PhysicsCore.ApplyImpulse( hitEntity, hitPoint, dir * projectile.Impulse );
-				HealthSystem.ApplyDamage( hitEntity, projectile.Damage );
+				HealthSystem.ApplyDamage( hitEntity, projectile.Damage, projectile.Sender );
 
-				Explode( projectile.SenderID, hitEntity, hitPoint, hitNormal, projectile );
+				Explode( projectile.Sender, hitEntity, hitPoint, hitNormal, projectile );
 				FXPlayback.AttachFX( gs, hitEntity, projectile.ExplosionFX, 0, hitPoint, hitNormal );
 
 				transform.Position	=	hitPoint;
@@ -79,7 +79,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 		
-		public void Explode ( uint attackerId, Entity ignore, Vector3 hitPoint, Vector3 hitNormal, ProjectileComponent projectile )
+		public void Explode ( Entity attacker, Entity ignore, Vector3 hitPoint, Vector3 hitNormal, ProjectileComponent projectile )
 		{
 			var radius	=	projectile.Radius;
 			var damage	=	projectile.Damage;
@@ -104,7 +104,7 @@ namespace IronStar.Gameplay.Systems
 					var dmg		=	(short)( factor * damage );
 
 					PhysicsCore.ApplyImpulse( e, impP, impV );
-					HealthSystem.ApplyDamage( e, projectile.Damage );
+					HealthSystem.ApplyDamage( e, projectile.Damage, attacker );
 				}
 			}
 		}

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.01.10.00">
-    <object class="AudioFile" id="{8895719b-576a-4876-8697-8dc7c0189d06}">
+    <object class="AudioFile" id="{7a8e29f3-3e9b-4457-a990-2fa87711d6c1}">
         <property name="assetPath">
-            <value>player/steps/foot4.ogg</value>
+            <value>player/steps/step_metal_05.ogg</value>
         </property>
         <property name="frequencyInKHz">
             <value>44.0999985</value>
@@ -11,7 +11,7 @@
             <value>1</value>
         </property>
         <property name="length">
-            <value>0.25750566893424037</value>
+            <value>0.45047619047619047</value>
         </property>
         <relationship name="masterAssetFolder">
             <destination>{63028330-1a67-44b7-ba85-881ae659ed7e}</destination>

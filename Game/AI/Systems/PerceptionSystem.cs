@@ -86,6 +86,16 @@ namespace IronStar.AI
 
 					entity.GetBlackboard().SetEntry( BehaviorSystem.KEY_TARGET_ENTITY, behavior.LastSeenTarget );
 
+					var health = entity.GetComponent<HealthComponent>();
+					if (health!=null)
+					{
+						if (health.LastAttacker!=null)
+						{
+							behavior.LastSeenTarget = health.LastAttacker;
+							entity.GetBlackboard().SetEntry( BehaviorSystem.KEY_TARGET_ENTITY, health.LastAttacker );
+						}
+					}
+
 					/*
 					var color	=	visibility ? Color.Red : Color.Lime;
 					dr.DrawFrustum( frustum, color, 0.02f, 2 );

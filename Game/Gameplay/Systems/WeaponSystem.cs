@@ -342,11 +342,12 @@ namespace IronStar.Gameplay.Systems
 
 			if (r) 
 			{
-				SurfaceType surface = SurfaceType.Metal;
 				PhysicsCore.ApplyImpulse( hitEntity, hitPoint, d * weapon.Impulse );
-				HealthSystem.ApplyDamage( hitEntity, weapon.Damage, ref surface );
+				HealthSystem.ApplyDamage( hitEntity, weapon.Damage, attacker );
 
-				var hitFx = GetHitFXName( weapon.BeamHitFX, surface ); 
+				var material = MaterialComponent.GetMaterial( hitEntity );
+
+				var hitFx = GetHitFXName( weapon.BeamHitFX, material ); 
 				SFX.FXPlayback.AttachFX( gs, hitEntity, hitFx, 0, hitPoint, hitNormal );
 			} 
 			else 
@@ -363,21 +364,33 @@ namespace IronStar.Gameplay.Systems
 
 
 
-		string GetHitFXName( string fxName, SurfaceType surface )
+		string GetHitFXName( string fxName, MaterialType surface )
 		{
-			if (fxName!="bulletHit") 
+			if (fxName=="bulletHit") 
+			{
+				switch (surface)
+				{
+					case MaterialType.Metal	: return "bulletHit_metal";
+					case MaterialType.Sand	: return "bulletHit_metal";
+					case MaterialType.Rock	: return "bulletHit_metal";
+					case MaterialType.Flesh	: return "bulletHit_flesh";
+					default: return fxName;
+				}
+			}
+			else if (fxName=="shotgunHit") 
+			{
+				switch (surface)
+				{
+					case MaterialType.Metal	: return "shotgunHit_metal";
+					case MaterialType.Sand	: return "shotgunHit_metal";
+					case MaterialType.Rock	: return "shotgunHit_metal";
+					case MaterialType.Flesh	: return "shotgunHit_flesh";
+					default: return fxName;
+				}
+			}
+			else
 			{
 				return fxName;
-			}
-
-			switch (surface)
-			{
-				case SurfaceType.Metal	: return "bulletHit";
-				case SurfaceType.Sand	: return "bulletHit";
-				case SurfaceType.Rock	: return "bulletHit";
-				case SurfaceType.Flesh	: return "bulletHit_flesh";
-				case SurfaceType.Armor	: return "bulletHit";
-				default: return fxName;
 			}
 		}
 
@@ -403,7 +416,7 @@ namespace IronStar.Gameplay.Systems
 
 			projectile.Damage		=	weapon.Damage;
 			projectile.Impulse		=	weapon.Impulse;
-			projectile.SenderID		=	attacker.ID;
+			projectile.Sender		=	attacker;
 			projectile.Direction	=	d;
 
 			transform.Position	=	povTransform.TranslationVector;

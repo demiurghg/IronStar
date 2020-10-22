@@ -153,7 +153,7 @@
             <value>0</value>
         </property>
         <property name="maximumTimeDelay">
-            <value>180</value>
+            <value>220</value>
         </property>
         <property name="quantizationInterval">
             <value>6</value>
@@ -204,7 +204,7 @@
     </object>
     <object class="EventMixerGroup" id="{ed8b0f90-09c8-4db4-a2b1-d306f048d524}">
         <property name="volume">
-            <value>-16</value>
+            <value>-24.5</value>
         </property>
         <property name="name">
             <value>Audio 3</value>

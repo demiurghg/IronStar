@@ -11,7 +11,7 @@ namespace IronStar.Gameplay.Components
 {
 	public class ProjectileComponent : IComponent
 	{
-		public uint		SenderID;
+		public Entity	Sender;
 		public int		Damage;
 		public float	Impulse;
 		public Vector3	Direction;

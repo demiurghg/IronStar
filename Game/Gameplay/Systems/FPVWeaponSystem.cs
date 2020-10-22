@@ -28,9 +28,6 @@ namespace IronStar.Gameplay.Systems
 		const string ANIM_RAISE		=	"raise"			;
 		const string ANIM_DROP		=	"drop"			;
 
-		const string SOUND_LANDING	=	"player/landing";
-		const string SOUND_STEP		=	"player/step"	;
-		const string SOUND_JUMP		=	"player/jump"	;
 		const string SOUND_NO_AMMO	=	"weapon/noAmmo"	;
 
 		const string JOINT_MUZZLE	=	"muzzle"		;

@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace IronStar.Gameplay
 {
-	public enum SurfaceType
+	public enum MaterialType
 	{
 		Metal	,
 		Sand	,
 		Rock	,
 		Flesh	,
-		Armor	,
 	}
 }

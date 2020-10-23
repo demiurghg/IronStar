@@ -102,7 +102,7 @@
             <value>0.5</value>
         </property>
         <property name="volume">
-            <value>-7.5</value>
+            <value>-10.5</value>
         </property>
         <relationship name="modulators">
             <destination>{84e2654b-0630-44fd-8d7a-6b87fe744b73}</destination>
@@ -161,6 +161,7 @@
     </object>
     <object class="MixerBusEffectChain" id="{5a85a73e-6783-45d9-9922-c4d19fa00969}">
         <relationship name="effects">
+            <destination>{d8f4f6b4-fa83-4a7e-b734-25b80855e2a8}</destination>
             <destination>{2ad92439-1293-430c-8827-321f61400015}</destination>
         </relationship>
     </object>
@@ -177,6 +178,11 @@
     <object class="SpatialiserEffect" id="{6ce28eb0-3cc7-4de9-b2b6-2ca31be07031}">
         <property name="maximumDistance">
             <value>100</value>
+        </property>
+    </object>
+    <object class="ThreeEQEffect" id="{d8f4f6b4-fa83-4a7e-b734-25b80855e2a8}">
+        <property name="lowGain">
+            <value>10</value>
         </property>
     </object>
     <object class="MixerBusFader" id="{2ad92439-1293-430c-8827-321f61400015}"/>

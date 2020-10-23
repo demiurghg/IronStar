@@ -160,6 +160,9 @@
         </relationship>
     </object>
     <object class="EventMixerGroup" id="{b63e4942-0466-4117-90fc-a5b56bceb972}">
+        <property name="volume">
+            <value>-4</value>
+        </property>
         <property name="name">
             <value>Audio 2</value>
         </property>
@@ -183,7 +186,7 @@
     </object>
     <object class="MixerBusPanner" id="{7d2e18fe-95df-46be-bc0c-1cba09c6cb71}">
         <property name="surroundLFELevel">
-            <value>6</value>
+            <value>1</value>
         </property>
     </object>
     <object class="MixerBusFader" id="{8ddf42b9-8a92-4d49-85d0-ce2274bd4bc2}"/>

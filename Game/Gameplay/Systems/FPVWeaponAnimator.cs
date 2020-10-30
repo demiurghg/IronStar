@@ -67,7 +67,7 @@ namespace IronStar.Gameplay.Systems
 		public WeaponAnimator ( SFX.FXPlayback fxPlayback, RenderModelInstance model )
 		{
 			this.model	=	model;
-			composer	=	new AnimationComposer( fxPlayback, model, model.Scene );
+			composer	=	new AnimationComposer( fxPlayback, model.Scene );
 
 			trackWeapon	=	new TakeSequencer( model.Scene, null, AnimationBlendMode.Override );
 
@@ -101,7 +101,7 @@ namespace IronStar.Gameplay.Systems
 			UpdateWeaponStates(gameTime, weapon, steps);
 			UpdateMovements(gameTime, steps, uc);
 
-			composer.Update( gameTime, model.FlattenTransforms ); 
+			composer.Update( gameTime, model.ModelFeatureWorldMatrix, model.IsFPVModel, model.FlattenTransforms ); 
 			model.CommitJointTransform();
 		}
 

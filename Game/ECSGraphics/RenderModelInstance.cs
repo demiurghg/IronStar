@@ -163,12 +163,16 @@ namespace IronStar.SFX2
 		}
 
 
+		#warning What this function do?
 		public void CommitJointTransform()
 		{
 			sceneView.SetTransform( (mesh,matrix) => mesh.World = matrix, ModelFeatureWorldMatrix );
 		}
 
 
+		/// <summary>
+		/// Gets transform matrix from model space to world space
+		/// </summary>
 		public Matrix ModelFeatureWorldMatrix { get; private set; } = Matrix.Identity;
 	}
 }

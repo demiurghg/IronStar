@@ -48,7 +48,7 @@ namespace IronStar.Gameplay
 			cameraScene		=	CreateCameraScene( 6, 4, 0 );
 			animData		=	new Matrix[2];
 
-			composer	=	new AnimationComposer( fxPlayback, null, cameraScene );
+			composer	=	new AnimationComposer( fxPlayback, cameraScene );
 			mainTrack	=	new TakeSequencer( cameraScene, null, AnimationBlendMode.Override );
 			shake0		=	new TakeSequencer( cameraScene, null, AnimationBlendMode.Additive );
 			shake1		=	new TakeSequencer( cameraScene, null, AnimationBlendMode.Additive );
@@ -121,12 +121,13 @@ namespace IronStar.Gameplay
 			//	animate :
 			UpdateAnimationState(step, health);
 
-			composer.Update( gameTime, rotateYaw * translate, animData );
+			composer.Update( gameTime, rotateYaw * translate, false, animData );
 			//cameraScene.ComputeAbsoluteTransforms( animData, animData );
 			var animatedCameraMatrix = animData[1];
 
 			//	update stuff :
-			var camMatrix	=	rotatePR * animatedCameraMatrix * rotateYaw * translate;
+			var thirdPerson	=	Matrix.Translation( Vector3.BackwardRH * 10 );
+			var camMatrix	=	thirdPerson * rotatePR * animatedCameraMatrix * rotateYaw * translate;
 
 			var cameraPos	=	camMatrix.TranslationVector;
 

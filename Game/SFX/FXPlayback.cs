@@ -174,8 +174,10 @@ namespace IronStar.SFX {
 		/// 
 		/// </summary>
 		/// <param name="fxEvent"></param>
-		public FXInstance RunFX ( string className, FXEvent fxEvent, bool looped, bool attached )
+		public FXInstance RunFX ( FXEvent fxEvent, bool looped, bool attached )
 		{
+			var className = fxEvent.FXName;
+
 			if (className=="*trail_bullet") 
 			{
 				return RunTrailBullet( fxEvent );
@@ -221,6 +223,7 @@ namespace IronStar.SFX {
 		protected override FXInstance Create( ECS.Entity entity, FXComponent fx, Transform t )
 		{
 			var fxEvent			=	new FXEvent();
+			fxEvent.FXName		=	fx.FXName;
 			fxEvent.Origin		=	t.Position;
 			fxEvent.Rotation	=	t.Rotation;
 			fxEvent.Scale		=	(t.Scaling.X + t.Scaling.Y + t.Scaling.Z) / 3.0f;
@@ -234,7 +237,7 @@ namespace IronStar.SFX {
 
 			var attached	=	entity.ContainsComponent<AttachmentComponent>();
 
-			return RunFX( fx.FXName, fxEvent, fx.Looped, attached ); 
+			return RunFX( fxEvent, fx.Looped, attached ); 
 		}
 
 		protected override void Destroy( ECS.Entity entity, FXInstance fxInstance )

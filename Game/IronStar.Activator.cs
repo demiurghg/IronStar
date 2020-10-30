@@ -71,6 +71,7 @@ namespace IronStar {
 			gs.AddSystem( new Gameplay.BobbingSystem() );
 			gs.AddSystem( new Gameplay.CameraSystem(fxPlayback) );
 			gs.AddSystem( new FPVWeaponSystem(game) );
+			gs.AddSystem( new MonsterAnimationSystem(game,fxPlayback,physicsCore) );
 			gs.AddSystem( fxPlayback );
 
 			//	rendering :

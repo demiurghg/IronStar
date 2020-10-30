@@ -180,6 +180,7 @@
     <Compile Include="Gameplay\Components\HealthComponent.cs" />
     <Compile Include="Gameplay\Components\InventoryComponent.cs" />
     <Compile Include="Gameplay\Components\PowerupComponent.cs" />
+    <Compile Include="Gameplay\GameConfig.cs" />
     <Compile Include="Gameplay\PlayerInput.cs" />
     <Compile Include="ECSFactories\PlayerFactory.cs" />
     <Compile Include="ECSPhysics\MaterialType.cs" />
@@ -210,6 +211,8 @@
     <Compile Include="ECSPhysics\GravityComponent.cs" />
     <Compile Include="ECSPhysics\StaticCollisionComponent.cs" />
     <Compile Include="Mathematics\Intersection.cs" />
+    <Compile Include="Monsters\Systems\MonsterAnimator.cs" />
+    <Compile Include="Monsters\Systems\MonsterAnimationSystem.cs" />
     <Compile Include="Monsters\Systems\MonsterKillSystem.cs" />
     <Compile Include="SceneView.cs" />
     <Compile Include="ECSGraphics\LightProbeSphere.cs" />

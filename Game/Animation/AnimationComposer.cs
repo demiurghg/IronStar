@@ -31,6 +31,7 @@ namespace IronStar.Animation
 		readonly Matrix[] localTransforms;
 		readonly RenderModelInstance model;
 		readonly Queue<string> soundQueue;
+		readonly Queue<FXEvent> fxQueue;
 
 		List<FXInstance> fxInstances = new List<FXInstance>(32);
 		List<SoundEventInstance> soundInstances = new List<SoundEventInstance>(32);
@@ -40,22 +41,16 @@ namespace IronStar.Animation
 		/// 
 		/// </summary>
 		/// <param name="scene"></param>
-		public AnimationComposer ( FXPlayback fxPlayback, RenderModelInstance model, Scene scene )
+		public AnimationComposer ( FXPlayback fxPlayback, Scene scene )
 		{
 			timer			=	new TimeSpan(0);
-			this.model		=	model;
 			this.scene		=	scene;
 			this.tracks		=	new AnimationStack();
 			this.fxPlayback	=	fxPlayback;
 			this.soundQueue	=	new Queue<string>();
+			this.fxQueue	=	new Queue<FXEvent>();
 
 			localTransforms	=	new Matrix[scene.Nodes.Count];
-		}
-
-
-		public void Update ( GameTime gameTime, Matrix[] flatTransforms )
-		{
-			Update( gameTime, model.ModelFeatureWorldMatrix, flatTransforms );
 		}
 
 
@@ -65,7 +60,7 @@ namespace IronStar.Animation
 		/// </summary>
 		/// <param name="gameTime"></param>
 		/// <param name="transforms"></param>
-		public void Update ( GameTime gameTime, Matrix worldTransform, Matrix[] flatTransforms )
+		public void Update ( GameTime gameTime, Matrix worldTransform, bool isFpv, Matrix[] flatTransforms )
 		{
 			if (flatTransforms==null) {
 				throw new ArgumentNullException("transforms");
@@ -98,7 +93,13 @@ namespace IronStar.Animation
 
 			//--------------------------------
 			//	update FX :
-			foreach ( var fxInstance in fxInstances ) {
+			while ( fxQueue.Any() )
+			{
+				SequenceFX( fxQueue.Dequeue(), worldTransform, isFpv, flatTransforms );
+			}
+
+			foreach ( var fxInstance in fxInstances ) 
+			{
 				Vector3 p, s;
 				Quaternion q;
 				Matrix jointWorld = flatTransforms[ fxInstance.JointIndex ] * worldTransform;
@@ -146,14 +147,23 @@ namespace IronStar.Animation
 			}
 
 			var fxEvent			=	new FXEvent();
+				fxEvent.FXName	=	fxName;
 				fxEvent.Scale	=	scale;
+				fxEvent.JointId	=	jointId;
+
+			fxQueue.Enqueue( fxEvent );
 			
-			var instance = fxPlayback.RunFX( fxName, fxEvent, false, false /* -- this is not ECS FX! */ );
+		}
+
+
+		void SequenceFX( FXEvent fxEvent, Matrix worldTransform, bool isFpv, Matrix[] transforms )
+		{
+			var instance = fxPlayback.RunFX( fxEvent, false, false /* -- this is not ECS FX! */ );
 
 			if (instance!=null)
 			{
-				instance.JointIndex	=	jointId;
-				instance.WeaponFX	=	model.IsFPVModel;
+				instance.JointIndex	=	fxEvent.JointId;
+				instance.WeaponFX	=	isFpv;
 				fxInstances.Add( instance );
 			}
 		}
@@ -163,6 +173,7 @@ namespace IronStar.Animation
 		{
 			soundQueue.Enqueue( soundEventName );
 		}
+
 
 		/// <summary>
 		/// 

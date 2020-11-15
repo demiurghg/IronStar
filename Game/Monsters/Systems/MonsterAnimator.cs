@@ -43,7 +43,7 @@ namespace IronStar.Monsters.Systems
 
 		public void Update ( GameTime gameTime, Matrix worldTransform, Matrix[] bones )
 		{
-			pose.Frame		=	0;//(int)(gameTime.Frames % 6);
+			pose.Frame		=	3;//(int)(gameTime.Frames % 6);
 			composer.Update( gameTime, worldTransform, false, bones );
 		}
 	}

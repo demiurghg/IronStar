@@ -366,14 +366,32 @@ namespace Fusion.Engine.Graphics.Scenes {
 
 
 		/// <summary>
-		/// Computes bones transforms for skinning taking in account bind position.
+		/// Computes global bones transforms for skinning taking in account bind position.
 		/// </summary>
-		/// <param name="source">Local bone transforms</param>
+		/// <param name="source">Global bone transforms</param>
 		/// <param name="destination">Global bone transforms multiplied by bind pose matrix</param>
 		public void ComputeBoneTransforms ( Matrix[] source, Matrix[] destination )
 		{
+			for ( int i=0; i<Nodes.Count; i++ ) 
+			{
+				#warning PERFORMANCE: precompute inverse bind pose transform
+				destination[i] = Matrix.Invert( Nodes[i].BindPose ) * source[i];
+			}
+		}
+
+
+		/// <summary>
+		/// Computes global bones transforms for skinning taking in account bind position.
+		/// </summary>
+		/// <param name="source">Global bone transforms</param>
+		/// <param name="destination">Global bone transforms multiplied by bind pose matrix</param>
+		public void ComputeBoneTransformsFromLocal ( Matrix[] source, Matrix[] destination )
+		{
 			ComputeAbsoluteTransforms( source, destination );
-			for ( int i=0; i<Nodes.Count; i++ ) {
+
+			for ( int i=0; i<Nodes.Count; i++ ) 
+			{
+				#warning PERFORMANCE: precompute inverse bind pose transform
 				destination[i] = Matrix.Invert( Nodes[i].BindPose ) * destination[i];
 			}
 		}

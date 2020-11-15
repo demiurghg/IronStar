@@ -110,6 +110,19 @@ namespace Fusion.Core.Extensions {
 		}
 
 
+
+		public static T[] CreateArray<T>( int count, T value ) where T: struct
+		{
+			var array = new T[count];
+			
+			for (int i=0; i<count; i++)
+			{
+				array[i] = value;
+			}
+
+			return array;
+		}
+
 	
 		/// <summary>
 		/// 

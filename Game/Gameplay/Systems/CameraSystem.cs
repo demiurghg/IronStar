@@ -126,7 +126,7 @@ namespace IronStar.Gameplay
 			var animatedCameraMatrix = animData[1];
 
 			//	update stuff :
-			var thirdPerson	=	Matrix.Translation( Vector3.BackwardRH * 10 );
+			var thirdPerson	=	GameConfig.UseThirdPersonCamera ? Matrix.Translation( Vector3.BackwardRH * 10 ) : Matrix.Identity;
 			var camMatrix	=	thirdPerson * rotatePR * animatedCameraMatrix * rotateYaw * translate;
 
 			var cameraPos	=	camMatrix.TranslationVector;

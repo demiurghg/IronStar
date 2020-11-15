@@ -52,7 +52,7 @@ namespace IronStar.Animation
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="name"></param>
+		/// <param name="name">Take name. May be null, first track will be set</param>
 		/// <param name="blendMode"></param>
 		public AnimationPose( Scene scene, string channel, string takeName, AnimationBlendMode blendMode ) : base(scene, channel, blendMode)
 		{

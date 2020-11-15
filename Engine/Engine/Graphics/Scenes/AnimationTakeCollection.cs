@@ -20,7 +20,8 @@ namespace Fusion.Engine.Graphics.Scenes {
 
 		public AnimationTake this [ string name ] {
 			get {
-				return this.FirstOrDefault( t => t.Name == name );
+				if (name==null) return this.FirstOrDefault();
+				else return this.FirstOrDefault( t => t.Name == name );
 			}
 		}
 

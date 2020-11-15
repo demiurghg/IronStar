@@ -157,13 +157,13 @@ namespace Fusion.Engine.Graphics {
 
 			this.Mesh	=	mesh;
 
-			if (IsSkinned && scene.Nodes.Count > SceneRenderer.MaxBones) {
-				throw new ArgumentOutOfRangeException( string.Format("Scene contains more than {0} bones and cannot be used for skinning.", SceneRenderer.MaxBones ) );
+			if (IsSkinned && scene.Nodes.Count > RenderSystem.MaxBones) {
+				throw new ArgumentOutOfRangeException( string.Format("Scene contains more than {0} bones and cannot be used for skinning.", RenderSystem.MaxBones ) );
 			}
 
 			if (IsSkinned) {
 				BoneTransforms	=	Enumerable
-					.Range(0, SceneRenderer.MaxBones)
+					.Range(0, RenderSystem.MaxBones)
 					.Select( i => Matrix.Identity )
 					.ToArray();
 			}

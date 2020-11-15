@@ -170,6 +170,19 @@ namespace IronStar.SFX2
 		}
 
 
+
+		public void SetBoneTransforms( Matrix[] bones )
+		{
+			foreach ( var inst in sceneView.meshes )
+			{
+				if (inst!=null && inst.IsSkinned)
+				{
+					scene.ComputeBoneTransforms( bones, inst.BoneTransforms );
+				}
+			}
+		}
+
+
 		/// <summary>
 		/// Gets transform matrix from model space to world space
 		/// </summary>

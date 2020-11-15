@@ -19,14 +19,12 @@ namespace Fusion.Engine.Graphics {
 
 	internal partial class SceneRenderer : RenderComponent {
 
-		internal const int MaxBones = 128;
-
 		static FXConstantBuffer<GpuData.CAMERA>				regCamera			= new CRegister( 0, "Camera"			);
 		static FXConstantBuffer<GpuData.DIRECT_LIGHT>		regDirectLight		= new CRegister( 1, "DirectLight"		);
 		static FXConstantBuffer<STAGE>						regStage			= new CRegister( 2, "Stage"				);
 		static FXConstantBuffer<INSTANCE>					regInstance			= new CRegister( 3, "Instance"			);
 		static FXConstantBuffer<SUBSET>						regSubset			= new CRegister( 4, "Subset"			);
-		static FXConstantBuffer<Matrix>						regBones			= new CRegister( 5, MaxBones, "Bones"	);
+		static FXConstantBuffer<Matrix>						regBones			= new CRegister( 5, RenderSystem.MaxBones, "Bones"	);
 		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow	= new CRegister( 6, "CascadeShadow"		);
 		static FXConstantBuffer<Fog.FOG_DATA>				regFog				= new CRegister( 7, "Fog"				);
 
@@ -113,7 +111,7 @@ namespace Fusion.Engine.Graphics {
 
 			constBufferStage	=	new ConstantBuffer( Game.GraphicsDevice, typeof(STAGE) );
 			constBufferInstance	=	new ConstantBuffer( Game.GraphicsDevice, typeof(INSTANCE) );
-			constBufferBones	=	new ConstantBuffer( Game.GraphicsDevice, typeof(Matrix), MaxBones );
+			constBufferBones	=	new ConstantBuffer( Game.GraphicsDevice, typeof(Matrix), RenderSystem.MaxBones );
 			constBufferSubset	=	new ConstantBuffer( Game.GraphicsDevice, typeof(SUBSET) );
 
 			using ( var ms = new MemoryStream( Properties.Resources.envLut ) ) {
@@ -295,30 +293,30 @@ namespace Fusion.Engine.Graphics {
 
 			bool aniso	=	rs.VTSystem.UseAnisotropic ;
 
-			int flag = (int)( stageFlag | SurfaceFlags.RIGID );
+			var  flag	=	stageFlag | (instance.IsSkinned ? SurfaceFlags.SKINNED : SurfaceFlags.RIGID);
 
 			if (aniso && stageFlag==SurfaceFlags.FORWARD) {
-				flag |= (int)SurfaceFlags.ANISOTROPIC;
+				flag |= SurfaceFlags.ANISOTROPIC;
 			}
 
 			if (context.Transparent) {
-				flag |= (int)SurfaceFlags.TRANSPARENT;
+				flag |= SurfaceFlags.TRANSPARENT;
 			}
 
 			if ( stageFlag==SurfaceFlags.FORWARD || stageFlag==SurfaceFlags.RADIANCE ) {
 				if ( instance.Group==InstanceGroup.Static ) {
-					flag |= (int)SurfaceFlags.IRRADIANCE_MAP;
+					flag |= SurfaceFlags.IRRADIANCE_MAP;
 				} else {
-					flag |= (int)SurfaceFlags.IRRADIANCE_VOLUME;
+					flag |= SurfaceFlags.IRRADIANCE_VOLUME;
 				}
 			}
 
-			if (!factory.IsCombinationSupported( flag ))
+			if (!factory.IsCombinationSupported( (int)flag ))
 			{
 				return false;
 			}
 
-			device.PipelineState	=	factory[ flag ];
+			device.PipelineState	=	factory[ (int)flag ];
 
 			cbDataInstance.Group	=	(int)instance.Group;
 			cbDataInstance.Color	=	instance.Color;
@@ -326,6 +324,11 @@ namespace Fusion.Engine.Graphics {
 			cbDataInstance.LMRegion	=	instance.LightMapScaleOffset;
 
 			constBufferInstance.SetData( ref cbDataInstance );
+
+			if (instance.IsSkinned)
+			{
+				constBufferBones.SetData( instance.BoneTransforms );
+			}
 
 			return true;
 		}

@@ -79,6 +79,7 @@
     <Compile Include="AI\Decorators\HasTarget.cs" />
     <Compile Include="AI\Systems\PerceptionSystem.cs" />
     <Compile Include="AI\NavigationRouter.cs" />
+    <Compile Include="Animation\BoneComponent.cs" />
     <Compile Include="BTCore\Blackboard.cs" />
     <Compile Include="BTCore\Decorators\Success.cs" />
     <Compile Include="BTCore\Decorators\Repeat.cs" />
@@ -259,7 +260,6 @@
     <Compile Include="Editor\MapEditor.cs" />
     <Compile Include="Editor\Selection.cs" />
     <Compile Include="Editor\Utils.cs" />
-    <Compile Include="GameConfig.cs" />
     <Compile Include="IronStar.Commands.cs" />
     <Compile Include="IronStar.cs" />
     <Compile Include="LocalMessageService.cs" />

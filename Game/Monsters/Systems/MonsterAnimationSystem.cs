@@ -14,10 +14,11 @@ using IronStar.Gameplay;
 using IronStar.SFX2;
 using IronStar.SFX;
 using IronStar.Animation;
+using Fusion.Engine.Graphics.Scenes;
 
 namespace IronStar.Monsters.Systems
 {
-	class MonsterAnimationSystem : ProcessingSystem<MonsterAnimator,CharacterController, RenderModel, StepComponent>
+	class MonsterAnimationSystem : ProcessingSystem<MonsterAnimator,CharacterController,RenderModel,StepComponent>
 	{
 		readonly Game Game;
 		readonly FXPlayback fxPlayback;
@@ -31,13 +32,18 @@ namespace IronStar.Monsters.Systems
 			this.physics	=	physics;
 		}
 
+		public override Aspect GetAspect()
+		{
+			return base.GetAspect().Include<BoneComponent,Transform>();
+		}
+
 		protected override MonsterAnimator Create( Entity entity, CharacterController ch, RenderModel rm, StepComponent step )
 		{
-			//var animator = new MonsterAnimator( fxPlayback, rm, rm.);
+			var scene		=	entity.gs.Content.Load( rm.scenePath, Scene.Empty );
+			var transform	=	rm.transform;
+			var animator	=	new MonsterAnimator( fxPlayback, scene, physics );
 
-
-			return null;
-			//return animator;
+			return animator;
 		}
 
 		protected override void Destroy( Entity entity, MonsterAnimator animator )
@@ -46,7 +52,9 @@ namespace IronStar.Monsters.Systems
 
 		protected override void Process( Entity entity, GameTime gameTime, MonsterAnimator animator, CharacterController ch, RenderModel rm, StepComponent step )
 		{
-			animator?.Update( gameTime );
+			var bones		=	entity.GetComponent<BoneComponent>();
+			var transform	=	entity.GetComponent<Transform>();
+			animator?.Update( gameTime, transform.TransformMatrix, bones.Bones );
 		}
 	}
 }

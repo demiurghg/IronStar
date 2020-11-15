@@ -19,6 +19,7 @@ using BEPUphysics.BroadPhaseEntries;
 using Fusion.Scripting;
 using KopiLua;
 using IronStar.ECS;
+using IronStar.Animation;
 
 namespace IronStar.SFX2 
 {
@@ -28,6 +29,10 @@ namespace IronStar.SFX2
 		public readonly RenderSystem rs;
 		public readonly RenderWorld	rw;
 		public readonly ContentManager content;
+
+		readonly Aspect skinnedAspect = new Aspect().Include<RenderModelInstance,Transform,RenderModel,BoneComponent>();
+		readonly Aspect rigidAspect   = new Aspect().Include<RenderModelInstance,Transform,RenderModel>()
+													.Exclude<BoneComponent>();
 
 		
 		public RenderModelSystem ( Game game )
@@ -54,6 +59,16 @@ namespace IronStar.SFX2
 		protected override void Process( Entity e, GameTime gameTime, RenderModelInstance model, Transform t, RenderModel rm )
 		{
 			model.SetTransform( t.TransformMatrix );
+
+			if (skinnedAspect.Accept(e))
+			{
+				var bones = e.GetComponent<BoneComponent>()?.Bones;
+
+				if (bones!=null)
+				{
+					model.SetBoneTransforms( e.GetComponent<BoneComponent>().Bones );
+				}
+			}
 		}
 	}
 }

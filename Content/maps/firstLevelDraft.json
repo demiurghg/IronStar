@@ -1625,7 +1625,7 @@
         "TranslateX": 40.0,
         "TranslateY": 20.0,
         "TranslateZ": 92.0,
-        "RotateYaw": -270.0,
+        "RotateYaw": -90.0,
         "RotatePitch": 180.0,
         "RotateRoll": 0.0
       },
@@ -2392,7 +2392,7 @@
         "TranslateX": 40.0,
         "TranslateY": 20.0,
         "TranslateZ": 82.0,
-        "RotateYaw": -270.0,
+        "RotateYaw": -90.0,
         "RotatePitch": 180.0,
         "RotateRoll": 0.0
       },
@@ -3344,7 +3344,7 @@
         "TranslateX": -86.0,
         "TranslateY": 40.0,
         "TranslateZ": -80.0,
-        "RotateYaw": 0.0,
+        "RotateYaw": -15.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
       },
@@ -3383,7 +3383,7 @@
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
         "NodeGuid": "8803e74f-f1f0-420b-a693-c471380f61f3",
-        "Width": 88.0,
+        "Width": 96.0,
         "Height": 40.0,
         "Depth": 96.0,
         "ShellWidth": 4.0,
@@ -3392,7 +3392,7 @@
         "Visible": true,
         "Frozen": false,
         "TranslateX": 43.0,
-        "TranslateY": 22.0,
+        "TranslateY": 26.2202168,
         "TranslateZ": 5.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
@@ -3425,7 +3425,7 @@
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
         "NodeGuid": "e49912b1-987d-45d4-923d-80c1e92c6056",
         "LightColor": "255, 113, 26, 255",
-        "LightIntensity": 1040.0,
+        "LightIntensity": 0.0,
         "OuterRadius": 100.0,
         "TubeRadius": 0.125,
         "TubeLength": 0.0,
@@ -3441,9 +3441,9 @@
         "SlopeBias": 2.0,
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 128.0,
+        "TranslateX": 127.987137,
         "TranslateY": 72.0,
-        "TranslateZ": 176.0,
+        "TranslateZ": 187.271561,
         "RotateYaw": 0.0,
         "RotatePitch": -60.0,
         "RotateRoll": 0.0
@@ -3691,12 +3691,12 @@
         "FactoryName": "P3xxYx3j",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -369.408875,
-        "TranslateY": 12.6074848,
-        "TranslateZ": -96.97524,
-        "RotateYaw": -97.5154953,
-        "RotatePitch": -11.5551128,
-        "RotateRoll": -0.145360544
+        "TranslateX": -370.436218,
+        "TranslateY": 12.6433372,
+        "TranslateZ": -96.537674,
+        "RotateYaw": -98.69522,
+        "RotatePitch": -7.011006,
+        "RotateRoll": -23.541666
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
@@ -3704,7 +3704,7 @@
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
+          "Classname": "WEAPON_ROCKETLAUNCHER"
         },
         "FactoryName": "Xb1lvVZH",
         "Visible": true,
@@ -4101,12 +4101,12 @@
         "FactoryName": "0sVvn3Ss",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -319.1134,
-        "TranslateY": 5.140954,
-        "TranslateZ": -90.7385254,
-        "RotateYaw": -128.784775,
-        "RotatePitch": 89.79252,
-        "RotateRoll": -140.419968
+        "TranslateX": -319.114441,
+        "TranslateY": 5.140983,
+        "TranslateZ": -90.7379,
+        "RotateYaw": 169.869919,
+        "RotatePitch": 89.84051,
+        "RotateRoll": 158.346039
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",

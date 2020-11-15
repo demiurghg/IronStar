@@ -6,7 +6,8 @@
     "$type": "IronStar.SFX.FXSoundStage, IronStar",
     "Enabled": true,
     "Sound": "env/fire",
-    "Reverb": 1.0
+    "Reverb": 1.0,
+    "FlybySound": false
   },
   "LightStage": {
     "$type": "IronStar.SFX.FXLightStage, IronStar",
@@ -21,9 +22,23 @@
     "OffsetDirection": "none",
     "OffsetFactor": 0.0
   },
-  "CameraShake": {
-    "$type": "IronStar.SFX.FXCameraShake, IronStar",
-    "Enabled": true
+  "DecalStage": {
+    "$type": "IronStar.SFX.FXDecalStage, IronStar",
+    "Size": 0.5,
+    "Depth": 0.25,
+    "Enabled": false,
+    "SurfaceLifetime": 2.0,
+    "SurfaceDecal": "",
+    "BaseColor": "128, 128, 128, 255",
+    "Roughness": 0.5,
+    "Metallic": 0.5,
+    "ColorFactor": 1.0,
+    "SpecularFactor": 1.0,
+    "NormalMapFactor": 1.0,
+    "EmissionLifetime": 2.0,
+    "EmissionColor": "0, 0, 0, 255",
+    "EmissionIntensity": 7.0,
+    "EmissionDecal": ""
   },
   "ParticleStage1": {
     "$type": "IronStar.SFX.FXParticleStage, IronStar",

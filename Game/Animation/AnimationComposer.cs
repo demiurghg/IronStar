@@ -65,8 +65,8 @@ namespace IronStar.Animation
 			if (flatTransforms==null) {
 				throw new ArgumentNullException("transforms");
 			}
-			if (flatTransforms.Length!=scene.Nodes.Count) {
-				throw new ArgumentOutOfRangeException("transforms.Length != scene.Nodes.Count");
+			if (flatTransforms.Length<scene.Nodes.Count) {
+				throw new ArgumentOutOfRangeException("transforms.Length < scene.Nodes.Count");
 			}
 
 			//--------------------------------

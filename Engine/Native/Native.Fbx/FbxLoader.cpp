@@ -264,9 +264,12 @@ Node ^Native::Fbx::FbxLoader::CreateSceneNode( FbxNode *fbxNode, FbxScene *fbxSc
 
 	//	Get bind pose :
 	int poseCount = fbxScene->GetPoseCount();
-	for (int i = 0; i < poseCount; i++) {
+	for (int i = 0; i < poseCount; i++) 
+	{
 		FbxPose* lPose = fbxScene->GetPose(i);
-		if (lPose ) {
+
+		if (lPose/* && lPose->IsValidBindPose()*/) 
+		{
 			//pNode should be the FBX node of bones.
 			int lNodeIndex = lPose->Find(fbxNode);
 			if (lNodeIndex > -1) {

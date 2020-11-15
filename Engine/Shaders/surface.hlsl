@@ -1,9 +1,9 @@
 
 #ifdef _UBERSHADER
-$ubershader FORWARD RIGID ANISOTROPIC +TRANSPARENT IRRADIANCE_MAP|IRRADIANCE_VOLUME
-$ubershader SHADOW RIGID +TRANSPARENT
-$ubershader ZPASS RIGID
-$ubershader GBUFFER RIGID
+$ubershader FORWARD RIGID|SKINNED ANISOTROPIC +TRANSPARENT IRRADIANCE_MAP|IRRADIANCE_VOLUME
+$ubershader SHADOW RIGID|SKINNED +TRANSPARENT
+$ubershader ZPASS RIGID|SKINNED
+$ubershader GBUFFER RIGID|SKINNED
 // $ubershader RADIANCE RIGID IRRADIANCE_MAP|IRRADIANCE_VOLUME
 
 // $ubershader FORWARD RIGID +ANISOTROPIC +TRANSPARENT IRRADIANCE_MAP|IRRADIANCE_VOLUME
@@ -21,7 +21,9 @@ struct VSInput {
 	float3 Normal 	: NORMAL;
 	float4 Color 	: COLOR;
 	float2 TexCoord : TEXCOORD0;
+#ifdef RIGID
 	float2 LMCoord  : TEXCOORD1;
+#endif	
 #ifdef SKINNED
     int4   BoneIndices  : BLENDINDICES0;
     float4 BoneWeights  : BLENDWEIGHTS0;
@@ -156,7 +158,12 @@ PSInput VSMain( VSInput input )
 	output.Tangent 		=  	tangent.xyz;
 	output.Binormal		=  	binormal.xyz;
 	output.WorldPos		=	wPos.xyz;
+	
+	#ifdef RIGID
 	output.LMCoord		=	mad( input.LMCoord.xy, Instance.LMRegion.xy, Instance.LMRegion.zw );
+	#else
+	output.LMCoord		=	0;
+	#endif
 	
 	return output;
 }

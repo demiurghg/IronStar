@@ -29,8 +29,7 @@ namespace IronStar.ECSFactories
 
 			if (GameConfig.UseThirdPersonCamera)
 			{
-				e.AddComponent( new RenderModel("scenes\\monsters\\marine\\skin_test", transform, Color.Red, 7, RMFlags.None ) );
-				///e.AddComponent( new RenderModel("scenes\\monsters\\marine\\marine_anim", transform, Color.Red, 7, RMFlags.None ) );
+				e.AddComponent( new RenderModel("scenes\\monsters\\marine\\marine_anim", transform, Color.Red, 7, RMFlags.None ) );
 				e.AddComponent( new BoneComponent() );
 			}
 

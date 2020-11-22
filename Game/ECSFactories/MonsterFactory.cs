@@ -38,7 +38,7 @@ namespace IronStar.ECSFactories
 			var transform	=	Matrix.RotationY( MathUtil.Pi ) * Matrix.Scaling(0.1f);
 
 			//e.AddComponent( new PlayerComponent() );
-			e.AddComponent( new RenderModel("scenes\\monsters\\marine\\skin_test", transform, Color.Red, 7, RMFlags.None ) );
+			e.AddComponent( new RenderModel("scenes\\monsters\\marine\\marine_anim", transform, Color.Red, 7, RMFlags.None ) );
 			e.AddComponent( new BoneComponent() );
 			e.AddComponent( new CharacterController(6,4,2, 24,9, 20, 10, 2.2f) );
 			e.AddComponent( new UserCommandComponent() );

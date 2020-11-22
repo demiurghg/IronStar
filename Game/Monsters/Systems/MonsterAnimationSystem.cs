@@ -50,11 +50,12 @@ namespace IronStar.Monsters.Systems
 		{
 		}
 
+		
 		protected override void Process( Entity entity, GameTime gameTime, MonsterAnimator animator, CharacterController ch, RenderModel rm, StepComponent step )
 		{
 			var bones		=	entity.GetComponent<BoneComponent>();
 			var transform	=	entity.GetComponent<Transform>();
-			animator?.Update( gameTime, transform.TransformMatrix, bones.Bones );
+			animator?.Update( gameTime, transform.TransformMatrix, step.GroundVelocity, bones.Bones );
 		}
 	}
 }

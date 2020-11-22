@@ -594,6 +594,7 @@
     <Compile Include="Engine\Graphics\SceneRenderer.cs" />
     <Compile Include="Engine\Graphics\SceneRenderer.Gpu.cs" />
     <Compile Include="Engine\Graphics\Scenes\AnimationBlendMode.cs" />
+    <Compile Include="Engine\Graphics\Scenes\AnimationKey.cs" />
     <Compile Include="Engine\Graphics\Scenes\AnimationWrapMode.cs" />
     <Compile Include="Engine\Graphics\Scenes\AnimationTakeCollection.cs" />
     <Compile Include="Engine\Graphics\Scenes\GeometryCache.cs" />

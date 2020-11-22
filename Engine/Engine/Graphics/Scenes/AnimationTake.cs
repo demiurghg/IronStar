@@ -142,6 +142,19 @@ namespace Fusion.Engine.Graphics.Scenes {
 		}
 
 
+		public Matrix[] GetPose( int frame )
+		{
+			var pose = new Matrix[NodeCount];
+
+			for (int i=0; i<NodeCount; i++)
+			{
+				pose[i] = GetKey( frame, i );
+			}
+
+			return pose;
+		}
+
+
 		/// <summary>
 		/// Sets anim key
 		/// </summary>
@@ -165,7 +178,14 @@ namespace Fusion.Engine.Graphics.Scenes {
 			}
 
 			transform  = animData[ Address( frame - firstFrame, node ) ];
+		}
 
+
+		public Matrix GetKey( int frame, int node )
+		{
+			Matrix t;
+			GetKey( frame, node, out t );
+			return t;
 		}
 
 

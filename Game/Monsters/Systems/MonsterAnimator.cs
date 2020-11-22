@@ -25,7 +25,7 @@ namespace IronStar.Monsters.Systems
 
 		readonly AnimationComposer composer;
 
-		readonly AnimationPose pose;
+		readonly GaitLayer gaitLayer;
 
 
 		public MonsterAnimator( SFX.FXPlayback fxPlayback, Scene scene, PhysicsCore physics )
@@ -35,15 +35,16 @@ namespace IronStar.Monsters.Systems
 
 			composer		=	new AnimationComposer( fxPlayback, scene );
 
-			pose			=	new AnimationPose( scene, null, "Take 001", AnimationBlendMode.Override );
+			gaitLayer		=	new GaitLayer( scene, null, null, AnimationBlendMode.Override );
 
-			composer.Tracks.Add( pose );
+			composer.Tracks.Add( gaitLayer );
 		}
 
 
-		public void Update ( GameTime gameTime, Matrix worldTransform, Matrix[] bones )
+		public void Update ( GameTime gameTime, Matrix worldTransform, Vector3 groundVelocity, Matrix[] bones )
 		{
-			pose.Frame		=	3;//(int)(gameTime.Frames % 6);
+			gaitLayer.Advance( groundVelocity.Length(), gameTime );
+			//pose.Frame		=	3;//(int)(gameTime.Frames % 6);
 			composer.Update( gameTime, worldTransform, false, bones );
 		}
 	}

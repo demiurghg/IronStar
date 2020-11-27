@@ -322,6 +322,22 @@ namespace Fusion.Engine.Graphics.Scenes {
 		}
 
 
+		/// <summary>
+		/// Computes local transforms for given global
+		/// </summary>
+		/// <param name="destination"></param>
+		public Matrix ComputeLocalTransform( Matrix[] globalTransforms, int index )
+		{
+			if ( globalTransforms == null ) throw new ArgumentNullException("source");
+			if ( globalTransforms.Length < Nodes.Count ) throw new ArgumentOutOfRangeException("source.Length must be greater of equal to Nodes.Count");
+
+			var node			=	Nodes[index];
+			var parentIndex		=	node.ParentIndex;
+			var globalTransform	=	globalTransforms[index];
+			
+			return 	(parentIndex<0) ? globalTransform : globalTransform * Matrix.Invert( globalTransforms[parentIndex] );
+		}
+
 
 		/// <summary>
 		/// Computes absolute transformations using local transforms and scene's hierarchy.
@@ -332,21 +348,10 @@ namespace Fusion.Engine.Graphics.Scenes {
 		/// <param name="destinationGlobalTransforms"></param>
 		public void ComputeAbsoluteTransforms ( Matrix[] source, Matrix[] destination )
 		{
-			if ( source == null ) {
-				throw new ArgumentNullException("source");
-			}
-
-			if ( destination == null ) {
-				throw new ArgumentNullException("destination");
-			}
-
-			if ( source.Length < Nodes.Count ) {
-				throw new ArgumentOutOfRangeException("source.Length must be greater of equal to Nodes.Count");
-			}
-
-			if ( destination.Length < Nodes.Count ) {
-				throw new ArgumentOutOfRangeException("destination.Length must be greater of equal to Nodes.Count");
-			}
+			if ( source == null ) throw new ArgumentNullException("source");
+			if ( destination == null ) throw new ArgumentNullException("destination");
+			if ( source.Length < Nodes.Count ) throw new ArgumentOutOfRangeException("source.Length must be greater of equal to Nodes.Count");
+			if ( destination.Length < Nodes.Count ) throw new ArgumentOutOfRangeException("destination.Length must be greater of equal to Nodes.Count");
 
 			for ( int i=0; i<Nodes.Count; i++) {
 				

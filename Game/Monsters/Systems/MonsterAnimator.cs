@@ -14,6 +14,7 @@ using IronStar.Gameplay;
 using IronStar.SFX2;
 using IronStar.SFX;
 using IronStar.Animation;
+using IronStar.Animation.IK;
 using Fusion.Engine.Graphics.Scenes;
 
 namespace IronStar.Monsters.Systems
@@ -25,27 +26,25 @@ namespace IronStar.Monsters.Systems
 
 		readonly AnimationComposer composer;
 
-		readonly GaitLayer gaitLayer;
+		readonly FBIKAnimator fbikAnimator;
 
 
-		public MonsterAnimator( SFX.FXPlayback fxPlayback, Scene scene, PhysicsCore physics )
+		public MonsterAnimator( SFX.FXPlayback fxPlayback, Scene scene, Matrix modelTransform, PhysicsCore physics )
 		{								
 			this.fxPlayback	=	fxPlayback;
 			this.physics	=	physics;
 
 			composer		=	new AnimationComposer( fxPlayback, scene );
 
-			gaitLayer		=	new GaitLayer( scene, null, null, AnimationBlendMode.Override );
-
-			composer.Tracks.Add( gaitLayer );
+			fbikAnimator	=	new FBIKAnimator( scene, modelTransform );
 		}
 
 
 		public void Update ( GameTime gameTime, Matrix worldTransform, Vector3 groundVelocity, Matrix[] bones )
 		{
-			gaitLayer.Advance( groundVelocity.Length(), gameTime );
+			fbikAnimator.Evaluate( gameTime, fxPlayback.Game.RenderSystem.RenderWorld.Debug, worldTransform, bones );
 			//pose.Frame		=	3;//(int)(gameTime.Frames % 6);
-			composer.Update( gameTime, worldTransform, false, bones );
+			//composer.Update( gameTime, worldTransform, false, bones );
 		}
 	}
 }

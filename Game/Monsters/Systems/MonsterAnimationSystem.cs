@@ -41,7 +41,7 @@ namespace IronStar.Monsters.Systems
 		{
 			var scene		=	entity.gs.Content.Load( rm.scenePath, Scene.Empty );
 			var transform	=	rm.transform;
-			var animator	=	new MonsterAnimator( fxPlayback, scene, physics );
+			var animator	=	new MonsterAnimator( fxPlayback, scene, rm.transform, physics );
 
 			return animator;
 		}

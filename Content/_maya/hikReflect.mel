@@ -1,0 +1,68 @@
+proc inplaceReflect(string $node, string $axis)
+{
+    float $rr = `getAttr ($node + ".reachRotation")`;
+    if ($rr!=1) { warning ("IK Blend R on node \"" + $node + "\" must be 1"); }
+    float $x;
+    $x = `getAttr ($node  + ".translateX")` * (-1);
+    setAttr ($node + ".translateX") $x;
+    $x = `getAttr ($node + ".rotateX")` * (-1);
+    setAttr ($node + ".rotateX") $x;
+    $x = `getAttr ($node + ".rotateY")` * (-1);
+    setAttr ($node + ".rotateY") $x;
+}
+
+proc swapReflect(string $leftNode, string $rightNode, int $rotate) {
+    float $rx;
+    float $lx;
+    // reflect translation :
+    setAttr ($leftNode  + ".pinning") 0;
+    setAttr ($rightNode + ".pinning") 0;
+    float $rr = `getAttr ($leftNode + ".reachRotation")`;
+    if ($rr!=1) { warning ("IK Blend R on node \"" + $leftNode + "\" must be 1"); }
+          $rr = `getAttr ($rightNode + ".reachRotation")`;
+    if ($rr!=1) { warning ("IK Blend R on node \"" + $rightNode + "\" must be 1"); }
+//    setAttr ($leftNode  + ".reachRotation") 1;
+//    setAttr ($rightNode + ".reachRotation") 1;
+//    setAttr ($leftNode  + ".reachTranslation") 1;
+//    setAttr ($rightNode + ".reachTranslation") 1;
+    $lx = `getAttr ($leftNode  + ".translateX")` * (-1);
+    $rx = `getAttr ($rightNode + ".translateX")` * (-1);
+    setAttr ($leftNode  + ".translateX") $rx;
+    setAttr ($rightNode + ".translateX") $lx;
+    $lx = `getAttr ($leftNode  + ".translateY")`;
+    $rx = `getAttr ($rightNode + ".translateY")`;
+    setAttr ($leftNode  + ".translateY") $rx;
+    setAttr ($rightNode + ".translateY") $lx;
+    $lx = `getAttr ($leftNode  + ".translateZ")`;
+    $rx = `getAttr ($rightNode + ".translateZ")`;
+    setAttr ($leftNode  + ".translateZ") $rx;
+    setAttr ($rightNode + ".translateZ") $lx;
+    // reflect rotations :
+	if ($rotate)
+	{
+	    $lx = `getAttr ($leftNode  + ".rotateX")`;
+	    $rx = `getAttr ($rightNode + ".rotateX")`;
+	    setAttr ($leftNode  + ".rotateX") $rx;
+	    setAttr ($rightNode + ".rotateX") $lx;
+	    $lx = `getAttr ($leftNode  + ".rotateY")` * (-1);
+	    $rx = `getAttr ($rightNode + ".rotateY")` * (-1);
+	    setAttr ($leftNode  + ".rotateY") $rx;
+	    setAttr ($rightNode + ".rotateY") $lx;
+	    $lx = `getAttr ($leftNode  + ".rotateZ")`;
+	    $rx = `getAttr ($rightNode + ".rotateZ")`;
+	    setAttr ($leftNode  + ".rotateZ") $rx;
+	    setAttr ($rightNode + ".rotateZ") $lx;
+	}
+}
+
+undoInfo -openChunk;
+//hikGlobals -edit -rap false;
+swapReflect("Character1_Ctrl_LeftAnkleEffector", "Character1_Ctrl_RightAnkleEffector", true);
+swapReflect("Character1_Ctrl_LeftFootEffector",  "Character1_Ctrl_RightFootEffector", true);
+//swapReflect("Character1_Ctrl_LeftHipEffector",   "Character1_Ctrl_RightHipEffector", true);
+swapReflect("Character1_Ctrl_LeftKneeEffector",  "Character1_Ctrl_RightKneeEffector", true);
+inplaceReflect("Character1_Ctrl_HipsEffector", ".rotateX");
+inplaceReflect("Character1_Ctrl_ChestEndEffector", ".rotateX");
+inplaceReflect("Character1_Ctrl_HeadEffector", ".rotateX");
+//hikGlobals -edit -rap false;
+undoInfo -closeChunk;

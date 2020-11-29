@@ -83,7 +83,6 @@
     <Compile Include="Animation\IK\Effector.cs" />
     <Compile Include="Animation\IK\FBIKAnimator.cs" />
     <Compile Include="Animation\IK\IKSkeleton.cs" />
-    <Compile Include="Animation\IK\IKSolver.cs" />
     <Compile Include="BTCore\Blackboard.cs" />
     <Compile Include="BTCore\Decorators\Success.cs" />
     <Compile Include="BTCore\Decorators\Repeat.cs" />
@@ -346,6 +345,10 @@
     <ProjectReference Include="..\Engine\Native\Native.Recast\RecastSharp.vcxproj">
       <Project>{0daf5f26-3aa9-479c-831a-693aa074b05e}</Project>
       <Name>Native.Recast</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Engine\SDKs\BEPUphysics\BEPUik\BEPUik.csproj">
+      <Project>{2d5a0344-623a-4bfa-aab6-8ac64e2a4129}</Project>
+      <Name>BEPUik</Name>
     </ProjectReference>
     <ProjectReference Include="..\Engine\Widgets\Fusion.Widgets.csproj">
       <Project>{68592deb-c5ae-49d3-bfca-d529e90255b8}</Project>

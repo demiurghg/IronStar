@@ -18,9 +18,9 @@ namespace IronStar.Animation.IK
 		public const string	L_SHOULDER	=	"L_shoulder";
 		public const string	L_ARM		=	"L_arm"		;
 		public const string	L_HAND		=	"L_hand"	;
-		public const string	R_SHOULDER	=	"L_shoulder";
-		public const string	R_ARM		=	"L_arm"		;
-		public const string	R_HAND		=	"L_hand"	;
+		public const string	R_SHOULDER	=	"R_shoulder";
+		public const string	R_ARM		=	"R_arm"		;
+		public const string	R_HAND		=	"R_hand"	;
 
 		public const string	L_HIP		=	"L_hip"		;
 		public const string	L_SHIN		=	"L_shin"	;

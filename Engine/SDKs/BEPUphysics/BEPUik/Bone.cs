@@ -10,6 +10,11 @@ namespace BEPUik
     /// </summary>
     public class Bone
     {
+		/// <summary>
+		/// Bone index for whatever
+		/// </summary>
+		public int Index;
+
         internal List<IKJoint> joints = new List<IKJoint>();
 
         /// <summary>

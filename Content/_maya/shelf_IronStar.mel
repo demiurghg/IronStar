@@ -1,0 +1,42 @@
+global proc shelf_IronStar () {
+    global string $gBuffStr;
+    global string $gBuffStr0;
+    global string $gBuffStr1;
+
+
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "User Script" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "User Script" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "E:/GITHUB/IronStar/Content/_maya/iconHikReflect.png" 
+        -image1 "E:/GITHUB/IronStar/Content/_maya/iconHikReflect.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "proc inplaceReflect(string $node, string $axis)\n{\n    float $rr = `getAttr ($node + \".reachRotation\")`;\n    if ($rr!=1) { warning (\"IK Blend R on node \\\"\" + $node + \"\\\" must be 1\"); }\n    float $x;\n    $x = `getAttr ($node  + \".translateX\")` * (-1);\n    setAttr ($node + \".translateX\") $x;\n    $x = `getAttr ($node + \".rotateX\")` * (-1);\n    setAttr ($node + \".rotateX\") $x;\n    $x = `getAttr ($node + \".rotateY\")` * (-1);\n    setAttr ($node + \".rotateY\") $x;\n}\n\nproc swapReflect(string $leftNode, string $rightNode) {\n    float $rx;\n    float $lx;\n    // reflect translation :\n    setAttr ($leftNode  + \".pinning\") 0;\n    setAttr ($rightNode + \".pinning\") 0;\n    float $rr = `getAttr ($leftNode + \".reachRotation\")`;\n    if ($rr!=1) { warning (\"IK Blend R on node \\\"\" + $leftNode + \"\\\" must be 1\"); }\n          $rr = `getAttr ($rightNode + \".reachRotation\")`;\n    if ($rr!=1) { warning (\"IK Blend R on node \\\"\" + $rightNode + \"\\\" must be 1\"); }\n//    setAttr ($leftNode  + \".reachRotation\") 1;\n//    setAttr ($rightNode + \".reachRotation\") 1;\n//    setAttr ($leftNode  + \".reachTranslation\") 1;\n//    setAttr ($rightNode + \".reachTranslation\") 1;\n    $lx = `getAttr ($leftNode  + \".translateX\")` * (-1);\n    $rx = `getAttr ($rightNode + \".translateX\")` * (-1);\n    setAttr -av ($leftNode  + \".translateX\") $rx;\n    setAttr -av ($rightNode + \".translateX\") $lx;\n    $lx = `getAttr ($leftNode  + \".translateY\")`;\n    $rx = `getAttr ($rightNode + \".translateY\")`;\n    setAttr -av ($leftNode  + \".translateY\") $rx;\n    setAttr -av ($rightNode + \".translateY\") $lx;\n    $lx = `getAttr ($leftNode  + \".translateZ\")`;\n    $rx = `getAttr ($rightNode + \".translateZ\")`;\n    setAttr -av ($leftNode  + \".translateZ\") $rx;\n    setAttr -av ($rightNode + \".translateZ\") $lx;\n    // reflect rotations :\n    $lx = `getAttr ($leftNode  + \".rotateX\")`;\n    $rx = `getAttr ($rightNode + \".rotateX\")`;\n    setAttr -av ($leftNode  + \".rotateX\") $rx;\n    setAttr -av ($rightNode + \".rotateX\") $lx;\n    $lx = `getAttr ($leftNode  + \".rotateY\")` * (-1);\n    $rx = `getAttr ($rightNode + \".rotateY\")` * (-1);\n    setAttr -av ($leftNode  + \".rotateY\") $rx;\n    setAttr -av ($rightNode + \".rotateY\") $lx;\n    $lx = `getAttr ($leftNode  + \".rotateZ\")`;\n    $rx = `getAttr ($rightNode + \".rotateZ\")`;\n    setAttr -av ($leftNode  + \".rotateZ\") $rx;\n    setAttr -av ($rightNode + \".rotateZ\") $lx;\n}\n\nundoInfo -openChunk;\n//hikGlobals -edit -rap false;\nswapReflect(\"Character1_Ctrl_LeftAnkleEffector\", \"Character1_Ctrl_RightAnkleEffector\");\nswapReflect(\"Character1_Ctrl_LeftFootEffector\",  \"Character1_Ctrl_RightFootEffector\");\n//swapReflect(\"Character1_Ctrl_LeftHipEffector\",   \"Character1_Ctrl_RightHipEffector\");\nswapReflect(\"Character1_Ctrl_LeftKneeEffector\",  \"Character1_Ctrl_RightKneeEffector\");\ninplaceReflect(\"Character1_Ctrl_HipsEffector\", \".rotateX\");\ninplaceReflect(\"Character1_Ctrl_ChestEndEffector\", \".rotateX\");\ninplaceReflect(\"Character1_Ctrl_HeadEffector\", \".rotateX\");\n//hikGlobals -edit -rap false;\nundoInfo -closeChunk;" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+
+} 

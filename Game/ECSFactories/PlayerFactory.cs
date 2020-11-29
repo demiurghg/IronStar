@@ -23,7 +23,7 @@ namespace IronStar.ECSFactories
 			var e = gs.Spawn();
 
 			//	rotate character's model to face along forward vector :
-			var transform	=	Matrix.RotationY( MathUtil.Pi ) * Matrix.Scaling(0.1f);
+			var transform	=	Matrix.RotationY( MathUtil.Pi*0 ) * Matrix.Scaling(0.1f);
 
 			e.AddComponent( new PlayerComponent() );
 

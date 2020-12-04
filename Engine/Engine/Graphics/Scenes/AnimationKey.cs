@@ -9,17 +9,21 @@ namespace Fusion.Engine.Graphics.Scenes
 {
 	public struct AnimationKey
 	{
-		public Vector3 Translation;
 		public Quaternion Rotation;
-		public Vector3 Scaling;
+		public Vector3 Translation;
+		public float Scaling;
+
+
+		public static readonly AnimationKey Identity = new AnimationKey( Matrix.Identity );
+
 
 		public AnimationKey( Matrix transform )
 		{
-			transform.Decompose( out Scaling, out Rotation, out Translation );
+			transform.DecomposeUniformScale( out Scaling, out Rotation, out Translation );
 		}
 
 
-		public AnimationKey( Vector3 t, Quaternion r, Vector3 s )
+		public AnimationKey( Vector3 t, Quaternion r, float s )
 		{
 			Translation	=	t;
 			Scaling		=	s;
@@ -40,7 +44,7 @@ namespace Fusion.Engine.Graphics.Scenes
 		{
 			var t = Vector3		.Lerp ( start.Translation, end.Translation, factor );
 			var r = Quaternion	.Slerp( start.Rotation	 , end.Rotation	  , factor );
-			var s = Vector3		.Lerp ( start.Scaling	 , end.Scaling	  , factor );
+			var s = MathUtil	.Lerp ( start.Scaling	 , end.Scaling	  , factor );
 
 			return new AnimationKey( t, r, s );
 		}

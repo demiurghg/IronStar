@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Fusion;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
+using Fusion.Core.Extensions;
 using Fusion.Engine.Graphics;
 using Fusion.Engine.Graphics.Scenes;
 using Fusion.Scripting;
@@ -18,6 +19,8 @@ namespace IronStar.Animation
 	{
 		int frameFrom = 0;
 		int frameTo = 0;
+
+
 
 		public override bool IsPlaying { get { return true; } }
 
@@ -46,16 +49,14 @@ namespace IronStar.Animation
 			set { frameTo = value; }
 		}
 
-		readonly AnimationTake take;
-
 		float	travalledDistance = 0;
 
 
-		Matrix[]	stance;
-		Matrix[]	rightLegUp;
-		Matrix[]	rightLegBack;
-		Matrix[]	leftLegUp;
-		Matrix[]	leftLegBack;
+		AnimationTake	takeWalk;
+		AnimationTake	takeIdle;
+		AnimationTake	takeRun;
+
+		AnimationKey[]	pose;
 
 
 		/// <summary>
@@ -63,22 +64,13 @@ namespace IronStar.Animation
 		/// </summary>
 		/// <param name="name">Take name. May be null, first track will be set</param>
 		/// <param name="blendMode"></param>
-		public GaitLayer( Scene scene, string channel, string takeName, AnimationBlendMode blendMode ) : base(scene, channel, blendMode)
+		public GaitLayer( Scene scene, string channel, AnimationBlendMode blendMode ) : base(scene, channel, blendMode)
 		{
-			this.take			=	scene.Takes[takeName];
-			travalledDistance	=	0;
+			takeWalk			=	scene.Takes["walk"];
+			takeIdle			=	scene.Takes["idle"];
+			takeRun				=	scene.Takes["run"];
 
-			if (take==null) 
-			{
-				Log.Warning("Take '{0}' does not exist", takeName );
-			}
-
-			stance			=	take.GetPose( 2 );
-
-			rightLegUp		=	take.GetPose( 3 );
-			rightLegBack	=	take.GetPose( 4 );
-			leftLegUp		=	take.GetPose( 5 );
-			leftLegBack		=	take.GetPose( 6 );
+			pose				=	new AnimationKey[ scene.Nodes.Count ];
 		}
 
 
@@ -112,33 +104,75 @@ namespace IronStar.Animation
 				return false; // bypass track
 			}
 
-			Frame = MathUtil.Clamp( Frame + take.FirstFrame, take.FirstFrame, take.LastFrame );
+			//Frame = MathUtil.Clamp( Frame + take.FirstFrame, take.FirstFrame, take.LastFrame );
 
+			ApplyIdleAnimation( gameTime );
 
-			float frame		=	travalledDistance / 1.7f * 0.32f * 2;
-			float factor	=	frame % 1.0f;
-			int frame0		=	(int)Math.Floor( frame );
-			int frame1		=	frame0 + 1;
-
-			int walkFrame0	=	GetWalkFrameIndex( frame0 );
-			int walkFrame1	=	GetWalkFrameIndex( frame1 );
-			int runFrame0	=	GetRunFrameIndex( frame0 );
-			int runFrame1	=	GetRunFrameIndex( frame1 );
-
-			for ( int chIdx = 0; chIdx < channelIndices.Length; chIdx++ ) 
+			for ( int i=0; i<nodeCount; i++ )
 			{
-				int nodeIndex	= channelIndices[ chIdx ];
-				var weight		= Weight;
-
-				Matrix key0		=	take.GetKey( runFrame0, nodeIndex );
-				Matrix key1		=	take.GetKey( runFrame1, nodeIndex );
-
-				Matrix key		=	AnimationUtils.Lerp( key0, key1, factor );
-
-				destination[nodeIndex] = key;
+				destination[i] = pose[i].Transform;
 			}
 
 			return true;
 		}
+
+
+
+		float idlePoseCooldownTimer = 0;
+		float idlePoseTransitionTime;
+		int currentIdlePose = -1;
+		int nextIdlePose = 0;
+		bool idleWaiting = false;
+
+		void ApplyIdleAnimation( GameTime gameTime )
+		{
+			float dt = gameTime.ElapsedSec;
+
+			if (idlePoseCooldownTimer<=0)
+			{
+				if (currentIdlePose!=nextIdlePose)
+				{
+					currentIdlePose			=	nextIdlePose;
+					idlePoseTransitionTime	=	MathUtil.Random.NextFloat( 0.7f, 1.2f );
+				}
+				else
+				{
+					currentIdlePose			=	nextIdlePose;
+					nextIdlePose			=	MathUtil.Random.Next( takeIdle.FrameCount );
+					idlePoseTransitionTime	=	MathUtil.Random.NextFloat( 0.5f, 0.6f );
+				}
+
+				idlePoseCooldownTimer	=	idlePoseTransitionTime;
+			}
+
+
+			var firstFrame	=	takeIdle.FirstFrame;
+			var factor		=	1.0f - MathUtil.Clamp( idlePoseCooldownTimer / idlePoseTransitionTime, 0, 1 );
+				factor		=	AnimationUtils.SlowFollowThrough(factor);
+			idlePoseCooldownTimer -= dt;
+
+			for ( int nodeIndex=0; nodeIndex<nodeCount; nodeIndex++ )
+			{
+				AnimationKey k0, k1;
+				takeIdle.GetKey( firstFrame + currentIdlePose, nodeIndex, out k0 ); 
+				takeIdle.GetKey( firstFrame + nextIdlePose, nodeIndex, out k1 ); 
+
+				var k = AnimationKey.Lerp( k0, k1, factor );
+
+				pose[nodeIndex]	=	k;
+			}
+		}
+
+
+
+		void ApplyLocomotionAnimation( float travelledDistance )
+		{
+			/*float frame		=	travalledDistance / 1.7f * 0.32f * 2;
+			float factor	=	frame % 1.0f;
+			int frame0		=	(int)Math.Floor( frame );
+			int frame1		=	frame0 + 1;			*/
+
+		}
+
 	}
 }

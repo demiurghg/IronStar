@@ -35,7 +35,7 @@ namespace IronStar.Monsters.Systems
 
 			composer		=	new AnimationComposer( fxPlayback, scene );
 
-			gaitLayer		=	new GaitLayer( scene, null, null, AnimationBlendMode.Override );
+			gaitLayer		=	new GaitLayer( scene, null, AnimationBlendMode.Override );
 
 			composer.Tracks.Add( gaitLayer );
 		}

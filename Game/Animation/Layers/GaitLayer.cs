@@ -17,43 +17,12 @@ namespace IronStar.Animation
 {
 	public class GaitLayer : BaseLayer 
 	{
-		int frameFrom = 0;
-		int frameTo = 0;
-
-
-
 		public override bool IsPlaying { get { return true; } }
 
-		public int Frame 
-		{ 
-			get 
-			{
-				return (frameFrom==frameTo) ? frameFrom : int.MaxValue;
-			}
-			set 
-			{
-				frameFrom = value;
-				frameTo   = value;
-			}
-		}
-
-		public int FrameFrom 
-		{ 
-			get { return frameFrom; }
-			set { frameFrom = value; }
-		}
-
-		public int FrameTo 
-		{ 
-			get { return frameTo; }
-			set { frameTo = value; }
-		}
-
-		float	travalledDistance = 0;
 
 
-		AnimationTake	takeWalk;
 		AnimationTake	takeIdle;
+		AnimationTake	takeWalk;
 		AnimationTake	takeRun;
 
 		AnimationKey[]	pose;
@@ -76,7 +45,7 @@ namespace IronStar.Animation
 
 		public void Advance( float groundVelocity, GameTime gameTime )
 		{
-			travalledDistance += groundVelocity * gameTime.ElapsedSec;
+			//travalledDistance += groundVelocity * gameTime.ElapsedSec;
 		}
 
 

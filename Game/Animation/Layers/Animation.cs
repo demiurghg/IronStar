@@ -53,7 +53,7 @@ namespace IronStar.Animation
 				next = MathUtil.Clamp( next + Take.FirstFrame, Take.FirstFrame, Take.LastFrame );
 			}
 				
-			Matrix prevT, nextT;
+			AnimationKey prevT, nextT;
 
 			if (useDelta) 
 			{
@@ -66,7 +66,7 @@ namespace IronStar.Animation
 				Take.GetKey( next, node, out nextT );
 			}
 
-			transform = AnimationUtils.Lerp( prevT, nextT, weight );
+			transform = AnimationKey.Lerp( prevT, nextT, weight ).Transform;
 		}
 	}
 }

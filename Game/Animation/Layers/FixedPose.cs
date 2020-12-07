@@ -90,17 +90,17 @@ namespace IronStar.Animation
 				var weight		= Weight;
 
 				Matrix dst		=	destination[nodeIndex];
-				Matrix src;
+				AnimationKey src;
 
 				if (additive) 
 				{
 					take.GetDeltaKey( Frame, nodeIndex, out src );
-					dst = AnimationUtils.Lerp( dst, dst * src, weight );
+					dst = AnimationUtils.Lerp( dst, dst * src.Transform, weight );
 				} 
 				else 
 				{
 					take.GetKey( Frame, nodeIndex, out src );
-					dst = AnimationUtils.Lerp( dst, src, weight );
+					dst = AnimationUtils.Lerp( dst, src.Transform, weight );
 				}
 
 				destination[nodeIndex] = dst;

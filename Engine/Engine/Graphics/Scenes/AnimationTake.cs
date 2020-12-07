@@ -159,6 +159,23 @@ namespace Fusion.Engine.Graphics.Scenes {
 		}
 
 
+		public void GetPose( int frame, AnimationBlendMode blendMode, AnimationKey[] pose )
+		{
+			if (pose.Length<NodeCount) throw new ArgumentException("Length of the pose array is less than number of nodes");
+
+			var key  = new AnimationKey();
+
+			for (int i=0; i<NodeCount; i++)
+			{
+				if (blendMode==AnimationBlendMode.Override)	GetKey( frame, i, out key ); else
+				if (blendMode==AnimationBlendMode.Additive)	GetDeltaKey( frame, i, out key ); else
+				throw new ArgumentException("blendMode");
+					
+				pose[i] = key;
+			}
+		}
+
+
 		/// <summary>
 		/// Sets anim key
 		/// </summary>
@@ -225,7 +242,7 @@ namespace Fusion.Engine.Graphics.Scenes {
 		/// <param name="frame"></param>
 		/// <param name="node"></param>
 		/// <param name="transform"></param>
-		public void GetDeltaKey ( int frame, int node, out Matrix transform )
+		public void GetDeltaKey ( int frame, int node, out AnimationKey key )
 		{
 			if (frame<FirstFrame) {
 				throw new ArgumentOutOfRangeException("frame < FirstFrame");
@@ -241,8 +258,7 @@ namespace Fusion.Engine.Graphics.Scenes {
 				throw new ArgumentOutOfRangeException("node >= NodeCount");
 			}
 
-			transform  = animDelta[ Address( frame - firstFrame, node ) ].Transform;
-
+			key  = animDelta[ Address( frame - firstFrame, node ) ];
 		}
 
 

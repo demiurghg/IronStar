@@ -81,6 +81,8 @@
     <Compile Include="AI\NavigationRouter.cs" />
     <Compile Include="Animation\BoneComponent.cs" />
     <Compile Include="Animation\Layers\GaitLayer.cs" />
+    <Compile Include="Animation\Layers\Pose.cs" />
+    <Compile Include="Animation\Layers\AnimationBlendMode.cs" />
     <Compile Include="BTCore\Blackboard.cs" />
     <Compile Include="BTCore\Decorators\Success.cs" />
     <Compile Include="BTCore\Decorators\Repeat.cs" />

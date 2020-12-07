@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fusion.Engine.Graphics.Scenes 
+namespace IronStar.Animation
 {
-	public enum AnimationWrapMode 
+	public enum BlendMode 
 	{
-		Clamp,
-		Repeat,
+		Override,
+		Additive,
 	}
 }

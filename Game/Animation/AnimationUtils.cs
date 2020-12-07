@@ -6,8 +6,34 @@ using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 
 namespace IronStar.Animation {
+
+	public enum AnimationCurve
+	{
+		LinearStep			,
+		SmoothStep			,
+		SmootherStep		,
+		QuadraticStep		,
+		SlowFollowThrough	,
+		FastFollowThrough	,
+	}
+
+
 	static class AnimationUtils 
 	{
+		public static float Curve( AnimationCurve curve, float x )
+		{
+			switch (curve)
+			{
+				case AnimationCurve.LinearStep			: return LinearStep			( x );
+				case AnimationCurve.SmoothStep			: return SmoothStep			( x );
+				case AnimationCurve.SmootherStep		: return SmootherStep		( x );
+				case AnimationCurve.QuadraticStep		: return QuadraticStep		( x );
+				case AnimationCurve.SlowFollowThrough	: return SlowFollowThrough	( x );
+				case AnimationCurve.FastFollowThrough	: return FastFollowThrough	( x );
+			}
+			return x;
+		}
+
 		public static float SmoothStep( float x )
 		{
 			return MathUtil.SmoothStep(x);

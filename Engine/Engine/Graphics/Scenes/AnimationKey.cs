@@ -48,5 +48,17 @@ namespace Fusion.Engine.Graphics.Scenes
 
 			return new AnimationKey( t, r, s );
 		}
+
+
+		public static AnimationKey Multiply( AnimationKey a, AnimationKey b )
+		{
+			return new AnimationKey( a.Transform * b.Transform );
+
+			/*var t	=	a.Translation	+	b.Translation;
+			var r	=	a.Rotation		*	b.Rotation;
+			var s	=	a.Scaling		+	b.Scaling;
+
+			return new AnimationKey(t,r,s);	 */
+		}
 	}
 }

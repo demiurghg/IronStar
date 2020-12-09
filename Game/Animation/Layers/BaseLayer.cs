@@ -24,6 +24,8 @@ namespace IronStar.Animation
 		readonly protected int[] channelIndices;
 		readonly protected int channelIndex;
 
+		public Scene Scene { get { return scene; } }
+
 
 		/// <summary>
 		/// 

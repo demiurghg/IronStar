@@ -27,10 +27,13 @@ namespace IronStar.Animation
 		Animation currentAnim;
 		Animation pendingAnim;
 
+		AnimationKey[] keyTransforms;
+
 
 		public TakeSequencer( Scene scene, string channel, AnimationBlendMode blendMode ) : base(scene, channel, blendMode)
 		{
-			trackTime	=	new TimeSpan(0);
+			trackTime		=	new TimeSpan(0);
+			keyTransforms	=	new AnimationKey[ scene.Nodes.Count ];
 		}
 
 
@@ -74,14 +77,15 @@ namespace IronStar.Animation
 			//	sequence take :
 			if (currentAnim==null || immediate) 
 			{
-				var anim	= new Animation ( trackTime, take, scene.TimeMode, looped, hold );
+				var anim	= new Animation ( this, trackTime, take, looped, hold );
 	
 				currentAnim	=	anim;
 				pendingAnim	=	null;
+				currentAnim.Play();
 			} 
 			else 
 			{
-				var anim	=	new Animation ( currentAnim.End, take, scene.TimeMode, looped, hold );
+				var anim	=	new Animation ( this, currentAnim.End, take, looped, hold );
 				pendingAnim	=	anim;
 			}
 		}
@@ -105,11 +109,26 @@ namespace IronStar.Animation
 		 *  Internal stuff :
 		-----------------------------------------------------------------------------------------*/
 
-		bool ApplyTransforms ( Matrix[] destination )
+		public void ApplyTransforms ( AnimationKey[] keys )
 		{
-			if ( currentAnim==null || Weight==0 ) {
+			var key = AnimationKey.Identity;
+
+			for (int nodeIndex=0; nodeIndex < nodeCount; nodeIndex++)
+			{
+				currentAnim.Sample( nodeIndex, trackTime, ref key );
+				keys[ nodeIndex ] = key;
+			}
+		}
+
+		public bool ApplyTransforms ( Matrix[] destination )
+		{
+			if ( currentAnim==null || Weight==0 ) 
+			{
 				return false; // bypass track
 			}
+
+			var	dst	=	Matrix.Identity;
+			var	src	=	AnimationKey.Identity;
 
 			bool additive = blendMode==AnimationBlendMode.Additive;
 
@@ -117,21 +136,20 @@ namespace IronStar.Animation
 			for ( int chIdx = 0; chIdx < channelIndices.Length; chIdx++ ) 
 			{
 				
-				int nodeIndex	= channelIndices[ chIdx ];
-				var weight		= Weight;
+				int nodeIndex	=	channelIndices[ chIdx ];
+				var weight		=	Weight;
 
-				Matrix dst		=	destination[nodeIndex];
-				Matrix src;
+				dst				=	destination[nodeIndex];
 
 				if (additive) 
 				{
-					currentAnim.GetKey( nodeIndex, trackTime, true, out src );
-					dst = AnimationUtils.Lerp( dst, dst * src, weight );
+					currentAnim.Sample( nodeIndex, trackTime, ref src );
+					dst = AnimationUtils.Lerp( dst, dst * src.Transform, weight );
 				} 
 				else 
 				{
-					currentAnim.GetKey( nodeIndex, trackTime, false, out src );
-					dst = AnimationUtils.Lerp( dst, src, weight );
+					currentAnim.Sample( nodeIndex, trackTime, ref src );
+					dst = AnimationUtils.Lerp( dst, src.Transform, weight );
 				}
 
 				destination[nodeIndex] = dst;

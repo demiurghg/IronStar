@@ -14,28 +14,91 @@ using IronStar.Animation;
 
 namespace IronStar.Animation
 {
-	class Animation 
+	abstract class AnimClip
 	{
-		readonly TimeMode timeMode;
-		public readonly AnimationTake Take;
+		readonly protected TakeSequencer sequencer;
+		readonly protected bool additive;
 		public readonly bool Looped;
 		public readonly bool Hold;
 		public			TimeSpan Start;
 		public readonly TimeSpan Length;
 		public TimeSpan End { get { return Start + Length; } }
 
-		public Animation ( TimeSpan startTime, AnimationTake take, TimeMode timeMode, bool looped, bool hold ) 
+		public AnimClip( TakeSequencer sequencer, TimeSpan startTime, TimeSpan length, bool looped, bool hold )
 		{
-			this.timeMode	=	timeMode;
+			this.sequencer	=	sequencer;
 			this.Start		=	startTime;
-			this.Take		=	take;
+			this.Length		=	length;
 			this.Looped		=	looped;
 			this.Hold		=	hold;
-			this.Length		=	Scene.ComputeFrameLength( take.FrameCount, timeMode );
+			this.Length		=	length;
+			this.additive	=	sequencer.blendMode==AnimationBlendMode.Additive;
+		}
+
+		public abstract void Play();
+		public abstract void Sample( int nodeIndex, TimeSpan time, ref AnimationKey key );
+	}
+
+
+	class Transition : AnimClip
+	{
+		AnimationKey[]	originPose;
+		AnimationKey[]	targetPose;
+		AnimationCurve	curve;
+		AnimationTake	take;
+
+		public Transition( TakeSequencer sequencer, AnimationTake take, int frame, AnimationCurve curve, TimeSpan startTime, TimeSpan length, bool looped, bool hold )
+		 : base(sequencer, startTime, length, looped, hold)
+		{
+			this.take	=	take;
+			this.curve	=	curve;
+			targetPose	=	new AnimationKey[ sequencer.Scene.Nodes.Count ];
+			originPose	=	new AnimationKey[ sequencer.Scene.Nodes.Count ];
+
+			frame		=	MathUtil.Clamp( frame + take.FirstFrame, take.FirstFrame, take.FirstFrame + take.FrameCount );
+
+			take.GetPose( frame, sequencer.blendMode, targetPose );
+		}
+
+		public override void Play()
+		{
+			
+		}
+
+		public override void Sample( int nodeIndex, TimeSpan time, ref AnimationKey key )
+		{
+			float factorTime	=	(float)((time.TotalMilliseconds - Start.TotalMilliseconds) / Length.TotalMilliseconds);
+			float factorCurve	=	AnimationUtils.Curve( curve, MathUtil.Saturate(factorTime) );
+
+			if (additive) 
+			{
+				key = AnimationKey.Lerp( AnimationKey.Identity, targetPose[nodeIndex], factorCurve );
+			} 
+			else 
+			{
+				key = AnimationKey.Lerp( originPose[nodeIndex], targetPose[nodeIndex], factorCurve );
+			}
+		}
+	}
+
+
+	class Animation : AnimClip 
+	{
+		readonly TimeMode timeMode;
+		public readonly AnimationTake Take;
+
+		public Animation ( TakeSequencer sequencer, TimeSpan startTime, AnimationTake take, bool looped, bool hold )
+		 : base( sequencer, startTime, Scene.ComputeFrameLength( take.FrameCount, sequencer.Scene.TimeMode ), looped, hold )
+		{
+			this.Take		=	take;
+			this.timeMode	=	sequencer.Scene.TimeMode;
 		}
 
 
-		public void GetKey ( int node, TimeSpan time, bool useDelta, out Matrix transform )
+		public override void Play()	{ /* do nothing */ }
+
+
+		public override void Sample ( int node, TimeSpan time, ref AnimationKey key )
 		{
 			int prev, next;
 			float weight;
@@ -55,7 +118,7 @@ namespace IronStar.Animation
 				
 			AnimationKey prevT, nextT;
 
-			if (useDelta) 
+			if (additive) 
 			{
 				Take.GetDeltaKey( prev, node, out prevT );
 				Take.GetDeltaKey( next, node, out nextT );
@@ -66,7 +129,7 @@ namespace IronStar.Animation
 				Take.GetKey( next, node, out nextT );
 			}
 
-			transform = AnimationKey.Lerp( prevT, nextT, weight ).Transform;
+			key = AnimationKey.Lerp( prevT, nextT, weight );
 		}
 	}
 }

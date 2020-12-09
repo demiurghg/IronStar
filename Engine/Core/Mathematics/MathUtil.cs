@@ -1006,7 +1006,7 @@ namespace Fusion.Core.Mathematics
 
 
 		/// <summary>
-		/// Returns float clamped to range -1,1
+		/// Returns float clamped to range 0,1
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>

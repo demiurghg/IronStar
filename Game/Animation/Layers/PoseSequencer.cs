@@ -24,6 +24,7 @@ namespace IronStar.Animation
 
 		Pose originPose;
 		Pose targetPose;
+		Pose pendingPose;
 
 		bool			transitionActive;
 		TimeSpan		time;
@@ -36,6 +37,7 @@ namespace IronStar.Animation
 			time				=	new TimeSpan(0);
 			originPose			=	new Pose( scene, blendMode );
 			targetPose			=	new Pose( scene, blendMode );
+			pendingPose			=	new Pose( scene, blendMode );
 			transitionActive	=	false;
 		}
 

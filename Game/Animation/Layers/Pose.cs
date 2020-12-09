@@ -18,6 +18,10 @@ namespace IronStar.Animation.Layers
 		public AnimationKey[] TargetPose { get { return targetPose; }	}
 		public AnimationBlendMode BlendMode { get { return blendMode; } }
 
+		TimeSpan		time;
+		TimeSpan		transitionTime;
+		AnimationCurve	transitionCurve;
+
 
 		public Pose( Scene scene, AnimationBlendMode blendMode )
 		{

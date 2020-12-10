@@ -14,11 +14,21 @@ using Fusion.Engine.Graphics.Scenes;
 using System.Runtime.CompilerServices;
 using IronStar.Gameplay.Components;
 using Fusion.Core.Extensions;
+using Fusion.Core.Configuration;
 
 namespace IronStar.Gameplay
 {
-	public class CameraSystem : ISystem
+	public class CameraSystem : ISystem, IGameComponent
 	{
+		[Config]
+		public bool EnableThirdPerson { get; set; }
+
+		[Config]
+		public float ThirdPersonRange { get; set; } = 8.0f;
+
+		[Config]
+		public float ThirdPersonAngle { get; set; } = 0.0f;
+
 		const string SOUND_LANDING	=	"player/landing"	;
 		const string SOUND_STEP		=	"player/step"		;
 		const string SOUND_JUMP		=	"player/jump"		;
@@ -62,6 +72,11 @@ namespace IronStar.Gameplay
 			composer.Tracks.Add( shake3 );
 
 			mainTrack.Sequence("stand", SequenceMode.Immediate|SequenceMode.Hold);
+		}
+
+
+		public void Initialize()
+		{
 		}
 
 		
@@ -126,8 +141,9 @@ namespace IronStar.Gameplay
 			var animatedCameraMatrix = animData[1];
 
 			//	update stuff :
-			var thirdPerson	=	GameConfig.UseThirdPersonCamera ? Matrix.Translation( Vector3.BackwardRH * 10 ) : Matrix.Identity;
-			var camMatrix	=	thirdPerson * rotatePR * animatedCameraMatrix * rotateYaw * translate;
+			var tpvTranslate	=	EnableThirdPerson ? Matrix.Translation( Vector3.BackwardRH * ThirdPersonRange ) : Matrix.Identity;
+			var tpvRotate		=	EnableThirdPerson ? Matrix.RotationY( MathUtil.DegreesToRadians( ThirdPersonAngle ) ) : Matrix.Identity;
+			var camMatrix		=	tpvTranslate * rotatePR * animatedCameraMatrix * tpvRotate * rotateYaw * translate;
 
 			var cameraPos	=	camMatrix.TranslationVector;
 

@@ -207,7 +207,7 @@ namespace IronStar.Animation
 			statePeriod		=	period;
 			stateTimer		=	0;
 
-			Log.Message("Anim FSM : {0} --> {1} : {2}", oldState, newState, period );
+			//Log.Message("Anim FSM : {0} --> {1} : {2}", oldState, newState, period );
 		}
 
 

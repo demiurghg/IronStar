@@ -41,9 +41,10 @@ namespace IronStar.Monsters.Systems
 		}
 
 
-		public void Update ( GameTime gameTime, Matrix worldTransform, Vector3 groundVelocity, Matrix[] bones )
+		public void Update ( GameTime gameTime, Matrix worldTransform, StepComponent step, Matrix[] bones )
 		{
-			gaitLayer.Advance( groundVelocity.Length(), gameTime );
+			gaitLayer.UpdateMonsterState( step );
+
 			//pose.Frame		=	3;//(int)(gameTime.Frames % 6);
 			composer.Update( gameTime, worldTransform, false, bones );
 		}

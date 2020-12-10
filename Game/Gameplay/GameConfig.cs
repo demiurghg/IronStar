@@ -22,7 +22,7 @@ namespace IronStar.Gameplay
 {
 	public partial class GameConfig : GameComponent 
 	{
-		public static bool UseThirdPersonCamera = true;
+		public static bool UseThirdPersonCamera = false;
 
 		[Config]
 		public float ThirdPersonCameraOffset { get; set; }

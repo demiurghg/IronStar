@@ -13,6 +13,7 @@ namespace IronStar.Animation {
 		SmoothStep			,
 		SmootherStep		,
 		QuadraticStep		,
+		QuadraticStepInv	,
 		SlowFollowThrough	,
 		FastFollowThrough	,
 	}
@@ -28,6 +29,7 @@ namespace IronStar.Animation {
 				case AnimationCurve.SmoothStep			: return SmoothStep			( x );
 				case AnimationCurve.SmootherStep		: return SmootherStep		( x );
 				case AnimationCurve.QuadraticStep		: return QuadraticStep		( x );
+				case AnimationCurve.QuadraticStepInv	: return QuadraticStepInv	( x );
 				case AnimationCurve.SlowFollowThrough	: return SlowFollowThrough	( x );
 				case AnimationCurve.FastFollowThrough	: return FastFollowThrough	( x );
 			}
@@ -47,6 +49,14 @@ namespace IronStar.Animation {
 
 
 		public static float QuadraticStep( float x )
+		{
+			if (x<0) return 0;
+			if (x>1) return 1;
+			return x * x;
+		}
+
+
+		public static float QuadraticStepInv( float x )
 		{
 			if (x<0) return 0;
 			if (x>1) return 1;
@@ -91,7 +101,7 @@ namespace IronStar.Animation {
 
 			if (x<p) 
 			{	
-				return QuadraticStep( x / p ) * ( 1 + h );
+				return QuadraticStepInv( x / p ) * ( 1 + h );
 			}
 			else
 			{
@@ -109,7 +119,7 @@ namespace IronStar.Animation {
 
 			if (x<p) 
 			{	
-				return QuadraticStep( x / p );
+				return QuadraticStepInv( x / p );
 			}
 			else
 			{

@@ -116,7 +116,8 @@ namespace IronStar.Animation
 				next = MathUtil.Clamp( next + Take.FirstFrame, Take.FirstFrame, Take.LastFrame );
 			}
 				
-			AnimationKey prevT, nextT;
+			var prevT = AnimationKey.Identity;
+			var nextT = AnimationKey.Identity;
 
 			if (additive) 
 			{
@@ -125,8 +126,8 @@ namespace IronStar.Animation
 			} 
 			else 
 			{
-				Take.GetKey( prev, node, out prevT );
-				Take.GetKey( next, node, out nextT );
+				Take.GetKey( prev, node, ref prevT );
+				Take.GetKey( next, node, ref nextT );
 			}
 
 			key = AnimationKey.Lerp( prevT, nextT, weight );

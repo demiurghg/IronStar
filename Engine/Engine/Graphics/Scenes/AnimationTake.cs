@@ -151,7 +151,7 @@ namespace Fusion.Engine.Graphics.Scenes {
 
 			for (int i=0; i<NodeCount; i++)
 			{
-				GetKey( frame, i, out key );
+				GetKey( frame, i, ref key );
 				pose[i] = key;
 			}
 
@@ -167,12 +167,20 @@ namespace Fusion.Engine.Graphics.Scenes {
 
 			for (int i=0; i<NodeCount; i++)
 			{
-				if (blendMode==AnimationBlendMode.Override)	GetKey( frame, i, out key ); else
+				if (blendMode==AnimationBlendMode.Override)	GetKey( frame, i, ref key ); else
 				if (blendMode==AnimationBlendMode.Additive)	GetDeltaKey( frame, i, out key ); else
 				throw new ArgumentException("blendMode");
 					
 				pose[i] = key;
 			}
+		}
+
+
+
+		public void GetKeyByIndex( int index, int node, ref AnimationKey key )
+		{
+			index	=	MathUtil.Clamp( index, 0, FrameCount-1 );
+			GetKey( index + firstFrame, node, ref key );
 		}
 
 
@@ -208,7 +216,7 @@ namespace Fusion.Engine.Graphics.Scenes {
 		/// <param name="frame"></param>
 		/// <param name="node"></param>
 		/// <param name="transform"></param>
-		public void GetKey ( int frame, int node, out AnimationKey key )
+		public void GetKey ( int frame, int node, ref AnimationKey key )
 		{
 			if (frame<FirstFrame) {
 				throw new ArgumentOutOfRangeException("frame < FirstFrame");

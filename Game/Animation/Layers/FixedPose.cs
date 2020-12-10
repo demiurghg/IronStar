@@ -89,8 +89,8 @@ namespace IronStar.Animation
 				int nodeIndex	= channelIndices[ chIdx ];
 				var weight		= Weight;
 
-				Matrix dst		=	destination[nodeIndex];
-				AnimationKey src;
+				var dst		=	destination[nodeIndex];
+				var src		=	AnimationKey.Identity;
 
 				if (additive) 
 				{
@@ -99,7 +99,7 @@ namespace IronStar.Animation
 				} 
 				else 
 				{
-					take.GetKey( Frame, nodeIndex, out src );
+					take.GetKey( Frame, nodeIndex, ref src );
 					dst = AnimationUtils.Lerp( dst, src.Transform, weight );
 				}
 

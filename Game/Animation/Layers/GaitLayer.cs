@@ -48,7 +48,7 @@ namespace IronStar.Animation
 		int				idlePoseCount;
 
 		bool			isWalking;
-		Vector3			gorundVelocity;
+		Vector3			groundVelocity;
 
 
 		/// <summary>
@@ -73,7 +73,7 @@ namespace IronStar.Animation
 		public void UpdateMonsterState ( StepComponent step )
 		{
 			isWalking		=	step.IsWalkingOrRunning;
-			gorundVelocity	=	step.GroundVelocity;
+			groundVelocity	=	step.GroundVelocity;
 		}
 
 
@@ -114,9 +114,11 @@ namespace IronStar.Animation
 		{
 			//	The average runner will have a cadence of 150 to 170 SPM (Steps Per Minute), 
 			//	while the fastest long-distance runners are up in the 180 to 200 SPM range.
-			float halfStepTime	=	60.0f / 160.0f * 0.5f;
 
-			float walkRunFactor	=	MathUtil.Saturate( (gorundVelocity.Length() / 20.0f - 0.2f) );
+			float walkRunFactor	=	MathUtil.Saturate( (groundVelocity.Length() / 20.0f - 0.2f) );
+			float runCadence	=	60.0f / 160.0f;
+			float walkCadence	=	60.0f / 100.0f;
+			float halfStepTime	=	MathUtil.Lerp( walkCadence, runCadence, walkRunFactor ) * 0.5f;
 
 			switch (state)
 			{

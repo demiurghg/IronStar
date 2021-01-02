@@ -26,6 +26,7 @@ namespace IronStar.Monsters.Systems
 		readonly AnimationComposer	composer;
 
 		readonly Sequencer		locomotionLayer;
+		readonly AnimationPose	tiltForward;
 		LocomotionStateMachine		locomotionFsm;
 
 
@@ -66,7 +67,7 @@ namespace IronStar.Monsters.Systems
 
 			protected override void Transition( LocomotionStates previous, LocomotionStates next )
 			{
-				var crossfade = TimeSpan.FromSeconds(0.25f);
+				var crossfade = TimeSpan.FromSeconds(0.125f);
 				if (next==LocomotionStates.Run)  layer.Sequence("run" , SequenceMode.Immediate|SequenceMode.Looped, crossfade);
 				if (next==LocomotionStates.Idle) layer.Sequence("idle", SequenceMode.Immediate|SequenceMode.Looped, crossfade);
 			}
@@ -82,14 +83,23 @@ namespace IronStar.Monsters.Systems
 
 			locomotionLayer		=	new Sequencer( scene, null, AnimationBlendMode.Override );
 			locomotionFsm		=	new LocomotionStateMachine( locomotionLayer );
+			tiltForward			=	new AnimationPose( scene, null, "tilt", AnimationBlendMode.Additive );
+			tiltForward.Weight	=	0;
+			tiltForward.Frame	=	2;
 
 			composer.Tracks.Add( locomotionLayer );
+			composer.Tracks.Add( tiltForward );
 		}
 
 
 		public void Update ( GameTime gameTime, Matrix worldTransform, StepComponent step, Matrix[] bones )
 		{
+			bool run = step.GroundVelocity.Length()>0.2f;
+
+			tiltForward.Weight = MathUtil.Clamp( tiltForward.Weight + (run ? 0.1f : -0.1f), 0, 1 );
+
 			composer.Update( gameTime, worldTransform, false, bones );
+			bones[1] = Matrix.RotationY( MathUtil.DegreesToRadians(25) ) * bones[1];
 			locomotionFsm.Update( step );
 		}
 	}

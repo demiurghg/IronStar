@@ -77,6 +77,7 @@
     <Compile Include="AI\Decorators\HasBlackboardValue.cs" />
     <Compile Include="AI\Decorators\AcquireToken.cs" />
     <Compile Include="AI\Decorators\HasTarget.cs" />
+    <Compile Include="AI\StateMachine.cs" />
     <Compile Include="AI\Systems\PerceptionSystem.cs" />
     <Compile Include="AI\NavigationRouter.cs" />
     <Compile Include="Animation\BoneComponent.cs" />

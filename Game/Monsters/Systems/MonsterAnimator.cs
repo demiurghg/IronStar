@@ -23,9 +23,53 @@ namespace IronStar.Monsters.Systems
 		readonly FXPlayback fxPlayback;
 		readonly PhysicsCore physics;
 
-		readonly AnimationComposer composer;
+		readonly AnimationComposer	composer;
 
-		readonly GaitLayer gaitLayer;
+		readonly TakeSequencer		locomotionLayer;
+		LocomotionStateMachine		locomotionFsm;
+
+
+		enum LocomotionStates { Idle, Run };
+		class LocomotionStateMachine : StateMachine<LocomotionStates, StepComponent>
+		{
+			TakeSequencer layer;
+
+			public LocomotionStateMachine(TakeSequencer layer) : base(LocomotionStates.Idle)
+			{
+				this.layer	=	layer;	
+				layer.Sequence("idle", SequenceMode.Immediate|SequenceMode.Looped);
+			}
+
+			LocomotionStates Idle(StepComponent step)
+			{
+				if (step.GroundVelocity.Length()>0.2f)
+				{
+					return LocomotionStates.Run;
+				}
+				else
+				{
+					return LocomotionStates.Idle;
+				}
+			}
+
+			LocomotionStates Run(StepComponent step)
+			{
+				if (step.GroundVelocity.Length()>0.2f)
+				{
+					return LocomotionStates.Run;
+				}
+				else
+				{
+					return LocomotionStates.Idle;
+				}
+			}
+
+			protected override void Transition( LocomotionStates previous, LocomotionStates next )
+			{
+				if (next==LocomotionStates.Run)  layer.Sequence("run" , SequenceMode.Immediate|SequenceMode.Looped);
+				if (next==LocomotionStates.Idle) layer.Sequence("idle", SequenceMode.Immediate|SequenceMode.Looped);
+			}
+		}
 
 
 		public MonsterAnimator( SFX.FXPlayback fxPlayback, Scene scene, PhysicsCore physics )
@@ -35,18 +79,17 @@ namespace IronStar.Monsters.Systems
 
 			composer		=	new AnimationComposer( fxPlayback, scene );
 
-			gaitLayer		=	new GaitLayer( scene, null, AnimationBlendMode.Override );
+			locomotionLayer		=	new TakeSequencer( scene, null, AnimationBlendMode.Override );
+			locomotionFsm		=	new LocomotionStateMachine( locomotionLayer );
 
-			composer.Tracks.Add( gaitLayer );
+			composer.Tracks.Add( locomotionLayer );
 		}
 
 
 		public void Update ( GameTime gameTime, Matrix worldTransform, StepComponent step, Matrix[] bones )
 		{
-			gaitLayer.UpdateMonsterState( step );
-
-			//pose.Frame		=	3;//(int)(gameTime.Frames % 6);
 			composer.Update( gameTime, worldTransform, false, bones );
+			locomotionFsm.Update( step );
 		}
 	}
 }

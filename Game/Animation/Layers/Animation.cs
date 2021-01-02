@@ -69,7 +69,7 @@ namespace IronStar.Animation
 
 			if (Hold) 
 			{
-				return AnimationUtils.Max( End, trackTime );
+				return AnimationUtils.Max( Start + Length, trackTime );
 			}
 
 			if (Looped) 

@@ -78,7 +78,8 @@ namespace IronStar.Animation
 			//	pass transformations through all tracks :
 			bool anim = false;
 
-			foreach ( var track in tracks ) {
+			foreach ( var track in tracks ) 
+			{
 				anim |= track.Evaluate( gameTime, localTransforms );
 			}
 
@@ -207,13 +208,13 @@ namespace IronStar.Animation
 		}
 
 
-		public TakeSequencer GetAdditiveIdleSequencer()
+		public Sequencer GetAdditiveIdleSequencer()
 		{
 			foreach ( var track in tracks )
 			{
-				if ( track is TakeSequencer )
+				if ( track is Sequencer )
 				{
-					var sequencer = (TakeSequencer)track;
+					var sequencer = (Sequencer)track;
 					
 					if (!sequencer.IsPlaying && sequencer.blendMode==AnimationBlendMode.Additive)
 					{

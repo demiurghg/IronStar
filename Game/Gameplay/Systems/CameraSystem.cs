@@ -40,11 +40,11 @@ namespace IronStar.Gameplay
 
 		Scene cameraScene;
 		AnimationComposer	composer;
-		TakeSequencer		mainTrack;
-		TakeSequencer		shake0;
-		TakeSequencer		shake1;
-		TakeSequencer		shake2;
-		TakeSequencer		shake3;
+		Sequencer		mainTrack;
+		Sequencer		shake0;
+		Sequencer		shake1;
+		Sequencer		shake2;
+		Sequencer		shake3;
 		Matrix[]			animData;
 		bool				dead = false;
 
@@ -59,11 +59,11 @@ namespace IronStar.Gameplay
 			animData		=	new Matrix[2];
 
 			composer	=	new AnimationComposer( fxPlayback, cameraScene );
-			mainTrack	=	new TakeSequencer( cameraScene, null, AnimationBlendMode.Override );
-			shake0		=	new TakeSequencer( cameraScene, null, AnimationBlendMode.Additive );
-			shake1		=	new TakeSequencer( cameraScene, null, AnimationBlendMode.Additive );
-			shake2		=	new TakeSequencer( cameraScene, null, AnimationBlendMode.Additive );
-			shake3		=	new TakeSequencer( cameraScene, null, AnimationBlendMode.Additive );
+			mainTrack	=	new Sequencer( cameraScene, null, AnimationBlendMode.Override );
+			shake0		=	new Sequencer( cameraScene, null, AnimationBlendMode.Additive );
+			shake1		=	new Sequencer( cameraScene, null, AnimationBlendMode.Additive );
+			shake2		=	new Sequencer( cameraScene, null, AnimationBlendMode.Additive );
+			shake3		=	new Sequencer( cameraScene, null, AnimationBlendMode.Additive );
 
 			composer.Tracks.Add( mainTrack );
 			composer.Tracks.Add( shake0 );

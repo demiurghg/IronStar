@@ -109,7 +109,7 @@
     <Compile Include="Animation\AnimationStack.cs" />
     <Compile Include="Animation\Layers\Animation.cs" />
     <Compile Include="Animation\Layers\SequenceMode.cs" />
-    <Compile Include="Animation\Layers\TakeSequencer.cs" />
+    <Compile Include="Animation\Layers\Sequencer.cs" />
     <Compile Include="Animation\ITransformProvider.cs" />
     <Compile Include="ECSFactories\PowerupFactory.cs" />
     <Compile Include="ECSFactories\ProjectileFactory.cs" />

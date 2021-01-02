@@ -16,27 +16,79 @@ namespace IronStar.Animation
 {
 	abstract class AnimClip
 	{
-		readonly protected TakeSequencer sequencer;
+		readonly protected Sequencer sequencer;
 		readonly protected bool additive;
 		public readonly bool Looped;
 		public readonly bool Hold;
-		public			TimeSpan Start;
-		public readonly TimeSpan Length;
-		public TimeSpan End { get { return Start + Length; } }
+		public	TimeSpan Start;
+		public	TimeSpan End;
+		public	TimeSpan Length;
+		public	TimeSpan Crossfade;
 
-		public AnimClip( TakeSequencer sequencer, TimeSpan startTime, TimeSpan length, bool looped, bool hold )
+		public bool IsInfinite { get { return End == TimeSpan.MaxValue; } }
+
+		public AnimClip( Sequencer sequencer, TimeSpan startTime, TimeSpan length, bool looped, bool hold )
 		{
 			this.sequencer	=	sequencer;
 			this.Start		=	startTime;
 			this.Length		=	length;
+			this.End		=	startTime + length;
 			this.Looped		=	looped;
 			this.Hold		=	hold;
-			this.Length		=	length;
+
+			if (looped || hold)
+			{
+				End	=	TimeSpan.MaxValue;
+			}
+
 			this.additive	=	sequencer.blendMode==AnimationBlendMode.Additive;
 		}
 
+		protected float GetCrossfadeFactor( TimeSpan trackTime )
+		{
+			if (Crossfade==TimeSpan.Zero) return 1;
+			
+			var localTime	=	trackTime - Start;
+
+			if ( localTime < TimeSpan.Zero ) return 0;
+			if ( localTime > Crossfade ) return 1;
+
+			var crossfadeSeconds	=	Crossfade.TotalSeconds;
+			var localTimeSeconds	=	localTime.TotalSeconds;
+
+			return (float)MathUtil.Saturate( localTimeSeconds / crossfadeSeconds );
+		}
+
+		
+		public TimeSpan GetTerminationTime( TimeSpan trackTime )
+		{
+			if (!Looped && !Hold) 
+			{
+				return End;
+			}
+
+			if (Hold) 
+			{
+				return AnimationUtils.Max( End, trackTime );
+			}
+
+			if (Looped) 
+			{
+				var localTicks	=	(trackTime - Start).Ticks;
+				var lengthTicks	=	Length.Ticks;
+				var loopCount	=	MathUtil.IntDivRoundUp( localTicks, lengthTicks );
+
+				var termTime	=	Start + new TimeSpan( loopCount * lengthTicks );
+			}
+
+			Log.Warning("GetTerminationTime -- bad hold/loop state");
+
+			return trackTime;
+		}
+
+
 		public abstract void Play();
-		public abstract void Sample( int nodeIndex, TimeSpan time, ref AnimationKey key );
+		public abstract float Sample( int nodeIndex, TimeSpan trackTime, ref AnimationKey key );
 	}
 
 
@@ -47,7 +99,7 @@ namespace IronStar.Animation
 		AnimationCurve	curve;
 		AnimationTake	take;
 
-		public Transition( TakeSequencer sequencer, AnimationTake take, int frame, AnimationCurve curve, TimeSpan startTime, TimeSpan length, bool looped, bool hold )
+		public Transition( Sequencer sequencer, AnimationTake take, int frame, AnimationCurve curve, TimeSpan startTime, TimeSpan length, bool looped, bool hold )
 		 : base(sequencer, startTime, length, looped, hold)
 		{
 			this.take	=	take;
@@ -65,9 +117,9 @@ namespace IronStar.Animation
 			
 		}
 
-		public override void Sample( int nodeIndex, TimeSpan time, ref AnimationKey key )
+		public override float Sample( int nodeIndex, TimeSpan trackTime, ref AnimationKey key )
 		{
-			float factorTime	=	(float)((time.TotalMilliseconds - Start.TotalMilliseconds) / Length.TotalMilliseconds);
+			float factorTime	=	(float)((trackTime.TotalMilliseconds - Start.TotalMilliseconds) / Length.TotalMilliseconds);
 			float factorCurve	=	AnimationUtils.Curve( curve, MathUtil.Saturate(factorTime) );
 
 			if (additive) 
@@ -78,6 +130,8 @@ namespace IronStar.Animation
 			{
 				key = AnimationKey.Lerp( originPose[nodeIndex], targetPose[nodeIndex], factorCurve );
 			}
+
+			return 1;
 		}
 	}
 
@@ -87,7 +141,7 @@ namespace IronStar.Animation
 		readonly TimeMode timeMode;
 		public readonly AnimationTake Take;
 
-		public Animation ( TakeSequencer sequencer, TimeSpan startTime, AnimationTake take, bool looped, bool hold )
+		public Animation ( Sequencer sequencer, TimeSpan startTime, AnimationTake take, bool looped, bool hold )
 		 : base( sequencer, startTime, Scene.ComputeFrameLength( take.FrameCount, sequencer.Scene.TimeMode ), looped, hold )
 		{
 			this.Take		=	take;
@@ -98,12 +152,13 @@ namespace IronStar.Animation
 		public override void Play()	{ /* do nothing */ }
 
 
-		public override void Sample ( int node, TimeSpan time, ref AnimationKey key )
+		public override float Sample ( int node, TimeSpan trackTime, ref AnimationKey key )
 		{
 			int prev, next;
 			float weight;
+			float crossfade = GetCrossfadeFactor(trackTime);
 
-			Scene.TimeToFrames( time - Start, timeMode, out prev, out next, out weight );
+			Scene.TimeToFrames( trackTime - Start, timeMode, out prev, out next, out weight );
 
 			if (Looped) 
 			{
@@ -131,6 +186,8 @@ namespace IronStar.Animation
 			}
 
 			key = AnimationKey.Lerp( prevT, nextT, weight );
+
+			return crossfade;
 		}
 	}
 }

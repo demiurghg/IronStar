@@ -207,5 +207,18 @@ namespace IronStar.Animation {
 				destination[i]	=	x;
 			}
 		}
+
+
+		public static TimeSpan Max( TimeSpan a, TimeSpan b )
+		{
+			if (a >= b)	return a;
+				else	return b;
+		}
+
+		public static TimeSpan Min( TimeSpan a, TimeSpan b )
+		{
+			if (a >= b)	return a;
+				else	return b;
+		}
 	}
 }

@@ -636,6 +636,14 @@ namespace Fusion.Core.Mathematics
 		/// <param name="b"></param>
 		/// <returns></returns>
 		static public uint IntDivRoundUp ( uint a, uint b ) { return ( a + b - 1 ) / b; }
+
+		/// <summary>
+		/// Divide a by b rounding result up
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
+		static public long IntDivRoundUp ( long a, long b ) { return ( a + b - 1 ) / b; }
 							 
 		/// <summary>
 		/// Checks whether value is odd

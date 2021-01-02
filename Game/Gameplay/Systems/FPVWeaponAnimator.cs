@@ -41,17 +41,17 @@ namespace IronStar.Gameplay.Systems
 
 		readonly Random rand = new Random();
 
-		TakeSequencer		trackWeapon;
-		TakeSequencer		trackBarrel;
-		TakeSequencer		trackShake0;
-		TakeSequencer		trackShake1;
-		TakeSequencer		trackShake2;
-		TakeSequencer		trackShake3;
+		Sequencer		trackWeapon;
+		Sequencer		trackBarrel;
+		Sequencer		trackShake0;
+		Sequencer		trackShake1;
+		Sequencer		trackShake2;
+		Sequencer		trackShake3;
 		AnimationPose		poseTilt;
 
 		AnimationComposer	composer;
 
-		TakeSequencer[]	shakeTracks;
+		Sequencer[]	shakeTracks;
 
 		RenderModelInstance	model;
 
@@ -69,12 +69,12 @@ namespace IronStar.Gameplay.Systems
 			this.model	=	model;
 			composer	=	new AnimationComposer( fxPlayback, model.Scene );
 
-			trackWeapon	=	new TakeSequencer( model.Scene, null, AnimationBlendMode.Override );
+			trackWeapon	=	new Sequencer( model.Scene, null, AnimationBlendMode.Override );
 
-			trackShake0	=	new TakeSequencer( model.Scene, null, AnimationBlendMode.Additive );
-			trackShake1	=	new TakeSequencer( model.Scene, null, AnimationBlendMode.Additive );
-			trackShake2	=	new TakeSequencer( model.Scene, null, AnimationBlendMode.Additive );
-			trackShake3	=	new TakeSequencer( model.Scene, null, AnimationBlendMode.Additive );
+			trackShake0	=	new Sequencer( model.Scene, null, AnimationBlendMode.Additive );
+			trackShake1	=	new Sequencer( model.Scene, null, AnimationBlendMode.Additive );
+			trackShake2	=	new Sequencer( model.Scene, null, AnimationBlendMode.Additive );
+			trackShake3	=	new Sequencer( model.Scene, null, AnimationBlendMode.Additive );
 
 			poseTilt	=	new AnimationPose( model.Scene, null, ANIM_TILT, AnimationBlendMode.Additive );
 			poseTilt.Weight = 0;

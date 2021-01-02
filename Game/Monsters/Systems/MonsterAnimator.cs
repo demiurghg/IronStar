@@ -25,19 +25,19 @@ namespace IronStar.Monsters.Systems
 
 		readonly AnimationComposer	composer;
 
-		readonly TakeSequencer		locomotionLayer;
+		readonly Sequencer		locomotionLayer;
 		LocomotionStateMachine		locomotionFsm;
 
 
 		enum LocomotionStates { Idle, Run };
 		class LocomotionStateMachine : StateMachine<LocomotionStates, StepComponent>
 		{
-			TakeSequencer layer;
+			Sequencer layer;
 
-			public LocomotionStateMachine(TakeSequencer layer) : base(LocomotionStates.Idle)
+			public LocomotionStateMachine(Sequencer layer) : base(LocomotionStates.Idle)
 			{
 				this.layer	=	layer;	
-				layer.Sequence("idle", SequenceMode.Immediate|SequenceMode.Looped);
+				layer.Sequence("idle", SequenceMode.Immediate|SequenceMode.Looped, TimeSpan.Zero);
 			}
 
 			LocomotionStates Idle(StepComponent step)
@@ -66,8 +66,9 @@ namespace IronStar.Monsters.Systems
 
 			protected override void Transition( LocomotionStates previous, LocomotionStates next )
 			{
-				if (next==LocomotionStates.Run)  layer.Sequence("run" , SequenceMode.Immediate|SequenceMode.Looped);
-				if (next==LocomotionStates.Idle) layer.Sequence("idle", SequenceMode.Immediate|SequenceMode.Looped);
+				var crossfade = TimeSpan.FromSeconds(0.25f);
+				if (next==LocomotionStates.Run)  layer.Sequence("run" , SequenceMode.Immediate|SequenceMode.Looped, crossfade);
+				if (next==LocomotionStates.Idle) layer.Sequence("idle", SequenceMode.Immediate|SequenceMode.Looped, crossfade);
 			}
 		}
 
@@ -79,7 +80,7 @@ namespace IronStar.Monsters.Systems
 
 			composer		=	new AnimationComposer( fxPlayback, scene );
 
-			locomotionLayer		=	new TakeSequencer( scene, null, AnimationBlendMode.Override );
+			locomotionLayer		=	new Sequencer( scene, null, AnimationBlendMode.Override );
 			locomotionFsm		=	new LocomotionStateMachine( locomotionLayer );
 
 			composer.Tracks.Add( locomotionLayer );

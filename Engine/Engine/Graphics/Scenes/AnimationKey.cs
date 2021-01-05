@@ -50,6 +50,12 @@ namespace Fusion.Engine.Graphics.Scenes
 		}
 
 
+		public static AnimationKey operator * ( AnimationKey a, AnimationKey b )
+		{
+			return Multiply(a,b);
+		}
+
+
 		public static AnimationKey Multiply( AnimationKey a, AnimationKey b )
 		{
 			return new AnimationKey( a.Transform * b.Transform );

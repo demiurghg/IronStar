@@ -57,6 +57,9 @@ namespace IronStar.Animation
 		}
 
 
+		//protected abstract void ApplyNodeTransform( int nodeIndex, bool additive, ref Matrix nodeTransform );
+
+
 		/// <summary>
 		/// 
 		/// </summary>

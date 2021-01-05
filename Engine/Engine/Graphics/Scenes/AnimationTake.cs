@@ -28,6 +28,16 @@ namespace Fusion.Engine.Graphics.Scenes {
 		readonly int		lastFrame;
 
 		/// <summary>
+		/// Returns clamed frame index
+		/// </summary>
+		/// <param name="frameIndex"></param>
+		/// <returns></returns>
+		public int ClampFrameIndex( int frameIndex )
+		{
+			return MathUtil.Clamp( frameIndex, FirstFrame, LastFrame );
+		}
+
+		/// <summary>
 		/// Gets take name
 		/// </summary>
 		public string Name { get { return name; } }

@@ -30,6 +30,7 @@ namespace IronStar.Gameplay.Components
 
 		public Vector3	GroundVelocity;
 		public float	FallVelocity;
+		public Vector3	LocalAcceleration;
 
 		public void Load( GameState gs, Stream stream )
 		{

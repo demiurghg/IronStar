@@ -26,7 +26,7 @@ namespace IronStar.Monsters.Systems
 		readonly AnimationComposer	composer;
 
 		readonly Sequencer		locomotionLayer;
-		readonly AnimationPose	tiltForward;
+		readonly BlendSpaceD4	tiltForward;
 		LocomotionStateMachine		locomotionFsm;
 
 
@@ -83,9 +83,7 @@ namespace IronStar.Monsters.Systems
 
 			locomotionLayer		=	new Sequencer( scene, null, AnimationBlendMode.Override );
 			locomotionFsm		=	new LocomotionStateMachine( locomotionLayer );
-			tiltForward			=	new AnimationPose( scene, null, "tilt", AnimationBlendMode.Additive );
-			tiltForward.Weight	=	0;
-			tiltForward.Frame	=	2;
+			tiltForward			=	new BlendSpaceD4( scene, null, "tilt", AnimationBlendMode.Additive );
 
 			composer.Tracks.Add( locomotionLayer );
 			composer.Tracks.Add( tiltForward );
@@ -96,7 +94,12 @@ namespace IronStar.Monsters.Systems
 		{
 			bool run = step.GroundVelocity.Length()>0.2f;
 
-			tiltForward.Weight = MathUtil.Clamp( tiltForward.Weight + (run ? 0.1f : -0.1f), 0, 1 );
+			var accel = Vector3.TransformNormal( step.LocalAcceleration, Matrix.Invert(worldTransform) );
+
+			tiltForward.Weight = 1;
+			tiltForward.FactorX	=	-accel.Z / 100.0f;
+			tiltForward.FactorY	=	 accel.X / 100.0f;
+
 
 			composer.Update( gameTime, worldTransform, false, bones );
 			bones[1] = Matrix.RotationY( MathUtil.DegreesToRadians(25) ) * bones[1];

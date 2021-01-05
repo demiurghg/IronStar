@@ -82,7 +82,6 @@
     <Compile Include="AI\NavigationRouter.cs" />
     <Compile Include="Animation\BoneComponent.cs" />
     <Compile Include="Animation\Layers\GaitLayer.cs" />
-    <Compile Include="Animation\Layers\Pose.cs" />
     <Compile Include="Animation\Layers\AnimationBlendMode.cs" />
     <Compile Include="BTCore\Blackboard.cs" />
     <Compile Include="BTCore\Decorators\Success.cs" />
@@ -104,7 +103,7 @@
     <Compile Include="AI\Systems\BehaviorSystem.cs" />
     <Compile Include="AI\Systems\NavigationSystem.cs" />
     <Compile Include="Animation\AnimationComposer.cs" />
-    <Compile Include="Animation\Layers\FixedPose.cs" />
+    <Compile Include="Animation\Layers\BlendSpace.cs" />
     <Compile Include="Animation\Layers\BaseLayer.cs" />
     <Compile Include="Animation\AnimationStack.cs" />
     <Compile Include="Animation\Layers\Animation.cs" />

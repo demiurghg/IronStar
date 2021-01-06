@@ -1569,5 +1569,44 @@ namespace Fusion.Core.Mathematics
             return new Vector2(value.X, value.Y);
         }
 #endif
+
+		/// <summary>
+		/// Moves current vector to target vector with given velocity.
+		/// If distance is less than velocity current vector becomes equal target.
+		/// </summary>
+		/// <param name="current"></param>
+		/// <param name="target"></param>
+		/// <param name="velocity"></param>
+		public void MoveTo( Vector2 target, float velocity )
+		{
+			var delta		=	target - this;
+			var distance	=	delta.Length();
+
+			if ( distance<velocity || distance < float.Epsilon*256 )
+			{
+				this = target;
+				this = target;
+				this = target;
+			}
+			else
+			{
+				delta /= distance;
+				this = this + delta * velocity;
+			}
+		}
+
+
+		/// <summary>
+		/// Moves current vector to target vector with given velocity.
+		/// If distance is less than velocity current vector becomes equal target.
+		/// </summary>
+		/// <param name="current"></param>
+		/// <param name="target"></param>
+		/// <param name="velocity"></param>
+		public static Vector2 MoveTo( Vector2 current, Vector2 target, float velocity )
+		{
+			current.MoveTo( target, velocity );
+			return current;
+		}
     }
 }

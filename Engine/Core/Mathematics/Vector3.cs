@@ -1872,5 +1872,30 @@ namespace Fusion.Core.Mathematics
             return new Vector3(value.X, value.Y, value.Z);
         }
 #endif
+
+		/// <summary>
+		/// Moves current vector to target vector with given velocity.
+		/// If distance is less than velocity current vector becomes equal target.
+		/// </summary>
+		/// <param name="current"></param>
+		/// <param name="target"></param>
+		/// <param name="velocity"></param>
+		public void MoveTo( ref Vector3 target, float velocity )
+		{
+			var delta		=	target - this;
+			var distance	=	delta.Length();
+
+			if ( distance<velocity || distance < float.Epsilon*256 )
+			{
+				this = target;
+				this = target;
+				this = target;
+			}
+			else
+			{
+				delta /= distance;
+				this = this + delta * velocity;
+			}
+		}
     }
 }

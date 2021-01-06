@@ -56,15 +56,25 @@ namespace Fusion.Engine.Graphics.Scenes
 		}
 
 
+		public static void Multiply( ref AnimationKey a, ref AnimationKey b, ref AnimationKey combined )
+		{
+			combined.Scaling = 1;
+			Vector3 intermediate;
+			Quaternion.Transform(ref a.Translation, ref b.Rotation, out intermediate);
+			Vector3.Add(ref intermediate, ref b.Translation, out combined.Translation);
+			Quaternion.Multiply(ref a.Rotation, ref b.Rotation, out combined.Rotation);
+		}
+
+
 		public static AnimationKey Multiply( AnimationKey a, AnimationKey b )
 		{
+			var key = new AnimationKey();
+
+			Multiply( ref a, ref b, ref key );
+
+			return key;//*/
+
 			return new AnimationKey( a.Transform * b.Transform );
-
-			/*var t	=	a.Translation	+	b.Translation;
-			var r	=	a.Rotation		*	b.Rotation;
-			var s	=	a.Scaling		+	b.Scaling;
-
-			return new AnimationKey(t,r,s);	 */
 		}
 	}
 }

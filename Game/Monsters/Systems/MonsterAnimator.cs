@@ -27,51 +27,11 @@ namespace IronStar.Monsters.Systems
 
 		readonly Sequencer		locomotionLayer;
 		readonly BlendSpaceD4	tiltForward;
-		LocomotionStateMachine		locomotionFsm;
+		//LocomotionStateMachine		locomotionFsm;
 
 
-		enum LocomotionStates { Idle, Run };
-		class LocomotionStateMachine : StateMachine<LocomotionStates, StepComponent>
-		{
-			Sequencer layer;
-
-			public LocomotionStateMachine(Sequencer layer) : base(LocomotionStates.Idle)
-			{
-				this.layer	=	layer;	
-				layer.Sequence("idle", SequenceMode.Immediate|SequenceMode.Looped, TimeSpan.Zero);
-			}
-
-			LocomotionStates Idle(StepComponent step)
-			{
-				if (step.GroundVelocity.Length()>0.2f)
-				{
-					return LocomotionStates.Run;
-				}
-				else
-				{
-					return LocomotionStates.Idle;
-				}
-			}
-
-			LocomotionStates Run(StepComponent step)
-			{
-				if (step.GroundVelocity.Length()>0.2f)
-				{
-					return LocomotionStates.Run;
-				}
-				else
-				{
-					return LocomotionStates.Idle;
-				}
-			}
-
-			protected override void Transition( LocomotionStates previous, LocomotionStates next )
-			{
-				var crossfade = TimeSpan.FromSeconds(0.125f);
-				if (next==LocomotionStates.Run)  layer.Sequence("run" , SequenceMode.Immediate|SequenceMode.Looped, crossfade);
-				if (next==LocomotionStates.Idle) layer.Sequence("idle", SequenceMode.Immediate|SequenceMode.Looped, crossfade);
-			}
-		}
+		enum LocomotionState { Initial, Idle, Run };
+		LocomotionState locomotionState = LocomotionState.Initial;
 
 
 		public MonsterAnimator( SFX.FXPlayback fxPlayback, Scene scene, PhysicsCore physics )
@@ -82,28 +42,57 @@ namespace IronStar.Monsters.Systems
 			composer		=	new AnimationComposer( fxPlayback, scene );
 
 			locomotionLayer		=	new Sequencer( scene, null, AnimationBlendMode.Override );
-			locomotionFsm		=	new LocomotionStateMachine( locomotionLayer );
-			tiltForward			=	new BlendSpaceD4( scene, null, "tilt", AnimationBlendMode.Additive );
+			tiltForward			=	new BlendSpaceD4( scene, "spine1", "rotation", AnimationBlendMode.Additive );
 
 			composer.Tracks.Add( locomotionLayer );
 			composer.Tracks.Add( tiltForward );
 		}
 
 
-		public void Update ( GameTime gameTime, Matrix worldTransform, StepComponent step, Matrix[] bones )
+
+		public void UpdateLocomotionState( GameTime gameTime, StepComponent step, UserCommandComponent uc )
 		{
+			bool run		=	new Vector2( uc.MoveForward, uc.MoveRight ).Length() > 0.1f;
+			var crossfade	=	TimeSpan.FromSeconds(0.125f);
+
+			switch (locomotionState)
+			{
+			case LocomotionState.Initial:
+				locomotionLayer.Sequence("idle" , SequenceMode.Immediate|SequenceMode.Looped);
+				locomotionState = LocomotionState.Idle;
+				break;
+
+			case LocomotionState.Idle:
+				if (run) 
+				{
+					locomotionLayer.Sequence("run" , SequenceMode.Immediate|SequenceMode.Looped, crossfade);
+					locomotionState = LocomotionState.Run;
+				}
+				break;
+
+			case LocomotionState.Run:
+				if (!run) 
+				{
+					locomotionLayer.Sequence("idle" , SequenceMode.Immediate|SequenceMode.Looped, crossfade);
+					locomotionState = LocomotionState.Idle;
+				}
+				break;
+			}
+		}
+
+
+		public void Update ( GameTime gameTime, Matrix worldTransform, StepComponent step, UserCommandComponent uc, Matrix[] bones )
+		{
+			UpdateLocomotionState( gameTime, step, uc );
+
 			bool run = step.GroundVelocity.Length()>0.2f;
 
 			var accel = Vector3.TransformNormal( step.LocalAcceleration, Matrix.Invert(worldTransform) );
 
-			tiltForward.Weight = 1;
-			tiltForward.FactorX	=	-accel.Z / 100.0f;
-			tiltForward.FactorY	=	 accel.X / 100.0f;
-
+			tiltForward.Weight	=	1;
+			tiltForward.Factor	=	Vector2.MoveTo( tiltForward.Factor, new Vector2( uc.MoveForward, uc.MoveRight ), gameTime.ElapsedSec * 8 );
 
 			composer.Update( gameTime, worldTransform, false, bones );
-			bones[1] = Matrix.RotationY( MathUtil.DegreesToRadians(25) ) * bones[1];
-			locomotionFsm.Update( step );
 		}
 	}
 }

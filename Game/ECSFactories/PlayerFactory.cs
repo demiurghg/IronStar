@@ -27,7 +27,7 @@ namespace IronStar.ECSFactories
 
 			e.AddComponent( new PlayerComponent() );
 
-			/*e.AddComponent( new RenderModel("scenes\\monsters\\marine\\marine_anim", transform, Color.Red, 7, RMFlags.None ) );
+			e.AddComponent( new RenderModel("scenes\\monsters\\marine\\marine_anim", transform, Color.Red, 7, RMFlags.None ) );
 			e.AddComponent( new BoneComponent() ); //*/
 
 			e.AddComponent( new HealthComponent(100,0) );

@@ -122,11 +122,24 @@ namespace IronStar.Animation
 
 	public class BlendSpaceD4 : BlendSpace
 	{
-		public float FactorX { get { return factorX; } set { factorX = MathUtil.Clamp( value, -1f, 1f ); } }
-		public float FactorY { get { return factorY; } set { factorY = MathUtil.Clamp( value, -1f, 1f ); } }
+		//public float FactorX { get { return factorX; } set { factorX = MathUtil.Clamp( value, -1f, 1f ); } }
+		//public float FactorY { get { return factorY; } set { factorY = MathUtil.Clamp( value, -1f, 1f ); } }
 
-		float factorX = 0;
-		float factorY = 0;
+		public Vector2 Factor 
+		{
+			get 
+			{ 
+				return factor;
+			}
+			set 
+			{
+				factor	=	value;
+				factor.X =  MathUtil.Clamp( factor.X, -1f, 1f );
+				factor.Y =  MathUtil.Clamp( factor.Y, -1f, 1f );
+			}
+		}
+
+		Vector2 factor;
 
 		//	frame indices
 		readonly int f0,f1,f2,f3,f4; 
@@ -147,10 +160,8 @@ namespace IronStar.Animation
 			var keyY = AnimationKey.Identity;
 			var key0 = AnimationKey.Identity;
 
-			var factor = MathUtil.Saturate( new Vector2( FactorX, FactorY ).Length() );
-
-			take.GetDeltaKey( FactorX > 0 ? f1 : f2, nodeIndex, out keyX );
-			take.GetDeltaKey( FactorY > 0 ? f3 : f4, nodeIndex, out keyY );
+			take.GetDeltaKey( factor.X > 0 ? f1 : f2, nodeIndex, out keyX );
+			take.GetDeltaKey( factor.Y > 0 ? f3 : f4, nodeIndex, out keyY );
 
 			if (additive)	
 			{
@@ -161,8 +172,8 @@ namespace IronStar.Animation
 				take.GetKey( f0, nodeIndex, ref key0 );
 			}
 
-			key0	=	AnimationKey.Lerp( key0, key0 * keyX, Math.Abs( FactorX ) );
-			key0	=	AnimationKey.Lerp( key0, key0 * keyY, Math.Abs( FactorY ) );
+			key0	=	AnimationKey.Lerp( key0, key0 * keyX, Math.Abs( factor.X ) );
+			key0	=	AnimationKey.Lerp( key0, key0 * keyY, Math.Abs( factor.Y ) );
 
 			key		=	key0;
 		}

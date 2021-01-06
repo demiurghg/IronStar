@@ -55,7 +55,8 @@ namespace IronStar.Monsters.Systems
 		{
 			var bones		=	entity.GetComponent<BoneComponent>();
 			var transform	=	entity.GetComponent<Transform>();
-			animator?.Update( gameTime, transform.TransformMatrix, step, bones.Bones );
+			var uc			=	entity.GetComponent<UserCommandComponent>();
+			animator?.Update( gameTime, transform.TransformMatrix, step, uc, bones.Bones );
 		}
 	}
 }

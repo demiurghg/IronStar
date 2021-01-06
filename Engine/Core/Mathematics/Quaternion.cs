@@ -1223,6 +1223,64 @@ namespace Fusion.Core.Mathematics
         }
 
         /// <summary>
+        /// Transforms the vector using a quaternion.
+        /// </summary>
+        /// <param name="v">Vector to transform.</param>
+        /// <param name="rotation">Rotation to apply to the vector.</param>
+        /// <param name="result">Transformed vector.</param>
+        public static void Transform(ref Vector3 v, ref Quaternion rotation, out Vector3 result)
+        {
+            //This operation is an optimized-down version of v' = q * v * q^-1.
+            //The expanded form would be to treat v as an 'axis only' quaternion
+            //and perform standard quaternion multiplication.  Assuming q is normalized,
+            //q^-1 can be replaced by a conjugation.
+            float x2 = rotation.X + rotation.X;
+            float y2 = rotation.Y + rotation.Y;
+            float z2 = rotation.Z + rotation.Z;
+            float xx2 = rotation.X * x2;
+            float xy2 = rotation.X * y2;
+            float xz2 = rotation.X * z2;
+            float yy2 = rotation.Y * y2;
+            float yz2 = rotation.Y * z2;
+            float zz2 = rotation.Z * z2;
+            float wx2 = rotation.W * x2;
+            float wy2 = rotation.W * y2;
+            float wz2 = rotation.W * z2;
+            //Defer the component setting since they're used in computation.
+            float transformedX = v.X * (1f - yy2 - zz2) + v.Y * (xy2 - wz2) + v.Z * (xz2 + wy2);
+            float transformedY = v.X * (xy2 + wz2) + v.Y * (1f - xx2 - zz2) + v.Z * (yz2 - wx2);
+            float transformedZ = v.X * (xz2 - wy2) + v.Y * (yz2 + wx2) + v.Z * (1f - xx2 - yy2);
+            result.X = transformedX;
+            result.Y = transformedY;
+            result.Z = transformedZ;
+
+        }
+
+
+        /// <summary>
+        /// Multiplies two quaternions together in opposite order.
+        /// </summary>
+        /// <param name="a">First quaternion to multiply.</param>
+        /// <param name="b">Second quaternion to multiply.</param>
+        /// <param name="result">Product of the multiplication.</param>
+        public static void Concatenate(ref Quaternion a, ref Quaternion b, out Quaternion result)
+        {
+            float aX = a.X;
+            float aY = a.Y;
+            float aZ = a.Z;
+            float aW = a.W;
+            float bX = b.X;
+            float bY = b.Y;
+            float bZ = b.Z;
+            float bW = b.W;
+
+            result.X = aW * bX + aX * bW + aZ * bY - aY * bZ;
+            result.Y = aW * bY + aY * bW + aX * bZ - aZ * bX;
+            result.Z = aW * bZ + aZ * bW + aY * bX - aX * bY;
+            result.W = aW * bW - aX * bX - aY * bY - aZ * bZ;
+        }
+
+        /// <summary>
         /// Adds two quaternions.
         /// </summary>
         /// <param name="left">The first quaternion to add.</param>

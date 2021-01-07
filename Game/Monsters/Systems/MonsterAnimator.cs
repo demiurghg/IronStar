@@ -30,8 +30,9 @@ namespace IronStar.Monsters.Systems
 		//LocomotionStateMachine		locomotionFsm;
 
 
-		enum LocomotionState { Initial, Idle, Run };
+		enum LocomotionState { Initial, Idle, Run, Jump, Landing };
 		LocomotionState locomotionState = LocomotionState.Initial;
+		TimeSpan locomotionTimer;
 
 
 		public MonsterAnimator( SFX.FXPlayback fxPlayback, Scene scene, PhysicsCore physics )
@@ -42,7 +43,7 @@ namespace IronStar.Monsters.Systems
 			composer		=	new AnimationComposer( fxPlayback, scene );
 
 			locomotionLayer		=	new Sequencer( scene, null, AnimationBlendMode.Override );
-			tiltForward			=	new BlendSpaceD4( scene, "spine1", "rotation", AnimationBlendMode.Additive );
+			tiltForward			=	new BlendSpaceD4( scene, null, "tilt", AnimationBlendMode.Additive );
 
 			composer.Tracks.Add( locomotionLayer );
 			composer.Tracks.Add( tiltForward );
@@ -52,8 +53,18 @@ namespace IronStar.Monsters.Systems
 
 		public void UpdateLocomotionState( GameTime gameTime, StepComponent step, UserCommandComponent uc )
 		{
-			bool run		=	new Vector2( uc.MoveForward, uc.MoveRight ).Length() > 0.1f;
+			var run			=	new Vector2( uc.MoveForward, uc.MoveRight ).Length() > 0.1f;
+			var traction	=	step.HasTraction;
 			var crossfade	=	TimeSpan.FromSeconds(0.125f);
+			var landTime	=	TimeSpan.FromSeconds(0.2f);
+			var timeout		=	false;
+			var endAnim		=	!locomotionLayer.IsPlaying;
+			
+			if (locomotionTimer>TimeSpan.Zero)
+			{
+				locomotionTimer -= gameTime.Elapsed;
+				timeout = locomotionTimer <= TimeSpan.Zero;
+			}
 
 			switch (locomotionState)
 			{
@@ -63,21 +74,50 @@ namespace IronStar.Monsters.Systems
 				break;
 
 			case LocomotionState.Idle:
-				if (run) 
+				if (run && traction) 
 				{
 					locomotionLayer.Sequence("run" , SequenceMode.Immediate|SequenceMode.Looped, crossfade);
 					locomotionState = LocomotionState.Run;
 				}
+				if (!traction) 
+				{
+					locomotionLayer.Sequence("jump" , SequenceMode.Immediate|SequenceMode.Hold);
+					locomotionState = LocomotionState.Jump;
+				}
 				break;
 
 			case LocomotionState.Run:
-				if (!run) 
+				if (!run && traction) 
 				{
 					locomotionLayer.Sequence("idle" , SequenceMode.Immediate|SequenceMode.Looped, crossfade);
 					locomotionState = LocomotionState.Idle;
 				}
+				if (!traction)
+				{
+					locomotionLayer.Sequence("jump" , SequenceMode.Immediate|SequenceMode.Hold);
+					locomotionState = LocomotionState.Jump;
+				}
+				break;
+
+			case LocomotionState.Jump:
+				if (traction)
+				{
+					locomotionLayer.Sequence("land" , SequenceMode.Immediate);
+					locomotionState = LocomotionState.Landing;
+					locomotionTimer = landTime;
+				}
+				break;
+
+			case LocomotionState.Landing:
+				if (timeout)
+				{
+					locomotionLayer.Sequence("idle" , SequenceMode.Immediate, crossfade);
+					locomotionState = LocomotionState.Idle;
+				}
 				break;
 			}
+
+
 		}
 
 
@@ -85,12 +125,13 @@ namespace IronStar.Monsters.Systems
 		{
 			UpdateLocomotionState( gameTime, step, uc );
 
-			bool run = step.GroundVelocity.Length()>0.2f;
+			var run			= step.GroundVelocity.Length()>0.2f;
+			var traction	= step.HasTraction;
 
 			var accel = Vector3.TransformNormal( step.LocalAcceleration, Matrix.Invert(worldTransform) );
 
 			tiltForward.Weight	=	1;
-			tiltForward.Factor	=	Vector2.MoveTo( tiltForward.Factor, new Vector2( uc.MoveForward, uc.MoveRight ), gameTime.ElapsedSec * 8 );
+			tiltForward.Factor	=	Vector2.MoveTo( tiltForward.Factor, new Vector2( uc.MoveForward, uc.MoveRight ) * (traction?1:0), gameTime.ElapsedSec * 8 );
 
 			composer.Update( gameTime, worldTransform, false, bones );
 		}

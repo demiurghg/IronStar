@@ -74,6 +74,7 @@ namespace IronStar.Animation
 			var looped		=	sequenceMode.HasFlag( SequenceMode.Looped );
 			var hold		=	sequenceMode.HasFlag( SequenceMode.Hold );
 			var noTwice		=	sequenceMode.HasFlag( SequenceMode.DontPlayTwice );
+			var reverse		=	sequenceMode.HasFlag( SequenceMode.Reverse );
 
 			//	looped and holds contradicts each other :
 			if (looped && hold) throw new ArgumentException("SequenceMode.Looped and SequenceMode.Hold are incompatible");
@@ -90,7 +91,7 @@ namespace IronStar.Animation
 			var lastAnim	=	animations.LastOrDefault();
 			var startTime	=	(lastAnim==null || immediate) ? trackTime : lastAnim.GetTerminationTime(trackTime);
 
-			var newAnim			=	new Animation( this, startTime, take, looped, hold );
+			var newAnim			=	new Animation( this, startTime, take, looped, hold, reverse );
 			newAnim.Crossfade	=	(lastAnim==null) ? TimeSpan.Zero : crossfade;
 
 			StopAllAnimationsAt( startTime + crossfade );
@@ -99,6 +100,11 @@ namespace IronStar.Animation
 		}
 
 
+		/// <summary>
+		/// Force all playing animations to be stopped at given time.
+		/// If animation stops earlier, its stop time is not changed.
+		/// </summary>
+		/// <param name="stopTime"></param>
 		void StopAllAnimationsAt( TimeSpan stopTime )
 		{
 			foreach ( var anim in animations )

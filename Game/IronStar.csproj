@@ -215,6 +215,7 @@
     <Compile Include="ECSPhysics\GravityComponent.cs" />
     <Compile Include="ECSPhysics\StaticCollisionComponent.cs" />
     <Compile Include="Mathematics\Intersection.cs" />
+    <Compile Include="Monsters\Systems\MonsterAnimator.Locomotion.cs" />
     <Compile Include="Monsters\Systems\MonsterAnimator.cs" />
     <Compile Include="Monsters\Systems\MonsterAnimationSystem.cs" />
     <Compile Include="Monsters\Systems\MonsterKillSystem.cs" />

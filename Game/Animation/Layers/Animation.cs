@@ -20,6 +20,7 @@ namespace IronStar.Animation
 		readonly protected bool additive;
 		public readonly bool Looped;
 		public readonly bool Hold;
+		public readonly bool Reverse;
 		public	TimeSpan Start;
 		public	TimeSpan End;
 		public	TimeSpan Length;
@@ -27,7 +28,7 @@ namespace IronStar.Animation
 
 		public bool IsInfinite { get { return End == TimeSpan.MaxValue; } }
 
-		public AnimClip( Sequencer sequencer, TimeSpan startTime, TimeSpan length, bool looped, bool hold )
+		public AnimClip( Sequencer sequencer, TimeSpan startTime, TimeSpan length, bool looped, bool hold, bool reverse )
 		{
 			this.sequencer	=	sequencer;
 			this.Start		=	startTime;
@@ -35,6 +36,7 @@ namespace IronStar.Animation
 			this.End		=	startTime + length;
 			this.Looped		=	looped;
 			this.Hold		=	hold;
+			this.Reverse	=	reverse;
 
 			if (looped || hold)
 			{
@@ -99,8 +101,8 @@ namespace IronStar.Animation
 		AnimationCurve	curve;
 		AnimationTake	take;
 
-		public Transition( Sequencer sequencer, AnimationTake take, int frame, AnimationCurve curve, TimeSpan startTime, TimeSpan length, bool looped, bool hold )
-		 : base(sequencer, startTime, length, looped, hold)
+		public Transition( Sequencer sequencer, AnimationTake take, int frame, AnimationCurve curve, TimeSpan startTime, TimeSpan length, bool looped, bool hold, bool reverse )
+		 : base(sequencer, startTime, length, looped, hold, reverse)
 		{
 			this.take	=	take;
 			this.curve	=	curve;
@@ -141,8 +143,8 @@ namespace IronStar.Animation
 		readonly TimeMode timeMode;
 		public readonly AnimationTake Take;
 
-		public Animation ( Sequencer sequencer, TimeSpan startTime, AnimationTake take, bool looped, bool hold )
-		 : base( sequencer, startTime, Scene.ComputeFrameLength( take.FrameCount, sequencer.Scene.TimeMode ), looped, hold )
+		public Animation ( Sequencer sequencer, TimeSpan startTime, AnimationTake take, bool looped, bool hold, bool reverse )
+		 : base( sequencer, startTime, Scene.ComputeFrameLength( take.FrameCount, sequencer.Scene.TimeMode ), looped, hold, reverse )
 		{
 			this.Take		=	take;
 			this.timeMode	=	sequencer.Scene.TimeMode;
@@ -157,8 +159,15 @@ namespace IronStar.Animation
 			int prev, next;
 			float weight;
 			float crossfade = GetCrossfadeFactor(trackTime);
+			int frameCount = Take.FrameCount;
 
 			Scene.TimeToFrames( trackTime - Start, timeMode, out prev, out next, out weight );
+
+			if (Reverse)
+			{
+				prev	=	frameCount - MathUtil.Wrap( prev, 0, frameCount );
+				next	=	frameCount - MathUtil.Wrap( next, 0, frameCount );
+			}
 
 			if (Looped) 
 			{

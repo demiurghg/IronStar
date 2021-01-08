@@ -34,5 +34,10 @@ namespace IronStar.Animation
 		/// Ignore if new animation is the same as current or pending.
 		/// </summary>
 		DontPlayTwice	=	0x0008,
+
+		/// <summary>
+		/// Play animation backward.
+		/// </summary>
+		Reverse			=	0x0010,
 	}
 }

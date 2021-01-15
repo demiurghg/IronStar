@@ -58,6 +58,19 @@ namespace IronStar.Animation
 		}
 
 
+		public TimeSpan GetTakeLength( string takeName )
+		{
+			var take	=	scene.Takes[ takeName ];
+
+			if (take==null) 
+			{
+				Log.Warning("Take '{0}' does not exist", takeName );
+				return TimeSpan.Zero;
+			}
+
+			return Scene.ComputeFrameLength( take.FrameCount, scene.TimeMode );
+		}
+
 		/// <summary>
 		/// Sequence new take.
 		/// 

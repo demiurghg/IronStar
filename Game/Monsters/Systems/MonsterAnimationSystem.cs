@@ -18,7 +18,7 @@ using Fusion.Engine.Graphics.Scenes;
 
 namespace IronStar.Monsters.Systems
 {
-	class MonsterAnimationSystem : ProcessingSystem<MonsterAnimator,CharacterController,RenderModel,StepComponent>
+	class MonsterAnimationSystem : ProcessingSystem<MonsterAnimator,CharacterController,RenderModel,StepComponent,UserCommandComponent>
 	{
 		readonly Game Game;
 		readonly FXPlayback fxPlayback;
@@ -37,11 +37,11 @@ namespace IronStar.Monsters.Systems
 			return base.GetAspect().Include<BoneComponent,Transform>();
 		}
 
-		protected override MonsterAnimator Create( Entity entity, CharacterController ch, RenderModel rm, StepComponent step )
+		protected override MonsterAnimator Create( Entity entity, CharacterController ch, RenderModel rm, StepComponent step, UserCommandComponent uc )
 		{
 			var scene		=	entity.gs.Content.Load( rm.scenePath, Scene.Empty );
 			var transform	=	rm.transform;
-			var animator	=	new MonsterAnimator( fxPlayback, scene, physics );
+			var animator	=	new MonsterAnimator( fxPlayback, scene, physics, uc );
 
 			return animator;
 		}
@@ -51,12 +51,11 @@ namespace IronStar.Monsters.Systems
 		}
 
 		
-		protected override void Process( Entity entity, GameTime gameTime, MonsterAnimator animator, CharacterController ch, RenderModel rm, StepComponent step )
+		protected override void Process( Entity entity, GameTime gameTime, MonsterAnimator animator, CharacterController ch, RenderModel rm, StepComponent step, UserCommandComponent uc )
 		{
 			var bones		=	entity.GetComponent<BoneComponent>();
 			var transform	=	entity.GetComponent<Transform>();
-			var uc			=	entity.GetComponent<UserCommandComponent>();
-			animator?.Update( gameTime, transform.TransformMatrix, step, uc, bones.Bones );
+			animator?.Update( gameTime, transform, step, uc, bones.Bones );
 		}
 	}
 }

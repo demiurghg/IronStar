@@ -104,10 +104,10 @@ namespace IronStar.ECSPhysics
 			cc.IsCrouching	=	crouching;
 			cc.HasTraction	=	traction;
 			
-			if (uc!=null)
+			/*if (uc!=null)
 			{
 				t.Rotation	=	Quaternion.RotationYawPitchRoll( uc.Yaw, 0, 0 );
-			}
+			} */
 			
 			t.Position	=	position;
 			v.Linear	=	MathConverter.Convert( controller.Body.LinearVelocity );

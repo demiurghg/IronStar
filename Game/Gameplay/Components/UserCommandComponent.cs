@@ -48,7 +48,7 @@ namespace IronStar.Gameplay
 		public float DPitch;
 
 		public bool IsMoving { get { return Math.Abs(MoveForward)>0.1f || Math.Abs(MoveRight)>0.1f; } }
-		public bool IsForward { get { return MoveForward>0; } }
+		public bool IsForward { get { return MoveForward>=0; } }
 
 		public void SetAnglesFromQuaternion( Quaternion q )
 		{
@@ -94,23 +94,6 @@ namespace IronStar.Gameplay
 		}
 
 		
-		float ShortestAngle( float start, float end, float maxValue = -1 )
-		{
-			start			=	MathUtil.RadiansToDegrees(start);
-			end				=	MathUtil.RadiansToDegrees(end);
-			var shortest	=	((((end - start) % 360) + 540) % 360) - 180;
-
-			shortest		=	MathUtil.DegreesToRadians( shortest );
-
-			if (maxValue>=0)
-			{
-				shortest = Math.Sign(shortest) * Math.Min( maxValue, Math.Abs( shortest ) );
-			}
-
-			return shortest;
-		}
-
-
 		public float RotateTo( Vector3 originPoint, Vector3 targetPoint, float maxYawRate, float maxPitchRate )
 		{
 			if (originPoint==targetPoint) 
@@ -122,8 +105,8 @@ namespace IronStar.Gameplay
 			var desiredYaw		=	(float)Math.Atan2( -dir.X, -dir.Z );
 			var desiredPitch	=	(float)Math.Asin( dir.Y );
 
-			var shortestYaw		=	ShortestAngle( Yaw,	desiredYaw, maxYawRate );
-			var shortestPitch	=	ShortestAngle( Pitch, desiredPitch, maxPitchRate );
+			var shortestYaw		=	MathUtil.ShortestAngle( Yaw,	desiredYaw, maxYawRate );
+			var shortestPitch	=	MathUtil.ShortestAngle( Pitch, desiredPitch, maxPitchRate );
 
 			DesiredYaw		=	DesiredYaw   + shortestYaw;
 			DesiredPitch	=	DesiredPitch + shortestPitch;

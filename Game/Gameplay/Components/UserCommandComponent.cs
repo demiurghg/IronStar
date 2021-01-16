@@ -70,7 +70,7 @@ namespace IronStar.Gameplay
 			get { return Quaternion.RotationYawPitchRoll( Yaw, Pitch, Roll ); }
 		}
 
-		private Matrix RotationMatrix 
+		public Matrix RotationMatrix 
 		{
 			get { return Matrix.RotationQuaternion( Rotation ); }
 		}

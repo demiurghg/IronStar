@@ -27,10 +27,9 @@ namespace IronStar.Monsters.Systems
 		const string		ANIM_JUMP		=	"jump"	;
 		const string		ANIM_LAND		=	"land"	;
 		const float			YAW_THRESHOLD	=	MathUtil.PiOverFour; // 45 degrees
-		const float			TURN_RATE		=	MathUtil.Pi;
+		const float			TURN_RATE		=	MathUtil.Pi * 2;
 
-		static TimeSpan	ANIM_CROSSFADE	=	TimeSpan.FromMilliseconds(125);
-		static TimeSpan	LAND_TIMEOUT	=	TimeSpan.FromMilliseconds(200);
+		static TimeSpan	ANIM_CROSSFADE	=	TimeSpan.FromMilliseconds(200);
 
 		abstract class LocomotionState
 		{
@@ -201,8 +200,8 @@ namespace IronStar.Monsters.Systems
 
 			public Land( MonsterAnimator animator, UserCommandComponent uc ) : base(animator, uc, uc.DesiredYaw)
 			{
-				sequencer.Sequence("land" , SequenceMode.Immediate|SequenceMode.Hold);
-				timeout	=	LAND_TIMEOUT;
+				timeout	=	sequencer.GetTakeLength(ANIM_LAND);
+				sequencer.Sequence(ANIM_LAND , SequenceMode.Immediate|SequenceMode.Hold, TimeSpan.FromMilliseconds(100));
 			}
 
 			protected override LocomotionState Next( GameTime gameTime, Transform t, UserCommandComponent uc, StepComponent step )

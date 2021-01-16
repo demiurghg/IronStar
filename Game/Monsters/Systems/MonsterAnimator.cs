@@ -59,6 +59,7 @@ namespace IronStar.Monsters.Systems
 			locomotionState	=	locomotionState.NextState( gameTime, t, uc, step );
 		}
 
+		Vector2 tiltFactor = Vector2.Zero;
 
 		public void Update ( GameTime gameTime, Transform transform, StepComponent step, UserCommandComponent uc, Matrix[] bones )
 		{
@@ -69,13 +70,19 @@ namespace IronStar.Monsters.Systems
 			var traction	= step.HasTraction;
 			var tiltVel		= (traction ? 8 : 2) * gameTime.ElapsedSec;
 
-			var accel = Vector3.TransformNormal( step.LocalAcceleration, Matrix.Invert(transform.TransformMatrix) );
+			var accel = Vector3.TransformNormal( step.LocalAcceleration, Matrix.Invert(uc.RotationMatrix) );
 
 			tiltForward.Weight	=	1;
-			tiltForward.Factor	=	Vector2.MoveTo( tiltForward.Factor, new Vector2( uc.MoveForward, uc.MoveRight ) * (traction?1:0), tiltVel );
+			tiltFactor			=	Vector2.MoveTo( tiltFactor, new Vector2( uc.MoveForward, uc.MoveRight ) * (traction?1:0), tiltVel );
+			tiltForward.Factor	=	new Vector2( SignedSmoothStep( tiltFactor.X ), SignedSmoothStep( tiltFactor.Y ) );
 
 			//	update composer :
 			composer.Update( gameTime, transform.TransformMatrix, false, bones );
+		}
+
+		float SignedSmoothStep( float x )
+		{
+			return Math.Sign(x) * AnimationUtils.SmoothStep( Math.Abs(x) );
 		}
 	}
 }

@@ -89,7 +89,8 @@ namespace IronStar.AI
 						new Sequence(
 							approach, 
 							new Selector(
-								new AcquireToken(tokenPool, new Sequence( new Wait(350,750), attack ) ),
+								//new AcquireToken(tokenPool, new Sequence( new Wait(350,750), attack ) ),
+								new Sequence( new Wait(350,750), attack ),
 								tacticalMove
 							)
 						)

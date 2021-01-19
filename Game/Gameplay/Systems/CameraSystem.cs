@@ -21,7 +21,7 @@ namespace IronStar.Gameplay
 	public class CameraSystem : ISystem, IGameComponent
 	{
 		[Config]
-		public bool EnableThirdPerson { get; set; }
+		public bool ThirdPersonEnable { get; set; }
 
 		[Config]
 		public float ThirdPersonRange { get; set; } = 8.0f;
@@ -141,8 +141,8 @@ namespace IronStar.Gameplay
 			var animatedCameraMatrix = animData[1];
 
 			//	update stuff :
-			var tpvTranslate	=	EnableThirdPerson ? Matrix.Translation( Vector3.BackwardRH * ThirdPersonRange ) : Matrix.Identity;
-			var tpvRotate		=	EnableThirdPerson ? Matrix.RotationY( MathUtil.DegreesToRadians( ThirdPersonAngle ) ) : Matrix.Identity;
+			var tpvTranslate	=	ThirdPersonEnable ? Matrix.Translation( Vector3.BackwardRH * ThirdPersonRange ) : Matrix.Identity;
+			var tpvRotate		=	ThirdPersonEnable ? Matrix.RotationY( MathUtil.DegreesToRadians( ThirdPersonAngle ) ) : Matrix.Identity;
 			var camMatrix		=	tpvTranslate * rotatePR * animatedCameraMatrix * tpvRotate * rotateYaw * translate;
 
 			var cameraPos	=	camMatrix.TranslationVector;

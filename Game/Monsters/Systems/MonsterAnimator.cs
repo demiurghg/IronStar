@@ -20,6 +20,7 @@ namespace IronStar.Monsters.Systems
 {
 	partial class MonsterAnimator
 	{
+		readonly Entity monsterEntity;
 		readonly FXPlayback fxPlayback;
 		readonly PhysicsCore physics;
 
@@ -28,28 +29,71 @@ namespace IronStar.Monsters.Systems
 		readonly Sequencer		locomotionLayer;
 		readonly BlendSpaceD4	tiltForward;
 		readonly BlendSpaceD4	rotateTorso;
+		readonly Sequencer		torsoLayer;
 		LocomotionState		locomotionState;
+		WeaponState			prevWeaponState = WeaponState.Idle;
 
 		float	baseYaw;
 
 
-		public MonsterAnimator( SFX.FXPlayback fxPlayback, Scene scene, PhysicsCore physics, UserCommandComponent uc )
+		public MonsterAnimator( SFX.FXPlayback fxPlayback, Entity e, Scene scene, PhysicsCore physics, UserCommandComponent uc )
 		{								
-			this.fxPlayback	=	fxPlayback;
-			this.physics	=	physics;
+			this.monsterEntity	=	e;
+			this.fxPlayback		=	fxPlayback;
+			this.physics		=	physics;
 
-			baseYaw			=	uc.DesiredYaw;
+			baseYaw				=	uc.DesiredYaw;
 
-			composer		=	new AnimationComposer( fxPlayback, scene );
+			composer			=	new AnimationComposer( fxPlayback, scene );
 
 			locomotionLayer		=	new Sequencer( scene, null, AnimationBlendMode.Override );
 			tiltForward			=	new BlendSpaceD4( scene, null, "tilt", AnimationBlendMode.Additive );
 			rotateTorso			=	new BlendSpaceD4( scene, null, "rotation", AnimationBlendMode.Additive );
+			torsoLayer			=	new Sequencer( scene, "spine1", AnimationBlendMode.Override );
 			locomotionState		=	new Idle(this, uc);
 
+			torsoLayer.Sequence("attack", SequenceMode.Looped|SequenceMode.Immediate);
+
 			composer.Tracks.Add( locomotionLayer );
+			composer.Tracks.Add( torsoLayer );
 			composer.Tracks.Add( rotateTorso );
 			composer.Tracks.Add( tiltForward );
+		}
+
+
+		public void UpdateWeaponState()
+		{
+			var e				=	monsterEntity;
+			var inventory		=	e.GetComponent<InventoryComponent>();
+			var weaponEntity	=	inventory?.ActiveWeapon;
+			var weapon			=	weaponEntity?.GetComponent<WeaponComponent>();
+			var crossfade		=	TimeSpan.FromMilliseconds(50);
+
+			if (weapon!=null)
+			{
+				if (weapon.State!=prevWeaponState)
+				{
+					prevWeaponState	=	weapon.State;
+
+					if (weapon.State==WeaponState.Cooldown || weapon.State==WeaponState.Cooldown2)
+					{
+						torsoLayer.Sequence("attack", SequenceMode.Immediate|SequenceMode.Hold, crossfade );
+					}
+					else if (weapon.State==WeaponState.Drop)
+					{
+						torsoLayer.Sequence("drop", SequenceMode.Immediate|SequenceMode.Hold, crossfade);
+					}
+					else if (weapon.State==WeaponState.Raise)
+					{
+						torsoLayer.Sequence("raise", SequenceMode.Immediate|SequenceMode.Hold, crossfade);
+					}
+					else
+					{
+						torsoLayer.Sequence("aim", SequenceMode.Immediate|SequenceMode.Hold, crossfade);
+					}
+				}
+			}
+			
 		}
 
 
@@ -64,6 +108,7 @@ namespace IronStar.Monsters.Systems
 		public void Update ( GameTime gameTime, Transform transform, StepComponent step, UserCommandComponent uc, Matrix[] bones )
 		{
 			UpdateLocomotionState( gameTime, transform, step, uc );
+			UpdateWeaponState();
 
 			//	update tilt :
 			var run			= step.GroundVelocity.Length()>0.2f;

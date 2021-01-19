@@ -116,6 +116,8 @@ namespace IronStar.AI
 
 		protected override void Destroy( Entity entity, BTNode resource )
 		{
+			var uc = entity.GetComponent<UserCommandComponent>();
+			uc.ResetControl();
 			tokenPool.RestoreTokens(entity);
 		}
 

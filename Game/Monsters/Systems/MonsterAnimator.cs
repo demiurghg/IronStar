@@ -50,7 +50,7 @@ namespace IronStar.Monsters.Systems
 			tiltForward			=	new BlendSpaceD4( scene, null, "tilt", AnimationBlendMode.Additive );
 			rotateTorso			=	new BlendSpaceD4( scene, null, "rotation", AnimationBlendMode.Additive );
 			torsoLayer			=	new Sequencer( scene, "spine1", AnimationBlendMode.Override );
-			locomotionState		=	new Idle(this, uc);
+			locomotionState		=	new Idle(this, uc, false);
 
 			torsoLayer.Sequence("attack", SequenceMode.Looped|SequenceMode.Immediate);
 
@@ -98,16 +98,20 @@ namespace IronStar.Monsters.Systems
 
 
 
-		public void UpdateLocomotionState( GameTime gameTime, Transform t, StepComponent step, UserCommandComponent uc )
+		public void UpdateLocomotionState( GameTime gameTime, Transform t, StepComponent step, UserCommandComponent uc, HealthComponent health )
 		{
-			locomotionState	=	locomotionState.NextState( gameTime, t, uc, step );
+			var dead  = health==null ? false : health.Health<=0;
+			locomotionState	=	locomotionState.NextState( gameTime, t, uc, step, dead );
 		}
+
 
 		Vector2 tiltFactor = Vector2.Zero;
 
 		public void Update ( GameTime gameTime, Transform transform, StepComponent step, UserCommandComponent uc, Matrix[] bones )
 		{
-			UpdateLocomotionState( gameTime, transform, step, uc );
+			var health		=	monsterEntity.GetComponent<HealthComponent>();
+
+			UpdateLocomotionState( gameTime, transform, step, uc, health );
 			UpdateWeaponState();
 
 			//	update tilt :

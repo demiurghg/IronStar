@@ -20,12 +20,16 @@ namespace IronStar.Monsters.Systems
 {
 	partial class MonsterAnimator
 	{
+		const string		ANIM_CR_IDLE	=	"crouch_idle"	;
+		const string		ANIM_CR_WALK	=	"crouch_walk"	;
+
 		const string		ANIM_IDLE		=	"idle"	;
 		const string		ANIM_TURN		=	"turn"	;
 		const string		ANIM_WALK		=	"walk"	;
 		const string		ANIM_RUN		=	"run"	;
 		const string		ANIM_JUMP		=	"jump"	;
 		const string		ANIM_LAND		=	"land"	;
+		const string		ANIM_DEATH		=	"death1";
 		const float			YAW_THRESHOLD	=	MathUtil.PiOverFour; // 45 degrees
 		const float			TURN_RATE		=	MathUtil.Pi * 2;
 
@@ -49,7 +53,7 @@ namespace IronStar.Monsters.Systems
 				rotateTorso		=	animator.rotateTorso;
 			}
 
-			public LocomotionState NextState( GameTime gameTime, Transform t, UserCommandComponent uc, StepComponent step )
+			public LocomotionState NextState( GameTime gameTime, Transform t, UserCommandComponent uc, StepComponent step, bool dead )
 			{
 				if (allowRotation)
 				{
@@ -77,6 +81,11 @@ namespace IronStar.Monsters.Systems
 				rotateTorso.Weight	=	1;
 				rotateTorso.Factor	=	new Vector2( yawFactor, pitchFactor );
 
+				if (dead && GetType()!=typeof(Dead))
+				{
+					return new Dead(animator, uc);
+				}
+
 				return Next( gameTime, t, uc, step );
 			}
 
@@ -87,12 +96,14 @@ namespace IronStar.Monsters.Systems
 		class Idle : LocomotionState
 		{
 			float baseYaw;
+			readonly bool crouch;
 
-			public Idle( MonsterAnimator animator, UserCommandComponent uc ) : base(animator, uc, uc.DesiredYaw)
+			public Idle( MonsterAnimator animator, UserCommandComponent uc, bool crouch ) : base(animator, uc, uc.DesiredYaw)
 			{
+				this.crouch		=	crouch;
 				allowRotation	=	false;
 				baseYaw = uc.DesiredYaw;
-				sequencer.Sequence(	ANIM_IDLE, SequenceMode.Looped|SequenceMode.Immediate, ANIM_CROSSFADE );
+				sequencer.Sequence(	crouch ? ANIM_CR_IDLE : ANIM_IDLE, SequenceMode.Looped|SequenceMode.Immediate, ANIM_CROSSFADE );
 			}
 
 			protected override LocomotionState Next( GameTime gameTime, Transform t, UserCommandComponent uc, StepComponent step )
@@ -100,6 +111,7 @@ namespace IronStar.Monsters.Systems
 				var move	=	uc.IsMoving;
 				var trac	=	step.HasTraction;
 				var fwd		=	uc.IsForward;
+				var cr		=	step.IsCrouching;
 
 				var arc		=	MathUtil.ShortestAngle( baseYaw, uc.DesiredYaw );
 
@@ -108,7 +120,8 @@ namespace IronStar.Monsters.Systems
 				//	return new Turn(animator, uc, baseYaw); 
 				}
 
-				if (move && trac) return new Move(animator, uc, fwd);
+				if (crouch!=cr) return new Idle(animator, uc, cr);
+				if (move && trac) return new Move(animator, uc, fwd, cr);
 				if (!trac) return new Jump(animator, uc);
 
 				return this;
@@ -135,11 +148,12 @@ namespace IronStar.Monsters.Systems
 				var move	=	uc.IsMoving;
 				var trac	=	step.HasTraction;
 				var fwd		=	uc.IsForward;
+				var cr		=	step.IsCrouching;
 
-				if (move && trac) return new Move(animator, uc, fwd);
+				if (move && trac) return new Move(animator, uc, fwd, cr);
 				if (!trac) return new Jump(animator, uc);
 
-				if (timeout<=TimeSpan.Zero) return new Idle(animator, uc);
+				if (timeout<=TimeSpan.Zero) return new Idle(animator, uc, cr);
 				timeout -= gameTime.Elapsed;
 				
 				return this;
@@ -150,14 +164,16 @@ namespace IronStar.Monsters.Systems
 		class Move : LocomotionState
 		{
 			readonly bool forward;
+			readonly bool crouch;
 
-			public Move( MonsterAnimator animator, UserCommandComponent uc, bool forward ) : base(animator, uc, uc.DesiredYaw)
+			public Move( MonsterAnimator animator, UserCommandComponent uc, bool forward, bool crouch ) : base(animator, uc, uc.DesiredYaw)
 			{
 				this.forward	=	forward;
+				this.crouch		=	crouch;
 
 				var flags =  forward ? SequenceMode.Looped|SequenceMode.Immediate : SequenceMode.Looped|SequenceMode.Immediate|SequenceMode.Reverse;
 
-				sequencer.Sequence(	ANIM_RUN, flags, ANIM_CROSSFADE );
+				sequencer.Sequence(	crouch ? ANIM_CR_WALK : ANIM_RUN, flags, ANIM_CROSSFADE );
 			}
 
 			protected override LocomotionState Next( GameTime gameTime, Transform t, UserCommandComponent uc, StepComponent step )
@@ -165,9 +181,10 @@ namespace IronStar.Monsters.Systems
 				var move	=	uc.IsMoving;
 				var trac	=	step.HasTraction;
 				var fwd		=	uc.IsForward;
+				var cr		=	step.IsCrouching;
 
-				if (forward!=fwd) return new Move(animator, uc, fwd);
-				if (!move && trac) return new Idle(animator, uc);
+				if (forward!=fwd || crouch!=cr) return new Move(animator, uc, fwd, cr);
+				if (!move && trac) return new Idle(animator, uc, cr);
 				if (!trac) return new Jump(animator, uc);
 
 				return this;
@@ -206,9 +223,23 @@ namespace IronStar.Monsters.Systems
 
 			protected override LocomotionState Next( GameTime gameTime, Transform t, UserCommandComponent uc, StepComponent step )
 			{
-				if (timeout<=TimeSpan.Zero) return new Idle(animator, uc);
+				if (timeout<=TimeSpan.Zero) return new Idle(animator, uc, step.IsCrouching);
 				timeout -= gameTime.Elapsed;
 				
+				return this;
+			}
+		}
+
+
+		class Dead : LocomotionState
+		{
+			public Dead( MonsterAnimator animator, UserCommandComponent uc ) : base(animator, uc, uc.DesiredYaw)
+			{
+				sequencer.Sequence(ANIM_DEATH , SequenceMode.Immediate|SequenceMode.Hold, TimeSpan.FromMilliseconds(100));
+			}
+
+			protected override LocomotionState Next( GameTime gameTime, Transform t, UserCommandComponent uc, StepComponent step )
+			{
 				return this;
 			}
 		}

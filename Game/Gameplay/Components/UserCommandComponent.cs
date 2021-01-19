@@ -50,6 +50,15 @@ namespace IronStar.Gameplay
 		public bool IsMoving { get { return Math.Abs(MoveForward)>0.1f || Math.Abs(MoveRight)>0.1f; } }
 		public bool IsForward { get { return MoveForward>=0; } }
 
+		public void ResetControl()
+		{
+			Weapon		=	null;
+			Action		=	UserAction.None;
+			MoveForward	=	0;
+			MoveRight	=	0;
+			MoveUp		=	0;
+		}
+
 		public void SetAnglesFromQuaternion( Quaternion q )
 		{
 			var m = Matrix.RotationQuaternion(q);

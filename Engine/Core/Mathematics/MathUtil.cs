@@ -636,6 +636,14 @@ namespace Fusion.Core.Mathematics
 		/// <param name="b"></param>
 		/// <returns></returns>
 		static public uint IntDivRoundUp ( uint a, uint b ) { return ( a + b - 1 ) / b; }
+
+		/// <summary>
+		/// Divide a by b rounding result up
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
+		static public long IntDivRoundUp ( long a, long b ) { return ( a + b - 1 ) / b; }
 							 
 		/// <summary>
 		/// Checks whether value is odd
@@ -1006,7 +1014,7 @@ namespace Fusion.Core.Mathematics
 
 
 		/// <summary>
-		/// Returns float clamped to range -1,1
+		/// Returns float clamped to range 0,1
 		/// </summary>
 		/// <param name="value"></param>
 		/// <returns></returns>
@@ -1158,5 +1166,29 @@ namespace Fusion.Core.Mathematics
 
 		static public int	Max3 ( int a, int b, int c ) { return Math.Max( a, Math.Max( b, c ) ); }
 		static public int	Min3 ( int a, int b, int c ) { return Math.Min( a, Math.Min( b, c ) ); }
+
+
+		/// <summary>
+		/// Gets angle of the shortest arc between two angles.
+		/// </summary>
+		/// <param name="start"></param>
+		/// <param name="end"></param>
+		/// <param name="maxValue"></param>
+		/// <returns></returns>
+		public static float ShortestAngle( float start, float end, float maxValue = -1 )
+		{
+			start			=	MathUtil.RadiansToDegrees(start);
+			end				=	MathUtil.RadiansToDegrees(end);
+			var shortest	=	((((end - start) % 360) + 540) % 360) - 180;
+
+			shortest		=	MathUtil.DegreesToRadians( shortest );
+
+			if (maxValue>=0)
+			{
+				shortest = Math.Sign(shortest) * Math.Min( maxValue, Math.Abs( shortest ) );
+			}
+
+			return shortest;
+		}
     }
 }

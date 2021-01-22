@@ -28,6 +28,13 @@ namespace Fusion.Core.Extensions
     /// </summary>
     public static class RandomExtensions
     {
+		public static T SelectRandom<T>( this Random random, params T[] options )
+		{
+			if (options.Length==0) return default(T);
+
+			return options[ random.Next(options.Length) ];
+		}
+
 		/// <summary>
 		/// 
 		/// </summary>

@@ -24,6 +24,8 @@ namespace IronStar.Animation
 		readonly protected int[] channelIndices;
 		readonly protected int channelIndex;
 
+		public Scene Scene { get { return scene; } }
+
 
 		/// <summary>
 		/// 
@@ -53,6 +55,9 @@ namespace IronStar.Animation
 				channelIndices	=	scene.GetChannelNodeIndices( channelIndex );
 			}
 		}
+
+
+		//protected abstract void ApplyNodeTransform( int nodeIndex, bool additive, ref Matrix nodeTransform );
 
 
 		/// <summary>

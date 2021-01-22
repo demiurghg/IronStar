@@ -26,8 +26,11 @@ namespace IronStar.Gameplay.Components
 		public bool		HasTraction;
 		public bool		IsCrouching;
 
+		public bool		IsWalkingOrRunning { get { return HasTraction && GroundVelocity.Length() > 0.125f; } }
+
 		public Vector3	GroundVelocity;
 		public float	FallVelocity;
+		public Vector3	LocalAcceleration;
 
 		public void Load( GameState gs, Stream stream )
 		{

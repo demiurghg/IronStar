@@ -86,16 +86,23 @@ namespace IronStar.AI
 				return false;
 			}
 
-			var from	=	attacker.GetPOV();
-			var to		=	target.GetPOV();
+			try
+			{
+				var from	=	attacker.GetPOV();
+				var to		=	target.GetPOV();
 
-			if (Vector3.Distance(from,to) > maxDistance)
+				if (Vector3.Distance(from,to) > maxDistance)
+				{
+					return false;
+				}
+				else
+				{
+					return attacker.gs.GetService<PhysicsCore>().HasLineOfSight( from, to, attacker, target );
+				}
+			} 
+			catch (InvalidOperationException)
 			{
 				return false;
-			}
-			else
-			{
-				return attacker.gs.GetService<PhysicsCore>().HasLineOfSight( from, to, attacker, target );
 			}
 		}
 	}

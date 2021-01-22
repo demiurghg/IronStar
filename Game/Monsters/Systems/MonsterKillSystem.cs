@@ -22,19 +22,25 @@ namespace IronStar.Monsters.Systems
 
 		public void Update( GameState gs, GameTime gameTime )
 		{
-			var monsterAspect = new Aspect().Include<HealthComponent>().Single<BehaviorComponent,PlayerComponent>();
+			var monsterAspect = new Aspect().Include<HealthComponent,UserCommandComponent>().Single<BehaviorComponent,PlayerComponent>();
 
 			foreach ( var monsterEntity in gs.QueryEntities(monsterAspect) )
 			{
 				var health	=	monsterEntity.GetComponent<HealthComponent>();
+				var uc		=	monsterEntity.GetComponent<UserCommandComponent>();
 
 				var isMonster	  = monsterEntity.ContainsComponent<BehaviorComponent>();
 
-				if (health.Health<0 && isMonster)
+				if (health.Health<-50)
 				{
 					CreatGiblets( gs, monsterEntity.GetLocation(), Vector3.Up );	
 
 					gs.Kill( monsterEntity );
+				}
+
+				if (health.Health<=0)
+				{
+					monsterEntity.RemoveComponent<BehaviorComponent>();
 				}
 			}
 		}

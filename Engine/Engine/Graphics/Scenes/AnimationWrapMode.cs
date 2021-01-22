@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fusion.Engine.Graphics.Scenes {
-	public enum AnimationWrapMode {
+namespace Fusion.Engine.Graphics.Scenes 
+{
+	public enum AnimationWrapMode 
+	{
 		Clamp,
 		Repeat,
-
 	}
 }

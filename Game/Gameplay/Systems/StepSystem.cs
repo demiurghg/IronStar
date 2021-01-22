@@ -22,11 +22,15 @@ namespace IronStar.Gameplay.Systems
 	/// </summary>
 	class StepSystem : ISystem
 	{
+		const float STEP_VELOCITY_THRESHOLD = 0.1f;
+		const float ACCELERATION_FILTER		= 10.0f;
+
 		public void Add( GameState gs, Entity e ) {}
 		public void Remove( GameState gs, Entity e ) {}
 		public Aspect GetAspect() { return Aspect.Empty; }
 
-		Aspect stepAspect = Aspect.Empty.Include<StepComponent,CharacterController,Velocity>();
+		Aspect stepAspect = Aspect.Empty.Include<StepComponent,CharacterController,Velocity,Transform>();
+
 
 		public void Update( GameState gs, GameTime gameTime )
 		{
@@ -35,8 +39,12 @@ namespace IronStar.Gameplay.Systems
 			foreach ( var e in stepEntities )
 			{
 				var step		=	e.GetComponent<StepComponent>();
+
 				var controller	=	e.GetComponent<CharacterController>();
 				var velocity3D	=	e.GetComponent<Velocity>().Linear;
+				var transform	=	e.GetComponent<Transform>();
+
+				var oldVelocity		=	new Vector3( step.GroundVelocity.X, step.FallVelocity, step.GroundVelocity.Z );
 
 				step.FallVelocity	=	velocity3D.Y;
 				step.GroundVelocity	=	new Vector3( velocity3D.X, 0, velocity3D.Z );
@@ -50,7 +58,7 @@ namespace IronStar.Gameplay.Systems
 				step.LeftStep	=	false;
 				step.RightStep	=	false;
 
-				if ( controller.HasTraction && (velocity > 0.1f) )
+				if ( controller.HasTraction && (velocity > STEP_VELOCITY_THRESHOLD) )
 				{
 					if (step.StepTimer<0)
 					{
@@ -81,6 +89,18 @@ namespace IronStar.Gameplay.Systems
 
 				step.IsCrouching	=	controller.IsCrouching;
 
+
+				//
+				//	acceleration :
+				//
+				var acceleration		=	( velocity3D - oldVelocity ) / gameTime.ElapsedSec;
+
+				step.LocalAcceleration.MoveTo( ref acceleration, ACCELERATION_FILTER );
+				//acceleration		=	Vector3.TransformNormal( acceleration, Matrix.Invert( transform.TransformMatrix ) );
+				//step.LocalAcceleration	=	Vector3.Lerp( step.LocalAcceleration, acceleration, ACCELERATION_FILTER );
+
+
+				gs.Game.RenderSystem.RenderWorld.Debug.DrawVector( transform.Position, acceleration, Color.Yellow, 0.1f );
 				//
 				//	debug :
 				//

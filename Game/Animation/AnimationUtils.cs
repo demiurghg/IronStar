@@ -6,8 +6,36 @@ using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 
 namespace IronStar.Animation {
+
+	public enum AnimationCurve
+	{
+		LinearStep			,
+		SmoothStep			,
+		SmootherStep		,
+		QuadraticStep		,
+		QuadraticStepInv	,
+		SlowFollowThrough	,
+		FastFollowThrough	,
+	}
+
+
 	static class AnimationUtils 
 	{
+		public static float Curve( AnimationCurve curve, float x )
+		{
+			switch (curve)
+			{
+				case AnimationCurve.LinearStep			: return LinearStep			( x );
+				case AnimationCurve.SmoothStep			: return SmoothStep			( x );
+				case AnimationCurve.SmootherStep		: return SmootherStep		( x );
+				case AnimationCurve.QuadraticStep		: return QuadraticStep		( x );
+				case AnimationCurve.QuadraticStepInv	: return QuadraticStepInv	( x );
+				case AnimationCurve.SlowFollowThrough	: return SlowFollowThrough	( x );
+				case AnimationCurve.FastFollowThrough	: return FastFollowThrough	( x );
+			}
+			return x;
+		}
+
 		public static float SmoothStep( float x )
 		{
 			return MathUtil.SmoothStep(x);
@@ -21,6 +49,14 @@ namespace IronStar.Animation {
 
 
 		public static float QuadraticStep( float x )
+		{
+			if (x<0) return 0;
+			if (x>1) return 1;
+			return x * x;
+		}
+
+
+		public static float QuadraticStepInv( float x )
 		{
 			if (x<0) return 0;
 			if (x>1) return 1;
@@ -65,7 +101,7 @@ namespace IronStar.Animation {
 
 			if (x<p) 
 			{	
-				return QuadraticStep( x / p ) * ( 1 + h );
+				return QuadraticStepInv( x / p ) * ( 1 + h );
 			}
 			else
 			{
@@ -83,7 +119,7 @@ namespace IronStar.Animation {
 
 			if (x<p) 
 			{	
-				return QuadraticStep( x / p );
+				return QuadraticStepInv( x / p );
 			}
 			else
 			{
@@ -170,6 +206,19 @@ namespace IronStar.Animation {
 
 				destination[i]	=	x;
 			}
+		}
+
+
+		public static TimeSpan Max( TimeSpan a, TimeSpan b )
+		{
+			if (a >= b)	return a;
+				else	return b;
+		}
+
+		public static TimeSpan Min( TimeSpan a, TimeSpan b )
+		{
+			if (a >= b)	return a;
+				else	return b;
 		}
 	}
 }

@@ -78,8 +78,10 @@ namespace IronStar.ECS
 
 				RefreshEntities();
 
-				foreach ( var system in systems )
+				foreach ( var systemWrapper in systems )
 				{
+					var system = systemWrapper.System;
+					Game.Components.Remove(	system as IGameComponent );
 					( system as IDisposable )?.Dispose();
 				}
 			}
@@ -404,6 +406,11 @@ namespace IronStar.ECS
 
 			services.AddService( system.GetType(), system );
 			systems.Add( system );
+
+			if (system is IGameComponent)
+			{
+				Game.Components.Add( (IGameComponent)system );
+			}
 		}
 
 

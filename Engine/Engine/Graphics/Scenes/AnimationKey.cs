@@ -9,17 +9,21 @@ namespace Fusion.Engine.Graphics.Scenes
 {
 	public struct AnimationKey
 	{
-		public Vector3 Translation;
 		public Quaternion Rotation;
-		public Vector3 Scaling;
+		public Vector3 Translation;
+		public float Scaling;
+
+
+		public static readonly AnimationKey Identity = new AnimationKey( Matrix.Identity );
+
 
 		public AnimationKey( Matrix transform )
 		{
-			transform.Decompose( out Scaling, out Rotation, out Translation );
+			transform.DecomposeUniformScale( out Scaling, out Rotation, out Translation );
 		}
 
 
-		public AnimationKey( Vector3 t, Quaternion r, Vector3 s )
+		public AnimationKey( Vector3 t, Quaternion r, float s )
 		{
 			Translation	=	t;
 			Scaling		=	s;
@@ -40,9 +44,37 @@ namespace Fusion.Engine.Graphics.Scenes
 		{
 			var t = Vector3		.Lerp ( start.Translation, end.Translation, factor );
 			var r = Quaternion	.Slerp( start.Rotation	 , end.Rotation	  , factor );
-			var s = Vector3		.Lerp ( start.Scaling	 , end.Scaling	  , factor );
+			var s = MathUtil	.Lerp ( start.Scaling	 , end.Scaling	  , factor );
 
 			return new AnimationKey( t, r, s );
+		}
+
+
+		public static AnimationKey operator * ( AnimationKey a, AnimationKey b )
+		{
+			return Multiply(a,b);
+		}
+
+
+		public static void Multiply( ref AnimationKey a, ref AnimationKey b, ref AnimationKey combined )
+		{
+			combined.Scaling = 1;
+			Vector3 intermediate;
+			Quaternion.Transform(ref a.Translation, ref b.Rotation, out intermediate);
+			Vector3.Add(ref intermediate, ref b.Translation, out combined.Translation);
+			Quaternion.Multiply(ref a.Rotation, ref b.Rotation, out combined.Rotation);
+		}
+
+
+		public static AnimationKey Multiply( AnimationKey a, AnimationKey b )
+		{
+			var key = new AnimationKey();
+
+			Multiply( ref a, ref b, ref key );
+
+			return key;//*/
+
+			return new AnimationKey( a.Transform * b.Transform );
 		}
 	}
 }

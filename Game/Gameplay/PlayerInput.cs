@@ -95,6 +95,8 @@ namespace IronStar.Gameplay
 			if (Game.Keyboard.IsKeyDown( Jump			)) userCommand.MoveUp++;
 			if (Game.Keyboard.IsKeyDown( Crouch			)) userCommand.MoveUp--;
 
+			if (Game.Keyboard.IsKeyDown( Walk			)) { userCommand.MoveForward *= 0.33f; userCommand.MoveRight *= 0.33f; }
+
 			if (Game.Keyboard.IsKeyDown( Attack			)) flags |= UserAction.Attack;
 			if (Game.Keyboard.IsKeyDown( Zoom			)) flags |= UserAction.Zoom;
 			if (Game.Keyboard.IsKeyDown( Use			)) flags |= UserAction.Use;

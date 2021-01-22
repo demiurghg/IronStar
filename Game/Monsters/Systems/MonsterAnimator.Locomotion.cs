@@ -112,6 +112,7 @@ namespace IronStar.Monsters.Systems
 				var trac	=	step.HasTraction;
 				var fwd		=	uc.IsForward;
 				var cr		=	step.IsCrouching;
+				var run		=	uc.IsRunning;
 
 				var arc		=	MathUtil.ShortestAngle( baseYaw, uc.DesiredYaw );
 
@@ -121,7 +122,7 @@ namespace IronStar.Monsters.Systems
 				}
 
 				if (crouch!=cr) return new Idle(animator, uc, cr);
-				if (move && trac) return new Move(animator, uc, fwd, cr);
+				if (move && trac) return new Move(animator, uc, run, fwd, cr);
 				if (!trac) return new Jump(animator, uc);
 
 				return this;
@@ -149,8 +150,9 @@ namespace IronStar.Monsters.Systems
 				var trac	=	step.HasTraction;
 				var fwd		=	uc.IsForward;
 				var cr		=	step.IsCrouching;
+				var run		=	uc.IsRunning;
 
-				if (move && trac) return new Move(animator, uc, fwd, cr);
+				if (move && trac) return new Move(animator, uc, run, fwd, cr);
 				if (!trac) return new Jump(animator, uc);
 
 				if (timeout<=TimeSpan.Zero) return new Idle(animator, uc, cr);
@@ -165,15 +167,19 @@ namespace IronStar.Monsters.Systems
 		{
 			readonly bool forward;
 			readonly bool crouch;
+			readonly bool run;
 
-			public Move( MonsterAnimator animator, UserCommandComponent uc, bool forward, bool crouch ) : base(animator, uc, uc.DesiredYaw)
+			public Move( MonsterAnimator animator, UserCommandComponent uc, bool run, bool forward, bool crouch ) : base(animator, uc, uc.DesiredYaw)
 			{
 				this.forward	=	forward;
 				this.crouch		=	crouch;
+				this.run		=	!crouch && run;
 
 				var flags =  forward ? SequenceMode.Looped|SequenceMode.Immediate : SequenceMode.Looped|SequenceMode.Immediate|SequenceMode.Reverse;
 
-				sequencer.Sequence(	crouch ? ANIM_CR_WALK : ANIM_RUN, flags, ANIM_CROSSFADE );
+				var animName	=	crouch ? ANIM_CR_WALK : ( run ? ANIM_RUN : ANIM_WALK );
+
+				sequencer.Sequence(	animName, flags, ANIM_CROSSFADE );
 			}
 
 			protected override LocomotionState Next( GameTime gameTime, Transform t, UserCommandComponent uc, StepComponent step )
@@ -182,8 +188,9 @@ namespace IronStar.Monsters.Systems
 				var trac	=	step.HasTraction;
 				var fwd		=	uc.IsForward;
 				var cr		=	step.IsCrouching;
+				var run		=	!cr && uc.IsRunning;
 
-				if (forward!=fwd || crouch!=cr) return new Move(animator, uc, fwd, cr);
+				if (forward!=fwd || crouch!=cr || this.run!=run) return new Move(animator, uc, run, fwd, cr);
 				if (!move && trac) return new Idle(animator, uc, cr);
 				if (!trac) return new Jump(animator, uc);
 

@@ -48,6 +48,7 @@ namespace IronStar.Gameplay
 		public float DPitch;
 
 		public bool IsMoving { get { return Math.Abs(MoveForward)>0.1f || Math.Abs(MoveRight)>0.1f; } }
+		public bool IsRunning { get { return MovementVector.Length() > 0.5f; } }
 		public bool IsForward { get { return MoveForward>=0; } }
 
 		public void ResetControl()

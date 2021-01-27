@@ -29,7 +29,8 @@ namespace Fusion.Engine.Graphics
 	[RequireShader("hdr", true)]
 	internal class HdrFilter : RenderComponent 
 	{
-		static FXConstantBuffer<PARAMS> regParams = new CRegister( 0, "Params" );
+		static FXConstantBuffer<PARAMS>			regParams = new CRegister( 0, "Params" );
+		static FXConstantBuffer<GpuData.CAMERA> regCamera = new CRegister( 1, "Camera" );
 
 		readonly Random rand = new Random();
 		
@@ -461,8 +462,10 @@ namespace Fusion.Engine.Graphics
 				paramsData.VignetteAmount		=	Vignette;
 
 				paramsCB.SetData( ref paramsData );
-				device.GfxConstants[0]		=	paramsCB;
-				device.ComputeConstants[0]	=	paramsCB;
+				device.GfxConstants[0]				=	paramsCB;
+				device.ComputeConstants[0]			=	paramsCB;
+				device.GfxConstants[regCamera]		=	camera.CameraData;
+				device.ComputeConstants[regCamera]	=	camera.CameraData;
 
 				//
 				//	Measure and adapt :

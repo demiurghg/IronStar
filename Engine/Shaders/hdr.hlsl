@@ -439,6 +439,29 @@ float3 CellShading(float3 a)
 	return chr * lum;
 }
 
+float LinearizeDepth(float z)
+{
+	float a	=	Camera.LinearizeDepthScale;
+	float b = 	Camera.LinearizeDepthBias;
+	return 1.0f / (z * a + b);
+}
+
+float ContourFactor( float z )
+{
+	return sqrt(z)*10;
+}
+
+float FindContour(uint x, uint y)
+{
+	float d0	=	ContourFactor( LinearizeDepth( DepthBuffer.Load(int3( x+0, y+0, 0 ) ).r ) );
+	float d1	=	ContourFactor( LinearizeDepth( DepthBuffer.Load(int3( x+1, y+0, 0 ) ).r ) );
+	float d2	=	ContourFactor( LinearizeDepth( DepthBuffer.Load(int3( x-1, y+0, 0 ) ).r ) );
+	float d3	=	ContourFactor( LinearizeDepth( DepthBuffer.Load(int3( x+0, y+1, 0 ) ).r ) );
+	float d4	=	ContourFactor( LinearizeDepth( DepthBuffer.Load(int3( x+0, y-1, 0 ) ).r ) );
+	
+	return saturate( 1 - 1 * abs( d0 - (d1+d2+d3+d4)/4.0f ) );
+}
+
 float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 {
 	uint width;
@@ -518,6 +541,8 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	colorGraded				=	ColorSaturation( colorGraded, 0.75 );
 	
 	//colorGraded 	=	tonemapped;
+	
+	//float contour		=	FindContour( xpos, ypos );
 	
 	//colorGraded		=	CellShading(colorGraded) * contour + noiseDither*0.1;
 	

@@ -838,6 +838,24 @@
         "RotateYaw": -0.219493,
         "RotatePitch": 0.00458094757,
         "RotateRoll": 0.00756161334
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "NodeGuid": "882b7070-dcee-4209-a62f-4acda6a86b56",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.StartPointFactory, IronStar",
+          "StartPointType": "singlePlayer"
+        },
+        "FactoryName": "qbBPQ31v",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.0,
+        "TranslateY": 4.443392,
+        "TranslateZ": 0.0,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
       }
     ]
   },

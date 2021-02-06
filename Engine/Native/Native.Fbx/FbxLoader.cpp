@@ -326,6 +326,17 @@ void Native::Fbx::FbxLoader::HandleMesh( Fusion::Engine::Graphics::Scenes::Scene
 	int vertexIdCount = 0;
 
 	//
+	//	UV set names :
+	//
+	FbxStringList NameListOfUV;
+	fbxMesh->GetUVSetNames(NameListOfUV);
+
+	for (int i=0; i<NameListOfUV.GetCount(); i++)
+	{
+		nodeMesh->UVSetNames->Add( gcnew String(NameListOfUV.GetStringAt(i)) );
+	}
+
+	//
 	//	vertices :
 	//	
 	for (int i=0; i<polyCount; i++) {

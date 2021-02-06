@@ -22,6 +22,7 @@ namespace Fusion.Engine.Graphics.Scenes {
 		public List<MeshTriangle>	Triangles			{ get; private set; }	
 		public List<MeshSubset>		Subsets				{ get; private set; }
 		public List<MeshSurfel>		Surfels				{ get; private set; }
+		public List<string>			UVSetNames			{ get; private set; }
 		public int					TriangleCount		{ get { return Triangles.Count; } }
 		public int					VertexCount			{ get { return Vertices.Count; } }
 		public int					IndexCount			{ get { return TriangleCount * 3; } }
@@ -47,6 +48,7 @@ namespace Fusion.Engine.Graphics.Scenes {
 			Triangles		=	new List<MeshTriangle>();
 			Subsets			=	new List<MeshSubset>();
 			Surfels			=	new List<MeshSurfel>();
+			UVSetNames		=	new List<string>();
 		}
 
 
@@ -699,6 +701,10 @@ namespace Fusion.Engine.Graphics.Scenes {
 			//	read subsets :
 			int subsetCount	=	reader.ReadInt32();
 			Subsets			=	reader.Read<MeshSubset>( subsetCount ).ToList();
+
+			//	read UV-set names :
+			int uvSetCount	=	reader.ReadInt32();
+			for (int i=0; i<uvSetCount; i++) UVSetNames.Add( reader.ReadString() );
 							
 			//	read adjacent tris :
 			int adjTrisCount		=	reader.ReadInt32();
@@ -725,6 +731,9 @@ namespace Fusion.Engine.Graphics.Scenes {
 			
 			writer.Write( Subsets.Count );
 			writer.Write( Subsets.ToArray() );
+
+			writer.Write( UVSetNames.Count );
+			foreach ( var uvSetName in UVSetNames ) writer.Write( uvSetName );
 
 			writer.Write( AdjacentTriangles.Length );
 			writer.Write( AdjacentTriangles );

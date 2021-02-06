@@ -81,7 +81,7 @@ namespace Fusion.Engine.Graphics.Lights {
 			Log.Message("");
 			Log.Message("-------- Building radiosity form-factor --------");
 
-			Log.Message("Allocaing lightmap regions...");
+			Log.Message("Allocating lightmap regions...");
 
 			int totalSizeInPixels = 0;
 

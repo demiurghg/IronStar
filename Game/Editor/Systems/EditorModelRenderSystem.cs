@@ -39,7 +39,17 @@ namespace IronStar.Editor.Systems
 			var transform	=	e.GetComponent<Transform>();
 			var model		=	e.GetComponent<SFX2.RenderModel>();
 
-			var scene		=	content.Load( model.scenePath, Scene.Empty );
+			Scene scene;
+
+			if (string.IsNullOrWhiteSpace(model.scenePath)) 
+			{
+				scene = Scene.CreateEmptyScene();
+			}
+			else
+			{
+				scene = content.Load( model.scenePath, Scene.Empty );
+			}
+			
 			var transforms	=	scene.ComputeAbsoluteTransforms();
 
 			for (int i=0; i<scene.Nodes.Count; i++)

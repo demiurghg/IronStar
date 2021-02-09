@@ -534,6 +534,7 @@
     <Compile Include="Engine\Graphics\ForwardTransparentContext.cs" />
     <Compile Include="Engine\Graphics\ForwardZPassContext.cs" />
     <Compile Include="Engine\Graphics\Bvh\BvhTree.cs" />
+    <Compile Include="Engine\Graphics\GI\RayTracer.cs" />
     <Compile Include="Engine\Graphics\GI\LightProbeDebug.cs" />
     <Compile Include="Engine\Graphics\GI\LightMapper.Rtc.cs" />
     <Compile Include="Engine\Graphics\GI\LightMapper.Lighting.cs" />
@@ -543,7 +544,6 @@
     <Compile Include="Engine\Graphics\GI\LightMapGroup.cs" />
     <Compile Include="Engine\Graphics\GI\CachedPatchIndex.cs" />
     <Compile Include="Engine\Graphics\GI\GlobalPatchIndex.cs" />
-    <Compile Include="Engine\Graphics\GI\RayTracer.cs" />
     <Compile Include="Engine\Graphics\GI\Radiosity.Vectors.cs" />
     <Compile Include="Engine\Graphics\GI\Radiosity.Config.cs" />
     <Compile Include="Engine\Graphics\GI\Radiosity.cs" />
@@ -799,6 +799,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Engine\Graphics\FrameGraph\" />
+    <Folder Include="Engine\Graphics\GI2\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

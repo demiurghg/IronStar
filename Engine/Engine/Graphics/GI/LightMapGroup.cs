@@ -23,9 +23,9 @@ namespace Fusion.Engine.Graphics.Lights
 	/// </summary>
 	class LightMapGroup 
 	{
-		public LightMapGroup ( int size, Guid guid, IEnumerable<RenderInstance> instances, int bias )
+		public LightMapGroup ( int size, string name, IEnumerable<RenderInstance> instances, int bias )
 		{
-			Guid		=	guid;
+			Name		=	name;
 
 			if (bias>0)
 			{
@@ -40,7 +40,7 @@ namespace Fusion.Engine.Graphics.Lights
 			Instances	=	instances.ToArray();
 		}
 		public Rectangle Region;
-		public readonly Guid Guid;
+		public readonly string Name;
 		public readonly RenderInstance[] Instances;
 	}
 }

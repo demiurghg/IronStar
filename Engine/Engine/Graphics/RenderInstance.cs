@@ -101,7 +101,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Tag
 		/// </summary>
-		public Guid LightMapGuid {
+		public string LightMapRegionName {
 			get; set;
 		}
 

@@ -344,7 +344,7 @@ namespace Fusion.Engine.Graphics {
 				{
 					if (instance.Group==InstanceGroup.Static) 
 					{
-						instance.LightMapScaleOffset = rs.Radiosity.LightMap.GetRegionMadScaleOffset( instance.LightMapGuid );
+						instance.LightMapScaleOffset = rs.Radiosity.LightMap.GetRegionMadScaleOffset( instance.LightMapRegionName );
 					}
 				}
 			}

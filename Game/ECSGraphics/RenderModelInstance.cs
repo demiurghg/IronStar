@@ -72,19 +72,11 @@ namespace IronStar.SFX2
 			scene		=	string.IsNullOrWhiteSpace(rm.scenePath) ? Scene.Empty : content.Load( rm.scenePath, Scene.Empty );
 			
 			sceneView	=	new SceneView<RenderInstance>( scene, 
-							mesh => new RenderInstance( rs, scene, mesh ),
-							node => rm.AcceptVisibleNode( node )
+							(node,mesh)	=> CreateRenderInstance( rs, scene, node, mesh, rm ),
+							node		=> rm.AcceptVisibleNode( node )
 							);
 
 			preTransform	=	rm.transform;
-
-			sceneView.ForEachMesh( mesh => {
-				mesh.Group	= rm.UseLightMap ? InstanceGroup.Static : InstanceGroup.Kinematic;
-				mesh.Color	= Color4.Zero;
-				mesh.LightMapGuid = rm.lightmapGuid;
-				mesh.LightMapSize = rm.lightmapSize;
-				rs.RenderWorld.Instances.Add( mesh );
-			});
 
 			if (fpvEnabled)
 			{
@@ -92,6 +84,21 @@ namespace IronStar.SFX2
 			}
 
 			SetTransform( tm );
+		}
+
+
+		RenderInstance CreateRenderInstance( RenderSystem rs, Scene scene, Node node, Mesh mesh, RenderModel rm )
+		{
+			var ri = new RenderInstance( rs, scene, mesh );
+
+			ri.Group				= rm.UseLightMap ? InstanceGroup.Static : InstanceGroup.Kinematic;
+			ri.Color				= Color4.Zero;
+			ri.LightMapRegionName	= rm.lightmapGuid.ToString();// + "##" + scene.GetFullNodePath(node);
+			ri.LightMapSize			= rm.lightmapSize;
+
+			rs.RenderWorld.Instances.Add( ri );
+
+			return ri;
 		}
 
 

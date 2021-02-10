@@ -88,9 +88,9 @@ namespace Fusion.Engine.Graphics.Lights {
 			var lmGroups = instances
 					.Where( i0 => i0.Group==InstanceGroup.Static )
 					.GroupBy( 
-						instance => instance.LightMapGuid, // guid
-						instance => instance,              // instance
-						(guid,inst) => new LightMapGroup( inst.First().LightMapSize.Width, guid, inst, 0 )
+						instance => instance.LightMapRegionName,
+						instance => instance,
+						(name,inst) => new LightMapGroup( inst.First().LightMapSize.Width, name, inst, 0 )
 					)
 					.ToArray();
 
@@ -132,8 +132,9 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			formFactor		=	new FormFactor( allocator.Width, settings );
 
-			foreach ( var group in lmGroups ) {
-				formFactor.Regions.Add( group.Guid, group.Region );
+			foreach ( var group in lmGroups ) 
+			{
+				formFactor.Regions.Add( group.Name, group.Region );
 			}
 
 			//-------------------------------------------------

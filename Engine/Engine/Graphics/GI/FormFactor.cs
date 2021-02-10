@@ -73,8 +73,8 @@ namespace Fusion.Engine.Graphics.Lights
 
 		readonly Allocator2D                allocator;
 
-		public IDictionary<Guid, Rectangle> Regions { get { return regions; } }
-		readonly Dictionary<Guid, Rectangle> regions = new Dictionary<Guid, Rectangle>();
+		public IDictionary<string, Rectangle> Regions { get { return regions; } }
+		readonly Dictionary<string, Rectangle> regions = new Dictionary<string, Rectangle>();
 		readonly Dictionary<string, uint> indexDict = new Dictionary<string, uint>();
 
 		public readonly Header header;

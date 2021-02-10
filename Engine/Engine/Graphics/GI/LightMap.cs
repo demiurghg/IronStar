@@ -77,7 +77,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 
 
-		readonly Dictionary<Guid,Rectangle> regions = new Dictionary<Guid, Rectangle>();
+		readonly Dictionary<string,Rectangle> regions = new Dictionary<string, Rectangle>();
 
 		readonly FormFactor.Header header;
 		public FormFactor.Header Header { get { return header; } }
@@ -134,11 +134,11 @@ namespace Fusion.Engine.Graphics.Lights {
 				reader.ExpectFourCC("RGN1", "bad lightmap format");
 
 				int regionCount = reader.ReadInt32();
-				regions		=	new Dictionary<Guid, Rectangle>();
+				regions		=	new Dictionary<string, Rectangle>();
 
 				for (int i=0; i<regionCount; i++)
 				{
-					regions.Add( reader.Read<Guid>(), reader.Read<Rectangle>() );
+					regions.Add( reader.ReadString(), reader.Read<Rectangle>() );
 				}
 
 				//	read gbuffer :
@@ -230,34 +230,34 @@ namespace Fusion.Engine.Graphics.Lights {
 
 
 
-		public void AddRegion( Guid guid, Rectangle region )
+		public void AddRegion( string name, Rectangle region )
 		{
-			regions.Add( guid, region );
+			regions.Add( name, region );
 		}
 
 
-		public bool HasRegion ( Guid guid )
+		public bool HasRegion ( string name )
 		{
-			return regions.ContainsKey(guid);
+			return regions.ContainsKey(name);
 		}
 
 
-		public Rectangle GetRegion ( Guid guid )
+		public Rectangle GetRegion ( string regionName )
 		{
 			Rectangle rect;
-			if (regions.TryGetValue( guid, out rect ) ) {
+			if (regions.TryGetValue( regionName, out rect ) ) {
 				return rect;
 			} else {
-				Log.Warning("Irradiance map region [{0}] not found", guid );
+				Log.Warning("Irradiance map region [{0}] not found", regionName );
 				return new Rectangle(0,0,0,0);
 			}
 		}
 
 
 
-		public Vector4 GetRegionMadScaleOffset ( Guid guid )
+		public Vector4 GetRegionMadScaleOffset ( string regionName )
 		{
-			return GetRegion(guid).GetMadOpScaleOffsetNDC( Width, Height );
+			return GetRegion(regionName).GetMadOpScaleOffsetNDC( Width, Height );
 		}
 
 

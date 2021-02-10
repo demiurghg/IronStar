@@ -24,7 +24,7 @@ namespace IronStar
 
 
 
-		public SceneView( Scene scene, Func<Mesh,TMesh> meshSelector, Func<Node,bool> nodeFilter )
+		public SceneView( Scene scene, Func<Node,Mesh,TMesh> meshSelector, Func<Node,bool> nodeFilter )
 		{
 			this.scene	=	scene;
 			transforms	=	new Matrix[ scene.Nodes.Count ];
@@ -36,12 +36,18 @@ namespace IronStar
 			{
 				if (nodeFilter(scene.Nodes[i]))
 				{
-					var meshIndex	=	scene.Nodes[i].MeshIndex;
-					meshes[i]		=	(meshIndex < 0) ? null : meshSelector( scene.Meshes[ meshIndex ] );
+					var node		=	scene.Nodes[i];
+					var meshIndex	=	node.MeshIndex;
+					meshes[i]		=	(meshIndex < 0) ? null : meshSelector( node, scene.Meshes[ meshIndex ] );
 				}
 			}
 		}
 
+		public SceneView( Scene scene, Func<Mesh,TMesh> meshSelector, Func<Node,bool> nodeFilter )
+		:this( scene, (node,mesh) => meshSelector(mesh), nodeFilter )
+		{
+			
+		}
 
 		public Matrix GetAbsoluteTransform(int nodeIndex)
 		{

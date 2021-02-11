@@ -46,6 +46,26 @@ namespace Fusion.Engine.Graphics.GI
 		public RenderTarget2D	raytracedImage;
 
 
+		class RTBuildBvh : ICommand
+		{
+			RayTracer rt;
+
+			[CommandLineParser.Option]
+			public bool All { get; set; }
+
+			public RTBuildBvh( RayTracer rt )
+			{
+				this.rt	=	rt;
+			}
+
+			public object Execute()
+			{
+				rt.BuildAccelerationStructure(All);
+				return null;
+			}
+		}
+
+
 
 		/// <summary>
 		/// 
@@ -63,6 +83,8 @@ namespace Fusion.Engine.Graphics.GI
 			raytracedImage	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10, 800, 600,true );
 
 			LoadContent();
+
+			Game.Invoker.RegisterCommand("rtBuildBvh", ()=>new RTBuildBvh(this) );
 
 			Game.Reloading += (s,e) => LoadContent();
 		}
@@ -122,13 +144,13 @@ namespace Fusion.Engine.Graphics.GI
 		 *	Scene preprocessing :
 		-----------------------------------------------------------------------------------------*/
 
-		public void BuildAccelerationStructure()
+		public void BuildAccelerationStructure(bool all)
 		{
 			Log.Message("Build acceleration structure");
 			var sw = new Stopwatch();
 			sw.Start();
 
-			var instances	=	rs.RenderWorld.Instances.Where( inst => inst.Group==InstanceGroup.Static ).ToArray();
+			var instances	=	all ? rs.RenderWorld.Instances.ToArray() : rs.RenderWorld.Instances.Where( inst => inst.Group==InstanceGroup.Static ).ToArray();
 			var tris		=	new List<Triangle>();
 			var totalTris	=	0;
 
@@ -226,6 +248,7 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			public BvhNode ( bool isLeaf, uint index, BoundingBox bbox )
 			{
+			#if false
 				// expand bbox to solve f16-precision issues :
 				Half3	bboxMin		=	( bbox.Minimum - Vector3.One * 0.05f );
 				Half3	bboxMax		=	( bbox.Maximum + Vector3.One * 0.05f );
@@ -237,13 +260,26 @@ namespace Fusion.Engine.Graphics.GI
 				PackedMinMaxIndex.Y	=	(uint)(( bboxMin.Z.RawValue << 16 ) | ( bboxMax.X.RawValue ));
 				PackedMinMaxIndex.Z	=	(uint)(( bboxMax.Y.RawValue << 16 ) | ( bboxMax.Z.RawValue ));
 				PackedMinMaxIndex.W	=	leadBit | indexBits;
+			#else
+				uint	leadBit		=	isLeaf ? 0x80000000u : 0;
+				uint	indexBits	=	index  & 0x7FFFFFFFu;
+
+				BBoxMin		=	bbox.Minimum;
+				BBoxMax		=	bbox.Maximum;
+				Index		=	leadBit | indexBits;
+				Reserved	=	0;
+			#endif
 			}
 
+			public Vector3	BBoxMin;
+			public uint		Index;
+			public Vector3	BBoxMax;
+			public uint		Reserved;
 			//[ minX ][ minY ]
 			//[ minZ ][ maxX ]
 			//[ maxY ][ maxZ ]
 			//[ IsLeaf:Index ]
-			public UInt4	PackedMinMaxIndex;
+			//public UInt4	PackedMinMaxIndex;
 		}
 
 

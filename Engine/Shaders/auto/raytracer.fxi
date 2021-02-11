@@ -66,9 +66,12 @@ struct Triangle {
 };
 
 // Fusion.Engine.Graphics.GI.RayTracer+BvhNode
-// Marshal.SizeOf = 16
+// Marshal.SizeOf = 32
 struct BvhNode {
-	uint4      PackedMinMaxIndex;             // offset:    0
+	float3     BBoxMin;                       // offset:    0
+	uint       Index;                         // offset:   12
+	float3     BBoxMax;                       // offset:   16
+	uint       Reserved;                      // offset:   28
 };
 
 // ---------------- SHADER RESOURCES ---------------- //

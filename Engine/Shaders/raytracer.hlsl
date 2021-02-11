@@ -25,7 +25,7 @@ RAY CreateRay( uint2 xy )
 {
 	float 	x 	=	( xy.x )		/ 800.0 * 2 - 1;
 	float 	y 	=	( 600-xy.y ) 	/ 600.0 * 2 - 1;
-	float 	z	=	(wang_hash( 199*xy.x + 2999*xy.y ) & 0xF) / 64.0f + 1.0f;
+	float 	z	=	1.0f;//(wang_hash( 199*xy.x + 2999*xy.y ) & 0xF) / 64.0f + 1.0f;
 	float3 	p 	=	Camera.CameraPosition.xyz;
 	float3  d 	=	Camera.CameraForward.xyz * z + Camera.CameraRight.xyz * x + Camera.CameraUp.xyz * y;
 	return ConstructRay( p, normalize(d) );
@@ -33,6 +33,7 @@ RAY CreateRay( uint2 xy )
 
 void UnpackBVHNode( BvhNode node, out float3 minBound, out float3 maxBound, out uint index, out uint isLeaf )
 {
+#if 0
 	minBound.x	=	f16tof32( node.PackedMinMaxIndex.x >> 16 );
 	minBound.y	=	f16tof32( node.PackedMinMaxIndex.x >>  0 );
 	minBound.z	=	f16tof32( node.PackedMinMaxIndex.y >> 16 );
@@ -41,6 +42,12 @@ void UnpackBVHNode( BvhNode node, out float3 minBound, out float3 maxBound, out 
 	maxBound.z	=	f16tof32( node.PackedMinMaxIndex.z >>  0 );
 	isLeaf		=	node.PackedMinMaxIndex.w & 0x80000000;
 	index		=	node.PackedMinMaxIndex.w & 0x7FFFFFFF;
+#else
+	minBound	=	node.BBoxMin.xyz;
+	maxBound	=	node.BBoxMax.xyz;
+	isLeaf		=	node.Index & 0x80000000;
+	index		=	node.Index & 0x7FFFFFFF;
+#endif	
 }
 
 

@@ -481,7 +481,6 @@ namespace Fusion.Engine.Graphics {
 						//	clusterize light set :
 						rs.LightManager.LightGrid.ClusterizeLightSet( stereoEye, Camera, LightSet );
 
-						//	#TODO -- restore dynamic light-probes
 						//  compute radiosity using shadowmaps
 						rs.Radiosity.Render( gameTime );
 

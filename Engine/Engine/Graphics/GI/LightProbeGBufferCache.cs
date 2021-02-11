@@ -20,8 +20,8 @@ namespace Fusion.Engine.Graphics.Lights {
 	}
 
 
-	public class LightProbeGBufferCache : DisposableBase {
-
+	public class LightProbeGBufferCache : DisposableBase 
+	{
 		readonly RenderSystem rs;
 		internal ShaderResource		Radiance		{ get { return rs.LightMapResources.LightProbeRadianceArray; } }
 		internal TextureCubeArray	GBufferColor	{ get { return rs.LightMapResources.LightProbeColorArray; } }

@@ -23,25 +23,26 @@ namespace Fusion.Engine.Graphics {
 
 		internal readonly GraphicsDevice Device;
 
-		internal SpriteEngine		SpriteEngine	{ get { return Game.GetService< SpriteEngine	 >(); } }
-		internal Filter				Filter			{ get { return Game.GetService< Filter			 >(); } }
-		internal Filter2			Filter2			{ get { return Game.GetService< Filter2			 >(); } }
-		internal BlurFilter			Blur			{ get { return Game.GetService< BlurFilter		 >(); } }
-		internal BilateralFilter	BilateralFilter	{ get { return Game.GetService< BilateralFilter	 >(); } }
-		internal DilateFilter		DilateFilter	{ get { return Game.GetService< DilateFilter	 >(); } }
-		internal SsaoFilter			SsaoFilter		{ get { return Game.GetService< SsaoFilter		 >(); } }
-		internal BitonicSort		BitonicSort		{ get { return Game.GetService< BitonicSort		 >(); } }
-		internal HdrFilter			HdrFilter		{ get { return Game.GetService< HdrFilter		 >(); } }
-		public   DofFilter			DofFilter		{ get { return Game.GetService< DofFilter		 >(); } }
-		internal LightManager		LightManager	{ get { return Game.GetService< LightManager	 >(); } }
-		internal SceneRenderer		SceneRenderer	{ get { return Game.GetService< SceneRenderer	 >(); } }
-		internal VTSystem			VTSystem		{ get { return Game.GetService< VTSystem		 >(); } }
-		public   Sky2				Sky				{ get { return Game.GetService< Sky2			 >(); } }
-		internal Fog				Fog				{ get { return Game.GetService< Fog				 >(); } }
-		internal LightProbeDebug	LightMapDebugger{ get { return Game.GetService< LightProbeDebug	 >(); } }
-		public Radiosity			Radiosity		{ get { return Game.GetService< Radiosity		 >(); } }
-		public RayTracer			RayTracer		{ get { return Game.GetService< RayTracer		 >(); } }
-		public GameFX				GameFX			{ get { return Game.GetService< GameFX			 >(); } }
+		internal SpriteEngine			SpriteEngine		{ get { return Game.GetService< SpriteEngine		>(); } }
+		internal Filter					Filter				{ get { return Game.GetService< Filter				>(); } }
+		internal Filter2				Filter2				{ get { return Game.GetService< Filter2				>(); } }
+		internal BlurFilter				Blur				{ get { return Game.GetService< BlurFilter			>(); } }
+		internal BilateralFilter		BilateralFilter		{ get { return Game.GetService< BilateralFilter		>(); } }
+		internal DilateFilter			DilateFilter		{ get { return Game.GetService< DilateFilter		>(); } }
+		internal SsaoFilter				SsaoFilter			{ get { return Game.GetService< SsaoFilter			>(); } }
+		internal BitonicSort			BitonicSort			{ get { return Game.GetService< BitonicSort			>(); } }
+		internal HdrFilter				HdrFilter			{ get { return Game.GetService< HdrFilter			>(); } }
+		public   DofFilter				DofFilter			{ get { return Game.GetService< DofFilter			>(); } }
+		internal LightManager			LightManager		{ get { return Game.GetService< LightManager		>(); } }
+		internal LightProbeRelighter	LightProbeRelighter	{ get { return Game.GetService< LightProbeRelighter	>(); } }
+		internal SceneRenderer			SceneRenderer		{ get { return Game.GetService< SceneRenderer		>(); } }
+		internal VTSystem				VTSystem			{ get { return Game.GetService< VTSystem			>(); } }
+		public   Sky2					Sky					{ get { return Game.GetService< Sky2				>(); } }
+		internal Fog					Fog					{ get { return Game.GetService< Fog					>(); } }
+		internal LightProbeDebug		LightMapDebugger	{ get { return Game.GetService< LightProbeDebug		>(); } }
+		public Radiosity				Radiosity			{ get { return Game.GetService< Radiosity			>(); } }
+		public RayTracer				RayTracer			{ get { return Game.GetService< RayTracer			>(); } }
+		public GameFX					GameFX				{ get { return Game.GetService< GameFX				>(); } }
 
 		/// <summary>
 		/// Gets render counters.
@@ -124,6 +125,7 @@ namespace Fusion.Engine.Graphics {
 			Game.AddServiceAndComponent( new HdrFilter			( this ) );
 			Game.AddServiceAndComponent( new GameFX				( this ) );
 			Game.AddServiceAndComponent( new LightManager		( this ) );
+			Game.AddServiceAndComponent( new LightProbeRelighter( this ) );
 			Game.AddServiceAndComponent( new SceneRenderer		( this ) );
 			Game.AddServiceAndComponent( new Sky2				( this ) );
 			Game.AddServiceAndComponent( new Fog				( this ) );

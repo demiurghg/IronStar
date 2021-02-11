@@ -224,6 +224,10 @@ namespace Fusion.Engine.Graphics {
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
+		/// <summary>
+		/// Compute cubemap mip levels in-place for given cubemap.
+		/// </summary>
+		/// <param name="cubemap"></param>
 		public void GenerateCubeMipLevel( RenderTargetCube cubemap )
 		{
 			device.ResetStates();

@@ -37,7 +37,7 @@ static const int PrefilterBlockSizeY = 8;
 
 // ---------------- DATA STRUCTURES ---------------- //
 
-// Fusion.Engine.Graphics.LightManager+RELIGHT_PARAMS
+// Fusion.Engine.Graphics.GI.LightProbeRelighter+RELIGHT_PARAMS
 // Marshal.SizeOf = 64
 struct RELIGHT_PARAMS {
 	uint       CubeIndex;                     // offset:    0

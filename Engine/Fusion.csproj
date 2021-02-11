@@ -534,6 +534,7 @@
     <Compile Include="Engine\Graphics\ForwardTransparentContext.cs" />
     <Compile Include="Engine\Graphics\ForwardZPassContext.cs" />
     <Compile Include="Engine\Graphics\Bvh\BvhTree.cs" />
+    <Compile Include="Engine\Graphics\GI\LightProbeRelighter.cs" />
     <Compile Include="Engine\Graphics\GI\RayTracer.cs" />
     <Compile Include="Engine\Graphics\GI\LightProbeDebug.cs" />
     <Compile Include="Engine\Graphics\GI\LightMapper.Rtc.cs" />

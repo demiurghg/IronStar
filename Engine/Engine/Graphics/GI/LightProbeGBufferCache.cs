@@ -7,6 +7,7 @@ using Fusion.Drivers.Graphics;
 using Fusion.Core;
 using System.IO;
 using Fusion.Core.Content;
+using Fusion.Engine.Graphics.GI2;
 
 namespace Fusion.Engine.Graphics.Lights {
 
@@ -20,7 +21,7 @@ namespace Fusion.Engine.Graphics.Lights {
 	}
 
 
-	public class LightProbeGBufferCache : DisposableBase 
+	public class LightProbeGBufferCache : DisposableBase, ILightProbeProvider
 	{
 		readonly RenderSystem rs;
 		internal ShaderResource		Radiance		{ get { return rs.LightMapResources.LightProbeRadianceArray; } }
@@ -55,7 +56,8 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			using ( var reader = new BinaryReader( stream ) ) 
 			{
-				reader.ExpectFourCC("IRC2", "light probe G-buffer");
+				reader.ExpectFourCC("IRC3", "light probe G-buffer");
+				reader.ExpectFourCC("GBUF", "light probe G-buffer");
 
 				CubeCount	=	reader.ReadInt32();
 
@@ -66,18 +68,20 @@ namespace Fusion.Engine.Graphics.Lights {
 				{
 					reader.ExpectFourCC("CUBE", "light probe G-buffer");
 
-					var guid	=	reader.Read<Guid>();
+					var guid		=	reader.Read<Guid>();
+					int mipSize		=	size;
+					int dataSize	=	mipSize * mipSize;
 
 					probes.Add( guid, cubeId );
 					
 					for (int face=0; face<6; face++) 
 					{
-						int mipSize		= size;
-						int dataSize	= mipSize * mipSize;
-
 						reader.Read( buffer, dataSize );
 						GBufferColor.SetData( cubeId, (CubeFace)face, 0, buffer );
+					}
 
+					for (int face=0; face<6; face++) 
+					{
 						reader.Read( buffer, dataSize );
 						GBufferMapping.SetData( cubeId, (CubeFace)face, 0, buffer );
 					}
@@ -95,6 +99,23 @@ namespace Fusion.Engine.Graphics.Lights {
 			base.Dispose( disposing );
 		}
 
+
+		public ShaderResource GetLightProbeCubeArray()
+		{
+			return Radiance;
+		}
+
+		
+		public int GetLightProbeIndex( string name )
+		{
+			return GetLightProbeIndex( Guid.Parse(name) );
+		}
+
+
+		public void Update()
+		{
+			
+		}
 
 
 		public bool HasLightProbe ( Guid guid )

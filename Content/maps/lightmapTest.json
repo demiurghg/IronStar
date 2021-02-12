@@ -59,7 +59,7 @@
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
         "NodeGuid": "4596840d-4a4a-4a45-813f-cfe9f613ac83",
-        "Width": 152.0,
+        "Width": 120.0,
         "Height": 72.0,
         "Depth": 128.0,
         "ShellWidth": 16.0,

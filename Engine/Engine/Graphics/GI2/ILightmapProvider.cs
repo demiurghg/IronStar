@@ -10,17 +10,10 @@ namespace Fusion.Engine.Graphics.GI2
 {
 	internal interface ILightmapProvider
 	{
-		Size2		LightmapSize { get; }
-		BoundingBox VolumeBounds { get; }
-
-		ShaderResource	LightmapL0 { get; }
-		ShaderResource	LightmapL1 { get; }
-		ShaderResource	LightmapL2 { get; }
-		ShaderResource	LightmapL3 { get; }
-
-		ShaderResource	VolumeL0 { get; }
-		ShaderResource	VolumeL1 { get; }
-		ShaderResource	VolumeL2 { get; }
-		ShaderResource	VolumeL3 { get; }
+		Size2			GetLightmapSize();
+		BoundingBox		GetVolumeBounds();
+		RectangleF		GetRegion( string name );
+		ShaderResource	GetLightmap( int band );
+		ShaderResource	GetVolume( int band );
 	}
 }

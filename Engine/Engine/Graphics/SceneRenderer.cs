@@ -260,7 +260,7 @@ namespace Fusion.Engine.Graphics {
 			device.GfxResources[ regIrradianceVolumeL2		]	=	rs.Radiosity.LightVolumeL2;
 			device.GfxResources[ regIrradianceVolumeL3		]	=	rs.Radiosity.LightVolumeL3;
 
-			device.GfxResources[ regRadianceCache			]	=	rs.RenderWorld.IrradianceCache?.Radiance;
+			device.GfxResources[ regRadianceCache			]	=	rs.RenderWorld.LightProbeProvider?.GetLightProbeCubeArray();
 			device.GfxResources[ regEnvLut					]	=	envLut.Srv;
 			device.GfxResources[ regClusterLightProbeBuffer	]	=	rs.LightManager.LightGrid.ProbeDataGpu;
 			device.GfxResources[ regFogVolume				]	=	rs.Fog.FogGrid;

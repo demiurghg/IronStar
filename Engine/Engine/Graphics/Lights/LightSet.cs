@@ -34,7 +34,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Collection of environment lights.
 		/// </summary>
-		public ICollection<LightProbe> LightProbes {
+		public IList<LightProbe> LightProbes {
 			get {
 				return envLights;	
 			}

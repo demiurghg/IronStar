@@ -7,9 +7,24 @@ using Fusion.Drivers.Graphics;
 
 namespace Fusion.Engine.Graphics.GI2
 {
-	internal interface ILightProbeProvider
+	public interface ILightProbeProvider
 	{
-		ShaderResource	GetLightProbeCubeArray();
-		int				GetLightProbeIndex( Guid guid );
+		/// <summary>
+		/// Returns shader resource (cube texture array) view with HDR data
+		/// </summary>
+		/// <returns></returns>
+		ShaderResource GetLightProbeCubeArray();
+
+		/// <summary>
+		/// Gets light-probe index by name
+		/// </summary>
+		/// <param name="name">Name of light-probe</param>
+		/// <returns>Negative value, if light-probe with given name does not exist</returns>
+		int GetLightProbeIndex( string name );
+
+		/// <summary>
+		/// Updates light-probes if necessary
+		/// </summary>
+		void Update();
 	}
 }

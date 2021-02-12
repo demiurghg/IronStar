@@ -536,6 +536,7 @@
     <Compile Include="Engine\Graphics\Bvh\BvhTree.cs" />
     <Compile Include="Engine\Graphics\GI2\ILightmapProvider.cs" />
     <Compile Include="Engine\Graphics\GI2\ILightProbeProvider.cs" />
+    <Compile Include="Engine\Graphics\GI\LightProbeBaker.cs" />
     <Compile Include="Engine\Graphics\GI\LightProbeRelighter.cs" />
     <Compile Include="Engine\Graphics\GI\RayTracer.cs" />
     <Compile Include="Engine\Graphics\GI\LightProbeDebug.cs" />

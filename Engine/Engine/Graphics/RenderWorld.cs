@@ -16,6 +16,7 @@ using Fusion.Engine.Graphics.Lights;
 using Fusion.Build;
 using Fusion.Engine.Graphics.GI;
 using Fusion.Engine.Graphics.Bvh;
+using Fusion.Engine.Graphics.GI2;
 
 namespace Fusion.Engine.Graphics {
 
@@ -116,7 +117,7 @@ namespace Fusion.Engine.Graphics {
 		VirtualTexture		virtualTexture = null;
 		LightMap			irradianceMap = null;	
 		IrradianceVolume	irradianceVolume = null;
-		LightProbeGBufferCache		irradianceCache = null;
+		ILightProbeProvider	lightProveProvider = null;
 
 		/// <summary>
 		/// Sets and gets virtual texture for entire world
@@ -158,13 +159,17 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Sets anf gets irradiance map
 		/// </summary>
-		public LightProbeGBufferCache IrradianceCache {
-			get {
-				return irradianceCache;
+		public ILightProbeProvider LightProbeProvider 
+		{
+			get 
+			{
+				return lightProveProvider;
 			}
-			set {
-				if (irradianceCache!=value) {
-					irradianceCache = value;
+			set 
+			{
+				if (lightProveProvider!=value) 
+				{
+					lightProveProvider = value;
 				}
 			}
 		}
@@ -195,7 +200,6 @@ namespace Fusion.Engine.Graphics {
 			camera			=	new Camera(rs, nameof(camera));
 			weaponCamera	=	new Camera(rs, nameof(weaponCamera));
 			shadowCamera	=	new Camera(rs, nameof(shadowCamera));
-			cubemapCamera	=	new Camera(rs, nameof(cubemapCamera));
 
 			var vp	=	Game.GraphicsDevice.DisplayBounds;
 
@@ -349,9 +353,11 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 
-			if (irradianceCache!=null) {
-				foreach ( var lpb in LightSet.LightProbes ) {
-					lpb.ImageIndex	= irradianceCache.GetLightProbeIndex( lpb.Guid );
+			if (lightProveProvider!=null) 
+			{
+				foreach ( var lpb in LightSet.LightProbes ) 
+				{
+					lpb.ImageIndex	= lightProveProvider.GetLightProbeIndex( lpb.Guid.ToString() );
 				}
 			}
 		}
@@ -600,105 +606,6 @@ namespace Fusion.Engine.Graphics {
 			if (rs.VTSystem.ShowPageTexture) {
 				rs.Filter.Copy( targetSurface, rs.VTSystem.PageTable );
 				return;
-			}
-		}
-
-
-		/// <summary>
-		/// Captures radiance for reflection cubemap
-		/// </summary>
-		public void CaptureRadiance ( Stream stream )
-		{
-			var sw		= new Stopwatch();
-			var device	=	Game.GraphicsDevice;
-			sw.Start();
-
-			Log.Message("---- Building Environment Radiance ----");
-
-			using ( var writer = new BinaryWriter(stream) ) {
-
-				writer.WriteFourCC("IRC2");
-				writer.Write( LightSet.LightProbes.Count );
-
-				var lmRc =	rs.LightMapResources;
-
-				foreach ( var lightProbe in LightSet.LightProbes ) {
-
-					using ( new PixEvent( "Render Cube" ) )
-					{
-
-						Log.Message( "...{0}", lightProbe.Guid );
-
-						for (int i=0; i<6; i++) {
-
-							var face	=	(CubeFace)i;
-							var depth	=	lmRc.LightProbeDepth.GetSurface();
-							var color	=	lmRc.LightProbeColor.GetSurface( 0, face );
-							var normal	=	lmRc.LightProbeMapping.GetSurface( 0, face );
-							var camera	=	cubemapCamera;
-							var time	=	GameTime.Zero;
-							var mono	=	StereoEye.Mono;
-
-							camera.SetupCameraCubeFaceLH( lightProbe.ProbeMatrix.TranslationVector, face, 0.125f, 4096 );
-					
-							device.Clear( depth );
-							device.Clear( color,  Color4.Zero );
-							device.Clear( normal, Color4.Zero );
-
-							var context	=	new LightProbeContext( rs, camera, depth, color, normal );
-							var groups	=	InstanceGroup.Static | InstanceGroup.Kinematic;
-
-							//	render gbuffer albedo and lightmap coords:
-							rs.SceneRenderer.RenderLightProbeGBuffer( context, this, groups );
-						}
-					}
-				
-					//Game.GetService<CubeMapFilter>().PrefilterLightProbe( LightProbeHdr, LightProbeHdrTemp );
-
-					//IrradianceCache.UpdateLightProbe( lightProbe.Guid, LightProbeHdrTemp ); 
-
-					var bufferSize		=	RenderSystem.LightProbeSize * RenderSystem.LightProbeSize;
-					var stagingBuffer	=	new Color[ bufferSize ];
-					int count;
-
-					writer.WriteFourCC("CUBE");
-
-					writer.Write( lightProbe.Guid );
-
-					for (int face=0; face<6; face++) 
-					{
-						count = lmRc.LightProbeColor.GetData( (CubeFace)face, 0, stagingBuffer );
-						writer.Write( stagingBuffer, count );
-
-						count = lmRc.LightProbeMapping.GetData( (CubeFace)face, 0, stagingBuffer );
-						writer.Write( stagingBuffer, count );
-					}
-				}
-			}
-
-
-			sw.Stop();
-			Log.Message("{0} light probes - {1} ms", LightSet.LightProbes.Count, sw.ElapsedMilliseconds);
-			Log.Message("----------------");
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="gameTime"></param>
-		public void CaptureRadiance ( string mapName )
-		{
-			var device			=	Game.GraphicsDevice;
-			var builder			=	Game.GetService<Builder>();
-			var basePath		=	builder.GetBaseInputDirectory();
-
-			var pathIrrCache	=	Path.Combine(basePath, RenderSystem.LightmapPath, Path.ChangeExtension( mapName + "_irrcache", ".irrcache"	) );
-
-			using ( var stream = File.OpenWrite( pathIrrCache ) ) 
-			{
-				CaptureRadiance( stream );
 			}
 		}
 

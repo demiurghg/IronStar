@@ -43,6 +43,7 @@ namespace Fusion.Engine.Graphics {
 		public Radiosity				Radiosity			{ get { return Game.GetService< Radiosity			>(); } }
 		public RayTracer				RayTracer			{ get { return Game.GetService< RayTracer			>(); } }
 		public GameFX					GameFX				{ get { return Game.GetService< GameFX				>(); } }
+		public LightProbeBaker			LightProbeBaker		{ get { return Game.GetService< LightProbeBaker		>(); } }
 
 		/// <summary>
 		/// Gets render counters.
@@ -135,6 +136,7 @@ namespace Fusion.Engine.Graphics {
 
 			Game.AddServiceAndComponent( new Radiosity			( this ) );
 			Game.AddServiceAndComponent( new RayTracer			( this ) );
+			Game.AddServiceAndComponent( new LightProbeBaker	( this ) );
 
 			Device.DisplayBoundsChanged += (s,e) => {
 				DisplayBoundsChanged?.Invoke( s, e );

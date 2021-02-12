@@ -9,6 +9,7 @@ using Fusion.Core.Configuration;
 using System.ComponentModel;
 using Fusion.Core.Shell;
 using System.IO;
+using Fusion.Engine.Graphics.GI;
 
 namespace Fusion.Engine.Graphics {
 
@@ -16,9 +17,9 @@ namespace Fusion.Engine.Graphics {
 
 		void RegisterCommands ()
 		{
-			Game.Invoker.RegisterCommand("screenshot",	() => new ScreenshotCmd(this)	);
-			Game.Invoker.RegisterCommand("vtrestart",	() => new VTRestartCmd(this)	);
-			Game.Invoker.RegisterCommand("buildrad",	() => new BuildRadCmd(this)		);
+			Game.Invoker.RegisterCommand("screenshot"		,	() => new ScreenshotCmd(this)	);
+			Game.Invoker.RegisterCommand("vtrestart"		,	() => new VTRestartCmd(this)	);
+			Game.Invoker.RegisterCommand("bakeLightProbes"	,	() => new BakeLightProbes(this)	);
 		}
 
 
@@ -55,32 +56,27 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		class BuildRadCmd : CommandNoHistory 
+		class BakeLightProbes : CommandNoHistory 
 		{
+			[CommandLineParser.Required]
+			public LightProbeCaptureMode Mode { get; set; }
+
 			[CommandLineParser.Required]
 			[CommandLineParser.Name("mapname")]
 			public string MapName { get; set; }
 
-			[CommandLineParser.Option]
-			[CommandLineParser.Name("map")]
-			public bool Map { get; set; }
-
 			readonly RenderSystem rs;
 			
-			public BuildRadCmd ( RenderSystem rs ) {
+			public BakeLightProbes ( RenderSystem rs ) {
 				this.rs = rs;
 			}
 			
 			public override object Execute()
 			{
-				rs.RenderWorld?.CaptureRadiance( MapName );
+				rs.LightProbeBaker.CaptureLightProbes( MapName, Mode );
 
 				return null;
 			}
 		}
-
-
-
-										  
 	}
 }

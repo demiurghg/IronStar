@@ -270,21 +270,25 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="rtCube"></param>
 		public void CopyFromRenderTargetCube ( int index, RenderTargetCube rtCube )
 		{
-			using ( new PixEvent( "CopyFromRenderTargetCube" ) ) {
-
-				if ( rtCube.MipCount!=this.MipCount ) {
+			using ( new PixEvent( "CopyFromRenderTargetCube" ) ) 
+			{
+				if ( rtCube.MipCount!=this.MipCount ) 
+				{
 					throw new GraphicsException( "CopyFromRenderTargetCube: source and destination have different mip count" );
 				}
 
-				if (rtCube.Width!=this.Width) {
+				if (rtCube.Width!=this.Width) 
+				{
 					throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different width");
 				}
 
-				if (rtCube.Height!=this.Height) {
+				if (rtCube.Height!=this.Height) 
+				{
 					throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different height");
 				}
 
-				if (rtCube.Format!=this.format) {
+				if (rtCube.Format!=this.format) 
+				{
 					throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different format");
 				}
 
@@ -301,9 +305,10 @@ namespace Fusion.Drivers.Graphics {
 				int stride	 = 6;
 				var context	 = GraphicsDevice.DeviceContext;
 
-				for (int mip=0; mip<rtCube.MipCount; mip++) {
-					for (int face=0; face<6; face++) {
-
+				for (int mip=0; mip<rtCube.MipCount; mip++) 
+				{
+					for (int face=0; face<6; face++) 
+					{
 						int srcIndex = Resource.CalculateSubResourceIndex( mip, face,                  mipCount );
 						int dstIndex = Resource.CalculateSubResourceIndex( mip, face + stride * index, mipCount );;
 
@@ -315,7 +320,7 @@ namespace Fusion.Drivers.Graphics {
 
 
 
-		void GetData<T> ( int mip, int index, CubeFace face, T[] data ) where T: struct
+		public int GetData<T> ( int mip, int index, CubeFace face, T[] data ) where T: struct
 		{																	
 			int faceId		=	(int)face;			
 			int srcIndex	=	Resource.CalculateSubResourceIndex( mip, index * 6 + faceId, MipCount );
@@ -328,22 +333,58 @@ namespace Fusion.Drivers.Graphics {
 			DataStream stream;
 			var dataBox = context.MapSubresource( stagingCube, dstIndex, MapMode.Read, MapFlags.None, out stream );
 
-			int mipWidth		=	Width  >> mip;
-			int mipHeight		=	Height >> mip;
+			int mipWidth		= Resource.CalculateMipSize( mip, Width );
+			int mipHeight		= Resource.CalculateMipSize( mip, Height );
             int currentIndex	=	0;
 			int elementSize		=	Marshal.SizeOf(typeof(T));
 
-			for ( int row=0; row<mipHeight; row++ ) {
-
-                stream.ReadRange( data, currentIndex, mipWidth );
-                stream.Seek( dataBox.RowPitch - (elementSize * mipWidth), SeekOrigin.Current);
-                currentIndex += mipWidth;
-
+			for ( int row=0; row<mipHeight; row++ ) 
+			{
+				stream.ReadRange( data, currentIndex, mipWidth );
+				stream.Seek( dataBox.RowPitch - (elementSize * mipWidth), SeekOrigin.Current);
+				currentIndex += mipWidth;
 			}
 
 			stream.Dispose();
 
 			context.UnmapSubresource( stagingCube, dstIndex );
+
+			return mipWidth * mipHeight;
+		}
+
+
+		public void SetData<T>( int cubeIndex, CubeFace face, int level, T[] data ) where T: struct
+		{
+			var elementSizeInByte	=	Marshal.SizeOf(typeof(T));
+			var dataHandle			=	GCHandle.Alloc(data, GCHandleType.Pinned);
+
+			try 
+			{
+				var dataPtr		=	dataHandle.AddrOfPinnedObject();
+
+				int x = 0;
+				int y = 0;
+				int w = Math.Max(Width >> level, 1);
+				int h = Math.Max(Height >> level, 1);
+
+				int subres	=	Resource.CalculateSubResourceIndex( level, cubeIndex * 6 + (int)face, MipCount );
+
+				var box		= new DataBox(dataPtr, w * Converter.SizeOf(format), 0);
+
+				var region		= new ResourceRegion();
+				region.Top		= y;
+				region.Front	= 0;
+				region.Back		= 1;
+				region.Bottom	= y + h;
+				region.Left		= x;
+				region.Right	= x + w;
+
+				device.DeviceContext.UpdateSubresource(box, texCubeArray, subres, region);
+			} 
+			finally 
+			{
+				dataHandle.Free();
+			}
 		}
 	}
 }

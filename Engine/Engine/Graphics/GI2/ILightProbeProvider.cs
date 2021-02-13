@@ -25,6 +25,6 @@ namespace Fusion.Engine.Graphics.GI2
 		/// <summary>
 		/// Updates light-probes if necessary
 		/// </summary>
-		void Update();
+		void Update(LightSet lightSet, Camera camera);
 	}
 }

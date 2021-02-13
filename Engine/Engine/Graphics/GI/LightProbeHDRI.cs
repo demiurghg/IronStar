@@ -11,22 +11,20 @@ using Fusion.Engine.Graphics.GI2;
 
 namespace Fusion.Engine.Graphics.Lights {
 
-	[ContentLoader(typeof(LightProbeGBufferCache))]
-	public class IrradianceCacheLoader : ContentLoader {
+	[ContentLoader(typeof(LightProbeHDRI))]
+	public class LightProbeHDRILoader : ContentLoader {
 
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 		{
-			return new LightProbeGBufferCache( content.Game.RenderSystem, stream );
+			return new LightProbeHDRI( content.Game.RenderSystem, stream );
 		}
 	}
 
 
-	public class LightProbeGBufferCache : DisposableBase, ILightProbeProvider
+	public class LightProbeHDRI : DisposableBase, ILightProbeProvider
 	{
 		readonly RenderSystem rs;
 		internal ShaderResource		Radiance		{ get { return rs.LightMapResources.LightProbeRadianceArray; } }
-		internal TextureCubeArray	GBufferColor	{ get { return rs.LightMapResources.LightProbeColorArray; } }
-		internal TextureCubeArray	GBufferMapping	{ get { return rs.LightMapResources.LightProbeMappingArray; } }
 
 		readonly Dictionary<string,int> probes = new Dictionary<string,int>();
 
@@ -38,7 +36,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		/// <param name="rs"></param>
 		/// <param name="stream"></param>
-		public LightProbeGBufferCache ( RenderSystem rs )
+		public LightProbeHDRI ( RenderSystem rs )
 		{
 			this.rs		=	rs;
 		}
@@ -50,14 +48,15 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		/// <param name="rs"></param>
 		/// <param name="stream"></param>
-		public LightProbeGBufferCache ( RenderSystem rs, Stream stream )
+		public LightProbeHDRI ( RenderSystem rs, Stream stream )
 		{
-			this.rs		=	rs;
+			this.rs				=	rs;
+			var	cubeArrayHdr	=	rs.LightMapResources.LightProbeRadianceArray;
 
 			using ( var reader = new BinaryReader( stream ) ) 
 			{
 				reader.ExpectFourCC("IRC3", "light probe G-buffer");
-				reader.ExpectFourCC("GBUF", "light probe G-buffer");
+				reader.ExpectFourCC("HDRI", "light probe G-buffer");
 
 				CubeCount	=	reader.ReadInt32();
 
@@ -69,21 +68,20 @@ namespace Fusion.Engine.Graphics.Lights {
 					reader.ExpectFourCC("CUBE", "light probe G-buffer");
 
 					var name		=	reader.ReadString();
-					int mipSize		=	size;
-					int dataSize	=	mipSize * mipSize;
 
 					probes.Add( name, cubeId );
 					
-					for (int face=0; face<6; face++) 
+					for (int mip=0; mip<RenderSystem.LightProbeMaxMips; mip++)
 					{
-						reader.Read( buffer, dataSize );
-						GBufferColor.SetData( cubeId, (CubeFace)face, 0, buffer );
-					}
+						int mipSize		=	size >> mip;
+						int dataSize	=	mipSize * mipSize;
 
-					for (int face=0; face<6; face++) 
-					{
-						reader.Read( buffer, dataSize );
-						GBufferMapping.SetData( cubeId, (CubeFace)face, 0, buffer );
+						for (int face=0; face<6; face++) 
+						{
+							reader.Read( buffer, dataSize );
+
+							cubeArrayHdr.SetData( cubeId, (CubeFace)face, 0, buffer );
+						}
 					}
 				}
 			}
@@ -114,7 +112,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 		public void Update(LightSet lightSet, Camera camera)
 		{
-			rs.LightProbeRelighter.RelightLightProbes(lightSet, camera);
+			//	do nothing
 		}
 
 
@@ -138,19 +136,6 @@ namespace Fusion.Engine.Graphics.Lights {
 				Log.Warning("LightProbe [{0}] not found", name );
 				return -1;
 			}
-		}
-
-
-		internal void UpdateLightProbe ( Guid guid, RenderTargetCube renderTargetCube )
-		{
-			int index = GetLightProbeIndex( guid );
-			
-			if (index<0) 
-			{
-				return;
-			}
-
-			GBufferColor.CopyFromRenderTargetCube( index, renderTargetCube );
 		}
 	}
 }

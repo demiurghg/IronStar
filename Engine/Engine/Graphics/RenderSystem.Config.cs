@@ -35,7 +35,7 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine]	public const uint	LightSpotShapeRound			=	0x00020000;
 
 		[ShaderDefine]	public const uint	LightProbeSize				=	128;
-		[ShaderDefine]	public const uint	LightProbeMaxMips			=	6;
+		[ShaderDefine]	public const uint	LightProbeMaxMips			=	7;
 		[ShaderDefine]	public const uint	LightProbeMaxMip			=	6;
 		[ShaderDefine]	public const uint	LightProbeMaxSpecularMip	=	LightProbeMaxMip - 1;
 
@@ -47,7 +47,8 @@ namespace Fusion.Engine.Graphics {
 		public static float MetersToGameUnit( float v ) { return v / 0.32f; }
 		public static float GameUnitToMeters( float v ) { return v * 0.32f; }
 
-		public const string LightmapPath = @"maps\lightmaps";
+		public const string LightmapPath	= @"maps\lightmaps";
+		public const string LightProbePath	= @"maps\lightprobes";
 
 		public const int	LightmapSize				=	2048;
 

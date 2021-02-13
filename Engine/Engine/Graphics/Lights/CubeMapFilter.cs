@@ -288,20 +288,52 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="lightSet"></param>
-		/// <param name="target"></param>
 		public void PrefilterLightProbe ( RenderTargetCube source, TextureCubeArrayRW targetArray, int targetIndex )
 		{
 			if (targetIndex<0) return;
 
+			var target0 =   targetArray.GetSingleCubeSurface( targetIndex, 0 );
+			var target1 =   targetArray.GetSingleCubeSurface( targetIndex, 1 );
+			var target2 =   targetArray.GetSingleCubeSurface( targetIndex, 2 );
+			var target3 =   targetArray.GetSingleCubeSurface( targetIndex, 3 );
+			var target4 =   targetArray.GetSingleCubeSurface( targetIndex, 4 );
+			var target5 =   targetArray.GetSingleCubeSurface( targetIndex, 5 );
+			var target6 =   targetArray.GetSingleCubeSurface( targetIndex, 6 );
+
+			PrefilterLightProbe( source, target0, target1, target2, target3, target4, target5, target6 );
+		}
+
+
+		public void PrefilterLightProbe ( RenderTargetCube source, RenderTargetCube target )
+		{
+			var target0 =   target.GetCubeSurface( 0 );
+			var target1 =   target.GetCubeSurface( 1 );
+			var target2 =   target.GetCubeSurface( 2 );
+			var target3 =   target.GetCubeSurface( 3 );
+			var target4 =   target.GetCubeSurface( 4 );
+			var target5 =   target.GetCubeSurface( 5 );
+			var target6 =   target.GetCubeSurface( 6 );
+
+			PrefilterLightProbe( source, target0, target1, target2, target3, target4, target5, target6 );
+		}
+
+
+		public void PrefilterLightProbe ( RenderTargetCube source, params RenderTargetSurface[] cubeSurfaces )
+		{
 			using ( new PixEvent( "PrefilterLightProbe" ) )
 			{
-
-				if ( source      == null ) throw new ArgumentNullException( "source" );
-				if ( targetArray == null ) throw new ArgumentNullException( "targetArray" );
+				if ( source == null ) 
+				{
+					throw new ArgumentNullException( "source" );
+				}
+				if ( cubeSurfaces == null ) 
+				{
+					throw new ArgumentNullException( "cubeSurfaces" );
+				}
+				if ( cubeSurfaces.Length!=7 )
+				{
+					throw new ArgumentNullException( "cubeSurfaces must contain 7 surfaces" );
+				}
 
 				Flags flag = Flags.PREFILTER;
 
@@ -319,25 +351,17 @@ namespace Fusion.Engine.Graphics {
 
 				GenerateFilterData();
 
-				var target0 =   targetArray.GetSingleCubeSurface( targetIndex, 0 );
-				var target1 =   targetArray.GetSingleCubeSurface( targetIndex, 1 );
-				var target2 =   targetArray.GetSingleCubeSurface( targetIndex, 2 );
-				var target3 =   targetArray.GetSingleCubeSurface( targetIndex, 3 );
-				var target4 =   targetArray.GetSingleCubeSurface( targetIndex, 4 );
-				var target5 =   targetArray.GetSingleCubeSurface( targetIndex, 5 );
-				var target6 =   targetArray.GetSingleCubeSurface( targetIndex, 6 );
+				device.SetComputeUnorderedAccess( 0, cubeSurfaces[0].UnorderedAccess );
+				device.SetComputeUnorderedAccess( 1, cubeSurfaces[1].UnorderedAccess );
+				device.SetComputeUnorderedAccess( 2, cubeSurfaces[2].UnorderedAccess );
+				device.SetComputeUnorderedAccess( 3, cubeSurfaces[3].UnorderedAccess );
+				device.SetComputeUnorderedAccess( 4, cubeSurfaces[4].UnorderedAccess );
+				device.SetComputeUnorderedAccess( 5, cubeSurfaces[5].UnorderedAccess );
+				device.SetComputeUnorderedAccess( 6, cubeSurfaces[6].UnorderedAccess );
 
-				device.SetComputeUnorderedAccess( 0, target0.UnorderedAccess );
-				device.SetComputeUnorderedAccess( 1, target1.UnorderedAccess );
-				device.SetComputeUnorderedAccess( 2, target2.UnorderedAccess );
-				device.SetComputeUnorderedAccess( 3, target3.UnorderedAccess );
-				device.SetComputeUnorderedAccess( 4, target4.UnorderedAccess );
-				device.SetComputeUnorderedAccess( 5, target5.UnorderedAccess );
-				device.SetComputeUnorderedAccess( 6, target6.UnorderedAccess );
-
-				device.ComputeSamplers[regLinearSampler]   =   SamplerState.LinearWrap;
-				device.ComputeResources[regSource]   =   source;
-				device.ComputeConstants[regFilterData]   =   cbFilterData;
+				device.ComputeSamplers[regLinearSampler]	=	SamplerState.LinearWrap;
+				device.ComputeResources[regSource]			=	source;
+				device.ComputeConstants[regFilterData]		=	cbFilterData;
 
 				int size    =   128*128 + 64*64 + 32*32 + 16*16 + 8*8 + 4*4 + 2*2;
 				int tgx     =   MathUtil.IntDivRoundUp( size, 64 );

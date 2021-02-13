@@ -81,12 +81,11 @@ namespace Fusion.Engine.Graphics.GI
 
 			Log.Message("---- Building Environment Radiance ----");
 
-			using ( var writer = new BinaryWriter(stream) ) {
-
+			using ( var writer = new BinaryWriter(stream) ) 
+			{
 				writer.WriteFourCC("IRC3");
 				writer.WriteFourCC(useGBuffer ? "GBUF" : "HDRI");
 				writer.Write( lightSet.LightProbes.Count );
-
 
 				for ( int index = 0; index < lightSet.LightProbes.Count; index++ )
 				{
@@ -96,8 +95,8 @@ namespace Fusion.Engine.Graphics.GI
 					{
 						Log.Message( "...{0}", lightProbe.Guid );
 
-						for (int i=0; i<6; i++) {
-
+						for (int i=0; i<6; i++) 
+						{
 							var face	=	(CubeFace)i;
 							var depth	=	lmRc.LightProbeDepth.GetSurface();
 							var gbuf0	=	lmRc.LightProbeColor.GetSurface( 0, face );
@@ -107,40 +106,42 @@ namespace Fusion.Engine.Graphics.GI
 							camera.SetupCameraCubeFaceLH( lightProbe.ProbeMatrix.TranslationVector, face, 0.125f, 4096 );
 					
 							device.Clear( depth );
-							device.Clear( hdr,  Color4.Zero );
-							device.Clear( gbuf0,  Color4.Zero );
+							device.Clear( hdr,	 MathUtil.Random.NextColor4() );
+							device.Clear( gbuf0, Color4.Zero );
 							device.Clear( gbuf1, Color4.Zero );
 
-							var context	=	new LightProbeContext( rs, camera, depth, useGBuffer ? gbuf0 : hdr, useGBuffer ? gbuf1 : null );
 							var groups	=	InstanceGroup.Static | InstanceGroup.Kinematic;
 
 							if (useGBuffer) 
 							{
 								//	render gbuffer albedo and lightmap coords:
+								var context	=	new LightProbeContext( rs, camera, depth, gbuf0, gbuf1 );
 								rs.SceneRenderer.RenderLightProbeGBuffer( context, rs.RenderWorld, groups );
 							}
 							else
 							{
 								//	render hdr image :
+								var context	=	new LightProbeContext( rs, camera, depth, hdr, null );
 								rs.SceneRenderer.RenderLightProbeRadiance( context, rs.RenderWorld, groups );
 							}
 						}
 					}
-				
-					if (!useGBuffer)
-					{
-						var radianceArray	=	rs.LightMapResources.LightProbeRadianceArray;
-						Game.GetService<CubeMapFilter>().PrefilterLightProbe( lmRc.LightProbeRadiance, lmRc.LightProbeRadianceArray, index );
-					}
-
-					//IrradianceCache.UpdateLightProbe( lightProbe.Guid, LightProbeHdrTemp ); 
 
 					writer.WriteFourCC("CUBE");
-
-					writer.Write( lightProbe.Guid );
-
-					WriteCubemapToStream( writer, lmRc.LightProbeColor );
-					WriteCubemapToStream( writer, lmRc.LightProbeMapping );
+					writer.Write( lightProbe.Guid.ToString() );
+				
+					if (useGBuffer)
+					{
+						WriteCubemapToStream( writer, lmRc.LightProbeColor );
+						WriteCubemapToStream( writer, lmRc.LightProbeMapping );
+					}
+					else
+					{
+						device.ResetStates();
+						Game.GetService<CubeMapFilter>().GenerateCubeMipLevel( lmRc.LightProbeRadiance );
+						Game.GetService<CubeMapFilter>().PrefilterLightProbe( lmRc.LightProbeRadiance, lmRc.LightProbeRadianceArray, index );
+						WriteCubemapToStream( writer, lmRc.LightProbeRadianceArray, index );
+					}
 				}
 			}
 
@@ -158,7 +159,22 @@ namespace Fusion.Engine.Graphics.GI
 			{
 				for (int face=0; face<6; face++) 
 				{
-					count = cube.GetData( (CubeFace)face, 0, stagingBuffer );
+					count = cube.GetData( (CubeFace)face, mip, stagingBuffer );
+					writer.Write( stagingBuffer, count );
+				}
+			}
+		}
+
+
+		void WriteCubemapToStream( BinaryWriter writer, TextureCubeArrayRW cubeArray, int index )
+		{
+			int count;
+
+			for (int mip=0; mip<cubeArray.MipCount; mip++)
+			{
+				for (int face=0; face<6; face++) 
+				{
+					count = cubeArray.GetData( mip, index, (CubeFace)face, stagingBuffer );
 					writer.Write( stagingBuffer, count );
 				}
 			}
@@ -171,7 +187,9 @@ namespace Fusion.Engine.Graphics.GI
 			var builder			=	Game.GetService<Builder>();
 			var basePath		=	builder.GetBaseInputDirectory();
 
-			var pathIrrCache	=	Path.Combine(basePath, RenderSystem.LightmapPath, Path.ChangeExtension( mapName + "_irrcache", ".irrcache"	) );
+			var pathIrrCache	=	Path.Combine(basePath, RenderSystem.LightProbePath, Path.ChangeExtension( mapName, ".bin" ) );
+
+			ContentUtils.MakeDirectoryForFile( pathIrrCache );
 
 			using ( var stream = File.OpenWrite( pathIrrCache ) ) 
 			{

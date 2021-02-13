@@ -143,6 +143,20 @@ namespace Fusion.Build {
 
 
 		/// <summary>
+		/// Copy raw files as target type. Files are specified by base directory and extension
+		/// </summary>
+		/// <typeparam name="TTarget"></typeparam>
+		/// <param name="directory">Base directory for content type</param>
+		/// <param name="extension">Extension with leading dot</param>
+		/// <returns></returns>
+		public Builder Copy<TTarget> ( string directory, string extension )
+		{
+			buildRules.Add( new BuildRule( directory + "/*" + extension, new CopyProcessor(typeof(TTarget)) ) );
+			return this;
+		}
+
+
+		/// <summary>
 		/// Builds content
 		/// </summary>
 		/// <param name="rebuild"></param>

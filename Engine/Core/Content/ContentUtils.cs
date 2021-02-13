@@ -58,6 +58,11 @@ namespace Fusion.Core.Content {
 		}
 
 
+		public static void MakeDirectoryForFile( string filePath )
+		{
+			Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+		}
+
 
 		/// <summary>
 		/// Creates a relative path from one file or folder to another.

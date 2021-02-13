@@ -261,12 +261,11 @@ namespace Fusion.Drivers.Graphics {
 				var currentIndex	=	startIndex;
 				var elementSize		=	Marshal.SizeOf(typeof(T));
 					
-				for (var row = 0; row < rows; row++) {
-
+				for (var row = 0; row < rows; row++) 
+				{
 					stream.ReadRange(data, currentIndex, elementsInRow);
 					stream.Seek(databox.RowPitch - (elementSize * elementsInRow), SeekOrigin.Current);
 					currentIndex += elementsInRow;
-
 				}
 
 				d3dContext.UnmapSubresource( staging, subres );
@@ -276,9 +275,6 @@ namespace Fusion.Drivers.Graphics {
 				return elementsInRow * rows;
 			}
 		}
-
-
-
 
 
 		public ShaderResource GetCubeShaderResource ( int mipLevel )

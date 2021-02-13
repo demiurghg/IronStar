@@ -51,10 +51,12 @@ namespace Fusion.Engine.Graphics.Lights {
 		internal RenderTargetCube	LightProbeMapping	{ get { return lightProbeMapping; } }
 		internal DepthStencil2D		LightProbeDepth		{ get { return lightProbeDepth; } }
 		internal RenderTargetCube	LightProbeRadiance	{ get { return lightProbeRadiance; } }
+		internal RenderTargetCube	LightProbeHdrTemp	{ get { return lightProbeHdrTemp; } }
 		RenderTargetCube			lightProbeColor;
 		RenderTargetCube			lightProbeMapping;
 		DepthStencil2D				lightProbeDepth;
 		RenderTargetCube			lightProbeRadiance;
+		RenderTargetCube			lightProbeHdrTemp;
 
 
 		public LightMapResources ( RenderSystem rs )
@@ -84,6 +86,7 @@ namespace Fusion.Engine.Graphics.Lights {
 			lightProbeColor			=	new RenderTargetCube	( rs.Device, ColorFormat.Rgba8,			size		);
 			lightProbeMapping		=	new RenderTargetCube	( rs.Device, ColorFormat.Rg16_UNorm,	size		);
 			lightProbeRadiance		=	new RenderTargetCube	( rs.Device, HdrFormat,					size, mips	);
+			lightProbeHdrTemp		=	new RenderTargetCube	( rs.Device, HdrFormat,					size, mips	);
 			lightProbeDepth			=	new DepthStencil2D		( rs.Device, DepthFormat.D24S8,			size, size	);
 		}
 

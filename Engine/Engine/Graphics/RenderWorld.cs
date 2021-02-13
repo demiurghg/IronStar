@@ -491,7 +491,7 @@ namespace Fusion.Engine.Graphics {
 						rs.Radiosity.Render( gameTime );
 
 						//	relight cubemaps :
-						rs.LightProbeRelighter.RelightLightProbes( LightSet, Camera );
+						LightProbeProvider?.Update( LightSet, Camera );
 
 						//	render particle lighting :
 						ParticleSystem.RenderLight( gameTime, Camera );

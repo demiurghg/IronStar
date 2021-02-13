@@ -124,7 +124,8 @@ namespace Fusion.Drivers.Graphics {
 			var elementSizeInByte	=	Marshal.SizeOf(typeof(T));
 			var dataHandle			=	GCHandle.Alloc(data, GCHandleType.Pinned);
 
-			try {
+			try 
+			{
 				var dataPtr		=	dataHandle.AddrOfPinnedObject();
 
 				int x = 0;
@@ -134,9 +135,9 @@ namespace Fusion.Drivers.Graphics {
 
 				int subres	=	Resource.CalculateSubResourceIndex( level, cubeIndex * 6 + (int)face, MipCount );
 
-				var box = new SharpDX.DataBox(dataPtr, w * Converter.SizeOf(Format), 0);
+				var box = new DataBox(dataPtr, w * Converter.SizeOf(Format), 0);
 
-				var region		= new SharpDX.Direct3D11.ResourceRegion();
+				var region		= new ResourceRegion();
 				region.Top		= y;
 				region.Front	= 0;
 				region.Back		= 1;
@@ -144,11 +145,10 @@ namespace Fusion.Drivers.Graphics {
 				region.Left		= x;
 				region.Right	= x + w;
 
-				lock (device.DeviceContext) {
-					device.DeviceContext.UpdateSubresource(box, texCubeArray, subres, region);
-				}
-
-			} finally {
+				device.DeviceContext.UpdateSubresource(box, texCubeArray, subres, region);
+			} 
+			finally 
+			{
 				dataHandle.Free();
 			}
 		}

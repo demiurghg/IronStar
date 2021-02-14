@@ -32,9 +32,12 @@ namespace IronStar.UI.HUD
 
 		public void Update( GameState gs, GameTime gameTime )
 		{
-			var player	=	gs.QueryEntities(PlayerFactory.PlayerAspect).Last();
+			var player	=	gs.QueryEntities(PlayerFactory.PlayerAspect).LastOrDefault();
 
-			UpdateDamageEffect( gs, gameTime, player );
+			if (player!=null)
+			{
+				UpdateDamageEffect( gs, gameTime, player );
+			}
 		}
 
 

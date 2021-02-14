@@ -62,8 +62,8 @@ namespace IronStar
 
 			var mapName =  serverInfo;
 
-			content.PrecacheSafe<LightProbeHDRI	>(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrcache"));
-			content.PrecacheSafe<LightMap		>(Path.Combine(RenderSystem.LightmapPath, mapName + "_irrmap"));
+			content.PrecacheSafe<LightProbeHDRI	>( Path.Combine(RenderSystem.LightProbePath	, mapName	));
+			content.PrecacheSafe<LightMap		>( Path.Combine(RenderSystem.LightmapPath	, mapName	));
 
 			var map = content.PrecacheSafe<Map>(@"maps\" + mapName);
 		}

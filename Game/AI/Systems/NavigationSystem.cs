@@ -36,6 +36,7 @@ namespace IronStar.AI
 
 		private void Worker_RunWorkerCompleted( object sender, RunWorkerCompletedEventArgs e )
 		{
+			Log.Message("Navigation system : build completed");
 			navMesh = (NavigationMesh)e.Result;
 		}
 
@@ -70,7 +71,8 @@ namespace IronStar.AI
 		public void Update( GameState gs, GameTime gameTime )
 		{
 			if (navMeshDirty && !worker.IsBusy)
-			{
+			{										
+				Log.Message("Navigation system : build started");
 				worker.RunWorkerAsync( GetStaticGeometry(gs) );
 				navMeshDirty = false;
 			}
@@ -191,7 +193,15 @@ namespace IronStar.AI
 			config.BBox			=	new BoundingBox( Vector3.One * (-600), Vector3.One*600 );
 			config.MaxVertsPerPoly	=	6;
 
-			return new NavigationMesh( config, bd.verts, bd.inds, bd.walks );
+			try
+			{
+				return new NavigationMesh( config, bd.verts, bd.inds, bd.walks );
+			} 
+			catch ( Exception e )
+			{
+				Log.Error(e.ToString());
+				return null;
+			}
 		}
 
 

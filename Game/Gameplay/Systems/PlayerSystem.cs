@@ -16,6 +16,8 @@ namespace IronStar.Gameplay
 	{
 		Random rand = new Random();
 
+		bool warningFired = false;
+
 
 		public Aspect GetAspect()
 		{
@@ -50,7 +52,11 @@ namespace IronStar.Gameplay
 
 			if (e==null)
 			{
-				Log.Warning("UpdatePlayerSpawn: missing entity with PlayerStart and Transform");
+				if (!warningFired)
+				{
+					Log.Warning("UpdatePlayerSpawn: missing entity with PlayerStart and Transform");
+					warningFired = true;
+				}
 				return;
 			}
 

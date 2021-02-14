@@ -34,7 +34,7 @@ namespace IronStar.UI.HUD
 
 		public void Update( GameState gs, GameTime gameTime )
 		{
-			var player	=	gs.QueryEntities(PlayerFactory.PlayerAspect).Last();
+			var player	=	gs.QueryEntities(PlayerFactory.PlayerAspect).LastOrDefault();
 
 			UpdateHealthStatus( gs, gameTime, player );
 			UpdateWeaponStatus( gs, gameTime, player );

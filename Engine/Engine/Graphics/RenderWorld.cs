@@ -625,7 +625,7 @@ namespace Fusion.Engine.Graphics {
 			var builder			=	Game.GetService<Builder>();
 			var basePath		=	builder.GetBaseInputDirectory();
 
-			var pathIrrMap		=	Path.Combine(basePath, RenderSystem.LightmapPath, Path.ChangeExtension( mapName + "_irrmap"	 , ".irrmap"	) );
+			var pathIrrMap		=	Path.Combine(basePath, RenderSystem.LightmapPath, Path.ChangeExtension( mapName, ".irrmap"	) );
 
 			var irrMap = lightmapper.BakeLightMap();
 

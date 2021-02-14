@@ -122,7 +122,7 @@ namespace Fusion.Engine.Graphics.GI
 							{
 								//	render hdr image :
 								var context	=	new LightProbeContext( rs, camera, depth, hdr, null );
-								rs.SceneRenderer.RenderLightProbeRadiance( context, rs.RenderWorld, groups );
+								RenderHdrScene( hdr, context, rs.RenderWorld, groups );
 							}
 						}
 					}
@@ -151,6 +151,18 @@ namespace Fusion.Engine.Graphics.GI
 		}
 
 
+		void RenderHdrScene(RenderTargetSurface hdrSurf, LightProbeContext context, RenderWorld rw, InstanceGroup groups)
+		{
+			var camera	=	context.GetCamera();
+
+			rs.Sky.RenderSkyLut( GameTime.Zero, camera );
+			rs.Sky.RenderSky( GameTime.Zero, camera, StereoEye.Mono, hdrSurf );
+			rs.Sky.RenderSkyCube( GameTime.Zero, camera );
+
+			rs.SceneRenderer.RenderLightProbeRadiance( context, rs.RenderWorld, groups );
+		}
+
+
 		void WriteCubemapToStream( BinaryWriter writer, RenderTargetCube cube )
 		{
 			int count;
@@ -170,7 +182,7 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			int count;
 
-			for (int mip=0; mip<cubeArray.MipCount; mip++)
+			for (int mip=0; mip<RenderSystem.LightProbeMaxMips; mip++)
 			{
 				for (int face=0; face<6; face++) 
 				{

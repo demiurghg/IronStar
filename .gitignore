@@ -11,6 +11,10 @@ smgvector/
 _kitbash
 _outsource
 
+# Lightmaps
+Content/maps/lightmaps/
+Content/maps/lightprobes/
+
 # FMOD
 .cache/
 .user/

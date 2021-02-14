@@ -4,7 +4,7 @@ $ubershader FORWARD RIGID|SKINNED ANISOTROPIC +TRANSPARENT IRRADIANCE_MAP|IRRADI
 $ubershader SHADOW RIGID|SKINNED +TRANSPARENT
 $ubershader ZPASS RIGID|SKINNED
 $ubershader GBUFFER RIGID|SKINNED
-// $ubershader RADIANCE RIGID IRRADIANCE_MAP|IRRADIANCE_VOLUME
+$ubershader RADIANCE RIGID IRRADIANCE_MAP|IRRADIANCE_VOLUME
 
 // $ubershader FORWARD RIGID +ANISOTROPIC +TRANSPARENT IRRADIANCE_MAP|IRRADIANCE_VOLUME
 // $ubershader SHADOW RIGID +TRANSPARENT
@@ -390,7 +390,8 @@ float4 PSMain( PSInput input ) : SV_TARGET0
 	float3 	lighting	=	ComputeClusteredLighting( input, Stage.ViewportSize.xy, surface, triNormal, input.LMCoord );
 	
 	//	Apply fog :
-	float3	final	=	ApplyVolumetricFog( lighting, input.ProjPos, SamplerLinearClamp, FogVolume );
+	float3 final		=	lighting;
+	//float3	final	=	ApplyVolumetricFog( lighting, input.ProjPos, SamplerLinearClamp, FogVolume );
 	
 	return	float4( final, 1 );
 }

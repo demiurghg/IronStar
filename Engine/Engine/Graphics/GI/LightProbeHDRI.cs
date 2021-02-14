@@ -55,8 +55,8 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			using ( var reader = new BinaryReader( stream ) ) 
 			{
-				reader.ExpectFourCC("IRC3", "light probe G-buffer");
-				reader.ExpectFourCC("HDRI", "light probe G-buffer");
+				reader.ExpectFourCC("IRC3", "light probe HDR cubemaps");
+				reader.ExpectFourCC("HDRI", "light probe HDR cubemaps");
 
 				CubeCount	=	reader.ReadInt32();
 
@@ -65,7 +65,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 				for ( int cubeId = 0; cubeId < CubeCount; cubeId++ ) 
 				{
-					reader.ExpectFourCC("CUBE", "light probe G-buffer");
+					reader.ExpectFourCC("CUBE", "light probe HDR cubemaps");
 
 					var name		=	reader.ReadString();
 
@@ -80,7 +80,7 @@ namespace Fusion.Engine.Graphics.Lights {
 						{
 							reader.Read( buffer, dataSize );
 
-							cubeArrayHdr.SetData( cubeId, (CubeFace)face, 0, buffer );
+							cubeArrayHdr.SetData( cubeId, (CubeFace)face, mip, buffer );
 						}
 					}
 				}

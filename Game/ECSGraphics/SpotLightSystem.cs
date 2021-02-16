@@ -55,6 +55,8 @@ namespace IronStar.SFX2
 			light.SpotView		=	Matrix.Invert( transform );
 			light.Projection	=	ol.ComputeSpotMatrix();
 			light.SpotMaskName	=	ol.SpotMaskName;
+
+			light.EnableGI		=	ol.EnableGI;
 		}
 	}
 }

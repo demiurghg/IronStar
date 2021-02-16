@@ -115,8 +115,8 @@ namespace Fusion.Engine.Graphics {
 
 
 		VirtualTexture		virtualTexture = null;
-		LightMap			irradianceMap = null;	
-		ILightProbeProvider	lightProveProvider = null;
+		ILightmapProvider	lightmap = null;
+		ILightProbeProvider	lightProbes = null;
 
 		/// <summary>
 		/// Sets and gets virtual texture for entire world
@@ -147,13 +147,28 @@ namespace Fusion.Engine.Graphics {
 		{
 			get 
 			{
-				return lightProveProvider;
+				return lightProbes;
 			}
 			set 
 			{
-				if (lightProveProvider!=value) 
+				if (lightProbes!=value) 
 				{
-					lightProveProvider = value;
+					lightProbes = value;
+				}
+			}
+		}
+
+
+		public ILightmapProvider Lightmap
+		{
+			get { return rs.Radiosity.LightMap; }
+			set 
+			{
+				if (lightmap!=value)
+				{
+					rs.Radiosity.LightMap = (LightMap)value;
+					//lightmap = value;
+					//rs.Radiosity.Refresh();
 				}
 			}
 		}
@@ -337,11 +352,11 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 
-			if (lightProveProvider!=null) 
+			if (lightProbes!=null) 
 			{
 				foreach ( var lpb in LightSet.LightProbes ) 
 				{
-					lpb.ImageIndex	= lightProveProvider.GetLightProbeIndex( lpb.Guid.ToString() );
+					lpb.ImageIndex	= lightProbes.GetLightProbeIndex( lpb.Guid.ToString() );
 				}
 			}
 		}

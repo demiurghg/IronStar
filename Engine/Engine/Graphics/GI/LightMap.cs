@@ -242,6 +242,11 @@ namespace Fusion.Engine.Graphics.GI {
 			throw new NotImplementedException();
 		}
 
+		public Int3 GetVolumeSize()
+		{
+			return new Int3( Header.VolumeWidth, Header.VolumeHeight, Header.VolumeDepth );
+		}
+
 		public ShaderResource GetLightmap( int band )
 		{
 			switch (band)

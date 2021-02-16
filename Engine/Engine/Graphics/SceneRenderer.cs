@@ -199,6 +199,7 @@ namespace Fusion.Engine.Graphics {
 			
 			var width	=	context.Viewport.Width;
 			var height	=	context.Viewport.Height;
+			var rw		=	rs.RenderWorld;
 
 			cbDataStage.WorldToVoxelOffset	=	rs.Radiosity.GetWorldToVoxelOffset();
 			cbDataStage.WorldToVoxelScale	=	rs.Radiosity.GetWorldToVoxelScale();
@@ -244,15 +245,15 @@ namespace Fusion.Engine.Graphics {
 			device.GfxResources[ regShadowMapParticles		]	=	context.RequireShadows ? rs.LightManager.ShadowMap.ParticleShadowTexture : null;
 			device.GfxResources[ regAmbientOcclusion		]	=	context.RequireShadows ? rs.RenderWorld.HdrFrame.AOBuffer.GetShaderResource(0) : null;
 
-			device.GfxResources[ regIrradianceMapL0			]	=	rs.Radiosity.IrradianceL0;
-			device.GfxResources[ regIrradianceMapL1			]	=	rs.Radiosity.IrradianceL1;
-			device.GfxResources[ regIrradianceMapL2			]	=	rs.Radiosity.IrradianceL2;
-			device.GfxResources[ regIrradianceMapL3			]	=	rs.Radiosity.IrradianceL3;
+			device.GfxResources[ regIrradianceMapL0			]	=	rw.Lightmap?.GetLightmap(0);
+			device.GfxResources[ regIrradianceMapL1			]	=	rw.Lightmap?.GetLightmap(1);
+			device.GfxResources[ regIrradianceMapL2			]	=	rw.Lightmap?.GetLightmap(2);
+			device.GfxResources[ regIrradianceMapL3			]	=	rw.Lightmap?.GetLightmap(3);
 
-			device.GfxResources[ regIrradianceVolumeL0		]	=	rs.Radiosity.LightVolumeL0;
-			device.GfxResources[ regIrradianceVolumeL1		]	=	rs.Radiosity.LightVolumeL1;
-			device.GfxResources[ regIrradianceVolumeL2		]	=	rs.Radiosity.LightVolumeL2;
-			device.GfxResources[ regIrradianceVolumeL3		]	=	rs.Radiosity.LightVolumeL3;
+			device.GfxResources[ regIrradianceVolumeL0		]	=	rw.Lightmap?.GetVolume(0);
+			device.GfxResources[ regIrradianceVolumeL1		]	=	rw.Lightmap?.GetVolume(1);
+			device.GfxResources[ regIrradianceVolumeL2		]	=	rw.Lightmap?.GetVolume(2);
+			device.GfxResources[ regIrradianceVolumeL3		]	=	rw.Lightmap?.GetVolume(3);
 
 			device.GfxResources[ regRadianceCache			]	=	rs.RenderWorld.LightProbeProvider?.GetLightProbeCubeArray();
 			device.GfxResources[ regEnvLut					]	=	envLut.Srv;

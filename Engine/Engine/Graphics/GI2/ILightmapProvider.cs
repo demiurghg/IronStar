@@ -8,10 +8,11 @@ using Fusion.Drivers.Graphics;
 
 namespace Fusion.Engine.Graphics.GI2
 {
-	internal interface ILightmapProvider
+	public interface ILightmapProvider
 	{
 		Size2			GetLightmapSize();
 		BoundingBox		GetVolumeBounds();
+		Int3			GetVolumeSize();
 		Rectangle		GetRegion( string name );
 		Vector4			GetRegionMadST( string name );
 		ShaderResource	GetLightmap( int band );

@@ -606,6 +606,7 @@ namespace Fusion.Engine.Graphics {
 		void RenderGeneric ( string passName, GameTime gameTime, Camera camera, Viewport viewport, RenderTargetSurface colorTarget, DepthStencilSurface depthTarget, ShaderResource depthValues, Flags flags )
 		{
 			var device	=	Game.GraphicsDevice;
+			var rw		=	rs.RenderWorld;
 
 			using ( new PixEvent(passName) ) {
 
@@ -664,10 +665,10 @@ namespace Fusion.Engine.Graphics {
 
 					if (flags.HasFlag(Flags.LIGHTMAP) || flags.HasFlag(Flags.HARD)) 
 					{
-						device.GfxResources[ regIrradianceVolumeL0 ]	= 	rs.Radiosity.LightVolumeL0	;
-						device.GfxResources[ regIrradianceVolumeL1 ]	= 	rs.Radiosity.LightVolumeL1	;
-						device.GfxResources[ regIrradianceVolumeL2 ]	= 	rs.Radiosity.LightVolumeL2	;
-						device.GfxResources[ regIrradianceVolumeL3 ]	= 	rs.Radiosity.LightVolumeL3	;
+						device.GfxResources[ regIrradianceVolumeL0 ]	= 	rw.Lightmap?.GetVolume(0);
+						device.GfxResources[ regIrradianceVolumeL1 ]	= 	rw.Lightmap?.GetVolume(1);
+						device.GfxResources[ regIrradianceVolumeL2 ]	= 	rw.Lightmap?.GetVolume(2);
+						device.GfxResources[ regIrradianceVolumeL3 ]	= 	rw.Lightmap?.GetVolume(3);
 					}
 
 					device.GfxResources[ regLightMapRegionsGS ]	=	lightMapRegions;

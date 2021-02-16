@@ -37,8 +37,8 @@ namespace IronStar {
 			rw.LightSet.SpotAtlas	=	content.Load<TextureAtlas>(@"spots\spots|srgb");
 			rw.LightSet.DecalAtlas	=	content.Load<TextureAtlas>(@"decals\decals");
 
-			rw.LightProbeProvider					=	content.Load(Path.Combine(RenderSystem.LightProbePath, mapName ), (LightProbeHDRI)null );
-			game.RenderSystem.Radiosity.LightMap	=	content.Load(Path.Combine(RenderSystem.LightmapPath, mapName), (LightMap)null );
+			rw.LightProbeProvider	=	content.Load(Path.Combine(RenderSystem.LightProbePath, mapName ), (LightProbeHDRI)null );
+			rw.Lightmap				=	content.Load(Path.Combine(RenderSystem.LightmapPath, mapName), (LightMap)null );
 
 			gs.Services.AddService( content );
 			gs.Services.AddService( game.RenderSystem );

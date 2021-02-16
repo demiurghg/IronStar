@@ -69,7 +69,7 @@ namespace Fusion.Engine.Graphics.GI
 		[ShaderIfDef("INTEGRATE3")] static FXRWTexture3D<Vector4>	regLightVolumeL2	=	new URegister( 2, "LightVolumeL2"	);
 		[ShaderIfDef("INTEGRATE3")] static FXRWTexture3D<Vector4>	regLightVolumeL3	=	new URegister( 3, "LightVolumeL3"	);
 
-		public LightMap LightMap
+		internal LightMap LightMap
 		{
 			get { return lightMap; }
 			set {
@@ -80,6 +80,13 @@ namespace Fusion.Engine.Graphics.GI
 				}
 			}
 		}
+
+
+		public void Refresh()
+		{
+			fullRefresh	=	true;
+		}
+
 
 		bool fullRefresh = false;
 		LightMap lightMap;

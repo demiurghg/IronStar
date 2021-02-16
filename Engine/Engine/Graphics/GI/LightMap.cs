@@ -309,9 +309,8 @@ namespace Fusion.Engine.Graphics.GI {
 
 		public void DebugDraw( int x, int y, DebugRender dr )
 		{
-			int counter = 0;
-
-			/*for (int i=0; i<tilesX; i++)
+			/*int counter = 0;
+			for (int i=0; i<tilesX; i++)
 			{
 				for (int j=0; j<tilesY; j++)
 				{

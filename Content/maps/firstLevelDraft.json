@@ -3462,7 +3462,7 @@
         "FovHorizontal": 60.0,
         "LightStyle": "default",
         "EnableGI": true,
-        "SpotMaskName": "",
+        "SpotMaskName": "grid",
         "LodBias": 0,
         "DepthBias": 0.0009765625,
         "SlopeBias": 2.0,

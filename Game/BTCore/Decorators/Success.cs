@@ -27,8 +27,6 @@ namespace IronStar.BTCore.Decorators
 			{
 				return BTStatus.Success;
 			}
-
-			return status;
 		}
 	}
 }

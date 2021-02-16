@@ -199,7 +199,6 @@ namespace IronStar {
 			{
 				throw new NotImplementedException();
 				//>>>>>>>>Builder.OpenReport( ReportFile );
-				return null;
 			}
 
 		}

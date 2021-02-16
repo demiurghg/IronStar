@@ -198,8 +198,6 @@ namespace Fusion.Engine.Graphics
 			Vector3 p1			=	origin + dir * t1;
 	 
 			float 	segmentLength 	= distance(p0, p1); 
-			float 	opticalDepthR 	= 0;
-			float	opticalDepthM 	= 0; 
 			float 	mu 				= dot(dir, sunDir); // cosine of the angle between the sun direction and the ray direction 
 			float 	phaseR 			= 3f / (16f * M_PI) * (1 + mu * mu); 
 			float 	phaseM 			= 3f / (8f * M_PI) * ((1f - g * g) * (1f + mu * mu)) / ((2f + g * g) * pow(abs(1f + g * g - 2f * g * mu), 1.5f)); 

@@ -29,10 +29,8 @@ namespace Fusion.Engine.Graphics.GI {
 		/// <param name="action"></param>
 		void ForEachLightMapPixel (	IEnumerable<LightMapGroup> lmGroups, Action<int,int> action, bool showLog = false )
 		{
-			int count		=	0;
 			int total		=	lmGroups.Sum( lmg => lmg.Region.Width * lmg.Region.Height );
 			int one20th		=	total / 10;
-			int progress	=	0;
 
 			foreach ( var group in lmGroups )
 			{

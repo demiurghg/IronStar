@@ -241,8 +241,6 @@ namespace IronStar.Gameplay.Components
 			where TComponent1: IComponent 
 			where TComponent2: IComponent
 		{
-			TComponent1 c1;
-			TComponent2 c2;
 			return FindItem(gs, predicate)!=null;
 		}
 

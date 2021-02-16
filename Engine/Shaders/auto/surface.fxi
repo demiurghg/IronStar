@@ -71,16 +71,15 @@ struct DIRECT_LIGHT {
 struct STAGE {
 	float4     WorldToVoxelScale;             // offset:    0
 	float4     WorldToVoxelOffset;            // offset:   16
-	float4     SkyAmbientLevel;               // offset:   32
-	float4     ViewportSize;                  // offset:   48
-	float      VTPageScaleRCP;                // offset:   64
-	float      VTGradientScaler;              // offset:   68
-	float      SsaoWeight;                    // offset:   72
-	float      ShowLightComplexity;           // offset:   76
-	float      SlopeBias;                     // offset:   80
-	float      DepthBias;                     // offset:   84
-	float      DirectLightFactor;             // offset:   88
-	float      IndirectLightFactor;           // offset:   92
+	float4     ViewportSize;                  // offset:   32
+	float      VTPageScaleRCP;                // offset:   48
+	float      VTGradientScaler;              // offset:   52
+	float      SsaoWeight;                    // offset:   56
+	float      ShowLightComplexity;           // offset:   60
+	float      SlopeBias;                     // offset:   64
+	float      DepthBias;                     // offset:   68
+	float      DirectLightFactor;             // offset:   72
+	float      IndirectLightFactor;           // offset:   76
 };
 
 // Fusion.Engine.Graphics.SceneRenderer+INSTANCE

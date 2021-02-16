@@ -49,12 +49,6 @@ namespace IronStar.SFX {
 		}
 
 
-		public ECS.Aspect GetAspect()
-		{
-			return ECS.Aspect.Empty;
-		}
-
-
 		protected override void Dispose( bool disposing )
 		{
 			if (disposing) {

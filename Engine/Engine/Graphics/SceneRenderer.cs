@@ -204,7 +204,6 @@ namespace Fusion.Engine.Graphics {
 			cbDataStage.WorldToVoxelOffset	=	rs.Radiosity.GetWorldToVoxelOffset();
 			cbDataStage.WorldToVoxelScale	=	rs.Radiosity.GetWorldToVoxelScale();
 			cbDataStage.VTGradientScaler	=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;
-			cbDataStage.SkyAmbientLevel		=	new Color4(8,0,4,1);
 			cbDataStage.VTPageScaleRCP		=	rs.VTSystem.PageScaleRCP;
 			cbDataStage.SsaoWeight			=	instanceGroup.HasFlag(InstanceGroup.Weapon) ? 0 : 1;
 			cbDataStage.ViewportSize		=	new Vector4( width, height, 1.0f / width, 1.0f / height );

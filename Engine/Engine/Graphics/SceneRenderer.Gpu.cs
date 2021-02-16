@@ -49,7 +49,6 @@ namespace Fusion.Engine.Graphics {
 			public Vector4	WorldToVoxelScale		;
 			public Vector4	WorldToVoxelOffset		;
 			
-			public Color4	SkyAmbientLevel			;
 			public Vector4	ViewportSize			;
 			
 			public float	VTPageScaleRCP			;

@@ -253,6 +253,7 @@ namespace Fusion.Engine.Graphics {
 		void SetupParameters ( Camera camera, LightSet lightSet, ShaderResource fogHistory )
 		{
 			var fogData		=	new FOG_DATA();
+			var rw			=	rs.RenderWorld;
 
 			fogData.WorldToVoxelOffset	=	rs.Radiosity.GetWorldToVoxelOffset();
 			fogData.WorldToVoxelScale	=	rs.Radiosity.GetWorldToVoxelScale();
@@ -296,10 +297,10 @@ namespace Fusion.Engine.Graphics {
 			device.ComputeResources	[ regLutAP1				]	=	rs.Sky.LutAP1;
 			device.ComputeResources	[ regShadowHistory		]	=	shadowHistory;
 		
-			device.ComputeResources	[ regIrradianceVolumeL0	]	= 	rs.Radiosity.LightVolumeL0	;
-			device.ComputeResources	[ regIrradianceVolumeL1	]	= 	rs.Radiosity.LightVolumeL1	;
-			device.ComputeResources	[ regIrradianceVolumeL2	]	= 	rs.Radiosity.LightVolumeL2	;
-			device.ComputeResources	[ regIrradianceVolumeL3	]	= 	rs.Radiosity.LightVolumeL3	;
+			device.ComputeResources	[ regIrradianceVolumeL0	]	= 	rw.Lightmap?.GetVolume(0);
+			device.ComputeResources	[ regIrradianceVolumeL1	]	= 	rw.Lightmap?.GetVolume(1);
+			device.ComputeResources	[ regIrradianceVolumeL2	]	= 	rw.Lightmap?.GetVolume(2);
+			device.ComputeResources	[ regIrradianceVolumeL3	]	= 	rw.Lightmap?.GetVolume(3);
 		}
 
 		/// <summary>

@@ -150,6 +150,7 @@ namespace Fusion.Engine.Graphics.GI {
 
 			var paramData	= new DEBUG_PARAMS();
 			var lightmap	= rs.Radiosity.LightMap;
+			var rw			= rs.RenderWorld;
 
 			paramData.LightProbeSize		=	LightProbeSize;
 			paramData.LightProbeMipLevel	=	LightProbeMipLevel;
@@ -174,10 +175,10 @@ namespace Fusion.Engine.Graphics.GI {
 
 			device.GfxSamplers[ regSampler ]			=	SamplerState.LinearWrap;
 
-			device.GfxResources[ regLightVolumeL0	]	=	rs.Radiosity.LightVolumeL0;
-			device.GfxResources[ regLightVolumeL1	]	=	rs.Radiosity.LightVolumeL1;
-			device.GfxResources[ regLightVolumeL2	]	=	rs.Radiosity.LightVolumeL2;
-			device.GfxResources[ regLightVolumeL3	]	=	rs.Radiosity.LightVolumeL3;
+			device.GfxResources[ regLightVolumeL0	]	=	rw.Lightmap?.GetVolume(0);
+			device.GfxResources[ regLightVolumeL1	]	=	rw.Lightmap?.GetVolume(1);
+			device.GfxResources[ regLightVolumeL2	]	=	rw.Lightmap?.GetVolume(2);
+			device.GfxResources[ regLightVolumeL3	]	=	rw.Lightmap?.GetVolume(3);
 
 			device.GfxResources[ regLightProbes		]	=	rs.LightMapResources?.LightProbeRadianceArray;
 			device.GfxResources[ regLightProbeData	]	=	rs.LightManager.LightGrid.ProbeDataGpu;

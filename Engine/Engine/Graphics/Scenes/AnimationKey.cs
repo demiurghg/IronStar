@@ -72,9 +72,7 @@ namespace Fusion.Engine.Graphics.Scenes
 
 			Multiply( ref a, ref b, ref key );
 
-			return key;//*/
-
-			return new AnimationKey( a.Transform * b.Transform );
+			return key;
 		}
 	}
 }

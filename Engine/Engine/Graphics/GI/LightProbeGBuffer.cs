@@ -9,19 +9,19 @@ using System.IO;
 using Fusion.Core.Content;
 using Fusion.Engine.Graphics.GI2;
 
-namespace Fusion.Engine.Graphics.Lights {
+namespace Fusion.Engine.Graphics.GI {
 
-	[ContentLoader(typeof(LightProbeGBufferCache))]
-	public class IrradianceCacheLoader : ContentLoader {
+	[ContentLoader(typeof(LightProbeGBuffer))]
+	public class LightProbeGBufferLoader : ContentLoader {
 
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 		{
-			return new LightProbeGBufferCache( content.Game.RenderSystem, stream );
+			return new LightProbeGBuffer( content.Game.RenderSystem, stream );
 		}
 	}
 
 
-	public class LightProbeGBufferCache : DisposableBase, ILightProbeProvider
+	public class LightProbeGBuffer : DisposableBase, ILightProbeProvider
 	{
 		readonly RenderSystem rs;
 		internal ShaderResource		Radiance		{ get { return rs.LightMapResources.LightProbeRadianceArray; } }
@@ -38,7 +38,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		/// <param name="rs"></param>
 		/// <param name="stream"></param>
-		public LightProbeGBufferCache ( RenderSystem rs )
+		public LightProbeGBuffer ( RenderSystem rs )
 		{
 			this.rs		=	rs;
 		}
@@ -50,7 +50,7 @@ namespace Fusion.Engine.Graphics.Lights {
 		/// </summary>
 		/// <param name="rs"></param>
 		/// <param name="stream"></param>
-		public LightProbeGBufferCache ( RenderSystem rs, Stream stream )
+		public LightProbeGBuffer ( RenderSystem rs, Stream stream )
 		{
 			this.rs		=	rs;
 

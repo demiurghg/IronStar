@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Fusion.Core.Content;
 
-namespace Fusion.Engine.Graphics.Lights 
+namespace Fusion.Engine.Graphics.GI 
 {
 	/// <summary>
 	/// 

@@ -12,7 +12,8 @@ namespace Fusion.Engine.Graphics.GI2
 	{
 		Size2			GetLightmapSize();
 		BoundingBox		GetVolumeBounds();
-		RectangleF		GetRegion( string name );
+		Rectangle		GetRegion( string name );
+		Vector4			GetRegionMadST( string name );
 		ShaderResource	GetLightmap( int band );
 		ShaderResource	GetVolume( int band );
 	}

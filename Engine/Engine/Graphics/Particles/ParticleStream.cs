@@ -419,13 +419,6 @@ namespace Fusion.Engine.Graphics {
 			//	fill constant data :
 			PARAMS param		=	new PARAMS();
 
-			var occlusionMatrix = Matrix.Identity;
-
-			if (rs.RenderWorld.IrradianceVolume!=null)
-			{
-				occlusionMatrix = rs.RenderWorld.IrradianceVolume.WorldPosToTexCoord;
-			}
-
 			param.WorldToVoxelOffset	=	rs.Radiosity.GetWorldToVoxelOffset();
 			param.WorldToVoxelScale		=	rs.Radiosity.GetWorldToVoxelScale();
 			param.SkyAmbientLevel		=	new Color4(8,0,4,1);

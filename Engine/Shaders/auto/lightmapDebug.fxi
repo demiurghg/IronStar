@@ -124,7 +124,7 @@ struct CAMERA {
 	float      Pad2;                          // offset:  412
 };
 
-// Fusion.Engine.Graphics.Lights.LightProbeDebug+DEBUG_PARAMS
+// Fusion.Engine.Graphics.GI.LightProbeDebug+DEBUG_PARAMS
 // Marshal.SizeOf = 64
 struct DEBUG_PARAMS {
 	float4     VoxelToWorldScale;             // offset:    0

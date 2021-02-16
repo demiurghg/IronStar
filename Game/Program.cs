@@ -24,7 +24,7 @@ using Fusion.Scripting;
 using Fusion.Build.Processors;
 using Fusion.Engine.Audio;
 using Fusion.Engine.Graphics.Ubershaders;
-using Fusion.Engine.Graphics.Lights;
+using Fusion.Engine.Graphics.GI;
 using Fusion.Engine.Graphics;
 
 namespace IronStar {
@@ -149,7 +149,6 @@ namespace IronStar {
 
 				.Copy<SoundBank>("*.bank")
 
-				.Copy<IrradianceVolume>	("*.irrvol"  )
 				.Copy<LightMap>			("*.irrmap"  )
 				.Copy<LightProbeHDRI>	("maps/lightprobes/*.bin")
 				;

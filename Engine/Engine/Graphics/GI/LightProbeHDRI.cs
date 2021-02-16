@@ -9,7 +9,7 @@ using System.IO;
 using Fusion.Core.Content;
 using Fusion.Engine.Graphics.GI2;
 
-namespace Fusion.Engine.Graphics.Lights {
+namespace Fusion.Engine.Graphics.GI {
 
 	[ContentLoader(typeof(LightProbeHDRI))]
 	public class LightProbeHDRILoader : ContentLoader {

@@ -16,7 +16,7 @@ using Fusion.Build;
 using IronStar.SinglePlayer;
 using IronStar.ECS;
 using IronStar.Gameplay.Systems;
-using Fusion.Engine.Graphics.Lights;
+using Fusion.Engine.Graphics.GI;
 using Fusion.Core.Content;
 using System.IO;
 using IronStar.AI;

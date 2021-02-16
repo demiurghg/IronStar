@@ -17,7 +17,7 @@ using System.Runtime.CompilerServices;
 using Fusion.Engine.Graphics.Scenes;
 using System.IO;
 
-namespace Fusion.Engine.Graphics.Lights {
+namespace Fusion.Engine.Graphics.GI {
 
 	partial class LightMapper {
 

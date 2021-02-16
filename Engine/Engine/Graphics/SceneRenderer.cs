@@ -200,12 +200,6 @@ namespace Fusion.Engine.Graphics {
 			var width	=	context.Viewport.Width;
 			var height	=	context.Viewport.Height;
 
-			var occlusionMatrix = Matrix.Identity;
-			if (rs.RenderWorld.IrradianceVolume!=null)
-			{
-				occlusionMatrix = rs.RenderWorld.IrradianceVolume.WorldPosToTexCoord;
-			}
-
 			cbDataStage.WorldToVoxelOffset	=	rs.Radiosity.GetWorldToVoxelOffset();
 			cbDataStage.WorldToVoxelScale	=	rs.Radiosity.GetWorldToVoxelScale();
 			cbDataStage.VTGradientScaler	=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;

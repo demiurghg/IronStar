@@ -19,7 +19,7 @@ using Fusion.Engine.Graphics.Scenes;
 using System.IO;
 using Fusion.Engine.Graphics.GI;
 
-namespace Fusion.Engine.Graphics.Lights {
+namespace Fusion.Engine.Graphics.GI {
 
 	internal partial class LightMapper : DisposableBase {
 

@@ -16,7 +16,7 @@ using Fusion.Core.IniParser.Model;
 using Fusion.Engine.Graphics;
 using IronStar.Mapping;
 using System.Threading;
-using Fusion.Engine.Graphics.Lights;
+using Fusion.Engine.Graphics.GI;
 
 namespace IronStar 
 {

@@ -16,8 +16,9 @@ using System.Threading.Tasks;
 using System.IO;
 using Fusion.Core.Content;
 using Fusion.Engine.Graphics.GI;
+using Fusion.Engine.Graphics.GI2;
 
-namespace Fusion.Engine.Graphics.Lights {
+namespace Fusion.Engine.Graphics.GI {
 
 	[ContentLoader(typeof(LightMap))]
 	public class FormFactorLoader : ContentLoader {
@@ -29,7 +30,7 @@ namespace Fusion.Engine.Graphics.Lights {
 	}
 
 	// #TODO -- rename to FormFactor
-	public class LightMap : DisposableBase {
+	public class LightMap : DisposableBase, ILightmapProvider {
 
 		readonly RenderSystem rs;
 
@@ -230,6 +231,42 @@ namespace Fusion.Engine.Graphics.Lights {
 
 
 
+
+		public Size2 GetLightmapSize()
+		{
+			return new Size2( Width, Height );
+		}
+
+		public BoundingBox GetVolumeBounds()
+		{
+			throw new NotImplementedException();
+		}
+
+		public ShaderResource GetLightmap( int band )
+		{
+			switch (band)
+			{
+				case 0: return irradianceL0;
+				case 1: return irradianceL1;
+				case 2: return irradianceL2;
+				case 3: return irradianceL3;
+			}
+			throw new ArgumentOutOfRangeException("band");
+		}
+
+		public ShaderResource GetVolume( int band )
+		{
+			switch (band)
+			{
+				case 0: return lightVolumeL0;
+				case 1: return lightVolumeL1;
+				case 2: return lightVolumeL2;
+				case 3: return lightVolumeL3;
+			}
+			throw new ArgumentOutOfRangeException("band");
+		}
+
+
 		public void AddRegion( string name, Rectangle region )
 		{
 			regions.Add( name, region );
@@ -255,7 +292,7 @@ namespace Fusion.Engine.Graphics.Lights {
 
 
 
-		public Vector4 GetRegionMadScaleOffset ( string regionName )
+		public Vector4 GetRegionMadST ( string regionName )
 		{
 			return GetRegion(regionName).GetMadOpScaleOffsetNDC( Width, Height );
 		}

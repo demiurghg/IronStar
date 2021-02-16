@@ -116,7 +116,6 @@ namespace Fusion.Engine.Graphics {
 
 		VirtualTexture		virtualTexture = null;
 		LightMap			irradianceMap = null;	
-		IrradianceVolume	irradianceVolume = null;
 		ILightProbeProvider	lightProveProvider = null;
 
 		/// <summary>
@@ -136,21 +135,6 @@ namespace Fusion.Engine.Graphics {
 						rs.VTSystem.Start(value);
 						virtualTexture = value;
 					}
-				}
-			}
-		}
-
-
-		/// <summary>
-		/// Sets anf gets irradiance map
-		/// </summary>
-		public IrradianceVolume IrradianceVolume {
-			get {
-				return irradianceVolume;
-			}
-			set {
-				if (irradianceVolume!=value) {
-					irradianceVolume = value;
 				}
 			}
 		}
@@ -348,7 +332,7 @@ namespace Fusion.Engine.Graphics {
 				{
 					if (instance.Group==InstanceGroup.Static) 
 					{
-						instance.LightMapScaleOffset = rs.Radiosity.LightMap.GetRegionMadScaleOffset( instance.LightMapRegionName );
+						instance.LightMapScaleOffset = rs.Radiosity.LightMap.GetRegionMadST( instance.LightMapRegionName );
 					}
 				}
 			}

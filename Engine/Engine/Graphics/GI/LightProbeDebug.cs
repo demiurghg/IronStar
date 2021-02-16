@@ -17,7 +17,7 @@ using System.IO;
 using Fusion.Core.Content;
 using Fusion.Engine.Graphics.Scenes;
 
-namespace Fusion.Engine.Graphics.Lights {
+namespace Fusion.Engine.Graphics.GI {
 
 	[RequireShader("lightmapDebug",true)]
 	[ShaderSharedStructure(typeof(GpuData.DIRECT_LIGHT))]

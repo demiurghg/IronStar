@@ -16,7 +16,7 @@ using System.IO;
 using Fusion.Core.Content;
 using Fusion.Build;
 
-namespace Fusion.Engine.Graphics.Lights 
+namespace Fusion.Engine.Graphics.GI 
 {
 	public class FormFactor
 	{

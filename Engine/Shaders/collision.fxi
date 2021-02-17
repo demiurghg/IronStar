@@ -141,6 +141,7 @@ void GetFrustumPlanesFromMatrix ( float4x4 vpMatrix, out float4 left, out float4
 	Ray
 ------------------------------------------------------------------------------*/
 
+#ifndef RAY_DEFINED
 struct RAY
 {
 	float3 orig;
@@ -148,6 +149,7 @@ struct RAY
 	float3 dir;
 	// int3   dirsign;
 };
+#endif
 
 
 RAY ConstructRay( float3 origin, float3 dir )

@@ -39,6 +39,7 @@ static const int PrefilterBlockSizeY = 8;
 
 // Fusion.Engine.Graphics.GI.LightProbeRelighter+RELIGHT_PARAMS
 // Marshal.SizeOf = 64
+#define RELIGHT_PARAMS_DEFINED 1
 struct RELIGHT_PARAMS {
 	uint       CubeIndex;                     // offset:    0
 	float      RadiosityLevel;                // offset:    4

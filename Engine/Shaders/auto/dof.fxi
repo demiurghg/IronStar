@@ -37,6 +37,7 @@ static const uint BlockSize = 8;
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
 // Marshal.SizeOf = 416
+#define CAMERA_DEFINED 1
 struct CAMERA {
 	float4x4   Projection;                    // offset:    0
 	float4x4   View;                          // offset:   64
@@ -59,6 +60,7 @@ struct CAMERA {
 
 // Fusion.Engine.Graphics.DofFilter+DOF_DATA
 // Marshal.SizeOf = 64
+#define DOF_DATA_DEFINED 1
 struct DOF_DATA {
 	float      ApertureDiameter;              // offset:    0
 	float      FocalLength;                   // offset:    4

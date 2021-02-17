@@ -41,6 +41,7 @@ static const float Epsilon = 0.0002441406;
 
 // Fusion.Engine.Graphics.HdrFilter+PARAMS
 // Marshal.SizeOf = 128
+#define PARAMS_DEFINED 1
 struct PARAMS {
 	float      AdaptationRate;                // offset:    0
 	float      LuminanceLowBound;             // offset:    4
@@ -66,6 +67,7 @@ struct PARAMS {
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
 // Marshal.SizeOf = 416
+#define CAMERA_DEFINED 1
 struct CAMERA {
 	float4x4   Projection;                    // offset:    0
 	float4x4   View;                          // offset:   64

@@ -36,6 +36,7 @@ static const int NoiseSizeX = 64;
 
 // Fusion.Engine.Graphics.GameFX+PARAMS
 // Marshal.SizeOf = 128
+#define PARAMS_DEFINED 1
 struct PARAMS {
 	float      Time;                          // offset:    0
 	float      Random;                        // offset:    4

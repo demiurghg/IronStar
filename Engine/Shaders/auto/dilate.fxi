@@ -37,6 +37,7 @@ static const int BilateralBlockSizeY = 16;
 
 // Fusion.Engine.Graphics.DilateFilter+DILATE
 // Marshal.SizeOf = 64
+#define DILATE_DEFINED 1
 struct DILATE {
 	uint2      SourceXY;                      // offset:    0
 	uint2      TargetXY;                      // offset:    8

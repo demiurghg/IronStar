@@ -26,8 +26,9 @@ namespace Fusion.Engine.Graphics.GI
 		const int TileSize		=	8;
 
 		static FXConstantBuffer<GpuData.CAMERA>		regCamera			=	new CRegister( 0, "Camera"		);
-		static FXStructuredBuffer<Triangle>			regRtTriangles		=	new TRegister(20, "RtTriangles"		);
-		static FXStructuredBuffer<BvhNode>			regRtBvhTree		=	new TRegister(21, "RtBvhTree"		);
+		static FXStructuredBuffer<TRIANGLE>			regRtTriangles		=	new TRegister(20, "RtTriangles"		);
+		static FXStructuredBuffer<BVHNODE>			regRtBvhTree		=	new TRegister(21, "RtBvhTree"		);
+		static FXStructure<RAY> declRayStructure = 0;
 
 		[ShaderIfDef("RAYTRACE")]   
 		static FXRWTexture2D<Vector4>			regRaytraceImage	=	new URegister( 0, "RaytraceImage"	);
@@ -151,7 +152,7 @@ namespace Fusion.Engine.Graphics.GI
 			sw.Start();
 
 			var instances	=	all ? rs.RenderWorld.Instances.ToArray() : rs.RenderWorld.Instances.Where( inst => inst.Group==InstanceGroup.Static ).ToArray();
-			var tris		=	new List<Triangle>();
+			var tris		=	new List<TRIANGLE>();
 			var totalTris	=	0;
 
 			foreach ( var instance in instances )
@@ -159,15 +160,15 @@ namespace Fusion.Engine.Graphics.GI
 				totalTris = GetRenderInstanceTriangles( tris, instance );
 			}
 
-			var bvhTree	=	new BvhTree<Triangle>( tris, prim => prim.ComputeBBox(), prim => prim.ComputeCentroid() );
-			var flatTree =	bvhTree.FlattenTree( (isLeaf,index,bbox) => new BvhNode( isLeaf, index, bbox ) );
+			var bvhTree	=	new BvhTree<TRIANGLE>( tris, prim => prim.ComputeBBox(), prim => prim.ComputeCentroid() );
+			var flatTree =	bvhTree.FlattenTree( (isLeaf,index,bbox) => new BVHNODE( isLeaf, index, bbox ) );
 
 
 			SafeDispose( ref sbBvhTree );
 			SafeDispose( ref sbPrimitives );
 
-			sbPrimitives	=	new StructuredBuffer( rs.Device, typeof(Triangle), bvhTree.Primitives.Length,	StructuredBufferFlags.None );
-			sbBvhTree		=	new StructuredBuffer( rs.Device, typeof(BvhNode),  flatTree.Length,				StructuredBufferFlags.None );
+			sbPrimitives	=	new StructuredBuffer( rs.Device, typeof(TRIANGLE), bvhTree.Primitives.Length,	StructuredBufferFlags.None );
+			sbBvhTree		=	new StructuredBuffer( rs.Device, typeof(BVHNODE),  flatTree.Length,				StructuredBufferFlags.None );
 
 			sbPrimitives.SetData( bvhTree.Primitives );
 			sbBvhTree.SetData( flatTree );
@@ -178,7 +179,7 @@ namespace Fusion.Engine.Graphics.GI
 
 
 
-		int GetRenderInstanceTriangles( List<Triangle> tris, RenderInstance instance )
+		int GetRenderInstanceTriangles( List<TRIANGLE> tris, RenderInstance instance )
 		{
 			if (instance.Mesh==null)
 			{
@@ -200,7 +201,7 @@ namespace Fusion.Engine.Graphics.GI
 				var p1	=	positions[ indices[ i*3+1 ] ];
 				var p2	=	positions[ indices[ i*3+2 ] ];
 
-				tris.Add( new Triangle( p0, p1, p2 ) );
+				tris.Add( new TRIANGLE( p0, p1, p2 ) );
 			}
 
 			return numTris;
@@ -210,10 +211,33 @@ namespace Fusion.Engine.Graphics.GI
 		 *	Ray-tracing structures :
 		-----------------------------------------------------------------------------------------*/
 
-		[StructLayout(LayoutKind.Sequential, Pack=4, Size=64)]
-		public struct Triangle
+		public struct RAY
 		{
-			public Triangle( Vector3 p0, Vector3 p1, Vector3 p2 )
+			public RAY(Vector3 origin, Vector3 direction)
+			{
+				orig	=	origin;
+				dir		=	direction;
+				invdir	=	1.0f / direction;
+				norm	=	Vector3.Zero;
+				uv		=	Vector2.Zero;
+				time	=	9999999;
+				index	=	-1;
+			}
+
+			public Vector3	orig;
+			public Vector3	invdir;
+			public Vector3	dir;
+			public Vector3	norm;
+			public Vector2	uv;
+			public float	time;
+			public int		index;
+		}
+
+
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=64)]
+		public struct TRIANGLE
+		{
+			public TRIANGLE( Vector3 p0, Vector3 p1, Vector3 p2 )
 			{
 				Point0	=	new Vector4( p0, 1 );
 				Point1	=	new Vector4( p1, 1 );
@@ -244,9 +268,9 @@ namespace Fusion.Engine.Graphics.GI
 		}
 
 
-		public struct BvhNode
+		public struct BVHNODE
 		{
-			public BvhNode ( bool isLeaf, uint index, BoundingBox bbox )
+			public BVHNODE ( bool isLeaf, uint index, BoundingBox bbox )
 			{
 			#if false
 				// expand bbox to solve f16-precision issues :

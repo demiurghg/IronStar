@@ -40,6 +40,7 @@ static const int PatternSize = 256;
 
 // Fusion.Engine.Graphics.SsaoFilter+HdaoParams
 // Marshal.SizeOf = 80
+#define HdaoParams_DEFINED 1
 struct HdaoParams {
 	float4     InputSize;                     // offset:    0
 	float      CameraTangentX;                // offset:   16
@@ -56,6 +57,7 @@ struct HdaoParams {
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
 // Marshal.SizeOf = 416
+#define CAMERA_DEFINED 1
 struct CAMERA {
 	float4x4   Projection;                    // offset:    0
 	float4x4   View;                          // offset:   64

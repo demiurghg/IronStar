@@ -208,7 +208,7 @@ namespace Fusion.Engine.Graphics.GI
 
 			using ( new PixEvent( "Radiosity" ) )
 			{
-				//rs.RayTracer.TestRayTracing();
+				rs.RayTracer.TestRayTracing();
 
 				for (int i=0; i<MaxRPF; i++)
 				{

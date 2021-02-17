@@ -35,6 +35,7 @@ static const uint InstanceGroupWeapon = 16;
 
 // Fusion.Engine.Graphics.DebugRender+ConstData
 // Marshal.SizeOf = 256
+#define ConstData_DEFINED 1
 struct ConstData {
 	float4x4   View;                          // offset:    0
 	float4x4   Projection;                    // offset:   64

@@ -40,6 +40,7 @@ static const int MatrixHeight = 256;
 
 // Fusion.Engine.Graphics.BitonicSort+SORT_DATA
 // Marshal.SizeOf = 16
+#define SORT_DATA_DEFINED 1
 struct SORT_DATA {
 	uint       Level;                         // offset:    0
 	uint       LevelMask;                     // offset:    4

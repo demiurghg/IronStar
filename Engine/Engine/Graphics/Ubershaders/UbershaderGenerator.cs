@@ -317,6 +317,7 @@ namespace Fusion.Engine.Graphics.Ubershaders {
 
 			sb.AppendFormat("// {0}\r\n", nestedType);
 			sb.AppendFormat("// Marshal.SizeOf = {0}\r\n", Marshal.SizeOf(nestedType));
+			sb.AppendFormat("#define {0}_DEFINED 1\r\n", nestedType.Name);
 			sb.AppendFormat("struct {0} {{\r\n", nestedType.Name);
 
 			foreach ( var field in nestedType.GetFields() ) {

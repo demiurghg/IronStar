@@ -1,12 +1,18 @@
 #ifndef __MATH_FXI__
 #define __MATH_FXI__
 
+static const float PI = 3.141592f;
+
 float sqr(float a) 
 {
 	return a * a;
 }
 
-static const float PI = 3.141592f;
-
+void swap(inout float a, inout float b)
+{
+	float t = a;
+	a = b;
+	b = t;
+}
 
 #endif

@@ -1,3 +1,6 @@
+#ifndef UBERSHADER_RENDERSYSTEM
+#define UBERSHADER_RENDERSYSTEM
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int LightClusterGridWidth = 16;
@@ -28,6 +31,8 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- SHADER RESOURCES ---------------- //
 
+#endif
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int BlockSizeX = 32;
@@ -40,7 +45,8 @@ static const int PatternSize = 256;
 
 // Fusion.Engine.Graphics.SsaoFilter+HdaoParams
 // Marshal.SizeOf = 80
-#define HdaoParams_DEFINED 1
+#ifndef __STRUCT_HdaoParams
+#define __STRUCT_HdaoParams 1
 struct HdaoParams {
 	float4     InputSize;                     // offset:    0
 	float      CameraTangentX;                // offset:   16
@@ -54,10 +60,12 @@ struct HdaoParams {
 	int2       WriteOffset;                   // offset:   48
 	float      Dummy;                         // offset:   56
 };
+#endif
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
 // Marshal.SizeOf = 416
-#define CAMERA_DEFINED 1
+#ifndef __STRUCT_CAMERA
+#define __STRUCT_CAMERA 1
 struct CAMERA {
 	float4x4   Projection;                    // offset:    0
 	float4x4   View;                          // offset:   64
@@ -77,6 +85,7 @@ struct CAMERA {
 	float      Pad1;                          // offset:  408
 	float      Pad2;                          // offset:  412
 };
+#endif
 
 // ---------------- SHADER RESOURCES ---------------- //
 

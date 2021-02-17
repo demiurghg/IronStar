@@ -23,11 +23,16 @@ namespace Fusion.Engine.Graphics.GI
 	public partial class RayTracer : RenderComponent
 	{
 		[ShaderDefine]	
+		[ShaderIfDef("RAYTRACE")]
 		const int TileSize		=	8;
 
+		[ShaderIfDef("RAYTRACE")]   
 		static FXConstantBuffer<GpuData.CAMERA>		regCamera			=	new CRegister( 0, "Camera"		);
+		[ShaderIfDef("RAYTRACE")]   
 		static FXStructuredBuffer<TRIANGLE>			regRtTriangles		=	new TRegister(20, "RtTriangles"		);
+		[ShaderIfDef("RAYTRACE")]   
 		static FXStructuredBuffer<BVHNODE>			regRtBvhTree		=	new TRegister(21, "RtBvhTree"		);
+		[ShaderIfDef("RAYTRACE")]   
 		static FXStructure<RAY> declRayStructure = 0;
 
 		[ShaderIfDef("RAYTRACE")]   

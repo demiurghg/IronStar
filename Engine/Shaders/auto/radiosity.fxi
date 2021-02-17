@@ -1,3 +1,6 @@
+#ifndef UBERSHADER_RENDERSYSTEM
+#define UBERSHADER_RENDERSYSTEM
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int LightClusterGridWidth = 16;
@@ -28,6 +31,8 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- SHADER RESOURCES ---------------- //
 
+#endif
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int TileSize = 8;
@@ -38,7 +43,8 @@ static const uint PatchCacheSize = 768;
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
 // Marshal.SizeOf = 416
-#define CAMERA_DEFINED 1
+#ifndef __STRUCT_CAMERA
+#define __STRUCT_CAMERA 1
 struct CAMERA {
 	float4x4   Projection;                    // offset:    0
 	float4x4   View;                          // offset:   64
@@ -58,10 +64,12 @@ struct CAMERA {
 	float      Pad1;                          // offset:  408
 	float      Pad2;                          // offset:  412
 };
+#endif
 
 // Fusion.Engine.Graphics.GI.Radiosity+RADIOSITY
 // Marshal.SizeOf = 64
-#define RADIOSITY_DEFINED 1
+#ifndef __STRUCT_RADIOSITY
+#define __STRUCT_RADIOSITY 1
 struct RADIOSITY {
 	uint2      RegionXY;                      // offset:    0
 	uint       RegionWidth;                   // offset:    8
@@ -72,10 +80,12 @@ struct RADIOSITY {
 	float      ShadowFilter;                  // offset:   28
 	float      ColorBounce;                   // offset:   32
 };
+#endif
 
 // Fusion.Engine.Graphics.ShadowMap+CASCADE_SHADOW
 // Marshal.SizeOf = 576
-#define CASCADE_SHADOW_DEFINED 1
+#ifndef __STRUCT_CASCADE_SHADOW
+#define __STRUCT_CASCADE_SHADOW 1
 struct CASCADE_SHADOW {
 	float4x4   CascadeViewProjection0;        // offset:    0
 	float4x4   CascadeViewProjection1;        // offset:   64
@@ -90,10 +100,12 @@ struct CASCADE_SHADOW {
 	float4     CascadeScaleOffset2;           // offset:  544
 	float4     CascadeScaleOffset3;           // offset:  560
 };
+#endif
 
 // Fusion.Engine.Graphics.GpuData+DIRECT_LIGHT
 // Marshal.SizeOf = 48
-#define DIRECT_LIGHT_DEFINED 1
+#ifndef __STRUCT_DIRECT_LIGHT
+#define __STRUCT_DIRECT_LIGHT 1
 struct DIRECT_LIGHT {
 	float4     DirectLightDirection;          // offset:    0
 	float4     DirectLightIntensity;          // offset:   16
@@ -102,10 +114,12 @@ struct DIRECT_LIGHT {
 	float      Pad1;                          // offset:   40
 	float      Pad2;                          // offset:   44
 };
+#endif
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHT
 // Marshal.SizeOf = 132
-#define LIGHT_DEFINED 1
+#ifndef __STRUCT_LIGHT
+#define __STRUCT_LIGHT 1
 struct LIGHT {
 	float4x4   ViewProjection;                // offset:    0
 	float4     Position0LightRange;           // offset:   64
@@ -114,6 +128,7 @@ struct LIGHT {
 	float4     ShadowScaleOffset;             // offset:  112
 	uint       LightType;                     // offset:  128
 };
+#endif
 
 // ---------------- SHADER RESOURCES ---------------- //
 

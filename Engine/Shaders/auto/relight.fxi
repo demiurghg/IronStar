@@ -1,3 +1,6 @@
+#ifndef UBERSHADER_RENDERSYSTEM
+#define UBERSHADER_RENDERSYSTEM
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int LightClusterGridWidth = 16;
@@ -28,6 +31,8 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- SHADER RESOURCES ---------------- //
 
+#endif
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int BlockSizeX = 16;
@@ -39,13 +44,15 @@ static const int PrefilterBlockSizeY = 8;
 
 // Fusion.Engine.Graphics.GI.LightProbeRelighter+RELIGHT_PARAMS
 // Marshal.SizeOf = 64
-#define RELIGHT_PARAMS_DEFINED 1
+#ifndef __STRUCT_RELIGHT_PARAMS
+#define __STRUCT_RELIGHT_PARAMS 1
 struct RELIGHT_PARAMS {
 	uint       CubeIndex;                     // offset:    0
 	float      RadiosityLevel;                // offset:    4
 	float      Dummy0;                        // offset:    8
 	float      Dummy1;                        // offset:   12
 };
+#endif
 
 // ---------------- SHADER RESOURCES ---------------- //
 

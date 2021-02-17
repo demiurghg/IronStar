@@ -1,3 +1,6 @@
+#ifndef UBERSHADER_RENDERSYSTEM
+#define UBERSHADER_RENDERSYSTEM
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int LightClusterGridWidth = 16;
@@ -28,6 +31,8 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- SHADER RESOURCES ---------------- //
 
+#endif
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int BilateralBlockSizeX = 16;
@@ -37,7 +42,8 @@ static const int BilateralBlockSizeY = 16;
 
 // Fusion.Engine.Graphics.DilateFilter+DILATE
 // Marshal.SizeOf = 64
-#define DILATE_DEFINED 1
+#ifndef __STRUCT_DILATE
+#define __STRUCT_DILATE 1
 struct DILATE {
 	uint2      SourceXY;                      // offset:    0
 	uint2      TargetXY;                      // offset:    8
@@ -48,6 +54,7 @@ struct DILATE {
 	float      reserved2;                     // offset:   40
 	float      reserved3;                     // offset:   44
 };
+#endif
 
 // ---------------- SHADER RESOURCES ---------------- //
 

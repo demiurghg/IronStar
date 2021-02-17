@@ -1,3 +1,6 @@
+#ifndef UBERSHADER_RENDERSYSTEM
+#define UBERSHADER_RENDERSYSTEM
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int LightClusterGridWidth = 16;
@@ -28,6 +31,8 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- SHADER RESOURCES ---------------- //
 
+#endif
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const uint BLOCK_SIZE = 16;
@@ -41,7 +46,8 @@ static const uint AP_DEPTH = 16;
 
 // Fusion.Engine.Graphics.Sky2+SKY_DATA
 // Marshal.SizeOf = 256
-#define SKY_DATA_DEFINED 1
+#ifndef __STRUCT_SKY_DATA
+#define __STRUCT_SKY_DATA 1
 struct SKY_DATA {
 	float4     BetaRayleigh;                  // offset:    0
 	float4     BetaMie;                       // offset:   16
@@ -72,10 +78,12 @@ struct SKY_DATA {
 	float      Dummy2;                        // offset:  200
 	float      Dummy3;                        // offset:  204
 };
+#endif
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
 // Marshal.SizeOf = 416
-#define CAMERA_DEFINED 1
+#ifndef __STRUCT_CAMERA
+#define __STRUCT_CAMERA 1
 struct CAMERA {
 	float4x4   Projection;                    // offset:    0
 	float4x4   View;                          // offset:   64
@@ -95,10 +103,12 @@ struct CAMERA {
 	float      Pad1;                          // offset:  408
 	float      Pad2;                          // offset:  412
 };
+#endif
 
 // Fusion.Engine.Graphics.GpuData+DIRECT_LIGHT
 // Marshal.SizeOf = 48
-#define DIRECT_LIGHT_DEFINED 1
+#ifndef __STRUCT_DIRECT_LIGHT
+#define __STRUCT_DIRECT_LIGHT 1
 struct DIRECT_LIGHT {
 	float4     DirectLightDirection;          // offset:    0
 	float4     DirectLightIntensity;          // offset:   16
@@ -107,10 +117,12 @@ struct DIRECT_LIGHT {
 	float      Pad1;                          // offset:   40
 	float      Pad2;                          // offset:   44
 };
+#endif
 
 // Fusion.Engine.Graphics.Fog+FOG_DATA
 // Marshal.SizeOf = 256
-#define FOG_DATA_DEFINED 1
+#ifndef __STRUCT_FOG_DATA
+#define __STRUCT_FOG_DATA 1
 struct FOG_DATA {
 	float4     WorldToVoxelScale;             // offset:    0
 	float4     WorldToVoxelOffset;            // offset:   16
@@ -128,6 +140,7 @@ struct FOG_DATA {
 	float      FogHeight;                     // offset:  100
 	float      FogScale;                      // offset:  104
 };
+#endif
 
 // ---------------- SHADER RESOURCES ---------------- //
 

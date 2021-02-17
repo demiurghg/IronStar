@@ -43,7 +43,11 @@ namespace Fusion.Engine.Graphics.Ubershaders {
 					var fullPath			=   context.ResolveContentPath( nameExt, out baseDir );
 					var assetSrc			=   new AssetSource( nameExt, baseDir, context.FullOutputDirectory, new UbershaderProcessor(), context );
 
+					//	wrap common section to allow HLSL to include to each other
+					headerTextBuilder.Append("#ifndef UBERSHADER_RENDERSYSTEM\r\n");
+					headerTextBuilder.Append("#define UBERSHADER_RENDERSYSTEM\r\n\r\n");
 					headerTextBuilder.Append( GenerateVirtualHeader( typeof(RenderSystem), null ) );
+					headerTextBuilder.Append("#endif\r\n\r\n");
 
 					foreach ( var shader in shaderGroup )
 					{
@@ -126,18 +130,14 @@ namespace Fusion.Engine.Graphics.Ubershaders {
 
 			foreach ( var group in groupedHandles )
 			{
-				if (group.Defines!=null) 
-				{
-					var ifdef = string.Join( " || ", group.Defines.Split(' ',',','|').Select( def => "defined(" + def + ")" ) );
-					sb.AppendLine("#if " + ifdef);
-				}
+				AppendIfDefOpening(sb, group.Defines);
 
 				foreach ( var handle in group.Handles )
 				{
 					sb.AppendLine( handle.GetDeclaration() );
 				}
 
-				if (group.Defines!=null) sb.AppendLine("#endif");
+				AppendIfDefClosing(sb, group.Defines);
 			}
 		}
 
@@ -199,6 +199,25 @@ namespace Fusion.Engine.Graphics.Ubershaders {
 		static void AppendSplitter( StringBuilder sb, string text )
 		{
 			sb.AppendFormat("// ---------------- {0} ---------------- //\r\n\r\n", text.ToUpper());
+		}
+
+
+		static void AppendIfDefOpening( StringBuilder sb, string defines )
+		{
+			if (!string.IsNullOrWhiteSpace(defines))
+			{
+				var ifdef = string.Join( " || ", defines.Split(' ',',','|').Select( def => "defined(" + def + ")" ) );
+				sb.AppendLine("#if " + ifdef);
+			}
+		}
+
+
+		static void AppendIfDefClosing( StringBuilder sb, string defines )
+		{
+			if (!string.IsNullOrWhiteSpace(defines))
+			{
+				sb.AppendLine("#endif");
+			}
 		}
 
 
@@ -317,7 +336,8 @@ namespace Fusion.Engine.Graphics.Ubershaders {
 
 			sb.AppendFormat("// {0}\r\n", nestedType);
 			sb.AppendFormat("// Marshal.SizeOf = {0}\r\n", Marshal.SizeOf(nestedType));
-			sb.AppendFormat("#define {0}_DEFINED 1\r\n", nestedType.Name);
+			sb.AppendFormat("#ifndef __STRUCT_{0}\r\n", nestedType.Name);
+			sb.AppendFormat("#define __STRUCT_{0} 1\r\n", nestedType.Name);
 			sb.AppendFormat("struct {0} {{\r\n", nestedType.Name);
 
 			foreach ( var field in nestedType.GetFields() ) {
@@ -329,38 +349,48 @@ namespace Fusion.Engine.Graphics.Ubershaders {
 			}
 
 			sb.AppendFormat("}};\r\n");
+			sb.AppendFormat("#endif\r\n");
 			sb.AppendFormat("\r\n");
 		}
-
 
 
 		static void ReflectDefinitions ( StringBuilder sb, Type type )
 		{
 			AppendSplitter(sb, "Constant Values");
 
-			foreach ( var field in type.GetFields(BindingFlags.Instance | 
-                       BindingFlags.Static |
-                       BindingFlags.NonPublic |
-                       BindingFlags.Public) ) {
+			var fieldDefGroups	=	type.GetFields(BindingFlags.Instance | 
+				BindingFlags.Static |
+				BindingFlags.NonPublic |
+				BindingFlags.Public)
+				.Where( f1 => f1.HasAttribute<ShaderDefineAttribute>() )
+				.Select( f2 => new { FieldInfo = f2, Define = f2.GetCustomAttribute<ShaderIfDefAttribute>()?.Define } )
+				.GroupBy( f3 => f3.Define )
+				.Select( g0 => new { Defines = g0.First().Define, FieldInfos = g0.Select(h1 => h1.FieldInfo).ToArray() } )
+				.ToArray();
 
-				if (field.GetCustomAttribute<ShaderDefineAttribute>()==null) {
-					continue;
+			foreach ( var fieldDefGroup in fieldDefGroups ) 
+			{
+				AppendIfDefOpening( sb, fieldDefGroup.Defines );
+
+				foreach ( var field in fieldDefGroup.FieldInfos )
+				{
+					if (field.IsLiteral) 
+					{
+						string value;
+						var culture	= CultureInfo.InvariantCulture;
+
+						if (field.FieldType==typeof(int))			value = ((int)  field.GetValue(null)).ToString(culture);
+						else if (field.FieldType==typeof(float))	value = ((float)field.GetValue(null)).ToString(culture);
+						else if (field.FieldType==typeof(uint))		value = ((uint) field.GetValue(null)).ToString(culture);
+						else throw new Exception(string.Format("Bad type for HLSL definition : {0}", field.FieldType));
+
+						var typeName = GetStructFieldHLSLType( field.FieldType );
+
+						sb.AppendFormat("static const {0} {1} = {2};\r\n", typeName, field.Name, value);
+					}
 				}
 
-				if (field.IsLiteral) {
-
-					string value;
-					var culture	= CultureInfo.InvariantCulture;
-
-					if (field.FieldType==typeof(int))			value = ((int)  field.GetValue(null)).ToString(culture);
-					else if (field.FieldType==typeof(float))	value = ((float)field.GetValue(null)).ToString(culture);
-					else if (field.FieldType==typeof(uint))		value = ((uint) field.GetValue(null)).ToString(culture);
-					else throw new Exception(string.Format("Bad type for HLSL definition : {0}", field.FieldType));
-
-					var typeName = GetStructFieldHLSLType( field.FieldType );
-
-					sb.AppendFormat("static const {0} {1} = {2};\r\n", typeName, field.Name, value);
-				}
+				AppendIfDefClosing( sb, fieldDefGroup.Defines );
 			}
 
 			sb.AppendFormat("\r\n");

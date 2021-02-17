@@ -1,3 +1,6 @@
+#ifndef UBERSHADER_RENDERSYSTEM
+#define UBERSHADER_RENDERSYSTEM
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int LightClusterGridWidth = 16;
@@ -28,6 +31,8 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- SHADER RESOURCES ---------------- //
 
+#endif
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int NoiseSizeX = 64;
@@ -36,13 +41,15 @@ static const int NoiseSizeX = 64;
 
 // Fusion.Engine.Graphics.GameFX+PARAMS
 // Marshal.SizeOf = 128
-#define PARAMS_DEFINED 1
+#ifndef __STRUCT_PARAMS
+#define __STRUCT_PARAMS 1
 struct PARAMS {
 	float      Time;                          // offset:    0
 	float      Random;                        // offset:    4
 	float      PainAmount;                    // offset:    8
 	float      DeathFactor;                   // offset:   12
 };
+#endif
 
 // ---------------- SHADER RESOURCES ---------------- //
 

@@ -1,3 +1,6 @@
+#ifndef UBERSHADER_RENDERSYSTEM
+#define UBERSHADER_RENDERSYSTEM
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int LightClusterGridWidth = 16;
@@ -28,6 +31,8 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- SHADER RESOURCES ---------------- //
 
+#endif
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int NoiseSizeX = 64;
@@ -41,7 +46,8 @@ static const float Epsilon = 0.0002441406;
 
 // Fusion.Engine.Graphics.HdrFilter+PARAMS
 // Marshal.SizeOf = 128
-#define PARAMS_DEFINED 1
+#ifndef __STRUCT_PARAMS
+#define __STRUCT_PARAMS 1
 struct PARAMS {
 	float      AdaptationRate;                // offset:    0
 	float      LuminanceLowBound;             // offset:    4
@@ -64,10 +70,12 @@ struct PARAMS {
 	uint       NoiseY;                        // offset:   72
 	float      VignetteAmount;                // offset:   76
 };
+#endif
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
 // Marshal.SizeOf = 416
-#define CAMERA_DEFINED 1
+#ifndef __STRUCT_CAMERA
+#define __STRUCT_CAMERA 1
 struct CAMERA {
 	float4x4   Projection;                    // offset:    0
 	float4x4   View;                          // offset:   64
@@ -87,6 +95,7 @@ struct CAMERA {
 	float      Pad1;                          // offset:  408
 	float      Pad2;                          // offset:  412
 };
+#endif
 
 // ---------------- SHADER RESOURCES ---------------- //
 

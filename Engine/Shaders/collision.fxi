@@ -1,11 +1,11 @@
 #ifndef __COLLISION_FXI__
 #define __COLLISION_FXI__
 
+#include "math.fxi"
 
 static const uint COLLISION_INTERSECT	= 0; 
 static const uint COLLISION_INSIDE 		= 1; 
 static const uint COLLISION_OUTSIDE 	= 2; 
-
 
 /*------------------------------------------------------------------------------
 	Frustum / AABB intersection
@@ -141,7 +141,7 @@ void GetFrustumPlanesFromMatrix ( float4x4 vpMatrix, out float4 left, out float4
 	Ray
 ------------------------------------------------------------------------------*/
 
-#ifndef RAY_DEFINED
+#ifndef __STRUCT_RAY
 struct RAY
 {
 	float3 orig;
@@ -151,30 +151,21 @@ struct RAY
 };
 #endif
 
-
-RAY ConstructRay( float3 origin, float3 dir )
-{
-	RAY r;
-	r.orig		=	origin;
-	r.dir		=	dir;
-	r.invdir	=	1.0f / dir;
-	// r.dirsign.x	=	( dir.x < 0 ) ? 1 : 0;
-	// r.dirsign.y	=	( dir.y < 0 ) ? 1 : 0;
-	// r.dirsign.z	=	( dir.z < 0 ) ? 1 : 0;
-	return r;
-}
-
+// RAY ConstructRay( float3 origin, float3 dir )
+// {
+	// RAY r;
+	// r.orig		=	origin;
+	// r.dir		=	dir;
+	// r.invdir	=	1.0f / dir;
+	// // r.dirsign.x	=	( dir.x < 0 ) ? 1 : 0;
+	// // r.dirsign.y	=	( dir.y < 0 ) ? 1 : 0;
+	// // r.dirsign.z	=	( dir.z < 0 ) ? 1 : 0;
+	// return r;
+// }
 
 /*------------------------------------------------------------------------------
 	Ray / AABB intersection
 ------------------------------------------------------------------------------*/
-
-void swap(inout float a, inout float b)
-{
-	float t = a;
-	a = b;
-	b = t;
-}
 
 
 //
@@ -310,16 +301,5 @@ bool RayTriangleIntersection( RAY r, float3 a, float3 b, float3 c, float4 plane,
 	return true;
 }
 
-
-
-
-
-
-
 #endif
-
-
-
-
-
 

@@ -1,3 +1,6 @@
+#ifndef UBERSHADER_RENDERSYSTEM
+#define UBERSHADER_RENDERSYSTEM
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int LightClusterGridWidth = 16;
@@ -28,6 +31,8 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- SHADER RESOURCES ---------------- //
 
+#endif
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 
@@ -35,7 +40,8 @@ static const uint InstanceGroupWeapon = 16;
 
 // Fusion.Engine.Graphics.DebugRender+ConstData
 // Marshal.SizeOf = 256
-#define ConstData_DEFINED 1
+#ifndef __STRUCT_ConstData
+#define __STRUCT_ConstData 1
 struct ConstData {
 	float4x4   View;                          // offset:    0
 	float4x4   Projection;                    // offset:   64
@@ -44,6 +50,7 @@ struct ConstData {
 	float4     ViewPosition;                  // offset:  208
 	float4     PixelSize;                     // offset:  224
 };
+#endif
 
 // ---------------- SHADER RESOURCES ---------------- //
 

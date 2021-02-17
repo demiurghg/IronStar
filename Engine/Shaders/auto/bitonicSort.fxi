@@ -1,3 +1,6 @@
+#ifndef UBERSHADER_RENDERSYSTEM
+#define UBERSHADER_RENDERSYSTEM
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int LightClusterGridWidth = 16;
@@ -28,6 +31,8 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- SHADER RESOURCES ---------------- //
 
+#endif
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int NumberOfElements = 65536;
@@ -40,13 +45,15 @@ static const int MatrixHeight = 256;
 
 // Fusion.Engine.Graphics.BitonicSort+SORT_DATA
 // Marshal.SizeOf = 16
-#define SORT_DATA_DEFINED 1
+#ifndef __STRUCT_SORT_DATA
+#define __STRUCT_SORT_DATA 1
 struct SORT_DATA {
 	uint       Level;                         // offset:    0
 	uint       LevelMask;                     // offset:    4
 	uint       Width;                         // offset:    8
 	uint       Height;                        // offset:   12
 };
+#endif
 
 // ---------------- SHADER RESOURCES ---------------- //
 

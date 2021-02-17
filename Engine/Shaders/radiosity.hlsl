@@ -4,10 +4,10 @@ $ubershader 	ILLUMINATE
 $ubershader 	COLLAPSE
 $ubershader 	INTEGRATE2
 $ubershader 	INTEGRATE3
-$ubershader		RAYTRACE
 #endif
 
 #include "auto/radiosity.fxi"
+#include "raytracer.hlsl"
 
 #define NO_DECALS
 #define NO_CUBEMAPS

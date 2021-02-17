@@ -1,3 +1,6 @@
+#ifndef UBERSHADER_RENDERSYSTEM
+#define UBERSHADER_RENDERSYSTEM
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int LightClusterGridWidth = 16;
@@ -27,6 +30,8 @@ static const uint InstanceGroupWeapon = 16;
 // ---------------- DATA STRUCTURES ---------------- //
 
 // ---------------- SHADER RESOURCES ---------------- //
+
+#endif
 
 // ---------------- CONSTANT VALUES ---------------- //
 

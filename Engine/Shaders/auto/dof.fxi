@@ -1,3 +1,6 @@
+#ifndef UBERSHADER_RENDERSYSTEM
+#define UBERSHADER_RENDERSYSTEM
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int LightClusterGridWidth = 16;
@@ -28,6 +31,8 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- SHADER RESOURCES ---------------- //
 
+#endif
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const uint BokehShapeSize = 19;
@@ -37,7 +42,8 @@ static const uint BlockSize = 8;
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
 // Marshal.SizeOf = 416
-#define CAMERA_DEFINED 1
+#ifndef __STRUCT_CAMERA
+#define __STRUCT_CAMERA 1
 struct CAMERA {
 	float4x4   Projection;                    // offset:    0
 	float4x4   View;                          // offset:   64
@@ -57,16 +63,19 @@ struct CAMERA {
 	float      Pad1;                          // offset:  408
 	float      Pad2;                          // offset:  412
 };
+#endif
 
 // Fusion.Engine.Graphics.DofFilter+DOF_DATA
 // Marshal.SizeOf = 64
-#define DOF_DATA_DEFINED 1
+#ifndef __STRUCT_DOF_DATA
+#define __STRUCT_DOF_DATA 1
 struct DOF_DATA {
 	float      ApertureDiameter;              // offset:    0
 	float      FocalLength;                   // offset:    4
 	float      FocalDistance;                 // offset:    8
 	float      PixelDensity;                  // offset:   12
 };
+#endif
 
 // ---------------- SHADER RESOURCES ---------------- //
 

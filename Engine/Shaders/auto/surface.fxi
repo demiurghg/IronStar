@@ -1,3 +1,6 @@
+#ifndef UBERSHADER_RENDERSYSTEM
+#define UBERSHADER_RENDERSYSTEM
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int LightClusterGridWidth = 16;
@@ -28,6 +31,8 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- SHADER RESOURCES ---------------- //
 
+#endif
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 
@@ -35,7 +40,8 @@ static const uint InstanceGroupWeapon = 16;
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
 // Marshal.SizeOf = 416
-#define CAMERA_DEFINED 1
+#ifndef __STRUCT_CAMERA
+#define __STRUCT_CAMERA 1
 struct CAMERA {
 	float4x4   Projection;                    // offset:    0
 	float4x4   View;                          // offset:   64
@@ -55,10 +61,12 @@ struct CAMERA {
 	float      Pad1;                          // offset:  408
 	float      Pad2;                          // offset:  412
 };
+#endif
 
 // Fusion.Engine.Graphics.GpuData+DIRECT_LIGHT
 // Marshal.SizeOf = 48
-#define DIRECT_LIGHT_DEFINED 1
+#ifndef __STRUCT_DIRECT_LIGHT
+#define __STRUCT_DIRECT_LIGHT 1
 struct DIRECT_LIGHT {
 	float4     DirectLightDirection;          // offset:    0
 	float4     DirectLightIntensity;          // offset:   16
@@ -67,10 +75,12 @@ struct DIRECT_LIGHT {
 	float      Pad1;                          // offset:   40
 	float      Pad2;                          // offset:   44
 };
+#endif
 
 // Fusion.Engine.Graphics.SceneRenderer+STAGE
 // Marshal.SizeOf = 256
-#define STAGE_DEFINED 1
+#ifndef __STRUCT_STAGE
+#define __STRUCT_STAGE 1
 struct STAGE {
 	float4     WorldToVoxelScale;             // offset:    0
 	float4     WorldToVoxelOffset;            // offset:   16
@@ -84,20 +94,24 @@ struct STAGE {
 	float      DirectLightFactor;             // offset:   72
 	float      IndirectLightFactor;           // offset:   76
 };
+#endif
 
 // Fusion.Engine.Graphics.SceneRenderer+INSTANCE
 // Marshal.SizeOf = 128
-#define INSTANCE_DEFINED 1
+#ifndef __STRUCT_INSTANCE
+#define __STRUCT_INSTANCE 1
 struct INSTANCE {
 	float4x4   World;                         // offset:    0
 	float4     Color;                         // offset:   64
 	float4     LMRegion;                      // offset:   80
 	int        Group;                         // offset:   96
 };
+#endif
 
 // Fusion.Engine.Graphics.SceneRenderer+SUBSET
 // Marshal.SizeOf = 48
-#define SUBSET_DEFINED 1
+#ifndef __STRUCT_SUBSET
+#define __STRUCT_SUBSET 1
 struct SUBSET {
 	float4     Rectangle;                     // offset:    0
 	float4     Color;                         // offset:   16
@@ -106,10 +120,12 @@ struct SUBSET {
 	float      Dummy2;                        // offset:   40
 	float      Dummy3;                        // offset:   44
 };
+#endif
 
 // Fusion.Engine.Graphics.ShadowMap+CASCADE_SHADOW
 // Marshal.SizeOf = 576
-#define CASCADE_SHADOW_DEFINED 1
+#ifndef __STRUCT_CASCADE_SHADOW
+#define __STRUCT_CASCADE_SHADOW 1
 struct CASCADE_SHADOW {
 	float4x4   CascadeViewProjection0;        // offset:    0
 	float4x4   CascadeViewProjection1;        // offset:   64
@@ -124,10 +140,12 @@ struct CASCADE_SHADOW {
 	float4     CascadeScaleOffset2;           // offset:  544
 	float4     CascadeScaleOffset3;           // offset:  560
 };
+#endif
 
 // Fusion.Engine.Graphics.Fog+FOG_DATA
 // Marshal.SizeOf = 256
-#define FOG_DATA_DEFINED 1
+#ifndef __STRUCT_FOG_DATA
+#define __STRUCT_FOG_DATA 1
 struct FOG_DATA {
 	float4     WorldToVoxelScale;             // offset:    0
 	float4     WorldToVoxelOffset;            // offset:   16
@@ -145,10 +163,12 @@ struct FOG_DATA {
 	float      FogHeight;                     // offset:  100
 	float      FogScale;                      // offset:  104
 };
+#endif
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHT
 // Marshal.SizeOf = 132
-#define LIGHT_DEFINED 1
+#ifndef __STRUCT_LIGHT
+#define __STRUCT_LIGHT 1
 struct LIGHT {
 	float4x4   ViewProjection;                // offset:    0
 	float4     Position0LightRange;           // offset:   64
@@ -157,10 +177,12 @@ struct LIGHT {
 	float4     ShadowScaleOffset;             // offset:  112
 	uint       LightType;                     // offset:  128
 };
+#endif
 
 // Fusion.Engine.Graphics.SceneRenderer+DECAL
 // Marshal.SizeOf = 184
-#define DECAL_DEFINED 1
+#ifndef __STRUCT_DECAL
+#define __STRUCT_DECAL 1
 struct DECAL {
 	float4x4   DecalMatrixInv;                // offset:    0
 	float4     BasisX;                        // offset:   64
@@ -176,10 +198,12 @@ struct DECAL {
 	uint       AssignmentGroup;               // offset:  176
 	float      MipBias;                       // offset:  180
 };
+#endif
 
 // Fusion.Engine.Graphics.SceneRenderer+LIGHTPROBE
 // Marshal.SizeOf = 96
-#define LIGHTPROBE_DEFINED 1
+#ifndef __STRUCT_LIGHTPROBE
+#define __STRUCT_LIGHTPROBE 1
 struct LIGHTPROBE {
 	float4x4   MatrixInv;                     // offset:    0
 	float4     Position;                      // offset:   64
@@ -188,6 +212,7 @@ struct LIGHTPROBE {
 	float      NormalizedHeight;              // offset:   88
 	float      NormalizedDepth;               // offset:   92
 };
+#endif
 
 // ---------------- SHADER RESOURCES ---------------- //
 

@@ -3,6 +3,7 @@
 $ubershader		RAYTRACE
 #endif
 
+#include "math.fxi"
 #include "auto/raytracer.fxi"
 
 /*------------------------------------------------------------------------------
@@ -22,12 +23,6 @@ RAY ConstructRay( float3 origin, float3 dir )
 	return r;
 }
 
-void swap(inout float a, inout float b)
-{
-	float t = a;
-	a = b;
-	b = t;
-}
 
 /*------------------------------------------------------------------------------
 	Ray / AABB intersection
@@ -36,7 +31,7 @@ void swap(inout float a, inout float b)
 //
 //	https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection
 //
-bool RayAABBIntersection(RAY r, float3 aabbMin, float3 aabbMax, out float tmin, out float tmax) 
+bool RTRayAABBIntersection(RAY r, float3 aabbMin, float3 aabbMax, out float tmin, out float tmax) 
 { 
 	tmin = (aabbMin.x - r.orig.x) * r.invdir.x; 
 	tmax = (aabbMax.x - r.orig.x) * r.invdir.x; 
@@ -80,7 +75,7 @@ bool RayAABBIntersection(RAY r, float3 aabbMin, float3 aabbMax, out float tmin, 
 
 #define EPSILON 0.00001
 
-float3 Barycentric(float3 p, float3 a, float3 b, float3 c )
+float3 RTBarycentric(float3 p, float3 a, float3 b, float3 c )
 {
     float3 v0 = b - a; 
 	float3 v1 = c - a; 
@@ -97,7 +92,7 @@ float3 Barycentric(float3 p, float3 a, float3 b, float3 c )
 	return float3(u,v,w);
 }
 
-bool RayTriangleIntersection( inout RAY r, TRIANGLE tri, int index )
+bool RTRayTriangleIntersection( inout RAY r, TRIANGLE tri, int index )
 {
 	float  t 		= 0;
 	float2 uv 		= float2(0,0);
@@ -123,7 +118,7 @@ bool RayTriangleIntersection( inout RAY r, TRIANGLE tri, int index )
 
 	float3 p 	=	r.orig + r.dir * t;
 	
-	uv = Barycentric( p, a, b, c ).xy;
+	uv = RTBarycentric( p, a, b, c ).xy;
 	
 	if (uv.x<0 || uv.y<0 || uv.x + uv.y>1 )
 	{
@@ -142,7 +137,7 @@ bool RayTriangleIntersection( inout RAY r, TRIANGLE tri, int index )
 	BVH UTILS :
 ------------------------------------------------------------------------------*/
 
-void UnpackBVHNode( BVHNODE node, out float3 minBound, out float3 maxBound, out uint index, out uint isLeaf )
+void RTUnpackBVHNode( BVHNODE node, out float3 minBound, out float3 maxBound, out uint index, out uint isLeaf )
 {
 	minBound	=	node.BBoxMin.xyz;
 	maxBound	=	node.BBoxMax.xyz;
@@ -180,9 +175,9 @@ bool RayTrace( inout RAY ray, StructuredBuffer<TRIANGLE> tris, StructuredBuffer<
 		float3 minBound, maxBound;
 		uint index, isLeaf;
 		
-		UnpackBVHNode( node, minBound, maxBound, index, isLeaf );
+		RTUnpackBVHNode( node, minBound, maxBound, index, isLeaf );
 		
-		if ( RayAABBIntersection( ray, minBound, maxBound, tmin, tmax ) )
+		if ( RTRayAABBIntersection( ray, minBound, maxBound, tmin, tmax ) )
 		{
 			if (tmax>0 && tmin < ray.time) 
 			{
@@ -190,7 +185,7 @@ bool RayTrace( inout RAY ray, StructuredBuffer<TRIANGLE> tris, StructuredBuffer<
 				{
 					TRIANGLE tri = tris[ index ];
 					
-					if ( RayTriangleIntersection( ray, tri, index ) )
+					if ( RTRayTriangleIntersection( ray, tri, index ) )
 					{
 					}
 				}
@@ -226,7 +221,7 @@ RAY CreateRay( uint2 xy )
 {
 	float 	x 	=	( xy.x )		/ 800.0 * 2 - 1;
 	float 	y 	=	( 600-xy.y ) 	/ 600.0 * 2 - 1;
-	float 	z	=	1.0f;//(wang_hash( 199*xy.x + 2999*xy.y ) & 0xF) / 64.0f + 1.0f;
+	float 	z	=	1;//(wang_hash( 199*xy.x + 2999*xy.y ) & 0xF) / 256.0f + 1.0f;
 	float3 	p 	=	Camera.CameraPosition.xyz;
 	float3  d 	=	Camera.CameraForward.xyz * z + Camera.CameraRight.xyz * x + Camera.CameraUp.xyz * y;
 	return ConstructRay( p, normalize(d) );
@@ -247,10 +242,7 @@ void CSMain(
 	
 	GroupMemoryBarrierWithGroupSync();
 	
-	if (ray.index>=0)
-	{
-		RaytraceImage[ storeXY ] = float4((ray.norm*0.5+0.5) * float3(ray.uv,1),1);
-	}
+	RaytraceImage[ storeXY ] = (ray.index<0) ? float4(0,0,0,1) : float4((ray.norm*0.5+0.5) * float3(ray.uv,1),1);
 }
 
 #endif

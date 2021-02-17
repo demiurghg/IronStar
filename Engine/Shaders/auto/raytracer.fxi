@@ -1,3 +1,6 @@
+#ifndef UBERSHADER_RENDERSYSTEM
+#define UBERSHADER_RENDERSYSTEM
+
 // ---------------- CONSTANT VALUES ---------------- //
 
 static const int LightClusterGridWidth = 16;
@@ -28,15 +31,20 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- SHADER RESOURCES ---------------- //
 
+#endif
+
 // ---------------- CONSTANT VALUES ---------------- //
 
+#if defined(RAYTRACE)
 static const int TileSize = 8;
+#endif
 
 // ---------------- DATA STRUCTURES ---------------- //
 
 // Fusion.Engine.Graphics.GpuData+CAMERA
 // Marshal.SizeOf = 416
-#define CAMERA_DEFINED 1
+#ifndef __STRUCT_CAMERA
+#define __STRUCT_CAMERA 1
 struct CAMERA {
 	float4x4   Projection;                    // offset:    0
 	float4x4   View;                          // offset:   64
@@ -56,30 +64,36 @@ struct CAMERA {
 	float      Pad1;                          // offset:  408
 	float      Pad2;                          // offset:  412
 };
+#endif
 
 // Fusion.Engine.Graphics.GI.RayTracer+TRIANGLE
 // Marshal.SizeOf = 64
-#define TRIANGLE_DEFINED 1
+#ifndef __STRUCT_TRIANGLE
+#define __STRUCT_TRIANGLE 1
 struct TRIANGLE {
 	float4     Point0;                        // offset:    0
 	float4     Point1;                        // offset:   16
 	float4     Point2;                        // offset:   32
 	float4     PlaneEq;                       // offset:   48
 };
+#endif
 
 // Fusion.Engine.Graphics.GI.RayTracer+BVHNODE
 // Marshal.SizeOf = 32
-#define BVHNODE_DEFINED 1
+#ifndef __STRUCT_BVHNODE
+#define __STRUCT_BVHNODE 1
 struct BVHNODE {
 	float3     BBoxMin;                       // offset:    0
 	uint       Index;                         // offset:   12
 	float3     BBoxMax;                       // offset:   16
 	uint       Reserved;                      // offset:   28
 };
+#endif
 
 // Fusion.Engine.Graphics.GI.RayTracer+RAY
 // Marshal.SizeOf = 64
-#define RAY_DEFINED 1
+#ifndef __STRUCT_RAY
+#define __STRUCT_RAY 1
 struct RAY {
 	float3     orig;                          // offset:    0
 	float3     invdir;                        // offset:   12
@@ -89,15 +103,16 @@ struct RAY {
 	float      time;                          // offset:   56
 	int        index;                         // offset:   60
 };
+#endif
 
 // ---------------- SHADER RESOURCES ---------------- //
 
+#if defined(RAYTRACE)
 cbuffer __buffer0 : register(b0) {
 	CAMERA Camera : packoffset(c0);
 };
 StructuredBuffer<TRIANGLE>     RtTriangles                    : register(t20);
 StructuredBuffer<BVHNODE>      RtBvhTree                      : register(t21);
 
-#if defined(RAYTRACE)
 RWTexture2D<float4>            RaytraceImage                  : register(u0);
 #endif

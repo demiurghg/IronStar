@@ -130,6 +130,30 @@ struct LIGHT {
 };
 #endif
 
+// Fusion.Engine.Graphics.GI.RayTracer+TRIANGLE
+// Marshal.SizeOf = 64
+#ifndef __STRUCT_TRIANGLE
+#define __STRUCT_TRIANGLE 1
+struct TRIANGLE {
+	float4     Point0;                        // offset:    0
+	float4     Point1;                        // offset:   16
+	float4     Point2;                        // offset:   32
+	float4     PlaneEq;                       // offset:   48
+};
+#endif
+
+// Fusion.Engine.Graphics.GI.RayTracer+BVHNODE
+// Marshal.SizeOf = 32
+#ifndef __STRUCT_BVHNODE
+#define __STRUCT_BVHNODE 1
+struct BVHNODE {
+	float3     BBoxMin;                       // offset:    0
+	uint       Index;                         // offset:   12
+	float3     BBoxMax;                       // offset:   16
+	uint       Reserved;                      // offset:   28
+};
+#endif
+
 // ---------------- SHADER RESOURCES ---------------- //
 
 cbuffer __buffer0 : register(b0) {
@@ -165,6 +189,8 @@ Texture2D<float4>              BBoxMax                        : register(t14);
 Texture3D<uint4>               Clusters                       : register(t15);
 Texture3D<uint>                IndexVolume                    : register(t16);
 Texture3D<float4>              SkyVolume                      : register(t17);
+StructuredBuffer<TRIANGLE>     RtTriangles                    : register(t18);
+StructuredBuffer<BVHNODE>      RtBvhTree                      : register(t19);
 SamplerState                   LinearSampler                  : register(s0);
 SamplerComparisonState         ShadowSampler                  : register(s1);
 #if defined(ILLUMINATE) || defined(COLLAPSE) || defined(DILATE)

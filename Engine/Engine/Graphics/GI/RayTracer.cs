@@ -16,6 +16,7 @@ using Fusion.Engine.Graphics.Lights;
 using Fusion.Core.Shell;
 using Fusion.Engine.Graphics.Bvh;
 using System.Diagnostics;
+using Fusion.Engine.Graphics.Scenes;
 
 namespace Fusion.Engine.Graphics.GI
 {
@@ -48,8 +49,13 @@ namespace Fusion.Engine.Graphics.GI
 		StateFactory		factory;
 		StructuredBuffer	sbPrimitives;
 		StructuredBuffer	sbBvhTree;
+		StructuredBuffer	sbVertexData;
 
 		public RenderTarget2D	raytracedImage;
+
+		public StructuredBuffer	PrimitiveBuffer { get { return sbPrimitives; } }
+		public StructuredBuffer	BvhTreeBuffer { get { return sbBvhTree; } }
+		public StructuredBuffer	VertexDataBuffer { get { return sbVertexData; } }
 
 
 		class RTBuildBvh : ICommand
@@ -150,41 +156,55 @@ namespace Fusion.Engine.Graphics.GI
 		 *	Scene preprocessing :
 		-----------------------------------------------------------------------------------------*/
 
-		public void BuildAccelerationStructure(bool all)
+		public void BuildAccelerationStructure<TVertex>( Func<RenderInstance,bool> filter, Func<MeshVertex,TVertex> extractor) where TVertex: struct
 		{
-			Log.Message("Build acceleration structure");
+			Log.Message("Build acceleration structure"); 
+			Log.Message("...vertex type : {0}", typeof(TVertex).Name);
 			var sw = new Stopwatch();
 			sw.Start();
 
-			var instances	=	all ? rs.RenderWorld.Instances.ToArray() : rs.RenderWorld.Instances.Where( inst => inst.Group==InstanceGroup.Static ).ToArray();
+			var instances	=	rs.RenderWorld.Instances.Where( inst => filter(inst) ).ToArray();
 			var tris		=	new List<TRIANGLE>();
+			var verts		=	new List<TVertex>();
 			var totalTris	=	0;
 
 			foreach ( var instance in instances )
 			{
-				totalTris = GetRenderInstanceTriangles( tris, instance );
+				totalTris = GetRenderInstanceTriangles( tris, verts, extractor, instance );
 			}
 
-			var bvhTree	=	new BvhTree<TRIANGLE>( tris, prim => prim.ComputeBBox(), prim => prim.ComputeCentroid() );
-			var flatTree =	bvhTree.FlattenTree( (isLeaf,index,bbox) => new BVHNODE( isLeaf, index, bbox ) );
+			var bvhTree		=	new BvhTree<TRIANGLE>( tris, prim => prim.ComputeBBox(), prim => prim.ComputeCentroid() );
+			var flatTree	=	bvhTree.FlattenTree( (isLeaf,index,bbox) => new BVHNODE( isLeaf, index, bbox ) );
+			var vertData	=	verts.ToArray();
 
 
 			SafeDispose( ref sbBvhTree );
 			SafeDispose( ref sbPrimitives );
+			SafeDispose( ref sbVertexData );
 
 			sbPrimitives	=	new StructuredBuffer( rs.Device, typeof(TRIANGLE), bvhTree.Primitives.Length,	StructuredBufferFlags.None );
 			sbBvhTree		=	new StructuredBuffer( rs.Device, typeof(BVHNODE),  flatTree.Length,				StructuredBufferFlags.None );
+			sbVertexData	=	new StructuredBuffer( rs.Device, typeof(TVertex),  vertData.Length,				StructuredBufferFlags.None );
 
 			sbPrimitives.SetData( bvhTree.Primitives );
 			sbBvhTree.SetData( flatTree );
-
+			sbVertexData.SetData( vertData );
+			
 			sw.Stop();
 			Log.Message("Done: {0} ms", sw.ElapsedMilliseconds);
 		}
 
 
 
-		int GetRenderInstanceTriangles( List<TRIANGLE> tris, RenderInstance instance )
+
+		public void BuildAccelerationStructure(bool all)
+		{
+			BuildAccelerationStructure( inst => inst.Group==InstanceGroup.Static, v => v.Normal );
+		}
+
+
+
+		int GetRenderInstanceTriangles<TVertex>( List<TRIANGLE> tris, List<TVertex> verts, Func<MeshVertex,TVertex> extractor, RenderInstance instance )
 		{
 			if (instance.Mesh==null)
 			{
@@ -206,7 +226,15 @@ namespace Fusion.Engine.Graphics.GI
 				var p1	=	positions[ indices[ i*3+1 ] ];
 				var p2	=	positions[ indices[ i*3+2 ] ];
 
+				var v0	=	extractor( mesh.Vertices[ i*3+0 ] );
+				var v1	=	extractor( mesh.Vertices[ i*3+1 ] );
+				var v2	=	extractor( mesh.Vertices[ i*3+2 ] );
+
 				tris.Add( new TRIANGLE( p0, p1, p2 ) );
+
+				verts.Add( v0 );
+				verts.Add( v1 );
+				verts.Add( v2 );
 			}
 
 			return numTris;

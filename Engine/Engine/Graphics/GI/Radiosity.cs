@@ -52,6 +52,8 @@ namespace Fusion.Engine.Graphics.GI
 		static FXTexture3D<UInt4>							regClusters			=	new TRegister(15, "Clusters"		);
 		static FXTexture3D<uint>							regIndexVolume		=	new TRegister(16, "IndexVolume"		);
 		static FXTexture3D<Vector4>							regSkyVolume		=	new TRegister(17, "SkyVolume"		);
+		static FXStructuredBuffer<RayTracer.TRIANGLE>		regRtTriangles		=	new TRegister(18, "RtTriangles"		);
+		static FXStructuredBuffer<RayTracer.BVHNODE>		regRtBvhTree		=	new TRegister(19, "RtBvhTree"		);
 
 		static FXSamplerState								regSamplerLinear	=	new SRegister( 0, "LinearSampler"	);
 		static FXSamplerComparisonState						regSamplerShadow	=	new SRegister( 1, "ShadowSampler"	);
@@ -271,6 +273,8 @@ namespace Fusion.Engine.Graphics.GI
 			device.ComputeResources[ regIndexVolume		]	=	lightMap.indexVol;
 			device.ComputeResources[ regSkyVolume		]	=	lightMap.skyVol;
 
+			device.ComputeResources[ regRtTriangles		]	=	rs.RayTracer.PrimitiveBuffer;
+			device.ComputeResources[ regRtBvhTree		]	=	rs.RayTracer.BvhTreeBuffer;
 		}
 
 

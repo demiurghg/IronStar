@@ -144,7 +144,14 @@ void CSMain(
 		
 		if (1) 
 		{
-			LIGHTING lighting	=	ComputeDirectLight( DirectLight, Camera, geometry, surface, CascadeShadow, shadowRc, loadXY );
+			float3 	dir	=	-normalize(DirectLight.DirectLightDirection.xyz);
+			RAY 	ray = 	ConstructRay( position + normal * 0.1f, dir );
+			
+			bool shadow = RayTrace( ray, RtTriangles, RtBvhTree );
+			
+			LIGHTING lighting 	= (LIGHTING)0;
+			lighting.diffuse	= shadow ? 0 : max( 0, dot(normal, dir) * DirectLight.DirectLightIntensity.rgb );
+			//LIGHTING lighting	=	ComputeDirectLight( DirectLight, Camera, geometry, surface, CascadeShadow, shadowRc, loadXY );
 			
 			AccumulateLighting( totalLight, lighting, 1 );
 		}

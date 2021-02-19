@@ -154,6 +154,15 @@ struct BVHNODE {
 };
 #endif
 
+// Fusion.Engine.Graphics.GI.Radiosity+LMVertex
+// Marshal.SizeOf = 8
+#ifndef __STRUCT_LMVertex
+#define __STRUCT_LMVertex 1
+struct LMVertex {
+	float2     LMCoord;                       // offset:    0
+};
+#endif
+
 // ---------------- SHADER RESOURCES ---------------- //
 
 cbuffer __buffer0 : register(b0) {
@@ -191,6 +200,7 @@ Texture3D<uint>                IndexVolume                    : register(t16);
 Texture3D<float4>              SkyVolume                      : register(t17);
 StructuredBuffer<TRIANGLE>     RtTriangles                    : register(t18);
 StructuredBuffer<BVHNODE>      RtBvhTree                      : register(t19);
+StructuredBuffer<LMVertex>     RtLmVerts                      : register(t20);
 SamplerState                   LinearSampler                  : register(s0);
 SamplerComparisonState         ShadowSampler                  : register(s1);
 #if defined(ILLUMINATE) || defined(COLLAPSE) || defined(DILATE)

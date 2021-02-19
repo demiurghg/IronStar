@@ -22,7 +22,7 @@ namespace Fusion.Engine.Graphics.GI
 	[RequireShader("radiosity", true)]
 	public partial class Radiosity : RenderComponent
 	{
-		const int RegionSize = 128;
+		const int RegionSize = 64;
 
 		[ShaderDefine]	const int TileSize			=	RadiositySettings.TileSize;
 		[ShaderDefine]	const int ClusterSize		=	RadiositySettings.ClusterSize;
@@ -54,6 +54,7 @@ namespace Fusion.Engine.Graphics.GI
 		static FXTexture3D<Vector4>							regSkyVolume		=	new TRegister(17, "SkyVolume"		);
 		static FXStructuredBuffer<RayTracer.TRIANGLE>		regRtTriangles		=	new TRegister(18, "RtTriangles"		);
 		static FXStructuredBuffer<RayTracer.BVHNODE>		regRtBvhTree		=	new TRegister(19, "RtBvhTree"		);
+		static FXStructuredBuffer<LMVertex>					regRtLmVerts		=	new TRegister(20, "RtLmVerts"		);
 
 		static FXSamplerState								regSamplerLinear	=	new SRegister( 0, "LinearSampler"	);
 		static FXSamplerComparisonState						regSamplerShadow	=	new SRegister( 1, "ShadowSampler"	);
@@ -120,6 +121,11 @@ namespace Fusion.Engine.Graphics.GI
 			public float	ShadowFilter;
 
 			public float	ColorBounce;
+		}
+
+		struct LMVertex
+		{
+			public Vector2 LMCoord;
 		}
 
 		public ShaderResource Radiance		{ get { return lightMap?.radiance;		} }
@@ -275,6 +281,7 @@ namespace Fusion.Engine.Graphics.GI
 
 			device.ComputeResources[ regRtTriangles		]	=	rs.RayTracer.PrimitiveBuffer;
 			device.ComputeResources[ regRtBvhTree		]	=	rs.RayTracer.BvhTreeBuffer;
+			device.ComputeResources[ regRtLmVerts		]	=	rs.RayTracer.VertexDataBuffer;
 		}
 
 

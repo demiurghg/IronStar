@@ -8,6 +8,7 @@ $ubershader 	INTEGRATE3
 
 #include "auto/radiosity.fxi"
 #include "raytracer.hlsl"
+#include "hammersley.fxi"
 
 #define NO_DECALS
 #define NO_CUBEMAPS
@@ -280,6 +281,13 @@ float3 unpack_color( uint2 color )
 	return result;
 }
 
+float2 lerp_barycentric_coords( float2 a, float2 b, float2 c, float2 uv )
+{
+	float u = uv.x;
+	float v = uv.y;
+	float w = 1 - u - v;
+	return a * u + b * v + c * w;
+}
 
 uint uintDivUp( uint a, uint b ) { return (a % b != 0) ? (a / b + 1) : (a / b); }
 
@@ -313,92 +321,73 @@ void CSMain(
 	int2	loadXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
 	int2	storeXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
 	
-	#if 0
-	//	culling :
-	float3 bboxMin		=	BBoxMin[ tileLoadXY ].xyz;
-	float3 bboxMax		=	BBoxMax[ tileLoadXY ].xyz;
-
-	if (groupIndex<6)
-	{
-		if (IsAABBOutsidePlane( FrustumPlanes[groupIndex], bboxMin, bboxMax )) skip_tile_processing = true;
-	}
-	
-	GroupMemoryBarrierWithGroupSync();
-	#endif
-
-	//	upload cache
-	uint 	cacheIndex	=	Tiles[ tileLoadXY ].x;
-	uint 	cacheCount	=	Tiles[ tileLoadXY ].y;
-	uint	cacheBase	=	Tiles[ tileLoadXY ].z;
-	uint	stride		=	TileSize * TileSize;
-	
-	GroupMemoryBarrierWithGroupSync();
-
-	for (uint base=0; base<PatchCacheSize; base+=stride)
-	{
-		uint offset = groupThreadId.x + groupThreadId.y * TileSize;
-		uint addr   = cacheIndex + base + offset;
-		
-		if (base+offset < cacheCount)
-		{
-			uint 	lmAddr		=	Cache[ addr ];
-			uint 	lmX			=	(lmAddr >> 20) & 0xFFF;
-			uint 	lmY			=	(lmAddr >>  8) & 0xFFF;
-			uint 	lmMip		=	(lmAddr >>  5) & 0x007;
-			int3	loadUVm		=	int3( lmX, lmY, lmMip );
-			float3 	radiance	=	Radiance.Load( loadUVm ).rgb;
-			float3 	color		=	Albedo.Load( loadUVm ).rgb;
-					color		=	lerp( WhiteColor, color, Radiosity.ColorBounce );
-			radiance_cache[ base+offset ] = pack_color(radiance * color);
-		}
-		else
-		{
-			radiance_cache[ base+offset ] = pack_color(float3(10,0,5));
-		}
-	}//*/
-	
-	GroupMemoryBarrierWithGroupSync();
-
-	uint 	offsetCount	=	IndexMap[ loadXY ];
-	uint 	offset		=	(offsetCount >> 8) + cacheBase;
-	uint 	count		=	(offsetCount & 0xFF);
-	
-	uint	begin		=	offset;
-	uint	end			=	offset + count;
-	
 	float4	irradianceR	=	float4( 0, 0, 0, 0 );
 	float4	irradianceG	=	float4( 0, 0, 0, 0 );
 	float4	irradianceB	=	float4( 0, 0, 0, 0 );
 	
-	float3	skyDir		=	Sky[ loadXY ].xyz * 2 - 1;
+	/*float3	skyDir		=	Sky[ loadXY ].xyz * 2 - 1;
 	float	skyFactor	=	length( skyDir ) * Radiosity.SkyFactor;
-	float3	skyColor	=	SkyBox.SampleLevel( LinearSampler, skyDir.xyz * float3(-1,1,1), 0 ).rgb * skyFactor * skyFactor;
+	float3	skyColor	=	SkyBox.SampleLevel( LinearSampler, skyDir.xyz * float3(-1,1,1), 0 ).rgb * skyFactor * skyFactor;*/
 	
 	// irradianceR			+=	SHL1EvaluateDiffuse( Radiance[loadXY].r, float3(0,0,0) );
 	// irradianceG			+=	SHL1EvaluateDiffuse( Radiance[loadXY].g, float3(0,0,0) );
 	// irradianceB			+=	SHL1EvaluateDiffuse( Radiance[loadXY].b, float3(0,0,0) );
 
-	irradianceR			+=	SHL1EvaluateDiffuse( skyColor.r, normalize(skyDir.xyz) );
+	/*irradianceR			+=	SHL1EvaluateDiffuse( skyColor.r, normalize(skyDir.xyz) );
 	irradianceG			+=	SHL1EvaluateDiffuse( skyColor.g, normalize(skyDir.xyz) );
-	irradianceB			+=	SHL1EvaluateDiffuse( skyColor.b, normalize(skyDir.xyz) );
+	irradianceB			+=	SHL1EvaluateDiffuse( skyColor.b, normalize(skyDir.xyz) );*/
+	
+	float3	lmNormal	=	Normal	[ loadXY ].xyz * 2 - 1;
+	float3	lmPosition	=	Position[ loadXY ].xyz + lmNormal * 0.01;
+	static const uint NUM_SAMPLES	=	512;
+	float k = 1.0f / NUM_SAMPLES;
 	
 	if (!skip_tile_processing)
 	{
-		for (uint index=begin; index<end; index++)
+		for (uint i=0; i<NUM_SAMPLES; i++)
 		{
-			uint 	lmAddr		=	Indices[ index ];
-			uint 	cacheIndex	=	(lmAddr >> 20) & 0xFFF;
-			uint 	direction	=	(lmAddr >>  8) & 0xFFF;
-			uint 	hitCount	=	(lmAddr >>  0) & 0x0FF;
+			float3	rayDir		=	hammersley_sphere_uniform( i, NUM_SAMPLES );
 			
-			float3 	radiance	=	unpack_color( radiance_cache[ cacheIndex ] );
-			float3 	lightDirN	=	DecodeDirection( direction );
+			if (dot(rayDir, lmNormal)>0.01)
+			{
+				RAY 	ray		=	ConstructRay( lmPosition, rayDir );
+				bool	hit		=	RayTrace( ray, RtTriangles, RtBvhTree );
+				float3	light	=	float3(0,0,0);
+				
+				if (hit)
+				{
+					uint 	triIndex	=	ray.index;
+					float3	hitNormal	=	normalize(ray.norm);
+					float2 	lmCoord0	=	RtLmVerts[ triIndex*3+0 ].LMCoord;
+					float2 	lmCoord1	=	RtLmVerts[ triIndex*3+1 ].LMCoord;
+					float2 	lmCoord2	=	RtLmVerts[ triIndex*3+2 ].LMCoord;
+					float2	lmCoord		=	lerp_barycentric_coords( lmCoord0, lmCoord1, lmCoord2, ray.uv );
+					float	nDotL		=	max( 0, -dot( hitNormal, rayDir ) );
+					float3	albedo		=	Albedo.SampleLevel( LinearSampler, lmCoord, 0 ).rgb;
+					light				=	nDotL * albedo * Radiance.SampleLevel( LinearSampler, lmCoord, 0 ).rgb;
+				}
+				else
+				{
+					light		=	SkyBox.SampleLevel( LinearSampler, rayDir.xyz * float3(-1,1,1), 0 ).rgb;
+				}
 
-			float3	light		=	radiance.rgb * hitCount * Radiosity.IndirectFactor;	
+				irradianceR		+=	k * SHL1EvaluateDiffuse( light.r, rayDir );
+				irradianceG		+=	k * SHL1EvaluateDiffuse( light.g, rayDir );
+				irradianceB		+=	k * SHL1EvaluateDiffuse( light.b, rayDir );
+			}
+			// uint 	lmAddr		=	Indices[ index ];
+			// uint 	cacheIndex	=	(lmAddr >> 20) & 0xFFF;
+			// uint 	direction	=	(lmAddr >>  8) & 0xFFF;
+			// uint 	hitCount	=	(lmAddr >>  0) & 0x0FF;
 			
-			irradianceR			+=	SHL1EvaluateDiffuse( light.r, lightDirN );
-			irradianceG			+=	SHL1EvaluateDiffuse( light.g, lightDirN );
-			irradianceB			+=	SHL1EvaluateDiffuse( light.b, lightDirN );
+			// float3 	radiance	=	unpack_color( radiance_cache[ cacheIndex ] );
+			// float3 	lightDirN	=	DecodeDirection( direction );
+
+			// float3	light		=	radiance.rgb * hitCount * Radiosity.IndirectFactor;	
+			
+			// irradianceR			+=	SHL1EvaluateDiffuse( light.r, lightDirN );
+			// irradianceG			+=	SHL1EvaluateDiffuse( light.g, lightDirN );
+			// irradianceB			+=	SHL1EvaluateDiffuse( light.b, lightDirN );
 		}
 	
 		StoreLightmap( storeXY.xy, irradianceR, irradianceG, irradianceB );

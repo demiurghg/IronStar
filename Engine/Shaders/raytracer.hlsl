@@ -118,7 +118,7 @@ bool RTRayTriangleIntersection( inout RAY r, TRIANGLE tri, int index )
 
 	float3 p 	=	r.orig + r.dir * t;
 	
-	uv = RTBarycentric( p, a, b, c ).xy;
+	uv 	=	RTBarycentric( p, a, b, c ).xy;
 	
 	if (uv.x<0 || uv.y<0 || uv.x + uv.y>1 )
 	{

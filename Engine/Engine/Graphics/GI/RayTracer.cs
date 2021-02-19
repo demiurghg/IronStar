@@ -199,7 +199,7 @@ namespace Fusion.Engine.Graphics.GI
 
 		public void BuildAccelerationStructure(bool all)
 		{
-			BuildAccelerationStructure( inst => inst.Group==InstanceGroup.Static, v => v.Normal );
+			BuildAccelerationStructure( inst => inst.Group==InstanceGroup.Static, v => v.TexCoord1 );
 		}
 
 
@@ -222,13 +222,17 @@ namespace Fusion.Engine.Graphics.GI
 
 			for (int i=0; i<numTris; i++)
 			{
-				var p0	=	positions[ indices[ i*3+0 ] ];
-				var p1	=	positions[ indices[ i*3+1 ] ];
-				var p2	=	positions[ indices[ i*3+2 ] ];
+				var i0	=	indices[ i*3+0 ];
+				var i1	=	indices[ i*3+1 ];
+				var i2	=	indices[ i*3+2 ];
 
-				var v0	=	extractor( mesh.Vertices[ i*3+0 ] );
-				var v1	=	extractor( mesh.Vertices[ i*3+1 ] );
-				var v2	=	extractor( mesh.Vertices[ i*3+2 ] );
+				var p0	=	positions[ i0 ];
+				var p1	=	positions[ i1 ];
+				var p2	=	positions[ i2 ];
+
+				var v0	=	extractor( mesh.Vertices[ i0 ] );
+				var v1	=	extractor( mesh.Vertices[ i1 ] );
+				var v2	=	extractor( mesh.Vertices[ i2 ] );
 
 				tris.Add( new TRIANGLE( p0, p1, p2 ) );
 

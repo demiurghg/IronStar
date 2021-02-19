@@ -3,7 +3,7 @@
 $ubershader 	ILLUMINATE
 $ubershader 	COLLAPSE
 $ubershader 	INTEGRATE2
-$ubershader 	INTEGRATE3
+--$ubershader 	INTEGRATE3
 #endif
 
 #include "auto/radiosity.fxi"
@@ -37,10 +37,6 @@ void ReconstructBasis(float3 normal, out float3 tangentX, out float3 tangentY)
 }
 
 
-groupshared uint light_indices[ TileSize * TileSize ];
-groupshared uint light_count = 0;
-
-
 [numthreads(TileSize,TileSize,1)] 
 void CSMain( 
 	uint3 groupId : SV_GroupID, 
@@ -49,9 +45,6 @@ void CSMain(
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
 	uint2 	tileLoadXY	=	groupId.xy + Radiosity.RegionXY/8;
-	float3 	bboxMin		=	BBoxMin[ tileLoadXY ].xyz;
-	float3 	bboxMax		=	BBoxMax[ tileLoadXY ].xyz;
-
 	int2	loadXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
 	int2	storeXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
 	
@@ -62,32 +55,6 @@ void CSMain(
 	shadowRc.ShadowMask		=	ShadowMask		;
 	
 	float4 	albedo			=	Albedo[ loadXY ].rgba;
-	
-	//---------------------------------
-	
-	if (1)
-	{
-		uint 	light_index		=	groupIndex;
-		LIGHT 	light			=	Lights[light_index];
-		uint 	current_index;
-		
-		float4 planes[6], left, right, top, bottom, near, far;
-		
-		GetFrustumPlanesFromMatrix( light.ViewProjection, left, right, top, bottom, near, far );
-		
-		planes[0]	=	(-1) * left;
-		planes[1] 	=	(-1) * right;
-		planes[2]	=	(-1) * top;
-		planes[3] 	=	(-1) * bottom;
-		planes[4]	=	(-1) * near;
-		planes[5] 	=	(-1) * far;
-
-		if ( light.LightType!=LightTypeNone && FrustumAABBIntersect( planes, bboxMin, bboxMax )!=COLLISION_OUTSIDE )
-		{
-			InterlockedAdd( light_count, 1, current_index );
-			light_indices[ current_index ] = light_index;
-		}
-	}
 	
 	GroupMemoryBarrierWithGroupSync();
 	
@@ -116,32 +83,17 @@ void CSMain(
 		// compute spot lights :
 		//-----------------------------
 		
-		for (uint index=0; index<light_count; index++)
+		/*for (uint index=0; index<light_count; index++)
 		{
 			LIGHT light 		=	Lights[ light_indices[ index ] ];
 			LIGHTING lighting	=	ComputePointLight( light, Camera, geometry, surface, shadowRc );
 			
 			AccumulateLighting( totalLight, lighting, 1 );
-		}
+		}*/
 
 		//-----------------------------
 		// compute direct light :
 		//-----------------------------
-		
-		/*float2 sample_pattern[] = {
-			float2( 0.25f, 0.75f ),		float2(-0.75f, 0.25f ),
-			float2(-0.25f,-0.75f ),		float2( 0.75f,-0.25f ),
-			float2( 0.00f, 0.00f )
-		};
-		float3 		shadow = 0;
-
-		for (int i=0; i<5; i++)
-		{
-			float3 offset = tangentX * sample_pattern[i].x * size;
-						  + tangentY * sample_pattern[i].y * size;
-			geometry.position = position + offset;
-			shadow += 0.2*ComputeCascadedShadows( geometry, float2(0,0), CascadeShadow, shadowRc );
-		}*/
 		
 		if (1) 
 		{
@@ -342,11 +294,14 @@ void CSMain(
 	static const uint NUM_SAMPLES	=	512;
 	float k = 1.0f / NUM_SAMPLES;
 	
+	float3	random_vector	=	hammersley_sphere_uniform( groupIndex, TileSize * TileSize );
+	
 	if (!skip_tile_processing)
 	{
 		for (uint i=0; i<NUM_SAMPLES; i++)
 		{
 			float3	rayDir		=	hammersley_sphere_uniform( i, NUM_SAMPLES );
+					//rayDir		=	reflect( rayDir, random_vector );
 			
 			if (dot(rayDir, lmNormal)>0.01)
 			{

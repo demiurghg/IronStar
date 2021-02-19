@@ -51,19 +51,6 @@ namespace Fusion.Engine.Graphics.GI {
 		internal Texture2D			albedo		;
 		internal Texture2D			position	;
 		internal Texture2D			normal		;
-		internal Texture2D			area		;
-		internal Texture2D			sky			;
-		internal Texture2D			indexMap	;
-		internal Texture2D			tiles		;
-		internal FormattedBuffer	indices		;
-		internal FormattedBuffer	cache		;
-
-		internal Texture2D			bboxMin		;
-		internal Texture2D			bboxMax		;
-
-		internal Texture3D			indexVol	;
-		internal Texture3D			clusters	;
-		internal Texture3D			skyVol		;
 
 		internal RenderTarget2D		radiance	;
 		internal RenderTarget2D		irradianceL0;
@@ -93,26 +80,14 @@ namespace Fusion.Engine.Graphics.GI {
 
 			using ( var reader = new BinaryReader( stream ) )
 			{
-				const int mips = RadiositySettings.MapPatchLevels;
-
 				//	read header :
-				reader.ExpectFourCC("RAD2", "bad lightmap format");
+				reader.ExpectFourCC("RAD3", "bad lightmap format");
 
 				header			=	reader.Read<FormFactor.Header>();
 
-				albedo			=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	mips,	false );
-				position		=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgb32F,	mips,	false );
-				normal			=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	mips,	false );
-				area			=	new Texture2D( rs.Device, Width,  Height, ColorFormat.R32F,		mips,	false );
-				sky				=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	1,		false );
-				indexMap		=	new Texture2D( rs.Device, Width,  Height, ColorFormat.R32,		1,		false );
-				tiles			=	new Texture2D( rs.Device, tilesX, tilesY, ColorFormat.Rgba32,	1,		false );
-				bboxMax			=	new Texture2D( rs.Device, tilesX, tilesY, ColorFormat.Rgb32F,	1,		false );
-				bboxMin			=	new Texture2D( rs.Device, tilesX, tilesY, ColorFormat.Rgb32F,	1,		false );
-
-				clusters		=	new Texture3D( rs.Device, ColorFormat.Rgba32,	clusterX, clusterY, clusterZ );
-				indexVol		=	new Texture3D( rs.Device, ColorFormat.R32,		VolumeWidth, VolumeHeight, VolumeDepth );
-				skyVol			=	new Texture3D( rs.Device, ColorFormat.Rgba8,	VolumeWidth, VolumeHeight, VolumeDepth );
+				albedo			=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	1,	false );
+				position		=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgb32F,	1,	false );
+				normal			=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	1,	false );
 
 				radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	Width, Height, true,  true );
 				irradianceL0	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	Width, Height, false, true );
@@ -146,41 +121,13 @@ namespace Fusion.Engine.Graphics.GI {
 				reader.ExpectFourCC("GBF1", "bad lightmap format");
 
 				reader.ExpectFourCC("POS1", "bad lightmap format");
-				for (int i=0; i<mips; i++) position.SetData( i, Image<Vector3>.FromStream(stream).RawImageData );
+				position.SetData( Image<Vector3>.FromStream(stream).RawImageData );
 
 				reader.ExpectFourCC("NRM1", "bad lightmap format");
-				for (int i=0; i<mips; i++) normal.SetData( i, Image<Color>.FromStream(stream).RawImageData );
+				normal.SetData( Image<Color>.FromStream(stream).RawImageData );
 
 				reader.ExpectFourCC("ALB1", "bad lightmap format");
-				for (int i=0; i<mips; i++) albedo.SetData( i, Image<Color>.FromStream(stream).RawImageData );
-
-				reader.ExpectFourCC("ARE1", "bad lightmap format");
-				for (int i=0; i<mips; i++) area.SetData( i, Image<float>.FromStream(stream).RawImageData );
-
-				reader.ExpectFourCC("SKY1", "bad lightmap format");
-				sky.SetData( Image<Color>.FromStream(stream).RawImageData );
-
-				//	read indices
-				reader.ExpectFourCC("TILE", "bad lightmap format");
-				cache	=	ReadUintBufferFromStream( reader );
-				indices	=	ReadUintBufferFromStream( reader );
-
-				//	read index map
-				reader.ExpectFourCC("MAP1", "bad lightmap format");
-				tiles.SetData( Image<Int4>.FromStream( stream ).RawImageData );
-				indexMap.SetData( Image<uint>.FromStream(stream).RawImageData );
-
-				//	read bounding boxes :
-				reader.ExpectFourCC("BBOX", "bad lightmap format");
-				bboxMin.SetData( Image<Vector3>.FromStream( stream ).RawImageData );
-				bboxMax.SetData( Image<Vector3>.FromStream( stream ).RawImageData );
-
-				// #TODO #LIGHTMAPS - write volume indices
-				reader.ExpectFourCC("VOL1", "bad lightmap format");
-
-				clusters.SetData( Volume<Int4>.FromStream( stream ).RawImageData );
-				indexVol.SetData( Volume<uint>.FromStream( stream ).RawImageData );
-				skyVol	.SetData( Volume<Color>.FromStream( stream ).RawImageData );
+				albedo.SetData( Image<Color>.FromStream(stream).RawImageData );
 			}
 		}
 
@@ -201,18 +148,6 @@ namespace Fusion.Engine.Graphics.GI {
 				SafeDispose( ref albedo		);
 				SafeDispose( ref position	);
 				SafeDispose( ref normal		);
-				SafeDispose( ref area		);
-				SafeDispose( ref sky		);	
-				SafeDispose( ref indexMap	);
-				SafeDispose( ref tiles		);
-				SafeDispose( ref cache		);
-				SafeDispose( ref indices	);
-				SafeDispose( ref bboxMin	);
-				SafeDispose( ref bboxMax	);
-
-				SafeDispose( ref indexVol	);
-				SafeDispose( ref skyVol		);
-				SafeDispose( ref clusters	);
 
 				SafeDispose( ref radiance		);
 				SafeDispose( ref irradianceL0	);

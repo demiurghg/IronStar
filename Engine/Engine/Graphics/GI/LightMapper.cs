@@ -147,9 +147,6 @@ namespace Fusion.Engine.Graphics.GI {
 				}
 			}
 
-			Log.Message("Generating patch LODs...");
-			formFactor.GeneratePatchLods();
-
 			//--------------------------------------
 
 			using ( var rtc = new Rtc() ) {
@@ -171,12 +168,12 @@ namespace Fusion.Engine.Graphics.GI {
 					//--------------------------------------
 
 					Log.Message("Building lightmap form-factor...");
-					ForEachLightMapTile( lmGroups, (tx,ty) => BakeTile( scene, tx, ty ) );
+					//ForEachLightMapTile( lmGroups, (tx,ty) => BakeTile( scene, tx, ty ) );
 
 					//--------------------------------------
 
 					Log.Message("Building volumetric form-factor...");
-					BakeLightVolume( scene );
+					//BakeLightVolume( scene );
 					//ForEachLightMapTile( lmGroups, (tx,ty) => BakeCluster( scene, tx, ty ) );
 				}
 			}
@@ -188,195 +185,12 @@ namespace Fusion.Engine.Graphics.GI {
 				Log.Message("Saving debug images...");
 				formFactor.SaveDebugImages();
 			}
-	
-			Log.Message("Generating bounding boxes...");
-			formFactor.ComputeBoundingBoxes();
 
 			stopwatch.Stop();
 			Log.Message("Completed : build time : {0}", stopwatch.Elapsed.ToString());
-
-			var sampleCount =  formFactor.IndexMap.GetLinearData()
-				.Select( index => index & 0xFF )
-				.Where( count => count!=0 );
-
-			var lightMapTexels	=	sampleCount.Count();
-
-			var cachedSamples = formFactor.Tiles.GetLinearData()
-				.Select( cached => cached.Y )
-				.Where( count => count!=0 );
-
-			Log.Message("   lightmap texels        : {0} / {1}", lightMapTexels, formFactor.IndexMap.Width * formFactor.IndexMap.Height );
-
-			Log.Message("   average samples        : {0:0.00}", sampleCount.Average( s => s ) );
-			Log.Message("   max samples            : {0}", sampleCount.Max( s => s ) );
-			Log.Message("   min samples            : {0}", sampleCount.Min( s => s ) );
-
-			Log.Message("   average cached samples : {0:0.00}", cachedSamples.Average( s => s ) );
-			Log.Message("   max cached samples     : {0}", cachedSamples.Max( s => s ) );
-			Log.Message("   min cached samples     : {0}", cachedSamples.Min( s => s ) );
-
 			Log.Message("----------------");
 
 			return formFactor;
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		void BakeTile ( RtcScene scene, int tileX, int tileY )
-		{
-			int tileSize			=	RadiositySettings.TileSize;
-			var offset				=	new Int2( tileX * tileSize, tileY * tileSize );
-			var gatheringResults	=	new GatheringResults[tileSize*tileSize];
-
-			for (uint i=0; i<tileSize*tileSize; i++)
-			{
-				var xy = MortonCode.Decode2( i ) + offset;
-
-				var p = formFactor.Position[xy];
-				var n = formFactor.Normal[xy];
-				var c = formFactor.Albedo[xy];
-
-				gatheringResults[i]	=	(c.A > 0) ? GatherRadiosityPatches( scene, xy, p, n ) : null;
-			}
-
-			//	merge all hit patches (thir coords) and upload cache-line to formfactor
-			//	retrieving (offset, count) of uploaded cache-line
-			var globalPatches	=	gatheringResults
-				.Where( results0 => results0 != null )
-				.SelectMany( results1 => results1.Patches )
-				.GroupBy( patch0 => patch0.Coords )
-				.OrderByDescending( group0 => group0.Count() )
-				.Where( group1 => group1.Count() > 3 ) // prune lonely patches, since they do not affect picture too much
-				.Select( group1 => group1.First() )
-				//.DistinctBy( patch => patch.Coords )
-				.ToArray();
-
-			if (globalPatches.Length>=RadiositySettings.MaxPatchesPerTile)
-			{
-				Log.Warning("Tile [{0}, {1}] exceeded patch cache: {2} > {3}. Extra patches are ignored.", tileX, tileY, globalPatches.Length, RadiositySettings.MaxPatchesPerTile);
-				globalPatches = globalPatches.Take( RadiositySettings.MaxPatchesPerTile ).ToArray();
-			}
-
-			formFactor.Tiles[tileX,tileY]	=	formFactor.AddGlobalPatchIndices( globalPatches );
-			int baseAddress = formFactor.Tiles[tileX,tileY].Z;
-
-			for (uint i=0; i<tileSize*tileSize; i++)
-			{
-				var xy = MortonCode.Decode2( i ) + offset;
-
-				if (gatheringResults[i]==null)
-				{
-					formFactor.IndexMap[xy] = 0;
-					formFactor.Sky[xy] = Vector3.Zero;
-				}
-				else
-				{
-					var cachedPatches	=	gatheringResults[i].Patches	
-						.GroupBy( patch0 => patch0.Coords )
-						.Select( group => new { 
-							Patch = group.First(), 
-							Hits = group.Count(),
-							Dir = Radiosity.EncodeDirection( formFactor.Position[ group.First().Coords ] - gatheringResults[i].Origin )
-						} )
-						.Select( patch1 => new CachedPatchIndex( GetPatchIndexInCache(globalPatches, patch1.Patch), patch1.Dir, patch1.Hits ) )
-						.Where( cpi0 => cpi0.CacheIndex >= 0 )
-						.OrderBy( cpi1 => cpi1.CacheIndex )
-						.ToArray();
-
-					formFactor.IndexMap[xy] = formFactor.AddCachedPatchIndices( cachedPatches, baseAddress );
-					formFactor.Sky[xy]		= gatheringResults[i].Sky;
-				}
-			}
-		}
-
-
-		int GetPatchIndexInCache( GlobalPatchIndex[] cacheLine, GlobalPatchIndex patch )
-		{
-			for (int i=0; i<cacheLine.Length; i++)
-			{
-				if (cacheLine[i].Index == patch.Index) return i;
-			}
-			return -1;
-		}
-
-
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		void BakeCluster ( RtcScene scene, int clusterX, int clusterY, int clusterZ )
-		{
-			int clusterSize			=	RadiositySettings.ClusterSize;
-			int totalVoxels			=	clusterSize * clusterSize * clusterSize;
-			var offset				=	new Int3( clusterX * clusterSize, clusterY * clusterSize, clusterZ * clusterSize );
-			var gatheringResults	=	new GatheringResults[totalVoxels];
-
-			for (uint i=0; i<totalVoxels; i++)
-			{
-				var xyz = MortonCode.Decode3( i ) + offset;
-				var p = Radiosity.VoxelToWorld( xyz, formFactor.header );
-				var n = Vector3.Zero;
-
-				gatheringResults[i]	=	GatherRadiosityPatches( scene, Int2.Zero, p, n );
-			}
-
-			//	merge all hit patches (thir coords) and upload cache-line to formfactor
-			//	retrieving (offset, count) of uploaded cache-line
-			var globalPatches	=	gatheringResults
-				.Where( results0 => results0 != null )
-				.SelectMany( results1 => results1.Patches )
-				.GroupBy( patch0 => patch0.Coords )
-				.OrderByDescending( group0 => group0.Count() )
-				//.Where( group1 => group1.Count() > 3 ) // prune lonely patches, since they do not affect picture too much
-				.Select( group1 => group1.First() )
-				//.DistinctBy( patch => patch.Coords )
-				.ToArray();
-
-			formFactor.Clusters[clusterX,clusterY,clusterZ]	=	formFactor.AddGlobalPatchIndices( globalPatches );
-			int baseAddress = formFactor.Clusters[clusterX,clusterY,clusterZ].Z;
-
-			for (uint i=0; i<totalVoxels; i++)
-			{
-				var xyz = MortonCode.Decode3( i ) + offset;
-
-				if (gatheringResults[i]==null)
-				{
-					formFactor.IndexVolume[xyz] = 0;
-					formFactor.SkyVolume[xyz] = Vector3.Zero;
-				}
-				else
-				{
-					var cachedPatches	=	gatheringResults[i].Patches	
-						.GroupBy( patch0 => patch0.Coords )
-						.Select( group => new { 
-							Patch = group.First(), 
-							Hits = group.Count(),
-							Dir = Radiosity.EncodeDirection( formFactor.Position[ group.First().Coords ] - gatheringResults[i].Origin )
-						} )
-						.Select( patch1 => new CachedPatchIndex( GetPatchIndexInCache(globalPatches, patch1.Patch), patch1.Dir, patch1.Hits ) )
-						.ToArray();
-
-					formFactor.IndexVolume[xyz]	=	formFactor.AddCachedPatchIndices( cachedPatches, baseAddress );
-					formFactor.SkyVolume[xyz]	=	gatheringResults[i].Sky;
-				}
-			}
-		}
-
-
-
-		void BakeLightVolume( RtcScene scene )
-		{
-			const int clusterSize = RadiositySettings.ClusterSize;
-
-			formFactor.Clusters.ForEachVoxel( (i,j,k,c) =>
-			{
-				BakeCluster( scene, i,j,k );
-			});
 		}
 
 
@@ -456,119 +270,6 @@ namespace Fusion.Engine.Graphics.GI {
 		}
 
 
-		class GatheringResults 
-		{
-			public GatheringResults( Vector3 origin ) { Origin = origin; }
-			public readonly Vector3	Origin;
-			public Vector3	Sky;
-			public GlobalPatchIndex[]	Patches;
-		}
-
-
-		/// <summary>
-		/// Computes indirect radiance in given point
-		/// </summary>
-		GatheringResults GatherRadiosityPatches ( RtcScene scene, Int2 xy, Vector3 position, Vector3 normal, float bias=0 )
-		{
-			var sampleCount		=	hammersleySphere.Length;
-			var invSampleCount	=	1.0f / sampleCount;
-			var	result			=	new GatheringResults(position);
-			var skyFactor		=	0.0f;
-
-			var normalLength	=	normal.Length();
-
-			var omniDirect		=	normal.Length() < 0.001f;
-
-			//---------------------------------
-			var randVector		=	rand.NextVector3(-Vector3.One, Vector3.One).Normalized();
-			//var randVector		=	new Vector3(0,0,0);
-			//randVector.X		=	MathUtil.Lerp( -1f, 1f, (xy.X % 4) / 3.0f );
-			//randVector.Y		=	MathUtil.Lerp( -1f, 1f, (xy.Y % 4) / 3.0f );
-			////randVector.Z		=	MathUtil.Lerp( -1f, 1f, (xy.X + xy.Y) % 2 );
-			//randVector.Normalize();
-
-			var lmAddrList = new List<GlobalPatchIndex>();
-
-			var pointSet	=	omniDirect ? hammersleySphere : hammersleyCosine;
-			var localBasis	=	omniDirect ? Matrix.Identity : MathUtil.ComputeAimedBasis( normal ) * Matrix.RotationAxis( normal, rand.NextFloat( 0, MathUtil.TwoPi ) );
-
-
-			for ( int i = 0; i<sampleCount; i++ ) {
-
-				//var dir		=	Vector3.TransformNormal( pointSet[i], localBasis );
-				var dir		=	Vector3.Reflect( -hammersleySphere[i], randVector );
-				//var dir		=	hammersleySphere[i];
-
-				var nDotL	= Vector3.Dot( dir, normal );
-
-				if (normalLength>0 && nDotL<=0) {
-					continue;
-				}
-
-				var ray		=	new RtcRay();
-				var pos		=	position + dir * bias;
-
-				EmbreeExtensions.UpdateRay( ref ray, pos, dir, 0, 4096 );
-
-				var intersect	=	 scene.Intersect( ref ray );
-					
-				//-------------------------------------------
-				//	ray hits nothing, so this is sky light :
-				if (!intersect && dir.Y>0) 
-				{
-					result.Sky	+=	dir * invSampleCount;
-					skyFactor	+=	invSampleCount * 2; // because only half of points are in use
-				}
-
-				//-------------------------------------------
-				//	trying to find direct light :
-				if (intersect) 
-				{
-					var origin		=	EmbreeExtensions.Convert( ray.Origin );
-					var distance	=	ray.TFar; // we assume, that dir is normalized
-					var direction	=	EmbreeExtensions.Convert( ray.Direction );
-					var hitPoint	=	origin + direction * (ray.TFar);
-					var hitNormal	=	(-1) * EmbreeExtensions.Convert( ray.HitNormal ).Normalized();
-
-					var dirDotN		=	Vector3.Dot( hitNormal, -direction );
-
-					if (dirDotN>0) // we hit front side of the face
-					{
-						Int2 coords;
-						Int3 patch;
-
-						if (GetLightMapCoordinates( ref ray, out coords ))
-						{
-							if (formFactor.SelectPatch( coords, distance, dirDotN, settings, out patch ) )
-							{
-								var area	=	formFactor.Area	[ patch ];
-								var ppos	=	formFactor.Position[ patch ];
-								var pnormal	=	formFactor.Normal	[ patch ].Normalized();
-								var pdir	=	Vector3.Normalize( origin - ppos );
-								var pdist	=	Vector3.Distance( ppos, origin );
-								var pDotL	=	Vector3.Dot( pdir, pnormal );
-								var weight	=	area * pDotL * Radiosity.Falloff(pdist) / 2.0f / MathUtil.Pi;
-
-								if ( weight > settings.RadianceThreshold && pdist < settings.DiscardDistance ) 
-								{
-									lmAddrList.Add( new GlobalPatchIndex( patch ) );
-								}
-							}
-						}
-
-					}
-				}
-			} 
-
-			result.Patches	=	lmAddrList.ToArray();
-
-			result.Sky.Normalize();
-			result.Sky *= skyFactor;
-
-			return result;
-		}
-
-
 		/// <summary>
 		/// Rasterizes LM texcoords to lightmap
 		/// </summary>
@@ -642,7 +343,7 @@ namespace Fusion.Engine.Graphics.GI {
 								lightmap.Albedo	 [xy] =	albedo;
 								lightmap.Position[xy] = InterpolatePosition	( p0, p1, p2, s, t ) + bias;
 								lightmap.Normal  [xy] = InterpolateNormal	( n0, n1, n2, s, t );
-								lightmap.Area	 [xy] = area;
+								//lightmap.Area	 [xy] = area;
 								lightmap.Coverage[xy] = coverage;
 							}
 							else

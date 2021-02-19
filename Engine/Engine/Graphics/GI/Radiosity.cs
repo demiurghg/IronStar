@@ -37,21 +37,11 @@ namespace Fusion.Engine.Graphics.GI
 		static FXTexture2D<Vector4>							regPosition			=	new TRegister( 0, "Position"		);
 		static FXTexture2D<Vector4>							regAlbedo			=	new TRegister( 1, "Albedo"			);
 		static FXTexture2D<Vector4>							regNormal			=	new TRegister( 2, "Normal"			);
-		static FXTexture2D<UInt4>							regTiles			=	new TRegister( 3, "Tiles"			);
-		static FXTexture2D<uint>							regIndexMap			=	new TRegister( 4, "IndexMap"		);
-		static FXBuffer<uint>								regIndices			=	new TRegister( 5, "Indices"			);
-		static FXBuffer<uint>								regCache			=	new TRegister( 6, "Cache"			);
 		static FXTexture2D<Vector4>							regRadiance			=	new TRegister( 7, "Radiance"		);
 		static FXTexture2D<Vector4>							regShadowMap		=	new TRegister( 8, "ShadowMap"		);
 		static FXTexture2D<Vector4>							regShadowMask		=	new TRegister( 9, "ShadowMask"		);
 		static FXStructuredBuffer<SceneRenderer.LIGHT>		regLights			=	new TRegister(10, "Lights"			);
-		static FXTexture2D<Vector4>							regSky				=	new TRegister(11, "Sky"				);
 		static FXTextureCube<Vector4>						regSkyBox			=	new TRegister(12, "SkyBox"			);
-		static FXTexture2D<Vector4>							regBBoxMin			=	new TRegister(13, "BBoxMin"			);
-		static FXTexture2D<Vector4>							regBBoxMax			=	new TRegister(14, "BBoxMax"			);
-		static FXTexture3D<UInt4>							regClusters			=	new TRegister(15, "Clusters"		);
-		static FXTexture3D<uint>							regIndexVolume		=	new TRegister(16, "IndexVolume"		);
-		static FXTexture3D<Vector4>							regSkyVolume		=	new TRegister(17, "SkyVolume"		);
 		static FXStructuredBuffer<RayTracer.TRIANGLE>		regRtTriangles		=	new TRegister(18, "RtTriangles"		);
 		static FXStructuredBuffer<RayTracer.BVHNODE>		regRtBvhTree		=	new TRegister(19, "RtBvhTree"		);
 		static FXStructuredBuffer<LMVertex>					regRtLmVerts		=	new TRegister(20, "RtLmVerts"		);
@@ -216,7 +206,7 @@ namespace Fusion.Engine.Graphics.GI
 
 			using ( new PixEvent( "Radiosity" ) )
 			{
-				rs.RayTracer.TestRayTracing();
+				//rs.RayTracer.TestRayTracing();
 
 				for (int i=0; i<MaxRPF; i++)
 				{
@@ -239,7 +229,7 @@ namespace Fusion.Engine.Graphics.GI
 				}
 
 				SetupShaderResources();
-				IntegrateLightVolume();
+				//IntegrateLightVolume();
 			}
 		}
 
@@ -255,10 +245,6 @@ namespace Fusion.Engine.Graphics.GI
 			device.ComputeResources[ regPosition		]	=	lightMap.position	;
 			device.ComputeResources[ regAlbedo			]	=	lightMap.albedo		;
 			device.ComputeResources[ regNormal			]	=	lightMap.normal		;
-			device.ComputeResources[ regTiles			]	=	lightMap.tiles		;
-			device.ComputeResources[ regIndexMap		]	=	lightMap.indexMap	;
-			device.ComputeResources[ regIndices			]	=	lightMap.indices	;
-			device.ComputeResources[ regCache			]	=	lightMap.cache		;
 			device.ComputeResources[ regRadiance		]	=	lightMap.irradianceL0		;
 
 			device.ComputeSamplers[ regSamplerShadow	]	=	SamplerState.ShadowSampler;
@@ -270,14 +256,6 @@ namespace Fusion.Engine.Graphics.GI
 			device.ComputeResources[ regLights			]	=	rs.LightManager.LightGrid.RadLtDataGpu;
 
 			device.ComputeResources[ regSkyBox			]	=	rs.Sky.SkyCubeDiffuse;
-			device.ComputeResources[ regSky				]	=	lightMap.sky;
-
-			device.ComputeResources[ regBBoxMin			]	=	lightMap.bboxMin;
-			device.ComputeResources[ regBBoxMax			]	=	lightMap.bboxMax;
-
-			device.ComputeResources[ regClusters		]	=	lightMap.clusters;
-			device.ComputeResources[ regIndexVolume		]	=	lightMap.indexVol;
-			device.ComputeResources[ regSkyVolume		]	=	lightMap.skyVol;
 
 			device.ComputeResources[ regRtTriangles		]	=	rs.RayTracer.PrimitiveBuffer;
 			device.ComputeResources[ regRtBvhTree		]	=	rs.RayTracer.BvhTreeBuffer;
@@ -324,19 +302,6 @@ namespace Fusion.Engine.Graphics.GI
 				DispatchRegion( region );
 			}
 
-			using ( new PixEvent( "Collapse" ) )
-			{
-				device.PipelineState    =   factory[(int)Flags.COLLAPSE];			
-
-				for (int mip=1; mip<RadiositySettings.MapPatchLevels; mip++)
-				{
-					device.SetComputeUnorderedAccess( regRadianceUav,		lightMap.radiance.GetSurface( mip ).UnorderedAccess );
-					device.ComputeResources			[ regRadiance	]	=	lightMap.radiance.GetShaderResource( mip - 1 );
-
-					DispatchRegion( region, mip );
-				}
-			}
-
 			using ( new PixEvent( "Integrate Map" ) )
 			{
 				device.PipelineState    =   factory[(int)Flags.INTEGRATE2];			
@@ -375,9 +340,9 @@ namespace Fusion.Engine.Graphics.GI
 				device.SetComputeUnorderedAccess( regLightVolumeL3,		lightMap.lightVolumeL3.UnorderedAccess );
 				device.ComputeResources			[ regRadiance	]	=	lightMap.radiance;
 
-				int width	=	lightMap.indexVol.Width;
-				int height	=	lightMap.indexVol.Height;
-				int depth	=	lightMap.indexVol.Depth;
+				int width	=	lightMap.lightVolumeL0.Width;
+				int height	=	lightMap.lightVolumeL0.Height;
+				int depth	=	lightMap.lightVolumeL0.Depth;
 
 				device.Dispatch( new Int3( width, height, depth ), new Int3( ClusterSize, ClusterSize, ClusterSize ) );
 			}

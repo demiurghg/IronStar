@@ -50,17 +50,10 @@ namespace Fusion.Engine.Graphics.GI
 		public int TileX { get { return Width  / TileSize; } }
 		public int TileY { get { return Height / TileSize; } }
 
-		public readonly MipChain<Color>     Albedo;
-		public readonly MipChain<Vector3>   Position;
-		public readonly MipChain<Vector3>   Normal;
-		public readonly MipChain<float>     Area;
-		public readonly Image<byte>         Coverage;
-		public readonly Image<Vector3>		Sky;
-		public readonly Image<uint>			IndexMap;
-		public readonly List<GlobalPatchIndex>	Indices;
-		public readonly Image<Int4>			Tiles;
-		public readonly Image<Vector3>		BBoxMin;
-		public readonly Image<Vector3>		BBoxMax;
+		public readonly Image<Color>		Albedo;
+		public readonly Image<Vector3>		Position;
+		public readonly Image<Vector3>		Normal;
+		public readonly Image<byte>			Coverage;
 
 		public readonly Volume<Int4>		Clusters;
 		public readonly Volume<uint>		IndexVolume;
@@ -68,10 +61,7 @@ namespace Fusion.Engine.Graphics.GI
 
 		public readonly Image<Color>[]		FormFactorPages;
 
-		public readonly List<GlobalPatchIndex>		TileCache;
-		public readonly List<CachedPatchIndex>	CachedIndices;
-
-		readonly Allocator2D                allocator;
+		readonly Allocator2D				allocator;
 
 		public IDictionary<string, Rectangle> Regions { get { return regions; } }
 		readonly Dictionary<string, Rectangle> regions = new Dictionary<string, Rectangle>();
@@ -107,50 +97,14 @@ namespace Fusion.Engine.Graphics.GI
 									.Select( i => new Image<Color>( RegionSize, RegionSize, Color.Black ) )
 									.ToArray();
 
-			Albedo          =   new MipChain<Color>		( size,  size,  RadiositySettings.MapPatchLevels, Color.Zero );
-			Position        =   new MipChain<Vector3>	( size,  size,  RadiositySettings.MapPatchLevels, Vector3.Zero );
-			Normal          =   new MipChain<Vector3>	( size,  size,  RadiositySettings.MapPatchLevels, Vector3.Zero );
-			Area            =   new MipChain<float>		( size,  size,  RadiositySettings.MapPatchLevels, 0 );
-			Tiles			=	new Image<Int4>			( TileX, TileY, Int4.Zero );
-			BBoxMin			=	new Image<Vector3>		( TileX, TileY, Vector3.Zero );
-			BBoxMax			=	new Image<Vector3>		( TileX, TileY, Vector3.Zero );
-
-			Sky             =   new Image<Vector3>		( size, size, Vector3.Zero );
-			IndexMap        =   new Image<uint>			( size, size, 0 );
-			Indices         =   new List<GlobalPatchIndex>();
-
-			TileCache		=	new List<GlobalPatchIndex>();
-			CachedIndices	=	new List<CachedPatchIndex>();;
-
-			Coverage        =   new Image<byte>( size, size, 0 );
+			Albedo			=	   new Image<Color>		( size,  size,  Color.Zero );
+			Position		=	   new Image<Vector3>	( size,  size,  Vector3.Zero );
+			Normal			=	   new Image<Vector3>	( size,  size,  Vector3.Zero );
+			Coverage		=	   new Image<byte>		( size,  size,  0 );
 
 			IndexVolume		=	new Volume<uint>	( VolumeWidth,				 VolumeHeight,				 VolumeDepth );
 			Clusters		=	new Volume<Int4>	( VolumeWidth / ClusterSize, VolumeHeight / ClusterSize, VolumeDepth / ClusterSize );
 			SkyVolume		=	new Volume<Vector3>	( VolumeWidth,				 VolumeHeight,				 VolumeDepth );
-		}
-
-
-
-		public Int4 AddGlobalPatchIndices ( IEnumerable<GlobalPatchIndex> indices )
-		{
-			int offset		=	TileCache.Count;
-			int count		=	indices.Count();
-			int baseAddr	=	CachedIndices.Count;
-
-			TileCache.AddRange( indices );
-
-			return new Int4( offset, count, baseAddr, 0 );
-		}
-
-
-		public uint AddCachedPatchIndices ( IEnumerable<CachedPatchIndex> indices, int baseAddress )
-		{
-			int offset	=	CachedIndices.Count - baseAddress;
-			int count	=	indices.Count();
-
-			CachedIndices.AddRange( indices );
-
-			return Radiosity.GetLMIndex( offset, count );
 		}
 
 
@@ -167,70 +121,6 @@ namespace Fusion.Engine.Graphics.GI
 					}
 				}
 			}
-			return true;
-		}
-
-
-
-		public void ComputeBoundingBoxes()
-		{
-
-			for (int tx=0; tx<TileX; tx++)
-			{
-				for (int ty=0; ty<TileY; ty++)
-				{
-					var coords = new List<Vector3>( TileX * TileY );
-					var maxArea = 0f;
-
-					for (int x=0; x<TileSize; x++)
-					{
-						for (int y=0; y<TileSize; y++)
-						{
-							var xy = new Int2( tx*TileSize+x, ty*TileSize+y );
-							if (Albedo[xy].A>0)
-							{
-								maxArea = Math.Max( Area[xy], maxArea );
-								coords.Add( Position[ xy ] );
-							}
-						}
-					}
-
-					var margin	=	Vector3.One * (float)Math.Sqrt( maxArea );
-					var bbox	= BoundingBox.FromPoints( coords );
-						bbox	= new BoundingBox( bbox.Minimum - margin, bbox.Maximum + margin );
-
-					BBoxMin[ tx, ty ] = bbox.Minimum;
-					BBoxMax[ tx, ty ] = bbox.Maximum;
-				}
-			}
-		}
-
-
-
-		public bool SelectPatch( Int2 coord, float dist, float nDotV, RadiositySettings settings, out Int3 selectedPatch )
-		{
-			selectedPatch		=	new Int3( coord.X, coord.Y, 0 );
-			Int3	patch		=	new Int3( coord.X, coord.Y, 0 );
-
-			if (Albedo[selectedPatch].A==0)
-			{
-				return false;
-			}
-
-			for (int mip=1; mip<RadiositySettings.MapPatchLevels; mip++)
-			{
-				patch.X =	patch.X / 2;
-				patch.Y =	patch.Y / 2;
-				patch.Z	=	mip;
-
-				var areaThreshold	=	MathUtil.TwoPi * dist*dist * settings.PatchThreshold;
-
-				if ( Albedo[patch].A==0 ) break;
-				if ( Area[patch] * nDotV > areaThreshold ) break;
-
-				selectedPatch	=	patch;
-			}
-
 			return true;
 		}
 
@@ -254,68 +144,6 @@ namespace Fusion.Engine.Graphics.GI
 				0.5f);
 		}
 
-
-
-		public void GeneratePatchLods ()
-		{
-			for (int srcMip = 0; srcMip < RadiositySettings.MapPatchLevels-1; srcMip++)
-			{
-				int dstMip		= srcMip+1;
-				int dstWidth	= Albedo[dstMip].Width;
-				int dstHeight	= Albedo[dstMip].Height;
-
-				for (int i=0; i<dstWidth; i++)
-				{
-					for (int j=0; j<dstHeight; j++)
-					{
-						var c00	=	Albedo[srcMip][i*2+0, j*2+0];
-						var c01	=	Albedo[srcMip][i*2+0, j*2+1];
-						var c10	=	Albedo[srcMip][i*2+1, j*2+0];
-						var c11	=	Albedo[srcMip][i*2+1, j*2+1];
-
-						var p00	=	Position[srcMip][i*2+0, j*2+0];
-						var p01	=	Position[srcMip][i*2+0, j*2+1];
-						var p10	=	Position[srcMip][i*2+1, j*2+0];
-						var p11	=	Position[srcMip][i*2+1, j*2+1];
-
-						var n00	=	Normal[srcMip][i*2+0, j*2+0];
-						var n01	=	Normal[srcMip][i*2+0, j*2+1];
-						var n10	=	Normal[srcMip][i*2+1, j*2+0];
-						var n11	=	Normal[srcMip][i*2+1, j*2+1];
-
-						var a00	=	Area[srcMip][i*2+0, j*2+0];
-						var a01	=	Area[srcMip][i*2+0, j*2+1];
-						var a10	=	Area[srcMip][i*2+1, j*2+0];
-						var a11	=	Area[srcMip][i*2+1, j*2+1];
-
-						var w00	=	c00.A == 0 ? 0 : 1;
-						var w01	=	c01.A == 0 ? 0 : 1;
-						var w10	=	c10.A == 0 ? 0 : 1;
-						var w11	=	c11.A == 0 ? 0 : 1;
-
-						var all	=	c00.A!=0 && c01.A!=0 && c10.A!=0 && c11.A!=0;
-
-						var w	=	w00 + w01 + w10 + w11;
-
-						if (all)
-						{
-							Albedo[dstMip][i,j]		=	AverageColor( c00, c11, c01, c10 );
-							Normal[dstMip][i,j]		=	AverageVector( n00, n01, n10, n11 ).Normalized();
-							Position[dstMip][i,j]	=	AverageVector( p00, p01, p10, p11 );
-							Area[dstMip][i,j]		=	a00 + a01 + a10 + a11;
-						}
-						else
-						{
-							Albedo[dstMip][i,j]		=	Color.Zero;
-							Normal[dstMip][i,j]		=	Vector3.Zero;
-							Position[dstMip][i,j]	=	Vector3.Zero;
-							Area[dstMip][i,j]		=	0;
-						}
-					}
-				}
-			}
-		}
-		
 
 
 		void SaveDebugImage( Image<Color> image, string name )
@@ -345,72 +173,10 @@ namespace Fusion.Engine.Graphics.GI
 		}
 
 
-		Int4 DebugDrawTileInfo( int x, int y, Int4 tileData )
-		{
-			var ts = RadiositySettings.TileSize;
-
-			if (tileData.Y<1) return tileData;
-
-			var testImage = new Image<Color>(tileData.Y, ts*ts, Color.Black);
-
-			int row = 0;
-
-			for (uint i=0; i<ts*ts; i++)
-			{
-				var xy = MortonCode.Decode2(i) + new Int2( x * ts, y * ts );
-
-				var addr = IndexMap[xy];
-				var offset = addr >> 8;
-				var count = addr & 0xFF;
-
-				if (count==0) continue;
-
-				for (uint j=offset; j<offset+count; j++)
-				{
-					var cpatch	= CachedIndices[(int)j];
-					var hits	= (byte)cpatch.HitCount;
-					var normal	= (byte)cpatch.Direction;
-
-					testImage[cpatch.CacheIndex, row] = new Color( hits*8, 0, normal*4, (byte)255 );
-				}
-
-				row++;
-			}
-
-			testImage = testImage.Crop( new Rectangle( 0,0,testImage.Width, row), Color.Black);
-
-			SaveDebugImage( testImage, string.Format("tile_{0:00}_{1:00}_{2:0000}", x, y, tileData.Y) );
-
-			return tileData;
-		}
-
-
 		public void SaveDebugImages()
 		{
-			//Tiles.ForEachPixel( DebugDrawTileInfo );
-			
-			//File.WriteAllText( "rad_indices.txt", string.Join("\r\n", Indices.Select( idx=>idx.ToString() ) ) );
-
-			SaveDebugImage( Sky.Convert( EncodeSkyRGB8 ), "rad_sky" );
-			SaveDebugImage( IndexMap.Convert( idx => new Color(idx) ), "rad_index_map" );
-
-			for (int mip=0; mip<RadiositySettings.MapPatchLevels; mip++)
-			{
-				var prefix = "_" + mip.ToString();
-				SaveDebugImage( Albedo[mip]										, "rad_albedo" + prefix );
-				SaveDebugImage( Normal[mip].Convert( EncodeNormalRGB8 )			, "rad_normal" + prefix );
-				SaveDebugImage( Area[mip].Convert( a => new Color(a/256.0f))	, "rad_area"   + prefix );
-			}
-
-			var rand = new Random();
-			SkyVolume.ForEachVoxel( (i,j,k,c) => rand.NextVector3OnSphere() );
-
-			int z = 0;
-			foreach (var slice in SkyVolume.Convert(EncodeSkyRGB8).GetSlices())
-			{
-				SaveDebugImage( slice, "sky" + z.ToString() );
-				z++;
-			}
+			SaveDebugImage( Albedo									, "rad_albedo" );
+			SaveDebugImage( Normal.Convert( EncodeNormalRGB8 )		, "rad_normal" );
 		}
 
 
@@ -422,10 +188,8 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			using ( var writer = new BinaryWriter( stream ) )
 			{
-				const int mips = RadiositySettings.MapPatchLevels;
-
 				//	write header :
-				writer.WriteFourCC("RAD2");
+				writer.WriteFourCC("RAD3");
 
 				writer.Write( header );
 
@@ -442,42 +206,13 @@ namespace Fusion.Engine.Graphics.GI
 				writer.WriteFourCC("GBF1");
 
 				writer.WriteFourCC("POS1");
-				for (int i=0; i<mips; i++) Position[i].WriteStream( stream );
+				Position.WriteStream( stream );
 
 				writer.WriteFourCC("NRM1");
-				for (int i=0; i<mips; i++) Normal[i].Convert( EncodeNormalRGB8 ).WriteStream( stream );
+				Normal.Convert( EncodeNormalRGB8 ).WriteStream( stream );
 
 				writer.WriteFourCC("ALB1");
-				for (int i=0; i<mips; i++) Albedo[i].WriteStream( stream );
-
-				writer.WriteFourCC("ARE1");
-				for (int i=0; i<mips; i++) Area[i].WriteStream( stream );
-
-				writer.WriteFourCC("SKY1");
-				Sky.Convert( EncodeSkyRGB8 ).WriteStream( stream );
-
-				//	write tiled cache data :
-				writer.WriteFourCC("TILE");
-				writer.Write( TileCache.Count );
-				writer.Write( TileCache.Select( a => a.Index ).ToArray() );
-				writer.Write( CachedIndices.Count );
-				writer.Write( CachedIndices.Select( a => a.GpuIndex ).ToArray() );
-
-				//	write tile & index map
-				writer.WriteFourCC("MAP1");
-				Tiles.WriteStream( stream );
-				IndexMap.WriteStream( stream );
-
-				//	bounding boxes :
-				writer.WriteFourCC("BBOX");
-				BBoxMin.WriteStream( stream );
-				BBoxMax.WriteStream( stream );
-
-				//	write cluster & index volumes
-				writer.WriteFourCC("VOL1");
-				Clusters.WriteStream( stream );
-				IndexVolume.WriteStream( stream );
-				SkyVolume.Convert( EncodeSkyRGB8 ).WriteStream( stream );
+				Albedo.WriteStream( stream );
 			}
 		}
 

@@ -207,16 +207,6 @@ bool RayTrace( inout RAY ray, StructuredBuffer<TRIANGLE> tris, StructuredBuffer<
 
 #ifdef RAYTRACE
 
-uint wang_hash(uint seed)
-{
-    seed = (seed ^ 61) ^ (seed >> 16);
-    seed *= 9;
-    seed = seed ^ (seed >> 4);
-    seed *= 0x27d4eb2d;
-    seed = seed ^ (seed >> 15);
-    return seed;
-}
-
 RAY CreateRay( uint2 xy )
 {
 	float 	x 	=	( xy.x )		/ 800.0 * 2 - 1;

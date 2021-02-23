@@ -21,7 +21,7 @@ namespace Fusion.Engine.Graphics.GI {
 
 	[RequireShader("lightmapDebug",true)]
 	[ShaderSharedStructure(typeof(GpuData.DIRECT_LIGHT))]
-	public class LightProbeDebug : RenderComponent, IPipelineStateProvider {
+	public class LightProbeDebugger : RenderComponent, IPipelineStateProvider {
 
 		[Config]
 		public float LightProbeSize { get; set; } = 5.0f;
@@ -96,7 +96,7 @@ namespace Fusion.Engine.Graphics.GI {
 		}
 
 
-		public LightProbeDebug ( RenderSystem rs ) : base(rs)
+		public LightProbeDebugger ( RenderSystem rs ) : base(rs)
 		{
 		}
 
@@ -161,11 +161,11 @@ namespace Fusion.Engine.Graphics.GI {
 			{
 				paramData.VoxelToWorldScale		=	rs.Radiosity.GetVoxelToWorldScale();
 				paramData.VoxelToWorldOffset	=	rs.Radiosity.GetVoxelToWorldOffset();
-				paramData.VolumeWidth			=	(uint)lightmap.Header.VolumeWidth;
-				paramData.VolumeHeight			=	(uint)lightmap.Header.VolumeHeight;
-				paramData.VolumeDepth			=	(uint)lightmap.Header.VolumeDepth;
+				paramData.VolumeWidth			=	(uint)lightmap.Header.VolumeSize.Width;
+				paramData.VolumeHeight			=	(uint)lightmap.Header.VolumeSize.Height;
+				paramData.VolumeDepth			=	(uint)lightmap.Header.VolumeSize.Depth;
 				paramData.VolumeStride			=	lightmap.Header.VolumeStride;
-				volumeElementCount				=	lightmap.Header.VolumeWidth * lightmap.Header.VolumeHeight * lightmap.Header.VolumeDepth;
+				volumeElementCount				=	lightmap.Header.VolumeSize.TotalVolume;
 			}
 
 			cbParams.SetData( paramData );

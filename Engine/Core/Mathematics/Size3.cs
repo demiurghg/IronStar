@@ -28,27 +28,28 @@ namespace Fusion.Core.Mathematics
     /// Structure using the same layout than <see cref="System.Drawing.Size"/>.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct Size2 : IEquatable<Size2>
+    public struct Size3 : IEquatable<Size3>
     {
         /// <summary>
         /// A zero size with (width, height) = (0,0)
         /// </summary>
-        public static readonly Size2 Zero = new Size2(0, 0);
+        public static readonly Size3 Zero = new Size3(0, 0, 0);
 
         /// <summary>
         /// A zero size with (width, height) = (0,0)
         /// </summary>
-        public static readonly Size2 Empty = Zero;
+        public static readonly Size3 Empty = Zero;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Size2"/> struct.
+        /// Initializes a new instance of the <see cref="Size3"/> struct.
         /// </summary>
         /// <param name="width">The x.</param>
         /// <param name="height">The y.</param>
-        public Size2(int width, int height)
+        public Size3(int width, int height, int depth)
         {
             Width = width;
             Height = height;
+            Depth = depth;
         }
 
         /// <summary>
@@ -61,12 +62,17 @@ namespace Fusion.Core.Mathematics
         /// </summary>
         public int Height;
 
+        /// <summary>
+        /// Height.
+        /// </summary>
+        public int Depth;
+
 		/// <summary>
-		/// Gets area of the rectangle of given size
+		/// Gets volume of the box of given size
 		/// </summary>
-		public int Area 
+		public int TotalVolume
 		{
-			get { return Width * Height; } 
+			get { return Width * Height * Depth; }
 		}
 
         /// <summary>
@@ -76,17 +82,17 @@ namespace Fusion.Core.Mathematics
         /// <returns>
         ///   <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public bool Equals(Size2 other)
+        public bool Equals(Size3 other)
         {
-            return other.Width == Width && other.Height == Height;
+            return other.Width == Width && other.Height == Height && other.Depth == Depth;
         }
 
         /// <inheritdoc/>
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            if (obj.GetType() != typeof(Size2)) return false;
-            return Equals((Size2)obj);
+            if (obj.GetType() != typeof(Size3)) return false;
+            return Equals((Size3)obj);
         }
 
         /// <inheritdoc/>
@@ -94,7 +100,10 @@ namespace Fusion.Core.Mathematics
         {
             unchecked
             {
-                return (Width * 397) ^ Height;
+                var hashCode = Width;
+                hashCode = (hashCode * 397) ^ Height;
+                hashCode = (hashCode * 397) ^ Depth;
+                return hashCode;
             }
         }
 
@@ -106,7 +115,7 @@ namespace Fusion.Core.Mathematics
         /// <returns>
         /// The result of the operator.
         /// </returns>
-        public static bool operator ==(Size2 left, Size2 right)
+        public static bool operator ==(Size3 left, Size3 right)
         {
             return left.Equals(right);
         }
@@ -119,14 +128,14 @@ namespace Fusion.Core.Mathematics
         /// <returns>
         /// The result of the operator.
         /// </returns>
-        public static bool operator !=(Size2 left, Size2 right)
+        public static bool operator !=(Size3 left, Size3 right)
         {
             return !left.Equals(right);
         }
 
         public override string ToString()
         {
-            return string.Format("({0},{1})", Width, Height);
+            return string.Format("({0},{1},{2})", Width, Height, Depth);
         }
     }
 }

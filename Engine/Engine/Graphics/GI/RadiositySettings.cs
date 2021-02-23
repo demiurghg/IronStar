@@ -11,9 +11,8 @@ namespace Fusion.Engine.Graphics.GI
 	public class RadiositySettings
 	{
 		public const int UpdateRegionSize = 256;
-		public const int TileSize = 8;
+		public const int TileSize = 16;
 		public const int ClusterSize = 4;
-		public const int MaxPatchesPerTile = 768;
 
 		/// <summary>
 		///	Number of light-gird elements along X-axis
@@ -64,37 +63,6 @@ namespace Fusion.Engine.Graphics.GI
 		[AECategory("Quality")]
 		[AEValueRange( 32, 1024, 32, 1 )]
 		public int LightGridSampleCount { get; set; } = 64;
-
-		/// <summary>
-		///	Maximum number of radiating patches for each lightmap texel
-		/// </summary>
-		[AECategory("Light Map")]
-		public int MaxPatches { get; set; } = 32;
-
-		/// <summary>
-		///	Threshold to discard patch: L = cos(theta) / (patchSize + R^2) * patchSize^2
-		/// </summary>
-		[AECategory("Light Map")]
-		[AEDisplayName("Radiance Threshold")]
-		[AEValueRange( 0, 0.1f, 0.01f, 0.001f )]
-		public float RadianceThreshold { get; set; } = 0.01f;
-
-		/// <summary>
-		///	Threshold to discard patch: L = cos(theta) / (patchSize + R^2) * patchSize^2
-		/// </summary>
-		[AECategory("Light Map")]
-		[AEDisplayName("Discard Distance")]
-		[AEValueRange( 0, 500f, 100f, 10f )]
-		public float DiscardDistance { get; set; } = 200;
-
-		/// <summary>
-		///	Patch approx projection area on unit sphere is greated then	PatchThreshold
-		///	will be dropped in favor of smaller one
-		/// </summary>
-		[AECategory("Light Map")]
-		[AEDisplayName("Patch Threshold")]
-		[AEValueRange(0,2,0.1f,0.01f)]
-		public float PatchThreshold { get; set; } = 0.4f;
 
 		/// <summary>
 		///	Produce debugging images for albedo, normals, etc

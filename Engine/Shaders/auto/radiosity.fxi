@@ -35,9 +35,8 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- CONSTANT VALUES ---------------- //
 
-static const int TileSize = 8;
+static const int TileSize = 16;
 static const int ClusterSize = 4;
-static const uint PatchCacheSize = 768;
 
 // ---------------- DATA STRUCTURES ---------------- //
 

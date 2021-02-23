@@ -486,9 +486,6 @@ namespace Fusion.Engine.Graphics {
 						//	clusterize light set :
 						rs.LightManager.LightGrid.ClusterizeLightSet( stereoEye, Camera, LightSet );
 
-						//  compute radiosity using shadowmaps
-						rs.Radiosity.Render( gameTime );
-
 						//	relight cubemaps :
 						LightProbeProvider?.Update( LightSet, Camera );
 
@@ -607,34 +604,6 @@ namespace Fusion.Engine.Graphics {
 				return;
 			}
 		}
-
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="gameTime"></param>
-		public void BuildRadiosityFormFactor ( string mapName, RadiositySettings settings )
-		{
-			var lightmapper		=	new LightMapper( rs, settings, Instances );
-
-			var sw				=	new Stopwatch();
-			var device			=	Game.GraphicsDevice;
-			var builder			=	Game.GetService<Builder>();
-			var basePath		=	builder.GetBaseInputDirectory();
-
-			var pathIrrMap		=	Path.Combine(basePath, RenderSystem.LightmapPath, Path.ChangeExtension( mapName, ".irrmap"	) );
-
-			var irrMap = lightmapper.BakeLightMap();
-
-			using ( var stream = File.OpenWrite( pathIrrMap ) ) 
-			{
-				irrMap.WriteStream( stream );
-			}
-
-		}
-
 
 
 		void BuildVisibility ()

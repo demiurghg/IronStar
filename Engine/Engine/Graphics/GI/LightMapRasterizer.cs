@@ -18,32 +18,21 @@ using Fusion.Engine.Graphics.Scenes;
 using System.IO;
 using Fusion.Engine.Graphics.GI;
 
-namespace Fusion.Engine.Graphics.GI {
-
-	internal partial class LightMapper : DisposableBase {
-
-		readonly RadiositySettings settings;
-		readonly Vector3[] hammersleySphere;
-		readonly Vector3[] hammersleyCosine;
+namespace Fusion.Engine.Graphics.GI 
+{
+	internal partial class LightMapRasterizer : DisposableBase 
+	{
 		readonly RenderInstance[] instances;
 		readonly RenderSystem rs;
-
-		FormFactor formFactor;
+		LightMapGBuffer lmGBuffer;
 
 		/// <summary>
 		/// Creates instance of the Lightmap
 		/// </summary>
-		public LightMapper( RenderSystem rs, RadiositySettings settings, IEnumerable<RenderInstance> instances )
+		public LightMapRasterizer( RenderSystem rs, IEnumerable<RenderInstance> instances )
 		{
-			this.rs				=	rs;
-			this.settings		=	settings;
-			hammersleySphere	=	Hammersley.GenerateSphereUniform(settings.LightMapSampleCount);
-			hammersleyCosine	=	Hammersley.GenerateHemisphereCosine(settings.LightMapSampleCount)
-									.Select( v => new Vector3( v.X, v.Z, -v.Y ) )
-									.ToArray();
-			this.instances		=	instances
-					.Where( inst => inst.Group==InstanceGroup.Static || inst.Group==InstanceGroup.Kinematic )
-					.ToArray();
+			this.rs			=	rs;
+			this.instances	=	instances.ToArray();
 		}
 
 
@@ -71,21 +60,17 @@ namespace Fusion.Engine.Graphics.GI {
 		/// <summary>
 		/// Update lightmap
 		/// </summary>
-		public FormFactor BakeLightMap ()
+		public LightMapGBuffer RasterizeGBuffer ()
 		{
 			var stopwatch		=	new Stopwatch();
 			stopwatch.Start();
 
 			//-------------------------------------------------
-			Log.Message("");
-			Log.Message("-------- Building radiosity form-factor --------");
-
 			Log.Message("Allocating lightmap regions...");
 
-			int totalSizeInPixels = 0;
+			int totalPixels = 0;
 
 			var lmGroups = instances
-					.Where( i0 => i0.Group==InstanceGroup.Static )
 					.GroupBy( 
 						instance => instance.LightMapRegionName,
 						instance => instance,
@@ -101,14 +86,17 @@ namespace Fusion.Engine.Graphics.GI {
 
 			while (true)
 			{
-				try {
-
+				try 
+				{
 					allocator = new Allocator2D( lightMapSize );
 
-					foreach ( var group in lmGroups ) {
+					foreach ( var group in lmGroups ) 
+					{
 						var addr = allocator.Alloc( group.Region.Width, "");
 						group.Region.X = addr.X;
 						group.Region.Y = addr.Y;
+
+						totalPixels += group.Region.Width * group.Region.Height;
 					}
 
 					break;
@@ -123,76 +111,61 @@ namespace Fusion.Engine.Graphics.GI {
 				}
 			}
 
-			Log.Message("Completed: {0} %", totalSizeInPixels / (float)(RenderSystem.LightmapSize * RenderSystem.LightmapSize) );
+			float utilization = totalPixels / (float)(allocator.Width * allocator.Height);
+			Log.Message("Allocating completed: {0}x{1}, {2:0.0}%", allocator.Width, allocator.Height, utilization * 100 );
+
 
 			//-------------------------------------------------
 
-			Log.Message("Allocating buffers...");
-
-			formFactor		=	new FormFactor( allocator.Width, settings );
+			lmGBuffer		=	new LightMapGBuffer( rs, allocator.Width );
 
 			foreach ( var group in lmGroups ) 
 			{
-				formFactor.Regions.Add( group.Name, group.Region );
+				lmGBuffer.Regions.Add( group.Name, group.Region );
 			}
 
 			//-------------------------------------------------
 
 			Log.Message("Rasterizing lightmap G-buffer...");
 
-			foreach ( var group in lmGroups ) {
-				foreach ( var instance in group.Instances ) {
+			foreach ( var group in lmGroups ) 
+			{
+				foreach ( var instance in group.Instances ) 
+				{
 					instance.BakingLMRegion = group.Region;
-					RasterizeInstance( formFactor, instance, group.Region, settings );
+					RasterizeInstance( lmGBuffer, instance, group.Region );
 				}
 			}
 
 			//--------------------------------------
 
-			using ( var rtc = new Rtc() ) {
-
-				using ( var scene = BuildRtcScene( rtc, instances ) ) {
-
+			using ( var rtc = new Rtc() ) 
+			{
+				using ( var scene = BuildRtcScene( rtc, instances ) ) 
+				{
 					Log.Message("Fix geometry overlaps...");
 
 					ForEachLightMapPixel( lmGroups, (i,j) => 
 					{
-						var p = formFactor.Position[i,j];
-						var n = formFactor.Normal[i,j];
+						var p = lmGBuffer.Position[i,j];
+						var n = lmGBuffer.Normal[i,j];
 
 						p = FixGeometryOverlap( scene, p, n );
 
-						formFactor.Position[i,j] = p;
+						lmGBuffer.Position[i,j] = p;
 					}, true);
-
-					//--------------------------------------
-
-					Log.Message("Building lightmap form-factor...");
-					//ForEachLightMapTile( lmGroups, (tx,ty) => BakeTile( scene, tx, ty ) );
-
-					//--------------------------------------
-
-					Log.Message("Building volumetric form-factor...");
-					//BakeLightVolume( scene );
-					//ForEachLightMapTile( lmGroups, (tx,ty) => BakeCluster( scene, tx, ty ) );
 				}
 			}
 
 			//--------------------------------------
 
-			if (settings.DebugLightmaps)
-			{
-				Log.Message("Saving debug images...");
-				formFactor.SaveDebugImages();
-			}
-
 			stopwatch.Stop();
-			Log.Message("Completed : build time : {0}", stopwatch.Elapsed.ToString());
-			Log.Message("----------------");
+			Log.Message("Resterizing completed : {0}", stopwatch.Elapsed.ToString());
 
-			return formFactor;
+			lmGBuffer.UpdateGpuData();
+
+			return lmGBuffer;
 		}
-
 
 
 		/// <summary>
@@ -275,7 +248,7 @@ namespace Fusion.Engine.Graphics.GI {
 		/// </summary>
 		/// <param name="lightmap"></param>
 		/// <param name="instance"></param>
-		void RasterizeInstance ( FormFactor lightmap, RenderInstance instance, Rectangle viewport, RadiositySettings settings )
+		void RasterizeInstance ( LightMapGBuffer lightmap, RenderInstance instance, Rectangle viewport )
 		{
 			var mesh		=	instance.Mesh;
 
@@ -306,7 +279,7 @@ namespace Fusion.Engine.Graphics.GI {
 			foreach ( var subset in instance.Subsets )
 			{
 				var segment =	rs.RenderWorld.VirtualTexture.GetTextureSegmentInfo( subset.Name );
-				var albedo	=	settings.UseWhiteDiffuse ? new Color(0.5f) : segment.AverageColor;
+				var albedo	=	segment.AverageColor;
 				albedo.A	=	255;
 
 				for (int i=subset.StartPrimitive; i<subset.StartPrimitive+subset.PrimitiveCount; i++) 

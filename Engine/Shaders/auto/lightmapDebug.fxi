@@ -147,7 +147,7 @@ struct CAMERA {
 };
 #endif
 
-// Fusion.Engine.Graphics.GI.LightProbeDebug+DEBUG_PARAMS
+// Fusion.Engine.Graphics.GI.LightProbeDebugger+DEBUG_PARAMS
 // Marshal.SizeOf = 64
 #ifndef __STRUCT_DEBUG_PARAMS
 #define __STRUCT_DEBUG_PARAMS 1

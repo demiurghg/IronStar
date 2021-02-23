@@ -258,8 +258,6 @@ void StoreLightmap( int2 xy, float4 shR, float4 shG, float4 shB )
 	IrradianceL3[ xy ]	=	float4( shR.w/shR.x , shG.w/shG.x	, shB.w/shB.x	, 0 ) * 0.5f + 0.5f;
 }
 
-groupshared uint2 radiance_cache[ PatchCacheSize ];
-
 groupshared bool skip_tile_processing = false;
 
 [numthreads(TileSize,TileSize,1)] 

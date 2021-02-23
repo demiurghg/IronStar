@@ -21,7 +21,7 @@ using Fusion.Engine.Graphics.GI2;
 namespace Fusion.Engine.Graphics.GI {
 
 	[ContentLoader(typeof(LightMap))]
-	public class FormFactorLoader : ContentLoader {
+	public class LightMapLoader : ContentLoader {
 
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 		{
@@ -30,27 +30,25 @@ namespace Fusion.Engine.Graphics.GI {
 	}
 
 	// #TODO -- rename to FormFactor
-	public class LightMap : DisposableBase, ILightmapProvider {
+	public class LightMap : DisposableBase, ILightmapProvider 
+	{
+		public struct HeaderData
+		{
+			public Size2	MapSize;
+			public Size3	VolumeSize;
+			public int		VolumeStride;
+			public Vector3	VolumePosition;
+			public int		Reserved0;
+		}
 
 		readonly RenderSystem rs;
 
-		public int Width  { get { return header.Width; } }
-		public int Height { get { return header.Height; } }
-		int	tilesX { get { return Width  / RadiositySettings.TileSize; } }
-		int	tilesY { get { return Height / RadiositySettings.TileSize; } }
+		public int Width  { get { return header.MapSize.Width; } }
+		public int Height { get { return header.MapSize.Height; } }
 
-		int	VolumeWidth  { get { return header.VolumeWidth ; } }
-		int	VolumeHeight { get { return header.VolumeHeight; } }
-		int	VolumeDepth  { get { return header.VolumeDepth ; } }
-
-		int	clusterX { get { return header.VolumeWidth  / RadiositySettings.ClusterSize; } }
-		int	clusterY { get { return header.VolumeHeight / RadiositySettings.ClusterSize; } }
-		int	clusterZ { get { return header.VolumeDepth  / RadiositySettings.ClusterSize; } }
-
-		//	#TODO -- make private and gain access through properties:
-		internal Texture2D			albedo		;
-		internal Texture2D			position	;
-		internal Texture2D			normal		;
+		int	VolumeWidth  { get { return header.VolumeSize.Width ; } }
+		int	VolumeHeight { get { return header.VolumeSize.Height; } }
+		int	VolumeDepth  { get { return header.VolumeSize.Depth ; } }
 
 		internal RenderTarget2D		radiance	;
 		internal RenderTarget2D		irradianceL0;
@@ -67,11 +65,23 @@ namespace Fusion.Engine.Graphics.GI {
 
 		readonly Dictionary<string,Rectangle> regions = new Dictionary<string, Rectangle>();
 
-		readonly FormFactor.Header header;
-		public FormFactor.Header Header { get { return header; } }
+		readonly HeaderData header;
+		public HeaderData Header { get { return header; } }
 
 
 		public IEnumerable<Rectangle> Regions { get { return regions.Select( r => r.Value ); } }
+
+
+		public LightMap ( RenderSystem rs, Size2 mapSize, Size3 volumeSize )
+		{
+			this.rs	=	rs;
+
+			header	=	new HeaderData();
+			header.MapSize		=	mapSize;
+			header.VolumeSize	=	volumeSize;
+
+			CreateGpuResources( mapSize, volumeSize );
+		}
 
 
 		public LightMap ( RenderSystem rs, Stream stream )
@@ -81,30 +91,9 @@ namespace Fusion.Engine.Graphics.GI {
 			using ( var reader = new BinaryReader( stream ) )
 			{
 				//	read header :
-				reader.ExpectFourCC("RAD3", "bad lightmap format");
+				reader.ExpectFourCC("RAD4", "bad lightmap format");
 
-				header			=	reader.Read<FormFactor.Header>();
-
-				albedo			=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	1,	false );
-				position		=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgb32F,	1,	false );
-				normal			=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	1,	false );
-
-				radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	Width, Height, true,  true );
-				irradianceL0	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	Width, Height, false, true );
-				irradianceL1	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	Width, Height, false, true );
-				irradianceL2	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	Width, Height, false, true );
-				irradianceL3	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	Width, Height, false, true );
-
-				rs.Device.Clear( radiance.Surface,		Color4.Zero );
-				rs.Device.Clear( irradianceL0.Surface,	Color4.Zero );
-				rs.Device.Clear( irradianceL1.Surface,	Color4.Zero );
-				rs.Device.Clear( irradianceL2.Surface,	Color4.Zero );
-				rs.Device.Clear( irradianceL3.Surface,	Color4.Zero );
-
-				lightVolumeL0	=	new Texture3DCompute( rs.Device, ColorFormat.Rg11B10,	VolumeWidth, VolumeHeight, VolumeDepth );
-				lightVolumeL1	=	new Texture3DCompute( rs.Device, ColorFormat.Rgba8,		VolumeWidth, VolumeHeight, VolumeDepth );
-				lightVolumeL2	=	new Texture3DCompute( rs.Device, ColorFormat.Rgba8,		VolumeWidth, VolumeHeight, VolumeDepth );
-				lightVolumeL3	=	new Texture3DCompute( rs.Device, ColorFormat.Rgba8,		VolumeWidth, VolumeHeight, VolumeDepth );
+				header			=	reader.Read<HeaderData>();
 
 				//	read regions :
 				reader.ExpectFourCC("RGN1", "bad lightmap format");
@@ -117,27 +106,62 @@ namespace Fusion.Engine.Graphics.GI {
 					regions.Add( reader.ReadString(), reader.Read<Rectangle>() );
 				}
 
-				//	read gbuffer :
-				reader.ExpectFourCC("GBF1", "bad lightmap format");
+				//	read regions :
+				reader.ExpectFourCC("MAP1", "bad lightmap format");
 
-				reader.ExpectFourCC("POS1", "bad lightmap format");
-				position.SetData( Image<Vector3>.FromStream(stream).RawImageData );
+				var dataSize2	=	header.MapSize.Width * header.MapSize.Height * 4;
+				var dataBuffer2	=	new byte[ dataSize2 ];
 
-				reader.ExpectFourCC("NRM1", "bad lightmap format");
-				normal.SetData( Image<Color>.FromStream(stream).RawImageData );
-
-				reader.ExpectFourCC("ALB1", "bad lightmap format");
-				albedo.SetData( Image<Color>.FromStream(stream).RawImageData );
+				reader.Read( dataBuffer2, 0, dataSize2 ); irradianceL0.SetData( dataBuffer2 );
 			}
 		}
 
 
-		FormattedBuffer ReadUintBufferFromStream( BinaryReader reader )
+		public void Save ( Stream stream )
 		{
-			int count	=	reader.ReadInt32();
-			var buffer	=	new FormattedBuffer( rs.Device, Drivers.Graphics.VertexFormat.UInt, count, StructuredBufferFlags.None );
-			buffer.SetData( reader.Read<uint>(count) );
-			return buffer;
+			using ( var writer = new BinaryWriter( stream ) )
+			{
+				writer.WriteFourCC("RAD4");
+				writer.Write( header );
+
+				writer.WriteFourCC("RGN1");
+				foreach ( var pair in regions )
+				{
+					writer.Write( pair.Key );
+					writer.Write( pair.Value );
+				}
+
+				writer.WriteFourCC("MAP1");
+
+				var dataSize2	=	header.MapSize.Width * header.MapSize.Height * 4;
+				var dataBuffer2	=	new byte[ dataSize2 ];
+
+				irradianceL0.GetData( dataBuffer2 );	writer.Write( dataBuffer2, 0, dataSize2 );
+				irradianceL1.GetData( dataBuffer2 );	writer.Write( dataBuffer2, 0, dataSize2 );
+				irradianceL2.GetData( dataBuffer2 );	writer.Write( dataBuffer2, 0, dataSize2 );
+				irradianceL3.GetData( dataBuffer2 );	writer.Write( dataBuffer2, 0, dataSize2 );
+			}
+		}
+
+		
+		void CreateGpuResources( Size2 mapSize, Size3 volumeSize )
+		{
+			radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	mapSize.Width, mapSize.Height, true,  true );
+			irradianceL0	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	mapSize.Width, mapSize.Height, false, true );
+			irradianceL1	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	mapSize.Width, mapSize.Height, false, true );
+			irradianceL2	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	mapSize.Width, mapSize.Height, false, true );
+			irradianceL3	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	mapSize.Width, mapSize.Height, false, true );
+
+			rs.Device.Clear( radiance.Surface,		Color4.Zero );
+			rs.Device.Clear( irradianceL0.Surface,	Color4.Zero );
+			rs.Device.Clear( irradianceL1.Surface,	Color4.Zero );
+			rs.Device.Clear( irradianceL2.Surface,	Color4.Zero );
+			rs.Device.Clear( irradianceL3.Surface,	Color4.Zero );
+
+			lightVolumeL0	=	new Texture3DCompute( rs.Device, ColorFormat.Rg11B10,	volumeSize.Width, volumeSize.Height, volumeSize.Depth );
+			lightVolumeL1	=	new Texture3DCompute( rs.Device, ColorFormat.Rgba8,		volumeSize.Width, volumeSize.Height, volumeSize.Depth );
+			lightVolumeL2	=	new Texture3DCompute( rs.Device, ColorFormat.Rgba8,		volumeSize.Width, volumeSize.Height, volumeSize.Depth );
+			lightVolumeL3	=	new Texture3DCompute( rs.Device, ColorFormat.Rgba8,		volumeSize.Width, volumeSize.Height, volumeSize.Depth );
 		}
 
 
@@ -145,10 +169,6 @@ namespace Fusion.Engine.Graphics.GI {
 		{
 			if (disposing)
 			{
-				SafeDispose( ref albedo		);
-				SafeDispose( ref position	);
-				SafeDispose( ref normal		);
-
 				SafeDispose( ref radiance		);
 				SafeDispose( ref irradianceL0	);
 				SafeDispose( ref irradianceL1	);
@@ -179,7 +199,7 @@ namespace Fusion.Engine.Graphics.GI {
 
 		public Int3 GetVolumeSize()
 		{
-			return new Int3( Header.VolumeWidth, Header.VolumeHeight, Header.VolumeDepth );
+			return new Int3( Header.VolumeSize.Width, Header.VolumeSize.Height, Header.VolumeSize.Depth );
 		}
 
 		public ShaderResource GetLightmap( int band )

@@ -461,22 +461,27 @@ namespace Fusion.Drivers.Graphics {
 			var sw = new Stopwatch();
 			sw.Start();
 
-			lock ( device.DeviceContext ) {
-				if (SampleCount>1) {
+			lock ( device.DeviceContext ) 
+			{
+				if (SampleCount>1) 
+				{
 												
-					using( var temp = new RenderTarget2D( this.device, this.Format, this.Width, this.Height, false, false ) ) {
+					using( var temp = new RenderTarget2D( this.device, this.Format, this.Width, this.Height, false, false ) ) 
+					{
 						this.device.Resolve( this, temp );
 						temp.SaveToFile( path );
 					}
 				
-				} else {
+				} else 
+				{
 
 					var pixelCount	=	Width * Height;
 					var pixels		=   new Color[ pixelCount ];
 					var rawData		=   new byte[ pixelCount * 3 ];
 					GetData( pixels );
 
-					for ( int i=0; i<pixelCount; i++ ) {
+					for ( int i=0; i<pixelCount; i++ ) 
+					{
 						rawData[i*3 + 0] = pixels[i].B;
 						rawData[i*3 + 1] = pixels[i].G;
 						rawData[i*3 + 2] = pixels[i].R;
@@ -490,7 +495,8 @@ namespace Fusion.Drivers.Graphics {
 
 					encoder.Frames.Add( frame );
 
-					using ( var stream = File.OpenWrite( path ) ) {
+					using ( var stream = File.OpenWrite( path ) ) 
+					{
 						encoder.Save( stream );
 					}
 				}
@@ -499,5 +505,82 @@ namespace Fusion.Drivers.Graphics {
 			sw.Stop();
 			Log.Message("Screenshot: {1} ms, path {0}", path, sw.ElapsedMilliseconds );
 		}
+
+
+		/// <summary>
+		/// Sets 2D texture data, specifying a destination rectangle
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="rect"></param>
+		/// <param name="data"></param>
+		public void SetData<T> ( int level, Rectangle rect, T[] data ) where T: struct
+		{
+			SetData<T>( level, rect, data, 0, data.Length );
+		}
+
+
+		/// <summary>
+		/// Sets 2D texture data.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="data"></param>
+		public void SetData<T>(T[] data) where T : struct
+        {
+			this.SetData(0, null, data, 0, data.Length);
+        }
+
+
+		/// <summary>
+		/// Sets 2D texture data, specifying a mipmap level, source rectangle, start index, and number of elements.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="level"></param>
+		/// <param name="data"></param>
+		/// <param name="startIndex"></param>
+		/// <param name="elementCount"></param>
+		public void SetData<T>( int level, Rectangle? rect, T[] data, int startIndex, int elementCount ) where T: struct
+		{
+			var elementSizeInByte	=	Marshal.SizeOf(typeof(T));
+			var dataHandle			=	GCHandle.Alloc(data, GCHandleType.Pinned);
+			// Use try..finally to make sure dataHandle is freed in case of an error
+			try {
+				var startBytes	=	startIndex * elementSizeInByte;
+				var dataPtr		=	(IntPtr)(dataHandle.AddrOfPinnedObject().ToInt64() + startBytes);
+
+				int x, y, w, h;
+				if (rect.HasValue) 
+				{
+					x = rect.Value.X;
+					y = rect.Value.Y;
+					w = rect.Value.Width;
+					h = rect.Value.Height;
+				} 
+				else 
+				{
+					x = 0;
+					y = 0;
+					w = SharpDX.Direct3D11.Resource.CalculateMipSize( level, Width );
+					h = SharpDX.Direct3D11.Resource.CalculateMipSize( level, Height );
+				}
+
+				var box = new SharpDX.DataBox(dataPtr, w * Converter.SizeOf(Format), 0);
+
+				var region		= new SharpDX.Direct3D11.ResourceRegion();
+				region.Top		= y;
+				region.Front	= 0;
+				region.Back		= 1;
+				region.Bottom	= y + h;
+				region.Left		= x;
+				region.Right	= x + w;
+
+				device.DeviceContext.UpdateSubresource(box, tex2D, level, region);
+
+			} 
+			finally 
+			{
+				dataHandle.Free();
+			}
+		}
+
 	}
 }

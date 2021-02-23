@@ -246,7 +246,8 @@ namespace IronStar.Editor {
 
 		void BakeLightMap()
 		{
-			rs.RenderWorld.BuildRadiosityFormFactor( mapName, map.RadiositySettings );
+			Log.Warning("BakeLightMap is not assigned");
+			//rs.RenderWorld.BuildRadiosityFormFactor( mapName, map.RadiositySettings );
 		}
 
 

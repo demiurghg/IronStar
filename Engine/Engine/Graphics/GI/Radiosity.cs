@@ -16,6 +16,7 @@ using Fusion.Engine.Graphics.Lights;
 using Fusion.Core.Shell;
 using Fusion.Engine.Graphics.Bvh;
 using System.Diagnostics;
+using System.IO;
 
 namespace Fusion.Engine.Graphics.GI
 {
@@ -26,7 +27,6 @@ namespace Fusion.Engine.Graphics.GI
 
 		[ShaderDefine]	const int TileSize			=	RadiositySettings.TileSize;
 		[ShaderDefine]	const int ClusterSize		=	RadiositySettings.ClusterSize;
-		[ShaderDefine]	const uint PatchCacheSize	=	RadiositySettings.MaxPatchesPerTile;
 
 		static FXConstantBuffer<GpuData.CAMERA>				regCamera			=	new CRegister( 0, "Camera"		);
 		static FXConstantBuffer<RADIOSITY>					regRadiosity		=	new CRegister( 1, "Radiosity"		);
@@ -115,6 +115,7 @@ namespace Fusion.Engine.Graphics.GI
 
 		struct LMVertex
 		{
+			public LMVertex( Vector2 lmCoord ) { LMCoord = lmCoord; }
 			public Vector2 LMCoord;
 		}
 
@@ -154,6 +155,8 @@ namespace Fusion.Engine.Graphics.GI
 			tempHDR1		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10, RegionSize, RegionSize, true );
 			tempLDR1		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,   RegionSize, RegionSize, true );
 
+			Game.Invoker.RegisterCommand("bakeRadiosity", () => new BakeRadiosityCmd(this) );
+
 			LoadContent();
 
 			Game.Reloading += (s,e) => LoadContent();
@@ -183,58 +186,105 @@ namespace Fusion.Engine.Graphics.GI
 		}
 
 		/*-----------------------------------------------------------------------------------------
-		 *	Radiosity rendering :
+		 *	Radiosity baking :
 		-----------------------------------------------------------------------------------------*/
 
-		[AECommand]
-		public void AdvanceRegion()
+		void BakeRadiosity ( int numBonces, int numRays, bool useFilter, string path )
 		{
-			counter++;
+			var instances	=	rs.RenderWorld.Instances
+				.Where( inst => inst.Group.HasFlag( InstanceGroup.Static ) )
+				.ToArray();
+
+			var sw = new Stopwatch();
+
+			using ( var rasterizer = new LightMapRasterizer( rs, instances ) )
+			{
+				using ( var gbuffer = rasterizer.RasterizeGBuffer() )
+				{
+					using ( var rtData = RayTracer.BuildAccelerationStructure( rs, instances, v => new LMVertex( v.TexCoord1 ) ) )
+					{
+						using ( var lightMap = RenderLightmap( rtData, gbuffer ) )
+						{
+							Log.Message("Saving : {0}", path );
+							using ( var stream = File.OpenWrite( path ) )
+							{
+								lightMap.Save( stream );
+							}
+						}
+					}
+				}
+			}
+
+			Log.Message("Done : {0}", sw.Elapsed);
 		}
 
 
-		int counter = 0;
-
-		public void Render ( GameTime gameTime )
+		LightMap RenderLightmap(RayTracer.RTData rtData, LightMapGBuffer gbuffer )
 		{
-			if (lightMap==null || lightMap.albedo==null)
-			{
-				return;
-			}
+			var lightMap = new LightMap( rs, gbuffer.Size, new Size3(1,1,1) );
 
 			device.ResetStates();
 
-			using ( new PixEvent( "Radiosity" ) )
+			SetupShaderResources( rtData, gbuffer, lightMap );
+
+			RenderBounce( rtData, gbuffer, lightMap );
+
+			return lightMap;
+		}
+
+
+		void RenderBounce( RayTracer.RTData rtData, LightMapGBuffer gbuffer, LightMap lightMap )
+		{
+			var fullRegion = new Rectangle( 0, 0, gbuffer.Width, gbuffer.Height );
+
+			using ( new PixEvent( "Lighting" ) )
 			{
-				//rs.RayTracer.TestRayTracing();
+				Log.Message("Illuminating...");
 
-				for (int i=0; i<MaxRPF; i++)
+				device.SetComputeUnorderedAccess( regRadianceUav, lightMap.radiance.Surface.UnorderedAccess );
+					
+				DispatchRegion( Flags.ILLUMINATE, fullRegion );
+			}
+
+			using ( new PixEvent( "Integrate Map" ) )
+			{
+				Log.Message("Ray-tracing...");
+
+				int totalRegions = MathUtil.IntDivRoundUp( gbuffer.Width * gbuffer.Height, RegionSize * RegionSize );
+
+				for (int i=0; i<totalRegions; i++)
 				{
-					SetupShaderResources();
-	
-					int regSize =	RegionSize;
-					int regX	=	lightMap.Width  / regSize;
-					int regY	=	lightMap.Height / regSize;
+					Log.Message("...{0}/{1}", i+1, totalRegions);
 
-					int regId	=	(counter) % (regX * regY);
+					var coord  = MortonCode.Decode2((uint)i);
+					var region = new Rectangle( coord.X * RegionSize, coord.Y * RegionSize, RegionSize, RegionSize );
 
-					int x		=	regId % regX * regSize;
-					int y		=	regId / regX * regSize;
-					int w		=	regSize;
-					int h		=	regSize;
+					device.SetComputeUnorderedAccess( regRadianceUav,		null );
+					device.SetComputeUnorderedAccess( regIrradianceL0,		lightMap.irradianceL0.Surface.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regIrradianceL1,		lightMap.irradianceL1.Surface.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regIrradianceL2,		lightMap.irradianceL2.Surface.UnorderedAccess );
+					device.SetComputeUnorderedAccess( regIrradianceL3,		lightMap.irradianceL3.Surface.UnorderedAccess );
+					device.ComputeResources			[ regRadiance	]	=	lightMap.radiance;
 
-					if (!LockRegion) counter++;
-
-					RenderRegion( new Rectangle(x, y, w, h) );
+					DispatchRegion( Flags.INTEGRATE2, region );
 				}
+			}
 
-				SetupShaderResources();
-				//IntegrateLightVolume();
+			using ( new PixEvent( "Denoising/Dilation" ) )
+			{
+				/*FilterLightmap( lightMap.irradianceL0, tempHDR0, gbuffer.Albedo, region, WeightIntensitySHL0, 20, FalloffIntensitySHL0 );
+				FilterLightmap( lightMap.irradianceL1, tempLDR0, gbuffer.Albedo, region, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
+				FilterLightmap( lightMap.irradianceL2, tempLDR0, gbuffer.Albedo, region, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
+				FilterLightmap( lightMap.irradianceL3, tempLDR0, gbuffer.Albedo, region, WeightDirectionSHL1, 20, FalloffDirectionSHL1 ); */
 			}
 		}
 
 
-		void SetupShaderResources()
+		/*-----------------------------------------------------------------------------------------
+		 *	Radiosity rendering :
+		-----------------------------------------------------------------------------------------*/
+
+		void SetupShaderResources( RayTracer.RTData rtData, LightMapGBuffer gbuffer, LightMap lightMap )
 		{
 			device.ComputeConstants[ regCamera			]	=	rs.RenderWorld.Camera.CameraData;
 			device.ComputeConstants[ regRadiosity		]	=	cbRadiosity;
@@ -242,10 +292,10 @@ namespace Fusion.Engine.Graphics.GI
 			device.ComputeConstants[ regDirectLight		]	=	rs.LightManager.DirectLightData;
 			device.ComputeConstants[ regFrustumPlanes	]	=	rs.RenderWorld.Camera.FrustumPlanes;
 
-			device.ComputeResources[ regPosition		]	=	lightMap.position	;
-			device.ComputeResources[ regAlbedo			]	=	lightMap.albedo		;
-			device.ComputeResources[ regNormal			]	=	lightMap.normal		;
-			device.ComputeResources[ regRadiance		]	=	lightMap.irradianceL0		;
+			device.ComputeResources[ regPosition		]	=	gbuffer.PositionTexture	;
+			device.ComputeResources[ regAlbedo			]	=	gbuffer.AlbedoTexture	;
+			device.ComputeResources[ regNormal			]	=	gbuffer.NormalTexture	;
+			device.ComputeResources[ regRadiance		]	=	lightMap.irradianceL0	;
 
 			device.ComputeSamplers[ regSamplerShadow	]	=	SamplerState.ShadowSampler;
 			device.ComputeSamplers[ regSamplerLinear	]	=	SamplerState.LinearClamp;
@@ -257,15 +307,17 @@ namespace Fusion.Engine.Graphics.GI
 
 			device.ComputeResources[ regSkyBox			]	=	rs.Sky.SkyCubeDiffuse;
 
-			device.ComputeResources[ regRtTriangles		]	=	rs.RayTracer.PrimitiveBuffer;
-			device.ComputeResources[ regRtBvhTree		]	=	rs.RayTracer.BvhTreeBuffer;
-			device.ComputeResources[ regRtLmVerts		]	=	rs.RayTracer.VertexDataBuffer;
+			device.ComputeResources[ regRtTriangles		]	=	rtData.Primitives;
+			device.ComputeResources[ regRtBvhTree		]	=	rtData.BvhTree;
+			device.ComputeResources[ regRtLmVerts		]	=	rtData.VertexData;
 		}
 
 
 
-		void DispatchRegion( Rectangle region, int mip = 0 )
+		void DispatchRegion( Flags pass, Rectangle region, int mip = 0 )
 		{
+			device.PipelineState	=	factory[(int)pass];
+				
 			var radiosity = new RADIOSITY();
 
 			int x		=	region.X >> mip;
@@ -278,7 +330,7 @@ namespace Fusion.Engine.Graphics.GI
 			radiosity.RegionHeight		=	(uint)height;
 
 			radiosity.SkyFactor			=	SkyFactor;
-			radiosity.IndirectFactor	=	IndirectFactor / lightMap.Header.LightMapSampleCount;
+			radiosity.IndirectFactor	=	IndirectFactor;
 			radiosity.SecondBounce		=	SecondBounce;
 			radiosity.ShadowFilter		=	ShadowFilterRadius;
 
@@ -291,21 +343,17 @@ namespace Fusion.Engine.Graphics.GI
 
 
 
-		void RenderRegion( Rectangle region )
+		/*void RenderRegion( Rectangle region )
 		{
 			using ( new PixEvent( "Lighting" ) )
 			{
-				device.PipelineState    =   factory[(int)Flags.ILLUMINATE];			
-				
 				device.SetComputeUnorderedAccess( regRadianceUav, lightMap.radiance.Surface.UnorderedAccess );
 					
-				DispatchRegion( region );
+				DispatchRegion( Flags.ILLUMINATE, region );
 			}
 
 			using ( new PixEvent( "Integrate Map" ) )
 			{
-				device.PipelineState    =   factory[(int)Flags.INTEGRATE2];			
-
 				device.SetComputeUnorderedAccess( regRadianceUav,		null );
 				device.SetComputeUnorderedAccess( regIrradianceL0,		lightMap.irradianceL0.Surface.UnorderedAccess );
 				device.SetComputeUnorderedAccess( regIrradianceL1,		lightMap.irradianceL1.Surface.UnorderedAccess );
@@ -313,7 +361,7 @@ namespace Fusion.Engine.Graphics.GI
 				device.SetComputeUnorderedAccess( regIrradianceL3,		lightMap.irradianceL3.Surface.UnorderedAccess );
 				device.ComputeResources			[ regRadiance	]	=	lightMap.radiance;
 
-				DispatchRegion( region );
+				DispatchRegion( Flags.INTEGRATE2, region );
 			}
 
 			using ( new PixEvent( "Denoising/Dilation" ) )
@@ -323,7 +371,7 @@ namespace Fusion.Engine.Graphics.GI
 				FilterLightmap( lightMap.irradianceL2, tempLDR0, lightMap.albedo, region, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
 				FilterLightmap( lightMap.irradianceL3, tempLDR0, lightMap.albedo, region, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
 			}
-		}
+		}*/
 
 
 
@@ -391,26 +439,26 @@ namespace Fusion.Engine.Graphics.GI
 		}
 
 
-		public static Vector3 VoxelToWorld( Int3 voxel, FormFactor.Header header )
+		public static Vector3 VoxelToWorld( Int3 voxel, LightMap.HeaderData header )
 		{
 			var result = new Vector4(voxel.X, voxel.Y, voxel.Z, 0) * GetVoxelToWorldScale(header) + GetVoxelToWorldOffset(header);
 			return new Vector3( result.X, result.Y, result.Z );
 		}
 
 
-		static public Vector4 GetVoxelToWorldScale( FormFactor.Header header )
+		static public Vector4 GetVoxelToWorldScale( LightMap.HeaderData header )
 		{
 			float s = header.VolumeStride;
 			return new Vector4( s, s, s, 0 );
 		}
 
 
-		static public Vector4 GetVoxelToWorldOffset( FormFactor.Header header )
+		static public Vector4 GetVoxelToWorldOffset( LightMap.HeaderData header )
 		{
 			float s = header.VolumeStride;
-			float w = header.VolumeWidth;
-			float h = header.VolumeHeight;
-			float d = header.VolumeDepth;
+			float w = header.VolumeSize.Width;
+			float h = header.VolumeSize.Height;
+			float d = header.VolumeSize.Depth;
 			float x = header.VolumePosition.X - (s*w/2) + s/2;
 			float y = header.VolumePosition.Y -         + s/2;
 			float z = header.VolumePosition.Z - (s*d/2) + s/2;
@@ -432,7 +480,7 @@ namespace Fusion.Engine.Graphics.GI
 
 		Vector4 GetVolumeDimension()
 		{
-			return lightMap==null ? new Vector4(1,1,1,1) : new Vector4(	lightMap.Header.VolumeWidth, lightMap.Header.VolumeHeight, lightMap.Header.VolumeDepth, 1 );
+			return lightMap==null ? new Vector4(1,1,1,1) : new Vector4(	lightMap.Header.VolumeSize.Width, lightMap.Header.VolumeSize.Height, lightMap.Header.VolumeSize.Depth, 1 );
 		}
 
 

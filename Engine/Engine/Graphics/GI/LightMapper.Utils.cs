@@ -20,7 +20,7 @@ using Fusion.Engine.Graphics.GI;
 
 namespace Fusion.Engine.Graphics.GI {
 
-	partial class LightMapper {
+	partial class LightMapRasterizer {
 
 		/// <summary>
 		/// 

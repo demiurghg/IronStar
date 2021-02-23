@@ -58,27 +58,6 @@ namespace Fusion.Engine.Graphics.GI
 		public StructuredBuffer	VertexDataBuffer { get { return sbVertexData; } }
 
 
-		class RTBuildBvh : ICommand
-		{
-			RayTracer rt;
-
-			[CommandLineParser.Option]
-			public bool All { get; set; }
-
-			public RTBuildBvh( RayTracer rt )
-			{
-				this.rt	=	rt;
-			}
-
-			public object Execute()
-			{
-				rt.BuildAccelerationStructure(All);
-				return null;
-			}
-		}
-
-
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -95,8 +74,6 @@ namespace Fusion.Engine.Graphics.GI
 			raytracedImage	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10, 800, 600,true );
 
 			LoadContent();
-
-			Game.Invoker.RegisterCommand("rtBuildBvh", ()=>new RTBuildBvh(this) );
 
 			Game.Reloading += (s,e) => LoadContent();
 		}
@@ -131,7 +108,7 @@ namespace Fusion.Engine.Graphics.GI
 		/// <summary>
 		/// 
 		/// </summary>
-		public void TestRayTracing()
+		/*public void TestRayTracing()
 		{
 			using ( new PixEvent( "Ray Tracing" ) )
 			{
@@ -149,21 +126,20 @@ namespace Fusion.Engine.Graphics.GI
 
 				device.Dispatch( new Int2( width, height ), new Int2( TileSize, TileSize ) );
 			}
-		}
+		}*/
 
 
 		/*-----------------------------------------------------------------------------------------
 		 *	Scene preprocessing :
 		-----------------------------------------------------------------------------------------*/
 
-		public void BuildAccelerationStructure<TVertex>( Func<RenderInstance,bool> filter, Func<MeshVertex,TVertex> extractor) where TVertex: struct
+		static public RTData BuildAccelerationStructure<TVertex>( RenderSystem rs, IEnumerable<RenderInstance> instances, Func<MeshVertex,TVertex> extractor) where TVertex: struct
 		{
 			Log.Message("Build acceleration structure"); 
 			Log.Message("...vertex type : {0}", typeof(TVertex).Name);
 			var sw = new Stopwatch();
 			sw.Start();
 
-			var instances	=	rs.RenderWorld.Instances.Where( inst => filter(inst) ).ToArray();
 			var tris		=	new List<TRIANGLE>();
 			var verts		=	new List<TVertex>();
 			var totalTris	=	0;
@@ -177,34 +153,20 @@ namespace Fusion.Engine.Graphics.GI
 			var flatTree	=	bvhTree.FlattenTree( (isLeaf,index,bbox) => new BVHNODE( isLeaf, index, bbox ) );
 			var vertData	=	verts.ToArray();
 
+			var rtData		=	new RTData( rs, typeof(TVertex), bvhTree.Primitives.Length,	flatTree.Length, vertData.Length );
 
-			SafeDispose( ref sbBvhTree );
-			SafeDispose( ref sbPrimitives );
-			SafeDispose( ref sbVertexData );
-
-			sbPrimitives	=	new StructuredBuffer( rs.Device, typeof(TRIANGLE), bvhTree.Primitives.Length,	StructuredBufferFlags.None );
-			sbBvhTree		=	new StructuredBuffer( rs.Device, typeof(BVHNODE),  flatTree.Length,				StructuredBufferFlags.None );
-			sbVertexData	=	new StructuredBuffer( rs.Device, typeof(TVertex),  vertData.Length,				StructuredBufferFlags.None );
-
-			sbPrimitives.SetData( bvhTree.Primitives );
-			sbBvhTree.SetData( flatTree );
-			sbVertexData.SetData( vertData );
+			rtData.Primitives.SetData( bvhTree.Primitives );
+			rtData.BvhTree.SetData( flatTree );
+			rtData.VertexData.SetData( vertData );
 			
 			sw.Stop();
 			Log.Message("Done: {0} ms", sw.ElapsedMilliseconds);
+
+			return rtData;
 		}
 
 
-
-
-		public void BuildAccelerationStructure(bool all)
-		{
-			BuildAccelerationStructure( inst => inst.Group==InstanceGroup.Static, v => v.TexCoord1 );
-		}
-
-
-
-		int GetRenderInstanceTriangles<TVertex>( List<TRIANGLE> tris, List<TVertex> verts, Func<MeshVertex,TVertex> extractor, RenderInstance instance )
+		static int GetRenderInstanceTriangles<TVertex>( List<TRIANGLE> tris, List<TVertex> verts, Func<MeshVertex,TVertex> extractor, RenderInstance instance )
 		{
 			if (instance.Mesh==null)
 			{

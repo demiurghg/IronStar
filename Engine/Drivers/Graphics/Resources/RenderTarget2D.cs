@@ -168,7 +168,8 @@ namespace Fusion.Drivers.Graphics {
 				texDesc.SampleDescription	=	new DXGI.SampleDescription(samples, 0);
 				texDesc.Usage				=	ResourceUsage.Default;
 
-			if (enableRWBuffer) {
+			if (enableRWBuffer) 
+			{
 				texDesc.BindFlags |= BindFlags.UnorderedAccess;
 			}
 
@@ -178,14 +179,14 @@ namespace Fusion.Drivers.Graphics {
 				srvDesc.Texture2D.MipLevels			=	MipCount;
 				srvDesc.Texture2D.MostDetailedMip	=	0;
 
-			if (enableRWBuffer) {
+			#warning Remove block below, dup
+			if (enableRWBuffer) 
+			{
 				texDesc.BindFlags |= BindFlags.UnorderedAccess;
 			}
 
 			tex2D	=	new D3D.Texture2D( device.Device, texDesc );
 			SRV		=	new ShaderResourceView( device.Device, tex2D, srvDesc );
-
-
 
 			//
 			//	Create surfaces :
@@ -193,8 +194,8 @@ namespace Fusion.Drivers.Graphics {
 			surfaces	=	new RenderTargetSurface[ MipCount ];
 			mipSrvs		=	new ShaderResource[ MipCount ];
 
-			for ( int i=0; i<MipCount; i++ ) { 
-
+			for ( int i=0; i<MipCount; i++ ) 
+			{ 
 				width	=	GetMipSize( Width,  i );
 				height	=	GetMipSize( Height, i );
 
@@ -219,7 +220,8 @@ namespace Fusion.Drivers.Graphics {
 				
 				UnorderedAccessView uav = null;
 
-				if (enableRWBuffer) {
+				if (enableRWBuffer) 
+				{
 					var uavDesc = new UnorderedAccessViewDescription();
 					uavDesc.Buffer.ElementCount	=	width * height;
 					uavDesc.Buffer.FirstElement	=	0;
@@ -321,30 +323,28 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="startIndex"></param>
 		/// <param name="elementCount"></param>
 		public void GetData<T>(int level, Rectangle? rect, T[] data, int startIndex, int elementCount) where T : struct
-        {
-            if (data == null || data.Length == 0) {
-                throw new ArgumentException("data cannot be null");
+		{
+			if (data == null || data.Length == 0) {
+				throw new ArgumentException("data cannot be null");
 			}
-            
+			
 			if (data.Length < startIndex + elementCount) {
-                throw new ArgumentException("The data passed has a length of " + data.Length + " but " + elementCount + " pixels have been requested.");
+				throw new ArgumentException("The data passed has a length of " + data.Length + " but " + elementCount + " pixels have been requested.");
 			}
 
 			if (rect.HasValue) {
 				throw new NotImplementedException("Set 'rect' parameter to null.");
 			}
 
+			var mipWidth	=	Resource.CalculateMipSize( level, Width );
+			var mipHeight	=	Resource.CalculateMipSize( level, Height );
 
-			var mipWidth	=	MathUtil.Clamp( Width >> level , 1, Width );
-			var mipHeight	=	MathUtil.Clamp( Width >> level , 1, Height );
-
-
-            // Create a temp staging resource for copying the data.
-            // 
-            // TODO: We should probably be pooling these staging resources
-            // and not creating a new one each time.
-            //
-            var desc = new SharpDX.Direct3D11.Texture2DDescription();
+			// Create a temp staging resource for copying the data.
+			// 
+			// TODO: We should probably be pooling these staging resources
+			// and not creating a new one each time.
+			//
+			var desc = new Texture2DDescription();
 				desc.Width						= mipWidth;
 				desc.Height						= mipHeight;
 				desc.MipLevels					= 1;
@@ -357,59 +357,55 @@ namespace Fusion.Drivers.Graphics {
 				desc.Usage						= D3D.ResourceUsage.Staging;
 				desc.OptionFlags				= D3D.ResourceOptionFlags.None;
 
-		    
-			var d3dContext = device.DeviceContext;
-
+			
+			var d3dContext	=	device.DeviceContext;
 			var elementSize	=	Marshal.SizeOf(typeof(T));
 			var pixelSize	=	Converter.SizeOf(Format);
 
-            using (var stagingTex = new D3D.Texture2D(device.Device, desc)) {
-                
-				lock (d3dContext) {
-					//
-                    // Copy the data from the GPU to the staging texture.
-					//
-                    int elementsInRow;
-                    int rows;
-                    
-					if (rect.HasValue) {
-                        
-						elementsInRow = rect.Value.Width * pixelSize / elementSize;
-                        rows = rect.Value.Height;
+			using (var stagingTex = new D3D.Texture2D(device.Device, desc)) 
+			{
+				//
+				// Copy the data from the GPU to the staging texture.
+				//
+				int elementsInRow;
+				int rows;
+					
+				if (rect.HasValue) 
+				{
+					elementsInRow = rect.Value.Width * pixelSize / elementSize;
+					rows = rect.Value.Height;
 
-						var region = new D3D.ResourceRegion( rect.Value.Left, rect.Value.Top, 0, rect.Value.Right, rect.Value.Bottom, 1 );
+					var region = new D3D.ResourceRegion( rect.Value.Left, rect.Value.Top, 0, rect.Value.Right, rect.Value.Bottom, 1 );
 
-                        d3dContext.CopySubresourceRegion( tex2D, level, region, stagingTex, 0, 0, 0, 0);
+					d3dContext.CopySubresourceRegion( tex2D, level, region, stagingTex, 0, 0, 0, 0);
+				} 
+				else 
+				{
+					elementsInRow = mipWidth * pixelSize / elementSize;
+					rows = mipHeight;
 
-                    } else {
-                        
-						elementsInRow = mipWidth * pixelSize / elementSize;
-                        rows = mipHeight;
-
-                        d3dContext.CopySubresourceRegion( tex2D, level, null, stagingTex, 0, 0, 0, 0);
-
-                    }
+					d3dContext.CopySubresourceRegion( tex2D, level, null, stagingTex, 0, 0, 0, 0);
+				}
 
 
-                    // Copy the data to the array :
-                    DataStream stream;
-                    var databox = d3dContext.MapSubresource(stagingTex, 0, D3D.MapMode.Read, D3D.MapFlags.None, out stream);
+				// Copy the data to the array :
+				DataStream stream;
+				var databox = d3dContext.MapSubresource(stagingTex, 0, D3D.MapMode.Read, D3D.MapFlags.None, out stream);
 
-                    // Some drivers may add pitch to rows.
-                    // We need to copy each row separatly and skip trailing zeros.
-                    var currentIndex	=	startIndex;
-                    
-					for (var row = 0; row < rows; row++) {
+				// Some drivers may add pitch to rows.
+				// We need to copy each row separatly and skip trailing zeros.
+				var currentIndex	=	startIndex;
+					
+				for (var row = 0; row < rows; row++) 
+				{
+					stream.ReadRange(data, currentIndex, elementsInRow);
+					stream.Seek(databox.RowPitch - (elementSize * elementsInRow), SeekOrigin.Current);
+					currentIndex += elementsInRow;
 
-                        stream.ReadRange(data, currentIndex, elementsInRow);
-                        stream.Seek(databox.RowPitch - (elementSize * elementsInRow), SeekOrigin.Current);
-                        currentIndex += elementsInRow;
-
-                    }
-                    stream.Dispose();
-                }
+				}
+				stream.Dispose();
 			}
-        }
+		}
 
 
 		public void CopyTo ( RenderTarget2D destination )

@@ -149,7 +149,7 @@ namespace IronStar {
 
 				.Copy<SoundBank>("*.bank")
 
-				.Copy<LightMap>			("*.irrmap"  )
+				.Copy<LightMap>			("maps/lightmaps/*.bin")
 				.Copy<LightProbeHDRI>	("maps/lightprobes/*.bin")
 				;
 

@@ -10,7 +10,6 @@ namespace Fusion.Engine.Graphics.GI
 {
 	public class RadiositySettings
 	{
-		public const int UpdateRegionSize = 256;
 		public const int TileSize = 16;
 		public const int ClusterSize = 4;
 

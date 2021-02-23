@@ -17,13 +17,14 @@ using Fusion.Core.Shell;
 using Fusion.Engine.Graphics.Bvh;
 using System.Diagnostics;
 using System.IO;
+using Fusion.Engine.Graphics.Scenes;
 
 namespace Fusion.Engine.Graphics.GI
 {
 	[RequireShader("radiosity", true)]
 	public partial class Radiosity : RenderComponent
 	{
-		const int RegionSize = 64;
+		public const int RegionSize = 64;
 
 		[ShaderDefine]	const int TileSize			=	RadiositySettings.TileSize;
 		[ShaderDefine]	const int ClusterSize		=	RadiositySettings.ClusterSize;
@@ -62,29 +63,6 @@ namespace Fusion.Engine.Graphics.GI
 		[ShaderIfDef("INTEGRATE3")] static FXRWTexture3D<Vector4>	regLightVolumeL2	=	new URegister( 2, "LightVolumeL2"	);
 		[ShaderIfDef("INTEGRATE3")] static FXRWTexture3D<Vector4>	regLightVolumeL3	=	new URegister( 3, "LightVolumeL3"	);
 
-		internal LightMap LightMap
-		{
-			get { return lightMap; }
-			set {
-				if (lightMap!=value)
-				{
-					lightMap	=	value;
-					fullRefresh	=	true;
-				}
-			}
-		}
-
-
-		public void Refresh()
-		{
-			fullRefresh	=	true;
-		}
-
-
-		bool fullRefresh = false;
-		LightMap lightMap;
-		
-
 		enum Flags 
 		{	
 			ILLUMINATE	=	0x001,
@@ -116,10 +94,11 @@ namespace Fusion.Engine.Graphics.GI
 		struct LMVertex
 		{
 			public LMVertex( Vector2 lmCoord ) { LMCoord = lmCoord; }
+			public LMVertex( float x, float y ) { LMCoord = new Vector2(x,y); }
 			public Vector2 LMCoord;
 		}
 
-		public ShaderResource Radiance		{ get { return lightMap?.radiance;		} }
+		/*public ShaderResource Radiance		{ get { return lightMap?.radiance;		} }
 		public ShaderResource IrradianceL0	{ get { return lightMap?.irradianceL0;	} }
 		public ShaderResource IrradianceL1	{ get { return lightMap?.irradianceL1;	} }
 		public ShaderResource IrradianceL2	{ get { return lightMap?.irradianceL2;	} }
@@ -127,7 +106,7 @@ namespace Fusion.Engine.Graphics.GI
 		public ShaderResource LightVolumeL0	{ get { return lightMap?.lightVolumeL0;	} }
 		public ShaderResource LightVolumeL1	{ get { return lightMap?.lightVolumeL1;	 } }
 		public ShaderResource LightVolumeL2	{ get { return lightMap?.lightVolumeL2;	 } }
-		public ShaderResource LightVolumeL3	{ get { return lightMap?.lightVolumeL3;	 } }
+		public ShaderResource LightVolumeL3	{ get { return lightMap?.lightVolumeL3;	 } }  */
 
 		ConstantBuffer	cbRadiosity	;
 		Ubershader		shader;
@@ -155,7 +134,7 @@ namespace Fusion.Engine.Graphics.GI
 			tempHDR1		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10, RegionSize, RegionSize, true );
 			tempLDR1		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,   RegionSize, RegionSize, true );
 
-			Game.Invoker.RegisterCommand("bakeRadiosity", () => new BakeRadiosityCmd(this) );
+			Game.Invoker.RegisterCommand("bakeLightMap", () => new BakeLightMapCmd(this) );
 
 			LoadContent();
 
@@ -189,7 +168,7 @@ namespace Fusion.Engine.Graphics.GI
 		 *	Radiosity baking :
 		-----------------------------------------------------------------------------------------*/
 
-		void BakeRadiosity ( int numBonces, int numRays, bool useFilter, string path )
+		void BakeRadiosity ( int numBonces, int numRays, bool useFilter, Stream stream )
 		{
 			var instances	=	rs.RenderWorld.Instances
 				.Where( inst => inst.Group.HasFlag( InstanceGroup.Static ) )
@@ -201,15 +180,11 @@ namespace Fusion.Engine.Graphics.GI
 			{
 				using ( var gbuffer = rasterizer.RasterizeGBuffer() )
 				{
-					using ( var rtData = RayTracer.BuildAccelerationStructure( rs, instances, v => new LMVertex( v.TexCoord1 ) ) )
+					using ( var rtData = BuildBVHTree(gbuffer, instances) )
 					{
-						using ( var lightMap = RenderLightmap( rtData, gbuffer ) )
+						using ( var lightMap = RenderLightmap( rtData, gbuffer, numBonces, useFilter ) )
 						{
-							Log.Message("Saving : {0}", path );
-							using ( var stream = File.OpenWrite( path ) )
-							{
-								lightMap.Save( stream );
-							}
+							lightMap.Save( stream );
 						}
 					}
 				}
@@ -219,38 +194,75 @@ namespace Fusion.Engine.Graphics.GI
 		}
 
 
-		LightMap RenderLightmap(RayTracer.RTData rtData, LightMapGBuffer gbuffer )
+		class BvhDataProvider : RayTracer.BvhDataProvider<LMVertex, Vector4>
+		{
+			readonly LightMapGBuffer gbuffer;
+			public BvhDataProvider( LightMapGBuffer gbuffer ) { this.gbuffer = gbuffer; }
+
+			public override Vector4 Cache( RenderInstance instance )
+			{
+				return gbuffer.Regions[ instance.LightMapRegionName ].GetMadOpScaleOffsetNDC( gbuffer.Width, gbuffer.Height );
+			}
+
+			public override LMVertex Transform( Vector4 cache, ref MeshVertex vertex )
+			{
+				float x = vertex.TexCoord1.X * cache.X + cache.Z;
+				float y = vertex.TexCoord1.Y * cache.Y + cache.W;
+				return new LMVertex(x, y);
+			}
+		}
+
+
+		RayTracer.RTData BuildBVHTree(LightMapGBuffer gbuffer, IEnumerable<RenderInstance> instances )
+		{
+			return RayTracer.BuildAccelerationStructure( rs, instances, new BvhDataProvider(gbuffer) );
+		}
+
+
+		LightMap RenderLightmap(RayTracer.RTData rtData, LightMapGBuffer gbuffer, int numBounces, bool useFilter )
 		{
 			var lightMap = new LightMap( rs, gbuffer.Size, new Size3(1,1,1) );
 
-			device.ResetStates();
+			foreach (var pair in gbuffer.Regions)
+			{
+				lightMap.Regions.Add( pair.Key, pair.Value );
+			}
 
-			SetupShaderResources( rtData, gbuffer, lightMap );
+			for (int i=0; i<numBounces; i++)
+			{
+				device.ResetStates();
 
-			RenderBounce( rtData, gbuffer, lightMap );
+				SetupShaderResources( rtData, gbuffer, lightMap );
+				RenderBounce( rtData, gbuffer, lightMap, useFilter );
+			}
 
 			return lightMap;
 		}
 
 
-		void RenderBounce( RayTracer.RTData rtData, LightMapGBuffer gbuffer, LightMap lightMap )
+		void RenderBounce( RayTracer.RTData rtData, LightMapGBuffer gbuffer, LightMap lightMap, bool useFilter )
 		{
 			var fullRegion = new Rectangle( 0, 0, gbuffer.Width, gbuffer.Height );
+
+			//------------------------------------
 
 			using ( new PixEvent( "Lighting" ) )
 			{
 				Log.Message("Illuminating...");
 
 				device.SetComputeUnorderedAccess( regRadianceUav, lightMap.radiance.Surface.UnorderedAccess );
+				device.ComputeResources			[ regRadiance	]	=	lightMap.irradianceL0;
 					
 				DispatchRegion( Flags.ILLUMINATE, fullRegion );
 			}
 
+			int totalRegions = MathUtil.IntDivRoundUp( gbuffer.Width * gbuffer.Height, RegionSize * RegionSize );
+
+			//------------------------------------
+
 			using ( new PixEvent( "Integrate Map" ) )
 			{
 				Log.Message("Ray-tracing...");
-
-				int totalRegions = MathUtil.IntDivRoundUp( gbuffer.Width * gbuffer.Height, RegionSize * RegionSize );
 
 				for (int i=0; i<totalRegions; i++)
 				{
@@ -260,22 +272,36 @@ namespace Fusion.Engine.Graphics.GI
 					var region = new Rectangle( coord.X * RegionSize, coord.Y * RegionSize, RegionSize, RegionSize );
 
 					device.SetComputeUnorderedAccess( regRadianceUav,		null );
+					device.ComputeResources			[ regRadiance	]	=	lightMap.radiance;
+
 					device.SetComputeUnorderedAccess( regIrradianceL0,		lightMap.irradianceL0.Surface.UnorderedAccess );
 					device.SetComputeUnorderedAccess( regIrradianceL1,		lightMap.irradianceL1.Surface.UnorderedAccess );
 					device.SetComputeUnorderedAccess( regIrradianceL2,		lightMap.irradianceL2.Surface.UnorderedAccess );
 					device.SetComputeUnorderedAccess( regIrradianceL3,		lightMap.irradianceL3.Surface.UnorderedAccess );
-					device.ComputeResources			[ regRadiance	]	=	lightMap.radiance;
 
 					DispatchRegion( Flags.INTEGRATE2, region );
+
+					device.Present(0);
 				}
 			}
 
+			//------------------------------------
+
 			using ( new PixEvent( "Denoising/Dilation" ) )
 			{
-				/*FilterLightmap( lightMap.irradianceL0, tempHDR0, gbuffer.Albedo, region, WeightIntensitySHL0, 20, FalloffIntensitySHL0 );
-				FilterLightmap( lightMap.irradianceL1, tempLDR0, gbuffer.Albedo, region, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
-				FilterLightmap( lightMap.irradianceL2, tempLDR0, gbuffer.Albedo, region, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
-				FilterLightmap( lightMap.irradianceL3, tempLDR0, gbuffer.Albedo, region, WeightDirectionSHL1, 20, FalloffDirectionSHL1 ); */
+				if (useFilter)
+				{
+					for (int i=0; i<totalRegions; i++)
+					{
+						var coord  = MortonCode.Decode2((uint)i);
+						var region = new Rectangle( coord.X * RegionSize, coord.Y * RegionSize, RegionSize, RegionSize );
+
+						FilterLightmap( lightMap.irradianceL0, tempHDR0, gbuffer.AlbedoTexture, region, WeightIntensitySHL0, 20, FalloffIntensitySHL0 );
+						FilterLightmap( lightMap.irradianceL1, tempLDR0, gbuffer.AlbedoTexture, region, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
+						FilterLightmap( lightMap.irradianceL2, tempLDR0, gbuffer.AlbedoTexture, region, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
+						FilterLightmap( lightMap.irradianceL3, tempLDR0, gbuffer.AlbedoTexture, region, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
+					}
+				}
 			}
 		}
 
@@ -377,7 +403,7 @@ namespace Fusion.Engine.Graphics.GI
 
 		void IntegrateLightVolume()
 		{
-			using ( new PixEvent( "Integrate Volume" ) )
+			/*using ( new PixEvent( "Integrate Volume" ) )
 			{
 				device.PipelineState    =   factory[(int)Flags.INTEGRATE3];			
 
@@ -393,7 +419,7 @@ namespace Fusion.Engine.Graphics.GI
 				int depth	=	lightMap.lightVolumeL0.Depth;
 
 				device.Dispatch( new Int3( width, height, depth ), new Int3( ClusterSize, ClusterSize, ClusterSize ) );
-			}
+			}	   */
 		}
 
 
@@ -439,22 +465,23 @@ namespace Fusion.Engine.Graphics.GI
 		}
 
 
-		public static Vector3 VoxelToWorld( Int3 voxel, LightMap.HeaderData header )
+		/*static Vector3 VoxelToWorld( Int3 voxel, LightMap.HeaderData header )
 		{
 			var result = new Vector4(voxel.X, voxel.Y, voxel.Z, 0) * GetVoxelToWorldScale(header) + GetVoxelToWorldOffset(header);
 			return new Vector3( result.X, result.Y, result.Z );
 		}
 
 
-		static public Vector4 GetVoxelToWorldScale( LightMap.HeaderData header )
+		public Vector4 GetVoxelToWorldScale( LightMap.HeaderData header )
 		{
 			float s = header.VolumeStride;
 			return new Vector4( s, s, s, 0 );
 		}
 
 
-		static public Vector4 GetVoxelToWorldOffset( LightMap.HeaderData header )
+		public Vector4 GetVoxelToWorldOffset( LightMap lightMap )
 		{
+			var header = lightMap.Header;
 			float s = header.VolumeStride;
 			float w = header.VolumeSize.Width;
 			float h = header.VolumeSize.Height;
@@ -463,35 +490,35 @@ namespace Fusion.Engine.Graphics.GI
 			float y = header.VolumePosition.Y -         + s/2;
 			float z = header.VolumePosition.Z - (s*d/2) + s/2;
 			return new Vector4( x, y, z, 0 );
-		}
+		}	  */
 
 
-		public Vector4 GetVoxelToWorldScale()
+		/*public static Vector4 GetVoxelToWorldScale( LightMap lightMap )
 		{
 			return lightMap==null ? new Vector4(1,1,1,1) : GetVoxelToWorldScale(lightMap.Header);
 		}
 
 
-		public Vector4 GetVoxelToWorldOffset()
+		public static Vector4 GetVoxelToWorldOffset( LightMap lightMap )
 		{
 			return lightMap==null ? new Vector4(0,0,0,0) : GetVoxelToWorldOffset(lightMap.Header);
 		}
 
 
-		Vector4 GetVolumeDimension()
+		static Vector4 GetVolumeDimension( LightMap lightMap )
 		{
 			return lightMap==null ? new Vector4(1,1,1,1) : new Vector4(	lightMap.Header.VolumeSize.Width, lightMap.Header.VolumeSize.Height, lightMap.Header.VolumeSize.Depth, 1 );
 		}
 
 
-		public Vector4 GetWorldToVoxelScale()
+		public static Vector4 GetWorldToVoxelScale( LightMap lightMap )
 		{
-			return Vector4.One / GetVoxelToWorldScale() / GetVolumeDimension();
+			return Vector4.One / GetVoxelToWorldScale(lightMap) / GetVolumeDimension(lightMap);
 		}
 
-		public Vector4 GetWorldToVoxelOffset()
+		public static Vector4 GetWorldToVoxelOffset( LightMap lightMap )
 		{
-			return ( (-1) * GetVoxelToWorldOffset() / GetVoxelToWorldScale() + Vector4.One * 0.5f ) / GetVolumeDimension();
-		}
+			return ( (-1) * GetVoxelToWorldOffset(lightMap) / GetVoxelToWorldScale(lightMap) + Vector4.One * 0.5f ) / GetVolumeDimension(lightMap);
+		}	  */
 	}
 }

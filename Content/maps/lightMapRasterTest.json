@@ -22,7 +22,7 @@
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
         "GlowIntensity": 100.0,
-        "LightMapSize": "lightMap256",
+        "LightMapSize": "lightMap64",
         "UseLightVolume": false,
         "UseCollisionMesh": false,
         "Walkable": true,
@@ -51,6 +51,29 @@
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapModel, IronStar",
+        "NodeGuid": "3253f43e-e459-4ff2-b807-cd2450420c13",
+        "ScenePath": "scenes\\grayBoxing\\radiosityBug.fbx",
+        "Scale": 1.0,
+        "GlowColor": "255, 0, 0, 255",
+        "GlowIntensity": 100.0,
+        "LightMapSize": "lightMap64",
+        "UseLightVolume": false,
+        "UseCollisionMesh": false,
+        "Walkable": true,
+        "UseCustomNodes": false,
+        "CustomVisibleNode": "",
+        "CustomCollisionNode": "",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": -36.0,
+        "TranslateY": 0.0,
+        "TranslateZ": 0.0,
+        "RotateYaw": -180.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
       }
     ]
   },
@@ -63,10 +86,6 @@
     "NormalOffsetBias": 0.25,
     "LightMapSampleCount": 512,
     "LightGridSampleCount": 64,
-    "MaxPatches": 128,
-    "RadianceThreshold": 0.01,
-    "DiscardDistance": 400.0,
-    "PatchThreshold": 1.0,
     "UseWhiteDiffuse": false,
     "DebugLightmaps": false
   }

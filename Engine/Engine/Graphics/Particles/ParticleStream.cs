@@ -152,8 +152,7 @@ namespace Fusion.Engine.Graphics {
 		[StructLayout(LayoutKind.Sequential, Size=128)]
 		[ShaderStructure]
 		struct PARAMS {
-			public Vector4	WorldToVoxelScale;
-			public Vector4	WorldToVoxelOffset;
+			public Matrix	WorldToLightVolume;
 			public Vector4	Gravity;
 			public Vector4	LightMapSize;
 			public Color4	SkyAmbientLevel;
@@ -419,8 +418,7 @@ namespace Fusion.Engine.Graphics {
 			//	fill constant data :
 			PARAMS param		=	new PARAMS();
 
-			param.WorldToVoxelOffset	=	rs.Radiosity.GetWorldToVoxelOffset();
-			param.WorldToVoxelScale		=	rs.Radiosity.GetWorldToVoxelScale();
+			param.WorldToLightVolume	=	renderWorld.LightMap.WorldToVolume;
 			param.SkyAmbientLevel		=	new Color4(8,0,4,1);
 			param.MaxParticles			=	0;
 			param.DeltaTime				=	deltaTime;
@@ -665,10 +663,10 @@ namespace Fusion.Engine.Graphics {
 
 					if (flags.HasFlag(Flags.LIGHTMAP) || flags.HasFlag(Flags.HARD)) 
 					{
-						device.GfxResources[ regIrradianceVolumeL0 ]	= 	rw.Lightmap?.GetVolume(0);
-						device.GfxResources[ regIrradianceVolumeL1 ]	= 	rw.Lightmap?.GetVolume(1);
-						device.GfxResources[ regIrradianceVolumeL2 ]	= 	rw.Lightmap?.GetVolume(2);
-						device.GfxResources[ regIrradianceVolumeL3 ]	= 	rw.Lightmap?.GetVolume(3);
+						device.GfxResources[ regIrradianceVolumeL0 ]	= 	rw.LightMap?.GetVolume(0);
+						device.GfxResources[ regIrradianceVolumeL1 ]	= 	rw.LightMap?.GetVolume(1);
+						device.GfxResources[ regIrradianceVolumeL2 ]	= 	rw.LightMap?.GetVolume(2);
+						device.GfxResources[ regIrradianceVolumeL3 ]	= 	rw.LightMap?.GetVolume(3);
 					}
 
 					device.GfxResources[ regLightMapRegionsGS ]	=	lightMapRegions;

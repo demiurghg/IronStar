@@ -38,6 +38,8 @@ namespace IronStar.ECS
 		readonly EntityActionCollection		actions;
 		readonly Queue<EntityAction>		actionQueue;
 
+		public event	EventHandler Reloading;
+
 
 		/// <summary>
 		/// Game state constructor
@@ -63,6 +65,14 @@ namespace IronStar.ECS
 			factories	=	new EntityFactoryCollection();
 			actions		=	new EntityActionCollection();
 			actionQueue	=	new Queue<EntityAction>();
+
+			Game.Reloading += Game_Reloading;
+		}
+
+		
+		private void Game_Reloading( object sender, EventArgs e )
+		{
+			Reloading?.Invoke(sender, e);
 		}
 
 
@@ -74,6 +84,8 @@ namespace IronStar.ECS
 		{
 			if ( disposing )
 			{
+				Game.Reloading -= Game_Reloading;
+
 				KillAllInternal();
 
 				RefreshEntities();

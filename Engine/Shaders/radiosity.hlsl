@@ -62,11 +62,11 @@ void CSMain(
 	
 	if (albedo.a>0)
 	{
-		float3	indirect		=	Radiance[ loadXY ].rgb * Radiosity.SecondBounce;
 		float3	position		=	Position[ loadXY ].xyz;
 		float3	normal			=	Normal	[ loadXY ].xyz * 2 - 1;
 				normal			=	normalize( normal );
 		float	size			=	Radiosity.ShadowFilter;
+		float3	indirect		=	Radiance[ loadXY ].rgb * 2;
 
 		//	reconstruct basis ?
 		float3  tangentX, tangentY;
@@ -98,7 +98,7 @@ void CSMain(
 		if (1) 
 		{
 			float3 	dir	=	-normalize(DirectLight.DirectLightDirection.xyz);
-			RAY 	ray = 	ConstructRay( position + normal * 0.1f, dir );
+			RAY 	ray = 	ConstructRay( position + normal * 0.01f, dir );
 			
 			bool shadow = RayTrace( ray, RtTriangles, RtBvhTree );
 			
@@ -289,58 +289,44 @@ void CSMain(
 	
 	float3	lmNormal	=	Normal	[ loadXY ].xyz * 2 - 1;
 	float3	lmPosition	=	Position[ loadXY ].xyz + lmNormal * 0.01;
-	static const uint NUM_SAMPLES	=	512;
+			lmNormal	=	normalize(lmNormal);
+	static const uint NUM_SAMPLES	=	32;
 	float k = 1.0f / NUM_SAMPLES;
 	
 	float3	random_vector	=	hammersley_sphere_uniform( groupIndex, TileSize * TileSize );
 	
-	if (!skip_tile_processing)
+	for (uint i=0; i<NUM_SAMPLES; i++)
 	{
-		for (uint i=0; i<NUM_SAMPLES; i++)
+		float3	rayDir		=	hammersley_sphere_uniform( i, NUM_SAMPLES );
+				rayDir		=	reflect( rayDir, random_vector );
+				rayDir		=	normalize( rayDir + lmNormal * 1.01 );
+		
+		if (true || dot(rayDir, lmNormal)>0.01)
 		{
-			float3	rayDir		=	hammersley_sphere_uniform( i, NUM_SAMPLES );
-					//rayDir		=	reflect( rayDir, random_vector );
+			RAY 	ray		=	ConstructRay( lmPosition, rayDir );
+			bool	hit		=	RayTrace( ray, RtTriangles, RtBvhTree );
+			float3	light	=	float3(0,0,0);
 			
-			if (dot(rayDir, lmNormal)>0.01)
+			if (hit)
 			{
-				RAY 	ray		=	ConstructRay( lmPosition, rayDir );
-				bool	hit		=	RayTrace( ray, RtTriangles, RtBvhTree );
-				float3	light	=	float3(0,0,0);
-				
-				if (hit)
-				{
-					uint 	triIndex	=	ray.index;
-					float3	hitNormal	=	normalize(ray.norm);
-					float2 	lmCoord0	=	RtLmVerts[ triIndex*3+0 ].LMCoord;
-					float2 	lmCoord1	=	RtLmVerts[ triIndex*3+1 ].LMCoord;
-					float2 	lmCoord2	=	RtLmVerts[ triIndex*3+2 ].LMCoord;
-					float2	lmCoord		=	lerp_barycentric_coords( lmCoord0, lmCoord1, lmCoord2, ray.uv );
-					float	nDotL		=	max( 0, -dot( hitNormal, rayDir ) );
-					float3	albedo		=	Albedo.SampleLevel( LinearSampler, lmCoord, 0 ).rgb;
-					light				=	nDotL * albedo * Radiance.SampleLevel( LinearSampler, lmCoord, 0 ).rgb;
-				}
-				else
-				{
-					light		=	SkyBox.SampleLevel( LinearSampler, rayDir.xyz * float3(-1,1,1), 0 ).rgb;
-				}
-
-				irradianceR		+=	k * SHL1EvaluateDiffuse( light.r, rayDir );
-				irradianceG		+=	k * SHL1EvaluateDiffuse( light.g, rayDir );
-				irradianceB		+=	k * SHL1EvaluateDiffuse( light.b, rayDir );
+				uint 	triIndex	=	ray.index;
+				float3	hitNormal	=	normalize(ray.norm);
+				float2 	lmCoord0	=	RtLmVerts[ triIndex*3+0 ].LMCoord;
+				float2 	lmCoord1	=	RtLmVerts[ triIndex*3+1 ].LMCoord;
+				float2 	lmCoord2	=	RtLmVerts[ triIndex*3+2 ].LMCoord;
+				float2	lmCoord		=	lerp_barycentric_coords( lmCoord0, lmCoord1, lmCoord2, ray.uv );
+				float	nDotL		=	max( 0, -dot( hitNormal, rayDir ) );
+				float3	albedo		=	Albedo.SampleLevel( LinearSampler, lmCoord, 0 ).rgb;
+				light				=	nDotL * albedo * Radiance.SampleLevel( LinearSampler, lmCoord, 0 ).rgb;
 			}
-			// uint 	lmAddr		=	Indices[ index ];
-			// uint 	cacheIndex	=	(lmAddr >> 20) & 0xFFF;
-			// uint 	direction	=	(lmAddr >>  8) & 0xFFF;
-			// uint 	hitCount	=	(lmAddr >>  0) & 0x0FF;
-			
-			// float3 	radiance	=	unpack_color( radiance_cache[ cacheIndex ] );
-			// float3 	lightDirN	=	DecodeDirection( direction );
+			else
+			{
+				light		=	SkyBox.SampleLevel( LinearSampler, rayDir.xyz * float3(-1,1,1), 0 ).rgb;
+			}
 
-			// float3	light		=	radiance.rgb * hitCount * Radiosity.IndirectFactor;	
-			
-			// irradianceR			+=	SHL1EvaluateDiffuse( light.r, lightDirN );
-			// irradianceG			+=	SHL1EvaluateDiffuse( light.g, lightDirN );
-			// irradianceB			+=	SHL1EvaluateDiffuse( light.b, lightDirN );
+			irradianceR		+=	k * SHL1EvaluateDiffuse( light.r, rayDir );
+			irradianceG		+=	k * SHL1EvaluateDiffuse( light.g, rayDir );
+			irradianceB		+=	k * SHL1EvaluateDiffuse( light.b, rayDir );
 		}
 	
 		StoreLightmap( storeXY.xy, irradianceR, irradianceG, irradianceB );

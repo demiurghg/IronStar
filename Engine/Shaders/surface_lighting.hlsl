@@ -112,7 +112,7 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 		AccumulateLighting( totalLight, lightmap, ssaoFactor * Stage.IndirectLightFactor );
 	#endif
 	#ifdef IRRADIANCE_VOLUME
-		float3 volumeCoord	=	mad( float4(geometry.position.xyz, 1), Stage.WorldToVoxelScale, Stage.WorldToVoxelOffset ).xyz;
+		float3	volumeCoord	=	mul( float4(geometry.position.xyz, 1), Stage.WorldToLightVolume ).xyz;
 		LIGHTING lightmap	=	EvaluateLightVolume( reflection.a, rcLightMap, geometry, surface, Camera, volumeCoord );
 		AccumulateLighting( totalLight, lightmap, ssaoFactor * Stage.IndirectLightFactor );
 	#endif

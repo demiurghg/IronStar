@@ -201,8 +201,7 @@ namespace Fusion.Engine.Graphics {
 			var height	=	context.Viewport.Height;
 			var rw		=	rs.RenderWorld;
 
-			cbDataStage.WorldToVoxelOffset	=	rs.Radiosity.GetWorldToVoxelOffset();
-			cbDataStage.WorldToVoxelScale	=	rs.Radiosity.GetWorldToVoxelScale();
+			cbDataStage.WorldToLightVolume	=	rw.LightMap.WorldToVolume;
 			cbDataStage.VTGradientScaler	=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;
 			cbDataStage.VTPageScaleRCP		=	rs.VTSystem.PageScaleRCP;
 			cbDataStage.SsaoWeight			=	instanceGroup.HasFlag(InstanceGroup.Weapon) ? 0 : 1;
@@ -244,17 +243,17 @@ namespace Fusion.Engine.Graphics {
 			device.GfxResources[ regShadowMapParticles		]	=	context.RequireShadows ? rs.LightManager.ShadowMap.ParticleShadowTexture : null;
 			device.GfxResources[ regAmbientOcclusion		]	=	context.RequireShadows ? rs.RenderWorld.HdrFrame.AOBuffer.GetShaderResource(0) : null;
 
-			device.GfxResources[ regIrradianceMapL0			]	=	rw.Lightmap?.GetLightmap(0);
-			device.GfxResources[ regIrradianceMapL1			]	=	rw.Lightmap?.GetLightmap(1);
-			device.GfxResources[ regIrradianceMapL2			]	=	rw.Lightmap?.GetLightmap(2);
-			device.GfxResources[ regIrradianceMapL3			]	=	rw.Lightmap?.GetLightmap(3);
+			device.GfxResources[ regIrradianceMapL0			]	=	rw.LightMap?.GetLightmap(0);
+			device.GfxResources[ regIrradianceMapL1			]	=	rw.LightMap?.GetLightmap(1);
+			device.GfxResources[ regIrradianceMapL2			]	=	rw.LightMap?.GetLightmap(2);
+			device.GfxResources[ regIrradianceMapL3			]	=	rw.LightMap?.GetLightmap(3);
 
-			device.GfxResources[ regIrradianceVolumeL0		]	=	rw.Lightmap?.GetVolume(0);
-			device.GfxResources[ regIrradianceVolumeL1		]	=	rw.Lightmap?.GetVolume(1);
-			device.GfxResources[ regIrradianceVolumeL2		]	=	rw.Lightmap?.GetVolume(2);
-			device.GfxResources[ regIrradianceVolumeL3		]	=	rw.Lightmap?.GetVolume(3);
+			device.GfxResources[ regIrradianceVolumeL0		]	=	rw.LightMap?.GetVolume(0);
+			device.GfxResources[ regIrradianceVolumeL1		]	=	rw.LightMap?.GetVolume(1);
+			device.GfxResources[ regIrradianceVolumeL2		]	=	rw.LightMap?.GetVolume(2);
+			device.GfxResources[ regIrradianceVolumeL3		]	=	rw.LightMap?.GetVolume(3);
 
-			device.GfxResources[ regRadianceCache			]	=	rs.RenderWorld.LightProbeProvider?.GetLightProbeCubeArray();
+			device.GfxResources[ regRadianceCache			]	=	rs.RenderWorld.LightProbes?.GetLightProbeCubeArray();
 			device.GfxResources[ regEnvLut					]	=	envLut.Srv;
 			device.GfxResources[ regClusterLightProbeBuffer	]	=	rs.LightManager.LightGrid.ProbeDataGpu;
 			device.GfxResources[ regFogVolume				]	=	rs.Fog.FogGrid;

@@ -333,8 +333,8 @@ namespace Fusion.Drivers.Graphics {
 			DataStream stream;
 			var dataBox = context.MapSubresource( stagingCube, dstIndex, MapMode.Read, MapFlags.None, out stream );
 
-			int mipWidth		= Resource.CalculateMipSize( mip, Width );
-			int mipHeight		= Resource.CalculateMipSize( mip, Height );
+			int mipWidth		=	Resource.CalculateMipSize( mip, Width );
+			int mipHeight		=	Resource.CalculateMipSize( mip, Height );
             int currentIndex	=	0;
 			int elementSize		=	Marshal.SizeOf(typeof(T));
 
@@ -364,8 +364,8 @@ namespace Fusion.Drivers.Graphics {
 
 				int x = 0;
 				int y = 0;
-				int w = Math.Max(Width >> level, 1);
-				int h = Math.Max(Height >> level, 1);
+				int w = Resource.CalculateMipSize( level, Width );
+				int h = Resource.CalculateMipSize( level, Height );
 
 				int subres	=	Resource.CalculateSubResourceIndex( level, cubeIndex * 6 + (int)face, MipCount );
 

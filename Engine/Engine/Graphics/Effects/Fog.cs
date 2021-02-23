@@ -122,8 +122,7 @@ namespace Fusion.Engine.Graphics {
 		[StructLayout(LayoutKind.Sequential, Pack=4, Size=256)]
 		public struct FOG_DATA 
 		{
-			public Vector4	WorldToVoxelScale;
-			public Vector4	WorldToVoxelOffset;
+			public Matrix	WorldToVolume;
 			public Vector4	SampleOffset;
 
 			public Vector4	FogSizeInv;
@@ -255,8 +254,7 @@ namespace Fusion.Engine.Graphics {
 			var fogData		=	new FOG_DATA();
 			var rw			=	rs.RenderWorld;
 
-			fogData.WorldToVoxelOffset	=	rs.Radiosity.GetWorldToVoxelOffset();
-			fogData.WorldToVoxelScale	=	rs.Radiosity.GetWorldToVoxelScale();
+			fogData.WorldToVolume		=	rw.LightMap.WorldToVolume;
 			fogData.IndirectLightFactor	=	rs.Radiosity.MasterIntensity;
 			fogData.DirectLightFactor	=	rs.SkipDirectLighting ? 0 : 1;
 
@@ -297,10 +295,10 @@ namespace Fusion.Engine.Graphics {
 			device.ComputeResources	[ regLutAP1				]	=	rs.Sky.LutAP1;
 			device.ComputeResources	[ regShadowHistory		]	=	shadowHistory;
 		
-			device.ComputeResources	[ regIrradianceVolumeL0	]	= 	rw.Lightmap?.GetVolume(0);
-			device.ComputeResources	[ regIrradianceVolumeL1	]	= 	rw.Lightmap?.GetVolume(1);
-			device.ComputeResources	[ regIrradianceVolumeL2	]	= 	rw.Lightmap?.GetVolume(2);
-			device.ComputeResources	[ regIrradianceVolumeL3	]	= 	rw.Lightmap?.GetVolume(3);
+			device.ComputeResources	[ regIrradianceVolumeL0	]	= 	rw.LightMap?.GetVolume(0);
+			device.ComputeResources	[ regIrradianceVolumeL1	]	= 	rw.LightMap?.GetVolume(1);
+			device.ComputeResources	[ regIrradianceVolumeL2	]	= 	rw.LightMap?.GetVolume(2);
+			device.ComputeResources	[ regIrradianceVolumeL3	]	= 	rw.LightMap?.GetVolume(3);
 		}
 
 		/// <summary>

@@ -202,6 +202,31 @@ namespace Fusion.Build {
 		}
 
 
+		/// <summary>
+		/// Creates and replace existing source file for writing
+		/// </summary>
+		/// <param name="dir"></param>
+		/// <param name="nameExt"></param>
+		/// <returns></returns>
+		public Stream CreateSourceFile( string dir, string nameExt )
+		{
+			var basePath	=	GetBaseInputDirectory();
+			var dirPath		=	Path.Combine( basePath, dir );
+			var filePath	=	Path.Combine( basePath, dir, nameExt );
+
+			if (!Directory.Exists(dirPath))
+			{
+				Directory.CreateDirectory(dirPath);
+			}
+
+			if (File.Exists(filePath))
+			{
+				File.Delete(filePath);
+			}
+
+			return File.OpenWrite(filePath);
+		}
+
 		/*-----------------------------------------------------------------------------------------
 		 * 
 		 * Content building

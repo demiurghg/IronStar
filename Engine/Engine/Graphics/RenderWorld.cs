@@ -115,7 +115,8 @@ namespace Fusion.Engine.Graphics {
 
 
 		VirtualTexture		virtualTexture = null;
-		ILightmapProvider	lightmap = null;
+		ILightMapProvider	lightmap = null;
+		ILightMapProvider	lightmapNull = null;
 		ILightProbeProvider	lightProbes = null;
 
 		/// <summary>
@@ -143,7 +144,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Sets anf gets irradiance map
 		/// </summary>
-		public ILightProbeProvider LightProbeProvider 
+		public ILightProbeProvider LightProbes 
 		{
 			get 
 			{
@@ -159,16 +160,17 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		public ILightmapProvider Lightmap
+		public ILightMapProvider LightMap
 		{
-			get { return rs.Radiosity.LightMap; }
+			get 
+			{ 
+				return lightmap ?? lightmapNull; 
+			}
 			set 
 			{
 				if (lightmap!=value)
 				{
-					rs.Radiosity.LightMap = (LightMap)value;
-					//lightmap = value;
-					//rs.Radiosity.Refresh();
+					lightmap = value;
 				}
 			}
 		}
@@ -213,6 +215,7 @@ namespace Fusion.Engine.Graphics {
 			LightSet		=	new LightSet( Game.RenderSystem );
 
 			debug			=	new DebugRender( Game );
+			lightmapNull	=	new LightMap( rs, new Size2(8,8), new Size3(1,1,1) );
 			
 			particleSystem	=	new ParticleSystem( Game.RenderSystem, this );
 
@@ -341,13 +344,13 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		void UpdateInstanceAndLightMapping ()
 		{
-			if (rs.Radiosity.LightMap!=null) 
+			if (LightMap!=null) 
 			{
 				foreach ( var instance in Instances ) 
 				{
 					if (instance.Group==InstanceGroup.Static) 
 					{
-						instance.LightMapScaleOffset = rs.Radiosity.LightMap.GetRegionMadST( instance.LightMapRegionName );
+						instance.LightMapScaleOffset = LightMap.GetRegionMadST( instance.LightMapRegionName );
 					}
 				}
 			}
@@ -459,7 +462,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="stereoEye"></param>
 		void RenderHdrScene ( GameTime gameTime, StereoEye stereoEye, Viewport viewport, RenderTargetSurface targetSurface )
 		{
-			using ( new PixEvent( "Frame" ) ) {
+			using ( new PixEvent( "Frame" ) ) 
+			{
 				//	clear g-buffer and hdr-buffers:
 				viewHdrFrame.Clear();
 
@@ -487,7 +491,7 @@ namespace Fusion.Engine.Graphics {
 						rs.LightManager.LightGrid.ClusterizeLightSet( stereoEye, Camera, LightSet );
 
 						//	relight cubemaps :
-						LightProbeProvider?.Update( LightSet, Camera );
+						LightProbes?.Update( LightSet, Camera );
 
 						//	render particle lighting :
 						ParticleSystem.RenderLight( gameTime, Camera );

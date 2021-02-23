@@ -214,8 +214,8 @@ namespace Fusion.Engine.Graphics.GI
 
 				device.ComputeResources	[ regGBufferColorData	]	=	colorData;
 				device.ComputeResources	[ regGBufferNormalData	]	=	normalData;
-				device.ComputeResources	[ regLightMap0			]	=	rs.Radiosity.Radiance;
-				device.ComputeResources	[ regLightMap1			]	=	rs.Radiosity.IrradianceL0;
+				device.ComputeResources	[ regLightMap0			]	=	rs.RenderWorld.LightMap.GetLightmap(0);
+				device.ComputeResources	[ regLightMap1			]	=	rs.RenderWorld.LightMap.GetLightmap(0);
 				device.ComputeResources	[ regSkyCube			]	=	rs.Sky.SkyCube;
 				device.ComputeSamplers	[ regPointSampler		]	=	SamplerState.PointClamp;
 				device.ComputeSamplers	[ regLinearSampler		]	=	SamplerState.LinearWrap;

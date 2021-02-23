@@ -19,7 +19,6 @@ namespace Fusion.Engine.Graphics {
 		{
 			Game.Invoker.RegisterCommand("screenshot"		,	() => new ScreenshotCmd(this)	);
 			Game.Invoker.RegisterCommand("vtrestart"		,	() => new VTRestartCmd(this)	);
-			Game.Invoker.RegisterCommand("bakeLightProbes"	,	() => new BakeLightProbes(this)	);
 		}
 
 
@@ -51,30 +50,6 @@ namespace Fusion.Engine.Graphics {
 			{
 				rs.RenderWorld.VirtualTexture = null;
 				rs.RenderWorld.VirtualTexture = rs.Game.Content.Load<VirtualTexture>("*megatexture");
-				return null;
-			}
-		}
-
-
-		class BakeLightProbes : CommandNoHistory 
-		{
-			[CommandLineParser.Required]
-			public LightProbeCaptureMode Mode { get; set; }
-
-			[CommandLineParser.Required]
-			[CommandLineParser.Name("mapname")]
-			public string MapName { get; set; }
-
-			readonly RenderSystem rs;
-			
-			public BakeLightProbes ( RenderSystem rs ) {
-				this.rs = rs;
-			}
-			
-			public override object Execute()
-			{
-				rs.LightProbeBaker.CaptureLightProbes( MapName, Mode );
-
 				return null;
 			}
 		}

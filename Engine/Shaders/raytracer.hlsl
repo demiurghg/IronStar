@@ -74,6 +74,7 @@ bool RTRayAABBIntersection(RAY r, float3 aabbMin, float3 aabbMax, out float tmin
 ------------------------------------------------------------------------------*/
 
 #define EPSILON 0.00001
+#define TWOSIDED 1
 
 float3 RTBarycentric(float3 p, float3 a, float3 b, float3 c )
 {
@@ -104,10 +105,11 @@ bool RTRayTriangleIntersection( inout RAY r, TRIANGLE tri, int index )
 	
 	// 	ray and triangle are parallel 
 	//	or ray comes from behind:
-	if ( dot(r.dir, plane.xyz) > EPSILON )
-	{
-		return false;
-	}
+#ifdef TWOSIDED
+	if ( abs(dot(r.dir, plane.xyz)) < EPSILON ) return false;
+#else	
+	if ( -dot(r.dir, plane.xyz) < EPSILON ) return false;
+#endif	
 	
 	t = - (plane.w + dot(r.orig, plane.xyz)) / dot(r.dir, plane.xyz);
 	

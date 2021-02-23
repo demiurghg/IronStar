@@ -55,7 +55,7 @@ float3 ComputeClusteredLighting ( float3 worldPos, float3 normal, float3 color, 
 	//	Lightmaps :
 	//----------------------------------------------------------------------------------------------
 	
-	float3	volumeCoord	=	mad( float4(worldPos, 1), Params.WorldToVoxelScale, Params.WorldToVoxelOffset ).xyz;
+	float3	volumeCoord	=	mul( float4(worldPos, 1), Params.WorldToLightVolume ).xyz;
 	LIGHTING lightmap	=	EvaluateLightVolume( 0.5, rcLightMap, geometry, surface, Camera, volumeCoord );
 	
 	AccumulateLighting( totalLight, lightmap, Params.IndirectLightFactor );

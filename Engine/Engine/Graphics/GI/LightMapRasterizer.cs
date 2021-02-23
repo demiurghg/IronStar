@@ -22,6 +22,8 @@ namespace Fusion.Engine.Graphics.GI
 {
 	internal partial class LightMapRasterizer : DisposableBase 
 	{
+		const int MinLightMapSize = Radiosity.RegionSize;
+
 		readonly RenderInstance[] instances;
 		readonly RenderSystem rs;
 		LightMapGBuffer lmGBuffer;
@@ -80,7 +82,7 @@ namespace Fusion.Engine.Graphics.GI
 
 			//	minimum size of the lightmap 
 			//	must be equal size of the update region
-			int lightMapSize = RadiositySettings.UpdateRegionSize;
+			int lightMapSize = MinLightMapSize;
 
 			Allocator2D allocator;		
 
@@ -166,6 +168,7 @@ namespace Fusion.Engine.Graphics.GI
 
 			return lmGBuffer;
 		}
+
 
 
 		/// <summary>

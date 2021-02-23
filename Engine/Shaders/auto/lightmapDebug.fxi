@@ -148,20 +148,19 @@ struct CAMERA {
 #endif
 
 // Fusion.Engine.Graphics.GI.LightProbeDebugger+DEBUG_PARAMS
-// Marshal.SizeOf = 64
+// Marshal.SizeOf = 96
 #ifndef __STRUCT_DEBUG_PARAMS
 #define __STRUCT_DEBUG_PARAMS 1
 struct DEBUG_PARAMS {
-	float4     VoxelToWorldScale;             // offset:    0
-	float4     VoxelToWorldOffset;            // offset:   16
-	float      LightProbeSize;                // offset:   32
-	float      LightProbeMipLevel;            // offset:   36
-	float      Dummy1;                        // offset:   40
-	float      Dummy2;                        // offset:   44
-	uint       VolumeWidth;                   // offset:   48
-	uint       VolumeHeight;                  // offset:   52
-	uint       VolumeDepth;                   // offset:   56
-	float      VolumeStride;                  // offset:   60
+	float4x4   VoxelToWorld;                  // offset:    0
+	float      LightProbeSize;                // offset:   64
+	float      LightProbeMipLevel;            // offset:   68
+	float      Dummy1;                        // offset:   72
+	float      Dummy2;                        // offset:   76
+	uint       VolumeWidth;                   // offset:   80
+	uint       VolumeHeight;                  // offset:   84
+	uint       VolumeDepth;                   // offset:   88
+	float      SphSize;                       // offset:   92
 };
 #endif
 

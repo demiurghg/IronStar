@@ -30,7 +30,7 @@ namespace Fusion.Engine.Graphics.GI {
 	}
 
 	// #TODO -- rename to FormFactor
-	public class LightMap : DisposableBase, ILightmapProvider 
+	public class LightMap : DisposableBase, ILightMapProvider 
 	{
 		public struct HeaderData
 		{
@@ -42,6 +42,9 @@ namespace Fusion.Engine.Graphics.GI {
 		}
 
 		readonly RenderSystem rs;
+
+		public Size2 LightMapSize { get { return header.MapSize; } }
+		public Size3 VolumeSize { get { return header.VolumeSize; } }
 
 		public int Width  { get { return header.MapSize.Width; } }
 		public int Height { get { return header.MapSize.Height; } }
@@ -68,9 +71,7 @@ namespace Fusion.Engine.Graphics.GI {
 		readonly HeaderData header;
 		public HeaderData Header { get { return header; } }
 
-
-		public IEnumerable<Rectangle> Regions { get { return regions.Select( r => r.Value ); } }
-
+		public Dictionary<string,Rectangle> Regions { get { return regions; } }
 
 		public LightMap ( RenderSystem rs, Size2 mapSize, Size3 volumeSize )
 		{
@@ -109,10 +110,15 @@ namespace Fusion.Engine.Graphics.GI {
 				//	read regions :
 				reader.ExpectFourCC("MAP1", "bad lightmap format");
 
+				CreateGpuResources( header.MapSize, header.VolumeSize );
+
 				var dataSize2	=	header.MapSize.Width * header.MapSize.Height * 4;
 				var dataBuffer2	=	new byte[ dataSize2 ];
 
 				reader.Read( dataBuffer2, 0, dataSize2 ); irradianceL0.SetData( dataBuffer2 );
+				reader.Read( dataBuffer2, 0, dataSize2 ); irradianceL1.SetData( dataBuffer2 );
+				reader.Read( dataBuffer2, 0, dataSize2 ); irradianceL2.SetData( dataBuffer2 );
+				reader.Read( dataBuffer2, 0, dataSize2 ); irradianceL3.SetData( dataBuffer2 );
 			}
 		}
 
@@ -125,6 +131,8 @@ namespace Fusion.Engine.Graphics.GI {
 				writer.Write( header );
 
 				writer.WriteFourCC("RGN1");
+				writer.Write( regions.Count );
+
 				foreach ( var pair in regions )
 				{
 					writer.Write( pair.Key );
@@ -146,7 +154,7 @@ namespace Fusion.Engine.Graphics.GI {
 		
 		void CreateGpuResources( Size2 mapSize, Size3 volumeSize )
 		{
-			radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	mapSize.Width, mapSize.Height, true,  true );
+			radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	mapSize.Width, mapSize.Height, false, true );
 			irradianceL0	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	mapSize.Width, mapSize.Height, false, true );
 			irradianceL1	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	mapSize.Width, mapSize.Height, false, true );
 			irradianceL2	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	mapSize.Width, mapSize.Height, false, true );
@@ -185,23 +193,6 @@ namespace Fusion.Engine.Graphics.GI {
 		}
 
 
-
-
-		public Size2 GetLightmapSize()
-		{
-			return new Size2( Width, Height );
-		}
-
-		public BoundingBox GetVolumeBounds()
-		{
-			throw new NotImplementedException();
-		}
-
-		public Int3 GetVolumeSize()
-		{
-			return new Int3( Header.VolumeSize.Width, Header.VolumeSize.Height, Header.VolumeSize.Depth );
-		}
-
 		public ShaderResource GetLightmap( int band )
 		{
 			switch (band)
@@ -214,6 +205,7 @@ namespace Fusion.Engine.Graphics.GI {
 			throw new ArgumentOutOfRangeException("band");
 		}
 
+		
 		public ShaderResource GetVolume( int band )
 		{
 			switch (band)
@@ -242,14 +234,16 @@ namespace Fusion.Engine.Graphics.GI {
 		public Rectangle GetRegion ( string regionName )
 		{
 			Rectangle rect;
-			if (regions.TryGetValue( regionName, out rect ) ) {
+			if (regions.TryGetValue( regionName, out rect ) ) 
+			{
 				return rect;
-			} else {
+			}
+			else 
+			{
 				Log.Warning("Irradiance map region [{0}] not found", regionName );
 				return new Rectangle(0,0,0,0);
 			}
 		}
-
 
 
 		public Vector4 GetRegionMadST ( string regionName )
@@ -258,45 +252,20 @@ namespace Fusion.Engine.Graphics.GI {
 		}
 
 
-		static Random rand = new Random();
-		Color[] colors = Enumerable.Range(0,64).Select( i => rand.NextColor() ).ToArray();
-
-
-		public void DebugDraw( int x, int y, DebugRender dr )
+		public Matrix WorldToVolume
 		{
-			/*int counter = 0;
-			for (int i=0; i<tilesX; i++)
+			get
 			{
-				for (int j=0; j<tilesY; j++)
-				{
-					var min = bboxMinCpu[i,j];
-					var max = bboxMaxCpu[i,j];
-					dr.DrawBox( new BoundingBox(min, max), Matrix.Identity, colors[ counter % colors.Length ], 2 );
-					counter++;
-				}
-			} */
-			//x	=	MathUtil.Clamp( x, 0, width-1 );
-			//y	=	MathUtil.Clamp( y, 0, height-1 );
+				return Matrix.Identity;
+			}
+		}
 
-			//var recvPatch	=	new Int2(x,y);
-
-			//var indexCount	=	indexmap_cpu[ recvPatch ];
-			//var offset		=	indexCount >> 8;
-			//var count		=	indexCount & 0xFF;
-			//var	begin		=	offset;
-			//var	end			=	offset + count;
-
-			//var origin		=	position_cpu[ recvPatch ];
-				
-			//for (var i = begin; i<end; i++)
-			//{
-			//	var radPatch	=	new PatchIndex( indices_cpu[ i ] );
-			//	var patchCoord	=	new Int3( radPatch.X, radPatch.Y, radPatch.Mip );
-
-			//	var pos			=	position_cpu[ patchCoord ];
-
-			//	dr.DrawLine( origin, pos, colors[ radPatch.Mip ] );
-			//}
+		public Matrix VoxelToWorld
+		{
+			get
+			{
+				return Matrix.Identity;
+			}
 		}
 	}
 }

@@ -48,7 +48,7 @@ PSInput VSMain( VSInput input, uint instanceId : SV_InstanceID )
 #endif	
 
 #ifdef SHOW_LIGHTVOLUME
-	float	size		=	Params.VolumeStride / 8.0f;
+	float	size		=	Params.SphSize;
 	uint	width		=	Params.VolumeWidth;
 	uint	height		=	Params.VolumeHeight;
 	uint	depth		=	Params.VolumeDepth;
@@ -57,7 +57,7 @@ PSInput VSMain( VSInput input, uint instanceId : SV_InstanceID )
 	uint	index_z		=	( instanceId / width / height );
 			voxelIndex	=	uint3(index_x,index_y,index_z);
 			
-	float3	lpbPos		=	mad( float3(index_x,index_y,index_z), Params.VoxelToWorldScale.xyz, Params.VoxelToWorldOffset.xyz );
+	float3	lpbPos		=	mul( float4(index_x,index_y,index_z,1), Params.VoxelToWorld ).xyz;
 #endif	
 	
 	float4 	pos			=	float4( input.Position * size + lpbPos, 1 	);

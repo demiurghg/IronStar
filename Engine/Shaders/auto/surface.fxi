@@ -82,17 +82,16 @@ struct DIRECT_LIGHT {
 #ifndef __STRUCT_STAGE
 #define __STRUCT_STAGE 1
 struct STAGE {
-	float4     WorldToVoxelScale;             // offset:    0
-	float4     WorldToVoxelOffset;            // offset:   16
-	float4     ViewportSize;                  // offset:   32
-	float      VTPageScaleRCP;                // offset:   48
-	float      VTGradientScaler;              // offset:   52
-	float      SsaoWeight;                    // offset:   56
-	float      ShowLightComplexity;           // offset:   60
-	float      SlopeBias;                     // offset:   64
-	float      DepthBias;                     // offset:   68
-	float      DirectLightFactor;             // offset:   72
-	float      IndirectLightFactor;           // offset:   76
+	float4x4   WorldToLightVolume;            // offset:    0
+	float4     ViewportSize;                  // offset:   64
+	float      VTPageScaleRCP;                // offset:   80
+	float      VTGradientScaler;              // offset:   84
+	float      SsaoWeight;                    // offset:   88
+	float      ShowLightComplexity;           // offset:   92
+	float      SlopeBias;                     // offset:   96
+	float      DepthBias;                     // offset:  100
+	float      DirectLightFactor;             // offset:  104
+	float      IndirectLightFactor;           // offset:  108
 };
 #endif
 
@@ -147,21 +146,20 @@ struct CASCADE_SHADOW {
 #ifndef __STRUCT_FOG_DATA
 #define __STRUCT_FOG_DATA 1
 struct FOG_DATA {
-	float4     WorldToVoxelScale;             // offset:    0
-	float4     WorldToVoxelOffset;            // offset:   16
-	float4     SampleOffset;                  // offset:   32
-	float4     FogSizeInv;                    // offset:   48
-	uint       FogSizeX;                      // offset:   64
-	uint       FogSizeY;                      // offset:   68
-	uint       FogSizeZ;                      // offset:   72
-	float      FogGridExpK;                   // offset:   76
-	float      DirectLightFactor;             // offset:   80
-	float      IndirectLightFactor;           // offset:   84
-	float      HistoryFactor;                 // offset:   88
-	uint       FrameCount;                    // offset:   92
-	float      FogDensity;                    // offset:   96
-	float      FogHeight;                     // offset:  100
-	float      FogScale;                      // offset:  104
+	float4x4   WorldToVolume;                 // offset:    0
+	float4     SampleOffset;                  // offset:   64
+	float4     FogSizeInv;                    // offset:   80
+	uint       FogSizeX;                      // offset:   96
+	uint       FogSizeY;                      // offset:  100
+	uint       FogSizeZ;                      // offset:  104
+	float      FogGridExpK;                   // offset:  108
+	float      DirectLightFactor;             // offset:  112
+	float      IndirectLightFactor;           // offset:  116
+	float      HistoryFactor;                 // offset:  120
+	uint       FrameCount;                    // offset:  124
+	float      FogDensity;                    // offset:  128
+	float      FogHeight;                     // offset:  132
+	float      FogScale;                      // offset:  136
 };
 #endif
 

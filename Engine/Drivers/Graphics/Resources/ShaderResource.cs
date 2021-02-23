@@ -76,8 +76,10 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="disposing"></param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing) {
-				if (SRV!=null) {
+			if (disposing) 
+			{
+				if (SRV!=null) 
+				{
 					SRV.Dispose();
 				}
 			}
@@ -92,7 +94,8 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="samples"></param>
 		protected void CheckSamplesCount ( int samples )
 		{
-			if (samples!=1 && samples!=2 && samples!=4 && samples!=8 ) {
+			if (samples!=1 && samples!=2 && samples!=4 && samples!=8 ) 
+			{
 				throw new ArgumentException("Parameter 'samples' must be 1, 2, 4 or 8.");
 			}
 		}
@@ -186,7 +189,7 @@ namespace Fusion.Drivers.Graphics {
 		/// <returns></returns>
 		public static int GetMipSize ( int size, int mipLevel )
 		{
-			return Math.Max(1, size>>mipLevel);
+			return Resource.CalculateMipSize( mipLevel, size );
 		}
 
 
@@ -203,7 +206,8 @@ namespace Fusion.Drivers.Graphics {
 
 			int pitch;
 
-			switch (format) {
+			switch (format) 
+			{
 				case ColorFormat.Dxt1:
 				case ColorFormat.Dxt3:
 				case ColorFormat.Dxt5:
@@ -218,6 +222,5 @@ namespace Fusion.Drivers.Graphics {
 
 			return pitch;
 		}
-
 	}
 }

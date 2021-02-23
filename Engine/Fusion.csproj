@@ -535,7 +535,7 @@
     <Compile Include="Engine\Graphics\ForwardTransparentContext.cs" />
     <Compile Include="Engine\Graphics\ForwardZPassContext.cs" />
     <Compile Include="Engine\Graphics\Bvh\BvhTree.cs" />
-    <Compile Include="Engine\Graphics\GI2\ILightmapProvider.cs" />
+    <Compile Include="Engine\Graphics\GI2\ILightMapProvider.cs" />
     <Compile Include="Engine\Graphics\GI2\ILightProbeProvider.cs" />
     <Compile Include="Engine\Graphics\GI\LightProbeBaker.cs" />
     <Compile Include="Engine\Graphics\GI\LightProbeHDRI.cs" />

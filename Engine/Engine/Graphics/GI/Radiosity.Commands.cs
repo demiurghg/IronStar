@@ -16,12 +16,13 @@ using Fusion.Engine.Graphics.Lights;
 using Fusion.Core.Shell;
 using Fusion.Engine.Graphics.Bvh;
 using System.Diagnostics;
+using Fusion.Build;
 
 namespace Fusion.Engine.Graphics.GI
 {
 	public partial class Radiosity : RenderComponent
 	{
-		class BakeRadiosityCmd : ICommand
+		class BakeLightMapCmd : ICommand
 		{
 			readonly Radiosity	rad;
 
@@ -53,20 +54,23 @@ namespace Fusion.Engine.Graphics.GI
 			[CommandLineParser.Option]
 			public bool NoFilter { get; set; }
 
-			[CommandLineParser.Name("path")]
+			[CommandLineParser.Name("mapname")]
 			[CommandLineParser.Required]
-			public string OutputPath { get; set; }
+			public string MapName { get; set; }
 
 
-
-			public BakeRadiosityCmd( Radiosity rad )
+			public BakeLightMapCmd( Radiosity rad )
 			{
 				this.rad	=	rad;
 			}
 
 			public object Execute()
 			{
-				rad.BakeRadiosity( NumBounces, NumRays, !NoFilter, OutputPath );
+				using ( var stream = rad.Game.GetService<Builder>().CreateSourceFile( RenderSystem.LightmapPath, MapName + ".bin" ) )
+				{
+					rad.BakeRadiosity( NumBounces, NumRays, !NoFilter, stream );
+				}
+
 				return null;
 			}
 		}

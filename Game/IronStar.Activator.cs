@@ -33,12 +33,6 @@ namespace IronStar {
 			var gs			=	new GameState(game, content);
 
 			var rw	=	game.RenderSystem.RenderWorld;
-			rw.VirtualTexture		=	content.Load<VirtualTexture>("*megatexture");
-			rw.LightSet.SpotAtlas	=	content.Load<TextureAtlas>(@"spots\spots|srgb");
-			rw.LightSet.DecalAtlas	=	content.Load<TextureAtlas>(@"decals\decals");
-
-			rw.LightProbeProvider	=	content.Load(Path.Combine(RenderSystem.LightProbePath, mapName ), (LightProbeHDRI)null );
-			rw.Lightmap				=	content.Load(Path.Combine(RenderSystem.LightmapPath, mapName), (LightMap)null );
 
 			gs.Services.AddService( content );
 			gs.Services.AddService( game.RenderSystem );
@@ -87,16 +81,27 @@ namespace IronStar {
 			gs.AddSystem( new GameFXSystem(game) );
 			gs.AddSystem( new HudSystem(game) );
 
-
 			if (isEditor)
 			{
 				gs.GetService<Gameplay.CameraSystem>().Enabled = false;
 			}
 
-
 			map.ActivateGameState(gs);
 
+			LoadContent(rw, content, mapName);
+			gs.Reloading += (s,e) => LoadContent( rw, content, mapName );
+
 			return gs;
+		}
+
+		static void LoadContent( RenderWorld rw, ContentManager content, string mapName )
+		{
+			rw.VirtualTexture		=	content.Load<VirtualTexture>("*megatexture");
+			rw.LightSet.SpotAtlas	=	content.Load<TextureAtlas>(@"spots\spots|srgb");
+			rw.LightSet.DecalAtlas	=	content.Load<TextureAtlas>(@"decals\decals");
+
+			rw.LightProbes			=	content.Load(Path.Combine(RenderSystem.LightProbePath, mapName ), (LightProbeHDRI)null );
+			rw.LightMap				=	content.Load(Path.Combine(RenderSystem.LightmapPath, mapName), (LightMap)null );
 		}
 	}
 }

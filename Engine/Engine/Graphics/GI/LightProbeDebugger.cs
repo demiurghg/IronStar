@@ -62,8 +62,7 @@ namespace Fusion.Engine.Graphics.GI {
 		[StructLayout(LayoutKind.Sequential, Pack=4)]
 		struct DEBUG_PARAMS 
 		{
-			public Vector4	VoxelToWorldScale;
-			public Vector4	VoxelToWorldOffset;
+			public Matrix	VoxelToWorld;
 
 			public float	LightProbeSize;
 			public float	LightProbeMipLevel;
@@ -73,7 +72,7 @@ namespace Fusion.Engine.Graphics.GI {
 			public uint		VolumeWidth;
 			public uint		VolumeHeight;
 			public uint		VolumeDepth;
-			public float	VolumeStride;
+			public float	SphSize;
 		}
 
 		Ubershader		shader;
@@ -149,8 +148,8 @@ namespace Fusion.Engine.Graphics.GI {
 			device.SetScissorRect( hdrFrame.HdrTarget.Bounds );
 
 			var paramData	= new DEBUG_PARAMS();
-			var lightmap	= rs.Radiosity.LightMap;
 			var rw			= rs.RenderWorld;
+			var lightmap	= rw.LightMap;
 
 			paramData.LightProbeSize		=	LightProbeSize;
 			paramData.LightProbeMipLevel	=	LightProbeMipLevel;
@@ -159,13 +158,12 @@ namespace Fusion.Engine.Graphics.GI {
 
 			if (lightmap!=null)
 			{
-				paramData.VoxelToWorldScale		=	rs.Radiosity.GetVoxelToWorldScale();
-				paramData.VoxelToWorldOffset	=	rs.Radiosity.GetVoxelToWorldOffset();
-				paramData.VolumeWidth			=	(uint)lightmap.Header.VolumeSize.Width;
-				paramData.VolumeHeight			=	(uint)lightmap.Header.VolumeSize.Height;
-				paramData.VolumeDepth			=	(uint)lightmap.Header.VolumeSize.Depth;
-				paramData.VolumeStride			=	lightmap.Header.VolumeStride;
-				volumeElementCount				=	lightmap.Header.VolumeSize.TotalVolume;
+				paramData.VoxelToWorld	=	lightmap.VoxelToWorld;
+				paramData.VolumeWidth	=	(uint)lightmap.VolumeSize.Width;
+				paramData.VolumeHeight	=	(uint)lightmap.VolumeSize.Height;
+				paramData.VolumeDepth	=	(uint)lightmap.VolumeSize.Depth;
+				paramData.SphSize		=	1;
+				volumeElementCount		=	lightmap.VolumeSize.TotalVolume;
 			}
 
 			cbParams.SetData( paramData );
@@ -175,10 +173,10 @@ namespace Fusion.Engine.Graphics.GI {
 
 			device.GfxSamplers[ regSampler ]			=	SamplerState.LinearWrap;
 
-			device.GfxResources[ regLightVolumeL0	]	=	rw.Lightmap?.GetVolume(0);
-			device.GfxResources[ regLightVolumeL1	]	=	rw.Lightmap?.GetVolume(1);
-			device.GfxResources[ regLightVolumeL2	]	=	rw.Lightmap?.GetVolume(2);
-			device.GfxResources[ regLightVolumeL3	]	=	rw.Lightmap?.GetVolume(3);
+			device.GfxResources[ regLightVolumeL0	]	=	rw.LightMap?.GetVolume(0);
+			device.GfxResources[ regLightVolumeL1	]	=	rw.LightMap?.GetVolume(1);
+			device.GfxResources[ regLightVolumeL2	]	=	rw.LightMap?.GetVolume(2);
+			device.GfxResources[ regLightVolumeL3	]	=	rw.LightMap?.GetVolume(3);
 
 			device.GfxResources[ regLightProbes		]	=	rs.LightMapResources?.LightProbeRadianceArray;
 			device.GfxResources[ regLightProbeData	]	=	rs.LightManager.LightGrid.ProbeDataGpu;

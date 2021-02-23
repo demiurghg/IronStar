@@ -133,7 +133,74 @@ namespace Fusion.Engine.Graphics.GI
 		 *	Scene preprocessing :
 		-----------------------------------------------------------------------------------------*/
 
-		static public RTData BuildAccelerationStructure<TVertex>( RenderSystem rs, IEnumerable<RenderInstance> instances, Func<MeshVertex,TVertex> extractor) where TVertex: struct
+		public interface IBvhDataProvider<TVertex> where TVertex: struct
+		{
+			TRIANGLE[]	GetTriangles(RenderInstance instance);
+			TVertex[]	GetVertices(RenderInstance instance);
+		}
+
+
+		public abstract class BvhDataProvider<TVertex,TCache> : IBvhDataProvider<TVertex> where TVertex: struct
+		{
+			public TRIANGLE[] GetTriangles( RenderInstance instance )
+			{
+				var mesh		=	instance.Mesh;
+
+				var indices		=	mesh.GetIndices();
+				var positions	=	mesh.Vertices
+									.Select( v1 => Vector3.TransformCoordinate( v1.Position, instance.World ) )
+									.ToArray();
+
+				var numTris		=	indices.Length / 3;
+				var tris		=	new TRIANGLE[numTris];
+
+				for (int i=0; i<numTris; i++)
+				{
+					var i0	=	indices[ i*3+0 ];
+					var i1	=	indices[ i*3+1 ];
+					var i2	=	indices[ i*3+2 ];
+
+					var p0	=	positions[ i0 ];
+					var p1	=	positions[ i1 ];
+					var p2	=	positions[ i2 ];
+
+					tris[i]	=	new TRIANGLE( p0, p1, p2 );
+				}
+
+				return tris;
+			}
+
+
+			public TVertex[] GetVertices( RenderInstance instance )
+			{
+				var mesh		=	instance.Mesh;
+				var cache		=	Cache( instance );
+
+				var indices		=	mesh.GetIndices();
+
+				var numVerts	=	indices.Length;
+				var verts		=	new TVertex[numVerts];
+
+				for (int i=0; i<numVerts; i++)
+				{
+					var i0	=	indices[ i ];
+					var v0	=	mesh.Vertices[ i0 ];
+
+					verts[i]	=	Transform( cache, ref v0 );
+				}
+
+				return verts;
+			}
+
+			public abstract TCache Cache( RenderInstance instance );
+			public abstract TVertex Transform( TCache cache, ref MeshVertex vertex );
+		}
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Scene preprocessing :
+		-----------------------------------------------------------------------------------------*/
+
+		static public RTData BuildAccelerationStructure<TVertex>( RenderSystem rs, IEnumerable<RenderInstance> instances, IBvhDataProvider<TVertex> provider ) where TVertex: struct
 		{
 			Log.Message("Build acceleration structure"); 
 			Log.Message("...vertex type : {0}", typeof(TVertex).Name);
@@ -142,11 +209,14 @@ namespace Fusion.Engine.Graphics.GI
 
 			var tris		=	new List<TRIANGLE>();
 			var verts		=	new List<TVertex>();
-			var totalTris	=	0;
 
 			foreach ( var instance in instances )
 			{
-				totalTris = GetRenderInstanceTriangles( tris, verts, extractor, instance );
+				if (instance.Mesh!=null)
+				{
+					tris.AddRange( provider.GetTriangles(instance) );
+					verts.AddRange( provider.GetVertices(instance) );
+				}
 			}
 
 			var bvhTree		=	new BvhTree<TRIANGLE>( tris, prim => prim.ComputeBBox(), prim => prim.ComputeCentroid() );
@@ -165,46 +235,6 @@ namespace Fusion.Engine.Graphics.GI
 			return rtData;
 		}
 
-
-		static int GetRenderInstanceTriangles<TVertex>( List<TRIANGLE> tris, List<TVertex> verts, Func<MeshVertex,TVertex> extractor, RenderInstance instance )
-		{
-			if (instance.Mesh==null)
-			{
-				return 0;
-			}
-
-			var mesh		=	instance.Mesh;
-
-			var indices		=	mesh.GetIndices();
-			var positions	=	mesh.Vertices
-								.Select( v1 => Vector3.TransformCoordinate( v1.Position, instance.World ) )
-								.ToArray();
-
-			var numTris		=	indices.Length / 3;
-
-			for (int i=0; i<numTris; i++)
-			{
-				var i0	=	indices[ i*3+0 ];
-				var i1	=	indices[ i*3+1 ];
-				var i2	=	indices[ i*3+2 ];
-
-				var p0	=	positions[ i0 ];
-				var p1	=	positions[ i1 ];
-				var p2	=	positions[ i2 ];
-
-				var v0	=	extractor( mesh.Vertices[ i0 ] );
-				var v1	=	extractor( mesh.Vertices[ i1 ] );
-				var v2	=	extractor( mesh.Vertices[ i2 ] );
-
-				tris.Add( new TRIANGLE( p0, p1, p2 ) );
-
-				verts.Add( v0 );
-				verts.Add( v1 );
-				verts.Add( v2 );
-			}
-
-			return numTris;
-		}
 
 		/*-----------------------------------------------------------------------------------------
 		 *	Ray-tracing structures :

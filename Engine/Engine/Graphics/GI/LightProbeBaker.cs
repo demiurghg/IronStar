@@ -45,6 +45,8 @@ namespace Fusion.Engine.Graphics.GI
 
 			LoadContent();
 			Game.Reloading += (s,e) => LoadContent();
+			
+			Game.Invoker.RegisterCommand("bakeLightProbes", () => new BakeLightProbes(this) );
 		}
 
 
@@ -63,6 +65,36 @@ namespace Fusion.Engine.Graphics.GI
 			base.Dispose( disposing );
 		}
 
+		/*-----------------------------------------------------------------------------------------
+		 *	Light probe relighting :
+		-----------------------------------------------------------------------------------------*/
+
+		class BakeLightProbes : ICommand
+		{
+			[CommandLineParser.Required]
+			public LightProbeCaptureMode Mode { get; set; }
+
+			[CommandLineParser.Required]
+			[CommandLineParser.Name("mapname")]
+			public string MapName { get; set; }
+
+			readonly LightProbeBaker lpb;
+			
+			public BakeLightProbes ( LightProbeBaker lpb ) 
+			{
+				this.lpb = lpb;
+			}
+			
+			public object Execute()
+			{
+				using ( var stream = lpb.Game.GetService<Builder>().CreateSourceFile( RenderSystem.LightProbePath, MapName + ".bin" ) )
+				{
+					lpb.CaptureLightProbes( stream, Mode );
+				}
+
+				return null;
+			}
+		}
 
 		/*-----------------------------------------------------------------------------------------
 		 *	Light probe relighting :

@@ -246,16 +246,14 @@ namespace IronStar.Editor {
 
 		void BakeLightMap()
 		{
-			Log.Warning("BakeLightMap is not assigned");
-			//rs.RenderWorld.BuildRadiosityFormFactor( mapName, map.RadiositySettings );
+			Game.Invoker.ExecuteString(string.Format("bakeLightMap {0}", mapName), "contentBuild");
 		}
 
 
 		void BakeLightProbes()
 		{
-			Game.Invoker.ExecuteString(string.Format("buildrad {0}", mapName), "contentBuild");
+			Game.Invoker.ExecuteString(string.Format("bakeLightProbes HdrImage {0}", mapName), "contentBuild");
 		}
-
 
 
 		Palette CreateEntityPalette ( Workspace workspace )

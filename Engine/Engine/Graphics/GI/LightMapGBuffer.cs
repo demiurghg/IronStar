@@ -82,7 +82,7 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			positionTexture.SetData( Position.RawImageData );
 			albedoTexture.SetData( Albedo.RawImageData );
-			normalTexture.SetData( Normal.RawImageData );
+			normalTexture.SetData( Normal.Convert( EncodeNormalRGB8 ).RawImageData );
 		}
 
 

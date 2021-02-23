@@ -53,23 +53,22 @@ static const uint LightmapHeight = 2048;
 // ---------------- DATA STRUCTURES ---------------- //
 
 // Fusion.Engine.Graphics.ParticleStream+PARAMS
-// Marshal.SizeOf = 128
+// Marshal.SizeOf = 144
 #ifndef __STRUCT_PARAMS
 #define __STRUCT_PARAMS 1
 struct PARAMS {
-	float4     WorldToVoxelScale;             // offset:    0
-	float4     WorldToVoxelOffset;            // offset:   16
-	float4     Gravity;                       // offset:   32
-	float4     LightMapSize;                  // offset:   48
-	float4     SkyAmbientLevel;               // offset:   64
-	int        MaxParticles;                  // offset:   80
-	float      DeltaTime;                     // offset:   84
-	uint       DeadListSize;                  // offset:   88
-	float      CocScale;                      // offset:   92
-	float      CocBias;                       // offset:   96
-	uint       IntegrationSteps;              // offset:  100
-	float      IndirectLightFactor;           // offset:  104
-	float      DirectLightFactor;             // offset:  108
+	float4x4   WorldToLightVolume;            // offset:    0
+	float4     Gravity;                       // offset:   64
+	float4     LightMapSize;                  // offset:   80
+	float4     SkyAmbientLevel;               // offset:   96
+	int        MaxParticles;                  // offset:  112
+	float      DeltaTime;                     // offset:  116
+	uint       DeadListSize;                  // offset:  120
+	float      CocScale;                      // offset:  124
+	float      CocBias;                       // offset:  128
+	uint       IntegrationSteps;              // offset:  132
+	float      IndirectLightFactor;           // offset:  136
+	float      DirectLightFactor;             // offset:  140
 };
 #endif
 
@@ -137,21 +136,20 @@ struct CASCADE_SHADOW {
 #ifndef __STRUCT_FOG_DATA
 #define __STRUCT_FOG_DATA 1
 struct FOG_DATA {
-	float4     WorldToVoxelScale;             // offset:    0
-	float4     WorldToVoxelOffset;            // offset:   16
-	float4     SampleOffset;                  // offset:   32
-	float4     FogSizeInv;                    // offset:   48
-	uint       FogSizeX;                      // offset:   64
-	uint       FogSizeY;                      // offset:   68
-	uint       FogSizeZ;                      // offset:   72
-	float      FogGridExpK;                   // offset:   76
-	float      DirectLightFactor;             // offset:   80
-	float      IndirectLightFactor;           // offset:   84
-	float      HistoryFactor;                 // offset:   88
-	uint       FrameCount;                    // offset:   92
-	float      FogDensity;                    // offset:   96
-	float      FogHeight;                     // offset:  100
-	float      FogScale;                      // offset:  104
+	float4x4   WorldToVolume;                 // offset:    0
+	float4     SampleOffset;                  // offset:   64
+	float4     FogSizeInv;                    // offset:   80
+	uint       FogSizeX;                      // offset:   96
+	uint       FogSizeY;                      // offset:  100
+	uint       FogSizeZ;                      // offset:  104
+	float      FogGridExpK;                   // offset:  108
+	float      DirectLightFactor;             // offset:  112
+	float      IndirectLightFactor;           // offset:  116
+	float      HistoryFactor;                 // offset:  120
+	uint       FrameCount;                    // offset:  124
+	float      FogDensity;                    // offset:  128
+	float      FogHeight;                     // offset:  132
+	float      FogScale;                      // offset:  136
 };
 #endif
 

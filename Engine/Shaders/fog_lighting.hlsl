@@ -111,7 +111,7 @@ float2 ComputeSkyShadow( float3 worldPos )
 
 	float	shadow		=	ComputeCascadedShadows( geometry, float2(1,1), CascadeShadow, rcShadow ).r; 
 
-	float3	volumeCoord	=	mad( float4(worldPos, 1), Fog.WorldToVoxelScale, Fog.WorldToVoxelOffset ).xyz;
+	float3	volumeCoord	=	mul( float4(worldPos, 1), Fog.WorldToVolume ).xyz;
 	float 	skyFactor	=	IrradianceVolumeL1.SampleLevel( LinearClamp, volumeCoord, 0 ).a;
 	
 	skyFactor =	 saturate(skyFactor);
@@ -159,7 +159,7 @@ float3 ComputeClusteredLighting ( float3 worldPos )
 	//	Lightmaps :
 	//----------------------------------------------------------------------------------------------
 	
-	float3	volumeCoord	=	mad( float4(worldPos, 1), Fog.WorldToVoxelScale, Fog.WorldToVoxelOffset ).xyz;
+	float3	volumeCoord	=	mul( float4(worldPos, 1), Fog.WorldToVolume ).xyz;
 	float3 	lightmap	=	EvaluateLightVolume( rcLightMap, volumeCoord );
 	
 	//totalLight.rgb		+=	lightmap;

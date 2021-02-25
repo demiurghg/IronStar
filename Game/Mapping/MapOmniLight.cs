@@ -14,11 +14,10 @@ using Fusion;
 using Fusion.Core.Shell;
 using IronStar.ECS;
 
-namespace IronStar.Mapping {
-
-
-	public class MapOmniLight : MapNode {
-
+namespace IronStar.Mapping 
+{
+	public class MapOmniLight : MapNode 
+	{
 		[AECategory("Omni-light")]
 		[AEValueRange(0, 100, 1, 0.125f)]
 		public float OuterRadius { get; set; } = 5;
@@ -47,16 +46,9 @@ namespace IronStar.Mapping {
 		public float LightIntensity { get; set; } = 100;
 
 
-		OmniLight	light;
-
-
-		/// <summary>
-		/// 
-		/// </summary>
 		public MapOmniLight ()
 		{
 		}
-
 
 
 		public override void SpawnNodeECS( GameState gs )
@@ -85,11 +77,9 @@ namespace IronStar.Mapping {
 		public override MapNode DuplicateNode()
 		{
 			var newNode = (MapOmniLight)MemberwiseClone();
-			newNode.light = null;
 			newNode.NodeGuid = Guid.NewGuid();
 			return newNode;
 		}
-
 
 
 		public override BoundingBox GetBoundingBox()

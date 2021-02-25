@@ -21,8 +21,8 @@ namespace Fusion.Engine.Graphics.GI {
 
 	[RequireShader("lightmapDebug",true)]
 	[ShaderSharedStructure(typeof(GpuData.DIRECT_LIGHT))]
-	public class LightProbeDebugger : RenderComponent, IPipelineStateProvider {
-
+	public class LightProbeDebugger : RenderComponent, IPipelineStateProvider 
+	{
 		[Config]
 		public float LightProbeSize { get; set; } = 5.0f;
 		
@@ -209,7 +209,11 @@ namespace Fusion.Engine.Graphics.GI {
 					device.PipelineState	=	factory[ (int)flags ];
 			
 					DrawInstancedSpheres( volumeElementCount );
-				}							
+				}		
+				
+				/*var lvMatrix	=	rw.LightSet.LightVolume.WorldMatrix;
+				var lvBox		=	new BoundingBox(1,1,1);
+				rw.Debug.DrawBox( lvBox, lvMatrix, Color.White, 1 );*/
 			}
 		}
 

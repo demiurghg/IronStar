@@ -34,10 +34,8 @@ namespace IronStar.Editor {
 		{
 			public HistorySnapshot( Game game, IEnumerable<MapNode> selection, Map map )
 			{
-				var jsonFactory = game.GetService<JsonFactory>();
-
 				SelectedNodes = selection.Select( node => node.NodeGuid ).ToArray();
-				SerializedMap = jsonFactory.ExportJsonString( map );
+				SerializedMap = JsonUtils.ExportJsonString( map );
 			}
 
 			public readonly Guid[] SelectedNodes;
@@ -89,7 +87,7 @@ namespace IronStar.Editor {
 			map.Nodes.Clear();
 			ResetWorld();
 
-			map = (Map)Game.GetService<JsonFactory>().ImportJsonString( snapshot.SerializedMap );
+			map = (Map)JsonUtils.ImportJsonString( snapshot.SerializedMap );
 			ResetWorld();
 
 			selection.Clear();

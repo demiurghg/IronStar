@@ -15,6 +15,7 @@ using Fusion.Engine.Graphics;
 using System.Net;
 using Fusion.Build.Mapping;
 using Fusion.Engine.Graphics.Ubershaders;
+using Fusion.Core;
 
 namespace Fusion.Build {
 	public class Builder {
@@ -225,6 +226,21 @@ namespace Fusion.Build {
 			}
 
 			return File.OpenWrite(filePath);
+		}
+
+
+		public void CreateJsonFile( Type type, string dir, string nameExt )
+		{
+			using ( var file = CreateSourceFile( dir, nameExt ) )
+			{
+				JsonUtils.ExportJson( file, Activator.CreateInstance( type ) );
+			}
+		}
+
+
+		public void CreateJsonFile<T>( string dir, string nameExt )
+		{
+			CreateJsonFile( typeof(T), dir, nameExt );
 		}
 
 		/*-----------------------------------------------------------------------------------------

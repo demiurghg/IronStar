@@ -18,6 +18,7 @@ using Fusion.Core.Content;
 
 namespace Fusion.Engine.Graphics.GI {
 
+	#warning Remove resources that are not in use.
 	public class LightMapResources : DisposableBase {
 
 		//const ColorFormat HdrFormat = ColorFormat.Rgba16F;

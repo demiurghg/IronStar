@@ -36,9 +36,7 @@ namespace Fusion.Engine.Graphics.GI {
 		{
 			public Size2	MapSize;
 			public Size3	VolumeSize;
-			public int		VolumeStride;
-			public Vector3	VolumePosition;
-			public int		Reserved0;
+			public Matrix	VolumeMatrix;
 		}
 
 		readonly RenderSystem rs;
@@ -73,13 +71,14 @@ namespace Fusion.Engine.Graphics.GI {
 
 		public Dictionary<string,Rectangle> Regions { get { return regions; } }
 
-		public LightMap ( RenderSystem rs, Size2 mapSize, Size3 volumeSize )
+		public LightMap ( RenderSystem rs, Size2 mapSize, Size3 volumeSize, Matrix volumeMatrix )
 		{
 			this.rs	=	rs;
 
 			header	=	new HeaderData();
 			header.MapSize		=	mapSize;
 			header.VolumeSize	=	volumeSize;
+			header.VolumeMatrix	=	volumeMatrix;
 
 			CreateGpuResources( mapSize, volumeSize );
 		}
@@ -92,7 +91,7 @@ namespace Fusion.Engine.Graphics.GI {
 			using ( var reader = new BinaryReader( stream ) )
 			{
 				//	read header :
-				reader.ExpectFourCC("RAD4", "bad lightmap format");
+				reader.ExpectFourCC("RAD5", "bad lightmap format");
 
 				header			=	reader.Read<HeaderData>();
 
@@ -107,18 +106,28 @@ namespace Fusion.Engine.Graphics.GI {
 					regions.Add( reader.ReadString(), reader.Read<Rectangle>() );
 				}
 
-				//	read regions :
-				reader.ExpectFourCC("MAP1", "bad lightmap format");
-
 				CreateGpuResources( header.MapSize, header.VolumeSize );
 
-				var dataSize2	=	header.MapSize.Width * header.MapSize.Height * 4;
+				//	read map :
+				reader.ExpectFourCC("MAP1", "bad lightmap format");
+
+				var dataSize2	=	header.MapSize.TotalArea * 4;
 				var dataBuffer2	=	new byte[ dataSize2 ];
 
 				reader.Read( dataBuffer2, 0, dataSize2 ); irradianceL0.SetData( dataBuffer2 );
 				reader.Read( dataBuffer2, 0, dataSize2 ); irradianceL1.SetData( dataBuffer2 );
 				reader.Read( dataBuffer2, 0, dataSize2 ); irradianceL2.SetData( dataBuffer2 );
 				reader.Read( dataBuffer2, 0, dataSize2 ); irradianceL3.SetData( dataBuffer2 );
+
+				//	read volume :
+				reader.ExpectFourCC("VOL1", "bad lightmap format");
+				var dataSize3	=	header.VolumeSize.TotalVolume * 4;
+				var dataBuffer3	=	new byte[ dataSize2 ];
+
+				reader.Read( dataBuffer3, 0, dataSize3 ); lightVolumeL0.SetData( dataBuffer3 );
+				reader.Read( dataBuffer3, 0, dataSize3 ); lightVolumeL1.SetData( dataBuffer3 );
+				reader.Read( dataBuffer3, 0, dataSize3 ); lightVolumeL2.SetData( dataBuffer3 );
+				reader.Read( dataBuffer3, 0, dataSize3 ); lightVolumeL3.SetData( dataBuffer3 );
 			}
 		}
 
@@ -127,7 +136,7 @@ namespace Fusion.Engine.Graphics.GI {
 		{
 			using ( var writer = new BinaryWriter( stream ) )
 			{
-				writer.WriteFourCC("RAD4");
+				writer.WriteFourCC("RAD5");
 				writer.Write( header );
 
 				writer.WriteFourCC("RGN1");
@@ -141,13 +150,23 @@ namespace Fusion.Engine.Graphics.GI {
 
 				writer.WriteFourCC("MAP1");
 
-				var dataSize2	=	header.MapSize.Width * header.MapSize.Height * 4;
+				var dataSize2	=	header.MapSize.TotalArea * 4;
 				var dataBuffer2	=	new byte[ dataSize2 ];
 
 				irradianceL0.GetData( dataBuffer2 );	writer.Write( dataBuffer2, 0, dataSize2 );
 				irradianceL1.GetData( dataBuffer2 );	writer.Write( dataBuffer2, 0, dataSize2 );
 				irradianceL2.GetData( dataBuffer2 );	writer.Write( dataBuffer2, 0, dataSize2 );
 				irradianceL3.GetData( dataBuffer2 );	writer.Write( dataBuffer2, 0, dataSize2 );
+
+				writer.WriteFourCC("VOL1");
+
+				var dataSize3	=	header.VolumeSize.TotalVolume * 4;
+				var dataBuffer3	=	new byte[ dataSize2 ];
+
+				/*lightVolumeL0.GetData( dataBuffer3 );*/	writer.Write( dataBuffer3, 0, dataSize3 );
+				/*lightVolumeL1.GetData( dataBuffer3 );*/	writer.Write( dataBuffer3, 0, dataSize3 );
+				/*lightVolumeL2.GetData( dataBuffer3 );*/	writer.Write( dataBuffer3, 0, dataSize3 );
+				/*lightVolumeL3.GetData( dataBuffer3 );*/	writer.Write( dataBuffer3, 0, dataSize3 );
 			}
 		}
 

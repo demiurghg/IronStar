@@ -17,11 +17,10 @@ namespace IronStar.SFX2
 		Dictionary<uint,RSOmniLight> lights = new Dictionary<uint, RSOmniLight>();
 
 		readonly LightSet ls;
-
-		
+	
 		public OmniLightSystem( RenderSystem rs )
 		{
-			this.ls	=	rs.RenderWorld.LightSet;
+			ls	=	rs.RenderWorld.LightSet;
 		}
 
 		

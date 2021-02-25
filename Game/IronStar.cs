@@ -55,7 +55,6 @@ namespace IronStar {
 			this.AddServiceAndComponent( 600, new GameServer( this ) );
 			this.AddServiceAndComponent( 800, new UserInterface( this, new ShooterInterface(this) ) );
 			this.AddServiceAndComponent( 700, new Mission( this ) );
-			this.AddServiceAndComponent(1000, new JsonFactory( this ) );
 
 			this.GetService<FrameProcessor>().LayerOrder = 100;
 			this.GetService<GameConsole>().LayerOrder = 200;

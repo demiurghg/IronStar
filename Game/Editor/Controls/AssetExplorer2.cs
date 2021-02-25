@@ -20,7 +20,6 @@ namespace IronStar.Editor.Controls {
 
 		Type[] types;
 		readonly FileListBox fileList;
-		readonly JsonFactory factory;
 		readonly Panel toolPanel;
 		readonly Label labelName;
 		readonly AEPropertyGrid grid;
@@ -51,7 +50,6 @@ namespace IronStar.Editor.Controls {
 			//------------------------
 
 			this.types		=	types.Where( t => !t.IsAbstract ).ToArray();
-			this.factory	=	parent.Game.GetService<JsonFactory>();
 
 			fileList		=	new FileListBox( Frames, initialDir, "*.json" );
 			fileList.X		=	2;
@@ -196,7 +194,7 @@ namespace IronStar.Editor.Controls {
 				File.Delete(targetFileName);
 			}
 			using (var stream = File.OpenWrite(targetFileName)) {
-				factory.ExportJson(stream, targetObject);
+				JsonUtils.ExportJson(stream, targetObject);
 			}
 			dirty1 = false;
 		}
@@ -226,7 +224,7 @@ namespace IronStar.Editor.Controls {
 					targetFileName	=	fileList.SelectedItem.FullPath;
 
 					using (var stream = File.OpenRead(targetFileName)) {
-						targetObject = factory.ImportJson(stream);
+						targetObject = JsonUtils.ImportJson(stream);
 					}
 
 					labelName.Text	=	targetObject.GetType().Name + " - " + Path.GetFileNameWithoutExtension( targetFileName );
@@ -304,21 +302,28 @@ namespace IronStar.Editor.Controls {
 
 			panel.Add( new Button(frames, "Cancel", 300- 80-2, 200-22, 80, 20, () => panel.Close() ) );
 			panel.Add( new Button(frames, "OK",     300-160-4, 200-22, 80, 20, 
-				() => {
+				() => 
+				{
 					var type = listBox.SelectedItem as Type;
-					if (type==null) {
+
+					if (type==null) 
+					{
 						MessageBox.ShowError(owner, "Select asset type", null);
 						return;
 					}
-					if (string.IsNullOrWhiteSpace(textBox.Text)) {
+					
+					if (string.IsNullOrWhiteSpace(textBox.Text)) 
+					{
 						MessageBox.ShowError(owner, "Provide asset name", null);
 						return;
 					}
+					
 					var obj  = Activator.CreateInstance(type);
 					var path = Path.Combine( fileListBox.CurrentDirectory, textBox.Text + ".json" );
 
-					using ( var stream = File.OpenWrite( path ) ) {
-						Game.GetService<JsonFactory>().ExportJson( stream, obj );
+					using ( var stream = File.OpenWrite( path ) ) 
+					{
+						JsonUtils.ExportJson( stream, obj );
 					}
 
 					fileListBox.RefreshFileList();

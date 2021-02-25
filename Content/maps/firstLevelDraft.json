@@ -4479,10 +4479,6 @@
     "NormalOffsetBias": 0.25,
     "LightMapSampleCount": 512,
     "LightGridSampleCount": 64,
-    "MaxPatches": 32,
-    "RadianceThreshold": 0.02,
-    "DiscardDistance": 200.0,
-    "PatchThreshold": 0.4,
     "UseWhiteDiffuse": false,
     "DebugLightmaps": false
   }

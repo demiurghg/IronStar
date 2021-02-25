@@ -173,7 +173,6 @@ namespace IronStar {
 		}
 
 
-
 		class ContentFileCommand : CommandNoHistory {
 			public override object Execute()
 			{

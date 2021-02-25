@@ -129,7 +129,7 @@ namespace IronStar.Mapping {
 
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 		{
-			Map map = content.Game.GetService<JsonFactory>().ImportJson( stream ) as Map;
+			Map map = JsonUtils.ImportJson( stream ) as Map;
 
 			map.Validate();
 

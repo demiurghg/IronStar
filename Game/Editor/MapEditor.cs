@@ -112,7 +112,7 @@ namespace IronStar.Editor {
 
 			if (File.Exists(fullPath)) {
 				Log.Message("Opening existing map: {0}", fullPath);
-				this.map = (Map)Game.GetService<JsonFactory>().ImportJson( File.OpenRead( fullPath ) );
+				this.map = (Map)JsonUtils.ImportJson( File.OpenRead( fullPath ) );
 			} else {
 				Log.Message("Creating new map: {0}", fullPath);
 				this.map = new Map();
@@ -151,7 +151,7 @@ namespace IronStar.Editor {
 			Log.Message("Saving map: {0}", fullPath);
 			File.Delete( fullPath );
 
-			Game.GetService<JsonFactory>().ExportJson( File.OpenWrite( fullPath ), map );
+			JsonUtils.ExportJson( File.OpenWrite( fullPath ), map );
 		}
 
 

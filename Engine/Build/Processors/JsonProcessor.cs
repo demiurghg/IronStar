@@ -24,7 +24,7 @@ namespace Fusion.Build.Processors {
 
 		public override void Process ( AssetSource assetFile, IBuildContext context )
 		{
-			var settings = JsonFactory.CreateSettings(false);
+			var settings = JsonUtils.DefaultSettings;
 
 			using ( var sourceStream = assetFile.OpenSourceStream() ) 
 			{

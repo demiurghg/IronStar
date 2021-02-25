@@ -47,14 +47,32 @@
         "Frozen": false,
         "TranslateX": 0.0,
         "TranslateY": 24.0,
-        "TranslateZ": 38.0,
+        "TranslateZ": 0.0,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapLightVolume, IronStar",
+        "NodeGuid": "6ab7dce4-9aae-4c55-aef5-8aec75330e43",
+        "ResolutionX": 16,
+        "ResolutionY": 8,
+        "ResolutionZ": 16,
+        "Width": 64.0,
+        "Height": 32.0,
+        "Depth": 64.0,
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.0,
+        "TranslateY": 8.0,
+        "TranslateZ": 0.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "3253f43e-e459-4ff2-b807-cd2450420c13",
+        "NodeGuid": "e39eacbb-c2ee-4eb2-90da-a4eae941ca69",
         "ScenePath": "scenes\\grayBoxing\\radiosityBug.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -68,25 +86,19 @@
         "CustomCollisionNode": "",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -36.0,
-        "TranslateY": 0.0,
+        "TranslateX": -16.0,
+        "TranslateY": 8.0,
         "TranslateZ": 0.0,
-        "RotateYaw": -180.0,
+        "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": -90.0
       }
     ]
   },
   "RadiositySettings": {
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
-    "LightGridWidth": 8,
-    "LightGridHeight": 4,
-    "LightGridDepth": 8,
-    "LightGridStep": 4,
-    "NormalOffsetBias": 0.25,
-    "LightMapSampleCount": 512,
-    "LightGridSampleCount": 64,
-    "UseWhiteDiffuse": false,
-    "DebugLightmaps": false
+    "NumRays": 128,
+    "NumBounces": 1,
+    "UseFilter": true
   }
 }

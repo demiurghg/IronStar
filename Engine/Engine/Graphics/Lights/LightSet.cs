@@ -14,79 +14,58 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Collection of omni lights.
 		/// </summary>
-		public ICollection<OmniLight> OmniLights {
-			get {
-				return omniLights;	
-			}
-		}
+		public ICollection<OmniLight> OmniLights { get { return omniLights; } }
 
 
 		/// <summary>
 		/// Collection of spot lights.
 		/// </summary>
-		public ICollection<SpotLight> SpotLights {
-			get {
-				return spotLights;	
-			}
-		}
+		public ICollection<SpotLight> SpotLights { get { return spotLights; } }
 
 
 		/// <summary>
 		/// Collection of environment lights.
 		/// </summary>
-		public IList<LightProbe> LightProbes {
-			get {
-				return envLights;	
-			}
-		}
+		public IList<LightProbe> LightProbes { get { return envLights; } }
 
 
 		/// <summary>
 		/// Collection of environment lights.
 		/// </summary>
-		public ICollection<Decal> Decals {
-			get {
-				return decals;	
-			}
-		}
+		public ICollection<Decal> Decals { get { return decals;	} }
 
 
 		/// <summary>
 		/// Due to technical limitations only one source of direct 
 		/// light is avaiable foreach LightSet.
 		/// </summary>
-		public DirectLight DirectLight {
-			get {
-				return directLight;
-			}
-		}
+		public DirectLight DirectLight { get { return directLight; } }
 		
 
+		/// <summary>
+		/// Gets light volume
+		/// </summary>
+		public LightVolume LightVolume { get { return lightVolume; } }
+
 
 		/// <summary>
 		/// Spot-light mask atlas.
 		/// </summary>
-		public TextureAtlas SpotAtlas {
-			get; set;
-		}
+		public TextureAtlas SpotAtlas {	get; set; }
 
 
 		/// <summary>
 		/// Spot-light mask atlas.
 		/// </summary>
-		public TextureAtlas DecalAtlas {
-			get; set;
-		}
+		public TextureAtlas DecalAtlas { get; set; }
 
 
-		DirectLight		directLight = new DirectLight();
-		List<OmniLight> omniLights = new List<OmniLight>();
-		List<SpotLight> spotLights = new List<SpotLight>();
-		List<LightProbe>  envLights  = new List<LightProbe>();
-		List<Decal>		decals		= new List<Decal>();
-
-
-		List<bool>	imageIndices;
+		DirectLight			directLight	= new DirectLight();
+		LightVolume			lightVolume	= new LightVolume();
+		List<OmniLight>		omniLights	= new List<OmniLight>();
+		List<SpotLight>		spotLights	= new List<SpotLight>();
+		List<LightProbe>	envLights	= new List<LightProbe>();
+		List<Decal>			decals		= new List<Decal>();
 
 
 		/// <summary>
@@ -95,9 +74,6 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="rs"></param>
 		public LightSet ( RenderSystem rs )
 		{
-			imageIndices	=	Enumerable.Range(0, LightGrid.MaxLightProbes)
-								.Select(i=>false)
-								.ToList();
 		}
 
 
@@ -131,40 +107,5 @@ namespace Fusion.Engine.Graphics {
 				}
 			});
 		}
-
-
-		[Obsolete]
-		public int AllocImageIndex ()
-		{
-			int r = imageIndices.IndexOf(false);
-
-			if (r>=0) 
-			{
-				imageIndices[r] = true;
-			}
-
-			return r;
-		}
-
-
-		[Obsolete]
-		public void FreeImageIndex( int index )
-		{
-			if (index>=0 && index<imageIndices.Count)
-			{
-				imageIndices[index] = false;
-			}
-		}
-
-
-
-		[Obsolete]
-		public void FreeAllImageIndices ()
-		{
-			for (int i=0; i<imageIndices.Count; i++) {
-				imageIndices[i] = false;
-			}
-		}
-
 	}
 }

@@ -18,9 +18,23 @@ namespace Fusion.Core {
 	/// <summary>
 	/// //	https://stackoverflow.com/questions/24171730/adding-a-custom-type-name-to-all-classes-during-serialisation-with-json-net
 	/// </summary>
-	public class JsonFactory : GameComponent {
+	public static class JsonUtils 
+	{
+		static readonly JsonSerializerSettings settings;
 
-		public static JsonSerializerSettings CreateSettings( bool idented )
+		public static JsonSerializerSettings DefaultSettings 
+		{ 
+			get { return CreateSettings(); } 
+		}
+
+
+		static JsonUtils()
+		{
+			settings	=	CreateSettings();
+		}
+
+
+		static JsonSerializerSettings CreateSettings()
 		{
 			var settings = new JsonSerializerSettings();
 
@@ -33,34 +47,9 @@ namespace Fusion.Core {
 			return settings;
 		}
 
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="game"></param>
-		public JsonFactory( Game game ) : base(game)
+		
+		public static object ImportJson ( Stream stream )
 		{
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public override void Initialize()
-		{
-			base.Initialize();
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="stream"></param>
-		/// <returns></returns>
-		public object ImportJson ( Stream stream )
-		{
-			var settings = CreateSettings(true);
-
 			using ( var reader = new StreamReader( stream ) ) 
 			{
 				var text = reader.ReadToEnd();
@@ -69,16 +58,8 @@ namespace Fusion.Core {
 		}
 
 
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="stream"></param>
-		/// <param name="obj"></param>
-		public void ExportJson ( Stream stream, object obj )
+		public static void ExportJson ( Stream stream, object obj )
 		{
-			var settings = CreateSettings(true);
-
 			var text = JsonConvert.SerializeObject(obj, settings);
 
 			using ( var writer = new StreamWriter( stream ) ) {
@@ -87,19 +68,15 @@ namespace Fusion.Core {
 		}
 
 
-		public string ExportJsonString( object obj )
+		public static string ExportJsonString( object obj )
 		{
-			var settings = CreateSettings(true);
 			return JsonConvert.SerializeObject(obj, settings);
 		}
 
 		
-		public object ImportJsonString( string text )
+		public static object ImportJsonString( string text )
 		{
-			var settings = CreateSettings(true);
 			return JsonConvert.DeserializeObject(text, settings);
 		}
-
-		
 	}
 }

@@ -177,7 +177,7 @@
     <Compile Include="Core\Extensions\GameExtensions.cs" />
     <Compile Include="Core\Extensions\XmlImporter.cs" />
     <Compile Include="Core\Input\CursorLoader.cs" />
-    <Compile Include="Core\JsonFactory.cs" />
+    <Compile Include="Core\JsonUtils.cs" />
     <Compile Include="Core\FpsCounter.cs" />
     <Compile Include="Core\GameComponentCollectionEventArgs.cs" />
     <Compile Include="Core\IExitable.cs" />
@@ -558,6 +558,7 @@
     <Compile Include="Engine\Graphics\IRenderContext.cs" />
     <Compile Include="Engine\Graphics\Lights\CascadedShadowMap.cs" />
     <Compile Include="Engine\Graphics\Lights\Decal.cs" />
+    <Compile Include="Engine\Graphics\Lights\LightVolume.cs" />
     <Compile Include="Engine\Graphics\Lights\DirectLight.cs" />
     <Compile Include="Engine\Graphics\Lights\Extents.cs" />
     <Compile Include="Engine\Graphics\Lights\ICSMController.cs" />

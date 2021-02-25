@@ -290,7 +290,7 @@ void CSMain(
 	float3	lmNormal	=	Normal	[ loadXY ].xyz * 2 - 1;
 	float3	lmPosition	=	Position[ loadXY ].xyz + lmNormal * 0.01;
 			lmNormal	=	normalize(lmNormal);
-	static const uint NUM_SAMPLES	=	32;
+	static const uint NUM_SAMPLES	=	256;
 	float k = 1.0f / NUM_SAMPLES;
 	
 	float3	random_vector	=	hammersley_sphere_uniform( groupIndex, TileSize * TileSize );
@@ -298,7 +298,7 @@ void CSMain(
 	for (uint i=0; i<NUM_SAMPLES; i++)
 	{
 		float3	rayDir		=	hammersley_sphere_uniform( i, NUM_SAMPLES );
-				rayDir		=	reflect( rayDir, random_vector );
+				//rayDir		=	reflect( rayDir, random_vector );
 				rayDir		=	normalize( rayDir + lmNormal * 1.01 );
 		
 		if (true || dot(rayDir, lmNormal)>0.01)

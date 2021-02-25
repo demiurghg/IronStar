@@ -74,6 +74,7 @@ namespace IronStar {
 			gs.AddSystem( new SFX2.OmniLightSystem(game.RenderSystem) );
 			gs.AddSystem( new SFX2.SpotLightSystem(game.RenderSystem) );
 			gs.AddSystem( new SFX2.LightProbeSystem(game.RenderSystem) );
+			gs.AddSystem( new SFX2.LightVolumeSystem(game.RenderSystem) );
 			gs.AddSystem( new SFX2.LightingSystem() );
 			gs.AddSystem( new Gameplay.PlayerSystem() );
 

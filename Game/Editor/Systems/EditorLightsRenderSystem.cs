@@ -19,6 +19,7 @@ namespace IronStar.Editor.Systems
 		readonly Aspect aspectSpotLights		=	new Aspect().Include<SFX2.SpotLight>();
 		readonly Aspect aspectLightProbeBox		=	new Aspect().Include<SFX2.LightProbeBox>();
 		readonly Aspect aspectLightProbeSphere	=	new Aspect().Include<SFX2.LightProbeSphere>();
+		readonly Aspect aspectLightVolume		=	new Aspect().Include<SFX2.LightVolume>();
 		readonly Aspect aspectDecals			=	new Aspect().Include<SFX2.DecalComponent>();
 
 		public EditorLightRenderSystem( MapEditor editor, DebugRender dr )
@@ -95,6 +96,17 @@ namespace IronStar.Editor.Systems
 				if (editor.GetRenderProperties(entity, out color, out selected ))
 				{
 					DrawDecal( selected, color, transform.TransformMatrix, decal );
+				}
+			}
+
+			foreach ( var entity in gs.QueryEntities( aspectLightVolume ) )
+			{
+				var transform	=	entity.GetComponent<Transform>();
+				var lightVolume	=	entity.GetComponent<SFX2.LightVolume>();
+
+				if (editor.GetRenderProperties(entity, out color, out selected ))
+				{
+					DrawLightVolume( selected, color, transform.TransformMatrix, lightVolume );
 				}
 			}
 		}
@@ -242,6 +254,29 @@ namespace IronStar.Editor.Systems
 			dr.DrawLine( c, c+z, Color.Blue , Color.Blue , 5, 1 );
 
 			dr.DrawLine( p4, p5, color, color, 2, 2 );
+		}
+	
+
+		void DrawLightVolume( bool selected, Color color, Matrix transform, SFX2.LightVolume vol )		
+		{
+			dr.DrawPoint( transform.TranslationVector, 2.0f, color, 1 );
+
+			var probeMatrix  = Matrix.Scaling( vol.Width/2.0f, vol.Height/2.0f, vol.Depth/2.0f ) * transform;
+
+			if (selected) 
+			{
+				var box = new BoundingBox( 2, 2, 2 );
+				dr.DrawBox( box, probeMatrix, color ); 
+				dr.DrawBox( box, transform, color );
+				dr.DrawPoint( transform.TranslationVector, 4, color ); 
+			} 
+			else 
+			{
+				var box = new BoundingBox( 2, 2, 2 );
+				dr.DrawBox( box, probeMatrix, color ); 
+				dr.DrawBox( box, transform, color ); 
+				dr.DrawPoint( transform.TranslationVector, 4, color ); 
+			}
 		}
 	}
 }

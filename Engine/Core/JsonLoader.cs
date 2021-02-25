@@ -18,7 +18,7 @@ namespace Fusion.Core {
 
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 		{
-			return content.Game.GetService<JsonFactory>().ImportJson( stream );
+			return JsonUtils.ImportJson( stream );
 		}
 	}
 }

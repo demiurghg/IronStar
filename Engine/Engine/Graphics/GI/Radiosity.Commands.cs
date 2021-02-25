@@ -68,7 +68,13 @@ namespace Fusion.Engine.Graphics.GI
 			{
 				using ( var stream = rad.Game.GetService<Builder>().CreateSourceFile( RenderSystem.LightmapPath, MapName + ".bin" ) )
 				{
-					rad.BakeRadiosity( NumBounces, NumRays, !NoFilter, stream );
+					var settings = new RadiositySettings();
+
+					settings.NumRays	=	NumRays;
+					settings.NumBounces	=	NumBounces;
+					settings.UseFilter	=	!NoFilter;
+
+					rad.BakeRadiosity( settings, stream );
 				}
 
 				return null;

@@ -215,7 +215,7 @@ namespace Fusion.Engine.Graphics {
 			LightSet		=	new LightSet( Game.RenderSystem );
 
 			debug			=	new DebugRender( Game );
-			lightmapNull	=	new LightMap( rs, new Size2(8,8), new Size3(1,1,1) );
+			lightmapNull	=	new LightMap( rs, new Size2(8,8), new Size3(1,1,1), Matrix.Identity );
 			
 			particleSystem	=	new ParticleSystem( Game.RenderSystem, this );
 

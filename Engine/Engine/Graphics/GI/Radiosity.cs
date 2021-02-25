@@ -168,7 +168,7 @@ namespace Fusion.Engine.Graphics.GI
 		 *	Radiosity baking :
 		-----------------------------------------------------------------------------------------*/
 
-		void BakeRadiosity ( int numBonces, int numRays, bool useFilter, Stream stream )
+		void BakeRadiosity ( RadiositySettings settings, Stream stream )
 		{
 			var instances	=	rs.RenderWorld.Instances
 				.Where( inst => inst.Group.HasFlag( InstanceGroup.Static ) )
@@ -182,7 +182,7 @@ namespace Fusion.Engine.Graphics.GI
 				{
 					using ( var rtData = BuildBVHTree(gbuffer, instances) )
 					{
-						using ( var lightMap = RenderLightmap( rtData, gbuffer, numBonces, useFilter ) )
+						using ( var lightMap = RenderLightmap( rtData, gbuffer, settings ) )
 						{
 							lightMap.Save( stream );
 						}
@@ -219,28 +219,31 @@ namespace Fusion.Engine.Graphics.GI
 		}
 
 
-		LightMap RenderLightmap(RayTracer.RTData rtData, LightMapGBuffer gbuffer, int numBounces, bool useFilter )
+		LightMap RenderLightmap(RayTracer.RTData rtData, LightMapGBuffer gbuffer, RadiositySettings settings )
 		{
-			var lightMap = new LightMap( rs, gbuffer.Size, new Size3(1,1,1) );
+			var lightVol = rs.RenderWorld.LightSet.LightVolume;
+			var lightMap = new LightMap( rs, gbuffer.Size, lightVol.VolumeSize, lightVol.WorldMatrix );
 
 			foreach (var pair in gbuffer.Regions)
 			{
 				lightMap.Regions.Add( pair.Key, pair.Value );
 			}
 
-			for (int i=0; i<numBounces; i++)
+			for (int i=0; i<settings.NumBounces; i++)
 			{
 				device.ResetStates();
 
 				SetupShaderResources( rtData, gbuffer, lightMap );
-				RenderBounce( rtData, gbuffer, lightMap, useFilter );
+				RenderBounce( rtData, gbuffer, lightMap, settings );
 			}
+
+			RenderVolume( rtData, gbuffer, lightMap );
 
 			return lightMap;
 		}
 
 
-		void RenderBounce( RayTracer.RTData rtData, LightMapGBuffer gbuffer, LightMap lightMap, bool useFilter )
+		void RenderBounce( RayTracer.RTData rtData, LightMapGBuffer gbuffer, LightMap lightMap, RadiositySettings settings )
 		{
 			var fullRegion = new Rectangle( 0, 0, gbuffer.Width, gbuffer.Height );
 
@@ -262,7 +265,7 @@ namespace Fusion.Engine.Graphics.GI
 
 			using ( new PixEvent( "Integrate Map" ) )
 			{
-				Log.Message("Ray-tracing...");
+				Log.Message("Ray-tracing lightmap...");
 
 				for (int i=0; i<totalRegions; i++)
 				{
@@ -289,7 +292,7 @@ namespace Fusion.Engine.Graphics.GI
 
 			using ( new PixEvent( "Denoising/Dilation" ) )
 			{
-				if (useFilter)
+				if (settings.UseFilter)
 				{
 					for (int i=0; i<totalRegions; i++)
 					{
@@ -305,6 +308,29 @@ namespace Fusion.Engine.Graphics.GI
 			}
 		}
 
+
+		void RenderVolume( RayTracer.RTData rtData, LightMapGBuffer gbuffer, LightMap lightMap )
+		{
+			using ( new PixEvent( "Integrate Map" ) )
+			{
+				/*Log.Message("Ray-tracing light volume...");
+
+				device.PipelineState    =   factory[(int)Flags.INTEGRATE3];			
+
+				device.SetComputeUnorderedAccess( regRadianceUav,		null );
+				device.SetComputeUnorderedAccess( regLightVolumeL0,		lightMap.lightVolumeL0.UnorderedAccess );
+				device.SetComputeUnorderedAccess( regLightVolumeL1,		lightMap.lightVolumeL1.UnorderedAccess );
+				device.SetComputeUnorderedAccess( regLightVolumeL2,		lightMap.lightVolumeL2.UnorderedAccess );
+				device.SetComputeUnorderedAccess( regLightVolumeL3,		lightMap.lightVolumeL3.UnorderedAccess );
+				device.ComputeResources			[ regRadiance	]	=	lightMap.radiance;
+
+				int width	=	lightMap.lightVolumeL0.Width;
+				int height	=	lightMap.lightVolumeL0.Height;
+				int depth	=	lightMap.lightVolumeL0.Depth;
+
+				device.Dispatch( new Int3( width, height, depth ), new Int3( ClusterSize, ClusterSize, ClusterSize ) );		*/
+			}			
+		}
 
 		/*-----------------------------------------------------------------------------------------
 		 *	Radiosity rendering :

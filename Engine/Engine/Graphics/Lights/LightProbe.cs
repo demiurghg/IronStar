@@ -63,7 +63,6 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-
 		/// <summary>
 		/// Creates instance of EnvLight
 		/// </summary>
@@ -75,6 +74,5 @@ namespace Fusion.Engine.Graphics
 			this.Guid	=	guid;
 			ImageIndex	=	0;
 		}
-		
 	}
 }

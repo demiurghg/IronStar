@@ -26,6 +26,8 @@ namespace Fusion.Drivers.Graphics {
 
 		UnorderedAccessView uav;
 
+		ColorFormat format;
+
 		internal UnorderedAccessView Uav {
 			get {
 				return uav;
@@ -48,6 +50,7 @@ namespace Fusion.Drivers.Graphics {
 			this.Width		=	width;
 			this.Height		=	height;
 			this.Depth		=	depth;
+			this.format		=	format;
 
 			var texDesc = new Texture3DDescription();
 			texDesc.BindFlags		=	BindFlags.ShaderResource|BindFlags.UnorderedAccess;
@@ -85,7 +88,8 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="disposing"></param>
 		protected override void Dispose ( bool disposing )
 		{
-			if (disposing) {
+			if (disposing) 
+			{
 				SafeDispose( ref tex3D );
 				SafeDispose( ref SRV );
 				SafeDispose( ref uav );
@@ -102,8 +106,26 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="data"></param>
         public void SetData<T>(T[] data) where T: struct
 		{
-			throw new NotImplementedException();
-			//device.DeviceContext.UpdateSubresource(data, tex3D, 0, Width*8, Height*Width*8);
+			var elementSizeInByte = Marshal.SizeOf(typeof(T));
+			var dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+			try
+			{
+				var dataPtr		=	(IntPtr)(dataHandle.AddrOfPinnedObject().ToInt64());
+
+				int rowPitch	=	Converter.SizeOf(this.format) * Width;
+				int slicePitch	=	rowPitch * Height; // For 3D texture: Size of 2D image.
+				var box			=	new DataBox(dataPtr, rowPitch, slicePitch);
+
+				int subresourceIndex = 0;
+
+				var region		=	new ResourceRegion(0, 0, 0, Width, Height, Depth);
+
+				device.DeviceContext.UpdateSubresource(box, tex3D, subresourceIndex, region);
+			}
+			finally
+			{
+				dataHandle.Free();
+			}
 		}
 	}
 }

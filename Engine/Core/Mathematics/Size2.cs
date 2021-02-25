@@ -64,7 +64,7 @@ namespace Fusion.Core.Mathematics
 		/// <summary>
 		/// Gets area of the rectangle of given size
 		/// </summary>
-		public int Area 
+		public int TotalArea 
 		{
 			get { return Width * Height; } 
 		}

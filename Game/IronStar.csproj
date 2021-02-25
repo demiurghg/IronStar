@@ -116,11 +116,13 @@
     <Compile Include="ECSFactories\WeaponFactory.cs" />
     <Compile Include="ECSFactories\BoxFactory.cs" />
     <Compile Include="ECSFactories\AmmoFactory.cs" />
+    <Compile Include="ECSGraphics\LightVolumeSystem.cs" />
     <Compile Include="ECSGraphics\AnimationComponent.cs" />
     <Compile Include="ECSGraphics\FPVComponent.cs" />
     <Compile Include="ECSGraphics\LightProbeSystem.cs" />
     <Compile Include="ECSGraphics\DecalComponent.cs" />
     <Compile Include="ECSGraphics\DecalSystem.cs" />
+    <Compile Include="ECSGraphics\LightVolume.cs" />
     <Compile Include="ECSGraphics\SpotLightSystem.cs" />
     <Compile Include="ECSGraphics\OmniLightSystem.cs" />
     <Compile Include="ECSGraphics\RenderModelInstance.cs" />
@@ -214,6 +216,7 @@
     <Compile Include="ECSPhysics\DynamicBox.cs" />
     <Compile Include="ECSPhysics\GravityComponent.cs" />
     <Compile Include="ECSPhysics\StaticCollisionComponent.cs" />
+    <Compile Include="Mapping\MapLightVolume.cs" />
     <Compile Include="Mathematics\Intersection.cs" />
     <Compile Include="Monsters\Systems\MonsterAnimator.Locomotion.cs" />
     <Compile Include="Monsters\Systems\MonsterAnimator.cs" />

@@ -98,13 +98,57 @@ namespace Fusion.Drivers.Graphics {
 		}
 
 
+		public void GetData<T>(T[] data) where T: struct
+		{
+			var elementSizeInByte = Marshal.SizeOf(typeof(T));
+			var dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
+
+			var desc = tex3D.Description;
+			desc.BindFlags		=	BindFlags.None;
+			desc.CpuAccessFlags	=	CpuAccessFlags.Read;
+			desc.Usage			=	ResourceUsage.Staging;
+			desc.OptionFlags	=	ResourceOptionFlags.None;
+
+			var elementSize	=	Marshal.SizeOf(typeof(T));
+			var pixelSize	=	Converter.SizeOf(format);
+
+			using ( var stagingTex3D = new D3D.Texture3D( device.Device, desc ) )
+			{
+				device.DeviceContext.CopyResource( tex3D, stagingTex3D );
+
+				DataStream stream;
+				var dataBox = device.DeviceContext.MapSubresource( stagingTex3D, 0, 0, MapMode.Read, MapFlags.None, out stream );
+
+				int cols	=	Width * pixelSize / elementSize;;
+				int rows	=	Height;
+				int slices	=	Depth;
+
+				var index	=	0;
+
+				for ( int slice = 0; slice < slices; slice++ )
+				{
+					for (int row = 0; row < rows; row++ )
+					{
+						stream.Seek( slice * dataBox.SlicePitch + row * dataBox.RowPitch, SeekOrigin.Begin );
+						stream.ReadRange( data, index, cols );
+
+						index += cols;
+					}
+				}
+
+				stream?.Dispose();
+
+				device.DeviceContext.UnmapSubresource( stagingTex3D, 0 );
+			}
+		}
+
 
 		/// <summary>
 		/// Sets 3D texture data.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="data"></param>
-        public void SetData<T>(T[] data) where T: struct
+		public void SetData<T>(T[] data) where T: struct
 		{
 			var elementSizeInByte = Marshal.SizeOf(typeof(T));
 			var dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);

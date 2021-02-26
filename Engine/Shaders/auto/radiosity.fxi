@@ -66,18 +66,19 @@ struct CAMERA {
 #endif
 
 // Fusion.Engine.Graphics.GI.Radiosity+RADIOSITY
-// Marshal.SizeOf = 64
+// Marshal.SizeOf = 128
 #ifndef __STRUCT_RADIOSITY
 #define __STRUCT_RADIOSITY 1
 struct RADIOSITY {
-	uint2      RegionXY;                      // offset:    0
-	uint       RegionWidth;                   // offset:    8
-	uint       RegionHeight;                  // offset:   12
-	float      SkyFactor;                     // offset:   16
-	float      IndirectFactor;                // offset:   20
-	float      SecondBounce;                  // offset:   24
-	float      ShadowFilter;                  // offset:   28
-	float      ColorBounce;                   // offset:   32
+	float4x4   VoxelToWorld;                  // offset:    0
+	uint2      RegionXY;                      // offset:   64
+	uint       RegionWidth;                   // offset:   72
+	uint       RegionHeight;                  // offset:   76
+	float      SkyFactor;                     // offset:   80
+	float      IndirectFactor;                // offset:   84
+	float      SecondBounce;                  // offset:   88
+	float      ShadowFilter;                  // offset:   92
+	float      ColorBounce;                   // offset:   96
 };
 #endif
 

@@ -163,10 +163,10 @@ namespace Fusion.Engine.Graphics.GI {
 				var dataSize3	=	header.VolumeSize.TotalVolume * 4;
 				var dataBuffer3	=	new byte[ dataSize2 ];
 
-				/*lightVolumeL0.GetData( dataBuffer3 );*/	writer.Write( dataBuffer3, 0, dataSize3 );
-				/*lightVolumeL1.GetData( dataBuffer3 );*/	writer.Write( dataBuffer3, 0, dataSize3 );
-				/*lightVolumeL2.GetData( dataBuffer3 );*/	writer.Write( dataBuffer3, 0, dataSize3 );
-				/*lightVolumeL3.GetData( dataBuffer3 );*/	writer.Write( dataBuffer3, 0, dataSize3 );
+				lightVolumeL0.GetData( dataBuffer3 );	writer.Write( dataBuffer3, 0, dataSize3 );
+				lightVolumeL1.GetData( dataBuffer3 );	writer.Write( dataBuffer3, 0, dataSize3 );
+				lightVolumeL2.GetData( dataBuffer3 );	writer.Write( dataBuffer3, 0, dataSize3 );
+				lightVolumeL3.GetData( dataBuffer3 );	writer.Write( dataBuffer3, 0, dataSize3 );
 			}
 		}
 
@@ -275,7 +275,17 @@ namespace Fusion.Engine.Graphics.GI {
 		{
 			get
 			{
-				return Matrix.Identity;
+				var width		=	Header.VolumeSize.Width;
+				var height		=	Header.VolumeSize.Height;
+				var depth		=	Header.VolumeSize.Depth;
+
+				var scale		=	new Vector3( 1.0f / width, 1.0f / height, 1.0f / depth );
+				var half		=	new Vector3( 0.5f, 0.5f, 0.5f );
+
+				var translation	=	Matrix.Translation( half + 0.0f*scale );
+				var worldInv	=	Matrix.Invert( Header.VolumeMatrix );
+
+				return worldInv * translation;
 			}
 		}
 
@@ -283,7 +293,17 @@ namespace Fusion.Engine.Graphics.GI {
 		{
 			get
 			{
-				return Matrix.Identity;
+				var width		=	Header.VolumeSize.Width;
+				var height		=	Header.VolumeSize.Height;
+				var depth		=	Header.VolumeSize.Depth;
+
+				var scale		=	new Vector3( 1.0f / width, 1.0f / height, 1.0f / depth );
+				var half		=	new Vector3( -0.5f, -0.5f, -0.5f );
+
+				var scaling		=	Matrix.Scaling( scale );
+				var translation	=	Matrix.Translation( half + scale * 0.5f );
+				var world		=	Header.VolumeMatrix;
+				return scaling * translation * world;
 			}
 		}
 	}

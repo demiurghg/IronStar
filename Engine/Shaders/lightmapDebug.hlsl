@@ -134,10 +134,10 @@ float4 PSMain( PSInput input ) : SV_Target0
 	
 	if (surfaceNormal.y > 1-skyFactor)
 	{
-		return float4(1,1,1,1);
+		//return float4(1,1,1,1);
 	}
 	
-	LIGHTING lighting		=	EvaluateLightVolume( rc, geom, surf, Camera, input.VoxelIndex ); // * 4 * 3.14; 
+	LIGHTING lighting		=	EvaluateLightVolume( rc, geom, surf, Camera, input.VoxelIndex ); 
 	return float4(lighting.diffuse,1);
 #endif
 }

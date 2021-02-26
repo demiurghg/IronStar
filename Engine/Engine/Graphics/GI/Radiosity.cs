@@ -76,9 +76,11 @@ namespace Fusion.Engine.Graphics.GI
 			RAYTRACE	=	0x100,
 		}
 
-		[StructLayout(LayoutKind.Sequential, Pack=4, Size=64)]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=128)]
 		struct RADIOSITY
 		{
+			public Matrix	VoxelToWorld;
+
 			public UInt2	RegionXY;
 			public uint		RegionWidth;
 			public uint		RegionHeight;
@@ -237,6 +239,7 @@ namespace Fusion.Engine.Graphics.GI
 				RenderBounce( rtData, gbuffer, lightMap, settings );
 			}
 
+			SetupShaderResources( rtData, gbuffer, lightMap );
 			RenderVolume( rtData, gbuffer, lightMap );
 
 			return lightMap;
@@ -256,7 +259,7 @@ namespace Fusion.Engine.Graphics.GI
 				device.SetComputeUnorderedAccess( regRadianceUav, lightMap.radiance.Surface.UnorderedAccess );
 				device.ComputeResources			[ regRadiance	]	=	lightMap.irradianceL0;
 					
-				DispatchRegion( Flags.ILLUMINATE, fullRegion );
+				DispatchRegion( Flags.ILLUMINATE, lightMap, fullRegion );
 			}
 
 			int totalRegions = MathUtil.IntDivRoundUp( gbuffer.Width * gbuffer.Height, RegionSize * RegionSize );
@@ -282,7 +285,7 @@ namespace Fusion.Engine.Graphics.GI
 					device.SetComputeUnorderedAccess( regIrradianceL2,		lightMap.irradianceL2.Surface.UnorderedAccess );
 					device.SetComputeUnorderedAccess( regIrradianceL3,		lightMap.irradianceL3.Surface.UnorderedAccess );
 
-					DispatchRegion( Flags.INTEGRATE2, region );
+					DispatchRegion( Flags.INTEGRATE2, lightMap, region );
 
 					device.Present(0);
 				}
@@ -313,7 +316,7 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			using ( new PixEvent( "Integrate Map" ) )
 			{
-				/*Log.Message("Ray-tracing light volume...");
+				Log.Message("Ray-tracing light volume...");
 
 				device.PipelineState    =   factory[(int)Flags.INTEGRATE3];			
 
@@ -328,7 +331,7 @@ namespace Fusion.Engine.Graphics.GI
 				int height	=	lightMap.lightVolumeL0.Height;
 				int depth	=	lightMap.lightVolumeL0.Depth;
 
-				device.Dispatch( new Int3( width, height, depth ), new Int3( ClusterSize, ClusterSize, ClusterSize ) );		*/
+				device.Dispatch( new Int3( width, height, depth ), new Int3( ClusterSize, ClusterSize, ClusterSize ) );
 			}			
 		}
 
@@ -366,7 +369,7 @@ namespace Fusion.Engine.Graphics.GI
 
 
 
-		void DispatchRegion( Flags pass, Rectangle region, int mip = 0 )
+		void DispatchRegion( Flags pass, LightMap lightMap, Rectangle region, int mip = 0 )
 		{
 			device.PipelineState	=	factory[(int)pass];
 				
@@ -376,6 +379,8 @@ namespace Fusion.Engine.Graphics.GI
 			int y		=	region.Y >> mip;
 			int width	=	region.Width >> mip;
 			int height	=	region.Height >> mip;
+
+			radiosity.VoxelToWorld		=	lightMap.VoxelToWorld;
 
 			radiosity.RegionXY			=	new UInt2((uint)x, (uint)y);
 			radiosity.RegionWidth		=	(uint)width;

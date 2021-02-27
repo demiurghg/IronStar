@@ -91,6 +91,8 @@ namespace Fusion.Engine.Graphics.GI
 			public float	ShadowFilter;
 
 			public float	ColorBounce;
+			public uint		NumRays;
+			public float	WhiteAlbedo;
 		}
 
 		struct LMVertex
@@ -259,7 +261,7 @@ namespace Fusion.Engine.Graphics.GI
 				device.SetComputeUnorderedAccess( regRadianceUav, lightMap.radiance.Surface.UnorderedAccess );
 				device.ComputeResources			[ regRadiance	]	=	lightMap.irradianceL0;
 					
-				DispatchRegion( Flags.ILLUMINATE, lightMap, fullRegion );
+				DispatchRegion( Flags.ILLUMINATE, lightMap, fullRegion, settings );
 			}
 
 			int totalRegions = MathUtil.IntDivRoundUp( gbuffer.Width * gbuffer.Height, RegionSize * RegionSize );
@@ -285,7 +287,7 @@ namespace Fusion.Engine.Graphics.GI
 					device.SetComputeUnorderedAccess( regIrradianceL2,		lightMap.irradianceL2.Surface.UnorderedAccess );
 					device.SetComputeUnorderedAccess( regIrradianceL3,		lightMap.irradianceL3.Surface.UnorderedAccess );
 
-					DispatchRegion( Flags.INTEGRATE2, lightMap, region );
+					DispatchRegion( Flags.INTEGRATE2, lightMap, region, settings );
 
 					device.Present(0);
 				}
@@ -360,7 +362,7 @@ namespace Fusion.Engine.Graphics.GI
 
 			device.ComputeResources[ regLights			]	=	rs.LightManager.LightGrid.RadLtDataGpu;
 
-			device.ComputeResources[ regSkyBox			]	=	rs.Sky.SkyCubeDiffuse;
+			device.ComputeResources[ regSkyBox			]	=	rs.Sky.SkyCube;
 
 			device.ComputeResources[ regRtTriangles		]	=	rtData.Primitives;
 			device.ComputeResources[ regRtBvhTree		]	=	rtData.BvhTree;
@@ -369,16 +371,16 @@ namespace Fusion.Engine.Graphics.GI
 
 
 
-		void DispatchRegion( Flags pass, LightMap lightMap, Rectangle region, int mip = 0 )
+		void DispatchRegion( Flags pass, LightMap lightMap, Rectangle region, RadiositySettings settings )
 		{
 			device.PipelineState	=	factory[(int)pass];
 				
 			var radiosity = new RADIOSITY();
 
-			int x		=	region.X >> mip;
-			int y		=	region.Y >> mip;
-			int width	=	region.Width >> mip;
-			int height	=	region.Height >> mip;
+			int x		=	region.X;
+			int y		=	region.Y;
+			int width	=	region.Width;
+			int height	=	region.Height;
 
 			radiosity.VoxelToWorld		=	lightMap.VoxelToWorld;
 
@@ -392,6 +394,8 @@ namespace Fusion.Engine.Graphics.GI
 			radiosity.ShadowFilter		=	ShadowFilterRadius;
 
 			radiosity.ColorBounce		=	ColorBounce;
+			radiosity.NumRays			=	(uint)settings.NumRays;
+			radiosity.WhiteAlbedo		=	settings.WhiteDiffuse ? 1.0f : 0.0f;
 
 			cbRadiosity.SetData( radiosity );
 

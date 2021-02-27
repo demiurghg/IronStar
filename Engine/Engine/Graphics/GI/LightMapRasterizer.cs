@@ -23,6 +23,7 @@ namespace Fusion.Engine.Graphics.GI
 	internal partial class LightMapRasterizer : DisposableBase 
 	{
 		const int MinLightMapSize = Radiosity.RegionSize;
+		const float NormalBias = 1.0f / 16.0f;
 
 		readonly RenderInstance[] instances;
 		readonly RenderSystem rs;
@@ -57,6 +58,9 @@ namespace Fusion.Engine.Graphics.GI
 		-----------------------------------------------------------------------------------------*/
 
 		Random rand		=	new Random();
+		#warning remove debug points for lightmaps
+		public static List<Vector3> debug_points = new List<Vector3>();
+		public static List<Vector3> debug_normals = new List<Vector3>();
 		
 
 		/// <summary>
@@ -66,6 +70,8 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			var stopwatch		=	new Stopwatch();
 			stopwatch.Start();
+			debug_points.Clear();
+			debug_normals.Clear();
 
 			//-------------------------------------------------
 			Log.Message("Allocating lightmap regions...");
@@ -151,10 +157,15 @@ namespace Fusion.Engine.Graphics.GI
 					{
 						var p = lmGBuffer.Position[i,j];
 						var n = lmGBuffer.Normal[i,j];
+						var a = lmGBuffer.Area[i,j];
 
-						p = FixGeometryOverlap( scene, p, n );
+						p = FixGeometryOverlap( scene, p, n, a );
 
 						lmGBuffer.Position[i,j] = p;
+
+						//debug_points.Add( p );
+						//debug_normals.Add( n );
+
 					}, true);
 				}
 			}
@@ -174,7 +185,7 @@ namespace Fusion.Engine.Graphics.GI
 		/// <summary>
 		/// Fix centroid partially overlapped by another geometry
 		/// </summary>
-		Vector3 FixGeometryOverlap ( RtcScene scene, Vector3 position, Vector3 normal)
+		Vector3 FixGeometryOverlap ( RtcScene scene, Vector3 position, Vector3 normal, float area )
 		{
 			var basis	=	MathUtil.ComputeAimedBasis( normal );
 			var dirs	=	new[] { basis.Right, basis.Left, basis.Up, basis.Down };
@@ -182,9 +193,12 @@ namespace Fusion.Engine.Graphics.GI
 			var minT	=	float.MaxValue;
 			var result	=	position;
 
+
 			foreach ( var dir in dirs ) 
 			{
-				EmbreeExtensions.UpdateRay( ref ray, position - dir*0.125f, dir, 0, 3 );
+				var searchRadius	=	(float)Math.Sqrt(area) * 0.5f;
+				var backOffset		=	dir * searchRadius * (float)Math.Sqrt(2.0f);
+				EmbreeExtensions.UpdateRay( ref ray, position, dir, 0, searchRadius );
 
 				if ( scene.Intersect( ref ray ) ) 
 				{
@@ -192,9 +206,10 @@ namespace Fusion.Engine.Graphics.GI
 					{
 						var n	= -ray.GetHitNormal().Normalized();	
 
-						if ( Vector3.Dot( n, dir ) > 0 ) {
+						if ( Vector3.Dot( n, dir ) > 0 ) 
+						{
 							minT	= ray.TFar;
-							result	= ray.GetHitPoint() + n / 16f;
+							result	= ray.GetHitPoint() + n * NormalBias;
 						}
 					}
 				}
@@ -244,7 +259,6 @@ namespace Fusion.Engine.Graphics.GI
 			coord	=	new Int2( i, j );
 			return true;
 		}
-
 
 		/// <summary>
 		/// Rasterizes LM texcoords to lightmap
@@ -309,7 +323,7 @@ namespace Fusion.Engine.Graphics.GI
 
 					var n		=	Vector3.Cross( p1 - p0, p2 - p0 ).Normalized();
 					var area	=	ComputeLightMapTexelArea( p0, p1, p2,  d0, d1, d2 );
-					var bias	=	n * 1 / 16.0f;
+					var bias	=	n * NormalBias;
 
 					Rasterizer.RasterizeTriangleConservative( d0, d1, d2, //Rasterizer.Samples8x,
 						(xy,s,t,coverage) => 
@@ -319,7 +333,7 @@ namespace Fusion.Engine.Graphics.GI
 								lightmap.Albedo	 [xy] =	albedo;
 								lightmap.Position[xy] = InterpolatePosition	( p0, p1, p2, s, t ) + bias;
 								lightmap.Normal  [xy] = InterpolateNormal	( n0, n1, n2, s, t );
-								//lightmap.Area	 [xy] = area;
+								lightmap.Area	 [xy] = area;
 								lightmap.Coverage[xy] = coverage;
 							}
 							else

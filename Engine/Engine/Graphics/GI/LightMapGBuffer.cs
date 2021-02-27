@@ -31,6 +31,7 @@ namespace Fusion.Engine.Graphics.GI
 		public readonly Image<Color>		Albedo;
 		public readonly Image<Vector3>		Position;
 		public readonly Image<Vector3>		Normal;
+		public readonly Image<float>		Area;
 		public readonly Image<byte>			Coverage;
 
 		internal Texture2D	albedoTexture	;
@@ -58,6 +59,7 @@ namespace Fusion.Engine.Graphics.GI
 			Position		=	new Image<Vector3>	( Width,  Height, Vector3.Zero );
 			Normal			=	new Image<Vector3>	( Width,  Height, Vector3.Zero );
 			Coverage		=	new Image<byte>		( Width,  Height, 0 );
+			Area			=	new Image<float>	( Width,  Height, 0 );
 
 			albedoTexture	=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	1,	false );
 			positionTexture	=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgb32F,	1,	false );
@@ -115,7 +117,13 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			n.Normalize();
 			n = (n + Vector3.One) * 0.5f;
-			return new Color( n.X, n.Y, n.Z, 0.0f );
+			return new Color( 
+				MathUtil.Lerp( (byte)0, (byte)255, n.X ),
+				MathUtil.Lerp( (byte)0, (byte)255, n.Y ),
+				MathUtil.Lerp( (byte)0, (byte)255, n.Z ),
+				(byte)255 );
+			//n = (n + Vector3.One) * 0.5f;
+			//return new Color( n.X, n.Y, n.Z, 0.0f );
 		}
 
 

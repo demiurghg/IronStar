@@ -544,7 +544,7 @@
     <Compile Include="Engine\Graphics\GI\Radiosity.Job.cs" />
     <Compile Include="Engine\Graphics\GI\RayTracer.RTData.cs" />
     <Compile Include="Engine\Graphics\GI\RayTracer.cs" />
-    <Compile Include="Engine\Graphics\GI\LightProbeDebugger.cs" />
+    <Compile Include="Engine\Graphics\GI\LightProbeViewer.cs" />
     <Compile Include="Engine\Graphics\GI\LightMapper.Rtc.cs" />
     <Compile Include="Engine\Graphics\GI\LightMapper.Utils.cs" />
     <Compile Include="Engine\Graphics\GI\LightMapResources.cs" />

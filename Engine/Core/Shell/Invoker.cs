@@ -171,27 +171,58 @@ namespace Fusion.Core.Shell {
 		/// <param name="command"></param>
 		/// <param name="immediate"></param>
 		/// <returns></returns>
-		public object Execute ( ICommand command )
+		public object ExecuteImmediate ( ICommand command )
 		{
-			lock (lockObject) {
-
-				var result = command.Execute();
-
-				return result;
+			lock (lockObject) 
+			{
+				return command.Execute();
 			}
 		}
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="commands"></param>
-		public void ExecuteBatch ( params ICommand[] commands )
+		public void Execute( params ICommand[] commands )
 		{
-			var batch = new Batch( commands.ToArray() );
-			Execute( batch );
+			if (commands.Length==0)
+			{
+				return;
+			}
+
+			lock (lockObject) 
+			{
+				try 
+				{
+					cmdQueue.Enqueue( (commands.Length==1) ? commands[0] : new Batch(commands) );
+				} 
+				catch ( InvokerException e )
+				{
+					Log.Error( e.Message );
+				}
+			}
 		}
 
+
+
+		public void Execute( Action action )
+		{
+			Execute( new ActionCommand(action) );
+		}
+
+
+		class ActionCommand : ICommand
+		{
+			readonly Action action;
+			
+			public ActionCommand( Action action )
+			{
+				this.action	=	action;
+			}
+
+			public object Execute()
+			{
+				action?.Invoke();
+				return null;
+			}
+		}
 
 
 		/// <summary>
@@ -201,8 +232,9 @@ namespace Fusion.Core.Shell {
 		/// <returns></returns>
 		public object ExecuteStringImmediate ( string commandLine )
 		{
-			lock (lockObject) {
-				return Execute( ParseCommand( commandLine ) );
+			lock (lockObject) 
+			{
+				return ExecuteImmediate( ParseCommand( commandLine ) );
 			}
 		}
 
@@ -301,8 +333,8 @@ namespace Fusion.Core.Shell {
 			{
 				while ( cmdQueue.Any() ) 
 				{
-					try {
-
+					try 
+					{
 						var cmd    = cmdQueue.Dequeue();
 
 						if (cmd is WaitCmd) 
@@ -310,17 +342,17 @@ namespace Fusion.Core.Shell {
 							break;
 						}
 						
-						var result = Execute( cmd );	
+						var result = cmd.Execute();	
 
 						if (showResult && result!=null) 
 						{
 							Log.Message("// {0} //", StringConverter.ConvertToString(result) );
 						}
 
-					} catch ( Exception e ) {
-
+					} 
+					catch ( Exception e ) 
+					{
 						Log.Error( e.Message );
-					
 					}
 				}
 			}

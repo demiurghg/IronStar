@@ -39,7 +39,7 @@ namespace Fusion.Engine.Graphics {
 		internal VTSystem				VTSystem			{ get { return Game.GetService< VTSystem			>(); } }
 		public   Sky2					Sky					{ get { return Game.GetService< Sky2				>(); } }
 		internal Fog					Fog					{ get { return Game.GetService< Fog					>(); } }
-		internal LightProbeDebugger		LightMapDebugger	{ get { return Game.GetService< LightProbeDebugger		>(); } }
+		internal LightProbeViewer		LightMapDebugger	{ get { return Game.GetService< LightProbeViewer		>(); } }
 		public Radiosity				Radiosity			{ get { return Game.GetService< Radiosity			>(); } }
 		public RayTracer				RayTracer			{ get { return Game.GetService< RayTracer			>(); } }
 		public GameFX					GameFX				{ get { return Game.GetService< GameFX				>(); } }
@@ -132,7 +132,7 @@ namespace Fusion.Engine.Graphics {
 			Game.AddServiceAndComponent( new Fog				( this ) );
 			Game.AddServiceAndComponent( new BitonicSort		( this ) );
 			Game.AddServiceAndComponent( new VTSystem			( this ) );
-			Game.AddServiceAndComponent( new LightProbeDebugger	( this ) );
+			Game.AddServiceAndComponent( new LightProbeViewer	( this ) );
 
 			Game.AddServiceAndComponent( new Radiosity			( this ) );
 			Game.AddServiceAndComponent( new RayTracer			( this ) );

@@ -24,6 +24,8 @@ using Fusion.Engine.Frames;
 using Fusion.Core.Input;
 using Fusion.Widgets;
 using IronStar.AI;
+using Fusion.Core.Shell;
+using Fusion.Engine.Graphics.GI;
 
 namespace IronStar.Editor {
 
@@ -167,6 +169,7 @@ namespace IronStar.Editor {
 			workspace.AddHotkey( Keys.D4		, ModKeys.None, ToggleLightProbes );
 			workspace.AddHotkey( Keys.D5		, ModKeys.None, ToggleLightVolume );
 			workspace.AddHotkey( Keys.D6		, ModKeys.None, ToggleDirectLighting );
+			workspace.AddHotkey( Keys.D7		, ModKeys.None, ToggleFiltering );
 			
 			workspace.AddHotkey( Keys.Delete	, ModKeys.None, () => DeleteSelection() );
 			workspace.AddHotkey( Keys.U			, ModKeys.Ctrl, () => DuplicateSelection() );
@@ -202,39 +205,47 @@ namespace IronStar.Editor {
 
 
 		void ResetViewMode ()
-		{
-			Game.Invoker.ExecuteString("LightMapDebugger.ShowLightProbes False");
-			Game.Invoker.ExecuteString("LightMapDebugger.ShowLightVolume False");
-			Game.Invoker.ExecuteString("VTSystem.ShowDiffuse False");
-			Game.Invoker.ExecuteString("VTSystem.ShowSpecular False");
-			Game.Invoker.ExecuteString("RenderSystem.SkipDirectLighting False");
-			Game.Invoker.ExecuteString("vtrestart");
+		{							
+			Game.Invoker.ExecuteString(
+				"LightProbeViewer.ShowLightProbes False",
+				"LightProbeViewer.ShowLightVolume False",
+				"VTSystem.ShowDiffuse False",
+				"VTSystem.ShowSpecular False",
+				"RenderSystem.SkipDirectLighting False",
+				"vtrestart"
+			);
 		}
 
 
 		void ToggleDiffuse()
 		{
-			Game.Invoker.ExecuteString("toggle VTSystem.ShowDiffuse");
-			Game.Invoker.ExecuteString("vtrestart");
+			Game.Invoker.ExecuteString(
+				"toggle VTSystem.ShowDiffuse", 
+				"VTSystem.ShowSpecular False", 
+				"vtrestart"
+			);
 		}
 
 
 		void ToggleSpecular()
 		{
-			Game.Invoker.ExecuteString("toggle VTSystem.ShowSpecular");
-			Game.Invoker.ExecuteString("vtrestart");
+			Game.Invoker.ExecuteString(
+				"toggle VTSystem.ShowSpecular", 
+				"VTSystem.ShowDiffuse False", 
+				"vtrestart"
+			);
 		}
 
 
 		void ToggleLightProbes()
 		{
-			Game.Invoker.ExecuteString("toggle LightProbeDebug.ShowLightProbes");
+			Game.Invoker.ExecuteString("toggle LightProbeViewer.ShowLightProbes");
 		}
 
 
 		void ToggleLightVolume()
 		{
-			Game.Invoker.ExecuteString("toggle LightProbeDebug.ShowLightVolume");
+			Game.Invoker.ExecuteString("toggle LightProbeViewer.ShowLightVolume");
 		}
 
 
@@ -244,9 +255,20 @@ namespace IronStar.Editor {
 		}
 
 
+		void ToggleFiltering()
+		{
+			Game.Invoker.ExecuteString(
+				"toggle RenderSystem.UsePointLightmapSampling",
+				"toggle RenderSystem.UsePointShadowSampling"
+			);
+		}
+
+
 		void BakeLightMap()
 		{
-			Game.Invoker.ExecuteString(string.Format("bakeLightMap {0}", mapName), "contentBuild");
+			Game.Invoker.Execute( new Radiosity.BakeRadiosityCommand( Game, mapName, Map.RadiositySettings ) );
+			Game.Invoker.ExecuteString("contentBuild");
+			//Game.Invoker.ExecuteString(string.Format("bakeLightMap {0}", mapName), "contentBuild");
 		}
 
 

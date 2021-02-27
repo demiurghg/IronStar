@@ -22,6 +22,33 @@ namespace Fusion.Engine.Graphics.GI
 {
 	public partial class Radiosity : RenderComponent
 	{
+		public class BakeRadiosityCommand : ICommand
+		{
+			readonly RadiositySettings settings;
+			readonly string mapName;
+			readonly Game game;
+
+			public BakeRadiosityCommand( Game game, string mapName, RadiositySettings settings )
+			{
+				this.game		=	game;
+				this.mapName	=	mapName;
+				this.settings	=	settings;
+			}
+
+			public object Execute()
+			{
+				var rad = game.RenderSystem.Radiosity;
+				var build = game.GetService<Builder>();
+				
+				using ( var stream = build.CreateSourceFile( RenderSystem.LightmapPath, mapName + ".bin" ) )
+				{
+					rad.BakeRadiosity( settings, stream );
+				}
+
+				return null;
+			}
+		}
+
 		class BakeLightMapCmd : ICommand
 		{
 			readonly Radiosity	rad;
@@ -54,6 +81,10 @@ namespace Fusion.Engine.Graphics.GI
 			[CommandLineParser.Option]
 			public bool NoFilter { get; set; }
 
+			[CommandLineParser.Name("white")]
+			[CommandLineParser.Option]
+			public bool White { get; set; }
+
 			[CommandLineParser.Name("mapname")]
 			[CommandLineParser.Required]
 			public string MapName { get; set; }
@@ -70,9 +101,10 @@ namespace Fusion.Engine.Graphics.GI
 				{
 					var settings = new RadiositySettings();
 
-					settings.NumRays	=	NumRays;
-					settings.NumBounces	=	NumBounces;
-					settings.UseFilter	=	!NoFilter;
+					settings.NumRays		=	NumRays;
+					settings.NumBounces		=	NumBounces;
+					settings.UseFilter		=	!NoFilter;
+					settings.WhiteDiffuse	=	White;
 
 					rad.BakeRadiosity( settings, stream );
 				}

@@ -24,5 +24,8 @@ namespace Fusion.Engine.Graphics.GI
 
 		[AECategory("Quality")]
 		public bool UseFilter { get; set; } = true;
+
+		[AECategory("Debug")]
+		public bool WhiteDiffuse { get; set; } = true;
 	}
 }

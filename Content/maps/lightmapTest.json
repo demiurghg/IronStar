@@ -22,7 +22,7 @@
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
         "GlowIntensity": 100.0,
-        "LightMapSize": "lightMap512",
+        "LightMapSize": "lightMap256",
         "UseLightVolume": false,
         "UseCollisionMesh": false,
         "Walkable": true,
@@ -790,7 +790,7 @@
         "CustomCollisionNode": "",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 0.0,
+        "TranslateX": -12.0,
         "TranslateY": 0.0,
         "TranslateZ": 72.0,
         "RotateYaw": 0.0,
@@ -815,7 +815,7 @@
         "Frozen": false,
         "TranslateX": 16.0,
         "TranslateY": 0.0,
-        "TranslateZ": 96.0,
+        "TranslateZ": 90.0,
         "RotateYaw": -90.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
@@ -1029,9 +1029,9 @@
       {
         "$type": "IronStar.Mapping.MapLightVolume, IronStar",
         "NodeGuid": "ad30241e-70a7-4093-81f7-3e944f0207e6",
-        "ResolutionX": 32,
-        "ResolutionY": 8,
-        "ResolutionZ": 32,
+        "ResolutionX": 16,
+        "ResolutionY": 4,
+        "ResolutionZ": 16,
         "Width": 512.0,
         "Height": 128.0,
         "Depth": 512.0,
@@ -1048,8 +1048,9 @@
   },
   "RadiositySettings": {
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
-    "NumRays": 128,
-    "NumBounces": 1,
-    "UseFilter": true
+    "NumRays": 256,
+    "NumBounces": 2,
+    "UseFilter": true,
+    "WhiteDiffuse": false
   }
 }

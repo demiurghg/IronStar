@@ -79,6 +79,8 @@ struct RADIOSITY {
 	float      SecondBounce;                  // offset:   88
 	float      ShadowFilter;                  // offset:   92
 	float      ColorBounce;                   // offset:   96
+	uint       NumRays;                       // offset:  100
+	float      WhiteAlbedo;                   // offset:  104
 };
 #endif
 

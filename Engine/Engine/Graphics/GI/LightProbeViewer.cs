@@ -21,7 +21,7 @@ namespace Fusion.Engine.Graphics.GI {
 
 	[RequireShader("lightmapDebug",true)]
 	[ShaderSharedStructure(typeof(GpuData.DIRECT_LIGHT))]
-	public class LightProbeDebugger : RenderComponent, IPipelineStateProvider 
+	public class LightProbeViewer : RenderComponent, IPipelineStateProvider 
 	{
 		[Config]
 		public float LightProbeSize { get; set; } = 5.0f;
@@ -95,7 +95,7 @@ namespace Fusion.Engine.Graphics.GI {
 		}
 
 
-		public LightProbeDebugger ( RenderSystem rs ) : base(rs)
+		public LightProbeViewer ( RenderSystem rs ) : base(rs)
 		{
 		}
 
@@ -141,6 +141,14 @@ namespace Fusion.Engine.Graphics.GI {
 
 		internal void Render ( Camera camera, HdrFrame hdrFrame )
 		{
+			for( int i=0; i<LightMapRasterizer.debug_normals.Count; i++)
+			{
+				var p = LightMapRasterizer.debug_points[i];
+				var n = LightMapRasterizer.debug_normals[i];
+				rs.RenderWorld.Debug.DrawPoint( p, 0.2f, Color.Red, 1 );
+				rs.RenderWorld.Debug.DrawVector( p, n, Color.Blue, 0.7f );
+			}
+
 			device.ResetStates();
 			device.SetTargets( hdrFrame.DepthBuffer.Surface, hdrFrame.HdrTarget.Surface );
 

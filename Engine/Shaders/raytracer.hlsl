@@ -73,7 +73,6 @@ bool RTRayAABBIntersection(RAY r, float3 aabbMin, float3 aabbMax, out float tmin
 	Ray / Triangle intersection
 ------------------------------------------------------------------------------*/
 
-#define EPSILON 0.00001
 #define TWOSIDED 1
 
 float3 RTBarycentric(float3 p, float3 a, float3 b, float3 c )
@@ -95,8 +94,9 @@ float3 RTBarycentric(float3 p, float3 a, float3 b, float3 c )
 
 bool RTRayTriangleIntersection( inout RAY r, TRIANGLE tri, int index )
 {
-	float  t 		= 0;
-	float2 uv 		= float2(0,0);
+	float  t 		=	0;
+	float2 uv 		=	float2(0,0);
+	float  epsilon	= 	0.000001f;
 	
 	float4 plane	=	tri.PlaneEq;
 	float3 a		=	tri.Point0.xyz;
@@ -106,9 +106,9 @@ bool RTRayTriangleIntersection( inout RAY r, TRIANGLE tri, int index )
 	// 	ray and triangle are parallel 
 	//	or ray comes from behind:
 #ifdef TWOSIDED
-	if ( abs(dot(r.dir, plane.xyz)) < EPSILON ) return false;
+	if ( abs(dot(r.dir, plane.xyz)) < epsilon ) return false;
 #else	
-	if ( -dot(r.dir, plane.xyz) < EPSILON ) return false;
+	if ( -dot(r.dir, plane.xyz) < epsilon ) return false;
 #endif	
 	
 	t = - (plane.w + dot(r.orig, plane.xyz)) / dot(r.dir, plane.xyz);

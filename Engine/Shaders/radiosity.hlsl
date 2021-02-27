@@ -66,7 +66,7 @@ void CSMain(
 		float3	normal			=	Normal	[ loadXY ].xyz * 2 - 1;
 				normal			=	normalize( normal );
 		float	size			=	Radiosity.ShadowFilter;
-		float3	indirect		=	Radiance[ loadXY ].rgb * 2;
+		float3	indirect		=	Radiance[ loadXY ].rgb;
 
 		//	reconstruct basis ?
 		float3  tangentX, tangentY;
@@ -251,7 +251,6 @@ uint uintDivUp( uint a, uint b ) { return (a % b != 0) ? (a / b + 1) : (a / b); 
 
 void StoreLightmap( int2 xy, float4 shR, float4 shG, float4 shB )
 {
-	shR.xyz += LightEpsilon;
 	IrradianceL0[ xy ]	=	float4( shR.x		, shG.x			, shB.x			, 0 );
 	IrradianceL1[ xy ]	=	float4( shR.y/shR.x , shG.y/shG.x	, shB.y/shB.x	, 0 ) * 0.5f + 0.5f;
 	IrradianceL2[ xy ]	=	float4( shR.z/shR.x , shG.z/shG.x	, shB.z/shB.x	, 0 ) * 0.5f + 0.5f;
@@ -271,22 +270,23 @@ void CSMain(
 	int2	loadXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
 	int2	storeXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
 	
-	float4	irradianceR	=	float4( 0, 0, 0, 0 );
-	float4	irradianceG	=	float4( 0, 0, 0, 0 );
-	float4	irradianceB	=	float4( 0, 0, 0, 0 );
+	float4	irradianceR	=	float4( 0.0001f, 0, 0, 0 );
+	float4	irradianceG	=	float4( 0.0001f, 0, 0, 0 );
+	float4	irradianceB	=	float4( 0.0001f, 0, 0, 0 );
 	
 	float3	lmNormal	=	Normal	[ loadXY ].xyz * 2 - 1;
-	float3	lmPosition	=	Position[ loadXY ].xyz + lmNormal * 0.01;
 			lmNormal	=	normalize(lmNormal);
-	static const uint NUM_SAMPLES	=	64;
-	float k = 1.0f / NUM_SAMPLES;
+	float3	lmPosition	=	Position[ loadXY ].xyz;// + lmNormal * 0.01;
+	uint  num_samples	=	Radiosity.NumRays;
+	float k = 0.5f / num_samples;
 	
 	float3	random_vector	=	hammersley_sphere_uniform( groupIndex, TileSize * TileSize );
 	
-	for (uint i=0; i<NUM_SAMPLES; i++)
+	[loop]
+	for (uint i=0; i<num_samples; i++)
 	{
-		float3	rayDir		=	hammersley_sphere_uniform( i, NUM_SAMPLES );
-				//rayDir		=	reflect( rayDir, random_vector );
+		float3	rayDir		=	normalize(hammersley_sphere_uniform( i, num_samples ));
+				rayDir		=	reflect( rayDir, random_vector );
 				rayDir		=	normalize( rayDir + lmNormal * 1.01 );
 		
 		if (true || dot(rayDir, lmNormal)>0.01)
@@ -304,17 +304,18 @@ void CSMain(
 				float2 	lmCoord2	=	RtLmVerts[ triIndex*3+2 ].LMCoord;
 				float2	lmCoord		=	lerp_barycentric_coords( lmCoord0, lmCoord1, lmCoord2, ray.uv );
 				float	nDotL		=	max( 0, -dot( hitNormal, rayDir ) );
-				float3	albedo		=	Albedo.SampleLevel( LinearSampler, lmCoord, 0 ).rgb;
-				light				=	nDotL * albedo * Radiance.SampleLevel( LinearSampler, lmCoord, 0 ).rgb;
+				float3	albedo		=	pow(Albedo.SampleLevel( LinearSampler, lmCoord, 0 ).rgb, 1/2.2f);
+						albedo		=	lerp( albedo, 0.9f, Radiosity.WhiteAlbedo );
+				light				=	nDotL * albedo * Radiance.SampleLevel( LinearSampler, lmCoord, 0 ).rgb;//*/
 			}
 			else
 			{
 				light		=	SkyBox.SampleLevel( LinearSampler, rayDir.xyz * float3(-1,1,1), 0 ).rgb;
 			}
 
-			irradianceR		+=	k * SHL1EvaluateDiffuse( light.r, rayDir );
-			irradianceG		+=	k * SHL1EvaluateDiffuse( light.g, rayDir );
-			irradianceB		+=	k * SHL1EvaluateDiffuse( light.b, rayDir );
+			irradianceR		+=	SHL1EvaluateDiffuse( k * light.r, rayDir );
+			irradianceG		+=	SHL1EvaluateDiffuse( k * light.g, rayDir );
+			irradianceB		+=	SHL1EvaluateDiffuse( k * light.b, rayDir );
 		}
 	}
 	
@@ -355,7 +356,7 @@ void CSMain(
 	float3	lmPosition	=	mul( float4(storeXYZ, 1.0f), Radiosity.VoxelToWorld ).xyz;
 
 	static const uint NUM_SAMPLES	=	64;
-	float k = 2.0f / NUM_SAMPLES;
+	float k = 1.0f / NUM_SAMPLES;
 	
 	float3	random_vector	=	hammersley_sphere_uniform( groupIndex, TileSize * TileSize );
 	
@@ -386,9 +387,9 @@ void CSMain(
 				light		=	SkyBox.SampleLevel( LinearSampler, rayDir.xyz * float3(-1,1,1), 0 ).rgb;
 			}
 
-			irradianceR		+=	k * SHL1EvaluateDiffuse( light.r, rayDir );
-			irradianceG		+=	k * SHL1EvaluateDiffuse( light.g, rayDir );
-			irradianceB		+=	k * SHL1EvaluateDiffuse( light.b, rayDir );
+			irradianceR		+=	SHL1EvaluateDiffuse( k * light.r, rayDir );
+			irradianceG		+=	SHL1EvaluateDiffuse( k * light.g, rayDir );
+			irradianceB		+=	SHL1EvaluateDiffuse( k * light.b, rayDir );
 		}
 	}
 

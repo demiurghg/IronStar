@@ -57,6 +57,9 @@ namespace Fusion.Engine.Graphics.GI {
 		internal RenderTarget2D		irradianceL2;
 		internal RenderTarget2D		irradianceL3;
 
+		internal RenderTarget2D		tempHdr;
+		internal RenderTarget2D		tempLdr;
+
 		internal Texture3DCompute	lightVolumeL0;
 		internal Texture3DCompute	lightVolumeL1;
 		internal Texture3DCompute	lightVolumeL2;
@@ -80,7 +83,7 @@ namespace Fusion.Engine.Graphics.GI {
 			header.VolumeSize	=	volumeSize;
 			header.VolumeMatrix	=	volumeMatrix;
 
-			CreateGpuResources( mapSize, volumeSize );
+			CreateGpuResources( mapSize, volumeSize, true );
 		}
 
 
@@ -106,7 +109,7 @@ namespace Fusion.Engine.Graphics.GI {
 					regions.Add( reader.ReadString(), reader.Read<Rectangle>() );
 				}
 
-				CreateGpuResources( header.MapSize, header.VolumeSize );
+				CreateGpuResources( header.MapSize, header.VolumeSize, false );
 
 				//	read map :
 				reader.ExpectFourCC("MAP1", "bad lightmap format");
@@ -171,13 +174,19 @@ namespace Fusion.Engine.Graphics.GI {
 		}
 
 		
-		void CreateGpuResources( Size2 mapSize, Size3 volumeSize )
+		void CreateGpuResources( Size2 mapSize, Size3 volumeSize, bool createTempResources )
 		{
 			radiance		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	mapSize.Width, mapSize.Height, false, true );
 			irradianceL0	=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	mapSize.Width, mapSize.Height, false, true );
 			irradianceL1	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	mapSize.Width, mapSize.Height, false, true );
 			irradianceL2	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	mapSize.Width, mapSize.Height, false, true );
 			irradianceL3	=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	mapSize.Width, mapSize.Height, false, true );
+
+			if (createTempResources)
+			{
+				tempHdr		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10,	mapSize.Width, mapSize.Height, false, true );
+				tempLdr		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,	mapSize.Width, mapSize.Height, false, true );
+			}
 
 			rs.Device.Clear( radiance.Surface,		Color4.Zero );
 			rs.Device.Clear( irradianceL0.Surface,	Color4.Zero );

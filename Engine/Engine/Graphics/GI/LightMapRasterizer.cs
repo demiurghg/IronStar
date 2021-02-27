@@ -28,12 +28,14 @@ namespace Fusion.Engine.Graphics.GI
 		readonly RenderInstance[] instances;
 		readonly RenderSystem rs;
 		LightMapGBuffer lmGBuffer;
+		RadiositySettings settings;
 
 		/// <summary>
 		/// Creates instance of the Lightmap
 		/// </summary>
-		public LightMapRasterizer( RenderSystem rs, IEnumerable<RenderInstance> instances )
+		public LightMapRasterizer( RenderSystem rs, IEnumerable<RenderInstance> instances, RadiositySettings settings )
 		{
+			this.settings	=	settings;
 			this.rs			=	rs;
 			this.instances	=	instances.ToArray();
 		}
@@ -77,12 +79,13 @@ namespace Fusion.Engine.Graphics.GI
 			Log.Message("Allocating lightmap regions...");
 
 			int totalPixels = 0;
+			int bias = settings.Bias;
 
 			var lmGroups = instances
 					.GroupBy( 
 						instance => instance.LightMapRegionName,
 						instance => instance,
-						(name,inst) => new LightMapGroup( inst.First().LightMapSize.Width, name, inst, 0 )
+						(name,inst) => new LightMapGroup( inst.First().LightMapSize.Width, name, inst, bias )
 					)
 					.ToArray();
 

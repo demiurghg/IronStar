@@ -23,7 +23,20 @@ namespace Fusion.Engine.Graphics.GI
 		public int NumBounces { get; set; } = 1;
 
 		[AECategory("Quality")]
-		public bool UseFilter { get; set; } = true;
+		[AEValueRange( -1, 1, 1, 1 )]
+		public int Bias { get; set; } = 0;
+
+		[AECategory("Filtering")]
+		public bool UseBilateral { get; set; } = true;
+
+		[AECategory("Filtering")]
+		public bool UseDilate { get; set; } = true;
+
+		[AECategory("Filtering")]
+		public float FilterFalloff { get; set; } = 0.5f;
+
+		[AECategory("Filtering")]
+		public float FilterWeight { get; set; } = 0.5f;
 
 		[AECategory("Debug")]
 		public bool WhiteDiffuse { get; set; } = true;

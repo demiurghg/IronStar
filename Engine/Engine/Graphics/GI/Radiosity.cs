@@ -116,12 +116,6 @@ namespace Fusion.Engine.Graphics.GI
 		Ubershader		shader;
 		StateFactory	factory;
 
-		RenderTarget2D	tempHDR0;
-		RenderTarget2D	tempLDR0;
-		RenderTarget2D	tempHDR1;
-		RenderTarget2D	tempLDR1;
-
-
 		public Radiosity( RenderSystem rs ) : base(rs)
 		{
 		}
@@ -132,13 +126,6 @@ namespace Fusion.Engine.Graphics.GI
 			base.Initialize();
 
 			cbRadiosity	=	new ConstantBuffer( rs.Device, typeof(RADIOSITY) );
-
-			tempHDR0		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10, RegionSize, RegionSize, true );
-			tempLDR0		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,   RegionSize, RegionSize, true );
-			tempHDR1		=	new RenderTarget2D( rs.Device, ColorFormat.Rg11B10, RegionSize, RegionSize, true );
-			tempLDR1		=	new RenderTarget2D( rs.Device, ColorFormat.Rgba8,   RegionSize, RegionSize, true );
-
-			Game.Invoker.RegisterCommand("bakeLightMap", () => new BakeLightMapCmd(this) );
 
 			LoadContent();
 
@@ -158,10 +145,6 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			if (disposing)
 			{
-				SafeDispose( ref tempHDR0 );
-				SafeDispose( ref tempLDR0 );
-				SafeDispose( ref tempHDR1 );
-				SafeDispose( ref tempLDR1 );
 				SafeDispose( ref cbRadiosity	);
 			}
 
@@ -180,7 +163,7 @@ namespace Fusion.Engine.Graphics.GI
 
 			var sw = new Stopwatch();
 
-			using ( var rasterizer = new LightMapRasterizer( rs, instances ) )
+			using ( var rasterizer = new LightMapRasterizer( rs, instances, settings ) )
 			{
 				using ( var gbuffer = rasterizer.RasterizeGBuffer() )
 				{
@@ -242,7 +225,7 @@ namespace Fusion.Engine.Graphics.GI
 			}
 
 			SetupShaderResources( rtData, gbuffer, lightMap );
-			RenderVolume( rtData, gbuffer, lightMap );
+			RenderVolume( rtData, gbuffer, lightMap, settings );
 
 			return lightMap;
 		}
@@ -297,24 +280,15 @@ namespace Fusion.Engine.Graphics.GI
 
 			using ( new PixEvent( "Denoising/Dilation" ) )
 			{
-				if (settings.UseFilter)
-				{
-					for (int i=0; i<totalRegions; i++)
-					{
-						var coord  = MortonCode.Decode2((uint)i);
-						var region = new Rectangle( coord.X * RegionSize, coord.Y * RegionSize, RegionSize, RegionSize );
-
-						FilterLightmap( lightMap.irradianceL0, tempHDR0, gbuffer.AlbedoTexture, region, WeightIntensitySHL0, 20, FalloffIntensitySHL0 );
-						FilterLightmap( lightMap.irradianceL1, tempLDR0, gbuffer.AlbedoTexture, region, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
-						FilterLightmap( lightMap.irradianceL2, tempLDR0, gbuffer.AlbedoTexture, region, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
-						FilterLightmap( lightMap.irradianceL3, tempLDR0, gbuffer.AlbedoTexture, region, WeightDirectionSHL1, 20, FalloffDirectionSHL1 );
-					}
-				}
+				FilterLightmap( lightMap.irradianceL0, lightMap.tempHdr, gbuffer.AlbedoTexture, fullRegion, settings );
+				FilterLightmap( lightMap.irradianceL1, lightMap.tempLdr, gbuffer.AlbedoTexture, fullRegion, settings );
+				FilterLightmap( lightMap.irradianceL2, lightMap.tempLdr, gbuffer.AlbedoTexture, fullRegion, settings );
+				FilterLightmap( lightMap.irradianceL3, lightMap.tempLdr, gbuffer.AlbedoTexture, fullRegion, settings );
 			}
 		}
 
 
-		void RenderVolume( RayTracer.RTData rtData, LightMapGBuffer gbuffer, LightMap lightMap )
+		void RenderVolume( RayTracer.RTData rtData, LightMapGBuffer gbuffer, LightMap lightMap, RadiositySettings settings )
 		{
 			using ( new PixEvent( "Integrate Map" ) )
 			{
@@ -332,6 +306,8 @@ namespace Fusion.Engine.Graphics.GI
 				int width	=	lightMap.lightVolumeL0.Width;
 				int height	=	lightMap.lightVolumeL0.Height;
 				int depth	=	lightMap.lightVolumeL0.Depth;
+
+				SetupShaderConsts( lightMap, new Rectangle(0,0,1,1), settings );
 
 				device.Dispatch( new Int3( width, height, depth ), new Int3( ClusterSize, ClusterSize, ClusterSize ) );
 			}			
@@ -370,11 +346,8 @@ namespace Fusion.Engine.Graphics.GI
 		}
 
 
-
-		void DispatchRegion( Flags pass, LightMap lightMap, Rectangle region, RadiositySettings settings )
+		void SetupShaderConsts ( LightMap lightMap, Rectangle region, RadiositySettings settings )
 		{
-			device.PipelineState	=	factory[(int)pass];
-				
 			var radiosity = new RADIOSITY();
 
 			int x		=	region.X;
@@ -398,8 +371,16 @@ namespace Fusion.Engine.Graphics.GI
 			radiosity.WhiteAlbedo		=	settings.WhiteDiffuse ? 1.0f : 0.0f;
 
 			cbRadiosity.SetData( radiosity );
+		}
 
-			device.Dispatch( new Int2( width, height ), new Int2( TileSize, TileSize ) );
+
+		void DispatchRegion( Flags pass, LightMap lightMap, Rectangle region, RadiositySettings settings )
+		{
+			device.PipelineState	=	factory[(int)pass];
+				
+			SetupShaderConsts( lightMap, region, settings );
+
+			device.Dispatch( new Int2( region.Width, region.Height ), new Int2( TileSize, TileSize ) );
 		}
 
 
@@ -459,13 +440,28 @@ namespace Fusion.Engine.Graphics.GI
 
 
 
-		void FilterLightmap( RenderTarget2D irradiance, RenderTarget2D temp, ShaderResource albedo, Rectangle region, float lumaFactor, float alphaFactor, float falloff )
+		void FilterLightmap( RenderTarget2D irradiance, RenderTarget2D temp, ShaderResource albedo, Rectangle region, RadiositySettings settings )
 		{
-			if (!SkipFiltering)
+			float falloff		=	settings.FilterWeight;
+			float lumaWeight	=	settings.FilterWeight;
+			float alphaWeight	=	20.0f;
+
+			if (settings.UseBilateral)
 			{
-				var tempRegion = new Rectangle( 0,0, RegionSize, RegionSize );
-				rs.BilateralFilter.FilterSHL1ByAlphaSinglePass( temp, tempRegion, irradiance, albedo, region, lumaFactor, alphaFactor, falloff ); 
-				rs.DilateFilter.DilateByMaskAlpha( irradiance, region, temp, tempRegion, albedo, region, 0, 1 );
+				rs.BilateralFilter.FilterSHL1ByAlphaSinglePass( temp, region, irradiance, albedo, region, lumaWeight, alphaWeight, falloff ); 
+			}
+			else
+			{
+				rs.Filter.Copy( temp.Surface, irradiance );
+			}
+
+			if (settings.UseDilate)
+			{
+				rs.DilateFilter.DilateByMaskAlpha( irradiance, region, temp, region, albedo, region, 0, 1 );
+			}
+			else
+			{
+				rs.Filter.Copy( irradiance.Surface, temp );
 			}
 		}
 

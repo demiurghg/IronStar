@@ -24,6 +24,7 @@ $ubershader 	INTEGRATE3
 ------------------------------------------------------------------------------*/
 
 // small addition to tell lit and unlit areas
+static const float NoLight = 0.00001f;
 static const float3 LightEpsilon = float3( 0.0001f, 0.0001f, 0.0001f );
 static const float3 WhiteColor = float3( 0.875f, 0.875f, 0.875f );
 
@@ -270,15 +271,15 @@ void CSMain(
 	int2	loadXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
 	int2	storeXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
 	
-	float4	irradianceR	=	float4( 0.0001f, 0, 0, 0 );
-	float4	irradianceG	=	float4( 0.0001f, 0, 0, 0 );
-	float4	irradianceB	=	float4( 0.0001f, 0, 0, 0 );
+	float4	irradianceR	=	float4( NoLight, 0, 0, 0 );
+	float4	irradianceG	=	float4( NoLight, 0, 0, 0 );
+	float4	irradianceB	=	float4( NoLight, 0, 0, 0 );
 	
 	float3	lmNormal	=	Normal	[ loadXY ].xyz * 2 - 1;
 			lmNormal	=	normalize(lmNormal);
 	float3	lmPosition	=	Position[ loadXY ].xyz;// + lmNormal * 0.01;
 	uint  num_samples	=	Radiosity.NumRays;
-	float k = 0.5f / num_samples;
+	float k = 1.0f / num_samples;
 	
 	float3	random_vector	=	hammersley_sphere_uniform( groupIndex, TileSize * TileSize );
 	
@@ -287,9 +288,8 @@ void CSMain(
 	{
 		float3	rayDir		=	normalize(hammersley_sphere_uniform( i, num_samples ));
 				rayDir		=	reflect( rayDir, random_vector );
-				rayDir		=	normalize( rayDir + lmNormal * 1.01 );
 		
-		if (true || dot(rayDir, lmNormal)>0.01)
+		if (dot(rayDir, lmNormal)>0.01)
 		{
 			RAY 	ray		=	ConstructRay( lmPosition, rayDir );
 			bool	hit		=	RayTrace( ray, RtTriangles, RtBvhTree );
@@ -304,7 +304,7 @@ void CSMain(
 				float2 	lmCoord2	=	RtLmVerts[ triIndex*3+2 ].LMCoord;
 				float2	lmCoord		=	lerp_barycentric_coords( lmCoord0, lmCoord1, lmCoord2, ray.uv );
 				float	nDotL		=	max( 0, -dot( hitNormal, rayDir ) );
-				float3	albedo		=	pow(Albedo.SampleLevel( LinearSampler, lmCoord, 0 ).rgb, 1/2.2f);
+				float3	albedo		=	Albedo.SampleLevel( LinearSampler, lmCoord, 0 ).rgb;
 						albedo		=	lerp( albedo, 0.9f, Radiosity.WhiteAlbedo );
 				light				=	nDotL * albedo * Radiance.SampleLevel( LinearSampler, lmCoord, 0 ).rgb;//*/
 			}
@@ -349,20 +349,20 @@ void CSMain(
 	int3	loadXYZ		=	dispatchThreadId.xyz;
 	int3	storeXYZ	=	dispatchThreadId.xyz;
 
-	float4	irradianceR	=	float4( 0.001, 0, 0, 0 );
-	float4	irradianceG	=	float4( 0.001, 0, 0, 0 );
-	float4	irradianceB	=	float4( 0.001, 0, 0, 0 );
+	float4	irradianceR	=	float4( NoLight, 0, 0, 0 );
+	float4	irradianceG	=	float4( NoLight, 0, 0, 0 );
+	float4	irradianceB	=	float4( NoLight, 0, 0, 0 );
 	
 	float3	lmPosition	=	mul( float4(storeXYZ, 1.0f), Radiosity.VoxelToWorld ).xyz;
 
-	static const uint NUM_SAMPLES	=	64;
-	float k = 1.0f / NUM_SAMPLES;
+	uint  num_samples	=	Radiosity.NumRays;
+	float k = 1.0f / num_samples;
 	
 	float3	random_vector	=	hammersley_sphere_uniform( groupIndex, TileSize * TileSize );
 	
-	for (uint i=0; i<NUM_SAMPLES; i++)
+	for (uint i=0; i<num_samples; i++)
 	{
-		float3	rayDir		=	hammersley_sphere_uniform( i, NUM_SAMPLES );
+		float3	rayDir		=	hammersley_sphere_uniform( i, num_samples );
 		
 		if (true)
 		{

@@ -63,9 +63,9 @@
         "Depth": 64.0,
         "Visible": true,
         "Frozen": false,
-        "TranslateX": 0.0,
+        "TranslateX": 12.0,
         "TranslateY": 8.0,
-        "TranslateZ": 0.0,
+        "TranslateZ": -3.57816124,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
@@ -76,7 +76,11 @@
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 256,
     "NumBounces": 2,
-    "UseFilter": true,
+    "Bias": 0,
+    "UseBilateral": true,
+    "UseDilate": true,
+    "FilterFalloff": 0.5,
+    "FilterWeight": 0.5,
     "WhiteDiffuse": false
   }
 }

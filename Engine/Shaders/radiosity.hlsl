@@ -260,6 +260,25 @@ void StoreLightmap( int2 xy, float4 shR, float4 shG, float4 shB )
 
 groupshared bool skip_tile_processing = false;
 
+static const uint PatternSize = 2;
+
+float3 GetRandomVector(uint2 xy)
+{
+	uint id = (xy.x%PatternSize) + (xy.y%PatternSize) * PatternSize;
+	return hammersley_sphere_uniform(id, PatternSize*PatternSize);
+}
+
+uint Interlace(uint x)
+{
+	return (x & 0xFFF0) | ((x&0x03)<<2) | ((x&0xC)>>2);
+}
+
+uint2 Interlace(uint2 xy)
+{
+	return uint2( Interlace(xy.x), Interlace(xy.y) );
+}
+
+
 [numthreads(TileSize,TileSize,1)] 
 void CSMain( 
 	uint3 groupId : SV_GroupID, 
@@ -268,8 +287,12 @@ void CSMain(
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
 	uint2 	tileLoadXY	=	groupId.xy + Radiosity.RegionXY/8;
-	int2	loadXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
-	int2	storeXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
+	uint2	loadXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
+	uint2	storeXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
+	
+	loadXY	=	Interlace(loadXY);
+	storeXY	=	Interlace(storeXY);
+
 	
 	float4	irradianceR	=	float4( NoLight, 0, 0, 0 );
 	float4	irradianceG	=	float4( NoLight, 0, 0, 0 );
@@ -281,7 +304,8 @@ void CSMain(
 	uint  num_samples	=	Radiosity.NumRays;
 	float k = 1.0f / num_samples;
 	
-	float3	random_vector	=	hammersley_sphere_uniform( groupIndex, TileSize * TileSize );
+	
+	float3	random_vector	=	GetRandomVector( loadXY.xy );
 	
 	[loop]
 	for (uint i=0; i<num_samples; i++)

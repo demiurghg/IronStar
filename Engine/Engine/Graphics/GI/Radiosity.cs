@@ -24,7 +24,7 @@ namespace Fusion.Engine.Graphics.GI
 	[RequireShader("radiosity", true)]
 	public partial class Radiosity : RenderComponent
 	{
-		public const int RegionSize = 64;
+		public const int RegionSize = 128;
 
 		[ShaderDefine]	const int TileSize			=	RadiositySettings.TileSize;
 		[ShaderDefine]	const int ClusterSize		=	RadiositySettings.ClusterSize;
@@ -162,6 +162,7 @@ namespace Fusion.Engine.Graphics.GI
 				.ToArray();
 
 			var sw = new Stopwatch();
+			sw.Start();
 
 			using ( var rasterizer = new LightMapRasterizer( rs, instances, settings ) )
 			{
@@ -177,6 +178,7 @@ namespace Fusion.Engine.Graphics.GI
 				}
 			}
 
+			sw.Stop();
 			Log.Message("Done : {0}", sw.Elapsed);
 		}
 

@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fusion.Core.Binding {
-	public class DelegateBinding<TValue> : IValueBinding {
+namespace Fusion.Core.Binding 
+{
+	public class DelegateBinding<TValue> : IValueBinding 
+	{
 
 		readonly Func<TValue> getFunc;
 		readonly Action<TValue> setFunc;

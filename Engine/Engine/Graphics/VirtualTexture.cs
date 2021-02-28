@@ -54,27 +54,24 @@ namespace Fusion.Engine.Graphics {
 		{
 			int num;
 
-			using ( var reader = new BinaryReader( stream ) ) {				
-			
+			using ( var reader = new BinaryReader( stream ) ) 
+			{
 				num	=	reader.ReadInt32();
 
 				VTSegments = new VTSegmentCollection();
 
-				for ( int i=0; i<num; i++ ) {
-				
+				for ( int i=0; i<num; i++ ) 
+				{
 					var name	=	reader.ReadString();
-					var x       =   reader.ReadInt32();
-					var y       =   reader.ReadInt32();
-					var w       =   reader.ReadInt32();
-					var h       =   reader.ReadInt32();
+					var x		=	reader.ReadInt32();
+					var y		=	reader.ReadInt32();
+					var w		=	reader.ReadInt32();
+					var h		=	reader.ReadInt32();
 					var t		=	reader.ReadBoolean();
 					var c		=	reader.Read<Color>();
 
-					Log.Message("{0} - {1}", name, c);
-
 					VTSegments.Add( name, new VTSegment( name, x, y, w, h, c, t ) );
 				}
-
 			}
 		}
 
@@ -86,21 +83,23 @@ namespace Fusion.Engine.Graphics {
 		/// <returns></returns>
 		internal VTSegment GetTextureSegmentInfo ( string name )
 		{
-			if (string.IsNullOrWhiteSpace(name)) {
+			if (string.IsNullOrWhiteSpace(name)) 
+			{
 				return VTSegment.Empty;
 			}
 
 			VTSegment segmentInfo;
 
-			if ( VTSegments.TryGetValue( name, out segmentInfo ) ) {
-
+			if ( VTSegments.TryGetValue( name, out segmentInfo ) ) 
+			{
 				return segmentInfo;
-
-			} else {
-
+			} 
+			else 
+			{
 				var warning = string.Format("Missing VT region {0}", name);
 
-				if (warnings.Add(warning)) {
+				if (warnings.Add(warning)) 
+				{
 					Log.Warning(warning);
 				}
 
@@ -115,8 +114,10 @@ namespace Fusion.Engine.Graphics {
 			serializer.NullValueHandling	=	NullValueHandling.Ignore;
 			serializer.Formatting			=	Formatting.Indented;
 
-			using (var sw = new StreamWriter(stream)) {
-				using (var writer = new JsonTextWriter(sw)) {
+			using (var sw = new StreamWriter(stream)) 
+			{
+				using (var writer = new JsonTextWriter(sw)) 
+				{
 					serializer.Serialize(writer, vt);
 				}
 			}
@@ -128,8 +129,10 @@ namespace Fusion.Engine.Graphics {
 			var serializer					=	new JsonSerializer();
 			serializer.NullValueHandling	=	NullValueHandling.Ignore;
 
-			using (var sw = new StreamReader(stream)) {
-				using (var reader = new JsonTextReader(sw)) {
+			using (var sw = new StreamReader(stream)) 
+			{
+				using (var reader = new JsonTextReader(sw)) 
+				{
 					return serializer.Deserialize<VirtualTexture>(reader);
 				}
 			}

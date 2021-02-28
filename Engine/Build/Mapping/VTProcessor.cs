@@ -78,22 +78,21 @@ namespace Fusion.Build.Mapping {
 			//
 			//	Process tiles :
 			//
-			using ( var tileStorage = context.GetVTStorage() ) {
-
+			using ( var tileStorage = context.GetVTStorage() ) 
+			{
 				var pageTable	=	CreateVTTextureTable( iniFiles, context, tileStorage );
-
 
 				//
 				//	Get allocator and pack/repack textures :
 				//	
 				Allocator2D allocator = null;
 
-				if (tileStorage.FileExists( targetAllocator ) && tileStorage.FileExists( targetMegatexture ) ) {
-
+				if (tileStorage.FileExists( targetAllocator ) && tileStorage.FileExists( targetMegatexture ) ) 
+				{
 					Log.Message("Loading VT allocator...");
 
-					using ( var allocStream = tileStorage.OpenRead( targetAllocator ) ) {
-
+					using ( var allocStream = tileStorage.OpenRead( targetAllocator ) ) 
+					{
 						allocator		=	Allocator2D.LoadState( allocStream );
 						var targetTime	=	tileStorage.GetLastWriteTimeUtc(targetMegatexture);
 
@@ -101,25 +100,27 @@ namespace Fusion.Build.Mapping {
 						RepackTextureAtlas( pageTable, allocator, targetTime );
 					}
 
-					using ( var vtStream = AssetStream.OpenRead( targetMegatexturePath ) ) {
+					using ( var vtStream = AssetStream.OpenRead( targetMegatexturePath ) ) 
+					{
 						var vt = new VirtualTexture( vtStream );
-						foreach ( var tex in pageTable.SourceTextures ) {
+						foreach ( var tex in pageTable.SourceTextures ) 
+						{
 							tex.AverageColor = vt.GetTextureSegmentInfo( tex.Name ).AverageColor;
 						}
 					}
-			
-				} else {
-			
+				} 
+				else 
+				{
 					allocator = new Allocator2D(VTConfig.VirtualPageCount);
 
 					Log.Message("Packing ALL textures to atlas...");
 					PackTextureAtlas( pageTable.SourceTextures, allocator );
-
 				}
 
 				Log.Message("Saving VT allocator...");
 
-				using ( var allocStream = tileStorage.OpenWrite( targetAllocator ) ) {
+				using ( var allocStream = tileStorage.OpenWrite( targetAllocator ) ) 
+				{
 					Allocator2D.SaveState( allocStream, allocator );
 				}
 
@@ -134,7 +135,8 @@ namespace Fusion.Build.Mapping {
 				//	Generate mip-maps :
 				//
 				Log.Message("Generating mipmaps...");
-				for (int mip=0; mip<VTConfig.MipCount-1; mip++) {
+				for (int mip=0; mip<VTConfig.MipCount-1; mip++) 
+				{
 					Log.Message("Generating mip level {0}/{1}...", mip, VTConfig.MipCount);
 					GenerateMipLevels( context, pageTable, mip, tileStorage );
 				}
@@ -143,12 +145,16 @@ namespace Fusion.Build.Mapping {
 				//
 				//	Write asset :
 				//
-				using ( var stream = tileStorage.OpenWrite( targetMegatexture ) ) {
-					using ( var assetStream = AssetStream.OpenWrite( stream, "", new[] {""}, typeof(VirtualTexture) ) ) {
-						using ( var sw = new BinaryWriter( assetStream ) ) {
+				using ( var stream = tileStorage.OpenWrite( targetMegatexture ) ) 
+				{
+					using ( var assetStream = AssetStream.OpenWrite( stream, "", new[] {""}, typeof(VirtualTexture) ) ) 
+					{
+						using ( var sw = new BinaryWriter( assetStream ) ) 
+						{
 							sw.Write( pageTable.SourceTextures.Count );
 
-							foreach ( var tex in pageTable.SourceTextures ) {
+							foreach ( var tex in pageTable.SourceTextures ) 
+							{
 								VTTexture.Write( tex, sw );
 							}
 						}
@@ -175,10 +181,10 @@ namespace Fusion.Build.Mapping {
 		{
 			var texTable	=	new VTTextureTable();
 
-			foreach ( var mtrlFile in materialFilePaths ) {
-
-				using ( var stream = File.OpenRead( mtrlFile ) ) {
-
+			foreach ( var mtrlFile in materialFilePaths ) 
+			{
+				using ( var stream = File.OpenRead( mtrlFile ) ) 
+				{
 					var name		=	ContentUtils.GetPathWithoutExtension( context.GetRelativePath( mtrlFile ) );
 					var content		=	Material.LoadFromIniFile( stream, name );
 					var writeTime	=	File.GetLastWriteTimeUtc( mtrlFile );
@@ -187,13 +193,15 @@ namespace Fusion.Build.Mapping {
 						continue;
 					}*/
 
-					try {
+					try 
+					{
 						var tex = new VTTexture( content, name, context, writeTime );
 						texTable.AddTexture( tex );
-					} catch ( Exception e ) {
+					} 
+					catch ( Exception e ) 
+					{
 						Log.Warning("{0}. Skipped.", e.Message );
 					}
-
 				}
 			}
 
@@ -209,8 +217,8 @@ namespace Fusion.Build.Mapping {
 		/// <param name="textures"></param>
 		void PackTextureAtlas ( IEnumerable<VTTexture> textures, Allocator2D allocator )
 		{
-			foreach ( var tex in textures ) {
-
+			foreach ( var tex in textures ) 
+			{
 				var size = Math.Max(tex.Width/128, tex.Height/128);
 
 				var addr = allocator.Alloc( size, tex.Name );
@@ -220,7 +228,6 @@ namespace Fusion.Build.Mapping {
 				tex.TilesDirty		=	true;
 
 				Log.Message("...add: {0} : {1}x{2} : tile[{3},{4}]", tex.Name, tex.Width, tex.Height, addr.X, addr.Y );
-
 			}
 		}
 
@@ -236,16 +243,17 @@ namespace Fusion.Build.Mapping {
 			//
 			var blockInfo = allocator.GetAllocatedBlockInfo();
 
-			foreach ( var block in blockInfo ) {
-
-				if (!vtexTable.Contains( block.Tag )) {
-			
+			foreach ( var block in blockInfo ) 
+			{
+				if (!vtexTable.Contains( block.Tag )) 
+				{
 					Log.Message("...removed: {0}", block.Tag);
 					allocator.Free( block.Address );
-
-				} else {
-					
-					if (vtexTable[ block.Tag ].IsModified(targetWriteTime)) {
+				} 
+				else 
+				{
+					if (vtexTable[ block.Tag ].IsModified(targetWriteTime)) 
+					{
 						Log.Message("...changed: {0}", block.Tag );
 						allocator.Free( block.Address );
 					} 
@@ -259,15 +267,17 @@ namespace Fusion.Build.Mapping {
 			var blockDictionary	=	allocator.GetAllocatedBlockInfo().ToDictionary( bi => bi.Tag );
 			var newTextureList		=	new List<VTTexture>();
 
-			foreach ( var tex in vtexTable.SourceTextures ) {
+			foreach ( var tex in vtexTable.SourceTextures ) 
+			{
 				Allocator2D.BlockInfo bi;
 
-				if (blockDictionary.TryGetValue( tex.Name, out bi )) {
-
+				if (blockDictionary.TryGetValue( tex.Name, out bi )) 
+				{
 					tex.TexelOffsetX = bi.Address.X * VTConfig.PageSize;
 					tex.TexelOffsetY = bi.Address.Y * VTConfig.PageSize;
-
-				} else {
+				}
+				else 
+				{
 					newTextureList.Add( tex );
 				}
 			}
@@ -286,8 +296,10 @@ namespace Fusion.Build.Mapping {
 			int totalCount = textures.Count;
 			int counter = 1;
 
-			Parallel.ForEach( textures, texture => {
-				if (texture.TilesDirty) {
+			Parallel.ForEach( textures, texture => 
+			{
+				if (texture.TilesDirty) 
+				{
 					int counterValue = Interlocked.Increment( ref counter );
 
 					Log.Message("...{0}/{1} - {2}", counterValue, totalCount, texture.Name );
@@ -326,16 +338,12 @@ namespace Fusion.Build.Mapping {
 			int sizeB   = VTConfig.PageSizeBordered;
 			var cache   = new TileSamplerCache( mapStorage );
 
-			foreach ( var vttex in pageTable.SourceTextures ) {
-
-				if (!vttex.TilesDirty) {
+			foreach ( var vttex in pageTable.SourceTextures ) 
+			{
+				if (!vttex.TilesDirty) 
+				{
 					continue;
 				}
-
-				/*if ( vttex.Width>>sourceMipLevel <= VTConfig.PageSize ) {
-					continue;
-				} */
-
 
 				int startX	= RoundDown2( vttex.AddressX, sourceMipLevel );
 				int startY	= RoundDown2( vttex.AddressY, sourceMipLevel );
@@ -346,12 +354,13 @@ namespace Fusion.Build.Mapping {
 				int endExX	= RoundUp2( vttex.AddressX + wTiles, sourceMipLevel );
 				int endExY	= RoundUp2( vttex.AddressY + hTiles, sourceMipLevel );
 
-				for ( int pageX = startX; pageX < endExX; pageX+=2 ) {
-					for ( int pageY = startY; pageY < endExY; pageY+=2 ) {
+				for ( int pageX = startX; pageX < endExX; pageX+=2 ) 
+				{
+					for ( int pageY = startY; pageY < endExY; pageY+=2 ) 
+					{
+						var address			=	new VTAddress( pageX/2, pageY/2, sourceMipLevel+1 );
 
-						var address			=   new VTAddress( pageX/2, pageY/2, sourceMipLevel+1 );
-
-						var tile			=   new VTTile(address);
+						var tile			=	new VTTile(address);
 
 						var offsetX			=   (pageX) * VTConfig.PageSize;
 						var offsetY			=   (pageY) * VTConfig.PageSize;
@@ -361,9 +370,10 @@ namespace Fusion.Build.Mapping {
 						var normalValue		=   Color.Zero;
 						var specularValue   =   Color.Zero;
 
-						for ( int x = 0; x<sizeB; x++ ) {
-							for ( int y = 0; y<sizeB; y++ ) {
-
+						for ( int x = 0; x<sizeB; x++ ) 
+						{
+							for ( int y = 0; y<sizeB; y++ ) 
+							{
 								int srcX    =   offsetX + x*2 - border * 2;
 								int srcY    =   offsetY + y*2 - border * 2;
 
@@ -372,7 +382,6 @@ namespace Fusion.Build.Mapping {
 								SampleMegatextureQ4( cache, srcX, srcY, sourceMipLevel, ref colorValue, ref normalValue, ref specularValue );
 
 								tile.SetValues( x, y, ref colorValue, ref normalValue, ref specularValue );
-
 							}
 						}
 

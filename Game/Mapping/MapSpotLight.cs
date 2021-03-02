@@ -13,6 +13,7 @@ using System.Drawing.Design;
 using Fusion;
 using Fusion.Core.Shell;
 using IronStar.ECS;
+using Fusion.Widgets.Advanced;
 
 namespace IronStar.Mapping {
 
@@ -25,40 +26,40 @@ namespace IronStar.Mapping {
 
 		[AECategory("Light Color")]
 		[AEDisplayName("Intensity")]
-		[AEValueRange(0, 5000, 10, 1)]
+		[AESlider(0, 5000, 10, 1)]
 		public float LightIntensity { get; set; } = 100;
 		
 
 
 		[AECategory("Spot Shape")]
 		[AEDisplayName("Outer Radius")]
-		[AEValueRange(0, 100, 1, 0.125f)]
+		[AESlider(0, 100, 1, 0.125f)]
 		public float OuterRadius { get; set; } = 5;
 		
 		[AECategory("Spot Shape")]
 		[AEDisplayName("Tube Radius")]
-		[AEValueRange(0, 50, 1, 0.125f)]
+		[AESlider(0, 50, 1, 0.125f)]
 		public float TubeRadius { get; set; } = 0.125f;
 		
 		[AECategory("Spot Shape")]
 		[AEDisplayName("Tube Length")]
-		[AEValueRange(0, 50, 1, 0.125f)]
+		[AESlider(0, 50, 1, 0.125f)]
 		public float TubeLength { get; set; } = 0.0f;
 		
 		[AECategory("Spot Shape")]
-		[AEValueRange(0, 4, 1/4f, 1/64f)]
+		[AESlider(0, 4, 1/4f, 1/64f)]
 		public float NearPlane { get; set; } = 0.125f;
 		
 		[AECategory("Spot Shape")]
-		[AEValueRange(0, 100, 1, 1/8f)]
+		[AESlider(0, 100, 1, 1/8f)]
 		public float FarPlane { get; set; } = 5;
 		
 		[AECategory("Spot Shape")]
-		[AEValueRange(0, 150, 15, 1)]
+		[AESlider(0, 150, 15, 1)]
 		public float FovVertical { get; set; } = 60;
 		
 		[AECategory("Spot Shape")]
-		[AEValueRange(0, 150, 15, 1)]
+		[AESlider(0, 150, 15, 1)]
 		public float FovHorizontal { get; set; } = 60;
 
 		[AECategory("Spot-light")]
@@ -77,17 +78,17 @@ namespace IronStar.Mapping {
 		
 		[AECategory("Spot Shadow")]
 		[AEDisplayName("Shadow LOD Bias")]
-		[AEValueRange(0, 8, 1, 1)]
+		[AESlider(0, 8, 1, 1)]
 		public int LodBias { get; set; } = 0;
 		
 		[AECategory("Spot Shadow")]
 		[AEDisplayName("Shadow Depth Bias")]
-		[AEValueRange(0, 1/512f, 1/8192f, 1/16384f)]
+		[AESlider(0, 1/512f, 1/8192f, 1/16384f)]
 		public float DepthBias { get; set; } = 1f / 1024f;
 
 		[AECategory("Spot Shadow")]
 		[AEDisplayName("Shadow Slope Bias")]
-		[AEValueRange(0, 8, 1, 0.125f/4.0f)]
+		[AESlider(0, 8, 1, 0.125f/4.0f)]
 		public float SlopeBias { get; set; } = 2;
 
 

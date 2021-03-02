@@ -1,34 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Fusion.Core.Mathematics;
+﻿using Fusion.Core.Mathematics;
 using IronStar.ECS;
-using Fusion.Engine.Graphics;
-using RSOmniLight = Fusion.Engine.Graphics.OmniLight;
 using Fusion.Core.Shell;
+using Fusion.Widgets.Advanced;
 
 namespace IronStar.SFX2
 {
 	public class OmniLight : Component
 	{
 		[AECategory("Omni-light")]
-		[AEValueRange(0, 100, 1, 0.125f)]
+		[AESlider(0, 100, 1, 0.125f)]
 		public float OuterRadius 
 		{ 
 			get; set; 
 		}
 		
 		[AECategory("Omni-light")]
-		[AEValueRange(0, 8, 1, 0.125f)]
+		[AESlider(0, 8, 1, 0.125f)]
 		public float TubeRadius 
 		{ 
 			get; set; 
 		}
 
 		[AECategory("Omni-light")]
-		[AEValueRange(0, 32, 1, 0.125f)]
+		[AESlider(0, 32, 1, 0.125f)]
 		public float TubeLength { get; set; } = 0.0f;
 
 		[AECategory("Light Color")]
@@ -40,7 +34,7 @@ namespace IronStar.SFX2
 
 		[AECategory("Light Color")]
 		[AEDisplayName("Intensity")]
-		[AEValueRange(0, 12, 10, 1)]
+		[AESlider(0, 12, 10, 1)]
 		public float LightIntensity 
 		{ 
 			get; set; 

@@ -16,13 +16,14 @@ using Fusion.Core.Shell;
 using Fusion.Widgets.Binding;
 using IronStar.UI.Controls;
 using IronStar.UI.Controls.Dialogs;
+using Fusion.Widgets.Advanced;
 
-namespace IronStar.UI.Controls.Advanced {
-
-	public partial class PropertyGrid : Frame {
-
-
-		class DeferredChange {
+namespace IronStar.UI.Controls.Advanced 
+{
+	public partial class PropertyGrid : Frame 
+	{
+		class DeferredChange 
+		{
 			public PropertyInfo Property;
 			public object Value;
 		}

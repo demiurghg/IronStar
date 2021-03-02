@@ -14,6 +14,7 @@ using Fusion.Core.Extensions;
 using Fusion.Engine.Graphics.Ubershaders;
 using Fusion.Core.Shell;
 using Fusion.Engine.Imaging;
+using Fusion.Widgets.Advanced;
 
 namespace Fusion.Engine.Graphics {
 
@@ -33,82 +34,82 @@ namespace Fusion.Engine.Graphics {
 
 		[Config]	
 		[AECategory("Sun")]
-		[AEValueRange(-90, 90, 5, 0.1f)]
+		[AESlider(-90, 90, 5, 0.1f)]
 		public float SunAltitude { get; set; } = 45;
 
 		[Config]	
 		[AECategory("Sun")]
-		[AEValueRange(-180, 180, 5, 0.1f)]
+		[AESlider(-180, 180, 5, 0.1f)]
 		public float SunAzimuth { get; set; } = 45;
 
 		[Config]	
 		[AECategory("Sun")]
 		[AEDisplayName("Sun Intensity (Ev)")]
-		[AEValueRange(0, 10, 1, 0.01f)]
+		[AESlider(0, 10, 1, 0.01f)]
 		public float SunIntensityEv { get; set; } = 8;
 
 		[Config]	
 		[AECategory("Sun")]
-		[AEValueRange(1500, 27000, 100, 1)]
+		[AESlider(1500, 27000, 100, 1)]
 		public float SunTemperature { get; set; } = 5900;
 
 		[Config]	
 		[AECategory("Sun")]
-		[AEValueRange(-5, 16, 1, 1)]
+		[AESlider(-5, 16, 1, 1)]
 		public float SunBrightnessEv { get; set; } = 12;
 
 		[Config]	
 		[AECategory("Sun")]
-		[AEValueRange(0, 5, 0.1f, 0.01f)]
+		[AESlider(0, 5, 0.1f, 0.01f)]
 		public float SunAngularSize { get; set; } = 1;
 
 		[Config]	
 		[AECategory("Atmosphere")]
-		[AEValueRange(500, 12000, 500, 10)]
+		[AESlider(500, 12000, 500, 10)]
 		public float PlanetRadius { get; set; } = 6360;
 		
 		[Config]	
-		[AEValueRange(0, 200, 10, 1)]
+		[AESlider(0, 200, 10, 1)]
 		[AECategory("Atmosphere")]
 		public float AtmosphereHeight { get; set; } = 80;
 		
 		[Config]	
-		[AEValueRange(1, 10000, 500, 10)]
+		[AESlider(1, 10000, 500, 10)]
 		[AECategory("Atmosphere")]
 		public float RayleighHeight { get; set; } = 8000;
 		
 		[Config]	
-		[AEValueRange(1, 5000, 200, 10)]
+		[AESlider(1, 5000, 200, 10)]
 		[AECategory("Atmosphere")]
 		public float MieHeight { get; set; } = 1200;
 		
 		[Config]	
-		[AEValueRange(0, 200000, 1000, 10)]
+		[AESlider(0, 200000, 1000, 10)]
 		public float ViewElevation { get; set; } = 0;
 
 		[Config]	
 		[AECategory("Atmosphere")]
-		[AEValueRange(-0.95f, 0.95f, 0.05f, 0.01f)]
+		[AESlider(-0.95f, 0.95f, 0.05f, 0.01f)]
 		public float MieExcentricity { get; set; } = 0.76f;
 		
 		[Config]	
 		[AECategory("Atmosphere")]
 		[AEDisplayName("Sky Exposure (Ev)")]
-		[AEValueRange(-8, 8, 1, 0.1f)]
+		[AESlider(-8, 8, 1, 0.1f)]
 		public float SkyExposure { get; set; } = 0;
 
 		[Config]	
-		[AEValueRange(1000,5000,500,1)]
+		[AESlider(1000,5000,500,1)]
 		public float SkySphereSize { get; set; } = 10f;
 
 		[Config]	
 		[AECategory("Tweaks")]
-		[AEValueRange(-8, 8, 1, 0.1f)]
+		[AESlider(-8, 8, 1, 0.1f)]
 		public float RayleighScale { get; set; } = 0;
 
 		[Config]	
 		[AECategory("Tweaks")]
-		[AEValueRange(-8, 8, 1, 0.1f)]
+		[AESlider(-8, 8, 1, 0.1f)]
 		public float MieScale { get; set; } = 0;
 		
 		[Config]	
@@ -117,48 +118,48 @@ namespace Fusion.Engine.Graphics {
 		
 		[Config]	
 		[AECategory("Tweaks")]
-		[AEValueRange(0, 5, 1, 0.1f)]
+		[AESlider(0, 5, 1, 0.1f)]
 		public float APScale { get; set; } = 0;
 		
 		[Config]	
 		[AECategory("Tweaks")]
-		[AEValueRange(0, 1, 0.1f, 0.001f)]
+		[AESlider(0, 1, 0.1f, 0.001f)]
 		public float AmbientLevel { get; set; } = 0;
 		
 		[Config]	
 		[AECategory("Cirrus Clouds")]
-		[AEValueRange(0, 1, 0.1f, 0.001f)]
+		[AESlider(0, 1, 0.1f, 0.001f)]
 		[AEDisplayName("Cirrus Coverage")]
 		public float CirrusCoverage { get; set; } = 1;
 		
 		[Config]	
 		[AECategory("Cirrus Clouds")]
-		[AEValueRange(0, 12000, 1000f, 1f)]
+		[AESlider(0, 12000, 1000f, 1f)]
 		[AEDisplayName("Cirrus Height (m)")]
 		public float CirrusHeight { get; set; } = 6000;
 		
 		[Config]	
 		[AECategory("Cirrus Clouds")]
-		[AEValueRange(0, 1, 0.1f, 0.01f)]
+		[AESlider(0, 1, 0.1f, 0.01f)]
 		[AEDisplayName("Cirrus Density")]
 		public float CirrusDensity { get; set; } = 1;
 		
 		[Config]	
 		[AECategory("Cirrus Clouds")]
-		[AEValueRange(1, 100, 10f, 1f)]
+		[AESlider(1, 100, 10f, 1f)]
 		[AEDisplayName("Cirrus Size (km)")]
 		public float CirrusSize { get; set; } = 24;
 		
 		[Config]	
 		[AECategory("Wind")]
 		[AEDisplayName("Wind Speed (km/h)")]
-		[AEValueRange(0, 500, 10f, 1f)]
+		[AESlider(0, 500, 10f, 1f)]
 		public float WindVelocity { get; set; } = 240;
 		
 		[Config]	
 		[AECategory("Wind")]
 		[AEDisplayName("Wind Direction")]
-		[AEValueRange(-180, 180, 5f, 1f)]
+		[AESlider(-180, 180, 5f, 1f)]
 		public float WindDirection { get; set; } = 0;
 		
 		[AECategory("Debug")]

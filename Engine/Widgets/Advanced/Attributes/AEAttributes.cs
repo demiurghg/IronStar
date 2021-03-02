@@ -7,45 +7,7 @@ using Fusion.Widgets.Binding;
 
 namespace Fusion.Core.Shell {
 
-	[AttributeUsage(AttributeTargets.Property|AttributeTargets.Method)]
-	public class AECategoryAttribute : Attribute {
-
-		public readonly string Category;
-
-		public AECategoryAttribute( string category ) 
-		{
-			this.Category = category;
-		}
-	}
-
-
-	[AttributeUsage(AttributeTargets.Property|AttributeTargets.Method)]
-	public class AEDisplayNameAttribute : Attribute {
-
-		public readonly string Name;
-
-		public AEDisplayNameAttribute( string name ) 
-		{
-			this.Name = name;
-		}
-	}
-
-
-	[AttributeUsage(AttributeTargets.Method)]
-	public class AECommandAttribute : Attribute {
-	}
-
-
-	[AttributeUsage(AttributeTargets.Property)]
-	public class AEExpandableAttribute : Attribute {
-	}
-
-
-	[AttributeUsage(AttributeTargets.Property)]
-	public class AEIgnoreAttribute : Attribute {
-	}
-
-
+	[Obsolete]
 	[AttributeUsage(AttributeTargets.Property)]
 	public class AEValueRangeAttribute : Attribute {
 
@@ -64,6 +26,7 @@ namespace Fusion.Core.Shell {
 	}
 
 
+	[Obsolete]
 	public class AEClassnameAttribute : Attribute {
 		public readonly string Directory;
 		public AEClassnameAttribute( string dir )
@@ -74,11 +37,6 @@ namespace Fusion.Core.Shell {
 
 
 
-	public abstract class AEExternalEditorAttribute : Attribute {
-		public abstract void RunEditor ( IValueBinding binding );
-	}
-
-
 	public enum AEFileNameMode {
 		NoExtension = 0x0001,
 		FileNameOnly = 0x0002,
@@ -86,6 +44,7 @@ namespace Fusion.Core.Shell {
 
 
 
+	[Obsolete]
 	public class AEFileNameAttribute : Attribute {
 		public readonly string Directory;
 		public readonly string Extension;
@@ -102,6 +61,7 @@ namespace Fusion.Core.Shell {
 	}
 
 
+	[Obsolete]
 	public class AEAtlasImageAttribute : Attribute {
 		public readonly string AtlasName;
 

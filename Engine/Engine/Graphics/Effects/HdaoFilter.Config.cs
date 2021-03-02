@@ -12,11 +12,12 @@ using Fusion.Drivers.Graphics;
 using System.Runtime.InteropServices;
 using Fusion.Engine.Common;
 using Fusion.Core.Shell;
+using Fusion.Widgets.Advanced;
 
-namespace Fusion.Engine.Graphics {
-	internal partial class SsaoFilter {
-
-		
+namespace Fusion.Engine.Graphics 
+{
+	internal partial class SsaoFilter 
+	{
 		[AECategory("HDAO")] [Config] public QualityLevel QualityLevel { get; set; }
 
 		[AECategory("HDAO")] [Config] public float	FadeoutDistance { get; set; } = 50;
@@ -29,6 +30,5 @@ namespace Fusion.Engine.Graphics {
 		[AECategory("Bilateral Filter")] [Config] public float	BilateralDepthFactor { get; set; } = 2;
 		[AECategory("Bilateral Filter")] [Config] public float	BilateralColorFactor { get; set; } = 0;
 		[AECategory("Bilateral Filter")] [Config] public float	BilateralFalloff { get; set; } = 0.2f;
-
 	}
 }

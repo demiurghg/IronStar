@@ -17,6 +17,7 @@ using Fusion.Core.Shell;
 using Fusion.Engine.Graphics.Scenes;
 using IronStar.ECS;
 using IronStar.ECSPhysics;
+using Fusion.Widgets.Advanced;
 
 namespace IronStar.Mapping {
 
@@ -65,7 +66,7 @@ namespace IronStar.Mapping {
 
 		[AECategory( "Appearance" )]
 		[AEDisplayName("Glow Intensity")]
-		[AEValueRange(0,5000,100,1)]
+		[AESlider(0,5000,100,1)]
 		[Description( "Model glow color multiplier" )]
 		public float GlowIntensity { get; set; } = 100;
 

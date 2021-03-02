@@ -13,18 +13,19 @@ using System.Drawing.Design;
 using Fusion;
 using Fusion.Core.Shell;
 using IronStar.ECS;
+using Fusion.Widgets.Advanced;
 
 namespace IronStar.Mapping {
 
 	public class MapLightProbeSphere : MapNode {
 
 		[Category("Light probe")]
-		[AEValueRange(0,256,8,0.25f)]
+		[AESlider(0,256,8,0.25f)]
 		public float Radius { get; set; } = 32;
 
 		[Category("Light probe")]
 		[AEDisplayName("Transition Width")]
-		[AEValueRange(0.25f,64,1,0.25f)]
+		[AESlider(0.25f,64,1,0.25f)]
 		public float Transition  { get; set; } = 8f;
 
 

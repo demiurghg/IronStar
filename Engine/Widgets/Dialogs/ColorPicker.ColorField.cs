@@ -12,11 +12,12 @@ using Fusion.Core.Mathematics;
 using Fusion;
 using Fusion.Core.Input;
 
-namespace Fusion.Widgets.Dialogs {
-	partial class ColorPicker : Frame {
-
-		class ColorField : Frame {
-			
+namespace Fusion.Widgets.Dialogs 
+{
+	partial class ColorPicker : Frame 
+	{
+		class ColorField : Frame 
+		{
 			Func<HSVColor> getFunc;
 			Action<HSVColor> setFunc;
 
@@ -103,12 +104,7 @@ namespace Fusion.Widgets.Dialogs {
 
 				spriteLayer.Draw( null, vLine, Color.Black, clipRectIndex );
 				spriteLayer.Draw( null, hLine, Color.Black, clipRectIndex );
-
 			}
-
-
-
 		}
-		
 	}
 }

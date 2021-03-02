@@ -11,6 +11,7 @@ using IronStar.SFX;
 using Newtonsoft.Json;
 using Fusion.Core.Shell;
 using Fusion.Core.Extensions;
+using Fusion.Widgets.Advanced;
 
 namespace IronStar.Mapping {
 	public class MapEntity : MapNode {

@@ -19,8 +19,6 @@ using Fusion.Widgets.Dialogs;
 
 namespace Fusion.Widgets.Advanced 
 {
-	using Editors;
-
 	public partial class AEPropertyGrid : Frame 
 	{
 		public const int VerticalPadding = 0;
@@ -49,6 +47,7 @@ namespace Fusion.Widgets.Advanced
 			defaultEditors.Add( typeof(float),	(name,binding) => new AETextBox( this, name, binding, null ) );
 			defaultEditors.Add( typeof(string),	(name,binding) => new AETextBox( this, name, binding, null ) );
 			defaultEditors.Add( typeof(Color),	(name,binding) => new AEColorPicker( this, name, binding ) );
+			defaultEditors.Add( typeof(Enum),	(name,binding) => new AEColorPicker( this, name, binding ) );
 		}
 
 
@@ -112,6 +111,25 @@ namespace Fusion.Widgets.Advanced
 		}
 
 
+		string GetCategory( PropertyInfo pi, string parentCategory )
+		{
+			var category	=	pi.GetAttribute<AECategoryAttribute>()?.Category;
+
+			if (category==null) 
+			{
+				category	=	parentCategory ?? "Misc";
+			} 
+			else 
+			{
+				if (parentCategory!=null) 
+				{
+					category = parentCategory + "/" + category;
+				}
+			}
+
+			return category;
+		}
+
 
 		/// <summary>
 		/// 
@@ -141,68 +159,27 @@ namespace Fusion.Widgets.Advanced
 				};
 
 				var name		=	pi.GetAttribute<AEDisplayNameAttribute>()?.Name ?? pi.Name;
-				var category	=	pi.GetAttribute<AECategoryAttribute>()?.Category;
+				var category	=	GetCategory(pi, subcat);
 
-				if (category==null) 
+				EditorCreator creator;
+				var useDefaultEditor = true;
+				var binding = new PropertyBinding( obj, pi, OnPropertyChange );
+
+				//	try custom editor first :
+				foreach ( var editor in pi.GetCustomAttributes() )
 				{
-					category	=	subcat ?? "Misc";
-				} 
-				else 
-				{
-					if (subcat!=null) 
+					if (editor is AEEditorAttribute)
 					{
-						category = subcat + "/" + category;
+						useDefaultEditor = false;
+						AddToCollapseRegion( category, (editor as AEEditorAttribute).CreateEditor( this, name, binding ) );
 					}
 				}
 
-
-				EditorCreator creator;
-
-				if ( defaultEditors.TryGetValue( pi.PropertyType, out creator ) )
+				//	fallback for default editors :
+				if ( useDefaultEditor && defaultEditors.TryGetValue( pi.PropertyType, out creator ) )
 				{
-					AddToCollapseRegion( category, creator( name, new PropertyBinding( obj, pi, OnPropertyChange ) ) );
+					AddToCollapseRegion( category, creator( name, binding ) );
 				}
-				else
-				{
-				}
-
-				/*if (pi.PropertyType==typeof(bool)) 
-				{
-					AddCheckBox( category, name, ()=>(bool)(pi.GetValue(obj)), (val)=>setFunc(val) );
-				} */
-
-				if (pi.PropertyType==typeof(float)) {
-					/*var min		=	1.0f;
-					var max		=	100.0f;
-					var step	=	5.0f;
-					var pstep	=	1.0f;
-
-					var range	=	pi.GetAttribute<AEValueRangeAttribute>();
-
-					if (range!=null) {
-						min		=	range.Min;
-						max		=	range.Max;
-						step	=	range.RoughStep;
-						pstep	=	range.PreciseStep;
-						AddSlider( category, name, ()=>(float)(pi.GetValue(obj)), (val)=>setFunc(val), min, max, step, pstep );
-					} else {
-						AddTextBoxNum( category, name, 
-							()	 => StringConverter.ConvertToString( pi.GetValue(obj) ),
-							(val)=>	setFunc( StringConverter.ToSingle(val) ),
-							null );
-					} */
-				}
-
-				/*if (pi.PropertyType==typeof(int)) {
-					AddTextBoxNum( category, name, 
-						()	 => StringConverter.ConvertToString( pi.GetValue(obj) ),
-						(val)=>	setFunc( StringConverter.ToInt32(val) ),
-						null );
-				} */
-
-				/*if (pi.PropertyType==typeof(Color)) {
-					AddColorPicker( category, name, ()=>(Color)(pi.GetValue(obj)), (val)=>setFunc(val) );
-				} */
 
 				if (pi.PropertyType.IsEnum) {
 
@@ -323,15 +300,15 @@ namespace Fusion.Widgets.Advanced
 		}
 
 
-		public void AddCheckBox ( string category, string name, Func<bool> getFunc, Action<bool> setFunc )
+		/*public void AddCheckBox ( string category, string name, Func<bool> getFunc, Action<bool> setFunc )
 		{
 			AddToCollapseRegion( category, new AECheckBox( this, name, new DelegateBinding<bool>(getFunc, setFunc) ) );
 		}
 
 		public void AddSlider ( string category, string name, Func<float> getFunc, Action<float> setFunc, float min, float max, float step, float pstep )
 		{
-			AddToCollapseRegion( category, new AESlider( this, name, getFunc, setFunc, min, max, step, pstep ) );
-		}
+			//AddToCollapseRegion( category, new AESlider( this, name, getFunc, setFunc, min, max, step, pstep ) );
+		} */
 
 		public void AddTextBox ( string category, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc )
 		{

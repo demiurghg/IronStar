@@ -11,7 +11,7 @@ using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Widgets;
 
-namespace Fusion.Widgets.Advanced.Editors
+namespace Fusion.Widgets.Advanced
 {
 	class AEDropDown : AEBaseEditor 
 	{

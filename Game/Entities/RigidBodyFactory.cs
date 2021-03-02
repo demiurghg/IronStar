@@ -21,12 +21,13 @@ using BEPUphysics.PositionUpdating;
 using Fusion.Core.IniParser.Model;
 using System.ComponentModel;
 using Fusion.Core.Shell;
-//using BEPUphysics.
+using Fusion.Widgets.Advanced;
 
 
-namespace IronStar {
-	public class RigidBodyFactory : EntityFactoryContent {
-
+namespace IronStar 
+{
+	public class RigidBodyFactory : EntityFactoryContent 
+	{
 		[AECategory("Physics")]
 		public float  Width  { get; set; } = 1;
 		[AECategory("Physics")]

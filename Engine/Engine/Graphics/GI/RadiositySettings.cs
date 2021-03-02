@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Shell;
 using Fusion.Core.Mathematics;
+using Fusion.Widgets.Advanced;
 
 namespace Fusion.Engine.Graphics.GI
 {
@@ -15,15 +16,15 @@ namespace Fusion.Engine.Graphics.GI
 		public const int ClusterSize = 4;
 
 		[AECategory("Quality")]
-		[AEValueRange( 32, 1024, 32, 1 )]
+		[AESlider( 32, 1024, 32, 1 )]
 		public int NumRays { get; set; } = 128;
 
 		[AECategory("Quality")]
-		[AEValueRange( 1, 3, 1, 1 )]
+		[AESlider( 1, 3, 1, 1 )]
 		public int NumBounces { get; set; } = 1;
 
 		[AECategory("Quality")]
-		[AEValueRange( -1, 1, 1, 1 )]
+		[AESlider( -1, 1, 1, 1 )]
 		public int Bias { get; set; } = 0;
 
 		[AECategory("Filtering")]

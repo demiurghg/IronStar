@@ -12,6 +12,7 @@ using Fusion.Engine.Graphics;
 using Fusion.Core.Input;
 using Fusion.Core.Configuration;
 using Fusion.Core.Shell;
+using Fusion.Widgets.Advanced;
 
 namespace Fusion.Engine.Tools {
 	

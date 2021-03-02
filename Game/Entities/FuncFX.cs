@@ -12,15 +12,16 @@ using System.ComponentModel;
 using Fusion.Core.Shell;
 using Fusion.Core;
 using Fusion;
+using Fusion.Widgets.Advanced;
 
-namespace IronStar {
-
-	public enum FuncFXMode {
+namespace IronStar 
+{
+	public enum FuncFXMode 
+	{
 		Persistent,
 		AutoTrigger,
 		Trigger,
 	}
-
 
 
 	/// <summary>

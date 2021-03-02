@@ -8,15 +8,17 @@ using Fusion.Core.Mathematics;
 using Fusion.Engine.Graphics;
 using Fusion.Core.Shell;
 using Newtonsoft.Json;
+using Fusion.Widgets.Advanced;
 
-namespace IronStar.Mapping {
-	public class MapEnvironment {
-
+namespace IronStar.Mapping 
+{
+	public class MapEnvironment 
+	{
 		[AECategory( "Physics" )]
 		public float Gravity { get; set; } = 48;
 
 		[AECategory( "Sky" )]
-		[AEValueRange(2,8,0.25f,0.01f)]
+		[AESlider(2,8,0.25f,0.01f)]
 		public float SkyTrubidity {
 			get {
 				return turbidity;
@@ -28,19 +30,19 @@ namespace IronStar.Mapping {
 		float turbidity = 2;
 
 		[AECategory( "Sky" )]
-		[AEValueRange(0,90,15,0.01f)]
+		[AESlider(0,90,15,0.01f)]
 		public float SunAltitude { get; set; } = 45;
 
 		[AECategory( "Sky" )]
-		[AEValueRange(0,10,1,0.01f)]
+		[AESlider(0,10,1,0.01f)]
 		public float SkyIntensity { get; set; } = 1;
 
 		[AECategory( "Sky" )]
-		[AEValueRange(-180,180,15,0.1f)]
+		[AESlider(-180,180,15,0.1f)]
 		public float SunAzimuth { get; set; } = 45;
 
 		[AECategory( "Sky" )]
-		[AEValueRange(0,500,10,1)]
+		[AESlider(0,500,10,1)]
 		public float SunIntensity { get; set; } = 100;
 
 		[AECategory( "Fog" )]

@@ -16,7 +16,7 @@ using System.Diagnostics;
 using Fusion.Build.Mapping;
 using Fusion.Engine.Graphics.Ubershaders;
 using System.ComponentModel;
-using Fusion.Core.Shell;
+using Fusion.Widgets.Advanced;
 
 namespace Fusion.Engine.Graphics {
 
@@ -115,12 +115,13 @@ namespace Fusion.Engine.Graphics {
 		[Config]
 		[Category("Performamce")]
 		[Description("Size of physical texture")]
-		public int PhysicalSize {
-			get {
-				return physicalSize;
-			}
-			set {
-				if (physicalSize!=value) {
+		public int PhysicalSize 
+		{
+			get { return physicalSize; }
+			set 
+			{
+				if (physicalSize!=value) 
+				{
 					physicalSize = value;
 					physicalSizeDirty = true;
 				}
@@ -130,7 +131,8 @@ namespace Fusion.Engine.Graphics {
 		bool physicalSizeDirty = true;
 
 
-		public float PageScaleRCP {
+		public float PageScaleRCP 
+		{
 			get; private set;
 		}
 

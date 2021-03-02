@@ -12,7 +12,7 @@ using Fusion.Core.Mathematics;
 using Fusion.Widgets;
 using Fusion.Widgets.Binding;
 
-namespace Fusion.Widgets.Advanced.Editors
+namespace Fusion.Widgets.Advanced
 {
 	class AECheckBox : AEBaseEditor 
 	{

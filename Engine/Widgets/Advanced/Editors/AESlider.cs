@@ -10,38 +10,52 @@ using System.Reflection;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Widgets;
+using Fusion.Widgets.Binding;
 
-namespace Fusion.Widgets.Advanced.Editors
+namespace Fusion.Widgets.Advanced
 {
+	public class AESliderAttribute : AEEditorAttribute
+	{
+		readonly float min;
+		readonly float max;
+		readonly float step;
+		readonly float pstep;
+
+		public AESliderAttribute( float min, float max, float step, float preciseStep = 0 )
+		{
+			this.max	=	max;
+			this.min	=	min;
+			this.step	=	step;
+			this.pstep	=	(preciseStep==0) ? (step / 10.0f) : preciseStep;
+		}
+
+		public override Frame CreateEditor( AEPropertyGrid grid, string name, IValueBinding binding )
+		{
+			return new AESlider( grid, name, binding, min, max, step, pstep ); 
+		}
+	}
+
+
 	class AESlider : AEBaseEditor 
 	{
 		readonly Slider slider;
-
-		readonly Func<float>	getFunc;
-		readonly Action<float>	setFunc;
-
-		readonly float min;
-		readonly float max;
+		readonly IValueBinding binding;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="grid"></param>
 		/// <param name="bindingInfo"></param>
-		public AESlider ( AEPropertyGrid grid, string name, Func<float> getFunc, Action<float> setFunc, float min, float max, float step, float pstep ) : base(grid, name)
+		public AESlider ( AEPropertyGrid grid, string name, IValueBinding binding, float min, float max, float step, float pstep ) : base(grid, name)
 		{ 
-			this.getFunc	=	getFunc;
-			this.setFunc	=	setFunc;
-
-			this.min		=	min;
-			this.max		=	max;
+			this.binding	=	binding;
 				
 			Width			=	grid.Width;
 			Height			=	ComputeItemHeight();
 
 			this.StatusChanged +=AESlider_StatusChanged;
 
-			slider				=	new Slider( Frames, getFunc, setFunc, min, max, step, pstep )
+			slider				=	new Slider( Frames, binding, min, max, step, pstep )
 			{
 				Font			=	ColorTheme.NormalFont,
 				PaddingLeft		=	AEPropertyGrid.VerticalPadding, // yes, for slider they should be the same
@@ -92,10 +106,11 @@ namespace Fusion.Widgets.Advanced.Editors
 
 
 		protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
-		{
-			var value = getFunc();
-
-			slider.Text		=	value.ToString();
+		{								
+			if (binding!=null)
+			{
+				slider.Text		=	binding.GetValue()?.ToString();
+			}
 
 			base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
 		}

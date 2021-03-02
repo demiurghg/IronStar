@@ -161,6 +161,12 @@
     <Compile Include="Build\Processors\UbershaderProcessor.cs" />
     <Compile Include="Build\Processors\UbershaderProcessor.Parser.cs" />
     <Compile Include="Build\ToolException.cs" />
+    <Compile Include="Widgets\Advanced\Attributes\AEEditorAttribute.cs" />
+    <Compile Include="Widgets\Advanced\Attributes\AECommandAttribute.cs" />
+    <Compile Include="Widgets\Advanced\Attributes\AEIgnoreAttribute.cs" />
+    <Compile Include="Widgets\Advanced\Attributes\AEExpandableAttribute.cs" />
+    <Compile Include="Widgets\Advanced\Attributes\AEDisplayNameAttribute.cs" />
+    <Compile Include="Widgets\Advanced\Attributes\AECategoryAttribute.cs" />
     <Compile Include="Widgets\Binding\DelegateBinding.cs" />
     <Compile Include="Widgets\Binding\IValueEditor.cs" />
     <Compile Include="Widgets\Binding\IValueBinding.cs" />
@@ -196,7 +202,7 @@
     <Compile Include="Core\Mathematics\UShort3.cs" />
     <Compile Include="Core\Mathematics\Segment.cs" />
     <Compile Include="Core\Mathematics\WaveLength.cs" />
-    <Compile Include="Widgets\Advanced\AEAttributes.cs" />
+    <Compile Include="Widgets\Advanced\Attributes\AEAttributes.cs" />
     <Compile Include="Widgets\Advanced\AEValueProviderAttribute.cs" />
     <Compile Include="Core\Shell\ArgListException.cs" />
     <Compile Include="Core\Shell\ArgList.Context.cs" />

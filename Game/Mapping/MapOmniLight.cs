@@ -13,21 +13,22 @@ using System.Drawing.Design;
 using Fusion;
 using Fusion.Core.Shell;
 using IronStar.ECS;
+using Fusion.Widgets.Advanced;
 
 namespace IronStar.Mapping 
 {
 	public class MapOmniLight : MapNode 
 	{
 		[AECategory("Omni-light")]
-		[AEValueRange(0, 100, 1, 0.125f)]
+		[AESlider(0, 100, 1, 0.125f)]
 		public float OuterRadius { get; set; } = 5;
 		
 		[AECategory("Omni-light")]
-		[AEValueRange(0, 8, 1, 0.125f)]
+		[AESlider(0, 8, 1, 0.125f)]
 		public float TubeRadius { get; set; } = 0.125f;
 
 		[AECategory("Omni-light")]
-		[AEValueRange(0, 32, 1, 0.125f)]
+		[AESlider(0, 32, 1, 0.125f)]
 		public float TubeLength { get; set; } = 0.0f;
 
 		[AECategory("Omni-light")]
@@ -42,7 +43,7 @@ namespace IronStar.Mapping
 
 		[AECategory("Light Color")]
 		[AEDisplayName("Intensity")]
-		[AEValueRange(0, 5000, 10, 1)]
+		[AESlider(0, 5000, 10, 1)]
 		public float LightIntensity { get; set; } = 100;
 
 

@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Fusion.Core.Content;
 using Fusion.Engine.Graphics.Scenes;
+using Fusion.Widgets.Advanced;
 
 namespace Fusion.Engine.Graphics.GI {
 
@@ -24,9 +25,11 @@ namespace Fusion.Engine.Graphics.GI {
 	public class LightProbeViewer : RenderComponent, IPipelineStateProvider 
 	{
 		[Config]
+		[AESlider(0.5f, 10.0f, 0.5f)]
 		public float LightProbeSize { get; set; } = 5.0f;
 		
 		[Config]
+		[AESlider(0, RenderSystem.LightProbeMaxSpecularMip, 0.1f)]
 		public float LightProbeMipLevel { get; set; } = 0.0f;
 		
 		[Config]

@@ -9,6 +9,7 @@ using Fusion.Engine.Graphics;
 using RSOmniLight = Fusion.Engine.Graphics.OmniLight;
 using Fusion.Core.Shell;
 using System.IO;
+using Fusion.Widgets.Advanced;
 
 namespace IronStar.SFX2
 {
@@ -17,12 +18,12 @@ namespace IronStar.SFX2
 		public readonly Guid guid;
 
 		[AECategory("Light probe")]
-		[AEValueRange(0,256,8,0.25f)]
+		[AESlider(0,256,8,0.25f)]
 		public float Radius { get; set; } = 32;
 
 		[AECategory("Light probe")]
 		[AEDisplayName("Transition Width")]
-		[AEValueRange(0.25f,64,1,0.25f)]
+		[AESlider(0.25f,64,1,0.25f)]
 		public float Transition  { get; set; } = 8f;
 
 		public LightProbeSphere ( Guid guid )

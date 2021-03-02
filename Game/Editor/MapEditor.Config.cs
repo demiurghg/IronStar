@@ -1,30 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using Fusion;
-using Fusion.Core.Mathematics;
-using Fusion.Engine.Common;
+﻿using Fusion.Core.Mathematics;
 using Fusion.Core;
-using Fusion.Core.Content;
-using Fusion.Engine.Server;
-using Fusion.Engine.Client;
-using Fusion.Core.Extensions;
-using IronStar.SFX;
-using Fusion.Core.IniParser.Model;
-using Fusion.Engine.Graphics;
-using IronStar.Mapping;
-using Fusion.Build;
-using BEPUphysics;
-using IronStar.Editor.Controls;
-using IronStar.Editor.Manipulators;
-using Fusion.Engine.Frames;
 using Fusion.Core.Shell;
 using Fusion.Core.Configuration;
+using Fusion.Widgets.Advanced;
 
-namespace IronStar.Editor {
+namespace IronStar.Editor
+{
 
 	public enum AxisMode {
 		Global,
@@ -51,7 +32,7 @@ namespace IronStar.Editor {
 
 		[Config]
 		[AECategory("Camera")]
-		[AEValueRange(10,160,10,1)]
+		[AESlider(10,160,10,1)]
 		public float CameraFov { 
 			get { return cameraFov; }
 			set { cameraFov = MathUtil.Clamp( value, 10, 160 ); }

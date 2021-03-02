@@ -13,27 +13,28 @@ using System.Drawing.Design;
 using Fusion;
 using Fusion.Core.Shell;
 using IronStar.ECS;
+using Fusion.Widgets.Advanced;
 
 namespace IronStar.Mapping 
 {
 	public class MapLightVolume : MapNode 
 	{
 		[AECategory("Light Volume")]
-		[AEValueRange(4, 256, 4, 1)]
+		[AESlider(4, 256, 4, 1)]
 		public int ResolutionX 
 		{ 
 			get; set; 
 		} = 4;
 		
 		[AECategory("Light Volume")]
-		[AEValueRange(4, 256, 4, 1)]
+		[AESlider(4, 256, 4, 1)]
 		public int ResolutionY 
 		{ 
 			get; set; 
 		} = 4;
 		
 		[AECategory("Light Volume")]
-		[AEValueRange(4, 256, 4, 1)]
+		[AESlider(4, 256, 4, 1)]
 		public int ResolutionZ 
 		{ 
 			get; set; 
@@ -41,21 +42,21 @@ namespace IronStar.Mapping
 
 
 		[AECategory("Light Volume")]
-		[AEValueRange(32, 2048, 64, 4)]
+		[AESlider(32, 2048, 64, 4)]
 		public float Width 
 		{ 
 			get; set; 
 		} = 32;
 		
 		[AECategory("Light Volume")]
-		[AEValueRange(32, 2048, 64, 4)]
+		[AESlider(32, 2048, 64, 4)]
 		public float Height 
 		{ 
 			get; set; 
 		} = 32;
 		
 		[AECategory("Light Volume")]
-		[AEValueRange(32, 2048, 64, 4)]
+		[AESlider(32, 2048, 64, 4)]
 		public float Depth 
 		{ 
 			get; set; 

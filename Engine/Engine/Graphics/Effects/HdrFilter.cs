@@ -14,6 +14,7 @@ using Fusion.Engine.Graphics;
 using Fusion.Engine.Imaging;
 using Fusion.Engine.Graphics.Ubershaders;
 using Fusion.Core.Shell;
+using Fusion.Widgets.Advanced;
 
 
 namespace Fusion.Engine.Graphics 
@@ -51,14 +52,14 @@ namespace Fusion.Engine.Graphics
 		/// Time to adapt. Default value is 0.5 seconds.
 		/// </summary>
 		[Config]
-		[AEValueRange(0.125f, 4f, 0.125f, 0.125f)]
+		[AESlider(0.125f, 4f, 0.125f, 0.125f)]
 		public float AdaptationHalfTime { get; set; } = 0.5f;
 
 		/// <summary>
 		/// Luminance key value. Default value is 0.18.
 		/// </summary>
 		[Config]
-		[AEValueRange(0.045f, 1, 0.05f, 0.01f)]
+		[AESlider(0.045f, 1, 0.05f, 0.01f)]
 		public float KeyValue { get; set; } = 0.18f;
 		
 		/// <summary>
@@ -77,7 +78,7 @@ namespace Fusion.Engine.Graphics
 		/// One means fully bloomed image.
 		/// </summary>
 		[Config]
-		[AEValueRange(0, 1, 0.1f, 0.01f)]
+		[AESlider(0, 1, 0.1f, 0.01f)]
 		public float BloomAmount { get; set; } = 0.1f;
 
 		/// <summary>
@@ -85,7 +86,7 @@ namespace Fusion.Engine.Graphics
 		/// One means fully bloomed image.
 		/// </summary>
 		[Config]
-		[AEValueRange(0, 1, 1f/32f, 1f/256f)]
+		[AESlider(0, 1, 1f/32f, 1f/256f)]
 		public float DirtAmount { get; set; } = 0.9f;
 
 		/// <summary>
@@ -93,7 +94,7 @@ namespace Fusion.Engine.Graphics
 		/// Default value is 1.
 		/// </summary>
 		[Config]
-		[AEValueRange(0, 1, 1f/32f, 1f/256f)]
+		[AESlider(0, 1, 1f/32f, 1f/256f)]
 		public float Saturation { get; set; } = 1.0f;
 
 		static readonly int		MinLogLuminance = -16;
@@ -139,14 +140,14 @@ namespace Fusion.Engine.Graphics
 		/// Dither pattern amount
 		/// </summary>
 		[Config]
-		[AEValueRange(0, 16, 1f, 1f/16f)]
+		[AESlider(0, 16, 1f, 1f/16f)]
 		public float Dithering { get; set; } = 4;
 
 		/// <summary>
 		/// Dither pattern amount
 		/// </summary>
 		[Config]
-		[AEValueRange(0, 1, 1f/16f, 1f/256f)]
+		[AESlider(0, 1, 1f/16f, 1f/256f)]
 		public float Vignette { get; set; } = 1;
 
 

@@ -18,6 +18,7 @@ using Fusion.Engine.Graphics;
 using System.Drawing.Design;
 using Fusion.Core.Content;
 using Fusion.Development;
+using Fusion.Widgets.Advanced;
 using Fusion.Core.Shell;
 
 namespace IronStar.SFX {
@@ -418,7 +419,7 @@ namespace IronStar.SFX {
 		[Editor( typeof( SoundFileLocationEditor ), typeof( UITypeEditor ) )]
 		public string Sound { get; set; } = "";
 
-		[AEValueRange(0,1, 0.125f, 0.125f/16)]
+		[AESlider(0,1, 0.125f, 0.125f/16)]
 		public float Reverb { get; set; } = 1;
 
 		[Description( "Enables and disables sound stage" )]
@@ -503,23 +504,23 @@ namespace IronStar.SFX {
 		public Color BaseColor { get; set;} = new Color(128,128,128,255);
 
 		[AECategory("Hard-surface Decal")]
-		[AEValueRange(0, 1, 1/4f, 1/128f)]
+		[AESlider(0, 1, 1/4f, 1/128f)]
 		public float Roughness { get; set;}= 0.5f;
 
 		[AECategory("Hard-surface Decal")]
-		[AEValueRange(0, 1, 1/4f, 1/128f)]
+		[AESlider(0, 1, 1/4f, 1/128f)]
 		public float Metallic { get; set;} = 0.5f;
 
 		[AECategory("Hard-surface Decal")]
-		[AEValueRange(0, 1, 1/4f, 1/128f)]
+		[AESlider(0, 1, 1/4f, 1/128f)]
 		public float ColorFactor { get; set;} = 1.0f;
 
 		[AECategory("Hard-surface Decal")]
-		[AEValueRange(0, 1, 1/4f, 1/128f)]
+		[AESlider(0, 1, 1/4f, 1/128f)]
 		public float SpecularFactor { get; set;} = 1.0f;
 
 		[AECategory("Hard-surface Decal")]
-		[AEValueRange(0, 1, 1/4f, 1/128f)]
+		[AESlider(0, 1, 1/4f, 1/128f)]
 		public float NormalMapFactor { get; set;} = 1.0f;
 
 

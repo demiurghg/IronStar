@@ -10,6 +10,7 @@ using System.Reflection;
 using Fusion.Core.Mathematics;
 using Fusion;
 using Fusion.Core.Input;
+using Fusion.Widgets.Binding;
 
 namespace Fusion.Widgets.Dialogs {
 	public partial class ColorPicker : Frame {
@@ -119,7 +120,6 @@ namespace Fusion.Widgets.Dialogs {
 
 			this.Missclick +=ColorPicker_Missclick;
 
-
 			colorField	=	new ColorField( Frames, 80+3, 2, 180+2, 100+2, 
 				() => colorHSV, 
 				(hsv) => { colorHSV = hsv; UpdateFromHSV(); }
@@ -140,8 +140,10 @@ namespace Fusion.Widgets.Dialogs {
 
 			sliderRed	=	new Slider( 
 				Frames, 
-				()=>colorRGBA.Red * 255, 
-				(r)=> { colorRGBA.Red = r/255; UpdateFromRGBA(); UpdateSliders(); },
+				new DelegateBinding<float>(
+					()=>colorRGBA.Red * 255, 
+					(r)=> { colorRGBA.Red = r/255; UpdateFromRGBA(); UpdateSliders();}
+				),
 				0, 255, 16, 1 ) {
 					X = 83,
 					Y = 107 + height * 0+1,
@@ -155,8 +157,10 @@ namespace Fusion.Widgets.Dialogs {
 
 			sliderGreen	=	new Slider( 
 				Frames, 
-				()=>colorRGBA.Green*255, 
-				(r)=> { colorRGBA.Green = r/255; UpdateFromRGBA(); UpdateSliders(); },
+				new DelegateBinding<float>(
+					()=>colorRGBA.Green*255, 
+					(r)=> { colorRGBA.Green = r/255; UpdateFromRGBA(); UpdateSliders(); }
+				),
 				0, 255, 16, 1 ) {
 					X = 83,
 					Y = 107 + height * 1+1,
@@ -170,8 +174,10 @@ namespace Fusion.Widgets.Dialogs {
 
 			sliderBlue	=	new Slider( 
 				Frames, 
-				()=>colorRGBA.Blue*255, 
-				(r)=> { colorRGBA.Blue = r/255; UpdateFromRGBA(); UpdateSliders(); },
+				new DelegateBinding<float>(
+					()=>colorRGBA.Blue*255, 
+					(r)=> { colorRGBA.Blue = r/255; UpdateFromRGBA(); UpdateSliders(); }
+				),
 				0, 255, 16, 1 ) {
 					X = 83,
 					Y = 107 + height * 2+1,
@@ -185,8 +191,10 @@ namespace Fusion.Widgets.Dialogs {
 
 			sliderAlpha	=	new Slider( 
 				Frames, 
-				()=>colorRGBA.Alpha*255, 
-				(r)=> { colorRGBA.Alpha = r/255; UpdateFromRGBA(); UpdateSliders(); },
+				new DelegateBinding<float>(
+					()=>colorRGBA.Alpha*255, 
+					(r)=> { colorRGBA.Alpha = r/255; UpdateFromRGBA(); UpdateSliders(); }
+				),
 				0, 255, 16, 1 ) {
 					X = 83,
 					Y = 107 + height * 3+1,
@@ -201,14 +209,16 @@ namespace Fusion.Widgets.Dialogs {
 
 			sliderTemp = new Slider(
 				Frames,
-				()=> temperature,
-				(t)=> { temperature = t; 
-						targetColor = Temperature.GetColor((int)t);  
-						UpdateFromColor(); 
-						UpdateSliders(); 
-						sliderTemp.SliderColor = targetColor; 
-						sliderTemp.Text = t.ToString() + "K";
-					},
+				new DelegateBinding<float>(
+					()=> temperature,
+					(t)=> { temperature = t; 
+							targetColor = Temperature.GetColor((int)t);  
+							UpdateFromColor(); 
+							UpdateSliders(); 
+							sliderTemp.SliderColor = targetColor; 
+							sliderTemp.Text = t.ToString() + "K";
+						}
+					),
 					1000, 40000, 100, 1 ) {
 					X = 83,
 					Y = 107 + height * 4+1,
@@ -222,8 +232,10 @@ namespace Fusion.Widgets.Dialogs {
 
 			sliderSat = new Slider(
 				Frames,
-				()=> colorHSV.S * 100f,
-				(v)=> { colorHSV.S = v/100f; UpdateFromHSV(); UpdateSliders(); },
+				new DelegateBinding<float>(
+					()=> colorHSV.S * 100f,
+					(v)=> { colorHSV.S = v/100f; UpdateFromHSV(); UpdateSliders(); }
+				),
 				0, 100, 1, 1 ) {
 					X = 267,
 					Y = 2,
@@ -235,9 +247,6 @@ namespace Fusion.Widgets.Dialogs {
 					ForeColor = new Color(0,0,0,160),
 					Vertical = true,
 				};
-
-
-
 
 			Add( sliderRed );
 			Add( sliderGreen );

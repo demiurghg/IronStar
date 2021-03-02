@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core;
 using Fusion.Core.Configuration;
-using Fusion.Core.Shell;
+using Fusion.Widgets.Advanced;
 
 namespace IronStar.AI
 {

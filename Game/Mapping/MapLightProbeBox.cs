@@ -13,36 +13,37 @@ using System.Drawing.Design;
 using Fusion;
 using Fusion.Core.Shell;
 using IronStar.ECS;
+using Fusion.Widgets.Advanced;
 
-namespace IronStar.Mapping {
-
-	public class MapLightProbeBox : MapNode {
-
+namespace IronStar.Mapping 
+{
+	public class MapLightProbeBox : MapNode 
+	{
 		[Category("Light probe")]
-		[AEValueRange(0,256,8,0.25f)]
+		[AESlider(0,256,8,0.25f)]
 		public float Width  { get; set; } = 16;
 
 		[Category("Light probe")]
-		[AEValueRange(0,256,8,0.25f)]
+		[AESlider(0,256,8,0.25f)]
 		public float Height { get; set; } = 16;
 
 		[Category("Light probe")]
-		[AEValueRange(0,256,8,0.25f)]
+		[AESlider(0,256,8,0.25f)]
 		public float Depth  { get; set; } = 16;
 
 		[Category("Light probe")]
 		[AEDisplayName("Transition Width")]
-		[AEValueRange(0.25f,32,1,0.25f)]
+		[AESlider(0.25f,32,1,0.25f)]
 		public float ShellWidth  { get; set; } = 8f;
 
 		[Category("Light probe")]
 		[AEDisplayName("Transition Height")]
-		[AEValueRange(0.25f,32,1,0.25f)]
+		[AESlider(0.25f,32,1,0.25f)]
 		public float ShellHeight  { get; set; } = 8f;
 
 		[Category("Light probe")]
 		[AEDisplayName("Transition Depth")]
-		[AEValueRange(0.25f,32,1,0.25f)]
+		[AESlider(0.25f,32,1,0.25f)]
 		public float ShellDepth  { get; set; } = 8f;
 
 

@@ -11,7 +11,7 @@ using Fusion.Core.Mathematics;
 using Fusion.Widgets;
 using Fusion.Core;
 
-namespace Fusion.Widgets.Advanced.Editors 
+namespace Fusion.Widgets.Advanced 
 {
 	class AEButton : AEBaseEditor 
 	{

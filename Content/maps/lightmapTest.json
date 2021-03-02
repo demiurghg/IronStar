@@ -155,7 +155,7 @@
         "TubeLength": 14.0,
         "LightStyle": "default",
         "Ambient": false,
-        "LightColor": "174, 190, 255, 255",
+        "LightColor": "57, 240, 60, 255",
         "LightIntensity": 12.0,
         "Visible": true,
         "Frozen": false,
@@ -1055,6 +1055,6 @@
     "UseDilate": true,
     "FilterFalloff": 0.5,
     "FilterWeight": 0.5,
-    "WhiteDiffuse": true
+    "WhiteDiffuse": false
   }
 }

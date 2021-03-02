@@ -13,7 +13,7 @@ using Fusion.Widgets;
 using Fusion.Widgets.Dialogs;
 using Fusion.Widgets.Binding;
 
-namespace Fusion.Widgets.Advanced.Editors
+namespace Fusion.Widgets.Advanced
 {
 	class AEColorPicker : AEBaseEditor 
 	{

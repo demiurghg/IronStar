@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using Fusion.Core.Extensions;
 using Fusion.Engine.Graphics.Ubershaders;
+using Fusion.Widgets.Advanced;
 using Fusion.Core.Shell;
 
 namespace Fusion.Engine.Graphics {
@@ -22,17 +23,17 @@ namespace Fusion.Engine.Graphics {
 	{
 		[Config]	
 		[AECategory("Fog")]
-		[AEValueRange(0, 0.1f, 0.01f, 0.001f)]
+		[AESlider(0, 0.1f, 0.01f, 0.001f)]
 		public float FogDensity { get; set; } = 0;
 
 		[Config]	
 		[AECategory("Fog")]
-		[AEValueRange(0, 1000, 50, 1)]
+		[AESlider(0, 1000, 50, 1)]
 		public float FogHeight { get; set; } = 50;
 
 		[Config]	
 		[AECategory("Fog")]
-		[AEValueRange(0, 0.98f, 0.1f, 0.01f)]
+		[AESlider(0, 0.98f, 0.1f, 0.01f)]
 		public float HistoryFactor 
 		{ 
 			get { return historyFactor; }
@@ -59,7 +60,7 @@ namespace Fusion.Engine.Graphics {
 
 		[Config]
 		[AECategory("Fog Grid")]
-		[AEValueRange(1, 5000, 100f, 1f)]
+		[AESlider(1, 5000, 100f, 1f)]
 		public float FogGridHalfDepth { get { return fogGridHalfDepth; } set { fogGridHalfDepth = MathUtil.Clamp( value, 1, 5000 ); } }
 		float fogGridHalfDepth = 300.0f;
 

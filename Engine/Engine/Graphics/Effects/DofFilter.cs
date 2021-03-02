@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using Fusion.Engine.Graphics;
 using Fusion.Engine.Graphics.Ubershaders;
 using Fusion.Core.Shell;
+using Fusion.Widgets.Advanced;
 
 namespace Fusion.Engine.Graphics 
 {
@@ -25,19 +26,19 @@ namespace Fusion.Engine.Graphics
 		public bool Enabled { get; set; } = false;
 
 		[Config]
-		[AEValueRange(35, 70, 5f, 1f)]
+		[AESlider(35, 70, 5f, 1f)]
 		public float FilmFormat { get; set; } = 35;
 
 		[Config]
-		[AEValueRange(1.4f, 22, 0.1f, 0.01f)]
+		[AESlider(1.4f, 22, 0.1f, 0.01f)]
 		public float FNumber { get; set; } = 1;
 
 		[Config]
-		[AEValueRange(0.5f, 100, 0.5f, 0.01f)]
+		[AESlider(0.5f, 100, 0.5f, 0.01f)]
 		public float FocalDistance { get; set; } = 10;
 
 		[Config]
-		[AEValueRange(0, 360, 10f, 1f)]
+		[AESlider(0, 360, 10f, 1f)]
 		public float DiaphragmAngle { get; set; } = 15;
 
 

@@ -9,13 +9,13 @@ using Fusion.Engine.Graphics;
 using System.Reflection;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
+using Fusion.Widgets.Binding;
 
-namespace Fusion.Widgets {
-
-	public class Slider : Frame {
-
-		readonly Func<float> getFunc;
-		readonly Action<float> setFunc;
+namespace Fusion.Widgets 
+{
+	public class Slider : Frame 
+	{
+		readonly IValueBinding binding;
 
 		readonly float min;
 		readonly float max;
@@ -26,15 +26,19 @@ namespace Fusion.Widgets {
 
 		public bool Vertical;
 
+		public float Value { get; set; }
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="grid"></param>
 		/// <param name="bindingInfo"></param>
-		public Slider ( FrameProcessor fp, Func<float> getFunc, Action<float> setFunc, float min, float max, float snap, float psnap ) : base(fp)
+		public Slider ( FrameProcessor fp, IValueBinding binding, float min, float max, float snap, float psnap ) : base(fp)
 		{ 
-			this.getFunc		=	getFunc;
-			this.setFunc		=	setFunc;
+			if (binding.ValueType==typeof(float))
+			{
+				this.binding	=	binding;
+			}
 
 			this.min			=	min;
 			this.max			=	max;
@@ -47,32 +51,38 @@ namespace Fusion.Widgets {
 			this.TextAlignment	=	Alignment.MiddleCenter;
 
 			this.MouseDown  +=Slider_MouseDown;
-			this.MouseMove+=Slider_MouseMove;
-			this.MouseUp+=Slider_MouseUp;
+			this.MouseMove	+=Slider_MouseMove;
+			this.MouseUp	+=Slider_MouseUp;
 				
 			SliderColor	=	ColorTheme.ElementColorNormal;
 		}
 
 
 
-		bool dragStarted = false;
-		bool dragPrecise = false;
-		int dragXPos	= 0;
-		int dragYPos	= 0;
-		float storedValue = 0;
+		bool dragStarted	= false;
+		bool dragPrecise	= false;
+		int dragXPos		= 0;
+		int dragYPos		= 0;
+		float storedValue	= 0;
 
 
 
 		private void Slider_MouseDown( object sender, MouseEventArgs e )
 		{
-			dragStarted = true;
+			dragStarted =	true;
 
-			storedValue	= getFunc();
+			if (binding!=null)
+			{
+				Value	=	(float)binding.GetValue();
+			}
+
+			storedValue	=	Value;
 
 			dragXPos	=	e.X;
 			dragYPos	=	e.Y;
 
-			if (Frames.Game.Keyboard.IsKeyDown( Fusion.Core.Input.Keys.LeftShift ) ) {
+			if (Frames.Game.Keyboard.IsKeyDown( Fusion.Core.Input.Keys.LeftShift ) ) 
+			{
 				dragPrecise = true;
 			}
 		}
@@ -81,41 +91,46 @@ namespace Fusion.Widgets {
 
 		private void Slider_MouseMove( object sender, MouseEventArgs e )
 		{
-			if (dragStarted) {
+			if (dragStarted) 
+			{
 				var padRect	 = GetPaddedRectangle(false);
 				var fraction = 0.0f;
 				var newValue = 0.0f;
 					
-				if (dragPrecise) {
-
+				if (dragPrecise) 
+				{
 					var origin	=	(float)(Math.Round( storedValue / psnap ) * psnap);
 					var delta	=	0;
 
-					if (Vertical) {
+					if (Vertical) 
+					{
 						delta	=	(int)((dragYPos - e.Y)/2);
-					} else {
+					} 
+					else 
+					{
 						delta	=	(int)((e.X - dragXPos)/2);
 					}
 
 					newValue	=	origin + psnap * delta;
-
-				} else {
-
-					if (Vertical) {
+				} 
+				else 
+				{
+					if (Vertical) 
+					{
 						fraction	=	1 - ((e.Y - padRect.Y) / (float)(padRect.Height));
-					} else {
+					} 
+					else 
+					{
 						fraction	=	(e.X - padRect.X) / (float)(padRect.Width);
 					}
 
-
 					newValue	=	min + (max-min)*fraction;
 					newValue	=	(float)(Math.Round( newValue / snap ) * snap);
-					
 				}
 
 				newValue	=	MathUtil.Clamp( newValue, min, max );
-
-				setFunc( newValue );
+				Value		=	newValue;
+				binding?.SetValue( newValue );
 			}
 		}
 
@@ -136,7 +151,7 @@ namespace Fusion.Widgets {
 
 		protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
 		{
-			var value	= getFunc();
+			var value	= binding==null ? Value : (float)binding.GetValue();
 			var padRect	= GetPaddedRectangle(true);
 
 			value		=	MathUtil.Clamp( value, min, max );
@@ -150,11 +165,14 @@ namespace Fusion.Widgets {
 			var rect		=	padRect;
 			var fadeColor	=	new Color( SliderColor.R, SliderColor.G, SliderColor.B, (byte)64 );
 
-			if (Vertical) {
+			if (Vertical) 
+			{
 				rect.Height		=	sliderHeight;
 				rect.Y			=	padRect.Y + padRect.Height - sliderHeight;
 				spriteLayer.DrawGradient( rect, SliderColor, SliderColor, fadeColor, fadeColor, clipRectIndex );
-			} else {
+			} 
+			else 
+			{
 				rect.Width		=	sliderWidth;
 				spriteLayer.DrawGradient( rect, fadeColor, SliderColor, fadeColor, SliderColor, clipRectIndex );
 			}

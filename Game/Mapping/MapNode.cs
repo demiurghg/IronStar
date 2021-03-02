@@ -13,6 +13,7 @@ using Fusion.Core.Shell;
 using Fusion.Engine.Common;
 using Newtonsoft.Json;
 using IronStar.ECS;
+using Fusion.Widgets.Advanced;
 
 namespace IronStar.Mapping {
 	public abstract class MapNode {
@@ -84,7 +85,7 @@ namespace IronStar.Mapping {
 
 		[AECategory("Transform")]
 		[AEDisplayName("Rotate Yaw")]
-		[AEValueRange(-180,180,15,1)]
+		[AESlider(-180,180,15,1)]
 		public float RotateYaw {
 			get { return rotateYaw; }
 			set {
@@ -97,7 +98,7 @@ namespace IronStar.Mapping {
 
 		[AECategory("Transform")]
 		[AEDisplayName("Rotate Pitch")]
-		[AEValueRange(-180,180,15,1)]
+		[AESlider(-180,180,15,1)]
 		public float RotatePitch {
 			get { return rotatePitch; }
 			set {
@@ -110,7 +111,7 @@ namespace IronStar.Mapping {
 
 		[AECategory("Transform")]
 		[AEDisplayName("Rotate Roll")]
-		[AEValueRange(-180,180,15,1)]
+		[AESlider(-180,180,15,1)]
 		public float RotateRoll {
 			get { return rotateRoll; }
 			set {

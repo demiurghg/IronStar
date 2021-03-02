@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Graphics;
 
-namespace Fusion.Widgets {
-
-	public static class ColorTheme {
-
+namespace Fusion.Widgets 
+{
+	#warning Replace with some kind of IColorTheme interface
+	public static class ColorTheme 
+	{
 		public static SpriteFont NormalFont = null;
 		public static SpriteFont BoldFont = null;
 		public static SpriteFont Monospaced = null;

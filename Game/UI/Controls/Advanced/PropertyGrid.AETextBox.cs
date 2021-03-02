@@ -9,7 +9,7 @@ using Fusion.Engine.Graphics;
 using System.Reflection;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
-using Fusion.Core.Binding;
+using Fusion.Widgets.Binding;
 using IronStar.UI.Controls;
 
 namespace IronStar.UI.Controls.Advanced {

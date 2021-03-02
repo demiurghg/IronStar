@@ -13,7 +13,7 @@ using Fusion;
 using Fusion.Engine.Frames.Layouts;
 using Fusion.Core;
 using Fusion.Core.Shell;
-using Fusion.Core.Binding;
+using Fusion.Widgets.Binding;
 using IronStar.UI.Controls;
 using IronStar.UI.Controls.Dialogs;
 

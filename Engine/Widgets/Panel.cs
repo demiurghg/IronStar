@@ -9,15 +9,16 @@ namespace Fusion.Widgets {
 	
 	public class Panel : Frame {
 
-		public bool AllowDrag {
+		public bool AllowDrag 
+		{
 			get; set;
 		}
 
 
-		public bool AllowResize {
+		public bool AllowResize 
+		{
 			get; set;
 		}
-
 
 
 		public Panel ( FrameProcessor fp, int x, int y, int w, int h ) : base( fp )
@@ -62,8 +63,8 @@ namespace Fusion.Widgets {
 
 		private void Panel_MouseDown( object sender, MouseEventArgs e )
 		{
-			if (AllowDrag || AllowResize) {
-
+			if (AllowDrag || AllowResize) 
+			{
 				dragX		=	Frames.MousePosition.X;
 				dragY		=	Frames.MousePosition.Y;
 				posX		=	X;
@@ -73,11 +74,13 @@ namespace Fusion.Widgets {
 
 				var gr = GlobalRectangle;
 
-				if (AllowDrag) {
+				if (AllowDrag) 
+				{
 					dragging	=	true;
 				} 
 				
-				if (AllowResize) {
+				if (AllowResize) 
+				{
 					if ( Distance( gr.Bottom,	dragY ) <= borderArea ) { resizeBottom	= true;	dragging = false; }
 					if ( Distance( gr.Top,		dragY ) <= borderArea ) { resizeTop		= true; dragging = false; }
 					if ( Distance( gr.Right,	dragX ) <= borderArea ) { resizeRight	= true; dragging = false; }
@@ -95,12 +98,14 @@ namespace Fusion.Widgets {
 			var mouseX = Frames.MousePosition.X;
 			var mouseY = Frames.MousePosition.Y;
 
-			if (dragging) {
+			if (dragging) 
+			{
 				X	=	posX + (mouseX - dragX);
 				Y	=	posY + (mouseY - dragY);
 			}
 
-			if (resizeRight) {
+			if (resizeRight) 
+			{
 				Width		=	width + (mouseX - dragX);
 				MakeLayoutDirty();
 			}
@@ -110,13 +115,15 @@ namespace Fusion.Widgets {
 				MakeLayoutDirty();
 			}
 
-			if (resizeTop) {
+			if (resizeTop) 
+			{
 				Height		=	height - (mouseY - dragY);
 				Y			=	posY + (mouseY - dragY);
 				MakeLayoutDirty();
 			}
 
-			if (resizeLeft) {
+			if (resizeLeft) 
+			{
 				Width		=	width - (mouseX - dragX);
 				X			=	posX + (mouseX - dragX);
 				MakeLayoutDirty();
@@ -125,9 +132,11 @@ namespace Fusion.Widgets {
 
 		private void Panel_MouseUp( object sender, MouseEventArgs e )
 		{
-			if (dragging) {
+			if ( dragging )
+			{
 				dragging = false;
 			}
+
 			dragging		= false;
 			resizeBottom	= false;
 			resizeTop		= false;

@@ -30,7 +30,7 @@
         "CustomVisibleNode": "",
         "CustomCollisionNode": "",
         "Visible": true,
-        "Frozen": false,
+        "Frozen": true,
         "TranslateX": 0.0,
         "TranslateY": 0.0,
         "TranslateZ": 0.0,

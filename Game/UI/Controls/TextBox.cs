@@ -10,7 +10,7 @@ using System.Reflection;
 using Fusion.Core.Mathematics;
 using Fusion;
 using Fusion.Core;
-using Fusion.Core.Binding;
+using Fusion.Widgets.Binding;
 using Fusion.Core.Input;
 
 namespace IronStar.UI.Controls {
@@ -61,14 +61,39 @@ namespace IronStar.UI.Controls {
 		}
 
 
-		void CallSetFunc ( string value )
+		bool SetValue ( string text )
 		{
 			ValueChanged?.Invoke(this, EventArgs.Empty);
 
-			if (binding!=null) {
-				if (!binding.SetValue( value )) {
-					Text = (string)binding.GetValue();
+			if (binding!=null) 
+			{
+				object value;
+
+				if (StringConverter.TryConvertFromString(binding.ValueType, text, out value))
+				{
+					if (binding.SetValue(value))
+					{
+						return true;
+					}
 				}
+
+				Text = GetValue();
+				return false;
+			}
+
+			return true;
+		}
+
+
+		string GetValue()
+		{
+			if (binding!=null)
+			{
+				return StringConverter.ConvertToString( binding.GetValue() );
+			}
+			else
+			{
+				return Text;
 			}
 		}
 
@@ -85,7 +110,7 @@ namespace IronStar.UI.Controls {
 
 		private void TextBox_Deactivated( object sender, EventArgs e )
 		{
-			CallSetFunc( Text );
+			SetValue( Text );
 		}
 
 		private void TextBox_Activated( object sender, EventArgs e )
@@ -95,7 +120,8 @@ namespace IronStar.UI.Controls {
 
 		private void TextBox_StatusChanged( object sender, StatusEventArgs e )
 		{
-			switch ( e.Status ) {
+			switch ( e.Status ) 
+			{
 				case FrameStatus.None:		ForeColor	=	MenuTheme.TextColorNormal; break;
 				case FrameStatus.Hovered:	ForeColor	=	MenuTheme.TextColorHovered; break;
 				case FrameStatus.Pushed:	ForeColor	=	MenuTheme.TextColorPushed; break;
@@ -105,23 +131,28 @@ namespace IronStar.UI.Controls {
 
 		protected override void Update( GameTime gameTime )
 		{
-			if (Frames.TargetFrame==this) {
-			} else {
-				if (binding!=null) {
-					Text = (string)binding.GetValue();
-				}
-			}
 		}
 
 
+		void UpdateTextValueFromBinding()
+		{
+			if (Frames.TargetFrame!=this) 
+			{
+				Text = GetValue ();
+			}
+		}
+		
+
 		protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
 		{
+			UpdateTextValueFromBinding();
+
 			var padRect	= GetPaddedRectangle(true);
 
 			base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
 
-			if (Frames.TargetFrame==this) {
-
+			if (Frames.TargetFrame==this) 
+			{
 				var r		=	ComputeGlobalAlignedTextRectangle();
 
 				var minSel	=	Math.Min( selectionStart, selectionStart + selectionLength );
@@ -142,7 +173,6 @@ namespace IronStar.UI.Controls {
 
 				spriteLayer.Draw( null,  x, y, w, h, colorS, clipRectIndex );
 				spriteLayer.Draw( null, cx, y, 2, h, colorC, clipRectIndex );
-
 			}
 		}
 
@@ -176,7 +206,7 @@ namespace IronStar.UI.Controls {
 			}
 
 			if (e.Key==Keys.Enter) {	
-				CallSetFunc( Text );
+				SetValue( Text );
 				Parent.FocusTarget();
 				return;
 			}
@@ -229,9 +259,9 @@ namespace IronStar.UI.Controls {
 
 
 		/*-------------------------------------------------------------------------------------
-			* 
-			*	Editing stuff :
-			* 
+		 * 
+		 *	Editing stuff :
+		 * 
 		-------------------------------------------------------------------------------------*/
 
 		int selectionStart;

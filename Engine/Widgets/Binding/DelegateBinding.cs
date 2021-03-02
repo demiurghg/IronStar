@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fusion.Core.Binding 
+namespace Fusion.Widgets.Binding 
 {
 	public class DelegateBinding<TValue> : IValueBinding 
 	{
-
 		readonly Func<TValue> getFunc;
 		readonly Action<TValue> setFunc;
 
@@ -27,10 +26,18 @@ namespace Fusion.Core.Binding
 		}
 
 
-		public bool IsReadonly {
-			get {
+		public bool IsReadonly 
+		{
+			get 
+			{
 				return setFunc==null;
 			}
+		}
+
+
+		public Type ValueType
+		{
+			get { return typeof(TValue); }
 		}
 
 
@@ -42,13 +49,19 @@ namespace Fusion.Core.Binding
 
 		public bool SetValue( object value )
 		{
-			if (IsReadonly) {
+			if (IsReadonly) 
+			{
 				return false;
-			} else {
-				try {
+			} 
+			else 
+			{
+				try 
+				{
 					setFunc((TValue)value);
 					return true;
-				} catch ( Exception e ) {
+				} 
+				catch ( Exception e ) 
+				{
 					Log.Error("{0}", e.Message);
 					return false;
 				}

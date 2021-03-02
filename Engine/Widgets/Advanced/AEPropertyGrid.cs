@@ -13,13 +13,22 @@ using Fusion;
 using Fusion.Engine.Frames.Layouts;
 using Fusion.Core;
 using Fusion.Core.Shell;
-using Fusion.Core.Binding;
+using Fusion.Widgets.Binding;
 using Fusion.Widgets;
 using Fusion.Widgets.Dialogs;
 
-namespace Fusion.Widgets.Advanced {
+namespace Fusion.Widgets.Advanced 
+{
+	using Editors;
 
-	public partial class AEPropertyGrid : Frame {
+	public partial class AEPropertyGrid : Frame 
+	{
+		public const int VerticalPadding = 0;
+		public const int HorizontalPadding = 4;
+
+		delegate Frame EditorCreator(string name, IValueBinding binding);
+
+		readonly Dictionary<Type,EditorCreator> defaultEditors = new Dictionary<Type,EditorCreator>();
 
 		/// <summary>
 		/// 
@@ -34,12 +43,18 @@ namespace Fusion.Widgets.Advanced {
 			this.Padding		=	1;
 
 			this.Layout			=	new StackLayout() { AllowResize = true, EqualWidth = true, Interval = 1 };
-			
+
+			defaultEditors.Add( typeof(bool),	(name,binding) => new AECheckBox( this, name, binding ) );
+			defaultEditors.Add( typeof(int),	(name,binding) => new AETextBox( this, name, binding, null ) );
+			defaultEditors.Add( typeof(float),	(name,binding) => new AETextBox( this, name, binding, null ) );
+			defaultEditors.Add( typeof(string),	(name,binding) => new AETextBox( this, name, binding, null ) );
+			defaultEditors.Add( typeof(Color),	(name,binding) => new AEColorPicker( this, name, binding ) );
 		}
 
 
 
-		public class PropertyChangedEventArgs : EventArgs {
+		public class PropertyChangedEventArgs : EventArgs 
+		{
 			public PropertyChangedEventArgs(object target, PropertyInfo property, object value)
 			{
 				TargetObject = target;
@@ -65,12 +80,16 @@ namespace Fusion.Widgets.Advanced {
 		/// <summary>
 		/// 
 		/// </summary>
-		public object TargetObject {
-			get {
+		public object TargetObject 
+		{
+			get 
+			{
 				return targetObject;
 			}
-			set {
-				if (targetObject!=value) {
+			set 
+			{
+				if (targetObject!=value) 
+				{
 					targetObject = value;
 					Clear();
 					FeedObject(targetObject, 0, null);
@@ -99,14 +118,15 @@ namespace Fusion.Widgets.Advanced {
 		/// </summary>
 		void FeedObject ( object obj, int nestingLevel, string subcat )
 		{
-			if (obj==null) {
+			if (obj==null) 
+			{
 				return;
 			}
 
 			//--------------------------------------------------------------------------
 
-			foreach ( var pi in obj.GetType().GetProperties() ) {
-
+			foreach ( var pi in obj.GetType().GetProperties() ) 
+			{
 				if (!pi.CanWrite || !pi.CanRead) {
 					continue;
 				}
@@ -123,20 +143,36 @@ namespace Fusion.Widgets.Advanced {
 				var name		=	pi.GetAttribute<AEDisplayNameAttribute>()?.Name ?? pi.Name;
 				var category	=	pi.GetAttribute<AECategoryAttribute>()?.Category;
 
-				if (category==null) {
+				if (category==null) 
+				{
 					category	=	subcat ?? "Misc";
-				} else {
-					if (subcat!=null) {
+				} 
+				else 
+				{
+					if (subcat!=null) 
+					{
 						category = subcat + "/" + category;
 					}
 				}
 
-				if (pi.PropertyType==typeof(bool)) {
-					AddCheckBox( category, name, ()=>(bool)(pi.GetValue(obj)), (val)=>setFunc(val) );
+
+				EditorCreator creator;
+
+				if ( defaultEditors.TryGetValue( pi.PropertyType, out creator ) )
+				{
+					AddToCollapseRegion( category, creator( name, new PropertyBinding( obj, pi, OnPropertyChange ) ) );
+				}
+				else
+				{
 				}
 
+				/*if (pi.PropertyType==typeof(bool)) 
+				{
+					AddCheckBox( category, name, ()=>(bool)(pi.GetValue(obj)), (val)=>setFunc(val) );
+				} */
+
 				if (pi.PropertyType==typeof(float)) {
-					var min		=	1.0f;
+					/*var min		=	1.0f;
 					var max		=	100.0f;
 					var step	=	5.0f;
 					var pstep	=	1.0f;
@@ -154,19 +190,19 @@ namespace Fusion.Widgets.Advanced {
 							()	 => StringConverter.ConvertToString( pi.GetValue(obj) ),
 							(val)=>	setFunc( StringConverter.ToSingle(val) ),
 							null );
-					}
+					} */
 				}
 
-				if (pi.PropertyType==typeof(int)) {
+				/*if (pi.PropertyType==typeof(int)) {
 					AddTextBoxNum( category, name, 
 						()	 => StringConverter.ConvertToString( pi.GetValue(obj) ),
 						(val)=>	setFunc( StringConverter.ToInt32(val) ),
 						null );
-				}
+				} */
 
-				if (pi.PropertyType==typeof(Color)) {
+				/*if (pi.PropertyType==typeof(Color)) {
 					AddColorPicker( category, name, ()=>(Color)(pi.GetValue(obj)), (val)=>setFunc(val) );
-				}
+				} */
 
 				if (pi.PropertyType.IsEnum) {
 
@@ -181,7 +217,7 @@ namespace Fusion.Widgets.Advanced {
 
 					if (pi.HasAttribute<AEFileNameAttribute>()) {
 					
-						var fna			= pi.GetAttribute<AEFileNameAttribute>();
+						/*var fna			= pi.GetAttribute<AEFileNameAttribute>();
 						var ext			= fna.Extension;
 						var dir			= fna.Directory;
 						var nameOnly	= fna.FileNameOnly;
@@ -190,7 +226,7 @@ namespace Fusion.Widgets.Advanced {
 							()=>(string)(pi.GetValue(obj)), 
 							(val)=>setFunc(val), 
 							(val)=>FileSelector.ShowDialog( Frames, dir, ext, "", (fnm)=>setFunc(fnm) )
-						);
+						);	*/
 					
 					} else if (pi.HasAttribute<AEAtlasImageAttribute>()) {
 					
@@ -289,7 +325,7 @@ namespace Fusion.Widgets.Advanced {
 
 		public void AddCheckBox ( string category, string name, Func<bool> getFunc, Action<bool> setFunc )
 		{
-			AddToCollapseRegion( category, new AECheckBox( this, name, getFunc, setFunc ) );
+			AddToCollapseRegion( category, new AECheckBox( this, name, new DelegateBinding<bool>(getFunc, setFunc) ) );
 		}
 
 		public void AddSlider ( string category, string name, Func<float> getFunc, Action<float> setFunc, float min, float max, float step, float pstep )
@@ -299,7 +335,7 @@ namespace Fusion.Widgets.Advanced {
 
 		public void AddTextBox ( string category, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc )
 		{
-			var textBox = new AETextBox( this, name, getFunc, setFunc, null );
+			var textBox = new AETextBox( this, name, new DelegateBinding<string>(getFunc, setFunc), null );
 			var button	= new Button( Frames, "Select...", 0,0, 200, 20, () => selectFunc(textBox.Text) ) { 
 				MarginRight = 0,
 				MarginLeft = 150,
@@ -314,7 +350,7 @@ namespace Fusion.Widgets.Advanced {
 
 		public void AddTextBoxNum ( string category, string name, Func<string> getFunc, Action<string> setFunc, Action<string> selectFunc )
 		{
-			AddToCollapseRegion( category, new AETextBox( this, name, getFunc, setFunc, selectFunc ) );
+			AddToCollapseRegion( category, new AETextBox( this, name, new DelegateBinding<string>(getFunc, setFunc), selectFunc ) );
 		}
 
 		public void AddButton ( string category, string name, Action action )
@@ -327,10 +363,10 @@ namespace Fusion.Widgets.Advanced {
 			AddToCollapseRegion( category, new AEDropDown( this, name, value, values, getFunc, setFunc ) );
 		}
 
-		public void AddColorPicker ( string category, string name, Func<Color> getFunc, Action<Color> setFunc )
+		/*public void AddColorPicker ( string category, string name, Func<Color> getFunc, Action<Color> setFunc )
 		{
 			AddToCollapseRegion( category, new AEColorPicker( this, name, getFunc, setFunc ) );
-		}
+		}				 */
 
 	}
 }

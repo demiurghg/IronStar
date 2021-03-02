@@ -10,7 +10,7 @@ using System.Reflection;
 using Fusion.Core.Mathematics;
 using Fusion;
 using Fusion.Core;
-using Fusion.Core.Binding;
+using Fusion.Widgets.Binding;
 using Fusion.Core.Input;
 
 namespace Fusion.Widgets {
@@ -62,14 +62,39 @@ namespace Fusion.Widgets {
 		}
 
 
-		void CallSetFunc ( string value )
+		bool SetValue ( string text )
 		{
 			ValueChanged?.Invoke(this, EventArgs.Empty);
 
-			if (binding!=null) {
-				if (!binding.SetValue( value )) {
-					Text = (string)binding.GetValue();
+			if (binding!=null) 
+			{
+				object value;
+
+				if (StringConverter.TryConvertFromString(binding.ValueType, text, out value))
+				{
+					if (binding.SetValue(value))
+					{
+						return true;
+					}
 				}
+
+				Text = GetValue();
+				return false;
+			}
+
+			return true;
+		}
+
+
+		string GetValue()
+		{
+			if (binding!=null)
+			{
+				return StringConverter.ConvertToString( binding.GetValue() );
+			}
+			else
+			{
+				return Text;
 			}
 		}
 
@@ -86,7 +111,7 @@ namespace Fusion.Widgets {
 
 		private void TextBox_Deactivated( object sender, EventArgs e )
 		{
-			CallSetFunc( Text );
+			SetValue( Text );
 		}
 
 		private void TextBox_Activated( object sender, EventArgs e )
@@ -96,7 +121,8 @@ namespace Fusion.Widgets {
 
 		private void TextBox_StatusChanged( object sender, StatusEventArgs e )
 		{
-			switch ( e.Status ) {
+			switch ( e.Status ) 
+			{
 				case FrameStatus.None:		ForeColor	=	ColorTheme.TextColorNormal; break;
 				case FrameStatus.Hovered:	ForeColor	=	ColorTheme.TextColorHovered; break;
 				case FrameStatus.Pushed:	ForeColor	=	ColorTheme.TextColorPushed; break;
@@ -106,10 +132,16 @@ namespace Fusion.Widgets {
 
 		protected override void Update( GameTime gameTime )
 		{
-			if (Frames.TargetFrame==this) {
-			} else {
-				if (binding!=null) {
-					Text = (string)binding.GetValue();
+		}
+
+
+		void UpdateValueFromBinding()
+		{
+			if (Frames.TargetFrame!=this) 
+			{
+				if (binding!=null) 
+				{
+					Text = GetValue();
 				}
 			}
 		}
@@ -117,12 +149,14 @@ namespace Fusion.Widgets {
 
 		protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
 		{
+			UpdateValueFromBinding();
+
 			var padRect	= GetPaddedRectangle(true);
 
 			base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
 
-			if (Frames.TargetFrame==this) {
-
+			if (Frames.TargetFrame==this) 
+			{
 				var r		=	ComputeGlobalAlignedTextRectangle();
 
 				var minSel	=	Math.Min( selectionStart, selectionStart + selectionLength );
@@ -143,7 +177,6 @@ namespace Fusion.Widgets {
 
 				spriteLayer.Draw( null,  x, y, w, h, colorS, clipRectIndex );
 				spriteLayer.Draw( null, cx, y, 2, h, colorC, clipRectIndex );
-
 			}
 		}
 
@@ -177,7 +210,7 @@ namespace Fusion.Widgets {
 			}
 
 			if (e.Key==Keys.Enter) {	
-				CallSetFunc( Text );
+				SetValue( Text );
 				Parent.FocusTarget();
 				return;
 			}

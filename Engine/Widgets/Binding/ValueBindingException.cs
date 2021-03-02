@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fusion.Core.Binding {
-	class ValueBindingException : Exception {
-
+namespace Fusion.Widgets.Binding 
+{
+	class ValueBindingException : Exception 
+	{
 		public ValueBindingException ()
 		{
 		}

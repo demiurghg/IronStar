@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Fusion.Core.Binding {
-
-	public interface IValueBinding {
-
+namespace Fusion.Widgets.Binding 
+{
+	public interface IValueBinding 
+	{
 		/// <summary>
 		/// Gets value.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>Value</returns>
 		object GetValue ();
 
 		/// <summary>
@@ -24,8 +24,11 @@ namespace Fusion.Core.Binding {
 		/// <summary>
 		/// Indicates that given binding is read-only.
 		/// </summary>
-		bool IsReadonly {
-			get;
-		}
+		bool IsReadonly { get; }
+
+		/// <summary>
+		/// Gets value type
+		/// </summary>
+		Type ValueType { get; }
 	}
 }

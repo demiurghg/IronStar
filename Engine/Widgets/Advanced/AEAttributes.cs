@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Fusion.Core.Binding;
+using Fusion.Widgets.Binding;
 
 namespace Fusion.Core.Shell {
 

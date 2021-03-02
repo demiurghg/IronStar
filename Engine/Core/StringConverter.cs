@@ -18,7 +18,7 @@ namespace Fusion.Core {
 
 			var type = value.GetType();
 
-			if (type.IsEnum)				{ stringValue = ToString( (Enum)   value );	  return true; }
+			if (type.IsEnum)				{ stringValue = ToString( ( Enum	)value ); return true; }
 			if (type==typeof( String	) )	{ stringValue = ToString( ( String	)value ); return true; }
 			if (type==typeof( Boolean	) )	{ stringValue = ToString( ( Boolean	)value ); return true; }
 			if (type==typeof( Int16		) )	{ stringValue = ToString( ( Int16	)value ); return true; }

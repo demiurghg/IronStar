@@ -13,16 +13,17 @@ using Fusion.Core;
 using Fusion.Widgets.Binding;
 using Fusion.Core.Input;
 
-namespace Fusion.Widgets {
-
-	public class TextBox : Frame {
-
-		protected readonly IValueBinding binding;
+namespace Fusion.Widgets 
+{
+	public class TextBox : Frame 
+	{
+		protected readonly StringBindingWrapper binding;
 
 		public Color CursorColor { get; set; } = Color.Gray;
 
 		public event EventHandler ValueChanged;
 
+		bool editingMode = false;
 
 		/// <summary>
 		/// 
@@ -31,7 +32,7 @@ namespace Fusion.Widgets {
 		/// <param name="bindingInfo"></param>
 		public TextBox ( FrameProcessor fp, IValueBinding binding = null ) : base(fp)
 		{ 
-			this.binding		=	binding;
+			this.binding		=	new StringBindingWrapper( binding, "" );
 
 			this.Font			=	ColorTheme.NormalFont;
 
@@ -62,43 +63,6 @@ namespace Fusion.Widgets {
 		}
 
 
-		bool SetValue ( string text )
-		{
-			ValueChanged?.Invoke(this, EventArgs.Empty);
-
-			if (binding!=null) 
-			{
-				object value;
-
-				if (StringConverter.TryConvertFromString(binding.ValueType, text, out value))
-				{
-					if (binding.SetValue(value))
-					{
-						return true;
-					}
-				}
-
-				Text = GetValue();
-				return false;
-			}
-
-			return true;
-		}
-
-
-		string GetValue()
-		{
-			if (binding!=null)
-			{
-				return StringConverter.ConvertToString( binding.GetValue() );
-			}
-			else
-			{
-				return Text;
-			}
-		}
-
-
 		private void TextBox_KeyUp( object sender, KeyEventArgs e )
 		{
 			e.Handled = true;
@@ -111,12 +75,12 @@ namespace Fusion.Widgets {
 
 		private void TextBox_Deactivated( object sender, EventArgs e )
 		{
-			SetValue( Text );
+			CancelEdits();
 		}
 
 		private void TextBox_Activated( object sender, EventArgs e )
 		{
-			ResetSelection();
+			EnterEdits();
 		}
 
 		private void TextBox_StatusChanged( object sender, StatusEventArgs e )
@@ -135,27 +99,18 @@ namespace Fusion.Widgets {
 		}
 
 
-		void UpdateValueFromBinding()
-		{
-			if (Frames.TargetFrame!=this) 
-			{
-				if (binding!=null) 
-				{
-					Text = GetValue();
-				}
-			}
-		}
-
-
 		protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
 		{
-			UpdateValueFromBinding();
+			if (!editingMode)
+			{
+				base.Text	=	binding.GetValue();
+			}
 
 			var padRect	= GetPaddedRectangle(true);
 
 			base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
 
-			if (Frames.TargetFrame==this) 
+			if (editingMode) 
 			{
 				var r		=	ComputeGlobalAlignedTextRectangle();
 
@@ -180,22 +135,78 @@ namespace Fusion.Widgets {
 			}
 		}
 
+		/*-------------------------------------------------------------------------------------
+		*	Data binding logic :
+		-------------------------------------------------------------------------------------*/
 
+		void EnterEdits()
+		{
+			if (!editingMode)
+			{
+				Log.Message("Enter Edit Mode");
+				Text		=	binding.GetValue();
+				editingMode	=	true;
+			}
+		}
+
+		void CommitEdits()
+		{
+			if (editingMode)
+			{
+				Log.Message("Commit Edits");
+				binding.SetValue(Text);
+				editingMode	=	false;
+			}
+		}
+
+
+		void CancelEdits()
+		{
+			if (editingMode)
+			{
+				Log.Message("Cancel Edits");
+				Text		=	binding.GetValue();
+				editingMode	=	false;
+			}
+		}
 
 		/*-------------------------------------------------------------------------------------
-		* 
 		*	Typewriting :
-		* 
 		-------------------------------------------------------------------------------------*/
 
 		private void TextBox_TypeWrite( object sender, KeyEventArgs e )
 		{
 			e.Handled = true;
 
-			if (e.Key==Keys.Tab) {
-				if (e.Shift) {
+			if (e.Key==Keys.Enter) 
+			{	
+				if (editingMode) 
+				{
+					CommitEdits();
+				}
+				else 
+				{
+					EnterEdits();
+				}
+				//Parent.FocusTarget();
+				return;
+			}
+
+			if (e.Key==Keys.Escape) 
+			{
+				CancelEdits();
+				ResetSelection();
+			}
+
+			if (e.Key==Keys.Tab) 
+			{
+				CommitEdits();
+				if (e.Shift) 
+				{
 					Frames.TargetFrame = PrevTabStop();
-				} else {
+				} 
+				else 
+				{
 					Frames.TargetFrame = NextTabStop();
 				}
 			}
@@ -206,12 +217,6 @@ namespace Fusion.Widgets {
 					case Keys.X: CopyToClipboard(); ClearSelection(); break;
 					case Keys.V: PasteFromClipboard(); break;
 				}
-				return;
-			}
-
-			if (e.Key==Keys.Enter) {	
-				SetValue( Text );
-				Parent.FocusTarget();
 				return;
 			}
 
@@ -245,17 +250,6 @@ namespace Fusion.Widgets {
 				return;
 			}
 
-			if (e.Key==Keys.Tab) {
-				return;
-			}
-
-			if (e.Key==Keys.Escape) {
-				if (binding!=null) {
-					Text = (string)binding.GetValue();
-				}
-				ResetSelection();
-			}
-
 			if (e.Symbol!='\0') {
 				InsertText( new string( e.Symbol, 1 ) );
 			}
@@ -277,7 +271,7 @@ namespace Fusion.Widgets {
 			}
 
 			set {
-				base.Text = value;
+				base.Text  = value;
 				ResetSelection();
 			}
 		}
@@ -316,8 +310,8 @@ namespace Fusion.Widgets {
 
 		void MoveCursor ( int value, bool shift )
 		{
-			if (shift) {
-
+			if (shift) 
+			{
 				if ( selectionStart + value > Text.Length ) {
 					value = Text.Length - selectionStart;
 				}

@@ -176,20 +176,26 @@ namespace Fusion.Widgets.Advanced
 				}
 
 				//	fallback for default editors :
-				if ( useDefaultEditor && defaultEditors.TryGetValue( pi.PropertyType, out creator ) )
+				if ( useDefaultEditor )
 				{
-					AddToCollapseRegion( category, creator( name, binding ) );
+					//	special case for enums :
+					if ( pi.PropertyType.IsEnum )
+					{
+						var type	=	pi.PropertyType;
+						var value	=	pi.GetValue(obj).ToString();
+						var values	=	Enum.GetNames( type );
+
+						AddToCollapseRegion( category, new AEDropDown( this, name, value, values, binding ) );
+					}
+
+					//	default editors :
+					if ( defaultEditors.TryGetValue( pi.PropertyType, out creator ) )
+					{
+						AddToCollapseRegion( category, creator( name, binding ) );
+					}
 				}
 
-				if (pi.PropertyType.IsEnum) {
-
-					var type	=	pi.PropertyType;
-					var value	=	pi.GetValue(obj).ToString();
-					var values	=	Enum.GetNames( type );
-
-					AddDropDown( category, name, value, values, ()=>pi.GetValue(obj).ToString(), (val)=>setFunc(Enum.Parse(type, val)) );
-				}
-
+				#if false
 				if (pi.PropertyType==typeof(string)) {
 
 					if (pi.HasAttribute<AEFileNameAttribute>()) {
@@ -229,7 +235,8 @@ namespace Fusion.Widgets.Advanced
 					{
 						AddTextBox( category, name, ()=>(string)(pi.GetValue(obj)), (val)=>setFunc(val), null );
 					}
-				}
+				}  */
+				#endif
 
 				if (pi.PropertyType.IsClass) {
 					
@@ -337,7 +344,6 @@ namespace Fusion.Widgets.Advanced
 
 		public void AddDropDown ( string category, string name, string value, IEnumerable<string> values, Func<string> getFunc, Action<string> setFunc )
 		{
-			AddToCollapseRegion( category, new AEDropDown( this, name, value, values, getFunc, setFunc ) );
 		}
 
 		/*public void AddColorPicker ( string category, string name, Func<Color> getFunc, Action<Color> setFunc )

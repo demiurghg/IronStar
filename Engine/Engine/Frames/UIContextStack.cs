@@ -54,10 +54,13 @@ namespace Fusion.Engine.Frames {
 		/// <param name="frame"></param>
 		public void SetTargetFrame ( Frame frame )
 		{
-			var oldTargetFrame = modalFrames.Peek().Target;
 			var newTargetFrame = frame;
 
+			var oldTargetFrame = modalFrames.Peek().Target;
+			oldTargetFrame?.OnDeactivate();
+
 			modalFrames.Peek().Target	=	newTargetFrame;
+			newTargetFrame?.OnActivate();
 		}
 
 

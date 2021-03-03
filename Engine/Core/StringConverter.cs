@@ -16,6 +16,11 @@ namespace Fusion.Core {
 		{
 			stringValue = default(string);
 
+			if (value==null)
+			{
+				return true;
+			}
+
 			var type = value.GetType();
 
 			if (type.IsEnum)				{ stringValue = ToString( ( Enum	)value ); return true; }
@@ -47,25 +52,37 @@ namespace Fusion.Core {
 		{
 			value	=	default(object);
 
-			if (type.IsEnum)			{ value = Enum.Parse( type, stringValue, true ); return true; }
-			if (type==typeof(String))	{ value = ToString  ( stringValue );	return true; }
-			if (type==typeof(Boolean))	{ value = ToBoolean ( stringValue );	return true; }
-			if (type==typeof(Int16)  )	{ value = ToInt16	( stringValue );	return true; }
-			if (type==typeof(Int32)  )	{ value = ToInt32	( stringValue );	return true; }
-			if (type==typeof(Int64)  )	{ value = ToInt64	( stringValue );	return true; }
-			if (type==typeof(Single) )	{ value = ToSingle	( stringValue );	return true; }
-			if (type==typeof(Double) )	{ value = ToDouble	( stringValue );	return true; }
-			if (type==typeof(Color)  )	{ value = ToColor	( stringValue );	return true; }
-			if (type==typeof(Color4) )	{ value = ToColor4	( stringValue );	return true; }
-			if (type==typeof(Double) )	{ value = ToDouble	( stringValue );	return true; }
-			if (type==typeof(Vector2))	{ value = ToVector2 ( stringValue );	return true; }
-			if (type==typeof(Vector3))	{ value = ToVector3 ( stringValue );	return true; }
-			if (type==typeof(Vector4))	{ value = ToVector4 ( stringValue );	return true; }
-			if (type==typeof(Half)   )	{ value = ToHalf	( stringValue );	return true; }
-			if (type==typeof(Half2)  )	{ value = ToHalf2	( stringValue );	return true; }
-			if (type==typeof(Half3)  )	{ value = ToHalf3	( stringValue );	return true; }
-			if (type==typeof(Half4)  )	{ value = ToHalf4	( stringValue );	return true; }
-			if (type==typeof(Guid)  )	{ value = ToGuid	( stringValue );	return true; }
+			if (stringValue==null)
+			{
+				return true;
+			}
+
+			try 
+			{
+				if (type.IsEnum)			{ value = Enum.Parse( type, stringValue, true ); return true; }
+				if (type==typeof(String))	{ value = ToString  ( stringValue );	return true; }
+				if (type==typeof(Boolean))	{ value = ToBoolean ( stringValue );	return true; }
+				if (type==typeof(Int16)  )	{ value = ToInt16	( stringValue );	return true; }
+				if (type==typeof(Int32)  )	{ value = ToInt32	( stringValue );	return true; }
+				if (type==typeof(Int64)  )	{ value = ToInt64	( stringValue );	return true; }
+				if (type==typeof(Single) )	{ value = ToSingle	( stringValue );	return true; }
+				if (type==typeof(Double) )	{ value = ToDouble	( stringValue );	return true; }
+				if (type==typeof(Color)  )	{ value = ToColor	( stringValue );	return true; }
+				if (type==typeof(Color4) )	{ value = ToColor4	( stringValue );	return true; }
+				if (type==typeof(Double) )	{ value = ToDouble	( stringValue );	return true; }
+				if (type==typeof(Vector2))	{ value = ToVector2 ( stringValue );	return true; }
+				if (type==typeof(Vector3))	{ value = ToVector3 ( stringValue );	return true; }
+				if (type==typeof(Vector4))	{ value = ToVector4 ( stringValue );	return true; }
+				if (type==typeof(Half)   )	{ value = ToHalf	( stringValue );	return true; }
+				if (type==typeof(Half2)  )	{ value = ToHalf2	( stringValue );	return true; }
+				if (type==typeof(Half3)  )	{ value = ToHalf3	( stringValue );	return true; }
+				if (type==typeof(Half4)  )	{ value = ToHalf4	( stringValue );	return true; }
+				if (type==typeof(Guid)  )	{ value = ToGuid	( stringValue );	return true; }
+			}
+			catch ( FormatException )
+			{
+				return false;
+			}
 
 			return false;
 		}

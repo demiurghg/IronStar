@@ -11,6 +11,7 @@ using Fusion.Core.Mathematics;
 using Fusion.Engine.Frames.Layouts;
 using Fusion.Core;
 using Fusion;
+using Fusion.Widgets.Binding;
 
 namespace Fusion.Widgets {
 
@@ -19,8 +20,7 @@ namespace Fusion.Widgets {
 		const int MaxElements = 12;
 		const int MinWidth = 70;
 
-		readonly Func<string> getFunc;
-		readonly Action<string> setFunc;
+		readonly StringBindingWrapper binding;
 		readonly string[] values;
 
 		Frame dropDownList;
@@ -33,10 +33,9 @@ namespace Fusion.Widgets {
 		/// </summary>
 		/// <param name="grid"></param>
 		/// <param name="bindingInfo"></param>
-		public DropDown ( FrameProcessor fp, string value, IEnumerable<string> values, Func<string> getFunc, Action<string> setFunc ) : base(fp)
+		public DropDown ( FrameProcessor fp, string value, IEnumerable<string> values, IValueBinding binding ) : base(fp)
 		{ 
-			this.getFunc		=	getFunc;
-			this.setFunc		=	setFunc;
+			this.binding		=	new StringBindingWrapper( binding, value );
 
 			this.Font			=	ColorTheme.NormalFont;
 
@@ -61,29 +60,30 @@ namespace Fusion.Widgets {
 		}
 
 
-		public override int Width {
-			get {
+		public override int Width 
+		{
+			get 
+			{
 				return base.Width;
 			}
-
-			set {
+			set 
+			{
 				base.Width=value;
 			}
 		}
 
 
-
-		public override int Height {
-			get {
+		public override int Height 
+		{
+			get 
+			{
 				return ComputeHeight();
-				//return base.Height;
 			}
 
 			set {
 				base.Height = ComputeHeight();
 			}
 		}
-
 
 
 		Frame CreateDropDownList ( int minWidth, out int minDropDownWidth )
@@ -120,14 +120,13 @@ namespace Fusion.Widgets {
 			//	BorderColor		= ColorTheme.AccentBorder,
 			//};
 
-			foreach ( var value in values ) {
-
+			foreach ( var value in values ) 
+			{
 				var textSize		=	MeasureSingleLineString( Font, value );
 				var textWidth		=	textSize.Width;
 
 				var dropDownElement = new Frame( Frames, 0, 0, textWidth+8, textHeight+4, value, ColorTheme.DropdownButtonNormal );
 					dropDownElement.Font = ColorTheme.NormalFont;
-
 
 				dropDownElement.TextAlignment	= Alignment.MiddleLeft;
 				dropDownElement.PaddingLeft		= 4;
@@ -190,7 +189,7 @@ namespace Fusion.Widgets {
 
 			this.Text = value;
 
-			setFunc( value );
+			binding?.SetValue( value );
 
 			CloseDropDownList();
 		}
@@ -245,7 +244,7 @@ namespace Fusion.Widgets {
 
 		protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
 		{
-			Text = getFunc();
+			Text = binding.GetValue();
 
 			base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
 			/*var value	= getFunc();

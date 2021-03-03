@@ -59,15 +59,4 @@ namespace Fusion.Core.Shell {
 			NoExtension  = fileNameMode.HasFlag( AEFileNameMode.NoExtension );
 		}
 	}
-
-
-	[Obsolete]
-	public class AEAtlasImageAttribute : Attribute {
-		public readonly string AtlasName;
-
-		public AEAtlasImageAttribute( string atlasName )
-		{
-			AtlasName = atlasName;
-		}
-	}
 }

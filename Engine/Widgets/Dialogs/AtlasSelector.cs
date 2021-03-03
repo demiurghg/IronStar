@@ -19,8 +19,8 @@ using Fusion.Core;
 
 namespace Fusion.Widgets.Dialogs {
 
-	static public class AtlasSelector {
-
+	static public class AtlasSelector 
+	{
 		const int DialogWidth	= 640 + 4 + 4 + 4;
 		const int DialogHeight	= 480 + 2 + 2 + 14 + 2 + 20 + 2;
 
@@ -32,8 +32,8 @@ namespace Fusion.Widgets.Dialogs {
 		}
 
 
-		class AtlasSelectorFrame : Panel {
-
+		public class AtlasSelectorFrame : Panel 
+		{
 			readonly Action<string> setImageName;
 			readonly string		oldImageName;
 
@@ -66,7 +66,6 @@ namespace Fusion.Widgets.Dialogs {
 				pageLayout.AddRow(	17, new[] { -1f } );
 
 				Layout			=	pageLayout;
-
 
 				labelDir		=	new Label( fp, 0,0,0,0, "Atlas: " + atlasName ) { TextAlignment = Alignment.MiddleLeft };
 				labelStatus		=	new Label( fp, 0,0,0,0, "....") { TextAlignment = Alignment.MiddleLeft };
@@ -109,27 +108,34 @@ namespace Fusion.Widgets.Dialogs {
 
 			void ApplyFilter ()
 			{
-				if (string.IsNullOrWhiteSpace(filterBox.Text)) {
-					foreach( var child in imageList.Children ) {
+				if (string.IsNullOrWhiteSpace(filterBox.Text)) 
+				{
+					foreach( var child in imageList.Children ) 
+					{
 						child.Visible = true;
 					}
-				} else {
-
+				} 
+				else 
+				{
 					var text = filterBox.Text;
 
-					foreach( var child in imageList.Children ) {
+					foreach( var child in imageList.Children ) 
+					{
 						child.Visible = child.Text.ToLowerInvariant().Contains( text.ToLowerInvariant() );
 					}
 				}
 			}
 
 
-			public int Zoom {
-				get {
+			public int Zoom 
+			{
+				get 
+				{
 					return zoom;
 				}
 				set {
-					if (zoom!=value) {
+					if (zoom!=value) 
+					{
 						zoom = value;
 						zoom = MathUtil.Clamp( zoom, 0,2 );
 						galery.ItemWidth  =  64 << zoom;
@@ -137,56 +143,14 @@ namespace Fusion.Widgets.Dialogs {
 						galery.NumColumns =  10 >> zoom;
 						imageList.MakeLayoutDirty();
 
-						foreach (var child in imageList.Children) {
+						foreach (var child in imageList.Children) 
+						{
 							child.ImageDstRect = new Rectangle(0,0, galery.ItemWidth, galery.ItemHeight);
 						}
 					}
 				}
 			}
 			int zoom = 0;
-
-
-			class AtlasButton : Frame {
-
-				readonly TextureAtlas atlas;
-				readonly TextureAtlasClip clip;
-				bool mouseIn = false;
-
-				public AtlasButton ( FrameProcessor frames, TextureAtlas atlas, string clipName, int size ) : base(frames)
-				{
-					this.atlas	=	atlas;
-					this.clip	=	atlas.GetClipByName( clipName );
-
-					Font			=	ColorTheme.NormalFont;
-					TextAlignment	=	Alignment.BottomCenter;
-					Padding			=	3;
-					Border			=	1;
-					Image			=	atlas.Texture;
-					BackColor		=	Color.Zero;
-					ImageColor		=	Color.White;
-					ImageMode		=	FrameImageMode.Manual;
-					ImageDstRect	=	new Rectangle(0,0,size,size);
-					Text			=	clipName;
-
-					this.MouseIn   +=   (s,e) => mouseIn = true;
-					this.MouseOut  +=   (s,e) => mouseIn = false;
-
-					ImageSrcRect	=	new Rectangle(0,0,0,0);// atlas.GetAbsoluteRectangleByName(clipName);
-				}
-
-				protected override void Update( GameTime gameTime )
-				{
-					if (mouseIn) {
-						var gpr	  = this.GetPaddedRectangle(true);
-						int frame = (Frames.MousePosition.X - gpr.X) * clip.Length / gpr.Width;
-							frame = MathUtil.Clamp( frame, 0, clip.Length-1 );
-						ImageSrcRect	=	atlas.AbsoluteRectangles[ clip.FirstIndex + frame ];
-					} else {
-						int frame = (int)(gameTime.Total.TotalSeconds * 10) % clip.Length;
-						ImageSrcRect	=	atlas.AbsoluteRectangles[ clip.FirstIndex + frame ];
-					}
-				}
-			}
 
 
 			Frame CreateImageList ( string atlasName )
@@ -205,14 +169,13 @@ namespace Fusion.Widgets.Dialogs {
 
 				var names	= atlas.GetClipNames().OrderBy( n => n ).ToArray();
 
-				for ( int i=0; i<names.Length; i++ ) {
+				for ( int i=0; i<names.Length; i++ ) 
+				{
+					var name	=	names[i];
+					var button	=	new AtlasButton( Frames, atlas, name, size );
+					button.Text	=	name;
 
-					var name   = names[i];
-
-					var button = new AtlasButton( Frames, atlas, name, size );
-
-					button.Click			+= (s,e) => Accept(name);
-					button.StatusChanged	+= Button_StatusChanged;
+					button.Click+= (s,e) => Accept(name);
 
 					panel.Add( button );
 				}
@@ -221,41 +184,11 @@ namespace Fusion.Widgets.Dialogs {
 			}
 
 
-			private void Button_StatusChanged(object sender, StatusEventArgs e)
-			{
-				var button = (Frame)sender;
-				
-				switch ( e.Status ) {
-					case FrameStatus.None:		
-						button.ForeColor	=	ColorTheme.TextColorNormal;	
-						button.BackColor	=	ColorTheme.ButtonColorNormal;	
-						button.BorderColor	=	Color.Black;
-						button.TextOffsetX	=	0;
-						button.TextOffsetY	=	0;	
-						break;
-					case FrameStatus.Hovered:	
-						button.ForeColor	=	ColorTheme.TextColorHovered;	
-						button.BackColor	=	ColorTheme.ButtonColorHovered;	
-						button.BorderColor	=	ColorTheme.TextColorHovered;
-						button.TextOffsetX	=	0;
-						button.TextOffsetY	=	0;	
-						break;
-					case FrameStatus.Pushed:	
-						button.ForeColor	=	ColorTheme.TextColorPushed;	
-						button.BackColor	=	ColorTheme.ButtonColorPushed;		
-						button.BorderColor	=	ColorTheme.TextColorPushed;
-						button.TextOffsetX	=	1;
-						button.TextOffsetY	=	0;	
-					break;
-				}
-			}
-
 			public void Accept(string name)
 			{
 				setImageName(name);
 				Close();
 			}
-
 
 
 			private void FileSelectorFrame_Missclick( object sender, EventArgs e )

@@ -30,7 +30,7 @@ namespace Fusion.Widgets.Dialogs
 				this.getFunc	=	getFunc;
 				this.setFunc	=	setFunc;
 
-				this.Image		=	fp.Game.Content.Load<DiscTexture>(@"editor\hsvMap2");
+				this.Image		=	fp.Game.Content.Load<DiscTexture>("hsvMap");
 				this.ImageColor	=	new Color(255,255,255,255);
 				this.ImageMode	=	FrameImageMode.Stretched;
 

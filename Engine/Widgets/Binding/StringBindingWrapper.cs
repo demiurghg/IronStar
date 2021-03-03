@@ -18,6 +18,10 @@ namespace Fusion.Widgets.Binding
 			this.binding	=	binding;
 		}
 
+		public StringBindingWrapper( IValueBinding binding )
+		{
+			this.binding=binding;
+		}
 
 		public bool SetValue( string stringValue )
 		{

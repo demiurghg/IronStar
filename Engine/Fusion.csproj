@@ -161,12 +161,18 @@
     <Compile Include="Build\Processors\UbershaderProcessor.cs" />
     <Compile Include="Build\Processors\UbershaderProcessor.Parser.cs" />
     <Compile Include="Build\ToolException.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Widgets\Advanced\Attributes\AEEditorAttribute.cs" />
     <Compile Include="Widgets\Advanced\Attributes\AECommandAttribute.cs" />
     <Compile Include="Widgets\Advanced\Attributes\AEIgnoreAttribute.cs" />
     <Compile Include="Widgets\Advanced\Attributes\AEExpandableAttribute.cs" />
     <Compile Include="Widgets\Advanced\Attributes\AEDisplayNameAttribute.cs" />
     <Compile Include="Widgets\Advanced\Attributes\AECategoryAttribute.cs" />
+    <Compile Include="Widgets\Advanced\Editors\AEAtlasSelector.cs" />
     <Compile Include="Widgets\Binding\DelegateBinding.cs" />
     <Compile Include="Widgets\Binding\IValueEditor.cs" />
     <Compile Include="Widgets\Binding\IValueBinding.cs" />
@@ -701,11 +707,6 @@
     <Compile Include="Scripting\LuaStackGuard.cs" />
     <Compile Include="Scripting\LuaUtils.cs" />
     <Compile Include="Scripting\LuaValue.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="Core\Shell\CommandLineParser.cs" />
     <Compile Include="Core\Shell\CommandAttribute.cs" />
     <Compile Include="Core\Shell\CommandLineParserException.cs" />
@@ -741,6 +742,7 @@
     <Compile Include="Widgets\Advanced\AEPropertyGrid.cs" />
     <Compile Include="Widgets\Button.cs" />
     <Compile Include="Widgets\ColorTheme.cs" />
+    <Compile Include="Widgets\Dialogs\AtlasButton.cs" />
     <Compile Include="Widgets\Dialogs\AtlasSelector.cs" />
     <Compile Include="Widgets\Dialogs\ColorPicker.ColorField.cs" />
     <Compile Include="Widgets\Dialogs\ColorPicker.cs" />
@@ -798,6 +800,8 @@
     <None Include="fusionIconGrayscale.ico" />
     <None Include="conchars.tga" />
     <None Include="fusionSplash.png" />
+    <None Include="hsvMap.tga" />
+    <None Include="null.tga" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

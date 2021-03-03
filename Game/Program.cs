@@ -127,6 +127,7 @@ namespace IronStar {
 				.ToolsDirectory(@"..\..\..\..\Engine\SDKs\KopiLua\Luac\bin\x64\Release")
 
 				.InputDirectory(@"..\..\..\..\Engine\Shaders")
+				.InputDirectory(@"..\..\..\..\Engine\Widgets")
 
 				.Process("*.hlsl"               , ubershaderProcessor )
 

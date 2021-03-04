@@ -12,12 +12,13 @@ using Fusion.Core.Mathematics;
 using Fusion.Core.Shell;
 using Fusion.Engine.Graphics;
 using IronStar.ECS;
+using Fusion.Widgets.Advanced;
 
 namespace IronStar 
 {
-	class EntityFactoryListProviderAttribute : AEValueProviderAttribute
+	class EntityFactoryListProviderAttribute : AEDropDownValueProviderAttribute
 	{
-		public override string[] GetValues( Game game )
+		protected override string[] GetValues( Game game )
 		{
 			return Misc
 				.GetAllClassesWithAttribute<EntityFactoryAttribute>()

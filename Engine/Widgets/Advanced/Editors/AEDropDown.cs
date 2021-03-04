@@ -14,23 +14,30 @@ using Fusion.Widgets.Binding;
 
 namespace Fusion.Widgets.Advanced
 {
+	public abstract class AEDropDownValueProviderAttribute : AEEditorAttribute 
+	{
+		protected abstract string[] GetValues(Game game);
+
+		public override Frame CreateEditor( AEPropertyGrid grid, string name, IValueBinding binding )
+		{
+			return new AEDropDown( grid, name, GetValues(grid.Game), binding ); 
+		}
+	}
+
+
 	class AEDropDown : AEBaseEditor 
 	{
 		DropDown dropDown;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="grid"></param>
-		/// <param name="bindingInfo"></param>
-		public AEDropDown ( AEPropertyGrid grid, string name, string value, IEnumerable<string> values, IValueBinding binding ) : base(grid, name)
+		public AEDropDown ( AEPropertyGrid grid, string name, IEnumerable<string> values, IValueBinding binding ) : base(grid, name)
 		{ 
 			Width			=	grid.Width;
 			Height			=	ComputeItemHeight();
 
 			this.StatusChanged +=AEDropDown_StatusChanged;
 
-			dropDown		=	new DropDown( Frames, value, values, binding ) {
+			dropDown		=	new DropDown( Frames, values, binding ) 
+			{
 				PaddingLeft		=	AEPropertyGrid.HorizontalPadding,
 				PaddingRight	=	AEPropertyGrid.HorizontalPadding,
 				PaddingTop		=	AEPropertyGrid.VerticalPadding,

@@ -33,9 +33,9 @@ namespace Fusion.Widgets {
 		/// </summary>
 		/// <param name="grid"></param>
 		/// <param name="bindingInfo"></param>
-		public DropDown ( FrameProcessor fp, string value, IEnumerable<string> values, IValueBinding binding ) : base(fp)
+		public DropDown ( FrameProcessor fp, IEnumerable<string> values, IValueBinding binding ) : base(fp)
 		{ 
-			this.binding		=	new StringBindingWrapper( binding, value );
+			this.binding		=	new StringBindingWrapper( binding );
 
 			this.Font			=	ColorTheme.NormalFont;
 
@@ -43,7 +43,7 @@ namespace Fusion.Widgets {
 			this.Width			=	1;
 			this.BorderColor	=	ColorTheme.BorderColor;
 			this.TextAlignment	=	Alignment.MiddleLeft;
-			this.Text			=	value;
+			this.Text			=	this.binding.GetValue();
 
 			StatusChanged	+=	DropDown_StatusChanged;
 			Click += DropDown_Click;

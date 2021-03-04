@@ -182,10 +182,9 @@ namespace Fusion.Widgets.Advanced
 					if ( pi.PropertyType.IsEnum )
 					{
 						var type	=	pi.PropertyType;
-						var value	=	pi.GetValue(obj).ToString();
 						var values	=	Enum.GetNames( type );
 
-						AddToCollapseRegion( category, new AEDropDown( this, name, value, values, binding ) );
+						AddToCollapseRegion( category, new AEDropDown( this, name, values, binding ) );
 					}
 
 					//	default editors :

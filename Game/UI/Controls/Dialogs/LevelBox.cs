@@ -56,7 +56,7 @@ namespace IronStar.UI.Controls.Dialogs {
 			gallery				=	new Frame( frames );
 			gallery.BackColor	=	MenuTheme.Transparent;
 
-			gallery.Layout		=	new GaleryLayout( 3, 256, 144, MenuTheme.Margin );
+			gallery.Layout		=	new GaleryLayout( 256, 144, MenuTheme.Margin );
 
 			PopulateGallery();
 

@@ -21,8 +21,8 @@ namespace Fusion.Widgets.Dialogs {
 
 	static public class AtlasSelector 
 	{
-		const int DialogWidth	= 640 + 4 + 4 + 4;
-		const int DialogHeight	= 480 + 2 + 2 + 14 + 2 + 20 + 2;
+		const int DialogWidth	= 640;
+		const int DialogHeight	= 480;
 
 		static public void ShowDialog ( FrameProcessor fp, string atlasName, string oldImageName, Action<string> setImageName )
 		{
@@ -36,6 +36,7 @@ namespace Fusion.Widgets.Dialogs {
 		{
 			readonly Action<string> setImageName;
 			readonly string		oldImageName;
+			readonly int[] sizeList = new[] { 16,32,48,64,96,128,192,256,384,512};
 
 			GaleryLayout	galery;
 			Label		labelDir;
@@ -56,6 +57,7 @@ namespace Fusion.Widgets.Dialogs {
 				this.setImageName	=	setImageName;
 
 				AllowDrag		=	true;
+				AllowResize		=	true;
 
 				var pageLayout	=	new PageLayout();
 
@@ -96,7 +98,7 @@ namespace Fusion.Widgets.Dialogs {
 				scrollBox.Add( imageList );
 				Add( labelStatus );
 
-				Missclick += FileSelectorFrame_Missclick;
+				Zoom	=	3;
 			}
 
 
@@ -136,11 +138,11 @@ namespace Fusion.Widgets.Dialogs {
 				set {
 					if (zoom!=value) 
 					{
-						zoom = value;
-						zoom = MathUtil.Clamp( zoom, 0,2 );
-						galery.ItemWidth  =  64 << zoom;
-						galery.ItemHeight =  64 << zoom;
-						galery.NumColumns =  10 >> zoom;
+						zoom				=	MathUtil.Clamp( value, 0, sizeList.Length-1 );
+						var size			=	sizeList[ zoom ];
+						galery.ItemWidth	=	size;
+						galery.ItemHeight	=	size;
+
 						imageList.MakeLayoutDirty();
 
 						foreach (var child in imageList.Children) 
@@ -155,15 +157,10 @@ namespace Fusion.Widgets.Dialogs {
 
 			Frame CreateImageList ( string atlasName )
 			{
-				var size	= 128;
 				var atlas	= Frames.Game.Content.Load<TextureAtlas>(atlasName);
-				var colNum	= 5;
-				var rowNum  = MathUtil.IntDivRoundUp( atlas.Count, colNum );
-				var width	= (size)*colNum;
-				var height	= (size)*rowNum;
 
-				var panel		=	new Frame( Frames, 0,0, width, height, "", Color.Zero );
-				galery			=	new GaleryLayout(5,128,128,0);
+				var panel		=	new Frame( Frames, 0,0, 0, 0, "", Color.Zero );
+				galery			=	new GaleryLayout(128,128,0);
 				panel.Layout	=	galery;
 				panel.Tag		=	atlas;
 
@@ -172,13 +169,15 @@ namespace Fusion.Widgets.Dialogs {
 				for ( int i=0; i<names.Length; i++ ) 
 				{
 					var name	=	names[i];
-					var button	=	new AtlasButton( Frames, atlas, name, size );
+					var button	=	new AtlasButton( Frames, atlas, name, 32 );
 					button.Text	=	name;
 
 					button.Click+= (s,e) => Accept(name);
 
 					panel.Add( button );
 				}
+
+				panel.RunLayout();
 
 				return panel;
 			}
@@ -187,12 +186,6 @@ namespace Fusion.Widgets.Dialogs {
 			public void Accept(string name)
 			{
 				setImageName(name);
-				Close();
-			}
-
-
-			private void FileSelectorFrame_Missclick( object sender, EventArgs e )
-			{
 				Close();
 			}
 		}

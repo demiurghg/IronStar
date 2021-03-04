@@ -313,7 +313,8 @@ namespace Fusion.Engine.Frames {
 
 		void RunLayoutInternal ()
 		{
-			if (layoutDirty) {
+			if (layoutDirty) 
+			{
 				RunLayout();
 				layoutDirty = false;
 			}

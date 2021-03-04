@@ -801,8 +801,6 @@
     <None Include="fusionIconGrayscale.ico" />
     <None Include="conchars.tga" />
     <None Include="fusionSplash.png" />
-    <None Include="hsvMap.tga" />
-    <None Include="null.tga" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

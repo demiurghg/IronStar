@@ -42,7 +42,7 @@ namespace Fusion.Core {
 		/// </summary>
 		public float MaxFps {
 			get {
-				return 1 / timeRecord.Max( time => time );
+				return 1 / timeRecord.Min( time => time );
 			}
 		}
 
@@ -52,7 +52,7 @@ namespace Fusion.Core {
 		/// </summary>
 		public float MinFps {
 			get {
-				return 1 / timeRecord.Min( time => time );
+				return 1 / timeRecord.Max( time => time );
 			}
 		}
 

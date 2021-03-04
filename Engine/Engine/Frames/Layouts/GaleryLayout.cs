@@ -11,21 +11,25 @@ using Fusion.Drivers.Graphics;
 using Fusion.Engine.Frames;
 
 
-namespace Fusion.Engine.Frames.Layouts {
+namespace Fusion.Engine.Frames.Layouts 
+{
+	public enum GaleryGrowMode
+	{
+		Vertical
+	}
 
-	public class GaleryLayout : LayoutEngine {
-
+	public class GaleryLayout : LayoutEngine 
+	{
 		public int	Interval	{ get; set; } = 0;
 		public int  ItemWidth	{ get; set; } = 64;
 		public int  ItemHeight	{ get; set; } = 64;
-		public int  NumColumns  { get; set; } = 5;
+		public GaleryGrowMode GrowMode { get; set; } = GaleryGrowMode.Vertical;
 
-		public GaleryLayout(int numColumns, int itemWidth, int itemHeight, int interval)
+		public GaleryLayout(int itemWidth, int itemHeight, int interval)
 		{
 			Interval	=	interval;
 			ItemWidth	=	itemWidth;
 			ItemHeight	=	itemHeight;
-			NumColumns  =	numColumns;
 		}
 
 
@@ -39,14 +43,17 @@ namespace Fusion.Engine.Frames.Layouts {
 			var gp = targetFrame.GetPaddedRectangle(false);
 			var index = 0;
 			
-			foreach ( var child in targetFrame.Children ) {
-
-				if (!child.Visible) {
+			int numColumns	=	Math.Max(1, targetFrame.GetPaddedRectangle(false).Width / ItemWidth);
+			
+			foreach ( var child in targetFrame.Children ) 
+			{
+				if (!child.Visible) 
+				{
 					continue;
 				}
 
-				int row	=	index / NumColumns;
-				int col	=	index % NumColumns;
+				int row	=	index / numColumns;
+				int col	=	index % numColumns;
 
 				child.X			=	(ItemWidth + Interval)  * col;
 				child.Y			=	(ItemHeight + Interval) * row;
@@ -56,10 +63,10 @@ namespace Fusion.Engine.Frames.Layouts {
 				index++;
 			}
 
-			int totalRows		=	MathUtil.IntDivRoundUp( index, NumColumns );
-			int totalCols		=	NumColumns;
+			int totalRows		=	MathUtil.IntDivRoundUp( index, numColumns );
+			int totalCols		=	numColumns;
 
-			targetFrame.Width	=	(ItemWidth  + Interval) * totalCols;
+			//targetFrame.Width	=	(ItemWidth  + Interval) * totalCols;
 			targetFrame.Height	=	(ItemHeight + Interval) * totalRows;
 		}
 

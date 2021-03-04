@@ -56,8 +56,8 @@ namespace Fusion.Widgets.Dialogs {
 				this.oldImageName	=	oldImageName;
 				this.setImageName	=	setImageName;
 
-				AllowDrag		=	true;
 				AllowResize		=	true;
+				AllowDrag		=	true;
 
 				var pageLayout	=	new PageLayout();
 

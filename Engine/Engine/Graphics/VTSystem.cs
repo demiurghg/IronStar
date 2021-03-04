@@ -26,94 +26,93 @@ namespace Fusion.Engine.Graphics {
 		readonly RenderSystem rs;
 
 		[Config]
-		[Category("Performamce")]
+		[AECategory("Performamce")]
 		[Description("Max uploaded to physical texture pages per frame")]
 		public int MaxPPF { get; set; }
 
 		[Config]
-		[Category("Debugging")]
+		[AECategory("Debugging")]
 		public bool ShowPageCaching { get; set; }
 
 		[Config]
-		[Category("Debugging")]
+		[AECategory("Debugging")]
 		public bool ShowPageLoads { get; set; }
 
 		[Config]
-		[Category("Debugging")]
+		[AECategory("Debugging")]
 		[Description("Enables displaying of physical texture")]
 		public bool ShowPhysicalTextures { get; set; }
 
 		[Config]
-		[Category("Debugging")]
+		[AECategory("Debugging")]
 		public bool ShowPageTexture { get; set; }
 
 		[Config]
-		[Category("Debugging")]
+		[AECategory("Tiles")]
 		[Description("Shows tile border for each uploaded tile")]
 		public bool ShowTileBorder { get; set; }
 
 		[Config]
-		[Category("Debugging")]
+		[AECategory("Tiles")]
 		[Description("Disables virtual texturing feedback")]
 		public bool LockTiles { get; set; }
 
 		[Config]
-		[Category("Debugging")]
+		[AECategory("Tiles")]
 		[Description("Shows tile address for each uploaded tile")]
 		public bool ShowTileAddress { get; set; }
 
 		[Config]
-		[Category("Debugging")]
+		[AECategory("Tiles")]
 		[Description("Fills each tile with checkers, for filtering debugging")]
 		public bool ShowTileCheckers { get; set; }
 
 		[Config]
-		[Category("Debugging")]
+		[AECategory("Debugging")]
 		[Description("Fills each tile with checkers, for filtering debugging")]
 		public bool UpdateStressTest { get; set; }
 
 		[Config]
-		[Category("Debugging")]
+		[AECategory("Tiles")]
 		[Description("Fills each tile mip level with solid colors to debug mip transitions")]
 		public bool ShowMipLevels { get; set; }
 
 		[Config]
-		[Category("Debugging")]
+		[AECategory("Tiles")]
 		[Description("Fills each tile with random color.")]
 		public bool RandomColor { get; set; }
 
 		[Config]
-		[Category("Debugging")]
+		[AECategory("Performamce")]
 		[Description("Texture LOD bias.")]
 		public int LodBias { get; set; } = 0;
 
 		[Config]
-		[Category("Debugging")]
+		[AECategory("Debugging")]
 		[Description("Show thrashing.")]
 		public bool ShowThrashing { get; set; } = false;
 
 		[Config]
-		[Category("Debugging")]
+		[AECategory("Tiles")]
 		[Description("Show thrashing.")]
 		public bool ShowDiffuse { get; set; } = false;
 
 		[Config]
-		[Category("Debugging")]
+		[AECategory("Tiles")]
 		[Description("Show thrashing.")]
 		public bool ShowSpecular { get; set; } = false;
 
 		[Config]
-		[Category("Performamce")]
+		[AECategory("Performamce")]
 		[Description("Enables and disables anisotropic filtering.")]
 		public bool UseAnisotropic { get; set; }
 
 		[Config]
-		[Category("Performamce")]
-		[Description("Enables and disables anisotropic filtering.")]
+		[AECategory("Debugging")]
 		public float DebugGradientScale { get; set; } = 1;
 
 		[Config]
-		[Category("Performamce")]
+		[AECategory("Performamce")]
 		[Description("Size of physical texture")]
 		public int PhysicalSize 
 		{

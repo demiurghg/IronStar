@@ -352,7 +352,11 @@ namespace Fusion.Core.Shell {
 					} 
 					catch ( Exception e ) 
 					{
-						Log.Error( e.Message );
+						while (e!=null)
+						{
+							Log.Error(e.Message);
+							e = e.InnerException;
+						}
 					}
 				}
 			}

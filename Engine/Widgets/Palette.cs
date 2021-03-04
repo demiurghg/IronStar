@@ -6,14 +6,16 @@ using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Frames;
 using Fusion.Engine.Frames.Layouts;
+using Fusion.Widgets;
 
 namespace Fusion.Widgets {
 
-	public class Palette : Panel {
-
-		Frame  splitter;
-		Button closeButton;
-
+	public class Palette : Panel 
+	{
+		Frame		captionFrame;
+		Frame		itemList;
+		ScrollBox	scrollBox;
+		Button		closeButton;
 
 		/// <summary>
 		/// 
@@ -26,12 +28,28 @@ namespace Fusion.Widgets {
 		/// <param name="h"></param>
 		public Palette ( FrameProcessor frames, string caption, int x, int y, int w, int h ) : base(frames, x,y,w,h)
 		{
-			Layout = new StackLayout() { AllowResize = true, EqualWidth = true, Interval = 1 };
+			AllowDrag	=	true;
+			AllowResize	=	true;
 
-			Add( new Label( Frames, 0,0,w,12, caption ) { TextAlignment = Alignment.MiddleCenter } );
+			var pageLayout = new PageLayout();
+			pageLayout.AddRow(  17, new[] { -1f } );
+			pageLayout.AddRow( -1f, new[] { -1f } );
+			pageLayout.AddRow(  25, new[] { -1f } );
 
-			Add( new Frame( Frames, 0,0,0,10, "", Color.Zero ) );
-			Add( new Button( Frames, "Close", 0,0,w,20, () => Visible = false ) );
+			Layout	=	pageLayout;
+
+			captionFrame	=	new Label( Frames, 0,0,0,0, caption ) { TextAlignment = Alignment.MiddleLeft };
+			scrollBox		=	new ScrollBox( Frames, 0,0,0,0 );
+			closeButton		=	new Button( Frames, "Close", 0,0,0,0, () => Visible = false );
+
+			itemList		=	new Frame( Frames, 0,0,0,0, "", Color.Zero );
+			itemList.Layout	=	new StackLayout() { AllowResize = true, EqualWidth = true, Interval = 1 };
+
+			Add( captionFrame );
+			Add( scrollBox );
+			Add( closeButton );
+
+			scrollBox.Add( itemList );
 		}
 
 
@@ -42,8 +60,7 @@ namespace Fusion.Widgets {
 		/// <param name="action"></param>
 		public void AddSplitter()
 		{
-			int count = Children.Count();
-			Insert(count-2, new Frame( Frames, 0,0,0,10, "", Color.Zero ) );
+			itemList.Add( new Frame( Frames, 0,0,0,10, "", Color.Zero ) );
 		}
 
 
@@ -54,14 +71,13 @@ namespace Fusion.Widgets {
 		/// <param name="action"></param>
 		public void AddButton( string text, Action action )
 		{
-			int count	=	Children.Count();
-			var button	=	new Button( Frames, text, 0,0,Width,20, action );
+			var button	=	new Button( Frames, text, 0, 0, 0, 23, action );
 
 			button.TextAlignment = Alignment.MiddleLeft;
 			button.PaddingLeft	 = 5;
 			button.PaddingRight	 = 5;
 
-			Insert(count-2, button );
+			itemList.Add( button );
 		}
 	}
 }

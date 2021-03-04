@@ -48,7 +48,10 @@ namespace Fusion.Widgets {
 
 		private void Button_Click( object sender, MouseEventArgs e )
 		{
-			action?.Invoke();
+			if (action!=null)
+			{
+				Frames.Game.Invoker.Execute( action );
+			}
 		}
 
 

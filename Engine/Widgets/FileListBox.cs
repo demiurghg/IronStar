@@ -12,17 +12,19 @@ using System.IO;
 using Fusion.Core.Content;
 using Fusion.Build;
 
-namespace Fusion.Widgets {
-
-	public class FileListBox : ListBox {
-
-		public enum FileDisplayMode {
+namespace Fusion.Widgets 
+{
+	public class FileListBox : ListBox 
+	{
+		public enum FileDisplayMode 
+		{
 			ShortNoExt,
 			Short,
 			Full,
 		}
 
-		public class FileListItem {
+		public class FileListItem 
+		{
 			public readonly FileDisplayMode DisplayMode;
 			public readonly bool IsDirectory;
 			public readonly string FullPath;

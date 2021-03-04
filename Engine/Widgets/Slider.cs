@@ -15,7 +15,7 @@ namespace Fusion.Widgets
 {
 	public class Slider : Frame 
 	{
-		readonly IValueBinding binding;
+		readonly NumericBindingWrapper binding;
 
 		readonly float min;
 		readonly float max;
@@ -35,10 +35,7 @@ namespace Fusion.Widgets
 		/// <param name="bindingInfo"></param>
 		public Slider ( FrameProcessor fp, IValueBinding binding, float min, float max, float snap, float psnap ) : base(fp)
 		{ 
-			if (binding.ValueType==typeof(float))
-			{
-				this.binding	=	binding;
-			}
+			this.binding		=	new NumericBindingWrapper( binding );
 
 			this.min			=	min;
 			this.max			=	max;

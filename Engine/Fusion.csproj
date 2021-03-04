@@ -178,6 +178,7 @@
     <Compile Include="Widgets\Binding\IValueEditor.cs" />
     <Compile Include="Widgets\Binding\IValueBinding.cs" />
     <Compile Include="Widgets\Binding\PropertyBinding.cs" />
+    <Compile Include="Widgets\Binding\NumericBindingWrapper.cs" />
     <Compile Include="Widgets\Binding\StringBindingWrapper.cs" />
     <Compile Include="Widgets\Binding\ValueBindingException.cs" />
     <Compile Include="Core\Collection\EnumArray.cs" />

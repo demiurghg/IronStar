@@ -20,7 +20,7 @@
         "NodeGuid": "b2ca0c3f-ac3e-4057-9635-ab8540aff262",
         "ScenePath": "scenes\\grayBoxing\\radiosityBug.fbx",
         "Scale": 1.0,
-        "GlowColor": "255, 0, 0, 255",
+        "GlowColor": "143, 239, 0, 255",
         "GlowIntensity": 100.0,
         "LightMapSize": "lightMap128",
         "UseLightVolume": false,
@@ -47,7 +47,7 @@
         "Frozen": false,
         "TranslateX": 0.0,
         "TranslateY": 5.38562965,
-        "TranslateZ": 0.0,
+        "TranslateZ": -104.282562,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
@@ -75,8 +75,8 @@
   "RadiositySettings": {
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 256,
-    "NumBounces": 2,
-    "Bias": 0,
+    "NumBounces": 3,
+    "Bias": 1,
     "UseBilateral": true,
     "UseDilate": true,
     "FilterFalloff": 0.5,

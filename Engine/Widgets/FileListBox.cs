@@ -86,24 +86,29 @@ namespace Fusion.Widgets {
 		/// <summary>
 		/// Current directory
 		/// </summary>
-		public string CurrentDirectory {
-			get {
-				return currentDir;
-			}
-			set {
+		public string CurrentDirectory 
+		{
+			get { return currentDir; }
+			set 
+			{
 				var newDir = value;
 
-				if (!Path.IsPathRooted(newDir)) {
+				if (!Path.IsPathRooted(newDir)) 
+				{
 					newDir = Path.Combine( ContentDirectory, newDir );
 				}
-				if (!Directory.Exists(newDir)) {
-					throw new ArgumentException("directory '" + value + "' does not exist");
+				
+				if (Directory.Exists(newDir)) 
+				{
+					currentDir = newDir;
+					RefreshFileList();
 				}
-				currentDir = newDir;
-				RefreshFileList();
+				else
+				{
+					Log.Warning("FileListBox : Directory '" + value + "' does not exist");
+				}
 			}
 		}
-
 
 
 		FileDisplayMode fileDisplayMode = FileDisplayMode.Full;

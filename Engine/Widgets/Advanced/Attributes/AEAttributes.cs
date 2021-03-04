@@ -24,39 +24,4 @@ namespace Fusion.Core.Shell {
 			this.PreciseStep	=	preciseStep;
 		}
 	}
-
-
-	[Obsolete]
-	public class AEClassnameAttribute : Attribute {
-		public readonly string Directory;
-		public AEClassnameAttribute( string dir )
-		{
-			Directory = dir;
-		}
-	}
-
-
-
-	public enum AEFileNameMode {
-		NoExtension = 0x0001,
-		FileNameOnly = 0x0002,
-	}
-
-
-
-	[Obsolete]
-	public class AEFileNameAttribute : Attribute {
-		public readonly string Directory;
-		public readonly string Extension;
-		public readonly bool FileNameOnly;
-		public readonly bool NoExtension;
-
-		public AEFileNameAttribute( string dir, string ext, AEFileNameMode fileNameMode )
-		{
-			Directory = dir;
-			Extension = ext;
-			FileNameOnly = fileNameMode.HasFlag( AEFileNameMode.FileNameOnly );
-			NoExtension  = fileNameMode.HasFlag( AEFileNameMode.NoExtension );
-		}
-	}
 }

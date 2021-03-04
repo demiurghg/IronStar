@@ -31,7 +31,6 @@ namespace IronStar
 
 		[AECategory("FX")]
 		[Description("Name of the FX object")]
-		[AEClassname("fx")]
 		public string FX { get; set; } = "";
 
 		[AECategory("FX")]

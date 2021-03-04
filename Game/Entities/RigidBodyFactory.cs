@@ -39,7 +39,6 @@ namespace IronStar
 
 		
 		[AECategory("Appearance")]
-		[AEClassname("models")]
 		public string Model  { get; set; } = "";
 
 
@@ -53,19 +52,15 @@ namespace IronStar
 		public bool ExplodeOnDamage  { get; set; } = false;
 
 		[AECategory("Explosiveness")]
-		[AEClassname("fx")]
 		public string ExplosionFX  { get; set; } = "";
 
 		[AECategory("Explosiveness")]
-		[AEClassname("fx")]
 		public string BurningFX  { get; set; } = "";
 
 		[AECategory("Explosiveness")]
-		[AEClassname("fx")]
 		public int BurningMaxTime  { get; set; } = 100;
 
 		[AECategory("Explosiveness")]
-		[AEClassname("fx")]
 		public int BurningMinTime  { get; set; } = 500;
 
 		[AECategory("Explosiveness")]

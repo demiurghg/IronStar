@@ -172,6 +172,7 @@
     <Compile Include="Widgets\Advanced\Attributes\AEExpandableAttribute.cs" />
     <Compile Include="Widgets\Advanced\Attributes\AEDisplayNameAttribute.cs" />
     <Compile Include="Widgets\Advanced\Attributes\AECategoryAttribute.cs" />
+    <Compile Include="Widgets\Advanced\Editors\AEFileSelector.cs" />
     <Compile Include="Widgets\Advanced\Editors\AEAtlasSelector.cs" />
     <Compile Include="Widgets\Binding\DelegateBinding.cs" />
     <Compile Include="Widgets\Binding\IValueEditor.cs" />

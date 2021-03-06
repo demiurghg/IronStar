@@ -181,6 +181,17 @@ namespace Fusion.Engine.Graphics {
 			LoadContent();
 
 			Game.Reloading += (s,e) => LoadContent();
+			Game.GraphicsDevice.DisplayBoundsChanged +=GraphicsDevice_DisplayBoundsChanged;
+		}
+
+		private void GraphicsDevice_DisplayBoundsChanged( object sender, EventArgs e )
+		{
+			fogDensity		.Clear(Vector4.Zero);
+			scatteredLight0	.Clear(Vector4.Zero);
+			scatteredLight1	.Clear(Vector4.Zero);
+			volumeShadow	.Clear(Vector4.Zero);
+			shadowHistory	.Clear(Vector4.Zero);
+			integratedLight	.Clear(Vector4.Zero);
 		}
 
 

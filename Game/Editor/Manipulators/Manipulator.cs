@@ -31,7 +31,7 @@ namespace IronStar.Editor.Manipulators {
 		}
 
 
-		public abstract bool StartManipulation ( int x, int y );
+		public abstract bool StartManipulation ( int x, int y, bool snap );
 		public abstract void UpdateManipulation ( int x, int y );
 		public abstract void StopManipulation ( int x, int y );
 		public abstract void Update ( GameTime gameTime, int x, int y );
@@ -170,17 +170,25 @@ namespace IronStar.Editor.Manipulators {
 
 		public float Snap ( float value, float snapValue )
 		{
-			return (float)(Math.Round( value / snapValue ) * snapValue);
+			if (snapValue==0)
+			{
+				return value;
+			} 
+			else
+			{
+				return (float)(Math.Round( value / snapValue ) * snapValue);
+			}
 		}
 
 
 		public float Snap ( float value, float snapValue, bool enable )
 		{
-			if (enable) {
+			return Snap( value, enable ? snapValue : 0 );
+			/*if (enable) {
 				return (float)(Math.Round( value / snapValue ) * snapValue);
 			} else {
 				return value;
-			}
+			} */
 		}
 
 

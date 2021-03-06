@@ -14,7 +14,8 @@ using IronStar.Mapping;
 namespace IronStar.Editor {
 	public class RotateTool : Manipulator {
 
-		enum Rotation {
+		enum Rotation 
+		{
 			Yaw, Pitch, Roll
 		}
 
@@ -31,18 +32,23 @@ namespace IronStar.Editor {
 		{
 			var target = editor.Selection.LastOrDefault();
 
-			if (target==null) {
-				switch (index) {
+			if (target==null) 
+			{
+				switch (index) 
+				{
 					case 0: return Vector3.UnitX;
 					case 1: return Vector3.UnitY;
 					case 2: return Vector3.UnitZ;
 					case 3: return Vector3.ForwardRH;
 				}
-			} else {
+			} 
+			else 
+			{
 				float yaw   = MathUtil.DegreesToRadians( target.RotateYaw );
 				float pitch = MathUtil.DegreesToRadians( target.RotatePitch );
 				float roll  = MathUtil.DegreesToRadians( target.RotateRoll );
-				switch (index) {
+				switch (index) 
+				{
 					case 0: return Matrix.RotationYawPitchRoll(yaw,pitch,0).Right;
 					case 1: return Matrix.RotationYawPitchRoll(yaw,0,0).Up;
 					case 2: return Matrix.RotationYawPitchRoll(yaw,pitch,roll).Backward;
@@ -66,7 +72,8 @@ namespace IronStar.Editor {
 			var dr = rs.RenderWorld.Debug;
 			var mp = game.Mouse.Position;
 
-			if (!editor.Selection.Any()) {
+			if (!editor.Selection.Any()) 
+			{
 				return;
 			}
 
@@ -76,10 +83,8 @@ namespace IronStar.Editor {
 			var linerSize	= editor.camera.PixelToWorldSize( origin, 5 );
 			var ray			= editor.camera.PointToRay( x, y );
 
-
-
-
-			if (!manipulating) {
+			if (!manipulating) 
+			{
 				var hitX	=	IntersectRing( target.TranslateVector, GetAxis(0), mp, ringSize[0] );
 				var hitY	=	IntersectRing( target.TranslateVector, GetAxis(1), mp, ringSize[1] );
 				var hitZ	=	IntersectRing( target.TranslateVector, GetAxis(2), mp, ringSize[2] );
@@ -90,8 +95,9 @@ namespace IronStar.Editor {
 				DrawRing( dr, ray, origin, GetAxis(1), hitInd == 1 ? Utils.SelectColor : Color.Lime , ringSize[1] );
 				DrawRing( dr, ray, origin, GetAxis(2), hitInd == 2 ? Utils.SelectColor : Color.Blue , ringSize[2] );
 
-			} else {
-
+			} 
+			else 
+			{
 				DrawRing( dr, ray, origin, GetAxis(axisIndex), Utils.SelectColor, ringSize[axisIndex] );
 
 				var vecSize	=	editor.camera.PixelToWorldSize(origin, 110);
@@ -99,7 +105,6 @@ namespace IronStar.Editor {
 				dr.DrawLine( origin, origin + vector0 * vecSize, Utils.SelectColor, Utils.SelectColor, 2, 2 );
 				dr.DrawLine( origin, origin + vector1 * vecSize, Utils.SelectColor, Utils.SelectColor, 2, 2 );
 			}
-
 
 			var a	=	editor.camera.PixelToWorldSize(origin, 110);
 			var b	=	editor.camera.PixelToWorldSize(origin, 140);
@@ -163,13 +168,13 @@ namespace IronStar.Editor {
 		float[]	  angles	= null;
 
 
-		public override bool StartManipulation ( int x, int y )
+		public override bool StartManipulation ( int x, int y, bool useSnapping )
 		{
 			if (!editor.Selection.Any()) {
 				return false;
 			}
 
-			snapEnable	=	editor.RotateToolSnapEnable;
+			snapEnable	=	useSnapping;
 			snapValue	=	editor.RotateToolSnapValue;
 			angle		=	0;
 			vector0		=	Vector3.Zero;

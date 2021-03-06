@@ -327,20 +327,20 @@ namespace IronStar.Editor.Controls {
 			mouseX	=	e.X;
 			mouseY	=	e.Y;
 
-			if (Game.Keyboard.IsKeyDown(Keys.LeftAlt)) {
-				if (e.Key==Keys.LeftButton) {
-					editor.camera.StartManipulation( e.X, e.Y, Manipulation.Rotating );
-				} else
-				if (e.Key==Keys.RightButton) {
-					editor.camera.StartManipulation( e.X, e.Y, Manipulation.Zooming );
-				} else 
-				if (e.Key==Keys.MiddleButton) {
-					editor.camera.StartManipulation( e.X, e.Y, Manipulation.Translating );
-				} else {
-					editor.camera.StartManipulation( e.X, e.Y, Manipulation.None );
+			bool useSnap	=	!Game.Keyboard.IsKeyDown(Keys.J);
+
+			if (Game.Keyboard.IsKeyDown(Keys.LeftAlt)) 
+			{
+				switch (e.Key)
+				{
+					case Keys.LeftButton:	editor.camera.StartManipulation( e.X, e.Y, Manipulation.Rotating );	break;
+					case Keys.RightButton:	editor.camera.StartManipulation( e.X, e.Y, Manipulation.Zooming );	break;
+					case Keys.MiddleButton:	editor.camera.StartManipulation( e.X, e.Y, Manipulation.Translating );	break;
 				}
-			} else {
-				if (!editor.manipulator.StartManipulation( e.X, e.Y )) {
+			} else 
+			{
+				if (!editor.manipulator.StartManipulation( e.X, e.Y, useSnap )) 
+				{
 					editor.StartMarqueeSelection( e.X, e.Y, Game.Keyboard.IsKeyDown(Keys.LeftShift) );
 				}
 			}

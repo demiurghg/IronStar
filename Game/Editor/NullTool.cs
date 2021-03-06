@@ -46,7 +46,7 @@ namespace IronStar.Editor {
 			}
 		}
 
-		public override bool StartManipulation ( int x, int y )
+		public override bool StartManipulation ( int x, int y, bool useSnapping )
 		{
 			return false;
 		}

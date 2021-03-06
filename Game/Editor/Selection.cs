@@ -18,18 +18,15 @@ using IronStar.Mapping;
 using Fusion.Build;
 using BEPUphysics;
 
-namespace IronStar.Editor {
-	public class Selection {
-
+namespace IronStar.Editor 
+{
+	public class Selection 
+	{
 		public Map map;
 
 		public Selection ( Map map )
 		{
 			this.map	=	map;
 		}
-
-
-
-		//void 
 	}
 }

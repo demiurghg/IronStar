@@ -118,13 +118,14 @@ namespace IronStar.Editor {
 		Vector3[] initPos = null;
 
 
-		public override bool StartManipulation ( int x, int y )
+		public override bool StartManipulation ( int x, int y, bool useSnapping )
 		{
-			if (!editor.Selection.Any()) {
+			if (!editor.Selection.Any()) 
+			{
 				return false;
 			}
 
-			snapEnable	=	editor.MoveToolSnapEnable;
+			snapEnable	=	useSnapping;
 			snapValue	=	editor.MoveToolSnapValue;
 
 			targets	=	editor.GetSelection();
@@ -140,11 +141,13 @@ namespace IronStar.Editor {
 
 			var index		=	HandleIntersection.PollIntersections( intersectX, intersectY, intersectZ );
 
-			if (index<0) {
+			if (index<0) 
+			{
 				return false;
 			}
 
-			if (index==0) {		
+			if (index==0) 
+			{		
 				manipulating	=	true;
 				direction		=	Vector3.UnitX;
 				initialPoint	=	intersectX.HitPoint;
@@ -152,7 +155,8 @@ namespace IronStar.Editor {
 				return true;
 			}
 
-			if (index==1) {		
+			if (index==1) 
+			{		
 				manipulating	=	true;
 				direction		=	Vector3.UnitY;
 				initialPoint	=	intersectY.HitPoint;
@@ -160,7 +164,8 @@ namespace IronStar.Editor {
 				return true;
 			}
 
-			if (index==2) {		
+			if (index==2) 
+			{		
 				manipulating	=	true;
 				direction		=	Vector3.UnitZ;
 				initialPoint	=	intersectZ.HitPoint;
@@ -174,8 +179,8 @@ namespace IronStar.Editor {
 
 		public override void UpdateManipulation ( int x, int y )
 		{
-			if (manipulating) {
-
+			if (manipulating && targets.Any()) 
+			{
 				var origin	=	initialPoint;
 				var mp		=	new Point( x, y );
 
@@ -183,17 +188,23 @@ namespace IronStar.Editor {
 				
 				currentPoint	= result.HitPoint;
 
-				for ( int i=0; i<targets.Length; i++) {
-					var target	= targets[i];
-					var pos		= initPos[i];
+				//	compute delta vector :
+				var lastItemPosition	=	initPos.Last();
+				var newItemPosition		=	Snap( lastItemPosition + (currentPoint - initialPoint), snapEnable ? snapValue : 0 ); 
+				var translationDelta	=	newItemPosition - lastItemPosition;
 
-					if (snapEnable) {
-						target.TranslateVector = Snap( pos + (currentPoint - initialPoint), snapValue );
-					} else {
-						target.TranslateVector = pos + (currentPoint - initialPoint);
+
+				if (translationDelta.Length()>0)
+				{
+					for ( int i=0; i<targets.Length; i++) 
+					{
+						var target	= targets[i];
+						var pos		= initPos[i];
+
+						target.TranslateVector = pos + translationDelta;
+
+						target.ResetNodeECS( this.editor.GameState );
 					}
-
-					target.ResetNodeECS( this.editor.GameState );
 				}
 			}
 		}
@@ -201,7 +212,8 @@ namespace IronStar.Editor {
 
 		public override void StopManipulation ( int x, int y )
 		{
-			if (manipulating) {
+			if (manipulating) 
+			{
 				manipulating	=	false;
 			}
 		}

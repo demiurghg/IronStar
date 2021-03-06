@@ -19,13 +19,14 @@ using Fusion.Build;
 using BEPUphysics;
 using IronStar.ECS;
 
-namespace IronStar.Editor {
+namespace IronStar.Editor 
+{
 
 	/// <summary>
 	/// World represents entire game state.
 	/// </summary>
-	public partial class MapEditor {
-
+	public partial class MapEditor 
+	{
 		LayerState GetLayerStateForNode ( MapNode node )
 		{
 			if (node is MapEntity)			return LayerEntities;
@@ -89,26 +90,31 @@ namespace IronStar.Editor {
 		{
 			var ray = camera.PointToRay( x, y );
 
-			var pickedItem		=	GetNodeUnderCursor( x, y );
+			var pickedItem	=	GetNodeUnderCursor( x, y );
 
-
-			if (add) {
-
-				if (pickedItem==null) {
+			if (add) 
+			{
+				if (pickedItem==null) 
+				{
 					return;
 				}
 
-				if (selection.Contains(pickedItem)) {
+				if (selection.Contains(pickedItem)) 
+				{
 					selection.Remove(pickedItem);
-				} else {
+				} 
+				else 
+				{
 					selection.Add(pickedItem);
 				}
 
-			} else {
-
+			} 
+			else 
+			{
 				ClearSelection();
 
-				if (pickedItem!=null) {
+				if (pickedItem!=null) 
+				{
 					selection.Add(pickedItem);
 				}
 			}
@@ -133,9 +139,12 @@ namespace IronStar.Editor {
 			var node1	=	GetNodeUnderCursorModel( x, y, out p1, out d1 );
 			var node2	=	GetNodeUnderCursorNoModel( x, y, out p2, out d2 );
 
-			if (d1<d2) {
+			if (d1<d2) 
+			{
 				return node1;
-			} else {
+			}
+			else 
+			{
 				return node2;
 			}
 		}
@@ -185,18 +194,20 @@ namespace IronStar.Editor {
 
 			distance			=	float.MaxValue;
 
-			foreach ( var item in map.Nodes ) {
-
-				if (IsSelectable(item)) {
-
+			foreach ( var item in map.Nodes ) 
+			{
+				if (IsSelectable(item)) 
+				{
 					var bbox	=	DefaultBox;
 					var iw		=	Matrix.Invert( item.WorldMatrix );
 					float d;
 
 					var rayT	=	Utils.TransformRay( iw, ray );
 
-					if (rayT.Intersects(ref bbox, out d)) {
-						if (distance > d) {
+					if (rayT.Intersects(ref bbox, out d)) 
+					{
+						if (distance > d) 
+						{
 							distance = d;
 							pickedItem = item;
 						}
@@ -240,27 +251,34 @@ namespace IronStar.Editor {
 
 		public void UpdateMarqueeSelection ( int x, int y )
 		{
-			if (marqueeSelecting) {
+			if (marqueeSelecting) 
+			{
 				selectingMarqueeEnd	  = new Point(x,y);
 			}
 		}
 
 		public void StopMarqueeSelection ( int x, int y )
 		{
-			if (marqueeSelecting) {
+			if (marqueeSelecting) 
+			{
 
-				if (selectingMarqueeStart==selectingMarqueeEnd) {
+				if (selectingMarqueeStart==selectingMarqueeEnd) 
+				{
 					marqueeSelecting = false;
 					return;
 				}
 
-				if (!selectingMarqueeAdd) {
+				if (!selectingMarqueeAdd) 
+				{
 					ClearSelection();
 				}
 
-				foreach ( var item in map.Nodes ) {
-					if (camera.IsInRectangle( item.TranslateVector, SelectionMarquee )) {
-						if (IsSelectable(item)) {
+				foreach ( var item in map.Nodes ) 
+				{
+					if (camera.IsInRectangle( item.TranslateVector, SelectionMarquee )) 
+					{
+						if (IsSelectable(item)) 
+						{
 							selection.Add( item );
 						}
 					}

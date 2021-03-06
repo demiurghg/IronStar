@@ -289,7 +289,11 @@ namespace IronStar.Editor {
 
 			var newItems = selection
 				#warning REMOVE PARAMETER
-				.Select( item => item.DuplicateNode() )
+				.Select( item => {
+					var newNode = item.DuplicateNode();
+					newNode.TranslateVector = item.TranslateVector + Vector3.One;
+					return newNode;
+				})
 				.ToArray();
 
 			Map.Nodes.AddRange( newItems );

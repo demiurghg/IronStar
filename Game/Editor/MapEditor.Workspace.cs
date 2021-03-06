@@ -129,8 +129,8 @@ namespace IronStar.Editor {
  				  "Rotate snap : {1}\r\n" +
  				  "Camera FOV  : {2}\r\n" +
  				  "", 
-				  MoveToolSnapEnable   ? MoveToolSnapValue  .ToString("000.00") : "Disabled",
-				  RotateToolSnapEnable ? RotateToolSnapValue.ToString("000.00") : "Disabled", 
+				  MoveToolSnapValue  .ToString("000.00"),
+				  RotateToolSnapValue.ToString("000.00"), 
 				  camera.Fov,0 );
 			};
 
@@ -182,10 +182,6 @@ namespace IronStar.Editor {
 			workspace.AddHotkey( Keys.U			, ModKeys.None, () => UseSelected() );
 			workspace.AddHotkey( Keys.D			, ModKeys.Ctrl, () => DuplicateSelection() );
 			workspace.AddHotkey( Keys.N			, ModKeys.None, () => ai.ShowNavigationMesh = !ai.ShowNavigationMesh );
-
-
-			workspace.AddHotkey( Keys.J			, ModKeys.Ctrl, () => RotateToolSnapEnable = !RotateToolSnapEnable );
-			workspace.AddHotkey( Keys.J			, ModKeys.None, () => MoveToolSnapEnable = !MoveToolSnapEnable );
 
 			workspace.AddHotkey( Keys.G			, ModKeys.None, () => rs.SkipDebugRendering = !rs.SkipDebugRendering );
 			workspace.AddHotkey( Keys.G			, ModKeys.Alt,	() => DrawGrid = !DrawGrid );

@@ -45,12 +45,7 @@ namespace IronStar.Editor
 
 
 		[Config]
-		[AECategory("Move Tool")]
-		public bool MoveToolSnapEnable { get; set; } = true;
-
-
-		[Config]
-		[AECategory("Move Tool")]
+		[AECategory("Snapping")]
 		public float MoveToolSnapValue { 
 			get {
 				return moveToolSnapValue;	
@@ -63,12 +58,7 @@ namespace IronStar.Editor
 
 
 		[Config]
-		[AECategory("Rotate Tool")]
-		public bool RotateToolSnapEnable { get; set; } = true;
-
-
-		[Config]
-		[AECategory("Rotate Tool")]
+		[AECategory("Snapping")]
 		public float RotateToolSnapValue { 
 			get {
 				return rotateToolSnapValue;

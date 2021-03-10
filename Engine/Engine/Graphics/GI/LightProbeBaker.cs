@@ -137,6 +137,9 @@ namespace Fusion.Engine.Graphics.GI
 
 							camera.SetupCameraCubeFaceLH( lightProbe.ProbeMatrix.TranslationVector, face, 0.125f, 4096 );
 					
+							rs.LightManager.LightGrid.UpdateLightSetVisibility( StereoEye.Mono, camera, lightSet );
+							rs.LightManager.LightGrid.ClusterizeLightSet( StereoEye.Mono, camera, lightSet );
+
 							device.Clear( depth );
 							device.Clear( hdr,	 MathUtil.Random.NextColor4() );
 							device.Clear( gbuf0, Color4.Zero );

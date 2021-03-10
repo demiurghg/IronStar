@@ -30,6 +30,9 @@ static const float3 WhiteColor = float3( 0.875f, 0.875f, 0.875f );
 
 #ifdef ILLUMINATE
 
+groupshared uint light_indices[ TileSize * TileSize ];
+groupshared uint light_count = 0;
+
 void ReconstructBasis(float3 normal, out float3 tangentX, out float3 tangentY)
 {
 	tangentX = abs(normal.x>0.7) ? float3(0,0,1) : float3(1,0,0);
@@ -45,9 +48,12 @@ void CSMain(
 	uint  groupIndex: SV_GroupIndex, 
 	uint3 dispatchThreadId : SV_DispatchThreadID) 
 {
-	uint2 	tileLoadXY	=	groupId.xy + Radiosity.RegionXY/8;
+	uint2 	tileLoadXY	=	groupId.xy + Radiosity.RegionXY/TileSize;
 	int2	loadXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
 	int2	storeXY		=	dispatchThreadId.xy + Radiosity.RegionXY;
+	
+	float3 	bboxMin		=	BBoxMin[ tileLoadXY ].xyz;
+	float3 	bboxMax		=	BBoxMax[ tileLoadXY ].xyz;	
 	
 	SHADOW_RESOURCES	shadowRc;
 	shadowRc.ShadowSampler	=	ShadowSampler	; 
@@ -83,14 +89,42 @@ void CSMain(
 		//-----------------------------
 		// compute spot lights :
 		//-----------------------------
+
+		if (1)
+		{
+			uint 	light_index		=	groupIndex;
+			LIGHT 	light			=	Lights[light_index];
+			uint 	current_index;
+			
+			float4 planes[6], left, right, top, bottom, near, far;
+			
+			GetFrustumPlanesFromMatrix( light.ViewProjection, left, right, top, bottom, near, far );
+			
+			planes[0]	=	(-1) * left;
+			planes[1] 	=	(-1) * right;
+			planes[2]	=	(-1) * top;
+			planes[3] 	=	(-1) * bottom;
+			planes[4]	=	(-1) * near;
+			planes[5] 	=	(-1) * far;
+
+			if ( light.LightType!=LightTypeNone && FrustumAABBIntersect( planes, bboxMin, bboxMax )!=COLLISION_OUTSIDE )
+			{
+				InterlockedAdd( light_count, 1, current_index );
+				light_indices[ current_index ] = light_index;
+			}
+		}
+	
+		//-----------------------------
+		// compute spot lights :
+		//-----------------------------
 		
-		/*for (uint index=0; index<light_count; index++)
+		for (uint index=0; index<light_count; index++)
 		{
 			LIGHT light 		=	Lights[ light_indices[ index ] ];
 			LIGHTING lighting	=	ComputePointLight( light, Camera, geometry, surface, shadowRc );
 			
 			AccumulateLighting( totalLight, lighting, 1 );
-		}*/
+		}
 
 		//-----------------------------
 		// compute direct light :

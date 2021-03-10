@@ -38,6 +38,8 @@ namespace Fusion.Engine.Graphics.GI
 		static FXTexture2D<Vector4>							regPosition			=	new TRegister( 0, "Position"		);
 		static FXTexture2D<Vector4>							regAlbedo			=	new TRegister( 1, "Albedo"			);
 		static FXTexture2D<Vector4>							regNormal			=	new TRegister( 2, "Normal"			);
+		static FXTexture2D<Vector4>							regBBoxMin			=	new TRegister( 3, "BBoxMin"			);
+		static FXTexture2D<Vector4>							regBBoxMax			=	new TRegister( 4, "BBoxMax"			);
 		static FXTexture2D<Vector4>							regRadiance			=	new TRegister( 7, "Radiance"		);
 		static FXTexture2D<Vector4>							regShadowMap		=	new TRegister( 8, "ShadowMap"		);
 		static FXTexture2D<Vector4>							regShadowMask		=	new TRegister( 9, "ShadowMask"		);
@@ -330,6 +332,8 @@ namespace Fusion.Engine.Graphics.GI
 			device.ComputeResources[ regPosition		]	=	gbuffer.PositionTexture	;
 			device.ComputeResources[ regAlbedo			]	=	gbuffer.AlbedoTexture	;
 			device.ComputeResources[ regNormal			]	=	gbuffer.NormalTexture	;
+			device.ComputeResources[ regBBoxMin			]	=	gbuffer.bboxMinTexture	;
+			device.ComputeResources[ regBBoxMax			]	=	gbuffer.bboxMaxTexture	;
 			device.ComputeResources[ regRadiance		]	=	lightMap.irradianceL0	;
 
 			device.ComputeSamplers[ regSamplerShadow	]	=	SamplerState.ShadowSampler;

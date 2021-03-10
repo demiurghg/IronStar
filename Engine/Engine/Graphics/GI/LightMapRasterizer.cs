@@ -125,7 +125,6 @@ namespace Fusion.Engine.Graphics.GI
 			float utilization = totalPixels / (float)(allocator.Width * allocator.Height);
 			Log.Message("Allocating completed: {0}x{1}, {2:0.0}%", allocator.Width, allocator.Height, utilization * 100 );
 
-
 			//-------------------------------------------------
 
 			lmGBuffer		=	new LightMapGBuffer( rs, allocator.Width );
@@ -172,6 +171,10 @@ namespace Fusion.Engine.Graphics.GI
 					}, true);
 				}
 			}
+
+			//--------------------------------------
+
+			lmGBuffer.ComputeBoundingBoxes();
 
 			//--------------------------------------
 

@@ -26,6 +26,9 @@ namespace Fusion.Engine.Graphics.GI
 		public int Width	{ get { return size; } }
 		public int Height	{ get { return size; } }
 
+		public int TileX { get { return Width/16; } }
+		public int TileY { get { return Height/16; } }
+
 		public Size2 Size { get { return new Size2( size, size ); } }
 
 		public readonly Image<Color>		Albedo;
@@ -33,10 +36,14 @@ namespace Fusion.Engine.Graphics.GI
 		public readonly Image<Vector3>		Normal;
 		public readonly Image<float>		Area;
 		public readonly Image<byte>			Coverage;
+		public readonly Image<Vector3>		BBoxMin;
+		public readonly Image<Vector3>		BBoxMax;
 
 		internal Texture2D	albedoTexture	;
 		internal Texture2D	positionTexture	;
 		internal Texture2D	normalTexture	;
+		internal Texture2D	bboxMinTexture	;
+		internal Texture2D	bboxMaxTexture	;
 
 		public ShaderResource AlbedoTexture { get { return albedoTexture; } }
 		public ShaderResource PositionTexture { get { return positionTexture; } }
@@ -55,15 +62,24 @@ namespace Fusion.Engine.Graphics.GI
 			this.rs		=	rs;
 			this.size	=	size;
 
-			Albedo			=	new Image<Color>	( Width,  Height, Color.Zero );
-			Position		=	new Image<Vector3>	( Width,  Height, Vector3.Zero );
-			Normal			=	new Image<Vector3>	( Width,  Height, Vector3.Zero );
-			Coverage		=	new Image<byte>		( Width,  Height, 0 );
-			Area			=	new Image<float>	( Width,  Height, 0 );
+			if (size/RadiositySettings.TileSize!=MathUtil.IntDivRoundUp( size, RadiositySettings.TileSize ))
+			{
+				throw new ArgumentException("Size must be a multiple of " + RadiositySettings.TileSize, nameof(size));
+			}
+
+			Albedo		=	new Image<Color>	( Width,  Height, Color.Zero );
+			Position	=	new Image<Vector3>	( Width,  Height, Vector3.Zero );
+			Normal		=	new Image<Vector3>	( Width,  Height, Vector3.Zero );
+			Coverage	=	new Image<byte>		( Width,  Height, 0 );
+			Area		=	new Image<float>	( Width,  Height, 0 );
+			BBoxMin		=	new Image<Vector3>	( TileX,  TileY,  Vector3.Zero );
+			BBoxMax		=	new Image<Vector3>	( TileX,  TileY,  Vector3.Zero );
 
 			albedoTexture	=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	1,	false );
 			positionTexture	=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgb32F,	1,	false );
 			normalTexture	=	new Texture2D( rs.Device, Width,  Height, ColorFormat.Rgba8,	1,	false );
+			bboxMinTexture	=	new Texture2D( rs.Device, TileX,  TileY,  ColorFormat.Rgb32F,	1,	false );
+			bboxMaxTexture	=	new Texture2D( rs.Device, TileX,  TileY,  ColorFormat.Rgb32F,	1,	false );
 		}
 
 
@@ -74,6 +90,8 @@ namespace Fusion.Engine.Graphics.GI
 				SafeDispose( ref albedoTexture	 );
 				SafeDispose( ref positionTexture );
 				SafeDispose( ref normalTexture	 );
+				SafeDispose( ref bboxMinTexture	 );
+				SafeDispose( ref bboxMaxTexture	 );
 			}
 
 			base.Dispose( disposing );
@@ -85,6 +103,9 @@ namespace Fusion.Engine.Graphics.GI
 			positionTexture.SetData( Position.RawImageData );
 			albedoTexture.SetData( Albedo.RawImageData );
 			normalTexture.SetData( Normal.Convert( EncodeNormalRGB8 ).RawImageData );
+
+			bboxMinTexture.SetData( BBoxMin.RawImageData );
+			bboxMaxTexture.SetData( BBoxMax.RawImageData );
 		}
 
 
@@ -145,7 +166,42 @@ namespace Fusion.Engine.Graphics.GI
 			SaveDebugImage( Normal.Convert( EncodeNormalRGB8 )		, "rad_normal" );
 		}
 
+		
+		public void ComputeBoundingBoxes()
+		{
+			var tileSize = RadiositySettings.TileSize;
 
+			for (int tx=0; tx<TileX; tx++)
+			{
+				for (int ty=0; ty<TileY; ty++)
+				{
+					var coords = new List<Vector3>( TileX * TileY );
+					var maxArea = 0f;
+
+					for (int x=0; x<tileSize; x++)
+					{
+						for (int y=0; y<tileSize; y++)
+						{
+							var xy = new Int2( tx*tileSize+x, ty*tileSize+y );
+
+							if (Albedo[xy].A>0)
+							{
+								maxArea = Math.Max( Area[xy], maxArea );
+								coords.Add( Position[ xy ] );
+							}
+						}
+					}
+
+					var margin	=	Vector3.One * (float)Math.Sqrt( maxArea );
+					var bbox	= BoundingBox.FromPoints( coords );
+						bbox	= new BoundingBox( bbox.Minimum - margin, bbox.Maximum + margin );
+
+					BBoxMin[ tx, ty ] = bbox.Minimum;
+					BBoxMax[ tx, ty ] = bbox.Maximum;
+				}
+			}
+		}
+		
 		/*-----------------------------------------------------------------------------------------
 		 *	Lightmap Import :
 		-----------------------------------------------------------------------------------------*/

@@ -185,6 +185,8 @@ cbuffer __buffer4 : register(b4) {
 Texture2D<float4>              Position                       : register(t0);
 Texture2D<float4>              Albedo                         : register(t1);
 Texture2D<float4>              Normal                         : register(t2);
+Texture2D<float4>              BBoxMin                        : register(t3);
+Texture2D<float4>              BBoxMax                        : register(t4);
 Texture2D<float4>              Radiance                       : register(t7);
 Texture2D<float4>              ShadowMap                      : register(t8);
 Texture2D<float4>              ShadowMask                     : register(t9);

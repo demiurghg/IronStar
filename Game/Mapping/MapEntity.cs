@@ -60,7 +60,7 @@ namespace IronStar.Mapping {
 			var newNode = (MapEntity)MemberwiseClone();
 			newNode.Factory		= Factory.Duplicate();
 			newNode.FactoryName	= Misc.GenerateRandomString(8);
-			newNode.NodeGuid = Guid.NewGuid();
+			newNode.Name = GenerateUniqueName();
 			return newNode;
 		}
 

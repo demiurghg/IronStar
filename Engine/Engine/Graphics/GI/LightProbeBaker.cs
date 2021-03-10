@@ -125,7 +125,7 @@ namespace Fusion.Engine.Graphics.GI
 
 					using ( new PixEvent( "Render Cube" ) )
 					{
-						Log.Message( "...{0}", lightProbe.Guid );
+						Log.Message( "...{0}", lightProbe.Name );
 
 						for (int i=0; i<6; i++) 
 						{
@@ -163,7 +163,7 @@ namespace Fusion.Engine.Graphics.GI
 					}
 
 					writer.WriteFourCC("CUBE");
-					writer.Write( lightProbe.Guid.ToString() );
+					writer.Write( lightProbe.Name );
 				
 					if (useGBuffer)
 					{

@@ -38,7 +38,7 @@ namespace IronStar.SFX2
 		public RMFlags	rmFlags;
 
 		public Size2	lightmapSize;
-		public Guid		lightmapGuid;
+		public string	lightmapName;
 
 		public string	cmPrefix;
 
@@ -65,10 +65,10 @@ namespace IronStar.SFX2
 		}
 
 
-		public void SetupLightmap( int width, int height, Guid regionGuid )
+		public void SetupLightmap( int width, int height, string regionId )
 		{
 			lightmapSize	=	new Size2( width, height );
-			lightmapGuid	=	regionGuid;
+			lightmapName		=	regionId;
 		}
 
 

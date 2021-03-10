@@ -34,11 +34,11 @@ namespace IronStar.Editor {
 		{
 			public HistorySnapshot( Game game, IEnumerable<MapNode> selection, Map map )
 			{
-				SelectedNodes = selection.Select( node => node.NodeGuid ).ToArray();
+				SelectedNodes = selection.Select( node => node.Name ).ToArray();
 				SerializedMap = JsonUtils.ExportJsonString( map );
 			}
 
-			public readonly Guid[] SelectedNodes;
+			public readonly string[] SelectedNodes;
 			public readonly string SerializedMap;
 		}
 
@@ -91,13 +91,13 @@ namespace IronStar.Editor {
 			ResetWorld();
 
 			selection.Clear();
-			selection.AddRange( snapshot.SelectedNodes.Select( guid => GetNodeByGuid(guid) ) );
+			selection.AddRange( snapshot.SelectedNodes.Select( name => GetNodeByName(name) ) );
 		}
 
 
-		MapNode GetNodeByGuid(Guid guid)
+		MapNode GetNodeByName(string name)
 		{
-			return map.Nodes.SingleOrDefault( node => node.NodeGuid == guid );
+			return map.Nodes.SingleOrDefault( node => node.Name == name );
 		}
 	}
 }

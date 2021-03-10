@@ -76,7 +76,7 @@ namespace IronStar.Mapping
 			ecsEntity = gs.Spawn();
 			ecsEntity.AddComponent( new ECS.Transform( TranslateVector, RotateQuaternion ) );
 
-			var light = new SFX2.LightProbeBox(NodeGuid);
+			var light = new SFX2.LightProbeBox(Name);
 
 			light.Width			=	Width;
 			light.Height		=	Height;
@@ -107,7 +107,7 @@ namespace IronStar.Mapping
 		{
 			var newNode = (MapLightProbeBox)MemberwiseClone();
 			newNode.light = null;
-			newNode.NodeGuid = Guid.NewGuid();
+			newNode.Name = GenerateUniqueName();
 			return newNode;
 		}
 	}

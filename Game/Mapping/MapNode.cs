@@ -15,10 +15,11 @@ using Newtonsoft.Json;
 using IronStar.ECS;
 using Fusion.Widgets.Advanced;
 
-namespace IronStar.Mapping {
-	public abstract class MapNode {
-
-		public Guid NodeGuid = Guid.NewGuid();
+namespace IronStar.Mapping 
+{
+	public abstract class MapNode 
+	{
+		public string Name;
 
 		/// <summary>
 		/// Indicates that map object or entity should be updated without
@@ -31,8 +32,15 @@ namespace IronStar.Mapping {
 		/// </summary>
 		public MapNode ()
 		{
-
+			Name = GenerateUniqueName();
 		}
+
+
+		public static string GenerateUniqueName()
+		{
+			return Guid.NewGuid().ToString();
+		}
+
 
 		[AECategory("Display")]
 		public bool Visible { get; set; } = true;

@@ -93,7 +93,7 @@ namespace IronStar.SFX2
 
 			ri.Group				= rm.UseLightMap ? InstanceGroup.Static : InstanceGroup.Kinematic;
 			ri.Color				= Color4.Zero;
-			ri.LightMapRegionName	= rm.lightmapGuid.ToString();// + "##" + scene.GetFullNodePath(node);
+			ri.LightMapRegionName	= rm.lightmapName;// + "##" + scene.GetFullNodePath(node);
 			ri.LightMapSize			= rm.lightmapSize;
 
 			rs.RenderWorld.Instances.Add( ri );

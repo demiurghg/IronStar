@@ -78,7 +78,7 @@ namespace IronStar.Mapping
 		public override MapNode DuplicateNode()
 		{
 			var newNode = (MapOmniLight)MemberwiseClone();
-			newNode.NodeGuid = Guid.NewGuid();
+			newNode.Name = GenerateUniqueName();
 			return newNode;
 		}
 

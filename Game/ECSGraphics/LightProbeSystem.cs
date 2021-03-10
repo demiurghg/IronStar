@@ -36,11 +36,11 @@ namespace IronStar.SFX2
 
 		protected override RSLightProbe Create( Entity e, LightProbeSphere lpSph, LightProbeBox lpBox, Transform t )
 		{
-			var guid = new Guid();;
-			if (lpSph!=null) guid = lpSph.guid;
-			if (lpBox!=null) guid = lpBox.guid;
+			string name = "";
+			if (lpSph!=null) name = lpSph.name;
+			if (lpBox!=null) name = lpBox.name;
 
-			var light = new RSLightProbe(guid);
+			var light = new RSLightProbe(name);
 
 			Process( e, GameTime.Zero, light, lpSph, lpBox, t );
 

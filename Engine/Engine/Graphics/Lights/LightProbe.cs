@@ -19,7 +19,7 @@ namespace Fusion.Engine.Graphics
 
 	public class LightProbe 
 	{
-		public readonly Guid Guid;
+		public readonly string Name;
 
 		public LightProbeMode	Mode { get; set; } = LightProbeMode.CubeReflection;
 
@@ -69,9 +69,9 @@ namespace Fusion.Engine.Graphics
 		/// <param name="position"></param>
 		/// <param name="innerRadius"></param>
 		/// <param name="outerRadius"></param>
-		public LightProbe ( Guid guid )
+		public LightProbe ( string name )
 		{
-			this.Guid	=	guid;
+			this.Name	=	name;
 			ImageIndex	=	0;
 		}
 	}

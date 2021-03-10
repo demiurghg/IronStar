@@ -359,7 +359,7 @@ namespace Fusion.Engine.Graphics {
 			{
 				foreach ( var lpb in LightSet.LightProbes ) 
 				{
-					lpb.ImageIndex	= lightProbes.GetLightProbeIndex( lpb.Guid.ToString() );
+					lpb.ImageIndex	= lightProbes.GetLightProbeIndex( lpb.Name );
 				}
 			}
 		}

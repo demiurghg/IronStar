@@ -15,7 +15,7 @@ namespace IronStar.SFX2
 {
 	public class LightProbeBox : IComponent
 	{
-		public readonly Guid guid;
+		public readonly string name;
 
 		[AECategory("Light probe")]
 		[AESlider(0,256,8,0.25f)]
@@ -44,9 +44,9 @@ namespace IronStar.SFX2
 		[AESlider(0.25f,32,1,0.25f)]
 		public float ShellDepth  { get; set; } = 8f;
 
-		public LightProbeBox ( Guid guid )
+		public LightProbeBox ( string name )
 		{
-			this.guid	=	guid;
+			this.name	=	name;
 		}
 
 		public void Save( GameState gs, Stream stream ) {}

@@ -15,7 +15,7 @@ namespace IronStar.SFX2
 {
 	public class LightProbeSphere : IComponent
 	{
-		public readonly Guid guid;
+		public readonly string name;
 
 		[AECategory("Light probe")]
 		[AESlider(0,256,8,0.25f)]
@@ -26,13 +26,13 @@ namespace IronStar.SFX2
 		[AESlider(0.25f,64,1,0.25f)]
 		public float Transition  { get; set; } = 8f;
 
-		public LightProbeSphere ( Guid guid )
+		public LightProbeSphere ( string name )
 		{
-			this.guid	=	guid;
+			this.name	=	name;
 		}
 
 
-		private LightProbeSphere () : this( Guid.NewGuid() )
+		private LightProbeSphere () : this( Guid.NewGuid().ToString() )
 		{
 		}
 

@@ -118,7 +118,7 @@ namespace IronStar.Mapping {
 			var rm		=	new SFX2.RenderModel( ScenePath, Matrix.Identity, Color.White, 1, SFX2.RMFlags.None );
 			rm.cmPrefix	=	UseCollisionMesh ? "cm_" : "";
 			var lmSize	=	UseLightVolume ? 0 : (int)LightMapSize;
-			rm.SetupLightmap( lmSize, lmSize, NodeGuid );
+			rm.SetupLightmap( lmSize, lmSize, Name );
 			ecsEntity.AddComponent( rm );
 		}
 
@@ -126,7 +126,7 @@ namespace IronStar.Mapping {
 		public override MapNode DuplicateNode()
 		{
 			var newNode = (MapModel)MemberwiseClone();
-			newNode.NodeGuid = Guid.NewGuid();
+			newNode.Name = GenerateUniqueName();
 
 			return newNode;
 		}

@@ -25,13 +25,13 @@ using IronStar.ECSPhysics;
 using IronStar.Editor.Systems;
 using IronStar.AI;
 
-namespace IronStar.Editor {
-
+namespace IronStar.Editor 
+{
 	/// <summary>
 	/// World represents entire game state.
 	/// </summary>
-	public partial class MapEditor : GameComponent {
-
+	public partial class MapEditor : GameComponent 
+	{
 		const string Dir = "maps";
 		const string Ext = ".json";
 
@@ -46,10 +46,13 @@ namespace IronStar.Editor {
 		public EditorCamera	camera;
 		public Manipulator	manipulator;
 
-		public Manipulator Manipulator {
+		public Manipulator Manipulator 
+		{
 			get { return manipulator; }
-			set {
-				if (!manipulator.IsManipulating) {
+			set 
+			{
+				if (!manipulator.IsManipulating) 
+				{
 					manipulator = value;
 				}
 			}
@@ -59,14 +62,10 @@ namespace IronStar.Editor {
 
 		Map	map = null;
 
-		public Map Map {
-			get {
-				return map;
-			}
-		}
+		public Map Map { get { return map; } }
 
 		ECS.GameState	gameState;
-		public ECS.GameState GameState { get {  return gameState; } }
+		public ECS.GameState GameState { get { return gameState; } }
 		/*GameWorld world;
 
 		public GameWorld World { get { return world; } }*/
@@ -110,10 +109,13 @@ namespace IronStar.Editor {
 		{
 			base.Initialize();
 
-			if (File.Exists(fullPath)) {
+			if (File.Exists(fullPath)) 
+			{
 				Log.Message("Opening existing map: {0}", fullPath);
 				this.map = (Map)JsonUtils.ImportJson( File.OpenRead( fullPath ) );
-			} else {
+			}
+			else
+			{
 				Log.Message("Creating new map: {0}", fullPath);
 				this.map = new Map();
 			}
@@ -123,6 +125,7 @@ namespace IronStar.Editor {
 			gameState.AddSystem( new EditorLightRenderSystem( this, rs.RenderWorld.Debug ) );
 			gameState.AddSystem( new EditorPhysicsRenderSystem( this, rs.RenderWorld.Debug ) );
 			gameState.AddSystem( new EditorModelRenderSystem( this, rs.RenderWorld.Debug ) );
+			gameState.AddSystem( new EditorCharacterRenderSystem( this, rs.RenderWorld.Debug ) );
 			gameState.Update( GameTime.MSec16 );
 
 			//world.SimulateWorld( GameTime.MSec16 );
@@ -192,8 +195,8 @@ namespace IronStar.Editor {
 		/// <param name="disposing"></param>
 		protected override void Dispose( bool disposing )
 		{
-			if ( disposing ) {
-
+			if ( disposing ) 
+			{
 				Game.Reloading -= Game_Reloading;
 
 				selection.Clear();
@@ -219,7 +222,8 @@ namespace IronStar.Editor {
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
-		public IEnumerable<MapNode> Selection {
+		public IEnumerable<MapNode> Selection 
+		{
 			get { return selection; }
 		}
 
@@ -248,10 +252,12 @@ namespace IronStar.Editor {
 
 		public void Select( MapNode node )
 		{
-			if ( node==null ) {
+			if ( node==null ) 
+			{
 				throw new ArgumentNullException( "node" );
 			}
-			if ( !map.Nodes.Contains( node ) ) {
+			if ( !map.Nodes.Contains( node ) ) 
+			{
 				throw new ArgumentException( "Provided node does not exist in current map" );
 			}
 			selection.Clear();
@@ -264,11 +270,13 @@ namespace IronStar.Editor {
 
 		public void DeleteSelection ()
 		{
-			if (manipulator.IsManipulating) {
+			if (manipulator.IsManipulating) 
+			{
 				return;
 			}
 
-			foreach ( var se in selection ) {
+			foreach ( var se in selection ) 
+			{
 				se.KillNodeECS( gameState );
 				map.Nodes.Remove( se );
 			}
@@ -283,7 +291,8 @@ namespace IronStar.Editor {
 
 		public void DuplicateSelection ()
 		{
-			if (manipulator.IsManipulating) {
+			if (manipulator.IsManipulating) 
+			{
 				return;
 			}
 
@@ -298,7 +307,8 @@ namespace IronStar.Editor {
 
 			Map.Nodes.AddRange( newItems );
 
-			foreach ( var newItem in newItems ) {
+			foreach ( var newItem in newItems ) 
+			{
 				newItem.SpawnNodeECS(gameState);
 			}
 
@@ -314,7 +324,8 @@ namespace IronStar.Editor {
 
 		public void ResetSelected()
 		{
-			if (manipulator.IsManipulating) {
+			if (manipulator.IsManipulating) 
+			{
 				return;
 			}
 
@@ -331,14 +342,16 @@ namespace IronStar.Editor {
 		/// </summary>
 		public void ResetWorld ()
 		{
-			if (manipulator.IsManipulating) {
+			if (manipulator.IsManipulating) 
+			{
 				return;
 			}
 
 			EnableSimulation = false;
 
 			//	kill node's entities
-			foreach ( var node in map.Nodes ) {
+			foreach ( var node in map.Nodes ) 
+			{
 				node.KillNodeECS(gameState);
 			}
 	
@@ -347,7 +360,8 @@ namespace IronStar.Editor {
 			gameState.KillAll();
 
 			//	spawn entities again
-			foreach ( var node in map.Nodes ) {
+			foreach ( var node in map.Nodes ) 
+			{
 				node.SpawnNodeECS(gameState);
 			}
 
@@ -410,11 +424,13 @@ namespace IronStar.Editor {
 		{
 			Log.Warning("MapEditor.ActivateSelected -- NOT IMPLEMENTED");
 
-			if (manipulator.IsManipulating) {
+			if (manipulator.IsManipulating) 
+			{
 				return;
 			}
 
-			foreach ( var se in selection ) {
+			foreach ( var se in selection ) 
+			{
 				//se.ActivateNode();
 			}
 		}
@@ -427,11 +443,13 @@ namespace IronStar.Editor {
 		{
 			Log.Warning("MapEditor.UseSelected -- NOT IMPLEMENTED");
 
-			if (manipulator.IsManipulating) {
+			if (manipulator.IsManipulating) 
+			{
 				return;
 			}
 
-			foreach ( var se in selection ) {
+			foreach ( var se in selection ) 
+			{
 				//se.UseNode();
 			}
 		}
@@ -479,7 +497,8 @@ namespace IronStar.Editor {
 			gameState.Update( gameTime );
 
 			//	draw stuff :
-			if (DrawGrid) {
+			if (DrawGrid) 
+			{
 				rs.RenderWorld.Debug.DrawGrid();
 			}
 
@@ -494,7 +513,8 @@ namespace IronStar.Editor {
 		/// </summary>
 		public void UnfreezeAll ()
 		{
-			foreach ( var node in map.Nodes ) {
+			foreach ( var node in map.Nodes ) 
+			{
 				node.Frozen = false;
 			}
 			Do();
@@ -506,7 +526,8 @@ namespace IronStar.Editor {
 		/// </summary>
 		public void FreezeSelected ()
 		{
-			foreach ( var node in Selection ) {
+			foreach ( var node in Selection ) 
+			{
 				node.Frozen = true;
 			}
 			ClearSelection();
@@ -519,14 +540,17 @@ namespace IronStar.Editor {
 		/// </summary>
 		public void TargetSelection ()
 		{
-			if (manipulator.IsManipulating) {
+			if (manipulator.IsManipulating) 
+			{
 				return;
 			}
 
-			if (selection.Count<2) {
+			if (selection.Count<2) 
+			{
 				Log.Warning("TargetSelection: select at least two objects");
 				return;
 			}
+			
 			var targets =	selection.Take(selection.Count-1);
 			var aimObj  =	selection.Last();
 
@@ -552,17 +576,17 @@ namespace IronStar.Editor {
 
 			var points = new List<Vector3>();
 
-			if (!targets.Any()) {
+			if (!targets.Any()) 
+			{
 				points.Add( Vector3.One * 30 );
 				points.Add( Vector3.One * (-30) );
-			} else {
-
-				foreach ( var node in targets ) {
-					
+			} 
+			else 
+			{
+				foreach ( var node in targets ) 
+				{
 					points.AddRange( node.GetBoundingBox().GetCorners().Select( p => Vector3.TransformCoordinate( p, node.WorldMatrix ) ) );
-
 				}
-
 			}
 
 			var bbox	= BoundingBox.FromPoints( points );
@@ -577,7 +601,5 @@ namespace IronStar.Editor {
 			camera.Target	= center;
 			camera.Distance = (size / scaler) * 1.0f;
 		}
-
-
 	}
 }

@@ -164,6 +164,7 @@
     <Compile Include="ECS\Static.cs" />
     <Compile Include="ECS\Velocity.cs" />
     <Compile Include="Editor\MapEditor.History.cs" />
+    <Compile Include="Editor\Systems\EditorCharacterRenderSystem.cs" />
     <Compile Include="Editor\Systems\EditorEntityRenderSystem.cs" />
     <Compile Include="Editor\Systems\EditorModelRenderSystem.cs" />
     <Compile Include="Editor\Systems\EditorPhysicsRenderSystem.cs" />

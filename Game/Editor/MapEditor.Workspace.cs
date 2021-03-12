@@ -36,7 +36,7 @@ namespace IronStar.Editor
 	public partial class MapEditor 
 	{
 		Workspace workspace;
-		Outliner outliner;
+		MapOutliner outliner;
 		FpsCounter fpsCounter = new FpsCounter(60);
 
 		void SetupWorkspace ()
@@ -72,8 +72,8 @@ namespace IronStar.Editor
 			upperShelf.AddLButton("FCS", @"editor\iconFocus",		()=> FocusSelection() );
 
 			upperShelf.AddLSplitter();
-			upperShelf.AddLButton("Undo", null,	() => Undo() );
-			upperShelf.AddLButton("Redo", null,	() => Redo() );
+			upperShelf.AddLButton("Undo", null,	() => Log.Warning("Undo") );
+			upperShelf.AddLButton("Redo", null,	() => Log.Warning("Redo") );
 
 			upperShelf.AddLSplitter();
 			upperShelf.AddFatLButton("Palette", null, ()=> workspace.TogglePalette( entityPalette ) );
@@ -160,6 +160,9 @@ namespace IronStar.Editor
 			};
 
 			//- HOTKEYS ----------------------------------------------------------------
+
+			workspace.AddHotkey( Keys.Z			, ModKeys.Ctrl, () => Game.Invoker.ExecuteString("undo") );
+			workspace.AddHotkey( Keys.Y			, ModKeys.Ctrl, () => Game.Invoker.ExecuteString("redo") );
 
 			workspace.AddHotkey( Keys.F			, ModKeys.None,	() => FocusSelection() );
 			//workspace.AddHotkey( Keys.F2		, ModKeys.None, () => rs.VSyncInterval = (rs.VSyncInterval==1) ? 0 : 1 );
@@ -335,9 +338,9 @@ namespace IronStar.Editor
 		}
 
 
-		Outliner CreateOutliner( Workspace workspace )
+		MapOutliner CreateOutliner( Workspace workspace )
 		{
-			return new Outliner(workspace, 0,0,200,450 );
+			return new MapOutliner(workspace, this, 0,0,200,450 );
 		}
 
 

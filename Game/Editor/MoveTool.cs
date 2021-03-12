@@ -128,7 +128,7 @@ namespace IronStar.Editor {
 			snapEnable	=	useSnapping;
 			snapValue	=	editor.MoveToolSnapValue;
 
-			targets	=	editor.GetSelection();
+			targets	=	editor.Selection.ToArray();
 			initPos	=	targets.Select( t => t.TranslateVector ).ToArray();
 
 			var origin	=	initPos.Last();

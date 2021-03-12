@@ -43,46 +43,6 @@ namespace IronStar.Editor {
 		}
 
 
-		public void Do ()
-		{
-			outliner.SetItems( Map );
-			//undoStack.Push( new HistorySnapshot( Game, GetSelection(), this.Map ) );
-			//redoStack.Clear();
-		}
-
-
-		void Undo()
-		{
-			//if (undoStack.Any())
-			//{
-			//	var snapshot = undoStack.Pop();
-			//	redoStack.Push( snapshot );
-
-			//	LoadSnapshot( snapshot );
-			//}
-			//else
-			//{
-			//	Log.Warning("Undo stack is empty");
-			//}
-		}
-
-
-		void Redo()
-		{
-			//if (redoStack.Any())
-			//{
-			//	var snapshot = redoStack.Pop();
-			//	undoStack.Push( snapshot );
-
-			//	LoadSnapshot( snapshot );
-			//}
-			//else
-			//{
-			//	Log.Warning("Redo stack is empty");
-			//}
-		}
-
-
 		void LoadSnapshot(HistorySnapshot snapshot)
 		{
 			map.Nodes.Clear();

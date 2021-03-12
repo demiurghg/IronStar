@@ -45,6 +45,24 @@ namespace Fusion.Widgets
 		public int SelectedIndex { get { return selection.Any() ? selection.Last() : -1; } }
 		public object SelectedItem { get { return ( SelectedIndex < 0 ) ? null : binding[ SelectedIndex ]; } }
 
+		public IEnumerable<object> GetSelectedItems()
+		{
+			List<object> list = new List<object>();
+
+			if (binding!=null)
+			{
+				for (int i=0; i<binding.Count; i++)
+				{
+					if (selection.Contains(i))
+					{
+						list.Add(binding[i]);
+					}
+				}
+			}
+
+			return list;
+		}
+
 		
 		/// <summary>
 		/// 

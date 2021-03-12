@@ -163,8 +163,10 @@
     <Compile Include="ECS\Collections\SystemCollection.cs" />
     <Compile Include="ECS\Static.cs" />
     <Compile Include="ECS\Velocity.cs" />
-    <Compile Include="Editor\Controls\Outliner.cs" />
+    <Compile Include="Editor\Commands\Select.cs" />
+    <Compile Include="Editor\Controls\MapOutliner.cs" />
     <Compile Include="Editor\MapEditor.History.cs" />
+    <Compile Include="Editor\MapEditor.Picking.cs" />
     <Compile Include="Editor\Systems\EditorCharacterRenderSystem.cs" />
     <Compile Include="Editor\Systems\EditorEntityRenderSystem.cs" />
     <Compile Include="Editor\Systems\EditorModelRenderSystem.cs" />

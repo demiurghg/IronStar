@@ -301,8 +301,7 @@ namespace IronStar.Editor.Controls
 			//	common operations for each type of editors
 			if (editor.camera.Manipulation==Manipulation.None && !editor.manipulator.IsManipulating) 
 			{
-				var shift =	Game.Keyboard.IsKeyDown(Keys.LeftShift) || Game.Keyboard.IsKeyDown(Keys.RightShift);
-				editor.Select( e.X, e.Y, shift );
+				editor.PickSelection( e.X, e.Y, e.Shift );
 			}
 		}
 
@@ -370,8 +369,6 @@ namespace IronStar.Editor.Controls
 			editor.camera.StopManipulation( e.X, e.Y );
 			editor.manipulator.StopManipulation( e.X, e.Y );
 			editor.StopMarqueeSelection( e.X, e.Y );
-
-			editor.Do();
 		}
 	}
 }

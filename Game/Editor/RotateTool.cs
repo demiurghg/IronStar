@@ -180,7 +180,7 @@ namespace IronStar.Editor {
 			vector0		=	Vector3.Zero;
 			vector1		=	Vector3.Zero;
 
-			targets		=	editor.GetSelection();
+			targets		=	editor.Selection.ToArray();
 
 			var target	=	targets.LastOrDefault();
 

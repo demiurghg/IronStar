@@ -18,11 +18,10 @@ using Newtonsoft.Json;
 using Fusion.Engine.Graphics.GI;
 using IronStar.ECS;
 
-namespace IronStar.Mapping {
-	public partial class Map : IPrecachable {
-
-		
-
+namespace IronStar.Mapping 
+{
+	public partial class Map : IPrecachable 
+	{
 		/// <summary>
 		/// 
 		/// </summary>
@@ -65,7 +64,7 @@ namespace IronStar.Mapping {
 		public void Validate()
 		{
 			foreach ( var n in Nodes ) {
-				if ( Math.Abs( n.TranslateX ) > 1024 ||	Math.Abs( n.TranslateY ) > 1024 || Math.Abs( n.TranslateZ ) > 1024 ) {
+				if ( Math.Abs( n.TranslateX ) > 4096 ||	Math.Abs( n.TranslateY ) > 4096 || Math.Abs( n.TranslateZ ) > 4096 ) {
 					Log.Warning("Map : bad position : [{0} {1} {2}]. Moved to [0 0 0]", n.TranslateX, n.TranslateY, n.TranslateZ );
 					n.TranslateX = 0;
 					n.TranslateY = 0;

@@ -58,7 +58,7 @@ namespace IronStar.Editor
 			}
 		}
 
-		readonly List<MapNode> selection = new List<MapNode>();
+		readonly Selection selection;
 
 		Map	map = null;
 
@@ -78,7 +78,10 @@ namespace IronStar.Editor
 		/// <param name="maxEntities"></param>
 		public MapEditor ( Game game, string map ) : base(game)
 		{
-			this.mapName	=	map;
+			mapName			=	map;
+			selection		=	new Selection();
+
+			selection.Changed += Selection_Changed;
 
 			this.rs			=	Game.RenderSystem;
 			Content         =   new ContentManager( Game );
@@ -88,6 +91,12 @@ namespace IronStar.Editor
 			SetupWorkspace();
 
 			fullPath	=	GetFullMapPath(map);
+		}
+
+		
+		private void Selection_Changed( object sender, EventArgs e )
+		{
+			workspace?.FeedProperties( selection.LastOrDefault() );
 		}
 
 
@@ -183,15 +192,6 @@ namespace IronStar.Editor
 		/// <summary>
 		/// 
 		/// </summary>
-		void FeedSelection ()
-		{
-			workspace?.FeedProperties( selection.FirstOrDefault() );
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="disposing"></param>
 		protected override void Dispose( bool disposing )
 		{
@@ -200,7 +200,7 @@ namespace IronStar.Editor
 				Game.Reloading -= Game_Reloading;
 
 				selection.Clear();
-				FeedSelection();
+				//FeedSelection();
 
 				UnregisterCommands();
 				//SaveMap();
@@ -222,35 +222,20 @@ namespace IronStar.Editor
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
-		public IEnumerable<MapNode> Selection 
+		public Selection Selection 
 		{
 			get { return selection; }
 		}
-
-		public MapNode[] GetSelection() 
-		{
-			return selection.ToArray();
-		}
-
-
-		public void ClearSelection ()
-		{
-			selection.Clear();
-			Do();
-		}
-
-
 
 		public void CreateNodeUI ( MapNode newNode )
 		{
 			Map.Nodes.Add( newNode );
 			newNode.SpawnNodeECS( GameState );
-			Select( newNode );
-			Do();
+			Select_Deprecated( newNode );
 		}
 
 
-		public void Select( MapNode node )
+		public void Select_Deprecated( MapNode node )
 		{
 			if ( node==null ) 
 			{
@@ -263,8 +248,7 @@ namespace IronStar.Editor
 			selection.Clear();
 			selection.Add( node );
 
-			FeedSelection();
-			Do();
+			//FeedSelection();
 		}
 
 
@@ -281,10 +265,8 @@ namespace IronStar.Editor
 				map.Nodes.Remove( se );
 			}
 
-			ClearSelection();
-			FeedSelection();
-
-			Do();
+			selection.Clear();
+			//FeedSelection();
 		}
 
 
@@ -312,13 +294,10 @@ namespace IronStar.Editor
 				newItem.SpawnNodeECS(gameState);
 			}
 
-			ClearSelection();
-
+			selection.Clear();
 			selection.AddRange( newItems );
 
-			FeedSelection();
-
-			Do();
+			//FeedSelection();
 		}
 
 
@@ -399,7 +378,6 @@ namespace IronStar.Editor
 					}
 				}
 			}
-			Do();
 		}
 
 
@@ -411,8 +389,6 @@ namespace IronStar.Editor
 		{
 			var mapNode = target as MapNode;
 			mapNode?.ResetNodeECS( gameState );
-
-			Do();
 		}
 
 
@@ -517,7 +493,6 @@ namespace IronStar.Editor
 			{
 				node.Frozen = false;
 			}
-			Do();
 		}
 
 
@@ -530,8 +505,7 @@ namespace IronStar.Editor
 			{
 				node.Frozen = true;
 			}
-			ClearSelection();
-			Do();
+			selection.Clear();
 		}
 
 

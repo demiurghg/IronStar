@@ -17,7 +17,7 @@
     "$values": [
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "4563de88-14d9-4879-89c6-14de09bdbbbf",
+        "Name": "1a2a0722-494e-477c-979d-c868ee3c7da5",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.StartPointFactory, IronStar",
@@ -35,7 +35,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "c4229d1b-4e38-4f91-8e64-24cbb7434528",
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -53,7 +53,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "c4229d1b-4e38-4f91-8e64-24cbb7434528",
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -71,7 +71,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "c4229d1b-4e38-4f91-8e64-24cbb7434528",
+        "Name": "ace3a556-4ce1-425f-86a0-c69d1c7e81e1",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -89,7 +89,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "c4229d1b-4e38-4f91-8e64-24cbb7434528",
+        "Name": "04c1f096-3065-405b-9d05-972a0872b61e",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -107,7 +107,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "NodeGuid": "3aec703f-b244-4a8d-aa28-d04af23dfcce",
+        "Name": "96a2a0df-91f0-4e42-b3f0-91238e20aba0",
         "Width": 68.0,
         "Height": 52.0,
         "Depth": 128.0,
@@ -125,7 +125,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "6a9aab8f-9c96-4101-ae95-0c4ffe66c7bb",
+        "Name": "b4211d33-fa38-4e77-9d8f-a6956099769c",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -143,7 +143,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "20840d9f-2adc-491a-83aa-fc996985b117",
+        "Name": "169a4e2d-ec0f-4854-86c4-a53b8c52c4f6",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -161,7 +161,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "673a82c3-8726-495a-ac18-aa84886e3a9c",
+        "Name": "d37bbb76-a9bf-456a-b775-acde226613ad",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -179,7 +179,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "c6e54e33-51af-438a-a898-19f97d03ddd9",
+        "Name": "67c85cee-c4cc-41b3-a72a-07116e86451a",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -197,7 +197,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "af7897dc-0d8d-4a38-8845-5131dc81a0a2",
+        "Name": "5bb6f6c7-2a2d-448c-a2fa-7ef15775e4f6",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -215,7 +215,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "e77059dd-d281-454c-aad8-322cbf61edf6",
+        "Name": "16c88b9a-5fe2-4bde-8ec7-3934e60a1919",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -233,7 +233,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "442bb191-4945-4f25-8bd1-090c4940ce61",
+        "Name": "e0e2772a-e10a-4bf7-bfb0-027df3dd0741",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -251,7 +251,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "7fdf8aa7-af90-41de-bf26-3417d779ac8a",
+        "Name": "aedb94b9-e542-44ce-9faf-62c5ec894ed8",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -269,7 +269,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "a8b07d01-020e-425a-b65f-96b393453b94",
+        "Name": "c63cd3f8-47ae-4e55-90b0-96839b193ef5",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -287,7 +287,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "554d5c21-2453-4b03-aca2-a00f53bef680",
+        "Name": "15b3d325-52f4-4c76-8dd7-670f408ca103",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.FuncFXFactory, IronStar",
@@ -310,7 +310,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "123c6add-4a5e-49a6-b4ca-bb7ed4221acf",
+        "Name": "1b2607c6-eba4-49fd-bfcd-4b3533004d3a",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -328,7 +328,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "e07748d9-621e-4e0d-9e40-3417ad006986",
+        "Name": "b3a9887a-3b75-4e76-9494-1a3783b3e4b3",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -346,7 +346,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "a0e34852-c8ad-4a5a-87f8-e0f147bd8990",
+        "Name": "2f5cd9da-fb19-45d0-b7ec-d56178a52f1b",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -364,7 +364,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "f507d2cc-0354-450c-bedc-255257064df7",
+        "Name": "50f2d333-e9a8-477b-af0b-c952e2e5ed4c",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -382,7 +382,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "99647ee6-88d2-4f18-a747-923044c936d4",
+        "Name": "931274e7-5ab0-4903-966e-27e2e957bc7e",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -400,7 +400,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "e4eee72c-146f-400a-964c-d4c5636cfedd",
+        "Name": "552125f1-6a5d-4788-be50-a5d14f67d87b",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -418,7 +418,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "5198e1cf-9f92-42b3-99b4-dc0ba68ae386",
+        "Name": "daad0ff9-5e22-4be6-a545-17ae5d3ac7df",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -436,7 +436,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "59cee07a-75ca-4cd6-a3f7-7762d8624f4e",
+        "Name": "5bae8864-cfc8-4f23-8b26-fe8612ae043a",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -454,7 +454,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "e3f7a9ad-ea7b-458b-89c6-0b7ee0fc4295",
+        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -472,7 +472,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "acd4456b-1f0b-4720-ad33-a4155daf10aa",
+        "Name": "174af710-1635-43fa-88aa-7b33dd4a3536",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -490,7 +490,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "1372b797-7574-4764-8fe2-de2bbf9afedf",
+        "Name": "baa15562-5283-4ff0-8a19-c4f6e7fdca3f",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -508,7 +508,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "2c5fb782-a72d-4c44-9ef6-7e025b3b774c",
+        "Name": "6b4dc60b-265b-4877-b666-aa3bd5fea5a6",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -526,7 +526,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "dcf8a95c-0102-41bd-9e78-4513aad4c207",
+        "Name": "cfa16f54-d494-41c3-89ef-438bd004754d",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -544,7 +544,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "dbfafe0a-6505-4d20-882b-11ba82015934",
+        "Name": "63116f69-ac9e-4f2b-bf27-a9281939f8e5",
         "ScenePath": "scenes\\grayBoxing\\map1.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -567,7 +567,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "6b7dac7b-87a4-439b-9d3e-ada2fe4b9cf6",
+        "Name": "dff8edb2-5677-47d4-bc60-18eab7501d02",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.FuncFXFactory, IronStar",
@@ -590,7 +590,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "52711835-b951-48df-8e33-27d27ec35f19",
+        "Name": "f8665592-f519-4e99-a925-c67a33be916e",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.FuncFXFactory, IronStar",
@@ -613,7 +613,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "d71f9051-29e7-4660-96ab-defc24de0b3e",
+        "Name": "79c7d6c6-861e-4e0a-9a6f-9e68a9809894",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.FuncFXFactory, IronStar",
@@ -636,7 +636,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "086868f9-e5c7-4f38-9a2c-8e4e9ec1e3f7",
+        "Name": "4d4aded5-d9e7-4d46-94f7-ed8df80ed617",
         "ScenePath": "scenes\\boxes\\containers\\container_LP_big.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -659,7 +659,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "NodeGuid": "e1026121-65ad-4bcf-8a76-a176b91de720",
+        "Name": "331d845b-be78-4823-992a-5f38facd7466",
         "Width": 64.0,
         "Height": 32.0,
         "Depth": 64.0,
@@ -677,7 +677,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "acbd10a0-3a88-4639-a5f4-083ca265d428",
+        "Name": "48dc6a30-3189-45fe-8dc2-aae65d48fb2b",
         "ScenePath": "scenes\\boxes\\containers\\container_LP_big.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -700,7 +700,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "30c53ffe-3cf6-4ccf-be8d-255b14ffe01b",
+        "Name": "e1ad4071-ea65-4b3c-9adb-edb138778dc8",
         "ScenePath": "scenes\\boxes\\containers\\container_LP_big.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -723,7 +723,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "3385038e-51df-4c82-9ccd-0b09648081cc",
+        "Name": "3c20693d-ef5d-4e98-9875-5f3ced975c27",
         "ScenePath": "scenes\\boxes\\containers\\container_LP_big.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -746,7 +746,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "NodeGuid": "f2b4760b-36ac-49bc-bb9f-d321d907021b",
+        "Name": "8e47f245-2ee8-4950-9ad2-413189b5041d",
         "Width": 16.0,
         "Height": 16.0,
         "Depth": 48.0,
@@ -764,7 +764,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "efbd681b-4f27-4077-921f-fbc34f5ad5b1",
+        "Name": "088367f3-1af8-4ed4-958b-a1b3310cf09e",
         "ScenePath": "scenes\\rocks\\Rock_2\\Rock_2.fbx",
         "Scale": 1.2,
         "GlowColor": "255, 0, 0, 255",
@@ -787,7 +787,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "b293732a-616f-4fc9-ade7-0b911349e3b8",
+        "Name": "fff2184f-a4af-4b03-a7db-c4ad21256f0f",
         "ScenePath": "scenes\\rocks\\Rock_1\\Rock_1.fbx",
         "Scale": 0.7,
         "GlowColor": "255, 0, 0, 255",
@@ -810,7 +810,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "8a603ef8-57d8-42ad-ba7f-2f330cff8a37",
+        "Name": "1e776e87-b614-4a1a-a336-190bc8d1179a",
         "ScenePath": "scenes\\rocks\\Rock_2\\Rock_2.fbx",
         "Scale": 0.3,
         "GlowColor": "255, 0, 0, 255",
@@ -833,7 +833,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "424b75c7-b120-4f74-ae85-2ce466c589f9",
+        "Name": "1f0477fd-8cd5-4c43-8c91-efcc187d61cf",
         "ScenePath": "scenes\\rocks\\Rock_1\\Rock_1.fbx",
         "Scale": 0.5,
         "GlowColor": "255, 0, 0, 255",
@@ -856,7 +856,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "5d19f62d-8480-4c89-9fc3-e579688c3cb3",
+        "Name": "128fa4c5-5dc5-4892-be17-3f4425b31040",
         "ScenePath": "scenes\\rocks\\Rock_2\\Rock_2.fbx",
         "Scale": 0.5,
         "GlowColor": "255, 0, 0, 255",
@@ -879,7 +879,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "03e820c2-9d00-461a-9941-ca5aa2142f40",
+        "Name": "e383ec3c-e353-4c28-9336-73597dc43599",
         "ScenePath": "scenes\\rocks\\Rock_1\\Rock_1.fbx",
         "Scale": 0.5,
         "GlowColor": "255, 0, 0, 255",
@@ -902,7 +902,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "420ed28d-5853-46f2-9bc8-db89564d97a4",
+        "Name": "14108a87-1549-4ea0-8171-098f215616bc",
         "ScenePath": "scenes\\rocks\\Rock_1\\Rock_1.fbx",
         "Scale": 0.5,
         "GlowColor": "255, 0, 0, 255",
@@ -925,7 +925,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "757ee78e-915e-4014-ab20-959ad071a629",
+        "Name": "9881b03b-b976-42c1-b724-7ab73fa1e76f",
         "ScenePath": "scenes\\rocks\\Rock_2\\Rock_2.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -948,7 +948,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "61e510f6-7d1a-4802-85f5-bd8ac1941fe4",
+        "Name": "4c2190c6-a9f1-440a-a465-00f9014fefb5",
         "ScenePath": "scenes\\rocks\\Rock_1\\Rock_1.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -971,7 +971,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "24a07b1c-c929-4fae-bd12-8a08c85b0a40",
+        "Name": "a694e58f-6038-4948-8a57-4a51c07269d8",
         "ScenePath": "scenes\\rocks\\Rock_1\\Rock_1.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -994,7 +994,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "5170d34f-7e53-43f7-8982-4d891bca78b4",
+        "Name": "d40296a8-91ec-452e-a915-e66c50742100",
         "ScenePath": "scenes\\rocks\\Rock_2\\Rock_2.fbx",
         "Scale": 0.7,
         "GlowColor": "255, 0, 0, 255",
@@ -1017,7 +1017,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "b833623e-18de-40f8-a1bc-96119c25d7da",
+        "Name": "92a5cb1d-fa6c-400e-8798-e1a9a5c7ef90",
         "ScenePath": "scenes\\rocks\\Rock_2\\Rock_2.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1040,7 +1040,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "bfe99333-ae2c-4443-b896-ed7609fd1b4b",
+        "Name": "f1350a43-2d16-4c00-a20e-ada2796fb8bb",
         "ScenePath": "scenes\\rocks\\Rock_1\\Rock_1.fbx",
         "Scale": 0.5,
         "GlowColor": "255, 0, 0, 255",
@@ -1063,7 +1063,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "62748b3d-7987-43d2-a53d-ca5f9dad51a1",
+        "Name": "9c2f839c-bfd7-488b-b25f-f6dcbefbed74",
         "ScenePath": "scenes\\rocks\\Rock_3\\Rock_3.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1086,7 +1086,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "1bee3d77-3842-43ca-87a3-fb1c5a8c1b0d",
+        "Name": "0e79aca8-edbf-4192-8943-d968aa87ebd8",
         "ScenePath": "scenes\\rocks\\Rock_4\\Rock_4.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1109,7 +1109,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "c255fbd0-72bd-4c0e-9a29-090727bdfb10",
+        "Name": "410b5373-a9ca-4f32-a68a-47c2e2483e21",
         "ScenePath": "scenes\\rocks\\Rock_9\\Rock_9.fbx",
         "Scale": 0.75,
         "GlowColor": "255, 0, 0, 255",
@@ -1132,7 +1132,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "4703abf2-551c-4e35-87a0-e9a7f5da10fc",
+        "Name": "538829a7-b0af-4205-9ec1-29501e184545",
         "ScenePath": "scenes\\rocks\\Rock_7\\Rock_7.fbx",
         "Scale": 1.4,
         "GlowColor": "255, 0, 0, 255",
@@ -1155,7 +1155,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "8d5e5467-e7c4-4143-b2c2-b3f33e7efcba",
+        "Name": "728b7776-df6a-46ee-ab4a-fb0776008a95",
         "ScenePath": "scenes\\rocks\\Rock_6\\Rock_6.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1178,7 +1178,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "887a00b3-11de-457f-9772-6460b1276ce3",
+        "Name": "9dd858d4-8d5f-4725-8e92-38ce5dd18a4d",
         "ScenePath": "scenes\\rocks\\Rock_5\\Rock_5.fbx",
         "Scale": 3.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1201,7 +1201,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "71de0e9c-0ca6-4be0-85fc-0a689e0acdb9",
+        "Name": "131cba90-2ff3-48d8-9ad2-b72574aedbb9",
         "ScenePath": "scenes\\rocks\\Rock_2\\Rock_2.fbx",
         "Scale": 2.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1224,7 +1224,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "f6d5bcaa-c5d4-46e0-8f8d-6f2399db4348",
+        "Name": "9f23dd86-c014-4bb3-8f73-65cdc34821a4",
         "ScenePath": "scenes\\rocks\\Rock_1\\Rock_1.fbx",
         "Scale": 0.75,
         "GlowColor": "255, 0, 0, 255",
@@ -1247,7 +1247,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "b0a7d501-5ea8-42df-b289-d80ea7b5a2a4",
+        "Name": "488f6dc8-2b81-4e4c-b6f5-50d699fde21d",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -1265,7 +1265,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "1abbf6c9-5cad-4508-b540-717773df43dd",
+        "Name": "dafad655-688f-41ca-aacb-8ef851e2837f",
         "ScenePath": "scenes\\rocks\\Rock_1\\Rock_1.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1288,7 +1288,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "NodeGuid": "96aa7ff7-5e44-436c-b1fc-0f36e5dc3b85",
+        "Name": "274fd0be-a80b-46fb-8a17-0f3b90ca7a03",
         "Width": 88.0,
         "Height": 40.0,
         "Depth": 96.0,
@@ -1306,7 +1306,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "NodeGuid": "9657efec-b44e-4625-afdf-4fb5d229bfd1",
+        "Name": "b8065b01-41f4-486b-b7de-dc819e5b8048",
         "Width": 68.0,
         "Height": 64.0,
         "Depth": 128.0,
@@ -1324,7 +1324,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "83bcab73-401c-4b7d-bbae-c42cf2a4944d",
+        "Name": "f60559d8-36fe-487c-9f3f-e92c29ecc9c0",
         "ScenePath": "scenes\\pipes\\BigPipes\\pipeSegment.fbx",
         "Scale": 2.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1347,7 +1347,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "NodeGuid": "8d2c94db-d675-4067-be28-7b03bd66d804",
+        "Name": "0cf1dd43-c079-47fb-847c-3cb698453c05",
         "Width": 88.0,
         "Height": 72.0,
         "Depth": 104.0,
@@ -1365,7 +1365,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "45c72c2d-c06e-4a79-931d-391c7279f663",
+        "Name": "74793419-7f22-4c8e-b68b-2ece727cb419",
         "ScenePath": "scenes\\rocks\\Rock_2\\Rock_2.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1388,7 +1388,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "8a68f658-2743-4715-8880-03c98a2769e5",
+        "Name": "6ff73244-396f-4280-a0be-c157a3409865",
         "ScenePath": "scenes\\rocks\\Rock_1\\Rock_1.fbx",
         "Scale": 0.5,
         "GlowColor": "255, 0, 0, 255",
@@ -1411,7 +1411,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "NodeGuid": "a2cf722c-7e56-4dd3-8be3-ecf4f1e4d534",
+        "Name": "28ea0802-f4a1-405c-b4cd-3f60d03ca2a4",
         "Width": 104.0,
         "Height": 76.0,
         "Depth": 128.0,
@@ -1429,7 +1429,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "56365ff3-44dc-4391-90ef-ebe3b5e5d028",
+        "Name": "25f5be47-fb88-4cdc-9529-b47014e08079",
         "ScenePath": "scenes\\pipes\\bigPipeTurn8.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1452,7 +1452,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "0ff042a1-bae7-4f77-b8ff-ad4a3c52e22b",
+        "Name": "54ce13b0-b7d0-4cb8-b05f-158f69a50d5a",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1475,7 +1475,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "efd9e507-ae1c-47ad-bd7e-57e7fbb3f055",
+        "Name": "7733ccbb-da8b-4210-8626-dc839a690991",
         "ScenePath": "scenes\\pipes\\bigPipeTurn8.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1498,7 +1498,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "1a71b975-d96b-4491-a96c-8358568f7442",
+        "Name": "466f6e00-6a57-4592-a7ed-51c74a6082d6",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1521,7 +1521,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "dac90dae-010e-4900-af7c-061dff254e3a",
+        "Name": "f45b9554-f9a0-4e5a-814d-e185f87b1d3a",
         "ScenePath": "scenes\\pipes\\bigPipeSupport.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1544,7 +1544,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "90707dff-8423-4355-a9a1-2e41f425cb75",
+        "Name": "0e3a4148-d5e3-40e7-8e8d-02d0a71e6176",
         "ScenePath": "scenes\\pipes\\bigPipeSupport.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1567,7 +1567,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "1cbbd4c7-de74-4f0c-978b-1f7cda6822f8",
+        "Name": "69040cea-46c0-4543-8d03-8694b3a69ffc",
         "ScenePath": "scenes\\pipes\\bigPipeSupport.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1590,7 +1590,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "2975f85e-8d9d-4a51-8d9c-d1779f6c8c84",
+        "Name": "1697a9b1-86ab-47f4-a949-55f34535a79e",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1613,7 +1613,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "8d17cb60-65e7-41c3-9ddb-f2badcb2595f",
+        "Name": "68800a9a-483c-42fe-a179-a872faeeecb4",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1636,7 +1636,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "5385a4db-83e0-450a-89fe-a77b5e14b5a0",
+        "Name": "2c3cb834-9f46-432c-956a-f048e053b384",
         "ScenePath": "scenes\\pipes\\bigPipeTurn8.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1659,7 +1659,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "fff8dfa2-7096-4c33-9d0d-0f1e247f292b",
+        "Name": "844aaa1d-4334-4b76-bd2e-2456ab9419ac",
         "ScenePath": "scenes\\pipes\\bigPipeTurn8.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1682,7 +1682,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "7588c804-92c3-418d-8520-31ed7a72d526",
+        "Name": "407a9d22-5d26-4139-8165-030d04e8feed",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1705,7 +1705,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "f5f927ff-ec78-40df-85a2-d2059ffd5243",
+        "Name": "e707a9f8-bf2e-4c2b-abbd-aa3197125810",
         "ScenePath": "scenes\\pipes\\bigPipeSupport.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1728,7 +1728,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "af99450a-1405-4b22-bfe6-c617404a81fa",
+        "Name": "0f6728ba-9f37-46ba-8a86-8a196ccc2025",
         "ScenePath": "scenes\\pipes\\bigPipeSupport.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1751,7 +1751,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "NodeGuid": "655ee506-d561-4f7b-b885-5a446bbe8a21",
+        "Name": "07a68043-6d86-41bc-995b-48a215c3a6e2",
         "Width": 88.0,
         "Height": 40.0,
         "Depth": 64.0,
@@ -1769,7 +1769,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "5426ebf9-341b-46b0-9011-5fcc37be1c40",
+        "Name": "0a37d9c9-3e0b-44b6-b545-8555f2cc1322",
         "ScenePath": "scenes\\pipes\\bigPipeSupport.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1792,7 +1792,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "702599df-36fa-42a3-baec-d29e69408c99",
+        "Name": "4557a99d-a78c-47f7-8050-6aa8352520d4",
         "ScenePath": "scenes\\pipes\\bigPipeSupport.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1815,7 +1815,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "9fac182e-ca98-41c6-8ee7-6eebac788cc8",
+        "Name": "7e76243b-a939-4b04-94c6-1026b3513bb8",
         "ScenePath": "scenes\\trusses\\truss.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1838,7 +1838,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "6e1705bf-d7b8-41ea-a31c-1dab9f5741ba",
+        "Name": "74d1feb4-a99f-4889-a866-83596d01bf49",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1861,7 +1861,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "4675f78f-b63b-429f-a119-a565581f8d69",
+        "Name": "506f5dea-54e6-4945-a407-f56c40cded45",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1884,7 +1884,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "f0714794-ec7f-4a7c-8fa7-28ec2d2f6e74",
+        "Name": "c2e7f64a-2936-4bd0-afaf-5f83e7846acb",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1907,7 +1907,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "1e750cc5-0675-46f1-9787-9328c5071267",
+        "Name": "00bd3e18-f3ad-44ba-9fce-006fc83599ab",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1930,7 +1930,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "37d84c43-b93f-470a-8d6d-63beadc3d550",
+        "Name": "9beac698-39e4-48fd-9c7b-194506d7f7f1",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1953,7 +1953,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "dade4edf-384c-4163-9ff6-2e1ac1775b62",
+        "Name": "80bf4d84-691e-470d-a325-c58600a40e13",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1976,7 +1976,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "0a08401d-95ce-4ed6-8e24-79a6bd85322e",
+        "Name": "d80131e8-d13b-44ec-9a3c-f65c9634073f",
         "ScenePath": "scenes\\trusses\\truss.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -1999,7 +1999,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "a843aa77-f4a3-4edb-92c4-feac52c96c5b",
+        "Name": "1b1c5849-04ad-4682-b044-be8d64fd7e01",
         "ScenePath": "scenes\\trusses\\truss.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2022,7 +2022,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "517d43b4-a958-46b9-a812-a0f8e17a8431",
+        "Name": "7194cbe2-ba3d-4186-849d-b419d5d9ab3b",
         "ScenePath": "scenes\\pipes\\bigPipeTurn8.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2045,7 +2045,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "05009412-35c8-4cbb-a093-3c634a01d329",
+        "Name": "31789674-e640-4824-b8be-c1b1e6e4dd74",
         "ScenePath": "scenes\\pipes\\bigPipeTurn8.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2068,7 +2068,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "5fcd9c46-72dd-4a3d-a672-2498d76a58d3",
+        "Name": "532e942f-3105-4ebd-a041-72f279e69a99",
         "ScenePath": "scenes\\pipes\\bigPipeTurn8.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2091,7 +2091,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "e7da2fdc-2d7f-4ffa-943a-310aa93f1d86",
+        "Name": "150ec6b5-a0b5-47b4-826a-35d47951501e",
         "ScenePath": "scenes\\pipes\\bigPipeTurn8.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2114,7 +2114,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "925d064c-08d2-4fd0-868d-2ab2728a4921",
+        "Name": "00208e96-0a0f-4957-8823-8a695998f330",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2137,7 +2137,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "143c89f1-4058-4914-992e-ba97168c6f96",
+        "Name": "ce31c249-632b-4d9f-965e-e6a4e5e5d64a",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2160,7 +2160,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "4150158e-4859-4113-9257-e98de658c3bc",
+        "Name": "940f06c9-eaf8-44f6-b01d-c4b5ba4697ce",
         "ScenePath": "scenes\\pipes\\bigPipeTurn8.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2183,7 +2183,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "09c5ebab-c3f3-48a8-affc-7670916f7f5d",
+        "Name": "7efd6bcc-f36a-4530-be7b-0042bb2ef65f",
         "ScenePath": "scenes\\pipes\\bigPipeTurn8.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2206,7 +2206,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "2a2fb327-05e4-45bc-bf17-aab029986b0e",
+        "Name": "1edc1cc7-8de3-403e-a066-d732b3b7ab8b",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2229,7 +2229,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "74239510-07d0-4959-ac57-7c8c3e8412e4",
+        "Name": "0d75871d-c0f8-4e92-829f-d22e5dc220eb",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2252,7 +2252,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "1394fed2-ff3e-46e8-b3d8-9458f725f94d",
+        "Name": "015120fe-6d9c-4785-8ecd-85ae2d709002",
         "ScenePath": "scenes\\boxes\\containers\\container_LP_big.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2275,7 +2275,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "c0c9fda9-2138-4ca8-bfea-0b03394ccded",
+        "Name": "68b0d686-dc6b-498c-b608-1640c2d59d04",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -2293,7 +2293,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "fedb1fe4-8ed8-4e72-8b40-ebbe9b443c04",
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e840",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -2311,7 +2311,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "876a081c-7f71-47b7-b3cb-589888f4a889",
+        "Name": "1faa3b05-a3ae-4088-8d65-bda273884c1e",
         "TargetName": "container_explosion",
         "Factory": {
           "$type": "IronStar.FuncFXFactory, IronStar",
@@ -2334,7 +2334,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "bee5c695-50cd-43bf-ab8c-c59da6dc156c",
+        "Name": "b0049f37-a578-4fef-95de-9cd1b0236ae9",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.FuncFXFactory, IronStar",
@@ -2357,7 +2357,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "22df949c-eaf3-4c97-940d-082e248dae41",
+        "Name": "4823113c-35c1-465e-8691-2d1c3fddb53c",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2380,7 +2380,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "bd6ff9ac-a812-473b-affa-d088fcdeb2ba",
+        "Name": "f9f31674-1f93-4d2c-bfcc-6d9f80e409aa",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2403,7 +2403,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "e78418bc-5026-4599-8d0e-a0dbe04fc9d4",
+        "Name": "3837276b-baef-4646-ac24-5442d7fbb8ad",
         "ScenePath": "scenes\\pipes\\bigPipeTurn8.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2426,7 +2426,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "82bca9d7-36e7-41a5-8707-e1b32213a4c9",
+        "Name": "3e364df4-61fd-43e2-a467-63e4394a4d73",
         "ScenePath": "scenes\\pipes\\bigPipeTurn8.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2449,7 +2449,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "ae778982-3b31-4475-9240-cbc1ce860481",
+        "Name": "ffc10006-6ea7-4159-a751-976433e90f34",
         "ScenePath": "scenes\\pipes\\bigPipeTurn8.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2472,7 +2472,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "d4f4f8a4-9e79-4f14-9d56-0437b263ea9b",
+        "Name": "9afaf205-118c-4624-941c-dd443bd6792b",
         "ScenePath": "scenes\\pipes\\bigPipeTurn8.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2495,7 +2495,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "e79524e9-79b1-4739-96c9-4da57b7a843d",
+        "Name": "84c085d7-d692-4a91-a5ae-ad108520f5ff",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.FuncFXFactory, IronStar",
@@ -2518,7 +2518,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "92685090-ab15-42db-929b-7c9462d8f42c",
+        "Name": "8925c15b-d67c-4765-a4f1-c7b9bdd137f3",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.FuncFXFactory, IronStar",
@@ -2541,7 +2541,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapDecal, IronStar",
-        "NodeGuid": "e2ef148f-b907-4b7f-84ed-3f17d3d1b271",
+        "Name": "f06cc2ca-9a16-418a-8447-d0265a47a989",
         "ImageName": "blood1",
         "Width": 19.8125,
         "Height": 22.875,
@@ -2566,7 +2566,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "f7451ffa-4bb0-4885-aaa7-a0edf5514882",
+        "Name": "d6d54c19-c652-4d74-b5fd-9bcce8cba0de",
         "TargetName": "container_explosion",
         "Factory": {
           "$type": "IronStar.FuncFXFactory, IronStar",
@@ -2589,7 +2589,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "8423fe3d-b52d-465d-8b60-384ad4c907c8",
+        "Name": "6e3c0b55-6b27-46c4-b712-00f52277579a",
         "ScenePath": "scenes\\rocks\\Rock_1\\Rock_1.fbx",
         "Scale": 0.5,
         "GlowColor": "255, 0, 0, 255",
@@ -2612,7 +2612,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "c9b6ad0f-88da-4109-9a0c-43c339e9b0a3",
+        "Name": "73704dfe-763b-47a8-9cdc-abc50310fd13",
         "ScenePath": "scenes\\rocks\\Rock_1\\Rock_1.fbx",
         "Scale": 0.5,
         "GlowColor": "255, 0, 0, 255",
@@ -2635,7 +2635,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "e2baf135-5506-49fd-ab33-7b0090f265f0",
+        "Name": "0bea3a0d-36c2-4a6c-816d-6b152fe2674d",
         "ScenePath": "scenes\\rocks\\Rock_1\\Rock_1.fbx",
         "Scale": 0.5,
         "GlowColor": "255, 0, 0, 255",
@@ -2658,7 +2658,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "21adc5e8-e307-4310-81ff-58550b351e3a",
+        "Name": "6c222b6a-e69a-4e4c-a8e4-b2ee96b62bb1",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2681,7 +2681,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "aab4066e-db6d-4e82-9708-de18f1d8de7a",
+        "Name": "8b9d9c4c-9c0b-4262-8cc8-4364ab7cd7e2",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2704,7 +2704,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "4ebd95af-6c4f-4a80-8b2d-786355975e66",
+        "Name": "bbf4058b-c9fa-40d9-99a4-24961de598f2",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2727,7 +2727,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "8980fe95-c221-494a-b9a5-1ef41959cee4",
+        "Name": "bd246e34-f16e-483a-b3a2-c0bd73c8b5ef",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2750,7 +2750,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "8d0fc0ee-640b-4261-8ab4-d0db8a398e51",
+        "Name": "7154559a-09ac-4e87-af82-438ffbc877c3",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2773,7 +2773,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "64cf1756-e8ae-4251-a671-f042fa056be8",
+        "Name": "ee28b2e3-575e-4ce6-850d-ebeb581777f2",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2796,7 +2796,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "f93163e7-9b59-40a1-9130-5bb64deaf43b",
+        "Name": "24c7c58e-3ae1-4e52-945d-37f79b7afbbc",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2819,7 +2819,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "a24b2173-827d-4dd1-9251-cc1925489f69",
+        "Name": "098faada-f386-4604-9047-57c4f6865fd2",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2842,7 +2842,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "b0353802-afeb-4482-96be-b61cbc1ecda8",
+        "Name": "f8dc17da-9634-4940-b410-45421147a3fb",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2865,7 +2865,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "b4cf4483-6137-460d-9b05-1663c71aee1c",
+        "Name": "acae2951-7bd9-4f33-925e-175d48d113c5",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2888,7 +2888,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "e85f13c6-956b-4d50-8670-cfd2110e92e3",
+        "Name": "dd4fdabc-e447-498b-a6cb-baca7dda3628",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2911,7 +2911,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "f1ae4795-4a95-456a-b0ff-d48810bc4370",
+        "Name": "39d10213-40fd-404f-a12f-203c1c74191c",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2934,7 +2934,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "932c592e-17b7-4d25-89ed-8fe0a7160934",
+        "Name": "89aa618c-43ba-4875-ae54-bfa3feb01297",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2957,7 +2957,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "5158bd87-d7a9-4c03-9b7f-23967fd1d253",
+        "Name": "0fd5e714-ac02-4d40-a813-3409f956bf2c",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -2980,7 +2980,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "bb8001d8-3697-44a9-94e5-7746d8180e06",
+        "Name": "e0cbc4e2-63a1-4a83-b96c-ec8180e6270f",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -3003,7 +3003,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "00878eca-1078-4362-9244-9def148b0649",
+        "Name": "a341a358-17da-4e93-8a45-17c873a3a4eb",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -3026,7 +3026,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "9ed6e4b0-008a-48e9-8723-2c48d3d55ef8",
+        "Name": "42f46512-08fa-499a-8dd1-44f19ad6218d",
         "ScenePath": "scenes\\trusses\\truss.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -3049,7 +3049,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "acffab1f-0d8a-4bea-92cc-8e3a4ddc42b8",
+        "Name": "94f150dd-4b82-4bae-ad38-a9123b3bd459",
         "ScenePath": "scenes\\trusses\\truss.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -3072,7 +3072,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "178ad517-7bcb-4a4b-a901-9df115b189cd",
+        "Name": "a409aac8-6c81-404e-abdf-07ced25e460a",
         "ScenePath": "scenes\\trusses\\truss.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -3095,7 +3095,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "42e137a7-a643-4a6a-8098-e24f39217f54",
+        "Name": "514aaeb3-66af-43dc-bf05-d835ebb464ab",
         "ScenePath": "scenes\\trusses\\truss.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -3118,7 +3118,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "09ff5fd7-ce9f-404b-911c-300dc50e965a",
+        "Name": "fc5e632c-178a-4a6d-a61b-61cccef9df6f",
         "ScenePath": "scenes\\trusses\\truss.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -3141,7 +3141,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "81ef578b-e9ed-4a3a-aedc-40c3f34f3e57",
+        "Name": "4eccb21e-d665-4085-9fa6-d470d57701ec",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3159,7 +3159,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "c6ec59a1-e32b-4674-a897-bd873aecf479",
+        "Name": "3b0bfb8c-c579-4db3-a9f9-f47e89b3819a",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3177,7 +3177,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "NodeGuid": "753ce563-1066-43f9-8109-0d7d8059787b",
+        "Name": "2d8e3960-b8b0-4b29-bb9b-f83a5528f0c4",
         "Width": 64.0,
         "Height": 32.0,
         "Depth": 64.0,
@@ -3195,7 +3195,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "NodeGuid": "5d379fc0-6bb5-42fb-911b-b5044c427d9d",
+        "Name": "646150ed-3078-423a-b853-9720b43a2578",
         "Width": 128.0,
         "Height": 256.0,
         "Depth": 128.0,
@@ -3213,7 +3213,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "6b24fbbd-2b97-4944-8a06-fe6e6e57b7de",
+        "Name": "3b91da44-ae39-4538-82b9-36e635eef410",
         "ScenePath": "scenes\\rocks\\Rock_1\\Rock_1.fbx",
         "Scale": 0.5,
         "GlowColor": "255, 0, 0, 255",
@@ -3236,7 +3236,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "NodeGuid": "3c06b488-97d8-4bae-a786-eef273548391",
+        "Name": "19b9c552-6a86-483e-ac87-93ec04e2a224",
         "Width": 96.0,
         "Height": 84.0,
         "Depth": 92.0,
@@ -3254,7 +3254,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "NodeGuid": "54025dda-9c3a-4ae4-b2c8-0c19bba4cd06",
+        "Name": "6523b3ba-ef2e-44e6-a2ba-adb5e180fc34",
         "Width": 112.0,
         "Height": 48.0,
         "Depth": 64.0,
@@ -3272,7 +3272,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "NodeGuid": "6f08b675-1ccb-42c1-9837-a30bc01ccbfd",
+        "Name": "6ef0bf62-abe8-4130-a283-984ea98ccf11",
         "Width": 88.0,
         "Height": 72.0,
         "Depth": 80.0,
@@ -3290,7 +3290,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
-        "NodeGuid": "147d0dea-5c82-4c9f-95cd-c83d4ef2767b",
+        "Name": "0ee39d22-9874-4c69-a4c9-5ea67d2960f2",
         "Radius": 88.0,
         "Transition": 21.0,
         "Visible": true,
@@ -3304,7 +3304,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
-        "NodeGuid": "07649178-36f0-48e2-9ca5-2730ef45e049",
+        "Name": "419f3dc2-ea46-42ae-90c8-debc753a01a2",
         "Radius": 88.0,
         "Transition": 22.0,
         "Visible": true,
@@ -3318,7 +3318,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
-        "NodeGuid": "3918dc09-3a8a-4065-84e3-87b8898f007e",
+        "Name": "5031a815-73e1-47a4-8d78-f1eea8186740",
         "Radius": 72.0,
         "Transition": 27.0,
         "Visible": true,
@@ -3332,7 +3332,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
-        "NodeGuid": "b52414c1-13d3-40bd-b492-f83606361df8",
+        "Name": "54c810b6-b8ae-47ed-b1ff-d5d9078f7ac4",
         "Radius": 72.0,
         "Transition": 20.0,
         "Visible": true,
@@ -3346,7 +3346,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "NodeGuid": "3719a882-bbee-45e0-92ba-e01f144259d5",
+        "Name": "a3236f60-c8e5-4aac-a9fa-68944352d6a1",
         "Width": 184.0,
         "Height": 64.0,
         "Depth": 88.0,
@@ -3364,7 +3364,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "NodeGuid": "8803e74f-f1f0-420b-a693-c471380f61f3",
+        "Name": "18b95f08-4318-43bc-aa89-27d1c3438324",
         "Width": 96.0,
         "Height": 40.0,
         "Depth": 96.0,
@@ -3382,7 +3382,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "ec7e4ed1-f7ff-44bb-8fa9-701f0c09c489",
+        "Name": "7a90b269-fdef-4609-8ef9-74fb2496d6dd",
         "ScenePath": "terrain\\terrain.fbx",
         "Scale": 15000.0,
         "GlowColor": "255, 0, 0, 255",
@@ -3405,7 +3405,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
-        "NodeGuid": "e49912b1-987d-45d4-923d-80c1e92c6056",
+        "Name": "74ca006e-eb6e-498c-b95b-5ccd48ebfe11",
         "LightColor": "255, 113, 26, 255",
         "LightIntensity": 0.0,
         "OuterRadius": 100.0,
@@ -3432,7 +3432,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
-        "NodeGuid": "232920d6-48e0-4a87-877c-8b225dda1df6",
+        "Name": "0db0dede-40a2-4d66-b2e6-8fa7ada65d85",
         "LightColor": "255, 113, 26, 255",
         "LightIntensity": 1110.0,
         "OuterRadius": 100.0,
@@ -3459,7 +3459,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "921f892d-499a-4593-a43c-48b77eafaaa6",
+        "Name": "f290342d-624a-4530-8425-18e3faad6312",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.FuncFXFactory, IronStar",
@@ -3482,7 +3482,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "8685f572-63d1-49ec-8ad6-a2391fbb124d",
+        "Name": "fee5dbb0-fd33-4725-8823-b541c29ae7d2",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.FuncFXFactory, IronStar",
@@ -3505,7 +3505,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "c4db27c5-c726-4b42-8c1c-36ebb7fbaad1",
+        "Name": "ab8d406e-6864-4944-8971-37e8cde54ba2",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.FuncFXFactory, IronStar",
@@ -3528,7 +3528,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "NodeGuid": "6dbf3ecc-8081-4c9a-a6a9-2947cb8bf906",
+        "Name": "44d514a4-e70b-428d-ad2e-8d1b2e1f93b2",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
@@ -3551,7 +3551,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "5a8784fb-7c76-4d84-881f-07ddcfc8c9fa",
+        "Name": "82f60d6c-d6dd-4863-af68-5899ad796ecb",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.FuncFXFactory, IronStar",
@@ -3574,7 +3574,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "3476654c-b0ce-4a2d-8a67-10176df9425b",
+        "Name": "cbf0f1d4-20d8-43a1-b5f2-6ec993508368",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3592,7 +3592,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "328987cf-4a78-47a1-87cd-79f8865c7432",
+        "Name": "e36171b3-c2ea-4c8d-83a3-826d12fab506",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3610,7 +3610,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "38d5d6eb-a6b7-4140-a5e0-aa3d35657cfd",
+        "Name": "860bb5e3-7ab0-4c5b-a72f-071cffe16e8d",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3628,7 +3628,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "6c609802-0bc9-4529-8e7c-989a84dbbc7f",
+        "Name": "55dfb28a-a5b8-4034-9549-0c153d66d326",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3646,7 +3646,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "ab22bb74-61a0-4d40-bd59-59704226c95a",
+        "Name": "b25dbc97-1306-4755-b55a-cb5c82a7ba0d",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3664,7 +3664,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "8bb7b327-4e37-41a6-8952-959b8f3e47c9",
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842855",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3682,7 +3682,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "ec404c06-9fc8-4402-beb9-2b7533657e11",
+        "Name": "32b85f16-ff69-4c51-962d-53f3b33aa038",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3700,7 +3700,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapDecal, IronStar",
-        "NodeGuid": "be145d30-07f0-4d52-8dbf-6fc2a501d824",
+        "Name": "c84beffa-846c-4e39-be2d-6c3738a7b53f",
         "ImageName": "blood3",
         "Width": 18.0,
         "Height": 16.0,
@@ -3725,7 +3725,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapDecal, IronStar",
-        "NodeGuid": "59227287-1a5c-429a-94c7-e584c9d098d0",
+        "Name": "f265bb78-5043-4a75-ae6d-524c47a7c741",
         "ImageName": "blood3",
         "Width": 28.0,
         "Height": 27.0,
@@ -3750,7 +3750,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "NodeGuid": "951f9177-b983-473a-997b-cbdb6f5b8df2",
+        "Name": "04c47c17-4086-44de-990e-837da4858261",
         "Width": 128.0,
         "Height": 256.0,
         "Depth": 128.0,
@@ -3768,7 +3768,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
-        "NodeGuid": "a839ba42-19ba-43f2-b149-bf05f82131da",
+        "Name": "ffa7a85c-06a9-4445-b83a-583ec05b973f",
         "Width": 128.0,
         "Height": 256.0,
         "Depth": 128.0,
@@ -3786,7 +3786,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "d4239da8-1d68-4b25-9e17-a463366c97e5",
+        "Name": "5df8ed58-4bca-4ffd-b29f-f7cdea5e9e61",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3804,7 +3804,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "487dc8b2-aa2a-41e1-96d3-d5e4e4ab2df6",
+        "Name": "d7a1c802-7e8c-4b38-aa52-f5d83be6e9a3",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3822,7 +3822,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "2fad50e3-8c27-403b-86df-aaf929f021d2",
+        "Name": "a549c8b1-b2e3-48ab-970a-3e4a2a965108",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3840,7 +3840,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "06a9f2b3-2314-4dbb-8481-c3b0f109b039",
+        "Name": "5767a7c2-bd0c-4ada-95dd-bc6ca850c1cd",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3858,7 +3858,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "57999eef-0585-4aa9-9a4b-76643f12c023",
+        "Name": "20567e16-0b74-4786-b88c-bcfb26cad120",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3876,7 +3876,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "6821c793-533b-41b0-aae4-10584137f4ce",
+        "Name": "540a7339-f9e1-4d5b-8df3-d1a1e621cb1e",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3894,7 +3894,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "95ba0814-8321-4add-9805-fe1159ff9581",
+        "Name": "04a85f05-b5a4-4629-991e-41c488021025",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3912,7 +3912,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "b76a4966-8d9e-4e92-ad52-f678ed5eb583",
+        "Name": "026df03f-d522-4b8e-a429-f60f42522f09",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3930,7 +3930,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "f00f0c74-73e9-42c8-8819-a55e1e4005a8",
+        "Name": "bc20cce2-ca9d-4898-8193-276f2fd45b6f",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3948,7 +3948,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "9dca882d-2bfd-4bac-ba63-97d14c4283a2",
+        "Name": "9da1afa1-5cc5-4398-9646-79e802a52bc2",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3966,7 +3966,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "f3c386f7-b864-4b47-aff1-a718f3bf8fb4",
+        "Name": "fe363466-630f-47fa-abc2-b921ff526e83",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -3984,7 +3984,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "499c6924-d1c7-4cd2-a1dd-be101e49e252",
+        "Name": "f875c8c4-f28e-4ffe-9b54-94082fdb36ea",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4002,7 +4002,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "2b49dccf-7956-42e0-9178-47e66d05d078",
+        "Name": "2db378a7-2c27-4957-993e-580f2b0c3865",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4020,7 +4020,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "5fa5b502-1f31-4818-a48e-2972f0a4fc35",
+        "Name": "2dcc6912-6c76-4e5c-aaac-67ab124d3c33",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4038,7 +4038,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "c2e709a4-930f-4058-bada-9b1540d74377",
+        "Name": "85af3074-c632-49fb-980b-dac71e19116d",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4056,7 +4056,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "089b4622-b844-43cc-b62c-4f15be7e735b",
+        "Name": "e171217b-5f55-4fb4-8d0f-42ba58d16433",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4074,7 +4074,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "b55a79fb-90b4-49d7-862b-3d51c4a273bf",
+        "Name": "e7ee0f3e-ab70-4bd9-a5a0-5ff57be1b621",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4092,7 +4092,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "3ed39313-81e5-4f60-8e84-97a4628177df",
+        "Name": "0f76eb2e-1cab-43bf-959f-a660a5dfeacc",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4110,7 +4110,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "c067b356-00a6-4a73-8797-e7b94d784af2",
+        "Name": "afb9f76a-59e5-4118-9cf3-4a5197cdd967",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4128,7 +4128,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "10988698-c296-4a29-ad6a-6ca65d3d26ea",
+        "Name": "a8f13665-e066-44e5-a0d8-420bdaa3fc3a",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4146,7 +4146,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "d2cfb5f7-7eea-4860-9041-f72aea0c5ddb",
+        "Name": "1814b130-4d22-4462-8213-fff3da519eff",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4164,7 +4164,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "4f89aaaf-7258-4fde-aea6-635042172470",
+        "Name": "97fc88e4-7141-4680-b6be-f295925b9d9d",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4182,7 +4182,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "c907e802-9c1b-4d49-b95f-c980c6757460",
+        "Name": "beecf186-f5a9-4f01-8af5-303048319cf9",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4200,7 +4200,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "e3d35d13-5952-431b-8a04-5e4af354ea9b",
+        "Name": "1f50af9a-a548-4b4c-832f-a8b708614d22",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4218,7 +4218,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "bccf09cc-33ee-4d3e-b0a3-e695b46ad23d",
+        "Name": "16377fc7-a5cf-4067-91dc-114e712be54c",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4236,7 +4236,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "f1210ea7-17ab-4f0a-81b3-ad3ce9c34032",
+        "Name": "3bef46d0-0358-4512-b15b-06fc7968a83f",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4254,7 +4254,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "983fdcfe-a74b-4317-9664-2c352c58a9bf",
+        "Name": "be196c20-801c-4254-a1a6-3c2b7c2d32ea",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4272,7 +4272,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "e62f597d-1db3-40cd-a62d-c22d961e1648",
+        "Name": "2e1e1c81-2409-4610-8baa-91a7ad5f2fd9",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4290,7 +4290,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "67539594-7293-4ff9-90da-643429af40b0",
+        "Name": "5f66624e-6efd-47a8-9613-8bc30271990e",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4308,7 +4308,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "d66cfd96-5071-4679-a6f0-a5a846ad595f",
+        "Name": "27ffe47a-a7d2-4b9d-8bd9-9400ff58b735",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4326,7 +4326,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "13474303-eb3a-433e-8d7f-c36714e61ff9",
+        "Name": "f24a81ed-a8c4-4076-9afc-f0613773fbdb",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4344,7 +4344,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "44bdcbc4-04cd-4221-b0a4-402669c9cde6",
+        "Name": "f3f4a69d-58c2-4414-bb9a-9d65db7a093d",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4362,7 +4362,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "289fc317-291f-4018-a20b-a57c3d736ca3",
+        "Name": "b2660930-8207-4a8e-a621-c4c0a0cf5214",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4380,7 +4380,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "3b5773f8-c84c-4f2b-b80a-c01e97d64824",
+        "Name": "06dc4839-94e9-49df-b16d-4d178c732c6a",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4398,7 +4398,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "e48190f2-7775-42b6-a732-c48c10489422",
+        "Name": "b220a97f-9e51-4c82-b683-7b83abace09b",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4416,7 +4416,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "69fe4ee8-9d14-4fae-921f-796946f1ac1c",
+        "Name": "34f42e8a-2703-4a59-8065-5fdb9666942c",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",
@@ -4434,7 +4434,7 @@
       },
       {
         "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "NodeGuid": "88be1063-a0da-49c9-81a2-33b9e6bcf36c",
+        "Name": "4b55c57f-4611-456d-a67c-a0d4758ac133",
         "TargetName": null,
         "Factory": {
           "$type": "IronStar.ProxyFactory, IronStar",

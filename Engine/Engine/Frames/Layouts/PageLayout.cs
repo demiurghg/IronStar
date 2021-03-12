@@ -13,10 +13,12 @@ using Fusion.Engine.Frames;
 
 namespace Fusion.Engine.Frames.Layouts {
 
-	public class PageLayout : LayoutEngine {
-
-		static public PageLayout CreateFill {
-			get {
+	public class PageLayout : LayoutEngine 
+	{
+		static public PageLayout CreateFill 
+		{
+			get 
+			{
 				var layout = new PageLayout();
 				layout.AddRow(-1, new[] {-1f} );
 				return layout;
@@ -24,7 +26,8 @@ namespace Fusion.Engine.Frames.Layouts {
 		}
 
 
-		public int Margin {
+		public int Margin 
+		{
 			get { return gap; }
 			set { gap = value; }
 		}
@@ -55,7 +58,8 @@ namespace Fusion.Engine.Frames.Layouts {
 		/// </summary>
 		/// <param name="height"></param>
 		/// <param name="width"></param>
-		public void AddRow ( float height, float[] width )
+		#warning consider zero size as size of the child frame
+		public void AddRow ( float height, params float[] width )
 		{
 			rows.Add( new Row() { Height = height, Width = width.ToArray() } );
 		}
@@ -78,39 +82,48 @@ namespace Fusion.Engine.Frames.Layouts {
 			var freeCount	=	measures.Count( v => v < 0 );
 
 			//	sum fixed values:
-			for ( int i=0; i<length; i++ ) {
-				if (measures[i]>=1) {
+			for ( int i=0; i<length; i++ ) 
+			{
+				if (measures[i]>=1) 
+				{
 					sizes[i] =	(int)measures[i];
 					free	 -=	sizes[i];
 				}
 			}
 
 			//	fixed elements get too much space:
-			if (free<=0) {
+			if (free<=0) 
+			{
 				return sizes;
 			}
 
 			int free2 = free;
 
 			//	spring elements :
-			for ( int i=0; i<length; i++ ) {
-				if (measures[i]>=0 && measures[i]<1) {
+			for ( int i=0; i<length; i++ ) 
+			{
+				if (measures[i]>=0 && measures[i]<1) 
+				{
 					sizes[i] =	(int)(measures[i] * free2);
 					free	 -=	sizes[i];
 				}
 			}
 
 			//	fixed elements get too much space:
-			if (free<=0) {
+			if (free<=0) 
+			{
 				return sizes;
 			}
 
 			//	free elements :
-			if (freeCount>0) {
+			if (freeCount>0) 
+			{
 				free /= freeCount;
 
-				for ( int i=0; i<length; i++ ) {
-					if (measures[i]<0) {
+				for ( int i=0; i<length; i++ ) 
+				{
+					if (measures[i]<0) 
+					{
 						sizes[i] =	free;
 					}
 				}
@@ -143,12 +156,13 @@ namespace Fusion.Engine.Frames.Layouts {
 			var index = 0;
 			var rowHeights	=	ComputeSizes( h, gap, rows.Select( r => r.Height ).ToArray() );
 			
-			for ( int i=0; i<rows.Count; i++ ) {
-
+			for ( int i=0; i<rows.Count; i++ ) 
+			{
 				x	=	gp.X;
 				var colWidths	=	ComputeSizes( w, gap, rows[i].Width );
 
-				for ( int j=0; j<colWidths.Length; j++ ) {
+				for ( int j=0; j<colWidths.Length; j++ ) 
+				{
 					SetChildSize( targetFrame, index, x,y, colWidths[j], rowHeights[i] );
 					x += colWidths[j];
 					x += gap;
@@ -209,7 +223,8 @@ namespace Fusion.Engine.Frames.Layouts {
 
 		void SetChildSize( Frame targetFrame, int index, int x, int y, int w, int h )
 		{
-			if (index>=targetFrame.Children.Count()) {
+			if (index>=targetFrame.Children.Count()) 
+			{
 				return;
 			}
 

@@ -45,6 +45,7 @@ namespace IronStar.Editor {
 
 		public void Do ()
 		{
+			outliner.SetItems( Map );
 			//undoStack.Push( new HistorySnapshot( Game, GetSelection(), this.Map ) );
 			//redoStack.Clear();
 		}

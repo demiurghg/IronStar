@@ -175,6 +175,10 @@
     <Compile Include="Widgets\Advanced\Editors\AEFileSelector.cs" />
     <Compile Include="Widgets\Advanced\Editors\AEAtlasSelector.cs" />
     <Compile Include="Widgets\Binding\DelegateBinding.cs" />
+    <Compile Include="Widgets\Binding\NameProvider.cs" />
+    <Compile Include="Widgets\Binding\ListBinding.cs" />
+    <Compile Include="Widgets\Binding\IListBinding.cs" />
+    <Compile Include="Widgets\Binding\INameProvider.cs" />
     <Compile Include="Widgets\Binding\IValueEditor.cs" />
     <Compile Include="Widgets\Binding\IValueBinding.cs" />
     <Compile Include="Widgets\Binding\PropertyBinding.cs" />

@@ -8,46 +8,42 @@ using Fusion.Engine.Common;
 using Fusion.Core;
 using Fusion.Engine.Frames;
 using Fusion.Engine.Graphics;
+using Fusion.Widgets.Binding;
 
-namespace Fusion.Widgets {
+namespace Fusion.Widgets 
+{
+	public class ListBox : Frame 
+	{
+		readonly HashSet<int> selection = new HashSet<int>();
+		private int itemHeight { get { return Font.LineHeight; } }
 
-	public class ListBox : Frame {
-
-		object[] items;
-
-		int itemHeight {
-			get {
-				return Font.LineHeight;
-			}
+		public bool AllowMultipleSelection 
+		{
+			get { return allowMultiSelection; }
+			set { allowMultiSelection = value; ResetSelection(); }
 		}
 
 		public event EventHandler	SelectedItemChanged;
 
-		/// <summary>
-		/// Negative value means no selection
-		/// </summary>
-		public int SelectedIndex {	
-			get { return selectedIndex; }
-			private set {
-				if (selectedIndex!=value) {
-					selectedIndex = value;
-					SelectedItemChanged?.Invoke( this, EventArgs.Empty );
-				}
-			}
-		}
-		int selectedIndex = -1;
-
-		/// <summary>
-		/// Gets selected item value
-		/// </summary>
-		public object SelectedItem { 
-			get {
-				return ( SelectedIndex < 0 ) ? null : items[ SelectedIndex ];
-			}
+		public IListBinding Binding 
+		{ 
+			get { return binding; }
+			set { binding = value; }
 		}
 
-		Func<object,string> nameConverter;
+		public INameProvider NameProvider 
+		{ 
+			get { return nameProvider; }
+			set { nameProvider = value; }
+		}
 
+		bool allowMultiSelection;
+		IListBinding binding = null;
+		INameProvider nameProvider = null;
+
+
+		public int SelectedIndex { get { return selection.Any() ? selection.Last() : -1; } }
+		public object SelectedItem { get { return ( SelectedIndex < 0 ) ? null : binding[ SelectedIndex ]; } }
 
 		
 		/// <summary>
@@ -56,8 +52,8 @@ namespace Fusion.Widgets {
 		/// <param name="fp"></param>
 		public ListBox ( FrameProcessor fp, IEnumerable<object> items, Func<object,string> nameConverter = null ) : base(fp)
 		{
-			this.items		=	items.ToArray();
-			this.nameConverter	=	nameConverter ?? ((obj) => obj.ToString());
+			Binding			=	new ListBinding( items );
+			NameProvider	=	new NameProvider( nameConverter );
 
 			Font			=	ColorTheme.Monospaced;
 
@@ -70,7 +66,6 @@ namespace Fusion.Widgets {
 			this.MouseMove  +=	ListBox_MouseMove;
 			this.MouseIn	+=	ListBox_MouseIn;
 			this.MouseOut	+=	ListBox_MouseOut;
-			this.Click		+=	ListBox_Click;
 			this.MouseDown	+=	ListBox_MouseDown;
 			this.MouseWheel +=	ListBox_MouseWheel;
 
@@ -84,14 +79,10 @@ namespace Fusion.Widgets {
 		int scrollOffset = 0;
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="items"></param>
 		public void SetItems ( IEnumerable<object> items )
 		{
-			this.items		=	items.ToArray();
-			SelectedIndex	=	-1;
+			Binding			=	new ListBinding(items);
+			ResetSelection();
 			Parent?.MakeLayoutDirty();
 			UpdateScroll();
 		}
@@ -123,40 +114,85 @@ namespace Fusion.Widgets {
 			mouseIn = true;
 		}
 
+		
 		private void ListBox_MouseDown( object sender, MouseEventArgs e )
 		{
-			int index = GetItemIndexUnderCursor(e.X, e.Y);
-			SelectedIndex = index;
+			int index	= GetItemIndexUnderCursor(e.X, e.Y);
+			var toggle	= e.Ctrl && AllowMultipleSelection;
+			var range	= e.Shift && AllowMultipleSelection;
+
+			if (index<0)
+			{
+				ResetSelection();
+			}
+			else
+			{
+				SetSelection( index, toggle, range );
+			}
+		}
+
+
+		void SetSelection( int index, bool toggle, bool range )
+		{
+			if (!toggle && !range) SingleSelection(index);
+			if (toggle && !range) ToggleSelection(index);
+			if (range) AddSelectionRange(index);
+
+			SelectedItemChanged?.Invoke( this, EventArgs.Empty );
+		}
+
+		public void ResetSelection()
+		{
+			selection.Clear();
 			SelectedItemChanged?.Invoke( this, EventArgs.Empty );
 		}
 
 
-		private void ListBox_Click( object sender, MouseEventArgs e )
+		void SingleSelection(int index)
 		{
-			/*int index = GetItemIndexUnderCursor(e.X, e.Y);
-			SelectedIndex = index;
-			SelectedItemChanged?.Invoke( this, EventArgs.Empty );  */
+			selection.Clear();
+			selection.Add(index);
+		}
+
+		void ToggleSelection(int index)
+		{
+			if (selection.Contains( index )) selection.Remove( index );
+										else selection.Add( index );
+		}
+
+		void AddSelectionRange(int index)
+		{
+			int begin = Math.Min(SelectedIndex, index);
+			int end   = Math.Max(SelectedIndex, index);
+
+			for (int i=begin; i<=end; i++)
+			{
+				selection.Add(i);
+			}
 		}
 
 
 		int GetItemIndexUnderCursor (int x, int y)
 		{
-			if (!mouseIn) {
+			if (!mouseIn) 
+			{
 				return -1;
 			}
 
 			int index = (mouseY - BorderTop - PaddingTop + scrollOffset) / itemHeight;
-			if (index < 0 || index >= items.Length) {
+			
+			if (index < 0 || index >= binding.Count) 
+			{
 				index = -1;
 			}
+			
 			return index;
 		}
 
 
-		int ContentHeight {
-			get {
-				return itemHeight * items.Length;
-			}
+		int ContentHeight 
+		{
+			get { return itemHeight * binding.Count; }
 		}
 
 
@@ -169,7 +205,8 @@ namespace Fusion.Widgets {
 
 			//	content is completely inside of the frame
 			//	set scrollOffset zero and return
-			if (height<=gp.Height) {
+			if (height<=gp.Height) 
+			{
 				scrollOffset = 0;
 				return;
 			}
@@ -201,14 +238,14 @@ namespace Fusion.Widgets {
 			UpdateScroll();
 
 			var gp			=	GetPaddedRectangle();
-			var count		=	items.Length;
+			var count		=	binding.Count;
 			var hoverIdx	=	GetItemIndexUnderCursor(mouseX, mouseY);
 
 			var	drawScroll	=	ContentHeight > gp.Height;
 
-			for (int i=0; i<count; i++) {
-
-				var text	=	nameConverter( items[i] );
+			for (int i=0; i<count; i++) 
+			{
+				var text	=	NameProvider.GetDisplayName( binding[i] );
 				var hovered	=	false;
 				var selected=	false;
 				int x		=	gp.X;
@@ -216,18 +253,21 @@ namespace Fusion.Widgets {
 				int h		=	itemHeight;
 				int w		=	gp.Width;
 
-				if (drawScroll) {
+				if (drawScroll) 
+				{
 					w -= (ColorTheme.ScrollSize + 1);
 				}
 
 				var rect	=	new Rectangle(x,y,w,h);
 				int yLocal	=	i * itemHeight;
 
-				if ( i == hoverIdx ) {
+				if ( i == hoverIdx ) 
+				{
 					hovered = true;
 				}
 
-				if ( i == SelectedIndex ) {
+				if ( selection.Contains(i) ) 
+				{
 					hovered	 = false;
 					selected = true;
 				}
@@ -235,27 +275,28 @@ namespace Fusion.Widgets {
 				var textColor	=	hovered ? ColorTheme.TextColorHovered : ColorTheme.TextColorNormal;
 				var highlight	=	ColorTheme.HighlightColor;
 
-				if (drawScroll) {
+				if (drawScroll) 
+				{
 					spriteLayer.Draw( null, scrollRect, ColorTheme.ScrollMarkerColor, clipRectIndex );
 				}
 
-				if (selected) {
-
+				if (selected) 
+				{
 					spriteLayer.Draw( null, rect, ColorTheme.TextColorNormal, clipRectIndex );
 					DrawText( spriteLayer, x, y, text, ColorTheme.BackgroundColorDark, clipRectIndex );
-
-				} else if (hovered) {
-
+				}
+				else if (hovered) 
+				{
 					spriteLayer.Draw( null, rect, ColorTheme.HighlightColor, clipRectIndex );
 					DrawText( spriteLayer, x, y, text, ColorTheme.TextColorHovered, clipRectIndex );
-
-				} else {
-
-					if ((i&1)==1) {
+				} 
+				else 
+				{
+					if ((i&1)==1) 
+					{
 						spriteLayer.Draw( null, rect, new Color(255,255,255,4), clipRectIndex );
 					}
 					DrawText( spriteLayer, x, y, text, ColorTheme.TextColorNormal, clipRectIndex );
-
 				}
 			}
 		}

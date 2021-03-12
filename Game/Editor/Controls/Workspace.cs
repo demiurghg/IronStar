@@ -17,9 +17,10 @@ using Fusion.Engine.Graphics;
 using Fusion.Widgets;
 using Fusion.Widgets.Advanced;
 
-namespace IronStar.Editor.Controls {
-	
-	public class Workspace : Frame  {
+namespace IronStar.Editor.Controls 
+{
+	public class Workspace : Frame  
+	{
 
 		public Shelf UpperShelf {
 			get { return upperShelf; }
@@ -42,21 +43,13 @@ namespace IronStar.Editor.Controls {
 		}
 
 		readonly List<Hotkey> hotkeys = new List<Hotkey>();
-		readonly List<Palette> palettes = new List<Palette>();
+		readonly List<Frame> palettes = new List<Frame>();
 
 		Shelf	upperShelf;
 		Shelf	lowerShelf;
 		MapEditor editor;
 		AEPropertyGrid grid;
 		ScrollBox	gridScrollBox;
-		Panel	palette;
-		Panel	assets;
-		Panel	components;
-
-		Type[] entityTypes;
-
-		Frame	statLabel;
-		Frame	snapLabel;
 
 
 		/// <summary>
@@ -79,8 +72,6 @@ namespace IronStar.Editor.Controls {
 
 			this.Anchor			=	FrameAnchor.All;
 
-			this.entityTypes	=	Misc.GetAllSubclassesOf( typeof(EntityFactoryContent), false );
-
 			//
 			//	setup controls :
 			//
@@ -102,7 +93,7 @@ namespace IronStar.Editor.Controls {
 
 
 		/// <summary>
-		/// Cloeses workspace and remove it from parent frame node
+		/// Closes workspace and remove it from parent frame node
 		/// </summary>
 		public void CloseWorkspace ()
 		{
@@ -126,13 +117,16 @@ namespace IronStar.Editor.Controls {
 		/// Toggles (and adds, if necessary) palette.
 		/// </summary>
 		/// <param name="palette"></param>
-		public void TogglePalette ( Palette palette )
+		public void TogglePalette ( Frame palette )
 		{
-			if (!palettes.Contains(palette)) {
+			if (!palettes.Contains(palette)) 
+			{
 				palettes.Add(palette);
 				this.Add( palette );
 				palette.Visible = true;
-			} else {
+			} 
+			else 
+			{
 				palette.Visible = !palette.Visible;
 			}
 
@@ -149,7 +143,8 @@ namespace IronStar.Editor.Controls {
 			int x = 10;
 			int y = 50;
 
-			foreach ( var frame in frames ) {
+			foreach ( var frame in frames ) 
+			{
 				if (frame==null) { continue; }
 				if (!frame.Visible) { continue;	}
 				frame.X = x;
@@ -224,9 +219,10 @@ namespace IronStar.Editor.Controls {
 		/// <param name="target"></param>
 		public void FeedProperties ( object target )
 		{
-			if (grid==null) {
-
-				gridScrollBox = new ScrollBox( Frames, Width - 320, 40, 320, Height - 40-40 ) {
+			if (grid==null) 
+			{
+				gridScrollBox = new ScrollBox( Frames, Width - 320, 40, 320, Height - 40-40 ) 
+				{
 					BorderColor = ColorTheme.BorderColor,
 					Border		= 1,
 				};
@@ -251,11 +247,7 @@ namespace IronStar.Editor.Controls {
 				gridScrollBox.Add( grid );
 			}
 
-			if (target==null) {
-				gridScrollBox.Visible = false;
-			} else {
-				gridScrollBox.Visible = true;
-			}
+			gridScrollBox.Visible = (target!=null);
 
 			grid.TargetObject = target;
 		}
@@ -285,14 +277,13 @@ namespace IronStar.Editor.Controls {
 
 			e.Handled = true;
 
-			foreach ( var hotkey in hotkeys ) {
-
-				if (hotkey.Key==e.Key) {
-
-					if ( shift == (hotkey.ModKey==ModKeys.Shift) && alt == (hotkey.ModKey==ModKeys.Alt) && ctrl == (hotkey.ModKey==ModKeys.Ctrl) ) {
-
+			foreach ( var hotkey in hotkeys ) 
+			{
+				if (hotkey.Key==e.Key) 
+				{
+					if ( shift == (hotkey.ModKey==ModKeys.Shift) && alt == (hotkey.ModKey==ModKeys.Alt) && ctrl == (hotkey.ModKey==ModKeys.Ctrl) ) 
+					{
 						hotkey.Action?.Invoke();
-
 					}
 				}
 			}
@@ -308,7 +299,8 @@ namespace IronStar.Editor.Controls {
 		{
 			//	TODO: Manipulation, selection and camera manipulating are
 			//	common operations for each type of editors
-			if (editor.camera.Manipulation==Manipulation.None && !editor.manipulator.IsManipulating) {
+			if (editor.camera.Manipulation==Manipulation.None && !editor.manipulator.IsManipulating) 
+			{
 				var shift =	Game.Keyboard.IsKeyDown(Keys.LeftShift) || Game.Keyboard.IsKeyDown(Keys.RightShift);
 				editor.Select( e.X, e.Y, shift );
 			}
@@ -337,7 +329,8 @@ namespace IronStar.Editor.Controls {
 					case Keys.RightButton:	editor.camera.StartManipulation( e.X, e.Y, Manipulation.Zooming );	break;
 					case Keys.MiddleButton:	editor.camera.StartManipulation( e.X, e.Y, Manipulation.Translating );	break;
 				}
-			} else 
+			} 
+			else 
 			{
 				if (!editor.manipulator.StartManipulation( e.X, e.Y, useSnap )) 
 				{

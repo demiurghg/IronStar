@@ -26,15 +26,17 @@ using Fusion.Widgets;
 using IronStar.AI;
 using Fusion.Core.Shell;
 using Fusion.Engine.Graphics.GI;
+using Fusion.Engine.Frames.Layouts;
 
-namespace IronStar.Editor {
-
+namespace IronStar.Editor 
+{
 	/// <summary>
 	/// World represents entire game state.
 	/// </summary>
-	public partial class MapEditor {
-
+	public partial class MapEditor 
+	{
 		Workspace workspace;
+		Outliner outliner;
 		FpsCounter fpsCounter = new FpsCounter(60);
 
 		void SetupWorkspace ()
@@ -54,8 +56,11 @@ namespace IronStar.Editor {
 
 			var entityPalette		=	CreateEntityPalette( workspace );
 			var componentPalette	=	CreateComponentPalette( workspace );
+			var outlinerPanel		=	CreateOutliner( workspace );
 			var assetExplorer		=	CreateAssetExplorer( workspace );
 			assetExplorer.Visible	=	false;
+
+			outliner	=	outlinerPanel;
 
 			//- UPPER SHELF ------------------------------------------------------------
 
@@ -73,6 +78,7 @@ namespace IronStar.Editor {
 			upperShelf.AddLSplitter();
 			upperShelf.AddFatLButton("Palette", null, ()=> workspace.TogglePalette( entityPalette ) );
 			upperShelf.AddFatLButton("Assets", null, ()=> assetExplorer.Visible = !assetExplorer.Visible );
+			upperShelf.AddFatLButton("Outliner", null, ()=> workspace.TogglePalette( outlinerPanel ) );
 
 			upperShelf.AddLSplitter();
 			upperShelf.AddFatLButton("Unfreeze\rAll", null, ()=> UnfreezeAll() );
@@ -316,13 +322,11 @@ namespace IronStar.Editor {
 
 			var componentList = Game.Components.OrderBy( c1 => c1.GetType().Name ).ToArray();
 
-			foreach ( var component in componentList ) {
-
+			foreach ( var component in componentList ) 
+			{
 				string name = component.GetType().Name;
 
-				Action func = () => { 
-					workspace.FeedProperties( component );
-				};
+				Action func = () => workspace.FeedProperties( component );
 
 				palette.AddButton( name, func );
 			}
@@ -331,6 +335,10 @@ namespace IronStar.Editor {
 		}
 
 
+		Outliner CreateOutliner( Workspace workspace )
+		{
+			return new Outliner(workspace, 0,0,200,450 );
+		}
 
 
 		public static Panel CreateAssetExplorer ( Frame parent )

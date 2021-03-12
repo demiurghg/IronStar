@@ -142,6 +142,9 @@ namespace Fusion.Engine.Frames {
 			public int DX = 0;
 			public int DY = 0;
 			public int Wheel = 0;
+			public bool Shift = false;
+			public bool Ctrl = false;
+			public bool Alt = false;
 		}
 
 		public class StatusEventArgs : EventArgs {
@@ -571,6 +574,24 @@ namespace Fusion.Engine.Frames {
 		}
 
 
+		MouseEventArgs CreateMouseEventArgs( Keys key, int x, int y, int dx, int dy )
+		{
+			var shift = Game.Keyboard.IsKeyDown(Keys.LeftShift) || Game.Keyboard.IsKeyDown(Keys.RightShift);
+			var ctrl  = Game.Keyboard.IsKeyDown(Keys.LeftControl) || Game.Keyboard.IsKeyDown(Keys.RightControl);
+			var alt   = Game.Keyboard.IsKeyDown(Keys.LeftAlt) || Game.Keyboard.IsKeyDown(Keys.RightAlt);
+			return new MouseEventArgs() { Key = key, X = x, Y = y, DX = dx, DY = dy, Alt = alt, Ctrl = ctrl, Shift = shift };
+		}
+
+
+		MouseEventArgs CreateMouseEventArgs( int mouseWheel )
+		{
+			var shift = Game.Keyboard.IsKeyDown(Keys.LeftShift) || Game.Keyboard.IsKeyDown(Keys.RightShift);
+			var ctrl  = Game.Keyboard.IsKeyDown(Keys.LeftControl) || Game.Keyboard.IsKeyDown(Keys.RightControl);
+			var alt   = Game.Keyboard.IsKeyDown(Keys.LeftAlt) || Game.Keyboard.IsKeyDown(Keys.RightAlt);
+			return new MouseEventArgs() { Wheel = mouseWheel, Alt = alt, Ctrl = ctrl, Shift = shift };
+		}
+
+
 		internal void OnClick ( Point location, Keys key, bool doubleClick)
 		{
 			int x = location.X - GlobalRectangle.X;
@@ -579,7 +600,7 @@ namespace Fusion.Engine.Frames {
 			if (doubleClick) {
 				DoubleClick?.Invoke( this, new MouseEventArgs() { Key = key, X = x, Y = y } );
 			} else {
-				Click?.Invoke( this, new MouseEventArgs() { Key = key, X = x, Y = y } );
+				Click?.Invoke( this, CreateMouseEventArgs( key, x, y, 0, 0 ) );
 			}
 		}
 
@@ -589,7 +610,7 @@ namespace Fusion.Engine.Frames {
 			int x = location.X - GlobalRectangle.X;
 			int y = location.Y - GlobalRectangle.Y;
 
-			MouseIn?.Invoke( this, new MouseEventArgs() { Key = Keys.None, X = x, Y = y } );
+			MouseIn?.Invoke( this, CreateMouseEventArgs( Keys.None, x, y, 0, 0 ) );
 		}
 
 
@@ -598,7 +619,7 @@ namespace Fusion.Engine.Frames {
 			int x = location.X - GlobalRectangle.X;
 			int y = location.Y - GlobalRectangle.Y;
 
-			MouseMove?.Invoke( this, new MouseEventArgs() { Key = Keys.None, X = x, Y = y, DX = dx, DY = dy } );
+			MouseMove?.Invoke( this, CreateMouseEventArgs( Keys.None, x, y, dx, dy ) );
 		}
 
 
@@ -607,7 +628,7 @@ namespace Fusion.Engine.Frames {
 			int x = location.X - GlobalRectangle.X;
 			int y = location.Y - GlobalRectangle.Y;
 
-			MouseOut?.Invoke( this, new MouseEventArgs() { Key = Keys.None, X = x, Y = y } );
+			MouseOut?.Invoke( this, CreateMouseEventArgs( Keys.None, x, y, 0, 0 ) );
 		}
 
 
@@ -616,7 +637,7 @@ namespace Fusion.Engine.Frames {
 			int x = location.X - GlobalRectangle.X;
 			int y = location.Y - GlobalRectangle.Y;
 
-			MouseDown?.Invoke( this, new MouseEventArgs() { Key = key, X = x, Y = y } );
+			MouseDown?.Invoke( this, CreateMouseEventArgs( key, x, y, 0, 0 ) );
 		}
 
 
@@ -625,14 +646,14 @@ namespace Fusion.Engine.Frames {
 			int x = location.X - GlobalRectangle.X;
 			int y = location.Y - GlobalRectangle.Y;
 
-			MouseUp?.Invoke( this, new MouseEventArgs() { Key = key, X = x, Y = y } );
+			MouseUp?.Invoke( this, CreateMouseEventArgs( key, x, y, 0, 0 ) );
 		}
 
 
 		internal void OnMouseWheel ( int wheel )
 		{
 			if (MouseWheel!=null) {
-				MouseWheel( this, new MouseEventArgs(){ Wheel = wheel } );
+				MouseWheel( this, CreateMouseEventArgs(wheel) );
 			} else if ( Parent!=null ) {
 				Parent.OnMouseWheel( wheel );
 			}

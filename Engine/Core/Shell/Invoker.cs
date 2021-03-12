@@ -24,9 +24,25 @@ namespace Fusion.Core.Shell {
 
 		readonly object lockObject = new object();
 		readonly Queue<ICommand> cmdQueue	= new Queue<ICommand>(1024);
+		readonly Stack<IUndoable> undoStack = new Stack<IUndoable>(1024);
+		readonly Stack<IUndoable> redoStack = new Stack<IUndoable>(1024);
 		readonly Dictionary<string,CommandEntry> commandsRegistry = new Dictionary<string, CommandEntry>();
 
-		class CommandEntry {
+		public bool Echo 
+		{ 
+			get { return echo; }
+			set {
+				if (value!=echo)
+				{
+					echo = value;
+					Log.Message("Invoker Echo : {0}", echo ? "On" : "Off");
+				}
+			}
+		}
+		bool echo = false;
+
+		class CommandEntry 
+		{
 			public CommandCreator Creator;
 			public CommandLineParser Parser;
 		}
@@ -42,6 +58,9 @@ namespace Fusion.Core.Shell {
 			RegisterCommand("get",		()=>new Get(this)		);
 			RegisterCommand("wait",		()=>new WaitCmd(this)	);
 			RegisterCommand("toggle",	()=>new Toggle(this)	);
+			RegisterCommand("undo",		()=>new UndoCmd(this)	);
+			RegisterCommand("redo",		()=>new RedoCmd(this)	);
+			RegisterCommand("echo",		()=>new EchoCmd(this)	);
 
 			Game.Components.ComponentAdded   += (s,e) => FlushNameCache();
 			Game.Components.ComponentRemoved += (s,e) => FlushNameCache();
@@ -323,6 +342,61 @@ namespace Fusion.Core.Shell {
 		}
 
 
+		void LogCommand( string method, object cmd )
+		{
+			if (echo)
+			{
+				Log.Message("{0} : {1}", method, cmd );
+			}
+		}
+
+
+		bool UndoInternal ( int count )
+		{
+			lock (lockObject) 
+			{
+				for (int i=0; i<count; i++) 
+				{
+					if (undoStack.Any()) 
+					{
+						var cmd = undoStack.Pop();
+						LogCommand("UNDO", cmd);
+						cmd.Rollback();
+						redoStack.Push(cmd);
+					} 
+					else 
+					{
+						return false;
+					}
+				}
+			}
+
+			return true;			
+		}
+
+
+		public bool RedoInternal ( int count )
+		{
+			lock (lockObject) 
+			{
+				for (int i=0; i<count; i++) 
+				{
+					if (redoStack.Any()) 
+					{
+						var cmd = redoStack.Pop();
+						LogCommand("REDO", cmd);
+						cmd.Execute();
+						undoStack.Push(cmd);
+					} 
+					else 
+					{
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
 
 		/// <summary>
 		/// Executes deferred commands 
@@ -341,9 +415,17 @@ namespace Fusion.Core.Shell {
 						{
 							break;
 						}
-						
+
+						LogCommand("EXEC", cmd);
+
 						var result = cmd.Execute();	
 
+						if (cmd is IUndoable)
+						{
+							redoStack.Clear();
+							undoStack.Push(cmd as IUndoable);
+						}
+						
 						if (showResult && result!=null) 
 						{
 							Log.Message("// {0} //", StringConverter.ConvertToString(result) );

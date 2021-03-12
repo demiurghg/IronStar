@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Fusion.Core.Shell 
 {
-	public interface ICommand 
+	public interface IUndoable : ICommand
 	{
-		object Execute();
+		void Rollback();
 	}
 }

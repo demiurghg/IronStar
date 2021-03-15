@@ -14,6 +14,7 @@ using Fusion.Engine.Client;
 using Fusion.Core.Extensions;
 using IronStar.SFX;
 using Fusion.Core.IniParser.Model;
+using Fusion.Widgets;
 using Fusion.Engine.Graphics;
 using IronStar.Mapping;
 using Fusion.Build;
@@ -58,7 +59,7 @@ namespace IronStar.Editor
 			}
 		}
 
-		readonly Selection selection;
+		readonly Selection<MapNode> selection;
 
 		Map	map = null;
 
@@ -79,7 +80,7 @@ namespace IronStar.Editor
 		public MapEditor ( Game game, string map ) : base(game)
 		{
 			mapName			=	map;
-			selection		=	new Selection();
+			selection		=	new Selection<MapNode>();
 
 			selection.Changed += Selection_Changed;
 
@@ -222,7 +223,7 @@ namespace IronStar.Editor
 		 * 
 		-----------------------------------------------------------------------------------------*/
 
-		public Selection Selection 
+		public Selection<MapNode> Selection 
 		{
 			get { return selection; }
 		}

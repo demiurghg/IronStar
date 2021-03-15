@@ -17,6 +17,7 @@ using Fusion.Widgets.Advanced;
 using IronStar.Mapping;
 using Fusion.Widgets.Binding;
 using IronStar.Editor.Commands;
+using System.Collections;
 
 namespace IronStar.Editor.Controls 
 {
@@ -51,6 +52,8 @@ namespace IronStar.Editor.Controls
 			listBox.Binding = new MapBinding( editor );
 			listBox.AllowMultipleSelection = true;
 			listBox.SelectedItemChanged +=ListBox_SelectedItemChanged;
+			listBox.Font = ColorTheme.NormalFont;
+			editor.Selection.Changed += EditorSelection_Changed;
 
 			Add( label );
 			Add( filter );
@@ -58,10 +61,28 @@ namespace IronStar.Editor.Controls
 			Add( btnClose );
 		}
 
-		
+		private void EditorSelection_Changed( object sender, EventArgs e )
+		{
+			suppressSelectedItemChanged = true;
+
+			listBox.DeselectAll();
+
+			foreach ( var mapNode in editor.Selection)
+			{
+				listBox.SelectItem( mapNode, true );
+			}
+
+			suppressSelectedItemChanged = false;
+		}
+
+
+		bool suppressSelectedItemChanged = false;
+
 		private void ListBox_SelectedItemChanged( object sender, EventArgs e )
 		{
-			var selectedNodes = listBox.GetSelectedItems()
+			if (suppressSelectedItemChanged) return;
+
+			var selectedNodes = listBox.SelectedItems
 								.Select( obj => obj as MapNode )
 								.Where( node => node!=null )
 								.ToArray();
@@ -73,14 +94,6 @@ namespace IronStar.Editor.Controls
 		string GetDisplayName( MapNode node )
 		{
 			return node.GetType().Name + " : " + node.Name;
-		}
-
-
-		public void SetItems( Map map )
-		{
-			if (map==null) return;
-
-			listBox.SetItems( map.Nodes );
 		}
 
 
@@ -101,10 +114,7 @@ namespace IronStar.Editor.Controls
 					{
 						return editor.Map.Nodes[index]; 
 					}
-					else
-					{
-						return "Map is not loaded";
-					}
+					throw new ArgumentOutOfRangeException("index");
 				}
 			}
 
@@ -118,13 +128,19 @@ namespace IronStar.Editor.Controls
 					}
 					else
 					{
-						return 1;
+						return 0;
 					}
 				}
 			}
 
 			public bool IsReadonly { get	{ return false; } }
 			public void Add( object item ) { throw new NotImplementedException(); }
+
+			public IEnumerator GetEnumerator()
+			{
+				return editor.Map.Nodes.GetEnumerator();
+			}
+
 			public void Remove( object item ) { throw new NotImplementedException(); }
 		}
 	}

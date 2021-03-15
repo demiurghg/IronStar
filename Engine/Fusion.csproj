@@ -764,6 +764,7 @@
     <Compile Include="Widgets\Palette.cs" />
     <Compile Include="Widgets\Panel.cs" />
     <Compile Include="Widgets\ScrollBox.cs" />
+    <Compile Include="Widgets\Selection.cs" />
     <Compile Include="Widgets\Shelf.cs" />
     <Compile Include="Widgets\Slider.cs" />
     <Compile Include="Widgets\TextBox.cs" />

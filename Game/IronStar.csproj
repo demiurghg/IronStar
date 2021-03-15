@@ -269,7 +269,6 @@
     <Compile Include="Editor\EditorCamera.cs" />
     <Compile Include="Editor\Enums.cs" />
     <Compile Include="Editor\MapEditor.cs" />
-    <Compile Include="Editor\Selection.cs" />
     <Compile Include="Editor\Utils.cs" />
     <Compile Include="IronStar.Commands.cs" />
     <Compile Include="IronStar.cs" />

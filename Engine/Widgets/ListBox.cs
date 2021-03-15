@@ -14,7 +14,7 @@ namespace Fusion.Widgets
 {
 	public class ListBox : Frame 
 	{
-		readonly HashSet<int> selection = new HashSet<int>();
+		readonly Selection<int> selection = new Selection<int>();
 		private int itemHeight { get { return Font.LineHeight; } }
 
 		public bool AllowMultipleSelection 
@@ -45,22 +45,33 @@ namespace Fusion.Widgets
 		public int SelectedIndex { get { return selection.Any() ? selection.Last() : -1; } }
 		public object SelectedItem { get { return ( SelectedIndex < 0 ) ? null : binding[ SelectedIndex ]; } }
 
-		public IEnumerable<object> GetSelectedItems()
+		public IEnumerable<int> SelectedIndices 
 		{
-			List<object> list = new List<object>();
-
-			if (binding!=null)
+			get 
 			{
-				for (int i=0; i<binding.Count; i++)
+				return selection;
+			}
+		}
+
+		public IEnumerable<object> SelectedItems
+		{
+			get 
+			{
+				if (binding!=null)
 				{
-					if (selection.Contains(i))
-					{
-						list.Add(binding[i]);
-					}
+					return selection
+						//	selection may keep deleted items, 
+						//	binding may be changed outside of the list box
+						//	so check bounds
+						.Where( idx1 => (idx1 >= 0 && idx1 < binding.Count) )
+						.Select( idx => binding[idx] )
+						;
+				}
+				else
+				{
+					return null;
 				}
 			}
-
-			return list;
 		}
 
 		
@@ -103,6 +114,43 @@ namespace Fusion.Widgets
 			ResetSelection();
 			Parent?.MakeLayoutDirty();
 			UpdateScroll();
+		}
+
+
+		public void DeselectAll()
+		{
+			selection.Clear();
+		}
+
+
+		public void SelectItem( object item, bool selected )
+		{
+			int idx = IndexOf(item);
+
+			if (idx>=0)
+			{
+				if (selected)
+				{
+					selection.Add(idx);
+				} 
+				else
+				{
+					selection.Remove(idx);
+				}
+			}
+		}
+
+
+		public int IndexOf( object item )
+		{
+			for (int idx=0; idx<binding.Count; idx++)
+			{
+				if (item.Equals(binding[idx]))
+				{
+					return idx;
+				}
+			}
+			return -1;
 		}
 
 

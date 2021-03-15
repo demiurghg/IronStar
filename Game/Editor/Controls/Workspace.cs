@@ -16,6 +16,7 @@ using Fusion.Build;
 using Fusion.Engine.Graphics;
 using Fusion.Widgets;
 using Fusion.Widgets.Advanced;
+using IronStar.Editor.Manipulators;
 
 namespace IronStar.Editor.Controls 
 {
@@ -51,6 +52,19 @@ namespace IronStar.Editor.Controls
 		AEPropertyGrid grid;
 		ScrollBox	gridScrollBox;
 
+		public ITool manipulator;
+
+		public ITool Manipulator 
+		{
+			get { return manipulator; }
+			set 
+			{
+				if (!manipulator.IsManipulating) 
+				{
+					manipulator = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// 
@@ -71,6 +85,9 @@ namespace IronStar.Editor.Controls
 			this.Height			=	frames.RootFrame.Height;
 
 			this.Anchor			=	FrameAnchor.All;
+
+			//	set null manipulator :
+			manipulator		=	new NullTool();
 
 			//
 			//	setup controls :
@@ -192,8 +209,9 @@ namespace IronStar.Editor.Controls
 			spriteLayer.Draw( null,     x, y+h-1, w, 1, new Color(220,220,220,192), clipRectIndex);
 			spriteLayer.Draw( null, x+w-1,     y, 1, h, new Color(220,220,220,192), clipRectIndex);
 
-			if (editor.manipulator!=null && editor.manipulator.IsManipulating) {
-				var text  = editor.manipulator.ManipulationText;
+			if (manipulator!=null && manipulator.IsManipulating) 
+			{
+				var text  = manipulator.ManipulationText;
 				var lines = text.SplitLines();
 
 				x   =	mouseX + 0;
@@ -277,13 +295,16 @@ namespace IronStar.Editor.Controls
 
 			e.Handled = true;
 
-			foreach ( var hotkey in hotkeys ) 
+			if (!manipulator.IsManipulating)
 			{
-				if (hotkey.Key==e.Key) 
+				foreach ( var hotkey in hotkeys ) 
 				{
-					if ( shift == (hotkey.ModKey==ModKeys.Shift) && alt == (hotkey.ModKey==ModKeys.Alt) && ctrl == (hotkey.ModKey==ModKeys.Ctrl) ) 
+					if (hotkey.Key==e.Key) 
 					{
-						hotkey.Action?.Invoke();
+						if ( shift == (hotkey.ModKey==ModKeys.Shift) && alt == (hotkey.ModKey==ModKeys.Alt) && ctrl == (hotkey.ModKey==ModKeys.Ctrl) ) 
+						{
+							hotkey.Action?.Invoke();
+						}
 					}
 				}
 			}
@@ -299,7 +320,7 @@ namespace IronStar.Editor.Controls
 		{
 			//	TODO: Manipulation, selection and camera manipulating are
 			//	common operations for each type of editors
-			if (editor.camera.Manipulation==Manipulation.None && !editor.manipulator.IsManipulating) 
+			if (editor.camera.Manipulation==Manipulation.None && !manipulator.IsManipulating) 
 			{
 				editor.PickSelection( e.X, e.Y, e.Shift );
 			}
@@ -331,7 +352,7 @@ namespace IronStar.Editor.Controls
 			} 
 			else 
 			{
-				if (!editor.manipulator.StartManipulation( e.X, e.Y, useSnap )) 
+				if (!manipulator.StartManipulation( e.X, e.Y, useSnap )) 
 				{
 					editor.StartMarqueeSelection( e.X, e.Y, Game.Keyboard.IsKeyDown(Keys.LeftShift) );
 				}
@@ -352,7 +373,7 @@ namespace IronStar.Editor.Controls
 			//	TODO: Manipulation, selection and camera manipulating are
 			//	common operations for each type of editors
 			editor.camera.UpdateManipulation( e.X, e.Y );
-			editor.manipulator.UpdateManipulation( e.X, e.Y );
+			manipulator.UpdateManipulation( e.X, e.Y );
 			editor.UpdateMarqueeSelection( e.X, e.Y );
 		}
 
@@ -367,7 +388,7 @@ namespace IronStar.Editor.Controls
 			//	TODO: Manipulation, selection and camera manipulating are
 			//	common operations for each type of editors
 			editor.camera.StopManipulation( e.X, e.Y );
-			editor.manipulator.StopManipulation( e.X, e.Y );
+			manipulator.StopManipulation( e.X, e.Y );
 			editor.StopMarqueeSelection( e.X, e.Y );
 		}
 	}

@@ -16,19 +16,15 @@ namespace IronStar.Editor.Commands
 		Clear,
 	}
 
-	public class Select : IUndoable
+	public class SelectNodes : BaseCommand
 	{
 		readonly MapNode[] items;
-				 MapNode[] restore;
-		readonly MapEditor editor;
 		readonly SelectMode mode;
 
 		
-		public Select( MapEditor editor, SelectMode mode, params MapNode[] nodes )
+		public SelectNodes( MapEditor editor, SelectMode mode, params MapNode[] nodes ) : base(editor)
 		{
 			this.mode	=	mode;
-			this.editor	=	editor;
-
 			this.items	=	nodes
 							.Where(n => n!=null)
 							.ToArray();
@@ -41,10 +37,8 @@ namespace IronStar.Editor.Commands
 		}
 
 
-		public object Execute()
+		public override object Execute()
 		{
-			restore	=	editor.Selection.ToArray();
-
 			switch (mode)
 			{
 				case SelectMode.Replace:
@@ -68,9 +62,9 @@ namespace IronStar.Editor.Commands
 		}
 
 		
-		public void Rollback()
+		public override void Rollback()
 		{
-			editor.Selection.SetRange( restore );
+			RestoreSelection();
 		}
 	}
 }

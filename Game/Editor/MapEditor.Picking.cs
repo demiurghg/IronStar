@@ -111,7 +111,7 @@ namespace IronStar.Editor
 				var pickedItem	=	GetNodeUnderCursor( x, y );
 				var mode		=	add ? SelectMode.Toggle : SelectMode.Replace;
 
-				Game.Invoker.Execute( new Select(this, mode, pickedItem ) );
+				Game.Invoker.Execute( new SelectNodes(this, mode, pickedItem ) );
 			}
 		}
 
@@ -191,7 +191,7 @@ namespace IronStar.Editor
 					}
 				}
 
-				Game.Invoker.Execute( new Select( this, mode, candidates.ToArray() ) );
+				Game.Invoker.Execute( new SelectNodes( this, mode, candidates.ToArray() ) );
 			}
 
 			marqueeStarted = false;

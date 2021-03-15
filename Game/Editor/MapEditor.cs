@@ -25,6 +25,7 @@ using Fusion.Engine.Frames;
 using IronStar.ECSPhysics;
 using IronStar.Editor.Systems;
 using IronStar.AI;
+using IronStar.Editor.Commands;
 
 namespace IronStar.Editor 
 {
@@ -45,19 +46,6 @@ namespace IronStar.Editor
 		readonly RenderSystem rs;
 
 		public EditorCamera	camera;
-		public Manipulator	manipulator;
-
-		public Manipulator Manipulator 
-		{
-			get { return manipulator; }
-			set 
-			{
-				if (!manipulator.IsManipulating) 
-				{
-					manipulator = value;
-				}
-			}
-		}
 
 		readonly Selection<MapNode> selection;
 
@@ -87,7 +75,6 @@ namespace IronStar.Editor
 			this.rs			=	Game.RenderSystem;
 			Content         =   new ContentManager( Game );
 			camera			=	new EditorCamera( this );
-			manipulator		=	new NullTool( this );
 
 			SetupWorkspace();
 
@@ -98,6 +85,7 @@ namespace IronStar.Editor
 		private void Selection_Changed( object sender, EventArgs e )
 		{
 			workspace?.FeedProperties( selection.LastOrDefault() );
+			workspace.Manipulator.StopManipulation(0,0);
 		}
 
 
@@ -230,43 +218,23 @@ namespace IronStar.Editor
 
 		public void CreateNodeUI ( MapNode newNode )
 		{
-			Map.Nodes.Add( newNode );
+			Game.Invoker.Execute( new CreateNode(this, newNode) );
+			/*Map.Nodes.Add( newNode );
 			newNode.SpawnNodeECS( GameState );
-			Select_Deprecated( newNode );
-		}
-
-
-		public void Select_Deprecated( MapNode node )
-		{
-			if ( node==null ) 
-			{
-				throw new ArgumentNullException( "node" );
-			}
-			if ( !map.Nodes.Contains( node ) ) 
-			{
-				throw new ArgumentException( "Provided node does not exist in current map" );
-			}
-			selection.Clear();
-			selection.Add( node );
-
-			//FeedSelection();
+			Select_Deprecated( newNode );*/
 		}
 
 
 		public void DeleteSelection ()
 		{
-			if (manipulator.IsManipulating) 
-			{
-				return;
-			}
-
-			foreach ( var se in selection ) 
+			Game.Invoker.Execute( new DeleteSelection(this) );
+			/*foreach ( var se in selection ) 
 			{
 				se.KillNodeECS( gameState );
 				map.Nodes.Remove( se );
 			}
 
-			selection.Clear();
+			selection.Clear();*/
 			//FeedSelection();
 		}
 
@@ -274,12 +242,9 @@ namespace IronStar.Editor
 
 		public void DuplicateSelection ()
 		{
-			if (manipulator.IsManipulating) 
-			{
-				return;
-			}
+			Game.Invoker.Execute( new DuplicateSelection(this) );
 
-			var newItems = selection
+			/*var newItems = selection
 				#warning REMOVE PARAMETER
 				.Select( item => {
 					var newNode = item.DuplicateNode();
@@ -298,17 +263,12 @@ namespace IronStar.Editor
 			selection.Clear();
 			selection.AddRange( newItems );
 
-			//FeedSelection();
+			//FeedSelection(); */
 		}
 
 
 		public void ResetSelected()
 		{
-			if (manipulator.IsManipulating) 
-			{
-				return;
-			}
-
 			foreach ( var node in Selection )
 			{
 				node.ResetNodeECS(GameState);
@@ -322,11 +282,6 @@ namespace IronStar.Editor
 		/// </summary>
 		public void ResetWorld ()
 		{
-			if (manipulator.IsManipulating) 
-			{
-				return;
-			}
-
 			EnableSimulation = false;
 
 			//	kill node's entities
@@ -355,11 +310,6 @@ namespace IronStar.Editor
 		/// </summary>
 		public void BakeToEntity ()
 		{
-			if (manipulator.IsManipulating) 
-			{
-				return;
-			}
-
 			foreach ( var se in selection ) 
 			{
 				var transform = (se as MapEntity)?.EcsEntity?.GetComponent<ECS.Transform>();
@@ -401,11 +351,6 @@ namespace IronStar.Editor
 		{
 			Log.Warning("MapEditor.ActivateSelected -- NOT IMPLEMENTED");
 
-			if (manipulator.IsManipulating) 
-			{
-				return;
-			}
-
 			foreach ( var se in selection ) 
 			{
 				//se.ActivateNode();
@@ -419,11 +364,6 @@ namespace IronStar.Editor
 		public void UseSelected ()
 		{
 			Log.Warning("MapEditor.UseSelected -- NOT IMPLEMENTED");
-
-			if (manipulator.IsManipulating) 
-			{
-				return;
-			}
 
 			foreach ( var se in selection ) 
 			{
@@ -481,7 +421,7 @@ namespace IronStar.Editor
 
 			var mp = Game.Mouse.Position;
 
-			manipulator?.Update( gameTime, mp.X, mp.Y );
+			workspace.Manipulator?.Update( gameTime, mp.X, mp.Y );
 		}
 
 
@@ -515,11 +455,6 @@ namespace IronStar.Editor
 		/// </summary>
 		public void TargetSelection ()
 		{
-			if (manipulator.IsManipulating) 
-			{
-				return;
-			}
-
 			if (selection.Count<2) 
 			{
 				Log.Warning("TargetSelection: select at least two objects");

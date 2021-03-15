@@ -87,7 +87,7 @@ namespace IronStar.Editor.Controls
 								.Where( node => node!=null )
 								.ToArray();
 
-			Game.Invoker.Execute( new Select( editor, SelectMode.Replace, selectedNodes ) );
+			Game.Invoker.Execute( new SelectNodes( editor, SelectMode.Replace, selectedNodes ) );
 		}
 
 		

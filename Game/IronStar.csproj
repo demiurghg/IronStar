@@ -163,8 +163,13 @@
     <Compile Include="ECS\Collections\SystemCollection.cs" />
     <Compile Include="ECS\Static.cs" />
     <Compile Include="ECS\Velocity.cs" />
-    <Compile Include="Editor\Commands\Select.cs" />
+    <Compile Include="Editor\Commands\BaseCommand.cs" />
+    <Compile Include="Editor\Commands\DuplicateSelection.cs" />
+    <Compile Include="Editor\Commands\DeleteSelection.cs" />
+    <Compile Include="Editor\Commands\CreateNode.cs" />
+    <Compile Include="Editor\Commands\SelectNodes.cs" />
     <Compile Include="Editor\Controls\MapOutliner.cs" />
+    <Compile Include="Editor\Manipulators\ITool.cs" />
     <Compile Include="Editor\MapEditor.History.cs" />
     <Compile Include="Editor\MapEditor.Picking.cs" />
     <Compile Include="Editor\Systems\EditorCharacterRenderSystem.cs" />
@@ -262,9 +267,9 @@
     <Compile Include="Editor\MapEditor.Config.cs" />
     <Compile Include="Editor\MapEditor.Workspace.cs" />
     <Compile Include="Editor\MapEditor.Selection.cs" />
-    <Compile Include="Editor\RotateTool.cs" />
-    <Compile Include="Editor\NullTool.cs" />
-    <Compile Include="Editor\MoveTool.cs" />
+    <Compile Include="Editor\Manipulators\RotateTool.cs" />
+    <Compile Include="Editor\Manipulators\NullTool.cs" />
+    <Compile Include="Editor\Manipulators\MoveTool.cs" />
     <Compile Include="Editor\Manipulators\Manipulator.cs" />
     <Compile Include="Editor\EditorCamera.cs" />
     <Compile Include="Editor\Enums.cs" />

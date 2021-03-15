@@ -11,29 +11,22 @@ using Fusion;
 using Fusion.Core;
 using IronStar.Mapping;
 
-namespace IronStar.Editor {
-	public class MoveTool : Manipulator {
-
-
-		/// <summary>
-		/// 
-		/// </summary>
+namespace IronStar.Editor.Manipulators 
+{
+	public class MoveTool : Manipulator 
+	{
 		public MoveTool ( MapEditor editor ) : base(editor)
 		{
 		}
 
 
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="gameTime"></param>
 		public override void Update ( GameTime gameTime, int x, int y )
 		{
 			var dr = rs.RenderWorld.Debug;
 			var mp = game.Mouse.Position;
 
-			if (!editor.Selection.Any()) {
+			if (!editor.Selection.Any()) 
+			{
 				return;
 			}
 
@@ -44,14 +37,16 @@ namespace IronStar.Editor {
 
 			var ray = editor.camera.PointToRay( x, y );
 
-			if (manipulating) {
+			if (manipulating) 
+			{
 				DrawArrow( dr, ray, origin, direction, Utils.SelectColor  );
 
 				dr.DrawPoint(initialPoint, linerSize, Utils.GridColor);
 				dr.DrawPoint(currentPoint, linerSize, Utils.GridColor);
 				dr.DrawLine(initialPoint, currentPoint, Utils.GridColor);
 
-				foreach ( var item in editor.Selection ) {
+				foreach ( var item in editor.Selection ) 
+				{
 					var pos   = item.TranslateVector;
 					var floor = item.TranslateVector;
 					floor.Y = 0;
@@ -59,9 +54,9 @@ namespace IronStar.Editor {
 					dr.DrawLine(floor, pos, Utils.GridColor);
 					dr.DrawWaypoint(floor, linerSize*5, Utils.GridColor);
 				}
-				
-			} else {
-
+			} 
+			else 
+			{
 				var hitX	=	IntersectArrow( target.TranslateVector, Vector3.UnitX, mp );
 				var hitY	=	IntersectArrow( target.TranslateVector, Vector3.UnitY, mp );
 				var hitZ	=	IntersectArrow( target.TranslateVector, Vector3.UnitZ, mp );
@@ -75,17 +70,22 @@ namespace IronStar.Editor {
 		}
 
 
-		public override bool IsManipulating {
+		public override bool IsManipulating 
+		{
 			get {
 				return manipulating;
 			}
 		}
 
 
-		public override string ManipulationText {
-			get {
+		public override string ManipulationText 
+		{
+			get 
+			{
 				var target = targets?.LastOrDefault();
-				if (target==null) {
+
+				if (target==null) 
+				{
 					return "---";
 				}
 
@@ -217,6 +217,5 @@ namespace IronStar.Editor {
 				manipulating	=	false;
 			}
 		}
-
 	}
 }

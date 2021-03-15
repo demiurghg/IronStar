@@ -10,19 +10,16 @@ using Fusion.Engine.Common;
 using Fusion;
 using IronStar.Mapping;
 
-namespace IronStar.Editor.Manipulators {
-	public abstract class Manipulator {
-
+namespace IronStar.Editor.Manipulators 
+{
+	public abstract class Manipulator : ITool
+	{
 		readonly protected RenderSystem rs;
 		readonly protected Game game;
 		readonly protected MapEditor editor;
 
-		public abstract bool IsManipulating { get; }
 
 
-		/// <summary>
-		/// Constrcutor
-		/// </summary>
 		public Manipulator ( MapEditor editor )
 		{
 			this.rs		=	editor.Game.RenderSystem;
@@ -36,7 +33,7 @@ namespace IronStar.Editor.Manipulators {
 		public abstract void StopManipulation ( int x, int y );
 		public abstract void Update ( GameTime gameTime, int x, int y );
 		public abstract string ManipulationText { get; }
-
+		public abstract bool IsManipulating { get; }
 
 
 		/// <summary>

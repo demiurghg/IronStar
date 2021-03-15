@@ -91,6 +91,14 @@ namespace Fusion.Widgets
 			Changed?.Invoke(this, EventArgs.Empty);
 		}
 
+
+		public void Set( T item )
+		{
+			list.Clear();
+			list.Add( item );
+			Changed?.Invoke(this, EventArgs.Empty);
+		}
+
 		public void Toggle( T item )
 		{
 			if (item==null) return;

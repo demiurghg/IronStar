@@ -64,9 +64,9 @@ namespace IronStar.Editor
 
 			//- UPPER SHELF ------------------------------------------------------------
 
-			upperShelf.AddLButton("ST", @"editor\iconToolSelect",	()=> manipulator = new NullTool(this) );
-			upperShelf.AddLButton("MT", @"editor\iconToolMove",		()=> manipulator = new MoveTool(this) );
-			upperShelf.AddLButton("RT", @"editor\iconToolRotate",	()=> manipulator = new RotateTool(this) );
+			upperShelf.AddLButton("ST", @"editor\iconToolSelect",	()=> workspace.Manipulator = new NullTool() );
+			upperShelf.AddLButton("MT", @"editor\iconToolMove",		()=> workspace.Manipulator = new MoveTool(this) );
+			upperShelf.AddLButton("RT", @"editor\iconToolRotate",	()=> workspace.Manipulator = new RotateTool(this) );
 
 			upperShelf.AddLSplitter();
 			upperShelf.AddLButton("FCS", @"editor\iconFocus",		()=> FocusSelection() );
@@ -167,9 +167,9 @@ namespace IronStar.Editor
 			workspace.AddHotkey( Keys.F			, ModKeys.None,	() => FocusSelection() );
 			//workspace.AddHotkey( Keys.F2		, ModKeys.None, () => rs.VSyncInterval = (rs.VSyncInterval==1) ? 0 : 1 );
 			
-			workspace.AddHotkey( Keys.Q			, ModKeys.None, () => Manipulator = new NullTool(this) );
-			workspace.AddHotkey( Keys.W			, ModKeys.None, () => Manipulator = new MoveTool(this) );
-			workspace.AddHotkey( Keys.E			, ModKeys.None, () => Manipulator = new RotateTool(this) );
+			workspace.AddHotkey( Keys.Q			, ModKeys.None, () => workspace.Manipulator = new NullTool() );
+			workspace.AddHotkey( Keys.W			, ModKeys.None, () => workspace.Manipulator = new MoveTool(this) );
+			workspace.AddHotkey( Keys.E			, ModKeys.None, () => workspace.Manipulator = new RotateTool(this) );
 			workspace.AddHotkey( Keys.T			, ModKeys.None, () => TargetSelection() );
 			
 			workspace.AddHotkey( Keys.D1		, ModKeys.None, ResetViewMode );
@@ -301,8 +301,8 @@ namespace IronStar.Editor
 
 			palette.AddSplitter();
 
-			foreach ( var ent in entityTypes ) {
-
+			foreach ( var ent in entityTypes ) 
+			{
 				string name = ent.Name.Replace("Factory", "");
 
 				Action action = () => { 

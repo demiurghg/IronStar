@@ -515,9 +515,9 @@
         "FactoryName": "5TKWUmgA",
         "Visible": true,
         "Frozen": false,
-        "TranslateX": -42.146965,
+        "TranslateX": -16.0,
         "TranslateY": 0.0,
-        "TranslateZ": -22.1452713,
+        "TranslateZ": -22.0,
         "RotateYaw": -75.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
@@ -644,24 +644,6 @@
         "TranslateX": -22.6518478,
         "TranslateY": 0.0,
         "TranslateZ": -36.26701,
-        "RotateYaw": -75.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
-      },
-      {
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "Name": "534455d0-75d8-42e1-b2cd-71786120ba81",
-        "TargetName": null,
-        "Factory": {
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
-        },
-        "FactoryName": "tQGQfUVu",
-        "Visible": true,
-        "Frozen": false,
-        "TranslateX": -22.6518478,
-        "TranslateY": 0.0,
-        "TranslateZ": -22.638979,
         "RotateYaw": -75.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0

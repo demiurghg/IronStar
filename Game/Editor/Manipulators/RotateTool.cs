@@ -11,9 +11,10 @@ using IronStar.Editor.Manipulators;
 using Fusion;				  
 using IronStar.Mapping;
 
-namespace IronStar.Editor {
-	public class RotateTool : Manipulator {
-
+namespace IronStar.Editor.Manipulators
+{
+	public class RotateTool : Manipulator 
+	{
 		enum Rotation 
 		{
 			Yaw, Pitch, Roll

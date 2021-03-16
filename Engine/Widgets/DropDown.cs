@@ -189,7 +189,7 @@ namespace Fusion.Widgets {
 
 			this.Text = value;
 
-			binding?.SetValue( value );
+			binding?.SetValue( value, ValueSetMode.Default );
 
 			CloseDropDownList();
 		}

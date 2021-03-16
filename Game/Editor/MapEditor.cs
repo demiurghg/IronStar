@@ -78,6 +78,8 @@ namespace IronStar.Editor
 
 			SetupWorkspace();
 
+			Game.Invoker.ClearUndoHistory();
+
 			fullPath	=	GetFullMapPath(map);
 		}
 
@@ -186,6 +188,8 @@ namespace IronStar.Editor
 		{
 			if ( disposing ) 
 			{
+				Game.Invoker.ClearUndoHistory();
+
 				Game.Reloading -= Game_Reloading;
 
 				selection.Clear();
@@ -336,11 +340,12 @@ namespace IronStar.Editor
 		/// 
 		/// </summary>
 		/// <param name="target"></param>
-		public void SelectedPropertyChange ( object target )
+		public void CommitSelectedNodeChanges ()
 		{
-			Log.Message("-- {0} --", target);
-			var mapNode = target as MapNode;
-			mapNode?.ResetNodeECS( gameState );
+			foreach (var node in Selection)
+			{
+				node?.ResetNodeECS( gameState );
+			}
 		}
 
 

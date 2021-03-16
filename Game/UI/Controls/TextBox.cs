@@ -71,7 +71,7 @@ namespace IronStar.UI.Controls {
 
 				if (StringConverter.TryConvertFromString(binding.ValueType, text, out value))
 				{
-					if (binding.SetValue(value))
+					if (binding.SetValue(value, ValueSetMode.Default))
 					{
 						return true;
 					}

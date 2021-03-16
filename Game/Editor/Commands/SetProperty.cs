@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Fusion.Core.Shell;
 using IronStar.Mapping;
 using System.Reflection;
+using Fusion.Core.Extensions;
 
 namespace IronStar.Editor.Commands
 {
@@ -19,25 +20,18 @@ namespace IronStar.Editor.Commands
 		
 		readonly PropertyInfo property;
 		readonly RollbackInfo[] rollbackInfo;
-		object valueToSet;
+		public object Value;
 		
-		public SetProperty( MapEditor editor, PropertyInfo property ) : base(editor)
+		public SetProperty( MapEditor editor, PropertyInfo property, object value ) : base(editor)
 		{
 			this.property		=	property;
+			this.Value			=	value;
 			this.rollbackInfo	=	editor
 								.Selection
-								.Select( t => new RollbackInfo { Node = t, Value = property.GetValue(t) } )
+								.Where(	obj0 => obj0 is MapNode )
+								.Where( obj1 => property.DeclaringType.IsAssignableFrom( obj1.GetType() ) )
+								.Select( obj2 => new RollbackInfo { Node = obj2, Value = property.GetValue(obj2) } )
 								.ToArray();
-		}
-
-
-		public object ValueToSet
-		{
-			get { return valueToSet; }
-			set 
-			{
-				valueToSet = value;
-			}
 		}
 
 
@@ -45,7 +39,7 @@ namespace IronStar.Editor.Commands
 		{
 			foreach ( var ri in rollbackInfo )
 			{
-				property.SetValue( ri.Node, valueToSet );
+				property.SetValue( ri.Node, Value );
 				ri.Node.ResetNodeECS(gs);
 			}
 			return null;

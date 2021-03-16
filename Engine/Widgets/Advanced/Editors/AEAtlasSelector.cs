@@ -77,7 +77,7 @@ namespace Fusion.Widgets.Advanced
 			var button	=	(Frame)sender;
 			var rect	=	button.GlobalRectangle;
 
-			ShowDialog( Frames, atlasName, binding.GetValue(), (s) => binding.SetValue(s) );
+			ShowDialog( Frames, atlasName, binding.GetValue(), (s) => binding.SetValue(s, ValueSetMode.Default) );
 		}
 
 

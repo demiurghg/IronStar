@@ -53,7 +53,7 @@ namespace Fusion.Widgets.Advanced
 			var button	=	(Frame)sender;
 			var rect	=	button.GlobalRectangle;
 
-			ColorPicker.ShowDialog( Frames, rect.X, rect.Y + rect.Height, (Color)binding.GetValue(), (c)=>binding.SetValue(c) );
+			ColorPicker.ShowDialog( Frames, rect.X, rect.Y + rect.Height, (Color)binding.GetValue(), (c)=>binding.SetValue(c, ValueSetMode.Default) );
 		}
 
 

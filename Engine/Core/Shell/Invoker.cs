@@ -28,6 +28,8 @@ namespace Fusion.Core.Shell {
 		readonly Stack<IUndoable> redoStack = new Stack<IUndoable>(1024);
 		readonly Dictionary<string,CommandEntry> commandsRegistry = new Dictionary<string, CommandEntry>();
 
+		public IEnumerable<IUndoable> UndoStack { get { return undoStack; } }
+
 		public bool Echo 
 		{ 
 			get { return echo; }
@@ -398,9 +400,17 @@ namespace Fusion.Core.Shell {
 			return true;
 		}
 
-		/// <summary>
-		/// Executes deferred commands 
-		/// </summary>
+
+		public void ClearUndoHistory()
+		{
+			lock ( lockObject ) 
+			{
+				undoStack.Clear();
+				redoStack.Clear();
+			}
+		}
+
+
 		public void ExecuteDeferredCommands ( bool showResult = true )
 		{
 			lock ( lockObject ) 

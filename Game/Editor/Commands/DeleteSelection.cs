@@ -22,7 +22,7 @@ namespace IronStar.Editor.Commands
 				map.Nodes.Remove( node );
 			}
 
-			editor.Selection.Clear();
+			editor.Selection.RemoveRange( Selection );
 
 			return null;
 		}

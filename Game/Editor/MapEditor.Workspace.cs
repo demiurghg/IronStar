@@ -29,6 +29,7 @@ using Fusion.Engine.Graphics.GI;
 using Fusion.Engine.Frames.Layouts;
 using Fusion.Widgets.Advanced;
 using IronStar.Editor.Commands;
+using Fusion.Widgets.Binding;
 
 namespace IronStar.Editor 
 {
@@ -185,7 +186,6 @@ namespace IronStar.Editor
 			workspace.AddHotkey( Keys.D7		, ModKeys.None, ToggleFiltering );
 			
 			workspace.AddHotkey( Keys.Delete	, ModKeys.None, () => DeleteSelection() );
-			workspace.AddHotkey( Keys.U			, ModKeys.Ctrl, () => DuplicateSelection() );
 
 			workspace.AddHotkey( Keys.Space		, ModKeys.None, () => EnableSimulation = !EnableSimulation );
 			workspace.AddHotkey( Keys.Escape	, ModKeys.None, () => ResetWorld() );
@@ -373,30 +373,33 @@ namespace IronStar.Editor
 		
 		private void SetupGridEvents( AEPropertyGrid grid )
 		{
-			grid.ValueChangeInitiated+=Grid_ValueChangeInitiated;
-			grid.ValueChangeUpdated+=Grid_ValueChangeUpdated;
-			grid.ValueChangeCommitted+=Grid_ValueChangeCommitted;
+			grid.PropertyValueChanging+=Grid_PropertyValueChanging;
 		}
 
-		SetProperty setCommand = null;
+		SetProperty setPropertyCommand = null;
 
-		private void Grid_ValueChangeInitiated( object sender, AEPropertyGrid.PropertyChangedEventArgs e )
+		private void Grid_PropertyValueChanging( object sender, AEPropertyGrid.PropertyChangedEventArgs e )
 		{
-			setCommand = new SetProperty( this, e.Property );
-		}
-
-		private void Grid_ValueChangeCommitted( object sender, AEPropertyGrid.PropertyChangedEventArgs e )
-		{
-			if (setCommand!=null)
+			switch ( e.SetMode )
 			{
-				setCommand.ValueToSet = e.Value;
-			}
-			Game.Invoker.Execute( setCommand );
-		}
+				case ValueSetMode.Default:
+					Game.Invoker.Execute( new SetProperty(this, e.Property, e.Value) );
+					break;
 
-		private void Grid_ValueChangeUpdated( object sender, AEPropertyGrid.PropertyChangedEventArgs e )
-		{
-			SelectedPropertyChange( e.TargetObject );
+				case ValueSetMode.InteractiveInitiate:
+					setPropertyCommand = new SetProperty(this, e.Property, e.Value);
+					break;
+
+				case ValueSetMode.InteractiveUpdate:
+					setPropertyCommand.Value = e.Value;
+					setPropertyCommand.Execute(); // hacky way to update values for all selected nodes
+					CommitSelectedNodeChanges();
+					break;
+
+				case ValueSetMode.InteractiveComplete:
+					Game.Invoker.Execute( setPropertyCommand );
+					break;
+			}
 		}
 	}
 }

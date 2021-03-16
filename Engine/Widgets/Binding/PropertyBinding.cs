@@ -7,23 +7,19 @@ using System.Reflection;
 
 namespace Fusion.Widgets.Binding 
 {
-	public delegate void PropertyChangeHandler(object target, PropertyInfo property, object value);
+	public delegate void PropertyChangeHandler(object target, PropertyInfo property, ValueSetMode mode, object value);
 
 	public class PropertyBinding : IValueBinding 
 	{
 		readonly object targetObject;
 		readonly PropertyInfo propertyInfo;
-		readonly PropertyChangeHandler onInitiate;
-		readonly PropertyChangeHandler onChange;
-		readonly PropertyChangeHandler onCommit;
-		readonly PropertyChangeHandler onCancel;
-		object storedValue;
-		object newValue;
+		readonly PropertyChangeHandler onChanging;
+		readonly PropertyChangeHandler onChanged;
 
-		public PropertyBinding ( object targetObject, PropertyInfo propertyInfo ) : this( targetObject, propertyInfo, null, null, null, null ) {}
+		public PropertyBinding ( object targetObject, PropertyInfo propertyInfo ) : this( targetObject, propertyInfo, null, null ) {}
 
 		
-		public PropertyBinding ( object targetObject, PropertyInfo propertyInfo, PropertyChangeHandler initiate, PropertyChangeHandler change, PropertyChangeHandler commit, PropertyChangeHandler cancel )
+		public PropertyBinding ( object targetObject, PropertyInfo propertyInfo, PropertyChangeHandler changing, PropertyChangeHandler changed  )
 		{
 			if (targetObject==null) 
 			{
@@ -35,10 +31,8 @@ namespace Fusion.Widgets.Binding
 				throw new ArgumentNullException( "propertyInfo" );
 			}
 			
-			this.onInitiate		=	initiate;
-			this.onChange		=	change;
-			this.onCommit		=	commit;
-			this.onCancel		=	cancel;
+			this.onChanged		=	changed;
+			this.onChanging		=	changing;
 			this.targetObject	=	targetObject;
 			this.propertyInfo	=	propertyInfo;
 
@@ -67,26 +61,7 @@ namespace Fusion.Widgets.Binding
 		}
 
 
-		public void Initiate()
-		{
-			storedValue = propertyInfo.GetValue( targetObject );
-			onInitiate?.Invoke( targetObject, propertyInfo, storedValue );
-		}
-
-
-		public void Commit()
-		{
-			onCommit?.Invoke( targetObject, propertyInfo, newValue );
-		}
-
-
-		public void Cancel()
-		{
-			onCancel?.Invoke( targetObject, propertyInfo, storedValue );
-		}
-
-
-		public bool SetValue(object value)
+		public bool SetValue(object value, ValueSetMode mode)
 		{
 			if (IsReadonly) 
 			{
@@ -94,9 +69,12 @@ namespace Fusion.Widgets.Binding
 			}
 			else 
 			{
-				newValue = value;
+				onChanging?.Invoke(targetObject, propertyInfo, mode, value );
+
 				propertyInfo.SetValue(targetObject, value);
-				onChange?.Invoke(targetObject, propertyInfo, value);
+
+				onChanged?.Invoke(targetObject, propertyInfo, mode, value );
+
 				return true;
 			}
 		}

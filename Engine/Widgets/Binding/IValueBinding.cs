@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 
 namespace Fusion.Widgets.Binding 
 {
+	public enum ValueSetMode
+	{
+		Default,
+		InteractiveInitiate,
+		InteractiveUpdate,
+		InteractiveComplete,
+	}
+
 	public interface IValueBinding 
 	{
 		/// <summary>
@@ -15,28 +23,11 @@ namespace Fusion.Widgets.Binding
 		object GetValue ();
 
 		/// <summary>
-		/// Initiate value changes.
-		/// Proper interface implementation should store old value here.
-		/// </summary>
-		void Initiate();
-
-		/// <summary>
-		/// Commits value changes for interactive controls like sliders or color-pickers
-		/// </summary>
-		void Commit();
-
-		/// <summary>
-		/// Cancels changes.
-		/// Proper interface implementation should restore old value.
-		/// </summary>
-		void Cancel();
-
-		/// <summary>
 		/// Sets value. Returns TRUE if scceeded, FALSE otherwice.
 		/// </summary>
 		/// <param name="value">Value to set</param>
 		/// <returns></returns>
-		bool SetValue (object value);
+		bool SetValue (object value, ValueSetMode setMode);
 
 		/// <summary>
 		/// Indicates that given binding is read-only.

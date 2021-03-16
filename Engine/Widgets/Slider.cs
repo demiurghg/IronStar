@@ -26,7 +26,11 @@ namespace Fusion.Widgets
 
 		public bool Vertical;
 
-		public float Value { get; set; }
+		public float Value 
+		{ 
+			get { return (float)binding.GetValue(); }
+			set { binding.SetValue(value, ValueSetMode.Default); }
+		}
 
 		/// <summary>
 		/// 
@@ -73,12 +77,12 @@ namespace Fusion.Widgets
 			dragXPos	=	e.X;
 			dragYPos	=	e.Y;
 
-			binding.Initiate();
-
 			if (Frames.Game.Keyboard.IsKeyDown( Fusion.Core.Input.Keys.LeftShift ) ) 
 			{
 				dragPrecise = true;
 			}
+
+			binding.SetValue( binding.GetValue(), ValueSetMode.InteractiveInitiate );
 		}
 
 
@@ -123,8 +127,11 @@ namespace Fusion.Widgets
 				}
 
 				newValue	=	MathUtil.Clamp( newValue, min, max );
-				Value		=	newValue;
-				binding?.SetValue( newValue );
+
+				if (newValue!=Value)
+				{
+					binding.SetValue( newValue, ValueSetMode.InteractiveUpdate );
+				}
 			}
 		}
 
@@ -134,7 +141,8 @@ namespace Fusion.Widgets
 		{
 			dragStarted		=	false;
 			dragPrecise		=	false;
-			binding.Commit();
+
+			binding.SetValue( binding.GetValue(), ValueSetMode.InteractiveComplete );
 		}
 
 
@@ -174,6 +182,5 @@ namespace Fusion.Widgets
 
 			this.DrawFrameText( spriteLayer, clipRectIndex );
 		}
-
 	}
 }

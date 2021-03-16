@@ -144,7 +144,6 @@ namespace Fusion.Widgets
 			if (!editingMode)
 			{
 				Log.Message("Enter Edit Mode");
-				binding.Initiate();
 				Text		=	binding.GetValue();
 				editingMode	=	true;
 			}
@@ -155,8 +154,7 @@ namespace Fusion.Widgets
 			if (editingMode)
 			{
 				Log.Message("Commit Edits");
-				binding.SetValue(Text);
-				binding.Commit();
+				binding.SetValue(Text, ValueSetMode.Default);
 				editingMode	=	false;
 			}
 		}
@@ -167,7 +165,6 @@ namespace Fusion.Widgets
 			if (editingMode)
 			{
 				Log.Message("Cancel Edits");
-				binding.Cancel();
 				Text		=	binding.GetValue();
 				editingMode	=	false;
 			}

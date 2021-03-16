@@ -60,7 +60,7 @@ namespace Fusion.Widgets.Advanced
 
 		private void YesNoButton_Click( object sender, MouseEventArgs e )
 		{
-			binding.SetValue( !(bool)binding.GetValue() );
+			binding.SetValue( !(bool)binding.GetValue(), ValueSetMode.Default );
 		}
 
 

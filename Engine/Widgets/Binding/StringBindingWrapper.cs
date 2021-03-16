@@ -25,25 +25,7 @@ namespace Fusion.Widgets.Binding
 		}
 
 
-		public void Initiate()
-		{
-			binding?.Initiate();
-		}
-
-
-		public void Commit()
-		{
-			binding?.Commit();
-		}
-
-		
-		public void Cancel()
-		{
-			binding?.Cancel();
-		}
-
-		
-		public bool SetValue( string stringValue )
+		public bool SetValue( string stringValue, ValueSetMode mode )
 		{
 			fallbackValue	=	stringValue;
 
@@ -52,7 +34,7 @@ namespace Fusion.Widgets.Binding
 				object value;
 				if ( StringConverter.TryConvertFromString( binding.ValueType, stringValue, out value ) )
 				{
-					return binding.SetValue( value );
+					return binding.SetValue( value, mode );
 				}
 				else
 				{

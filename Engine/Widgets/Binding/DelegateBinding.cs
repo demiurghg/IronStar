@@ -52,7 +52,7 @@ namespace Fusion.Widgets.Binding
 		public void Cancel()   { Log.Message("Delegate Binding -- Cancel");   }
 
 
-		public bool SetValue( object value )
+		public bool SetValue( object value, ValueSetMode mode )
 		{
 			if (IsReadonly) 
 			{

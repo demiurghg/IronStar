@@ -51,46 +51,24 @@ namespace Fusion.Widgets.Advanced
 		}
 
 
-
 		public class PropertyChangedEventArgs : EventArgs 
 		{
-			public PropertyChangedEventArgs(object target, PropertyInfo property, object value)
+			public PropertyChangedEventArgs(object target, PropertyInfo property, ValueSetMode setMode, object value)
 			{
 				TargetObject = target;
 				Property = property;
+				SetMode = setMode;
 				Value = value;
 			}
 			public readonly object TargetObject;
 			public readonly PropertyInfo Property;
+			public readonly ValueSetMode SetMode;
 			public readonly object Value;
 		}
 
 
-		public event EventHandler<PropertyChangedEventArgs>	ValueChangeInitiated;
-		public event EventHandler<PropertyChangedEventArgs>	ValueChangeUpdated;
-		public event EventHandler<PropertyChangedEventArgs>	ValueChangeCommitted;
-		public event EventHandler<PropertyChangedEventArgs>	ValueChangeCancelled;
-
-		protected void OnValueChangeInitiated (object target, PropertyInfo property, object value)
-		{
-			ValueChangeInitiated?.Invoke( this, new PropertyChangedEventArgs(target, property, value) );
-		}
-
-		protected void OnValueChangeUpdated (object target, PropertyInfo property, object value)
-		{
-			ValueChangeUpdated?.Invoke( this, new PropertyChangedEventArgs(target, property, value) );
-		}
-
-		protected void OnValueChangeCommitted (object target, PropertyInfo property, object value)
-		{
-			ValueChangeCommitted?.Invoke( this, new PropertyChangedEventArgs(target, property, value) );
-		}
-
-		protected void OnValueChangeCancelled (object target, PropertyInfo property, object value)
-		{
-			ValueChangeCancelled?.Invoke( this, new PropertyChangedEventArgs(target, property, value) );
-		}
-
+		public event EventHandler<PropertyChangedEventArgs>	PropertyValueChanging; // Called before setting the value
+		public event EventHandler<PropertyChangedEventArgs>	PropertyValueChanged;  // Called after setting the value
 
 
 		/// <summary>
@@ -181,10 +159,9 @@ namespace Fusion.Widgets.Advanced
 				EditorCreator creator;
 				var useDefaultEditor = true;
 				var binding = new PropertyBinding( obj, pi, 
-									OnValueChangeInitiated,
-									OnValueChangeUpdated,
-									OnValueChangeCommitted,
-									OnValueChangeCancelled );
+					(o,p,m,v)=>this.PropertyValueChanging?.Invoke(this, new PropertyChangedEventArgs(o,p,m,v)),
+					(o,p,m,v)=>this.PropertyValueChanged?.Invoke(this, new PropertyChangedEventArgs(o,p,m,v))
+				);
 
 				//	try custom editor first :
 				foreach ( var editor in pi.GetCustomAttributes() )
@@ -317,15 +294,5 @@ namespace Fusion.Widgets.Advanced
 		{
 			AddToCollapseRegion( category, new Button( Frames, name, 0,0, 200, 23, action ) { MarginRight = 100 } );
 		}
-
-		public void AddDropDown ( string category, string name, string value, IEnumerable<string> values, Func<string> getFunc, Action<string> setFunc )
-		{
-		}
-
-		/*public void AddColorPicker ( string category, string name, Func<Color> getFunc, Action<Color> setFunc )
-		{
-			AddToCollapseRegion( category, new AEColorPicker( this, name, getFunc, setFunc ) );
-		}				 */
-
 	}
 }

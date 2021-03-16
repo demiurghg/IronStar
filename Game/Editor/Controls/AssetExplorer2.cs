@@ -109,7 +109,7 @@ namespace IronStar.Editor.Controls {
 			};
 
 			fileList.SelectedItemChanged += FileList_SelectedItemChanged;
-			grid.ValueChangeUpdated		 +=	Grid_PropertyChanged;
+			grid.PropertyValueChanged	 +=	Grid_PropertyChanged;
 
 			parent.Add( this );
 			this.CenterFrame();

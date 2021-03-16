@@ -91,7 +91,7 @@ namespace Fusion.Widgets.Advanced
 		
 		private void OpenDialog()
 		{
-			FileSelector.ShowDialog( Frames, dir, ext, binding.GetValue(), (fnm)=>binding.SetValue(fnm) );
+			FileSelector.ShowDialog( Frames, dir, ext, binding.GetValue(), (fnm)=>binding.SetValue(fnm, ValueSetMode.Default) );
 		}
 
 

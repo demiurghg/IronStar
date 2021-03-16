@@ -31,31 +31,13 @@ namespace Fusion.Widgets.Binding
 		}
 
 
-		public void Initiate()
-		{
-			binding?.Initiate();
-		}
-
-
-		public void Commit()
-		{
-			binding?.Commit();
-		}
-
-
-		public void Cancel()
-		{
-			binding?.Cancel();
-		}
-
-
-		public bool SetValue( double numericValue )
+		public bool SetValue( double numericValue, ValueSetMode mode )
 		{
 			fallbackValue	=	numericValue;
 
 			if (binding!=null)
 			{
-				binding.SetValue( Convert.ChangeType( numericValue, binding.ValueType ) );
+				binding.SetValue( Convert.ChangeType( numericValue, binding.ValueType ), mode );
 			}
 
 			return true;

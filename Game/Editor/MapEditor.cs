@@ -338,6 +338,7 @@ namespace IronStar.Editor
 		/// <param name="target"></param>
 		public void SelectedPropertyChange ( object target )
 		{
+			Log.Message("-- {0} --", target);
 			var mapNode = target as MapNode;
 			mapNode?.ResetNodeECS( gameState );
 		}

@@ -13,14 +13,17 @@ namespace Fusion.Widgets.Binding
 	{
 		readonly object targetObject;
 		readonly PropertyInfo propertyInfo;
+		readonly PropertyChangeHandler onInitiate;
 		readonly PropertyChangeHandler onChange;
+		readonly PropertyChangeHandler onCommit;
+		readonly PropertyChangeHandler onCancel;
+		object storedValue;
+		object newValue;
 
-		public PropertyBinding ( object targetObject, PropertyInfo propertyInfo ) : this( targetObject, propertyInfo, null )
-		{
-		}
+		public PropertyBinding ( object targetObject, PropertyInfo propertyInfo ) : this( targetObject, propertyInfo, null, null, null, null ) {}
 
 		
-		public PropertyBinding ( object targetObject, PropertyInfo propertyInfo, PropertyChangeHandler onChange )
+		public PropertyBinding ( object targetObject, PropertyInfo propertyInfo, PropertyChangeHandler initiate, PropertyChangeHandler change, PropertyChangeHandler commit, PropertyChangeHandler cancel )
 		{
 			if (targetObject==null) 
 			{
@@ -32,44 +35,12 @@ namespace Fusion.Widgets.Binding
 				throw new ArgumentNullException( "propertyInfo" );
 			}
 			
-			this.onChange		=	onChange;
+			this.onInitiate		=	initiate;
+			this.onChange		=	change;
+			this.onCommit		=	commit;
+			this.onCancel		=	cancel;
 			this.targetObject	=	targetObject;
 			this.propertyInfo	=	propertyInfo;
-
-			if (!propertyInfo.CanRead) 
-			{
-				throw new ValueBindingException("Property '{0}' can not be read", propertyInfo.Name );
-			}
-		}
-
-
-		public PropertyBinding ( object targetObject, string propertyName )
-		{
-			if (targetObject==null) 
-			{
-				throw new ArgumentNullException( "targetObject" );
-			}
-			
-			if (propertyInfo==null) 
-			{
-				throw new ArgumentNullException( "propertyName" );
-			}
-			
-			this.targetObject	=	targetObject;
-			this.propertyInfo	=	targetObject.GetType().GetProperty( propertyName );
-
-			if (propertyInfo==null) 
-			{
-				throw new ValueBindingException("Property '{0}' was not found", propertyName );
-			}
-
-			/*if (!propertyInfo.PropertyType.IsAssignableFrom(typeof(TValue))) {
-				throw new ValueBindingException("Type of property '{0}' and {1} is not assignable to each other", propertyName, typeof(TValue) );
-			}
-
-			if (!typeof(TValue).IsAssignableFrom(propertyInfo.PropertyType)) {
-				throw new ValueBindingException("Type of property '{0}' and {1} is not assignable to each other", propertyName, typeof(TValue) );
-			} */
 
 			if (!propertyInfo.CanRead) 
 			{
@@ -96,6 +67,25 @@ namespace Fusion.Widgets.Binding
 		}
 
 
+		public void Initiate()
+		{
+			storedValue = propertyInfo.GetValue( targetObject );
+			onInitiate?.Invoke( targetObject, propertyInfo, storedValue );
+		}
+
+
+		public void Commit()
+		{
+			onCommit?.Invoke( targetObject, propertyInfo, newValue );
+		}
+
+
+		public void Cancel()
+		{
+			onCancel?.Invoke( targetObject, propertyInfo, storedValue );
+		}
+
+
 		public bool SetValue(object value)
 		{
 			if (IsReadonly) 
@@ -104,6 +94,7 @@ namespace Fusion.Widgets.Binding
 			}
 			else 
 			{
+				newValue = value;
 				propertyInfo.SetValue(targetObject, value);
 				onChange?.Invoke(targetObject, propertyInfo, value);
 				return true;

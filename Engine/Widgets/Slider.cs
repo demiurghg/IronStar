@@ -67,16 +67,13 @@ namespace Fusion.Widgets
 		private void Slider_MouseDown( object sender, MouseEventArgs e )
 		{
 			dragStarted =	true;
-
-			if (binding!=null)
-			{
-				Value	=	(float)binding.GetValue();
-			}
-
+			Value		=	(float)binding.GetValue();
 			storedValue	=	Value;
 
 			dragXPos	=	e.X;
 			dragYPos	=	e.Y;
+
+			binding.Initiate();
 
 			if (Frames.Game.Keyboard.IsKeyDown( Fusion.Core.Input.Keys.LeftShift ) ) 
 			{
@@ -137,6 +134,7 @@ namespace Fusion.Widgets
 		{
 			dragStarted		=	false;
 			dragPrecise		=	false;
+			binding.Commit();
 		}
 
 

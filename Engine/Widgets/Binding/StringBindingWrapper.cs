@@ -18,11 +18,31 @@ namespace Fusion.Widgets.Binding
 			this.binding	=	binding;
 		}
 
+		
 		public StringBindingWrapper( IValueBinding binding )
 		{
 			this.binding=binding;
 		}
 
+
+		public void Initiate()
+		{
+			binding?.Initiate();
+		}
+
+
+		public void Commit()
+		{
+			binding?.Commit();
+		}
+
+		
+		public void Cancel()
+		{
+			binding?.Cancel();
+		}
+
+		
 		public bool SetValue( string stringValue )
 		{
 			fallbackValue	=	stringValue;

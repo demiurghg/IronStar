@@ -22,6 +22,10 @@ namespace IronStar.Editor.Controls
 {
 	public class Workspace : Frame  
 	{
+		public AEPropertyGrid Grid
+		{
+			get { return grid; }
+		}
 
 		public Shelf UpperShelf {
 			get { return upperShelf; }
@@ -105,6 +109,8 @@ namespace IronStar.Editor.Controls
 			MouseUp		+=	RootFrame_MouseUp;
 
 			Click		+=	RootFrame_Click;
+
+			FeedProperties(null);
 		}
 
 
@@ -259,8 +265,6 @@ namespace IronStar.Editor.Controls
 
 				//grid.Anchor	=	FrameAnchor.Top | FrameAnchor.Right;
 
-				grid.PropertyChanged+=Grid_PropertyChanged;
-
 				Add( gridScrollBox );
 				gridScrollBox.Add( grid );
 			}
@@ -268,17 +272,6 @@ namespace IronStar.Editor.Controls
 			gridScrollBox.Visible = (target!=null);
 
 			grid.TargetObject = target;
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void Grid_PropertyChanged( object sender, AEPropertyGrid.PropertyChangedEventArgs e )
-		{
-			editor.SelectedPropertyChange( e.TargetObject );
 		}
 
 

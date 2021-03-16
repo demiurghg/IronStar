@@ -13,6 +13,7 @@ namespace Fusion.Widgets.Binding
 		readonly IValueBinding binding;
 		double fallbackValue;
 
+		
 		public NumericBindingWrapper( IValueBinding binding, double initialValue )
 		{
 			fallbackValue	=	initialValue;
@@ -23,10 +24,30 @@ namespace Fusion.Widgets.Binding
 			}
 		}
 
+
 		public NumericBindingWrapper( IValueBinding binding )
 		{
 			this.binding=binding;
 		}
+
+
+		public void Initiate()
+		{
+			binding?.Initiate();
+		}
+
+
+		public void Commit()
+		{
+			binding?.Commit();
+		}
+
+
+		public void Cancel()
+		{
+			binding?.Cancel();
+		}
+
 
 		public bool SetValue( double numericValue )
 		{

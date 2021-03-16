@@ -47,6 +47,11 @@ namespace Fusion.Widgets.Binding
 		}
 
 
+		public void Initiate() { Log.Message("Delegate Binding -- Initiate"); }
+		public void Commit()   { Log.Message("Delegate Binding -- Commit");   }
+		public void Cancel()   { Log.Message("Delegate Binding -- Cancel");   }
+
+
 		public bool SetValue( object value )
 		{
 			if (IsReadonly) 

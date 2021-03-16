@@ -170,6 +170,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Widgets\Advanced\IPropertyGridTracker.cs" />
     <Compile Include="Widgets\Advanced\Attributes\AEEditorAttribute.cs" />
     <Compile Include="Widgets\Advanced\Attributes\AECommandAttribute.cs" />
     <Compile Include="Widgets\Advanced\Attributes\AEIgnoreAttribute.cs" />

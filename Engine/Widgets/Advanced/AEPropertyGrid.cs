@@ -66,12 +66,29 @@ namespace Fusion.Widgets.Advanced
 		}
 
 
+		public event EventHandler<PropertyChangedEventArgs>	ValueChangeInitiated;
+		public event EventHandler<PropertyChangedEventArgs>	ValueChangeUpdated;
+		public event EventHandler<PropertyChangedEventArgs>	ValueChangeCommitted;
+		public event EventHandler<PropertyChangedEventArgs>	ValueChangeCancelled;
 
-		public event EventHandler<PropertyChangedEventArgs>	PropertyChanged;
-
-		protected void OnPropertyChange (object target, PropertyInfo property, object value)
+		protected void OnValueChangeInitiated (object target, PropertyInfo property, object value)
 		{
-			PropertyChanged?.Invoke( this, new PropertyChangedEventArgs(target, property, value) );
+			ValueChangeInitiated?.Invoke( this, new PropertyChangedEventArgs(target, property, value) );
+		}
+
+		protected void OnValueChangeUpdated (object target, PropertyInfo property, object value)
+		{
+			ValueChangeUpdated?.Invoke( this, new PropertyChangedEventArgs(target, property, value) );
+		}
+
+		protected void OnValueChangeCommitted (object target, PropertyInfo property, object value)
+		{
+			ValueChangeCommitted?.Invoke( this, new PropertyChangedEventArgs(target, property, value) );
+		}
+
+		protected void OnValueChangeCancelled (object target, PropertyInfo property, object value)
+		{
+			ValueChangeCancelled?.Invoke( this, new PropertyChangedEventArgs(target, property, value) );
 		}
 
 
@@ -153,17 +170,21 @@ namespace Fusion.Widgets.Advanced
 					continue;
 				}
 
-				Action<object> setFunc  =	delegate (object value) {
+				/*Action<object> setFunc  =	delegate (object value) {
 					pi.SetValue(obj,value);
 					OnPropertyChange(obj,pi,value);
-				};
+				};*/
 
 				var name		=	pi.GetAttribute<AEDisplayNameAttribute>()?.Name ?? pi.Name;
 				var category	=	GetCategory(pi, subcat);
 
 				EditorCreator creator;
 				var useDefaultEditor = true;
-				var binding = new PropertyBinding( obj, pi, OnPropertyChange );
+				var binding = new PropertyBinding( obj, pi, 
+									OnValueChangeInitiated,
+									OnValueChangeUpdated,
+									OnValueChangeCommitted,
+									OnValueChangeCancelled );
 
 				//	try custom editor first :
 				foreach ( var editor in pi.GetCustomAttributes() )
@@ -194,49 +215,6 @@ namespace Fusion.Widgets.Advanced
 					}
 				}
 
-				#if false
-				if (pi.PropertyType==typeof(string)) {
-
-					if (pi.HasAttribute<AEFileNameAttribute>()) {
-					
-						/*var fna			= pi.GetAttribute<AEFileNameAttribute>();
-						var ext			= fna.Extension;
-						var dir			= fna.Directory;
-						var nameOnly	= fna.FileNameOnly;
-						var noExt		= fna.NoExtension;
-						AddTextBox( category, name, 
-							()=>(string)(pi.GetValue(obj)), 
-							(val)=>setFunc(val), 
-							(val)=>FileSelector.ShowDialog( Frames, dir, ext, "", (fnm)=>setFunc(fnm) )
-						);	*/
-					
-					} else if (pi.HasAttribute<AEAtlasImageAttribute>()) {
-					
-						var aia = pi.GetAttribute<AEAtlasImageAttribute>();
-						var an  = aia.AtlasName;
-						AddTextBox( category, name, 
-							()=>(string)(pi.GetValue(obj)), 
-							(val)=>setFunc(val), 
-							(val)=>AtlasSelector.ShowDialog( Frames, an, "", (fnm)=>setFunc(fnm) )
-						);
-					
-					} 
-					else if (pi.HasAttribute<AEValueProviderAttribute>()) 
-					{
-						var provider	=	pi.GetAttribute<AEValueProviderAttribute>();
-						var type		=	pi.PropertyType;
-						var value		=	pi.GetValue(obj).ToString();
-						var values		=	provider.GetValues(Frames.Game);
-
-						AddDropDown( category, name, value, values, ()=>pi.GetValue(obj).ToString(), (val)=>setFunc(val) );
-					} 
-					else 
-					{
-						AddTextBox( category, name, ()=>(string)(pi.GetValue(obj)), (val)=>setFunc(val), null );
-					}
-				}  */
-				#endif
-
 				if (pi.PropertyType.IsClass) {
 					
 					if (pi.HasAttribute<AEExpandableAttribute>()) {
@@ -245,7 +223,6 @@ namespace Fusion.Widgets.Advanced
 						FeedObject( value, nestingLevel+1, category + "/" + pi.Name );
 					}
 				}
-
 			}
 
 			//--------------------------------------------------------------------------

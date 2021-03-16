@@ -27,6 +27,8 @@ using IronStar.AI;
 using Fusion.Core.Shell;
 using Fusion.Engine.Graphics.GI;
 using Fusion.Engine.Frames.Layouts;
+using Fusion.Widgets.Advanced;
+using IronStar.Editor.Commands;
 
 namespace IronStar.Editor 
 {
@@ -51,6 +53,8 @@ namespace IronStar.Editor
 
 			var upperShelf	=	workspace.UpperShelf;
 			var lowerShelf	=	workspace.LowerShelf;
+
+			SetupGridEvents( workspace.Grid );
 
 			//- PALETTES & EXPLORERS ---------------------------------------------------
 
@@ -364,6 +368,35 @@ namespace IronStar.Editor
 			//assetExplorer.AddToolButton( "Animation",	() => assetExplorer.SetTargetClass( "animation"	, typeAnimation	) );
 
 			return assetExplorer;			  
+		}
+
+		
+		private void SetupGridEvents( AEPropertyGrid grid )
+		{
+			grid.ValueChangeInitiated+=Grid_ValueChangeInitiated;
+			grid.ValueChangeUpdated+=Grid_ValueChangeUpdated;
+			grid.ValueChangeCommitted+=Grid_ValueChangeCommitted;
+		}
+
+		SetProperty setCommand = null;
+
+		private void Grid_ValueChangeInitiated( object sender, AEPropertyGrid.PropertyChangedEventArgs e )
+		{
+			setCommand = new SetProperty( this, e.Property );
+		}
+
+		private void Grid_ValueChangeCommitted( object sender, AEPropertyGrid.PropertyChangedEventArgs e )
+		{
+			if (setCommand!=null)
+			{
+				setCommand.ValueToSet = e.Value;
+			}
+			Game.Invoker.Execute( setCommand );
+		}
+
+		private void Grid_ValueChangeUpdated( object sender, AEPropertyGrid.PropertyChangedEventArgs e )
+		{
+			SelectedPropertyChange( e.TargetObject );
 		}
 	}
 }

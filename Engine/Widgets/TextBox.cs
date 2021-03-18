@@ -38,6 +38,7 @@ namespace Fusion.Widgets
 
 			this.BackColor		=	ColorTheme.BackgroundColorDark;
 			this.Width			=	1;
+			this.Border			=	1;
 			this.BorderColor	=	ColorTheme.BorderColor;
 			this.PaddingRight	=	3;
 			this.PaddingLeft	=	3;
@@ -76,11 +77,13 @@ namespace Fusion.Widgets
 		private void TextBox_Deactivated( object sender, EventArgs e )
 		{
 			CancelEdits();
+			BorderColor	=	ColorTheme.BorderColor;
 		}
 
 		private void TextBox_Activated( object sender, EventArgs e )
 		{
 			EnterEdits();
+			BorderColor = ColorTheme.FocusColor;
 		}
 
 		private void TextBox_StatusChanged( object sender, StatusEventArgs e )

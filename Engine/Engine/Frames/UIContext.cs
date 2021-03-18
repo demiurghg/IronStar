@@ -22,8 +22,8 @@ namespace Fusion.Engine.Frames {
 	/// Holds current root frame and current target frame.
 	/// No events should passed behind the root frame.
 	/// </summary>
-	public class UIContext {
-
+	public class UIContext 
+	{
 		internal readonly Frame Root;
 		internal Frame Target;
 

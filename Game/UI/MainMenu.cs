@@ -44,8 +44,8 @@ namespace IronStar.UI {
 			ImageMode	=	FrameImageMode.Stretched;
 
 			OverallColor	=	Color.Gray;
-			Activated	+=	(s,e) => { OverallColor = Color.White; Log.Message("Main Menu: Activated"); };
-			Deactivated	+=	(s,e) => { OverallColor = Color.Gray;  Log.Message("Main Menu: Deactivated"); };
+			ContextActivated	+=	(s,e) => { OverallColor = Color.White; Log.Message("Main Menu: Activated"); };
+			ContextDeactivated	+=	(s,e) => { OverallColor = Color.Gray;  Log.Message("Main Menu: Deactivated"); };
 
 			var pageLayout		=	new PageLayout();
 			pageLayout.Margin	=	0;

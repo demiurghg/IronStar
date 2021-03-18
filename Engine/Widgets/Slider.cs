@@ -10,6 +10,7 @@ using System.Reflection;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Widgets.Binding;
+using Fusion.Core.Input;
 
 namespace Fusion.Widgets 
 {
@@ -54,11 +55,15 @@ namespace Fusion.Widgets
 			this.MouseDown  +=Slider_MouseDown;
 			this.MouseMove	+=Slider_MouseMove;
 			this.MouseUp	+=Slider_MouseUp;
+
+			this.KeyDown    +=Slider_KeyDown;
+
+			this.MouseDown		+= (s,e) => BorderColor = ColorTheme.FocusColor;
+			this.Activated		+= (s,e) => BorderColor = ColorTheme.FocusColor;
+			this.Deactivated	+= (s,e) => BorderColor = ColorTheme.BorderColor;
 				
 			SliderColor	=	ColorTheme.ElementColorNormal;
 		}
-
-
 
 		bool dragStarted	= false;
 		bool dragPrecise	= false;
@@ -145,6 +150,23 @@ namespace Fusion.Widgets
 			binding.SetValue( binding.GetValue(), ValueSetMode.InteractiveComplete );
 		}
 
+
+		private void Slider_KeyDown( object sender, KeyEventArgs e )
+		{
+			int direction = 0;
+
+			if (e.Key==Keys.Right) direction++;
+			if (e.Key==Keys.Left) direction--;
+
+			if (direction!=0)
+			{
+				e.Handled = true;
+
+				var newValue	=	MathUtil.Clamp( Value + direction * snap, min, max );
+
+				binding.SetValue( newValue, ValueSetMode.Default );
+			}
+		}
 
 
 		protected override void Update( GameTime gameTime )

@@ -271,6 +271,8 @@ namespace IronStar.Editor.Controls
 
 			gridScrollBox.Visible = (target!=null);
 
+			grid.Frames.TargetFrame = grid;
+
 			grid.TargetObject = target;
 		}
 

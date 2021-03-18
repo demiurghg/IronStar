@@ -54,13 +54,15 @@ namespace Fusion.Engine.Frames {
 		/// <param name="frame"></param>
 		public void SetTargetFrame ( Frame frame )
 		{
-			var newTargetFrame = frame;
+			modalFrames.Peek().Target = frame;
+			
+			/*var newTargetFrame = frame;
 
 			var oldTargetFrame = modalFrames.Peek().Target;
 			oldTargetFrame?.OnDeactivate();
 
 			modalFrames.Peek().Target	=	newTargetFrame;
-			newTargetFrame?.OnActivate();
+			newTargetFrame?.OnActivate();*/
 		}
 
 
@@ -80,14 +82,14 @@ namespace Fusion.Engine.Frames {
 			(ownerFrame ?? frames.RootFrame).Add( modalFrame );
 
 			//	deactivate top context's frames :
-			modalFrames.Peek().Root?.OnDeactivate();
+			CallContextDeactivation( modalFrames.Peek().Root );
 
 			//	create and push new context
 			var context = new UIContext( modalFrame, targetFrame );
 			modalFrames.Push( context );
 
 			//	activate top context's frames :
-			modalFrames.Peek().Root?.OnActivate();
+			CallContextActivation( modalFrames.Peek().Root );
 
 			return context;
 		}
@@ -113,9 +115,11 @@ namespace Fusion.Engine.Frames {
 		{
 			if (modalFrames.Any() && modalFrames.Peek()==uiContext)
 			{
-				modalFrames.Peek().Root?.OnDeactivate();
+				CallContextDeactivation( modalFrames.Peek().Root );
+
 				modalFrames.Pop().Root?.Close();
-				modalFrames.Peek().Root?.OnActivate();
+
+				CallContextActivation( modalFrames.Peek().Root );
 
 				uiContext = null;
 
@@ -130,6 +134,24 @@ namespace Fusion.Engine.Frames {
 		bool PopUIContext( UIContext uiContext )
 		{
 			return PopUIContext( ref uiContext );
+		}
+
+
+		void CallContextActivation(Frame root)
+		{
+			if (root!=null)
+			{
+				Frame.BFSForeach(root, (f) => f.OnContextActivate() );
+			}
+		}
+
+
+		void CallContextDeactivation(Frame root)
+		{
+			if (root!=null)
+			{
+				Frame.BFSForeach(root, (f) => f.OnContextDeactivate() );
+			}
 		}
 
 

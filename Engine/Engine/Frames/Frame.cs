@@ -177,6 +177,8 @@ namespace Fusion.Engine.Frames {
 		public event EventHandler	LayoutChanged;
 		public event EventHandler	Activated;
 		public event EventHandler	Deactivated;
+		public event EventHandler	ContextActivated;
+		public event EventHandler	ContextDeactivated;
 		public event EventHandler	Enter;
 		public event EventHandler	Leave;
 		public event EventHandler	Missclick;
@@ -748,6 +750,18 @@ namespace Fusion.Engine.Frames {
 		}
 
 
+		internal void OnContextActivate ()
+		{
+			ContextActivated?.Invoke( this, EventArgs.Empty );
+		}
+
+		
+		internal void OnContextDeactivate ()
+		{
+			ContextDeactivated?.Invoke( this, EventArgs.Empty );
+		}
+
+
 		internal void OnKeyDown( Keys key, bool shift, bool alt, bool ctrl )
 		{
 			var eventArgs = new KeyEventArgs() { Key = key, Shift = shift, Alt = alt, Ctrl = ctrl };
@@ -812,6 +826,24 @@ namespace Fusion.Engine.Frames {
 
 			return list;
 		}
+
+
+		public static void BFSForeach( Frame root, Action<Frame> action )
+		{
+			Queue<Frame> Q = new Queue<Frame>();
+
+			Q.Enqueue( root );
+
+			while ( Q.Any() ) {
+				
+				var t = Q.Dequeue();
+				action(t);
+
+				foreach ( var u in t.Children ) {
+					Q.Enqueue( u );
+				}
+			}
+		}
 			
 
 		public static Frame BFSSearch ( Frame v, Func<Frame,bool> predicate )
@@ -861,7 +893,7 @@ namespace Fusion.Engine.Frames {
 
 			return list;
 		}
-			
+
 
 		void UpdateGlobalRect ( int px, int py ) 
 		{

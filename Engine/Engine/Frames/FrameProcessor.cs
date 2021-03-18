@@ -219,6 +219,40 @@ namespace Fusion.Engine.Frames {
 		}
 
 
+		bool IsAttachedToRoot(Frame frame)
+		{
+			var root = RootFrame;
+
+			while (frame!=null)
+			{
+				if (frame==root) return true;
+				frame = frame.Parent;
+			}
+
+			return false;
+		}
+
+
+		Frame oldTargetFrame = null;
+
+		void TrackActiveFrame()
+		{
+			#warning When target frame is removed from hierarchy we need to choose another good target frame
+			if (TargetFrame!=null && !IsAttachedToRoot(TargetFrame))
+			{
+				Log.Warning("UI: Target frame lost");
+				TargetFrame = null;
+			}
+
+			if (oldTargetFrame!=TargetFrame)
+			{
+				oldTargetFrame?.OnDeactivate();
+				TargetFrame?.OnActivate();
+				oldTargetFrame = TargetFrame;
+			}
+		}
+
+
 		/// <summary>
 		/// Updates stuff
 		/// </summary>
@@ -240,6 +274,8 @@ namespace Fusion.Engine.Frames {
 
 				RootFrame?.UpdateInternalNonRecursive( gameTime );
 
+				TrackActiveFrame();
+
 			sw.Stop();
 
 			//
@@ -256,7 +292,8 @@ namespace Fusion.Engine.Frames {
 		/// <param name="gameTime"></param>
 		void Draw ( GameTime gameTime, SpriteLayer spriteLayer )
 		{
-			if (SkipUserInterface) {
+			if (SkipUserInterface) 
+			{
 				return;
 			}
 

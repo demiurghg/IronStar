@@ -11,15 +11,17 @@ using Fusion.Core.Mathematics;
 using Fusion;
 using Fusion.Core.Input;
 using Fusion.Widgets.Binding;
+using Fusion.Core;
 
-namespace Fusion.Widgets.Dialogs {
-	public partial class ColorPicker : Frame {
-
+namespace Fusion.Widgets.Dialogs 
+{
+	public partial class ColorPicker : Frame 
+	{
 		static ColorPicker colorPicker;
 
-		static public void ShowDialog ( FrameProcessor fp, int x, int y, Color initialColor, Action<Color> setColor )
+		static public void ShowDialog ( FrameProcessor fp, int x, int y, IValueBinding binding )
 		{
-			colorPicker = new ColorPicker( fp, initialColor, setColor );
+			colorPicker = new ColorPicker( fp, binding );
 
 			colorPicker.X	=	x;
 			colorPicker.Y	=	y;
@@ -35,13 +37,12 @@ namespace Fusion.Widgets.Dialogs {
 
 		Color targetColor;
 		Color initColor;
-		Action<Color> setColor;
+		ColorBindingWrapper binding;
 
 		ColorField colorField;
 
 		Frame oldColorSample;
 		Frame newColorSample;
-		float temperature	=	6600;
 
 		Color4		colorRGBA;
 		HSVColor	colorHSV;
@@ -51,61 +52,21 @@ namespace Fusion.Widgets.Dialogs {
 		Slider sliderBlue	;
 		Slider sliderAlpha	;
 		Slider sliderSat	;
-		Slider sliderTemp	;
-
-		void UpdateFromColor ()
-		{
-			colorRGBA	=	new Color4( targetColor.R/255f, targetColor.G/255f, targetColor.B/255f, targetColor.A/255f );
-			colorHSV	=	HSVColor.ConvertRgbToHsv( colorRGBA );
-			newColorSample.BackColor = targetColor;
-			UpdateSliders();
-
-			setColor( targetColor );
-		}
-
-
-		void UpdateFromRGBA ()
-		{
-			targetColor =	new Color( colorRGBA );
-			colorHSV	=	HSVColor.ConvertRgbToHsv( colorRGBA );
-			newColorSample.BackColor = targetColor;
-
-			UpdateSliders();
-
-			setColor( targetColor );
-		}
-
-		void UpdateFromHSV ()
-		{
-			colorRGBA	= HSVColor.ConvertHsvToRgb( colorHSV, colorRGBA.Alpha );
-			targetColor = new Color( colorRGBA );
-			newColorSample.BackColor = targetColor;
-
-			UpdateSliders();
-
-			setColor( targetColor );
-		}
-
-
-		void UpdateSliders ()
-		{
-			sliderRed	.Text	=	( (int)(255 * colorRGBA.Red		) ).ToString();
-			sliderGreen	.Text	=	( (int)(255 * colorRGBA.Green	) ).ToString();
-			sliderBlue	.Text	=	( (int)(255 * colorRGBA.Blue	) ).ToString();
-			sliderAlpha	.Text	=	( (int)(255 * colorRGBA.Alpha	) ).ToString();
-
-			sliderSat	.Text	=	( (int)(100 * colorHSV.S		) ).ToString();
-		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="fp"></param>
-		private ColorPicker ( FrameProcessor fp, Color initColor, Action<Color> setColor ) : base(fp)
+		private ColorPicker ( FrameProcessor fp, IValueBinding binding ) : base(fp)
 		{
-			this.initColor		=	initColor;
+			if (binding.ValueType!=typeof(Color))
+			{
+				throw new ValueBindingException("ColorPicker does not support value type " + binding.ValueType.ToString());
+			}
+
+			this.binding		=	new ColorBindingWrapper(binding);
+			this.initColor		=	this.binding.GetRGBValue();
 			this.targetColor	=	initColor;
-			this.setColor		=	setColor;
 
 			Width	=	DialogWidth;
 			Height	=	DialogHeight;	
@@ -115,20 +76,16 @@ namespace Fusion.Widgets.Dialogs {
 			BorderColor		=	ColorTheme.BorderColor;
 			BackColor		=	ColorTheme.BackgroundColor;
 
-			oldColorSample	=	AddColorButton(  2,   2, 80, 30, "", initColor, ()=> { targetColor = initColor; UpdateFromColor(); } );
+			oldColorSample	=	AddColorButton(  2,   2, 80, 30, "", initColor, ()=> { targetColor = initColor; } );
 			newColorSample	=	AddColorButton(  2,  32, 80, 30, "", initColor, null );
 
 			this.Missclick +=ColorPicker_Missclick;
 
-			colorField	=	new ColorField( Frames, 80+3, 2, 180+2, 100+2, 
-				() => colorHSV, 
-				(hsv) => { colorHSV = hsv; UpdateFromHSV(); }
-			);
+			colorField	=	new ColorField( Frames, 80+3, 2, 180+2, 100+2, this.binding );
+			
 			Add( colorField );
 
-
 			int height	=	ColorTheme.NormalFont.LineHeight;
-
 
 			AddLabel( 2, 107 + height * 0-1, "Red"	);
 			AddLabel( 2, 107 + height * 1-1, "Green" );
@@ -137,13 +94,9 @@ namespace Fusion.Widgets.Dialogs {
 										 
 			AddLabel( 2, 107 + height * 4-1, "Temp, (K)" );
 
-
 			sliderRed	=	new Slider( 
 				Frames, 
-				new DelegateBinding<float>(
-					()=>colorRGBA.Red * 255, 
-					(r)=> { colorRGBA.Red = r/255; UpdateFromRGBA(); UpdateSliders();}
-				),
+				this.binding.Red,
 				0, 255, 16, 1 ) {
 					X = 83,
 					Y = 107 + height * 0+1,
@@ -157,10 +110,7 @@ namespace Fusion.Widgets.Dialogs {
 
 			sliderGreen	=	new Slider( 
 				Frames, 
-				new DelegateBinding<float>(
-					()=>colorRGBA.Green*255, 
-					(r)=> { colorRGBA.Green = r/255; UpdateFromRGBA(); UpdateSliders(); }
-				),
+				this.binding.Green,
 				0, 255, 16, 1 ) {
 					X = 83,
 					Y = 107 + height * 1+1,
@@ -174,10 +124,7 @@ namespace Fusion.Widgets.Dialogs {
 
 			sliderBlue	=	new Slider( 
 				Frames, 
-				new DelegateBinding<float>(
-					()=>colorRGBA.Blue*255, 
-					(r)=> { colorRGBA.Blue = r/255; UpdateFromRGBA(); UpdateSliders(); }
-				),
+				this.binding.Blue,
 				0, 255, 16, 1 ) {
 					X = 83,
 					Y = 107 + height * 2+1,
@@ -191,10 +138,7 @@ namespace Fusion.Widgets.Dialogs {
 
 			sliderAlpha	=	new Slider( 
 				Frames, 
-				new DelegateBinding<float>(
-					()=>colorRGBA.Alpha*255, 
-					(r)=> { colorRGBA.Alpha = r/255; UpdateFromRGBA(); UpdateSliders(); }
-				),
+				this.binding.Alpha,
 				0, 255, 16, 1 ) {
 					X = 83,
 					Y = 107 + height * 3+1,
@@ -207,13 +151,13 @@ namespace Fusion.Widgets.Dialogs {
 				};
 
 
-			sliderTemp = new Slider(
+			/*sliderTemp = new Slider(
 				Frames,
 				new DelegateBinding<float>(
 					()=> temperature,
 					(t)=> { temperature = t; 
 							targetColor = Temperature.GetColor((int)t);  
-							UpdateFromColor(); 
+							UpdateFromColor(ValueSetMode.Default); 
 							UpdateSliders(); 
 							sliderTemp.SliderColor = targetColor; 
 							sliderTemp.Text = t.ToString() + "K";
@@ -228,15 +172,12 @@ namespace Fusion.Widgets.Dialogs {
 					BackColor = new Color(0,0,0,64),
 					SliderColor = new Color(256,256,256,255),
 					ForeColor = new Color(0,0,0,160),
-				};
+				}; */
 
 			sliderSat = new Slider(
 				Frames,
-				new DelegateBinding<float>(
-					()=> colorHSV.S * 100f,
-					(v)=> { colorHSV.S = v/100f; UpdateFromHSV(); UpdateSliders(); }
-				),
-				0, 100, 1, 1 ) {
+				this.binding.Sat,
+				0, 1, 1f/8f, 1f/128f ) {
 					X = 267,
 					Y = 2,
 					Width = 30,
@@ -254,17 +195,27 @@ namespace Fusion.Widgets.Dialogs {
 			Add( sliderAlpha );
 
 			Add( sliderSat );
-			Add( sliderTemp );
-
-			UpdateFromColor();
-			UpdateSliders();
-
 		}
 
 		private void ColorPicker_Missclick( object sender, EventArgs e )
 		{
 			Close();
 		}
+
+
+		protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
+		{
+			sliderRed	.Text	=	binding.GetRGBValue().R.ToString();
+			sliderGreen	.Text	=	binding.GetRGBValue().G.ToString();
+			sliderBlue	.Text	=	binding.GetRGBValue().B.ToString();
+			sliderAlpha	.Text	=	binding.GetRGBValue().A.ToString();
+
+			var sat = (int)(binding.GetHSVColor().S * 100);
+			sliderSat	.Text	=	sat.ToString();
+
+			base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
+		}
+
 
 		Frame AddColorButton ( int x, int y, int w, int h, string text, Color color, Action action )
 		{
@@ -296,7 +247,5 @@ namespace Fusion.Widgets.Dialogs {
 
 			Add( frame );
 		}
-
-		
 	}
 }

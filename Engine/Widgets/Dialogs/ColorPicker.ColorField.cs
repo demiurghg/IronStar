@@ -11,6 +11,7 @@ using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion;
 using Fusion.Core.Input;
+using Fusion.Widgets.Binding;
 
 namespace Fusion.Widgets.Dialogs 
 {
@@ -18,17 +19,15 @@ namespace Fusion.Widgets.Dialogs
 	{
 		class ColorField : Frame 
 		{
-			Func<HSVColor> getFunc;
-			Action<HSVColor> setFunc;
+			ColorBindingWrapper binding;
 
-			public ColorField ( FrameProcessor fp, int x, int y, int w, int h, Func<HSVColor> getFunc, Action<HSVColor> setFunc ) : base(fp,x,y,w,h,"",Color.Gray)
+			public ColorField ( FrameProcessor fp, int x, int y, int w, int h, ColorBindingWrapper binding ) : base(fp,x,y,w,h,"",Color.Gray)
 			{
+				this.binding	=	binding;
+
 				Border			=	1;
 				BorderColor		=	Color.Black;
 				BackColor		=	Color.Black;
-
-				this.getFunc	=	getFunc;
-				this.setFunc	=	setFunc;
 
 				this.Image		=	fp.Game.Content.Load<DiscTexture>("hsvMap");
 				this.ImageColor	=	new Color(255,255,255,255);
@@ -42,7 +41,7 @@ namespace Fusion.Widgets.Dialogs
 
 			private void ColorField_Click( object sender, MouseEventArgs e )
 			{
-				UpdateColorFromPointOnMap( e.X, e.Y );
+				UpdateColorFromPointOnMap( e.X, e.Y, ValueSetMode.Default );
 			}
 
 			bool trackColor = false;
@@ -50,30 +49,32 @@ namespace Fusion.Widgets.Dialogs
 			private void ColorField_MouseDown( object sender, MouseEventArgs e )
 			{
 				trackColor = true;
+					UpdateColorFromPointOnMap( e.X, e.Y, ValueSetMode.InteractiveInitiate );
 			}
 
 			private void ColorField_MouseMove( object sender, MouseEventArgs e )
 			{
 				if (trackColor) {
-					UpdateColorFromPointOnMap( e.X, e.Y );
+					UpdateColorFromPointOnMap( e.X, e.Y, ValueSetMode.InteractiveUpdate );
 				}
 			}
 
 			private void ColorField_MouseUp( object sender, MouseEventArgs e )
 			{
 				trackColor = false;
+					UpdateColorFromPointOnMap( e.X, e.Y, ValueSetMode.InteractiveComplete );
 			}
 
 
-			void UpdateColorFromPointOnMap( int x, int y )
+			void UpdateColorFromPointOnMap( int x, int y, ValueSetMode mode )
 			{
 				var pr	=	GetPaddedRectangle(true);
-				var hsv	=	getFunc();
+				var hsv	=	binding.GetHSVColor();
 
 				hsv.H	=	MathUtil.Clamp( (x - 1) / (float)pr.Width, 0, 1 ) * 360;
 				hsv.V	=	1 - MathUtil.Clamp( (y - 1) / (float)pr.Height, 0, 1 );
 
-				setFunc( hsv );
+				binding.SetHSVColor( hsv, mode );
 			}
 
 			
@@ -81,7 +82,7 @@ namespace Fusion.Widgets.Dialogs
 			{
 				base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
 
-				var hsv	=	getFunc();
+				var hsv	=	binding.GetHSVColor();
 
 				var pr	=	GetPaddedRectangle(true);
 				var y	=	pr.Y;

@@ -14,6 +14,11 @@ using Fusion.Core.Input;
 
 namespace Fusion.Widgets 
 {
+	public class SliderValueChangedArgs : EventArgs 
+	{
+		public float Value;
+	}
+
 	public class Slider : Frame 
 	{
 		readonly NumericBindingWrapper binding;
@@ -30,8 +35,16 @@ namespace Fusion.Widgets
 		public float Value 
 		{ 
 			get { return (float)binding.GetValue(); }
-			set { binding.SetValue(value, ValueSetMode.Default); }
+			set 
+			{ 
+				if (Value!=value && binding.SetValue(value, ValueSetMode.Default))
+				{
+					OnSliderValueChanged(value);
+				}
+			}
 		}
+
+		public event EventHandler<SliderValueChangedArgs>	SliderValueChanged;
 
 		/// <summary>
 		/// 
@@ -58,12 +71,17 @@ namespace Fusion.Widgets
 
 			this.KeyDown    +=Slider_KeyDown;
 
-			this.MouseDown		+= (s,e) => BorderColor = ColorTheme.FocusColor;
-			this.Activated		+= (s,e) => BorderColor = ColorTheme.FocusColor;
 			this.Deactivated	+= (s,e) => BorderColor = ColorTheme.BorderColor;
 				
 			SliderColor	=	ColorTheme.ElementColorNormal;
 		}
+
+
+		void OnSliderValueChanged(float value)
+		{
+			SliderValueChanged?.Invoke(this, new SliderValueChangedArgs() { Value = value } );
+		}
+
 
 		bool dragStarted	= false;
 		bool dragPrecise	= false;
@@ -136,6 +154,7 @@ namespace Fusion.Widgets
 				if (newValue!=Value)
 				{
 					binding.SetValue( newValue, ValueSetMode.InteractiveUpdate );
+					OnSliderValueChanged( newValue );
 				}
 			}
 		}
@@ -176,7 +195,7 @@ namespace Fusion.Widgets
 
 		protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
 		{
-			var value	= binding==null ? Value : (float)binding.GetValue();
+			var value	= Value;
 			var padRect	= GetPaddedRectangle(true);
 
 			value		=	MathUtil.Clamp( value, min, max );

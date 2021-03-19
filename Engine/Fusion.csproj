@@ -179,6 +179,9 @@
     <Compile Include="Widgets\Advanced\Attributes\AECategoryAttribute.cs" />
     <Compile Include="Widgets\Advanced\Editors\AEFileSelector.cs" />
     <Compile Include="Widgets\Advanced\Editors\AEAtlasSelector.cs" />
+    <Compile Include="Widgets\Binding\VectorComponentBinding.cs" />
+    <Compile Include="Widgets\Binding\VectorBindingWrapper.cs" />
+    <Compile Include="Widgets\Binding\ColorComponentBinding.cs" />
     <Compile Include="Widgets\Binding\DelegateBinding.cs" />
     <Compile Include="Widgets\Binding\NameProvider.cs" />
     <Compile Include="Widgets\Binding\ListBinding.cs" />
@@ -188,6 +191,7 @@
     <Compile Include="Widgets\Binding\IValueBinding.cs" />
     <Compile Include="Widgets\Binding\PropertyBinding.cs" />
     <Compile Include="Widgets\Binding\NumericBindingWrapper.cs" />
+    <Compile Include="Widgets\Binding\ColorBindingWrapper.cs" />
     <Compile Include="Widgets\Binding\StringBindingWrapper.cs" />
     <Compile Include="Widgets\Binding\ValueBindingException.cs" />
     <Compile Include="Core\Collection\EnumArray.cs" />

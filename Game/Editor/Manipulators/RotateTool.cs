@@ -8,17 +8,22 @@ using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Common;
 using IronStar.Editor.Manipulators;
-using Fusion;				  
+using Fusion;
 using IronStar.Mapping;
+using IronStar.Editor.Commands;
 
 namespace IronStar.Editor.Manipulators
 {
 	public class RotateTool : Manipulator 
 	{
+		const float Epsilon = 1f / 16384f;
+
 		enum Rotation 
 		{
 			Yaw, Pitch, Roll
 		}
+
+		RotateCommand rotateCommand = null;
 
 
 		/// <summary>
@@ -177,7 +182,7 @@ namespace IronStar.Editor.Manipulators
 
 			snapEnable	=	useSnapping;
 			snapValue	=	editor.RotateToolSnapValue;
-			angle		=	0;
+			angle	=	0;
 			vector0		=	Vector3.Zero;
 			vector1		=	Vector3.Zero;
 
@@ -205,6 +210,7 @@ namespace IronStar.Editor.Manipulators
 				initialPoint	=	intersectX.HitPoint;
 				currentPoint	=	intersectX.HitPoint;
 				angles			=	targets.Select( t => t.RotatePitch ).ToArray();
+				rotateCommand	=	new RotateCommand(editor);
 				return true;
 			}
 
@@ -214,6 +220,7 @@ namespace IronStar.Editor.Manipulators
 				initialPoint	=	intersectY.HitPoint;
 				currentPoint	=	intersectY.HitPoint;
 				angles			=	targets.Select( t => t.RotateYaw ).ToArray();
+				rotateCommand	=	new RotateCommand(editor);
 				return true;
 			}
 
@@ -223,6 +230,7 @@ namespace IronStar.Editor.Manipulators
 				initialPoint	=	intersectZ.HitPoint;
 				currentPoint	=	intersectZ.HitPoint;
 				angles			=	targets.Select( t => t.RotateRoll ).ToArray();
+				rotateCommand	=	new RotateCommand(editor);
 				return true;
 			}
 			
@@ -232,12 +240,13 @@ namespace IronStar.Editor.Manipulators
 
 		public override void UpdateManipulation ( int x, int y )
 		{
-			if (manipulating) {
+			if (manipulating) 
+			{
+				var origin		=	targets.Last().TranslateVector;
+				var baseAngle	=	angles.Last();
+				var mp			=	new Point( x, y );
 
-				var origin	=	targets.Last().TranslateVector;
-				var mp		=	new Point( x, y );
-
-				var result	=	IntersectRing( origin, GetAxis(axisIndex), mp );
+				var result		=	IntersectRing( origin, GetAxis(axisIndex), mp );
 				
 				currentPoint	=	result.HitPoint;
 
@@ -249,16 +258,20 @@ namespace IronStar.Editor.Manipulators
 
 				angle			=	MathUtil.RadiansToDegrees ( (float)Math.Atan2( sine, cosine ) );
 
-				for ( int i=0; i<targets.Length; i++) {
-					var target	=	targets[i];
+				angle			=	Snap( baseAngle + angle, snapValue, snapEnable );
 
-					switch (rotation) {
-						case Rotation.Yaw  : target.RotateYaw   = Snap( angles[i] + angle, snapValue, snapEnable ); break;
-						case Rotation.Pitch: target.RotatePitch = Snap( angles[i] + angle, snapValue, snapEnable ); break;
-						case Rotation.Roll : target.RotateRoll  = Snap( angles[i] + angle, snapValue, snapEnable ); break;
+				var deltaAngle	=	angle - baseAngle;
+
+				if (Math.Abs(deltaAngle)>Epsilon)
+				{
+					switch (rotation) 
+					{
+						case Rotation.Yaw  : rotateCommand.DeltaYaw		=	deltaAngle; break;
+						case Rotation.Pitch: rotateCommand.DeltaPitch	=	deltaAngle; break;
+						case Rotation.Roll : rotateCommand.DeltaRoll	=	deltaAngle; break;
 					}
 
-					target.ResetNodeECS( this.editor.GameState );
+					rotateCommand.Execute();
 				}
 			}
 		}
@@ -266,8 +279,11 @@ namespace IronStar.Editor.Manipulators
 
 		public override void StopManipulation ( int x, int y )
 		{
-			if (manipulating) {
+			if (manipulating) 
+			{
+				editor.Game.Invoker.Execute( rotateCommand );
 				manipulating	=	false;
+				rotateCommand	=	null;
 			}
 		}
 

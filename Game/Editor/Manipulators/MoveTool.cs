@@ -10,11 +10,14 @@ using IronStar.Editor.Manipulators;
 using Fusion;
 using Fusion.Core;
 using IronStar.Mapping;
+using IronStar.Editor.Commands;
 
 namespace IronStar.Editor.Manipulators 
 {
 	public class MoveTool : Manipulator 
 	{
+		MoveCommand moveCommand;
+
 		public MoveTool ( MapEditor editor ) : base(editor)
 		{
 		}
@@ -152,6 +155,7 @@ namespace IronStar.Editor.Manipulators
 				direction		=	Vector3.UnitX;
 				initialPoint	=	intersectX.HitPoint;
 				currentPoint	=	intersectX.HitPoint;
+				moveCommand		=	new MoveCommand(editor);
 				return true;
 			}
 
@@ -161,6 +165,7 @@ namespace IronStar.Editor.Manipulators
 				direction		=	Vector3.UnitY;
 				initialPoint	=	intersectY.HitPoint;
 				currentPoint	=	intersectY.HitPoint;
+				moveCommand		=	new MoveCommand(editor);
 				return true;
 			}
 
@@ -170,6 +175,7 @@ namespace IronStar.Editor.Manipulators
 				direction		=	Vector3.UnitZ;
 				initialPoint	=	intersectZ.HitPoint;
 				currentPoint	=	intersectZ.HitPoint;
+				moveCommand		=	new MoveCommand(editor);
 				return true;
 			}
 			
@@ -193,18 +199,12 @@ namespace IronStar.Editor.Manipulators
 				var newItemPosition		=	Snap( lastItemPosition + (currentPoint - initialPoint), snapEnable ? snapValue : 0 ); 
 				var translationDelta	=	newItemPosition - lastItemPosition;
 
+				translationDelta	*=	direction;
 
 				if (translationDelta.Length()>0)
 				{
-					for ( int i=0; i<targets.Length; i++) 
-					{
-						var target	= targets[i];
-						var pos		= initPos[i];
-
-						target.TranslateVector = pos + translationDelta;
-
-						target.ResetNodeECS( this.editor.GameState );
-					}
+					moveCommand.MoveVector	=	translationDelta;
+					moveCommand.Execute();
 				}
 			}
 		}
@@ -214,6 +214,8 @@ namespace IronStar.Editor.Manipulators
 		{
 			if (manipulating) 
 			{
+				editor.Game.Invoker.Execute( moveCommand );
+				moveCommand		=	null;
 				manipulating	=	false;
 			}
 		}

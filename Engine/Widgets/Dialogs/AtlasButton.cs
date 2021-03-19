@@ -102,12 +102,14 @@ namespace Fusion.Widgets.Dialogs
 						frame		=	MathUtil.Clamp( frame, 0, clip.Length-1 );
 					ImageSrcRect	=	atlas.AbsoluteRectangles[ clip.FirstIndex + frame ];
 					ImageMode		=	FrameImageMode.Manual;
+					Image			=	atlas.Texture;
 				} 
 				else 
 				{
 					int frame		=	(int)(gameTime.Total.TotalSeconds * 10) % clip.Length;
 					ImageSrcRect	=	atlas.AbsoluteRectangles[ clip.FirstIndex + frame ];
 					ImageMode		=	FrameImageMode.Manual;
+					Image			=	atlas.Texture;
 				}
 			}
 			else

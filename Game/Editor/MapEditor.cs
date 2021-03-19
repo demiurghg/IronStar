@@ -314,7 +314,8 @@ namespace IronStar.Editor
 		/// </summary>
 		public void BakeToEntity ()
 		{
-			foreach ( var se in selection ) 
+			Game.Invoker.Execute(new BakeCommand(this) );
+			/*foreach ( var se in selection ) 
 			{
 				var transform = (se as MapEntity)?.EcsEntity?.GetComponent<ECS.Transform>();
 
@@ -332,7 +333,7 @@ namespace IronStar.Editor
 						se.RotateQuaternion	=	Quaternion.Identity;
 					}
 				}
-			}
+			}*/
 		}
 
 

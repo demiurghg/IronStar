@@ -169,6 +169,24 @@
         "RotateYaw": -135.0,
         "RotatePitch": 0.0,
         "RotateRoll": 0.0
+      },
+      {
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "Name": "ff1dd341-29fe-4548-9e9b-096ecd689ec1",
+        "TargetName": null,
+        "Factory": {
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "BOXEXPLOSIVE"
+        },
+        "FactoryName": "0AlIx2KU",
+        "Visible": true,
+        "Frozen": false,
+        "TranslateX": 0.0,
+        "TranslateY": 8.0,
+        "TranslateZ": 0.0,
+        "RotateYaw": 0.0,
+        "RotatePitch": 0.0,
+        "RotateRoll": 60.0
       }
     ]
   },

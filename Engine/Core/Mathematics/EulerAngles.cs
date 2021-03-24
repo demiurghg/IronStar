@@ -115,7 +115,7 @@ namespace Fusion.Core.Mathematics
 
 		public static EulerAngles RotationQuaternion( Quaternion quaternion )
 		{
-			return FromMatrix( Matrix.RotationQuaternion(quaternion) );
+			return RotationMatrix( Matrix.RotationQuaternion(quaternion) );
 		}
 	}
 }

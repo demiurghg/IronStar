@@ -8,11 +8,11 @@ using IronStar.Mapping;
 
 namespace IronStar.Editor.Commands
 {
-	public class DuplicateSelection : BaseCommand
+	public class DuplicateSelected : BaseCommand
 	{
 		readonly MapNode[] duplicates;
 
-		public DuplicateSelection( MapEditor editor ) : base(editor)
+		public DuplicateSelected( MapEditor editor ) : base(editor)
 		{
 			duplicates	=	Selection
 							.Select( n => n.DuplicateNode() )

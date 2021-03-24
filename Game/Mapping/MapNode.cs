@@ -75,101 +75,153 @@ namespace IronStar.Mapping
 		[AECategory("Display")]
 		public bool Frozen { get; set; }
 
-		float translateX  = 0;
-		float translateY  = 0;
-		float translateZ  = 0;
-		float rotateYaw   = 0;
-		float rotatePitch = 0;
-		float rotateRoll  = 0;
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Transformation stuff :
+		-----------------------------------------------------------------------------------------*/
+
+		Vector3 translation	=	Vector3.Zero;
+		Vector3 scaling		=	Vector3.One;
+		Quaternion rotation	=	Quaternion.Identity;
+
+		[Browsable(false)]
+		public Vector3 Translation 
+		{
+			get { return translation; }
+			set { translation = value; }
+		}
+
+
+		[Browsable(false)]
+		public Vector3 Scaling
+		{
+			get { return scaling; }
+			set { scaling = value; }
+		}
+
+
+		[Browsable(false)]
+		public Quaternion Rotation 
+		{
+			get { return rotation; }
+			set { rotation = value; }
+		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Transformation components :
+		-----------------------------------------------------------------------------------------*/
 
 		[AECategory("Transform")]
 		[AEDisplayName("Translate X")]
-		public float TranslateX { 
-			get { return translateX; }
-			set {
-				if (translateX!=value) {
-					dirty = true;
-					translateX = value;
-				}
-			}
+		public float TranslateX 
+		{ 
+			get { return translation.X; }
+			set { translation.X = value; }
 		}
 
+		
 		[AECategory("Transform")]
 		[AEDisplayName("Translate Y")]
-		public float TranslateY { 
-			get { return translateY; }
-			set {
-				if (translateY!=value) {
-					dirty = true;
-					translateY = value;
-				}
-			}
+		public float TranslateY 
+		{ 
+			get { return translation.Y; }
+			set { translation.Y = value; }
 		}
 
+		
 		[AECategory("Transform")]
 		[AEDisplayName("Translate Z")]
-		public float TranslateZ {
-			get { return translateZ; }
-			set {
-				if (translateZ!=value) {
-					dirty = true;
-					translateZ = value;
-				}
-			}
+		public float TranslateZ 
+		{
+			get { return translation.Z; }
+			set { translation.Z = value; }
 		}
 
+		
 		[AECategory("Transform")]
 		[AEDisplayName("Rotate Yaw")]
 		[AESlider(-180,180,15,1)]
-		public float RotateYaw {
-			get { return rotateYaw; }
-			set {
-				if (rotateYaw!=value) {
-					dirty = true;
-					rotateYaw = value;
-				}
+		public float RotateYaw 
+		{
+			get { return EulerAngles.RotationQuaternion(Rotation).Yaw.Degrees; }
+			set 
+			{
+				var angles = EulerAngles.RotationQuaternion(Rotation);
+				angles.Yaw.Degrees = value;
+				rotation = angles.ToQuaternion();
 			}
 		}
+
 
 		[AECategory("Transform")]
 		[AEDisplayName("Rotate Pitch")]
 		[AESlider(-180,180,15,1)]
-		public float RotatePitch {
-			get { return rotatePitch; }
-			set {
-				if (rotatePitch!=value) {
-					dirty = true;
-					rotatePitch = value;
-				}
+		public float RotatePitch 
+		{
+			get { return EulerAngles.RotationQuaternion(Rotation).Pitch.Degrees; }
+			set 
+			{
+				var angles = EulerAngles.RotationQuaternion(Rotation);
+				angles.Pitch.Degrees = value;
+				rotation = angles.ToQuaternion();
 			}
 		}
+
 
 		[AECategory("Transform")]
 		[AEDisplayName("Rotate Roll")]
 		[AESlider(-180,180,15,1)]
-		public float RotateRoll {
-			get { return rotateRoll; }
-			set {
-				if (rotateRoll!=value) {
-					dirty = true;
-					rotateRoll = value;
-				}
+		public float RotateRoll 
+		{
+			get { return EulerAngles.RotationQuaternion(Rotation).Roll.Degrees; }
+			set 
+			{
+				var angles = EulerAngles.RotationQuaternion(Rotation);
+				angles.Roll.Degrees = value;
+				rotation = angles.ToQuaternion();
 			}
 		}
 
 
+		/*-----------------------------------------------------------------------------------------
+		 *	Transformation matricies :
+		-----------------------------------------------------------------------------------------*/
 
-		/// <summary>
-		/// Gets node's world transform matrix 
-		/// </summary>
 		[Browsable(false)]
 		[JsonIgnore]
 		public Matrix GlobalTransform 
 		{
 			get 
 			{
-				var transform = Matrix.Identity;
+				//return ParentTransform * LocalTransform;
 				var node = this;
+				var transform = LocalTransform;
+				var parent = node.Parent;
+
+				while (parent!=null)
+				{
+					transform	= transform * parent.LocalTransform;
+					parent		= parent.Parent;
+				}
+
+				return transform;//*/
+			}
+			set 
+			{
+				var global = GlobalTransform;
+				var local  = LocalTransform;
+				LocalTransform = value * Matrix.Invert(GlobalTransform) * LocalTransform;
+			}
+		}
+
+
+		Matrix ParentTransform
+		{
+			get 
+			{
+				var transform = Matrix.Identity;
+				var node = this.Parent;
 
 				while (node!=null)
 				{
@@ -182,9 +234,6 @@ namespace IronStar.Mapping
 		}
 
 
-		/// <summary>
-		/// Gets node's world transform matrix 
-		/// </summary>
 		[Browsable(false)]
 		[JsonIgnore]
 		public Matrix LocalTransform 
@@ -204,51 +253,9 @@ namespace IronStar.Mapping
 			}
 		}
 
-
-
-
-		/// <summary>
-		/// Gets and sets translation vector
-		/// </summary>
-		[Browsable(false)]
-		public Vector3 Translation {
-			get {
-				return new Vector3( TranslateX, TranslateY, TranslateZ );
-			}
-			set {
-				TranslateX = value.X;
-				TranslateY = value.Y;
-				TranslateZ = value.Z;
-			}
-		}
-
-
-		[Browsable(false)]
-		public Vector3 Scaling
-		{
-			get;
-			set;
-		} = Vector3.One;
-
-
-		/// <summary>
-		/// Gets and sets rotation quaternion
-		/// </summary>
-		[Browsable(false)]
-		public Quaternion Rotation {
-			get {
-				return Quaternion.RotationYawPitchRoll( 
-					MathUtil.DegreesToRadians( rotateYaw   ), 
-					MathUtil.DegreesToRadians( rotatePitch ), 
-					MathUtil.DegreesToRadians( rotateRoll  )
-				);
-			}
-			set {
-				var rotationMatrix = Matrix.RotationQuaternion( value );
-				MathUtil.ToAnglesDeg( rotationMatrix, out rotateYaw, out rotatePitch, out rotateRoll );
-			}
-		}
-
+		/*-----------------------------------------------------------------------------------------
+		 *	ECS stuff :
+		-----------------------------------------------------------------------------------------*/
 
 		[JsonIgnore]
 		protected ECS.Entity ecsEntity = null;
@@ -257,11 +264,13 @@ namespace IronStar.Mapping
 		[JsonIgnore]
 		public ECS.Entity EcsEntity { get { return ecsEntity; } }
 		
+		
 		public virtual void KillNodeECS( GameState gs ) 
 		{
 			gs.Kill(ecsEntity); 
 		}
-		
+
+
 		public virtual void ResetNodeECS( GameState gs, bool recursive = true )
 		{
 			KillNodeECS(gs);
@@ -276,11 +285,13 @@ namespace IronStar.Mapping
 			}
 		}
 
+
 		public bool HasEntity( ECS.Entity entity )
 		{
 			return ecsEntity!=null && ecsEntity==entity;
 		}
 
+		
 		public virtual MapNode DuplicateNode ()
 		{
 			var node = (MapNode)Activator.CreateInstance( GetType() );
@@ -292,7 +303,10 @@ namespace IronStar.Mapping
 			return node;
 		}
 
-		public virtual BoundingBox GetBoundingBox() { return new BoundingBox( 2, 2, 2 ); }
-
+		
+		public virtual BoundingBox GetBoundingBox() 
+		{
+			return new BoundingBox( 2, 2, 2 ); 
+		}
 	}
 }

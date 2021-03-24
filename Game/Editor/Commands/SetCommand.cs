@@ -10,7 +10,7 @@ using Fusion.Core.Extensions;
 
 namespace IronStar.Editor.Commands
 {
-	public class SetProperty : BaseCommand
+	public class SetCommand : BaseCommand
 	{
 		class RollbackInfo
 		{
@@ -22,7 +22,7 @@ namespace IronStar.Editor.Commands
 		readonly RollbackInfo[] rollbackInfo;
 		public object Value;
 		
-		public SetProperty( MapEditor editor, PropertyInfo property, object value ) : base(editor)
+		public SetCommand( MapEditor editor, PropertyInfo property, object value ) : base(editor)
 		{
 			this.property		=	property;
 			this.Value			=	value;

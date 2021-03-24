@@ -195,6 +195,8 @@ namespace Fusion.Widgets
 
 		protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
 		{
+			Text		=	Math.Round( Value, 2 ).ToString();
+
 			var value	= Value;
 			var padRect	= GetPaddedRectangle(true);
 

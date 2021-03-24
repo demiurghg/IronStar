@@ -103,17 +103,5 @@ namespace Fusion.Widgets.Advanced
 			slider.Width	=	Width/2;
 			slider.Height	=	ComputeItemHeight();
 		}
-
-
-		protected override void DrawFrame( GameTime gameTime, SpriteLayer spriteLayer, int clipRectIndex )
-		{								
-			if (binding!=null)
-			{
-				slider.Text		=	binding.GetValue()?.ToString();
-			}
-
-			base.DrawFrame( gameTime, spriteLayer, clipRectIndex );
-		}
-
 	}
 }

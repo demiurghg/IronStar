@@ -20,7 +20,7 @@ namespace IronStar.Editor.Commands
 		{
 			public MapNode Node;
 			public MapNode OldParent;
-			public Matrix WorldMatrix;
+			public Matrix GlobalTransform;
 		}
 		
 
@@ -36,7 +36,7 @@ namespace IronStar.Editor.Commands
 								{ 
 									Node = node, 
 									OldParent = node.Parent, 
-									WorldMatrix = node.GlobalTransform
+									GlobalTransform = node.GlobalTransform
 								})
 								.ToArray();
 		}
@@ -44,14 +44,15 @@ namespace IronStar.Editor.Commands
 
 		public override object Execute()
 		{
-			foreach ( var node in Selection )
+			foreach ( var ri in rollbackInfo )
 			{
-				if (node!=parentNode)
+				if (ri.Node!=parentNode)
 				{
-					node.Parent	=	parentNode;
+					ri.Node.Parent			=	parentNode;
+					ri.Node.GlobalTransform	=	ri.GlobalTransform;
 				}
 
-				node.ResetNodeECS(gs);
+				ri.Node.ResetNodeECS(gs);
 			}
 			return null;
 		}

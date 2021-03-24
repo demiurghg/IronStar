@@ -165,13 +165,13 @@
     <Compile Include="ECS\Velocity.cs" />
     <Compile Include="Editor\Commands\BakeCommand.cs" />
     <Compile Include="Editor\Commands\BaseCommand.cs" />
-    <Compile Include="Editor\Commands\DuplicateSelection.cs" />
-    <Compile Include="Editor\Commands\DeleteSelection.cs" />
+    <Compile Include="Editor\Commands\DuplicateSelected.cs" />
+    <Compile Include="Editor\Commands\DeleteSelected.cs" />
     <Compile Include="Editor\Commands\CreateNode.cs" />
     <Compile Include="Editor\Commands\ParentCommand.cs" />
     <Compile Include="Editor\Commands\RotateCommand.cs" />
     <Compile Include="Editor\Commands\MoveCommand.cs" />
-    <Compile Include="Editor\Commands\SetProperty.cs" />
+    <Compile Include="Editor\Commands\SetCommand.cs" />
     <Compile Include="Editor\Commands\SelectNodes.cs" />
     <Compile Include="Editor\Controls\MapOutliner.cs" />
     <Compile Include="Editor\Manipulators\ITool.cs" />

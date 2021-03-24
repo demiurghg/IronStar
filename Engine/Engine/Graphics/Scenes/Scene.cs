@@ -300,17 +300,19 @@ namespace Fusion.Engine.Graphics.Scenes {
 		/// <param name="destination"></param>
 		public void ComputeAbsoluteTransforms ( Matrix[] destination, Matrix preTransform )
 		{
-			if ( destination.Length < Nodes.Count ) {
+			if ( destination.Length < Nodes.Count ) 
+			{
 				throw new ArgumentOutOfRangeException("destination.Length must be greater of equal to Nodes.Count");
 			}
 
-			for ( int i=0; i<Nodes.Count; i++) {
-				
+			for ( int i=0; i<Nodes.Count; i++) 
+			{
 				var node = Nodes[i];
 				var transform = node.Transform;
 				var parentIndex = node.ParentIndex;
 
-				while ( parentIndex!=-1 ) {
+				while ( parentIndex!=-1 ) 
+				{
 					var parent	=	Nodes[ parentIndex ].Transform;
 
 					transform	=	transform * parent;

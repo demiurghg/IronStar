@@ -231,15 +231,7 @@ namespace IronStar.Editor
 
 		public void DeleteSelection ()
 		{
-			Game.Invoker.Execute( new DeleteSelection(this) );
-			/*foreach ( var se in selection ) 
-			{
-				se.KillNodeECS( gameState );
-				map.Nodes.Remove( se );
-			}
-
-			selection.Clear();*/
-			//FeedSelection();
+			Game.Invoker.Execute( new DeleteSelected(this) );
 		}
 
 
@@ -251,7 +243,7 @@ namespace IronStar.Editor
 
 		public void DuplicateSelection ()
 		{
-			Game.Invoker.Execute( new DuplicateSelection(this) );
+			Game.Invoker.Execute( new DuplicateSelected(this) );
 		}
 
 

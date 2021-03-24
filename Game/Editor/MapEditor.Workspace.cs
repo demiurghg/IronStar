@@ -378,18 +378,18 @@ namespace IronStar.Editor
 			grid.PropertyValueChanging+=Grid_PropertyValueChanging;
 		}
 
-		SetProperty setPropertyCommand = null;
+		SetCommand setPropertyCommand = null;
 
 		private void Grid_PropertyValueChanging( object sender, AEPropertyGrid.PropertyChangedEventArgs e )
 		{
 			switch ( e.SetMode )
 			{
 				case ValueSetMode.Default:
-					Game.Invoker.Execute( new SetProperty(this, e.Property, e.Value) );
+					Game.Invoker.Execute( new SetCommand(this, e.Property, e.Value) );
 					break;
 
 				case ValueSetMode.InteractiveInitiate:
-					setPropertyCommand = new SetProperty(this, e.Property, e.Value);
+					setPropertyCommand = new SetCommand(this, e.Property, e.Value);
 					break;
 
 				case ValueSetMode.InteractiveUpdate:

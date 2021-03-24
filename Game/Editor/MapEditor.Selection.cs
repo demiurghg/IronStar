@@ -67,7 +67,8 @@ namespace IronStar.Editor
 
 			if (node!=null)
 			{
-				selected	=	selection.Contains(node);
+				selected	=	selection.Contains(node) || IsParentSelected(node);
+
 				color		=	selected ? Utils.WireColorSelected : ( IsSelectable(node) ? Utils.WireColor : Utils.GridColor );
 				color		=	(selection.LastOrDefault()==node) ? Color.White : color;
 
@@ -79,6 +80,24 @@ namespace IronStar.Editor
 				selected	=	false;
 				return false;
 			}
+		}
+
+
+		bool IsParentSelected( MapNode node )
+		{
+			var parent = node.Parent;
+
+			while (parent!=null)
+			{
+				if (selection.Contains(parent)) 
+				{
+					return true;
+				}
+
+				parent = parent.Parent;
+			}
+
+			return false;
 		}
 	}
 }

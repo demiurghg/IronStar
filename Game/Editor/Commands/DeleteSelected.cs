@@ -8,9 +8,9 @@ using IronStar.Mapping;
 
 namespace IronStar.Editor.Commands
 {
-	public class DeleteSelection : BaseCommand
+	public class DeleteSelected : BaseCommand
 	{
-		public DeleteSelection( MapEditor editor ) : base(editor)
+		public DeleteSelected( MapEditor editor ) : base(editor)
 		{
 		}
 

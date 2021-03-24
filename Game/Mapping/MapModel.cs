@@ -112,7 +112,7 @@ namespace IronStar.Mapping {
 		{
 			ecsEntity = gs.Spawn();
 
-			ecsEntity.AddComponent( new ECS.Transform( TranslateVector, RotateQuaternion, Scale ) );
+			ecsEntity.AddComponent( new ECS.Transform( GlobalTransform ) );
 			ecsEntity.AddComponent( new StaticCollisionComponent() { Walkable = Walkable } );
 
 			var rm		=	new SFX2.RenderModel( ScenePath, Matrix.Identity, Color.White, 1, SFX2.RMFlags.None );
@@ -120,15 +120,6 @@ namespace IronStar.Mapping {
 			var lmSize	=	UseLightVolume ? 0 : (int)LightMapSize;
 			rm.SetupLightmap( lmSize, lmSize, Name );
 			ecsEntity.AddComponent( rm );
-		}
-
-
-		public override MapNode DuplicateNode()
-		{
-			var newNode = (MapModel)MemberwiseClone();
-			newNode.Name = GenerateUniqueName();
-
-			return newNode;
 		}
 
 

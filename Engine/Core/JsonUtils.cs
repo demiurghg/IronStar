@@ -43,6 +43,7 @@ namespace Fusion.Core {
 			settings.ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor;
 			settings.TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple; 
 			settings.TypeNameHandling = TypeNameHandling.All;
+			settings.PreserveReferencesHandling = PreserveReferencesHandling.All;
 
 			return settings;
 		}

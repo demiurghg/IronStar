@@ -78,7 +78,7 @@ namespace IronStar.Editor
 				if (IsSelectable(item)) 
 				{
 					var bbox	=	DefaultBox;
-					var iw		=	Matrix.Invert( item.WorldMatrix );
+					var iw		=	Matrix.Invert( item.GlobalTransform );
 					float d;
 
 					var rayT	=	Utils.TransformRay( iw, ray );
@@ -182,7 +182,7 @@ namespace IronStar.Editor
 
 				foreach ( var item in map.Nodes ) 
 				{
-					if (camera.IsInRectangle( item.TranslateVector, SelectionMarquee )) 
+					if (camera.IsInRectangle( item.Translation, SelectionMarquee )) 
 					{
 						if (IsSelectable(item)) 
 						{

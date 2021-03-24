@@ -38,6 +38,16 @@ namespace IronStar.ECS
 		/// </summary>
 		/// <param name="p"></param>
 		/// <param name="r"></param>
+		public Transform ( Matrix t )
+		{
+			t.Decompose( out Scaling, out Rotation, out Position );
+		}
+
+		/// <summary>
+		/// Creates new transform
+		/// </summary>
+		/// <param name="p"></param>
+		/// <param name="r"></param>
 		public Transform ( Vector3 p, Quaternion r, Vector3 s )
 		{
 			Position	=	p;

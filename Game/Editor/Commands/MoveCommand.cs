@@ -28,7 +28,7 @@ namespace IronStar.Editor.Commands
 			this.rollbackInfo	=	editor
 								.Selection
 								.Where(	obj0 => obj0 is MapNode )
-								.Select( obj2 => new RollbackInfo { Node = obj2, Translation = obj2.TranslateVector } )
+								.Select( obj2 => new RollbackInfo { Node = obj2, Translation = obj2.Translation } )
 								.ToArray();
 		}
 
@@ -37,7 +37,7 @@ namespace IronStar.Editor.Commands
 		{
 			foreach ( var ri in rollbackInfo )
 			{
-				ri.Node.TranslateVector = ri.Translation + MoveVector;
+				ri.Node.Translation = ri.Translation + MoveVector;
 				ri.Node.ResetNodeECS(gs);
 			}
 			return null;
@@ -48,7 +48,7 @@ namespace IronStar.Editor.Commands
 		{
 			foreach ( var ri in rollbackInfo )
 			{
-				ri.Node.TranslateVector = ri.Translation;
+				ri.Node.Translation = ri.Translation;
 				ri.Node.ResetNodeECS(gs);
 			}
 			RestoreSelection();

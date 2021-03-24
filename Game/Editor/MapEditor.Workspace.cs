@@ -199,6 +199,8 @@ namespace IronStar.Editor
 			workspace.AddHotkey( Keys.G			, ModKeys.None, () => rs.SkipDebugRendering = !rs.SkipDebugRendering );
 			workspace.AddHotkey( Keys.G			, ModKeys.Alt,	() => DrawGrid = !DrawGrid );
 			workspace.AddHotkey( Keys.G			, ModKeys.Ctrl, () => DrawGrid = !DrawGrid );
+			workspace.AddHotkey( Keys.P			, ModKeys.None, () => ParentSelection(true) );
+			workspace.AddHotkey( Keys.P			, ModKeys.Shift,() => ParentSelection(false) );
 
 			workspace.AddHotkey( Keys.OemComma	, ModKeys.None, () => MoveToolSnapValue *= 0.5f );
 			workspace.AddHotkey( Keys.OemPeriod	, ModKeys.None, () => MoveToolSnapValue *= 2.0f );

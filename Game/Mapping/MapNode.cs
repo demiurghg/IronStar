@@ -14,6 +14,7 @@ using Fusion.Engine.Common;
 using Newtonsoft.Json;
 using IronStar.ECS;
 using Fusion.Widgets.Advanced;
+using Fusion.Core.Extensions;
 
 namespace IronStar.Mapping 
 {
@@ -21,10 +22,36 @@ namespace IronStar.Mapping
 	{
 		public string Name;
 
+		//public MapNodeCollection Children {	get { return children; } }
+		//readonly MapNodeCollection children;
+
 		/// <summary>
 		/// Indicates that map object or entity should be updated without
 		/// </summary>
 		protected bool dirty = true;
+
+		/// <summary>
+		/// Gets and sets parent node
+		/// </summary>
+		public MapNode Parent 
+		{ 
+			get { return parent; }
+			set
+			{
+				if (parent!=value)
+				{
+					parent?.children.Remove(this);
+					parent = value;
+					parent?.children.Add(this);
+				}
+			}
+		}
+
+		MapNode parent = null;
+		MapNodeCollection children = new MapNodeCollection();
+
+		[JsonIgnore]
+		public IEnumerable<MapNode> Children { get { return children; } }
 
 
 		/// <summary>
@@ -137,20 +164,54 @@ namespace IronStar.Mapping
 		/// </summary>
 		[Browsable(false)]
 		[JsonIgnore]
-		public Matrix WorldMatrix {
-			get {
-				return Matrix.RotationQuaternion( RotateQuaternion ) 
-					* Matrix.Translation( TranslateVector );
+		public Matrix GlobalTransform 
+		{
+			get 
+			{
+				var transform = Matrix.Identity;
+				var node = this;
+
+				while (node!=null)
+				{
+					transform	= transform * node.LocalTransform;
+					node		= node.Parent;
+				}
+
+				return transform;
 			}
 		}
+
+
+		/// <summary>
+		/// Gets node's world transform matrix 
+		/// </summary>
+		[Browsable(false)]
+		[JsonIgnore]
+		public Matrix LocalTransform 
+		{
+			get 
+			{
+				return Matrix.Scaling( Scaling ) * Matrix.RotationQuaternion( Rotation ) * Matrix.Translation( Translation );
+			}
+			set 
+			{
+				Vector3 s, t;
+				Quaternion r;
+				value.Decompose( out s, out r, out t );
+				Translation	=	t;
+				Scaling		=	s;
+				Rotation	=	r;
+			}
+		}
+
+
 
 
 		/// <summary>
 		/// Gets and sets translation vector
 		/// </summary>
 		[Browsable(false)]
-		[JsonIgnore]
-		public Vector3 TranslateVector {
+		public Vector3 Translation {
 			get {
 				return new Vector3( TranslateX, TranslateY, TranslateZ );
 			}
@@ -162,12 +223,19 @@ namespace IronStar.Mapping
 		}
 
 
+		[Browsable(false)]
+		public Vector3 Scaling
+		{
+			get;
+			set;
+		} = Vector3.One;
+
+
 		/// <summary>
 		/// Gets and sets rotation quaternion
 		/// </summary>
 		[Browsable(false)]
-		[JsonIgnore]
-		public Quaternion RotateQuaternion {
+		public Quaternion Rotation {
 			get {
 				return Quaternion.RotationYawPitchRoll( 
 					MathUtil.DegreesToRadians( rotateYaw   ), 
@@ -194,10 +262,18 @@ namespace IronStar.Mapping
 			gs.Kill(ecsEntity); 
 		}
 		
-		public virtual void ResetNodeECS( GameState gs )
+		public virtual void ResetNodeECS( GameState gs, bool recursive = true )
 		{
 			KillNodeECS(gs);
 			SpawnNodeECS(gs);
+
+			if (recursive)
+			{
+				foreach (var child in Children)
+				{
+					child?.ResetNodeECS(gs);
+				}
+			}
 		}
 
 		public bool HasEntity( ECS.Entity entity )
@@ -205,7 +281,16 @@ namespace IronStar.Mapping
 			return ecsEntity!=null && ecsEntity==entity;
 		}
 
-		public abstract MapNode DuplicateNode ();
+		public virtual MapNode DuplicateNode ()
+		{
+			var node = (MapNode)Activator.CreateInstance( GetType() );
+
+			Misc.CopyProperties( this, node );
+
+			node.Name = Guid.NewGuid().ToString();
+
+			return node;
+		}
 
 		public virtual BoundingBox GetBoundingBox() { return new BoundingBox( 2, 2, 2 ); }
 

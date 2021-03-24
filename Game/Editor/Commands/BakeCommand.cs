@@ -30,7 +30,7 @@ namespace IronStar.Editor.Commands
 			this.rollbackInfo	=	editor
 								.Selection
 								.Where(	obj0 => obj0 is MapNode )
-								.Select( obj2 => new RollbackInfo { Node = obj2, Translation = obj2.TranslateVector, Rotation = obj2.RotateQuaternion } )
+								.Select( obj2 => new RollbackInfo { Node = obj2, Translation = obj2.Translation, Rotation = obj2.Rotation } )
 								.ToArray();
 		}
 
@@ -46,16 +46,16 @@ namespace IronStar.Editor.Commands
 				{
 					if (transform!=null)
 					{
-						ri.Node.TranslateVector = transform.Position;
-						ri.Node.RotateQuaternion = transform.Rotation;
+						ri.Node.Translation	= transform.Position;
+						ri.Node.Rotation	= transform.Rotation;
 						ri.Node.ResetNodeECS(gs);
 					}
 				} 
 				catch ( Exception e )
 				{
 					Log.Warning("Failed to bake transform for {0}: {1}", node.Name, e.Message);
-					ri.Node.TranslateVector	 = ri.Translation;
-					ri.Node.RotateQuaternion = ri.Rotation;
+					ri.Node.Translation	= ri.Translation;
+					ri.Node.Rotation	= ri.Rotation;
 					ri.Node.ResetNodeECS(gs);
 				}
 			}
@@ -67,8 +67,8 @@ namespace IronStar.Editor.Commands
 		{
 			foreach ( var ri in rollbackInfo )
 			{
-				ri.Node.TranslateVector	 = ri.Translation;
-				ri.Node.RotateQuaternion = ri.Rotation;
+				ri.Node.Translation	=	ri.Translation;
+				ri.Node.Rotation	=	ri.Rotation;
 				ri.Node.ResetNodeECS(gs);
 			}
 			RestoreSelection();

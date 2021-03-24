@@ -72,7 +72,7 @@ namespace IronStar.Mapping
 		{
 			ecsEntity = gs.Spawn();
 
-			ecsEntity.AddComponent( new Transform( TranslateVector, RotateQuaternion, 1 ) );
+			ecsEntity.AddComponent( new Transform( Translation, Rotation, 1 ) );
 			ecsEntity.AddComponent( CreateOmniLight() );
 		}
 
@@ -90,14 +90,6 @@ namespace IronStar.Mapping
 			light.Depth			=	Depth;
 
 			return light;
-		}
-
-
-		public override MapNode DuplicateNode()
-		{
-			var newNode = (MapOmniLight)MemberwiseClone();
-			newNode.Name = GenerateUniqueName();
-			return newNode;
 		}
 
 

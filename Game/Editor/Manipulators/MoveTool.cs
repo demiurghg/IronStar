@@ -34,7 +34,7 @@ namespace IronStar.Editor.Manipulators
 			}
 
 			var target		= editor.Selection.Last();
-			var origin		= target.TranslateVector;
+			var origin		= target.Translation;
 
 			var linerSize	= editor.camera.PixelToWorldSize( origin, 5 );
 
@@ -50,8 +50,8 @@ namespace IronStar.Editor.Manipulators
 
 				foreach ( var item in editor.Selection ) 
 				{
-					var pos   = item.TranslateVector;
-					var floor = item.TranslateVector;
+					var pos   = item.Translation;
+					var floor = item.Translation;
 					floor.Y = 0;
 
 					dr.DrawLine(floor, pos, Utils.GridColor);
@@ -60,9 +60,9 @@ namespace IronStar.Editor.Manipulators
 			} 
 			else 
 			{
-				var hitX	=	IntersectArrow( target.TranslateVector, Vector3.UnitX, mp );
-				var hitY	=	IntersectArrow( target.TranslateVector, Vector3.UnitY, mp );
-				var hitZ	=	IntersectArrow( target.TranslateVector, Vector3.UnitZ, mp );
+				var hitX	=	IntersectArrow( target.Translation, Vector3.UnitX, mp );
+				var hitY	=	IntersectArrow( target.Translation, Vector3.UnitY, mp );
+				var hitZ	=	IntersectArrow( target.Translation, Vector3.UnitZ, mp );
 
 				int hitInd	=	HandleIntersection.PollIntersections( hitX, hitY, hitZ );
 
@@ -132,7 +132,7 @@ namespace IronStar.Editor.Manipulators
 			snapValue	=	editor.MoveToolSnapValue;
 
 			targets	=	editor.Selection.ToArray();
-			initPos	=	targets.Select( t => t.TranslateVector ).ToArray();
+			initPos	=	targets.Select( t => t.Translation ).ToArray();
 
 			var origin	=	initPos.Last();
 			var mp		=	new Point( x, y );

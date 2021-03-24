@@ -243,31 +243,15 @@ namespace IronStar.Editor
 		}
 
 
+		public void ParentSelection(bool parent)
+		{
+			Game.Invoker.Execute( new ParentCommand(this) );
+		}
+
 
 		public void DuplicateSelection ()
 		{
 			Game.Invoker.Execute( new DuplicateSelection(this) );
-
-			/*var newItems = selection
-				#warning REMOVE PARAMETER
-				.Select( item => {
-					var newNode = item.DuplicateNode();
-					newNode.TranslateVector = item.TranslateVector + Vector3.One;
-					return newNode;
-				})
-				.ToArray();
-
-			Map.Nodes.AddRange( newItems );
-
-			foreach ( var newItem in newItems ) 
-			{
-				newItem.SpawnNodeECS(gameState);
-			}
-
-			selection.Clear();
-			selection.AddRange( newItems );
-
-			//FeedSelection(); */
 		}
 
 
@@ -277,7 +261,6 @@ namespace IronStar.Editor
 			{
 				node.ResetNodeECS(GameState);
 			}
-
 		}
 
 
@@ -477,10 +460,10 @@ namespace IronStar.Editor
 			
 			var tpos	=	new Vector3(x,y,z);
 
-			var matrix	=	Matrix.LookAtRH( aimObj.TranslateVector, tpos, Vector3.Up );
+			var matrix	=	Matrix.LookAtRH( aimObj.Translation, tpos, Vector3.Up );
 			matrix.Invert();
 
-			aimObj.RotateQuaternion	=	Quaternion.RotationMatrix( matrix );
+			aimObj.Rotation	=	Quaternion.RotationMatrix( matrix );
 		}
 
 
@@ -502,7 +485,7 @@ namespace IronStar.Editor
 			{
 				foreach ( var node in targets ) 
 				{
-					points.AddRange( node.GetBoundingBox().GetCorners().Select( p => Vector3.TransformCoordinate( p, node.WorldMatrix ) ) );
+					points.AddRange( node.GetBoundingBox().GetCorners().Select( p => Vector3.TransformCoordinate( p, node.GlobalTransform ) ) );
 				}
 			}
 

@@ -50,17 +50,16 @@ namespace IronStar.Mapping {
 
 			if (ecsEntity!=null)
 			{
-				gs.Teleport( ecsEntity, TranslateVector, RotateQuaternion );
+				gs.Teleport( ecsEntity, Translation, Rotation );
 			}
 		}
 
 
 		public override MapNode DuplicateNode()
 		{
-			var newNode = (MapEntity)MemberwiseClone();
+			var newNode = (MapEntity)base.DuplicateNode();
 			newNode.Factory		= Factory.Duplicate();
 			newNode.FactoryName	= Misc.GenerateRandomString(8);
-			newNode.Name = GenerateUniqueName();
 			return newNode;
 		}
 

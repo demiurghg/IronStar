@@ -113,7 +113,7 @@ namespace IronStar.Mapping
 
 			foreach ( var node in Nodes )
 			{
-				node.SpawnNodeECS( gs );
+				node?.SpawnNodeECS( gs );
 			}
 		}
 	}

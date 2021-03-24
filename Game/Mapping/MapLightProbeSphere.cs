@@ -32,12 +32,12 @@ namespace IronStar.Mapping {
 		[AECommand]
 		public void MakeGlobal()
 		{
-			TranslateVector	=	Vector3.Up * 512;
-			RotatePitch		=	0;
-			RotateRoll		=	0;
-			RotateYaw		=	0;
-			Radius			=	2048;
-			Transition		=	8f;
+			Translation	=	Vector3.Up * 512;
+			RotatePitch	=	0;
+			RotateRoll	=	0;
+			RotateYaw	=	0;
+			Radius		=	2048;
+			Transition	=	8f;
 		}
 
 		LightProbe	light;
@@ -55,7 +55,7 @@ namespace IronStar.Mapping {
 		public override void SpawnNodeECS( GameState gs )
 		{
 			ecsEntity = gs.Spawn();
-			ecsEntity.AddComponent( new ECS.Transform( TranslateVector, RotateQuaternion ) );
+			ecsEntity.AddComponent( new ECS.Transform( Translation, Rotation ) );
 
 			var light = new SFX2.LightProbeSphere(Name);
 
@@ -69,7 +69,7 @@ namespace IronStar.Mapping {
 
 		private Matrix ComputeProbeMatrix ()
 		{
-			return Matrix.Scaling( Radius, Radius, Radius ) * WorldMatrix;
+			return Matrix.Scaling( Radius, Radius, Radius ) * GlobalTransform;
 		}
 
 
@@ -77,15 +77,6 @@ namespace IronStar.Mapping {
 		public override BoundingBox GetBoundingBox()
 		{
 			return new BoundingBox( Radius*2, Radius*2, Radius*2 );
-		}
-
-
-		public override MapNode DuplicateNode()
-		{
-			var newNode = (MapLightProbeSphere)MemberwiseClone();
-			newNode.light = null;
-			newNode.Name = GenerateUniqueName();
-			return newNode;
 		}
 	}
 }

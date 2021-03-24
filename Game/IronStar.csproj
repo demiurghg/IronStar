@@ -168,6 +168,7 @@
     <Compile Include="Editor\Commands\DuplicateSelection.cs" />
     <Compile Include="Editor\Commands\DeleteSelection.cs" />
     <Compile Include="Editor\Commands\CreateNode.cs" />
+    <Compile Include="Editor\Commands\ParentCommand.cs" />
     <Compile Include="Editor\Commands\RotateCommand.cs" />
     <Compile Include="Editor\Commands\MoveCommand.cs" />
     <Compile Include="Editor\Commands\SetProperty.cs" />

@@ -1,6 +1,8 @@
 {
+  "$id": "1",
   "$type": "IronStar.Mapping.Map, IronStar",
   "Environment": {
+    "$id": "2",
     "$type": "IronStar.Mapping.MapEnvironment, IronStar",
     "Gravity": 48.0,
     "SkyTrubidity": 2.0,
@@ -13,9 +15,11 @@
     "FogColor": "10, 10, 10, 0"
   },
   "Nodes": {
+    "$id": "3",
     "$type": "IronStar.Mapping.MapNodeCollection, IronStar",
     "$values": [
       {
+        "$id": "4",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "Name": "6633d15e-d528-4fa2-88d1-53b1cf2be124",
         "ScenePath": "scenes\\grayBoxing\\lightMapTest.fbx",
@@ -29,6 +33,7 @@
         "UseCustomNodes": false,
         "CustomVisibleNode": "",
         "CustomCollisionNode": "",
+        "Parent": null,
         "Visible": true,
         "Frozen": true,
         "TranslateX": 0.0,
@@ -36,17 +41,23 @@
         "TranslateZ": 0.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "0, 0, 0",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1"
       },
       {
+        "$id": "5",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "d0287a3b-71c0-40a3-abed-c06822ad35f5",
         "TargetName": null,
         "Factory": {
+          "$id": "6",
           "$type": "IronStar.StartPointFactory, IronStar",
           "StartPointType": "singlePlayer"
         },
         "FactoryName": "YTd2a4Rx",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -167.022385,
@@ -54,9 +65,13 @@
         "TranslateZ": 168.490814,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-167.022385, 2.2136302, 168.490814",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1"
       },
       {
+        "$id": "7",
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
         "Name": "07111c5e-380a-43c5-be1c-e60d854bd1f5",
         "Width": 120.0,
@@ -65,6 +80,7 @@
         "ShellWidth": 13.0,
         "ShellHeight": 5.0,
         "ShellDepth": 7.0,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": 80.0,
@@ -72,9 +88,13 @@
         "TranslateZ": 84.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "80, 50, 84",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1"
       },
       {
+        "$id": "8",
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
         "Name": "736deffe-e41a-4e9e-a0a6-a6cca705a9c4",
         "LightColor": "255, 129, 40, 255",
@@ -92,6 +112,7 @@
         "LodBias": 0,
         "DepthBias": 0.0009765625,
         "SlopeBias": 2.0,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -90.0,
@@ -99,9 +120,13 @@
         "TranslateZ": 96.0,
         "RotateYaw": -90.0,
         "RotatePitch": -90.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-90, 44, 96",
+        "Scaling": "1, 1, 1",
+        "Rotation": "-0.49999997, -0.49999997, -0.49999997, 0.49999997"
       },
       {
+        "$id": "9",
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
         "Name": "ee9e1bb2-c75b-4568-9a36-84ee01707039",
         "LightColor": "255, 156, 73, 255",
@@ -119,6 +144,7 @@
         "LodBias": 0,
         "DepthBias": 0.0009765625,
         "SlopeBias": 2.0,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -12.0,
@@ -126,9 +152,13 @@
         "TranslateZ": 96.0,
         "RotateYaw": -90.0,
         "RotatePitch": -90.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-12, 44, 96",
+        "Scaling": "1, 1, 1",
+        "Rotation": "-0.49999997, -0.49999997, -0.49999997, 0.49999997"
       },
       {
+        "$id": "10",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "Name": "b5938541-f0cb-4101-9150-2a2be3d24079",
         "OuterRadius": 27.0,
@@ -138,6 +168,7 @@
         "Ambient": false,
         "LightColor": "255, 8, 0, 255",
         "LightIntensity": 100.0,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -96.0,
@@ -145,9 +176,13 @@
         "TranslateZ": 40.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-96, 8, 40",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1"
       },
       {
+        "$id": "11",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "Name": "170d651e-9dc6-4f97-9dfd-5a1a4348031f",
         "OuterRadius": 27.0,
@@ -157,6 +192,7 @@
         "Ambient": false,
         "LightColor": "57, 240, 60, 255",
         "LightIntensity": 12.0,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -32.0,
@@ -164,13 +200,18 @@
         "TranslateZ": 38.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": -90.0
+        "RotateRoll": -90.0,
+        "Translation": "-32, 12, 38",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, -0.707106769, 0.707106769"
       },
       {
+        "$id": "12",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Name": "5ef4613e-0e81-4f00-8af9-164c236b754f",
         "Radius": 40.0,
         "Transition": 8.0,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": 0.0,
@@ -178,17 +219,23 @@
         "TranslateZ": 16.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "0, 16, 16",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1"
       },
       {
+        "$id": "13",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "098e5f61-2d7e-42c6-8e17-7bca584ea071",
         "TargetName": null,
         "Factory": {
+          "$id": "14",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "AMMO_BULLETS"
         },
         "FactoryName": "XzJmAybC",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -168.51152,
@@ -196,17 +243,23 @@
         "TranslateZ": 117.313751,
         "RotateYaw": -0.08274843,
         "RotatePitch": 0.001752358,
-        "RotateRoll": 0.00503934128
+        "RotateRoll": 0.00503934128,
+        "Translation": "-168.51152, 0.346312553, 117.313751",
+        "Scaling": "1, 1, 1",
+        "Rotation": "1.526045E-05, -0.0007221169, 4.398758E-05, 0.999999762"
       },
       {
+        "$id": "15",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "28ebdd35-d584-4f9c-bd17-fa132e189967",
         "TargetName": null,
         "Factory": {
+          "$id": "16",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "AMMO_BULLETS"
         },
         "FactoryName": "wewrPi5o",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -169.452728,
@@ -214,17 +267,23 @@
         "TranslateZ": 117.314018,
         "RotateYaw": -0.1644839,
         "RotatePitch": 0.00328487856,
-        "RotateRoll": 0.005397546
+        "RotateRoll": 0.005397546,
+        "Translation": "-169.452728, 0.346312135, 117.314018",
+        "Scaling": "1, 1, 1",
+        "Rotation": "2.85983333E-05, -0.00143539382, 4.71435742E-05, 0.999999"
       },
       {
+        "$id": "17",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "90f42fa2-f36a-4740-9d63-6e001aabe189",
         "TargetName": null,
         "Factory": {
+          "$id": "18",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "AMMO_BULLETS"
         },
         "FactoryName": "NnBl2fil",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -170.513153,
@@ -232,17 +291,23 @@
         "TranslateZ": 117.3095,
         "RotateYaw": -0.106116652,
         "RotatePitch": -0.003214802,
-        "RotateRoll": 0.008451674
+        "RotateRoll": 0.008451674,
+        "Translation": "-170.513153, 0.346425146, 117.3095",
+        "Scaling": "1, 1, 1",
+        "Rotation": "-2.81227276E-05, -0.0009260403, 7.37287555E-05, 0.9999996"
       },
       {
+        "$id": "19",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "6c728cf4-c51c-44bd-8221-5a45bfba7eba",
         "TargetName": null,
         "Factory": {
+          "$id": "20",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "AMMO_BULLETS"
         },
         "FactoryName": "EbfPUvqE",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -171.352356,
@@ -250,17 +315,23 @@
         "TranslateZ": 117.3127,
         "RotateYaw": 0.008379434,
         "RotatePitch": 0.000185444092,
-        "RotateRoll": 0.000140989374
+        "RotateRoll": 0.000140989374,
+        "Translation": "-171.352356, 0.3463093, 117.3127",
+        "Scaling": "1, 1, 1",
+        "Rotation": "1.61839489E-06, 7.31243563E-05, 1.23024608E-06, 1"
       },
       {
+        "$id": "21",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "47181f4e-f860-46eb-8425-877b42e6be9d",
         "TargetName": null,
         "Factory": {
+          "$id": "22",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "AMMO_BULLETS"
         },
         "FactoryName": "ktmdgqbV",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -168.515686,
@@ -268,17 +339,23 @@
         "TranslateZ": 117.313934,
         "RotateYaw": -0.1773277,
         "RotatePitch": 0.00189255422,
-        "RotateRoll": 0.007494838
+        "RotateRoll": 0.007494838,
+        "Translation": "-168.515686, 1.05212247, 117.313934",
+        "Scaling": "1, 1, 1",
+        "Rotation": "1.64144185E-05, -0.00154747663, 6.543028E-05, 0.9999988"
       },
       {
+        "$id": "23",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "6900aadd-f42a-4286-a5d6-3e54709d7a64",
         "TargetName": null,
         "Factory": {
+          "$id": "24",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "AMMO_CELLS"
         },
         "FactoryName": "x4Vb54zw",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -169.000809,
@@ -286,17 +363,23 @@
         "TranslateZ": 115.355049,
         "RotateYaw": 1.6602037,
         "RotatePitch": 0.00518227648,
-        "RotateRoll": -0.3575232
+        "RotateRoll": -0.3575232,
+        "Translation": "-169.000809, 0.344483435, 115.355049",
+        "Scaling": "1, 1, 1",
+        "Rotation": "1.82953954E-08, 0.0144875739, -0.003120301, 0.999890149"
       },
       {
+        "$id": "25",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "e2558a51-603d-40f2-9a80-adc1ccec368b",
         "TargetName": null,
         "Factory": {
+          "$id": "26",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "AMMO_BULLETS"
         },
         "FactoryName": "5lLXo01k",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -170.524857,
@@ -304,17 +387,23 @@
         "TranslateZ": 117.310722,
         "RotateYaw": -0.4671394,
         "RotatePitch": -0.01757665,
-        "RotateRoll": 0.0224017967
+        "RotateRoll": 0.0224017967,
+        "Translation": "-170.524857, 1.05218458, 117.310722",
+        "Scaling": "1, 1, 1",
+        "Rotation": "-0.000154180874, -0.004076519, 0.000194865657, 0.9999917"
       },
       {
+        "$id": "27",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "a944662a-96c1-4843-8029-fc50a5f5a788",
         "TargetName": null,
         "Factory": {
+          "$id": "28",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "AMMO_BULLETS"
         },
         "FactoryName": "Qy8t26Ip",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -171.352249,
@@ -322,17 +411,23 @@
         "TranslateZ": 117.31266,
         "RotateYaw": 0.0043461523,
         "RotatePitch": 0.000142232559,
-        "RotateRoll": 4.901414E-05
+        "RotateRoll": 4.901414E-05,
+        "Translation": "-171.352249, 1.05211973, 117.31266",
+        "Scaling": "1, 1, 1",
+        "Rotation": "1.24122948E-06, 3.79273333E-05, 4.27681982E-07, 1"
       },
       {
+        "$id": "29",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "d341e142-7ab9-4bcf-9f90-868aa22ebaa8",
         "TargetName": null,
         "Factory": {
+          "$id": "30",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "WEAPON_RAILGUN"
         },
         "FactoryName": "zUDT7PeT",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -173.413483,
@@ -340,17 +435,23 @@
         "TranslateZ": 120.109093,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-173.413483, 0.436001956, 120.109093",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1"
       },
       {
+        "$id": "31",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "e44fda1c-24d9-48ef-bfc0-47612e6761d8",
         "TargetName": null,
         "Factory": {
+          "$id": "32",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "WEAPON_MACHINEGUN"
         },
         "FactoryName": "L7RJiI82",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -170.068634,
@@ -358,17 +459,23 @@
         "TranslateZ": 120.10408,
         "RotateYaw": 0.0133879334,
         "RotatePitch": 0.00230907346,
-        "RotateRoll": -0.01343714
+        "RotateRoll": -0.01343714,
+        "Translation": "-170.068634, 0.5878017, 120.10408",
+        "Scaling": "1, 1, 1",
+        "Rotation": "2.01367657E-05, 0.000116834126, -0.000117263524, 1"
       },
       {
+        "$id": "33",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "608b70da-4079-463e-bf0f-3bc4a2923556",
         "TargetName": null,
         "Factory": {
+          "$id": "34",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "WEAPON_SHOTGUN"
         },
         "FactoryName": "6CV453Bg",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -167.812759,
@@ -376,17 +483,23 @@
         "TranslateZ": 120.112732,
         "RotateYaw": 0.0143572586,
         "RotatePitch": 0.00170818,
-        "RotateRoll": 0.0206019916
+        "RotateRoll": 0.0206019916,
+        "Translation": "-167.812759, 0.5877198, 120.112732",
+        "Scaling": "1, 1, 1",
+        "Rotation": "1.49292073E-05, 0.000125288032, 0.000179784431, 1"
       },
       {
+        "$id": "35",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "8d6113ee-9c24-4504-af11-f74ac15c3a06",
         "TargetName": null,
         "Factory": {
+          "$id": "36",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "WEAPON_ROCKETLAUNCHER"
         },
         "FactoryName": "4mjq1lZS",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -166.491135,
@@ -394,17 +507,23 @@
         "TranslateZ": 120.112785,
         "RotateYaw": 0.00127310562,
         "RotatePitch": -5.39883729E-07,
-        "RotateRoll": -0.000104801824
+        "RotateRoll": -0.000104801824,
+        "Translation": "-166.491135, 0.4874189, 120.112785",
+        "Scaling": "1, 1, 1",
+        "Rotation": "-4.721535E-09, 1.11099425E-05, -9.145684E-07, 1"
       },
       {
+        "$id": "37",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "f129d362-0dee-4e69-b8bd-33ee5a4ede45",
         "TargetName": null,
         "Factory": {
+          "$id": "38",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "WEAPON_MACHINEGUN2"
         },
         "FactoryName": "jglfONWD",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -164.586716,
@@ -412,9 +531,13 @@
         "TranslateZ": 120.109772,
         "RotateYaw": 0.0124785174,
         "RotatePitch": 4.724572E-05,
-        "RotateRoll": -0.000117133321
+        "RotateRoll": -0.000117133321,
+        "Translation": "-164.586716, 0.487421781, 120.109772",
+        "Scaling": "1, 1, 1",
+        "Rotation": "4.121854E-07, 0.000108895605, -1.022226E-06, 1"
       },
       {
+        "$id": "39",
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
         "Name": "a690fd7a-97b0-45f5-b26e-7db5befdd433",
         "Width": 56.0,
@@ -423,6 +546,7 @@
         "ShellWidth": 16.0,
         "ShellHeight": 16.0,
         "ShellDepth": 15.0,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -166.075592,
@@ -430,17 +554,23 @@
         "TranslateZ": 142.199387,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-166.075592, 27.294075, 142.199387",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1"
       },
       {
+        "$id": "40",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "ce60499d-063b-46c2-846c-d1a708b81553",
         "TargetName": null,
         "Factory": {
+          "$id": "41",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "MONSTER_MARINE"
         },
         "FactoryName": "FdVR22Ux",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": 49.913475,
@@ -448,17 +578,23 @@
         "TranslateZ": 104.335152,
         "RotateYaw": -60.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "49.913475, 0, 104.335152",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, -0.5, 0, 0.8660254"
       },
       {
+        "$id": "42",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "8eb36da4-7c5d-4893-bcb5-1bd851a7e1ab",
         "TargetName": null,
         "Factory": {
+          "$id": "43",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "MONSTER_MARINE"
         },
         "FactoryName": "04AMfQhE",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": 60.9883728,
@@ -466,17 +602,23 @@
         "TranslateZ": 84.8771744,
         "RotateYaw": -75.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "60.9883728, 0, 84.8771744",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, -0.6087614, 0, 0.7933533"
       },
       {
+        "$id": "44",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "96a6aee8-7837-4627-900d-c5a68f4543d2",
         "TargetName": null,
         "Factory": {
+          "$id": "45",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "MONSTER_MARINE"
         },
         "FactoryName": "sjoR2EFJ",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": 73.10551,
@@ -484,17 +626,23 @@
         "TranslateZ": 107.471748,
         "RotateYaw": -225.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "73.10551, 0, 107.471748",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, -0.923879564, 0, -0.3826834"
       },
       {
+        "$id": "46",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de45",
         "TargetName": null,
         "Factory": {
+          "$id": "47",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "MONSTER_MARINE"
         },
         "FactoryName": "oSnhdYbU",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": 80.59734,
@@ -502,17 +650,23 @@
         "TranslateZ": 67.17596,
         "RotateYaw": -225.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "80.59734, 0, 67.17596",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, -0.923879564, 0, -0.3826834"
       },
       {
+        "$id": "48",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "af4ab926-28e7-4317-be76-52b5fc5c2e0b",
         "TargetName": null,
         "Factory": {
+          "$id": "49",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "MONSTER_MARINE"
         },
         "FactoryName": "5TKWUmgA",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -16.0,
@@ -520,17 +674,23 @@
         "TranslateZ": -22.0,
         "RotateYaw": -75.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-16, 0, -22",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, -0.6087614, 0, 0.7933533"
       },
       {
+        "$id": "50",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "92756088-3312-454d-ad39-719921b9510a",
         "TargetName": null,
         "Factory": {
+          "$id": "51",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "MONSTER_MARINE"
         },
         "FactoryName": "jCQTTK4Y",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -22.5379944,
@@ -538,17 +698,23 @@
         "TranslateZ": -39.84649,
         "RotateYaw": -225.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-22.5379944, 0, -39.84649",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, -0.923879564, 0, -0.3826834"
       },
       {
+        "$id": "52",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "5fa4d057-9df7-4751-8fbb-b2fbe1b6c176",
         "TargetName": null,
         "Factory": {
+          "$id": "53",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "MONSTER_MARINE"
         },
         "FactoryName": "vVOKeies",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -42.146965,
@@ -556,17 +722,23 @@
         "TranslateZ": -38.9151764,
         "RotateYaw": -75.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-42.146965, 0, -38.9151764",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, -0.6087614, 0, 0.7933533"
       },
       {
+        "$id": "54",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "aeae6c43-c466-4d2f-bea0-f06d4c3591af",
         "TargetName": null,
         "Factory": {
+          "$id": "55",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "MONSTER_MARINE"
         },
         "FactoryName": "Jrp6lekC",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -42.0,
@@ -574,17 +746,23 @@
         "TranslateZ": -56.0,
         "RotateYaw": -75.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-42, 0, -56",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, -0.6087614, 0, 0.7933533"
       },
       {
+        "$id": "56",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "328f1bb3-2f41-4095-bfdd-1dd72c1cab81",
         "TargetName": null,
         "Factory": {
+          "$id": "57",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "MONSTER_MARINE"
         },
         "FactoryName": "0JVWZrXa",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -42.146965,
@@ -592,17 +770,23 @@
         "TranslateZ": -74.1047,
         "RotateYaw": -75.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-42.146965, 0, -74.1047",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, -0.6087614, 0, 0.7933533"
       },
       {
+        "$id": "58",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "90f84561-d109-4cf5-99bd-74d485575725",
         "TargetName": null,
         "Factory": {
+          "$id": "59",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "MONSTER_MARINE"
         },
         "FactoryName": "ePyxpQGc",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -22.6518478,
@@ -610,17 +794,23 @@
         "TranslateZ": -74.1047,
         "RotateYaw": -75.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-22.6518478, 0, -74.1047",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, -0.6087614, 0, 0.7933533"
       },
       {
+        "$id": "60",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "91a50b39-6fa2-4d4c-b075-8bd8434888d0",
         "TargetName": null,
         "Factory": {
+          "$id": "61",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "MONSTER_MARINE"
         },
         "FactoryName": "kbYLA4f7",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -22.0,
@@ -628,17 +818,23 @@
         "TranslateZ": -56.0,
         "RotateYaw": -75.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-22, 0, -56",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, -0.6087614, 0, 0.7933533"
       },
       {
+        "$id": "62",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "62da475b-e066-4172-81ae-f9924b70852f",
         "TargetName": null,
         "Factory": {
+          "$id": "63",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "MONSTER_MARINE"
         },
         "FactoryName": "y0LdN3LL",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -22.6518478,
@@ -646,17 +842,23 @@
         "TranslateZ": -36.26701,
         "RotateYaw": -75.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-22.6518478, 0, -36.26701",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, -0.6087614, 0, 0.7933533"
       },
       {
+        "$id": "64",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "83c7ecdd-195f-47ac-bad1-34ece24ce65f",
         "TargetName": null,
         "Factory": {
+          "$id": "65",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "WEAPON_PLASMAGUN"
         },
         "FactoryName": "yBY2kJ8d",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -162.71843,
@@ -664,17 +866,23 @@
         "TranslateZ": 120.109772,
         "RotateYaw": 0.0124785174,
         "RotatePitch": 4.724572E-05,
-        "RotateRoll": -0.000117133321
+        "RotateRoll": -0.000117133321,
+        "Translation": "-162.71843, 0.487421781, 120.109772",
+        "Scaling": "1, 1, 1",
+        "Rotation": "4.121854E-07, 0.000108895605, -1.022226E-06, 1"
       },
       {
+        "$id": "66",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "0edb288a-ebff-4813-96c9-85c71055c740",
         "TargetName": null,
         "Factory": {
+          "$id": "67",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "AMMO_CELLS"
         },
         "FactoryName": "HxkWwNI2",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -167.430313,
@@ -682,17 +890,23 @@
         "TranslateZ": 115.341881,
         "RotateYaw": 0.2363704,
         "RotatePitch": 0.0196998753,
-        "RotateRoll": -0.00666341931
+        "RotateRoll": -0.00666341931,
+        "Translation": "-167.430313, 0.3444608, 115.341881",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0.000171793523, 0.00206272956, -5.850379E-05, 0.999997854"
       },
       {
+        "$id": "68",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "8bd7f42a-9893-433c-9184-eb67a75091fa",
         "TargetName": null,
         "Factory": {
+          "$id": "69",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "AMMO_CELLS"
         },
         "FactoryName": "wVSMzGhB",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -167.432846,
@@ -700,17 +914,23 @@
         "TranslateZ": 115.345406,
         "RotateYaw": 0.104364529,
         "RotatePitch": 0.0469688438,
-        "RotateRoll": -0.0203985218
+        "RotateRoll": -0.0203985218,
+        "Translation": "-167.432846, 1.046081, 115.345406",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0.000409718166, 0.0009108251, -0.0001783839, 0.9999995"
       },
       {
+        "$id": "70",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "a9cb2365-8158-47db-a9ea-776192e2ae0c",
         "TargetName": null,
         "Factory": {
+          "$id": "71",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "AMMO_CELLS"
         },
         "FactoryName": "CRtsU5p5",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -168.835938,
@@ -718,17 +938,23 @@
         "TranslateZ": 115.349556,
         "RotateYaw": 1.76348448,
         "RotatePitch": 0.0103135444,
-        "RotateRoll": -0.7261764
+        "RotateRoll": -0.7261764,
+        "Translation": "-168.835938, 1.045408, 115.349556",
+        "Scaling": "1, 1, 1",
+        "Rotation": "-7.52864435E-06, 0.0153889591, -0.006337676, 0.9998615"
       },
       {
+        "$id": "72",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "774e3bfe-b607-43fd-8e49-4b3660f41260",
         "TargetName": null,
         "Factory": {
+          "$id": "73",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "AMMO_CELLS"
         },
         "FactoryName": "bY7HQE3f",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -168.8281,
@@ -736,17 +962,23 @@
         "TranslateZ": 115.310135,
         "RotateYaw": -0.219493,
         "RotatePitch": 0.00458094757,
-        "RotateRoll": 0.00756161334
+        "RotateRoll": 0.00756161334,
+        "Translation": "-168.8281, 3.71680474, 115.310135",
+        "Scaling": "1, 1, 1",
+        "Rotation": "3.984984E-05, -0.00191543926, 6.606397E-05, 0.999998152"
       },
       {
+        "$id": "74",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "7406e362-024a-4ce3-8728-6185ed6c83c8",
         "TargetName": null,
         "Factory": {
+          "$id": "75",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "AMMO_CELLS"
         },
         "FactoryName": "lgMcgpUl",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -167.385452,
@@ -754,9 +986,13 @@
         "TranslateZ": 115.310135,
         "RotateYaw": -0.219493,
         "RotatePitch": 0.00458094757,
-        "RotateRoll": 0.00756161334
+        "RotateRoll": 0.00756161334,
+        "Translation": "-167.385452, 3.71680474, 115.310135",
+        "Scaling": "1, 1, 1",
+        "Rotation": "3.984984E-05, -0.00191543926, 6.606397E-05, 0.999998152"
       },
       {
+        "$id": "76",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "Name": "2080d41f-a84d-4f07-a60e-f10663eb9178",
         "ScenePath": "scenes\\base_door\\small_door01.fbx",
@@ -770,6 +1006,7 @@
         "UseCustomNodes": false,
         "CustomVisibleNode": "",
         "CustomCollisionNode": "",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -12.0,
@@ -777,9 +1014,13 @@
         "TranslateZ": 72.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-12, 0, 72",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1"
       },
       {
+        "$id": "77",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "Name": "7afb77a2-da1c-45c0-9189-05bed12e706d",
         "ScenePath": "scenes\\base_door\\big_door01.fbx",
@@ -793,6 +1034,7 @@
         "UseCustomNodes": false,
         "CustomVisibleNode": "",
         "CustomCollisionNode": "",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": 16.0,
@@ -800,9 +1042,13 @@
         "TranslateZ": 90.0,
         "RotateYaw": -90.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "16, 0, 90",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, -0.707106769, 0, 0.707106769"
       },
       {
+        "$id": "78",
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
         "Name": "bde9d8a9-ff8c-4fca-a15a-9d0089e921ab",
         "Width": 136.0,
@@ -811,6 +1057,7 @@
         "ShellWidth": 0.25,
         "ShellHeight": 0.25,
         "ShellDepth": 0.25,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -50.0,
@@ -818,17 +1065,23 @@
         "TranslateZ": 96.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-50, 140, 96",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1"
       },
       {
+        "$id": "79",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "Name": "60df3389-b014-48f2-8370-59308f2335cd",
         "TargetName": null,
         "Factory": {
+          "$id": "80",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "MONSTER_MARINE"
         },
         "FactoryName": "xtUcEoIu",
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -58.0,
@@ -836,9 +1089,13 @@
         "TranslateZ": 68.0,
         "RotateYaw": -225.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-58, 0, 68",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, -0.923879564, 0, -0.3826834"
       },
       {
+        "$id": "81",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "Name": "9b652c1b-b979-46c6-9f6f-7aa9147d12e7",
         "OuterRadius": 27.0,
@@ -848,6 +1105,7 @@
         "Ambient": false,
         "LightColor": "255, 176, 103, 255",
         "LightIntensity": 12.0,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -50.0,
@@ -855,9 +1113,13 @@
         "TranslateZ": 38.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": -90.0
+        "RotateRoll": -90.0,
+        "Translation": "-50, 12, 38",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, -0.707106769, 0.707106769"
       },
       {
+        "$id": "82",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "Name": "44638b6e-d2f2-4036-ab32-640f99c8b0ab",
         "OuterRadius": 27.0,
@@ -867,6 +1129,7 @@
         "Ambient": false,
         "LightColor": "113, 142, 255, 255",
         "LightIntensity": 12.0,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -68.0,
@@ -874,9 +1137,13 @@
         "TranslateZ": 38.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": -90.0
+        "RotateRoll": -90.0,
+        "Translation": "-68, 12, 38",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, -0.707106769, 0.707106769"
       },
       {
+        "$id": "83",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "Name": "609b5d00-4472-4130-9995-42116e536b68",
         "OuterRadius": 27.0,
@@ -886,6 +1153,7 @@
         "Ambient": false,
         "LightColor": "174, 190, 255, 255",
         "LightIntensity": 12.0,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -24.0,
@@ -893,9 +1161,13 @@
         "TranslateZ": 64.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": -90.0
+        "RotateRoll": -90.0,
+        "Translation": "-24, 12, 64",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, -0.707106769, 0.707106769"
       },
       {
+        "$id": "84",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "Name": "df35392c-06a5-4e75-ad35-2232f02ef795",
         "OuterRadius": 27.0,
@@ -905,6 +1177,7 @@
         "Ambient": false,
         "LightColor": "174, 190, 255, 255",
         "LightIntensity": 12.0,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": 0.0,
@@ -912,9 +1185,13 @@
         "TranslateZ": 64.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": -90.0
+        "RotateRoll": -90.0,
+        "Translation": "0, 16, 64",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, -0.707106769, 0.707106769"
       },
       {
+        "$id": "85",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "Name": "57d56120-fe2d-477f-96cc-82039da607a1",
         "OuterRadius": 27.0,
@@ -924,6 +1201,7 @@
         "Ambient": false,
         "LightColor": "174, 190, 255, 255",
         "LightIntensity": 12.0,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": 16.0,
@@ -931,9 +1209,13 @@
         "TranslateZ": 64.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": -90.0
+        "RotateRoll": -90.0,
+        "Translation": "16, 12, 64",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, -0.707106769, 0.707106769"
       },
       {
+        "$id": "86",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "Name": "608fdbcf-e47b-4a9c-8f9b-b0c5b82626bf",
         "OuterRadius": 27.0,
@@ -943,6 +1225,7 @@
         "Ambient": false,
         "LightColor": "174, 190, 255, 255",
         "LightIntensity": 12.0,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -44.0,
@@ -950,9 +1233,13 @@
         "TranslateZ": 64.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": -90.0
+        "RotateRoll": -90.0,
+        "Translation": "-44, 12, 64",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, -0.707106769, 0.707106769"
       },
       {
+        "$id": "87",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "Name": "3940f5b1-2ab9-4883-a10f-a9da0bedea3e",
         "OuterRadius": 27.0,
@@ -962,6 +1249,7 @@
         "Ambient": false,
         "LightColor": "174, 190, 255, 255",
         "LightIntensity": 12.0,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -64.0,
@@ -969,9 +1257,13 @@
         "TranslateZ": 64.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": -90.0
+        "RotateRoll": -90.0,
+        "Translation": "-64, 12, 64",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, -0.707106769, 0.707106769"
       },
       {
+        "$id": "88",
         "$type": "IronStar.Mapping.MapOmniLight, IronStar",
         "Name": "8bde870c-2b04-4580-a89b-c78f7c5ea268",
         "OuterRadius": 27.0,
@@ -981,6 +1273,7 @@
         "Ambient": false,
         "LightColor": "174, 190, 255, 255",
         "LightIntensity": 12.0,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -84.0,
@@ -988,9 +1281,13 @@
         "TranslateZ": 64.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": -90.0
+        "RotateRoll": -90.0,
+        "Translation": "-84, 12, 64",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, -0.707106769, 0.707106769"
       },
       {
+        "$id": "89",
         "$type": "IronStar.Mapping.MapLightProbeBox, IronStar",
         "Name": "8b7f90d8-52af-4385-8980-a99716b306c6",
         "Width": 136.0,
@@ -999,6 +1296,7 @@
         "ShellWidth": 0.25,
         "ShellHeight": 0.25,
         "ShellDepth": 0.25,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -50.0,
@@ -1006,9 +1304,13 @@
         "TranslateZ": 50.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-50, 24, 50",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1"
       },
       {
+        "$id": "90",
         "$type": "IronStar.Mapping.MapLightVolume, IronStar",
         "Name": "16f11adf-d256-4461-b96e-dd17167cfa09",
         "ResolutionX": 16,
@@ -1017,6 +1319,7 @@
         "Width": 512.0,
         "Height": 128.0,
         "Depth": 512.0,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": 0.0,
@@ -1024,9 +1327,13 @@
         "TranslateZ": 0.0,
         "RotateYaw": 0.0,
         "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "0, 52, 0",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1"
       },
       {
+        "$id": "91",
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
         "Name": "d230dd18-451b-4251-a76a-e21dc0493890",
         "LightColor": "255, 129, 40, 255",
@@ -1044,6 +1351,7 @@
         "LodBias": 0,
         "DepthBias": 0.0009765625,
         "SlopeBias": 2.0,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -29.0,
@@ -1051,9 +1359,13 @@
         "TranslateZ": -66.0,
         "RotateYaw": 0.0,
         "RotatePitch": -30.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-29, 45, -66",
+        "Scaling": "1, 1, 1",
+        "Rotation": "-0.258819044, 0, 0, 0.9659258"
       },
       {
+        "$id": "92",
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
         "Name": "30175b3b-a05f-493f-b4d9-192a2a65389f",
         "LightColor": "255, 156, 73, 255",
@@ -1071,6 +1383,7 @@
         "LodBias": 0,
         "DepthBias": 0.0009765625,
         "SlopeBias": 2.0,
+        "Parent": null,
         "Visible": true,
         "Frozen": false,
         "TranslateX": -166.0,
@@ -1078,11 +1391,15 @@
         "TranslateZ": 103.0,
         "RotateYaw": -90.0,
         "RotatePitch": -105.0,
-        "RotateRoll": 0.0
+        "RotateRoll": 0.0,
+        "Translation": "-166, 57, 103",
+        "Scaling": "1, 1, 1",
+        "Rotation": "-0.5609855, -0.430459321, -0.5609855, 0.430459321"
       }
     ]
   },
   "RadiositySettings": {
+    "$id": "93",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 256,
     "NumBounces": 3,

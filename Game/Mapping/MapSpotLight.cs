@@ -94,7 +94,7 @@ namespace IronStar.Mapping {
 
 		Matrix SpotView {
 			get {
-				return	Matrix.Invert(WorldMatrix);
+				return	Matrix.Invert(GlobalTransform);
 			}
 		}
 
@@ -123,7 +123,7 @@ namespace IronStar.Mapping {
 		{
 			ecsEntity = gs.Spawn();
 
-			ecsEntity.AddComponent( new Transform( TranslateVector, RotateQuaternion, 1 ) );
+			ecsEntity.AddComponent( new Transform( Translation, Rotation, 1 ) );
 			ecsEntity.AddComponent( CreateSpotLight() );
 		}
 

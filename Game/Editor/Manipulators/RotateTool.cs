@@ -127,17 +127,22 @@ namespace IronStar.Editor.Manipulators
 
 
 
-		public override bool IsManipulating {
-			get {
+		public override bool IsManipulating 
+		{
+			get 
+			{
 				return manipulating;
 			}
 		}
 
 
-		public override string ManipulationText {
-			get {
+		public override string ManipulationText 
+		{
+			get 
+			{
 				var target = targets?.LastOrDefault();
-				if (target==null) {
+				if (target==null) 
+				{
 					return "---";
 				}
 
@@ -146,12 +151,14 @@ namespace IronStar.Editor.Manipulators
 					"{1,7:000.00}\r" +
 					"{2,7:000.00}\r" +
 					"{3,7:000.00}\r" + 
-					"{3,7:000.00}", 
+					"{4,7:000.00}\r" + 
+					"{5,7:000.00}", 
 					rotation.ToString().ToUpper(), 
 					target.RotateYaw, 
 					target.RotatePitch, 
 					target.RotateRoll,
-					angle);
+					angle,
+					angleRaw);
 			}
 		}
 
@@ -165,6 +172,7 @@ namespace IronStar.Editor.Manipulators
 
 		Vector3 vector0, vector1;
 		float	angle;
+		float	angleRaw;
 
 		bool		snapEnable;
 		float		snapValue;
@@ -257,22 +265,20 @@ namespace IronStar.Editor.Manipulators
 				var cosine		=	Vector3.Dot( vector0, vector1 );
 
 				angle			=	MathUtil.RadiansToDegrees ( (float)Math.Atan2( sine, cosine ) );
+				angleRaw		=	angle;
 
 				angle			=	Snap( baseAngle + angle, snapValue, snapEnable );
 
 				var deltaAngle	=	angle - baseAngle;
 
-				if (Math.Abs(deltaAngle)>Epsilon)
+				switch (rotation) 
 				{
-					switch (rotation) 
-					{
-						case Rotation.Yaw  : rotateCommand.DeltaYaw		=	deltaAngle; break;
-						case Rotation.Pitch: rotateCommand.DeltaPitch	=	deltaAngle; break;
-						case Rotation.Roll : rotateCommand.DeltaRoll	=	deltaAngle; break;
-					}
-
-					rotateCommand.Execute();
+					case Rotation.Yaw  : rotateCommand.DeltaYaw		=	deltaAngle; break;
+					case Rotation.Pitch: rotateCommand.DeltaPitch	=	deltaAngle; break;
+					case Rotation.Roll : rotateCommand.DeltaRoll	=	deltaAngle; break;
 				}
+
+				rotateCommand.Execute();
 			}
 		}
 

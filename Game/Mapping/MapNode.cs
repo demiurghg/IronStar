@@ -21,42 +21,9 @@ namespace IronStar.Mapping
 	public abstract class MapNode 
 	{
 		public string Name;
-
-		//public MapNodeCollection Children {	get { return children; } }
-		//readonly MapNodeCollection children;
-
-		/// <summary>
-		/// Indicates that map object or entity should be updated without
-		/// </summary>
 		protected bool dirty = true;
 
-		/// <summary>
-		/// Gets and sets parent node
-		/// </summary>
-		public MapNode Parent 
-		{ 
-			get { return parent; }
-			set
-			{
-				if (parent!=value)
-				{
-					parent?.children.Remove(this);
-					parent = value;
-					parent?.children.Add(this);
-				}
-			}
-		}
 
-		MapNode parent = null;
-		MapNodeCollection children = new MapNodeCollection();
-
-		[JsonIgnore]
-		public IEnumerable<MapNode> Children { get { return children; } }
-
-
-		/// <summary>
-		/// 
-		/// </summary>
 		public MapNode ()
 		{
 			Name = GenerateUniqueName();
@@ -190,53 +157,7 @@ namespace IronStar.Mapping
 
 		[Browsable(false)]
 		[JsonIgnore]
-		public Matrix GlobalTransform 
-		{
-			get 
-			{
-				//return ParentTransform * LocalTransform;
-				var node = this;
-				var transform = LocalTransform;
-				var parent = node.Parent;
-
-				while (parent!=null)
-				{
-					transform	= transform * parent.LocalTransform;
-					parent		= parent.Parent;
-				}
-
-				return transform;//*/
-			}
-			set 
-			{
-				var global = GlobalTransform;
-				var local  = LocalTransform;
-				LocalTransform = value * Matrix.Invert(GlobalTransform) * LocalTransform;
-			}
-		}
-
-
-		Matrix ParentTransform
-		{
-			get 
-			{
-				var transform = Matrix.Identity;
-				var node = this.Parent;
-
-				while (node!=null)
-				{
-					transform	= transform * node.LocalTransform;
-					node		= node.Parent;
-				}
-
-				return transform;
-			}
-		}
-
-
-		[Browsable(false)]
-		[JsonIgnore]
-		public Matrix LocalTransform 
+		public Matrix Transform 
 		{
 			get 
 			{
@@ -271,18 +192,10 @@ namespace IronStar.Mapping
 		}
 
 
-		public virtual void ResetNodeECS( GameState gs, bool recursive = true )
+		public virtual void ResetNodeECS( GameState gs )
 		{
 			KillNodeECS(gs);
 			SpawnNodeECS(gs);
-
-			if (recursive)
-			{
-				foreach (var child in Children)
-				{
-					child?.ResetNodeECS(gs);
-				}
-			}
 		}
 
 

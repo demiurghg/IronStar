@@ -78,7 +78,7 @@ namespace IronStar.Editor
 				if (IsSelectable(item)) 
 				{
 					var bbox	=	DefaultBox;
-					var iw		=	Matrix.Invert( item.GlobalTransform );
+					var iw		=	Matrix.Invert( item.Transform );
 					float d;
 
 					var rayT	=	Utils.TransformRay( iw, ray );

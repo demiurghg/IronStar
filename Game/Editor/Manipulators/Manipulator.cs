@@ -181,11 +181,6 @@ namespace IronStar.Editor.Manipulators
 		public float Snap ( float value, float snapValue, bool enable )
 		{
 			return Snap( value, enable ? snapValue : 0 );
-			/*if (enable) {
-				return (float)(Math.Round( value / snapValue ) * snapValue);
-			} else {
-				return value;
-			} */
 		}
 
 

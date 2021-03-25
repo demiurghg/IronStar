@@ -22,33 +22,6 @@ namespace IronStar.Editor.Commands
 			get { return storedSelection; }
 		}
 
-		protected IEnumerable<MapNode> SelectionHierarchy
-		{
-			get 
-			{
-				Queue<MapNode> Q = new Queue<MapNode>();
-				List<MapNode> list = new List<MapNode>();
-
-				foreach (var node in Selection)
-				{
-					Q.Enqueue( node );
-
-					while ( Q.Any() ) 
-					{
-						var t = Q.Dequeue();
-						list.Add( t );
-
-						foreach ( var u in t.Children ) 
-						{
-							Q.Enqueue( u );
-						}
-					}
-				}
-
-				return list;
-			}
-		}
-
 		public BaseCommand( MapEditor editor )
 		{
 			this.editor	=	editor;

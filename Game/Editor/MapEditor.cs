@@ -235,12 +235,6 @@ namespace IronStar.Editor
 		}
 
 
-		public void ParentSelection(bool parent)
-		{
-			Game.Invoker.Execute( new ParentCommand(this) );
-		}
-
-
 		public void DuplicateSelection ()
 		{
 			Game.Invoker.Execute( new DuplicateSelected(this) );
@@ -477,7 +471,7 @@ namespace IronStar.Editor
 			{
 				foreach ( var node in targets ) 
 				{
-					points.AddRange( node.GetBoundingBox().GetCorners().Select( p => Vector3.TransformCoordinate( p, node.GlobalTransform ) ) );
+					points.AddRange( node.GetBoundingBox().GetCorners().Select( p => Vector3.TransformCoordinate( p, node.Transform ) ) );
 				}
 			}
 

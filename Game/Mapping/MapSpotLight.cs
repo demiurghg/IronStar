@@ -94,7 +94,7 @@ namespace IronStar.Mapping {
 
 		Matrix SpotView {
 			get {
-				return	Matrix.Invert(GlobalTransform);
+				return	Matrix.Invert(Transform);
 			}
 		}
 

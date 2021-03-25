@@ -92,7 +92,7 @@ namespace IronStar.Mapping
 
 		private Matrix ComputeProbeMatrix ()
 		{
-			return Matrix.Scaling( Width/2.0f, Height/2.0f, Depth/2.0f ) * GlobalTransform;
+			return Matrix.Scaling( Width/2.0f, Height/2.0f, Depth/2.0f ) * Transform;
 		}
 
 

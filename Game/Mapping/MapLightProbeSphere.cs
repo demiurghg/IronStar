@@ -69,7 +69,7 @@ namespace IronStar.Mapping {
 
 		private Matrix ComputeProbeMatrix ()
 		{
-			return Matrix.Scaling( Radius, Radius, Radius ) * GlobalTransform;
+			return Matrix.Scaling( Radius, Radius, Radius ) * Transform;
 		}
 
 

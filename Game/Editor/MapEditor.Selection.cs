@@ -70,7 +70,7 @@ namespace IronStar.Editor
 				selected	=	selection.Contains(node);
 
 				color		=	selected ? Utils.WireColorSelected : ( IsSelectable(node) ? Utils.WireColor : Utils.GridColor );
-				color		=	(selection.LastOrDefault()==node) ? Color.White : color;
+				color		=	(selection.LastOrDefault()==node) ? Utils.WireColorSelectedLast : color;
 
 				return IsVisible(node);
 			}

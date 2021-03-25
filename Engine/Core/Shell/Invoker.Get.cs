@@ -13,11 +13,12 @@ using System.Reflection;
 using System.ComponentModel;
 using Fusion.Core.Mathematics;
 
-namespace Fusion.Core.Shell {
-	public partial class Invoker {
-
-		class Get : CommandNoHistory {
-
+namespace Fusion.Core.Shell 
+{
+	public partial class Invoker 
+	{
+		class Get : ICommand 
+		{
 			readonly Invoker invoker;
 
 			[CommandLineParser.Required]
@@ -43,14 +44,17 @@ namespace Fusion.Core.Shell {
 			}
 
 
-			public override object Execute()
+			public object Execute()
 			{
 				var propValue = invoker.GetComponentProperty(Variable);
 
-				if (Print) {
+				if (Print) 
+				{
 					Log.Message("{0} = {1}", Variable, propValue);
 					return null;
-				} else {
+				}
+				else 
+				{
 					return propValue;
 				}
 			}

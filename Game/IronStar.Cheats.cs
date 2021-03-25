@@ -25,14 +25,14 @@ namespace IronStar {
 
 		void RegisterCheats()
 		{
-			Invoker.RegisterCommand("godMode"		, () => new God() );
+			Invoker.RegisterCommand("godMode"		, () => new GodMode() );
 			Invoker.RegisterCommand("noTarget"		, () => new NoTarget() );
 		}
 
 
-		class God : CommandNoHistory 
+		class GodMode : ICommand 
 		{
-			public override object Execute()
+			public object Execute()
 			{
 				IsGodMode = !IsGodMode;
 				Log.Message("God mode " + (IsGodMode ? "enabled" : "disabled"));
@@ -41,9 +41,9 @@ namespace IronStar {
 		}
 
 
-		class NoTarget : CommandNoHistory 
+		class NoTarget : ICommand 
 		{
-			public override object Execute()
+			public object Execute()
 			{
 				IsNoTarget = !IsNoTarget;
 				Log.Message("AI " + (IsNoTarget ? "disabled" : "enabled"));

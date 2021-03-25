@@ -9,7 +9,7 @@ using IronStar.Mapping;
 
 namespace IronStar.Editor.Commands
 {
-	public abstract class BaseCommand : IUndoable
+	public abstract class BaseCommand
 	{
 		protected readonly MapEditor editor;
 		protected readonly GameState gs;
@@ -31,9 +31,6 @@ namespace IronStar.Editor.Commands
 			//	save selection :
 			storedSelection = editor.Selection.ToArray();
 		}
-
-		public abstract object Execute();
-		public abstract void Rollback();
 
 		protected void RestoreSelection()
 		{

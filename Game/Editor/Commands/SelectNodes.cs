@@ -16,7 +16,7 @@ namespace IronStar.Editor.Commands
 		Clear,
 	}
 
-	public class SelectNodes : BaseCommand
+	public class SelectNodes : BaseCommand, IUndoable
 	{
 		readonly MapNode[] items;
 		readonly SelectMode mode;
@@ -37,7 +37,7 @@ namespace IronStar.Editor.Commands
 		}
 
 
-		public override object Execute()
+		public virtual object Execute()
 		{
 			switch (mode)
 			{
@@ -62,7 +62,7 @@ namespace IronStar.Editor.Commands
 		}
 
 		
-		public override void Rollback()
+		public virtual void Rollback()
 		{
 			RestoreSelection();
 		}

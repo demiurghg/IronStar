@@ -8,13 +8,13 @@ using IronStar.Mapping;
 
 namespace IronStar.Editor.Commands
 {
-	public class DeleteSelected : BaseCommand
+	public class DeleteSelected : BaseCommand, IUndoable
 	{
 		public DeleteSelected( MapEditor editor ) : base(editor)
 		{
 		}
 
-		public override object Execute()
+		public virtual object Execute()
 		{
 			foreach ( var node in Selection ) 
 			{
@@ -27,7 +27,7 @@ namespace IronStar.Editor.Commands
 			return null;
 		}
 
-		public override void Rollback()
+		public virtual void Rollback()
 		{
 			foreach ( var node in Selection ) 
 			{

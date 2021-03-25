@@ -18,8 +18,8 @@ using IronStar.SinglePlayer;
 namespace IronStar {
 	partial class IronStar : Game
 	{
-		class MapCommand : CommandNoHistory {
-
+		class MapCommand : ICommand
+		{
 			readonly IronStar game;
 
 			[CommandLineParser.Name("mapname")]
@@ -39,11 +39,14 @@ namespace IronStar {
 				this.game	=	game;
 			}
 
-			public override object Execute()
+			public object Execute()
 			{
-				if (Edit) {
+				if (Edit) 
+				{
 					game.StartEditor(MapName);
-				} else {
+				} 
+				else 
+				{
 					game.GetService<Mission>().State.Start(MapName);
 				}
 				return null;
@@ -53,7 +56,8 @@ namespace IronStar {
 
 
 
-		class KillServerCommand : CommandNoHistory {
+		class KillServerCommand : ICommand 
+		{
 
 			readonly IronStar game;
 
@@ -62,7 +66,7 @@ namespace IronStar {
 				this.game = game;
 			}
 
-			public override object Execute()
+			public object Execute()
 			{
 				game.KillServer();
 				return null;
@@ -71,8 +75,8 @@ namespace IronStar {
 
 
 
-		class ConnectCommand : CommandNoHistory {
-
+		class ConnectCommand : ICommand
+		{
 			readonly IronStar game;
 
 			[CommandLineParser.Required]
@@ -88,7 +92,7 @@ namespace IronStar {
 				this.game = game;
 			}
 
-			public override object Execute()
+			public object Execute()
 			{
 				game.Connect( Host, Port );
 				return null;
@@ -97,7 +101,7 @@ namespace IronStar {
 
 
 
-		class DisconnectCommand : CommandNoHistory {
+		class DisconnectCommand : ICommand {
 
 			readonly IronStar game;
 
@@ -106,7 +110,7 @@ namespace IronStar {
 				this.game = game;
 			}
 
-			public override object Execute()
+			public object Execute()
 			{
 				game.Disconnect( "disconnect by user request" );
 				return null;
@@ -115,7 +119,7 @@ namespace IronStar {
 
 
 
-		class KillEditorCommand : CommandNoHistory {
+		class KillEditorCommand : ICommand {
 
 			readonly IronStar game;
 
@@ -124,7 +128,7 @@ namespace IronStar {
 				this.game = game;
 			}
 
-			public override object Execute()
+			public object Execute()
 			{
 				game.StopEditor();
 				return null;
@@ -133,7 +137,7 @@ namespace IronStar {
 
 
 
-		class ContentBuildCommand : CommandNoHistory 
+		class ContentBuildCommand : ICommand 
 		{
 			Game	 game;
 			Builder builder;
@@ -152,7 +156,7 @@ namespace IronStar {
 				this.builder	=	builder;
 			}
 
-			public override object Execute ()
+			public object Execute ()
 			{
 				if (Force) 
 				{
@@ -173,8 +177,9 @@ namespace IronStar {
 		}
 
 
-		class ContentFileCommand : CommandNoHistory {
-			public override object Execute()
+		class ContentFileCommand : ICommand 
+		{
+			public object Execute()
 			{
 				throw new NotImplementedException();
 				//>>>>>>>>return Builder.Options.ContentIniFile;
@@ -183,7 +188,7 @@ namespace IronStar {
 
 
 
-		class ContentReportCommand : CommandNoHistory {
+		class ContentReportCommand : ICommand {
 
 			[CommandLineParser.Option]
 			[CommandLineParser.Name("reportFile")]
@@ -194,7 +199,7 @@ namespace IronStar {
 			{
 			}
 
-			public override object Execute() 
+			public object Execute() 
 			{
 				throw new NotImplementedException();
 				//>>>>>>>>Builder.OpenReport( ReportFile );

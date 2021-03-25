@@ -23,6 +23,7 @@ using IronStar.Editor.Manipulators;
 using Fusion.Engine.Frames;
 using Fusion.Core.Shell;
 using Fusion.Core.Configuration;
+using IronStar.Editor.Commands;
 
 namespace IronStar.Editor {
 
@@ -32,18 +33,18 @@ namespace IronStar.Editor {
 		{
 			Game.Invoker.RegisterCommand("editorSave"	, () => new EditorSave(this) );
 			Game.Invoker.RegisterCommand("editorSaveAs"	, () => new EditorSaveAs(this) );
+			Game.Invoker.RegisterCommand("editorPrefab" , () => new EditorPrefabCommand(this) );
 		}
 
 
 		void UnregisterCommands ()
 		{
-			Game.Invoker.UnregisterCommand("editorSave"		);
-			Game.Invoker.UnregisterCommand("editorSaveAs"	);
+			Game.Invoker.UnregisterCommand("editor*");
 		}
 
 
 
-		class CreateAsset : CommandNoHistory 
+		class CreateAsset : ICommand 
 		{
 			readonly MapEditor mapEditor;
 
@@ -52,48 +53,9 @@ namespace IronStar.Editor {
 				this.mapEditor	=	mapEditor;
 			}
 
-			public override object Execute()
+			public object Execute()
 			{
 				mapEditor.SaveMap();
-				return null;
-			}
-		}
-
-
-
-		class EditorSave : CommandNoHistory
-		{
-			readonly MapEditor mapEditor;
-
-			public EditorSave ( MapEditor mapEditor )
-			{
-				this.mapEditor	=	mapEditor;
-			}
-
-			public override object Execute()
-			{
-				mapEditor.SaveMap();
-				return null;
-			}
-		}
-
-
-		class EditorSaveAs : CommandNoHistory
-		{
-			readonly MapEditor mapEditor;
-
-			[CommandLineParser.Required]
-			[CommandLineParser.Name("newMapName")]
-			public string NewMapName { get; set; }
-
-			public EditorSaveAs ( MapEditor mapEditor )
-			{
-				this.mapEditor	=	mapEditor;
-			}
-
-			public override object Execute()
-			{
-				mapEditor.SaveMapAs(NewMapName);
 				return null;
 			}
 		}

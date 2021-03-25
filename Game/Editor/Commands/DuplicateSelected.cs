@@ -8,7 +8,7 @@ using IronStar.Mapping;
 
 namespace IronStar.Editor.Commands
 {
-	public class DuplicateSelected : BaseCommand
+	public class DuplicateSelected : BaseCommand, IUndoable
 	{
 		readonly MapNode[] duplicates;
 
@@ -19,7 +19,7 @@ namespace IronStar.Editor.Commands
 							.ToArray();
 		}
 
-		public override object Execute()
+		public virtual object Execute()
 		{
 			foreach ( var node in duplicates ) 
 			{
@@ -32,7 +32,7 @@ namespace IronStar.Editor.Commands
 			return null;
 		}
 
-		public override void Rollback()
+		public virtual void Rollback()
 		{
 			foreach ( var node in duplicates ) 
 			{

@@ -112,7 +112,7 @@ namespace IronStar.Mapping {
 		{
 			ecsEntity = gs.Spawn();
 
-			ecsEntity.AddComponent( new ECS.Transform( Transform ) );
+			ecsEntity.AddComponent( new ECS.Transform( Matrix.Scaling(Scale) * Transform ) );
 			ecsEntity.AddComponent( new StaticCollisionComponent() { Walkable = Walkable } );
 
 			var rm		=	new SFX2.RenderModel( ScenePath, Matrix.Identity, Color.White, 1, SFX2.RMFlags.None );

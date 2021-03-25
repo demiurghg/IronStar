@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
 
-namespace Fusion {
+namespace Fusion 
+{
 	/// <summary>
 	/// Represents a wildcard running on the
 	/// <see cref="System.Text.RegularExpressions"/> engine.
 	/// </summary>
-	public static class Wildcard {
+	public static class Wildcard 
+	{
 
 		/// <summary>
 		/// Converts a wildcard to a regex.

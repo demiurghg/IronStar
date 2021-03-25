@@ -8,7 +8,7 @@ using IronStar.Mapping;
 
 namespace IronStar.Editor.Commands
 {
-	public class CreateNode : BaseCommand
+	public class CreateNode : BaseCommand, IUndoable
 	{
 		readonly MapNode newNode;
 
@@ -17,7 +17,7 @@ namespace IronStar.Editor.Commands
 			this.newNode	=	newNode;
 		}
 
-		public override object Execute()
+		public virtual object Execute()
 		{
 			map.Nodes.Add( newNode );
 			newNode.SpawnNodeECS( gs );
@@ -26,7 +26,7 @@ namespace IronStar.Editor.Commands
 			return null;
 		}
 
-		public override void Rollback()
+		public virtual void Rollback()
 		{
 			map.Nodes.Remove( newNode );
 			newNode.KillNodeECS( gs );

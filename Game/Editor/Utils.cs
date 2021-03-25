@@ -13,10 +13,11 @@ namespace IronStar.Editor
 {
 	static class Utils 
 	{
-		readonly public static Color SelectColor		=	new Color(255,211,149);
-		readonly public static Color GridColor			=	new Color(64,64,64);
-		readonly public static Color WireColor			=	new Color(0,4,96);
-		readonly public static Color WireColorSelected	=	new Color(67,255,163);
+		readonly public static Color SelectColor			=	new Color(255,211,149);
+		readonly public static Color GridColor				=	new Color(64,64,64);
+		readonly public static Color WireColor				=	new Color(0,4,96);
+		readonly public static Color WireColorSelected		=	new Color(255,255,255);
+		readonly public static Color WireColorSelectedLast	=	new Color(67,255,163);
 
 		
 		public static Ray TransformRay ( Matrix m, Ray r )

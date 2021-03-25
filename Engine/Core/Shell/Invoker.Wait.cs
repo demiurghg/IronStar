@@ -14,17 +14,17 @@ using System.ComponentModel;
 using Fusion.Core.Mathematics;
 
 namespace Fusion.Core.Shell {
-	public partial class Invoker {
-
-		class WaitCmd : CommandNoHistory {
-
+	public partial class Invoker 
+	{
+		class WaitCmd : ICommand 
+		{
 			public WaitCmd ( Invoker invoker )
 			{
 			}
 
-			public override object Execute()
+			public object Execute()
 			{
-				return null;
+				throw new NotImplementedException(nameof(WaitCmd));
 			}
 		}
 	}

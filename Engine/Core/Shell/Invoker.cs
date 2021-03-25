@@ -95,12 +95,26 @@ namespace Fusion.Core.Shell {
 		/// Removes command from command registry
 		/// </summary>
 		/// <param name="commandName"></param>
-		public void UnregisterCommand ( string commandName )
+		public void UnregisterCommand ( string commandNamePattern )
 		{
-			lock (lockObject) {
-				if (!commandsRegistry.Remove( commandName )) {
-					Log.Warning("Command '{0}' is not registered", commandName );
+			lock (lockObject) 
+			{
+				int counter = 0;
+
+				var toRemove = commandsRegistry
+								.Select( pair => pair.Key )
+								.Where( name => Wildcard.Match(name, commandNamePattern) )
+								.ToArray();	
+
+				foreach ( var name in toRemove )
+				{
+					if (commandsRegistry.Remove( name )) 
+					{
+						counter++;
+					}
 				}
+
+				Log.Message("UnregisterCommand : {0} commands", counter);
 			}
 		}
 

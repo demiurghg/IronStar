@@ -22,7 +22,8 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		class ScreenshotCmd : CommandNoHistory {
+		class ScreenshotCmd : ICommand 
+		{
 			readonly RenderSystem rs;
 
 			public ScreenshotCmd ( RenderSystem rs ) 
@@ -30,7 +31,7 @@ namespace Fusion.Engine.Graphics {
 				this.rs = rs;
 			}
 
-			public override object Execute()
+			public object Execute()
 			{
 				rs.Screenshot(null);
 
@@ -39,14 +40,16 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		class VTRestartCmd : CommandNoHistory {
+		class VTRestartCmd : ICommand 
+		{
 			readonly RenderSystem rs;
 			
-			public VTRestartCmd ( RenderSystem rs ) {
+			public VTRestartCmd ( RenderSystem rs ) 
+			{
 				this.rs = rs;
 			}
 			
-			public override object Execute()
+			public object Execute()
 			{
 				rs.RenderWorld.VirtualTexture = null;
 				rs.RenderWorld.VirtualTexture = rs.Game.Content.Load<VirtualTexture>("*megatexture");

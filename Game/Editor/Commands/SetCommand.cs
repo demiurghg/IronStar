@@ -10,7 +10,7 @@ using Fusion.Core.Extensions;
 
 namespace IronStar.Editor.Commands
 {
-	public class SetCommand : BaseCommand
+	public class SetCommand : BaseCommand, IUndoable
 	{
 		class RollbackInfo
 		{
@@ -35,7 +35,7 @@ namespace IronStar.Editor.Commands
 		}
 
 
-		public override object Execute()
+		public virtual object Execute()
 		{
 			foreach ( var ri in rollbackInfo )
 			{
@@ -46,7 +46,7 @@ namespace IronStar.Editor.Commands
 		}
 
 		
-		public override void Rollback()
+		public virtual void Rollback()
 		{
 			foreach ( var ri in rollbackInfo )
 			{

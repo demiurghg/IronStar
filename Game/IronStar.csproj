@@ -163,6 +163,9 @@
     <Compile Include="ECS\Collections\SystemCollection.cs" />
     <Compile Include="ECS\Static.cs" />
     <Compile Include="ECS\Velocity.cs" />
+    <Compile Include="Editor\Commands\EditorSaveAs.cs" />
+    <Compile Include="Editor\Commands\EditorSave.cs" />
+    <Compile Include="Editor\Commands\EditorPrefabCommand.cs" />
     <Compile Include="Editor\Commands\BakeCommand.cs" />
     <Compile Include="Editor\Commands\BaseCommand.cs" />
     <Compile Include="Editor\Commands\DuplicateSelected.cs" />

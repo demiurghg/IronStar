@@ -13,8 +13,10 @@ using Fusion.Core.Shell;
 using Fusion.Core.Extensions;
 using Fusion.Widgets.Advanced;
 
-namespace IronStar.Mapping {
-	public class MapEntity : MapNode {
+namespace IronStar.Mapping 
+{
+	public class MapEntity : MapNode 
+	{
 
 		/// <summary>
 		/// Entity target name

@@ -59,9 +59,10 @@ namespace Fusion.Engine.Frames.Layouts {
 		/// <param name="height"></param>
 		/// <param name="width"></param>
 		#warning consider zero size as size of the child frame
-		public void AddRow ( float height, params float[] width )
+		public PageLayout AddRow ( float height, params float[] width )
 		{
 			rows.Add( new Row() { Height = height, Width = width.ToArray() } );
+			return this;
 		}
 
 

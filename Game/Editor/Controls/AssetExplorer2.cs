@@ -15,9 +15,10 @@ using Fusion.Build;
 using Fusion.Widgets;
 using Fusion.Widgets.Advanced;
 
-namespace IronStar.Editor.Controls {
-	public class AssetExplorer2 : Panel {
-
+namespace IronStar.Editor.Controls 
+{
+	public class AssetExplorer2 : Panel 
+	{
 		Type[] types;
 		readonly FileListBox fileList;
 		readonly Panel toolPanel;
@@ -38,7 +39,7 @@ namespace IronStar.Editor.Controls {
 
 			pageLayout.AddRow(  17, new[] { -1f } );
 			pageLayout.AddRow(  29, new[] { -1f } );
-			pageLayout.AddRow( -1f, new[] { 0.5f, 0.5f } );
+			pageLayout.AddRow( -1f, new[] { 0.4f, 0.6f } );
 			pageLayout.AddRow(  25, new[] { -1f, -1f, -1f, -1f, -1f, -1f } );
 			pageLayout.AddRow(	17, new[] { -1f } );
 
@@ -103,9 +104,9 @@ namespace IronStar.Editor.Controls {
 			//------------------------
 
 			fileList.DoubleClick += (s,e) => {
-				/*if (fileList.SelectedItem!=null && fileList.SelectedItem.IsDirectory) {
+				if (fileList.SelectedItem!=null && fileList.SelectedItem.IsDirectory) {
 					fileList.CurrentDirectory = fileList.SelectedItem.FullPath;
-				} */
+				}
 			};
 
 			fileList.SelectedItemChanged += FileList_SelectedItemChanged;
@@ -215,15 +216,19 @@ namespace IronStar.Editor.Controls {
 		/// <param name="e"></param>
 		private void FileList_SelectedItemChanged(object sender, EventArgs e)
 		{
-			try {
+			try 
+			{
 				//labelPath.Text = fileList.CurrentDirectory;
-				if (fileList.SelectedItem==null) {
+				if (fileList.SelectedItem==null) 
+				{
 					return;
 				}
-				if (!fileList.SelectedItem.IsDirectory) {
+				if (!fileList.SelectedItem.IsDirectory) 
+				{
 					targetFileName	=	fileList.SelectedItem.FullPath;
 
-					using (var stream = File.OpenRead(targetFileName)) {
+					using (var stream = File.OpenRead(targetFileName)) 
+					{
 						targetObject = JsonUtils.ImportJson(stream);
 					}
 
@@ -231,7 +236,9 @@ namespace IronStar.Editor.Controls {
 
 					grid.TargetObject = targetObject;
 				}
-			} catch ( Exception err ) {
+			} 
+			catch ( Exception err ) 
+			{
 				labelName.Text = "...";
 				targetFileName	=	null;
 				targetObject	=	null;
@@ -248,14 +255,16 @@ namespace IronStar.Editor.Controls {
 		{
 			var item = fileList.SelectedItem;
 
-			if (item.IsDirectory) {
+			if (item.IsDirectory) 
+			{
 				MessageBox.ShowError(Parent, "Could not delete directory", null);
 				return;
 			}
 
 			MessageBox.ShowQuestion(Parent, 
 				string.Format("Delete file {0}?", item.RelativePath), 
-				()=> {
+				()=> 
+				{
 					File.Delete(item.FullPath); 
 					fileList.RefreshFileList();
 					grid.TargetObject = null;
@@ -273,7 +282,8 @@ namespace IronStar.Editor.Controls {
 		{
 			var item = fileList.SelectedItem;
 
-			if (item.IsDirectory) {
+			if (item.IsDirectory) 
+			{
 				MessageBox.ShowError(Parent, "Could not rename directory", null);
 				return;
 			}
@@ -293,15 +303,21 @@ namespace IronStar.Editor.Controls {
 			var frames	=	owner.Frames;
 
 			var panel	=	new Panel( frames, 0,0, 300, 200 );
-			var listBox	=	new ListBox( frames, types, t => (t as Type).Name )		{ X = 2, Y = 2, Width = 300-4, Height = 200-22-14 };
-			var textBox	=	new TextBox( frames, null )	{ X = 2, Y = 200-22-11, Width=300-4, Height=10 };
+			var layout	=	new PageLayout();
+				layout.AddRow(-1,-1);
+				layout.AddRow(17,-1);
+				layout.AddRow(23,-1,-1,-1);
+			panel.Layout = layout;
+
+			var listBox	=	new ListBox( frames, types, t => (t as Type).Name );
+			var textBox	=	new TextBox( frames, null );
 				textBox.TextAlignment	=	Alignment.MiddleLeft;
 
 			panel.Add( listBox );
 			panel.Add( textBox );
 
-			panel.Add( new Button(frames, "Cancel", 300- 80-2, 200-22, 80, 20, () => panel.Close() ) );
-			panel.Add( new Button(frames, "OK",     300-160-4, 200-22, 80, 20, 
+			panel.Add( Frame.CreateEmptyFrame(owner.Frames) );
+			panel.Add( new Button(frames, "OK",     0,0,0,0, 
 				() => 
 				{
 					var type = listBox.SelectedItem as Type;
@@ -331,8 +347,10 @@ namespace IronStar.Editor.Controls {
 					panel.Close();
 				}
 			));
+			panel.Add( new Button(frames, "Cancel", 0,0,0,0, () => panel.Close() ) );
 
-			panel.Missclick += (s,e) => {
+			panel.Missclick += (s,e) => 
+			{
 				panel.Close();
 			};
 

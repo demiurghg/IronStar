@@ -1,0 +1,23 @@
+{
+  "$id": "1",
+  "$type": "IronStar.Gameplay.DataAssets.WeaponConfig, IronStar",
+  "TimeWarmup": "00:00:00",
+  "TimeCooldown": "00:00:00",
+  "TimeOverheat": "00:00:00",
+  "TimeReload": "00:00:00",
+  "TimeDrop": "00:00:00.3500000",
+  "TimeRaise": "00:00:00.3500000",
+  "TimeNoAmmo": "00:00:00.2500000",
+  "BeamHitFX": null,
+  "BeamTrailFX": null,
+  "MuzzleFX": null,
+  "ProjectileClass": null,
+  "ProjectileCount": 1,
+  "Damage": 0,
+  "Impulse": 0.0,
+  "MaxSpread": 0.0,
+  "SpreadMode": "const",
+  "Spread": 0.0,
+  "AmmoClass": "",
+  "AmmoConsumption": 1
+}

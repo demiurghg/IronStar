@@ -54,7 +54,8 @@ namespace IronStar.Editor.Controls
 		Shelf	lowerShelf;
 		MapEditor editor;
 		AEPropertyGrid grid;
-		ScrollBox	gridScrollBox;
+		Panel	gridPanel;
+		Label	gridLabel;
 
 		public ITool manipulator;
 
@@ -245,35 +246,51 @@ namespace IronStar.Editor.Controls
 		{
 			if (grid==null) 
 			{
-				gridScrollBox = new ScrollBox( Frames, Width - 320, 40, 320, Height - 40-40 ) 
+				gridPanel			=	new Panel( Frames, Width - 320, 40, 320, Height - 40 - 40 );
+				gridPanel.Anchor	=	FrameAnchor.Top | FrameAnchor.Bottom | FrameAnchor.Right;
+				gridPanel.Margin	=	3;
+
+				gridPanel.Layout	=	new PageLayout()
+									.AddRow( 20, -1 )
+									.AddRow( -1, -1 )
+									.AddRow( 20, 0.5f, 0.5f )
+									;
+
+				gridLabel	=	new Label( Frames, 0,0,0,0, "Property Grid");
+				gridLabel.TextAlignment = Alignment.MiddleLeft;
+				gridLabel.Padding	= 3;
+
+				var scrollBox = new ScrollBox( Frames, 0,0,0,0 ) 
 				{
 					BorderColor = ColorTheme.BorderColor,
 					Border		= 1,
 				};
 
-				gridScrollBox.Anchor	=	FrameAnchor.Top | FrameAnchor.Bottom | FrameAnchor.Right;
-
-				gridScrollBox.ScrollMarkerSize = 5;
+				scrollBox.ScrollMarkerSize = 5;
 
 				grid = new AEPropertyGrid(Frames);
 
 				grid.Width	=	300;
 				grid.Height	=	500;
 
-				grid.X		=	Width - 300 - 10;
-				grid.Y		=	40 + 10;
+				scrollBox.Add( grid );
 
-				//grid.Anchor	=	FrameAnchor.Top | FrameAnchor.Right;
+				gridPanel.Add( gridLabel );
+				gridPanel.Add( scrollBox );
 
-				Add( gridScrollBox );
-				gridScrollBox.Add( grid );
+				gridPanel.Add( new Button(Frames, "<", 0,0,0,0, () => { gridPanel.Width = gridPanel.Width + 20; gridPanel.X = gridPanel.X - 20; } ) );
+				gridPanel.Add( new Button(Frames, ">", 0,0,0,0, () => { gridPanel.Width = gridPanel.Width - 20; gridPanel.X = gridPanel.X + 20; } ) );
+
+				Add( gridPanel );
 			}
 
-			gridScrollBox.Visible = (target!=null);
+			gridPanel.Visible = (target!=null);
 
 			grid.Frames.TargetFrame = grid;
 
 			grid.TargetObject = target;
+
+			gridLabel.Text = target?.ToString() ?? "null";
 		}
 
 

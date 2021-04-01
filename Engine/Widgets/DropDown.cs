@@ -60,7 +60,7 @@ namespace Fusion.Widgets {
 		}
 
 
-		public override int Width 
+		/*public override int Width 
 		{
 			get 
 			{
@@ -83,7 +83,7 @@ namespace Fusion.Widgets {
 			set {
 				base.Height = ComputeHeight();
 			}
-		}
+		}*/
 
 
 		Frame CreateDropDownList ( int minWidth, out int minDropDownWidth )

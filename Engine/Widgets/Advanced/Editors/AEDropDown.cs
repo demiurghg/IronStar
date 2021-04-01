@@ -68,7 +68,7 @@ namespace Fusion.Widgets.Advanced
 
 			dropDown.X		=	Width/2;
 			dropDown.Width	=	Width/2;
-			dropDown.Height	=	10;
+			dropDown.Height	=	ComputeItemHeight();
 		}
 
 

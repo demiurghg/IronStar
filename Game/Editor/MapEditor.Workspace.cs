@@ -30,6 +30,7 @@ using Fusion.Engine.Frames.Layouts;
 using Fusion.Widgets.Advanced;
 using IronStar.Editor.Commands;
 using Fusion.Widgets.Binding;
+using IronStar.Gameplay.DataAssets;
 
 namespace IronStar.Editor 
 {
@@ -353,7 +354,7 @@ namespace IronStar.Editor
 			var types = new List<Type>();
 
 			var typeFX			=	new[] { typeof(FXFactory) };
-			var typeEntities	=	Misc.GetAllSubclassesOf(typeof(EntityFactoryContent), true);
+			var typeEntities	=	Misc.GetAllSubclassesOf(typeof(DataAsset), true);
 			//var typeModels		=	Misc.GetAllSubclassesOf(typeof(ModelFactory), true);
 			//var typeItems		=	Misc.GetAllSubclassesOf(typeof(ItemFactory), true);
 			//var typeWeapon		=	Misc.GetAllSubclassesOf(typeof(Weapon), true);
@@ -361,8 +362,8 @@ namespace IronStar.Editor
 
 			var assetExplorer	=	new AssetExplorer2( parent, "fx", typeFX, 0,0, 500, 600 );
 
-			assetExplorer.AddToolButton( "FX"		,	() => assetExplorer.SetTargetClass( "fx"		, typeFX		) );
-			assetExplorer.AddToolButton( "Entities"	,	() => assetExplorer.SetTargetClass( "entities"	, typeEntities	) );
+			assetExplorer.AddToolButton( "FX"			,	() => assetExplorer.SetTargetClass( "fx"		, typeFX		) );
+			assetExplorer.AddToolButton( "Data Assets"	,	() => assetExplorer.SetTargetClass( "data"		, typeEntities	) );
 			//assetExplorer.AddToolButton( "Models"	,	() => assetExplorer.SetTargetClass( "models"	, typeModels	) );
 			//assetExplorer.AddToolButton( "Items"	,	() => assetExplorer.SetTargetClass( "items"		, typeItems		) );
 			//assetExplorer.AddToolButton( "Animation",	() => assetExplorer.SetTargetClass( "animation"	, typeAnimation	) );

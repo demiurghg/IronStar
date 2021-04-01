@@ -202,6 +202,8 @@
     <Compile Include="Gameplay\Components\HealthComponent.cs" />
     <Compile Include="Gameplay\Components\InventoryComponent.cs" />
     <Compile Include="Gameplay\Components\PowerupComponent.cs" />
+    <Compile Include="Gameplay\DataAssets\DataAsset.cs" />
+    <Compile Include="Gameplay\DataAssets\WeaponConfig.cs" />
     <Compile Include="Gameplay\GameConfig.cs" />
     <Compile Include="Gameplay\PlayerInput.cs" />
     <Compile Include="ECSFactories\PlayerFactory.cs" />

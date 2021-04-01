@@ -60,6 +60,7 @@ namespace Fusion.Widgets
 
 		private void TextBox_Click(object sender, MouseEventArgs e)
 		{
+			EnterEdits();
 			SetCursorFromMouse();
 		}
 
@@ -341,10 +342,10 @@ namespace Fusion.Widgets
 
 		void ClearSelection ()
 		{
+			CheckSelection();
+
 			int start  = selectionLength > 0 ? selectionStart : selectionStart + selectionLength;
 			int length = Math.Abs( selectionLength );
-
-			CheckSelection();
 
 			base.Text = Text.Remove( start, length );
 

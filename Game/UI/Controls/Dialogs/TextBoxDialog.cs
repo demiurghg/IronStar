@@ -16,15 +16,14 @@ namespace IronStar.UI.Controls.Dialogs
 		{
 			AllowDrag			=	true;
 
-			var layout		=	new PageLayout();
-			layout.AddRow( MenuTheme.ElementHeight,		new float[] { -1 } );
-			layout.AddRow( -1,							new float[] { -1 } );
-			layout.AddRow( -1,							new float[] { -1 } );
-			layout.AddRow( MenuTheme.ElementHeight/2,	new float[] { -1 } );
-			layout.AddRow( MenuTheme.ElementHeight,		new float[] { 0.5f, 0.5f } );
-			layout.Margin	=	4;
-
-			Layout	=	layout;
+			Layout		=	new PageLayout()
+						.AddRow( MenuTheme.ElementHeight,		new float[] { -1 } )
+						.AddRow( -1,							new float[] { -1 } )
+						.AddRow( -1,							new float[] { -1 } )
+						.AddRow( MenuTheme.ElementHeight/2,	new float[] { -1 } )
+						.AddRow( MenuTheme.ElementHeight,		new float[] { 0.5f, 0.5f } )
+						.Margin( 4 )
+						;
 
 			//	Header :
 

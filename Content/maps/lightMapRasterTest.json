@@ -81,13 +81,13 @@
         "Frozen": false,
         "Translation": "0, 11, 0",
         "Scaling": "1, 1, 1",
-        "Rotation": "-0.495723516, -0.06526331, -0.113038965, 0.8586159",
+        "Rotation": "-0.4957237, -0.06526333, -0.11303895, 0.858615756",
         "TranslateX": 0.0,
         "TranslateY": 11.0,
         "TranslateZ": 0.0,
-        "RotateYaw": -8.537773E-06,
-        "RotatePitch": -60.00015,
-        "RotateRoll": -15.000001
+        "RotateYaw": -9.391558E-06,
+        "RotatePitch": -60.0001678,
+        "RotateRoll": -14.9999981
       },
       {
         "$id": "7",
@@ -162,7 +162,7 @@
         "Frozen": false,
         "Translation": "-0.7529106, 0.4881998, 0.005567449",
         "Scaling": "1, 1, 1",
-        "Rotation": "-0.006519352, -0.006521184, 0.7070755, 0.707078",
+        "Rotation": "-0.00651935162, -0.006521184, 0.7070755, 0.70707804",
         "TranslateX": -0.7529106,
         "TranslateY": 0.4881998,
         "TranslateZ": 0.005567449,
@@ -189,12 +189,12 @@
         "Frozen": false,
         "Translation": "-54.09184, 0, 16",
         "Scaling": "1, 1, 1",
-        "Rotation": "1.33226752E-15, 3.85670766E-08, -5.1381663E-23, 1",
+        "Rotation": "1.33226731E-15, 3.856707E-08, -5.13816473E-23, 1",
         "TranslateX": -54.09184,
         "TranslateY": 0.0,
         "TranslateZ": 16.0,
-        "RotateYaw": 4.419461E-06,
-        "RotatePitch": 1.526666E-13,
+        "RotateYaw": 4.41946031E-06,
+        "RotatePitch": 1.52666576E-13,
         "RotateRoll": 0.0
       },
       {

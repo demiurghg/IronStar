@@ -26,14 +26,13 @@ namespace IronStar.UI.Controls.Dialogs
 			panel.ImageColor		=	MenuTheme.ImageColor;
 			panel.ImageMode			=	FrameImageMode.Stretched;
 
-			var layout		=	new PageLayout();
-			layout.Margin	=	MenuTheme.Margin;
-			layout.AddRow( MenuTheme.ElementHeight, new float[] { -1 } );
-			layout.AddRow( MenuTheme.ElementHeight, new float[] { -1, -1, -1, -1 } );
-			layout.AddRow(						-1, new float[] { -1 } );
-			layout.AddRow( MenuTheme.ElementHeight, new float[] { -1, -1 } );
-
-			panel.Layout	=	layout;
+			panel.Layout	=	new PageLayout()
+					.Margin( MenuTheme.Margin )
+					.AddRow( MenuTheme.ElementHeight, new float[] { -1 } )
+					.AddRow( MenuTheme.ElementHeight, new float[] { -1, -1, -1, -1 } )
+					.AddRow(						-1, new float[] { -1 } )
+					.AddRow( MenuTheme.ElementHeight, new float[] { -1, -1 } )
+					;
 
 			//	Header :
 

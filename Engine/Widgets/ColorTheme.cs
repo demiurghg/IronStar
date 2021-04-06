@@ -36,7 +36,7 @@ namespace Fusion.Widgets
 		public static readonly Color	ScrollMarkerColor		=	new Color(120,120,120, 192);
 
 		public static readonly Color	HighlightColor			=	new Color(150,150,150, 32 );
-		public static readonly Color	FocusColor				=	new Color(255,216,114, 192);
+		public static readonly Color	FocusColor				=	new Color( 85, 85, 85, 192);
 		
 		public static readonly Color	TextColorNormal			=	new Color(210,210,210, 230);
 		public static readonly Color	TextColorHovered		=	new Color(230,230,230, 230);

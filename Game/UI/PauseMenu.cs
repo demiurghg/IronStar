@@ -28,18 +28,17 @@ namespace IronStar.UI {
 		{
 			BackColor	=	MenuTheme.BackColor;
 
-			var pageLayout		=	new PageLayout();
-			pageLayout.Margin	=	MenuTheme.Margin;
-			pageLayout.AddRow(  40f, new float[] { -1 } );
-			pageLayout.AddRow(  40f, new float[] { -1 } );
-			pageLayout.AddRow(  40f, new float[] { -1 } );
-			pageLayout.AddRow(  40f, new float[] { -1 } );
-			pageLayout.AddRow(  40f, new float[] { -1 } );
-			pageLayout.AddRow(  40f, new float[] { -1 } );
-			pageLayout.AddRow(  40f, new float[] { -1 } );
-			pageLayout.AddRow(  40f, new float[] { -1 } );
-
-			this.Layout	=	pageLayout;
+			Layout	=	new PageLayout()
+					.Margin(  MenuTheme.Margin )
+					.AddRow(  40f, new float[] { -1 } )
+					.AddRow(  40f, new float[] { -1 } )
+					.AddRow(  40f, new float[] { -1 } )
+					.AddRow(  40f, new float[] { -1 } )
+					.AddRow(  40f, new float[] { -1 } )
+					.AddRow(  40f, new float[] { -1 } )
+					.AddRow(  40f, new float[] { -1 } )
+					.AddRow(  40f, new float[] { -1 } )
+					;
 
 			//	create menu :
 

@@ -203,7 +203,6 @@
     <Compile Include="Gameplay\Components\InventoryComponent.cs" />
     <Compile Include="Gameplay\Components\PowerupComponent.cs" />
     <Compile Include="Gameplay\DataAssets\DataAsset.cs" />
-    <Compile Include="Gameplay\DataAssets\WeaponConfig.cs" />
     <Compile Include="Gameplay\GameConfig.cs" />
     <Compile Include="Gameplay\PlayerInput.cs" />
     <Compile Include="ECSFactories\PlayerFactory.cs" />
@@ -235,6 +234,7 @@
     <Compile Include="ECSPhysics\GravityComponent.cs" />
     <Compile Include="ECSPhysics\StaticCollisionComponent.cs" />
     <Compile Include="Mapping\MapLightVolume.cs" />
+    <Compile Include="Mapping\MapPrefab.cs" />
     <Compile Include="Mathematics\Intersection.cs" />
     <Compile Include="Monsters\Systems\MonsterAnimator.Locomotion.cs" />
     <Compile Include="Monsters\Systems\MonsterAnimator.cs" />

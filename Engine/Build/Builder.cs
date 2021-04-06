@@ -229,6 +229,15 @@ namespace Fusion.Build {
 		}
 
 
+		public Stream OpenSourceFile( string nameExt )
+		{
+			var basePath	=	GetBaseInputDirectory();
+			var filePath	=	Path.Combine( basePath, nameExt );
+
+			return File.OpenRead(filePath);
+		}
+
+
 		public void CreateJsonFile( Type type, string dir, string nameExt )
 		{
 			using ( var file = CreateSourceFile( dir, nameExt ) )

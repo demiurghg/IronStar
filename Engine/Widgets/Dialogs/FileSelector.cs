@@ -15,31 +15,44 @@ using Fusion.Build;
 using Fusion.Core.Content;
 using Fusion.Engine.Frames.Layouts;
 
-namespace Fusion.Widgets.Dialogs {
-
-	static public class FileSelector {
-
+namespace Fusion.Widgets.Dialogs 
+{
+	static public class FileSelector 
+	{
 		const int DialogWidth	= 560 + 4 + 4 + 4;
 		const int DialogHeight	= 480 + 2 + 2 + 14 + 2 + 20 + 2;
 
-
-		static public void ShowDialog ( FrameProcessor fp, string defaultDir, string searchPattern, string oldFileName, Action<string> setFileName )
+		enum Mode
 		{
-			var fileSelector	=	new FileSelectorFrame( fp, defaultDir, searchPattern, oldFileName, setFileName );
-
-			fp.ShowDialogCentered( fileSelector );
-
-			//fp.PushModalFrame( fileSelector );
-			//fileSelector.CenterFrame();
+			Open,
+			Save,
 		}
 
 
-		class ListItem {
+		static public void ShowDialog ( FrameProcessor fp, string defaultDir, string searchPattern, string oldFileName, Action<string> commitAction )
+		{
+			var fileSelector	=	new FileSelectorFrame( fp, Mode.Open, defaultDir, searchPattern, oldFileName, commitAction );
+
+			fp.ShowDialogCentered( fileSelector );
+		}
+
+
+		static public void ShowSaveDialog ( FrameProcessor fp, string defaultDir, string searchPattern, string oldFileName, Action<string> commitAction )
+		{
+			var fileSelector	=	new FileSelectorFrame( fp, Mode.Save, defaultDir, searchPattern, oldFileName, commitAction );
+
+			fp.ShowDialogCentered( fileSelector );
+		}
+
+
+		class ListItem 
+		{
 			public readonly bool IsDirectory;
 			public readonly string Name;
 			public readonly string DisplayName;
 
-			string SizeToString ( long size ) {
+			string SizeToString ( long size ) 
+			{
 				if (size<1024) return size.ToString() + "   ";
 				if (size<1024*1024) return (size/1024).ToString() + " Kb";
 				return (size/1024/1024).ToString() + " Mb";
@@ -66,51 +79,51 @@ namespace Fusion.Widgets.Dialogs {
 
 
 
-		class FileSelectorFrame : Panel {
-
-			readonly Action<string> setFileName;
+		class FileSelectorFrame : Panel 
+		{
+			readonly Action<string> commitAction;
+			readonly Mode mode;
 
 			Label		labelDir;
 			//ScrollBox	scrollBox;
 			Button		buttonAccept;
 			Button		buttonHome;
-			Button		buttonPreview;
 			Button		buttonClose;
 			FileListBox	fileListBox;
+			TextBox		fileTextBox;
 
 			Frame		previewFrame;
 
 
 
-			public FileSelectorFrame ( FrameProcessor fp, string defaultDir, string searchPattern, string oldFileName, Action<string> setFileName ) 
+			public FileSelectorFrame ( FrameProcessor fp, Mode mode, string defaultDir, string searchPattern, string oldFileName, Action<string> setFileName ) 
 			: base ( fp, 0,0, DialogWidth, DialogHeight )
 			{
-				this.setFileName	=	setFileName;
+				this.commitAction	=	setFileName;
+				this.mode			=	mode;
 
 				AllowDrag			=	true;
 				AllowResize			=	true;
 
-				var	pageLayout		=	new PageLayout();
-
-				pageLayout.AddRow(  17, new[] { -1f } );
-				pageLayout.AddRow( -1f, new[] { -1f } );
-				pageLayout.AddRow(  25, new[] { -1f, -1f, -1f, -1f } );
-				pageLayout.AddRow(	17, new[] { -1f } );
-
-				Layout			=	pageLayout;
+				Layout	=	new PageLayout()
+						.AddRow(  17, new[] { -1f } )
+						.AddRow( -1f, new[] { -1f } )
+						.AddRow(  18, new[] { -1f } )
+						.AddRow(  25, new[] { 80, -1f, 80, 80 } )
+						.AddRow(  17, new[] { -1f } )
+						.Margin(2)
+						;
 
 				labelDir			=	new Label( fp, 2, 3, DialogWidth - 4, 15, "" );
 
-				buttonAccept		=	new Button( fp, "Accept",	DialogWidth - 120 - 2, DialogHeight - 2 - 25, 120, 15, ()=>Accept() );
-				buttonHome			=	new Button( fp, "Home",		DialogWidth - 240 - 4, DialogHeight - 2 - 25, 120, 15, ()=>Home() );
-				buttonPreview		=	new Button( fp, "Preview",  DialogWidth - 360 - 6, DialogHeight - 2 - 25, 120, 15, ()=>Preview() );
-				buttonClose			=	new Button( fp, "Close",	2,                     DialogHeight - 2 - 20, 120,   15, ()=>Close() );
+				fileTextBox			=	new TextBox( fp );
+				fileTextBox.CommitEditsOnDeactivation = true;
+
+				buttonAccept		=	new Button( fp, mode.ToString(),	0,0,0,0, ()=>Accept() );
+				buttonHome			=	new Button( fp, "Home",				0,0,0,0, ()=>Home() );
+				buttonClose			=	new Button( fp, "Cancel",			0,0,0,0, ()=>Close() );
 
 				fileListBox			=	new FileListBox( fp, defaultDir, searchPattern );
-				fileListBox.X		=	2;
-				fileListBox.Y		=	14;
-				fileListBox.Width	=	560+4+4;
-				fileListBox.Height	=	480+4;
 
 				fileListBox.IsDoubleClickEnabled = true;
 				fileListBox.DoubleClick += FileListBox_DoubleClick;
@@ -121,23 +134,31 @@ namespace Fusion.Widgets.Dialogs {
 				Add( labelDir );
 				Add( fileListBox );
 
-				Add( buttonAccept );
+				Add( fileTextBox );
+
 				Add( buttonHome );
-				Add( buttonPreview );
+				Add( CreateEmptyFrame(fp) );
+				Add( buttonAccept );
 				Add( buttonClose );
 
 				Missclick += FileSelectorFrame_Missclick;
 				Closed += FileSelectorFrame_Closed;
 			}
 
+			
 			private void FileSelectorFrame_Closed( object sender, EventArgs e )
 			{
-				ClosePreview();
 			}
 
+			
 			private void FileListBox_SelectedItemChanged( object sender, EventArgs e )
 			{
-				Preview();
+				var selectedItem = fileListBox.SelectedItem;
+
+				if (selectedItem!=null && !selectedItem.IsDirectory) 
+				{
+					fileTextBox.Text = selectedItem.FileName;
+				}
 			}
 
 			
@@ -153,96 +174,61 @@ namespace Fusion.Widgets.Dialogs {
 			}
 
 
-			public void Preview ()
-			{
-				var selectedItem = fileListBox.SelectedItem;
-				var content = Frames.Game.Content;
-
-				ClosePreview();
-
-				if (selectedItem==null || selectedItem.IsDirectory) {
-					return;
-				}
-
-				var ext		= Path.GetExtension( selectedItem.RelativePath );
-				var relName = selectedItem.RelativePath;
-				var path	= ContentUtils.GetPathWithoutExtension( relName );
-				var name	= Path.GetFileName(path);
-
-				if (ext==".tga"	|| ext==".png" || ext==".jpg") {
-
-					Log.Message("File selector preview : {0}", path );
-					
-					try {
-						var image = content.Load<DiscTexture>(path);	
-
-						var label = string.Format("{0}\r{1}x{2}", name, image.Width, image.Height );
-
-						var w = image.Width;
-						var h = image.Height;
-
-						while (w>320 || h>320) {
-							w /= 2;
-							h /= 2;
-						}
-
-						while (Math.Max(w,h)<128) {
-							w *= 2;
-							h *= 2;
-						}
-
-						var fw = w + 4 + 2;
-						var fh = h + 4 + 2 + 17;
-
-						previewFrame = new Frame( Frames, 50,50, fw, fh, label, Color.Black );
-						previewFrame.X				= this.X - fw - 5;
-						previewFrame.Y				= this.Y;
-						previewFrame.Padding		= 2;
-						previewFrame.Border			= 1;
-						previewFrame.BorderColor	= ColorTheme.BorderColorLight;
-						previewFrame.BackColor		= ColorTheme.BackgroundColorDark;
-						previewFrame.ForeColor		= ColorTheme.TextColorNormal;
-						previewFrame.TextAlignment	= Alignment.BottomCenter;
-						previewFrame.ShadowColor	= ColorTheme.ShadowColor;
-						previewFrame.ShadowOffset	= new Vector2(1,1);
-						previewFrame.Image			= image;
-						previewFrame.ImageMode		= FrameImageMode.Manual;
-						previewFrame.ImageDstRect	= new Rectangle(3,3,w,h);
-						previewFrame.ImageSrcRect	= new Rectangle(0,0,image.Width,image.Height);
-						previewFrame.ImageColor		= Color.White;
-
-						Frames.RootFrame.Add( previewFrame );
-
-					} catch ( Exception e ) {
-						Log.Warning("{0}", e.Message);
-					}
-				}
-			}
-
-
 			public void Accept()
 			{
 				var selectedItem = fileListBox.SelectedItem;
 
-				if (selectedItem==null) {
+				if (selectedItem==null) 
+				{
 					return;
 				}
 
-				if (selectedItem.IsDirectory) {
+				if (selectedItem.IsDirectory) 
+				{
 					fileListBox.CurrentDirectory = selectedItem.FullPath;
-				} else {
-					setFileName( selectedItem.RelativePath );
+				}
+				else 
+				{
+					string relativePath	= selectedItem.RelativePath;
+					string fullPath		= selectedItem.FullPath;
+
+					if (!string.IsNullOrWhiteSpace(fileTextBox.Text) && fileTextBox.Text!=selectedItem.FileName)
+					{
+						relativePath	= Path.Combine( fileListBox.CurrentDirectoryRelativePath, fileTextBox.Text );
+						fullPath		= Path.Combine( fileListBox.CurrentDirectory			, fileTextBox.Text );
+					}
+
+					var fileExists = File.Exists( fullPath );
+
+					if (mode==Mode.Open && !fileExists)
+					{
+						MessageBox.ShowError(Frames, 
+							string.Format("File {0} does not exist", relativePath), 
+							null 
+						);
+						return;
+					}
+
+					if (mode==Mode.Save && fileExists)
+					{
+						MessageBox.ShowQuestion(Frames, 
+							string.Format("File {0} already exists. Overwrite?", relativePath), 
+							() => { 
+								commitAction(relativePath); 
+								Close(); 
+							}, 
+							null 
+						);
+						return;
+					}
+
+					commitAction( relativePath );
 					Close();
 				}
 			}
 
 
-			void ClosePreview ()
-			{
-				if (previewFrame!=null) {
-					Frames.RootFrame.Remove( previewFrame );
-				}
-			}
+
 
 
 			private void FileSelectorFrame_Missclick( object sender, EventArgs e )

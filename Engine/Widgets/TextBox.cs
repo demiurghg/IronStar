@@ -25,6 +25,8 @@ namespace Fusion.Widgets
 
 		bool editingMode = false;
 
+		public bool CommitEditsOnDeactivation = false;
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -77,7 +79,15 @@ namespace Fusion.Widgets
 
 		private void TextBox_Deactivated( object sender, EventArgs e )
 		{
-			CancelEdits();
+			if (CommitEditsOnDeactivation)
+			{
+				CommitEdits();
+			}
+			else
+			{
+				CancelEdits();
+			}
+
 			BorderColor	=	ColorTheme.BorderColor;
 		}
 
@@ -276,6 +286,7 @@ namespace Fusion.Widgets
 
 			set {
 				base.Text  = value;
+				binding.SetValue( value, ValueSetMode.Default );
 				ResetSelection();
 			}
 		}

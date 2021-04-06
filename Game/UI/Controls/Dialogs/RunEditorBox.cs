@@ -23,13 +23,12 @@ namespace IronStar.UI.Controls.Dialogs {
 
 		public RunEditorBox ( FrameProcessor frames ) : base(frames, 0,0,900-64,600-4)
 		{
-			var layout		=	new PageLayout();
-			layout.Margin	=	MenuTheme.Margin;
-			layout.AddRow( MenuTheme.ElementHeight, new float[] { -1 } );
-			layout.AddRow(						-1, new float[] { -1 } );
-			layout.AddRow( MenuTheme.ElementHeight, new float[] { -1,-1,-1 } );
-
-			this.Layout	=	layout;
+			Layout	=	new PageLayout()
+					.Margin( MenuTheme.Margin )
+					.AddRow( MenuTheme.ElementHeight, new float[] { -1 } )
+					.AddRow(                      -1, new float[] { -1 } )
+					.AddRow( MenuTheme.ElementHeight, new float[] { -1,-1,-1 } )
+					;
 
 			//	Header :
 

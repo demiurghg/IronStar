@@ -42,8 +42,8 @@ namespace Fusion.Widgets {
 
 			StatusChanged	+=	Button_StatusChanged;
 			Click			+=	Button_Click;
-			Activated		+=  (s,e) => BorderColor = ColorTheme.FocusColor;
-			Deactivated		+=  (s,e) => BorderColor = ColorTheme.ButtonBorderColor;
+			//Activated		+=  (s,e) => BorderColor = ColorTheme.FocusColor;
+			//Deactivated		+=  (s,e) => BorderColor = ColorTheme.ButtonBorderColor;
 		}
 
 

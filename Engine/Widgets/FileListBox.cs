@@ -30,6 +30,7 @@ namespace Fusion.Widgets
 			public readonly string FullPath;
 			public readonly string DisplayName;
 			public readonly string RelativePath;
+			public readonly string FileName;
 
 			string SizeToString( long size )
 			{
@@ -43,6 +44,7 @@ namespace Fusion.Widgets
 				FullPath		=   fullPath;
 				IsDirectory		=   dir;
 				RelativePath	=	ContentUtils.MakeRelativePath( Path.GetFullPath(flb.ContentDirectory) + "\\", fullPath );
+				FileName		=	Path.GetFileName(fullPath);
 
 				switch (displayMode) {
 					case FileDisplayMode.Full: 				
@@ -113,6 +115,15 @@ namespace Fusion.Widgets
 		}
 
 
+		public string CurrentDirectoryRelativePath
+		{
+			get
+			{
+				return ContentUtils.MakeRelativePath( ContentDirectory + "\\", CurrentDirectory );
+			}
+		}
+
+
 		FileDisplayMode fileDisplayMode = FileDisplayMode.Full;
 
 		public FileDisplayMode DisplayMode {
@@ -173,7 +184,8 @@ namespace Fusion.Widgets
 			//	add top level directory (if exists) :
 			var parentDir = Directory.GetParent( currentDir )?.FullName;
 
-			if (parentDir!=null) {
+			if (parentDir!=null) 
+			{
 				itemList.Add( new FileListItem(this, fileDisplayMode, parentDir, true, "..") );
 			}
 
@@ -188,7 +200,8 @@ namespace Fusion.Widgets
 			//	add files for each pattern :
 			var fileList = new List<string>();
 				
-			foreach (var pattern in searchPatterns) {
+			foreach (var pattern in searchPatterns) 
+			{
 				var files = Directory
 					.EnumerateFiles( currentDir, pattern, SearchOption.TopDirectoryOnly )
 					.ToList();

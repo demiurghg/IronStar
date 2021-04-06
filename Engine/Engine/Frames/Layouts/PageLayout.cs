@@ -26,12 +26,6 @@ namespace Fusion.Engine.Frames.Layouts {
 		}
 
 
-		public int Margin 
-		{
-			get { return gap; }
-			set { gap = value; }
-		}
-
 		int gap = 1;
 
 		struct Row {
@@ -65,6 +59,12 @@ namespace Fusion.Engine.Frames.Layouts {
 			return this;
 		}
 
+
+		public PageLayout Margin( int margin )
+		{
+			gap = margin;
+			return this;
+		}
 
 
 		/// <summary>

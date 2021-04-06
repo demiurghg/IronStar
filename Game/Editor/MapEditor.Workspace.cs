@@ -295,6 +295,7 @@ namespace IronStar.Editor
 			var entityTypes	=	Misc.GetAllSubclassesOf( typeof(EntityFactoryContent), false );
 
 			palette.AddButton( "Static Model"			,	() => CreateNodeUI( new MapModel			() ) );
+			palette.AddButton( "Prefab		"			,	() => CreateNodeUI( new MapPrefab			() ) );
 			palette.AddButton( "Decal"					,	() => CreateNodeUI( new MapDecal			() ) );
 			palette.AddButton( "Light Probe (Spherical)",	() => CreateNodeUI( new MapLightProbeSphere	() ) );
 			palette.AddButton( "Light Probe (Box)"		,	() => CreateNodeUI( new MapLightProbeBox	() ) );

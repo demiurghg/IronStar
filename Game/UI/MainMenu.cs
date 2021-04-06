@@ -47,13 +47,11 @@ namespace IronStar.UI {
 			ContextActivated	+=	(s,e) => { OverallColor = Color.White; Log.Message("Main Menu: Activated"); };
 			ContextDeactivated	+=	(s,e) => { OverallColor = Color.Gray;  Log.Message("Main Menu: Deactivated"); };
 
-			var pageLayout		=	new PageLayout();
-			pageLayout.Margin	=	0;
-			pageLayout.AddRow(  0.5f, new float[] {  -1			} );
-			pageLayout.AddRow( -1.0f, new float[] { 320, -1		} );
-			pageLayout.AddRow( 80.0f, new float[] {  -1, -1, -1	} );
-
-			this.Layout	=	pageLayout;
+			Layout	=	new PageLayout()
+					.AddRow(  0.5f, new float[] {  -1			} )
+					.AddRow( -1.0f, new float[] { 320, -1		} )
+					.AddRow( 80.0f, new float[] {  -1, -1, -1	} )
+					;
 
 			//	create menu :
 

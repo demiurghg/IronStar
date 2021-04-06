@@ -257,11 +257,11 @@ namespace IronStar.Editor.Controls
 
 			if (item.IsDirectory) 
 			{
-				MessageBox.ShowError(Parent, "Could not delete directory", null);
+				MessageBox.ShowError(Frames, "Could not delete directory", null);
 				return;
 			}
 
-			MessageBox.ShowQuestion(Parent, 
+			MessageBox.ShowQuestion(Frames, 
 				string.Format("Delete file {0}?", item.RelativePath), 
 				()=> 
 				{
@@ -284,7 +284,7 @@ namespace IronStar.Editor.Controls
 
 			if (item.IsDirectory) 
 			{
-				MessageBox.ShowError(Parent, "Could not rename directory", null);
+				MessageBox.ShowError(Frames, "Could not rename directory", null);
 				return;
 			}
 
@@ -324,13 +324,13 @@ namespace IronStar.Editor.Controls
 
 					if (type==null) 
 					{
-						MessageBox.ShowError(owner, "Select asset type", null);
+						MessageBox.ShowError(Frames, "Select asset type", null);
 						return;
 					}
 					
 					if (string.IsNullOrWhiteSpace(textBox.Text)) 
 					{
-						MessageBox.ShowError(owner, "Provide asset name", null);
+						MessageBox.ShowError(Frames, "Provide asset name", null);
 						return;
 					}
 					

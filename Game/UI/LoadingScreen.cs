@@ -70,13 +70,12 @@ namespace IronStar.UI {
 			Width	=	frames.RootFrame.Width;
 			Height	=	frames.RootFrame.Height;
 			
-			var pageLayout		=	new PageLayout();
-			pageLayout.Margin	=	0;
-			pageLayout.AddRow(  120f, new float[] { -1, -1 } );
-			pageLayout.AddRow( -1.0f, new float[] { -1 } );
-			pageLayout.AddRow(  120f, new float[] { -1 } );
-
-			this.Layout	=	pageLayout;
+			Layout	=	new PageLayout()
+					.Margin( 0 )
+					.AddRow(  120f, new float[] { -1, -1 } )
+					.AddRow( -1.0f, new float[] { -1 } )
+					.AddRow(  120f, new float[] { -1 } )
+					;
 
 			this.TypeWrite +=LoadingScreen_TypeWrite;
 

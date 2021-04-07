@@ -760,7 +760,9 @@
     <Compile Include="Widgets\Dialogs\AtlasSelector.cs" />
     <Compile Include="Widgets\Dialogs\ColorPicker.ColorField.cs" />
     <Compile Include="Widgets\Dialogs\ColorPicker.cs" />
-    <Compile Include="Widgets\Dialogs\FileSelector.cs" />
+    <Compile Include="Widgets\Dialogs\SaveFileDialog.cs" />
+    <Compile Include="Widgets\Dialogs\OpenFileDialog.cs" />
+    <Compile Include="Widgets\Dialogs\FileDialog.cs" />
     <Compile Include="Widgets\Dialogs\MessageBox.cs" />
     <Compile Include="Widgets\DropDown.cs" />
     <Compile Include="Widgets\FileListBox.cs" />

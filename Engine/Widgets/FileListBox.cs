@@ -87,6 +87,12 @@ namespace Fusion.Widgets
 		}
 
 
+		public string DefaultExt
+		{
+			get { return Path.GetExtension( searchPatterns.First() ); }
+		}
+
+
 		/// <summary>
 		/// Current directory
 		/// </summary>

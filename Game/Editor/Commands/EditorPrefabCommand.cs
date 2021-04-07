@@ -26,6 +26,11 @@ namespace IronStar.Editor.Commands
 			
 		}
 
+		public EditorPrefabCommand( MapEditor editor, string name ) : base( editor )
+		{
+			this.Name = name;
+		}
+
 		public object Execute()
 		{
 			if (Selection.Any())
@@ -38,7 +43,7 @@ namespace IronStar.Editor.Commands
 					node.Translation -= baseTrans;
 				}
 
-				using ( var stream = editor.Game.GetService<Builder>().CreateSourceFile( "prefabs", Name + ".pfb" ) )
+				using ( var stream = editor.Game.GetService<Builder>().CreateSourceFile( Name ) )
 				{
 					JsonUtils.ExportJson( stream, prefab );
 				}

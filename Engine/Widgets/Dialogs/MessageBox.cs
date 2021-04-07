@@ -14,18 +14,19 @@ namespace Fusion.Widgets
 		static void ShowDialog ( FrameProcessor fp, string caption, string message, Color textColor, int numButtons, Action accept, Action reject )
 		{
 			var frames	=	fp;
-			var panel	=	new Panel( frames, 0, 0, 350, 100 );
+			var panel	=	new Panel( frames, 0, 0, 350, 140 );
 			var label	=	new Frame( frames );
 
 			panel.Layout	=	new PageLayout()
 				.Margin(2)
-				.AddRow(17, -1f)
+				.AddRow(20, -1f)
 				.AddRow(-1, -1f)
-				.AddRow(25, -1f, 80,80);
+				.AddRow(25, -1f, 80,80)
+				.AddRow(12, -1f);
 
-			var captionLabel		=	new Label(fp, 0,0,0,0, caption);
-			captionLabel.Padding	=	1;
-			captionLabel.TextAlignment = Alignment.MiddleCenter;
+			var captionLabel			=	new Label(fp, 0,0,0,0, caption);
+			captionLabel.Padding		=	2;
+			captionLabel.TextAlignment	=	Alignment.MiddleCenter;
 
 			label.Text			=	message;
 			label.ForeColor		=	textColor;

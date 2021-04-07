@@ -26,6 +26,7 @@ using IronStar.ECSPhysics;
 using IronStar.Editor.Systems;
 using IronStar.AI;
 using IronStar.Editor.Commands;
+using Fusion.Widgets.Dialogs;
 
 namespace IronStar.Editor 
 {
@@ -410,6 +411,16 @@ namespace IronStar.Editor
 			{
 				node.Frozen = false;
 			}
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public void MakePrefab ()
+		{
+			var saveFileDialog = new SaveFileDialog( workspace.Frames, "prefabs", "*.json" );
+			saveFileDialog.Show( (name) => Game.Invoker.Execute( new EditorPrefabCommand(this, name) ) );
 		}
 
 

@@ -229,6 +229,26 @@ namespace Fusion.Build {
 		}
 
 
+		public Stream CreateSourceFile( string nameExt )
+		{
+			var basePath	=	GetBaseInputDirectory();
+			var filePath	=	Path.Combine( basePath, nameExt );
+			var dirPath		=	Path.GetDirectoryName( filePath );
+
+			if (!Directory.Exists(dirPath))
+			{
+				Directory.CreateDirectory(dirPath);
+			}
+
+			if (File.Exists(filePath))
+			{
+				File.Delete(filePath);
+			}
+
+			return File.OpenWrite(filePath);
+		}
+
+
 		public Stream OpenSourceFile( string nameExt )
 		{
 			var basePath	=	GetBaseInputDirectory();

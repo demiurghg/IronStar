@@ -90,6 +90,9 @@ namespace IronStar.Editor
 			upperShelf.AddFatLButton("Unfreeze\rAll", null, ()=> UnfreezeAll() );
 
 			upperShelf.AddLSplitter();
+			upperShelf.AddFatLButton("Make\rPrefab", null, ()=> MakePrefab() );
+
+			upperShelf.AddLSplitter();
 			upperShelf.AddLButton("BUILD\rRELOAD"	, @"editor\iconBuild",		()=> Game.Invoker.ExecuteString("contentBuild") );
 			upperShelf.AddLButton("MAKE\rSCRSHT"	, @"editor\iconScreenshot", ()=> GeneratePreview() );
 			upperShelf.AddLButton("RAD\rCFG"		, @"editor\iconRadCfg",		()=> workspace.FeedProperties( map.RadiositySettings ) );

@@ -51,6 +51,7 @@ namespace Fusion.Widgets.Advanced
 
 		Frame fileButton;
 		TextBox textBox;
+		OpenFileDialog fileSelector;
 
 		/// <summary>
 		/// 
@@ -66,6 +67,8 @@ namespace Fusion.Widgets.Advanced
 				
 			Width			=	grid.Width;
 			Height			=	ComputeItemHeight() + 23;
+
+			fileSelector	=	new OpenFileDialog( Frames, dir, ext );
 
 			StatusChanged	+=	AEFileSelector_StatusChanged;
 
@@ -91,7 +94,8 @@ namespace Fusion.Widgets.Advanced
 		
 		private void OpenDialog()
 		{
-			FileSelector.ShowDialog( Frames, dir, ext, binding.GetValue(), (fnm)=>binding.SetValue(fnm, ValueSetMode.Default) );
+			fileSelector.Show( (fileName) => binding.SetValue( fileName, ValueSetMode.Default ) );
+			//FileSelector.ShowDialog( Frames, dir, ext, binding.GetValue(), (fnm)=>binding.SetValue(fnm, ValueSetMode.Default) );
 		}
 
 

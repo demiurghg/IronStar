@@ -57,7 +57,7 @@ namespace Fusion.Widgets.Advanced
 			buttonCollapse		=	new Frame( grid.Frames ) {
 				Font			=	ColorTheme.NormalFont,
 				Width			=	0, // does not matter due to layout engine
-				Height			=	ColorTheme.NormalFont.LineHeight+4,
+				Height			=	ColorTheme.NormalFont.LineHeight+6,
 				Border			=	1,
 				Text			=	category,
 				TextAlignment	=	Alignment.MiddleLeft,
@@ -93,6 +93,19 @@ namespace Fusion.Widgets.Advanced
 			{
 				frame.Visible = false;
 			}
+		}
+
+
+
+		public void Collapse()
+		{
+			Collapsed = true;
+		}
+
+
+		public void Expand()
+		{
+			Collapsed = false;
 		}
 
 

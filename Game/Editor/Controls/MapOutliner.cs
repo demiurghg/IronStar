@@ -37,15 +37,15 @@ namespace IronStar.Editor.Controls
 			AllowResize		=	true;
 
 			var pageLayout = new PageLayout();
-			pageLayout.AddRow(17, /**/ -1.0f );
-			pageLayout.AddRow(17, /**/ -1.0f );
+			pageLayout.AddRow(20, /**/ -1.0f );
+			pageLayout.AddRow(20, /**/ -1.0f );
 			pageLayout.AddRow(-1, /**/ -1.0f );
 			pageLayout.AddRow(23, /**/ -1.0f );
 
 			Layout	=	pageLayout;
 
-			label		=	new Label( fp, 0,0,0,0, "Outliner");
-			filter		=	new TextBox(fp);
+			label		=	new Label( fp, 0,0,0,0, "Outliner") { Padding = 2 };
+			filter		=	new TextBox(fp) { TextAlignment = Alignment.MiddleLeft };
 			btnClose	=	new Button(fp, "Close", 0,0,0,0, () => Visible = false );
 
 			listBox		=	new ListBox( fp, new MapNode[0], obj => GetDisplayName((MapNode)obj) );  

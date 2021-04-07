@@ -251,9 +251,9 @@ namespace IronStar.Editor.Controls
 				gridPanel.Margin	=	3;
 
 				gridPanel.Layout	=	new PageLayout()
-									.AddRow( 20, -1 )
+									.AddRow( 20, -1, 60, 60 )
 									.AddRow( -1, -1 )
-									.AddRow( 20, 0.5f, 0.5f )
+									.AddRow( 22, 0.5f, 0.5f )
 									;
 
 				gridLabel	=	new Label( Frames, 0,0,0,0, "Property Grid");
@@ -273,9 +273,14 @@ namespace IronStar.Editor.Controls
 				grid.Width	=	300;
 				grid.Height	=	500;
 
+				var btnCollapse = new Button(Frames, "Collapse", 0,0,0,0, grid.CollapseAll );
+				var btnExpand   = new Button(Frames, "Expand", 0,0,0,0, grid.ExpandAll );
+
 				scrollBox.Add( grid );
 
 				gridPanel.Add( gridLabel );
+				gridPanel.Add( btnCollapse );
+				gridPanel.Add( btnExpand );
 				gridPanel.Add( scrollBox );
 
 				gridPanel.Add( new Button(Frames, "<", 0,0,0,0, () => { gridPanel.Width = gridPanel.Width + 20; gridPanel.X = gridPanel.X - 20; } ) );

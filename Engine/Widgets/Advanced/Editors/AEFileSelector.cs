@@ -75,6 +75,7 @@ namespace Fusion.Widgets.Advanced
 			textBox	=	new TextBox( Frames, binding ) 
 			{ 
 				TextAlignment = Alignment.MiddleLeft, 
+				Height = 23,
 			};
 
 			Add( textBox );

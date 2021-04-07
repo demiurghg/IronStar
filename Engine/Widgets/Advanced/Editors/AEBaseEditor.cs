@@ -37,7 +37,7 @@ namespace Fusion.Widgets.Advanced
 
 		protected int ComputeItemHeight ()
 		{
-			return GetFontHeight() + 2 + 2 * AEPropertyGrid.VerticalPadding;
+			return GetFontHeight() + 2 + 2 + 2 * AEPropertyGrid.VerticalPadding;
 		}
 
 

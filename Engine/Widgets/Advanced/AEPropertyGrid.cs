@@ -71,6 +71,18 @@ namespace Fusion.Widgets.Advanced
 		public event EventHandler<PropertyChangedEventArgs>	PropertyValueChanged;  // Called after setting the value
 
 
+		public void CollapseAll()
+		{
+			ForEachChildren( child => (child as AECollapseRegion)?.Collapse() );
+		}
+
+
+		public void ExpandAll()
+		{
+			ForEachChildren( child => (child as AECollapseRegion)?.Expand() );
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>

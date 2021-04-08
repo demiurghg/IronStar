@@ -68,7 +68,7 @@ namespace IronStar.SFX2
 		public void SetupLightmap( int width, int height, string regionId )
 		{
 			lightmapSize	=	new Size2( width, height );
-			lightmapName		=	regionId;
+			lightmapName	=	regionId;
 		}
 
 

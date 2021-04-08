@@ -28,7 +28,7 @@ namespace IronStar.Mapping
 	public class MapPrefab : MapNode 
 	{
 		[AECategory( "Prefab" )]
-		[AEFileName("prefabs", "*.pfb", AEFileNameMode.NoExtension)]
+		[AEFileName("prefabs", "*.json", AEFileNameMode.NoExtension)]
 		public string PrefabPath { get; set; } = "";
 
 		MapNodeCollection nodes;
@@ -45,25 +45,40 @@ namespace IronStar.Mapping
 		public override void SpawnNodeECS( GameState gs )
 		{
 			var builder = gs.Game.GetService<Builder>();
+
+			if (string.IsNullOrWhiteSpace(PrefabPath))
+			{
+				nodes = null;
+				return;
+			}
+
 			using ( var stream = builder.OpenSourceFile( PrefabPath ) )
 			{
 				nodes = JsonUtils.ImportJson(stream) as MapNodeCollection;
 
 				if (nodes!=null)
 				{
-					
+					foreach ( var node in nodes )
+					{
+						node.SpawnNodeECS(gs);
+
+						var t = node.EcsEntity.GetComponent<Transform>();
+						t.TransformMatrix = t.TransformMatrix * this.Transform;
+					}
 				}
 			}
-			/*ecsEntity = gs.Spawn();
+		}
 
-			ecsEntity.AddComponent( new ECS.Transform( Matrix.Scaling(Scale) * Transform ) );
-			ecsEntity.AddComponent( new StaticCollisionComponent() { Walkable = Walkable } );
 
-			var rm		=	new SFX2.RenderModel( ScenePath, Matrix.Identity, Color.White, 1, SFX2.RMFlags.None );
-			rm.cmPrefix	=	UseCollisionMesh ? "cm_" : "";
-			var lmSize	=	UseLightVolume ? 0 : (int)LightMapSize;
-			rm.SetupLightmap( lmSize, lmSize, Name );
-			ecsEntity.AddComponent( rm );*/
+		public override void KillNodeECS( GameState gs )
+		{
+			if (nodes!=null)
+			{
+				foreach ( var node in nodes )
+				{
+					node.KillNodeECS(gs);
+				}
+			}
 		}
 
 

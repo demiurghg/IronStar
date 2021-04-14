@@ -207,7 +207,7 @@ namespace IronStar.Mapping {
 		}
 
 
-		public override BoundingBox GetBoundingBox()
+		public override BoundingBox GetBoundingBox( GameState gs )
 		{
 			var frustum = new BoundingFrustum( SpotView * SpotProjection );
 			var points  = frustum.GetCorners();

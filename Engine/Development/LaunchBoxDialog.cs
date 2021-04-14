@@ -26,6 +26,12 @@ namespace Fusion.Development {
 		Action runEditor;
 
 
+		public string StartupCommand 
+		{
+			get { return startupCommand.Text; }
+		}
+
+
 		public LaunchBoxForm ( Game game, string config, Action runEditor )
 		{
 			this.game	=	game;

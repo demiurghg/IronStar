@@ -20,8 +20,15 @@ namespace IronStar.Mapping
 {
 	public abstract class MapNode 
 	{
-		public string Name;
+		[AECategory("Node")]
+		public string Name { get; set; }
 		protected bool dirty = true;
+
+		[AECategory("Node")]
+		public bool Visible { get; set; } = true;
+
+		[AECategory("Node")]
+		public bool Frozen { get; set; }
 
 
 		public MapNode ()
@@ -34,13 +41,6 @@ namespace IronStar.Mapping
 		{
 			return Guid.NewGuid().ToString();
 		}
-
-
-		[AECategory("Display")]
-		public bool Visible { get; set; } = true;
-
-		[AECategory("Display")]
-		public bool Frozen { get; set; }
 
 
 		/*-----------------------------------------------------------------------------------------
@@ -217,7 +217,7 @@ namespace IronStar.Mapping
 		}
 
 		
-		public virtual BoundingBox GetBoundingBox() 
+		public virtual BoundingBox GetBoundingBox( GameState gs ) 
 		{
 			return new BoundingBox( 2, 2, 2 ); 
 		}

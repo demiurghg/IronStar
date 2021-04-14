@@ -712,9 +712,11 @@ namespace Fusion.Engine.Graphics.Scenes {
 
 			Log.Message("{0}", baseDirUri );
 
-			foreach ( var mtrl in Materials ) {
+			foreach ( var mtrl in Materials ) 
+			{
 					
-				if (mtrl.ColorMap==null) {
+				if (mtrl.ColorMap==null) 
+				{
 					continue;
 				}
 				Log.Message( "-" + mtrl.ColorMap );
@@ -733,11 +735,41 @@ namespace Fusion.Engine.Graphics.Scenes {
 		public int CalculateNodeDepth ( Node node )
 		{
 			int depth = 0;
-			while (node.ParentIndex>=0) {
+			while (node.ParentIndex>=0) 
+			{
 				node = Nodes[node.ParentIndex];
 				depth++;
 			}
 			return depth;
+		}
+
+
+		public BoundingBox ComputeBoundingBoxApprox(Matrix transform)
+		{
+			var transforms = ComputeAbsoluteTransforms();
+			var points = new List<Vector3>();
+
+			var bbox = new BoundingBox();
+
+			for (int i=0; i<Nodes.Count; i++)
+			{
+				var t = transform * transforms[i];
+				var n = Nodes[i];
+
+				if (n.MeshIndex>=0)
+				{
+					var m = meshes[ n.MeshIndex ];
+					var b = m.BoundingBox;
+					var c = b.GetCorners().Select( p => Vector3.TransformCoordinate( p, t ) ).ToArray();
+
+					for (int j=0; j<c.Length; j++)
+					{
+						points.Add(c[j]);
+					}
+				}
+			}
+
+			return BoundingBox.FromPoints( points );
 		}
 	}
 }

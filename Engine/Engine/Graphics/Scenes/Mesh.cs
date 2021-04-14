@@ -27,6 +27,9 @@ namespace Fusion.Engine.Graphics.Scenes {
 		public int					VertexCount			{ get { return Vertices.Count; } }
 		public int					IndexCount			{ get { return TriangleCount * 3; } }
 
+		public BoundingBox			BoundingBox			{ get { return boundingBox; } }
+		BoundingBox boundingBox = new BoundingBox(0,0,0);
+
 		internal VertexBuffer		VertexBuffer		{ get { return vertexBuffer; } }
 		internal IndexBuffer		IndexBuffer			{ get { return indexBuffer; } }
 
@@ -116,8 +119,10 @@ namespace Fusion.Engine.Graphics.Scenes {
 
 			bool skinned	=	false;
 
-			foreach ( var v in Vertices ) {
-				if (v.SkinIndices!=Int4.Zero) {
+			foreach ( var v in Vertices )
+			 {
+				if (v.SkinIndices!=Int4.Zero) 
+				{
 					skinned = true;
 					break;
 				}
@@ -126,9 +131,12 @@ namespace Fusion.Engine.Graphics.Scenes {
 			IsSkinned	=	skinned;
 
 
-			if (skinned) {
+			if (skinned) 
+			{
 				vertexBuffer = VertexBuffer.Create( device, Vertices.Select( v => VertexColorTextureTBNSkinned.Convert(v) ).ToArray() );
-			} else {
+			} 
+			else 
+			{
 				vertexBuffer = VertexBuffer.Create( device, Vertices.Select( v => VertexColorTextureTBNRigid.Convert(v) ).ToArray() );
 			}
 		}
@@ -220,10 +228,10 @@ namespace Fusion.Engine.Graphics.Scenes {
 		{
 			//	if there are not shading groups, 
 			//	take them from per triangle material indices
-			if (!Subsets.Any() || takeFromTriangleMtrlIndices) {
-				
-				for ( int i=0; i<Triangles.Count; i++ ) {
-
+			if (!Subsets.Any() || takeFromTriangleMtrlIndices) 
+			{
+				for ( int i=0; i<Triangles.Count; i++ ) 
+				{
 					MeshSubset sg = new MeshSubset();
 					sg.MaterialIndex	=	Triangles[i].MaterialIndex;
 					sg.StartPrimitive	=	i;
@@ -234,21 +242,23 @@ namespace Fusion.Engine.Graphics.Scenes {
 				}
 			}
 
-
-			if ( Subsets.Count==1 ) {
+			if ( Subsets.Count==1 ) 
+			{
 				return;
 			}
 
-
 			List<List<MeshTriangle>>	perMtrlTris = new List<List<MeshTriangle>>();
 
-			foreach ( var mtrl in scene.Materials ) {
+			foreach ( var mtrl in scene.Materials ) 
+			{
 				perMtrlTris.Add( new List<MeshTriangle>() );
 			}
 
-			foreach ( var sg in Subsets ) {
+			foreach ( var sg in Subsets ) 
+			{
 
-				for ( int i = sg.StartPrimitive; i < sg.StartPrimitive + sg.PrimitiveCount; i++ ) {
+				for ( int i = sg.StartPrimitive; i < sg.StartPrimitive + sg.PrimitiveCount; i++ ) 
+				{
 					perMtrlTris[ sg.MaterialIndex ].Add( Triangles[i] );
 				}
 			}
@@ -256,13 +266,15 @@ namespace Fusion.Engine.Graphics.Scenes {
 			Subsets.Clear();
 			Triangles.Clear();
 
-			for ( int i=0; i<perMtrlTris.Count; i++ ) {
+			for ( int i=0; i<perMtrlTris.Count; i++ ) 
+			{
 				var sg = new MeshSubset();
 				sg.MaterialIndex	=	i;
 				sg.StartPrimitive	=	Triangles.Count;
 				sg.PrimitiveCount	=	perMtrlTris[i].Count;
 
-				if (sg.PrimitiveCount==0) {
+				if (sg.PrimitiveCount==0) 
+				{
 					continue;
 				}
 
@@ -463,11 +475,15 @@ namespace Fusion.Engine.Graphics.Scenes {
 			Vector3 min = new Vector3( float.MaxValue );
 			Vector3 max = new Vector3( float.MinValue );
 
-			for( int i = Vertices.Count; --i >= 0; ) {
+			for( int i = Vertices.Count; --i >= 0; ) 
+			{
 				min = Vector3.Min( min, Vertices[i].Position );
 				max = Vector3.Max( max, Vertices[i].Position );
 			}
-			return new BoundingBox( min, max );
+
+			boundingBox = new BoundingBox( min, max );
+
+			return boundingBox;
 		}
 
 
@@ -690,6 +706,8 @@ namespace Fusion.Engine.Graphics.Scenes {
 		/// <param name="reader"></param>
 		public void Deserialize( BinaryReader reader )
 		{
+			boundingBox	=	reader.Read<BoundingBox>();
+			
 			//	read vertices :
 			int vertexCount	=	reader.ReadInt32();
 			Vertices		=	reader.Read<MeshVertex>( vertexCount ).ToList();
@@ -723,12 +741,14 @@ namespace Fusion.Engine.Graphics.Scenes {
 		/// <param name="writer"></param>
 		public void Serialize( BinaryWriter writer )
 		{
+			writer.Write( boundingBox );
+			
 			writer.Write( VertexCount );
 			writer.Write( Vertices.ToArray() );
 			
 			writer.Write( TriangleCount );
 			writer.Write( Triangles.ToArray() );
-			
+
 			writer.Write( Subsets.Count );
 			writer.Write( Subsets.ToArray() );
 

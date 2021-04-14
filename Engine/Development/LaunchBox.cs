@@ -17,16 +17,24 @@ using Fusion.Core;
 namespace Fusion.Development {
 	public static class LaunchBox {
 
-		public static bool ShowDialog ( Game game, string config, Action runEditor )
+		public static bool ShowDialog ( Game game, string config, Action runEditor, Action<string> runCommand )
 		{
 			//var form = new Dashboard( game, config, true );
 			var form = new LaunchBoxForm( game, config, runEditor );
 
 			var dr = form.ShowDialog();
+			
+			if (!string.IsNullOrWhiteSpace(form.StartupCommand))
+			{
+				runCommand?.Invoke( form.StartupCommand );
+			}
 
-			if (dr==DialogResult.OK) {
+			if (dr==DialogResult.OK) 
+			{
 				return true;
-			} else {
+			} 
+			else 
+			{
 				return false;
 			}
 		} 

@@ -19,9 +19,10 @@ using IronStar.ECS;
 using IronStar.ECSPhysics;
 using Fusion.Widgets.Advanced;
 
-namespace IronStar.Mapping {
-
-	public enum LightMapSize {
+namespace IronStar.Mapping 
+{
+	public enum LightMapSize 
+	{
 		LightMap8	= 8,
 		LightMap16	= 16,
 		LightMap32	= 32,
@@ -34,26 +35,29 @@ namespace IronStar.Mapping {
 	}
 
 
-	public class MapModel : MapNode {
-
+	public class MapModel : MapNode 
+	{
 		static readonly Scene EmptyScene = Scene.CreateEmptyScene();
-
 
 		[AECategory( "Appearance" )]
 		[Description( "Path to FBX scene" )]
 		[AEFileName("scenes", "*.fbx", AEFileNameMode.NoExtension)]
-		public string ScenePath { 
+		public string ScenePath 
+		{ 
 			get { return scenePath; }
-			set {
-				if (scenePath!=value) {
+			set 
+			{
+				if (scenePath!=value) 
+				{
 					scenePath = value;
-					scenePathDirty = true;
+					bboxDirty = true;
 				}
 			}
 		}
 
 		string scenePath = "";
-		bool scenePathDirty = true;
+		bool bboxDirty = true;
+		BoundingBox bbox;
 
 		[AECategory( "Appearance" )]
 		[Description( "Entire model scale" )]
@@ -92,17 +96,6 @@ namespace IronStar.Mapping {
 		public string CustomCollisionNode { get; set; } = "";
 		
 
-
-		Scene			scene		= null;
-		RenderInstance[]	instances	= null;
-		StaticMesh[]	collidables = null;
-		Matrix[]		transforms	= null;
-		DebugModel[]	debugModels = null;
-
-
-		/// <summary>
-		/// 
-		/// </summary>
 		public MapModel ()
 		{
 		}
@@ -123,10 +116,25 @@ namespace IronStar.Mapping {
 		}
 
 
-		public override BoundingBox GetBoundingBox()
+		public override BoundingBox GetBoundingBox( GameState gs )
 		{
+			if (bboxDirty)
+			{
+				var scene = gs.Content.Load( ScenePath, (Scene)null );
+				bboxDirty = false;
+
+				if (scene==null)
+				{
+					bbox = new BoundingBox( 8, 8, 8 );
+				}
+				else
+				{
+					bbox = scene.ComputeBoundingBoxApprox( Matrix.Scaling(Scale) );
+				}
+			}
+
 			#warning Need more smart bounding box for map models!
-			return new BoundingBox( 8, 8, 8 );
+			return bbox;
 		}
 	}
 }

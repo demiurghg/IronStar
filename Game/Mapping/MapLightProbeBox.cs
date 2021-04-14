@@ -97,7 +97,7 @@ namespace IronStar.Mapping
 
 
 
-		public override BoundingBox GetBoundingBox()
+		public override BoundingBox GetBoundingBox( GameState gs )
 		{
 			return new BoundingBox( Width, Height, Depth );
 		}

@@ -390,9 +390,12 @@ namespace Fusion.Core {
 		/// </summary>
 		protected virtual void Initialize ()
 		{
+			Invoker.ExecuteDeferredCommands();
+		
 			var components = Components.ToArrayThreadSafe();
 
-			foreach ( var component in components ) {
+			foreach ( var component in components ) 
+			{
 				Log.Message("Initialize :  {0}", component.GetType().Name);
 				component.Initialize();
 			}

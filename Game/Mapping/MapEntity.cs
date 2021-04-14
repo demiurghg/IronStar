@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using Fusion.Core.Shell;
 using Fusion.Core.Extensions;
 using Fusion.Widgets.Advanced;
+using IronStar.ECS;
 
 namespace IronStar.Mapping 
 {
@@ -66,7 +67,7 @@ namespace IronStar.Mapping
 		}
 
 
-		public override BoundingBox GetBoundingBox()
+		public override BoundingBox GetBoundingBox( GameState gs )
 		{
 			#warning Need more smart bounding box for entitites!
 			return new BoundingBox( 4, 4, 4 );

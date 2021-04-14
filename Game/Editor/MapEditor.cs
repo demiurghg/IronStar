@@ -482,7 +482,7 @@ namespace IronStar.Editor
 			{
 				foreach ( var node in targets ) 
 				{
-					points.AddRange( node.GetBoundingBox().GetCorners().Select( p => Vector3.TransformCoordinate( p, node.Transform ) ) );
+					points.AddRange( node.GetBoundingBox(gameState).GetCorners().Select( p => Vector3.TransformCoordinate( p, node.Transform ) ) );
 				}
 			}
 

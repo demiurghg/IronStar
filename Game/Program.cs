@@ -64,7 +64,11 @@ namespace IronStar {
 
 				//	apply command-line options here:
 				//	...
-				if (!LaunchBox.ShowDialog(game, "Config.ini", ()=>Log.Warning("Editor is in-game only"))) {
+				if (!LaunchBox.ShowDialog(game, "Config.ini", 
+					()		=>	Log.Warning("Editor is in-game only"), 
+					(cmd)	=>	game.Invoker.ExecuteString(cmd))
+					) 
+				{
 					return 0;
 				}
 

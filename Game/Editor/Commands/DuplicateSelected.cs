@@ -23,6 +23,7 @@ namespace IronStar.Editor.Commands
 		{
 			foreach ( var node in duplicates ) 
 			{
+				node.Name = editor.GetUniqueName( node );
 				editor.Map.Nodes.Add( node );
 				node.SpawnNodeECS( editor.GameState );
 			}

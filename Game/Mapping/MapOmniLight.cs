@@ -75,14 +75,6 @@ namespace IronStar.Mapping
 		}
 
 
-		public override MapNode DuplicateNode()
-		{
-			var newNode = (MapOmniLight)MemberwiseClone();
-			newNode.Name = GenerateUniqueName();
-			return newNode;
-		}
-
-
 		public override BoundingBox GetBoundingBox( GameState gs )
 		{
 			float sz = OuterRadius / (float)Math.Sqrt(3);

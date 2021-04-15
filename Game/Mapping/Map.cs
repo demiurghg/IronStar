@@ -63,8 +63,10 @@ namespace IronStar.Mapping
 
 		public void Validate()
 		{
-			foreach ( var n in Nodes ) {
-				if ( Math.Abs( n.TranslateX ) > 4096 ||	Math.Abs( n.TranslateY ) > 4096 || Math.Abs( n.TranslateZ ) > 4096 ) {
+			foreach ( var n in Nodes ) 
+			{
+				if ( Math.Abs( n.TranslateX ) > 4096 ||	Math.Abs( n.TranslateY ) > 4096 || Math.Abs( n.TranslateZ ) > 4096 ) 
+				{
 					Log.Warning("Map : bad position : [{0} {1} {2}]. Moved to [0 0 0]", n.TranslateX, n.TranslateY, n.TranslateZ );
 					n.TranslateX = 0;
 					n.TranslateY = 0;
@@ -72,33 +74,39 @@ namespace IronStar.Mapping
 				}
 
 
-				if ( float.IsNaN(n.RotateYaw) || float.IsInfinity(n.RotateYaw) ) {
+				if ( float.IsNaN(n.RotateYaw) || float.IsInfinity(n.RotateYaw) ) 
+				{
 					Log.Warning("Map : bad rotation yaw : {0}", n.RotateYaw );
 					n.RotateYaw = 0;
 				}
 
-				if ( float.IsNaN(n.RotatePitch) || float.IsInfinity(n.RotatePitch) ) {
+				if ( float.IsNaN(n.RotatePitch) || float.IsInfinity(n.RotatePitch) ) 
+				{
 					Log.Warning("Map : bad rotation pitch : {0}", n.RotatePitch );
 					n.RotatePitch = 0;
 				}
 
-				if ( float.IsNaN(n.RotateRoll) || float.IsInfinity(n.RotateRoll) ) {
+				if ( float.IsNaN(n.RotateRoll) || float.IsInfinity(n.RotateRoll) ) 
+				{
 					Log.Warning("Map : bad rotation roll : {0}", n.RotateRoll );
 					n.RotateRoll = 0;
 				}
 
 
-				if ( float.IsNaN(n.TranslateX) || float.IsInfinity(n.TranslateX) ) {
+				if ( float.IsNaN(n.TranslateX) || float.IsInfinity(n.TranslateX) ) 
+				{
 					Log.Warning("Map : bad translation X : {0}", n.TranslateX );
 					n.TranslateX = 0;
 				}
 
-				if ( float.IsNaN(n.TranslateY) || float.IsInfinity(n.TranslateY) ) {
+				if ( float.IsNaN(n.TranslateY) || float.IsInfinity(n.TranslateY) ) 
+				{
 					Log.Warning("Map : bad translation Y : {0}", n.TranslateY );
 					n.TranslateY = 0;
 				}
 
-				if ( float.IsNaN(n.TranslateZ) || float.IsInfinity(n.TranslateZ) ) {
+				if ( float.IsNaN(n.TranslateZ) || float.IsInfinity(n.TranslateZ) ) 
+				{
 					Log.Warning("Map : bad translation Z : {0}", n.TranslateZ );
 					n.TranslateZ = 0;
 				}

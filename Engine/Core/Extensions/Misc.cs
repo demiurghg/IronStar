@@ -47,6 +47,32 @@ namespace Fusion.Core.Extensions
 			}
 		}
 
+
+		public static int GetTrailingNumber( string input, out string output )
+		{
+			var stack = new Stack<char>();
+			int index;
+
+			for (index = input.Length - 1; index >= 0; index--)
+			{
+				if (!char.IsNumber(input[index]))
+				{
+					break;
+				}
+
+				stack.Push(input[index]);
+			}
+
+			output = new string(input.Take(index+1).ToArray());
+
+			var numStr	=	new string(stack.ToArray());
+			int numInt	=	-1;
+			var success	=	int.TryParse( numStr, out numInt );
+
+			return success ? numInt : -1;
+		}
+
+
 		/// <summary>
 		/// https://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Longest_common_substring#Retrieve_the_Longest_Substring
 		/// + special case when one of the args is null.

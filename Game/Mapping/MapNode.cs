@@ -15,13 +15,31 @@ using Newtonsoft.Json;
 using IronStar.ECS;
 using Fusion.Widgets.Advanced;
 using Fusion.Core.Extensions;
+using IronStar.Editor;
 
 namespace IronStar.Mapping 
 {
 	public abstract class MapNode 
 	{
 		[AECategory("Node")]
-		public string Name { get; set; }
+		public string Name 
+		{ 
+			get { return name; }
+			set
+			{
+				if (name!=value)
+				{
+					name = value;
+
+					if (MapEditor.Instance!=null)
+					{
+						name = MapEditor.Instance.GetUniqueName(this);
+					}
+				}
+			}
+		}
+		string name;
+
 		protected bool dirty = true;
 
 		[AECategory("Node")]
@@ -33,10 +51,11 @@ namespace IronStar.Mapping
 
 		public MapNode ()
 		{
-			Name = GenerateUniqueName();
+			Name = this.GetType().Name + "0";
 		}
 
 
+		[Obsolete("deprecated", true)]
 		public static string GenerateUniqueName()
 		{
 			return Guid.NewGuid().ToString();
@@ -210,8 +229,6 @@ namespace IronStar.Mapping
 			var node = (MapNode)Activator.CreateInstance( GetType() );
 
 			Misc.CopyProperties( this, node );
-
-			node.Name = Guid.NewGuid().ToString();
 
 			return node;
 		}

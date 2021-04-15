@@ -35,6 +35,8 @@ namespace IronStar.Editor
 	/// </summary>
 	public partial class MapEditor : GameComponent 
 	{
+		public static MapEditor Instance { get; private set; }
+
 		const string Dir = "maps";
 		const string Ext = ".json";
 
@@ -137,6 +139,8 @@ namespace IronStar.Editor
 			RegisterCommands();
 
 			Game.Reloading += Game_Reloading;
+
+			Instance	=	this;
 		}
 
 
@@ -189,6 +193,8 @@ namespace IronStar.Editor
 		{
 			if ( disposing ) 
 			{
+				Instance	=	null;
+
 				Game.Invoker.ClearUndoHistory();
 
 				Game.Reloading -= Game_Reloading;
@@ -221,12 +227,28 @@ namespace IronStar.Editor
 			get { return selection; }
 		}
 
+
+		public string GetUniqueName( MapNode node )
+		{
+			var name		=	node.Name;
+			var hashSet		=	new HashSet<string>( map.Nodes.Where( n1=>n1!=node ).Select( n2 => n2.Name ) );
+			var baseName	=	"";
+			var index		=	Misc.GetTrailingNumber(name, out baseName);
+			var newName		=	name;
+
+			while (hashSet.Contains(newName))
+			{
+				index++;
+				newName = baseName + index.ToString();
+			}
+
+			return newName;
+		}
+
+		
 		public void CreateNodeUI ( MapNode newNode )
 		{
 			Game.Invoker.Execute( new CreateNode(this, newNode) );
-			/*Map.Nodes.Add( newNode );
-			newNode.SpawnNodeECS( GameState );
-			Select_Deprecated( newNode );*/
 		}
 
 
@@ -251,9 +273,6 @@ namespace IronStar.Editor
 		}
 
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public void ResetWorld ()
 		{
 			EnableSimulation = false;
@@ -285,25 +304,6 @@ namespace IronStar.Editor
 		public void BakeToEntity ()
 		{
 			Game.Invoker.Execute(new BakeCommand(this) );
-			/*foreach ( var se in selection ) 
-			{
-				var transform = (se as MapEntity)?.EcsEntity?.GetComponent<ECS.Transform>();
-
-				if (transform!=null) 
-				{
-					try 
-					{
-						se.TranslateVector	=	transform.Position;
-						se.RotateQuaternion	=	transform.Rotation;
-					} 
-					catch ( Exception e ) 
-					{
-						Log.Error("Failed to bake: {0}", e.Message);
-						se.TranslateVector	=	transform.Position;
-						se.RotateQuaternion	=	Quaternion.Identity;
-					}
-				}
-			}*/
 		}
 
 

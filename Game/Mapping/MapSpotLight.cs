@@ -199,14 +199,6 @@ namespace IronStar.Mapping {
 		//}
 
 
-		public override MapNode DuplicateNode()
-		{
-			var newNode = (MapSpotLight)MemberwiseClone();
-			newNode.Name = GenerateUniqueName();
-			return newNode;
-		}
-
-
 		public override BoundingBox GetBoundingBox( GameState gs )
 		{
 			var frustum = new BoundingFrustum( SpotView * SpotProjection );

@@ -19,6 +19,8 @@ namespace IronStar.Editor.Commands
 
 		public virtual object Execute()
 		{
+			newNode.Name	=	editor.GetUniqueName(newNode); 
+
 			map.Nodes.Add( newNode );
 			newNode.SpawnNodeECS( gs );
 			editor.Selection.Set( newNode );

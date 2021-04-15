@@ -34,15 +34,11 @@ namespace IronStar.Mapping
 		[AECategory("Factory")]
 		public EntityFactoryContent Factory { get; set; }
 
-		[AEIgnore]
-		public string FactoryName { get; set; }
-
 		/// <summary>
 		/// 
 		/// </summary>
 		public MapEntity ()
 		{
-			 FactoryName	=	Misc.GenerateRandomString(8);
 		}
 
 
@@ -62,7 +58,6 @@ namespace IronStar.Mapping
 		{
 			var newNode = (MapEntity)base.DuplicateNode();
 			newNode.Factory		= Factory.Duplicate();
-			newNode.FactoryName	= Misc.GenerateRandomString(8);
 			return newNode;
 		}
 

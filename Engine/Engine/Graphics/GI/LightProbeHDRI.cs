@@ -104,28 +104,21 @@ namespace Fusion.Engine.Graphics.GI {
 		}
 
 		
-		public int GetLightProbeIndex( string name )
-		{
-			return GetLightProbeIndex( Guid.Parse(name) );
-		}
-
-
 		public void Update(LightSet lightSet, Camera camera)
 		{
 			//	do nothing
 		}
 
 
-		public bool HasLightProbe ( Guid guid )
+		public bool HasLightProbe ( string name )
 		{
-			return probes.ContainsKey(guid.ToString());
+			return probes.ContainsKey(name);
 		}
 
 
 
-		public int GetLightProbeIndex ( Guid guid )
+		public int GetLightProbeIndex ( string name )
 		{
-			var name = guid.ToString();
 			int index;
 			if (probes.TryGetValue( name, out index ) ) 
 			{

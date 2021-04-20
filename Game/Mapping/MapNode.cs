@@ -170,6 +170,15 @@ namespace IronStar.Mapping
 		}
 
 
+		[AECommand]
+		public void IdentityMatrix()
+		{
+			Rotation	=	Quaternion.Identity;
+			RotatePitch	=	0;
+			RotateRoll	=	0;
+			RotateYaw	=	0;
+		}
+
 		/*-----------------------------------------------------------------------------------------
 		 *	Transformation matricies :
 		-----------------------------------------------------------------------------------------*/

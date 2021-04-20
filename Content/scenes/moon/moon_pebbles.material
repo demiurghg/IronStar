@@ -1,0 +1,18 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = False
+
+[Textures]
+BaseColor = pebbles_lowpoly_moon_pebbles_BaseColor.png
+NormalMap = pebbles_lowpoly_moon_pebbles_Normal.png
+Metallic  = pebbles_lowpoly_moon_pebbles_Metallic.png
+Roughness = pebbles_lowpoly_moon_pebbles_Roughness.png
+Emission  = 
+Occlusion = 
+
+
+
+
+

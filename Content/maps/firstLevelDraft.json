@@ -35,10 +35,7 @@
         "Rotation": "0, -0.608761251, 0, 0.7933535",
         "TranslateX": -407.406219,
         "TranslateY": 10.6268244,
-        "TranslateZ": -90.49928,
-        "RotateYaw": -74.99998,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -90.49928
       },
       {
         "$id": "6",
@@ -57,10 +54,7 @@
         "Rotation": "-0.00221362617, -0.12571162, -0.09693108, 0.9873176",
         "TranslateX": -371.0041,
         "TranslateY": 9.85702,
-        "TranslateZ": -95.7025,
-        "RotateYaw": -14.3537445,
-        "RotatePitch": -1.64701235,
-        "RotateRoll": -11.0068207
+        "TranslateZ": -95.7025
       },
       {
         "$id": "8",
@@ -79,10 +73,7 @@
         "Rotation": "-0.00435475446, -0.06610544, -0.0955250561, 0.993220031",
         "TranslateX": -372.723541,
         "TranslateY": 10.1232166,
-        "TranslateZ": -90.223465,
-        "RotateYaw": -7.49918365,
-        "RotatePitch": -1.219341,
-        "RotateRoll": -10.9073782
+        "TranslateZ": -90.223465
       },
       {
         "$id": "10",
@@ -101,10 +92,7 @@
         "Rotation": "0.8935321, -0.03389092, -0.446998954, -0.0253706481",
         "TranslateX": -382.651581,
         "TranslateY": 11.343585,
-        "TranslateZ": -84.66129,
-        "RotateYaw": -126.928474,
-        "RotatePitch": -4.33784628,
-        "RotateRoll": -177.822647
+        "TranslateZ": -84.66129
       },
       {
         "$id": "12",
@@ -123,10 +111,7 @@
         "Rotation": "-0.348723382, -0.8226864, -0.173478752, 0.4141065",
         "TranslateX": -358.892273,
         "TranslateY": -4.72931671,
-        "TranslateZ": -78.80559,
-        "RotateYaw": -136.805328,
-        "RotatePitch": -35.0474358,
-        "RotateRoll": 31.69269
+        "TranslateZ": -78.80559
       },
       {
         "$id": "14",
@@ -145,10 +130,7 @@
         "Rotation": "0, -0.70710665, 0, 0.7071069",
         "TranslateX": -418.0,
         "TranslateY": 26.1777611,
-        "TranslateZ": -83.25592,
-        "RotateYaw": -89.99998,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -83.25592
       },
       {
         "$id": "15",
@@ -167,10 +149,7 @@
         "Rotation": "-0.00288340217, -0.247402191, 0.00159795443, 0.968907237",
         "TranslateX": -311.1591,
         "TranslateY": 5.255922,
-        "TranslateZ": -86.60816,
-        "RotateYaw": -28.6484623,
-        "RotatePitch": -0.2748388,
-        "RotateRoll": 0.259167552
+        "TranslateZ": -86.60816
       },
       {
         "$id": "17",
@@ -189,10 +168,7 @@
         "Rotation": "0.129375875, 0.134030357, 0.694897354, 0.6945614",
         "TranslateX": -311.3274,
         "TranslateY": 5.237846,
-        "TranslateZ": -89.45994,
-        "RotateYaw": 21.4690361,
-        "RotatePitch": -0.375616133,
-        "RotateRoll": 89.9565
+        "TranslateZ": -89.45994
       },
       {
         "$id": "19",
@@ -211,10 +187,7 @@
         "Rotation": "0.00112430833, 0.116067953, -0.000445644226, 0.993240535",
         "TranslateX": -318.851349,
         "TranslateY": 5.17236042,
-        "TranslateZ": -91.49632,
-        "RotateYaw": 13.3304214,
-        "RotatePitch": 0.133892745,
-        "RotateRoll": -0.03576822
+        "TranslateZ": -91.49632
       },
       {
         "$id": "21",
@@ -233,10 +206,7 @@
         "Rotation": "0.00112397352, -0.0189587958, 0.00026293908, 0.999819636",
         "TranslateX": -316.217529,
         "TranslateY": 5.178152,
-        "TranslateZ": -95.468544,
-        "RotateYaw": -2.17261815,
-        "RotatePitch": 0.129346,
-        "RotateRoll": 0.0276833829
+        "TranslateZ": -95.468544
       },
       {
         "$id": "23",
@@ -255,10 +225,7 @@
         "Rotation": "-0.07825546, 0.133886725, 0.4467713, 0.881104946",
         "TranslateX": -359.483582,
         "TranslateY": -5.38176155,
-        "TranslateZ": -81.79886,
-        "RotateYaw": 9.89291,
-        "RotatePitch": -14.9239082,
-        "RotateRoll": 52.476387
+        "TranslateZ": -81.79886
       },
       {
         "$id": "25",
@@ -277,10 +244,7 @@
         "Rotation": "-0.6224511, -0.340203822, -0.337001324, 0.619068742",
         "TranslateX": -310.040619,
         "TranslateY": 5.18918371,
-        "TranslateZ": -87.9304,
-        "RotateYaw": -165.175583,
-        "RotatePitch": -89.623085,
-        "RotateRoll": 107.953773
+        "TranslateZ": -87.9304
       },
       {
         "$id": "27",
@@ -299,10 +263,7 @@
         "Rotation": "0.6542606, 0.00253750384, 0.7562626, 0.00187339052",
         "TranslateX": -312.981934,
         "TranslateY": 5.17842674,
-        "TranslateZ": -89.03269,
-        "RotateYaw": 81.72795,
-        "RotatePitch": -0.07945021,
-        "RotateRoll": 179.6474
+        "TranslateZ": -89.03269
       },
       {
         "$id": "29",
@@ -321,10 +282,7 @@
         "Rotation": "0.7038706, 0.07162389, -0.07210399, 0.703020155",
         "TranslateX": -318.476227,
         "TranslateY": 5.14057064,
-        "TranslateZ": -90.8692856,
-        "RotateYaw": -144.723831,
-        "RotatePitch": 89.92598,
-        "RotateRoll": -156.39003
+        "TranslateZ": -90.8692856
       },
       {
         "$id": "31",
@@ -343,10 +301,7 @@
         "Rotation": "-0.03903816, 0.0419111922, -0.706998169, 0.7048923",
         "TranslateX": -315.9167,
         "TranslateY": 5.14997,
-        "TranslateZ": -96.16341,
-        "RotateYaw": 6.562478,
-        "RotatePitch": 0.242183,
-        "RotateRoll": -90.15703
+        "TranslateZ": -96.16341
       },
       {
         "$id": "33",
@@ -370,10 +325,7 @@
         "Rotation": "0, 0, -0.382683456, 0.9238795",
         "TranslateX": -445.0,
         "TranslateY": 12.0,
-        "TranslateZ": -84.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": -45.0000038
+        "TranslateZ": -84.0
       },
       {
         "$id": "35",
@@ -392,10 +344,7 @@
         "Rotation": "0.0162952021, 0.2099347, -0.03936933, 0.976786554",
         "TranslateX": -382.81546,
         "TranslateY": 12.7607727,
-        "TranslateZ": -83.72428,
-        "RotateYaw": 24.1620445,
-        "RotatePitch": 2.77212572,
-        "RotateRoll": -4.0226655
+        "TranslateZ": -83.72428
       },
       {
         "$id": "37",
@@ -414,10 +363,7 @@
         "Rotation": "0.672200561, -0.235714331, 0.176782459, 0.6792151",
         "TranslateX": -384.828735,
         "TranslateY": 13.6833858,
-        "TranslateZ": -83.80906,
-        "RotateYaw": -100.18605,
-        "RotatePitch": 85.18972,
-        "RotateRoll": -66.2382
+        "TranslateZ": -83.80906
       },
       {
         "$id": "39",
@@ -436,10 +382,7 @@
         "Rotation": "0.1736136, -0.201640874, -0.7372383, 0.6210306",
         "TranslateX": -360.0265,
         "TranslateY": 6.775946,
-        "TranslateZ": -83.63934,
-        "RotateYaw": -30.5398273,
-        "RotatePitch": -4.68491,
-        "RotateRoll": -98.50048
+        "TranslateZ": -83.63934
       },
       {
         "$id": "41",
@@ -458,10 +401,7 @@
         "Rotation": "0.08821098, -0.102186933, -0.7573308, 0.638926148",
         "TranslateX": -359.997864,
         "TranslateY": 6.78612328,
-        "TranslateZ": -89.00666,
-        "RotateYaw": -15.3327036,
-        "RotatePitch": -2.41045761,
-        "RotateRoll": -99.36982
+        "TranslateZ": -89.00666
       },
       {
         "$id": "43",
@@ -480,10 +420,7 @@
         "Rotation": "0.03113065, 0.00165582914, 0.677624643, 0.734746933",
         "TranslateX": -353.355,
         "TranslateY": 5.88086176,
-        "TranslateZ": -72.96609,
-        "RotateYaw": 2.559985,
-        "RotatePitch": 2.49328113,
-        "RotateRoll": 85.4236755
+        "TranslateZ": -72.96609
       },
       {
         "$id": "45",
@@ -502,10 +439,7 @@
         "Rotation": "0.001698355, -0.03549713, -0.0805284, 0.9961186",
         "TranslateX": -355.863678,
         "TranslateY": 6.236496,
-        "TranslateZ": -80.4885,
-        "RotateYaw": -4.07099056,
-        "RotatePitch": -0.133701429,
-        "RotateRoll": -9.238977
+        "TranslateZ": -80.4885
       },
       {
         "$id": "47",
@@ -524,10 +458,7 @@
         "Rotation": "-0.0278727785, 0.0331649855, -0.7396217, 0.6716271",
         "TranslateX": -352.16922,
         "TranslateY": 5.868446,
-        "TranslateZ": -89.02781,
-        "RotateYaw": 4.92119074,
-        "RotatePitch": 0.6657266,
-        "RotateRoll": -95.488205
+        "TranslateZ": -89.02781
       },
       {
         "$id": "49",
@@ -546,10 +477,7 @@
         "Rotation": "0.256196082, 0.2263777, 0.638217568, 0.6897789",
         "TranslateX": -381.616943,
         "TranslateY": 12.6426582,
-        "TranslateZ": -84.46502,
-        "RotateYaw": 39.8404579,
-        "RotatePitch": 3.69704628,
-        "RotateRoll": 86.89324
+        "TranslateZ": -84.46502
       },
       {
         "$id": "51",
@@ -568,10 +496,7 @@
         "Rotation": "0.185378984, -0.0186209418, 0.9777898, 0.09599467",
         "TranslateX": -367.93338,
         "TranslateY": 9.345706,
-        "TranslateZ": -100.709007,
-        "RotateYaw": 21.0929813,
-        "RotatePitch": 4.129186,
-        "RotateRoll": 169.554977
+        "TranslateZ": -100.709007
       },
       {
         "$id": "53",
@@ -590,10 +515,7 @@
         "Rotation": "0.300919324, -0.6459416, 0.609131336, 0.348089",
         "TranslateX": -380.771332,
         "TranslateY": 11.1506443,
-        "TranslateZ": -82.27107,
-        "RotateYaw": -100.623878,
-        "RotatePitch": 85.15034,
-        "RotateRoll": 24.6884174
+        "TranslateZ": -82.27107
       },
       {
         "$id": "55",
@@ -612,10 +534,7 @@
         "Rotation": "0.3150042, 0.281024158, 0.616472363, 0.66465",
         "TranslateX": -385.780365,
         "TranslateY": 11.9677029,
-        "TranslateZ": -83.79834,
-        "RotateYaw": 49.8131866,
-        "RotatePitch": 4.14310551,
-        "RotateRoll": 87.61712
+        "TranslateZ": -83.79834
       },
       {
         "$id": "57",
@@ -634,10 +553,7 @@
         "Rotation": "0.193837464, 0.192682251, 0.6813366, 0.6790295",
         "TranslateX": -335.0,
         "TranslateY": 6.0,
-        "TranslateZ": -94.0,
-        "RotateYaw": 31.72286,
-        "RotatePitch": 0.0389491543,
-        "RotateRoll": 90.2054
+        "TranslateZ": -94.0
       },
       {
         "$id": "59",
@@ -656,10 +572,7 @@
         "Rotation": "0.08346535, -0.08085787, -0.7556672, 0.644564",
         "TranslateX": -355.131256,
         "TranslateY": 6.25186157,
-        "TranslateZ": -75.80163,
-        "RotateYaw": -13.3209028,
-        "RotatePitch": -0.8368786,
-        "RotateRoll": -98.9756851
+        "TranslateZ": -75.80163
       },
       {
         "$id": "61",
@@ -684,10 +597,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -54.0,
         "TranslateY": 34.0,
-        "TranslateZ": -12.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -12.0
       },
       {
         "$id": "62",
@@ -711,10 +621,7 @@
         "Rotation": "0.130526245, 0, 0, 0.9914448",
         "TranslateX": -450.0,
         "TranslateY": 14.0,
-        "TranslateZ": -78.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 15.0000048,
-        "RotateRoll": 0.0
+        "TranslateZ": -78.0
       },
       {
         "$id": "64",
@@ -738,10 +645,7 @@
         "Rotation": "0.04614833, -0.621125937, 0.350528359, 0.6994302",
         "TranslateX": -456.5,
         "TranslateY": 9.0,
-        "TranslateZ": -89.5,
-        "RotateYaw": -74.99986,
-        "RotatePitch": 29.9999714,
-        "RotateRoll": 29.9999752
+        "TranslateZ": -89.5
       },
       {
         "$id": "66",
@@ -765,10 +669,7 @@
         "Rotation": "0.249999717, -0.06698716, 0.249999881, 0.933012843",
         "TranslateX": -351.0,
         "TranslateY": 4.279323,
-        "TranslateZ": -64.0,
-        "RotateYaw": 2.9575574E-06,
-        "RotatePitch": 29.9999619,
-        "RotateRoll": 29.9999828
+        "TranslateZ": -64.0
       },
       {
         "$id": "68",
@@ -793,10 +694,7 @@
         "Rotation": "-0.0331991, -0.792171955, -0.0432658345, 0.607856452",
         "TranslateX": -345.0,
         "TranslateY": 4.0,
-        "TranslateZ": -64.0,
-        "RotateYaw": -104.999855,
-        "RotatePitch": -6.25240135,
-        "RotateRoll": -2.02771253E-06
+        "TranslateZ": -64.0
       },
       {
         "$id": "69",
@@ -815,10 +713,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -336.0,
         "TranslateY": 19.0,
-        "TranslateZ": -77.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -77.0
       },
       {
         "$id": "70",
@@ -843,10 +738,7 @@
         "Rotation": "0, -0.866025448, 0, 0.49999997",
         "TranslateX": 28.0,
         "TranslateY": 29.0,
-        "TranslateZ": 176.0,
-        "RotateYaw": -120.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 176.0
       },
       {
         "$id": "71",
@@ -871,10 +763,7 @@
         "Rotation": "0, 0.991444767, 0, 0.130526826",
         "TranslateX": 22.0,
         "TranslateY": 40.0,
-        "TranslateZ": 169.0,
-        "RotateYaw": 164.999924,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 169.0
       },
       {
         "$id": "72",
@@ -899,10 +788,7 @@
         "Rotation": "0, -0.7933528, 0, 0.608762145",
         "TranslateX": 12.0,
         "TranslateY": 29.0,
-        "TranslateZ": 169.0,
-        "RotateYaw": -104.999893,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 169.0
       },
       {
         "$id": "73",
@@ -921,10 +807,7 @@
         "Rotation": "0, -0.159911543, 0, 0.987131357",
         "TranslateX": 20.0,
         "TranslateY": 35.0,
-        "TranslateZ": 176.0,
-        "RotateYaw": -18.4035225,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 176.0
       },
       {
         "$id": "74",
@@ -949,10 +832,7 @@
         "Rotation": "-0.3966764, -0.687063754, 0.304380983, 0.5272034",
         "TranslateX": 244.0,
         "TranslateY": -44.9033737,
-        "TranslateZ": -71.0,
-        "RotateYaw": -104.999908,
-        "RotatePitch": 0.0,
-        "RotateRoll": 59.9999924
+        "TranslateZ": -71.0
       },
       {
         "$id": "75",
@@ -977,10 +857,7 @@
         "Rotation": "0, 0, 1, 9.099629E-07",
         "TranslateX": -453.0,
         "TranslateY": 12.0,
-        "TranslateZ": -94.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 179.9999
+        "TranslateZ": -94.0
       },
       {
         "$id": "76",
@@ -1005,10 +882,7 @@
         "Rotation": "0.09229595, -0.7010574, 0.270598054, 0.6532815",
         "TranslateX": -476.0,
         "TranslateY": 1.0,
-        "TranslateZ": -109.0,
-        "RotateYaw": -90.0,
-        "RotatePitch": 30.0,
-        "RotateRoll": 15.0
+        "TranslateZ": -109.0
       },
       {
         "$id": "77",
@@ -1033,10 +907,7 @@
         "Rotation": "0.3744164, 0.5179824, -0.135298952, 0.7571002",
         "TranslateX": -434.0,
         "TranslateY": -19.0,
-        "TranslateZ": -53.0,
-        "RotateYaw": 74.99997,
-        "RotatePitch": 44.9999733,
-        "RotateRoll": 14.9999762
+        "TranslateZ": -53.0
       },
       {
         "$id": "78",
@@ -1061,10 +932,7 @@
         "Rotation": "0.957662046, 0.126079217, 0.256605148, 0.0337828621",
         "TranslateX": -452.0,
         "TranslateY": 15.0,
-        "TranslateZ": -43.0,
-        "RotateYaw": 149.999954,
-        "RotatePitch": -1.2806604E-06,
-        "RotateRoll": 164.999924
+        "TranslateZ": -43.0
       },
       {
         "$id": "79",
@@ -1089,10 +957,7 @@
         "Rotation": "0.430459231, 0.560984969, -0.43045792, 0.560987234",
         "TranslateX": -354.0,
         "TranslateY": -20.0,
-        "TranslateZ": -63.0,
-        "RotateYaw": 89.99968,
-        "RotatePitch": 74.99984,
-        "RotateRoll": -0.000109516113
+        "TranslateZ": -63.0
       },
       {
         "$id": "80",
@@ -1117,10 +982,7 @@
         "Rotation": "-0.396676481, -0.5272028, -0.304380476, 0.6870644",
         "TranslateX": -306.0,
         "TranslateY": -24.0,
-        "TranslateZ": -63.0,
-        "RotateYaw": -74.9999542,
-        "RotatePitch": -59.999958,
-        "RotateRoll": -1.53679248E-05
+        "TranslateZ": -63.0
       },
       {
         "$id": "81",
@@ -1145,10 +1007,7 @@
         "Rotation": "-0.70710665, -6.43440842E-07, 0.7071069, 6.43441069E-07",
         "TranslateX": 46.0,
         "TranslateY": 8.0,
-        "TranslateZ": -199.0,
-        "RotateYaw": -89.99998,
-        "RotatePitch": 0.0,
-        "RotateRoll": 179.9999
+        "TranslateZ": -199.0
       },
       {
         "$id": "82",
@@ -1173,10 +1032,7 @@
         "Rotation": "-0.70710665, -6.43440842E-07, 0.7071069, 6.43441069E-07",
         "TranslateX": 126.0,
         "TranslateY": 2.0,
-        "TranslateZ": -286.0,
-        "RotateYaw": -89.99998,
-        "RotatePitch": 0.0,
-        "RotateRoll": 179.9999
+        "TranslateZ": -286.0
       },
       {
         "$id": "83",
@@ -1201,10 +1057,7 @@
         "Rotation": "-1, -9.099629E-07, 9.099629E-07, 8.280325E-13",
         "TranslateX": 47.0,
         "TranslateY": 2.0,
-        "TranslateZ": -92.0,
-        "RotateYaw": -179.9999,
-        "RotatePitch": 0.0,
-        "RotateRoll": 179.9999
+        "TranslateZ": -92.0
       },
       {
         "$id": "84",
@@ -1229,10 +1082,7 @@
         "Rotation": "-0.9238795, -8.406961E-07, 0.382683426, 3.48227729E-07",
         "TranslateX": -384.0,
         "TranslateY": 12.0,
-        "TranslateZ": -52.0,
-        "RotateYaw": -135.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 179.9999
+        "TranslateZ": -52.0
       },
       {
         "$id": "85",
@@ -1257,10 +1107,7 @@
         "Rotation": "0.258819044, 2.355157E-07, 0.9659258, 8.78956655E-07",
         "TranslateX": -99.1642151,
         "TranslateY": 11.9310989,
-        "TranslateZ": 23.08062,
-        "RotateYaw": 30.0,
-        "RotatePitch": 3.25688781E-12,
-        "RotateRoll": 179.9999
+        "TranslateZ": 23.08062
       },
       {
         "$id": "86",
@@ -1285,10 +1132,7 @@
         "Rotation": "0.0990457162, 0.239117637, 0.369643748, 0.892399132",
         "TranslateX": -467.0,
         "TranslateY": -15.0,
-        "TranslateZ": -58.0,
-        "RotateYaw": 30.0,
-        "RotatePitch": -3.4150944E-06,
-        "RotateRoll": 44.9999924
+        "TranslateZ": -58.0
       },
       {
         "$id": "87",
@@ -1313,10 +1157,7 @@
         "Rotation": "0, 0.382683456, 0, 0.9238795",
         "TranslateX": 394.0,
         "TranslateY": -61.0,
-        "TranslateZ": -53.0,
-        "RotateYaw": 45.0000038,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -53.0
       },
       {
         "$id": "88",
@@ -1341,10 +1182,7 @@
         "Rotation": "0, -0.866025448, 0, 0.49999997",
         "TranslateX": -149.0,
         "TranslateY": -27.0,
-        "TranslateZ": 305.0,
-        "RotateYaw": -120.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 305.0
       },
       {
         "$id": "89",
@@ -1369,10 +1207,7 @@
         "Rotation": "-0.482962877, -0.8365162, 0.1294097, 0.224144176",
         "TranslateX": -387.0,
         "TranslateY": -8.0,
-        "TranslateZ": -130.0,
-        "RotateYaw": -149.999954,
-        "RotatePitch": -8.537736E-07,
-        "RotateRoll": 60.0
+        "TranslateZ": -130.0
       },
       {
         "$id": "90",
@@ -1397,10 +1232,7 @@
         "Rotation": "0, 0.130526245, 0, 0.9914448",
         "TranslateX": -144.0,
         "TranslateY": -10.0,
-        "TranslateZ": -262.0,
-        "RotateYaw": 15.0000048,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -262.0
       },
       {
         "$id": "91",
@@ -1425,10 +1257,7 @@
         "Rotation": "-0.5461915, 0.0863134861, 0.0567129068, 0.8312692",
         "TranslateX": 178.0,
         "TranslateY": -42.0,
-        "TranslateZ": 13.0,
-        "RotateYaw": 11.8559418,
-        "RotatePitch": -66.61442,
-        "RotateRoll": 0.0
+        "TranslateZ": 13.0
       },
       {
         "$id": "92",
@@ -1453,10 +1282,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": 0.0,
         "TranslateY": -280.0,
-        "TranslateZ": -820.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -820.0
       },
       {
         "$id": "93",
@@ -1481,10 +1307,7 @@
         "Rotation": "-0.70710665, -6.43440842E-07, 0.7071069, 6.43441069E-07",
         "TranslateX": -126.0,
         "TranslateY": -3.0,
-        "TranslateZ": -270.0,
-        "RotateYaw": -89.99998,
-        "RotatePitch": 0.0,
-        "RotateRoll": 179.9999
+        "TranslateZ": -270.0
       },
       {
         "$id": "94",
@@ -1509,10 +1332,7 @@
         "Rotation": "0, 0, 1, 9.099629E-07",
         "TranslateX": -415.0,
         "TranslateY": 16.0,
-        "TranslateZ": -145.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 179.9999
+        "TranslateZ": -145.0
       },
       {
         "$id": "95",
@@ -1531,10 +1351,7 @@
         "Rotation": "0.263530582, -0.02952748, 0.963636339, 0.03293553",
         "TranslateX": -351.317657,
         "TranslateY": 6.108226,
-        "TranslateZ": -65.92223,
-        "RotateYaw": 30.487566,
-        "RotatePitch": 4.259081,
-        "RotateRoll": 177.246124
+        "TranslateZ": -65.92223
       },
       {
         "$id": "97",
@@ -1559,10 +1376,7 @@
         "Rotation": "-0.70710665, -6.43440842E-07, 0.7071069, 6.43441069E-07",
         "TranslateX": -33.6288834,
         "TranslateY": 2.0,
-        "TranslateZ": -5.38283253,
-        "RotateYaw": -89.99998,
-        "RotatePitch": 0.0,
-        "RotateRoll": 179.9999
+        "TranslateZ": -5.38283253
       },
       {
         "$id": "98",
@@ -1581,10 +1395,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": 40.0,
         "TranslateY": 58.0,
-        "TranslateZ": 72.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 72.0
       },
       {
         "$id": "99",
@@ -1603,10 +1414,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -32.48844,
         "TranslateY": 57.0721169,
-        "TranslateZ": 38.4319229,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 38.4319229
       },
       {
         "$id": "100",
@@ -1631,10 +1439,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -32.0,
         "TranslateY": 32.0,
-        "TranslateZ": 96.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 96.0
       },
       {
         "$id": "101",
@@ -1653,10 +1458,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -32.0,
         "TranslateY": 38.0,
-        "TranslateZ": 170.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 170.0
       },
       {
         "$id": "102",
@@ -1681,10 +1483,7 @@
         "Rotation": "0, -0.608761251, 0, 0.793353438",
         "TranslateX": -235.0,
         "TranslateY": -72.0,
-        "TranslateZ": -225.0,
-        "RotateYaw": -74.99997,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -225.0
       },
       {
         "$id": "103",
@@ -1703,10 +1502,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -8.0,
         "TranslateY": 68.0,
-        "TranslateZ": 280.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 280.0
       },
       {
         "$id": "104",
@@ -1731,10 +1527,7 @@
         "Rotation": "-0.49999994, 0.499999881, -0.50000006, 0.50000006",
         "TranslateX": 24.0,
         "TranslateY": 20.0,
-        "TranslateZ": 100.0,
-        "RotateYaw": 89.99998,
-        "RotatePitch": -3.4150944E-06,
-        "RotateRoll": -90.0
+        "TranslateZ": 100.0
       },
       {
         "$id": "105",
@@ -1759,10 +1552,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": 16.0,
         "TranslateY": 20.0,
-        "TranslateZ": 116.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 116.0
       },
       {
         "$id": "106",
@@ -1787,10 +1577,7 @@
         "Rotation": "6.433881E-07, 0.7069847, -0.707228839, 6.436102E-07",
         "TranslateX": 6.0,
         "TranslateY": 12.0,
-        "TranslateZ": 100.0,
-        "RotateYaw": -1.88646663E-08,
-        "RotatePitch": 89.98021,
-        "RotateRoll": -179.9999
+        "TranslateZ": 100.0
       },
       {
         "$id": "107",
@@ -1815,10 +1602,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": 6.0,
         "TranslateY": 20.0,
-        "TranslateZ": 116.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 116.0
       },
       {
         "$id": "108",
@@ -1843,10 +1627,7 @@
         "Rotation": "-4.371138E-08, -4.371139E-08, -4.37113918E-08, 1",
         "TranslateX": 16.0,
         "TranslateY": 12.0,
-        "TranslateZ": 116.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": -5.008956E-06
+        "TranslateZ": 116.0
       },
       {
         "$id": "109",
@@ -1871,10 +1652,7 @@
         "Rotation": "-4.371138E-08, -4.371139E-08, -4.37113918E-08, 1",
         "TranslateX": 6.0,
         "TranslateY": 12.0,
-        "TranslateZ": 116.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": -5.008956E-06
+        "TranslateZ": 116.0
       },
       {
         "$id": "110",
@@ -1899,10 +1677,7 @@
         "Rotation": "-0.0586052239, 0.285494983, -0.0456107445, 0.9554987",
         "TranslateX": 26.0,
         "TranslateY": 12.0,
-        "TranslateZ": 74.0,
-        "RotateYaw": 33.5711823,
-        "RotatePitch": -4.93072176,
-        "RotateRoll": -6.95403528
+        "TranslateZ": 74.0
       },
       {
         "$id": "111",
@@ -1927,10 +1702,7 @@
         "Rotation": "0.70710665, 6.74349451E-07, 0.7071069, 6.1253246E-07",
         "TranslateX": 40.0,
         "TranslateY": 20.0,
-        "TranslateZ": 92.0,
-        "RotateYaw": 89.99998,
-        "RotatePitch": -5.00895339E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 92.0
       },
       {
         "$id": "112",
@@ -1955,10 +1727,7 @@
         "Rotation": "0.70710665, -6.74349451E-07, -0.7071069, 6.1253246E-07",
         "TranslateX": 72.0,
         "TranslateY": 20.0,
-        "TranslateZ": 92.0,
-        "RotateYaw": -89.99998,
-        "RotatePitch": -5.00895339E-06,
-        "RotateRoll": -179.9999
+        "TranslateZ": 92.0
       },
       {
         "$id": "113",
@@ -1983,10 +1752,7 @@
         "Rotation": "0.7069847, 0, 0, 0.707228839",
         "TranslateX": 88.0,
         "TranslateY": 12.0,
-        "TranslateZ": 92.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 89.98021,
-        "RotateRoll": 0.0
+        "TranslateZ": 92.0
       },
       {
         "$id": "114",
@@ -2011,10 +1777,7 @@
         "Rotation": "0.7071068, 6.743495E-07, 0.7071067, 6.125324E-07",
         "TranslateX": 104.0,
         "TranslateY": 12.0,
-        "TranslateZ": 92.0,
-        "RotateYaw": 90.00001,
-        "RotatePitch": -5.008937E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 92.0
       },
       {
         "$id": "115",
@@ -2039,10 +1802,7 @@
         "Rotation": "0.70710665, -6.74349451E-07, -0.7071069, 6.1253246E-07",
         "TranslateX": 120.0,
         "TranslateY": 4.0,
-        "TranslateZ": 92.0,
-        "RotateYaw": -89.99998,
-        "RotatePitch": -5.00895339E-06,
-        "RotateRoll": -179.9999
+        "TranslateZ": 92.0
       },
       {
         "$id": "116",
@@ -2067,10 +1827,7 @@
         "Rotation": "0, -0.70710665, 0, 0.7071069",
         "TranslateX": 48.0,
         "TranslateY": 12.0,
-        "TranslateZ": 92.0,
-        "RotateYaw": -89.99998,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 92.0
       },
       {
         "$id": "117",
@@ -2095,10 +1852,7 @@
         "Rotation": "0, -0.70710665, 0, 0.7071069",
         "TranslateX": 66.0,
         "TranslateY": 12.0,
-        "TranslateZ": 92.0,
-        "RotateYaw": -89.99998,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 92.0
       },
       {
         "$id": "118",
@@ -2117,10 +1871,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": 86.0,
         "TranslateY": 16.0,
-        "TranslateZ": 100.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 100.0
       },
       {
         "$id": "119",
@@ -2145,10 +1896,7 @@
         "Rotation": "0, -0.70710665, 0, 0.7071069",
         "TranslateX": 32.0,
         "TranslateY": 12.0,
-        "TranslateZ": 92.0,
-        "RotateYaw": -89.99998,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 92.0
       },
       {
         "$id": "120",
@@ -2173,10 +1921,7 @@
         "Rotation": "0, -0.70710665, 0, 0.7071069",
         "TranslateX": 78.0,
         "TranslateY": 12.0,
-        "TranslateZ": 92.0,
-        "RotateYaw": -89.99998,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 92.0
       },
       {
         "$id": "121",
@@ -2201,10 +1946,7 @@
         "Rotation": "-0.7069847, 0, 0, 0.707228839",
         "TranslateX": -22.0,
         "TranslateY": 30.0,
-        "TranslateZ": 68.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": -89.98021,
-        "RotateRoll": 0.0
+        "TranslateZ": 68.0
       },
       {
         "$id": "122",
@@ -2229,10 +1971,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -28.0,
         "TranslateY": 34.0,
-        "TranslateZ": 84.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 84.0
       },
       {
         "$id": "123",
@@ -2257,10 +1996,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -36.0,
         "TranslateY": 34.0,
-        "TranslateZ": 84.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 84.0
       },
       {
         "$id": "124",
@@ -2285,10 +2021,7 @@
         "Rotation": "-4.904282E-08, 3.763183E-08, 0.991444767, 0.130526826",
         "TranslateX": -28.0,
         "TranslateY": 42.0,
-        "TranslateZ": 84.0,
-        "RotateYaw": -5.008944E-06,
-        "RotatePitch": -5.008944E-06,
-        "RotateRoll": 164.999924
+        "TranslateZ": 84.0
       },
       {
         "$id": "125",
@@ -2313,10 +2046,7 @@
         "Rotation": "2.36563942E-08, -5.711159E-08, -0.9238795, 0.382683426",
         "TranslateX": -36.0,
         "TranslateY": 42.0,
-        "TranslateZ": 84.0,
-        "RotateYaw": -5.008948E-06,
-        "RotatePitch": -5.008948E-06,
-        "RotateRoll": -135.0
+        "TranslateZ": 84.0
       },
       {
         "$id": "126",
@@ -2341,10 +2071,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -36.0,
         "TranslateY": 42.0,
-        "TranslateZ": 116.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 116.0
       },
       {
         "$id": "127",
@@ -2369,10 +2096,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -28.0,
         "TranslateY": 42.0,
-        "TranslateZ": 116.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 116.0
       },
       {
         "$id": "128",
@@ -2397,10 +2121,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -42.0,
         "TranslateY": 30.0,
-        "TranslateZ": 100.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 100.0
       },
       {
         "$id": "129",
@@ -2425,10 +2146,7 @@
         "Rotation": "-0.7069847, 0, 0, 0.707228839",
         "TranslateX": -42.0,
         "TranslateY": 30.0,
-        "TranslateZ": 68.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": -89.98021,
-        "RotateRoll": 0.0
+        "TranslateZ": 68.0
       },
       {
         "$id": "130",
@@ -2453,10 +2171,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -28.0,
         "TranslateY": 50.0,
-        "TranslateZ": 68.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 68.0
       },
       {
         "$id": "131",
@@ -2481,10 +2196,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -36.0,
         "TranslateY": 50.0,
-        "TranslateZ": 68.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 68.0
       },
       {
         "$id": "132",
@@ -2509,10 +2221,7 @@
         "Rotation": "6.433881E-07, 0.7069847, -0.707228839, 6.436102E-07",
         "TranslateX": -28.0,
         "TranslateY": 26.0,
-        "TranslateZ": 68.0,
-        "RotateYaw": -1.88646663E-08,
-        "RotatePitch": 89.98021,
-        "RotateRoll": -179.9999
+        "TranslateZ": 68.0
       },
       {
         "$id": "133",
@@ -2537,10 +2246,7 @@
         "Rotation": "6.433881E-07, 0.7069847, -0.707228839, 6.436102E-07",
         "TranslateX": -36.0,
         "TranslateY": 26.0,
-        "TranslateZ": 68.0,
-        "RotateYaw": -1.88646663E-08,
-        "RotatePitch": 89.98021,
-        "RotateRoll": -179.9999
+        "TranslateZ": 68.0
       },
       {
         "$id": "134",
@@ -2565,10 +2271,7 @@
         "Rotation": "0.7069847, 0, 0, 0.707228839",
         "TranslateX": -28.0,
         "TranslateY": 10.0,
-        "TranslateZ": 60.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 89.98021,
-        "RotateRoll": 0.0
+        "TranslateZ": 60.0
       },
       {
         "$id": "135",
@@ -2593,10 +2296,7 @@
         "Rotation": "0.7069847, 0, 0, 0.707228839",
         "TranslateX": -36.0,
         "TranslateY": 10.0,
-        "TranslateZ": 60.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 89.98021,
-        "RotateRoll": 0.0
+        "TranslateZ": 60.0
       },
       {
         "$id": "136",
@@ -2621,10 +2321,7 @@
         "Rotation": "0, 1, 0, 9.099629E-07",
         "TranslateX": -28.0,
         "TranslateY": 50.0,
-        "TranslateZ": 52.0,
-        "RotateYaw": 179.9999,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 52.0
       },
       {
         "$id": "137",
@@ -2649,10 +2346,7 @@
         "Rotation": "0, 1, 0, 9.099629E-07",
         "TranslateX": -36.0,
         "TranslateY": 50.0,
-        "TranslateZ": 52.0,
-        "RotateYaw": 179.9999,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 52.0
       },
       {
         "$id": "138",
@@ -2677,10 +2371,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -28.0,
         "TranslateY": 58.0,
-        "TranslateZ": 36.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 36.0
       },
       {
         "$id": "139",
@@ -2705,10 +2396,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -36.0,
         "TranslateY": 58.0,
-        "TranslateZ": 36.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 36.0
       },
       {
         "$id": "140",
@@ -2733,10 +2421,7 @@
         "Rotation": "-0.04722906, -0.499255925, -0.0272677131, 0.8647366",
         "TranslateX": -314.0,
         "TranslateY": 4.90409946,
-        "TranslateZ": -71.0,
-        "RotateYaw": -60.0,
-        "RotatePitch": -6.2524004,
-        "RotateRoll": -2.134434E-07
+        "TranslateZ": -71.0
       },
       {
         "$id": "141",
@@ -2755,10 +2440,7 @@
         "Rotation": "0.706301749, -0.04909815, 0.05149661, 0.704326153",
         "TranslateX": -333.755,
         "TranslateY": 5.923957,
-        "TranslateZ": -91.6088638,
-        "RotateYaw": 125.399422,
-        "RotatePitch": 89.7489853,
-        "RotateRoll": 133.557373
+        "TranslateZ": -91.6088638
       },
       {
         "$id": "143",
@@ -2777,10 +2459,7 @@
         "Rotation": "-0.624834955, 0.7644377, -0.114967071, 0.109539337",
         "TranslateX": -370.2868,
         "TranslateY": 10.1494322,
-        "TranslateZ": -98.1387939,
-        "RotateYaw": 161.857681,
-        "RotatePitch": 2.22835422,
-        "RotateRoll": -78.87946
+        "TranslateZ": -98.1387939
       },
       {
         "$id": "145",
@@ -2804,10 +2483,7 @@
         "Rotation": "0.09150644, -0.524518669, 0.341506124, 0.7745194",
         "TranslateX": -320.0,
         "TranslateY": 3.54933548,
-        "TranslateZ": -72.0,
-        "RotateYaw": -59.9999428,
-        "RotatePitch": 29.999979,
-        "RotateRoll": 29.9999828
+        "TranslateZ": -72.0
       },
       {
         "$id": "147",
@@ -2831,10 +2507,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -341.0,
         "TranslateY": 5.0,
-        "TranslateZ": -76.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -76.0
       },
       {
         "$id": "149",
@@ -2859,10 +2532,7 @@
         "Rotation": "0.70710665, 6.74349451E-07, 0.7071069, 6.1253246E-07",
         "TranslateX": 40.0,
         "TranslateY": 20.0,
-        "TranslateZ": 82.0,
-        "RotateYaw": 89.99998,
-        "RotatePitch": -5.00895339E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 82.0
       },
       {
         "$id": "150",
@@ -2887,10 +2557,7 @@
         "Rotation": "0.70710665, -6.74349451E-07, -0.7071069, 6.1253246E-07",
         "TranslateX": 40.0,
         "TranslateY": 57.7791824,
-        "TranslateZ": 71.0,
-        "RotateYaw": -89.99998,
-        "RotatePitch": -5.00895339E-06,
-        "RotateRoll": -179.9999
+        "TranslateZ": 71.0
       },
       {
         "$id": "151",
@@ -2915,10 +2582,7 @@
         "Rotation": "-7.10542736E-15, 0.70710665, 6.181723E-08, 0.7071069",
         "TranslateX": 24.0,
         "TranslateY": 12.0,
-        "TranslateZ": 82.0,
-        "RotateYaw": 89.99998,
-        "RotatePitch": -5.008955E-06,
-        "RotateRoll": 5.008956E-06
+        "TranslateZ": 82.0
       },
       {
         "$id": "152",
@@ -2943,10 +2607,7 @@
         "Rotation": "-7.10542736E-15, 0.70710665, 6.181723E-08, 0.7071069",
         "TranslateX": 24.0,
         "TranslateY": 12.0,
-        "TranslateZ": 71.0,
-        "RotateYaw": 89.99998,
-        "RotatePitch": -5.008955E-06,
-        "RotateRoll": 5.008956E-06
+        "TranslateZ": 71.0
       },
       {
         "$id": "153",
@@ -2971,10 +2632,7 @@
         "Rotation": "-6.181723E-08, -0.70710665, 1.0658141E-14, 0.7071069",
         "TranslateX": 56.0,
         "TranslateY": 12.0,
-        "TranslateZ": 71.0,
-        "RotateYaw": -89.99998,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 5.00895567E-06
+        "TranslateZ": 71.0
       },
       {
         "$id": "154",
@@ -2999,10 +2657,7 @@
         "Rotation": "-6.181723E-08, -0.70710665, 1.0658141E-14, 0.7071069",
         "TranslateX": 56.0,
         "TranslateY": 12.0,
-        "TranslateZ": 82.0,
-        "RotateYaw": -89.99998,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 5.00895567E-06
+        "TranslateZ": 82.0
       },
       {
         "$id": "155",
@@ -3026,10 +2681,7 @@
         "Rotation": "-0.608760834, 0, 0, 0.7933538",
         "TranslateX": -36.0,
         "TranslateY": 58.0,
-        "TranslateZ": 19.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": -74.9999161,
-        "RotateRoll": 0.0
+        "TranslateZ": 19.0
       },
       {
         "$id": "157",
@@ -3053,10 +2705,7 @@
         "Rotation": "-0.608760834, 0, 0, 0.7933538",
         "TranslateX": -28.0,
         "TranslateY": 58.0,
-        "TranslateZ": 19.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": -74.9999161,
-        "RotateRoll": 0.0
+        "TranslateZ": 19.0
       },
       {
         "$id": "159",
@@ -3082,10 +2731,7 @@
         "Rotation": "-0.6531687, 0.270551354, 0.270644784, 0.6533942",
         "TranslateX": 61.6909866,
         "TranslateY": 30.50483,
-        "TranslateZ": 151.8464,
-        "RotateYaw": 0.0,
-        "RotatePitch": -89.98021,
-        "RotateRoll": 45.0000038
+        "TranslateZ": 151.8464
       },
       {
         "$id": "160",
@@ -3109,10 +2755,7 @@
         "Rotation": "0.326640546, 0.2951604, 0.135298952, 0.8876263",
         "TranslateX": -322.0,
         "TranslateY": 6.0,
-        "TranslateZ": -73.0,
-        "RotateYaw": 45.0,
-        "RotatePitch": 29.9999752,
-        "RotateRoll": 29.9999828
+        "TranslateZ": -73.0
       },
       {
         "$id": "162",
@@ -3137,10 +2780,7 @@
         "Rotation": "0.7933528, 6.687019E-07, 0.608762145, 6.23308154E-07",
         "TranslateX": -78.6210861,
         "TranslateY": 23.3026848,
-        "TranslateZ": -61.42176,
-        "RotateYaw": 104.999893,
-        "RotatePitch": 1.00179195E-05,
-        "RotateRoll": 179.9999
+        "TranslateZ": -61.42176
       },
       {
         "$id": "163",
@@ -3165,10 +2805,7 @@
         "Rotation": "-0.07945957, 0.7865662, 0.6035532, 0.103553794",
         "TranslateX": -89.0,
         "TranslateY": -4.0,
-        "TranslateZ": -69.0,
-        "RotateYaw": 164.999924,
-        "RotatePitch": -74.99997,
-        "RotateRoll": 5.976415E-06
+        "TranslateZ": -69.0
       },
       {
         "$id": "164",
@@ -3193,10 +2830,7 @@
         "Rotation": "-0.130526319, 2.0544897E-07, -0.9914448, 8.90767069E-07",
         "TranslateX": -134.0,
         "TranslateY": 21.0,
-        "TranslateZ": -84.0,
-        "RotateYaw": 15.0000134,
-        "RotatePitch": 1.00179113E-05,
-        "RotateRoll": -179.9999
+        "TranslateZ": -84.0
       },
       {
         "$id": "165",
@@ -3221,10 +2855,7 @@
         "Rotation": "0.70710665, -6.74349451E-07, -0.7071069, 6.1253246E-07",
         "TranslateX": 152.0,
         "TranslateY": 4.0,
-        "TranslateZ": 92.0,
-        "RotateYaw": -89.99998,
-        "RotatePitch": -5.00895339E-06,
-        "RotateRoll": -179.9999
+        "TranslateZ": 92.0
       },
       {
         "$id": "166",
@@ -3249,10 +2880,7 @@
         "Rotation": "0.70710665, -6.74349451E-07, -0.7071069, 6.1253246E-07",
         "TranslateX": 184.0,
         "TranslateY": 4.0,
-        "TranslateZ": 92.0,
-        "RotateYaw": -89.99998,
-        "RotatePitch": -5.00895339E-06,
-        "RotateRoll": -179.9999
+        "TranslateZ": 92.0
       },
       {
         "$id": "167",
@@ -3277,10 +2905,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -28.0,
         "TranslateY": 34.0,
-        "TranslateZ": 116.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 116.0
       },
       {
         "$id": "168",
@@ -3305,10 +2930,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -36.0,
         "TranslateY": 34.0,
-        "TranslateZ": 116.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 116.0
       },
       {
         "$id": "169",
@@ -3333,10 +2955,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -36.0,
         "TranslateY": 42.0,
-        "TranslateZ": 148.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 148.0
       },
       {
         "$id": "170",
@@ -3361,10 +2980,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -28.0,
         "TranslateY": 42.0,
-        "TranslateZ": 148.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 148.0
       },
       {
         "$id": "171",
@@ -3389,10 +3005,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -28.0,
         "TranslateY": 34.0,
-        "TranslateZ": 148.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 148.0
       },
       {
         "$id": "172",
@@ -3417,10 +3030,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -36.0,
         "TranslateY": 34.0,
-        "TranslateZ": 148.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 148.0
       },
       {
         "$id": "173",
@@ -3445,10 +3055,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -36.0,
         "TranslateY": 42.0,
-        "TranslateZ": 180.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 180.0
       },
       {
         "$id": "174",
@@ -3473,10 +3080,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -28.0,
         "TranslateY": 42.0,
-        "TranslateZ": 180.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 180.0
       },
       {
         "$id": "175",
@@ -3501,10 +3105,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -28.0,
         "TranslateY": 34.0,
-        "TranslateZ": 180.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 180.0
       },
       {
         "$id": "176",
@@ -3529,10 +3130,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -36.0,
         "TranslateY": 34.0,
-        "TranslateZ": 180.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 180.0
       },
       {
         "$id": "177",
@@ -3557,10 +3155,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -36.0,
         "TranslateY": 42.0,
-        "TranslateZ": 212.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 212.0
       },
       {
         "$id": "178",
@@ -3585,10 +3180,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -28.0,
         "TranslateY": 42.0,
-        "TranslateZ": 212.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 212.0
       },
       {
         "$id": "179",
@@ -3613,10 +3205,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -28.0,
         "TranslateY": 34.0,
-        "TranslateZ": 212.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 212.0
       },
       {
         "$id": "180",
@@ -3641,10 +3230,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -36.0,
         "TranslateY": 34.0,
-        "TranslateZ": 212.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 212.0
       },
       {
         "$id": "181",
@@ -3669,10 +3255,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -42.0,
         "TranslateY": 30.0,
-        "TranslateZ": 164.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 164.0
       },
       {
         "$id": "182",
@@ -3697,10 +3280,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -42.0,
         "TranslateY": 30.0,
-        "TranslateZ": 228.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 228.0
       },
       {
         "$id": "183",
@@ -3725,10 +3305,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -22.0,
         "TranslateY": 32.0,
-        "TranslateZ": 100.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 100.0
       },
       {
         "$id": "184",
@@ -3753,10 +3330,7 @@
         "Rotation": "0.129409567, -0.129409969, 0.01703712, 0.982962847",
         "TranslateX": -22.0,
         "TranslateY": 29.0,
-        "TranslateZ": 166.0,
-        "RotateYaw": -15.0000525,
-        "RotatePitch": 15.0000048,
-        "RotateRoll": -3.841981E-06
+        "TranslateZ": 166.0
       },
       {
         "$id": "185",
@@ -3781,10 +3355,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -22.0,
         "TranslateY": 30.0,
-        "TranslateZ": 230.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 230.0
       },
       {
         "$id": "186",
@@ -3803,10 +3374,7 @@
         "Rotation": "0.629404962, 0.446241021, 0.143251732, 0.619836569",
         "TranslateX": -334.419128,
         "TranslateY": 6.30999565,
-        "TranslateZ": -95.22729,
-        "RotateYaw": 104.5631,
-        "RotatePitch": 40.7233124,
-        "RotateRoll": 77.29674
+        "TranslateZ": -95.22729
       },
       {
         "$id": "188",
@@ -3825,10 +3393,7 @@
         "Rotation": "0.241410285, 0.559574664, 0.548854649, 0.5721501",
         "TranslateX": -127.63916,
         "TranslateY": 6.059391,
-        "TranslateZ": -149.923553,
-        "RotateYaw": 74.14055,
-        "RotatePitch": -19.75534,
-        "RotateRoll": 72.63071
+        "TranslateZ": -149.923553
       },
       {
         "$id": "190",
@@ -3847,10 +3412,7 @@
         "Rotation": "0, 0.363852918, 0, 0.931456447",
         "TranslateX": -294.6089,
         "TranslateY": 19.0,
-        "TranslateZ": -105.949219,
-        "RotateYaw": 42.67401,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -105.949219
       },
       {
         "$id": "191",
@@ -3869,10 +3431,7 @@
         "Rotation": "0, 0.363852918, 0, 0.931456447",
         "TranslateX": 125.716919,
         "TranslateY": 85.85284,
-        "TranslateZ": -286.439758,
-        "RotateYaw": 42.67401,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -286.439758
       },
       {
         "$id": "192",
@@ -3897,10 +3456,7 @@
         "Rotation": "-0.333027482, -0.433811337, 0.5098006, 0.664081156",
         "TranslateX": -151.906677,
         "TranslateY": -4.0,
-        "TranslateZ": -91.0,
-        "RotateYaw": -66.30919,
-        "RotatePitch": 0.0,
-        "RotateRoll": 75.02532
+        "TranslateZ": -91.0
       },
       {
         "$id": "193",
@@ -3919,10 +3475,7 @@
         "Rotation": "0, 0.363852918, 0, 0.931456447",
         "TranslateX": -346.573944,
         "TranslateY": 36.1190567,
-        "TranslateZ": -212.257614,
-        "RotateYaw": 42.67401,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -212.257614
       },
       {
         "$id": "194",
@@ -3941,10 +3494,7 @@
         "Rotation": "0, 0.363852918, 0, 0.931456447",
         "TranslateX": -261.0,
         "TranslateY": 23.0,
-        "TranslateZ": -143.0,
-        "RotateYaw": 42.67401,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -143.0
       },
       {
         "$id": "195",
@@ -3963,10 +3513,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -222.0,
         "TranslateY": 23.7414989,
-        "TranslateZ": 339.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 339.0
       },
       {
         "$id": "196",
@@ -3981,10 +3528,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -192.0,
         "TranslateY": 27.0,
-        "TranslateZ": -205.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -205.0
       },
       {
         "$id": "197",
@@ -3999,10 +3543,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -131.0,
         "TranslateY": 24.0,
-        "TranslateZ": -150.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -150.0
       },
       {
         "$id": "198",
@@ -4017,10 +3558,7 @@
         "Rotation": "0, -0.130526245, 0, 0.9914448",
         "TranslateX": -86.0,
         "TranslateY": 40.0,
-        "TranslateZ": -80.0,
-        "RotateYaw": -15.0000048,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -80.0
       },
       {
         "$id": "199",
@@ -4035,10 +3573,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -213.0,
         "TranslateY": 18.0,
-        "TranslateZ": -301.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -301.0
       },
       {
         "$id": "200",
@@ -4057,10 +3592,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": 76.0,
         "TranslateY": 53.0,
-        "TranslateZ": 171.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 171.0
       },
       {
         "$id": "201",
@@ -4079,10 +3611,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": 43.0,
         "TranslateY": 26.2202168,
-        "TranslateZ": 5.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 5.0
       },
       {
         "$id": "202",
@@ -4110,10 +3639,7 @@
         "Rotation": "-0.49999997, 0, 0, 0.866025448",
         "TranslateX": 127.987137,
         "TranslateY": 72.0,
-        "TranslateZ": 187.271561,
-        "RotateYaw": 0.0,
-        "RotatePitch": -59.9999924,
-        "RotateRoll": 0.0
+        "TranslateZ": 187.271561
       },
       {
         "$id": "203",
@@ -4141,10 +3667,7 @@
         "Rotation": "-0.49999997, 0, 0, 0.866025448",
         "TranslateX": 40.0,
         "TranslateY": 72.0,
-        "TranslateZ": 176.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": -59.9999924,
-        "RotateRoll": 0.0
+        "TranslateZ": 176.0
       },
       {
         "$id": "204",
@@ -4168,10 +3691,7 @@
         "Rotation": "-0.7069847, 0, 0, 0.707228839",
         "TranslateX": -36.0,
         "TranslateY": 60.0,
-        "TranslateZ": 52.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": -89.98021,
-        "RotateRoll": 0.0
+        "TranslateZ": 52.0
       },
       {
         "$id": "206",
@@ -4195,10 +3715,7 @@
         "Rotation": "-0.49999997, 0, 0, 0.866025448",
         "TranslateX": -28.0,
         "TranslateY": 60.0,
-        "TranslateZ": 44.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": -59.9999924,
-        "RotateRoll": 0.0
+        "TranslateZ": 44.0
       },
       {
         "$id": "208",
@@ -4222,10 +3739,7 @@
         "Rotation": "-0.49999997, 0, 0, 0.866025448",
         "TranslateX": -32.0,
         "TranslateY": 40.0,
-        "TranslateZ": 104.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": -59.9999924,
-        "RotateRoll": 0.0
+        "TranslateZ": 104.0
       },
       {
         "$id": "210",
@@ -4250,10 +3764,7 @@
         "Rotation": "-4.37114238E-08, 4.37113457E-08, 1, 9.099629E-07",
         "TranslateX": -36.0,
         "TranslateY": 32.0,
-        "TranslateZ": 144.0,
-        "RotateYaw": -5.00895567E-06,
-        "RotatePitch": -5.00895567E-06,
-        "RotateRoll": 179.9999
+        "TranslateZ": 144.0
       },
       {
         "$id": "211",
@@ -4277,10 +3788,7 @@
         "Rotation": "-0.482962519, -0.224143788, -0.129409283, 0.8365166",
         "TranslateX": -24.0,
         "TranslateY": 40.0,
-        "TranslateZ": 156.0,
-        "RotateYaw": -29.9999828,
-        "RotatePitch": -59.9999428,
-        "RotateRoll": 6.830189E-06
+        "TranslateZ": 156.0
       },
       {
         "$id": "213",
@@ -4299,10 +3807,7 @@
         "Rotation": "0.289365858, -0.6579122, 0.589974761, 0.3678975",
         "TranslateX": -354.912781,
         "TranslateY": 6.855955,
-        "TranslateZ": -86.86117,
-        "RotateYaw": -103.087074,
-        "RotatePitch": 81.5783844,
-        "RotateRoll": 21.36127
+        "TranslateZ": -86.86117
       },
       {
         "$id": "215",
@@ -4321,10 +3826,7 @@
         "Rotation": "0.5004703, -0.0426469073, 0.861874938, 0.06987363",
         "TranslateX": -357.558777,
         "TranslateY": 7.243221,
-        "TranslateZ": -86.9368439,
-        "RotateYaw": 59.9603577,
-        "RotatePitch": 8.247645,
-        "RotateRoll": 175.4936
+        "TranslateZ": -86.9368439
       },
       {
         "$id": "217",
@@ -4343,10 +3845,7 @@
         "Rotation": "-0.5745776, 0.04148054, 0.814743459, 0.0658258349",
         "TranslateX": -356.123077,
         "TranslateY": 7.86312151,
-        "TranslateZ": -81.32033,
-        "RotateYaw": -70.1363144,
-        "RotatePitch": -8.235148,
-        "RotateRoll": 176.5478
+        "TranslateZ": -81.32033
       },
       {
         "$id": "219",
@@ -4365,10 +3864,7 @@
         "Rotation": "0.260996222, 0.655118942, 0.696182132, -0.134278268",
         "TranslateX": -361.520355,
         "TranslateY": 7.95315075,
-        "TranslateZ": -91.7521057,
-        "RotateYaw": 88.34993,
-        "RotatePitch": -79.19059,
-        "RotateRoll": 124.259933
+        "TranslateZ": -91.7521057
       },
       {
         "$id": "221",
@@ -4387,10 +3883,7 @@
         "Rotation": "0.490724146, -0.5147009, 0.4562821, 0.534863949",
         "TranslateX": -353.994,
         "TranslateY": 6.74831867,
-        "TranslateZ": -92.59852,
-        "RotateYaw": -96.35955,
-        "RotatePitch": 84.06449,
-        "RotateRoll": -9.492789
+        "TranslateZ": -92.59852
       },
       {
         "$id": "223",
@@ -4409,10 +3902,7 @@
         "Rotation": "0.115482479, -0.749457955, -0.178062633, 0.6271127",
         "TranslateX": -370.436218,
         "TranslateY": 12.6433372,
-        "TranslateZ": -96.537674,
-        "RotateYaw": -98.69515,
-        "RotatePitch": -7.010998,
-        "RotateRoll": -23.5416565
+        "TranslateZ": -96.537674
       },
       {
         "$id": "225",
@@ -4431,10 +3921,7 @@
         "Rotation": "0.338503033, 0.613310337, 0.6806537, -0.21442169",
         "TranslateX": -365.718079,
         "TranslateY": 8.819017,
-        "TranslateZ": -95.08649,
-        "RotateYaw": 84.64727,
-        "RotatePitch": -78.54145,
-        "RotateRoll": 141.6278
+        "TranslateZ": -95.08649
       },
       {
         "$id": "227",
@@ -4460,10 +3947,7 @@
         "Rotation": "-0.7069847, 0, 0, 0.707228839",
         "TranslateX": -346.0,
         "TranslateY": 6.0,
-        "TranslateZ": -80.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": -89.98021,
-        "RotateRoll": 0.0
+        "TranslateZ": -80.0
       },
       {
         "$id": "228",
@@ -4489,10 +3973,7 @@
         "Rotation": "-0.7069847, 0, 0, 0.707228839",
         "TranslateX": -320.2069,
         "TranslateY": 4.588501,
-        "TranslateZ": -75.5398254,
-        "RotateYaw": 0.0,
-        "RotatePitch": -89.98021,
-        "RotateRoll": 0.0
+        "TranslateZ": -75.5398254
       },
       {
         "$id": "229",
@@ -4511,10 +3992,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": 46.04347,
         "TranslateY": 85.85284,
-        "TranslateZ": -205.465149,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -205.465149
       },
       {
         "$id": "230",
@@ -4533,10 +4011,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": 46.04347,
         "TranslateY": 85.85284,
-        "TranslateZ": -85.069725,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -85.069725
       },
       {
         "$id": "231",
@@ -4555,10 +4030,7 @@
         "Rotation": "0.00138192845, -0.8660223, 0.00228828564, 0.4999983",
         "TranslateX": -303.1558,
         "TranslateY": 4.84459829,
-        "TranslateZ": -74.1461639,
-        "RotateYaw": -120.0,
-        "RotatePitch": 0.306266665,
-        "RotateRoll": -0.006032404
+        "TranslateZ": -74.1461639
       },
       {
         "$id": "233",
@@ -4577,10 +4049,7 @@
         "Rotation": "0.00074258924, -0.965922236, 0.002567984, 0.258818626",
         "TranslateX": -88.51108,
         "TranslateY": 24.8410015,
-        "TranslateZ": -87.91064,
-        "RotateYaw": -149.999954,
-        "RotatePitch": 0.3062667,
-        "RotateRoll": -0.006032351
+        "TranslateZ": -87.91064
       },
       {
         "$id": "235",
@@ -4599,10 +4068,7 @@
         "Rotation": "0.0004010496, -0.99144125, 0.00264294236, 0.1305265",
         "TranslateX": 27.556139,
         "TranslateY": 21.939867,
-        "TranslateZ": -93.54487,
-        "RotateYaw": -164.999924,
-        "RotatePitch": 0.306266844,
-        "RotateRoll": -0.00603253767
+        "TranslateZ": -93.54487
       },
       {
         "$id": "237",
@@ -4621,10 +4087,7 @@
         "Rotation": "0.00138192845, -0.8660223, 0.00228828564, 0.4999983",
         "TranslateX": -150.362976,
         "TranslateY": 24.8410015,
-        "TranslateZ": -196.773926,
-        "RotateYaw": -120.0,
-        "RotatePitch": 0.306266665,
-        "RotateRoll": -0.006032404
+        "TranslateZ": -196.773926
       },
       {
         "$id": "239",
@@ -4643,10 +4106,7 @@
         "Rotation": "0.00192709255, -0.707104146, 0.00185264426, 0.7071044",
         "TranslateX": 36.0307,
         "TranslateY": 12.28693,
-        "TranslateZ": 65.72238,
-        "RotateYaw": -90.0,
-        "RotatePitch": 0.306266665,
-        "RotateRoll": -0.00603245758
+        "TranslateZ": 65.72238
       },
       {
         "$id": "241",
@@ -4665,10 +4125,7 @@
         "Rotation": "0.00192709255, -0.707104146, 0.00185264426, 0.7071044",
         "TranslateX": 38.2814636,
         "TranslateY": 12.0,
-        "TranslateZ": 61.6967163,
-        "RotateYaw": -90.0,
-        "RotatePitch": 0.306266665,
-        "RotateRoll": -0.00603245758
+        "TranslateZ": 61.6967163
       },
       {
         "$id": "243",
@@ -4687,10 +4144,7 @@
         "Rotation": "0.00192709255, -0.707104146, 0.00185264426, 0.7071044",
         "TranslateX": 40.93696,
         "TranslateY": 12.0,
-        "TranslateZ": 54.7554321,
-        "RotateYaw": -90.0,
-        "RotatePitch": 0.306266665,
-        "RotateRoll": -0.00603245758
+        "TranslateZ": 54.7554321
       },
       {
         "$id": "245",
@@ -4709,10 +4163,7 @@
         "Rotation": "0.00192709255, -0.707104146, 0.00185264426, 0.7071044",
         "TranslateX": 50.8821259,
         "TranslateY": 11.3423786,
-        "TranslateZ": 46.9634247,
-        "RotateYaw": -90.0,
-        "RotatePitch": 0.306266665,
-        "RotateRoll": -0.00603245758
+        "TranslateZ": 46.9634247
       },
       {
         "$id": "247",
@@ -4731,10 +4182,7 @@
         "Rotation": "0.00192709255, -0.707104146, 0.00185264426, 0.7071044",
         "TranslateX": 32.0,
         "TranslateY": 12.0,
-        "TranslateZ": 56.0,
-        "RotateYaw": -90.0,
-        "RotatePitch": 0.306266665,
-        "RotateRoll": -0.00603245758
+        "TranslateZ": 56.0
       },
       {
         "$id": "249",
@@ -4753,10 +4201,7 @@
         "Rotation": "0.0009836165, 0.117446132, -0.000345936627, 0.9930787",
         "TranslateX": -319.004181,
         "TranslateY": 5.17377,
-        "TranslateZ": -92.1288757,
-        "RotateYaw": 13.4894485,
-        "RotatePitch": 0.116589829,
-        "RotateRoll": -0.0261292625
+        "TranslateZ": -92.1288757
       },
       {
         "$id": "251",
@@ -4775,10 +4220,7 @@
         "Rotation": "0.00171450572, -0.0186687782, 0.0004100595, 0.999824166",
         "TranslateX": -316.867676,
         "TranslateY": 5.17759848,
-        "TranslateZ": -95.48336,
-        "RotateYaw": -2.13933754,
-        "RotatePitch": 0.197310954,
-        "RotateRoll": 0.04331354
+        "TranslateZ": -95.48336
       },
       {
         "$id": "253",
@@ -4797,10 +4239,7 @@
         "Rotation": "0.7045434, 0.07127692, -0.07070178, 0.7025236",
         "TranslateX": -319.114441,
         "TranslateY": 5.140983,
-        "TranslateZ": -90.7379,
-        "RotateYaw": 169.867447,
-        "RotatePitch": 89.8286743,
-        "RotateRoll": 158.343719
+        "TranslateZ": -90.7379
       },
       {
         "$id": "255",
@@ -4819,10 +4258,7 @@
         "Rotation": "0.66356, 0.249547958, -0.243820027, 0.6617898",
         "TranslateX": -316.854553,
         "TranslateY": 5.854292,
-        "TranslateZ": -95.38107,
-        "RotateYaw": 127.59108,
-        "RotatePitch": 89.51341,
-        "RotateRoll": 86.75502
+        "TranslateZ": -95.38107
       },
       {
         "$id": "257",
@@ -4841,10 +4277,7 @@
         "Rotation": "0.121901795, -0.123979263, -0.692599952, 0.7000532",
         "TranslateX": -335.160461,
         "TranslateY": 5.091812,
-        "TranslateZ": -83.84924,
-        "RotateYaw": -20.0257645,
-        "RotatePitch": -0.0607664958,
-        "RotateRoll": -89.376
+        "TranslateZ": -83.84924
       },
       {
         "$id": "259",
@@ -4863,10 +4296,7 @@
         "Rotation": "0.15157783, -0.156302929, -0.6895919, 0.690692842",
         "TranslateX": -330.678925,
         "TranslateY": 5.08917332,
-        "TranslateZ": -87.4597,
-        "RotateYaw": -25.14917,
-        "RotatePitch": -0.354262829,
-        "RotateRoll": -89.82957
+        "TranslateZ": -87.4597
       },
       {
         "$id": "261",
@@ -4885,10 +4315,7 @@
         "Rotation": "0.140019715, -0.144775748, -0.6917541, 0.6934773",
         "TranslateX": -325.4612,
         "TranslateY": 5.09417772,
-        "TranslateZ": -87.42238,
-        "RotateYaw": -23.2362366,
-        "RotatePitch": -0.349360347,
-        "RotateRoll": -89.78562
+        "TranslateZ": -87.42238
       },
       {
         "$id": "263",
@@ -4907,10 +4334,7 @@
         "Rotation": "0.193837464, 0.192682251, 0.6813366, 0.6790295",
         "TranslateX": -97.04657,
         "TranslateY": 21.542223,
-        "TranslateZ": -85.34665,
-        "RotateYaw": 31.72286,
-        "RotatePitch": 0.0389491543,
-        "RotateRoll": 90.2054
+        "TranslateZ": -85.34665
       },
       {
         "$id": "265",
@@ -4929,10 +4353,7 @@
         "Rotation": "0.706301749, -0.04909815, 0.05149661, 0.704326153",
         "TranslateX": -95.8015747,
         "TranslateY": 21.4661789,
-        "TranslateZ": -82.95551,
-        "RotateYaw": 125.399422,
-        "RotatePitch": 89.7489853,
-        "RotateRoll": 133.557373
+        "TranslateZ": -82.95551
       },
       {
         "$id": "267",
@@ -4951,10 +4372,7 @@
         "Rotation": "0.629404962, 0.446241021, 0.143251732, 0.619836569",
         "TranslateX": -96.4657,
         "TranslateY": 21.8522186,
-        "TranslateZ": -86.57394,
-        "RotateYaw": 104.5631,
-        "RotatePitch": 40.7233124,
-        "RotateRoll": 77.29674
+        "TranslateZ": -86.57394
       },
       {
         "$id": "269",
@@ -4973,10 +4391,7 @@
         "Rotation": "0.217278153, 0.21820575, 0.6718747, 0.6736177",
         "TranslateX": 29.1207943,
         "TranslateY": 17.3882656,
-        "TranslateZ": -85.47295,
-        "RotateYaw": 35.8695641,
-        "RotatePitch": -0.0280191414,
-        "RotateRoll": 89.84248
+        "TranslateZ": -85.47295
       },
       {
         "$id": "271",
@@ -4995,10 +4410,7 @@
         "Rotation": "0.7069847, 0, 0, 0.707228839",
         "TranslateX": 30.43553,
         "TranslateY": 17.9148388,
-        "TranslateZ": -82.70137,
-        "RotateYaw": 0.0,
-        "RotatePitch": 89.98021,
-        "RotateRoll": 0.0
+        "TranslateZ": -82.70137
       },
       {
         "$id": "273",
@@ -5017,10 +4429,7 @@
         "Rotation": "0.6008142, 0.4629755, 0.176883191, 0.6272067",
         "TranslateX": 29.6822872,
         "TranslateY": 18.2474728,
-        "TranslateZ": -86.766655,
-        "RotateYaw": 100.752327,
-        "RotatePitch": 36.1487923,
-        "RotateRoll": 74.52374
+        "TranslateZ": -86.766655
       },
       {
         "$id": "275",
@@ -5039,10 +4448,7 @@
         "Rotation": "0.00138192845, -0.8660223, 0.00228828564, 0.4999983",
         "TranslateX": 51.3504562,
         "TranslateY": 44.521965,
-        "TranslateZ": 166.24765,
-        "RotateYaw": -120.0,
-        "RotatePitch": 0.306266665,
-        "RotateRoll": -0.006032404
+        "TranslateZ": 166.24765
       },
       {
         "$id": "277",
@@ -5061,10 +4467,7 @@
         "Rotation": "0.00138192845, -0.8660223, 0.00228828564, 0.4999983",
         "TranslateX": 65.7595749,
         "TranslateY": 44.521965,
-        "TranslateZ": 166.24765,
-        "RotateYaw": -120.0,
-        "RotatePitch": 0.306266665,
-        "RotateRoll": -0.006032404
+        "TranslateZ": 166.24765
       },
       {
         "$id": "279",
@@ -5083,10 +4486,7 @@
         "Rotation": "0.00138192845, -0.8660223, 0.00228828564, 0.4999983",
         "TranslateX": 51.3504562,
         "TranslateY": 44.521965,
-        "TranslateZ": 150.778885,
-        "RotateYaw": -120.0,
-        "RotatePitch": 0.306266665,
-        "RotateRoll": -0.006032404
+        "TranslateZ": 150.778885
       },
       {
         "$id": "281",
@@ -5105,10 +4505,7 @@
         "Rotation": "0.00138192845, -0.8660223, 0.00228828564, 0.4999983",
         "TranslateX": -72.36913,
         "TranslateY": 18.5497227,
-        "TranslateZ": 128.955231,
-        "RotateYaw": -120.0,
-        "RotatePitch": 0.306266665,
-        "RotateRoll": -0.006032404
+        "TranslateZ": 128.955231
       },
       {
         "$id": "283",
@@ -5127,10 +4524,7 @@
         "Rotation": "0.00138192845, -0.8660223, 0.00228828564, 0.4999983",
         "TranslateX": -57.9600143,
         "TranslateY": 18.5497227,
-        "TranslateZ": 128.955231,
-        "RotateYaw": -120.0,
-        "RotatePitch": 0.306266665,
-        "RotateRoll": -0.006032404
+        "TranslateZ": 128.955231
       },
       {
         "$id": "285",
@@ -5149,10 +4543,7 @@
         "Rotation": "0.00138192845, -0.8660223, 0.00228828564, 0.4999983",
         "TranslateX": -72.36913,
         "TranslateY": 18.5497227,
-        "TranslateZ": 113.486465,
-        "RotateYaw": -120.0,
-        "RotatePitch": 0.306266665,
-        "RotateRoll": -0.006032404
+        "TranslateZ": 113.486465
       },
       {
         "$id": "287",
@@ -5171,10 +4562,7 @@
         "Rotation": "0.00138192845, -0.8660223, 0.00228828564, 0.4999983",
         "TranslateX": 238.416321,
         "TranslateY": 11.0529251,
-        "TranslateZ": 33.78591,
-        "RotateYaw": -120.0,
-        "RotatePitch": 0.306266665,
-        "RotateRoll": -0.006032404
+        "TranslateZ": 33.78591
       },
       {
         "$id": "289",
@@ -5193,10 +4581,7 @@
         "Rotation": "0.00138192845, -0.8660223, 0.00228828564, 0.4999983",
         "TranslateX": 252.825439,
         "TranslateY": 11.0529251,
-        "TranslateZ": 33.78591,
-        "RotateYaw": -120.0,
-        "RotatePitch": 0.306266665,
-        "RotateRoll": -0.006032404
+        "TranslateZ": 33.78591
       },
       {
         "$id": "291",
@@ -5215,10 +4600,7 @@
         "Rotation": "0.00138192845, -0.8660223, 0.00228828564, 0.4999983",
         "TranslateX": 238.416321,
         "TranslateY": 11.0529251,
-        "TranslateZ": 18.3171463,
-        "RotateYaw": -120.0,
-        "RotatePitch": 0.306266665,
-        "RotateRoll": -0.006032404
+        "TranslateZ": 18.3171463
       },
       {
         "$id": "293",
@@ -5237,10 +4619,7 @@
         "Rotation": "-0.506363332, 0.5019711, -0.6038112, -0.356417149",
         "TranslateX": -110.8617,
         "TranslateY": 12.2537317,
-        "TranslateZ": -132.967178,
-        "RotateYaw": 93.77947,
-        "RotatePitch": 75.27225,
-        "RotateRoll": -162.1464
+        "TranslateZ": -132.967178
       },
       {
         "$id": "295",
@@ -5265,10 +4644,7 @@
         "Rotation": "-0.3966764, 0.5272029, 0.304380357, 0.687064469",
         "TranslateX": -218.0,
         "TranslateY": -18.0,
-        "TranslateZ": -192.0,
-        "RotateYaw": 74.99998,
-        "RotatePitch": -59.9999428,
-        "RotateRoll": -6.830189E-06
+        "TranslateZ": -192.0
       },
       {
         "$id": "296",
@@ -5292,10 +4668,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -130.0,
         "TranslateY": 10.0,
-        "TranslateZ": -116.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -116.0
       },
       {
         "$id": "298",
@@ -5319,10 +4692,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -114.0,
         "TranslateY": 10.0,
-        "TranslateZ": -128.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -128.0
       },
       {
         "$id": "300",
@@ -5341,10 +4711,7 @@
         "Rotation": "-1.38829716E-06, -0.8802927, 2.17619754E-06, 0.474430948",
         "TranslateX": -114.0,
         "TranslateY": 11.9148264,
-        "TranslateZ": -129.0,
-        "RotateYaw": -123.355385,
-        "RotatePitch": 0.000144046135,
-        "RotateRoll": 0.000258353917
+        "TranslateZ": -129.0
       },
       {
         "$id": "302",
@@ -5363,10 +4730,7 @@
         "Rotation": "3.194045E-05, -0.500003636, 3.56383753E-05, 0.8660233",
         "TranslateX": -130.999924,
         "TranslateY": 14.148839,
-        "TranslateZ": -117.99984,
-        "RotateYaw": -60.0004768,
-        "RotatePitch": 0.00521168,
-        "RotateRoll": 0.001706649
+        "TranslateZ": -117.99984
       },
       {
         "$id": "304",
@@ -5385,10 +4749,7 @@
         "Rotation": "-1.38829716E-06, -0.8802927, 2.17619754E-06, 0.474430948",
         "TranslateX": -131.0,
         "TranslateY": 11.9148264,
-        "TranslateZ": -118.0,
-        "RotateYaw": -123.355385,
-        "RotatePitch": 0.000144046135,
-        "RotateRoll": 0.000258353917
+        "TranslateZ": -118.0
       },
       {
         "$id": "306",
@@ -5407,10 +4768,7 @@
         "Rotation": "0.7061835, 0.0325692259, -0.03258513, 0.706528366",
         "TranslateX": -113.674507,
         "TranslateY": 11.9147291,
-        "TranslateZ": -134.00589,
-        "RotateYaw": 0.00043718543,
-        "RotatePitch": 89.97202,
-        "RotateRoll": -5.28079
+        "TranslateZ": -134.00589
       },
       {
         "$id": "308",
@@ -5429,10 +4787,7 @@
         "Rotation": "0.6306238, -0.319483131, 0.319639146, 0.6309318",
         "TranslateX": -115.693314,
         "TranslateY": 11.9148169,
-        "TranslateZ": -135.239609,
-        "RotateYaw": 0.0,
-        "RotatePitch": 89.97202,
-        "RotateRoll": 53.73486
+        "TranslateZ": -135.239609
       },
       {
         "$id": "310",
@@ -5451,10 +4806,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": 0.0,
         "TranslateY": 56.0,
-        "TranslateZ": 96.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": 96.0
       },
       {
         "$id": "311",
@@ -5479,10 +4831,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -181.441483,
         "TranslateY": 12.024786,
-        "TranslateZ": -182.098,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -182.098
       },
       {
         "$id": "312",
@@ -5507,10 +4856,7 @@
         "Rotation": "-0.06526312, -0.113039039, 0.4957224, 0.8586164",
         "TranslateX": -187.843948,
         "TranslateY": 8.0,
-        "TranslateZ": -178.220428,
-        "RotateYaw": -15.0000048,
-        "RotatePitch": -4.268868E-07,
-        "RotateRoll": 60.0
+        "TranslateZ": -178.220428
       },
       {
         "$id": "313",
@@ -5535,10 +4881,7 @@
         "Rotation": "4.549815E-07, -0.866025448, 0.49999997, 7.88051068E-07",
         "TranslateX": -136.0,
         "TranslateY": 4.0,
-        "TranslateZ": -178.0,
-        "RotateYaw": -179.9999,
-        "RotatePitch": 59.9999924,
-        "RotateRoll": -6.51377563E-12
+        "TranslateZ": -178.0
       },
       {
         "$id": "314",
@@ -5563,10 +4906,7 @@
         "Rotation": "-0.433012724, -0.75, 0.24999997, 0.433012664",
         "TranslateX": -138.0,
         "TranslateY": 5.0,
-        "TranslateZ": -186.0,
-        "RotateYaw": -120.0,
-        "RotatePitch": -3.4150944E-06,
-        "RotateRoll": 60.0
+        "TranslateZ": -186.0
       },
       {
         "$id": "315",
@@ -5591,10 +4931,7 @@
         "Rotation": "0.5303289, 0.306187242, -0.04736644, 0.7891495",
         "TranslateX": -73.0,
         "TranslateY": 19.0,
-        "TranslateZ": -115.0,
-        "RotateYaw": 60.0000343,
-        "RotatePitch": 59.999794,
-        "RotateRoll": 29.9999962
+        "TranslateZ": -115.0
       },
       {
         "$id": "316",
@@ -5619,10 +4956,7 @@
         "Rotation": "0.7069847, 0, 0, 0.707228839",
         "TranslateX": -130.0,
         "TranslateY": 3.0,
-        "TranslateZ": -172.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 89.98021,
-        "RotateRoll": 0.0
+        "TranslateZ": -172.0
       },
       {
         "$id": "317",
@@ -5647,10 +4981,7 @@
         "Rotation": "0.470915735, 0.4620968, -0.3914565, 0.641456664",
         "TranslateX": -90.2157059,
         "TranslateY": 19.0,
-        "TranslateZ": -129.309937,
-        "RotateYaw": 59.9999771,
-        "RotatePitch": 74.99997,
-        "RotateRoll": -15.0000181
+        "TranslateZ": -129.309937
       },
       {
         "$id": "318",
@@ -5675,10 +5006,7 @@
         "Rotation": "0.130396277, 0.00582367973, -0.04423525, 0.990457535",
         "TranslateX": -137.242126,
         "TranslateY": 1.189462,
-        "TranslateZ": -172.0,
-        "RotateYaw": -6.07675361E-07,
-        "RotatePitch": 15.0000067,
-        "RotateRoll": -5.114424
+        "TranslateZ": -172.0
       },
       {
         "$id": "319",
@@ -5703,10 +5031,7 @@
         "Rotation": "-0.145225912, 0.01911935, 0.129118308, 0.9807509",
         "TranslateX": -129.0,
         "TranslateY": 2.497549,
-        "TranslateZ": -161.0,
-        "RotateYaw": -4.460268E-07,
-        "RotatePitch": -16.8458729,
-        "RotateRoll": 15.0
+        "TranslateZ": -161.0
       },
       {
         "$id": "320",
@@ -5731,10 +5056,7 @@
         "Rotation": "1.66533388E-16, -3.856703E-09, 6.422698E-25, 1",
         "TranslateX": -292.0,
         "TranslateY": 5.0,
-        "TranslateZ": -79.0,
-        "RotateYaw": -4.419456E-07,
-        "RotatePitch": 1.908332E-14,
-        "RotateRoll": 0.0
+        "TranslateZ": -79.0
       },
       {
         "$id": "321",
@@ -5759,10 +5081,7 @@
         "Rotation": "1.608589E-16, -0.258819044, 4.31020061E-17, 0.9659258",
         "TranslateX": -301.0,
         "TranslateY": 5.0,
-        "TranslateZ": -73.0,
-        "RotateYaw": -30.0,
-        "RotatePitch": 1.908332E-14,
-        "RotateRoll": -7.583033E-22
+        "TranslateZ": -73.0
       },
       {
         "$id": "322",
@@ -5787,10 +5106,7 @@
         "Rotation": "1.53683077E-16, -0.385191023, 6.414718E-17, 0.92283684",
         "TranslateX": -439.0,
         "TranslateY": 11.2615719,
-        "TranslateZ": -68.0,
-        "RotateYaw": -45.3111954,
-        "RotatePitch": 1.90833118E-14,
-        "RotateRoll": 5.308123E-21
+        "TranslateZ": -68.0
       },
       {
         "$id": "323",
@@ -5815,10 +5131,7 @@
         "Rotation": "0, 0, 0, 1",
         "TranslateX": -359.0,
         "TranslateY": 7.2545023,
-        "TranslateZ": -111.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": 0.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -111.0
       },
       {
         "$id": "324",
@@ -5843,10 +5156,7 @@
         "Rotation": "0.461939484, -0.3314137, 0.1913416, 0.800103247",
         "TranslateX": -383.0,
         "TranslateY": 10.9809055,
-        "TranslateZ": -111.0,
-        "RotateYaw": -45.0000038,
-        "RotatePitch": 59.99995,
-        "RotateRoll": -6.830189E-06
+        "TranslateZ": -111.0
       },
       {
         "$id": "325",
@@ -5871,10 +5181,7 @@
         "Rotation": "-0.4619395, -0.3314137, -0.1913417, 0.800103247",
         "TranslateX": -435.0,
         "TranslateY": 12.0,
-        "TranslateZ": -73.0,
-        "RotateYaw": -45.0000038,
-        "RotatePitch": -59.9999657,
-        "RotateRoll": -6.830189E-06
+        "TranslateZ": -73.0
       },
       {
         "$id": "326",
@@ -5899,10 +5206,7 @@
         "Rotation": "1.44222037E-16, -0.5, 8.32666938E-17, 0.8660254",
         "TranslateX": -433.689575,
         "TranslateY": 11.2615719,
-        "TranslateZ": -79.0,
-        "RotateYaw": -60.0,
-        "RotatePitch": 1.90833084E-14,
-        "RotateRoll": 6.82472958E-21
+        "TranslateZ": -79.0
       },
       {
         "$id": "327",
@@ -5927,10 +5231,7 @@
         "Rotation": "-0.49999997, 0, 0, 0.866025448",
         "TranslateX": -442.0,
         "TranslateY": 15.0,
-        "TranslateZ": -74.0,
-        "RotateYaw": 0.0,
-        "RotatePitch": -59.9999924,
-        "RotateRoll": 0.0
+        "TranslateZ": -74.0
       },
       {
         "$id": "328",
@@ -5955,10 +5256,7 @@
         "Rotation": "-0.258819044, 0, 0, 0.9659258",
         "TranslateX": -440.0,
         "TranslateY": 15.0,
-        "TranslateZ": -62.0003433,
-        "RotateYaw": 0.0,
-        "RotatePitch": -30.0,
-        "RotateRoll": 0.0
+        "TranslateZ": -62.0003433
       },
       {
         "$id": "329",
@@ -5983,10 +5281,7 @@
         "Rotation": "0.0607531145, -0.5237042, -0.067770645, 0.8470244",
         "TranslateX": -429.65918,
         "TranslateY": 10.2819881,
-        "TranslateZ": -60.0,
-        "RotateYaw": -63.62063,
-        "RotatePitch": 1.83006322,
-        "RotateRoll": -10.284214
+        "TranslateZ": -60.0
       },
       {
         "$id": "330",
@@ -6011,10 +5306,7 @@
         "Rotation": "0.0652631, 0.495722443, 0.113039, 0.8586165",
         "TranslateX": -429.0,
         "TranslateY": 12.0,
-        "TranslateZ": -57.0,
-        "RotateYaw": 60.0,
-        "RotatePitch": 4.268868E-07,
-        "RotateRoll": 15.0
+        "TranslateZ": -57.0
       },
       {
         "$id": "331",
@@ -6039,10 +5331,7 @@
         "Rotation": "0.130446464, 0.004562863, -0.0346583575, 0.9908389",
         "TranslateX": -179.0,
         "TranslateY": 9.165614,
-        "TranslateZ": -187.0,
-        "RotateYaw": 2.20972865E-07,
-        "RotatePitch": 15.0000067,
-        "RotateRoll": -4.00664139
+        "TranslateZ": -187.0
       },
       {
         "$id": "332",
@@ -6067,10 +5356,7 @@
         "Rotation": "0.0648761, 0.00464075152, -0.0711991, 0.9953393",
         "TranslateX": -176.0,
         "TranslateY": 7.22713566,
-        "TranslateZ": -173.2767,
-        "RotateYaw": 2.690809E-07,
-        "RotatePitch": 7.458515,
-        "RotateRoll": -8.18308
+        "TranslateZ": -173.2767
       },
       {
         "$id": "333",
@@ -6092,13 +5378,10 @@
         "Frozen": false,
         "Translation": "-187.843948, 9.650347, -185",
         "Scaling": "0.99999994, 1, 1",
-        "Rotation": "-0.06526313, -0.113039039, 0.495722383, 0.8586165",
+        "Rotation": "0, 0, 0, 0",
         "TranslateX": -187.843948,
         "TranslateY": 9.650347,
-        "TranslateZ": -185.0,
-        "RotateYaw": -15.0000067,
-        "RotatePitch": -2.134434E-06,
-        "RotateRoll": 59.9999924
+        "TranslateZ": -185.0
       },
       {
         "$id": "334",
@@ -6118,15 +5401,12 @@
         "Name": "MapModel23",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-192.820129, 7.40088844, -184.15538",
+        "Translation": "-192.820129, 7.45315838, -184.15538",
         "Scaling": "1, 1, 1",
-        "Rotation": "0.130297169, -0.00772993872, 0.0587146878, 0.9897047",
+        "Rotation": "0.10689263, -0.00665911753, 0.0814100355, 0.9909097",
         "TranslateX": -192.820129,
-        "TranslateY": 7.40088844,
-        "TranslateZ": -184.15538,
-        "RotateYaw": 1.10486432E-07,
-        "RotatePitch": 15.0000067,
-        "RotateRoll": 6.79023743
+        "TranslateY": 7.45315838,
+        "TranslateZ": -184.15538
       }
     ]
   },

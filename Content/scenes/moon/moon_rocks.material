@@ -5,9 +5,9 @@ MaskEmission  = False
 InvertYNormal = False
 
 [Textures]
-BaseColor = rocks_lowpoly_moon_rocks_BaseColor.png
-NormalMap = rocks_lowpoly_moon_rocks_Normal.png
-Metallic  = rocks_lowpoly_moon_rocks_Metallic.png
-Roughness = rocks_lowpoly_moon_rocks_Roughness.png
+BaseColor = moon_rocks_lowpoly_moon_rocks.png
+NormalMap = moon_rocks_lowpoly_moon_rocks_nm.png
+Metallic  = moon_rocks_lowpoly_moon_rocks_m.png
+Roughness = moon_rocks_lowpoly_moon_rocks_r.png
 Emission  = 
-Occlusion = 
+Occlusion = moon_rocks_lowpoly_moon_rocks_ao.png

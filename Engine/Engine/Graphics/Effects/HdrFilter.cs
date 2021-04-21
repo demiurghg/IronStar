@@ -107,12 +107,14 @@ namespace Fusion.Engine.Graphics
 		float adaptMaxEv = MaxLogLuminance;
 
 		[Config]
+		[AESlider(-8, 8, 1, 0.1f)]
 		public float EVMin { 
 			get { return minEv; }
 			set { minEv = MathUtil.Clamp( value, MinLogLuminance, MaxLogLuminance ); }
 		}
 
 		[Config]
+		[AESlider(-8, 8, 1, 0.1f)]
 		public float EVMax {
 			get { return maxEv; }
 			set { maxEv = MathUtil.Clamp( value, MinLogLuminance, MaxLogLuminance ); }
@@ -120,12 +122,14 @@ namespace Fusion.Engine.Graphics
 
 
 		[Config]
+		[AESlider(-8, 8, 1, 0.1f)]
 		public float AdaptEVMin { 
 			get { return adaptMinEv; }
 			set { adaptMinEv = MathUtil.Clamp( value, MinLogLuminance, MaxLogLuminance ); }
 		}
 
 		[Config]
+		[AESlider(-8, 8, 1, 0.1f)]
 		public float AdaptEVMax {
 			get { return adaptMaxEv; }
 			set { adaptMaxEv = MathUtil.Clamp( value, MinLogLuminance, MaxLogLuminance ); }

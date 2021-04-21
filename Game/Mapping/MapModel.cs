@@ -61,6 +61,7 @@ namespace IronStar.Mapping
 
 		[AECategory( "Appearance" )]
 		[Description( "Entire model scale" )]
+		[AESlider(0.1f, 10.0f, 0.5f, 0.01f)]
 		public float Scale { get; set; } = 1;
 
 		[AECategory( "Appearance" )]

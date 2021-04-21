@@ -19,6 +19,10 @@ namespace IronStar.Editor
 		readonly public static Color WireColorSelected		=	new Color(255,255,255);
 		readonly public static Color WireColorSelectedLast	=	new Color(67,255,163);
 
+		readonly public static Color ActiveHandleColor		=	new Color(255,255,128);
+		readonly public static Color HighlightedHandleColor	=	new Color(255,255,255);
+		readonly public static Color InactiveHandleColor	=	new Color(64,64,64);
+
 		
 		public static Ray TransformRay ( Matrix m, Ray r )
 		{

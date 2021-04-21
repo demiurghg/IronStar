@@ -70,7 +70,8 @@ namespace IronStar.Editor.Manipulators
 				axis	=	Vector3.Normalize( axis );
 			var axisA	=	Vector3.Cross( axis, Vector3.Up ).Normalized();	
 
-			if (axisA.LengthSquared()<0.001f) {
+			if (axisA.LengthSquared()<0.001f) 
+			{
 				axisA	=	Vector3.Cross( axis, Vector3.Right ).Normalized();
 			}
 
@@ -119,9 +120,12 @@ namespace IronStar.Editor.Manipulators
 
 			var pickDistance = Vector3.Distance( hitPoint, pickRay.Position );
 
-			if ( (dist < tolerance) && (t2 > 0) && (t2 < 1) && (t1 > 0)) {
+			if ( (dist < tolerance) && (t2 > 0) && (t2 < 1) && (t1 > 0)) 
+			{
 				return new HandleIntersection( true, pickDistance, dist, hitPoint );
-			} else {
+			}
+			else
+			{
 				return new HandleIntersection( false, pickDistance, dist, hitPoint );
 			}
 		}
@@ -147,25 +151,25 @@ namespace IronStar.Editor.Manipulators
 
 			Vector3 hitPoint;
 
-			if ( plane.Intersects( ref pickRay, out hitPoint ) ) {
-
+			if ( plane.Intersects( ref pickRay, out hitPoint ) ) 
+			{
 				var originHitPointDistance	=	Vector3.Distance( origin, hitPoint );
 				var pickDistance			=	Vector3.Distance( hitPoint, pickRay.Position );
 
 				var hitRing	=	(originHitPointDistance > radius - tolerance) && (originHitPointDistance < radius + tolerance);
 
 				return new HandleIntersection( hitRing, pickDistance, 0, hitPoint );
-				
-			} else {
+			} 
+			else 
+			{
 				return new HandleIntersection( false, float.PositiveInfinity, float.PositiveInfinity, Vector3.Zero );
 			}
-
 		}
 
 
 
 
-		public float Snap ( float value, float snapValue )
+		public static float Snap ( float value, float snapValue )
 		{
 			if (snapValue==0)
 			{
@@ -178,13 +182,13 @@ namespace IronStar.Editor.Manipulators
 		}
 
 
-		public float Snap ( float value, float snapValue, bool enable )
+		public static float Snap ( float value, float snapValue, bool enable )
 		{
 			return Snap( value, enable ? snapValue : 0 );
 		}
 
 
-		public Vector3 Snap ( Vector3 value, float snapValue )
+		public static Vector3 Snap ( Vector3 value, float snapValue )
 		{
 			return new Vector3( Snap( value.X, snapValue ), Snap( value.Y, snapValue ), Snap( value.Z, snapValue ) );
 		}

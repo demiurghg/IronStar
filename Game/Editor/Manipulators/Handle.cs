@@ -10,12 +10,22 @@ using Fusion.Engine.Common;
 using Fusion;
 using IronStar.Mapping;
 
-namespace IronStar.Editor.Manipulators {
-	public abstract class Handle {
+namespace IronStar.Editor.Manipulators 
+{
+	public abstract class Handle 
+	{
+		public enum State
+		{
+			Default,
+			Highlighted,
+			Active,
+			Inactive,
+		}
 
 		readonly protected RenderSystem rs;
 		readonly protected Game game;
 		readonly protected MapEditor editor;
+		readonly protected DebugRender dr;
 
 		/// <summary>
 		/// Constrcutor
@@ -23,16 +33,76 @@ namespace IronStar.Editor.Manipulators {
 		public Handle ( MapEditor editor )
 		{
 			this.rs		=	editor.Game.RenderSystem;
+			this.dr		=	rs.RenderWorld.Debug;
 			this.game	=	editor.Game;
 			this.editor	=	editor;
 		}
 
 
-		public abstract bool StartHandling ( int x, int y );
-		public abstract void UpdateHandling ( int x, int y );
-		public abstract void StopHandling ( int x, int y );
-		public abstract void DrawHandle ( DebugRender dr, Ray pickRay, bool active );
+		public abstract HandleIntersection Intersect( Matrix transform, Point pickPoint );
+		public abstract void Draw ( Matrix transform, State state );
+		public abstract void Start( Matrix transform, Point pickPoint, float snapping );
+		public abstract void Update( Point pickPoint );
+		public abstract void Stop( Point pickPoint );
 
+
+		protected void DrawArrow ( Vector3 origin, Vector3 dir, Color color )
+		{
+			var p0 = origin;
+			var p1 = p0 + dir * editor.camera.PixelToWorldSize( origin, 90 );
+			var p2 = p1 + dir * editor.camera.PixelToWorldSize( origin, 20 );
+
+			dr.DrawLine(p0,p1, color, color, 2,2 );
+			dr.DrawLine(p1,p2, color, color, 9,1 );
+		}
+
+		
+		protected HandleIntersection IntersectArrow ( Vector3 origin, Vector3 dir, Point pickPoint )
+		{
+			var length		=	editor.camera.PixelToWorldSize(origin, 110);
+			var tolerance	=	editor.camera.PixelToWorldSize(origin, 7);
+			var arrowRay	=	new Ray( origin, dir * length);
+			var pickRay		=	editor.camera.PointToRay( pickPoint.X, pickPoint.Y );
+
+			Vector3 temp, hitPoint;
+			float t1, t2;
+
+			var dist = Utils.RayIntersectsRay(ref pickRay, ref arrowRay, out temp, out hitPoint, out t1, out t2 );
+
+			var pickDistance = Vector3.Distance( hitPoint, pickRay.Position );
+
+			if ( (dist < tolerance) && (t2 > 0) && (t2 < 1) && (t1 > 0)) 
+			{
+				return new HandleIntersection( true, pickDistance, dist, hitPoint );
+			}
+			else
+			{
+				return new HandleIntersection( false, pickDistance, dist, hitPoint );
+			}
+		}
+
+
+		public static Handle GetHandleUnderCursor( Point pickPoint, Matrix transform, IEnumerable<Handle> handles )
+		{
+			Handle	closestHandle	=	null;
+			float	closestDistance	=	float.MaxValue;
+
+			foreach ( var handle in handles )
+			{
+				var r = handle.Intersect(transform, pickPoint);
+
+				if (r.Hit)
+				{
+					if (r.PickDistance<closestDistance)
+					{
+						closestHandle	=	handle;
+						closestDistance	=	r.PickDistance;
+					}
+				}
+			}
+
+			return closestHandle;
+		}
 
 	#if false
 		/// <summary>
@@ -92,18 +162,10 @@ namespace IronStar.Editor.Manipulators {
 			{
 				dr.DrawLine(points[i], points[i + 1], color, color, 2, 2);
 			}
-		}
+		}*/
 
 		
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="origin"></param>
-		/// <param name="dir"></param>
-		/// <param name="pickPoint"></param>
-		/// <param name="hitPoint"></param>
-		/// <returns></returns>
 		protected HandleIntersection IntersectArrow ( Vector3 origin, Vector3 dir, Point pickPoint )
 		{
 			var length		=	editor.camera.PixelToWorldSize(origin, 110);
@@ -118,9 +180,12 @@ namespace IronStar.Editor.Manipulators {
 
 			var pickDistance = Vector3.Distance( hitPoint, pickRay.Position );
 
-			if ( (dist < tolerance) && (t2 > 0) && (t2 < 1) && (t1 > 0)) {
+			if ( (dist < tolerance) && (t2 > 0) && (t2 < 1) && (t1 > 0)) 
+			{
 				return new HandleIntersection( true, pickDistance, dist, hitPoint );
-			} else {
+			}
+			else
+			{
 				return new HandleIntersection( false, pickDistance, dist, hitPoint );
 			}
 		}

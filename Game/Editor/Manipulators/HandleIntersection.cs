@@ -9,10 +9,10 @@ using Fusion.Engine.Common;
 using Fusion;
 using IronStar.Mapping;
 
-namespace IronStar.Editor.Manipulators {
-
-	public class HandleIntersection {
-
+namespace IronStar.Editor.Manipulators 
+{
+	public class HandleIntersection 
+	{
 		/// <summary>
 		/// 
 		/// </summary>

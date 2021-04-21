@@ -18,8 +18,21 @@ namespace IronStar.Editor.Manipulators
 	{
 		MoveCommand moveCommand;
 
+		Handle[] handles;
+
+		Handle	activeHandle = null;
+
+
 		public MoveTool ( MapEditor editor ) : base(editor)
 		{
+			var local = editor.MoveAxisMode==AxisMode.Local;
+
+			handles	=	new []
+			{
+				new MoveHandle( editor, Vector3.UnitX, local, Color.Red , Move ),
+				new MoveHandle( editor, Vector3.UnitY, local, Color.Lime, Move ),
+				new MoveHandle( editor, Vector3.UnitZ, local, Color.Blue, Move ),
+			};
 		}
 
 
@@ -34,20 +47,20 @@ namespace IronStar.Editor.Manipulators
 			}
 
 			var target		= editor.Selection.Last();
-			var origin		= target.Translation;
+			var transform	= target.Transform;
 
-			var linerSize	= editor.camera.PixelToWorldSize( origin, 5 );
+			var linearSize	= editor.camera.PixelToWorldSize( transform.TranslationVector, 5 );
 
 			var ray = editor.camera.PointToRay( x, y );
 
-			if (manipulating) 
+			if (activeHandle!=null) 
 			{
-				DrawArrow( dr, ray, origin, direction, Utils.SelectColor  );
-
-				dr.DrawPoint(initialPoint, linerSize, Utils.GridColor);
-				dr.DrawPoint(currentPoint, linerSize, Utils.GridColor);
-				dr.DrawLine(initialPoint, currentPoint, Utils.GridColor);
-
+				foreach ( var handle in handles )
+				{
+					var active = activeHandle==handle;
+					handle.Draw( transform, active ? Handle.State.Active : Handle.State.Inactive ); 
+				}
+				
 				foreach ( var item in editor.Selection ) 
 				{
 					var pos   = item.Translation;
@@ -55,28 +68,27 @@ namespace IronStar.Editor.Manipulators
 					floor.Y = 0;
 
 					dr.DrawLine(floor, pos, Utils.GridColor);
-					dr.DrawWaypoint(floor, linerSize*5, Utils.GridColor);
+					dr.DrawWaypoint(floor, linearSize*5, Utils.GridColor);
 				}
 			} 
 			else 
 			{
-				var hitX	=	IntersectArrow( target.Translation, Vector3.UnitX, mp );
-				var hitY	=	IntersectArrow( target.Translation, Vector3.UnitY, mp );
-				var hitZ	=	IntersectArrow( target.Translation, Vector3.UnitZ, mp );
+				var handleUnderCursor	=	Handle.GetHandleUnderCursor( new Point(x,y), transform, handles );
 
-				int hitInd	=	HandleIntersection.PollIntersections( hitX, hitY, hitZ );
-
-				DrawArrow( dr, ray, origin, Vector3.UnitX, hitInd == 0 ? Utils.SelectColor : Color.Red  );
-				DrawArrow( dr, ray, origin, Vector3.UnitY, hitInd == 1 ? Utils.SelectColor : Color.Lime );
-				DrawArrow( dr, ray, origin, Vector3.UnitZ, hitInd == 2 ? Utils.SelectColor : Color.Blue );
+				foreach ( var handle in handles )
+				{
+					var highlight = handleUnderCursor==handle;
+					handle.Draw( transform, highlight ? Handle.State.Highlighted : Handle.State.Default ); 
+				}
 			}
 		}
 
 
 		public override bool IsManipulating 
 		{
-			get {
-				return manipulating;
+			get 
+			{
+				return activeHandle!=null;
 			}
 		}
 
@@ -85,40 +97,10 @@ namespace IronStar.Editor.Manipulators
 		{
 			get 
 			{
-				var target = targets?.LastOrDefault();
-
-				if (target==null) 
-				{
-					return "---";
-				}
-
-				var distance	= Vector3.Distance( initialPoint, currentPoint );
-				var translateX	= target.TranslateX;
-				var translateY	= target.TranslateY;
-				var translateZ	= target.TranslateZ;
-				return string.Format(
-					"X {0,8:###.00}\r" +
-					"Y {1,8:###.00}\r" +
-					"Z {2,8:###.00}\r" +
-					"D {3,8:###.00}\r",
-					translateX,
-					translateY,
-					translateZ,
-					distance);
+				return "--";
 			}
 		}
 
-
-		bool	manipulating;
-		Vector3 direction;
-		Vector3 initialPoint;
-		Vector3 currentPoint;
-
-		bool		snapEnable;
-		float		snapValue;
-
-		MapNode[] targets = null;
-		Vector3[] initPos = null;
 
 
 		public override bool StartManipulation ( int x, int y, bool useSnapping )
@@ -128,95 +110,53 @@ namespace IronStar.Editor.Manipulators
 				return false;
 			}
 
-			snapEnable	=	useSnapping;
-			snapValue	=	editor.MoveToolSnapValue;
+			var snapping	=	useSnapping ? editor.MoveToolSnapValue : 0;
+			var target		=	editor.Selection.Last();
+			var transform	=	target.Transform;
+			var pickPoint	=	new Point( x, y );
 
-			targets	=	editor.Selection.ToArray();
-			initPos	=	targets.Select( t => t.Translation ).ToArray();
+			activeHandle	=	Handle.GetHandleUnderCursor( pickPoint, transform, handles );
 
-			var origin	=	initPos.Last();
-			var mp		=	new Point( x, y );
-
-
-			var intersectX	=	IntersectArrow( origin, Vector3.UnitX, mp );
-			var intersectY	=	IntersectArrow( origin, Vector3.UnitY, mp );
-			var intersectZ	=	IntersectArrow( origin, Vector3.UnitZ, mp );
-
-			var index		=	HandleIntersection.PollIntersections( intersectX, intersectY, intersectZ );
-
-			if (index<0) 
+			if (activeHandle!=null) 
+			{
+				activeHandle.Start( transform, pickPoint, snapping );
+				moveCommand		=	new MoveCommand(editor);
+				return true;
+			}
+			else
 			{
 				return false;
 			}
+		}
 
-			if (index==0) 
-			{		
-				manipulating	=	true;
-				direction		=	Vector3.UnitX;
-				initialPoint	=	intersectX.HitPoint;
-				currentPoint	=	intersectX.HitPoint;
-				moveCommand		=	new MoveCommand(editor);
-				return true;
-			}
 
-			if (index==1) 
-			{		
-				manipulating	=	true;
-				direction		=	Vector3.UnitY;
-				initialPoint	=	intersectY.HitPoint;
-				currentPoint	=	intersectY.HitPoint;
-				moveCommand		=	new MoveCommand(editor);
-				return true;
-			}
 
-			if (index==2) 
-			{		
-				manipulating	=	true;
-				direction		=	Vector3.UnitZ;
-				initialPoint	=	intersectZ.HitPoint;
-				currentPoint	=	intersectZ.HitPoint;
-				moveCommand		=	new MoveCommand(editor);
-				return true;
+		void Move( Vector3 moveVector )
+		{
+			if (moveVector.Length()>0)
+			{
+				moveCommand.MoveVector	=	moveVector;
+				moveCommand.Execute();
 			}
-			
-			return false;
 		}
 
 
 		public override void UpdateManipulation ( int x, int y )
 		{
-			if (manipulating && targets.Any()) 
+			if (activeHandle!=null) 
 			{
-				var origin	=	initialPoint;
-				var mp		=	new Point( x, y );
-
-				var result	=	IntersectArrow( origin, direction, mp );
-				
-				currentPoint	= result.HitPoint;
-
-				//	compute delta vector :
-				var lastItemPosition	=	initPos.Last();
-				var newItemPosition		=	Snap( lastItemPosition + (currentPoint - initialPoint), snapEnable ? snapValue : 0 ); 
-				var translationDelta	=	newItemPosition - lastItemPosition;
-
-				translationDelta	*=	direction;
-
-				if (translationDelta.Length()>0)
-				{
-					moveCommand.MoveVector	=	translationDelta;
-					moveCommand.Execute();
-				}
+				activeHandle.Update( new Point( x, y ) ); 
 			}
 		}
 
 
 		public override void StopManipulation ( int x, int y )
 		{
-			if (manipulating) 
+			if (activeHandle!=null) 
 			{
 				editor.Game.Invoker.Execute( moveCommand );
 				moveCommand		=	null;
-				manipulating	=	false;
+				activeHandle	=	null;
 			}
 		}
 	}

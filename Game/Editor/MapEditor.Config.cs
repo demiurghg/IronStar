@@ -3,6 +3,7 @@ using Fusion.Core;
 using Fusion.Core.Shell;
 using Fusion.Core.Configuration;
 using Fusion.Widgets.Advanced;
+using IronStar.Editor.Manipulators;
 
 namespace IronStar.Editor
 {
@@ -55,6 +56,20 @@ namespace IronStar.Editor
 			}
 		}
 		float moveToolSnapValue = 1.0f;
+
+
+		[Config]
+		[AECategory("Snapping")]
+		public AxisMode MoveAxisMode { 
+			get {
+				return moveAxisMode;	
+			}
+			set {
+				moveAxisMode = value;
+				workspace.Manipulator = new MoveTool(this);
+			}
+		}
+		AxisMode moveAxisMode = AxisMode.Global;
 
 
 		[Config]

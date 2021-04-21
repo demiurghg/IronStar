@@ -19,10 +19,12 @@ namespace IronStar.ECSPhysics
 	{
 		public class CollisionModel 
 		{
-			public int count;
+			public int count = 0;
 			public StaticMesh[]	staticMeshes;
 			public Matrix[]		transforms;
 		}
+
+		readonly CollisionModel EmptyCollisionModel = new CollisionModel() { count = 0, staticMeshes = new StaticMesh[0], transforms = new Matrix[0] };
 
 		readonly PhysicsCore physics;
 
@@ -34,6 +36,11 @@ namespace IronStar.ECSPhysics
 
 		protected override CollisionModel Create( Entity e, StaticCollisionComponent sc, RenderModel rm, Transform t )
 		{
+			if (!sc.Collidable)
+			{
+				return EmptyCollisionModel;
+			}
+
 			var content		=	e.gs.Content;
 			
 			var scene		=	string.IsNullOrWhiteSpace(rm.scenePath) ? Scene.Empty : content.Load( rm.scenePath, Scene.Empty );

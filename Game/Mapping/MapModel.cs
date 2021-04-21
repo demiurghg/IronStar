@@ -83,6 +83,9 @@ namespace IronStar.Mapping
 		[AECategory( "Physics" )]
 		public bool UseCollisionMesh { get; set; } = false;
 
+		[AECategory( "Physics" )]
+		public bool Collidable { get; set; } = true;
+
 		[AECategory( "Navigation" )]
 		public bool Walkable { get; set; } = true;
 
@@ -106,7 +109,7 @@ namespace IronStar.Mapping
 			ecsEntity = gs.Spawn();
 
 			ecsEntity.AddComponent( new ECS.Transform( Matrix.Scaling(Scale) * Transform ) );
-			ecsEntity.AddComponent( new StaticCollisionComponent() { Walkable = Walkable } );
+			ecsEntity.AddComponent( new StaticCollisionComponent() { Walkable = Walkable, Collidable = Collidable } );
 
 			var rm		=	new SFX2.RenderModel( ScenePath, Matrix.Identity, Color.White, 1, SFX2.RMFlags.None );
 			rm.cmPrefix	=	UseCollisionMesh ? "cm_" : "";

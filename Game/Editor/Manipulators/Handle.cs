@@ -56,6 +56,38 @@ namespace IronStar.Editor.Manipulators
 			dr.DrawLine(p1,p2, color, color, 9,1 );
 		}
 
+
+		protected void DrawRing ( Vector3 origin, Vector3 axis, Color color, float size = 90)
+		{
+				axis	=	Vector3.Normalize( axis );
+			var axisA	=	Vector3.Cross( axis, Vector3.Up ).Normalized();	
+
+			if (axisA.LengthSquared()<0.001f) 
+			{
+				axisA	=	Vector3.Cross( axis, Vector3.Right ).Normalized();
+			}
+
+			var axisB	=	Vector3.Cross( axisA, axis ).Normalized();
+
+			int N = 64;
+			Vector3[] points = new Vector3[N + 1];
+
+			var radius = editor.camera.PixelToWorldSize(origin, size);
+
+			for (int i = 0; i <= N; i++)
+			{
+				var p = origin;
+				p += axisA * radius * (float)Math.Cos(Math.PI * 2 * i / N);
+				p += axisB * radius * (float)Math.Sin(Math.PI * 2 * i / N);
+				points[i] = p;
+			}
+
+			for (int i = 0; i < N; i++)
+			{
+				dr.DrawLine(points[i], points[i + 1], color, color, 2, 2);
+			}
+		}
+
 		
 		protected HandleIntersection IntersectArrow ( Vector3 origin, Vector3 dir, Point pickPoint )
 		{
@@ -78,6 +110,32 @@ namespace IronStar.Editor.Manipulators
 			else
 			{
 				return new HandleIntersection( false, pickDistance, dist, hitPoint );
+			}
+		}
+
+
+		protected HandleIntersection IntersectRing ( Vector3 origin, Vector3 axis, Point pickPoint, float size = 90 )
+		{
+			var radius		=	editor.camera.PixelToWorldSize(origin, size);
+			var tolerance	=	editor.camera.PixelToWorldSize(origin, 7);
+			var pickRay		=	editor.camera.PointToRay( pickPoint.X, pickPoint.Y );
+
+			var plane		=	new Plane( origin, axis );
+
+			Vector3 hitPoint;
+
+			if ( plane.Intersects( ref pickRay, out hitPoint ) ) 
+			{
+				var originHitPointDistance	=	Vector3.Distance( origin, hitPoint );
+				var pickDistance			=	Vector3.Distance( hitPoint, pickRay.Position );
+
+				var hitRing	=	(originHitPointDistance > radius - tolerance) && (originHitPointDistance < radius + tolerance);
+
+				return new HandleIntersection( hitRing, pickDistance, 0, hitPoint );
+			} 
+			else 
+			{
+				return new HandleIntersection( false, float.PositiveInfinity, float.PositiveInfinity, Vector3.Zero );
 			}
 		}
 

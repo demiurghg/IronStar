@@ -85,6 +85,20 @@ namespace IronStar.Editor
 		float rotateToolSnapValue = 1.0f;
 
 
+
+		[Config]
+		[AECategory("Snapping")]
+		public AxisMode RotateAxisMode { 
+			get {
+				return rotateAxisMode;	
+			}
+			set {
+				rotateAxisMode = value;
+				workspace.Manipulator = new RotateTool(this);
+			}
+		}
+		AxisMode rotateAxisMode = AxisMode.Global;
+
 		[AECommand]
 		public void ToggleSimulation ()
 		{

@@ -24,9 +24,9 @@ namespace Fusion.Widgets.Binding
 		{
 			fallbackValue	=	initialValue;
 
-			if (binding.ValueType!=typeof(Color))
+			if (binding.ValueType!=typeof(Vector3))
 			{
-				throw new ValueBindingException("ColorBindingWrapper do not support value type " + binding.ValueType.ToString() );
+				throw new ValueBindingException("VectorBindingWrapper do not support value type " + binding.ValueType.ToString() );
 			}
 
 			this.binding	=	binding;

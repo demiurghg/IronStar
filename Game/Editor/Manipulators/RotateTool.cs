@@ -16,63 +16,26 @@ namespace IronStar.Editor.Manipulators
 {
 	public class RotateTool : Manipulator 
 	{
-		const float Epsilon = 1f / 16384f;
+		RotateCommand rotateCommand;
 
-		enum Rotation 
-		{
-			Yaw, Pitch, Roll
-		}
+		Handle[] handles;
 
-		RotateCommand rotateCommand = null;
+		Handle	activeHandle = null;
 
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public RotateTool ( MapEditor editor ) : base(editor)
 		{
+			var local = editor.RotateAxisMode==AxisMode.Local;
+
+			handles	=	new []
+			{
+				new RotateHandle( editor, Vector3.UnitX, local, Color.Red , Rotate ),
+				new RotateHandle( editor, Vector3.UnitY, local, Color.Lime, Rotate ),
+				new RotateHandle( editor, Vector3.UnitZ, local, Color.Blue, Rotate ),
+			};
 		}
 
 
-		Vector3 GetAxis ( int index )
-		{
-			var target = editor.Selection.LastOrDefault();
-
-			if (target==null) 
-			{
-				switch (index) 
-				{
-					case 0: return Vector3.UnitX;
-					case 1: return Vector3.UnitY;
-					case 2: return Vector3.UnitZ;
-					case 3: return Vector3.ForwardRH;
-				}
-			} 
-			else 
-			{
-				float yaw   = MathUtil.DegreesToRadians( target.RotateYaw );
-				float pitch = MathUtil.DegreesToRadians( target.RotatePitch );
-				float roll  = MathUtil.DegreesToRadians( target.RotateRoll );
-				switch (index) 
-				{
-					case 0: return Matrix.RotationYawPitchRoll(yaw,pitch,0).Right;
-					case 1: return Matrix.RotationYawPitchRoll(yaw,0,0).Up;
-					case 2: return Matrix.RotationYawPitchRoll(yaw,pitch,roll).Backward;
-					case 3: return Matrix.RotationYawPitchRoll(yaw,0,0).Forward;
-				}
-			}
-
-			return Vector3.Zero;
-		}
-
-
-		readonly int[] ringSize = new[] {90,110,70};
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="gameTime"></param>
 		public override void Update ( GameTime gameTime, int x, int y )
 		{
 			var dr = rs.RenderWorld.Debug;
@@ -84,54 +47,48 @@ namespace IronStar.Editor.Manipulators
 			}
 
 			var target		= editor.Selection.Last();
-			var origin		= target.Translation;
+			var transform	= target.Transform;
 
-			var linerSize	= editor.camera.PixelToWorldSize( origin, 5 );
-			var ray			= editor.camera.PointToRay( x, y );
+			var linearSize	= editor.camera.PixelToWorldSize( transform.TranslationVector, 5 );
 
-			if (!manipulating) 
+			var ray = editor.camera.PointToRay( x, y );
+
+			if (activeHandle!=null) 
 			{
-				var hitX	=	IntersectRing( target.Translation, GetAxis(0), mp, ringSize[0] );
-				var hitY	=	IntersectRing( target.Translation, GetAxis(1), mp, ringSize[1] );
-				var hitZ	=	IntersectRing( target.Translation, GetAxis(2), mp, ringSize[2] );
+				foreach ( var handle in handles )
+				{
+					var active = activeHandle==handle;
+					handle.Draw( transform, active ? Handle.State.Active : Handle.State.Inactive ); 
+				}
+				
+				foreach ( var item in editor.Selection ) 
+				{
+					var pos   = item.Translation;
+					var floor = item.Translation;
+					floor.Y = 0;
 
-				int hitInd	=	HandleIntersection.PollIntersections( hitX, hitY, hitZ );
-
-				DrawRing( dr, ray, origin, GetAxis(0), hitInd == 0 ? Utils.SelectColor : Color.Red  , ringSize[0] );
-				DrawRing( dr, ray, origin, GetAxis(1), hitInd == 1 ? Utils.SelectColor : Color.Lime , ringSize[1] );
-				DrawRing( dr, ray, origin, GetAxis(2), hitInd == 2 ? Utils.SelectColor : Color.Blue , ringSize[2] );
-
+					dr.DrawLine(floor, pos, Utils.GridColor);
+					dr.DrawWaypoint(floor, linearSize*5, Utils.GridColor);
+				}
 			} 
 			else 
 			{
-				DrawRing( dr, ray, origin, GetAxis(axisIndex), Utils.SelectColor, ringSize[axisIndex] );
+				var handleUnderCursor	=	Handle.GetHandleUnderCursor( new Point(x,y), transform, handles );
 
-				var vecSize	=	editor.camera.PixelToWorldSize(origin, 110);
-
-				dr.DrawLine( origin, origin + vector0 * vecSize, Utils.SelectColor, Utils.SelectColor, 2, 2 );
-				dr.DrawLine( origin, origin + vector1 * vecSize, Utils.SelectColor, Utils.SelectColor, 2, 2 );
+				foreach ( var handle in handles )
+				{
+					var highlight = handleUnderCursor==handle;
+					handle.Draw( transform, highlight ? Handle.State.Highlighted : Handle.State.Default ); 
+				}
 			}
-
-			var a	=	editor.camera.PixelToWorldSize(origin, 110);
-			var b	=	editor.camera.PixelToWorldSize(origin, 140);
-			var c	=	editor.camera.PixelToWorldSize(origin, 150);
-
-			var fwd	=	GetAxis(3);
-
-			var clr	=	manipulating ? Utils.SelectColor : Color.Lime;
-
-			dr.DrawLine( origin + fwd*a, origin + fwd*b, clr, clr,  4, 4 );
-			dr.DrawLine( origin + fwd*b, origin + fwd*c, clr, clr, 16, 2 );
 		}
-
-
 
 
 		public override bool IsManipulating 
 		{
 			get 
 			{
-				return manipulating;
+				return activeHandle!=null;
 			}
 		}
 
@@ -140,158 +97,64 @@ namespace IronStar.Editor.Manipulators
 		{
 			get 
 			{
-				var target = targets?.LastOrDefault();
-				if (target==null) 
-				{
-					return "---";
-				}
-
-				return string.Format(
-					"{0}\r" +
-					"{1,7:000.00}\r" +
-					"{2,7:000.00}\r" +
-					"{3,7:000.00}\r" + 
-					"{4,7:000.00}\r" + 
-					"{5,7:000.00}", 
-					rotation.ToString().ToUpper(), 
-					target.RotateYaw, 
-					target.RotatePitch, 
-					target.RotateRoll,
-					angle,
-					angleRaw);
+				return "--";
 			}
 		}
 
 
 
-		bool		manipulating;
-		Rotation	rotation; // yaw=0,pitch=1,roll=2
-		Vector3		initialPoint;
-		Vector3		currentPoint;
-		int			axisIndex;
-
-		Vector3 vector0, vector1;
-		float	angle;
-		float	angleRaw;
-
-		bool		snapEnable;
-		float		snapValue;
-
-
-		MapNode[] targets	= null;
-		float[]	  angles	= null;
-
-
 		public override bool StartManipulation ( int x, int y, bool useSnapping )
 		{
-			if (!editor.Selection.Any()) {
+			if (!editor.Selection.Any()) 
+			{
 				return false;
 			}
 
-			snapEnable	=	useSnapping;
-			snapValue	=	editor.RotateToolSnapValue;
-			angle	=	0;
-			vector0		=	Vector3.Zero;
-			vector1		=	Vector3.Zero;
+			var snapping	=	useSnapping ? editor.RotateToolSnapValue : 0;
+			var target		=	editor.Selection.Last();
+			var transform	=	target.Transform;
+			var pickPoint	=	new Point( x, y );
 
-			targets		=	editor.Selection.ToArray();
+			activeHandle	=	Handle.GetHandleUnderCursor( pickPoint, transform, handles );
 
-			var target	=	targets.LastOrDefault();
-
-			var origin	=	targets.Last().Translation;
-			var mp		=	new Point( x, y );
-
-
-			var intersectX	=	IntersectRing( origin, GetAxis(0), mp, ringSize[0] );
-			var intersectY	=	IntersectRing( origin, GetAxis(1), mp, ringSize[1] );
-			var intersectZ	=	IntersectRing( origin, GetAxis(2), mp, ringSize[2] );
-
-			axisIndex		=	HandleIntersection.PollIntersections( intersectX, intersectY, intersectZ );
-
-			if (axisIndex<0) {
+			if (activeHandle!=null) 
+			{
+				activeHandle.Start( transform, pickPoint, snapping );
+				rotateCommand	=	new RotateCommand(editor);
+				return true;
+			}
+			else
+			{
 				return false;
 			}
+		}
 
-			if (axisIndex==0) {		
-				manipulating	=	true;
-				rotation		=	Rotation.Pitch;
-				initialPoint	=	intersectX.HitPoint;
-				currentPoint	=	intersectX.HitPoint;
-				angles			=	targets.Select( t => t.RotatePitch ).ToArray();
-				rotateCommand	=	new RotateCommand(editor);
-				return true;
-			}
 
-			if (axisIndex==1) {		
-				manipulating	=	true;
-				rotation		=	Rotation.Yaw;
-				initialPoint	=	intersectY.HitPoint;
-				currentPoint	=	intersectY.HitPoint;
-				angles			=	targets.Select( t => t.RotateYaw ).ToArray();
-				rotateCommand	=	new RotateCommand(editor);
-				return true;
-			}
 
-			if (axisIndex==2) {		
-				manipulating	=	true;
-				rotation		=	Rotation.Roll;
-				initialPoint	=	intersectZ.HitPoint;
-				currentPoint	=	intersectZ.HitPoint;
-				angles			=	targets.Select( t => t.RotateRoll ).ToArray();
-				rotateCommand	=	new RotateCommand(editor);
-				return true;
-			}
-			
-			return false;
+		void Rotate( Quaternion q )
+		{
+			rotateCommand.Rotation	=	q;
+			rotateCommand.Execute();
 		}
 
 
 		public override void UpdateManipulation ( int x, int y )
 		{
-			if (manipulating) 
+			if (activeHandle!=null) 
 			{
-				var origin		=	targets.Last().Translation;
-				var baseAngle	=	angles.Last();
-				var mp			=	new Point( x, y );
-
-				var result		=	IntersectRing( origin, GetAxis(axisIndex), mp );
-				
-				currentPoint	=	result.HitPoint;
-
-				vector0			=	(initialPoint - origin).Normalized();
-				vector1			=	(currentPoint - origin).Normalized();
-
-				var sine		=	Vector3.Dot( GetAxis(axisIndex), Vector3.Cross( vector0, vector1 ) );
-				var cosine		=	Vector3.Dot( vector0, vector1 );
-
-				angle			=	MathUtil.RadiansToDegrees ( (float)Math.Atan2( sine, cosine ) );
-				angleRaw		=	angle;
-
-				angle			=	Snap( baseAngle + angle, snapValue, snapEnable );
-
-				var deltaAngle	=	angle - baseAngle;
-
-				switch (rotation) 
-				{
-					case Rotation.Yaw  : rotateCommand.DeltaYaw		=	deltaAngle; break;
-					case Rotation.Pitch: rotateCommand.DeltaPitch	=	deltaAngle; break;
-					case Rotation.Roll : rotateCommand.DeltaRoll	=	deltaAngle; break;
-				}
-
-				rotateCommand.Execute();
+				activeHandle.Update( new Point( x, y ) ); 
 			}
 		}
 
 
 		public override void StopManipulation ( int x, int y )
 		{
-			if (manipulating) 
+			if (activeHandle!=null) 
 			{
 				editor.Game.Invoker.Execute( rotateCommand );
-				manipulating	=	false;
 				rotateCommand	=	null;
+				activeHandle	=	null;
 			}
 		}
-
 	}
 }

@@ -73,26 +73,6 @@ namespace IronStar.Mapping
 					n.TranslateZ = 0;
 				}
 
-
-				if ( float.IsNaN(n.RotateYaw) || float.IsInfinity(n.RotateYaw) ) 
-				{
-					Log.Warning("Map : bad rotation yaw : {0}", n.RotateYaw );
-					n.RotateYaw = 0;
-				}
-
-				if ( float.IsNaN(n.RotatePitch) || float.IsInfinity(n.RotatePitch) ) 
-				{
-					Log.Warning("Map : bad rotation pitch : {0}", n.RotatePitch );
-					n.RotatePitch = 0;
-				}
-
-				if ( float.IsNaN(n.RotateRoll) || float.IsInfinity(n.RotateRoll) ) 
-				{
-					Log.Warning("Map : bad rotation roll : {0}", n.RotateRoll );
-					n.RotateRoll = 0;
-				}
-
-
 				if ( float.IsNaN(n.TranslateX) || float.IsInfinity(n.TranslateX) ) 
 				{
 					Log.Warning("Map : bad translation X : {0}", n.TranslateX );

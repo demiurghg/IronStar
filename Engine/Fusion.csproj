@@ -171,6 +171,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Widgets\Advanced\Editors\AERotationEditor.cs" />
     <Compile Include="Widgets\Advanced\IPropertyGridTracker.cs" />
     <Compile Include="Widgets\Advanced\Attributes\AEEditorAttribute.cs" />
     <Compile Include="Widgets\Advanced\Attributes\AECommandAttribute.cs" />
@@ -180,6 +181,7 @@
     <Compile Include="Widgets\Advanced\Attributes\AECategoryAttribute.cs" />
     <Compile Include="Widgets\Advanced\Editors\AEFileSelector.cs" />
     <Compile Include="Widgets\Advanced\Editors\AEAtlasSelector.cs" />
+    <Compile Include="Widgets\Binding\QuaternionBindingWrapper.cs" />
     <Compile Include="Widgets\Binding\VectorComponentBinding.cs" />
     <Compile Include="Widgets\Binding\VectorBindingWrapper.cs" />
     <Compile Include="Widgets\Binding\ColorComponentBinding.cs" />

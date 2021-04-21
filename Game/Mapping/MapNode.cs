@@ -86,7 +86,8 @@ namespace IronStar.Mapping
 		}
 
 
-		[Browsable(false)]
+		[AECategory("Transform")]
+		[AERotation]
 		public Quaternion Rotation 
 		{
 			get { return rotation; }
@@ -106,7 +107,6 @@ namespace IronStar.Mapping
 			set { translation.X = value; }
 		}
 
-		
 		[AECategory("Transform")]
 		[AEDisplayName("Translate Y")]
 		public float TranslateY 
@@ -114,7 +114,6 @@ namespace IronStar.Mapping
 			get { return translation.Y; }
 			set { translation.Y = value; }
 		}
-
 		
 		[AECategory("Transform")]
 		[AEDisplayName("Translate Z")]
@@ -122,61 +121,6 @@ namespace IronStar.Mapping
 		{
 			get { return translation.Z; }
 			set { translation.Z = value; }
-		}
-
-		
-		[AECategory("Transform")]
-		[AEDisplayName("Rotate Yaw")]
-		[AESlider(-180,180,15,1)]
-		public float RotateYaw 
-		{
-			get { return EulerAngles.RotationQuaternion(Rotation).Yaw.Degrees; }
-			set 
-			{
-				var angles = EulerAngles.RotationQuaternion(Rotation);
-				angles.Yaw.Degrees = value;
-				rotation = angles.ToQuaternion();
-			}
-		}
-
-
-		[AECategory("Transform")]
-		[AEDisplayName("Rotate Pitch")]
-		[AESlider(-180,180,15,1)]
-		public float RotatePitch 
-		{
-			get { return EulerAngles.RotationQuaternion(Rotation).Pitch.Degrees; }
-			set 
-			{
-				var angles = EulerAngles.RotationQuaternion(Rotation);
-				angles.Pitch.Degrees = value;
-				rotation = angles.ToQuaternion();
-			}
-		}
-
-
-		[AECategory("Transform")]
-		[AEDisplayName("Rotate Roll")]
-		[AESlider(-180,180,15,1)]
-		public float RotateRoll 
-		{
-			get { return EulerAngles.RotationQuaternion(Rotation).Roll.Degrees; }
-			set 
-			{
-				var angles = EulerAngles.RotationQuaternion(Rotation);
-				angles.Roll.Degrees = value;
-				rotation = angles.ToQuaternion();
-			}
-		}
-
-
-		[AECommand]
-		public void IdentityMatrix()
-		{
-			Rotation	=	Quaternion.Identity;
-			RotatePitch	=	0;
-			RotateRoll	=	0;
-			RotateYaw	=	0;
 		}
 
 		/*-----------------------------------------------------------------------------------------

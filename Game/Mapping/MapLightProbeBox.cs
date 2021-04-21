@@ -51,9 +51,7 @@ namespace IronStar.Mapping
 		public void MakeGlobal()
 		{
 			Translation	=	Vector3.Up * 512;
-			RotatePitch	=	0;
-			RotateRoll	=	0;
-			RotateYaw	=	0;
+			Rotation	=	Quaternion.Identity;
 			Width		=	2048;
 			Height		=	2048;
 			Depth		=	2048;

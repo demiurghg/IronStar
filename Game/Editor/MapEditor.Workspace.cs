@@ -178,8 +178,9 @@ namespace IronStar.Editor
 			
 			workspace.AddHotkey( Keys.Q			, ModKeys.None, () => workspace.Manipulator = new NullTool() );
 			workspace.AddHotkey( Keys.W			, ModKeys.None, () => workspace.Manipulator = new MoveTool(this) );
-			workspace.AddHotkey( Keys.W			, ModKeys.Ctrl, () => MoveAxisMode = MoveAxisMode.NextEnum() );
 			workspace.AddHotkey( Keys.E			, ModKeys.None, () => workspace.Manipulator = new RotateTool(this) );
+			workspace.AddHotkey( Keys.W			, ModKeys.Ctrl, () => MoveAxisMode = MoveAxisMode.NextEnum() );
+			workspace.AddHotkey( Keys.E			, ModKeys.Ctrl, () => RotateAxisMode = RotateAxisMode.NextEnum() );
 			workspace.AddHotkey( Keys.T			, ModKeys.None, () => TargetSelection() );
 			
 			workspace.AddHotkey( Keys.D1		, ModKeys.None, ResetViewMode );

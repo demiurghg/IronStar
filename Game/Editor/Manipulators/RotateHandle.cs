@@ -13,11 +13,11 @@ using IronStar.Editor;
 
 namespace IronStar.Editor.Manipulators 
 {
-	public class MoveHandle : Handle 
+	public class RotateHandle : Handle 
 	{
 		readonly Vector3 axis;
 		readonly Color color;
-		readonly Action<Vector3> move;
+		readonly Action<Quaternion> rotate;
 		readonly bool local;
 
 		Matrix  initialTransform;
@@ -26,11 +26,11 @@ namespace IronStar.Editor.Manipulators
 		Vector3 currentPoint;
 
 
-		public MoveHandle ( MapEditor editor, Vector3 axis, bool local, Color color, Action<Vector3> move ) : base(editor)
+		public RotateHandle ( MapEditor editor, Vector3 axis, bool local, Color color, Action<Quaternion> rotate ) : base(editor)
 		{
 			this.axis	=	axis.Normalized();
 			this.color	=	color;
-			this.move	=	move;
+			this.rotate	=	rotate;
 			this.local	=	local;
 		}
 
@@ -44,7 +44,7 @@ namespace IronStar.Editor.Manipulators
 
 			var currentAxis = local ? Vector3.TransformNormal( axis, transform ) : axis;
 			
-			DrawArrow( transform.TranslationVector, currentAxis, drawColor );
+			DrawRing( transform.TranslationVector, currentAxis, drawColor );
 		}
 
 
@@ -52,7 +52,7 @@ namespace IronStar.Editor.Manipulators
 		{
 			var currentAxis = local ? Vector3.TransformNormal( axis, transform ) : axis;
 
-			return IntersectArrow( transform.TranslationVector, currentAxis, pickPoint );
+			return IntersectRing( transform.TranslationVector, currentAxis, pickPoint );
 		}
 
 
@@ -62,32 +62,41 @@ namespace IronStar.Editor.Manipulators
 
 			this.snapping		=	snapping;
 			initialTransform	=	transform;
-			var result		= IntersectArrow( initialTransform.TranslationVector, currentAxis, pickPoint ); 
+			var result			=	IntersectRing( initialTransform.TranslationVector, currentAxis, pickPoint ); 
 
 			initialPoint	=	result.HitPoint;
 			currentPoint	=	result.HitPoint;
 		}
 
 
-		void MoveInternal( Vector3 moveVector, Vector3 currentAxis )
+		void RotateInternal( float angle, Vector3 currentAxis )
 		{
-			var initialPosistion	=	initialTransform.TranslationVector;
-			var currentPosition		=	Manipulator.Snap( initialPosistion + (moveVector), snapping ); 
-			var translationDelta	=	currentPosition - initialPosistion;
+			//var initialPosistion	=	initialTransform.TranslationVector;
+			//var currentPosition		=	Manipulator.Snap( initialPosistion + (moveVector), snapping ); 
+			//var translationDelta	=	currentPosition - initialPosistion;
+			angle	=	MathUtil.DegreesToRadians( angle );
 
-			moveVector = currentAxis * Vector3.Dot( translationDelta, currentAxis );
-
-			move( moveVector );
+			rotate( Quaternion.RotationAxis( currentAxis, angle ) );
 		}
 
 
 		public override void Update( Point pickPoint )
 		{
 			var currentAxis	=	local ? Vector3.TransformNormal( axis, initialTransform ) : axis;
-			var result		=	IntersectArrow( initialTransform.TranslationVector, currentAxis, pickPoint ); 
+			var result		=	IntersectRing( initialTransform.TranslationVector, currentAxis, pickPoint ); 
+			var origin		=	initialTransform.TranslationVector;
 			currentPoint	=	result.HitPoint;
-			var delta		=	currentPoint - initialPoint;
-			MoveInternal( delta, currentAxis );
+
+			var	vector0		=	(initialPoint - origin).Normalized();
+			var	vector1		=	(currentPoint - origin).Normalized();
+
+			var sine		=	Vector3.Dot( currentAxis, Vector3.Cross( vector0, vector1 ) );
+			var cosine		=	Vector3.Dot( vector0, vector1 );
+
+			var angle		=	MathUtil.RadiansToDegrees ( (float)Math.Atan2( sine, cosine ) );
+				angle		=	Manipulator.Snap( angle, snapping );
+
+			RotateInternal( angle, currentAxis );
 		}
 
 

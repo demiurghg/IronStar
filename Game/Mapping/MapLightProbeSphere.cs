@@ -33,9 +33,7 @@ namespace IronStar.Mapping {
 		public void MakeGlobal()
 		{
 			Translation	=	Vector3.Up * 512;
-			RotatePitch	=	0;
-			RotateRoll	=	0;
-			RotateYaw	=	0;
+			Rotation	=	Quaternion.Identity;
 			Radius		=	2048;
 			Transition	=	8f;
 		}

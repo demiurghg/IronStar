@@ -16,15 +16,11 @@ namespace IronStar.Editor.Commands
 		class RollbackInfo
 		{
 			public MapNode Node;
-			public float Yaw;
-			public float Pitch;
-			public float Roll;
+			public Quaternion Rotation;
 		}
 		
 		readonly RollbackInfo[] rollbackInfo;
-		public float DeltaYaw = 0;
-		public float DeltaPitch = 0;
-		public float DeltaRoll = 0;
+		public Quaternion Rotation;
 		
 		public RotateCommand( MapEditor editor ) : base(editor)
 		{
@@ -33,9 +29,7 @@ namespace IronStar.Editor.Commands
 								.Where(	obj0 => obj0 is MapNode )
 								.Select( obj2 => new RollbackInfo { 
 									Node	= obj2, 
-									Yaw		= obj2.RotateYaw, 
-									Pitch	= obj2.RotatePitch, 
-									Roll	= obj2.RotateRoll, 
+									Rotation= obj2.Rotation,
 								} )
 								.ToArray();
 		}
@@ -45,9 +39,7 @@ namespace IronStar.Editor.Commands
 		{
 			foreach ( var ri in rollbackInfo )
 			{
-				ri.Node.RotateYaw	= ri.Yaw	+ DeltaYaw	;
-				ri.Node.RotatePitch	= ri.Pitch	+ DeltaPitch;
-				ri.Node.RotateRoll	= ri.Roll	+ DeltaRoll	;
+				ri.Node.Rotation	=	Rotation * ri.Rotation;
 				ri.Node.ResetNodeECS(gs);
 			}
 			return null;
@@ -58,9 +50,7 @@ namespace IronStar.Editor.Commands
 		{
 			foreach ( var ri in rollbackInfo )
 			{
-				ri.Node.RotateYaw	= ri.Yaw	;
-				ri.Node.RotatePitch	= ri.Pitch	;
-				ri.Node.RotateRoll	= ri.Roll	;
+				ri.Node.Rotation	=	ri.Rotation;
 				ri.Node.ResetNodeECS(gs);
 			}
 			RestoreSelection();

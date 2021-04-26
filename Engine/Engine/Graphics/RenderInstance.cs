@@ -68,6 +68,8 @@ namespace Fusion.Engine.Graphics {
 			get; set;
 		}
 
+		public bool NoShadow { get; set; }
+
 		/// <summary>
 		/// Gets whether mesh is skinned.
 		/// </summary>

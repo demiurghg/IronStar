@@ -1,6 +1,6 @@
 #if 0
-$ubershader SINGLE_PASS	MASK_DEPTH|MASK_ALPHA
-$ubershader DOUBLE_PASS	MASK_DEPTH|MASK_ALPHA HORIZONTAL|VERTICAL
+----$ubershader SINGLE_PASS	MASK_DEPTH|MASK_ALPHA
+$ubershader DOUBLE_PASS	MASK_DEPTH|MASK_ALPHA +LUMA_ONLY HORIZONTAL|VERTICAL
 #endif
 
 #include "auto/bilateral.fxi"
@@ -32,16 +32,64 @@ float ExtractMaskFactor( float4 mask )
 	return 0;
 }
 
-float ExtractLumaFactor( float4 color )
+float ExtractLuma( float4 color )
 {
+#ifndef LUMA_ONLY	
 	return dot( color, filterParams.LumaVector );
+#else	
+	return color.r;
+#endif
 }
 
-float ExtractLumaFactor( float3 color )
+struct PIXEL
 {
-	return dot( color, filterParams.LumaVector.xyz );
+#ifndef LUMA_ONLY	
+	float4	Data;
+#endif	
+	float	Luma;
+	float	Mask;
+};
+
+PIXEL ExtractPixelData( float4 color, float4 mask )
+{
+	PIXEL px;
+	
+#ifdef MASK_DEPTH
+	px.Luma	=	ExtractLuma( color );
+	px.Mask	= 	LinearizeDepth ( mask.r );
+#endif	
+#ifdef MASK_ALPHA
+	px.Luma	=	ExtractLuma( color );
+	px.Mask	= 	mask.a;
+#endif	
+#ifndef LUMA_ONLY
+	px.Data = color;
+#endif
+
+	return px;
 }
 
+float ComputePixelDelta( PIXEL a, PIXEL b, float falloff )
+{
+	float	deltaL	=	a.Luma - b.Luma;
+	float	deltaM	=	a.Mask - b.Mask;
+	
+	float 	powerL	=	deltaL * deltaL * filterParams.ColorFactor;
+	float	powerM	=	deltaM * deltaM * filterParams.MaskFactor;
+	
+	float	weight	=	exp( - powerL - powerM - falloff );
+	
+	return weight;
+}
+
+float4 GetPixelData( PIXEL px )
+{
+#ifndef LUMA_ONLY	
+	return px.Data;
+#else
+	return px.Luma;
+#endif
+}
 
 //-------------------------------------------------------------------------------
 //	DOUBLE PASS 
@@ -49,13 +97,11 @@ float ExtractLumaFactor( float3 color )
 
 #ifdef DOUBLE_PASS
 #ifdef HORIZONTAL
-groupshared float4 cachedData[BlockSize16][BlockSize16*2];
-groupshared float2 cachedMask[BlockSize16][BlockSize16*2];
+groupshared PIXEL cache[BlockSize16][BlockSize16*2];
 #endif
 
 #ifdef VERTICAL
-groupshared float4 cachedData[BlockSize16*2][BlockSize16];
-groupshared float2 cachedMask[BlockSize16*2][BlockSize16];
+groupshared PIXEL cache[BlockSize16*2][BlockSize16];
 #endif
 #endif
 
@@ -108,10 +154,7 @@ void CSMain(
 		float4	color	=	Source .Load( loadPoint );
 		float4	mask	=	Mask.Load( loadPoint );
 		
-		float 	lf		=	ExtractLumaFactor( color );
-		float 	mf		=	ExtractMaskFactor( mask );
-		cachedMask[ storePoint.y ][ storePoint.x ]  = float2( lf, mf );
-		cachedData[ storePoint.y ][ storePoint.x ]  = color;
+		cache[ storePoint.y ][ storePoint.x ]	=	ExtractPixelData( color, mask );
 	}
 	
 	GroupMemoryBarrierWithGroupSync();
@@ -123,8 +166,7 @@ void CSMain(
 	float4 accumValue 	= 0;
 	float  accumWeight	= 0;
 	
-	float 	maskCenter		=	ExtractMaskFactor( Mask  .Load( centerPoint ) );
-	float	lumaCenter		=	ExtractLumaFactor( Source.Load( centerPoint ) );
+	PIXEL	centerPixel	=	ExtractPixelData( Source.Load( centerPoint ),  Mask.Load( centerPoint ) );
 	
 	[unroll]
 	for (int t=-7; t<=7; t++) {
@@ -141,19 +183,12 @@ void CSMain(
 		
 		int2	loadPoint	=	int2(overlapX,overlapY) + groupThreadId.xy + offset.xy;
 	
-		float4	localColor	=	cachedData[ loadPoint.y ][ loadPoint.x ];
-		float2	localMask	=	cachedMask[ loadPoint.y ][ loadPoint.x ];
+		PIXEL 	localPixel	=	cache[ loadPoint.y ][ loadPoint.x ];
 		
-		float	deltaL		=	localMask.x - lumaCenter;
-		float	deltaM		=	localMask.y - maskCenter;
-		
-		float 	powerL		=	deltaL * deltaL * filterParams.ColorFactor;
-		float	powerM		=	deltaM * deltaM * filterParams.MaskFactor;
-		
-		float	weight		=	exp( - powerL - powerM - falloff );
+		float	weight		=	ComputePixelDelta( localPixel, centerPixel, falloff );
 		
 		accumWeight			+=	weight;
-		accumValue 			+=	localColor * weight;
+		accumValue 			+=	GetPixelData( localPixel ) * weight;
 	}//*/
 	
 	float4	result			=	accumValue / accumWeight;

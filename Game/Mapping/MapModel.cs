@@ -61,13 +61,17 @@ namespace IronStar.Mapping
 
 		[AECategory( "Appearance" )]
 		[Description( "Entire model scale" )]
-		[AESlider(0.1f, 10.0f, 0.5f, 0.01f)]
+		[AESlider(0.1f, 100.0f, 0.5f, 0.01f)]
 		public float Scale { get; set; } = 1;
 
 		[AECategory( "Appearance" )]
 		[AEDisplayName("Glow Color")]
 		[Description( "Model glow color multiplier" )]
 		public Color GlowColor { get; set; } = Color.Red;
+
+		[AECategory( "Appearance" )]
+		[AEDisplayName("Skip Shadow")]
+		public bool SkipShadow { get; set; }
 
 		[AECategory( "Appearance" )]
 		[AEDisplayName("Glow Intensity")]
@@ -113,9 +117,13 @@ namespace IronStar.Mapping
 			ecsEntity.AddComponent( new StaticCollisionComponent() { Walkable = Walkable, Collidable = Collidable } );
 
 			var rm		=	new SFX2.RenderModel( ScenePath, Matrix.Identity, Color.White, 1, SFX2.RMFlags.None );
+			
+			rm.NoShadow	=	SkipShadow;
 			rm.cmPrefix	=	UseCollisionMesh ? "cm_" : "";
+
 			var lmSize	=	UseLightVolume ? 0 : (int)LightMapSize;
 			rm.SetupLightmap( lmSize, lmSize, Name );
+			
 			ecsEntity.AddComponent( rm );
 		}
 

@@ -42,6 +42,7 @@ namespace IronStar.SFX2
 
 		public string	cmPrefix;
 
+		public bool		NoShadow { get; set; }
 		public bool		UseLightMap { get { return lightmapSize.Width>0 && lightmapSize.Height>0; } }
 
 
@@ -56,6 +57,7 @@ namespace IronStar.SFX2
 			this.transform	=	transform	;
 			this.color		=	color		;
 			this.intensity	=	intensity	;
+			this.rmFlags	=	flags		;
 		}
 
 

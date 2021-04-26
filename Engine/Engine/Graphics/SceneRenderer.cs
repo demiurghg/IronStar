@@ -431,7 +431,7 @@ namespace Fusion.Engine.Graphics {
 
 		internal void RenderShadowMap ( ShadowContext shadowContext, RenderList renderList, InstanceGroup mask )
 		{
-			var instances	=	renderList.Where( inst => (inst.Group & mask) != 0 );
+			var instances	=	renderList.Where( inst => ((inst.Group & mask) != 0) && !inst.NoShadow );
 
 			RenderGeneric("ShadowMap", null, StereoEye.Mono, SurfaceFlags.SHADOW, shadowContext, instances, mask );
 		}

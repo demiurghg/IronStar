@@ -10,13 +10,13 @@ using Fusion.Engine.Common;
 using Fusion.Drivers.Graphics;
 using System.Runtime.InteropServices;
 
-namespace Fusion.Engine.Graphics {
-
+namespace Fusion.Engine.Graphics 
+{
 	/// <summary>
 	/// Shadow render context
 	/// </summary>
-	internal class ShadowContext : IRenderContext {
-		
+	internal class ShadowContext : IRenderContext 
+	{
 		readonly Rectangle region;
 		readonly Camera camera;
 		readonly float farDistance;
@@ -73,8 +73,10 @@ namespace Fusion.Engine.Graphics {
 		public float FarDistance { get { return farDistance; } }
 		
 
-		public Viewport Viewport { 
-			get {
+		public Viewport Viewport 
+		{ 
+			get 
+			{
 				return new Viewport( region );
 			}
 		}

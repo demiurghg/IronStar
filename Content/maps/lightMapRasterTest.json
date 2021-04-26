@@ -402,7 +402,7 @@
       {
         "$id": "23",
         "$type": "IronStar.Mapping.MapModel, IronStar",
-        "ScenePath": "scenes\\moon\\moonRockMedium1.fbx",
+        "ScenePath": "scenes\\moon\\moonRockMedium2.fbx",
         "Scale": 1.0,
         "GlowColor": "255, 0, 0, 255",
         "GlowIntensity": 100.0,
@@ -519,7 +519,7 @@
         "Frozen": false,
         "Translation": "104, -1, -16",
         "Scaling": "1, 1, 1",
-        "Rotation": "0, 0, 0, 1",
+        "Rotation": "0, 0.707106769, 0, 0.707106769",
         "TranslateX": 104.0,
         "TranslateY": -1.0,
         "TranslateZ": -16.0

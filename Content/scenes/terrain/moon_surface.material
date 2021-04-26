@@ -1,0 +1,13 @@
+[General]
+Transparent   = False
+Emission      = 0, 0, 0, 0
+MaskEmission  = False
+InvertYNormal = False
+
+[Textures]
+BaseColor = moon_color.jpg
+NormalMap = moon_nm.jpg
+Metallic  = 
+Roughness = moon_r.jpg
+Emission  = 
+Occlusion = 

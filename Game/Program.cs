@@ -120,6 +120,7 @@ namespace IronStar {
 				.Ignore("scenes/*.png"  )
 				.Ignore("scenes/*.jpg"  )
 				.Ignore("turtle/*"      )
+				.Ignore("_maya/*"       )
 				.Ignore("_outsource/*"  )
 				.Ignore("_kitbash/*"    )
 				.Ignore("*.wav"         )

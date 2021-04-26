@@ -47,6 +47,8 @@ namespace Fusion.Core.Extensions {
 
 		public static T[] Read<T> ( this BinaryReader reader, int count ) where T : struct
 		{
+			if (count==0) return new T[0];
+
 			var buffer			= reader.ReadBytes( count * Marshal.SizeOf(typeof(T)) );
 			var elementCount	= count;
 			var handle			= GCHandle.Alloc( buffer, GCHandleType.Pinned );

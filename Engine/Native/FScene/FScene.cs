@@ -89,7 +89,7 @@ namespace FScene {
 							mesh.DefragmentSubsets(scene, true);
 							mesh.ComputeTangentFrame();
 							mesh.ComputeBoundingBox();
-							mesh.BuildAdjacency();
+							//mesh.BuildAdjacency();
 						}
 					}
 

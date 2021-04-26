@@ -42,13 +42,17 @@ namespace Fusion.Core.Extensions {
 
 		public static void Write<T>( this BinaryWriter writer, T[] array ) where T : struct
 		{
-			WriteGeneric<T>( writer, array, array.Length );
+			if (array.Length>0)
+			{
+				WriteGeneric<T>( writer, array, array.Length );
+			}
 		}
 
 
 		public static void Write<T>( this BinaryWriter writer, T[] array, int count ) where T : struct
 		{
-			if (count>array.Length) {
+			if (count>array.Length) 
+			{
 				throw new ArgumentOutOfRangeException("count > array.Length");
 			}
 			WriteGeneric<T>( writer, array, count );

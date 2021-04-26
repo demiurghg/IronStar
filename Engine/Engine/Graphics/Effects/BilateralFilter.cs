@@ -14,18 +14,12 @@ using Fusion.Engine.Graphics.Ubershaders;
 
 namespace Fusion.Engine.Graphics
 {
-	public enum BilateralType {
-		Depth,
-		Normals,
-	}
-
-
 	/// <summary>
 	/// Bilateral filter
 	/// </summary>
 	[RequireShader("bilateral", true)]
-	internal class BilateralFilter : RenderComponent {
-
+	internal class BilateralFilter : RenderComponent 
+	{
 		static FXConstantBuffer<FilterParams>		regParams	=	new CRegister( 0, "filterParams" );
 		static FXConstantBuffer<GpuData.CAMERA>		regCamera	=	new CRegister( 1, "Camera" );
 
@@ -37,6 +31,7 @@ namespace Fusion.Engine.Graphics
 			HORIZONTAL		=	0x0008,
 			MASK_DEPTH		=	0x0010,
 			MASK_ALPHA		=	0x0020,
+			LUMA_ONLY		=	0x0040,
 		}
 
 
@@ -177,8 +172,11 @@ namespace Fusion.Engine.Graphics
 		{
 			Color4 luma = new Color4(1,0,0,0);
 			var region = new Rectangle(0,0,16384,16384);
-			BilateralPass( Flags.DOUBLE_PASS | Flags.HORIZONTAL | Flags.MASK_DEPTH, temp  , region, camera, target, region, depth, region, colorFactor, depthFactor, falloff, luma );
-			BilateralPass( Flags.DOUBLE_PASS | Flags.VERTICAL   | Flags.MASK_DEPTH, target, region, camera, temp  , region, depth, region, colorFactor, depthFactor, falloff, luma );
+			var flagsH = Flags.DOUBLE_PASS | Flags.HORIZONTAL | Flags.MASK_DEPTH | Flags.LUMA_ONLY;
+			var flagsV = Flags.DOUBLE_PASS | Flags.VERTICAL   | Flags.MASK_DEPTH | Flags.LUMA_ONLY;
+			
+			BilateralPass( flagsH, temp  , region, camera, target, region, depth, region, colorFactor, depthFactor, falloff, luma );
+			BilateralPass( flagsV, target, region, camera, temp  , region, depth, region, colorFactor, depthFactor, falloff, luma );
 		}
 
 

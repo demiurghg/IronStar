@@ -422,6 +422,11 @@ namespace Fusion.Engine.Graphics {
 
 		internal void RenderZPass ( GameTime gameTime, StereoEye stereoEye, Camera camera, HdrFrame frame, RenderList renderList, InstanceGroup mask )
 		{		
+			if (rs.SkipZPass) 
+			{
+				return;
+			}
+
 			var context		=	new ForwardZPassContext( camera, frame );
 			var instances	=	renderList.Where( inst => (inst.Group & mask) != 0 );
 
@@ -431,6 +436,11 @@ namespace Fusion.Engine.Graphics {
 
 		internal void RenderShadowMap ( ShadowContext shadowContext, RenderList renderList, InstanceGroup mask )
 		{
+			if (rs.SkipShadows)
+			{
+				return;
+			}
+
 			var instances	=	renderList.Where( inst => ((inst.Group & mask) != 0) && !inst.NoShadow );
 
 			RenderGeneric("ShadowMap", null, StereoEye.Mono, SurfaceFlags.SHADOW, shadowContext, instances, mask );

@@ -187,6 +187,20 @@ namespace Fusion.Engine.Graphics {
 
 
 		/// <summary>
+		/// Skips feed-back buffer reading
+		/// </summary>
+		[Config]
+		public bool SkipZPass { get; set; }
+
+
+		/// <summary>
+		/// Skips feed-back buffer reading
+		/// </summary>
+		[Config]
+		public bool SkipShadows { get; set; }
+
+
+		/// <summary>
 		/// 
 		/// </summary>
 		[Config]

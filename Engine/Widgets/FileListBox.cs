@@ -163,6 +163,12 @@ namespace Fusion.Widgets
 			this.currentDir		=	Path.Combine( ContentDirectory, initialDirectory );
 			this.homeDir		=	Path.Combine( ContentDirectory, initialDirectory );
 
+			if (!Directory.Exists(currentDir))
+			{
+				Log.Warning("Directory '{0}' does not exist", currentDir);
+				currentDir	=	ContentDirectory;
+			}
+
 			RefreshFileList();
 
 			IsDoubleClickEnabled =	true;

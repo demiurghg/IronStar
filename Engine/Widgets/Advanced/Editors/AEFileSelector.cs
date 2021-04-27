@@ -13,6 +13,7 @@ using Fusion.Widgets;
 using Fusion.Widgets.Dialogs;
 using Fusion.Widgets.Binding;
 using static Fusion.Widgets.Dialogs.AtlasSelector;
+using System.IO;
 
 namespace Fusion.Widgets.Advanced
 {
@@ -95,7 +96,20 @@ namespace Fusion.Widgets.Advanced
 		
 		private void OpenDialog()
 		{
-			fileSelector.Show( (fileName) => binding.SetValue( fileName, ValueSetMode.Default ) );
+			var fileName = binding.GetValue();
+			var dirName  = dir;
+
+			if (!string.IsNullOrWhiteSpace(fileName))
+			{
+				/*var fileDirName = Path.GetDirectoryName(fileName);
+				if (Directory.Exists(fileDirName))
+				{ */
+					dirName = Path.GetDirectoryName(fileName);
+				//}*/
+			}
+
+			fileSelector	=	new OpenFileDialog( Frames, dirName, ext );
+			fileSelector.Show( (openFile) => binding.SetValue( openFile, ValueSetMode.Default ) );
 			//FileSelector.ShowDialog( Frames, dir, ext, binding.GetValue(), (fnm)=>binding.SetValue(fnm, ValueSetMode.Default) );
 		}
 

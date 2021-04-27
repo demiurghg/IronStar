@@ -26,7 +26,7 @@ namespace Fusion.Widgets.Dialogs
 		}
 
 
-		public void Show( Action<string> openAction, string initialFileName = null )
+		public void Show( Action<string> openAction )
 		{
 			this.openAction = openAction;
 			ShowInternal();

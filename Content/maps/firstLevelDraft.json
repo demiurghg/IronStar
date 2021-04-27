@@ -3850,11 +3850,11 @@
         "Name": "1697a9b1-86ab-47f4-a949-55f34535a79e",
         "Visible": true,
         "Frozen": false,
-        "Translation": "40, 20, 92",
+        "Translation": "40, 75, 92",
         "Scaling": "1, 1, 1",
-        "Rotation": "0.70710665, 6.74349451E-07, 0.7071069, 6.1253246E-07",
+        "Rotation": "0, 0.707106769, 0, 0.707106769",
         "TranslateX": 40.0,
-        "TranslateY": 20.0,
+        "TranslateY": 75.0,
         "TranslateZ": 92.0
       },
       {
@@ -3866,7 +3866,7 @@
         "SkipShadow": false,
         "GlowIntensity": 100.0,
         "LightMapSize": "lightMap8",
-        "UseLightVolume": true,
+        "UseLightVolume": false,
         "UseCollisionMesh": false,
         "Collidable": true,
         "Walkable": true,
@@ -5535,12 +5535,12 @@
   "RadiositySettings": {
     "$id": "335",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
-    "NumRays": 128,
-    "NumBounces": 2,
+    "NumRays": 32,
+    "NumBounces": 1,
     "Bias": 0,
     "UseBilateral": true,
     "UseDilate": true,
-    "FilterFalloff": 0.5,
+    "FilterFalloff": 0.7,
     "FilterWeight": 0.5,
     "WhiteDiffuse": false
   }

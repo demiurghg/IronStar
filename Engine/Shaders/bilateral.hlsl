@@ -1,5 +1,5 @@
 #if 0
-----$ubershader SINGLE_PASS	MASK_DEPTH|MASK_ALPHA
+$ubershader SINGLE_PASS	MASK_DEPTH|MASK_ALPHA
 $ubershader DOUBLE_PASS	MASK_DEPTH|MASK_ALPHA +LUMA_ONLY HORIZONTAL|VERTICAL
 #endif
 
@@ -36,6 +36,15 @@ float ExtractLuma( float4 color )
 {
 #ifndef LUMA_ONLY	
 	return dot( color, filterParams.LumaVector );
+#else	
+	return color.r;
+#endif
+}
+
+float ExtractLuma( float3 color )
+{
+#ifndef LUMA_ONLY	
+	return dot( color.rgb, filterParams.LumaVector.rgb );
 #else	
 	return color.r;
 #endif
@@ -259,7 +268,7 @@ void CSMain(
 	GroupMemoryBarrierWithGroupSync();
 	
 	float4	valueCenter	=	CacheLoad( groupThreadId.xy + offset );
-	float	lumaCenter	=	ExtractLumaFactor( valueCenter );
+	float	lumaCenter	=	ExtractLuma( valueCenter );
 	float	maskCenter	=	valueCenter.a;
 
 	//[unroll]
@@ -271,7 +280,7 @@ void CSMain(
 			
 			float4 	localValue	=	CacheLoad( groupThreadId.xy + offset + int2(x,y) );
 			float3	localColor	=	localValue.rgb;
-			float	localLuma	=	ExtractLumaFactor( localColor );
+			float	localLuma	=	ExtractLuma( localColor );
 			float	localMask	=	localValue.a;
 			
 			float	deltaL		=	localLuma - lumaCenter;

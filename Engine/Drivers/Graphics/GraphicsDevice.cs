@@ -270,11 +270,7 @@ namespace Fusion.Drivers.Graphics {
 		{
 			Log.Message("Display bounds changed: {0} {1}", DisplayBounds.Width, DisplayBounds.Height );
 
-			if (DisplayBoundsChanged!=null) {
-				if (true) { // lock (deviceContext) {
-					DisplayBoundsChanged( this, EventArgs.Empty );
-				}
-			}
+			DisplayBoundsChanged?.Invoke( this, EventArgs.Empty );
 		}
 
 

@@ -317,7 +317,7 @@ namespace Fusion.Drivers.Graphics.Display {
 		/// <summary>
 		/// 
 		/// </summary>
-		public override Rectangle Bounds
+		protected override Rectangle BoundsInternal
 		{
 			get { 
 				return new Rectangle( 0, 0, window1.ClientSize.Width, window1.ClientSize.Height );

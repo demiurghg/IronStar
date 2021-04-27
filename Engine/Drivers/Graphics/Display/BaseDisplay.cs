@@ -21,10 +21,13 @@ using Fusion.Engine.Graphics;
 using Fusion.Engine.Graphics.Ubershaders;
 using Fusion.Core;
 
-
-namespace Fusion.Drivers.Graphics.Display {
+namespace Fusion.Drivers.Graphics.Display 
+{
 	[RequireShader("stereo")]
-	abstract class BaseDisplay : GraphicsObject {
+	abstract class BaseDisplay : GraphicsObject 
+	{
+		public const int MinWidth	=	64;
+		public const int MinHeight	=	64;
 
 		protected readonly	Game Game;
 		public 		D3D.Device d3dDevice = null;
@@ -180,10 +183,20 @@ namespace Fusion.Drivers.Graphics.Display {
 		/// <summary>
 		/// Gets display bounds.
 		/// </summary>
-		public abstract Rectangle Bounds {
-			get;
+		public Rectangle Bounds {
+			get 
+			{
+				var w = Math.Max( MinWidth,  BoundsInternal.Width  );
+				var h = Math.Max( MinHeight, BoundsInternal.Height );
+				return new Rectangle( 0, 0, w, h );
+			}
 		}
 
+
+		protected abstract Rectangle BoundsInternal
+		{
+			get;
+		}
 
 
 		/// <summary>
@@ -272,8 +285,10 @@ namespace Fusion.Drivers.Graphics.Display {
 			var border		=	FormBorderStyle.Sizable;
 
 
-			if (supportTouch) {
-				touchForm = new TouchForm() {
+			if (supportTouch) 
+			{
+				touchForm = new TouchForm() 
+				{
 					Text			=	text,
 					BackColor		=	color,
 					ClientSize		=	clientSize,
@@ -282,10 +297,14 @@ namespace Fusion.Drivers.Graphics.Display {
 					StartPosition	=	startPos,
 					WindowState		=	windowState,
 					FormBorderStyle	=	border,
+					MinimumSize		=	new System.Drawing.Size(MinWidth,MinHeight),
 				};
 				form = touchForm;
-			} else {
-				form = new Form() {
+			} 
+			else 
+			{
+				form = new Form() 
+				{
 					Text			=	text,
 					BackColor		=	color,
 					ClientSize		=	clientSize,
@@ -294,12 +313,13 @@ namespace Fusion.Drivers.Graphics.Display {
 					StartPosition	=	startPos,
 					WindowState		=	windowState,
 					FormBorderStyle	=	border,
+					MinimumSize		=	new System.Drawing.Size(MinWidth,MinHeight),
 				};
 			}
 
 
-			if (output!=null) {
-
+			if (output!=null) 
+			{
 				var bounds		=	output.Description.DesktopBounds;
 				var scrW		=	bounds.Right - bounds.Left;
 				var scrH		=	bounds.Bottom - bounds.Top;
@@ -316,7 +336,8 @@ namespace Fusion.Drivers.Graphics.Display {
 			form.Move += (s,e) => Game.InputDevice.RemoveAllPressedKeys();
 			form.FormClosing += form_FormClosing;
 
-			if (supportTouch) {
+			if (supportTouch) 
+			{
 				touchForm.PointerUp			+= (s,e) => Game.Touch.CallPointerUpEvent( e.PointerID, e.Location );
 				touchForm.PointerDown		+= (s,e) => Game.Touch.CallPointerDownEvent( e.PointerID, e.Location );
 				touchForm.PointerUpdate		+= (s,e) => Game.Touch.CallPointerUpdateEvent( e.PointerID, e.Location );

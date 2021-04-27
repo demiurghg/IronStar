@@ -285,10 +285,6 @@ namespace Fusion.Engine.Graphics {
 		{
 			SafeDispose( ref viewHdrFrame );
 
-			//	clamp values :
-			newWidth	=	Math.Max(128, newWidth);
-			newHeight	=	Math.Max(128, newHeight);
-
 			int targetWidth		=	newWidth;
 			int targetHeight	=	newHeight;
 

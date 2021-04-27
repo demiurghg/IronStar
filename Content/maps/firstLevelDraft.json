@@ -2759,12 +2759,12 @@
         "Name": "419f3dc2-ea46-42ae-90c8-debc753a01a2",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-131, 24, -150",
+        "Translation": "-72, 34, -111",
         "Scaling": "1, 1, 1",
         "Rotation": "0, 0, 0, 1",
-        "TranslateX": -131.0,
-        "TranslateY": 24.0,
-        "TranslateZ": -150.0
+        "TranslateX": -72.0,
+        "TranslateY": 34.0,
+        "TranslateZ": -111.0
       },
       {
         "$id": "182",

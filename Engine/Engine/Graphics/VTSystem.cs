@@ -89,18 +89,20 @@ namespace Fusion.Engine.Graphics {
 
 		[Config]
 		[AECategory("Debugging")]
-		[Description("Show thrashing.")]
 		public bool ShowThrashing { get; set; } = false;
 
 		[Config]
 		[AECategory("Tiles")]
-		[Description("Show thrashing.")]
 		public bool ShowDiffuse { get; set; } = false;
 
 		[Config]
 		[AECategory("Tiles")]
-		[Description("Show thrashing.")]
 		public bool ShowSpecular { get; set; } = false;
+
+		[Config]
+		[AECategory("Tiles")]
+		[Description("Show thrashing.")]
+		public bool ShowMirror { get; set; } = false;
 
 		[Config]
 		[AECategory("Performamce")]
@@ -522,6 +524,10 @@ namespace Fusion.Engine.Graphics {
 
 								if (ShowSpecular) {
 									tile.MakeGlossyMetal();
+								}
+
+								if (ShowMirror) {
+									tile.MakeMirror();
 								}
 
 								WriteTileToPhysicalTexture( tile, rect.X, rect.Y );

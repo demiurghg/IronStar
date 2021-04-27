@@ -32,18 +32,15 @@ namespace Fusion.Build.Mapping {
 			}
 		}
 
-		Image<Color>	colorData;
-		Image<Color>	normalData;
-		Image<Color>	specularData;
+		Image<Color>	colorData;			//	RGB - base color
+		Image<Color>	normalData;			//	RGB - normal
+		Image<Color>	specularData;		//	Roughness, Metalness, Emission, Ambient Occlusion
 
 		Image<Color>	colorDataMip;
 		Image<Color>	normalDataMip;
 		Image<Color>	specularDataMip;
 
 
-
-
-		
 		/// <summary>
 		/// Creates instance of VTTile
 		/// </summary>
@@ -136,6 +133,20 @@ namespace Fusion.Build.Mapping {
 
 			colorDataMip?.Fill( Color.Gray );
 			specularDataMip?.ForEachPixel( spec => new Color( spec.R, (byte)255, (byte)0, spec.A ) );
+		}
+
+
+		/// <summary>
+		/// Clears tile with particular color, flat normal and no specular.
+		/// </summary>
+		/// <param name="color"></param>
+		public void MakeMirror()
+		{
+			colorData.Fill( Color.White );
+			specularData.ForEachPixel( spec => new Color( (byte)0, (byte)255, (byte)0, spec.A ) );
+
+			colorDataMip?.Fill( Color.White );
+			specularDataMip?.ForEachPixel( spec => new Color( (byte)0, (byte)255, (byte)0, spec.A ) );
 		}
 
 

@@ -186,6 +186,7 @@ namespace IronStar.Editor
 			workspace.AddHotkey( Keys.D1		, ModKeys.None, ResetViewMode );
 			workspace.AddHotkey( Keys.D2		, ModKeys.None, ToggleDiffuse );
 			workspace.AddHotkey( Keys.D3		, ModKeys.None, ToggleSpecular );
+			workspace.AddHotkey( Keys.D3		, ModKeys.Ctrl, ToggleMirror );
 			workspace.AddHotkey( Keys.D4		, ModKeys.None, ToggleLightProbes );
 			workspace.AddHotkey( Keys.D5		, ModKeys.None, ToggleLightVolume );
 			workspace.AddHotkey( Keys.D6		, ModKeys.None, ToggleDirectLighting );
@@ -226,6 +227,7 @@ namespace IronStar.Editor
 				"LightProbeViewer.ShowLightVolume False",
 				"VTSystem.ShowDiffuse False",
 				"VTSystem.ShowSpecular False",
+				"VTSystem.ShowMirror False", 
 				"RenderSystem.SkipDirectLighting False",
 				"vtrestart"
 			);
@@ -237,6 +239,7 @@ namespace IronStar.Editor
 			Game.Invoker.ExecuteString(
 				"toggle VTSystem.ShowDiffuse", 
 				"VTSystem.ShowSpecular False", 
+				"VTSystem.ShowMirror False", 
 				"vtrestart"
 			);
 		}
@@ -246,6 +249,18 @@ namespace IronStar.Editor
 		{
 			Game.Invoker.ExecuteString(
 				"toggle VTSystem.ShowSpecular", 
+				"VTSystem.ShowMirror False", 
+				"VTSystem.ShowDiffuse False", 
+				"vtrestart"
+			);
+		}
+
+
+		void ToggleMirror()
+		{
+			Game.Invoker.ExecuteString(
+				"toggle VTSystem.ShowMirror", 
+				"VTSystem.ShowSpecular False", 
 				"VTSystem.ShowDiffuse False", 
 				"vtrestart"
 			);

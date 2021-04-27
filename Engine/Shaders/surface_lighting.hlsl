@@ -79,7 +79,8 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 #if defined (TRANSPARENT) || defined(DIFFUSE_ONLY)
 	float 	ssaoFactor	=	1;
 #else
-	float 	ssaoFactor	=	SRGBToLinear( AmbientOcclusion.Load( int3( input.Position.xy, 0 ) ).r );
+	float 	ssaoFactor	=	AmbientOcclusion.Load( int3( input.Position.xy, 0 ) ).r;
+	//float 	ssaoFactor	=	SRGBToLinear( AmbientOcclusion.Load( int3( input.Position.xy, 0 ) ).r );
 	ssaoFactor	=	lerp( 1, ssaoFactor, Stage.SsaoWeight );
 	ssaoFactor	*=	surface.occlusion;
 #endif	
@@ -100,7 +101,7 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 		light_complexity++;
 	}
 	
-	totalLight.specular.rgb		=	reflection.rgb * ssaoFactor;
+	totalLight.specular.rgb		=	reflection.rgb * ssaoFactor * ssaoFactor;
 #endif
 
 	//----------------------------------------------------------------------------------------------

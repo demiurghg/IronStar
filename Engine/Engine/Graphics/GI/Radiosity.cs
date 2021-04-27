@@ -452,18 +452,18 @@ namespace Fusion.Engine.Graphics.GI
 			float lumaWeight	=	settings.FilterWeight;
 			float alphaWeight	=	20.0f;
 
-			if (settings.UseBilateral)
+			if (settings.UseDilate)
 			{
-				rs.BilateralFilter.FilterSHL1ByAlphaSinglePass( temp, region, irradiance, albedo, region, lumaWeight, alphaWeight, falloff ); 
+				rs.DilateFilter.DilateByMaskAlpha( temp, region, irradiance, region, albedo, region, 0, 1 );
 			}
 			else
 			{
 				rs.Filter.Copy( temp.Surface, irradiance );
 			}
 
-			if (settings.UseDilate)
+			if (settings.UseBilateral)
 			{
-				rs.DilateFilter.DilateByMaskAlpha( irradiance, region, temp, region, albedo, region, 0, 1 );
+				rs.BilateralFilter.FilterSHL1ByAlphaSinglePass( irradiance, region, temp, albedo, region, lumaWeight, alphaWeight, falloff ); 
 			}
 			else
 			{

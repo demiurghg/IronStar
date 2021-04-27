@@ -206,10 +206,8 @@ namespace Fusion.Engine.Graphics
 		/// <param name="rect"></param>
 		public void FilterSHL1ByAlphaSinglePass ( RenderTarget2D target, Rectangle targetRect, RenderTarget2D source, ShaderResource albedo, Rectangle sourceRect, float intensityFactor, float alphaFactor, float falloff )
 		{
-			Color4 luma = new Color4(0.4f, 0.2f, 0.2f, 0.2f);
+			Color4 luma = new Color4(0.33f, 0.33f, 0.33f, 0.33f);
 			BilateralPass( Flags.SINGLE_PASS | Flags.MASK_ALPHA, target, targetRect, null, source, sourceRect, albedo, sourceRect, intensityFactor, alphaFactor, falloff, luma );
 		}
-
-
 	}
 }

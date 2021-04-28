@@ -52,7 +52,7 @@ namespace Fusion.Engine.Graphics
 		Allocator2D allocator;
 
 
-		readonly Cascade[] cascades = new Cascade[MaxCascades];
+		readonly ShadowCascade[] cascades = new ShadowCascade[MaxCascades];
 		
 
 		/// <summary>
@@ -94,7 +94,6 @@ namespace Fusion.Engine.Graphics
 		readonly int	minRegionSize;
 		readonly ShadowSystem ss;
 		DepthStencil2D	depthBuffer;
-		//RenderTarget2D	shadowTexture;
 		RenderTarget2D	prtShadow;
 		ConstantBuffer	constCascadeShadow;
 
@@ -112,7 +111,8 @@ namespace Fusion.Engine.Graphics
 			this.rs				=	rs;
 			this.ss				=	rs.ShadowSystem;
 
-			switch ( shadowQuality ) {
+			switch ( shadowQuality ) 
+			{
 				case QualityLevel.None:		shadowMapSize	=	1024; break;
 				case QualityLevel.Low:		shadowMapSize	=	1024; break;
 				case QualityLevel.Medium:	shadowMapSize	=	2048; break;
@@ -126,16 +126,15 @@ namespace Fusion.Engine.Graphics
 
 			allocator			=	new Allocator2D(shadowMapSize);
 
-			//shadowTexture		=	new RenderTarget2D( device, ColorFormat.R32F,		shadowMapSize, shadowMapSize );
 			depthBuffer			=	new DepthStencil2D( device, DepthFormat.D24S8,		shadowMapSize, shadowMapSize );
 			prtShadow			=	new RenderTarget2D( device, ColorFormat.Rgba8_sRGB,	shadowMapSize, shadowMapSize );
 
 			constCascadeShadow	=	new ConstantBuffer( device, typeof(CASCADE_SHADOW) );
 
-			cascades[0]	=	new Cascade(maxRegionSize);
-			cascades[1]	=	new Cascade(maxRegionSize);
-			cascades[2]	=	new Cascade(maxRegionSize);
-			cascades[3]	=	new Cascade(maxRegionSize);
+			cascades[0]	=	new ShadowCascade(maxRegionSize);
+			cascades[1]	=	new ShadowCascade(maxRegionSize);
+			cascades[2]	=	new ShadowCascade(maxRegionSize);
+			cascades[3]	=	new ShadowCascade(maxRegionSize);
 		}
 
 
@@ -146,8 +145,8 @@ namespace Fusion.Engine.Graphics
 		/// <param name="disposing"></param>
 		protected override void Dispose ( bool disposing )
 		{
-			if (disposing) {
-				//SafeDispose( ref shadowTexture );
+			if (disposing) 
+			{
 				SafeDispose( ref depthBuffer );
 				SafeDispose( ref prtShadow );
 			}
@@ -163,7 +162,6 @@ namespace Fusion.Engine.Graphics
 		public void Clear ()
 		{
 			device.Clear( depthBuffer.Surface, 1, 0 );
-			//device.Clear( shadowTexture.Surface, Color4.White );
 			device.Clear( prtShadow.Surface, Color4.White );
 		}
 
@@ -173,7 +171,7 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		/// <param name="index"></param>
 		/// <returns></returns>
-		public Cascade GetCascade ( int index ) 
+		public ShadowCascade GetCascade ( int index ) 
 		{
 			if (index<0 || index>=MaxCascades) {
 				throw new ArgumentOutOfRangeException("index", "index must be within range 0.." + (MaxCascades-1).ToString() );
@@ -188,7 +186,7 @@ namespace Fusion.Engine.Graphics
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public Cascade GetLessDetailedCascade ()
+		public ShadowCascade GetLessDetailedCascade ()
 		{
 			return cascades[ MaxCascades - 1 ];
 		}
@@ -221,36 +219,38 @@ namespace Fusion.Engine.Graphics
 		/// <returns></returns>
 		bool AllocateShadowMapRegions ( Allocator2D allocator, int detailBias, IEnumerable<SpotLight> visibleSpotLights )
 		{
-			foreach ( var cascade in cascades ) {
-
+			foreach ( var cascade in cascades ) 
+			{
 				Int2 address;
 
 				var size	=	SignedShift( maxRegionSize, cascade.DetailLevel + detailBias, minRegionSize, maxRegionSize );
 
-				if (allocator.TryAlloc( size, "", out address )) {
-
+				if (allocator.TryAlloc( size, "", out address )) 
+				{
 					var rect	=	new Rectangle( address.X, address.Y, size, size );
 					cascade.ShadowRegion		=	rect;
 					cascade.ShadowScaleOffset	=	GetScaleOffset( rect );
-					
-				} else {
+				} 
+				else 
+				{
 					return false;
 				}
 			}
 
-			foreach ( var light in visibleSpotLights ) {
-
+			foreach ( var light in visibleSpotLights ) 
+			{
 				Int2 address;
 
 				var size	=	SignedShift( maxRegionSize, light.DetailLevel + detailBias, minRegionSize, maxRegionSize );
 
-				if (allocator.TryAlloc( size, "", out address )) {
-
+				if (allocator.TryAlloc( size, "", out address )) 
+				{
 					var rect	=	new Rectangle( address.X, address.Y, size, size );
 					light.ShadowRegion			=	rect;
 					light.ShadowScaleOffset		=	GetScaleOffset( rect );
-					
-				} else {
+				}
+				else 
+				{
 					return false;
 				}
 			}
@@ -275,8 +275,8 @@ namespace Fusion.Engine.Graphics
 			var slopeBiases = new[] { 0,0,0,0 };
 			var depthBiases = new[] { 0,0,0,0 };
 
-			for ( int i = 0; i<cascades.Length; i++ ) {
-
+			for ( int i = 0; i<cascades.Length; i++ ) 
+			{
 				var	smSize			=	cascades[i].ShadowRegion.Width; //	width == height
 
 				float	offset		=	splitOffset * (float)Math.Pow( splitFactor, i );
@@ -285,17 +285,13 @@ namespace Fusion.Engine.Graphics
 				Vector3 viewDir		=	camMatrix.Forward.Normalized();
 				Vector3	origin		=	viewPos + viewDir * offset;
 
-				if (rs.ShadowSystem.LockLessDetailedSplit && i==lessDetailed) {
-					origin	=	Vector3.Zero;
-					radius	=	128;
-				}
-
 				Matrix	lightRot	=	Matrix.LookAtRH( Vector3.Zero, Vector3.Zero + lightDir, Vector3.UnitY );
 				Matrix	lightRotI	=	Matrix.Invert( lightRot );
 				Vector3	lsOrigin	=	Vector3.TransformCoordinate( origin, lightRot );
 				float	snapValue	=	4 * radius / smSize;
 
-				if (ss.SnapShadowmapCascades) {
+				if (ss.SnapShadowmapCascades) 
+				{
 					lsOrigin.X		=	(float)Math.Round(lsOrigin.X / snapValue) * snapValue;
 					lsOrigin.Y		=	(float)Math.Round(lsOrigin.Y / snapValue) * snapValue;
 				}
@@ -306,12 +302,8 @@ namespace Fusion.Engine.Graphics
 				var projection		=	Matrix.OrthoRH( radius*2, radius*2, -projDepth/2, projDepth/2);
 				//var projection		=	Matrix.OrthoRH( radius*2, radius*2, -radius, radius);
 
-
 				cascades[i].ViewMatrix			=	view;
 				cascades[i].ProjectionMatrix	=	projection;	  
-				cascades[i].DepthBias			=	depthBiases[i]; // must be zero or epsilon!
-				cascades[i].SlopeBias			=	slopeBiases[i]; // must be 1.0f
-
 			}
 		}
 
@@ -376,11 +368,14 @@ namespace Fusion.Engine.Graphics
 
 			int detailBias = 0;
 
-			while (true) {
-
-				if (AllocateShadowMapRegions( allocator, detailBias, lights )) {
+			while (true) 
+			{
+				if (AllocateShadowMapRegions( allocator, detailBias, lights )) 
+				{
 					break;
-				} else {
+				}
+				else
+				{
 					allocator.FreeAll();
 					Log.Warning("Failed to allocate to much shadow maps. Detail bias {0}. Reallocating.", detailBias);
 					detailBias++;

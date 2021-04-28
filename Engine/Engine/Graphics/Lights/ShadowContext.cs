@@ -25,13 +25,11 @@ namespace Fusion.Engine.Graphics
 		readonly DepthStencilSurface depthBuffer;
 		
 
-		public ShadowContext ( Camera camera, ShadowMap.Cascade cascade, DepthStencilSurface depthBuffer )
+		public ShadowContext ( Camera camera, ShadowCascade cascade, DepthStencilSurface depthBuffer )
 		{
 			this.camera			=	camera;
 			this.farDistance	=	1;
 			this.region			=	cascade.ShadowRegion;
-			this.depthBias		=	cascade.DepthBias;
-			this.slopeBias		=	cascade.SlopeBias;
 			this.depthBuffer	=	depthBuffer;
 		}
 
@@ -41,8 +39,6 @@ namespace Fusion.Engine.Graphics
 			this.camera			=	camera;
 			this.farDistance	=	spot.Projection.GetFarPlaneDistance();
 			this.region			=	spot.ShadowRegion;
-			this.depthBias		=	spot.DepthBias;
-			this.slopeBias		=	spot.SlopeBias;
 			this.depthBuffer	=	depthBuffer;
 		}
 

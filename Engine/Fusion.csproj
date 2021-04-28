@@ -605,7 +605,7 @@
     <Compile Include="Engine\Graphics\GI\LightMapRasterizer.cs" />
     <Compile Include="Engine\Graphics\Lights\OmniLight.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowContext.cs" />
-    <Compile Include="Engine\Graphics\Lights\ShadowMap.Cascade.cs" />
+    <Compile Include="Engine\Graphics\Lights\ShadowCascade.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowMap.cs" />
     <Compile Include="Engine\Graphics\Lights\SpotLight.cs" />
     <Compile Include="Engine\Graphics\MathConverter.cs" />

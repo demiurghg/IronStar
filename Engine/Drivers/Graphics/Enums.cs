@@ -449,7 +449,7 @@ namespace Fusion.Drivers.Graphics {
 		{
 			switch ( format ) {
 				case DepthFormat.D24S8	: return Format.D24_UNorm_S8_UInt;
-				case DepthFormat.D16	: return Format.R16_UNorm;
+				case DepthFormat.D16	: return Format.D16_UNorm;
 				case DepthFormat.D32F	: return Format.D32_Float;
 			}
 			throw new ArgumentException("bad format");

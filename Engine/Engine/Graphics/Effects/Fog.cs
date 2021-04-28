@@ -292,7 +292,7 @@ namespace Fusion.Engine.Graphics {
 			device.ComputeConstants	[ regSky				]	=	rs.Sky.SkyData;
 			device.ComputeConstants	[ regCamera				]	=	camera.CameraData;
 			device.ComputeConstants	[ regDirectLight		]	=	rs.LightManager.DirectLightData;
-			device.ComputeConstants	[ regCascadeShadow		]	=	rs.LightManager.ShadowMap.GetCascadeShadowConstantBuffer();
+			device.ComputeConstants	[ regCascadeShadow		]	=	rs.ShadowSystem.ShadowMap.GetCascadeShadowConstantBuffer();
 
 			device.ComputeSamplers	[ regLinearClamp		]	=	SamplerState.LinearClamp;
 			device.ComputeSamplers	[ regShadowSampler		]	=	SamplerState.ShadowSampler;
@@ -301,8 +301,8 @@ namespace Fusion.Engine.Graphics {
 			device.ComputeResources	[ regClusterTable		]	=	rs.LightManager.LightGrid.GridTexture		;
 			device.ComputeResources	[ regLightIndexTable	]	=	rs.LightManager.LightGrid.IndexDataGpu		;
 			device.ComputeResources	[ regLightDataTable		]	=	rs.LightManager.LightGrid.LightDataGpu		;
-			device.ComputeResources	[ regShadowMap			]	=	rs.LightManager.ShadowMap.ShadowTexture		;
-			device.ComputeResources	[ regShadowMask			]	=	rs.LightManager.ShadowMap.ParticleShadowTexture	;
+			device.ComputeResources	[ regShadowMap			]	=	rs.ShadowSystem.ShadowMap.ShadowTexture		;
+			device.ComputeResources	[ regShadowMask			]	=	rs.ShadowSystem.ShadowMap.ParticleShadowTexture	;
 			device.ComputeResources	[ regLutAP0				]	=	rs.Sky.LutAP0;
 			device.ComputeResources	[ regLutAP1				]	=	rs.Sky.LutAP1;
 			device.ComputeResources	[ regShadowHistory		]	=	shadowHistory;

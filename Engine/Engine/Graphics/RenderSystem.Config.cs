@@ -210,12 +210,6 @@ namespace Fusion.Engine.Graphics {
 		/// Shows particles statistics.
 		/// </summary>
 		[Config]
-		public QualityLevel ShadowQuality { get; set; }	= QualityLevel.Medium;
-
-		/// <summary>
-		/// Shows particles statistics.
-		/// </summary>
-		[Config]
 		public bool FreezeParticles { get; set; }
 
 
@@ -256,26 +250,6 @@ namespace Fusion.Engine.Graphics {
 		public bool SkipGhostDebugRendering { get; set; }
 
 		[AECategory("Lightmap")] [Config]	public bool UsePointLightmapSampling { get; set; } = false;
-
-		[AECategory("Shadows")]  [Config]	public bool UsePointShadowSampling { get; set; } = false;
-		[AECategory("Shadows")]  [Config]	public bool SnapShadowmapCascades { get; set; } = true;
-		[AECategory("Shadows")]  [Config]	public bool LockLessDetailedSplit { get; set; } = false;
-
-		[AECategory("Shadows")]  [Config]	public float ShadowGradientBiasX { get; set; } = 1;
-		[AECategory("Shadows")]  [Config]	public float ShadowGradientBiasY { get; set; } = 1;
-
-		[AECategory("Shadows")]  [Config]	public float ShadowCascadeDepth { get; set; } = 1024;
-		[AECategory("Shadows")]  [Config]	public float ShadowCascadeFactor { get; set; } = 3;
-		[AECategory("Shadows")]  [Config]	public float ShadowCascadeSize { get; set; } = 4;
-
-		[AECategory("Shadows")]  [Config]	public float CSMSlopeBias0 { get; set; } = 1;
-		[AECategory("Shadows")]  [Config]	public float CSMSlopeBias1 { get; set; } = 1;
-		[AECategory("Shadows")]  [Config]	public float CSMSlopeBias2 { get; set; } = 1;
-		[AECategory("Shadows")]  [Config]	public float CSMSlopeBias3 { get; set; } = 1;
-		[AECategory("Shadows")]  [Config]	public float CSMDepthBias0 { get; set; } = 1E-07f;
-		[AECategory("Shadows")]  [Config]	public float CSMDepthBias1 { get; set; } = 1E-07f;
-		[AECategory("Shadows")]  [Config]	public float CSMDepthBias2 { get; set; } = 1E-07f;
-		[AECategory("Shadows")]  [Config]	public float CSMDepthBias3 { get; set; } = 1E-07f;
 
 		[AECommand]
 		public void KillParticles ()

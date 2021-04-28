@@ -6,16 +6,20 @@ using System.Threading.Tasks;
 using Fusion.Core.Extensions;
 using Fusion.Core.Mathematics;
 
-namespace Fusion.Engine.Graphics.Lights {
-
-	public static class Extents {
-
-		class Line {
-			public Line ( Vector3 a, Vector3 b ) { 
+namespace Fusion.Engine.Graphics.Lights 
+{
+	public static class Extents 
+	{
+		class Line 
+		{
+			public Line ( Vector3 a, Vector3 b ) 
+			{ 
 				A = new Vector4( a, 1 ); 
 				B = new Vector4( b, 1 ); 
 			}
-			public Line ( Vector4 a, Vector4 b ) { 
+			
+			public Line ( Vector4 a, Vector4 b ) 
+			{ 
 				A = a; 
 				B = b; 
 			}
@@ -29,10 +33,12 @@ namespace Fusion.Engine.Graphics.Lights {
 			/// <returns></returns>
 			public bool Clip ( float znear ) 
 			{
-				if ( A.Z <= znear && B.Z <= znear ) {
+				if ( A.Z <= znear && B.Z <= znear ) 
+				{
 					return true;
 				}
-				if ( A.Z >= znear && B.Z >= znear ) {
+				if ( A.Z >= znear && B.Z >= znear ) 
+				{
 					return false;
 				}
 
@@ -78,7 +84,8 @@ namespace Fusion.Engine.Graphics.Lights {
 					.Select( p0 => Vector3.TransformCoordinate( p0, view ) )
 					.ToArray();
 
-			var lines = new[]{
+			var lines = new[]
+			{
 				new Line( viewPoints[0], viewPoints[1] ),
 				new Line( viewPoints[1], viewPoints[2] ),
 				new Line( viewPoints[2], viewPoints[3] ),
@@ -97,18 +104,21 @@ namespace Fusion.Engine.Graphics.Lights {
 
 			lines = lines.Where( line => line.Clip(znear) ).ToArray();
 
-			if (!lines.Any()) {
+			if (!lines.Any()) 
+			{
 				return false;
 			}
 
 			var projPoints = new List<Vector4>();
 			
-			foreach ( var line in lines ) {
+			foreach ( var line in lines ) 
+			{
 				projPoints.Add( Vector4.Transform( line.A, projection ) );
 				projPoints.Add( Vector4.Transform( line.B, projection ) );
 			}
 
-			if (projectZ) {
+			if (projectZ) 
+			{
 				min.X	=	projPoints.Min( p => p.X / p.W );
 				min.Y	=	projPoints.Max( p => p.Y / p.W );
 				min.Z	=	projPoints.Min( p => p.Z / p.W );
@@ -116,7 +126,9 @@ namespace Fusion.Engine.Graphics.Lights {
 				max.X	=	projPoints.Max( p => p.X / p.W );
 				max.Y	=	projPoints.Min( p => p.Y / p.W );
 				max.Z	=	projPoints.Max( p => p.Z / p.W );
-			} else {
+			}
+			else
+			{
 				min.X	=	projPoints.Min( p => p.X / p.W );
 				min.Y	=	projPoints.Max( p => p.Y / p.W );
 				min.Z	=	projPoints.Min( p => p.W );
@@ -141,9 +153,12 @@ namespace Fusion.Engine.Graphics.Lights {
 		{
 			var pp = Vector3.TransformCoordinate( point, proj );
 
-			if (skipZ) {
+			if (skipZ)
+			{
 				return new Vector3( pp.X, pp.Y, -point.Z );
-			} else {
+			}
+			else
+			{
 				return pp;
 			}
 		}
@@ -177,11 +192,13 @@ namespace Fusion.Engine.Graphics.Lights {
 			viewPoints[6]	=	new Vector4( basis.TranslationVector - basis.Right - basis.Up - basis.Backward, 1 );
 			viewPoints[7]	=	new Vector4( basis.TranslationVector + basis.Right - basis.Up - basis.Backward, 1 );
 
-			for (int i=0; i<viewPoints.Length; i++) {
+			for (int i=0; i<viewPoints.Length; i++)
+			{
 				viewPoints[i] = Vector4.Transform( viewPoints[i], view );
 			}
 
-			var lines = new[]{
+			var lines = new[]
+			{
 				new Line( viewPoints[0], viewPoints[1] ),
 				new Line( viewPoints[1], viewPoints[2] ),
 				new Line( viewPoints[2], viewPoints[3] ),
@@ -275,15 +292,19 @@ namespace Fusion.Engine.Graphics.Lights {
 			max.Y		=	( minP.Y * -0.5f + 0.5f ) * vp.Height;
 			min.Y		=	( maxP.Y * -0.5f + 0.5f ) * vp.Height;
 
-			if (projectZ) {
+			if (projectZ)
+			{
 				min.Z	=	Vector3.TransformCoordinate( new Vector3(0,0, Math.Min( viewPos.Z + radius, znear )), projection ).Z;
 				max.Z	=	Vector3.TransformCoordinate( new Vector3(0,0, Math.Min( viewPos.Z - radius, znear )), projection ).Z;
-			} else {
+			}
+			else
+			{
 				min.Z	=	Math.Max( Math.Abs(viewPos.Z) - radius, znear );
 				max.Z	=	Math.Max( Math.Abs(viewPos.Z) + radius, znear );
 			}
 
-			if (!r0) {
+			if (!r0)
+			{
 				return false;
 			}
 
@@ -310,7 +331,8 @@ namespace Fusion.Engine.Graphics.Lights {
 		{
 			min = max = 0;
 
-			if (z>r-znear) {
+			if (z>r-znear)
+			{
 				return false;
 			}
 

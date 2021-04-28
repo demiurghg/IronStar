@@ -325,7 +325,7 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			device.ComputeConstants[ regCamera			]	=	rs.RenderWorld.Camera.CameraData;
 			device.ComputeConstants[ regRadiosity		]	=	cbRadiosity;
-			device.ComputeConstants[ regCascadeShadow	]	=	rs.LightManager.ShadowMap.GetCascadeShadowConstantBuffer();
+			device.ComputeConstants[ regCascadeShadow	]	=	rs.ShadowSystem.ShadowMap.GetCascadeShadowConstantBuffer();
 			device.ComputeConstants[ regDirectLight		]	=	rs.LightManager.DirectLightData;
 			device.ComputeConstants[ regFrustumPlanes	]	=	rs.RenderWorld.Camera.FrustumPlanes;
 
@@ -339,8 +339,8 @@ namespace Fusion.Engine.Graphics.GI
 			device.ComputeSamplers[ regSamplerShadow	]	=	SamplerState.ShadowSampler;
 			device.ComputeSamplers[ regSamplerLinear	]	=	SamplerState.LinearClamp;
 
-			device.ComputeResources[ regShadowMap		]	=	rs.LightManager.ShadowMap.ShadowTexture;
-			device.ComputeResources[ regShadowMask		]	=	rs.LightManager.ShadowMap.ParticleShadowTexture;
+			device.ComputeResources[ regShadowMap		]	=	rs.ShadowSystem.ShadowMap.ShadowTexture;
+			device.ComputeResources[ regShadowMask		]	=	rs.ShadowSystem.ShadowMap.ParticleShadowTexture;
 
 			device.ComputeResources[ regLights			]	=	rs.LightManager.LightGrid.RadLtDataGpu;
 

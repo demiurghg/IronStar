@@ -16,8 +16,8 @@ namespace Fusion.Engine.Graphics {
 	/// <summary>
 	/// Defines interface for cacascade shadow map controller.
 	/// </summary>
-	public interface ICSMController {
-
+	public interface ICSMController 
+	{
 		/// <summary>
 		/// Indicates whether specifed cascade should be updated.
 		/// </summary>

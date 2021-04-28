@@ -475,10 +475,11 @@ namespace Fusion.Engine.Graphics {
 
 						//	prepare light set for shadow rendering :
 						rs.LightManager.Update( gameTime, LightSet, Instances );
+						rs.ShadowSystem.Update( gameTime, LightSet, Instances );
 						rs.LightManager.LightGrid.UpdateLightSetVisibility( stereoEye, Camera, LightSet );
 
 						//	allocated and render shadows :
-						rs.LightManager.ShadowMap.RenderShadowMaps( gameTime, Camera, rs, this, LightSet );
+						rs.ShadowSystem.ShadowMap.RenderShadowMaps( gameTime, Camera, rs, this, LightSet );
 
 						//	render sky-cube
 						rs.Sky.RenderSkyCube();
@@ -493,7 +494,7 @@ namespace Fusion.Engine.Graphics {
 						ParticleSystem.RenderLight( gameTime, Camera );
 
 						//	render particles casting shadows :
-						rs.LightManager.ShadowMap.RenderParticleShadows( gameTime, rs, this, LightSet );
+						rs.ShadowSystem.ShadowMap.RenderParticleShadows( gameTime, rs, this, LightSet );
 					}
 				}
 
@@ -589,8 +590,8 @@ namespace Fusion.Engine.Graphics {
 				case 4  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.DofForeground ); return;
 				case 5  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.HdrTarget ); return;
 				case 6  : rs.Filter.Copy( targetSurface,		viewHdrFrame.AOBuffer ); return;
-				case 7  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ParticleShadowTexture ); return;
-				case 8  : rs.Filter.StretchRect( targetSurface, rs.LightManager.ShadowMap.ShadowTexture ); return;
+				case 7  : rs.Filter.StretchRect( targetSurface, rs.ShadowSystem.ShadowMap.ParticleShadowTexture ); return;
+				case 8  : rs.Filter.StretchRect( targetSurface, rs.ShadowSystem.ShadowMap.ShadowTexture ); return;
 				case 9  : rs.Filter.StretchRect( targetSurface, ParticleSystem.SoftStream.Lightmap ); return;
 				case 10 : rs.Filter.StretchRect( targetSurface, viewHdrFrame.FeedbackBufferRB, SamplerState.PointClamp ); return;
 			}

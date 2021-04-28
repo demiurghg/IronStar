@@ -12,12 +12,13 @@ using System.Runtime.InteropServices;
 using Fusion.Build.Mapping;
 using Fusion.Engine.Graphics.Ubershaders;
 
-namespace Fusion.Engine.Graphics {
-
-	partial class ShadowMap : DisposableBase {
-
+namespace Fusion.Engine.Graphics 
+{
+	partial class ShadowMap : DisposableBase 
+	{
 		[ShaderStructure]
-		struct VPL {
+		struct VPL 
+		{
 			Vector4 Position;
 			Vector4 Normal;
 			Vector4 Intensity;
@@ -25,7 +26,8 @@ namespace Fusion.Engine.Graphics {
 
 		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential, Pack=4)]
-		public struct CASCADE_SHADOW {
+		public struct CASCADE_SHADOW 
+		{
 			public Matrix	CascadeViewProjection0	;
 			public Matrix	CascadeViewProjection1	;
 			public Matrix	CascadeViewProjection2	;
@@ -57,9 +59,9 @@ namespace Fusion.Engine.Graphics {
 		/// Gets color shadow map buffer.
 		/// Actually stores depth value.
 		/// </summary>
-		public RenderTarget2D ShadowTexture {
+		public ShaderResource ShadowTexture {
 			get {
-				return shadowTexture;
+				return depthBuffer;//shadowTexture;
 			}
 		}
 
@@ -90,8 +92,9 @@ namespace Fusion.Engine.Graphics {
 		readonly int	shadowMapSize;
 		readonly int	maxRegionSize;
 		readonly int	minRegionSize;
+		readonly ShadowSystem ss;
 		DepthStencil2D	depthBuffer;
-		RenderTarget2D	shadowTexture;
+		//RenderTarget2D	shadowTexture;
 		RenderTarget2D	prtShadow;
 		ConstantBuffer	constCascadeShadow;
 
@@ -107,6 +110,7 @@ namespace Fusion.Engine.Graphics {
 			this.ShadowQuality	=	shadowQuality;
 			this.device			=	rs.Device;
 			this.rs				=	rs;
+			this.ss				=	rs.ShadowSystem;
 
 			switch ( shadowQuality ) {
 				case QualityLevel.None:		shadowMapSize	=	1024; break;
@@ -122,7 +126,7 @@ namespace Fusion.Engine.Graphics {
 
 			allocator			=	new Allocator2D(shadowMapSize);
 
-			shadowTexture			=	new RenderTarget2D( device, ColorFormat.R32F,		shadowMapSize, shadowMapSize );
+			//shadowTexture		=	new RenderTarget2D( device, ColorFormat.R32F,		shadowMapSize, shadowMapSize );
 			depthBuffer			=	new DepthStencil2D( device, DepthFormat.D24S8,		shadowMapSize, shadowMapSize );
 			prtShadow			=	new RenderTarget2D( device, ColorFormat.Rgba8_sRGB,	shadowMapSize, shadowMapSize );
 
@@ -143,7 +147,7 @@ namespace Fusion.Engine.Graphics {
 		protected override void Dispose ( bool disposing )
 		{
 			if (disposing) {
-				SafeDispose( ref shadowTexture );
+				//SafeDispose( ref shadowTexture );
 				SafeDispose( ref depthBuffer );
 				SafeDispose( ref prtShadow );
 			}
@@ -159,7 +163,7 @@ namespace Fusion.Engine.Graphics {
 		public void Clear ()
 		{
 			device.Clear( depthBuffer.Surface, 1, 0 );
-			device.Clear( shadowTexture.Surface, Color4.White );
+			//device.Clear( shadowTexture.Surface, Color4.White );
 			device.Clear( prtShadow.Surface, Color4.White );
 		}
 
@@ -266,8 +270,10 @@ namespace Fusion.Engine.Graphics {
 
 			lightDir.Normalize();
 
-			var slopeBiases = new[] { rs.CSMSlopeBias0, rs.CSMSlopeBias1, rs.CSMSlopeBias2, rs.CSMSlopeBias3 };
-			var depthBiases = new[] { rs.CSMDepthBias0, rs.CSMDepthBias1, rs.CSMDepthBias2, rs.CSMDepthBias3 };
+			//var slopeBiases = new[] { rs.ShadowSystem.CSMSlopeBias0, rs.ShadowSystem.CSMSlopeBias1, rs.ShadowSystem.CSMSlopeBias2, rs.ShadowSystem.CSMSlopeBias3 };
+			//var depthBiases = new[] { rs.ShadowSystem.CSMDepthBias0, rs.ShadowSystem.CSMDepthBias1, rs.ShadowSystem.CSMDepthBias2, rs.ShadowSystem.CSMDepthBias3 };
+			var slopeBiases = new[] { 0,0,0,0 };
+			var depthBiases = new[] { 0,0,0,0 };
 
 			for ( int i = 0; i<cascades.Length; i++ ) {
 
@@ -279,7 +285,7 @@ namespace Fusion.Engine.Graphics {
 				Vector3 viewDir		=	camMatrix.Forward.Normalized();
 				Vector3	origin		=	viewPos + viewDir * offset;
 
-				if (rs.LockLessDetailedSplit && i==lessDetailed) {
+				if (rs.ShadowSystem.LockLessDetailedSplit && i==lessDetailed) {
 					origin	=	Vector3.Zero;
 					radius	=	128;
 				}
@@ -289,7 +295,7 @@ namespace Fusion.Engine.Graphics {
 				Vector3	lsOrigin	=	Vector3.TransformCoordinate( origin, lightRot );
 				float	snapValue	=	4 * radius / smSize;
 
-				if (rs.SnapShadowmapCascades) {
+				if (ss.SnapShadowmapCascades) {
 					lsOrigin.X		=	(float)Math.Round(lsOrigin.X / snapValue) * snapValue;
 					lsOrigin.Y		=	(float)Math.Round(lsOrigin.Y / snapValue) * snapValue;
 				}
@@ -381,9 +387,9 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 
-			var factor	=	rs.ShadowCascadeFactor;
-			var depth	=	rs.ShadowCascadeDepth;
-			var size	=	rs.ShadowCascadeSize;
+			var factor	=	rs.ShadowSystem.ShadowCascadeFactor;
+			var depth	=	rs.ShadowSystem.ShadowCascadeDepth;
+			var size	=	rs.ShadowSystem.ShadowCascadeSize;
 
 			ComputeCascadeMatricies( camera, lightSet, size, 0, factor, depth );
 
@@ -400,16 +406,16 @@ namespace Fusion.Engine.Graphics {
 				return;	// nothing to render
 			}
 
-			using (new PixEvent("Shadow Maps")) {
-
+			using (new PixEvent("Shadow Maps")) 
+			{
 				device.Clear( depthBuffer.Surface, 1, 0 );
-				device.Clear( shadowTexture.Surface, Color4.White );
+				//device.Clear( shadowTexture.Surface, Color4.White );
 
 				var shadowCamera	=	renderWorld.ShadowCamera;
 
-				foreach ( var cascade in cascades ) {
-
-					var contextSolid  = new ShadowContext( shadowCamera, cascade, depthBuffer.Surface, shadowTexture.Surface );
+				foreach ( var cascade in cascades ) 
+				{
+					var contextSolid  = new ShadowContext( shadowCamera, cascade, depthBuffer.Surface );
 
 					shadowCamera.SetView( cascade.ViewMatrix );
 					shadowCamera.SetProjection( cascade.ProjectionMatrix );
@@ -417,12 +423,12 @@ namespace Fusion.Engine.Graphics {
 					shadowRenderList.Clear();
 					shadowRenderList.AddRange( sceneBvhTree.Traverse( bbox => shadowCamera.Frustum.Contains( bbox ) ) );
 
-					rs.SceneRenderer.RenderShadowMap( contextSolid,  shadowRenderList, group );
+					rs.SceneRenderer.RenderShadowMap( contextSolid,  shadowRenderList, group, true );
 				}
 
-				foreach ( var spot in lights ) {
-
-					var contextSolid  = new ShadowContext( shadowCamera, spot, depthBuffer.Surface, shadowTexture.Surface );
+				foreach ( var spot in lights ) 
+				{
+					var contextSolid  = new ShadowContext( shadowCamera, spot, depthBuffer.Surface );
 
 					shadowCamera.SetView( spot.SpotView );
 					shadowCamera.SetProjection( spot.Projection );
@@ -430,7 +436,7 @@ namespace Fusion.Engine.Graphics {
 					shadowRenderList.Clear();
 					shadowRenderList.AddRange( sceneBvhTree.Traverse( bbox => shadowCamera.Frustum.Contains( bbox ) ) );
 
-					rs.SceneRenderer.RenderShadowMap( contextSolid, shadowRenderList, group );
+					rs.SceneRenderer.RenderShadowMap( contextSolid, shadowRenderList, group, false );
 				}
 			}
 

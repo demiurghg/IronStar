@@ -44,6 +44,7 @@ namespace Fusion.Engine.Graphics {
 		public RayTracer				RayTracer			{ get { return Game.GetService< RayTracer			>(); } }
 		public GameFX					GameFX				{ get { return Game.GetService< GameFX				>(); } }
 		public LightProbeBaker			LightProbeBaker		{ get { return Game.GetService< LightProbeBaker		>(); } }
+		internal ShadowSystem				ShadowSystem		{ get { return Game.GetService< ShadowSystem		>(); } }
 
 		/// <summary>
 		/// Gets render counters.
@@ -127,6 +128,7 @@ namespace Fusion.Engine.Graphics {
 			Game.AddServiceAndComponent( new GameFX				( this ) );
 			Game.AddServiceAndComponent( new LightManager		( this ) );
 			Game.AddServiceAndComponent( new LightProbeRelighter( this ) );
+			Game.AddServiceAndComponent( new ShadowSystem		( this ) );
 			Game.AddServiceAndComponent( new SceneRenderer		( this ) );
 			Game.AddServiceAndComponent( new Sky2				( this ) );
 			Game.AddServiceAndComponent( new Fog				( this ) );

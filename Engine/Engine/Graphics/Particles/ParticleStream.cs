@@ -466,8 +466,8 @@ namespace Fusion.Engine.Graphics {
 			device.ComputeConstants	[ regDirectLight	]	=	rs.LightManager.DirectLightData;
 			device.GfxConstants		[ regDirectLight	]	=	rs.LightManager.DirectLightData;
 
-			device.ComputeConstants	[ regCascadeShadow	]	=	rs.LightManager.ShadowMap.GetCascadeShadowConstantBuffer();
-			device.GfxConstants		[ regCascadeShadow	]	=	rs.LightManager.ShadowMap.GetCascadeShadowConstantBuffer();
+			device.ComputeConstants	[ regCascadeShadow	]	=	rs.ShadowSystem.ShadowMap.GetCascadeShadowConstantBuffer();
+			device.GfxConstants		[ regCascadeShadow	]	=	rs.ShadowSystem.ShadowMap.GetCascadeShadowConstantBuffer();
 
 			device.ComputeConstants	[ regFog			]	=	rs.Fog.FogData;
 			device.GfxConstants		[ regFog			]	=	rs.Fog.FogData;
@@ -648,9 +648,9 @@ namespace Fusion.Engine.Graphics {
 						device.GfxResources[ regClusterTable	]	=	rs.LightManager.LightGrid.GridTexture		;
 						device.GfxResources[ regLightIndexTable	]	=	rs.LightManager.LightGrid.IndexDataGpu		;
 						device.GfxResources[ regLightDataTable	]	=	rs.LightManager.LightGrid.LightDataGpu		;
-						device.GfxResources[ regShadowMap		]	=	rs.LightManager.ShadowMap.ShadowTexture		;
+						device.GfxResources[ regShadowMap		]	=	rs.ShadowSystem.ShadowMap.ShadowTexture		;
 
-						device.GfxResources[ regShadowMask		]	=	rs.LightManager.ShadowMap.ParticleShadowTexture	;
+						device.GfxResources[ regShadowMask		]	=	rs.ShadowSystem.ShadowMap.ParticleShadowTexture	;
 
 						device.GfxSamplers[ regSampler			]	=	SamplerState.LinearWrap						;
 						device.GfxSamplers[ regShadowSampler	]	=	SamplerState.ShadowSampler					;

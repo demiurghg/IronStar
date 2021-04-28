@@ -33,6 +33,8 @@ namespace Fusion.Engine.Graphics {
 			TRANSPARENT			=	1 << 10,
 			IRRADIANCE_MAP		=	1 << 11,
 			IRRADIANCE_VOLUME	=	1 << 12,
+			CSM					=	1 << 13,
+			SPOT				=	1 << 14,
 		}
 
 

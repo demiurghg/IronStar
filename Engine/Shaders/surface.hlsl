@@ -1,7 +1,7 @@
 
 #ifdef _UBERSHADER
 $ubershader FORWARD RIGID|SKINNED ANISOTROPIC +TRANSPARENT IRRADIANCE_MAP|IRRADIANCE_VOLUME
-$ubershader SHADOW RIGID|SKINNED +TRANSPARENT
+$ubershader SHADOW RIGID|SKINNED SPOT|CSM
 $ubershader ZPASS RIGID|SKINNED
 $ubershader GBUFFER RIGID|SKINNED
 $ubershader RADIANCE RIGID IRRADIANCE_MAP|IRRADIANCE_VOLUME
@@ -404,6 +404,7 @@ float4 PSMain( PSInput input ) : SV_TARGET0
 #ifdef SHADOW
 float4 PSMain( PSInput input, float4 vpos : SV_POSITION ) : SV_TARGET0
 {
+#if 0	
 	float z		= input.ProjPos.z / Camera.FarDistance;
 
 	float dzdx	 = ddx(z);
@@ -415,6 +416,9 @@ float4 PSMain( PSInput input, float4 vpos : SV_POSITION ) : SV_TARGET0
 	#endif
 
 	return z + Stage.DepthBias + slope * Stage.SlopeBias;
+#else
+	return 0;
+#endif	
 }
 #endif
 

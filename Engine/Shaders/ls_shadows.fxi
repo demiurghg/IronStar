@@ -169,12 +169,18 @@ float3	ComputeCascadedShadows ( GEOMETRY geometry, float2 vpos, CASCADE_SHADOW s
 }
 
 
+//#define LINEAR_DEPTH
+
 float3 ComputeSpotShadow ( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc )
 {
 	float2 smSizeRcp	=	1.0f / GetTextureSize( rc.ShadowMap );
 	float4 scaleOffset	=	light.ShadowScaleOffset;
 	float4 lsPos		=	mul(float4(geometry.position,1), light.ViewProjection);
+#ifdef LINEAR_DEPTH	
 	float  shadowDepth	=	lsPos.z / light.IntensityFar.w;
+#else
+	float  shadowDepth	=	lsPos.z / lsPos.w;
+#endif	
 		   lsPos.xyz	= 	lsPos.xyz / lsPos.w;
 		   
 	float3 shadow		=	0;

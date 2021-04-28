@@ -114,7 +114,8 @@ namespace Fusion.Engine.Graphics {
 			constBufferBones	=	new ConstantBuffer( Game.GraphicsDevice, typeof(Matrix), RenderSystem.MaxBones );
 			constBufferSubset	=	new ConstantBuffer( Game.GraphicsDevice, typeof(SUBSET) );
 
-			using ( var ms = new MemoryStream( Properties.Resources.envLut ) ) {
+			using ( var ms = new MemoryStream( Properties.Resources.envLut ) ) 
+			{
 				envLut    =   UserTexture.CreateFromTga( rs, ms, false );
 			}
 
@@ -143,19 +144,24 @@ namespace Fusion.Engine.Graphics {
 		{
 			ps.RasterizerState	=	RasterizerState.CullCW;
 
-			if (flags.HasFlag( SurfaceFlags.SKINNED )) {
+			if (flags.HasFlag( SurfaceFlags.SKINNED )) 
+			{
 				ps.VertexInputElements	=	VertexColorTextureTBNSkinned.Elements;
 			}
 			
-			if (flags.HasFlag( SurfaceFlags.RIGID )) {
+			if (flags.HasFlag( SurfaceFlags.RIGID )) 
+			{
 				ps.VertexInputElements	=	VertexColorTextureTBNRigid.Elements;
 			}
 
-			if (flags.HasFlag( SurfaceFlags.SHADOW )) {
-				ps.RasterizerState = RasterizerState.ShadowsCW;
+			if (flags.HasFlag( SurfaceFlags.SHADOW )) 
+			{
+				if (flags.HasFlag( SurfaceFlags.SPOT )) ps.RasterizerState = rs.ShadowSystem.SpotShadowRasterizerState;
+				if (flags.HasFlag( SurfaceFlags.CSM )) 	ps.RasterizerState = rs.ShadowSystem.CascadeShadowRasterizerState;
 			}
 
-			if (flags.HasFlag( SurfaceFlags.TRANSPARENT)) {
+			if (flags.HasFlag( SurfaceFlags.TRANSPARENT)) 
+			{
 				ps.BlendState = BlendState.Opaque;
 			}
 		}
@@ -200,6 +206,7 @@ namespace Fusion.Engine.Graphics {
 			var width	=	context.Viewport.Width;
 			var height	=	context.Viewport.Height;
 			var rw		=	rs.RenderWorld;
+			var ss		=	rs.ShadowSystem;
 
 			cbDataStage.WorldToLightVolume	=	rw.LightMap.WorldToVolume;
 			cbDataStage.VTGradientScaler	=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;
@@ -222,7 +229,7 @@ namespace Fusion.Engine.Graphics {
 			device.GfxConstants[ regInstance		]	= constBufferInstance;
 			device.GfxConstants[ regSubset			]	= constBufferSubset;
 			device.GfxConstants[ regBones			]	= constBufferBones;
-			device.GfxConstants[ regCascadeShadow	]	= rs.LightManager.ShadowMap.UpdateCascadeShadowConstantBuffer();
+			device.GfxConstants[ regCascadeShadow	]	= rs.ShadowSystem.ShadowMap.UpdateCascadeShadowConstantBuffer();
 			device.GfxConstants[ regFog				]	= rs.Fog.FogData;
 
 			//-----------------------------
@@ -239,8 +246,8 @@ namespace Fusion.Engine.Graphics {
 			device.GfxResources[ regClusterDecalBuffer		]	=	rs.LightManager.LightGrid.DecalDataGpu;						
 
 			device.GfxResources[ regDecalImages				]	=	rs.RenderWorld.LightSet?.DecalAtlas?.Texture?.Srv;
-			device.GfxResources[ regShadowMap				]	=	context.RequireShadows ? rs.LightManager.ShadowMap.ShadowTexture : null;
-			device.GfxResources[ regShadowMapParticles		]	=	context.RequireShadows ? rs.LightManager.ShadowMap.ParticleShadowTexture : null;
+			device.GfxResources[ regShadowMap				]	=	context.RequireShadows ? rs.ShadowSystem.ShadowMap.ShadowTexture : null;
+			device.GfxResources[ regShadowMapParticles		]	=	context.RequireShadows ? rs.ShadowSystem.ShadowMap.ParticleShadowTexture : null;
 			device.GfxResources[ regAmbientOcclusion		]	=	context.RequireShadows ? rs.RenderWorld.HdrFrame.AOBuffer.GetShaderResource(0) : null;
 
 			device.GfxResources[ regIrradianceMapL0			]	=	rw.LightMap?.GetLightmap(0);
@@ -267,7 +274,7 @@ namespace Fusion.Engine.Graphics {
 			device.GfxSamplers[ regParticleSampler		]	=	SamplerState.LinearClamp;
 			device.GfxSamplers[ regMipSampler			]	=	rs.VTSystem.UseAnisotropic ? SamplerState.VTAnisotropicIndex : SamplerState.VTTrilinearIndex;
 			device.GfxSamplers[ regSamplerLinearClamp	]	=	SamplerState.LinearClamp;
-			device.GfxSamplers[ regShadowSampler		]	=	rs.UsePointShadowSampling ? SamplerState.ShadowSamplerPoint : SamplerState.ShadowSampler;
+			device.GfxSamplers[ regShadowSampler		]	=	ss.UsePointShadowSampling ? SamplerState.ShadowSamplerPoint : SamplerState.ShadowSampler;
 
 			//-----------------------------
 
@@ -434,7 +441,7 @@ namespace Fusion.Engine.Graphics {
 		}
 		
 
-		internal void RenderShadowMap ( ShadowContext shadowContext, RenderList renderList, InstanceGroup mask )
+		internal void RenderShadowMap ( ShadowContext shadowContext, RenderList renderList, InstanceGroup mask, bool csm )
 		{
 			if (rs.SkipShadows)
 			{
@@ -443,7 +450,9 @@ namespace Fusion.Engine.Graphics {
 
 			var instances	=	renderList.Where( inst => ((inst.Group & mask) != 0) && !inst.NoShadow );
 
-			RenderGeneric("ShadowMap", null, StereoEye.Mono, SurfaceFlags.SHADOW, shadowContext, instances, mask );
+			var flags = SurfaceFlags.SHADOW | (csm ? SurfaceFlags.CSM : SurfaceFlags.SPOT );
+
+			RenderGeneric("ShadowMap", null, StereoEye.Mono, flags, shadowContext, instances, mask );
 		}
 
 

@@ -23,21 +23,10 @@ namespace Fusion.Engine.Graphics {
 
 	internal partial class LightManager : RenderComponent 
 	{
-		public ShadowMap ShadowMap {
-			get { return shadowMap; }
-		}
-		ShadowMap shadowMap;
-
-
-		public ConstantBuffer DirectLightData {
-			get { return cbDirectLightData; }
-		}
+		public ConstantBuffer DirectLightData { get { return cbDirectLightData; } }
 		ConstantBuffer	cbDirectLightData;
 
-
-		public LightGrid LightGrid {
-			get { return lightGrid; }
-		}
+		public LightGrid LightGrid { get { return lightGrid; } }
 		LightGrid lightGrid;
 
 
@@ -55,7 +44,6 @@ namespace Fusion.Engine.Graphics {
 		public override void Initialize()
 		{
 			lightGrid			=	new LightGrid( rs, RenderSystem.LightClusterGridWidth, RenderSystem.LightClusterGridHeight, RenderSystem.LightClusterGridDepth );
-			shadowMap			=	new ShadowMap( rs, rs.ShadowQuality );
 			cbDirectLightData	=	new ConstantBuffer( rs.Device, typeof(GpuData.DIRECT_LIGHT) );
 		}
 
@@ -68,7 +56,6 @@ namespace Fusion.Engine.Graphics {
 			if (disposing) 
 			{
 				SafeDispose( ref lightGrid );
-				SafeDispose( ref shadowMap );
 				SafeDispose( ref cbDirectLightData );
 			}
 
@@ -81,12 +68,6 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public void Update ( GameTime gameTime, LightSet lightSet, IEnumerable<RenderInstance> instances )
 		{
-			if (shadowMap.ShadowQuality!=rs.ShadowQuality) {
-				SafeDispose( ref shadowMap );
-				shadowMap	=	new ShadowMap( rs, rs.ShadowQuality );
-			}
-
-
 			foreach ( var omni in lightSet.OmniLights ) {
 				omni.Timer += (uint)gameTime.Elapsed.TotalMilliseconds;
 				if (omni.Timer<0) omni.Timer = 0;

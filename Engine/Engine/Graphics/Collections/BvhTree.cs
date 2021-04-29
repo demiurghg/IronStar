@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 
-namespace Fusion.Engine.Graphics.Bvh
+namespace Fusion.Engine.Graphics.Collections
 {
 	public class BvhTree<TPrimitive>
 	{

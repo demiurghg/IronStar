@@ -15,16 +15,17 @@ using Fusion.Core.Extensions;
 using Fusion.Engine.Graphics.Lights;
 using Fusion.Build;
 using Fusion.Engine.Graphics.GI;
-using Fusion.Engine.Graphics.Bvh;
+using Fusion.Engine.Graphics.Collections;
 using Fusion.Engine.Graphics.GI2;
+using Fusion.Engine.Graphics.Collections;
 
-namespace Fusion.Engine.Graphics {
-
+namespace Fusion.Engine.Graphics 
+{
 	/// <summary>
 	/// Represents entire visible world.
 	/// </summary>
-	public class RenderWorld : DisposableBase {
-
+	public class RenderWorld : DisposableBase 
+	{
 		readonly Game			Game;
 		readonly RenderSystem	rs;
 
@@ -57,21 +58,6 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public Camera ShadowCamera {
 			get { return shadowCamera; }
-		}
-
-
-		/// <summary>
-		/// Indicated whether target buffer should be cleared before rendering.
-		/// </summary>
-		public bool Clear {	
-			get; set;
-		}
-
-		/// <summary>
-		/// Gets and sets clear color
-		/// </summary>
-		public Color4 ClearColor {
-			get; set;
 		}
 
 
@@ -146,10 +132,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public ILightProbeProvider LightProbes 
 		{
-			get 
-			{
-				return lightProbes;
-			}
+			get { return lightProbes; }
 			set 
 			{
 				if (lightProbes!=value) 
@@ -162,10 +145,7 @@ namespace Fusion.Engine.Graphics {
 
 		public ILightMapProvider LightMap
 		{
-			get 
-			{ 
-				return lightmap ?? lightmapNull; 
-			}
+			get { return lightmap ?? lightmapNull; }
 			set 
 			{
 				if (lightmap!=value)
@@ -211,7 +191,7 @@ namespace Fusion.Engine.Graphics {
 				height	=	vp.Height;
 			}
 
-			Instances		=	new List<RenderInstance>();
+			Instances		=	new RenderInstanceCollection();
 			LightSet		=	new LightSet( Game.RenderSystem );
 
 			debug			=	new DebugRender( Game );
@@ -295,9 +275,6 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-
-
-
 		/// <summary>
 		/// Indicates whether world is paused.
 		/// </summary>
@@ -323,7 +300,6 @@ namespace Fusion.Engine.Graphics {
 		{
 			IsPaused	=	true;
 		}
-
 
 
 		/// <summary>
@@ -415,20 +391,16 @@ namespace Fusion.Engine.Graphics {
 
 
 		/*-----------------------------------------------------------------------------------------
-		 * 
 		 *	Rendering :
-		 * 
 		-----------------------------------------------------------------------------------------*/
-
 
 		/// <summary>
 		/// Renders view
 		/// </summary>
 		internal void Render ( GameTime gameTime, StereoEye stereoEye, RenderTargetSurface targetSurface )
 		{
-			//	clear target buffer if necassary :
-			if ( Clear) {
-				rs.Device.Clear( targetSurface, ClearColor );
+			if (rs.ClearBackbuffer) {
+				rs.Device.Clear( targetSurface, Color.Magenta.ToColor4() );
 			}
 
 			var viewport	=	new Viewport( 0,0, targetSurface.Width, targetSurface.Height );
@@ -449,8 +421,6 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -463,11 +433,11 @@ namespace Fusion.Engine.Graphics {
 				//	clear g-buffer and hdr-buffers:
 				viewHdrFrame.Clear();
 
-				using ( new PixEvent( "Frame Preprocessing" ) ) {
-
+				using ( new PixEvent( "Frame Preprocessing" ) ) 
+				{
 					//	single pass for stereo rendering :
-					if ( stereoEye!=StereoEye.Right ) {
-
+					if ( stereoEye!=StereoEye.Right ) 
+					{
 						//	simulate particles BEFORE lighting
 						//	to make particle lit (position is required) and 
 						//	get simulated particles for shadows.
@@ -475,11 +445,10 @@ namespace Fusion.Engine.Graphics {
 
 						//	prepare light set for shadow rendering :
 						rs.LightManager.Update( gameTime, LightSet, Instances );
-						rs.ShadowSystem.Update( gameTime, LightSet, Instances );
 						rs.LightManager.LightGrid.UpdateLightSetVisibility( stereoEye, Camera, LightSet );
 
 						//	allocated and render shadows :
-						rs.ShadowSystem.ShadowMap.RenderShadowMaps( gameTime, Camera, rs, this, LightSet );
+						rs.ShadowSystem.RenderShadows( gameTime, Camera, this, Instances );
 
 						//	render sky-cube
 						rs.Sky.RenderSkyCube();
@@ -525,7 +494,8 @@ namespace Fusion.Engine.Graphics {
 
 					ParticleSystem.RenderHard( gameTime, Camera, stereoEye, viewHdrFrame );
 
-					using ( new PixEvent( "Background downsample" ) ) {
+					using ( new PixEvent( "Background downsample" ) ) 
+					{
 						var hdrFrame = viewHdrFrame;
 						var filter	 = rs.Filter;
 						var blur	 = rs.Blur;
@@ -583,7 +553,8 @@ namespace Fusion.Engine.Graphics {
 
 		void DrawDebugImages( Viewport viewport, RenderTargetSurface targetSurface )
 		{
-			switch (rs.ShowGBuffer) {
+			switch (rs.ShowGBuffer) 
+			{
 				case 1  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.Normals ); return;
 				case 2  : rs.Filter.StretchRect( targetSurface,	rs.RayTracer.raytracedImage, new Rectangle(1280-800-64,720-600-64,800,600) ); break;
 				case 3  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.DofCOC ); return;
@@ -596,19 +567,16 @@ namespace Fusion.Engine.Graphics {
 				case 10 : rs.Filter.StretchRect( targetSurface, viewHdrFrame.FeedbackBufferRB, SamplerState.PointClamp ); return;
 			}
 
-			if (rs.VTSystem.ShowPhysicalTextures) {
+			if (rs.VTSystem.ShowPhysicalTextures) 
+			{
 				rs.Filter.StretchRect( targetSurface, rs.VTSystem.PhysicalPages0 );
 				return;
 			}
-			if (rs.VTSystem.ShowPageTexture) {
+			if (rs.VTSystem.ShowPageTexture) 
+			{
 				rs.Filter.Copy( targetSurface, rs.VTSystem.PageTable );
 				return;
 			}
-		}
-
-
-		void BuildVisibility ()
-		{
 		}
 	}
 }

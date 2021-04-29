@@ -130,8 +130,9 @@
     <Compile Include="Build\BuildOptions.cs" />
     <Compile Include="Build\BuildResult.cs" />
     <Compile Include="Build\IBuildContext.cs" />
-    <Compile Include="Build\Mapping\Allocator2D.Block.cs" />
     <Compile Include="Build\Mapping\Allocator2D.cs" />
+    <Compile Include="Build\Mapping\IImageCache.cs" />
+    <Compile Include="Build\Mapping\LRUImageCache.cs" />
     <Compile Include="Build\Mapping\LRUCache.cs" />
     <Compile Include="Build\Mapping\VTProcessor.cs" />
     <Compile Include="Build\Mapping\VTTexel.cs" />
@@ -166,7 +167,9 @@
     <Compile Include="Core\Shell\Invoker.Redo.cs" />
     <Compile Include="Core\Shell\Invoker.Undo.cs" />
     <Compile Include="Core\Shell\IUndoable.cs" />
+    <Compile Include="Engine\Graphics\Collections\RenderInstanceCollection.cs" />
     <Compile Include="Engine\Graphics\Lights\ICSMController.cs" />
+    <Compile Include="Engine\Graphics\Lights\IShadowProvider.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowSystem.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -566,7 +569,7 @@
     <Compile Include="Engine\Graphics\ForwardSolidContext.cs" />
     <Compile Include="Engine\Graphics\ForwardTransparentContext.cs" />
     <Compile Include="Engine\Graphics\ForwardZPassContext.cs" />
-    <Compile Include="Engine\Graphics\Bvh\BvhTree.cs" />
+    <Compile Include="Engine\Graphics\Collections\BvhTree.cs" />
     <Compile Include="Engine\Graphics\GI2\ILightMapProvider.cs" />
     <Compile Include="Engine\Graphics\GI2\ILightProbeProvider.cs" />
     <Compile Include="Engine\Graphics\GI\LightProbeBaker.cs" />
@@ -853,6 +856,10 @@
     <ProjectReference Include="SDKs\LidgrenNetwork\Lidgren.Network\Lidgren.Network.csproj">
       <Project>{49ba1c69-6104-41ac-a5d8-b54fa9f696e8}</Project>
       <Name>Lidgren.Network</Name>
+    </ProjectReference>
+    <ProjectReference Include="SDKs\PowerCollections\PowerCollections.csproj">
+      <Project>{5821977d-ac2c-4912-bcd0-6e6b1a756167}</Project>
+      <Name>PowerCollections</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

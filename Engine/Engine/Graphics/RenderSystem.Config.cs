@@ -118,6 +118,12 @@ namespace Fusion.Engine.Graphics {
 		public int VSyncInterval { get; set; }
 
 		/// <summary>
+		/// Vertical synchronization interval.
+		/// </summary>
+		[Config]
+		public bool ClearBackbuffer { get; set; }
+
+		/// <summary>
 		/// 
 		/// </summary>
 		[Config]

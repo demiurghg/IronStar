@@ -25,6 +25,25 @@ namespace Fusion.Build.Mapping
 			lruList		=	new LinkedList<KeyValuePair<Rectangle, TTag>>();
 		}
 
+
+		public Rectangle Add( int size, TTag tag )
+		{
+			Rectangle region;
+
+			if ( TryAdd(size, tag, out region) )
+			{
+				return region;
+			}
+
+			throw new OutOfMemoryException(string.Format("Can not allocate region size {0}x{0} for {1}", size, tag.ToString()));
+		}
+
+
+		public bool Contains ( TTag tag )
+		{
+			return lruList.Any( item => item.Value.Equals(tag) );
+		}
+
 		
 		public bool TryAdd( int size, TTag tag, out Rectangle region )
 		{
@@ -104,6 +123,12 @@ namespace Fusion.Build.Mapping
 		{
 			lruList.Clear();
 			allocator.FreeAll();
+		}
+
+
+		public IEnumerable<TTag> GetContent()
+		{
+			return allocator.GetAllocatedBlockInfo().Select( block => block.Tag.Value.Value );
 		}
 	}
 }

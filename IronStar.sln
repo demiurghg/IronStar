@@ -44,6 +44,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luac", "Engine\SDKs\KopiLua
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lua", "Engine\SDKs\KopiLua\Lua\Lua.csproj", "{1F39043F-11B4-4202-9B0A-6606FA7BB355}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerCollections", "Engine\SDKs\PowerCollections\PowerCollections.csproj", "{5821977D-AC2C-4912-BCD0-6E6B1A756167}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -98,6 +100,10 @@ Global
 		{1F39043F-11B4-4202-9B0A-6606FA7BB355}.Debug|x64.Build.0 = Debug|x64
 		{1F39043F-11B4-4202-9B0A-6606FA7BB355}.Release|x64.ActiveCfg = Release|x64
 		{1F39043F-11B4-4202-9B0A-6606FA7BB355}.Release|x64.Build.0 = Release|x64
+		{5821977D-AC2C-4912-BCD0-6E6B1A756167}.Debug|x64.ActiveCfg = Debug|x64
+		{5821977D-AC2C-4912-BCD0-6E6B1A756167}.Debug|x64.Build.0 = Debug|x64
+		{5821977D-AC2C-4912-BCD0-6E6B1A756167}.Release|x64.ActiveCfg = Release|x64
+		{5821977D-AC2C-4912-BCD0-6E6B1A756167}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,5 +124,6 @@ Global
 		{E8DDBC21-EF74-4ABA-9C49-BFC702BE25D8} = {A4F2C256-0BA2-43BC-90A4-2C9706821C79}
 		{6962DD1F-A32D-4827-B5C5-DB1742CB4D48} = {2C943100-BC24-44CD-9A8E-70A34775B8A7}
 		{1F39043F-11B4-4202-9B0A-6606FA7BB355} = {2C943100-BC24-44CD-9A8E-70A34775B8A7}
+		{5821977D-AC2C-4912-BCD0-6E6B1A756167} = {A4F2C256-0BA2-43BC-90A4-2C9706821C79}
 	EndGlobalSection
 EndGlobal

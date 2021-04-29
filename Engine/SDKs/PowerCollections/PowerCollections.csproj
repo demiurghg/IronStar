@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="15.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5821977D-AC2C-4912-BCD0-6E6B1A756167}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Wintellect.PowerCollections</RootNamespace>
+    <AssemblyName>PowerCollections</AssemblyName>
+    <WarningLevel>4</WarningLevel>
+    <SignAssembly>false</SignAssembly>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>CODE_ANALYSIS;DEBUG;TRACE</DefineConstants>
+    <BaseAddress>1239678976</BaseAddress>
+    <DocumentationFile>bin\Debug\PowerCollections.xml</DocumentationFile>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>Wintellect.PowerCollections.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>1239678976</BaseAddress>
+    <DocumentationFile>bin\Release\PowerCollections.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseSigned|x64'">
+    <OutputPath>bin\x64\ReleaseSigned\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>1239678976</BaseAddress>
+    <DocumentationFile>bin\Release\PowerCollections.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <DebugType />
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <Compile Include="Algorithms.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Bag.cs" />
+    <Compile Include="BigList.cs" />
+    <Compile Include="CollectionBase.cs" />
+    <Compile Include="Comparers.cs" />
+    <Compile Include="Deque.cs" />
+    <Compile Include="DictionaryBase.cs" />
+    <Compile Include="Hash.cs" />
+    <Compile Include="ListBase.cs" />
+    <Compile Include="MultiDictionary.cs" />
+    <Compile Include="MultiDictionaryBase.cs" />
+    <Compile Include="OrderedBag.cs" />
+    <Compile Include="OrderedDictionary.cs" />
+    <Compile Include="OrderedMultiDictionary.cs" />
+    <Compile Include="OrderedSet.cs" />
+    <Compile Include="Pair.cs" />
+    <Compile Include="ReadOnlyCollectionBase.cs" />
+    <Compile Include="ReadOnlyDictionaryBase.cs" />
+    <Compile Include="ReadOnlyListBase.cs" />
+    <Compile Include="ReadOnlyMultiDictionaryBase.cs" />
+    <Compile Include="RedBlack.cs" />
+    <Compile Include="Set.cs" />
+    <Compile Include="Strings.cs" />
+    <Compile Include="Triple.cs" />
+    <Compile Include="Util.cs" />
+    <AppDesigner Include="Properties\" />
+    <None Include="Wintellect.PowerCollections.ruleset" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
+</Project>

@@ -248,14 +248,14 @@ namespace Fusion.Build.Mapping {
 				if (!vtexTable.Contains( block.Tag )) 
 				{
 					Log.Message("...removed: {0}", block.Tag);
-					allocator.Free( block.Address );
+					allocator.Free( block.Region );
 				} 
 				else 
 				{
 					if (vtexTable[ block.Tag ].IsModified(targetWriteTime)) 
 					{
 						Log.Message("...changed: {0}", block.Tag );
-						allocator.Free( block.Address );
+						allocator.Free( block.Region );
 					} 
 				}
 			}

@@ -10,20 +10,25 @@ using System.IO;
 using Fusion.Engine.Imaging;
 using Newtonsoft.Json;
 
-namespace Fusion.Build.Mapping {
-
+namespace Fusion.Build.Mapping 
+{
+	/*---------------------------------------------------------------------------------------------
+	 *	Generic Allocator Version
+	---------------------------------------------------------------------------------------------*/
 
 	/// <summary>
 	/// http://www.memorymanagement.org/mmref/alloc.html
 	/// </summary>
-	public partial class Allocator2D {
-
+	public partial class Allocator2D<TTag> 
+	{
 		public readonly int Size;
 
 		public int Width { get { return Size; } }
 		public int Height { get { return Size; } }
 
-		Block rootBlock;
+		protected Block rootBlock;
+
+		protected Block RootBlock { get { return rootBlock; } }
 
 
 		/// <summary>
@@ -37,88 +42,81 @@ namespace Fusion.Build.Mapping {
 		}
 
 
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="size"></param>
-		/// <returns></returns>
-		public Int2 Alloc ( int size, string tag )
+		public Rectangle Alloc ( int size, TTag tag )
 		{
-			Int2 address;
+			Rectangle rect;
 
-			if (!TryAlloc(size, tag, out address)) {
+			if (!TryAlloc(size, tag, out rect)) 
+			{
 				throw new OutOfMemoryException(string.Format("No enough space in 2D allocator (size={0})", size));
-			} else {
-				return address;
+			} 
+			else 
+			{
+				return rect;
 			}
 		}
 
 
-
-		public bool TryAlloc ( int size, string tag, out Int2 address )
+		public bool TryAlloc ( int size, TTag tag, out Rectangle rectangle )
 		{
-			address = new Int2(0,0);
+			rectangle = new Rectangle(0,0,0,0);
 
-			if (tag==null) {
+			if (tag==null) 
+			{
 				throw new ArgumentNullException("tag");
 			}
-			if (size<=0) {
+			if (size<=0) 
+			{
 				throw new ArgumentOutOfRangeException("size");
 			}
 
-			size		=	MathUtil.RoundUpNextPowerOf2( size );
-			var block	=	GetFreeBlock( size );
+			var block	=	GetFreeBlock( MathUtil.RoundUpNextPowerOf2( size ) );
 
-			if (block==null) {
+			if (block==null) 
+			{
 				return false;
 			}
 
 			block.Tag	=	tag;
-			address		=	block.Address;
+			rectangle	=	new Rectangle( block.Address.X, block.Address.Y, size, size );
 
 			return true;
 		}
 
 
-
-		/// <summary>
-		/// 
-		/// </summary>
 		public void FreeAll ()
 		{
 			rootBlock	=	new Block( new Int2(0,0), Size, null, null );
 		}
 
 
-		/// <summary>
-		/// Gets free block of appropriate size
-		/// </summary>
-		/// <param name="size"></param>
-		/// <returns></returns>
 		Block GetFreeBlock ( int size )
 		{
 			var Q = new Stack<Block>();
 
 			Q.Push( rootBlock );
 
-			while ( Q.Any() ) {
-				
+			while ( Q.Any() ) 
+			{
 				var block = Q.Pop();
 
 				var state = block.State;
 
-				if (block.Size<size) {
+				if (block.Size<size) 
+				{
 					continue;
 				}
 
 				// block is already allocated - skip
-				if (state==BlockState.Allocated) {
+				if (state==BlockState.Allocated) 
+				{
 					continue;
 				}
 
-				if (state==BlockState.Split) {
-					if (block.Size/2>=size) {
+				if (state==BlockState.Split) 
+				{
+					if (block.Size/2>=size) 
+					{
 						Q.Push( block.BottomRight );
 						Q.Push( block.BottomLeft );
 						Q.Push( block.TopRight	 );
@@ -127,14 +125,18 @@ namespace Fusion.Build.Mapping {
 					continue;
 				}
 
-				if (state==BlockState.Free) {
-					if (block.Size/2>=size) {
+				if (state==BlockState.Free) 
+				{
+					if (block.Size/2>=size) 
+					{
 						block.Split();
 						Q.Push( block.BottomRight );
 						Q.Push( block.BottomLeft );
 						Q.Push( block.TopRight	 );
 						Q.Push( block.TopLeft	 );
-					} else {
+					} 
+					else
+					{
 						return block;
 					}
 				}
@@ -144,55 +146,95 @@ namespace Fusion.Build.Mapping {
 		}
 
 
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="address"></param>
-		public int Free ( Int2 address )
+		bool TryFindBlock( Rectangle region, out Block node )
 		{
-			var node = rootBlock;
+			node = rootBlock;
+			var address = new Int2( region.X, region.Y );
 
-			while (true) {
-				
-				if (node.Address==address) {
-					if (node.State==BlockState.Allocated) {
-						node.FreeAndMerge();
-						return node.Size;
+			while (true) 
+			{
+				if (node.Address==address) 
+				{
+					if (node.State==BlockState.Allocated) 
+					{
+						return true;
 					}
 				}
 
-				if (node.IsAddressInside(address)) {
-
-					if ( node.TopLeft.IsAddressInside(address) ) {
+				if (node.IsAddressInside(address)) 
+				{
+					if ( node.TopLeft.IsAddressInside(address) ) 
+					{
 						node = node.TopLeft;
 						continue;
 					}	
-					if ( node.TopRight.IsAddressInside(address) ) {
+					if ( node.TopRight.IsAddressInside(address) ) 
+					{
 						node = node.TopRight;
 						continue;
 					}	
-					if ( node.BottomLeft.IsAddressInside(address) ) {
+					if ( node.BottomLeft.IsAddressInside(address) ) 
+					{
 						node = node.BottomLeft;
 						continue;
 					}	
-					if ( node.BottomRight.IsAddressInside(address) ) {
+					if ( node.BottomRight.IsAddressInside(address) ) 
+					{
 						node = node.BottomRight;
 						continue;
 					}	
-
-				} else {
-					throw new InvalidOperationException(string.Format("Bad address [{0}, {1}]", address.X, address.Y));
+				} 
+				else 
+				{
+					node = default(Block);
+					return false;
 				}
 			}
 		}
 
 
+		public bool Free ( Rectangle region, out TTag tag )
+		{
+			Block node;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
+			if (TryFindBlock( region, out node ))
+			{
+				tag = node.Tag;
+				node.FreeAndMerge();
+				return true;
+			}
+			else
+			{
+				tag = default(TTag);
+				return false;
+			}
+		}
+
+
+		public bool Free ( Rectangle region )
+		{
+			TTag dummy;
+			return Free( region, out dummy );
+		}
+
+
+		public bool TryGet( Rectangle region, out TTag tag )
+		{
+			tag = default(TTag);
+			Block block;
+
+			if (TryFindBlock( region, out block ))
+			{
+				tag = block.Tag;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+
 		public IEnumerable<BlockInfo> GetAllocatedBlockInfo ()
 		{
 			var list = new List<BlockInfo>();
@@ -201,15 +243,17 @@ namespace Fusion.Build.Mapping {
 
 			S.Push( rootBlock );
 
-			while (S.Any()) {
-
+			while (S.Any()) 
+			{
 				var block = S.Pop();
 
-				if (block.State==BlockState.Allocated) {
+				if (block.State==BlockState.Allocated) 
+				{
 					list.Add( new BlockInfo(block.Address, block.Size, block.Tag) );
 				}
 
-				if (block.State==BlockState.Split) {
+				if (block.State==BlockState.Split) 
+				{
 					S.Push( block.BottomRight );
 					S.Push( block.BottomLeft );
 					S.Push( block.TopRight );
@@ -221,132 +265,12 @@ namespace Fusion.Build.Mapping {
 		}
 
 
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="address"></param>
-		/// <returns></returns>
 		public Size2 GetBlockSize ( Int2 address )
 		{
 			throw new NotImplementedException();
 		}
 
 
-
-		public static void SaveState ( Stream targetStream, Allocator2D allocator )
-		{
-			var writer = new BinaryWriter(targetStream, Encoding.Default, true);
-			SaveState(  writer, allocator );
-		}
-
-
-		public static Allocator2D LoadState ( Stream sourceStream )
-		{
-			var reader = new BinaryReader(sourceStream, Encoding.Default, true);
-			return LoadState( reader );
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="allocator"></param>
-		/// <returns></returns>
-		public static void SaveState ( BinaryWriter writer, Allocator2D allocator )
-		{		
-			//	write header:
-			writer.WriteFourCC("MLC2");
-			writer.WriteFourCC("1.00");
-
-			writer.Write( allocator.Size );
-
-			//	write nodes if depth-first order :
-			var S = new Stack<Block>();
-
-			S.Push( allocator.rootBlock );
-
-			while (S.Any()) {
-
-				var block = S.Pop();
-
-				writer.WriteFourCC("BLCK");
-
-				writer.Write( block.Address.X );
-				writer.Write( block.Address.Y );
-				writer.Write( block.Size );
-				writer.Write( (int)block.State );
-
-				if (block.State==BlockState.Allocated) {
-					writer.Write( block.Tag );
-				}
-
-				if (block.State==BlockState.Split) {
-					S.Push( block.BottomRight );
-					S.Push( block.BottomLeft );
-					S.Push( block.TopRight );
-					S.Push( block.TopLeft );
-				}
-			}
-		}
-
-
-
-		public static Allocator2D LoadState ( BinaryReader reader )
-		{
-			//	read header:
-			var fourcc  = reader.ReadFourCC();
-			var version = reader.ReadFourCC();
-
-			var size	= reader.ReadInt32();
-			
-			var allocator = new Allocator2D( size );
-
-
-			//	read nodes if depth-first order :
-			var S = new Stack<Block>();
-
-			S.Push( allocator.rootBlock );
-
-			while (S.Any()) {
-
-				var block = S.Pop();
-
-				var fcc = reader.ReadFourCC();
-
-				block.Address.X = reader.ReadInt32();
-				block.Address.Y = reader.ReadInt32();
-				block.Size		= reader.ReadInt32();
-				
-				var state		=	(BlockState)reader.ReadInt32();
-
-				if (state==BlockState.Allocated) {
-					block.Tag = reader.ReadString();
-				}
-
-				if (state==BlockState.Split) {
-					block.Split();
-					S.Push( block.BottomRight );
-					S.Push( block.BottomLeft );
-					S.Push( block.TopRight );
-					S.Push( block.TopLeft );
-				}
-			}
-
-			return allocator;
-		}
-
-
-
-		/// <summary>
-		/// Test method
-		/// </summary>
-		/// <param name="image"></param>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="w"></param>
-		/// <param name="h"></param>
-		/// <param name="color"></param>
 		static void DrawRectangle ( Image<Color> image, int x, int y, int w, int h, Color color, bool clear )
 		{
 			for (var i=x; i<x+w; i++) {
@@ -362,12 +286,6 @@ namespace Fusion.Build.Mapping {
 		}
 
 
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="dir"></param>
 		public static void RunTest ( int size, int interations, string dir )
 		{
 			Log.Message("Allocator2D test: {0} {1} {2}", size, interations, dir );
@@ -382,7 +300,7 @@ namespace Fusion.Build.Mapping {
 			var image	= new Image<Color>(size,size, Color.Black);
 			var rand	= new Random();
 
-			var list    = new List<Int2>();
+			var list    = new List<Rectangle>();
 
 			for (int i=0; i<interations; i++) {
 
@@ -401,11 +319,11 @@ namespace Fusion.Build.Mapping {
 
 							var tag = string.Format("Block#{0,4:D4}##{1,4:D4}", i,sz);
 
-							var a  = alloc.Alloc(sz, tag);
+							var r  = alloc.Alloc(sz, tag);
 
-							list.Add(a);
+							list.Add(r);
 
-							DrawRectangle( image, a.X, a.Y, sz,sz, rand.NextColor(), false );
+							DrawRectangle( image, r.X, r.Y, r.Width, r.Height, rand.NextColor(), false );
 						}
 
 					} else {
@@ -420,9 +338,10 @@ namespace Fusion.Build.Mapping {
 							var fa = list[ id ];
 							list.RemoveAt( id );
 
-							var sz = alloc.Free(fa);
-
-							DrawRectangle( image, fa.X, fa.Y, sz, sz, Color.Black, true );
+							if(alloc.Free(fa))
+							{
+								DrawRectangle( image, fa.X, fa.Y, fa.Width, fa.Height, Color.Black, true );
+							}
 						}
 					}
 
@@ -451,6 +370,290 @@ namespace Fusion.Build.Mapping {
 			}
 
 			Log.Message("Done!");
+		}
+
+		/*-----------------------------------------------------------------------------------------------
+		 *	Block stuff :
+		-----------------------------------------------------------------------------------------------*/
+
+		protected enum BlockState 
+		{
+			Free = 0,
+			Split = 1,
+			Allocated = 2,
+		}
+
+
+		public class BlockInfo 
+		{
+			public BlockInfo( Int2 address, int size, TTag tag )
+			{
+				Address	=	address;
+				Size	=	size;
+				Tag		=	tag;
+			}
+
+			public readonly Int2	Address;
+			public readonly int		Size;
+			public readonly TTag	Tag;
+			public Rectangle Region 
+			{
+				get { return new Rectangle( Address.X, Address.Y, Size, Size ); }
+			}
+		}
+
+		protected class Block 
+		{
+			public Int2	Address;
+			public int	Size;
+
+			public Block TopLeft;
+			public Block TopRight;
+			public Block BottomLeft;
+			public Block BottomRight;
+			public Block Parent;
+
+			public TTag Tag 
+			{
+				get; set;
+			}
+
+			public BlockState State 
+			{
+				get 
+				{
+					if (TopLeft==null && BottomLeft==null && TopLeft==null && TopLeft==null) 
+					{
+						if (Tag==null) 
+						{
+							return BlockState.Free;
+						} else 
+						{
+							return BlockState.Allocated;
+						}
+					} 
+					else 
+					{
+						if (Tag==null) 
+						{
+							return BlockState.Split;
+						} 
+						else 
+						{
+							throw new InvalidOperationException("Bad block state");
+						}
+					}
+				}
+			}
+
+
+			public Block ( Int2 address, int size, Block parent, string tag )
+			{
+				Address	=	address;
+				Size	=	size;
+				Tag		=	default(TTag);
+				Parent	=	parent;
+			}
+
+
+			public Block Split ()
+			{
+				if (State!=BlockState.Free) 
+				{
+					throw new InvalidOperationException(string.Format("{0} block could not be split", State));
+				}
+
+				var addr	=	Address;
+				var size	=	Size / 2;
+
+				TopLeft		=	new Block( new Int2( addr.X,		addr.Y			), size, this, null );
+				TopRight	=	new Block( new Int2( addr.X + size, addr.Y			), size, this, null );
+				BottomLeft	=	new Block( new Int2( addr.X,		addr.Y + size	), size, this, null );
+				BottomRight	=	new Block( new Int2( addr.X + size, addr.Y + size	), size, this, null );
+
+				return TopLeft;
+			}
+
+
+			public void FreeAndMerge ()
+			{
+				if (State==BlockState.Allocated) 
+				{
+					Tag = default(TTag);
+
+					var parent = Parent;
+
+					while (parent!=null && parent.TryMerge()) 
+					{
+						parent = parent.Parent;
+					}
+
+				}
+				else 
+				{
+					throw new InvalidOperationException(string.Format("Can not free {0} block", State));
+				}
+			}
+
+
+			public bool TryMerge ()
+			{
+				if (State==BlockState.Split) 
+				{
+					if (   TopLeft.State==BlockState.Free 
+						&& TopRight.State==BlockState.Free 
+						&& BottomLeft.State==BlockState.Free 
+						&& BottomRight.State==BlockState.Free ) 
+					{
+
+						TopLeft = null;
+						TopRight = null;
+						BottomLeft = null;
+						BottomRight = null;
+
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				} 
+				else 
+				{
+					return false;
+				}
+			}
+
+
+			public bool IsAddressInside ( Int2 address )
+			{
+				return ( address.X >= Address.X )
+					&& ( address.Y >= Address.Y )
+					&& ( address.X < Address.X + Size )
+					&& ( address.Y < Address.Y + Size );
+			}
+		}
+	}
+
+
+	/*---------------------------------------------------------------------------------------------
+	 *	String Version
+	---------------------------------------------------------------------------------------------*/
+
+	/// <summary>
+	/// http://www.memorymanagement.org/mmref/alloc.html
+	/// </summary>
+	public partial class Allocator2D : Allocator2D<string>
+	{
+		public Allocator2D( int size ) : base( size )
+		{
+		}
+
+
+		public static void SaveState ( Stream targetStream, Allocator2D allocator )
+		{
+			var writer = new BinaryWriter(targetStream, Encoding.Default, true);
+			SaveState( writer, allocator );
+		}
+
+
+		public static Allocator2D LoadState ( Stream sourceStream )
+		{
+			var reader = new BinaryReader(sourceStream, Encoding.Default, true);
+			return LoadState( reader );
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="allocator"></param>
+		/// <returns></returns>
+		public static void SaveState ( BinaryWriter writer, Allocator2D allocator )
+		{		
+			//	write header:
+			writer.WriteFourCC("MLC2");
+			writer.WriteFourCC("1.00");
+
+			writer.Write( allocator.Size );
+
+			//	write nodes if depth-first order :
+			var S = new Stack<Block>();
+
+			S.Push( allocator.rootBlock );
+
+			while (S.Any()) 
+			{
+				var block = S.Pop();
+
+				writer.WriteFourCC("BLCK");
+
+				writer.Write( block.Address.X );
+				writer.Write( block.Address.Y );
+				writer.Write( block.Size );
+				writer.Write( (int)block.State );
+
+				if (block.State==BlockState.Allocated) 
+				{
+					writer.Write( block.Tag );
+				}
+
+				if (block.State==BlockState.Split) 
+				{
+					S.Push( block.BottomRight );
+					S.Push( block.BottomLeft );
+					S.Push( block.TopRight );
+					S.Push( block.TopLeft );
+				}
+			}
+		}
+
+
+
+		public static Allocator2D LoadState ( BinaryReader reader )
+		{
+			//	read header:
+			var fourcc  = reader.ReadFourCC();
+			var version = reader.ReadFourCC();
+
+			var size	= reader.ReadInt32();
+			
+			var allocator = new Allocator2D( size );
+
+
+			//	read nodes if depth-first order :
+			var S = new Stack<Block>();
+
+			S.Push( allocator.RootBlock );
+
+			while (S.Any()) 
+			{
+				var block = S.Pop();
+
+				var fcc = reader.ReadFourCC();
+
+				block.Address.X = reader.ReadInt32();
+				block.Address.Y = reader.ReadInt32();
+				block.Size		= reader.ReadInt32();
+				
+				var state		=	(BlockState)reader.ReadInt32();
+
+				if (state==BlockState.Allocated) 
+				{
+					block.Tag = reader.ReadString();
+				}
+
+				if (state==BlockState.Split) 
+				{
+					block.Split();
+					S.Push( block.BottomRight );
+					S.Push( block.BottomLeft );
+					S.Push( block.TopRight );
+					S.Push( block.TopLeft );
+				}
+			}
+
+			return allocator;
 		}
 	}
 }

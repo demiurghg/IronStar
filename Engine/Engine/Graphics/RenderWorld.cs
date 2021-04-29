@@ -448,7 +448,7 @@ namespace Fusion.Engine.Graphics
 						rs.LightManager.LightGrid.UpdateLightSetVisibility( stereoEye, Camera, LightSet );
 
 						//	allocated and render shadows :
-						rs.ShadowSystem.RenderShadows( gameTime, Camera, this, Instances );
+						rs.ShadowSystem.RenderShadows( gameTime, Camera, this );
 
 						//	render sky-cube
 						rs.Sky.RenderSkyCube();

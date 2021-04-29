@@ -15,11 +15,13 @@ namespace Fusion.Engine.Graphics
 {
 	public class ShadowCascade 
 	{
-		readonly int sizeInTexels;
+		public readonly int SizeInTexels;
+		public readonly int Index;
 
-		public ShadowCascade ( int sizeInTexels )
+		public ShadowCascade ( int index, int sizeInTexels )
 		{
-			this.sizeInTexels	=	sizeInTexels;
+			this.Index			=	index;
+			this.SizeInTexels	=	sizeInTexels;
 		}
 
 
@@ -35,13 +37,6 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		public int CascadeSizeInTexels {
-			get {
-				return sizeInTexels;
-			}
-		}
-
-			
 		public Matrix ViewMatrix;
 
 		public Matrix ProjectionMatrix;
@@ -60,7 +55,7 @@ namespace Fusion.Engine.Graphics
 				matrix	=	Matrix.Invert	( matrix );
 				matrix	=	Matrix.Transpose( matrix );
 
-			var size	=	(float)CascadeSizeInTexels;
+			var size	=	(float)SizeInTexels;
 
 				matrix	=	matrix * Matrix.Scaling( -2.0f/size, 2.0f/size, 1 );
 

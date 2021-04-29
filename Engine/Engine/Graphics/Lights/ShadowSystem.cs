@@ -120,9 +120,11 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		public void Update ( GameTime gameTime, LightSet lightSet, IEnumerable<RenderInstance> instances )
+		public void RenderShadows ( GameTime gameTime, Camera camera, RenderWorld rw )
 		{
 			CreateResourcesIfNecessary();
+
+			shadowMap.RenderShadowMaps( gameTime, camera, rs, rw, rw.LightSet );
 		}
 	}
 }

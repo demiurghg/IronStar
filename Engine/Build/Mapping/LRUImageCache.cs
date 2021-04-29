@@ -39,12 +39,6 @@ namespace Fusion.Build.Mapping
 		}
 
 
-		public bool Contains ( TTag tag )
-		{
-			return lruList.Any( item => item.Value.Equals(tag) );
-		}
-
-		
 		public bool TryAdd( int size, TTag tag, out Rectangle region )
 		{
 			region	=	default(Rectangle);
@@ -75,7 +69,6 @@ namespace Fusion.Build.Mapping
 					OnDiscard( node.Value.Key, node.Value.Value );
 				}
 			}
-
 		}
 
 
@@ -100,6 +93,25 @@ namespace Fusion.Build.Mapping
 				tag = default(TTag);
 				return false;
 			}
+		}
+
+		
+		public bool TryGet( TTag tag, out Rectangle region )
+		{
+			region = default(Rectangle);
+
+			for ( var node = lruList.First; node != null; node = node.Next )
+			{
+				if (node.Value.Value.Equals(tag))
+				{
+					lruList.Remove(node);
+					lruList.AddLast(node);
+					region = node.Value.Key;
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		

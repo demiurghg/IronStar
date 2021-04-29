@@ -272,7 +272,9 @@ namespace Fusion.Engine.Graphics {
 		/// <returns></returns>
 		int GetSpotLightLOD ( SpotLight spotLight, BoundingFrustum frustum, Vector3 viewPosition )
 		{
-			if (frustum.Contains( viewPosition )==ContainmentType.Contains) {
+			//	viewer is inside of the spot-light :
+			if (frustum.Contains( viewPosition )==ContainmentType.Contains) 
+			{
 				return spotLight.LodBias;
 			}
 
@@ -432,8 +434,10 @@ namespace Fusion.Engine.Graphics {
 
 
 			#region	Compute light and decal count
-			foreach ( OmniLight ol in lightSet.OmniLights ) {
-				if (ol.Visible) {
+			foreach ( OmniLight ol in lightSet.OmniLights )
+			{
+				if (ol.Visible) 
+				{
 					for (int i=ol.MinExtent.X; i<ol.MaxExtent.X; i++)
 					for (int j=ol.MinExtent.Y; j<ol.MaxExtent.Y; j++)
 					for (int k=ol.MinExtent.Z; k<ol.MaxExtent.Z; k++) {
@@ -443,33 +447,42 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 
-			foreach ( SpotLight sl in lightSet.SpotLights ) {
-				if (sl.Visible) {
+			foreach ( SpotLight sl in lightSet.SpotLights ) 
+			{
+				if (sl.Visible) 
+				{
 					for (int i=sl.MinExtent.X; i<sl.MaxExtent.X; i++)
 					for (int j=sl.MinExtent.Y; j<sl.MaxExtent.Y; j++)
-					for (int k=sl.MinExtent.Z; k<sl.MaxExtent.Z; k++) {
+					for (int k=sl.MinExtent.Z; k<sl.MaxExtent.Z; k++) 
+					{
 						int a = ComputeAddress(i,j,k);
 						lightGrid[a].AddLight();
 					}
 				}
 			}
 
-			foreach ( Decal dcl in lightSet.Decals ) {
-				if (dcl.Visible) {
+			foreach ( Decal dcl in lightSet.Decals ) 
+			{
+				if (dcl.Visible) 
+				{
 					for (int i=dcl.MinExtent.X; i<dcl.MaxExtent.X; i++)
 					for (int j=dcl.MinExtent.Y; j<dcl.MaxExtent.Y; j++)
-					for (int k=dcl.MinExtent.Z; k<dcl.MaxExtent.Z; k++) {
+					for (int k=dcl.MinExtent.Z; k<dcl.MaxExtent.Z; k++) 
+					{
 						int a = ComputeAddress(i,j,k);
 						lightGrid[a].AddDecal();
 					}
 				}
 			}
 
-			foreach ( LightProbe lpb in lightSet.LightProbes ) {
-				if (lpb.Visible) {
+			foreach ( LightProbe lpb in lightSet.LightProbes ) 
+			{
+				if (lpb.Visible) 
+				{
 					for (int i=lpb.MinExtent.X; i<lpb.MaxExtent.X; i++)
 					for (int j=lpb.MinExtent.Y; j<lpb.MaxExtent.Y; j++)
-					for (int k=lpb.MinExtent.Z; k<lpb.MaxExtent.Z; k++) {
+					for (int k=lpb.MinExtent.Z; k<lpb.MaxExtent.Z; k++) 
+					{
 						int a = ComputeAddress(i,j,k);
 						lightGrid[a].AddLightProbe();
 					}
@@ -480,7 +493,8 @@ namespace Fusion.Engine.Graphics {
 
 
 			uint offset = 0;
-			for ( int i=0; i<lightGrid.Length; i++ ) {
+			for ( int i=0; i<lightGrid.Length; i++ ) 
+			{
 
 				lightGrid[i].Offset = offset;
 
@@ -494,11 +508,14 @@ namespace Fusion.Engine.Graphics {
 
 
 			uint index = 0;
-			foreach ( var ol in lightSet.OmniLights ) {
-				if (ol.Visible) {
+			foreach ( var ol in lightSet.OmniLights ) 
+			{
+				if (ol.Visible) 
+				{
 					for (int i=ol.MinExtent.X; i<ol.MaxExtent.X; i++)
 					for (int j=ol.MinExtent.Y; j<ol.MaxExtent.Y; j++)
-					for (int k=ol.MinExtent.Z; k<ol.MaxExtent.Z; k++) {
+					for (int k=ol.MinExtent.Z; k<ol.MaxExtent.Z; k++) 
+					{
 						int a = ComputeAddress(i,j,k);
 						indexData[ lightGrid[a].Offset + lightGrid[a].TotalCount ] = index;
 						lightGrid[a].AddLight();
@@ -510,11 +527,14 @@ namespace Fusion.Engine.Graphics {
 				}
 			}
 
-			foreach ( var sl in lightSet.SpotLights ) {
-				if (sl.Visible) {
+			foreach ( var sl in lightSet.SpotLights ) 
+			{
+				if (sl.Visible)
+				{
 					for (int i=sl.MinExtent.X; i<sl.MaxExtent.X; i++)
 					for (int j=sl.MinExtent.Y; j<sl.MaxExtent.Y; j++)
-					for (int k=sl.MinExtent.Z; k<sl.MaxExtent.Z; k++) {
+					for (int k=sl.MinExtent.Z; k<sl.MaxExtent.Z; k++) 
+					{
 						int a = ComputeAddress(i,j,k);
 						indexData[ lightGrid[a].Offset + lightGrid[a].TotalCount ] = index;
 						lightGrid[a].AddLight();
@@ -528,11 +548,14 @@ namespace Fusion.Engine.Graphics {
 
 			index = 0;
 
-			foreach ( var dcl in lightSet.Decals ) {
-				if (dcl.Visible) {
+			foreach ( var dcl in lightSet.Decals ) 
+			{
+				if (dcl.Visible) 
+				{
 					for (int i=dcl.MinExtent.X; i<dcl.MaxExtent.X; i++)
 					for (int j=dcl.MinExtent.Y; j<dcl.MaxExtent.Y; j++)
-					for (int k=dcl.MinExtent.Z; k<dcl.MaxExtent.Z; k++) {
+					for (int k=dcl.MinExtent.Z; k<dcl.MaxExtent.Z; k++) 
+					{
 						int a = ComputeAddress(i,j,k);
 						indexData[ lightGrid[a].Offset + lightGrid[a].TotalCount ] = index;
 						lightGrid[a].AddDecal();
@@ -546,11 +569,14 @@ namespace Fusion.Engine.Graphics {
 
 			index = 0;
 
-			foreach ( var lpb in lightSet.LightProbes ) {
-				if (lpb.Visible) {
+			foreach ( var lpb in lightSet.LightProbes ) 
+			{
+				if (lpb.Visible) 
+				{
 					for (int i=lpb.MinExtent.X; i<lpb.MaxExtent.X; i++)
 					for (int j=lpb.MinExtent.Y; j<lpb.MaxExtent.Y; j++)
-					for (int k=lpb.MinExtent.Z; k<lpb.MaxExtent.Z; k++) {
+					for (int k=lpb.MinExtent.Z; k<lpb.MaxExtent.Z; k++) 
+					{
 						int a = ComputeAddress(i,j,k);
 						indexData[ lightGrid[a].Offset + lightGrid[a].TotalCount ] = index;
 						lightGrid[a].AddLightProbe();
@@ -584,7 +610,8 @@ namespace Fusion.Engine.Graphics {
 			}
 
 
-			using ( new PixEvent( "Update cluster structures" ) ) {
+			using ( new PixEvent( "Update cluster structures" ) ) 
+			{
 				LightDataGpu.UpdateData	( lightData );
 				DecalDataGpu.UpdateData	( decalData );
 				IndexDataGpu.UpdateData	( indexData );

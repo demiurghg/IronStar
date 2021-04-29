@@ -17,14 +17,6 @@ namespace Fusion.Engine.Graphics
 	partial class ShadowMap : DisposableBase 
 	{
 		[ShaderStructure]
-		struct VPL 
-		{
-			Vector4 Position;
-			Vector4 Normal;
-			Vector4 Intensity;
-		}
-
-		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential, Pack=4)]
 		public struct CASCADE_SHADOW 
 		{
@@ -50,6 +42,7 @@ namespace Fusion.Engine.Graphics
 		public readonly QualityLevel ShadowQuality; 
 
 		Allocator2D allocator;
+		LRUImageCache<object> cache;
 
 
 		readonly ShadowCascade[] cascades = new ShadowCascade[MaxCascades];
@@ -94,8 +87,10 @@ namespace Fusion.Engine.Graphics
 		readonly int	minRegionSize;
 		readonly ShadowSystem ss;
 		DepthStencil2D	depthBuffer;
+		DepthStencil2D	cacheBuffer;
 		RenderTarget2D	prtShadow;
 		ConstantBuffer	constCascadeShadow;
+		int frameCounter = 0;
 
 
 
@@ -125,16 +120,18 @@ namespace Fusion.Engine.Graphics
 			minRegionSize		=	16;
 
 			allocator			=	new Allocator2D(shadowMapSize);
+			cache				=	new LRUImageCache<object>(shadowMapSize);
 
-			depthBuffer			=	new DepthStencil2D( device, DepthFormat.D24S8,		shadowMapSize, shadowMapSize );
+			depthBuffer			=	new DepthStencil2D( device, DepthFormat.D16,		shadowMapSize, shadowMapSize );
+			cacheBuffer			=	new DepthStencil2D( device, DepthFormat.D16,		shadowMapSize, shadowMapSize );
 			prtShadow			=	new RenderTarget2D( device, ColorFormat.Rgba8_sRGB,	shadowMapSize, shadowMapSize );
 
 			constCascadeShadow	=	new ConstantBuffer( device, typeof(CASCADE_SHADOW) );
 
-			cascades[0]	=	new ShadowCascade(maxRegionSize);
-			cascades[1]	=	new ShadowCascade(maxRegionSize);
-			cascades[2]	=	new ShadowCascade(maxRegionSize);
-			cascades[3]	=	new ShadowCascade(maxRegionSize);
+			cascades[0]	=	new ShadowCascade(0, maxRegionSize);
+			cascades[1]	=	new ShadowCascade(1, maxRegionSize);
+			cascades[2]	=	new ShadowCascade(2, maxRegionSize);
+			cascades[3]	=	new ShadowCascade(3, maxRegionSize);
 		}
 
 
@@ -221,15 +218,14 @@ namespace Fusion.Engine.Graphics
 		{
 			foreach ( var cascade in cascades ) 
 			{
-				Int2 address;
+				Rectangle region;
 
 				var size	=	SignedShift( maxRegionSize, cascade.DetailLevel + detailBias, minRegionSize, maxRegionSize );
 
-				if (allocator.TryAlloc( size, "", out address )) 
+				if (allocator.TryAlloc( size, "", out region )) 
 				{
-					var rect	=	new Rectangle( address.X, address.Y, size, size );
-					cascade.ShadowRegion		=	rect;
-					cascade.ShadowScaleOffset	=	GetScaleOffset( rect );
+					cascade.ShadowRegion		=	region;
+					cascade.ShadowScaleOffset	=	GetScaleOffset( region );
 				} 
 				else 
 				{
@@ -239,15 +235,14 @@ namespace Fusion.Engine.Graphics
 
 			foreach ( var light in visibleSpotLights ) 
 			{
-				Int2 address;
+				Rectangle region;
 
 				var size	=	SignedShift( maxRegionSize, light.DetailLevel + detailBias, minRegionSize, maxRegionSize );
 
-				if (allocator.TryAlloc( size, "", out address )) 
+				if (allocator.TryAlloc( size, "", out region )) 
 				{
-					var rect	=	new Rectangle( address.X, address.Y, size, size );
-					light.ShadowRegion			=	rect;
-					light.ShadowScaleOffset		=	GetScaleOffset( rect );
+					light.ShadowRegion			=	region;
+					light.ShadowScaleOffset		=	GetScaleOffset( region );
 				}
 				else 
 				{
@@ -260,7 +255,7 @@ namespace Fusion.Engine.Graphics
 
 
 
-		void ComputeCascadeMatricies ( Camera camera, LightSet lightSet, float splitSize, float splitOffset, float splitFactor, float projDepth )
+		void ComputeCascadeMatricies ( ShadowCascade cascade, Camera camera, LightSet lightSet )
 		{
 			var camMatrix		=	camera.CameraMatrix;
 			var viewPos			=	camera.CameraPosition;
@@ -268,43 +263,39 @@ namespace Fusion.Engine.Graphics
 			var viewMatrix		=	camera.ViewMatrix;
 			var lessDetailed	=	cascades.Length-1;
 
+			var splitSize		=	rs.ShadowSystem.ShadowCascadeSize;
+			var splitFactor		=	rs.ShadowSystem.ShadowCascadeFactor;
+			var projDepth		=	rs.ShadowSystem.ShadowCascadeDepth;
+			var splitOffset		=	0;
+
 			lightDir.Normalize();
 
-			//var slopeBiases = new[] { rs.ShadowSystem.CSMSlopeBias0, rs.ShadowSystem.CSMSlopeBias1, rs.ShadowSystem.CSMSlopeBias2, rs.ShadowSystem.CSMSlopeBias3 };
-			//var depthBiases = new[] { rs.ShadowSystem.CSMDepthBias0, rs.ShadowSystem.CSMDepthBias1, rs.ShadowSystem.CSMDepthBias2, rs.ShadowSystem.CSMDepthBias3 };
-			var slopeBiases = new[] { 0,0,0,0 };
-			var depthBiases = new[] { 0,0,0,0 };
+			var	smSize			=	cascade.ShadowRegion.Width; //	width == height
 
-			for ( int i = 0; i<cascades.Length; i++ ) 
+			float	offset		=	splitOffset * (float)Math.Pow( splitFactor, cascade.Index );
+			float	radius		=	splitSize   * (float)Math.Pow( splitFactor, cascade.Index );
+
+			Vector3 viewDir		=	camMatrix.Forward.Normalized();
+			Vector3	origin		=	viewPos + viewDir * offset;
+
+			Matrix	lightRot	=	Matrix.LookAtRH( Vector3.Zero, Vector3.Zero + lightDir, Vector3.UnitY );
+			Matrix	lightRotI	=	Matrix.Invert( lightRot );
+			Vector3	lsOrigin	=	Vector3.TransformCoordinate( origin, lightRot );
+			float	snapValue	=	4 * radius / smSize;
+
+			if (ss.SnapShadowmapCascades) 
 			{
-				var	smSize			=	cascades[i].ShadowRegion.Width; //	width == height
-
-				float	offset		=	splitOffset * (float)Math.Pow( splitFactor, i );
-				float	radius		=	splitSize   * (float)Math.Pow( splitFactor, i );
-
-				Vector3 viewDir		=	camMatrix.Forward.Normalized();
-				Vector3	origin		=	viewPos + viewDir * offset;
-
-				Matrix	lightRot	=	Matrix.LookAtRH( Vector3.Zero, Vector3.Zero + lightDir, Vector3.UnitY );
-				Matrix	lightRotI	=	Matrix.Invert( lightRot );
-				Vector3	lsOrigin	=	Vector3.TransformCoordinate( origin, lightRot );
-				float	snapValue	=	4 * radius / smSize;
-
-				if (ss.SnapShadowmapCascades) 
-				{
-					lsOrigin.X		=	(float)Math.Round(lsOrigin.X / snapValue) * snapValue;
-					lsOrigin.Y		=	(float)Math.Round(lsOrigin.Y / snapValue) * snapValue;
-				}
-				//lsOrigin.Z			=	(float)Math.Round(lsOrigin.Z / snapValue) * snapValue;
-				origin				=	Vector3.TransformCoordinate( lsOrigin, lightRotI );//*/
-
-				var view			=	Matrix.LookAtRH( origin, origin + lightDir, Vector3.UnitY );
-				var projection		=	Matrix.OrthoRH( radius*2, radius*2, -projDepth/2, projDepth/2);
-				//var projection		=	Matrix.OrthoRH( radius*2, radius*2, -radius, radius);
-
-				cascades[i].ViewMatrix			=	view;
-				cascades[i].ProjectionMatrix	=	projection;	  
+				lsOrigin.X		=	(float)Math.Round(lsOrigin.X / snapValue) * snapValue;
+				lsOrigin.Y		=	(float)Math.Round(lsOrigin.Y / snapValue) * snapValue;
 			}
+			//lsOrigin.Z			=	(float)Math.Round(lsOrigin.Z / snapValue) * snapValue;
+			origin				=	Vector3.TransformCoordinate( lsOrigin, lightRotI );//*/
+
+			var view			=	Matrix.LookAtRH( origin, origin + lightDir, Vector3.UnitY );
+			var projection		=	Matrix.OrthoRH( radius*2, radius*2, -projDepth/2, projDepth/2);
+
+			cascade.ViewMatrix			=	view;
+			cascade.ProjectionMatrix	=	projection;	  
 		}
 
 
@@ -333,7 +324,7 @@ namespace Fusion.Engine.Graphics
 				data = new CASCADE_SHADOW();
 			}
 
-			constCascadeShadow.SetData(ref data);			
+			constCascadeShadow.SetData(ref data);
 
 			return constCascadeShadow;
 		}
@@ -349,12 +340,35 @@ namespace Fusion.Engine.Graphics
 		}
 
 
+
+		void ClearShadowRegion( Rectangle region )
+		{
+			rs.Filter.ClearDepth( depthBuffer.Surface, region );
+		}
+
+
+		bool NeedCascadeUpdate( int idx, ShadowCascade cascade )
+		{
+			if (idx<2) return true;
+			
+			if (((idx+frameCounter)&1)==1)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="lightSet"></param>
 		public void RenderShadowMaps ( GameTime gameTime, Camera camera, RenderSystem rs, RenderWorld renderWorld, LightSet lightSet, InstanceGroup group = InstanceGroup.NotWeapon )
 		{
+			frameCounter++;
 			//
 			//	Allocate shadow map regions :
 			//
@@ -382,12 +396,6 @@ namespace Fusion.Engine.Graphics
 				}
 			}
 
-			var factor	=	rs.ShadowSystem.ShadowCascadeFactor;
-			var depth	=	rs.ShadowSystem.ShadowCascadeDepth;
-			var size	=	rs.ShadowSystem.ShadowCascadeSize;
-
-			ComputeCascadeMatricies( camera, lightSet, size, 0, factor, depth );
-
 			device.ResetStates();
 
 			//
@@ -401,28 +409,39 @@ namespace Fusion.Engine.Graphics
 				return;	// nothing to render
 			}
 
-			using (new PixEvent("Shadow Maps")) 
+			var shadowCamera	=	renderWorld.ShadowCamera;
+
+			using (new PixEvent("Cascade Shadow Maps")) 
 			{
-				device.Clear( depthBuffer.Surface, 1, 0 );
-				//device.Clear( shadowTexture.Surface, Color4.White );
-
-				var shadowCamera	=	renderWorld.ShadowCamera;
-
-				foreach ( var cascade in cascades ) 
+				for (int i=0; i<cascades.Length; i++)
 				{
-					var contextSolid  = new ShadowContext( shadowCamera, cascade, depthBuffer.Surface );
+					var cascade			=	cascades[i];
+					var contextSolid	=	new ShadowContext( shadowCamera, cascade, depthBuffer.Surface );
+					var updateShadow	=	(frameCounter<=1) || (i<2) && (((i+frameCounter) & 1) == 1);
 
-					shadowCamera.SetView( cascade.ViewMatrix );
-					shadowCamera.SetProjection( cascade.ProjectionMatrix );
+					if (NeedCascadeUpdate(i, cascade))
+					{
+						ComputeCascadeMatricies( cascade, camera, lightSet );
 
-					shadowRenderList.Clear();
-					shadowRenderList.AddRange( sceneBvhTree.Traverse( bbox => shadowCamera.Frustum.Contains( bbox ) ) );
+						ClearShadowRegion( cascade.ShadowRegion );
 
-					rs.SceneRenderer.RenderShadowMap( contextSolid,  shadowRenderList, group, true );
+						shadowCamera.SetView( cascade.ViewMatrix );
+						shadowCamera.SetProjection( cascade.ProjectionMatrix );
+
+						shadowRenderList.Clear();
+						shadowRenderList.AddRange( sceneBvhTree.Traverse( bbox => shadowCamera.Frustum.Contains( bbox ) ) );
+
+						rs.SceneRenderer.RenderShadowMap( contextSolid, shadowRenderList, group, true );
+					}
 				}
+			}
 
+			using (new PixEvent("Spot-Light Shadow Maps")) 
+			{
 				foreach ( var spot in lights ) 
 				{
+					ClearShadowRegion( spot.ShadowRegion );
+
 					var contextSolid  = new ShadowContext( shadowCamera, spot, depthBuffer.Surface );
 
 					shadowCamera.SetView( spot.SpotView );
@@ -439,33 +458,34 @@ namespace Fusion.Engine.Graphics
 			//
 			//	Shadow mask rendering 
 			//
-			using ( new PixEvent( "Shadow Masks" ) ) {
-
+			using ( new PixEvent( "Shadow Masks" ) ) 
+			{
 				device.Clear( prtShadow.Surface, Color4.Black );
 
 				//	draw cascade shadow masks :
-				foreach ( var cascade in cascades ) {
-
-					var far		= cascade.ProjectionMatrix.GetFarPlaneDistance();
-
-					var vp		= new Viewport( cascade.ShadowRegion );
+				foreach ( var cascade in cascades ) 
+				{
+					var far	=	cascade.ProjectionMatrix.GetFarPlaneDistance();
+					var vp	=	new Viewport( cascade.ShadowRegion );
 
 					rs.Filter2.RenderBorder( prtShadow.Surface, cascade.ShadowRegion, 1 );
-
 				}
 
 
 				//	draw spot shadow masks :
-				foreach ( var spot in lights ) {
-
+				foreach ( var spot in lights ) 
+				{
 					var name	=	spot.SpotMaskName;
 					var clip	=	lightSet.SpotAtlas.GetClipByName( name );
 
-					if (clip!=null) {
+					if (clip!=null) 
+					{
 						var dstRegion	=	spot.ShadowRegion;
 						var	srcRegion	=	lightSet.SpotAtlas.AbsoluteRectangles[ clip.FirstIndex ];
 						rs.Filter2.RenderQuad( prtShadow.Surface, lightSet.SpotAtlas.Texture.Srv, dstRegion, srcRegion );
-					} else {
+					} 
+					else 
+					{
 						var dstRegion	=	spot.ShadowRegion;
 						rs.Filter2.RenderSpot( prtShadow.Surface, dstRegion, 1 );
 					}
@@ -492,15 +512,14 @@ namespace Fusion.Engine.Graphics
 			var instances		=	renderWorld.Instances;
 			var shadowCamera	=	renderWorld.ShadowCamera;
 
-
 			//
 			//	Particle shadow rendering 
 			//
 			using ( new PixEvent( "Particle Shadows" ) ) {
 
 				//	draw cascade shadow particles :
-				foreach ( var cascade in cascades ) {
-
+				foreach ( var cascade in cascades ) 
+				{
 					var vp		= new Viewport( cascade.ShadowRegion );
 
 					shadowCamera.ViewMatrix			=	cascade.ViewMatrix;
@@ -509,10 +528,9 @@ namespace Fusion.Engine.Graphics
 					rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, shadowCamera, prtShadow.Surface, depthBuffer.Surface );
 				}
 
-
 				//	draw spot shadow particles :
-				foreach ( var spot in lights ) {
-
+				foreach ( var spot in lights ) 
+				{
 					var vp		= new Viewport( spot.ShadowRegion );
 
 					shadowCamera.ViewMatrix			=	spot.SpotView;

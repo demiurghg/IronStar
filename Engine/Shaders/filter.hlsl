@@ -8,10 +8,12 @@ $ubershader PREFILTER_ENVMAP POSX|POSY|POSZ|NEGX|NEGY|NEGZ
 $ubershader FILL_ALPHA_ONE
 $ubershader DOWNSAMPLE_DEPTH_RED
 $ubershader DOWNSAMPLE_DEPTH_GREEN
+$ubershader CLEAR_DEPTH
 #endif
 
 
 //-------------------------------------------------------------------------------
+
 #if defined(COPY) || defined(OVERLAY_ADDITIVE) || defined(COPY_ALPHA)
 
 Texture2D	Source : register(t0);
@@ -28,6 +30,24 @@ float4 PSMain(float4 position : SV_POSITION) : SV_Target
 	#else
 	return Source.Load(int3(position.xy, 0));
 	#endif
+}
+
+#endif
+
+
+//-------------------------------------------------------------------------------
+#if defined(CLEAR_DEPTH)
+
+Texture2D	Source : register(t0);
+
+float4 VSMain(uint VertexID : SV_VertexID) : SV_POSITION
+{
+	return float4((VertexID == 0) ? 3.0f : -1.0f, (VertexID == 2) ? 3.0f : -1.0f, 1.0f, 1.0f);
+}
+
+float PSMain(float4 position : SV_POSITION) : SV_Depth
+{
+	return 1.0f;
 }
 
 #endif

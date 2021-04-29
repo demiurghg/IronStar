@@ -18,7 +18,8 @@ namespace Fusion.Engine.Graphics
 	/// Class for base image processing such as copying, blurring, enhancement, anti-aliasing etc.
 	/// </summary>
 	[RequireShader("filter")]
-	internal class Filter : RenderComponent {
+	internal class Filter : RenderComponent 
+	{
 		const int MaxBlurTaps	=	33;
 
 		[Flags]
@@ -49,8 +50,7 @@ namespace Fusion.Engine.Graphics
 			COPY_ALPHA							= 1 << 22,
 			DOWNSAMPLE_DEPTH_RED				= 1 << 23,
 			DOWNSAMPLE_DEPTH_GREEN				= 1 << 24,
-
-
+			CLEAR_DEPTH							= 1 << 25,
 		}
 
 		[StructLayout( LayoutKind.Explicit )]
@@ -130,6 +130,15 @@ namespace Fusion.Engine.Graphics
 			if (flags==ShaderFlags.DOWNSAMPLE_DEPTH_GREEN) {
 				ps.BlendState = BlendState.WriteMaskGreen;
 			}
+
+			if (flags==ShaderFlags.CLEAR_DEPTH)
+			{
+				var dss = new DepthStencilState();
+				dss.DepthComparison		=	ComparisonFunc.Always;
+				dss.DepthWriteEnabled	=	true;
+				dss.DepthEnabled		=	true;
+				ps.DepthStencilState	=	dss;
+			}
 		}
 
 
@@ -140,7 +149,8 @@ namespace Fusion.Engine.Graphics
 		/// <param name="disposing"></param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing) {
+			if (disposing) 
+			{
 				SafeDispose( ref gaussWeightsCB );
 				SafeDispose( ref sourceRectCB );
 				SafeDispose( ref bufLinearizeDepth );
@@ -248,44 +258,6 @@ namespace Fusion.Engine.Graphics
 
 
 
-		public void LinearizeDepth( RenderTargetSurface dst, ShaderResource src )
-		{
-			throw new NotImplementedException();
-		#if false
-			Debug.Assert( Game.IsServiceExist<Camera>() );
-
-			var camera = Game.GetService<Camera>();
-
-			bufLinearizeDepth.Data.linearizeDepthA = 1.0f / camera.FrustumZFar - 1.0f / camera.FrustumZNear;
-			bufLinearizeDepth.Data.linearizeDepthB = 1.0f / camera.FrustumZNear;
-			bufLinearizeDepth.UpdateCBuffer();
-
-
-			var isDepthMSAA = ( src.SampleCount > 1 );
-			var depthShader = (int)( isDepthMSAA ? ShaderFlags.RESOLVE_AND_LINEARIZE_DEPTH_MSAA : ShaderFlags.LINEARIZE_DEPTH );
-
-			string signature;
-
-			SetDefaultRenderStates();
-
-			using( new PixEvent() ) {
-				bufLinearizeDepth.SetCBufferPS( 0 );
-
-				shaders.SetPixelShader( depthShader );
-				shaders.SetVertexShader( depthShader );
-
-				dst.SetViewport();
-				device.SetRenderTargets( dst );
-				src.SetPS( 0 );
-
-				device.Draw( Primitive.TriangleList, 3, 0 );
-			}
-			device.ResetStates();
-		#endif
-		}
-
-
-
 		void SetViewport ( RenderTargetSurface dst, Rectangle? dstRect = null )
 		{
 			var rect = dstRect.HasValue ? dstRect.Value : new Rectangle( 0, 0, dst.Width, dst.Height );
@@ -324,6 +296,31 @@ namespace Fusion.Engine.Graphics
 
 
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="dst">target to copy to</param>
+		/// <param name="src">target to copy from</param>
+		public void ClearDepth( DepthStencilSurface depthStencil, Rectangle region )
+		{
+			SetDefaultRenderStates();
+
+			using ( new PixEvent( "ClearDepth" ) ) 
+			{
+				device.SetScissorRect( region );
+				device.SetViewport( region );
+
+				device.SetTargets( depthStencil );
+
+				device.PipelineState	=	factory[(int)ShaderFlags.CLEAR_DEPTH];
+
+				device.Draw( 3, 0 );
+			}
+			device.ResetStates();
+		}
+
+
+
 		public void CopyColor (	RenderTargetSurface dst, ShaderResource src )
 		{
 			Copy ( dst, src );
@@ -349,8 +346,8 @@ namespace Fusion.Engine.Graphics
 					device.SetTargets( null, dst );
 				}
 
-				device.PipelineState            =   factory[(int)ShaderFlags.COPY_ALPHA];
-				device.GfxResources[0]  = src;
+				device.PipelineState	=	factory[(int)ShaderFlags.COPY_ALPHA];
+				device.GfxResources[0]	=	src;
 
 				device.Draw( 3, 0 );
 			}
@@ -397,7 +394,7 @@ namespace Fusion.Engine.Graphics
 
 			using( new PixEvent("OverlayAdditive") ) {
 
-				if(dst == null) {
+				if (dst == null) {
 					device.RestoreBackbuffer();
 				} else {
 					device.SetTargets( null, dst );

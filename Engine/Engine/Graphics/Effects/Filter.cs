@@ -48,8 +48,8 @@ namespace Fusion.Engine.Graphics
 			FILL_ALPHA_ONE						= 1 << 20,
 			BILATERAL							= 1 << 21,
 			COPY_ALPHA							= 1 << 22,
-			DOWNSAMPLE_DEPTH_RED				= 1 << 23,
-			DOWNSAMPLE_DEPTH_GREEN				= 1 << 24,
+			DOWNSAMPLE_DEPTH_MAX				= 1 << 23,
+			DOWNSAMPLE_DEPTH_LINEAR				= 1 << 24,
 			CLEAR_DEPTH							= 1 << 25,
 		}
 
@@ -115,6 +115,11 @@ namespace Fusion.Engine.Graphics
 			ps.RasterizerState		=	RasterizerState.CullNone;
 			ps.DepthStencilState	=	DepthStencilState.None;
 
+			var depthWriteState = new DepthStencilState();
+			depthWriteState.DepthComparison		=	ComparisonFunc.Always;
+			depthWriteState.DepthWriteEnabled	=	true;
+			depthWriteState.DepthEnabled		=	true;
+
 			if (flags==ShaderFlags.OVERLAY_ADDITIVE) {
 				ps.BlendState = BlendState.Additive;
 			}
@@ -123,21 +128,14 @@ namespace Fusion.Engine.Graphics
 				ps.BlendState = BlendState.AlphaMaskWrite;
 			}
 
-			if (flags==ShaderFlags.DOWNSAMPLE_DEPTH_RED) {
-				ps.BlendState = BlendState.WriteMaskRed;
-			}
-
-			if (flags==ShaderFlags.DOWNSAMPLE_DEPTH_GREEN) {
-				ps.BlendState = BlendState.WriteMaskGreen;
+			if (flags==ShaderFlags.DOWNSAMPLE_DEPTH_MAX || flags==ShaderFlags.DOWNSAMPLE_DEPTH_LINEAR) 
+			{
+				ps.DepthStencilState = depthWriteState;
 			}
 
 			if (flags==ShaderFlags.CLEAR_DEPTH)
 			{
-				var dss = new DepthStencilState();
-				dss.DepthComparison		=	ComparisonFunc.Always;
-				dss.DepthWriteEnabled	=	true;
-				dss.DepthEnabled		=	true;
-				ps.DepthStencilState	=	dss;
+				ps.DepthStencilState = depthWriteState;
 			}
 		}
 
@@ -415,40 +413,18 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		/// <param name="target"></param>
 		/// <param name="source"></param>
-		public void DownsampleDepthRed( RenderTargetSurface target, DepthStencil2D source )
+		public void DownsampleDepth( DepthStencilSurface target, DepthStencil2D source )
 		{
 			SetDefaultRenderStates();
 
-			using( new PixEvent("DownsampleDepthToRed") ) {
+			using( new PixEvent("DownsampleDepth") ) {
 				
-				SetViewport( target );
-				device.SetTargets( null, target );
+				var rect = new Rectangle( 0,0, target.Width, target.Height );
+				device.SetScissorRect( rect );
+				device.SetViewport( rect );
+				device.SetTargets( target );
 				
-				device.PipelineState	=	factory[ (int)ShaderFlags.DOWNSAMPLE_DEPTH_RED ];
-				device.GfxResources[0]	=	source;
-				device.GfxSamplers[0]	=	SamplerState.LinearPointClamp;
-
-				device.Draw( 3, 0 );
-			}
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="target"></param>
-		/// <param name="source"></param>
-		public void DownsampleDepthGreen( RenderTargetSurface target, DepthStencil2D source )
-		{
-			SetDefaultRenderStates();
-
-			using( new PixEvent("DownsampleDepthToGreen") ) {
-
-				SetViewport( target );
-				device.SetTargets( null, target );
-				
-				device.PipelineState	=	factory[ (int)ShaderFlags.DOWNSAMPLE_DEPTH_GREEN ];
+				device.PipelineState	=	factory[ (int)ShaderFlags.DOWNSAMPLE_DEPTH_MAX ];
 				device.GfxResources[0]	=	source;
 				device.GfxSamplers[0]	=	SamplerState.LinearPointClamp;
 

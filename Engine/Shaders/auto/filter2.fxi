@@ -1,0 +1,60 @@
+#ifndef UBERSHADER_RENDERSYSTEM
+#define UBERSHADER_RENDERSYSTEM
+
+// ---------------- CONSTANT VALUES ---------------- //
+
+static const int LightClusterGridWidth = 16;
+static const int LightClusterGridHeight = 8;
+static const int LightClusterGridDepth = 24;
+static const float LightClusterExpScale = 0.015625;
+static const int VTVirtualPageCount = 1024;
+static const int VTPageSize = 128;
+static const int VTMaxMip = 6;
+static const int VTMipSelectorScale = 2048;
+static const uint LightTypeNone = 0;
+static const uint LightTypeOmni = 1;
+static const uint LightTypeOmniShadow = 2;
+static const uint LightTypeSpotShadow = 3;
+static const uint LightTypeAmbient = 4;
+static const uint LightSpotShapeSquare = 65536;
+static const uint LightSpotShapeRound = 131072;
+static const uint LightProbeSize = 128;
+static const uint LightProbeMaxMips = 7;
+static const uint LightProbeMaxMip = 6;
+static const uint LightProbeMaxSpecularMip = 5;
+static const uint InstanceGroupStatic = 1;
+static const uint InstanceGroupDynamic = 4;
+static const uint InstanceGroupCharacter = 8;
+static const uint InstanceGroupWeapon = 16;
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+#endif
+
+// ---------------- CONSTANT VALUES ---------------- //
+
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// Fusion.Engine.Graphics.Filter2+CDATA
+// Marshal.SizeOf = 64
+#ifndef __STRUCT_CDATA
+#define __STRUCT_CDATA 1
+struct CDATA {
+	float4     ScaleOffset;                   // offset:    0
+	float4     TargetSize;                    // offset:   16
+	float4     Color;                         // offset:   32
+	float4     Dummy;                         // offset:   48
+};
+#endif
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+cbuffer __buffer0 : register(b0) {
+	CDATA CData : packoffset(c0);
+};
+Texture2D<float4>              Source                         : register(t0);
+SamplerState                   SamplerPointClamp              : register(s0);
+SamplerState                   SamplerLinearClamp             : register(s1);

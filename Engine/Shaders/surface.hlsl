@@ -57,6 +57,7 @@ struct GBuffer {
 
 #define SHADOW_FILTER
 #define SHADOW_TRANSITION
+#define SHADOW_PARTICLES
 
 #include "ls_core.fxi"
 #include "ls_fog.fxi"

@@ -553,29 +553,19 @@ namespace Fusion.Engine.Graphics
 
 		void DrawDebugImages( Viewport viewport, RenderTargetSurface targetSurface )
 		{
-			switch (rs.ShowGBuffer) 
+			switch (rs.VisualizeBuffer) 
 			{
-				case 1  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.Normals ); return;
-				case 2  : rs.Filter.StretchRect( targetSurface,	rs.RayTracer.raytracedImage, new Rectangle(1280-800-64,720-600-64,800,600) ); break;
-				case 3  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.DofCOC ); return;
-				case 4  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.DofForeground ); return;
-				case 5  : rs.Filter.CopyColor( targetSurface,	viewHdrFrame.HdrTarget ); return;
-				case 6  : rs.Filter.Copy( targetSurface,		viewHdrFrame.AOBuffer ); return;
-				case 7  : rs.Filter.StretchRect( targetSurface, rs.ShadowSystem.ShadowMap.ParticleShadowTexture ); return;
-				case 8  : rs.Filter.StretchRect( targetSurface, rs.ShadowSystem.ShadowMap.ShadowTexture ); return;
-				case 9  : rs.Filter.StretchRect( targetSurface, ParticleSystem.SoftStream.Lightmap ); return;
-				case 10 : rs.Filter.StretchRect( targetSurface, viewHdrFrame.FeedbackBufferRB, SamplerState.PointClamp ); return;
-			}
-
-			if (rs.VTSystem.ShowPhysicalTextures) 
-			{
-				rs.Filter.StretchRect( targetSurface, rs.VTSystem.PhysicalPages0 );
-				return;
-			}
-			if (rs.VTSystem.ShowPageTexture) 
-			{
-				rs.Filter.Copy( targetSurface, rs.VTSystem.PageTable );
-				return;
+				case VisualizeBuffer.Normals			: rs.Filter.CopyColor( targetSurface,	viewHdrFrame.Normals ); return;
+				case VisualizeBuffer.DofCOC				: rs.Filter.CopyColor( targetSurface,	viewHdrFrame.DofCOC ); return;
+				case VisualizeBuffer.DofForeground		: rs.Filter.CopyColor( targetSurface,	viewHdrFrame.DofForeground ); return;
+				case VisualizeBuffer.HdrTarget			: rs.Filter.CopyColor( targetSurface,	viewHdrFrame.HdrTarget ); return;
+				case VisualizeBuffer.SSAOBuffer			: rs.Filter.Copy( targetSurface,		viewHdrFrame.AOBuffer ); return;
+				case VisualizeBuffer.Shadows			: rs.Filter.StretchRect( targetSurface, rs.ShadowSystem.ShadowMap.ShadowTexture ); return;
+				case VisualizeBuffer.ParticleShadows	: rs.Filter.StretchRect( targetSurface, rs.ShadowSystem.ShadowMap.ParticleShadowTexture ); return;
+				case VisualizeBuffer.ParticleLightmap	: rs.Filter.StretchRect( targetSurface, ParticleSystem.SoftStream.Lightmap ); return;
+				case VisualizeBuffer.VTFeedbackBuffer	: rs.Filter.StretchRect( targetSurface, viewHdrFrame.FeedbackBufferRB, SamplerState.PointClamp ); return;
+				case VisualizeBuffer.VTPhysicalTexture	: rs.Filter.StretchRect( targetSurface, rs.VTSystem.PhysicalPages0 ); return;
+				case VisualizeBuffer.VTPageTexture		: rs.Filter.Copy( targetSurface, rs.VTSystem.PageTable ); return;
 			}
 		}
 	}

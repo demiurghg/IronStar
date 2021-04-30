@@ -305,14 +305,17 @@ namespace Fusion.Engine.Graphics {
 					ps.RasterizerState		=	RasterizerState.CullNone;
 				}
 
-				if (flag.HasFlag(Flags.SOFT_SHADOW) || flag.HasFlag(Flags.HARD_SHADOW)) {
-
+				if (flag.HasFlag(Flags.SOFT_SHADOW) || flag.HasFlag(Flags.HARD_SHADOW)) 
+				{
 					var bs = new BlendState();
-					bs.DstAlpha	=	Blend.One;
-					bs.SrcAlpha	=	Blend.One;
 					bs.SrcColor	=	Blend.DstColor;
 					bs.DstColor	=	Blend.Zero;
+					bs.SrcAlpha	=	Blend.DstAlpha;
+					bs.DstAlpha	=	Blend.Zero;
 					bs.AlphaOp	=	BlendOp.Add;
+					bs.ColorOp	=	BlendOp.Add;
+
+					bs.WriteMask	=	ColorChannels.Alpha;
 
 					ps.BlendState			=	bs;
 					ps.DepthStencilState	=	DepthStencilState.Readonly;
@@ -606,8 +609,8 @@ namespace Fusion.Engine.Graphics {
 			var device	=	Game.GraphicsDevice;
 			var rw		=	rs.RenderWorld;
 
-			using ( new PixEvent(passName) ) {
-
+			using ( new PixEvent(passName) ) 
+			{
 				device.ResetStates();
 
 				//
@@ -828,7 +831,7 @@ namespace Fusion.Engine.Graphics {
 
 			var flags		=	Flags.DRAW | (soft ? Flags.SOFT_SHADOW : Flags.HARD_SHADOW);
 
-			RenderGeneric( "Particles Shadow", gameTime, camera, viewport, colorTarget, depthTarget, null, flags );
+			RenderGeneric( "Particles Shadow", gameTime, camera, viewport, colorTarget, depthBuffer, null, flags );
 		}
 	}
 }

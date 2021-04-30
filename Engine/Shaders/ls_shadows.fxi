@@ -163,7 +163,11 @@ float3	ComputeCascadedShadows ( GEOMETRY geometry, float2 vpos, CASCADE_SHADOW s
 	shadow = rc.ShadowMap.SampleCmpLevelZero( rc.ShadowSampler, cascade.TexCoord, cascade.Depth );
 #endif
 	
-	shadow *= rc.ShadowMask.SampleLevel( rc.LinearSampler, cascade.TexCoord, 0 ).rgb;
+	float4 mask = rc.ShadowMask.SampleLevel( rc.LinearSampler, cascade.TexCoord, 0 );
+	shadow *= mask.rgb;
+#ifdef SHADOW_PARTICLES
+	shadow *= mask.a;
+#endif
 	
 	return lerp(shadow, 1, saturate(cascade.Fade*16-15));
 }
@@ -207,7 +211,12 @@ float3 ComputeSpotShadow ( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc )
 			accumulatedShadow	=	rc.ShadowMap.SampleCmpLevelZero( rc.ShadowSampler, lsPos.xy, shadowDepth ).r;
 		#endif
 
-		shadow		=	accumulatedShadow * rc.ShadowMask.SampleLevel( rc.LinearSampler, lsPos.xy, 0 ).rgb;
+		shadow		=	accumulatedShadow;
+		float4 mask = 	rc.ShadowMask.SampleLevel( rc.LinearSampler, lsPos.xy, 0 );
+		shadow *= mask.rgb;
+	#ifdef SHADOW_PARTICLES
+		shadow *= mask.a;
+	#endif
 	}
 	
 	return shadow;

@@ -83,6 +83,10 @@ namespace Fusion.Core {
 			{
 				return false;
 			}
+			catch ( ArgumentException )
+			{
+				return false;
+			}
 
 			return false;
 		}

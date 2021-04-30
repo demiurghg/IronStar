@@ -54,11 +54,19 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		public ShaderResource ShadowTexture {
 			get {
-				return depthBuffer;//shadowTexture;
+				return depthBuffer;
 			}
 		}
 
-
+		/// <summary>
+		/// Gets color shadow map buffer.
+		/// Actually stores depth value.
+		/// </summary>
+		public ShaderResource ShadowTextureLowRes {
+			get {
+				return depthBuffer;
+			}
+		}
 
 		/// <summary>
 		/// Gets color shadow map buffer.
@@ -87,7 +95,6 @@ namespace Fusion.Engine.Graphics
 		readonly int	minRegionSize;
 		readonly ShadowSystem ss;
 		DepthStencil2D	depthBuffer;
-		DepthStencil2D	cacheBuffer;
 		RenderTarget2D	prtShadow;
 		ConstantBuffer	constCascadeShadow;
 		int frameCounter = 0;
@@ -122,16 +129,15 @@ namespace Fusion.Engine.Graphics
 			allocator			=	new Allocator2D(shadowMapSize);
 			cache				=	new LRUImageCache<object>(shadowMapSize);
 
-			depthBuffer			=	new DepthStencil2D( device, DepthFormat.D16,		shadowMapSize, shadowMapSize );
-			cacheBuffer			=	new DepthStencil2D( device, DepthFormat.D16,		shadowMapSize, shadowMapSize );
-			prtShadow			=	new RenderTarget2D( device, ColorFormat.Rgba8_sRGB,	shadowMapSize, shadowMapSize );
+			depthBuffer			=	new DepthStencil2D( device, DepthFormat.D16,		shadowMapSize,   shadowMapSize   );
+			prtShadow			=	new RenderTarget2D( device, ColorFormat.Rgba8_sRGB,	shadowMapSize,   shadowMapSize   );
 
 			constCascadeShadow	=	new ConstantBuffer( device, typeof(CASCADE_SHADOW) );
 
-			cascades[0]	=	new ShadowCascade(0, maxRegionSize);
-			cascades[1]	=	new ShadowCascade(1, maxRegionSize);
-			cascades[2]	=	new ShadowCascade(2, maxRegionSize);
-			cascades[3]	=	new ShadowCascade(3, maxRegionSize);
+			cascades[0]	=	new ShadowCascade(0, maxRegionSize, Color.White);
+			cascades[1]	=	new ShadowCascade(1, maxRegionSize, new Color(255,128,128) );
+			cascades[2]	=	new ShadowCascade(2, maxRegionSize, new Color(128,255,128) );
+			cascades[3]	=	new ShadowCascade(3, maxRegionSize, new Color(128,128,255) );
 		}
 
 
@@ -146,6 +152,7 @@ namespace Fusion.Engine.Graphics
 			{
 				SafeDispose( ref depthBuffer );
 				SafeDispose( ref prtShadow );
+				SafeDispose( ref constCascadeShadow );
 			}
 
 			base.Dispose( disposing );
@@ -156,7 +163,7 @@ namespace Fusion.Engine.Graphics
 		/// <summary>
 		/// 
 		/// </summary>
-		public void Clear ()
+		private void Clear ()
 		{
 			device.Clear( depthBuffer.Surface, 1, 0 );
 			device.Clear( prtShadow.Surface, Color4.White );
@@ -347,18 +354,16 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		bool NeedCascadeUpdate( int idx, ShadowCascade cascade )
+		bool NeedCascadeUpdate( ShadowCascade cascade )
 		{
-			if (idx<2) return true;
+			switch (ss.CascadeUpdateMode)
+			{
+				case CascadeUpdateMode.None: return ShadowInterleave.CascadeInterleaveNone( frameCounter, cascade.Index );
+				case CascadeUpdateMode.Interleave1122: return ShadowInterleave.CascadeInterleave1122( frameCounter, cascade.Index );
+				case CascadeUpdateMode.Interleave1244: return ShadowInterleave.CascadeInterleave1244( frameCounter, cascade.Index );
+			}
 			
-			if (((idx+frameCounter)&1)==1)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			return true;
 		}
 
 
@@ -413,13 +418,11 @@ namespace Fusion.Engine.Graphics
 
 			using (new PixEvent("Cascade Shadow Maps")) 
 			{
-				for (int i=0; i<cascades.Length; i++)
+				foreach (var cascade in cascades)
 				{
-					var cascade			=	cascades[i];
 					var contextSolid	=	new ShadowContext( shadowCamera, cascade, depthBuffer.Surface );
-					var updateShadow	=	(frameCounter<=1) || (i<2) && (((i+frameCounter) & 1) == 1);
 
-					if (NeedCascadeUpdate(i, cascade))
+					if (NeedCascadeUpdate(cascade))
 					{
 						ComputeCascadeMatricies( cascade, camera, lightSet );
 
@@ -460,34 +463,37 @@ namespace Fusion.Engine.Graphics
 			//
 			using ( new PixEvent( "Shadow Masks" ) ) 
 			{
-				device.Clear( prtShadow.Surface, Color4.Black );
-
-				//	draw cascade shadow masks :
-				foreach ( var cascade in cascades ) 
+				if (!ss.SkipShadowMasks)
 				{
-					var far	=	cascade.ProjectionMatrix.GetFarPlaneDistance();
-					var vp	=	new Viewport( cascade.ShadowRegion );
-
-					rs.Filter2.RenderBorder( prtShadow.Surface, cascade.ShadowRegion, 1 );
-				}
-
-
-				//	draw spot shadow masks :
-				foreach ( var spot in lights ) 
-				{
-					var name	=	spot.SpotMaskName;
-					var clip	=	lightSet.SpotAtlas.GetClipByName( name );
-
-					if (clip!=null) 
+					//	draw cascade shadow masks :
+					foreach ( var cascade in cascades ) 
 					{
-						var dstRegion	=	spot.ShadowRegion;
-						var	srcRegion	=	lightSet.SpotAtlas.AbsoluteRectangles[ clip.FirstIndex ];
-						rs.Filter2.RenderQuad( prtShadow.Surface, lightSet.SpotAtlas.Texture.Srv, dstRegion, srcRegion );
-					} 
-					else 
+						if (NeedCascadeUpdate(cascade))
+						{
+							var dstRegion	=	cascade.ShadowRegion;
+							var color		=	ss.ShowSplits ? cascade.Color : Color.White;
+							rs.Filter2.RenderBorder( prtShadow.Surface, dstRegion, color );
+						}
+					}
+
+
+					//	draw spot shadow masks :
+					foreach ( var spot in lights ) 
 					{
-						var dstRegion	=	spot.ShadowRegion;
-						rs.Filter2.RenderSpot( prtShadow.Surface, dstRegion, 1 );
+						var name	=	spot.SpotMaskName;
+						var clip	=	lightSet.SpotAtlas.GetClipByName( name );
+
+						if (clip!=null) 
+						{
+							var dstRegion	=	spot.ShadowRegion;
+							var	srcRegion	=	lightSet.SpotAtlas.AbsoluteRectangles[ clip.FirstIndex ];
+							rs.Filter2.RenderQuad( prtShadow.Surface, lightSet.SpotAtlas.Texture.Srv, dstRegion, srcRegion, Color.White );
+						} 
+						else 
+						{
+							var dstRegion	=	spot.ShadowRegion;
+							rs.Filter2.RenderSpot( prtShadow.Surface, dstRegion, Color.White );
+						}
 					}
 				}
 			}
@@ -504,6 +510,8 @@ namespace Fusion.Engine.Graphics
 		/// <param name="lightSet"></param>
 		public void RenderParticleShadows ( GameTime gameTime, RenderSystem rs, RenderWorld renderWorld, LightSet lightSet )
 		{
+			if (ss.SkipParticleShadows) return;
+
 			var lights = lightSet
 					.SpotLights
 					.Where ( light0 => light0.Visible )
@@ -520,12 +528,15 @@ namespace Fusion.Engine.Graphics
 				//	draw cascade shadow particles :
 				foreach ( var cascade in cascades ) 
 				{
-					var vp		= new Viewport( cascade.ShadowRegion );
+					if (NeedCascadeUpdate(cascade))
+					{
+						var vp		= new Viewport( cascade.ShadowRegion );
 
-					shadowCamera.ViewMatrix			=	cascade.ViewMatrix;
-					shadowCamera.ProjectionMatrix	=	cascade.ProjectionMatrix;
+						shadowCamera.ViewMatrix			=	cascade.ViewMatrix;
+						shadowCamera.ProjectionMatrix	=	cascade.ProjectionMatrix;
 
-					rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, shadowCamera, prtShadow.Surface, depthBuffer.Surface );
+						rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, shadowCamera, prtShadow.Surface, depthBuffer.Surface );
+					}
 				}
 
 				//	draw spot shadow particles :

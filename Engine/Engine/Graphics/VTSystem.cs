@@ -39,15 +39,6 @@ namespace Fusion.Engine.Graphics {
 		public bool ShowPageLoads { get; set; }
 
 		[Config]
-		[AECategory("Debugging")]
-		[Description("Enables displaying of physical texture")]
-		public bool ShowPhysicalTextures { get; set; }
-
-		[Config]
-		[AECategory("Debugging")]
-		public bool ShowPageTexture { get; set; }
-
-		[Config]
 		[AECategory("Tiles")]
 		[Description("Shows tile border for each uploaded tile")]
 		public bool ShowTileBorder { get; set; }

@@ -170,6 +170,7 @@
     <Compile Include="Engine\Graphics\Collections\RenderInstanceCollection.cs" />
     <Compile Include="Engine\Graphics\Lights\ICSMController.cs" />
     <Compile Include="Engine\Graphics\Lights\IShadowProvider.cs" />
+    <Compile Include="Engine\Graphics\Lights\ShadowInterleave.cs" />
     <Compile Include="Engine\Graphics\Lights\ShadowSystem.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

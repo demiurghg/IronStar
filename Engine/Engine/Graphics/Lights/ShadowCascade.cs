@@ -17,11 +17,13 @@ namespace Fusion.Engine.Graphics
 	{
 		public readonly int SizeInTexels;
 		public readonly int Index;
+		public readonly Color Color;
 
-		public ShadowCascade ( int index, int sizeInTexels )
+		public ShadowCascade ( int index, int sizeInTexels, Color color )
 		{
 			this.Index			=	index;
 			this.SizeInTexels	=	sizeInTexels;
+			this.Color			=	color;
 		}
 
 

@@ -13,6 +13,13 @@ using Fusion.Widgets.Advanced;
 
 namespace Fusion.Engine.Graphics 
 {
+	enum CascadeUpdateMode
+	{
+		None,
+		Interleave1122,
+		Interleave1244,
+	}
+
 	/// <summary>
 	/// Shadow render context
 	/// </summary>
@@ -34,16 +41,22 @@ namespace Fusion.Engine.Graphics
 		bool shadowQualityDirty = true;
 		QualityLevel shadowQualityLevel	= QualityLevel.Medium;
 
-		[AECategory("General")]  [Config]	public bool UsePointShadowSampling { get; set; } = false;
+		[AECategory("Performance")]		[Config]	public bool UsePointShadowSampling { get; set; } = false;
+		[AECategory("Performance")]		[Config]	public bool SkipShadowMasks { get; set; } = false;
+		[AECategory("Performance")]		[Config]	public bool SkipParticleShadows { get; set; } = false;
+		[AECategory("Performance")]		[Config]	public CascadeUpdateMode CascadeUpdateMode { get; set; } = CascadeUpdateMode.Interleave1122;
 
-		[AECategory("Cascade Shadows")]  [Config]	public bool SnapShadowmapCascades { get; set; } = true;
+		[AECategory("Debug")]			[Config]	public bool ShowSplits { get; set; } = false;
 
-		[AECategory("Cascade Shadows")]  [Config]	public float ShadowGradientBiasX { get; set; } = 1;
-		[AECategory("Cascade Shadows")]  [Config]	public float ShadowGradientBiasY { get; set; } = 1;
 
-		[AECategory("Cascade Shadows")]  [Config]	public float ShadowCascadeDepth { get; set; } = 1024;
-		[AECategory("Cascade Shadows")]  [Config]	public float ShadowCascadeFactor { get; set; } = 3;
-		[AECategory("Cascade Shadows")]  [Config]	public float ShadowCascadeSize { get; set; } = 4;
+		[AECategory("Cascade Shadows")] [Config]	public bool SnapShadowmapCascades { get; set; } = true;
+
+		[AECategory("Cascade Shadows")] [Config]	public float ShadowGradientBiasX { get; set; } = 1;
+		[AECategory("Cascade Shadows")] [Config]	public float ShadowGradientBiasY { get; set; } = 1;
+
+		[AECategory("Cascade Shadows")] [Config]	public float ShadowCascadeDepth { get; set; } = 1024;
+		[AECategory("Cascade Shadows")] [Config]	public float ShadowCascadeFactor { get; set; } = 3;
+		[AECategory("Cascade Shadows")] [Config]	public float ShadowCascadeSize { get; set; } = 4;
 
 		bool biasDirty = true;
 

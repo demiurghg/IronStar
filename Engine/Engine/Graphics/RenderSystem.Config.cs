@@ -11,10 +11,26 @@ using Fusion.Core.Shell;
 using Fusion.Widgets.Advanced;
 using Fusion.Engine.Graphics.Ubershaders;
 
-namespace Fusion.Engine.Graphics {
+namespace Fusion.Engine.Graphics 
+{
+	public enum VisualizeBuffer
+	{
+		None,
+		Normals,
+		DofCOC,
+		DofForeground,
+		HdrTarget,
+		SSAOBuffer,
+		Shadows,
+		ParticleShadows,
+		ParticleLightmap,
+		VTFeedbackBuffer,
+		VTPhysicalTexture,
+		VTPageTexture,
+	}
 
-	public partial class RenderSystem : GameComponent {
-
+	public partial class RenderSystem : GameComponent 
+	{
 		public const int MaxBones = 128;
 
 		[ShaderDefine] public const int		LightClusterGridWidth		=	16;
@@ -136,15 +152,8 @@ namespace Fusion.Engine.Graphics {
 		public bool MsaaEnabled { get; set; }
 
 
-		/// <summary>
-		/// Shows G-buffer content.
-		///		0 - show final image
-		///		1 - show diffuse
-		///		2 - show specular
-		///		3 - show normal map
-		/// </summary>
 		[Config]
-		public int ShowGBuffer { get; set; }
+		public VisualizeBuffer VisualizeBuffer { get; set; }
 
 
 		/// <summary>

@@ -266,6 +266,11 @@ namespace Fusion.Engine.Graphics {
 			var fogData		=	new FOG_DATA();
 			var rw			=	rs.RenderWorld;
 
+			if (fogSizeX!=fogDensity.Width || fogSizeY!=fogDensity.Height || fogSizeZ!=fogDensity.Depth)
+			{
+				CreateVolumeResources();
+			}
+
 			fogData.WorldToVolume		=	rw.LightMap.WorldToVolume;
 			fogData.IndirectLightFactor	=	rs.Radiosity.MasterIntensity;
 			fogData.DirectLightFactor	=	rs.SkipDirectLighting ? 0 : 1;

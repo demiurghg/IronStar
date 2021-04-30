@@ -4,6 +4,8 @@ $ubershader RENDER_BORDER
 $ubershader RENDER_SPOT
 #endif
 
+#include "auto/filter2.fxi"
+
 //-------------------------------------------------------------------------------
 
 float4 GenerateQuadCoords( int vertexID )
@@ -18,9 +20,6 @@ float4 GenerateQuadCoords( int vertexID )
 //-------------------------------------------------------------------------------
 
 #if defined(RENDER_QUAD)
-
-SamplerState	SamplerLinearClamp : register(s0);
-Texture2D Source : register(t0);
 
 cbuffer GaussWeightsCB : register(b0) {
 	float4 scaleOffset;
@@ -46,7 +45,7 @@ PS_IN VSMain(uint VertexID : SV_VertexID)
 
 float4 PSMain(PS_IN input) : SV_Target
 {
-	return Source.SampleLevel(SamplerLinearClamp, input.uv, 0);
+	return Source.SampleLevel(SamplerLinearClamp, input.uv, 0) * CData.Color;
 }
 
 #endif
@@ -54,13 +53,6 @@ float4 PSMain(PS_IN input) : SV_Target
 //-------------------------------------------------------------------------------
 
 #if defined(RENDER_BORDER) || defined(RENDER_SPOT)
-
-SamplerState	SamplerLinearClamp : register(s0);
-Texture2D Source : register(t0);
-
-cbuffer GaussWeightsCB : register(b0) {
-	float4 targetSize;
-};
 
 struct PS_IN {
     float4 position : SV_POSITION;
@@ -72,7 +64,7 @@ PS_IN VSMain(uint VertexID : SV_VertexID)
 {
 	PS_IN output;
 	output.position	=	GenerateQuadCoords( VertexID );
-	output.projpos	=	output.position.xy * (1 + targetSize.zw*8) * 1.0f;
+	output.projpos	=	output.position.xy * (1 + CData.TargetSize.zw*8) * 1.0f;
 	return output;
 }
 
@@ -89,7 +81,7 @@ float4 PSMain(PS_IN input) : SV_Target
 	value 	= 	saturate( 1-length(input.projpos.xy) );
 	value 	*=	value;
 		
-	return value;
+	return value * CData.Color;
 
 #endif
 	
@@ -100,7 +92,7 @@ float4 PSMain(PS_IN input) : SV_Target
 
 	float	value	=	max( abs(x), abs(y) ) > 1 ? 0 : 1;
 		
-	return value;
+	return value * CData.Color;
 	
 #endif
 

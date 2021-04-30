@@ -6,8 +6,7 @@ $ubershader GAUSS_BLUR PASS1|PASS2 +BILATERAL
 $ubershader LINEARIZE_DEPTH|RESOLVE_AND_LINEARIZE_DEPTH_MSAA
 $ubershader PREFILTER_ENVMAP POSX|POSY|POSZ|NEGX|NEGY|NEGZ
 $ubershader FILL_ALPHA_ONE
-$ubershader DOWNSAMPLE_DEPTH_RED
-$ubershader DOWNSAMPLE_DEPTH_GREEN
+$ubershader DOWNSAMPLE_DEPTH_MAX|DOWNSAMPLE_DEPTH_LINEAR
 $ubershader CLEAR_DEPTH
 #endif
 
@@ -37,6 +36,23 @@ float4 PSMain(float4 position : SV_POSITION) : SV_Target
 
 //-------------------------------------------------------------------------------
 #if defined(CLEAR_DEPTH)
+
+Texture2D	Source : register(t0);
+
+float4 VSMain(uint VertexID : SV_VertexID) : SV_POSITION
+{
+	return float4((VertexID == 0) ? 3.0f : -1.0f, (VertexID == 2) ? 3.0f : -1.0f, 1.0f, 1.0f);
+}
+
+float PSMain(float4 position : SV_POSITION) : SV_Depth
+{
+	return 1.0f;
+}
+
+#endif
+
+//-------------------------------------------------------------------------------
+#if defined(COPY_DEPTH)
 
 Texture2D	Source : register(t0);
 
@@ -104,7 +120,7 @@ float4 PSMain(PS_IN input) : SV_Target
 #endif
 
 //-------------------------------------------------------------------------------
-#if defined(DOWNSAMPLE_DEPTH_RED) || defined(DOWNSAMPLE_DEPTH_GREEN)
+#if defined(DOWNSAMPLE_DEPTH_MAX) || defined(DOWNSAMPLE_DEPTH_LINEAR)
 
 SamplerState	SamplerLinearClamp : register(s0);
 Texture2D Source : register(t0);
@@ -135,7 +151,7 @@ PS_IN VSMain(uint VertexID : SV_VertexID)
 	return output;
 }
 
-float4 PSMain(PS_IN input) : SV_Target
+float PSMain(PS_IN input) : SV_Depth
 {
 	float4 vpos	=	input.position;
 	int3 p00	=	int3( vpos.xy*2 + int2( 0, 0), 0 );

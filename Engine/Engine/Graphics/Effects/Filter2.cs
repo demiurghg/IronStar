@@ -17,7 +17,7 @@ namespace Fusion.Engine.Graphics
 	/// <summary>
 	/// Class for base image processing such as copying, blurring, enhancement, anti-aliasing etc.
 	/// </summary>
-	[RequireShader("filter2")]
+	[RequireShader("filter2", true)]
 	internal class Filter2 : RenderComponent {
 
 		[Flags]
@@ -30,6 +30,21 @@ namespace Fusion.Engine.Graphics
 		Ubershader		shaders;
 		StateFactory	factory;
 		ConstantBuffer	cbuffer;
+
+		static FXConstantBuffer<CDATA>	regCData				=	new CRegister( 0, "CData"	);
+		static FXTexture2D<Vector4>		regSource				=	new TRegister( 0, "Source"	);
+		static FXSamplerState			regSamplerPointClamp	=	new SRegister( 0, "SamplerPointClamp"	);
+		static FXSamplerState			regSamplerLinearClamp	=	new SRegister( 1, "SamplerLinearClamp"	);
+
+		[StructLayout(LayoutKind.Sequential, Pack=4)]
+		public struct CDATA
+		{														  
+			public Vector4	ScaleOffset;
+			public Vector4	TargetSize;
+			public Vector4	Color;
+			public Vector4	Dummy;
+		}
+
 		
 		public Filter2( RenderSystem device ) : base( device )
 		{
@@ -44,7 +59,7 @@ namespace Fusion.Engine.Graphics
 		{
 			LoadContent();
 
-			cbuffer	=	new ConstantBuffer( device, typeof(Vector4) );
+			cbuffer	=	new ConstantBuffer( device, typeof(CDATA) );
 
 			Game.Reloading += (s,e) => LoadContent();
 		}
@@ -83,21 +98,12 @@ namespace Fusion.Engine.Graphics
 		/// <param name="disposing"></param>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing) {
+			if (disposing) 
+			{
 				SafeDispose( ref cbuffer );
 			}
 
 			base.Dispose( disposing );
-		}
-
-
-
-		/// <summary>
-		/// Sets default render state
-		/// </summary>
-		void SetDefaultRenderStates()
-		{
-			device.ResetStates();
 		}
 
 		/*-----------------------------------------------------------------------------------------------
@@ -106,10 +112,47 @@ namespace Fusion.Engine.Graphics
 		 * 
 		-----------------------------------------------------------------------------------------------*/
 
-		void SetViewport ( RenderTargetSurface dst )
+		void SetupPass ( RenderTargetSurface dst, Rectangle? dstRegion, ShaderResource src, Rectangle? srcRegion, Color color )
 		{
-			device.SetViewport( dst.Bounds );
-			device.SetScissorRect( dst.Bounds );
+			device.ResetStates();
+
+			CDATA cData = new CDATA();
+
+			cData.TargetSize.X = dst.Width;
+			cData.TargetSize.Y = dst.Height;
+			cData.TargetSize.Z = 1.0f / dst.Width;
+			cData.TargetSize.W = 1.0f / dst.Height;
+
+			if (srcRegion.HasValue && src!=null)
+			{
+				cData.ScaleOffset	=	GetScaleOffset( srcRegion.Value, src.Width, src.Height );
+			}
+			else
+			{	
+				cData.ScaleOffset	=	new Vector4(1,1,0,0);
+			}
+
+			cData.Color	=	color.ToVector4();
+
+			if (dstRegion.HasValue)
+			{
+				device.SetViewport( dstRegion.Value );
+				device.SetScissorRect( dstRegion.Value );
+			}
+			else
+			{
+				device.SetViewport( dst.Bounds );
+				device.SetScissorRect( dst.Bounds );
+			}
+
+			cbuffer.SetData( ref cData );
+
+			device.SetTargets( null, dst );
+
+			device.GfxResources[regSource]				=	src;
+			device.GfxSamplers[regSamplerPointClamp]	=	SamplerState.PointClamp;
+			device.GfxSamplers[regSamplerLinearClamp]	=	SamplerState.LinearClamp;
+			device.GfxConstants[regCData]				=	cbuffer;
 		}
 
 
@@ -140,25 +183,14 @@ namespace Fusion.Engine.Graphics
 		/// <param name="src"></param>
 		/// <param name="filter"></param>
 		/// <param name="rect"></param>
-		public void RenderQuad ( RenderTargetSurface dst, ShaderResource src, Rectangle dstRegion, Rectangle srcRegion )
+		public void RenderQuad ( RenderTargetSurface dst, ShaderResource src, Rectangle dstRegion, Rectangle srcRegion, Color color )
 		{
-			SetDefaultRenderStates();
-
-			using( new PixEvent("StretchRect") ) {
-
-				device.SetTargets( null, dst );
-				device.SetViewport( dstRegion );
-				device.SetScissorRect( dstRegion );
+			using( new PixEvent("RenderQuad") ) 
+			{
+				SetupPass( dst, dstRegion, src, srcRegion, color );
 
 				device.PipelineState	=	factory[ (int)(ShaderFlags.RENDER_QUAD) ];
 
-				Vector4 scaleOffset	=	 GetScaleOffset( srcRegion, src.Width, src.Height );
-				cbuffer.SetData( ref scaleOffset );
-
-				device.GfxResources[0]	=	src;
-				device.GfxSamplers[0]	=	SamplerState.LinearPointClamp;
-				device.GfxConstants[0]	=	cbuffer;
-
 				device.Draw( 4, 0 );
 			}
 			device.ResetStates();
@@ -172,32 +204,16 @@ namespace Fusion.Engine.Graphics
 		/// <param name="src"></param>
 		/// <param name="filter"></param>
 		/// <param name="rect"></param>
-		public void RenderBorder ( RenderTargetSurface dst, Rectangle dstRegion, float width )
+		public void RenderBorder ( RenderTargetSurface dst, Rectangle dstRegion, Color color )
 		{
-			SetDefaultRenderStates();
+			using( new PixEvent("RenderBorder") ) 
+			{
+				SetupPass( dst, dstRegion, null, null, color );
 
-			using( new PixEvent("StretchRect") ) {
-
-				device.SetTargets( null, dst );
-				device.SetScissorRect( dstRegion );
-				device.SetViewport( dstRegion );
-
-				device.PipelineState			=	factory[ (int)(ShaderFlags.RENDER_BORDER) ];
-
-				Vector4 targetSize;
-				targetSize.X = dst.Width;
-				targetSize.Y = dst.Height;
-				targetSize.Z = 1.0f / dst.Width;
-				targetSize.W = 1.0f / dst.Height;
-
-				cbuffer.SetData( targetSize );
-
-				device.GfxSamplers[0]	=	SamplerState.LinearPointClamp;
-				device.GfxConstants[0]	=	cbuffer;
+				device.PipelineState	=	factory[ (int)(ShaderFlags.RENDER_BORDER) ];
 
 				device.Draw( 4, 0 );
 			}
-			device.ResetStates();
 		}
 
 
@@ -209,35 +225,17 @@ namespace Fusion.Engine.Graphics
 		/// <param name="src"></param>
 		/// <param name="filter"></param>
 		/// <param name="rect"></param>
-		public void RenderSpot ( RenderTargetSurface dst, Rectangle dstRegion, float width )
+		public void RenderSpot ( RenderTargetSurface dst, Rectangle dstRegion, Color color )
 		{
-			SetDefaultRenderStates();
+			using( new PixEvent("RenderSpot") ) 
+			{
+				SetupPass( dst, dstRegion, null, null, color );
 
-			using( new PixEvent("StretchRect") ) {
-
-				device.SetTargets( null, dst );
-				device.SetScissorRect( dstRegion );
-				device.SetViewport( dstRegion );
-
-				device.PipelineState			=	factory[ (int)(ShaderFlags.RENDER_SPOT) ];
-
-				Vector4 targetSize;
-				targetSize.X = dst.Width;
-				targetSize.Y = dst.Height;
-				targetSize.Z = 1.0f / dst.Width;
-				targetSize.W = 1.0f / dst.Height;
-
-				cbuffer.SetData( ref targetSize );
-
-				device.GfxSamplers[0]	=	SamplerState.LinearPointClamp;
-				device.GfxConstants[0]	=	cbuffer;
+				device.PipelineState	=	factory[ (int)(ShaderFlags.RENDER_SPOT) ];
 
 				device.Draw( 4, 0 );
 			}
 			device.ResetStates();
 		}
-
-
-
 	}
 }

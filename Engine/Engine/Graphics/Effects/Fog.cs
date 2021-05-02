@@ -306,8 +306,8 @@ namespace Fusion.Engine.Graphics {
 			device.ComputeResources	[ regClusterTable		]	=	rs.LightManager.LightGrid.GridTexture		;
 			device.ComputeResources	[ regLightIndexTable	]	=	rs.LightManager.LightGrid.IndexDataGpu		;
 			device.ComputeResources	[ regLightDataTable		]	=	rs.LightManager.LightGrid.LightDataGpu		;
-			device.ComputeResources	[ regShadowMap			]	=	rs.ShadowSystem.ShadowMap.ShadowTexture		;
-			device.ComputeResources	[ regShadowMask			]	=	rs.ShadowSystem.ShadowMap.ParticleShadowTexture	;
+			device.ComputeResources	[ regShadowMap			]	=	rs.ShadowSystem.ShadowMap.ShadowTextureLowRes		;
+			device.ComputeResources	[ regShadowMask			]	=	rs.ShadowSystem.ShadowMap.ParticleShadowTextureLowRes	;
 			device.ComputeResources	[ regLutAP0				]	=	rs.Sky.LutAP0;
 			device.ComputeResources	[ regLutAP1				]	=	rs.Sky.LutAP1;
 			device.ComputeResources	[ regShadowHistory		]	=	shadowHistory;

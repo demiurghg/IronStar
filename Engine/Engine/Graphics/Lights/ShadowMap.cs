@@ -54,7 +54,7 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		public ShaderResource ShadowTexture {
 			get {
-				return depthBuffer;
+				return shadowMap;
 			}
 		}
 
@@ -64,7 +64,7 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		public ShaderResource ShadowTextureLowRes {
 			get {
-				return depthBuffer;
+				return shadowMapLowRes;
 			}
 		}
 
@@ -75,6 +75,16 @@ namespace Fusion.Engine.Graphics
 		public RenderTarget2D ParticleShadowTexture {
 			get {
 				return prtShadow;
+			}
+		}
+
+		/// <summary>
+		/// Gets color shadow map buffer.
+		/// Actually stores depth value.
+		/// </summary>
+		public ShaderResource ParticleShadowTextureLowRes {
+			get {
+				return prtShadowLowRes;
 			}
 		}
 
@@ -95,9 +105,14 @@ namespace Fusion.Engine.Graphics
 		readonly int	minRegionSize;
 		readonly ShadowSystem ss;
 		DepthStencil2D	depthBuffer;
+		RenderTarget2D	shadowMap;
 		RenderTarget2D	prtShadow;
+		RenderTarget2D	shadowMapLowRes;
+		RenderTarget2D	prtShadowLowRes;
 		ConstantBuffer	constCascadeShadow;
 		int frameCounter = 0;
+
+		List<Rectangle> dirtyRegionList = new List<Rectangle>();
 
 
 
@@ -130,14 +145,17 @@ namespace Fusion.Engine.Graphics
 			cache				=	new LRUImageCache<object>(shadowMapSize);
 
 			depthBuffer			=	new DepthStencil2D( device, DepthFormat.D16,		shadowMapSize,   shadowMapSize   );
+			shadowMap			=	new RenderTarget2D( device, ColorFormat.R16_UNorm,	shadowMapSize,   shadowMapSize   );
 			prtShadow			=	new RenderTarget2D( device, ColorFormat.Rgba8_sRGB,	shadowMapSize,   shadowMapSize   );
+			shadowMapLowRes		=	new RenderTarget2D( device, ColorFormat.R16_UNorm,	shadowMapSize/4, shadowMapSize/4 );
+			prtShadowLowRes		=	new RenderTarget2D( device, ColorFormat.Rgba8_sRGB,	shadowMapSize/4, shadowMapSize/4 );
 
 			constCascadeShadow	=	new ConstantBuffer( device, typeof(CASCADE_SHADOW) );
 
 			cascades[0]	=	new ShadowCascade(0, maxRegionSize, Color.White);
-			cascades[1]	=	new ShadowCascade(1, maxRegionSize, new Color(255,128,128) );
-			cascades[2]	=	new ShadowCascade(2, maxRegionSize, new Color(128,255,128) );
-			cascades[3]	=	new ShadowCascade(3, maxRegionSize, new Color(128,128,255) );
+			cascades[1]	=	new ShadowCascade(1, maxRegionSize, new Color(255,0,0) );
+			cascades[2]	=	new ShadowCascade(2, maxRegionSize, new Color(0,255,0) );
+			cascades[3]	=	new ShadowCascade(3, maxRegionSize, new Color(0,0,255) );
 		}
 
 
@@ -152,6 +170,8 @@ namespace Fusion.Engine.Graphics
 			{
 				SafeDispose( ref depthBuffer );
 				SafeDispose( ref prtShadow );
+				SafeDispose( ref shadowMapLowRes );
+				SafeDispose( ref prtShadowLowRes );
 				SafeDispose( ref constCascadeShadow );
 			}
 
@@ -348,9 +368,22 @@ namespace Fusion.Engine.Graphics
 
 
 
-		void ClearShadowRegion( Rectangle region )
+		[Obsolete("Very slow??!")]
+		void ClearShadowDepthRegion( Rectangle region )
 		{
 			rs.Filter.ClearDepth( depthBuffer.Surface, region );
+		}
+
+
+		void CopyShadowRegionToLowRes( Rectangle region )
+		{
+			var scale			=	depthBuffer.Width / shadowMapLowRes.Width;
+			var regionLowRes	=	new Rectangle( 
+				region.X / scale, region.Y / scale,
+				region.Width / scale, region.Height / scale );
+
+			rs.Filter2.CopyColor( prtShadowLowRes.Surface, prtShadow,	regionLowRes, region, Color.White );
+			rs.Filter2.CopyDepth( shadowMapLowRes.Surface, shadowMap,	regionLowRes, region );
 		}
 
 
@@ -373,6 +406,10 @@ namespace Fusion.Engine.Graphics
 		/// <param name="lightSet"></param>
 		public void RenderShadowMaps ( GameTime gameTime, Camera camera, RenderSystem rs, RenderWorld renderWorld, LightSet lightSet, InstanceGroup group = InstanceGroup.NotWeapon )
 		{
+			dirtyRegionList.Clear();
+
+			device.Clear( depthBuffer.Surface );
+
 			frameCounter++;
 			//
 			//	Allocate shadow map regions :
@@ -420,13 +457,11 @@ namespace Fusion.Engine.Graphics
 			{
 				foreach (var cascade in cascades)
 				{
-					var contextSolid	=	new ShadowContext( shadowCamera, cascade, depthBuffer.Surface );
+					var contextSolid	=	new ShadowContext( rs, shadowCamera, cascade, depthBuffer.Surface, shadowMap.Surface );
 
 					if (NeedCascadeUpdate(cascade))
 					{
 						ComputeCascadeMatricies( cascade, camera, lightSet );
-
-						ClearShadowRegion( cascade.ShadowRegion );
 
 						shadowCamera.SetView( cascade.ViewMatrix );
 						shadowCamera.SetProjection( cascade.ProjectionMatrix );
@@ -443,9 +478,9 @@ namespace Fusion.Engine.Graphics
 			{
 				foreach ( var spot in lights ) 
 				{
-					ClearShadowRegion( spot.ShadowRegion );
+					ClearShadowDepthRegion( spot.ShadowRegion );
 
-					var contextSolid  = new ShadowContext( shadowCamera, spot, depthBuffer.Surface );
+					var contextSolid  = new ShadowContext( rs, shadowCamera, spot, depthBuffer.Surface, shadowMap.Surface );
 
 					shadowCamera.SetView( spot.SpotView );
 					shadowCamera.SetProjection( spot.Projection );
@@ -473,6 +508,8 @@ namespace Fusion.Engine.Graphics
 							var dstRegion	=	cascade.ShadowRegion;
 							var color		=	ss.ShowSplits ? cascade.Color : Color.White;
 							rs.Filter2.RenderBorder( prtShadow.Surface, dstRegion, color );
+
+							dirtyRegionList.Add( dstRegion );
 						}
 					}
 
@@ -487,14 +524,24 @@ namespace Fusion.Engine.Graphics
 						{
 							var dstRegion	=	spot.ShadowRegion;
 							var	srcRegion	=	lightSet.SpotAtlas.AbsoluteRectangles[ clip.FirstIndex ];
-							rs.Filter2.RenderQuad( prtShadow.Surface, lightSet.SpotAtlas.Texture.Srv, dstRegion, srcRegion, Color.White );
+							rs.Filter2.CopyColor( prtShadow.Surface, lightSet.SpotAtlas.Texture.Srv, dstRegion, srcRegion, Color.White );
+							dirtyRegionList.Add( dstRegion );
 						} 
 						else 
 						{
 							var dstRegion	=	spot.ShadowRegion;
 							rs.Filter2.RenderSpot( prtShadow.Surface, dstRegion, Color.White );
+							dirtyRegionList.Add( dstRegion );
 						}
 					}
+				}
+			}
+
+			using ( new PixEvent( "Downsample Shadow" ) ) 
+			{
+				foreach ( var rect in dirtyRegionList )
+				{
+					CopyShadowRegionToLowRes( rect );
 				}
 			}
 		}

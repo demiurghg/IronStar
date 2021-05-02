@@ -70,6 +70,7 @@ namespace Fusion.Drivers.Graphics {
 		public static DepthStencilState		Sky			{ get; private set; }
 		public static DepthStencilState		LightMark	{ get; private set; }
 		public static DepthStencilState		LightPass	{ get; private set; }
+		public static DepthStencilState		DepthWrite	{ get; private set; }
 
 
 		/// <summary>
@@ -98,6 +99,14 @@ namespace Fusion.Drivers.Graphics {
 			None = new DepthStencilState() {
 				DepthEnabled = false,
 				DepthWriteEnabled = false
+			};
+
+
+			DepthWrite = new DepthStencilState()
+			{
+				DepthEnabled		=	true,
+				DepthComparison		=	ComparisonFunc.Always,
+				DepthWriteEnabled	=	true,
 			};
 
 			LightMark	=	new DepthStencilState() {

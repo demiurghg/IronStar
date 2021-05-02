@@ -63,6 +63,12 @@ namespace Fusion.Engine.Graphics
 		}
 
 
+		public override string ToString()
+		{
+			return string.Format("{0} : {1}", Mode, Name );
+		}
+
+
 		/// <summary>
 		/// Creates instance of EnvLight
 		/// </summary>

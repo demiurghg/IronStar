@@ -95,6 +95,7 @@ namespace Fusion.Drivers.Graphics {
 		Rgba32F,
 		Rgb32F,
 		Rg16_UNorm,
+		R16_UNorm,
 		Dxt1,
 		Dxt3,
 		Dxt5,
@@ -358,7 +359,8 @@ namespace Fusion.Drivers.Graphics {
 				case ColorFormat.Rgba32		: return 16;
 				case ColorFormat.Rgba32F	: return 16;
 				case ColorFormat.Rgb32F		: return 12;
-				case ColorFormat.Rg16_UNorm : return 4;
+				case ColorFormat.Rg16_UNorm	: return 4;
+				case ColorFormat.R16_UNorm	: return 2;
 				case ColorFormat.Dxt1		: return -1;
 				case ColorFormat.Dxt3		: return -1;
 				case ColorFormat.Dxt5		: return -1;
@@ -414,6 +416,7 @@ namespace Fusion.Drivers.Graphics {
 				case ColorFormat.Rgba32		: return Format.R32G32B32A32_UInt;
 				case ColorFormat.Rgb32F		: return Format.R32G32B32_Float;
 				case ColorFormat.Rg16_UNorm	: return Format.R16G16_UNorm;
+				case ColorFormat.R16_UNorm	: return Format.R16_UNorm;
 				case ColorFormat.Dxt1		: return Format.BC1_UNorm;
 				case ColorFormat.Dxt3		: return Format.BC2_UNorm;
 				case ColorFormat.Dxt5		: return Format.BC3_UNorm;

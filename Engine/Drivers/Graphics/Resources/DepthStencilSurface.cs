@@ -6,15 +6,19 @@ using System.Threading.Tasks;
 using SharpDX;
 using SharpDX.Direct3D11;
 using Fusion.Core;
+using Fusion.Core.Mathematics;
 
-namespace Fusion.Drivers.Graphics {
-	public class DepthStencilSurface : ShaderResource {
+namespace Fusion.Drivers.Graphics 
+{
+	public class DepthStencilSurface : ShaderResource 
+	{
 
 		public DepthFormat	Format			{ get; private set; }
 		public int			SampleCount		{ get; private set; }
 
 		internal	DepthStencilView	DSV	=	null;
 
+		public Rectangle	Bounds			{ get { return new Rectangle( 0,0, Width, Height ); } }
 
 		/// <summary>
 		/// 

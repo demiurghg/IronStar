@@ -18,13 +18,16 @@ namespace Fusion.Engine.Graphics
 	/// Class for base image processing such as copying, blurring, enhancement, anti-aliasing etc.
 	/// </summary>
 	[RequireShader("filter2", true)]
-	internal class Filter2 : RenderComponent {
-
+	internal class Filter2 : RenderComponent 
+	{
 		[Flags]
-		enum ShaderFlags : int {
-			RENDER_QUAD		= 0x0001,
-			RENDER_BORDER	= 0x0002,
-			RENDER_SPOT		= 0x0004,
+		enum ShaderFlags : int 
+		{
+			COPY			=	1 << 0,
+			COLOR			=	1 << 1,
+			DEPTH			=	1 << 2,
+			RENDER_BORDER	=	1 << 3,
+			RENDER_SPOT		=	1 << 4,
 		}
 
 		Ubershader		shaders;
@@ -88,6 +91,14 @@ namespace Fusion.Engine.Graphics
 			ps.BlendState			=	BlendState.Opaque;
 			ps.RasterizerState		=	RasterizerState.CullNone;
 			ps.DepthStencilState	=	DepthStencilState.None;
+
+			if (flags.HasFlag(ShaderFlags.COLOR))
+			{
+			}
+
+			if (flags.HasFlag(ShaderFlags.DEPTH))
+			{
+			}
 		}
 
 
@@ -112,16 +123,21 @@ namespace Fusion.Engine.Graphics
 		 * 
 		-----------------------------------------------------------------------------------------------*/
 
-		void SetupPass ( RenderTargetSurface dst, Rectangle? dstRegion, ShaderResource src, Rectangle? srcRegion, Color color )
+		void SetupPass ( RenderTargetSurface colorTarget, DepthStencilSurface depthTarget, Rectangle? dstRegion, ShaderResource src, Rectangle? srcRegion, Color color )
 		{
 			device.ResetStates();
 
 			CDATA cData = new CDATA();
 
-			cData.TargetSize.X = dst.Width;
-			cData.TargetSize.Y = dst.Height;
-			cData.TargetSize.Z = 1.0f / dst.Width;
-			cData.TargetSize.W = 1.0f / dst.Height;
+			Rectangle rect = new Rectangle(0,0,1,1);
+
+			if (colorTarget!=null) rect = colorTarget.Bounds;
+			if (depthTarget!=null) rect = depthTarget.Bounds;
+
+			cData.TargetSize.X = rect.Width;
+			cData.TargetSize.Y = rect.Height;
+			cData.TargetSize.Z = 1.0f / rect.Width;
+			cData.TargetSize.W = 1.0f / rect.Height;
 
 			if (srcRegion.HasValue && src!=null)
 			{
@@ -141,13 +157,13 @@ namespace Fusion.Engine.Graphics
 			}
 			else
 			{
-				device.SetViewport( dst.Bounds );
-				device.SetScissorRect( dst.Bounds );
+				device.SetViewport( rect );
+				device.SetScissorRect( rect );
 			}
 
 			cbuffer.SetData( ref cData );
 
-			device.SetTargets( null, dst );
+			device.SetTargets( depthTarget, colorTarget );
 
 			device.GfxResources[regSource]				=	src;
 			device.GfxSamplers[regSamplerPointClamp]	=	SamplerState.PointClamp;
@@ -183,13 +199,35 @@ namespace Fusion.Engine.Graphics
 		/// <param name="src"></param>
 		/// <param name="filter"></param>
 		/// <param name="rect"></param>
-		public void RenderQuad ( RenderTargetSurface dst, ShaderResource src, Rectangle dstRegion, Rectangle srcRegion, Color color )
+		public void CopyColor ( RenderTargetSurface dst, ShaderResource src, Rectangle dstRegion, Rectangle srcRegion, Color color )
 		{
-			using( new PixEvent("RenderQuad") ) 
+			using( new PixEvent("CopyColor") ) 
 			{
-				SetupPass( dst, dstRegion, src, srcRegion, color );
+				SetupPass( dst, null, dstRegion, src, srcRegion, color );
 
-				device.PipelineState	=	factory[ (int)(ShaderFlags.RENDER_QUAD) ];
+				device.PipelineState	=	factory[ (int)(ShaderFlags.COPY|ShaderFlags.COLOR) ];
+
+				device.Draw( 4, 0 );
+			}
+			device.ResetStates();
+		}
+
+
+
+		/// <summary>
+		/// Performs good-old StretchRect to destination buffer with blending.
+		/// </summary>
+		/// <param name="dst"></param>
+		/// <param name="src"></param>
+		/// <param name="filter"></param>
+		/// <param name="rect"></param>
+		public void CopyDepth ( RenderTargetSurface dst, ShaderResource src, Rectangle dstRegion, Rectangle srcRegion )
+		{
+			using( new PixEvent("CopyDepth") ) 
+			{
+				SetupPass( dst, null, dstRegion, src, srcRegion, Color.White );
+
+				device.PipelineState	=	factory[ (int)(ShaderFlags.COPY|ShaderFlags.DEPTH) ];
 
 				device.Draw( 4, 0 );
 			}
@@ -208,7 +246,7 @@ namespace Fusion.Engine.Graphics
 		{
 			using( new PixEvent("RenderBorder") ) 
 			{
-				SetupPass( dst, dstRegion, null, null, color );
+				SetupPass( dst, null, dstRegion, null, null, color );
 
 				device.PipelineState	=	factory[ (int)(ShaderFlags.RENDER_BORDER) ];
 
@@ -229,7 +267,7 @@ namespace Fusion.Engine.Graphics
 		{
 			using( new PixEvent("RenderSpot") ) 
 			{
-				SetupPass( dst, dstRegion, null, null, color );
+				SetupPass( dst, null, dstRegion, null, null, color );
 
 				device.PipelineState	=	factory[ (int)(ShaderFlags.RENDER_SPOT) ];
 

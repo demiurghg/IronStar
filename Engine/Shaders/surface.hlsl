@@ -405,12 +405,12 @@ float4 PSMain( PSInput input ) : SV_TARGET0
 #ifdef SHADOW
 float4 PSMain( PSInput input, float4 vpos : SV_POSITION ) : SV_TARGET0
 {
-#if 0	
+#if 1	
 	float z		= input.ProjPos.z / Camera.FarDistance;
 
-	float dzdx	 = ddx(z);
-	float dzdy	 = ddy(z);
-	float slope = abs(dzdx) + abs(dzdy);
+	float dzdx	=	ddx(z);
+	float dzdy	=	ddy(z);
+	float slope	=	abs(dzdx) + abs(dzdy);
 	
 	#ifdef TRANSPARENT
 		clip( 0.5 - dither2( vpos.x, vpos.y ) );

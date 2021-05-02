@@ -693,41 +693,35 @@ namespace Fusion.Drivers.Graphics {
 			}
 
 
-			if (true) { // lock (deviceContext) {
-
-				this.depthStencilSurface	=	depthStencil;
-				renderTargets.CopyTo( renderTargetSurfaces, 0 );
+			this.depthStencilSurface	=	depthStencil;
+			renderTargets.CopyTo( renderTargetSurfaces, 0 );
 
 
-				if (depthStencil!=null) {
-					w	=	depthStencil.Width;
-					h	=	depthStencil.Height;
+			if (depthStencil!=null) 
+			{
+				w	=	depthStencil.Width;
+				h	=	depthStencil.Height;
+			}
+
+			if (renderTargets.Any(rt=>rt!=null)) 
+			{
+				if (w==-1 || h==-1) {
+					w	=	renderTargets.First().Width;
+					h	=	renderTargets.First().Height;
 				}
-
-				if (renderTargets.Any()) {
 				
-					if (w==-1 || h==-1) {
-						w	=	renderTargets.First().Width;
-						h	=	renderTargets.First().Height;
-					}
-				
-					if ( !renderTargets.All( surf => surf.Width == w && surf.Height == h ) ) {
-						throw new ArgumentException("All surfaces must be the same size", "renderTargets");
-					}
+				if ( !renderTargets.All( surf => surf.Width == w && surf.Height == h ) ) {
+					throw new ArgumentException("All surfaces must be the same size", "renderTargets");
 				}
+			}
 
-				DepthStencilView	dsv		=	depthStencil == null ? null : depthStencil.DSV;
-				RenderTargetView[] 	rtvs	=	renderTargets.Select( rt => rt.RTV ).ToArray();
+			DepthStencilView	dsv		=	depthStencil == null ? null : depthStencil.DSV;
+			RenderTargetView[] 	rtvs	=	renderTargets.Select( rt => rt?.RTV ).ToArray();
 
-				if (!rtvs.Any()) {
-					deviceContext.OutputMerger.SetTargets( dsv, (RenderTargetView)null );
-				} else {
-					deviceContext.OutputMerger.SetTargets( dsv, rtvs );
-				}
-
-				/*if (w>0 && h>0) {
-					SetViewport( 0, 0, w, h );
-				} */
+			if (!rtvs.Any()) {
+				deviceContext.OutputMerger.SetTargets( dsv, (RenderTargetView)null );
+			} else {
+				deviceContext.OutputMerger.SetTargets( dsv, rtvs );
 			}
 		}
 

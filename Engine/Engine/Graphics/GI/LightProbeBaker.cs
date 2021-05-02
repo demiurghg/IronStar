@@ -119,9 +119,11 @@ namespace Fusion.Engine.Graphics.GI
 				writer.WriteFourCC(useGBuffer ? "GBUF" : "HDRI");
 				writer.Write( lightSet.LightProbes.Count );
 
-				for ( int index = 0; index < lightSet.LightProbes.Count; index++ )
+				var lightProbes = lightSet.LightProbes.OrderBy( p0 => p0.Name ).ToList();
+
+				for ( int index = 0; index < lightProbes.Count; index++ )
 				{
-					var lightProbe =	lightSet.LightProbes[index];
+					var lightProbe =	lightProbes[index];
 
 					using ( new PixEvent( "Render Cube" ) )
 					{

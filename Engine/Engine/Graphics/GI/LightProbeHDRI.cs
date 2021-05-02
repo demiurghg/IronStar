@@ -12,7 +12,8 @@ using Fusion.Engine.Graphics.GI2;
 namespace Fusion.Engine.Graphics.GI {
 
 	[ContentLoader(typeof(LightProbeHDRI))]
-	public class LightProbeHDRILoader : ContentLoader {
+	public class LightProbeHDRILoader : ContentLoader 
+	{
 
 		public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 		{
@@ -69,19 +70,27 @@ namespace Fusion.Engine.Graphics.GI {
 
 					var name		=	reader.ReadString();
 
-					probes.Add( name, cubeId );
-					
-					for (int mip=0; mip<RenderSystem.LightProbeMaxMips; mip++)
+					try
 					{
-						int mipSize		=	size >> mip;
-						int dataSize	=	mipSize * mipSize;
-
-						for (int face=0; face<6; face++) 
+						probes.Add( name, cubeId );
+					
+						for (int mip=0; mip<RenderSystem.LightProbeMaxMips; mip++)
 						{
-							reader.Read( buffer, dataSize );
+							int mipSize		=	size >> mip;
+							int dataSize	=	mipSize * mipSize;
 
-							cubeArrayHdr.SetData( cubeId, (CubeFace)face, mip, buffer );
+							for (int face=0; face<6; face++) 
+							{
+								reader.Read( buffer, dataSize );
+
+								cubeArrayHdr.SetData( cubeId, (CubeFace)face, mip, buffer );
+							}
 						}
+					} 
+					catch (Exception e)
+					{
+						Log.Warning("Failed to load light probe: '{0}' #{1}", name, cubeId);
+						Log.Warning(e.Message);
 					}
 				}
 			}

@@ -1,5 +1,5 @@
 #if 0
-$ubershader RENDER_QUAD 
+$ubershader COPY COLOR|DEPTH
 $ubershader RENDER_BORDER
 $ubershader RENDER_SPOT
 #endif
@@ -19,13 +19,10 @@ float4 GenerateQuadCoords( int vertexID )
 
 //-------------------------------------------------------------------------------
 
-#if defined(RENDER_QUAD)
+#if defined(COPY)
 
-cbuffer GaussWeightsCB : register(b0) {
-	float4 scaleOffset;
-};
-
-struct PS_IN {
+struct PS_IN 
+{
     float4 position : SV_POSITION;
   	float2 uv : TEXCOORD0;
 };
@@ -37,7 +34,7 @@ PS_IN VSMain(uint VertexID : SV_VertexID)
 	
 	output.position	=	GenerateQuadCoords( VertexID );
 	output.uv 		=	output.position.xy;// * float2(0.5f, -0.5f) + 0.5f;
-	output.uv		=	mad( output.uv, scaleOffset.xy, scaleOffset.zw );
+	output.uv		=	mad( output.uv, CData.ScaleOffset.xy, CData.ScaleOffset.zw );
 
 	return output;
 }
@@ -45,7 +42,12 @@ PS_IN VSMain(uint VertexID : SV_VertexID)
 
 float4 PSMain(PS_IN input) : SV_Target
 {
+#ifdef COLOR	
 	return Source.SampleLevel(SamplerLinearClamp, input.uv, 0) * CData.Color;
+#endif	
+#ifdef DEPTH	
+	return Source.SampleLevel(SamplerLinearClamp, input.uv, 0).rrrr;
+#endif	
 }
 
 #endif

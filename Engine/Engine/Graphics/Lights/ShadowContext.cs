@@ -23,23 +23,32 @@ namespace Fusion.Engine.Graphics
 		readonly float depthBias;
 		readonly float slopeBias;
 		readonly DepthStencilSurface depthBuffer;
+		readonly RenderTargetSurface colorBuffer;
+
+		const float depthBiasScale = 1.0f / 65536.0f;
 		
 
-		public ShadowContext ( Camera camera, ShadowCascade cascade, DepthStencilSurface depthBuffer )
+		public ShadowContext ( RenderSystem rs, Camera camera, ShadowCascade cascade, DepthStencilSurface depthBuffer, RenderTargetSurface colorBuffer )
 		{
 			this.camera			=	camera;
 			this.farDistance	=	1;
 			this.region			=	cascade.ShadowRegion;
 			this.depthBuffer	=	depthBuffer;
+			this.colorBuffer	=	colorBuffer;
+			this.depthBias		=	rs.ShadowSystem.CascadeDepthBias * depthBiasScale;
+			this.slopeBias		=	rs.ShadowSystem.CascadeSlopeBias;
 		}
 
 
-		public ShadowContext ( Camera camera, SpotLight spot, DepthStencilSurface depthBuffer )
+		public ShadowContext ( RenderSystem rs, Camera camera, SpotLight spot, DepthStencilSurface depthBuffer, RenderTargetSurface colorBuffer )
 		{
 			this.camera			=	camera;
 			this.farDistance	=	spot.Projection.GetFarPlaneDistance();
 			this.region			=	spot.ShadowRegion;
 			this.depthBuffer	=	depthBuffer;
+			this.colorBuffer	=	colorBuffer;
+			this.depthBias		=	rs.ShadowSystem.SpotDepthBias * depthBiasScale;
+			this.slopeBias		=	rs.ShadowSystem.SpotSlopeBias;
 		}
 
 
@@ -51,7 +60,7 @@ namespace Fusion.Engine.Graphics
 
 		public void SetupRenderTargets ( GraphicsDevice device )
 		{
-			device.SetTargets( depthBuffer );
+			device.SetTargets( depthBuffer, colorBuffer );
 		}
 
 

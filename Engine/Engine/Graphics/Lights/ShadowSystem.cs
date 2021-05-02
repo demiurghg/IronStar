@@ -47,6 +47,8 @@ namespace Fusion.Engine.Graphics
 		[AECategory("Performance")]		[Config]	public CascadeUpdateMode CascadeUpdateMode { get; set; } = CascadeUpdateMode.Interleave1122;
 
 		[AECategory("Debug")]			[Config]	public bool ShowSplits { get; set; } = false;
+		[AECategory("Debug")]			[Config]	public bool UseHighResFogShadows { get; set; } = false;
+		[AECategory("Debug")]			[Config]	public bool ClearEntireShadow { get; set; } = false;
 
 
 		[AECategory("Cascade Shadows")] [Config]	public bool SnapShadowmapCascades { get; set; } = true;

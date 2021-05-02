@@ -173,7 +173,7 @@ float3	ComputeCascadedShadows ( GEOMETRY geometry, float2 vpos, CASCADE_SHADOW s
 }
 
 
-//#define LINEAR_DEPTH
+#define LINEAR_DEPTH
 
 float3 ComputeSpotShadow ( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc )
 {

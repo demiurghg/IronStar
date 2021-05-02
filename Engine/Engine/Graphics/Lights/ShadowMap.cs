@@ -64,7 +64,7 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		public ShaderResource ShadowTextureLowRes {
 			get {
-				return shadowMapLowRes;
+				return ss.UseHighResFogShadows ? shadowMap : shadowMapLowRes;
 			}
 		}
 
@@ -84,7 +84,7 @@ namespace Fusion.Engine.Graphics
 		/// </summary>
 		public ShaderResource ParticleShadowTextureLowRes {
 			get {
-				return prtShadowLowRes;
+				return ss.UseHighResFogShadows ? prtShadow : prtShadowLowRes;
 			}
 		}
 
@@ -367,14 +367,6 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-
-		[Obsolete("Very slow??!")]
-		void ClearShadowDepthRegion( Rectangle region )
-		{
-			rs.Filter.ClearDepth( depthBuffer.Surface, region );
-		}
-
-
 		void CopyShadowRegionToLowRes( Rectangle region )
 		{
 			var scale			=	depthBuffer.Width / shadowMapLowRes.Width;
@@ -400,15 +392,31 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="lightSet"></param>
-		public void RenderShadowMaps ( GameTime gameTime, Camera camera, RenderSystem rs, RenderWorld renderWorld, LightSet lightSet, InstanceGroup group = InstanceGroup.NotWeapon )
+		void ClearShadows()
 		{
 			dirtyRegionList.Clear();
 
 			device.Clear( depthBuffer.Surface );
+
+			if (ss.ClearEntireShadow)
+			{
+				device.Clear( shadowMap.Surface, Color4.White );
+			}
+		}
+
+
+		void ClearShadowRegion( Rectangle region )
+		{
+			if (!ss.ClearEntireShadow)
+			{
+				rs.Filter2.ClearColor( shadowMap.Surface, region, Color.White );
+			}
+		}
+
+
+		public void RenderShadowMaps ( GameTime gameTime, Camera camera, RenderSystem rs, RenderWorld renderWorld, LightSet lightSet, InstanceGroup group = InstanceGroup.NotWeapon )
+		{
+			ClearShadows();
 
 			frameCounter++;
 			//
@@ -461,6 +469,8 @@ namespace Fusion.Engine.Graphics
 
 					if (NeedCascadeUpdate(cascade))
 					{
+						ClearShadowRegion( cascade.ShadowRegion );
+
 						ComputeCascadeMatricies( cascade, camera, lightSet );
 
 						shadowCamera.SetView( cascade.ViewMatrix );
@@ -478,7 +488,7 @@ namespace Fusion.Engine.Graphics
 			{
 				foreach ( var spot in lights ) 
 				{
-					ClearShadowDepthRegion( spot.ShadowRegion );
+					ClearShadowRegion( spot.ShadowRegion );
 
 					var contextSolid  = new ShadowContext( rs, shadowCamera, spot, depthBuffer.Surface, shadowMap.Surface );
 

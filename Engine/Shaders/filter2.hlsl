@@ -1,5 +1,5 @@
 #if 0
-$ubershader COPY COLOR|DEPTH
+$ubershader CLEAR|COPY COLOR|DEPTH
 $ubershader RENDER_BORDER
 $ubershader RENDER_SPOT
 #endif
@@ -19,7 +19,7 @@ float4 GenerateQuadCoords( int vertexID )
 
 //-------------------------------------------------------------------------------
 
-#if defined(COPY)
+#if defined(COPY) || defined(CLEAR)
 
 struct PS_IN 
 {
@@ -43,10 +43,20 @@ PS_IN VSMain(uint VertexID : SV_VertexID)
 float4 PSMain(PS_IN input) : SV_Target
 {
 #ifdef COLOR	
-	return Source.SampleLevel(SamplerLinearClamp, input.uv, 0) * CData.Color;
+	#ifdef COPY
+		return Source.SampleLevel(SamplerLinearClamp, input.uv, 0) * CData.Color;
+	#endif
+	#ifdef CLEAR
+		return CData.Color;
+	#endif
 #endif	
 #ifdef DEPTH	
-	return Source.SampleLevel(SamplerLinearClamp, input.uv, 0).rrrr;
+	#ifdef COPY
+		return Source.SampleLevel(SamplerLinearClamp, input.uv, 0).rrrr;
+	#endif
+	#ifdef CLEAR
+		return CData.Color.r;
+	#endif
 #endif	
 }
 

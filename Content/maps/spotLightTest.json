@@ -467,11 +467,11 @@
         "Name": "MapSpotLight0",
         "Visible": true,
         "Frozen": false,
-        "Translation": "0, 6, 52",
+        "Translation": "0, 12, 52",
         "Scaling": "1, 1, 1",
-        "Rotation": "-0.9915963, 0, 0, 0.129370049",
+        "Rotation": "-0.9662269, 0, 0, 0.257692546",
         "TranslateX": 0.0,
-        "TranslateY": 6.0,
+        "TranslateY": 12.0,
         "TranslateZ": 52.0
       },
       {

@@ -24,10 +24,11 @@ namespace Fusion.Engine.Graphics
 		enum ShaderFlags : int 
 		{
 			COPY			=	1 << 0,
-			COLOR			=	1 << 1,
-			DEPTH			=	1 << 2,
-			RENDER_BORDER	=	1 << 3,
-			RENDER_SPOT		=	1 << 4,
+			CLEAR			=	1 << 1,
+			COLOR			=	1 << 2,
+			DEPTH			=	1 << 3,
+			RENDER_BORDER	=	1 << 4,
+			RENDER_SPOT		=	1 << 5,
 		}
 
 		Ubershader		shaders;
@@ -206,6 +207,27 @@ namespace Fusion.Engine.Graphics
 				SetupPass( dst, null, dstRegion, src, srcRegion, color );
 
 				device.PipelineState	=	factory[ (int)(ShaderFlags.COPY|ShaderFlags.COLOR) ];
+
+				device.Draw( 4, 0 );
+			}
+			device.ResetStates();
+		}
+
+
+		/// <summary>
+		/// Performs good-old StretchRect to destination buffer with blending.
+		/// </summary>
+		/// <param name="dst"></param>
+		/// <param name="src"></param>
+		/// <param name="filter"></param>
+		/// <param name="rect"></param>
+		public void ClearColor ( RenderTargetSurface dst, Rectangle dstRegion, Color color )
+		{
+			using( new PixEvent("CopyColor") ) 
+			{
+				SetupPass( dst, null, dstRegion, null, null, color );
+
+				device.PipelineState	=	factory[ (int)(ShaderFlags.CLEAR|ShaderFlags.COLOR) ];
 
 				device.Draw( 4, 0 );
 			}

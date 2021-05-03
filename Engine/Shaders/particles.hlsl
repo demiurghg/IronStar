@@ -482,7 +482,8 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 		// if (depth < vpos.z) {
 		// 	clip(-1);
 		// }
-		float softFactor	=	saturate( (sceneZ - prtZ) * input.ViewPosSZ.w );
+		float particleThickness =	input.ViewPosSZ.w;
+		float softFactor		=	saturate( (sceneZ - prtZ) * particleThickness + 1 ) * saturate(prtZ * particleThickness);
 	#endif
 
 	#ifdef SOFT

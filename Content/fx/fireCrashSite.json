@@ -145,7 +145,7 @@
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "gauss",
       "MinLifetime": 0.5,
-      "MaxLifetime": 1.0
+      "MaxLifetime": 1.4
     },
     "Shape": {
       "$id": "15",

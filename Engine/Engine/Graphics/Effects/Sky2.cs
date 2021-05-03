@@ -421,7 +421,7 @@ namespace Fusion.Engine.Graphics {
 			var viewOrigin		=	upVector * eleveation;
 
 			skyData.BetaRayleigh		=	BetaRayleigh * MathUtil.Exp2( RayleighScale );	
-			skyData.BetaMie				=	BetaMie		 * MathUtil.Exp2( MieScale );
+			skyData.BetaMie				=	BetaMie		 * MathUtil.Exp2( MieScale ) * MieColor;
 			skyData.PlanetRadius		=	( PlanetRadius ) * 1000	;
 			skyData.AtmosphereRadius	=	( PlanetRadius + AtmosphereHeight ) * 1000;
 			skyData.RayleighHeight		=	RayleighHeight;

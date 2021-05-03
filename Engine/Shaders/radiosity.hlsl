@@ -391,10 +391,10 @@ void CSMain(
 void StoreLightVolume( int3 xyz, float4 shR, float4 shG, float4 shB, float skyFactor )
 {
 	shR.xyz += LightEpsilon;
-	LightVolumeL0[ xyz ]	=	float4( float3( shR.x		, shG.x			, shB.x		 	)				, 0 );
+	LightVolumeL0[ xyz ]	=	float4( float3( shR.x		, shG.x			, shB.x		 	)				, skyFactor );
 	LightVolumeL1[ xyz ]	=	float4( float3( shR.y/shR.x , shG.y/shG.x	, shB.y/shB.x	) * 0.5f + 0.5f	, skyFactor );
-	LightVolumeL2[ xyz ]	=	float4( float3( shR.z/shR.x , shG.z/shG.x	, shB.z/shB.x	) * 0.5f + 0.5f	, 0 );
-	LightVolumeL3[ xyz ]	=	float4( float3( shR.w/shR.x , shG.w/shG.x	, shB.w/shB.x	) * 0.5f + 0.5f	, 0 );
+	LightVolumeL2[ xyz ]	=	float4( float3( shR.z/shR.x , shG.z/shG.x	, shB.z/shB.x	) * 0.5f + 0.5f	, skyFactor );
+	LightVolumeL3[ xyz ]	=	float4( float3( shR.w/shR.x , shG.w/shG.x	, shB.w/shB.x	) * 0.5f + 0.5f	, skyFactor );
 }
 
 [numthreads(ClusterSize,ClusterSize,ClusterSize)] 
@@ -417,6 +417,7 @@ void CSMain(
 	float k = 1.0f / num_samples;
 	
 	float3	random_vector	=	hammersley_sphere_uniform( groupIndex, TileSize * TileSize );
+	float	skyFactor		=	0;
 	
 	for (uint i=0; i<num_samples; i++)
 	{
@@ -443,6 +444,7 @@ void CSMain(
 			else
 			{
 				light		=	SkyBox.SampleLevel( LinearSampler, rayDir.xyz * float3(-1,1,1), 0 ).rgb;
+				skyFactor	+=	2;
 			}
 
 			irradianceR		+=	SHL1EvaluateDiffuse( k * light.r, rayDir );
@@ -451,7 +453,7 @@ void CSMain(
 		}
 	}
 
-	StoreLightVolume( storeXYZ, irradianceR, irradianceG, irradianceB, 0.1f );
+	StoreLightVolume( storeXYZ, irradianceR, irradianceG, irradianceB, skyFactor * k );
 }
 
 #endif

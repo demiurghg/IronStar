@@ -563,7 +563,8 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 	#endif
 	
 	//-----------------------------------------
-	//	apply ground fog (sky view only) :
+	//	apply fog on top of sky 
+	//	(sky view only)
 	//-----------------------------------------
 	
 	#if 1

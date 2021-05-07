@@ -469,7 +469,7 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	float	luminanceAdaptLinear	=	EVToLuminance( luminanceAdaptEV );
 	float	luminanceLinear			=	EVToLuminance( luminanceEV );
 
-			//luminanceAdaptLinear	=	MeasuredLuminance[0].g;
+			luminanceAdaptLinear	=	MeasuredLuminance[0].g;
 	
 	float3	bloom		=	( bloom0 * 1.000f  
 							+ bloom1 * 2.000f  

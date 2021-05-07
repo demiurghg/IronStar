@@ -56,6 +56,7 @@ namespace Fusion.Engine.Graphics {
 		static FXTexture3D<Vector4>							regIrradianceVolumeL3		=	new TRegister(17, "IrradianceVolumeL3"		);
 																											
 		static FXStructuredBuffer<Vector4>					regLightMapRegionsGS		=	new TRegister(18, "lightMapRegionsGS"		);
+		static FXStructuredBuffer<Vector4>					regExposureBuffer			=	new TRegister(19, "ExposureBuffer"			);
 																															
 		static FXRWStructuredBuffer<Particle>				regparticleBuffer			=	new URegister( 0, "particleBuffer"			);
 		static FXConsumeStructuredBuffer<uint>				regdeadParticleIndicesPull	=	new URegister( 1, "deadParticleIndicesPull"	);
@@ -673,6 +674,7 @@ namespace Fusion.Engine.Graphics {
 					}
 
 					device.GfxResources[ regLightMapRegionsGS ]	=	lightMapRegions;
+					device.GfxResources[ regExposureBuffer ]	=	rw.HdrFrame.MeasuredNew;
 
 					//	setup PS :
 					device.PipelineState	=	factory[ (int)flags ];

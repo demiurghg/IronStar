@@ -97,6 +97,8 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public float	Alpha;
 
+		public float	Exposure;
+
 		public float	Roughness;
 
 		public float	Metallic;
@@ -113,32 +115,32 @@ namespace Fusion.Engine.Graphics {
 		/// Values between 0 and 1 means reduced gravity, like snowflakes or dust.
 		/// Negative values means particle that has positive buoyancy.
 		/// </summary>
-		public float		Gravity;                
+		public float		Gravity;
 
 		/// <summary>
 		/// Counter velocity deceleration
 		/// </summary>
-		public float		Damping;                
+		public float		Damping;
 
 		/// <summary>
 		/// Initial size of the particle
 		/// </summary>
-		public float		Size0;                  
+		public float		Size0;
 
 		/// <summary>
 		/// Terminal size of the particle
 		/// </summary>
-		public float		Size1;                  
+		public float		Size1;
 
 		/// <summary>
 		/// Initial rotation of the particle
 		/// </summary>
-		public float		Rotation0;                 
+		public float		Rotation0;
 
 		/// <summary>
 		/// Terminal rotation of the particle
 		/// </summary>
-		public float		Rotation1;                 
+		public float		Rotation1;
 
 		/// <summary>
 		/// Total particle life-time
@@ -150,27 +152,27 @@ namespace Fusion.Engine.Graphics {
 		/// particle injection time caused by discrete updating.
 		/// Internally this field used as particle life-time counter.
 		/// </summary>
-		public float		TimeLag;	           
+		public float		TimeLag;
 
 		/// <summary>
 		/// Fade in time fraction
 		/// </summary>
-		public float		FadeIn;                
+		public float		FadeIn;
 
 		/// <summary>
 		/// Fade out time fraction
 		/// </summary>
-		public float		FadeOut;               
+		public float		FadeOut;
 
 		/// <summary>
 		/// Index of the image in the texture atlas
 		/// </summary>
-		public int		ImageIndex;        
+		public int		ImageIndex;
 		
 		/// <summary>
 		/// Number of frames
 		/// </summary>
-		public int		ImageCount;    
+		public int		ImageCount;
 
 		/// <summary>
 		/// Zero means world-space basis
@@ -180,7 +182,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Index of the image in the texture atlas
 		/// </summary>
-		public ParticleFX	Effects;      
+		public ParticleFX	Effects;
 		
 
 		void CheckFloat ( float value )
@@ -191,7 +193,7 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		[Conditional("DEBUG")]		
+		[Conditional("DEBUG")]
 		public void Check ()
 		{
 			CheckFloat( Position.X );

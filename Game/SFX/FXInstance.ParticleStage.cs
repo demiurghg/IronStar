@@ -113,6 +113,7 @@ namespace IronStar.SFX {
 
 				p.Color			=   stage.Color.ToColor3();
 				p.Alpha			=	stage.Alpha;
+				p.Exposure		=	stage.Exposure;
 				p.Roughness		=	stage.Roughness;
 				p.Metallic		=	stage.Metallic;
 				p.Intensity		=	stage.Intensity;

@@ -154,7 +154,7 @@ struct FOG_DATA {
 #endif
 
 // Fusion.Engine.Graphics.Particle
-// Marshal.SizeOf = 128
+// Marshal.SizeOf = 132
 #ifndef __STRUCT_Particle
 #define __STRUCT_Particle 1
 struct Particle {
@@ -163,25 +163,26 @@ struct Particle {
 	float3     Acceleration;                  // offset:   24
 	float3     Color;                         // offset:   36
 	float      Alpha;                         // offset:   48
-	float      Roughness;                     // offset:   52
-	float      Metallic;                      // offset:   56
-	float      Intensity;                     // offset:   60
-	float      Scattering;                    // offset:   64
-	float      BeamFactor;                    // offset:   68
-	float      Gravity;                       // offset:   72
-	float      Damping;                       // offset:   76
-	float      Size0;                         // offset:   80
-	float      Size1;                         // offset:   84
-	float      Rotation0;                     // offset:   88
-	float      Rotation1;                     // offset:   92
-	float      LifeTime;                      // offset:   96
-	float      TimeLag;                       // offset:  100
-	float      FadeIn;                        // offset:  104
-	float      FadeOut;                       // offset:  108
-	int        ImageIndex;                    // offset:  112
-	int        ImageCount;                    // offset:  116
-	int        WeaponIndex;                   // offset:  120
-	uint       Effects;                       // offset:  124
+	float      Exposure;                      // offset:   52
+	float      Roughness;                     // offset:   56
+	float      Metallic;                      // offset:   60
+	float      Intensity;                     // offset:   64
+	float      Scattering;                    // offset:   68
+	float      BeamFactor;                    // offset:   72
+	float      Gravity;                       // offset:   76
+	float      Damping;                       // offset:   80
+	float      Size0;                         // offset:   84
+	float      Size1;                         // offset:   88
+	float      Rotation0;                     // offset:   92
+	float      Rotation1;                     // offset:   96
+	float      LifeTime;                      // offset:  100
+	float      TimeLag;                       // offset:  104
+	float      FadeIn;                        // offset:  108
+	float      FadeOut;                       // offset:  112
+	int        ImageIndex;                    // offset:  116
+	int        ImageCount;                    // offset:  120
+	int        WeaponIndex;                   // offset:  124
+	uint       Effects;                       // offset:  128
 };
 #endif
 
@@ -243,6 +244,7 @@ Texture3D<float4>              IrradianceVolumeL1             : register(t15);
 Texture3D<float4>              IrradianceVolumeL2             : register(t16);
 Texture3D<float4>              IrradianceVolumeL3             : register(t17);
 StructuredBuffer<float4>       lightMapRegionsGS              : register(t18);
+StructuredBuffer<float4>       ExposureBuffer                 : register(t19);
 RWStructuredBuffer<Particle>   particleBuffer                 : register(u0);
 ConsumeStructuredBuffer<uint>  deadParticleIndicesPull        : register(u1);
 AppendStructuredBuffer<uint>   deadParticleIndicesPush        : register(u1);

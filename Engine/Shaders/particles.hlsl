@@ -261,8 +261,9 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	
 	float  sz 		=   lerp( prt.Size0, prt.Size1, factor )/2;
 	float  fade		=	Ramp( prt.FadeIn, prt.FadeOut, factor );
-	float3 color3	=	SRGBToLinear(prt.Color) * prt.Intensity;
-	float  alpha	=	prt.Alpha * fade;
+	float  intensity=	lerp( prt.Intensity, prt.Intensity * ExposureBuffer[0].g, prt.Exposure );
+	float3 color3	=	SRGBToLinear(prt.Color) * intensity;
+	float  alpha	=	saturate(prt.Alpha * fade);
 	float4 color	=	float4( color3, alpha );
 
 	if (prt.Effects==ParticleFX_Distortive) {
@@ -489,7 +490,7 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 	#ifdef SOFT
 		float4 	color	=	Texture.Sample( LinearSampler, input.TexCoord );
 		float3 	light	=	(input.LMFactor > 0.5f) ? LightMap.Sample( LinearSampler, input.LMCoord ).rgb : 1;
-		
+
 		color.rgba		=	SRGBToLinear( color.rgba ) * input.Color;	
 		color.rgba 		*= 	softFactor;
 		color.rgb  		*= 	light.rgb;

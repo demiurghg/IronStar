@@ -362,21 +362,38 @@ namespace IronStar.SFX {
 		public Color Color { get; set; } = Color.White;
 
 		[Description( "Particle alpha factor or alpha-kill threshold" )]
+		[AESlider(0,2,0.1f,0.01f)]
 		public float Alpha { get; set; } = 1;
 
+		[Description( "Exposure compensation factor" )]
+		[AESlider(0,1,0.1f,0.01f)]
+		public float Exposure { get; set; } = 0;
+
 		[Description( "Roughness for hard particles" )]
+		[AESlider(0,1,0.1f,0.01f)]
 		public float Roughness { get; set; } = 0.5f;
 
 		[Description( "Metallic for hard particles" )]
+		[AESlider(0,1,0.1f,0.01f)]
 		public float Metallic { get; set; } = 0.0f;
 
 		[Description( "Particle emission intensity" )]
 		public float Intensity { get; set; } = 100;
 
+		[Description( "Particle emission intensity" )]
+		[AESlider(-4,16,1f,0.01f)]
+		public float IntensityEV 
+		{ 
+			get { return MathUtil.Log2(Intensity); }
+			set { Intensity = MathUtil.Exp2(value); }
+		}					  
+
 		[Description( "Particle approximate subsurface scattering" )]
+		[AESlider(0,1,0.1f,0.01f)]
 		public float Scattering { get; set; } = 0;
 
 		[Description( "Particle extending along velocity vector" )]
+		[AESlider(0,100,1f,0.1f)]
 		public float BeamFactor { get; set; } = 0;
 
 		[Description( "Defines life-time properties of particle stage" )]

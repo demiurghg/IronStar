@@ -213,7 +213,6 @@ namespace Fusion.Engine.Graphics
 
 		enum Flags {	
 			TONEMAPPING			=	0x001,
-			MEASURE_ADAPT		=	0x002,
 			LINEAR				=	0x004, 
 			REINHARD			=	0x008,
 			FILMIC				=	0x010,
@@ -482,10 +481,10 @@ namespace Fusion.Engine.Graphics
 				device.PipelineState		=	factory[ (int)(Flags.COMPUTE_HISTOGRAM) ];
 				device.Dispatch( new Int2(imageWidth, imageHeight), new Int2(BlockSizeX, BlockSizeY) ); 
 
-				device.SetComputeUnorderedAccess( 0, histogramBuffer.UnorderedAccess );
-				device.SetComputeUnorderedAccess( 1, hdrFrame.MeasuredNew.Surface.UnorderedAccess );
-
 				//--------------------
+
+				device.SetComputeUnorderedAccess( 0, histogramBuffer.UnorderedAccess );
+				device.SetComputeUnorderedAccess( 1, hdrFrame.MeasuredNew.UnorderedAccess );
 
 				device.PipelineState		=	factory[ (int)(Flags.AVERAGE_HISTOGRAM) ];
 				device.Dispatch( 1,1,1 ); 
@@ -526,10 +525,6 @@ namespace Fusion.Engine.Graphics
 				device.Draw( 3, 0 );
 			
 				device.ResetStates();
-
-
-				//	swap luminanice buffers :
-				///Misc.Swap( ref hdrFrame.MeasuredNew, ref hdrFrame.MeasuredOld );
 			}
 		}
 	}

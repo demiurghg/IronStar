@@ -72,8 +72,7 @@ namespace Fusion.Engine.Graphics {
 		public RenderTarget2D	DepthSliceMap2		;
 		public RenderTarget2D	DepthSliceMap3		;
 
-		public RenderTarget2D	MeasuredNew			;
-		public RenderTarget2D	MeasuredOld			;
+		public StructuredBuffer	MeasuredNew			;
 
 
 		public HdrFrame ( Game game, int width, int height )
@@ -137,8 +136,7 @@ namespace Fusion.Engine.Graphics {
 			DepthSliceMap2		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.R32F,		halfWidth,	halfHeight, false, true );
 			DepthSliceMap3		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.R32F,		halfWidth,	halfHeight, false, true );
 
-			MeasuredOld			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.R32F,	  1,  1, true );
-			MeasuredNew			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.R32F,	  1,  1, true );
+			MeasuredNew			=	new StructuredBuffer( game.GraphicsDevice, typeof(Vector4), 1, StructuredBufferFlags.None );
 
 			Clear();
 		}
@@ -223,7 +221,6 @@ namespace Fusion.Engine.Graphics {
 				SafeDispose( ref DepthSliceMap2			);
 				SafeDispose( ref DepthSliceMap3			);
 				
-				SafeDispose( ref MeasuredOld			);
 				SafeDispose( ref MeasuredNew			);
 			} 
 

@@ -1,7 +1,7 @@
 
 
 #if 0
-$ubershader		(TONEMAPPING LINEAR|REINHARD|FILMIC)|MEASURE_ADAPT +SHOW_HISTOGRAM
+$ubershader		(TONEMAPPING LINEAR|REINHARD|FILMIC) +SHOW_HISTOGRAM
 $ubershader		COMPOSITION
 $ubershader		COMPUTE_HISTOGRAM|AVERAGE_HISTOGRAM
 #endif
@@ -112,8 +112,19 @@ void CSMain(uint groupIndex : SV_GroupIndex, uint3 threadId : SV_DispatchThreadI
 
 #ifdef AVERAGE_HISTOGRAM
 RWByteAddressBuffer LuminanceHistogram : register(u0);
-RWTexture2D<float> LuminanceOutput : register(u1);
+RWStructuredBuffer<float4> LuminanceOutput : register(u1);
 
+float Sigmoid(float x, float c, float s)
+{
+	return 1.0f / (1 + exp(-s*(x-c)));
+}
+
+float SoftClamp(float x, float L, float H)
+{
+	float D = H - L;
+	float M = 0.5 * (H+L);
+	return D * Sigmoid(x,M,4/D)+L;
+}
 
 groupshared float HistogramShared[NumHistogramBins];
 
@@ -144,51 +155,17 @@ void CSMain(uint groupIndex : SV_GroupIndex)
         float weightedLogAverage 		= 	(HistogramShared[0].x / max((float)pixelCount - countForThisBin, 1.0)) - 1.0;
 		//float weightedLogAverage 		= 	(HistogramShared[0].x / max((float)pixelCount, 1.0)) - 1.0;
         float weightedAverageLuminance	= 	exp2(((weightedLogAverage / 254.0) * logLuminanceRange) + minLogLuminance);
-        float luminanceLastFrame 		=	LuminanceOutput[uint2(0, 0)];
+        float luminanceLastFrame 		=	LuminanceOutput[0].r;
 		
 		weightedAverageLuminance		=	clamp( ComputeEV(weightedAverageLuminance), Params.EVMin, Params.EVMax );
 		
-        float adaptedLuminance 			=	lerp( luminanceLastFrame, weightedAverageLuminance, Params.AdaptationRate );
-        LuminanceOutput[uint2(0, 0)] 	=	adaptedLuminance;
+        float adaptedLuminanceEV				=	lerp( luminanceLastFrame, weightedAverageLuminance, Params.AdaptationRate );
+        float adaptedLuminanceClampedEV			=	SoftClamp( adaptedLuminanceEV, Params.AdaptEVMin, Params.AdaptEVMax );
+		float adaptedLuminanceClampedLinear		=	EVToLuminance( adaptedLuminanceClampedEV );
+        
+		LuminanceOutput[0] 	=	float4( adaptedLuminanceEV, adaptedLuminanceClampedLinear, 0, 0 );
     }
 }
-#endif
-
-
-/*-----------------------------------------------------------------------------
-	Luminance Measurement and Adaptation:
-	Assumed 128x128 input image.
------------------------------------------------------------------------------*/
-#if MEASURE_ADAPT
-
-Texture2D	SourceHdrImage 		: register(t0);
-Texture2D	MasuredLuminance	: register(t1);
-
-
-float4 VSMain(uint VertexID : SV_VertexID) : SV_POSITION
-{
-	return FSQuad( VertexID );
-}
-
-
-float4 PSMain(float4 position : SV_POSITION) : SV_Target
-{
-	float sumLum = 0;
-	const float3 lumVector = float3(0.213f, 0.715f, 0.072f );
-	
-	float oldLum = MasuredLuminance.Load(int3(0,0,0)).r;
-	
-	for (int x=0; x<32; x++) {
-		for (int y=0; y<32; y++) {
-			
-			sumLum += log( dot( lumVector, SourceHdrImage.Load(int3(x,y,3)).rgb ) + 0.0001f );
-		}
-	}
-	sumLum = clamp( exp(sumLum / 1024.0f), Params.LuminanceLowBound, Params.LuminanceHighBound );
-	
-	return lerp( oldLum, max(0.5,min(100,sumLum)), Params.AdaptationRate );
-}
-
 #endif
 
 
@@ -283,15 +260,15 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 
 #ifdef TONEMAPPING
 
-Texture2D			FinalHdrImage 		: register(t0);
-Texture2D			MasuredLuminance	: register(t1);
-Texture2D			BloomTexture		: register(t2);
-Texture2D			BloomMask1			: register(t3);
-Texture2D			BloomMask2			: register(t4);
-Texture2D			NoiseTexture		: register(t5);
-Texture2D			VignmetteTexture	: register(t6);
-ByteAddressBuffer 	Histogram			: register(t9);
-Texture2D			DepthBuffer 		: register(t10);
+Texture2D					FinalHdrImage 		: register(t0);
+StructuredBuffer<float4> 	MeasuredLuminance 	: register(t1);
+Texture2D					BloomTexture		: register(t2);
+Texture2D					BloomMask1			: register(t3);
+Texture2D					BloomMask2			: register(t4);
+Texture2D					NoiseTexture		: register(t5);
+Texture2D					VignmetteTexture	: register(t6);
+ByteAddressBuffer 			Histogram			: register(t9);
+Texture2D					DepthBuffer 		: register(t10);
 
 
 float3 LinearToSRGB(float3 LinearRGB) {
@@ -483,7 +460,7 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	float4	bloomMask1	=	BloomMask1.SampleLevel( LinearSampler, uv, 0 );
 	float4	bloomMask2	=	BloomMask2.SampleLevel( LinearSampler, uv, 0 );
 	float4	bloomMask	=	lerp( bloomMask1, bloomMask2, Params.DirtMaskLerpFactor );
-	float	luminanceEV	=	MasuredLuminance.Load(int3(0,0,0)).r;
+	float	luminanceEV	=	MeasuredLuminance[0].r;
 	float	noiseDither	=	NoiseTexture.Load( int3(xpos%64,ypos%64,0) ).r;
 	float3	vignette	=	VignmetteTexture.SampleLevel( LinearSampler, uv, 0 ).rgb;
 			vignette	=	lerp( float3(1,1,1), vignette, 0*Params.VignetteAmount );
@@ -492,6 +469,8 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 	float	luminanceAdaptLinear	=	EVToLuminance( luminanceAdaptEV );
 	float	luminanceLinear			=	EVToLuminance( luminanceEV );
 
+			//luminanceAdaptLinear	=	MeasuredLuminance[0].g;
+	
 	float3	bloom		=	( bloom0 * 1.000f  
 							+ bloom1 * 2.000f  
 							+ bloom2 * 3.000f  

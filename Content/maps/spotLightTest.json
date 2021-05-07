@@ -813,7 +813,7 @@
       {
         "$id": "46",
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
-        "LightColor": "255, 176, 128, 255",
+        "LightColor": "255, 235, 223, 255",
         "LightIntensity": 5000.0,
         "OuterRadius": 69.0,
         "TubeRadius": 0.0,
@@ -824,19 +824,19 @@
         "FovHorizontal": 45.0,
         "LightStyle": "default",
         "EnableGI": true,
-        "SpotMaskName": "grid",
+        "SpotMaskName": "color",
         "LodBias": 1,
         "DepthBias": 0.0009765625,
         "SlopeBias": 1.0,
         "Name": "MapSpotLight12",
         "Visible": true,
         "Frozen": false,
-        "Translation": "16, 28, -100",
+        "Translation": "16, 28, -106.324547",
         "Scaling": "1, 0.9999994, 0.9999994",
-        "Rotation": "0.8660254, 0, 0, -0.49999997",
+        "Rotation": "0.970800638, 0, 0, -0.2398875",
         "TranslateX": 16.0,
         "TranslateY": 28.0,
-        "TranslateZ": -100.0
+        "TranslateZ": -106.324547
       },
       {
         "$id": "47",
@@ -967,12 +967,12 @@
         "Name": "MapEntity3",
         "Visible": true,
         "Frozen": false,
-        "Translation": "16, 0, -84",
+        "Translation": "16, 0, -92",
         "Scaling": "1, 1, 1",
         "Rotation": "0, 0, 0, 1",
         "TranslateX": 16.0,
         "TranslateY": 0.0,
-        "TranslateZ": -84.0
+        "TranslateZ": -92.0
       },
       {
         "$id": "53",
@@ -981,7 +981,7 @@
         "Factory": {
           "$id": "54",
           "$type": "IronStar.FuncFXFactory, IronStar",
-          "FX": "fire",
+          "FX": "bulletHit_flesh",
           "FXMode": "persistent",
           "Once": false,
           "Start": false,
@@ -991,12 +991,12 @@
         "Name": "MapEntity4",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-40, 0, -84",
+        "Translation": "40, 4, -68",
         "Scaling": "1, 1, 1",
         "Rotation": "0, 0, 0, 1",
-        "TranslateX": -40.0,
-        "TranslateY": 0.0,
-        "TranslateZ": -84.0
+        "TranslateX": 40.0,
+        "TranslateY": 4.0,
+        "TranslateZ": -68.0
       },
       {
         "$id": "55",
@@ -1219,11 +1219,35 @@
         "TranslateX": 60.0,
         "TranslateY": 0.0,
         "TranslateZ": -12.0
+      },
+      {
+        "$id": "68",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "69",
+          "$type": "IronStar.FuncFXFactory, IronStar",
+          "FX": "bloodTrail",
+          "FXMode": "persistent",
+          "Once": false,
+          "Start": false,
+          "MinInterval": 1,
+          "MaxInterval": 1
+        },
+        "Name": "MapEntity7",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "44, 4, -68",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1",
+        "TranslateX": 44.0,
+        "TranslateY": 4.0,
+        "TranslateZ": -68.0
       }
     ]
   },
   "RadiositySettings": {
-    "$id": "68",
+    "$id": "70",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 256,
     "NumBounces": 2,

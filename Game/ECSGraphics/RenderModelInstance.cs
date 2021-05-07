@@ -134,7 +134,11 @@ namespace IronStar.SFX2
 		{
 			if (disposing)
 			{
-				sceneView?.ForEachMesh( mesh => rs.RenderWorld.Instances.Remove( mesh ) );
+				sceneView?.ForEachMesh( mesh => 
+				{
+					rs.RenderWorld.Instances.Remove( mesh );
+					mesh?.Dispose();
+				});
 			}
 			
 			base.Dispose( disposing );

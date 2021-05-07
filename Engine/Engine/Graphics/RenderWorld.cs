@@ -109,18 +109,28 @@ namespace Fusion.Engine.Graphics
 		/// Sets and gets virtual texture for entire world
 		/// </summary>
 		public VirtualTexture VirtualTexture {
-			get {
+			get 
+			{
 				return virtualTexture;
 			}
 			set {
-				if (value==null) {
-					rs.VTSystem.Stop();
-					virtualTexture = value;
-				} else {
-					if (virtualTexture!=value) {
+				if (virtualTexture!=value) 
+				{
+					if (value==null) 
+					{
+						rs.VTSystem.Stop();
+						virtualTexture = value;
+					}
+					else 
+					{
 						rs.VTSystem.Stop();
 						rs.VTSystem.Start(value);
 						virtualTexture = value;
+					}
+
+					foreach (var ri in Instances)
+					{
+						ri.MakeGpuDataDirty();
 					}
 				}
 			}

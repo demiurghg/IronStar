@@ -21,6 +21,8 @@ namespace IronStar.ECS
 		internal long ComponentMapping;
 		internal long SystemMapping;
 
+		public object Tag;
+
 		/// <summary>
 		/// Entity constructor
 		/// </summary>

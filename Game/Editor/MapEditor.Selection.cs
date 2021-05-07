@@ -63,7 +63,7 @@ namespace IronStar.Editor
 
 		public bool GetRenderProperties( Entity entity, out Color color, out bool selected )
 		{
-			var node	=	Map.Nodes.FirstOrDefault( n => n.EcsEntity == entity );
+			var node	=	entity.Tag as MapNode;
 
 			if (node!=null)
 			{

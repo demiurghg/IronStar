@@ -299,11 +299,12 @@ namespace Fusion.Engine.Graphics.GI
 								.Select( v2 => v2.TexCoord1 * scale + offset )
 								.ToArray();
 
-			foreach ( var subset in instance.Subsets )
+			foreach ( var subset in instance.Mesh.Subsets )
 			{
-				var segment =	rs.RenderWorld.VirtualTexture.GetTextureSegmentInfo( subset.Name );
-				var albedo	=	segment.AverageColor;
-				albedo.A	=	255;
+				var material	=	instance.Scene.Materials[ subset.MaterialIndex ];
+				var segment		=	rs.RenderWorld.VirtualTexture.GetTextureSegmentInfo( material.Name );
+				var albedo		=	segment.AverageColor;
+				albedo.A		=	255;
 
 				for (int i=subset.StartPrimitive; i<subset.StartPrimitive+subset.PrimitiveCount; i++) 
 				{

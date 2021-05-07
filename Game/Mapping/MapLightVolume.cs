@@ -70,7 +70,8 @@ namespace IronStar.Mapping
 
 		public override void SpawnNodeECS( GameState gs )
 		{
-			ecsEntity = gs.Spawn();
+			ecsEntity		=	gs.Spawn();
+			ecsEntity.Tag	=	this;
 
 			ecsEntity.AddComponent( new Transform( Translation, Rotation, 1 ) );
 			ecsEntity.AddComponent( CreateOmniLight() );

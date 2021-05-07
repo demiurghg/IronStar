@@ -13,7 +13,8 @@ using Fusion.Engine.Graphics.Scenes;
 
 namespace Fusion.Engine.Graphics {
 
-	public enum InstanceGroup : uint {
+	public enum InstanceGroup : uint 
+	{
 		Static		=	0x00000001,
 		Kinematic	=	0x00000002,
 		Dynamic		=	0x00000004,
@@ -28,9 +29,13 @@ namespace Fusion.Engine.Graphics {
 	/// <summary>
 	/// Represnets mesh instance
 	/// </summary>
-	public class RenderInstance {
+	public sealed class RenderInstance : DisposableBase 
+	{
+		private readonly RenderSystem rs;
+		private readonly RenderWorld rw;
 
 		public bool Visible = true;
+
 
 		public InstanceGroup Group {
 			get; set;
@@ -39,23 +44,43 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Instance world matrix. Default value is Matrix.Identity.
 		/// </summary>
-		public Matrix World {
-			get; set;
+		public Matrix World 
+		{
+			get { return world; }
+			set
+			{
+				if (world!=value)
+				{
+					world = value;
+					instanceDataDirty = true;
+				}
+			}
 		}
 
 		/// <summary>
 		/// Instance color. Default value 0,0,0,0
 		/// </summary>
-		public Color4 Color {
-			get; set;
+		public Color4 Color 
+		{
+			get { return color; }
+			set 
+			{
+				if ( color!=value )
+				{
+					color	=	value;
+					instanceDataDirty = true;
+				}
+			}
 		}
+
+		Matrix world;
+		Color4 color;
 
 		/// <summary>
 		/// Gets and sets mesh.
 		/// </summary>
-		public Mesh Mesh {
-			get; private set;
-		}
+		public Mesh Mesh { get; private set; }
+		public Scene Scene { get; private set; }
 
 		public BoundingBox LocalBoundingBox {
 			get; private set;
@@ -127,15 +152,11 @@ namespace Fusion.Engine.Graphics {
 		readonly internal int indexCount;
 		readonly internal int vertexCount;
 
-
-		public struct Subset {
-			public int StartPrimitive;
-			public int PrimitiveCount;
-			public string Name;
-		}
-
-
-		internal readonly Subset[] Subsets;
+		bool				instanceDataDirty	=	true;
+		bool				subsetDataDirty		=	true;
+		bool[]				transparency;
+		ConstantBuffer		instanceCData;
+		ConstantBuffer[]	subsetCData;
 
 
 		/// <summary>
@@ -145,6 +166,10 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="mesh"></param>
 		public RenderInstance ( RenderSystem rs, Scene scene, Mesh mesh )
 		{
+			this.rs		=	rs;
+			this.rw		=	rs.RenderWorld;
+			this.Scene	=	scene;
+
 			Group		=	InstanceGroup.Static;
 			World		=	Matrix.Identity;
 			Color		=	Color4.Zero;
@@ -172,13 +197,93 @@ namespace Fusion.Engine.Graphics {
 
 			LocalBoundingBox = mesh.ComputeBoundingBox();
 
-			Subsets	=	mesh.Subsets.Select( subset => new Subset() { 
-					Name			= scene.Materials[subset.MaterialIndex].Name, 
-					PrimitiveCount	= subset.PrimitiveCount,
-					StartPrimitive	= subset.StartPrimitive 
-				}).ToArray();
+			instanceCData	=	new ConstantBuffer( rs.Device, typeof(SceneRenderer.INSTANCE) );
+			subsetCData		=	mesh.Subsets.Select( subset => new ConstantBuffer( rs.Device, typeof(SceneRenderer.SUBSET) ) ).ToArray();
 		}
 
+
+		protected override void Dispose( bool disposing )
+		{
+			if (disposing)
+			{
+				SafeDispose( ref instanceCData );
+				SafeDispose( ref subsetCData );
+			}
+
+			base.Dispose( disposing );
+		}
+
+
+		public void MakeGpuDataDirty()
+		{
+			instanceDataDirty	=	true;
+			subsetDataDirty		=	true;
+		}
+
+
+		public ConstantBuffer GetInstanceData()
+		{
+			var data = new SceneRenderer.INSTANCE();
+			
+			if (instanceDataDirty)
+			{
+				data.World		=	World;
+				data.Color		=	Color;
+				data.LMRegion	=	LightMapScaleOffset;
+				data.Group		=	(int)Group;
+
+				instanceCData.SetData( ref data );
+				instanceDataDirty = false;
+			}
+
+			return instanceCData;
+		}
+
+
+		public int GetSubsetCount()
+		{
+			return subsetCData.Length;
+		}
+
+
+		public ConstantBuffer GetSubsetData(int subsetIndex, out bool isTransparent, out int startPrimitive, out int primitiveCount)
+		{
+			var data = new SceneRenderer.SUBSET();
+			
+			if (subsetDataDirty)
+			{
+				transparency	=	new bool[subsetCData.Length];
+
+				for (int i=0; i<subsetCData.Length; i++)
+				{
+					var subset		=	Mesh.Subsets[ i ];
+					var material	=	Scene.Materials[ subset.MaterialIndex ];
+					var name		=	material.Name;
+
+					var segment		=	rw.VirtualTexture.GetTextureSegmentInfo( name );
+					var region		=	segment.Region;
+
+					transparency[i]	=	segment.Transparent;
+
+					data.Color		=	segment.AverageColor;
+					data.MaxMip		=	segment.MaxMipLevel;
+					data.Rectangle	=	new Vector4( region.X, region.Y, region.Width, region.Height );
+					data.Dummy1		=	0;
+					data.Dummy2		=	0;
+					data.Dummy3		=	0;
+
+					subsetCData[i].SetData( ref data );
+				}
+
+				subsetDataDirty = false;
+			}
+
+			startPrimitive	=	Mesh.Subsets[ subsetIndex ].StartPrimitive;
+			primitiveCount	=	Mesh.Subsets[ subsetIndex ].PrimitiveCount;
+			isTransparent	=	transparency[ subsetIndex ];
+
+			return subsetCData[ subsetIndex ];
+		}
 
 
 		/// <summary>
@@ -191,6 +296,7 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		[Obsolete("Should not be used", true)]
 		public static RenderInstance FromScene ( RenderSystem rs, ContentManager content, string pathNode )
 		{
 			if (string.IsNullOrWhiteSpace(pathNode)) {

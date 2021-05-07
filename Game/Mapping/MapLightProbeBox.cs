@@ -71,7 +71,8 @@ namespace IronStar.Mapping
 
 		public override void SpawnNodeECS( GameState gs )
 		{
-			ecsEntity = gs.Spawn();
+			ecsEntity		=	gs.Spawn();
+			ecsEntity.Tag	=	this;
 			ecsEntity.AddComponent( new ECS.Transform( Translation, Rotation ) );
 
 			var light = new SFX2.LightProbeBox(Name);

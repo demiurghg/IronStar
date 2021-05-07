@@ -111,7 +111,8 @@ namespace IronStar.Mapping
 
 		public override void SpawnNodeECS( GameState gs )
 		{
-			ecsEntity = gs.Spawn();
+			ecsEntity		=	gs.Spawn();
+			ecsEntity.Tag	=	this;
 
 			ecsEntity.AddComponent( new ECS.Transform( Matrix.Scaling(Scale) * Transform ) );
 			ecsEntity.AddComponent( new StaticCollisionComponent() { Walkable = Walkable, Collidable = Collidable } );

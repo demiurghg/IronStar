@@ -71,14 +71,13 @@ namespace Fusion.Engine.Graphics {
 		Ubershader		surfaceShader;
 		StateFactory	factory;
 		UserTexture		envLut;
+		VTSystem		vt;
+		ShadowSystem	ss;
+		RenderWorld		rw;
 
 		STAGE			cbDataStage		=	new STAGE();
-		INSTANCE		cbDataInstance	=	new INSTANCE();
-		SUBSET			cbDataSubset	=	new SUBSET();
 
 		ConstantBuffer	constBufferStage	;
-		ConstantBuffer	constBufferInstance	;
-		ConstantBuffer	constBufferSubset	;
 		ConstantBuffer	constBufferBones	;
 
 		/// <summary>
@@ -110,9 +109,7 @@ namespace Fusion.Engine.Graphics {
 			LoadContent();
 
 			constBufferStage	=	new ConstantBuffer( Game.GraphicsDevice, typeof(STAGE) );
-			constBufferInstance	=	new ConstantBuffer( Game.GraphicsDevice, typeof(INSTANCE) );
 			constBufferBones	=	new ConstantBuffer( Game.GraphicsDevice, typeof(Matrix), RenderSystem.MaxBones );
-			constBufferSubset	=	new ConstantBuffer( Game.GraphicsDevice, typeof(SUBSET) );
 
 			using ( var ms = new MemoryStream( Properties.Resources.envLut ) ) 
 			{
@@ -176,9 +173,7 @@ namespace Fusion.Engine.Graphics {
 		{
 			if (disposing) {
 				SafeDispose( ref constBufferStage );
-				SafeDispose( ref constBufferInstance );
 				SafeDispose( ref constBufferBones );
-				SafeDispose( ref constBufferSubset );
 				SafeDispose( ref envLut );
 			}
 
@@ -205,8 +200,6 @@ namespace Fusion.Engine.Graphics {
 			
 			var width	=	context.Viewport.Width;
 			var height	=	context.Viewport.Height;
-			var rw		=	rs.RenderWorld;
-			var ss		=	rs.ShadowSystem;
 
 			cbDataStage.WorldToLightVolume	=	rw.LightMap.WorldToVolume;
 			cbDataStage.VTGradientScaler	=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;
@@ -226,8 +219,8 @@ namespace Fusion.Engine.Graphics {
 			device.GfxConstants[ regCamera			]	= context.GetCamera().CameraData;
 			device.GfxConstants[ regDirectLight		]	= rs.LightManager.DirectLightData;
 			device.GfxConstants[ regStage			]	= constBufferStage;
-			device.GfxConstants[ regInstance		]	= constBufferInstance;
-			device.GfxConstants[ regSubset			]	= constBufferSubset;
+			//device.GfxConstants[ regInstance		]	= constBufferInstance;
+			//device.GfxConstants[ regSubset			]	= constBufferSubset;
 			device.GfxConstants[ regBones			]	= constBufferBones;
 			device.GfxConstants[ regCascadeShadow	]	= rs.ShadowSystem.ShadowMap.UpdateCascadeShadowConstantBuffer();
 			device.GfxConstants[ regFog				]	= rs.Fog.FogData;
@@ -291,7 +284,7 @@ namespace Fusion.Engine.Graphics {
 		{
 			if (!instance.Visible) return false;
 
-			bool aniso	=	rs.VTSystem.UseAnisotropic ;
+			bool aniso	=	vt.UseAnisotropic ;
 
 			var  flag	=	stageFlag | (instance.IsSkinned ? SurfaceFlags.SKINNED : SurfaceFlags.RIGID);
 
@@ -318,12 +311,15 @@ namespace Fusion.Engine.Graphics {
 
 			device.PipelineState	=	factory[ (int)flag ];
 
+			/*
 			cbDataInstance.Group	=	(int)instance.Group;
 			cbDataInstance.Color	=	instance.Color;
 			cbDataInstance.World	=	instance.World;
 			cbDataInstance.LMRegion	=	instance.LightMapScaleOffset;
 
 			constBufferInstance.SetData( ref cbDataInstance );
+			*/
+			device.GfxConstants[ regInstance ]	= instance.GetInstanceData();
 
 			if (instance.IsSkinned)
 			{
@@ -335,21 +331,26 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		bool SetupSubset ( ref VTSegment segmentInfo, bool transparent )
+		bool SetupAndDrawSubset ( RenderInstance instance, int subsetIndex, bool transparentPass )
 		{
-			var region = segmentInfo.Region;
+			int startPrimitive;
+			int primitiveCount;
+			bool isTransparent;
 
-			if (segmentInfo.Transparent!=transparent) {
+			var subsetData	=	instance.GetSubsetData( subsetIndex, out isTransparent, out startPrimitive, out primitiveCount );
+
+			if (isTransparent==transparentPass)
+			{
+				device.GfxConstants[ regSubset ]	= subsetData;
+
+				device.DrawIndexed( primitiveCount*3, startPrimitive*3, 0 );
+
+				return true;
+			}
+			else
+			{
 				return false;
 			}
-
-			cbDataSubset.Rectangle	=	new Vector4( region.X, region.Y, region.Width, region.Height );
-			cbDataSubset.Color		=	segmentInfo.AverageColor.ToColor4();
-			cbDataSubset.MaxMip		=	segmentInfo.MaxMipLevel;
-			
-			constBufferSubset.SetData( ref cbDataSubset );
-
-			return true;
 		}
 
 
@@ -363,6 +364,10 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="rw"></param>
 		void RenderGeneric ( string eventName, GameTime gameTime, StereoEye stereoEye, SurfaceFlags surfFlags, IRenderContext context, IEnumerable<RenderInstance> instances, InstanceGroup instanceGroup )
 		{
+			vt	=	rs.VTSystem;
+			ss	=	rs.ShadowSystem;
+			rw	=	rs.RenderWorld;
+			
 			using ( new PixEvent(eventName) ) 
 			{
 				var transparent		=	context.Transparent;
@@ -375,15 +380,9 @@ namespace Fusion.Engine.Graphics {
 						{
 							device.SetupVertexInput( instance.vb, instance.ib );
 
-							foreach ( var subset in instance.Subsets ) 
+							for ( int subsetIndex = 0; subsetIndex < instance.GetSubsetCount(); subsetIndex++ )
 							{
-								var vt		=	rs.RenderWorld.VirtualTexture;
-								var segment	=	vt.GetTextureSegmentInfo( subset.Name );
-
-								if (SetupSubset( ref segment, transparent )) 
-								{
-									device.DrawIndexed( subset.PrimitiveCount*3, subset.StartPrimitive*3, 0 );
-								}
+								SetupAndDrawSubset( instance, subsetIndex, transparent );
 							}
 						}
 					}
@@ -404,7 +403,7 @@ namespace Fusion.Engine.Graphics {
 
 			var feedbackBuffer = new VTAddress[ HdrFrame.FeedbackBufferWidth * HdrFrame.FeedbackBufferHeight ];
 			frame.FeedbackBufferRB.GetFeedback( feedbackBuffer );
-			rs.VTSystem.Update( feedbackBuffer, gameTime );
+			vt.Update( feedbackBuffer, gameTime );
 		}
 
 

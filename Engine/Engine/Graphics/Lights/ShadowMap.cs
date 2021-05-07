@@ -465,19 +465,20 @@ namespace Fusion.Engine.Graphics
 			{
 				foreach (var cascade in cascades)
 				{
-					var contextSolid	=	new ShadowContext( rs, shadowCamera, cascade, depthBuffer.Surface, shadowMap.Surface );
-
 					if (NeedCascadeUpdate(cascade))
 					{
+						var contextSolid	=	new ShadowContext( rs, shadowCamera, cascade, depthBuffer.Surface, shadowMap.Surface );
+
 						ClearShadowRegion( cascade.ShadowRegion );
 
 						ComputeCascadeMatricies( cascade, camera, lightSet );
 
 						shadowCamera.SetView( cascade.ViewMatrix );
 						shadowCamera.SetProjection( cascade.ProjectionMatrix );
+						var frustum		=	shadowCamera.Frustum;
 
 						shadowRenderList.Clear();
-						shadowRenderList.AddRange( sceneBvhTree.Traverse( bbox => shadowCamera.Frustum.Contains( bbox ) ) );
+						shadowRenderList.AddRange( sceneBvhTree.Traverse( bbox => frustum.Contains( bbox ) ) );
 
 						rs.SceneRenderer.RenderShadowMap( contextSolid, shadowRenderList, group, true );
 					}
@@ -494,9 +495,10 @@ namespace Fusion.Engine.Graphics
 
 					shadowCamera.SetView( spot.SpotView );
 					shadowCamera.SetProjection( spot.Projection );
+					var frustum		=	shadowCamera.Frustum;
 
 					shadowRenderList.Clear();
-					shadowRenderList.AddRange( sceneBvhTree.Traverse( bbox => shadowCamera.Frustum.Contains( bbox ) ) );
+					shadowRenderList.AddRange( sceneBvhTree.Traverse( bbox => frustum.Contains( bbox ) ) );
 
 					rs.SceneRenderer.RenderShadowMap( contextSolid, shadowRenderList, group, false );
 				}

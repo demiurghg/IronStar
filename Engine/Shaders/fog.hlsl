@@ -167,8 +167,19 @@ void CSMain(
 	FogTarget[ location.xyz ] = historyFactor==0 ? fogST : lerp( fogST, fogHistory, factor );
 	
 	//	Compute sky shadow and ambient occlusion :
+#if 0
+	float2 skyShadow = 0;
+	for (int i=0; i<4; i++)
+	{
+		wsPosition = GetWorldPosition( location.xyz + offset + float3(0,0,0.25f*i) );
+		skyShadow += 0.25f*ComputeSkyShadow( wsPosition );
+	}
+#else
 	float2 	skyShadow	=	ComputeSkyShadow( wsPosition );
-			skyShadow	=	historyFactor==0 ? skyShadow : lerp( skyShadow, shadowHistory, historyFactor );
+#endif
+			
+	skyShadow	=	historyFactor==0 ? skyShadow : lerp( skyShadow, shadowHistory, historyFactor );
+			
 	FogShadowTarget[ location.xyz ] = float4( skyShadow, 0, 0 );
 }
 

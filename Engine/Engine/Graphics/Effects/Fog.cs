@@ -42,17 +42,32 @@ namespace Fusion.Engine.Graphics {
 		float historyFactor = 0.8f;
 
 		[Config]
-		[AECategory("Fog Grid")]
-		public int FogGridSizeX	{ get { return fogSizeX; } set { fogSizeX = MathUtil.Clamp(value, 8, 256 ); } }
-		[Config]
-		[AECategory("Fog Grid")]
-		public int FogGridSizeY	{ get { return fogSizeY; } set { fogSizeY = MathUtil.Clamp(value, 8, 256 ); } }
-		[Config]
-		[AECategory("Fog Grid")]
-		public int FogGridSizeZ { get { return fogSizeZ; } set { fogSizeZ = MathUtil.Clamp(value, 8, 256 ); } }
-		int fogSizeX = 128;
-		int fogSizeY = 96;
-		int fogSizeZ = 192;
+		[AECategory("Quality")]
+		public QualityLevel FogQuality 
+		{ 
+			get { return fogQuality; }
+			set
+			{
+				if (fogQuality!=value)
+				{
+					fogQuality = value;
+					fogQualityDirty = true;
+				}
+			}
+		}
+		QualityLevel fogQuality	=	QualityLevel.Ultra;
+		bool fogQualityDirty	=	true;
+
+		//[Config]
+		//[AECategory("Fog Grid")]
+		//public int FogGridSizeX	{ get { return fogSizeX; } set { fogSizeX = MathUtil.Clamp(value, 8, 256 ); } }
+		//[Config]
+		//[AECategory("Fog Grid")]
+		//public int FogGridSizeY	{ get { return fogSizeY; } set { fogSizeY = MathUtil.Clamp(value, 8, 256 ); } }
+		//[Config]
+		//[AECategory("Fog Grid")]
+		//public int FogGridSizeZ { get { return fogSizeZ; } set { fogSizeZ = MathUtil.Clamp(value, 8, 256 ); } }
+		Size3 fogGridSize;
 
 		[Config]
 		[AECategory("Fog Grid")]
@@ -217,14 +232,23 @@ namespace Fusion.Engine.Graphics {
 			SafeDispose( ref integratedLight );
 			SafeDispose( ref volumeShadow );
 
-			fogDensity		=	new Texture3DCompute( device, ColorFormat.Rgba8,	fogSizeX, fogSizeY, fogSizeZ );
-			scatteredLight0	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	fogSizeX, fogSizeY, fogSizeZ );
-			scatteredLight1	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	fogSizeX, fogSizeY, fogSizeZ );
-			integratedLight	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	fogSizeX, fogSizeY, fogSizeZ );
-			skyFogLut		=	new RenderTarget2D  ( device, ColorFormat.Rgba16F,	fogSizeX, fogSizeY, true );
+			switch (fogQuality)
+			{
+				case QualityLevel.None:	   fogGridSize	=	new Size3(  32,  24,  96 );	break;
+				case QualityLevel.Low:	   fogGridSize	=	new Size3(  32,  24,  96 );	break;
+				case QualityLevel.Medium:  fogGridSize	=	new Size3(  64,  48,  96 );	break;
+				case QualityLevel.High:	   fogGridSize	=	new Size3( 128,  96, 192 );	break;
+				case QualityLevel.Ultra:   fogGridSize	=	new Size3( 256, 192, 192 );	break;
+			}
 
-			volumeShadow	=	new Texture3DCompute( device, ColorFormat.Rg16F,	fogSizeX, fogSizeY, fogSizeZ );
-			shadowHistory	=	new Texture3DCompute( device, ColorFormat.Rg16F,	fogSizeX, fogSizeY, fogSizeZ );
+			fogDensity		=	new Texture3DCompute( device, ColorFormat.Rgba8,	fogGridSize.Width, fogGridSize.Height, fogGridSize.Depth );
+			scatteredLight0	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	fogGridSize.Width, fogGridSize.Height, fogGridSize.Depth );
+			scatteredLight1	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	fogGridSize.Width, fogGridSize.Height, fogGridSize.Depth );
+			integratedLight	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	fogGridSize.Width, fogGridSize.Height, fogGridSize.Depth );
+			skyFogLut		=	new RenderTarget2D  ( device, ColorFormat.Rgba16F,	fogGridSize.Width, fogGridSize.Height, true );
+
+			volumeShadow	=	new Texture3DCompute( device, ColorFormat.Rg16F,	fogGridSize.Width, fogGridSize.Height, fogGridSize.Depth );
+			shadowHistory	=	new Texture3DCompute( device, ColorFormat.Rg16F,	fogGridSize.Width, fogGridSize.Height, fogGridSize.Depth );
 
 			int floatOne	=	0;//BitConverter.ToInt32( BitConverter.GetBytes(1.0f), 0 );
 
@@ -266,21 +290,22 @@ namespace Fusion.Engine.Graphics {
 			var fogData		=	new FOG_DATA();
 			var rw			=	rs.RenderWorld;
 
-			if (fogSizeX!=fogDensity.Width || fogSizeY!=fogDensity.Height || fogSizeZ!=fogDensity.Depth)
+			if (fogQualityDirty)
 			{
 				CreateVolumeResources();
+				fogQualityDirty = false;
 			}
 
 			fogData.WorldToVolume		=	rw.LightMap.WorldToVolume;
 			fogData.IndirectLightFactor	=	rs.Radiosity.MasterIntensity;
 			fogData.DirectLightFactor	=	rs.SkipDirectLighting ? 0 : 1;
 
-			fogData.FogSizeInv			=	new Vector4( 1.0f / fogSizeX, 1.0f / fogSizeY, 1.0f / fogSizeZ, 0 );
+			fogData.FogSizeInv			=	new Vector4( 1.0f / fogGridSize.Width, 1.0f / fogGridSize.Height, 1.0f / fogGridSize.Depth, 0 );
 			fogData.FogGridExpK			=	FogGridExpK;
 
-			fogData.FogSizeX			=	(uint)fogSizeX;
-			fogData.FogSizeY			=	(uint)fogSizeY;
-			fogData.FogSizeZ			=	(uint)fogSizeZ;
+			fogData.FogSizeX			=	(uint)fogGridSize.Width;
+			fogData.FogSizeY			=	(uint)fogGridSize.Height;
+			fogData.FogSizeZ			=	(uint)fogGridSize.Depth;
 
 			fogData.FogDensity			=	MathUtil.Exp2( rs.Sky.MieScale ) * Sky2.BetaMie.Red;
 			fogData.FogHeight			=	rs.Sky.MieHeight;
@@ -336,9 +361,9 @@ namespace Fusion.Engine.Graphics {
 					device.SetComputeUnorderedAccess( regFogTarget,			scatteredLight0.UnorderedAccess );
 					device.SetComputeUnorderedAccess( regFogShadowTarget,	volumeShadow.UnorderedAccess );
 					
-					var gx	=	MathUtil.IntDivUp( FogGridSizeX, BlockSizeX );
-					var gy	=	MathUtil.IntDivUp( FogGridSizeY, BlockSizeY );
-					var gz	=	MathUtil.IntDivUp( FogGridSizeZ, BlockSizeZ );
+					var gx	=	MathUtil.IntDivUp( fogGridSize.Width,  BlockSizeX );
+					var gy	=	MathUtil.IntDivUp( fogGridSize.Height, BlockSizeY );
+					var gz	=	MathUtil.IntDivUp( fogGridSize.Depth,  BlockSizeZ );
 
 					device.Dispatch( gx, gy, gz );
 				}
@@ -361,8 +386,8 @@ namespace Fusion.Engine.Graphics {
 					device.ComputeResources			[ regFogSource ]	=	scatteredLight0;
 					device.ComputeResources			[ regShadow ]		=	volumeShadow;
 					
-					var gx	=	MathUtil.IntDivUp( FogGridSizeX, 8 );
-					var gy	=	MathUtil.IntDivUp( FogGridSizeY, 8 );
+					var gx	=	MathUtil.IntDivUp( fogGridSize.Width,  8 );
+					var gy	=	MathUtil.IntDivUp( fogGridSize.Height, 8 );
 					var gz	=	1;
 
 					device.Dispatch( gx, gy, gz );

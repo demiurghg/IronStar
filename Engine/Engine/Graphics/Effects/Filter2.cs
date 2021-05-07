@@ -235,7 +235,6 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-
 		/// <summary>
 		/// Performs good-old StretchRect to destination buffer with blending.
 		/// </summary>

@@ -194,6 +194,34 @@ namespace Fusion.Engine.Graphics {
 			CirrusSize			=	50;
 		}
 
+		[AECommand]
+		public void Moon()
+		{
+			SunIntensityEv = 7;
+			SunTemperature = 5900;
+			SunBrightnessEv = 16;
+			SunAngularSize = 0.7f;
+			PlanetRadius = 4000;
+			AtmosphereHeight = 60;
+			RayleighHeight = 4000;
+			MieHeight = 2600;
+			ViewElevation = 60;
+			MieExcentricity = 0.7f;
+			SkyExposure = 0;
+			SkySphereSize = 10;
+			RayleighScale = 2;
+			MieScale = 5;
+			MieColor = new Color(150, 134, 126, 255);
+			APScale = 4;
+			AmbientLevel = 0.8f;
+			CirrusCoverage = 1;
+			CirrusHeight = 6000;
+			CirrusDensity = 0.5f;
+			CirrusSize = 20;
+			WindVelocity = 240;
+			WindDirection = -45;
+		}
+
 
 		static FXConstantBuffer<SKY_DATA>				regSky				=	new CRegister( 0, "Sky"			);
 		static FXConstantBuffer<GpuData.CAMERA>			regCamera			=	new CRegister( 1, "Camera"		);

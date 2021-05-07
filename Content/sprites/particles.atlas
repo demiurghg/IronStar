@@ -1,5 +1,5 @@
-Width 		= 2048
-Height 		= 2048
+Width 		= 4096
+Height 		= 4096
 Compression = false
 Padding		= 16
 
@@ -27,6 +27,7 @@ gaussMuzzle         =   gaussMuzzle.tga
 gunMuzzle           =   gunMuzzle.tga
 laserTrace          =   laserTrace.tga
 laserPoint          =   laserPoint.tga
+smokePuff			=	puff\puff*.tga
 plasmaCore          =   plasmaCore.tga
 plasmaFire          =   plasmaFire.tga
 plasmaPuff          =   plasmaPuff.tga

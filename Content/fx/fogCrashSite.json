@@ -49,9 +49,9 @@
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
     "Enabled": true,
     "Sprite": "explosionSmoke",
-    "UseRandomImages": true,
+    "UseRandomImages": false,
     "Effect": "softLit",
-    "Count": 100,
+    "Count": 25,
     "Period": 1.0,
     "Timing": {
       "$id": "6",
@@ -63,7 +63,7 @@
     },
     "Color": "124, 124, 124, 255",
     "Alpha": 0.5,
-    "Roughness": 0.5,
+    "Roughness": 0.33,
     "Metallic": 0.0,
     "Intensity": 1.0,
     "Scattering": 1.0,
@@ -72,18 +72,18 @@
       "$id": "7",
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "uniform",
-      "MinLifetime": 4.0,
-      "MaxLifetime": 5.0
+      "MinLifetime": 3.0,
+      "MaxLifetime": 4.0
     },
     "Shape": {
       "$id": "8",
       "$type": "IronStar.SFX.FXShape, IronStar",
-      "Size0": 15.0,
+      "Size0": 10.0,
       "Size1": 15.0,
       "EnableRotation": true,
-      "InitialAngle": 360.0,
-      "MinAngularVelocity": 0.0,
-      "MaxAngularVelocity": 0.0
+      "InitialAngle": -90.0,
+      "MinAngularVelocity": 50.0,
+      "MaxAngularVelocity": -50.0
     },
     "Position": {
       "$id": "9",
@@ -92,7 +92,7 @@
       "OffsetFactor": 0.0,
       "Distribution": "box",
       "Width": 128.0,
-      "Height": 8.0,
+      "Height": 1.0,
       "Depth": 128.0,
       "Radius": 1.0
     },

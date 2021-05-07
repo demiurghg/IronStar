@@ -261,7 +261,7 @@ namespace Fusion.Engine.Graphics.Collections
 
 			stack.Push( new StackEntry(root,false) );
 
-			while ( stack.Any() ) 
+			while ( stack.Count > 0 ) 
 			{
 				var current = stack.Pop();
 
@@ -295,7 +295,7 @@ namespace Fusion.Engine.Graphics.Collections
 
 			stack.Push( root );
 
-			while ( stack.Any() ) 
+			while ( stack.Count > 0 ) 
 			{
 				var current = stack.Pop();
 

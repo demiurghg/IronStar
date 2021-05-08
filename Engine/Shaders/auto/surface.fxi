@@ -35,6 +35,7 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- CONSTANT VALUES ---------------- //
 
+static const int BatchSize = 128;
 
 // ---------------- DATA STRUCTURES ---------------- //
 
@@ -96,28 +97,25 @@ struct STAGE {
 #endif
 
 // Fusion.Engine.Graphics.SceneRenderer+INSTANCE
-// Marshal.SizeOf = 128
+// Marshal.SizeOf = 96
 #ifndef __STRUCT_INSTANCE
 #define __STRUCT_INSTANCE 1
 struct INSTANCE {
 	float4x4   World;                         // offset:    0
-	float4     Color;                         // offset:   64
-	float4     LMRegion;                      // offset:   80
-	int        Group;                         // offset:   96
+	float4     LMRegion;                      // offset:   64
+	float3     Color;                         // offset:   80
+	int        Group;                         // offset:   92
 };
 #endif
 
 // Fusion.Engine.Graphics.SceneRenderer+SUBSET
-// Marshal.SizeOf = 48
+// Marshal.SizeOf = 32
 #ifndef __STRUCT_SUBSET
 #define __STRUCT_SUBSET 1
 struct SUBSET {
 	float4     Rectangle;                     // offset:    0
-	float4     Color;                         // offset:   16
-	float      MaxMip;                        // offset:   32
-	float      Dummy1;                        // offset:   36
-	float      Dummy2;                        // offset:   40
-	float      Dummy3;                        // offset:   44
+	float3     Color;                         // offset:   16
+	float      MaxMip;                        // offset:   28
 };
 #endif
 
@@ -224,7 +222,7 @@ cbuffer __buffer2 : register(b2) {
 	STAGE Stage : packoffset(c0);
 };
 cbuffer __buffer3 : register(b3) {
-	INSTANCE Instance : packoffset(c0);
+	INSTANCE Instance[128] : packoffset(c0);
 };
 cbuffer __buffer4 : register(b4) {
 	SUBSET Subset : packoffset(c0);

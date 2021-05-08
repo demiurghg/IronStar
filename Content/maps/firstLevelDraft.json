@@ -87,12 +87,12 @@
         "Name": "ace3a556-4ce1-425f-86a0-c69d1c7e81e1",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-382.656128, 11.3439474, -84.66088",
+        "Translation": "-382.762146, 11.3644619, -85.51715",
         "Scaling": "1, 1, 1",
-        "Rotation": "-0.1417478, 0.4482116, 0.0248179883, -0.882268548",
-        "TranslateX": -382.656128,
-        "TranslateY": 11.3439474,
-        "TranslateZ": -84.66088
+        "Rotation": "0.0125961266, 0.457225859, 0.0407782681, -0.888326049",
+        "TranslateX": -382.762146,
+        "TranslateY": 11.3644619,
+        "TranslateZ": -85.51715
       },
       {
         "$id": "12",
@@ -106,12 +106,12 @@
         "Name": "04c1f096-3065-405b-9d05-972a0872b61e",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-358.892273, -4.72931671, -78.80559",
+        "Translation": "-358.39, -41.00026, -77.35738",
         "Scaling": "1, 1, 1",
-        "Rotation": "0.456081271, 0.279376715, -0.793004632, 0.291688263",
-        "TranslateX": -358.892273,
-        "TranslateY": -4.72931671,
-        "TranslateZ": -78.80559
+        "Rotation": "0.526484251, 0.458810866, 0.468524367, -0.541102469",
+        "TranslateX": -358.39,
+        "TranslateY": -41.00026,
+        "TranslateZ": -77.35738
       },
       {
         "$id": "14",
@@ -201,12 +201,12 @@
         "Name": "5bb6f6c7-2a2d-448c-a2fa-7ef15775e4f6",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-359.483582, -5.38176155, -81.79886",
+        "Translation": "-360.8797, -41.0922546, -73.9135056",
         "Scaling": "1, 1, 1",
-        "Rotation": "0.883781433, -0.46042484, 0.07442595, -0.0374212563",
-        "TranslateX": -359.483582,
-        "TranslateY": -5.38176155,
-        "TranslateZ": -81.79886
+        "Rotation": "-0.278934121, 0.658794343, -0.6444501, -0.269944251",
+        "TranslateX": -360.8797,
+        "TranslateY": -41.0922546,
+        "TranslateZ": -73.9135056
       },
       {
         "$id": "24",
@@ -320,12 +320,12 @@
         "Name": "1b2607c6-eba4-49fd-bfcd-4b3533004d3a",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-382.8134, 12.8210449, -83.7225952",
+        "Translation": "-382.867065, 13.3671188, -84.62001",
         "Scaling": "1, 1, 1",
-        "Rotation": "0.9660794, 0.0115555972, 0.2142652, -0.143692315",
-        "TranslateX": -382.8134,
-        "TranslateY": 12.8210449,
-        "TranslateZ": -83.7225952
+        "Rotation": "0.9511822, -0.0428275578, 0.305578023, 0.00634104339",
+        "TranslateX": -382.867065,
+        "TranslateY": 13.3671188,
+        "TranslateZ": -84.62001
       },
       {
         "$id": "36",
@@ -339,12 +339,12 @@
         "Name": "b3a9887a-3b75-4e76-9494-1a3783b3e4b3",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-384.822968, 13.71354, -83.80882",
+        "Translation": "-384.395721, 13.6915541, -84.7449951",
         "Scaling": "1, 1, 1",
-        "Rotation": "0.5857221, -0.144196138, -0.2570662, -0.7550192",
-        "TranslateX": -384.822968,
-        "TranslateY": 13.71354,
-        "TranslateZ": -83.80882
+        "Rotation": "0.619414747, -0.3301189, -0.281289071, -0.6543878",
+        "TranslateX": -384.395721,
+        "TranslateY": 13.6915541,
+        "TranslateZ": -84.7449951
       },
       {
         "$id": "38",
@@ -453,12 +453,12 @@
         "Name": "5bae8864-cfc8-4f23-8b26-fe8612ae043a",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-381.620239, 12.6428423, -84.4638",
+        "Translation": "-381.5177, 12.6429853, -85.41562",
         "Scaling": "1, 1, 1",
-        "Rotation": "0.650444269, -0.6622808, 0.141160041, -0.344064385",
-        "TranslateX": -381.620239,
-        "TranslateY": 12.6428423,
-        "TranslateZ": -84.4638
+        "Rotation": "0.6078787, -0.6666253, 0.313442618, -0.296391428",
+        "TranslateX": -381.5177,
+        "TranslateY": 12.6429853,
+        "TranslateZ": -85.41562
       },
       {
         "$id": "50",
@@ -491,12 +491,12 @@
         "Name": "174af710-1635-43fa-88aa-7b33dd4a3536",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-380.772766, 11.1507254, -82.26885",
+        "Translation": "-380.5109, 11.4017429, -83.43471",
         "Scaling": "1, 1, 1",
-        "Rotation": "0.306123972, -0.519425631, -0.7197081, -0.344246149",
-        "TranslateX": -380.772766,
-        "TranslateY": 11.1507254,
-        "TranslateZ": -82.26885
+        "Rotation": "0.2439264, -0.715370953, -0.5262884, -0.3895702",
+        "TranslateX": -380.5109,
+        "TranslateY": 11.4017429,
+        "TranslateZ": -83.43471
       },
       {
         "$id": "54",
@@ -510,12 +510,12 @@
         "Name": "baa15562-5283-4ff0-8a19-c4f6e7fdca3f",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-385.7784, 11.9686623, -83.79845",
+        "Translation": "-385.338165, 11.940711, -84.38975",
         "Scaling": "1, 1, 1",
-        "Rotation": "0.315099865, 0.2809207, 0.616198063, 0.6649026",
-        "TranslateX": -385.7784,
-        "TranslateY": 11.9686623,
-        "TranslateZ": -83.79845
+        "Rotation": "0.40793404, 0.367039382, 0.569020748, 0.6124436",
+        "TranslateX": -385.338165,
+        "TranslateY": 11.940711,
+        "TranslateZ": -84.38975
       },
       {
         "$id": "56",
@@ -828,11 +828,11 @@
         "Name": "d40296a8-91ec-452e-a915-e66c50742100",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-384, 12, -52",
+        "Translation": "-384, 15.3131666, -52",
         "Scaling": "1, 1, 1",
         "Rotation": "-0.9238795, -8.406961E-07, 0.382683426, 3.48227729E-07",
         "TranslateX": -384.0,
-        "TranslateY": 12.0,
+        "TranslateY": 15.3131666,
         "TranslateZ": -52.0
       },
       {
@@ -5179,11 +5179,11 @@
         "Name": "MapModel21",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-176, 7.22713566, -168.7173",
+        "Translation": "-176, 6.456849, -168.7173",
         "Scaling": "1, 1, 1",
         "Rotation": "0.0648761, 0.00464075152, -0.0711991, 0.9953393",
         "TranslateX": -176.0,
-        "TranslateY": 7.22713566,
+        "TranslateY": 6.456849,
         "TranslateZ": -168.7173
       },
       {
@@ -5533,11 +5533,63 @@
         "TranslateX": -346.560822,
         "TranslateY": 5.9997,
         "TranslateZ": -79.13185
+      },
+      {
+        "$id": "334",
+        "$type": "IronStar.Mapping.MapModel, IronStar",
+        "ScenePath": "scenes\\moon\\pebbles1.fbx",
+        "Scale": 0.7,
+        "GlowColor": "255, 0, 0, 255",
+        "SkipShadow": false,
+        "GlowIntensity": 100.0,
+        "LightMapSize": "lightMap16",
+        "UseLightVolume": true,
+        "UseCollisionMesh": false,
+        "Collidable": false,
+        "Walkable": true,
+        "UseCustomNodes": true,
+        "CustomVisibleNode": "",
+        "CustomCollisionNode": "cm",
+        "Name": "MapModel28",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-426.982971, 10.6582756, -68",
+        "Scaling": "0.9999999, 1, 1",
+        "Rotation": "0.00474817865, -0.52507627, -0.04112607, 0.850047648",
+        "TranslateX": -426.982971,
+        "TranslateY": 10.6582756,
+        "TranslateZ": -68.0
+      },
+      {
+        "$id": "335",
+        "$type": "IronStar.Mapping.MapModel, IronStar",
+        "ScenePath": "scenes\\moon\\pebbles1.fbx",
+        "Scale": 0.7,
+        "GlowColor": "255, 0, 0, 255",
+        "SkipShadow": false,
+        "GlowIntensity": 100.0,
+        "LightMapSize": "lightMap16",
+        "UseLightVolume": true,
+        "UseCollisionMesh": false,
+        "Collidable": false,
+        "Walkable": true,
+        "UseCustomNodes": true,
+        "CustomVisibleNode": "",
+        "CustomCollisionNode": "cm",
+        "Name": "MapModel29",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-406.056152, 10.54928, -74.60532",
+        "Scaling": "0.9999999, 0.99999994, 0.99999994",
+        "Rotation": "0.00474817725, -0.52507627, -0.0411260724, 0.850047648",
+        "TranslateX": -406.056152,
+        "TranslateY": 10.54928,
+        "TranslateZ": -74.60532
       }
     ]
   },
   "RadiositySettings": {
-    "$id": "334",
+    "$id": "336",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 128,
     "NumBounces": 1,

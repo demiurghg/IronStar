@@ -88,6 +88,7 @@ namespace Fusion.Engine.Graphics
 		/// Fullscreen
 		/// </summary>
 		[Config]
+		[AECategory("Video")]
 		public bool Fullscreen { 
 			get { 
 				return isFullscreen;
@@ -107,52 +108,67 @@ namespace Fusion.Engine.Graphics
 		/// Screen width
 		/// </summary>
 		[Config]
+		[AECategory("Video")]
 		public int	Width { get; set; }
 
 		/// <summary>
 		/// Screen height
 		/// </summary>
 		[Config]
+		[AECategory("Video")]
 		public int	Height { get; set; }
 		
 		/// <summary>
 		/// Stereo mode.
 		/// </summary>
 		[Config]
+		[AECategory("Video")]
 		public StereoMode StereoMode { get; set; }
 
 		/// <summary>
 		/// Interlacing mode for stereo.
 		/// </summary>
 		[Config]
+		[AECategory("Video")]
 		public InterlacingMode InterlacingMode { get; set; }
 
 		/// <summary>
 		/// Vertical synchronization interval.
 		/// </summary>
 		[Config]
+		[AECategory("Video")]
 		public int VSyncInterval { get; set; }
 
 		/// <summary>
 		/// Vertical synchronization interval.
 		/// </summary>
 		[Config]
+		[AECategory("Video")]
 		public bool ClearBackbuffer { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		[Config]
+		[AECategory("Video")]
 		public bool UseDebugDevice { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		[Config]
+		[AECategory("Video")]
+		[Obsolete]
 		public bool MsaaEnabled { get; set; }
 
 
 		[Config]
+		[AECategory("Performance")]
+		public bool UseBatching { get; set; }
+
+
+		[Config]
+		[AECategory("Debug")]
 		public VisualizeBuffer VisualizeBuffer { get; set; }
 
 
@@ -160,6 +176,7 @@ namespace Fusion.Engine.Graphics
 		/// Shows particles statistics.
 		/// </summary>
 		[Config]
+		[AECategory("Debug")]
 		public bool ShowParticles { get; set; }
 
 
@@ -167,6 +184,7 @@ namespace Fusion.Engine.Graphics
 		/// Shows particles statistics.
 		/// </summary>
 		[Config]
+		[AECategory("Debug")]
 		public bool ShowExtents { get; set; }
 
 
@@ -174,30 +192,35 @@ namespace Fusion.Engine.Graphics
 		/// Shows particles statistics.
 		/// </summary>
 		[Config]
+		[AECategory("Debug")]
 		public bool SkipParticles { get; set; }
 
 		/// <summary>
 		/// Shows particles statistics.
 		/// </summary>
 		[Config]
+		[AECategory("Debug")]
 		public bool SkipParticleShadows { get; set; }
 
 		/// <summary>
 		/// Shows particles statistics.
 		/// </summary>
 		[Config]
+		[AECategory("Debug")]
 		public bool SkipParticlesSimulation { get; set; }
 
 		/// <summary>
 		/// Shows particles statistics.
 		/// </summary>
 		[Config]
+		[AECategory("Debug")]
 		public bool SkipSceneRendering { get; set; }
 
 		/// <summary>
 		/// Skips feed-back buffer reading
 		/// </summary>
 		[Config]
+		[AECategory("Debug")]
 		public bool SkipFeedback { get; set; }
 
 
@@ -205,6 +228,7 @@ namespace Fusion.Engine.Graphics
 		/// Skips feed-back buffer reading
 		/// </summary>
 		[Config]
+		[AECategory("Debug")]
 		public bool SkipZPass { get; set; }
 
 
@@ -212,6 +236,7 @@ namespace Fusion.Engine.Graphics
 		/// Skips feed-back buffer reading
 		/// </summary>
 		[Config]
+		[AECategory("Debug")]
 		public bool SkipShadows { get; set; }
 
 
@@ -219,12 +244,14 @@ namespace Fusion.Engine.Graphics
 		/// 
 		/// </summary>
 		[Config]
+		[AECategory("Debug")]
 		public bool SkipDebugRendering { get; set; }
 
 		/// <summary>
 		/// Shows particles statistics.
 		/// </summary>
 		[Config]
+		[AECategory("Debug")]
 		public bool FreezeParticles { get; set; }
 
 
@@ -232,12 +259,14 @@ namespace Fusion.Engine.Graphics
 		/// Shows counters
 		/// </summary>
 		[Config]
+		[AECategory("Debug")]
 		public bool ShowCounters { get; set; }
 
 		/// <summary>
 		/// Shows counters
 		/// </summary>
 		[Config]
+		[AECategory("Debug")]
 		public bool ShowLightCounters { get; set; }
 
 
@@ -245,12 +274,14 @@ namespace Fusion.Engine.Graphics
 		/// Shows counters
 		/// </summary>
 		[Config]
+		[AECategory("Debug")]
 		public bool ShowLightComplexity { get; set; }
 
 		/// <summary>
 		/// Shows counters
 		/// </summary>
 		[Config]
+		[AECategory("Debug")]
 		public bool SkipDirectLighting { get; set; } = false;
 
 		/// <summary>

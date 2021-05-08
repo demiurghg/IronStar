@@ -37,6 +37,18 @@ namespace Fusion.Engine.Graphics {
 		public bool Visible = true;
 
 
+		public int InstanceRef
+		{
+			get 
+			{	
+				unchecked
+				{
+					return (Mesh.InstanceRef << 8) | ((int)(Group) & 0xFF);
+				}
+			}
+		}
+
+
 		public InstanceGroup Group {
 			get; set;
 		}
@@ -228,7 +240,7 @@ namespace Fusion.Engine.Graphics {
 			if (instanceDataDirty)
 			{
 				data.World		=	World;
-				data.Color		=	Color;
+				data.Color		=	new Color3( Color.Red, Color.Green, Color.Blue );
 				data.LMRegion	=	LightMapScaleOffset;
 				data.Group		=	(int)Group;
 
@@ -242,11 +254,30 @@ namespace Fusion.Engine.Graphics {
 
 		public int GetSubsetCount()
 		{
-			return subsetCData.Length;
+			return Mesh.Subsets.Count;
 		}
 
 
-		public ConstantBuffer GetSubsetData(int subsetIndex, out bool isTransparent, out int startPrimitive, out int primitiveCount)
+		internal void GetSubsetData( int subsetIndex, ref SceneRenderer.SUBSET subsetData, out bool isTransparent, out int startPrimitive, out int primitiveCount )
+		{
+			var subset		=	Mesh.Subsets[ subsetIndex ];
+			var material	=	Scene.Materials[ subset.MaterialIndex ];
+			var name		=	material.Name;
+
+			var segment		=	rw.VirtualTexture.GetTextureSegmentInfo( name );
+			var region		=	segment.Region;
+
+			subsetData.Color		=	segment.AverageColor.ToColor3();
+			subsetData.MaxMip		=	segment.MaxMipLevel;
+			subsetData.Rectangle	=	new Vector4( region.X, region.Y, region.Width, region.Height );
+
+			startPrimitive	=	subset.StartPrimitive;
+			primitiveCount	=	subset.PrimitiveCount;
+			isTransparent	=	material.Transparent;
+		}
+
+
+		public ConstantBuffer GetSubsetBuffer(int subsetIndex, out bool isTransparent, out int startPrimitive, out int primitiveCount)
 		{
 			var data = new SceneRenderer.SUBSET();
 			
@@ -265,12 +296,9 @@ namespace Fusion.Engine.Graphics {
 
 					transparency[i]	=	segment.Transparent;
 
-					data.Color		=	segment.AverageColor;
+					data.Color		=	segment.AverageColor.ToColor3();
 					data.MaxMip		=	segment.MaxMipLevel;
 					data.Rectangle	=	new Vector4( region.X, region.Y, region.Width, region.Height );
-					data.Dummy1		=	0;
-					data.Dummy2		=	0;
-					data.Dummy3		=	0;
 
 					subsetCData[i].SetData( ref data );
 				}

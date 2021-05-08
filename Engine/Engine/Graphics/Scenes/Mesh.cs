@@ -13,10 +13,15 @@ using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
 using Fusion.Core.Collection;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Fusion.Engine.Graphics.Scenes {
 
-	public sealed partial class Mesh : DisposableBase, IEquatable<Mesh> {
+	public sealed partial class Mesh : DisposableBase, IEquatable<Mesh> 
+	{
+		private static int meshInstanceCounter	=	0;
+
+		public readonly int InstanceRef;
 
 		public List<MeshVertex>		Vertices			{ get; set; }	
 		public List<MeshTriangle>	Triangles			{ get; private set; }	
@@ -47,6 +52,10 @@ namespace Fusion.Engine.Graphics.Scenes {
 		/// </summary>
 		public Mesh ()
 		{
+			//	keeps more or less unique index used to group render instances
+			//	it works, bacause runtime meshes are created usually once.
+			InstanceRef		=	Interlocked.Increment( ref meshInstanceCounter );
+
 			Vertices		=	new List<MeshVertex>();
 			Triangles		=	new List<MeshTriangle>();
 			Subsets			=	new List<MeshSubset>();
@@ -192,7 +201,11 @@ namespace Fusion.Engine.Graphics.Scenes {
 
 		public override int GetHashCode ()
 		{
-			return Misc.Hash( Vertices, Triangles, Subsets );
+			unchecked
+			{
+				return ( Vertices.Count * 37 + Triangles.Count ) * 37 + Subsets.Count;
+			}
+			//return Misc.Hash( Vertices, Triangles, Subsets );
 		}
 
 

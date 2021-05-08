@@ -67,11 +67,20 @@ namespace Fusion.Engine.Graphics {
 
 
 		[ShaderStructure]
-		[StructLayout(LayoutKind.Sequential, Pack=4, Size=128)]
-		public struct INSTANCE {
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=96)]
+		public struct INSTANCE 
+		{
+			public INSTANCE( RenderInstance instance )
+			{
+				World		=	instance.World;
+				LMRegion	=	instance.LightMapScaleOffset;
+				Color		=	new Color3( instance.Color.Red, instance.Color.Green, instance.Color.Blue );
+				Group		=	(int)instance.Group;
+			}
+
 			public Matrix	World	;
-			public Color4	Color	;
 			public Vector4	LMRegion;
+			public Color3	Color	;
 			public int		Group	;
 		}
 
@@ -79,11 +88,8 @@ namespace Fusion.Engine.Graphics {
 		[ShaderStructure]
 		public struct SUBSET {
 			public Vector4	Rectangle;
-			public Color4	Color;
+			public Color3	Color;
 			public float	MaxMip;
-			public float	Dummy1;
-			public float	Dummy2;
-			public float	Dummy3;
 		}
 
 

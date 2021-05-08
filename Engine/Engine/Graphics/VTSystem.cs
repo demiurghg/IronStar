@@ -206,14 +206,13 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-
 		/// <summary>
 		/// 
 		/// </summary>
 		void ApplyVTState ()
 		{
-			if (physicalSizeDirty) {
-
+			if (physicalSizeDirty) 
+			{
 				Log.Message("VT state changes: new size {0}", physicalSize);
 
 				SafeDispose( ref PhysicalPages0	);
@@ -255,7 +254,6 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-
 		Texture2D CreateMipSelectorTexture ()
 		{
 			int mips = VTConfig.MaxMipLevel;
@@ -263,12 +261,12 @@ namespace Fusion.Engine.Graphics {
 
 			var mipIndex		=	new Texture2D( rs.Device, size, size, ColorFormat.R32F, mips, false );
 
-			for (int i=0; i<=mips; i++) {
+			for (int i=0; i<=mips; i++)
+			{
 				mipIndex.SetData( i, Enumerable.Range(0, (64>>i)*(64>>i)).Select( n=> (float)i ).ToArray() );
 			}
 			return mipIndex;
 		}
-
 
 
 		/// <summary>
@@ -277,8 +275,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="disposing"></param>
 		protected override void Dispose ( bool disposing )
 		{
-			if (disposing) {
-
+			if (disposing) 
+			{
 				SafeDispose( ref tileLoader );
 				
 				SafeDispose( ref PhysicalPages0	);
@@ -297,7 +295,6 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -306,7 +303,6 @@ namespace Fusion.Engine.Graphics {
 		{
 			stopwatch.Restart();
 		}
-
 
 
 		/// <summary>
@@ -331,29 +327,30 @@ namespace Fusion.Engine.Graphics {
 			int tableSize	=	VTConfig.VirtualPageCount;
 			PageGpu[] pages;
 
-			using (new PixEvent("UpdatePageTable")) {
-
+			using (new PixEvent("UpdatePageTable")) 
+			{
 				var device = Game.GraphicsDevice;
 				device.ResetStates();
 
-
-				using ( new CVEvent( "GetGpuPageData" ) ) {
+				using ( new CVEvent( "GetGpuPageData" ) ) 
+				{
 					pages = tileCache.GetGpuPageData();
 				}
 
-				
-				using ( new CVEvent( "SetData" ) ) {
-					if ( pages.Any() ) {
+				using ( new CVEvent( "SetData" ) ) 
+				{
+					if ( pages.Any() ) 
+					{
 						pages.CopyTo( pageDataCpu, 0 );
 						//PageData.SetData( pages );
 						PageData.UpdateData( pageDataCpu );
 					}
 				}
 
-				for (int mip=0; mip<VTConfig.MipCount; mip++) {
-
-					using ( new CVEvent( "Dispatch Pass" ) ) {
-
+				for (int mip=0; mip<VTConfig.MipCount; mip++) 
+				{
+					using ( new CVEvent( "Dispatch Pass" ) ) 
+					{
 						Params.SetData( new Int4( pages.Length, mip, 0,0 ) );
 
 						device.PipelineState	=	factory[0];
@@ -372,7 +369,6 @@ namespace Fusion.Engine.Graphics {
 			}
 		}
 
-		
 
 		/// <summary>
 		/// 
@@ -380,8 +376,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="data"></param>
 		public void Update ( VTAddress[] data, GameTime gameTime )
 		{
-			using ( new PixEvent( "VT Update" ) ) {
-
+			using ( new PixEvent( "VT Update" ) ) 
+			{
 				var feedback = data.Distinct().Where( p => p.Dummy!=0 ).ToArray();
 
 				ApplyVTState();
@@ -391,17 +387,19 @@ namespace Fusion.Engine.Graphics {
 				//	
 				//	Build tree :
 				//
-				foreach ( var addr in feedback ) {
-
+				foreach ( var addr in feedback ) 
+				{
 					var paddr = addr;
 
-					if (addr.MipLevel<LodBias) {
+					if (addr.MipLevel<LodBias) 
+					{
 						continue;
 					}
 
 					feedbackTree.Add( paddr );
 
-					while (paddr.MipLevel < VTConfig.MaxMipLevel) {
+					while (paddr.MipLevel < VTConfig.MaxMipLevel)
+					{
 						paddr = VTAddress.FromChild( paddr );
 						feedbackTree.Add( paddr );
 					}
@@ -422,9 +420,10 @@ namespace Fusion.Engine.Graphics {
 				//	Detect thrashing and prevention
 				//	Get highest mip, remove them, repeat until no thrashing occur.
 				//
-				while (feedbackTree.Count >= tileCache.Capacity * 2 / 3 ) {
-
-					if (ShowThrashing) {
+				while (feedbackTree.Count >= tileCache.Capacity * 2 / 3 ) 
+				{
+					if (ShowThrashing) 
+					{
 						Log.Warning("VT thrashing: r:{0} a:{1}", feedbackTree.Count, tileCache.Capacity);
 					}
 
@@ -436,35 +435,36 @@ namespace Fusion.Engine.Graphics {
 				}
 
 
-				if (LockTiles) {
+				if (LockTiles) 
+				{
 					feedbackTree.Clear();
 				}
 
 
-				if (tileCache!=null) {
+				if (tileCache!=null) 
+				{
 				}
 
 				//
 				//	Put into cache :
 				//
-				if (tileCache!=null && tileLoader!=null) {
-
+				if (tileCache!=null && tileLoader!=null) 
+				{
 					int counter = 0;
 
-					foreach ( var addr in feedbackTree ) {
-				
+					foreach ( var addr in feedbackTree ) 
+					{
 						int physAddr;
 
-						if ( tileCache.Add( addr, out physAddr ) ) {
-
-							//Log.Message("...vt tile cache: {0} --> {1}", addr, physAddr );
-
+						if ( tileCache.Add( addr, out physAddr ) ) 
+						{
 							tileLoader.RequestTile( addr );
 
 							counter++;
 						}
 
-						if (counter>MaxPPF) {
+						if (counter>MaxPPF) 
+						{
 							break;
 						}
 					}
@@ -473,51 +473,59 @@ namespace Fusion.Engine.Graphics {
 				//
 				//	update table :
 				//
-				if (tileLoader!=null && tileCache!=null) {
-
-					for (int i=0; i<MaxPPF; i++) {
-				
+				if (tileLoader!=null && tileCache!=null) 
+				{
+					for (int i=0; i<MaxPPF; i++) 
+					{
 						VTTile tile;
 
-						if (tileLoader.TryGetTile( out tile )) {
-
+						if (tileLoader.TryGetTile( out tile )) 
+						{
 							Rectangle rect;
 
-							if (tileCache.TranslateAddress( tile.VirtualAddress, tile, out rect )) {
-							
+							if (tileCache.TranslateAddress( tile.VirtualAddress, tile, out rect )) 
+							{
 								var sz = VTConfig.PageSizeBordered;
 
-								if (RandomColor) {	
+								if (RandomColor) 
+								{
 									tile.FillRandomColor();
 								}
 
-								if (ShowTileCheckers) {
+								if (ShowTileCheckers) 
+								{
 									tile.DrawChecker();
 								}
 
-								if (ShowTileAddress) {	
+								if (ShowTileAddress) 
+								{
 									tile.DrawText( 16,16, tile.VirtualAddress.ToString() );
 									tile.DrawText( 16,32, string.Format("{0} {1}", rect.X/sz, rect.Y/sz ) );
 									tile.DrawText( 16,48, Math.Floor(stopwatch.Elapsed.TotalMilliseconds).ToString() );
 								}
 
-								if (ShowTileBorder) {
+								if (ShowTileBorder) 
+								{
 									tile.DrawBorder();
 								}
 
-								if (ShowMipLevels) {
+								if (ShowMipLevels) 
+								{
 									tile.DrawMipLevels(ShowTileBorder);
 								}
 
-								if (ShowDiffuse) {
+								if (ShowDiffuse) 
+								{
 									tile.MakeWhiteDiffuse();
 								}
 
-								if (ShowSpecular) {
+								if (ShowSpecular) 
+								{
 									tile.MakeGlossyMetal();
 								}
 
-								if (ShowMirror) {
+								if (ShowMirror) 
+								{
 									tile.MakeMirror();
 								}
 
@@ -529,23 +537,22 @@ namespace Fusion.Engine.Graphics {
 
 					}
 
-					if (UpdateStressTest) {
-					
+					if (UpdateStressTest) 
+					{
 						var tile	=	new VTTile(VTAddress.CreateBadAddress(0));
 						tile.FillRandomColor();
 
 						var size	=	VTConfig.PageSizeBordered;;
 						int max		=	PhysicalPages0.Width / size;
 
-						for (int i=0; i<MaxPPF; i++) {
-
+						for (int i=0; i<MaxPPF; i++) 
+						{
 							var x = rand.Next( max ) * size;
 							var y = rand.Next( max ) * size;
 
 							WriteTileToPhysicalTexture( tile, x, y );
 						}
 					}
-
 
 					//	update page table :
 					UpdatePageTable();

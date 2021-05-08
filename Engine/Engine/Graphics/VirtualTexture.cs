@@ -16,11 +16,11 @@ namespace Fusion.Engine.Graphics {
 	/// <summary>
 	/// Represents virtual texture resource
 	/// </summary>
-	public sealed class VirtualTexture {
-
+	public sealed class VirtualTexture : DisposableBase
+	{
 		[ContentLoader(typeof(VirtualTexture))]
-		internal class Loader : ContentLoader {
-
+		internal class Loader : ContentLoader 
+		{
 			public override object Load( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 			{
 				return new VirtualTexture(stream);
@@ -39,11 +39,10 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="allocator"></param>
 		/// <param name="segments"></param>
-		public VirtualTexture ( IEnumerable<VTSegment> segments )
+		/*public VirtualTexture ( IEnumerable<VTSegment> segments )
 		{
 			VTSegments	=	new VTSegmentCollection( segments.ToDictionary( s => s.Name ) );
-		}
-
+		}*/
 
 
 		/// <summary>
@@ -58,6 +57,11 @@ namespace Fusion.Engine.Graphics {
 			{
 				num	=	reader.ReadInt32();
 
+				int maxPages	=	VTConfig.VirtualPageCount * VTConfig.VirtualPageCount;
+				int totalPages	=	0;
+
+				Log.Message("...{0} segments", num);
+
 				VTSegments = new VTSegmentCollection();
 
 				for ( int i=0; i<num; i++ ) 
@@ -70,9 +74,24 @@ namespace Fusion.Engine.Graphics {
 					var t		=	reader.ReadBoolean();
 					var c		=	reader.Read<Color>();
 
+					int pageSize	=	w / VTConfig.PageSize * h / VTConfig.PageSize;
+					totalPages		+=	pageSize;
+
 					VTSegments.Add( name, new VTSegment( name, x, y, w, h, c, t ) );
 				}
+
+				Log.Message("...{0}% utilization", 100.0f * totalPages / maxPages );
 			}
+		}
+
+
+		protected override void Dispose( bool disposing )
+		{
+			if (disposing)
+			{
+			}
+
+			base.Dispose( disposing );
 		}
 
 

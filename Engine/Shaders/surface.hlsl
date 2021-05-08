@@ -5,12 +5,6 @@ $ubershader SHADOW RIGID|SKINNED SPOT|CSM
 $ubershader ZPASS RIGID|SKINNED
 $ubershader GBUFFER RIGID|SKINNED
 $ubershader RADIANCE RIGID IRRADIANCE_MAP|IRRADIANCE_VOLUME
-
-// $ubershader FORWARD RIGID +ANISOTROPIC +TRANSPARENT IRRADIANCE_MAP|IRRADIANCE_VOLUME
-// $ubershader SHADOW RIGID +TRANSPARENT
-// $ubershader ZPASS RIGID
-// $ubershader GBUFFER RIGID
-// $ubershader RADIANCE RIGID IRRADIANCE_MAP|IRRADIANCE_VOLUME
 #endif
 
 
@@ -122,7 +116,7 @@ float4 TransformNormal( int4 boneIndices, float4 boneWeights, float3 inputNormal
 
 
 
-PSInput VSMain( VSInput input )
+PSInput VSMain( VSInput input, uint iid : SV_InstanceID )
 {
 	PSInput output;
 	
@@ -130,12 +124,12 @@ PSInput VSMain( VSInput input )
 	
 	#if RIGID
 		float4 	pos			=	float4( input.Position, 1 	);
-		float4	wPos		=	mul( pos,  Instance.World 	);
+		float4	wPos		=	mul( pos,  Instance[iid].World 	);
 		float4	vPos		=	mul( wPos, Camera.View 		);
 		float4	pPos		=	mul( vPos, projection 		);
-		float4	normal		=	mul( float4(input.Normal,0	),  Instance.World 		);
-		float4	tangent		=	mul( float4(input.Tangent,0	),  Instance.World 		);
-		float4	binormal	=	mul( float4(input.Binormal,0),  Instance.World 	);
+		float4	normal		=	mul( float4(input.Normal,0	),  Instance[iid].World 		);
+		float4	tangent		=	mul( float4(input.Tangent,0	),  Instance[iid].World 		);
+		float4	binormal	=	mul( float4(input.Binormal,0),  Instance[iid].World 	);
 	#endif
 	#if SKINNED
 		float4 	sPos		=	TransformPosition	( input.BoneIndices, input.BoneWeights, input.Position	);
@@ -143,17 +137,17 @@ PSInput VSMain( VSInput input )
 		float4  sTangent	=	TransformNormal		( input.BoneIndices, input.BoneWeights, input.Tangent	);
 		float4  sBinormal	=	TransformNormal		( input.BoneIndices, input.BoneWeights, input.Binormal	);
 		
-		float4	wPos		=	mul( sPos, Instance.World 	);
+		float4	wPos		=	mul( sPos, Instance[iid].World 	);
 		float4	vPos		=	mul( wPos, Camera.View 		);
 		float4	pPos		=	mul( vPos, projection		);
-		float4	normal		=	mul( sNormal,  Instance.World 	);
-		float4	tangent		=	mul( sTangent,  Instance.World 	);
-		float4	binormal	=	mul( sBinormal,  Instance.World 	);
+		float4	normal		=	mul( sNormal,  Instance[iid].World 	);
+		float4	tangent		=	mul( sTangent,  Instance[iid].World 	);
+		float4	binormal	=	mul( sBinormal,  Instance[iid].World 	);
 	#endif
 	
 	output.Position 	= 	pPos;
 	output.ProjPos		=	pPos;
-	output.Color 		= 	Instance.Color;
+	output.Color 		= 	float4(Instance[iid].Color, 1);
 	output.TexCoord		= 	input.TexCoord;
 	output.Normal		= 	normal.xyz;
 	output.Tangent 		=  	tangent.xyz;
@@ -161,7 +155,7 @@ PSInput VSMain( VSInput input )
 	output.WorldPos		=	wPos.xyz;
 	
 	#ifdef RIGID
-	output.LMCoord		=	mad( input.LMCoord.xy, Instance.LMRegion.xy, Instance.LMRegion.zw );
+	output.LMCoord		=	mad( input.LMCoord.xy, Instance[iid].LMRegion.xy, Instance[iid].LMRegion.zw );
 	#else
 	output.LMCoord		=	0;
 	#endif

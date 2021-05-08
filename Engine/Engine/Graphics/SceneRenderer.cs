@@ -15,16 +15,19 @@ using Fusion.Engine.Graphics.Scenes;
 using System.Runtime.CompilerServices;
 using System.IO;
 
-namespace Fusion.Engine.Graphics {
-
-	internal partial class SceneRenderer : RenderComponent {
+namespace Fusion.Engine.Graphics 
+{
+	internal partial class SceneRenderer : RenderComponent 
+	{
+		[ShaderDefine]
+		const int BatchSize = 128;
 
 		static FXConstantBuffer<GpuData.CAMERA>				regCamera			= new CRegister( 0, "Camera"			);
 		static FXConstantBuffer<GpuData.DIRECT_LIGHT>		regDirectLight		= new CRegister( 1, "DirectLight"		);
 		static FXConstantBuffer<STAGE>						regStage			= new CRegister( 2, "Stage"				);
-		static FXConstantBuffer<INSTANCE>					regInstance			= new CRegister( 3, "Instance"			);
-		static FXConstantBuffer<SUBSET>						regSubset			= new CRegister( 4, "Subset"			);
-		static FXConstantBuffer<Matrix>						regBones			= new CRegister( 5, RenderSystem.MaxBones, "Bones"	);
+		static FXConstantBuffer<INSTANCE>					regInstance			= new CRegister( 3, BatchSize,				"Instance"	);
+		static FXConstantBuffer<SUBSET>						regSubset			= new CRegister( 4,							"Subset"	);
+		static FXConstantBuffer<Matrix>						regBones			= new CRegister( 5, RenderSystem.MaxBones,	"Bones"		);
 		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow	= new CRegister( 6, "CascadeShadow"		);
 		static FXConstantBuffer<Fog.FOG_DATA>				regFog				= new CRegister( 7, "Fog"				);
 
@@ -57,7 +60,7 @@ namespace Fusion.Engine.Graphics {
 		static FXTextureCubeArray<Vector4>		regRadianceCache		=	new TRegister(22, "RadianceCache"		);
 		static FXTexture2D<Vector4>				regEnvLut				=	new TRegister(23, "EnvLut"				);
 		static FXTexture3D<Vector4>				regFogVolume			=	new TRegister(24, "FogVolume"			);
-											   
+
 		static FXSamplerState					regSamplerLinear		=	new SRegister( 0, "SamplerLinear"		);
 		static FXSamplerState					regSamplerPoint			=	new SRegister( 1, "SamplerPoint"		);
 		static FXSamplerState					regSamplerLightmap		=	new SRegister( 2, "SamplerLightmap"		);
@@ -67,7 +70,6 @@ namespace Fusion.Engine.Graphics {
 		static FXSamplerState					regSamplerLinearClamp	=	new SRegister( 6, "SamplerLinearClamp"	);
 		static FXSamplerComparisonState			regShadowSampler		=	new SRegister( 7, "ShadowSampler"		);
 
-																					
 		Ubershader		surfaceShader;
 		StateFactory	factory;
 		UserTexture		envLut;
@@ -77,8 +79,11 @@ namespace Fusion.Engine.Graphics {
 
 		STAGE			cbDataStage		=	new STAGE();
 
-		ConstantBuffer	constBufferStage	;
-		ConstantBuffer	constBufferBones	;
+		ConstantBuffer		constBufferStage	;
+		ConstantBuffer		constBufferBones	;
+		ConstantBuffer		constBufferInstance	;
+		ConstantBuffer		constBufferInstanceBatch	;
+		ConstantBuffer		constBufferSubset	;
 
 		/// <summary>
 		/// Gets pipeline state factory
@@ -108,8 +113,11 @@ namespace Fusion.Engine.Graphics {
 		{
 			LoadContent();
 
-			constBufferStage	=	new ConstantBuffer( Game.GraphicsDevice, typeof(STAGE) );
-			constBufferBones	=	new ConstantBuffer( Game.GraphicsDevice, typeof(Matrix), RenderSystem.MaxBones );
+			constBufferStage			=	new ConstantBuffer( Game.GraphicsDevice, typeof(STAGE) );
+			constBufferBones			=	new ConstantBuffer( Game.GraphicsDevice, typeof(Matrix), RenderSystem.MaxBones );
+			constBufferInstance			=	new ConstantBuffer( Game.GraphicsDevice, typeof(INSTANCE) );
+			constBufferInstanceBatch	=	new ConstantBuffer( Game.GraphicsDevice, typeof(INSTANCE), BatchSize );
+			constBufferSubset			=	new ConstantBuffer( Game.GraphicsDevice, typeof(SUBSET) );
 
 			using ( var ms = new MemoryStream( Properties.Resources.envLut ) ) 
 			{
@@ -171,9 +179,13 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="disposing"></param>
 		protected override void Dispose ( bool disposing )
 		{
-			if (disposing) {
+			if (disposing)
+			{
 				SafeDispose( ref constBufferStage );
 				SafeDispose( ref constBufferBones );
+				SafeDispose( ref constBufferInstance );
+				SafeDispose( ref constBufferInstanceBatch );
+				SafeDispose( ref constBufferSubset );
 				SafeDispose( ref envLut );
 			}
 
@@ -219,8 +231,8 @@ namespace Fusion.Engine.Graphics {
 			device.GfxConstants[ regCamera			]	= context.GetCamera().CameraData;
 			device.GfxConstants[ regDirectLight		]	= rs.LightManager.DirectLightData;
 			device.GfxConstants[ regStage			]	= constBufferStage;
-			//device.GfxConstants[ regInstance		]	= constBufferInstance;
-			//device.GfxConstants[ regSubset			]	= constBufferSubset;
+			device.GfxConstants[ regInstance		]	= rs.UseBatching ? constBufferInstanceBatch : constBufferInstance;
+			device.GfxConstants[ regSubset			]	= constBufferSubset;
 			device.GfxConstants[ regBones			]	= constBufferBones;
 			device.GfxConstants[ regCascadeShadow	]	= rs.ShadowSystem.ShadowMap.UpdateCascadeShadowConstantBuffer();
 			device.GfxConstants[ regFog				]	= rs.Fog.FogData;
@@ -280,7 +292,7 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		bool SetupInstance ( SurfaceFlags stageFlag, IRenderContext context, RenderInstance instance )
+		bool SetupInstance ( SurfaceFlags stageFlag, IRenderContext context, RenderInstance instance, bool instanced )
 		{
 			if (!instance.Visible) return false;
 
@@ -311,19 +323,14 @@ namespace Fusion.Engine.Graphics {
 
 			device.PipelineState	=	factory[ (int)flag ];
 
-			/*
-			cbDataInstance.Group	=	(int)instance.Group;
-			cbDataInstance.Color	=	instance.Color;
-			cbDataInstance.World	=	instance.World;
-			cbDataInstance.LMRegion	=	instance.LightMapScaleOffset;
-
-			constBufferInstance.SetData( ref cbDataInstance );
-			*/
-			device.GfxConstants[ regInstance ]	= instance.GetInstanceData();
-
 			if (instance.IsSkinned)
 			{
 				constBufferBones.SetData( instance.BoneTransforms );
+			}
+
+			if (!instanced) 
+			{
+				constBufferInstance.SetData( new INSTANCE(instance) );
 			}
 
 			return true;
@@ -331,19 +338,27 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		bool SetupAndDrawSubset ( RenderInstance instance, int subsetIndex, bool transparentPass )
+		bool SetupAndDrawSubset ( RenderInstance instance, int subsetIndex, bool transparentPass, bool instanced = false, int instanceCount = 0 )
 		{
 			int startPrimitive;
 			int primitiveCount;
 			bool isTransparent;
+			SUBSET subsetData = new SUBSET();
 
-			var subsetData	=	instance.GetSubsetData( subsetIndex, out isTransparent, out startPrimitive, out primitiveCount );
+			instance.GetSubsetData( subsetIndex, ref subsetData, out isTransparent, out startPrimitive, out primitiveCount );
 
 			if (isTransparent==transparentPass)
 			{
-				device.GfxConstants[ regSubset ]	= subsetData;
+				constBufferSubset.SetData( ref subsetData );
 
-				device.DrawIndexed( primitiveCount*3, startPrimitive*3, 0 );
+				if (instanced)
+				{
+					device.DrawInstancedIndexed( primitiveCount*3, instanceCount, startPrimitive*3, 0, 0 );
+				}
+				else
+				{
+					device.DrawIndexed( primitiveCount*3, startPrimitive*3, 0 );
+				}
 
 				return true;
 			}
@@ -354,6 +369,7 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		INSTANCE[] instanceData = new INSTANCE[ BatchSize ];
 
 		/// <summary>
 		/// 
@@ -374,22 +390,58 @@ namespace Fusion.Engine.Graphics {
 			
 				if ( SetupStage( stereoEye, context, instanceGroup ) ) 
 				{
-					foreach ( var instance in instances ) 
+					if (rs.UseBatching)
 					{
-						if ( SetupInstance( surfFlags, context, instance ) ) 
-						{
-							device.SetupVertexInput( instance.vb, instance.ib );
+						var batchGroups = instances.GroupBy( inst => inst.InstanceRef ).Select( g => g.ToArray() );
 
-							for ( int subsetIndex = 0; subsetIndex < instance.GetSubsetCount(); subsetIndex++ )
+						foreach ( var group in batchGroups )
+						{
+							var template		=	group.First();  
+							var instanceCount	=	group.Count();
+							var passCount		=	MathUtil.IntDivRoundUp( instanceCount, BatchSize );
+							/*var instData	= group.Select( g => new INSTANCE(g) ).ToArray();
+							instanceData.SetData( instData );					 */
+							for (int passId=0; passId<passCount; passId++)
 							{
-								SetupAndDrawSubset( instance, subsetIndex, transparent );
+								int  passInstanceCount = Math.Min( BatchSize, instanceCount - passId * BatchSize );
+								
+								for (int instanceId=0; instanceId<passInstanceCount; instanceId++)
+								{
+									instanceData[ instanceId ] = new INSTANCE(group[ passId * BatchSize + instanceId ]);
+								}
+
+								constBufferInstanceBatch.SetData( instanceData );
+
+								if ( SetupInstance( surfFlags, context, template, true ) ) 
+								{
+									device.SetupVertexInput( template.vb, template.ib );
+
+									for ( int subsetIndex = 0; subsetIndex < template.GetSubsetCount(); subsetIndex++ )
+									{
+										SetupAndDrawSubset( template, subsetIndex, transparent, true, passInstanceCount );
+									}
+								}
+							}
+						}
+					}
+					else
+					{
+						foreach ( var instance in instances ) 
+						{
+							if ( SetupInstance( surfFlags, context, instance, false ) ) 
+							{
+								device.SetupVertexInput( instance.vb, instance.ib );
+
+								for ( int subsetIndex = 0; subsetIndex < instance.GetSubsetCount(); subsetIndex++ )
+								{
+									SetupAndDrawSubset( instance, subsetIndex, transparent );
+								}
 							}
 						}
 					}
 				}
 			}
 		}
-
 
 
 

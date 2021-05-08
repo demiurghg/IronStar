@@ -395,7 +395,8 @@ namespace Fusion.Engine.Graphics
 			else
 			{
 				rlMainView.Clear();
-				rlMainView.AddRange( sceneBvhTree.Traverse( (bbox) => camera.Frustum.Contains( bbox ) ) );
+				var frustum	=	camera.Frustum;
+				rlMainView.AddRange( sceneBvhTree.Traverse( (bbox) => frustum.Contains( bbox ) ) );
 			}
 		}
 

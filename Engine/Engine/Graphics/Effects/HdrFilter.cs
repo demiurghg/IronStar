@@ -104,6 +104,14 @@ namespace Fusion.Engine.Graphics
 		public float DirtAmount { get; set; } = 0.9f;
 
 		/// <summary>
+		/// Amount of dirt. Zero means no bloom.
+		/// One means fully bloomed image.
+		/// </summary>
+		[Config]
+		[AECategory("Bloom")]
+		public bool SkipBlur { get; set; } = false;
+
+		/// <summary>
 		/// Gets and sets overall image saturation
 		/// Default value is 1.
 		/// </summary>
@@ -607,21 +615,24 @@ namespace Fusion.Engine.Graphics
 				//filter.StretchRect( hdrFrame.Bloom0.Surface, hdrFrame.HdrTarget, SamplerState.LinearClamp );
 				hdrFrame.Bloom0.BuildMipmaps();
 
-				#if false
-				#warning BLUR SCALING ERROR
-				blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 0 );
-				blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 1 );
-				blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2 );
-				blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 3 );
-				blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 4 );
-				device.ResetStates();
-				#else
-				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 0 );
-				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 1 );
-				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 2 );
-				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 3 );
-				filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 4 );
-				#endif
+				if (!SkipBlur)
+				{
+					#if false
+					#warning BLUR SCALING ERROR
+					blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 0 );
+					blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 1 );
+					blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2 );
+					blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 3 );
+					blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 4 );
+					device.ResetStates();
+					#else
+					filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 0 );
+					filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 1 );
+					filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 2 );
+					filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 3 );
+					filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 4 );
+					#endif
+				}
 
 				//
 				//	Setup parameters :

@@ -194,7 +194,20 @@ float Bloom(float x)
 
 float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 {
-	float3	hdrImage	=	HdrImage.SampleLevel( LinearSampler, uv, 0 ).rgb;
+	uint2	vpos		=	uint2( position.x, position.y );
+	uint 	w, h;
+	HdrImage.GetDimensions(w, h);
+	float2	dudv0		=	float2(  1.0f / w,  1.0f / h );
+	float2	dudv1		=	float2(  0.0f / w,  1.0f / h );
+	float2	dudv2		=	float2(  0.0f / w,  0.0f / h );
+	float2	dudv3		=	float2(  1.0f / w,  0.0f / h );
+
+	float3	hdrImage	=	HdrImage.SampleLevel( LinearSampler, uv + dudv0, 0 ).rgb * 0.25f
+						+	HdrImage.SampleLevel( LinearSampler, uv + dudv1, 0 ).rgb * 0.25f
+						+	HdrImage.SampleLevel( LinearSampler, uv + dudv2, 0 ).rgb * 0.25f
+						+	HdrImage.SampleLevel( LinearSampler, uv + dudv3, 0 ).rgb * 0.25f
+						;
+
 	float	exposure	=	MeasuredLuminance[0].g;
 	float	luma		=	GetLuminance(hdrImage);
 	float3 	chroma		=	hdrImage / (luma + 0.00001f);
@@ -559,7 +572,7 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 							+ bloom2 * 1.000f  
 							+ bloom3 * 1.000f 
 							+ bloom4 * 1.000f 
-							)/5.000f;//*/
+							)/2.000f;//*/
 							
 	if (isnan(bloom.x)) {
 		bloom = 0;

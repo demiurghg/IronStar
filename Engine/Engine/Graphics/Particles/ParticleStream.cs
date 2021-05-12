@@ -617,9 +617,9 @@ namespace Fusion.Engine.Graphics {
 				//
 				//	Setup images :
 				//
-				if (Images!=null && !Images.IsDisposed) 
+				if (ps.ImageRectangles!=null) 
 				{
-					imagesCB.SetData( Images.GetNormalizedRectangles( MAX_IMAGES ) );
+					imagesCB.SetData( ps.ImageRectangles );
 				}
 
 				SetupGPUParameters( 0, 0, renderWorld, camera, flags );

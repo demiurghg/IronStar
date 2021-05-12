@@ -12,13 +12,13 @@ using Fusion.Core.Configuration;
 using Fusion.Engine.Graphics.Ubershaders;
 using System.IO;
 
-namespace Fusion.Engine.Graphics {
-
+namespace Fusion.Engine.Graphics 
+{
 	/// <summary>
 	/// Represents particle rendering and simulation system.
 	/// </summary>
-	public class ParticleSystem : DisposableBase {
-
+	public class ParticleSystem : DisposableBase 
+	{
 		readonly Game Game;
 		readonly RenderSystem rs;
 		RenderWorld	renderWorld;
@@ -49,17 +49,28 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		#warning Remove this property, pass TextureAtlas from outside as paramter of Render() function
 		public TextureAtlas Images {
-			get {
+			get 
+			{
 				if (images!=null && images.Texture==null) return null;
 				return images;
 			}
-			set {
-				if (value!=null && value.Count>ParticleStream.MAX_IMAGES) {
+			set 
+			{
+				if (value!=null && value.Count>ParticleStream.MAX_IMAGES) 
+				{
 					throw new ArgumentOutOfRangeException("Number of subimages in texture atlas is greater than " + ParticleStream.MAX_IMAGES.ToString() );
 				}
-				images = value;
+				if (images!=value)
+				{
+					images = value;
+					normalizedImageRectangles = images?.GetNormalizedRectangles( ParticleStream.MAX_IMAGES );
+				}
 			}
 		}
+
+		RectangleF[] normalizedImageRectangles = null;
+
+		public RectangleF[] ImageRectangles { get { return normalizedImageRectangles; } }
 
 		TextureAtlas	images = null;
 		DynamicTexture		colorTemp;

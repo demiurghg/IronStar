@@ -1,8 +1,9 @@
 
 
 #if 0
-$ubershader		(TONEMAPPING LINEAR|REINHARD|FILMIC) +SHOW_HISTOGRAM
+$ubershader		(TONEMAPPING LINEAR|REINHARD|FILMIC|SCURVE) +SHOW_HISTOGRAM
 $ubershader		COMPOSITION
+$ubershader		BRIGHTPASS
 $ubershader		COMPUTE_HISTOGRAM|AVERAGE_HISTOGRAM
 #endif
 
@@ -168,6 +169,49 @@ void CSMain(uint groupIndex : SV_GroupIndex)
 }
 #endif
 
+/*-----------------------------------------------------------------------------
+	BRIGHTPASS
+-----------------------------------------------------------------------------*/
+
+#ifdef BRIGHTPASS
+Texture2D					HdrImage			: register(t0);
+StructuredBuffer<float4> 	MeasuredLuminance 	: register(t1);
+
+float4 VSMain(uint VertexID : SV_VertexID, out float2 uv : TEXCOORD) : SV_POSITION
+{
+	uv = FSQuadUV( VertexID );
+	return FSQuad( VertexID );
+}
+
+float sqr(float x) { return x * x; }
+
+float Bloom(float x)
+{
+	float T = Params.BloomThreshold;
+	return sqr(sqrt(max(T,x))-sqrt(T));
+}
+
+
+float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
+{
+	float3	hdrImage	=	HdrImage.SampleLevel( LinearSampler, uv, 0 ).rgb;
+	float	exposure	=	MeasuredLuminance[0].g;
+	float	luma		=	GetLuminance(hdrImage);
+	float3 	chroma		=	hdrImage / (luma + 0.00001f);
+	
+#if 0
+	float3 	bloom;
+	bloom.r	=	Bloom( hdrImage.r / exposure ) * exposure;
+	bloom.g	=	Bloom( hdrImage.g / exposure ) * exposure;
+	bloom.b	=	Bloom( hdrImage.b / exposure ) * exposure;
+	
+	return float4(bloom, 1);
+#else
+	return float4( chroma * Bloom( luma / exposure ) * exposure, 1 );
+#endif
+}
+
+#endif
 
 /*-----------------------------------------------------------------------------
 	Frame composition
@@ -335,6 +379,35 @@ float3 TintColor ( float3 color, float3 tint )
 }
 
 
+float SCurve( float x )
+{
+	//float	c	= 	exp(x * log(10)) / 0.24f;
+	float	c	= 	x * Params.ExposureBias;
+	float	lc	=	log10(c);
+	float	ga	=	Params.Slope;
+	float	s0	=	Params.Shoulder;
+	float	s1	=	Params.WhiteClip;
+	float	t0	=	Params.Toe;
+	float	t1	=	Params.BlackClip;
+	
+	float 	ta	=	(1 - t0 - 0.18f) / ga - 0.733f;
+	float	sa	=	(s0 - 0.18f) / ga - 0.733f;
+	
+	if (lc>sa) 
+	{
+		return 1 + s1 - 2 * ( 1 + s1 - s0 ) / ( 1 + exp(  2 * ga / ( 1 + s1 - s0 ) * (lc - sa) ) );
+	}
+	else if (lc<ta)
+	{
+		return 0 - t1 + 2 * ( 1 + t1 - t0 ) / ( 1 + exp( -2 * ga / ( 1 + t1 - t0 ) * (lc - ta) ) );
+	}
+	else
+	{
+		return ga * (lc + 0.733) + 0.18f;
+	}
+}
+
+
 float3 Tonemap ( float3 exposured )
 {
 	#ifdef LINEAR
@@ -348,6 +421,13 @@ float3 Tonemap ( float3 exposured )
 	#ifdef FILMIC
 		float3 x = max(0,exposured-0.004);
 		float3 tonemapped = (x*(6.2*x+.5))/(x*(6.2*x+1.7)+0.06);
+	#endif
+	
+	#ifdef SCURVE
+		float3 	tonemapped;
+		tonemapped.r	=	SCurve( exposured.r );
+		tonemapped.g	=	SCurve( exposured.g );
+		tonemapped.b	=	SCurve( exposured.b );
 	#endif
 	return tonemapped;
 }
@@ -389,6 +469,8 @@ float3 ShowHistogram ( uint x, uint y, float3 image, float lumActual, float lumA
 	float  	exposured	=	pow( 2, (x / (float)Params.Width) * Params.EVRange + Params.EVMin );
 	uint 	curve		=	(uint)(Tonemap( float3(exposured,exposured,exposured) * Params.KeyValue / lumAdapt ).r * 128);
 	float4 	shade3		=	((Params.Height-128 - y)==curve) ? float4(0,1,0,1) : float4(0,0,0,0);
+			curve		=	(uint)(pow((exposured * Params.KeyValue / lumAdapt ).r, 1/2.2f) * 128);
+	float4 	shade4		=	((Params.Height-128 - y)==curve) ? float4(0,1,0,0.5) : float4(0,0,0,0);
 	
 	uint	adaptMin	=	(uint)(NormalizeEV( Params.AdaptEVMin ) * Params.Width);
 	uint	adaptMax	=	(uint)(NormalizeEV( Params.AdaptEVMax ) * Params.Width);
@@ -399,6 +481,7 @@ float3 ShowHistogram ( uint x, uint y, float3 image, float lumActual, float lumA
 	image	=	lerp( image, shade1.rgb, shade1.a );
 	image	=	lerp( image, shade2.rgb, shade2.a );
 	image	=	lerp( image, shade3.rgb, shade3.a );
+	image	=	lerp( image, shade4.rgb, shade4.a );
 			
 	return 	image;
 }
@@ -472,11 +555,11 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 			luminanceAdaptLinear	=	MeasuredLuminance[0].g;
 	
 	float3	bloom		=	( bloom0 * 1.000f  
-							+ bloom1 * 2.000f  
-							+ bloom2 * 3.000f  
-							+ bloom3 * 4.000f 
-							+ bloom4 * 5.000f 
-							)/15.000f;//*/
+							+ bloom1 * 1.000f  
+							+ bloom2 * 1.000f  
+							+ bloom3 * 1.000f 
+							+ bloom4 * 1.000f 
+							)/5.000f;//*/
 							
 	if (isnan(bloom.x)) {
 		bloom = 0;
@@ -484,7 +567,7 @@ float4 PSMain(float4 position : SV_POSITION, float2 uv : TEXCOORD0 ) : SV_Target
 					
 	//bloom	*=	bloomMask.rgb;
 	
-	hdrImage	=	lerp( hdrImage, bloom, Params.BloomAmount );
+	hdrImage	=	hdrImage + bloom * Params.BloomAmount;
 	
 	hdrImage	*=	vignette;
 

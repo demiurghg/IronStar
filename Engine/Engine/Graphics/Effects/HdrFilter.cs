@@ -24,6 +24,7 @@ namespace Fusion.Engine.Graphics
 		Linear,
 		Reinhard,
 		Filmic,
+		SCurve,
 	}
 
 
@@ -66,6 +67,8 @@ namespace Fusion.Engine.Graphics
 		/// Bloom gaussian blur sigma. Default is 3.
 		/// </summary>
 		[Config]
+		[AECategory("Bloom")]
+		[AESlider(1, 5, 0.1f, 0.01f)]
 		public float GaussBlurSigma { 
 			get { return gaussBlurSigma; }
 			set { gaussBlurSigma = MathUtil.Clamp( value, 1, 5 ); }
@@ -78,14 +81,25 @@ namespace Fusion.Engine.Graphics
 		/// One means fully bloomed image.
 		/// </summary>
 		[Config]
-		[AESlider(0, 1, 0.1f, 0.01f)]
-		public float BloomAmount { get; set; } = 0.1f;
+		[AECategory("Bloom")]
+		[AESlider(0, 2, 0.1f, 0.01f)]
+		public float BloomScale { get; set; } = 0.1f;
+
+		/// <summary>
+		/// Amount of bloom. Zero means no bloom.
+		/// One means fully bloomed image.
+		/// </summary>
+		[Config]
+		[AECategory("Bloom")]
+		[AESlider(-4, 8, 0.1f, 0.01f)]
+		public float BloomThreshold { get; set; } = 4f;
 
 		/// <summary>
 		/// Amount of dirt. Zero means no bloom.
 		/// One means fully bloomed image.
 		/// </summary>
 		[Config]
+		[AECategory("Bloom")]
 		[AESlider(0, 1, 1f/32f, 1f/256f)]
 		public float DirtAmount { get; set; } = 0.9f;
 
@@ -135,6 +149,112 @@ namespace Fusion.Engine.Graphics
 			set { adaptMaxEv = MathUtil.Clamp( value, MinLogLuminance, MaxLogLuminance ); }
 		}
 
+
+		[AECategory("SCurve")]
+		[AECommand()]
+		public void FitSCurveFilmic()
+		{
+			slope		=	0.54f;
+			toe			=	0.5f;
+			shoulder	=	0.5f;
+			blackClip	=	0;
+			whiteClip	=	0;
+		}
+
+
+		[AECategory("SCurve")]
+		[AECommand()]
+		public void FitSCurveReinhard()
+		{
+			slope		=	0.40f;
+			toe			=	0.35f;
+			shoulder	=	0.65f;
+			blackClip	=	0;
+			whiteClip	=	0;
+		}
+
+
+		[AECategory("SCurve")]
+		[AECommand()]
+		public void MakeSCurveDefault()
+		{
+			slope		=	0.980f;
+			toe			=	0.300f;
+			shoulder	=	0.220f;
+			blackClip	=	0.000f;
+			whiteClip	=	0.025f;
+		}
+
+		float slope		=	0.980f;
+		float toe		=	0.300f;
+		float shoulder	=	0.220f;
+		float blackClip	=	0.000f;
+		float whiteClip =	0.025f;
+		float expBias	=	0.000f;
+
+		[AECategory("SCurve")]
+		[Config]
+		[AESlider(0.1f, 2.0f, 0.1f, 0.01f)]
+		public float Slope 
+		{
+			get { return slope; }
+			set { slope	= value; }
+		}
+		
+
+		[AECategory("SCurve")]
+		[Config]
+		[AESlider(0.0f, 1.0f, 0.1f, 0.01f)]
+		public float Toe 
+		{
+			get { return toe; }
+			set { toe	= value; }
+		}
+		
+
+		[AECategory("SCurve")]
+		[Config]
+		[AESlider(0.0f, 1.0f, 0.1f, 0.01f)]
+		public float Shoulder 
+		{
+			get { return shoulder; }
+			set { shoulder	= value; }
+		}
+		
+
+		[AECategory("SCurve")]
+		[Config]
+		[AESlider(0.0f, 1.0f, 0.1f, 0.01f)]
+		public float BlackClip 
+		{
+			get { return blackClip; }
+			set { blackClip	= value; }
+		}
+
+		
+		[AECategory("SCurve")]
+		[Config]
+		[AESlider(0.0f, 1.0f, 0.1f, 0.01f)]
+		public float WhiteClip 
+		{
+			get { return whiteClip; }
+			set { whiteClip	= value; }
+		}
+		
+		[AECategory("SCurve")]
+		[Config]
+		[AESlider(-4, 4, 0.1f, 0.01f)]
+		public float ExposureBias 
+		{
+			get { return expBias; }
+			set { expBias	= value; }
+		}
+		
+		
+		
+		
+		
+		
 		static float ComputeLogLuminance ( float linear )
 		{
 			return (float)Math.Log( linear, 2 );
@@ -178,6 +298,7 @@ namespace Fusion.Engine.Graphics
 			public	float	LuminanceHighBound;
 			public	float	KeyValue;
 			public	float	BloomAmount;
+			public  float	BloomThreshold;
 			public	float	DirtMaskLerpFactor;
 			public	float	DirtAmount;
 			public	float	Saturation;
@@ -193,6 +314,13 @@ namespace Fusion.Engine.Graphics
 			public	uint	NoiseX;
 			public	uint	NoiseY;
 			public	float	VignetteAmount;
+
+			public	float	Slope;
+			public	float	Toe;
+			public	float	Shoulder;
+			public	float	BlackClip;
+			public	float	WhiteClip;
+			public	float	ExposureBias;
 		}
 
 
@@ -213,14 +341,16 @@ namespace Fusion.Engine.Graphics
 
 		enum Flags {	
 			TONEMAPPING			=	0x001,
+			BRIGHTPASS			=	0x002,
 			LINEAR				=	0x004, 
 			REINHARD			=	0x008,
 			FILMIC				=	0x010,
-			SHOW_HISTOGRAM		=	0x020,
+			SCURVE				=	0x020,
+			SHOW_HISTOGRAM		=	0x100,
 
-			COMPOSITION			=	0x100,
-			COMPUTE_HISTOGRAM	=	0x200,
-			AVERAGE_HISTOGRAM	=	0x400,
+			COMPOSITION			=	0x200,
+			COMPUTE_HISTOGRAM	=	0x400,
+			AVERAGE_HISTOGRAM	=	0x800,
 		}
 
 		/// <summary>
@@ -346,7 +476,38 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-							
+		void SetupConstantBuffer(GameTime gameTime, int imageWidth, int imageHeight)
+		{
+			var paramsData	=	new PARAMS();
+			paramsData.AdaptationRate		=	1 - (float)Math.Pow( 0.5f, gameTime.ElapsedSec / AdaptationHalfTime );
+			paramsData.KeyValue				=	KeyValue;
+			paramsData.BloomAmount			=	BloomScale;
+			paramsData.BloomThreshold		=	MathUtil.Exp2(BloomThreshold);
+			paramsData.DirtMaskLerpFactor	=	0;
+			paramsData.DirtAmount			=	0;
+			paramsData.Saturation			=	Saturation;
+			paramsData.DitherAmount			=	Dithering;
+			paramsData.Width				=	(uint)imageWidth;
+			paramsData.Height				=	(uint)imageHeight;
+			paramsData.EVMin				=	EVMin;
+			paramsData.EVMax				=	EVMax;
+			paramsData.EVRange				=	paramsData.EVMax - paramsData.EVMin;
+			paramsData.EVRangeInverse		=	1.0f / paramsData.EVRange;
+			paramsData.AdaptEVMin			=	AdaptEVMin;
+			paramsData.AdaptEVMax			=	AdaptEVMax;
+			paramsData.NoiseX				=	0;
+			paramsData.NoiseY				=	0;
+			paramsData.VignetteAmount		=	Vignette;
+
+			paramsData.Slope				=	Slope		;
+			paramsData.Toe					=	Toe			;
+			paramsData.Shoulder				=	Shoulder	;
+			paramsData.BlackClip			=	BlackClip	;
+			paramsData.WhiteClip			=	WhiteClip	;
+			paramsData.ExposureBias			=	MathUtil.Exp2( ExposureBias );
+
+			paramsCB.SetData( ref paramsData );
+		}
 		
 	 
 		/// <summary>
@@ -396,6 +557,23 @@ namespace Fusion.Engine.Graphics
 		uint frameCounter	=	0;
 
 
+		void Brightpass( GameTime gameTime, RenderTargetSurface bloomTarget, HdrFrame hdrFrame, Camera camera )
+		{
+			device.GfxConstants[0]	=	paramsCB;
+			device.GfxSamplers[0]	=	SamplerState.LinearClamp;
+			device.GfxResources[0]	=	hdrFrame.HdrTarget;
+			device.GfxResources[1]	=	hdrFrame.MeasuredNew;
+			
+			device.SetTargets( null, bloomTarget );
+			device.SetViewport( bloomTarget.Bounds );
+			device.SetScissorRect( bloomTarget.Bounds );
+
+			device.PipelineState	=	factory[ (int)(Flags.BRIGHTPASS) ];
+				
+			device.Draw( 3, 0 );
+		}
+
+
 		/// <summary>
 		/// Performs luminance measurement, tonemapping, applies bloom.
 		/// </summary>
@@ -412,7 +590,9 @@ namespace Fusion.Engine.Graphics
 			int imageWidth	=	hdrFrame.HdrTarget.Width;
 			int imageHeight	=	hdrFrame.HdrTarget.Height;
 
-			using ( new PixEvent("HDR Postprocessing") ) {
+			using ( new PixEvent("HDR Postprocessing") ) 
+			{
+				SetupConstantBuffer(gameTime, imageWidth, imageHeight);
 
 				//
 				//	Rough downsampling of source HDR-image :
@@ -423,7 +603,8 @@ namespace Fusion.Engine.Graphics
 				//
 				//	Make bloom :
 				//
-				filter.StretchRect( hdrFrame.Bloom0.Surface, hdrFrame.HdrTarget, SamplerState.LinearClamp );
+				Brightpass( gameTime, hdrFrame.Bloom0.Surface, hdrFrame, camera );
+				//filter.StretchRect( hdrFrame.Bloom0.Surface, hdrFrame.HdrTarget, SamplerState.LinearClamp );
 				hdrFrame.Bloom0.BuildMipmaps();
 
 				#if false
@@ -445,27 +626,6 @@ namespace Fusion.Engine.Graphics
 				//
 				//	Setup parameters :
 				//
-				var paramsData	=	new PARAMS();
-				paramsData.AdaptationRate		=	1 - (float)Math.Pow( 0.5f, gameTime.ElapsedSec / AdaptationHalfTime );
-				paramsData.KeyValue				=	KeyValue;
-				paramsData.BloomAmount			=	BloomAmount;
-				paramsData.DirtMaskLerpFactor	=	0;
-				paramsData.DirtAmount			=	0;
-				paramsData.Saturation			=	Saturation;
-				paramsData.DitherAmount			=	Dithering;
-				paramsData.Width				=	(uint)imageWidth;
-				paramsData.Height				=	(uint)imageHeight;
-				paramsData.EVMin				=	EVMin;
-				paramsData.EVMax				=	EVMax;
-				paramsData.EVRange				=	paramsData.EVMax - paramsData.EVMin;
-				paramsData.EVRangeInverse		=	1.0f / paramsData.EVRange;
-				paramsData.AdaptEVMin			=	AdaptEVMin;
-				paramsData.AdaptEVMax			=	AdaptEVMax;
-				paramsData.NoiseX				=	0;
-				paramsData.NoiseY				=	0;
-				paramsData.VignetteAmount		=	Vignette;
-
-				paramsCB.SetData( ref paramsData );
 				device.GfxConstants[0]				=	paramsCB;
 				device.ComputeConstants[0]			=	paramsCB;
 				device.GfxConstants[regCamera]		=	camera.CameraData;
@@ -515,6 +675,7 @@ namespace Fusion.Engine.Graphics
 				if (TonemappingOperator==TonemappingOperator.Filmic)   { op = Flags.FILMIC;   }
 				if (TonemappingOperator==TonemappingOperator.Linear)   { op = Flags.LINEAR;	 }
 				if (TonemappingOperator==TonemappingOperator.Reinhard) { op = Flags.REINHARD; }
+				if (TonemappingOperator==TonemappingOperator.SCurve)   { op = Flags.SCURVE; }
 
 				if (ShowHistogram) {
 					op |= Flags.SHOW_HISTOGRAM;

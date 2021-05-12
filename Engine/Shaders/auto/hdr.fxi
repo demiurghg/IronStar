@@ -54,21 +54,28 @@ struct PARAMS {
 	float      LuminanceHighBound;            // offset:    8
 	float      KeyValue;                      // offset:   12
 	float      BloomAmount;                   // offset:   16
-	float      DirtMaskLerpFactor;            // offset:   20
-	float      DirtAmount;                    // offset:   24
-	float      Saturation;                    // offset:   28
-	float      DitherAmount;                  // offset:   32
-	uint       Width;                         // offset:   36
-	uint       Height;                        // offset:   40
-	float      EVMin;                         // offset:   44
-	float      EVMax;                         // offset:   48
-	float      EVRange;                       // offset:   52
-	float      EVRangeInverse;                // offset:   56
-	float      AdaptEVMin;                    // offset:   60
-	float      AdaptEVMax;                    // offset:   64
-	uint       NoiseX;                        // offset:   68
-	uint       NoiseY;                        // offset:   72
-	float      VignetteAmount;                // offset:   76
+	float      BloomThreshold;                // offset:   20
+	float      DirtMaskLerpFactor;            // offset:   24
+	float      DirtAmount;                    // offset:   28
+	float      Saturation;                    // offset:   32
+	float      DitherAmount;                  // offset:   36
+	uint       Width;                         // offset:   40
+	uint       Height;                        // offset:   44
+	float      EVMin;                         // offset:   48
+	float      EVMax;                         // offset:   52
+	float      EVRange;                       // offset:   56
+	float      EVRangeInverse;                // offset:   60
+	float      AdaptEVMin;                    // offset:   64
+	float      AdaptEVMax;                    // offset:   68
+	uint       NoiseX;                        // offset:   72
+	uint       NoiseY;                        // offset:   76
+	float      VignetteAmount;                // offset:   80
+	float      Slope;                         // offset:   84
+	float      Toe;                           // offset:   88
+	float      Shoulder;                      // offset:   92
+	float      BlackClip;                     // offset:   96
+	float      WhiteClip;                     // offset:  100
+	float      ExposureBias;                  // offset:  104
 };
 #endif
 

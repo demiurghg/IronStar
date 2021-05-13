@@ -103,7 +103,6 @@ Global
 		{5821977D-AC2C-4912-BCD0-6E6B1A756167}.Debug|x64.ActiveCfg = Debug|x64
 		{5821977D-AC2C-4912-BCD0-6E6B1A756167}.Debug|x64.Build.0 = Debug|x64
 		{5821977D-AC2C-4912-BCD0-6E6B1A756167}.Release|x64.ActiveCfg = Release|x64
-		{5821977D-AC2C-4912-BCD0-6E6B1A756167}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

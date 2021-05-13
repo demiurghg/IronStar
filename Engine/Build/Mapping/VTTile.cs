@@ -14,8 +14,8 @@ namespace Fusion.Build.Mapping {
 	/// <summary>
 	/// https://www.infoworld.com/article/3221392/how-to-use-the-object-pool-design-pattern-in-c.html
 	/// </summary>
-	public class VTTile {
-
+	public class VTTile 
+	{
 		static Random rand = new Random();		
 
 		VTAddress	address;
@@ -23,14 +23,8 @@ namespace Fusion.Build.Mapping {
 		/// <summary>
 		/// Gets address of the tile
 		/// </summary>
-		public VTAddress VirtualAddress {
-			get {
-				return address;
-			}
-			set {
-				address = value;
-			}
-		}
+		public VTAddress VirtualAddress;
+		public Rectangle PhysicalAddress;
 
 		Image<Color>	colorData;			//	RGB - base color
 		Image<Color>	normalData;			//	RGB - normal
@@ -54,6 +48,8 @@ namespace Fusion.Build.Mapping {
 			colorDataMip	=	new Image<Color>	(size/2, size/2);
 			normalDataMip	=	new Image<Color>	(size/2, size/2);
 			specularDataMip	=	new Image<Color>	(size/2, size/2);
+
+			PhysicalAddress	=	new Rectangle(0,0,0,0);
 		}
 
 

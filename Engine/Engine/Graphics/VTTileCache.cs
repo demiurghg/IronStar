@@ -73,6 +73,8 @@ namespace Fusion.Engine.Graphics {
 		readonly int physTexSize;
 		LRUCache<VTAddress,Page> cache;
 
+		readonly object lockObj = new object();
+
 		public int Capacity {
 			get { return capacity; }
 		}
@@ -98,14 +100,17 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		public void Purge ()
 		{
-			cache	=	new LRUCache<VTAddress,Page>( capacity );
-
-			//	fill cache with dummy pages :
-			for (int i=0; i<capacity; i++) 
+			lock (lockObj)
 			{
-				var va		= VTAddress.CreateBadAddress(i);
-				var page	= new Page( va, i, pageCount, physTexSize );
-				cache.Add( va, page );
+				cache	=	new LRUCache<VTAddress,Page>( capacity );
+
+				//	fill cache with dummy pages :
+				for (int i=0; i<capacity; i++) 
+				{
+					var va		= VTAddress.CreateBadAddress(i);
+					var page	= new Page( va, i, pageCount, physTexSize );
+					cache.Add( va, page );
+				}
 			}
 		}
 
@@ -119,27 +124,30 @@ namespace Fusion.Engine.Graphics {
 		/// <returns>False if address is not presented in cache</returns>
 		public bool TranslateAddress ( VTAddress address, VTTile tile, out Rectangle rectangle )
 		{
-			Page page;
-
-			if (cache.TryGetValue(address, out page)) 
+			lock (lockObj)
 			{
-				var pa		=	page.Address;
-				var ppc		=	pageCount;
-				var size	=	VTConfig.PageSizeBordered;
-				int x		=	(pa % ppc) * size;
-				int y		=	(pa / ppc) * size;
-				int w		=	size;
-				int h		=	size;
-				rectangle 	=	new Rectangle( x,y,w,h );
+				Page page;
 
-				page.Tile	=	tile;
+				if (cache.TryGetValue(address, out page)) 
+				{
+					var pa		=	page.Address;
+					var ppc		=	pageCount;
+					var size	=	VTConfig.PageSizeBordered;
+					int x		=	(pa % ppc) * size;
+					int y		=	(pa / ppc) * size;
+					int w		=	size;
+					int h		=	size;
+					rectangle 	=	new Rectangle( x,y,w,h );
 
-				return true;
-			}
-			else 
-			{
-				rectangle	=	new Rectangle();
-				return false;
+					page.Tile	=	tile;
+
+					return true;
+				}
+				else 
+				{
+					rectangle	=	new Rectangle();
+					return false;
+				}
 			}
 		}
 
@@ -151,16 +159,18 @@ namespace Fusion.Engine.Graphics {
 		/// <returns></returns>
 		public PageGpu[] GetGpuPageData ()
 		{
-			return cache.GetValues()
-				.Where( pair1 => pair1.Tile!=null )
-				.OrderByDescending( pair0 => pair0.VA.MipLevel )
-				.Select( pair2 => new PageGpu( 
-					pair2.VA.PageX, 
-					pair2.VA.PageY, 
-					pair2.X,
-					pair2.Y,
-					pair2.VA.MipLevel ) )
-				.ToArray();
+			lock (lockObj)
+			{
+				return cache.GetValues()
+					.Where( pair1 => pair1.Tile!=null )
+					.Select( pair2 => new PageGpu( 
+						pair2.VA.PageX, 
+						pair2.VA.PageY, 
+						pair2.X,
+						pair2.Y,
+						pair2.VA.MipLevel ) )
+					.ToArray();
+			}
 		}
 
 
@@ -182,24 +192,27 @@ namespace Fusion.Engine.Graphics {
 		/// <returns>False if page is already exist</returns>
 		public bool Add ( VTAddress virtualAddress, out int physicalAddress )
 		{
-			Page page;
-
-			if (cache.TryGetValue( virtualAddress, out page )) 
+			lock (lockObj)
 			{
-				physicalAddress	=	page.Address;
-				return false;
-			} 
-			else 
-			{
-				cache.Discard( out page );
+				Page page;
 
-				var newPage	=	new Page( virtualAddress, page.Address, pageCount, physTexSize );
+				if (cache.TryGetValue( virtualAddress, out page )) 
+				{
+					physicalAddress	=	page.Address;
+					return false;
+				} 
+				else 
+				{
+					cache.Discard( out page );
 
-				cache.Add( virtualAddress, newPage ); 
+					var newPage	=	new Page( virtualAddress, page.Address, pageCount, physTexSize );
 
-				physicalAddress	=	newPage.Address;
+					cache.Add( virtualAddress, newPage ); 
 
-				return true;
+					physicalAddress	=	newPage.Address;
+
+					return true;
+				}
 			}
 		}
 	}

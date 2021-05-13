@@ -55,7 +55,7 @@ namespace Fusion.Build.Mapping
 		/// </summary>
 		public IEnumerable<Value> GetValues () 
 		{
-			return lruList.Select( item => item.value ).ToArray();
+			return lruList.Select( item => item.value );
 		}
 
 

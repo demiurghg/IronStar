@@ -18,7 +18,7 @@ using Fusion.Build.Mapping;
 
 namespace Fusion.Engine.Graphics 
 {
-	internal class VTTileLoader : DisposableBase 
+	internal class VTTileLoader
 	{
 		readonly IStorage storage;
 		readonly VTSystem vt;
@@ -31,20 +31,24 @@ namespace Fusion.Engine.Graphics
 		ConcurrentQueue<VTAddress>	requestQueue;
 		#endif
 		
-		ConcurrentQueue<VTTile>		loadedTiles;
+		ConcurrentQueue<VTAddress[]>	feedbackQueue;
+		ConcurrentQueue<VTTile>			loadedTiles;
 
 		Thread	loaderThread;
 		bool	stopLoader = false;
+
+		VTTileCache	tileCache;
 		
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="baseDirectory"></param>
-		public VTTileLoader ( VTSystem vt, IStorage storage )
+		public VTTileLoader ( VTSystem vt, IStorage storage, VTTileCache tileCache )
 		{
 			this.storage		=	storage;
 			this.vt				=	vt;
+			this.tileCache		=	tileCache;
 
 			#if USE_PRIORITY_QUEUE
 				requestQueue	=	new ConcurrentPriorityQueue<int,VTAddress>();
@@ -53,6 +57,7 @@ namespace Fusion.Engine.Graphics
 			#endif
 
 			loadedTiles			=	new ConcurrentQueue<VTTile>();
+			feedbackQueue		=	new ConcurrentQueue<VTAddress[]>();
 
 			loaderThread		=	new Thread( new ThreadStart( LoaderTask ) );
 			loaderThread.Name	=	"VT Tile Loader Thread";
@@ -76,6 +81,14 @@ namespace Fusion.Engine.Graphics
 		}
 
 
+		public void ReadFeedbackAndRequestTiles( VTAddress[] feedback )
+		{
+			if (feedback!=null)
+			{
+				feedbackQueue.Enqueue( feedback );
+			}
+		}
+
 
 		/// <summary>
 		/// Gets loaded tile or zero
@@ -88,15 +101,10 @@ namespace Fusion.Engine.Graphics
 
 
 
-		protected override void Dispose( bool disposing )
+		public void StopAndWait()
 		{
-			if ( disposing ) 
-			{
-				lock (lockObj) 
-				{
-					stopLoader	=	true;
-				}
-			}
+			stopLoader	=	true;
+			loaderThread.Join();
 		}
 
 
@@ -116,6 +124,77 @@ namespace Fusion.Engine.Graphics
 		}
 
 
+		List<VTAddress> BuildFeedbackVTAddressTree( VTAddress[] rawAddressData )
+		{
+			if (vt.LockTiles) return new List<VTAddress>();
+
+			var feedback = rawAddressData.Distinct().Where( p => p.Dummy!=0 ).ToArray();
+
+			List<VTAddress> feedbackTree = new List<VTAddress>();
+
+			//	Build tree :
+			foreach ( var addr in feedback ) 
+			{
+				var paddr = addr;
+
+				if (addr.MipLevel<vt.LodBias) 
+				{
+					continue;
+				}
+
+				feedbackTree.Add( paddr );
+
+				while (paddr.MipLevel < VTConfig.MaxMipLevel)
+				{
+					paddr = VTAddress.FromChild( paddr );
+					feedbackTree.Add( paddr );
+				}
+			}
+
+			//	Distinct :
+			return feedbackTree
+				.Distinct()
+				//.Where( p0 => tileCache.Contains(p0) )
+				.OrderByDescending( p1 => p1.MipLevel )
+				.ToList();//*/
+		}
+
+
+
+		void UpdateCacheAndRequestTiles( List<VTAddress> feedback )
+		{
+			int counter = 0;
+
+			//	Detect thrashing and prevention
+			//	Get highest mip, remove them, repeat until no thrashing occur.
+			/*while (feedbackTree.Count >= tileCache.Capacity * 2 / 3 ) 
+			{
+				if (ShowThrashing) Log.Warning("VT thrashing: r:{0} a:{1}", feedbackTree.Count, tileCache.Capacity);
+
+				feedbackTree = feedbackTree.Select( a1 => a1.IsLeastDetailed ? a1 : a1.GetLessDetailedMip() )
+					.Distinct()
+					.OrderByDescending( p1 => p1.MipLevel )
+					.ToList()
+					;
+			} */
+
+			foreach ( var addr in feedback ) 
+			{
+				int physAddr;
+
+				if ( tileCache.Add( addr, out physAddr ) ) 
+				{
+					RequestTile( addr );
+					counter++;
+				}
+
+				if (counter>vt.MaxPPF) 
+				{
+					break;
+				}
+			}
+		}
+
 
 		/// <summary>
 		/// Functionas running in separate thread
@@ -129,6 +208,15 @@ namespace Fusion.Engine.Graphics
 					VTAddress address = default(VTAddress);
 					KeyValuePair<int,VTAddress> result;
 
+					VTAddress[] feedbackBuffer;
+
+					if (feedbackQueue.TryDequeue(out feedbackBuffer))
+					{
+						var feedback = BuildFeedbackVTAddressTree(feedbackBuffer);
+						UpdateCacheAndRequestTiles( feedback );
+						vt.FeedbackBufferPool.Recycle( feedbackBuffer );
+					}
+
 					if (!requestQueue.TryDequeue(out result)) 
 					{
 						//Thread.Sleep(1);
@@ -141,7 +229,6 @@ namespace Fusion.Engine.Graphics
 
 					var fileName = address.GetFileNameWithoutExtension(".tile");
 
-					//Log.Message("...vt tile load : {0}", fileName );
 					try 
 					{
 						using ( new CVEvent( "Reading Tile" ) ) 
@@ -153,24 +240,13 @@ namespace Fusion.Engine.Graphics
 							loadedTiles.Enqueue( tile );
 						}
 					} 
-					catch 
-					( OutOfMemoryException oome ) 
+					catch ( OutOfMemoryException oome ) 
 					{
-						//var tile = new VTTile( address );
-						//tile.Clear( Color.Magenta );
-
-						//loadedTiles.Enqueue( tile );
-
 						Log.Error("VTTileLoader : {0}", oome.Message );
 						Thread.Sleep(500);
 					} 
 					catch ( IOException ioex ) 
 					{
-						//var tile = new VTTile( address );
-						//tile.Clear( Color.Magenta );
-
-						//loadedTiles.Enqueue( tile );
-
 						Log.Error("VTTileLoader : {0}", ioex.Message );
 						Thread.Sleep(50);
 					}

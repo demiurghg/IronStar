@@ -41,7 +41,8 @@ void CSMain(
 	//--------------------------
 	// Tiled approach:
 	//--------------------------
-	for (uint passIt=0; passIt < passCount; passIt++) {
+	for (uint passIt=0; passIt < passCount; passIt++) 
+	{
 		uint 	pageIndex	=	passIt * threadCount + groupIndex;
 		
 		float2 tileMin = float2( groupId.x*BLOCK_SIZE_X,    		  groupId.y*BLOCK_SIZE_Y			  );
@@ -72,17 +73,24 @@ void CSMain(
 	
 	float4	physicalAddress	=	float4(0,0,999,0);
 	
-	for (uint i = 0; i < visiblePageCount; i++) {
-	
-		uint 	pageIndex 	= 	visiblePages[ i ];
-		PAGE 	page 		= 	pageData[ pageIndex ];
-		float	size		=	exp2(page.mip - targetMipLevel);
-
-		if ( page.vx*size <= location.x && page.vx*size + size > location.x 
-		  && page.vy*size <= location.y && page.vy*size + size > location.y ) 
+	for (uint i = 0; i < visiblePageCount; i++) 
+	{
+		for (int mip=6; mip>=0; mip--)
 		{
-			if (physicalAddress.z>page.mip) {
-				physicalAddress 	=	float4( page.offsetX, page.offsetY, page.mip, 1 );
+			uint 	pageIndex 	= 	visiblePages[ i ];
+			PAGE 	page 		= 	pageData[ pageIndex ];
+			float	size		=	exp2(page.mip - targetMipLevel);
+
+			if ( mip == page.mip 
+			  && page.vx*size 		 <= location.x 
+			  && page.vx*size + size >  location.x 
+			  && page.vy*size 		 <= location.y 
+			  && page.vy*size + size >  location.y ) 
+			{
+				if (physicalAddress.z>page.mip) 
+				{
+					physicalAddress =	float4( page.offsetX, page.offsetY, page.mip, 1 );
+				}
 			}
 		}
 	}

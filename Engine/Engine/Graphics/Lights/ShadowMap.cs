@@ -44,7 +44,6 @@ namespace Fusion.Engine.Graphics
 		Allocator2D allocator;
 		LRUImageCache<object> cache;
 
-
 		readonly ShadowCascade[] cascades = new ShadowCascade[MaxCascades];
 		
 
@@ -367,15 +366,23 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		void CopyShadowRegionToLowRes( Rectangle region )
+		Rectangle ScaleRectangle( Rectangle r, int s )
 		{
-			var scale			=	depthBuffer.Width / shadowMapLowRes.Width;
-			var regionLowRes	=	new Rectangle( 
-				region.X / scale, region.Y / scale,
-				region.Width / scale, region.Height / scale );
+			return new Rectangle( r.X / s, r.Y / s, r.Width / s, r.Height / s );
+		}
 
-			rs.Filter2.CopyColor( prtShadowLowRes.Surface, prtShadow,	regionLowRes, region, Color.White );
-			rs.Filter2.CopyDepth( shadowMapLowRes.Surface, shadowMap,	regionLowRes, region );
+
+		void CopyShadowRegionToLowRes( IEnumerable<Rectangle> dirtyRegionList )
+		{
+			if (dirtyRegionList.Any())
+			{
+				var scale	=	depthBuffer.Width / shadowMapLowRes.Width;
+				var hiRes	=	dirtyRegionList.ToArray();
+				var loRes	=	dirtyRegionList.Select( r => ScaleRectangle( r, scale ) ).ToArray();
+
+				rs.Filter2.CopyColorBatched( prtShadowLowRes.Surface, prtShadow, loRes, hiRes, Color.White );
+				rs.Filter2.CopyColorBatched( shadowMapLowRes.Surface, shadowMap, loRes, hiRes, Color.White );
+			}
 		}
 
 
@@ -405,11 +412,11 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		void ClearShadowRegion( Rectangle region )
+		void ClearShadowRegions( IEnumerable<Rectangle> regions )
 		{
 			if (!ss.ClearEntireShadow)
 			{
-				rs.Filter2.ClearColor( shadowMap.Surface, region, Color.White );
+				rs.Filter2.ClearColorBatched( shadowMap.Surface, regions.ToArray(), Color.White );
 			}
 		}
 
@@ -461,6 +468,22 @@ namespace Fusion.Engine.Graphics
 
 			var shadowCamera	=	renderWorld.ShadowCamera;
 
+
+			using ( new PixEvent( "Shadow Clear" ) )
+			{
+				foreach ( var cascade in cascades )
+				{
+					if ( NeedCascadeUpdate( cascade ) ) dirtyRegionList.Add( cascade.ShadowRegion );
+				}
+
+				foreach (var spot in lights )
+				{
+					dirtyRegionList.Add( spot.ShadowRegion );
+				}
+				ClearShadowRegions( dirtyRegionList );
+			}
+
+
 			using (new PixEvent("Cascade Shadow Maps")) 
 			{
 				foreach (var cascade in cascades)
@@ -468,8 +491,6 @@ namespace Fusion.Engine.Graphics
 					if (NeedCascadeUpdate(cascade))
 					{
 						var contextSolid	=	new ShadowContext( rs, shadowCamera, cascade, depthBuffer.Surface, shadowMap.Surface );
-
-						ClearShadowRegion( cascade.ShadowRegion );
 
 						ComputeCascadeMatricies( cascade, camera, lightSet );
 
@@ -489,8 +510,6 @@ namespace Fusion.Engine.Graphics
 			{
 				foreach ( var spot in lights ) 
 				{
-					ClearShadowRegion( spot.ShadowRegion );
-
 					var contextSolid  = new ShadowContext( rs, shadowCamera, spot, depthBuffer.Surface, shadowMap.Surface );
 
 					shadowCamera.SetView( spot.SpotView );
@@ -537,13 +556,11 @@ namespace Fusion.Engine.Graphics
 							var dstRegion	=	spot.ShadowRegion;
 							var	srcRegion	=	lightSet.SpotAtlas.AbsoluteRectangles[ clip.FirstIndex ];
 							rs.Filter2.CopyColor( prtShadow.Surface, lightSet.SpotAtlas.Texture.Srv, dstRegion, srcRegion, Color.White );
-							dirtyRegionList.Add( dstRegion );
 						} 
 						else 
 						{
 							var dstRegion	=	spot.ShadowRegion;
 							rs.Filter2.RenderSpot( prtShadow.Surface, dstRegion, Color.White );
-							dirtyRegionList.Add( dstRegion );
 						}
 					}
 				}
@@ -551,10 +568,7 @@ namespace Fusion.Engine.Graphics
 
 			using ( new PixEvent( "Downsample Shadow" ) ) 
 			{
-				foreach ( var rect in dirtyRegionList )
-				{
-					CopyShadowRegionToLowRes( rect );
-				}
+				CopyShadowRegionToLowRes( dirtyRegionList );
 			}
 		}
 

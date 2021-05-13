@@ -124,9 +124,13 @@ namespace Fusion.Engine.Graphics
 		 * 
 		-----------------------------------------------------------------------------------------------*/
 
-		void SetupPass ( RenderTargetSurface colorTarget, DepthStencilSurface depthTarget, Rectangle? dstRegion, ShaderResource src, Rectangle? srcRegion, Color color )
+		void SetupPass ( ShaderFlags flags, RenderTargetSurface colorTarget, DepthStencilSurface depthTarget, Rectangle? dstRegion, ShaderResource src, Rectangle? srcRegion, Color color, bool fast = false )
 		{
-			device.ResetStates();
+			if (!fast)
+			{
+				device.ResetStates();
+				device.PipelineState	=	factory[ (int)flags ];
+			}
 
 			CDATA cData = new CDATA();
 
@@ -164,12 +168,15 @@ namespace Fusion.Engine.Graphics
 
 			cbuffer.SetData( ref cData );
 
-			device.SetTargets( depthTarget, colorTarget );
+			if (!fast)
+			{
+				device.SetTargets( depthTarget, colorTarget );
 
-			device.GfxResources[regSource]				=	src;
-			device.GfxSamplers[regSamplerPointClamp]	=	SamplerState.PointClamp;
-			device.GfxSamplers[regSamplerLinearClamp]	=	SamplerState.LinearClamp;
-			device.GfxConstants[regCData]				=	cbuffer;
+				device.GfxResources[regSource]				=	src;
+				device.GfxSamplers[regSamplerPointClamp]	=	SamplerState.PointClamp;
+				device.GfxSamplers[regSamplerLinearClamp]	=	SamplerState.LinearClamp;
+				device.GfxConstants[regCData]				=	cbuffer;
+			}
 		}
 
 
@@ -192,68 +199,55 @@ namespace Fusion.Engine.Graphics
 
 
 
-
-		/// <summary>
-		/// Performs good-old StretchRect to destination buffer with blending.
-		/// </summary>
-		/// <param name="dst"></param>
-		/// <param name="src"></param>
-		/// <param name="filter"></param>
-		/// <param name="rect"></param>
 		public void CopyColor ( RenderTargetSurface dst, ShaderResource src, Rectangle dstRegion, Rectangle srcRegion, Color color )
 		{
 			using( new PixEvent("CopyColor") ) 
 			{
-				SetupPass( dst, null, dstRegion, src, srcRegion, color );
-
-				device.PipelineState	=	factory[ (int)(ShaderFlags.COPY|ShaderFlags.COLOR) ];
-
+				SetupPass( ShaderFlags.COPY|ShaderFlags.COLOR, dst, null, dstRegion, src, srcRegion, color );
 				device.Draw( 4, 0 );
 			}
-			device.ResetStates();
 		}
 
 
-		/// <summary>
-		/// Performs good-old StretchRect to destination buffer with blending.
-		/// </summary>
-		/// <param name="dst"></param>
-		/// <param name="src"></param>
-		/// <param name="filter"></param>
-		/// <param name="rect"></param>
+		public void CopyColorBatched ( RenderTargetSurface dst, ShaderResource src, Rectangle[] dstRegions, Rectangle[] srcRegions, Color color )
+		{
+			using( new PixEvent("CopyColorBatched") ) 
+			{
+				int count = Math.Min( dstRegions.Length, srcRegions.Length );
+
+				for (int i=0; i<count; i++)
+				{
+					SetupPass( ShaderFlags.COPY|ShaderFlags.COLOR, dst, null, dstRegions[i], src, srcRegions[i], color, i!=0 );
+					device.Draw( 4, 0 );
+				}
+			}
+		}
+
+
 		public void ClearColor ( RenderTargetSurface dst, Rectangle dstRegion, Color color )
 		{
-			using( new PixEvent("CopyColor") ) 
+			using( new PixEvent("ClearColor") ) 
 			{
-				SetupPass( dst, null, dstRegion, null, null, color );
-
-				device.PipelineState	=	factory[ (int)(ShaderFlags.CLEAR|ShaderFlags.COLOR) ];
-
+				SetupPass( ShaderFlags.CLEAR|ShaderFlags.COLOR, dst, null, dstRegion, null, null, color );
 				device.Draw( 4, 0 );
 			}
-			device.ResetStates();
 		}
 
 
-		/// <summary>
-		/// Performs good-old StretchRect to destination buffer with blending.
-		/// </summary>
-		/// <param name="dst"></param>
-		/// <param name="src"></param>
-		/// <param name="filter"></param>
-		/// <param name="rect"></param>
-		public void CopyDepth ( RenderTargetSurface dst, ShaderResource src, Rectangle dstRegion, Rectangle srcRegion )
+		public void ClearColorBatched ( RenderTargetSurface dst, Rectangle[] dstRegions, Color color )
 		{
-			using( new PixEvent("CopyDepth") ) 
+			using( new PixEvent("ClearColorBatched") ) 
 			{
-				SetupPass( dst, null, dstRegion, src, srcRegion, Color.White );
+				int count = dstRegions.Length;
 
-				device.PipelineState	=	factory[ (int)(ShaderFlags.COPY|ShaderFlags.DEPTH) ];
-
-				device.Draw( 4, 0 );
+				for (int i=0; i<count; i++)
+				{
+					SetupPass( ShaderFlags.CLEAR|ShaderFlags.COLOR, dst, null, dstRegions[i], null, null, color, i!=0 );
+					device.Draw( 4, 0 );
+				}
 			}
-			device.ResetStates();
 		}
+
 
 
 		/// <summary>
@@ -267,9 +261,7 @@ namespace Fusion.Engine.Graphics
 		{
 			using( new PixEvent("RenderBorder") ) 
 			{
-				SetupPass( dst, null, dstRegion, null, null, color );
-
-				device.PipelineState	=	factory[ (int)(ShaderFlags.RENDER_BORDER) ];
+				SetupPass( ShaderFlags.RENDER_BORDER, dst, null, dstRegion, null, null, color );
 
 				device.Draw( 4, 0 );
 			}
@@ -288,13 +280,10 @@ namespace Fusion.Engine.Graphics
 		{
 			using( new PixEvent("RenderSpot") ) 
 			{
-				SetupPass( dst, null, dstRegion, null, null, color );
-
-				device.PipelineState	=	factory[ (int)(ShaderFlags.RENDER_SPOT) ];
+				SetupPass( ShaderFlags.RENDER_SPOT, dst, null, dstRegion, null, null, color );
 
 				device.Draw( 4, 0 );
 			}
-			device.ResetStates();
 		}
 	}
 }

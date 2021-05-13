@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using Fusion.Drivers.Graphics;
 
-namespace Fusion.Engine.Graphics {
-	struct SpriteVertex {
-
+namespace Fusion.Engine.Graphics 
+{
+	struct SpriteVertex 
+	{
 		[Vertex("POSITION")]	public Vector3	Position;
 		[Vertex("TEXCOORD")]	public Vector2	TexCoord;
 		[Vertex("COLOR")]		public Color	Color;

@@ -453,9 +453,12 @@ namespace Fusion.Engine.Graphics
 		{
 			rs.Filter.StretchRect( frame.FeedbackBufferRB.Surface, frame.FeedbackBuffer, SamplerState.PointClamp );
 
-			var feedbackBuffer = new VTAddress[ HdrFrame.FeedbackBufferWidth * HdrFrame.FeedbackBufferHeight ];
+			var feedbackBuffer = vt.FeedbackBufferPool.Alloc();
+			
 			frame.FeedbackBufferRB.GetFeedback( feedbackBuffer );
 			vt.Update( feedbackBuffer, gameTime );
+
+			vt.FeedbackBufferPool.Recycle( feedbackBuffer );
 		}
 
 

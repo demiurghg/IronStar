@@ -16,14 +16,10 @@ using System.Threading;
 using Fusion.Core.Collection;
 using Fusion.Build.Mapping;
 
-namespace Fusion.Engine.Graphics {
-
-
-	/// <summary>
-	/// 
-	/// </summary>
-	internal class VTTileLoader : IDisposable {
-
+namespace Fusion.Engine.Graphics 
+{
+	internal class VTTileLoader : DisposableBase 
+	{
 		readonly IStorage storage;
 		readonly VTSystem vt;
 
@@ -92,43 +88,28 @@ namespace Fusion.Engine.Graphics {
 
 
 
-		#region IDisposable Support
-		private bool disposedValue = false; // To detect redundant calls
-
-		protected virtual void Dispose( bool disposing )
+		protected override void Dispose( bool disposing )
 		{
-			if ( !disposedValue ) {
-				if ( disposing ) {
-					lock (lockObj) {
-						stopLoader	=	true;
-					}
+			if ( disposing ) 
+			{
+				lock (lockObj) 
+				{
+					stopLoader	=	true;
 				}
-
-				disposedValue = true;
 			}
 		}
 
 
-		// This code added to correctly implement the disposable pattern.
-		public void Dispose()
-		{
-			Dispose( true );
-		}
-		#endregion
-
-
-
-		/// <summary>
-		/// Removes all loaded tiles and requests
-		/// </summary>
 		public void Purge ()
 		{
-			lock (lockObj) {
+			lock (lockObj) 
+			{
 				requestQueue.Clear();
 
 				VTTile tile;
 
-				while (loadedTiles.TryDequeue(out tile)) {
+				while (loadedTiles.TryDequeue(out tile)) 
+				{
 					VTTilePool.Recycle(tile);
 				}
 			}
@@ -141,27 +122,28 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		void LoaderTask ()
 		{
-			while (!stopLoader) {
-
-				using ( new CVEvent( "VT Loader Task" ) ) {
-
+			while (!stopLoader) 
+			{
+				using ( new CVEvent( "VT Loader Task" ) ) 
+				{
 					VTAddress address = default(VTAddress);
 					KeyValuePair<int,VTAddress> result;
 
-					if (!requestQueue.TryDequeue(out result)) {
+					if (!requestQueue.TryDequeue(out result)) 
+					{
 						//Thread.Sleep(1);
 						continue;
-					} else {
+					} 
+					else 
+					{
 						address = result.Value;
 					}
 
-					
 					var fileName = address.GetFileNameWithoutExtension(".tile");
 
 					//Log.Message("...vt tile load : {0}", fileName );
-
-					try {
-					
+					try 
+					{
 						using ( new CVEvent( "Reading Tile" ) ) 
 						{
 							var tile = VTTilePool.Alloc(address);
@@ -170,9 +152,10 @@ namespace Fusion.Engine.Graphics {
 
 							loadedTiles.Enqueue( tile );
 						}
-
-					} catch ( OutOfMemoryException oome ) {
-
+					} 
+					catch 
+					( OutOfMemoryException oome ) 
+					{
 						//var tile = new VTTile( address );
 						//tile.Clear( Color.Magenta );
 
@@ -180,9 +163,9 @@ namespace Fusion.Engine.Graphics {
 
 						Log.Error("VTTileLoader : {0}", oome.Message );
 						Thread.Sleep(500);
-
-					} catch ( IOException ioex ) {
-
+					} 
+					catch ( IOException ioex ) 
+					{
 						//var tile = new VTTile( address );
 						//tile.Clear( Color.Magenta );
 

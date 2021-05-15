@@ -1,0 +1,79 @@
+#ifndef UBERSHADER_RENDERSYSTEM
+#define UBERSHADER_RENDERSYSTEM
+
+// ---------------- CONSTANT VALUES ---------------- //
+
+static const int LightClusterGridWidth = 16;
+static const int LightClusterGridHeight = 8;
+static const int LightClusterGridDepth = 24;
+static const float LightClusterExpScale = 0.015625;
+static const int VTVirtualPageCount = 1024;
+static const int VTPageSize = 128;
+static const int VTMaxMip = 6;
+static const int VTMipSelectorScale = 2048;
+static const uint LightTypeNone = 0;
+static const uint LightTypeOmni = 1;
+static const uint LightTypeOmniShadow = 2;
+static const uint LightTypeSpotShadow = 3;
+static const uint LightTypeAmbient = 4;
+static const uint LightSpotShapeSquare = 65536;
+static const uint LightSpotShapeRound = 131072;
+static const uint LightProbeSize = 128;
+static const uint LightProbeMaxMips = 7;
+static const uint LightProbeMaxMip = 6;
+static const uint LightProbeMaxSpecularMip = 5;
+static const uint InstanceGroupStatic = 1;
+static const uint InstanceGroupDynamic = 4;
+static const uint InstanceGroupCharacter = 8;
+static const uint InstanceGroupWeapon = 16;
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+#endif
+
+// ---------------- CONSTANT VALUES ---------------- //
+
+static const int BlockSize = 256;
+
+// ---------------- DATA STRUCTURES ---------------- //
+
+// Fusion.Engine.Graphics.VTSystem+PARAMS
+// Marshal.SizeOf = 16
+#ifndef __STRUCT_PARAMS
+#define __STRUCT_PARAMS 1
+struct PARAMS {
+	uint       totalPageCount;                // offset:    0
+	uint       dummy0;                        // offset:    4
+	uint       dummy1;                        // offset:    8
+	uint       dummy2;                        // offset:   12
+};
+#endif
+
+// Fusion.Engine.Graphics.PageGpu
+// Marshal.SizeOf = 20
+#ifndef __STRUCT_PageGpu
+#define __STRUCT_PageGpu 1
+struct PageGpu {
+	float      VX;                            // offset:    0
+	float      VY;                            // offset:    4
+	float      OffsetX;                       // offset:    8
+	float      OffsetY;                       // offset:   12
+	float      Mip;                           // offset:   16
+};
+#endif
+
+// ---------------- SHADER RESOURCES ---------------- //
+
+cbuffer __buffer0 : register(b0) {
+	PARAMS Params : packoffset(c0);
+};
+StructuredBuffer<PageGpu>      pageData                       : register(t0);
+RWTexture2D<float4>            pageTable                      : register(u0);
+RWTexture2D<float4>            pageTable1                     : register(u1);
+RWTexture2D<float4>            pageTable2                     : register(u2);
+RWTexture2D<float4>            pageTable3                     : register(u3);
+RWTexture2D<float4>            pageTable4                     : register(u4);
+RWTexture2D<float4>            pageTable5                     : register(u5);
+RWTexture2D<float4>            pageTable6                     : register(u6);

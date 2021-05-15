@@ -21,11 +21,32 @@ using Fusion.Core.Utils;
 
 namespace Fusion.Engine.Graphics 
 {
-	[RequireShader("vtcache")]
+	[RequireShader("vtcache", true)]
+	[ShaderSharedStructure(typeof(PageGpu))]
 	internal class VTSystem : GameComponent 
 	{
-		const int BlockSizeX = 16;
-		const int BlockSizeY = 16;
+		struct PARAMS
+		{
+			public uint totalPageCount;
+			public uint dummy0;
+			public uint dummy1;
+			public uint dummy2;
+		}
+
+		[ShaderDefine]
+		const int BlockSize = 256;
+
+		static FXConstantBuffer<PARAMS>		regParams		=	new CRegister( 0, "Params"	);
+
+		static FXStructuredBuffer<PageGpu>	regPageData		=	new TRegister( 0, "pageData"	);
+
+		static FXRWTexture2D<Vector4>		regTarget0		=	new URegister( 0, "pageTable"		);
+		static FXRWTexture2D<Vector4>		regTarget1		=	new URegister( 1, "pageTable1"		);
+		static FXRWTexture2D<Vector4>		regTarget2		=	new URegister( 2, "pageTable2"		);
+		static FXRWTexture2D<Vector4>		regTarget3		=	new URegister( 3, "pageTable3"		);
+		static FXRWTexture2D<Vector4>		regTarget4		=	new URegister( 4, "pageTable4"		);
+		static FXRWTexture2D<Vector4>		regTarget5		=	new URegister( 5, "pageTable5"		);
+		static FXRWTexture2D<Vector4>		regTarget6		=	new URegister( 6, "pageTable6"		);
 
 		readonly RenderSystem rs;
 
@@ -41,6 +62,10 @@ namespace Fusion.Engine.Graphics
 		[Config]
 		[AECategory("Debugging")]
 		public bool ShowPageLoads { get; set; }
+
+		[Config]
+		[AECategory("Debugging")]
+		public bool SkipPageTableUpdate { get; set; }
 
 		[Config]
 		[AECategory("Tiles")]
@@ -379,23 +404,38 @@ namespace Fusion.Engine.Graphics
 					}
 				}
 
-				for (int mip=0; mip<VTConfig.MipCount; mip++) 
+				using ( new CVEvent( "Dispatch Pass" ) ) 
 				{
-					using ( new CVEvent( "Dispatch Pass" ) ) 
+					var param = new PARAMS();
+					param.totalPageCount	=	(uint)pages.Length;
+
+					Params.SetData( ref param );
+
+					device.PipelineState	=	factory[0];
+
+					device.ComputeConstants[ regParams]		=	Params;
+					device.ComputeResources[ regPageData]	=	PageData;
+					device.SetComputeUnorderedAccess( regTarget0, PageTable.GetSurface(0).UnorderedAccess );
+					device.SetComputeUnorderedAccess( regTarget1, PageTable.GetSurface(1).UnorderedAccess );
+					device.SetComputeUnorderedAccess( regTarget2, PageTable.GetSurface(2).UnorderedAccess );
+					device.SetComputeUnorderedAccess( regTarget3, PageTable.GetSurface(3).UnorderedAccess );
+					device.SetComputeUnorderedAccess( regTarget4, PageTable.GetSurface(4).UnorderedAccess );
+					device.SetComputeUnorderedAccess( regTarget5, PageTable.GetSurface(5).UnorderedAccess );
+					device.SetComputeUnorderedAccess( regTarget6, PageTable.GetSurface(6).UnorderedAccess );
+
+					if (!SkipPageTableUpdate)
 					{
-						Params.SetData( new Int4( pages.Length, mip, 0,0 ) );
+						int threadCount	=	tableSize * tableSize /	(  1 *  1 )//	0
+										+	tableSize * tableSize / (  2 *  2 )//	1
+										+	tableSize * tableSize / (  4 *  4 )//	2
+										+	tableSize * tableSize / (  8 *  8 )//	3
+										+	tableSize * tableSize / ( 16 * 16 )//	4
+										+	tableSize * tableSize / ( 32 * 32 )//	5
+										+	tableSize * tableSize / ( 64 * 64 )//	6
+										;
+						int groupSize	=	MathUtil.IntDivRoundUp( threadCount, 256 );
 
-						device.PipelineState	=	factory[0];
-
-						device.ComputeConstants[0]	=	Params;
-						device.ComputeResources[0]	=	PageData;
-						device.SetComputeUnorderedAccess( 0, PageTable.GetSurface(mip).UnorderedAccess );
-
-						int targetSize	=	tableSize >> mip;
-						int groupCountX	=	MathUtil.IntDivUp( targetSize, BlockSizeX );
-						int groupCountY	=	MathUtil.IntDivUp( targetSize, BlockSizeY );
-
-						device.Dispatch( groupCountX, groupCountY, 1 );
+						device.Dispatch( groupSize, 1, 1 );
 					}
 				}
 			}

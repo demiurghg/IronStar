@@ -55,9 +55,10 @@ void CSMain(
 	float2	blurDir		=	float2(0,rcpHeight);
 #endif
 	
-	for (int x=-15; x<15; x++) {
-		float 	weight 	= 	GaussDistribution( x, 3.0f );
-		float4	value	=	source.SampleLevel( linearClamp, uv + blurDir * x, 0 );
+	for (int x=-3; x<3; x++) {
+		float 	weight 	= 	GaussDistribution( x/2.0f, 1.0f );
+		float   offset	=	0.5f * sign(x);
+		float4	value	=	source.SampleLevel( linearClamp, uv + blurDir * (2*x + offset), 0 );
 				accum 	+= 	value * weight;
 	}
 	

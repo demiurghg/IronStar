@@ -122,7 +122,7 @@ float2 GetShadowHistory( float3 wsPosition, out float factor )
 }
 
 
-[numthreads(BlockSizeX,BlockSizeY,BlockSizeZ)] 
+[numthreads(16,16,1)] 
 void CSMain( 
 	uint3 groupId : SV_GroupID, 
 	uint3 groupThreadId : SV_GroupThreadID, 

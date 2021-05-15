@@ -361,9 +361,12 @@ namespace Fusion.Engine.Graphics {
 					device.SetComputeUnorderedAccess( regFogTarget,			scatteredLight0.UnorderedAccess );
 					device.SetComputeUnorderedAccess( regFogShadowTarget,	volumeShadow.UnorderedAccess );
 					
-					var gx	=	MathUtil.IntDivUp( fogGridSize.Width,  BlockSizeX );
-					var gy	=	MathUtil.IntDivUp( fogGridSize.Height, BlockSizeY );
-					var gz	=	MathUtil.IntDivUp( fogGridSize.Depth,  BlockSizeZ );
+					//var gx	=	MathUtil.IntDivUp( fogGridSize.Width,  BlockSizeX );
+					//var gy	=	MathUtil.IntDivUp( fogGridSize.Height, BlockSizeY );
+					//var gz	=	MathUtil.IntDivUp( fogGridSize.Depth,  BlockSizeZ );
+					var gx	=	MathUtil.IntDivUp( fogGridSize.Width,  16 );
+					var gy	=	MathUtil.IntDivUp( fogGridSize.Height, 16 );
+					var gz	=	MathUtil.IntDivUp( fogGridSize.Depth,  1 );
 
 					device.Dispatch( gx, gy, gz );
 				}

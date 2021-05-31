@@ -268,10 +268,12 @@ SURFACE SampleVirtualTexture( PSInput input, out float4 feedback )
 	float4 fallback		=	float4( 0.5f, 0.5, 0.5f, 1.0f );
 	int2 indexXY 		=	(int2)floor(input.TexCoord * VTVirtualPageCount / scale );
 	float4 physPageTC	=	Texture0.Load( int3(indexXY, (int)(mip)) ).xyzw;
+	physPageTC.xy *=	Stage.VTInvertedPhysicalSize;
 	
 	float mipFrac		=	max(0, mipf - physPageTC.z);
 	
-	if (physPageTC.w>0) {
+	if (physPageTC.w>0) 
+	{
 		float2 	withinPageTC	=	vtexTC * VTVirtualPageCount / exp2(physPageTC.z);
 				withinPageTC	=	frac( withinPageTC );
 				withinPageTC	=	withinPageTC * Stage.VTPageScaleRCP;

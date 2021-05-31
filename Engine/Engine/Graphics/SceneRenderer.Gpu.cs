@@ -45,7 +45,7 @@ namespace Fusion.Engine.Graphics {
 
 
 		[ShaderStructure]
-		[StructLayout(LayoutKind.Sequential, Pack=4, Size=256)]
+		[StructLayout(LayoutKind.Sequential, Pack=4, Size=128)]
 		public struct STAGE 
 		{
 			public Matrix	WorldToLightVolume		;
@@ -54,6 +54,7 @@ namespace Fusion.Engine.Graphics {
 			
 			public float	VTPageScaleRCP			;
 			public float	VTGradientScaler		;
+			public float	VTInvertedPhysicalSize	;
 			public float	SsaoWeight				;
 			public float	ShowLightComplexity		;
 

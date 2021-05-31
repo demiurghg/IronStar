@@ -31,7 +31,7 @@ namespace Fusion.Engine.Graphics
 		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow	= new CRegister( 6, "CascadeShadow"		);
 		static FXConstantBuffer<Fog.FOG_DATA>				regFog				= new CRegister( 7, "Fog"				);
 
-		static FXTexture2D<Vector4>				regTexture0				=	new TRegister( 0, "Texture0"			);
+		static FXTexture2D<UInt4>				regTexture0				=	new TRegister( 0, "Texture0"			);
 		static FXTexture2D<Vector4>				regTexture1				=	new TRegister( 1, "Texture1"			);
 		static FXTexture2D<Vector4>				regTexture2				=	new TRegister( 2, "Texture2"			);
 		static FXTexture2D<Vector4>				regTexture3				=	new TRegister( 3, "Texture3"			);
@@ -213,16 +213,17 @@ namespace Fusion.Engine.Graphics
 			var width	=	context.Viewport.Width;
 			var height	=	context.Viewport.Height;
 
-			cbDataStage.WorldToLightVolume	=	rw.LightMap.WorldToVolume;
-			cbDataStage.VTGradientScaler	=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;
-			cbDataStage.VTPageScaleRCP		=	rs.VTSystem.PageScaleRCP;
-			cbDataStage.SsaoWeight			=	instanceGroup.HasFlag(InstanceGroup.Weapon) ? 0 : 1;
-			cbDataStage.ViewportSize		=	new Vector4( width, height, 1.0f / width, 1.0f / height );
-			cbDataStage.DepthBias			=	context.DepthBias;
-			cbDataStage.SlopeBias			=	context.SlopeBias;
-			cbDataStage.DirectLightFactor	=	rs.SkipDirectLighting ? 0 : 1;
-			cbDataStage.IndirectLightFactor	=	rs.Radiosity.MasterIntensity;
-			cbDataStage.ShowLightComplexity	=	rs.ShowLightComplexity ? 1 : 0;
+			cbDataStage.WorldToLightVolume		=	rw.LightMap.WorldToVolume;
+			cbDataStage.VTGradientScaler		=	VTConfig.PageSize * VTConfig.VirtualPageCount / (float)rs.VTSystem.PhysicalPages0.Width;
+			cbDataStage.VTPageScaleRCP			=	rs.VTSystem.PageScaleRCP;
+			cbDataStage.VTInvertedPhysicalSize	=	1.0f / rs.VTSystem.PhysicalSize;
+			cbDataStage.SsaoWeight				=	instanceGroup.HasFlag(InstanceGroup.Weapon) ? 0 : 1;
+			cbDataStage.ViewportSize			=	new Vector4( width, height, 1.0f / width, 1.0f / height );
+			cbDataStage.DepthBias				=	context.DepthBias;
+			cbDataStage.SlopeBias				=	context.SlopeBias;
+			cbDataStage.DirectLightFactor		=	rs.SkipDirectLighting ? 0 : 1;
+			cbDataStage.IndirectLightFactor		=	rs.Radiosity.MasterIntensity;
+			cbDataStage.ShowLightComplexity		=	rs.ShowLightComplexity ? 1 : 0;
 
 			constBufferStage.SetData( ref cbDataStage );
 

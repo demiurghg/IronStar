@@ -48,7 +48,7 @@ void ComputeTileLocation( uint index, out uint2 xy, out uint mip )
 	xy.y		=	index / size;
 }
 
-void WriteValue( uint2 xy, uint mip, float4 value )
+void WriteValue( uint2 xy, uint mip, uint4 value )
 {
 	switch (mip)
 	{
@@ -71,7 +71,7 @@ void CSMain( uint3 dispatchThreadId : SV_DispatchThreadID, uint3 groupIndex : SV
 {
 	uint 	totalPageCount	=	Params.totalPageCount;
 
-	float4 	physicalAddress	=	float4(0,0,999,0);
+	uint4 	physicalAddress	=	float4(0,0,999,0);
 	uint2 	tileLocation;
 	uint2 	targetLocation;
 	uint  	targetMipLevel;
@@ -134,7 +134,7 @@ void CSMain( uint3 dispatchThreadId : SV_DispatchThreadID, uint3 groupIndex : SV
 				  && ( ( page.VY*size + size) >  targetLocation.y ) 
 				 )
 				{
-					physicalAddress 	=	float4( page.OffsetX, page.OffsetY, page.Mip, 1 );
+					physicalAddress 	=	uint4( page.OffsetX, page.OffsetY, page.Mip, 1 );
 				}
 			}
 		}

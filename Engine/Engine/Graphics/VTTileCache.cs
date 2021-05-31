@@ -17,9 +17,9 @@ using Fusion.Build.Mapping;
 namespace Fusion.Engine.Graphics {
 
 	[StructLayout(LayoutKind.Explicit, Size=20)]
-	public struct PageGpu {
-
-		public PageGpu ( float vx, float vy, float offsetX, float offsetY, float mip )
+	public struct PageGpu 
+	{
+		public PageGpu ( float vx, float vy, uint offsetX, uint offsetY, float mip )
 		{
 			this.VX			= vx;
 			this.VY			= vy;
@@ -30,17 +30,17 @@ namespace Fusion.Engine.Graphics {
 
 		[FieldOffset( 0)] public float VX;
 		[FieldOffset( 4)] public float VY;
-		[FieldOffset( 8)] public float OffsetX;
-		[FieldOffset(12)] public float OffsetY;
+		[FieldOffset( 8)] public uint OffsetX;
+		[FieldOffset(12)] public uint OffsetY;
 		[FieldOffset(16)] public float Mip;
 	}
 
 
 
-	public class VTTileCache {
-
-		class Page {
-			
+	public class VTTileCache 
+	{
+		class Page 
+		{
 			public Page ( VTAddress va, int pa, int physPageCount, int physicalTexSize )
 			{
 				this.VA			=	va;
@@ -50,14 +50,14 @@ namespace Fusion.Engine.Graphics {
 				var border		=	VTConfig.PageBorderWidth;
 				var pageSize	=	VTConfig.PageSizeBordered;
 
-				this.X			=	((pa % physPageCount) * pageSize + border ) / physTexSize;
-				this.Y			=	((pa / physPageCount) * pageSize + border ) / physTexSize;
+				this.X			=	(uint)((pa % (physPageCount)) * pageSize + border );
+				this.Y			=	(uint)((pa / (physPageCount)) * pageSize + border );
 			}
 			
 			public readonly VTAddress VA;
 			public readonly int Address;
-			public readonly float X;
-			public readonly float Y;
+			public readonly uint X;
+			public readonly uint Y;
 
 			public VTTile Tile = null;
 

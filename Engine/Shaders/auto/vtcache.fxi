@@ -58,8 +58,8 @@ struct PARAMS {
 struct PageGpu {
 	float      VX;                            // offset:    0
 	float      VY;                            // offset:    4
-	float      OffsetX;                       // offset:    8
-	float      OffsetY;                       // offset:   12
+	uint       OffsetX;                       // offset:    8
+	uint       OffsetY;                       // offset:   12
 	float      Mip;                           // offset:   16
 };
 #endif
@@ -70,10 +70,10 @@ cbuffer __buffer0 : register(b0) {
 	PARAMS Params : packoffset(c0);
 };
 StructuredBuffer<PageGpu>      pageData                       : register(t0);
-RWTexture2D<float4>            pageTable                      : register(u0);
-RWTexture2D<float4>            pageTable1                     : register(u1);
-RWTexture2D<float4>            pageTable2                     : register(u2);
-RWTexture2D<float4>            pageTable3                     : register(u3);
-RWTexture2D<float4>            pageTable4                     : register(u4);
-RWTexture2D<float4>            pageTable5                     : register(u5);
-RWTexture2D<float4>            pageTable6                     : register(u6);
+RWTexture2D<uint4>             pageTable                      : register(u0);
+RWTexture2D<uint4>             pageTable1                     : register(u1);
+RWTexture2D<uint4>             pageTable2                     : register(u2);
+RWTexture2D<uint4>             pageTable3                     : register(u3);
+RWTexture2D<uint4>             pageTable4                     : register(u4);
+RWTexture2D<uint4>             pageTable5                     : register(u5);
+RWTexture2D<uint4>             pageTable6                     : register(u6);

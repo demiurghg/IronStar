@@ -79,7 +79,7 @@ struct DIRECT_LIGHT {
 #endif
 
 // Fusion.Engine.Graphics.SceneRenderer+STAGE
-// Marshal.SizeOf = 256
+// Marshal.SizeOf = 128
 #ifndef __STRUCT_STAGE
 #define __STRUCT_STAGE 1
 struct STAGE {
@@ -87,12 +87,13 @@ struct STAGE {
 	float4     ViewportSize;                  // offset:   64
 	float      VTPageScaleRCP;                // offset:   80
 	float      VTGradientScaler;              // offset:   84
-	float      SsaoWeight;                    // offset:   88
-	float      ShowLightComplexity;           // offset:   92
-	float      SlopeBias;                     // offset:   96
-	float      DepthBias;                     // offset:  100
-	float      DirectLightFactor;             // offset:  104
-	float      IndirectLightFactor;           // offset:  108
+	float      VTInvertedPhysicalSize;        // offset:   88
+	float      SsaoWeight;                    // offset:   92
+	float      ShowLightComplexity;           // offset:   96
+	float      SlopeBias;                     // offset:  100
+	float      DepthBias;                     // offset:  104
+	float      DirectLightFactor;             // offset:  108
+	float      IndirectLightFactor;           // offset:  112
 };
 #endif
 
@@ -236,7 +237,7 @@ cbuffer __buffer6 : register(b6) {
 cbuffer __buffer7 : register(b7) {
 	FOG_DATA Fog : packoffset(c0);
 };
-Texture2D<float4>              Texture0                       : register(t0);
+Texture2D<uint4>               Texture0                       : register(t0);
 Texture2D<float4>              Texture1                       : register(t1);
 Texture2D<float4>              Texture2                       : register(t2);
 Texture2D<float4>              Texture3                       : register(t3);

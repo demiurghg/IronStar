@@ -48,17 +48,27 @@ void ComputeTileLocation( uint index, out uint2 xy, out uint mip )
 	xy.y		=	index / size;
 }
 
+uint Encode(uint4 value)
+{
+	return 
+		(( value.x & 0x1FFF ) << 0 )  |
+		(( value.y & 0x1FFF ) << 13 ) |
+		(( value.z & 0x000F ) << 26 ) |
+		(( value.w & 0x0001 ) << 30 ) ;
+		
+}
+
 void WriteValue( uint2 xy, uint mip, uint4 value )
 {
 	switch (mip)
 	{
-		case 0: pageTable [xy] = value; break;
-		case 1: pageTable1[xy] = value; break;
-		case 2: pageTable2[xy] = value; break;
-		case 3: pageTable3[xy] = value; break;
-		case 4: pageTable4[xy] = value; break;
-		case 5: pageTable5[xy] = value; break;
-		case 6: pageTable6[xy] = value; break;
+		case 0: pageTable [xy] = Encode(value); break;
+		case 1: pageTable1[xy] = Encode(value); break;
+		case 2: pageTable2[xy] = Encode(value); break;
+		case 3: pageTable3[xy] = Encode(value); break;
+		case 4: pageTable4[xy] = Encode(value); break;
+		case 5: pageTable5[xy] = Encode(value); break;
+		case 6: pageTable6[xy] = Encode(value); break;
 	}
 }
 

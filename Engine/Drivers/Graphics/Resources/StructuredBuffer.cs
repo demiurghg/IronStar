@@ -14,10 +14,10 @@ using DXGI = SharpDX.DXGI;
 using System.Runtime.InteropServices;
 
 
-namespace Fusion.Drivers.Graphics {
-
-	public class StructuredBuffer : ShaderResource {
-
+namespace Fusion.Drivers.Graphics 
+{
+	public class StructuredBuffer : ShaderResource 
+	{
 		/// <summary>
 		/// Structure stride in bytes
 		/// </summary>

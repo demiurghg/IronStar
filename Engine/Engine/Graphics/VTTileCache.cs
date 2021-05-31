@@ -19,7 +19,7 @@ namespace Fusion.Engine.Graphics {
 	[StructLayout(LayoutKind.Explicit, Size=20)]
 	public struct PageGpu 
 	{
-		public PageGpu ( float vx, float vy, uint offsetX, uint offsetY, float mip )
+		public PageGpu ( uint vx, uint vy, uint offsetX, uint offsetY, uint mip )
 		{
 			this.VX			= vx;
 			this.VY			= vy;
@@ -28,11 +28,11 @@ namespace Fusion.Engine.Graphics {
 			this.Mip		= mip;
 		}
 
-		[FieldOffset( 0)] public float VX;
-		[FieldOffset( 4)] public float VY;
+		[FieldOffset( 0)] public uint VX;
+		[FieldOffset( 4)] public uint VY;
 		[FieldOffset( 8)] public uint OffsetX;
 		[FieldOffset(12)] public uint OffsetY;
-		[FieldOffset(16)] public float Mip;
+		[FieldOffset(16)] public uint Mip;
 	}
 
 
@@ -164,11 +164,11 @@ namespace Fusion.Engine.Graphics {
 				return cache.GetValues()
 					.Where( pair1 => pair1.Tile!=null )
 					.Select( pair2 => new PageGpu( 
-						pair2.VA.PageX, 
-						pair2.VA.PageY, 
+						(uint)pair2.VA.PageX, 
+						(uint)pair2.VA.PageY, 
 						pair2.X,
 						pair2.Y,
-						pair2.VA.MipLevel ) )
+						(uint)pair2.VA.MipLevel ) )
 					.ToArray();
 			}
 		}

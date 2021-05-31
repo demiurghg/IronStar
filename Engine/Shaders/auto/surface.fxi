@@ -237,7 +237,7 @@ cbuffer __buffer6 : register(b6) {
 cbuffer __buffer7 : register(b7) {
 	FOG_DATA Fog : packoffset(c0);
 };
-Texture2D<uint4>               Texture0                       : register(t0);
+Texture2D<uint>                Texture0                       : register(t0);
 Texture2D<float4>              Texture1                       : register(t1);
 Texture2D<float4>              Texture2                       : register(t2);
 Texture2D<float4>              Texture3                       : register(t3);

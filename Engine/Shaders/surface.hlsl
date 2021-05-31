@@ -219,6 +219,17 @@ float MipLevel( float2 uv )
 	VIRTUAL TEXTURE
 -----------------------------------------------------------------------------*/
 
+uint4 Decode(uint value)
+{
+	uint4 result;
+	result.x 	=	( value >> 0  ) & 0x1FFF;
+	result.y 	=	( value >> 13 ) & 0x1FFF;
+	result.z 	=	( value >> 26 ) & 0x000F;
+	result.w 	=	( value >> 30 ) & 0x0001;
+	return result;
+}
+
+
 SURFACE SampleVirtualTexture( PSInput input, out float4 feedback )
 {
 	SURFACE surf;
@@ -267,7 +278,7 @@ SURFACE SampleVirtualTexture( PSInput input, out float4 feedback )
 	float2 vtexTC		=	saturate(input.TexCoord);
 	float4 fallback		=	float4( 0.5f, 0.5, 0.5f, 1.0f );
 	int2 indexXY 		=	(int2)floor(input.TexCoord * VTVirtualPageCount / scale );
-	float4 physPageTC	=	Texture0.Load( int3(indexXY, (int)(mip)) ).xyzw;
+	float4 physPageTC	=	Decode( Texture0.Load( int3(indexXY, (int)(mip)) ) );
 	physPageTC.xy *=	Stage.VTInvertedPhysicalSize;
 	
 	float mipFrac		=	max(0, mipf - physPageTC.z);

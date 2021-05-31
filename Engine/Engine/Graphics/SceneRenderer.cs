@@ -31,7 +31,7 @@ namespace Fusion.Engine.Graphics
 		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow	= new CRegister( 6, "CascadeShadow"		);
 		static FXConstantBuffer<Fog.FOG_DATA>				regFog				= new CRegister( 7, "Fog"				);
 
-		static FXTexture2D<UInt4>				regTexture0				=	new TRegister( 0, "Texture0"			);
+		static FXTexture2D<uint>				regTexture0				=	new TRegister( 0, "Texture0"			);
 		static FXTexture2D<Vector4>				regTexture1				=	new TRegister( 1, "Texture1"			);
 		static FXTexture2D<Vector4>				regTexture2				=	new TRegister( 2, "Texture2"			);
 		static FXTexture2D<Vector4>				regTexture3				=	new TRegister( 3, "Texture3"			);

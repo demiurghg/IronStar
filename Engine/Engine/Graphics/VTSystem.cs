@@ -40,13 +40,13 @@ namespace Fusion.Engine.Graphics
 
 		static FXStructuredBuffer<PageGpu>	regPageData		=	new TRegister( 0, "pageData"	);
 
-		static FXRWTexture2D<UInt4>		regTarget0		=	new URegister( 0, "pageTable"		);
-		static FXRWTexture2D<UInt4>		regTarget1		=	new URegister( 1, "pageTable1"		);
-		static FXRWTexture2D<UInt4>		regTarget2		=	new URegister( 2, "pageTable2"		);
-		static FXRWTexture2D<UInt4>		regTarget3		=	new URegister( 3, "pageTable3"		);
-		static FXRWTexture2D<UInt4>		regTarget4		=	new URegister( 4, "pageTable4"		);
-		static FXRWTexture2D<UInt4>		regTarget5		=	new URegister( 5, "pageTable5"		);
-		static FXRWTexture2D<UInt4>		regTarget6		=	new URegister( 6, "pageTable6"		);
+		static FXRWTexture2D<uint>		regTarget0		=	new URegister( 0, "pageTable"		);
+		static FXRWTexture2D<uint>		regTarget1		=	new URegister( 1, "pageTable1"		);
+		static FXRWTexture2D<uint>		regTarget2		=	new URegister( 2, "pageTable2"		);
+		static FXRWTexture2D<uint>		regTarget3		=	new URegister( 3, "pageTable3"		);
+		static FXRWTexture2D<uint>		regTarget4		=	new URegister( 4, "pageTable4"		);
+		static FXRWTexture2D<uint>		regTarget5		=	new URegister( 5, "pageTable5"		);
+		static FXRWTexture2D<uint>		regTarget6		=	new URegister( 6, "pageTable6"		);
 
 		readonly RenderSystem rs;
 
@@ -279,7 +279,7 @@ namespace Fusion.Engine.Graphics
 				StagingTileMip		=	new Texture2DStaging( rs.Device, tileSize/2, tileSize/2, ColorFormat.Rgba8		);
 				StagingTileSrgbMip	=	new Texture2DStaging( rs.Device, tileSize/2, tileSize/2, ColorFormat.Rgba8_sRGB	);
 
-				PageTable			=	new RenderTarget2D( rs.Device, ColorFormat.Rgba32, tableSize, tableSize, true, true );
+				PageTable			=	new RenderTarget2D( rs.Device, ColorFormat.R32, tableSize, tableSize, true, true );
 				PageData			=	new StructuredBuffer( rs.Device, typeof(PageGpu), maxTiles, StructuredBufferFlags.None );
 				pageDataCpu			=	new PageGpu[ maxTiles ];
 				Params				=	new ConstantBuffer( rs.Device, 16 );

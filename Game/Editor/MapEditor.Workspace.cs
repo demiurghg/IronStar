@@ -41,7 +41,7 @@ namespace IronStar.Editor
 	{
 		Workspace workspace;
 		MapOutliner outliner;
-		FpsCounter fpsCounter = new FpsCounter(60);
+		FpsCounter fpsCounter = new FpsCounter(300);
 
 		void SetupWorkspace ()
 		{

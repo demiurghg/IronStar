@@ -14,6 +14,13 @@ using Fusion.Engine.Graphics.Ubershaders;
 
 namespace Fusion.Engine.Graphics
 {
+	public enum BlurTaps
+	{
+		Tap7,
+		Tap15,
+		Tap33,
+	}
+
 	/// <summary>
 	/// Class for base image processing such as copying, blurring, enhancement, anti-aliasing etc.
 	/// </summary>
@@ -51,6 +58,9 @@ namespace Fusion.Engine.Graphics
 			DOWNSAMPLE_DEPTH_MAX				= 1 << 23,
 			DOWNSAMPLE_DEPTH_LINEAR				= 1 << 24,
 			CLEAR_DEPTH							= 1 << 25,
+			TAPS_7								= 1 << 26,
+			TAPS_15								= 1 << 27,
+			TAPS_33								= 1 << 28,
 		}
 
 		[StructLayout( LayoutKind.Explicit )]
@@ -560,9 +570,9 @@ namespace Fusion.Engine.Graphics
 		/// <param name="temporary"></param>
 		/// <param name="sigma"></param>
 		/// <param name="mipLevel"></param>
-		public void GaussBlur ( RenderTarget2D srcDst, RenderTarget2D temporary, float sigma, int mipLevel )
+		public void GaussBlur ( RenderTarget2D srcDst, RenderTarget2D temporary, float sigma, BlurTaps numTaps, int mipLevel )
 		{
-			GaussBlurInternal( srcDst, srcDst, temporary, sigma, 0f, mipLevel, null, null );
+			GaussBlurInternal( srcDst, srcDst, temporary, sigma, 0f, numTaps, mipLevel, null, null );
 		}
 
 
@@ -579,7 +589,7 @@ namespace Fusion.Engine.Graphics
 		/// <param name="mipLevel"></param>
 		public void GaussBlurBilateral ( RenderTarget2D src, RenderTarget2D dst, RenderTarget2D temporary, ShaderResource depthData, ShaderResource normalData, float sigma, float sharpness, int mipLevel )
 		{
-			GaussBlurInternal( src, dst, temporary, sigma, sharpness, mipLevel, depthData, normalData );
+			GaussBlurInternal( src, dst, temporary, sigma, sharpness, BlurTaps.Tap33, mipLevel, depthData, normalData );
 		}
 
 
@@ -591,7 +601,7 @@ namespace Fusion.Engine.Graphics
 		/// <param name="temporary"></param>
 		/// <param name="sigma"></param>
 		/// <param name="kernelSize"></param>
-		void GaussBlurInternal ( RenderTarget2D src, RenderTarget2D dst, RenderTarget2D temporary, float sigma, float sharpness, int mipLevel, ShaderResource depthData, ShaderResource normalData )
+		void GaussBlurInternal ( RenderTarget2D src, RenderTarget2D dst, RenderTarget2D temporary, float sigma, float sharpness, BlurTaps numTaps, int mipLevel, ShaderResource depthData, ShaderResource normalData )
 		{
 			var taps = GetGaussWeightsBuffer( sigma, mipLevel );
 
@@ -602,14 +612,20 @@ namespace Fusion.Engine.Graphics
 
 			int combination	=	(int)ShaderFlags.GAUSS_BLUR;
 
-			if (depthData!=null && normalData!=null) {
+			if (depthData!=null && normalData!=null) 
+			{
 				combination |=	(int)ShaderFlags.BILATERAL;
 			}
 
+			switch (numTaps)
+			{
+				case BlurTaps.Tap7:		combination |= (int)ShaderFlags.TAPS_7;		break;
+				case BlurTaps.Tap15:	combination |= (int)ShaderFlags.TAPS_15;	break;
+				case BlurTaps.Tap33:	combination |= (int)ShaderFlags.TAPS_33;	break;
+			}
 
-
-			using( new PixEvent("GaussBlur") ) {
-
+			using( new PixEvent("GaussBlur") ) 
+			{
 				SetViewport(temporary.GetSurface(mipLevel));
 				device.SetTargets( null, temporary.GetSurface(mipLevel) );
 
@@ -624,8 +640,6 @@ namespace Fusion.Engine.Graphics
 				device.GfxSamplers[1]	=	SamplerState.PointClamp;
 
 				device.Draw( 3, 0 );
-
-
 
 				device.GfxResources[0]	=	null;
 

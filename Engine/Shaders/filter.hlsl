@@ -2,7 +2,7 @@
 $ubershader FXAA|COPY|DOWNSAMPLE_4|OVERLAY_ADDITIVE|COPY_ALPHA
 $ubershader (STRETCH_RECT..TO_CUBE_FACE)|(DOWNSAMPLE_2_4x4..TO_CUBE_FACE)
 $ubershader GAUSS_BLUR_3x3 PASS1|PASS2
-$ubershader GAUSS_BLUR PASS1|PASS2 +BILATERAL
+$ubershader GAUSS_BLUR PASS1|PASS2 +BILATERAL TAPS_7|TAPS_15|TAPS_33
 $ubershader LINEARIZE_DEPTH|RESOLVE_AND_LINEARIZE_DEPTH_MSAA
 $ubershader PREFILTER_ENVMAP POSX|POSY|POSZ|NEGX|NEGY|NEGZ
 $ubershader FILL_ALPHA_ONE
@@ -586,9 +586,22 @@ float4 PSMain(PS_IN input) : SV_Target
 		
 	#else
 		float4 color = Source.SampleLevel(SamplerLinearClamp, input.uv, 0) * Weights[0].x;
+	
+	#ifdef TAPS_33
+		int start = 17-16;
+		int end   = 17+16;
+	#endif
+	#ifdef TAPS_15
+		int start = 17-7;
+		int end   = 17+7;
+	#endif
+	#ifdef TAPS_7
+		int start = 17-3;
+		int end   = 17+3;
+	#endif
 
 		[unroll]
-		for (int i = 1; i < 33; i++) {
+		for (int i = start; i < end; i++) {
 			color += Source.SampleLevel(SamplerLinearClamp, input.uv + input.texelSize * Weights[i].w, Weights[i].y) * Weights[i].x;
 		}
 

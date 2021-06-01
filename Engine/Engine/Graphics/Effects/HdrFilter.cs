@@ -74,7 +74,11 @@ namespace Fusion.Engine.Graphics
 			set { gaussBlurSigma = MathUtil.Clamp( value, 1, 5 ); }
 		}
 
-		float gaussBlurSigma = 3;
+		float gaussBlurSigma = 2;
+
+		[Config]
+		[AECategory("Bloom")]
+		public BlurTaps BloomTaps { get; set; } = BlurTaps.Tap15;
 
 		/// <summary>
 		/// Amount of bloom. Zero means no bloom.
@@ -617,22 +621,12 @@ namespace Fusion.Engine.Graphics
 
 				if (!SkipBlur)
 				{
-					#if false
-					#warning BLUR SCALING ERROR
-					blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 0 );
-					blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 1 );
-					blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2 );
-					blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 3 );
-					blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 4 );
-					device.ResetStates();
-					#else
-					filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 0 );
-					filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 1 );
-					filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 2 );
-					filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 3 );
-					filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, 4 );
-					#endif
-				}
+					filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, BloomTaps, 0 );
+					filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, BloomTaps, 1 );
+					filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, BloomTaps, 2 );
+					filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, BloomTaps, 3 );
+					filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, BloomTaps, 4 );
+			}
 
 				//
 				//	Setup parameters :

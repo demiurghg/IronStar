@@ -513,15 +513,15 @@ namespace Fusion.Engine.Graphics
 						filter.StretchRect( hdrFrame.Bloom0.Surface, hdrFrame.HdrTarget, SamplerState.LinearClamp );
 						hdrFrame.Bloom0.BuildMipmaps();
 
-						//filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 0 );
-						//filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 1 );
-						//filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 2 );
-						//filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2, 3 );
+						filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 1.5f, BlurTaps.Tap7, 0 );
+						filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 1.5f, BlurTaps.Tap7, 1 );
+						filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 1.5f, BlurTaps.Tap7, 2 );
+						filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 1.5f, BlurTaps.Tap7, 3 );
 
-						blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 0 );
+						/*blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 0 );
 						blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 1 );
 						blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 2 );
-						blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 3 );
+						blur.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, 3 );*/
 					}
 
 					rs.SceneRenderer.RenderForwardTransparent( gameTime, stereoEye, Camera, viewHdrFrame, rlMainView, InstanceGroup.All );

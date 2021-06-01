@@ -16,23 +16,29 @@ using Fusion.Build.Mapping;
 
 namespace Fusion.Engine.Graphics {
 
-	[StructLayout(LayoutKind.Explicit, Size=20)]
+	[StructLayout(LayoutKind.Explicit, Size=12)]
 	public struct PageGpu 
 	{
 		public PageGpu ( uint vx, uint vy, uint offsetX, uint offsetY, uint mip )
 		{
 			this.VX			= vx;
 			this.VY			= vy;
-			this.OffsetX	= offsetX;
-			this.OffsetY	= offsetY;
-			this.Mip		= mip;
+			this.PAddr		= Encode( offsetX, offsetY, mip );
 		}
 
 		[FieldOffset( 0)] public uint VX;
 		[FieldOffset( 4)] public uint VY;
-		[FieldOffset( 8)] public uint OffsetX;
-		[FieldOffset(12)] public uint OffsetY;
-		[FieldOffset(16)] public uint Mip;
+		[FieldOffset( 8)] public uint PAddr;
+
+		static uint Encode(uint px, uint py, uint mip)
+		{
+			//	[y/n][res][x:13][y:13][mip:4]
+			return 
+				0x80000000 |
+				(( px  & 0x1FFF ) << 17 ) |
+				(( py  & 0x1FFF ) <<  4 ) |
+				(( mip & 0x000F ) <<  0 ) ;
+		}
 	}
 
 

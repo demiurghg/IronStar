@@ -52,15 +52,13 @@ struct PARAMS {
 #endif
 
 // Fusion.Engine.Graphics.PageGpu
-// Marshal.SizeOf = 20
+// Marshal.SizeOf = 12
 #ifndef __STRUCT_PageGpu
 #define __STRUCT_PageGpu 1
 struct PageGpu {
 	uint       VX;                            // offset:    0
 	uint       VY;                            // offset:    4
-	uint       OffsetX;                       // offset:    8
-	uint       OffsetY;                       // offset:   12
-	uint       Mip;                           // offset:   16
+	uint       PAddr;                         // offset:    8
 };
 #endif
 

@@ -222,10 +222,10 @@ float MipLevel( float2 uv )
 uint4 Decode(uint value)
 {
 	uint4 result;
-	result.x 	=	( value >> 0  ) & 0x1FFF;
-	result.y 	=	( value >> 13 ) & 0x1FFF;
-	result.z 	=	( value >> 26 ) & 0x000F;
-	result.w 	=	( value >> 30 ) & 0x0001;
+	result.w 	=	( value >> 31 );
+	result.x 	=	( value >> 17 ) & 0x1FFF;
+	result.y 	=	( value >>  4 ) & 0x1FFF;
+	result.z 	=	( value >>  0 ) & 0x000F;
 	return result;
 }
 

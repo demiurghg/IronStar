@@ -50,12 +50,12 @@ void ComputeTileLocation( uint index, out uint2 xy, out uint mip )
 
 uint Encode(uint4 value)
 {
+	//	[y/n][res][x:13][y:13][mip:4]
 	return 
-		(( value.x & 0x1FFF ) << 0 )  |
-		(( value.y & 0x1FFF ) << 13 ) |
-		(( value.z & 0x000F ) << 26 ) |
-		(( value.w & 0x0001 ) << 30 ) ;
-		
+		(( value.w & 0x0001 ) << 31 ) |
+		(( value.x & 0x1FFF ) << 17 ) |
+		(( value.y & 0x1FFF ) <<  4 ) |
+		(( value.z & 0x000F ) <<  0 ) ;
 }
 
 void WriteValue( uint2 xy, uint mip, uint4 value )
@@ -73,6 +73,21 @@ void WriteValue( uint2 xy, uint mip, uint4 value )
 }
 
 
+void WriteValue( uint2 xy, uint mip, uint value )
+{
+	switch (mip)
+	{
+		case 0: pageTable [xy] = value; break;
+		case 1: pageTable1[xy] = value; break;
+		case 2: pageTable2[xy] = value; break;
+		case 3: pageTable3[xy] = value; break;
+		case 4: pageTable4[xy] = value; break;
+		case 5: pageTable5[xy] = value; break;
+		case 6: pageTable6[xy] = value; break;
+	}
+}
+
+
 groupshared uint visiblePageCount = 0; 
 groupshared uint visiblePages[343];
 
@@ -81,7 +96,6 @@ void CSMain( uint3 dispatchThreadId : SV_DispatchThreadID, uint3 groupIndex : SV
 {
 	uint 	totalPageCount	=	Params.totalPageCount;
 
-	uint4 	physicalAddress	=	float4(0,0,999,0);
 	uint2 	tileLocation;
 	uint2 	targetLocation;
 	uint  	targetMipLevel;
@@ -102,18 +116,20 @@ void CSMain( uint3 dispatchThreadId : SV_DispatchThreadID, uint3 groupIndex : SV
 	{
 		uint 	pageIndex	=	passIt * 16*16 + groupThreadIndex.y * 16 + groupThreadIndex.x;
 		
-		float2 	tileMin = 	float2( tileLocation.x * 16,    	tileLocation.y * 16      );
-		float2 	tileMax = 	float2( tileLocation.x * 16 + 16,	tileLocation.y * 16 + 16 );
+		uint2 	tileMin		= 	uint2( tileLocation.x * 16,    		tileLocation.y * 16      );
+		uint2 	tileMax		= 	uint2( tileLocation.x * 16 + 16,	tileLocation.y * 16 + 16 );
 		
 		if ( pageIndex < totalPageCount) 
 		{
 			PageGpu	page = pageData[ pageIndex ];
 			
-			if ( page.Mip >= targetMipLevel ) 
+			uint pageMip = page.PAddr & 0xF;
+			
+			if ( pageMip >= targetMipLevel ) 
 			{
-				float	size	=	exp2(page.Mip - targetMipLevel);
-				float2 	pageMin	=	float2( page.VX * size, 		page.VY * size 		  );
-				float2 	pageMax	=	float2( page.VX * size + size, 	page.VY * size + size );
+				uint	size	=	exp2(pageMip - targetMipLevel);
+				uint2 	pageMin	=	uint2( page.VX * size, 			page.VY * size 		  );
+				uint2 	pageMax	=	uint2( page.VX * size + size, 	page.VY * size + size );
 			
 				if ( pageMin.x < tileMax.x && tileMin.x < pageMax.x 
 				  && pageMin.y < tileMax.y && tileMin.y < pageMax.y ) 
@@ -128,29 +144,34 @@ void CSMain( uint3 dispatchThreadId : SV_DispatchThreadID, uint3 groupIndex : SV
 	
 	GroupMemoryBarrierWithGroupSync();
 	
+	uint 	physicalAddress	=	0xF;
+
 	for (uint i = 0; i < visiblePageCount; i++) 
 	{
 		uint 	pageIndex	=	visiblePages[ i ];
 		PageGpu page 		= 	pageData[ pageIndex ];
-		uint	mip			=	(uint)page.Mip;
-		float	size		=	exp2(mip - targetMipLevel);
+		uint	pageMip 	=	page.PAddr & 0xF;
+		uint	size		=	exp2(pageMip - targetMipLevel);
 		
-		if (physicalAddress.z>page.Mip) 
+		[flatten]
+		if ( (physicalAddress & 0xF) > pageMip ) 
 		{
+			[flatten]
+			if ( ( ( page.VX*size       ) <= targetLocation.x )
+			  && ( ( page.VX*size + size) >  targetLocation.x )
+			  && ( ( page.VY*size       ) <= targetLocation.y )
+			  && ( ( page.VY*size + size) >  targetLocation.y ) 
+			 )
 			{
-				if ( ( ( page.VX*size       ) <= targetLocation.x )
-				  && ( ( page.VX*size + size) >  targetLocation.x )
-				  && ( ( page.VY*size       ) <= targetLocation.y )
-				  && ( ( page.VY*size + size) >  targetLocation.y ) 
-				 )
-				{
-					physicalAddress 	=	uint4( page.OffsetX, page.OffsetY, page.Mip, 1 );
-				}
+				physicalAddress 	=	page.PAddr;
 			}
 		}
 	}
-	
+
 	GroupMemoryBarrierWithGroupSync();
+
+	WriteValue( targetLocation, targetMipLevel, physicalAddress );
+	
 #else 
 	//--------------------------
 	// Brute-force approach:
@@ -176,9 +197,7 @@ void CSMain( uint3 dispatchThreadId : SV_DispatchThreadID, uint3 groupIndex : SV
 			}
 		}
 	}
-#endif
-	
+
 	WriteValue( targetLocation, targetMipLevel, physicalAddress );
-	//WriteValue( targetLocation, targetMipLevel, float4(targetLocation.xy, targetMipLevel,0) );
-	//pageTable[dispatchThreadId.xy] = physicalAddress;
+#endif
 }

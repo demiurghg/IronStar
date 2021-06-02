@@ -247,8 +247,8 @@ namespace Fusion.Engine.Graphics {
 			integratedLight	=	new Texture3DCompute( device, ColorFormat.Rgba16F,	fogGridSize.Width, fogGridSize.Height, fogGridSize.Depth );
 			skyFogLut		=	new RenderTarget2D  ( device, ColorFormat.Rgba16F,	fogGridSize.Width, fogGridSize.Height, true );
 
-			volumeShadow	=	new Texture3DCompute( device, ColorFormat.Rg16F,	fogGridSize.Width, fogGridSize.Height, fogGridSize.Depth );
-			shadowHistory	=	new Texture3DCompute( device, ColorFormat.Rg16F,	fogGridSize.Width, fogGridSize.Height, fogGridSize.Depth );
+			volumeShadow	=	new Texture3DCompute( device, ColorFormat.Rg8,	fogGridSize.Width, fogGridSize.Height, fogGridSize.Depth );
+			shadowHistory	=	new Texture3DCompute( device, ColorFormat.Rg8,	fogGridSize.Width, fogGridSize.Height, fogGridSize.Depth );
 
 			int floatOne	=	0;//BitConverter.ToInt32( BitConverter.GetBytes(1.0f), 0 );
 

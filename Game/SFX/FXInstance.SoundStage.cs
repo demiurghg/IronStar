@@ -110,14 +110,14 @@ namespace IronStar.SFX {
 
 			public override void Kill ()
 			{
-				soundInstance.Stop(true);
-				soundInstance.Release();
+				soundInstance?.Stop(true);
+				soundInstance?.Release();
 			}
 
 
 			public override void Update ( float dt, FXEvent fxEvent )
 			{
-				soundInstance.Set3DParameters( fxEvent.Origin, fxEvent.Velocity );
+				soundInstance?.Set3DParameters( fxEvent.Origin, fxEvent.Velocity );
 			}
 
 		}

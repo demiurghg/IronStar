@@ -57,8 +57,14 @@
         </relationship>
     </object>
     <object class="EventAutomatableProperties" id="{c4b77c0d-ddec-4dcd-851f-8275d1d54c2b}">
-        <property name="dopplerEnabled">
-            <value>true</value>
+        <property name="maxVoices">
+            <value>1</value>
+        </property>
+        <property name="voiceStealing">
+            <value>2</value>
+        </property>
+        <property name="dopplerScale">
+            <value>50</value>
         </property>
     </object>
     <object class="MarkerTrack" id="{2b7b64e4-dcd7-43bd-a2f7-e581803af273}"/>
@@ -169,6 +175,15 @@
     <object class="MixerBusPanner" id="{bbd77517-e0a8-4ee1-b2de-82840faf43a6}"/>
     <object class="MixerBusFader" id="{86d2f3ee-ff6d-4a03-93d7-5af137268836}"/>
     <object class="SpatialiserEffect" id="{2f24b845-78b0-47c2-819e-7409cb5d3650}">
+        <property name="distanceRolloffType">
+            <value>3</value>
+        </property>
+        <property name="minimumDistance">
+            <value>5</value>
+        </property>
+        <property name="maximumDistance">
+            <value>74</value>
+        </property>
         <property name="soundSize">
             <value>1.70000005</value>
         </property>

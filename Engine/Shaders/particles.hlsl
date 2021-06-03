@@ -1,9 +1,6 @@
 
 #if 0
-$ubershader INITIALIZE
-$ubershader INJECTION
-$ubershader SIMULATION
-$ubershader	ALLOC_LIGHTMAP
+$ubershader COMPUTE INITIALIZE|INJECTION|SIMULATION|ALLOC_LIGHTMAP
 $ubershader DRAW SOFT|HARD|DUDV|VELOCITY|HARD_SHADOW|SOFT_SHADOW|LIGHTMAP
 #endif
 
@@ -238,10 +235,10 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 {
 	GSOutput p0, p1, p2, p3;
 	
-	uint prtId = (uint)( sortParticleBufferGS[ inputPoint[0].vertexID ].y );
+	uint prtId = (uint)( sortParticleBuffer[ inputPoint[0].vertexID ].y );
 	//uint prtId = inputPoint[0].vertexID;
 	
-	Particle prt = particleBufferGS[ prtId ];
+	Particle prt = particleBuffer[ prtId ];
 	
 	if (prt.TimeLag<0) {
 		return;

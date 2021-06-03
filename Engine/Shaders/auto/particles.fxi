@@ -228,8 +228,6 @@ SamplerState                   FogSampler                     : register(s1);
 SamplerComparisonState         ShadowSampler                  : register(s2);
 Texture2D<float4>              Texture                        : register(t0);
 StructuredBuffer<Particle>     injectionBuffer                : register(t1);
-StructuredBuffer<Particle>     particleBufferGS               : register(t2);
-StructuredBuffer<float2>       sortParticleBufferGS           : register(t3);
 Texture2D<float4>              DepthValues                    : register(t5);
 Texture2D<float4>              ColorTemperature               : register(t6);
 Texture3D<uint2>               ClusterArray                   : register(t7);
@@ -245,8 +243,14 @@ Texture3D<float4>              IrradianceVolumeL2             : register(t16);
 Texture3D<float4>              IrradianceVolumeL3             : register(t17);
 StructuredBuffer<float4>       lightMapRegionsGS              : register(t18);
 StructuredBuffer<float4>       ExposureBuffer                 : register(t19);
+#if defined(DRAW)
+StructuredBuffer<Particle>     particleBuffer                 : register(t2);
+StructuredBuffer<float2>       sortParticleBuffer             : register(t3);
+#endif
+#if defined(COMPUTE)
 RWStructuredBuffer<Particle>   particleBuffer                 : register(u0);
 ConsumeStructuredBuffer<uint>  deadParticleIndicesPull        : register(u1);
 AppendStructuredBuffer<uint>   deadParticleIndicesPush        : register(u1);
 RWStructuredBuffer<float2>     sortParticleBuffer             : register(u2);
 RWStructuredBuffer<float4>     lightMapRegions                : register(u3);
+#endif

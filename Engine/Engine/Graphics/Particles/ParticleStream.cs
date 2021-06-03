@@ -22,51 +22,50 @@ namespace Fusion.Engine.Graphics {
 	[RequireShader("particles", true)]
 	public class ParticleStream : RenderComponent 
 	{
-		static FXConstantBuffer<PARAMS>						regParams				=	new CRegister( 0, "Params"					);
-		static FXConstantBuffer<GpuData.CAMERA>				regCamera				=	new CRegister( 1, "Camera"					);
-		static FXConstantBuffer<GpuData.CAMERA>				regCameraWeapon			=	new CRegister( 2, "CameraWeapon"			);
-		static FXConstantBuffer<Vector4>					regImages				=	new CRegister( 3, MAX_IMAGES, "Images"		);
-		static FXConstantBuffer<GpuData.DIRECT_LIGHT>		regDirectLight			=	new CRegister( 4, "DirectLight"				);
-		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow		=	new CRegister( 5, "CascadeShadow"			);
-		static FXConstantBuffer<Fog.FOG_DATA>				regFog					=	new CRegister( 6, "Fog"						);
+		static FXConstantBuffer<PARAMS>									regParams				=	new CRegister( 0, "Params"					);
+		static FXConstantBuffer<GpuData.CAMERA>							regCamera				=	new CRegister( 1, "Camera"					);
+		static FXConstantBuffer<GpuData.CAMERA>							regCameraWeapon			=	new CRegister( 2, "CameraWeapon"			);
+		static FXConstantBuffer<Vector4>								regImages				=	new CRegister( 3, MAX_IMAGES, "Images"		);
+		static FXConstantBuffer<GpuData.DIRECT_LIGHT>					regDirectLight			=	new CRegister( 4, "DirectLight"				);
+		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>				regCascadeShadow		=	new CRegister( 5, "CascadeShadow"			);
+		static FXConstantBuffer<Fog.FOG_DATA>							regFog					=	new CRegister( 6, "Fog"						);
 
-		static FXSamplerState								regSampler					=	new SRegister( 0, "LinearSampler"			);
-		static FXSamplerState								regFogSampler				=	new SRegister( 1, "FogSampler"			);
-		static FXSamplerComparisonState						regShadowSampler			=	new SRegister( 2, "ShadowSampler"			);
-																										   
-		static FXTexture2D<Vector4>							regTexture 					=	new TRegister( 0, "Texture" 				);
-		static FXStructuredBuffer<Particle>					reginjectionBuffer			=	new TRegister( 1, "injectionBuffer"			);
-		static FXStructuredBuffer<Particle>					regparticleBufferGS			=	new TRegister( 2, "particleBufferGS"		);
-		static FXStructuredBuffer<Vector2>					regsortParticleBufferGS		=	new TRegister( 3, "sortParticleBufferGS"	);
-		static FXTexture2D<Vector4>							regDepthValues				=	new TRegister( 5, "DepthValues"				);
-		static FXTexture2D<Vector4>							regColorTemperature			=	new TRegister( 6, "ColorTemperature"		);
-																										   	
-		static FXTexture3D<UInt2>							regClusterTable				=	new TRegister( 7, "ClusterArray"			);
-		static FXBuffer<uint>								regLightIndexTable			=	new TRegister( 8, "ClusterIndexBuffer"			);
-		static FXStructuredBuffer<SceneRenderer.LIGHT>		regLightDataTable			=	new TRegister( 9, "ClusterLightBuffer"			);
-		static FXTexture2D<Vector4>							regShadowMap				=	new TRegister(10, "ShadowMap"				);
-		static FXTexture2D<Vector4>							regLightMap					=	new TRegister(11, "LightMap"				);
-		static FXTexture2D<Vector4>							regShadowMask				=	new TRegister(12, "ShadowMask"				);
+		static FXSamplerState											regSampler					=	new SRegister( 0, "LinearSampler"			);
+		static FXSamplerState											regFogSampler				=	new SRegister( 1, "FogSampler"			);
+		static FXSamplerComparisonState									regShadowSampler			=	new SRegister( 2, "ShadowSampler"			);
+																													   
+		static FXTexture2D<Vector4>										regTexture 					=	new TRegister( 0, "Texture" 				);
+		static FXStructuredBuffer<Particle>								regInjectionBuffer			=	new TRegister( 1, "injectionBuffer"			);
+		[ShaderIfDef("DRAW")]	static FXStructuredBuffer<Particle>		regParticleBufferGS			=	new TRegister( 2, "particleBuffer"			);
+		[ShaderIfDef("DRAW")]	static FXStructuredBuffer<Vector2>		regSortParticleBufferGS		=	new TRegister( 3, "sortParticleBuffer"		);
+		static FXTexture2D<Vector4>										regDepthValues				=	new TRegister( 5, "DepthValues"				);
+		static FXTexture2D<Vector4>										regColorTemperature			=	new TRegister( 6, "ColorTemperature"		);
+																													   	
+		static FXTexture3D<UInt2>										regClusterTable				=	new TRegister( 7, "ClusterArray"			);
+		static FXBuffer<uint>											regLightIndexTable			=	new TRegister( 8, "ClusterIndexBuffer"			);
+		static FXStructuredBuffer<SceneRenderer.LIGHT>					regLightDataTable			=	new TRegister( 9, "ClusterLightBuffer"			);
+		static FXTexture2D<Vector4>										regShadowMap				=	new TRegister(10, "ShadowMap"				);
+		static FXTexture2D<Vector4>										regLightMap					=	new TRegister(11, "LightMap"				);
+		static FXTexture2D<Vector4>										regShadowMask				=	new TRegister(12, "ShadowMask"				);
 
-		static FXTexture3D<Vector4>							regFogVolume				=	new TRegister(13, "FogVolume"				);
+		static FXTexture3D<Vector4>										regFogVolume				=	new TRegister(13, "FogVolume"				);
 
-		static FXTexture3D<Vector4>							regIrradianceVolumeL0		=	new TRegister(14, "IrradianceVolumeL0"		);
-		static FXTexture3D<Vector4>							regIrradianceVolumeL1		=	new TRegister(15, "IrradianceVolumeL1"		);
-		static FXTexture3D<Vector4>							regIrradianceVolumeL2		=	new TRegister(16, "IrradianceVolumeL2"		);
-		static FXTexture3D<Vector4>							regIrradianceVolumeL3		=	new TRegister(17, "IrradianceVolumeL3"		);
-																											
-		static FXStructuredBuffer<Vector4>					regLightMapRegionsGS		=	new TRegister(18, "lightMapRegionsGS"		);
-		static FXStructuredBuffer<Vector4>					regExposureBuffer			=	new TRegister(19, "ExposureBuffer"			);
+		static FXTexture3D<Vector4>										regIrradianceVolumeL0		=	new TRegister(14, "IrradianceVolumeL0"		);
+		static FXTexture3D<Vector4>										regIrradianceVolumeL1		=	new TRegister(15, "IrradianceVolumeL1"		);
+		static FXTexture3D<Vector4>										regIrradianceVolumeL2		=	new TRegister(16, "IrradianceVolumeL2"		);
+		static FXTexture3D<Vector4>										regIrradianceVolumeL3		=	new TRegister(17, "IrradianceVolumeL3"		);
+																														
+		static FXStructuredBuffer<Vector4>								regLightMapRegionsGS		=	new TRegister(18, "lightMapRegionsGS"		);
+		static FXStructuredBuffer<Vector4>								regExposureBuffer			=	new TRegister(19, "ExposureBuffer"			);
 																															
-		static FXRWStructuredBuffer<Particle>				regparticleBuffer			=	new URegister( 0, "particleBuffer"			);
-		static FXConsumeStructuredBuffer<uint>				regdeadParticleIndicesPull	=	new URegister( 1, "deadParticleIndicesPull"	);
-		static FXAppendStructuredBuffer<uint>				regdeadParticleIndicesPush	=	new URegister( 1, "deadParticleIndicesPush"	);
-		static FXRWStructuredBuffer<Vector2>				regsortParticleBuffer		=	new URegister( 2, "sortParticleBuffer"		);
-		static FXRWStructuredBuffer<Vector4>				reglightMapRegions			=	new URegister( 3, "lightMapRegions"			);
+		[ShaderIfDef("COMPUTE")] static FXRWStructuredBuffer<Particle>	uavParticleBuffer			=	new URegister( 0, "particleBuffer"			);
+		[ShaderIfDef("COMPUTE")] static FXConsumeStructuredBuffer<uint>	uavDeadParticleIndicesPull	=	new URegister( 1, "deadParticleIndicesPull"	);
+		[ShaderIfDef("COMPUTE")] static FXAppendStructuredBuffer<uint>	uavDeadParticleIndicesPush	=	new URegister( 1, "deadParticleIndicesPush"	);
+		[ShaderIfDef("COMPUTE")] static FXRWStructuredBuffer<Vector2>	uavSortParticleBuffer		=	new URegister( 2, "sortParticleBuffer"		);
+		[ShaderIfDef("COMPUTE")] static FXRWStructuredBuffer<Vector4>	uavLightMapRegions			=	new URegister( 3, "lightMapRegions"			);
 
 
 		readonly ParticleSystem ps;
-		readonly int particleCount;
 		readonly bool sortParticles;
 		readonly bool useLightmap;
 		Ubershader		shader;
@@ -135,18 +134,19 @@ namespace Fusion.Engine.Graphics {
 		}
 
 		enum Flags {
-			INJECTION		=	0x0001,
-			SIMULATION		=	0x0002,
-			INITIALIZE		=	0x0004,
-			ALLOC_LIGHTMAP	=	0x0008,
-			DRAW			=	0x0100,
-			SOFT			=	0x0200,
-			HARD			=	0x0400,
-			DUDV			=	0x0800,
-			VELOCITY		=	0x1000,
-			SOFT_SHADOW		=	0x2000,
-			HARD_SHADOW		=	0x4000,
-			LIGHTMAP		=	0x8000,
+			COMPUTE			=	1 <<  0,
+			INJECTION		=	1 <<  1,
+			SIMULATION		=	1 <<  2,
+			INITIALIZE		=	1 <<  3,
+			ALLOC_LIGHTMAP	=	1 <<  4,
+			DRAW			=	1 <<  5,
+			SOFT			=	1 <<  6,
+			HARD			=	1 <<  7,
+			DUDV			=	1 <<  8,
+			VELOCITY		=	1 <<  9,
+			SOFT_SHADOW		=	1 << 10,
+			HARD_SHADOW		=	1 << 11,
+			LIGHTMAP		=	1 << 12,
 		}
 
 
@@ -201,7 +201,6 @@ namespace Fusion.Engine.Graphics {
 		{
 			this.renderWorld	=	renderWorld;
 			this.ps				=	ps;
-			particleCount		=	MAX_PARTICLES;
 			sortParticles		=	sort;
 			useLightmap			=	lightmap;
 
@@ -225,7 +224,7 @@ namespace Fusion.Engine.Graphics {
 			var device = Game.GraphicsDevice;
 
 			device.SetComputeUnorderedAccess( 1, deadParticlesIndices.UnorderedAccess, 0 );
-			device.PipelineState	=	factory[ (int)Flags.INITIALIZE ];
+			device.PipelineState	=	factory[ (int)(Flags.COMPUTE|Flags.INITIALIZE) ];
 			device.Dispatch( MathUtil.IntDivUp( MAX_PARTICLES, BLOCK_SIZE ) );
 		}
 
@@ -440,7 +439,7 @@ namespace Fusion.Engine.Graphics {
 			param.IndirectLightFactor	=	rs.Radiosity.MasterIntensity;
 			param.DirectLightFactor		=	rs.SkipDirectLighting ? 0 : 1;
 
-			if (flags==Flags.INJECTION) 
+			if (flags.HasFlag(Flags.INJECTION)) 
 			{
 				param.MaxParticles	=	injectionCount;
 			}
@@ -449,7 +448,7 @@ namespace Fusion.Engine.Graphics {
 			paramsCB.SetData( ref param );
 
 			//	set DeadListSize to prevent underflow:
-			if (flags==Flags.INJECTION) 
+			if (flags.HasFlag(Flags.INJECTION)) 
 			{
 				deadParticlesIndices.CopyStructureCount( paramsCB, Marshal.OffsetOf( typeof(PARAMS), "DeadListSize").ToInt32() );
 			}
@@ -475,6 +474,8 @@ namespace Fusion.Engine.Graphics {
 
 			device.ComputeConstants	[ regFog			]	=	rs.Fog.FogData;
 			device.GfxConstants		[ regFog			]	=	rs.Fog.FogData;
+
+			device.PipelineState	=	factory[ (int)flags ];
 		}
 
 
@@ -513,13 +514,11 @@ namespace Fusion.Engine.Graphics {
 					//injectionBuffer.SetData( injectionBufferCPU );
 					injectionBuffer.UpdateData( injectionBufferCPU );
 
-					device.ComputeResources[ reginjectionBuffer ] = injectionBuffer;
-					device.SetComputeUnorderedAccess( regparticleBuffer,			simulationBuffer.UnorderedAccess,		0 );
-					device.SetComputeUnorderedAccess( regdeadParticleIndicesPush,	deadParticlesIndices.UnorderedAccess, -1 );
+					device.ComputeResources[ regInjectionBuffer ] = injectionBuffer;
+					device.SetComputeUnorderedAccess( uavParticleBuffer,			simulationBuffer.UnorderedAccess,		0 );
+					device.SetComputeUnorderedAccess( uavDeadParticleIndicesPush,	deadParticlesIndices.UnorderedAccess, -1 );
 
-					SetupGPUParameters( 0, 0, renderWorld, camera, Flags.INJECTION );
-
-					device.PipelineState	=	factory[ (int)Flags.INJECTION ];
+					SetupGPUParameters( 0, 0, renderWorld, camera, Flags.COMPUTE | Flags.INJECTION );
 			
 					//	GPU time ???? -> 0.0046
 					device.Dispatch( MathUtil.IntDivUp( MAX_INJECTED, BLOCK_SIZE ) );
@@ -548,10 +547,8 @@ namespace Fusion.Engine.Graphics {
 							timeAccumulator -= stepTime;
 						}
 
-						SetupGPUParameters( stepTime, stepCount, renderWorld, camera, Flags.SIMULATION);
+						SetupGPUParameters( stepTime, stepCount, renderWorld, camera, Flags.COMPUTE | Flags.SIMULATION);
 
-						device.PipelineState	=	factory[ (int)Flags.SIMULATION ];
-	
 						/// GPU time : 1.665 ms	 --> 0.38 ms
 						device.Dispatch( MathUtil.IntDivUp( MAX_PARTICLES, BLOCK_SIZE ) );
 					}
@@ -570,10 +567,8 @@ namespace Fusion.Engine.Graphics {
 						device.SetComputeUnorderedAccess( 2, sortParticlesBuffer.UnorderedAccess, 0 );
 						device.SetComputeUnorderedAccess( 3, lightMapRegions.UnorderedAccess, 0 );
 
-						SetupGPUParameters( 0, 0, renderWorld, camera, Flags.ALLOC_LIGHTMAP );
+						SetupGPUParameters( 0, 0, renderWorld, camera, Flags.COMPUTE | Flags.ALLOC_LIGHTMAP );
 
-						device.PipelineState	=	factory[ (int)Flags.ALLOC_LIGHTMAP ];
-	
 						device.Dispatch( 1, 1, 1 );//*/
 					}
 				}
@@ -640,9 +635,9 @@ namespace Fusion.Engine.Graphics {
 					device.ComputeSamplers	[ regSampler ]		=	SamplerState.LinearClamp4Mips;
 
 					device.GfxResources[ regTexture 			]	=	Images==null? rs.WhiteTexture.Srv : Images.Texture.Srv;
-					device.GfxResources[ reginjectionBuffer		]	=	simulationBuffer	;
-					device.GfxResources[ regparticleBufferGS	]	=	simulationBuffer	;
-					device.GfxResources[ regsortParticleBufferGS]	=	sortParticlesBuffer ;
+					device.GfxResources[ regInjectionBuffer		]	=	simulationBuffer	;
+					device.GfxResources[ regParticleBufferGS	]	=	simulationBuffer	;
+					device.GfxResources[ regSortParticleBufferGS]	=	sortParticlesBuffer ;
 					device.GfxResources[ regDepthValues			]	=	depthValues			;
 					device.GfxResources[ regColorTemperature	]	=	ps.ColorTempMap.Srv ;
 					device.GfxResources[ regFogVolume			]	=	rs.Fog.FogGrid;
@@ -677,7 +672,7 @@ namespace Fusion.Engine.Graphics {
 					device.GfxResources[ regExposureBuffer ]	=	rw.HdrFrame.MeasuredNew;
 
 					//	setup PS :
-					device.PipelineState	=	factory[ (int)flags ];
+					//device.PipelineState	=	factory[ (int)flags ];
 
 					//	GPU time : 0.81 ms	-> 0.91 ms
 					device.Draw( MAX_PARTICLES, 0 );

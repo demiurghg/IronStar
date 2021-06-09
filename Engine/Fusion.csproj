@@ -634,7 +634,6 @@
     <Compile Include="Engine\Graphics\Scenes\AnimationKey.cs" />
     <Compile Include="Engine\Graphics\Scenes\AnimationWrapMode.cs" />
     <Compile Include="Engine\Graphics\Scenes\AnimationTakeCollection.cs" />
-    <Compile Include="Engine\Graphics\Scenes\GeometryCache.cs" />
     <Compile Include="Engine\Graphics\Scenes\Material.cs" />
     <Compile Include="Engine\Graphics\Scenes\Mesh.cs" />
     <Compile Include="Engine\Graphics\Scenes\MeshSubset.cs" />

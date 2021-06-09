@@ -14,8 +14,14 @@ using DXGI = SharpDX.DXGI;
 using System.Runtime.InteropServices;
 
 
-namespace Fusion.Drivers.Graphics {
-	public enum VertexBufferOptions {
+namespace Fusion.Drivers.Graphics 
+{
+	public enum VertexBufferOptions 
+	{
+		/// <summary>
+		/// Fastest vertex buffer, no update, could be created in separate thread.
+		/// </summary>
+		Static,
 
 		/// <summary>
 		/// Fastest vertex buffer, slow update.

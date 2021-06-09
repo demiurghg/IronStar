@@ -14,10 +14,12 @@ namespace Fusion.Engine.Graphics {
 	/// <summary>
 	/// Represents any kind of texture that could be loaded from content.
 	/// </summary>
-	public class DiscTexture : Texture {
+	public class DiscTexture : Texture 
+	{
 
 		[ContentLoader(typeof(DiscTexture))]
-		public class Loader : ContentLoader {
+		public class Loader : ContentLoader 
+		{
 
 			public override object Load ( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 			{
@@ -51,7 +53,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="disposing"></param>
 		protected override void Dispose ( bool disposing )
 		{
-			if (disposing) {
+			if (disposing) 
+			{
 				SafeDispose( ref texture );
 			}
 

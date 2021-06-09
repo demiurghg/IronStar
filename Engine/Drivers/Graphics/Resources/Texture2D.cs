@@ -19,20 +19,23 @@ using Fusion.Core.Extensions;
 using Fusion.Engine.Common;
 
 
-namespace Fusion.Drivers.Graphics {
-
-	internal class Texture2D : ShaderResource {
+namespace Fusion.Drivers.Graphics 
+{
+	internal class Texture2D : ShaderResource 
+	{
 
 		D3D.Texture2D	tex2D;
 		ColorFormat		format;
 		int				mipCount;
 
-		internal D3D.Texture2D Tex2D {
+		internal D3D.Texture2D Tex2D 
+		{
 			get { return tex2D; }
 		}
 
 		[ContentLoader(typeof(Texture2D))]
-		internal class Loader : ContentLoader {
+		internal class Loader : ContentLoader 
+		{
 
 			public override object Load ( ContentManager content, Stream stream, Type requestedType, string assetPath, IStorage storage )
 			{
@@ -68,7 +71,8 @@ namespace Fusion.Drivers.Graphics {
 			texDesc.Usage			=	ResourceUsage.Default;
 			texDesc.Width			=	Width;
 													 
-			lock (device.DeviceContext) {
+			lock (device.DeviceContext) 
+			{
 				tex2D	=	new D3D.Texture2D( device.Device, texDesc );
 				SRV		=	new ShaderResourceView( device.Device, tex2D );
 			}

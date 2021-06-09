@@ -14,9 +14,10 @@ using DXGI = SharpDX.DXGI;
 using System.Runtime.InteropServices;
 
 
-namespace Fusion.Drivers.Graphics {
-	public class VertexBuffer : GraphicsObject {
-		
+namespace Fusion.Drivers.Graphics 
+{
+	public class VertexBuffer : GraphicsObject 
+	{
 		/// <summary>
 		/// Vertex stride
 		/// </summary>
@@ -50,7 +51,7 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		/// <param name="device"></param>
 		/// <param name="capacity"></param>
-		public VertexBuffer ( GraphicsDevice device, Type vertexType, int capacity, VertexBufferOptions options = VertexBufferOptions.Default ) : base(device)
+		public VertexBuffer ( GraphicsDevice device, Type vertexType, int capacity, VertexBufferOptions options = VertexBufferOptions.Default, DataStream data = null ) : base(device)
 		{
 			//Log.Message("Creation: Vertex Buffer");
 
@@ -63,18 +64,19 @@ namespace Fusion.Drivers.Graphics {
 
 			BufferDescription	desc = new BufferDescription();
 
-			if (options==VertexBufferOptions.Default) {
-
+			if (options==VertexBufferOptions.Default) 
+			{
 				desc.BindFlags				=	BindFlags.VertexBuffer;
 				desc.CpuAccessFlags			=	CpuAccessFlags.None;
 				desc.OptionFlags			=	ResourceOptionFlags.None;
 				desc.SizeInBytes			=	Capacity * Stride;
 				desc.StructureByteStride	=	0;
 				desc.Usage					=	ResourceUsage.Default;
-
-			} else if (options==VertexBufferOptions.VertexOutput) {
-
-				if ((Stride/4)*4!=Stride) {
+			}
+			else if (options==VertexBufferOptions.VertexOutput) 
+			{
+				if ((Stride/4)*4!=Stride) 
+				{
 					throw new GraphicsException("Stride for vertex buffer with enabled vertex output must be multiple of 4.");
 				}
 
@@ -84,22 +86,28 @@ namespace Fusion.Drivers.Graphics {
 				desc.SizeInBytes			=	Capacity * Stride;
 				desc.StructureByteStride	=	0;
 				desc.Usage					=	ResourceUsage.Default;
-
-			} else if (options==VertexBufferOptions.Dynamic) {
-
+			}
+			else if (options==VertexBufferOptions.Dynamic) 
+			{
 				desc.BindFlags				=	BindFlags.VertexBuffer;
 				desc.CpuAccessFlags			=	CpuAccessFlags.Write;
 				desc.OptionFlags			=	ResourceOptionFlags.None;
 				desc.SizeInBytes			=	Capacity * Stride;
 				desc.StructureByteStride	=	0;
 				desc.Usage					=	ResourceUsage.Dynamic;
-
-			} else {
+			}
+			else
+			{
 				throw new ArgumentException("options");
 			}
 
-			lock (device.DeviceContext) {
-				vertexBuffer				=	new D3D11.Buffer( device.Device, desc );
+			if (data!=null)
+			{
+				vertexBuffer	=	new D3D11.Buffer( device.Device, data, desc );
+			}
+			else
+			{
+				vertexBuffer	=	new D3D11.Buffer( device.Device, desc );
 			}
 		}
 
@@ -114,8 +122,17 @@ namespace Fusion.Drivers.Graphics {
 		/// <returns></returns>
 		public static VertexBuffer Create<TVertex> ( GraphicsDevice device, TVertex[] vertexData ) where TVertex: struct
 		{
-			var vb = new VertexBuffer( device, typeof(TVertex), vertexData.Length );
-			vb.SetData( vertexData );
+			var size		=	vertexData.Length * Marshal.SizeOf( typeof( TVertex ) );
+			var handle		=	GCHandle.Alloc( vertexData, GCHandleType.Pinned );
+			VertexBuffer vb;
+
+			using ( var dataStream = new DataStream( handle.AddrOfPinnedObject(), size, true, false ) )
+			{
+				vb = new VertexBuffer( device, typeof(TVertex), vertexData.Length, VertexBufferOptions.Default, dataStream );
+			}
+
+			handle.Free();
+
 			return vb;
 		}
 
@@ -126,8 +143,8 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
-			if (disposing) {
-				Log.Debug("VertexBuffer: disposing");
+			if (disposing) 
+			{
 				vertexBuffer.Dispose();
 			}
 		 	base.Dispose(disposing);
@@ -141,42 +158,41 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="data"></param>
 		public void SetData<T> ( T[] data, int offset, int count ) where T: struct
 		{
-			if (Options==VertexBufferOptions.VertexOutput) {
+			if (Options==VertexBufferOptions.VertexOutput) 
+			{
 				throw new GraphicsException("Vertex buffer created with enabled vertex output can not be written.");
 			}
 
-			lock (device.DeviceContext) {
+			if (Options==VertexBufferOptions.Dynamic) 
+			{
+				var dataBox = device.DeviceContext.MapSubresource( vertexBuffer, 0, MapMode.WriteDiscard, D3D11.MapFlags.None );
 
-				if (Options==VertexBufferOptions.Dynamic) {
+				SharpDX.Utilities.Write( dataBox.DataPointer, data, offset, count );
 
-					var dataBox = device.DeviceContext.MapSubresource( vertexBuffer, 0, MapMode.WriteDiscard, D3D11.MapFlags.None );
+				device.DeviceContext.UnmapSubresource( vertexBuffer, 0 );
+			} 
+			else if (Options==VertexBufferOptions.Default) 
+			{
+				var bufferDesc = new BufferDescription 
+				{
+					BindFlags			= BindFlags.None,
+					Usage				= ResourceUsage.Staging,
+					CpuAccessFlags		= CpuAccessFlags.Write | CpuAccessFlags.Read,
+					OptionFlags			= ResourceOptionFlags.None,
+					SizeInBytes			= Capacity * Stride,
+				};
 
-					SharpDX.Utilities.Write( dataBox.DataPointer, data, offset, count );
+				var bufferStaging		= new D3D11.Buffer(device.Device, bufferDesc);
 
-					device.DeviceContext.UnmapSubresource( vertexBuffer, 0 );
-				} 
-				else if (Options==VertexBufferOptions.Default) {
+				var dataBox = device.DeviceContext.MapSubresource( bufferStaging, 0, MapMode.Write, D3D11.MapFlags.None );
 
-					var bufferDesc = new BufferDescription {
-							BindFlags			= BindFlags.None,
-							Usage				= ResourceUsage.Staging,
-							CpuAccessFlags		= CpuAccessFlags.Write | CpuAccessFlags.Read,
-							OptionFlags			= ResourceOptionFlags.None,
-							SizeInBytes			= Capacity * Stride,
-						};
+				SharpDX.Utilities.Write( dataBox.DataPointer, data, offset, count );
 
-					var bufferStaging		= new D3D11.Buffer(device.Device, bufferDesc);
+				device.DeviceContext.UnmapSubresource( bufferStaging, 0 );
 
-					var dataBox = device.DeviceContext.MapSubresource( bufferStaging, 0, MapMode.Write, D3D11.MapFlags.None );
+				device.DeviceContext.CopyResource( bufferStaging, vertexBuffer );
 
-					SharpDX.Utilities.Write( dataBox.DataPointer, data, offset, count );
-
-					device.DeviceContext.UnmapSubresource( bufferStaging, 0 );
-
-					device.DeviceContext.CopyResource( bufferStaging, vertexBuffer );
-
-					SafeDispose( ref bufferStaging );
-				}
+				SafeDispose( ref bufferStaging );
 			}
 		}
 

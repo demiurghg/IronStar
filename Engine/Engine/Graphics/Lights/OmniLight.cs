@@ -10,8 +10,8 @@ using Fusion.Engine.Common;
 
 namespace Fusion.Engine.Graphics {
 
-	public class OmniLight {
-
+	public class OmniLight 
+	{
 		internal uint Timer = 0;
 		
 		/// <summary>

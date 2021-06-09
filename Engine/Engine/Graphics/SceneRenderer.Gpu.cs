@@ -145,7 +145,9 @@ namespace Fusion.Engine.Graphics {
 
 		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential)]
-		public struct LIGHT {	
+		#warning Reduce DECAL structure size to 128 byte
+		public struct LIGHT 
+		{	
 			//public Matrix	WorldMatrix;
 			public Matrix	ViewProjection;
 			public Vector4	Position0LightRange;

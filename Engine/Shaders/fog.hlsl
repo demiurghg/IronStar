@@ -23,7 +23,10 @@ float GetCellLength( uint3 location )
 	float	invDepthSlices	=	Fog.FogSizeInv.z;
 	float	frontDistance	=	log( 1 - (slice+0.0000f) * invDepthSlices ) / Fog.FogGridExpK;
 	float	backDistance	=	log( 1 - (slice+0.9999f) * invDepthSlices ) / Fog.FogGridExpK;
-	float	cellHeight		=	abs(backDistance - frontDistance) * Fog.FogScale * GAME_UNIT;
+	
+	//	FogScale affects only atmospheric lighting and should not be affected by local lights.
+	//	Since atmospheric light is computed in Sky2 module, simply skip it here.
+	float	cellHeight		=	abs(backDistance - frontDistance) /* Fog.FogScale*/ * GAME_UNIT;
 
 	float2	normLocation	=	location.xy * Fog.FogSizeInv.xy;
 	
@@ -145,7 +148,7 @@ void CSMain(
 	float	fadeout			=	pow( saturate( 1 - location.z * Fog.FogSizeInv.z ), 4 );
 	float	density			=	GetAtmosphericFogDensity( wsPositionNJ );
 	
-	//	Commpute phase function of incoming light :
+	//	Compute phase function of incoming light :
 	float	apWeight	=	GetAPBlendFactor( location.z );
 	float3	localLight	=	ComputeClusteredLighting( wsPosition ).rgb * density;
 	float3	phaseLight	=	localLight;

@@ -626,7 +626,7 @@ namespace Fusion.Engine.Graphics
 					filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, BloomTaps, 2 );
 					filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, BloomTaps, 3 );
 					filter.GaussBlur( hdrFrame.Bloom0, hdrFrame.Bloom1, GaussBlurSigma, BloomTaps, 4 );
-			}
+				}
 
 				//
 				//	Setup parameters :

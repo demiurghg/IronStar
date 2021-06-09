@@ -4,6 +4,7 @@ $ubershader
 #endif
 
 #include "auto/vtcache.fxi"
+#include "morton.fxi"
 
 void ComputeTileLocation( uint index, out uint2 xy, out uint mip )
 {
@@ -103,7 +104,7 @@ void CSMain( uint3 dispatchThreadId : SV_DispatchThreadID, uint3 groupIndex : SV
 	ComputeTileLocation( groupIndex.x, tileLocation, targetMipLevel );
 	targetLocation	=	tileLocation.xy * 16 + groupThreadIndex.xy;
 	
-	GroupMemoryBarrierWithGroupSync();
+	//GroupMemoryBarrierWithGroupSync();
 
 #if 1
 	//--------------------------
@@ -168,7 +169,7 @@ void CSMain( uint3 dispatchThreadId : SV_DispatchThreadID, uint3 groupIndex : SV
 		}
 	}
 
-	GroupMemoryBarrierWithGroupSync();
+	//GroupMemoryBarrierWithGroupSync();
 
 	WriteValue( targetLocation, targetMipLevel, physicalAddress );
 	

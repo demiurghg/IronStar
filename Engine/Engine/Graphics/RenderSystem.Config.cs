@@ -285,6 +285,13 @@ namespace Fusion.Engine.Graphics
 		public bool SkipDirectLighting { get; set; } = false;
 
 		/// <summary>
+		/// Shows counters
+		/// </summary>
+		[Config]
+		[AECategory("Debug")]
+		public bool SkipBackgroundBlur { get; set; } = false;
+
+		/// <summary>
 		/// 
 		/// </summary>
 		[Config]	

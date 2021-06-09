@@ -17,8 +17,10 @@ using Fusion.Build.Mapping;
 using Fusion.Engine.Graphics.Ubershaders;
 using Fusion.Core;
 
-namespace Fusion.Build {
-	public class Builder {
+namespace Fusion.Build 
+{
+	public class Builder 
+	{
 
 		readonly List<string> ignorePatterns = new List<string>();
 		readonly List<string> inputDirs = new List<string>();

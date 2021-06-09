@@ -13,10 +13,10 @@ using Fusion.Core;
 using Fusion.Core.Content;
 using Microsoft.Win32;
 
-namespace Fusion.Build {
-
-	public class BuildContext : IBuildContext {
-
+namespace Fusion.Build 
+{
+	public class BuildContext : IBuildContext 
+	{
 		readonly List<string> contentDirs = new List<string>();
 		readonly List<string> toolsDirs = new List<string>();
 		string tempDir;
@@ -30,10 +30,12 @@ namespace Fusion.Build {
 		/// <param name="options"></param>
 		public BuildContext ( string targetDir, IEnumerable<string> contentDirs, IEnumerable<string> toolsDirs, string tempDir )
 		{
+			Log.Message("Current dir : {0}", Directory.GetCurrentDirectory() );
+
 			this.contentDirs	=	contentDirs.Select( dir => ResolveDirectory( dir ) ).ToList();
 			this.toolsDirs		=	toolsDirs.Select( dir => ResolveDirectory( dir ) ).ToList();
-			this.targetDir		=	ResolveDirectory( targetDir );
-			this.tempDir		=	ResolveDirectory( tempDir );
+			this.targetDir		=	ResolveDirectory( targetDir, true );
+			this.tempDir		=	ResolveDirectory( tempDir, true );
 
 			Log.Message("Source directories:");
 
@@ -94,39 +96,45 @@ namespace Fusion.Build {
 		/// </summary>
 		/// <param name="dir"></param>
 		/// <returns></returns>
-		string ResolveDirectory ( string dir )
+		string ResolveDirectory ( string dir, bool createIfMissing = false )
 		{
-			if ( dir.StartsWith("%") && dir.EndsWith("%") ) {
+			if ( dir.StartsWith("%") && dir.EndsWith("%") ) 
+			{
 				var envVar = Environment.GetEnvironmentVariable( dir.Substring(1, dir.Length-2) );
-				if (envVar==null) {
+				if (envVar==null) 
+				{
 					Log.Warning("  {0} : environment variable not found", dir);
 					return null;
 				}
-				if (!Directory.Exists( envVar )) {
+				if (!Directory.Exists( envVar )) 
+				{
 					Log.Warning("  {0} = {1} : path not found", dir, envVar );
 					return null;
 				}
 				return envVar;
 			}
 
-			if ( dir.StartsWith("HKEY_") ) {
-
+			if ( dir.StartsWith("HKEY_") ) 
+			{
 				var keyValue	=	dir.Split(new[]{'@'}, 2);
 				var key			=	keyValue[0];
 				var value		=	keyValue.Length == 2 ? keyValue[1] : "";
 
 				var regValue	=	Registry.GetValue(key, value, null);
 
-				if (regValue==null) {
+				if (regValue==null) 
+				{
 					Log.Warning("  {0} : registry variable not found", dir);
 					return null;
 				}
-				if (!(regValue is string)) {
+				if (!(regValue is string)) 
+				{
 					Log.Warning("  {0} : registry variable must be string", dir);
 					return null;
 				}
 				
-				if (!Directory.Exists( (string)regValue )) {
+				if (!Directory.Exists( (string)regValue )) 
+				{
 					Log.Warning("  {0} = {1} : path not found", dir, (string)regValue );
 					return null;
 				}
@@ -134,15 +142,28 @@ namespace Fusion.Build {
 				return (string)regValue;
 			}
 
-			if (Path.IsPathRooted( dir )) {
-				if (Directory.Exists( dir )) {
+			if (Path.IsPathRooted( dir )) 
+			{
+				if (Directory.Exists( dir )) 
+				{
 					return dir;
 				}
-			} else {
+			} 
+			else 
+			{
 				var fullDir = Path.GetFullPath( dir );
-				if (Directory.Exists( fullDir )) {
+				if (Directory.Exists( fullDir )) 
+				{
 					return fullDir;
 				}
+			}
+
+
+			if (createIfMissing)
+			{
+				var di = Directory.CreateDirectory(dir);
+				Log.Message("Create missing directory : {0}", di.FullName );
+				return di.FullName;
 			}
 
 			Log.Warning("  {0} : not resolved", dir);

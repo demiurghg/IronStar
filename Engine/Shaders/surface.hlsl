@@ -50,6 +50,7 @@ struct GBuffer {
 #include "shl1.fxi"
 
 #define SHADOW_FILTER
+//#define SHADOW_FILTER_HQ
 #define SHADOW_TRANSITION
 #define SHADOW_PARTICLES
 

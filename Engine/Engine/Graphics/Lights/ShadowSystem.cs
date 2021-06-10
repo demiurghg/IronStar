@@ -49,6 +49,7 @@ namespace Fusion.Engine.Graphics
 		[AECategory("Debug")]			[Config]	public bool ShowSplits { get; set; } = false;
 		[AECategory("Debug")]			[Config]	public bool UseHighResFogShadows { get; set; } = false;
 		[AECategory("Debug")]			[Config]	public bool ClearEntireShadow { get; set; } = false;
+		[AECategory("Debug")]			[Config]	public bool SkipBorders { get; set; } = false;
 
 
 		[AECategory("Cascade Shadows")] [Config]	public bool SnapShadowmapCascades { get; set; } = true;

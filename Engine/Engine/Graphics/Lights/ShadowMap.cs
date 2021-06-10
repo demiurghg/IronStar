@@ -538,7 +538,15 @@ namespace Fusion.Engine.Graphics
 						{
 							var dstRegion	=	cascade.ShadowRegion;
 							var color		=	ss.ShowSplits ? cascade.Color : Color.White;
-							rs.Filter2.RenderBorder( prtShadow.Surface, dstRegion, color );
+
+							if (!ss.SkipBorders)
+							{
+								rs.Filter2.RenderBorder( prtShadow.Surface, dstRegion, color );
+							}
+							else
+							{
+								rs.Filter2.ClearColor( prtShadow.Surface, dstRegion, color );
+							}
 
 							dirtyRegionList.Add( dstRegion );
 						}

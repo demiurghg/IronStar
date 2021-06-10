@@ -72,7 +72,7 @@ namespace Fusion.Engine.Graphics {
 		StateFactory	factory;
 		RenderWorld	renderWorld;
 
-		[ShaderDefine]	public const int  BLOCK_SIZE				=	256;
+		[ShaderDefine]	public const int  BLOCK_SIZE				=	64;
 		[ShaderDefine]	public const int  MAX_INJECTED				=	4096;
 		[ShaderDefine]	public const int  MAX_PARTICLES				=	256 * 256;
 		[ShaderDefine]	public const int  MAX_IMAGES				=	512;
@@ -156,12 +156,9 @@ namespace Fusion.Engine.Graphics {
 			public Matrix	WorldToLightVolume;
 			public Vector4	Gravity;
 			public Vector4	LightMapSize;
-			public Color4	SkyAmbientLevel;
 			public int		MaxParticles;
 			public float	DeltaTime;
 			public uint		DeadListSize;
-			public float	CocScale;
-			public float	CocBias;
 			public uint		IntegrationSteps;
 			public float	IndirectLightFactor;
 			public float	DirectLightFactor;
@@ -422,7 +419,6 @@ namespace Fusion.Engine.Graphics {
 			PARAMS param		=	new PARAMS();
 
 			param.WorldToLightVolume	=	renderWorld.LightMap.WorldToVolume;
-			param.SkyAmbientLevel		=	new Color4(8,0,4,1);
 			param.MaxParticles			=	0;
 			param.DeltaTime				=	deltaTime;
 			param.Gravity				=	new Vector4( this.Gravity, 0 );
@@ -432,8 +428,6 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			param.MaxParticles		=	MAX_PARTICLES;
-			param.CocBias			=	0;
-			param.CocScale			=	0;
 			param.IntegrationSteps	=	stepCount;
 
 			param.IndirectLightFactor	=	rs.Radiosity.MasterIntensity;

@@ -23,6 +23,21 @@ void TransformPoint ( float4x4 transform, inout float3 p )
 	p.xyz = mul( float4(p,1), transform ).xyz;
 }
 
+bool IsWeaponFX( Particle p )
+{
+	return (p.WpnImageIndexCount & 0x80000000)!=0;
+}
+
+uint GetImageIndex( Particle p )
+{
+	return (p.WpnImageIndexCount & 0x0000FFFF) >> 0;
+}
+
+uint GetImageCount( Particle p )
+{
+	return (p.WpnImageIndexCount & 0x7FFF0000) >> 16;
+}
+
 /*-----------------------------------------------------------------------------
 	Simulation :
 -----------------------------------------------------------------------------*/
@@ -44,10 +59,12 @@ void CSMain(
 #ifdef INJECTION
 	//	id must be less than max injected particles.
 	//	dead list must contain at leas MAX_INJECTED indices to prevent underflow.
-	if (id < (uint)Params.MaxParticles && Params.DeadListSize > (uint)MAX_INJECTED ) {
+	if (id < (uint)Params.MaxParticles && Params.DeadListSize > (uint)MAX_INJECTED ) 
+	{
 		Particle p = injectionBuffer[ id ];
 		
-		if (p.WeaponIndex>0) {
+		if (IsWeaponFX(p)) 
+		{
 			TransformVector( Camera.View, p.Velocity );
 			TransformPoint ( Camera.View, p.Position );//*/
 		}
@@ -248,7 +265,8 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 		return;
 	}
 
-	if (prt.WeaponIndex>0) {
+	if (IsWeaponFX(prt)) 
+	{
 		TransformVector( Camera.ViewInverted, prt.Velocity );
 		TransformPoint ( Camera.ViewInverted, prt.Position );
 	}//*/
@@ -299,8 +317,11 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	float3		up	=	(basisUp * cos(a) - basisRt * sin(a));
 	float3		fwd	=	offset * sz;
 	
-	int			frame	=	(int)lerp( prt.ImageIndex, prt.ImageIndex + prt.ImageCount, factor );
-				frame	=	clamp( frame, prt.ImageIndex, prt.ImageIndex + prt.ImageCount );
+	float 		imageIndex	=	GetImageIndex( prt );
+	float 		imageCount	=	GetImageCount( prt );
+	
+	int			frame	=	(int)lerp( imageIndex, imageIndex + imageCount, factor );
+				frame	=	clamp( frame, imageIndex, imageIndex + imageCount );
 	float4		image	=	Images[frame];
 	
 	float4 wpos0	=	float4( position + rt + up - fwd, 1 );
@@ -352,7 +373,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	
 	float4 lightmapRegion	=	lightMapRegionsGS[ prtId ];
 	
-	float4x4	projection	= (prt.WeaponIndex > 0) ? CameraWeapon.Projection : Camera.Projection;
+	float4x4	projection	= (IsWeaponFX(prt)) ? CameraWeapon.Projection : Camera.Projection;
 	
 	p0.Position	 = mul( pos0, projection );
 	p0.Normal	 = normal0;

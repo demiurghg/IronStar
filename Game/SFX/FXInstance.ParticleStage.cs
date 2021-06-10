@@ -109,7 +109,7 @@ namespace IronStar.SFX {
 					p.ImageIndex	=	spriteIndex;
 					p.ImageCount	=	spriteCount;
 				}
-				p.WeaponIndex	=	fxInstance.WeaponFX ? 1 : 0;
+				p.WeaponIndex	=	fxInstance.WeaponFX;
 
 				p.Color			=   stage.Color.ToColor3();
 				p.Alpha			=	stage.Alpha;

@@ -165,19 +165,47 @@ namespace Fusion.Engine.Graphics {
 		public float		FadeOut;
 
 		/// <summary>
+		/// 1  bit — weapon or not
+		/// 15 bit - image count
+		/// 16 bit - image index
+		/// </summary>
+		public uint			WpnImageIndexCount;
+
+		/// <summary>
 		/// Index of the image in the texture atlas
 		/// </summary>
-		public int		ImageIndex;
+		public int ImageIndex 
+		{ 
+			set 
+			{ 
+				WpnImageIndexCount &= 0xFFFF0000;
+				WpnImageIndexCount |= ((((uint)value) & 0xFFFF) << 0); 
+			} 
+		}
 		
 		/// <summary>
 		/// Number of frames
 		/// </summary>
-		public int		ImageCount;
+		public int ImageCount 
+		{ 
+			set 
+			{
+				WpnImageIndexCount &= 0x1000FFFF;
+				WpnImageIndexCount |= ((((uint)value) & 0x7FFF) << 16); 
+			}
+		}
 
 		/// <summary>
 		/// Zero means world-space basis
 		/// </summary>
-		public int		WeaponIndex;
+		public bool		WeaponIndex 
+		{ 
+			set
+			{
+				if (value)	WpnImageIndexCount |= 0x80000000;
+					else	WpnImageIndexCount &= 0x7FFFFFFF;
+			}
+		}
 
 		/// <summary>
 		/// Index of the image in the texture atlas

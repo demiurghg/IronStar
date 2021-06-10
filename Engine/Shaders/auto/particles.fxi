@@ -35,7 +35,7 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- CONSTANT VALUES ---------------- //
 
-static const int BLOCK_SIZE = 256;
+static const int BLOCK_SIZE = 64;
 static const int MAX_INJECTED = 4096;
 static const int MAX_PARTICLES = 65536;
 static const int MAX_IMAGES = 512;
@@ -53,22 +53,19 @@ static const uint LightmapHeight = 2048;
 // ---------------- DATA STRUCTURES ---------------- //
 
 // Fusion.Engine.Graphics.ParticleStream+PARAMS
-// Marshal.SizeOf = 144
+// Marshal.SizeOf = 128
 #ifndef __STRUCT_PARAMS
 #define __STRUCT_PARAMS 1
 struct PARAMS {
 	float4x4   WorldToLightVolume;            // offset:    0
 	float4     Gravity;                       // offset:   64
 	float4     LightMapSize;                  // offset:   80
-	float4     SkyAmbientLevel;               // offset:   96
-	int        MaxParticles;                  // offset:  112
-	float      DeltaTime;                     // offset:  116
-	uint       DeadListSize;                  // offset:  120
-	float      CocScale;                      // offset:  124
-	float      CocBias;                       // offset:  128
-	uint       IntegrationSteps;              // offset:  132
-	float      IndirectLightFactor;           // offset:  136
-	float      DirectLightFactor;             // offset:  140
+	int        MaxParticles;                  // offset:   96
+	float      DeltaTime;                     // offset:  100
+	uint       DeadListSize;                  // offset:  104
+	uint       IntegrationSteps;              // offset:  108
+	float      IndirectLightFactor;           // offset:  112
+	float      DirectLightFactor;             // offset:  116
 };
 #endif
 
@@ -154,7 +151,7 @@ struct FOG_DATA {
 #endif
 
 // Fusion.Engine.Graphics.Particle
-// Marshal.SizeOf = 132
+// Marshal.SizeOf = 124
 #ifndef __STRUCT_Particle
 #define __STRUCT_Particle 1
 struct Particle {
@@ -179,10 +176,8 @@ struct Particle {
 	float      TimeLag;                       // offset:  104
 	float      FadeIn;                        // offset:  108
 	float      FadeOut;                       // offset:  112
-	int        ImageIndex;                    // offset:  116
-	int        ImageCount;                    // offset:  120
-	int        WeaponIndex;                   // offset:  124
-	uint       Effects;                       // offset:  128
+	uint       WpnImageIndexCount;            // offset:  116
+	uint       Effects;                       // offset:  120
 };
 #endif
 

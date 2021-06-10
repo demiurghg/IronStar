@@ -148,18 +148,32 @@ float3	ComputeCascadedShadows ( GEOMETRY geometry, float2 vpos, CASCADE_SHADOW s
 	
 	float3	shadow		=	0;
 	
-#ifdef SHADOW_FILTER
+#if defined(SHADOW_FILTER)
 	[unroll]
-	for( int i=0; i<5; i++ ) 
+	for( int i=0; i<9; i++ ) 
 	{
-		float 	x	=	shadowSamplePattern5x[i].x;
-		float	y	=	shadowSamplePattern5x[i].y;
+		float 	x	=	shadowSamplePattern9x[i].x;
+		float	y	=	shadowSamplePattern9x[i].y;
 		float	z	=	cascade.Depth + dot( cascade.Gradient.xy, float2(x,y) );
 		float	sh	=	rc.ShadowMap.SampleCmpLevelZero( rc.ShadowSampler, cascade.TexCoord + csmSizeRcp * float2(x,y), z ).r;
 		shadow		+=	sh;
 	}
-	shadow /= 5;
-#else	
+	shadow /= 9;
+	shadow *= shadow;
+#elif defined(SHADOW_FILTER_HQ)
+	[unroll]
+	for( int i=-2; i<=2; i++ ) 
+	for( int j=-2; j<=2; j++ ) 
+	{
+		float 	x	=	i;
+		float	y	=	j;
+		float	z	=	cascade.Depth + dot( cascade.Gradient.xy, float2(x,y) );
+		float	sh	=	rc.ShadowMap.SampleCmpLevelZero( rc.ShadowSampler, cascade.TexCoord + csmSizeRcp * float2(x,y), z ).r;
+		shadow		+=	sh;
+	}
+	shadow /= 25;
+	shadow *= shadow;
+#else
 	shadow = rc.ShadowMap.SampleCmpLevelZero( rc.ShadowSampler, cascade.TexCoord, cascade.Depth );
 #endif
 	
@@ -198,7 +212,7 @@ float3 ComputeSpotShadow ( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc )
 				
 		//	TODO : num taps <--> shadow quality
 		//	TODO : kernel size <--> shadow region size
-		#ifdef SHADOW_FILTER
+		#if defined(SHADOW_FILTER)
 			[unroll]
 			for( int i=0; i<5; i++ ) 
 			{
@@ -207,6 +221,17 @@ float3 ComputeSpotShadow ( GEOMETRY geometry, LIGHT light, SHADOW_RESOURCES rc )
 				accumulatedShadow += shadow;
 			}
 			accumulatedShadow 	/= 	5.0f;
+		#elif defined(SHADOW_FILTER_HQ)
+			[unroll]
+			for( int i=-2; i<=2; i++ ) 
+			for( int j=-2; j<=2; j++ ) 
+			{
+				float2	smcoord	=	mad( float2(i,j), smSizeRcp.xy, lsPos.xy);
+				float	shadow	=	rc.ShadowMap.SampleCmpLevelZero( rc.ShadowSampler, smcoord, shadowDepth ).r;
+				accumulatedShadow += shadow;
+			}
+			accumulatedShadow /= 25;
+			accumulatedShadow *= accumulatedShadow;
 		#else
 			accumulatedShadow	=	rc.ShadowMap.SampleCmpLevelZero( rc.ShadowSampler, lsPos.xy, shadowDepth ).r;
 		#endif

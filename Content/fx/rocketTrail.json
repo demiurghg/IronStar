@@ -85,9 +85,9 @@
     "Acceleration": {
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
       "GravityFactor": 0.0,
-      "Damping": 0.0,
-      "DragForce": 1.0,
-      "Turbulence": 1.0
+      "Damping": 1.0,
+      "DragForce": 0.0,
+      "Turbulence": 0.0
     }
   },
   "ParticleStage2": {
@@ -150,7 +150,7 @@
     "Acceleration": {
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
       "GravityFactor": -0.1,
-      "Damping": 1.0,
+      "Damping": 2.0,
       "DragForce": 0.0,
       "Turbulence": 0.0
     }

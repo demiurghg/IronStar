@@ -14,8 +14,8 @@ namespace Fusion.Engine.Graphics {
 	/// Defines particle behavior.
 	/// </summary>
 	[Flags]
-	public enum ParticleFX : uint {
-
+	public enum ParticleFX : byte 
+	{
 		/// <summary>
 		/// Hard (alpha-kill) emissive particle 
 		/// like electric sparks or smoldering ash. 
@@ -88,13 +88,13 @@ namespace Fusion.Engine.Graphics {
 		public Color	Color { set { ColorPacked = (uint)value.ToBgra(); }	}
 		public uint		ColorPacked;
 
-		public float	Exposure { set { BitUtils.Set8BitUNorm( ref MaterialERMS, value, 0 ); } }
+		public float	Exposure { set { BitUtils.UIntSetUNorm8( ref MaterialERMS, value, 0 ); } }
 
-		public float	Roughness { set { BitUtils.Set8BitUNorm( ref MaterialERMS, value, 1 ); } }
+		public float	Roughness { set { BitUtils.UIntSetUNorm8( ref MaterialERMS, value, 1 ); } }
 
-		public float	Metallic { set { BitUtils.Set8BitUNorm( ref MaterialERMS, value, 2 ); } }
+		public float	Metallic { set { BitUtils.UIntSetUNorm8( ref MaterialERMS, value, 2 ); } }
 
-		public float	Scattering { set { BitUtils.Set8BitUNorm( ref MaterialERMS, value, 3 ); } }
+		public float	Scattering { set { BitUtils.UIntSetUNorm8( ref MaterialERMS, value, 3 ); } }
 
 		public uint		MaterialERMS;
 
@@ -129,22 +129,34 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Initial size of the particle
 		/// </summary>
-		public float		Size0;
+		public float		Size0 { set { Size01.X = value; } }
 
 		/// <summary>
 		/// Terminal size of the particle
 		/// </summary>
-		public float		Size1;
+		public float		Size1 { set { Size01.Y = value; } }
+
+		public Half2		Size01;
 
 		/// <summary>
 		/// Initial rotation of the particle
 		/// </summary>
-		public float		Rotation0;
+		public float Rotation0 
+		{ 
+			set { Rotation01.X = value; } 
+			get { return Rotation01.X; } 
+		}
 
 		/// <summary>
 		/// Terminal rotation of the particle
 		/// </summary>
-		public float		Rotation1;
+		public float Rotation1 
+		{ 
+			set { Rotation01.Y = value; } 
+			get { return Rotation01.Y; } 
+		}
+
+		public Half2		Rotation01;
 
 		/// <summary>
 		/// Total particle life-time
@@ -161,60 +173,45 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Fade in time fraction
 		/// </summary>
-		public float		FadeIn;
+		public float		FadeIn { set { BitUtils.UIntSetUNorm8( ref FadingImageIndexCount, value, 0 ); } }
 
 		/// <summary>
 		/// Fade out time fraction
 		/// </summary>
-		public float		FadeOut;
+		public float		FadeOut { set { BitUtils.UIntSetUNorm8( ref FadingImageIndexCount, value, 1 ); } }
 
 		/// <summary>
 		/// 1  bit — weapon or not
 		/// 15 bit - image count
 		/// 16 bit - image index
 		/// </summary>
-		public uint			WpnImageIndexCount;
+		public uint			FadingImageIndexCount;
 
 		/// <summary>
 		/// Index of the image in the texture atlas
 		/// </summary>
-		public int ImageIndex 
-		{ 
-			set 
-			{ 
-				WpnImageIndexCount &= 0xFFFF0000;
-				WpnImageIndexCount |= ((((uint)value) & 0xFFFF) << 0); 
-			} 
-		}
+		public int ImageIndex { set { BitUtils.UIntSetByte( ref FadingImageIndexCount, (byte)value, 2 ); } }
 		
 		/// <summary>
 		/// Number of frames
 		/// </summary>
-		public int ImageCount 
-		{ 
-			set 
-			{
-				WpnImageIndexCount &= 0x1000FFFF;
-				WpnImageIndexCount |= ((((uint)value) & 0x7FFF) << 16); 
-			}
-		}
+		public int ImageCount { set { BitUtils.UIntSetByte( ref FadingImageIndexCount, (byte)value, 3 ); } }
 
 		/// <summary>
 		/// Zero means world-space basis
 		/// </summary>
-		public bool		WeaponIndex 
-		{ 
-			set
-			{
-				if (value)	WpnImageIndexCount |= 0x80000000;
-					else	WpnImageIndexCount &= 0x7FFFFFFF;
-			}
-		}
+		public bool	 WeaponIndex { set { BitUtils.UIntSetByte( ref FXData, (byte)(value ? 1 : 0), 3 ); } }
 
 		/// <summary>
 		/// Index of the image in the texture atlas
 		/// </summary>
-		public ParticleFX	Effects;
+		public ParticleFX	Effects 
+		{ 
+			set { BitUtils.UIntSetByte( ref FXData, (byte)value, 0 ); } 
+			get { return (ParticleFX)BitUtils.UIntGetByte( FXData, 0 ); } 
+		}
+
+		public uint FXData;
 		
 
 		void CheckFloat ( float value )

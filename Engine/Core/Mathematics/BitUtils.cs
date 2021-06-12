@@ -11,12 +11,26 @@ namespace Fusion.Core.Mathematics
 	/// </summary>
 	public static class BitUtils
 	{
-		static public void Set8BitUNorm( ref uint target, float value, int byteIndex )
+		static public void UIntSetUNorm8( ref uint target, float value, int byteIndex )
 		{
 			uint uval = ((uint)( MathUtil.Clamp( value, 0, 1 ) * 255 )) & 0xFF;
 			uint mask = ((uint)(0x000000FF)) << (byteIndex * 8);
 			target &= ~mask;
 			target |= (uval << (byteIndex * 8));
+		}
+
+		static public void UIntSetByte( ref uint target, byte value, int byteIndex )
+		{
+			uint uval = ((uint)value) & 0xFF;
+			uint mask = ((uint)(0x000000FF)) << (byteIndex * 8);
+			target &= ~mask;
+			target |= (uval << (byteIndex * 8));
+		}
+
+		static public byte UIntGetByte( uint target, int byteIndex )
+		{
+			uint mask = ((uint)(0x000000FF)) << (byteIndex * 8);
+			return (byte)( (target & mask) >> (byteIndex * 8) );
 		}
 
 		/// <summary>

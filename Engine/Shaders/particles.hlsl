@@ -23,20 +23,14 @@ void TransformPoint ( float4x4 transform, inout float3 p )
 	p.xyz = mul( float4(p,1), transform ).xyz;
 }
 
-bool IsWeaponFX( Particle p )
-{
-	return (p.WpnImageIndexCount & 0x80000000)!=0;
-}
+bool IsWeaponFX		( Particle p ) { return (p.FXData & 0xFF000000) >> 24; } 
+uint GetParticleFX	( Particle p ) { return (p.FXData & 0x000000FF) >>  0; } 
 
-uint GetImageIndex( Particle p )
-{
-	return (p.WpnImageIndexCount & 0x0000FFFF) >> 0;
-}
+uint 	GetImageCount( Particle p ) { return ((p.FadingImageIndexCount & 0xFF000000) >> 24); }
+uint 	GetImageIndex( Particle p ) { return ((p.FadingImageIndexCount & 0x00FF0000) >> 16); }
+float 	GetFadeIn	 ( Particle p ) { return ((p.FadingImageIndexCount & 0x000000FF) >>  0) / 255.0f; }
+float 	GetFadeOut	 ( Particle p ) { return ((p.FadingImageIndexCount & 0x0000FF00) >>  8) / 255.0f; }
 
-uint GetImageCount( Particle p )
-{
-	return (p.WpnImageIndexCount & 0x7FFF0000) >> 16;
-}
 
 float4 GetColor4( Particle p )
 {
@@ -57,6 +51,11 @@ float GetBeamFactor	( Particle p ) { return f16tof32( p.IntensityBeamFactor >> 1
 float GetIntensity 	( Particle p ) { return f16tof32( p.IntensityBeamFactor >>  0 ); }
 float GetDamping 	( Particle p ) { return f16tof32( p.GravityDamping >> 16 ); }
 float GetGravity	( Particle p ) { return f16tof32( p.GravityDamping >>  0 ); }
+
+float GetSize0 		( Particle p ) { return f16tof32( p.Size01 >> 0 ); }
+float GetSize1 		( Particle p ) { return f16tof32( p.Size01 >> 16 ); }
+float GetRotation0 	( Particle p ) { return f16tof32( p.Rotation01 >> 0 ); }
+float GetRotation1 	( Particle p ) { return f16tof32( p.Rotation01 >> 16 ); }
 
 /*-----------------------------------------------------------------------------
 	Simulation :
@@ -169,7 +168,7 @@ void CSMain(
 			
 			float 	factor	=	saturate(p.TimeLag / p.LifeTime);
 			float4 	projPos	=	mul( float4(p.Position.xyz,1), Camera.ViewProjection );
-			float  	size	=   lerp( p.Size0, p.Size1, factor ) / abs(projPos.w);
+			float  	size	=   lerp( GetSize0(p), GetSize1(p), factor ) / abs(projPos.w);
 			uint	offset;
 			uint 	bank;
 
@@ -294,20 +293,20 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	float time		=	prt.TimeLag;
 	float factor	=	saturate(prt.TimeLag / prt.LifeTime);
 	
-	float  sz 		=   lerp( prt.Size0, prt.Size1, factor )/2;
-	float  fade		=	Ramp( prt.FadeIn, prt.FadeOut, factor );
+	float  sz 		=   lerp( GetSize0(prt), GetSize1(prt), factor )/2;
+	float  fade		=	Ramp( GetFadeIn(prt), GetFadeOut(prt), factor );
 	float  intensity=	lerp( GetIntensity(prt), GetIntensity(prt) * ExposureBuffer[0].g, GetExposure(prt) );
 	float4 color4	=	GetColor4( prt );
 	float  alpha	=	color4.a * fade;
 	float4 color	=	float4( color4.rgb * intensity, alpha );
 
-	if (prt.Effects==ParticleFX_Distortive) {
+	if (GetParticleFX(prt)==ParticleFX_Distortive) {
 		color	=	float4( 1,1,1, alpha );
 	}
 	
 	float3 position		=	prt.Position    ;// + prt.Velocity * time + accel * time * time / 2;
 	
-	float  a		=	lerp( prt.Rotation0, prt.Rotation1, factor );	
+	float  a		=	lerp( GetRotation0(prt), GetRotation1(prt), factor );	
 
 	float2x2	m	=	float2x2( cos(a), sin(a), -sin(a), cos(a) );
 	
@@ -451,22 +450,24 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p3.Binormal	 = -up;
 	p3.Fog		 = SampleVolumetricFog( Fog, p3.Position, FogSampler, FogVolume );
 	
+	uint prtEffects = GetParticleFX(prt);
+	
 	#if defined(SOFT)
-	if (prt.Effects==ParticleFX_SoftLit || prt.Effects==ParticleFX_SoftLitShadow) {
+	if (prtEffects==ParticleFX_SoftLit || prtEffects==ParticleFX_SoftLitShadow) {
 		p0.LMFactor	 = 1;		p1.LMFactor	 = 1;
 		p2.LMFactor	 = 1;		p3.LMFactor	 = 1;
 	}
 	#endif
 	
 	#if defined(HARD)
-	if (prt.Effects==ParticleFX_HardLit || prt.Effects==ParticleFX_HardLitShadow) {
+	if (prtEffects==ParticleFX_HardLit || prtEffects==ParticleFX_HardLitShadow) {
 		p0.LMFactor	 = 1;		p1.LMFactor	 = 1;
 		p2.LMFactor	 = 1;		p3.LMFactor	 = 1;
 	}
 	#endif
 	
 	#if defined(SOFT_SHADOW) || defined(HARD_SHADOW)
-	if (prt.Effects!=ParticleFX_SoftLitShadow && prt.Effects!=ParticleFX_HardLitShadow) {
+	if (prtEffects!=ParticleFX_SoftLitShadow && prtEffects!=ParticleFX_HardLitShadow) {
 		return;
 	}
 	#endif

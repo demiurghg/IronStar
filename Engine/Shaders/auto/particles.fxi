@@ -39,6 +39,7 @@ static const int BLOCK_SIZE = 64;
 static const int MAX_INJECTED = 4096;
 static const int MAX_PARTICLES = 65536;
 static const int MAX_IMAGES = 512;
+static const uint ParticleFX_Weapon = 0;
 static const uint ParticleFX_Hard = 0;
 static const uint ParticleFX_HardLit = 1;
 static const uint ParticleFX_HardLitShadow = 2;
@@ -151,7 +152,7 @@ struct FOG_DATA {
 #endif
 
 // Fusion.Engine.Graphics.Particle
-// Marshal.SizeOf = 80
+// Marshal.SizeOf = 64
 #ifndef __STRUCT_Particle
 #define __STRUCT_Particle 1
 struct Particle {
@@ -161,16 +162,12 @@ struct Particle {
 	uint       MaterialERMS;                  // offset:   28
 	uint       IntensityBeamFactor;           // offset:   32
 	uint       GravityDamping;                // offset:   36
-	float      Size0;                         // offset:   40
-	float      Size1;                         // offset:   44
-	float      Rotation0;                     // offset:   48
-	float      Rotation1;                     // offset:   52
-	float      LifeTime;                      // offset:   56
-	float      TimeLag;                       // offset:   60
-	float      FadeIn;                        // offset:   64
-	float      FadeOut;                       // offset:   68
-	uint       WpnImageIndexCount;            // offset:   72
-	uint       Effects;                       // offset:   76
+	uint       Size01;                        // offset:   40
+	uint       Rotation01;                    // offset:   44
+	float      LifeTime;                      // offset:   48
+	float      TimeLag;                       // offset:   52
+	uint       FadingImageIndexCount;         // offset:   56
+	uint       FXData;                        // offset:   60
 };
 #endif
 

@@ -77,6 +77,7 @@ namespace Fusion.Engine.Graphics {
 		[ShaderDefine]	public const int  MAX_PARTICLES				=	256 * 256;
 		[ShaderDefine]	public const int  MAX_IMAGES				=	512;
 
+		[ShaderDefine]	public const uint ParticleFX_Weapon			=	(uint)ParticleFX.Hard			;
 		[ShaderDefine]	public const uint ParticleFX_Hard			=	(uint)ParticleFX.Hard			;
 		[ShaderDefine]	public const uint ParticleFX_HardLit		=	(uint)ParticleFX.HardLit		;
 		[ShaderDefine]	public const uint ParticleFX_HardLitShadow	=	(uint)ParticleFX.HardLitShadow	;

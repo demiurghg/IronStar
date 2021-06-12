@@ -99,9 +99,9 @@
     "Acceleration": {
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
       "GravityFactor": 0.0,
-      "Damping": 5.0,
-      "DragForce": 1.0,
-      "Turbulence": 1.0
+      "Damping": 3.0,
+      "DragForce": 0.0,
+      "Turbulence": 0.0
     }
   },
   "ParticleStage2": {
@@ -110,7 +110,7 @@
     "Sprite": "explosionSmoke2",
     "UseRandomImages": false,
     "Effect": "softLitShadow",
-    "Count": 77,
+    "Count": 50,
     "Period": 1.0,
     "Timing": {
       "$type": "IronStar.SFX.FXTiming, IronStar",
@@ -135,7 +135,7 @@
     "Shape": {
       "$type": "IronStar.SFX.FXShape, IronStar",
       "Size0": 0.8,
-      "Size1": 1.5,
+      "Size1": 2.5,
       "EnableRotation": true,
       "InitialAngle": 360.0,
       "MinAngularVelocity": 25.0,
@@ -156,15 +156,15 @@
       "Direction": "localUp",
       "LinearDistribution": "gauss",
       "LinearVelocityMin": 0.0,
-      "LinearVelocityMax": 2.0,
+      "LinearVelocityMax": 20.0,
       "RadialDistribution": "gauss",
       "RadialVelocity": 60.0,
       "Advection": 0.0
     },
     "Acceleration": {
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
-      "GravityFactor": 0.0,
-      "Damping": 3.0,
+      "GravityFactor": 0.5,
+      "Damping": 1.4,
       "DragForce": 0.0,
       "Turbulence": 0.0
     }

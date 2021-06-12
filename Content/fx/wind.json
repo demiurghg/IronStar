@@ -6,7 +6,7 @@
   "SoundStage": {
     "$id": "2",
     "$type": "IronStar.SFX.FXSoundStage, IronStar",
-    "Enabled": true,
+    "Enabled": false,
     "Sound": "env/wind",
     "Reverb": 1.0,
     "FlybySound": false

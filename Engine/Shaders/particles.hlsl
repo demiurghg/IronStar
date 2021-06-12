@@ -38,6 +38,26 @@ uint GetImageCount( Particle p )
 	return (p.WpnImageIndexCount & 0x7FFF0000) >> 16;
 }
 
+float4 GetColor4( Particle p )
+{
+	uint  c = p.ColorPacked;
+	float b = ((c >> 0) & 0xFF) / 255.0f;
+	float g = ((c >> 8) & 0xFF) / 255.0f;
+	float r = ((c >>16) & 0xFF) / 255.0f;
+	float a = ((c >>24) & 0xFF) / 255.0f;
+	return SRGBToLinear(float4(r,g,b,a));
+}
+
+float GetExposure	( Particle p ) { return ((p.MaterialERMS >>  0) & 0xFF) / 255.0f; }
+float GetRoughness	( Particle p ) { return ((p.MaterialERMS >>  8) & 0xFF) / 255.0f; }
+float GetMetallic	( Particle p ) { return ((p.MaterialERMS >> 16) & 0xFF) / 255.0f; }
+float GetScattering	( Particle p ) { return ((p.MaterialERMS >> 24) & 0xFF) / 255.0f; }
+
+float GetBeamFactor	( Particle p ) { return f16tof32( p.IntensityBeamFactor >> 16 ); }
+float GetIntensity 	( Particle p ) { return f16tof32( p.IntensityBeamFactor >>  0 ); }
+float GetDamping 	( Particle p ) { return f16tof32( p.GravityDamping >> 16 ); }
+float GetGravity	( Particle p ) { return f16tof32( p.GravityDamping >>  0 ); }
+
 /*-----------------------------------------------------------------------------
 	Simulation :
 -----------------------------------------------------------------------------*/
@@ -95,19 +115,19 @@ void CSMain(
 		//	Integrate kinematics :
 		float  time		=	p.TimeLag;
 		
-		float3 gravity		=	-Params.Gravity.xyz * p.Gravity;
+		float3 gravity		=	-Params.Gravity.xyz * GetGravity(p);
 		float3 position		=	p.Position;
 		float3 velocity		=	p.Velocity;
 		float3 acceleration	=	0;
 		
-		for (uint i=0; i<Params.IntegrationSteps; i++) {
-			
-			acceleration	=	p.Acceleration - velocity * length(velocity) * p.Damping + gravity;
+		for (uint i=0; i<Params.IntegrationSteps; i++) 
+		{
+			acceleration	=	(-1.0f) * velocity * length(velocity) * GetDamping(p) + gravity;
 			velocity		=	velocity + acceleration * Params.DeltaTime;	
 			position		=	position + velocity     * Params.DeltaTime;	
 		}
 
-		if (p.BeamFactor>=0) {
+		if (GetBeamFactor(p)>=0) {
 			particleBuffer[ id ].Velocity	=	velocity;	
 			particleBuffer[ id ].Position	=	position;	
 		}
@@ -276,10 +296,10 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	
 	float  sz 		=   lerp( prt.Size0, prt.Size1, factor )/2;
 	float  fade		=	Ramp( prt.FadeIn, prt.FadeOut, factor );
-	float  intensity=	lerp( prt.Intensity, prt.Intensity * ExposureBuffer[0].g, prt.Exposure );
-	float3 color3	=	SRGBToLinear(prt.Color) * intensity;
-	float  alpha	=	saturate(prt.Alpha * fade);
-	float4 color	=	float4( color3, alpha );
+	float  intensity=	lerp( GetIntensity(prt), GetIntensity(prt) * ExposureBuffer[0].g, GetExposure(prt) );
+	float4 color4	=	GetColor4( prt );
+	float  alpha	=	color4.a * fade;
+	float4 color	=	float4( color4.rgb * intensity, alpha );
 
 	if (prt.Effects==ParticleFX_Distortive) {
 		color	=	float4( 1,1,1, alpha );
@@ -293,18 +313,19 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	
 	float3	offset	=	normalize( prt.Position - Camera.CameraPosition.xyz );
 	
-	float3	basisRt	=	Camera.CameraRight.xyz * sz;
-	float3	basisUp	=	Camera.CameraUp.xyz    * sz;
+	float3	basisRt		=	Camera.CameraRight.xyz * sz;
+	float3	basisUp		=	Camera.CameraUp.xyz    * sz;
+	float 	beamFactor	=	GetBeamFactor(prt);
 
-	if (prt.BeamFactor>0) {
-		basisRt	=	(prt.Velocity * 1/60.0f) * prt.BeamFactor;
+	if (beamFactor>0) {
+		basisRt	=	(prt.Velocity * 1/60.0f) * beamFactor;
 		basisUp	=	normalize( cross( Camera.CameraPosition.xyz - position, basisRt ) ) * sz;
 		
 		if (length(basisRt)<sz) {
 			basisRt = normalize(basisRt)*sz;
 		}
 	}
-	if (prt.BeamFactor<0) {
+	if (beamFactor<0) {
 		basisRt	=	prt.Velocity;
 		basisUp	=	normalize( cross( Camera.CameraPosition.xyz - position, basisRt ) ) * sz;
 		
@@ -374,6 +395,9 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	float4 lightmapRegion	=	lightMapRegionsGS[ prtId ];
 	
 	float4x4	projection	= (IsWeaponFX(prt)) ? CameraWeapon.Projection : Camera.Projection;
+	float 		roughness	= GetRoughness( prt );
+	float		scattering	= GetScattering( prt );
+	float		metallic	= GetMetallic( prt );
 	
 	p0.Position	 = mul( pos0, projection );
 	p0.Normal	 = normal0;
@@ -382,7 +406,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p0.ViewPosSZ = float4( pos0.xyz, 1/sz );
 	p0.Color 	 = color;
 	p0.LMFactor	 = 0;
-	p0.FogSRM	 = float4( 0, prt.Scattering, prt.Roughness, prt.Metallic );
+	p0.FogSRM	 = float4( 0, scattering, roughness, metallic );
 	p0.WorldPos	 = wpos0.xyz;
 	p0.Tangent	 = rt;
 	p0.Binormal	 = -up;
@@ -395,7 +419,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p1.ViewPosSZ = float4( pos1.xyz, 1/sz );
 	p1.Color 	 = color;
 	p1.LMFactor	 = 0;
-	p1.FogSRM	 = float4( 0, prt.Scattering, prt.Roughness, prt.Metallic );
+	p1.FogSRM	 = float4( 0, scattering, roughness, metallic );
 	p1.WorldPos	 = wpos1.xyz;
 	p1.Tangent	 = rt;
 	p1.Binormal	 = -up;
@@ -408,7 +432,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p2.ViewPosSZ = float4( pos2.xyz, 1/sz );
 	p2.Color 	 = color;
 	p2.LMFactor	 = 0;
-	p2.FogSRM	 = float4( 0, prt.Scattering, prt.Roughness, prt.Metallic );
+	p2.FogSRM	 = float4( 0, scattering, roughness, metallic );
 	p2.WorldPos	 = wpos2.xyz;
 	p2.Tangent	 = rt;
 	p2.Binormal	 = -up;
@@ -421,7 +445,7 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	p3.ViewPosSZ = float4( pos3.xyz, 1/sz );
 	p3.Color 	 = color;
 	p3.LMFactor	 = 0;
-	p3.FogSRM	 = float4( 0, prt.Scattering, prt.Roughness, prt.Metallic );
+	p3.FogSRM	 = float4( 0, scattering, roughness, metallic );
 	p3.WorldPos	 = wpos3.xyz;
 	p3.Tangent	 = rt;
 	p3.Binormal	 = -up;

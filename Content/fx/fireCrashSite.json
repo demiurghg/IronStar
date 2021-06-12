@@ -62,12 +62,12 @@
       "FadeOut": 0.6
     },
     "Color": "255, 125, 38, 255",
-    "Alpha": 0.5,
+    "Alpha": 1.0,
     "Exposure": 0.0,
     "Roughness": 0.5,
     "Metallic": 0.0,
-    "Intensity": 300.0,
-    "IntensityEV": 8.228819,
+    "Intensity": 16.0,
+    "IntensityEV": 4.0,
     "Scattering": 1.0,
     "BeamFactor": 17.0,
     "Lifetime": {
@@ -113,9 +113,7 @@
       "$id": "11",
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
       "GravityFactor": 0.0,
-      "Damping": 0.2,
-      "DragForce": 1.0,
-      "Turbulence": 1.0
+      "Damping": 0.2
     }
   },
   "ParticleStage2": {
@@ -187,9 +185,7 @@
       "$id": "18",
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
       "GravityFactor": -0.5,
-      "Damping": 0.2,
-      "DragForce": 0.0,
-      "Turbulence": 0.0
+      "Damping": 0.2
     }
   },
   "ParticleStage3": {
@@ -214,7 +210,7 @@
     "Exposure": 0.0,
     "Roughness": 0.2,
     "Metallic": 0.0,
-    "Intensity": 2000.0,
+    "Intensity": 1999.99976,
     "IntensityEV": 10.9657841,
     "Scattering": 0.0,
     "BeamFactor": 3.0,
@@ -261,9 +257,7 @@
       "$id": "25",
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
       "GravityFactor": -0.1,
-      "Damping": 0.0,
-      "DragForce": 0.0,
-      "Turbulence": 1.0
+      "Damping": 0.0
     }
   },
   "ParticleStage4": {
@@ -288,7 +282,7 @@
     "Exposure": 0.0,
     "Roughness": 0.5,
     "Metallic": 0.0,
-    "Intensity": 100.0,
+    "Intensity": 99.99999,
     "IntensityEV": 6.643856,
     "Scattering": 0.0,
     "BeamFactor": 0.0,
@@ -335,9 +329,7 @@
       "$id": "32",
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
       "GravityFactor": 0.0,
-      "Damping": 0.0,
-      "DragForce": 0.0,
-      "Turbulence": 0.0
+      "Damping": 0.0
     }
   },
   "ParticleStage5": {
@@ -362,7 +354,7 @@
     "Exposure": 0.0,
     "Roughness": 0.5,
     "Metallic": 0.0,
-    "Intensity": 100.0,
+    "Intensity": 99.99999,
     "IntensityEV": 6.643856,
     "Scattering": 0.0,
     "BeamFactor": 0.0,
@@ -409,9 +401,7 @@
       "$id": "39",
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
       "GravityFactor": 0.0,
-      "Damping": 0.0,
-      "DragForce": 0.0,
-      "Turbulence": 0.0
+      "Damping": 0.0
     }
   }
 }

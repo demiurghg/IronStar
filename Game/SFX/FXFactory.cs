@@ -200,17 +200,9 @@ namespace IronStar.SFX {
 		[Description( "Velocity damping factor" )]
 		public float Damping { get; set; } = 0;
 
-		[XmlAttribute]
-		[Description( "Constant acceleration opposite to initial velocity vector" )]
-		public float DragForce { get; set; } = 0;
-
-		[XmlAttribute]
-		[Description( "Constant normally distributed acceleration" )]
-		public float Turbulence { get; set; } = 0;
-
 		public override string ToString()
 		{
-			return string.Format( "G:{0:0.##} D:{1:0.##} Drag:{2:0.##}, Turb:{3:0.##}", GravityFactor, Damping, DragForce, Turbulence );
+			return string.Format( "G:{0:0.##} D:{1:0.##}", GravityFactor, Damping );
 		}
 	}
 

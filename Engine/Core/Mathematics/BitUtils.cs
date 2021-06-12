@@ -11,6 +11,13 @@ namespace Fusion.Core.Mathematics
 	/// </summary>
 	public static class BitUtils
 	{
+		static public void Set8BitUNorm( ref uint target, float value, int byteIndex )
+		{
+			uint uval = ((uint)( MathUtil.Clamp( value, 0, 1 ) * 255 )) & 0xFF;
+			uint mask = ((uint)(0x000000FF)) << (byteIndex * 8);
+			target &= ~mask;
+			target |= (uval << (byteIndex * 8));
+		}
 
 		/// <summary>
 		/// Whether x is power of two

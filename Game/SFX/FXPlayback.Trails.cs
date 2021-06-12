@@ -46,7 +46,6 @@ namespace IronStar.SFX {
 			p.Rotation0		=	0;
 			p.Rotation1		=	0;
 
-			p.Acceleration	=	Vector3.Zero;
 			p.Damping		=	0;
 			p.Gravity		=	0;
 
@@ -74,9 +73,8 @@ namespace IronStar.SFX {
 				p.FadeIn		=	0.1f;
 				p.FadeOut		=	0.9f;
 				
-				p.Color			=	new Color(255, 156, 73, 255).ToColor3();
+				p.Color			=	new Color(255, 156, 73, 255);
 				p.Intensity		=	500;
-				p.Alpha			=	1;
  
 				rw.ParticleSystem.InjectParticle( p );
 
@@ -93,7 +91,7 @@ namespace IronStar.SFX {
 			var rayPos			=	p.Position - p.Velocity;
 			var rayVel			=	p.Velocity * 2;
 
-			var	color		=	new Color(148, 171, 255, 255).ToColor3();
+			var	color		=	new Color(148, 171, 255, 255);
 
 			p.Size0			=	1.00f;
 			p.Size1			=	0.30f;
@@ -101,10 +99,10 @@ namespace IronStar.SFX {
 			p.LifeTime		=	0.5f;
 			p.FadeIn		=	0.1f;
 			p.FadeOut		=	0.9f;
+			p.Exposure		=	1;
 				
 			p.Color			=	color;
 			p.Intensity		=	5000;
-			p.Alpha			=	1;
 
 			p.ImageIndex	=	GetSpriteClip("bulletTrace").FirstIndex;
 			p.ImageCount	=	GetSpriteClip("bulletTrace").Length;
@@ -135,7 +133,7 @@ namespace IronStar.SFX {
 				var vel		=	rt * c * 0.15f + up * s * 0.15f + rand.GaussRadialDistribution(0,0.5f);
 				#else
 				var pos		=	rayPos + rt * c * 0.0f + up * s * 0.0f + rayVel * factor;
-				var vel		=	rand.GaussRadialDistribution(0,0.5f);
+				var vel		=	rand.GaussRadialDistribution(0,1f);
 				var accel	=	rand.GaussRadialDistribution(0,3f);
 				#endif
 
@@ -143,9 +141,10 @@ namespace IronStar.SFX {
 
 				p.Position		=	pos;
 				p.Velocity		=	vel;
-				p.Acceleration	=	accel;
-				p.Damping		=	8f;
+				p.Damping		=	0;
 				p.Gravity		=	0;
+
+				p.Exposure		=	1.0f;
 
 				p.BeamFactor	=	0;
 
@@ -154,7 +153,6 @@ namespace IronStar.SFX {
 
 				p.Intensity		=	rand.NextFloat(2000, 5000);
 				p.Color			=	color;
-				p.Alpha			=	1;
 				p.FadeIn		=	0.3f;
 				p.FadeOut		=	0.4f;			
 

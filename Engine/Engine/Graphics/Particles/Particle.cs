@@ -83,31 +83,25 @@ namespace Fusion.Engine.Graphics {
 		public Vector3	Velocity;           
 
 		/// <summary>
-		/// Acceleration of the particle regardless of gravity.
-		/// </summary>
-		public Vector3	Acceleration;          
-
-		/// <summary>
 		/// Color of particle, tint for glowing particles.
 		/// </summary>
-		public Color3	Color;
+		public Color	Color { set { ColorPacked = (uint)value.ToBgra(); }	}
+		public uint		ColorPacked;
 
-		/// <summary>
-		/// Alpha factor, transparency or threshold
-		/// </summary>
-		public float	Alpha;
+		public float	Exposure { set { BitUtils.Set8BitUNorm( ref MaterialERMS, value, 0 ); } }
 
-		public float	Exposure;
+		public float	Roughness { set { BitUtils.Set8BitUNorm( ref MaterialERMS, value, 1 ); } }
 
-		public float	Roughness;
+		public float	Metallic { set { BitUtils.Set8BitUNorm( ref MaterialERMS, value, 2 ); } }
 
-		public float	Metallic;
+		public float	Scattering { set { BitUtils.Set8BitUNorm( ref MaterialERMS, value, 3 ); } }
 
-		public float	Intensity;
+		public uint		MaterialERMS;
 
-		public float	Scattering;
+		public float	Intensity { set { IntensityBeamFactor.X = value; } }
+		public float	BeamFactor { set { IntensityBeamFactor.Y = value; } }
 
-		public float	BeamFactor;
+		public Half2	IntensityBeamFactor;
 
 		/// <summary>
 		/// Gravity influence.
@@ -115,12 +109,22 @@ namespace Fusion.Engine.Graphics {
 		/// Values between 0 and 1 means reduced gravity, like snowflakes or dust.
 		/// Negative values means particle that has positive buoyancy.
 		/// </summary>
-		public float		Gravity;
+		public float Gravity 
+		{ 
+			set { GravityDamping.X = value; } 
+			get { return GravityDamping.X; } 
+		}
 
 		/// <summary>
 		/// Counter velocity deceleration
 		/// </summary>
-		public float		Damping;
+		public float Damping 
+		{ 
+			set { GravityDamping.Y = value; } 
+			get { return GravityDamping.Y; } 
+		}
+
+		public Half2		GravityDamping;
 
 		/// <summary>
 		/// Initial size of the particle
@@ -231,10 +235,6 @@ namespace Fusion.Engine.Graphics {
 			CheckFloat( Velocity.X );
 			CheckFloat( Velocity.Y );
 			CheckFloat( Velocity.Z );
-
-			CheckFloat( Acceleration.X );
-			CheckFloat( Acceleration.Y );
-			CheckFloat( Acceleration.Z );
 
 			CheckFloat( LifeTime );
 			CheckFloat( Damping );

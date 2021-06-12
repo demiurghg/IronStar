@@ -102,17 +102,21 @@ namespace IronStar.SFX {
 
 				p.Effects		=	stage.Effect;
 
-				if (stage.UseRandomImages) {
+				if (stage.UseRandomImages) 
+				{
 					p.ImageIndex	=	rand.Next( spriteIndex, spriteIndex + spriteCount );
 					p.ImageCount	=	1;
-				} else {
+				}
+				else 
+				{
 					p.ImageIndex	=	spriteIndex;
 					p.ImageCount	=	spriteCount;
 				}
+				
 				p.WeaponIndex	=	fxInstance.WeaponFX;
 
-				p.Color			=   stage.Color.ToColor3();
-				p.Alpha			=	stage.Alpha;
+				byte alpha		=	(byte)(MathUtil.Clamp( stage.Alpha, 0, 1 ) * 255);
+				p.Color			=	new Color( stage.Color.R, stage.Color.G, stage.Color.B, alpha );
 				p.Exposure		=	stage.Exposure;
 				p.Roughness		=	stage.Roughness;
 				p.Metallic		=	stage.Metallic;
@@ -137,8 +141,6 @@ namespace IronStar.SFX {
 
 				p.Velocity		=	stage.Velocity.GetVelocity(fxEvent, rand) * scale;
 
-				var turbulence	=	rand.GaussRadialDistribution(0, stage.Acceleration.Turbulence * scale);
-				p.Acceleration	=	stage.Acceleration.DragForce * p.Velocity + turbulence;
 				p.Damping		=	stage.Acceleration.Damping / scale;
 				p.Gravity		=	stage.Acceleration.GravityFactor;
 

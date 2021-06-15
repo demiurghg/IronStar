@@ -16,8 +16,8 @@ using Fusion.Core.Mathematics;
 using Fusion.Core.Content;
 using Fusion.Core.Extensions;
 
-namespace Fusion.Engine.Audio {
-
+namespace Fusion.Engine.Audio 
+{
 	[ContentLoader(typeof(SoundBank))]
 	public sealed class SoundBankLoader : ContentLoader
 	{
@@ -27,8 +27,8 @@ namespace Fusion.Engine.Audio {
 		}
 	}
 
-	public sealed partial class SoundSystem : GameComponent {
-
+	public sealed partial class SoundSystem : GameComponent 
+	{
 		internal FMOD.Studio.System system;
 		internal FMOD.System		lowlevel;
 
@@ -75,8 +75,10 @@ namespace Fusion.Engine.Audio {
 		/// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
-			if (disposing) {
-				if (system!=null) {
+			if (disposing) 
+			{
+				if (system!=null) 
+				{
 					FmodExt.ERRCHECK( system.release() );
 					system = null;
 				}
@@ -89,7 +91,18 @@ namespace Fusion.Engine.Audio {
 		/// </summary>			
 		public override void Update( GameTime gameTime )
 		{
+			SetMasterBusVolume( MasterVolume );
+
 			FmodExt.ERRCHECK( system.update() );
+		}
+
+
+		void SetMasterBusVolume(float volume)
+		{
+			Bus master;
+			FmodExt.ERRCHECK( system.getBus("bus:/", out master) );
+
+			master?.setVolume(volume);
 		}
 
 
@@ -135,7 +148,8 @@ namespace Fusion.Engine.Audio {
 
 			var result = system.getEvent( eventPath, out eventDesc );
 
-			if (result!=FMOD.RESULT.OK) {
+			if (result!=FMOD.RESULT.OK) 
+			{
 				throw new SoundException( result, eventPath );
 			}
 
@@ -168,7 +182,8 @@ namespace Fusion.Engine.Audio {
 
 			FmodExt.ERRCHECK( system.getEvent(eventPath, out desc) );
 
-			if (desc==null) {
+			if (desc==null) 
+			{
 				Log.Warning("Failed to play event: {0}", eventPath );
 				return false;
 			}
@@ -176,13 +191,15 @@ namespace Fusion.Engine.Audio {
 			bool is3d;
 			FmodExt.ERRCHECK( desc.is3D( out is3d ) );
 
-			if (is3d) {
+			if (is3d) 
+			{
 				Log.Warning("Event '{0}' is 3D", eventPath);
 			}
 
 			FmodExt.ERRCHECK( desc.createInstance( out inst ) );
 
-			if (inst==null) {
+			if (inst==null) 
+			{
 				return false;
 			}
 

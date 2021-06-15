@@ -33,7 +33,7 @@
   25. Profit???
   26. YES!!! 
 
-### Common problems and solutions
+## Common problems and solutions
   * **Problem**: I can not even build the project: `error MSB3103: Invalid Resx file. Type in the data at line 123, position 5, cannot be loaded because it threw the following exception during construction: Parameter is not valid.`
   * **Solution**: Make sure that GIT LFS is installed.
   
@@ -43,4 +43,10 @@
   * **Problem**: particles.hlsl: bad combination: 0x00000008: INITIALIZE
   * **Solution**: Make sure that Tools and Windows SDKs are installed.
 
-  * **Problem**: 
+  * **Problem**: Failed to load Microsoft.ConcurrencyVisualizer.Markers
+  * **Solution**: In case of "Strong name validation failed", open the command prompt as administrator and enter following commands:
+    1. `reg DELETE "HKLM\Software\Microsoft\StrongName\Verification" /f`
+    2. `reg ADD "HKLM\Software\Microsoft\StrongName\Verification\*,*" /f`
+    3. `reg DELETE "HKLM\Software\Wow6432Node\Microsoft\StrongName\Verification" /f`
+    4. `reg ADD "HKLM\Software\Wow6432Node\Microsoft\StrongName\Verification\*,*" /f`
+

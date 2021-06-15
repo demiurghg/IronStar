@@ -9,13 +9,13 @@ using Fusion.Core;
 using Fusion.Core.Mathematics;
 
 
-namespace Fusion.Engine.Audio {
-	public class ReverbZone {
-
+namespace Fusion.Engine.Audio 
+{
+	public class ReverbZone 
+	{
 		readonly FMOD.Studio.System system;
 		readonly FMOD.System lowlevel;
 		Reverb3D reverb;
-
 
 
 		internal ReverbZone ( SoundSystem device )
@@ -28,13 +28,11 @@ namespace Fusion.Engine.Audio {
 		}
 
 
-
 		public void Release ()
 		{
 			FmodExt.ERRCHECK( reverb.release() );
 		}
 
-		
 
 		public void Set3DParameters ( Vector3 position, float minDistance, float maxDistance )
 		{
@@ -43,11 +41,11 @@ namespace Fusion.Engine.Audio {
 		}
 
 
-
 		public void SetReverbParameters ( ReverbPreset preset )
 		{
 			var reverbParams = PRESET.OFF();
-			switch ( preset ) {
+			switch ( preset ) 
+			{
 				case ReverbPreset.OFF				: reverbParams = PRESET.OFF				 (); break;
 				case ReverbPreset.GENERIC			: reverbParams = PRESET.GENERIC			 (); break;
 				case ReverbPreset.PADDEDCELL		: reverbParams = PRESET.PADDEDCELL		 (); break;

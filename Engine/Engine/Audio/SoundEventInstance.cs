@@ -136,39 +136,18 @@ namespace Fusion.Engine.Audio
 		}
 
 
-		public float ReverbLevel {
-			set {
+		public float ReverbLevel 
+		{
+			set 
+			{
 				FmodExt.ERRCHECK( inst.setReverbLevel( 0, value ) );
 			}
-			get {
+			get 
+			{
 				float result;
 				FmodExt.ERRCHECK( inst.getReverbLevel( 0, out result ) );
 				return result;
 			}
 		}
-		/// <summary>
-		///// 
-		///// </summary>
-		//public bool IsLooped;
-
-		///// <summary>
-		///// 
-		///// </summary>
-  //      public float Pan;
-		
-		///// <summary>
-		///// 
-		///// </summary>
-		//public float Pitch         ;
-
-		///// <summary>
-		///// 
-		///// </summary>
-		//public SoundState State ;
-
-		///// <summary>
-		///// 
-		///// </summary>
-		//public float Volume;
 	}
 }

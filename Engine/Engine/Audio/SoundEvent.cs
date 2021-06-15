@@ -54,10 +54,9 @@ namespace Fusion.Engine.Audio
 		readonly EventDescription eventDesc;
 		readonly string path;
 
-		public string Path {
-			get {
-				return path;
-			}
+		public string Path 
+		{
+			get { return path; }
 		}
 
 		/// <summary>
@@ -86,8 +85,10 @@ namespace Fusion.Engine.Audio
 		}
 
 
-		public float MaximumDistance {
-			get {
+		public float MaximumDistance 
+		{
+			get 
+			{
 				float dist;
 				FmodExt.ERRCHECK( eventDesc.getMaximumDistance( out dist ) );
 				return dist;
@@ -95,13 +96,14 @@ namespace Fusion.Engine.Audio
 		}
 
 
-		public float MinimumDistance {
-			get {
+		public float MinimumDistance 
+		{
+			get 
+			{
 				float dist;
 				FmodExt.ERRCHECK( eventDesc.getMinimumDistance( out dist ) );
 				return dist;
 			}
 		}
-
 	}
 }

@@ -57,10 +57,10 @@ namespace Fusion.Engine.Audio
     {
 		Bank bank;
 
-		internal Bank Bank {
+		internal Bank Bank 
+		{
 			get { return bank; }
 		}
-
 
 
 		/// <summary>
@@ -82,12 +82,11 @@ namespace Fusion.Engine.Audio
 
 			FmodExt.ERRCHECK( bank.getEventList( out eventDescs ) );
 
-			for ( int i=0; i<eventDescs.Length; i++ ) {
-
+			for ( int i=0; i<eventDescs.Length; i++ ) 
+			{
 				Log.Verbose("... {0}", eventDescs[i].GetPath() );
 			}
-        }
-
+		}
 
 
 		/// <summary>
@@ -96,8 +95,10 @@ namespace Fusion.Engine.Audio
 		/// <param name="disposing"></param>
 		protected override void Dispose( bool disposing )
 		{
-			if (disposing) {
-				if (Bank!=null) {
+			if (disposing) 
+			{
+				if (Bank!=null) 
+				{
  					FmodExt.ERRCHECK( Bank.unload() );
 				}
 			}

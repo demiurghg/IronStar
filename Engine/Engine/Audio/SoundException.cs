@@ -1,11 +1,11 @@
 ﻿using System;
 using FMOD;
 
-
-namespace Fusion.Engine.Audio {
-
+namespace Fusion.Engine.Audio 
+{
 	[Serializable]
-	public class SoundException : Exception {
+	public class SoundException : Exception 
+	{
 
 		public SoundException ()
 		{

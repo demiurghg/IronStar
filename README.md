@@ -44,10 +44,9 @@
   * **Solution**: Make sure that Tools and Windows SDKs are installed.
 
   * **Problem**: Failed to load Microsoft.ConcurrencyVisualizer.Markers
-  * **Solution**: Open the command prompt as administrator and enter following commands:
-  Open the command prompt as administrator and enter following commands:
-	`reg DELETE "HKLM\Software\Microsoft\StrongName\Verification" /f`
-	`reg ADD "HKLM\Software\Microsoft\StrongName\Verification\*,*" /f`
-	`reg DELETE "HKLM\Software\Wow6432Node\Microsoft\StrongName\Verification" /f`
-	`reg ADD "HKLM\Software\Wow6432Node\Microsoft\StrongName\Verification\*,*" /f`
+  * **Solution**: In case of "Strong name validation failed", open the command prompt as administrator and enter following commands:
+    1. `reg DELETE "HKLM\Software\Microsoft\StrongName\Verification" /f`
+    2. `reg ADD "HKLM\Software\Microsoft\StrongName\Verification\*,*" /f`
+    3. `reg DELETE "HKLM\Software\Wow6432Node\Microsoft\StrongName\Verification" /f`
+    4. `reg ADD "HKLM\Software\Wow6432Node\Microsoft\StrongName\Verification\*,*" /f`
 

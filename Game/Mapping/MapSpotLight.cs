@@ -81,16 +81,6 @@ namespace IronStar.Mapping {
 		[AESlider(0, 8, 1, 1)]
 		public int LodBias { get; set; } = 0;
 		
-		[AECategory("Spot Shadow")]
-		[AEDisplayName("Shadow Depth Bias")]
-		[AESlider(0, 1/512f, 1/8192f, 1/16384f)]
-		public float DepthBias { get; set; } = 1f / 1024f;
-
-		[AECategory("Spot Shadow")]
-		[AEDisplayName("Shadow Slope Bias")]
-		[AESlider(0, 8, 1, 0.125f/4.0f)]
-		public float SlopeBias { get; set; } = 2;
-
 
 		Matrix SpotView {
 			get {
@@ -140,8 +130,6 @@ namespace IronStar.Mapping {
 			light.LightIntensity	=	LightIntensity;
 
 			light.EnableGI			=	EnableGI;
-			light.SlopeBias			=	SlopeBias;
-			light.DepthBias			=	DepthBias;
 			light.SpotMaskName		=	SpotMaskName;
 			light.LodBias			=	LodBias;
 
@@ -202,7 +190,7 @@ namespace IronStar.Mapping {
 
 		public override BoundingBox GetBoundingBox( GameState gs )
 		{
-			var frustum = new BoundingFrustum( SpotView * SpotProjection );
+			var frustum = new BoundingFrustum( /*SpotView **/ SpotProjection );
 			var points  = frustum.GetCorners();
 			return BoundingBox.FromPoints( points );
 		}

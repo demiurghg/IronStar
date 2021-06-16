@@ -78,16 +78,6 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// 
 		/// </summary>
-		public float	SlopeBias = 2;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		public float	DepthBias = 1f / 1024f;
-
-		/// <summary>
-		/// 
-		/// </summary>
 		public LightStyle LightStyle;
 
 		/// <summary>

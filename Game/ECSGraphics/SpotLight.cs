@@ -49,21 +49,6 @@ namespace IronStar.SFX2
 		[AESlider(0, 8, 1, 1)]
 		public int LodBias { get; set; }
 		
-		[AECategory("Spot Shadow")]
-		[AEDisplayName("Shadow Depth Bias")]
-		[AESlider(0, 1/512f, 1/8192f, 1/16384f)]
-		public float DepthBias { get; set; }
-
-		[AECategory("Spot Shadow")]
-		[AEDisplayName("Shadow Slope Bias")]
-		[AESlider(0, 8, 1, 0.125f/4.0f)]
-		public float SlopeBias { get; set; }
-
-		float nearPlane = 0.5f;
-		float farPlane = 15;
-		float fovVertical = 60;
-		float fovHorizontal = 60;
-
 		[AECategory("Spot Shape")]
 		[AESlider(0, 4, 1/4f, 1/64f)]
 		public float NearPlane { get; set; } = 0.5f;

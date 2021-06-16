@@ -57,8 +57,6 @@ namespace IronStar.SFX2
 			light.SpotMaskName	=	ol.SpotMaskName;
 
 			light.EnableGI		=	ol.EnableGI;
-			light.SlopeBias		=	ol.SlopeBias;
-			light.DepthBias		=	ol.DepthBias;
 			light.LodBias		=	ol.LodBias;
 		}
 	}

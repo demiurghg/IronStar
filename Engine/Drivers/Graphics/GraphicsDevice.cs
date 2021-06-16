@@ -106,12 +106,13 @@ namespace Fusion.Drivers.Graphics {
 		/// <summary>
 		/// Pipeline state.
 		/// </summary>
-		public PipelineState PipelineState {
-			get {
-				return pipelineState;
-			}
-			set {
-				if (value!=pipelineState) {
+		public PipelineState PipelineState 
+		{
+			get { return pipelineState;	}
+			set 
+			{
+				if (value!=pipelineState) 
+				{
 					pipelineState		= value;
 					pipelineStateDirty	= true;
 				}

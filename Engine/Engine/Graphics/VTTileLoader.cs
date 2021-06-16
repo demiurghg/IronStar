@@ -152,11 +152,28 @@ namespace Fusion.Engine.Graphics
 			}
 
 			//	Distinct :
-			return feedbackTree
+			feedbackTree = feedbackTree
 				.Distinct()
 				//.Where( p0 => tileCache.Contains(p0) )
 				.OrderByDescending( p1 => p1.MipLevel )
 				.ToList();//*/
+
+			//	Prevent thrashing:
+			while (feedbackTree.Count >= tileCache.Capacity * 2 / 3 ) 
+			{
+				if (vt.ShowThrashing) 
+				{
+					Log.Warning("VT thrashing: r:{0} a:{1}", feedbackTree.Count, tileCache.Capacity);
+				}
+
+				feedbackTree = feedbackTree.Select( a1 => a1.IsLeastDetailed ? a1 : a1.GetLessDetailedMip() )
+					.Distinct()
+					.OrderByDescending( p1 => p1.MipLevel )
+					.ToList()
+					;
+			}
+
+			return feedbackTree;
 		}
 
 

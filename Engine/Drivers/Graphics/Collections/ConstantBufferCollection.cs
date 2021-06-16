@@ -11,8 +11,8 @@ namespace Fusion.Drivers.Graphics {
 	/// <summary>
 	/// The constant buffer collection.
 	/// </summary>
-	public sealed class ConstantBufferCollection : GraphicsObject {
-
+	public sealed class ConstantBufferCollection : GraphicsObject 
+	{
 		readonly CommonShaderStage[] stages;
 
 
@@ -30,8 +30,10 @@ namespace Fusion.Drivers.Graphics {
 		/// <summary>
 		/// Total count of sampler states that can be simultaniously bound to pipeline.
 		/// </summary>
-		public int Count { 
-			get { 
+		public int Count 
+		{ 
+			get 
+			{ 
 				return CommonShaderStage.ConstantBufferApiSlotCount;
 			}
 		}
@@ -47,9 +49,12 @@ namespace Fusion.Drivers.Graphics {
 		{
 			set 
 			{
-				for (int i=0; i<stages.Length; i++)
+				lock (device.DeviceContext) 
 				{
-					stages[i].SetConstantBuffer( index, (value==null) ? null : value.buffer );
+					for (int i=0; i<stages.Length; i++)
+					{
+						stages[i].SetConstantBuffer( index, (value==null) ? null : value.buffer );
+					}
 				}
 			}
 		}

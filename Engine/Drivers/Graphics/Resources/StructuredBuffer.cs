@@ -162,7 +162,8 @@ namespace Fusion.Drivers.Graphics
 		/// </summary>
 		protected override void Dispose ( bool disposing )
 		{
-			if (disposing) {
+			if (disposing) 
+			{
 				SafeDispose( ref SRV );
 				SafeDispose( ref uav );
 				SafeDispose( ref bufferGpu );
@@ -193,10 +194,9 @@ namespace Fusion.Drivers.Graphics
 				throw new ArgumentException("Input buffer size (" + inputBytes.ToString() + " bytes) not equals structured buffer size (" + bufferBytes.ToString() + " bytes)"); 
 			}
 
-			lock (device.DeviceContext) {
-
+			lock (device.DeviceContext) 
+			{
 				device.DeviceContext.UpdateSubresource( data, bufferGpu );
-
 			}
 		}
 
@@ -226,8 +226,8 @@ namespace Fusion.Drivers.Graphics
 			//
 			//	Write data
 			//
-			lock (device.DeviceContext ) {
-
+			lock (device.DeviceContext ) 
+			{
 				var db = device.DeviceContext.MapSubresource( bufferStaging, 0, MapMode.Write, D3D11.MapFlags.None );
 
 				SharpDX.Utilities.Write( db.DataPointer, data, startIndex, elementCount );
@@ -257,17 +257,20 @@ namespace Fusion.Drivers.Graphics
 		/// </summary>
 		public void GetData<T> ( T[] data, int startIndex, int elementCount ) where T: struct
 		{
-			if (data==null) {
+			if (data==null) 
+			{
 				throw new ArgumentNullException("data");
 			}
 
-			if (data.Length < startIndex + elementCount) {
+			if (data.Length < startIndex + elementCount) 
+			{
 				throw new ArgumentException("The data passed has a length of " + data.Length + " but " + elementCount + " elements have been requested."); 
 			}
 
 			int inputBytes	=	elementCount * Marshal.SizeOf(typeof(T));
 			int bufferBytes =	StructureCapacity * StructureStride;
-			if ( inputBytes > bufferBytes ) {
+			if ( inputBytes > bufferBytes ) 
+			{
 				throw new ArgumentException("Input data (" + inputBytes.ToString() + " bytes) exceeded buffer size (" + bufferBytes.ToString() + " bytes)"); 
 			}
 
@@ -275,7 +278,8 @@ namespace Fusion.Drivers.Graphics
 			//
 			//	Read data
 			//	
-			lock (device.DeviceContext) {
+			lock (device.DeviceContext) 
+			{
 				device.DeviceContext.CopyResource( bufferGpu, bufferStaging );
 
 				var db = device.DeviceContext.MapSubresource( bufferStaging, 0, MapMode.Read, D3D11.MapFlags.None );

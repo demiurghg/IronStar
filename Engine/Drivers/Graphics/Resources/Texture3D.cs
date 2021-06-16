@@ -18,13 +18,13 @@ using Fusion.Core;
 using Fusion.Engine.Common;
 
 
-namespace Fusion.Drivers.Graphics {
-	internal class Texture3D : ShaderResource {
-
+namespace Fusion.Drivers.Graphics 
+{
+	internal class Texture3D : ShaderResource 
+	{
 		D3D.Texture3D	tex3D;
 
 		ColorFormat format;
-
 
 
 		/// <summary>
@@ -79,23 +79,27 @@ namespace Fusion.Drivers.Graphics {
 		{
 			var elementSizeInByte = Marshal.SizeOf(typeof(T));
 			var dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-			try
+
+			lock (device.DeviceContext) 
 			{
-				var dataPtr		=	(IntPtr)(dataHandle.AddrOfPinnedObject().ToInt64());
+				try
+				{
+					var dataPtr		=	(IntPtr)(dataHandle.AddrOfPinnedObject().ToInt64());
 
-				int rowPitch	=	Converter.SizeOf(this.format) * Width;
-				int slicePitch	=	rowPitch * Height; // For 3D texture: Size of 2D image.
-				var box			=	new DataBox(dataPtr, rowPitch, slicePitch);
+					int rowPitch	=	Converter.SizeOf(this.format) * Width;
+					int slicePitch	=	rowPitch * Height; // For 3D texture: Size of 2D image.
+					var box			=	new DataBox(dataPtr, rowPitch, slicePitch);
 
-				int subresourceIndex = 0;
+					int subresourceIndex = 0;
 
-				var region		=	new ResourceRegion(0, 0, 0, Width, Height, Depth);
+					var region		=	new ResourceRegion(0, 0, 0, Width, Height, Depth);
 
-				device.DeviceContext.UpdateSubresource(box, tex3D, subresourceIndex, region);
-			}
-			finally
-			{
-				dataHandle.Free();
+					device.DeviceContext.UpdateSubresource(box, tex3D, subresourceIndex, region);
+				}
+				finally
+				{
+					dataHandle.Free();
+				}
 			}
 		}
 	}

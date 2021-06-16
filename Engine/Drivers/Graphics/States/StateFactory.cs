@@ -12,12 +12,10 @@ using Fusion.Core.Content;
 using Fusion.Core.Mathematics;
 
 
-namespace Fusion.Drivers.Graphics {
-
-	/// <summary>
-	/// 
-	/// </summary>
-	internal sealed class StateFactory : GraphicsObject {
+namespace Fusion.Drivers.Graphics 
+{
+	internal sealed class StateFactory : GraphicsObject 
+	{
 
 		Ubershader		ubershader;
 		Dictionary<int, PipelineState>	pipelineStates;
@@ -102,14 +100,14 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="disposing"></param>
 		protected override void Dispose ( bool disposing )
 		{
-			if (disposing) {
-				
-				foreach ( var ps  in pipelineStates ) {
+			if (disposing) 
+			{
+				foreach ( var ps  in pipelineStates ) 
+				{
 					ps.Value.Dispose();
 				}
 
 				pipelineStates.Clear();
-
 			}
 
 			base.Dispose( disposing );
@@ -124,11 +122,12 @@ namespace Fusion.Drivers.Graphics {
 		/// <returns></returns>
 		public PipelineState this[ int combination ] {
 
-			get {
-				
+			get 
+			{
 				PipelineState ps;
 
-				if (!pipelineStates.TryGetValue( combination, out ps )) {
+				if (!pipelineStates.TryGetValue( combination, out ps )) 
+				{
 					var path	=	device.Game.Content.GetPathTo( ubershader );
 					var message =	string.Format("{0}: bad combination", path );
 					throw new UbershaderException( message, combination, combinerEnum );
@@ -168,14 +167,17 @@ namespace Fusion.Drivers.Graphics {
 			//
 			//	validate enum :
 			//
-			if (Enum.GetUnderlyingType(enumType)!=typeof(int)) {
+			if (Enum.GetUnderlyingType(enumType)!=typeof(int)) 
+			{
 				throw new ArgumentException("Underlying type should be Int32");
 			}
 
 			Dictionary<string,int> enumDict = new Dictionary<string,int>();
 
-			foreach ( var enumValue in Enum.GetValues( enumType ) ) {
-				if ( !MathUtil.IsPowerOfTwo( (int)enumValue ) && (int)enumValue!=0 ) {
+			foreach ( var enumValue in Enum.GetValues( enumType ) ) 
+			{
+				if ( !MathUtil.IsPowerOfTwo( (int)enumValue ) && (int)enumValue!=0 ) 
+				{
 					throw new ArgumentException("Each value must be zero or power of two");
 				}
 				enumDict.Add( enumValue.ToString(), (int)enumValue );
@@ -188,12 +190,12 @@ namespace Fusion.Drivers.Graphics {
 			//
 			var defineList = ubershader.Defines;
 
-			foreach ( var defines in defineList ) {
-				
+			foreach ( var defines in defineList ) 
+			{
 				int combination = 0;
 
-				if ( GetCombinerSet( enumDict, defines, out combination ) ) {
-					
+				if ( GetCombinerSet( enumDict, defines, out combination ) ) 
+				{
 					var ps = new PipelineState( device );
 
 					ps.PixelShader		=	ubershader.GetPixelShader		( defines );
@@ -212,18 +214,15 @@ namespace Fusion.Drivers.Graphics {
 
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="delList"></param>
-		/// <returns></returns>
 		bool GetCombinerSet ( Dictionary<string,int> enumDict, string defList, out int combination )
 		{				
 			var defs	=	defList.Split( new[]{' ','\t'}, StringSplitOptions.RemoveEmptyEntries );
 			combination	=	0;
 
-			foreach ( var def in defs ) {
-				if ( !enumDict.ContainsKey(def) ) {
+			foreach ( var def in defs ) 
+			{
+				if ( !enumDict.ContainsKey(def) ) 
+				{
 					return false;
 				}
 
@@ -235,34 +234,26 @@ namespace Fusion.Drivers.Graphics {
 
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="value"></param>
-		/// <returns></returns>
 		string GetEnumName ( int value )
 		{
 			return Enum.GetName( combinerEnum, value );
 		}
-				
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="combination"></param>
-		/// <returns></returns>
+
 		string GetDefinitionsByCombination ( int combination )
 		{
 			List<string> defs = new List<string>();
 
-            for (int i=0; i<32; i++) {
+			for (int i=0; i<32; i++) 
+			{
 				int bit = 1<<i;
 				
-				if ( (bit & combination) != 0 ) {
-					defs.Add( GetEnumName(bit) );					
+				if ( (bit & combination) != 0 ) 
+				{
+					defs.Add( GetEnumName(bit) );
 				}
-            }
+			}
 
 			return "[" + string.Join( " ", defs.ToArray() ) + "]";
 		}

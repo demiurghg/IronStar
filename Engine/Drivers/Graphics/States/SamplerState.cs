@@ -16,8 +16,10 @@ using D3DDepthStencilState	=	SharpDX.Direct3D11.DepthStencilState;
 using Fusion.Engine.Graphics;
 
 
-namespace Fusion.Drivers.Graphics {
-	public sealed class SamplerState : GraphicsObject {
+namespace Fusion.Drivers.Graphics 
+{
+	public sealed class SamplerState : GraphicsObject 
+	{
 
 		public Filter			Filter			{ get { return filter		 ; } set { PipelineBoundCheck() ; filter		  = value; } }
 		public AddressMode		AddressU		{ get { return addressU		 ; } set { PipelineBoundCheck() ; addressU		  = value; } }
@@ -30,8 +32,10 @@ namespace Fusion.Drivers.Graphics {
 		public Color4			BorderColor		{ get { return borderColor	 ; } set { PipelineBoundCheck() ; borderColor	  = value; } }
 		public ComparisonFunc	ComparisonFunc	{ get { return compareFunc	 ; } set { PipelineBoundCheck() ; compareFunc	  = value; } }
 
-		public AddressMode	Address	{ 
-			set {
+		public AddressMode	Address	
+		{ 
+			set 
+			{
 				AddressU	=	value;
 				AddressV	=	value;
 				AddressW	=	value;
@@ -154,7 +158,8 @@ namespace Fusion.Drivers.Graphics {
 		/// <returns></returns>
 		public static SamplerState Create ( Filter filter, AddressMode addressMode, Color4 borderColor, ComparisonFunc cmpFunc = ComparisonFunc.Always, int maxMipLevel = int.MaxValue, int maxAnisotropy = 4 )
 		{
-			return new SamplerState() {
+			return new SamplerState() 
+			{
 				Filter			=	filter,
 				Address			=	addressMode,
 				BorderColor		=	borderColor,
@@ -176,7 +181,8 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		void PipelineBoundCheck ()
 		{
-			if (state!=null) {
+			if (state!=null) 
+			{
 				throw new GraphicsException("Sampler state that has already been bound to the graphics pipeline can not be modified.");
 			}
 		}
@@ -189,8 +195,10 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="disposing"></param>
 		protected override void Dispose ( bool disposing )
 		{
-			if (disposing) {
-				if (state!=null) {
+			if (disposing) 
+			{
+				if (state!=null) 
+				{
 					state.Dispose();
 					state = null;
 				}
@@ -206,8 +214,8 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="device"></param>
 		internal D3DSamplerState Apply ( GraphicsDevice device )
 		{
-			if ( state == null ) {
-
+			if ( state == null ) 
+			{
 				var ssd = new SamplerStateDescription();
 
 				ssd.ComparisonFunction	=	Converter.Convert( this.compareFunc );

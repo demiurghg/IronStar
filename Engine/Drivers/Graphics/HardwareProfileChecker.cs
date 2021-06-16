@@ -14,41 +14,9 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		/// <param name="profile"></param>
 		/// <returns></returns>
-		public static FeatureLevel GetFeatureLevel ( GraphicsProfile profile )
+		public static FeatureLevel GetFeatureLevel ()
 		{
-			if (profile==GraphicsProfile.HiDef) {
-				return FeatureLevel.Level_11_0;
-			}
-			if (profile==GraphicsProfile.Reach) {
-				return FeatureLevel.Level_10_0;
-			}
-			if (profile==GraphicsProfile.Mobile) {
-				return FeatureLevel.Level_9_3;
-			}
-
-			throw new ArgumentException("profile");
+			return FeatureLevel.Level_11_0;
 		}
-
-
-		/// <summary>
-		/// Gets the version of shader
-		/// </summary>
-		/// <param name="profile"></param>
-		/// <returns></returns>
-		public static string GetShaderVersion( GraphicsProfile profile )
-		{
-			if (profile==GraphicsProfile.HiDef) {
-				return "5_0";
-			}
-			if (profile==GraphicsProfile.Reach) {
-				return "4_0";
-			}
-			if (profile==GraphicsProfile.Mobile) {
-				return "2_0";
-			}
-
-			throw new ArgumentException("profile");
-		}
-
 	}
 }

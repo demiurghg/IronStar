@@ -53,7 +53,7 @@ namespace Fusion.Drivers.Graphics.Display {
 				Log.Debug(nvex.Message);
 			}
 
-			var featureLevel	=	HardwareProfileChecker.GetFeatureLevel( parameters.GraphicsProfile ); 
+			var featureLevel	=	HardwareProfileChecker.GetFeatureLevel(); 
 
 			Adapter	adapter;
 			Output leftOut, rightOut;

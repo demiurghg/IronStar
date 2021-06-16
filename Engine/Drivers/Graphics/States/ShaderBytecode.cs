@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using Fusion.Core;
 using Fusion.Core.Extensions;
 
-namespace Fusion.Drivers.Graphics {
-
-	public sealed class ShaderBytecode {
-
+namespace Fusion.Drivers.Graphics 
+{
+	public sealed class ShaderBytecode 
+	{
 		byte[] bytecode;
 
 		/// <summary>
@@ -35,8 +35,10 @@ namespace Fusion.Drivers.Graphics {
 		/// <summary>
 		/// Gets bytecode bytes.
 		/// </summary>
-		public byte[] Bytecode {
-			get {
+		public byte[] Bytecode 
+		{
+			get 
+			{
 				return bytecode;
 			}
 		}

@@ -14,10 +14,10 @@ using DXGI = SharpDX.DXGI;
 using Fusion.Core.Mathematics;
 
 
-namespace Fusion.Drivers.Graphics {
-	
-	public class DepthStencil2D : ShaderResource {
-
+namespace Fusion.Drivers.Graphics 
+{
+	public class DepthStencil2D : ShaderResource 
+	{
 		/// <summary>
 		/// Samples count
 		/// </summary>
@@ -52,17 +52,7 @@ namespace Fusion.Drivers.Graphics {
 			Format		=	format;
 			SampleCount	=	samples;
 
-			var bindFlags	=	BindFlags.DepthStencil;
-
-			
-			if (device.GraphicsProfile==GraphicsProfile.HiDef) {
-				bindFlags	|=	BindFlags.ShaderResource;
-
-			} else if (device.GraphicsProfile==GraphicsProfile.Reach) {
-				if (samples==1) {
-					bindFlags	|=	BindFlags.ShaderResource;
-				}
-			}
+			var bindFlags	=	BindFlags.DepthStencil | BindFlags.ShaderResource;
 
 
 			var	texDesc	=	new Texture2DDescription();

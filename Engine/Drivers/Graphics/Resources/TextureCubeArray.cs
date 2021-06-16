@@ -18,9 +18,10 @@ using Fusion.Core;
 using Fusion.Engine.Common;
 
 
-namespace Fusion.Drivers.Graphics {
-	internal class TextureCubeArray : ShaderResource {
-
+namespace Fusion.Drivers.Graphics 
+{
+	internal class TextureCubeArray : ShaderResource 
+	{
 		internal readonly D3D.Texture2D	texCubeArray;
 
 		public readonly int MipCount;
@@ -85,27 +86,30 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="rtCube"></param>
 		public void CopyFromRenderTargetCube ( int index, RenderTargetCube rtCube )
 		{
-			using ( new PixEvent( "CopyFromRenderTargetCube" ) ) {
+			using ( new PixEvent( "CopyFromRenderTargetCube" ) ) 
+			{
+				lock (device.DeviceContext) 
+				{
+					if ( rtCube.MipCount!=this.MipCount ) {
+						throw new GraphicsException( "CopyFromRenderTargetCube: source and destination have different mip count" );
+					}
 
-				if ( rtCube.MipCount!=this.MipCount ) {
-					throw new GraphicsException( "CopyFromRenderTargetCube: source and destination have different mip count" );
-				}
+					if (rtCube.Width!=this.Width) {
+						throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different width");
+					}
+					if (rtCube.Height!=this.Height) {
+						throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different height");
+					}
 
-				if (rtCube.Width!=this.Width) {
-					throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different width");
-				}
-				if (rtCube.Height!=this.Height) {
-					throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different height");
-				}
-
-				int subResourceCount = 6 * rtCube.MipCount;
+					int subResourceCount = 6 * rtCube.MipCount;
 			
-				for (int i=0; i<subResourceCount; i++) {
+					for (int i=0; i<subResourceCount; i++) {
 				
-					int srcIndex = i;
-					int dstIndex = i + subResourceCount * index;
+						int srcIndex = i;
+						int dstIndex = i + subResourceCount * index;
 
-					GraphicsDevice.DeviceContext.CopySubresourceRegion( rtCube.TextureResource, srcIndex, null, texCubeArray, dstIndex );
+						GraphicsDevice.DeviceContext.CopySubresourceRegion( rtCube.TextureResource, srcIndex, null, texCubeArray, dstIndex );
+					}
 				}
 			}
 		}
@@ -145,7 +149,10 @@ namespace Fusion.Drivers.Graphics {
 				region.Left		= x;
 				region.Right	= x + w;
 
-				device.DeviceContext.UpdateSubresource(box, texCubeArray, subres, region);
+				lock (device.DeviceContext) 
+				{
+					device.DeviceContext.UpdateSubresource(box, texCubeArray, subres, region);
+				}
 			} 
 			finally 
 			{

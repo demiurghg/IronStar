@@ -24,13 +24,14 @@ using D3DComputeShader		=	SharpDX.Direct3D11.ComputeShader	;
 using SharpDX.Mathematics.Interop;
 
 
-namespace Fusion.Drivers.Graphics {
-
+namespace Fusion.Drivers.Graphics 
+{
 	/// <summary>
 	/// Pipeline state represents all GPU states as single object.
 	/// 
 	/// </summary>
-	public sealed class PipelineState : GraphicsObject {
+	public sealed class PipelineState : GraphicsObject 
+	{
 
 		public int SamplersCount { get { return CommonShaderStage.SamplerRegisterCount; } }
 
@@ -150,7 +151,8 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="disposing"></param>
 		protected override void Dispose ( bool disposing )
 		{
-			if (disposing) {
+			if (disposing)
+			{
 				Log.Debug("PipelineState: disposing");
 				DisposeStates();
 			}
@@ -186,39 +188,43 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		internal void Set()
 		{
-			if (!isReady) {
+			if (!isReady) 
+			{
 				ApplyChanges();
 			}
 
-			if (cs!=null) {
-				
-				//	just set compute shader.
-				device.DeviceContext.ComputeShader	.Set( cs );
+			lock (device.DeviceContext) 
+			{
+				if (cs!=null) 
+				{
+					//	just set compute shader.
+					device.DeviceContext.ComputeShader	.Set( cs );
+				} 
+				else 
+				{
+					device.DeviceContext.InputAssembler.PrimitiveTopology	=	Converter.Convert( Primitive );
 
-			} else {
-				
-				device.DeviceContext.InputAssembler.PrimitiveTopology	=	Converter.Convert( Primitive );
+					//	set blending :
+					device.DeviceContext.OutputMerger.BlendState		=	blendState;
+					device.DeviceContext.OutputMerger.BlendFactor		=	blendFactor;
+					device.DeviceContext.OutputMerger.BlendSampleMask	=	blendMsaaMask;
 
-				//	set blending :
-				device.DeviceContext.OutputMerger.BlendState		=	blendState;
-				device.DeviceContext.OutputMerger.BlendFactor		=	blendFactor;
-				device.DeviceContext.OutputMerger.BlendSampleMask	=	blendMsaaMask;
+					//	set rasterizer :
+					device.DeviceContext.Rasterizer.State	=	rasterState;
 
-				//	set rasterizer :
-				device.DeviceContext.Rasterizer.State	=	rasterState;
+					//	shaders :
+					device.DeviceContext.PixelShader	.Set( ps );
+					device.DeviceContext.VertexShader	.Set( vs );
+					device.DeviceContext.GeometryShader	.Set( gs );
+					device.DeviceContext.HullShader		.Set( hs );
+					device.DeviceContext.DomainShader	.Set( ds );
 
-				//	shaders :
-				device.DeviceContext.PixelShader	.Set( ps );
-				device.DeviceContext.VertexShader	.Set( vs );
-				device.DeviceContext.GeometryShader	.Set( gs );
-				device.DeviceContext.HullShader		.Set( hs );
-				device.DeviceContext.DomainShader	.Set( ds );
+					device.DeviceContext.OutputMerger.DepthStencilState		=	depthStencilState;
+					device.DeviceContext.OutputMerger.DepthStencilReference	=	depthStencilRef;
 
-				device.DeviceContext.OutputMerger.DepthStencilState		=	depthStencilState;
-				device.DeviceContext.OutputMerger.DepthStencilReference	=	depthStencilRef;
-
-				//	layout :
-				device.DeviceContext.InputAssembler.InputLayout	=	inputLayout;
+					//	layout :
+					device.DeviceContext.InputAssembler.InputLayout	=	inputLayout;
+				}
 			}
 		}
 
@@ -234,8 +240,8 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		public void ApplyChanges ()
 		{
-			lock (device.DeviceContext) {
-				
+			lock (device.DeviceContext) 
+			{
 				Log.Debug("PipelineState: applying changes");
 
 				DisposeStates();
@@ -266,29 +272,38 @@ namespace Fusion.Drivers.Graphics {
 			ds	=	DomainShader	== null ? null : new D3DDomainShader	( device.Device, DomainShader	.Bytecode );
 			cs	=	ComputeShader	== null ? null : new D3DComputeShader	( device.Device, ComputeShader	.Bytecode );
 
-			if (cs!=null) {
-				if ( ps!=null || vs!=null || gs!=null || hs!=null || ds!=null ) {
+			if (cs!=null) 
+			{
+				if ( ps!=null || vs!=null || gs!=null || hs!=null || ds!=null ) 
+				{
 					throw new InvalidOperationException("If ComputeShader is set, other shader must be set null.");
 				}
-			} else {
-				if ( vs==null ) {
+			}
+			else 
+			{
+				if ( vs==null ) 
+				{
 					throw new InvalidOperationException("Vertex shader must be set.");
 				}
 			}
 
 
 			
-			if (VertexInputElements==null || vs==null) {
+			if (VertexInputElements==null || vs==null) 
+			{
 				inputLayout =	null ;
-			} else {
+			} 
+			else 
+			{
 				inputLayout	=	new InputLayout( device.Device, VertexShader.Bytecode, VertexInputElement.Convert( VertexInputElements ) );
 			}
 
 
 
-			if (VertexOutputElements!=null) {
-
-				if (GeometryShader==null) {
+			if (VertexOutputElements!=null) 
+			{
+				if (GeometryShader==null) 
+				{
 					throw new InvalidOperationException("Geometry shader is required for vertex output.");
 				}
 
@@ -344,22 +359,21 @@ namespace Fusion.Drivers.Graphics {
 		{
 			var rsd = new RasterizerStateDescription();
 
-			if ( RasterizerState.CullMode == CullMode.CullNone ) {
-
+			if ( RasterizerState.CullMode == CullMode.CullNone ) 
+			{
 				rsd.CullMode				=	D3DCullMode.None;
 				rsd.IsFrontCounterClockwise	=	false;
-
-			} else if ( RasterizerState.CullMode == CullMode.CullCW ) {
-
+			} 
+			else if ( RasterizerState.CullMode == CullMode.CullCW ) 
+			{
 				rsd.CullMode				=	D3DCullMode.Front;
 				rsd.IsFrontCounterClockwise	=	false;
-
-			} else if ( RasterizerState.CullMode == CullMode.CullCCW ) {
-
+			} 
+			else if ( RasterizerState.CullMode == CullMode.CullCCW ) 
+			{
 				rsd.CullMode				=	D3DCullMode.Front;
 				rsd.IsFrontCounterClockwise	=	true;
 			}
-
 
 			rsd.FillMode				=	Converter.Convert( RasterizerState.FillMode );
 			rsd.DepthBias				=	RasterizerState.DepthBias;
@@ -384,8 +398,8 @@ namespace Fusion.Drivers.Graphics {
 			bool enabled	=	true;
 
 			if ( BlendState.DstAlpha==Blend.Zero && BlendState.SrcAlpha==Blend.One &&
-				 BlendState.DstColor==Blend.Zero && BlendState.SrcColor==Blend.One ) {
-
+				 BlendState.DstColor==Blend.Zero && BlendState.SrcColor==Blend.One ) 
+			{
 				 enabled = false;
 			}
 
@@ -403,11 +417,10 @@ namespace Fusion.Drivers.Graphics {
 			bsd.IndependentBlendEnable	=	false;
 			bsd.RenderTarget[0]			=	rtbd;
 
-			blendFactor	=	SharpDXHelper.Convert( BlendState.BlendFactor );
+			blendFactor		=	SharpDXHelper.Convert( BlendState.BlendFactor );
 			blendMsaaMask	=	BlendState.MultiSampleMask;
 
 			blendState	=	new D3DBlendState( device.Device, bsd );
 		}
-
 	}
 }

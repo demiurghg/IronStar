@@ -12,14 +12,14 @@ using D3D11 = SharpDX.Direct3D11;
 using System.Runtime.InteropServices;
 
 
-namespace Fusion.Drivers.Graphics {
-
+namespace Fusion.Drivers.Graphics 
+{
 	/// <summary>
 	/// Wrapper for constant data and buffer
 	/// </summary>
 	/// <typeparam name="ConstDataT"></typeparam>
-	public class ConstantBuffer : GraphicsObject {
-			
+	public class ConstantBuffer : GraphicsObject 
+	{
 		internal	D3D11.Buffer	buffer;
 
 		int bufferSizeInBytes;
@@ -55,7 +55,8 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="underlayingType"></param>
 		public ConstantBuffer ( GraphicsDevice device, Type dataType, int count ) : base(device)
 		{
-			if (count<1) {
+			if (count<1) 
+			{
 				throw new ArgumentOutOfRangeException("count must be greater than zero");
 			}
 			Create( Marshal.SizeOf( dataType ) * count );
@@ -136,7 +137,8 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		protected override void Dispose ( bool disposing )
 		{
-			if (disposing) {
+			if (disposing) 
+			{
 				Log.Debug("ConstantBuffer: disposing");
 				SafeDispose( ref buffer );
 			}
@@ -156,8 +158,8 @@ namespace Fusion.Drivers.Graphics {
 				Marshal.StructureToPtr( value, db.DataPointer, false );
 				device.DeviceContext.UnmapSubresource( buffer, 0 );
 			#else
-				lock (device.DeviceContext) {
-					//device.DeviceContext.UpdateSubresource( new DataBox(
+				lock (device.DeviceContext) 
+				{
 					device.DeviceContext.UpdateSubresource( ref value, buffer );
 				}
 			#endif
@@ -185,11 +187,13 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="?"></param>
 		public void SetData<T> ( T[] data ) where T: struct
 		{
-			if ( bufferSizeInBytes!=Marshal.SizeOf(typeof(T)) * data.Length ) {
+			if ( bufferSizeInBytes!=Marshal.SizeOf(typeof(T)) * data.Length ) 
+			{
 				throw new ArgumentException("Size of argument data must be equal to constant buffer size");
 			}
 
-			lock (device.DeviceContext) {
+			lock (device.DeviceContext) 
+			{
 				device.DeviceContext.UpdateSubresource( data, buffer );
 			}
 		}

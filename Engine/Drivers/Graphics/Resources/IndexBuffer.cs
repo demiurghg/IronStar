@@ -50,9 +50,7 @@ namespace Fusion.Drivers.Graphics {
 			desc.StructureByteStride	=	0;
 			desc.Usage					=	ResourceUsage.Dynamic;
 
-			lock (device.DeviceContext) {
-				indexBuffer	=	new D3D11.Buffer( device.Device, desc );
-			}
+			indexBuffer	=	new D3D11.Buffer( device.Device, desc );
 		}
 
 
@@ -77,7 +75,8 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing) {
+			if (disposing) 
+			{
 				indexBuffer.Dispose();
 			}
 			base.Dispose(disposing);
@@ -91,7 +90,8 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="data"></param>
 		public void SetData ( int[] data, int offset, int count )
 		{
-			lock ( device.DeviceContext ) {
+			lock ( device.DeviceContext ) 
+			{
 				var dataBox = device.DeviceContext.MapSubresource( indexBuffer, 0, MapMode.WriteDiscard, D3D11.MapFlags.None );
 
 				SharpDX.Utilities.Write( dataBox.DataPointer, data, offset, count );

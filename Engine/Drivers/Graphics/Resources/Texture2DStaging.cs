@@ -19,8 +19,10 @@ using Fusion.Core.Extensions;
 using Fusion.Engine.Common;
 
 
-namespace Fusion.Drivers.Graphics {
-	internal class Texture2DStaging : DisposableBase {
+namespace Fusion.Drivers.Graphics 
+{
+	internal class Texture2DStaging : DisposableBase 
+	{
 
 		D3D.Texture2D	tex2D;
 		ColorFormat		format;
@@ -60,7 +62,8 @@ namespace Fusion.Drivers.Graphics {
 			texDesc.Usage			=	ResourceUsage.Dynamic;
 			texDesc.Width			=	Width;
 													 
-			lock (device.DeviceContext) {
+			lock (device.DeviceContext) 
+			{
 				tex2D	=	new D3D.Texture2D( device.Device, texDesc );
 			}
 		}
@@ -92,7 +95,10 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="dstRect"></param>
 		public void CopyToTexture ( Texture2D dstTexture, int level, int x, int y )
 		{
-			device.DeviceContext.CopySubresourceRegion( tex2D, 0, null, dstTexture.Tex2D, level, x, y );
+			lock (device.DeviceContext) 
+			{
+				device.DeviceContext.CopySubresourceRegion( tex2D, 0, null, dstTexture.Tex2D, level, x, y );
+			}
 		}
 		
 
@@ -107,26 +113,29 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="elementCount"></param>
 		public void SetData<T>( int level, T[] data ) where T: struct
 		{
-			var dataBox				=	device.DeviceContext.MapSubresource( tex2D, level, MapMode.WriteDiscard, MapFlags.None );
+			lock (device.DeviceContext) 
+			{
+				var dataBox				=	device.DeviceContext.MapSubresource( tex2D, level, MapMode.WriteDiscard, MapFlags.None );
 
-			var elementSizeInByte	=	Marshal.SizeOf(typeof(T));
-			var pointer				=	dataBox.DataPointer;
+				var elementSizeInByte	=	Marshal.SizeOf(typeof(T));
+				var pointer				=	dataBox.DataPointer;
 
-			if (elementSizeInByte!=elementSize) {
-				throw new InvalidDataException("Marshal.SizeOf(typeof(T)) != pixel size");
+				if (elementSizeInByte!=elementSize) {
+					throw new InvalidDataException("Marshal.SizeOf(typeof(T)) != pixel size");
+				}
+
+				int width				=	Width >> level;
+				int height				=	Height >> level;
+
+				for ( int row = 0; row < height; row++ ) {
+
+					Utilities.Write( pointer, data, width * row, width );
+					pointer += dataBox.RowPitch;
+
+				}
+
+				device.DeviceContext.UnmapSubresource( tex2D, level );
 			}
-
-			int width				=	Width >> level;
-			int height				=	Height >> level;
-
-			for ( int row = 0; row < height; row++ ) {
-
-				Utilities.Write( pointer, data, width * row, width );
-				pointer += dataBox.RowPitch;
-
-			}
-
-			device.DeviceContext.UnmapSubresource( tex2D, level );
 		}
 		
 
@@ -141,21 +150,23 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="elementCount"></param>
 		public void SetDataRaw( int level, byte[] data )
 		{
-			var dataBox				=	device.DeviceContext.MapSubresource( tex2D, level, MapMode.WriteDiscard, MapFlags.None );
+			lock (device.DeviceContext) 
+			{
+				var dataBox				=	device.DeviceContext.MapSubresource( tex2D, level, MapMode.WriteDiscard, MapFlags.None );
 
-			var pointer				=	dataBox.DataPointer;
+				var pointer				=	dataBox.DataPointer;
 
-			int width				=	Width >> level;
-			int height				=	Height >> level;
+				int width				=	Width >> level;
+				int height				=	Height >> level;
 
-			for ( int row = 0; row < height; row++ ) {
+				for ( int row = 0; row < height; row++ ) 
+				{
+					Utilities.Write( pointer, data, width * row * elementSize, width * elementSize );
+					pointer += dataBox.RowPitch;
+				}
 
-				Utilities.Write( pointer, data, width * row * elementSize, width * elementSize );
-				pointer += dataBox.RowPitch;
-
+				device.DeviceContext.UnmapSubresource( tex2D, level );
 			}
-
-			device.DeviceContext.UnmapSubresource( tex2D, level );
 		}
 	}
 }

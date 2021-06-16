@@ -14,15 +14,8 @@ using D3DAddressMode	=	SharpDX.Direct3D11.TextureAddressMode;
 using D3DComparison		=	SharpDX.Direct3D11.Comparison;
 
 
-namespace Fusion.Drivers.Graphics {
-
-	public enum GraphicsProfile {
-		HiDef,
-		Reach,
-		Mobile,
-	}
-
-
+namespace Fusion.Drivers.Graphics 
+{
 	/// <summary>
 	/// Defines stereo mode
 	/// </summary>

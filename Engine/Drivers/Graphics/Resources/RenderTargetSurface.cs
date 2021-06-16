@@ -8,7 +8,8 @@ using SharpDX.Direct3D11;
 using Fusion.Core;
 using Fusion.Core.Mathematics;
 
-namespace Fusion.Drivers.Graphics {
+namespace Fusion.Drivers.Graphics 
+{
 
 	/// <summary>
 	/// Represenst single rendering surface for render targets.
@@ -16,8 +17,8 @@ namespace Fusion.Drivers.Graphics {
 	/// Never dispose RenderTargetSurface. 
 	/// It always will be disposed by owning object.
 	/// </summary>
-	public class RenderTargetSurface : GraphicsObject {
-
+	public class RenderTargetSurface : GraphicsObject 
+	{
 		public int			Width			{ get; private set; }
 		public int			Height			{ get; private set; }
 		public ColorFormat	Format			{ get; private set; }

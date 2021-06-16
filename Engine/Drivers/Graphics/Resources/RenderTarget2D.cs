@@ -19,10 +19,10 @@ using DXGI = SharpDX.DXGI;
 using Fusion.Core.Mathematics;
 
 
-namespace Fusion.Drivers.Graphics {
-
-	public class RenderTarget2D : ShaderResource {
-
+namespace Fusion.Drivers.Graphics 
+{
+	public class RenderTarget2D : ShaderResource 
+	{
 		/// <summary>
 		/// Samples count
 		/// </summary>
@@ -280,7 +280,10 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		public void BuildMipmaps ()
 		{
-			device.DeviceContext.GenerateMips( SRV );
+			lock (device.DeviceContext) 
+			{
+				device.DeviceContext.GenerateMips( SRV );
+			}
 		}
 
 
@@ -290,7 +293,10 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		public void SetViewport ()
 		{
-			device.DeviceContext.Rasterizer.SetViewport( 0,0, Width, Height, 0, 1 );
+			lock (device.DeviceContext) 
+			{
+				device.DeviceContext.Rasterizer.SetViewport( 0,0, Width, Height, 0, 1 );
+			}
 		}
 
 
@@ -362,48 +368,51 @@ namespace Fusion.Drivers.Graphics {
 			var elementSize	=	Marshal.SizeOf(typeof(T));
 			var pixelSize	=	Converter.SizeOf(Format);
 
-			using (var stagingTex = new D3D.Texture2D(device.Device, desc)) 
+			lock (device.DeviceContext) 
 			{
-				//
-				// Copy the data from the GPU to the staging texture.
-				//
-				int elementsInRow;
-				int rows;
+				using (var stagingTex = new D3D.Texture2D(device.Device, desc)) 
+				{
+					//
+					// Copy the data from the GPU to the staging texture.
+					//
+					int elementsInRow;
+					int rows;
 					
-				if (rect.HasValue) 
-				{
-					elementsInRow = rect.Value.Width * pixelSize / elementSize;
-					rows = rect.Value.Height;
+					if (rect.HasValue) 
+					{
+						elementsInRow = rect.Value.Width * pixelSize / elementSize;
+						rows = rect.Value.Height;
 
-					var region = new D3D.ResourceRegion( rect.Value.Left, rect.Value.Top, 0, rect.Value.Right, rect.Value.Bottom, 1 );
+						var region = new D3D.ResourceRegion( rect.Value.Left, rect.Value.Top, 0, rect.Value.Right, rect.Value.Bottom, 1 );
 
-					d3dContext.CopySubresourceRegion( tex2D, level, region, stagingTex, 0, 0, 0, 0);
-				} 
-				else 
-				{
-					elementsInRow = mipWidth * pixelSize / elementSize;
-					rows = mipHeight;
+						d3dContext.CopySubresourceRegion( tex2D, level, region, stagingTex, 0, 0, 0, 0);
+					} 
+					else 
+					{
+						elementsInRow = mipWidth * pixelSize / elementSize;
+						rows = mipHeight;
 
-					d3dContext.CopySubresourceRegion( tex2D, level, null, stagingTex, 0, 0, 0, 0);
-				}
+						d3dContext.CopySubresourceRegion( tex2D, level, null, stagingTex, 0, 0, 0, 0);
+					}
 
 
-				// Copy the data to the array :
-				DataStream stream;
-				var databox = d3dContext.MapSubresource(stagingTex, 0, D3D.MapMode.Read, D3D.MapFlags.None, out stream);
+					// Copy the data to the array :
+					DataStream stream;
+					var databox = d3dContext.MapSubresource(stagingTex, 0, D3D.MapMode.Read, D3D.MapFlags.None, out stream);
 
-				// Some drivers may add pitch to rows.
-				// We need to copy each row separatly and skip trailing zeros.
-				var currentIndex	=	startIndex;
+					// Some drivers may add pitch to rows.
+					// We need to copy each row separatly and skip trailing zeros.
+					var currentIndex	=	startIndex;
 					
-				for (var row = 0; row < rows; row++) 
-				{
-					stream.ReadRange(data, currentIndex, elementsInRow);
-					stream.Seek(databox.RowPitch - (elementSize * elementsInRow), SeekOrigin.Current);
-					currentIndex += elementsInRow;
+					for (var row = 0; row < rows; row++) 
+					{
+						stream.ReadRange(data, currentIndex, elementsInRow);
+						stream.Seek(databox.RowPitch - (elementSize * elementsInRow), SeekOrigin.Current);
+						currentIndex += elementsInRow;
 
+					}
+					stream.Dispose();
 				}
-				stream.Dispose();
 			}
 		}
 
@@ -414,7 +423,10 @@ namespace Fusion.Drivers.Graphics {
 			if (destination.Height != Height) throw new ArgumentException("destination.Height != Height");
 			if (destination.Format != Format) throw new ArgumentException("destination.Format != Format");
 
-			device.DeviceContext.CopySubresourceRegion( tex2D, 0, null, destination.tex2D, 0 );
+			lock (device.DeviceContext) 
+			{
+				device.DeviceContext.CopySubresourceRegion( tex2D, 0, null, destination.tex2D, 0 );
+			}
 		}
 
 
@@ -539,44 +551,46 @@ namespace Fusion.Drivers.Graphics {
 			var elementSizeInByte	=	Marshal.SizeOf(typeof(T));
 			var dataHandle			=	GCHandle.Alloc(data, GCHandleType.Pinned);
 			// Use try..finally to make sure dataHandle is freed in case of an error
-			try {
-				var startBytes	=	startIndex * elementSizeInByte;
-				var dataPtr		=	(IntPtr)(dataHandle.AddrOfPinnedObject().ToInt64() + startBytes);
-
-				int x, y, w, h;
-				if (rect.HasValue) 
-				{
-					x = rect.Value.X;
-					y = rect.Value.Y;
-					w = rect.Value.Width;
-					h = rect.Value.Height;
-				} 
-				else 
-				{
-					x = 0;
-					y = 0;
-					w = SharpDX.Direct3D11.Resource.CalculateMipSize( level, Width );
-					h = SharpDX.Direct3D11.Resource.CalculateMipSize( level, Height );
-				}
-
-				var box = new SharpDX.DataBox(dataPtr, w * Converter.SizeOf(Format), 0);
-
-				var region		= new SharpDX.Direct3D11.ResourceRegion();
-				region.Top		= y;
-				region.Front	= 0;
-				region.Back		= 1;
-				region.Bottom	= y + h;
-				region.Left		= x;
-				region.Right	= x + w;
-
-				device.DeviceContext.UpdateSubresource(box, tex2D, level, region);
-
-			} 
-			finally 
+			lock (device.DeviceContext) 
 			{
-				dataHandle.Free();
+				try {
+					var startBytes	=	startIndex * elementSizeInByte;
+					var dataPtr		=	(IntPtr)(dataHandle.AddrOfPinnedObject().ToInt64() + startBytes);
+
+					int x, y, w, h;
+					if (rect.HasValue) 
+					{
+						x = rect.Value.X;
+						y = rect.Value.Y;
+						w = rect.Value.Width;
+						h = rect.Value.Height;
+					} 
+					else 
+					{
+						x = 0;
+						y = 0;
+						w = SharpDX.Direct3D11.Resource.CalculateMipSize( level, Width );
+						h = SharpDX.Direct3D11.Resource.CalculateMipSize( level, Height );
+					}
+
+					var box = new SharpDX.DataBox(dataPtr, w * Converter.SizeOf(Format), 0);
+
+					var region		= new SharpDX.Direct3D11.ResourceRegion();
+					region.Top		= y;
+					region.Front	= 0;
+					region.Back		= 1;
+					region.Bottom	= y + h;
+					region.Left		= x;
+					region.Right	= x + w;
+
+					device.DeviceContext.UpdateSubresource(box, tex2D, level, region);
+
+				} 
+				finally 
+				{
+					dataHandle.Free();
+				}
 			}
 		}
-
 	}
 }

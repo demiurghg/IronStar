@@ -13,11 +13,10 @@ using D3D = SharpDX.Direct3D11;
 using DXGI = SharpDX.DXGI;
 using System.Runtime.InteropServices;
 
-namespace Fusion.Drivers.Graphics {
-
-
-	internal class RenderTargetCube : ShaderResource {
-
+namespace Fusion.Drivers.Graphics 
+{
+	internal class RenderTargetCube : ShaderResource 
+	{
 		/// <summary>
 		/// Samples count
 		/// </summary>
@@ -144,45 +143,46 @@ namespace Fusion.Drivers.Graphics {
 			}
 
 
-
 			//
 			//	Create surfaces :
 			//
 			surfaces	=	new RenderTargetSurface[ MipCount, 6 ];
 
-			for ( int mip=0; mip<MipCount; mip++ ) { 
+			lock (device.DeviceContext) 
+			{
+				for ( int mip=0; mip<MipCount; mip++ ) 
+				{ 
+					int width	=	GetMipSize( Width,  mip );
+					int height	=	GetMipSize( Height, mip );
 
-				int width	=	GetMipSize( Width,  mip );
-				int height	=	GetMipSize( Height, mip );
+					for ( int face=0; face<6; face++) {
 
-				for ( int face=0; face<6; face++) {
+						var rtvDesc = new RenderTargetViewDescription();
+							rtvDesc.Texture2DArray.MipSlice			=	mip;
+							rtvDesc.Texture2DArray.FirstArraySlice	=	face;
+							rtvDesc.Texture2DArray.ArraySize		=	1;
+							rtvDesc.Dimension						=	RenderTargetViewDimension.Texture2DArray;
+							rtvDesc.Format							=	Converter.Convert( format );
 
-					var rtvDesc = new RenderTargetViewDescription();
-						rtvDesc.Texture2DArray.MipSlice			=	mip;
-						rtvDesc.Texture2DArray.FirstArraySlice	=	face;
-						rtvDesc.Texture2DArray.ArraySize		=	1;
-						rtvDesc.Dimension						=	RenderTargetViewDimension.Texture2DArray;
-						rtvDesc.Format							=	Converter.Convert( format );
+						var rtv	=	new RenderTargetView( device.Device, texCube, rtvDesc );
 
-					var rtv	=	new RenderTargetView( device.Device, texCube, rtvDesc );
+						var uavDesc = new UnorderedAccessViewDescription();
+							uavDesc.Dimension			=	UnorderedAccessViewDimension.Texture2DArray;
+							uavDesc.Format				=	Converter.Convert( format );
+							uavDesc.Texture2DArray.ArraySize		=	1;
+							uavDesc.Texture2DArray.FirstArraySlice	=	face;
+							uavDesc.Texture2DArray.MipSlice			=	mip;
 
-					var uavDesc = new UnorderedAccessViewDescription();
-						uavDesc.Dimension			=	UnorderedAccessViewDimension.Texture2DArray;
-						uavDesc.Format				=	Converter.Convert( format );
-						uavDesc.Texture2DArray.ArraySize		=	1;
-						uavDesc.Texture2DArray.FirstArraySlice	=	face;
-						uavDesc.Texture2DArray.MipSlice			=	mip;
+						var uav	=	new UnorderedAccessView( device.Device, texCube, uavDesc );
 
-					var uav	=	new UnorderedAccessView( device.Device, texCube, uavDesc );
+						int subResId	=	Resource.CalculateSubResourceIndex( mip, face, MipCount );
 
-					int subResId	=	Resource.CalculateSubResourceIndex( mip, face, MipCount );
+						surfaces[mip,face]	=	new RenderTargetSurface( device, rtv, uav, texCube, subResId, format, Width, Height, 1 );
 
-					surfaces[mip,face]	=	new RenderTargetSurface( device, rtv, uav, texCube, subResId, format, Width, Height, 1 );
-
-					GraphicsDevice.Clear( surfaces[mip,face], Color4.Zero );
+						GraphicsDevice.Clear( surfaces[mip,face], Color4.Zero );
+					}
 				}
 			}
-
 
 
 			cubeSurfaces = new RenderTargetSurface[MipCount];
@@ -240,8 +240,8 @@ namespace Fusion.Drivers.Graphics {
 			var d3dContext = device.DeviceContext;
 
 
-			lock (d3dContext) {
-
+			lock (device.DeviceContext) 
+			{
 				//
 				// Copy the data from the GPU to the staging texture.
 				//
@@ -332,7 +332,8 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		protected override void Dispose ( bool disposing )
 		{
-			if (disposing) {
+			if (disposing) 
+			{
 				SafeDispose( ref surfaces );
 
 				SafeDispose( ref cubeSurfaces );

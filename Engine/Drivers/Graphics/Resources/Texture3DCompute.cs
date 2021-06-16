@@ -19,8 +19,10 @@ using Fusion.Engine.Common;
 using SharpDX.Mathematics.Interop;
 
 
-namespace Fusion.Drivers.Graphics {
-	public class Texture3DCompute : ShaderResource {
+namespace Fusion.Drivers.Graphics 
+{
+	public class Texture3DCompute : ShaderResource 
+	{
 
 		D3D.Texture3D	tex3D;
 
@@ -112,33 +114,36 @@ namespace Fusion.Drivers.Graphics {
 			var elementSize	=	Marshal.SizeOf(typeof(T));
 			var pixelSize	=	Converter.SizeOf(format);
 
-			using ( var stagingTex3D = new D3D.Texture3D( device.Device, desc ) )
+			lock (device.DeviceContext) 
 			{
-				device.DeviceContext.CopyResource( tex3D, stagingTex3D );
-
-				DataStream stream;
-				var dataBox = device.DeviceContext.MapSubresource( stagingTex3D, 0, 0, MapMode.Read, MapFlags.None, out stream );
-
-				int cols	=	Width * pixelSize / elementSize;;
-				int rows	=	Height;
-				int slices	=	Depth;
-
-				var index	=	0;
-
-				for ( int slice = 0; slice < slices; slice++ )
+				using ( var stagingTex3D = new D3D.Texture3D( device.Device, desc ) )
 				{
-					for (int row = 0; row < rows; row++ )
+					device.DeviceContext.CopyResource( tex3D, stagingTex3D );
+
+					DataStream stream;
+					var dataBox = device.DeviceContext.MapSubresource( stagingTex3D, 0, 0, MapMode.Read, MapFlags.None, out stream );
+
+					int cols	=	Width * pixelSize / elementSize;;
+					int rows	=	Height;
+					int slices	=	Depth;
+
+					var index	=	0;
+
+					for ( int slice = 0; slice < slices; slice++ )
 					{
-						stream.Seek( slice * dataBox.SlicePitch + row * dataBox.RowPitch, SeekOrigin.Begin );
-						stream.ReadRange( data, index, cols );
+						for (int row = 0; row < rows; row++ )
+						{
+							stream.Seek( slice * dataBox.SlicePitch + row * dataBox.RowPitch, SeekOrigin.Begin );
+							stream.ReadRange( data, index, cols );
 
-						index += cols;
+							index += cols;
+						}
 					}
+
+					stream?.Dispose();
+
+					device.DeviceContext.UnmapSubresource( stagingTex3D, 0 );
 				}
-
-				stream?.Dispose();
-
-				device.DeviceContext.UnmapSubresource( stagingTex3D, 0 );
 			}
 		}
 
@@ -152,23 +157,27 @@ namespace Fusion.Drivers.Graphics {
 		{
 			var elementSizeInByte = Marshal.SizeOf(typeof(T));
 			var dataHandle = GCHandle.Alloc(data, GCHandleType.Pinned);
-			try
+
+			lock (device.DeviceContext) 
 			{
-				var dataPtr		=	(IntPtr)(dataHandle.AddrOfPinnedObject().ToInt64());
+				try
+				{
+					var dataPtr		=	(IntPtr)(dataHandle.AddrOfPinnedObject().ToInt64());
 
-				int rowPitch	=	Converter.SizeOf(this.format) * Width;
-				int slicePitch	=	rowPitch * Height; // For 3D texture: Size of 2D image.
-				var box			=	new DataBox(dataPtr, rowPitch, slicePitch);
+					int rowPitch	=	Converter.SizeOf(this.format) * Width;
+					int slicePitch	=	rowPitch * Height; // For 3D texture: Size of 2D image.
+					var box			=	new DataBox(dataPtr, rowPitch, slicePitch);
 
-				int subresourceIndex = 0;
+					int subresourceIndex = 0;
 
-				var region		=	new ResourceRegion(0, 0, 0, Width, Height, Depth);
+					var region		=	new ResourceRegion(0, 0, 0, Width, Height, Depth);
 
-				device.DeviceContext.UpdateSubresource(box, tex3D, subresourceIndex, region);
-			}
-			finally
-			{
-				dataHandle.Free();
+					device.DeviceContext.UpdateSubresource(box, tex3D, subresourceIndex, region);
+				}
+				finally
+				{
+					dataHandle.Free();
+				}
 			}
 		}
 	}

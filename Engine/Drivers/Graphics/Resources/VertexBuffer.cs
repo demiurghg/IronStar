@@ -169,30 +169,36 @@ namespace Fusion.Drivers.Graphics
 
 				SharpDX.Utilities.Write( dataBox.DataPointer, data, offset, count );
 
-				device.DeviceContext.UnmapSubresource( vertexBuffer, 0 );
+				lock (device.DeviceContext) 
+				{
+					device.DeviceContext.UnmapSubresource( vertexBuffer, 0 );
+				}
 			} 
 			else if (Options==VertexBufferOptions.Default) 
 			{
-				var bufferDesc = new BufferDescription 
+				lock (device.DeviceContext) 
 				{
-					BindFlags			= BindFlags.None,
-					Usage				= ResourceUsage.Staging,
-					CpuAccessFlags		= CpuAccessFlags.Write | CpuAccessFlags.Read,
-					OptionFlags			= ResourceOptionFlags.None,
-					SizeInBytes			= Capacity * Stride,
-				};
+					var bufferDesc = new BufferDescription 
+					{
+						BindFlags			= BindFlags.None,
+						Usage				= ResourceUsage.Staging,
+						CpuAccessFlags		= CpuAccessFlags.Write | CpuAccessFlags.Read,
+						OptionFlags			= ResourceOptionFlags.None,
+						SizeInBytes			= Capacity * Stride,
+					};
 
-				var bufferStaging		= new D3D11.Buffer(device.Device, bufferDesc);
+					var bufferStaging		= new D3D11.Buffer(device.Device, bufferDesc);
 
-				var dataBox = device.DeviceContext.MapSubresource( bufferStaging, 0, MapMode.Write, D3D11.MapFlags.None );
+					var dataBox = device.DeviceContext.MapSubresource( bufferStaging, 0, MapMode.Write, D3D11.MapFlags.None );
 
-				SharpDX.Utilities.Write( dataBox.DataPointer, data, offset, count );
+					SharpDX.Utilities.Write( dataBox.DataPointer, data, offset, count );
 
-				device.DeviceContext.UnmapSubresource( bufferStaging, 0 );
+					device.DeviceContext.UnmapSubresource( bufferStaging, 0 );
 
-				device.DeviceContext.CopyResource( bufferStaging, vertexBuffer );
+					device.DeviceContext.CopyResource( bufferStaging, vertexBuffer );
 
-				SafeDispose( ref bufferStaging );
+					SafeDispose( ref bufferStaging );
+				}
 			}
 		}
 

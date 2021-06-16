@@ -17,11 +17,10 @@ using Fusion.Core.Mathematics;
 using Fusion.Engine.Graphics;
 
 
-namespace Fusion.Drivers.Graphics {
-
-	internal class FeedbackBuffer : ShaderResource {
-
-
+namespace Fusion.Drivers.Graphics 
+{
+	internal class FeedbackBuffer : ShaderResource 
+	{
 		/// <summary>
 		/// Render target format
 		/// </summary>
@@ -122,16 +121,15 @@ namespace Fusion.Drivers.Graphics {
 
 			surface	=	new RenderTargetSurface( device, rtv, null, tex2D, 0, ColorFormat.Unknown, width, height, 1 );
 
-			device.Clear( surface, Color4.Zero );
+			lock (device.DeviceContext)
+			{
+				device.Clear( surface, Color4.Zero );
 
-            device.DeviceContext.CopySubresourceRegion( tex2D, 0, null, tex2Dstaging,  0, 0, 0, 0);
-            device.DeviceContext.CopySubresourceRegion( tex2D, 0, null, tex2Dstaging1, 0, 0, 0, 0);
-            device.DeviceContext.CopySubresourceRegion( tex2D, 0, null, tex2Dstaging2, 0, 0, 0, 0);
+				device.DeviceContext.CopySubresourceRegion( tex2D, 0, null, tex2Dstaging,  0, 0, 0, 0);
+				device.DeviceContext.CopySubresourceRegion( tex2D, 0, null, tex2Dstaging1, 0, 0, 0, 0);
+				device.DeviceContext.CopySubresourceRegion( tex2D, 0, null, tex2Dstaging2, 0, 0, 0, 0);
+			}
 		}
-
-
-
-
 
 
 		/// <summary>
@@ -151,7 +149,10 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		public void SetViewport ()
 		{
-			device.DeviceContext.Rasterizer.SetViewport( 0,0, Width, Height, 0, 1 );
+			lock (device.DeviceContext)
+			{
+				device.DeviceContext.Rasterizer.SetViewport( 0,0, Width, Height, 0, 1 );
+			}
 		}
 
 
@@ -161,7 +162,8 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		protected override void Dispose ( bool disposing )
 		{
-			if (disposing) {
+			if (disposing) 
+			{
 				Log.Debug("RenderTarget2D: disposing");
 
 				SafeDispose( ref surface );
@@ -193,8 +195,8 @@ namespace Fusion.Drivers.Graphics {
 
 			GetData( feedbackDataRaw );
 
-			for ( int i=0; i<linearSize; i++) {
-
+			for ( int i=0; i<linearSize; i++) 
+			{
 				var vaRaw		=	MathUtil.UnpackRGB10A2( feedbackDataRaw[i] );
 				var pageX		=	(short)vaRaw.X; 
 				var pageY		=	(short)vaRaw.Y; 
@@ -223,60 +225,60 @@ namespace Fusion.Drivers.Graphics {
 		/// https://msdn.microsoft.com/en-us/library/windows/desktop/bb205132(v=vs.85).aspx#Performance_Considerations
 		/// 
 		void GetData<T>(int level, T[] data, int startIndex, int elementCount) where T : struct
-        {
+		{
 			var temp		= tex2Dstaging;
 			tex2Dstaging	= tex2Dstaging1;
 			tex2Dstaging1	= tex2Dstaging2;
 			tex2Dstaging2	= temp;
 
 
-            if (data == null || data.Length == 0) {
-                throw new ArgumentException("data cannot be null");
+			if (data == null || data.Length == 0) {
+				throw new ArgumentException("data cannot be null");
 			}
-            
+			
 			if (data.Length < startIndex + elementCount) {
-                throw new ArgumentException("The data passed has a length of " + data.Length + " but " + elementCount + " pixels have been requested.");
+				throw new ArgumentException("The data passed has a length of " + data.Length + " but " + elementCount + " pixels have been requested.");
 			}
 
 			var d3dContext = device.DeviceContext;
 
 
-			lock (d3dContext) {
-
+			lock (device.DeviceContext)
+			{
 				//
-                // Copy the data from the GPU to the staging texture.
+				// Copy the data from the GPU to the staging texture.
 				//
-                int elementsInRow;
-                int rows;
-                    
+				int elementsInRow;
+				int rows;
+					
 				elementsInRow = Width;
-                rows = Height;
+				rows = Height;
 
-                d3dContext.CopySubresourceRegion( tex2D, level, null, tex2Dstaging, 0, 0, 0, 0);
+				d3dContext.CopySubresourceRegion( tex2D, level, null, tex2Dstaging, 0, 0, 0, 0);
 
 
-                // Copy the data to the array :
-                DataStream stream;
-                var databox = d3dContext.MapSubresource(tex2Dstaging1, 0, D3D.MapMode.Read, D3D.MapFlags.None, out stream);
+				// Copy the data to the array :
+				DataStream stream;
+				var databox = d3dContext.MapSubresource(tex2Dstaging1, 0, D3D.MapMode.Read, D3D.MapFlags.None, out stream);
 
-                // Some drivers may add pitch to rows.
-                // We need to copy each row separatly and skip trailing zeros.
-                var currentIndex	=	startIndex;
-                var elementSize		=	Marshal.SizeOf(typeof(T));
-                    
+				// Some drivers may add pitch to rows.
+				// We need to copy each row separatly and skip trailing zeros.
+				var currentIndex	=	startIndex;
+				var elementSize		=	Marshal.SizeOf(typeof(T));
+					
 				for (var row = 0; row < rows; row++) {
 
-                    stream.ReadRange(data, currentIndex, elementsInRow);
-                    stream.Seek(databox.RowPitch - (elementSize * elementsInRow), SeekOrigin.Current);
-                    currentIndex += elementsInRow;
+					stream.ReadRange(data, currentIndex, elementsInRow);
+					stream.Seek(databox.RowPitch - (elementSize * elementsInRow), SeekOrigin.Current);
+					currentIndex += elementsInRow;
 
-                }
+				}
 
 				d3dContext.UnmapSubresource( tex2Dstaging1, 0 );
 
-                stream.Dispose();
-            }
-        }
+				stream.Dispose();
+			}
+		}
 
 
 

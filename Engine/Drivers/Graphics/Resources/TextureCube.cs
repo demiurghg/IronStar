@@ -20,9 +20,10 @@ using Fusion.Core;
 using Fusion.Engine.Common;
 
 
-namespace Fusion.Drivers.Graphics {
-	internal class TextureCube : ShaderResource {
-
+namespace Fusion.Drivers.Graphics 
+{
+	internal class TextureCube : ShaderResource 
+	{
 		D3D.Texture2D	texCube;
 		ColorFormat		format;
 		int				mipCount;
@@ -234,7 +235,8 @@ namespace Fusion.Drivers.Graphics {
                     Right = xOffset + width
                 };
 
-				lock (device.DeviceContext) {
+				lock (device.DeviceContext) 
+				{
 					device.DeviceContext.UpdateSubresource(box, texCube, subresourceIndex, region);
 				}
 

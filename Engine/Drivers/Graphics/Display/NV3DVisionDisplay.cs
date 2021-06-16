@@ -60,7 +60,7 @@ namespace Fusion.Drivers.Graphics.Display {
 
 			var driverType			=	DriverType.Hardware;
 
-			var featureLevel	=	HardwareProfileChecker.GetFeatureLevel( parameters.GraphicsProfile ); 
+			var featureLevel	=	HardwareProfileChecker.GetFeatureLevel(); 
 
 
 			swapChainDesc = new SwapChainDescription () {

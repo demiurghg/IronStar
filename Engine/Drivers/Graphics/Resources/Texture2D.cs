@@ -71,11 +71,8 @@ namespace Fusion.Drivers.Graphics
 			texDesc.Usage			=	ResourceUsage.Default;
 			texDesc.Width			=	Width;
 													 
-			lock (device.DeviceContext) 
-			{
-				tex2D	=	new D3D.Texture2D( device.Device, texDesc );
-				SRV		=	new ShaderResourceView( device.Device, tex2D );
-			}
+			tex2D	=	new D3D.Texture2D( device.Device, texDesc );
+			SRV		=	new ShaderResourceView( device.Device, tex2D );
 		}
 		
 
@@ -104,10 +101,8 @@ namespace Fusion.Drivers.Graphics
 			texDesc.Usage			=	ResourceUsage.Default;
 			texDesc.Width			=	Width;
 													 
-			lock (device.DeviceContext) {
-				tex2D	=	new D3D.Texture2D( device.Device, texDesc );
-				SRV		=	new ShaderResourceView( device.Device, tex2D );
-			}
+			tex2D	=	new D3D.Texture2D( device.Device, texDesc );
+			SRV		=	new ShaderResourceView( device.Device, tex2D );
 		}
 		
 
@@ -219,7 +214,8 @@ namespace Fusion.Drivers.Graphics
 		/// <param name="disposing"></param>
 		protected override void Dispose ( bool disposing )
 		{
-			if (disposing) {
+			if (disposing) 
+			{
 				SafeDispose( ref tex2D );
 				SafeDispose( ref SRV );
 				//SafeDispose( ref srgbResource );
@@ -301,7 +297,10 @@ namespace Fusion.Drivers.Graphics
 		/// <param name="dstRect"></param>
 		public void CopyToTexture ( Texture2D dstTexture, int level, int x, int y )
 		{
-			device.DeviceContext.CopySubresourceRegion( tex2D, level, null, dstTexture.tex2D, level, x, y );
+			lock (device.DeviceContext) 
+			{
+				device.DeviceContext.CopySubresourceRegion( tex2D, level, null, dstTexture.tex2D, level, x, y );
+			}
 		}
 		
 
@@ -354,7 +353,8 @@ namespace Fusion.Drivers.Graphics
 				region.Left		= x;
 				region.Right	= x + w;
 
-				lock (device.DeviceContext) {
+				lock (device.DeviceContext) 
+				{
 					device.DeviceContext.UpdateSubresource(box, tex2D, level, region);
 				}
 

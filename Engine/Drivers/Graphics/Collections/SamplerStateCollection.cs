@@ -45,9 +45,12 @@ namespace Fusion.Drivers.Graphics {
 		{
 			set 
 			{
-				for (int i=0; i<stages.Length; i++)
+				lock (device.DeviceContext) 
 				{
-					stages[i].SetSampler( index, (value==null) ? null : value.Apply(device) );
+					for (int i=0; i<stages.Length; i++)
+					{
+						stages[i].SetSampler( index, (value==null) ? null : value.Apply(device) );
+					}
 				}
 			}
 		}

@@ -50,11 +50,6 @@ namespace Fusion.Drivers.Graphics {
 		/// <summary>
 		/// 
 		/// </summary>
-		public GraphicsProfile	GraphicsProfile		{ get; set; }
-
-		/// <summary>
-		/// 
-		/// </summary>
 		public int MsaaLevel { get; set; }
 
 

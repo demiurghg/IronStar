@@ -49,9 +49,12 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		public void Clear ()
 		{
-			foreach ( var stage in stages )
+			lock (device.DeviceContext) 
 			{
-				stage.SetShaderResources( 0, clearArray );
+				foreach ( var stage in stages )
+				{
+					stage.SetShaderResources( 0, clearArray );
+				}
 			}
 		}
 	
@@ -66,9 +69,12 @@ namespace Fusion.Drivers.Graphics {
 		{
 			set 
 			{
-				for (int i=0; i<stages.Length; i++)
+				lock (device.DeviceContext) 
 				{
-					stages[i].SetShaderResource( index, (value==null) ? null : value.SRV );
+					for (int i=0; i<stages.Length; i++)
+					{
+						stages[i].SetShaderResource( index, (value==null) ? null : value.SRV );
+					}
 				}
 			}
 		}

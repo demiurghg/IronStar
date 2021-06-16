@@ -18,9 +18,10 @@ using Fusion.Core;
 using Fusion.Engine.Common;
 
 
-namespace Fusion.Drivers.Graphics {
-	internal class TextureCubeArrayRW : ShaderResource {
-
+namespace Fusion.Drivers.Graphics 
+{
+	internal class TextureCubeArrayRW : ShaderResource 
+	{
 		internal readonly D3D.Texture2D	texCubeArray;
 
 		public readonly int MipCount;
@@ -131,9 +132,7 @@ namespace Fusion.Drivers.Graphics {
 					var uav	=	new UnorderedAccessView( device.Device, texCubeArray, uavDesc );
 
 					batchCubeSurfaces[batchIndex,mip]	=	new RenderTargetSurface( device, null, uav, texCubeArray, -1, format, mipSize, mipSize, 1 );
-
 				}
-
 			}
 
 
@@ -236,9 +235,8 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="rtSourceCube"></param>
 		public void CopyTopMipLevelFromRenderTargetCube ( int index, RenderTargetCube rtSourceCube )
 		{
-			using ( new PixEvent( "CopyTopMipLevelFromRenderTargetCube" ) ) {
-
-				
+			using ( new PixEvent( "CopyTopMipLevelFromRenderTargetCube" ) ) 
+			{
 				if (rtSourceCube.Width!=this.Width) {
 					throw new GraphicsException("CopyFromRenderTargetCube: source and destination have different width");
 				}
@@ -253,12 +251,15 @@ namespace Fusion.Drivers.Graphics {
 
 				int subResourceCount = 6 * rtSourceCube.MipCount;
 			
-				for (int i=0; i<6; i++) {
+				lock (device.DeviceContext) 
+				{
+					for (int i=0; i<6; i++) {
 
-					int srcIndex = Resource.CalculateSubResourceIndex( 0, i,			 rtSourceCube.MipCount );
-					int dstIndex = Resource.CalculateSubResourceIndex( 0, index * 6 + i, this.MipCount );
+						int srcIndex = Resource.CalculateSubResourceIndex( 0, i,			 rtSourceCube.MipCount );
+						int dstIndex = Resource.CalculateSubResourceIndex( 0, index * 6 + i, this.MipCount );
 
-					GraphicsDevice.DeviceContext.CopySubresourceRegion( rtSourceCube.TextureResource, srcIndex, null, texCubeArray, dstIndex );
+						GraphicsDevice.DeviceContext.CopySubresourceRegion( rtSourceCube.TextureResource, srcIndex, null, texCubeArray, dstIndex );
+					}
 				}
 			}
 		}
@@ -305,14 +306,17 @@ namespace Fusion.Drivers.Graphics {
 				int stride	 = 6;
 				var context	 = GraphicsDevice.DeviceContext;
 
-				for (int mip=0; mip<rtCube.MipCount; mip++) 
+				lock (device.DeviceContext) 
 				{
-					for (int face=0; face<6; face++) 
+					for (int mip=0; mip<rtCube.MipCount; mip++) 
 					{
-						int srcIndex = Resource.CalculateSubResourceIndex( mip, face,                  mipCount );
-						int dstIndex = Resource.CalculateSubResourceIndex( mip, face + stride * index, mipCount );;
+						for (int face=0; face<6; face++) 
+						{
+							int srcIndex = Resource.CalculateSubResourceIndex( mip, face,                  mipCount );
+							int dstIndex = Resource.CalculateSubResourceIndex( mip, face + stride * index, mipCount );;
 
-						context.CopySubresourceRegion( rtCube.TextureResource, srcIndex, null, texCubeArray, dstIndex );
+							context.CopySubresourceRegion( rtCube.TextureResource, srcIndex, null, texCubeArray, dstIndex );
+						}
 					}
 				}
 			}
@@ -331,25 +335,29 @@ namespace Fusion.Drivers.Graphics {
 			context.CopySubresourceRegion( texCubeArray, srcIndex, null, stagingCube, dstIndex );
 
 			DataStream stream;
-			var dataBox = context.MapSubresource( stagingCube, dstIndex, MapMode.Read, MapFlags.None, out stream );
-
-			int mipWidth		=	Resource.CalculateMipSize( mip, Width );
-			int mipHeight		=	Resource.CalculateMipSize( mip, Height );
-            int currentIndex	=	0;
-			int elementSize		=	Marshal.SizeOf(typeof(T));
-
-			for ( int row=0; row<mipHeight; row++ ) 
+			
+			lock (device.DeviceContext) 
 			{
-				stream.ReadRange( data, currentIndex, mipWidth );
-				stream.Seek( dataBox.RowPitch - (elementSize * mipWidth), SeekOrigin.Current);
-				currentIndex += mipWidth;
+				var dataBox = context.MapSubresource( stagingCube, dstIndex, MapMode.Read, MapFlags.None, out stream );
+
+				int mipWidth		=	Resource.CalculateMipSize( mip, Width );
+				int mipHeight		=	Resource.CalculateMipSize( mip, Height );
+				int currentIndex	=	0;
+				int elementSize		=	Marshal.SizeOf(typeof(T));
+
+				for ( int row=0; row<mipHeight; row++ ) 
+				{
+					stream.ReadRange( data, currentIndex, mipWidth );
+					stream.Seek( dataBox.RowPitch - (elementSize * mipWidth), SeekOrigin.Current);
+					currentIndex += mipWidth;
+				}
+
+				stream.Dispose();
+
+				context.UnmapSubresource( stagingCube, dstIndex );
+
+				return mipWidth * mipHeight;
 			}
-
-			stream.Dispose();
-
-			context.UnmapSubresource( stagingCube, dstIndex );
-
-			return mipWidth * mipHeight;
 		}
 
 
@@ -379,7 +387,10 @@ namespace Fusion.Drivers.Graphics {
 				region.Left		= x;
 				region.Right	= x + w;
 
-				device.DeviceContext.UpdateSubresource(box, texCubeArray, subres, region);
+				lock (device.DeviceContext) 
+				{
+					device.DeviceContext.UpdateSubresource(box, texCubeArray, subres, region);
+				}
 			} 
 			finally 
 			{

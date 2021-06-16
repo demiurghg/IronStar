@@ -17,14 +17,15 @@ using Fusion.Engine.Graphics;
 using Fusion.Engine.Common;
 
 
-namespace Fusion.Drivers.Graphics {
-
+namespace Fusion.Drivers.Graphics 
+{
 	public interface IPipelineStateProvider
 	{
 		bool ProvideState ( PipelineState ps, int flags );
 	}
 	
-	internal partial class Ubershader : GraphicsObject {
+	internal partial class Ubershader : GraphicsObject 
+	{
 
 		public const string UbershaderSignature = "USH1";
 		public const string PSBytecodeSignature = "PSBC";
@@ -34,8 +35,8 @@ namespace Fusion.Drivers.Graphics {
 		public const string DSBytecodeSignature = "DSBC";
 		public const string CSBytecodeSignature = "CSBC";
 
-		class UsdbEntry {
-
+		class UsdbEntry 
+		{
 			public string Defines;
 
 			public ShaderBytecode PixelShader;
@@ -81,18 +82,20 @@ namespace Fusion.Drivers.Graphics {
 		{
 			database.Clear();
 
-			using ( var br = new BinaryReader( stream ) ) {
-
+			using ( var br = new BinaryReader( stream ) ) 
+			{
 				var foucCC = br.ReadFourCC();
 
-				if (foucCC!=UbershaderSignature) {
+				if (foucCC!=UbershaderSignature) 
+				{
 					throw new IOException("Bad ubershader signature");
 				}
 
 
 				var count = br.ReadInt32();
 
-				for (int i=0; i<count; i++) {
+				for (int i=0; i<count; i++) 
+				{
 					var defines		=	br.ReadString();
 					int length;
 
@@ -124,7 +127,8 @@ namespace Fusion.Drivers.Graphics {
 					//PrintSignature( bytecode, "ISGN" );
 					//PrintSignature( bytecode, "OSGN" );
 					//PrintSignature( bytecode, "OSG5" );
-					if (database.ContainsKey(defines)) {
+					if (database.ContainsKey(defines)) 
+					{
 						Log.Warning("Duplicate definitions: {0}", defines );
 						continue;
 					}
@@ -148,7 +152,8 @@ namespace Fusion.Drivers.Graphics {
 		/// <returns></returns>
 		public StateFactory CreateFactory ( Type type, Action<PipelineState,int> enumerator )
 		{
-			lock (factories) {
+			lock (factories) 
+			{
 				var factory = new StateFactory( this, type, enumerator );
 				factories.Add(factory);
 				return factory;
@@ -159,7 +164,8 @@ namespace Fusion.Drivers.Graphics {
 
 		public StateFactory CreateFactory ( Type type, IPipelineStateProvider provider )
 		{
-			lock (factories) {
+			lock (factories) 
+			{
 				var factory = new StateFactory( this, type, (ps,flag) => provider.ProvideState(ps, flag) );
 				factories.Add(factory);
 				return factory;
@@ -226,9 +232,12 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="disposing"></param>
 		protected override void Dispose ( bool disposing )
 		{
-			if (disposing) {
-				foreach ( var obj in factories ) {
-					if (obj!=null) {
+			if (disposing) 
+			{
+				foreach ( var obj in factories ) 
+				{
+					if (obj!=null) 
+					{
 						obj.Dispose();
 					}
 				}
@@ -243,7 +252,8 @@ namespace Fusion.Drivers.Graphics {
 		/// Gets all defines
 		/// </summary>
 		public ICollection<string>	Defines {
-			get {
+			get 
+			{
 				return database.Select( dbe => dbe.Key ).ToArray();
 			}
 		}

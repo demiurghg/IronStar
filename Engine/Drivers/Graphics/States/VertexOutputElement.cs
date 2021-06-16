@@ -15,9 +15,10 @@ using System.Runtime.InteropServices;
 using Fusion.Core.Mathematics;
 
 
-namespace Fusion.Drivers.Graphics {
-
-	public struct VertexOutputElement {
+namespace Fusion.Drivers.Graphics 
+{
+	public struct VertexOutputElement 
+	{
 
 		/// <summary>
 		/// Zero-based, stream number.
@@ -114,6 +115,5 @@ namespace Fusion.Drivers.Graphics {
 					Stream			=	e.Stream
 				} ).ToArray();
 		}
-
 	}
 }

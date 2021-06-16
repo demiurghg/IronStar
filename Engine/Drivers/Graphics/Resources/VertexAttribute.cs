@@ -11,8 +11,8 @@ namespace Fusion.Drivers.Graphics {
 	/// A description of a single element for the input-assembler stage.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Field)]
-	internal sealed class VertexAttribute : Attribute {
-
+	internal sealed class VertexAttribute : Attribute 
+	{
 		public const string	Position        =	"POSITION"		;
 		public const string	Color           =	"COLOR"			;
 		public const string	TexCoord        =	"TEXCOORD"		;
@@ -57,11 +57,13 @@ namespace Fusion.Drivers.Graphics {
 		/// <param name="instanceStepRate">The number of instances to draw using the same per-instance data before advancing in the buffer by one element. Zero means pervertex data.</param>
 		public VertexAttribute ( string name, int index = 0, int inputSlot = 0, int instanceStepRate = 0 )
 		{
-			if (name.Length>64) {
+			if (name.Length>64) 
+			{
 				throw new ArgumentException("'name.Length' must be < 64");
 			}
 
-			if (inputSlot<0 || inputSlot>15) {
+			if (inputSlot<0 || inputSlot>15) 
+			{
 				throw new ArgumentException("'inputSlot' must be within range [0..15]");
 			}
 

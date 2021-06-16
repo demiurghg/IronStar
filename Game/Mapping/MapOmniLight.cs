@@ -43,8 +43,8 @@ namespace IronStar.Mapping
 
 		[AECategory("Light Color")]
 		[AEDisplayName("Intensity")]
-		[AESlider(0, 5000, 10, 1)]
-		public float LightIntensity { get; set; } = 100;
+		[AESlider(0, 16, 1, 1f/16f)]
+		public float LightIntensity { get; set; } = 5;
 
 
 		public MapOmniLight ()
@@ -70,7 +70,7 @@ namespace IronStar.Mapping
 			light.TubeRadius		=	TubeRadius;
 			light.OuterRadius		=	OuterRadius;
 			light.LightColor		=	LightColor;
-			light.LightIntensity	=	MathUtil.Log2( MathUtil.Clamp( LightIntensity, 1/64.0f, 1024 ) );
+			light.LightIntensity	=	LightIntensity;
 
 			return light;
 		}

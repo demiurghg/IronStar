@@ -22,16 +22,18 @@ namespace IronStar.Editor.Manipulators
 
 		Handle	activeHandle = null;
 
+		readonly bool isLocalSpace;
+
 
 		public MoveTool ( MapEditor editor ) : base(editor)
 		{
-			var local = editor.MoveAxisMode==AxisMode.Local;
+			isLocalSpace = editor.MoveAxisMode==AxisMode.Local;
 
 			handles	=	new []
 			{
-				new MoveHandle( editor, Vector3.UnitX, local, Color.Red , Move ),
-				new MoveHandle( editor, Vector3.UnitY, local, Color.Lime, Move ),
-				new MoveHandle( editor, Vector3.UnitZ, local, Color.Blue, Move ),
+				new MoveHandle( editor, Vector3.UnitX, isLocalSpace, Color.Red , Move ),
+				new MoveHandle( editor, Vector3.UnitY, isLocalSpace, Color.Lime, Move ),
+				new MoveHandle( editor, Vector3.UnitZ, isLocalSpace, Color.Blue, Move ),
 			};
 		}
 
@@ -97,7 +99,7 @@ namespace IronStar.Editor.Manipulators
 		{
 			get 
 			{
-				return "--";
+				return isLocalSpace ? "Local" : "World";
 			}
 		}
 

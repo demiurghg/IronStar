@@ -49,27 +49,27 @@
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
     "Enabled": true,
     "Sprite": "explosionSmoke",
-    "UseRandomImages": false,
+    "UseRandomImages": true,
     "Effect": "softLit",
-    "Count": 5,
+    "Count": 3,
     "Period": 1.0,
     "Timing": {
       "$id": "6",
       "$type": "IronStar.SFX.FXTiming, IronStar",
       "Delay": 0.0,
-      "Bunch": 0.9,
-      "FadeIn": 0.1,
+      "Bunch": 1.0,
+      "FadeIn": 0.3,
       "FadeOut": 0.6
     },
-    "Color": "124, 124, 124, 255",
-    "Alpha": 0.3,
+    "Color": "150, 150, 150, 255",
+    "Alpha": 0.5,
     "Exposure": 0.0,
     "Roughness": 0.33,
     "Metallic": 0.0,
     "Intensity": 1.0,
     "IntensityEV": 0.0,
     "Scattering": 0.5,
-    "BeamFactor": 0.0,
+    "BeamFactor": 51.0,
     "Lifetime": {
       "$id": "7",
       "$type": "IronStar.SFX.FXLifetime, IronStar",
@@ -80,10 +80,10 @@
     "Shape": {
       "$id": "8",
       "$type": "IronStar.SFX.FXShape, IronStar",
-      "Size0": 10.0,
-      "Size1": 15.0,
+      "Size0": 5.0,
+      "Size1": 10.0,
       "EnableRotation": true,
-      "InitialAngle": -90.0,
+      "InitialAngle": 360.0,
       "MinAngularVelocity": 50.0,
       "MaxAngularVelocity": -50.0
     },
@@ -112,7 +112,7 @@
     "Acceleration": {
       "$id": "11",
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
-      "GravityFactor": 0.0,
+      "GravityFactor": -0.1,
       "Damping": 0.0
     }
   },
@@ -123,7 +123,7 @@
     "Sprite": "bulletSpark",
     "UseRandomImages": false,
     "Effect": "softLit",
-    "Count": 500,
+    "Count": 17,
     "Period": 1.0,
     "Timing": {
       "$id": "13",
@@ -164,7 +164,7 @@
       "$type": "IronStar.SFX.FXPosition, IronStar",
       "OffsetDirection": "localUp",
       "OffsetFactor": 0.0,
-      "Distribution": "cylinder",
+      "Distribution": "box",
       "Width": 4.0,
       "Height": 0.0,
       "Depth": 4.0,
@@ -173,12 +173,12 @@
     "Velocity": {
       "$id": "17",
       "$type": "IronStar.SFX.FXVelocity, IronStar",
-      "Direction": "localBackward",
+      "Direction": "localRight",
       "LinearDistribution": "gauss",
-      "LinearVelocityMin": 18.0,
-      "LinearVelocityMax": 22.0,
+      "LinearVelocityMin": 15.0,
+      "LinearVelocityMax": 25.0,
       "RadialDistribution": "sphere",
-      "RadialVelocity": 5.0,
+      "RadialVelocity": 0.0,
       "Advection": 0.0
     },
     "Acceleration": {

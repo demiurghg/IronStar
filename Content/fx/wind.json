@@ -6,7 +6,7 @@
   "SoundStage": {
     "$id": "2",
     "$type": "IronStar.SFX.FXSoundStage, IronStar",
-    "Enabled": false,
+    "Enabled": true,
     "Sound": "env/wind",
     "Reverb": 1.0,
     "FlybySound": false
@@ -113,9 +113,7 @@
       "$id": "11",
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
       "GravityFactor": 0.0,
-      "Damping": 0.0,
-      "DragForce": 0.0,
-      "Turbulence": 0.0
+      "Damping": 0.0
     }
   },
   "ParticleStage2": {
@@ -187,9 +185,7 @@
       "$id": "18",
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
       "GravityFactor": 0.0,
-      "Damping": 0.0,
-      "DragForce": 0.0,
-      "Turbulence": 0.0
+      "Damping": 0.0
     }
   },
   "ParticleStage3": {
@@ -261,9 +257,7 @@
       "$id": "25",
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
       "GravityFactor": 0.0,
-      "Damping": 0.0,
-      "DragForce": 0.0,
-      "Turbulence": 0.0
+      "Damping": 0.0
     }
   },
   "ParticleStage4": {
@@ -335,9 +329,7 @@
       "$id": "32",
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
       "GravityFactor": 0.0,
-      "Damping": 0.0,
-      "DragForce": 0.0,
-      "Turbulence": 0.0
+      "Damping": 0.0
     }
   },
   "ParticleStage5": {
@@ -409,9 +401,7 @@
       "$id": "39",
       "$type": "IronStar.SFX.FXAcceleration, IronStar",
       "GravityFactor": 0.0,
-      "Damping": 0.0,
-      "DragForce": 0.0,
-      "Turbulence": 0.0
+      "Damping": 0.0
     }
   }
 }

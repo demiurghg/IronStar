@@ -162,10 +162,10 @@ namespace IronStar.Editor
 				var vsync  = rs.VSyncInterval!=0;
 				statLabel.Text	=	
 					string.Format(
- 					  "    FT: {0,5:000.0} {4}\r\n" +
- 					  "Max FT: {1,5:000.0}\r\n" +
- 					  "Avg FT: {2,5:000.0}\r\n" +
- 					  "Min FT: {3,5:000.0}", 1000/curFps, 1000/maxFps, 1000/avgFps, 1000/minFps, vsync ? "VSYNC ON" : "VSYNC OFF" );
+ 					  "    FT: {0,6:000.00} {4}\r\n" +
+ 					  "Max FT: {1,6:000.00}\r\n" +
+ 					  "Avg FT: {2,6:000.00}\r\n" +
+ 					  "Min FT: {3,6:000.00}", 1000/curFps, 1000/maxFps, 1000/avgFps, 1000/minFps, vsync ? "VSYNC ON" : "VSYNC OFF" );
 					/*string.Format(
  					  "    FPS: {0,5:000.0} {4}\r\n" +
  					  "Max FPS: {1,5:000.0}\r\n" +

@@ -394,10 +394,15 @@ namespace Fusion.Build.Mapping {
 			var b	=	VTConfig.PageBorderWidth;
 
 			for (int i=b; i<s+b; i++) {
-				colorData.SetPixel( b,     i,		Color.Red );
-				colorData.SetPixel( b+s-1,	i,		Color.Red );
-				colorData.SetPixel( i,		b,      Color.Red );
-				colorData.SetPixel( i,		b+s-1,	Color.Red );
+				colorData.SetPixel( b,     i,		Color.Yellow );
+				colorData.SetPixel( b+s-1,	i,		Color.Yellow );
+				colorData.SetPixel( i,		b,      Color.Yellow );
+				colorData.SetPixel( i,		b+s-1,	Color.Yellow );
+
+				/*colorData.SetPixel( b+1,    i,		Color.Yellow );
+				colorData.SetPixel( b+s-2,	i,		Color.Yellow );
+				colorData.SetPixel( i,		b+1,    Color.Yellow );
+				colorData.SetPixel( i,		b+s-2,	Color.Yellow );*/
 			}
 		}
 

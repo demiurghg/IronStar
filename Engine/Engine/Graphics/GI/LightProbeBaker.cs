@@ -193,7 +193,7 @@ namespace Fusion.Engine.Graphics.GI
 			var camera	=	context.GetCamera();
 
 			rs.Sky.RenderSkyLut( GameTime.Zero, camera );
-			rs.Sky.RenderSky( GameTime.Zero, camera, StereoEye.Mono, hdrSurf );
+			rs.Sky.RenderSky( GameTime.Zero, camera, StereoEye.Mono, hdrSurf, true );
 			rs.Sky.RenderSkyCube( GameTime.Zero, camera );
 
 			rs.SceneRenderer.RenderLightProbeRadiance( context, rs.RenderWorld, groups );

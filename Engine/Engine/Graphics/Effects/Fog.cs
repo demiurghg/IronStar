@@ -37,7 +37,7 @@ namespace Fusion.Engine.Graphics {
 		public float HistoryFactor 
 		{ 
 			get { return historyFactor; }
-			set { historyFactor = MathUtil.Clamp( value, 0, 0.98f ); }
+			set { historyFactor = MathUtil.Clamp( value, 0, 0.99f ); }
 		}
 		float historyFactor = 0.8f;
 

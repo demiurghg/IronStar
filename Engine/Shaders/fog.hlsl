@@ -42,6 +42,7 @@ float GetCellLength( uint3 location )
 float3 GetWorldPosition( float3 gridLocation )
 {
 	float3	normLocation	=	( gridLocation.xyz + float3(0.5,0.5,0.5) ) * Fog.FogSizeInv.xyz;
+			normLocation.z	=	clamp( normLocation.z, Fog.FogSizeInv.z * 0.5f, 1 - Fog.FogSizeInv.z * 0.5f);
 	
 	float	tangentX		=	lerp( -Camera.CameraTangentX,  Camera.CameraTangentX, normLocation.x );
 	float	tangentY		=	lerp(  Camera.CameraTangentY, -Camera.CameraTangentY, normLocation.y );
@@ -71,34 +72,64 @@ float GetAPBlendFactor( uint slice )
 
 #ifdef COMPUTE
 
-static const float3 aaPattern[8] = 
+static const float HISTORY_FACTOR_SHADOW	=	0.97f;
+static const float HISTORY_FACTOR_FOG		=	0.98f;
+
+static const float2 aa8[8] = 
 {
-	float3(  1, -3, -7 ) / 8.0f,
-	float3( -1,  3,  5 ) / 8.0f,
-	float3(  5,  1, -3 ) / 8.0f,
-	float3( -3, -5,  1 ) / 8.0f,
-	float3( -5,  5, -1 ) / 8.0f,
-	float3( -7, -1,  3 ) / 8.0f,
-	float3(  3,  7, -5 ) / 8.0f,
-	float3(  7, -7,  7 ) / 8.0f,
+	float2(  1, -3 ) / 8.0f,
+	float2( -1,  3 ) / 8.0f,
+	float2(  5,  1 ) / 8.0f,
+	float2( -3, -5 ) / 8.0f,
+	float2( -5,  5 ) / 8.0f,
+	float2( -7, -1 ) / 8.0f,
+	float2(  3,  7 ) / 8.0f,
+	float2(  7, -7 ) / 8.0f,
+};
+
+static const float2 aa4[4] = 
+{
+	float2( -2, -6 ) / 8.0f,
+	float2(  6, -2 ) / 8.0f,
+	float2( -6,  2 ) / 8.0f,
+	float2(  2,  6 ) / 8.0f,
+};
+
+static const float2 aa5[5] = 
+{
+	float2(  0,  0 ) / 8.0f,
+	float2( -2, -6 ) / 8.0f,
+	float2(  6, -2 ) / 8.0f,
+	float2( -6,  2 ) / 8.0f,
+	float2(  2,  6 ) / 8.0f,
+};
+
+static const uint bayer[4][4] = 
+{
+	 0,  8,  2, 10,	12,  4, 14, 16,  6,  3,  1,  9, 15,  7, 13, 5,
 };
 
 
-float ClipHistory( float4 ppPosition )
+float ClipHistory( float4 ppPosition, float4 ppPosition2 )
 {
-	float3	deviceCoords	=	ppPosition.xyz / ppPosition.w;
+	float3	deviceCoords	=	ppPosition.xyz  / ppPosition.w;
+	float3	deviceCoords2	=	ppPosition2.xyz / ppPosition2.w;
+	
+	float 	falloff			=	1 - 0.5*saturate(3*distance(deviceCoords, deviceCoords2));
 	
 	float	maxX			=	1.0f - 0.5f * Fog.FogSizeInv.x;
 	float	maxY			=	1.0f - 0.5f * Fog.FogSizeInv.y;
 	float	minZ			=	1.0f * Fog.FogSizeInv.z;
+	//float	maxZ			=	1.0f - 0.5f * Fog.FogSizeInv.z;
+	float	maxZ			=	0.9999f;
 	
-	if (abs(deviceCoords.x)>maxX || abs(deviceCoords.y)>maxY || deviceCoords.z>1 || deviceCoords.z<=0.1f )
+	if (abs(deviceCoords.x)>maxX || abs(deviceCoords.y)>maxY || deviceCoords.z>maxZ || deviceCoords.z<=0.1f )
 	{
 		return 0;
 	}
 	else
 	{
-		return 1;
+		return falloff;
 	}
 }
 
@@ -106,9 +137,10 @@ float ClipHistory( float4 ppPosition )
 float4 GetFogHistory( float3 wsPosition, out float factor )
 {
 	float4 	ppPosition	=	mul( float4(wsPosition,1), Camera.ReprojectionMatrix );
+	float4 	ppPosition2	=	mul( float4(wsPosition,1), Camera.ViewProjection );
 	float4	fogData		=	SampleVolumetricFog( Fog, ppPosition, LinearClamp, FogHistory );
 	
-	factor = ClipHistory( ppPosition ) * Fog.HistoryFactor;
+	factor = ClipHistory( ppPosition, ppPosition2 ) * HISTORY_FACTOR_FOG;
 	
 	return fogData;
 }
@@ -117,9 +149,10 @@ float4 GetFogHistory( float3 wsPosition, out float factor )
 float2 GetShadowHistory( float3 wsPosition, out float factor )
 {
 	float4 	ppPosition	=	mul( float4(wsPosition,1), Camera.ReprojectionMatrix );
+	float4 	ppPosition2	=	mul( float4(wsPosition,1), Camera.ViewProjection );
 	float4	fogData		=	SampleVolumetricFog( Fog, ppPosition, LinearClamp, FogShadowHistory );
 	
-	factor = ClipHistory( ppPosition ) * Fog.HistoryFactor;
+	factor = ClipHistory( ppPosition, ppPosition2 ) * HISTORY_FACTOR_SHADOW;
 	
 	return saturate(fogData.xy);
 }
@@ -134,12 +167,17 @@ void CSMain(
 {
 	uint3 	location		=	dispatchThreadId.xyz;
 
-	float	historyFactor	=	1;
+	float	historyFactorFog	=	0;
+	float	historyFactorShadow	=	0;
 	float3	wsPositionNJ	=	GetWorldPosition( location.xyz );
-	float4	fogHistory		=	GetFogHistory( wsPositionNJ, historyFactor );
-	float2	shadowHistory	=	GetShadowHistory( wsPositionNJ, historyFactor );
+	float4	fogHistory		=	GetFogHistory( wsPositionNJ, historyFactorFog );
+	float2	shadowHistory	=	GetShadowHistory( wsPositionNJ, historyFactorShadow );
 	
-	float3	offset			=	aaPattern[ Fog.FrameCount % 8 ] * 1 * float3(0.5f,0.5f,0.5f);
+	//float3	offset			=	float3(0,0,0.75f);
+	//float3	offset			=	aaPattern[ Fog.FrameCount % 8 ] * 1 * float3(0.5f,0.5f,0.5f);	
+	float	offsetZ			=	( (bayer[location.x&3][location.y&3] + Fog.FrameCount*11) & 0xF ) / 16.0f;
+	float2	offsetXY		=	0.5f*aa5[Fog.FrameCount % 5];
+	float3	offset			=	float3(offsetXY, offsetZ);
 	float3 	wsPosition		=	GetWorldPosition( location.xyz + offset );
 	
 	float3	cameraPos		=	Camera.CameraPosition.xyz;
@@ -166,8 +204,8 @@ void CSMain(
 	float4	fogST			=	float4( integScatt, 1 /* transmittance w/o atmospheric fog */ );
 	
 	//	to prevent NaN-history :
-	float4 factor			=	float4( historyFactor, historyFactor, historyFactor, 0 );
-	FogTarget[ location.xyz ] = historyFactor==0 ? fogST : lerp( fogST, fogHistory, factor );
+	float4 factor			=	float4( historyFactorFog, historyFactorFog, historyFactorFog, 0 );
+	FogTarget[ location.xyz ] = historyFactorFog==0 ? fogST : lerp( fogST, fogHistory, factor );
 	
 	//	Compute sky shadow and ambient occlusion :
 #if 0
@@ -181,7 +219,7 @@ void CSMain(
 	float2 	skyShadow	=	ComputeSkyShadow( wsPosition );
 #endif
 			
-	skyShadow	=	historyFactor==0 ? skyShadow : lerp( skyShadow, shadowHistory, historyFactor );
+	skyShadow	=	historyFactorShadow==0 ? skyShadow : lerp( skyShadow, shadowHistory, historyFactorShadow );
 			
 	FogShadowTarget[ location.xyz ] = float4( skyShadow, 0, 0 );
 }

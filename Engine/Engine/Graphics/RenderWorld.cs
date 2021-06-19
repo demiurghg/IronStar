@@ -484,7 +484,7 @@ namespace Fusion.Engine.Graphics
 					//	render sky and fog :
 					rs.Sky.RenderSkyLut( gameTime, Camera );
 					rs.Fog.RenderFogVolume( Camera, LightSet );
-					rs.Sky.RenderSky( gameTime, Camera, stereoEye, viewHdrFrame );
+					rs.Sky.RenderSky( gameTime, Camera, stereoEye, viewHdrFrame, false );
 					rs.Sky.RenderSkyCube( gameTime, Camera );
 
 					//	Z-pass without weapon :

@@ -252,6 +252,37 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
+		[AECommand]
+		public void Titan()
+		{
+			SunAltitude	=	15;
+			SunAzimuth	=	45;
+			SunIntensityEv = 2; // ~10 AU
+			SunTemperature = 5900;
+			SunBrightnessEv = 10;
+			SunAngularSize = 0.4f;
+			PlanetRadius = 2500;
+			AtmosphereHeight = 60;
+			RayleighHeight = 500;
+			MieHeight = 1800;
+			ViewElevation = 60;
+			MieExcentricity = 0.76f;
+			SkyExposure = 0;
+			SkySphereSize = 10;
+			RayleighScale = -3f;
+			MieScale = 6;
+			MieColor = new Color(50, 80, 135, 255);	 // ref color: 208,185,121
+			APScale = 4;
+			AmbientLevel = 0.8f;
+			CirrusCoverage = 0;
+			CirrusHeight = 6000;
+			CirrusDensity = 0.0f;
+			CirrusSize = 20;
+			WindVelocity = 0;
+			WindDirection = -45;
+		}
+
+
 		static FXConstantBuffer<SKY_DATA>				regSky				=	new CRegister( 0, "Sky"			);
 		static FXConstantBuffer<GpuData.CAMERA>			regCamera			=	new CRegister( 1, "Camera"		);
 		static FXConstantBuffer<GpuData.DIRECT_LIGHT>	regDirectLight		=	new CRegister( 2, "DirectLight"	);
@@ -544,9 +575,9 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="stereoEye"></param>
 		/// <param name="frame"></param>
 		/// <param name="settings"></param>
-		internal void RenderSky( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame frame )
+		internal void RenderSky( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame frame, bool cubemap )
 		{
-			RenderSky( gameTime, camera, stereoEye, frame.HdrTarget.Surface );
+			RenderSky( gameTime, camera, stereoEye, frame.HdrTarget.Surface, cubemap );
 
 			if (ShowLut)
 			{
@@ -611,7 +642,7 @@ namespace Fusion.Engine.Graphics {
 		/// </summary>
 		/// <param name="rendCtxt"></param>
 		/// <param name="techName"></param>
-		internal void RenderSky( GameTime gameTime, Camera camera, StereoEye stereoEye, RenderTargetSurface color )
+		internal void RenderSky( GameTime gameTime, Camera camera, StereoEye stereoEye, RenderTargetSurface color, bool cubemap )
 		{
 			using ( new PixEvent( "Sky" ) )
 			{
@@ -625,7 +656,7 @@ namespace Fusion.Engine.Graphics {
 				device.GfxResources[ regSkyCube				] = skyCube;
 				device.GfxResources[ regFogLut				] = rs.Fog.SkyFogLut;
 
-				Setup( Flags.SKY_VIEW, camera, color.Bounds );
+				Setup( cubemap ? Flags.SKY_CUBE : Flags.SKY_VIEW, camera, color.Bounds );
 
 				device.SetupVertexInput( skyVB, null );
 				device.Draw( skyVB.Capacity, 0 );

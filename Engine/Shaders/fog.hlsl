@@ -73,7 +73,7 @@ float GetAPBlendFactor( uint slice )
 #ifdef COMPUTE
 
 static const float HISTORY_FACTOR_SHADOW	=	0.97f;
-static const float HISTORY_FACTOR_FOG		=	0.98f;
+static const float HISTORY_FACTOR_FOG		=	0.99f;
 
 static const float2 aa8[8] = 
 {
@@ -176,7 +176,7 @@ void CSMain(
 	//float3	offset			=	float3(0,0,0.75f);
 	//float3	offset			=	aaPattern[ Fog.FrameCount % 8 ] * 1 * float3(0.5f,0.5f,0.5f);	
 	float	offsetZ			=	( (bayer[location.x&3][location.y&3] + Fog.FrameCount*11) & 0xF ) / 16.0f;
-	float2	offsetXY		=	0.5f*aa5[Fog.FrameCount % 5];
+	float2	offsetXY		=	1.0f*aa5[Fog.FrameCount % 5];
 	float3	offset			=	float3(offsetXY, offsetZ);
 	float3 	wsPosition		=	GetWorldPosition( location.xyz + offset );
 	

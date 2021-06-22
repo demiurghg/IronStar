@@ -6,6 +6,7 @@
 #define NO_DECALS
 #define NO_CUBEMAPS
 #include "ls_core.fxi"
+#include "math.fxi"
 
 
 static const float  M_PI			=	3.141592f;
@@ -67,6 +68,7 @@ float3 ComputePointLight2( LIGHT light, CAMERA camera, GEOMETRY geometry, SHADOW
 	float3 	lightDir	=	lightDir0;// diffuseMPR.xyz;
 	
 	float	falloff		=	LightFalloff( length(lightDir), lightRange );
+	float	fadeout		=	saturate( 1 - dot(viewDir,viewDir) * Fog.FadeoutDistanceInvSqr);
 	
 	float3 	shadow		=	float3(1,1,1);
 
@@ -83,7 +85,7 @@ float3 ComputePointLight2( LIGHT light, CAMERA camera, GEOMETRY geometry, SHADOW
 		shadow	=	ComputeSpotShadow( geometry, light, rc );
 	}
 
-	lighting	=	shadow * falloff * phaseM * intensity;
+	lighting	=	shadow * falloff * fadeout * phaseM * intensity;
 	
 	return lighting;
 }

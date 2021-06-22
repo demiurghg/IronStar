@@ -75,9 +75,17 @@ namespace Fusion.Engine.Graphics {
 
 		[Config]
 		[AECategory("Fog Grid")]
-		[AESlider(1, 5000, 100f, 1f)]
-		public float FogGridHalfDepth { get { return fogGridHalfDepth; } set { fogGridHalfDepth = MathUtil.Clamp( value, 1, 5000 ); } }
-		float fogGridHalfDepth = 300.0f;
+		[AESlider(100, 5000, 100f, 1f)]
+		public float FogGridHalfDepth { get { return fogGridHalfDepth; } set { fogGridHalfDepth = MathUtil.Clamp( value, 100, 5000 ); } }
+		float fogGridHalfDepth = 1000.0f;
+
+		[Config]
+		[AECategory("Fog Grid")]
+		[AESlider(100, 5000, 100f, 1f)]
+		public float FogFadeoutDistance { get { return fogFadeoutDistance; } set { fogFadeoutDistance = MathUtil.Clamp( value, 100, 5000 ); } }
+		float fogFadeoutDistance = 1000.0f;
+
+
 
 		float FogGridExpK { get { return (float)Math.Log(0.5f) / fogGridHalfDepth; } }
 
@@ -154,6 +162,7 @@ namespace Fusion.Engine.Graphics {
 			public float	FogDensity;
 			public float	FogHeight;
 			public float	FogScale;
+			public float	FadeoutDistanceInvSqr;
 		}
 
 		Ubershader			shader;
@@ -296,24 +305,25 @@ namespace Fusion.Engine.Graphics {
 				fogQualityDirty = false;
 			}
 
-			fogData.WorldToVolume		=	rw.LightMap.WorldToVolume;
-			fogData.IndirectLightFactor	=	rs.Radiosity.MasterIntensity;
-			fogData.DirectLightFactor	=	rs.SkipDirectLighting ? 0 : 1;
+			fogData.WorldToVolume			=	rw.LightMap.WorldToVolume;
+			fogData.IndirectLightFactor		=	rs.Radiosity.MasterIntensity;
+			fogData.DirectLightFactor		=	rs.SkipDirectLighting ? 0 : 1;
 
-			fogData.FogSizeInv			=	new Vector4( 1.0f / fogGridSize.Width, 1.0f / fogGridSize.Height, 1.0f / fogGridSize.Depth, 0 );
-			fogData.FogGridExpK			=	FogGridExpK;
+			fogData.FogSizeInv				=	new Vector4( 1.0f / fogGridSize.Width, 1.0f / fogGridSize.Height, 1.0f / fogGridSize.Depth, 0 );
+			fogData.FogGridExpK				=	FogGridExpK;
 
-			fogData.FogSizeX			=	(uint)fogGridSize.Width;
-			fogData.FogSizeY			=	(uint)fogGridSize.Height;
-			fogData.FogSizeZ			=	(uint)fogGridSize.Depth;
+			fogData.FogSizeX				=	(uint)fogGridSize.Width;
+			fogData.FogSizeY				=	(uint)fogGridSize.Height;
+			fogData.FogSizeZ				=	(uint)fogGridSize.Depth;
 
-			fogData.FogDensity			=	MathUtil.Exp2( rs.Sky.MieScale ) * Sky2.BetaMie.Red;
-			fogData.FogHeight			=	rs.Sky.MieHeight;
-			fogData.FogScale			=	MathUtil.Exp2( rs.Sky.APScale );
+			fogData.FogDensity				=	MathUtil.Exp2( rs.Sky.MieScale ) * Sky2.BetaMie.Red;
+			fogData.FogHeight				=	rs.Sky.MieHeight;
+			fogData.FogScale				=	MathUtil.Exp2( rs.Sky.APScale );
 
-			fogData.SampleOffset		=	random.NextVector4( Vector4.Zero, Vector4.One );
-			fogData.HistoryFactor		=	HistoryFactor;
-			fogData.FrameCount			=	frameCounter;
+			fogData.SampleOffset			=	random.NextVector4( Vector4.Zero, Vector4.One );
+			fogData.HistoryFactor			=	HistoryFactor;
+			fogData.FadeoutDistanceInvSqr	=	(float)Math.Pow( 1.0f / FogFadeoutDistance, 2 );
+			fogData.FrameCount				=	frameCounter;
 
 
 			cbFog.SetData( fogData );

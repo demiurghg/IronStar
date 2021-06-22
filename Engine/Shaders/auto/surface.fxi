@@ -159,6 +159,7 @@ struct FOG_DATA {
 	float      FogDensity;                    // offset:  128
 	float      FogHeight;                     // offset:  132
 	float      FogScale;                      // offset:  136
+	float      FadeoutDistanceInvSqr;         // offset:  140
 };
 #endif
 

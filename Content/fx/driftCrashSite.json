@@ -58,7 +58,7 @@
       "$type": "IronStar.SFX.FXTiming, IronStar",
       "Delay": 0.0,
       "Bunch": 1.0,
-      "FadeIn": 0.3,
+      "FadeIn": 0.4,
       "FadeOut": 0.6
     },
     "Color": "150, 150, 150, 255",
@@ -68,13 +68,13 @@
     "Metallic": 0.0,
     "Intensity": 1.0,
     "IntensityEV": 0.0,
-    "Scattering": 0.5,
+    "Scattering": 1.0,
     "BeamFactor": 51.0,
     "Lifetime": {
       "$id": "7",
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "gauss",
-      "MinLifetime": 1.0,
+      "MinLifetime": 2.0,
       "MaxLifetime": 2.0
     },
     "Shape": {
@@ -103,7 +103,7 @@
       "$type": "IronStar.SFX.FXVelocity, IronStar",
       "Direction": "localRight",
       "LinearDistribution": "gauss",
-      "LinearVelocityMin": 18.0,
+      "LinearVelocityMin": 10.0,
       "LinearVelocityMax": 20.0,
       "RadialDistribution": "gauss",
       "RadialVelocity": 0.0,
@@ -119,21 +119,21 @@
   "ParticleStage2": {
     "$id": "12",
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
-    "Enabled": false,
-    "Sprite": "bulletSpark",
-    "UseRandomImages": false,
+    "Enabled": true,
+    "Sprite": "explosionSmoke",
+    "UseRandomImages": true,
     "Effect": "softLit",
-    "Count": 17,
+    "Count": 5,
     "Period": 1.0,
     "Timing": {
       "$id": "13",
       "$type": "IronStar.SFX.FXTiming, IronStar",
       "Delay": 0.0,
-      "Bunch": 1.0,
-      "FadeIn": 0.1,
+      "Bunch": 0.8,
+      "FadeIn": 0.4,
       "FadeOut": 0.3
     },
-    "Color": "17, 17, 17, 255",
+    "Color": "144, 144, 144, 255",
     "Alpha": 0.5,
     "Exposure": 0.0,
     "Roughness": 0.3,
@@ -141,23 +141,23 @@
     "Intensity": 1.0,
     "IntensityEV": 0.0,
     "Scattering": 1.0,
-    "BeamFactor": 10.0,
+    "BeamFactor": 0.0,
     "Lifetime": {
       "$id": "14",
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "gauss",
-      "MinLifetime": 2.0,
-      "MaxLifetime": 5.0
+      "MinLifetime": 0.5,
+      "MaxLifetime": 1.0
     },
     "Shape": {
       "$id": "15",
       "$type": "IronStar.SFX.FXShape, IronStar",
-      "Size0": 0.2,
-      "Size1": 0.2,
+      "Size0": 5.0,
+      "Size1": 20.0,
       "EnableRotation": true,
       "InitialAngle": 360.0,
-      "MinAngularVelocity": 0.0,
-      "MaxAngularVelocity": 360.0
+      "MinAngularVelocity": -10.0,
+      "MaxAngularVelocity": 10.0
     },
     "Position": {
       "$id": "16",
@@ -178,7 +178,7 @@
       "LinearVelocityMin": 15.0,
       "LinearVelocityMax": 25.0,
       "RadialDistribution": "sphere",
-      "RadialVelocity": 0.0,
+      "RadialVelocity": 1.0,
       "Advection": 0.0
     },
     "Acceleration": {

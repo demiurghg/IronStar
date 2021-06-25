@@ -316,19 +316,28 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	float3	basisUp		=	Camera.CameraUp.xyz    * sz;
 	float 	beamFactor	=	GetBeamFactor(prt);
 
-	if (beamFactor>0) {
-		basisRt	=	(prt.Velocity * 1/60.0f) * beamFactor;
-		basisUp	=	normalize( cross( Camera.CameraPosition.xyz - position, basisRt ) ) * sz;
+	if (beamFactor>0) 
+	{
+		float3	viewDir	=	normalize(Camera.CameraPosition.xyz - position);
+		float3	velNorm	=	normalize(prt.Velocity);
+		basisRt			=	(prt.Velocity * 1/60.0f) * beamFactor;
+		basisUp			=	normalize( cross( viewDir, basisRt ) ) * sz;
 		
-		if (length(basisRt)<sz) {
+		float beamFadeout	=	saturate( 9 - 10*abs(dot( viewDir, velNorm )) );
+		color.a				*=	beamFadeout;
+		
+		if (length(basisRt)<sz) 
+		{
 			basisRt = normalize(basisRt)*sz;
 		}
 	}
-	if (beamFactor<0) {
+	if (beamFactor<0) 
+	{
 		basisRt	=	prt.Velocity;
 		basisUp	=	normalize( cross( Camera.CameraPosition.xyz - position, basisRt ) ) * sz;
 		
-		if (length(basisRt)<sz) {
+		if (length(basisRt)<sz) 
+		{
 			basisRt = normalize(basisRt)*sz;
 		}
 	}
@@ -534,12 +543,17 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 		float4 	color	=	Texture.Sample( LinearSampler, input.TexCoord );
 		float3 	light	=	(input.LMFactor > 0.5f) ? LightMap.Sample( LinearSampler, input.LMCoord ).rgb : 1;
 
-		color.rgba		=	SRGBToLinear( color.rgba ) * input.Color;	
+		//color.rgba		=	SRGBToLinear( color.rgba ) * input.Color;	
+
+		color.rgb		=	SRGBToLinear( color.rgba ) * input.Color.rgb;	
+		color.a			=	color.a * input.Color.a;	
+		//color.a			=	saturate( color.a - 1 + (sqrt(input.Color.a))) * input.Color.a;
+
 		color.rgba 		*= 	softFactor;
 		color.rgb  		*= 	light.rgb;
 		
 		color.rgb		=	ApplyFog( color.rgb, input.Fog );
-		color.a			*	input.Fog.a;
+		//color.a			*	input.Fog.a;
 		
 		return color;
 	#endif

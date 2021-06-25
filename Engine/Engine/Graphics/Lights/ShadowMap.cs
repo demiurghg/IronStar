@@ -433,7 +433,7 @@ namespace Fusion.Engine.Graphics
 
 			var lights = lightSet
 					.SpotLights
-					.Where ( light0 => light0.Visible || light0.EnableGI )
+					.Where ( light0 => light0.Visible )
 					.OrderBy( light1 => light1.DetailLevel )
 					.ToArray();
 
@@ -591,8 +591,6 @@ namespace Fusion.Engine.Graphics
 		/// <param name="lightSet"></param>
 		public void RenderParticleShadows ( GameTime gameTime, RenderSystem rs, RenderWorld renderWorld, LightSet lightSet )
 		{
-			if (ss.SkipParticleShadows) return;
-
 			var lights = lightSet
 					.SpotLights
 					.Where ( light0 => light0.Visible )
@@ -606,29 +604,35 @@ namespace Fusion.Engine.Graphics
 			//
 			using ( new PixEvent( "Particle Shadows" ) ) {
 
-				//	draw cascade shadow particles :
-				foreach ( var cascade in cascades ) 
+				if (!ss.SkipParticleCascadeShadows)
 				{
-					if (NeedCascadeUpdate(cascade))
+					//	draw cascade shadow particles :
+					foreach ( var cascade in cascades ) 
 					{
-						var vp		= new Viewport( cascade.ShadowRegion );
+						if (NeedCascadeUpdate(cascade))
+						{
+							var vp		= new Viewport( cascade.ShadowRegion );
 
-						shadowCamera.ViewMatrix			=	cascade.ViewMatrix;
-						shadowCamera.ProjectionMatrix	=	cascade.ProjectionMatrix;
+							shadowCamera.ViewMatrix			=	cascade.ViewMatrix;
+							shadowCamera.ProjectionMatrix	=	cascade.ProjectionMatrix;
 
-						rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, shadowCamera, prtShadow.Surface, depthBuffer.Surface );
+							rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, shadowCamera, prtShadow.Surface, depthBuffer.Surface );
+						}
 					}
 				}
 
-				//	draw spot shadow particles :
-				foreach ( var spot in lights ) 
+				if (!ss.SkipParticleSpotShadows)
 				{
-					var vp		= new Viewport( spot.ShadowRegion );
+					//	draw spot shadow particles :
+					foreach ( var spot in lights ) 
+					{
+						var vp		= new Viewport( spot.ShadowRegion );
 
-					shadowCamera.ViewMatrix			=	spot.SpotView;
-					shadowCamera.ProjectionMatrix	=	spot.Projection;
+						shadowCamera.ViewMatrix			=	spot.SpotView;
+						shadowCamera.ProjectionMatrix	=	spot.Projection;
 
-					rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, shadowCamera, prtShadow.Surface, depthBuffer.Surface );
+						rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, shadowCamera, prtShadow.Surface, depthBuffer.Surface );
+					}
 				}
 			}
 		}

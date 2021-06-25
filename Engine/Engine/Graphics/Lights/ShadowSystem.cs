@@ -43,7 +43,8 @@ namespace Fusion.Engine.Graphics
 
 		[AECategory("Performance")]		[Config]	public bool UsePointShadowSampling { get; set; } = false;
 		[AECategory("Performance")]		[Config]	public bool SkipShadowMasks { get; set; } = false;
-		[AECategory("Performance")]		[Config]	public bool SkipParticleShadows { get; set; } = false;
+		[AECategory("Performance")]		[Config]	public bool SkipParticleSpotShadows { get; set; } = false;
+		[AECategory("Performance")]		[Config]	public bool SkipParticleCascadeShadows { get; set; } = false;
 		[AECategory("Performance")]		[Config]	public CascadeUpdateMode CascadeUpdateMode { get; set; } = CascadeUpdateMode.Interleave1122;
 
 		[AECategory("Debug")]			[Config]	public bool ShowSplits { get; set; } = false;

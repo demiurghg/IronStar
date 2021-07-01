@@ -240,6 +240,10 @@ namespace Fusion.Engine.Graphics
 		public bool SkipShadows { get; set; }
 
 
+		[Config]
+		[AECategory("Performance")]
+		public bool SkipSpotLights { get; set; }
+
 		/// <summary>
 		/// 
 		/// </summary>

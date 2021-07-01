@@ -66,8 +66,8 @@
     "Exposure": 0.0,
     "Roughness": 0.5,
     "Metallic": 0.0,
-    "Intensity": 64.0,
-    "IntensityEV": 6.0,
+    "Intensity": 128.0,
+    "IntensityEV": 7.0,
     "Scattering": 1.0,
     "BeamFactor": 75.0,
     "Lifetime": {

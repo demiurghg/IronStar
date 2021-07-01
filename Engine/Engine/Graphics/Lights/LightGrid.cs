@@ -229,8 +229,8 @@ namespace Fusion.Engine.Graphics {
 		{
 			var vp = new Rectangle(0,0,1,1);
 
-			foreach ( var sl in lightSet.SpotLights ) {
-
+			foreach ( var sl in lightSet.SpotLights ) 
+			{
 				Vector3 min, max, minF, maxF, minS, maxS;
 				sl.Visible	=	false;
 
@@ -247,7 +247,7 @@ namespace Fusion.Engine.Graphics {
 					min.Z	=	GetGridSlice( min.Z );
 					max.Z	=	GetGridSlice( max.Z );
 
-					sl.Visible		=	true;
+					sl.Visible		=	!rs.SkipSpotLights;
 
 					sl.DetailLevel	=	GetSpotLightLOD( sl, frustum, viewPosition );
 

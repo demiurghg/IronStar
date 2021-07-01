@@ -604,7 +604,7 @@ namespace Fusion.Engine.Graphics
 			//
 			using ( new PixEvent( "Particle Shadows" ) ) {
 
-				if (!ss.SkipParticleCascadeShadows)
+				if (!ss.SkipParticleShadows)
 				{
 					//	draw cascade shadow particles :
 					foreach ( var cascade in cascades ) 
@@ -621,11 +621,16 @@ namespace Fusion.Engine.Graphics
 					}
 				}
 
-				if (!ss.SkipParticleSpotShadows)
+				if (!ss.SkipParticleShadows)
 				{
 					//	draw spot shadow particles :
 					foreach ( var spot in lights ) 
 					{
+						if (spot.DetailLevel>ss.MaxParticleShadowsLod) 
+						{
+							continue;
+						}
+
 						var vp		= new Viewport( spot.ShadowRegion );
 
 						shadowCamera.ViewMatrix			=	spot.SpotView;

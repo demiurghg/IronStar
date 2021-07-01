@@ -2530,7 +2530,7 @@
         "$id": "167",
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
         "LightColor": "255, 192, 32, 255",
-        "LightIntensity": 9.0,
+        "LightIntensity": 0.0,
         "OuterRadius": 100.0,
         "TubeRadius": 0.125,
         "TubeLength": 0.0,
@@ -2556,7 +2556,7 @@
         "$id": "168",
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
         "LightColor": "160, 113, 80, 255",
-        "LightIntensity": 6.0,
+        "LightIntensity": 4.0,
         "OuterRadius": 100.0,
         "TubeRadius": 0.125,
         "TubeLength": 0.0,
@@ -7715,10 +7715,10 @@
         "Name": "0db0dede-40a2-4d66-b2e6-8fa7ada65d88",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-32, 30, 144",
+        "Translation": "-56, 30, 144",
         "Scaling": "1, 0.99999994, 0.99999994",
         "Rotation": "-0.7071067, 0, 0, 0.7071068",
-        "TranslateX": -32.0,
+        "TranslateX": -56.0,
         "TranslateY": 30.0,
         "TranslateZ": 144.0
       },
@@ -7741,10 +7741,10 @@
         "Name": "0db0dede-40a2-4d66-b2e6-8fa7ada65d89",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-32, 29.9999886, 176",
+        "Translation": "-56, 29.9999886, 176",
         "Scaling": "1, 0.9999999, 0.9999999",
         "Rotation": "-0.70710665, 0, 0, 0.7071069",
-        "TranslateX": -32.0,
+        "TranslateX": -56.0,
         "TranslateY": 29.9999886,
         "TranslateZ": 176.0
       },
@@ -7767,10 +7767,10 @@
         "Name": "0db0dede-40a2-4d66-b2e6-8fa7ada65d90",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-32, 29.9999943, 160",
+        "Translation": "-56, 29.9999943, 160",
         "Scaling": "1, 0.9999998, 0.9999998",
         "Rotation": "-0.70710665, 0, 0, 0.7071069",
-        "TranslateX": -32.0,
+        "TranslateX": -56.0,
         "TranslateY": 29.9999943,
         "TranslateZ": 160.0
       },
@@ -7778,7 +7778,7 @@
         "$id": "472",
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
         "LightColor": "160, 113, 80, 255",
-        "LightIntensity": 10.0,
+        "LightIntensity": 4.0,
         "OuterRadius": 100.0,
         "TubeRadius": 0.125,
         "TubeLength": 0.0,
@@ -8161,32 +8161,6 @@
       {
         "$id": "490",
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
-        "LightColor": "247, 64, 16, 255",
-        "LightIntensity": 11.0,
-        "OuterRadius": 100.0,
-        "TubeRadius": 0.125,
-        "TubeLength": 0.0,
-        "NearPlane": 0.125,
-        "FarPlane": 100.0,
-        "FovVertical": 30.0,
-        "FovHorizontal": 30.0,
-        "LightStyle": "default",
-        "EnableGI": true,
-        "SpotMaskName": "grid",
-        "LodBias": 0,
-        "Name": "0db0dede-40a2-4d66-b2e6-8fa7ada65d103",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "356, 108, 68",
-        "Scaling": "1, 0.99999994, 0.9999999",
-        "Rotation": "0.126078725, 0.2566048, -0.0337827057, 0.957662165",
-        "TranslateX": 356.0,
-        "TranslateY": 108.0,
-        "TranslateZ": 68.0
-      },
-      {
-        "$id": "491",
-        "$type": "IronStar.Mapping.MapSpotLight, IronStar",
         "LightColor": "255, 80, 0, 255",
         "LightIntensity": 6.0,
         "OuterRadius": 50.0,
@@ -8211,37 +8185,11 @@
         "TranslateZ": -196.0
       },
       {
-        "$id": "492",
-        "$type": "IronStar.Mapping.MapSpotLight, IronStar",
-        "LightColor": "255, 80, 0, 255",
-        "LightIntensity": 3.0,
-        "OuterRadius": 50.0,
-        "TubeRadius": 0.125,
-        "TubeLength": 0.0,
-        "NearPlane": 0.125,
-        "FarPlane": 49.0,
-        "FovVertical": 45.0,
-        "FovHorizontal": 75.0,
-        "LightStyle": "default",
-        "EnableGI": true,
-        "SpotMaskName": "grid",
-        "LodBias": 0,
-        "Name": "0db0dede-40a2-4d66-b2e6-8fa7ada65d105",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "-180, 28, -220",
-        "Scaling": "1, 0.9999998, 0.9999998",
-        "Rotation": "-0.146446615, 0.853553355, 0.353553385, 0.353553355",
-        "TranslateX": -180.0,
-        "TranslateY": 28.0,
-        "TranslateZ": -220.0
-      },
-      {
-        "$id": "493",
+        "$id": "491",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "494",
+          "$id": "492",
           "$type": "IronStar.FuncFXFactory, IronStar",
           "FX": "fireCrashSite",
           "FXMode": "persistent",
@@ -8261,11 +8209,11 @@
         "TranslateZ": -89.60388
       },
       {
-        "$id": "495",
+        "$id": "493",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "496",
+          "$id": "494",
           "$type": "IronStar.FuncFXFactory, IronStar",
           "FX": "fireCrashSite",
           "FXMode": "persistent",
@@ -8285,11 +8233,11 @@
         "TranslateZ": -78.0
       },
       {
-        "$id": "497",
+        "$id": "495",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "498",
+          "$id": "496",
           "$type": "IronStar.FuncFXFactory, IronStar",
           "FX": "fireCrashSite",
           "FXMode": "persistent",
@@ -8309,7 +8257,7 @@
         "TranslateZ": -89.5
       },
       {
-        "$id": "499",
+        "$id": "497",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\rocks\\Rock_1\\Rock_1.fbx",
         "Scale": 0.7,
@@ -8335,7 +8283,7 @@
         "TranslateZ": -94.0
       },
       {
-        "$id": "500",
+        "$id": "498",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\rocks\\Rock_1\\Rock_1.fbx",
         "Scale": 0.5,
@@ -8361,7 +8309,7 @@
         "TranslateZ": -53.0
       },
       {
-        "$id": "501",
+        "$id": "499",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\rocks\\Rock_1\\Rock_1.fbx",
         "Scale": 0.5,
@@ -8387,7 +8335,7 @@
         "TranslateZ": -72.4192047
       },
       {
-        "$id": "502",
+        "$id": "500",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\moon\\pebbles2.fbx",
         "Scale": 1.0,
@@ -8413,7 +8361,7 @@
         "TranslateZ": -68.0
       },
       {
-        "$id": "503",
+        "$id": "501",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\moon\\moonRockSmall1.fbx",
         "Scale": 1.0,
@@ -8439,7 +8387,7 @@
         "TranslateZ": -73.0
       },
       {
-        "$id": "504",
+        "$id": "502",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\moon\\pebbles1.fbx",
         "Scale": 0.8,
@@ -8465,7 +8413,7 @@
         "TranslateZ": -79.0
       },
       {
-        "$id": "505",
+        "$id": "503",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\moon\\moonBigRock0.fbx",
         "Scale": 1.0,
@@ -8491,7 +8439,7 @@
         "TranslateZ": -74.0
       },
       {
-        "$id": "506",
+        "$id": "504",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\moon\\moonBigRock2.fbx",
         "Scale": 1.0,
@@ -8517,7 +8465,7 @@
         "TranslateZ": -62.0003433
       },
       {
-        "$id": "507",
+        "$id": "505",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\moon\\pebbles1.fbx",
         "Scale": 0.7,
@@ -8543,7 +8491,7 @@
         "TranslateZ": -60.0
       },
       {
-        "$id": "508",
+        "$id": "506",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\moon\\moonRockSmall2.fbx",
         "Scale": 1.0,
@@ -8569,7 +8517,7 @@
         "TranslateZ": -57.0
       },
       {
-        "$id": "509",
+        "$id": "507",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\moon\\pebbles1.fbx",
         "Scale": 0.7,
@@ -8595,7 +8543,7 @@
         "TranslateZ": -68.0
       },
       {
-        "$id": "510",
+        "$id": "508",
         "$type": "IronStar.Mapping.MapDecal, IronStar",
         "ImageName": "explosion",
         "Width": 54.0,
@@ -8621,7 +8569,7 @@
         "TranslateZ": -79.99946
       },
       {
-        "$id": "511",
+        "$id": "509",
         "$type": "IronStar.Mapping.MapDecal, IronStar",
         "ImageName": "explosion",
         "Width": 54.0,
@@ -8647,7 +8595,7 @@
         "TranslateZ": -61.2060966
       },
       {
-        "$id": "512",
+        "$id": "510",
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
         "LightColor": "255, 80, 0, 255",
         "LightIntensity": 6.0,
@@ -8673,61 +8621,153 @@
         "TranslateZ": -288.0
       },
       {
-        "$id": "513",
-        "$type": "IronStar.Mapping.MapSpotLight, IronStar",
-        "LightColor": "247, 64, 16, 255",
-        "LightIntensity": 8.0,
-        "OuterRadius": 100.0,
-        "TubeRadius": 0.125,
-        "TubeLength": 0.0,
-        "NearPlane": 0.125,
-        "FarPlane": 100.0,
-        "FovVertical": 30.0,
-        "FovHorizontal": 30.0,
-        "LightStyle": "default",
-        "EnableGI": true,
-        "SpotMaskName": "grid",
-        "LodBias": 0,
-        "Name": "0db0dede-40a2-4d66-b2e6-8fa7ada65d107",
+        "$id": "511",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "512",
+          "$type": "IronStar.FuncFXFactory, IronStar",
+          "FX": "fireCrashSite",
+          "FXMode": "persistent",
+          "Once": false,
+          "Start": true,
+          "MinInterval": 1,
+          "MaxInterval": 1
+        },
+        "Name": "82f60d6c-d6dd-4863-af68-5899ad796ecb0",
         "Visible": true,
         "Frozen": false,
-        "Translation": "8, 144, 216",
-        "Scaling": "1, 0.99999994, 0.9999998",
-        "Rotation": "0.126078725, 0.2566048, -0.0337827019, 0.9576622",
-        "TranslateX": 8.0,
-        "TranslateY": 144.0,
-        "TranslateZ": 216.0
+        "Translation": "-32, 20, 132",
+        "Scaling": "1, 1, 1",
+        "Rotation": "-0.482962579, -0.2241438, -0.1294093, 0.836516559",
+        "TranslateX": -32.0,
+        "TranslateY": 20.0,
+        "TranslateZ": 132.0
       },
       {
-        "$id": "514",
-        "$type": "IronStar.Mapping.MapSpotLight, IronStar",
-        "LightColor": "247, 64, 16, 255",
-        "LightIntensity": 7.0,
-        "OuterRadius": 100.0,
-        "TubeRadius": 0.125,
-        "TubeLength": 0.0,
-        "NearPlane": 0.125,
-        "FarPlane": 100.0,
-        "FovVertical": 30.0,
-        "FovHorizontal": 30.0,
-        "LightStyle": "default",
-        "EnableGI": true,
-        "SpotMaskName": "grid",
-        "LodBias": 0,
-        "Name": "0db0dede-40a2-4d66-b2e6-8fa7ada65d108",
+        "$id": "513",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "514",
+          "$type": "IronStar.FuncFXFactory, IronStar",
+          "FX": "fireCrashSite",
+          "FXMode": "persistent",
+          "Once": false,
+          "Start": true,
+          "MinInterval": 1,
+          "MaxInterval": 1
+        },
+        "Name": "82f60d6c-d6dd-4863-af68-5899ad796ecb1",
         "Visible": true,
         "Frozen": false,
-        "Translation": "20, 144, 216",
-        "Scaling": "1, 0.99999994, 0.9999998",
-        "Rotation": "0.07945937, -0.379409581, -0.103553489, 0.9159756",
-        "TranslateX": 20.0,
-        "TranslateY": 144.0,
-        "TranslateZ": 216.0
+        "Translation": "-32, 16, 108",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0, 0, 0, 1",
+        "TranslateX": -32.0,
+        "TranslateY": 16.0,
+        "TranslateZ": 108.0
+      },
+      {
+        "$id": "515",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "516",
+          "$type": "IronStar.FuncFXFactory, IronStar",
+          "FX": "driftCrashSite",
+          "FXMode": "persistent",
+          "Once": false,
+          "Start": false,
+          "MinInterval": 1,
+          "MaxInterval": 1
+        },
+        "Name": "b0049f37-a578-4fef-95de-9cd1b0236ae44",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-4, 32, 152",
+        "Scaling": "0.999999166, 1, 0.9999991",
+        "Rotation": "0, -0.70710665, 0, 0.7071069",
+        "TranslateX": -4.0,
+        "TranslateY": 32.0,
+        "TranslateZ": 152.0
+      },
+      {
+        "$id": "517",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "518",
+          "$type": "IronStar.FuncFXFactory, IronStar",
+          "FX": "driftCrashSite",
+          "FXMode": "persistent",
+          "Once": false,
+          "Start": false,
+          "MinInterval": 1,
+          "MaxInterval": 1
+        },
+        "Name": "b0049f37-a578-4fef-95de-9cd1b0236ae45",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "52, 32, 152",
+        "Scaling": "0.9999991, 1, 0.999999046",
+        "Rotation": "0, -0.70710665, 0, 0.7071069",
+        "TranslateX": 52.0,
+        "TranslateY": 32.0,
+        "TranslateZ": 152.0
+      },
+      {
+        "$id": "519",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "520",
+          "$type": "IronStar.FuncFXFactory, IronStar",
+          "FX": "driftCrashSite",
+          "FXMode": "persistent",
+          "Once": false,
+          "Start": false,
+          "MinInterval": 1,
+          "MaxInterval": 1
+        },
+        "Name": "b0049f37-a578-4fef-95de-9cd1b0236ae46",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "100, 32, 152",
+        "Scaling": "0.999999046, 1, 0.999999",
+        "Rotation": "0, -0.70710665, 0, 0.7071069",
+        "TranslateX": 100.0,
+        "TranslateY": 32.0,
+        "TranslateZ": 152.0
+      },
+      {
+        "$id": "521",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "522",
+          "$type": "IronStar.FuncFXFactory, IronStar",
+          "FX": "driftCrashSite",
+          "FXMode": "persistent",
+          "Once": false,
+          "Start": false,
+          "MinInterval": 1,
+          "MaxInterval": 1
+        },
+        "Name": "b0049f37-a578-4fef-95de-9cd1b0236ae47",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "140, 32, 152",
+        "Scaling": "0.999999, 1, 0.9999989",
+        "Rotation": "0, -0.70710665, 0, 0.7071069",
+        "TranslateX": 140.0,
+        "TranslateY": 32.0,
+        "TranslateZ": 152.0
       }
     ]
   },
   "RadiositySettings": {
-    "$id": "515",
+    "$id": "523",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 128,
     "NumBounces": 1,

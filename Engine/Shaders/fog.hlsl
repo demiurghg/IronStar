@@ -72,8 +72,8 @@ float GetAPBlendFactor( uint slice )
 
 #ifdef COMPUTE
 
-static const float HISTORY_FACTOR_SHADOW	=	0.97f;
-static const float HISTORY_FACTOR_FOG		=	0.99f;
+static const float HISTORY_FACTOR_SHADOW	= 0.97f;
+static const float HISTORY_FACTOR_FOG		= 0.99f;
 
 static const float2 aa8[8] = 
 {

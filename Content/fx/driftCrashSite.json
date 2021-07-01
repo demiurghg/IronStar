@@ -123,14 +123,14 @@
     "Sprite": "explosionSmoke",
     "UseRandomImages": true,
     "Effect": "softLit",
-    "Count": 5,
+    "Count": 10,
     "Period": 1.0,
     "Timing": {
       "$id": "13",
       "$type": "IronStar.SFX.FXTiming, IronStar",
       "Delay": 0.0,
       "Bunch": 0.8,
-      "FadeIn": 0.4,
+      "FadeIn": 0.7,
       "FadeOut": 0.3
     },
     "Color": "144, 144, 144, 255",
@@ -165,9 +165,9 @@
       "OffsetDirection": "localUp",
       "OffsetFactor": 0.0,
       "Distribution": "box",
-      "Width": 4.0,
+      "Width": 16.0,
       "Height": 0.0,
-      "Depth": 4.0,
+      "Depth": 16.0,
       "Radius": 0.0
     },
     "Velocity": {

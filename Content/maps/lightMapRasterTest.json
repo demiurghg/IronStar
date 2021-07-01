@@ -93,26 +93,6 @@
       },
       {
         "$id": "9",
-        "$type": "IronStar.Mapping.MapOmniLight, IronStar",
-        "OuterRadius": 5.0,
-        "TubeRadius": 0.125,
-        "TubeLength": 0.0,
-        "LightStyle": "default",
-        "Ambient": false,
-        "LightColor": "255, 255, 255, 255",
-        "LightIntensity": 100.0,
-        "Name": "MapOmniLight0",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "25, 0, 34",
-        "Scaling": "1, 1, 1",
-        "Rotation": "0, 0, 0, 1",
-        "TranslateX": 25.0,
-        "TranslateY": 0.0,
-        "TranslateZ": 34.0
-      },
-      {
-        "$id": "10",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\moon\\moonRockMedium2.fbx",
         "Scale": 1.0,
@@ -138,7 +118,7 @@
         "TranslateZ": -24.0
       },
       {
-        "$id": "11",
+        "$id": "10",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\pipes\\bigPipeSupport.fbx",
         "Scale": 1.0,
@@ -164,7 +144,7 @@
         "TranslateZ": -34.0
       },
       {
-        "$id": "12",
+        "$id": "11",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\moon\\pebbles0.fbx",
         "Scale": 0.5,
@@ -190,7 +170,7 @@
         "TranslateZ": -26.0
       },
       {
-        "$id": "13",
+        "$id": "12",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\moon\\pebbles0.fbx",
         "Scale": 0.7,
@@ -216,7 +196,7 @@
         "TranslateZ": -26.0
       },
       {
-        "$id": "14",
+        "$id": "13",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\moon\\moonRockSmall0.fbx",
         "Scale": 1.0,
@@ -242,11 +222,11 @@
         "TranslateZ": -24.0
       },
       {
-        "$id": "15",
+        "$id": "14",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "16",
+          "$id": "15",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "BOXEXPLOSIVE"
         },
@@ -261,7 +241,7 @@
         "TranslateZ": -2.36470962
       },
       {
-        "$id": "17",
+        "$id": "16",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 32.0,
         "Transition": 8.0,
@@ -276,7 +256,7 @@
         "TranslateZ": -15.0
       },
       {
-        "$id": "18",
+        "$id": "17",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 32.0,
         "Transition": 8.0,
@@ -291,7 +271,7 @@
         "TranslateZ": 16.0
       },
       {
-        "$id": "19",
+        "$id": "18",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
@@ -317,7 +297,7 @@
         "TranslateZ": 0.0
       },
       {
-        "$id": "20",
+        "$id": "19",
         "$type": "IronStar.Mapping.MapModel, IronStar",
         "ScenePath": "scenes\\pipes\\bigPipeSegment32.fbx",
         "Scale": 1.0,
@@ -343,7 +323,7 @@
         "TranslateZ": 0.0
       },
       {
-        "$id": "21",
+        "$id": "20",
         "$type": "IronStar.Mapping.MapLightVolume, IronStar",
         "ResolutionX": 16,
         "ResolutionY": 16,
@@ -362,7 +342,7 @@
         "TranslateZ": 0.0
       },
       {
-        "$id": "22",
+        "$id": "21",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 32.0,
         "Transition": 16.0,
@@ -377,22 +357,7 @@
         "TranslateZ": -16.0
       },
       {
-        "$id": "23",
-        "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
-        "Radius": 32.0,
-        "Transition": 16.0,
-        "Name": "MapLightProbeSphere3",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "67, 7, 16",
-        "Scaling": "1, 1, 1",
-        "Rotation": "0, 0, 0, 1",
-        "TranslateX": 67.0,
-        "TranslateY": 7.0,
-        "TranslateZ": 16.0
-      },
-      {
-        "$id": "24",
+        "$id": "22",
         "$type": "IronStar.Mapping.MapLightProbeSphere, IronStar",
         "Radius": 32.0,
         "Transition": 8.0,
@@ -409,7 +374,7 @@
     ]
   },
   "RadiositySettings": {
-    "$id": "25",
+    "$id": "23",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 256,
     "NumBounces": 3,

@@ -203,6 +203,7 @@ SKY_SST computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin,
     float 	g 			= 	Sky.MieExcentricity; 
 	float3	betaR		=	Sky.BetaRayleigh.xyz;
 	float3	betaM		=	Sky.BetaMie.xyz;
+	float3	mieColor	=	pow(Sky.MieColor.rgb, 2.2f);
 
 	SKY_SST st;
 	st.scattering0		=	0;
@@ -240,8 +241,8 @@ SKY_SST computeIncidentLight(float3 orig, float3 dir, float3 sunDir, float tmin,
 		float3	transmittance	=	exp( - extinction );
 		
 		float3	luminance		=	ComputeIndcidentSunLight( pos, sunDir );
-		float3	scattering0		=	luminance * (hr * phaseR * betaR + hm * phaseM * betaM);
-		float3	scattering1		=	SampleAmbient(dir) * (hr * betaR + hm * betaM);
+		float3	scattering0		=	luminance * (hr * phaseR * betaR + hm * phaseM * betaM * mieColor);
+		float3	scattering1		=	SampleAmbient(dir) * (hr * betaR + hm * betaM * mieColor);
 
 		float3	integScatt0		=	( scattering0 - scattering0 * transmittance ) / extinctionClamp;
 		float3	integScatt1		=	( scattering1 - scattering1 * transmittance ) / extinctionClamp;
@@ -545,7 +546,7 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 	
 	float4 	skyScattering		= 	LutScattering	.SampleLevel( LutSampler, normUV, 0 );
 	float4 	skyTransmittance	= 	LutTransmittance.SampleLevel( LutSampler, normUV, 0 );
-	float4 	skyCirrusClouds		= 	LutCirrus		.SampleLevel( LutSampler, normUV, 0 );
+	float4 	skyCirrusClouds		= 	LutCirrus		.SampleLevel( LutSampler, normUV, 0 ) * pow(Sky.MieColor, 2.2f);
 
 	//-----------------------------------------
 	//	compute sun color (sky view only):

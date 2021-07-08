@@ -164,6 +164,9 @@ namespace Fusion.Engine.Graphics {
 		
 		[AECategory("Debug")]
 		public bool ShowLut { get; set; } = false;
+		
+		[AECategory("Debug")]
+		public bool SkipSky { get; set; } = false;
 
 		Vector2 currentCloudOffset = Vector2.Zero;
 
@@ -271,7 +274,7 @@ namespace Fusion.Engine.Graphics {
 			SkySphereSize = 10;
 			RayleighScale = -3f;
 			MieScale = 6;
-			MieColor = new Color(50, 80, 135, 255);	 // ref color: 208,185,121
+			MieColor = new Color(208,185,118, 255);	 // ref color: 208,185,121
 			APScale = 4;
 			AmbientLevel = 0.8f;
 			CirrusCoverage = 0;
@@ -318,6 +321,7 @@ namespace Fusion.Engine.Graphics {
 		{
 			public Color4	BetaRayleigh;	
 			public Color4	BetaMie;
+			public Color4	MieColor;
 
 			public Color4	SunIntensity;
 			public Color4	SunBrightness; // 
@@ -509,7 +513,8 @@ namespace Fusion.Engine.Graphics {
 			var viewOrigin		=	upVector * eleveation;
 
 			skyData.BetaRayleigh		=	BetaRayleigh * MathUtil.Exp2( RayleighScale );	
-			skyData.BetaMie				=	BetaMie		 * MathUtil.Exp2( MieScale ) * MieColor;
+			skyData.BetaMie				=	BetaMie		 * MathUtil.Exp2( MieScale );
+			skyData.MieColor			=	MieColor;
 			skyData.PlanetRadius		=	( PlanetRadius ) * 1000	;
 			skyData.AtmosphereRadius	=	( PlanetRadius + AtmosphereHeight ) * 1000;
 			skyData.RayleighHeight		=	RayleighHeight;
@@ -577,6 +582,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="settings"></param>
 		internal void RenderSky( GameTime gameTime, Camera camera, StereoEye stereoEye, HdrFrame frame, bool cubemap )
 		{
+			if (SkipSky) return;
+
 			RenderSky( gameTime, camera, stereoEye, frame.HdrTarget.Surface, cubemap );
 
 			if (ShowLut)
@@ -605,6 +612,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="techName"></param>
 		internal void RenderSkyLut( GameTime gameTime, Camera camera )
 		{
+			if (SkipSky) return;
+
 			UpdateCloudPosition( gameTime );
 
 			ambientColor = ComputeZenithColor() * AmbientLevel;
@@ -644,6 +653,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="techName"></param>
 		internal void RenderSky( GameTime gameTime, Camera camera, StereoEye stereoEye, RenderTargetSurface color, bool cubemap )
 		{
+			if (SkipSky) return;
+
 			using ( new PixEvent( "Sky" ) )
 			{
 				device.ResetStates();
@@ -671,6 +682,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="techName"></param>
 		internal void RenderSkyCube( GameTime gameTime, Camera camera )
 		{
+			if (SkipSky) return;
+
 			using ( new PixEvent( "SkyCube" ) )
 			{
 				device.ResetStates();

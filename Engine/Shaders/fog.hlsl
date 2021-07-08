@@ -72,7 +72,6 @@ float GetAPBlendFactor( uint slice )
 
 #ifdef COMPUTE
 
-static const float HISTORY_FACTOR_SHADOW	= 0.97f;
 static const float HISTORY_FACTOR_FOG		= 0.99f;
 
 static const float2 aa8[8] = 
@@ -115,7 +114,7 @@ float ClipHistory( float4 ppPosition, float4 ppPosition2 )
 	float3	deviceCoords	=	ppPosition.xyz  / ppPosition.w;
 	float3	deviceCoords2	=	ppPosition2.xyz / ppPosition2.w;
 	
-	float 	falloff			=	1 - 0.5*saturate(3*distance(deviceCoords, deviceCoords2));
+	float 	falloff			=	1;//1 - saturate(1.0f*distance(deviceCoords, deviceCoords2));
 	
 	float	maxX			=	1.0f - 0.5f * Fog.FogSizeInv.x;
 	float	maxY			=	1.0f - 0.5f * Fog.FogSizeInv.y;
@@ -138,6 +137,7 @@ float4 GetFogHistory( float3 wsPosition, out float factor )
 {
 	float4 	ppPosition	=	mul( float4(wsPosition,1), Camera.ReprojectionMatrix );
 	float4 	ppPosition2	=	mul( float4(wsPosition,1), Camera.ViewProjection );
+	
 	float4	fogData		=	SampleVolumetricFog( Fog, ppPosition, LinearClamp, FogHistory );
 	
 	factor = ClipHistory( ppPosition, ppPosition2 ) * HISTORY_FACTOR_FOG;
@@ -146,19 +146,7 @@ float4 GetFogHistory( float3 wsPosition, out float factor )
 }
 
 
-float2 GetShadowHistory( float3 wsPosition, out float factor )
-{
-	float4 	ppPosition	=	mul( float4(wsPosition,1), Camera.ReprojectionMatrix );
-	float4 	ppPosition2	=	mul( float4(wsPosition,1), Camera.ViewProjection );
-	float4	fogData		=	SampleVolumetricFog( Fog, ppPosition, LinearClamp, FogShadowHistory );
-	
-	factor = ClipHistory( ppPosition, ppPosition2 ) * HISTORY_FACTOR_SHADOW;
-	
-	return saturate(fogData.xy);
-}
-
-
-[numthreads(16,16,1)] 
+[numthreads(4,4,4)] 
 void CSMain( 
 	uint3 groupId : SV_GroupID, 
 	uint3 groupThreadId : SV_GroupThreadID, 
@@ -171,25 +159,27 @@ void CSMain(
 	float	historyFactorShadow	=	0;
 	float3	wsPositionNJ	=	GetWorldPosition( location.xyz );
 	float4	fogHistory		=	GetFogHistory( wsPositionNJ, historyFactorFog );
-	float2	shadowHistory	=	GetShadowHistory( wsPositionNJ, historyFactorShadow );
-	
+ 	
 	//float3	offset			=	float3(0,0,0.75f);
 	//float3	offset			=	aaPattern[ Fog.FrameCount % 8 ] * 1 * float3(0.5f,0.5f,0.5f);	
-	float	offsetZ			=	( (bayer[location.x&3][location.y&3] + Fog.FrameCount*11) & 0xF ) / 16.0f;
-	float2	offsetXY		=	1.0f*aa5[Fog.FrameCount % 5];
+	float	offsetZ			=	( (bayer[location.x&3][location.y&3] + Fog.FrameCount*1 + location.z*0) & 0xF ) / 16.0f;
+	float2	offsetXY		=	aa5[Fog.FrameCount % 5];
 	float3	offset			=	float3(offsetXY, offsetZ);
 	float3 	wsPosition		=	GetWorldPosition( location.xyz + offset );
 	
 	float3	cameraPos		=	Camera.CameraPosition.xyz;
 	
 	//	Compute fog density :
-	float	fadeout			=	pow( saturate( 1 - location.z * Fog.FogSizeInv.z ), 4 );
+	float	fadeout			=	pow( saturate( 1 - location.z * (Fog.FogSizeInv.z) * 1.1f ), 0.5f );
 	float	density			=	GetAtmosphericFogDensity( wsPositionNJ );
+	float3	color			=	1;
+	float3 	glow			=	0;
+	
+	density	=	0.01 * saturate( exp(- 0.01*wsPositionNJ.y ) );
 	
 	//	Compute phase function of incoming light :
-	float	apWeight	=	GetAPBlendFactor( location.z );
-	float3	localLight	=	ComputeClusteredLighting( wsPosition ).rgb * density;
-	float3	phaseLight	=	localLight;
+	float3	localLight	=	ComputeClusteredLighting( wsPosition ).rgb * density * color;
+	float3	phaseLight	=	localLight + glow * density;
 	
 	//	Compute length of the cell :
 	float	stepLength		=	GetCellLength( location.xyz );
@@ -201,27 +191,12 @@ void CSMain(
 	float3	scattering		=	phaseLight * stepLength;
 	float3	integScatt		=	( scattering - scattering * transmittance ) / extinctionClamp;
 	
-	float4	fogST			=	float4( integScatt, 1 /* transmittance w/o atmospheric fog */ );
+	float4	fogST			=	float4( integScatt, transmittance*1 /* transmittance w/o atmospheric fog */ );
 	
 	//	to prevent NaN-history :
 	float4 factor			=	float4( historyFactorFog, historyFactorFog, historyFactorFog, 0 );
 	FogTarget[ location.xyz ] = historyFactorFog==0 ? fogST : lerp( fogST, fogHistory, factor );
-	
-	//	Compute sky shadow and ambient occlusion :
-#if 0
-	float2 skyShadow = 0;
-	for (int i=0; i<4; i++)
-	{
-		wsPosition = GetWorldPosition( location.xyz + offset + float3(0,0,0.25f*i) );
-		skyShadow += 0.25f*ComputeSkyShadow( wsPosition );
-	}
-#else
-	float2 	skyShadow	=	ComputeSkyShadow( wsPosition );
-#endif
-			
-	skyShadow	=	historyFactorShadow==0 ? skyShadow : lerp( skyShadow, shadowHistory, historyFactorShadow );
-			
-	FogShadowTarget[ location.xyz ] = float4( skyShadow, 0, 0 );
+	//FogTarget[ location.xyz ] = float4(float3(1,1,1)/100.0f, 0.99f);
 }
 
 #endif
@@ -244,8 +219,6 @@ void CSMain(
 	
 	float3	accumFogScattering		=	float3(0,0,0);
 	float	accumFogTransmittance	=	1;
-	float3	accumSkyScattering		=	float3(0,0,0);
-	float	accumSkyTransmittance	=	1;
 	
 	bool 	applyFog = location.x > 64;
 	float3	apST0prev = 0;
@@ -265,45 +238,32 @@ void CSMain(
 		loadUVW.z = pow(abs(loadUVW.z), 1.0f / 1.5f);
 
 		//	Sample AP LUT :
-		float2	skyShadow		=	FogShadowSource[ loadXYZ ].rg;
-		
 		float	apWeight		=	GetAPBlendFactor( slice );
 		float	fogWeight		=	1 - apWeight;
-		float4	apST0			=	LutAP0.SampleLevel( LinearClamp, loadUVW, 0 );
-		float3	spST0delta		=	apST0.rgb - apST0prev;
-				apST0prev		=	apST0.rgb;
-		float4	apST1			=	LutAP1.SampleLevel( LinearClamp, loadUVW, 0 );
-		float3	spST1delta		=	apST1.rgb - apST1prev;
-				apST1prev		=	apST1.rgb;
-				
-		float3	spSTdelta		=	spST0delta * skyShadow.r + spST1delta * skyShadow.g;
+		float4	apST			=	LutAP0.SampleLevel( LinearClamp, loadUVW, 0 );
+				apST			+=	LutAP1.SampleLevel( LinearClamp, loadUVW, 0 );
+				apST.rgb		*=	apWeight;
 				
 		//	Sample FOG grid :
 		float4 	fogST			=	FogSource[ loadXYZ ];
 		
 		//	Integrate FOG with AP :
-		accumFogScattering		+=	spSTdelta + fogST.rgb * accumFogTransmittance;
+		accumFogScattering		+=	fogST.rgb * accumFogTransmittance;
 		accumFogTransmittance	*=	fogST.a;
 		
-		accumSkyScattering		+=	fogST.rgb * accumFogTransmittance;
-		accumSkyTransmittance	*=	fogST.a;
-		
 		//	Store fog in LUT :
-		FogTarget[ storeXYZ ]	=	float4( accumFogScattering, accumFogTransmittance * apST0.a );
+		FogTarget[ storeXYZ ]	=	float4( accumFogScattering + apST.rgb * accumFogTransmittance, accumFogTransmittance * apST.a );
 		
 		#ifdef SHOW_SLICE
-			float4 	areaFog	=	float4(4,4,0, slice % 2);
-			float4 	areaAP	=	float4(0,0,8, slice % 2);
-			FogTarget[ int3( location.xy, slice ) ]	=	lerp( areaFog, areaAP, apWeight );
-			if (slice>=Fog.FogSizeZ-6) FogTarget[ int3( location.xy, slice ) ]	=	float4(8,0,0,1);
+			float4 	areaFog	=	float4(1,0,0, slice % 2) * 0.1f;
+			FogTarget[ int3( location.xy, slice ) ]	=	areaFog;//lerp( areaFog, areaAP, apWeight );
+			if (slice>=Fog.FogSizeZ-1) FogTarget[ int3( location.xy, slice ) ]	=	float4(8,0,0,1);
 		#endif
 	}
-	
+
 	// 	integrated FOG for sky only, 
 	//	because sky already has aerial perspective itself :
-	float4	apST			=	LutAP0.SampleLevel( LinearClamp, float3( location.xy * Fog.FogSizeInv.xy, 1), 0 );
-	
-	SkyFogLut[ location.xy ] 	=	float4( accumSkyScattering, accumSkyTransmittance );
+	SkyFogLut[ location.xy ] 	=	float4( accumFogScattering, accumFogTransmittance );
 }
 
 #endif

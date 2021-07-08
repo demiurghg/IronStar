@@ -164,16 +164,13 @@ float3 ComputeClusteredLighting ( float3 worldPos )
 	float3	volumeCoord	=	mul( float4(worldPos, 1), Fog.WorldToVolume ).xyz;
 	float3 	lightmap	=	EvaluateLightVolume( rcLightMap, volumeCoord );
 	
-	//totalLight.rgb		+=	lightmap;
+	totalLight.rgb		+=	lightmap;// * 6.28;
 
 	//----------------------------------------------------------------------------------------------
 	//	Compute direct light :
 	//----------------------------------------------------------------------------------------------
 	
-	if (0)
-	{
-		totalLight.rgb += ComputeDirectLight2( geometry, DirectLight, Camera, CascadeShadow, rcShadow, float2(1,1) );
-	}
+	totalLight.rgb += ComputeDirectLight2( geometry, DirectLight, Camera, CascadeShadow, rcShadow, float2(1,1) );
 
 	//----------------------------------------------------------------------------------------------
 	//	Compute point lights :

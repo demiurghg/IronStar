@@ -48,7 +48,7 @@
     "$id": "5",
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
     "Enabled": true,
-    "Sprite": "explosionSmoke",
+    "Sprite": "smoke",
     "UseRandomImages": false,
     "Effect": "softLit",
     "Count": 3,
@@ -61,7 +61,7 @@
       "FadeIn": 0.4,
       "FadeOut": 0.6
     },
-    "Color": "150, 150, 150, 255",
+    "Color": "132, 132, 132, 255",
     "Alpha": 0.5,
     "Exposure": 0.0,
     "Roughness": 0.33,
@@ -84,8 +84,8 @@
       "Size1": 10.0,
       "EnableRotation": true,
       "InitialAngle": 360.0,
-      "MinAngularVelocity": 50.0,
-      "MaxAngularVelocity": -50.0
+      "MinAngularVelocity": 5.0,
+      "MaxAngularVelocity": -5.0
     },
     "Position": {
       "$id": "9",
@@ -120,8 +120,8 @@
     "$id": "12",
     "$type": "IronStar.SFX.FXParticleStage, IronStar",
     "Enabled": true,
-    "Sprite": "explosionSmoke",
-    "UseRandomImages": true,
+    "Sprite": "smoke",
+    "UseRandomImages": false,
     "Effect": "softLit",
     "Count": 10,
     "Period": 1.0,
@@ -133,7 +133,7 @@
       "FadeIn": 0.7,
       "FadeOut": 0.3
     },
-    "Color": "144, 144, 144, 255",
+    "Color": "140, 140, 140, 255",
     "Alpha": 0.5,
     "Exposure": 0.0,
     "Roughness": 0.3,

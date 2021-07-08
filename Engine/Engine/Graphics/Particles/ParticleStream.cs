@@ -346,7 +346,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="particle"></param>
 		public void InjectParticle ( ref Particle particle )
 		{
-			if (renderWorld.IsPaused) {
+			if (renderWorld.IsPaused || rs.SkipParticles) {
 				return;
 			}
 

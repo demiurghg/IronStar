@@ -71,32 +71,33 @@ struct FOG_DATA {
 struct SKY_DATA {
 	float4     BetaRayleigh;                  // offset:    0
 	float4     BetaMie;                       // offset:   16
-	float4     SunIntensity;                  // offset:   32
-	float4     SunBrightness;                 // offset:   48
-	float4     SunDirection;                  // offset:   64
-	float4     ViewOrigin;                    // offset:   80
-	float4     AmbientLevel;                  // offset:   96
-	float4     ViewportSize;                  // offset:  112
-	float      SunAzimuth;                    // offset:  128
-	float      SunAltitude;                   // offset:  132
-	float      APScale;                       // offset:  136
-	float      Dummy1;                        // offset:  140
-	float      PlanetRadius;                  // offset:  144
-	float      AtmosphereRadius;              // offset:  148
-	float      RayleighHeight;                // offset:  152
-	float      MieHeight;                     // offset:  156
-	float      MieExcentricity;               // offset:  160
-	float      SkySphereSize;                 // offset:  164
-	float      ViewHeight;                    // offset:  168
-	float      SkyExposure;                   // offset:  172
-	float      CirrusHeight;                  // offset:  176
-	float      CirrusCoverage;                // offset:  180
-	float      CirrusDensity;                 // offset:  184
-	float      CirrusScale;                   // offset:  188
-	float      CirrusScrollU;                 // offset:  192
-	float      CirrusScrollV;                 // offset:  196
-	float      Dummy2;                        // offset:  200
-	float      Dummy3;                        // offset:  204
+	float4     MieColor;                      // offset:   32
+	float4     SunIntensity;                  // offset:   48
+	float4     SunBrightness;                 // offset:   64
+	float4     SunDirection;                  // offset:   80
+	float4     ViewOrigin;                    // offset:   96
+	float4     AmbientLevel;                  // offset:  112
+	float4     ViewportSize;                  // offset:  128
+	float      SunAzimuth;                    // offset:  144
+	float      SunAltitude;                   // offset:  148
+	float      APScale;                       // offset:  152
+	float      Dummy1;                        // offset:  156
+	float      PlanetRadius;                  // offset:  160
+	float      AtmosphereRadius;              // offset:  164
+	float      RayleighHeight;                // offset:  168
+	float      MieHeight;                     // offset:  172
+	float      MieExcentricity;               // offset:  176
+	float      SkySphereSize;                 // offset:  180
+	float      ViewHeight;                    // offset:  184
+	float      SkyExposure;                   // offset:  188
+	float      CirrusHeight;                  // offset:  192
+	float      CirrusCoverage;                // offset:  196
+	float      CirrusDensity;                 // offset:  200
+	float      CirrusScale;                   // offset:  204
+	float      CirrusScrollU;                 // offset:  208
+	float      CirrusScrollV;                 // offset:  212
+	float      Dummy2;                        // offset:  216
+	float      Dummy3;                        // offset:  220
 };
 #endif
 

@@ -90,8 +90,8 @@
     "Position": {
       "$id": "9",
       "$type": "IronStar.SFX.FXPosition, IronStar",
-      "OffsetDirection": "none",
-      "OffsetFactor": 0.0,
+      "OffsetDirection": "localUp",
+      "OffsetFactor": 1.0,
       "Distribution": "sphere",
       "Width": 1.0,
       "Height": 1.0,
@@ -362,7 +362,7 @@
       "$id": "35",
       "$type": "IronStar.SFX.FXLifetime, IronStar",
       "Distribution": "gauss",
-      "MinLifetime": 0.3,
+      "MinLifetime": 0.5,
       "MaxLifetime": 0.6
     },
     "Shape": {

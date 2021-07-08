@@ -114,7 +114,7 @@ namespace Fusion.Engine.Graphics
 			float 	opticalDepthR	=	0;
 			float 	opticalDepthM	=	0;
 			var	betaR				=	BetaRayleigh * MathUtil.Exp2( RayleighScale );
-			var	betaM				=	BetaMie		 * MathUtil.Exp2( MieScale ) * MieColor;
+			var	betaM				=	BetaMie		 * MathUtil.Exp2( MieScale ) /** MieColor*/;
 	
 			//	integrate transmittance numerically using
 			//	analytically calculated integral for each segment
@@ -180,7 +180,7 @@ namespace Fusion.Engine.Graphics
 			float	M_PI	=	3.141592f;
 			float 	g 		= 	MieExcentricity; 
 			var	betaR		=	BetaRayleigh * MathUtil.Exp2( RayleighScale );
-			var	betaM		=	BetaMie		 * MathUtil.Exp2( MieScale ) * MieColor;
+			var	betaM		=	BetaMie		 * MathUtil.Exp2( MieScale ) /** MieColor*/;
 			var		sunDir	=	GetSunDirection();
 
 			SkyST st = new SkyST();
@@ -230,7 +230,7 @@ namespace Fusion.Engine.Graphics
 		Color4 ComputeAtmosphereAbsorption( Vector3 origin, Vector3 direction )
 		{
 			var	betaR		=	BetaRayleigh * MathUtil.Exp2( RayleighScale );
-			var	betaM		=	BetaMie		 * MathUtil.Exp2( MieScale ) * MieColor;
+			var	betaM		=	BetaMie		 * MathUtil.Exp2( MieScale ) /** MieColor*/;
 			var distance	=	0.0f;
 
 			if ( RayAtmosphereIntersection( origin, direction, out distance) )

@@ -243,11 +243,11 @@ namespace Fusion.Engine.Graphics {
 
 			switch (fogQuality)
 			{
-				case QualityLevel.None:	   fogGridSize	=	new Size3(  32,  24,  96 );	break;
-				case QualityLevel.Low:	   fogGridSize	=	new Size3(  32,  24,  96 );	break;
-				case QualityLevel.Medium:  fogGridSize	=	new Size3(  64,  48,  96 );	break;
-				case QualityLevel.High:	   fogGridSize	=	new Size3( 128,  96, 192 );	break;
-				case QualityLevel.Ultra:   fogGridSize	=	new Size3( 256, 192, 192 );	break;
+				case QualityLevel.None:	   fogGridSize	=	new Size3(  16,   8, 128 );	break;
+				case QualityLevel.Low:	   fogGridSize	=	new Size3(  32,  24, 128 );	break;
+				case QualityLevel.Medium:  fogGridSize	=	new Size3(  64,  48, 128 );	break;
+				case QualityLevel.High:	   fogGridSize	=	new Size3( 160,  96, 128 );	break;
+				case QualityLevel.Ultra:   fogGridSize	=	new Size3( 256, 192, 128 );	break;
 			}
 
 			fogDensity		=	new Texture3DCompute( device, ColorFormat.Rgba8,	fogGridSize.Width, fogGridSize.Height, fogGridSize.Depth );
@@ -374,9 +374,9 @@ namespace Fusion.Engine.Graphics {
 					//var gx	=	MathUtil.IntDivUp( fogGridSize.Width,  BlockSizeX );
 					//var gy	=	MathUtil.IntDivUp( fogGridSize.Height, BlockSizeY );
 					//var gz	=	MathUtil.IntDivUp( fogGridSize.Depth,  BlockSizeZ );
-					var gx	=	MathUtil.IntDivUp( fogGridSize.Width,  16 );
-					var gy	=	MathUtil.IntDivUp( fogGridSize.Height, 16 );
-					var gz	=	MathUtil.IntDivUp( fogGridSize.Depth,  1 );
+					var gx	=	MathUtil.IntDivUp( fogGridSize.Width,  4 );
+					var gy	=	MathUtil.IntDivUp( fogGridSize.Height, 4 );
+					var gz	=	MathUtil.IntDivUp( fogGridSize.Depth,  4 );
 
 					device.Dispatch( gx, gy, gz );
 				}

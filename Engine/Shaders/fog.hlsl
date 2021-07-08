@@ -175,7 +175,7 @@ void CSMain(
 	float3	color			=	1;
 	float3 	glow			=	0;
 	
-	density	=	0.01 * saturate( exp(- 0.01*wsPositionNJ.y ) );
+	density	=	0.005 * saturate( exp(- 0.01*wsPositionNJ.y ) );
 	
 	//	Compute phase function of incoming light :
 	float3	localLight	=	ComputeClusteredLighting( wsPosition ).rgb * density * color;
@@ -240,8 +240,7 @@ void CSMain(
 		//	Sample AP LUT :
 		float	apWeight		=	GetAPBlendFactor( slice );
 		float	fogWeight		=	1 - apWeight;
-		float4	apST			=	LutAP0.SampleLevel( LinearClamp, loadUVW, 0 );
-				apST			+=	LutAP1.SampleLevel( LinearClamp, loadUVW, 0 );
+		float4	apST			=	LutAP.SampleLevel( LinearClamp, loadUVW, 0 );
 				apST.rgb		*=	apWeight;
 				
 		//	Sample FOG grid :

@@ -299,8 +299,7 @@ namespace Fusion.Engine.Graphics {
 
 		static FXTexture2D<Vector4>						regCirrusClouds		=	new TRegister( 5, "CirrusClouds"	);
 
-		[ShaderIfDef("LUT_AP")]	static FXRWTexture3D<Vector4>	regLutAP0	=	new URegister( 0, "LutAP0"			);
-		[ShaderIfDef("LUT_AP")]	static FXRWTexture3D<Vector4>	regLutAP1	=	new URegister( 1, "LutAP1"			);
+		[ShaderIfDef("LUT_AP")]	static FXRWTexture3D<Vector4>	regLutAP	=	new URegister( 0, "LutAP"			);
 
 		static FXSamplerState		regLutSampler	=	new SRegister(0, "LutSampler" );
 		static FXSamplerState		regLinearWrap	=	new SRegister(1, "LinearWrap" );
@@ -387,8 +386,7 @@ namespace Fusion.Engine.Graphics {
 		internal RenderTargetCube	SkyCubeDiffuse { get { return skyCubeDiffuse; } }
 		RenderTargetCube			skyCubeDiffuse;
 
-		internal Texture3DCompute	LutAP0 { get { return lutAerial0; } }
-		internal Texture3DCompute	LutAP1 { get { return lutAerial1; } }
+		internal Texture3DCompute	LutAP { get { return lutAerial0; } }
 
 		DiscTexture	texCirrusClouds;
 
@@ -635,8 +633,7 @@ namespace Fusion.Engine.Graphics {
 				//	AP LUT :
 
 				Setup( Flags.LUT_AP, camera, new Rectangle(0,0, (int)LUT_WIDTH, (int)LUT_HEIGHT) );
-				device.SetComputeUnorderedAccess( regLutAP0, LutAP0.UnorderedAccess );
-				device.SetComputeUnorderedAccess( regLutAP1, LutAP1.UnorderedAccess );
+				device.SetComputeUnorderedAccess( regLutAP, LutAP.UnorderedAccess );
 
 				uint tgx = MathUtil.IntDivRoundUp( AP_WIDTH,  8 );
 				uint tgy = MathUtil.IntDivRoundUp( AP_HEIGHT, 8 );

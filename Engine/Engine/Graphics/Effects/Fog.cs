@@ -114,8 +114,7 @@ namespace Fusion.Engine.Graphics {
 		static FXStructuredBuffer<SceneRenderer.LIGHT>		regLightDataTable			=	new TRegister( 4, "ClusterLightBuffer"		);
 		static FXTexture2D<Vector4>							regShadowMap				=	new TRegister( 5, "ShadowMap"				);
 		static FXTexture2D<Vector4>							regShadowMask				=	new TRegister( 6, "ShadowMask"				);
-		static FXTexture3D<Vector4>							regLutAP0					=	new TRegister( 7, "LutAP0"					);
-		static FXTexture3D<Vector4>							regLutAP1					=	new TRegister( 8, "LutAP1"					);
+		static FXTexture3D<Vector4>							regLutAP					=	new TRegister( 7, "LutAP"					);
 		static FXTexture3D<Vector4>							regShadow					=	new TRegister( 9, "FogShadowSource"			);
 		static FXTexture3D<Vector4>							regShadowHistory			=	new TRegister(10, "FogShadowHistory"		);
 
@@ -343,8 +342,7 @@ namespace Fusion.Engine.Graphics {
 			device.ComputeResources	[ regLightDataTable		]	=	rs.LightManager.LightGrid.LightDataGpu		;
 			device.ComputeResources	[ regShadowMap			]	=	rs.ShadowSystem.ShadowMap.ShadowTextureLowRes		;
 			device.ComputeResources	[ regShadowMask			]	=	rs.ShadowSystem.ShadowMap.ParticleShadowTextureLowRes	;
-			device.ComputeResources	[ regLutAP0				]	=	rs.Sky.LutAP0;
-			device.ComputeResources	[ regLutAP1				]	=	rs.Sky.LutAP1;
+			device.ComputeResources	[ regLutAP				]	=	rs.Sky.LutAP;
 			device.ComputeResources	[ regShadowHistory		]	=	shadowHistory;
 		
 			device.ComputeResources	[ regIrradianceVolumeL0	]	= 	rw.LightMap?.GetVolume(0);

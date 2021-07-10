@@ -85,6 +85,23 @@ namespace Fusion.Engine.Graphics {
 		public float FogFadeoutDistance { get { return fogFadeoutDistance; } set { fogFadeoutDistance = MathUtil.Clamp( value, 100, 5000 ); } }
 		float fogFadeoutDistance = 1000.0f;
 
+		[Config]
+		[AECategory("Ground Fog")]
+		public bool GroundFogEnabled { get; set; } = true;
+
+		[Config]
+		[AECategory("Ground Fog")]
+		[AESlider(10, 5000, 100f, 10f)]
+		public float GroundFogHeight { get; set; } = 100;
+
+		[Config]
+		[AECategory("Ground Fog")]
+		[AESlider(1, 5000, 100, 1f)]
+		public float GroundFogDistance { get; set; } = 500;
+
+		[Config]
+		[AECategory("Ground Fog")]
+		public Color GroundFogColor { get; set; } = Color.Gray;
 
 
 		float FogGridExpK { get { return (float)Math.Log(0.5f) / fogGridHalfDepth; } }
@@ -149,6 +166,11 @@ namespace Fusion.Engine.Graphics {
 			public Vector4	SampleOffset;
 
 			public Vector4	FogSizeInv;
+			public Color4	FogColor;
+
+			public Color4	GroundFogColor;
+			public float	GroundFogDensity;
+			public float	GroundFogHeight;
 
 			public uint		FogSizeX;
 			public uint		FogSizeY;
@@ -310,6 +332,11 @@ namespace Fusion.Engine.Graphics {
 
 			fogData.FogSizeInv				=	new Vector4( 1.0f / fogGridSize.Width, 1.0f / fogGridSize.Height, 1.0f / fogGridSize.Depth, 0 );
 			fogData.FogGridExpK				=	FogGridExpK;
+			fogData.FogColor				=	rs.Sky.MieColor;
+
+			fogData.GroundFogColor			=	GroundFogColor;
+			fogData.GroundFogHeight			=	GroundFogHeight;
+			fogData.GroundFogDensity		=	GroundFogEnabled ? 0.693147f / GroundFogDistance : 0;
 
 			fogData.FogSizeX				=	(uint)fogGridSize.Width;
 			fogData.FogSizeY				=	(uint)fogGridSize.Height;

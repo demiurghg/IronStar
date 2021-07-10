@@ -49,18 +49,22 @@ struct FOG_DATA {
 	float4x4   WorldToVolume;                 // offset:    0
 	float4     SampleOffset;                  // offset:   64
 	float4     FogSizeInv;                    // offset:   80
-	uint       FogSizeX;                      // offset:   96
-	uint       FogSizeY;                      // offset:  100
-	uint       FogSizeZ;                      // offset:  104
-	float      FogGridExpK;                   // offset:  108
-	float      DirectLightFactor;             // offset:  112
-	float      IndirectLightFactor;           // offset:  116
-	float      HistoryFactor;                 // offset:  120
-	uint       FrameCount;                    // offset:  124
-	float      FogDensity;                    // offset:  128
-	float      FogHeight;                     // offset:  132
-	float      FogScale;                      // offset:  136
-	float      FadeoutDistanceInvSqr;         // offset:  140
+	float4     FogColor;                      // offset:   96
+	float4     GroundFogColor;                // offset:  112
+	float      GroundFogDensity;              // offset:  128
+	float      GroundFogHeight;               // offset:  132
+	uint       FogSizeX;                      // offset:  136
+	uint       FogSizeY;                      // offset:  140
+	uint       FogSizeZ;                      // offset:  144
+	float      FogGridExpK;                   // offset:  148
+	float      DirectLightFactor;             // offset:  152
+	float      IndirectLightFactor;           // offset:  156
+	float      HistoryFactor;                 // offset:  160
+	uint       FrameCount;                    // offset:  164
+	float      FogDensity;                    // offset:  168
+	float      FogHeight;                     // offset:  172
+	float      FogScale;                      // offset:  176
+	float      FadeoutDistanceInvSqr;         // offset:  180
 };
 #endif
 

@@ -61,9 +61,15 @@ float GetAtmosphericFogDensity ( float3 worldPos )
 }
 
 
+float GetGroundFogDensity ( float3 worldPos )
+{
+	return Fog.GroundFogDensity * min( 1, exp(-(worldPos.y * GAME_UNIT)/Fog.GroundFogHeight ) );
+}
+
+
 float GetAPBlendFactor( uint slice )
 {
-	return smoothstep( 64,128, slice );
+	return smoothstep( 120,127, slice );
 }
 
 /*-----------------------------------------------------------------------------
@@ -72,7 +78,7 @@ float GetAPBlendFactor( uint slice )
 
 #ifdef COMPUTE
 
-static const float HISTORY_FACTOR_FOG		= 0.99f;
+static const float HISTORY_FACTOR_FOG		= 0.95f;
 
 static const float2 aa8[8] = 
 {
@@ -114,7 +120,7 @@ float ClipHistory( float4 ppPosition, float4 ppPosition2 )
 	float3	deviceCoords	=	ppPosition.xyz  / ppPosition.w;
 	float3	deviceCoords2	=	ppPosition2.xyz / ppPosition2.w;
 	
-	float 	falloff			=	1;//1 - saturate(1.0f*distance(deviceCoords, deviceCoords2));
+	float 	falloff			=	1 - saturate(1.0f*distance(deviceCoords, deviceCoords2));
 	
 	float	maxX			=	1.0f - 0.5f * Fog.FogSizeInv.x;
 	float	maxY			=	1.0f - 0.5f * Fog.FogSizeInv.y;
@@ -171,14 +177,17 @@ void CSMain(
 	
 	//	Compute fog density :
 	float	fadeout			=	pow( saturate( 1 - location.z * (Fog.FogSizeInv.z) * 1.1f ), 0.5f );
-	float	density			=	GetAtmosphericFogDensity( wsPositionNJ );
-	float3	color			=	1;
+	float	apFactor		=	GetAPBlendFactor( location.z );
+	float	densityAP		=	GetAtmosphericFogDensity( wsPositionNJ ) * (1-apFactor);
+	float	densityGF		=	GetGroundFogDensity( wsPositionNJ ) * (1-apFactor);
+	float3	color			=	Fog.FogColor.rgb * densityAP + Fog.GroundFogColor.rgb * densityGF;
 	float3 	glow			=	0;
-	
-	density	=	0.005 * saturate( exp(- 0.01*wsPositionNJ.y ) );
+	float	density			=	densityAP + densityGF;
+
+	//	Ground fog :
 	
 	//	Compute phase function of incoming light :
-	float3	localLight	=	ComputeClusteredLighting( wsPosition ).rgb * density * color;
+	float3	localLight	=	ComputeClusteredLighting( wsPosition ).rgb * color;
 	float3	phaseLight	=	localLight + glow * density;
 	
 	//	Compute length of the cell :

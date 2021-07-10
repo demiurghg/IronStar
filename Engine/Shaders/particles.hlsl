@@ -545,7 +545,7 @@ float4 PSMain( GSOutput input, float4 vpos : SV_POSITION ) : SV_Target
 
 		//color.rgba		=	SRGBToLinear( color.rgba ) * input.Color;	
 
-		color.rgb		=	SRGBToLinear( color.rgba ) * input.Color.rgb;	
+		color.rgb		=	SRGBToLinear( color.rgb ) * input.Color.rgb;	
 		color.a			=	color.a * input.Color.a;	
 		//color.a			=	saturate( color.a - 1 + (sqrt(input.Color.a))) * input.Color.a;
 

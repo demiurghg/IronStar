@@ -260,7 +260,7 @@ namespace Fusion.Engine.Graphics {
 		{
 			SunAltitude	=	15;
 			SunAzimuth	=	45;
-			SunIntensityEv = 2; // ~10 AU
+			SunIntensityEv = 6; // 2 - real value; // ~10 AU
 			SunTemperature = 5900;
 			SunBrightnessEv = 10;
 			SunAngularSize = 0.4f;

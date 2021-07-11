@@ -77,13 +77,13 @@ namespace Fusion.Engine.Graphics {
 		[AECategory("Fog Grid")]
 		[AESlider(100, 5000, 100f, 1f)]
 		public float FogGridHalfDepth { get { return fogGridHalfDepth; } set { fogGridHalfDepth = MathUtil.Clamp( value, 100, 5000 ); } }
-		float fogGridHalfDepth = 1000.0f;
+		float fogGridHalfDepth = 300.0f;
 
 		[Config]
 		[AECategory("Fog Grid")]
 		[AESlider(100, 5000, 100f, 1f)]
 		public float FogFadeoutDistance { get { return fogFadeoutDistance; } set { fogFadeoutDistance = MathUtil.Clamp( value, 100, 5000 ); } }
-		float fogFadeoutDistance = 1000.0f;
+		float fogFadeoutDistance = 600.0f;
 
 		[Config]
 		[AECategory("Ground Fog")]
@@ -98,6 +98,11 @@ namespace Fusion.Engine.Graphics {
 		[AECategory("Ground Fog")]
 		[AESlider(1, 5000, 100, 1f)]
 		public float GroundFogDistance { get; set; } = 500;
+
+		[Config]
+		[AECategory("Ground Fog")]
+		[AESlider(-200, 200, 10, 1f)]
+		public float GroundFogLevel { get; set; } = 0;
 
 		[Config]
 		[AECategory("Ground Fog")]
@@ -171,6 +176,7 @@ namespace Fusion.Engine.Graphics {
 			public Color4	GroundFogColor;
 			public float	GroundFogDensity;
 			public float	GroundFogHeight;
+			public float	GroundFogLevel;
 
 			public uint		FogSizeX;
 			public uint		FogSizeY;
@@ -264,10 +270,10 @@ namespace Fusion.Engine.Graphics {
 
 			switch (fogQuality)
 			{
-				case QualityLevel.None:	   fogGridSize	=	new Size3(  16,   8, 128 );	break;
-				case QualityLevel.Low:	   fogGridSize	=	new Size3(  32,  24, 128 );	break;
-				case QualityLevel.Medium:  fogGridSize	=	new Size3(  64,  48, 128 );	break;
-				case QualityLevel.High:	   fogGridSize	=	new Size3( 160,  96, 128 );	break;
+				case QualityLevel.None:	   fogGridSize	=	new Size3(  16,   8,  64 );	break;
+				case QualityLevel.Low:	   fogGridSize	=	new Size3(  64,  48,  64 );	break;
+				case QualityLevel.Medium:  fogGridSize	=	new Size3( 160,  96,  64 );	break;
+				case QualityLevel.High:	   fogGridSize	=	new Size3( 256, 192,  64 );	break;
 				case QualityLevel.Ultra:   fogGridSize	=	new Size3( 256, 192, 128 );	break;
 			}
 
@@ -337,6 +343,7 @@ namespace Fusion.Engine.Graphics {
 			fogData.GroundFogColor			=	GroundFogColor;
 			fogData.GroundFogHeight			=	GroundFogHeight;
 			fogData.GroundFogDensity		=	GroundFogEnabled ? 0.693147f / GroundFogDistance : 0;
+			fogData.GroundFogLevel			=	GroundFogLevel;
 
 			fogData.FogSizeX				=	(uint)fogGridSize.Width;
 			fogData.FogSizeY				=	(uint)fogGridSize.Height;

@@ -22,7 +22,7 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 	rcCluster.LightProbeBuffer	=	ClusterLightProbeBuffer;
 	
 	LIGHTPROBE_RESOURCES rcLightProbe;
-	rcLightProbe.Sampler		=	SamplerLinearClamp;
+	rcLightProbe.Sampler		=	SamplerLightmap;
 	rcLightProbe.EnvironmentLut	=	EnvLut;
 	rcLightProbe.RadianceCache	=	RadianceCache;
 	

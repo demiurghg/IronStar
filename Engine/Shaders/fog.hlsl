@@ -63,13 +63,13 @@ float GetAtmosphericFogDensity ( float3 worldPos )
 
 float GetGroundFogDensity ( float3 worldPos )
 {
-	return Fog.GroundFogDensity * min( 1, exp(-(worldPos.y * GAME_UNIT)/Fog.GroundFogHeight ) );
+	return Fog.GroundFogDensity * min( 1, exp(-((worldPos.y - Fog.GroundFogLevel) * GAME_UNIT)/Fog.GroundFogHeight ) );
 }
 
 
 float GetAPBlendFactor( uint slice )
 {
-	return smoothstep( 120,127, slice );
+	return smoothstep( Fog.FogSizeZ - 5, Fog.FogSizeZ - 1, slice );
 }
 
 /*-----------------------------------------------------------------------------
@@ -78,7 +78,7 @@ float GetAPBlendFactor( uint slice )
 
 #ifdef COMPUTE
 
-static const float HISTORY_FACTOR_FOG		= 0.95f;
+static const float HISTORY_FACTOR_FOG		= 0.99f;
 
 static const float2 aa8[8] = 
 {
@@ -117,10 +117,11 @@ static const uint bayer[4][4] =
 
 float ClipHistory( float4 ppPosition, float4 ppPosition2 )
 {
-	float3	deviceCoords	=	ppPosition.xyz  / ppPosition.w;
-	float3	deviceCoords2	=	ppPosition2.xyz / ppPosition2.w;
+	float3	deviceCoords		=	ppPosition.xyz  / ppPosition.w;
+	float3	deviceCoords2		=	ppPosition2.xyz / ppPosition2.w;
+	float3	falloffAxialScale	=	float3(1, 1, 1);
 	
-	float 	falloff			=	1 - saturate(1.0f*distance(deviceCoords, deviceCoords2));
+	float 	falloff			=	1 - saturate(1.0f*distance(deviceCoords * falloffAxialScale, deviceCoords2 * falloffAxialScale));
 	
 	float	maxX			=	1.0f - 0.5f * Fog.FogSizeInv.x;
 	float	maxY			=	1.0f - 0.5f * Fog.FogSizeInv.y;
@@ -130,7 +131,7 @@ float ClipHistory( float4 ppPosition, float4 ppPosition2 )
 	
 	if (abs(deviceCoords.x)>maxX || abs(deviceCoords.y)>maxY || deviceCoords.z>maxZ || deviceCoords.z<=0.1f )
 	{
-		return 0;
+		return falloff * 0.9;
 	}
 	else
 	{
@@ -144,7 +145,19 @@ float4 GetFogHistory( float3 wsPosition, out float factor )
 	float4 	ppPosition	=	mul( float4(wsPosition,1), Camera.ReprojectionMatrix );
 	float4 	ppPosition2	=	mul( float4(wsPosition,1), Camera.ViewProjection );
 	
-	float4	fogData		=	SampleVolumetricFog( Fog, ppPosition, LinearClamp, FogHistory );
+	float4 fogData	=	float4(0,0,0,0);
+	
+	if (1)
+	{
+		fogData		=	SampleVolumetricFog( Fog, ppPosition, LinearClamp, FogHistory );
+	}
+	else
+	{
+		fogData	+=	0.25 * SampleVolumetricFog( Fog, lerp(ppPosition, ppPosition2, 0.25f), LinearClamp, FogHistory );
+		fogData	+=	0.25 * SampleVolumetricFog( Fog, lerp(ppPosition, ppPosition2, 0.50f), LinearClamp, FogHistory );
+		fogData	+=	0.25 * SampleVolumetricFog( Fog, lerp(ppPosition, ppPosition2, 0.75f), LinearClamp, FogHistory );
+		fogData	+=	0.25 * SampleVolumetricFog( Fog, lerp(ppPosition, ppPosition2, 1.00f), LinearClamp, FogHistory );
+	}
 	
 	factor = ClipHistory( ppPosition, ppPosition2 ) * HISTORY_FACTOR_FOG;
 	
@@ -229,10 +242,6 @@ void CSMain(
 	float3	accumFogScattering		=	float3(0,0,0);
 	float	accumFogTransmittance	=	1;
 	
-	bool 	applyFog = location.x > 64;
-	float3	apST0prev = 0;
-	float3	apST1prev = 0;
-
 	//	Zero slice is always transparent :
 	FogTarget[ int3( location.xy, 0 ) ]	=	float4(0,0,0,1);
 	
@@ -263,8 +272,10 @@ void CSMain(
 		FogTarget[ storeXYZ ]	=	float4( accumFogScattering + apST.rgb * accumFogTransmittance, accumFogTransmittance * apST.a );
 		
 		#ifdef SHOW_SLICE
-			float4 	areaFog	=	float4(1,0,0, slice % 2) * 0.1f;
-			FogTarget[ int3( location.xy, slice ) ]	=	areaFog;//lerp( areaFog, areaAP, apWeight );
+			if ((slice%2)==1)
+			{
+				FogTarget[ int3( location.xy, slice ) ]	=	(slice > Fog.FogSizeZ/2) ? float4(1,1,0,1) : float4(1,0,0,1);
+			}
 			if (slice>=Fog.FogSizeZ-1) FogTarget[ int3( location.xy, slice ) ]	=	float4(8,0,0,1);
 		#endif
 	}

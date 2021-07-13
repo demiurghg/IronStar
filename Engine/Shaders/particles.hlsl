@@ -31,6 +31,8 @@ uint 	GetImageIndex( Particle p ) { return ((p.FadingImageIndexCount & 0x00FF000
 float 	GetFadeIn	 ( Particle p ) { return ((p.FadingImageIndexCount & 0x000000FF) >>  0) / 255.0f; }
 float 	GetFadeOut	 ( Particle p ) { return ((p.FadingImageIndexCount & 0x0000FF00) >>  8) / 255.0f; }
 
+uint GetFrameCounter( Particle p ) { return (p.FXData & 0x00FF0000) >> 16; } 
+uint SetFrameCounter( inout Particle p, uint counter ) { p.FXData |= ((counter & 0x00FF0000)<<16); } 
 
 float4 GetColor4( Particle p )
 {
@@ -97,18 +99,36 @@ void CSMain(
 #ifdef SIMULATION
 	sortParticleBuffer[ id ] = float2(0,0);
 
-	if (id < (uint)Params.MaxParticles) {
+	if (id < (uint)Params.MaxParticles) 
+	{
 		Particle p = particleBuffer[ id ];
 
-		if (p.LifeTime>0) {
-			if (p.TimeLag < p.LifeTime) {
+		if (p.LifeTime>0)  // by timeout
+		{
+			if (p.TimeLag < p.LifeTime) 
+			{
 				p.TimeLag += Params.DeltaTime * Params.IntegrationSteps;
-			} else {
-				p.LifeTime = -1;
+			} 
+			else 
+			{
+				p.LifeTime = 0;
 				deadParticleIndicesPush.Append( id );
 			}
 		}
-
+		
+		if (p.LifeTime<0) // by frame number
+		{
+			if (abs(p.TimeLag) < abs(p.LifeTime))
+			{
+				p.TimeLag--;
+			}
+			else
+			{
+				p.LifeTime = 0;
+				deadParticleIndicesPush.Append( id );
+			}
+		}
+		
 		particleBuffer[ id ] = p;
 
 		//	Integrate kinematics :
@@ -126,7 +146,8 @@ void CSMain(
 			position		=	position + velocity     * Params.DeltaTime;	
 		}
 
-		if (GetBeamFactor(p)>=0) {
+		if (GetBeamFactor(p)>=0) 
+		{
 			particleBuffer[ id ].Velocity	=	velocity;	
 			particleBuffer[ id ].Position	=	position;	
 		}
@@ -134,7 +155,7 @@ void CSMain(
 		//	Measure distance :
 		float  pDist	=	distance( position.xyz, Camera.CameraPosition.xyz );
 		
-		float   pKey	=	(p.TimeLag > p.LifeTime) ? 0 : -abs(pDist);
+		float   pKey	=	(abs(p.TimeLag) > abs(p.LifeTime)) ? 0 : -abs(pDist);
 		//float 	pKey	=	wang_hash( id + (int)(Params.CameraPosition.x) );
 		float	pValue	=	id;
 		
@@ -157,25 +178,27 @@ void CSMain(
 	uint  groupIndex 		: SV_GroupIndex
 )
 {
-	for (uint base=0; base<64; base++) {
+	for (uint base=0; base<64; base++) 
+	{
 		int id = dispatchThreadID.x + base*1024;
 
-		if (id < Params.MaxParticles) {
-		
+		if (id < Params.MaxParticles) 
+		{
 			Particle p = particleBuffer[ id ];
 			
 			lightMapRegions[id] = 	float4(0,0,0,0);
 			
-			float 	factor	=	saturate(p.TimeLag / p.LifeTime);
+			float 	factor	=	saturate(abs(p.TimeLag / p.LifeTime));
 			float4 	projPos	=	mul( float4(p.Position.xyz,1), Camera.ViewProjection );
 			float  	size	=   lerp( GetSize0(p), GetSize1(p), factor ) / abs(projPos.w);
 			uint	offset;
 			uint 	bank;
 
-			if ( p.TimeLag < 0 )			{ continue; }
-			if ( p.TimeLag >= p.LifeTime ) 	{ continue; }
+			if ( abs(p.TimeLag) < 0 )				 { continue; }
+			if ( abs(p.TimeLag) >= abs(p.LifeTime) ) { continue; }
 	
-			for (int i=0; i<8; i++) {
+			for (int i=0; i<8; i++) 
+			{
 				float minSize = (i==0)?     0 : 1*exp2(i-8);
 				float maxSize = (i==7)? 99999 : 1*exp2(i-8+1);
 				
@@ -276,11 +299,11 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 	
 	Particle prt = particleBuffer[ prtId ];
 	
-	if (prt.TimeLag<0) {
+	if (prt.LifeTime>0 && prt.TimeLag<0) {
 		return;
 	}
 	
-	if (prt.TimeLag >= prt.LifeTime ) {
+	if (abs(prt.TimeLag) >= abs(prt.LifeTime) ) {
 		return;
 	}
 
@@ -290,8 +313,8 @@ void GSMain( point VSOutput inputPoint[1], inout TriangleStream<GSOutput> output
 		TransformPoint ( Camera.ViewInverted, prt.Position );
 	}//*/
 	
-	float time		=	prt.TimeLag;
-	float factor	=	saturate(prt.TimeLag / prt.LifeTime);
+	float time		=	abs(prt.TimeLag);
+	float factor	=	saturate(abs(prt.TimeLag / prt.LifeTime));
 	
 	float  sz 		=   lerp( GetSize0(prt), GetSize1(prt), factor )/2;
 	float  fade		=	Ramp( GetFadeIn(prt), GetFadeOut(prt), factor );

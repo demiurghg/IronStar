@@ -75,12 +75,12 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Initial position of the particle
 		/// </summary>
-		public Vector3	Position;              
+		public Vector3	Position;
 
 		/// <summary>
 		/// Initial velocity of the particle
 		/// </summary>
-		public Vector3	Velocity;           
+		public Vector3	Velocity;
 
 		/// <summary>
 		/// Color of particle, tint for glowing particles.
@@ -210,6 +210,8 @@ namespace Fusion.Engine.Graphics {
 			set { BitUtils.UIntSetByte( ref FXData, (byte)value, 0 ); } 
 			get { return (ParticleFX)BitUtils.UIntGetByte( FXData, 0 ); } 
 		}
+
+		//public byte FrameCounter { set { BitUtils.UIntSetByte( ref FXData, value, 2 ); } }
 
 		public uint FXData;
 		

@@ -359,7 +359,7 @@ namespace Fusion.Engine.Graphics {
 				return;
 			}
 
-			if (particle.LifeTime<=0) {
+			if (particle.LifeTime==0) {
 				return;
 			}
 

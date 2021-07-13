@@ -33,7 +33,9 @@ namespace IronStar.ECSGraphics
 		{
 			p.Effects		=	b.Effect;
 
-			p.ImageIndex	=	0;
+			var clip		=	fxPlayback.GetSpriteClip(b.ImageName);
+
+			p.ImageIndex	=	clip == null ? 0 : clip.FirstIndex;
 			p.ImageCount	=	1;
 				
 			p.WeaponIndex	=	false;
@@ -47,11 +49,10 @@ namespace IronStar.ECSGraphics
 			p.Scattering	=	b.Scattering;
 			p.BeamFactor	=	0;
 
-			p.LifeTime		=	1.0f;
-			p.TimeLag		=	2.0f; // make timelad > lifetime to make particle living only for one frame
-
-			p.FadeIn		=	0.1f;
-			p.FadeOut		=	0.1f;
+			p.LifeTime		=	-2; // frames
+			p.TimeLag		=	0;
+			p.FadeIn		=	1f / 128f;
+			p.FadeOut		=	1f / 128f;
 
 			p.Rotation0     =   b.Rotation;
 			p.Rotation1     =   b.Rotation;

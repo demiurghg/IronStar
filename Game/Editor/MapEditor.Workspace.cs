@@ -327,6 +327,7 @@ namespace IronStar.Editor
 			palette.AddButton( "Omni Light"				,	() => CreateNodeUI( new MapOmniLight		() ) );
 			palette.AddButton( "Spot Light"				,	() => CreateNodeUI( new MapSpotLight		() ) );
 			palette.AddButton( "Light Volume"			,	() => CreateNodeUI( new MapLightVolume		() ) );
+			palette.AddButton( "Billboard"				,	() => CreateNodeUI( new MapBillboard		() ) );
 			//palette.AddButton( "Sound"					,	() => CreateNodeUI( new MapSound			() ) );
 			//palette.AddButton( "Reverb Zone"			,	() => CreateNodeUI( new MapReverb			() ) );
 

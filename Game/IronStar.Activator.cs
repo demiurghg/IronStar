@@ -22,6 +22,7 @@ using System.IO;
 using IronStar.AI;
 using IronStar.UI.HUD;
 using IronStar.Monsters.Systems;
+using IronStar.ECSGraphics;
 
 namespace IronStar {
 	partial class IronStar : Game
@@ -75,6 +76,7 @@ namespace IronStar {
 			gs.AddSystem( new SFX2.SpotLightSystem(game.RenderSystem) );
 			gs.AddSystem( new SFX2.LightProbeSystem(game.RenderSystem) );
 			gs.AddSystem( new SFX2.LightVolumeSystem(game.RenderSystem) );
+			gs.AddSystem( new BillboardSystem(fxPlayback) );
 			gs.AddSystem( new SFX2.LightingSystem() );
 			gs.AddSystem( new Gameplay.PlayerSystem() );
 

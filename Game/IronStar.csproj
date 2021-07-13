@@ -116,6 +116,8 @@
     <Compile Include="ECSFactories\WeaponFactory.cs" />
     <Compile Include="ECSFactories\BoxFactory.cs" />
     <Compile Include="ECSFactories\AmmoFactory.cs" />
+    <Compile Include="ECSGraphics\BillboardComponent.cs" />
+    <Compile Include="ECSGraphics\BillboardSystem.cs" />
     <Compile Include="ECSGraphics\LightVolumeSystem.cs" />
     <Compile Include="ECSGraphics\AnimationComponent.cs" />
     <Compile Include="ECSGraphics\FPVComponent.cs" />
@@ -236,6 +238,7 @@
     <Compile Include="ECSPhysics\GravityComponent.cs" />
     <Compile Include="ECSPhysics\StaticCollisionComponent.cs" />
     <Compile Include="Mapping\MapLightVolume.cs" />
+    <Compile Include="Mapping\MapBillboard.cs" />
     <Compile Include="Mapping\MapPrefab.cs" />
     <Compile Include="Mathematics\Intersection.cs" />
     <Compile Include="Monsters\Systems\MonsterAnimator.Locomotion.cs" />

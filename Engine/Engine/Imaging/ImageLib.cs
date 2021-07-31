@@ -337,7 +337,7 @@ namespace Fusion.Engine.Imaging
 
 		public static Size2 TakeJpgSize( Stream stream )
 		{
-			var decoder = new JpegBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat|BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
+			var decoder = new JpegBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat|BitmapCreateOptions.DelayCreation, BitmapCacheOption.None);
 			var bitmapSource = decoder.Frames[0];
 			return new Size2( bitmapSource.PixelWidth, bitmapSource.PixelHeight );
 		}
@@ -405,7 +405,7 @@ namespace Fusion.Engine.Imaging
 
 		public static Size2 TakePngSize( Stream stream )
 		{
-			PngBitmapDecoder decoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat|BitmapCreateOptions.DelayCreation, BitmapCacheOption.OnDemand);
+			PngBitmapDecoder decoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat|BitmapCreateOptions.DelayCreation, BitmapCacheOption.None);
 			BitmapSource bitmapSource = decoder.Frames[0];
 			return new Size2( bitmapSource.PixelWidth, bitmapSource.PixelHeight );
 		}

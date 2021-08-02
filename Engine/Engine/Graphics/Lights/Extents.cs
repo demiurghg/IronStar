@@ -79,10 +79,13 @@ namespace Fusion.Engine.Graphics.Lights
 			min = max	=	Vector3.Zero;
 
 			var znear	=	projection.M34 * projection.M43 / projection.M33;
+
+			var viewPoints = frustum.GetCorners();
 			
-			var viewPoints = frustum.GetCorners()
-					.Select( p0 => Vector3.TransformCoordinate( p0, view ) )
-					.ToArray();
+			for (int i=0; i<viewPoints.Length; i++)
+			{
+				viewPoints[i] = Vector3.TransformCoordinate( viewPoints[i], view );
+			}
 
 			var lines = new[]
 			{
@@ -109,7 +112,7 @@ namespace Fusion.Engine.Graphics.Lights
 				return false;
 			}
 
-			var projPoints = new List<Vector4>();
+			var projPoints = new List<Vector4>(24);
 			
 			foreach ( var line in lines ) 
 			{
@@ -117,26 +120,21 @@ namespace Fusion.Engine.Graphics.Lights
 				projPoints.Add( Vector4.Transform( line.B, projection ) );
 			}
 
-			if (projectZ) 
-			{
-				min.X	=	projPoints.Min( p => p.X / p.W );
-				min.Y	=	projPoints.Max( p => p.Y / p.W );
-				min.Z	=	projPoints.Min( p => p.Z / p.W );
+			min		=	new Vector3( 99999,-99999, 99999);
+			max		=	new Vector3(-99999, 99999,-99999);
 
-				max.X	=	projPoints.Max( p => p.X / p.W );
-				max.Y	=	projPoints.Min( p => p.Y / p.W );
-				max.Z	=	projPoints.Max( p => p.Z / p.W );
-			}
-			else
+			for (int i=0; i<projPoints.Count; i++)
 			{
-				min.X	=	projPoints.Min( p => p.X / p.W );
-				min.Y	=	projPoints.Max( p => p.Y / p.W );
-				min.Z	=	projPoints.Min( p => p.W );
+				var p	=	projPoints[i];
+				min.X	=	Math.Min( min.X, p.X / p.W );
+				min.Y	=	Math.Max( min.Y, p.Y / p.W );
+				min.Z	=	Math.Min( min.Z, p.W );
 
-				max.X	=	projPoints.Max( p => p.X / p.W );
-				max.Y	=	projPoints.Min( p => p.Y / p.W );
-				max.Z	=	projPoints.Max( p => p.W );
+				max.X	=	Math.Max( max.X, p.X / p.W );
+				max.Y	=	Math.Min( max.Y, p.Y / p.W );
+				max.Z	=	Math.Max( max.Z, p.W );
 			}
+
 
 			min.X	=	( min.X *  0.5f + 0.5f ) * viewport.Width;
 			min.Y	=	( min.Y * -0.5f + 0.5f ) * viewport.Height;

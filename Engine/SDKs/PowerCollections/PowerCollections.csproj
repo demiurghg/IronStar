@@ -58,6 +58,15 @@
     <PlatformTarget>x64</PlatformTarget>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Profile|x64'">
+    <OutputPath>bin\x64\Profile\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <BaseAddress>1239678976</BaseAddress>
+    <DocumentationFile>bin\Release\PowerCollections.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />

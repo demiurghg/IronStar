@@ -3,6 +3,7 @@
 
 // ---------------- CONSTANT VALUES ---------------- //
 
+static const int MaxBones = 128;
 static const int LightClusterGridWidth = 16;
 static const int LightClusterGridHeight = 8;
 static const int LightClusterGridDepth = 24;

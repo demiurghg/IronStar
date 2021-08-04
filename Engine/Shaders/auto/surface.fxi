@@ -3,6 +3,7 @@
 
 // ---------------- CONSTANT VALUES ---------------- //
 
+static const int MaxBones = 128;
 static const int LightClusterGridWidth = 16;
 static const int LightClusterGridHeight = 8;
 static const int LightClusterGridDepth = 24;
@@ -35,7 +36,9 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- CONSTANT VALUES ---------------- //
 
-static const int BatchSize = 128;
+static const int BatchSizeRigid = 64;
+static const int BatchSizeSkinned = 4;
+static const int TotalBonesPerBatch = 512;
 
 // ---------------- DATA STRUCTURES ---------------- //
 
@@ -229,18 +232,21 @@ cbuffer __buffer2 : register(b2) {
 	STAGE Stage : packoffset(c0);
 };
 cbuffer __buffer3 : register(b3) {
-	INSTANCE Instance[128] : packoffset(c0);
+	INSTANCE InstanceRigid[64] : packoffset(c0);
 };
 cbuffer __buffer4 : register(b4) {
-	SUBSET Subset : packoffset(c0);
+	INSTANCE InstanceSkinned[4] : packoffset(c0);
 };
 cbuffer __buffer5 : register(b5) {
-	float4x4 Bones[128] : packoffset(c0);
+	float4x4 InstanceBones[512] : packoffset(c0);
 };
 cbuffer __buffer6 : register(b6) {
-	CASCADE_SHADOW CascadeShadow : packoffset(c0);
+	SUBSET Subset : packoffset(c0);
 };
 cbuffer __buffer7 : register(b7) {
+	CASCADE_SHADOW CascadeShadow : packoffset(c0);
+};
+cbuffer __buffer8 : register(b8) {
 	FOG_DATA Fog : packoffset(c0);
 };
 Texture2D<uint>                Texture0                       : register(t0);

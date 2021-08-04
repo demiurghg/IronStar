@@ -31,7 +31,7 @@ namespace Fusion.Engine.Graphics
 
 	public partial class RenderSystem : GameComponent 
 	{
-		public const int MaxBones = 128;
+		[ShaderDefine] public const int		MaxBones					=	128;
 
 		[ShaderDefine] public const int		LightClusterGridWidth		=	16;
 		[ShaderDefine] public const int		LightClusterGridHeight		=	 8;

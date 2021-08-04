@@ -25,22 +25,24 @@ namespace Fusion.Engine.Graphics
 		[ShaderDefine]
 		const int BatchSizeSkinned	= 4;
 
+		[ShaderDefine]
 		const int TotalBonesPerBatch	=	BatchSizeSkinned * RenderSystem.MaxBones;
 
 		static FXConstantBuffer<GpuData.CAMERA>				regCamera			= new CRegister( 0, "Camera"			);
 		static FXConstantBuffer<GpuData.DIRECT_LIGHT>		regDirectLight		= new CRegister( 1, "DirectLight"		);
 		static FXConstantBuffer<STAGE>						regStage			= new CRegister( 2, "Stage"				);
-		static FXConstantBuffer<INSTANCE>					regInstance			= new CRegister( 3, BatchSizeRigid,			"Instance"	);
-		static FXConstantBuffer<SUBSET>						regSubset			= new CRegister( 4,							"Subset"	);
-		static FXConstantBuffer<Matrix>						regBones			= new CRegister( 5, RenderSystem.MaxBones,	"Bones"		);
-		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow	= new CRegister( 6, "CascadeShadow"		);
-		static FXConstantBuffer<Fog.FOG_DATA>				regFog				= new CRegister( 7, "Fog"				);
+		static FXConstantBuffer<INSTANCE>					regInstanceRigid	= new CRegister( 3, BatchSizeRigid,		"InstanceRigid"		);
+		static FXConstantBuffer<INSTANCE>						regInstanceSkinned	= new CRegister( 4, BatchSizeSkinned,	"InstanceSkinned"	);
+		static FXConstantBuffer<Matrix>						regInstanceBones	= new CRegister( 5, TotalBonesPerBatch,	"InstanceBones"		);
+		static FXConstantBuffer<SUBSET>						regSubset			= new CRegister( 6,	"Subset"			);
+		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow	= new CRegister( 7, "CascadeShadow"		);
+		static FXConstantBuffer<Fog.FOG_DATA>				regFog				= new CRegister( 8, "Fog"				);
 
-		static FXTexture2D<uint>				regTexture0				=	new TRegister( 0, "Texture0"			);
-		static FXTexture2D<Vector4>				regTexture1				=	new TRegister( 1, "Texture1"			);
-		static FXTexture2D<Vector4>				regTexture2				=	new TRegister( 2, "Texture2"			);
-		static FXTexture2D<Vector4>				regTexture3				=	new TRegister( 3, "Texture3"			);
-		static FXTexture2D<Vector4>				regMipIndex				=	new TRegister( 4, "MipIndex"			);
+		static FXTexture2D<uint>				regTexture0					=	new TRegister( 0, "Texture0"			);
+		static FXTexture2D<Vector4>				regTexture1					=	new TRegister( 1, "Texture1"			);
+		static FXTexture2D<Vector4>				regTexture2					=	new TRegister( 2, "Texture2"			);
+		static FXTexture2D<Vector4>				regTexture3					=	new TRegister( 3, "Texture3"			);
+		static FXTexture2D<Vector4>				regMipIndex					=	new TRegister( 4, "MipIndex"			);
 
 		static FXTexture3D<UInt2>				regClusterArray				=	new TRegister( 5, "ClusterArray"			);
 		static FXBuffer<uint>					regClusterIndexBuffer		=	new TRegister( 6, "ClusterIndexBuffer"		);			 
@@ -48,35 +50,32 @@ namespace Fusion.Engine.Graphics
 		static FXStructuredBuffer<DECAL>		regClusterDecalBuffer		=	new TRegister( 8, "ClusterDecalBuffer"		);			 
 		static FXStructuredBuffer<LIGHTPROBE>	regClusterLightProbeBuffer	=	new TRegister( 9, "ClusterLightProbeBuffer"	);
 
-		static FXTexture2D<Vector4>				regDecalImages			=	new TRegister(10, "DecalImages"			);
-		static FXTexture2D<Vector4>				regShadowMap			=	new TRegister(11, "ShadowMap"			);
-		static FXTexture2D<Vector4>				regShadowMapParticles	=	new TRegister(12, "ShadowMapParticles"	);
-		static FXTexture2D<Vector4>				regAmbientOcclusion		=	new TRegister(13, "AmbientOcclusion"	);
+		static FXTexture2D<Vector4>				regDecalImages				=	new TRegister(10, "DecalImages"			);
+		static FXTexture2D<Vector4>				regShadowMap				=	new TRegister(11, "ShadowMap"			);
+		static FXTexture2D<Vector4>				regShadowMapParticles		=	new TRegister(12, "ShadowMapParticles"	);
+		static FXTexture2D<Vector4>				regAmbientOcclusion			=	new TRegister(13, "AmbientOcclusion"	);
 
-		static FXTexture2D<Vector4>				regIrradianceMapL0		=	new TRegister(14, "IrradianceMapL0"		);
-		static FXTexture2D<Vector4>				regIrradianceMapL1		=	new TRegister(15, "IrradianceMapL1"		);
-		static FXTexture2D<Vector4>				regIrradianceMapL2		=	new TRegister(16, "IrradianceMapL2"		);
-		static FXTexture2D<Vector4>				regIrradianceMapL3		=	new TRegister(17, "IrradianceMapL3"		);
-		static FXTexture3D<Vector4>				regIrradianceVolumeL0	=	new TRegister(18, "IrradianceVolumeL0"	);
-		static FXTexture3D<Vector4>				regIrradianceVolumeL1	=	new TRegister(19, "IrradianceVolumeL1"	);
-		static FXTexture3D<Vector4>				regIrradianceVolumeL2	=	new TRegister(20, "IrradianceVolumeL2"	);
-		static FXTexture3D<Vector4>				regIrradianceVolumeL3	=	new TRegister(21, "IrradianceVolumeL3"	);
+		static FXTexture2D<Vector4>				regIrradianceMapL0			=	new TRegister(14, "IrradianceMapL0"		);
+		static FXTexture2D<Vector4>				regIrradianceMapL1			=	new TRegister(15, "IrradianceMapL1"		);
+		static FXTexture2D<Vector4>				regIrradianceMapL2			=	new TRegister(16, "IrradianceMapL2"		);
+		static FXTexture2D<Vector4>				regIrradianceMapL3			=	new TRegister(17, "IrradianceMapL3"		);
+		static FXTexture3D<Vector4>				regIrradianceVolumeL0		=	new TRegister(18, "IrradianceVolumeL0"	);
+		static FXTexture3D<Vector4>				regIrradianceVolumeL1		=	new TRegister(19, "IrradianceVolumeL1"	);
+		static FXTexture3D<Vector4>				regIrradianceVolumeL2		=	new TRegister(20, "IrradianceVolumeL2"	);
+		static FXTexture3D<Vector4>				regIrradianceVolumeL3		=	new TRegister(21, "IrradianceVolumeL3"	);
 
-		static FXTextureCubeArray<Vector4>		regRadianceCache		=	new TRegister(22, "RadianceCache"		);
-		static FXTexture2D<Vector4>				regEnvLut				=	new TRegister(23, "EnvLut"				);
-		static FXTexture3D<Vector4>				regFogVolume			=	new TRegister(24, "FogVolume"			);
+		static FXTextureCubeArray<Vector4>		regRadianceCache			=	new TRegister(22, "RadianceCache"		);
+		static FXTexture2D<Vector4>				regEnvLut					=	new TRegister(23, "EnvLut"				);
+		static FXTexture3D<Vector4>				regFogVolume				=	new TRegister(24, "FogVolume"			);
 
-		static FXStructuredBuffer<INSTANCE>		regInstanceData			=	new TRegister(25, "InstanceData"		);
-		static FXStructuredBuffer<Matrix>		regBoneData				=	new TRegister(26, "BoneData"			);
-
-		static FXSamplerState					regSamplerLinear		=	new SRegister( 0, "SamplerLinear"		);
-		static FXSamplerState					regSamplerPoint			=	new SRegister( 1, "SamplerPoint"		);
-		static FXSamplerState					regSamplerLightmap		=	new SRegister( 2, "SamplerLightmap"		);
-		static FXSamplerState					regDecalSampler			=	new SRegister( 3, "DecalSampler"		);
-		static FXSamplerState					regParticleSampler		=	new SRegister( 4, "ParticleSampler"		);
-		static FXSamplerState					regMipSampler			=	new SRegister( 5, "MipSampler"			);
-		static FXSamplerState					regFogSampler			=	new SRegister( 6, "FogSampler"			);
-		static FXSamplerComparisonState			regShadowSampler		=	new SRegister( 7, "ShadowSampler"		);
+		static FXSamplerState					regSamplerLinear			=	new SRegister( 0, "SamplerLinear"		);
+		static FXSamplerState					regSamplerPoint				=	new SRegister( 1, "SamplerPoint"		);
+		static FXSamplerState					regSamplerLightmap			=	new SRegister( 2, "SamplerLightmap"		);
+		static FXSamplerState					regDecalSampler				=	new SRegister( 3, "DecalSampler"		);
+		static FXSamplerState					regParticleSampler			=	new SRegister( 4, "ParticleSampler"		);
+		static FXSamplerState					regMipSampler				=	new SRegister( 5, "MipSampler"			);
+		static FXSamplerState					regFogSampler				=	new SRegister( 6, "FogSampler"			);
+		static FXSamplerComparisonState			regShadowSampler			=	new SRegister( 7, "ShadowSampler"		);
 
 		Ubershader		surfaceShader;
 		StateFactory	factory;
@@ -89,13 +88,10 @@ namespace Fusion.Engine.Graphics
 
 		ConstantBuffer		constBufferStage	;
 		ConstantBuffer		constBufferBones	;
-		ConstantBuffer		constBufferInstance	;
-		ConstantBuffer		constBufferInstanceBatch	;
 		ConstantBuffer		constBufferSubset	;
-
-		StructuredBuffer	bufferInstanceDataRigid;
-		StructuredBuffer	bufferInstanceDataSkinned;
-		StructuredBuffer	bufferBoneData;
+		ConstantBuffer		constInstanceDataRigid;
+		ConstantBuffer		constInstanceDataSkinned;
+		ConstantBuffer		constBoneData;
 
 		readonly INSTANCE[]		dataInstanceRigid	=	new INSTANCE[ BatchSizeRigid ];
 		readonly INSTANCE[]		dataInstanceSkinned	=	new INSTANCE[ BatchSizeSkinned ];
@@ -131,13 +127,11 @@ namespace Fusion.Engine.Graphics
 
 			constBufferStage			=	new ConstantBuffer( Game.GraphicsDevice, typeof(STAGE) );
 			constBufferBones			=	new ConstantBuffer( Game.GraphicsDevice, typeof(Matrix), RenderSystem.MaxBones );
-			constBufferInstance			=	new ConstantBuffer( Game.GraphicsDevice, typeof(INSTANCE) );
-			constBufferInstanceBatch	=	new ConstantBuffer( Game.GraphicsDevice, typeof(INSTANCE), BatchSizeRigid );
 			constBufferSubset			=	new ConstantBuffer( Game.GraphicsDevice, typeof(SUBSET) );
 
-			bufferInstanceDataRigid		=	new StructuredBuffer( Game.GraphicsDevice, typeof(INSTANCE), BatchSizeRigid		, StructuredBufferFlags.None);
-			bufferInstanceDataSkinned	=	new StructuredBuffer( Game.GraphicsDevice, typeof(INSTANCE), BatchSizeSkinned	, StructuredBufferFlags.None);
-			bufferBoneData				=	new StructuredBuffer( Game.GraphicsDevice, typeof(Matrix), 	 TotalBonesPerBatch	, StructuredBufferFlags.None);
+			constInstanceDataRigid		=	new ConstantBuffer( Game.GraphicsDevice, typeof(INSTANCE),	BatchSizeRigid		);
+			constInstanceDataSkinned	=	new ConstantBuffer( Game.GraphicsDevice, typeof(INSTANCE),	BatchSizeSkinned	);
+			constBoneData				=	new ConstantBuffer( Game.GraphicsDevice, typeof(Matrix), 	TotalBonesPerBatch	);
 
 			using ( var ms = new MemoryStream( Properties.Resources.envLut ) ) 
 			{
@@ -201,14 +195,12 @@ namespace Fusion.Engine.Graphics
 		{
 			if (disposing)
 			{
-				SafeDispose( ref bufferBoneData );
-				SafeDispose( ref bufferInstanceDataRigid );
-				SafeDispose( ref bufferInstanceDataSkinned );
+				SafeDispose( ref constBoneData );
+				SafeDispose( ref constInstanceDataRigid );
+				SafeDispose( ref constInstanceDataSkinned );
 
 				SafeDispose( ref constBufferStage );
 				SafeDispose( ref constBufferBones );
-				SafeDispose( ref constBufferInstance );
-				SafeDispose( ref constBufferInstanceBatch );
 				SafeDispose( ref constBufferSubset );
 				SafeDispose( ref envLut );
 			}
@@ -254,9 +246,10 @@ namespace Fusion.Engine.Graphics
 			device.GfxConstants[ regCamera			]	= context.GetCamera().CameraData;
 			device.GfxConstants[ regDirectLight		]	= rs.LightManager.DirectLightData;
 			device.GfxConstants[ regStage			]	= constBufferStage;
-			device.GfxConstants[ regInstance		]	= rs.UseBatching ? constBufferInstanceBatch : constBufferInstance;
 			device.GfxConstants[ regSubset			]	= constBufferSubset;
-			device.GfxConstants[ regBones			]	= constBufferBones;
+			device.GfxConstants[ regInstanceRigid	]	= constInstanceDataRigid;
+			device.GfxConstants[ regInstanceSkinned	]	= constInstanceDataSkinned;
+			device.GfxConstants[ regInstanceBones	]	= constBoneData;
 			device.GfxConstants[ regCascadeShadow	]	= rs.ShadowSystem.ShadowMap.UpdateCascadeShadowConstantBuffer();
 			device.GfxConstants[ regFog				]	= rs.Fog.FogData;
 
@@ -315,7 +308,7 @@ namespace Fusion.Engine.Graphics
 
 
 
-		bool SetupInstance ( SurfaceFlags stageFlag, IRenderContext context, RenderInstance instance, bool instanced )
+		bool SetupInstance ( SurfaceFlags stageFlag, IRenderContext context, RenderInstance instance )
 		{
 			if (!instance.Visible) return false;
 
@@ -323,18 +316,24 @@ namespace Fusion.Engine.Graphics
 
 			var  flag	=	stageFlag | (instance.IsSkinned ? SurfaceFlags.SKINNED : SurfaceFlags.RIGID);
 
-			if (aniso && stageFlag==SurfaceFlags.FORWARD) {
+			if (aniso && stageFlag==SurfaceFlags.FORWARD) 
+			{
 				flag |= SurfaceFlags.ANISOTROPIC;
 			}
 
-			if (context.Transparent) {
+			if (context.Transparent) 
+			{
 				flag |= SurfaceFlags.TRANSPARENT;
 			}
 
-			if ( stageFlag==SurfaceFlags.FORWARD || stageFlag==SurfaceFlags.RADIANCE ) {
-				if ( instance.Group==InstanceGroup.Static ) {
+			if ( stageFlag==SurfaceFlags.FORWARD || stageFlag==SurfaceFlags.RADIANCE ) 
+			{
+				if ( instance.Group==InstanceGroup.Static ) 
+				{
 					flag |= SurfaceFlags.IRRADIANCE_MAP;
-				} else {
+				} 
+				else 
+				{
 					flag |= SurfaceFlags.IRRADIANCE_VOLUME;
 				}
 			}
@@ -345,16 +344,6 @@ namespace Fusion.Engine.Graphics
 			}
 
 			device.PipelineState	=	factory[ (int)flag ];
-
-			if (instance.IsSkinned)
-			{
-				constBufferBones.SetData( instance.BoneTransforms );
-			}
-
-			if (!instanced) 
-			{
-				constBufferInstance.SetData( new INSTANCE(instance) );
-			}
 
 			return true;
 		}
@@ -374,14 +363,7 @@ namespace Fusion.Engine.Graphics
 			{
 				constBufferSubset.SetData( ref subsetData );
 
-				if (instanced)
-				{
-					device.DrawInstancedIndexed( primitiveCount*3, instanceCount, startPrimitive*3, 0, 0 );
-				}
-				else
-				{
-					device.DrawIndexed( primitiveCount*3, startPrimitive*3, 0 );
-				}
+				device.DrawInstancedIndexed( primitiveCount*3, instanceCount, startPrimitive*3, 0, 0 );
 
 				return true;
 			}
@@ -415,51 +397,53 @@ namespace Fusion.Engine.Graphics
 			
 				if ( SetupStage( stereoEye, context, instanceGroup ) ) 
 				{
-					if (rs.UseBatching)
+					var batchGroups = instances.GroupBy( inst => inst.InstanceRef ).Select( g => g.ToArray() );
+
+					foreach ( var group in batchGroups )
 					{
-						var batchGroups = instances.GroupBy( inst => inst.InstanceRef ).Select( g => g.ToArray() );
+						var template		=	group.First();  
+						var instanceCount	=	group.Count();
+						var skinned			=	template.IsSkinned;
+						var batchSize		=	skinned ? BatchSizeSkinned : BatchSizeRigid;
+						var passCount		=	MathUtil.IntDivRoundUp( instanceCount, batchSize );
+						var maxBones		=	RenderSystem.MaxBones;
 
-						foreach ( var group in batchGroups )
+						for (int passId=0; passId<passCount; passId++)
 						{
-							var template		=	group.First();  
-							var instanceCount	=	group.Count();
-							var passCount		=	MathUtil.IntDivRoundUp( instanceCount, BatchSizeRigid );
-							/*var instData	= group.Select( g => new INSTANCE(g) ).ToArray();
-							instanceData.SetData( instData );					 */
-							for (int passId=0; passId<passCount; passId++)
-							{
-								int  passInstanceCount = Math.Min( BatchSizeRigid, instanceCount - passId * BatchSizeRigid );
+							int	passInstanceCount = Math.Min( batchSize, instanceCount - passId * batchSize );
 								
-								for (int instanceId=0; instanceId<passInstanceCount; instanceId++)
+							for ( int instanceId=0; instanceId < passInstanceCount; instanceId++ )
+							{
+								if (skinned)
 								{
-									instanceData[ instanceId ] = new INSTANCE(group[ passId * BatchSizeRigid + instanceId ]);
+									var instance	=	group[ passId * batchSize + instanceId ];
+									dataInstanceSkinned[ instanceId ] = new INSTANCE(instance);
+									instance.BoneTransforms.CopyTo( dataBoneData, maxBones * instanceId );
 								}
-
-								constBufferInstanceBatch.SetData( instanceData );
-
-								if ( SetupInstance( surfFlags, context, template, true ) ) 
+								else
 								{
-									device.SetupVertexInput( template.vb, template.ib );
-
-									for ( int subsetIndex = 0; subsetIndex < template.GetSubsetCount(); subsetIndex++ )
-									{
-										SetupAndDrawSubset( template, subsetIndex, transparent, true, passInstanceCount );
-									}
+									var instance	=	group[ passId * batchSize + instanceId ];
+									dataInstanceRigid[ instanceId ] = new INSTANCE(instance);
 								}
 							}
-						}
-					}
-					else
-					{
-						foreach ( var instance in instances ) 
-						{
-							if ( SetupInstance( surfFlags, context, instance, false ) ) 
-							{
-								device.SetupVertexInput( instance.vb, instance.ib );
 
-								for ( int subsetIndex = 0; subsetIndex < instance.GetSubsetCount(); subsetIndex++ )
+							if (skinned)
+							{
+								constInstanceDataSkinned.SetData( dataInstanceSkinned );
+								constBoneData.SetData( dataBoneData );
+							}
+							else
+							{
+								constInstanceDataRigid.SetData( dataInstanceRigid );
+							}
+
+							if ( SetupInstance( surfFlags, context, template ) ) 
+							{
+								device.SetupVertexInput( template.vb, template.ib );
+
+								for ( int subsetIndex = 0; subsetIndex < template.GetSubsetCount(); subsetIndex++ )
 								{
-									SetupAndDrawSubset( instance, subsetIndex, transparent );
+									SetupAndDrawSubset( template, subsetIndex, transparent, true, passInstanceCount );
 								}
 							}
 						}

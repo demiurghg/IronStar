@@ -1,4 +1,4 @@
-﻿#define USE_DYNAMIC_CB
+﻿//#define USE_DYNAMIC_CB
 
 using System;
 using System.Collections.Generic;
@@ -160,8 +160,7 @@ namespace Fusion.Drivers.Graphics
 				Utilities.Write( db.DataPointer, ref value );
 				device.DeviceContext.UnmapSubresource( buffer, 0 );
 			#else
-					device.DeviceContext.UpdateSubresource( ref value, buffer );
-				}
+				device.DeviceContext.UpdateSubresource( ref value, buffer );
 			#endif
 			}
 		}

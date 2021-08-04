@@ -250,6 +250,7 @@ namespace Fusion.Engine.Graphics {
 			if (worldBBoxDirty)
 			{
 				worldBBox = BoundingBox.FromPoints( LocalBoundingBox.GetCorners().Select( p => Vector3.TransformCoordinate( p, World ) ) );
+				worldBBoxDirty = false;
 			}
 			return worldBBox;
 		}

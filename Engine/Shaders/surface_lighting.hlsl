@@ -61,7 +61,7 @@ float3 ComputeClusteredLighting ( PSInput input, float2 vpSize, SURFACE surface,
 	{
 		DECAL decal = GetDecal( rcCluster, cluster, i );
 		
-		surface = ApplyDecal( geometry, surface, Camera, decal, rcDecals, Instance[0].Group );
+		surface = ApplyDecal( geometry, surface, Camera, decal, rcDecals, INSTANCE_DATA[0].Group );
 		light_complexity++;
 	}
 	

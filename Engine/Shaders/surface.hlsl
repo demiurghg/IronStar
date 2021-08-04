@@ -7,6 +7,14 @@ $ubershader GBUFFER RIGID|SKINNED
 $ubershader RADIANCE RIGID IRRADIANCE_MAP|IRRADIANCE_VOLUME
 #endif
 
+#ifdef RIGID
+#define INSTANCE_DATA	InstanceRigid
+#endif
+
+#ifdef SKINNED
+#define INSTANCE_DATA	InstanceSkinned
+#endif
+
 
 struct VSInput {
 	float3 Position : POSITION;
@@ -81,12 +89,14 @@ float4x3 ToFloat4x3 ( float4x4 m )
 					 m._m02_m11_m22_m32 );
 }
 
-float4x4 AccumulateSkin( float4 boneWeights, int4 boneIndices )
+float4x4 AccumulateSkin( uint instanceId, float4 boneWeights, int4 boneIndices )
 {
-	float4x4 result = boneWeights.x * Bones[boneIndices.x];
-	result = result + boneWeights.y * Bones[boneIndices.y];
-	result = result + boneWeights.z * Bones[boneIndices.z];
-	result = result + boneWeights.w * Bones[boneIndices.w];
+	uint offset	 =	instanceId * MaxBones;
+	
+	float4x4 result = boneWeights.x * InstanceBones[offset + boneIndices.x];
+	result = result + boneWeights.y * InstanceBones[offset + boneIndices.y];
+	result = result + boneWeights.z * InstanceBones[offset + boneIndices.z];
+	result = result + boneWeights.w * InstanceBones[offset + boneIndices.w];
 	// float4x3 result = boneWeights.x * ToFloat4x3( Bones[boneIndices.x] );
 	// result = result + boneWeights.y * ToFloat4x3( Bones[boneIndices.y] );
 	// result = result + boneWeights.z * ToFloat4x3( Bones[boneIndices.z] );
@@ -94,22 +104,22 @@ float4x4 AccumulateSkin( float4 boneWeights, int4 boneIndices )
 	return result;
 }
 
-float4 TransformPosition( int4 boneIndices, float4 boneWeights, float3 inputPos )
+float4 TransformPosition( uint instanceId, int4 boneIndices, float4 boneWeights, float3 inputPos )
 {
 	float4 position = 0; 
 	
-	float4x4 xform  = AccumulateSkin(boneWeights, boneIndices); 
+	float4x4 xform  = AccumulateSkin(instanceId, boneWeights, boneIndices); 
 	position = mul( float4(inputPos,1), xform );
 	
 	return position;
 }
 
 
-float4 TransformNormal( int4 boneIndices, float4 boneWeights, float3 inputNormal )
+float4 TransformNormal( uint instanceId, int4 boneIndices, float4 boneWeights, float3 inputNormal )
 {
     float4 normal = 0;
 
-	float4x4 xform  = AccumulateSkin(boneWeights, boneIndices); 
+	float4x4 xform  = AccumulateSkin(instanceId, boneWeights, boneIndices); 
 	normal = mul( float4(inputNormal,0), xform );
 	
 	return float4(normal.xyz,0);	// force w to zero
@@ -125,30 +135,30 @@ PSInput VSMain( VSInput input, uint iid : SV_InstanceID )
 	
 	#if RIGID
 		float4 	pos			=	float4( input.Position, 1 	);
-		float4	wPos		=	mul( pos,  Instance[iid].World 	);
+		float4	wPos		=	mul( pos,  INSTANCE_DATA[iid].World 	);
 		float4	vPos		=	mul( wPos, Camera.View 		);
 		float4	pPos		=	mul( vPos, projection 		);
-		float4	normal		=	mul( float4(input.Normal,0	),  Instance[iid].World 		);
-		float4	tangent		=	mul( float4(input.Tangent,0	),  Instance[iid].World 		);
-		float4	binormal	=	mul( float4(input.Binormal,0),  Instance[iid].World 	);
+		float4	normal		=	mul( float4(input.Normal,0	),  INSTANCE_DATA[iid].World );
+		float4	tangent		=	mul( float4(input.Tangent,0	),  INSTANCE_DATA[iid].World );
+		float4	binormal	=	mul( float4(input.Binormal,0),  INSTANCE_DATA[iid].World );
 	#endif
 	#if SKINNED
-		float4 	sPos		=	TransformPosition	( input.BoneIndices, input.BoneWeights, input.Position	);
-		float4  sNormal		=	TransformNormal		( input.BoneIndices, input.BoneWeights, input.Normal	);
-		float4  sTangent	=	TransformNormal		( input.BoneIndices, input.BoneWeights, input.Tangent	);
-		float4  sBinormal	=	TransformNormal		( input.BoneIndices, input.BoneWeights, input.Binormal	);
+		float4 	sPos		=	TransformPosition	( iid, input.BoneIndices, input.BoneWeights, input.Position	);
+		float4  sNormal		=	TransformNormal		( iid, input.BoneIndices, input.BoneWeights, input.Normal	);
+		float4  sTangent	=	TransformNormal		( iid, input.BoneIndices, input.BoneWeights, input.Tangent	);
+		float4  sBinormal	=	TransformNormal		( iid, input.BoneIndices, input.BoneWeights, input.Binormal	);
 		
-		float4	wPos		=	mul( sPos, Instance[iid].World 	);
-		float4	vPos		=	mul( wPos, Camera.View 		);
-		float4	pPos		=	mul( vPos, projection		);
-		float4	normal		=	mul( sNormal,  Instance[iid].World 	);
-		float4	tangent		=	mul( sTangent,  Instance[iid].World 	);
-		float4	binormal	=	mul( sBinormal,  Instance[iid].World 	);
+		float4	wPos		=	mul( sPos, INSTANCE_DATA[iid].World );
+		float4	vPos		=	mul( wPos, Camera.View 	);
+		float4	pPos		=	mul( vPos, projection	);
+		float4	normal		=	mul( sNormal,  	INSTANCE_DATA[iid].World );
+		float4	tangent		=	mul( sTangent,  INSTANCE_DATA[iid].World );
+		float4	binormal	=	mul( sBinormal, INSTANCE_DATA[iid].World );
 	#endif
 	
 	output.Position 	= 	pPos;
 	output.ProjPos		=	pPos;
-	output.Color 		= 	float4(Instance[iid].Color, 1);
+	output.Color 		= 	float4(INSTANCE_DATA[iid].Color, 1);
 	output.TexCoord		= 	input.TexCoord;
 	output.Normal		= 	normal.xyz;
 	output.Tangent 		=  	tangent.xyz;
@@ -156,7 +166,7 @@ PSInput VSMain( VSInput input, uint iid : SV_InstanceID )
 	output.WorldPos		=	wPos.xyz;
 	
 	#ifdef RIGID
-	output.LMCoord		=	mad( input.LMCoord.xy, Instance[iid].LMRegion.xy, Instance[iid].LMRegion.zw );
+	output.LMCoord		=	mad( input.LMCoord.xy, INSTANCE_DATA[iid].LMRegion.xy, INSTANCE_DATA[iid].LMRegion.zw );
 	#else
 	output.LMCoord		=	0;
 	#endif

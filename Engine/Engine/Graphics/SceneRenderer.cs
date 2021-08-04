@@ -99,7 +99,7 @@ namespace Fusion.Engine.Graphics
 
 		readonly INSTANCE[]		dataInstanceRigid	=	new INSTANCE[ BatchSizeRigid ];
 		readonly INSTANCE[]		dataInstanceSkinned	=	new INSTANCE[ BatchSizeSkinned ];
-		readonly Matrix[]		dataBoneData		=	new Matrix[ TotalBonesPerBatch ]
+		readonly Matrix[]		dataBoneData		=	new Matrix[ TotalBonesPerBatch ];
 
 		/// <summary>
 		/// Gets pipeline state factory
@@ -135,9 +135,9 @@ namespace Fusion.Engine.Graphics
 			constBufferInstanceBatch	=	new ConstantBuffer( Game.GraphicsDevice, typeof(INSTANCE), BatchSizeRigid );
 			constBufferSubset			=	new ConstantBuffer( Game.GraphicsDevice, typeof(SUBSET) );
 
-			bufferInstanceDataRigid		=	new StructuredBuffer( Game.GraphicsDevice, typeof(INSTANCE), BatchSizeRigid		);
-			bufferInstanceDataSkinned	=	new StructuredBuffer( Game.GraphicsDevice, typeof(INSTANCE), BatchSizeSkinned	);
-			bufferBoneData				=	new StructuredBuffer( Game.GraphicsDevice, typeof(Matrix), 	 TotalBonesPerBatch	);
+			bufferInstanceDataRigid		=	new StructuredBuffer( Game.GraphicsDevice, typeof(INSTANCE), BatchSizeRigid		, StructuredBufferFlags.None);
+			bufferInstanceDataSkinned	=	new StructuredBuffer( Game.GraphicsDevice, typeof(INSTANCE), BatchSizeSkinned	, StructuredBufferFlags.None);
+			bufferBoneData				=	new StructuredBuffer( Game.GraphicsDevice, typeof(Matrix), 	 TotalBonesPerBatch	, StructuredBufferFlags.None);
 
 			using ( var ms = new MemoryStream( Properties.Resources.envLut ) ) 
 			{

@@ -21,8 +21,8 @@ namespace Fusion {
 	///	reg ADD "HKLM\Software\Wow6432Node\Microsoft\StrongName\Verification\*,*" /f
 	/// 
 	/// </summary>
-	public sealed class CVEvent : IDisposable {
-
+	public sealed class CVEvent : IDisposable 
+	{
 		const int MaxSeries = 16;
 
 		[ThreadStatic] 
@@ -45,16 +45,19 @@ namespace Fusion {
 		}
 
 
+	#if false
 		public CVEvent (string eventName) 
 		{
-			if (series==null) {
+			if (series==null) 
+			{
 				series = CreateSeries();
 			}
 
 			span	=	series[calls].EnterSpan( eventName );
 			calls++;
 
-			if (calls>=MaxSeries) {
+			if (calls>=MaxSeries) 
+			{
 				throw new IndexOutOfRangeException("Too much nested CVEvents");
 			}
 		}
@@ -64,5 +67,14 @@ namespace Fusion {
 			span.Leave();
 			calls--;
 		}
+	#else
+		public CVEvent (string eventName) 
+		{
+		}
+
+		public void Dispose () 
+		{
+		}
+	#endif
 	}
 }

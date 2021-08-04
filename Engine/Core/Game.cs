@@ -58,7 +58,7 @@ namespace Fusion.Core {
 		/// <summary>
 		/// Gets the current graphics device
 		/// </summary>
-		internal GraphicsDevice GraphicsDevice { get { return graphicsDevice; } }
+		public GraphicsDevice GraphicsDevice { get { return graphicsDevice; } }
 
 		/// <summary>
 		/// Gets current content manager

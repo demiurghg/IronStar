@@ -151,6 +151,21 @@ namespace IronStar.Editor
 
 			//-----------
 
+			var graphStatsLabel	=	lowerShelf.AddRIndicator("", 200 );
+
+			graphStatsLabel.Tick += (s,e) => {
+				var dispatches = Game.GraphicsDevice.Stats.Dispatches;
+				var drawCalls  = Game.GraphicsDevice.Stats.DrawCalls;
+				var triangles  = Game.GraphicsDevice.Stats.VertexCount / 3;
+				graphStatsLabel.Text	=	
+					string.Format(
+ 						"Draw Calls : {0}\r\n" + 
+ 						"Triangles  : {1}\r\n" + 
+ 						"Dispatches : {2}\r\n" ,
+						drawCalls, triangles, dispatches
+					);
+			};
+
 			lowerShelf.AddRSplitter();
 			var statLabel	=	lowerShelf.AddRIndicator("", 200 );
 

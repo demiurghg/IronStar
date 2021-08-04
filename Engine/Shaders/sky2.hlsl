@@ -558,18 +558,6 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 		skyScattering.rgb	+=	sun.rgb * skyTransmittance.rgb * factor;
 	#endif
 	
-	//-----------------------------------------
-	//	apply fog on top of sky 
-	//	(sky view only)
-	//-----------------------------------------
-	
-	#if 1
-	#ifdef SKY_VIEW
-		float2 	fogUV	=	float2( input.position.xy * Sky.ViewportSize.zw );
-		float4	fogData	=	FogLut.SampleLevel( LinearClamp, fogUV, 0 );
-	
-		skyScattering.rgb = skyScattering.rgb * fogData.a + fogData.rgb;
-	#endif
 	
 	//-----------------------------------------
 	//	compute cirrus clouds :
@@ -581,12 +569,23 @@ float4 PSMain( PS_INPUT input ) : SV_TARGET0
 	
 	float	cirrusTexture	=	CirrusClouds.Sample( LinearWrap, cirrusCoords.xy ).r;
 	float	coverage		=	max(0.01f, Sky.CirrusCoverage);
-			cirrusTexture	=	smoothstep(1-coverage, 1, cirrusTexture);
+			//cirrusTexture	=	smoothstep(1-coverage, 1, cirrusTexture);
 			cirrusTexture	*=	Sky.CirrusDensity;
 			
 	float3	cloudGlow		=	skyCirrusClouds.rgb * cirrusTexture.r / 1.1f;
 
 	skyScattering.rgb 		= 	lerp( skyScattering.rgb, cloudGlow.rgb, cirrusTexture.r * cirrusTexture.r * skyCirrusClouds.a );
+
+	//-----------------------------------------
+	//	apply fog on top of sky 
+	//	(sky view only)
+	//-----------------------------------------
+	
+	#ifdef SKY_VIEW
+		float2 	fogUV	=	float2( input.position.xy * Sky.ViewportSize.zw );
+		float4	fogData	=	FogLut.SampleLevel( LinearClamp, fogUV, 0 );
+	
+		skyScattering.rgb = skyScattering.rgb * fogData.a + fogData.rgb;
 	#endif
 	
 	// result :

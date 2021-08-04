@@ -13,9 +13,10 @@ using Fusion.Engine.Graphics.Lights;
 using Fusion.Engine.Graphics.GI;
 
 
-namespace Fusion.Engine.Graphics {
-	public class LightGrid : DisposableBase {
-
+namespace Fusion.Engine.Graphics 
+{
+	public class LightGrid : DisposableBase 
+	{
 		public const int MaxLights			= 4096;
 		public const int MaxDecals			= 4096;
 		public const int MaxLightProbes	= 256;

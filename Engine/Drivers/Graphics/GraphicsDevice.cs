@@ -21,6 +21,8 @@ using Fusion.Core;
 using Fusion.Core.Mathematics;
 using Fusion.Engine.Common;
 using Fusion.Engine.Imaging;
+using Fusion.Core.Extensions;
+using Fusion.Core.Extensions;
 
 namespace Fusion.Drivers.Graphics {
 
@@ -129,6 +131,10 @@ namespace Fusion.Drivers.Graphics {
 		BaseDisplay				display			=	null;
 		Device					device			=	null;
 		DeviceContext			deviceContext	=	null;
+
+		public GraphicsStats	Stats { get { return statsOld; } }
+		GraphicsStats			stats = new GraphicsStats();
+		GraphicsStats			statsOld = new GraphicsStats();
 
 
 		/// <summary>
@@ -306,6 +312,9 @@ namespace Fusion.Drivers.Graphics {
 				}
 			}
 
+			Misc.Swap( ref stats, ref statsOld );
+			stats.Reset();
+
 			display.SwapBuffers( syncInterval );
 		}
 
@@ -395,6 +404,7 @@ namespace Fusion.Drivers.Graphics {
 		{					
 			lock (deviceContext) 
 			{
+				stats.DrawCalls++;
 				ApplyGpuState();
 				//deviceContext.InputAssembler.PrimitiveTopology	=	Converter.Convert( primitive );
 				deviceContext.Draw( vertexCount, firstIndex );
@@ -411,6 +421,7 @@ namespace Fusion.Drivers.Graphics {
 		{									 
 			lock (deviceContext) 
 			{
+				stats.DrawCalls++;
 				ApplyGpuState();
 				//deviceContext.InputAssembler.PrimitiveTopology	=	Converter.Convert( primitive );
 				deviceContext.DrawAuto();
@@ -431,6 +442,7 @@ namespace Fusion.Drivers.Graphics {
 		{
 			lock (deviceContext) 
 			{
+				stats.DrawCalls++;
 				ApplyGpuState();
 				//deviceContext.InputAssembler.PrimitiveTopology	=	Converter.Convert( primitive );
 				deviceContext.DrawInstanced( vertexCountPerInstance, instanceCount, startVertexLocation, startInstanceLocation );
@@ -449,6 +461,8 @@ namespace Fusion.Drivers.Graphics {
 		{
 			lock (deviceContext) 
 			{
+				stats.DrawCalls++;
+				stats.VertexCount += indexCount;
 				ApplyGpuState();
 				//deviceContext.InputAssembler.PrimitiveTopology	=	Converter.Convert( primitive );
 				deviceContext.DrawIndexed( indexCount, firstIndex,	baseVertexOffset );
@@ -467,6 +481,8 @@ namespace Fusion.Drivers.Graphics {
 		{
 			lock (deviceContext) 
 			{
+				stats.DrawCalls++;
+				stats.VertexCount += indexCountPerInstance * instanceCount;
 				ApplyGpuState();
 				deviceContext.DrawIndexedInstanced( indexCountPerInstance, instanceCount, startIndexLocation, baseVertexLocation, startInstanceLocation );
 			}
@@ -484,6 +500,7 @@ namespace Fusion.Drivers.Graphics {
 		{
 			lock (deviceContext) 
 			{
+				stats.Dispatches++;
 				ApplyGpuState();
 				deviceContext.Dispatch( threadGroupCountX, threadGroupCountY, threadGroupCountZ ); 
 			}
@@ -500,6 +517,7 @@ namespace Fusion.Drivers.Graphics {
 		{
 			lock (deviceContext) 
 			{
+				stats.Dispatches++;
 				ApplyGpuState();
 				deviceContext.Dispatch( (int)threadGroupCountX, (int)threadGroupCountY, (int)threadGroupCountZ ); 
 			}
@@ -517,6 +535,7 @@ namespace Fusion.Drivers.Graphics {
 		{
 			lock (deviceContext) 
 			{
+				stats.Dispatches++;
 				ApplyGpuState();
 				int tgx	=	MathUtil.IntDivRoundUp( totalSize.X, blockSize.X );
 				int tgy	=	MathUtil.IntDivRoundUp( totalSize.Y, blockSize.Y );
@@ -536,6 +555,7 @@ namespace Fusion.Drivers.Graphics {
 		{
 			lock (deviceContext) 
 			{
+				stats.Dispatches++;
 				ApplyGpuState();
 				int tgx	=	MathUtil.IntDivRoundUp( totalSize.X, blockSize.X );
 				int tgy	=	MathUtil.IntDivRoundUp( totalSize.Y, blockSize.Y );
@@ -615,21 +635,15 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		public void ResetStates ()
 		{
-			using ( new CVEvent( "Reset GPU states" ) ) 
+			lock ( this.DeviceContext ) 
 			{
-				lock ( this.DeviceContext ) 
-				{
-					using ( new CVEvent( "deviceContext.ClearState" ) ) 
-					{
-						deviceContext.ClearState();
-					}
+				deviceContext.ClearState();
 
-					SetTargets( null );
-					SetupVertexInput( null, null );
-					SetupVertexOutput( null, 0 );
+				/*SetTargets( null );
+				SetupVertexInput( null, null );
+				SetupVertexOutput( null, 0 );*/
 
-					PipelineState   =   null;
-				}
+				PipelineState	=	null;
 			}
 		}
 
@@ -640,10 +654,6 @@ namespace Fusion.Drivers.Graphics {
 		 *	Targets :
 		 * 
 		-----------------------------------------------------------------------------------------*/
-
-		RenderTargetSurface[]	renderTargetSurfaces	=	new RenderTargetSurface[8];
-		DepthStencilSurface		depthStencilSurface		=	null;
-
 
 		/// <summary>
 		/// 
@@ -696,39 +706,49 @@ namespace Fusion.Drivers.Graphics {
 			int w = -1;
 			int h = -1;
 
-			if (renderTargets.Length>8) {
+			DepthStencilView	dsv		=	null;
+			RenderTargetView[] 	rtvs	=	new RenderTargetView[ renderTargets.Length ];
+
+			if (renderTargets.Length>8) 
+			{
 				throw new ArgumentException("Could not bind more than 8 render targets");
 			}
-
-
-			this.depthStencilSurface	=	depthStencil;
-			renderTargets.CopyTo( renderTargetSurfaces, 0 );
-
 
 			if (depthStencil!=null) 
 			{
 				w	=	depthStencil.Width;
 				h	=	depthStencil.Height;
+				dsv	=	depthStencil.DSV;
 			}
 
-			if (renderTargets.Any(rt=>rt!=null)) 
+			for (int i=0; i<renderTargets.Length; i++)
 			{
-				if (w==-1 || h==-1) {
-					w	=	renderTargets.First().Width;
-					h	=	renderTargets.First().Height;
+				if (renderTargets[i]!=null)
+				{
+					rtvs[i] = renderTargets[i].RTV;
+
+					if (w==-1)
+					{
+						w = renderTargets[i].Width;
+						h = renderTargets[i].Height;
+					}
+					else
+					{
+						if (w!=renderTargets[i].Width || h!=renderTargets[i].Height)
+						{
+							throw new ArgumentException("All surfaces must be the same size", "renderTargets");
+						}
+					}
 				}
 				
-				if ( !renderTargets.All( surf => surf.Width == w && surf.Height == h ) ) {
-					throw new ArgumentException("All surfaces must be the same size", "renderTargets");
-				}
 			}
 
-			DepthStencilView	dsv		=	depthStencil == null ? null : depthStencil.DSV;
-			RenderTargetView[] 	rtvs	=	renderTargets.Select( rt => rt?.RTV ).ToArray();
-
-			if (!rtvs.Any()) {
+			if (rtvs.Length==0) 
+			{
 				deviceContext.OutputMerger.SetTargets( dsv, (RenderTargetView)null );
-			} else {
+			} 
+			else 
+			{
 				deviceContext.OutputMerger.SetTargets( dsv, rtvs );
 			}
 		}

@@ -9,7 +9,7 @@ namespace Fusion.Engine.Graphics.Collections
 {
 	public class BvhTree<TPrimitive>
 	{
-		sealed class SortedPrimitive
+		sealed class SortedPrimitive : IComparable<SortedPrimitive>
 		{
 			public SortedPrimitive( int primitiveIndex, BoundingBox bbox, Vector3 centroid )
 			{
@@ -23,6 +23,14 @@ namespace Fusion.Engine.Graphics.Collections
 			public readonly BoundingBox BoundingBox;
 			public readonly Vector3 Centroid;
 			public readonly ulong ZOrder;
+
+			public int CompareTo( SortedPrimitive other )
+			{
+				unchecked
+				{
+					return ZOrder.CompareTo( other.ZOrder );
+				}
+			}
 		}
 
 
@@ -77,13 +85,24 @@ namespace Fusion.Engine.Graphics.Collections
 
 			primitives	=	primitiveCollection.ToArray();
 
-			var sortedPrimitives	=	Enumerable.Range(0, primitives.Length)
+			var sortedPrimitives = new SortedPrimitive[ primitives.Length ];
+
+			for (int i=0; i<primitives.Length; i++)
+			{
+				var primitive		=	primitives[i];
+				var sortedPrimitive	=	new SortedPrimitive( i, bboxSelector(primitive), centroidSelector(primitive) );
+
+				sortedPrimitives[i]	=	sortedPrimitive;
+			}
+
+			Array.Sort( sortedPrimitives );
+			/*var sortedPrimitives	=	Enumerable.Range(0, primitives.Length)
 					.Select( index => new SortedPrimitive( 
 						index, 
 						bboxSelector( primitives[ index ] ), 
 						centroidSelector( primitives[ index ] ) ) ) 
 					.OrderBy( p1 => p1.ZOrder )
-					.ToArray();
+					.ToArray();*/
 
 			root = GenerateHierarchyRecursive( sortedPrimitives, 0, sortedPrimitives.Length-1 );
 

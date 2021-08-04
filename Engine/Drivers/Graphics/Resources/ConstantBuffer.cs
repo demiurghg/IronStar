@@ -1,4 +1,4 @@
-﻿//#define USE_DYNAMIC_CB
+﻿#define USE_DYNAMIC_CB
 
 using System;
 using System.Collections.Generic;
@@ -153,16 +153,17 @@ namespace Fusion.Drivers.Graphics
 		/// <param name="?"></param>
 		public void SetData<T> ( T value ) where T: struct
 		{
+			lock (device.DeviceContext) 
+			{
 			#if USE_DYNAMIC_CB
 				var db = device.DeviceContext.MapSubresource( buffer, 0, MapMode.WriteDiscard, D3D11.MapFlags.None );
-				Marshal.StructureToPtr( value, db.DataPointer, false );
+				Utilities.Write( db.DataPointer, ref value );
 				device.DeviceContext.UnmapSubresource( buffer, 0 );
 			#else
-				lock (device.DeviceContext) 
-				{
 					device.DeviceContext.UpdateSubresource( ref value, buffer );
 				}
 			#endif
+			}
 		}
 
 		
@@ -175,7 +176,13 @@ namespace Fusion.Drivers.Graphics
 		{
 			lock (device.DeviceContext) 
 			{
+			#if USE_DYNAMIC_CB
+				var db = device.DeviceContext.MapSubresource( buffer, 0, MapMode.WriteDiscard, D3D11.MapFlags.None );
+				Utilities.Write( db.DataPointer, ref value );
+				device.DeviceContext.UnmapSubresource( buffer, 0 );
+			#else
 				device.DeviceContext.UpdateSubresource( ref value, buffer );
+			#endif
 			}
 		}
 
@@ -194,7 +201,13 @@ namespace Fusion.Drivers.Graphics
 
 			lock (device.DeviceContext) 
 			{
+			#if USE_DYNAMIC_CB
+				var db = device.DeviceContext.MapSubresource( buffer, 0, MapMode.WriteDiscard, D3D11.MapFlags.None );
+				Utilities.Write( db.DataPointer, data, 0, data.Length );
+				device.DeviceContext.UnmapSubresource( buffer, 0 );
+			#else
 				device.DeviceContext.UpdateSubresource( data, buffer );
+			#endif
 			}
 		}
 

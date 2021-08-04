@@ -20,12 +20,17 @@ namespace Fusion.Engine.Graphics
 	internal partial class SceneRenderer : RenderComponent 
 	{
 		[ShaderDefine]
-		const int BatchSize = 128;
+		const int BatchSizeRigid	= 64;
+
+		[ShaderDefine]
+		const int BatchSizeSkinned	= 4;
+
+		const int TotalBonesPerBatch	=	BatchSizeSkinned * RenderSystem.MaxBones;
 
 		static FXConstantBuffer<GpuData.CAMERA>				regCamera			= new CRegister( 0, "Camera"			);
 		static FXConstantBuffer<GpuData.DIRECT_LIGHT>		regDirectLight		= new CRegister( 1, "DirectLight"		);
 		static FXConstantBuffer<STAGE>						regStage			= new CRegister( 2, "Stage"				);
-		static FXConstantBuffer<INSTANCE>					regInstance			= new CRegister( 3, BatchSize,				"Instance"	);
+		static FXConstantBuffer<INSTANCE>					regInstance			= new CRegister( 3, BatchSizeRigid,			"Instance"	);
 		static FXConstantBuffer<SUBSET>						regSubset			= new CRegister( 4,							"Subset"	);
 		static FXConstantBuffer<Matrix>						regBones			= new CRegister( 5, RenderSystem.MaxBones,	"Bones"		);
 		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow	= new CRegister( 6, "CascadeShadow"		);
@@ -61,6 +66,9 @@ namespace Fusion.Engine.Graphics
 		static FXTexture2D<Vector4>				regEnvLut				=	new TRegister(23, "EnvLut"				);
 		static FXTexture3D<Vector4>				regFogVolume			=	new TRegister(24, "FogVolume"			);
 
+		static FXStructuredBuffer<INSTANCE>		regInstanceData			=	new TRegister(25, "InstanceData"		);
+		static FXStructuredBuffer<Matrix>		regBoneData				=	new TRegister(26, "BoneData"			);
+
 		static FXSamplerState					regSamplerLinear		=	new SRegister( 0, "SamplerLinear"		);
 		static FXSamplerState					regSamplerPoint			=	new SRegister( 1, "SamplerPoint"		);
 		static FXSamplerState					regSamplerLightmap		=	new SRegister( 2, "SamplerLightmap"		);
@@ -84,6 +92,14 @@ namespace Fusion.Engine.Graphics
 		ConstantBuffer		constBufferInstance	;
 		ConstantBuffer		constBufferInstanceBatch	;
 		ConstantBuffer		constBufferSubset	;
+
+		StructuredBuffer	bufferInstanceDataRigid;
+		StructuredBuffer	bufferInstanceDataSkinned;
+		StructuredBuffer	bufferBoneData;
+
+		readonly INSTANCE[]		dataInstanceRigid	=	new INSTANCE[ BatchSizeRigid ];
+		readonly INSTANCE[]		dataInstanceSkinned	=	new INSTANCE[ BatchSizeSkinned ];
+		readonly Matrix[]		dataBoneData		=	new Matrix[ TotalBonesPerBatch ]
 
 		/// <summary>
 		/// Gets pipeline state factory
@@ -116,12 +132,16 @@ namespace Fusion.Engine.Graphics
 			constBufferStage			=	new ConstantBuffer( Game.GraphicsDevice, typeof(STAGE) );
 			constBufferBones			=	new ConstantBuffer( Game.GraphicsDevice, typeof(Matrix), RenderSystem.MaxBones );
 			constBufferInstance			=	new ConstantBuffer( Game.GraphicsDevice, typeof(INSTANCE) );
-			constBufferInstanceBatch	=	new ConstantBuffer( Game.GraphicsDevice, typeof(INSTANCE), BatchSize );
+			constBufferInstanceBatch	=	new ConstantBuffer( Game.GraphicsDevice, typeof(INSTANCE), BatchSizeRigid );
 			constBufferSubset			=	new ConstantBuffer( Game.GraphicsDevice, typeof(SUBSET) );
+
+			bufferInstanceDataRigid		=	new StructuredBuffer( Game.GraphicsDevice, typeof(INSTANCE), BatchSizeRigid		);
+			bufferInstanceDataSkinned	=	new StructuredBuffer( Game.GraphicsDevice, typeof(INSTANCE), BatchSizeSkinned	);
+			bufferBoneData				=	new StructuredBuffer( Game.GraphicsDevice, typeof(Matrix), 	 TotalBonesPerBatch	);
 
 			using ( var ms = new MemoryStream( Properties.Resources.envLut ) ) 
 			{
-				envLut    =   UserTexture.CreateFromTga( rs, ms, false );
+				envLut	=	UserTexture.CreateFromTga( rs, ms, false );
 			}
 
 			Game.Reloading += (s,e) => LoadContent();
@@ -181,6 +201,10 @@ namespace Fusion.Engine.Graphics
 		{
 			if (disposing)
 			{
+				SafeDispose( ref bufferBoneData );
+				SafeDispose( ref bufferInstanceDataRigid );
+				SafeDispose( ref bufferInstanceDataSkinned );
+
 				SafeDispose( ref constBufferStage );
 				SafeDispose( ref constBufferBones );
 				SafeDispose( ref constBufferInstance );
@@ -204,8 +228,6 @@ namespace Fusion.Engine.Graphics
 		/// <param name="vpHeight"></param>
 		public bool SetupStage ( StereoEye stereoEye, IRenderContext context, InstanceGroup instanceGroup )
 		{
-			device.ResetStates();
-
 			context.SetupRenderTargets( device );
 			device.SetViewport( context.Viewport );
 			device.SetScissorRect( context.Viewport.Bounds );
@@ -370,7 +392,7 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		INSTANCE[] instanceData = new INSTANCE[ BatchSize ];
+		INSTANCE[] instanceData = new INSTANCE[ BatchSizeRigid ];
 
 		/// <summary>
 		/// 
@@ -384,6 +406,8 @@ namespace Fusion.Engine.Graphics
 			vt	=	rs.VTSystem;
 			ss	=	rs.ShadowSystem;
 			rw	=	rs.RenderWorld;
+
+			if (!instances.Any()) return;
 			
 			using ( new PixEvent(eventName) ) 
 			{
@@ -399,16 +423,16 @@ namespace Fusion.Engine.Graphics
 						{
 							var template		=	group.First();  
 							var instanceCount	=	group.Count();
-							var passCount		=	MathUtil.IntDivRoundUp( instanceCount, BatchSize );
+							var passCount		=	MathUtil.IntDivRoundUp( instanceCount, BatchSizeRigid );
 							/*var instData	= group.Select( g => new INSTANCE(g) ).ToArray();
 							instanceData.SetData( instData );					 */
 							for (int passId=0; passId<passCount; passId++)
 							{
-								int  passInstanceCount = Math.Min( BatchSize, instanceCount - passId * BatchSize );
+								int  passInstanceCount = Math.Min( BatchSizeRigid, instanceCount - passId * BatchSizeRigid );
 								
 								for (int instanceId=0; instanceId<passInstanceCount; instanceId++)
 								{
-									instanceData[ instanceId ] = new INSTANCE(group[ passId * BatchSize + instanceId ]);
+									instanceData[ instanceId ] = new INSTANCE(group[ passId * BatchSizeRigid + instanceId ]);
 								}
 
 								constBufferInstanceBatch.SetData( instanceData );
@@ -492,6 +516,8 @@ namespace Fusion.Engine.Graphics
 			var context		=	new ForwardZPassContext( camera, frame );
 			var instances	=	renderList.Where( inst => (inst.Group & mask) != 0 );
 
+			rs.Device.ResetStates();
+
 			RenderGeneric("RenderZPass", gameTime, stereoEye, SurfaceFlags.ZPASS, context, instances, mask );
 		}
 		
@@ -515,6 +541,8 @@ namespace Fusion.Engine.Graphics
 		{
 			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
 
+			rs.Device.ResetStates();
+
 			RenderGeneric("LightProbeGBuffer", null, StereoEye.Mono, SurfaceFlags.GBUFFER, context, instances, mask );
 		}
 
@@ -522,6 +550,8 @@ namespace Fusion.Engine.Graphics
 		internal void RenderLightProbeRadiance ( LightProbeContext context, RenderWorld rw, InstanceGroup mask )
 		{
 			var instances	=	rw.Instances.Where( inst => (inst.Group & mask) != 0 );
+
+			rs.Device.ResetStates();
 
 			RenderGeneric("LightProbeRadiance", null, StereoEye.Mono, SurfaceFlags.RADIANCE, context, instances, mask );
 		}

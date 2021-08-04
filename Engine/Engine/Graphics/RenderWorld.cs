@@ -127,11 +127,6 @@ namespace Fusion.Engine.Graphics
 						rs.VTSystem.Start(value);
 						virtualTexture = value;
 					}
-
-					foreach (var ri in Instances)
-					{
-						ri.MakeGpuDataDirty();
-					}
 				}
 			}
 		}

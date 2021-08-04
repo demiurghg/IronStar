@@ -285,6 +285,36 @@ namespace Fusion.Engine.Graphics {
 			WindDirection = -45;
 		}
 
+		[AECommand]
+		public void Titan2()
+		{
+			SunAltitude = 10				;
+			SunAzimuth = 45					;
+			SunIntensityEv = 5				;
+			SunTemperature = 2200			;
+			SunBrightnessEv = 17			;
+			SunAngularSize = 0.7f			;
+			PlanetRadius = 4000				;
+			AtmosphereHeight = 60			;
+			RayleighHeight = 1000			;
+			MieHeight = 2000				;
+			ViewElevation = 60				;
+			MieExcentricity = 0.6f			;
+			SkyExposure = 0					;
+			SkySphereSize = 10				;
+			RayleighScale = 0				;
+			MieScale = 4					;
+			MieColor = new Color(150, 130, 96, 255);
+			APScale = 0						;
+			AmbientLevel = 0.8f				;
+			CirrusCoverage = 1				;
+			CirrusHeight = 2934				;
+			CirrusDensity = 1				;
+			CirrusSize = 10					;
+			WindVelocity = 0				;
+			WindDirection = -45				;
+		}
+
 
 		static FXConstantBuffer<SKY_DATA>				regSky				=	new CRegister( 0, "Sky"			);
 		static FXConstantBuffer<GpuData.CAMERA>			regCamera			=	new CRegister( 1, "Camera"		);

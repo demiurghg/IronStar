@@ -8,72 +8,101 @@ using Fusion.Core;
 using Fusion.Drivers.Graphics;
 using Fusion.Engine.Common;
 
-namespace Fusion.Engine.Graphics {
-
-	public enum SpotShape {
-		Round,
-		Square,
-	}
-
-
-	public class SpotLight {
-		
+namespace Fusion.Engine.Graphics 
+{
+	public class SpotLight 
+	{
 		internal uint Timer = 0;
+
+		bool shadowDirty = true;
+
+		Matrix	spotView;
+		Matrix	spotProjection;
+		int		lodBias;
+		int		lod;
 
 		/// <summary>
 		/// Spot-light view matrix.
 		/// </summary>
-		public Matrix	SpotView;
+		public Matrix SpotView
+		{
+			get { return spotView; }
+			set 
+			{ 
+				if (spotView!=value)
+				{
+					spotView	= value; 
+					shadowDirty	= true; 
+				}
+			}
+		}
 
 		/// <summary>
 		/// Spot-light projection matrix.
 		/// </summary>
-		public Matrix	Projection;
+		public Matrix Projection
+		{
+			get { return spotProjection; }
+			set
+			{
+				if (spotProjection!=value)
+				{
+					spotProjection	= value;
+					shadowDirty		= true;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Omni-light position
 		/// </summary>
-		public Vector3	Position0;
+		public Vector3 Position0;
 		
 		/// <summary>
 		/// Omni-light position
 		/// </summary>
-		public Vector3	Position1;
+		public Vector3 Position1;
 
 		/// <summary>
 		/// Spot-light intensity.
 		/// </summary>
-		public Color4	Intensity;
+		public Color4 Intensity;
 
 		/// <summary>
 		/// Spot-light intensity.
 		/// </summary>
-		public Color4	Intensity2 { get { return Intensity * LightStyleController.RunLightStyle((int)Timer, LightStyle); } }
-
-		/// <summary>
-		/// Spot-light mask texture index.
-		/// </summary>
-		public float	PenumbraFactor;
+		public Color4 Intensity2 { get { return Intensity * LightStyleController.RunLightStyle((int)Timer, LightStyle); } }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public string	SpotMaskName;
+		public string SpotMaskName;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public int	LodBias;
+		public int LodBias
+		{
+			get { return lodBias; }
+			set 
+			{
+				if (lodBias!=value)
+				{
+					lodBias		=	value;
+					shadowDirty	=	true;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Spot-light inner radius.
 		/// </summary>
-		public float	RadiusInner;
+		public float RadiusInner;
 
 		/// <summary>
 		/// Spot-light outer radius.
 		/// </summary>
-		public float	RadiusOuter;
+		public float RadiusOuter;
 
 		/// <summary>
 		/// 
@@ -89,10 +118,22 @@ namespace Fusion.Engine.Graphics {
 
 
 		internal bool		Visible = true;
-		internal int		DetailLevel;   
 		internal Rectangle	ShadowRegion;
 		internal Vector4	ShadowScaleOffset;
 		internal Int3		MinExtent;
 		internal Int3		MaxExtent;
+
+		internal int DetailLevel
+		{
+			get { return lod; }
+			set
+			{
+				if (lod!=value)
+				{
+					lod = value;
+					shadowDirty = true;
+				}
+			}
+		}
 	}
 }

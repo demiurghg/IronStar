@@ -50,6 +50,14 @@ namespace Fusion.Engine.Graphics.Scenes
 		}
 
 
+		public static void Lerp( ref AnimationKey start, ref AnimationKey end, float factor, ref AnimationKey result )
+		{
+			result.Translation	=	Vector3		.Lerp ( start.Translation, end.Translation, factor );
+			result.Rotation		=	Quaternion	.Slerp( start.Rotation	 , end.Rotation	  , factor );
+			result.Scaling		=	MathUtil	.Lerp ( start.Scaling	 , end.Scaling	  , factor );
+		}
+
+
 		public static AnimationKey operator * ( AnimationKey a, AnimationKey b )
 		{
 			return Multiply(a,b);

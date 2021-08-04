@@ -189,7 +189,6 @@ void CSMain(
 	float3	cameraPos		=	Camera.CameraPosition.xyz;
 	
 	//	Compute fog density :
-	float	fadeout			=	pow( saturate( 1 - location.z * (Fog.FogSizeInv.z) * 1.1f ), 0.5f );
 	float	apFactor		=	GetAPBlendFactor( location.z );
 	float	densityAP		=	GetAtmosphericFogDensity( wsPositionNJ ) * (1-apFactor);
 	float	densityGF		=	GetGroundFogDensity( wsPositionNJ ) * (1-apFactor);
@@ -207,8 +206,8 @@ void CSMain(
 	float	stepLength		=	GetCellLength( location.xyz );
 
 	//	Compute integral segment :
-	float	extinction		=	density * stepLength;
-	float	extinctionClamp	=	clamp( extinction, 0.000001, 1 );
+	float	extinction		=	density * stepLength * 1.2f;
+	float	extinctionClamp	=	clamp( extinction, 0.000001, 1000 );
 	float	transmittance	=	exp( -extinction );
 	float3	scattering		=	phaseLight * stepLength;
 	float3	integScatt		=	( scattering - scattering * transmittance ) / extinctionClamp;

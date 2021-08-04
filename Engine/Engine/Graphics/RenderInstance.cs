@@ -63,8 +63,8 @@ namespace Fusion.Engine.Graphics {
 			{
 				if (world!=value)
 				{
+					worldBBoxDirty = true;
 					world = value;
-					instanceDataDirty = true;
 				}
 			}
 		}
@@ -80,7 +80,6 @@ namespace Fusion.Engine.Graphics {
 				if ( color!=value )
 				{
 					color	=	value;
-					instanceDataDirty = true;
 				}
 			}
 		}
@@ -97,6 +96,9 @@ namespace Fusion.Engine.Graphics {
 		public BoundingBox LocalBoundingBox {
 			get; private set;
 		}
+
+		bool worldBBoxDirty = true;
+		BoundingBox worldBBox = new BoundingBox();
 
 		/// <summary>
 		/// Gets and sets surface effect.
@@ -164,13 +166,6 @@ namespace Fusion.Engine.Graphics {
 		readonly internal int indexCount;
 		readonly internal int vertexCount;
 
-		bool				instanceDataDirty	=	true;
-		bool				subsetDataDirty		=	true;
-		bool[]				transparency;
-		ConstantBuffer		instanceCData;
-		ConstantBuffer[]	subsetCData;
-
-
 		/// <summary>
 		/// Creates instance from mesh in scene.
 		/// </summary>
@@ -208,9 +203,6 @@ namespace Fusion.Engine.Graphics {
 			}
 
 			LocalBoundingBox = mesh.ComputeBoundingBox();
-
-			instanceCData	=	new ConstantBuffer( rs.Device, typeof(SceneRenderer.INSTANCE) );
-			subsetCData		=	mesh.Subsets.Select( subset => new ConstantBuffer( rs.Device, typeof(SceneRenderer.SUBSET) ) ).ToArray();
 		}
 
 
@@ -218,37 +210,9 @@ namespace Fusion.Engine.Graphics {
 		{
 			if (disposing)
 			{
-				SafeDispose( ref instanceCData );
-				SafeDispose( ref subsetCData );
 			}
 
 			base.Dispose( disposing );
-		}
-
-
-		public void MakeGpuDataDirty()
-		{
-			instanceDataDirty	=	true;
-			subsetDataDirty		=	true;
-		}
-
-
-		public ConstantBuffer GetInstanceData()
-		{
-			var data = new SceneRenderer.INSTANCE();
-			
-			if (instanceDataDirty)
-			{
-				data.World		=	World;
-				data.Color		=	new Color3( Color.Red, Color.Green, Color.Blue );
-				data.LMRegion	=	LightMapScaleOffset;
-				data.Group		=	(int)Group;
-
-				instanceCData.SetData( ref data );
-				instanceDataDirty = false;
-			}
-
-			return instanceCData;
 		}
 
 
@@ -277,50 +241,17 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-		public ConstantBuffer GetSubsetBuffer(int subsetIndex, out bool isTransparent, out int startPrimitive, out int primitiveCount)
-		{
-			var data = new SceneRenderer.SUBSET();
-			
-			if (subsetDataDirty)
-			{
-				transparency	=	new bool[subsetCData.Length];
-
-				for (int i=0; i<subsetCData.Length; i++)
-				{
-					var subset		=	Mesh.Subsets[ i ];
-					var material	=	Scene.Materials[ subset.MaterialIndex ];
-					var name		=	material.Name;
-
-					var segment		=	rw.VirtualTexture.GetTextureSegmentInfo( name );
-					var region		=	segment.Region;
-
-					transparency[i]	=	segment.Transparent;
-
-					data.Color		=	segment.AverageColor.ToColor3();
-					data.MaxMip		=	segment.MaxMipLevel;
-					data.Rectangle	=	new Vector4( region.X, region.Y, region.Width, region.Height );
-
-					subsetCData[i].SetData( ref data );
-				}
-
-				subsetDataDirty = false;
-			}
-
-			startPrimitive	=	Mesh.Subsets[ subsetIndex ].StartPrimitive;
-			primitiveCount	=	Mesh.Subsets[ subsetIndex ].PrimitiveCount;
-			isTransparent	=	transparency[ subsetIndex ];
-
-			return subsetCData[ subsetIndex ];
-		}
-
-
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
 		public BoundingBox ComputeWorldBoundingBox()
 		{
-			return BoundingBox.FromPoints( LocalBoundingBox.GetCorners().Select( p => Vector3.TransformCoordinate( p, World ) ) );
+			if (worldBBoxDirty)
+			{
+				worldBBox = BoundingBox.FromPoints( LocalBoundingBox.GetCorners().Select( p => Vector3.TransformCoordinate( p, World ) ) );
+			}
+			return worldBBox;
 		}
 
 

@@ -54,6 +54,17 @@
   <PropertyGroup>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Profile|x64'">
+    <OutputPath>bin\x64\Profile\</OutputPath>
+    <DefineConstants>TRACE;DIRECTX LUA_CORE WIN64</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>BasicDesignGuidelineRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.ConcurrencyVisualizer.Markers, Version=14.1.341.4, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\..\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Extensions\dryujlze.qhy\SDK\Managed\4.0\Microsoft.ConcurrencyVisualizer.Markers.dll</HintPath>
@@ -167,6 +178,7 @@
     <Compile Include="Core\Shell\Invoker.Redo.cs" />
     <Compile Include="Core\Shell\Invoker.Undo.cs" />
     <Compile Include="Core\Shell\IUndoable.cs" />
+    <Compile Include="Drivers\Graphics\GraphicsStats.cs" />
     <Compile Include="Engine\Graphics\Collections\RenderInstanceCollection.cs" />
     <Compile Include="Engine\Graphics\Lights\ICSMController.cs" />
     <Compile Include="Engine\Graphics\Lights\IShadowProvider.cs" />

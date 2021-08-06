@@ -14,7 +14,9 @@ namespace Fusion.Engine.Graphics
 	{
 		internal uint Timer = 0;
 
-		bool shadowDirty = true;
+		bool contentDirty = true;
+		bool regionDirty = true;
+		Rectangle region = new Rectangle(0,0,0,0);
 
 		Matrix	spotView;
 		Matrix	spotProjection;
@@ -31,8 +33,8 @@ namespace Fusion.Engine.Graphics
 			{ 
 				if (spotView!=value)
 				{
-					spotView	= value; 
-					shadowDirty	= true; 
+					spotView		= value; 
+					contentDirty	= true; 
 				}
 			}
 		}
@@ -48,7 +50,7 @@ namespace Fusion.Engine.Graphics
 				if (spotProjection!=value)
 				{
 					spotProjection	= value;
-					shadowDirty		= true;
+					contentDirty	= true;
 				}
 			}
 		}
@@ -79,7 +81,7 @@ namespace Fusion.Engine.Graphics
 		public string SpotMaskName;
 
 		/// <summary>
-		/// 
+		/// Decrease size of the shadow map region
 		/// </summary>
 		public int LodBias
 		{
@@ -88,8 +90,9 @@ namespace Fusion.Engine.Graphics
 			{
 				if (lodBias!=value)
 				{
-					lodBias		=	value;
-					shadowDirty	=	true;
+					lodBias			=	value;
+					contentDirty	=	true;
+					regionDirty		=	true;
 				}
 			}
 		}
@@ -118,11 +121,47 @@ namespace Fusion.Engine.Graphics
 
 
 		internal bool		Visible = true;
-		internal Rectangle	ShadowRegion;
 		internal Vector4	ShadowScaleOffset;
 		internal Int3		MinExtent;
 		internal Int3		MaxExtent;
 
+		internal RenderList ShadowCasters = new RenderList();
+
+		/// <summary>
+		/// Gets and sets shadow region
+		/// </summary>
+		internal Rectangle	ShadowRegion
+		{
+			get { return region; }
+			set
+			{
+				region			=	value;
+				regionDirty		=	false;
+				contentDirty	=	true;
+			}
+		}
+
+		
+		/// <summary>
+		/// Indicates that shadow region need to be updated
+		/// </summary>
+		public bool IsRegionDirty {	get { return regionDirty; }	}
+
+		
+		/// <summary>
+		/// Indicates that shadow map must be updated
+		/// </summary>
+		public bool IsContentDirty 
+		{ 
+			get { return contentDirty; } 
+			set { contentDirty = value; } 
+		}
+
+		
+		/// <summary>
+		/// Actual level of detail, 
+		/// depends on distance and size of the spot light
+		/// </summary>
 		internal int DetailLevel
 		{
 			get { return lod; }
@@ -130,8 +169,9 @@ namespace Fusion.Engine.Graphics
 			{
 				if (lod!=value)
 				{
-					lod = value;
-					shadowDirty = true;
+					lod				=	value;
+					contentDirty	=	true;
+					regionDirty		=	true;
 				}
 			}
 		}

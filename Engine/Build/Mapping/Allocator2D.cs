@@ -26,6 +26,8 @@ namespace Fusion.Build.Mapping
 		public int Width { get { return Size; } }
 		public int Height { get { return Size; } }
 
+		public bool IsEmpty { get { return rootBlock.State==BlockState.Free; } }
+
 		protected Block rootBlock;
 
 		protected Block RootBlock { get { return rootBlock; } }
@@ -158,6 +160,10 @@ namespace Fusion.Build.Mapping
 					if (node.State==BlockState.Allocated) 
 					{
 						return true;
+					}
+					if (node.State==BlockState.Free)
+					{
+						return false;
 					}
 				}
 

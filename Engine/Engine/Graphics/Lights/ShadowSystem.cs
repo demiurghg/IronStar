@@ -107,6 +107,37 @@ namespace Fusion.Engine.Graphics
 		}
 
 		
+		/*-----------------------------------------------------------------------------------------------
+		 *	Private stuff :
+		-----------------------------------------------------------------------------------------------*/
+
+		public void RenderShadows ( GameTime gameTime, Camera camera, RenderWorld rw )
+		{
+			CreateResourcesIfNecessary();
+
+			RemoveSpotLights( rw.LightSet.SpotLights );
+
+			AllocateShadowRegions( rw.LightSet.SpotLights );
+
+			UpdateVisibility( rw, rw.LightSet.SpotLights );
+
+			var lightList = rw.LightSet.SpotLights
+							.Where( s => s.IsContentDirty )
+							.ToList();
+
+			RenderShadowsInternal( rw, lightList, InstanceGroup.NotWeapon );
+
+			//shadowMap.RenderShadowMaps( gameTime, camera, rs, rw, rw.LightSet );
+		}
+
+
+		/*-----------------------------------------------------------------------------------------------
+		 *	Private stuff :
+		-----------------------------------------------------------------------------------------------*/
+
+		/// <summary>
+		/// Recreates shadows if necessary
+		/// </summary>
 		private void CreateResourcesIfNecessary()
 		{
 			if (shadowQualityDirty)
@@ -138,11 +169,130 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		public void RenderShadows ( GameTime gameTime, Camera camera, RenderWorld rw )
+		void RemoveSpotLights( IEnumerable<SpotLight> spotLights )
 		{
-			CreateResourcesIfNecessary();
+			var blocks = shadowMap.Allocator.GetAllocatedBlockInfo();
 
-			shadowMap.RenderShadowMaps( gameTime, camera, rs, rw, rw.LightSet );
+			foreach ( var block in blocks )
+			{
+				if ( !spotLights.Contains( block.Tag ) )
+				{
+					shadowMap.Allocator.Free( block.Region );
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Allocates and reallocates shadow regions when LOD is changed.
+		/// </summary>
+		void AllocateShadowRegions( IEnumerable<SpotLight> spotLights )
+		{
+			try 
+			{
+				foreach ( var spotLight in spotLights )
+				{
+					if (spotLight.IsRegionDirty)
+					{
+						shadowMap.Allocator.Free( spotLight.ShadowRegion );
+					}
+				}
+
+				bool refresh = shadowMap.Allocator.IsEmpty;
+
+				foreach ( var spotLight in spotLights )
+				{
+					if (spotLight.IsRegionDirty || refresh)
+					{
+						var shadowRegionSize		=	shadowMap.GetShadowRegionSize( spotLight.DetailLevel );
+						spotLight.ShadowRegion		=	shadowMap.Allocator.Alloc( shadowRegionSize, spotLight );
+						spotLight.ShadowScaleOffset	=	shadowMap.GetScaleOffset( spotLight.ShadowRegion );
+					}
+				}
+			} 
+			catch ( Exception e )
+			{
+				Log.Warning(e.Message);
+			}
+		}
+
+
+		/// <summary>
+		/// Updates shadow caster visibility for each light
+		/// </summary>
+		/// <param name="lights"></param>
+		void UpdateVisibility( RenderWorld rw, IEnumerable<SpotLight> lights )
+		{
+			if (rw.SceneBvhTree==null) return;
+
+			foreach ( var light in lights )
+			{
+				var frustum	=	new BoundingFrustum( light.SpotView * light.Projection );
+				var newList	=	rw.SceneBvhTree.Traverse( bbox => frustum.Contains( bbox ) );
+				var added	=	newList.Except( light.ShadowCasters );
+				var removed	=	light.ShadowCasters.Except( newList );
+
+				light.ShadowCasters	=	new RenderList(newList);
+
+				if (added.Any() || removed.Any())
+				{
+					light.IsContentDirty = true;
+				}
+
+				light.IsContentDirty = true;
+			}
+		}
+
+
+		/// <summary>
+		/// Renders shadows
+		/// </summary>
+		void RenderShadowsInternal(	RenderWorld rw, IEnumerable<SpotLight> lights, InstanceGroup group )
+		{
+			var shadowCamera	=	rw.ShadowCamera;
+			var depthBuffer		=	shadowMap.DepthBuffer;
+			var shadowTexture	=	shadowMap.ShadowTexture;
+			var maskTexture		=	shadowMap.ParticleShadowTexture;
+			var lightSet		=	rw.LightSet;
+
+			var regions		=	lights
+							.Select( lt => lt.ShadowRegion )
+							.ToArray();
+
+			//	clear shadow maps :
+			shadowMap.ClearShadowRegions( regions );
+
+			//	render shadow map :
+			foreach ( var light in lights )
+			{
+				var context	=	new ShadowContext( rs, shadowCamera, light, depthBuffer.Surface, shadowTexture.Surface );
+
+				rs.SceneRenderer.RenderShadowMap( context, light.ShadowCasters, group, false );
+			}
+
+			//	render shadow mask :
+			foreach ( var light in lights )
+			{
+				var name	=	light.SpotMaskName;
+				var clip	=	lightSet.SpotAtlas.GetClipByName( name );
+
+				if (clip!=null) 
+				{
+					var dstRegion	=	light.ShadowRegion;
+					var	srcRegion	=	lightSet.SpotAtlas.AbsoluteRectangles[ clip.FirstIndex ];
+					rs.Filter2.CopyColor( maskTexture.Surface, lightSet.SpotAtlas.Texture.Srv, dstRegion, srcRegion, Color.White );
+				} 
+				else 
+				{
+					var dstRegion	=	light.ShadowRegion;
+					rs.Filter2.RenderSpot( maskTexture.Surface, dstRegion, Color.White );
+				}
+			}
+
+			//	render particle shadows :
+
+			//	copy regions :
+			shadowMap.CopyShadowRegionToLowRes( regions );
 		}
 	}
 }

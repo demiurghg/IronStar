@@ -41,6 +41,8 @@ namespace Fusion.Engine.Graphics
 		public const int MaxCascades		= 4;
 		public readonly QualityLevel ShadowQuality; 
 
+		Allocator2D<SpotLight> allocator2;
+
 		Allocator2D allocator;
 		LRUImageCache<object> cache;
 
@@ -51,11 +53,12 @@ namespace Fusion.Engine.Graphics
 		/// Gets color shadow map buffer.
 		/// Actually stores depth value.
 		/// </summary>
-		public ShaderResource ShadowTexture {
+		public RenderTarget2D ShadowTexture {
 			get {
 				return shadowMap;
 			}
 		}
+
 
 		/// <summary>
 		/// Gets color shadow map buffer.
@@ -97,6 +100,9 @@ namespace Fusion.Engine.Graphics
 				return depthBuffer;
 			}
 		}
+
+
+		public Allocator2D<SpotLight> Allocator { get { return allocator2; } }
 
 
 		readonly int	shadowMapSize;
@@ -141,6 +147,7 @@ namespace Fusion.Engine.Graphics
 			minRegionSize		=	16;
 
 			allocator			=	new Allocator2D(shadowMapSize);
+			allocator2			=	new Allocator2D<SpotLight>(shadowMapSize);
 			cache				=	new LRUImageCache<object>(shadowMapSize);
 
 			depthBuffer			=	new DepthStencil2D( device, DepthFormat.D16,		shadowMapSize,   shadowMapSize   );
@@ -215,7 +222,7 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		Vector4 GetScaleOffset ( Rectangle rect )
+		public Vector4 GetScaleOffset ( Rectangle rect )
 		{
 			return rect.GetMadOpScaleOffsetOffCenterProjectToNDC( shadowMapSize, shadowMapSize );
 		}
@@ -232,6 +239,11 @@ namespace Fusion.Engine.Graphics
 			return MathUtil.Clamp( result, min, max );
 		}
 
+
+		public int GetShadowRegionSize( int detailLevel )
+		{
+			return SignedShift( maxRegionSize, detailLevel, minRegionSize, maxRegionSize );
+		}
 
 
 		/// <summary>
@@ -372,7 +384,7 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		void CopyShadowRegionToLowRes( IEnumerable<Rectangle> dirtyRegionList )
+		public void CopyShadowRegionToLowRes( IEnumerable<Rectangle> dirtyRegionList )
 		{
 			if (dirtyRegionList.Any())
 			{
@@ -412,12 +424,11 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		void ClearShadowRegions( IEnumerable<Rectangle> regions )
+		public void ClearShadowRegions( IEnumerable<Rectangle> regions )
 		{
-			if (!ss.ClearEntireShadow)
-			{
-				rs.Filter2.ClearColorBatched( shadowMap.Surface, regions.ToArray(), Color.White );
-			}
+			device.Clear( depthBuffer.Surface );
+
+			rs.Filter2.ClearColorBatched( shadowMap.Surface, regions.ToArray(), Color.White );
 		}
 
 

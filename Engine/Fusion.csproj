@@ -633,7 +633,7 @@
     <Compile Include="Engine\Graphics\Particles\ParticleStream.cs" />
     <Compile Include="Engine\Graphics\Particles\ParticleSystem.cs" />
     <Compile Include="Engine\Graphics\RenderComponent.cs" />
-    <Compile Include="Engine\Graphics\RenderCounters.cs" />
+    <Compile Include="Engine\Graphics\RenderStats.cs" />
     <Compile Include="Engine\Graphics\RenderSystem.Commands.cs" />
     <Compile Include="Engine\Graphics\RenderSystem.Config.cs" />
     <Compile Include="Engine\Graphics\RenderSystem.cs" />

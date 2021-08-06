@@ -19,9 +19,13 @@ using Fusion.Engine.Graphics.GI;
 
 namespace Fusion.Engine.Graphics {
 
-	public partial class RenderSystem : GameComponent, IRenderSystem {
-
+	public partial class RenderSystem : GameComponent, IRenderSystem 
+	{
 		internal readonly GraphicsDevice Device;
+
+		readonly RenderStats stats = new RenderStats();
+		public RenderStats Stats { get { return stats; } }
+
 
 		internal SpriteEngine			SpriteEngine		{ get { return Game.GetService< SpriteEngine		>(); } }
 		internal Filter					Filter				{ get { return Game.GetService< Filter				>(); } }
@@ -49,8 +53,6 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Gets render counters.
 		/// </summary>
-		internal RenderCounters Counters { get; private set; }
-
 		public Texture	GrayTexture { get { return grayTexture; } }
 		public Texture	WhiteTexture { get { return whiteTexture; } }
 		public Texture	BlackTexture { get { return blackTexture; } }
@@ -100,8 +102,6 @@ namespace Fusion.Engine.Graphics {
 		public RenderSystem ( Game Game, bool useRenderWorld ) : base(Game)
 		{
 			this.useRenderWorld	=	useRenderWorld;
-
-			Counters	=	new RenderCounters();
 
 			Width			=	1024;
 			Height			=	768;
@@ -241,7 +241,8 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="stereoEye"></param>
 		public void RenderView ( GameTime gameTime, StereoEye stereoEye )
 		{
-			Counters.Reset();
+			Stats.Reset();
+			Stats.InstanceCount		=	RenderWorld == null ? 0 : RenderWorld.Instances.Count;
 
 			var targetColorSurface	=	Device.Display.BackbufferColor.Surface;
 			var targetDepthSurface	=	Device.Display.BackbufferDepth.Surface;
@@ -256,10 +257,6 @@ namespace Fusion.Engine.Graphics {
 
 			//	draw sprites :
 			SpriteEngine.DrawSprites( gameTime, stereoEye, targetColorSurface, SpriteLayers );
-
-			if (ShowCounters) {
-				Counters.PrintCounters();
-			}
 		}
 
 

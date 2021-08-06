@@ -200,8 +200,8 @@ namespace Fusion.Engine.Graphics
 				float length	=	Vector3.Distance( ol.Position0, ol.Position1 );
 				float radius	=	ol.RadiusOuter + ol.RadiusInner + length;
 
-				if ( Extents.GetSphereExtent( view, proj, ol.CenterPosition, vp, radius, false, out min, out max ) ) {
-
+				if ( Extents.GetSphereExtent( view, proj, ol.CenterPosition, vp, radius, false, out min, out max ) ) 
+				{
 					min.Z	=	GetGridSlice( min.Z );
 					max.Z	=	GetGridSlice( max.Z );
 
@@ -214,6 +214,8 @@ namespace Fusion.Engine.Graphics
 					ol.MinExtent.X	=	Math.Max( 0, (int)Math.Floor( min.X * Width  ) );
 					ol.MinExtent.Y	=	Math.Max( 0, (int)Math.Floor( min.Y * Height ) );
 					ol.MinExtent.Z	=	Math.Max( 0, (int)Math.Floor( min.Z * Depth  ) );
+
+					rs.Stats.OmniLightCount++;
 				}
 			}
 		}
@@ -259,6 +261,8 @@ namespace Fusion.Engine.Graphics
 					sl.MinExtent.X	=	Math.Max( 0, (int)Math.Floor( min.X * Width  ) );
 					sl.MinExtent.Y	=	Math.Max( 0, (int)Math.Floor( min.Y * Height ) );
 					sl.MinExtent.Z	=	Math.Max( 0, (int)Math.Floor( min.Z * Depth  ) );
+
+					rs.Stats.SpotLightCount++;
 				}
 			}
 		}
@@ -312,10 +316,11 @@ namespace Fusion.Engine.Graphics
 		/// <param name="lightSet"></param>
 		void UpdateDecalExtentsAndVisibility ( Matrix view, Matrix proj, LightSet lightSet, Vector3 viewPos )
 		{
-			var vp = new Rectangle(0,0,1,1);
+			var vp		=	new Rectangle(0,0,1,1);
+			var skip	= 	rs.SkipDecals;
 
-			foreach ( var dcl in lightSet.Decals ) {
-
+			foreach ( var dcl in lightSet.Decals ) 
+			{
 				var distance	=	Vector3.Distance( dcl.DecalMatrix.TranslationVector, viewPos )+0.1f;
 
 				if (dcl.CharacteristicSize / distance < 0.005f)
@@ -326,7 +331,7 @@ namespace Fusion.Engine.Graphics
 				Vector3 min, max;
 				dcl.Visible	=	false;
 
-				if ( Extents.GetBasisExtent( view, proj, vp, dcl.DecalMatrix, out min, out max ) ) {
+				if ( Extents.GetBasisExtent( view, proj, vp, dcl.DecalMatrix, out min, out max ) && !skip ) {
 
 					min.Z	=	GetGridSlice( min.Z );
 					max.Z	=	GetGridSlice( max.Z );
@@ -342,6 +347,8 @@ namespace Fusion.Engine.Graphics
 					dcl.MinExtent.X	=	Math.Max( 0, (int)Math.Floor( min.X * Width  ) );
 					dcl.MinExtent.Y	=	Math.Max( 0, (int)Math.Floor( min.Y * Height ) );
 					dcl.MinExtent.Z	=	Math.Max( 0, (int)Math.Floor( min.Z * Depth  ) );
+
+					rs.Stats.DecalCount++;
 				}
 			}
 		}

@@ -194,18 +194,29 @@ namespace Fusion.Engine.Graphics {
 		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential)]
 		#warning Reduce DECAL structure size to 128 byte
+		//	Size = 184
+		//	Opt size 12
+		//	Z-ordering
 		public struct DECAL {
+			//	float3 + sign
 			public Matrix	DecalMatrixInv;
+			//	uint + uint + uint
 			public Vector4 	BasisX;
 			public Vector4 	BasisY;
 			public Vector4 	BasisZ;
+
+			//	uint
 			public Vector4 	EmissionRoughness;
+			//	uint
 			public Vector4	ImageScaleOffset;
+			//	uint
 			public Vector4	BaseColorMetallic;
+			//	uint
 			public float	ColorFactor;
 			public float	SpecularFactor;
 			public float	NormalMapFactor;
 			public float	FalloffFactor;
+			//	uint + glow scale 16 bit
 			public uint		AssignmentGroup;
 			public float	MipBias;
 

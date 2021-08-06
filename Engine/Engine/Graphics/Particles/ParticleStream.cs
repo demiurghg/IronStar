@@ -571,7 +571,7 @@ namespace Fusion.Engine.Graphics {
 
 				if (rs.ShowParticles) 
 				{
-					rs.Counters.DeadParticles	=	deadParticlesIndices.GetStructureCount();
+					rs.Stats.DeadParticles	=	deadParticlesIndices.GetStructureCount();
 				}
 
 				device.ResetStates();

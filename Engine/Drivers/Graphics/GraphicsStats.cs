@@ -25,9 +25,9 @@ namespace Fusion.Drivers.Graphics
 
 		public void Reset()
 		{
-			VertexCount	=	0;
-			DrawCalls	=	0;
-			Dispatches	=	0;
+			VertexCount		=	0;
+			DrawCalls		=	0;
+			Dispatches		=	0;
 		}
 	}
 }

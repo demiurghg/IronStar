@@ -137,7 +137,7 @@ namespace IronStar.Editor
 			//-----------
 
 			lowerShelf.AddRSplitter();
-			var snapLabel	=	lowerShelf.AddRIndicator("", 200 );
+			var snapLabel	=	lowerShelf.AddRIndicator("", 168 );
 			snapLabel.Tick += (s,e) => {
 				snapLabel.Text = string.Format(
  				  "Move snap   : {0}\r\n" +
@@ -151,7 +151,7 @@ namespace IronStar.Editor
 
 			//-----------
 
-			var graphStatsLabel	=	lowerShelf.AddRIndicator("", 200 );
+			var graphStatsLabel	=	lowerShelf.AddRIndicator("", 168 );
 
 			graphStatsLabel.Tick += (s,e) => {
 				var dispatches = Game.GraphicsDevice.Stats.Dispatches;
@@ -163,6 +163,23 @@ namespace IronStar.Editor
  						"Triangles  : {1}\r\n" + 
  						"Dispatches : {2}\r\n" ,
 						drawCalls, triangles, dispatches
+					);
+			};
+
+			var renderStatsLabel	=	lowerShelf.AddRIndicator("", 168 );
+
+			renderStatsLabel.Tick += (s,e) => {
+				var instances  = rs.Stats.InstanceCount;
+				var omniCount  = rs.Stats.OmniLightCount;
+				var spotCount  = rs.Stats.SpotLightCount;
+				var decalCount = rs.Stats.DecalCount;
+				renderStatsLabel.Text	=	
+					string.Format(
+ 						"Instances   : {0}\r\n" + 
+ 						"Omni Lights : {1}\r\n" + 
+ 						"Spot Lights : {2}\r\n" +
+ 						"Decals      : {3}"		,
+						instances, omniCount, spotCount, decalCount
 					);
 			};
 

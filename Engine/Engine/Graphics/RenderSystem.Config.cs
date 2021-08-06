@@ -244,6 +244,10 @@ namespace Fusion.Engine.Graphics
 		[AECategory("Performance")]
 		public bool SkipSpotLights { get; set; }
 
+		[Config]
+		[AECategory("Performance")]
+		public bool SkipDecals { get; set; }
+
 		/// <summary>
 		/// 
 		/// </summary>

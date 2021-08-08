@@ -123,7 +123,7 @@ struct SUBSET {
 };
 #endif
 
-// Fusion.Engine.Graphics.ShadowMap+CASCADE_SHADOW
+// Fusion.Engine.Graphics.ShadowSystem+CASCADE_SHADOW
 // Marshal.SizeOf = 576
 #ifndef __STRUCT_CASCADE_SHADOW
 #define __STRUCT_CASCADE_SHADOW 1

@@ -27,7 +27,7 @@ namespace Fusion.Engine.Graphics {
 		static FXConstantBuffer<GpuData.CAMERA>							regCameraWeapon			=	new CRegister( 2, "CameraWeapon"			);
 		static FXConstantBuffer<Vector4>								regImages				=	new CRegister( 3, MAX_IMAGES, "Images"		);
 		static FXConstantBuffer<GpuData.DIRECT_LIGHT>					regDirectLight			=	new CRegister( 4, "DirectLight"				);
-		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>				regCascadeShadow		=	new CRegister( 5, "CascadeShadow"			);
+		static FXConstantBuffer<ShadowSystem.CASCADE_SHADOW>			regCascadeShadow		=	new CRegister( 5, "CascadeShadow"			);
 		static FXConstantBuffer<Fog.FOG_DATA>							regFog					=	new CRegister( 6, "Fog"						);
 
 		static FXSamplerState											regSampler					=	new SRegister( 0, "LinearSampler"			);
@@ -464,8 +464,8 @@ namespace Fusion.Engine.Graphics {
 			device.ComputeConstants	[ regDirectLight	]	=	rs.LightManager.DirectLightData;
 			device.GfxConstants		[ regDirectLight	]	=	rs.LightManager.DirectLightData;
 
-			device.ComputeConstants	[ regCascadeShadow	]	=	rs.ShadowSystem.ShadowMap.GetCascadeShadowConstantBuffer();
-			device.GfxConstants		[ regCascadeShadow	]	=	rs.ShadowSystem.ShadowMap.GetCascadeShadowConstantBuffer();
+			device.ComputeConstants	[ regCascadeShadow	]	=	rs.ShadowSystem.GetCascadeShadowConstantBuffer();
+			device.GfxConstants		[ regCascadeShadow	]	=	rs.ShadowSystem.GetCascadeShadowConstantBuffer();
 
 			device.ComputeConstants	[ regFog			]	=	rs.Fog.FogData;
 			device.GfxConstants		[ regFog			]	=	rs.Fog.FogData;

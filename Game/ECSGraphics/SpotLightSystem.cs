@@ -42,22 +42,22 @@ namespace IronStar.SFX2
 		}
 
 		
-		protected override void Process( Entity e, GameTime gameTime, RSSpotLight light, SpotLight ol, Transform t )
+		protected override void Process( Entity e, GameTime gameTime, RSSpotLight light, SpotLight spot, Transform t )
 		{
-			var transform		=	t.TransformMatrix;
-			light.Position0		=	transform.TranslationVector + transform.Right * ol.TubeLength * 0.5f;
-			light.Position1		=	transform.TranslationVector + transform.Left  * ol.TubeLength * 0.5f;
+			var transform			=	t.TransformMatrix;
+			light.Position0			=	transform.TranslationVector + transform.Right * spot.TubeLength * 0.5f;
+			light.Position1			=	transform.TranslationVector + transform.Left  * spot.TubeLength * 0.5f;
 
-			light.Intensity		=	ol.LightColor.ToColor4() *  MathUtil.Exp2( ol.LightIntensity );
-			light.RadiusInner	=	ol.TubeRadius;
-			light.RadiusOuter	=	ol.OuterRadius;
+			light.Intensity			=	spot.LightColor.ToColor4() *  MathUtil.Exp2( spot.LightIntensity );
+			light.RadiusInner		=	spot.TubeRadius;
+			light.RadiusOuter		=	spot.OuterRadius;
 
-			light.SpotView		=	Matrix.Invert( transform );
-			light.Projection	=	ol.ComputeSpotMatrix();
-			light.SpotMaskName	=	ol.SpotMaskName;
+			light.ViewMatrix		=	Matrix.Invert( transform );
+			light.ProjectionMatrix	=	spot.ComputeSpotMatrix();
+			light.ShadowMaskName	=	spot.SpotMaskName;
 
-			light.EnableGI		=	ol.EnableGI;
-			light.LodBias		=	ol.LodBias;
+			light.EnableGI			=	spot.EnableGI;
+			light.LodBias			=	spot.LodBias;
 		}
 	}
 }

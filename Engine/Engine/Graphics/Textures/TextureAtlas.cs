@@ -153,6 +153,8 @@ namespace Fusion.Engine.Graphics {
 		/// <returns>Instance of TextureAtlasClip. If does not exist returns NULL.</returns>
 		public TextureAtlasClip GetClipByName ( string clipName )
 		{
+			if (clipName==null) return null;
+
 			TextureAtlasClip clip;
 			if ( clipName!=null && dictionary.TryGetValue(clipName, out clip) ) 
 			{

@@ -3360,7 +3360,7 @@ namespace Fusion.Core.Mathematics
 
 
 		/// <summary>
-		/// Return near plane distance of perspective and orthographic matrix
+		/// Returns near plane distance of perspective and orthographic matrix
 		/// </summary>
 		/// <returns></returns>
 		public float GetNearPlaneDistance ()
@@ -3371,7 +3371,7 @@ namespace Fusion.Core.Mathematics
 
 
 		/// <summary>
-		/// Return far plane distance of perspective and orthographic matrix
+		/// Returns far plane distance of perspective and orthographic matrix
 		/// </summary>
 		/// <returns></returns>
 		public float GetFarPlaneDistance ()
@@ -3386,6 +3386,14 @@ namespace Fusion.Core.Mathematics
 				float  zn = GetNearPlaneDistance();
 				return ( M43 * zn - zn ) / M43;
 				
+			}
+		}
+
+		public bool IsOrthographic
+		{
+			get 
+			{
+				return (M44==1);
 			}
 		}
 

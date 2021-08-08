@@ -124,7 +124,7 @@ namespace Fusion.Engine.Graphics {
 		static FXConstantBuffer<Sky2.SKY_DATA>				regSky						=	new CRegister( 1, "Sky"						);
 		static FXConstantBuffer<GpuData.CAMERA>				regCamera					=	new CRegister( 2, "Camera"					);
 		static FXConstantBuffer<GpuData.DIRECT_LIGHT>		regDirectLight				=	new CRegister( 3, "DirectLight"				);
-		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow			=	new CRegister( 4, "CascadeShadow"			);
+		static FXConstantBuffer<ShadowSystem.CASCADE_SHADOW>regCascadeShadow			=	new CRegister( 4, "CascadeShadow"			);
 
 		static FXSamplerState								regLinearClamp				=	new SRegister( 0, "LinearClamp"				);
 		static FXSamplerComparisonState						regShadowSampler			=	new SRegister( 1, "ShadowSampler"			);
@@ -365,7 +365,7 @@ namespace Fusion.Engine.Graphics {
 			device.ComputeConstants	[ regSky				]	=	rs.Sky.SkyData;
 			device.ComputeConstants	[ regCamera				]	=	camera.CameraData;
 			device.ComputeConstants	[ regDirectLight		]	=	rs.LightManager.DirectLightData;
-			device.ComputeConstants	[ regCascadeShadow		]	=	rs.ShadowSystem.ShadowMap.GetCascadeShadowConstantBuffer();
+			device.ComputeConstants	[ regCascadeShadow		]	=	rs.ShadowSystem.GetCascadeShadowConstantBuffer();
 
 			device.ComputeSamplers	[ regLinearClamp		]	=	SamplerState.LinearClamp;
 			device.ComputeSamplers	[ regShadowSampler		]	=	SamplerState.ShadowSampler;

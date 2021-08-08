@@ -10,44 +10,68 @@ using Fusion.Engine.Common;
 using Fusion.Drivers.Graphics;
 using System.Runtime.InteropServices;
 using Fusion.Build.Mapping;
+using Fusion.Engine.Graphics.Lights;
 
 namespace Fusion.Engine.Graphics 
 {
-	public class ShadowCascade 
+	public class ShadowCascade : IShadowProvider
 	{
 		public readonly int SizeInTexels;
 		public readonly int Index;
 		public readonly Color Color;
+		readonly int lod;
 
-		public ShadowCascade ( int index, int sizeInTexels, Color color )
+		public ShadowCascade ( int index, int sizeInTexels, int lod, Color color )
 		{
 			this.Index			=	index;
 			this.SizeInTexels	=	sizeInTexels;
 			this.Color			=	color;
+			this.lod			=	lod;
 		}
 
 
-		public bool IsActive 
+		public bool IsVisible {	get { return true; } }
+
+		public int ShadowLod { get { return lod; } }
+
+		public bool IsShadowDirty { get { return true; } set {} }
+		
+		public bool IsRegionDirty { get { return regionDirty; } }
+
+		public Rectangle ShadowRegion { get { return shadowRegion; } }
+
+		public Vector4 RegionScaleOffset { get { return regionScaleOffset; } }
+
+		public RenderList ShadowCasters { get { return shadowCasters; } }
+
+		public string ShadowMaskName { get { return null; } }
+
+		readonly RenderList shadowCasters = new RenderList();
+		bool regionDirty = true;
+		Rectangle shadowRegion;
+		Vector4 regionScaleOffset;
+
+		public void SetShadowRegion( Rectangle region, int shadowMapSize )
 		{
-			get { return true; }
-		}
+			regionDirty		=	false;
 
-
-		public int DetailLevel 
-		{
-			get { return 0; }
-		}
-
-
-		public Matrix ViewMatrix;
-
-		public Matrix ProjectionMatrix;
-
-
-		public Matrix ViewProjectionMatrix {
-			get {
-				return ViewMatrix * ProjectionMatrix;
+			if (shadowRegion!=region)
+			{
+				shadowRegion		=	region;
 			}
+
+			regionScaleOffset	=	region.GetMadOpScaleOffsetOffCenterProjectToNDC( shadowMapSize, shadowMapSize );
+		}
+
+
+		public Matrix ViewMatrix { get; set; }
+
+		public Matrix ProjectionMatrix { get; set; }
+
+
+		public Matrix ViewProjectionMatrix 
+		{
+			get { return ViewMatrix * ProjectionMatrix; }
 		}
 
 
@@ -63,12 +87,5 @@ namespace Fusion.Engine.Graphics
 
 			return matrix;
 		}
-
-
-		public Rectangle ShadowRegion;
-
-
-		public Vector4 ShadowScaleOffset;
 	}
-
 }

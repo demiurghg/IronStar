@@ -17,7 +17,7 @@ namespace Fusion.Engine.Graphics {
 
 	[RequireShader("surface", true)]
 	[ShaderSharedStructure(typeof(GpuData.CAMERA))]
-	[ShaderSharedStructure(typeof(ShadowMap.CASCADE_SHADOW))]
+	[ShaderSharedStructure(typeof(ShadowSystem.CASCADE_SHADOW))]
 	[ShaderSharedStructure(typeof(GpuData.DIRECT_LIGHT))]
 	internal partial class SceneRenderer : RenderComponent {
 
@@ -182,9 +182,9 @@ namespace Fusion.Engine.Graphics {
 				LightType			=	RenderSystem.LightTypeSpotShadow;
 				Position0LightRange	=	new Vector4( light.Position0, light.RadiusOuter );
 				Position1TubeRadius	=	new Vector4( light.Position1, light.RadiusInner );
-				IntensityFar		=	new Vector4( light.Intensity.Red, light.Intensity.Green, light.Intensity.Blue, light.Projection.GetFarPlaneDistance() );
-				ViewProjection		=	light.SpotView * light.Projection;
-				ShadowScaleOffset	=	light.ShadowScaleOffset;
+				IntensityFar		=	new Vector4( light.Intensity.Red, light.Intensity.Green, light.Intensity.Blue, light.ProjectionMatrix.GetFarPlaneDistance() );
+				ViewProjection		=	light.ViewMatrix * light.ProjectionMatrix;
+				ShadowScaleOffset	=	light.RegionScaleOffset;
 				#endregion
 			}
 		}

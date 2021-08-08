@@ -7,7 +7,7 @@ using Fusion.Core.Mathematics;
 
 namespace Fusion.Engine.Graphics.Lights
 {
-	internal interface IShadowProvider
+	public interface IShadowProvider
 	{
 		/// <summary>
 		/// Indicates that given light and its shadow 
@@ -18,7 +18,7 @@ namespace Fusion.Engine.Graphics.Lights
 		/// <summary>
 		/// Gets and sets shadow LOD 
 		/// </summary>
-		int ShadowLod { get; set; }
+		int ShadowLod { get; }
 
 		/// <summary>
 		/// Shadow view matrix
@@ -39,12 +39,12 @@ namespace Fusion.Engine.Graphics.Lights
 		/// Indicates that shadow image is bad or 
 		/// outdated and need to be rendered again
 		/// </summary>
-		bool ShadowDirty { get; }
+		bool IsShadowDirty { get; set; }
 
 		/// <summary>
 		/// Indicates that region must be re-allocated
 		/// </summary>
-		bool RegionDirty { get; }
+		bool IsRegionDirty { get; }
 
 		/// <summary>
 		/// Shadowmap normalized scale offset
@@ -57,6 +57,17 @@ namespace Fusion.Engine.Graphics.Lights
 		/// <param name="region"></param>
 		/// <param name="shadowMapSize"></param>
 		void SetShadowRegion( Rectangle region, int shadowMapSize );
+
+		/// <summary>
+		/// Gets list of visible shadow casters
+		/// </summary>
+		RenderList ShadowCasters { get; }
+
+		/// <summary>
+		/// Gets shadow mask name.
+		/// If light do not use mask, return null.
+		/// </summary>
+		string ShadowMaskName { get; }
 	}
 
 }

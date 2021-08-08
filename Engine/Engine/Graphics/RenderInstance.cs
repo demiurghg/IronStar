@@ -11,8 +11,8 @@ using Fusion.Core.Content;
 using Native.Embree;
 using Fusion.Engine.Graphics.Scenes;
 
-namespace Fusion.Engine.Graphics {
-
+namespace Fusion.Engine.Graphics 
+{
 	public enum InstanceGroup : uint 
 	{
 		Static		=	0x00000001,

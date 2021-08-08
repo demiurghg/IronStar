@@ -9,6 +9,7 @@ using Fusion.Core.Configuration;
 using Fusion.Engine.Common;
 using Fusion.Drivers.Graphics;
 using System.Runtime.InteropServices;
+using Fusion.Engine.Graphics.Lights;
 
 namespace Fusion.Engine.Graphics 
 {
@@ -40,11 +41,13 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		public ShadowContext ( RenderSystem rs, Camera camera, SpotLight spot, DepthStencilSurface depthBuffer, RenderTargetSurface colorBuffer )
+		public ShadowContext ( RenderSystem rs, Camera camera, IShadowProvider shadowProvider, DepthStencilSurface depthBuffer, RenderTargetSurface colorBuffer )
 		{
+			var projection		=	shadowProvider.ProjectionMatrix;
+
 			this.camera			=	camera;
-			this.farDistance	=	spot.Projection.GetFarPlaneDistance();
-			this.region			=	spot.ShadowRegion;
+			this.farDistance	=	projection.IsOrthographic ? 1 : projection.GetFarPlaneDistance();
+			this.region			=	shadowProvider.ShadowRegion;
 			this.depthBuffer	=	depthBuffer;
 			this.colorBuffer	=	colorBuffer;
 			this.depthBias		=	rs.ShadowSystem.SpotDepthBias * depthBiasScale;

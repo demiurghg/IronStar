@@ -31,7 +31,7 @@ namespace Fusion.Engine.Graphics.GI
 
 		static FXConstantBuffer<GpuData.CAMERA>				regCamera			=	new CRegister( 0, "Camera"		);
 		static FXConstantBuffer<RADIOSITY>					regRadiosity		=	new CRegister( 1, "Radiosity"		);
-		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow	=	new CRegister( 2, "CascadeShadow"	);
+		static FXConstantBuffer<ShadowSystem.CASCADE_SHADOW>regCascadeShadow	=	new CRegister( 2, "CascadeShadow"	);
 		static FXConstantBuffer<GpuData.DIRECT_LIGHT>		regDirectLight		=	new CRegister( 3, "DirectLight"		);
 		static FXConstantBuffer<Plane>						regFrustumPlanes	=	new CRegister( 4,6, "FrustumPlanes"	);
 																								   
@@ -325,7 +325,7 @@ namespace Fusion.Engine.Graphics.GI
 		{
 			device.ComputeConstants[ regCamera			]	=	rs.RenderWorld.Camera.CameraData;
 			device.ComputeConstants[ regRadiosity		]	=	cbRadiosity;
-			device.ComputeConstants[ regCascadeShadow	]	=	rs.ShadowSystem.ShadowMap.GetCascadeShadowConstantBuffer();
+			device.ComputeConstants[ regCascadeShadow	]	=	rs.ShadowSystem.GetCascadeShadowConstantBuffer();
 			device.ComputeConstants[ regDirectLight		]	=	rs.LightManager.DirectLightData;
 			device.ComputeConstants[ regFrustumPlanes	]	=	rs.RenderWorld.Camera.FrustumPlanes;
 

@@ -235,9 +235,9 @@ namespace Fusion.Engine.Graphics
 			foreach ( var sl in lightSet.SpotLights ) 
 			{
 				Vector3 min, max, minF, maxF, minS, maxS;
-				sl.Visible	=	false;
+				sl.IsVisible	=	false;
 
-				var frustum	=	new BoundingFrustum( sl.SpotView * sl.Projection );
+				var frustum	=	new BoundingFrustum( sl.ViewMatrix * sl.ProjectionMatrix );
 
 				bool visibleAsFrustum	=	Extents.GetFrustumExtent( view, proj, vp, frustum, false, out minF, out maxF );
 				bool visibleAsSphere	=	Extents.GetSphereExtent( view, proj, sl.CenterPosition, vp, sl.RadiusOuter, false, out minS, out maxS );
@@ -250,9 +250,9 @@ namespace Fusion.Engine.Graphics
 					min.Z	=	GetGridSlice( min.Z );
 					max.Z	=	GetGridSlice( max.Z );
 
-					sl.Visible		=	!rs.SkipSpotLights;
+					sl.IsVisible	=	!rs.SkipSpotLights;
 
-					sl.DetailLevel	=	GetSpotLightLOD( sl, frustum, viewPosition );
+					sl.ShadowLod	=	GetSpotLightLOD( sl, frustum, viewPosition );
 
 					sl.MaxExtent.X	=	Math.Min( Width,  (int)Math.Ceiling( max.X * Width  ) );
 					sl.MaxExtent.Y	=	Math.Min( Height, (int)Math.Ceiling( max.Y * Height ) );
@@ -457,7 +457,7 @@ namespace Fusion.Engine.Graphics
 
 			foreach ( SpotLight sl in lightSet.SpotLights ) 
 			{
-				if (sl.Visible) 
+				if (sl.IsVisible) 
 				{
 					for (int i=sl.MinExtent.X; i<sl.MaxExtent.X; i++)
 					for (int j=sl.MinExtent.Y; j<sl.MaxExtent.Y; j++)
@@ -537,7 +537,7 @@ namespace Fusion.Engine.Graphics
 
 			foreach ( var sl in lightSet.SpotLights ) 
 			{
-				if (sl.Visible)
+				if (sl.IsVisible)
 				{
 					for (int i=sl.MinExtent.X; i<sl.MaxExtent.X; i++)
 					for (int j=sl.MinExtent.Y; j<sl.MaxExtent.Y; j++)

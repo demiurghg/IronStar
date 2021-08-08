@@ -11,6 +11,8 @@ using Fusion.Drivers.Graphics;
 using System.Runtime.InteropServices;
 using Fusion.Widgets.Advanced;
 using System.Runtime.CompilerServices;
+using Fusion.Engine.Graphics.Lights;
+using Fusion.Engine.Graphics.Ubershaders;
 
 namespace Fusion.Engine.Graphics 
 {
@@ -26,6 +28,7 @@ namespace Fusion.Engine.Graphics
 	/// </summary>
 	internal class ShadowSystem : RenderComponent
 	{
+		public const int MaxCascades		= 4;
 		
 		[AECategory("General")]  [Config]	public QualityLevel ShadowQuality 
 		{ 
@@ -39,8 +42,27 @@ namespace Fusion.Engine.Graphics
 				}
 			}
 		}
+
 		bool shadowQualityDirty = true;
 		QualityLevel shadowQualityLevel	= QualityLevel.Medium;
+
+		[ShaderStructure]
+		[StructLayout(LayoutKind.Sequential, Pack=4)]
+		public struct CASCADE_SHADOW 
+		{
+			public Matrix	CascadeViewProjection0	;
+			public Matrix	CascadeViewProjection1	;
+			public Matrix	CascadeViewProjection2	;
+			public Matrix	CascadeViewProjection3	;
+			public Matrix	CascadeGradientMatrix0	;
+			public Matrix	CascadeGradientMatrix1	;
+			public Matrix	CascadeGradientMatrix2	;
+			public Matrix	CascadeGradientMatrix3	;
+			public Vector4	CascadeScaleOffset0		;
+			public Vector4	CascadeScaleOffset1		;
+			public Vector4	CascadeScaleOffset2		;
+			public Vector4	CascadeScaleOffset3		;
+		}
 
 		[AECategory("Performance")]		[Config]	public bool UsePointShadowSampling { get; set; } = false;
 		[AECategory("Performance")]		[Config]	public bool SkipShadowMasks { get; set; } = false;
@@ -84,7 +106,10 @@ namespace Fusion.Engine.Graphics
 		public RasterizerState SpotShadowRasterizerState { get { return spotShadowRasterizerState; } }
 		RasterizerState cascadeShadowRasterizerState;
 		RasterizerState spotShadowRasterizerState;
+		ConstantBuffer	constCascadeShadow;
 
+		readonly ShadowCascade[] cascades = new ShadowCascade[MaxCascades];
+		List<IShadowProvider> lightListToRender;
 
 
 		public ShadowSystem( RenderSystem rs ) : base( rs )
@@ -94,6 +119,8 @@ namespace Fusion.Engine.Graphics
 
 		public override void Initialize()
 		{
+			constCascadeShadow	=	new ConstantBuffer( device, typeof(CASCADE_SHADOW) );
+
 			CreateResourcesIfNecessary();
 		}
 
@@ -103,6 +130,7 @@ namespace Fusion.Engine.Graphics
 			if (disposing)
 			{
 				SafeDispose( ref shadowMap );
+				SafeDispose( ref constCascadeShadow );
 			}
 
 			base.Dispose( disposing );
@@ -113,26 +141,51 @@ namespace Fusion.Engine.Graphics
 		 *	Private stuff :
 		-----------------------------------------------------------------------------------------------*/
 
-		[MethodImpl(MethodImplOptions.NoOptimization)]
 		public void RenderShadows ( GameTime gameTime, Camera camera, RenderWorld rw )
 		{
 			CreateResourcesIfNecessary();
 
-			RemoveSpotLights( rw.LightSet.SpotLights );
+			ComputeCascadeMatricies( cascades[0], camera, rw.LightSet );
+			ComputeCascadeMatricies( cascades[1], camera, rw.LightSet );
+			ComputeCascadeMatricies( cascades[2], camera, rw.LightSet );
+			ComputeCascadeMatricies( cascades[3], camera, rw.LightSet );
 
-			AllocateShadowRegions( rw.LightSet.SpotLights );
+			var lightList = new List<IShadowProvider>();
+			lightList.AddRange( cascades );
+			lightList.AddRange( rw.LightSet.SpotLights );
 
-			UpdateVisibility( rw, rw.LightSet.SpotLights );
+			RemoveSpotLights( lightList );
 
-			var lightList = rw.LightSet.SpotLights
-							.Where( s => s.IsContentDirty )
+			AllocateShadowRegions( lightList );
+
+			UpdateVisibility( rw, lightList );
+
+			lightListToRender = lightList
+							.Where( s => s.IsShadowDirty )
 							.ToList();
 
-			RenderShadowsInternal( rw, lightList, InstanceGroup.NotWeapon );
-
-			//shadowMap.RenderShadowMaps( gameTime, camera, rs, rw, rw.LightSet );
+			RenderShadowsInternal( gameTime, rw, lightListToRender, InstanceGroup.NotWeapon );
 		}
 
+
+		public void RenderParticleShadows(GameTime gameTime, Camera camera, RenderWorld rw)
+		{
+			if (lightListToRender!=null)
+			{
+				RenderParticleShadowsInternal( gameTime, rw, lightListToRender ); 
+			}
+		}
+
+
+		public ShadowCascade GetCascade ( int index ) 
+		{
+			if (index<0 || index>=MaxCascades) 
+			{
+				throw new ArgumentOutOfRangeException("index", "index must be within range 0.." + (MaxCascades-1).ToString() );
+			}
+			
+			return cascades[index];
+		}
 
 		/*-----------------------------------------------------------------------------------------------
 		 *	Private stuff :
@@ -148,6 +201,11 @@ namespace Fusion.Engine.Graphics
 				SafeDispose( ref shadowMap );
 				shadowMap			=	new ShadowMap( rs, ShadowQuality );
 				shadowQualityDirty	=	false;
+
+				cascades[0]	=	new ShadowCascade(0, shadowMap.MaxRegionSize, 0, Color.White);
+				cascades[1]	=	new ShadowCascade(1, shadowMap.MaxRegionSize, 0, new Color(255,0,0) );
+				cascades[2]	=	new ShadowCascade(2, shadowMap.MaxRegionSize, 1, new Color(0,255,0) );
+				cascades[3]	=	new ShadowCascade(3, shadowMap.MaxRegionSize, 1, new Color(0,0,255) );
 			}
 
 			if (biasDirty)
@@ -172,8 +230,7 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		[MethodImpl(MethodImplOptions.NoOptimization)]
-		void RemoveSpotLights( IEnumerable<SpotLight> spotLights )
+		void RemoveSpotLights( IEnumerable<IShadowProvider> spotLights )
 		{
 			var blocks = shadowMap.Allocator.GetAllocatedBlockInfo();
 
@@ -190,8 +247,7 @@ namespace Fusion.Engine.Graphics
 		/// <summary>
 		/// Allocates and reallocates shadow regions when LOD is changed.
 		/// </summary>
-		[MethodImpl(MethodImplOptions.NoOptimization)]
-		void AllocateShadowRegions( IEnumerable<SpotLight> spotLights )
+		void AllocateShadowRegions( IEnumerable<IShadowProvider> spotLights )
 		{
 			try 
 			{
@@ -209,9 +265,10 @@ namespace Fusion.Engine.Graphics
 				{
 					if (spotLight.IsRegionDirty || refresh)
 					{
-						var shadowRegionSize		=	shadowMap.GetShadowRegionSize( spotLight.DetailLevel );
-						spotLight.ShadowRegion		=	shadowMap.Allocator.Alloc( shadowRegionSize, spotLight );
-						spotLight.ShadowScaleOffset	=	shadowMap.GetScaleOffset( spotLight.ShadowRegion );
+						var shadowRegionSize		=	shadowMap.GetShadowRegionSize( spotLight.ShadowLod );
+						var shadowRegion			=	shadowMap.Allocator.Alloc( shadowRegionSize, spotLight );
+
+						spotLight.SetShadowRegion( shadowRegion, shadowMap.ShadowMapSize );
 					}
 				}
 			} 
@@ -226,29 +283,29 @@ namespace Fusion.Engine.Graphics
 		/// Updates shadow caster visibility for each light
 		/// </summary>
 		/// <param name="lights"></param>
-		[MethodImpl(MethodImplOptions.NoOptimization)]
-		void UpdateVisibility( RenderWorld rw, IEnumerable<SpotLight> lights )
+		void UpdateVisibility( RenderWorld rw, IEnumerable<IShadowProvider> lights )
 		{
 			if (rw.SceneBvhTree==null) return;
 
 			foreach ( var light in lights )
 			{
-				var frustum	=	new BoundingFrustum( light.SpotView * light.Projection );
+				var frustum	=	new BoundingFrustum( light.ViewMatrix * light.ProjectionMatrix );
 				var newList	=	rw.SceneBvhTree.Traverse( bbox => frustum.Contains( bbox ) );
 
 				var added	=	newList.Except( light.ShadowCasters );
 				var removed	=	light.ShadowCasters.Except( newList );
 
-				light.ShadowCasters	=	new RenderList(newList);
+				light.ShadowCasters.Clear();
+				light.ShadowCasters.AddRange( newList );
 
 				if (added.Any() || removed.Any() || newList.Any( ri => ri.IsShadowDirty ) )
 				{
-					light.IsContentDirty = true;
+					light.IsShadowDirty = true;
 				}
 
 				if (SkipShadowCasterTracking)
 				{
-					light.IsContentDirty = true;
+					light.IsShadowDirty = true;
 				}
 			}
 
@@ -262,8 +319,7 @@ namespace Fusion.Engine.Graphics
 		/// <summary>
 		/// Renders shadows
 		/// </summary>
-		[MethodImpl(MethodImplOptions.NoOptimization)]
-		void RenderShadowsInternal(	RenderWorld rw, IEnumerable<SpotLight> lights, InstanceGroup group )
+		void RenderShadowsInternal(	GameTime gameTime, RenderWorld rw, IEnumerable<IShadowProvider> lights, InstanceGroup group )
 		{
 			var shadowCamera	=	rw.ShadowCamera;
 			var depthBuffer		=	shadowMap.DepthBuffer;
@@ -281,21 +337,21 @@ namespace Fusion.Engine.Graphics
 			//	render shadow map :
 			foreach ( var light in lights )
 			{
-				shadowCamera.ViewMatrix			=	light.SpotView;
-				shadowCamera.ProjectionMatrix	=	light.Projection;
+				shadowCamera.ViewMatrix			=	light.ViewMatrix;
+				shadowCamera.ProjectionMatrix	=	light.ProjectionMatrix;
 
 				var context	=	new ShadowContext( rs, shadowCamera, light, depthBuffer.Surface, shadowTexture.Surface );
 
 				rs.SceneRenderer.RenderShadowMap( context, light.ShadowCasters, group, false );
 
-				light.IsContentDirty = false;
+				light.IsShadowDirty = false;
 			}
 
 			//	render shadow mask :
 			foreach ( var light in lights )
 			{
-				var name	=	light.SpotMaskName;
-				var clip	=	lightSet.SpotAtlas.GetClipByName( name );
+				var name	=	light.ShadowMaskName;
+				var clip	=	lightSet.SpotAtlas?.GetClipByName( name );
 
 				if (clip!=null) 
 				{
@@ -306,14 +362,132 @@ namespace Fusion.Engine.Graphics
 				else 
 				{
 					var dstRegion	=	light.ShadowRegion;
-					rs.Filter2.RenderSpot( maskTexture.Surface, dstRegion, Color.White );
+					rs.Filter2.RenderBorder( maskTexture.Surface, dstRegion, Color.White );
 				}
 			}
-
-			//	render particle shadows :
 
 			//	copy regions :
 			shadowMap.CopyShadowRegionToLowRes( regions );
 		}
+
+
+		void RenderParticleShadowsInternal(	GameTime gameTime, RenderWorld rw, IEnumerable<IShadowProvider> lights )
+		{
+			if (SkipParticleShadows)
+			{
+				return;
+			}
+
+			var shadowCamera	=	rw.ShadowCamera;
+			var depthBuffer		=	shadowMap.DepthBuffer;
+			var shadowTexture	=	shadowMap.ShadowTexture;
+			var maskTexture		=	shadowMap.ParticleShadowTexture;
+			var lightSet		=	rw.LightSet;
+
+			//	render particle shadows :
+			foreach ( var light in lights )
+			{
+				if (light.ShadowLod <= MaxParticleShadowsLod) 
+				{
+					var vp		= new Viewport( light.ShadowRegion );
+
+					shadowCamera.ViewMatrix			=	light.ViewMatrix;
+					shadowCamera.ProjectionMatrix	=	light.ProjectionMatrix;
+
+					rs.RenderWorld.ParticleSystem.RenderShadow( gameTime, vp, shadowCamera, maskTexture.Surface, depthBuffer.Surface );
+				}
+			}
+		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Shadow Cascade stuff :
+		-----------------------------------------------------------------------------------------*/
+
+		void ComputeCascadeMatricies ( ShadowCascade cascade, Camera camera, LightSet lightSet )
+		{
+			var camMatrix		=	camera.CameraMatrix;
+			var viewPos			=	camera.CameraPosition;
+			var lightDir		=	lightSet.DirectLight.Direction;
+			var viewMatrix		=	camera.ViewMatrix;
+			var lessDetailed	=	cascades.Length-1;
+
+			var splitSize		=	rs.ShadowSystem.ShadowCascadeSize;
+			var splitFactor		=	rs.ShadowSystem.ShadowCascadeFactor;
+			var projDepth		=	rs.ShadowSystem.ShadowCascadeDepth;
+			var splitOffset		=	0;
+
+			lightDir.Normalize();
+
+			var	smSize			=	cascade.ShadowRegion.Width; //	width == height
+
+			float	offset		=	splitOffset * (float)Math.Pow( splitFactor, cascade.Index );
+			float	radius		=	splitSize   * (float)Math.Pow( splitFactor, cascade.Index );
+
+			Vector3 viewDir		=	camMatrix.Forward.Normalized();
+			Vector3	origin		=	viewPos + viewDir * offset;
+
+			Matrix	lightRot	=	Matrix.LookAtRH( Vector3.Zero, Vector3.Zero + lightDir, Vector3.UnitY );
+			Matrix	lightRotI	=	Matrix.Invert( lightRot );
+			Vector3	lsOrigin	=	Vector3.TransformCoordinate( origin, lightRot );
+			float	snapValue	=	4 * radius / smSize;
+
+			if (SnapShadowmapCascades) 
+			{
+				lsOrigin.X		=	(float)Math.Round(lsOrigin.X / snapValue) * snapValue;
+				lsOrigin.Y		=	(float)Math.Round(lsOrigin.Y / snapValue) * snapValue;
+			}
+			//lsOrigin.Z			=	(float)Math.Round(lsOrigin.Z / snapValue) * snapValue;
+			origin				=	Vector3.TransformCoordinate( lsOrigin, lightRotI );//*/
+
+			var view			=	Matrix.LookAtRH( origin, origin + lightDir, Vector3.UnitY );
+			var projection		=	Matrix.OrthoRH( radius*2, radius*2, -projDepth/2, projDepth/2);
+
+			cascade.ViewMatrix			=	view;
+			cascade.ProjectionMatrix	=	projection;	  
+		}
+
+
+		public ConstantBuffer UpdateCascadeShadowConstantBuffer ()
+		{
+			var data = new CASCADE_SHADOW();
+
+			data.CascadeViewProjection0		=	this.GetCascade( 0 ).ViewProjectionMatrix;
+			data.CascadeViewProjection1		=	this.GetCascade( 1 ).ViewProjectionMatrix;
+			data.CascadeViewProjection2		=	this.GetCascade( 2 ).ViewProjectionMatrix;
+			data.CascadeViewProjection3		=	this.GetCascade( 3 ).ViewProjectionMatrix;
+
+			data.CascadeGradientMatrix0		=	this.GetCascade( 0 ).ComputeGradientMatrix();
+			data.CascadeGradientMatrix1		=	this.GetCascade( 1 ).ComputeGradientMatrix();
+			data.CascadeGradientMatrix2		=	this.GetCascade( 2 ).ComputeGradientMatrix();
+			data.CascadeGradientMatrix3		=	this.GetCascade( 3 ).ComputeGradientMatrix();
+
+			data.CascadeScaleOffset0		=	this.GetCascade( 0 ).RegionScaleOffset;
+			data.CascadeScaleOffset1		=	this.GetCascade( 1 ).RegionScaleOffset;
+			data.CascadeScaleOffset2		=	this.GetCascade( 2 ).RegionScaleOffset;
+			data.CascadeScaleOffset3		=	this.GetCascade( 3 ).RegionScaleOffset;
+
+			if (float.IsNaN(data.CascadeViewProjection0.M11))
+			{
+				//	bad data, reset 
+				data = new CASCADE_SHADOW();
+			}
+
+			constCascadeShadow.SetData(ref data);
+
+			return constCascadeShadow;
+		}
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public ConstantBuffer GetCascadeShadowConstantBuffer ()
+		{
+			return constCascadeShadow;
+		}
+
+
 	}
 }

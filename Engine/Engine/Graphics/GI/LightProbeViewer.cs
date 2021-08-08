@@ -48,7 +48,7 @@ namespace Fusion.Engine.Graphics.GI {
 		static FXStructure<SceneRenderer.LIGHT>			stub1	=	0;
 		static FXStructure<SceneRenderer.LIGHTPROBE>	stub2	=	0;
 		static FXStructure<SceneRenderer.DECAL>			stub3	=	0;
-		static FXStructure<ShadowMap.CASCADE_SHADOW>	stub4	=	0;
+		static FXStructure<ShadowSystem.CASCADE_SHADOW>	stub4	=	0;
 
 		static FXConstantBuffer<GpuData.CAMERA>				regCamera			=	new CRegister(0, "Camera");
 		static FXConstantBuffer<DEBUG_PARAMS>				regParams			=	new CRegister(1, "Params");

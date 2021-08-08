@@ -32,10 +32,10 @@ namespace Fusion.Engine.Graphics
 		static FXConstantBuffer<GpuData.DIRECT_LIGHT>		regDirectLight		= new CRegister( 1, "DirectLight"		);
 		static FXConstantBuffer<STAGE>						regStage			= new CRegister( 2, "Stage"				);
 		static FXConstantBuffer<INSTANCE>					regInstanceRigid	= new CRegister( 3, BatchSizeRigid,		"InstanceRigid"		);
-		static FXConstantBuffer<INSTANCE>						regInstanceSkinned	= new CRegister( 4, BatchSizeSkinned,	"InstanceSkinned"	);
+		static FXConstantBuffer<INSTANCE>					regInstanceSkinned	= new CRegister( 4, BatchSizeSkinned,	"InstanceSkinned"	);
 		static FXConstantBuffer<Matrix>						regInstanceBones	= new CRegister( 5, TotalBonesPerBatch,	"InstanceBones"		);
 		static FXConstantBuffer<SUBSET>						regSubset			= new CRegister( 6,	"Subset"			);
-		static FXConstantBuffer<ShadowMap.CASCADE_SHADOW>	regCascadeShadow	= new CRegister( 7, "CascadeShadow"		);
+		static FXConstantBuffer<ShadowSystem.CASCADE_SHADOW>regCascadeShadow	= new CRegister( 7, "CascadeShadow"		);
 		static FXConstantBuffer<Fog.FOG_DATA>				regFog				= new CRegister( 8, "Fog"				);
 
 		static FXTexture2D<uint>				regTexture0					=	new TRegister( 0, "Texture0"			);
@@ -250,7 +250,7 @@ namespace Fusion.Engine.Graphics
 			device.GfxConstants[ regInstanceRigid	]	= constInstanceDataRigid;
 			device.GfxConstants[ regInstanceSkinned	]	= constInstanceDataSkinned;
 			device.GfxConstants[ regInstanceBones	]	= constBoneData;
-			device.GfxConstants[ regCascadeShadow	]	= rs.ShadowSystem.ShadowMap.UpdateCascadeShadowConstantBuffer();
+			device.GfxConstants[ regCascadeShadow	]	= rs.ShadowSystem.UpdateCascadeShadowConstantBuffer();
 			device.GfxConstants[ regFog				]	= rs.Fog.FogData;
 
 			//-----------------------------

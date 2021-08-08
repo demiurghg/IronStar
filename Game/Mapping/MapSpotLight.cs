@@ -159,7 +159,7 @@ namespace IronStar.Mapping {
 		//		dr.DrawSphere( position1, TubeRadius,  dispColor );
 		//		dr.DrawSphere( position,  OuterRadius, dispColor );
 
-		//		var frustum = new BoundingFrustum( SpotView * SpotProjection );
+		//		var frustum = new BoundingFrustum( ViewMatrix * SpotProjection );
 				
 		//		var points  = frustum.GetCorners();
 
@@ -190,7 +190,7 @@ namespace IronStar.Mapping {
 
 		public override BoundingBox GetBoundingBox( GameState gs )
 		{
-			var frustum = new BoundingFrustum( /*SpotView **/ SpotProjection );
+			var frustum = new BoundingFrustum( /*ViewMatrix **/ SpotProjection );
 			var points  = frustum.GetCorners();
 			return BoundingBox.FromPoints( points );
 		}

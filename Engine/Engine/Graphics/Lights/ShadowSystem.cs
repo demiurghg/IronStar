@@ -10,6 +10,7 @@ using Fusion.Engine.Common;
 using Fusion.Drivers.Graphics;
 using System.Runtime.InteropServices;
 using Fusion.Widgets.Advanced;
+using System.Runtime.CompilerServices;
 
 namespace Fusion.Engine.Graphics 
 {
@@ -52,6 +53,7 @@ namespace Fusion.Engine.Graphics
 		[AECategory("Debug")]			[Config]	public bool UseHighResFogShadows { get; set; } = false;
 		[AECategory("Debug")]			[Config]	public bool ClearEntireShadow { get; set; } = false;
 		[AECategory("Debug")]			[Config]	public bool SkipBorders { get; set; } = false;
+		[AECategory("Debug")]			[Config]	public bool SkipShadowCasterTracking { get; set; } = false;
 
 
 		[AECategory("Cascade Shadows")] [Config]	public bool SnapShadowmapCascades { get; set; } = true;
@@ -111,6 +113,7 @@ namespace Fusion.Engine.Graphics
 		 *	Private stuff :
 		-----------------------------------------------------------------------------------------------*/
 
+		[MethodImpl(MethodImplOptions.NoOptimization)]
 		public void RenderShadows ( GameTime gameTime, Camera camera, RenderWorld rw )
 		{
 			CreateResourcesIfNecessary();
@@ -169,6 +172,7 @@ namespace Fusion.Engine.Graphics
 		}
 
 
+		[MethodImpl(MethodImplOptions.NoOptimization)]
 		void RemoveSpotLights( IEnumerable<SpotLight> spotLights )
 		{
 			var blocks = shadowMap.Allocator.GetAllocatedBlockInfo();
@@ -186,6 +190,7 @@ namespace Fusion.Engine.Graphics
 		/// <summary>
 		/// Allocates and reallocates shadow regions when LOD is changed.
 		/// </summary>
+		[MethodImpl(MethodImplOptions.NoOptimization)]
 		void AllocateShadowRegions( IEnumerable<SpotLight> spotLights )
 		{
 			try 
@@ -194,7 +199,7 @@ namespace Fusion.Engine.Graphics
 				{
 					if (spotLight.IsRegionDirty)
 					{
-						shadowMap.Allocator.Free( spotLight.ShadowRegion );
+						shadowMap.Allocator.Free( spotLight );
 					}
 				}
 
@@ -221,6 +226,7 @@ namespace Fusion.Engine.Graphics
 		/// Updates shadow caster visibility for each light
 		/// </summary>
 		/// <param name="lights"></param>
+		[MethodImpl(MethodImplOptions.NoOptimization)]
 		void UpdateVisibility( RenderWorld rw, IEnumerable<SpotLight> lights )
 		{
 			if (rw.SceneBvhTree==null) return;
@@ -229,17 +235,26 @@ namespace Fusion.Engine.Graphics
 			{
 				var frustum	=	new BoundingFrustum( light.SpotView * light.Projection );
 				var newList	=	rw.SceneBvhTree.Traverse( bbox => frustum.Contains( bbox ) );
+
 				var added	=	newList.Except( light.ShadowCasters );
 				var removed	=	light.ShadowCasters.Except( newList );
 
 				light.ShadowCasters	=	new RenderList(newList);
 
-				if (added.Any() || removed.Any())
+				if (added.Any() || removed.Any() || newList.Any( ri => ri.IsShadowDirty ) )
 				{
 					light.IsContentDirty = true;
 				}
 
-				light.IsContentDirty = true;
+				if (SkipShadowCasterTracking)
+				{
+					light.IsContentDirty = true;
+				}
+			}
+
+			foreach ( var ri in rw.Instances )
+			{
+				ri.ClearShadowDirty();
 			}
 		}
 
@@ -247,6 +262,7 @@ namespace Fusion.Engine.Graphics
 		/// <summary>
 		/// Renders shadows
 		/// </summary>
+		[MethodImpl(MethodImplOptions.NoOptimization)]
 		void RenderShadowsInternal(	RenderWorld rw, IEnumerable<SpotLight> lights, InstanceGroup group )
 		{
 			var shadowCamera	=	rw.ShadowCamera;
@@ -265,9 +281,14 @@ namespace Fusion.Engine.Graphics
 			//	render shadow map :
 			foreach ( var light in lights )
 			{
+				shadowCamera.ViewMatrix			=	light.SpotView;
+				shadowCamera.ProjectionMatrix	=	light.Projection;
+
 				var context	=	new ShadowContext( rs, shadowCamera, light, depthBuffer.Surface, shadowTexture.Surface );
 
 				rs.SceneRenderer.RenderShadowMap( context, light.ShadowCasters, group, false );
+
+				light.IsContentDirty = false;
 			}
 
 			//	render shadow mask :

@@ -4604,12 +4604,12 @@
         "Name": "f3f4a69d-58c2-4414-bb9a-9d65db7a093d",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-57.9600143, 18.5497227, 128.955231",
+        "Translation": "-55, 18.5497227, 146",
         "Scaling": "1, 1, 1",
         "Rotation": "0.00138192845, -0.8660223, 0.00228828564, 0.4999983",
-        "TranslateX": -57.9600143,
+        "TranslateX": -55.0,
         "TranslateY": 18.5497227,
-        "TranslateZ": 128.955231
+        "TranslateZ": 146.0
       },
       {
         "$id": "290",

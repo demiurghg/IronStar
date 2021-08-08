@@ -34,9 +34,6 @@ namespace Fusion.Engine.Graphics {
 		private readonly RenderSystem rs;
 		private readonly RenderWorld rw;
 
-		public bool Visible = true;
-
-
 		public int InstanceRef
 		{
 			get 
@@ -48,6 +45,21 @@ namespace Fusion.Engine.Graphics {
 			}
 		}
 
+
+		public bool Visible 
+		{ 
+			get { return visible; }
+			set
+			{
+				if (visible != value)
+				{
+					visible = value;
+					isMoved = true;
+				}
+			}
+		}
+
+		bool visible = true;
 
 		public InstanceGroup Group {
 			get; set;
@@ -64,9 +76,25 @@ namespace Fusion.Engine.Graphics {
 				if (world!=value)
 				{
 					worldBBoxDirty = true;
+					isMoved = true;
 					world = value;
 				}
 			}
+		}
+
+		bool isMoved = true;
+
+		public bool IsShadowDirty
+		{
+			get 
+			{
+				return (isMoved || IsSkinned) && !NoShadow;
+			}
+		}
+
+		public void ClearShadowDirty()
+		{
+			isMoved = false;
 		}
 
 		/// <summary>

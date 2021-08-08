@@ -135,9 +135,13 @@ namespace Fusion.Engine.Graphics
 			get { return region; }
 			set
 			{
-				region			=	value;
 				regionDirty		=	false;
-				contentDirty	=	true;
+
+				if (region!=value)
+				{
+					region			=	value;
+					contentDirty	=	true;
+				}
 			}
 		}
 

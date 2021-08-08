@@ -93,17 +93,17 @@ namespace Fusion.Engine.Graphics.GI
 			//	must be equal size of the update region
 			int lightMapSize = MinLightMapSize;
 
-			Allocator2D allocator;		
+			Allocator2D<LightMapGroup> allocator;		
 
 			while (true)
 			{
 				try 
 				{
-					allocator = new Allocator2D( lightMapSize );
+					allocator = new Allocator2D<LightMapGroup>( lightMapSize );
 
 					foreach ( var group in lmGroups ) 
 					{
-						var addr = allocator.Alloc( group.Region.Width, "");
+						var addr = allocator.Alloc( group.Region.Width, group);
 						group.Region.X = addr.X;
 						group.Region.Y = addr.Y;
 

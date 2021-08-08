@@ -334,12 +334,12 @@
         "Name": "MapEntity5",
         "Visible": true,
         "Frozen": false,
-        "Translation": "71.47345, 0.346001983, 10.6323509",
+        "Translation": "72, 3, 10",
         "Scaling": "1, 1, 1",
         "Rotation": "0, -0.1305262, 0, 0.9914449",
-        "TranslateX": 71.47345,
-        "TranslateY": 0.346001983,
-        "TranslateZ": 10.6323509
+        "TranslateX": 72.0,
+        "TranslateY": 3.0,
+        "TranslateZ": 10.0
       },
       {
         "$id": "27",
@@ -353,10 +353,10 @@
         "Name": "MapEntity6",
         "Visible": true,
         "Frozen": false,
-        "Translation": "72.7443848, 0.346001983, 11.8616285",
+        "Translation": "73, 0.346001983, 11.8616285",
         "Scaling": "1, 1, 1",
         "Rotation": "0, -0.1305262, 0, 0.9914449",
-        "TranslateX": 72.7443848,
+        "TranslateX": 73.0,
         "TranslateY": 0.346001983,
         "TranslateZ": 11.8616285
       },
@@ -525,11 +525,11 @@
         "Name": "MapSpotLight1",
         "Visible": true,
         "Frozen": false,
-        "Translation": "75, 11.69058, -3.651081",
+        "Translation": "78, 7.613165, -3.651081",
         "Scaling": "0.9999998, 1, 0.9999998",
         "Rotation": "-0.0669873059, 0.9330127, 0.25000003, 0.25000006",
-        "TranslateX": 75.0,
-        "TranslateY": 11.69058,
+        "TranslateX": 78.0,
+        "TranslateY": 7.613165,
         "TranslateZ": -3.651081
       }
     ]

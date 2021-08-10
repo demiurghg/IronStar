@@ -315,12 +315,12 @@
         "Name": "MapEntity1",
         "Visible": true,
         "Frozen": false,
-        "Translation": "67.37461, 0.257247955, 12.315",
+        "Translation": "67.37461, 0.257247955, 26.3149986",
         "Scaling": "1, 1, 1",
         "Rotation": "0.04790786, -0.0481217653, -0.7053254, 0.7056239",
         "TranslateX": 67.37461,
         "TranslateY": 0.257247955,
-        "TranslateZ": 12.315
+        "TranslateZ": 26.3149986
       },
       {
         "$id": "25",
@@ -334,12 +334,12 @@
         "Name": "MapEntity5",
         "Visible": true,
         "Frozen": false,
-        "Translation": "72, 3, 10",
+        "Translation": "72, 3, 24",
         "Scaling": "1, 1, 1",
         "Rotation": "0, -0.1305262, 0, 0.9914449",
         "TranslateX": 72.0,
         "TranslateY": 3.0,
-        "TranslateZ": 10.0
+        "TranslateZ": 24.0
       },
       {
         "$id": "27",
@@ -348,17 +348,17 @@
         "Factory": {
           "$id": "28",
           "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "AMMO_BULLETS"
+          "Classname": "BOXEXPLOSIVE"
         },
         "Name": "MapEntity6",
         "Visible": true,
         "Frozen": false,
-        "Translation": "73, 0.346001983, 11.8616285",
+        "Translation": "78, 1, -5",
         "Scaling": "1, 1, 1",
         "Rotation": "0, -0.1305262, 0, 0.9914449",
-        "TranslateX": 73.0,
-        "TranslateY": 0.346001983,
-        "TranslateZ": 11.8616285
+        "TranslateX": 78.0,
+        "TranslateY": 1.0,
+        "TranslateZ": -5.0
       },
       {
         "$id": "29",
@@ -428,12 +428,12 @@
         "Name": "MapLightProbeSphere17",
         "Visible": true,
         "Frozen": false,
-        "Translation": "67.29706, 2, 12",
+        "Translation": "67.29706, 2, 26",
         "Scaling": "1, 1, 1",
         "Rotation": "0, 0, 0, 1",
         "TranslateX": 67.29706,
         "TranslateY": 2.0,
-        "TranslateZ": 12.0
+        "TranslateZ": 26.0
       },
       {
         "$id": "33",
@@ -484,32 +484,6 @@
         "$id": "35",
         "$type": "IronStar.Mapping.MapSpotLight, IronStar",
         "LightColor": "255, 255, 255, 255",
-        "LightIntensity": 2.0,
-        "OuterRadius": 59.0,
-        "TubeRadius": 0.125,
-        "TubeLength": 0.0,
-        "NearPlane": 0.125,
-        "FarPlane": 61.0,
-        "FovVertical": 60.0,
-        "FovHorizontal": 60.0,
-        "LightStyle": "default",
-        "EnableGI": true,
-        "SpotMaskName": "",
-        "LodBias": 0,
-        "Name": "MapSpotLight0",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "108, 32, -52",
-        "Scaling": "1, 1, 1",
-        "Rotation": "-0.0669873059, 0.933012664, 0.25, 0.25000003",
-        "TranslateX": 108.0,
-        "TranslateY": 32.0,
-        "TranslateZ": -52.0
-      },
-      {
-        "$id": "36",
-        "$type": "IronStar.Mapping.MapSpotLight, IronStar",
-        "LightColor": "255, 255, 255, 255",
         "LightIntensity": 6.0,
         "OuterRadius": 59.0,
         "TubeRadius": 0.125,
@@ -525,17 +499,17 @@
         "Name": "MapSpotLight1",
         "Visible": true,
         "Frozen": false,
-        "Translation": "78, 7.613165, -3.651081",
+        "Translation": "78, 16, -3.651081",
         "Scaling": "0.9999998, 1, 0.9999998",
-        "Rotation": "-0.0669873059, 0.9330127, 0.25000003, 0.25000006",
+        "Rotation": "-0.707106769, 0, 0, 0.707106769",
         "TranslateX": 78.0,
-        "TranslateY": 7.613165,
+        "TranslateY": 16.0,
         "TranslateZ": -3.651081
       }
     ]
   },
   "RadiositySettings": {
-    "$id": "37",
+    "$id": "36",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 256,
     "NumBounces": 3,

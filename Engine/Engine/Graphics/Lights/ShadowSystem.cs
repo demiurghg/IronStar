@@ -23,9 +23,8 @@ namespace Fusion.Engine.Graphics
 		Interleave1244,
 	}
 
-	/// <summary>
-	/// Shadow render context
-	/// </summary>
+	
+	
 	internal class ShadowSystem : RenderComponent
 	{
 		public const int MaxCascades		= 4;
@@ -77,12 +76,9 @@ namespace Fusion.Engine.Graphics
 		[AECategory("Debug")]			[Config]	public bool SkipBorders { get; set; } = false;
 		[AECategory("Debug")]			[Config]	public bool SkipShadowCasterTracking { get; set; } = false;
 
-
 		[AECategory("Cascade Shadows")] [Config]	public bool SnapShadowmapCascades { get; set; } = true;
-
 		[AECategory("Cascade Shadows")] [Config]	public float ShadowGradientBiasX { get; set; } = 1;
 		[AECategory("Cascade Shadows")] [Config]	public float ShadowGradientBiasY { get; set; } = 1;
-
 		[AECategory("Cascade Shadows")] [Config]	public float ShadowCascadeDepth { get; set; } = 1024;
 		[AECategory("Cascade Shadows")] [Config]	public float ShadowCascadeFactor { get; set; } = 3;
 		[AECategory("Cascade Shadows")] [Config]	public float ShadowCascadeSize { get; set; } = 4;
@@ -112,9 +108,11 @@ namespace Fusion.Engine.Graphics
 		List<IShadowProvider> lightListToRender;
 
 
+
 		public ShadowSystem( RenderSystem rs ) : base( rs )
 		{
 		}
+
 
 
 		public override void Initialize()
@@ -124,7 +122,8 @@ namespace Fusion.Engine.Graphics
 			CreateResourcesIfNecessary();
 		}
 
-		
+
+
 		protected override void Dispose( bool disposing )
 		{
 			if (disposing)
@@ -143,29 +142,37 @@ namespace Fusion.Engine.Graphics
 
 		public void RenderShadows ( GameTime gameTime, Camera camera, RenderWorld rw )
 		{
-			CreateResourcesIfNecessary();
+			var settingsChanged = CreateResourcesIfNecessary();
 
+			var lightList = new List<IShadowProvider>();
+			lightList.AddRange( cascades );
+			lightList.AddRange( rw.LightSet.SpotLights.Where( spot => spot.IsVisible ) );
+
+			//	reset shadows to prevent flicker
+			if (settingsChanged) lightList.ForEach( light => light.ResetShadow() );
+			
 			ComputeCascadeMatricies( cascades[0], camera, rw.LightSet );
 			ComputeCascadeMatricies( cascades[1], camera, rw.LightSet );
 			ComputeCascadeMatricies( cascades[2], camera, rw.LightSet );
 			ComputeCascadeMatricies( cascades[3], camera, rw.LightSet );
 
-			var lightList = new List<IShadowProvider>();
-			lightList.AddRange( cascades );
-			lightList.AddRange( rw.LightSet.SpotLights );
-
+			//	remove invisible lights from shadowmap :
 			RemoveSpotLights( lightList );
 
-			AllocateShadowRegions( lightList );
+			//	reallocate shadow regions
+			RaAllocateShadowRegions( lightList );
 
-			UpdateVisibility( rw, lightList );
+			//	update visibility and track shadow caster changes :
+			TrackShadowCastersVisibility( rw, lightList );
 
+			//	make new list and render all visible spotlights with changes :
 			lightListToRender = lightList
 							.Where( s => s.IsShadowDirty )
 							.ToList();
 
 			RenderShadowsInternal( gameTime, rw, lightListToRender, InstanceGroup.NotWeapon );
 		}
+
 
 
 		public void RenderParticleShadows(GameTime gameTime, Camera camera, RenderWorld rw)
@@ -175,6 +182,7 @@ namespace Fusion.Engine.Graphics
 				RenderParticleShadowsInternal( gameTime, rw, lightListToRender ); 
 			}
 		}
+
 
 
 		public ShadowCascade GetCascade ( int index ) 
@@ -191,11 +199,10 @@ namespace Fusion.Engine.Graphics
 		 *	Private stuff :
 		-----------------------------------------------------------------------------------------------*/
 
-		/// <summary>
-		/// Recreates shadows if necessary
-		/// </summary>
-		private void CreateResourcesIfNecessary()
+		private bool CreateResourcesIfNecessary()
 		{
+			bool result = false;
+
 			if (shadowQualityDirty)
 			{
 				SafeDispose( ref shadowMap );
@@ -206,6 +213,8 @@ namespace Fusion.Engine.Graphics
 				cascades[1]	=	new ShadowCascade(1, shadowMap.MaxRegionSize, 0, new Color(255,0,0) );
 				cascades[2]	=	new ShadowCascade(2, shadowMap.MaxRegionSize, 1, new Color(0,255,0) );
 				cascades[3]	=	new ShadowCascade(3, shadowMap.MaxRegionSize, 1, new Color(0,0,255) );
+
+				result = true;
 			}
 
 			if (biasDirty)
@@ -226,8 +235,12 @@ namespace Fusion.Engine.Graphics
 					Game.Reload();
 				}
 				biasDirty = false;
+				result = true;
 			}
+
+			return result;
 		}
+
 
 
 		void RemoveSpotLights( IEnumerable<IShadowProvider> spotLights )
@@ -239,15 +252,14 @@ namespace Fusion.Engine.Graphics
 				if ( !spotLights.Contains( block.Tag ) )
 				{
 					shadowMap.Allocator.Free( block.Region );
+					block.Tag.ResetShadow();
 				}
 			}
 		}
 
 
-		/// <summary>
-		/// Allocates and reallocates shadow regions when LOD is changed.
-		/// </summary>
-		void AllocateShadowRegions( IEnumerable<IShadowProvider> spotLights )
+
+		void RaAllocateShadowRegions( IEnumerable<IShadowProvider> spotLights )
 		{
 			try 
 			{
@@ -283,7 +295,7 @@ namespace Fusion.Engine.Graphics
 		/// Updates shadow caster visibility for each light
 		/// </summary>
 		/// <param name="lights"></param>
-		void UpdateVisibility( RenderWorld rw, IEnumerable<IShadowProvider> lights )
+		void TrackShadowCastersVisibility( RenderWorld rw, IEnumerable<IShadowProvider> lights )
 		{
 			if (rw.SceneBvhTree==null) return;
 
@@ -292,13 +304,14 @@ namespace Fusion.Engine.Graphics
 				var frustum	=	new BoundingFrustum( light.ViewMatrix * light.ProjectionMatrix );
 				var newList	=	rw.SceneBvhTree.Traverse( bbox => frustum.Contains( bbox ) );
 
-				var added	=	newList.Except( light.ShadowCasters );
-				var removed	=	light.ShadowCasters.Except( newList );
+				var added	=	newList.Except( light.ShadowCasters ).Any();
+				var removed	=	light.ShadowCasters.Except( newList ).Any();
+				var moved	=	newList.Any( ri => ri.IsShadowDirty );
 
 				light.ShadowCasters.Clear();
 				light.ShadowCasters.AddRange( newList );
 
-				if (added.Any() || removed.Any() || newList.Any( ri => ri.IsShadowDirty ) )
+				if (added || removed || moved )
 				{
 					light.IsShadowDirty = true;
 				}
@@ -316,9 +329,7 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		/// <summary>
-		/// Renders shadows
-		/// </summary>
+
 		void RenderShadowsInternal(	GameTime gameTime, RenderWorld rw, IEnumerable<IShadowProvider> lights, InstanceGroup group )
 		{
 			var shadowCamera	=	rw.ShadowCamera;
@@ -369,6 +380,7 @@ namespace Fusion.Engine.Graphics
 			//	copy regions :
 			shadowMap.CopyShadowRegionToLowRes( regions );
 		}
+
 
 
 		void RenderParticleShadowsInternal(	GameTime gameTime, RenderWorld rw, IEnumerable<IShadowProvider> lights )
@@ -448,6 +460,7 @@ namespace Fusion.Engine.Graphics
 		}
 
 
+		
 		public ConstantBuffer UpdateCascadeShadowConstantBuffer ()
 		{
 			var data = new CASCADE_SHADOW();
@@ -479,15 +492,10 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
+
 		public ConstantBuffer GetCascadeShadowConstantBuffer ()
 		{
 			return constCascadeShadow;
 		}
-
-
 	}
 }

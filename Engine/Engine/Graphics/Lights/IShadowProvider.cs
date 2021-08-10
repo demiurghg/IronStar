@@ -59,9 +59,15 @@ namespace Fusion.Engine.Graphics.Lights
 		void SetShadowRegion( Rectangle region, int shadowMapSize );
 
 		/// <summary>
+		/// Make all attributes dirty.
+		/// </summary>
+		void ResetShadow();
+
+		/// <summary>
 		/// Gets list of visible shadow casters
 		/// </summary>
 		RenderList ShadowCasters { get; }
+
 
 		/// <summary>
 		/// Gets shadow mask name.

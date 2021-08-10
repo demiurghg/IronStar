@@ -87,5 +87,10 @@ namespace Fusion.Engine.Graphics
 
 			return matrix;
 		}
+
+		public void ResetShadow()
+		{
+			regionDirty	=	true;
+		}
 	}
 }

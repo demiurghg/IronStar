@@ -160,7 +160,13 @@ namespace Fusion.Engine.Graphics
 			}
 		}
 
-		
+		public void ResetShadow()
+		{
+			regionDirty		=	true;
+			IsShadowDirty	=	true;
+		}
+
+
 		/// <summary>
 		/// Indicates that shadow region need to be updated
 		/// </summary>

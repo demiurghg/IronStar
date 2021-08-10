@@ -232,6 +232,8 @@ namespace Fusion.Engine.Graphics
 		{
 			var vp = new Rectangle(0,0,1,1);
 
+			var cameraFrustum	=	new BoundingFrustum(view * proj);
+
 			foreach ( var sl in lightSet.SpotLights ) 
 			{
 				Vector3 min, max, minF, maxF, minS, maxS;
@@ -239,10 +241,11 @@ namespace Fusion.Engine.Graphics
 
 				var frustum	=	new BoundingFrustum( sl.ViewMatrix * sl.ProjectionMatrix );
 
-				bool visibleAsFrustum	=	Extents.GetFrustumExtent( view, proj, vp, frustum, false, out minF, out maxF );
-				bool visibleAsSphere	=	Extents.GetSphereExtent( view, proj, sl.CenterPosition, vp, sl.RadiusOuter, false, out minS, out maxS );
+				bool visibleByContainment	=	true;//cameraFrustum.Contains( frustum );
+				bool visibleAsFrustum		=	Extents.GetFrustumExtent( view, proj, vp, frustum, false, out minF, out maxF );
+				bool visibleAsSphere		=	Extents.GetSphereExtent( view, proj, sl.CenterPosition, vp, sl.RadiusOuter, false, out minS, out maxS );
 
-				if ( visibleAsFrustum && visibleAsSphere )
+				if ( visibleByContainment && visibleAsFrustum && visibleAsSphere )
 				{ //*/
 					min		=	Vector3.Max( minF, minS );
 					max		=	Vector3.Min( maxF, maxS );

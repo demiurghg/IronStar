@@ -32,10 +32,9 @@ namespace Fusion.Engine.Graphics
 		/// Gets color shadow map buffer.
 		/// Actually stores depth value.
 		/// </summary>
-		public RenderTarget2D ShadowTexture {
-			get {
-				return shadowMap;
-			}
+		public RenderTarget2D ShadowTexture 
+		{
+			get { return shadowMap; }
 		}
 
 
@@ -43,43 +42,42 @@ namespace Fusion.Engine.Graphics
 		/// Gets color shadow map buffer.
 		/// Actually stores depth value.
 		/// </summary>
-		public ShaderResource ShadowTextureLowRes {
-			get {
-				return ss.UseHighResFogShadows ? shadowMap : shadowMapLowRes;
-			}
+		public ShaderResource ShadowTextureLowRes 
+		{
+			get { return ss.UseHighResFogShadows ? shadowMap : shadowMapLowRes;	}
 		}
 
 		/// <summary>
 		/// Gets color shadow map buffer.
 		/// Actually stores depth value.
 		/// </summary>
-		public RenderTarget2D ParticleShadowTexture {
-			get {
-				return prtShadow;
-			}
+		public RenderTarget2D ParticleShadowTexture 
+		{
+			get { return prtShadow;	}
 		}
 
 		/// <summary>
 		/// Gets color shadow map buffer.
 		/// Actually stores depth value.
 		/// </summary>
-		public ShaderResource ParticleShadowTextureLowRes {
-			get {
-				return ss.UseHighResFogShadows ? prtShadow : prtShadowLowRes;
-			}
+		public ShaderResource ParticleShadowTextureLowRes 
+		{
+			get { return ss.UseHighResFogShadows ? prtShadow : prtShadowLowRes; }
 		}
 
 		/// <summary>
 		/// Gets color shadow map buffer.
 		/// </summary>
-		public DepthStencil2D DepthBuffer {
-			get {
-				return depthBuffer;
-			}
+		public DepthStencil2D DepthBuffer 
+		{
+			get { return depthBuffer; }
 		}
 
 
-		public Allocator2D<IShadowProvider> Allocator { get { return allocator2; } }
+		public Allocator2D<IShadowProvider> Allocator 
+		{ 
+			get { return allocator2; } 
+		}
 
 
 		readonly int	shadowMapSize;
@@ -97,11 +95,6 @@ namespace Fusion.Engine.Graphics
 
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="singleShadowMapSize"></param>
-		/// <param name="splitCount"></param>
 		public ShadowMap ( RenderSystem rs, QualityLevel shadowQuality )
 		{
 			this.ShadowQuality	=	shadowQuality;
@@ -133,10 +126,6 @@ namespace Fusion.Engine.Graphics
 
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="disposing"></param>
 		protected override void Dispose ( bool disposing )
 		{
 			if (disposing) 
@@ -151,6 +140,7 @@ namespace Fusion.Engine.Graphics
 		}
 
 
+
 		private void Clear ()
 		{
 			device.Clear( depthBuffer.Surface, 1, 0 );
@@ -158,10 +148,12 @@ namespace Fusion.Engine.Graphics
 		}
 
 
+
 		public Vector4 GetScaleOffset ( Rectangle rect )
 		{
 			return rect.GetMadOpScaleOffsetOffCenterProjectToNDC( shadowMapSize, shadowMapSize );
 		}
+
 
 
 		int SignedShift ( int value, int shift, int min, int max )
@@ -176,16 +168,19 @@ namespace Fusion.Engine.Graphics
 		}
 
 
+
 		public int GetShadowRegionSize( int detailLevel )
 		{
 			return SignedShift( maxRegionSize, detailLevel, minRegionSize, maxRegionSize );
 		}
 
 
+
 		Rectangle ScaleRectangle( Rectangle r, int s )
 		{
 			return new Rectangle( r.X / s, r.Y / s, r.Width / s, r.Height / s );
 		}
+
 
 
 		public void CopyShadowRegionToLowRes( IEnumerable<Rectangle> dirtyRegionList )
@@ -202,6 +197,7 @@ namespace Fusion.Engine.Graphics
 		}
 
 
+
 		bool NeedCascadeUpdate( ShadowCascade cascade )
 		{
 			switch (ss.CascadeUpdateMode)
@@ -215,6 +211,7 @@ namespace Fusion.Engine.Graphics
 		}
 
 
+
 		void ClearShadows()
 		{
 			dirtyRegionList.Clear();
@@ -226,6 +223,7 @@ namespace Fusion.Engine.Graphics
 				device.Clear( shadowMap.Surface, Color4.White );
 			}
 		}
+
 
 
 		public void ClearShadowRegions( IEnumerable<Rectangle> regions )

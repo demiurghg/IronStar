@@ -183,8 +183,8 @@ namespace Fusion.Engine.Graphics {
 				Position0LightRange	=	new Vector4( light.Position0, light.RadiusOuter );
 				Position1TubeRadius	=	new Vector4( light.Position1, light.RadiusInner );
 				IntensityFar		=	new Vector4( light.Intensity.Red, light.Intensity.Green, light.Intensity.Blue, light.ProjectionMatrix.GetFarPlaneDistance() );
-				ViewProjection		=	light.ViewMatrix * light.ProjectionMatrix;
-				ShadowScaleOffset	=	light.RegionScaleOffset;
+				ViewProjection		=	light.ShadowViewProjection;
+				ShadowScaleOffset	=	light.RegionScaleTranslate;
 				#endregion
 			}
 		}

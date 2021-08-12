@@ -19,6 +19,9 @@ namespace Fusion.Engine.Graphics
 		public int	SpotLightCount;
 		public int	DecalCount;
 
+		public int CascadeCount;
+		public int ShadowMapCount;
+
 		public int	DeadParticles;
 
 		public void Reset()
@@ -27,6 +30,9 @@ namespace Fusion.Engine.Graphics
 			OmniLightCount	=	0;
 			SpotLightCount	=	0;
 			DecalCount		=	0;
+
+			CascadeCount	=	0;
+			ShadowMapCount	=	0;
 
 			DeadParticles	=	-1;
 		}

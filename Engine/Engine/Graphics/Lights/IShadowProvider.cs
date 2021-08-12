@@ -16,64 +16,58 @@ namespace Fusion.Engine.Graphics.Lights
 		bool IsVisible { get; }
 
 		/// <summary>
-		/// Gets and sets shadow LOD 
+		/// Gets shadow LOD 
 		/// </summary>
 		int ShadowLod { get; }
 
 		/// <summary>
-		/// Shadow view matrix
+		/// Desired shadow view matrix
 		/// </summary>
 		Matrix ViewMatrix { get; }
 
 		/// <summary>
-		/// Shadow projection matrix
+		/// Desired shadow projection matrix
 		/// </summary>
 		Matrix ProjectionMatrix { get; }
 
 		/// <summary>
-		/// Gets and sets region
+		/// Actual view projection matrix used for shadow map rendering
 		/// </summary>
-		Rectangle ShadowRegion { get; }
-
-		/// <summary>
-		/// Indicates that shadow image is bad or 
-		/// outdated and need to be rendered again
-		/// </summary>
-		bool IsShadowDirty { get; set; }
-
-		/// <summary>
-		/// Indicates that region must be re-allocated
-		/// </summary>
-		bool IsRegionDirty { get; }
-
-		/// <summary>
-		/// Shadowmap normalized scale offset
-		/// </summary>
-		Vector4 RegionScaleOffset { get; }
-
-		/// <summary>
-		/// Sets shadow map region.
-		/// </summary>
-		/// <param name="region"></param>
-		/// <param name="shadowMapSize"></param>
-		void SetShadowRegion( Rectangle region, int shadowMapSize );
-
-		/// <summary>
-		/// Make all attributes dirty.
-		/// </summary>
-		void ResetShadow();
-
-		/// <summary>
-		/// Gets list of visible shadow casters
-		/// </summary>
-		RenderList ShadowCasters { get; }
-
+		Matrix ShadowViewProjection { get; set; }
 
 		/// <summary>
 		/// Gets shadow mask name.
 		/// If light do not use mask, return null.
 		/// </summary>
 		string ShadowMaskName { get; }
-	}
 
+		/// <summary>
+		/// Gets and sets shadow dirty flag.
+		/// Indicates, that list of shadow casters, 
+		/// projection or view settings were changed.
+		/// </summary>
+		bool IsShadowDirty { get; set; }
+
+		/// <summary>
+		/// Gets render list of shadow casters.
+		/// </summary>
+		RenderList ShadowCasters { get; }
+
+		/// <summary>
+		/// Gets shadow region
+		/// </summary>
+		Rectangle ShadowRegion { get; } 
+
+		/// <summary>
+		/// Gets shadow region scale translate vector
+		/// </summary>
+		Vector4 RegionScaleTranslate { get; }
+
+		/// <summary>
+		/// Sets shadow region
+		/// </summary>
+		/// <param name="region"></param>
+		/// <param name="shadowMapSize"></param>
+		void SetShadowRegion( Rectangle region, int shadowMapSize );
+	}
 }

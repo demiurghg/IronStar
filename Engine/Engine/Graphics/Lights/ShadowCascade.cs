@@ -21,6 +21,10 @@ namespace Fusion.Engine.Graphics
 		public readonly Color Color;
 		readonly int lod;
 
+		Rectangle shadowRegion = new Rectangle(0,0,0,0);
+		Vector4 regionScaleTranslate;
+
+
 		public ShadowCascade ( int index, int sizeInTexels, int lod, Color color )
 		{
 			this.Index			=	index;
@@ -36,44 +40,19 @@ namespace Fusion.Engine.Graphics
 
 		public bool IsShadowDirty { get { return true; } set {} }
 		
-		public bool IsRegionDirty { get { return regionDirty; } }
-
-		public Rectangle ShadowRegion { get { return shadowRegion; } }
-
-		public Vector4 RegionScaleOffset { get { return regionScaleOffset; } }
+		public int SkipCounter { get; set; } = 0;
 
 		public RenderList ShadowCasters { get { return shadowCasters; } }
 
 		public string ShadowMaskName { get { return null; } }
 
 		readonly RenderList shadowCasters = new RenderList();
-		bool regionDirty = true;
-		Rectangle shadowRegion;
-		Vector4 regionScaleOffset;
-
-		public void SetShadowRegion( Rectangle region, int shadowMapSize )
-		{
-			regionDirty		=	false;
-
-			if (shadowRegion!=region)
-			{
-				shadowRegion		=	region;
-			}
-
-			regionScaleOffset	=	region.GetMadOpScaleOffsetOffCenterProjectToNDC( shadowMapSize, shadowMapSize );
-		}
-
 
 		public Matrix ViewMatrix { get; set; }
 
 		public Matrix ProjectionMatrix { get; set; }
 
-
-		public Matrix ViewProjectionMatrix 
-		{
-			get { return ViewMatrix * ProjectionMatrix; }
-		}
-
+		public Matrix ShadowViewProjection { get; set; }
 
 		public Matrix ComputeGradientMatrix () 
 		{
@@ -88,9 +67,21 @@ namespace Fusion.Engine.Graphics
 			return matrix;
 		}
 
-		public void ResetShadow()
+
+		public Rectangle ShadowRegion 
+		{ 
+			get { return shadowRegion; }
+		}
+
+		public Vector4 RegionScaleTranslate
 		{
-			regionDirty	=	true;
+			get { return regionScaleTranslate; }
+		}
+
+		public void SetShadowRegion( Rectangle region, int shadowMapSize )
+		{
+			shadowRegion			=	region;
+			regionScaleTranslate	=	shadowRegion.GetMadOpScaleOffsetOffCenterProjectToNDC( shadowMapSize, shadowMapSize );
 		}
 	}
 }

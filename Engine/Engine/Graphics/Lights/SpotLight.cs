@@ -16,12 +16,11 @@ namespace Fusion.Engine.Graphics
 		internal uint Timer = 0;
 
 		bool isShadowDirty = true;
-		bool regionDirty = true;
-		Rectangle region = new Rectangle(0,0,0,0);
+		Rectangle shadowRegion = new Rectangle(0,0,0,0);
+		Vector4 regionScaleTranslate;
 
 		Matrix	spotView;
 		Matrix	spotProjection;
-		int		lodBias;
 		int		lod;
 
 		/// <summary>
@@ -56,6 +55,8 @@ namespace Fusion.Engine.Graphics
 			}
 		}
 
+		public Matrix ShadowViewProjection { get; set; }
+
 		/// <summary>
 		/// Omni-light position
 		/// </summary>
@@ -72,11 +73,6 @@ namespace Fusion.Engine.Graphics
 		public Color4 Intensity;
 
 		/// <summary>
-		/// Spot-light intensity.
-		/// </summary>
-		public Color4 Intensity2 { get { return Intensity * LightStyleController.RunLightStyle((int)Timer, LightStyle); } }
-
-		/// <summary>
 		/// 
 		/// </summary>
 		public string ShadowMaskName { get; set; }
@@ -84,19 +80,7 @@ namespace Fusion.Engine.Graphics
 		/// <summary>
 		/// Decrease size of the shadow map region
 		/// </summary>
-		public int LodBias
-		{
-			get { return lodBias; }
-			set 
-			{
-				if (lodBias!=value)
-				{
-					lodBias			=	value;
-					isShadowDirty	=	true;
-					regionDirty		=	true;
-				}
-			}
-		}
+		public int LodBias { get; set; }
 
 		/// <summary>
 		/// Spot-light inner radius.
@@ -120,57 +104,12 @@ namespace Fusion.Engine.Graphics
 
 		public Vector3 CenterPosition { get { return 0.5f * Position0 + 0.5f * Position1; } }
 
-
 		public bool		IsVisible { get; set; }
-		public Vector4	RegionScaleOffset { get; private set; }
-		internal Int3		MinExtent;
-		internal Int3		MaxExtent;
+		internal Int3	MinExtent;
+		internal Int3	MaxExtent;
 
 		readonly RenderList shadowCasters = new RenderList();
 		public RenderList ShadowCasters { get { return shadowCasters; } }
-
-		/// <summary>
-		/// Gets and sets shadow region
-		/// </summary>
-		public Rectangle ShadowRegion
-		{
-			get { return region; }
-			set
-			{
-				regionDirty		=	false;
-
-				if (region!=value)
-				{
-					region			=	value;
-					isShadowDirty	=	true;
-				}
-			}
-		}
-
-
-		public void SetShadowRegion( Rectangle region, int shadowMapSize )
-		{
-			regionDirty		=	false;
-
-			if (this.region!=region)
-			{
-				this.region			=	region;
-				isShadowDirty		=	true;
-				RegionScaleOffset	=	region.GetMadOpScaleOffsetOffCenterProjectToNDC( shadowMapSize, shadowMapSize );
-			}
-		}
-
-		public void ResetShadow()
-		{
-			regionDirty		=	true;
-			IsShadowDirty	=	true;
-		}
-
-
-		/// <summary>
-		/// Indicates that shadow region need to be updated
-		/// </summary>
-		public bool IsRegionDirty {	get { return regionDirty; }	}
 
 		
 		/// <summary>
@@ -181,7 +120,6 @@ namespace Fusion.Engine.Graphics
 			get { return isShadowDirty; } 
 			set { isShadowDirty = value; } 
 		}
-
 		
 		/// <summary>
 		/// Actual level of detail, 
@@ -196,9 +134,24 @@ namespace Fusion.Engine.Graphics
 				{
 					lod				=	value;
 					isShadowDirty	=	true;
-					regionDirty		=	true;
 				}
 			}
+		}
+
+		public Rectangle ShadowRegion 
+		{ 
+			get { return shadowRegion; }
+		}
+
+		public Vector4 RegionScaleTranslate
+		{
+			get { return regionScaleTranslate; }
+		}
+
+		public void SetShadowRegion( Rectangle region, int shadowMapSize )
+		{
+			shadowRegion			=	region;
+			regionScaleTranslate	=	shadowRegion.GetMadOpScaleOffsetOffCenterProjectToNDC( shadowMapSize, shadowMapSize );
 		}
 	}
 }

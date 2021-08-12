@@ -173,13 +173,14 @@ namespace IronStar.Editor
 				var omniCount  = rs.Stats.OmniLightCount;
 				var spotCount  = rs.Stats.SpotLightCount;
 				var decalCount = rs.Stats.DecalCount;
+				var shadowCount= rs.Stats.ShadowMapCount;
 				renderStatsLabel.Text	=	
 					string.Format(
  						"Instances   : {0}\r\n" + 
  						"Omni Lights : {1}\r\n" + 
  						"Spot Lights : {2}\r\n" +
- 						"Decals      : {3}"		,
-						instances, omniCount, spotCount, decalCount
+ 						"Shadows     : {3}"		,
+						instances, omniCount, spotCount, shadowCount
 					);
 			};
 

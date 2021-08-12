@@ -15,14 +15,16 @@ namespace Fusion.Build.Mapping
 	/// <typeparam name="Value"></typeparam>
 	public class LRUImageCache<TTag> : IImageCache<TTag>
 	{
-		private Allocator2D<LinkedListNode<KeyValuePair<Rectangle,TTag>>> allocator;
-		private LinkedList<KeyValuePair<Rectangle,TTag>> lruList;
+		private Allocator2D<TTag> allocator;
+		private LinkedList<Rectangle> lruList;
 
+		Action<Rectangle,TTag> discard;
 		
-		public LRUImageCache( int size )
+		public LRUImageCache( int size, Action<Rectangle,TTag> discard )
 		{
-			allocator	=	new Allocator2D<LinkedListNode<KeyValuePair<Rectangle,TTag>>>(size);
-			lruList		=	new LinkedList<KeyValuePair<Rectangle, TTag>>();
+			allocator		=	new Allocator2D<TTag>(size);
+			lruList			=	new LinkedList<Rectangle>();
+			this.discard	=	discard;
 		}
 
 
@@ -48,25 +50,22 @@ namespace Fusion.Build.Mapping
 				return false;
 			}
 
-
 			while (true)
 			{
-				var pair = new KeyValuePair<Rectangle,TTag>( region, tag );
-				var node = new LinkedListNode<KeyValuePair<Rectangle,TTag>>( pair ); 
-
-				if (allocator.TryAlloc(size, node, out region))
+				if (allocator.TryAlloc(size, tag, out region))
 				{
-					lruList.AddLast( node );
+					lruList.AddLast( region );
 					return true;
 				}
 				else
 				{
-					node = lruList.First;
+					var removedRegion = lruList.First.Value;
+					TTag removedTag;
 					
 					lruList.RemoveFirst();
-					allocator.Free( node.Value.Key );
+					allocator.Free( removedRegion, out removedTag );
 
-					OnDiscard( node.Value.Key, node.Value.Value );
+					OnDiscard( removedRegion, removedTag );
 				}
 			}
 		}
@@ -74,18 +73,16 @@ namespace Fusion.Build.Mapping
 
 		void OnDiscard( Rectangle region, TTag tag )
 		{
+			discard?.Invoke( region, tag );
 		}
 
 		
 		public bool TryGet( Rectangle region, out TTag tag )
 		{
-			LinkedListNode<KeyValuePair<Rectangle,TTag>> node;
-			
-			if (allocator.TryGet( region, out node ))
+			if (allocator.TryGet( region, out tag ))
 			{
-				lruList.Remove(node);
-				lruList.AddLast(node);
-				tag = node.Value.Value;
+				lruList.Remove(region);
+				lruList.AddLast(region);
 				return true;
 			}
 			else
@@ -95,40 +92,39 @@ namespace Fusion.Build.Mapping
 			}
 		}
 
-		
-		public bool TryGet( TTag tag, out Rectangle region )
+
+		public bool Remove( Rectangle region, out TTag tag )
 		{
-			region = default(Rectangle);
-
-			for ( var node = lruList.First; node != null; node = node.Next )
+			if (allocator.Free( region, out tag ))
 			{
-				if (node.Value.Value.Equals(tag))
-				{
-					lruList.Remove(node);
-					lruList.AddLast(node);
-					region = node.Value.Key;
-					return true;
-				}
+				lruList.Remove(region);
+				return true;
 			}
-
 			return false;
 		}
 
-		
+
 		public bool Remove( Rectangle region )
 		{
-			LinkedListNode<KeyValuePair<Rectangle,TTag>> node;
-			
-			if (allocator.Free( region, out node ))
+			TTag dummy;
+			return Remove(region, out dummy);
+		}
+		/*public bool TryGet(   out Rectangle region )
+		{
+			region = default(Rectangle);
+
+			var node = FindNodeByTag( tag );
+
+			if (node!=null)
 			{
 				lruList.Remove(node);
+				lruList.AddLast(node);
+				region = node.Value.Key;
 				return true;
 			}
-			else
-			{
-				return false;
-			}
-		}
+
+			return false;
+		}  */
 
 
 		public void Clear()
@@ -140,7 +136,7 @@ namespace Fusion.Build.Mapping
 
 		public IEnumerable<TTag> GetContent()
 		{
-			return allocator.GetAllocatedBlockInfo().Select( block => block.Tag.Value.Value );
+			return allocator.GetAllocatedBlockInfo().Select( block => block.Tag );
 		}
 	}
 }

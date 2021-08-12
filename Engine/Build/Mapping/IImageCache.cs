@@ -29,11 +29,6 @@ namespace Fusion.Build.Mapping
 		/// <summary>
 		///	Removes all entires
 		/// </summary>
-		bool Remove( Rectangle region );
-
-		/// <summary>
-		///	Removes all entires
-		/// </summary>
 		void Clear();
 	}
 }

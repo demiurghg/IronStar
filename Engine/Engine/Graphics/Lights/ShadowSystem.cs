@@ -13,6 +13,8 @@ using Fusion.Widgets.Advanced;
 using System.Runtime.CompilerServices;
 using Fusion.Engine.Graphics.Lights;
 using Fusion.Engine.Graphics.Ubershaders;
+using Wintellect.PowerCollections;
+using Fusion.Core.Collection;
 
 namespace Fusion.Engine.Graphics 
 {
@@ -23,11 +25,22 @@ namespace Fusion.Engine.Graphics
 		Interleave1244,
 	}
 
+
+	enum ShadowPriority
+	{
+		Urgent,
+		High,
+		Medium,
+		Low,
+	}
 	
 	
 	internal class ShadowSystem : RenderComponent
 	{
-		public const int MaxCascades		= 4;
+		public const int MaxCascades		=	4;
+		public const int MaxSPF				=	32;
+
+		int frameCounter = 0;
 		
 		[AECategory("General")]  [Config]	public QualityLevel ShadowQuality 
 		{ 
@@ -66,6 +79,10 @@ namespace Fusion.Engine.Graphics
 		[AECategory("Performance")]		[Config]	public bool UsePointShadowSampling { get; set; } = false;
 		[AECategory("Performance")]		[Config]	public bool SkipShadowMasks { get; set; } = false;
 		[AECategory("Performance")]		[Config]	public bool SkipParticleShadows { get; set; } = false;
+		
+		[AESlider(0,MaxSPF,1,1)]
+		[AECategory("Performance")]		[Config]	public int  ShadowsPerFrame { get; set; } = 8;
+		
 		[AESlider(0,8,1,1)]
 		[AECategory("Performance")]		[Config]	public int  MaxParticleShadowsLod { get; set; } = 2;
 		[AECategory("Performance")]		[Config]	public CascadeUpdateMode CascadeUpdateMode { get; set; } = CascadeUpdateMode.Interleave1122;
@@ -105,12 +122,15 @@ namespace Fusion.Engine.Graphics
 		ConstantBuffer	constCascadeShadow;
 
 		readonly ShadowCascade[] cascades = new ShadowCascade[MaxCascades];
-		List<IShadowProvider> lightListToRender;
+		readonly List<IShadowProvider> renderList;
+		readonly ConcurrentPriorityQueue<int,IShadowProvider> renderQueue;
 
 
 
 		public ShadowSystem( RenderSystem rs ) : base( rs )
 		{
+			renderQueue	=	new ConcurrentPriorityQueue<int,IShadowProvider>();
+			renderList	=	new List<IShadowProvider>(MaxSPF);
 		}
 
 
@@ -140,59 +160,99 @@ namespace Fusion.Engine.Graphics
 		 *	Private stuff :
 		-----------------------------------------------------------------------------------------------*/
 
+		[MethodImpl(MethodImplOptions.NoOptimization|MethodImplOptions.NoInlining)]
 		public void RenderShadows ( GameTime gameTime, Camera camera, RenderWorld rw )
 		{
-			var settingsChanged = CreateResourcesIfNecessary();
+			frameCounter++;
 
+			var settingsChanged		=	CreateResourcesIfNecessary();
+
+			rs.Stats.CascadeCount	=	cascades.Length;
+
+			//	get list of visible lights :
 			var lightList = new List<IShadowProvider>();
 			lightList.AddRange( cascades );
 			lightList.AddRange( rw.LightSet.SpotLights.Where( spot => spot.IsVisible ) );
 
-			//	reset shadows to prevent flicker
-			if (settingsChanged) lightList.ForEach( light => light.ResetShadow() );
-			
 			ComputeCascadeMatricies( cascades[0], camera, rw.LightSet );
 			ComputeCascadeMatricies( cascades[1], camera, rw.LightSet );
 			ComputeCascadeMatricies( cascades[2], camera, rw.LightSet );
 			ComputeCascadeMatricies( cascades[3], camera, rw.LightSet );
 
-			//	remove invisible lights from shadowmap :
-			RemoveSpotLights( lightList );
-
-			//	reallocate shadow regions
-			RaAllocateShadowRegions( lightList );
-
 			//	update visibility and track shadow caster changes :
 			TrackShadowCastersVisibility( rw, lightList );
 
-			//	make new list and render all visible spotlights with changes :
-			lightListToRender = lightList
-							.Where( s => s.IsShadowDirty )
-							.ToList();
+			//	enqueue light with priorities :
+			foreach ( var light in lightList )
+			{
+				bool isLodChanged;
 
-			RenderShadowsInternal( gameTime, rw, lightListToRender, InstanceGroup.NotWeapon );
+				if (shadowMap.IsShadowAllocated(light, out isLodChanged))
+				{
+					if (light.IsShadowDirty)
+					{
+						EnqueueShadow( light, ShadowPriority.High );
+					}
+					else if (isLodChanged)
+					{
+						EnqueueShadow( light, ShadowPriority.Medium );
+					}
+					else
+					{
+						EnqueueShadow( light, ShadowPriority.Low );
+					}
+				}
+				else
+				{
+					EnqueueShadow( light, ShadowPriority.Urgent );
+				}
+			}
+
+			//	create render list for first shadows :
+			renderList.Clear();
+
+			for (int i=0; i<ShadowsPerFrame; i++)
+			{
+				IShadowProvider light;
+				if (renderQueue.TryDequeue(out light))
+				{
+					renderList.Add( light );
+				}
+			}
+
+			AllocateShadows( renderList );
+
+			RenderShadowsInternal( gameTime, rw, renderList, InstanceGroup.NotWeapon );
 		}
 
 
 
 		public void RenderParticleShadows(GameTime gameTime, Camera camera, RenderWorld rw)
 		{
-			if (lightListToRender!=null)
+			if (renderList!=null)
 			{
-				RenderParticleShadowsInternal( gameTime, rw, lightListToRender ); 
+				//RenderParticleShadowsInternal( gameTime, rw, renderList ); 
 			}
 		}
 
 
 
-		public ShadowCascade GetCascade ( int index ) 
+		void EnqueueShadow( IShadowProvider shadow, ShadowPriority priority )
 		{
-			if (index<0 || index>=MaxCascades) 
+			if (!renderQueue.Any( kv => kv.Value==shadow ))
 			{
-				throw new ArgumentOutOfRangeException("index", "index must be within range 0.." + (MaxCascades-1).ToString() );
+				int addition = 0;
+
+				switch (priority)
+				{
+					case ShadowPriority.Urgent:	addition = frameCounter	- MaxSPF * 4;	break;
+					case ShadowPriority.High:  	addition = frameCounter - MaxSPF * 2;	break;
+					case ShadowPriority.Medium:	addition = frameCounter				;	break;
+					case ShadowPriority.Low:   	addition = frameCounter + MaxSPF * 2;	break;
+				}
+
+				renderQueue.Enqueue( shadow.ShadowLod + addition, shadow );
 			}
-			
-			return cascades[index];
 		}
 
 		/*-----------------------------------------------------------------------------------------------
@@ -211,8 +271,8 @@ namespace Fusion.Engine.Graphics
 
 				cascades[0]	=	new ShadowCascade(0, shadowMap.MaxRegionSize, 0, Color.White);
 				cascades[1]	=	new ShadowCascade(1, shadowMap.MaxRegionSize, 0, new Color(255,0,0) );
-				cascades[2]	=	new ShadowCascade(2, shadowMap.MaxRegionSize, 1, new Color(0,255,0) );
-				cascades[3]	=	new ShadowCascade(3, shadowMap.MaxRegionSize, 1, new Color(0,0,255) );
+				cascades[2]	=	new ShadowCascade(2, shadowMap.MaxRegionSize, 0, new Color(0,255,0) );
+				cascades[3]	=	new ShadowCascade(3, shadowMap.MaxRegionSize, 0, new Color(0,0,255) );
 
 				result = true;
 			}
@@ -242,55 +302,6 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-
-		void RemoveSpotLights( IEnumerable<IShadowProvider> spotLights )
-		{
-			var blocks = shadowMap.Allocator.GetAllocatedBlockInfo();
-
-			foreach ( var block in blocks )
-			{
-				if ( !spotLights.Contains( block.Tag ) )
-				{
-					shadowMap.Allocator.Free( block.Region );
-					block.Tag.ResetShadow();
-				}
-			}
-		}
-
-
-
-		void RaAllocateShadowRegions( IEnumerable<IShadowProvider> spotLights )
-		{
-			try 
-			{
-				foreach ( var spotLight in spotLights )
-				{
-					if (spotLight.IsRegionDirty)
-					{
-						shadowMap.Allocator.Free( spotLight );
-					}
-				}
-
-				bool refresh = shadowMap.Allocator.IsEmpty;
-
-				foreach ( var spotLight in spotLights )
-				{
-					if (spotLight.IsRegionDirty || refresh)
-					{
-						var shadowRegionSize		=	shadowMap.GetShadowRegionSize( spotLight.ShadowLod );
-						var shadowRegion			=	shadowMap.Allocator.Alloc( shadowRegionSize, spotLight );
-
-						spotLight.SetShadowRegion( shadowRegion, shadowMap.ShadowMapSize );
-					}
-				}
-			} 
-			catch ( Exception e )
-			{
-				Log.Warning(e.Message);
-			}
-		}
-
-
 		/// <summary>
 		/// Updates shadow caster visibility for each light
 		/// </summary>
@@ -311,7 +322,7 @@ namespace Fusion.Engine.Graphics
 				light.ShadowCasters.Clear();
 				light.ShadowCasters.AddRange( newList );
 
-				if (added || removed || moved )
+				if ( added || removed || moved )
 				{
 					light.IsShadowDirty = true;
 				}
@@ -330,6 +341,15 @@ namespace Fusion.Engine.Graphics
 
 
 
+		void AllocateShadows( IEnumerable<IShadowProvider> lights )
+		{
+			foreach ( var light in lights )
+			{
+				shadowMap.AllocShadow( light );
+			}
+		}
+
+
 		void RenderShadowsInternal(	GameTime gameTime, RenderWorld rw, IEnumerable<IShadowProvider> lights, InstanceGroup group )
 		{
 			var shadowCamera	=	rw.ShadowCamera;
@@ -338,7 +358,7 @@ namespace Fusion.Engine.Graphics
 			var maskTexture		=	shadowMap.ParticleShadowTexture;
 			var lightSet		=	rw.LightSet;
 
-			var regions		=	lights
+			var regions	=	lights
 							.Select( lt => lt.ShadowRegion )
 							.ToArray();
 
@@ -348,8 +368,12 @@ namespace Fusion.Engine.Graphics
 			//	render shadow map :
 			foreach ( var light in lights )
 			{
+				rs.Stats.ShadowMapCount++;
+
 				shadowCamera.ViewMatrix			=	light.ViewMatrix;
 				shadowCamera.ProjectionMatrix	=	light.ProjectionMatrix;
+
+				light.ShadowViewProjection		=	light.ViewMatrix * light.ProjectionMatrix;
 
 				var context	=	new ShadowContext( rs, shadowCamera, light, depthBuffer.Surface, shadowTexture.Surface );
 
@@ -368,7 +392,7 @@ namespace Fusion.Engine.Graphics
 				{
 					var dstRegion	=	light.ShadowRegion;
 					var	srcRegion	=	lightSet.SpotAtlas.AbsoluteRectangles[ clip.FirstIndex ];
-					rs.Filter2.CopyColor( maskTexture.Surface, lightSet.SpotAtlas.Texture.Srv, dstRegion, srcRegion, Color.White );
+					rs.Filter2.CopyColor( maskTexture.Surface, lightSet.SpotAtlas?.Texture?.Srv, dstRegion, srcRegion, Color.White );
 				} 
 				else 
 				{
@@ -465,20 +489,20 @@ namespace Fusion.Engine.Graphics
 		{
 			var data = new CASCADE_SHADOW();
 
-			data.CascadeViewProjection0		=	this.GetCascade( 0 ).ViewProjectionMatrix;
-			data.CascadeViewProjection1		=	this.GetCascade( 1 ).ViewProjectionMatrix;
-			data.CascadeViewProjection2		=	this.GetCascade( 2 ).ViewProjectionMatrix;
-			data.CascadeViewProjection3		=	this.GetCascade( 3 ).ViewProjectionMatrix;
+			data.CascadeViewProjection0		=	this.GetCascade( 0 ).ShadowViewProjection;
+			data.CascadeViewProjection1		=	this.GetCascade( 1 ).ShadowViewProjection;
+			data.CascadeViewProjection2		=	this.GetCascade( 2 ).ShadowViewProjection;
+			data.CascadeViewProjection3		=	this.GetCascade( 3 ).ShadowViewProjection;
 
 			data.CascadeGradientMatrix0		=	this.GetCascade( 0 ).ComputeGradientMatrix();
 			data.CascadeGradientMatrix1		=	this.GetCascade( 1 ).ComputeGradientMatrix();
 			data.CascadeGradientMatrix2		=	this.GetCascade( 2 ).ComputeGradientMatrix();
 			data.CascadeGradientMatrix3		=	this.GetCascade( 3 ).ComputeGradientMatrix();
 
-			data.CascadeScaleOffset0		=	this.GetCascade( 0 ).RegionScaleOffset;
-			data.CascadeScaleOffset1		=	this.GetCascade( 1 ).RegionScaleOffset;
-			data.CascadeScaleOffset2		=	this.GetCascade( 2 ).RegionScaleOffset;
-			data.CascadeScaleOffset3		=	this.GetCascade( 3 ).RegionScaleOffset;
+			data.CascadeScaleOffset0		=	this.GetCascade( 0 ).RegionScaleTranslate;
+			data.CascadeScaleOffset1		=	this.GetCascade( 1 ).RegionScaleTranslate;
+			data.CascadeScaleOffset2		=	this.GetCascade( 2 ).RegionScaleTranslate;
+			data.CascadeScaleOffset3		=	this.GetCascade( 3 ).RegionScaleTranslate;
 
 			if (float.IsNaN(data.CascadeViewProjection0.M11))
 			{
@@ -491,6 +515,16 @@ namespace Fusion.Engine.Graphics
 			return constCascadeShadow;
 		}
 
+
+		public ShadowCascade GetCascade ( int index ) 
+		{
+			if (index<0 || index>=MaxCascades) 
+			{
+				throw new ArgumentOutOfRangeException("index", "index must be within range 0.." + (MaxCascades-1).ToString() );
+			}
+			
+			return cascades[index];
+		}
 
 
 		public ConstantBuffer GetCascadeShadowConstantBuffer ()

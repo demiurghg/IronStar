@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using Fusion.Build.Mapping;
 using Fusion.Engine.Graphics.Ubershaders;
 using Fusion.Engine.Graphics.Lights;
+using System.Runtime.CompilerServices;
 
 namespace Fusion.Engine.Graphics 
 {
@@ -22,7 +23,7 @@ namespace Fusion.Engine.Graphics
 		public const int MaxShadowmapSize	= 8192;
 		public readonly QualityLevel ShadowQuality; 
 
-		Allocator2D<IShadowProvider> allocator2;
+		LRUImageCache<IShadowProvider> shadowCache;
 
 		public int ShadowMapSize { get { return shadowMapSize; } }
 		public int MaxRegionSize { get { return maxRegionSize; } }
@@ -74,12 +75,6 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		public Allocator2D<IShadowProvider> Allocator 
-		{ 
-			get { return allocator2; } 
-		}
-
-
 		readonly int	shadowMapSize;
 		readonly int	maxRegionSize;
 		readonly int	minRegionSize;
@@ -89,9 +84,6 @@ namespace Fusion.Engine.Graphics
 		RenderTarget2D	prtShadow;
 		RenderTarget2D	shadowMapLowRes;
 		RenderTarget2D	prtShadowLowRes;
-		int frameCounter = 0;
-
-		List<Rectangle> dirtyRegionList = new List<Rectangle>();
 
 
 
@@ -115,7 +107,7 @@ namespace Fusion.Engine.Graphics
 			maxRegionSize		=	shadowMapSize / 4;
 			minRegionSize		=	16;
 
-			allocator2			=	new Allocator2D<IShadowProvider>(shadowMapSize);
+			shadowCache			=	new LRUImageCache<IShadowProvider>(shadowMapSize, (r,t) => t.SetShadowRegion( Rectangle.Empty, 1 ) );
 			
 			depthBuffer			=	new DepthStencil2D( device, DepthFormat.D16,		shadowMapSize,   shadowMapSize   );
 			shadowMap			=	new RenderTarget2D( device, ColorFormat.R16_UNorm,	shadowMapSize,   shadowMapSize   );
@@ -139,7 +131,51 @@ namespace Fusion.Engine.Graphics
 			base.Dispose( disposing );
 		}
 
+		/*-----------------------------------------------------------------------------------------------
+		 *	Cache and allocator stuff :
+		-----------------------------------------------------------------------------------------------*/
 
+		[MethodImpl(MethodImplOptions.NoOptimization|MethodImplOptions.NoInlining)]
+		public void AllocShadow( IShadowProvider shadowProvider )
+		{
+			bool isLodChanged;
+			var size = GetShadowRegionSize( shadowProvider.ShadowLod );
+
+			if ( IsShadowAllocated(shadowProvider, out isLodChanged) )
+			{
+				if (isLodChanged)
+				{
+					shadowCache.Remove( shadowProvider.ShadowRegion );
+					var region = shadowCache.Add( size, shadowProvider );
+					shadowProvider.SetShadowRegion( region, ShadowMapSize );
+				}
+			}
+			else
+			{
+				var region = shadowCache.Add( size, shadowProvider );
+				shadowProvider.SetShadowRegion( region, ShadowMapSize );
+			}
+		}
+
+
+		[MethodImpl(MethodImplOptions.NoOptimization|MethodImplOptions.NoInlining)]
+		public bool IsShadowAllocated( IShadowProvider shadow, out bool isLodChanged )
+		{
+			bool isAllocated = !shadow.ShadowRegion.IsEmpty;
+			isLodChanged = false;
+
+			if (isAllocated)
+			{	
+				isLodChanged = GetShadowRegionSize(shadow.ShadowLod)!=shadow.ShadowRegion.Width;
+			}
+
+			return isAllocated;
+		}
+
+
+		/*-----------------------------------------------------------------------------------------------
+		 *	Copy and Clear stuff :
+		-----------------------------------------------------------------------------------------------*/
 
 		private void Clear ()
 		{
@@ -148,12 +184,10 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-
 		public Vector4 GetScaleOffset ( Rectangle rect )
 		{
 			return rect.GetMadOpScaleOffsetOffCenterProjectToNDC( shadowMapSize, shadowMapSize );
 		}
-
 
 
 		int SignedShift ( int value, int shift, int min, int max )
@@ -168,19 +202,16 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-
 		public int GetShadowRegionSize( int detailLevel )
 		{
 			return SignedShift( maxRegionSize, detailLevel, minRegionSize, maxRegionSize );
 		}
 
 
-
 		Rectangle ScaleRectangle( Rectangle r, int s )
 		{
 			return new Rectangle( r.X / s, r.Y / s, r.Width / s, r.Height / s );
 		}
-
 
 
 		public void CopyShadowRegionToLowRes( IEnumerable<Rectangle> dirtyRegionList )
@@ -195,35 +226,6 @@ namespace Fusion.Engine.Graphics
 				rs.Filter2.CopyColorBatched( shadowMapLowRes.Surface, shadowMap, loRes, hiRes, Color.White );
 			}
 		}
-
-
-
-		bool NeedCascadeUpdate( ShadowCascade cascade )
-		{
-			switch (ss.CascadeUpdateMode)
-			{
-				case CascadeUpdateMode.None: return ShadowInterleave.CascadeInterleaveNone( frameCounter, cascade.Index );
-				case CascadeUpdateMode.Interleave1122: return ShadowInterleave.CascadeInterleave1122( frameCounter, cascade.Index );
-				case CascadeUpdateMode.Interleave1244: return ShadowInterleave.CascadeInterleave1244( frameCounter, cascade.Index );
-			}
-			
-			return true;
-		}
-
-
-
-		void ClearShadows()
-		{
-			dirtyRegionList.Clear();
-
-			device.Clear( depthBuffer.Surface );
-
-			if (ss.ClearEntireShadow)
-			{
-				device.Clear( shadowMap.Surface, Color4.White );
-			}
-		}
-
 
 
 		public void ClearShadowRegions( IEnumerable<Rectangle> regions )

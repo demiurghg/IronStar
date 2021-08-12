@@ -32,8 +32,6 @@ namespace Fusion.Build.Mapping
 
 		protected Block RootBlock { get { return rootBlock; } }
 
-		protected readonly Dictionary<TTag,Block> tagBlockDict = new Dictionary<TTag, Block>();
-
 
 		/// <summary>
 		/// 
@@ -80,18 +78,11 @@ namespace Fusion.Build.Mapping
 			{
 				return false;
 			}
-
-			block.Tag	=	tag;
-			rectangle	=	new Rectangle( block.Address.X, block.Address.Y, size, size );
-
-			if (!tagBlockDict.ContainsKey( tag ))
-			{
-				tagBlockDict.Add( tag, block );
-				return true;
-			}
 			else
 			{
-				throw new ArgumentException("Tag already exist");
+				block.Tag	=	tag;
+				rectangle	=	new Rectangle( block.Address.X, block.Address.Y, size, size );
+				return true;
 			}
 		}
 
@@ -99,7 +90,6 @@ namespace Fusion.Build.Mapping
 		public void FreeAll ()
 		{
 			rootBlock	=	new Block( new Int2(0,0), Size, null, null );
-			tagBlockDict.Clear();
 		}
 
 
@@ -217,30 +207,12 @@ namespace Fusion.Build.Mapping
 			if (TryFindBlock( region, out node ))
 			{
 				tag = node.Tag;
-				tagBlockDict.Remove(tag);
 				node.FreeAndMerge();
 				return true;
 			}
 			else
 			{
 				tag = default(TTag);
-				return false;
-			}
-		}
-
-
-		public bool Free ( TTag tag )
-		{
-			Block node;
-
-			if (tagBlockDict.TryGetValue( tag, out node ))
-			{
-				tagBlockDict.Remove(tag);
-				node.FreeAndMerge();
-				return true;
-			}
-			else
-			{
 				return false;
 			}
 		}

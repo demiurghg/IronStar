@@ -106,6 +106,11 @@ namespace IronStar.AI
 
 		public void DrawNavMesh( GameState gs, NavigationMesh mesh, DebugRender dr )
 		{
+			if (gs.Game.RenderSystem.SkipDebugRendering) 
+			{
+				return;
+			}
+
 			if (mesh!=null && gs.Game.GetService<AICore>().ShowNavigationMesh) 
 			{
 				var polyInds = new int[6];

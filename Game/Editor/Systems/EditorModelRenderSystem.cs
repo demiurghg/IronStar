@@ -36,6 +36,11 @@ namespace IronStar.Editor.Systems
 		
 		public void Add( GameState gs, Entity e )
 		{
+			if (gs.Game.RenderSystem.SkipDebugRendering) 
+			{
+				return;
+			}
+
 			var transform	=	e.GetComponent<Transform>();
 			var model		=	e.GetComponent<SFX2.RenderModel>();
 

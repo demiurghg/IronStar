@@ -43,6 +43,11 @@ namespace IronStar.Editor.Systems
 		
 		public void Update( GameState gs, GameTime gameTime )
 		{
+			if (gs.Game.RenderSystem.SkipDebugRendering) 
+			{
+				return;
+			}
+
 			var color		=	Color.Black;
 			var selected	=	false;
 

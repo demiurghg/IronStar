@@ -20,11 +20,10 @@ using Fusion.Engine.Frames;
 
 namespace Fusion.Engine.Tools {
 	
-	public sealed partial class GameConsole : GameComponent, IKeyboardHook {
-
-
-
-		class Line {
+	public sealed partial class GameConsole : GameComponent, IKeyboardHook 
+	{
+		class Line 
+		{
 			public readonly TraceEventType EventType;
 			public readonly string Message;
 
@@ -42,6 +41,8 @@ namespace Fusion.Engine.Tools {
 		SpriteLayer consoleLayer;
 		SpriteLayer editLayer;
 		SpriteLayer	debugTextLayer;
+
+		readonly string releaseInfo;
 		
 
 		float showFactor = 0;
@@ -84,6 +85,8 @@ namespace Fusion.Engine.Tools {
 			this.font		=	FontName;
 
 			editBox		=	new EditBox(this);
+
+			releaseInfo	=	Game.GetReleaseInfo();
 		}
 
 
@@ -97,7 +100,7 @@ namespace Fusion.Engine.Tools {
 
 			var rs = Game.GetService<RenderSystem>();
 
-			consoleLayer	=	new SpriteLayer( Game.RenderSystem, 1024 );
+			consoleLayer	=	new SpriteLayer( Game.RenderSystem, 6 * 50 * 50 );
 			editLayer		=	new SpriteLayer( Game.RenderSystem, 1024 );
 			debugTextLayer	=	new SpriteLayer( Game.RenderSystem, 1024 );
 			consoleLayer.Order = LayerOrder;
@@ -253,7 +256,7 @@ namespace Fusion.Engine.Tools {
 			DrawString( editLayer, charWidth + charWidth/2 + charWidth * editBox.Cursor,	-charHeight/2,  "_", cursorColor );
 
 
-			var version = Game.GetReleaseInfo();
+			var version = releaseInfo;
 			DrawString( editLayer, vp.Width - charWidth/2 - charWidth * version.Length, -charHeight - charHeight/2, version, VersionColor);
 
 			var frameRate = string.Format("fps = {0,7:0.00}", gameTime.Fps);

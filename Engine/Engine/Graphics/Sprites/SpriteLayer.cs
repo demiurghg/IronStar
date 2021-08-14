@@ -9,9 +9,10 @@ using Fusion.Drivers.Graphics;
 using Fusion.Engine.Common;
 using System.IO;
 
-namespace Fusion.Engine.Graphics {
-	public class SpriteLayer : DisposableBase {
-
+namespace Fusion.Engine.Graphics 
+{
+	public class SpriteLayer : DisposableBase 
+	{
 		/// <summary>
 		/// The number of sprite frames, that clips sprites against rectangle area and colorize them.
 		/// </summary>

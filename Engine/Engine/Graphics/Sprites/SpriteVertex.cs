@@ -15,7 +15,8 @@ namespace Fusion.Engine.Graphics
 		[Vertex("COLOR")]		public Color	Color;
 		[Vertex("FRAME")]		public int		FrameIndex;
 
-		public SpriteVertex ( Vector3 p, Color c, Vector2 tc, int frameIndex = 0 ) {
+		public SpriteVertex ( Vector3 p, Color c, Vector2 tc, int frameIndex = 0 ) 
+		{
 			Position	=	p;
 			Color		=	c;
 			TexCoord	=	tc;

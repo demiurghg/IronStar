@@ -161,8 +161,21 @@ namespace Fusion.Engine.Graphics
 		[MethodImpl(MethodImplOptions.NoOptimization|MethodImplOptions.NoInlining)]
 		public bool IsShadowAllocated( IShadowProvider shadow, out bool isLodChanged )
 		{
-			bool isAllocated = !shadow.ShadowRegion.IsEmpty;
+			bool isAllocated = false;
 			isLodChanged = false;
+
+			if (!shadow.ShadowRegion.IsEmpty)
+			{
+				IShadowProvider inCacheShadow;
+
+				if (shadowCache.TryGet( shadow.ShadowRegion, out inCacheShadow ))
+				{
+					if (inCacheShadow==shadow)
+					{
+						isAllocated = true;
+					}
+				}
+			}
 
 			if (isAllocated)
 			{	

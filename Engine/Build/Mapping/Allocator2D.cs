@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using Fusion.Engine.Imaging;
 using Newtonsoft.Json;
+using System.Runtime.CompilerServices;
 
 namespace Fusion.Build.Mapping 
 {
@@ -149,6 +150,7 @@ namespace Fusion.Build.Mapping
 		}
 
 
+		[MethodImpl(MethodImplOptions.NoOptimization|MethodImplOptions.NoInlining)]
 		bool TryFindBlock( Rectangle region, out Block node )
 		{
 			node = rootBlock;
@@ -170,6 +172,10 @@ namespace Fusion.Build.Mapping
 
 				if (node.IsAddressInside(address)) 
 				{
+					if ( node.State!=BlockState.Split)
+					{
+						throw new ArgumentOutOfRangeException("Bad region to free");
+					}
 					if ( node.TopLeft.IsAddressInside(address) ) 
 					{
 						node = node.TopLeft;

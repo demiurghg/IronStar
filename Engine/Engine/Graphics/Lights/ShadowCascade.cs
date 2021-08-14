@@ -33,6 +33,10 @@ namespace Fusion.Engine.Graphics
 			this.lod			=	lod;
 		}
 
+		public override string ToString()
+		{
+			return string.Format("Cascade: Index:{0} LOD:{1}", Index, ShadowLod);
+		}
 
 		public bool IsVisible {	get { return true; } }
 

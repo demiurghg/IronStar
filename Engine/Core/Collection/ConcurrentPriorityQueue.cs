@@ -110,6 +110,45 @@ namespace Fusion.Core.Collection
 		}
 
 
+
+		public void EnqueueWithPriorityIncrease(TPriority priority, TValue element)
+		{
+			lock (lockObject)
+			{
+				int index = -1;
+				var found = false;
+
+				for (int i=0; i<items.Count; i++)
+				{
+					if (Equals(items[i].Value, element))
+					{
+						found = true;
+
+						if (comparer.Compare(priority, items[i].Key)<0)
+						{
+							index = i;
+							break;
+						}
+					}
+				}
+
+				if (found)
+				{
+					if (index>=0)
+					{
+						items.RemoveAt(index);
+						Enqueue(priority, element);
+					}
+				}
+				else
+				{
+					Enqueue(priority, element);
+				}
+			}
+		}
+
+
+
 		/// <summary>
 		/// Add element to collection.
 		/// </summary>

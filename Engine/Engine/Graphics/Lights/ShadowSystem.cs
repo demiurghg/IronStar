@@ -167,6 +167,11 @@ namespace Fusion.Engine.Graphics
 
 			var settingsChanged		=	CreateResourcesIfNecessary();
 
+			if (settingsChanged) 
+			{
+				ResetShadows( rw.LightSet );
+			}
+
 			rs.Stats.CascadeCount	=	cascades.Length;
 
 			//	get list of visible lights :
@@ -178,6 +183,7 @@ namespace Fusion.Engine.Graphics
 			ComputeCascadeMatricies( cascades[1], camera, rw.LightSet );
 			ComputeCascadeMatricies( cascades[2], camera, rw.LightSet );
 			ComputeCascadeMatricies( cascades[3], camera, rw.LightSet );
+
 
 			//	update visibility and track shadow caster changes :
 			TrackShadowCastersVisibility( rw, lightList );
@@ -209,6 +215,7 @@ namespace Fusion.Engine.Graphics
 			}
 
 			//	create render list for first shadows :
+			//renderQueue.DropTail(60*5);
 			renderList.Clear();
 
 			for (int i=0; i<ShadowsPerFrame; i++)
@@ -231,7 +238,25 @@ namespace Fusion.Engine.Graphics
 		{
 			if (renderList!=null)
 			{
-				//RenderParticleShadowsInternal( gameTime, rw, renderList ); 
+				RenderParticleShadowsInternal( gameTime, rw, renderList ); 
+			}
+		}
+
+
+
+		void ResetShadows( LightSet lightSet )
+		{
+			renderQueue.Clear();
+			renderList.Clear();
+
+			foreach ( var spotLight in lightSet.SpotLights )
+			{
+				spotLight.SetShadowRegion(Rectangle.Empty, 1);
+			}
+
+			foreach ( var cascade in cascades )
+			{
+				cascade.SetShadowRegion(Rectangle.Empty, 1);
 			}
 		}
 
@@ -239,20 +264,18 @@ namespace Fusion.Engine.Graphics
 
 		void EnqueueShadow( IShadowProvider shadow, ShadowPriority priority )
 		{
-			if (!renderQueue.Any( kv => kv.Value==shadow ))
+			int addition = 0;
+
+			switch (priority)
 			{
-				int addition = 0;
-
-				switch (priority)
-				{
-					case ShadowPriority.Urgent:	addition = frameCounter	- MaxSPF * 4;	break;
-					case ShadowPriority.High:  	addition = frameCounter - MaxSPF * 2;	break;
-					case ShadowPriority.Medium:	addition = frameCounter				;	break;
-					case ShadowPriority.Low:   	addition = frameCounter + MaxSPF * 2;	break;
-				}
-
-				renderQueue.Enqueue( shadow.ShadowLod + addition, shadow );
+				case ShadowPriority.Urgent:	addition = frameCounter	- MaxSPF * 4;	break;
+				case ShadowPriority.High:  	addition = frameCounter - MaxSPF * 2;	break;
+				case ShadowPriority.Medium:	addition = frameCounter				;	break;
+				case ShadowPriority.Low:   	addition = frameCounter + MaxSPF * 2;	break;
 			}
+
+			//renderQueue.Remove( shadow );
+			renderQueue.EnqueueWithPriorityIncrease( shadow.ShadowLod + addition, shadow );
 		}
 
 		/*-----------------------------------------------------------------------------------------------
@@ -271,8 +294,8 @@ namespace Fusion.Engine.Graphics
 
 				cascades[0]	=	new ShadowCascade(0, shadowMap.MaxRegionSize, 0, Color.White);
 				cascades[1]	=	new ShadowCascade(1, shadowMap.MaxRegionSize, 0, new Color(255,0,0) );
-				cascades[2]	=	new ShadowCascade(2, shadowMap.MaxRegionSize, 0, new Color(0,255,0) );
-				cascades[3]	=	new ShadowCascade(3, shadowMap.MaxRegionSize, 0, new Color(0,0,255) );
+				cascades[2]	=	new ShadowCascade(2, shadowMap.MaxRegionSize, 1, new Color(0,255,0) );
+				cascades[3]	=	new ShadowCascade(3, shadowMap.MaxRegionSize, 1, new Color(0,0,255) );
 
 				result = true;
 			}
@@ -364,6 +387,10 @@ namespace Fusion.Engine.Graphics
 
 			//	clear shadow maps :
 			shadowMap.ClearShadowRegions( regions );
+
+
+			/*var debugString = string.Join( ",  ", lights.Select( l => l.ToString() ) );
+			Log.Message(debugString);*/
 
 			//	render shadow map :
 			foreach ( var light in lights )

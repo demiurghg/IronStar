@@ -23,6 +23,11 @@ namespace Fusion.Engine.Graphics
 		Matrix	spotProjection;
 		int		lod;
 
+		public override string ToString()
+		{
+			return string.Format("Spot: Mask:{0}, LOD:{1}", ShadowMaskName, ShadowLod);
+		}
+
 		/// <summary>
 		/// Spot-light view matrix.
 		/// </summary>

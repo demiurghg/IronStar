@@ -150,7 +150,6 @@ namespace Fusion.Build.Mapping
 		}
 
 
-		[MethodImpl(MethodImplOptions.NoOptimization|MethodImplOptions.NoInlining)]
 		bool TryFindBlock( Rectangle region, out Block node )
 		{
 			node = rootBlock;

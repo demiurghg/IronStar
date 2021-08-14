@@ -31,7 +31,6 @@ namespace IronStar {
 		const string ConfigFile = "Config.ini";
 		readonly Builder builder;
 
-		[MethodImpl(MethodImplOptions.NoOptimization)]
 		public IronStar(Builder builder) : base("IronStar", "IronStar")
 		{
 			this.builder	=	builder;

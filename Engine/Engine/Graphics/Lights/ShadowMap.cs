@@ -135,7 +135,6 @@ namespace Fusion.Engine.Graphics
 		 *	Cache and allocator stuff :
 		-----------------------------------------------------------------------------------------------*/
 
-		[MethodImpl(MethodImplOptions.NoOptimization|MethodImplOptions.NoInlining)]
 		public void AllocShadow( IShadowProvider shadowProvider )
 		{
 			bool isLodChanged;
@@ -158,7 +157,6 @@ namespace Fusion.Engine.Graphics
 		}
 
 
-		[MethodImpl(MethodImplOptions.NoOptimization|MethodImplOptions.NoInlining)]
 		public bool IsShadowAllocated( IShadowProvider shadow, out bool isLodChanged )
 		{
 			bool isAllocated = false;

@@ -160,7 +160,6 @@ namespace Fusion.Engine.Graphics
 		 *	Private stuff :
 		-----------------------------------------------------------------------------------------------*/
 
-		[MethodImpl(MethodImplOptions.NoOptimization|MethodImplOptions.NoInlining)]
 		public void RenderShadows ( GameTime gameTime, Camera camera, RenderWorld rw )
 		{
 			frameCounter++;

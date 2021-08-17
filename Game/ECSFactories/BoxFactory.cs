@@ -41,8 +41,7 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new RenderModel( model, Matrix.Scaling( scale ), Color.White, 5, RMFlags.None ) );
 			e.AddComponent( new DynamicBox( width, height, depth, mass ) );
 
-			e.AddComponent( new Transform() );
-			e.AddComponent( new Velocity() );
+			e.AddComponent( new KinematicState() );
 
 			return e;
 		}

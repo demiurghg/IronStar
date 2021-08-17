@@ -25,11 +25,12 @@ using BEPUphysics.Entities.Prefabs;
 using BEPUphysics.PositionUpdating;
 using BEPUphysics.CollisionRuleManagement;
 using BEPUEntity = BEPUphysics.Entities.Entity;
+using RigidTransform = BEPUutilities.RigidTransform;
 using IronStar.ECS;
 
 namespace IronStar.ECSPhysics 
 {
-	public class DynamicCollisionSystem : ProcessingSystem<Box,DynamicBox,Transform,Velocity>
+	public class DynamicCollisionSystem : ProcessingSystem<Box,DynamicBox,KinematicState>
 	{
 		readonly PhysicsCore physics;
 
@@ -39,11 +40,11 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		protected override Box Create( Entity entity, DynamicBox box, Transform t, Velocity v )
+		protected override Box Create( Entity entity, DynamicBox box, KinematicState t )
 		{
 			var ms				=	new MotionState();
-			ms.LinearVelocity	=	MathConverter.Convert( v.Linear );
-			ms.AngularVelocity	=	MathConverter.Convert( v.Angular );
+			ms.LinearVelocity	=	MathConverter.Convert( t.LinearVelocity );
+			ms.AngularVelocity	=	MathConverter.Convert( t.AngularVelocity );
 			ms.Position			=	MathConverter.Convert( t.Position );
 			ms.Orientation		=	MathConverter.Convert( t.Rotation );
 
@@ -54,7 +55,7 @@ namespace IronStar.ECSPhysics
 			cbox.CollisionInformation.Events.InitialCollisionDetected +=Events_InitialCollisionDetected;
 			cbox.CollisionInformation.CollisionRules.Group = physics.GetCollisionGroup( box.Group );
 
-			physics.Space.Add( cbox );
+			physics.Add( cbox );
 
 			return cbox;
 		}
@@ -68,11 +69,11 @@ namespace IronStar.ECSPhysics
 		
 		protected override void Destroy( Entity entity, Box cbox )
 		{
-			physics.Space.Remove( cbox );
+			physics.Remove( cbox );
 		}
 
 		
-		protected override void Process( Entity entity, GameTime gameTime, Box cbox, DynamicBox box, Transform t, Velocity v )
+		protected override void Process( Entity entity, GameTime gameTime, Box cbox, DynamicBox box, KinematicState t )
 		{
 			var impulse	=	entity.GetComponent<ImpulseComponent>();
 
@@ -83,10 +84,10 @@ namespace IronStar.ECSPhysics
 				impulse.Impulse  = Vector3.Zero;
 			}
 
-			v.Linear	=	MathConverter.Convert( cbox.LinearVelocity	);
-			v.Angular	=	MathConverter.Convert( cbox.AngularVelocity	);
-			t.Position	=	MathConverter.Convert( cbox.Position		);
-			t.Rotation	=	MathConverter.Convert( cbox.Orientation		);
+			t.LinearVelocity	=	MathConverter.Convert( cbox.LinearVelocity	);
+			t.AngularVelocity	=	MathConverter.Convert( cbox.AngularVelocity	);
+			t.Position			=	MathConverter.Convert( cbox.BufferedStates.InterpolatedStates.Position );
+			t.Rotation			=	MathConverter.Convert( cbox.BufferedStates.InterpolatedStates.Orientation );
 		}
 	}
 }

@@ -59,8 +59,8 @@ namespace IronStar
 			Log.Warning("SpawnECS -- {0} -- (not implemented completely)", GetType().Name);
 			
 			var e = gs.Spawn();
-			e.AddComponent( new ECS.Velocity() );
-			e.AddComponent( new ECS.Transform() );
+
+			e.AddComponent( new ECS.KinematicState() );
 			e.AddComponent( new FXComponent(FX,true) );
 
 			return e;

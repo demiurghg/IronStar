@@ -24,7 +24,8 @@ using IronStar.UI.HUD;
 using IronStar.Monsters.Systems;
 using IronStar.ECSGraphics;
 
-namespace IronStar {
+namespace IronStar 
+{
 	partial class IronStar : Game
 	{
 		public static GameState CreateGameState( Game game, ContentManager content, string mapName, Mapping.Map mapContent = null )

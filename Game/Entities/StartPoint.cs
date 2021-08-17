@@ -31,7 +31,7 @@ namespace IronStar {
 		{
 			var e = gs.Spawn();
 			e.AddComponent( new Gameplay.PlayerStartComponent() );
-			e.AddComponent( new ECS.Transform() );
+			e.AddComponent( new ECS.KinematicState() );
 			return e;
 		}
 

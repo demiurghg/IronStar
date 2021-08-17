@@ -16,7 +16,7 @@ namespace IronStar.ECSFactories
 	[EntityFactory("PLAYER")]
 	public class PlayerFactory : EntityFactory
 	{
-		public static readonly Aspect PlayerAspect = new Aspect().Include<PlayerComponent,Transform>();
+		public static readonly Aspect PlayerAspect = new Aspect().Include<PlayerComponent,KinematicState>();
 
 		public override Entity Spawn( GameState gs )
 		{
@@ -33,8 +33,7 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new HealthComponent(100,0) );
 			e.AddComponent( new CharacterController(6,4,1.5f, 24,8, 20, 10, 2.2f) );
 			e.AddComponent( new UserCommandComponent() );
-			e.AddComponent( new Transform() );
-			e.AddComponent( new Velocity() );
+			e.AddComponent( new KinematicState() );
 			e.AddComponent( new StepComponent() );
 			e.AddComponent( new MaterialComponent(MaterialType.Flesh) );
 

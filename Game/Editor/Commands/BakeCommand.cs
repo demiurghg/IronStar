@@ -40,7 +40,7 @@ namespace IronStar.Editor.Commands
 			foreach ( var ri in rollbackInfo )
 			{
 				var node = ri.Node;
-				var transform = ( node as MapEntity)?.EcsEntity?.GetComponent<ECS.Transform>();
+				var transform = ( node as MapEntity)?.EcsEntity?.GetComponent<ECS.KinematicState>();
 
 				try 
 				{

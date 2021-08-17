@@ -41,8 +41,7 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new AmmoComponent(ammoCount, ammoCapacity) );
 			e.AddComponent( new NameComponent(ammoName) );
 
-			e.AddComponent( new Transform() );
-			e.AddComponent( new Velocity() );
+			e.AddComponent( new KinematicState() );
 
 			return e;
 		}

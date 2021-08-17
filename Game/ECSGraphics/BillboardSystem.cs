@@ -11,7 +11,7 @@ using Fusion.Core.Mathematics;
 
 namespace IronStar.ECSGraphics
 {
-	class BillboardSystem : StatelessSystem<Transform, BillboardComponent>
+	class BillboardSystem : StatelessSystem<KinematicState, BillboardComponent>
 	{
 		readonly FXPlayback fxPlayback;
 
@@ -22,14 +22,14 @@ namespace IronStar.ECSGraphics
 			this.fxPlayback	=	fxPlayback;
 		}
 
-		protected override void Process( Entity entity, GameTime gameTime, Transform transform, BillboardComponent billboard )
+		protected override void Process( Entity entity, GameTime gameTime, KinematicState transform, BillboardComponent billboard )
 		{
 			CreateParticle( ref particle, billboard, transform );
 			fxPlayback.rw.ParticleSystem.InjectParticle( particle );
 		}
 
 
-		void CreateParticle( ref Particle p, BillboardComponent b, Transform t )
+		void CreateParticle( ref Particle p, BillboardComponent b, KinematicState t )
 		{
 			p.Effects		=	b.Effect;
 

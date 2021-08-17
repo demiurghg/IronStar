@@ -15,7 +15,7 @@ using Fusion.Core.Content;
 
 namespace IronStar.ECSPhysics
 {
-	class StaticCollisionSystem	: ProcessingSystem<StaticCollisionSystem.CollisionModel,StaticCollisionComponent,RenderModel,Transform>
+	class StaticCollisionSystem	: ProcessingSystem<StaticCollisionSystem.CollisionModel,StaticCollisionComponent,RenderModel,KinematicState>
 	{
 		public class CollisionModel 
 		{
@@ -34,7 +34,7 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		protected override CollisionModel Create( Entity e, StaticCollisionComponent sc, RenderModel rm, Transform t )
+		protected override CollisionModel Create( Entity e, StaticCollisionComponent sc, RenderModel rm, KinematicState t )
 		{
 			if (!sc.Collidable)
 			{
@@ -62,7 +62,7 @@ namespace IronStar.ECSPhysics
 				{
 					cm.staticMeshes[i]		=	CreateStaticMesh( scene.Meshes[ meshIdx ], cm.transforms[i] * transform );
 					cm.staticMeshes[i].Tag	=	e;
-					physics.Space.Add( cm.staticMeshes[i] );
+					physics.Add( cm.staticMeshes[i] );
 				}
 				else
 				{
@@ -74,7 +74,7 @@ namespace IronStar.ECSPhysics
 		}
 
 		
-		protected override void Process( Entity e, GameTime gameTime, CollisionModel cm, StaticCollisionComponent sc, RenderModel rm, Transform t )
+		protected override void Process( Entity e, GameTime gameTime, CollisionModel cm, StaticCollisionComponent sc, RenderModel rm, KinematicState t )
 		{
 			/*var tm =  t.TransformMatrix;
 
@@ -97,7 +97,7 @@ namespace IronStar.ECSPhysics
 			{
 				if (m!=null) 
 				{
-					physics.Space.Remove( m );
+					physics.Remove( m );
 				}
 			}
 		}

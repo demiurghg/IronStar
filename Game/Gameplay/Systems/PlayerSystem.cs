@@ -43,7 +43,7 @@ namespace IronStar.Gameplay
 		}
 
 
-		Aspect startPointAspect = new Aspect().Include<PlayerStartComponent,Transform>();
+		Aspect startPointAspect = new Aspect().Include<PlayerStartComponent,KinematicState>();
 
 
 		void UpdatePlayerSpawn ( GameState gs )
@@ -60,7 +60,7 @@ namespace IronStar.Gameplay
 				return;
 			}
 
-			var t	=	e.GetComponent<Transform>();
+			var t	=	e.GetComponent<KinematicState>();
 			var ps	=	e.GetComponent<PlayerStartComponent>();
 
 			if (!ps.PlayerSpawned)

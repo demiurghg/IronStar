@@ -20,12 +20,13 @@ using Fusion.Core.IniParser.Model;
 using BEPUphysics.BroadPhaseEntries.MobileCollidables;
 using BEPUphysics.BroadPhaseEntries;
 using BEPUphysics.NarrowPhaseSystems.Pairs;
+using RigidTransform = BEPUutilities.RigidTransform;
 using IronStar.ECS;
 using IronStar.Gameplay;
 
 namespace IronStar.ECSPhysics 
 {
-	public class CharacterControllerSystem : ProcessingSystem<BEPUCharacterController,CharacterController,Transform,Velocity>, ITransformFeeder
+	public class CharacterControllerSystem : ProcessingSystem<BEPUCharacterController,CharacterController,KinematicState>, ITransformFeeder
 	{
 		readonly PhysicsCore physics;
 
@@ -35,7 +36,7 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		protected override BEPUCharacterController Create( Entity e, CharacterController cc, Transform t, Velocity v )
+		protected override BEPUCharacterController Create( Entity e, CharacterController cc, KinematicState t )
 		{
 			var p	=	t.Position;
 
@@ -66,7 +67,7 @@ namespace IronStar.ECSPhysics
 			ch.Tag			=	e;
 			ch.Body.Tag		=	e;
 
-			physics.Space.Add( ch );
+			physics.Add( ch );
 
 			ch.Body.CollisionInformation.Events.InitialCollisionDetected +=Events_InitialCollisionDetected;
 			ch.Body.CollisionInformation.CollisionRules.Group = physics.CharacterGroup;
@@ -83,17 +84,17 @@ namespace IronStar.ECSPhysics
 
 		protected override void Destroy( Entity e, BEPUCharacterController ch )
 		{
-			physics.Space.Remove(ch); 
+			physics.Remove(ch); 
 		}
 
 
-		public void FeedTransform( GameState gs )
+		public void FeedTransform( GameState gs, RigidTransform[] transforms )
 		{
 			ForEach( gs, GameTime.Zero, FeedControllerData );
 		}
 
 		
-		protected void FeedControllerData( Entity e, GameTime gameTime, BEPUCharacterController controller, CharacterController cc, Transform t, Velocity v )
+		protected void FeedControllerData( Entity e, GameTime gameTime, BEPUCharacterController controller, CharacterController cc, KinematicState t )
 		{
 			var crouching	=	controller.StanceManager.CurrentStance == Stance.Crouching;
 			var traction	=	controller.SupportFinder.HasTraction;
@@ -109,13 +110,13 @@ namespace IronStar.ECSPhysics
 				t.Rotation	=	Quaternion.RotationYawPitchRoll( uc.Yaw, 0, 0 );
 			} */
 			
-			t.Position	=	position;
-			v.Linear	=	MathConverter.Convert( controller.Body.LinearVelocity );
-			v.Angular	=	Vector3.Zero;
+			t.Position			=	position;
+			t.LinearVelocity	=	MathConverter.Convert( controller.Body.LinearVelocity );
+			t.AngularVelocity	=	Vector3.Zero;
 		}
 
 
-		protected override void Process( Entity e, GameTime gameTime, BEPUCharacterController controller, CharacterController cc, Transform t, Velocity v )
+		protected override void Process( Entity e, GameTime gameTime, BEPUCharacterController controller, CharacterController cc, KinematicState t )
 		{
 			var uc	=	e.GetComponent<UserCommandComponent>();
 

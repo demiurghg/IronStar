@@ -30,7 +30,7 @@ namespace IronStar.Gameplay.Systems
 
 		Aspect weaponAspect			=	new Aspect().Include<WeaponComponent>();
 		Aspect armedEntityAspect	=	new Aspect().Include<InventoryComponent,UserCommandComponent,CharacterController>()
-													.Include<Transform>();
+													.Include<KinematicState>();
 
 
 		public WeaponSystem( PhysicsCore physics )
@@ -55,7 +55,7 @@ namespace IronStar.Gameplay.Systems
 
 			foreach ( var entity in entities )
 			{
-				var transform	=	entity.GetComponent<Transform>();
+				var transform	=	entity.GetComponent<KinematicState>();
 				var inventory	=	entity.GetComponent<InventoryComponent>();
 				var userCmd		=	entity.GetComponent<UserCommandComponent>();
 				var chctrl		=	entity.GetComponent<CharacterController>();
@@ -404,15 +404,15 @@ namespace IronStar.Gameplay.Systems
 		/// <param name="origin"></param>
 		void FireProjectile ( GameState gs, GameTime gameTime, WeaponComponent weapon, Matrix povTransform, Entity attacker )
 		{
-			var v = attacker.GetComponent<Velocity>();
-			var p = povTransform.TranslationVector + v.Linear * gameTime.ElapsedSec;
+			var t = attacker.GetComponent<KinematicState>();
+			var p = povTransform.TranslationVector + t.LinearVelocity * gameTime.ElapsedSec;
 			var q = Quaternion.RotationMatrix( povTransform );
 			var d = -GetFireDirection( q, weapon.MaxSpread );
 
 			var e = gs.Spawn( weapon.ProjectileClass );
 
 			var projectile	=	e.GetComponent<ProjectileComponent>();
-			var transform	=	e.GetComponent<Transform>();
+			var transform	=	e.GetComponent<KinematicState>();
 
 			projectile.Damage		=	weapon.Damage;
 			projectile.Impulse		=	weapon.Impulse;

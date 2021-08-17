@@ -62,7 +62,7 @@ namespace IronStar.Mapping
 					{
 						node.SpawnNodeECS(gs);
 
-						var t = node.EcsEntity.GetComponent<Transform>();
+						var t = node.EcsEntity.GetComponent<KinematicState>();
 						t.TransformMatrix = t.TransformMatrix * this.Transform;
 					}
 				}

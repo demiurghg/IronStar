@@ -40,8 +40,7 @@ namespace IronStar.ECSFactories
 
 			e.AddComponent( new DynamicBox( 1.2f, 1.2f, 3.0f, 5.0f ) { Group = CollisionGroup.PickupGroup } );
 
-			e.AddComponent( new Transform() );
-			e.AddComponent( new Velocity() );
+			e.AddComponent( new KinematicState() );
 
 			return e;
 		}

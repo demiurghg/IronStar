@@ -23,8 +23,7 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new ProjectileComponent(500, 0, 10, "plasmaExplosion") );
 			e.AddComponent( new FXComponent("plasmaTrail", true) );
 
-			e.AddComponent( new Transform() );
-			e.AddComponent( new Velocity() );
+			e.AddComponent( new KinematicState() );
 
 			return e;
 		}
@@ -41,8 +40,7 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new ProjectileComponent(300, 12, 10, "rocketExplosion") );
 			e.AddComponent( new FXComponent("rocketTrail", true) );
 
-			e.AddComponent( new Transform() );
-			e.AddComponent( new Velocity() );
+			e.AddComponent( new KinematicState() );
 
 			return e;
 		}

@@ -18,7 +18,7 @@ using IronStar.ECS;
 using IronStar.Gameplay.Components;
 
 namespace IronStar.SFX {
-	public partial class FXPlayback : ProcessingSystem<FXInstance, FXComponent, Transform>
+	public partial class FXPlayback : ProcessingSystem<FXInstance, FXComponent, KinematicState>
 	{
 		TextureAtlas spriteSheet;
 
@@ -214,7 +214,7 @@ namespace IronStar.SFX {
 		 *	ECS stuff :
 		-----------------------------------------------------------------------------------------*/
 
-		protected override FXInstance Create( ECS.Entity entity, FXComponent fx, Transform t )
+		protected override FXInstance Create( ECS.Entity entity, FXComponent fx, KinematicState t )
 		{
 			var fxEvent			=	new FXEvent();
 			fxEvent.FXName		=	fx.FXName;
@@ -222,12 +222,7 @@ namespace IronStar.SFX {
 			fxEvent.Rotation	=	t.Rotation;
 			fxEvent.Scale		=	(t.Scaling.X + t.Scaling.Y + t.Scaling.Z) / 3.0f;
 
-			var velocity		=	entity.GetComponent<Velocity>();
-
-			if (velocity!=null)
-			{
-				fxEvent.Velocity = velocity.Linear;
-			}
+			fxEvent.Velocity = t.LinearVelocity;
 
 			var attached	=	entity.ContainsComponent<AttachmentComponent>();
 
@@ -246,15 +241,14 @@ namespace IronStar.SFX {
 			Update( gameTime );
 		}
 
-		protected override void Process( ECS.Entity entity, GameTime gameTime, FXInstance fxInstance, FXComponent fx, Transform t )
+		protected override void Process( ECS.Entity entity, GameTime gameTime, FXInstance fxInstance, FXComponent fx, KinematicState t )
 		{
 			if ( fxInstance!=null )
 			{
-				fxInstance.fxEvent.Origin   =   t.Position;
-				fxInstance.fxEvent.Rotation =   t.Rotation;
-				fxInstance.fxEvent.Scale    =   ( t.Scaling.X + t.Scaling.Y + t.Scaling.Z ) / 3.0f;
-				var velocityComponent       =   entity.GetComponent<Velocity>();
-				fxInstance.fxEvent.Velocity =   velocityComponent==null ? Vector3.Zero : velocityComponent.Linear;
+				fxInstance.fxEvent.Origin	=	t.Position;
+				fxInstance.fxEvent.Rotation	=	t.Rotation;
+				fxInstance.fxEvent.Scale	=	( t.Scaling.X + t.Scaling.Y + t.Scaling.Z ) / 3.0f;
+				fxInstance.fxEvent.Velocity	=	t.LinearVelocity;
 
 				if ( fxInstance.IsExhausted )
 				{

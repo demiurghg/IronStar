@@ -103,7 +103,7 @@ namespace IronStar.ECS
 			return entities;
 		}
 
-		public virtual void Update( GameState gs, GameTime gameTime )
+		protected void ForEach( GameState gs, GameTime gameTime, Action<Entity,GameTime,TResource,T1,T2> action )
 		{
 			var entities = OrderEntities( gs.QueryEntities(aspect) );
 
@@ -112,8 +112,13 @@ namespace IronStar.ECS
 				var c1	=	e.GetComponent<T1>();
 				var c2	=	e.GetComponent<T2>();
 				var rc	=	resources[ e.ID ];
-				Process( e, gameTime, rc, c1, c2 );
+				action( e, gameTime, rc, c1,c2 );
 			}
+		}
+
+		public virtual void Update( GameState gs, GameTime gameTime )
+		{
+			ForEach( gs, gameTime, Process );
 		}
 
 		protected abstract TResource Create ( Entity entity, T1 component1, T2 component2 );

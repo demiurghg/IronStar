@@ -23,15 +23,15 @@ using IronStar.Animation;
 
 namespace IronStar.SFX2 
 {
-	public class RenderModelSystem : ProcessingSystem<RenderModelInstance,Transform,RenderModel>
+	public class RenderModelSystem : ProcessingSystem<RenderModelInstance,KinematicState,RenderModel>
 	{
 		readonly Game	game;
 		public readonly RenderSystem rs;
 		public readonly RenderWorld	rw;
 		public readonly ContentManager content;
 
-		readonly Aspect skinnedAspect = new Aspect().Include<RenderModelInstance,Transform,RenderModel,BoneComponent>();
-		readonly Aspect rigidAspect   = new Aspect().Include<RenderModelInstance,Transform,RenderModel>()
+		readonly Aspect skinnedAspect = new Aspect().Include<RenderModelInstance,KinematicState,RenderModel,BoneComponent>();
+		readonly Aspect rigidAspect   = new Aspect().Include<RenderModelInstance,KinematicState,RenderModel>()
 													.Exclude<BoneComponent>();
 
 		
@@ -44,7 +44,7 @@ namespace IronStar.SFX2
 		}
 
 
-		protected override RenderModelInstance Create( Entity e, Transform t, RenderModel rm )
+		protected override RenderModelInstance Create( Entity e, KinematicState t, RenderModel rm )
 		{
 			return new RenderModelInstance( e.gs, rm, t.TransformMatrix );
 		}
@@ -56,7 +56,7 @@ namespace IronStar.SFX2
 		}
 
 		
-		protected override void Process( Entity e, GameTime gameTime, RenderModelInstance model, Transform t, RenderModel rm )
+		protected override void Process( Entity e, GameTime gameTime, RenderModelInstance model, KinematicState t, RenderModel rm )
 		{
 			model.SetTransform( t.TransformMatrix );
 

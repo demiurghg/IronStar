@@ -98,7 +98,7 @@ namespace IronStar.Monsters.Systems
 
 
 
-		public void UpdateLocomotionState( GameTime gameTime, Transform t, StepComponent step, UserCommandComponent uc, HealthComponent health )
+		public void UpdateLocomotionState( GameTime gameTime, KinematicState t, StepComponent step, UserCommandComponent uc, HealthComponent health )
 		{
 			var dead  = health==null ? false : health.Health<=0;
 			locomotionState	=	locomotionState.NextState( gameTime, t, uc, step, dead );
@@ -107,7 +107,7 @@ namespace IronStar.Monsters.Systems
 
 		Vector2 tiltFactor = Vector2.Zero;
 
-		public void Update ( GameTime gameTime, Transform transform, StepComponent step, UserCommandComponent uc, Matrix[] bones )
+		public void Update ( GameTime gameTime, KinematicState transform, StepComponent step, UserCommandComponent uc, Matrix[] bones )
 		{
 			var health		=	monsterEntity.GetComponent<HealthComponent>();
 

@@ -12,7 +12,7 @@ using Fusion.Core;
 
 namespace IronStar.SFX2
 {
-	public class SpotLightSystem : ProcessingSystem<RSSpotLight,SpotLight,Transform>
+	public class SpotLightSystem : ProcessingSystem<RSSpotLight,SpotLight,KinematicState>
 	{
 		Dictionary<uint,RSSpotLight> lights = new Dictionary<uint, RSSpotLight>();
 
@@ -25,7 +25,7 @@ namespace IronStar.SFX2
 		}
 
 		
-		protected override RSSpotLight Create( Entity e, SpotLight ol, Transform t )
+		protected override RSSpotLight Create( Entity e, SpotLight ol, KinematicState t )
 		{
 			var light = new RSSpotLight();
 
@@ -42,7 +42,7 @@ namespace IronStar.SFX2
 		}
 
 		
-		protected override void Process( Entity e, GameTime gameTime, RSSpotLight light, SpotLight spot, Transform t )
+		protected override void Process( Entity e, GameTime gameTime, RSSpotLight light, SpotLight spot, KinematicState t )
 		{
 			var transform			=	t.TransformMatrix;
 			light.Position0			=	transform.TranslationVector + transform.Right * spot.TubeLength * 0.5f;

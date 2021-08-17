@@ -34,7 +34,7 @@ namespace IronStar.Monsters.Systems
 
 		public override Aspect GetAspect()
 		{
-			return base.GetAspect().Include<BoneComponent,Transform>();
+			return base.GetAspect().Include<BoneComponent,KinematicState>();
 		}
 
 		protected override MonsterAnimator Create( Entity entity, CharacterController ch, RenderModel rm, StepComponent step, UserCommandComponent uc )
@@ -56,7 +56,7 @@ namespace IronStar.Monsters.Systems
 			if (true)
 			{
 				var bones		=	entity.GetComponent<BoneComponent>();
-				var transform	=	entity.GetComponent<Transform>();
+				var transform	=	entity.GetComponent<KinematicState>();
 				animator?.Update( gameTime, transform, step, uc, bones.Bones );
 			}
 		}

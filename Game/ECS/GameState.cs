@@ -341,7 +341,7 @@ namespace IronStar.ECS
 		{
 			// #TODO -- force refresh entity to destroy and create again
 
-			var transform = e.GetComponent<Transform>();
+			var transform = e.GetComponent<KinematicState>();
 
 			if (transform!=null)
 			{

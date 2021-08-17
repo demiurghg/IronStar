@@ -7,14 +7,14 @@ using Fusion.Core.Mathematics;
 
 namespace IronStar.ECS
 {
-	public class Transform : Component
+	public class KinematicState : Component
 	{
 		/// <summary>
 		/// Creates new transform
 		/// </summary>
 		/// <param name="p"></param>
 		/// <param name="r"></param>
-		public Transform ()
+		public KinematicState ()
 		{
 			Position	=	Vector3.Zero;
 			Rotation	=	Quaternion.Identity;
@@ -26,7 +26,7 @@ namespace IronStar.ECS
 		/// </summary>
 		/// <param name="p"></param>
 		/// <param name="r"></param>
-		public Transform ( Vector3 p, Quaternion r )
+		public KinematicState ( Vector3 p, Quaternion r )
 		{
 			Position	=	p;
 			Rotation	=	r;
@@ -38,7 +38,7 @@ namespace IronStar.ECS
 		/// </summary>
 		/// <param name="p"></param>
 		/// <param name="r"></param>
-		public Transform ( Matrix t )
+		public KinematicState ( Matrix t )
 		{
 			t.Decompose( out Scaling, out Rotation, out Position );
 		}
@@ -48,7 +48,7 @@ namespace IronStar.ECS
 		/// </summary>
 		/// <param name="p"></param>
 		/// <param name="r"></param>
-		public Transform ( Vector3 p, Quaternion r, Vector3 s )
+		public KinematicState ( Vector3 p, Quaternion r, Vector3 s )
 		{
 			Position	=	p;
 			Rotation	=	r;
@@ -60,7 +60,7 @@ namespace IronStar.ECS
 		/// </summary>
 		/// <param name="p"></param>
 		/// <param name="r"></param>
-		public Transform ( Vector3 p, Quaternion r, float s )
+		public KinematicState ( Vector3 p, Quaternion r, float s )
 		{
 			Position	=	p;
 			Rotation	=	r;
@@ -81,6 +81,16 @@ namespace IronStar.ECS
 		/// Entity rotation
 		/// </summary>
 		public Quaternion	Rotation;
+
+		/// <summary>
+		/// Entity linear velocity
+		/// </summary>
+		public Vector3 LinearVelocity	=	Vector3.Zero;
+
+		/// <summary>
+		/// Entity angular velocity
+		/// </summary>
+		public Vector3 AngularVelocity	=	Vector3.Zero;
 
 		/// <summary>
 		/// Gets entity transform matrix

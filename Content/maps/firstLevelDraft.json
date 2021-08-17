@@ -3023,12 +3023,12 @@
         "Name": "340b0659-7874-4b05-b77c-b87f51b2916f",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-114, 10, -128",
+        "Translation": "-187, 10, -213",
         "Scaling": "1, 1, 1",
         "Rotation": "0.5, 0, 0, 0.8660254",
-        "TranslateX": -114.0,
+        "TranslateX": -187.0,
         "TranslateY": 10.0,
-        "TranslateZ": -128.0
+        "TranslateZ": -213.0
       },
       {
         "$id": "213",
@@ -12077,10 +12077,10 @@
         "Name": "0db0dede-40a2-4d66-b2e6-8fa7ada65d86",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-190, 39, -220",
+        "Translation": "-189, 39, -220",
         "Scaling": "1, 1, 1",
         "Rotation": "0.01611641, 0.8658755, 0.499913335, -0.009304836",
-        "TranslateX": -190.0,
+        "TranslateX": -189.0,
         "TranslateY": 39.0,
         "TranslateZ": -220.0
       }

@@ -9,7 +9,6 @@ using Fusion.Core.Mathematics;
 using BEPUphysics.NarrowPhaseSystems.Pairs;
 using BEPUphysics.CollisionRuleManagement;
 using IronStar.ECS;
-using BEPUphysics;
 using BU = BEPUutilities;
 using BEPUphysics.BroadPhaseEntries;
 using BEPUphysics.BroadPhaseSystems;

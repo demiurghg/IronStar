@@ -353,12 +353,12 @@
         "Name": "MapEntity6",
         "Visible": true,
         "Frozen": false,
-        "Translation": "78, 12, -23",
+        "Translation": "76.9472, 9.999945, -23.0011845",
         "Scaling": "1, 1, 1",
-        "Rotation": "0, -0.1305262, 0, 0.9914449",
-        "TranslateX": 78.0,
-        "TranslateY": 12.0,
-        "TranslateZ": -23.0
+        "Rotation": "-6.84106E-08, -0.130477265, -1.09807004E-07, 0.991451263",
+        "TranslateX": 76.9472,
+        "TranslateY": 9.999945,
+        "TranslateZ": -23.0011845
       },
       {
         "$id": "29",
@@ -499,10 +499,10 @@
         "Name": "MapSpotLight1",
         "Visible": true,
         "Frozen": false,
-        "Translation": "78, 16, -3.651081",
+        "Translation": "79, 16, -3.651081",
         "Scaling": "0.9999998, 1, 0.9999998",
         "Rotation": "-0.707106769, 0, 0, 0.707106769",
-        "TranslateX": 78.0,
+        "TranslateX": 79.0,
         "TranslateY": 16.0,
         "TranslateZ": -3.651081
       },
@@ -521,14 +521,14 @@
         "LightStyle": "default",
         "EnableGI": true,
         "SpotMaskName": "color",
-        "LodBias": 0,
+        "LodBias": 8,
         "Name": "MapSpotLight2",
         "Visible": true,
         "Frozen": false,
-        "Translation": "78, 16, -24",
+        "Translation": "77, 16, -24",
         "Scaling": "0.9999998, 0.99999994, 0.999999762",
         "Rotation": "-0.7071067, 0, 0, 0.7071068",
-        "TranslateX": 78.0,
+        "TranslateX": 77.0,
         "TranslateY": 16.0,
         "TranslateZ": -24.0
       },
@@ -596,12 +596,12 @@
         "Name": "MapEntity7",
         "Visible": true,
         "Frozen": false,
-        "Translation": "78, 12, -4",
+        "Translation": "80, 10, -2.06005049",
         "Scaling": "1, 1, 1",
-        "Rotation": "0, -0.1305262, 0, 0.9914449",
-        "TranslateX": 78.0,
-        "TranslateY": 12.0,
-        "TranslateZ": -4.0
+        "Rotation": "-0.4622278, 0.3302915, -0.190694213, 0.8005551",
+        "TranslateX": 80.0,
+        "TranslateY": 10.0,
+        "TranslateZ": -2.06005049
       },
       {
         "$id": "41",
@@ -615,12 +615,12 @@
         "Name": "MapEntity8",
         "Visible": true,
         "Frozen": false,
-        "Translation": "60, 12, -4",
+        "Translation": "58.94856, 9.999946, -3.99881887",
         "Scaling": "1, 1, 1",
-        "Rotation": "0, -0.1305262, 0, 0.9914449",
-        "TranslateX": 60.0,
-        "TranslateY": 12.0,
-        "TranslateZ": -4.0
+        "Rotation": "6.25067344E-07, -0.1304783, 2.494977E-07, 0.991451144",
+        "TranslateX": 58.94856,
+        "TranslateY": 9.999946,
+        "TranslateZ": -3.99881887
       },
       {
         "$id": "43",
@@ -634,12 +634,12 @@
         "Name": "MapEntity9",
         "Visible": true,
         "Frozen": false,
-        "Translation": "60, 12, -24",
+        "Translation": "58.94854, 9.999946, -23.9988441",
         "Scaling": "1, 1, 1",
-        "Rotation": "0, -0.1305262, 0, 0.9914449",
-        "TranslateX": 60.0,
-        "TranslateY": 12.0,
-        "TranslateZ": -24.0
+        "Rotation": "1.796455E-07, -0.130476952, 1.45293541E-07, 0.9914513",
+        "TranslateX": 58.94854,
+        "TranslateY": 9.999946,
+        "TranslateZ": -23.9988441
       }
     ]
   },

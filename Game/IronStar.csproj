@@ -161,7 +161,7 @@
     <Compile Include="ECS\SystemWrapper.cs" />
     <Compile Include="ECS\SystemAttribute.cs" />
     <Compile Include="ECS\EntityFactory.cs" />
-    <Compile Include="ECS\Transform.cs" />
+    <Compile Include="ECS\KinematicState.cs" />
     <Compile Include="ECS\Utils\Bag.cs" />
     <Compile Include="ECS\Utils\BagEnumerator.cs" />
     <Compile Include="ECS\Utils\BitSet.cs" />
@@ -174,7 +174,6 @@
     <Compile Include="ECS\ISystem.cs" />
     <Compile Include="ECS\Collections\SystemCollection.cs" />
     <Compile Include="ECS\Static.cs" />
-    <Compile Include="ECS\Velocity.cs" />
     <Compile Include="Editor\Commands\EditorSaveAs.cs" />
     <Compile Include="Editor\Commands\EditorSave.cs" />
     <Compile Include="Editor\Commands\EditorPrefabCommand.cs" />

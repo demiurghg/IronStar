@@ -14,7 +14,7 @@ using IronStar.SFX;
 
 namespace IronStar.Gameplay.Systems
 {
-	class ProjectileSystem : StatelessSystem<Transform,Velocity,ProjectileComponent>
+	class ProjectileSystem : StatelessSystem<KinematicState,ProjectileComponent>
 	{
 		readonly PhysicsCore	physics;
 		readonly Random			rand;
@@ -27,14 +27,14 @@ namespace IronStar.Gameplay.Systems
 
 		public override void Add( GameState gs, Entity e ) {}
 
-		protected override void Process( Entity entity, GameTime gameTime, Transform transform, Velocity velocity, ProjectileComponent projectile )
+		protected override void Process( Entity entity, GameTime gameTime, KinematicState transform, ProjectileComponent projectile )
 		{
 			var gs = entity.gs;
-			UpdateProjectile( gs, entity, transform, velocity, projectile, gameTime.ElapsedSec );
+			UpdateProjectile( gs, entity, transform, projectile, gameTime.ElapsedSec );
 		}
 
 
-		public void UpdateProjectile ( GameState gs, Entity entity, Transform transform, Velocity velocity, ProjectileComponent projectile, float elapsedTime )
+		public void UpdateProjectile ( GameState gs, Entity entity, KinematicState transform, ProjectileComponent projectile, float elapsedTime )
 		{
 			var first	=	projectile.Steps == 0;
 
@@ -66,15 +66,15 @@ namespace IronStar.Gameplay.Systems
 				Explode( projectile.Sender, hitEntity, hitPoint, hitNormal, projectile );
 				FXPlayback.AttachFX( gs, hitEntity, projectile.ExplosionFX, 0, hitPoint, hitNormal );
 
-				transform.Position	=	hitPoint;
-				velocity.Linear		=	projectile.Velocity * dir;
+				transform.Position			=	hitPoint;
+				transform.LinearVelocity	=	projectile.Velocity * dir;
 
 				gs.Kill( entity );
 			} 
 			else 
 			{
-				transform.Position	=	target;
-				velocity.Linear		=	projectile.Velocity * dir;
+				transform.Position			=	target;
+				transform.LinearVelocity	=	projectile.Velocity * dir;
 			}
 		}
 
@@ -90,7 +90,7 @@ namespace IronStar.Gameplay.Systems
 
 				foreach ( var e in list ) 
 				{
-					var t		=	e.GetComponent<Transform>();
+					var t		=	e.GetComponent<KinematicState>();
 
 					if (t==null) Log.Warning("Explode -- overlap with non-transform entity");
 

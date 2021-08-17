@@ -12,7 +12,7 @@ using Fusion.Core;
 
 namespace IronStar.SFX2
 {
-	public class OmniLightSystem : ProcessingSystem<RSOmniLight,OmniLight,Transform>
+	public class OmniLightSystem : ProcessingSystem<RSOmniLight,OmniLight,KinematicState>
 	{
 		Dictionary<uint,RSOmniLight> lights = new Dictionary<uint, RSOmniLight>();
 
@@ -24,7 +24,7 @@ namespace IronStar.SFX2
 		}
 
 		
-		protected override RSOmniLight Create( Entity e, OmniLight ol, Transform t )
+		protected override RSOmniLight Create( Entity e, OmniLight ol, KinematicState t )
 		{
 			var light = new RSOmniLight();
 
@@ -41,7 +41,7 @@ namespace IronStar.SFX2
 		}
 
 		
-		protected override void Process( Entity e, GameTime gameTime, RSOmniLight light, OmniLight ol, Transform t )
+		protected override void Process( Entity e, GameTime gameTime, RSOmniLight light, OmniLight ol, KinematicState t )
 		{
 			var transform		=	t.TransformMatrix;
 			light.Position0		=	transform.TranslationVector + transform.Right * ol.TubeLength * 0.5f;

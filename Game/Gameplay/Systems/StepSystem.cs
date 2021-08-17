@@ -29,7 +29,7 @@ namespace IronStar.Gameplay.Systems
 		public void Remove( GameState gs, Entity e ) {}
 		public Aspect GetAspect() { return Aspect.Empty; }
 
-		Aspect stepAspect = Aspect.Empty.Include<StepComponent,CharacterController,Velocity,Transform>();
+		Aspect stepAspect = Aspect.Empty.Include<StepComponent,CharacterController,KinematicState>();
 
 
 		public void Update( GameState gs, GameTime gameTime )
@@ -41,8 +41,8 @@ namespace IronStar.Gameplay.Systems
 				var step		=	e.GetComponent<StepComponent>();
 
 				var controller	=	e.GetComponent<CharacterController>();
-				var velocity3D	=	e.GetComponent<Velocity>().Linear;
-				var transform	=	e.GetComponent<Transform>();
+				var velocity3D	=	e.GetComponent<KinematicState>().LinearVelocity;
+				var transform	=	e.GetComponent<KinematicState>();
 
 				var oldVelocity		=	new Vector3( step.GroundVelocity.X, step.FallVelocity, step.GroundVelocity.Z );
 

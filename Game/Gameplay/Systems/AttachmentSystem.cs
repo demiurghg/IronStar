@@ -13,7 +13,7 @@ namespace IronStar.Gameplay.Systems
 {
 	class AttachmentSystem : ISystem
 	{
-		readonly Aspect attachmentAspect = new Aspect().Include<AttachmentComponent,Transform>();
+		readonly Aspect attachmentAspect = new Aspect().Include<AttachmentComponent,KinematicState>();
 
 		public Aspect GetAspect()
 		{
@@ -32,8 +32,8 @@ namespace IronStar.Gameplay.Systems
 				return false;
 			}
 
-			var attachTransform	=	entityToAttach?.GetComponent<Transform>();
-			var targetTransform	=	targetEntity?.GetComponent<Transform>();
+			var attachTransform	=	entityToAttach?.GetComponent<KinematicState>();
+			var targetTransform	=	targetEntity?.GetComponent<KinematicState>();
 
 			if (attachTransform==null) 
 			{
@@ -60,10 +60,10 @@ namespace IronStar.Gameplay.Systems
 			foreach ( var entity in gs.QueryEntities(attachmentAspect) )
 			{
 				var attachment		=	entity.GetComponent<AttachmentComponent>();
-				var transform		=	entity.GetComponent<Transform>();
+				var transform		=	entity.GetComponent<KinematicState>();
 
 				var targetEntity	=	gs.GetEntity( attachment.TargetID );
-				var targetTransform	=	targetEntity?.GetComponent<Transform>();
+				var targetTransform	=	targetEntity?.GetComponent<KinematicState>();
 
 				if (targetTransform!=null)
 				{

@@ -78,7 +78,7 @@ namespace IronStar.AI.Actions
 				}
 			}
 
-			var originPoint	=	entity.GetComponent<Transform>().Position;
+			var originPoint	=	entity.GetComponent<KinematicState>().Position;
 			var targetPoint =	Vector3.Zero;
 
 			var routeResult	=	NavigationRouter.FollowRoute( route, originPoint, 10, 7, 3, out targetPoint );

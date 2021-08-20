@@ -158,6 +158,7 @@ namespace Fusion.Engine.Graphics {
 			p.StereoMode		=	(Fusion.Drivers.Graphics.StereoMode)StereoMode;
 			p.InterlacingMode	=	(Fusion.Drivers.Graphics.InterlacingMode)InterlacingMode;
 			p.UseDebugDevice	=	UseDebugDevice;
+			p.UseRenderDoc		=	UseRenderDoc;
 			p.MsaaLevel			=	1;
 		}
 

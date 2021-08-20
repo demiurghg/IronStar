@@ -23,6 +23,11 @@ namespace Fusion.Drivers.Graphics {
 		public bool UseDebugDevice { get; set; }
 
 		/// <summary>
+		/// Try to load RenderDoc
+		/// </summary>
+		public bool UseRenderDoc { get; set; }
+
+		/// <summary>
 		/// Display width
 		/// </summary>
 		public int Width { get; set; }

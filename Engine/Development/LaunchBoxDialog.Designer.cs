@@ -47,6 +47,7 @@
 			this.openConfigDir = new System.Windows.Forms.Button();
 			this.openContentDir = new System.Windows.Forms.Button();
 			this.runEditorButton = new System.Windows.Forms.Button();
+			this.useRenderDoc = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.displayWidth)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.displayHeight)).BeginInit();
@@ -56,7 +57,7 @@
 			// 
 			this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.button1.Location = new System.Drawing.Point(178, 514);
+			this.button1.Location = new System.Drawing.Point(178, 535);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(110, 32);
 			this.button1.TabIndex = 0;
@@ -77,7 +78,7 @@
 			// debugDevice
 			// 
 			this.debugDevice.AutoSize = true;
-			this.debugDevice.Location = new System.Drawing.Point(114, 263);
+			this.debugDevice.Location = new System.Drawing.Point(114, 286);
 			this.debugDevice.Name = "debugDevice";
 			this.debugDevice.Size = new System.Drawing.Size(162, 17);
 			this.debugDevice.TabIndex = 6;
@@ -87,7 +88,7 @@
 			// button3
 			// 
 			this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.button3.Location = new System.Drawing.Point(12, 514);
+			this.button3.Location = new System.Drawing.Point(12, 535);
 			this.button3.Name = "button3";
 			this.button3.Size = new System.Drawing.Size(83, 32);
 			this.button3.TabIndex = 14;
@@ -98,7 +99,7 @@
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(18, 289);
+			this.label1.Location = new System.Drawing.Point(18, 312);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(90, 13);
 			this.label1.TabIndex = 4;
@@ -108,14 +109,14 @@
 			// startupCommand
 			// 
 			this.startupCommand.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.startupCommand.Location = new System.Drawing.Point(114, 286);
+			this.startupCommand.Location = new System.Drawing.Point(114, 309);
 			this.startupCommand.Name = "startupCommand";
 			this.startupCommand.Size = new System.Drawing.Size(174, 20);
 			this.startupCommand.TabIndex = 7;
 			// 
 			// openConfig
 			// 
-			this.openConfig.Location = new System.Drawing.Point(114, 312);
+			this.openConfig.Location = new System.Drawing.Point(114, 335);
 			this.openConfig.Name = "openConfig";
 			this.openConfig.Size = new System.Drawing.Size(144, 23);
 			this.openConfig.TabIndex = 8;
@@ -125,7 +126,7 @@
 			// 
 			// openContent
 			// 
-			this.openContent.Location = new System.Drawing.Point(114, 341);
+			this.openContent.Location = new System.Drawing.Point(114, 364);
 			this.openContent.Name = "openContent";
 			this.openContent.Size = new System.Drawing.Size(144, 23);
 			this.openContent.TabIndex = 10;
@@ -135,7 +136,7 @@
 			// 
 			// buildContent
 			// 
-			this.buildContent.Location = new System.Drawing.Point(114, 370);
+			this.buildContent.Location = new System.Drawing.Point(114, 393);
 			this.buildContent.Name = "buildContent";
 			this.buildContent.Size = new System.Drawing.Size(144, 23);
 			this.buildContent.TabIndex = 12;
@@ -145,7 +146,7 @@
 			// 
 			// rebuildContent
 			// 
-			this.rebuildContent.Location = new System.Drawing.Point(114, 399);
+			this.rebuildContent.Location = new System.Drawing.Point(114, 422);
 			this.rebuildContent.Name = "rebuildContent";
 			this.rebuildContent.Size = new System.Drawing.Size(144, 23);
 			this.rebuildContent.TabIndex = 13;
@@ -175,7 +176,7 @@
 			// versionLabel
 			// 
 			this.versionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.versionLabel.Location = new System.Drawing.Point(12, 478);
+			this.versionLabel.Location = new System.Drawing.Point(12, 499);
 			this.versionLabel.Name = "versionLabel";
 			this.versionLabel.Size = new System.Drawing.Size(276, 23);
 			this.versionLabel.TabIndex = 15;
@@ -196,7 +197,7 @@
 			this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.label4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.label4.Location = new System.Drawing.Point(12, 501);
+			this.label4.Location = new System.Drawing.Point(12, 522);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(276, 2);
 			this.label4.TabIndex = 19;
@@ -266,7 +267,7 @@
 			// 
 			// openConfigDir
 			// 
-			this.openConfigDir.Location = new System.Drawing.Point(264, 312);
+			this.openConfigDir.Location = new System.Drawing.Point(264, 335);
 			this.openConfigDir.Name = "openConfigDir";
 			this.openConfigDir.Size = new System.Drawing.Size(24, 23);
 			this.openConfigDir.TabIndex = 9;
@@ -276,7 +277,7 @@
 			// 
 			// openContentDir
 			// 
-			this.openContentDir.Location = new System.Drawing.Point(264, 341);
+			this.openContentDir.Location = new System.Drawing.Point(264, 364);
 			this.openContentDir.Name = "openContentDir";
 			this.openContentDir.Size = new System.Drawing.Size(24, 23);
 			this.openContentDir.TabIndex = 11;
@@ -286,7 +287,7 @@
 			// 
 			// runEditorButton
 			// 
-			this.runEditorButton.Location = new System.Drawing.Point(114, 428);
+			this.runEditorButton.Location = new System.Drawing.Point(114, 451);
 			this.runEditorButton.Name = "runEditorButton";
 			this.runEditorButton.Size = new System.Drawing.Size(144, 23);
 			this.runEditorButton.TabIndex = 22;
@@ -294,11 +295,22 @@
 			this.runEditorButton.UseVisualStyleBackColor = true;
 			this.runEditorButton.Click += new System.EventHandler(this.runEditorButton_Click);
 			// 
+			// useRenderDoc
+			// 
+			this.useRenderDoc.AutoSize = true;
+			this.useRenderDoc.Location = new System.Drawing.Point(114, 263);
+			this.useRenderDoc.Name = "useRenderDoc";
+			this.useRenderDoc.Size = new System.Drawing.Size(103, 17);
+			this.useRenderDoc.TabIndex = 5;
+			this.useRenderDoc.Text = "Use RenderDoc";
+			this.useRenderDoc.UseVisualStyleBackColor = true;
+			this.useRenderDoc.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+			// 
 			// LaunchBoxForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(300, 558);
+			this.ClientSize = new System.Drawing.Size(300, 579);
 			this.Controls.Add(this.runEditorButton);
 			this.Controls.Add(this.openContentDir);
 			this.Controls.Add(this.openConfigDir);
@@ -319,6 +331,7 @@
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.button3);
 			this.Controls.Add(this.debugDevice);
+			this.Controls.Add(this.useRenderDoc);
 			this.Controls.Add(this.trackObjects);
 			this.Controls.Add(this.button1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -359,5 +372,6 @@
 		private System.Windows.Forms.Button openConfigDir;
 		private System.Windows.Forms.Button openContentDir;
 		private System.Windows.Forms.Button runEditorButton;
+		private System.Windows.Forms.CheckBox useRenderDoc;
 	}
 }

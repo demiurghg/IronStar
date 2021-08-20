@@ -23,6 +23,7 @@ using Fusion.Engine.Common;
 using Fusion.Engine.Imaging;
 using Fusion.Core.Extensions;
 using Fusion.Core.Extensions;
+using Fusion.Drivers.Graphics.RenderDoc;
 
 namespace Fusion.Drivers.Graphics {
 
@@ -155,6 +156,11 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		internal void Initialize ( GraphicsParameters parameters )
 		{
+			if (parameters.UseRenderDoc)
+			{
+				RenderDoc.RenderDoc.Initialize();
+			}
+
 			IsInitialized			=	false;
 
 			try {
@@ -183,7 +189,6 @@ namespace Fusion.Drivers.Graphics {
 			deviceContext	=	device.ImmediateContext;
 
 			display.CreateDisplayResources();
-
 
 			//
 			//	create color buffer :

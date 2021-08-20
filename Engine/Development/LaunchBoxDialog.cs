@@ -74,7 +74,8 @@ namespace Fusion.Development {
 			trackObjects.Checked	=	game.TrackObjects;
 
 			//	use debug device :
-			debugDevice.Checked	=	game.RenderSystem.UseDebugDevice;
+			useRenderDoc.Checked	=	game.RenderSystem.UseRenderDoc;
+			debugDevice.Checked		=	game.RenderSystem.UseDebugDevice;
 		}
 
 
@@ -85,7 +86,7 @@ namespace Fusion.Development {
 			game.RenderSystem.StereoMode	=	(StereoMode)stereoMode.SelectedItem;
 
 			//	displya mode :
-			game.RenderSystem.Width	=	(int)displayWidth.Value;
+			game.RenderSystem.Width		=	(int)displayWidth.Value;
 			game.RenderSystem.Height	=	(int)displayHeight.Value;
 
 			//	fullscreen
@@ -95,6 +96,7 @@ namespace Fusion.Development {
 			game.TrackObjects	=	trackObjects.Checked;
 
 			//	use debug device :
+			game.RenderSystem.UseRenderDoc		=	useRenderDoc.Checked;
 			game.RenderSystem.UseDebugDevice	=	debugDevice.Checked;
 
 			if (!string.IsNullOrWhiteSpace(startupCommand.Text)) {
@@ -183,6 +185,11 @@ namespace Fusion.Development {
 		private void runEditorButton_Click( object sender, EventArgs e )
 		{
 			runEditor?.Invoke();
+		}
+
+		private void checkBox1_CheckedChanged( object sender, EventArgs e )
+		{
+
 		}
 	}
 }

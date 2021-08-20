@@ -179,6 +179,11 @@
     <Compile Include="Core\Shell\Invoker.Undo.cs" />
     <Compile Include="Core\Shell\IUndoable.cs" />
     <Compile Include="Drivers\Graphics\GraphicsStats.cs" />
+    <Compile Include="Drivers\Graphics\RenderDoc\CaptureOptions.cs" />
+    <Compile Include="Drivers\Graphics\RenderDoc\InputButton.cs" />
+    <Compile Include="Drivers\Graphics\RenderDoc\OverlayBits.cs" />
+    <Compile Include="Drivers\Graphics\RenderDoc\RenderDoc.cs" />
+    <Compile Include="Drivers\Graphics\RenderDoc\RenderDocApi.cs" />
     <Compile Include="Engine\Graphics\Collections\RenderInstanceCollection.cs" />
     <Compile Include="Engine\Graphics\Lights\ICSMController.cs" />
     <Compile Include="Engine\Graphics\Lights\IShadowProvider.cs" />

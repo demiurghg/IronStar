@@ -30,7 +30,7 @@ namespace IronStar.SFX {
 
 			var fx = gs.Spawn();
 
-			fx.AddComponent( new KinematicState(origin, rotation) );
+			fx.AddComponent( new KinematicState(origin, rotation, velocity) );
 			fx.AddComponent( new FXComponent( fxName, false ) );
 
 			return fx;

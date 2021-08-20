@@ -105,11 +105,6 @@ namespace IronStar.ECSPhysics
 			cc.IsCrouching	=	crouching;
 			cc.HasTraction	=	traction;
 			
-			/*if (uc!=null)
-			{
-				t.Rotation	=	Quaternion.RotationYawPitchRoll( uc.Yaw, 0, 0 );
-			} */
-			
 			t.Position			=	position;
 			t.LinearVelocity	=	MathConverter.Convert( controller.Body.LinearVelocity );
 			t.AngularVelocity	=	Vector3.Zero;
@@ -135,15 +130,18 @@ namespace IronStar.ECSPhysics
 			var moveDir		=	new BEPUutilities.Vector2( move.X, -move.Z );
 			var velScale	=	moveDir.Length();
 
-			controller.StandingSpeed	=	cc.standingSpeed * velScale;
-			controller.CrouchingSpeed	=	cc.crouchingSpeed * velScale;
-			controller.ProneSpeed		=	cc.proneSpeed * velScale;
+			physics.Invoke( ()=>
+			{
+				controller.StandingSpeed	=	cc.standingSpeed * velScale;
+				controller.CrouchingSpeed	=	cc.crouchingSpeed * velScale;
+				controller.ProneSpeed		=	cc.proneSpeed * velScale;
 
-			controller.HorizontalMotionConstraint.MovementDirection	=	moveDir;
+				controller.HorizontalMotionConstraint.MovementDirection	=	moveDir;
 
-			controller.StanceManager.DesiredStance	=	crouch ? Stance.Crouching : Stance.Standing;
+				controller.StanceManager.DesiredStance	=	crouch ? Stance.Crouching : Stance.Standing;
 
-			controller.TryToJump = jump;
+				controller.TryToJump = jump;
+			});
 		}
 	}
 }

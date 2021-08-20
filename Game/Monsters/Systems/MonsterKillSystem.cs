@@ -48,7 +48,8 @@ namespace IronStar.Monsters.Systems
 
 		void CreatGiblets( GameState gs, Vector3 position, Vector3 direction )
 		{
-			var rand = MathUtil.Random;
+			var rand	=	MathUtil.Random;
+			var physics	=	gs.GetService<PhysicsCore>();
 
 			for (int i=0; i<5; i++)
 			{
@@ -57,7 +58,7 @@ namespace IronStar.Monsters.Systems
 				var gib	 = gs.Spawn("GIBLET", pos1, Quaternion.Identity);
 				var imp  = rand.GaussRadialDistribution( 10, 5 );
 
-				PhysicsCore.ApplyImpulse( gib, pos0, imp );
+				physics.ApplyImpulse( gib, pos0, imp );
 			}
 		}
 	}

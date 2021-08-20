@@ -27,7 +27,7 @@ namespace IronStar.ECSPhysics
 	/// </summary>
 	public partial class PhysicsCore : DisposableBase, ISystem
 	{
-		Space physSpace;
+		readonly Space physSpace;
 
 		private Space Space 
 		{
@@ -43,7 +43,7 @@ namespace IronStar.ECSPhysics
 		const int MaxPhysObjects = 16384;
 		RigidTransform[] transforms = new RigidTransform[MaxPhysObjects];
 
-		HashSet<Tuple<Entity,Entity>> touchEvents;
+		ConcurrentQueue<Tuple<Entity,Entity>> touchEvents;
 
 		public readonly BEPUCollisionGroup StaticGroup		= new BEPUCollisionGroup();
 		public readonly BEPUCollisionGroup KinematicGroup	= new BEPUCollisionGroup();
@@ -51,16 +51,33 @@ namespace IronStar.ECSPhysics
 		public readonly BEPUCollisionGroup PickupGroup		= new BEPUCollisionGroup();
 		public readonly BEPUCollisionGroup CharacterGroup	= new BEPUCollisionGroup();
 
-		ConcurrentQueue<ISpaceObject>	creationQueue		= new ConcurrentQueue<ISpaceObject>();
-		ConcurrentQueue<ISpaceObject>	removalQueue		= new ConcurrentQueue<ISpaceObject>();
+		struct DeferredImpulse
+		{
+			public readonly Entity Entity;
+			public readonly Vector3 Position;
+			public readonly Vector3 Impulse;
+
+			public DeferredImpulse( Entity entity, Vector3 position, Vector3 impulse )
+			{
+				this.Entity		=	entity;
+				this.Position	=	position;
+				this.Impulse	=	impulse;
+			}
+		}
+
+		readonly ConcurrentQueue<ISpaceObject>		creationQueue	=	new ConcurrentQueue<ISpaceObject>();
+		readonly ConcurrentQueue<ISpaceObject>		removalQueue	=	new ConcurrentQueue<ISpaceObject>();
+		readonly List<ISpaceObject>					objectList		=	new List<ISpaceObject>();
+		readonly ConcurrentQueue<DeferredImpulse>	impulseQueue	=	new ConcurrentQueue<DeferredImpulse>();
+		readonly ConcurrentQueue<Action>			actionQueue		=	new ConcurrentQueue<Action>();
 		
 		public PhysicsCore ()
 		{
 			physSpace		=	new Space();
-			physSpace.BufferedStates.Enabled = true;
-			physSpace.BufferedStates.InterpolatedStates.Enabled = true;
+			physSpace.BufferedStates.Enabled = false;
+			physSpace.BufferedStates.InterpolatedStates.Enabled = false;
 
-			touchEvents	=	new HashSet<Tuple<Entity, Entity>>();
+			touchEvents	=	new ConcurrentQueue<Tuple<Entity,Entity>>();
 
 			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( StaticGroup,	CharacterGroup ), CollisionRule.Normal );
 			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( StaticGroup,	DymamicGroup   ), CollisionRule.Normal );
@@ -102,10 +119,12 @@ namespace IronStar.ECSPhysics
 			}
 		}
 
+
 		public Aspect GetAspect()
 		{
 			return Aspect.Empty;
 		}
+
 
 		public void Add( GameState gs, Entity e ) {}
 		public void Remove( GameState gs, Entity e ) {}
@@ -139,27 +158,39 @@ namespace IronStar.ECSPhysics
 			while (!stopRequest)
 			{
 				ISpaceObject spaceObj;
+				Action action;
 
 				time = (double)Stopwatch.GetTimestamp() / Stopwatch.Frequency; //compute the current time
 				dt = time - previousTime; //find the time passed since the previous frame
 				previousTime = time;
 
-				while (creationQueue.TryDequeue(out spaceObj))
+				lock (Space)
 				{
-					Space.Add(spaceObj);
+					while (creationQueue.TryDequeue(out spaceObj)) Space.Add(spaceObj);
+
+					while (actionQueue.TryDequeue(out action)) action?.Invoke();
+
+					ApplyDeferredImpulses();
+
+					if (Enabled)
+					{
+						Space.Update((float)dt);
+					}
+
+					while (removalQueue.TryDequeue(out spaceObj))
+					{
+						try 
+						{
+							Space.Remove(spaceObj);
+						} 
+						catch (Exception e)
+						{
+							Log.Warning(e.Message);
+						}
+					}
 				}
 
-				if (Enabled)
-				{
-					Space.Update((float)dt);
-				}
-
-				while (removalQueue.TryDequeue(out spaceObj))
-				{
-					Space.Remove(spaceObj);
-				}
-
-				Thread.Sleep(0); //Explicitly give other threads (if any) a chance to execute
+				//Thread.Sleep(100); //Explicitly give other threads (if any) a chance to execute
 			}
 		}
 
@@ -173,6 +204,37 @@ namespace IronStar.ECSPhysics
 		public void Remove( ISpaceObject physObj )
 		{
 			removalQueue.Enqueue( physObj );
+		}
+
+
+		public void ApplyImpulse( Entity entity, Vector3 position, Vector3 impulse )
+		{
+			impulseQueue.Enqueue( new DeferredImpulse( entity, position, impulse ) );
+		}
+
+
+		void ApplyDeferredImpulses()
+		{
+			DeferredImpulse impulse;
+
+			while (impulseQueue.TryDequeue(out impulse))
+			{
+				foreach (var physEntity in Space.Entities)
+				{
+					if (physEntity.Tag==impulse.Entity)
+					{
+						var p = MathConverter.Convert( impulse.Position );
+						var i = MathConverter.Convert( impulse.Impulse );
+						physEntity.ApplyImpulse( p, i );
+					}
+				}
+			}
+		}
+
+
+		public void Invoke( Action action )
+		{
+			actionQueue.Enqueue( action );
 		}
 
 
@@ -236,31 +298,14 @@ namespace IronStar.ECSPhysics
 				e.GetComponent<TouchDetector>()?.ClearTouches();
 			}
 
-			foreach ( var pair in touchEvents )
+			Tuple<Entity,Entity> touch;
+
+			while ( touchEvents.TryDequeue( out touch ))
 			{
-				var e1	=	pair.Item1;
-				var e2	=	pair.Item2;
+				var e1	=	touch.Item1;
+				var e2	=	touch.Item2;
 
 				e1.GetComponent<TouchDetector>()?.AddTouch( e2 );
-			}
-
-			touchEvents.Clear();
-		}
-
-
-		public static void ApplyImpulse( Entity entity, Vector3 location, Vector3 impulse )
-		{
-			if (entity==null) return;
-
-			if (!entity.ContainsComponent<ImpulseComponent>())
-			{
-				entity.AddComponent( new ImpulseComponent(location, impulse) );
-			}
-			else
-			{
-				var impulseComponent		= 	entity.GetComponent<ImpulseComponent>();
-				impulseComponent.Impulse	=	impulse;
-				impulseComponent.Location	=	location;
 			}
 		}
 
@@ -273,8 +318,8 @@ namespace IronStar.ECSPhysics
 			// do not handle touches with null-entities :
 			if (entity1==null || entity2==null)	return;
 
-			touchEvents.Add( new Tuple<Entity, Entity>( entity1, entity2 ) );
-			touchEvents.Add( new Tuple<Entity, Entity>( entity2, entity1 ) );
+			touchEvents.Enqueue( new Tuple<Entity, Entity>( entity1, entity2 ) );
+			touchEvents.Enqueue( new Tuple<Entity, Entity>( entity2, entity1 ) );
 		}
 	}
 }

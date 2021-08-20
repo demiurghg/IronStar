@@ -11,6 +11,7 @@ using IronStar.ECSPhysics;
 using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
 using IronStar.AI;
+using System.Runtime.CompilerServices;
 
 namespace IronStar.Gameplay.Systems
 {
@@ -328,6 +329,7 @@ namespace IronStar.Gameplay.Systems
 		/// <param name="attacker"></param>
 		/// <param name="shooter"></param>
 		/// <param name="world"></param>
+		[MethodImpl(MethodImplOptions.NoOptimization)]
 		void FireBeam ( GameState gs, WeaponComponent weapon, Matrix povTransform, Entity attacker )
 		{
 			var p = povTransform.TranslationVector;
@@ -342,7 +344,7 @@ namespace IronStar.Gameplay.Systems
 
 			if (r) 
 			{
-				PhysicsCore.ApplyImpulse( hitEntity, hitPoint, d * weapon.Impulse );
+				physics.ApplyImpulse( hitEntity, hitPoint, d * weapon.Impulse );
 				HealthSystem.ApplyDamage( hitEntity, weapon.Damage, attacker );
 
 				var material = MaterialComponent.GetMaterial( hitEntity );
@@ -359,6 +361,7 @@ namespace IronStar.Gameplay.Systems
 			var beamOrigin	 =	p;
 			var beamVelocity =	hitPoint - p;
 			var basis		=	MathUtil.ComputeAimedBasis( d );
+
 			SFX.FXPlayback.SpawnFX(	gs, weapon.BeamTrailFX, 0, beamOrigin, beamVelocity, Quaternion.RotationMatrix(basis) );
 		}
 

@@ -48,11 +48,12 @@ namespace IronStar.ECS
 		/// </summary>
 		/// <param name="p"></param>
 		/// <param name="r"></param>
-		public KinematicState ( Vector3 p, Quaternion r, Vector3 s )
+		public KinematicState ( Vector3 p, Quaternion r, Vector3 velocity )
 		{
-			Position	=	p;
-			Rotation	=	r;
-			Scaling		=	s;
+			Position		=	p;
+			Rotation		=	r;
+			Scaling			=	new Vector3(1,1,1);
+			LinearVelocity	=	velocity;
 		}
 
 		/// <summary>
@@ -81,6 +82,10 @@ namespace IronStar.ECS
 		/// Entity rotation
 		/// </summary>
 		public Quaternion	Rotation;
+
+		/*public float BackLerpFactor;
+		public Vector3 PreviousPosition;
+		public Quaternion PreviousRotation;*/
 
 		/// <summary>
 		/// Entity linear velocity

@@ -60,7 +60,7 @@ namespace IronStar.Gameplay.Systems
 			if ( physics.RayCastAgainstAll( origin, target, out hitNormal, out hitPoint, out hitEntity, parent ) ) 
 			{
 				//	inflict damage to hit object:
-				PhysicsCore.ApplyImpulse( hitEntity, hitPoint, dir * projectile.Impulse );
+				physics.ApplyImpulse( hitEntity, hitPoint, dir * projectile.Impulse );
 				HealthSystem.ApplyDamage( hitEntity, projectile.Damage, projectile.Sender );
 
 				Explode( projectile.Sender, hitEntity, hitPoint, hitNormal, projectile );
@@ -103,7 +103,7 @@ namespace IronStar.Gameplay.Systems
 					var impP	=	t.Position + rand.UniformRadialDistribution(0.1f, 0.1f);
 					var dmg		=	(short)( factor * damage );
 
-					PhysicsCore.ApplyImpulse( e, impP, impV );
+					physics.ApplyImpulse( e, impP, impV );
 					HealthSystem.ApplyDamage( e, projectile.Damage, attacker );
 				}
 			}

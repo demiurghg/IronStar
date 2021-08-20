@@ -60,7 +60,7 @@ namespace IronStar.AI
 			BoundingFrustum frustum;
 			BoundingSphere sphere;
 
-			if (Enabled)
+			if (Enabled && !IronStar.IsNoTarget)
 			{
 				if (GetSensoricBoundingVolumes(entity, out pov, out frustum, out sphere))
 				{

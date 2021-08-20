@@ -24,42 +24,103 @@ using Fusion;
 using IronStar.Gameplay;
 using Fusion.Core.Extensions;
 using BEPUCollisionGroup = BEPUphysics.CollisionRuleManagement.CollisionGroup;
+using System.Collections.Concurrent;
 
 namespace IronStar.ECSPhysics
 {
 	public partial class PhysicsCore
 	{
-		public bool RayCastAgainstEntity ( Vector3 from, Vector3 to, out Vector3 pos, out float distance, out Entity hitEntity )
+		public delegate bool RaycastCallback( Entity entity, Vector3 location, Vector3 normal, float distance );
+
+		ConcurrentQueue<DeferredRaycast> raycastRequests = new ConcurrentQueue<DeferredRaycast>();
+		ConcurrentQueue<DeferredRaycast> raycastResponces = new ConcurrentQueue<DeferredRaycast>();
+
+		struct RaycastResult
 		{
-			hitEntity	=	null;
-			var dir		=	to - from;
-			var dist	=	dir.Length();
-			var ndir	=	dir.Normalized();
+			public Entity Entity;
+			public Vector3 Location;
+			public Vector3 Normal;
+			public float Distance;
+		}
 
-			distance	=	float.MaxValue;
-			Ray ray		=	new Ray( from, ndir );
+		class DeferredRaycast
+		{
+			public readonly Vector3 From;
+			public readonly Vector3 To;
+			public readonly RaycastCallback Callback;
 
-			pos		= to;
-
-			var rcr		= new RayCastResult();	
-			var bRay	= MathConverter.Convert( ray );
-
-			bool result = Space.RayCast( bRay, dist, out rcr );
-
-			if (!result) {
-				return false;
+			List<RaycastResult> Results;
+			
+			public DeferredRaycast ( Vector3 from, Vector3 to, RaycastCallback callback )
+			{
+				this.From		=	from;
+				this.To			=	to;
+				this.Callback	=	callback;
+				Results			=	new List<RaycastResult>(10);
 			}
 
-			var convex		=	rcr.HitObject as ConvexCollidable;
-			pos				=	MathConverter.Convert( rcr.HitData.Location );
+			public void ExecuteCallback()
+			{
+				foreach ( var result in Results )
+				{
+					if (Callback(result.Entity, result.Location, result.Normal, result.Distance))
+					{
+						return;
+					}
+				}
+			}
+		}
 
-			if (convex!=null) {
-				hitEntity = convex.Entity.Tag as Entity;
-			} 
 
-			distance	=	rcr.HitData.T;
+		public void Raycast ( Vector3 from, Vector3 to, RaycastCallback callback )
+		{
+			raycastRequests.Enqueue( new DeferredRaycast(from, to, callback) );
+		}
 
-			return true;
+
+		
+		void ExecuteDeferredRaycasts()
+		{
+			foreach ( var raycast in raycastRequests )
+			{
+			}
+		}
+
+
+		public bool RayCastAgainstEntity ( Vector3 from, Vector3 to, out Vector3 pos, out float distance, out Entity hitEntity )
+		{
+			lock (Space)
+			{
+				hitEntity	=	null;
+				var dir		=	to - from;
+				var dist	=	dir.Length();
+				var ndir	=	dir.Normalized();
+
+				distance	=	float.MaxValue;
+				Ray ray		=	new Ray( from, ndir );
+
+				pos		= to;
+
+				var rcr		= new RayCastResult();	
+				var bRay	= MathConverter.Convert( ray );
+
+				bool result = Space.RayCast( bRay, dist, out rcr );
+
+				if (!result) {
+					return false;
+				}
+
+				var convex		=	rcr.HitObject as ConvexCollidable;
+				pos				=	MathConverter.Convert( rcr.HitData.Location );
+
+				if (convex!=null) {
+					hitEntity = convex.Entity.Tag as Entity;
+				} 
+
+				distance	=	rcr.HitData.T;
+
+				return true;
+			}
 		}
 
 
@@ -74,40 +135,43 @@ namespace IronStar.ECSPhysics
 		/// <returns></returns>
 		public Entity RayCastEditor ( Vector3 from, Vector3 to, out Vector3 normal, out Vector3 pos, out float distance )
 		{
-			var dir		=	to - from;
-			var dist	=	dir.Length();
-			var ndir	=	dir.Normalized();
-			Ray ray		=	new Ray( from, ndir );
+			lock (Space)
+			{
+				var dir		=	to - from;
+				var dist	=	dir.Length();
+				var ndir	=	dir.Normalized();
+				Ray ray		=	new Ray( from, ndir );
 
-			normal	= Vector3.Zero;
-			pos		= to;
+				normal	= Vector3.Zero;
+				pos		= to;
 
-			var rcr		= new RayCastResult();	
-			var bRay	= MathConverter.Convert( ray );
+				var rcr		= new RayCastResult();	
+				var bRay	= MathConverter.Convert( ray );
 
-			bool result = Space.RayCast( bRay, dist, out rcr );
+				bool result = Space.RayCast( bRay, dist, out rcr );
 
-			distance	=	rcr.HitData.T;
+				distance	=	rcr.HitData.T;
 
-			if (!result) {
+				if (!result) {
+					return null;
+				}
+
+				normal		=	MathConverter.Convert( rcr.HitData.Normal ).Normalized();
+				pos			=	MathConverter.Convert( rcr.HitData.Location );
+
+				var convexMesh	=	rcr.HitObject as ConvexCollidable;
+				var staticMesh	=	rcr.HitObject as StaticMesh;
+
+				if (convexMesh!=null) {
+					return convexMesh.Entity.Tag as Entity;
+				}
+			
+				if (staticMesh!=null) {
+					return staticMesh.Tag as Entity;
+				}
+
 				return null;
 			}
-
-			normal		=	MathConverter.Convert( rcr.HitData.Normal ).Normalized();
-			pos			=	MathConverter.Convert( rcr.HitData.Location );
-
-			var convexMesh	=	rcr.HitObject as ConvexCollidable;
-			var staticMesh	=	rcr.HitObject as StaticMesh;
-
-			if (convexMesh!=null) {
-				return convexMesh.Entity.Tag as Entity;
-			}
-			
-			if (staticMesh!=null) {
-				return staticMesh.Tag as Entity;
-			}
-
-			return null;
 		}
 
 
@@ -137,69 +201,72 @@ namespace IronStar.ECSPhysics
 		/// <returns></returns>
 		public bool RayCastAgainstAll ( Vector3 from, Vector3 to, out Vector3 normal, out Vector3 pos, out Entity hitEntity, Entity skipEntity = null, Entity skipEntity2 = null )
 		{
-			hitEntity	=	null;
-			var dir		=	to - from;
-			var dist	=	dir.Length();
-			var ndir	=	dir.Normalized();
-			Ray ray		=	new Ray( from, ndir );
-
-			normal	= Vector3.Zero;
-			pos		= to;
-
-			Func<BroadPhaseEntry, bool> filterFunc = delegate(BroadPhaseEntry bpe) 
+			lock (Space)
 			{
-				if (skipEntity==null) return true;
+				hitEntity	=	null;
+				var dir		=	to - from;
+				var dist	=	dir.Length();
+				var ndir	=	dir.Normalized();
+				Ray ray		=	new Ray( from, ndir );
 
-				if (bpe is StaticCollidable) {
+				normal	= Vector3.Zero;
+				pos		= to;
+
+				Func<BroadPhaseEntry, bool> filterFunc = delegate(BroadPhaseEntry bpe) 
+				{
+					if (skipEntity==null) return true;
+
+					if (bpe is StaticCollidable) {
+
+						return true;
+
+					} else if (bpe is ConvexCollidable) {
+
+						var hitEnt = (bpe as ConvexCollidable).Entity.Tag as Entity;
+
+						if (hitEnt==null) {
+							return true;
+						}
+
+						if (hitEnt==skipEntity) {
+							return false;
+						}
+
+						if (hitEnt==skipEntity2) {
+							return false;
+						}
+
+					} else {
+						return false;
+					}
+
+					ConvexCollidable cc = bpe as ConvexCollidable;
+					if (cc==null) return true;
+					
+					Entity ent = cc.Entity.Tag as Entity;
+					if (ent==null) return true;
+
+					if (ent==skipEntity) return false;
 
 					return true;
+				};
 
-				} else if (bpe is ConvexCollidable) {
+				var rcr		= new RayCastResult();	
+				var bRay	= MathConverter.Convert( ray );
 
-					var hitEnt = (bpe as ConvexCollidable).Entity.Tag as Entity;
+				bool result = Space.RayCast( bRay, dist, filterFunc, out rcr );
 
-					if (hitEnt==null) {
-						return true;
-					}
-
-					if (hitEnt==skipEntity) {
-						return false;
-					}
-
-					if (hitEnt==skipEntity2) {
-						return false;
-					}
-
-				} else {
+				if (!result) {
 					return false;
 				}
 
-				ConvexCollidable cc = bpe as ConvexCollidable;
-				if (cc==null) return true;
-					
-				Entity ent = cc.Entity.Tag as Entity;
-				if (ent==null) return true;
-
-				if (ent==skipEntity) return false;
+				var convex	=	rcr.HitObject as ConvexCollidable;
+				normal		=	MathConverter.Convert( rcr.HitData.Normal ).Normalized();
+				pos			=	MathConverter.Convert( rcr.HitData.Location );
+				hitEntity	=	(convex == null) ? null : convex.Entity.Tag as Entity;
 
 				return true;
-			};
-
-			var rcr		= new RayCastResult();	
-			var bRay	= MathConverter.Convert( ray );
-
-			bool result = Space.RayCast( bRay, dist, filterFunc, out rcr );
-
-			if (!result) {
-				return false;
 			}
-
-			var convex	=	rcr.HitObject as ConvexCollidable;
-			normal		=	MathConverter.Convert( rcr.HitData.Normal ).Normalized();
-			pos			=	MathConverter.Convert( rcr.HitData.Location );
-			hitEntity	=	(convex == null) ? null : convex.Entity.Tag as Entity;
-
-			return true;
 		}
 
 
@@ -216,36 +283,39 @@ namespace IronStar.ECSPhysics
 		/// <returns></returns>
 		public List<Entity> WeaponOverlap ( Vector3 origin, float radius, Entity entToSkip )
 		{
-			BU.BoundingSphere	sphere		= new BU.BoundingSphere(MathConverter.Convert(origin), radius);
-			SphereShape			sphereShape = new SphereShape(radius);
-			BU.Vector3			zeroSweep	= BU.Vector3.Zero;
-			BU.RigidTransform	rigidXForm	= new BU.RigidTransform( MathConverter.Convert(origin) );	
+			lock (Space)
+			{
+				BU.BoundingSphere	sphere		= new BU.BoundingSphere(MathConverter.Convert(origin), radius);
+				SphereShape			sphereShape = new SphereShape(radius);
+				BU.Vector3			zeroSweep	= BU.Vector3.Zero;
+				BU.RigidTransform	rigidXForm	= new BU.RigidTransform( MathConverter.Convert(origin) );	
 
-			var candidates = PhysicsResources.GetBroadPhaseEntryList();
-            Space.BroadPhase.QueryAccelerator.BroadPhase.QueryAccelerator.GetEntries(sphere, candidates);
+				var candidates = PhysicsResources.GetBroadPhaseEntryList();
+				Space.BroadPhase.QueryAccelerator.BroadPhase.QueryAccelerator.GetEntries(sphere, candidates);
 			
-			var result = new List<Entity>();
+				var result = new List<Entity>();
 
-			foreach ( var candidate in candidates )	{
+				foreach ( var candidate in candidates )	{
 
-				BU.RayHit rayHit;
-				bool r = candidate.ConvexCast( sphereShape, ref rigidXForm, ref zeroSweep, out rayHit );
+					BU.RayHit rayHit;
+					bool r = candidate.ConvexCast( sphereShape, ref rigidXForm, ref zeroSweep, out rayHit );
 
-				if (r) {
+					if (r) {
 					
-					var collidable	=	candidate as ConvexCollidable;
-					var entity		=	collidable==null ? null : collidable.Entity.Tag as Entity;
+						var collidable	=	candidate as ConvexCollidable;
+						var entity		=	collidable==null ? null : collidable.Entity.Tag as Entity;
 
-					if (collidable==null) continue;
-					if (entity==null) continue;
+						if (collidable==null) continue;
+						if (entity==null) continue;
 
-					result.Add( entity );
+						result.Add( entity );
+					}
 				}
-			}
 			
-			result.RemoveAll( e => e == entToSkip );
+				result.RemoveAll( e => e == entToSkip );
 
-			return result;
+				return result;
+			}
 		}
 
 		#if false

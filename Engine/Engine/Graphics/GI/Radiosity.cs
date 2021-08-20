@@ -18,6 +18,7 @@ using Fusion.Engine.Graphics.Collections;
 using System.Diagnostics;
 using System.IO;
 using Fusion.Engine.Graphics.Scenes;
+using Fusion.Drivers.Graphics.RenderDoc;
 
 namespace Fusion.Engine.Graphics.GI
 {
@@ -159,6 +160,8 @@ namespace Fusion.Engine.Graphics.GI
 
 		void BakeRadiosity ( RadiositySettings settings, Stream stream )
 		{
+			RenderDoc.StartFrameCapture();
+
 			var instances	=	rs.RenderWorld.Instances
 				.Where( inst => inst.Group.HasFlag( InstanceGroup.Static ) )
 				.ToArray();
@@ -182,6 +185,8 @@ namespace Fusion.Engine.Graphics.GI
 
 			sw.Stop();
 			Log.Message("Done : {0}", sw.Elapsed);
+
+			RenderDoc.EndFrameCapture();
 		}
 
 

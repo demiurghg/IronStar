@@ -52,7 +52,7 @@ float4 ComputeDiffuseTubeMRP( float3 L0, float3 L1, float3 n, float r )
 	float 	t 	=	a / (b+a);
 	float3 	mrp	=	L0 + t*(L1-L0);
 	
-	float	factor	=	1 / (1 + r / length(mrp));
+	float	factor	=	1 / (1 + r / max(0.001f,length(mrp)));
 	
 	return float4( ClosestToPoint( mrp, n, r ), factor );
 }

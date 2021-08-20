@@ -612,7 +612,7 @@ namespace Fusion.Engine.Graphics
 					radLtData[index].FromSpotLight( sl ); 
 					index++;
 
-					if (index>=MaxLights)
+					if (index>=MaxRadLights)
 					{
 						Log.Warning("Too much GI lights");
 						break;

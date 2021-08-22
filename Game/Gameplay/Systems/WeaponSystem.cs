@@ -332,17 +332,20 @@ namespace IronStar.Gameplay.Systems
 		[MethodImpl(MethodImplOptions.NoOptimization)]
 		void FireBeam ( GameState gs, WeaponComponent weapon, Matrix povTransform, Entity attacker )
 		{
-			var p = povTransform.TranslationVector;
-			var q = Quaternion.RotationMatrix( povTransform );
-			var d = -GetFireDirection( q, weapon.Spread );
+			var p	=	povTransform.TranslationVector;
+			var q	=	Quaternion.RotationMatrix( povTransform );
+			var d	=	-GetFireDirection( q, weapon.Spread );
+			var ray	=	new Ray(p,d);
 
 			Vector3 hitNormal;
 			Vector3 hitPoint;
 			Entity  hitEntity;
 
+			physics.Raycast( ray, BEAM_RANGE, new BeamRaycastCallback( gs, ray, attacker, weapon ), RaycastOptions.SortResults );
+
 			var r = physics.RayCastAgainstAll( p, p + d * BEAM_RANGE, out hitNormal, out hitPoint, out hitEntity, attacker );
 
-			if (r) 
+			/*if (r) 
 			{
 				physics.ApplyImpulse( hitEntity, hitPoint, d * weapon.Impulse );
 				HealthSystem.ApplyDamage( hitEntity, weapon.Damage, attacker );
@@ -362,12 +365,64 @@ namespace IronStar.Gameplay.Systems
 			var beamVelocity =	hitPoint - p;
 			var basis		=	MathUtil.ComputeAimedBasis( d );
 
-			SFX.FXPlayback.SpawnFX(	gs, weapon.BeamTrailFX, 0, beamOrigin, beamVelocity, Quaternion.RotationMatrix(basis) );
+			SFX.FXPlayback.SpawnFX(	gs, weapon.BeamTrailFX, 0, beamOrigin, beamVelocity, Quaternion.RotationMatrix(basis) );  */
 		}
 
 
+		class BeamRaycastCallback : IRaycastCallback
+		{
+			readonly Ray ray;
+			readonly Entity attacker;
+			readonly WeaponComponent weapon;
+			readonly GameState gs;
+			bool hitSomething = false;
+			Vector3 hitLocation;
 
-		string GetHitFXName( string fxName, MaterialType surface )
+			public BeamRaycastCallback( GameState gs, Ray ray, Entity attacker, WeaponComponent weapon )
+			{
+				this.ray		=	ray;
+				this.attacker	=	attacker;
+				this.weapon		=	weapon;
+				this.gs			=	gs;
+				hitSomething	=	false;
+				hitLocation		=	ray.Position + ray.Direction * BEAM_RANGE / 16;
+			}
+
+			public void Begin( int count ) {}
+
+			public bool RayHit( int index, Entity entity, Vector3 location, Vector3 normal, bool isStatic )
+			{
+				if (entity==attacker) return false;
+
+				hitSomething = true;
+				hitLocation	 = location;
+
+				var physics = gs.GetService<PhysicsCore>();
+
+				physics.ApplyImpulse( entity, location, ray.Direction * weapon.Impulse );
+				HealthSystem.ApplyDamage( entity, weapon.Damage, attacker );
+
+				var material = MaterialComponent.GetMaterial( entity );
+
+				var hitFx = GetHitFXName( weapon.BeamHitFX, material ); 
+				SFX.FXPlayback.AttachFX( gs, entity, hitFx, 0, location, normal );
+
+				return true;
+			}
+
+			public void End() 
+			{
+				//	run trail FX:
+				var beamOrigin	 =	ray.Position;
+				var beamVelocity =	hitLocation - ray.Position;
+				var basis		=	MathUtil.ComputeAimedBasis( ray.Direction );
+
+				SFX.FXPlayback.SpawnFX(	gs, weapon.BeamTrailFX, 0, beamOrigin, beamVelocity, Quaternion.RotationMatrix(basis) );
+			}
+		}
+
+
+		static string GetHitFXName( string fxName, MaterialType surface )
 		{
 			if (fxName=="bulletHit") 
 			{

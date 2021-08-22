@@ -100,7 +100,6 @@ namespace IronStar.ECSPhysics
 			var traction	=	controller.SupportFinder.HasTraction;
 			var offset		=	crouching ? cc.offsetCrouch : cc.offsetStanding;
 			var position	=	MathConverter.Convert( controller.Body.Position ) - offset;
-			var uc			=	e.GetComponent<UserCommandComponent>();
 
 			cc.IsCrouching	=	crouching;
 			cc.HasTraction	=	traction;

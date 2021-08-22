@@ -28,61 +28,120 @@ using System.Collections.Concurrent;
 
 namespace IronStar.ECSPhysics
 {
+	[Flags]
+	public enum RaycastOptions
+	{
+		None,
+		SortResults,
+	}
+
+	interface ISpaceQuery
+	{
+		void Execute( Space space );
+		void Callback();
+	}
+
+	public interface IRaycastCallback
+	{
+		void Begin( int count );
+		bool RayHit( int index, Entity entity, Vector3 location, Vector3 normal, bool isStatic );
+		void End();
+	}
+
 	public partial class PhysicsCore
 	{
-		public delegate bool RaycastCallback( Entity entity, Vector3 location, Vector3 normal, float distance );
+		public delegate bool RaycastCallback<T>( int index, Entity entity, T tag, Ray ray, Vector3 location, Vector3 normal, bool isStatic );
 
-		ConcurrentQueue<DeferredRaycast> raycastRequests = new ConcurrentQueue<DeferredRaycast>();
-		ConcurrentQueue<DeferredRaycast> raycastResponces = new ConcurrentQueue<DeferredRaycast>();
-
-		struct RaycastResult
+		static int RayCastResultComparison ( RayCastResult a, RayCastResult b )
 		{
-			public Entity Entity;
-			public Vector3 Location;
-			public Vector3 Normal;
-			public float Distance;
+			if ( MathUtil.NearEqual( a.HitData.T, b.HitData.T ) ) return 0;
+			else if ( a.HitData.T < b.HitData.T ) return -1; 
+			else return 1; 
 		}
 
-		class DeferredRaycast
-		{
-			public readonly Vector3 From;
-			public readonly Vector3 To;
-			public readonly RaycastCallback Callback;
+		readonly ConcurrentQueue<ISpaceQuery> queryRequests = new ConcurrentQueue<ISpaceQuery>();
+		readonly ConcurrentQueue<ISpaceQuery> queryResponces = new ConcurrentQueue<ISpaceQuery>();
 
-			List<RaycastResult> Results;
+		class DeferredRaycast : ISpaceQuery
+		{
+			readonly Ray ray;
+			readonly float maxDistance;
+			readonly IRaycastCallback callback;
+			readonly RaycastOptions options;  
+
+			List<RayCastResult> results;
 			
-			public DeferredRaycast ( Vector3 from, Vector3 to, RaycastCallback callback )
+			public DeferredRaycast ( Ray ray, float maxDistance, IRaycastCallback callback, RaycastOptions options )
 			{
-				this.From		=	from;
-				this.To			=	to;
-				this.Callback	=	callback;
-				Results			=	new List<RaycastResult>(10);
+				this.ray			=	ray;
+				this.callback		=	callback;
+				this.maxDistance	=	maxDistance;
+				this.options		=	options;
 			}
 
-			public void ExecuteCallback()
+			public void Execute( Space space )
 			{
-				foreach ( var result in Results )
+				results				=	new List<RayCastResult>(10);
+
+				var ray = MathConverter.Convert( this.ray );
+				space.RayCast( ray, maxDistance, results );
+
+				if (options.HasFlag( RaycastOptions.SortResults ))
 				{
-					if (Callback(result.Entity, result.Location, result.Normal, result.Distance))
-					{
-						return;
-					}
+					results.Sort( RayCastResultComparison );
 				}
 			}
+
+			public void Callback()
+			{
+				callback.Begin( results.Count );
+
+				for ( int idx = 0; idx < results.Count; idx++ )
+				{											
+					var result		=	results[idx];
+					var entity1		=	(result.HitObject as ConvexCollidable)?.Entity?.Tag as Entity;
+					var entity2		=	(result.HitObject as StaticCollidable)?.Tag as Entity;
+					var isStatic	=	(result.HitObject is StaticCollidable);
+					var location	=	MathConverter.Convert( result.HitData.Location );
+					var normal		=	MathConverter.Convert( result.HitData.Normal ).Normalized();
+					
+					if (!callback.RayHit(idx, entity1 ?? entity2, location, normal, isStatic))
+					{
+						continue;
+					}
+				}
+
+				callback.End();
+			}
 		}
 
 
-		public void Raycast ( Vector3 from, Vector3 to, RaycastCallback callback )
+		public void Raycast( Ray ray, float maxDistance, IRaycastCallback callback, RaycastOptions options )
 		{
-			raycastRequests.Enqueue( new DeferredRaycast(from, to, callback) );
+			queryRequests.Enqueue( new DeferredRaycast(ray, maxDistance, callback, options) );
 		}
 
 
 		
-		void ExecuteDeferredRaycasts()
+		void ExecuteSpatialQueries()
 		{
-			foreach ( var raycast in raycastRequests )
+			ISpaceQuery query;
+
+			while ( queryRequests.TryDequeue( out query ) )
 			{
+				query.Execute( Space );
+				queryResponces.Enqueue( query );
+			}
+		}
+
+
+		void ExecuteQueryCallbacks()
+		{
+			ISpaceQuery query;
+
+			while ( queryResponces.TryDequeue( out query ) )
+			{
+				query.Callback();
 			}
 		}
 

@@ -141,6 +141,8 @@ namespace IronStar.ECSPhysics
 				UpdateTransforms(gs);
 
 				UpdateTouchEvents(gs);
+
+				ExecuteQueryCallbacks();
 			}
 		}
 
@@ -169,6 +171,8 @@ namespace IronStar.ECSPhysics
 					while (creationQueue.TryDequeue(out spaceObj)) Space.Add(spaceObj);
 
 					while (actionQueue.TryDequeue(out action)) action?.Invoke();
+
+					ExecuteSpatialQueries();
 
 					ApplyDeferredImpulses();
 

@@ -48,6 +48,17 @@ namespace Fusion.Core.Extensions
 		}
 
 
+		public static void Delay(int msec)
+		{
+			var sw = new Stopwatch();
+			sw.Start();
+
+			while (sw.ElapsedMilliseconds<msec)
+			{
+			}
+		}
+
+
 		public static T NextEnum<T>(this T src) where T : struct
 		{
 			if (!typeof(T).IsEnum) throw new ArgumentException(String.Format("Argument {0} is not an Enum", typeof(T).FullName));

@@ -11,6 +11,7 @@ using Fusion;
 using System.Runtime.Remoting;
 using Fusion.Core.Content;
 using Fusion.Engine.Tools;
+using System.Collections.Concurrent;
 
 namespace IronStar.ECS
 {
@@ -22,14 +23,14 @@ namespace IronStar.ECS
 		public readonly Game Game;
 		public readonly ContentManager Content;
 
-		readonly EntityCollection       entities;
-		readonly SystemCollection       systems;
-		readonly ComponentCollection    components;
+		readonly EntityCollection		entities;
+		readonly SystemCollection		systems;
+		readonly ComponentCollection	components;
 
-		readonly Bag<Entity>        spawned;
-		readonly HashSet<Entity>    killed;
-
-		readonly HashSet<Entity>    refreshed;
+		readonly ConcurrentQueue<Entity>	spawned;
+		readonly ConcurrentQueue<Entity>	killed;
+		readonly ConcurrentQueue<Entity>	refreshed;
+		readonly ConcurrentQueue<Action>	invokeQueue;
 
 		readonly GameServiceContainer services;
 		public GameServiceContainer Services { get { return services; } }
@@ -56,9 +57,10 @@ namespace IronStar.ECS
 			systems		=	new SystemCollection(this);
 			components	=	new ComponentCollection();
 
-			spawned		=	new Bag<Entity>();
-			killed		=	new HashSet<Entity>();
-			refreshed	=	new HashSet<Entity>();
+			spawned		=	new ConcurrentQueue<Entity>();
+			killed		=	new ConcurrentQueue<Entity>();
+			refreshed	=	new ConcurrentQueue<Entity>();
+			invokeQueue	=	new ConcurrentQueue<Action>();
 
 			services	=	new GameServiceContainer();
 
@@ -124,27 +126,35 @@ namespace IronStar.ECS
 
 		void RefreshEntities()
 		{
+			Entity e;
+			Action a;
+
+			while (invokeQueue.TryDequeue(out a))
+			{
+				a.Invoke();
+			}
+
 			//	spawn entities :
-			foreach ( var e in spawned ) 
+			while (spawned.TryDequeue(out e))
 			{
 				entities.Add( e.ID, e );
 				Refresh( e );
 			}
-			spawned.Clear();
 
 			//	refresh component and system bindings :
-			foreach ( var e in refreshed )
+			while (refreshed.TryDequeue(out e))
 			{
 				foreach ( var system in systems )
 				{
 					system.Changed(e);
 				}
 			}
-			refreshed.Clear();
 
 			//	kill entities marked to kill :
-			foreach ( var id in killed ) { KillInternal( id ); }
-			killed.Clear();
+			while (killed.TryDequeue(out e))
+			{
+				KillInternal(e);
+			}
 		}
 
 		
@@ -206,6 +216,14 @@ namespace IronStar.ECS
 		 *	Actions :
 		-----------------------------------------------------------------------------------------------*/
 
+		public void Invoke ( Action action )
+		{
+			if (action!=null)
+			{
+				invokeQueue.Enqueue( action );
+			}
+		}
+
 		public bool Execute( string actionName, Entity target )
 		{
 			if (string.IsNullOrWhiteSpace(actionName)) 
@@ -240,7 +258,7 @@ namespace IronStar.ECS
 		{
 			var entity = new Entity( this, IdGenerator.Next() );
 
-			spawned.Add( entity );
+			spawned.Enqueue( entity );
 
 			return entity;
 		}
@@ -282,7 +300,7 @@ namespace IronStar.ECS
 
 		public void Kill( Entity e )
 		{
-			if (e!=null) killed.Add( e );
+			if (e!=null) killed.Enqueue( e );
 		}
 
 
@@ -297,8 +315,10 @@ namespace IronStar.ECS
 				}
 				else
 				{
-					RemoveAllEntityComponent( entity );
-					spawned.Remove( entity );
+					if (spawned.Contains(entity))
+					{
+						Log.Warning("Spawn queue contains killed entity!");
+					}
 				}
 			}
 		}
@@ -324,7 +344,7 @@ namespace IronStar.ECS
 
 		void Refresh( Entity e )
 		{
-			refreshed.Add( e );
+			refreshed.Enqueue( e );
 		}
 
 

@@ -20,7 +20,6 @@ namespace IronStar.Gameplay.Components
 		public float	Velocity;
 		public float	Radius;
 		public float	LifeTime;
-		public int		Steps = 0;
 
 		public ProjectileComponent()
 		{

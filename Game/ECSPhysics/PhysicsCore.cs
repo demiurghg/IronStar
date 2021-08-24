@@ -192,9 +192,11 @@ namespace IronStar.ECSPhysics
 							Log.Warning(e.Message);
 						}
 					}
+
+					//Misc.Delay(50);
 				}
 
-				//Thread.Sleep(100); //Explicitly give other threads (if any) a chance to execute
+				Thread.Sleep(0);
 			}
 		}
 

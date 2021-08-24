@@ -11,13 +11,15 @@ using Fusion.Core.Mathematics;
 using Fusion;
 using Fusion.Core.Extensions;
 using IronStar.SFX;
+using BEPUphysics.BroadPhaseEntries.MobileCollidables;
 
 namespace IronStar.Gameplay.Systems
 {
-	class ProjectileSystem : StatelessSystem<KinematicState,ProjectileComponent>
+	class ProjectileSystem : ProcessingSystem<ProjectileController,KinematicState,ProjectileComponent>
 	{
 		readonly PhysicsCore	physics;
 		readonly Random			rand;
+		float lastDeltaTime = 0;
 
 		public ProjectileSystem( PhysicsCore physics )
 		{
@@ -25,13 +27,59 @@ namespace IronStar.Gameplay.Systems
 			this.physics	=	physics;
 		}
 
-		public override void Add( GameState gs, Entity e ) {}
 
-		protected override void Process( Entity entity, GameTime gameTime, KinematicState transform, ProjectileComponent projectile )
+
+		protected override ProjectileController Create( Entity entity, KinematicState transform, ProjectileComponent projectile )
+		{
+			var position	=	MathConverter.Convert( transform.Position );
+			var direction	=	MathConverter.Convert( transform.TransformMatrix.Forward );
+			var velocity	=	projectile.Velocity;
+
+			var projectileController = new ProjectileController( position, direction, velocity, lastDeltaTime, (bpe) => PhysicsCore.SkipEntityFilter( bpe, projectile.Sender ) );
+			projectileController.CollisionDetected+=ProjectileController_CollisionDetected;
+			projectileController.Tag = entity;
+
+			physics.Add( projectileController );
+
+			return projectileController;
+		}
+
+		private void ProjectileController_CollisionDetected( object controller, ProjectileController.CollisionDetectedEventArgs e )
+		{
+			var entity		=	(controller as ProjectileController).Tag as Entity;
+			var location	=	MathConverter.Convert( e.Location );
+			var normal		=	MathConverter.Convert( e.Normal );		
+			var hitEntity	=	(e.HitObject as ConvexCollidable)?.Entity.Tag as Entity;
+			entity.gs.Invoke( () => Explode( entity, hitEntity, location, normal ) );
+		}
+
+		protected override void Destroy( Entity entity, ProjectileController projectileController )
+		{
+			physics.Remove( projectileController );
+		}
+
+		protected override void Process( Entity entity, GameTime gameTime, ProjectileController controller, KinematicState transform, ProjectileComponent projectile )
+		{
+			lastDeltaTime = gameTime.ElapsedSec;
+
+			transform.Position			=	MathConverter.Convert( controller.Position );
+			transform.LinearVelocity	=	MathConverter.Convert( controller.LinearVelocity );
+
+			projectile.LifeTime	-= gameTime.ElapsedSec;
+
+			if (projectile.LifeTime<0)
+			{
+				Explode( entity, null, transform.Position, Vector3.Up );
+			}
+		}
+
+
+		/*protected override void Process( Entity entity, GameTime gameTime, KinematicState transform, ProjectileComponent projectile )
 		{
 			var gs = entity.gs;
 			UpdateProjectile( gs, entity, transform, projectile, gameTime.ElapsedSec );
 		}
+
 
 
 		public void UpdateProjectile ( GameState gs, Entity entity, KinematicState transform, ProjectileComponent projectile, float elapsedTime )
@@ -76,14 +124,39 @@ namespace IronStar.Gameplay.Systems
 				transform.Position			=	target;
 				transform.LinearVelocity	=	projectile.Velocity * dir;
 			}
-		}
+		} */
 
 		
-		public void Explode ( Entity attacker, Entity ignore, Vector3 hitPoint, Vector3 hitNormal, ProjectileComponent projectile )
+		public void Explode ( Entity projectileEntity, Entity hitEntity, Vector3 hitPoint, Vector3 hitNormal )
 		{
+			Log.Message("EXPLOSION : {0} {1} {2}", projectileEntity, hitEntity, hitPoint );
+			
+			var gs			=	projectileEntity.gs;
+			var projectile	=	projectileEntity.GetComponent<ProjectileComponent>();
+
+			//	kill entity
+			gs.Kill( projectileEntity );
+
+			var attacker=	projectile.Sender;
+			var ignore	=	projectile.Sender;
 			var radius	=	projectile.Radius;
 			var damage	=	projectile.Damage;
+			var dir		=	projectile.Direction;
 
+			//	play FX on explostion 
+			//	and add damage on directly hit target:
+			if (hitEntity!=null)
+			{
+				physics.ApplyImpulse( hitEntity, hitPoint, dir * projectile.Impulse );
+				HealthSystem.ApplyDamage( hitEntity, projectile.Damage, projectile.Sender );
+				FXPlayback.AttachFX( gs, hitEntity, projectile.ExplosionFX, 0, hitPoint, hitNormal );
+			}
+			else
+			{
+				FXPlayback.SpawnFX( gs, projectile.ExplosionFX, 0, hitPoint, hitNormal );
+			}
+
+			//	make splash damage :
 			if (radius>0) 
 			{
 				var list = physics.WeaponOverlap( hitPoint, radius, ignore );

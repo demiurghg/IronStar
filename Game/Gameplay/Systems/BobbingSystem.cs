@@ -78,7 +78,6 @@ namespace IronStar.Gameplay
 		protected override void Process( Entity entity, GameTime gameTime, PlayerComponent pc, UserCommandComponent uc )
 		{
 			var	health	=	entity.GetComponent<HealthComponent>();
-			var impulse	=	entity.GetComponent<ImpulseComponent>();
 			var step	=	entity.GetComponent<StepComponent>();
 
 			if (step!=null)

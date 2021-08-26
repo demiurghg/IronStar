@@ -35,23 +35,8 @@ namespace IronStar.ECSPhysics
 		SortResults,
 	}
 
-	interface ISpaceQuery
-	{
-		void Execute( Space space );
-		void Callback();
-	}
-
-	public interface IRaycastCallback
-	{
-		void Begin( int count );
-		bool RayHit( int index, Entity entity, Vector3 location, Vector3 normal, bool isStatic );
-		void End();
-	}
-
 	public partial class PhysicsCore
 	{
-		public delegate bool RaycastCallback<T>( int index, Entity entity, T tag, Ray ray, Vector3 location, Vector3 normal, bool isStatic );
-
 		static int RayCastResultComparison ( RayCastResult a, RayCastResult b )
 		{
 			if ( MathUtil.NearEqual( a.HitData.T, b.HitData.T ) ) return 0;
@@ -62,65 +47,11 @@ namespace IronStar.ECSPhysics
 		readonly ConcurrentQueue<ISpaceQuery> queryRequests = new ConcurrentQueue<ISpaceQuery>();
 		readonly ConcurrentQueue<ISpaceQuery> queryResponces = new ConcurrentQueue<ISpaceQuery>();
 
-		class DeferredRaycast : ISpaceQuery
+
+		public void Query( ISpaceQuery query )
 		{
-			readonly Ray ray;
-			readonly float maxDistance;
-			readonly IRaycastCallback callback;
-			readonly RaycastOptions options;  
-
-			List<RayCastResult> results;
-			
-			public DeferredRaycast ( Ray ray, float maxDistance, IRaycastCallback callback, RaycastOptions options )
-			{
-				this.ray			=	ray;
-				this.callback		=	callback;
-				this.maxDistance	=	maxDistance;
-				this.options		=	options;
-			}
-
-			public void Execute( Space space )
-			{
-				results				=	new List<RayCastResult>(10);
-
-				var ray = MathConverter.Convert( this.ray );
-				space.RayCast( ray, maxDistance, results );
-
-				if (options.HasFlag( RaycastOptions.SortResults ))
-				{
-					results.Sort( RayCastResultComparison );
-				}
-			}
-
-			public void Callback()
-			{
-				callback.Begin( results.Count );
-
-				for ( int idx = 0; idx < results.Count; idx++ )
-				{											
-					var result		=	results[idx];
-					var entity1		=	(result.HitObject as ConvexCollidable)?.Entity?.Tag as Entity;
-					var entity2		=	(result.HitObject as StaticCollidable)?.Tag as Entity;
-					var isStatic	=	(result.HitObject is StaticCollidable);
-					var location	=	MathConverter.Convert( result.HitData.Location );
-					var normal		=	MathConverter.Convert( result.HitData.Normal ).Normalized();
-					
-					if (!callback.RayHit(idx, entity1 ?? entity2, location, normal, isStatic))
-					{
-						continue;
-					}
-				}
-
-				callback.End();
-			}
+			queryRequests.Enqueue( query );
 		}
-
-
-		public void Raycast( Ray ray, float maxDistance, IRaycastCallback callback, RaycastOptions options )
-		{
-			queryRequests.Enqueue( new DeferredRaycast(ray, maxDistance, callback, options) );
-		}
-
 
 		
 		void ExecuteSpatialQueries()
@@ -374,7 +305,7 @@ namespace IronStar.ECSPhysics
 			{
 				BU.BoundingSphere	sphere		= new BU.BoundingSphere(MathConverter.Convert(origin), radius);
 				SphereShape			sphereShape = new SphereShape(radius);
-				BU.Vector3			zeroSweep	= BU.Vector3.Zero;
+				BU.Vector3			zeroSweep	= BEPUVector3.Zero;
 				BU.RigidTransform	rigidXForm	= new BU.RigidTransform( MathConverter.Convert(origin) );	
 
 				var candidates = PhysicsResources.GetBroadPhaseEntryList();

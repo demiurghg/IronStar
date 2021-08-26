@@ -412,7 +412,6 @@ namespace IronStar.ECS
 
 			entity.ComponentMapping = 0;
 			components.RemoveAllComponents( entity.ID, c => {} );
-			
 		}
 
 		

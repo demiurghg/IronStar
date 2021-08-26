@@ -138,13 +138,16 @@
     <Compile Include="ECSGraphics\SpotLightSystem.cs" />
     <Compile Include="ECSGraphics\OmniLightSystem.cs" />
     <Compile Include="ECSGraphics\RenderModelInstance.cs" />
+    <Compile Include="ECSPhysics\ISpaceQuery.cs" />
     <Compile Include="ECSPhysics\MaterialComponent.cs" />
     <Compile Include="ECSPhysics\CharacterControllerSystem.cs" />
     <Compile Include="ECSPhysics\CollisionGroup.cs" />
     <Compile Include="ECSPhysics\DynamicCollisionSystem.cs" />
     <Compile Include="ECSPhysics\ITransformFeeder.cs" />
     <Compile Include="ECSPhysics\PhysicsConfig.cs" />
-    <Compile Include="ECSPhysics\PhysicsCore.Casting.cs" />
+    <Compile Include="ECSPhysics\PhysicsCore.Overlap.cs" />
+    <Compile Include="ECSPhysics\PhysicsCore.Raycast.cs" />
+    <Compile Include="ECSPhysics\PhysicsCore.Queries.cs" />
     <Compile Include="ECSPhysics\PhysicsCore.cs" />
     <Compile Include="ECSPhysics\ProjectileController.cs" />
     <Compile Include="ECSPhysics\StaticCollisionSystem.cs" />
@@ -242,7 +245,6 @@
     <Compile Include="IronStar.Activator.cs" />
     <Compile Include="Mapping\MapLightProbeBox.cs" />
     <Compile Include="ECSPhysics\CharacterController.cs" />
-    <Compile Include="ECSPhysics\IMotionState.cs" />
     <Compile Include="ECSPhysics\DynamicBox.cs" />
     <Compile Include="ECSPhysics\GravityComponent.cs" />
     <Compile Include="ECSPhysics\StaticCollisionComponent.cs" />

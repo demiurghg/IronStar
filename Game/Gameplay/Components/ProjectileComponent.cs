@@ -14,7 +14,6 @@ namespace IronStar.Gameplay.Components
 		public Entity	Sender;
 		public int		Damage;
 		public float	Impulse;
-		public Vector3	Direction;
 
 		public string	ExplosionFX;
 		public float	Velocity;

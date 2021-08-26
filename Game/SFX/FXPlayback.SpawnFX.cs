@@ -16,6 +16,7 @@ using Fusion.Engine.Graphics;
 using Fusion.Engine.Audio;
 using IronStar.ECS;
 using IronStar.Gameplay.Systems;
+using IronStar.ECSPhysics;
 
 namespace IronStar.SFX {
 	public partial class FXPlayback
@@ -80,7 +81,10 @@ namespace IronStar.SFX {
 
 			if (target!=null)
 			{
-				AttachmentSystem.Attach( e, target );
+				if (target.GetComponent<StaticCollisionComponent>()==null)
+				{
+					AttachmentSystem.Attach( e, target );
+				}
 			}
 
 			return e;

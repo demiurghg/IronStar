@@ -32,6 +32,12 @@ namespace IronStar.Gameplay.Systems
 				return false;
 			}
 
+			if (entityToAttach==null)
+			{
+				Log.Warning("Attaching entity is null");
+				return false;
+			}
+
 			var attachTransform	=	entityToAttach?.GetComponent<KinematicState>();
 			var targetTransform	=	targetEntity?.GetComponent<KinematicState>();
 

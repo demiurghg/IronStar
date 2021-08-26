@@ -35,6 +35,15 @@ namespace IronStar.ECS
 			this.ID			=	id;
 		}
 
+		
+		/// <summary>
+		/// Kills this entity
+		/// </summary>
+		public void Kill()
+		{
+			gs.Kill(this);
+		}
+
 		/// <summary>
 		/// Adds component to given entity
 		/// </summary>

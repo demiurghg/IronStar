@@ -53,9 +53,9 @@ namespace IronStar.ECSFactories
 	{
 		public override void Execute( GameState gs, Entity target )
 		{
-			float explosionTime = MathUtil.Random.NextFloat(0.05f, 0.1f);
+			float explosionTime = MathUtil.Random.NextFloat(0.3f, 0.7f);
 			target.AddComponent( new FXComponent("boxBurning", true) );
-			target.AddComponent( new ProjectileComponent(0, 7.5f, explosionTime, "boxExplosion", 100, 100) );
+			target.AddComponent( new ProjectileComponent(0, 12, explosionTime, "boxExplosion", 100, 300) );
 		}
 	}
 
@@ -64,13 +64,13 @@ namespace IronStar.ECSFactories
 	public class BoxExplosiveFactory : BoxFactory
 	{
 		public BoxExplosiveFactory():
-		base( 3, 2.25f, 2.25f, 10, 3, "scenes\\boxes\\box_low.fbx" ) {}
+		base( 3, 2.25f, 2.25f, 5, 3, "scenes\\boxes\\box_low.fbx" ) {}
 
 		public override Entity Spawn( GameState gs )
 		{
 			var e = base.Spawn( gs );
 
-			//e.AddComponent( new HealthComponent(2, 0, "EXPLODE_BOX") );
+			e.AddComponent( new HealthComponent(2, 0, "EXPLODE_BOX") );
 			e.AddComponent( new MaterialComponent( MaterialType.Metal ) );
 
 			return e;

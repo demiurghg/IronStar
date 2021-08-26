@@ -12,6 +12,7 @@ using Fusion.Core.Mathematics;
 using Fusion.Core.Extensions;
 using IronStar.AI;
 using System.Runtime.CompilerServices;
+using IronStar.SFX;
 
 namespace IronStar.Gameplay.Systems
 {
@@ -27,21 +28,29 @@ namespace IronStar.Gameplay.Systems
 		public void Remove( GameState gs, Entity e ) {}
 		public Aspect GetAspect() { return Aspect.Empty; }
 		public readonly PhysicsCore physics;
+		public readonly FXPlayback fxPlayback;
+		public readonly GameState gs;
 
 
 		Aspect weaponAspect			=	new Aspect().Include<WeaponComponent>();
 		Aspect armedEntityAspect	=	new Aspect().Include<InventoryComponent,UserCommandComponent,CharacterController>()
 													.Include<KinematicState>();
 
+		GameTime actualGameTime;
 
-		public WeaponSystem( PhysicsCore physics )
+
+		public WeaponSystem( GameState gs, PhysicsCore physics, FXPlayback fxPlayback )
 		{
+			this.gs			=	gs;
 			this.physics	=	physics;
+			this.fxPlayback	=	fxPlayback;
 		}
 
 
 		public void Update( GameState gs, GameTime gameTime )
 		{
+			actualGameTime = gameTime;
+
 			int msecs = gameTime.Milliseconds;
 			for (int i=0; i<msecs; i++)
 			{
@@ -136,7 +145,6 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-
 		void FadeSpread( GameTime gameTime, WeaponComponent weapon )
 		{
 			if (weapon.SpreadMode==SpreadMode.Variable)
@@ -178,7 +186,7 @@ namespace IronStar.Gameplay.Systems
 				case WeaponState.Warmup:	
 					if (timeout) 
 					{
-						Fire(gameTime, weapon, povTransform, attacker);
+						Fire(actualGameTime, weapon, povTransform, attacker);
 
 						weapon.Counter++;
 						
@@ -323,13 +331,10 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="attacker"></param>
-		/// <param name="shooter"></param>
-		/// <param name="world"></param>
-		[MethodImpl(MethodImplOptions.NoOptimization)]
+		/*-----------------------------------------------------------------------------------------
+		 *	Beam weapon :
+		-----------------------------------------------------------------------------------------*/
+
 		void FireBeam ( GameState gs, WeaponComponent weapon, Matrix povTransform, Entity attacker )
 		{
 			var p	=	povTransform.TranslationVector;
@@ -337,35 +342,7 @@ namespace IronStar.Gameplay.Systems
 			var d	=	-GetFireDirection( q, weapon.Spread );
 			var ray	=	new Ray(p,d);
 
-			Vector3 hitNormal;
-			Vector3 hitPoint;
-			Entity  hitEntity;
-
 			physics.Raycast( ray, BEAM_RANGE, new BeamRaycastCallback( gs, ray, attacker, weapon ), RaycastOptions.SortResults );
-
-			var r = physics.RayCastAgainstAll( p, p + d * BEAM_RANGE, out hitNormal, out hitPoint, out hitEntity, attacker );
-
-			/*if (r) 
-			{
-				physics.ApplyImpulse( hitEntity, hitPoint, d * weapon.Impulse );
-				HealthSystem.ApplyDamage( hitEntity, weapon.Damage, attacker );
-
-				var material = MaterialComponent.GetMaterial( hitEntity );
-
-				var hitFx = GetHitFXName( weapon.BeamHitFX, material ); 
-				SFX.FXPlayback.AttachFX( gs, hitEntity, hitFx, 0, hitPoint, hitNormal );
-			} 
-			else 
-			{
-				hitPoint = p + d * BEAM_RANGE;
-			}
-
-			//	run trail FX:
-			var beamOrigin	 =	p;
-			var beamVelocity =	hitPoint - p;
-			var basis		=	MathUtil.ComputeAimedBasis( d );
-
-			SFX.FXPlayback.SpawnFX(	gs, weapon.BeamTrailFX, 0, beamOrigin, beamVelocity, Quaternion.RotationMatrix(basis) );  */
 		}
 
 
@@ -397,15 +374,9 @@ namespace IronStar.Gameplay.Systems
 				hitSomething = true;
 				hitLocation	 = location;
 
-				var physics = gs.GetService<PhysicsCore>();
+				var ws = gs.GetService<WeaponSystem>();
 
-				physics.ApplyImpulse( entity, location, ray.Direction * weapon.Impulse );
-				HealthSystem.ApplyDamage( entity, weapon.Damage, attacker );
-
-				var material = MaterialComponent.GetMaterial( entity );
-
-				var hitFx = GetHitFXName( weapon.BeamHitFX, material ); 
-				SFX.FXPlayback.AttachFX( gs, entity, hitFx, 0, location, normal );
+				ws.InflictDamage( attacker, entity, weapon.Damage, weapon.Impulse, location, ray.Direction, normal, weapon.BeamHitFX );
 
 				return true;
 			}
@@ -421,6 +392,205 @@ namespace IronStar.Gameplay.Systems
 			}
 		}
 
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Projectile weapon :
+		-----------------------------------------------------------------------------------------*/
+
+
+		/// <summary>
+		/// Fires projectile
+		/// </summary>
+		/// <param name="attacker"></param>
+		/// <param name="world"></param>
+		/// <param name="origin"></param>
+		[MethodImpl(MethodImplOptions.NoOptimization)]
+		void FireProjectile ( GameState gs, GameTime gameTime, WeaponComponent weapon, Matrix povTransform, Entity attacker )
+		{
+			var dt	=	gameTime.ElapsedSec;
+			var t	=	attacker.GetComponent<KinematicState>();
+			var p	=	povTransform.TranslationVector;
+			var q	=	Quaternion.RotationMatrix( povTransform );
+			var d	=	-GetFireDirection( q, weapon.MaxSpread );
+
+			//	create projectile without transform :
+			var projectileEntity	=	gs.Spawn( weapon.ProjectileClass );
+			var projectileComponent	=	projectileEntity.GetComponent<ProjectileComponent>();
+				projectileComponent.Sender	=	attacker;
+				projectileComponent.Impulse	=	weapon.Impulse;
+				projectileComponent.Damage	=	weapon.Damage;
+
+			//	estimate projectile position :
+			var projectileVelocity	=	projectileComponent.Velocity;
+			var projectileDistance	=	projectileVelocity * gameTime.ElapsedSec * 2; // magic number??
+
+			var projectileRay		=	new Ray( p, d );
+
+			//	create estimated projectile transform to add it if no collision is found :
+			var kinematicState		=	new KinematicState( p + d * projectileDistance, q, 1 );
+
+			//	run raycast query to find instant porjectile position OR run projectile simulation :
+			var raycastCallback		=	new ProjectileRaycastCallback( gs, projectileRay, attacker, projectileEntity, kinematicState );
+
+			physics.Raycast( projectileRay, projectileDistance, raycastCallback, RaycastOptions.SortResults );
+		}
+
+
+		class ProjectileRaycastCallback : IRaycastCallback
+		{
+			readonly Ray ray;
+			readonly Entity attacker;
+			readonly Entity projectile;
+			readonly ProjectileComponent projectileComponent;
+			readonly KinematicState kinematicState;
+			readonly GameState gs;
+			readonly WeaponSystem ws;
+			bool hitSomething = false;
+
+			[MethodImpl(MethodImplOptions.NoOptimization)]
+			public ProjectileRaycastCallback( GameState gs, Ray ray, Entity attacker, Entity projectile, KinematicState ks )
+			{
+				this.ray		=	ray;
+				this.ws			=	gs.GetService<WeaponSystem>();
+				this.attacker	=	attacker;
+				this.projectile	=	projectile;
+				this.gs			=	gs;
+
+				this.kinematicState	=	ks;
+				projectileComponent	=	projectile.GetComponent<ProjectileComponent>();
+			}
+
+			public void Begin( int count ) {}
+
+			[MethodImpl(MethodImplOptions.NoOptimization)]
+			public bool RayHit( int index, Entity entity, Vector3 location, Vector3 normal, bool isStatic )
+			{
+				if (entity==attacker) return false;
+
+				//	inflict damage to instantly hit by projectile entity :
+				ws.InflictDamage( attacker, entity, projectileComponent.Damage, projectileComponent.Impulse, location, ray.Direction, normal, projectileComponent.ExplosionFX );
+				ws.Explode( attacker, entity, projectileComponent.Damage, projectileComponent.Impulse, projectileComponent.Radius, location, normal, null );
+
+				hitSomething = true;
+
+				//	kill projectile, 
+				//	we dont need it any more :
+				projectile.Kill();
+
+				return true;
+			}
+
+			[MethodImpl(MethodImplOptions.NoOptimization)]
+			public void End() 
+			{
+				if (!hitSomething)
+				{
+					//	nothing hit, add transform and continue projectile simulation :
+					projectile.AddComponent( kinematicState );
+				}
+			}
+		}
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Damage and explosions :
+		-----------------------------------------------------------------------------------------*/
+
+		public void InflictDamage( Entity attacker, Entity target, int damage, float impulse, Vector3 location, Vector3 direction, Vector3 normal, string fx )
+		{
+			if (target!=null)
+			{
+				direction.Normalize();
+				physics.ApplyImpulse( target, location, direction * impulse );
+				HealthSystem.ApplyDamage( target, damage, attacker );
+
+				if (fx!=null)
+				{
+					var material	=	MaterialComponent.GetMaterial( target );
+					var hitFx		=	GetHitFXName( fx, material ); 
+					SFX.FXPlayback.AttachFX( gs, target, hitFx, 0, location, normal );
+				}
+			}
+			else
+			{
+				if (fx!=null)
+				{
+					FXPlayback.SpawnFX( gs, fx, 0, location, normal );
+				}
+			}
+		}
+
+		
+		public void Explode ( Entity attacker, Entity target, int damage, float impulse, float radius, Vector3 location, Vector3 normal, string fx )
+		{
+			//	make splash damage :
+			if (radius>0) 
+			{
+				var overlapCallback = new ExplodeOverlapCallback( this, attacker, target, location, damage, impulse, radius );
+				physics.Overlap( location, radius, overlapCallback );
+			}
+
+			if (fx!=null)
+			{
+				FXPlayback.SpawnFX( gs, fx, 0, location, normal );
+			}
+		}
+
+
+		class ExplodeOverlapCallback : IRaycastCallback
+		{
+			Vector3	origin;
+			int		damage;
+			float	impulse;
+			float	radius;
+			Entity	attacker;
+			Entity	target;
+			WeaponSystem ws;
+
+			public ExplodeOverlapCallback( WeaponSystem ws, Entity attacker, Entity target, Vector3 origin, int damage, float impulse, float radius )
+			{
+				this.ws			=	ws;
+				this.attacker	=	attacker;
+				this.target		=	target	;
+				this.origin		=	origin	;
+				this.damage		=	damage	;
+				this.impulse	=	impulse	;
+				this.radius		=	radius	;
+			}
+
+			public void Begin( int count ) {}
+
+			public void End() {}
+			
+			public bool RayHit( int index, Entity entity, Vector3 location, Vector3 normal, bool isStatic )
+			{
+				if (entity!=null && entity!=target)
+				{
+					//	overlap test always gives result on the surface of the sphere...
+					var transform	=	entity.GetComponent<KinematicState>();
+
+					if (transform!=null)
+					{
+						location	=	transform.Position;
+						var delta	=	location - origin;
+						var dist	=	delta.Length() + 0.00001f;
+						var ndir	=	delta / dist;
+						var factor	=	MathUtil.Clamp((radius - dist) / radius, 0, 1);
+						var imp		=	factor * impulse;
+						var loc		=	location + MathUtil.Random.UniformRadialDistribution(0.3f, 0.3f);
+						var dmg		=	(short)( factor * damage );
+
+						ws.InflictDamage( attacker, entity, dmg, imp, loc, ndir, -ndir, null );
+					}
+				}
+
+				return false;
+			}
+		}
+
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Weapon utils :
+		-----------------------------------------------------------------------------------------*/
 
 		static string GetHitFXName( string fxName, MaterialType surface )
 		{
@@ -451,37 +621,6 @@ namespace IronStar.Gameplay.Systems
 				return fxName;
 			}
 		}
-
-
-
-		/// <summary>
-		/// Fires projectile
-		/// </summary>
-		/// <param name="attacker"></param>
-		/// <param name="world"></param>
-		/// <param name="origin"></param>
-		void FireProjectile ( GameState gs, GameTime gameTime, WeaponComponent weapon, Matrix povTransform, Entity attacker )
-		{
-			var t = attacker.GetComponent<KinematicState>();
-			var p = povTransform.TranslationVector + t.LinearVelocity * gameTime.ElapsedSec;
-			var q = Quaternion.RotationMatrix( povTransform );
-			var d = -GetFireDirection( q, weapon.MaxSpread );
-
-			var e = gs.Spawn( weapon.ProjectileClass );
-
-			var projectile	=	e.GetComponent<ProjectileComponent>();
-			var transform	=	e.GetComponent<KinematicState>();
-
-			projectile.Damage		=	weapon.Damage;
-			projectile.Impulse		=	weapon.Impulse;
-			projectile.Sender		=	attacker;
-			projectile.Direction	=	d;
-
-			transform.Position	=	povTransform.TranslationVector;
-			transform.Scaling	=	Vector3.One;
-			transform.Rotation	=	q;
-		}
-
 
 
 		Vector3 GetFireDirection ( Quaternion rotation, float spreadAngle )

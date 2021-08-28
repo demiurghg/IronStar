@@ -36,7 +36,7 @@ namespace IronStar.Gameplay.Systems
 			var direction	=	MathConverter.Convert( transform.TransformMatrix.Forward );
 			var velocity	=	projectile.Velocity;
 
-			var projectileController = new ProjectileController( position, direction, velocity, lastDeltaTime, (bpe) => PhysicsCore.SkipEntityFilter( bpe, projectile.Sender ) );
+			var projectileController = new ProjectileController( position, direction, velocity, (bpe) => PhysicsCore.SkipEntityFilter( bpe, projectile.Sender ) );
 			projectileController.CollisionDetected+=ProjectileController_CollisionDetected;
 			projectileController.Tag = entity;
 

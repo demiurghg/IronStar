@@ -568,6 +568,7 @@ namespace IronStar.Gameplay.Systems
 					//	overlap test always gives result on the surface of the sphere...
 					var transform	=	entity.GetComponent<KinematicState>();
 
+					//	sometimes transform is null
 					if (transform!=null)
 					{
 						location	=	transform.Position;

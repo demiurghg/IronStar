@@ -20,19 +20,17 @@ namespace IronStar.ECSPhysics
 
 		Vector3 position;
 		Vector3 direction;
-		readonly float lag;
 		readonly float velocity;
 		readonly Func<BroadPhaseEntry,bool> filter;
 		bool objectHit = false;
 
 		
-		public ProjectileController ( Vector3 position, Vector3 direction, float velocity, float lag, Func<BroadPhaseEntry, bool> filter )
+		public ProjectileController ( Vector3 position, Vector3 direction, float velocity, Func<BroadPhaseEntry, bool> filter )
 		{
 			this.IsUpdatedSequentially	=	false;
 			this.position	=	position;
 			this.direction	=	direction;
 			this.direction.Normalize();
-			this.lag		=	lag;
 			this.velocity	=	velocity;
 			this.filter		=	filter;
 		}
@@ -40,7 +38,7 @@ namespace IronStar.ECSPhysics
 		
 		void IBeforeSolverUpdateable.Update( float dt )
 		{
-			float maxDistance = updateCounter==0 ? (dt + lag) * velocity : dt * velocity;
+			float maxDistance = dt * velocity;
 			RayCastResult result;
 			
 			if (!objectHit)

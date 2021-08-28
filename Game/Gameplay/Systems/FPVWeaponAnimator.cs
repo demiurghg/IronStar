@@ -124,7 +124,7 @@ namespace IronStar.Gameplay.Systems
 
 			if (fireEvent) 
 			{
-				Log.Message("{0}", weaponState );
+				//Log.Message("{0}", weaponState );
 
 				//	hide inactive weapon :
 				model.Visible = weaponState!=WeaponState.Inactive;
@@ -186,7 +186,7 @@ namespace IronStar.Gameplay.Systems
 			//	landing animation :
 			if (steps.Landed) 
 			{
-				Log.Message("{0}", oldVelocity);
+				//Log.Message("{0}", oldVelocity);
 
 				float w = MathUtil.Clamp( oldVelocity / 30.0f, 0, 0.5f );
 
@@ -239,7 +239,8 @@ namespace IronStar.Gameplay.Systems
 		{
 			var track	=	shakeTracks.FirstOrDefault( tr => !tr.IsPlaying );
 
-			if (track!=null) {
+			if (track!=null) 
+			{
 				track.Weight = weight;
 				track.Sequence( name, SequenceMode.Immediate );
 			}

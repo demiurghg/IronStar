@@ -129,11 +129,15 @@ namespace IronStar.ECSPhysics
 			var moveDir		=	new BEPUutilities.Vector2( move.X, -move.Z );
 			var velScale	=	moveDir.Length();
 
+			var standingSpeed	=	cc.standingSpeed * velScale;
+			var crouchingSpeed	=	cc.crouchingSpeed * velScale;
+			var proneSpeed		=	cc.proneSpeed * velScale;
+
 			physics.Invoke( ()=>
 			{
-				controller.StandingSpeed	=	cc.standingSpeed * velScale;
-				controller.CrouchingSpeed	=	cc.crouchingSpeed * velScale;
-				controller.ProneSpeed		=	cc.proneSpeed * velScale;
+				controller.StandingSpeed	=	standingSpeed	;
+				controller.CrouchingSpeed	=	crouchingSpeed	;
+				controller.ProneSpeed		=	proneSpeed		;
 
 				controller.HorizontalMotionConstraint.MovementDirection	=	moveDir;
 

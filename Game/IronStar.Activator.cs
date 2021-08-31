@@ -53,6 +53,7 @@ namespace IronStar
 			//	game logic :
 			gs.AddSystem( new HealthSystem() );
 			gs.AddSystem( new PickupSystem() );
+			gs.AddSystem( new ExplosionSystem() );
 			gs.AddSystem( new WeaponSystem(gs, physicsCore, fxPlayback) );
 			gs.AddSystem( new ProjectileSystem(gs, physicsCore) );
 

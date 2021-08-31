@@ -18,7 +18,7 @@ namespace IronStar.Editor.Systems
 
 		readonly BoundingBox box			=	new BoundingBox(1,1,1);
 		readonly Aspect aspectTransform		=	new Aspect()
-												.Include<KinematicState>()
+												.Include<Transform>()
 												.Exclude<DynamicBox>()
 												.Exclude<SFX2.OmniLight,SFX2.SpotLight,SFX2.LightProbeSphere,SFX2.LightProbeBox>()
 												.Exclude<Decal>()
@@ -56,7 +56,7 @@ namespace IronStar.Editor.Systems
 
 			foreach ( var entity in gs.QueryEntities( aspectTransform ) )
 			{
-				var transform	=	entity.GetComponent<KinematicState>().TransformMatrix;
+				var transform	=	entity.GetComponent<Transform>().TransformMatrix;
 				var omniLight	=	entity.GetComponent<SFX2.OmniLight>();
 
 				if (editor.GetRenderProperties(entity, out color, out selected ))

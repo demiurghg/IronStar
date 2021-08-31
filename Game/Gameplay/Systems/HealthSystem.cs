@@ -92,11 +92,6 @@ namespace IronStar.Gameplay.Systems
 				var godMode	=	entity.ContainsComponent<PlayerComponent>() && IronStar.IsGodMode;
 
 				var status	=	health.ApplyDamage(godMode);
-
-				if (status==HealthStatus.JustDied)
-				{
-					gs.Execute( health.Action, entity );
-				}
 			}
 		}
 	}

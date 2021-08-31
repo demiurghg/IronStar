@@ -18,6 +18,8 @@ namespace IronStar.Gameplay
 
 		bool warningFired = false;
 
+		Aspect	playerAspect = new Aspect().Include<PlayerComponent,UserCommandComponent>();
+
 
 		public Aspect GetAspect()
 		{
@@ -43,7 +45,7 @@ namespace IronStar.Gameplay
 		}
 
 
-		Aspect startPointAspect = new Aspect().Include<PlayerStartComponent,KinematicState>();
+		Aspect startPointAspect = new Aspect().Include<PlayerStartComponent,Transform>();
 
 
 		void UpdatePlayerSpawn ( GameState gs )
@@ -60,7 +62,7 @@ namespace IronStar.Gameplay
 				return;
 			}
 
-			var t	=	e.GetComponent<KinematicState>();
+			var t	=	e.GetComponent<Transform>();
 			var ps	=	e.GetComponent<PlayerStartComponent>();
 
 			if (!ps.PlayerSpawned)
@@ -76,7 +78,7 @@ namespace IronStar.Gameplay
 		void UpdatePlayerState ( GameState gs, GameTime gameTime )
 		{
 			var playerInput	=	gs.Game.GetService<PlayerInput>();
-			var players		=	gs.QueryEntities<PlayerComponent,UserCommandComponent>();
+			var players		=	gs.QueryEntities(playerAspect);
 
 			foreach ( var player in players )
 			{

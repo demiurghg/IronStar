@@ -40,11 +40,11 @@ namespace IronStar.AI
 
 		public static Vector3 GetLocation( this Entity entity )
 		{
-			var transform = entity.GetComponent<KinematicState>();
+			var transform = entity.GetComponent<Transform>();
 			
 			if (transform==null) 
 			{
-				throw new InvalidOperationException("Entity has no " + nameof(KinematicState) + " component");
+				throw new InvalidOperationException("Entity has no " + nameof(Transform) + " component");
 			}
 
 			return transform.Position;
@@ -53,12 +53,12 @@ namespace IronStar.AI
 
 		public static Vector3 GetPOV( this Entity entity )
 		{
-			var transform	=	entity.GetComponent<KinematicState>();
+			var transform	=	entity.GetComponent<Transform>();
 			var controller	=	entity.GetComponent<CharacterController>();
 			
 			if (transform==null) 
 			{
-				throw new InvalidOperationException("Entity has no " + nameof(KinematicState) + " component");
+				throw new InvalidOperationException("Entity has no " + nameof(Transform) + " component");
 			}
 
 			if (controller!=null) 

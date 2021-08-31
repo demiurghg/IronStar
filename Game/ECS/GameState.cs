@@ -17,8 +17,10 @@ namespace IronStar.ECS
 {
 	public sealed partial class GameState : DisposableBase
 	{
-		public const int MaxSystems         =   BitSet.MaxBits;
-		public const int MaxComponentTypes  =   BitSet.MaxBits;
+		public const int MaxSystems			=	BitSet.MaxBits;
+		public const int MaxComponentTypes	=	BitSet.MaxBits;
+
+		object lockObj = new object();
 
 		public readonly Game Game;
 		public readonly ContentManager Content;
@@ -36,8 +38,6 @@ namespace IronStar.ECS
 		public GameServiceContainer Services { get { return services; } }
 
 		readonly EntityFactoryCollection	factories;
-		readonly EntityActionCollection		actions;
-		readonly Queue<EntityAction>		actionQueue;
 
 		public event	EventHandler Reloading;
 
@@ -65,8 +65,6 @@ namespace IronStar.ECS
 			services	=	new GameServiceContainer();
 
 			factories	=	new EntityFactoryCollection();
-			actions		=	new EntityActionCollection();
-			actionQueue	=	new Queue<EntityAction>();
 
 			Game.Reloading += Game_Reloading;
 		}
@@ -224,32 +222,6 @@ namespace IronStar.ECS
 			}
 		}
 
-		public bool Execute( string actionName, Entity target )
-		{
-			if (string.IsNullOrWhiteSpace(actionName)) 
-			{
-				return false;
-			}
-
-			EntityAction action;
-
-			if ( actions.TryGetValue( actionName, out action ) )
-			{
-				action.Execute( this, target );
-				return true;
-			}
-			{
-				Log.Warning("GameState:Execute -- no such action '{0}'", actionName);
-				return false;
-			}
-		}
-
-
-		void ExecuteActions()
-		{
-			// #TODO #ECS -- deferred action execution???
-		}
-
 		/*-----------------------------------------------------------------------------------------------
 		 *	Entity stuff :
 		-----------------------------------------------------------------------------------------------*/
@@ -361,7 +333,7 @@ namespace IronStar.ECS
 		{
 			// #TODO -- force refresh entity to destroy and create again
 
-			var transform = e.GetComponent<KinematicState>();
+			var transform = e.GetComponent<Transform>();
 
 			if (transform!=null)
 			{
@@ -466,77 +438,5 @@ namespace IronStar.ECS
 				//.ToArray()
 				;
 		}
-
-
-		public IEnumerable<TComponent> QueryComponents<TComponent>() where TComponent: IComponent
-		{
-			return components[typeof(TComponent)].Select( kv => (TComponent)kv.Value ).ToArray();
-		}
-
-
-		public IEnumerable<Entity> QueryEntities<TComponent>() 
-		where TComponent: IComponent
-		{
-			var	s1	=	components[typeof(TComponent)];
-			
-			return s1
-				.Select( keyValue => entities[ keyValue.Key ] )
-				.Where( e => e!=null )
-				.ToArray(); 
-		}
-
-
-		public IEnumerable<Entity> QueryEntities<TComponent1, TComponent2>() 
-		where TComponent1: IComponent 
-		where TComponent2: IComponent
-		{
-			var	s1	=	components[typeof(TComponent1)];
-			var	s2	=	components[typeof(TComponent2)];
-
-			return s1.Intersect( s2, entityComponentComparer )
-				.Select( keyValue => entities[ keyValue.Key ] )
-				.Where( e => e!=null )
-				.ToArray(); 
-		}
-
-
-		public IEnumerable<Entity> QueryEntities<TComponent1, TComponent2, TComponent3>() 
-		where TComponent1: IComponent 
-		where TComponent2: IComponent
-		where TComponent3: IComponent
-		{
-			var	s1	=	components[typeof(TComponent1)];
-			var	s2	=	components[typeof(TComponent2)];
-			var	s3	=	components[typeof(TComponent3)];
-
-			return s1
-				.Intersect( s2, entityComponentComparer )
-				.Intersect( s3, entityComponentComparer )
-				.Select( keyValue => entities[ keyValue.Key ] )
-				.Where( e => e!=null )
-				.ToArray(); 
-		}
-
-
-		public IEnumerable<Entity> QueryEntities<TComponent1, TComponent2, TComponent3, TComponent4>() 
-		where TComponent1: IComponent 
-		where TComponent2: IComponent
-		where TComponent3: IComponent
-		where TComponent4: IComponent
-		{
-			var	s1	=	components[typeof(TComponent1)];
-			var	s2	=	components[typeof(TComponent2)];
-			var	s3	=	components[typeof(TComponent3)];
-			var	s4	=	components[typeof(TComponent4)];
-
-			return s1
-				.Intersect( s2, entityComponentComparer )
-				.Intersect( s3, entityComponentComparer )
-				.Intersect( s4, entityComponentComparer )
-				.Select( keyValue => entities[ keyValue.Key ] )
-				.Where( e => e!=null )
-				.ToArray(); 
-		}
-
 	}
 }

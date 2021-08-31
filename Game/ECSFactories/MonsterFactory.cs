@@ -24,7 +24,7 @@ namespace IronStar.ECSFactories
 			var inventory	=	monster.GetComponent<InventoryComponent>();
 			var weapon		=	monster.gs.Spawn(weaponName);
 
-			weapon.RemoveComponent<KinematicState>();
+			weapon.RemoveComponent<Transform>();
 
 			inventory.AddItem( weapon );
 			inventory.SwitchWeapon( weapon );
@@ -45,7 +45,7 @@ namespace IronStar.ECSFactories
 
 			e.AddComponent( new CharacterController(6,4,2, 24,9, 20, 10, 2.2f) );
 			e.AddComponent( new UserCommandComponent() );
-			e.AddComponent( new KinematicState() );
+			e.AddComponent( new Transform() );
 			e.AddComponent( new StepComponent() );
 			e.AddComponent( new HealthComponent(50,25) );
 			e.AddComponent( new MaterialComponent(MaterialType.Flesh) );

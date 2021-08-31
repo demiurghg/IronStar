@@ -18,7 +18,7 @@ namespace IronStar.Editor.Systems
 
 		readonly BoundingBox box			=	new BoundingBox(1,1,1);
 		readonly Aspect aspectTransform		=	new Aspect()
-												.Include<KinematicState>()
+												.Include<Transform>()
 												.Include<CharacterController>()
 												;
 
@@ -53,7 +53,7 @@ namespace IronStar.Editor.Systems
 
 			foreach ( var entity in gs.QueryEntities( aspectTransform ) )
 			{
-				var transform	=	entity.GetComponent<KinematicState>().TransformMatrix;
+				var transform	=	entity.GetComponent<Transform>().TransformMatrix;
 				var character	=	entity.GetComponent<CharacterController>();
 
 				if (editor.GetRenderProperties(entity, out color, out selected ))

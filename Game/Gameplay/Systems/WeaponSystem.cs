@@ -34,7 +34,7 @@ namespace IronStar.Gameplay.Systems
 
 		Aspect weaponAspect			=	new Aspect().Include<WeaponComponent>();
 		Aspect armedEntityAspect	=	new Aspect().Include<InventoryComponent,UserCommandComponent,CharacterController>()
-													.Include<KinematicState>();
+													.Include<Transform>();
 
 		GameTime actualGameTime;
 
@@ -65,7 +65,7 @@ namespace IronStar.Gameplay.Systems
 
 			foreach ( var entity in entities )
 			{
-				var transform	=	entity.GetComponent<KinematicState>();
+				var transform	=	entity.GetComponent<Transform>();
 				var inventory	=	entity.GetComponent<InventoryComponent>();
 				var userCmd		=	entity.GetComponent<UserCommandComponent>();
 				var chctrl		=	entity.GetComponent<CharacterController>();
@@ -408,7 +408,7 @@ namespace IronStar.Gameplay.Systems
 		void FireProjectile ( GameState gs, GameTime gameTime, WeaponComponent weapon, Matrix povTransform, Entity attacker )
 		{
 			var dt	=	gameTime.ElapsedSec;
-			var t	=	attacker.GetComponent<KinematicState>();
+			var t	=	attacker.GetComponent<Transform>();
 			var p	=	povTransform.TranslationVector;
 			var q	=	Quaternion.RotationMatrix( povTransform );
 			var d	=	-GetFireDirection( q, weapon.MaxSpread );
@@ -427,7 +427,7 @@ namespace IronStar.Gameplay.Systems
 			var projectileRay		=	new Ray( p, d );
 
 			//	create estimated projectile transform to add it if no collision is found :
-			var kinematicState		=	new KinematicState( p + d * projectileDistance, q, 1 );
+			var kinematicState		=	new Transform( p + d * projectileDistance, q, 1 );
 
 			//	run raycast query to find instant porjectile position OR run projectile simulation :
 			var raycastCallback		=	new ProjectileRaycastCallback( gs, projectileRay, attacker, projectileEntity, kinematicState );
@@ -442,13 +442,13 @@ namespace IronStar.Gameplay.Systems
 			readonly Entity attacker;
 			readonly Entity projectile;
 			readonly ProjectileComponent projectileComponent;
-			readonly KinematicState kinematicState;
+			readonly Transform kinematicState;
 			readonly GameState gs;
 			readonly WeaponSystem ws;
 			bool hitSomething = false;
 
 			[MethodImpl(MethodImplOptions.NoOptimization)]
-			public ProjectileRaycastCallback( GameState gs, Ray ray, Entity attacker, Entity projectile, KinematicState ks )
+			public ProjectileRaycastCallback( GameState gs, Ray ray, Entity attacker, Entity projectile, Transform ks )
 			{
 				this.ray		=	ray;
 				this.ws			=	gs.GetService<WeaponSystem>();
@@ -566,7 +566,7 @@ namespace IronStar.Gameplay.Systems
 				if (entity!=null && entity!=target)
 				{
 					//	overlap test always gives result on the surface of the sphere...
-					var transform	=	entity.GetComponent<KinematicState>();
+					var transform	=	entity.GetComponent<Transform>();
 
 					//	sometimes transform is null
 					if (transform!=null)

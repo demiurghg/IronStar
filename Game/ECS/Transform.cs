@@ -7,14 +7,14 @@ using Fusion.Core.Mathematics;
 
 namespace IronStar.ECS
 {
-	public class KinematicState : Component
+	public class Transform : Component
 	{
 		/// <summary>
 		/// Creates new transform
 		/// </summary>
 		/// <param name="p"></param>
 		/// <param name="r"></param>
-		public KinematicState ()
+		public Transform ()
 		{
 			Position	=	Vector3.Zero;
 			Rotation	=	Quaternion.Identity;
@@ -26,7 +26,7 @@ namespace IronStar.ECS
 		/// </summary>
 		/// <param name="p"></param>
 		/// <param name="r"></param>
-		public KinematicState ( Vector3 p, Quaternion r )
+		public Transform ( Vector3 p, Quaternion r )
 		{
 			Position	=	p;
 			Rotation	=	r;
@@ -38,7 +38,7 @@ namespace IronStar.ECS
 		/// </summary>
 		/// <param name="p"></param>
 		/// <param name="r"></param>
-		public KinematicState ( Matrix t )
+		public Transform ( Matrix t )
 		{
 			t.Decompose( out Scaling, out Rotation, out Position );
 		}
@@ -48,7 +48,7 @@ namespace IronStar.ECS
 		/// </summary>
 		/// <param name="p"></param>
 		/// <param name="r"></param>
-		public KinematicState ( Vector3 p, Quaternion r, Vector3 velocity )
+		public Transform ( Vector3 p, Quaternion r, Vector3 velocity )
 		{
 			Position		=	p;
 			Rotation		=	r;
@@ -61,7 +61,7 @@ namespace IronStar.ECS
 		/// </summary>
 		/// <param name="p"></param>
 		/// <param name="r"></param>
-		public KinematicState ( Vector3 p, Quaternion r, float s )
+		public Transform ( Vector3 p, Quaternion r, float s )
 		{
 			Position	=	p;
 			Rotation	=	r;

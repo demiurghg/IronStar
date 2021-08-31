@@ -51,7 +51,7 @@ namespace IronStar.Editor.Systems
 
 			foreach ( var entity in gs.QueryEntities( aspectOmniLights ) )
 			{
-				var transform	=	entity.GetComponent<KinematicState>();
+				var transform	=	entity.GetComponent<Transform>();
 				var omniLight	=	entity.GetComponent<SFX2.OmniLight>();
 
 				if (editor.GetRenderProperties(entity, out color, out selected ))
@@ -62,7 +62,7 @@ namespace IronStar.Editor.Systems
 
 			foreach ( var entity in gs.QueryEntities( aspectSpotLights ) )
 			{
-				var transform	=	entity.GetComponent<KinematicState>();
+				var transform	=	entity.GetComponent<Transform>();
 				var spotLight	=	entity.GetComponent<SFX2.SpotLight>();
 
 				if (editor.GetRenderProperties(entity, out color, out selected ))
@@ -73,7 +73,7 @@ namespace IronStar.Editor.Systems
 
 			foreach ( var entity in gs.QueryEntities( aspectLightProbeBox ) )
 			{
-				var transform	=	entity.GetComponent<KinematicState>();
+				var transform	=	entity.GetComponent<Transform>();
 				var lightProbe	=	entity.GetComponent<SFX2.LightProbeBox>();
 
 				if (editor.GetRenderProperties(entity, out color, out selected ))
@@ -84,7 +84,7 @@ namespace IronStar.Editor.Systems
 
 			foreach ( var entity in gs.QueryEntities( aspectLightProbeSphere ) )
 			{
-				var transform	=	entity.GetComponent<KinematicState>();
+				var transform	=	entity.GetComponent<Transform>();
 				var lightProbe	=	entity.GetComponent<SFX2.LightProbeSphere>();
 
 				if (editor.GetRenderProperties(entity, out color, out selected ))
@@ -95,7 +95,7 @@ namespace IronStar.Editor.Systems
 
 			foreach ( var entity in gs.QueryEntities( aspectDecals ) )
 			{
-				var transform	=	entity.GetComponent<KinematicState>();
+				var transform	=	entity.GetComponent<Transform>();
 				var decal		=	entity.GetComponent<SFX2.DecalComponent>();
 
 				if (editor.GetRenderProperties(entity, out color, out selected ))
@@ -106,7 +106,7 @@ namespace IronStar.Editor.Systems
 
 			foreach ( var entity in gs.QueryEntities( aspectLightVolume ) )
 			{
-				var transform	=	entity.GetComponent<KinematicState>();
+				var transform	=	entity.GetComponent<Transform>();
 				var lightVolume	=	entity.GetComponent<SFX2.LightVolume>();
 
 				if (editor.GetRenderProperties(entity, out color, out selected ))

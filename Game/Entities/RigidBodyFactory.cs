@@ -81,7 +81,7 @@ namespace IronStar
 		{
 			var e = gs.Spawn();
 
-			e.AddComponent( new ECS.KinematicState() );
+			e.AddComponent( new ECS.Transform() );
 			e.AddComponent( new ECSPhysics.DynamicBox( Width, Height, Depth, Mass ) );
 			e.AddComponent( new SFX2.RenderModel("scenes\\boxes\\box_low.fbx", Matrix.Scaling(3), new Color(48, 96, 255), 7, SFX2.RMFlags.None ) );
 

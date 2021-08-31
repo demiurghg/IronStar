@@ -24,7 +24,7 @@ namespace IronStar.AI
 		NavigationMesh		navMesh			=	null;
 		BackgroundWorker	worker;
 
-		readonly Aspect	navGeometryAspect	=	new Aspect().Include<KinematicState,StaticCollisionComponent,RenderModel>();
+		readonly Aspect	navGeometryAspect	=	new Aspect().Include<Transform,StaticCollisionComponent,RenderModel>();
 
 
 		public NavigationSystem()
@@ -218,7 +218,7 @@ namespace IronStar.AI
 
 			foreach ( var entity in gs.QueryEntities(navGeometryAspect) )
 			{
-				var transform		=	entity.GetComponent<KinematicState>();
+				var transform		=	entity.GetComponent<Transform>();
 				var model			=	entity.GetComponent<RenderModel>();
 				var staticCollision	=	entity.GetComponent<StaticCollisionComponent>();
 

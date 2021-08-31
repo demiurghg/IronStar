@@ -31,7 +31,7 @@ namespace IronStar.SFX {
 
 			var fx = gs.Spawn();
 
-			fx.AddComponent( new KinematicState(origin, rotation, velocity) );
+			fx.AddComponent( new Transform(origin, rotation, velocity) );
 			fx.AddComponent( new FXComponent( fxName, false ) );
 
 			return fx;
@@ -40,7 +40,7 @@ namespace IronStar.SFX {
 
 		public static ECS.Entity SpawnFX( GameState gs, string fxName, ECS.Entity originEntity )
 		{
-			var transform	=	originEntity.GetComponent<KinematicState>();
+			var transform	=	originEntity.GetComponent<Transform>();
 
 			if (transform!=null)
 			{

@@ -60,7 +60,7 @@ namespace IronStar
 			
 			var e = gs.Spawn();
 
-			e.AddComponent( new ECS.KinematicState() );
+			e.AddComponent( new ECS.Transform() );
 			e.AddComponent( new FXComponent(FX,true) );
 
 			return e;

@@ -154,7 +154,7 @@ namespace IronStar.ECS
 		{
 			get 
 			{
-				var transform = GetComponent<KinematicState>();
+				var transform = GetComponent<Transform>();
 				return (transform==null) ? Vector3.Zero : transform.Position;
 			}
 		}

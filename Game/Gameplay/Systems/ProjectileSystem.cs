@@ -15,7 +15,7 @@ using BEPUphysics.BroadPhaseEntries.MobileCollidables;
 
 namespace IronStar.Gameplay.Systems
 {
-	class ProjectileSystem : ProcessingSystem<ProjectileController,KinematicState,ProjectileComponent>
+	class ProjectileSystem : ProcessingSystem<ProjectileController,Transform,ProjectileComponent>
 	{
 		readonly PhysicsCore	physics;
 		readonly Random			rand;
@@ -30,7 +30,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		protected override ProjectileController Create( Entity entity, KinematicState transform, ProjectileComponent projectile )
+		protected override ProjectileController Create( Entity entity, Transform transform, ProjectileComponent projectile )
 		{
 			var position	=	MathConverter.Convert( transform.Position );
 			var direction	=	MathConverter.Convert( transform.TransformMatrix.Forward );
@@ -49,7 +49,7 @@ namespace IronStar.Gameplay.Systems
 		private void ProjectileController_CollisionDetected( object controller, ProjectileController.CollisionDetectedEventArgs e )
 		{
 			var entity		=	(controller as ProjectileController).Tag as Entity;
-			var direction	=	entity.GetComponent<KinematicState>().TransformMatrix.Forward;
+			var direction	=	entity.GetComponent<Transform>().TransformMatrix.Forward;
 			var projectile	=	entity.GetComponent<ProjectileComponent>();
 			var location	=	MathConverter.Convert( e.Location );
 			var normal		=	MathConverter.Convert( e.Normal );		
@@ -70,7 +70,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 		
-		protected override void Process( Entity entity, GameTime gameTime, ProjectileController controller, KinematicState transform, ProjectileComponent projectile )
+		protected override void Process( Entity entity, GameTime gameTime, ProjectileController controller, Transform transform, ProjectileComponent projectile )
 		{
 			lastDeltaTime = gameTime.ElapsedSec;
 

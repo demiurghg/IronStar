@@ -61,7 +61,7 @@ namespace IronStar.Mapping
 			ecsEntity		=	gs.Spawn();
 			ecsEntity.Tag	=	this;
 
-			ecsEntity.AddComponent( new KinematicState( Translation, Rotation, 1 ) );
+			ecsEntity.AddComponent( new Transform( Translation, Rotation, 1 ) );
 			ecsEntity.AddComponent( CreateBillboard() );
 		}
 

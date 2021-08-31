@@ -30,7 +30,7 @@ namespace IronStar.Editor.Systems
 
 		public Aspect GetAspect()
 		{
-			return new Aspect().Include<KinematicState,SFX2.RenderModel,StaticCollisionComponent>();
+			return new Aspect().Include<Transform,SFX2.RenderModel,StaticCollisionComponent>();
 		}
 
 		
@@ -41,7 +41,7 @@ namespace IronStar.Editor.Systems
 				return;
 			}
 
-			var transform	=	e.GetComponent<KinematicState>();
+			var transform	=	e.GetComponent<Transform>();
 			var model		=	e.GetComponent<SFX2.RenderModel>();
 
 			Scene scene;

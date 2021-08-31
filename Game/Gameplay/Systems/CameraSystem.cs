@@ -89,7 +89,7 @@ namespace IronStar.Gameplay
 		public void Add( GameState gs, Entity e ) {}
 		public void Remove( GameState gs, Entity e ) {}
 
-		Aspect playerCameraAspect = new Aspect().Include<PlayerComponent,KinematicState>()
+		Aspect playerCameraAspect = new Aspect().Include<PlayerComponent,Transform>()
 												.Include<UserCommandComponent,CharacterController>();
 
 
@@ -114,7 +114,7 @@ namespace IronStar.Gameplay
 
 		void SetupPlayerCamera( GameTime gameTime, GameState gs, Entity e )
 		{
-			var t		=	e.GetComponent<KinematicState>();
+			var t		=	e.GetComponent<Transform>();
 			var uc		=	e.GetComponent<UserCommandComponent>();
 			var ch		=	e.GetComponent<CharacterController>();
 			var step	=	e.GetComponent<StepComponent>();

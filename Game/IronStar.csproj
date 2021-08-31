@@ -154,18 +154,16 @@
     <Compile Include="ECSPhysics\TouchDetector.cs" />
     <Compile Include="ECS\Aspect.cs" />
     <Compile Include="ECS\Collections\ComponentCollection.cs" />
-    <Compile Include="ECS\Collections\EntityActionCollection.cs" />
     <Compile Include="ECS\Component.cs" />
     <Compile Include="ECS\ECSTypeManager.cs" />
     <Compile Include="ECS\Collections\EntityFactoryCollection.cs" />
     <Compile Include="ECS\EntityRef.cs" />
-    <Compile Include="ECS\EntityAction.cs" />
     <Compile Include="ECS\StatelessSystem.cs" />
     <Compile Include="ECS\ProcessingSystem.cs" />
     <Compile Include="ECS\SystemWrapper.cs" />
     <Compile Include="ECS\SystemAttribute.cs" />
     <Compile Include="ECS\EntityFactory.cs" />
-    <Compile Include="ECS\KinematicState.cs" />
+    <Compile Include="ECS\Transform.cs" />
     <Compile Include="ECS\Utils\Bag.cs" />
     <Compile Include="ECS\Utils\BagEnumerator.cs" />
     <Compile Include="ECS\Utils\BitSet.cs" />
@@ -208,6 +206,7 @@
     <Compile Include="Entities\RigidBodyFactory.cs" />
     <Compile Include="Entities\StartPoint.cs" />
     <Compile Include="Gameplay\Components\AttachmentComponent.cs" />
+    <Compile Include="Gameplay\Components\ExplosiveComponent.cs" />
     <Compile Include="Gameplay\Components\MonsterComponent.cs" />
     <Compile Include="Gameplay\Components\NameComponent.cs" />
     <Compile Include="Gameplay\Components\PickupComponent.cs" />
@@ -226,6 +225,7 @@
     <Compile Include="Gameplay\Systems\AttachmentSystem.cs" />
     <Compile Include="Gameplay\Systems\BobbingSystem.cs" />
     <Compile Include="Gameplay\Systems\CameraSystem.cs" />
+    <Compile Include="Gameplay\Systems\ExplosionSystem.cs" />
     <Compile Include="Gameplay\Systems\FPVWeaponAnimator.cs" />
     <Compile Include="Gameplay\Systems\FPVWeaponSystem.cs" />
     <Compile Include="Gameplay\Systems\InventorySystem.cs" />

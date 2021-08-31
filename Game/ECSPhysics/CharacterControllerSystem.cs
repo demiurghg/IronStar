@@ -26,7 +26,7 @@ using IronStar.Gameplay;
 
 namespace IronStar.ECSPhysics 
 {
-	public class CharacterControllerSystem : ProcessingSystem<BEPUCharacterController,CharacterController,KinematicState>, ITransformFeeder
+	public class CharacterControllerSystem : ProcessingSystem<BEPUCharacterController,CharacterController,Transform>, ITransformFeeder
 	{
 		readonly PhysicsCore physics;
 
@@ -36,7 +36,7 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		protected override BEPUCharacterController Create( Entity e, CharacterController cc, KinematicState t )
+		protected override BEPUCharacterController Create( Entity e, CharacterController cc, Transform t )
 		{
 			var p	=	t.Position;
 
@@ -94,7 +94,7 @@ namespace IronStar.ECSPhysics
 		}
 
 		
-		protected void FeedControllerData( Entity e, GameTime gameTime, BEPUCharacterController controller, CharacterController cc, KinematicState t )
+		protected void FeedControllerData( Entity e, GameTime gameTime, BEPUCharacterController controller, CharacterController cc, Transform t )
 		{
 			var crouching	=	controller.StanceManager.CurrentStance == Stance.Crouching;
 			var traction	=	controller.SupportFinder.HasTraction;
@@ -110,7 +110,7 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		protected override void Process( Entity e, GameTime gameTime, BEPUCharacterController controller, CharacterController cc, KinematicState t )
+		protected override void Process( Entity e, GameTime gameTime, BEPUCharacterController controller, CharacterController cc, Transform t )
 		{
 			var uc	=	e.GetComponent<UserCommandComponent>();
 
@@ -118,6 +118,20 @@ namespace IronStar.ECSPhysics
 			{
 				Move( controller, cc, uc.MovementVector );
 			}
+
+			
+			var crouching	=	controller.StanceManager.CurrentStance == Stance.Crouching;
+			var traction	=	controller.SupportFinder.HasTraction;
+			var offset		=	crouching ? cc.offsetCrouch : cc.offsetStanding;
+			var position	=	physics.GetInterpolatedPosition( controller.Body.BufferedStates.MotionStateIndex ) - offset;
+			//var position	=	MathConverter.Convert( controller.Body.Position ) - offset;
+
+			cc.IsCrouching	=	crouching;
+			cc.HasTraction	=	traction;
+			
+			t.Position			=	position;
+			t.LinearVelocity	=	MathConverter.Convert( controller.Body.LinearVelocity );
+			t.AngularVelocity	=	Vector3.Zero;
 		}
 
 

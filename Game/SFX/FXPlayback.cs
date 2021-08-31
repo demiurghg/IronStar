@@ -18,7 +18,7 @@ using IronStar.ECS;
 using IronStar.Gameplay.Components;
 
 namespace IronStar.SFX {
-	public partial class FXPlayback : ProcessingSystem<FXInstance, FXComponent, KinematicState>
+	public partial class FXPlayback : ProcessingSystem<FXInstance, FXComponent, Transform>
 	{
 		TextureAtlas spriteSheet;
 
@@ -214,7 +214,7 @@ namespace IronStar.SFX {
 		 *	ECS stuff :
 		-----------------------------------------------------------------------------------------*/
 
-		protected override FXInstance Create( ECS.Entity entity, FXComponent fx, KinematicState t )
+		protected override FXInstance Create( ECS.Entity entity, FXComponent fx, Transform t )
 		{
 			var fxEvent			=	new FXEvent();
 			fxEvent.FXName		=	fx.FXName;
@@ -241,7 +241,7 @@ namespace IronStar.SFX {
 			Update( gameTime );
 		}
 
-		protected override void Process( ECS.Entity entity, GameTime gameTime, FXInstance fxInstance, FXComponent fx, KinematicState t )
+		protected override void Process( ECS.Entity entity, GameTime gameTime, FXInstance fxInstance, FXComponent fx, Transform t )
 		{
 			if ( fxInstance!=null )
 			{

@@ -16,7 +16,7 @@ namespace IronStar.Editor.Systems
 		readonly DebugRender dr;
 		readonly MapEditor editor;
 
-		readonly Aspect aspectDynamicBody		=	new Aspect().Include<KinematicState,DynamicBox>();
+		readonly Aspect aspectDynamicBody		=	new Aspect().Include<Transform,DynamicBox>();
 
 		public EditorPhysicsRenderSystem( MapEditor editor, DebugRender dr )
 		{
@@ -47,7 +47,7 @@ namespace IronStar.Editor.Systems
 
 			foreach ( var entity in gs.QueryEntities( aspectDynamicBody ) )
 			{
-				var transform	=	entity.GetComponent<KinematicState>();
+				var transform	=	entity.GetComponent<Transform>();
 				var dynamicBox	=	entity.GetComponent<DynamicBox>();
 
 				if (editor.GetRenderProperties(entity, out color, out selected ))

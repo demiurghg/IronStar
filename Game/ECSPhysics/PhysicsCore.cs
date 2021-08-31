@@ -27,6 +27,11 @@ namespace IronStar.ECSPhysics
 	/// </summary>
 	public partial class PhysicsCore : DisposableBase, ISystem
 	{
+		public delegate RigidTransform TransformCallback( ISpaceObject spaceObject, Transform transform );
+
+		const float SimulationTimeStep = 1.0f / 100.0f;
+		const int MaxTimeStepsPerFrame = 7;
+
 		readonly Space physSpace;
 
 		private Space Space 
@@ -74,8 +79,8 @@ namespace IronStar.ECSPhysics
 		public PhysicsCore ()
 		{
 			physSpace		=	new Space();
-			physSpace.BufferedStates.Enabled = false;
-			physSpace.BufferedStates.InterpolatedStates.Enabled = false;
+			physSpace.BufferedStates.Enabled = true;
+			physSpace.BufferedStates.InterpolatedStates.Enabled = true;
 
 			touchEvents	=	new ConcurrentQueue<Tuple<Entity,Entity>>();
 
@@ -150,53 +155,79 @@ namespace IronStar.ECSPhysics
 		/*-----------------------------------------------------------------------------------------------
 		 *	Parallel stuff :
 		-----------------------------------------------------------------------------------------------*/
+
+		double GetTime()
+		{
+			return Stopwatch.GetTimestamp() / (double)Stopwatch.Frequency;
+		}
+
 		
 		void PhysicsLoop()
 		{
-			double dt;
-			double time;
-			double previousTime = Stopwatch.GetTimestamp() / (double)Stopwatch.Frequency; //Give the engine a reasonable starting point.
+			double dt			=	SimulationTimeStep;
+			double time			=	0;
+			double currentTime	=	GetTime();
+			double accumulator	=	0;
+
+			Space.TimeStepSettings.TimeStepDuration				=	SimulationTimeStep;
+			Space.TimeStepSettings.MaximumTimeStepsPerFrame		=	MaxTimeStepsPerFrame;
 
 			while (!stopRequest)
 			{
-				ISpaceObject spaceObj;
-				Action action;
+				double newTime		=	GetTime();
+				double frameTime	=	newTime - currentTime;
+				currentTime			=	newTime;
 
-				time = (double)Stopwatch.GetTimestamp() / Stopwatch.Frequency; //compute the current time
-				dt = time - previousTime; //find the time passed since the previous frame
-				previousTime = time;
+				accumulator	+=	frameTime;
 
 				lock (Space)
 				{
-					while (creationQueue.TryDequeue(out spaceObj)) Space.Add(spaceObj);
-
-					while (actionQueue.TryDequeue(out action)) action?.Invoke();
-
-					ExecuteSpatialQueries();
-
-					ApplyDeferredImpulses();
-
-					if (Enabled)
+					while (accumulator >= dt)
 					{
-						Space.Update((float)dt);
-					}
+						DoAsyncSimulationStep(dt);
+						accumulator -= dt;
+						time += dt;
 
-					while (removalQueue.TryDequeue(out spaceObj))
-					{
-						try 
-						{
-							Space.Remove(spaceObj);
-						} 
-						catch (Exception e)
-						{
-							Log.Warning(e.Message);
-						}
+						//#error Call all ITransformFeeders to update transforms
 					}
-
-					//Misc.Delay(50);
 				}
 
 				Thread.Sleep(0);
+			}
+		}
+
+
+		void DoAsyncSimulationStep( double dt )
+		{
+			ISpaceObject spaceObj;
+			Action action;
+
+			while (creationQueue.TryDequeue(out spaceObj)) Space.Add(spaceObj);
+
+			while (actionQueue.TryDequeue(out action)) action?.Invoke();
+
+			ExecuteSpatialQueries();
+
+			ApplyDeferredImpulses();
+
+			if (Enabled)
+			{
+				Space.Update();
+				
+				Space.BufferedStates.InterpolatedStates.BlendAmount	=	0.5f;
+				Space.BufferedStates.InterpolatedStates.Update();
+			}
+
+			while (removalQueue.TryDequeue(out spaceObj))
+			{
+				try 
+				{
+					Space.Remove(spaceObj);
+				} 
+				catch (Exception e)
+				{
+					Log.Warning(e.Message);
+				}
 			}
 		}
 
@@ -282,11 +313,26 @@ namespace IronStar.ECSPhysics
 		}
 
 
+		public void GetTransform( Transform t, int index )
+		{
+			var rt = transforms[ index ];
+			t.Position		=	MathConverter.Convert( rt.Position );
+			t.Rotation		=	MathConverter.Convert( rt.Orientation );
+		}
+
+
+		public Vector3 GetInterpolatedPosition( int index )
+		{
+			var rt = transforms[ index ];
+			return	MathConverter.Convert( rt.Position );
+		}
+
+
 		void UpdateTransforms( GameState gs )
 		{
 			int count = physSpace.BufferedStates.Entities.Count;
-			//physSpace.BufferedStates.InterpolatedStates.GetStates( transforms );
-			physSpace.BufferedStates.InterpolatedStates.FlipBuffers();
+			physSpace.BufferedStates.InterpolatedStates.GetStates( transforms );
+			//physSpace.BufferedStates.InterpolatedStates.FlipBuffers();
 
 			foreach ( var transformFeeder in gs.GatherSystems<ITransformFeeder>() )
 			{

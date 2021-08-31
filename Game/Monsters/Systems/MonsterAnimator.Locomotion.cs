@@ -53,7 +53,7 @@ namespace IronStar.Monsters.Systems
 				rotateTorso		=	animator.rotateTorso;
 			}
 
-			public LocomotionState NextState( GameTime gameTime, KinematicState t, UserCommandComponent uc, StepComponent step, bool dead )
+			public LocomotionState NextState( GameTime gameTime, Transform t, UserCommandComponent uc, StepComponent step, bool dead )
 			{
 				if (allowRotation)
 				{
@@ -89,7 +89,7 @@ namespace IronStar.Monsters.Systems
 				return Next( gameTime, t, uc, step );
 			}
 
-			protected abstract LocomotionState Next( GameTime gameTime, KinematicState t, UserCommandComponent uc, StepComponent step );
+			protected abstract LocomotionState Next( GameTime gameTime, Transform t, UserCommandComponent uc, StepComponent step );
 		}
 
 
@@ -106,7 +106,7 @@ namespace IronStar.Monsters.Systems
 				sequencer.Sequence(	crouch ? ANIM_CR_IDLE : ANIM_IDLE, SequenceMode.Looped|SequenceMode.Immediate, ANIM_CROSSFADE );
 			}
 
-			protected override LocomotionState Next( GameTime gameTime, KinematicState t, UserCommandComponent uc, StepComponent step )
+			protected override LocomotionState Next( GameTime gameTime, Transform t, UserCommandComponent uc, StepComponent step )
 			{
 				var move	=	uc.IsMoving;
 				var trac	=	step.HasTraction;
@@ -144,7 +144,7 @@ namespace IronStar.Monsters.Systems
 				sequencer.Sequence(	ANIM_TURN, SequenceMode.Immediate|SequenceMode.Hold, ANIM_CROSSFADE );
 			}
 
-			protected override LocomotionState Next( GameTime gameTime, KinematicState t, UserCommandComponent uc, StepComponent step )
+			protected override LocomotionState Next( GameTime gameTime, Transform t, UserCommandComponent uc, StepComponent step )
 			{
 				var move	=	uc.IsMoving;
 				var trac	=	step.HasTraction;
@@ -182,7 +182,7 @@ namespace IronStar.Monsters.Systems
 				sequencer.Sequence(	animName, flags, ANIM_CROSSFADE );
 			}
 
-			protected override LocomotionState Next( GameTime gameTime, KinematicState t, UserCommandComponent uc, StepComponent step )
+			protected override LocomotionState Next( GameTime gameTime, Transform t, UserCommandComponent uc, StepComponent step )
 			{
 				var move	=	uc.IsMoving;
 				var trac	=	step.HasTraction;
@@ -206,7 +206,7 @@ namespace IronStar.Monsters.Systems
 				sequencer.Sequence("jump" , SequenceMode.Immediate|SequenceMode.Hold);
 			}
 
-			protected override LocomotionState Next( GameTime gameTime, KinematicState t, UserCommandComponent uc, StepComponent step )
+			protected override LocomotionState Next( GameTime gameTime, Transform t, UserCommandComponent uc, StepComponent step )
 			{
 				var move	=	uc.IsMoving;
 				var trac	=	step.HasTraction;
@@ -228,7 +228,7 @@ namespace IronStar.Monsters.Systems
 				sequencer.Sequence(ANIM_LAND , SequenceMode.Immediate|SequenceMode.Hold, TimeSpan.FromMilliseconds(100));
 			}
 
-			protected override LocomotionState Next( GameTime gameTime, KinematicState t, UserCommandComponent uc, StepComponent step )
+			protected override LocomotionState Next( GameTime gameTime, Transform t, UserCommandComponent uc, StepComponent step )
 			{
 				if (timeout<=TimeSpan.Zero) return new Idle(animator, uc, step.IsCrouching);
 				timeout -= gameTime.Elapsed;
@@ -245,7 +245,7 @@ namespace IronStar.Monsters.Systems
 				sequencer.Sequence(ANIM_DEATH , SequenceMode.Immediate|SequenceMode.Hold, TimeSpan.FromMilliseconds(100));
 			}
 
-			protected override LocomotionState Next( GameTime gameTime, KinematicState t, UserCommandComponent uc, StepComponent step )
+			protected override LocomotionState Next( GameTime gameTime, Transform t, UserCommandComponent uc, StepComponent step )
 			{
 				return this;
 			}

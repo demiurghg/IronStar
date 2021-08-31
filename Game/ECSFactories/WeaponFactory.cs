@@ -28,7 +28,7 @@ namespace IronStar.ECSFactories
 
 			e.AddComponent( new PickupComponent("pickupWeapon") );
 			e.AddComponent( new TouchDetector() );
-			e.AddComponent( new KinematicState() );
+			e.AddComponent( new Transform() );
 
 			return e;
 		}

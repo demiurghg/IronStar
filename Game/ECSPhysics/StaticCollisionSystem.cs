@@ -15,7 +15,7 @@ using Fusion.Core.Content;
 
 namespace IronStar.ECSPhysics
 {
-	class StaticCollisionSystem	: ProcessingSystem<StaticCollisionSystem.CollisionModel,StaticCollisionComponent,RenderModel,KinematicState>
+	class StaticCollisionSystem	: ProcessingSystem<StaticCollisionSystem.CollisionModel,StaticCollisionComponent,RenderModel,Transform>
 	{
 		public class CollisionModel 
 		{
@@ -34,7 +34,7 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		protected override CollisionModel Create( Entity e, StaticCollisionComponent sc, RenderModel rm, KinematicState t )
+		protected override CollisionModel Create( Entity e, StaticCollisionComponent sc, RenderModel rm, Transform t )
 		{
 			if (!sc.Collidable)
 			{
@@ -74,7 +74,7 @@ namespace IronStar.ECSPhysics
 		}
 
 		
-		protected override void Process( Entity e, GameTime gameTime, CollisionModel cm, StaticCollisionComponent sc, RenderModel rm, KinematicState t )
+		protected override void Process( Entity e, GameTime gameTime, CollisionModel cm, StaticCollisionComponent sc, RenderModel rm, Transform t )
 		{
 			/*var tm =  t.TransformMatrix;
 

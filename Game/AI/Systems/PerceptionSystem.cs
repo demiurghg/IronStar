@@ -124,7 +124,7 @@ namespace IronStar.AI
 			pov		=	new Vector3();
 
 			var cc			=	npcEntity.GetComponent<CharacterController>();
-			var transform	=	npcEntity.GetComponent<KinematicState>();
+			var transform	=	npcEntity.GetComponent<Transform>();
 			var behavior	=	npcEntity.GetComponent<BehaviorComponent>();
 			var uc			=	npcEntity.GetComponent<UserCommandComponent>();
 

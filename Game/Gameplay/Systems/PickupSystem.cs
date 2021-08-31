@@ -19,10 +19,10 @@ namespace IronStar.Gameplay.Systems
 		public void Remove( GameState gs, Entity e ) {}
 		public Aspect GetAspect() { return Aspect.Empty; }
 
-		readonly Aspect itemAspect		=	new Aspect().Include<PickupComponent,TouchDetector,KinematicState>().Single<WeaponComponent,AmmoComponent>();
-		readonly Aspect weaponAspect	=	new Aspect().Include<PickupComponent,TouchDetector,KinematicState,WeaponComponent>().Include<NameComponent>();
-		readonly Aspect ammoAspect		=	new Aspect().Include<PickupComponent,TouchDetector,KinematicState,AmmoComponent>().Include<NameComponent>();
-		readonly Aspect inventoryAspect	=	new Aspect().Include<PlayerComponent,InventoryComponent,KinematicState>();
+		readonly Aspect itemAspect		=	new Aspect().Include<PickupComponent,TouchDetector,Transform>().Single<WeaponComponent,AmmoComponent>();
+		readonly Aspect weaponAspect	=	new Aspect().Include<PickupComponent,TouchDetector,Transform,WeaponComponent>().Include<NameComponent>();
+		readonly Aspect ammoAspect		=	new Aspect().Include<PickupComponent,TouchDetector,Transform,AmmoComponent>().Include<NameComponent>();
+		readonly Aspect inventoryAspect	=	new Aspect().Include<PlayerComponent,InventoryComponent,Transform>();
 
 
 		
@@ -61,7 +61,7 @@ namespace IronStar.Gameplay.Systems
 			)
 			{
 				FXPlayback.SpawnFX( gs, pickup.FXName, pickupItem );
-				pickupItem.RemoveComponent<KinematicState>();
+				pickupItem.RemoveComponent<Transform>();
 
 				return true;
 			}
@@ -98,7 +98,7 @@ namespace IronStar.Gameplay.Systems
 				if (ammoEntity!=null)
 				{
 					TryPickAsAmmo( gs, inventory, ammoEntity ); 
-					ammoEntity.RemoveComponent<KinematicState>();
+					ammoEntity.RemoveComponent<Transform>();
 				}
 
 				return true;

@@ -41,21 +41,9 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new RenderModel( model, Matrix.Scaling( scale ), Color.White, 5, RMFlags.None ) );
 			e.AddComponent( new DynamicBox( width, height, depth, mass ) );
 
-			e.AddComponent( new KinematicState() );
+			e.AddComponent( new Transform() );
 
 			return e;
-		}
-	}
-
-
-	[EntityAction( "EXPLODE_BOX" )]
-	public class ExplodeBoxAction : EntityAction
-	{
-		public override void Execute( GameState gs, Entity target )
-		{
-			float explosionTime = MathUtil.Random.NextFloat(0.3f, 0.7f);
-			target.AddComponent( new FXComponent("boxBurning", true) );
-			target.AddComponent( new ProjectileComponent(0, 12, explosionTime, "boxExplosion", 100, 300) );
 		}
 	}
 
@@ -70,7 +58,10 @@ namespace IronStar.ECSFactories
 		{
 			var e = base.Spawn( gs );
 
-			e.AddComponent( new HealthComponent(2, 0, "EXPLODE_BOX") );
+			float timeout = MathUtil.Random.NextFloat(0.1f, 1.7f);
+
+			e.AddComponent( new HealthComponent(2, 0) );
+			e.AddComponent( new ExplosiveComponent(	timeout, 100,12,300, "boxBurning", "boxExplosion") ); 
 			e.AddComponent( new MaterialComponent( MaterialType.Metal ) );
 
 			return e;

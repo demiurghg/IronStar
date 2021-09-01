@@ -75,20 +75,7 @@ namespace IronStar.ECSPhysics
 		
 		protected override void Process( Entity entity, GameTime gameTime, Box cbox, DynamicBox box, Transform t )
 		{
-			/*var impulse	=	entity.GetComponent<ImpulseComponent>();
-
-			if (impulse!=null && impulse.Impulse!=Vector3.Zero)
-			{
-				cbox.ApplyImpulse( MathConverter.Convert(impulse.Location), MathConverter.Convert(impulse.Impulse) );
-				impulse.Location = Vector3.Zero;
-				impulse.Impulse  = Vector3.Zero;
-			} */
-			physics.GetTransform( t, cbox.BufferedStates.MotionStateIndex );
-
-			/*t.LinearVelocity	=	MathConverter.Convert( cbox.LinearVelocity	);
-			t.AngularVelocity	=	MathConverter.Convert( cbox.AngularVelocity	);
-			t.Position			=	MathConverter.Convert( cbox.BufferedStates.InterpolatedStates.Position );
-			t.Rotation			=	MathConverter.Convert( cbox.BufferedStates.InterpolatedStates.Orientation );  */
+			physics.GetTransform( t, cbox );
 		}
 	}
 }

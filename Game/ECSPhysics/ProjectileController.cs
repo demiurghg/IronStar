@@ -7,55 +7,65 @@ using BEPUphysics.BroadPhaseEntries;
 using BEPUphysics.UpdateableSystems;
 using BEPUutilities;
 using BEPUphysics;
+using BEPUphysics.EntityStateManagement;
 
 namespace IronStar.ECSPhysics
 {
 	class ProjectileController : Updateable, IBeforeSolverUpdateable
 	{
-		int updateCounter = 0;
+		public Vector3 Position { get { return motionState.Position; } }
+		public Vector3 LinearVelocity { get { return motionState.LinearVelocity; } }
+		public MotionState MotionState { get { return motionState; } }
 
-		public Vector3 Position { get { return position; } }
-		public Vector3 Direction { get { return direction; } }
-		public Vector3 LinearVelocity { get { return Direction * velocity; } }
-
-		Vector3 position;
-		Vector3 direction;
-		readonly float velocity;
 		readonly Func<BroadPhaseEntry,bool> filter;
 		bool objectHit = false;
 
+
+		MotionState motionState;
+
 		
-		public ProjectileController ( Vector3 position, Vector3 direction, float velocity, Func<BroadPhaseEntry, bool> filter )
+		public ProjectileController ( Vector3 position, Quaternion orientation, Vector3 velocity, Func<BroadPhaseEntry, bool> filter )
 		{
 			this.IsUpdatedSequentially	=	false;
-			this.position	=	position;
-			this.direction	=	direction;
-			this.direction.Normalize();
-			this.velocity	=	velocity;
+
+			motionState		=	new MotionState();
+			motionState.AngularVelocity	=	Vector3.Zero;
+			motionState.Orientation		=	orientation;
+			motionState.LinearVelocity	=	velocity;
+			motionState.Position		=	position;
+
 			this.filter		=	filter;
 		}
 
 		
 		void IBeforeSolverUpdateable.Update( float dt )
 		{
-			float maxDistance = dt * velocity;
+			var maxDistance	=	(dt * motionState.LinearVelocity).Length();
+
+			if (maxDistance==0)
+			{
+				return;
+			}
+
 			RayCastResult result;
+			var direction = motionState.LinearVelocity;
+			direction.Normalize();
 			
 			if (!objectHit)
 			{
-				if (Space.RayCast( new Ray( position, direction ), maxDistance, filter, out result ))
+				if (Space.RayCast( new Ray( motionState.Position, direction ), maxDistance, filter, out result ))
 				{
-					position	=	result.HitData.Location;
-					var normal	=	result.HitData.Normal;
+					motionState.Position	=	result.HitData.Location;
+					var normal				=	result.HitData.Normal;
 						normal.Normalize();
 
-					CollisionDetected?.Invoke( this, new CollisionDetectedEventArgs(result.HitObject, position, normal) );
+					CollisionDetected?.Invoke( this, new CollisionDetectedEventArgs(result.HitObject, motionState.Position, normal) );
 
 					objectHit = true;
 				}
 				else
 				{
-					position	=	position + direction * maxDistance;
+					motionState.Position	=	motionState.Position + direction * maxDistance;
 				}
 			}
 		}

@@ -26,7 +26,7 @@ using IronStar.Gameplay;
 
 namespace IronStar.ECSPhysics 
 {
-	public class CharacterControllerSystem : ProcessingSystem<BEPUCharacterController,CharacterController,Transform>, ITransformFeeder
+	public class CharacterControllerSystem : ProcessingSystem<BEPUCharacterController,CharacterController,Transform>
 	{
 		readonly PhysicsCore physics;
 
@@ -88,28 +88,6 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		public void FeedTransform( GameState gs, RigidTransform[] transforms )
-		{
-			ForEach( gs, GameTime.Zero, FeedControllerData );
-		}
-
-		
-		protected void FeedControllerData( Entity e, GameTime gameTime, BEPUCharacterController controller, CharacterController cc, Transform t )
-		{
-			var crouching	=	controller.StanceManager.CurrentStance == Stance.Crouching;
-			var traction	=	controller.SupportFinder.HasTraction;
-			var offset		=	crouching ? cc.offsetCrouch : cc.offsetStanding;
-			var position	=	MathConverter.Convert( controller.Body.Position ) - offset;
-
-			cc.IsCrouching	=	crouching;
-			cc.HasTraction	=	traction;
-			
-			t.Position			=	position;
-			t.LinearVelocity	=	MathConverter.Convert( controller.Body.LinearVelocity );
-			t.AngularVelocity	=	Vector3.Zero;
-		}
-
-
 		protected override void Process( Entity e, GameTime gameTime, BEPUCharacterController controller, CharacterController cc, Transform t )
 		{
 			var uc	=	e.GetComponent<UserCommandComponent>();
@@ -118,20 +96,22 @@ namespace IronStar.ECSPhysics
 			{
 				Move( controller, cc, uc.MovementVector );
 			}
-
 			
 			var crouching	=	controller.StanceManager.CurrentStance == Stance.Crouching;
 			var traction	=	controller.SupportFinder.HasTraction;
 			var offset		=	crouching ? cc.offsetCrouch : cc.offsetStanding;
-			var position	=	physics.GetInterpolatedPosition( controller.Body.BufferedStates.MotionStateIndex ) - offset;
-			//var position	=	MathConverter.Convert( controller.Body.Position ) - offset;
+
+			Transform tempTransform = new Transform();
+
+			if (physics.GetTransform( tempTransform, controller ))
+			{
+				t.Position			=	tempTransform.Position - offset;
+				t.LinearVelocity	=	tempTransform.LinearVelocity;
+				t.AngularVelocity	=	Vector3.Zero;
+			}
 
 			cc.IsCrouching	=	crouching;
 			cc.HasTraction	=	traction;
-			
-			t.Position			=	position;
-			t.LinearVelocity	=	MathConverter.Convert( controller.Body.LinearVelocity );
-			t.AngularVelocity	=	Vector3.Zero;
 		}
 
 

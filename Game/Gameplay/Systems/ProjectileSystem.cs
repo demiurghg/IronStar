@@ -33,10 +33,11 @@ namespace IronStar.Gameplay.Systems
 		protected override ProjectileController Create( Entity entity, Transform transform, ProjectileComponent projectile )
 		{
 			var position	=	MathConverter.Convert( transform.Position );
+			var orient		=	MathConverter.Convert( transform.Rotation );
 			var direction	=	MathConverter.Convert( transform.TransformMatrix.Forward );
-			var velocity	=	projectile.Velocity;
+			var velocity	=	direction * projectile.Velocity;
 
-			var projectileController = new ProjectileController( position, direction, velocity, (bpe) => PhysicsCore.SkipEntityFilter( bpe, projectile.Sender ) );
+			var projectileController = new ProjectileController( position, orient, velocity, (bpe) => PhysicsCore.SkipEntityFilter( bpe, projectile.Sender ) );
 			projectileController.CollisionDetected+=ProjectileController_CollisionDetected;
 			projectileController.Tag = entity;
 
@@ -76,8 +77,7 @@ namespace IronStar.Gameplay.Systems
 
 			if (!MathUtil.NearEqual(projectile.Velocity, 0))
 			{
-				transform.Position			=	MathConverter.Convert( controller.Position );
-				transform.LinearVelocity	=	MathConverter.Convert( controller.LinearVelocity );
+				physics.GetTransform( transform, controller );
 			}
 
 			projectile.LifeTime	-= gameTime.ElapsedSec;

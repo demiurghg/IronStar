@@ -135,7 +135,7 @@ namespace IronStar.ECS
 			//	spawn entities :
 			while (spawned.TryDequeue(out e))
 			{
-				entities.Add( e.ID, e );
+				entities.Add( e );
 				Refresh( e );
 			}
 
@@ -163,7 +163,10 @@ namespace IronStar.ECS
 		/// <returns></returns>
 		public TService GetService<TService>() where TService : class
 		{
-			return Services.GetService<TService>();
+			lock (lockObj)
+			{
+				return Services.GetService<TService>();
+			}
 		}
 
 
@@ -174,11 +177,14 @@ namespace IronStar.ECS
 		/// <returns></returns>
 		public IEnumerable<TSystem> GatherSystems<TSystem>()
 		{
-			var type = typeof(TSystem);
-			return systems
-				.Where( sys1 => type.IsAssignableFrom( sys1.System.GetType() ) )
-				.Select( sys2 => (TSystem)sys2.System )
-				.ToArray();
+			lock (lockObj)
+			{
+				var type = typeof(TSystem);
+				return systems
+					.Where( sys1 => type.IsAssignableFrom( sys1.System.GetType() ) )
+					.Select( sys2 => (TSystem)sys2.System )
+					.ToArray();
+			}
 		}
 
 
@@ -264,9 +270,7 @@ namespace IronStar.ECS
 
 		public Entity GetEntity( uint id )
 		{
-			Entity e = null;
-			entities.TryGetValue( id, out e );
-			return e;
+			return entities[ id ];
 		}
 
 
@@ -280,7 +284,7 @@ namespace IronStar.ECS
 		{
 			if (entity!=null)
 			{
-				if ( entities.Remove( entity.ID ) )
+				if ( entities.Remove( entity ) )
 				{
 					RemoveAllEntityComponent( entity );
 					Refresh( entity );
@@ -298,7 +302,7 @@ namespace IronStar.ECS
 
 		void KillAllInternal()
 		{
-			var killList = entities.Values.ToArray();
+			var killList = entities.GetSnapshot();
 
 			foreach ( var e in killList )
 			{
@@ -322,7 +326,7 @@ namespace IronStar.ECS
 
 		public bool Exists( uint id )
 		{
-			return entities.ContainsKey(id);
+			return entities.Contains(id);
 		}
 
 		/*-----------------------------------------------------------------------------------------------
@@ -405,38 +409,28 @@ namespace IronStar.ECS
 
 		public void AddSystem ( ISystem system )
 		{
-			if (system==null) throw new ArgumentNullException("system");
-
-			services.AddService( system.GetType(), system );
-			systems.Add( system );
-
-			if (system is IGameComponent)
+			lock (lockObj)
 			{
-				Game.Components.Add( (IGameComponent)system );
+				if (system==null) throw new ArgumentNullException("system");
+
+				services.AddService( system.GetType(), system );
+				systems.Add( system );
+
+				if (system is IGameComponent)
+				{
+					Game.Components.Add( (IGameComponent)system );
+				}
 			}
 		}
 
 
 		/*-----------------------------------------------------------------------------------------------
-		 *	System stuff :
+		 *	Queries :
 		-----------------------------------------------------------------------------------------------*/
-
-		readonly EntityComponentComparer entityComponentComparer = new EntityComponentComparer();
-
-		class EntityComponentComparer : IEqualityComparer<KeyValuePair<uint, IComponent>>
-		{
-			public bool Equals( KeyValuePair<uint, IComponent> x, KeyValuePair<uint, IComponent> y ) {  return x.Key == y.Key; }
-			public int GetHashCode( KeyValuePair<uint, IComponent> obj ) { return obj.Key.GetHashCode(); }
-		}
-
 
 		public IEnumerable<Entity> QueryEntities( Aspect aspect )
 		{
-			return entities
-				.Where( e1 => aspect.Accept(e1.Value) )
-				.Select( e2 => e2.Value )
-				//.ToArray()
-				;
+			return entities.Query( aspect );
 		}
 	}
 }

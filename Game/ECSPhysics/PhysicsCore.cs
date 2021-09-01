@@ -19,6 +19,7 @@ using System.Threading;
 using System.Diagnostics;
 using RigidTransform = BEPUutilities.RigidTransform;
 using System.Collections.Concurrent;
+using BEPUphysics.EntityStateManagement;
 
 namespace IronStar.ECSPhysics
 {
@@ -70,11 +71,13 @@ namespace IronStar.ECSPhysics
 			}
 		}
 
-		readonly ConcurrentQueue<ISpaceObject>		creationQueue	=	new ConcurrentQueue<ISpaceObject>();
-		readonly ConcurrentQueue<ISpaceObject>		removalQueue	=	new ConcurrentQueue<ISpaceObject>();
-		readonly List<ISpaceObject>					objectList		=	new List<ISpaceObject>();
-		readonly ConcurrentQueue<DeferredImpulse>	impulseQueue	=	new ConcurrentQueue<DeferredImpulse>();
-		readonly ConcurrentQueue<Action>			actionQueue		=	new ConcurrentQueue<Action>();
+		readonly ConcurrentQueue<ISpaceObject>			creationQueue		=	new ConcurrentQueue<ISpaceObject>();
+		readonly ConcurrentQueue<ISpaceObject>			removalQueue		=	new ConcurrentQueue<ISpaceObject>();
+		readonly List<ISpaceObject>						objectList			=	new List<ISpaceObject>();
+		readonly ConcurrentQueue<DeferredImpulse>		impulseQueue		=	new ConcurrentQueue<DeferredImpulse>();
+		readonly ConcurrentQueue<Action>				actionQueue			=	new ConcurrentQueue<Action>();
+		readonly MotionStateBuffer						motionStateBuffer	=	new MotionStateBuffer();
+		readonly Dictionary<ISpaceObject,MotionState>	motionStateDict		=	new Dictionary<ISpaceObject,MotionState>();
 		
 		public PhysicsCore ()
 		{
@@ -156,16 +159,16 @@ namespace IronStar.ECSPhysics
 		 *	Parallel stuff :
 		-----------------------------------------------------------------------------------------------*/
 
+		double lastUpdateTime = 0;
+
 		double GetTime()
 		{
 			return Stopwatch.GetTimestamp() / (double)Stopwatch.Frequency;
 		}
 
-		
 		void PhysicsLoop()
 		{
 			double dt			=	SimulationTimeStep;
-			double time			=	0;
 			double currentTime	=	GetTime();
 			double accumulator	=	0;
 
@@ -184,11 +187,10 @@ namespace IronStar.ECSPhysics
 				{
 					while (accumulator >= dt)
 					{
-						DoAsyncSimulationStep(dt);
-						accumulator -= dt;
-						time += dt;
+						DoAsyncSimulationStep(dt, currentTime);
 
-						//#error Call all ITransformFeeders to update transforms
+						lastUpdateTime = newTime;
+						accumulator -= dt;
 					}
 				}
 
@@ -197,19 +199,28 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		void DoAsyncSimulationStep( double dt )
+		void DoAsyncSimulationStep( double dt, double time )
 		{
 			ISpaceObject spaceObj;
 			Action action;
 
-			while (creationQueue.TryDequeue(out spaceObj)) Space.Add(spaceObj);
+			//	dequeue created objects :
+			while (creationQueue.TryDequeue(out spaceObj)) 
+			{
+				Space.Add(spaceObj);
+				motionStateBuffer.Add(spaceObj);
+			}
 
+			//	dequeue actions :
 			while (actionQueue.TryDequeue(out action)) action?.Invoke();
 
+			//	execute queries :
 			ExecuteSpatialQueries();
 
+			//	apply impulses :
 			ApplyDeferredImpulses();
 
+			//	run simulation :
 			if (Enabled)
 			{
 				Space.Update();
@@ -218,17 +229,22 @@ namespace IronStar.ECSPhysics
 				Space.BufferedStates.InterpolatedStates.Update();
 			}
 
+			//	remove objects :
 			while (removalQueue.TryDequeue(out spaceObj))
 			{
 				try 
 				{
 					Space.Remove(spaceObj);
+					motionStateBuffer.Remove(spaceObj);
 				} 
 				catch (Exception e)
 				{
 					Log.Warning(e.Message);
 				}
 			}
+
+			//	feedback simulation results :
+			motionStateBuffer.UpdateSimulationResults(time);
 		}
 
 
@@ -313,11 +329,18 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		public void GetTransform( Transform t, int index )
+		public bool GetTransform( Transform transform, ISpaceObject spaceObj )
 		{
-			var rt = transforms[ index ];
-			t.Position		=	MathConverter.Convert( rt.Position );
-			t.Rotation		=	MathConverter.Convert( rt.Orientation );
+			MotionState ms;
+			if (motionStateDict.TryGetValue( spaceObj, out ms ))
+			{
+				transform.Position			=	MathConverter.Convert( ms.Position );
+				transform.LinearVelocity	=	MathConverter.Convert( ms.LinearVelocity );
+				transform.Rotation			=	MathConverter.Convert( ms.Orientation );
+				transform.AngularVelocity	=	MathConverter.Convert( ms.AngularVelocity );
+				return true;
+			}
+			return false;
 		}
 
 
@@ -330,14 +353,7 @@ namespace IronStar.ECSPhysics
 
 		void UpdateTransforms( GameState gs )
 		{
-			int count = physSpace.BufferedStates.Entities.Count;
-			physSpace.BufferedStates.InterpolatedStates.GetStates( transforms );
-			//physSpace.BufferedStates.InterpolatedStates.FlipBuffers();
-
-			foreach ( var transformFeeder in gs.GatherSystems<ITransformFeeder>() )
-			{
-				transformFeeder.FeedTransform(gs, transforms);
-			}
+			motionStateBuffer.InterpolateMotionStates( motionStateDict, GetTime(), SimulationTimeStep );
 		}
 
 

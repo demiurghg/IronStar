@@ -83,10 +83,6 @@ namespace IronStar.ECS
 		/// </summary>
 		public Quaternion	Rotation;
 
-		/*public float BackLerpFactor;
-		public Vector3 PreviousPosition;
-		public Quaternion PreviousRotation;*/
-
 		/// <summary>
 		/// Entity linear velocity
 		/// </summary>

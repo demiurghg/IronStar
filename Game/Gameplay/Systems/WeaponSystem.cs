@@ -404,7 +404,6 @@ namespace IronStar.Gameplay.Systems
 		/// <param name="attacker"></param>
 		/// <param name="world"></param>
 		/// <param name="origin"></param>
-		[MethodImpl(MethodImplOptions.NoOptimization)]
 		void FireProjectile ( GameState gs, GameTime gameTime, WeaponComponent weapon, Matrix povTransform, Entity attacker )
 		{
 			var dt	=	gameTime.ElapsedSec;
@@ -447,7 +446,6 @@ namespace IronStar.Gameplay.Systems
 			readonly WeaponSystem ws;
 			bool hitSomething = false;
 
-			[MethodImpl(MethodImplOptions.NoOptimization)]
 			public ProjectileRaycastCallback( GameState gs, Ray ray, Entity attacker, Entity projectile, Transform ks )
 			{
 				this.ray		=	ray;
@@ -462,7 +460,6 @@ namespace IronStar.Gameplay.Systems
 
 			public void Begin( int count ) {}
 
-			[MethodImpl(MethodImplOptions.NoOptimization)]
 			public bool RayHit( int index, Entity entity, Vector3 location, Vector3 normal, bool isStatic )
 			{
 				if (entity==attacker) return false;
@@ -480,7 +477,6 @@ namespace IronStar.Gameplay.Systems
 				return true;
 			}
 
-			[MethodImpl(MethodImplOptions.NoOptimization)]
 			public void End() 
 			{
 				if (!hitSomething)

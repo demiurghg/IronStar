@@ -30,7 +30,7 @@ namespace IronStar.ECSPhysics
 	{
 		public delegate RigidTransform TransformCallback( ISpaceObject spaceObject, Transform transform );
 
-		const float SimulationTimeStep = 1.0f / 100.0f;
+		const float SimulationTimeStep = 1.0f / 60.0f;
 		const int MaxTimeStepsPerFrame = 7;
 
 		readonly Space physSpace;
@@ -161,15 +161,10 @@ namespace IronStar.ECSPhysics
 
 		double lastUpdateTime = 0;
 
-		double GetTime()
-		{
-			return Stopwatch.GetTimestamp() / (double)Stopwatch.Frequency;
-		}
-
 		void PhysicsLoop()
 		{
 			double dt			=	SimulationTimeStep;
-			double currentTime	=	GetTime();
+			double currentTime	=	Misc.GetTime();
 			double accumulator	=	0;
 
 			Space.TimeStepSettings.TimeStepDuration				=	SimulationTimeStep;
@@ -177,7 +172,7 @@ namespace IronStar.ECSPhysics
 
 			while (!stopRequest)
 			{
-				double newTime		=	GetTime();
+				double newTime		=	Misc.GetTime();
 				double frameTime	=	newTime - currentTime;
 				currentTime			=	newTime;
 
@@ -194,7 +189,7 @@ namespace IronStar.ECSPhysics
 					}
 				}
 
-				Thread.Sleep(0);
+				Thread.Sleep(1);
 			}
 		}
 
@@ -353,7 +348,7 @@ namespace IronStar.ECSPhysics
 
 		void UpdateTransforms( GameState gs )
 		{
-			motionStateBuffer.InterpolateMotionStates( motionStateDict, GetTime(), SimulationTimeStep );
+			motionStateBuffer.InterpolateMotionStates( motionStateDict, Misc.GetTime(), SimulationTimeStep );
 		}
 
 

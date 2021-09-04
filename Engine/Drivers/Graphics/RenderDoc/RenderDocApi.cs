@@ -208,7 +208,6 @@ namespace Fusion.Drivers.Graphics.RenderDoc
 	[StructLayout(LayoutKind.Sequential, Pack = 4)]
 	public struct RenderDocApi
 	{
-		[MethodImpl(MethodImplOptions.NoOptimization)]
 		public static RenderDocApi GetAPI(Version version)
 		{
 			var apiPtr	= IntPtr.Zero;

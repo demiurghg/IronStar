@@ -14,6 +14,19 @@ namespace Fusion.Core.Configuration {
 	///		larger than 4 (32-bit) or 8 (64-bit) bytes in config classes 
 	///		have lock on set and get.
 	/// </summary>
-	public sealed class ConfigAttribute : Attribute {
+	[AttributeUsage(AttributeTargets.Property|AttributeTargets.Class)]
+	public sealed class ConfigAttribute : Attribute 
+	{
+		public readonly string Name;
+
+		public ConfigAttribute()
+		{
+			Name = null;
+		}
+
+		public ConfigAttribute(string name)
+		{
+			Name = name;
+		}
 	}
 }

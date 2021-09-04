@@ -10,10 +10,12 @@ using Fusion.Core.Extensions;
 using Fusion.Engine.Common;
 using Fusion.Core.Input;
 using Fusion.Core;
+using System.Reflection;
 
-namespace Fusion.Core.Configuration {
-	public class ConfigManager {
-
+namespace Fusion.Core.Configuration 
+{
+	public class ConfigManager 
+	{
 		IniData settings;
 		readonly Game game;
 
@@ -27,42 +29,47 @@ namespace Fusion.Core.Configuration {
 		}
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="target"></param>
-		public void ApplySettings ( string sectionName, object target )
-		{
-			lock (lockObject) {
+		/*-----------------------------------------------------------------------------------------------
+		 *	Private core functions :
+		-----------------------------------------------------------------------------------------------*/
 
+		private void ApplySettings ( string sectionName, Type targetType, object targetObject, bool importAll )
+		{
+			lock (lockObject) 
+			{
 				var section = settings.Sections[sectionName];
 
-				if (section==null) {
+				if (section==null) 
+				{
 					Log.Warning("Section [{0}] does not exist.", sectionName);
 					return;
 				}
 
-				var props = target.GetType()
+				var props = targetType
 							.GetProperties()
-							.Where( p1 => p1.HasAttribute<ConfigAttribute>() )
+							.Where( p1 => p1.HasAttribute<ConfigAttribute>() || importAll )
 							.ToArray();
 			
-				foreach ( var prop in props ) {
-			
+				foreach ( var prop in props ) 
+				{
 					var name	=	prop.Name;
 					var type	=	prop.PropertyType;
 					var keyData =	section.GetKeyData( name );
 
-					if (keyData==null) {	
+					if (keyData==null) 
+					{	
 						Log.Warning("Key '{0}' does not exist in section [{1}].", name, sectionName );
 						continue;
 					}
 
 					object value;
 
-					if ( StringConverter.TryConvertFromString( type, keyData.Value, out value ) ) {
-						prop.SetValue( target, value );	
-					} else {
+					if ( StringConverter.TryConvertFromString( type, keyData.Value, out value ) ) 
+					{
+						prop.SetValue( targetObject, value );	
+					} 
+					else 
+					{
 						Log.Warning("Can not convert key '{0}' to {1}.", name, type.Name );
 					}
 				}
@@ -70,41 +77,28 @@ namespace Fusion.Core.Configuration {
 		}
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="target"></param>
-		public void ApplySettings ( object target )
+		private void RetrieveSettings ( string sectionName, Type sourceType, object sourceObject, bool exportAll )
 		{
-			ApplySettings( target.GetType().Name, target );
-		}
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="source"></param>
-		public void RetrieveSettings ( string sectionName, object source )
-		{
-			lock (lockObject) {
-
+			lock (lockObject) 
+			{
 				var sectionData = new SectionData( sectionName );
 
-				if (sectionData==null) {
+				if (sectionData==null) 
+				{
 					Log.Warning("Section [{0}] does not exist.", sectionName);
 					return;
 				}
 
-				var props = source.GetType()
+				var props = sourceType
 							.GetProperties()
-							.Where( p1 => p1.HasAttribute<ConfigAttribute>() )
+							.Where( p1 => p1.HasAttribute<ConfigAttribute>() || exportAll )
 							.ToArray();
 			
-				foreach ( var prop in props ) {
-			
+				foreach ( var prop in props ) 
+				{
 					var name	=	prop.Name;
 					var type	=	prop.PropertyType;
-					var value	=	StringConverter.ConvertToString( prop.GetValue(source) );
+					var value	=	StringConverter.ConvertToString( prop.GetValue(sourceObject) );
 
 					sectionData.Keys.AddKey( name, value );
 				}
@@ -115,13 +109,52 @@ namespace Fusion.Core.Configuration {
 		}
 
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="source"></param>
-		public void RetrieveSettings ( object source )
+
+		/*-----------------------------------------------------------------------------------------------
+		 *	Public export/import function
+		-----------------------------------------------------------------------------------------------*/
+
+		public void ApplyStaticSettings ()
 		{
-			RetrieveSettings( source.GetType().Name, source );
+			Misc.GetAllClassesWithAttribute<ConfigAttribute>()
+				.Where( type1 => type1.IsAbstract && type1.IsSealed )
+				.Select( type2 => new { Name = type2.GetCustomAttribute<ConfigAttribute>().Name ?? type2.Name, Type = type2 } )
+				.ToList()
+				.ForEach( nameType => ApplySettings( nameType.Name, nameType.Type ) );
+		}
+
+
+		public void RetrieveStaticSettings ()
+		{
+			Misc.GetAllClassesWithAttribute<ConfigAttribute>()
+				.Where( type1 => type1.IsAbstract && type1.IsSealed )
+				.Select( type2 => new { Name = type2.GetCustomAttribute<ConfigAttribute>().Name ?? type2.Name, Type = type2 } )
+				.ToList()
+				.ForEach( nameType => RetrieveSettings( nameType.Name, nameType.Type ) );
+		}
+
+
+		public void ApplySettings ( string sectionName, object target )
+		{
+			ApplySettings( sectionName, target.GetType(), target, false );
+		}
+
+
+		public void ApplySettings ( string sectionName, Type type )
+		{
+			ApplySettings( sectionName, type, null, true );
+		}
+
+
+		public void RetrieveSettings ( string sectionName, object source )
+		{
+			RetrieveSettings( sectionName, source.GetType(), source, false );
+		}
+
+
+		public void RetrieveSettings ( string sectionName, Type type )
+		{
+			RetrieveSettings( sectionName, type, null, true );
 		}
 
 
@@ -135,11 +168,12 @@ namespace Fusion.Core.Configuration {
 
 			var storage = game.UserStorage;
 
-			if (storage.FileExists(filename)) {
-				
+			if (storage.FileExists(filename)) 
+			{
 				LoadSettings( storage.OpenFile(filename, FileMode.Open, FileAccess.Read) );
-
-			} else {
+			} 
+			else 
+			{
 				Log.Warning("Can not load configuration from {0}", filename);
 			}
 		}
@@ -166,14 +200,15 @@ namespace Fusion.Core.Configuration {
 		/// <param name="stream"></param>
 		public void LoadSettings ( Stream stream )
 		{
-			lock (lockObject) {
-
+			lock (lockObject) 
+			{
 				var iniData = new IniData();
 				var parser = new StreamIniDataParser();
 
 				parser.Parser.Configuration.CommentString	=	"# ";
 
-				using ( var sw = new StreamReader(stream) ) {
+				using ( var sw = new StreamReader(stream) ) 
+				{
 					settings	= parser.ReadData( sw );
 				}
 			}

@@ -11,7 +11,7 @@ using Fusion.Drivers.Graphics;
 using System.Runtime.InteropServices;
 using Fusion.Engine.Graphics.Lights;
 using Fusion.Engine.Graphics.GI;
-
+using System.Runtime.CompilerServices;
 
 namespace Fusion.Engine.Graphics 
 {
@@ -444,159 +444,194 @@ namespace Fusion.Engine.Graphics
 			var vp = new Rectangle(0,0,1,1);
 
 
-			#region	Compute light and decal count
-			foreach ( OmniLight ol in lightSet.OmniLights )
+			try
 			{
-				if (ol.Visible) 
+				#region	Compute light and decal count
+				foreach ( OmniLight ol in lightSet.OmniLights )
 				{
-					for (int i=ol.MinExtent.X; i<ol.MaxExtent.X; i++)
-					for (int j=ol.MinExtent.Y; j<ol.MaxExtent.Y; j++)
-					for (int k=ol.MinExtent.Z; k<ol.MaxExtent.Z; k++) {
-						int a = ComputeAddress(i,j,k);
-						lightGrid[a].AddLight();
-					}
-				}
-			}
-
-			foreach ( SpotLight sl in lightSet.SpotLights ) 
-			{
-				if (sl.IsVisible) 
-				{
-					for (int i=sl.MinExtent.X; i<sl.MaxExtent.X; i++)
-					for (int j=sl.MinExtent.Y; j<sl.MaxExtent.Y; j++)
-					for (int k=sl.MinExtent.Z; k<sl.MaxExtent.Z; k++) 
+					if (ol.Visible) 
 					{
-						int a = ComputeAddress(i,j,k);
-						lightGrid[a].AddLight();
+						for (int i=ol.MinExtent.X; i<ol.MaxExtent.X; i++)
+						for (int j=ol.MinExtent.Y; j<ol.MaxExtent.Y; j++)
+						for (int k=ol.MinExtent.Z; k<ol.MaxExtent.Z; k++) {
+							int a = ComputeAddress(i,j,k);
+							lightGrid[a].AddLight();
+						}
 					}
 				}
-			}
 
-			foreach ( Decal dcl in lightSet.Decals ) 
-			{
-				if (dcl.Visible) 
+				foreach ( SpotLight sl in lightSet.SpotLights ) 
 				{
-					for (int i=dcl.MinExtent.X; i<dcl.MaxExtent.X; i++)
-					for (int j=dcl.MinExtent.Y; j<dcl.MaxExtent.Y; j++)
-					for (int k=dcl.MinExtent.Z; k<dcl.MaxExtent.Z; k++) 
+					if (sl.IsVisible) 
 					{
-						int a = ComputeAddress(i,j,k);
-						lightGrid[a].AddDecal();
+						for (int i=sl.MinExtent.X; i<sl.MaxExtent.X; i++)
+						for (int j=sl.MinExtent.Y; j<sl.MaxExtent.Y; j++)
+						for (int k=sl.MinExtent.Z; k<sl.MaxExtent.Z; k++) 
+						{
+							int a = ComputeAddress(i,j,k);
+							lightGrid[a].AddLight();
+						}
 					}
 				}
-			}
 
-			foreach ( LightProbe lpb in lightSet.LightProbes ) 
-			{
-				if (lpb.Visible) 
+				foreach ( Decal dcl in lightSet.Decals ) 
 				{
-					for (int i=lpb.MinExtent.X; i<lpb.MaxExtent.X; i++)
-					for (int j=lpb.MinExtent.Y; j<lpb.MaxExtent.Y; j++)
-					for (int k=lpb.MinExtent.Z; k<lpb.MaxExtent.Z; k++) 
+					if (dcl.Visible) 
 					{
-						int a = ComputeAddress(i,j,k);
-						lightGrid[a].AddLightProbe();
+						for (int i=dcl.MinExtent.X; i<dcl.MaxExtent.X; i++)
+						for (int j=dcl.MinExtent.Y; j<dcl.MaxExtent.Y; j++)
+						for (int k=dcl.MinExtent.Z; k<dcl.MaxExtent.Z; k++) 
+						{
+							int a = ComputeAddress(i,j,k);
+							lightGrid[a].AddDecal();
+						}
 					}
 				}
-			}
-			#endregion
 
-
-
-			uint offset = 0;
-			for ( int i=0; i<lightGrid.Length; i++ ) 
+				foreach ( LightProbe lpb in lightSet.LightProbes ) 
+				{
+					if (lpb.Visible) 
+					{
+						for (int i=lpb.MinExtent.X; i<lpb.MaxExtent.X; i++)
+						for (int j=lpb.MinExtent.Y; j<lpb.MaxExtent.Y; j++)
+						for (int k=lpb.MinExtent.Z; k<lpb.MaxExtent.Z; k++) 
+						{
+							int a = ComputeAddress(i,j,k);
+							lightGrid[a].AddLightProbe();
+						}
+					}
+				}
+				#endregion
+			} catch ( IndexOutOfRangeException ioore )
 			{
-
-				lightGrid[i].Offset = offset;
-
-				offset += lightGrid[i].LightCount;
-				offset += lightGrid[i].DecalCount;
-				offset += lightGrid[i].ProbeCount;
-
-				lightGrid[i].Count	= 0;
+				Log.Error("Compute light and decal count: {0}", ioore.Message);
 			}
 
+
+			try
+			{
+				uint offset = 0;
+				for ( int i=0; i<lightGrid.Length; i++ ) 
+				{
+
+					lightGrid[i].Offset = offset;
+
+					offset += lightGrid[i].LightCount;
+					offset += lightGrid[i].DecalCount;
+					offset += lightGrid[i].ProbeCount;
+
+					lightGrid[i].Count	= 0;
+				}
+			} catch ( IndexOutOfRangeException ioore )
+			{
+				Log.Error(ioore.Message);
+			}
 
 
 			uint index = 0;
-			foreach ( var ol in lightSet.OmniLights ) 
+
+			try
 			{
-				if (ol.Visible) 
+				foreach ( var ol in lightSet.OmniLights ) 
 				{
-					for (int i=ol.MinExtent.X; i<ol.MaxExtent.X; i++)
-					for (int j=ol.MinExtent.Y; j<ol.MaxExtent.Y; j++)
-					for (int k=ol.MinExtent.Z; k<ol.MaxExtent.Z; k++) 
+					if (ol.Visible) 
 					{
-						int a = ComputeAddress(i,j,k);
-						indexData[ lightGrid[a].Offset + lightGrid[a].TotalCount ] = index;
-						lightGrid[a].AddLight();
+						for (int i=ol.MinExtent.X; i<ol.MaxExtent.X; i++)
+						for (int j=ol.MinExtent.Y; j<ol.MaxExtent.Y; j++)
+						for (int k=ol.MinExtent.Z; k<ol.MaxExtent.Z; k++) 
+						{
+							int a = ComputeAddress(i,j,k);
+							indexData[ lightGrid[a].Offset + lightGrid[a].TotalCount ] = index;
+							lightGrid[a].AddLight();
+						}
+
+						lightData[index].FromOmniLight( ol );
+
+						index++;
 					}
-
-					lightData[index].FromOmniLight( ol );
-
-					index++;
 				}
+			} catch ( IndexOutOfRangeException ioore )
+			{
+				Log.Error(ioore.Message);
 			}
 
-			foreach ( var sl in lightSet.SpotLights ) 
+			try
 			{
-				if (sl.IsVisible)
+				foreach ( var sl in lightSet.SpotLights ) 
 				{
-					for (int i=sl.MinExtent.X; i<sl.MaxExtent.X; i++)
-					for (int j=sl.MinExtent.Y; j<sl.MaxExtent.Y; j++)
-					for (int k=sl.MinExtent.Z; k<sl.MaxExtent.Z; k++) 
+					if (sl.IsVisible)
 					{
-						int a = ComputeAddress(i,j,k);
-						indexData[ lightGrid[a].Offset + lightGrid[a].TotalCount ] = index;
-						lightGrid[a].AddLight();
+						for (int i=sl.MinExtent.X; i<sl.MaxExtent.X; i++)
+						for (int j=sl.MinExtent.Y; j<sl.MaxExtent.Y; j++)
+						for (int k=sl.MinExtent.Z; k<sl.MaxExtent.Z; k++) 
+						{
+							int a = ComputeAddress(i,j,k);
+							indexData[ lightGrid[a].Offset + lightGrid[a].TotalCount ] = index;
+							lightGrid[a].AddLight();
+						}
+
+						lightData[index].FromSpotLight( sl );
+
+						index++;
 					}
-
-					lightData[index].FromSpotLight( sl );
-
-					index++;
 				}
-			}
-
-			index = 0;
-
-			foreach ( var dcl in lightSet.Decals ) 
+			} catch ( IndexOutOfRangeException ioore )
 			{
-				if (dcl.Visible) 
-				{
-					for (int i=dcl.MinExtent.X; i<dcl.MaxExtent.X; i++)
-					for (int j=dcl.MinExtent.Y; j<dcl.MaxExtent.Y; j++)
-					for (int k=dcl.MinExtent.Z; k<dcl.MaxExtent.Z; k++) 
-					{
-						int a = ComputeAddress(i,j,k);
-						indexData[ lightGrid[a].Offset + lightGrid[a].TotalCount ] = index;
-						lightGrid[a].AddDecal();
-					}
-
-					decalData[index].FromDecal( dcl, proj.M22, ref screen );
-
-					index++;
-				}
+				Log.Error(ioore.Message);
 			}
 
 			index = 0;
 
-			foreach ( var lpb in lightSet.LightProbes ) 
+			try
 			{
-				if (lpb.Visible) 
+				foreach ( var dcl in lightSet.Decals ) 
 				{
-					for (int i=lpb.MinExtent.X; i<lpb.MaxExtent.X; i++)
-					for (int j=lpb.MinExtent.Y; j<lpb.MaxExtent.Y; j++)
-					for (int k=lpb.MinExtent.Z; k<lpb.MaxExtent.Z; k++) 
+					if (dcl.Visible) 
 					{
-						int a = ComputeAddress(i,j,k);
-						indexData[ lightGrid[a].Offset + lightGrid[a].TotalCount ] = index;
-						lightGrid[a].AddLightProbe();
+						for (int i=dcl.MinExtent.X; i<dcl.MaxExtent.X; i++)
+						for (int j=dcl.MinExtent.Y; j<dcl.MaxExtent.Y; j++)
+						for (int k=dcl.MinExtent.Z; k<dcl.MaxExtent.Z; k++) 
+						{
+							int a = ComputeAddress(i,j,k);
+							indexData[ lightGrid[a].Offset + lightGrid[a].TotalCount ] = index;
+							lightGrid[a].AddDecal();
+						}
+
+						decalData[index].FromDecal( dcl, proj.M22, ref screen );
+
+						index++;
 					}
-
-					probeData[index].FromLightProbe( lpb );
-
-					index++;
 				}
+			} catch ( IndexOutOfRangeException ioore )
+			{
+				Log.Error(ioore.Message);
+			}
+
+			index = 0;
+
+			try
+			{
+				foreach ( var lpb in lightSet.LightProbes ) 
+				{
+					if (lpb.Visible) 
+					{
+						for (int i=lpb.MinExtent.X; i<lpb.MaxExtent.X; i++)
+						for (int j=lpb.MinExtent.Y; j<lpb.MaxExtent.Y; j++)
+						for (int k=lpb.MinExtent.Z; k<lpb.MaxExtent.Z; k++) 
+						{
+							int a = ComputeAddress(i,j,k);
+							indexData[ lightGrid[a].Offset + lightGrid[a].TotalCount ] = index;
+							lightGrid[a].AddLightProbe();
+						}
+
+						probeData[index].FromLightProbe( lpb );
+
+						index++;
+					}
+				}
+			} catch ( IndexOutOfRangeException ioore )
+			{
+				Log.Error(ioore.Message);
 			}
 
 

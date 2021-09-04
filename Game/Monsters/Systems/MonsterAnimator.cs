@@ -52,8 +52,6 @@ namespace IronStar.Monsters.Systems
 			torsoLayer			=	new Sequencer( scene, "spine1", AnimationBlendMode.Override );
 			locomotionState		=	new Idle(this, uc, false);
 
-			torsoLayer.Sequence("attack", SequenceMode.Looped|SequenceMode.Immediate);
-
 			composer.Tracks.Add( locomotionLayer );
 			composer.Tracks.Add( torsoLayer );
 			composer.Tracks.Add( rotateTorso );

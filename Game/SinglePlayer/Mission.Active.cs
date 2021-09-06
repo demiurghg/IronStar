@@ -41,7 +41,6 @@ namespace IronStar.SinglePlayer {
 				if (context.GameState==null) {
 
 					var map				=	context.Content.Load<Mapping.Map>(@"maps\" + context.MapName);
-					var msgsvc			=	new LocalMessageService();
 
 					context.GameState	=	IronStar.CreateGameState( context.Game, context.Content, context.MapName );
 				}

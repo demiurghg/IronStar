@@ -12,6 +12,7 @@ using System.Runtime.Remoting;
 using Fusion.Core.Content;
 using Fusion.Engine.Tools;
 using System.Collections.Concurrent;
+using System.Collections;
 
 namespace IronStar.ECS
 {
@@ -29,10 +30,11 @@ namespace IronStar.ECS
 		readonly SystemCollection		systems;
 		readonly ComponentCollection	components;
 
-		readonly ConcurrentQueue<Entity>	spawned;
-		readonly ConcurrentQueue<Entity>	killed;
-		readonly ConcurrentQueue<Entity>	refreshed;
+		readonly ConcurrentQueue<Entity>	spawnedQueue;
+		readonly ConcurrentQueue<Entity>	killedQueue;
+		readonly ConcurrentQueue<Entity>	refreshedQueue;
 		readonly ConcurrentQueue<Action>	invokeQueue;
+		readonly ConcurrentQueue<Tuple<Entity,IComponent>> componentsToRemove;
 
 		readonly GameServiceContainer services;
 		public GameServiceContainer Services { get { return services; } }
@@ -57,10 +59,12 @@ namespace IronStar.ECS
 			systems		=	new SystemCollection(this);
 			components	=	new ComponentCollection();
 
-			spawned		=	new ConcurrentQueue<Entity>();
-			killed		=	new ConcurrentQueue<Entity>();
-			refreshed	=	new ConcurrentQueue<Entity>();
-			invokeQueue	=	new ConcurrentQueue<Action>();
+			spawnedQueue	=	new ConcurrentQueue<Entity>();
+			killedQueue		=	new ConcurrentQueue<Entity>();
+			refreshedQueue	=	new ConcurrentQueue<Entity>();
+			invokeQueue		=	new ConcurrentQueue<Action>();
+
+			componentsToRemove	=	new ConcurrentQueue<Tuple<Entity,IComponent>>();
 
 			services	=	new GameServiceContainer();
 
@@ -88,6 +92,8 @@ namespace IronStar.ECS
 
 				KillAllInternal();
 
+				//	just in case
+				RefreshEntities();
 				RefreshEntities();
 
 				foreach ( var systemWrapper in systems )
@@ -108,14 +114,11 @@ namespace IronStar.ECS
 		/// <param name="gameTime"></param>
 		public void Update( GameTime gameTime )
 		{
-			//	refresh entities and run systems :
 			RefreshEntities();
 
-			//	run sysytems :
 			foreach ( var system in systems )
 			{
 				system.System.Update( this, gameTime );
-				RefreshEntities();
 			}
 
 			PrintState();
@@ -133,25 +136,27 @@ namespace IronStar.ECS
 			}
 
 			//	spawn entities :
-			while (spawned.TryDequeue(out e))
+			while (spawnedQueue.TryDequeue(out e))
 			{
 				entities.Add( e );
 				Refresh( e );
 			}
 
+			RemoveEntityComponentsInternal();
+
+			//	kill entities marked to kill :
+			while (killedQueue.TryDequeue(out e))
+			{
+				KillInternal(e);
+			}
+
 			//	refresh component and system bindings :
-			while (refreshed.TryDequeue(out e))
+			while (refreshedQueue.TryDequeue(out e))
 			{
 				foreach ( var system in systems )
 				{
 					system.Changed(e);
 				}
-			}
-
-			//	kill entities marked to kill :
-			while (killed.TryDequeue(out e))
-			{
-				KillInternal(e);
 			}
 		}
 
@@ -186,7 +191,6 @@ namespace IronStar.ECS
 					.ToArray();
 			}
 		}
-
 
 
 		/*-----------------------------------------------------------------------------------------------
@@ -236,7 +240,7 @@ namespace IronStar.ECS
 		{
 			var entity = new Entity( this, IdGenerator.Next() );
 
-			spawned.Enqueue( entity );
+			spawnedQueue.Enqueue( entity );
 
 			return entity;
 		}
@@ -268,6 +272,14 @@ namespace IronStar.ECS
 		}
 
 
+		void Refresh ( Entity entity )
+		{
+			if (entity==null) throw new ArgumentNullException("entity");
+
+			refreshedQueue.Enqueue( entity );
+		}
+
+
 		public Entity GetEntity( uint id )
 		{
 			return entities[ id ];
@@ -276,7 +288,7 @@ namespace IronStar.ECS
 
 		public void Kill( Entity e )
 		{
-			if (e!=null) killed.Enqueue( e );
+			if (e!=null) killedQueue.Enqueue( e );
 		}
 
 
@@ -291,7 +303,7 @@ namespace IronStar.ECS
 				}
 				else
 				{
-					if (spawned.Contains(entity))
+					if (spawnedQueue.Contains(entity))
 					{
 						Log.Warning("Spawn queue contains killed entity!");
 					}
@@ -315,12 +327,6 @@ namespace IronStar.ECS
 		{
 			KillAllInternal();
 			RefreshEntities();
-		}
-
-
-		void Refresh( Entity e )
-		{
-			refreshed.Enqueue( e );
 		}
 
 
@@ -356,13 +362,15 @@ namespace IronStar.ECS
 		 *	Component stuff :
 		-----------------------------------------------------------------------------------------------*/
 
-		public void AddEntityComponent ( Entity entity, IComponent component )
+		public void AddEntityComponent( Entity entity, IComponent component )
 		{
 			if (entity==null) throw new ArgumentNullException("entity");
 			if (component==null) throw new ArgumentNullException("component");
 
+			//	deferred addition :
+			//componentAdditionQueue.Enqueue( new Tuple<Entity, IComponent>( entity, component ) );
+			//	immediate addition :
 			components.AddComponent( entity.ID, component );
-
 			entity.ComponentMapping |= ECSTypeManager.GetComponentBit( component.GetType() );
 
 			Refresh( entity );
@@ -374,20 +382,33 @@ namespace IronStar.ECS
 			if (entity==null) throw new ArgumentNullException("entity");
 			if (component==null) throw new ArgumentNullException("component");
 
-			entity.ComponentMapping &= ~ECSTypeManager.GetComponentBit( component.GetType() );
-
-			components.RemoveComponent( entity.ID, component );
-
-			Refresh( entity );
+			componentsToRemove.Enqueue( new Tuple<Entity, IComponent>( entity, component ) );
 		}
 
 
-		public void RemoveAllEntityComponent( Entity entity )
+		private void RemoveEntityComponentsInternal()
 		{
-			if (entity==null) throw new ArgumentNullException("entity");
+			Tuple<Entity,IComponent> entry;
 
+			while (componentsToRemove.TryDequeue( out entry ))
+			{
+				var entity		=	entry.Item1;
+				var component	=	entry.Item2;
+
+				entity.ComponentMapping &= ~ECSTypeManager.GetComponentBit( component.GetType() );
+				components.RemoveComponent( entity.ID, component );
+
+				Refresh( entity );
+			}
+		}
+
+
+		void RemoveAllEntityComponent( Entity entity )
+		{
 			entity.ComponentMapping = 0;
 			components.RemoveAllComponents( entity.ID, c => {} );
+
+			Refresh( entity );
 		}
 
 		

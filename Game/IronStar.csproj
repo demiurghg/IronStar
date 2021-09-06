@@ -158,6 +158,7 @@
     <Compile Include="ECS\Component.cs" />
     <Compile Include="ECS\ECSTypeManager.cs" />
     <Compile Include="ECS\Collections\EntityFactoryCollection.cs" />
+    <Compile Include="ECS\IGameState.cs" />
     <Compile Include="ECS\StatelessSystem.cs" />
     <Compile Include="ECS\ProcessingSystem.cs" />
     <Compile Include="ECS\SystemWrapper.cs" />
@@ -301,7 +302,6 @@
     <Compile Include="Editor\Utils.cs" />
     <Compile Include="IronStar.Commands.cs" />
     <Compile Include="IronStar.cs" />
-    <Compile Include="LocalMessageService.cs" />
     <Compile Include="Mapping\MapDecal.cs" />
     <Compile Include="Mapping\MapEntity.cs" />
     <Compile Include="Mapping\MapEnvironment.cs" />

@@ -38,7 +38,7 @@ namespace IronStar.UI.Controls.Advanced {
 				StatusChanged	+=	AESlider_StatusChanged;
 				Click			+=	AEButton_Click;
 
-				Update(new GameTime());
+				Update(GameTime.Zero);
 			}
 
 

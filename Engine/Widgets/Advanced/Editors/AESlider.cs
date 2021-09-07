@@ -69,7 +69,7 @@ namespace Fusion.Widgets.Advanced
 			slider.BorderColor	=	ColorTheme.BorderColor;
 			Add( slider );
 
-			Update(new GameTime());
+			Update(GameTime.Zero);
 		}
 
 

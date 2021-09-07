@@ -54,7 +54,7 @@ namespace Fusion.Widgets.Advanced
 
 			this.Add(yesNoButton);
 
-			Update(new GameTime());
+			Update(GameTime.Zero);
 		}
 
 

@@ -290,7 +290,7 @@ namespace Fusion.Core {
 			inputDevice			=	new InputDevice( this );
 			graphicsDevice		=	new GraphicsDevice( this );
 			content				=	new ContentManager( this );
-			gameTimeInternal	=	new GameTime();
+			gameTimeInternal	=	GameTime.Start();
 
 			keyboard			=	new Keyboard(this);
 			mouse				=	new Mouse(this);
@@ -512,7 +512,7 @@ namespace Fusion.Core {
 				graphicsDevice.Display.Prepare();
 
 				//	pre update :
-				gameTimeInternal.Update();
+				gameTimeInternal = gameTimeInternal.Next();
 				InputDevice.UpdateInput();
 
 				//	update game components :

@@ -52,7 +52,7 @@ namespace IronStar.UI.Controls.Advanced {
 				slider.StatusChanged +=Slider_StatusChanged;
 				Add( slider );
 
-				Update(new GameTime());
+				Update(GameTime.Zero);
 			}
 
 

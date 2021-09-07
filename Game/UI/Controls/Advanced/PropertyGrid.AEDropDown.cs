@@ -44,7 +44,7 @@ namespace IronStar.UI.Controls.Advanced {
 
 				Add( dropDown );
 
-				Update(new GameTime());
+				Update(GameTime.Zero);
 			}
 
 

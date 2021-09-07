@@ -64,7 +64,7 @@ namespace Fusion.Engine.Client {
 				clientTicks	=	stopwatch.Elapsed.Ticks;
 
 
-				context.Instance.FeedSnapshot( new GameTime(0,svTicks,0L), initialSnapshot, 0 );
+				context.Instance.FeedSnapshot( GameTime.Bad, initialSnapshot, 0 );
 			}
 
 
@@ -107,7 +107,7 @@ namespace Fusion.Engine.Client {
 				long currentTime	=	stopwatch.Elapsed.Ticks;
 				long deltaTime		=	currentTime - clientTicks;
 				clientTicks			=	currentTime;
-				var  clientTime		=	new GameTime(clientFrames, currentTime, deltaTime);
+				var  clientTime		=	GameTime.Bad;
 
 				clientFrames++;
 
@@ -202,7 +202,7 @@ namespace Fusion.Engine.Client {
 				#if USE_DEJITTER
 				jitter.Push( snapshot, ackCmdID, svTicks, stopwatch.Elapsed.Ticks );
 				#else
-				context.Instance.FeedSnapshot( new GameTime(svFrame, svTicks,timeDelta), snapshot, ackCmdID );
+				context.Instance.FeedSnapshot( GameTime.Bad, snapshot, ackCmdID );
 				#endif
 			}
 

@@ -13,6 +13,7 @@ using Fusion.Core.Content;
 using Fusion.Engine.Tools;
 using System.Collections.Concurrent;
 using System.Collections;
+using System.Threading;
 
 namespace IronStar.ECS
 {
@@ -46,6 +47,9 @@ namespace IronStar.ECS
 
 		public event	EventHandler Reloading;
 
+		Thread updateThread;
+		bool terminate = false;
+
 
 		/// <summary>
 		/// Game state constructor
@@ -75,6 +79,15 @@ namespace IronStar.ECS
 			factories	=	new EntityFactoryCollection();
 
 			Game.Reloading += Game_Reloading;
+		}
+
+
+		public void Start()
+		{
+			updateThread				=	new Thread( UpdateParallelLoop );
+			updateThread.Name			=	"ECS Update Thread";
+			updateThread.IsBackground	=	true;
+			updateThread.Start();
 		}
 
 		
@@ -126,6 +139,22 @@ namespace IronStar.ECS
 			}
 
 			PrintState();
+		}
+
+
+		public void UpdateParallelLoop()
+		{
+			while (!terminate)
+			{
+				RefreshEntities();
+
+				foreach ( var system in systems )
+				{
+					//system.System.Update( this, gameTime );
+				}
+			}
+
+
 		}
 
 

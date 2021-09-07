@@ -43,7 +43,7 @@ namespace IronStar.UI.Controls.Advanced {
 
 				Add( colorButton );
 
-				Update(new GameTime());
+				Update(GameTime.Zero);
 			}
 
 

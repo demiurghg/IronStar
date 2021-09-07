@@ -5,11 +5,57 @@ using System.Text;
 using System.Diagnostics;
 using Fusion.Core.Mathematics;
 
+namespace Fusion.Core 
+{
+	public class GameTime
+	{
+		public static TimeSpan Current { get { return sw.Elapsed; } }
+		static readonly Stopwatch sw = new Stopwatch();
+		static GameTime() { sw.Start(); }
 
-namespace Fusion.Core {
+		static public GameTime Zero   { get { return new GameTime( Current, TimeSpan.Zero, 0 ); } }
+		static public GameTime MSec16 { get { return new GameTime( Current, TimeSpan.FromMilliseconds(16), 1 ); } }
+		static public GameTime MSec1  { get { return new GameTime( Current, TimeSpan.FromMilliseconds( 1), 1 ); } }
+		static public GameTime Bad    { get { throw new NotImplementedException(); } }
 
-	public class GameTime {
-		
+		static public GameTime Start()
+		{
+			return new GameTime( Current, TimeSpan.Zero, 0 );
+		}
+
+		readonly TimeSpan	total;
+		readonly TimeSpan	elapsed;
+		readonly long		frames;
+
+		private GameTime( TimeSpan total, TimeSpan elapsed, long frames )
+		{
+			this.total		=	total;
+			this.elapsed	=	elapsed;
+			this.frames		=	frames;
+		}
+
+		public	GameTime Next()
+		{
+			var current = Current;
+			var elapsed = current - total;
+			return new GameTime( current, elapsed, frames + 1 );
+		}
+
+		public long Frames { get { return frames; } }
+
+		public TimeSpan Total { get { return total; }	}
+
+		public TimeSpan Elapsed { get { return elapsed; } }
+
+		public float ElapsedSec { get { return (float)elapsed.TotalSeconds; } }
+
+		public int Milliseconds { get { return (int)(elapsed.TotalMilliseconds); } }
+
+		public float Fps { get { return ElapsedSec==0 ? 0 : 1 / ElapsedSec; } }
+	}
+
+	public class GameTime2 
+	{
 		/// <summary>
 		/// Averaging frame count.
 		/// </summary>
@@ -50,23 +96,9 @@ namespace Fusion.Core {
 		public float Fps { get { return 1 / ElapsedSec; } }
 
 
-		public static GameTime MSec16 {
+		public static GameTime2 Zero {
 			get {
-				return new GameTime( 0, new TimeSpan(0,0,0,0,16), new TimeSpan(0,0,0,0,16) );
-			}
-		}
-
-
-		public static GameTime MSec1 {
-			get {
-				return new GameTime( 0, new TimeSpan(0,0,0,0,1), new TimeSpan(0,0,0,0,1) );
-			}
-		}
-
-
-		public static GameTime Zero {
-			get {
-				return new GameTime( 0, new TimeSpan(0,0,0,0,0), new TimeSpan(0,0,0,0,0) );
+				return new GameTime2( 0, new TimeSpan(0,0,0,0,0), new TimeSpan(0,0,0,0,0) );
 			}
 		}
 
@@ -74,7 +106,7 @@ namespace Fusion.Core {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public GameTime ()
+		public GameTime2 ()
 		{
 			stopWatch	= new Stopwatch();
 			stopWatch.Start();
@@ -87,7 +119,7 @@ namespace Fusion.Core {
 		/// </summary>
 		/// <param name="total"></param>
 		/// <param name="elapsed"></param>
-		internal GameTime ( long frames, TimeSpan total, TimeSpan elapsed )
+		internal GameTime2 ( long frames, TimeSpan total, TimeSpan elapsed )
 		{
 			this.frame		=	frames;
 			this.total		=	total;
@@ -100,7 +132,7 @@ namespace Fusion.Core {
 		/// </summary>
 		/// <param name="total"></param>
 		/// <param name="elapsed"></param>
-		internal GameTime ( long frames, long totalTicks, long elapsedTicks )
+		internal GameTime2 ( long frames, long totalTicks, long elapsedTicks )
 		{
 			this.frame		=	frames;
 			this.total		=	new TimeSpan(totalTicks);

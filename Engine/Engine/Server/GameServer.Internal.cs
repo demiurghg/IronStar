@@ -158,7 +158,7 @@ namespace Fusion.Engine.Server {
 						while ( accumulator > targetDelta ) {
 
 							//var svTime = new GameTime( time, targetDelta );
-							var svTime	= new GameTime( serverFrames, time, targetDelta );
+							var svTime	= GameTime.Bad;
 								
 							//
 							//	Do actual server stuff :

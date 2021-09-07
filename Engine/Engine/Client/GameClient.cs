@@ -94,7 +94,7 @@ namespace Fusion.Engine.Client {
 
 			while ( !(state is StandBy) ) {
 				Thread.Sleep(50);
-				Update( new GameTime() );
+				Update( GameTime.Bad );
 			}
 		}
 

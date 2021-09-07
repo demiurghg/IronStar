@@ -46,7 +46,7 @@ namespace Fusion.Widgets.Advanced
 
 			Add( dropDown );
 
-			Update(new GameTime());
+			Update(GameTime.Zero);
 		}
 
 

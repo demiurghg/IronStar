@@ -37,7 +37,7 @@ namespace Fusion.Widgets.Advanced
 			StatusChanged	+=	AESlider_StatusChanged;
 			Click			+=	AEButton_Click;
 
-			Update(new GameTime());
+			Update(GameTime.Zero);
 		}
 
 

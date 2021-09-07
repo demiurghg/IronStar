@@ -55,7 +55,7 @@ namespace IronStar.UI.Controls.Advanced {
 
 				this.Add(yesNoButton);
 
-				Update(new GameTime());
+				Update(GameTime.Zero);
 			}
 
 

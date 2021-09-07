@@ -27,12 +27,6 @@ namespace Fusion.Core.Extensions
 		}
 
 		
-		public static double GetTime()
-		{
-			return Stopwatch.GetTimestamp() / (double)Stopwatch.Frequency;
-		}
-
-
 		public static bool IsNumericType(this Type type)
 		{
 			switch (Type.GetTypeCode(type))

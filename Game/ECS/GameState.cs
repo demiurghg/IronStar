@@ -28,6 +28,7 @@ namespace IronStar.ECS
 		public ContentManager Content { get { return content; } }
 		readonly ContentManager content;
 		readonly Game game;
+		readonly TimeSpan timeStep;
 
 		readonly EntityCollection		entities;
 		readonly SystemCollection		systems;
@@ -55,12 +56,13 @@ namespace IronStar.ECS
 		/// Game state constructor
 		/// </summary>
 		/// <param name="game"></param>
-		public GameState( Game game, ContentManager content )
+		public GameState( Game game, ContentManager content, TimeSpan timeStep )
 		{
 			ECSTypeManager.Scan();
 
 			this.game		=	game;
 			this.content	=	content;
+			this.timeStep	=	timeStep;
 
 			entities	=	new EntityCollection();
 			systems		=	new SystemCollection(this);

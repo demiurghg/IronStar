@@ -42,7 +42,7 @@ namespace IronStar.Mapping
 		}
 
 
-		public override void SpawnNodeECS( GameState gs )
+		public override void SpawnNodeECS( IGameState gs )
 		{
 			var builder = gs.Game.GetService<Builder>();
 
@@ -70,7 +70,7 @@ namespace IronStar.Mapping
 		}
 
 
-		public override void KillNodeECS( GameState gs )
+		public override void KillNodeECS( IGameState gs )
 		{
 			if (nodes!=null)
 			{

@@ -77,7 +77,7 @@ namespace IronStar
 
 
 
-		public override ECS.Entity SpawnECS( ECS.GameState gs )
+		public override ECS.Entity SpawnECS( ECS.IGameState gs )
 		{
 			var e = gs.Spawn();
 

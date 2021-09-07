@@ -16,7 +16,7 @@ namespace IronStar.SinglePlayer {
 		public readonly Guid UserGuid;
 		public readonly ContentManager Content;
 
-		public GameState	GameState	=	null;
+		public IGameState	GameState	=	null;
 
 		public MissionContext ( Mission mission, string map )
 		{

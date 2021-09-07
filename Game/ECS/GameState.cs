@@ -16,15 +16,17 @@ using System.Collections;
 
 namespace IronStar.ECS
 {
-	public sealed partial class GameState : DisposableBase
+	public sealed partial class GameState : DisposableBase, IGameState
 	{
 		public const int MaxSystems			=	BitSet.MaxBits;
 		public const int MaxComponentTypes	=	BitSet.MaxBits;
 
 		object lockObj = new object();
 
-		public readonly Game Game;
-		public readonly ContentManager Content;
+		public Game Game { get { return game; } }
+		public ContentManager Content { get { return content; } }
+		readonly ContentManager content;
+		readonly Game game;
 
 		readonly EntityCollection		entities;
 		readonly SystemCollection		systems;
@@ -34,6 +36,7 @@ namespace IronStar.ECS
 		readonly ConcurrentQueue<Entity>	killedQueue;
 		readonly ConcurrentQueue<Entity>	refreshedQueue;
 		readonly ConcurrentQueue<Action>	invokeQueue;
+		readonly ConcurrentQueue<Tuple<Entity,IComponent>> componentsToAdd;
 		readonly ConcurrentQueue<Tuple<Entity,IComponent>> componentsToRemove;
 
 		readonly GameServiceContainer services;
@@ -52,8 +55,8 @@ namespace IronStar.ECS
 		{
 			ECSTypeManager.Scan();
 
-			this.Game		=	game;
-			this.Content	=	content;
+			this.game		=	game;
+			this.content	=	content;
 
 			entities	=	new EntityCollection();
 			systems		=	new SystemCollection(this);
@@ -64,6 +67,7 @@ namespace IronStar.ECS
 			refreshedQueue	=	new ConcurrentQueue<Entity>();
 			invokeQueue		=	new ConcurrentQueue<Action>();
 
+			componentsToAdd		=	new ConcurrentQueue<Tuple<Entity,IComponent>>();
 			componentsToRemove	=	new ConcurrentQueue<Tuple<Entity,IComponent>>();
 
 			services	=	new GameServiceContainer();
@@ -141,6 +145,8 @@ namespace IronStar.ECS
 				entities.Add( e );
 				Refresh( e );
 			}
+
+			AddEntityComponentsInternal();
 
 			RemoveEntityComponentsInternal();
 
@@ -362,18 +368,25 @@ namespace IronStar.ECS
 		 *	Component stuff :
 		-----------------------------------------------------------------------------------------------*/
 
+		const bool deferredComponents = false;
+
 		public void AddEntityComponent( Entity entity, IComponent component )
 		{
 			if (entity==null) throw new ArgumentNullException("entity");
 			if (component==null) throw new ArgumentNullException("component");
 
 			//	deferred addition :
-			//componentAdditionQueue.Enqueue( new Tuple<Entity, IComponent>( entity, component ) );
-			//	immediate addition :
-			components.AddComponent( entity.ID, component );
-			entity.ComponentMapping |= ECSTypeManager.GetComponentBit( component.GetType() );
+			if (deferredComponents)
+			{
+				componentsToAdd.Enqueue( new Tuple<Entity, IComponent>( entity, component ) );
+			}
+			else
+			{
+				components.AddComponent( entity.ID, component );
+				entity.ComponentMapping |= ECSTypeManager.GetComponentBit( component.GetType() );
 
-			Refresh( entity );
+				Refresh( entity );
+			}
 		}
 
 
@@ -383,6 +396,25 @@ namespace IronStar.ECS
 			if (component==null) throw new ArgumentNullException("component");
 
 			componentsToRemove.Enqueue( new Tuple<Entity, IComponent>( entity, component ) );
+		}
+
+
+		private void AddEntityComponentsInternal()
+		{
+			if (!deferredComponents) return;
+
+			Tuple<Entity,IComponent> entry;
+
+			while (componentsToAdd.TryDequeue( out entry ))
+			{
+				var entity		=	entry.Item1;
+				var component	=	entry.Item2;
+
+				entity.ComponentMapping |= ECSTypeManager.GetComponentBit( component.GetType() );
+				components.AddComponent( entity.ID, component );
+
+				Refresh( entity );
+			}
 		}
 
 

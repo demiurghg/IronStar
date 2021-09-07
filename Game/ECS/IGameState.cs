@@ -4,21 +4,29 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core;
+using Fusion.Core.Content;
+using Fusion.Core.Mathematics;
 
 namespace IronStar.ECS
 {
-	public interface IGameState
+	public interface IGameState	: IDisposable
 	{
-		/// <summary>
-		/// Spawns new entity
-		/// </summary>
-		/// <returns>New entity</returns>
+		Game Game { get; }
+
+		ContentManager Content { get; }
+
 		Entity Spawn();
 
-		/// <summary>
-		/// Updates game state
-		/// </summary>
-		/// <param name="gameTime"></param>
+		Entity Spawn(string classname);
+
+		void KillAll();
+
+		bool Teleport( Entity e, Vector3 position, Quaternion rotation );
+
 		void Update ( GameTime gameTime );
+
+		void AddSystem( ISystem system );
+
+		TService GetService<TService>() where TService : class;
 	}
 }

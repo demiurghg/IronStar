@@ -54,7 +54,7 @@ namespace IronStar
 		public int MaxInterval { get; set; } = 1;
 
 
-		public override ECS.Entity SpawnECS( ECS.GameState gs )
+		public override ECS.Entity SpawnECS( ECS.IGameState gs )
 		{
 			Log.Warning("SpawnECS -- {0} -- (not implemented completely)", GetType().Name);
 			

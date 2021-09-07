@@ -109,7 +109,7 @@ namespace IronStar.Mapping
 		}
 
 
-		public override void SpawnNodeECS( GameState gs )
+		public override void SpawnNodeECS( IGameState gs )
 		{
 			ecsEntity		=	gs.Spawn();
 			ecsEntity.Tag	=	this;

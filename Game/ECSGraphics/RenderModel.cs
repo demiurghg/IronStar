@@ -83,12 +83,5 @@ namespace IronStar.SFX2
 		{
 			return (string.IsNullOrWhiteSpace(cmPrefix)) ? true : !node.Name.StartsWith(cmPrefix);
 		}
-
-
-		public override void Added( GameState gs, Entity entity ) {}
-		public override void Removed( GameState gs ) {}
-		public override void Load( GameState gs, Stream stream ) {}
-		public override void Save( GameState gs, Stream stream ) {}
-
 	}
 }

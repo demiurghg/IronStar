@@ -8874,12 +8874,12 @@
         "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de0",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-70.24436, 19.1133347, 87.23757",
+        "Translation": "-70.24336, 19.113308, 87.23956",
         "Scaling": "1, 1, 1",
-        "Rotation": "0.00559247471, 0.6467287, 0.008430449, -0.762653053",
-        "TranslateX": -70.24436,
-        "TranslateY": 19.1133347,
-        "TranslateZ": 87.23757
+        "Rotation": "0.00560011, 0.6472249, 0.008429006, -0.762231946",
+        "TranslateX": -70.24336,
+        "TranslateY": 19.113308,
+        "TranslateZ": 87.23956
       },
       {
         "$id": "527",
@@ -8893,12 +8893,12 @@
         "Name": "6ca32d7e-757d-4993-b34c-6342f675e841",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-67.90843, 19.4164219, 98.0464554",
+        "Translation": "-67.90849, 19.4164333, 98.04583",
         "Scaling": "1, 1, 1",
-        "Rotation": "0.185100138, 0.179847777, 0.676460445, 0.689778149",
-        "TranslateX": -67.90843,
-        "TranslateY": 19.4164219,
-        "TranslateZ": 98.0464554
+        "Rotation": "0.185082063, 0.179836556, 0.67645967, 0.689786732",
+        "TranslateX": -67.90849,
+        "TranslateY": 19.4164333,
+        "TranslateZ": 98.04583
       },
       {
         "$id": "529",
@@ -12096,12 +12096,12 @@
         "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d18",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-76.20096, 19.2248611, 96.96018",
+        "Translation": "-76.199646, 19.2247868, 96.95227",
         "Scaling": "1, 1.00000012, 1.00000012",
-        "Rotation": "0.951438367, -0.0125525547, -0.307581425, -0.00100532826",
-        "TranslateX": -76.20096,
-        "TranslateY": 19.2248611,
-        "TranslateZ": 96.96018
+        "Rotation": "0.951284349, -0.0125505775, -0.308057666, -0.00100733922",
+        "TranslateX": -76.199646,
+        "TranslateY": 19.2247868,
+        "TranslateZ": 96.95227
       },
       {
         "$id": "788",
@@ -12115,12 +12115,12 @@
         "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b18",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-77.20879, 19.2736568, 101.628349",
+        "Translation": "-77.2094955, 19.2782078, 101.62471",
         "Scaling": "0.99999994, 0.999999762, 0.9999998",
-        "Rotation": "0.9968798, -0.0126736816, -0.0778909847, 0.00172394584",
-        "TranslateX": -77.20879,
-        "TranslateY": 19.2736568,
-        "TranslateZ": 101.628349
+        "Rotation": "0.9968633, -0.0126434537, -0.07811076, 0.00155226479",
+        "TranslateX": -77.2094955,
+        "TranslateY": 19.2782078,
+        "TranslateZ": 101.62471
       },
       {
         "$id": "790",
@@ -12172,12 +12172,12 @@
         "Name": "55dfb28a-a5b8-4034-9549-0c153d66d335",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-65.2066956, 18.9788456, 98.7935944",
+        "Translation": "-65.30757, 18.9807739, 98.85861",
         "Scaling": "1, 1, 0.99999994",
-        "Rotation": "0.3818019, -0.5958283, 0.587599158, 0.392356157",
-        "TranslateX": -65.2066956,
-        "TranslateY": 18.9788456,
-        "TranslateZ": 98.7935944
+        "Rotation": "0.383911341, -0.59467876, 0.586117, 0.394253761",
+        "TranslateX": -65.30757,
+        "TranslateY": 18.9807739,
+        "TranslateZ": 98.85861
       },
       {
         "$id": "796",
@@ -12191,12 +12191,12 @@
         "Name": "b25dbc97-1306-4755-b55a-cb5c82a7ba0d4",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-60.4381, 18.8832836, 99.7600861",
+        "Translation": "-60.64203, 18.8898029, 99.01786",
         "Scaling": "1, 0.99999994, 1",
-        "Rotation": "-0.6875901, 0.16132544, 0.147346273, 0.6924471",
-        "TranslateX": -60.4381,
-        "TranslateY": 18.8832836,
-        "TranslateZ": 99.7600861
+        "Rotation": "-0.6667782, 0.233428836, 0.2207636, 0.6724442",
+        "TranslateX": -60.64203,
+        "TranslateY": 18.8898029,
+        "TranslateZ": 99.01786
       },
       {
         "$id": "798",
@@ -12210,12 +12210,12 @@
         "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d19",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-69.95562, 19.0816364, 96.2301941",
+        "Translation": "-69.957695, 19.0816612, 96.23294",
         "Scaling": "1, 0.99999994, 0.99999994",
-        "Rotation": "0.9671174, -0.009609037, -0.2541155, -0.00410051364",
-        "TranslateX": -69.95562,
-        "TranslateY": 19.0816364,
-        "TranslateZ": 96.2301941
+        "Rotation": "0.967179, -0.009602018, -0.2538813, -0.00410658",
+        "TranslateX": -69.957695,
+        "TranslateY": 19.0816612,
+        "TranslateZ": 96.23294
       },
       {
         "$id": "800",
@@ -12226,15 +12226,15 @@
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
-        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b19",
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e859",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-69.90474, 19.089819, 101.305511",
-        "Scaling": "0.99999994, 0.9999999, 0.99999994",
-        "Rotation": "0.997409165, -0.0127237607, -0.07079269, 0.00117754738",
-        "TranslateX": -69.90474,
-        "TranslateY": 19.089819,
-        "TranslateZ": 101.305511
+        "Translation": "-68.472496, 19.4351711, 93.37796",
+        "Scaling": "1.00000012, 1, 1",
+        "Rotation": "-0.00315316953, -0.004398324, 0.6999241, 0.7141967",
+        "TranslateX": -68.472496,
+        "TranslateY": 19.4351711,
+        "TranslateZ": 93.37796
       },
       {
         "$id": "802",
@@ -12242,25 +12242,6 @@
         "TargetName": null,
         "Factory": {
           "$id": "803",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
-        },
-        "Name": "6ca32d7e-757d-4993-b34c-6342f675e859",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "-68.47757, 19.43524, 93.38553",
-        "Scaling": "1.00000012, 1, 1",
-        "Rotation": "-0.00382849644, -0.00504536, 0.699926555, 0.7141867",
-        "TranslateX": -68.47757,
-        "TranslateY": 19.43524,
-        "TranslateZ": 93.38553
-      },
-      {
-        "$id": "804",
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$id": "805",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -12275,11 +12256,11 @@
         "TranslateZ": 104.553749
       },
       {
-        "$id": "806",
+        "$id": "804",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "807",
+          "$id": "805",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -12294,30 +12275,30 @@
         "TranslateZ": 105.217293
       },
       {
-        "$id": "808",
+        "$id": "806",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "809",
+          "$id": "807",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
         "Name": "55dfb28a-a5b8-4034-9549-0c153d66d336",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-57.633152, 18.83086, 97.7285843",
+        "Translation": "-57.51143, 18.8296146, 97.2762451",
         "Scaling": "0.999999762, 0.9999998, 0.9999999",
-        "Rotation": "0.122520842, -0.001914169, 0.992415845, 0.009785277",
-        "TranslateX": -57.633152,
-        "TranslateY": 18.83086,
-        "TranslateZ": 97.7285843
+        "Rotation": "0.132999226, -0.00139724393, 0.991065562, 0.009917288",
+        "TranslateX": -57.51143,
+        "TranslateY": 18.8296146,
+        "TranslateZ": 97.2762451
       },
       {
-        "$id": "810",
+        "$id": "808",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "811",
+          "$id": "809",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -12332,6 +12313,25 @@
         "TranslateZ": 100.017578
       },
       {
+        "$id": "810",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "811",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842874",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-74.171875, 19.1734734, 93.17",
+        "Scaling": "0.9999998, 0.9999998, 0.99999994",
+        "Rotation": "0.00427061133, 0.270071566, -0.009503256, 0.9627839",
+        "TranslateX": -74.171875,
+        "TranslateY": 19.1734734,
+        "TranslateZ": 93.17
+      },
+      {
         "$id": "812",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
@@ -12340,15 +12340,15 @@
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
-        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842874",
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d20",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-74.17144, 19.1734676, 93.1701",
-        "Scaling": "0.9999998, 0.9999998, 0.99999994",
-        "Rotation": "0.0042649745, 0.2696803, -0.009504521, 0.9628936",
-        "TranslateX": -74.17144,
-        "TranslateY": 19.1734676,
-        "TranslateZ": 93.1701
+        "Translation": "-62.0034027, 18.9226532, 96.7141342",
+        "Scaling": "1, 0.999999762, 0.999999762",
+        "Rotation": "0.9544577, -0.0102063594, -0.298149168, -0.00366046536",
+        "TranslateX": -62.0034027,
+        "TranslateY": 18.9226532,
+        "TranslateZ": 96.7141342
       },
       {
         "$id": "814",
@@ -12359,15 +12359,15 @@
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
-        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d20",
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b20",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-61.9758, 18.9209347, 96.84857",
-        "Scaling": "1, 0.999999762, 0.999999762",
-        "Rotation": "0.952719569, -0.010278035, -0.303645283, -0.00439187046",
-        "TranslateX": -61.9758,
-        "TranslateY": 18.9209347,
-        "TranslateZ": 96.84857
+        "Translation": "-63.5392838, 18.94097, 101.502876",
+        "Scaling": "0.99999994, 1, 1",
+        "Rotation": "0.989925444, -0.009683793, -0.141242921, -0.00205112249",
+        "TranslateX": -63.5392838,
+        "TranslateY": 18.94097,
+        "TranslateZ": 101.502876
       },
       {
         "$id": "816",
@@ -12378,15 +12378,15 @@
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
-        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b20",
+        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de18",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-63.5075951, 18.9415588, 101.615318",
-        "Scaling": "0.99999994, 1, 1",
-        "Rotation": "0.99572295, -0.0104444362, -0.09178299, -0.00161008979",
-        "TranslateX": -63.5075951,
-        "TranslateY": 18.9415588,
-        "TranslateZ": 101.615318
+        "Translation": "-63.7957153, 18.9753113, 88.95995",
+        "Scaling": "0.999999762, 0.9999999, 0.999999762",
+        "Rotation": "-0.005454511, -0.6296412, -0.008570697, 0.776819646",
+        "TranslateX": -63.7957153,
+        "TranslateY": 18.9753113,
+        "TranslateZ": 88.95995
       },
       {
         "$id": "818",
@@ -12397,15 +12397,15 @@
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
-        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de18",
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e860",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-63.7974739, 18.97533, 88.9674759",
-        "Scaling": "0.999999762, 0.9999999, 0.999999762",
-        "Rotation": "-0.00546438, -0.630224764, -0.008568575, 0.7763462",
-        "TranslateX": -63.7974739,
-        "TranslateY": 18.97533,
-        "TranslateZ": 88.9674759
+        "Translation": "-61.36479, 19.292738, 92.68294",
+        "Scaling": "1.00000012, 0.99999994, 1",
+        "Rotation": "0.03525215, 0.0328926854, 0.6991792, 0.7133189",
+        "TranslateX": -61.36479,
+        "TranslateY": 19.292738,
+        "TranslateZ": 92.68294
       },
       {
         "$id": "820",
@@ -12413,25 +12413,6 @@
         "TargetName": null,
         "Factory": {
           "$id": "821",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
-        },
-        "Name": "6ca32d7e-757d-4993-b34c-6342f675e860",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "-61.3796272, 19.2940254, 92.82619",
-        "Scaling": "1.00000012, 0.99999994, 1",
-        "Rotation": "0.03663878, 0.0338524021, 0.699385, 0.7130023",
-        "TranslateX": -61.3796272,
-        "TranslateY": 19.2940254,
-        "TranslateZ": 92.82619
-      },
-      {
-        "$id": "822",
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$id": "823",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -12446,11 +12427,11 @@
         "TranslateZ": 105.470543
       },
       {
-        "$id": "824",
+        "$id": "822",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "825",
+          "$id": "823",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -12465,11 +12446,11 @@
         "TranslateZ": 97.9150162
       },
       {
-        "$id": "826",
+        "$id": "824",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "827",
+          "$id": "825",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -12484,6 +12465,25 @@
         "TranslateZ": 99.79049
       },
       {
+        "$id": "826",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "827",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842875",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-61.16445, 21.5005932, 95.32421",
+        "Scaling": "0.9999998, 0.9999999, 1",
+        "Rotation": "0.689575851, 0.08467575, -0.7107794, -0.110035069",
+        "TranslateX": -61.16445,
+        "TranslateY": 21.5005932,
+        "TranslateZ": 95.32421
+      },
+      {
         "$id": "828",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
@@ -12492,15 +12492,15 @@
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
-        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842875",
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d21",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-61.1549644, 21.5014954, 95.4674759",
-        "Scaling": "0.9999998, 0.9999999, 1",
-        "Rotation": "0.6815406, 0.08667371, -0.7180997, -0.111008607",
-        "TranslateX": -61.1549644,
-        "TranslateY": 21.5014954,
-        "TranslateZ": 95.4674759
+        "Translation": "-76.34108, 21.458746, 96.74462",
+        "Scaling": "1, 1, 1",
+        "Rotation": "0.9502119, -0.01238096, -0.311357856, -0.0005693622",
+        "TranslateX": -76.34108,
+        "TranslateY": 21.458746,
+        "TranslateZ": 96.74462
       },
       {
         "$id": "830",
@@ -12508,44 +12508,6 @@
         "TargetName": null,
         "Factory": {
           "$id": "831",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
-        },
-        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d21",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "-76.34227, 21.4588261, 96.7529144",
-        "Scaling": "1, 1, 1",
-        "Rotation": "0.9503036, -0.01238664, -0.311077923, -0.0005709925",
-        "TranslateX": -76.34227,
-        "TranslateY": 21.4588261,
-        "TranslateZ": 96.7529144
-      },
-      {
-        "$id": "832",
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$id": "833",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
-        },
-        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b21",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "-77.21528, 21.5048141, 101.525665",
-        "Scaling": "0.99999994, 0.9999998, 0.99999994",
-        "Rotation": "0.996299863, -0.0126775252, -0.08498777, 0.00176147954",
-        "TranslateX": -77.21528,
-        "TranslateY": 21.5048141,
-        "TranslateZ": 101.525665
-      },
-      {
-        "$id": "834",
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$id": "835",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -12560,11 +12522,11 @@
         "TranslateZ": 105.043465
       },
       {
-        "$id": "836",
+        "$id": "832",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "837",
+          "$id": "833",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -12579,6 +12541,44 @@
         "TranslateZ": 105.047043
       },
       {
+        "$id": "834",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "835",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "55dfb28a-a5b8-4034-9549-0c153d66d338",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-65.27113, 21.21063, 98.95367",
+        "Scaling": "0.99999994, 0.99999994, 0.9999999",
+        "Rotation": "-0.365464061, 0.6051225, -0.5999987, -0.374518782",
+        "TranslateX": -65.27113,
+        "TranslateY": 21.21063,
+        "TranslateZ": 98.95367
+      },
+      {
+        "$id": "836",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "837",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "b25dbc97-1306-4755-b55a-cb5c82a7ba0d7",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-60.1850548, 21.1436348, 99.51895",
+        "Scaling": "1, 0.9999999, 1",
+        "Rotation": "-0.643866241, 0.272511, 0.254098445, 0.6682874",
+        "TranslateX": -60.1850548,
+        "TranslateY": 21.1436348,
+        "TranslateZ": 99.51895
+      },
+      {
         "$id": "838",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
@@ -12587,15 +12587,15 @@
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
-        "Name": "55dfb28a-a5b8-4034-9549-0c153d66d338",
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d22",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-65.1612244, 21.2063217, 98.8848",
-        "Scaling": "0.99999994, 0.99999994, 0.9999999",
-        "Rotation": "-0.357320666, 0.6099283, -0.6042535, -0.367678076",
-        "TranslateX": -65.1612244,
-        "TranslateY": 21.2063217,
-        "TranslateZ": 98.8848
+        "Translation": "-69.7991943, 21.3092442, 96.3900452",
+        "Scaling": "1, 0.99999994, 0.99999994",
+        "Rotation": "0.9648248, -0.009743077, -0.262672961, -0.004587344",
+        "TranslateX": -69.7991943,
+        "TranslateY": 21.3092442,
+        "TranslateZ": 96.3900452
       },
       {
         "$id": "840",
@@ -12606,15 +12606,15 @@
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
-        "Name": "b25dbc97-1306-4755-b55a-cb5c82a7ba0d7",
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b22",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-60.4217, 21.1163425, 99.97857",
-        "Scaling": "1, 0.9999999, 1",
-        "Rotation": "-0.6741826, 0.212157443, 0.197864518, 0.679203033",
-        "TranslateX": -60.4217,
-        "TranslateY": 21.1163425,
-        "TranslateZ": 99.97857
+        "Translation": "-69.82335, 19.0916443, 101.613541",
+        "Scaling": "0.9999999, 0.9999998, 0.99999994",
+        "Rotation": "0.998098, -0.0126877418, -0.06030137, 0.00174209464",
+        "TranslateX": -69.82335,
+        "TranslateY": 19.0916443,
+        "TranslateZ": 101.613541
       },
       {
         "$id": "842",
@@ -12625,15 +12625,15 @@
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
-        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d22",
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e861",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-69.79667, 21.3092213, 96.3868942",
-        "Scaling": "1, 0.99999994, 0.99999994",
-        "Rotation": "0.964819968, -0.00976033, -0.262690365, -0.004578572",
-        "TranslateX": -69.79667,
-        "TranslateY": 21.3092213,
-        "TranslateZ": 96.3868942
+        "Translation": "-68.49415, 22.4194317, 93.1998444",
+        "Scaling": "1.00000012, 1, 1",
+        "Rotation": "0.01477998, 0.013510772, 0.6998452, 0.7140138",
+        "TranslateX": -68.49415,
+        "TranslateY": 22.4194317,
+        "TranslateZ": 93.1998444
       },
       {
         "$id": "844",
@@ -12641,44 +12641,6 @@
         "TargetName": null,
         "Factory": {
           "$id": "845",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
-        },
-        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b22",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "-69.85159, 21.321228, 101.560074",
-        "Scaling": "0.9999999, 0.9999998, 0.99999994",
-        "Rotation": "0.9978719, -0.0127659859, -0.06394029, 0.0007495903",
-        "TranslateX": -69.85159,
-        "TranslateY": 21.321228,
-        "TranslateZ": 101.560074
-      },
-      {
-        "$id": "846",
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$id": "847",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
-        },
-        "Name": "6ca32d7e-757d-4993-b34c-6342f675e861",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "-68.4986954, 22.4194813, 93.2071838",
-        "Scaling": "1.00000012, 1, 1",
-        "Rotation": "0.0141159371, 0.0128745418, 0.6998641, 0.7140205",
-        "TranslateX": -68.4986954,
-        "TranslateY": 22.4194813,
-        "TranslateZ": 93.2071838
-      },
-      {
-        "$id": "848",
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$id": "849",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -12693,11 +12655,11 @@
         "TranslateZ": 104.785133
       },
       {
-        "$id": "850",
+        "$id": "846",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "851",
+          "$id": "847",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -12712,30 +12674,30 @@
         "TranslateZ": 105.406113
       },
       {
-        "$id": "852",
+        "$id": "848",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "853",
+          "$id": "849",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
         "Name": "55dfb28a-a5b8-4034-9549-0c153d66d339",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-57.6828766, 21.0635586, 97.485405",
+        "Translation": "-57.5658836, 21.0622, 97.0246",
         "Scaling": "0.9999997, 0.9999998, 0.9999999",
-        "Rotation": "0.123639695, -0.00128083408, 0.992278934, 0.009701263",
-        "TranslateX": -57.6828766,
-        "TranslateY": 21.0635586,
-        "TranslateZ": 97.485405
+        "Rotation": "0.12895298, -0.000169345542, 0.991601, 0.009928494",
+        "TranslateX": -57.5658836,
+        "TranslateY": 21.0622,
+        "TranslateZ": 97.0246
       },
       {
-        "$id": "854",
+        "$id": "850",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "855",
+          "$id": "851",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -12750,6 +12712,44 @@
         "TranslateZ": 100.019119
       },
       {
+        "$id": "852",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "853",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842876",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-74.05449, 21.40188, 93.3361359",
+        "Scaling": "0.9999998, 0.9999998, 0.99999994",
+        "Rotation": "0.00454978133, 0.256528318, -0.009673285, 0.9664777",
+        "TranslateX": -74.05449,
+        "TranslateY": 21.40188,
+        "TranslateZ": 93.3361359
+      },
+      {
+        "$id": "854",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "855",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d23",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-61.6527252, 22.8287678, 98.05853",
+        "Scaling": "1, 0.999999762, 0.999999762",
+        "Rotation": "0.892935336, 0.08424014, -0.293748528, -0.330578178",
+        "TranslateX": -61.6527252,
+        "TranslateY": 22.8287678,
+        "TranslateZ": 98.05853
+      },
+      {
         "$id": "856",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
@@ -12758,15 +12758,15 @@
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
-        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842876",
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b23",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-74.05405, 21.4018726, 93.33608",
-        "Scaling": "0.9999998, 0.9999998, 0.99999994",
-        "Rotation": "0.00455209939, 0.256393582, -0.009671181, 0.966513336",
-        "TranslateX": -74.05405,
-        "TranslateY": 21.4018726,
-        "TranslateZ": 93.33608
+        "Translation": "-63.51039, 21.1715889, 101.700134",
+        "Scaling": "0.9999999, 0.9999998, 0.999999762",
+        "Rotation": "0.9887435, -0.009752078, -0.14928323, -0.00239672163",
+        "TranslateX": -63.51039,
+        "TranslateY": 21.1715889,
+        "TranslateZ": 101.700134
       },
       {
         "$id": "858",
@@ -12777,15 +12777,15 @@
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
-        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d23",
+        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de19",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-61.6858, 22.78313, 98.29659",
-        "Scaling": "1, 0.999999762, 0.999999762",
-        "Rotation": "0.916173458, 0.06738953, -0.218852326, -0.3289203",
-        "TranslateX": -61.6858,
-        "TranslateY": 22.78313,
-        "TranslateZ": 98.29659
+        "Translation": "-63.7933426, 21.20652, 88.921524",
+        "Scaling": "0.999999642, 0.9999999, 0.999999762",
+        "Rotation": "-0.005479166, -0.631358266, -0.008545871, 0.775424838",
+        "TranslateX": -63.7933426,
+        "TranslateY": 21.20652,
+        "TranslateZ": 88.921524
       },
       {
         "$id": "860",
@@ -12796,15 +12796,15 @@
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
-        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b23",
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e862",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-63.4997253, 21.1726055, 101.792084",
-        "Scaling": "0.9999999, 0.9999998, 0.999999762",
-        "Rotation": "0.993733168, -0.01048108, -0.111265324, -0.002139433",
-        "TranslateX": -63.4997253,
-        "TranslateY": 21.1726055,
-        "TranslateZ": 101.792084
+        "Translation": "-61.4119759, 22.3392143, 91.86376",
+        "Scaling": "1.00000012, 0.99999994, 1",
+        "Rotation": "-0.045914337, 0.0550438464, 0.70244205, 0.7081223",
+        "TranslateX": -61.4119759,
+        "TranslateY": 22.3392143,
+        "TranslateZ": 91.86376
       },
       {
         "$id": "862",
@@ -12812,44 +12812,6 @@
         "TargetName": null,
         "Factory": {
           "$id": "863",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
-        },
-        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de19",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "-63.794754, 21.20653, 88.9285355",
-        "Scaling": "0.999999642, 0.9999999, 0.999999762",
-        "Rotation": "-0.005497956, -0.6318495, -0.0085537415, 0.775024354",
-        "TranslateX": -63.794754,
-        "TranslateY": 21.20653,
-        "TranslateZ": 88.9285355
-      },
-      {
-        "$id": "864",
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$id": "865",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
-        },
-        "Name": "6ca32d7e-757d-4993-b34c-6342f675e862",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "-61.4045563, 22.28296, 92.23806",
-        "Scaling": "1.00000012, 0.99999994, 1",
-        "Rotation": "0.0104274908, 0.009381714, 0.7001626, 0.7138457",
-        "TranslateX": -61.4045563,
-        "TranslateY": 22.28296,
-        "TranslateZ": 92.23806
-      },
-      {
-        "$id": "866",
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$id": "867",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -12864,11 +12826,11 @@
         "TranslateZ": 105.4213
       },
       {
-        "$id": "868",
+        "$id": "864",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "869",
+          "$id": "865",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -12883,11 +12845,11 @@
         "TranslateZ": 97.68181
       },
       {
-        "$id": "870",
+        "$id": "866",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "871",
+          "$id": "867",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -12902,68 +12864,49 @@
         "TranslateZ": 99.69502
       },
       {
-        "$id": "872",
+        "$id": "868",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "873",
+          "$id": "869",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
         "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842877",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-53.68999, 18.7666359, 93.38908",
+        "Translation": "-53.69339, 18.7667, 93.38722",
         "Scaling": "0.9999998, 0.99999994, 1",
-        "Rotation": "0.3723257, -0.00264207087, -0.928047061, -0.009759626",
-        "TranslateX": -53.68999,
-        "TranslateY": 18.7666359,
-        "TranslateZ": 93.38908
+        "Rotation": "0.372306049, -0.00264149043, -0.9280549, -0.009763884",
+        "TranslateX": -53.69339,
+        "TranslateY": 18.7667,
+        "TranslateZ": 93.38722
       },
       {
-        "$id": "874",
+        "$id": "870",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "875",
+          "$id": "871",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
         "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d24",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-76.33756, 23.6948986, 96.7768555",
+        "Translation": "-76.33638, 23.6948166, 96.76877",
         "Scaling": "1, 1.00000012, 1.00000012",
-        "Rotation": "0.9515712, -0.0123876091, -0.307178229, -0.0005372186",
-        "TranslateX": -76.33756,
-        "TranslateY": 23.6948986,
-        "TranslateZ": 96.7768555
+        "Rotation": "0.951478064, -0.0123790149, -0.3074669, -0.0005316451",
+        "TranslateX": -76.33638,
+        "TranslateY": 23.6948166,
+        "TranslateZ": 96.76877
       },
       {
-        "$id": "876",
+        "$id": "872",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "877",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "boxExplosive"
-        },
-        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b24",
-        "Visible": true,
-        "Frozen": false,
-        "Translation": "-77.2065048, 23.7408581, 101.55584",
-        "Scaling": "0.99999994, 0.999999642, 0.9999998",
-        "Rotation": "0.99646306, -0.0126767149, -0.0830517039, 0.00175981375",
-        "TranslateX": -77.2065048,
-        "TranslateY": 23.7408581,
-        "TranslateZ": 101.55584
-      },
-      {
-        "$id": "878",
-        "$type": "IronStar.Mapping.MapEntity, IronStar",
-        "TargetName": null,
-        "Factory": {
-          "$id": "879",
+          "$id": "873",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -12978,11 +12921,11 @@
         "TranslateZ": 105.064705
       },
       {
-        "$id": "880",
+        "$id": "874",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "881",
+          "$id": "875",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -12997,30 +12940,30 @@
         "TranslateZ": 105.037071
       },
       {
-        "$id": "882",
+        "$id": "876",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "883",
+          "$id": "877",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
         "Name": "55dfb28a-a5b8-4034-9549-0c153d66d341",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-65.30214, 23.4415474, 98.5539",
+        "Translation": "-65.43178, 23.44537, 98.6358261",
         "Scaling": "1, 0.99999994, 0.9999999",
-        "Rotation": "-0.422084361, 0.5661392, -0.560917556, -0.432091",
-        "TranslateX": -65.30214,
-        "TranslateY": 23.4415474,
-        "TranslateZ": 98.5539
+        "Rotation": "-0.4324731, 0.5587858, -0.5535419, -0.44081375",
+        "TranslateX": -65.43178,
+        "TranslateY": 23.44537,
+        "TranslateZ": 98.6358261
       },
       {
-        "$id": "884",
+        "$id": "878",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "885",
+          "$id": "879",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -13035,68 +12978,68 @@
         "TranslateZ": 102.68119
       },
       {
-        "$id": "886",
+        "$id": "880",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "887",
+          "$id": "881",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
         "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d25",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-69.80464, 23.5452747, 96.38394",
+        "Translation": "-69.8077, 23.5453072, 96.38725",
         "Scaling": "0.99999994, 1, 0.99999994",
-        "Rotation": "0.9647242, -0.00976682, -0.2630415, -0.004580548",
-        "TranslateX": -69.80464,
-        "TranslateY": 23.5452747,
-        "TranslateZ": 96.38394
+        "Rotation": "0.964702249, -0.00973176, -0.2631232, -0.00458273338",
+        "TranslateX": -69.8077,
+        "TranslateY": 23.5453072,
+        "TranslateZ": 96.38725
       },
       {
-        "$id": "888",
+        "$id": "882",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "889",
+          "$id": "883",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
         "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b25",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-69.85067, 23.5571918, 101.536621",
+        "Translation": "-69.72953, 21.3255024, 101.641533",
         "Scaling": "0.9999998, 1, 1.00000012",
-        "Rotation": "0.99764806, -0.01278635, -0.06733709, 0.000722922967",
-        "TranslateX": -69.85067,
-        "TranslateY": 23.5571918,
-        "TranslateZ": 101.536621
+        "Rotation": "0.9974927, -0.012762039, -0.06959136, 0.00159870158",
+        "TranslateX": -69.72953,
+        "TranslateY": 21.3255024,
+        "TranslateZ": 101.641533
       },
       {
-        "$id": "890",
+        "$id": "884",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "891",
+          "$id": "885",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
         "Name": "6ca32d7e-757d-4993-b34c-6342f675e863",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-68.49536, 25.4063263, 93.21684",
+        "Translation": "-68.49059, 25.40628, 93.2096252",
         "Scaling": "1.00000012, 1, 1",
-        "Rotation": "0.0124316756, 0.0112260571, 0.699889362, 0.7140548",
-        "TranslateX": -68.49536,
-        "TranslateY": 25.4063263,
-        "TranslateZ": 93.21684
+        "Rotation": "0.0131281195, 0.0118660219, 0.6998653, 0.714055657",
+        "TranslateX": -68.49059,
+        "TranslateY": 25.40628,
+        "TranslateZ": 93.2096252
       },
       {
-        "$id": "892",
+        "$id": "886",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "893",
+          "$id": "887",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -13111,11 +13054,11 @@
         "TranslateZ": 104.766991
       },
       {
-        "$id": "894",
+        "$id": "888",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "895",
+          "$id": "889",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -13130,11 +13073,11 @@
         "TranslateZ": 105.380005
       },
       {
-        "$id": "896",
+        "$id": "890",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "897",
+          "$id": "891",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -13149,11 +13092,11 @@
         "TranslateZ": 97.4486
       },
       {
-        "$id": "898",
+        "$id": "892",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "899",
+          "$id": "893",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -13168,68 +13111,68 @@
         "TranslateZ": 100.025177
       },
       {
-        "$id": "900",
+        "$id": "894",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "901",
+          "$id": "895",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
         "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842878",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-74.0422, 23.6374245, 93.34251",
+        "Translation": "-74.04289, 23.6374416, 93.34285",
         "Scaling": "0.9999998, 0.9999998, 0.99999994",
-        "Rotation": "0.00456457725, 0.256138772, -0.00967895053, 0.966580749",
-        "TranslateX": -74.0422,
-        "TranslateY": 23.6374245,
-        "TranslateZ": 93.34251
+        "Rotation": "0.00455315271, 0.2561764, -0.009686661, 0.966570854",
+        "TranslateX": -74.04289,
+        "TranslateY": 23.6374416,
+        "TranslateZ": 93.34285
       },
       {
-        "$id": "902",
+        "$id": "896",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "903",
+          "$id": "897",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
         "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d26",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-64.77493, 18.9863758, 94.5013351",
+        "Translation": "-64.7733841, 18.98634, 94.4992752",
         "Scaling": "1, 0.999999762, 0.9999998",
-        "Rotation": "0.00683428533, 0.5830907, -0.007477188, 0.8123439",
-        "TranslateX": -64.77493,
-        "TranslateY": 18.9863758,
-        "TranslateZ": 94.5013351
+        "Rotation": "0.00683295, 0.583615243, -0.007465704, 0.811967254",
+        "TranslateX": -64.7733841,
+        "TranslateY": 18.98634,
+        "TranslateZ": 94.4992752
       },
       {
-        "$id": "904",
+        "$id": "898",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "905",
+          "$id": "899",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
         "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b26",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-63.4861145, 23.4081936, 101.757553",
+        "Translation": "-63.5030975, 23.4073124, 101.668549",
         "Scaling": "0.9999998, 0.9999999, 0.999999762",
-        "Rotation": "0.9956525, -0.0105293412, -0.09252936, -0.00188219454",
-        "TranslateX": -63.4861145,
-        "TranslateY": 23.4081936,
-        "TranslateZ": 101.757553
+        "Rotation": "0.991374433, -0.00980696, -0.130674139, -0.0021936486",
+        "TranslateX": -63.5030975,
+        "TranslateY": 23.4073124,
+        "TranslateZ": 101.668549
       },
       {
-        "$id": "906",
+        "$id": "900",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "907",
+          "$id": "901",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -13244,11 +13187,11 @@
         "TranslateZ": 88.9581757
       },
       {
-        "$id": "908",
+        "$id": "902",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "909",
+          "$id": "903",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -13263,11 +13206,11 @@
         "TranslateZ": 94.92757
       },
       {
-        "$id": "910",
+        "$id": "904",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "911",
+          "$id": "905",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -13282,11 +13225,11 @@
         "TranslateZ": 105.44445
       },
       {
-        "$id": "912",
+        "$id": "906",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "913",
+          "$id": "907",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -13301,11 +13244,11 @@
         "TranslateZ": 97.69725
       },
       {
-        "$id": "914",
+        "$id": "908",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "915",
+          "$id": "909",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -13320,11 +13263,11 @@
         "TranslateZ": 99.71694
       },
       {
-        "$id": "916",
+        "$id": "910",
         "$type": "IronStar.Mapping.MapEntity, IronStar",
         "TargetName": null,
         "Factory": {
-          "$id": "917",
+          "$id": "911",
           "$type": "IronStar.ProxyFactory, IronStar",
           "Classname": "boxExplosive"
         },
@@ -13337,11 +13280,1778 @@
         "TranslateX": -63.4689751,
         "TranslateY": 25.4537,
         "TranslateZ": 96.803894
+      },
+      {
+        "$id": "912",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "913",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d27",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "94.0930252, 31.0376549, 179.427277",
+        "Scaling": "1, 0.9999997, 0.999999762",
+        "Rotation": "0.941410065, -9.935451E-05, -0.33726415, -0.000223284645",
+        "TranslateX": 94.0930252,
+        "TranslateY": 31.0376549,
+        "TranslateZ": 179.427277
+      },
+      {
+        "$id": "914",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "915",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b19",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "93.41674, 31.0409451, 184.141663",
+        "Scaling": "0.99999994, 1, 1",
+        "Rotation": "0.9946437, -0.000436414848, 0.103361368, 0.000478773931",
+        "TranslateX": 93.41674,
+        "TranslateY": 31.0409451,
+        "TranslateZ": 184.141663
+      },
+      {
+        "$id": "916",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "917",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de21",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "91.71673, 31.4153, 173.76767",
+        "Scaling": "0.999999762, 0.9999998, 0.9999997",
+        "Rotation": "0.582255, -0.582254946, -0.4012223, 0.401221842",
+        "TranslateX": 91.71673,
+        "TranslateY": 31.4153,
+        "TranslateZ": 173.76767
+      },
+      {
+        "$id": "918",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "919",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e865",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "95.32213, 31.4152927, 176.244873",
+        "Scaling": "1, 0.999999762, 1",
+        "Rotation": "0.244085312, 0.244086385, 0.6636441, 0.663642",
+        "TranslateX": 95.32213,
+        "TranslateY": 31.4152927,
+        "TranslateZ": 176.244873
+      },
+      {
+        "$id": "920",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "921",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "cbf0f1d4-20d8-43a1-b5f2-6ec993508379",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "109.3986, 31.0398159, 185.5025",
+        "Scaling": "0.9999991, 0.999999464, 0.999999464",
+        "Rotation": "1.49073492E-06, 0.99031, 6.164529E-07, -0.138874456",
+        "TranslateX": 109.3986,
+        "TranslateY": 31.0398159,
+        "TranslateZ": 185.5025
+      },
+      {
+        "$id": "922",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "923",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e36171b3-c2ea-4c8d-83a3-826d12fab520",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "107.390869, 31.0398121, 187.951065",
+        "Scaling": "1.00000012, 0.9999998, 0.9999998",
+        "Rotation": "1.32735693E-07, 0.9581557, 1.51420716E-06, 0.286247581",
+        "TranslateX": 107.390869,
+        "TranslateY": 31.0398121,
+        "TranslateZ": 187.951065
+      },
+      {
+        "$id": "924",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "925",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "55dfb28a-a5b8-4034-9549-0c153d66d344",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "102.634834, 31.0352249, 182.689453",
+        "Scaling": "0.999999464, 0.9999996, 0.9999999",
+        "Rotation": "0.173310086, 0.000830776349, 0.984867, -0.0003845513",
+        "TranslateX": 102.634834,
+        "TranslateY": 31.0352249,
+        "TranslateZ": 182.689453
+      },
+      {
+        "$id": "926",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "927",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "b25dbc97-1306-4755-b55a-cb5c82a7ba0d13",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "103.4325, 31.03988, 187.904785",
+        "Scaling": "0.99999994, 0.9999998, 0.9999999",
+        "Rotation": "-2.784078E-05, 0.09924713, -2.3626033E-05, 0.9950628",
+        "TranslateX": 103.4325,
+        "TranslateY": 31.03988,
+        "TranslateZ": 187.904785
+      },
+      {
+        "$id": "928",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "929",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842880",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "95.63816, 32.7489929, 181.637665",
+        "Scaling": "0.999999762, 0.9999999, 1",
+        "Rotation": "-0.412420183, -0.480351418, 0.230804592, 0.7388513",
+        "TranslateX": 95.63816,
+        "TranslateY": 32.7489929,
+        "TranslateZ": 181.637665
+      },
+      {
+        "$id": "930",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "931",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d28",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "94.24533, 31.03799, 161.487259",
+        "Scaling": "1, 0.9999998, 0.9999999",
+        "Rotation": "0.9290186, -0.0003659811, -0.3700327, -0.00022685781",
+        "TranslateX": 94.24533,
+        "TranslateY": 31.03799,
+        "TranslateZ": 161.487259
+      },
+      {
+        "$id": "932",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "933",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b21",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "91.91958, 31.0398273, 167.930664",
+        "Scaling": "0.9999999, 0.9999999, 0.9999998",
+        "Rotation": "-0.700004637, -0.100008011, -0.1000128, 0.6999924",
+        "TranslateX": 91.91958,
+        "TranslateY": 31.0398273,
+        "TranslateZ": 167.930664
+      },
+      {
+        "$id": "934",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "935",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de22",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "91.07751, 31.03995, 152.333908",
+        "Scaling": "0.9999997, 0.999999762, 0.999999642",
+        "Rotation": "0.3459523, -0.616711855, 0.6167382, 0.345857739",
+        "TranslateX": 91.07751,
+        "TranslateY": 31.03995,
+        "TranslateZ": 152.333908
+      },
+      {
+        "$id": "936",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "937",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e866",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "95.5621, 31.4152966, 158.162857",
+        "Scaling": "1, 0.9999998, 0.99999994",
+        "Rotation": "0.262337476, 0.2623341, 0.656642556, 0.6566433",
+        "TranslateX": 95.5621,
+        "TranslateY": 31.4152966,
+        "TranslateZ": 158.162857
+      },
+      {
+        "$id": "938",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "939",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842881",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "95.75109, 33.0533028, 163.254",
+        "Scaling": "0.9999996, 0.999999642, 0.999999762",
+        "Rotation": "-0.399366558, -0.445272416, 0.1327485, 0.790326953",
+        "TranslateX": 95.75109,
+        "TranslateY": 33.0533028,
+        "TranslateZ": 163.254
+      },
+      {
+        "$id": "940",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "941",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d29",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "107.811279, 31.0388489, 162.251358",
+        "Scaling": "1, 0.9999998, 1",
+        "Rotation": "0.988371253, 0.000104784282, -0.15205963, 0.000321315427",
+        "TranslateX": 107.811279,
+        "TranslateY": 31.0388489,
+        "TranslateZ": 162.251358
+      },
+      {
+        "$id": "942",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "943",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b24",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "106.422981, 31.0398064, 166.2183",
+        "Scaling": "0.9999999, 0.999999762, 0.999999762",
+        "Rotation": "0.996854663, 5.47841728E-06, 0.07925133, -1.95813E-06",
+        "TranslateX": 106.422981,
+        "TranslateY": 31.0398064,
+        "TranslateZ": 166.2183
+      },
+      {
+        "$id": "944",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "945",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de23",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "106.516495, 31.0305386, 152.134949",
+        "Scaling": "0.9999995, 0.9999997, 0.999999642",
+        "Rotation": "-0.00121748692, -0.8000312, -0.00237550959, 0.5999524",
+        "TranslateX": 106.516495,
+        "TranslateY": 31.0305386,
+        "TranslateZ": 152.134949
+      },
+      {
+        "$id": "946",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "947",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e867",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "109.181511, 31.4153385, 158.459854",
+        "Scaling": "1.00000024, 1, 1",
+        "Rotation": "0.0895853341, 0.08959089, 0.7013944, 0.701422751",
+        "TranslateX": 109.181511,
+        "TranslateY": 31.4153385,
+        "TranslateZ": 158.459854
+      },
+      {
+        "$id": "948",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "949",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842882",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "112.630966, 31.03982, 164.167526",
+        "Scaling": "0.9999996, 0.9999996, 0.999999762",
+        "Rotation": "3.354872E-07, -0.509658337, 3.81004455E-08, 0.8603769",
+        "TranslateX": 112.630966,
+        "TranslateY": 31.03982,
+        "TranslateZ": 164.167526
+      },
+      {
+        "$id": "950",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "951",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d30",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "96.28789, 31.4136581, 184.260132",
+        "Scaling": "0.99999994, 0.999999762, 0.999999762",
+        "Rotation": "-0.4857325, 0.485556155, -0.5139476, 0.513962",
+        "TranslateX": 96.28789,
+        "TranslateY": 31.4136581,
+        "TranslateZ": 184.260132
+      },
+      {
+        "$id": "952",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "953",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b27",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "92.23795, 31.0398331, 186.603241",
+        "Scaling": "0.99999994, 0.99999994, 0.9999999",
+        "Rotation": "-0.701396465, -0.089686, -0.08968107, 0.7013963",
+        "TranslateX": 92.23795,
+        "TranslateY": 31.0398331,
+        "TranslateZ": 186.603241
+      },
+      {
+        "$id": "954",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "955",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de24",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "90.828064, 31.4140739, 175.931213",
+        "Scaling": "0.999999642, 0.999999762, 0.999999642",
+        "Rotation": "0.5982603, -0.5983056, -0.376645267, 0.37716493",
+        "TranslateX": 90.828064,
+        "TranslateY": 31.4140739,
+        "TranslateZ": 175.931213
+      },
+      {
+        "$id": "956",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "957",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e868",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "94.9466553, 31.039814, 172.16275",
+        "Scaling": "1.00000024, 0.99999994, 1",
+        "Rotation": "-1.39826716E-06, 0.79589, 3.1875627E-06, 0.6054413",
+        "TranslateX": 94.9466553,
+        "TranslateY": 31.039814,
+        "TranslateZ": 172.16275
+      },
+      {
+        "$id": "958",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "959",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "55dfb28a-a5b8-4034-9549-0c153d66d345",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "102.228, 33.265564, 182.329514",
+        "Scaling": "0.999999642, 0.999999762, 0.9999998",
+        "Rotation": "0.178311169, 0.00184643175, 0.9839721, -0.0008121172",
+        "TranslateX": 102.228,
+        "TranslateY": 33.265564,
+        "TranslateZ": 182.329514
+      },
+      {
+        "$id": "960",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "961",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842883",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "97.7943039, 31.039814, 189.04248",
+        "Scaling": "0.999999642, 0.9999996, 0.999999762",
+        "Rotation": "2.78515E-06, 0.32803455, -8.514939E-07, 0.94466573",
+        "TranslateX": 97.7943039,
+        "TranslateY": 31.039814,
+        "TranslateZ": 189.04248
+      },
+      {
+        "$id": "962",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "963",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d31",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "94.86577, 31.03656, 164.983139",
+        "Scaling": "1, 0.999999762, 0.9999999",
+        "Rotation": "-0.7051006, -0.05638796, -0.0576161556, 0.704509735",
+        "TranslateX": 94.86577,
+        "TranslateY": 31.03656,
+        "TranslateZ": 164.983139
+      },
+      {
+        "$id": "964",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "965",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b28",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "91.1989441, 31.03767, 171.041992",
+        "Scaling": "0.9999999, 0.9999999, 0.99999994",
+        "Rotation": "-0.7017189, -0.08736178, -0.08772917, 0.7016139",
+        "TranslateX": 91.1989441,
+        "TranslateY": 31.03767,
+        "TranslateZ": 171.041992
+      },
+      {
+        "$id": "966",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "967",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de25",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "89.36932, 31.04037, 150.448563",
+        "Scaling": "0.9999996, 0.999999762, 0.999999642",
+        "Rotation": "0.329019129, -0.625654161, 0.626101255, 0.329090267",
+        "TranslateX": 89.36932,
+        "TranslateY": 31.04037,
+        "TranslateZ": 150.448563
+      },
+      {
+        "$id": "968",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "969",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e869",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "95.20123, 31.03982, 154.225891",
+        "Scaling": "1.00000024, 1, 1",
+        "Rotation": "-1.6773696E-06, 0.817572534, 7.66435846E-07, 0.575825632",
+        "TranslateX": 95.20123,
+        "TranslateY": 31.03982,
+        "TranslateZ": 154.225891
+      },
+      {
+        "$id": "970",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "971",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842884",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "97.1605, 32.83418, 165.975647",
+        "Scaling": "0.999999642, 0.999999642, 0.9999998",
+        "Rotation": "0.9292277, -0.326645136, -0.137902439, -0.104027919",
+        "TranslateX": 97.1605,
+        "TranslateY": 32.83418,
+        "TranslateZ": 165.975647
+      },
+      {
+        "$id": "972",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "973",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d32",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "109.786057, 31.0398655, 164.701263",
+        "Scaling": "1, 0.9999997, 0.9999999",
+        "Rotation": "0.9069921, 4.5341425E-05, 0.421147674, 4.563126E-05",
+        "TranslateX": 109.786057,
+        "TranslateY": 31.0398655,
+        "TranslateZ": 164.701263
+      },
+      {
+        "$id": "974",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "975",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b29",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "105.734207, 31.0405178, 168.606171",
+        "Scaling": "0.99999994, 0.9999998, 0.9999998",
+        "Rotation": "-0.7042294, -0.0665386841, -0.06624775, 0.703736365",
+        "TranslateX": 105.734207,
+        "TranslateY": 31.0405178,
+        "TranslateZ": 168.606171
+      },
+      {
+        "$id": "976",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "977",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de26",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "106.762741, 33.2500839, 152.219238",
+        "Scaling": "0.999999642, 0.9999997, 0.9999997",
+        "Rotation": "-0.00312567246, -0.81061846, -0.00603052927, 0.585535169",
+        "TranslateX": 106.762741,
+        "TranslateY": 33.2500839,
+        "TranslateZ": 152.219238
+      },
+      {
+        "$id": "978",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "979",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e870",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "108.670189, 31.41535, 156.022217",
+        "Scaling": "1.00000012, 1, 0.9999999",
+        "Rotation": "-0.7071262, 0.707069, 0.003604905, -0.00362025341",
+        "TranslateX": 108.670189,
+        "TranslateY": 31.41535,
+        "TranslateZ": 156.022217
+      },
+      {
+        "$id": "980",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "981",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842885",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "109.973511, 31.0398445, 169.399246",
+        "Scaling": "0.999999642, 0.9999996, 0.999999762",
+        "Rotation": "-1.67137223E-05, -0.4195567, 6.069223E-06, 0.907729149",
+        "TranslateX": 109.973511,
+        "TranslateY": 31.0398445,
+        "TranslateZ": 169.399246
+      },
+      {
+        "$id": "982",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "983",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d33",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "98.65414, 31.0398254, 191.4905",
+        "Scaling": "0.9999999, 0.999999762, 0.9999998",
+        "Rotation": "1.67252517E-06, 0.274396628, 7.22382538E-07, 0.9616166",
+        "TranslateX": 98.65414,
+        "TranslateY": 31.0398254,
+        "TranslateZ": 191.4905
+      },
+      {
+        "$id": "984",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "985",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b30",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "92.2656555, 31.0398426, 189.795151",
+        "Scaling": "0.99999994, 0.9999999, 0.9999998",
+        "Rotation": "-0.7054188, -0.0488623939, -0.04884915, 0.7054151",
+        "TranslateX": 92.2656555,
+        "TranslateY": 31.0398426,
+        "TranslateZ": 189.795151
+      },
+      {
+        "$id": "986",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "987",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de27",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "89.58406, 31.4146786, 178.094421",
+        "Scaling": "0.9999995, 0.9999996, 0.9999995",
+        "Rotation": "0.6218997, -0.6220832, -0.336079866, 0.336605966",
+        "TranslateX": 89.58406,
+        "TranslateY": 31.4146786,
+        "TranslateZ": 178.094421
+      },
+      {
+        "$id": "988",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "989",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e871",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "97.69856, 31.0398178, 173.7993",
+        "Scaling": "1.00000036, 1, 1",
+        "Rotation": "-7.726997E-06, 0.7484431, 1.18805783E-05, 0.663199",
+        "TranslateX": 97.69856,
+        "TranslateY": 31.0398178,
+        "TranslateZ": 173.7993
+      },
+      {
+        "$id": "990",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "991",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "55dfb28a-a5b8-4034-9549-0c153d66d346",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "102.26046, 35.50117, 182.380539",
+        "Scaling": "0.9999997, 0.9999999, 0.9999998",
+        "Rotation": "0.170722783, 0.00177782029, 0.9853172, -0.000820625748",
+        "TranslateX": 102.26046,
+        "TranslateY": 35.50117,
+        "TranslateZ": 182.380539
+      },
+      {
+        "$id": "992",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "993",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842886",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "100.580391, 31.4168224, 187.59787",
+        "Scaling": "0.9999996, 0.9999996, 0.999999762",
+        "Rotation": "0.480164647, -0.47944212, -0.5198498, 0.5189734",
+        "TranslateX": 100.580391,
+        "TranslateY": 31.4168224,
+        "TranslateZ": 187.59787
+      },
+      {
+        "$id": "994",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "995",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d34",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "97.6441956, 31.220665, 167.880585",
+        "Scaling": "1, 0.9999998, 0.9999999",
+        "Rotation": "0.09903053, -0.09539757, 0.9904586, 0.00916659",
+        "TranslateX": 97.6441956,
+        "TranslateY": 31.220665,
+        "TranslateZ": 167.880585
+      },
+      {
+        "$id": "996",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "997",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b31",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "91.65237, 33.27432, 171.014282",
+        "Scaling": "0.99999994, 0.9999999, 0.9999999",
+        "Rotation": "-0.9858864, 0.000606412941, -0.1674133, 0.000673409668",
+        "TranslateX": 91.65237,
+        "TranslateY": 33.27432,
+        "TranslateZ": 171.014282
+      },
+      {
+        "$id": "998",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "999",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de28",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "87.44012, 31.0398331, 148.4866",
+        "Scaling": "0.9999996, 0.9999997, 0.9999997",
+        "Rotation": "0.229839027, -0.668705165, 0.6687186, 0.229832336",
+        "TranslateX": 87.44012,
+        "TranslateY": 31.0398331,
+        "TranslateZ": 148.4866
+      },
+      {
+        "$id": "1000",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1001",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e872",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "99.82907, 31.0398331, 155.04422",
+        "Scaling": "1.00000024, 1, 1",
+        "Rotation": "1.53493929E-05, -0.409914225, 5.65808932E-06, 0.912124038",
+        "TranslateX": 99.82907,
+        "TranslateY": 31.0398331,
+        "TranslateZ": 155.04422
+      },
+      {
+        "$id": "1002",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1003",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842887",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "101.209267, 31.03983, 168.1474",
+        "Scaling": "0.999999642, 0.9999996, 0.999999762",
+        "Rotation": "-0.289376467, 0.64517957, 0.6451856, 0.2893788",
+        "TranslateX": 101.209267,
+        "TranslateY": 31.03983,
+        "TranslateZ": 168.1474
+      },
+      {
+        "$id": "1004",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1005",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d35",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "112.905151, 31.0398216, 173.785248",
+        "Scaling": "0.99999994, 0.999999642, 0.999999762",
+        "Rotation": "3.408841E-06, -0.982270658, -2.09642212E-06, -0.187468052",
+        "TranslateX": 112.905151,
+        "TranslateY": 31.0398216,
+        "TranslateZ": 173.785248
+      },
+      {
+        "$id": "1006",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1007",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b32",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "105.435883, 31.04031, 171.147186",
+        "Scaling": "0.99999994, 0.999999642, 0.999999642",
+        "Rotation": "-0.702580869, -0.0809716, -0.08124437, 0.702298462",
+        "TranslateX": 105.435883,
+        "TranslateY": 31.04031,
+        "TranslateZ": 171.147186
+      },
+      {
+        "$id": "1008",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1009",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de29",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "106.509758, 35.48026, 152.340454",
+        "Scaling": "0.9999995, 0.9999996, 0.999999762",
+        "Rotation": "-0.0044368105, -0.815636933, -0.008385053, 0.578486264",
+        "TranslateX": 106.509758,
+        "TranslateY": 35.48026,
+        "TranslateZ": 152.340454
+      },
+      {
+        "$id": "1010",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1011",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e873",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "111.243965, 31.0398159, 151.877563",
+        "Scaling": "1, 0.9999999, 0.99999994",
+        "Rotation": "-4.68729468E-06, -0.4331966, -2.8789982E-06, 0.9012995",
+        "TranslateX": 111.243965,
+        "TranslateY": 31.0398159,
+        "TranslateZ": 151.877563
+      },
+      {
+        "$id": "1012",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1013",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d36",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "98.914505, 31.0397453, 182.6226",
+        "Scaling": "0.9999999, 0.999999642, 0.9999998",
+        "Rotation": "0.2899793, -1.13798551E-05, 0.957032859, -6.306946E-06",
+        "TranslateX": 98.914505,
+        "TranslateY": 31.0397453,
+        "TranslateZ": 182.6226
+      },
+      {
+        "$id": "1014",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1015",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b33",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "91.89955, 31.03987, 192.3961",
+        "Scaling": "0.99999994, 0.9999997, 0.9999997",
+        "Rotation": "-0.7018116, -0.08655396, -0.08653512, 0.70176965",
+        "TranslateX": 91.89955,
+        "TranslateY": 31.03987,
+        "TranslateZ": 192.3961
+      },
+      {
+        "$id": "1016",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1017",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de30",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "91.07358, 31.0382462, 181.682617",
+        "Scaling": "0.999999464, 0.999999642, 0.9999995",
+        "Rotation": "0.205328554, -0.6769601, -0.6763735, -0.205143929",
+        "TranslateX": 91.07358,
+        "TranslateY": 31.0382462,
+        "TranslateZ": 181.682617
+      },
+      {
+        "$id": "1018",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1019",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e874",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "96.9919357, 31.0398121, 178.149643",
+        "Scaling": "1.00000012, 1, 0.9999999",
+        "Rotation": "-6.83018868E-07, 0.936627, -7.91794662E-07, -0.3503282",
+        "TranslateX": 96.9919357,
+        "TranslateY": 31.0398121,
+        "TranslateZ": 178.149643
+      },
+      {
+        "$id": "1020",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1021",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "55dfb28a-a5b8-4034-9549-0c153d66d347",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "105.9183, 31.7702484, 182.169708",
+        "Scaling": "0.999999762, 0.99999994, 0.9999999",
+        "Rotation": "0.08454346, 0.156520858, 0.467334747, 0.865997553",
+        "TranslateX": 105.9183,
+        "TranslateY": 31.7702484,
+        "TranslateZ": 182.169708
+      },
+      {
+        "$id": "1022",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1023",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842888",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "88.15044, 31.0400314, 180.1681",
+        "Scaling": "0.9999996, 0.9999996, 0.999999762",
+        "Rotation": "-0.222004816, 0.671445, 0.67127645, 0.221953467",
+        "TranslateX": 88.15044,
+        "TranslateY": 31.0400314,
+        "TranslateZ": 180.1681
+      },
+      {
+        "$id": "1024",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1025",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d37",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "100.778664, 31.0398312, 160.876419",
+        "Scaling": "0.9999998, 0.999999642, 0.9999999",
+        "Rotation": "0.0752538, 8.692489E-06, 0.9971644, -1.881885E-05",
+        "TranslateX": 100.778664,
+        "TranslateY": 31.0398312,
+        "TranslateZ": 160.876419
+      },
+      {
+        "$id": "1026",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1027",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b34",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "90.10875, 34.02583, 175.6788",
+        "Scaling": "0.99999994, 0.999999762, 0.999999762",
+        "Rotation": "-0.6981799, -0.116290748, -0.115539864, 0.6969016",
+        "TranslateX": 90.10875,
+        "TranslateY": 34.02583,
+        "TranslateZ": 175.6788
+      },
+      {
+        "$id": "1028",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1029",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de31",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "84.19582, 31.0398712, 147.923187",
+        "Scaling": "0.9999994, 0.9999996, 0.999999642",
+        "Rotation": "0.391938418, -0.588550746, 0.588567436, 0.391893685",
+        "TranslateX": 84.19582,
+        "TranslateY": 31.0398712,
+        "TranslateZ": 147.923187
+      },
+      {
+        "$id": "1030",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1031",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e875",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "102.726692, 31.039814, 164.431625",
+        "Scaling": "1, 0.9999999, 0.99999994",
+        "Rotation": "-1.05573477E-07, -0.512153447, 4.85168641E-07, 0.858894",
+        "TranslateX": 102.726692,
+        "TranslateY": 31.039814,
+        "TranslateZ": 164.431625
+      },
+      {
+        "$id": "1032",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1033",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842889",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "97.41448, 31.574543, 160.915649",
+        "Scaling": "0.9999999, 0.99999994, 0.9999999",
+        "Rotation": "0.144955128, -0.122297131, 0.7496735, -0.6340513",
+        "TranslateX": 97.41448,
+        "TranslateY": 31.574543,
+        "TranslateZ": 160.915649
+      },
+      {
+        "$id": "1034",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1035",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d38",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "104.019325, 31.0392227, 161.926788",
+        "Scaling": "0.9999999, 0.9999997, 0.9999999",
+        "Rotation": "-0.367197871, 0.6042722, 0.6043462, 0.367132843",
+        "TranslateX": 104.019325,
+        "TranslateY": 31.0392227,
+        "TranslateZ": 161.926788
+      },
+      {
+        "$id": "1036",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1037",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b35",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "103.482437, 31.0400429, 174.74054",
+        "Scaling": "0.9999999, 0.9999997, 0.999999642",
+        "Rotation": "-0.0001221875, 0.820465744, 4.42108976E-05, 0.571695745",
+        "TranslateX": 103.482437,
+        "TranslateY": 31.0400429,
+        "TranslateZ": 174.74054
+      },
+      {
+        "$id": "1038",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1039",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de32",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "106.552467, 37.7091866, 152.525192",
+        "Scaling": "0.999999464, 0.9999996, 0.9999997",
+        "Rotation": "-0.005880226, -0.823875546, -0.0100717079, 0.566650748",
+        "TranslateX": 106.552467,
+        "TranslateY": 37.7091866,
+        "TranslateZ": 152.525192
+      },
+      {
+        "$id": "1040",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1041",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e876",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "112.185333, 31.0403786, 160.418869",
+        "Scaling": "1.00000012, 0.9999999, 1",
+        "Rotation": "-0.000169024031, 0.836349666, 0.000304951536, 0.548196137",
+        "TranslateX": 112.185333,
+        "TranslateY": 31.0403786,
+        "TranslateZ": 160.418869
+      },
+      {
+        "$id": "1042",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1043",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842890",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "105.024361, 31.0385323, 157.9157",
+        "Scaling": "0.9999995, 0.9999996, 0.9999998",
+        "Rotation": "-0.405815631, 0.5789673, 0.5784939, 0.4067619",
+        "TranslateX": 105.024361,
+        "TranslateY": 31.0385323,
+        "TranslateZ": 157.9157
+      },
+      {
+        "$id": "1044",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1045",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b36",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "90.81063, 31.0398083, 194.661316",
+        "Scaling": "0.99999994, 0.9999997, 0.999999642",
+        "Rotation": "-0.7031171, -0.0750221461, -0.07502253, 0.7031142",
+        "TranslateX": 90.81063,
+        "TranslateY": 31.0398083,
+        "TranslateZ": 194.661316
+      },
+      {
+        "$id": "1046",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1047",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de33",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "88.8981857, 31.0399055, 183.827484",
+        "Scaling": "0.9999996, 0.999999762, 0.9999999",
+        "Rotation": "0.0923103839, 0.7009967, 0.7011146, -0.0923075154",
+        "TranslateX": 88.8981857,
+        "TranslateY": 31.0399055,
+        "TranslateZ": 183.827484
+      },
+      {
+        "$id": "1048",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1049",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e877",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "97.60324, 31.039814, 170.701691",
+        "Scaling": "1.00000012, 0.9999998, 0.99999994",
+        "Rotation": "-0.7034654, 0.0716354549, 0.07162812, 0.7034729",
+        "TranslateX": 97.60324,
+        "TranslateY": 31.039814,
+        "TranslateZ": 170.701691
+      },
+      {
+        "$id": "1050",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1051",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "55dfb28a-a5b8-4034-9549-0c153d66d348",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "111.048714, 31.0399036, 177.165955",
+        "Scaling": "0.9999998, 1, 0.9999999",
+        "Rotation": "0.467554241, 0.530461252, 0.5305058, -0.467512041",
+        "TranslateX": 111.048714,
+        "TranslateY": 31.0399036,
+        "TranslateZ": 177.165955
+      },
+      {
+        "$id": "1052",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1053",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d39",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "91.96244, 31.4360046, 159.158127",
+        "Scaling": "1, 0.9999997, 0.9999998",
+        "Rotation": "0.69001466, 0.180856064, -0.6759748, 0.185010582",
+        "TranslateX": 91.96244,
+        "TranslateY": 31.4360046,
+        "TranslateZ": 159.158127
+      },
+      {
+        "$id": "1054",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1055",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b37",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "91.86947, 33.4240074, 180.366226",
+        "Scaling": "0.99999994, 0.9999997, 0.999999642",
+        "Rotation": "-0.239516258, 0.3481162, -0.358887643, 0.832254",
+        "TranslateX": 91.86947,
+        "TranslateY": 33.4240074,
+        "TranslateZ": 180.366226
+      },
+      {
+        "$id": "1056",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1057",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e878",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "99.0674744, 31.039856, 151.008377",
+        "Scaling": "0.9999999, 0.9999996, 0.99999994",
+        "Rotation": "-0.0427943133, -1.50496426E-05, 0.9990839, 1.3514732E-05",
+        "TranslateX": 99.0674744,
+        "TranslateY": 31.039856,
+        "TranslateZ": 151.008377
+      },
+      {
+        "$id": "1058",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1059",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842891",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "86.03084, 31.0398159, 151.693085",
+        "Scaling": "0.9999996, 0.9999996, 0.9999997",
+        "Rotation": "-0.705468357, 0.04802972, 0.0480284952, 0.7054791",
+        "TranslateX": 86.03084,
+        "TranslateY": 31.0398159,
+        "TranslateZ": 151.693085
+      },
+      {
+        "$id": "1060",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1061",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d40",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "104.945961, 31.0401669, 154.587524",
+        "Scaling": "0.99999994, 0.9999997, 0.999999762",
+        "Rotation": "0.9958447, 0.000103807004, 0.0910676345, 0.000160589567",
+        "TranslateX": 104.945961,
+        "TranslateY": 31.0401669,
+        "TranslateZ": 154.587524
+      },
+      {
+        "$id": "1062",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1063",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b38",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "109.008179, 31.04039, 182.605118",
+        "Scaling": "0.99999994, 0.999999642, 0.999999642",
+        "Rotation": "0.5063595, -0.493347138, -0.493292838, -0.5068242",
+        "TranslateX": 109.008179,
+        "TranslateY": 31.04039,
+        "TranslateZ": 182.605118
+      },
+      {
+        "$id": "1064",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1065",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6f000f7a-2f7e-43cf-b57d-46e2940b23de34",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "107.296432, 39.9284973, 152.58728",
+        "Scaling": "0.9999992, 0.999999464, 0.9999996",
+        "Rotation": "0.00705752335, 0.839039147, 0.0110279331, -0.5439134",
+        "TranslateX": 107.296432,
+        "TranslateY": 39.9284973,
+        "TranslateZ": 152.58728
+      },
+      {
+        "$id": "1066",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1067",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e879",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "109.072235, 31.0398121, 146.362823",
+        "Scaling": "0.99999994, 0.999999642, 0.99999994",
+        "Rotation": "-0.3680635, 0.6037628, 0.603759348, 0.368068278",
+        "TranslateX": 109.072235,
+        "TranslateY": 31.0398121,
+        "TranslateZ": 146.362823
+      },
+      {
+        "$id": "1068",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1069",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842892",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "106.200241, 33.2899246, 160.074341",
+        "Scaling": "0.999999642, 0.999999642, 0.9999998",
+        "Rotation": "-0.597867131, -0.375298679, 0.397841722, -0.586027",
+        "TranslateX": 106.200241,
+        "TranslateY": 33.2899246,
+        "TranslateZ": 160.074341
+      },
+      {
+        "$id": "1070",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1071",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "6ca32d7e-757d-4993-b34c-6342f675e880",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-13.8132143, 21.2903137, -83.28009",
+        "Scaling": "0.99999994, 1, 1",
+        "Rotation": "0.183196068, 0.183197543, 0.6829662, 0.68296057",
+        "TranslateX": -13.8132143,
+        "TranslateY": 21.2903137,
+        "TranslateZ": -83.28009
+      },
+      {
+        "$id": "1072",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1073",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d41",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-22.13548, 20.9102783, -84.42867",
+        "Scaling": "1, 1.00000012, 1.00000012",
+        "Rotation": "0.948489, 9.49829337E-05, -0.316809833, 0.0003430313",
+        "TranslateX": -22.13548,
+        "TranslateY": 20.9102783,
+        "TranslateZ": -84.42867
+      },
+      {
+        "$id": "1074",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1075",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b39",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-23.1877365, 20.91496, -79.79734",
+        "Scaling": "0.99999994, 0.999999762, 0.9999998",
+        "Rotation": "0.9967581, -5.85011876E-05, -0.0804564357, -4.806984E-05",
+        "TranslateX": -23.1877365,
+        "TranslateY": 20.91496,
+        "TranslateZ": -79.79734
+      },
+      {
+        "$id": "1076",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1077",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "55dfb28a-a5b8-4034-9549-0c153d66d349",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-11.2116, 20.91512, -82.50912",
+        "Scaling": "0.9999999, 0.99999994, 0.9999999",
+        "Rotation": "-0.390445083, 0.5896332, -0.5895101, -0.390337318",
+        "TranslateX": -11.2116,
+        "TranslateY": 20.91512,
+        "TranslateZ": -82.50912
+      },
+      {
+        "$id": "1078",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1079",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d42",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-15.9731617, 20.9102554, -85.0990448",
+        "Scaling": "0.99999994, 0.9999999, 0.99999994",
+        "Rotation": "0.967746556, -0.000143611251, -0.2519252, -0.000541721354",
+        "TranslateX": -15.9731617,
+        "TranslateY": 20.9102554,
+        "TranslateZ": -85.0990448
+      },
+      {
+        "$id": "1080",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1081",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842893",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-20.1609535, 20.9104862, -88.15545",
+        "Scaling": "0.9999998, 0.9999998, 0.9999999",
+        "Rotation": "0.000216367247, 0.2723091, -2.53073849E-05, 0.962209761",
+        "TranslateX": -20.1609535,
+        "TranslateY": 20.9104862,
+        "TranslateZ": -88.15545
+      },
+      {
+        "$id": "1082",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1083",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d43",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-22.2298241, 23.141037, -84.59706",
+        "Scaling": "1, 0.9999999, 0.9999999",
+        "Rotation": "0.9491596, 0.000193413391, -0.314794481, 0.00063593575",
+        "TranslateX": -22.2298241,
+        "TranslateY": 23.141037,
+        "TranslateZ": -84.59706
+      },
+      {
+        "$id": "1084",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1085",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d44",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-15.7925053, 23.1409073, -84.85978",
+        "Scaling": "1, 0.999999762, 0.999999762",
+        "Rotation": "0.9652035, -0.000301622029, -0.26149714, -0.001113393",
+        "TranslateX": -15.7925053,
+        "TranslateY": 23.1409073,
+        "TranslateZ": -84.85978
+      },
+      {
+        "$id": "1086",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1087",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b40",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-15.8356152, 20.91276, -79.77978",
+        "Scaling": "0.9999999, 0.999999642, 0.9999998",
+        "Rotation": "0.9978234, 0.000408336549, -0.06594097, -0.000155598478",
+        "TranslateX": -15.8356152,
+        "TranslateY": 20.91276,
+        "TranslateZ": -79.77978
+      },
+      {
+        "$id": "1088",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1089",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842894",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-20.0208778, 23.1413345, -88.03439",
+        "Scaling": "0.9999998, 0.9999998, 0.99999994",
+        "Rotation": "0.000574203441, 0.255402982, -0.000127911539, 0.966834545",
+        "TranslateX": -20.0208778,
+        "TranslateY": 23.1413345,
+        "TranslateZ": -88.03439
+      },
+      {
+        "$id": "1090",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1091",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d45",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-22.2242165, 25.3764439, -84.54352",
+        "Scaling": "0.99999994, 0.99999994, 1",
+        "Rotation": "0.950842559, 0.000204090407, -0.309674084, 0.0005930379",
+        "TranslateX": -22.2242165,
+        "TranslateY": 25.3764439,
+        "TranslateZ": -84.54352
+      },
+      {
+        "$id": "1092",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1093",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "e502d4ad-5f62-4b69-b6ee-1f54f4a2308d46",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-15.8445568, 25.3763313, -84.8663",
+        "Scaling": "0.9999999, 0.9999999, 0.9999998",
+        "Rotation": "0.965229332, -0.000272151723, -0.2614021, -0.0010888601",
+        "TranslateX": -15.8445568,
+        "TranslateY": 25.3763313,
+        "TranslateZ": -84.8663
+      },
+      {
+        "$id": "1094",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1095",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "1f6d941d-ca03-46bd-868d-a72c0fc4816b41",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-15.7996435, 23.1481113, -79.74",
+        "Scaling": "0.999999762, 0.99999994, 1",
+        "Rotation": "0.9970552, 0.00038169272, -0.0766871944, -0.000179404713",
+        "TranslateX": -15.7996435,
+        "TranslateY": 23.1481113,
+        "TranslateZ": -79.74
+      },
+      {
+        "$id": "1096",
+        "$type": "IronStar.Mapping.MapEntity, IronStar",
+        "TargetName": null,
+        "Factory": {
+          "$id": "1097",
+          "$type": "IronStar.ProxyFactory, IronStar",
+          "Classname": "boxExplosive"
+        },
+        "Name": "95b18df8-b3c3-4a48-aba4-6c2a74842895",
+        "Visible": true,
+        "Frozen": false,
+        "Translation": "-20.0554066, 25.3766727, -88.03477",
+        "Scaling": "0.999999762, 0.9999998, 0.99999994",
+        "Rotation": "0.0005609112, 0.254542828, -0.000109896129, 0.9670613",
+        "TranslateX": -20.0554066,
+        "TranslateY": 25.3766727,
+        "TranslateZ": -88.03477
       }
     ]
   },
   "RadiositySettings": {
-    "$id": "918",
+    "$id": "1098",
     "$type": "Fusion.Engine.Graphics.GI.RadiositySettings, Fusion",
     "NumRays": 128,
     "NumBounces": 1,

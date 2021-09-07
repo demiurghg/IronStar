@@ -152,19 +152,19 @@ namespace IronStar.Mapping
 
 		[JsonIgnore]
 		protected ECS.Entity ecsEntity = null;
-		public virtual void SpawnNodeECS( GameState gs ) {}
+		public virtual void SpawnNodeECS( IGameState gs ) {}
 
 		[JsonIgnore]
 		public ECS.Entity EcsEntity { get { return ecsEntity; } }
 		
 		
-		public virtual void KillNodeECS( GameState gs ) 
+		public virtual void KillNodeECS( IGameState gs ) 
 		{
-			gs.Kill(ecsEntity); 
+			ecsEntity?.Kill();
 		}
 
 
-		public virtual void ResetNodeECS( GameState gs )
+		public virtual void ResetNodeECS( IGameState gs )
 		{
 			KillNodeECS(gs);
 			SpawnNodeECS(gs);

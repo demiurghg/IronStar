@@ -34,16 +34,12 @@ namespace IronStar.ECSFactories
 			this.model	=	model;
 		}
 
-		public override Entity Spawn( GameState gs )
+		public override void Construct( Entity e, GameState gs )
 		{
-			var e = gs.Spawn();
-
 			e.AddComponent( new RenderModel( model, Matrix.Scaling( scale ), Color.White, 5, RMFlags.None ) );
 			e.AddComponent( new DynamicBox( width, height, depth, mass ) );
 
 			e.AddComponent( new Transform() );
-
-			return e;
 		}
 	}
 
@@ -54,17 +50,15 @@ namespace IronStar.ECSFactories
 		public BoxExplosiveFactory():
 		base( 3, 2.25f, 2.25f, 5, 3, "scenes\\boxes\\box_low.fbx" ) {}
 
-		public override Entity Spawn( GameState gs )
+		public override void Construct( Entity e, GameState gs )
 		{
-			var e = base.Spawn( gs );
-
 			float timeout = MathUtil.Random.NextFloat(0.1f, 1.7f);
+
+			base.Construct( e, gs );
 
 			e.AddComponent( new HealthComponent(2, 0) );
 			e.AddComponent( new ExplosiveComponent(	timeout, 100,12,300, "boxBurning", "boxExplosion") ); 
 			e.AddComponent( new MaterialComponent( MaterialType.Metal ) );
-
-			return e;
 		}
 	}
 
@@ -75,16 +69,14 @@ namespace IronStar.ECSFactories
 		public GibletFactory():
 		base( 1, 1, 1, 0.3f, 2, "scenes\\boxes\\box_low.fbx" ) {}
 
-		public override Entity Spawn( GameState gs )
+		public override void Construct( Entity e, GameState gs )
 		{
-			var e = base.Spawn( gs );
+			base.Construct( e, gs );
 
 			//e.AddComponent( new HealthComponent(2, 0, "EXPLODE_BOX") );
 			e.AddComponent( new FXComponent("bloodTrail", false) );
 			e.GetComponent<DynamicBox>().Group = CollisionGroup.PickupGroup;
 			e.AddComponent( new MaterialComponent(MaterialType.Flesh) );
-
-			return e;
 		}
 	}
 }

@@ -29,10 +29,8 @@ namespace IronStar.ECSFactories
 			ammoName		=	name;
 		}
 
-		public override Entity Spawn( GameState gs )
+		public override void Construct( Entity e, GameState gs )
 		{
-			var e = gs.Spawn();
-
 			e.AddComponent( new PickupComponent("pickupAmmo") );
 			e.AddComponent( new TouchDetector() );
 			e.AddComponent( new RenderModel( modelName, Matrix.Scaling( modelScale ), Color.White, 5, RMFlags.None ) );
@@ -42,8 +40,6 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new NameComponent(ammoName) );
 
 			e.AddComponent( new Transform() );
-
-			return e;
 		}
 	}
 

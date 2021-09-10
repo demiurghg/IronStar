@@ -309,16 +309,18 @@ namespace IronStar.ECS
 		public Entity Spawn( string classname )
 		{
 			EntityFactory factory;
+			var newEntity = Spawn();
 
 			if (factories.TryGetValue( classname, out factory ))
 			{
-				return factory.Spawn(this);
+				factory.Construct(newEntity, this);
 			}
 			else
 			{
 				Log.Warning("Factory {0} not found. Empty entity is spawned", classname);
-				return Spawn();;
 			}
+
+			return newEntity;
 		}
 
 

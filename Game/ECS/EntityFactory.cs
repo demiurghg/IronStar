@@ -9,7 +9,7 @@ namespace IronStar.ECS
 {
 	public abstract class EntityFactory
 	{
-		public abstract Entity Spawn( GameState gs );
+		public abstract void Construct( Entity e, GameState gs );
 	}
 
 

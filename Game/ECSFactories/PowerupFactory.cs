@@ -29,10 +29,8 @@ namespace IronStar.ECSFactories
 			pickupFx	=	fx;
 		}
 
-		public override Entity Spawn( GameState gs )
+		public override void Construct( Entity e, GameState gs )
 		{
-			var e = gs.Spawn();
-
 			e.AddComponent( new PickupComponent( pickupFx ) );
 			e.AddComponent( new PowerupComponent( health, armor ) );
 			e.AddComponent( new TouchDetector() );
@@ -41,8 +39,6 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new DynamicBox( 1.2f, 1.2f, 3.0f, 5.0f ) { Group = CollisionGroup.PickupGroup } );
 
 			e.AddComponent( new Transform() );
-
-			return e;
 		}
 	}
 

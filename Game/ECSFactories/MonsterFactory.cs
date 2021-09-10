@@ -27,12 +27,8 @@ namespace IronStar.ECSFactories
 			inventory.SwitchWeapon( weapon );
 		}
 
-		public override Entity Spawn( GameState gs )
+		public override void Construct( Entity e, GameState gs )
 		{
-			var e = gs.Spawn();
-
-			//return e;
-
 			//	rotate character's model to face along forward vector :
 			var transform	=	Matrix.RotationY( MathUtil.Pi ) * Matrix.Scaling(0.1f);
 
@@ -64,8 +60,6 @@ namespace IronStar.ECSFactories
 
 			//GiveWeapon( e, "WEAPON_PLASMAGUN");
 			GiveWeapon( gs, inventory, weapons[ MathUtil.Random.Next(weapons.Length) ] );
-
-			return e;
 		}
 	}
 }

@@ -18,10 +18,8 @@ namespace IronStar.ECSFactories
 	{
 		public static readonly Aspect PlayerAspect = new Aspect().Include<PlayerComponent,Transform>();
 
-		public override Entity Spawn( GameState gs )
+		public override void Construct( Entity e, GameState gs )
 		{
-			var e = gs.Spawn();
-
 			//	rotate character's model to face along forward vector :
 			var transform	=	Matrix.RotationY( MathUtil.Pi ) * Matrix.Scaling(0.1f);
 
@@ -38,8 +36,6 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new MaterialComponent(MaterialType.Flesh) );
 
 			e.AddComponent( new InventoryComponent() );
-
-			return e;
 		}
 	}
 }

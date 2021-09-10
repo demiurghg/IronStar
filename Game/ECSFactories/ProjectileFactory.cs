@@ -16,14 +16,10 @@ namespace IronStar.ECSFactories
 	[EntityFactory("PLASMA")]
 	public class PlasmaFactory : EntityFactory
 	{
-		public override Entity Spawn( GameState gs )
+		public override void Construct( Entity e, GameState gs )
 		{
-			var e = gs.Spawn();
-
 			e.AddComponent( new ProjectileComponent( 500, 3, 10, "plasmaExplosion") );
 			e.AddComponent( new FXComponent("plasmaTrail", true) );
-
-			return e;
 		}
 	}
 
@@ -31,14 +27,10 @@ namespace IronStar.ECSFactories
 	[EntityFactory("ROCKET")]
 	public class RocketFactory : EntityFactory
 	{
-		public override Entity Spawn( GameState gs )
+		public override void Construct( Entity e, GameState gs )
 		{
-			var e = gs.Spawn();
-
 			e.AddComponent( new ProjectileComponent(300, 12, 10, "rocketExplosion") );
 			e.AddComponent( new FXComponent("rocketTrail", true) );
-
-			return e;
 		}
 	}
 }

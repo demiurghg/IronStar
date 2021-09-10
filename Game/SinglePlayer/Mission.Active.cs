@@ -54,7 +54,7 @@ namespace IronStar.SinglePlayer {
 
 			public void Exit()
 			{
-				throw new NotImplementedException();
+				context.GameState.Dispose();
 			}
 
 

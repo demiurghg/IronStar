@@ -69,6 +69,7 @@ namespace IronStar
 			gs.AddSystem( new Gameplay.CameraSystem(fxPlayback) );
 			gs.AddSystem( new FPVWeaponSystem(game) );
 			gs.AddSystem( new MonsterAnimationSystem(game,fxPlayback,physicsCore) );
+
 			gs.AddSystem( fxPlayback );
 
 			//	rendering :
@@ -80,6 +81,7 @@ namespace IronStar
 			gs.AddSystem( new SFX2.LightVolumeSystem(game.RenderSystem) );
 			gs.AddSystem( new BillboardSystem(fxPlayback) );
 			gs.AddSystem( new SFX2.LightingSystem() );
+
 			gs.AddSystem( new Gameplay.PlayerSystem() );
 
 			//	ui
@@ -95,6 +97,8 @@ namespace IronStar
 
 			LoadContent(rw, content, mapName);
 			gs.Reloading += (s,e) => LoadContent( rw, content, mapName );
+
+			gs.Start();
 
 			return gs;
 		}

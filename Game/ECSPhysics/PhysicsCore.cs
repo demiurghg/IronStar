@@ -164,7 +164,7 @@ namespace IronStar.ECSPhysics
 		void PhysicsLoop()
 		{
 			TimeSpan dt				=	TimeSpan.FromMilliseconds(16);
-			TimeSpan currentTime	=	GameTime.Current;
+			TimeSpan currentTime	=	GameTime.CurrentTime;
 			TimeSpan accumulator	=	TimeSpan.Zero;
 
 			Space.TimeStepSettings.TimeStepDuration				=	SimulationTimeStep;
@@ -172,7 +172,7 @@ namespace IronStar.ECSPhysics
 
 			while (!stopRequest)
 			{
-				TimeSpan newTime	=	GameTime.Current;
+				TimeSpan newTime	=	GameTime.CurrentTime;
 				TimeSpan frameTime	=	newTime - currentTime;
 				currentTime			=	newTime;
 
@@ -348,7 +348,7 @@ namespace IronStar.ECSPhysics
 
 		void UpdateTransforms( GameState gs )
 		{
-			motionStateBuffer.InterpolateMotionStates( motionStateDict, GameTime.Current.TotalSeconds, SimulationTimeStep );
+			motionStateBuffer.InterpolateMotionStates( motionStateDict, GameTime.CurrentTime.TotalSeconds, SimulationTimeStep );
 		}
 
 

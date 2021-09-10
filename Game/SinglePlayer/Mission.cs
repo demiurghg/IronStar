@@ -56,6 +56,17 @@ namespace IronStar.SinglePlayer
 		}
 
 
+		protected override void Dispose( bool disposing )
+		{
+			if (disposing)
+			{
+				State.Exit();
+			}
+
+			base.Dispose( disposing );
+		}
+
+
 		/// <summary>
 		/// 
 		/// </summary>

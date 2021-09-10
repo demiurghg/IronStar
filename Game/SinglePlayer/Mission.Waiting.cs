@@ -36,7 +36,7 @@ namespace IronStar.SinglePlayer {
 			}
 
 
-			public void Exit() {}
+			public void Exit() { context.GameState.Dispose(); }
 			public void Pause() {}
 			public void Start( string map ) {}
 			public void Update( GameTime gameTime ) {}

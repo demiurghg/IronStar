@@ -107,6 +107,9 @@ namespace IronStar.ECS
 		{
 			if ( disposing )
 			{
+				terminate = true;
+				updateThread.Join();
+
 				Game.Reloading -= Game_Reloading;
 
 				KillAllInternal();
@@ -133,30 +136,50 @@ namespace IronStar.ECS
 		/// <param name="gameTime"></param>
 		public void Update( GameTime gameTime )
 		{
+			foreach ( var system in systems )
+			{
+				(system.System as IRenderer)?.Render( this, gameTime );
+			}
+
 			RefreshEntities();
 
 			foreach ( var system in systems )
 			{
 				system.System.Update( this, gameTime );
 			}
-
-			PrintState();
 		}
 
 
 		public void UpdateParallelLoop()
 		{
+			long	 frames			=	0;
+			TimeSpan dt				=	timeStep;
+			TimeSpan currentTime	=	GameTime.CurrentTime;
+			TimeSpan accumulator	=	TimeSpan.Zero;
+
 			while (!terminate)
 			{
-				RefreshEntities();
+				TimeSpan newTime	=	GameTime.CurrentTime;
+				TimeSpan frameTime	=	newTime - currentTime;
+				currentTime			=	newTime;
 
-				foreach ( var system in systems )
+				accumulator	+=	frameTime;
+
+				while (accumulator >= dt)
 				{
-					//system.System.Update( this, gameTime );
+					//RefreshEntities();
+
+					//foreach ( var system in systems )
+					//{
+					//	system.System.Update( this, new GameTime(dt, frames) );
+					//}
+
+					accumulator -= dt;
+					frames++;
 				}
+
+				Thread.Sleep(1);
 			}
-
-
 		}
 
 

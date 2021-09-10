@@ -45,7 +45,7 @@ namespace IronStar.SinglePlayer {
 
 
 			public void Continue() { Log.Message("Mission.Loading : in progress."); }
-			public void Exit() {}
+			public void Exit() { context.GameState.Dispose(); }
 			public void Pause() {}
 			public void Start( string map )	{}
 

@@ -9,41 +9,48 @@ namespace Fusion.Core
 {
 	public class GameTime
 	{
-		public static TimeSpan Current { get { return sw.Elapsed; } }
+		public static TimeSpan CurrentTime { get { return sw.Elapsed; } }
 		static readonly Stopwatch sw = new Stopwatch();
 		static GameTime() { sw.Start(); }
 
-		static public GameTime Zero   { get { return new GameTime( Current, TimeSpan.Zero, 0 ); } }
-		static public GameTime MSec16 { get { return new GameTime( Current, TimeSpan.FromMilliseconds(16), 1 ); } }
-		static public GameTime MSec1  { get { return new GameTime( Current, TimeSpan.FromMilliseconds( 1), 1 ); } }
+		static public GameTime Zero   { get { return new GameTime( CurrentTime, TimeSpan.Zero, 0 ); } }
+		static public GameTime MSec16 { get { return new GameTime( CurrentTime, TimeSpan.FromMilliseconds(16), 1 ); } }
+		static public GameTime MSec1  { get { return new GameTime( CurrentTime, TimeSpan.FromMilliseconds( 1), 1 ); } }
 		static public GameTime Bad    { get { throw new NotImplementedException(); } }
 
 		static public GameTime Start()
 		{
-			return new GameTime( Current, TimeSpan.Zero, 0 );
+			return new GameTime( CurrentTime, TimeSpan.Zero, 0 );
 		}
 
-		readonly TimeSpan	total;
+		readonly TimeSpan	current;
 		readonly TimeSpan	elapsed;
 		readonly long		frames;
 
-		private GameTime( TimeSpan total, TimeSpan elapsed, long frames )
+		public GameTime( TimeSpan elapsed, long frames )
 		{
-			this.total		=	total;
+			this.current	=	CurrentTime;
+			this.elapsed	=	elapsed;
+			this.frames		=	frames;
+		}
+
+		private GameTime( TimeSpan current, TimeSpan elapsed, long frames )
+		{
+			this.current	=	current;
 			this.elapsed	=	elapsed;
 			this.frames		=	frames;
 		}
 
 		public	GameTime Next()
 		{
-			var current = Current;
-			var elapsed = current - total;
-			return new GameTime( current, elapsed, frames + 1 );
+			var currentTime = CurrentTime;
+			var elapsedTime = currentTime - this.current;
+			return new GameTime( currentTime, elapsedTime, frames + 1 );
 		}
 
 		public long Frames { get { return frames; } }
 
-		public TimeSpan Total { get { return total; }	}
+		public TimeSpan Total { get { return current; }	}
 
 		public TimeSpan Elapsed { get { return elapsed; } }
 

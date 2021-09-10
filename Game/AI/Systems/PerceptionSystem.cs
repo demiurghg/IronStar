@@ -48,7 +48,6 @@ namespace IronStar.AI
 		{
 			player		=	gs.GetPlayer();
 			playerAlive	=	IsPlayerAlive( player );
-			dr			=	gs.GetService<RenderSystem>().RenderWorld.Debug;
 
 			base.Update( gs, gameTime );
 		}

@@ -25,7 +25,7 @@ using RSLightProbe = Fusion.Engine.Graphics.LightProbe;
 
 namespace IronStar.SFX2 
 {
-	public class LightingSystem : ISystem 
+	public class LightingSystem : ISystem, IRenderer 
 	{
 		public Aspect GetAspect()
 		{
@@ -38,6 +38,10 @@ namespace IronStar.SFX2
 
 
 		public void Update( GameState gs, GameTime gameTime )
+		{
+		}
+
+		public void Render( GameState gs, GameTime gameTime )
 		{
 			var rs	=	gs.GetService<RenderSystem>();
 			rs.RenderWorld.LightSet.DirectLight.Direction	=	-rs.Sky.GetSunDirection();

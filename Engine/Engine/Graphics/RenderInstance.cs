@@ -29,7 +29,7 @@ namespace Fusion.Engine.Graphics
 	/// <summary>
 	/// Represnets mesh instance
 	/// </summary>
-	public sealed class RenderInstance : DisposableBase 
+	public sealed class RenderInstance
 	{
 		private readonly RenderSystem rs;
 		private readonly RenderWorld rw;
@@ -231,16 +231,6 @@ namespace Fusion.Engine.Graphics
 			}
 
 			LocalBoundingBox = mesh.ComputeBoundingBox();
-		}
-
-
-		protected override void Dispose( bool disposing )
-		{
-			if (disposing)
-			{
-			}
-
-			base.Dispose( disposing );
 		}
 
 

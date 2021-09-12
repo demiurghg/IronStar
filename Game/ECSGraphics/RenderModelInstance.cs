@@ -21,7 +21,7 @@ using IronStar.ECS;
 
 namespace IronStar.SFX2 
 {
-	public partial class RenderModelInstance : DisposableBase
+	public partial class RenderModelInstance
 	{
 		static readonly Scene EmptyScene = Scene.CreateEmptyScene();
 
@@ -87,6 +87,24 @@ namespace IronStar.SFX2
 		}
 
 
+		public void AddInstances()
+		{
+			sceneView?.ForEachMesh( mesh => 
+			{
+				rs.RenderWorld.Instances.Add( mesh );
+			});
+		}
+
+		
+		public void RemoveInstances()
+		{
+			sceneView?.ForEachMesh( mesh => 
+			{
+				rs.RenderWorld.Instances.Remove( mesh );
+			});
+		}
+
+		
 		RenderInstance CreateRenderInstance( RenderSystem rs, Scene scene, Node node, Mesh mesh, RenderModel rm )
 		{
 			var ri = new RenderInstance( rs, scene, mesh );
@@ -98,8 +116,6 @@ namespace IronStar.SFX2
 			ri.Color				=	Color4.Zero;
 			ri.LightMapRegionName	=	rm.lightmapName;// + "##" + scene.GetFullNodePath(node);
 			ri.LightMapSize			=	rm.lightmapSize;
-
-			rs.RenderWorld.Instances.Add( ri );
 
 			return ri;
 		}
@@ -126,24 +142,6 @@ namespace IronStar.SFX2
 			sceneView.ForEachMesh( mesh => mesh.Group = InstanceGroup.Weapon );
 		}
 
-
-		/// <summary>
-		/// Disposes stuff
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if (disposing)
-			{
-				sceneView?.ForEachMesh( mesh => 
-				{
-					rs.RenderWorld.Instances.Remove( mesh );
-					mesh?.Dispose();
-				});
-			}
-			
-			base.Dispose( disposing );
-		}
-	
 
 		public bool Visible
 		{

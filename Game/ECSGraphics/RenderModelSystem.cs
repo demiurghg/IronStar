@@ -46,13 +46,15 @@ namespace IronStar.SFX2
 
 		protected override RenderModelInstance Create( Entity e, Transform t, RenderModel rm )
 		{
-			return new RenderModelInstance( e.gs, rm, t.TransformMatrix );
+			var model = new RenderModelInstance( e.gs, rm, t.TransformMatrix );
+			model.AddInstances();
+			return model;
 		}
 
 		
 		protected override void Destroy( Entity e, RenderModelInstance model )
 		{
-			model?.Dispose();
+			model.RemoveInstances();
 		}
 
 		

@@ -101,13 +101,14 @@ namespace IronStar.Gameplay.Systems
 			var rw = rs.RenderWorld;
 			var fx = gs.GetService<SFX.FXPlayback>();
 
-			SafeDispose( ref renderModel );
+			renderModel?.RemoveInstances();
 			animator	=	null;
 
 			if (model!=null)
 			{
 				renderModel	=	new RenderModelInstance( gs, model, rw.Camera.CameraMatrix, CAMERA_NODE );
 				animator	=	new WeaponAnimator(fx, renderModel); 
+				renderModel.AddInstances();
 			}
 		}
 	}

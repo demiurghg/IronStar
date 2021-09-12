@@ -14,11 +14,34 @@ using Fusion.Engine.Tools;
 using System.Collections.Concurrent;
 using System.Collections;
 using System.Threading;
+using Fusion.Core.Shell;
 
 namespace IronStar.ECS
 {
 	public sealed partial class GameState : DisposableBase, IGameState
 	{
+		struct FactoryData
+		{
+			public FactoryData( Entity e, EntityFactory f ) { Entity = e; Factory = f; }
+			public readonly Entity Entity;
+			public readonly EntityFactory Factory;
+		}
+
+		struct TeleportData
+		{
+			public TeleportData( Entity e, Vector3 t, Quaternion r ) { Entity = e; Translation = t; Rotation = r; }
+			public readonly Entity Entity;
+			public readonly Vector3 Translation;
+			public readonly Quaternion Rotation;
+		}
+
+		struct ComponentData
+		{
+			public ComponentData ( Entity e, IComponent c ) { Entity = e; Component = c; }
+			public readonly Entity Entity;
+			public readonly IComponent Component;
+		}
+
 		public const int MaxSystems			=	BitSet.MaxBits;
 		public const int MaxComponentTypes	=	BitSet.MaxBits;
 
@@ -30,16 +53,18 @@ namespace IronStar.ECS
 		readonly Game game;
 		readonly TimeSpan timeStep;
 
-		readonly EntityCollection		entities;
-		readonly SystemCollection		systems;
-		readonly ComponentCollection	components;
+		readonly EntityCollection			entities;
+		readonly SystemCollection			systems;
+		readonly ComponentCollection		components;
 
-		readonly ConcurrentQueue<Entity>	spawnedQueue;
-		readonly ConcurrentQueue<Entity>	killedQueue;
-		readonly ConcurrentQueue<Entity>	refreshedQueue;
-		readonly ConcurrentQueue<Action>	invokeQueue;
-		readonly ConcurrentQueue<Tuple<Entity,IComponent>> componentsToAdd;
-		readonly ConcurrentQueue<Tuple<Entity,IComponent>> componentsToRemove;
+		readonly ConcurrentQueue<Entity>		spawnQueue;
+		readonly ConcurrentQueue<FactoryData>	factoryQueue;
+		readonly ConcurrentQueue<TeleportData>	teleportQueue;
+		readonly ConcurrentQueue<ComponentData>	componentToRemove;
+		readonly ConcurrentQueue<Entity>		killQueue;
+		readonly HashSet<Entity>				refreshed;
+		readonly ConcurrentQueue<Action>		invokeQueue;
+		uint									killAllBarrierId = 0;
 
 		readonly GameServiceContainer services;
 		public GameServiceContainer Services { get { return services; } }
@@ -68,13 +93,13 @@ namespace IronStar.ECS
 			systems		=	new SystemCollection(this);
 			components	=	new ComponentCollection();
 
-			spawnedQueue	=	new ConcurrentQueue<Entity>();
-			killedQueue		=	new ConcurrentQueue<Entity>();
-			refreshedQueue	=	new ConcurrentQueue<Entity>();
-			invokeQueue		=	new ConcurrentQueue<Action>();
-
-			componentsToAdd		=	new ConcurrentQueue<Tuple<Entity,IComponent>>();
-			componentsToRemove	=	new ConcurrentQueue<Tuple<Entity,IComponent>>();
+			spawnQueue			=	new ConcurrentQueue<Entity>();
+			factoryQueue		=	new ConcurrentQueue<FactoryData>();
+			teleportQueue		=	new ConcurrentQueue<TeleportData>();
+			componentToRemove	=	new ConcurrentQueue<ComponentData>();
+			killQueue			=	new ConcurrentQueue<Entity>();
+			refreshed			=	new HashSet<Entity>();
+			invokeQueue			=	new ConcurrentQueue<Action>();
 
 			services	=	new GameServiceContainer();
 
@@ -99,6 +124,13 @@ namespace IronStar.ECS
 		}
 
 
+		bool IsUpdateThread()
+		{
+			return true;
+			return Thread.CurrentThread.ManagedThreadId == updateThread.ManagedThreadId;
+		}
+
+
 		/// <summary>
 		/// Disposes stuff
 		/// </summary>
@@ -112,7 +144,7 @@ namespace IronStar.ECS
 
 				Game.Reloading -= Game_Reloading;
 
-				KillAllInternal();
+				KillAll();
 
 				//	just in case
 				RefreshEntities();
@@ -129,6 +161,9 @@ namespace IronStar.ECS
 			base.Dispose( disposing );
 		}
 
+		/*-----------------------------------------------------------------------------------------
+		 *	Updates :
+		-----------------------------------------------------------------------------------------*/
 
 		/// <summary>
 		/// Updates game state
@@ -182,44 +217,6 @@ namespace IronStar.ECS
 			}
 		}
 
-
-		void RefreshEntities()
-		{
-			Entity e;
-			Action a;
-
-			while (invokeQueue.TryDequeue(out a))
-			{
-				a.Invoke();
-			}
-
-			//	spawn entities :
-			while (spawnedQueue.TryDequeue(out e))
-			{
-				entities.Add( e );
-				Refresh( e );
-			}
-
-			AddEntityComponentsInternal();
-
-			RemoveEntityComponentsInternal();
-
-			//	kill entities marked to kill :
-			while (killedQueue.TryDequeue(out e))
-			{
-				KillInternal(e);
-			}
-
-			//	refresh component and system bindings :
-			while (refreshedQueue.TryDequeue(out e))
-			{
-				foreach ( var system in systems )
-				{
-					system.Changed(e);
-				}
-			}
-		}
-
 		
 		/// <summary>
 		/// Gets gamestate's service
@@ -252,7 +249,6 @@ namespace IronStar.ECS
 			}
 		}
 
-
 		/*-----------------------------------------------------------------------------------------------
 		 *	Debug stuff :
 		-----------------------------------------------------------------------------------------------*/
@@ -281,14 +277,136 @@ namespace IronStar.ECS
 
 
 		/*-----------------------------------------------------------------------------------------------
-		 *	Actions :
+		 *	Structured change tracking :
 		-----------------------------------------------------------------------------------------------*/
 
-		public void Invoke ( Action action )
+		void RefreshEntities()
 		{
-			if (action!=null)
+			Entity e;
+			Action a;
+			FactoryData fd;
+			ComponentData cd;
+			TeleportData td;
+
+			while (invokeQueue.TryDequeue(out a))
 			{
-				invokeQueue.Enqueue( action );
+				a.Invoke();
+			}
+
+			while (spawnQueue.TryDequeue(out e))
+			{
+				entities.Add(e);
+				Refresh(e);
+			}
+
+			while (factoryQueue.TryDequeue(out fd))
+			{
+				fd.Factory.Construct( fd.Entity, this );
+			}
+
+			while (teleportQueue.TryDequeue(out td))
+			{
+				TeleportInternal( td.Entity, td.Translation, td.Rotation );
+			}
+
+			while (componentToRemove.TryDequeue(out cd))
+			{
+				RemoveEntityComponentInternal( cd.Entity, cd.Component );
+			}
+
+			while (killQueue.TryDequeue(out e))
+			{
+				KillInternal(e);
+			}
+
+			KillAllInternal();
+
+			//	refresh component and system bindings :
+			foreach (var re in refreshed)
+			{
+				foreach ( var system in systems )
+				{
+					system.Changed(re);
+				}
+			}
+			
+			refreshed.Clear();
+		}
+
+
+		public void Invoke( Action action )
+		{
+			invokeQueue.Enqueue( action );
+		}
+
+
+		void SpawnInternal( Entity e )
+		{
+			entities.Add( e );
+			Refresh( e );
+		}
+
+
+		void SpawnFactoryInternal( Entity e, string classname )
+		{
+			EntityFactory factory;
+
+			if (factories.TryGetValue( classname, out factory ))
+			{
+				factory.Construct(e, this);
+			}
+			else
+			{
+				Log.Warning("Factory {0} not found. Empty entity is spawned", classname);
+			}
+
+			SpawnInternal( e );
+		}
+
+
+		void KillAllInternal()
+		{
+			if (killAllBarrierId!=0)
+			{
+				var killList = entities.GetSnapshot();
+
+				foreach ( var e in killList )
+				{
+					if (e.ID<=killAllBarrierId)
+					{
+						KillInternal( e );
+					}
+				}
+
+				killAllBarrierId = 0;
+			}
+		}
+
+
+		void KillInternal( Entity entity )
+		{
+			if ( entities.Remove( entity ) )
+			{
+				entity.ComponentMapping = 0;
+				components.RemoveAllComponents( entity.ID, c => {} );
+
+				Refresh( entity );
+			}
+		}
+
+		void TeleportInternal( Entity e, Vector3 p, Quaternion r )
+		{
+			var t = e.GetComponent<Transform>();
+
+			if (t!=null)
+			{
+				t.Position	=	p;
+				t.Rotation	=	r;
+			}
+			else
+			{
+				Log.Warning("Teleport: {0} has not {1} component", e, nameof(Transform) );
+				//AddEntityComponentInternal( e, new Transform(p,r) );
 			}
 		}
 
@@ -298,29 +416,39 @@ namespace IronStar.ECS
 
 		public Entity Spawn()
 		{
-			var entity = new Entity( this, IdGenerator.Next() );
+			var e = new Entity( this, IdGenerator.Next() );
 
-			spawnedQueue.Enqueue( entity );
+			spawnQueue.Enqueue( e );
 
-			return entity;
+			return e;
 		}
 
 
 		public Entity Spawn( string classname )
 		{
+			var e = new Entity( this, IdGenerator.Next() );
+
+			spawnQueue.Enqueue( e );
+
 			EntityFactory factory;
-			var newEntity = Spawn();
 
 			if (factories.TryGetValue( classname, out factory ))
 			{
-				factory.Construct(newEntity, this);
+				if (IsUpdateThread())
+				{
+					factory.Construct(e,this);
+				}
+				else
+				{
+					factoryQueue.Enqueue( new FactoryData(e, factory) );
+				}
 			}
 			else
 			{
 				Log.Warning("Factory {0} not found. Empty entity is spawned", classname);
 			}
 
-			return newEntity;
+			return e;
 		}
 
 
@@ -338,85 +466,43 @@ namespace IronStar.ECS
 		{
 			if (entity==null) throw new ArgumentNullException("entity");
 
-			refreshedQueue.Enqueue( entity );
-		}
-
-
-		public Entity GetEntity( uint id )
-		{
-			return entities[ id ];
+			refreshed.Add( entity );
 		}
 
 
 		public void Kill( Entity e )
 		{
-			if (e!=null) killedQueue.Enqueue( e );
-		}
-
-
-		void KillInternal( Entity entity )
-		{
-			if (entity!=null)
-			{
-				if ( entities.Remove( entity ) )
-				{
-					RemoveAllEntityComponent( entity );
-					Refresh( entity );
-				}
-				else
-				{
-					if (spawnedQueue.Contains(entity))
-					{
-						Log.Warning("Spawn queue contains killed entity!");
-					}
-				}
-			}
-		}
-
-
-		void KillAllInternal()
-		{
-			var killList = entities.GetSnapshot();
-
-			foreach ( var e in killList )
-			{
-				KillInternal( e );
-			}
+			killQueue.Enqueue( e );
 		}
 
 
 		public void KillAll()
 		{
-			KillAllInternal();
-			RefreshEntities();
+			killAllBarrierId = IdGenerator.Next();
 		}
 
-
-		public bool Exists( uint id )
-		{
-			return entities.Contains(id);
-		}
 
 		/*-----------------------------------------------------------------------------------------------
 		 *	Movement stuff :
 		-----------------------------------------------------------------------------------------------*/
 
-		public bool Teleport( Entity e, Vector3 position, Quaternion rotation )
+		/// <summary>
+		/// Teleports given entity to new place defined by position and rotation.
+		/// This method executed immediately from udpate thread.
+		/// If called outside of the update thread transformation will be applied at the beginning of the next update frame
+		/// </summary>
+		/// <param name="e">Entity</param>
+		/// <param name="position">New entity position</param>pp
+		/// <param name="rotation">New entity rotation</param>
+		public void Teleport( Entity e, Vector3 position, Quaternion rotation )
 		{
-			// #TODO -- force refresh entity to destroy and create again
-
-			var transform = e.GetComponent<Transform>();
-
-			if (transform!=null)
+			if (IsUpdateThread())
 			{
-				transform.Position	=	position;
-				transform.Rotation	=	rotation;
-				return true;
+				TeleportInternal( e, position, rotation );
 			}
 			else
 			{
-				Log.Warning("Spawn(classname,position,rotation) : missing transform component");
-				return false;
+				teleportQueue.Enqueue( new TeleportData( e, position, rotation ) );
 			}
 		}
 
@@ -424,90 +510,86 @@ namespace IronStar.ECS
 		 *	Component stuff :
 		-----------------------------------------------------------------------------------------------*/
 
-		const bool deferredComponents = false;
-
+		/// <summary>
+		/// Immediately adds component to the given entity.
+		/// This method must be called within update thread: in entity factrory or system
+		/// </summary>
+		/// <param name="entity">Entity to add component to</param>
+		/// <param name="component">Component to add</param>
 		public void AddEntityComponent( Entity entity, IComponent component )
 		{
 			if (entity==null) throw new ArgumentNullException("entity");
 			if (component==null) throw new ArgumentNullException("component");
+			if (!IsUpdateThread()) throw new InvalidOperationException(nameof(AddEntityComponent) + " must be called within update thread");
 
-			//	deferred addition :
-			if (deferredComponents)
-			{
-				componentsToAdd.Enqueue( new Tuple<Entity, IComponent>( entity, component ) );
-			}
-			else
-			{
-				components.AddComponent( entity.ID, component );
-				entity.ComponentMapping |= ECSTypeManager.GetComponentBit( component.GetType() );
-
-				Refresh( entity );
-			}
+			AddEntityComponentInternal(entity, component);
 		}
 
-
+		/// <summary>
+		/// Add component to removal queue. Component will be removed at the beginning of the next update frame.
+		/// This method must be called within update thread: in entity factrory or system
+		/// </summary>
+		/// <param name="entity">Entity to remove component from</param>
+		/// <param name="component">Component to remove</param>
 		public void RemoveEntityComponent( Entity entity, IComponent component )
 		{
 			if (entity==null) throw new ArgumentNullException("entity");
 			if (component==null) throw new ArgumentNullException("component");
+			if (!IsUpdateThread()) throw new InvalidOperationException(nameof(RemoveEntityComponent) + " must be called within update thread");
 
-			componentsToRemove.Enqueue( new Tuple<Entity, IComponent>( entity, component ) );
+			componentToRemove.Enqueue( new ComponentData( entity, component ) );
 		}
 
 
-		private void AddEntityComponentsInternal()
+		private void AddEntityComponentInternal( Entity entity, IComponent component )
 		{
-			if (!deferredComponents) return;
-
-			Tuple<Entity,IComponent> entry;
-
-			while (componentsToAdd.TryDequeue( out entry ))
-			{
-				var entity		=	entry.Item1;
-				var component	=	entry.Item2;
-
-				entity.ComponentMapping |= ECSTypeManager.GetComponentBit( component.GetType() );
-				components.AddComponent( entity.ID, component );
-
-				Refresh( entity );
-			}
-		}
-
-
-		private void RemoveEntityComponentsInternal()
-		{
-			Tuple<Entity,IComponent> entry;
-
-			while (componentsToRemove.TryDequeue( out entry ))
-			{
-				var entity		=	entry.Item1;
-				var component	=	entry.Item2;
-
-				entity.ComponentMapping &= ~ECSTypeManager.GetComponentBit( component.GetType() );
-				components.RemoveComponent( entity.ID, component );
-
-				Refresh( entity );
-			}
-		}
-
-
-		void RemoveAllEntityComponent( Entity entity )
-		{
-			entity.ComponentMapping = 0;
-			components.RemoveAllComponents( entity.ID, c => {} );
+			entity.ComponentMapping |= ECSTypeManager.GetComponentBit( component.GetType() );
+			components.AddComponent( entity.ID, component );
 
 			Refresh( entity );
 		}
 
-		
+
+		private void RemoveEntityComponentInternal( Entity entity, IComponent component )
+		{
+			entity.ComponentMapping &= ~ECSTypeManager.GetComponentBit( component.GetType() );
+			components.RemoveComponent( entity.ID, component );
+
+			Refresh( entity );
+		}
+
+
+		/// <summary>
+		/// Gets entity's component of given type
+		/// This method must be called within update thread: in entity factrory or system
+		/// </summary>
+		/// <typeparam name="TComponent">Component type</typeparam>
+		/// <param name="entity">Entity to get component from</param>
+		/// <returns>Component</returns>
 		public TComponent GetEntityComponent<TComponent>( Entity entity ) where TComponent: IComponent
 		{
+			if (!IsUpdateThread()) 
+			{
+				throw new InvalidOperationException(nameof(GetEntityComponent) + " must be called within update thread");
+			}
 			return components.GetComponent<TComponent>( entity.ID );
 		}
 
-		
+
+		/// <summary>
+		/// Gets entity's component of given type
+		/// This method must be called within update thread: in entity factrory or system
+		/// </summary>
+		/// <param name="entity">Entity to get component from</param>
+		/// <param name="componentType">Component type</param>
+		/// <returns></returns>
+		/// <returns>Component</returns>
 		public IComponent GetEntityComponent( Entity entity, Type componentType )
 		{
+			if (!IsUpdateThread()) 
+			{
+				throw new InvalidOperationException(nameof(GetEntityComponent) + " must be called within update thread");
+			}
 			return components.GetComponent( entity.ID, componentType );
 		}
 
@@ -536,6 +618,17 @@ namespace IronStar.ECS
 		/*-----------------------------------------------------------------------------------------------
 		 *	Queries :
 		-----------------------------------------------------------------------------------------------*/
+
+		public bool Exists( uint id )
+		{
+			return entities.Contains(id);
+		}
+
+		public Entity GetEntity( uint id )
+		{
+			return entities[ id ];
+		}
+
 
 		public IEnumerable<Entity> QueryEntities( Aspect aspect )
 		{

@@ -21,7 +21,7 @@ namespace IronStar.ECS
 
 		void KillAll();
 
-		bool Teleport( Entity e, Vector3 position, Quaternion rotation );
+		void Teleport( Entity e, Vector3 position, Quaternion rotation );
 
 		void Update ( GameTime gameTime );
 

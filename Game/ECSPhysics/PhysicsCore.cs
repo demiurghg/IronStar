@@ -40,9 +40,7 @@ namespace IronStar.ECSPhysics
 			get { return physSpace; }
 		}
 
-		Thread physicsThread;
 		Stopwatch stopwatch;
-		bool stopRequest = false;
 
 		public bool Enabled { get; set; } = true;
 
@@ -71,19 +69,13 @@ namespace IronStar.ECSPhysics
 			}
 		}
 
-		readonly ConcurrentQueue<ISpaceObject>			creationQueue		=	new ConcurrentQueue<ISpaceObject>();
-		readonly ConcurrentQueue<ISpaceObject>			removalQueue		=	new ConcurrentQueue<ISpaceObject>();
 		readonly List<ISpaceObject>						objectList			=	new List<ISpaceObject>();
 		readonly ConcurrentQueue<DeferredImpulse>		impulseQueue		=	new ConcurrentQueue<DeferredImpulse>();
 		readonly ConcurrentQueue<Action>				actionQueue			=	new ConcurrentQueue<Action>();
-		readonly MotionStateBuffer						motionStateBuffer	=	new MotionStateBuffer();
-		readonly Dictionary<ISpaceObject,MotionState>	motionStateDict		=	new Dictionary<ISpaceObject,MotionState>();
 		
 		public PhysicsCore ()
 		{
 			physSpace		=	new Space();
-			physSpace.BufferedStates.Enabled = true;
-			physSpace.BufferedStates.InterpolatedStates.Enabled = true;
 
 			touchEvents	=	new ConcurrentQueue<Tuple<Entity,Entity>>();
 
@@ -94,11 +86,6 @@ namespace IronStar.ECSPhysics
 			CollisionRules.CollisionGroupRules.Add( new CollisionGroupPair( PickupGroup,	CharacterGroup ), CollisionRule.NoSolver );
 
 			stopwatch			=	new Stopwatch();
-
-			physicsThread				=	new Thread(PhysicsLoop);
-			physicsThread.IsBackground	=	true;
-			physicsThread.Name			=	"PhysicsThread";
-			physicsThread.Start();
 		}
 
 
@@ -106,8 +93,6 @@ namespace IronStar.ECSPhysics
 		{
 			if (disposing)
 			{
-				stopRequest	=	true;
-				physicsThread.Join();
 			}
 			
 			base.Dispose( disposing );
@@ -146,12 +131,17 @@ namespace IronStar.ECSPhysics
 			{
 				UpdateSimulation( gs, gameTime.ElapsedSec );
 
-				UpdateTransforms(gs);
-
 				UpdateTouchEvents(gs);
-
-				ExecuteQueryCallbacks();
 			}
+		}
+
+		
+		public static void UpdateTransformFromMotionState( MotionState ms, Transform t )
+		{
+			t.AngularVelocity	=	MathConverter.Convert( ms.AngularVelocity );
+			t.LinearVelocity	=	MathConverter.Convert( ms.LinearVelocity );
+			t.Position			=	MathConverter.Convert( ms.Position );
+			t.Rotation			=	MathConverter.Convert( ms.Orientation );
 		}
 
 
@@ -159,55 +149,18 @@ namespace IronStar.ECSPhysics
 		 *	Parallel stuff :
 		-----------------------------------------------------------------------------------------------*/
 
-		TimeSpan lastUpdateTime = TimeSpan.Zero;
-
-		void PhysicsLoop()
-		{
-			TimeSpan dt				=	TimeSpan.FromMilliseconds(16);
-			TimeSpan currentTime	=	GameTime.CurrentTime;
-			TimeSpan accumulator	=	TimeSpan.Zero;
-
-			Space.TimeStepSettings.TimeStepDuration				=	SimulationTimeStep;
-			Space.TimeStepSettings.MaximumTimeStepsPerFrame		=	MaxTimeStepsPerFrame;
-
-			while (!stopRequest)
-			{
-				TimeSpan newTime	=	GameTime.CurrentTime;
-				TimeSpan frameTime	=	newTime - currentTime;
-				currentTime			=	newTime;
-
-				accumulator	+=	frameTime;
-
-				lock (Space)
-				{
-					while (accumulator >= dt)
-					{
-						DoAsyncSimulationStep(dt.TotalMilliseconds, currentTime.TotalSeconds);
-
-						lastUpdateTime = newTime;
-						accumulator -= dt;
-					}
-				}
-
-				Thread.Sleep(1);
-			}
-		}
-
-
 		void DoAsyncSimulationStep( double dt, double time )
 		{
-			ISpaceObject spaceObj;
+			Space.TimeStepSettings.TimeStepDuration				=	1.0f / 60.0f;
+			Space.TimeStepSettings.MaximumTimeStepsPerFrame		=	3;
+
 			Action action;
 
-			//	dequeue created objects :
-			while (creationQueue.TryDequeue(out spaceObj)) 
-			{
-				Space.Add(spaceObj);
-				motionStateBuffer.Add(spaceObj);
-			}
-
 			//	dequeue actions :
-			while (actionQueue.TryDequeue(out action)) action?.Invoke();
+			while (actionQueue.TryDequeue(out action)) 
+			{
+				action?.Invoke();
+			}
 
 			//	execute queries :
 			ExecuteSpatialQueries();
@@ -219,39 +172,19 @@ namespace IronStar.ECSPhysics
 			if (Enabled)
 			{
 				Space.Update();
-				
-				Space.BufferedStates.InterpolatedStates.BlendAmount	=	0.5f;
-				Space.BufferedStates.InterpolatedStates.Update();
 			}
-
-			//	remove objects :
-			while (removalQueue.TryDequeue(out spaceObj))
-			{
-				try 
-				{
-					Space.Remove(spaceObj);
-					motionStateBuffer.Remove(spaceObj);
-				} 
-				catch (Exception e)
-				{
-					Log.Warning(e.Message);
-				}
-			}
-
-			//	feedback simulation results :
-			motionStateBuffer.UpdateSimulationResults(time);
 		}
 
 
 		public void Add( ISpaceObject physObj )
 		{
-			creationQueue.Enqueue( physObj );
+			Space.Add( physObj );
 		}
 
 
 		public void Remove( ISpaceObject physObj )
 		{
-			removalQueue.Enqueue( physObj );
+			Space.Remove( physObj );
 		}
 
 
@@ -309,6 +242,7 @@ namespace IronStar.ECSPhysics
 
 		void UpdateSimulation ( GameState gs, float elapsedTime )
 		{
+			DoAsyncSimulationStep( elapsedTime, 0 );
 			/*if (elapsedTime==0)
 			 {
 				physSpace.TimeStepSettings.MaximumTimeStepsPerFrame = 1;
@@ -321,34 +255,6 @@ namespace IronStar.ECSPhysics
 			physSpace.TimeStepSettings.MaximumTimeStepsPerFrame = 5;
 			physSpace.TimeStepSettings.TimeStepDuration = 1.0f/60.0f;
 			var steps = physSpace.Update(dt);  */
-		}
-
-
-		public bool GetTransform( Transform transform, ISpaceObject spaceObj )
-		{
-			MotionState ms;
-			if (motionStateDict.TryGetValue( spaceObj, out ms ))
-			{
-				transform.Position			=	MathConverter.Convert( ms.Position );
-				transform.LinearVelocity	=	MathConverter.Convert( ms.LinearVelocity );
-				transform.Rotation			=	MathConverter.Convert( ms.Orientation );
-				transform.AngularVelocity	=	MathConverter.Convert( ms.AngularVelocity );
-				return true;
-			}
-			return false;
-		}
-
-
-		public Vector3 GetInterpolatedPosition( int index )
-		{
-			var rt = transforms[ index ];
-			return	MathConverter.Convert( rt.Position );
-		}
-
-
-		void UpdateTransforms( GameState gs )
-		{
-			motionStateBuffer.InterpolateMotionStates( motionStateDict, GameTime.CurrentTime.TotalSeconds, SimulationTimeStep );
 		}
 
 

@@ -151,7 +151,6 @@
     <Compile Include="ECSPhysics\ProjectileController.cs" />
     <Compile Include="ECSPhysics\StaticCollisionSystem.cs" />
     <Compile Include="ECSPhysics\TouchDetector.cs" />
-    <Compile Include="ECSPhysics\MotionStateBuffer.cs" />
     <Compile Include="ECS\Aspect.cs" />
     <Compile Include="ECS\Collections\ComponentCollection.cs" />
     <Compile Include="ECS\Collections\EntityCollection.cs" />

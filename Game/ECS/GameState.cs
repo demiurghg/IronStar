@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define ASYNC_GAMESTATE
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -61,6 +62,7 @@ namespace IronStar.ECS
 		readonly ConcurrentQueue<FactoryData>	factoryQueue;
 		readonly ConcurrentQueue<TeleportData>	teleportQueue;
 		readonly ConcurrentQueue<ComponentData>	componentToRemove;
+		readonly ConcurrentQueue<ComponentData>	componentToAdd;
 		readonly ConcurrentQueue<Entity>		killQueue;
 		readonly HashSet<Entity>				refreshed;
 		readonly ConcurrentQueue<Action>		invokeQueue;
@@ -97,6 +99,7 @@ namespace IronStar.ECS
 			factoryQueue		=	new ConcurrentQueue<FactoryData>();
 			teleportQueue		=	new ConcurrentQueue<TeleportData>();
 			componentToRemove	=	new ConcurrentQueue<ComponentData>();
+			componentToAdd		=	new ConcurrentQueue<ComponentData>();
 			killQueue			=	new ConcurrentQueue<Entity>();
 			refreshed			=	new HashSet<Entity>();
 			invokeQueue			=	new ConcurrentQueue<Action>();
@@ -111,10 +114,12 @@ namespace IronStar.ECS
 
 		public void Start()
 		{
+			#if ASYNC_GAMESTATE
 			updateThread				=	new Thread( UpdateParallelLoop );
 			updateThread.Name			=	"ECS Update Thread";
 			updateThread.IsBackground	=	true;
 			updateThread.Start();
+			#endif
 		}
 
 		
@@ -126,8 +131,11 @@ namespace IronStar.ECS
 
 		bool IsUpdateThread()
 		{
+			#if ASYNC_GAMESTATE
+			return updateThread==null ? false : Thread.CurrentThread.ManagedThreadId == updateThread.ManagedThreadId;
+			#else
 			return true;
-			return Thread.CurrentThread.ManagedThreadId == updateThread.ManagedThreadId;
+			#endif
 		}
 
 
@@ -139,16 +147,15 @@ namespace IronStar.ECS
 		{
 			if ( disposing )
 			{
-				terminate = true;
-				updateThread.Join();
+				#if ASYNC_GAMESTATE
+					terminate = true;
+					updateThread.Join();
+				#else
+					KillAll();
+					RefreshEntities();
+				#endif
 
 				Game.Reloading -= Game_Reloading;
-
-				KillAll();
-
-				//	just in case
-				RefreshEntities();
-				RefreshEntities();
 
 				foreach ( var systemWrapper in systems )
 				{
@@ -176,12 +183,16 @@ namespace IronStar.ECS
 				(system.System as IRenderer)?.Render( this, gameTime );
 			}
 
+			#if ASYNC_GAMESTATE
+			// do nothing
+			#else
 			RefreshEntities();
 
 			foreach ( var system in systems )
 			{
 				system.System.Update( this, gameTime );
 			}
+			#endif
 		}
 
 
@@ -202,12 +213,12 @@ namespace IronStar.ECS
 
 				while (accumulator >= dt)
 				{
-					//RefreshEntities();
+					RefreshEntities();
 
-					//foreach ( var system in systems )
-					//{
-					//	system.System.Update( this, new GameTime(dt, frames) );
-					//}
+					foreach ( var system in systems )
+					{
+						system.System.Update( this, new GameTime(dt, frames) );
+					}
 
 					accumulator -= dt;
 					frames++;
@@ -215,6 +226,9 @@ namespace IronStar.ECS
 
 				Thread.Sleep(1);
 			}
+
+			KillAll();
+			RefreshEntities();
 		}
 
 		
@@ -307,6 +321,11 @@ namespace IronStar.ECS
 			while (teleportQueue.TryDequeue(out td))
 			{
 				TeleportInternal( td.Entity, td.Translation, td.Rotation );
+			}
+
+			while (componentToAdd.TryDequeue(out cd))
+			{
+				AddEntityComponentInternal( cd.Entity, cd.Component );
 			}
 
 			while (componentToRemove.TryDequeue(out cd))
@@ -539,9 +558,15 @@ namespace IronStar.ECS
 		{
 			if (entity==null) throw new ArgumentNullException("entity");
 			if (component==null) throw new ArgumentNullException("component");
-			if (!IsUpdateThread()) throw new InvalidOperationException(nameof(AddEntityComponent) + " must be called within update thread");
 
-			AddEntityComponentInternal(entity, component);
+			if (IsUpdateThread())
+			{
+				AddEntityComponentInternal(entity, component);
+			}
+			else
+			{
+				componentToAdd.Enqueue( new ComponentData( entity, component ) );
+			}
 		}
 
 		/// <summary>

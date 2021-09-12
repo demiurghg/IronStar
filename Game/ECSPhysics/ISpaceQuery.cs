@@ -10,6 +10,5 @@ namespace IronStar.ECSPhysics
 	public interface ISpaceQuery
 	{
 		void Execute( Space space );
-		void Callback();
 	}
 }

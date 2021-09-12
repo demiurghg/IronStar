@@ -44,8 +44,7 @@ namespace IronStar.ECSPhysics
 			else return 1; 
 		}
 
-		readonly ConcurrentQueue<ISpaceQuery> queryRequests = new ConcurrentQueue<ISpaceQuery>();
-		readonly ConcurrentQueue<ISpaceQuery> queryResponces = new ConcurrentQueue<ISpaceQuery>();
+		readonly Queue<ISpaceQuery> queryRequests = new Queue<ISpaceQuery>();
 
 
 		public void Query( ISpaceQuery query )
@@ -56,23 +55,9 @@ namespace IronStar.ECSPhysics
 		
 		void ExecuteSpatialQueries()
 		{
-			ISpaceQuery query;
-
-			while ( queryRequests.TryDequeue( out query ) )
+			while ( queryRequests.Any() )
 			{
-				query.Execute( Space );
-				queryResponces.Enqueue( query );
-			}
-		}
-
-
-		void ExecuteQueryCallbacks()
-		{
-			ISpaceQuery query;
-
-			while ( queryResponces.TryDequeue( out query ) )
-			{
-				query.Callback();
+				queryRequests.Dequeue().Execute( Space );
 			}
 		}
 

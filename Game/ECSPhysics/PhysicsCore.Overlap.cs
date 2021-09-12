@@ -74,9 +74,11 @@ namespace IronStar.ECSPhysics
 						results.Add( rcr );
 					}
 				}
+
+				RunCallback();
 			}
 
-			public void Callback()
+			void RunCallback()
 			{
 				callback.Begin( results.Count );
 

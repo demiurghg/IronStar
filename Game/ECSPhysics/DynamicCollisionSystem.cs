@@ -75,7 +75,7 @@ namespace IronStar.ECSPhysics
 		
 		protected override void Process( Entity entity, GameTime gameTime, Box cbox, DynamicBox box, Transform t )
 		{
-			physics.GetTransform( t, cbox );
+			PhysicsCore.UpdateTransformFromMotionState( cbox.MotionState, t );
 		}
 	}
 }

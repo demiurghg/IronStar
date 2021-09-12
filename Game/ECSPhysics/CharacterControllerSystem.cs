@@ -100,18 +100,15 @@ namespace IronStar.ECSPhysics
 			var crouching	=	controller.StanceManager.CurrentStance == Stance.Crouching;
 			var traction	=	controller.SupportFinder.HasTraction;
 			var offset		=	crouching ? cc.offsetCrouch : cc.offsetStanding;
+			var position	=	MathConverter.Convert( controller.Body.Position );
+			var velocity	=	MathConverter.Convert( controller.Body.LinearVelocity );
 
-			Transform tempTransform = new Transform();
+			t.Position			=	position - offset;
+			t.LinearVelocity	=	velocity;
+			t.AngularVelocity	=	Vector3.Zero;
 
-			if (physics.GetTransform( tempTransform, controller ))
-			{
-				t.Position			=	tempTransform.Position - offset;
-				t.LinearVelocity	=	tempTransform.LinearVelocity;
-				t.AngularVelocity	=	Vector3.Zero;
-			}
-
-			cc.IsCrouching	=	crouching;
-			cc.HasTraction	=	traction;
+			cc.IsCrouching		=	crouching;
+			cc.HasTraction		=	traction;
 		}
 
 

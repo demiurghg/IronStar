@@ -72,9 +72,11 @@ namespace IronStar.ECSPhysics
 				{
 					results.Sort( RayCastResultComparison );
 				}
+
+				RunCallback();
 			}
 
-			public void Callback()
+			void RunCallback()
 			{
 				callback.Begin( results.Count );
 

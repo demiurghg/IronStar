@@ -77,7 +77,7 @@ namespace IronStar.Gameplay.Systems
 
 			if (!MathUtil.NearEqual(projectile.Velocity, 0))
 			{
-				physics.GetTransform( transform, controller );
+				PhysicsCore.UpdateTransformFromMotionState( controller.MotionState, transform );
 			}
 
 			projectile.LifeTime	-= gameTime.ElapsedSec;

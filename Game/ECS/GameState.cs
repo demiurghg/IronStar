@@ -414,6 +414,11 @@ namespace IronStar.ECS
 		 *	Entity stuff :
 		-----------------------------------------------------------------------------------------------*/
 
+		/// <summary>
+		/// Create new entity. 
+		/// Entity will enter the world at the begining of the next update frame.
+		/// </summary>
+		/// <returns>New entity</returns>
 		public Entity Spawn()
 		{
 			var e = new Entity( this, IdGenerator.Next() );
@@ -424,6 +429,13 @@ namespace IronStar.ECS
 		}
 
 
+		/// <summary>
+		/// Create new entity using entity factory. 
+		/// Entity will enter the world at the begining of the next update frame.
+		/// In updtate thread construction is immediate. 
+		/// Outside of the update thread construction is deferred.
+		/// </summary>
+		/// <returns>New entity</returns>
 		public Entity Spawn( string classname )
 		{
 			var e = new Entity( this, IdGenerator.Next() );
@@ -470,12 +482,19 @@ namespace IronStar.ECS
 		}
 
 
+		/// <summary>
+		/// Adds entity to kill queue.
+		/// </summary>
+		/// <param name="e"></param>
 		public void Kill( Entity e )
 		{
 			killQueue.Enqueue( e );
 		}
 
 
+		/// <summary>
+		/// Kills all entities created before this call.
+		/// </summary>
 		public void KillAll()
 		{
 			killAllBarrierId = IdGenerator.Next();

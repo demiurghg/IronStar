@@ -20,10 +20,11 @@ using Fusion.Scripting;
 using KopiLua;
 using IronStar.ECS;
 using IronStar.Animation;
+using System.Collections.Concurrent;
 
 namespace IronStar.SFX2 
 {
-	public class RenderModelSystem : ProcessingSystem<RenderModelInstance,Transform,RenderModel>
+	public class RenderModelSystem : ProcessingSystem<RenderModelInstance,Transform,RenderModel>, IRenderer
 	{
 		readonly Game	game;
 		public readonly RenderSystem rs;
@@ -34,6 +35,9 @@ namespace IronStar.SFX2
 		readonly Aspect rigidAspect   = new Aspect().Include<RenderModelInstance,Transform,RenderModel>()
 													.Exclude<BoneComponent>();
 
+		readonly ConcurrentQueue<RenderModelInstance>	creationQueue;
+		readonly ConcurrentQueue<RenderModelInstance>	detroyQueue;
+
 		
 		public RenderModelSystem ( Game game )
 		{
@@ -41,20 +45,23 @@ namespace IronStar.SFX2
 			this.rs		=	game.RenderSystem;
 			this.rw		=	game.RenderSystem.RenderWorld;
 			this.content=	game.Content;
+
+			creationQueue	=	new ConcurrentQueue<RenderModelInstance>();
+			detroyQueue		=	new ConcurrentQueue<RenderModelInstance>();
 		}
 
 
 		protected override RenderModelInstance Create( Entity e, Transform t, RenderModel rm )
 		{
 			var model = new RenderModelInstance( e.gs, rm, t.TransformMatrix );
-			model.AddInstances();
+			creationQueue.Enqueue( model );
 			return model;
 		}
 
 		
 		protected override void Destroy( Entity e, RenderModelInstance model )
 		{
-			model.RemoveInstances();
+			detroyQueue.Enqueue( model );
 		}
 
 		
@@ -70,6 +77,21 @@ namespace IronStar.SFX2
 				{
 					model.SetBoneTransforms( e.GetComponent<BoneComponent>().Bones );
 				}
+			}
+		}
+
+		public void Render( GameState gs, GameTime gameTime )
+		{
+			RenderModelInstance model;
+			
+			while (creationQueue.TryDequeue(out model))
+			{
+				model.AddInstances();
+			}
+			
+			while (detroyQueue.TryDequeue(out model))
+			{
+				model.RemoveInstances();
 			}
 		}
 	}

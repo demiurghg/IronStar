@@ -15,10 +15,11 @@ using System.Runtime.CompilerServices;
 using IronStar.Gameplay.Components;
 using Fusion.Core.Extensions;
 using Fusion.Core.Configuration;
+using System.Collections.Concurrent;
 
 namespace IronStar.Gameplay
 {
-	public class CameraSystem : ISystem, IGameComponent
+	public class CameraSystem : ISystem, IGameComponent, IRenderer
 	{
 		[Config]
 		public bool ThirdPersonEnable { get; set; }
@@ -120,13 +121,6 @@ namespace IronStar.Gameplay
 			var step	=	e.GetComponent<StepComponent>();
 			var health	=	e.GetComponent<HealthComponent>();
 
-			var	rs	=	gs.GetService<RenderSystem>();
-			var rw	=	rs.RenderWorld;
-			var sw	=	gs.Game.SoundSystem;
-			var vp	=	gs.Game.RenderSystem.DisplayBounds;
-
-			var aspect	=	(vp.Width) / (float)vp.Height;
-
 			//	update matricies :
 			var translate	=	Matrix.Translation( t.Position );
 			var rotateYaw	=	Matrix.RotationYawPitchRoll( uc.Yaw, 0, 0 );
@@ -144,21 +138,43 @@ namespace IronStar.Gameplay
 			var tpvRotate		=	ThirdPersonEnable ? Matrix.RotationY( MathUtil.DegreesToRadians( ThirdPersonAngle ) ) : Matrix.Identity;
 			var camMatrix		=	tpvTranslate * rotatePR * animatedCameraMatrix * tpvRotate * rotateYaw * translate;
 
-			var cameraPos	=	camMatrix.TranslationVector;
+			transformQueue.Enqueue( new Tuple<Matrix,Vector3>(camMatrix, t.LinearVelocity) );
+			/*
+			*/
+		}
 
-			var cameraFwd	=	camMatrix.Forward;
-			var cameraUp	=	camMatrix.Up;
 
-			//	update stuff :
-			var velocity	=	t.LinearVelocity;
+		ConcurrentQueue<Tuple<Matrix,Vector3>> transformQueue = new ConcurrentQueue<Tuple<Matrix,Vector3>>();
 
-			rw.Camera		.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
-			rw.WeaponCamera	.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
 
-			rw.Camera		.SetPerspectiveFov( MathUtil.Rad(90),	0.125f/2.0f, 12288, aspect );
-			rw.WeaponCamera	.SetPerspectiveFov( MathUtil.Rad(75),	0.125f/2.0f, 6144, aspect );
+		public void Render( GameState gs, GameTime gameTime )
+		{
+			var	rs		=	gs.GetService<RenderSystem>();
+			var rw		=	rs.RenderWorld;
+			var sw		=	gs.Game.SoundSystem;
+			var vp		=	gs.Game.RenderSystem.DisplayBounds;
+			var aspect	=	(vp.Width) / (float)vp.Height;
 
-			sw.SetListener( cameraPos, cameraFwd, cameraUp, velocity );
+			Tuple<Matrix,Vector3> item;
+
+			while (transformQueue.TryDequeue(out item))
+			{
+				var camMatrix	=	item.Item1;
+				var velocity	=	item.Item2;
+
+				var cameraPos	=	camMatrix.TranslationVector;
+
+				var cameraFwd	=	camMatrix.Forward;
+				var cameraUp	=	camMatrix.Up;
+
+				rw.Camera		.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
+				rw.WeaponCamera	.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
+
+				rw.Camera		.SetPerspectiveFov( MathUtil.Rad(90),	0.125f/2.0f, 12288, aspect );
+				rw.WeaponCamera	.SetPerspectiveFov( MathUtil.Rad(75),	0.125f/2.0f, 6144, aspect );
+
+				sw.SetListener( cameraPos, cameraFwd, cameraUp, velocity );
+			}
 		}
 
 

@@ -30,9 +30,6 @@ namespace IronStar.ECSPhysics
 	{
 		public delegate RigidTransform TransformCallback( ISpaceObject spaceObject, Transform transform );
 
-		const float SimulationTimeStep = 1.0f / 60.0f;
-		const int MaxTimeStepsPerFrame = 7;
-
 		readonly Space physSpace;
 
 		private Space Space 
@@ -149,33 +146,6 @@ namespace IronStar.ECSPhysics
 		 *	Parallel stuff :
 		-----------------------------------------------------------------------------------------------*/
 
-		void DoAsyncSimulationStep( double dt, double time )
-		{
-			Space.TimeStepSettings.TimeStepDuration				=	1.0f / 60.0f;
-			Space.TimeStepSettings.MaximumTimeStepsPerFrame		=	3;
-
-			Action action;
-
-			//	dequeue actions :
-			while (actionQueue.TryDequeue(out action)) 
-			{
-				action?.Invoke();
-			}
-
-			//	execute queries :
-			ExecuteSpatialQueries();
-
-			//	apply impulses :
-			ApplyDeferredImpulses();
-
-			//	run simulation :
-			if (Enabled)
-			{
-				Space.Update();
-			}
-		}
-
-
 		public void Add( ISpaceObject physObj )
 		{
 			Space.Add( physObj );
@@ -242,19 +212,28 @@ namespace IronStar.ECSPhysics
 
 		void UpdateSimulation ( GameState gs, float elapsedTime )
 		{
-			DoAsyncSimulationStep( elapsedTime, 0 );
-			/*if (elapsedTime==0)
-			 {
-				physSpace.TimeStepSettings.MaximumTimeStepsPerFrame = 1;
-				physSpace.TimeStepSettings.TimeStepDuration = 1/1024.0f;
-				physSpace.Update(1/1024.0f);
-				return;
+			Space.TimeStepSettings.TimeStepDuration				=	elapsedTime;
+			Space.TimeStepSettings.MaximumTimeStepsPerFrame		=	3;
+
+			Action action;
+
+			//	dequeue actions :
+			while (actionQueue.TryDequeue(out action)) 
+			{
+				action?.Invoke();
 			}
 
-			var dt	=	elapsedTime;
-			physSpace.TimeStepSettings.MaximumTimeStepsPerFrame = 5;
-			physSpace.TimeStepSettings.TimeStepDuration = 1.0f/60.0f;
-			var steps = physSpace.Update(dt);  */
+			//	execute queries :
+			ExecuteSpatialQueries();
+
+			//	apply impulses :
+			ApplyDeferredImpulses();
+
+			//	run simulation :
+			if (Enabled)
+			{
+				Space.Update();
+			}
 		}
 
 

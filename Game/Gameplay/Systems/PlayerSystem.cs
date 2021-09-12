@@ -63,6 +63,7 @@ namespace IronStar.Gameplay
 			}
 
 			var t	=	e.GetComponent<Transform>();
+			var r	=	t.Rotation;
 			var ps	=	e.GetComponent<PlayerStartComponent>();
 
 			if (!ps.PlayerSpawned)
@@ -70,7 +71,7 @@ namespace IronStar.Gameplay
 				ps.PlayerSpawned = true;
 
 				var player = gs.Spawn("PLAYER", t.Position, t.Rotation);
-				player.GetComponent<UserCommandComponent>().SetAnglesFromQuaternion( t.Rotation );
+				gs.Invoke( () => player.GetComponent<UserCommandComponent>().SetAnglesFromQuaternion( r ) );
 			}
 		}
 

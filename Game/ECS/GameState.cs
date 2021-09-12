@@ -1,4 +1,4 @@
-﻿//#define ASYNC_GAMESTATE
+﻿#define ASYNC_GAMESTATE
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -318,14 +318,14 @@ namespace IronStar.ECS
 				fd.Factory.Construct( fd.Entity, this );
 			}
 
-			while (teleportQueue.TryDequeue(out td))
-			{
-				TeleportInternal( td.Entity, td.Translation, td.Rotation );
-			}
-
 			while (componentToAdd.TryDequeue(out cd))
 			{
 				AddEntityComponentInternal( cd.Entity, cd.Component );
+			}
+
+			while (teleportQueue.TryDequeue(out td))
+			{
+				TeleportInternal( td.Entity, td.Translation, td.Rotation );
 			}
 
 			while (componentToRemove.TryDequeue(out cd))

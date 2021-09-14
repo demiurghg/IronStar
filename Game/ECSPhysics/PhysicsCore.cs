@@ -135,10 +135,7 @@ namespace IronStar.ECSPhysics
 		
 		public static void UpdateTransformFromMotionState( MotionState ms, Transform t )
 		{
-			t.AngularVelocity	=	MathConverter.Convert( ms.AngularVelocity );
-			t.LinearVelocity	=	MathConverter.Convert( ms.LinearVelocity );
-			t.Position			=	MathConverter.Convert( ms.Position );
-			t.Rotation			=	MathConverter.Convert( ms.Orientation );
+			t.Move( ms );
 		}
 
 

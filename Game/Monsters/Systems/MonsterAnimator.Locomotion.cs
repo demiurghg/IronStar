@@ -76,7 +76,8 @@ namespace IronStar.Monsters.Systems
 				var yawDelta	=	MathUtil.ShortestAngle( currentYaw, uc.DesiredYaw, MathUtil.PiOverTwo );
 				var yawFactor	=	MathUtil.Clamp( -yawDelta / MathUtil.PiOverTwo, -1f, 1f );
 
-				t.Rotation	=	Quaternion.RotationYawPitchRoll( currentYaw, 0, 0 );
+				var rotation	=	Quaternion.RotationYawPitchRoll( currentYaw, 0, 0 );
+				t.Move( t.Position, rotation, t.LinearVelocity, t.AngularVelocity );
 
 				rotateTorso.Weight	=	1;
 				rotateTorso.Factor	=	new Vector2( yawFactor, pitchFactor );

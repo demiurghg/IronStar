@@ -32,7 +32,7 @@ namespace IronStar
 		{
 			var isEditor	=	mapContent!=null;
 			var map			=	mapContent ?? content.Load<Mapping.Map>(@"maps\" + mapName);
-			var gs			=	new GameState(game, content, TimeSpan.FromMilliseconds(50));
+			var gs			=	new GameState(game, content, TimeSpan.FromMilliseconds(100));
 
 			var rw	=	game.RenderSystem.RenderWorld;
 

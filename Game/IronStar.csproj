@@ -164,7 +164,7 @@
     <Compile Include="ECS\SystemWrapper.cs" />
     <Compile Include="ECS\SystemAttribute.cs" />
     <Compile Include="ECS\EntityFactory.cs" />
-    <Compile Include="ECS\Transform.cs" />
+    <Compile Include="ECS\Transform.New.cs" />
     <Compile Include="ECS\Utils\Bag.cs" />
     <Compile Include="ECS\Utils\BagEnumerator.cs" />
     <Compile Include="ECS\Utils\BitSet.cs" />

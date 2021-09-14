@@ -78,6 +78,8 @@ namespace IronStar.ECS
 		Thread updateThread;
 		bool terminate = false;
 
+		public TimeSpan TimeStep { get { return timeStep; } }
+
 
 		/// <summary>
 		/// Game state constructor
@@ -419,8 +421,7 @@ namespace IronStar.ECS
 
 			if (t!=null)
 			{
-				t.Position	=	p;
-				t.Rotation	=	r;
+				t.Teleport( p, r, Vector3.Zero, Vector3.Zero );
 			}
 			else
 			{

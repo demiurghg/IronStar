@@ -103,9 +103,7 @@ namespace IronStar.ECSPhysics
 			var position	=	MathConverter.Convert( controller.Body.Position );
 			var velocity	=	MathConverter.Convert( controller.Body.LinearVelocity );
 
-			t.Position			=	position - offset;
-			t.LinearVelocity	=	velocity;
-			t.AngularVelocity	=	Vector3.Zero;
+			t.Move( position - offset, t.Rotation, velocity, Vector3.Zero );
 
 			cc.IsCrouching		=	crouching;
 			cc.HasTraction		=	traction;

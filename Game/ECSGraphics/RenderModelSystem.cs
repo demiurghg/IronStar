@@ -38,6 +38,61 @@ namespace IronStar.SFX2
 		readonly ConcurrentQueue<RenderModelInstance>	creationQueue;
 		readonly ConcurrentQueue<RenderModelInstance>	detroyQueue;
 
+		struct LerpData
+		{												
+			public LerpData( RenderModelInstance r, Transform t )
+			{
+				target	=	r;
+				position0	=	t.PrevPosition;
+				position1	=	t.Position;
+				rotation0	=	t.PrevRotation;
+				rotation1	=	t.Rotation;
+				scaling		=	t.Scaling;
+			}
+			public RenderModelInstance	target;
+			public Vector3		position0;
+			public Vector3		position1;
+			public Quaternion	rotation0;
+			public Quaternion	rotation1;
+			public Vector3		scaling;
+		}
+
+		TimeSpan		writeTimestamp;
+		TimeSpan		readTimestamp;
+		Bag<LerpData>	writeBuffer	=	new Bag<LerpData>(64);
+		Bag<LerpData>	readBuffer	=	new Bag<LerpData>(64);
+		object			flipLock	=	new object();
+
+		void Flip()
+		{
+			lock (flipLock)
+			{
+				Misc.Swap( ref writeTimestamp,	ref readTimestamp );
+				Misc.Swap( ref writeBuffer,		ref readBuffer );
+			}
+		}
+
+		void Interpolate( GameState gs, TimeSpan currentTime )
+		{
+			lock (flipLock)
+			{
+				double timestamp	=	readTimestamp.TotalSeconds;
+				double time			=	currentTime.TotalSeconds;
+				double timestep		=	gs.TimeStep.TotalSeconds;
+
+				float alpha = MathUtil.Clamp( (float)((time - timestamp)/timestep)  , 0, 1 );
+
+				foreach ( var lerpData in readBuffer )
+				{
+					var scaling		=	lerpData.scaling;
+					var rotation	=	Quaternion.Slerp( lerpData.rotation0, lerpData.rotation1, alpha );
+					var position	=	Vector3.Lerp	( lerpData.position0, lerpData.position1, alpha );
+					var transform	=	Matrix.Scaling( scaling ) * Matrix.RotationQuaternion( rotation ) * Matrix.Translation( position );
+					lerpData.target.SetTransform( transform );
+				}
+			}
+		}
+
 		
 		public RenderModelSystem ( Game game )
 		{
@@ -67,7 +122,11 @@ namespace IronStar.SFX2
 		
 		protected override void Process( Entity e, GameTime gameTime, RenderModelInstance model, Transform t, RenderModel rm )
 		{
-			model.SetTransform( t.TransformMatrix );
+			/*model.SetTransform( t.TransformMatrix );
+
+			stateBuffer.SetTimeStamp();
+			stateBuffer.WriteTransform( model, transform1, transform2 )
+			stateBuffer.Flip();
 
 			if (skinnedAspect.Accept(e))
 			{
@@ -77,8 +136,21 @@ namespace IronStar.SFX2
 				{
 					model.SetBoneTransforms( e.GetComponent<BoneComponent>().Bones );
 				}
-			}
+			}  */
 		}
+
+		public override void Update( GameState gs, GameTime gameTime )
+		{
+			base.Update( gs, gameTime );
+
+			writeBuffer.Clear();
+			writeTimestamp = gameTime.Total;
+
+			ForEach( gs, gameTime, (e,gt,rmi,t,rm) => writeBuffer.Add( new LerpData(rmi,t) ) );
+
+			Flip();
+		}
+
 
 		public void Render( GameState gs, GameTime gameTime )
 		{
@@ -88,6 +160,8 @@ namespace IronStar.SFX2
 			{
 				model.AddInstances();
 			}
+
+			Interpolate(gs, gameTime.Total);
 			
 			while (detroyQueue.TryDequeue(out model))
 			{

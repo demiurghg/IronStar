@@ -140,7 +140,7 @@ namespace Fusion.Widgets
 				var cx		=	selectionLength < 0 ? x + w : x;
 
 				var color	=	CursorColor;
-				var alpha	=	(byte)( color.A * (0.7 + 0.3 * Math.Cos(10*gameTime.Total.TotalSeconds) ) );
+				var alpha	=	(byte)( color.A * (0.7 + 0.3 * Math.Cos(10*gameTime.Current.TotalSeconds) ) );
 				var colorC	=	new Color( color.R, color.G, color.B, alpha / 1 );
 				var colorS	=	new Color( color.R, color.G, color.B, alpha / 2 );
 

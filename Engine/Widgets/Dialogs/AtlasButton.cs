@@ -106,7 +106,7 @@ namespace Fusion.Widgets.Dialogs
 				} 
 				else 
 				{
-					int frame		=	(int)(gameTime.Total.TotalSeconds * 10) % clip.Length;
+					int frame		=	(int)(gameTime.Current.TotalSeconds * 10) % clip.Length;
 					ImageSrcRect	=	atlas.AbsoluteRectangles[ clip.FirstIndex + frame ];
 					ImageMode		=	FrameImageMode.Manual;
 					Image			=	atlas.Texture;

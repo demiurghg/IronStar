@@ -243,7 +243,7 @@ namespace Fusion.Engine.Tools {
 			editLayer.SetTransform( 0, vp.Height/2 - charHeight );
 
 			Color cursorColor = CmdLineColor;
-			cursorColor.A = (byte)( cursorColor.A * (0.5 + 0.5 * Math.Cos( 2 * CursorBlinkRate * Math.PI * gameTime.Total.TotalSeconds ) > 0.5 ? 1 : 0 ) );
+			cursorColor.A = (byte)( cursorColor.A * (0.5 + 0.5 * Math.Cos( 2 * CursorBlinkRate * Math.PI * gameTime.Current.TotalSeconds ) > 0.5 ? 1 : 0 ) );
 
 			editLayer.Clear();
 

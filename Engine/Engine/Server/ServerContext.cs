@@ -101,7 +101,7 @@ namespace Fusion.Engine.Server {
 			serverInstance.Update( svTime );
 
 			//	send snapshot to clients :
-			DispatchSnapshots( netServer, svTime.Total.Ticks );
+			DispatchSnapshots( netServer, svTime.Current.Ticks );
 
 			//	crash test for server :
 			//	TODO : server crash

@@ -50,7 +50,7 @@ namespace Fusion.Core
 
 		public long Frames { get { return frames; } }
 
-		public TimeSpan Total { get { return current; }	}
+		public TimeSpan Current { get { return current; }	}
 
 		public TimeSpan Elapsed { get { return elapsed; } }
 

@@ -175,7 +175,7 @@ namespace Fusion.Engine.Graphics
 				//	Setup parameters :
 				//
 				var paramsData	=	new PARAMS();
-				paramsData.Time				=	(float)gameTime.Total.TotalSeconds;
+				paramsData.Time				=	(float)gameTime.Current.TotalSeconds;
 				paramsData.Random			=	MathUtil.Random.NextFloat(0,1);
 				paramsData.PainAmount		=	painFXFactor;
 				paramsData.DeathFactor		=	deathFXFactor;

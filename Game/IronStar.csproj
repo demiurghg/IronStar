@@ -157,6 +157,7 @@
     <Compile Include="ECS\Component.cs" />
     <Compile Include="ECS\ECSTypeManager.cs" />
     <Compile Include="ECS\Collections\EntityFactoryCollection.cs" />
+    <Compile Include="ECS\FlipBuffer.cs" />
     <Compile Include="ECS\IGameState.cs" />
     <Compile Include="ECS\IRenderer.cs" />
     <Compile Include="ECS\StatelessSystem.cs" />

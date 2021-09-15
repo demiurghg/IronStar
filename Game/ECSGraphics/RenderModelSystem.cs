@@ -55,43 +55,18 @@ namespace IronStar.SFX2
 			public Quaternion	rotation0;
 			public Quaternion	rotation1;
 			public Vector3		scaling;
-		}
 
-		TimeSpan		writeTimestamp;
-		TimeSpan		readTimestamp;
-		Bag<LerpData>	writeBuffer	=	new Bag<LerpData>(64);
-		Bag<LerpData>	readBuffer	=	new Bag<LerpData>(64);
-		object			flipLock	=	new object();
-
-		void Flip()
-		{
-			lock (flipLock)
+			public void Interpolate( float alpha )
 			{
-				Misc.Swap( ref writeTimestamp,	ref readTimestamp );
-				Misc.Swap( ref writeBuffer,		ref readBuffer );
+				var rotation	=	Quaternion.Slerp( rotation0, rotation1, alpha );
+				var position	=	Vector3.Lerp	( position0, position1, alpha );
+				var transform	=	Matrix.Scaling( scaling ) * Matrix.RotationQuaternion( rotation ) * Matrix.Translation( position );
+				target.SetTransform( transform );
 			}
 		}
 
-		void Interpolate( GameState gs, TimeSpan currentTime )
-		{
-			lock (flipLock)
-			{
-				double timestamp	=	readTimestamp.TotalSeconds;
-				double time			=	currentTime.TotalSeconds;
-				double timestep		=	gs.TimeStep.TotalSeconds;
+		FlipBuffer<LerpData> lerpBuffer;
 
-				float alpha = MathUtil.Clamp( (float)((time - timestamp)/timestep)  , 0, 1 );
-
-				foreach ( var lerpData in readBuffer )
-				{
-					var scaling		=	lerpData.scaling;
-					var rotation	=	Quaternion.Slerp( lerpData.rotation0, lerpData.rotation1, alpha );
-					var position	=	Vector3.Lerp	( lerpData.position0, lerpData.position1, alpha );
-					var transform	=	Matrix.Scaling( scaling ) * Matrix.RotationQuaternion( rotation ) * Matrix.Translation( position );
-					lerpData.target.SetTransform( transform );
-				}
-			}
-		}
 
 		
 		public RenderModelSystem ( Game game )
@@ -103,6 +78,7 @@ namespace IronStar.SFX2
 
 			creationQueue	=	new ConcurrentQueue<RenderModelInstance>();
 			detroyQueue		=	new ConcurrentQueue<RenderModelInstance>();
+			lerpBuffer		=	new FlipBuffer<LerpData>(64);
 		}
 
 
@@ -143,12 +119,9 @@ namespace IronStar.SFX2
 		{
 			base.Update( gs, gameTime );
 
-			writeBuffer.Clear();
-			writeTimestamp = gameTime.Total;
+			ForEach( gs, gameTime, (e,gt,rmi,t,rm) => lerpBuffer.Add( new LerpData(rmi,t) ) );
 
-			ForEach( gs, gameTime, (e,gt,rmi,t,rm) => writeBuffer.Add( new LerpData(rmi,t) ) );
-
-			Flip();
+			lerpBuffer.Flip(gameTime);
 		}
 
 
@@ -161,7 +134,7 @@ namespace IronStar.SFX2
 				model.AddInstances();
 			}
 
-			Interpolate(gs, gameTime.Total);
+			lerpBuffer.Interpolate(gs, gameTime, (data,alpha) => data.Interpolate(alpha));
 			
 			while (detroyQueue.TryDequeue(out model))
 			{

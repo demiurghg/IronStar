@@ -154,10 +154,11 @@
     <Compile Include="ECS\Aspect.cs" />
     <Compile Include="ECS\Collections\ComponentCollection.cs" />
     <Compile Include="ECS\Collections\EntityCollection.cs" />
+    <Compile Include="ECS\Collections\StateInterpolator.cs" />
     <Compile Include="ECS\Component.cs" />
     <Compile Include="ECS\ECSTypeManager.cs" />
     <Compile Include="ECS\Collections\EntityFactoryCollection.cs" />
-    <Compile Include="ECS\FlipBuffer.cs" />
+    <Compile Include="ECS\BufferedList.cs" />
     <Compile Include="ECS\IGameState.cs" />
     <Compile Include="ECS\IRenderer.cs" />
     <Compile Include="ECS\StatelessSystem.cs" />
@@ -214,7 +215,9 @@
     <Compile Include="Gameplay\Components\KeyComponent.cs" />
     <Compile Include="Gameplay\Components\AmmoComponent.cs" />
     <Compile Include="Gameplay\Components\ProjectileComponent.cs" />
+    <Compile Include="Gameplay\Components\BobbingComponent.cs" />
     <Compile Include="Gameplay\Components\StepComponent.cs" />
+    <Compile Include="Gameplay\Components\UserCommand.cs" />
     <Compile Include="Gameplay\Components\WeaponComponent.cs" />
     <Compile Include="Gameplay\Components\HealthComponent.cs" />
     <Compile Include="Gameplay\Components\InventoryComponent.cs" />
@@ -230,7 +233,8 @@
     <Compile Include="Gameplay\Systems\FPVWeaponAnimator.cs" />
     <Compile Include="Gameplay\Systems\FPVWeaponSystem.cs" />
     <Compile Include="Gameplay\Systems\InventorySystem.cs" />
-    <Compile Include="Gameplay\Systems\PlayerSystem.cs" />
+    <Compile Include="Gameplay\Systems\PlayerInputSystem.cs" />
+    <Compile Include="Gameplay\Systems\PlayerSpawnSystem.cs" />
     <Compile Include="Gameplay\Systems\PickupSystem.cs" />
     <Compile Include="Gameplay\Systems\HealthSystem.cs" />
     <Compile Include="Gameplay\Systems\ProjectileSystem.cs" />

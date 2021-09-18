@@ -8,19 +8,6 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay
 {
-	[Flags]
-	public enum UserAction : byte 
-	{
-		None			=	0x00,
-		Zoom			=	0x01,
-		Attack			=	0x02,
-		Use				=	0x04,
-		SwitchWeapon	=	0x08,
-		ReloadWeapon	=	0x10,
-		ThrowGrenade	=	0x20,
-		MeleeAtack		=	0x40,
-	}	
-
 	public class UserCommandComponent : Component
 	{
 		public float Yaw   { get { return DesiredYaw	+ BobYaw;	 } }
@@ -50,6 +37,32 @@ namespace IronStar.Gameplay
 		public bool IsMoving { get { return Math.Abs(MoveForward)>0.1f || Math.Abs(MoveRight)>0.1f; } }
 		public bool IsRunning { get { return MovementVector.Length() > 0.5f; } }
 		public bool IsForward { get { return MoveForward>=0; } }
+
+		public void UpdateFromUserCommand ( float yaw, float pitch, UserAction action )
+		{
+			ResetControl();
+
+			DesiredYaw		=	yaw;
+			DesiredPitch	=	pitch;
+			DesiredRoll		=	0;
+			Action			=	action;
+
+			if (action.HasFlag( UserAction.MoveForward ))	MoveForward++;
+			if (action.HasFlag( UserAction.MoveBackward ))	MoveForward--;
+			if (action.HasFlag( UserAction.StrafeRight ))	MoveRight++;
+			if (action.HasFlag( UserAction.StrafeLeft ))	MoveRight--;
+			if (action.HasFlag( UserAction.Jump ))			MoveUp++;
+			if (action.HasFlag( UserAction.Crouch ))		MoveUp--;
+
+			if (action.HasFlag( UserAction.Weapon1 )) Weapon = "MACHINEGUN"		;
+			if (action.HasFlag( UserAction.Weapon2 )) Weapon = "MACHINEGUN2"	;
+			if (action.HasFlag( UserAction.Weapon3 )) Weapon = "SHOTGUN"		;
+			if (action.HasFlag( UserAction.Weapon4 )) Weapon = "PLASMAGUN"		;
+			if (action.HasFlag( UserAction.Weapon5 )) Weapon = "ROCKETLAUNCHER"	;
+			if (action.HasFlag( UserAction.Weapon6 )) Weapon = "MACHINEGUN"		;
+			if (action.HasFlag( UserAction.Weapon7 )) Weapon = "RAILGUN"		;
+			if (action.HasFlag( UserAction.Weapon8 )) Weapon = "MACHINEGUN"		;
+		}
 
 		public void ResetControl()
 		{

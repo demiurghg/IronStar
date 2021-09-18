@@ -36,16 +36,16 @@ namespace IronStar.SFX2
 													.Exclude<BoneComponent>();
 
 		readonly ConcurrentQueue<RenderModelInstance>	creationQueue;
-		readonly ConcurrentQueue<RenderModelInstance>	detroyQueue;
+		readonly ConcurrentQueue<RenderModelInstance>	destroyQueue;
 
 		struct LerpData
 		{												
 			public LerpData( RenderModelInstance r, Transform t )
 			{
 				target	=	r;
-				position0	=	t.PrevPosition;
+				position0	=	t.Position;
 				position1	=	t.Position;
-				rotation0	=	t.PrevRotation;
+				rotation0	=	t.Rotation;
 				rotation1	=	t.Rotation;
 				scaling		=	t.Scaling;
 			}
@@ -65,7 +65,7 @@ namespace IronStar.SFX2
 			}
 		}
 
-		FlipBuffer<LerpData> lerpBuffer;
+		BufferedList<LerpData> lerpBuffer;
 
 
 		
@@ -77,8 +77,8 @@ namespace IronStar.SFX2
 			this.content=	game.Content;
 
 			creationQueue	=	new ConcurrentQueue<RenderModelInstance>();
-			detroyQueue		=	new ConcurrentQueue<RenderModelInstance>();
-			lerpBuffer		=	new FlipBuffer<LerpData>(64);
+			destroyQueue		=	new ConcurrentQueue<RenderModelInstance>();
+			lerpBuffer		=	new BufferedList<LerpData>(64);
 		}
 
 
@@ -92,7 +92,7 @@ namespace IronStar.SFX2
 		
 		protected override void Destroy( Entity e, RenderModelInstance model )
 		{
-			detroyQueue.Enqueue( model );
+			destroyQueue.Enqueue( model );
 		}
 
 		
@@ -136,7 +136,7 @@ namespace IronStar.SFX2
 
 			lerpBuffer.Interpolate(gs, gameTime, (data,alpha) => data.Interpolate(alpha));
 			
-			while (detroyQueue.TryDequeue(out model))
+			while (destroyQueue.TryDequeue(out model))
 			{
 				model.RemoveInstances();
 			}

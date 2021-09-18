@@ -31,7 +31,12 @@ namespace IronStar.ECS
 			if (component==null) throw new ArgumentNullException("component");
 			if (entityId==0) throw new ArgumentNullException("entityId");
 
-			this[component.GetType()].Add( entityId, component );
+			//var targetDict = this[component.GetType()];
+			
+			//if (!targetDict.ContainsKey(entityId))
+			//{
+				this[component.GetType()].Add( entityId, component );
+			//}
 		}
 
 

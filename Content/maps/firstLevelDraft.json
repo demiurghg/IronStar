@@ -898,10 +898,10 @@
         "Name": "68b0d686-dc6b-498c-b608-1640c2d59d04",
         "Visible": true,
         "Frozen": false,
-        "Translation": "-333.755, 5.923957, -91.6088638",
+        "Translation": "-324, 5.923957, -91.6088638",
         "Scaling": "1, 1, 1",
         "Rotation": "0.706301749, -0.04909815, 0.05149661, 0.704326153",
-        "TranslateX": -333.755,
+        "TranslateX": -324.0,
         "TranslateY": 5.923957,
         "TranslateZ": -91.6088638
       },

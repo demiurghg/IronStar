@@ -68,79 +68,56 @@ namespace IronStar.Gameplay
 		}
 
 
-		public void UpdateUserInput ( GameTime gameTime, UserCommandComponent userCommand, bool isAlive )
+
+		public void UpdateUserInput ( GameTime gameTime, ref UserCommand userCommand )
 		{
-			var flags	=	UserAction.None;
 			var console	=	Game.GetService<GameConsole>();
 			var frames	=	Game.GetService<FrameProcessor>();
 			var ui		=	Game.GetService<UserInterface>().Instance;
 			
-			userCommand.MoveForward		=	0;
-			userCommand.MoveRight		=	0;
-			userCommand.MoveUp			=	0;
-			userCommand.Weapon			=	null;
+			userCommand.Action		=	UserAction.None;
 
-			if (Game.Keyboard.IsKeyDown( Keys.Escape	)) Game.GetService<Mission>().State.Pause();
-			
-			if (!isAlive) 
+			if (!ui.AllowGameInput()) 
 			{
-				userCommand.DesiredPitch *= 0.9f;
 				return;
 			}
 
-			if (Game.Keyboard.IsKeyDown( MoveForward	)) userCommand.MoveForward++;
-			if (Game.Keyboard.IsKeyDown( MoveBackward	)) userCommand.MoveForward--;
-			if (Game.Keyboard.IsKeyDown( StrafeRight	)) userCommand.MoveRight++;
-			if (Game.Keyboard.IsKeyDown( StrafeLeft		)) userCommand.MoveRight--;
-			if (Game.Keyboard.IsKeyDown( Jump			)) userCommand.MoveUp++;
-			if (Game.Keyboard.IsKeyDown( Crouch			)) userCommand.MoveUp--;
+			if (Game.Keyboard.IsKeyDown( Keys.Escape )) Game.GetService<Mission>().State.Pause();
+			
+			if (Game.Keyboard.IsKeyDown( MoveForward	)) userCommand.Action |= UserAction.MoveForward	;
+			if (Game.Keyboard.IsKeyDown( MoveBackward	)) userCommand.Action |= UserAction.MoveBackward;
+			if (Game.Keyboard.IsKeyDown( StrafeRight	)) userCommand.Action |= UserAction.StrafeRight	;
+			if (Game.Keyboard.IsKeyDown( StrafeLeft		)) userCommand.Action |= UserAction.StrafeLeft	;
+			if (Game.Keyboard.IsKeyDown( Jump			)) userCommand.Action |= UserAction.Jump		;
+			if (Game.Keyboard.IsKeyDown( Crouch			)) userCommand.Action |= UserAction.Crouch		;
+			if (Game.Keyboard.IsKeyDown( Walk			)) userCommand.Action |= UserAction.Walk		;
 
-			if (Game.Keyboard.IsKeyDown( Walk			)) { userCommand.MoveForward *= 0.33f; userCommand.MoveRight *= 0.33f; }
+			if (Game.Keyboard.IsKeyDown( Attack			)) userCommand.Action |= UserAction.Attack;
+			if (Game.Keyboard.IsKeyDown( Zoom			)) userCommand.Action |= UserAction.Zoom;
+			if (Game.Keyboard.IsKeyDown( Use			)) userCommand.Action |= UserAction.Use;
 
-			if (Game.Keyboard.IsKeyDown( Attack			)) flags |= UserAction.Attack;
-			if (Game.Keyboard.IsKeyDown( Zoom			)) flags |= UserAction.Zoom;
-			if (Game.Keyboard.IsKeyDown( Use			)) flags |= UserAction.Use;
+			if (Game.Keyboard.IsKeyDown( SwitchWeapon	)) userCommand.Action |= UserAction.SwitchWeapon;
+			if (Game.Keyboard.IsKeyDown( ThrowGrenade	)) userCommand.Action |= UserAction.ThrowGrenade;
+			if (Game.Keyboard.IsKeyDown( MeleeAttack	)) userCommand.Action |= UserAction.MeleeAtack;
+			if (Game.Keyboard.IsKeyDown( ReloadWeapon	)) userCommand.Action |= UserAction.ReloadWeapon;
 
-			if (Game.Keyboard.IsKeyDown( SwitchWeapon	)) flags |= UserAction.SwitchWeapon;
-			if (Game.Keyboard.IsKeyDown( ThrowGrenade	)) flags |= UserAction.ThrowGrenade;
-			if (Game.Keyboard.IsKeyDown( MeleeAttack	)) flags |= UserAction.MeleeAtack;
-			if (Game.Keyboard.IsKeyDown( ReloadWeapon	)) flags |= UserAction.ReloadWeapon;
-
-
-			if (Game.Keyboard.IsKeyDown( Weapon1	)) userCommand.Weapon = "MACHINEGUN"	;
-			if (Game.Keyboard.IsKeyDown( Weapon2	)) userCommand.Weapon = "MACHINEGUN2"	;
-			if (Game.Keyboard.IsKeyDown( Weapon3	)) userCommand.Weapon = "SHOTGUN"		;
-			if (Game.Keyboard.IsKeyDown( Weapon4	)) userCommand.Weapon = "PLASMAGUN"		;
-			if (Game.Keyboard.IsKeyDown( Weapon5	)) userCommand.Weapon = "ROCKETLAUNCHER";
-			if (Game.Keyboard.IsKeyDown( Weapon6	)) userCommand.Weapon = "MACHINEGUN"	;
-			if (Game.Keyboard.IsKeyDown( Weapon7	)) userCommand.Weapon = "RAILGUN"		;
-			if (Game.Keyboard.IsKeyDown( Weapon8	)) userCommand.Weapon = "MACHINEGUN"	;
+			if (Game.Keyboard.IsKeyDown( Weapon1	)) userCommand.Action |= UserAction.Weapon1;
+			if (Game.Keyboard.IsKeyDown( Weapon2	)) userCommand.Action |= UserAction.Weapon2;
+			if (Game.Keyboard.IsKeyDown( Weapon3	)) userCommand.Action |= UserAction.Weapon3;
+			if (Game.Keyboard.IsKeyDown( Weapon4	)) userCommand.Action |= UserAction.Weapon4;
+			if (Game.Keyboard.IsKeyDown( Weapon5	)) userCommand.Action |= UserAction.Weapon5;
+			if (Game.Keyboard.IsKeyDown( Weapon6	)) userCommand.Action |= UserAction.Weapon6;
+			if (Game.Keyboard.IsKeyDown( Weapon7	)) userCommand.Action |= UserAction.Weapon7;
+			if (Game.Keyboard.IsKeyDown( Weapon8	)) userCommand.Action |= UserAction.Weapon8;
 
 			//	http://eliteownage.com/mousesensitivity.html 
 			//	Q3A: 16200 dot per 360 turn:
-			var vp		=	Game.RenderSystem.DisplayBounds;
-			//var ui		=	Game.UserInterface.Instance as ShooterInterface;
-			//var cam		=	World.GetView<CameraView>();
+			var vp			=	Game.RenderSystem.DisplayBounds;
+			var deltaYaw	=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.X / 16200.0f;
+			var deltaPitch	=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.Y / 16200.0f * ( InvertMouse ? -1 : 1 );
 
-			if (ui.AllowGameInput()) 
-			{
-				userCommand.DYaw	=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.X / 16200.0f;
-				userCommand.DPitch	=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.Y / 16200.0f * ( InvertMouse ? -1 : 1 );
-
-				userCommand.Action			=	flags;
-				userCommand.DesiredYaw		+=  userCommand.DYaw;
-				userCommand.DesiredPitch	+=  userCommand.DPitch;
-				userCommand.DesiredRoll		=	0;
-
-				float limit					=	MathUtil.PiOverTwo * 0.95f;
-				userCommand.DesiredPitch	=	MathUtil.Clamp( userCommand.DesiredPitch, -limit, limit );
-			}
-			else 
-			{
-				userCommand.MoveForward		=	0;
-				userCommand.MoveRight		=	0;
-				userCommand.MoveUp			=	0;
-			}
+			userCommand.Yaw		+=	deltaYaw;
+			userCommand.Pitch	+=	deltaPitch;
 		}
 
 		

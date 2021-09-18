@@ -23,6 +23,7 @@ using IronStar.AI;
 using IronStar.UI.HUD;
 using IronStar.Monsters.Systems;
 using IronStar.ECSGraphics;
+using IronStar.Gameplay;
 
 namespace IronStar 
 {
@@ -32,12 +33,16 @@ namespace IronStar
 		{
 			var isEditor	=	mapContent!=null;
 			var map			=	mapContent ?? content.Load<Mapping.Map>(@"maps\" + mapName);
-			var gs			=	new GameState(game, content, TimeSpan.FromMilliseconds(100));
+			var gs			=	new GameState(game, content, TimeSpan.FromMilliseconds(50));
 
 			var rw	=	game.RenderSystem.RenderWorld;
 
 			gs.Services.AddService( content );
 			gs.Services.AddService( game.RenderSystem );
+
+			//	player system :
+			gs.AddSystem( new PlayerInputSystem() );
+			gs.AddSystem( new PlayerSpawnSystem() );
 
 			//	physics simulation :
 			var physicsCore = new ECSPhysics.PhysicsCore();
@@ -86,8 +91,6 @@ namespace IronStar
 			gs.AddSystem( new BillboardSystem(fxPlayback) );
 			*/
 			gs.AddSystem( new SFX2.LightingSystem() );
-
-			gs.AddSystem( new Gameplay.PlayerSystem() );
 
 			//	ui
 			//gs.AddSystem( new GameFXSystem(game) );

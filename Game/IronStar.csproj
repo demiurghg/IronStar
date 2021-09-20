@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IronStar</RootNamespace>
     <AssemblyName>IronStar</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -129,8 +130,6 @@
     <Compile Include="ECSGraphics\BillboardComponent.cs" />
     <Compile Include="ECSGraphics\BillboardSystem.cs" />
     <Compile Include="ECSGraphics\LightVolumeSystem.cs" />
-    <Compile Include="ECSGraphics\AnimationComponent.cs" />
-    <Compile Include="ECSGraphics\FPVComponent.cs" />
     <Compile Include="ECSGraphics\LightProbeSystem.cs" />
     <Compile Include="ECSGraphics\DecalComponent.cs" />
     <Compile Include="ECSGraphics\DecalSystem.cs" />
@@ -152,6 +151,7 @@
     <Compile Include="ECSPhysics\StaticCollisionSystem.cs" />
     <Compile Include="ECSPhysics\TouchDetector.cs" />
     <Compile Include="ECS\Aspect.cs" />
+    <Compile Include="ECS\Collections\ComponentBuffer.cs" />
     <Compile Include="ECS\Collections\ComponentCollection.cs" />
     <Compile Include="ECS\Collections\EntityCollection.cs" />
     <Compile Include="ECS\Collections\StateInterpolator.cs" />
@@ -159,6 +159,7 @@
     <Compile Include="ECS\ECSTypeManager.cs" />
     <Compile Include="ECS\Collections\EntityFactoryCollection.cs" />
     <Compile Include="ECS\BufferedList.cs" />
+    <Compile Include="ECS\IInterpolator.cs" />
     <Compile Include="ECS\IGameState.cs" />
     <Compile Include="ECS\IRenderer.cs" />
     <Compile Include="ECS\StatelessSystem.cs" />
@@ -408,6 +409,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="app.manifest">
       <SubType>Designer</SubType>
     </None>

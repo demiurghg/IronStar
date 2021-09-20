@@ -33,7 +33,7 @@ namespace IronStar
 		{
 			var isEditor	=	mapContent!=null;
 			var map			=	mapContent ?? content.Load<Mapping.Map>(@"maps\" + mapName);
-			var gs			=	new GameState(game, content, TimeSpan.FromMilliseconds(50));
+			var gs			=	new GameState(game, content, TimeSpan.FromMilliseconds(8));
 
 			var rw	=	game.RenderSystem.RenderWorld;
 
@@ -51,6 +51,8 @@ namespace IronStar
 			gs.AddSystem( new ECSPhysics.DynamicCollisionSystem(physicsCore) );
 			gs.AddSystem( new ECSPhysics.CharacterControllerSystem(physicsCore) );
 			gs.AddSystem( physicsCore );
+
+			gs.AddSystem( new Gameplay.CameraSystem(fxPlayback) );
 
 			//	attachment system :
 			gs.AddSystem( new AttachmentSystem() );
@@ -71,7 +73,6 @@ namespace IronStar
 			//	animation systems :
 			gs.AddSystem( new StepSystem() );
 			gs.AddSystem( new Gameplay.BobbingSystem() );
-			gs.AddSystem( new Gameplay.CameraSystem(fxPlayback) );
 			/*gs.AddSystem( new FPVWeaponSystem(game) );
 			gs.AddSystem( new MonsterAnimationSystem(game,fxPlayback,physicsCore) );*/
 
@@ -99,7 +100,7 @@ namespace IronStar
 
 			if (isEditor)
 			{
-				gs.GetService<Gameplay.CameraSystem>().Enabled = false;
+				gs.GetService<CameraSystem>().Enabled = false;
 			}
 
 			map.ActivateGameState(gs);

@@ -8,7 +8,7 @@ using Fusion.Core.Extensions;
 
 namespace IronStar.ECS
 {
-	class ComponentCollection : Dictionary<Type,Dictionary<uint,IComponent>>
+	class ComponentCollection : Dictionary<Type,ComponentBuffer>
 	{
 		class IDComparer : IEqualityComparer<uint>
 		{
@@ -21,7 +21,7 @@ namespace IronStar.ECS
 		{
 			foreach ( var componentType in ECSTypeManager.GetComponentTypes() )
 			{
-				Add( componentType, new Dictionary<uint, IComponent>() );
+				Add( componentType, new ComponentBuffer() );
 			}
 		}
 
@@ -49,16 +49,11 @@ namespace IronStar.ECS
 		}
 
 
-		public void RemoveAllComponents( uint entityId, Action<IComponent> action )
+		public void RemoveAllComponents( uint entityId )
 		{
 			foreach ( var dict in this )
 			{
-				IComponent component;
-				if ( dict.Value.TryGetValue( entityId, out component ) )
-				{
-					dict.Value.Remove( entityId );
-					action( component );
-				}
+				dict.Value.Remove( entityId );
 			}
 		}
 
@@ -86,6 +81,24 @@ namespace IronStar.ECS
 			else
 			{
 				return null;
+			}
+		}
+
+
+		public void CommitChanges()
+		{
+			foreach ( var dict in this )
+			{
+				dict.Value.CommitChanges();
+			}
+		}
+
+		
+		public void Interpolate()
+		{
+			foreach ( var dict in this )
+			{
+				dict.Value.Interpolate();
 			}
 		}
 	}

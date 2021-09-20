@@ -180,6 +180,8 @@ namespace IronStar.ECS
 		/// <param name="gameTime"></param>
 		public void Update( GameTime gameTime )
 		{
+			components.Interpolate();
+			
 			foreach ( var system in systems )
 			{
 				(system.System as IRenderer)?.Render( this, gameTime );
@@ -221,6 +223,8 @@ namespace IronStar.ECS
 					{
 						system.System.Update( this, new GameTime(dt, frames) );
 					}
+
+					components.CommitChanges();
 
 					accumulator -= dt;
 					frames++;
@@ -281,7 +285,7 @@ namespace IronStar.ECS
 
 			foreach ( var componentType in ECSTypeManager.GetComponentTypes() )
 			{
-				Dictionary<uint,IComponent> componentDict;
+				ComponentBuffer componentDict;
 				if (components.TryGetValue( componentType, out componentDict ))
 				{
 					con.DrawDebugText(Color.White, "  component : {0} : {1}", componentType.Name.Replace("Component", ""), componentDict.Count );
@@ -409,7 +413,7 @@ namespace IronStar.ECS
 			if ( entities.Remove( entity ) )
 			{
 				entity.ComponentMapping = 0;
-				components.RemoveAllComponents( entity.ID, c => {} );
+				components.RemoveAllComponents( entity.ID );
 
 				Refresh( entity );
 			}

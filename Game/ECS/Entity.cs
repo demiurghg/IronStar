@@ -102,6 +102,17 @@ namespace IronStar.ECS
 
 
 		/// <summary>
+		/// Gets entity's component by its index and type
+		/// </summary>
+		/// <typeparam name="TComponent">Component type</typeparam>
+		/// <returns>Entity's component</returns>
+		public IComponent GetComponent(Type componentType)
+		{
+			return gs.GetEntityComponent(this, componentType);
+		}
+
+
+		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>

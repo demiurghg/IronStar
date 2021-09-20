@@ -46,7 +46,7 @@ namespace IronStar.ECS
 			return updating.TryGetValue(id, out component);
 		}
 
-		public void CommitChanges()
+		public void CommitChanges( /* GameTime timestamp */ )
 		{
 			lock (flipLock)
 			{
@@ -61,7 +61,7 @@ namespace IronStar.ECS
 		}
 
 
-		public void Interpolate()
+		public void Interpolate( /* GameTime time */ )
 		{ 
 			lock (flipLock)
 			{

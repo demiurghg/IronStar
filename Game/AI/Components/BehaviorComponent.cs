@@ -11,7 +11,7 @@ using IronStar.ECS;
 
 namespace IronStar.AI
 {
-	public class BehaviorComponent : IComponent
+	public class BehaviorComponent : Component
 	{
 		public TimeSpan ThinkQuantum;
 		public TimeSpan ThinkCooldown;
@@ -30,14 +30,6 @@ namespace IronStar.AI
 			Blackboard		=	new Blackboard();
 			ThinkQuantum	=	TimeSpan.FromSeconds(0.35f);
 			ThinkCooldown	=	MathUtil.Random.NextTime( TimeSpan.Zero, ThinkQuantum );
-		}
-		
-		public void Load( GameState gs, Stream stream )
-		{
-		}
-
-		public void Save( GameState gs, Stream stream )
-		{
 		}
 	}
 }

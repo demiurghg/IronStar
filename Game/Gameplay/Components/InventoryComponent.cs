@@ -16,7 +16,7 @@ namespace IronStar.Gameplay.Components
 		InfiniteAmmo	=	0x01,
 	}
 
-	public class InventoryComponent : IComponent, IEnumerable<Entity>
+	public class InventoryComponent : Component, IEnumerable<Entity>
 	{
 		public InventoryFlags Flags { get { return flags; } }
 		InventoryFlags flags;
@@ -30,6 +30,19 @@ namespace IronStar.Gameplay.Components
 			this.flags	=	flags;
 		}
 
+		private InventoryComponent( InventoryFlags flags, Entity aw, Entity pw, IEnumerable<Entity> items )
+		{
+			this.flags			=	flags;
+			this.activeWeapon	=	aw;
+			this.pendingWeapon	=	pw;
+			this.items			=	new List<Entity>( items );
+		}
+
+		public override IComponent Clone()
+		{
+			return new InventoryComponent( flags, activeWeapon, pendingWeapon, items );
+		}
+
 		/// <summary>
 		/// Gets active weapon entity. Could be null.
 		/// </summary>
@@ -39,9 +52,6 @@ namespace IronStar.Gameplay.Components
 		/// Indicates, that inventory has pending weapon.
 		/// </summary>
 		public bool HasPendingWeapon { get { return pendingWeapon!=null; } }
-
-		public void Load( GameState gs, Stream stream ) {}
-		public void Save( GameState gs, Stream stream ) {}
 
 		public IEnumerator<Entity> GetEnumerator()
 		{

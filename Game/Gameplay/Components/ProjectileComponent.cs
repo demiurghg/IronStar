@@ -9,7 +9,7 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
-	public class ProjectileComponent : IComponent
+	public class ProjectileComponent : Component
 	{
 		public Entity	Sender;
 		public int		Damage;
@@ -41,8 +41,5 @@ namespace IronStar.Gameplay.Components
 			Impulse		=	impulse;
 			Damage		=	damage;
 		}
-
-		public void Load( GameState gs, Stream stream )	{}
-		public void Save( GameState gs, Stream stream )	{}
 	}
 }

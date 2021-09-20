@@ -8,7 +8,7 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
-	public class NameComponent : IComponent
+	public class NameComponent : Component
 	{
 		public string	Name;
 
@@ -21,8 +21,5 @@ namespace IronStar.Gameplay.Components
 		{
 			Name = name;
 		}
-
-		public void Load( GameState gs, Stream stream )	{	}
-		public void Save( GameState gs, Stream stream )	{	}
 	}
 }

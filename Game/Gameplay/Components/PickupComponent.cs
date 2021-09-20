@@ -8,7 +8,7 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
-	public class PickupComponent : IComponent
+	public class PickupComponent : Component
 	{
 		public string FXName { get; set; } = "";
 
@@ -16,8 +16,5 @@ namespace IronStar.Gameplay.Components
 		{
 			FXName	=	fxName;
 		}
-
-		public void Load( GameState gs, Stream stream )	{	}
-		public void Save( GameState gs, Stream stream )	{	}
 	}
 }

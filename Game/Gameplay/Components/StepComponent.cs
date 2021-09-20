@@ -9,7 +9,7 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
-	public class StepComponent : IComponent
+	public class StepComponent : Component
 	{
 		public bool		Jumped;
 		public bool		Landed;
@@ -31,13 +31,5 @@ namespace IronStar.Gameplay.Components
 		public Vector3	GroundVelocity;
 		public float	FallVelocity;
 		public Vector3	LocalAcceleration;
-
-		public void Load( GameState gs, Stream stream )
-		{
-		}
-
-		public void Save( GameState gs, Stream stream )
-		{
-		}
 	}
 }

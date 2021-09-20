@@ -9,7 +9,7 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
-	public class AttachmentComponent : IComponent
+	public class AttachmentComponent : Component
 	{
 		public uint TargetID { get; set; } = 0;
 		public Matrix LocalTransform { get; set; } = Matrix.Identity;
@@ -22,14 +22,6 @@ namespace IronStar.Gameplay.Components
 		{
 			TargetID		=	targetId;
 			LocalTransform	=	transform;
-		}
-
-		public void Load( GameState gs, Stream stream )
-		{
-		}
-
-		public void Save( GameState gs, Stream stream )
-		{
 		}
 	}
 }

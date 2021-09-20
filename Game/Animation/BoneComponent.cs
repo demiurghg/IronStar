@@ -19,25 +19,24 @@ using System.IO;
 
 namespace IronStar.Animation 
 {
-	public class BoneComponent : IComponent
+	public class BoneComponent : Component
 	{
 		public Matrix[] Bones { get { return bones; } }
 		readonly Matrix[] bones;
+
+		private BoneComponent(Matrix[] matricies) : this()
+		{
+			Array.Copy( matricies, bones, Math.Min( matricies.Length, bones.Length ) );
+		}
 
 		public BoneComponent()
 		{
 			bones = Misc.CreateArray( RenderSystem.MaxBones, Matrix.Identity );
 		}
 
-
-		public void Load( GameState gs, Stream stream )
+		public override IComponent Clone()
 		{
-			throw new NotImplementedException();
-		}
-
-		public void Save( GameState gs, Stream stream )
-		{
-			throw new NotImplementedException();
+			return new BoneComponent( bones );
 		}
 	}
 }

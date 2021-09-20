@@ -14,7 +14,7 @@ namespace IronStar.Gameplay.Components
 		Variable,
 	}
 
-	public class WeaponComponent : IComponent
+	public class WeaponComponent : Component
 	{
 		public TimeSpan	TimeWarmup		=	TimeSpan.FromMilliseconds(0);
 		public TimeSpan	TimeCooldown	=	TimeSpan.FromMilliseconds(0);
@@ -50,9 +50,6 @@ namespace IronStar.Gameplay.Components
 		public bool rqAttack;
 		public int Counter;
 
-
-		public void Load( GameState gs, Stream stream )	{}
-		public void Save( GameState gs, Stream stream )	{}
 
 		public static WeaponComponent BeamWeapon( int damage, float impulse, int count, float spread, SpreadMode spreadMode, int cooldown, string ammo, string trailFx, string hitFx, string muzzleFx )
 		{

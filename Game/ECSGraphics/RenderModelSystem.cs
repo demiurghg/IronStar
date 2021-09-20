@@ -77,7 +77,7 @@ namespace IronStar.SFX2
 			this.content=	game.Content;
 
 			creationQueue	=	new ConcurrentQueue<RenderModelInstance>();
-			destroyQueue		=	new ConcurrentQueue<RenderModelInstance>();
+			destroyQueue	=	new ConcurrentQueue<RenderModelInstance>();
 			lerpBuffer		=	new BufferedList<LerpData>(64);
 		}
 

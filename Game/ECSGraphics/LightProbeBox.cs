@@ -13,7 +13,7 @@ using Fusion.Widgets.Advanced;
 
 namespace IronStar.SFX2
 {
-	public class LightProbeBox : IComponent
+	public class LightProbeBox : Component
 	{
 		public readonly string name;
 
@@ -48,8 +48,5 @@ namespace IronStar.SFX2
 		{
 			this.name	=	name;
 		}
-
-		public void Save( GameState gs, Stream stream ) {}
-		public void Load( GameState gs, Stream stream ) {}
 	}
 }

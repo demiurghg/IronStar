@@ -10,9 +10,9 @@ using IronStar.ECS;
 
 namespace IronStar.ECSPhysics
 {
-	public class TouchDetector : IComponent, IEnumerable<Entity>
+	public class TouchDetector : Component, IEnumerable<Entity>
 	{
-		public readonly List<Entity> touches = new List<Entity>();
+		public readonly List<Entity> touches;
 
 		public void AddTouch( Entity touch )
 		{
@@ -27,12 +27,19 @@ namespace IronStar.ECSPhysics
 			touches.Clear();
 		}
 
-		public void Load( GameState gs, Stream stream )
+		private TouchDetector( IEnumerable<Entity> touches )
 		{
+			this.touches = new List<Entity>( touches );
 		}
 
-		public void Save( GameState gs, Stream stream )
+		public TouchDetector()
 		{
+			touches = new List<Entity>();
+		}
+
+		public override IComponent Clone()
+		{
+			return new TouchDetector( touches );
 		}
 
 		public IEnumerator<Entity> GetEnumerator()

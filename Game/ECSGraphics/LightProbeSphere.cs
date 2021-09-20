@@ -13,7 +13,7 @@ using Fusion.Widgets.Advanced;
 
 namespace IronStar.SFX2
 {
-	public class LightProbeSphere : IComponent
+	public class LightProbeSphere : Component
 	{
 		public readonly string name;
 
@@ -35,8 +35,5 @@ namespace IronStar.SFX2
 		private LightProbeSphere () : this( Guid.NewGuid().ToString() )
 		{
 		}
-
-		public void Save( GameState gs, Stream stream ) {}
-		public void Load( GameState gs, Stream stream ) {}
 	}
 }

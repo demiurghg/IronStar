@@ -8,7 +8,7 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
-	public class ExplosiveComponent : IComponent
+	public class ExplosiveComponent : Component
 	{
 		public bool		Initiated;
 		public float	Timeout;
@@ -28,8 +28,5 @@ namespace IronStar.Gameplay.Components
 			BurningFX	=	burningFX	;
 			ExplosionFX	=	explosionFX	;
 		}
-
-		public void Load( GameState gs, Stream stream )	{	}
-		public void Save( GameState gs, Stream stream )	{	}
 	}
 }

@@ -8,18 +8,10 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
-	public class MonsterComponent : IComponent
+	public class MonsterComponent : Component
 	{
 		public Entity	Weapon0;
 		public Entity	Weapon1;
 		public Entity	Weapon2;
-
-		public void Load( GameState gs, Stream stream )
-		{
-		}
-
-		public void Save( GameState gs, Stream stream )
-		{
-		}
 	}
 }

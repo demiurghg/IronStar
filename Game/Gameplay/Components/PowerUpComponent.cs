@@ -8,7 +8,7 @@ using IronStar.ECS;
 
 namespace IronStar.Gameplay.Components
 {
-	public class PowerupComponent : IComponent
+	public class PowerupComponent : Component
 	{
 		public int Health;
 		public int Armor;
@@ -25,8 +25,5 @@ namespace IronStar.Gameplay.Components
 			Health	=	health;
 			Armor	=	armor;
 		}
-
-		public void Load( GameState gs, Stream stream ) {}
-		public void Save( GameState gs, Stream stream ) {}
 	}
 }

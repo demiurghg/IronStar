@@ -11,10 +11,9 @@ using Fusion.Core.Extensions;
 using System.IO;
 using IronStar.ECS;
 
-namespace IronStar.SFX {
-
-
-	public class FXComponent : ECS.IComponent
+namespace IronStar.SFX 
+{
+	public class FXComponent : Component
 	{
 		public string	FXName;
 		public bool		Looped;
@@ -24,11 +23,5 @@ namespace IronStar.SFX {
 			FXName	=	fxName;
 			Looped	=	looped;
 		}
-
-
-		public void Added( GameState gs, Entity entity ) {}
-		public void Removed( GameState gs ) {}
-		public void Save( GameState gs, Stream stream ) {}
-		public void Load( GameState gs, Stream stream ) {}
 	}
 }

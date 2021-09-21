@@ -88,7 +88,69 @@ namespace Fusion.Build
 			return new DirectoryStorage(path);
 		}
 
+		enum ResolveResult
+		{
+			Success,
+			RegistryValueNotFound,
+			RegistryValueIsNotAString,
+			EnvironmentVariableNotFound,
+			DirectoryNotFound,
+		}
 
+		ResolveResult TryResolveDirectory( string dir, out string resolvedDir )
+		{
+			resolvedDir = null;
+
+			if ( dir.StartsWith("%") && dir.EndsWith("%") ) 
+			{
+				resolvedDir = Environment.GetEnvironmentVariable( dir.Substring(1, dir.Length-2) );
+				if (resolvedDir==null) 
+				{
+					return ResolveResult.EnvironmentVariableNotFound;
+				}
+				if (!Directory.Exists( resolvedDir )) 
+				{
+					return ResolveResult.DirectoryNotFound;
+				}
+			}
+
+			if ( dir.StartsWith("HKEY_") ) 
+			{
+				var keyValue	=	dir.Split(new[]{'@'}, 2);
+				var key			=	keyValue[0];
+				var value		=	keyValue.Length == 2 ? keyValue[1] : "";
+
+				var regValue		=	Registry.GetValue(key, value, null);
+				resolvedDir			=	regValue as string;
+
+				if (regValue==null) 
+				{
+					return ResolveResult.RegistryValueNotFound;
+				}
+				if (resolvedDir==null) 
+				{
+					return ResolveResult.RegistryValueIsNotAString;
+				}
+
+				if (!Directory.Exists( resolvedDir )) 
+				{
+					return ResolveResult.DirectoryNotFound;
+				}
+
+				return ResolveResult.Success;
+			}
+
+			resolvedDir = Path.IsPathRooted( dir ) ? dir : Path.GetFullPath( dir );
+
+			if (Directory.Exists( resolvedDir )) 
+			{
+				return ResolveResult.Success;
+			}
+			else
+			{
+				return ResolveResult.DirectoryNotFound;
+			}
+		}
 
 
 		/// <summary>
@@ -98,76 +160,31 @@ namespace Fusion.Build
 		/// <returns></returns>
 		string ResolveDirectory ( string dir, bool createIfMissing = false )
 		{
-			if ( dir.StartsWith("%") && dir.EndsWith("%") ) 
+			if (dir==null) throw new ArgumentNullException("dir");
+
+			string resolvedDir;
+			var result = TryResolveDirectory( dir, out resolvedDir );
+
+			switch (result)
 			{
-				var envVar = Environment.GetEnvironmentVariable( dir.Substring(1, dir.Length-2) );
-				if (envVar==null) 
-				{
-					Log.Warning("  {0} : environment variable not found", dir);
-					return null;
-				}
-				if (!Directory.Exists( envVar )) 
-				{
-					Log.Warning("  {0} = {1} : path not found", dir, envVar );
-					return null;
-				}
-				return envVar;
+				case ResolveResult.Success:	return resolvedDir;
+				case ResolveResult.RegistryValueNotFound:		throw new ContentException("Registry value not found: " + dir);
+				case ResolveResult.RegistryValueIsNotAString:	throw new ContentException("Registry value is not a string: " + dir);
+				case ResolveResult.EnvironmentVariableNotFound:	throw new ContentException("Environment variable not found: " + dir);
+				case ResolveResult.DirectoryNotFound:
+					if (createIfMissing)
+					{
+						Log.Message("Create missing directory : {0}", resolvedDir );
+						var di = Directory.CreateDirectory(dir);
+						return di.FullName;
+					}
+					else
+					{
+						throw new ContentException("Directory does not exist: " + resolvedDir);
+					}
 			}
 
-			if ( dir.StartsWith("HKEY_") ) 
-			{
-				var keyValue	=	dir.Split(new[]{'@'}, 2);
-				var key			=	keyValue[0];
-				var value		=	keyValue.Length == 2 ? keyValue[1] : "";
-
-				var regValue	=	Registry.GetValue(key, value, null);
-
-				if (regValue==null) 
-				{
-					Log.Warning("  {0} : registry variable not found", dir);
-					return null;
-				}
-				if (!(regValue is string)) 
-				{
-					Log.Warning("  {0} : registry variable must be string", dir);
-					return null;
-				}
-				
-				if (!Directory.Exists( (string)regValue )) 
-				{
-					Log.Warning("  {0} = {1} : path not found", dir, (string)regValue );
-					return null;
-				}
-
-				return (string)regValue;
-			}
-
-			if (Path.IsPathRooted( dir )) 
-			{
-				if (Directory.Exists( dir )) 
-				{
-					return dir;
-				}
-			} 
-			else 
-			{
-				var fullDir = Path.GetFullPath( dir );
-				if (Directory.Exists( fullDir )) 
-				{
-					return fullDir;
-				}
-			}
-
-
-			if (createIfMissing)
-			{
-				var di = Directory.CreateDirectory(dir);
-				Log.Message("Create missing directory : {0}", di.FullName );
-				return di.FullName;
-			}
-
-			Log.Warning("  {0} : not resolved", dir);
-			return null;
+			return resolvedDir;
 		}
 
 

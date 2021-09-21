@@ -220,7 +220,7 @@ namespace IronStar.SFX {
 			fxEvent.FXName		=	fx.FXName;
 			fxEvent.Origin		=	t.Position;
 			fxEvent.Rotation	=	t.Rotation;
-			fxEvent.Scale		=	(t.Scaling.X + t.Scaling.Y + t.Scaling.Z) / 3.0f;
+			fxEvent.Scale		=	t.Scaling;
 
 			fxEvent.Velocity = t.LinearVelocity;
 
@@ -247,7 +247,7 @@ namespace IronStar.SFX {
 			{
 				fxInstance.fxEvent.Origin	=	t.Position;
 				fxInstance.fxEvent.Rotation	=	t.Rotation;
-				fxInstance.fxEvent.Scale	=	( t.Scaling.X + t.Scaling.Y + t.Scaling.Z ) / 3.0f;
+				fxInstance.fxEvent.Scale	=	t.Scaling;
 				fxInstance.fxEvent.Velocity	=	t.LinearVelocity;
 
 				if ( fxInstance.IsExhausted )

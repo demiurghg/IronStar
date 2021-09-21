@@ -55,7 +55,7 @@ namespace IronStar.ECS
 		{
 			lock (lockObj)
 			{
-				return dict.Values.ToArray();
+				return dict.Values.Select( e => e.MakeCopyInternal() ).ToArray();
 			}
 		}
 

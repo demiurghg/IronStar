@@ -7,8 +7,8 @@ using Fusion.Core;
 
 namespace IronStar.ECS
 {
-	public interface IRenderer
+	public interface IDrawSystem : ISystem
 	{
-		void Render( GameState gs, GameTime gameTime );
+		void Draw( GameState gs, GameTime gameTime );
 	}
 }

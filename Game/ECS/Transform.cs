@@ -5,17 +5,41 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
 using BEPUphysics.EntityStateManagement;
+using System.Diagnostics;
 
 namespace IronStar.ECS
 {
 	public class Transform : Component
 	{
-		Vector3		position		=	Vector3.Zero;
-		Quaternion	rotation		=	Quaternion.Identity;
-		Vector3		scaling			=	Vector3.One;
-		Vector3		linearVelocity	=	Vector3.Zero;
-		Vector3		angularVelocity	=	Vector3.Zero;
-		byte		teleportCount	=	0;
+		/// <summary>
+		/// Entity position :
+		/// </summary>
+		public Vector3	Position;
+
+		/// <summary>
+		/// Entity rotation
+		/// </summary>
+		public Quaternion	Rotation;
+
+		/// <summary>
+		/// Entity scaling
+		/// </summary>
+		public float Scaling = 1;
+
+		/// <summary>
+		/// Increased each time when entity is teleported
+		/// </summary>
+		public byte TeleportCount;
+
+		/// <summary>
+		/// Entity linear velocity
+		/// </summary>
+		public Vector3 LinearVelocity;
+
+		/// <summary>
+		/// Entity angular velocity
+		/// </summary>
+		public Vector3 AngularVelocity;
 
 		/// <summary>
 		/// Creates new transform
@@ -33,9 +57,9 @@ namespace IronStar.ECS
 		/// <param name="r"></param>
 		public Transform ( Vector3 p, Quaternion r )
 		{
-			position	=	p;
-			rotation	=	r;
-			scaling		=	Vector3.One;
+			Position	=	p;
+			Rotation	=	r;
+			Scaling		=	1;
 		}
 
 		/// <summary>
@@ -45,7 +69,9 @@ namespace IronStar.ECS
 		/// <param name="r"></param>
 		public Transform ( Matrix t )
 		{
-			t.Decompose( out scaling, out rotation, out position );
+			Vector3 s;
+			t.Decompose( out s, out Rotation, out Position );
+			Scaling = s.X;
 		}
 
 		/// <summary>
@@ -55,10 +81,10 @@ namespace IronStar.ECS
 		/// <param name="r"></param>
 		public Transform ( Vector3 p, Quaternion r, Vector3 velocity )
 		{
-			position		=	p;
-			rotation		=	r;
-			scaling			=	new Vector3(1,1,1);
-			linearVelocity	=	velocity;
+			Position		=	p;
+			Rotation		=	r;
+			Scaling			=	1;
+			LinearVelocity	=	velocity;
 		}
 
 		/// <summary>
@@ -68,66 +94,58 @@ namespace IronStar.ECS
 		/// <param name="r"></param>
 		public Transform ( Vector3 p, Quaternion r, float s )
 		{
-			position	=	p;
-			rotation	=	r;
-			scaling		=	new Vector3(s,s,s);
+			Position	=	p;
+			Rotation	=	r;
+			Scaling		=	s;
 		}
 
 		public void Move( Vector3 position, Quaternion rotation, Vector3 linearVelocity, Vector3 angularVelocity )
 		{
-			this.position			=	position;
-			this.rotation			=	rotation;
-			this.linearVelocity		=	linearVelocity;
-			this.angularVelocity	=	angularVelocity;
+			this.Position			=	position;
+			this.Rotation			=	rotation;
+			this.LinearVelocity		=	linearVelocity;
+			this.AngularVelocity	=	angularVelocity;
 		}
 
 		public void Move( MotionState motionState )
 		{
-			this.position			=	MathConverter.Convert( motionState.Position );
-			this.rotation			=	MathConverter.Convert( motionState.Orientation );
-			this.linearVelocity		=	MathConverter.Convert( motionState.LinearVelocity );
-			this.angularVelocity	=	MathConverter.Convert( motionState.AngularVelocity );
+			this.Position			=	MathConverter.Convert( motionState.Position );
+			this.Rotation			=	MathConverter.Convert( motionState.Orientation );
+			this.LinearVelocity		=	MathConverter.Convert( motionState.LinearVelocity );
+			this.AngularVelocity	=	MathConverter.Convert( motionState.AngularVelocity );
 		}
 
 		public void Teleport( Vector3 position, Quaternion rotation, Vector3 linearVelocity, Vector3 angularVelocity )
 		{
-			this.position			=	position;
-			this.rotation			=	rotation;
-			this.linearVelocity		=	linearVelocity;
-			this.angularVelocity	=	angularVelocity;
+			this.Position			=	position;
+			this.Rotation			=	rotation;
+			this.LinearVelocity		=	linearVelocity;
+			this.AngularVelocity	=	angularVelocity;
 
-			teleportCount++;
+			TeleportCount++;
 		}
 
-		/// <summary>
-		/// Entity position :
-		/// </summary>
-		public Vector3	Position { get { return position; } }
+		public override IComponent Interpolate( IComponent previuous, float factor )
+		{
+			var prev	=	(Transform)previuous;
+			factor		=	(prev.TeleportCount != TeleportCount) ? 1 : factor;
+			
+			var p	= Vector3	.Lerp ( prev.Position,	Position,	factor );
+			var r	= Quaternion.Slerp( prev.Rotation,	Rotation,	factor );
+			var s	= MathUtil	.Lerp ( prev.Scaling,	Scaling,	factor );
+			var lv	= LinearVelocity;
+			var av	= AngularVelocity;
 
-		/// <summary>
-		/// Entity rotation
-		/// </summary>
-		public Quaternion	Rotation { get { return rotation; } }
-
-		/// <summary>
-		/// Entity scaling
-		/// </summary>
-		public Vector3	Scaling { get { return scaling; } }
-
-		/// <summary>
-		/// Increased each time when entity is teleported
-		/// </summary>
-		public byte TeleportCount { get { return teleportCount; } }
-
-		/// <summary>
-		/// Entity linear velocity
-		/// </summary>
-		public Vector3 LinearVelocity { get { return linearVelocity; } }
-
-		/// <summary>
-		/// Entity angular velocity
-		/// </summary>
-		public Vector3 AngularVelocity { get { return angularVelocity; } }
+			return new Transform()
+			{
+				Position		=	p,
+				Rotation		=	r,
+				Scaling			=	s,
+				LinearVelocity	=	lv,
+				AngularVelocity	=	av,
+				TeleportCount	=	TeleportCount,
+			};
+		}
 
 		/// <summary>
 		/// Gets entity transform matrix
@@ -140,7 +158,9 @@ namespace IronStar.ECS
 			}
 			set 
 			{
-				value.Decompose( out scaling, out rotation, out position );
+				Vector3 s;
+				value.Decompose( out s, out Rotation, out Position );
+				Scaling = s.X;
 			}
 		}
 	}

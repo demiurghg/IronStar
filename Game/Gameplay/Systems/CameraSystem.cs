@@ -20,7 +20,7 @@ using IronStar.ECS.Collections;
 
 namespace IronStar.Gameplay
 {
-	public class CameraSystem : ISystem, IGameComponent, IRenderer
+	public class CameraSystem : ISystem, IGameComponent, IDrawSystem
 	{
 		[Config]
 		public bool ThirdPersonEnable { get; set; }
@@ -172,7 +172,7 @@ namespace IronStar.Gameplay
 		}
 
 
-		public void Render( GameState gs, GameTime gameTime )
+		public void Draw( GameState gs, GameTime gameTime )
 		{
 			var	rs			=	gs.GetService<RenderSystem>();
 			var playerInput	=	gs.GetService<PlayerInputSystem>();

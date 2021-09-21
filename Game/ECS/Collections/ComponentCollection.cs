@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Fusion.Core;
 using Fusion.Core.Extensions;
 
 namespace IronStar.ECS
@@ -58,15 +59,9 @@ namespace IronStar.ECS
 		}
 
 
-		public void ClearComponentsOfType<TComponent>()
+		public void ClearComponentsOfType(Type componentType)
 		{
-			this[typeof(TComponent)].Clear();
-		}
-
-
-		public TComponent GetComponent<TComponent>( uint entityId ) where TComponent: IComponent
-		{
-			return (TComponent)GetComponent( entityId, typeof(TComponent) );
+			this[componentType].Clear();
 		}
 
 
@@ -85,11 +80,26 @@ namespace IronStar.ECS
 		}
 
 
-		public void CommitChanges()
+		public IComponent GetInterpolatedComponent( uint entityId, Type componentType )
+		{
+			IComponent result;
+
+			if ( this[componentType].TryGetInterpolatedValue( entityId, out result ) )
+			{
+				return result;
+			}
+			else
+			{
+				return null;
+			}
+		}
+
+
+		public void CommitChanges( TimeSpan timestep )
 		{
 			foreach ( var dict in this )
 			{
-				dict.Value.CommitChanges();
+				dict.Value.CommitChanges( GameTime.CurrentTime, timestep );
 			}
 		}
 
@@ -98,7 +108,7 @@ namespace IronStar.ECS
 		{
 			foreach ( var dict in this )
 			{
-				dict.Value.Interpolate();
+				dict.Value.Interpolate( GameTime.CurrentTime );
 			}
 		}
 	}

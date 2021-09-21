@@ -5,9 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Extensions;
+using Fusion.Core.Mathematics;
 
 namespace IronStar.ECS
 {
+	/// <summary>
+	/// #TODO #ECS #REFACTOR -- move interpolation to separate class
+	/// </summary>
 	class ComponentBuffer
 	{
 		Dictionary<uint, IComponent>	updating;
@@ -15,6 +19,8 @@ namespace IronStar.ECS
 		Dictionary<uint, IComponent>	previous;
 		Dictionary<uint, IComponent>	lerped;
 		object flipLock = new object();
+		TimeSpan timestamp;
+		TimeSpan timestep;
 
 		public ComponentBuffer()
 		{
@@ -26,30 +32,38 @@ namespace IronStar.ECS
 
 		public int Count { get { return updating.Count; } }
 
+		
 		public void Add( uint id, IComponent c )
 		{
 			updating.Add( id, c );
 		}
 
+		
 		public void Remove( uint id )
 		{
 			updating.Remove( id );
 		}
 
+		
 		public void Clear()
 		{
 			updating.Clear();
 		}
 
+		
 		public bool TryGetValue( uint id, out IComponent component )
 		{
 			return updating.TryGetValue(id, out component);
 		}
 
-		public void CommitChanges( /* GameTime timestamp */ )
+		
+		public void CommitChanges( TimeSpan timestamp, TimeSpan timestep )
 		{
 			lock (flipLock)
 			{
+				this.timestamp	=	timestamp;
+				this.timestep	=	timestep;
+
 				Misc.Swap( ref present, ref previous );
 				present.Clear();
 
@@ -61,10 +75,22 @@ namespace IronStar.ECS
 		}
 
 
-		public void Interpolate( /* GameTime time */ )
+		public bool TryGetInterpolatedValue( uint id, out IComponent component )
+		{
+			return lerped.TryGetValue( id, out component );
+		}
+
+
+		public void Interpolate( TimeSpan time )
 		{ 
 			lock (flipLock)
 			{
+				double	ftimestamp	=	timestamp.TotalSeconds;
+				double	ftimestep	=	timestep.TotalSeconds;
+				double	ftime		=	time.TotalSeconds;
+
+				float	factor		=	MathUtil.Clamp( (float)((ftime - ftimestamp)/ftimestep), 0, 1 );
+
 				lerped.Clear();
 
 				foreach ( var keyValue in present )
@@ -73,7 +99,7 @@ namespace IronStar.ECS
 
 					if (previous.TryGetValue( keyValue.Key, out prev))
 					{
-						lerped.Add( keyValue.Key, keyValue.Value.Interpolate(prev, 0.5f) );
+						lerped.Add( keyValue.Key, keyValue.Value.Interpolate(prev, factor) );
 					}
 					else
 					{

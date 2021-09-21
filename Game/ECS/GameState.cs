@@ -16,6 +16,7 @@ using System.Collections.Concurrent;
 using System.Collections;
 using System.Threading;
 using Fusion.Core.Shell;
+using System.Diagnostics;
 
 namespace IronStar.ECS
 {
@@ -57,6 +58,7 @@ namespace IronStar.ECS
 		readonly EntityCollection			entities;
 		readonly SystemCollection			systems;
 		readonly ComponentCollection		components;
+		Entity[] snapshot = new Entity[0];
 
 		readonly ConcurrentQueue<Entity>		spawnQueue;
 		readonly ConcurrentQueue<FactoryData>	factoryQueue;
@@ -76,6 +78,7 @@ namespace IronStar.ECS
 		public event	EventHandler Reloading;
 
 		Thread updateThread;
+		readonly Thread mainThread;
 		bool terminate = false;
 
 		public TimeSpan TimeStep { get { return timeStep; } }
@@ -88,6 +91,8 @@ namespace IronStar.ECS
 		public GameState( Game game, ContentManager content, TimeSpan timeStep )
 		{
 			ECSTypeManager.Scan();
+
+			mainThread		=	Thread.CurrentThread;
 
 			this.game		=	game;
 			this.content	=	content;
@@ -141,6 +146,28 @@ namespace IronStar.ECS
 		}
 
 
+		bool IsMainThread()
+		{
+			#if ASYNC_GAMESTATE
+			return Thread.CurrentThread.ManagedThreadId == mainThread.ManagedThreadId;
+			#else
+			throw new NotImplementedException();
+			#endif
+		}
+
+
+		void CheckUpdateThread(string methodName)
+		{
+			if (!IsUpdateThread()) throw new InvalidOperationException(methodName + " must be called from UPDATE thread");
+		}
+
+
+		void CheckMainThread(string methodName)
+		{
+			if (!IsMainThread()) throw new InvalidOperationException(methodName + " must be called from MAIN thread");
+		}
+
+
 		/// <summary>
 		/// Disposes stuff
 		/// </summary>
@@ -184,7 +211,7 @@ namespace IronStar.ECS
 			
 			foreach ( var system in systems )
 			{
-				(system.System as IRenderer)?.Render( this, gameTime );
+				(system.System as IDrawSystem)?.Draw( this, gameTime );
 			}
 
 			#if ASYNC_GAMESTATE
@@ -206,6 +233,7 @@ namespace IronStar.ECS
 			TimeSpan dt				=	timeStep;
 			TimeSpan currentTime	=	GameTime.CurrentTime;
 			TimeSpan accumulator	=	TimeSpan.Zero;
+			var		 stopwatch		=	new Stopwatch();
 
 			while (!terminate)
 			{
@@ -217,6 +245,9 @@ namespace IronStar.ECS
 
 				while (accumulator >= dt)
 				{
+					stopwatch.Reset();
+					stopwatch.Start();
+
 					RefreshEntities();
 
 					foreach ( var system in systems )
@@ -224,7 +255,14 @@ namespace IronStar.ECS
 						system.System.Update( this, new GameTime(dt, frames) );
 					}
 
-					components.CommitChanges();
+					components.CommitChanges( dt );
+					snapshot = entities.GetSnapshot();
+
+					stopwatch.Stop();
+					if (stopwatch.Elapsed > dt)
+					{
+						Log.Warning("LOOP TIME {0} > DT {1}", stopwatch.Elapsed, dt);
+					}
 
 					accumulator -= dt;
 					frames++;
@@ -255,7 +293,8 @@ namespace IronStar.ECS
 		/// <summary>
 		/// Gets all system inherited from TSystem
 		/// </summary>
-		/// <typeparam name="TSystem"></typeparam>
+		/// <typeparam name=
+		/// "TSystem"></typeparam>
 		/// <returns></returns>
 		public IEnumerable<TSystem> GatherSystems<TSystem>()
 		{
@@ -584,7 +623,7 @@ namespace IronStar.ECS
 		{
 			if (entity==null) throw new ArgumentNullException("entity");
 			if (component==null) throw new ArgumentNullException("component");
-			if (!IsUpdateThread()) throw new InvalidOperationException(nameof(RemoveEntityComponent) + " must be called within update thread");
+			CheckUpdateThread(nameof(RemoveEntityComponent));
 
 			componentToRemove.Enqueue( new ComponentData( entity, component ) );
 		}
@@ -610,24 +649,9 @@ namespace IronStar.ECS
 
 		/// <summary>
 		/// Gets entity's component of given type
-		/// This method must be called within update thread: in entity factrory or system
-		/// </summary>
-		/// <typeparam name="TComponent">Component type</typeparam>
-		/// <param name="entity">Entity to get component from</param>
-		/// <returns>Component</returns>
-		public TComponent GetEntityComponent<TComponent>( Entity entity ) where TComponent: IComponent
-		{
-			if (!IsUpdateThread()) 
-			{
-				throw new InvalidOperationException(nameof(GetEntityComponent) + " must be called within update thread");
-			}
-			return components.GetComponent<TComponent>( entity.ID );
-		}
-
-
-		/// <summary>
-		/// Gets entity's component of given type
-		/// This method must be called within update thread: in entity factrory or system
+		/// Result depends on thread where if called from.
+		/// In update thread this method returns latest component value.
+		/// In main thread this method returns interpolated or buffered value.
 		/// </summary>
 		/// <param name="entity">Entity to get component from</param>
 		/// <param name="componentType">Component type</param>
@@ -635,13 +659,15 @@ namespace IronStar.ECS
 		/// <returns>Component</returns>
 		public IComponent GetEntityComponent( Entity entity, Type componentType )
 		{
-			if (!IsUpdateThread()) 
+			if (IsUpdateThread())
 			{
-				throw new InvalidOperationException(nameof(GetEntityComponent) + " must be called within update thread");
+				return components.GetComponent( entity.ID, componentType );
 			}
-			return components.GetComponent( entity.ID, componentType );
+			else
+			{
+				return components.GetInterpolatedComponent( entity.ID, componentType );
+			}
 		}
-
 
 		/*-----------------------------------------------------------------------------------------------
 		 *	System stuff :
@@ -681,7 +707,7 @@ namespace IronStar.ECS
 
 		public IEnumerable<Entity> QueryEntities( Aspect aspect )
 		{
-			return entities.Query( aspect );
+			return IsUpdateThread() ? entities.Query( aspect ) : snapshot.Where( e => aspect.Accept(e) );
 		}
 	}
 }

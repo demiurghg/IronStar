@@ -14,7 +14,7 @@ using System.Collections.Concurrent;
 
 namespace IronStar.Gameplay
 {
-	public class PlayerInputSystem : ISystem, IRenderer
+	public class PlayerInputSystem : ISystem, IDrawSystem
 	{
 		Aspect							playerAspect	=	new Aspect().Include<Transform,PlayerComponent,UserCommandComponent>();
 		UserCommand						userCommand		=	new UserCommand();
@@ -75,7 +75,7 @@ namespace IronStar.Gameplay
 		}
 
 		
-		public void Render( GameState gs, GameTime gameTime )
+		public void Draw( GameState gs, GameTime gameTime )
 		{
 			#if COMMAND_QUEUE
 				var playerInput	=	gs.Game.GetService<PlayerInput>();

@@ -1,33 +1,16 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
 using Fusion;
 using Fusion.Build;
 using Fusion.Development;
-using Fusion.Engine.Common;
-using Fusion.Core;
-using Fusion.Core.Shell;
 using Fusion.Core.Utils;
-using Fusion.Engine.Imaging;
-using IronStar.Mapping;
-using Fusion.Core.Extensions;
 using Fusion.Build.Mapping;
-using Fusion.Engine.Client;
-using Fusion.Engine.Server;
-using IronStar.Editor;
-using Fusion.Core.Mathematics;
-using Fusion.Scripting;
 using Fusion.Build.Processors;
 using Fusion.Engine.Audio;
 using Fusion.Engine.Graphics.Ubershaders;
 using Fusion.Engine.Graphics.GI;
-using Fusion.Engine.Graphics;
 
-namespace IronStar {
+namespace IronStar
+{
 
 	class Program {
 

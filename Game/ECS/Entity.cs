@@ -35,6 +35,14 @@ namespace IronStar.ECS
 			this.ID			=	id;
 		}
 
+
+		internal Entity MakeCopyInternal()
+		{
+			var e = new Entity(gs, ID);
+			e.ComponentMapping	=	ComponentMapping;
+			e.SystemMapping		=	SystemMapping;
+			return e;
+		}
 		
 		/// <summary>
 		/// Kills this entity
@@ -97,7 +105,7 @@ namespace IronStar.ECS
 		/// <returns>Entity's component</returns>
 		public TComponent GetComponent<TComponent>() where TComponent: IComponent
 		{
-			return gs.GetEntityComponent<TComponent>(this);
+			return (TComponent)GetComponent(typeof(TComponent));
 		}
 
 
@@ -110,7 +118,6 @@ namespace IronStar.ECS
 		{
 			return gs.GetEntityComponent(this, componentType);
 		}
-
 
 		/// <summary>
 		/// 

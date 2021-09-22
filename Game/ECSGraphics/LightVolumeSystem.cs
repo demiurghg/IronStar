@@ -12,7 +12,7 @@ using Fusion.Core;
 
 namespace IronStar.SFX2
 {
-	public class LightVolumeSystem : ProcessingSystem<RSLightVolume, LightVolume, Transform>
+	public class LightVolumeSystem : DrawSystem<RSLightVolume, LightVolume, Transform>
 	{
 		readonly LightSet ls;
 	
@@ -24,7 +24,7 @@ namespace IronStar.SFX2
 		
 		protected override RSLightVolume Create( Entity entity, LightVolume lightVol, Transform transform )
 		{
-			Process( entity, GameTime.Zero, ls.LightVolume, lightVol, transform );
+			DrawEntity( entity, GameTime.Zero, ls.LightVolume, lightVol, transform );
 
 			return ls.LightVolume;
 		}
@@ -36,7 +36,7 @@ namespace IronStar.SFX2
 		}
 
 		
-		protected override void Process( Entity entity, GameTime gameTime, RSLightVolume resource, LightVolume lightVol, Transform transform )
+		protected override void DrawEntity( Entity entity, GameTime gameTime, RSLightVolume resource, LightVolume lightVol, Transform transform )
 		{
 			resource.ResolutionX	=	lightVol.ResolutionX;
 			resource.ResolutionY	=	lightVol.ResolutionY;

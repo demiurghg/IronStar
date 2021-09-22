@@ -159,7 +159,7 @@ namespace IronStar.Animation
 
 		void SequenceFX( FXEvent fxEvent, Matrix worldTransform, bool isFpv, Matrix[] transforms )
 		{
-			var instance = fxPlayback.RunFX( fxEvent, false, false /* -- this is not ECS FX! */ );
+			var instance = fxPlayback?.RunFX( fxEvent, false, false /* -- this is not ECS FX! */ );
 
 			if (instance!=null)
 			{

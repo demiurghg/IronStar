@@ -178,7 +178,7 @@ namespace IronStar.ECS
 			{
 				#if ASYNC_GAMESTATE
 					terminate = true;
-					updateThread.Join();
+					updateThread?.Join();
 				#else
 					KillAll();
 					RefreshEntities();
@@ -189,6 +189,7 @@ namespace IronStar.ECS
 				foreach ( var systemWrapper in systems )
 				{
 					var system = systemWrapper.System;
+					(system as IDrawSystem)?.Draw( this, GameTime.MSec16 );
 					Game.Components.Remove(	system as IGameComponent );
 					( system as IDisposable )?.Dispose();
 				}

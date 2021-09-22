@@ -17,8 +17,9 @@ using Fusion.Engine.Audio;
 using IronStar.ECS;
 using IronStar.Gameplay.Components;
 
-namespace IronStar.SFX {
-	public partial class FXPlayback : ProcessingSystem<FXInstance, FXComponent, Transform>
+namespace IronStar.SFX 
+{
+	public partial class FXPlayback : DrawSystem<FXInstance, FXComponent, Transform>
 	{
 		TextureAtlas spriteSheet;
 
@@ -51,7 +52,8 @@ namespace IronStar.SFX {
 
 		protected override void Dispose( bool disposing )
 		{
-			if (disposing) {
+			if (disposing) 
+			{
 				StopAllSFX();
 				game.Reloading -= Game_Reloading;
 			}
@@ -234,14 +236,14 @@ namespace IronStar.SFX {
 			fxInstance?.Kill();
 		}
 
-		public override void Update( GameState gs, GameTime gameTime )
+		public override void Draw( GameState gs, GameTime gameTime )
 		{
-			base.Update( gs, gameTime );
+			base.Draw( gs, gameTime );
 
 			Update( gameTime );
 		}
 
-		protected override void Process( ECS.Entity entity, GameTime gameTime, FXInstance fxInstance, FXComponent fx, Transform t )
+		protected override void DrawEntity( ECS.Entity entity, GameTime gameTime, FXInstance fxInstance, FXComponent fx, Transform t )
 		{
 			if ( fxInstance!=null )
 			{

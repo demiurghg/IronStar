@@ -12,7 +12,7 @@ using Fusion.Core;
 
 namespace IronStar.SFX2
 {
-	public class LightProbeSystem : ProcessingSystem<RSLightProbe,LightProbeSphere,LightProbeBox,Transform>
+	public class LightProbeSystem : DrawSystem<RSLightProbe,LightProbeSphere,LightProbeBox,Transform>
 	{
 		Dictionary<uint,RSLightProbe> lights = new Dictionary<uint, RSLightProbe>();
 
@@ -42,7 +42,7 @@ namespace IronStar.SFX2
 
 			var light = new RSLightProbe(name);
 
-			Process( e, GameTime.Zero, light, lpSph, lpBox, t );
+			DrawEntity( e, GameTime.Zero, light, lpSph, lpBox, t );
 
 			ls.LightProbes.Add( light );
 
@@ -56,7 +56,7 @@ namespace IronStar.SFX2
 		}
 
 		
-		protected override void Process( Entity e, GameTime gameTime, RSLightProbe light, LightProbeSphere lpSph, LightProbeBox lpBox, Transform t )
+		protected override void DrawEntity( Entity e, GameTime gameTime, RSLightProbe light, LightProbeSphere lpSph, LightProbeBox lpBox, Transform t )
 		{
 			var transform	=	t.TransformMatrix;
 

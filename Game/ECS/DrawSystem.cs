@@ -34,8 +34,8 @@ namespace IronStar.ECS
 
 		public void Add( GameState gs, Entity e )
 		{
-			var c1	=	(T1)e.GetComponent<T1>().Clone();
-			var c2	=	(T2)e.GetComponent<T2>().Clone();
+			var c1	=	(T1)e.GetComponent<T1>()?.Clone();
+			var c2	=	(T2)e.GetComponent<T2>()?.Clone();
 			creationQueue.Enqueue( Tuple.Create(e, c1, c2) );
 		}
 
@@ -131,9 +131,9 @@ namespace IronStar.ECS
 
 		public void Add( GameState gs, Entity e )
 		{
-			var c1	=	(T1)e.GetComponent<T1>().Clone();
-			var c2	=	(T2)e.GetComponent<T2>().Clone();
-			var c3	=	(T3)e.GetComponent<T3>().Clone();
+			var c1	=	(T1)e.GetComponent<T1>()?.Clone();
+			var c2	=	(T2)e.GetComponent<T2>()?.Clone();
+			var c3	=	(T3)e.GetComponent<T3>()?.Clone();
 			creationQueue.Enqueue( Tuple.Create(e, c1, c2, c3) );
 		}
 
@@ -232,10 +232,10 @@ namespace IronStar.ECS
 
 		public void Add( GameState gs, Entity e )
 		{
-			var c1	=	(T1)e.GetComponent<T1>().Clone();
-			var c2	=	(T2)e.GetComponent<T2>().Clone();
-			var c3	=	(T3)e.GetComponent<T3>().Clone();
-			var c4	=	(T4)e.GetComponent<T4>().Clone();
+			var c1	=	(T1)e.GetComponent<T1>()?.Clone();
+			var c2	=	(T2)e.GetComponent<T2>()?.Clone();
+			var c3	=	(T3)e.GetComponent<T3>()?.Clone();
+			var c4	=	(T4)e.GetComponent<T4>()?.Clone();
 			creationQueue.Enqueue( Tuple.Create(e, c1, c2, c3, c4) );
 		}
 

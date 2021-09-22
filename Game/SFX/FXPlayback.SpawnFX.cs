@@ -18,7 +18,8 @@ using IronStar.ECS;
 using IronStar.Gameplay.Systems;
 using IronStar.ECSPhysics;
 
-namespace IronStar.SFX {
+namespace IronStar.SFX 
+{
 	public partial class FXPlayback
 	{
 		public static ECS.Entity SpawnFX( GameState gs, string fxName, uint parentID, Vector3 origin, Vector3 velocity, Quaternion rotation )

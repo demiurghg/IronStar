@@ -48,6 +48,7 @@ namespace SpriteDemo
 			//	For this sample we need only texture and shader processors:
 			var textureProcessor		=	new TextureProcessor();
 			var ubershaderProcessor		=	new UbershaderProcessor();
+			var sceneProcessor			=	new SceneProcessor(true, true, 0, true, "");
 
 			//	create content builder with specified output directory
 			var builder =   new Builder("Content")
@@ -64,7 +65,8 @@ namespace SpriteDemo
 				.ToolsDirectory(@"..\..\..\..\..\Engine\Native\FScene\bin\x64\Release")
 				.ToolsDirectory(@"..\..\..\..\..\Engine\SDKs\KopiLua\Luac\bin\x64\Release")
 
-				//	provide additional content directories :
+				//	provide engine content directories :
+				.InputDirectory(@"..\..\..\..\..\Engine\Content")
 				.InputDirectory(@"..\..\..\..\..\Engine\Shaders")
 
 				//	associate file extensions with processors :
@@ -72,6 +74,7 @@ namespace SpriteDemo
 				.Process("*.tga"		, textureProcessor )
 				.Process("*.png"		, textureProcessor )
 				.Process("*.jpg"		, textureProcessor )
+				.Process("*.fbx"		, sceneProcessor )
 				;
 
 			return builder;

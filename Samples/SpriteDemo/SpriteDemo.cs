@@ -15,5 +15,31 @@ namespace SpriteDemo
 		{
 			this.AddServiceAndComponent( 100, new RenderSystem(this, true) );
 		}
+
+
+		protected override void Initialize()
+		{
+			base.Initialize();
+		}
+
+
+		protected override void Dispose( bool disposing )
+		{
+			if (disposing)
+			{
+				//	dispose disposable stuff here
+			}
+
+			base.Dispose( disposing );
+		}
+
+
+		protected override void Update( GameTime gameTime )
+		{
+			if (Keyboard.IsKeyDown(Fusion.Core.Input.Keys.Escape))
+			{
+				Exit();
+			}
+		}
 	}
 }

@@ -116,6 +116,7 @@ namespace IronStar
 
 				.InputDirectory(@"..\..\..\..\Engine\Shaders")
 				.InputDirectory(@"..\..\..\..\Engine\Widgets")
+				.InputDirectory(@"..\..\..\..\Engine\Content")
 
 				.Process("*.hlsl"               , ubershaderProcessor )
 

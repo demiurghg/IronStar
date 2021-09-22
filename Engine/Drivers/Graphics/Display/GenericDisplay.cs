@@ -74,12 +74,13 @@ namespace Fusion.Drivers.Graphics.Display {
 				Flags				=	SwapChainFlags.None,
 			};
 
-			D3D.Device.CreateWithSwapChain( driverType, deviceFlags, new[]{ featureLevel }, swapChainDesc, out d3dDevice, out swapChain );
+            Adapter adapter = new Factory1().Adapters[parameters.DeviceIndex];
+            D3D.Device.CreateWithSwapChain(adapter, deviceFlags, new[] { featureLevel }, swapChainDesc, out d3dDevice, out swapChain);
 
-			//Log.Message("   compute shaders : {0}", d3dDevice.CheckFeatureSupport(Feature.ComputeShaders) );
-			//Log.Message("   shader doubles  : {0}", d3dDevice.CheckFeatureSupport(Feature.ShaderDoubles) );
-			//Log.Message("   threading       : {0}", d3dDevice.CheckFeatureSupport(Feature.Threading) );
-			bool driverConcurrentCreates;
+            //Log.Message("   compute shaders : {0}", d3dDevice.CheckFeatureSupport(Feature.ComputeShaders) );
+            //Log.Message("   shader doubles  : {0}", d3dDevice.CheckFeatureSupport(Feature.ShaderDoubles) );
+            //Log.Message("   threading       : {0}", d3dDevice.CheckFeatureSupport(Feature.Threading) );
+            bool driverConcurrentCreates;
 			bool driverCommandLists;
 			d3dDevice.CheckThreadingSupport( out driverConcurrentCreates, out driverCommandLists );
 			//d3dDevice.GetCounterCapabilities();

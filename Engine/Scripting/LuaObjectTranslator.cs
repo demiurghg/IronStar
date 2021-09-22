@@ -177,8 +177,7 @@ namespace Fusion.Scripting {
 		/// <param name="id"></param>
 		void CollectObject ( object target, int id )
 		{
-			#warning Should we call Dispose() for IDisposable?
-
+			// #TODO #LUA -- should I call Dispose() for IDisposable?
 			//Log.Verbose("...gc object: {0} - {1}", id, target.ToString() );
 
 			map.Remove( id );

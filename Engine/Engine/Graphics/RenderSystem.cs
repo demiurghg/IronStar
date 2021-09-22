@@ -110,7 +110,6 @@ namespace Fusion.Engine.Graphics {
 			InterlacingMode	=	InterlacingMode.HorizontalLR;
 			UseDebugDevice	=	false;
 			VSyncInterval	=	1;
-			MsaaEnabled		=	false;
 			UseFXAA			=	true;
 
 			this.Device	=	Game.GraphicsDevice;

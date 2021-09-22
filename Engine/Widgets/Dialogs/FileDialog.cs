@@ -15,7 +15,6 @@ using Fusion.Build;
 using Fusion.Core.Content;
 using Fusion.Engine.Frames.Layouts;
 using Fusion.Core.Extensions;
-using Fusion.Core.Extensions;
 
 namespace Fusion.Widgets.Dialogs 
 {

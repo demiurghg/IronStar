@@ -160,14 +160,6 @@ namespace Fusion.Engine.Graphics
 		[AECategory("Video")]
 		public bool UseRenderDoc { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		[Config]
-		[AECategory("Video")]
-		[Obsolete]
-		public bool MsaaEnabled { get; set; }
-
 
 		[Config]
 		[AECategory("Performance")]

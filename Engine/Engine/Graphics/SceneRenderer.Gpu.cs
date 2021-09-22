@@ -145,7 +145,6 @@ namespace Fusion.Engine.Graphics {
 
 		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential)]
-		#warning Reduce DECAL structure size to 128 byte
 		public struct LIGHT 
 		{	
 			//public Matrix	WorldMatrix;
@@ -193,7 +192,7 @@ namespace Fusion.Engine.Graphics {
 
 		[ShaderStructure]
 		[StructLayout(LayoutKind.Sequential)]
-		#warning Reduce DECAL structure size to 128 byte
+		//	#TODO #PERF #RENDER -- PERFORMANCE: reduce DECAL size to 128 bytes
 		//	Size = 184
 		//	Opt size 12
 		//	Z-ordering

@@ -381,7 +381,7 @@ namespace Fusion.Engine.Graphics.Scenes {
 		{
 			for ( int i=0; i<Nodes.Count; i++ ) 
 			{
-				#warning PERFORMANCE: precompute inverse bind pose transform
+				//	#TODO #PERF #ANIMATION -- PERFORMANCE: precompute inverse bind pose transform
 				destination[i] = Matrix.Invert( Nodes[i].BindPose ) * source[i];
 			}
 		}
@@ -398,7 +398,7 @@ namespace Fusion.Engine.Graphics.Scenes {
 
 			for ( int i=0; i<Nodes.Count; i++ ) 
 			{
-				#warning PERFORMANCE: precompute inverse bind pose transform
+				// #TODO #ANIMATION #PERF -- precompute inverse bind pose transform
 				destination[i] = Matrix.Invert( Nodes[i].BindPose ) * destination[i];
 			}
 		}
@@ -748,8 +748,6 @@ namespace Fusion.Engine.Graphics.Scenes {
 		{
 			var transforms = ComputeAbsoluteTransforms();
 			var points = new List<Vector3>();
-
-			var bbox = new BoundingBox();
 
 			for (int i=0; i<Nodes.Count; i++)
 			{

@@ -252,7 +252,7 @@ namespace Fusion.Engine.Imaging
 		/// </summary>
 		public void CopySubImageTo ( int srcX, int srcY, int srcWidth, int srcHeight, int dstX, int dstY, Image<TColor> destination )
 		{
-			#warning add boundry checks!
+			// #TODO #IMAGE #CODE -- add boundry checks!
 			for (int x=0; x<srcWidth; x++) 
 			{
 				for (int y=0; y<srcHeight; y++) 
@@ -283,7 +283,7 @@ namespace Fusion.Engine.Imaging
 		/// </summary>
 		public void FillRect ( Rectangle rect, TColor color )
 		{
-			#warning add boundry checks!
+			// #TODO #IMAGE #CODE -- add boundry checks!
 			for (int i=rect.Left; i<rect.Right; i++)
 			{
 				for (int j=rect.Top; j<rect.Bottom; j++)

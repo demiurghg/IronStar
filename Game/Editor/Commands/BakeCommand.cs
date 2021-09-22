@@ -8,7 +8,6 @@ using Fusion.Core.Mathematics;
 using Fusion.Core.Shell;
 using IronStar.ECS;
 using IronStar.Mapping;
-using Fusion;
 
 namespace IronStar.Editor.Commands
 {

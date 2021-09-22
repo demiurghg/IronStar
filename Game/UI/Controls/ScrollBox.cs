@@ -39,7 +39,7 @@ namespace IronStar.UI.Controls {
 		{
 			BackColor	=	MenuTheme.Transparent;
 			Border		=	0;
-			#warning value
+			// #TODO #UI -- old stuff "value" - WTF?
 			Padding		=	1;
 
 			this.MouseWheel +=ScrollBox_MouseWheel;

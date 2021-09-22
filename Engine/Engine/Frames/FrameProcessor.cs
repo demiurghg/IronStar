@@ -237,7 +237,7 @@ namespace Fusion.Engine.Frames {
 
 		void TrackActiveFrame()
 		{
-			#warning When target frame is removed from hierarchy we need to choose another good target frame
+			// #TODO #UI -- When target frame is removed from hierarchy we need to choose another good target frame
 			if (TargetFrame!=null && !IsAttachedToRoot(TargetFrame))
 			{
 				Log.Warning("UI: Target frame lost");

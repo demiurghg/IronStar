@@ -65,7 +65,7 @@ namespace IronStar.Mapping
 
 		public override BoundingBox GetBoundingBox( GameState gs )
 		{
-			#warning Need more smart bounding box for entitites!
+			// #TODO #MAP -- Need more smart bounding box for entitites!
 			return new BoundingBox( 4, 4, 4 );
 		}
 	}

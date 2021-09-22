@@ -8,7 +8,7 @@ using Fusion.Engine.Graphics;
 
 namespace Fusion.Widgets 
 {
-	#warning Replace with some kind of IColorTheme interface
+	// #TODO #UI #REFACTOR -- Replace with some kind of IColorTheme interface
 	public static class ColorTheme 
 	{
 		public static SpriteFont NormalFont = null;

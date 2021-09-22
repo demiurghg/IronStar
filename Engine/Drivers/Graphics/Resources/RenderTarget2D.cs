@@ -179,12 +179,6 @@ namespace Fusion.Drivers.Graphics
 				srvDesc.Texture2D.MipLevels			=	MipCount;
 				srvDesc.Texture2D.MostDetailedMip	=	0;
 
-			#warning Remove block below, dup
-			if (enableRWBuffer) 
-			{
-				texDesc.BindFlags |= BindFlags.UnorderedAccess;
-			}
-
 			tex2D	=	new D3D.Texture2D( device.Device, texDesc );
 			SRV		=	new ShaderResourceView( device.Device, tex2D, srvDesc );
 

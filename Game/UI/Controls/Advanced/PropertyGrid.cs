@@ -101,11 +101,10 @@ namespace IronStar.UI.Controls.Advanced
 
 		public void CommitChanges ()
 		{
-			foreach ( var pair in changes ) {
-
+			foreach ( var pair in changes ) 
+			{
 				Log.Message("  property grid commit: {0} -> {1}", pair.Key.Name, pair.Value.ToString() );
 				pair.Key.SetValue( TargetObject, pair.Value );
-
 			}
 			changes.Clear();
 		}

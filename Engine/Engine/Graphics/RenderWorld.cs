@@ -17,7 +17,6 @@ using Fusion.Build;
 using Fusion.Engine.Graphics.GI;
 using Fusion.Engine.Graphics.Collections;
 using Fusion.Engine.Graphics.GI2;
-using Fusion.Engine.Graphics.Collections;
 
 namespace Fusion.Engine.Graphics 
 {

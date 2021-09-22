@@ -175,7 +175,7 @@ namespace IronStar.SFX2
 		}
 
 
-		#warning What this function do?
+		// #TODO #ANIMATION -- What this function do? Remove???
 		public void CommitJointTransform()
 		{
 			sceneView.SetTransform( (mesh,matrix) => mesh.World = matrix, ModelFeatureWorldMatrix );

@@ -8,7 +8,6 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Fusion.Core.Mathematics;
 using Color = Fusion.Core.Mathematics.Color;
 
 namespace Fusion.Engine.Imaging 

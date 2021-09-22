@@ -62,7 +62,7 @@ namespace IronStar.UI.HUD
 			this.Width		=	ui.RootFrame.Width;
 			this.Height		=	ui.RootFrame.Height;
 
-			#warning USE PAGE LAYOUT!
+			// #TODO #UI -- warning USE PAGE LAYOUT!
 			//var layout		=	new PageLayout();
 			//this.Layout		=	layout;
 

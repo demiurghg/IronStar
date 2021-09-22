@@ -147,12 +147,12 @@ namespace IronStar.UI {
 
 			frame.BackColor		=	MenuTheme.BackColor;
 			frame.BorderTop		=	1;
-			#warning accent color?
+			// #TODO #UI -- should I use accent color?
 			frame.BorderColor	=	MenuTheme.ElementColor;
 			frame.Font			=	MenuTheme.SmallFont;
 			frame.Text			=	text;
 			frame.TextAlignment	=	alignment;
-			#warning text color?
+			// #TODO #UI -- should I use text color?
 			frame.ForeColor		=	MenuTheme.TextColorDimmed;
 
 			frame.PaddingLeft	=	MenuTheme.MainContentPadding;

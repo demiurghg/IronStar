@@ -72,7 +72,7 @@ namespace IronStar.Animation
 			//--------------------------------
 			//	copy scene transforms :
 			scene.CopyLocalTransformsTo( localTransforms );
-			#warning support animation bypass!
+			// #TODO #ANIMATION -- support animation bypass!
 
 			//--------------------------------
 			//	pass transformations through all tracks :

@@ -22,7 +22,6 @@ using Fusion.Core.Mathematics;
 using Fusion.Engine.Common;
 using Fusion.Engine.Imaging;
 using Fusion.Core.Extensions;
-using Fusion.Core.Extensions;
 using Fusion.Drivers.Graphics.RenderDoc;
 
 namespace Fusion.Drivers.Graphics {

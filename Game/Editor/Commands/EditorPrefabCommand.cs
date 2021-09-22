@@ -8,7 +8,6 @@ using Fusion.Core.Mathematics;
 using Fusion.Core.Shell;
 using IronStar.ECS;
 using IronStar.Mapping;
-using Fusion;
 using Fusion.Core;
 using Fusion.Core.Extensions;
 using Fusion.Build;

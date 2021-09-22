@@ -146,7 +146,7 @@ namespace IronStar.Mapping
 				}
 			}
 
-			#warning Need more smart bounding box for map models!
+			// #TODO #MAP -- Need more smart bounding box for map models!
 			return bbox;
 		}
 	}

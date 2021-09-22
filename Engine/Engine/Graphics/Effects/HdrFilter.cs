@@ -402,7 +402,7 @@ namespace Fusion.Engine.Graphics
 			shader		=	Game.Content.Load<Ubershader>("hdr");
 			factory		=	shader.CreateFactory( typeof(Flags), Primitive.TriangleList, VertexInputElement.Empty, BlendState.Opaque, RasterizerState.CullNone, DepthStencilState.None );
 
-			vignetteTex	=	Game.Content.Load<DiscTexture>(@"noise\vignette");
+			Game.Content.TryLoad(@"noise\vignette", out vignetteTex);
 
 			noiseTex	=	new DiscTexture[8];
 			for (int i=0; i<8; i++) {

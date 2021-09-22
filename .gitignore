@@ -282,3 +282,5 @@ paket-files/
 *.irrvol
 *.rff
 *.painter_lock
+Engine/Shaders/auto/surface.fxi
+Engine/packages.config

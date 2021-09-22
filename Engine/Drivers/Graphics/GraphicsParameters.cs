@@ -52,11 +52,16 @@ namespace Fusion.Drivers.Graphics {
 		/// </summary>
 		public int MsaaLevel { get; set; }
 
+        /// <summary>
+        /// GPU index
+        /// </summary>
+        public string SelectedGpuName { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public GraphicsParameters()
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public GraphicsParameters()
 		{
 			SetDefault();
 		}
@@ -72,6 +77,6 @@ namespace Fusion.Drivers.Graphics {
 			FullScreen		=	false;
 			StereoMode		=	StereoMode.Disabled;
 			MsaaLevel		=	1;
-		}
+        }
 	}
 }

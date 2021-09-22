@@ -125,10 +125,17 @@ namespace Fusion.Engine.Graphics
 		[AECategory("Video")]
 		public StereoMode StereoMode { get; set; }
 
-		/// <summary>
-		/// Interlacing mode for stereo.
-		/// </summary>
-		[Config]
+        /// <summary>
+        /// GPU index.
+        /// </summary>
+        [Config]
+        [AECategory("Video")]
+        public string SelectedGpuName { get; set; }
+
+        /// <summary>
+        /// Interlacing mode for stereo.
+        /// </summary>
+        [Config]
 		[AECategory("Video")]
 		public InterlacingMode InterlacingMode { get; set; }
 

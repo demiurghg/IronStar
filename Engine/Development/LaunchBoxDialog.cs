@@ -12,7 +12,7 @@ using Fusion.Engine.Graphics;
 using System.IO;
 using System.Diagnostics;
 using Fusion.Core;
-
+using SharpDX.DXGI;
 
 namespace Fusion.Development {
 
@@ -63,8 +63,14 @@ namespace Fusion.Development {
 			stereoMode.Items.AddRange( Enum.GetValues(typeof(StereoMode)).Cast<object>().ToArray() );
 			stereoMode.SelectedItem = game.RenderSystem.StereoMode;
 
-			//	display mode :
-			displayWidth.Value	=	game.RenderSystem.Width;
+            //List available GPUs
+            GPUs.Items.Clear();
+            GPUs.Items.AddRange(GetGpus().Select(x => x.Description.Description).ToArray());
+            var index = GPUs.Items.IndexOf(game.RenderSystem.SelectedGpuName);
+            GPUs.SelectedItem = GPUs.Items[index];
+
+            //	display mode :
+            displayWidth.Value	=	game.RenderSystem.Width;
 			displayHeight.Value	=	game.RenderSystem.Height;
 
 			//	fullscreen
@@ -83,6 +89,8 @@ namespace Fusion.Development {
 		{
 			// stereo mode :
 			game.RenderSystem.StereoMode	=	(StereoMode)stereoMode.SelectedItem;
+
+            game.RenderSystem.SelectedGpuName = GPUs.SelectedItem.ToString();
 
 			//	displya mode :
 			game.RenderSystem.Width	=	(int)displayWidth.Value;
@@ -184,5 +192,7 @@ namespace Fusion.Development {
 		{
 			runEditor?.Invoke();
 		}
-	}
+
+        private Adapter[] GetGpus() => new Factory1().Adapters;
+    }
 }

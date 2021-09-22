@@ -35,7 +35,8 @@ static const uint InstanceGroupWeapon = 16;
 
 // ---------------- CONSTANT VALUES ---------------- //
 
-static const int BatchSize = 128;
+static const int BatchSizeRigid = 64;
+static const int BatchSizeSkinned = 4;
 
 // ---------------- DATA STRUCTURES ---------------- //
 
@@ -229,7 +230,7 @@ cbuffer __buffer2 : register(b2) {
 	STAGE Stage : packoffset(c0);
 };
 cbuffer __buffer3 : register(b3) {
-	INSTANCE Instance[128] : packoffset(c0);
+	INSTANCE Instance[64] : packoffset(c0);
 };
 cbuffer __buffer4 : register(b4) {
 	SUBSET Subset : packoffset(c0);
@@ -268,6 +269,8 @@ Texture3D<float4>              IrradianceVolumeL3             : register(t21);
 TextureCubeArray<float4>       RadianceCache                  : register(t22);
 Texture2D<float4>              EnvLut                         : register(t23);
 Texture3D<float4>              FogVolume                      : register(t24);
+StructuredBuffer<INSTANCE>     InstanceData                   : register(t25);
+StructuredBuffer<float4x4>     BoneData                       : register(t26);
 SamplerState                   SamplerLinear                  : register(s0);
 SamplerState                   SamplerPoint                   : register(s1);
 SamplerState                   SamplerLightmap                : register(s2);

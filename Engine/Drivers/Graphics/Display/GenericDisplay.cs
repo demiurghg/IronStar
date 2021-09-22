@@ -74,12 +74,15 @@ namespace Fusion.Drivers.Graphics.Display {
 				Flags				=	SwapChainFlags.None,
 			};
 
-			D3D.Device.CreateWithSwapChain( driverType, deviceFlags, new[]{ featureLevel }, swapChainDesc, out d3dDevice, out swapChain );
+            var adapters = new Factory1().Adapters;
+            var selectedAdapter = adapters.FirstOrDefault(x => x.Description.Description == parameters.SelectedGpuName);
+            Adapter adapter = selectedAdapter == null ? adapters[adapters.Length - 1] : selectedAdapter;
+            D3D.Device.CreateWithSwapChain(adapter, deviceFlags, new[] { featureLevel }, swapChainDesc, out d3dDevice, out swapChain);
 
-			//Log.Message("   compute shaders : {0}", d3dDevice.CheckFeatureSupport(Feature.ComputeShaders) );
-			//Log.Message("   shader doubles  : {0}", d3dDevice.CheckFeatureSupport(Feature.ShaderDoubles) );
-			//Log.Message("   threading       : {0}", d3dDevice.CheckFeatureSupport(Feature.Threading) );
-			bool driverConcurrentCreates;
+            //Log.Message("   compute shaders : {0}", d3dDevice.CheckFeatureSupport(Feature.ComputeShaders) );
+            //Log.Message("   shader doubles  : {0}", d3dDevice.CheckFeatureSupport(Feature.ShaderDoubles) );
+            //Log.Message("   threading       : {0}", d3dDevice.CheckFeatureSupport(Feature.Threading) );
+            bool driverConcurrentCreates;
 			bool driverCommandLists;
 			d3dDevice.CheckThreadingSupport( out driverConcurrentCreates, out driverCommandLists );
 			//d3dDevice.GetCounterCapabilities();

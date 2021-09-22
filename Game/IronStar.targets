@@ -6,6 +6,7 @@
         <FModStudioFiles   	Include="$(ProjectDir)..\Engine\SDKs\FMOD\api\studio\lib\*.dll;"/>
         <FModPlugIns		Include="$(ProjectDir)..\Engine\SDKs\FMOD\plugins\fmod\*.dll;"/>
         <EmbreeFiles 		Include="$(ProjectDir)..\Engine\SDKs\Embree\lib\*.dll;"/>
+        <RenderDocDLL		Include="$(ProjectDir)..\Engine\SDKs\renderdoc.dll;"/>
     </ItemGroup>
 
 	<Target Name="AfterBuild">
@@ -15,6 +16,7 @@
 		<Copy SourceFiles="@(FModPlugIns)"  	DestinationFolder="$(OutDir)" SkipUnchangedFiles="false"/>
 		<Copy SourceFiles="@(FbxSdkFiles)" 		DestinationFolder="$(OutDir)" SkipUnchangedFiles="false"/>
 		<Copy SourceFiles="@(EmbreeFiles)" 		DestinationFolder="$(OutDir)" SkipUnchangedFiles="false"/>
+		<Copy SourceFiles="@(RenderDocDLL)"		DestinationFolder="$(OutDir)" SkipUnchangedFiles="false"/>
 		<Exec Command='echo Done.'/>
 
 		<!--Exec Command='"$(SolutionDir)\Source\Bin\SharpCLI.exe" "$(TargetPath)"'/>

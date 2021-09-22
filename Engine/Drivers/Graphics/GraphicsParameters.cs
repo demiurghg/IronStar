@@ -55,7 +55,7 @@ namespace Fusion.Drivers.Graphics {
         /// <summary>
         /// GPU index
         /// </summary>
-        public int DeviceIndex { get; set; }
+        public string SelectedGpuName { get; set; }
 
 
         /// <summary>
@@ -77,7 +77,6 @@ namespace Fusion.Drivers.Graphics {
 			FullScreen		=	false;
 			StereoMode		=	StereoMode.Disabled;
 			MsaaLevel		=	1;
-            DeviceIndex     =   0;
         }
 	}
 }

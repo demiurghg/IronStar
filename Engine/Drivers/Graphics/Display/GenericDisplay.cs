@@ -74,7 +74,9 @@ namespace Fusion.Drivers.Graphics.Display {
 				Flags				=	SwapChainFlags.None,
 			};
 
-            Adapter adapter = new Factory1().Adapters[parameters.DeviceIndex];
+            var adapters = new Factory1().Adapters;
+            var selectedAdapter = adapters.FirstOrDefault(x => x.Description.Description == parameters.SelectedGpuName);
+            Adapter adapter = selectedAdapter == null ? adapters[adapters.Length - 1] : selectedAdapter;
             D3D.Device.CreateWithSwapChain(adapter, deviceFlags, new[] { featureLevel }, swapChainDesc, out d3dDevice, out swapChain);
 
             //Log.Message("   compute shaders : {0}", d3dDevice.CheckFeatureSupport(Feature.ComputeShaders) );

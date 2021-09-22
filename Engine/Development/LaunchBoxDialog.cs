@@ -12,7 +12,7 @@ using Fusion.Engine.Graphics;
 using System.IO;
 using System.Diagnostics;
 using Fusion.Core;
-using System.Management;
+using SharpDX.DXGI;
 
 namespace Fusion.Development {
 
@@ -65,11 +65,9 @@ namespace Fusion.Development {
 
             //List available GPUs
             GPUs.Items.Clear();
-            GPUs.Items.AddRange(GetGpus().ToArray());
-            if (GPUs.Items.Count > 0)
-            {
-                GPUs.SelectedItem = GPUs.Items[game.RenderSystem.DeviceIndex];
-            }
+            GPUs.Items.AddRange(GetGpus().Select(x => x.Description.Description).ToArray());
+            var index = GPUs.Items.IndexOf(game.RenderSystem.SelectedGpuName);
+            GPUs.SelectedItem = GPUs.Items[index];
 
             //	display mode :
             displayWidth.Value	=	game.RenderSystem.Width;
@@ -92,7 +90,7 @@ namespace Fusion.Development {
 			// stereo mode :
 			game.RenderSystem.StereoMode	=	(StereoMode)stereoMode.SelectedItem;
 
-            game.RenderSystem.DeviceIndex = GPUs.SelectedIndex;
+            game.RenderSystem.SelectedGpuName = GPUs.SelectedItem.ToString();
 
 			//	displya mode :
 			game.RenderSystem.Width	=	(int)displayWidth.Value;
@@ -195,18 +193,6 @@ namespace Fusion.Development {
 			runEditor?.Invoke();
 		}
 
-        private IEnumerable<GpuInfo> GetGpus()
-        {
-            var list = new List<GpuInfo>();
-            int index = 0;
-
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_VideoController");
-            foreach (ManagementBaseObject query in searcher.Get())
-            {
-                list.Add(new GpuInfo(query, index++));
-            }
-
-            return list;
-        }
+        private Adapter[] GetGpus() => new Factory1().Adapters;
     }
 }

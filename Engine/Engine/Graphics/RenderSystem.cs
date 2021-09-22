@@ -159,7 +159,7 @@ namespace Fusion.Engine.Graphics {
 			p.InterlacingMode	=	(Fusion.Drivers.Graphics.InterlacingMode)InterlacingMode;
 			p.UseDebugDevice	=	UseDebugDevice;
 			p.MsaaLevel			=	1;
-            p.DeviceIndex       =   DeviceIndex;
+            p.SelectedGpuName   =   SelectedGpuName;
         }
 
 

@@ -130,7 +130,7 @@ namespace Fusion.Engine.Graphics
         /// </summary>
         [Config]
         [AECategory("Video")]
-        public int DeviceIndex { get; set; }
+        public string SelectedGpuName { get; set; }
 
         /// <summary>
         /// Interlacing mode for stereo.

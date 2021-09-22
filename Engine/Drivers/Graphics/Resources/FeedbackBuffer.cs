@@ -21,9 +21,6 @@ namespace Fusion.Drivers.Graphics
 {
 	internal class FeedbackBuffer : ShaderResource 
 	{
-		/// <summary>
-		/// Render target format
-		/// </summary>
 		public ColorFormat	Format { get; private set; }
 
 
@@ -32,9 +29,8 @@ namespace Fusion.Drivers.Graphics
 		D3D.Texture2D			tex2Dstaging1;
 		D3D.Texture2D			tex2Dstaging2;
 		RenderTargetSurface		surface;
+		UnorderedAccessView		uav;
 		
-		readonly VTAddress[]	feedbackData;
-		readonly int[]			feedbackDataRaw;
 		readonly int			linearSize	;
 			
 
@@ -50,8 +46,6 @@ namespace Fusion.Drivers.Graphics
 		{
 			Log.Debug("FeedbackBuffer: w:{0} h:{1}", width, height );
 
-			feedbackData	=	new VTAddress[ width * height ];
-			feedbackDataRaw	=	new int[ width * height ];
 			linearSize		=	width * height;
 
 			Width		=	width;
@@ -65,9 +59,9 @@ namespace Fusion.Drivers.Graphics
 				texDesc.Width				=	width;
 				texDesc.Height				=	height;
 				texDesc.ArraySize			=	1;
-				texDesc.BindFlags			=	BindFlags.RenderTarget | BindFlags.ShaderResource;
+				texDesc.BindFlags			=	BindFlags.RenderTarget | BindFlags.ShaderResource | BindFlags.UnorderedAccess;
 				texDesc.CpuAccessFlags		=	CpuAccessFlags.None;
-				texDesc.Format				=	DXGI.Format.R10G10B10A2_UNorm;
+				texDesc.Format				=	DXGI.Format.R32_UInt;
 				texDesc.MipLevels			=	1;
 				texDesc.OptionFlags			=	ResourceOptionFlags.None;
 				texDesc.SampleDescription	=	new DXGI.SampleDescription(1, 0);
@@ -84,7 +78,7 @@ namespace Fusion.Drivers.Graphics
 				texDescStaging.ArraySize			=	1;
 				texDescStaging.BindFlags			=	BindFlags.None;
 				texDescStaging.CpuAccessFlags		=	CpuAccessFlags.Read;
-				texDescStaging.Format				=	DXGI.Format.R10G10B10A2_UNorm;
+				texDescStaging.Format				=	DXGI.Format.R32_UInt;
 				texDescStaging.MipLevels			=	1;
 				texDescStaging.OptionFlags			=	ResourceOptionFlags.None;
 				texDescStaging.SampleDescription	=	new DXGI.SampleDescription(1, 0);
@@ -101,7 +95,7 @@ namespace Fusion.Drivers.Graphics
 				srvDesc.Texture2D.MipLevels			=	1;
 				srvDesc.Texture2D.MostDetailedMip	=	0;
 				srvDesc.Dimension					=	ShaderResourceViewDimension.Texture2D;
-				srvDesc.Format						=	DXGI.Format.R10G10B10A2_UNorm;
+				srvDesc.Format						=	DXGI.Format.R32_UInt;
 
 			SRV		=	new ShaderResourceView( device.Device, tex2D, srvDesc );
 
@@ -115,15 +109,22 @@ namespace Fusion.Drivers.Graphics
 			var rtvDesc = new RenderTargetViewDescription();
 				rtvDesc.Texture2D.MipSlice	=	0;
 				rtvDesc.Dimension			=	RenderTargetViewDimension.Texture2D;
-				rtvDesc.Format				=	DXGI.Format.R10G10B10A2_UNorm;
+				rtvDesc.Format				=	DXGI.Format.R32_UInt;
 
 			var rtv	=	new RenderTargetView( device.Device, tex2D, rtvDesc );
 
-			surface	=	new RenderTargetSurface( device, rtv, null, tex2D, 0, ColorFormat.Unknown, width, height, 1 );
+			var uavDesc = new UnorderedAccessViewDescription();
+			uavDesc.Dimension	=	UnorderedAccessViewDimension.Texture2D;
+			uavDesc.Format		=	DXGI.Format.R32_UInt;
+			uavDesc.Texture2D.MipSlice = 0;
+
+			uav = new UnorderedAccessView( device.Device, tex2D, uavDesc );
+
+			surface	=	new RenderTargetSurface( device, rtv, uav, tex2D, 0, ColorFormat.Unknown, width, height, 1 );
 
 			lock (device.DeviceContext)
 			{
-				device.Clear( surface, Color4.Zero );
+				device.Clear( surface.UnorderedAccess, new Int4(-1,-1,-1,-1) );
 
 				device.DeviceContext.CopySubresourceRegion( tex2D, 0, null, tex2Dstaging,  0, 0, 0, 0);
 				device.DeviceContext.CopySubresourceRegion( tex2D, 0, null, tex2Dstaging1, 0, 0, 0, 0);
@@ -193,9 +194,9 @@ namespace Fusion.Drivers.Graphics
 				throw new ArgumentException("feedbackData.Length < " + linearSize.ToString() );
 			}
 
-			GetData( feedbackDataRaw );
+			GetData( feedbackData );
 
-			for ( int i=0; i<linearSize; i++) 
+			/*for ( int i=0; i<linearSize; i++) 
 			{
 				var vaRaw		=	MathUtil.UnpackRGB10A2( feedbackDataRaw[i] );
 				var pageX		=	(short)vaRaw.X; 
@@ -207,7 +208,7 @@ namespace Fusion.Drivers.Graphics
 				}
 
 				feedbackData[i]	=	new VTAddress( pageX, pageY, mipLevel );
-			}
+			}*/
 		}
 
 

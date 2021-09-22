@@ -128,7 +128,7 @@ namespace Fusion.Engine.Graphics
 		{
 			if (vt.LockTiles) return new List<VTAddress>();
 
-			var feedback = rawAddressData.Distinct().Where( p => p.Dummy!=0 ).ToArray();
+			var feedback = rawAddressData.Distinct().Where( p => !p.IsBad ).ToArray();
 
 			List<VTAddress> feedbackTree = new List<VTAddress>();
 

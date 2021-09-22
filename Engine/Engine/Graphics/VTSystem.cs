@@ -207,7 +207,7 @@ namespace Fusion.Engine.Graphics
 
 			var buffers = Enumerable
 						.Range(0, FeedBackBufferPoolSize )
-						.Select( i => new VTAddress[ HdrFrame.FeedbackBufferWidth * HdrFrame.FeedbackBufferHeight ] )
+						.Select( i => CreateFeedbackBuffer() )
 						.ToArray();
 
 			feedbackBufferPool	=	new FixedObjectPool<VTAddress[]>( buffers );
@@ -215,6 +215,16 @@ namespace Fusion.Engine.Graphics
 			MaxPPF	=	16;
 		}
 
+
+		VTAddress[] CreateFeedbackBuffer()
+		{
+			var size   = HdrFrame.FeedbackBufferWidth * HdrFrame.FeedbackBufferHeight; 
+			var buffer = new VTAddress[size];
+
+			for (int i=0; i<size; i++) buffer[i] = VTAddress.CreateBadAddress(-1);
+
+			return buffer;
+		}
 
 		Stopwatch stopwatch = new Stopwatch();
 

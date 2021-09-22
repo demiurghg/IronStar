@@ -106,7 +106,7 @@ namespace Fusion.Engine.Graphics {
 			DepthBufferGlass	=	new DepthStencil2D( game.GraphicsDevice, DepthFormat.D24S8,		width,		height,		1 );
 			Normals				=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, false );
 			AOBuffer			=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, true  );
-			FeedbackBuffer		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgb10A2,	width,		height,		false, false );
+			FeedbackBuffer		=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.R32,		width,		height,		false, true  );
 
 			DistortionBuffer	=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba8,		width,		height,		false, false );
 			SoftParticlesFront	=	new RenderTarget2D( game.GraphicsDevice, ColorFormat.Rgba16F,	width,		height,		false, false );
@@ -149,16 +149,14 @@ namespace Fusion.Engine.Graphics {
 			device.Clear( DepthBuffer.Surface,		1, 0 );
 			device.Clear( HdrTarget.Surface,		Color4.Black );
 
-			device.Clear( FeedbackBuffer.Surface,	Color4.Black );
-
 			device.Clear( DistortionBuffer.Surface, Color4.Zero );
 			device.Clear( HdrBufferGlass.Surface,	Color4.Zero );
 
 			float half	=	0.5f;
 			device.Clear( DistortionGlass.Surface,	new Color4(half, half, 0, 0) );
 
-			device.Clear( FeedbackBufferRB.Surface,	Color4.Zero );
-			device.Clear( FeedbackBuffer.Surface,	Color4.Zero );
+			device.Clear( FeedbackBufferRB.Surface,	Color4.White );
+			device.Clear( FeedbackBuffer.Surface.UnorderedAccess, new Int4(-1,-1,-1,-1) );
 
 			device.Clear( SoftParticlesBack.Surface,  Color4.Zero );
 			device.Clear( SoftParticlesFront.Surface, Color4.Zero );

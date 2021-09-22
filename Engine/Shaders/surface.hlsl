@@ -46,7 +46,7 @@ struct PSInput {
 
 struct GBuffer {
 	float4	hdr		 	: SV_Target0;
-	float4	feedback	: SV_Target1;
+	uint	feedback	: SV_Target1;
 #ifdef TRANSPARENT
 	float4	distort		: SV_Target2;
 #endif	
@@ -241,7 +241,7 @@ uint4 Decode(uint value)
 }
 
 
-SURFACE SampleVirtualTexture( PSInput input, out float4 feedback )
+SURFACE SampleVirtualTexture( PSInput input, out uint feedback )
 {
 	SURFACE surf;
 	surf.alpha			=	0.5f;
@@ -270,18 +270,18 @@ SURFACE SampleVirtualTexture( PSInput input, out float4 feedback )
 	float mipt		=	MipIndex.SampleGrad( MipSampler, mipuv, ddx(mipuv), ddy(mipuv) ).r;
 	float mipf		=	clamp(mipt, 0, Subset.MaxMip); // MipLevel( scaledCoords );
 	float mip		=	floor( mipf );
+	uint  umip		=	(uint)mip;
 	
 	float gradScale	=	Stage.VTGradientScaler * exp2(-mip);
 
 	float2 uvddx	=	ddx( scaledCoords.xy ) * gradScale;
 	float2 uvddy	=	ddy( scaledCoords.xy ) * gradScale;
 	
-	float scale		=	exp2(mip);
-	float pageX		=	floor( saturate(input.TexCoord.x) * VTVirtualPageCount / scale );
-	float pageY		=	floor( saturate(input.TexCoord.y) * VTVirtualPageCount / scale );
-	float dummy		=	1;
+	uint scale		=	(uint)exp2(mip);
+	uint pageX		=	(uint)floor( saturate(input.TexCoord.x) * VTVirtualPageCount / scale );
+	uint pageY		=	(uint)floor( saturate(input.TexCoord.y) * VTVirtualPageCount / scale );
 	
-	feedback		=	 float4( pageX / 1024.0f, pageY / 1024.0f, mip / 1024.0f, dummy / 4.0f );
+	feedback		=	(umip << 24) | (pageY << 12) | (pageX);
 
 	//---------------------------------
 	//	Virtual texturing stuff :
@@ -362,7 +362,7 @@ GBuffer PSMain( PSInput input )
 {
 	GBuffer output;
 
-	float4	feedback;
+	uint	feedback;
 	SURFACE surface		=	SampleVirtualTexture( input, feedback );
 
 	float3 	triNormal	=	cross( ddx(input.WorldPos.xyz), -ddy(input.WorldPos.xyz) );
@@ -399,7 +399,7 @@ GBuffer PSMain( PSInput input )
 #ifdef RADIANCE
 float4 PSMain( PSInput input ) : SV_TARGET0
 {
-	float4	feedback;
+	uint	feedback;
 	SURFACE surface		=	SampleVirtualTexture( input, feedback );
 
 	float3 	triNormal	=	cross( ddx(input.WorldPos.xyz), -ddy(input.WorldPos.xyz) );
@@ -455,7 +455,7 @@ struct LPGBuffer {
 
 LPGBuffer PSMain( PSInput input )
 {	
-	float4	feedback;
+	uint	feedback;
 	SURFACE surface		=	SampleVirtualTexture( input, feedback );
 
 	LPGBuffer	output;

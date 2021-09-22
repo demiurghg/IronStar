@@ -11,43 +11,45 @@ namespace Fusion.Engine.Graphics {
 	/// Address consist of page X index, page Y index & mip level.
 	/// Non-zero dummy used for GPU readback. Zero dummy is ignored.
 	/// </summary>
-	public struct VTAddress : IEquatable<VTAddress> {
-		
-		public Int16 PageX;
-		public Int16 PageY;
-		public Int16 MipLevel;
-		public Int16 Dummy;
+	public struct VTAddress : IEquatable<VTAddress> 
+	{
+		uint rawAddr;
+
+		public int PageX	{ get { return (int)((rawAddr >>  0) & 0xFFF ); } }
+		public int PageY	{ get { return (int)((rawAddr >> 12) & 0xFFF ); } }
+		public int MipLevel	{ get { return (int)((rawAddr >> 24) & 0x7   ); } }
+		public bool IsBad	{ get { return (rawAddr & 0xF0000000)!=0; }	}
 
 
-		public static VTAddress CreateBadAddress (int uniqueNumber) {
-			var a = new VTAddress();
-			a.PageX		= (short)( -( uniqueNumber ) );
-			a.PageY		= (short)( -( uniqueNumber >> 16 ) );
-			a.MipLevel	= -1;
-			a.Dummy		= -1;
-			return a;
+		public static VTAddress CreateBadAddress (int uniqueNumber) 
+		{
+			return new VTAddress( unchecked(0xF0000000 | (uint)uniqueNumber));
+		}
+
+
+		private VTAddress( uint raw )
+		{
+			rawAddr	=	raw;
 		}
 
 
 		public VTAddress ( int pageX, int pageY, int mipLevel )
 		{
-			if (mipLevel<0 | mipLevel>=VTConfig.MipCount) {
-				throw new ArgumentOutOfRangeException("mipLevel");
+			if (pageX>=VTConfig.TextureSize) {
+				throw new ArgumentException("pageX");
+			}
+			if (pageY>=VTConfig.TextureSize) {
+				throw new ArgumentException("pageY");
+			}
+			if (mipLevel>VTConfig.MaxMipLevel) {
+				throw new ArgumentException("mipLevel");
 			}
 
-			int maxPageCount = VTConfig.VirtualPageCount >> mipLevel;
+			/*var pageX		= (uint)(pageX & (VTConfig.TextureSize-1));
+			var pageY		= (uint)(pageY & (VTConfig.TextureSize-1));
+			var mipLevel	= (uint)(mipLevel & 0x7);*/
 
-			if (pageX<0 | pageX>=maxPageCount) {
-				throw new ArgumentOutOfRangeException("pageX");
-			}
-			if (pageY<0 | pageY>=maxPageCount) {
-				throw new ArgumentOutOfRangeException("pageY");
-			}
-
-			PageX		=	(short)pageX;
-			PageY		=	(short)pageY;
-			MipLevel	=	(short)mipLevel;
-			Dummy		=	1;
+			rawAddr			= unchecked(((uint)mipLevel << 24) | ((uint)pageY << 12) | (uint)pageX);
 		}
 
 
@@ -87,19 +89,17 @@ namespace Fusion.Engine.Graphics {
 				throw new ArgumentException("mip >= max mip");
 			}
 
-			return new VTAddress() { 
-				PageX		= (short)( feedback.PageX/2 ),
-				PageY		= (short)( feedback.PageY/2 ),
-				MipLevel	= (short)( feedback.MipLevel + 1 ),
-				Dummy		= (short)( feedback.Dummy   )
-			};
+			var pageX		= feedback.PageX/2;
+			var pageY		= feedback.PageY/2;
+			var mipLevel	= feedback.MipLevel + 1;
+
+			return new VTAddress( pageX, pageY, mipLevel );
 		}
 
 
-		public bool IsLeastDetailed {
-			get {
-				return (MipLevel == VTConfig.MaxMipLevel);
-			}
+		public bool IsLeastDetailed 
+		{
+			get { return (MipLevel == VTConfig.MaxMipLevel); }
 		}
 
 
@@ -116,76 +116,37 @@ namespace Fusion.Engine.Graphics {
 		}
 
 
-        private bool Equals(ref VTAddress other)
-        {
-            return	( other.PageX == PageX	) &&
-					( other.PageY == PageY	) &&
-					( other.MipLevel	  == MipLevel	);
-        }
+		private bool Equals(ref VTAddress other)
+		{
+			return	rawAddr==other.rawAddr;
+		}
 
 
-        public bool Equals(VTAddress other)
-        {
-            return Equals(ref other);
-        }
+		public bool Equals(VTAddress other)
+		{
+			return Equals(ref other);
+		}
 
 
-        public override bool Equals(object value)
-        {
-            if (!(value is VTAddress))
-                return false;
+		public override bool Equals(object value)
+		{
+			if (!(value is VTAddress))
+				return false;
 
-            var strongValue = (VTAddress)value;
-            return Equals(ref strongValue);
-        }
+			var strongValue = (VTAddress)value;
+			return Equals(ref strongValue);
+		}
 
 
 		public override int GetHashCode ()
 		{
-            unchecked
-            {
-                var hashCode = PageX.GetHashCode();
-                hashCode = (hashCode * 397) ^ PageY.GetHashCode();
-                hashCode = (hashCode * 397) ^ MipLevel.GetHashCode();
-                return hashCode;
-            }
+			return unchecked((int)rawAddr);
 		}
 
 
+		public UInt32 ComputeUIntAddress () { return unchecked((uint)rawAddr); }
 
-		public UInt32 ComputeUIntAddress ()
-		{
-			return (uint)ComputeIntAddress( PageX, PageY, MipLevel );
-		}
-
-
-		public Int32 ComputeIntAddress ()
-		{
-			return ComputeIntAddress( PageX, PageY, MipLevel );
-		}
-
-
-
-		public static Int32 ComputeIntAddress ( int pageX, int pageY, int mipLevel )
-		{
-			if (pageX>=VTConfig.TextureSize) {
-				throw new ArgumentException("pageX");
-			}
-			if (pageY>=VTConfig.TextureSize) {
-				throw new ArgumentException("pageY");
-			}
-			if (mipLevel>VTConfig.MaxMipLevel) {
-				throw new ArgumentException("mipLevel");
-			}
-
-			pageX		= pageX & (VTConfig.TextureSize-1);
-			pageY		= pageY & (VTConfig.TextureSize-1);
-			mipLevel	= mipLevel & 0x7;
-
-			return (Int32)((mipLevel << 24) | (pageY << 12) | pageX);
-		}
-
-
+		public Int32 ComputeIntAddress () {	return unchecked((int)rawAddr);	}
 
 		public string GetFileNameWithoutExtension (string postfix)
 		{

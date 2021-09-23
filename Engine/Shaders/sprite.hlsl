@@ -62,19 +62,25 @@ float4 PSMain( PS_IN input ) : SV_Target
 	float2 	vpos	=	input.pos.xy;
 	float4	tex		=	Texture.Sample( Sampler, input.tc );	
 	
-	FRAME  frame 	= 	Frames[ input.id ];
-	float  clipVal 	= 	1;
+	float4  frameColor	=	1;
+	float	frameClip	=	1;
 	
-	if ( vpos.x < frame.left || vpos.x > frame.right ) {
-		clipVal = -1;
+	if (input.id>=0)
+	{
+		FRAME  frame 	= 	Frames[ input.id ];
+		frameColor		=	frame.color;
+		
+		if ( vpos.x < frame.left || vpos.x > frame.right ) {
+			frameClip = -1;
+		}
+		
+		if ( vpos.y < frame.top || vpos.y > frame.bottom ) {
+			frameClip = -1;
+		}
 	}
 	
-	if ( vpos.y < frame.top || vpos.y > frame.bottom ) {
-		clipVal = -1;
-	}
+	clip( frameClip );
 	
-	clip( clipVal );//*/
-	
-	return input.col * tex * frame.color;
+	return input.col * tex * frameColor;
 }
 

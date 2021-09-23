@@ -348,7 +348,7 @@ namespace Fusion.Engine.Graphics
 		/// <param name="v"></param>
 		/// <param name="tw"></param>
 		/// <param name="th"></param>
-		public void DrawUV ( Texture srv, float x, float y, float w, float h, Color color, float u, float v, float tw, float th, int clipRectIndex=0 )
+		public void DrawUV ( Texture srv, float x, float y, float w, float h, Color color, float u, float v, float tw, float th, int clipRectIndex=-1 )
 		{
 			var c = color;
 			PushQuad( srv,
@@ -370,7 +370,7 @@ namespace Fusion.Engine.Graphics
 		/// <param name="h"></param>
 		/// <param name="color"></param>
 		/// <param name="clipRectIndex"></param>
-		public void Draw ( Texture srv, float x, float y, float w, float h, Color color, int clipRectIndex=0 )
+		public void Draw ( Texture srv, float x, float y, float w, float h, Color color, int clipRectIndex=-1 )
 		{
 			var c = color;
 			PushQuad( srv,
@@ -392,7 +392,7 @@ namespace Fusion.Engine.Graphics
 		/// <param name="height"></param>
 		/// <param name="angle"></param>
 		/// <param name="color"></param>
-        public void DrawSprite(Texture srv, float x, float y, float width, float height, float angle, Color color, int clipRectIndex=0 )
+        public void DrawSprite(Texture srv, float x, float y, float width, float height, float angle, Color color, int clipRectIndex=-1 )
 		{
 			float c		=	(float)Math.Cos( angle );
 			float s		=	(float)Math.Sin( angle );
@@ -425,7 +425,7 @@ namespace Fusion.Engine.Graphics
 		/// <param name="size"></param>
 		/// <param name="angle"></param>
 		/// <param name="color"></param>
-        public void DrawSprite( Texture srv, float x, float y, float size, float angle, Color color, int clipRectIndex=0 )
+        public void DrawSprite( Texture srv, float x, float y, float size, float angle, Color color, int clipRectIndex=-1 )
         {
 			DrawSprite( srv, x, y, size, size, angle, color, clipRectIndex );
         }
@@ -440,7 +440,7 @@ namespace Fusion.Engine.Graphics
 		/// <param name="p1"></param>
 		/// <param name="color"></param>
 		/// <param name="width"></param>
-		public void DrawBeam ( Texture srv, Vector2 p0, Vector2 p1, Color color0, Color color1, float width, float scale=1, float offset=0, int clipRectIndex=0 )
+		public void DrawBeam ( Texture srv, Vector2 p0, Vector2 p1, Color color0, Color color1, float width, float scale=1, float offset=0, int clipRectIndex=-1 )
 		{
 			if (p1 == p0) {
 				return;
@@ -479,7 +479,7 @@ namespace Fusion.Engine.Graphics
 		}
 		
 
-		public void DrawGradient ( Rectangle dstRect, Color topLeft, Color topRight, Color bottomLeft, Color bottomRight, int clipRectIndex=0 )
+		public void DrawGradient ( Rectangle dstRect, Color topLeft, Color topRight, Color bottomLeft, Color bottomRight, int clipRectIndex=-1 )
 		{
 			float x = dstRect.X;
 			float y = dstRect.Y;
@@ -502,7 +502,7 @@ namespace Fusion.Engine.Graphics
 		/// <param name="srcRect"></param>
 		/// <param name="color"></param>
 		/// <param name="clipRectIndex"></param>
-		public void Draw ( Texture texture, Rectangle dstRect, Rectangle srcRect, Color color, int clipRectIndex=0 )
+		public void Draw ( Texture texture, Rectangle dstRect, Rectangle srcRect, Color color, int clipRectIndex=-1 )
 		{
 			texture	=	texture ?? defaultTexture;
 
@@ -524,7 +524,7 @@ namespace Fusion.Engine.Graphics
 		/// <param name="offsetY"></param>
 		/// <param name="color"></param>
 		/// <param name="clipRectIndex"></param>
-		public void Draw ( Texture texture, Rectangle dstRect, Rectangle srcRect, int offsetX, int offsetY, Color color, int clipRectIndex=0 )
+		public void Draw ( Texture texture, Rectangle dstRect, Rectangle srcRect, int offsetX, int offsetY, Color color, int clipRectIndex=-1 )
 		{
 			texture	=	texture ?? defaultTexture;
 
@@ -548,22 +548,30 @@ namespace Fusion.Engine.Graphics
 		/// <param name="color"></param>
 		/// <param name="scale"></param>
 		/// <param name="clipRectIndex"></param>
-		public void DrawDebugString( float x, float y, string text, Color color, int clipRectIndex=0 )
+		public void DrawDebugString( float x, float y, string text, Color color, int clipRectIndex=-1 )
 		{
 			int len = text.Length;
 			var duv = 1.0f / 16.0f;
-			var scale = 1;
+			var cx = x;
+			var cy = y;
 
-			for (int i=0; i<len; i++) {
+			for (int i=0; i<len; i++) 
+			{
 				int ch = text[i];
 
 				var u  = (ch%16)/16.0f;
 				var v  = (ch/16)/16.0f;
 
-				if (ch!=' ') {
-					DrawUV(fontTexture, x, y, 8 * scale, 8 * scale, color, u, v, duv, duv, clipRectIndex);
+				if (ch=='\r')
+				{
+					cx = x;
+					cy += 8;
 				}
-				x += 8 * scale;
+
+				if (ch!=' ') {
+					DrawUV(fontTexture, cx, cy, 8, 8, color, u, v, duv, duv, clipRectIndex);
+				}
+				cx += 8;
 			}
 		}
 
@@ -607,7 +615,7 @@ namespace Fusion.Engine.Graphics
 		/// <param name="srcRect"></param>
 		/// <param name="color"></param>
 		/// <param name="clipRectIndex"></param>
-		public void Draw ( Texture texture, RectangleF dstRect, RectangleF srcRect, Color color, int clipRectIndex=0 )
+		public void Draw ( Texture texture, RectangleF dstRect, RectangleF srcRect, Color color, int clipRectIndex=-1 )
 		{
 			texture	=	texture ?? defaultTexture;
 
@@ -626,7 +634,7 @@ namespace Fusion.Engine.Graphics
 		/// <param name="dstRect"></param>
 		/// <param name="color"></param>
 		/// <param name="clipRectIndex"></param>
-		public void Draw ( Texture texture, Rectangle dstRect, Color color, int clipRectIndex=0 )
+		public void Draw ( Texture texture, Rectangle dstRect, Color color, int clipRectIndex=-1 )
 		{
 			texture	=	texture ?? defaultTexture;
 
@@ -645,7 +653,7 @@ namespace Fusion.Engine.Graphics
 		/// <param name="dstRect"></param>
 		/// <param name="color"></param>
 		/// <param name="clipRectIndex"></param>
-		public void Draw ( Texture texture, RectangleF dstRect, Color color, int clipRectIndex=0 )
+		public void Draw ( Texture texture, RectangleF dstRect, Color color, int clipRectIndex=-1 )
 		{
 			texture	=	texture ?? defaultTexture;
 

@@ -29,8 +29,8 @@ namespace Fusion.Engine.Tools {
 		[AECategory("Appearance")] [Config] public Color WarningColor	{ get; set; }
 		[AECategory("Appearance")] [Config] public Color CmdLineColor	{ get; set; }
 		[AECategory("Appearance")] [Config] public Color VersionColor	{ get; set; }
-		[AECategory("Appearance")] [Config] public Color VerboseColor	{ get; set; }
-		[AECategory("Appearance")] [Config] public Color DebugColor	{ get; set; }
+		[AECategory("Appearance")] [Config] public Color TraceColor		{ get; set; }
+		[AECategory("Appearance")] [Config] public Color DebugColor		{ get; set; }
 
 		[AECategory("Appearance")] [Config] public Color BackColor		{ get; set; }
 		[AECategory("Appearance")] [Config] public Color HelpColor		{ get; set; }
@@ -58,8 +58,8 @@ namespace Fusion.Engine.Tools {
 			WarningColor	=	Color.Yellow;
 			CmdLineColor	=	Color.Orange;
 			VersionColor	=	new Color(255,255,255, 64);
-			VerboseColor	=	new Color(255,255,255,128);
-			DebugColor		=	new Color(255,255,255, 64);
+			TraceColor		=	new Color(255,255,255, 64);
+			DebugColor		=	new Color(255,255,255,128);
 
 			BackColor		=	new Color(0,0,0,224);
 			HelpColor		=	Color.Gray;

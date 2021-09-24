@@ -471,7 +471,7 @@ namespace Fusion.Build
 				exitCode = proc.ExitCode;
 			}
 
-			Log.Verbose( "{0}", stdout ); //*/
+			Log.Trace( "{0}", stdout ); //*/
 				
 			if ( exitCode != 0 ) {
 				//File.WriteAllText( @"C:\GITHUB\stderr.txt", commandLine);

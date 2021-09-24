@@ -60,7 +60,7 @@ namespace Fusion.Drivers.Graphics
 
 			Stride		=	Marshal.SizeOf( vertexType );
 
-			Log.Debug("VertexBuffer: count:{0} stride:{1} options:{2}", capacity, Stride, options);
+			Log.Trace("VertexBuffer: count:{0} stride:{1} options:{2}", capacity, Stride, options);
 
 			BufferDescription	desc = new BufferDescription();
 

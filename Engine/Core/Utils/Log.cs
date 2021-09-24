@@ -10,241 +10,102 @@ using CC = System.ConsoleColor;
 using Fusion.Core.Mathematics;
 using System.Threading;
 using System.Collections.Concurrent;
+using NLog;
+using NLog.Targets;
+using NLog.Conditions;
+using NLog.Targets.Wrappers;
+using NLog.LayoutRenderers;
+
+namespace Fusion 
+{
+	public static class Log 
+	{
+		private static readonly Logger logger;
+		private static readonly ConcurrentMemoryTarget memoryTarget;
+		public static event EventHandler MessageLogged;
 
 
-namespace Fusion {
-	public static class Log {
-
-		/// <summary>
-		/// Defines Log verbosity level.
-		///	Value means lowest level, that will be printed.
-		/// </summary>
-		public static LogMessageType VerbosityLevel { get; set; }
-
-		static object lockObj = new object();
-		static List<LogListener> listeners = new List<LogListener>();
-
-		static readonly bool debugger = System.Diagnostics.Debugger.IsAttached;
-
-
-		///// <summary>
-		///// Indicates that debug messages are allowed.
-		///// </summary>
-		//public static bool IsDebugMessageEnabled { get { return VerbosityLevel == LogMessageType.Debug; } }
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="type"></param>
-		/// <param name="message"></param>
-		static void AddMessage ( LogMessageType type, string text )
+		static Log()
 		{
-			if (type>=VerbosityLevel) {
-				lock (lockObj) {
-					var threadId	=	Thread.CurrentThread.ManagedThreadId;
-					var message		=	new LogMessage( threadId, type, text );
-					
-					foreach (var listener in listeners) {
-						listener.Log( message );
-					}
+			logger				=	LogManager.GetCurrentClassLogger();
+			var config			=	new NLog.Config.LoggingConfiguration();
 
-					if (debugger) {
-						System.Diagnostics.Debug.WriteLine("[{0}] {1}", message.MessageType, message.MessageText );
-					}
-				}
-			}
+			LayoutRenderer.Register("trace-prefix", (logEvent) => logEvent.Level==LogLevel.Trace ? " - " : "" );
+			LayoutRenderer.Register("debug-prefix", (logEvent) => logEvent.Level==LogLevel.Debug ? "..." : "" );
+
+
+			memoryTarget		=	new ConcurrentMemoryTarget();
+			memoryTarget.MaxLogsCount	=	1024;
+			memoryTarget.MessageLogged	+=	(s,e) => MessageLogged?.Invoke(s,e);
+			memoryTarget.Layout			=	"${debug-prefix}${trace-prefix}${message}";
+
+			var logconsole		=	new NLog.Targets.ColoredConsoleTarget();
+
+			logconsole.Layout	=	"${debug-prefix}${trace-prefix}${message}";
+			logconsole.UseDefaultRowHighlightingRules = false;
+
+			var condTrace		=	ConditionParser.ParseExpression("level == LogLevel.Trace");
+			var condDebug		=	ConditionParser.ParseExpression("level == LogLevel.Debug");
+			var condInfo		=	ConditionParser.ParseExpression("level == LogLevel.Info");
+			var condWarning		=	ConditionParser.ParseExpression("level == LogLevel.Warning");
+			var condError		=	ConditionParser.ParseExpression("level == LogLevel.Error");
+			var condFatal		=	ConditionParser.ParseExpression("level == LogLevel.Fatal");
+		
+			logconsole.RowHighlightingRules.Add( new ConsoleRowHighlightingRule( condTrace	, ConsoleOutputColor.DarkGray,	ConsoleOutputColor.NoChange	) );
+			logconsole.RowHighlightingRules.Add( new ConsoleRowHighlightingRule( condDebug	, ConsoleOutputColor.Gray,		ConsoleOutputColor.NoChange	) );
+			logconsole.RowHighlightingRules.Add( new ConsoleRowHighlightingRule( condInfo	, ConsoleOutputColor.White,		ConsoleOutputColor.NoChange	) );
+			logconsole.RowHighlightingRules.Add( new ConsoleRowHighlightingRule( condWarning, ConsoleOutputColor.Yellow,	ConsoleOutputColor.NoChange	) );
+			logconsole.RowHighlightingRules.Add( new ConsoleRowHighlightingRule( condError	, ConsoleOutputColor.Red,		ConsoleOutputColor.NoChange	) );
+			logconsole.RowHighlightingRules.Add( new ConsoleRowHighlightingRule( condFatal	, ConsoleOutputColor.White,		ConsoleOutputColor.DarkRed	) );
+
+			logconsole.WordHighlightingRules.Add(
+					new ConsoleWordHighlightingRule("Loading", 
+						ConsoleOutputColor.NoChange, 
+						ConsoleOutputColor.DarkBlue));
+			logconsole.WordHighlightingRules.Add(
+					new ConsoleWordHighlightingRule("Initialize", 
+						ConsoleOutputColor.NoChange, 
+						ConsoleOutputColor.DarkBlue));	 
+
+			// Rules for mapping loggers to targets
+			var asyncConsole	=	new AsyncTargetWrapper(logconsole);
+			asyncConsole.BatchSize	=	64;
+
+			config.AddRule(LogLevel.Trace, LogLevel.Fatal, asyncConsole);
+			config.AddRule(LogLevel.Trace, LogLevel.Fatal, memoryTarget);
+
+			//config.
+			// Apply config
+			LogManager.Configuration = config;
 		}
 
 
-
-		/// <summary>
-		/// Adds Log listener.
-		/// </summary>
-		/// <param name="listener"></param>
-		public static void AddListener ( LogListener listener )
-		{
-			lock (lockObj) {
-				listeners.Add( listener );
-			}
-		}
+		public static IEnumerable<Tuple<LogLevel,string>> MemoryLog { get { return memoryTarget.Logs; } }
 
 
+		public static void Trace ( string message )							{	logger.Trace( message );		}
+		public static void Trace ( string format, params object[] args )	{	logger.Trace( format, args );	}
+		public static void Trace ( Exception exception )					{	logger.Trace( exception );		}
 
-		/// <summary>
-		/// Removes Log listener.
-		/// </summary>
-		/// <param name="listener"></param>
-		public static void RemoveListener ( LogListener listener )
-		{
-			lock (lockObj) {
-				listeners.Remove( listener );
-				listener.Flush();
-			}
-		}
+		public static void Debug ( string message )							{	logger.Debug( message );		}
+		public static void Debug ( string format, params object[] args )	{	logger.Debug( format, args );	}
+		public static void Debug ( Exception exception )					{	logger.Debug( exception );		}
 
+		public static void Message ( string message )						{	logger.Info( message );			}
+		public static void Message ( string format, params object[] args )	{	logger.Info( format, args );	}
+		public static void Message ( Exception exception )					{	logger.Info( exception );		}
 
+		public static void Warning ( string message )						{	logger.Warn( message );			}
+		public static void Warning ( string format, params object[] args )	{	logger.Warn( format, args);		}
+		public static void Warning ( Exception exception )					{	logger.Warn( exception );		}
+		
+		public static void Error ( string message )							{	logger.Error( message );		}
+		public static void Error ( string format, params object[] args )	{	logger.Error( format, args );	}
+		public static void Error ( Exception exception )					{	logger.Error( exception );		}
 
-		/// <summary>
-		/// Logs information message
-		/// </summary>
-		/// <param name="message"></param>
-		public static void Message ( string message )
-		{
-			AddMessage( LogMessageType.Information, message );
-		}
-
-
-
-		/// <summary>
-		/// Logs information message
-		/// </summary>
-		/// <param name="format"></param>
-		/// <param name="args"></param>
-		public static void Message ( string format, params object[] args )
-		{
-			AddMessage( LogMessageType.Information, string.Format(format, args) );
-		}
-
-
-
-		/// <summary>
-		/// Logs verbose message
-		/// </summary>
-		/// <param name="message"></param>
-		public static void Verbose ( string message )
-		{
-			AddMessage( LogMessageType.Verbose, message );
-		}
-
-
-
-		/// <summary>
-		/// Logs verbose message.
-		/// </summary>
-		/// <param name="format"></param>
-		/// <param name="args"></param>
-		public static void Verbose ( string format, params object[] args )
-		{
-			AddMessage( LogMessageType.Verbose, string.Format(format, args) );
-		}
-
-
-
-		/// <summary>
-		/// Logs warning message.
-		/// </summary>
-		/// <param name="message"></param>
-		public static void Warning ( string message )
-		{
-			AddMessage( LogMessageType.Warning, message );
-		}
-
-
-
-		/// <summary>
-		/// Logs warning message.
-		/// </summary>
-		/// <param name="format"></param>
-		/// <param name="args"></param>
-		public static void Warning ( string format, params object[] args )
-		{
-			AddMessage( LogMessageType.Warning, string.Format(format, args) );
-		}
-
-
-
-		/// <summary>
-		/// Logs error message.
-		/// </summary>
-		/// <param name="message"></param>
-		public static void Error ( string message )
-		{
-			AddMessage( LogMessageType.Error, message );
-		}
-
-
-
-		/// <summary>
-		/// Logs error message.
-		/// </summary>
-		/// <param name="format"></param>
-		/// <param name="args"></param>
-		public static void Error ( string format, params object[] args )
-		{
-			AddMessage( LogMessageType.Error, string.Format(format, args) );
-		}
-
-
-
-		/// <summary>
-		/// Logs fatal error message.
-		/// </summary>
-		/// <param name="message"></param>
-		public static void Fatal ( string message )
-		{
-			AddMessage( LogMessageType.Fatal, message );
-		}
-
-
-
-		/// <summary>
-		/// Logs fatal error message.
-		/// </summary>
-		/// <param name="format"></param>
-		/// <param name="args"></param>
-		public static void Fatal ( string format, params object[] args )
-		{
-			AddMessage( LogMessageType.Fatal, string.Format(format, args) );
-		}
-
-
-
-		/// <summary>
-		/// Logs debug message.
-		/// </summary>
-		/// <param name="message"></param>
-		public static void Debug ( string message )
-		{	
-			if (VerbosityLevel>LogMessageType.Debug) {
-				return;
-			}
-			AddMessage( LogMessageType.Debug, message );
-		}
-
-
-
-		/// <summary>
-		/// Logs debug message.
-		/// </summary>
-		/// <param name="format"></param>
-		/// <param name="args"></param>
-		public static void Debug ( string format, params object[] args )
-		{	
-			if (VerbosityLevel>LogMessageType.Debug) {
-				return;
-			}
-			AddMessage( LogMessageType.Debug, string.Format(format, args) );
-		}
-
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="e"></param>
-		/// <param name="format"></param>
-		/// <param name="args"></param>
-		public static void PrintException ( Exception e, string format, params object[] args )
-		{
-			Log.Error( format, args );
-
-			var lines = e.ToString().Split('\n');
-
-			foreach (var line in lines) {
-				Log.Error(line);
-			}
-		}
+		public static void Fatal ( string message )							{	logger.Fatal( message );		}
+		public static void Fatal ( string format, params object[] args )	{	logger.Fatal( format, args );	}
+		public static void Fatal ( Exception exception )					{	logger.Fatal( exception );		}
 
 
 		/// <summary>
@@ -253,8 +114,8 @@ namespace Fusion {
 		/// <param name="array"></param>
 		public static void Dump ( byte[] array )
 		{
-			Log.Verbose( "---------------------------------------------------------------------");
-			Log.Verbose( string.Format("Dump: {0} bytes ({0:X8})", array.Length) );
+			Log.Trace( "---------------------------------------------------------------------");
+			Log.Trace( string.Format("Dump: {0} bytes ({0:X8})", array.Length) );
 
 			for (int i=0; i<MathUtil.IntDivRoundUp( array.Length, 16 ); i++) {
 
@@ -282,10 +143,10 @@ namespace Fusion {
 					}
 				}
 
-				Log.Verbose( string.Format("{0,-51}| {1}", hex, txt) );
+				Log.Trace( string.Format("{0,-51}| {1}", hex, txt) );
 			}
 
-			Log.Verbose( "---------------------------------------------------------------------");
+			Log.Trace( "---------------------------------------------------------------------");
 		}
 	}
 }

@@ -17,15 +17,6 @@ namespace IronStar
 		[STAThread]
 		static int Main ( string[] args )
 		{
-			// 	colored console output :
-			Log.AddListener( new ColoredLogListener() );
-
-			//	output for in-game console :
-			Log.AddListener( new LogRecorder() );
-
-			//	set verbosity :
-			Log.VerbosityLevel = LogMessageType.Verbose;
-
 			//
 			//	Build content on startup.
 			//	Remove this line in release code.

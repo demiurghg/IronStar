@@ -228,7 +228,7 @@ namespace Fusion.Engine.Media
 					break;
 				}
 				var sleepTime = i * sleepTimeFactor;
-				Log.Verbose("State != MediaState.Playing ({0}) sleeping for {1} ms", i + 1, sleepTime);
+				Log.Trace("State != MediaState.Playing ({0}) sleeping for {1} ms", i + 1, sleepTime);
 #if WINRT
                 Task.Delay(sleepTime).Wait();
 #else

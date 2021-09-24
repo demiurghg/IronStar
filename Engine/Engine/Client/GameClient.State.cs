@@ -67,14 +67,14 @@ namespace Fusion.Engine.Client {
 					switch (msg.MessageType)
 					{
 						case NetIncomingMessageType.VerboseDebugMessage:Log.Debug	("CL Net: " + msg.ReadString()); break;
-						case NetIncomingMessageType.DebugMessage:		Log.Verbose	("CL Net: " + msg.ReadString()); break;
+						case NetIncomingMessageType.DebugMessage:		Log.Trace	("CL Net: " + msg.ReadString()); break;
 						case NetIncomingMessageType.WarningMessage:		Log.Warning	("CL Net: " + msg.ReadString()); break;
 						case NetIncomingMessageType.ErrorMessage:		Log.Error	("CL Net: " + msg.ReadString()); break;
 
 						case NetIncomingMessageType.ConnectionLatencyUpdated:
 							Ping = msg.ReadFloat();
 							if (game.Network.ShowLatency) {
-								Log.Verbose("...CL ping - {0} {1,6:0.00} ms", msg.SenderEndPoint, (Ping*1000) );
+								Log.Trace("...CL ping - {0} {1,6:0.00} ms", msg.SenderEndPoint, (Ping*1000) );
 							}
 							break;
 

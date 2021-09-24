@@ -127,14 +127,14 @@ namespace Fusion.Engine.Server {
 				switch (msg.MessageType)
 				{
 					case NetIncomingMessageType.VerboseDebugMessage:Log.Debug	("SV Net: " + msg.ReadString()); break;
-					case NetIncomingMessageType.DebugMessage:		Log.Verbose	("SV Net: " + msg.ReadString()); break;
+					case NetIncomingMessageType.DebugMessage:		Log.Trace	("SV Net: " + msg.ReadString()); break;
 					case NetIncomingMessageType.WarningMessage:		Log.Warning	("SV Net: " + msg.ReadString()); break;
 					case NetIncomingMessageType.ErrorMessage:		Log.Error	("SV Net: " + msg.ReadString()); break;
 
 					case NetIncomingMessageType.ConnectionLatencyUpdated:
 						if (game.Network.ShowLatency) {
 							float latency = msg.ReadFloat();
-							Log.Verbose("...SV ping - {0} {1,6:0.00} ms", msg.SenderEndPoint, (latency*1000) );
+							Log.Trace("...SV ping - {0} {1,6:0.00} ms", msg.SenderEndPoint, (latency*1000) );
 						}
 
 						break;

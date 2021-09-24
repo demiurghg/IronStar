@@ -301,7 +301,7 @@ namespace Fusion.Core.Content {
 			//
 			//	load content :
 			//
-			Log.Message("Loading : {0}", assetPath );
+			Log.Debug("Loading : {0}", assetPath );
 			using (var stream = OpenStream(assetPath) ) 
 			{
 				var loader	=	GetLoader( stream.ContentType );
@@ -329,6 +329,7 @@ namespace Fusion.Core.Content {
 
 				if ( TryGetExisting<T>( assetPath, ref anotherItem ) ) 
 				{
+					Log.Warning("Discard Loaded : {0}", assetPath );
 					(item.Object as IDisposable)?.Dispose();
 					return (T)anotherItem.Object;
 				}

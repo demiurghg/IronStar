@@ -183,8 +183,8 @@ namespace Fusion.Engine.Common {
 			{
 				switch (msg.MessageType)
 				{
-					case NetIncomingMessageType.VerboseDebugMessage:Log.Debug	("UI Net: " + msg.ReadString()); break;
-					case NetIncomingMessageType.DebugMessage:		Log.Verbose	("UI Net: " + msg.ReadString()); break;
+					case NetIncomingMessageType.VerboseDebugMessage:Log.Trace	("UI Net: " + msg.ReadString()); break;
+					case NetIncomingMessageType.DebugMessage:		Log.Debug	("UI Net: " + msg.ReadString()); break;
 					case NetIncomingMessageType.WarningMessage:		Log.Warning	("UI Net: " + msg.ReadString()); break;
 					case NetIncomingMessageType.ErrorMessage:		Log.Error	("UI Net: " + msg.ReadString()); break;
 

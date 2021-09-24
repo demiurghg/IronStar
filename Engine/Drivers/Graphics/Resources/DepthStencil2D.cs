@@ -43,7 +43,7 @@ namespace Fusion.Drivers.Graphics
 		/// <param name="format"></param>
 		public DepthStencil2D ( GraphicsDevice device, DepthFormat format, int width, int height, int samples = 1 ) : base( device )
 		{
-			Log.Debug("DepthStencil2D: f:{0} w:{1} h:{2} s:{3}", format, width, height, samples);
+			Log.Trace("DepthStencil2D: f:{0} w:{1} h:{2} s:{3}", format, width, height, samples);
 			CheckSamplesCount( samples );
 
 			Width		=	width;
@@ -138,7 +138,7 @@ namespace Fusion.Drivers.Graphics
 		protected override void Dispose ( bool disposing )
 		{
 			if (disposing) {
-				Log.Debug("DepthStencil2D: disposing");
+				Log.Trace("DepthStencil2D: disposing");
 				SafeDispose( ref tex2D );
 				SafeDispose( ref SRV );
 				SafeDispose( ref surface );

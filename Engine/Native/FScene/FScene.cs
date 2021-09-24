@@ -61,7 +61,7 @@ namespace FScene {
 		static int Main ( string[] args )
 		{
 			Thread.CurrentThread.CurrentCulture	=	System.Globalization.CultureInfo.InvariantCulture;
-			Log.AddListener( new StdLogListener() );
+			//Log.AddListener( new StdLogListener() );
 
 			var options = new Options();
 			var parser = new CommandLineParser( options.GetType() );

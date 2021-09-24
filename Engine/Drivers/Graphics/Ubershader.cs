@@ -137,7 +137,7 @@ namespace Fusion.Drivers.Graphics
 				}
 			}
 
-			Log.Debug("Ubershader: {0} shaders", database.Count );
+			Log.Trace("Ubershader: {0} shaders", database.Count );
 		}
 
 

@@ -247,7 +247,7 @@ namespace Fusion.Scripting {
 				Lua.LuaPop( L, 1 );  /* pop result */
 			}
 
-			Log.Verbose( sb.ToString() );
+			Log.Trace( sb.ToString() );
 
 			return 0;
 		}

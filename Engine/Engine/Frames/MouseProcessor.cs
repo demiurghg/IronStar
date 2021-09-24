@@ -279,7 +279,7 @@ namespace Fusion.Engine.Frames {
 				//	track double clicks :
 				bool doubleClick	=	false;
 
-				//Log.Verbose("DC: {0} {1}", doubleClickStopwatch.Elapsed, SysInfoDoubleClickTime );
+				//Log.Trace("DC: {0} {1}", doubleClickStopwatch.Elapsed, SysInfoDoubleClickTime );
 
 				if ( (currentHovered==doubleClickPushedFrame)
 					&& (currentHovered.IsDoubleClickEnabled) 

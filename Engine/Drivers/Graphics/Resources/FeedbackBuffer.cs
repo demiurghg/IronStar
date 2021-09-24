@@ -44,7 +44,7 @@ namespace Fusion.Drivers.Graphics
 		/// <param name="format"></param>
 		public FeedbackBuffer ( GraphicsDevice device, int width, int height ) : base ( device )
 		{
-			Log.Debug("FeedbackBuffer: w:{0} h:{1}", width, height );
+			Log.Trace("FeedbackBuffer: w:{0} h:{1}", width, height );
 
 			linearSize		=	width * height;
 
@@ -165,7 +165,7 @@ namespace Fusion.Drivers.Graphics
 		{
 			if (disposing) 
 			{
-				Log.Debug("RenderTarget2D: disposing");
+				Log.Trace("RenderTarget2D: disposing");
 
 				SafeDispose( ref surface );
 				SafeDispose( ref SRV );

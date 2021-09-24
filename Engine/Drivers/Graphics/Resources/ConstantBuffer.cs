@@ -111,7 +111,7 @@ namespace Fusion.Drivers.Graphics
 		/// <param name="sizeInBytes"></param>
 		void Create ( int sizeInBytes )
 		{
-			Log.Debug("ConstantBuffer: size {0} bytes", sizeInBytes);
+			Log.Trace("ConstantBuffer: size {0} bytes", sizeInBytes);
 			int size 	=	sizeInBytes;
 
 			int padSize	=	size % 16 == 0 ? size : (size/16 * 16) + 16;
@@ -139,7 +139,7 @@ namespace Fusion.Drivers.Graphics
 		{
 			if (disposing) 
 			{
-				Log.Debug("ConstantBuffer: disposing");
+				Log.Trace("ConstantBuffer: disposing");
 				SafeDispose( ref buffer );
 			}
 			base.Dispose( disposing );

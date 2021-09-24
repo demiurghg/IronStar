@@ -153,7 +153,7 @@ namespace Fusion.Drivers.Graphics
 		{
 			if (disposing)
 			{
-				Log.Debug("PipelineState: disposing");
+				Log.Trace("PipelineState: disposing");
 				DisposeStates();
 			}
 
@@ -242,7 +242,7 @@ namespace Fusion.Drivers.Graphics
 		{
 			lock (device.DeviceContext) 
 			{
-				Log.Debug("PipelineState: applying changes");
+				Log.Trace("PipelineState: applying changes");
 
 				DisposeStates();
 

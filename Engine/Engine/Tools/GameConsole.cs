@@ -17,6 +17,7 @@ using Fusion.Engine.Graphics;
 using Fusion.Core.Shell;
 using System.IO;
 using Fusion.Engine.Frames;
+using NLog;
 
 namespace Fusion.Engine.Tools {
 	
@@ -113,7 +114,7 @@ namespace Fusion.Engine.Tools {
 			Game.Reloading += (s,e) => LoadContent();
 
 			Game.GraphicsDevice.DisplayBoundsChanged += GraphicsDevice_DisplayBoundsChanged;
-			LogRecorder.TraceRecorded += TraceRecorder_TraceRecorded;
+			Log.MessageLogged += TraceRecorder_TraceRecorded;
 
 			Game.GetService<FrameProcessor>().Keyboard.KeyboardHook = this;
 
@@ -172,7 +173,7 @@ namespace Fusion.Engine.Tools {
 		{
 			if (disposing) {
 				Game.GraphicsDevice.DisplayBoundsChanged -= GraphicsDevice_DisplayBoundsChanged;
-				LogRecorder.TraceRecorded -= TraceRecorder_TraceRecorded;
+				Log.MessageLogged -= TraceRecorder_TraceRecorded;
 
 				SafeDispose( ref consoleFont );
 
@@ -318,7 +319,7 @@ namespace Fusion.Engine.Tools {
 			//	add small gap below command line...
 			consoleLayer.Draw( null, 0,0, vp.Width, vp.Height/2+1, BackColor );
 
-			var lines	=	LogRecorder.GetLines();
+			var lines	=	Log.MemoryLog;
 
 			scroll	=	MathUtil.Clamp( scroll, 0, lines.Count() );
 
@@ -326,21 +327,20 @@ namespace Fusion.Engine.Tools {
 			consoleFont.DrawString( consoleLayer, info, vp.Width - consoleFont.MeasureString(info).Width, vp.Height/2 - 1 * charHeight, ErrorColor );*/
 
 
-			foreach ( var line in lines.Reverse().Skip(scroll) ) {
+			foreach ( var line in lines.Reverse().Skip(scroll) ) 
+			{
+				var color	= Color.Gray;
+				var level	= line.Item1;
+				var text	= line.Item2;
 
-				Color color = Color.Gray;
-
-				switch (line.MessageType) {
-					case LogMessageType.Information : color = MessageColor; break;
-					case LogMessageType.Error		: color = ErrorColor;   break;
-					case LogMessageType.Warning		: color = WarningColor; break;
-					case LogMessageType.Verbose		: color = VerboseColor; break;
-					case LogMessageType.Debug		: color = DebugColor;   break;
-				}
+				if ( level==LogLevel.Info	) color =  MessageColor;
+				if ( level==LogLevel.Error	) color =  ErrorColor;  
+				if ( level==LogLevel.Warn	) color =  WarningColor;
+				if ( level==LogLevel.Debug	) color =  DebugColor;  
+				if ( level==LogLevel.Trace	) color =  TraceColor;
+				if ( level==LogLevel.Fatal	) color =  ErrorColor;
 				
-
-				DrawString( consoleLayer, charWidth/2, vp.Height/2 - (count+2) * charHeight, line.MessageText, color );
-				//consoleFont.DrawString( consoleLayer, line.Message, , color );
+				DrawString( consoleLayer, charWidth/2, vp.Height/2 - (count+2) * charHeight, text, color );
 
 				if (count>rows) {
 					break;

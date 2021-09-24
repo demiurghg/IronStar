@@ -74,7 +74,7 @@ namespace IronStar {
 		private void Components_ComponentAdded(object sender, GameComponentCollectionEventArgs e)
 		{
 			var name = e.GameComponent.GetType().Name;
-			Log.Message("Component added: {0}", name );
+			Log.Debug("Component added: {0}", name );
 			this.Config.ApplySettings( name, e.GameComponent );
 		}
 
@@ -82,7 +82,7 @@ namespace IronStar {
 		private void Components_ComponentRemoved(object sender, GameComponentCollectionEventArgs e)
 		{
 			var name = e.GameComponent.GetType().Name;
-			Log.Message("Component removed: {0}", name );
+			Log.Debug("Component removed: {0}", name );
 			this.Config.RetrieveSettings( name, e.GameComponent );
 		}
 

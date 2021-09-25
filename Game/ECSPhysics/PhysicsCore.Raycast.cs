@@ -39,7 +39,9 @@ namespace IronStar.ECSPhysics
 	{
 		public void Raycast( Ray ray, float maxDistance, IRaycastCallback callback, RaycastOptions options )
 		{
-			queryRequests.Enqueue( new DeferredRaycast(ray, maxDistance, callback, options) );
+			var raycast = new DeferredRaycast(ray, maxDistance, callback, options);
+			raycast.Execute( Space );
+			//queryRequests.Enqueue( raycast );
 		}
 
 

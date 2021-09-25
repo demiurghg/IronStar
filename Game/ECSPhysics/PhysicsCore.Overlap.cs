@@ -31,7 +31,9 @@ namespace IronStar.ECSPhysics
 	{
 		public void Overlap( Vector3 origin, float radius, IRaycastCallback callback )
 		{
-			Query( new DeferredOverlap(origin, radius, callback) );
+			var overlap = new DeferredOverlap(origin, radius, callback);
+			overlap.Execute(Space);
+			//Query(  );
 		}
 
 

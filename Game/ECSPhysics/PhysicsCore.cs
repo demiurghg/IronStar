@@ -209,8 +209,8 @@ namespace IronStar.ECSPhysics
 
 		void UpdateSimulation ( GameState gs, float elapsedTime )
 		{
-			Space.TimeStepSettings.TimeStepDuration				=	elapsedTime/5;
-			Space.TimeStepSettings.MaximumTimeStepsPerFrame		=	5;
+			Space.TimeStepSettings.TimeStepDuration				=	elapsedTime;
+			Space.TimeStepSettings.MaximumTimeStepsPerFrame		=	1;
 
 			Action action;
 
@@ -229,10 +229,7 @@ namespace IronStar.ECSPhysics
 			//	run simulation :
 			if (Enabled)
 			{
-				for (int i=0; i<5; i++)
-				{
-					Space.Update();
-				}
+				Space.Update();
 			}
 		}
 

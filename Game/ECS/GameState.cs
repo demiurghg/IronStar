@@ -236,6 +236,9 @@ namespace IronStar.ECS
 			TimeSpan accumulator	=	TimeSpan.Zero;
 			var		 stopwatch		=	new Stopwatch();
 
+			StepSimulation( stopwatch, dt, new GameTime(dt, frames++) );
+			StepSimulation( stopwatch, dt, new GameTime(dt, frames++) );
+
 			while (!terminate)
 			{
 				TimeSpan newTime	=	GameTime.CurrentTime;
@@ -246,34 +249,45 @@ namespace IronStar.ECS
 
 				while (accumulator >= dt)
 				{
-					stopwatch.Reset();
-					stopwatch.Start();
-
-					RefreshEntities();
-
-					foreach ( var system in systems )
-					{
-						system.System.Update( this, new GameTime(dt, frames) );
-					}
-
-					components.CommitChanges( dt );
-					snapshot = entities.GetSnapshot();
-
-					stopwatch.Stop();
-					if (stopwatch.Elapsed > dt)
-					{
-						Log.Warning("LOOP TIME {0} > DT {1}", stopwatch.Elapsed, dt);
-					}
+					StepSimulation( stopwatch, dt, new GameTime(dt, frames++) );
 
 					accumulator -= dt;
-					frames++;
 				}
 
-				Thread.Sleep(1);
+				Thread.Sleep(0);
 			}
 
 			KillAll();
 			RefreshEntities();
+		}
+
+
+		void StepSimulation( Stopwatch stopwatch, TimeSpan dt, GameTime gameTime )
+		{
+			stopwatch.Reset();
+			stopwatch.Start();
+
+			RefreshEntities();
+
+			foreach ( var system in systems )
+			{
+				system.Update( this, gameTime );
+			}
+
+			components.CommitChanges( dt );
+			snapshot = entities.GetSnapshot();
+
+			stopwatch.Stop();
+			if (stopwatch.Elapsed > dt)
+			{
+				Log.Warning("LOOP TIME {0} > DT {1}", stopwatch.Elapsed, dt);
+
+				foreach ( var system in systems )
+				{
+					if (system.ProfilingTime.Ticks > dt.Ticks / 10)
+					Log.Warning("   {0} : {1}", system.ProfilingTime, system.System.GetType().Name );
+				}
+			}
 		}
 
 		

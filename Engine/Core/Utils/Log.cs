@@ -58,20 +58,20 @@ namespace Fusion
 			logconsole.RowHighlightingRules.Add( new ConsoleRowHighlightingRule( condError	, ConsoleOutputColor.Red,		ConsoleOutputColor.NoChange	) );
 			logconsole.RowHighlightingRules.Add( new ConsoleRowHighlightingRule( condFatal	, ConsoleOutputColor.White,		ConsoleOutputColor.DarkRed	) );
 
-			logconsole.WordHighlightingRules.Add(
+			/*logconsole.WordHighlightingRules.Add(
 					new ConsoleWordHighlightingRule("Loading", 
-						ConsoleOutputColor.NoChange, 
-						ConsoleOutputColor.DarkBlue));
+					ConsoleOutputColor.NoChange, 
+					ConsoleOutputColor.DarkBlue));
 			logconsole.WordHighlightingRules.Add(
-					new ConsoleWordHighlightingRule("Initialize", 
-						ConsoleOutputColor.NoChange, 
-						ConsoleOutputColor.DarkBlue));	 
+					new ConsoleWordHighlightingRule("Initialize",
+						ConsoleOutputColor.NoChange,
+						ConsoleOutputColor.DarkBlue)); //*/
 
 			// Rules for mapping loggers to targets
 			var asyncConsole	=	new AsyncTargetWrapper(logconsole);
 			asyncConsole.BatchSize	=	64;
 
-			config.AddRule(LogLevel.Trace, LogLevel.Fatal, asyncConsole);
+			config.AddRule(LogLevel.Trace, LogLevel.Fatal, logconsole);
 			config.AddRule(LogLevel.Trace, LogLevel.Fatal, memoryTarget);
 
 			//config.

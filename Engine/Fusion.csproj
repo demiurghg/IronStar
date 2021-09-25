@@ -722,10 +722,6 @@
     <Compile Include="Engine\Imaging\Volume.cs" />
     <Compile Include="Engine\Imaging\Image.cs" />
     <Compile Include="Engine\Imaging\Sampler.cs" />
-    <Compile Include="Engine\Media\MediaState.cs" />
-    <Compile Include="Engine\Media\Video.cs" />
-    <Compile Include="Engine\Media\VideoPlayer.cs" />
-    <Compile Include="Engine\Media\VideoSampleGrabber.cs" />
     <Compile Include="Engine\Server\GameServer.cs" />
     <Compile Include="Engine\Server\GameServer.Internal.cs" />
     <Compile Include="Engine\Server\IServerInstance.cs" />

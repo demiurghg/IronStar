@@ -203,8 +203,8 @@ namespace IronStar.Gameplay.Systems
 
 			//	tilt :
 			float targetTilt	=	0;
-			if ( uc.MoveRight > 0 )	targetTilt++;
-			if ( uc.MoveRight < 0 )	targetTilt--;
+			if ( uc.Strafe > 0 )	targetTilt++;
+			if ( uc.Strafe < 0 )	targetTilt--;
 			if ( uc.DYaw < 0 )		targetTilt++;
 			if ( uc.DYaw > 0 )		targetTilt--;
 			targetTilt = MathUtil.Clamp( targetTilt, -1, 1 );

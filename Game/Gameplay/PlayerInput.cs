@@ -83,14 +83,19 @@ namespace IronStar.Gameplay
 			}
 
 			if (Game.Keyboard.IsKeyDown( Keys.Escape )) Game.GetService<Mission>().State.Pause();
-			
-			if (Game.Keyboard.IsKeyDown( MoveForward	)) userCommand.Action |= UserAction.MoveForward	;
-			if (Game.Keyboard.IsKeyDown( MoveBackward	)) userCommand.Action |= UserAction.MoveBackward;
-			if (Game.Keyboard.IsKeyDown( StrafeRight	)) userCommand.Action |= UserAction.StrafeRight	;
-			if (Game.Keyboard.IsKeyDown( StrafeLeft		)) userCommand.Action |= UserAction.StrafeLeft	;
+
+			float runFactor		=	1;
+			userCommand.Move	=	0;
+			userCommand.Strafe	=	0;
+
+			if (Game.Keyboard.IsKeyDown( Walk			)) runFactor = 0.33f;
+			if (Game.Keyboard.IsKeyDown( MoveForward	)) userCommand.Move		+= runFactor;
+			if (Game.Keyboard.IsKeyDown( MoveBackward	)) userCommand.Move		-= runFactor;
+			if (Game.Keyboard.IsKeyDown( StrafeRight	)) userCommand.Strafe	+= runFactor;
+			if (Game.Keyboard.IsKeyDown( StrafeLeft		)) userCommand.Strafe	-= runFactor;
+
 			if (Game.Keyboard.IsKeyDown( Jump			)) userCommand.Action |= UserAction.Jump		;
 			if (Game.Keyboard.IsKeyDown( Crouch			)) userCommand.Action |= UserAction.Crouch		;
-			if (Game.Keyboard.IsKeyDown( Walk			)) userCommand.Action |= UserAction.Walk		;
 
 			if (Game.Keyboard.IsKeyDown( Attack			)) userCommand.Action |= UserAction.Attack;
 			if (Game.Keyboard.IsKeyDown( Zoom			)) userCommand.Action |= UserAction.Zoom;
@@ -116,8 +121,10 @@ namespace IronStar.Gameplay
 			var deltaYaw	=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.X / 16200.0f;
 			var deltaPitch	=	-2 * MathUtil.Pi * 5 * Game.Mouse.PositionDelta.Y / 16200.0f * ( InvertMouse ? -1 : 1 );
 
-			userCommand.Yaw		+=	deltaYaw;
-			userCommand.Pitch	+=	deltaPitch;
+			userCommand.Yaw			+=	deltaYaw;
+			userCommand.Pitch		+=	deltaPitch;
+			userCommand.DeltaYaw	=	deltaYaw;
+			userCommand.DeltaPitch	=	deltaPitch;
 		}
 
 		

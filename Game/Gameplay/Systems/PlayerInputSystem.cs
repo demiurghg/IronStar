@@ -52,20 +52,36 @@ namespace IronStar.Gameplay
 				UserAction action = UserAction.None;
 				UserCommand uc;
 				float yaw = 0, pitch = 0;
+				float dYaw = 0, dPitch = 0;
+				float move = 0, strafe = 0;
 				bool command = false;
+				int count = 0;
 
 				#if COMMAND_QUEUE
 					while (commandQueue.TryDequeue( out uc ))
 					{
-						action	|=	uc.Action;
+						action	=	uc.Action | action;
+						dYaw	+=	uc.DeltaYaw;
+						dPitch	+=	uc.DeltaPitch;
 						yaw		=	uc.Yaw;
 						pitch	=	uc.Pitch;
+						move	+=	uc.Move;
+						strafe	+=	uc.Strafe;
 						command	=	true;
+						count++;
+					}
+
+					if (count>0)
+					{
+						move	/=	count;
+						strafe	/=	count;
+						dYaw	/=	count;
+						dPitch	/=	count;
 					}
 
 					if (command)
 					{
-						ucc.UpdateFromUserCommand( yaw, pitch, action );
+						ucc.UpdateFromUserCommand( yaw + dYaw, pitch + dPitch, move, strafe,  action );
 					}
 				#else
 					playerInput.UpdateUserInput( gameTime, ref userCommand );

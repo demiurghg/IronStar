@@ -94,7 +94,7 @@ namespace IronStar.ECSPhysics
 
 			if (uc!=null)
 			{
-				Move( controller, cc, uc.MovementVector );
+				Move( controller, cc, uc );
 			}
 			
 			var crouching	=	controller.StanceManager.CurrentStance == Stance.Crouching;
@@ -110,12 +110,18 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		void Move ( BEPUCharacterController controller, CharacterController cc, Vector3 move )
+		void Move ( BEPUCharacterController controller, CharacterController cc, UserCommandComponent uc )
 		{
-			var jump		=	move.Y > 0.5f;
-			var crouch		=	move.Y < -0.5f;
+			var jump		=	uc.Action.HasFlag( UserAction.Jump );
+			var crouch		=	uc.Action.HasFlag( UserAction.Crouch );
+			var moveVector	=	uc.MovementVector;
 
-			var moveDir		=	new BEPUutilities.Vector2( move.X, -move.Z );
+			if (jump && crouch) 
+			{
+				jump = crouch = false;
+			}
+
+			var moveDir		=	new BEPUutilities.Vector2( moveVector.X, -moveVector.Z );
 			var velScale	=	moveDir.Length();
 
 			var standingSpeed	=	cc.standingSpeed * velScale;

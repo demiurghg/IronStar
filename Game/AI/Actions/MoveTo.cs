@@ -54,7 +54,7 @@ namespace IronStar.AI.Actions
 
 			if (uc!=null)
 			{
-				uc.MoveForward = 0;
+				uc.Move = 0;
 			}
 		}
 
@@ -94,7 +94,7 @@ namespace IronStar.AI.Actions
 			if (uc!=null)
 			{
 				uc.RotateTo( originPoint, targetPoint, rateYaw, 0 );
-				uc.MoveForward = 1.0f;
+				uc.Move = 1.0f;
 			}
 
 			return routeResult;

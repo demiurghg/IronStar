@@ -20,17 +20,9 @@ namespace IronStar.Gameplay
 		ReloadWeapon	=	0x00000010,
 		ThrowGrenade	=	0x00000020,
 		MeleeAtack		=	0x00000040,
-						//	0x00080000,
-
-		MoveForward		=	0x00000100,
-		MoveBackward	=	0x00000200,
-		StrafeRight		=	0x00000400,
-		StrafeLeft		=	0x00000800,
 
 		Jump			=	0x00001000,
 		Crouch			=	0x00002000,
-		Walk			=	0x00004000,
-						//	0x00080000,
 					
 		Weapon1			=	0x00200000,
 		Weapon2			=	0x00400000,
@@ -46,8 +38,13 @@ namespace IronStar.Gameplay
 	public struct UserCommand
 	{
 		public UserAction	Action;
+		public float		Move;
+		public float		Strafe;
 		public float		Yaw;
 		public float		Pitch;
+		public float		Roll;
+		public float		DeltaYaw;
+		public float		DeltaPitch;
 
 		public static UserCommand FromTransform( Transform t )
 		{
@@ -61,21 +58,13 @@ namespace IronStar.Gameplay
 
 				uc.Yaw		=	yaw;
 				uc.Pitch	=	pitch;
+				uc.Roll		=	roll;
 
 				if (float.IsNaN(uc.Yaw)		|| float.IsInfinity(uc.Yaw)		) uc.Yaw	= 0;
 				if (float.IsNaN(uc.Pitch)	|| float.IsInfinity(uc.Pitch)	) uc.Pitch	= 0;
+				if (float.IsNaN(uc.Roll)	|| float.IsInfinity(uc.Roll)	) uc.Roll	= 0;
 			}
 
-			return uc;
-		}
-
-
-		public static UserCommand MergeCommand( UserCommand latest, UserCommand previous )
-		{
-			var uc = new UserCommand();
-			uc.Action	=	latest.Action | previous.Action;
-			uc.Yaw		=	latest.Yaw;
-			uc.Pitch	=	latest.Pitch;
 			return uc;
 		}
 	}

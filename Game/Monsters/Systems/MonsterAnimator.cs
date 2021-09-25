@@ -120,7 +120,7 @@ namespace IronStar.Monsters.Systems
 			var accel = Vector3.TransformNormal( step.LocalAcceleration, Matrix.Invert(uc.RotationMatrix) );
 
 			tiltForward.Weight	=	1;
-			tiltFactor			=	Vector2.MoveTo( tiltFactor, new Vector2( uc.MoveForward, uc.MoveRight ) * ((traction && !step.IsCrouching)?1:0), tiltVel );
+			tiltFactor			=	Vector2.MoveTo( tiltFactor, new Vector2( uc.Move, uc.Strafe ) * ((traction && !step.IsCrouching)?1:0), tiltVel );
 			tiltForward.Factor	=	new Vector2( SignedSmoothStep( tiltFactor.X ), SignedSmoothStep( tiltFactor.Y ) );
 
 			//	update composer :

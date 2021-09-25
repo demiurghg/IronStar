@@ -23,9 +23,8 @@ namespace IronStar.Gameplay
 		public float BobRoll;
 		public float BobUp;
 
-		public float MoveForward;
-		public float MoveRight;
-		public float MoveUp;
+		public float Move;
+		public float Strafe;
 
 		public UserAction Action;
 
@@ -34,11 +33,11 @@ namespace IronStar.Gameplay
 		public float DYaw;
 		public float DPitch;
 
-		public bool IsMoving { get { return Math.Abs(MoveForward)>0.1f || Math.Abs(MoveRight)>0.1f; } }
+		public bool IsMoving { get { return Math.Abs(Move)>0.1f || Math.Abs(Strafe)>0.1f; } }
 		public bool IsRunning { get { return MovementVector.Length() > 0.5f; } }
-		public bool IsForward { get { return MoveForward>=0; } }
+		public bool IsForward { get { return Move>=0; } }
 
-		public void UpdateFromUserCommand ( float yaw, float pitch, UserAction action )
+		public void UpdateFromUserCommand ( float yaw, float pitch, float move, float strafe, UserAction action )
 		{
 			ResetControl();
 
@@ -47,12 +46,8 @@ namespace IronStar.Gameplay
 			DesiredRoll		=	0;
 			Action			=	action;
 
-			if (action.HasFlag( UserAction.MoveForward ))	MoveForward++;
-			if (action.HasFlag( UserAction.MoveBackward ))	MoveForward--;
-			if (action.HasFlag( UserAction.StrafeRight ))	MoveRight++;
-			if (action.HasFlag( UserAction.StrafeLeft ))	MoveRight--;
-			if (action.HasFlag( UserAction.Jump ))			MoveUp++;
-			if (action.HasFlag( UserAction.Crouch ))		MoveUp--;
+			Move		=	move;
+			Strafe		=	strafe;
 
 			if (action.HasFlag( UserAction.Weapon1 )) Weapon = "MACHINEGUN"		;
 			if (action.HasFlag( UserAction.Weapon2 )) Weapon = "MACHINEGUN2"	;
@@ -66,11 +61,10 @@ namespace IronStar.Gameplay
 
 		public void ResetControl()
 		{
-			Weapon		=	null;
-			Action		=	UserAction.None;
-			MoveForward	=	0;
-			MoveRight	=	0;
-			MoveUp		=	0;
+			Weapon	=	null;
+			Action	=	UserAction.None;
+			Move	=	0;
+			Strafe	=	0;
 		}
 
 		public void SetAnglesFromQuaternion( Quaternion q )
@@ -110,9 +104,8 @@ namespace IronStar.Gameplay
 			{ 
 				var m = Matrix.RotationYawPitchRoll( Yaw, 0, 0 );
 
-				return m.Forward * MoveForward 
-					+ m.Right * MoveRight 
-					+ Vector3.Up * MoveUp;
+				return m.Forward * Move 
+					+ m.Right * Strafe;
 			}
 		}
 

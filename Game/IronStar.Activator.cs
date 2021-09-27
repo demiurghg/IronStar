@@ -33,9 +33,13 @@ namespace IronStar
 		{
 			var isEditor	=	mapContent!=null;
 			var map			=	mapContent ?? content.Load<Mapping.Map>(@"maps\" + mapName);
-			var gs			=	new GameState(game, content, TimeSpan.FromMilliseconds(100));
+			var gs			=	new GameState(game, content, TimeSpan.FromMilliseconds(16));
 
 			var rw	=	game.RenderSystem.RenderWorld;
+			
+			//	physics and FX systems are used by many other systems :
+			var physicsCore = new ECSPhysics.PhysicsCore();
+			var fxPlayback	= new SFX.FXPlayback(game, content);
 
 			gs.Services.AddService( content );
 			gs.Services.AddService( game.RenderSystem );
@@ -44,15 +48,15 @@ namespace IronStar
 			gs.AddSystem( new PlayerInputSystem() );
 			gs.AddSystem( new PlayerSpawnSystem() );
 
+			//	weapon system :
+			gs.AddSystem( new WeaponSystem(gs, physicsCore, fxPlayback) );
+			gs.AddSystem( new ProjectileSystem(gs, physicsCore) );
+
 			//	physics simulation :
-			var physicsCore = new ECSPhysics.PhysicsCore();
-			var fxPlayback	= new SFX.FXPlayback(game, content);
 			gs.AddSystem( new ECSPhysics.StaticCollisionSystem(physicsCore) );
 			gs.AddSystem( new ECSPhysics.DynamicCollisionSystem(physicsCore) );
 			gs.AddSystem( new ECSPhysics.CharacterControllerSystem(physicsCore) );
 			gs.AddSystem( physicsCore );
-
-			gs.AddSystem( new Gameplay.CameraSystem(fxPlayback) );
 
 			//	attachment system :
 			gs.AddSystem( new AttachmentSystem() );
@@ -61,8 +65,6 @@ namespace IronStar
 			gs.AddSystem( new HealthSystem() );
 			gs.AddSystem( new PickupSystem() );
 			gs.AddSystem( new ExplosionSystem() );
-			gs.AddSystem( new WeaponSystem(gs, physicsCore, fxPlayback) );
-			gs.AddSystem( new ProjectileSystem(gs, physicsCore) );
 
 			//	AI :
 			gs.AddSystem( new PerceptionSystem(physicsCore) );
@@ -71,8 +73,9 @@ namespace IronStar
 			gs.AddSystem( new MonsterKillSystem() );
 
 			//	animation systems :
-			gs.AddSystem( new StepSystem() );
 			gs.AddSystem( new Gameplay.BobbingSystem() );
+			gs.AddSystem( new Gameplay.CameraSystem(fxPlayback) );
+			gs.AddSystem( new StepSystem() );
 			gs.AddSystem( new FPVWeaponSystem(game) );
 			gs.AddSystem( new MonsterAnimationSystem(game,fxPlayback,physicsCore) );
 

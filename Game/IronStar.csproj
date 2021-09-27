@@ -209,6 +209,7 @@
     <Compile Include="Entities\RigidBodyFactory.cs" />
     <Compile Include="Entities\StartPoint.cs" />
     <Compile Include="Gameplay\Components\AttachmentComponent.cs" />
+    <Compile Include="Gameplay\Components\CameraComponent.cs" />
     <Compile Include="Gameplay\Components\ExplosiveComponent.cs" />
     <Compile Include="Gameplay\Components\MonsterComponent.cs" />
     <Compile Include="Gameplay\Components\NameComponent.cs" />
@@ -231,6 +232,7 @@
     <Compile Include="Gameplay\Systems\BobbingSystem.cs" />
     <Compile Include="Gameplay\Systems\CameraSystem.cs" />
     <Compile Include="Gameplay\Systems\ExplosionSystem.cs" />
+    <Compile Include="Gameplay\Systems\FpvState.cs" />
     <Compile Include="Gameplay\Systems\FPVWeaponAnimator.cs" />
     <Compile Include="Gameplay\Systems\FPVWeaponSystem.cs" />
     <Compile Include="Gameplay\Systems\InventorySystem.cs" />

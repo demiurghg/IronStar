@@ -25,7 +25,8 @@ using IronStar.SinglePlayer;
 using IronStar.Gameplay;
 using IronStar.AI;
 
-namespace IronStar {
+namespace IronStar 
+{
 	partial class IronStar : Game
 	{
 		const string ConfigFile = "Config.ini";
@@ -43,17 +44,17 @@ namespace IronStar {
 
 			this.Services.AddService( builder );
 
-			this.AddServiceAndComponent( 100, new RenderSystem(this, true) );
-			this.AddServiceAndComponent( 150, new AICore(this) );
-			this.AddServiceAndComponent( 200, new SoundSystem(this) );
-			this.AddServiceAndComponent( 300, new GameConsole( this ) );
-			this.AddServiceAndComponent( 350, new FrameProcessor(this) );
-			this.AddServiceAndComponent( 370, new PlayerInput(this) );
-			this.AddServiceAndComponent( 400, new Network( this ) );
-			this.AddServiceAndComponent( 500, new GameClient( this ) );
-			this.AddServiceAndComponent( 600, new GameServer( this ) );
-			this.AddServiceAndComponent( 800, new UserInterface( this, new ShooterInterface(this) ) );
-			this.AddServiceAndComponent( 700, new Mission( this ) );
+			this.AddServiceAndComponent( 1000, new RenderSystem(this, true) );
+			this.AddServiceAndComponent(  150, new AICore(this) );
+			this.AddServiceAndComponent(  200, new SoundSystem(this) );
+			this.AddServiceAndComponent(  300, new GameConsole( this ) );
+			this.AddServiceAndComponent(  350, new FrameProcessor(this) );
+			this.AddServiceAndComponent(  370, new PlayerInput(this) );
+			this.AddServiceAndComponent(  400, new Network( this ) );
+			this.AddServiceAndComponent(  500, new GameClient( this ) );
+			this.AddServiceAndComponent(  600, new GameServer( this ) );
+			this.AddServiceAndComponent(  800, new UserInterface( this, new ShooterInterface(this) ) );
+			this.AddServiceAndComponent(  700, new Mission( this ) );
 
 			this.GetService<FrameProcessor>().LayerOrder = 100;
 			this.GetService<GameConsole>().LayerOrder = 200;

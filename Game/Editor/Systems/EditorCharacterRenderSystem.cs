@@ -8,10 +8,11 @@ using Fusion.Core.Mathematics;
 using IronStar.ECS;
 using IronStar.ECSPhysics;
 using Fusion.Engine.Graphics;
+using System.Diagnostics;
 
 namespace IronStar.Editor.Systems
 {
-	partial class EditorCharacterRenderSystem : ISystem
+	partial class EditorCharacterRenderSystem : IDrawSystem
 	{
 		readonly DebugRender dr;
 		readonly MapEditor editor;
@@ -40,8 +41,11 @@ namespace IronStar.Editor.Systems
 		public void Add( GameState gs, Entity e ) {}
 		public void Remove( GameState gs, Entity e ) {}
 
-		
 		public void Update( GameState gs, GameTime gameTime )
+		{
+		}
+		
+		public void Draw( GameState gs, GameTime gameTime )
 		{
 			if (gs.Game.RenderSystem.SkipDebugRendering) 
 			{
@@ -53,17 +57,24 @@ namespace IronStar.Editor.Systems
 
 			foreach ( var entity in gs.QueryEntities( aspectTransform ) )
 			{
-				var transform	=	entity.GetComponent<Transform>().TransformMatrix;
+				Trace.Assert(entity!=null);
+
+				var transform	=	entity.GetComponent<Transform>();
 				var character	=	entity.GetComponent<CharacterController>();
 
-				if (editor.GetRenderProperties(entity, out color, out selected ))
+				if (transform!=null && character!=null)
 				{
-					var r = character.radius;
-					var h = character.height;
-					var p = transform.TranslationVector + Vector3.Up * h * 0.5f;
-					dr.DrawCylinder( p, r, h, color, 16 );
-					dr.DrawBox( box, transform, color );
-					dr.DrawBasis( transform, 1, 2 ); 
+					var transformMatrix = transform.TransformMatrix;
+
+					if (editor.GetRenderProperties(entity, out color, out selected ))
+					{
+						var r = character.radius;
+						var h = character.height;
+						var p = transformMatrix.TranslationVector + Vector3.Up * h * 0.5f;
+						dr.DrawCylinder( p, r, h, color, 16 );
+						dr.DrawBox( box, transformMatrix, color );
+						dr.DrawBasis( transformMatrix, 1, 2 ); 
+					}
 				}
 			}
 		}

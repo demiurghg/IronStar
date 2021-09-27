@@ -58,6 +58,7 @@ namespace IronStar.Gameplay
 				int count = 0;
 
 				#if COMMAND_QUEUE
+					//	#TODO #ECS #INPUT -- provide control for angular prediction amount (auto aim?)
 					while (commandQueue.TryDequeue( out uc ))
 					{
 						action	=	uc.Action | action;

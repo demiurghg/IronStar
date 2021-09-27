@@ -15,8 +15,6 @@ using System.Runtime.CompilerServices;
 using IronStar.Gameplay.Components;
 using Fusion.Core.Extensions;
 using Fusion.Core.Configuration;
-using System.Collections.Concurrent;
-using IronStar.ECS.Collections;
 
 namespace IronStar.Gameplay
 {
@@ -50,38 +48,6 @@ namespace IronStar.Gameplay
 		Matrix[]			animData;
 		bool				dead = false;
 
-		struct CameraLerpData
-		{
-			public CameraLerpData( Matrix animTransform, Vector3 position, Vector3 velocity, float bobYaw, float bobPitch, float bobRoll )
-			{
-				AnimTransform	=	animTransform;
-				Position		=	position;
-				Velocity		=	velocity;
-				BobYaw			=	bobYaw	;
-				BobPitch		=	bobPitch;
-				BobRoll			=	bobRoll	;
-			}						
-			public Matrix	AnimTransform;
-			public Vector3	Position;
-			public Vector3	Velocity;
-			public float	BobYaw;
-			public float	BobPitch;
-			public float	BobRoll;
-		}
-
-
-		CameraLerpData Interpolate( CameraLerpData a, CameraLerpData b, float factor )
-		{
-			var t = AnimationUtils.Lerp( a.AnimTransform, b.AnimTransform, factor );
-			var p = Vector3.Lerp( a.Position, b.Position, factor );
-			var v = Vector3.Lerp( a.Velocity, b.Velocity, factor );
-			var by = MathUtil.Lerp( a.BobYaw,   b.BobYaw  , factor );
-			var bp = MathUtil.Lerp( a.BobPitch, b.BobPitch, factor );
-			var br = MathUtil.Lerp( a.BobRoll,  b.BobRoll , factor );
-			return new CameraLerpData( t, p, v, by, bp,  br );
-		}
-
-		StateInterpolator<CameraLerpData> interpolator = new StateInterpolator<CameraLerpData>();
 
 		public bool Enabled { get; set; } = true;
 
@@ -129,6 +95,11 @@ namespace IronStar.Gameplay
 
 		public void Update( GameState gs, GameTime gameTime )
 		{
+		}
+
+
+		public void Draw( GameState gs, GameTime gameTime )
+		{
 			if (Enabled)
 			{
 				var	players	=	gs.QueryEntities(playerCameraAspect);
@@ -149,64 +120,52 @@ namespace IronStar.Gameplay
 		void SetupPlayerCamera( GameTime gameTime, GameState gs, Entity e )
 		{
 			var t		=	e.GetComponent<Transform>();
+			var v		=	t.LinearVelocity;
 			var uc		=	e.GetComponent<UserCommandComponent>();
 			var ch		=	e.GetComponent<CharacterController>();
 			var step	=	e.GetComponent<StepComponent>();
 			var health	=	e.GetComponent<HealthComponent>();
 
+			var	rs	=	gs.GetService<RenderSystem>();
+			var rw	=	rs.RenderWorld;
+			var sw	=	gs.Game.SoundSystem;
+			var vp	=	gs.Game.RenderSystem.DisplayBounds;
+
+			var playerInput	=	gs.GetService<PlayerInputSystem>();
+			var lastCommand	=	playerInput.LastCommand;
+
+			var aspect		=	(vp.Width) / (float)vp.Height;
+
 			//	update matricies :
-			var translate	=	Matrix.Translation( t.Position + Vector3.Up * uc.BobUp );
-			var rotateYaw	=	Matrix.RotationYawPitchRoll( uc.Yaw, 0, 0 );
-			var rotatePR	=	Matrix.RotationYawPitchRoll( 0, uc.Pitch, 0 );
+			var translate	=	Matrix.Translation( t.Position );
+			var rotateYaw	=	Matrix.RotationYawPitchRoll( lastCommand.Yaw, 0, 0 );
+			var rotatePR	=	Matrix.RotationYawPitchRoll( 0, lastCommand.Pitch, lastCommand.Roll );
 
 			//	animate :
 			UpdateAnimationState(step, health);
 
 			composer.Update( gameTime, rotateYaw * translate, false, animData );
-
+			//cameraScene.ComputeAbsoluteTransforms( animData, animData );
 			var animatedCameraMatrix = animData[1];
 
-			var camData	= new CameraLerpData( animatedCameraMatrix, t.Position, t.LinearVelocity, uc.BobYaw, uc.BobPitch, uc.BobRoll );
+			//	update stuff :
+			var tpvTranslate	=	ThirdPersonEnable ? Matrix.Translation( Vector3.BackwardRH * ThirdPersonRange ) : Matrix.Identity;
+			var tpvRotate		=	ThirdPersonEnable ? Matrix.RotationY( MathUtil.DegreesToRadians( ThirdPersonAngle ) ) : Matrix.Identity;
+			var camMatrix		=	tpvTranslate * rotatePR * animatedCameraMatrix * tpvRotate * rotateYaw * translate;
 
-			interpolator.FeedAndFlip( gameTime.Current, gs.TimeStep, camData );
-		}
+			var cameraPos	=	camMatrix.TranslationVector;
 
+			var cameraFwd	=	camMatrix.Forward;
+			var cameraUp	=	camMatrix.Up;
 
-		public void Draw( GameState gs, GameTime gameTime )
-		{
-			var	rs			=	gs.GetService<RenderSystem>();
-			var playerInput	=	gs.GetService<PlayerInputSystem>();
-			var uc			=	playerInput.LastCommand;
-			var rw			=	rs.RenderWorld;
-			var sw			=	gs.Game.SoundSystem;
-			var vp			=	gs.Game.RenderSystem.DisplayBounds;
-			var aspect		=	(vp.Width) / (float)vp.Height;
+			//	update stuff :
+			rw.Camera		.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
+			rw.WeaponCamera	.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
 
-			if (interpolator.HasData)
-			{
-				var cameraData	=	interpolator.Interpolate( gameTime.Current, Interpolate );
-				var animMatrix	=	cameraData.AnimTransform;
-				var position	=	cameraData.Position;
-				var velocity	=	cameraData.Velocity;
+			rw.Camera		.SetPerspectiveFov( MathUtil.Rad(90),	0.125f/2.0f, 12288, aspect );
+			rw.WeaponCamera	.SetPerspectiveFov( MathUtil.Rad(75),	0.125f/2.0f, 6144, aspect );
 
-				var translate	=	Matrix.Translation( position );
-				var rotateYaw	=	Matrix.RotationYawPitchRoll( uc.Yaw + cameraData.BobYaw, 0, 0 );
-				var rotatePR	=	Matrix.RotationYawPitchRoll( 0, uc.Pitch + cameraData.BobPitch, cameraData.BobRoll );
-
-				var camMatrix	=	rotatePR * animMatrix * rotateYaw * translate;
-
-				var cameraPos	=	camMatrix.TranslationVector;
-				var cameraFwd	=	camMatrix.Forward;
-				var cameraUp	=	camMatrix.Up;
-
-				rw.Camera		.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
-				rw.WeaponCamera	.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
-
-				rw.Camera		.SetPerspectiveFov( MathUtil.Rad(90),	0.125f/2.0f, 12288, aspect );
-				rw.WeaponCamera	.SetPerspectiveFov( MathUtil.Rad(75),	0.125f/2.0f, 6144, aspect );
-
-				sw.SetListener( cameraPos, cameraFwd, cameraUp, velocity );
-			}
+			sw.SetListener( cameraPos, cameraFwd, cameraUp, t.LinearVelocity );
 		}
 
 

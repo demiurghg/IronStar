@@ -33,7 +33,9 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new UserCommandComponent() );
 			e.AddComponent( new Transform() );
 			e.AddComponent( new StepComponent() );
+			e.AddComponent( new CameraComponent() );
 			e.AddComponent( new MaterialComponent(MaterialType.Flesh) );
+			e.AddComponent( new BobbingComponent() );
 
 			e.AddComponent( new InventoryComponent() );
 		}

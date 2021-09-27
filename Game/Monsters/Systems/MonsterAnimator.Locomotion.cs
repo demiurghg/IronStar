@@ -57,7 +57,7 @@ namespace IronStar.Monsters.Systems
 			{
 				if (allowRotation)
 				{
-					float targetYaw = uc.DesiredYaw;
+					float targetYaw = uc.Yaw;
 
 					if (step.HasTraction && uc.IsMoving)
 					{
@@ -72,8 +72,8 @@ namespace IronStar.Monsters.Systems
 				}
 
 				//	update torso rotation :
-				var pitchFactor	=	MathUtil.Clamp( uc.DesiredPitch	/ MathUtil.PiOverTwo, -1f, 1f );
-				var yawDelta	=	MathUtil.ShortestAngle( currentYaw, uc.DesiredYaw, MathUtil.PiOverTwo );
+				var pitchFactor	=	MathUtil.Clamp( uc.Pitch	/ MathUtil.PiOverTwo, -1f, 1f );
+				var yawDelta	=	MathUtil.ShortestAngle( currentYaw, uc.Yaw, MathUtil.PiOverTwo );
 				var yawFactor	=	MathUtil.Clamp( -yawDelta / MathUtil.PiOverTwo, -1f, 1f );
 
 				var rotation	=	Quaternion.RotationYawPitchRoll( currentYaw, 0, 0 );
@@ -99,11 +99,11 @@ namespace IronStar.Monsters.Systems
 			float baseYaw;
 			readonly bool crouch;
 
-			public Idle( MonsterAnimator animator, UserCommandComponent uc, bool crouch ) : base(animator, uc, uc.DesiredYaw)
+			public Idle( MonsterAnimator animator, UserCommandComponent uc, bool crouch ) : base(animator, uc, uc.Yaw)
 			{
 				this.crouch		=	crouch;
 				allowRotation	=	false;
-				baseYaw = uc.DesiredYaw;
+				baseYaw = uc.Yaw;
 				sequencer.Sequence(	crouch ? ANIM_CR_IDLE : ANIM_IDLE, SequenceMode.Looped|SequenceMode.Immediate, ANIM_CROSSFADE );
 			}
 
@@ -115,7 +115,7 @@ namespace IronStar.Monsters.Systems
 				var cr		=	step.IsCrouching;
 				var run		=	uc.IsRunning;
 
-				var arc		=	MathUtil.ShortestAngle( baseYaw, uc.DesiredYaw );
+				var arc		=	MathUtil.ShortestAngle( baseYaw, uc.Yaw );
 
 				if (Math.Abs(arc)>=YAW_THRESHOLD)
 				{
@@ -136,7 +136,7 @@ namespace IronStar.Monsters.Systems
 			TimeSpan timeout;
 			float baseYaw;
 
-			public Turn( MonsterAnimator animator, UserCommandComponent uc, float baseYaw ) : base(animator, uc, uc.DesiredYaw)
+			public Turn( MonsterAnimator animator, UserCommandComponent uc, float baseYaw ) : base(animator, uc, uc.Yaw)
 			{
 				this.baseYaw	=	baseYaw;
 				timeout			=	sequencer.GetTakeLength( ANIM_TURN );
@@ -170,7 +170,7 @@ namespace IronStar.Monsters.Systems
 			readonly bool crouch;
 			readonly bool run;
 
-			public Move( MonsterAnimator animator, UserCommandComponent uc, bool run, bool forward, bool crouch ) : base(animator, uc, uc.DesiredYaw)
+			public Move( MonsterAnimator animator, UserCommandComponent uc, bool run, bool forward, bool crouch ) : base(animator, uc, uc.Yaw)
 			{
 				this.forward	=	forward;
 				this.crouch		=	crouch;
@@ -202,7 +202,7 @@ namespace IronStar.Monsters.Systems
 
 		class Jump : LocomotionState
 		{
-			public Jump( MonsterAnimator animator, UserCommandComponent uc ) : base(animator, uc, uc.DesiredYaw)
+			public Jump( MonsterAnimator animator, UserCommandComponent uc ) : base(animator, uc, uc.Yaw)
 			{
 				sequencer.Sequence("jump" , SequenceMode.Immediate|SequenceMode.Hold);
 			}
@@ -223,7 +223,7 @@ namespace IronStar.Monsters.Systems
 		{
 			TimeSpan timeout;
 
-			public Land( MonsterAnimator animator, UserCommandComponent uc ) : base(animator, uc, uc.DesiredYaw)
+			public Land( MonsterAnimator animator, UserCommandComponent uc ) : base(animator, uc, uc.Yaw)
 			{
 				timeout	=	sequencer.GetTakeLength(ANIM_LAND);
 				sequencer.Sequence(ANIM_LAND , SequenceMode.Immediate|SequenceMode.Hold, TimeSpan.FromMilliseconds(100));
@@ -241,7 +241,7 @@ namespace IronStar.Monsters.Systems
 
 		class Dead : LocomotionState
 		{
-			public Dead( MonsterAnimator animator, UserCommandComponent uc ) : base(animator, uc, uc.DesiredYaw)
+			public Dead( MonsterAnimator animator, UserCommandComponent uc ) : base(animator, uc, uc.Yaw)
 			{
 				sequencer.Sequence(ANIM_DEATH , SequenceMode.Immediate|SequenceMode.Hold, TimeSpan.FromMilliseconds(100));
 			}

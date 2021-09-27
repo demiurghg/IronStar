@@ -21,7 +21,7 @@ namespace IronStar.Gameplay
 	/// Updates user command bobbing properties
 	/// Current implementation is for player only and contains state only for single entity.
 	/// </summary>
-	public class BobbingSystem : StatelessSystem<PlayerComponent,UserCommandComponent>
+	public class BobbingSystem : StatelessSystem<PlayerComponent,BobbingComponent>
 	{
 		static readonly float LAND_PITCH	=	MathUtil.DegreesToRadians( - 3 );
 		static readonly float LAND_UP		=	-0.5f;
@@ -75,7 +75,7 @@ namespace IronStar.Gameplay
 		Bob	bobUp	;
 
 
-		protected override void Process( Entity entity, GameTime gameTime, PlayerComponent pc, UserCommandComponent uc )
+		protected override void Process( Entity entity, GameTime gameTime, PlayerComponent pc, BobbingComponent bob )
 		{
 			var	health	=	entity.GetComponent<HealthComponent>();
 			var step	=	entity.GetComponent<StepComponent>();
@@ -101,10 +101,10 @@ namespace IronStar.Gameplay
 			bobRoll	 .Tick( gameTime.ElapsedSec );
 			bobUp	 .Tick( gameTime.ElapsedSec );
 
-			uc.BobPitch	=	bobPitch.Value + painPitch.Value;
-			uc.BobYaw	=	bobYaw	.Value + painYaw  .Value;
-			uc.BobRoll	=	bobRoll	.Value + painRoll .Value;
-			uc.BobUp	=	bobUp	.Value;
+			bob.BobPitch	=	bobPitch.Value + painPitch.Value;
+			bob.BobYaw		=	bobYaw	.Value + painYaw  .Value;
+			bob.BobRoll		=	bobRoll	.Value + painRoll .Value;
+			bob.BobUp		=	bobUp	.Value;
 		}
 
 

@@ -70,10 +70,12 @@ namespace IronStar.Gameplay.Systems
 				var userCmd		=	entity.GetComponent<UserCommandComponent>();
 				var chctrl		=	entity.GetComponent<CharacterController>();
 				var health		=	entity.GetComponent<HealthComponent>();
+				var bob			=	entity.GetComponent<BobbingComponent>();
+
 
 				var isAlive		=	health==null ? true : health.Health>0;
 
-				var povTransform	=	userCmd.ComputePovTransform(transform.Position, chctrl.PovOffset);
+				var povTransform	=	GameUtil.ComputePovTransform( userCmd, transform, chctrl, bob );
 
 				if (inventory.HasPendingWeapon && inventory.ActiveWeapon==null)
 				{
@@ -130,6 +132,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
+		//	#TODO #REFACTOR -- move to GameUtil
 		/*-----------------------------------------------------------------------------------------------
 		 * Weapon state
 		-----------------------------------------------------------------------------------------------*/

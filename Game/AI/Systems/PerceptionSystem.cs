@@ -20,6 +20,7 @@ using IronStar.BTCore.Decorators;
 using IronStar.AI.Actions;
 using IronStar.Gameplay;
 using IronStar.Gameplay.Components;
+using IronStar.Gameplay.Systems;
 
 namespace IronStar.AI
 {
@@ -132,7 +133,7 @@ namespace IronStar.AI
 				return false;
 			}
 
-			var head		=	uc.ComputePovTransform( transform.Position, cc.PovOffset );
+			var head		=	GameUtil.ComputePovTransform( uc, transform, cc, null );
 			var view		=	Matrix.Invert( head );
 
 			var proj		=	Matrix.PerspectiveFovRH( MathUtil.DegreesToRadians( behavior.VisibilityFov ), 2, 0.01f, behavior.VisibilityRange );

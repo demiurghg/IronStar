@@ -93,8 +93,18 @@ namespace IronStar.Gameplay
 												.Include<UserCommandComponent,CharacterController>();
 
 
+		/*-----------------------------------------------------------------------------------------
+		 *	Update & Draw :
+		-----------------------------------------------------------------------------------------*/
+
 		public void Update( GameState gs, GameTime gameTime )
 		{
+			var	players	=	gs.QueryEntities(playerCameraAspect);
+
+			foreach ( var player in players)
+			{
+				UpdatePlayerCamera(gameTime, gs, player);
+			}
 		}
 
 
@@ -106,18 +116,22 @@ namespace IronStar.Gameplay
 
 				if (players.Count()>1)
 				{
-					Log.Warning("CameraSystem.Update -- multiple players detected");
+					Log.Warning("CameraSystem.Draw -- multiple players detected");
 				}
 
 				foreach ( var player in players)
 				{
-					SetupPlayerCamera(gameTime, gs, player);
+					DrawPlayerCamera(gameTime, gs, player);
 				}
 			}
 		}
 
 
-		void SetupPlayerCamera( GameTime gameTime, GameState gs, Entity e )
+		/*-----------------------------------------------------------------------------------------
+		 *	Animation stuff :
+		-----------------------------------------------------------------------------------------*/
+
+		void UpdatePlayerCamera( GameTime gameTime, GameState gs, Entity e )
 		{
 			var t		=	e.GetComponent<Transform>();
 			var v		=	t.LinearVelocity;
@@ -125,6 +139,30 @@ namespace IronStar.Gameplay
 			var ch		=	e.GetComponent<CharacterController>();
 			var step	=	e.GetComponent<StepComponent>();
 			var health	=	e.GetComponent<HealthComponent>();
+			var camera	=	e.GetComponent<CameraComponent>();
+
+			var playerInput	=	gs.GetService<PlayerInputSystem>();
+			var lastCommand	=	playerInput.LastCommand;
+
+			//	animate :
+			UpdateAnimationState(step, health);
+			composer.Update( gameTime, Matrix.Identity, false, animData );
+
+			//	store animation matrix :
+			camera.AnimTransform = animData[1];
+		}
+
+
+		void DrawPlayerCamera( GameTime gameTime, GameState gs, Entity e )
+		{
+			var t		=	e.GetComponent<Transform>();
+			var v		=	t.LinearVelocity;
+			var uc		=	e.GetComponent<UserCommandComponent>();
+			var ch		=	e.GetComponent<CharacterController>();
+			var step	=	e.GetComponent<StepComponent>();
+			var health	=	e.GetComponent<HealthComponent>();
+			var camera	=	e.GetComponent<CameraComponent>();
+			var bob		=	e.GetComponent<BobbingComponent>();
 
 			var	rs	=	gs.GetService<RenderSystem>();
 			var rw	=	rs.RenderWorld;
@@ -134,31 +172,25 @@ namespace IronStar.Gameplay
 			var playerInput	=	gs.GetService<PlayerInputSystem>();
 			var lastCommand	=	playerInput.LastCommand;
 
-			var aspect		=	(vp.Width) / (float)vp.Height;
-
-			//	update matricies :
-			var translate	=	Matrix.Translation( t.Position );
-			var rotateYaw	=	Matrix.RotationYawPitchRoll( lastCommand.Yaw, 0, 0 );
-			var rotatePR	=	Matrix.RotationYawPitchRoll( 0, lastCommand.Pitch, lastCommand.Roll );
-
-			//	animate :
-			UpdateAnimationState(step, health);
-
-			composer.Update( gameTime, rotateYaw * translate, false, animData );
-			//cameraScene.ComputeAbsoluteTransforms( animData, animData );
-			var animatedCameraMatrix = animData[1];
+			var animMatrix	=	camera.AnimTransform;
 
 			//	update stuff :
+			var translate		=	Matrix.Translation( t.Position + Vector3.Up * bob.BobUp );
+			var rotateYaw		=	Matrix.RotationYawPitchRoll( lastCommand.Yaw + bob.BobYaw, 0, 0 );
+			var rotatePR		=	Matrix.RotationYawPitchRoll( 0, lastCommand.Pitch + bob.BobPitch, lastCommand.Roll + bob.BobRoll );
+
 			var tpvTranslate	=	ThirdPersonEnable ? Matrix.Translation( Vector3.BackwardRH * ThirdPersonRange ) : Matrix.Identity;
 			var tpvRotate		=	ThirdPersonEnable ? Matrix.RotationY( MathUtil.DegreesToRadians( ThirdPersonAngle ) ) : Matrix.Identity;
-			var camMatrix		=	tpvTranslate * rotatePR * animatedCameraMatrix * tpvRotate * rotateYaw * translate;
+			var camMatrix		=	tpvTranslate * rotatePR * animMatrix * tpvRotate * rotateYaw * translate;
 
 			var cameraPos	=	camMatrix.TranslationVector;
 
 			var cameraFwd	=	camMatrix.Forward;
 			var cameraUp	=	camMatrix.Up;
 
-			//	update stuff :
+			//	update camera and listener :
+			var aspect		=	(vp.Width) / (float)vp.Height;
+
 			rw.Camera		.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
 			rw.WeaponCamera	.LookAt( cameraPos, cameraPos + cameraFwd, cameraUp );
 
@@ -168,6 +200,10 @@ namespace IronStar.Gameplay
 			sw.SetListener( cameraPos, cameraFwd, cameraUp, t.LinearVelocity );
 		}
 
+
+		/*-----------------------------------------------------------------------------------------
+		 *	Animation stuff :
+		-----------------------------------------------------------------------------------------*/
 
 		void UpdateAnimationState( StepComponent steps, HealthComponent health )
 		{

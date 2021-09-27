@@ -10,18 +10,9 @@ namespace IronStar.Gameplay
 {
 	public class UserCommandComponent : Component
 	{
-		public float Yaw   { get { return DesiredYaw	+ BobYaw;	 } }
-		public float Pitch { get { return DesiredPitch	+ BobPitch;	 } }
-		public float Roll  { get { return DesiredRoll	+ BobRoll;	 } }
-
-		public float DesiredYaw;
-		public float DesiredPitch;
-		public float DesiredRoll;
-
-		public float BobYaw;
-		public float BobPitch;
-		public float BobRoll;
-		public float BobUp;
+		public float Yaw  ;
+		public float Pitch;
+		public float Roll ;
 
 		public float Move;
 		public float Strafe;
@@ -41,13 +32,13 @@ namespace IronStar.Gameplay
 		{
 			ResetControl();
 
-			DesiredYaw		=	yaw;
-			DesiredPitch	=	pitch;
-			DesiredRoll		=	0;
-			Action			=	action;
+			Yaw		=	yaw;
+			Pitch	=	pitch;
+			Roll	=	0;
+			Action	=	action;
 
-			Move		=	move;
-			Strafe		=	strafe;
+			Move	=	move;
+			Strafe	=	strafe;
 
 			if (action.HasFlag( UserAction.Weapon1 )) Weapon = "MACHINEGUN"		;
 			if (action.HasFlag( UserAction.Weapon2 )) Weapon = "MACHINEGUN2"	;
@@ -73,13 +64,13 @@ namespace IronStar.Gameplay
 			float yaw, pitch, roll;
 			m.ToAngles( out yaw, out pitch, out roll );
 
-			DesiredYaw		=	yaw;
-			DesiredPitch	=	pitch;
-			DesiredRoll		=	roll;
+			Yaw		=	yaw;
+			Pitch	=	pitch;
+			Roll	=	roll;
 
-			if (float.IsNaN(Yaw)	|| float.IsInfinity(Yaw)	) DesiredYaw	= 0;
-			if (float.IsNaN(Pitch)	|| float.IsInfinity(Pitch)	) DesiredPitch	= 0;
-			if (float.IsNaN(Roll)	|| float.IsInfinity(Roll)	) DesiredRoll	= 0;
+			if (float.IsNaN(Yaw)	|| float.IsInfinity(Yaw)	) Yaw	= 0;
+			if (float.IsNaN(Pitch)	|| float.IsInfinity(Pitch)	) Pitch	= 0;
+			if (float.IsNaN(Roll)	|| float.IsInfinity(Roll)	) Roll	= 0;
 		}
 
 		private Quaternion Rotation
@@ -90,12 +81,6 @@ namespace IronStar.Gameplay
 		public Matrix RotationMatrix 
 		{
 			get { return Matrix.RotationQuaternion( Rotation ); }
-		}
-
-		public Matrix ComputePovTransform( Vector3 origin, Vector3 powOffset )
-		{
-			var bobUp = BobUp * Vector3.Up;
-			return RotationMatrix * Matrix.Translation(origin + powOffset + bobUp);
 		}
 
 		public Vector3 MovementVector
@@ -124,8 +109,8 @@ namespace IronStar.Gameplay
 			var shortestYaw		=	MathUtil.ShortestAngle( Yaw,	desiredYaw, maxYawRate );
 			var shortestPitch	=	MathUtil.ShortestAngle( Pitch, desiredPitch, maxPitchRate );
 
-			DesiredYaw		=	DesiredYaw   + shortestYaw;
-			DesiredPitch	=	DesiredPitch + shortestPitch;
+			Yaw		=	Yaw		+ shortestYaw;
+			Pitch	=	Pitch	+ shortestPitch;
 
 			return Math.Abs( shortestYaw ) + Math.Abs( shortestPitch );
 		}

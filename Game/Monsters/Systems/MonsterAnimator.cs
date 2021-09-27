@@ -42,7 +42,7 @@ namespace IronStar.Monsters.Systems
 			this.fxPlayback		=	fxPlayback;
 			this.physics		=	physics;
 
-			baseYaw				=	uc.DesiredYaw;
+			baseYaw				=	uc.Yaw;
 
 			composer			=	new AnimationComposer( fxPlayback, scene );
 

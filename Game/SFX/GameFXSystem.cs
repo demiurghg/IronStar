@@ -48,15 +48,18 @@ namespace IronStar.UI.HUD
 			var health	=	player?.GetComponent<HealthComponent>();
 			var gameFx	=	Game.RenderSystem.GameFX;
 
-			if (health.LastDamage>0) 
+			if (health!=null)
 			{
-				gameFx.RunPainFX ( (health.LastDamage < health.MaxHealth / 3) ? 0.5f : 1.0f );
-			}
+				if (health.LastDamage>0) 
+				{
+					gameFx.RunPainFX ( (health.LastDamage < health.MaxHealth / 3) ? 0.5f : 1.0f );
+				}
 
-			if (health.Health<=0)
-			{
-				gameFx.RunDeathFX();
-				Game.RenderSystem.DofFilter.Enabled = true;
+				if (health.Health<=0)
+				{
+					gameFx.RunDeathFX();
+					Game.RenderSystem.DofFilter.Enabled = true;
+				}
 			}
 		}
 	}

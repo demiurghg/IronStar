@@ -19,6 +19,8 @@ namespace IronStar.ECS
 
 		Entity Spawn(string classname);
 
+		Entity Spawn(params IComponent[] components);
+
 		void KillAll();
 
 		void Teleport( Entity e, Vector3 position, Quaternion rotation );

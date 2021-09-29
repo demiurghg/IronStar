@@ -77,11 +77,11 @@ namespace IronStar
 
 
 
-		public override ECS.Entity SpawnECS( ECS.IGameState gs )
+		public override ECS.Entity SpawnECS( ECS.IGameState gs, Vector3 p, Quaternion r )
 		{
 			var e = gs.Spawn();
 
-			e.AddComponent( new ECS.Transform() );
+			e.AddComponent( new ECS.Transform(p,r) );
 			e.AddComponent( new ECSPhysics.DynamicBox( Width, Height, Depth, Mass ) );
 			e.AddComponent( new SFX2.RenderModel("scenes\\boxes\\box_low.fbx", Matrix.Scaling(3), new Color(48, 96, 255), 7, SFX2.RMFlags.None ) );
 

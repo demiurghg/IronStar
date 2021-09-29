@@ -20,9 +20,9 @@ using Fusion.Core.Shell;
 
 namespace IronStar {
 
-	public abstract class EntityFactoryContent : JsonContent {
-
-		public abstract ECS.Entity SpawnECS( ECS.IGameState gs );
+	public abstract class EntityFactoryContent : JsonContent 
+	{
+		public abstract ECS.Entity SpawnECS( ECS.IGameState gs, Vector3 p, Quaternion r );
 
 		/// <summary>
 		/// Draws entity in editor

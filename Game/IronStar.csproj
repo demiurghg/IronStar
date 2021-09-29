@@ -162,6 +162,7 @@
     <Compile Include="ECS\BufferedList.cs" />
     <Compile Include="ECS\IGameState.cs" />
     <Compile Include="ECS\IDrawSystem.cs" />
+    <Compile Include="ECS\SpawnData.cs" />
     <Compile Include="ECS\StatelessSystem.cs" />
     <Compile Include="ECS\ProcessingSystem.cs" />
     <Compile Include="ECS\SystemWrapper.cs" />
@@ -178,7 +179,6 @@
     <Compile Include="ECS\Utils\IdGenerator.cs" />
     <Compile Include="ECS\ISystem.cs" />
     <Compile Include="ECS\Collections\SystemCollection.cs" />
-    <Compile Include="ECS\Static.cs" />
     <Compile Include="Editor\Commands\EditorSaveAs.cs" />
     <Compile Include="Editor\Commands\EditorSave.cs" />
     <Compile Include="Editor\Commands\EditorPrefabCommand.cs" />

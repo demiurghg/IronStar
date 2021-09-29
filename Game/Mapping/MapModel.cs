@@ -111,21 +111,19 @@ namespace IronStar.Mapping
 
 		public override void SpawnNodeECS( IGameState gs )
 		{
-			ecsEntity		=	gs.Spawn();
-			ecsEntity.Tag	=	this;
-
-			ecsEntity.AddComponent( new ECS.Transform( Matrix.Scaling(Scale) * Transform ) );
-			ecsEntity.AddComponent( new StaticCollisionComponent() { Walkable = Walkable, Collidable = Collidable } );
-
+			//	create render model component :
+			var t		=	new Transform( Translation, Rotation, Scale );
+			var scc		=	new StaticCollisionComponent() { Walkable = Walkable, Collidable = Collidable };
 			var rm		=	new SFX2.RenderModel( ScenePath, Matrix.Identity, Color.White, 1, SFX2.RMFlags.None );
-			
+
 			rm.NoShadow	=	SkipShadow;
 			rm.cmPrefix	=	UseCollisionMesh ? "cm_" : "";
 
 			var lmSize	=	UseLightVolume ? 0 : (int)LightMapSize;
 			rm.SetupLightmap( lmSize, lmSize, Name );
 			
-			ecsEntity.AddComponent( rm );
+			ecsEntity		=	gs.Spawn( rm, t, scc);
+			ecsEntity.Tag	=	this;
 		}
 
 

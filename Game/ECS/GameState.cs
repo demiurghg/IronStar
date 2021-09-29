@@ -17,6 +17,7 @@ using System.Collections;
 using System.Threading;
 using Fusion.Core.Shell;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace IronStar.ECS
 {
@@ -24,7 +25,8 @@ namespace IronStar.ECS
 	{
 		struct FactoryData
 		{
-			public FactoryData( Entity e, EntityFactory f ) { Entity = e; Factory = f; }
+			public FactoryData( Entity e, EntityFactory f, string name ) { Entity = e; Factory = f; Name = name; }
+			public readonly string Name;
 			public readonly Entity Entity;
 			public readonly EntityFactory Factory;
 		}
@@ -60,7 +62,7 @@ namespace IronStar.ECS
 		readonly ComponentCollection		components;
 		Entity[] snapshot = new Entity[0];
 
-		readonly ConcurrentQueue<Entity>		spawnQueue;
+		readonly ConcurrentQueue<SpawnData>		spawnQueue2;
 		readonly ConcurrentQueue<FactoryData>	factoryQueue;
 		readonly ConcurrentQueue<TeleportData>	teleportQueue;
 		readonly ConcurrentQueue<ComponentData>	componentToRemove;
@@ -102,7 +104,7 @@ namespace IronStar.ECS
 			systems		=	new SystemCollection(this);
 			components	=	new ComponentCollection();
 
-			spawnQueue			=	new ConcurrentQueue<Entity>();
+			spawnQueue2			=	new ConcurrentQueue<SpawnData>();
 			factoryQueue		=	new ConcurrentQueue<FactoryData>();
 			teleportQueue		=	new ConcurrentQueue<TeleportData>();
 			componentToRemove	=	new ConcurrentQueue<ComponentData>();
@@ -357,6 +359,7 @@ namespace IronStar.ECS
 		void RefreshEntities()
 		{
 			Entity e;
+			SpawnData sd;
 			Action a;
 			FactoryData fd;
 			ComponentData cd;
@@ -367,20 +370,27 @@ namespace IronStar.ECS
 				a.Invoke();
 			}
 
-			while (spawnQueue.TryDequeue(out e))
+			while (spawnQueue2.TryDequeue(out sd))
 			{
-				entities.Add(e);
-				Refresh(e);
+				entities.Add(sd.Entity);
+				foreach (var component in sd.Components)
+				{
+					AddEntityComponentImmediate( sd.Entity, component );
+				}
+				Refresh(sd.Entity);
+				Log.Trace("Spawn : #{0} : {1}", sd.Entity.ID, string.Join(", ", sd.Components.Select(cc => cc.GetType().Name ) ) );
 			}
 
 			while (factoryQueue.TryDequeue(out fd))
 			{
 				fd.Factory.Construct( fd.Entity, this );
+				Refresh(fd.Entity);
+				Log.Trace("Spawn : #{0} : {1}", fd.Entity.ID, fd.Name );
 			}
 
 			while (componentToAdd.TryDequeue(out cd))
 			{
-				AddEntityComponentInternal( cd.Entity, cd.Component );
+				AddEntityComponentImmediate( cd.Entity, cd.Component );
 			}
 
 			while (teleportQueue.TryDequeue(out td))
@@ -390,12 +400,13 @@ namespace IronStar.ECS
 
 			while (componentToRemove.TryDequeue(out cd))
 			{
-				RemoveEntityComponentInternal( cd.Entity, cd.Component );
+				RemoveEntityComponentImmediate( cd.Entity, cd.Component );
 			}
 
 			while (killQueue.TryDequeue(out e))
 			{
 				KillInternal(e);
+				Log.Trace("Kill : #{0}", e.ID);
 			}
 
 			KillAllInternal();
@@ -447,6 +458,7 @@ namespace IronStar.ECS
 		{
 			if (killAllBarrierId!=0)
 			{
+				Log.Trace("Kill all before : #{0}", killAllBarrierId);
 				var killList = entities.GetSnapshot();
 
 				foreach ( var e in killList )
@@ -499,11 +511,21 @@ namespace IronStar.ECS
 		/// <returns>New entity</returns>
 		public Entity Spawn()
 		{
-			var e = new Entity( this, IdGenerator.Next() );
+			var entity = new Entity( this, IdGenerator.Next() );
 
-			spawnQueue.Enqueue( e );
+			spawnQueue2.Enqueue( new SpawnData( entity ) );
 
-			return e;
+			return entity;
+		}
+
+
+		public Entity Spawn( params IComponent[] components )
+		{
+			var entity = new Entity( this, IdGenerator.Next() );
+
+			spawnQueue2.Enqueue( new SpawnData( entity, components ) );
+
+			return entity;
 		}
 
 
@@ -518,7 +540,7 @@ namespace IronStar.ECS
 		{
 			var e = new Entity( this, IdGenerator.Next() );
 
-			spawnQueue.Enqueue( e );
+			spawnQueue2.Enqueue( new SpawnData(e) );
 
 			EntityFactory factory;
 
@@ -527,10 +549,11 @@ namespace IronStar.ECS
 				if (IsUpdateThread())
 				{
 					factory.Construct(e,this);
+					Log.Trace("Spawn : #{0} : {1}", e.ID, classname );
 				}
 				else
 				{
-					factoryQueue.Enqueue( new FactoryData(e, factory) );
+					factoryQueue.Enqueue( new FactoryData(e, factory, classname) );
 				}
 			}
 			else
@@ -618,14 +641,20 @@ namespace IronStar.ECS
 			if (entity==null) throw new ArgumentNullException("entity");
 			if (component==null) throw new ArgumentNullException("component");
 
+			#if false
 			if (IsUpdateThread())
 			{
-				AddEntityComponentInternal(entity, component);
+				AddEntityComponentImmediate(entity, component);
 			}
 			else
 			{
 				componentToAdd.Enqueue( new ComponentData( entity, component ) );
 			}
+			#else
+			CheckUpdateThread(nameof(AddEntityComponent));
+			AddEntityComponentImmediate(entity, component);
+			//componentToAdd.Enqueue( new ComponentData( entity, component ) );
+			#endif
 		}
 
 		/// <summary>
@@ -644,19 +673,23 @@ namespace IronStar.ECS
 		}
 
 
-		private void AddEntityComponentInternal( Entity entity, IComponent component )
+		private void AddEntityComponentImmediate( Entity entity, IComponent component )
 		{
 			entity.ComponentMapping |= ECSTypeManager.GetComponentBit( component.GetType() );
 			components.AddComponent( entity.ID, component );
+
+			Log.Trace("Add Component : #{0} : {1}", entity.ID, component.GetType().Name );
 
 			Refresh( entity );
 		}
 
 
-		private void RemoveEntityComponentInternal( Entity entity, IComponent component )
+		private void RemoveEntityComponentImmediate( Entity entity, IComponent component )
 		{
 			entity.ComponentMapping &= ~ECSTypeManager.GetComponentBit( component.GetType() );
 			components.RemoveComponent( entity.ID, component );
+
+			Log.Trace("Remove Component : #{0} : {1}", entity.ID, component.GetType().Name );
 
 			Refresh( entity );
 		}

@@ -49,7 +49,7 @@ namespace IronStar
 		EntityFactoryContent factory = null;
 
 
-		public override ECS.Entity SpawnECS( ECS.IGameState gs )
+		public override ECS.Entity SpawnECS( ECS.IGameState gs, Vector3 p, Quaternion r )
 		{
 			if (!string.IsNullOrWhiteSpace(classname))
 			{

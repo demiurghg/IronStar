@@ -128,13 +128,14 @@ namespace IronStar.Editor
 			gameState.AddSystem( new EditorLightRenderSystem( this, rs.RenderWorld.Debug ) );
 			gameState.AddSystem( new EditorPhysicsRenderSystem( this, rs.RenderWorld.Debug ) );
 			gameState.AddSystem( new EditorModelRenderSystem( this, rs.RenderWorld.Debug ) );
-			gameState.AddSystem( new EditorCharacterRenderSystem( this, rs.RenderWorld.Debug ) );
+			gameState.AddSystem( new EditorCharacterRenderSystem( this, rs.RenderWorld.Debug ) );  //*/
 
-			gameState.Update( GameTime.MSec16 );
 			//world.SimulateWorld( GameTime.MSec16 );
 			//world.PresentWorld( GameTime.MSec16, 1, null, null );
 
 			ResetWorld();
+
+			gameState.Update( GameTime.MSec16 );
 
 			RegisterCommands();
 

@@ -49,17 +49,14 @@ namespace IronStar.Mapping {
 
 		public override void SpawnNodeECS( IGameState gs )
 		{
-			ecsEntity		=	gs.Spawn();
-			ecsEntity.Tag	=	this;
-			ecsEntity.AddComponent( new ECS.Transform( Translation, Rotation ) );
+			var transform		=	new Transform( Translation, Rotation );
 
-			var light = new SFX2.LightProbeSphere(Name);
-
+			var light			=	new SFX2.LightProbeSphere(Name);
 			light.Radius		=	Radius;
 			light.Transition	=	Transition;
 
-			ecsEntity.AddComponent( light );
-			ecsEntity.AddComponent( new Static() );
+			ecsEntity			=	gs.Spawn( transform, light );
+			ecsEntity.Tag		=	this;
 		}
 
 

@@ -27,11 +27,9 @@ namespace IronStar {
 
 		public StartPointType StartPointType { get; set; }
 
-		public override ECS.Entity SpawnECS( ECS.IGameState gs )
+		public override ECS.Entity SpawnECS( ECS.IGameState gs, Vector3 p, Quaternion r )
 		{
-			var e = gs.Spawn();
-			e.AddComponent( new Gameplay.PlayerStartComponent() );
-			e.AddComponent( new ECS.Transform() );
+			var e = gs.Spawn( new Gameplay.PlayerStartComponent(), new ECS.Transform(p,r) );
 			return e;
 		}
 

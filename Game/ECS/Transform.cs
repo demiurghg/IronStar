@@ -19,7 +19,7 @@ namespace IronStar.ECS
 		/// <summary>
 		/// Entity rotation
 		/// </summary>
-		public Quaternion	Rotation;
+		public Quaternion	Rotation = Quaternion.Identity;
 
 		/// <summary>
 		/// Entity scaling

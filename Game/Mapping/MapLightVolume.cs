@@ -70,15 +70,12 @@ namespace IronStar.Mapping
 
 		public override void SpawnNodeECS( IGameState gs )
 		{
-			ecsEntity		=	gs.Spawn();
+			ecsEntity		=	gs.Spawn( new Transform( Translation, Rotation, 1 ), CreateLightVolume() );
 			ecsEntity.Tag	=	this;
-
-			ecsEntity.AddComponent( new Transform( Translation, Rotation, 1 ) );
-			ecsEntity.AddComponent( CreateOmniLight() );
 		}
 
 
-		SFX2.LightVolume CreateOmniLight()
+		SFX2.LightVolume CreateLightVolume()
 		{
 			var light = new SFX2.LightVolume();
 

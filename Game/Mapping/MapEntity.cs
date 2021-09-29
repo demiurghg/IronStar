@@ -45,7 +45,7 @@ namespace IronStar.Mapping
 
 		public override void SpawnNodeECS( ECS.IGameState gs )
 		{
-			ecsEntity		=	Factory.SpawnECS(gs);
+			ecsEntity		=	Factory.SpawnECS(gs, Translation, Rotation);
 			ecsEntity.Tag	=	this;
 
 			if (ecsEntity!=null)

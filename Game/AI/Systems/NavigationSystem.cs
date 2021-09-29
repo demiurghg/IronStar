@@ -20,7 +20,7 @@ namespace IronStar.AI
 {
 	class NavigationSystem : ISystem
 	{
-		bool				navMeshDirty	=	true;
+		bool				navMeshDirty	=	false;
 		NavigationMesh		navMesh			=	null;
 		BackgroundWorker	worker;
 

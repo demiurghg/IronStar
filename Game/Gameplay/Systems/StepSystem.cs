@@ -99,8 +99,6 @@ namespace IronStar.Gameplay.Systems
 				//acceleration		=	Vector3.TransformNormal( acceleration, Matrix.Invert( transform.TransformMatrix ) );
 				//step.LocalAcceleration	=	Vector3.Lerp( step.LocalAcceleration, acceleration, ACCELERATION_FILTER );
 
-
-				gs.Game.RenderSystem.RenderWorld.Debug.DrawVector( transform.Position, acceleration, Color.Yellow, 0.1f );
 				//
 				//	debug :
 				//

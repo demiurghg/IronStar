@@ -148,6 +148,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="color"></param>
 		public void DrawLine(Vector3 p0, Vector3 p1, Color color)
 		{
+			Game.CheckMainThread();
 			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p0,0), Color = color.ToVector4() });
 			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p1,0), Color = color.ToVector4() });
 			//DrawLine( p0, p1, color, Matrix.Identity );
@@ -163,6 +164,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="color"></param>
 		public void DrawLine(Vector2 p0, Vector2 p1, Color color)
 		{
+			Game.CheckMainThread();
 			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p0, 0,0), Color = color.ToVector4() });
 			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p1, 0,0), Color = color.ToVector4() });
 			//DrawLine( p0, p1, color, Matrix.Identity );
@@ -178,6 +180,7 @@ namespace Fusion.Engine.Graphics {
 		/// <param name="color"></param>
 		public void DrawLine(Vector3 p0, Vector3 p1, Color color0, Color color1)
 		{
+			Game.CheckMainThread();
 			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p0,0), Color = color0.ToVector4() });
 			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p1,0), Color = color1.ToVector4() });
 			//DrawLine( p0, p1, color, Matrix.Identity );
@@ -186,6 +189,7 @@ namespace Fusion.Engine.Graphics {
 
 		public void DrawLine(Vector3 p0, Vector3 p1, Color color0, Color color1, float width0, float width1)
 		{
+			Game.CheckMainThread();
 			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p0,width0), Color = color0.ToVector4() });
 			vertexDataAccum.Add(new DebugVertex() { Pos = new Vector4(p1,width1), Color = color1.ToVector4() });
 			//DrawLine( p0, p1, color, Matrix.Identity );

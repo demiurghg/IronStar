@@ -38,8 +38,8 @@ namespace Fusion.Core {
 	/// <summary>
 	/// Provides basic graphics device initialization, game logic, and rendering code. 
 	/// </summary>
-	public abstract class Game : DisposableBase {
-
+	public abstract class Game : DisposableBase 
+	{
 		/// <summary>
 		/// Game instance.
 		/// </summary>
@@ -194,6 +194,7 @@ namespace Fusion.Core {
 		GamepadCollection	gamepads		;
 		UserStorage			userStorage		;
 
+		readonly Thread		mainThread;
 
 		GameTime	gameTimeInternal;
 
@@ -251,6 +252,20 @@ namespace Fusion.Core {
 		readonly string gameId;
 
 
+		public bool IsMainThread()
+		{
+			return Thread.CurrentThread.ManagedThreadId == mainThread.ManagedThreadId;
+		}
+
+		public void CheckMainThread()
+		{
+			if (!IsMainThread())
+			{
+				throw new InvalidOperationException("Method must be called within main thread");
+			}
+		}
+
+
 		/// <summary>
 		/// Initializes a new instance of this class, which provides 
 		/// basic graphics device initialization, game logic, rendering code, and a game loop.
@@ -259,6 +274,7 @@ namespace Fusion.Core {
 		{
 			this.gameTitle	=	gameTitle;
 			this.gameId		=	gameId;
+			this.mainThread	=	Thread.CurrentThread;
 			Enabled			=	true;
 
 			AppDomain currentDomain = AppDomain.CurrentDomain;

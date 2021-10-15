@@ -14,7 +14,7 @@ using IronStar.SFX2;
 
 namespace IronStar.Editor.Systems
 {
-	partial class EditorModelRenderSystem : DrawSystem<DebugModel[], Transform, RenderModel, StaticCollisionComponent>
+	partial class EditorModelRenderSystem : ProcessingSystem<DebugModel[], Transform, RenderModel, StaticCollisionComponent>
 	{
 		readonly DebugRender dr;
 		readonly MapEditor editor;
@@ -26,12 +26,6 @@ namespace IronStar.Editor.Systems
 			this.dr			=	dr;
 			this.editor		=	editor;
 			this.content	=	editor.Content;
-		}
-
-		
-		public void Update( GameState gs, GameTime gameTime )
-		{
-			//throw new NotImplementedException();
 		}
 
 		
@@ -84,7 +78,7 @@ namespace IronStar.Editor.Systems
 		}
 
 		
-		protected override void DrawEntity( Entity entity, GameTime gameTime, DebugModel[] models, Transform component1, RenderModel component2, StaticCollisionComponent component3 )
+		protected override void Process( Entity entity, GameTime gameTime, DebugModel[] models, Transform component1, RenderModel component2, StaticCollisionComponent component3 )
 		{
 			Color color;
 			bool selected;

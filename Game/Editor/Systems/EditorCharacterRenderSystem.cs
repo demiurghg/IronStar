@@ -12,7 +12,7 @@ using System.Diagnostics;
 
 namespace IronStar.Editor.Systems
 {
-	partial class EditorCharacterRenderSystem : IDrawSystem
+	partial class EditorCharacterRenderSystem : ISystem
 	{
 		readonly DebugRender dr;
 		readonly MapEditor editor;
@@ -42,11 +42,6 @@ namespace IronStar.Editor.Systems
 		public void Remove( GameState gs, Entity e ) {}
 
 		public void Update( GameState gs, GameTime gameTime )
-		{
-		}
-
-
-		public void Draw( GameState gs, GameTime gameTime )
 		{
 			if (gs.Game.RenderSystem.SkipDebugRendering) 
 			{

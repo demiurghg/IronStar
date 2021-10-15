@@ -36,6 +36,10 @@ namespace IronStar.ECS
 		}
 
 
+		/// <summary>
+		/// Creates copy of given entity keeping old mapping bits
+		/// </summary>
+		/// <returns></returns>
 		internal Entity MakeCopyInternal()
 		{
 			var e = new Entity(gs, ID);
@@ -43,6 +47,7 @@ namespace IronStar.ECS
 			e.SystemMapping		=	SystemMapping;
 			return e;
 		}
+		
 		
 		/// <summary>
 		/// Kills this entity

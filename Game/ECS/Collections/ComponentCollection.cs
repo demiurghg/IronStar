@@ -78,38 +78,5 @@ namespace IronStar.ECS
 				return null;
 			}
 		}
-
-
-		public IComponent GetInterpolatedComponent( uint entityId, Type componentType )
-		{
-			IComponent result;
-
-			if ( this[componentType].TryGetInterpolatedValue( entityId, out result ) )
-			{
-				return result;
-			}
-			else
-			{
-				return null;
-			}
-		}
-
-
-		public void CommitChanges( TimeSpan timestep )
-		{
-			foreach ( var dict in this )
-			{
-				dict.Value.CommitChanges( GameTime.CurrentTime, timestep );
-			}
-		}
-
-		
-		public void Interpolate()
-		{
-			foreach ( var dict in this )
-			{
-				dict.Value.Interpolate( GameTime.CurrentTime );
-			}
-		}
 	}
 }

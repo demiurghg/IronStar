@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace IronStar.ECS
 {
-	class EntityCollection
+	class EntityCollection : IEnumerable<KeyValuePair<uint, Entity>>
 	{
 		class IDComparer : IEqualityComparer<uint>
 		{
@@ -51,15 +52,6 @@ namespace IronStar.ECS
 		}
 
 
-		public Entity[] GetSnapshot()
-		{
-			lock (lockObj)
-			{
-				return dict.Values.Select( e => e.MakeCopyInternal() ).ToArray();
-			}
-		}
-
-
 		public bool Contains( uint id )
 		{
 			return dict.ContainsKey( id );
@@ -77,6 +69,15 @@ namespace IronStar.ECS
 				}
 		}
 
+		public IEnumerator<KeyValuePair<uint, Entity>> GetEnumerator()
+		{
+			return ( (IEnumerable<KeyValuePair<uint, Entity>>)dict ).GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return ( (IEnumerable<KeyValuePair<uint, Entity>>)dict ).GetEnumerator();
+		}
 
 		public int Count
 		{

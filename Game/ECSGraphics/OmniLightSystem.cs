@@ -12,7 +12,7 @@ using Fusion.Core;
 
 namespace IronStar.SFX2
 {
-	public class OmniLightSystem : DrawSystem<RSOmniLight,OmniLight,Transform>
+	public class OmniLightSystem : ProcessingSystem<RSOmniLight,OmniLight,Transform>
 	{
 		Dictionary<uint,RSOmniLight> lights = new Dictionary<uint, RSOmniLight>();
 
@@ -28,7 +28,7 @@ namespace IronStar.SFX2
 		{
 			var light = new RSOmniLight();
 
-			DrawEntity( e, GameTime.Zero, light, ol, t );
+			Process( e, GameTime.Zero, light, ol, t );
 
 			ls.OmniLights.Add( light );
 			return light;
@@ -41,7 +41,7 @@ namespace IronStar.SFX2
 		}
 
 		
-		protected override void DrawEntity( Entity e, GameTime gameTime, RSOmniLight light, OmniLight ol, Transform t )
+		protected override void Process( Entity e, GameTime gameTime, RSOmniLight light, OmniLight ol, Transform t )
 		{
 			var transform		=	t.TransformMatrix;
 			light.Position0		=	transform.TranslationVector + transform.Right * ol.TubeLength * 0.5f;

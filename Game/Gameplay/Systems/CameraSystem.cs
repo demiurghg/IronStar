@@ -18,7 +18,7 @@ using Fusion.Core.Configuration;
 
 namespace IronStar.Gameplay
 {
-	public class CameraSystem : ISystem, IGameComponent, IDrawSystem
+	public class CameraSystem : ISystem, IGameComponent
 	{
 		[Config]
 		public bool ThirdPersonEnable { get; set; }
@@ -104,25 +104,7 @@ namespace IronStar.Gameplay
 			foreach ( var player in players)
 			{
 				UpdatePlayerCamera(gameTime, gs, player);
-			}
-		}
-
-
-		public void Draw( GameState gs, GameTime gameTime )
-		{
-			if (Enabled)
-			{
-				var	players	=	gs.QueryEntities(playerCameraAspect);
-
-				if (players.Count()>1)
-				{
-					Log.Warning("CameraSystem.Draw -- multiple players detected");
-				}
-
-				foreach ( var player in players)
-				{
-					DrawPlayerCamera(gameTime, gs, player);
-				}
+				DrawPlayerCamera(gameTime, gs, player);
 			}
 		}
 

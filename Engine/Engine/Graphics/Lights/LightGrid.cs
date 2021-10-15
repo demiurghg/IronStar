@@ -502,7 +502,8 @@ namespace Fusion.Engine.Graphics
 					}
 				}
 				#endregion
-			} catch ( IndexOutOfRangeException ioore )
+			} 
+			catch ( IndexOutOfRangeException ioore )
 			{
 				Log.Error("Compute light and decal count: {0}", ioore.Message);
 			}
@@ -522,7 +523,8 @@ namespace Fusion.Engine.Graphics
 
 					lightGrid[i].Count	= 0;
 				}
-			} catch ( IndexOutOfRangeException ioore )
+			} 
+			catch ( IndexOutOfRangeException ioore )
 			{
 				Log.Error(ioore.Message);
 			}
@@ -550,7 +552,8 @@ namespace Fusion.Engine.Graphics
 						index++;
 					}
 				}
-			} catch ( IndexOutOfRangeException ioore )
+			} 
+			catch ( IndexOutOfRangeException ioore )
 			{
 				Log.Error(ioore.Message);
 			}
@@ -575,7 +578,8 @@ namespace Fusion.Engine.Graphics
 						index++;
 					}
 				}
-			} catch ( IndexOutOfRangeException ioore )
+			} 
+			catch ( IndexOutOfRangeException ioore )
 			{
 				Log.Error(ioore.Message);
 			}
@@ -602,7 +606,8 @@ namespace Fusion.Engine.Graphics
 						index++;
 					}
 				}
-			} catch ( IndexOutOfRangeException ioore )
+			} 
+			catch ( IndexOutOfRangeException ioore )
 			{
 				Log.Error(ioore.Message);
 			}
@@ -629,7 +634,8 @@ namespace Fusion.Engine.Graphics
 						index++;
 					}
 				}
-			} catch ( IndexOutOfRangeException ioore )
+			} 
+			catch ( IndexOutOfRangeException ioore )
 			{
 				Log.Error(ioore.Message);
 			}
@@ -666,8 +672,5 @@ namespace Fusion.Engine.Graphics
 				gridTexture	.SetData	( lightGrid );
 			}
 		}
-
-
-
 	}
 }

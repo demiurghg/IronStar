@@ -15,7 +15,7 @@ using IronStar.Gameplay.Components;
 
 namespace IronStar.UI.HUD
 {
-	public class GameFXSystem : IDrawSystem
+	public class GameFXSystem : ISystem
 	{
 		readonly Game Game;
 
@@ -30,9 +30,8 @@ namespace IronStar.UI.HUD
 		public void Remove( GameState gs, Entity e ) {}
 		public Aspect GetAspect() { return Aspect.Empty; }
 
-		public void Update( GameState gs, GameTime gameTime ) {}
-
-		public void Draw( GameState gs, GameTime gameTime )
+		
+		public void Update( GameState gs, GameTime gameTime )
 		{
 			var player	=	gs.QueryEntities(PlayerFactory.PlayerAspect).LastOrDefault();
 

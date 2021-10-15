@@ -24,7 +24,7 @@ using System.Collections.Concurrent;
 
 namespace IronStar.SFX2 
 {
-	public class RenderModelSystem : DrawSystem<RenderModelInstance,Transform,RenderModel>, IDrawSystem
+	public class RenderModelSystem : ProcessingSystem<RenderModelInstance,Transform,RenderModel>
 	{
 		readonly Game	game;
 		public readonly RenderSystem rs;
@@ -56,8 +56,8 @@ namespace IronStar.SFX2
 			model.RemoveInstances();
 		}
 
-		
-		protected override void DrawEntity( Entity e, GameTime gameTime, RenderModelInstance model, Transform t, RenderModel rm )
+
+		protected override void Process( Entity e, GameTime gameTime, RenderModelInstance model, Transform t, RenderModel rm )
 		{
 			model.SetTransform( t.TransformMatrix );
 

@@ -25,7 +25,7 @@ using RSLightProbe = Fusion.Engine.Graphics.LightProbe;
 
 namespace IronStar.SFX2 
 {
-	public class LightingSystem : ISystem, IDrawSystem 
+	public class LightingSystem : ISystem
 	{
 		public Aspect GetAspect()
 		{

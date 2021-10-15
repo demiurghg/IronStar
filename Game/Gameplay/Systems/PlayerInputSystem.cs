@@ -14,11 +14,10 @@ using System.Collections.Concurrent;
 
 namespace IronStar.Gameplay
 {
-	public class PlayerInputSystem : ISystem, IDrawSystem
+	public class PlayerInputSystem : ISystem
 	{
-		Aspect							playerAspect	=	new Aspect().Include<Transform,PlayerComponent,UserCommandComponent>();
-		UserCommand						userCommand		=	new UserCommand();
-		ConcurrentQueue<UserCommand>	commandQueue	=	new ConcurrentQueue<UserCommand>();
+		Aspect			playerAspect	=	new Aspect().Include<Transform,PlayerComponent,UserCommandComponent>();
+		UserCommand		userCommand		=	new UserCommand();
 
 		public Aspect GetAspect() { return playerAspect; }
 
@@ -42,6 +41,7 @@ namespace IronStar.Gameplay
 		{
 			var playerInput	=	gs.Game.GetService<PlayerInput>();
 			var players		=	gs.QueryEntities(playerAspect);
+			playerInput.UpdateUserInput( gameTime, ref userCommand );
 
 			foreach ( var player in players )
 			{
@@ -49,56 +49,9 @@ namespace IronStar.Gameplay
 				var health	=	player.GetComponent<HealthComponent>();
 				var alive	=	health==null ? true : health.Health > 0;
 
-				UserAction action = UserAction.None;
-				UserCommand uc;
-				float yaw = 0, pitch = 0;
-				float dYaw = 0, dPitch = 0;
-				float move = 0, strafe = 0;
-				bool command = false;
-				int count = 0;
-
-				#if COMMAND_QUEUE
-					//	#TODO #ECS #INPUT -- provide control for angular prediction amount (auto aim?)
-					while (commandQueue.TryDequeue( out uc ))
-					{
-						action	=	uc.Action | action;
-						dYaw	+=	uc.DeltaYaw;
-						dPitch	+=	uc.DeltaPitch;
-						yaw		=	uc.Yaw;
-						pitch	=	uc.Pitch;
-						move	+=	uc.Move;
-						strafe	+=	uc.Strafe;
-						command	=	true;
-						count++;
-					}
-
-					if (count>0)
-					{
-						move	/=	count;
-						strafe	/=	count;
-						dYaw	/=	count;
-						dPitch	/=	count;
-					}
-
-					if (command)
-					{
-						ucc.UpdateFromUserCommand( yaw + dYaw, pitch + dPitch, move, strafe,  action );
-					}
-				#else
-					playerInput.UpdateUserInput( gameTime, ref userCommand );
-					ucc.UpdateFromUserCommand( userCommand.Yaw, userCommand.Pitch, userCommand.Action );
-				#endif
-			}
-		}
-
-		
-		public void Draw( GameState gs, GameTime gameTime )
-		{
-			#if COMMAND_QUEUE
-				var playerInput	=	gs.Game.GetService<PlayerInput>();
 				playerInput.UpdateUserInput( gameTime, ref userCommand );
-				commandQueue.Enqueue( userCommand );
-			#endif
+				ucc.UpdateFromUserCommand( userCommand.Yaw, userCommand.Pitch, userCommand.Move, userCommand.Strafe, userCommand.Action );
+			}
 		}
 	}
 }

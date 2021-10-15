@@ -1,5 +1,4 @@
-﻿#define ASYNC_GAMESTATE
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -60,7 +59,6 @@ namespace IronStar.ECS
 		readonly EntityCollection			entities;
 		readonly SystemCollection			systems;
 		readonly ComponentCollection		components;
-		Entity[] snapshot = new Entity[0];
 
 		readonly ConcurrentQueue<SpawnData>		spawnQueue2;
 		readonly ConcurrentQueue<FactoryData>	factoryQueue;
@@ -79,7 +77,7 @@ namespace IronStar.ECS
 
 		public event	EventHandler Reloading;
 
-		Thread updateThread;
+		readonly Stopwatch stopwatch = new Stopwatch();
 		readonly Thread mainThread;
 		bool terminate = false;
 
@@ -120,17 +118,6 @@ namespace IronStar.ECS
 			Game.Reloading += Game_Reloading;
 		}
 
-
-		public void Start()
-		{
-			#if ASYNC_GAMESTATE
-			updateThread				=	new Thread( UpdateParallelLoop );
-			updateThread.Name			=	"ECS Update Thread";
-			updateThread.IsBackground	=	true;
-			updateThread.Start();
-			#endif
-		}
-
 		
 		private void Game_Reloading( object sender, EventArgs e )
 		{
@@ -140,33 +127,13 @@ namespace IronStar.ECS
 
 		bool IsUpdateThread()
 		{
-			#if ASYNC_GAMESTATE
-			return updateThread==null ? false : Thread.CurrentThread.ManagedThreadId == updateThread.ManagedThreadId;
-			#else
-			return true;
-			#endif
-		}
-
-
-		bool IsMainThread()
-		{
-			#if ASYNC_GAMESTATE
 			return Thread.CurrentThread.ManagedThreadId == mainThread.ManagedThreadId;
-			#else
-			throw new NotImplementedException();
-			#endif
 		}
 
 
 		void CheckUpdateThread(string methodName)
 		{
 			if (!IsUpdateThread()) throw new InvalidOperationException(methodName + " must be called from UPDATE thread");
-		}
-
-
-		void CheckMainThread(string methodName)
-		{
-			if (!IsMainThread()) throw new InvalidOperationException(methodName + " must be called from MAIN thread");
 		}
 
 
@@ -178,20 +145,14 @@ namespace IronStar.ECS
 		{
 			if ( disposing )
 			{
-				#if ASYNC_GAMESTATE
-					terminate = true;
-					updateThread?.Join();
-				#else
-					KillAll();
-					RefreshEntities();
-				#endif
+				KillAll();
+				RefreshEntities();
 
 				Game.Reloading -= Game_Reloading;
 
 				foreach ( var systemWrapper in systems )
 				{
 					var system = systemWrapper.System;
-					(system as IDrawSystem)?.Draw( this, GameTime.MSec16 );
 					Game.Components.Remove(	system as IGameComponent );
 					( system as IDisposable )?.Dispose();
 				}
@@ -210,23 +171,31 @@ namespace IronStar.ECS
 		/// <param name="gameTime"></param>
 		public void Update( GameTime gameTime )
 		{
-			components.Interpolate();
-			
-			foreach ( var system in systems )
-			{
-				(system.System as IDrawSystem)?.Draw( this, gameTime );
-			}
+			var maxTime = TimeSpan.FromMilliseconds(20);
 
-			#if ASYNC_GAMESTATE
-			// do nothing
-			#else
+			stopwatch.Reset();
+			stopwatch.Start();
+
 			RefreshEntities();
 
 			foreach ( var system in systems )
 			{
-				system.System.Update( this, gameTime );
+				system.Update( this, gameTime );
 			}
-			#endif
+
+			stopwatch.Stop();
+			if (stopwatch.Elapsed > maxTime)
+			{
+				Log.Warning("LOOP TIME {0} > DT {1}", stopwatch.Elapsed, maxTime);
+
+				/*foreach ( var system in systems )
+				{
+					if (system.ProfilingTime.Ticks > maxTime.Ticks / 10)
+					{
+						Log.Warning("   {0} : {1}", system.ProfilingTime, system.System.GetType().Name );
+					}
+				}*/
+			}
 		}
 
 
@@ -275,9 +244,6 @@ namespace IronStar.ECS
 			{
 				system.Update( this, gameTime );
 			}
-
-			components.CommitChanges( dt );
-			snapshot = entities.GetSnapshot();
 
 			stopwatch.Stop();
 			if (stopwatch.Elapsed > dt)
@@ -378,14 +344,12 @@ namespace IronStar.ECS
 					AddEntityComponentImmediate( sd.Entity, component );
 				}
 				Refresh(sd.Entity);
-				Log.Trace("Spawn : #{0} : {1}", sd.Entity.ID, string.Join(", ", sd.Components.Select(cc => cc.GetType().Name ) ) );
 			}
 
 			while (factoryQueue.TryDequeue(out fd))
 			{
 				fd.Factory.Construct( fd.Entity, this );
 				Refresh(fd.Entity);
-				Log.Trace("Spawn : #{0} : {1}", fd.Entity.ID, fd.Name );
 			}
 
 			while (componentToAdd.TryDequeue(out cd))
@@ -406,7 +370,6 @@ namespace IronStar.ECS
 			while (killQueue.TryDequeue(out e))
 			{
 				KillInternal(e);
-				Log.Trace("Kill : #{0}", e.ID);
 			}
 
 			KillAllInternal();
@@ -458,8 +421,7 @@ namespace IronStar.ECS
 		{
 			if (killAllBarrierId!=0)
 			{
-				Log.Trace("Kill all before : #{0}", killAllBarrierId);
-				var killList = entities.GetSnapshot();
+				var killList = entities.Select( pair => pair.Value ).ToArray();
 
 				foreach ( var e in killList )
 				{
@@ -532,7 +494,7 @@ namespace IronStar.ECS
 		/// <summary>
 		/// Create new entity using entity factory. 
 		/// Entity will enter the world at the begining of the next update frame.
-		/// In updtate thread construction is immediate. 
+		/// In update thread construction is immediate. 
 		/// Outside of the update thread construction is deferred.
 		/// </summary>
 		/// <returns>New entity</returns>
@@ -549,7 +511,6 @@ namespace IronStar.ECS
 				if (IsUpdateThread())
 				{
 					factory.Construct(e,this);
-					Log.Trace("Spawn : #{0} : {1}", e.ID, classname );
 				}
 				else
 				{
@@ -641,20 +602,8 @@ namespace IronStar.ECS
 			if (entity==null) throw new ArgumentNullException("entity");
 			if (component==null) throw new ArgumentNullException("component");
 
-			#if false
-			if (IsUpdateThread())
-			{
-				AddEntityComponentImmediate(entity, component);
-			}
-			else
-			{
-				componentToAdd.Enqueue( new ComponentData( entity, component ) );
-			}
-			#else
 			CheckUpdateThread(nameof(AddEntityComponent));
 			AddEntityComponentImmediate(entity, component);
-			//componentToAdd.Enqueue( new ComponentData( entity, component ) );
-			#endif
 		}
 
 		/// <summary>
@@ -678,8 +627,6 @@ namespace IronStar.ECS
 			entity.ComponentMapping |= ECSTypeManager.GetComponentBit( component.GetType() );
 			components.AddComponent( entity.ID, component );
 
-			Log.Trace("Add Component : #{0} : {1}", entity.ID, component.GetType().Name );
-
 			Refresh( entity );
 		}
 
@@ -688,8 +635,6 @@ namespace IronStar.ECS
 		{
 			entity.ComponentMapping &= ~ECSTypeManager.GetComponentBit( component.GetType() );
 			components.RemoveComponent( entity.ID, component );
-
-			Log.Trace("Remove Component : #{0} : {1}", entity.ID, component.GetType().Name );
 
 			Refresh( entity );
 		}
@@ -707,14 +652,9 @@ namespace IronStar.ECS
 		/// <returns>Component</returns>
 		public IComponent GetEntityComponent( Entity entity, Type componentType )
 		{
-			if (IsUpdateThread())
-			{
-				return components.GetComponent( entity.ID, componentType );
-			}
-			else
-			{
-				return components.GetInterpolatedComponent( entity.ID, componentType );
-			}
+			CheckUpdateThread(nameof(GetEntityComponent));
+
+			return components.GetComponent( entity.ID, componentType );
 		}
 
 		/*-----------------------------------------------------------------------------------------------
@@ -755,7 +695,7 @@ namespace IronStar.ECS
 
 		public IEnumerable<Entity> QueryEntities( Aspect aspect )
 		{
-			return IsUpdateThread() ? entities.Query( aspect ) : snapshot.Where( e => aspect.Accept(e) );
+			return entities.Query( aspect );
 		}
 	}
 }

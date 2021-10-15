@@ -19,7 +19,7 @@ using IronStar.Gameplay.Components;
 
 namespace IronStar.SFX 
 {
-	public partial class FXPlayback : DrawSystem<FXInstance, FXComponent, Transform>
+	public partial class FXPlayback : ProcessingSystem<FXInstance, FXComponent, Transform>
 	{
 		TextureAtlas spriteSheet;
 
@@ -120,7 +120,7 @@ namespace IronStar.SFX
 		/// Updates visible meshes
 		/// </summary>
 		/// <param name="gameTime"></param>
-		public void Update ( GameTime gameTime )
+		void UpdateInternal ( GameTime gameTime )
 		{
 			const float dt = 1/60.0f;
 			timeAccumulator	+= gameTime.ElapsedSec;
@@ -236,14 +236,14 @@ namespace IronStar.SFX
 			fxInstance?.Kill();
 		}
 
-		public override void Draw( GameState gs, GameTime gameTime )
+		public override void Update( GameState gs, GameTime gameTime )
 		{
-			base.Draw( gs, gameTime );
+			base.Update( gs, gameTime );
 
-			Update( gameTime );
+			UpdateInternal( gameTime );
 		}
 
-		protected override void DrawEntity( ECS.Entity entity, GameTime gameTime, FXInstance fxInstance, FXComponent fx, Transform t )
+		protected override void Process( ECS.Entity entity, GameTime gameTime, FXInstance fxInstance, FXComponent fx, Transform t )
 		{
 			if ( fxInstance!=null )
 			{

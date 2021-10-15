@@ -13,7 +13,7 @@ using IronStar.Animation;
 
 namespace IronStar.Gameplay.Systems
 {
-	class FPVWeaponSystem : DisposableBase, IDrawSystem
+	class FPVWeaponSystem : DisposableBase, ISystem
 	{
 		const string ANIM_TILT		=	"tilt"			;
 		const string ANIM_IDLE		=	"idle"			;
@@ -67,11 +67,6 @@ namespace IronStar.Gameplay.Systems
 
 
 		public void Update( GameState gs, GameTime gameTime )
-		{
-		}
-
-
-		public void Draw( GameState gs, GameTime gameTime )
 		{
 			var rs = gs.GetService<RenderSystem>();
 			var rw = rs.RenderWorld;

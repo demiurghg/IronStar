@@ -12,7 +12,7 @@ using Fusion.Core;
 
 namespace IronStar.SFX2
 {
-	public class DecalSystem : DrawSystem<Decal,DecalComponent,Transform>
+	public class DecalSystem : ProcessingSystem<Decal,DecalComponent,Transform>
 	{
 		Dictionary<uint,Decal> lights = new Dictionary<uint, Decal>();
 
@@ -29,7 +29,7 @@ namespace IronStar.SFX2
 		{
 			var decal = new Decal();
 
-			DrawEntity( e, GameTime.Zero, decal, ol, t );
+			Process( e, GameTime.Zero, decal, ol, t );
 
 			ls.Decals.Add( decal );
 			return decal;
@@ -42,7 +42,7 @@ namespace IronStar.SFX2
 		}
 
 		
-		protected override void DrawEntity( Entity e, GameTime gameTime, Decal decal, DecalComponent dc, Transform t )
+		protected override void Process( Entity e, GameTime gameTime, Decal decal, DecalComponent dc, Transform t )
 		{
 			var transform			=	t.TransformMatrix;
 

@@ -123,12 +123,7 @@ namespace IronStar.Editor
 				this.map = new Map();
 			}
 
-			gameState	=	IronStar.CreateGameState( Game, Content, mapName, map );
-			gameState.AddSystem( new EditorEntityRenderSystem( this, rs.RenderWorld.Debug ) );
-			gameState.AddSystem( new EditorLightRenderSystem( this, rs.RenderWorld.Debug ) );
-			gameState.AddSystem( new EditorPhysicsRenderSystem( this, rs.RenderWorld.Debug ) );
-			gameState.AddSystem( new EditorModelRenderSystem( this, rs.RenderWorld.Debug ) );
-			gameState.AddSystem( new EditorCharacterRenderSystem( this, rs.RenderWorld.Debug ) );  //*/
+			gameState	=	IronStar.CreateGameState( Game, Content, mapName, map, this );
 
 			//world.SimulateWorld( GameTime.MSec16 );
 			//world.PresentWorld( GameTime.MSec16, 1, null, null );

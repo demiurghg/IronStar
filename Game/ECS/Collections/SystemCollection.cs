@@ -12,7 +12,7 @@ namespace IronStar.ECS
 		readonly GameState gs;
 		readonly object lockObj = new object();
 		readonly List<SystemWrapper> systemWrappers;
-
+		
 		public SystemCollection(GameState gs)
 		{
 			this.gs			=	gs;
@@ -24,7 +24,8 @@ namespace IronStar.ECS
 		{
 			lock (lockObj)
 			{
-				systemWrappers.Add( new SystemWrapper( gs, system ) );
+				var index = systemWrappers.Count;
+				systemWrappers.Add( new SystemWrapper( gs, system, index ) );
 			}
 		}
 

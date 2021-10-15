@@ -44,7 +44,8 @@ namespace IronStar.Editor.Systems
 		public void Update( GameState gs, GameTime gameTime )
 		{
 		}
-		
+
+
 		public void Draw( GameState gs, GameTime gameTime )
 		{
 			if (gs.Game.RenderSystem.SkipDebugRendering) 

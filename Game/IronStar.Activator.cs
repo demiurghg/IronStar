@@ -24,16 +24,18 @@ using IronStar.UI.HUD;
 using IronStar.Monsters.Systems;
 using IronStar.ECSGraphics;
 using IronStar.Gameplay;
+using IronStar.Editor.Systems;
 
 namespace IronStar 
 {
 	partial class IronStar : Game
 	{
-		public static GameState CreateGameState( Game game, ContentManager content, string mapName, Mapping.Map mapContent = null )
+		public static GameState CreateGameState( Game game, ContentManager content, string mapName, Mapping.Map mapContent = null, MapEditor editor = null )
 		{
 			var isEditor	=	mapContent!=null;
 			var map			=	mapContent ?? content.Load<Mapping.Map>(@"maps\" + mapName);
 			var gs			=	new GameState(game, content, TimeSpan.FromMilliseconds(16));
+			var rs			=	game.RenderSystem;
 
 			var rw	=	game.RenderSystem.RenderWorld;
 			
@@ -99,6 +101,12 @@ namespace IronStar
 			if (isEditor)
 			{
 				gs.GetService<CameraSystem>().Enabled = false;
+
+				gs.AddSystem( new EditorEntityRenderSystem( editor, rs.RenderWorld.Debug ) );
+				gs.AddSystem( new EditorLightRenderSystem( editor, rs.RenderWorld.Debug ) );
+				gs.AddSystem( new EditorPhysicsRenderSystem( editor, rs.RenderWorld.Debug ) );
+				gs.AddSystem( new EditorModelRenderSystem( editor, rs.RenderWorld.Debug ) );
+				gs.AddSystem( new EditorCharacterRenderSystem( editor, rs.RenderWorld.Debug ) );  //*/
 			}
 
 			map.ActivateGameState(gs);

@@ -19,13 +19,14 @@ namespace IronStar.ECS
 
 		public TimeSpan ProfilingTime { get { return profilingTime; } }
 		
-		public SystemWrapper( GameState gs, ISystem system )
+		public SystemWrapper( GameState gs, ISystem system, int index )
 		{
-			if (system==null) throw new ArgumentNullException("system");
+			if (system==null) throw new ArgumentNullException(nameof(system));
+			if (index>=GameState.MaxSystems || index<0) throw new ArgumentOutOfRangeException(nameof(index));
 
 			this.gs		=	gs;
 			this.System	=	system;
-			this.Bit	=	ECSTypeManager.GetSystemBit( system.GetType() );
+			this.Bit	=	1L << index;
 			this.Aspect	=	system.GetAspect();
 
 			this.stopwatch	=	new Stopwatch();

@@ -10,10 +10,11 @@ using Fusion.Engine.Graphics;
 using IronStar.ECSPhysics;
 using Fusion.Core.Content;
 using Fusion.Engine.Graphics.Scenes;
+using IronStar.SFX2;
 
 namespace IronStar.Editor.Systems
 {
-	partial class EditorModelRenderSystem : ISystem
+	partial class EditorModelRenderSystem : DrawSystem<DebugModel[], Transform, RenderModel, StaticCollisionComponent>
 	{
 		readonly DebugRender dr;
 		readonly MapEditor editor;
@@ -27,22 +28,17 @@ namespace IronStar.Editor.Systems
 			this.content	=	editor.Content;
 		}
 
-
-		public Aspect GetAspect()
+		
+		public void Update( GameState gs, GameTime gameTime )
 		{
-			return new Aspect().Include<Transform,SFX2.RenderModel,StaticCollisionComponent>();
+			//throw new NotImplementedException();
 		}
 
 		
-		public void Add( GameState gs, Entity e )
+		protected override DebugModel[] Create( Entity entity, Transform component1, RenderModel component2, StaticCollisionComponent component3 )
 		{
-			if (gs.Game.RenderSystem.SkipDebugRendering) 
-			{
-				return;
-			}
-
-			var transform	=	e.GetComponent<Transform>();
-			var model		=	e.GetComponent<SFX2.RenderModel>();
+			var transform	=	entity.GetComponent<Transform>();
+			var model		=	entity.GetComponent<RenderModel>();
 
 			Scene scene;
 
@@ -56,6 +52,7 @@ namespace IronStar.Editor.Systems
 			}
 			
 			var transforms	=	scene.ComputeAbsoluteTransforms();
+			var modelList	=	new List<DebugModel>();
 
 			for (int i=0; i<scene.Nodes.Count; i++)
 			{
@@ -67,36 +64,36 @@ namespace IronStar.Editor.Systems
 					var debugModel		=	new DebugModel( dr, mesh.Vertices.Select( v => v.Position ).ToArray(), mesh.GetIndices() );
 					debugModel.World	=	transforms[i] * transform.TransformMatrix;
 					debugModel.Color	=	Editor.Utils.WireColor;
-					debugModel.Tag		=	e;
+					debugModel.Tag		=	entity;
 
+					modelList.Add( debugModel );
 					dr.DebugModels.Add( debugModel );
 				}
+			}
+
+			return modelList.ToArray();
+		}
+
+		
+		protected override void Destroy( Entity entity, DebugModel[] models )
+		{
+			foreach (var m in models)
+			{
+				dr.DebugModels.Remove( m );
 			}
 		}
 
 		
-		public void Remove( GameState gs, Entity e )
-		{
-			dr.DebugModels.RemoveAll( dm => dm.Tag==e );
-		}
-
-		
-		public void Update( GameState gs, GameTime gameTime )
+		protected override void DrawEntity( Entity entity, GameTime gameTime, DebugModel[] models, Transform component1, RenderModel component2, StaticCollisionComponent component3 )
 		{
 			Color color;
 			bool selected;
 
-			foreach ( var dm in dr.DebugModels )
+			foreach ( var dm in models )
 			{
-				var e = dm.Tag as Entity;
-
-				if (e!=null)
-				{
-					editor.GetRenderProperties(e, out color, out selected );
-					dm.Color	=	color;
-				}
+				editor.GetRenderProperties(entity, out color, out selected );
+				dm.Color	=	color;
 			}
-			//throw new NotImplementedException();
 		}
 	}
 }

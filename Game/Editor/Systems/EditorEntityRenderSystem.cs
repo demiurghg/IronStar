@@ -11,7 +11,7 @@ using Fusion.Engine.Graphics;
 
 namespace IronStar.Editor.Systems
 {
-	partial class EditorEntityRenderSystem : ISystem
+	partial class EditorEntityRenderSystem : ISystem, IDrawSystem
 	{
 		readonly DebugRender dr;
 		readonly MapEditor editor;
@@ -45,6 +45,11 @@ namespace IronStar.Editor.Systems
 
 		
 		public void Update( GameState gs, GameTime gameTime )
+		{
+		}
+		
+
+		public void Draw( GameState gs, GameTime gameTime )
 		{
 			if (gs.Game.RenderSystem.SkipDebugRendering) 
 			{

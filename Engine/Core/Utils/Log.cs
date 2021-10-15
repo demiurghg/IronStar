@@ -39,6 +39,9 @@ namespace Fusion
 			memoryTarget.MessageLogged	+=	(s,e) => MessageLogged?.Invoke(s,e);
 			memoryTarget.Layout			=	"${debug-prefix}${trace-prefix}${message}";
 
+			var logfile			=	new NLog.Targets.FileTarget() { FileName = "engineLog" + DateTime.Now.ToString() + ".log" };
+			logfile.Layout		=	"[${level:uppercase=true}] ${message}";
+
 			var logconsole		=	new NLog.Targets.ColoredConsoleTarget();
 
 			logconsole.Layout	=	"${debug-prefix}${trace-prefix}${message}";
@@ -68,11 +71,12 @@ namespace Fusion
 						ConsoleOutputColor.DarkBlue)); //*/
 
 			// Rules for mapping loggers to targets
-			var asyncConsole	=	new AsyncTargetWrapper(logconsole);
-			asyncConsole.BatchSize	=	64;
+			/*var asyncConsole	=	new AsyncTargetWrapper(logconsole);
+			asyncConsole.BatchSize	=	64;*/
 
-			config.AddRule(LogLevel.Trace, LogLevel.Fatal, logconsole);
-			config.AddRule(LogLevel.Trace, LogLevel.Fatal, memoryTarget);
+			config.AddRule(LogLevel.Debug, LogLevel.Fatal, logconsole);
+			config.AddRule(LogLevel.Debug, LogLevel.Fatal, memoryTarget);
+			config.AddRule(LogLevel.Trace, LogLevel.Fatal, logfile);
 
 			//config.
 			// Apply config

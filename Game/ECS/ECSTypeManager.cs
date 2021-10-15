@@ -11,7 +11,6 @@ namespace IronStar.ECS
 	static class ECSTypeManager
 	{
 		static List<Type> componentTypes	= new List<Type>();
-		static List<Type> systemTypes		= new List<Type>();
 
 
 		public static void Scan()
@@ -23,20 +22,6 @@ namespace IronStar.ECS
 			{
 				throw new InvalidOperationException("ECSTypeManager -- too much component types. Max " + GameState.MaxComponentTypes.ToString());
 			}
-
-			systemTypes	=	Misc.GatherInterfaceImplementations( typeof(ISystem) )
-								.ToList();
-
-			if (systemTypes.Count > GameState.MaxSystems)
-			{
-				throw new InvalidOperationException("ECSTypeManager -- too much SYSTEM types. Max " + GameState.MaxSystems.ToString());
-			}
-		}
-
-
-		public static Type[] GetSystemTypes()
-		{
-			return systemTypes.ToArray();
 		}
 
 
@@ -53,24 +38,10 @@ namespace IronStar.ECS
 		}
 
 
-		public static long GetSystemBit( Type systemType )
-		{
-			int index = systemTypes.IndexOf( systemType );
-			return index < 0L ? 0L : (1L << index);
-		}
-
-
 		public static Type GetComponentType( long bit )
 		{
 			int index = MathUtil.LogBase2( (ulong)bit );
 			return componentTypes[index];
-		}
-
-
-		public static Type GetSystemType( long bit )
-		{
-			int index = MathUtil.LogBase2( (ulong)bit );
-			return systemTypes[index];
 		}
 	}
 }

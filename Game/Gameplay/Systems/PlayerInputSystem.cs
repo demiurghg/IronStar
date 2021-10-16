@@ -49,7 +49,6 @@ namespace IronStar.Gameplay
 				var health	=	player.GetComponent<HealthComponent>();
 				var alive	=	health==null ? true : health.Health > 0;
 
-				playerInput.UpdateUserInput( gameTime, ref userCommand );
 				ucc.UpdateFromUserCommand( userCommand.Yaw, userCommand.Pitch, userCommand.Move, userCommand.Strafe, userCommand.Action );
 			}
 		}

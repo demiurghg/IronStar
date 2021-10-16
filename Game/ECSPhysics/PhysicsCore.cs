@@ -229,7 +229,7 @@ namespace IronStar.ECSPhysics
 			//	run simulation :
 			if (Enabled)
 			{
-				Space.Update();
+				Space.Update(elapsedTime);
 			}
 		}
 

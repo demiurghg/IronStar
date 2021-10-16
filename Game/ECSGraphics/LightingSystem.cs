@@ -39,10 +39,6 @@ namespace IronStar.SFX2
 
 		public void Update( GameState gs, GameTime gameTime )
 		{
-		}
-
-		public void Draw( GameState gs, GameTime gameTime )
-		{
 			var rs	=	gs.GetService<RenderSystem>();
 			rs.RenderWorld.LightSet.DirectLight.Direction	=	-rs.Sky.GetSunDirection();
 			rs.RenderWorld.LightSet.DirectLight.Intensity	=	 rs.Sky.GetSunIntensity(true);	

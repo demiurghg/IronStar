@@ -22,14 +22,6 @@ namespace IronStar.ECS
 {
 	public sealed partial class GameState : DisposableBase, IGameState
 	{
-		struct FactoryData
-		{
-			public FactoryData( Entity e, EntityFactory f, string name ) { Entity = e; Factory = f; Name = name; }
-			public readonly string Name;
-			public readonly Entity Entity;
-			public readonly EntityFactory Factory;
-		}
-
 		struct TeleportData
 		{
 			public TeleportData( Entity e, Vector3 t, Quaternion r ) { Entity = e; Translation = t; Rotation = r; }
@@ -60,12 +52,10 @@ namespace IronStar.ECS
 		readonly SystemCollection			systems;
 		readonly ComponentCollection		components;
 
-		readonly ConcurrentQueue<SpawnData>		spawnQueue2;
-		readonly ConcurrentQueue<FactoryData>	factoryQueue;
-		readonly ConcurrentQueue<TeleportData>	teleportQueue;
+		readonly ConcurrentQueue<Entity>		spawnQueue2;
+		readonly ConcurrentQueue<Entity>		killQueue;
 		readonly ConcurrentQueue<ComponentData>	componentToRemove;
 		readonly ConcurrentQueue<ComponentData>	componentToAdd;
-		readonly ConcurrentQueue<Entity>		killQueue;
 		readonly HashSet<Entity>				refreshed;
 		readonly ConcurrentQueue<Action>		invokeQueue;
 		uint									killAllBarrierId = 0;
@@ -102,9 +92,7 @@ namespace IronStar.ECS
 			systems		=	new SystemCollection(this);
 			components	=	new ComponentCollection();
 
-			spawnQueue2			=	new ConcurrentQueue<SpawnData>();
-			factoryQueue		=	new ConcurrentQueue<FactoryData>();
-			teleportQueue		=	new ConcurrentQueue<TeleportData>();
+			spawnQueue2			=	new ConcurrentQueue<Entity>();
 			componentToRemove	=	new ConcurrentQueue<ComponentData>();
 			componentToAdd		=	new ConcurrentQueue<ComponentData>();
 			killQueue			=	new ConcurrentQueue<Entity>();
@@ -325,41 +313,18 @@ namespace IronStar.ECS
 		void RefreshEntities()
 		{
 			Entity e;
-			SpawnData sd;
 			Action a;
-			FactoryData fd;
 			ComponentData cd;
-			TeleportData td;
 
 			while (invokeQueue.TryDequeue(out a))
 			{
 				a.Invoke();
 			}
 
-			while (spawnQueue2.TryDequeue(out sd))
+			while (spawnQueue2.TryDequeue(out e)) 
 			{
-				entities.Add(sd.Entity);
-				foreach (var component in sd.Components)
-				{
-					AddEntityComponentImmediate( sd.Entity, component );
-				}
-				Refresh(sd.Entity);
-			}
-
-			while (factoryQueue.TryDequeue(out fd))
-			{
-				fd.Factory.Construct( fd.Entity, this );
-				Refresh(fd.Entity);
-			}
-
-			while (componentToAdd.TryDequeue(out cd))
-			{
-				AddEntityComponentImmediate( cd.Entity, cd.Component );
-			}
-
-			while (teleportQueue.TryDequeue(out td))
-			{
-				TeleportInternal( td.Entity, td.Translation, td.Rotation );
+				entities.Add( e );
+				Refresh( e );
 			}
 
 			while (componentToRemove.TryDequeue(out cd))
@@ -393,30 +358,6 @@ namespace IronStar.ECS
 		}
 
 
-		void SpawnInternal( Entity e )
-		{
-			entities.Add( e );
-			Refresh( e );
-		}
-
-
-		void SpawnFactoryInternal( Entity e, string classname )
-		{
-			EntityFactory factory;
-
-			if (factories.TryGetValue( classname, out factory ))
-			{
-				factory.Construct(e, this);
-			}
-			else
-			{
-				Log.Warning("Factory {0} not found. Empty entity is spawned", classname);
-			}
-
-			SpawnInternal( e );
-		}
-
-
 		void KillAllInternal()
 		{
 			if (killAllBarrierId!=0)
@@ -447,82 +388,35 @@ namespace IronStar.ECS
 			}
 		}
 
-		void TeleportInternal( Entity e, Vector3 p, Quaternion r )
-		{
-			var t = e.GetComponent<Transform>();
-
-			if (t!=null)
-			{
-				t.Teleport( p, r, Vector3.Zero, Vector3.Zero );
-			}
-			else
-			{
-				Log.Warning("Teleport: {0} has not {1} component", e, nameof(Transform) );
-				//AddEntityComponentInternal( e, new Transform(p,r) );
-			}
-		}
-
 		/*-----------------------------------------------------------------------------------------------
 		 *	Entity stuff :
 		-----------------------------------------------------------------------------------------------*/
 
-		/// <summary>
-		/// Create new entity. 
-		/// Entity will enter the world at the begining of the next update frame.
-		/// </summary>
-		/// <returns>New entity</returns>
 		public Entity Spawn()
 		{
 			var entity = new Entity( this, IdGenerator.Next() );
 
-			spawnQueue2.Enqueue( new SpawnData( entity ) );
+			spawnQueue2.Enqueue( entity );
 
 			return entity;
 		}
 
 
-		public Entity Spawn( params IComponent[] components )
-		{
-			var entity = new Entity( this, IdGenerator.Next() );
-
-			spawnQueue2.Enqueue( new SpawnData( entity, components ) );
-
-			return entity;
-		}
-
-
-		/// <summary>
-		/// Create new entity using entity factory. 
-		/// Entity will enter the world at the begining of the next update frame.
-		/// In update thread construction is immediate. 
-		/// Outside of the update thread construction is deferred.
-		/// </summary>
-		/// <returns>New entity</returns>
 		public Entity Spawn( string classname )
 		{
-			var e = new Entity( this, IdGenerator.Next() );
-
-			spawnQueue2.Enqueue( new SpawnData(e) );
-
 			EntityFactory factory;
 
 			if (factories.TryGetValue( classname, out factory ))
 			{
-				if (IsUpdateThread())
-				{
-					factory.Construct(e,this);
-				}
-				else
-				{
-					factoryQueue.Enqueue( new FactoryData(e, factory, classname) );
-				}
+				var e = Spawn();
+				factory.Construct(e, this);
+				return e;
 			}
 			else
 			{
 				Log.Warning("Factory {0} not found. Empty entity is spawned", classname);
+				return Spawn();;
 			}
-
-			return e;
 		}
 
 
@@ -536,6 +430,20 @@ namespace IronStar.ECS
 		}
 
 
+		public Entity Spawn( params IComponent[] components )
+		{
+			var entity = Spawn();
+
+			foreach ( var component in components )
+			{
+				entity.AddComponent(component);
+			}
+
+			return entity;
+		}
+
+
+		
 		void Refresh ( Entity entity )
 		{
 			if (entity==null) throw new ArgumentNullException("entity");
@@ -577,13 +485,16 @@ namespace IronStar.ECS
 		/// <param name="rotation">New entity rotation</param>
 		public void Teleport( Entity e, Vector3 position, Quaternion rotation )
 		{
-			if (IsUpdateThread())
+			var t = e.GetComponent<Transform>();
+
+			if (t!=null)
 			{
-				TeleportInternal( e, position, rotation );
+				t.Teleport( position, rotation, Vector3.Zero, Vector3.Zero );
 			}
 			else
 			{
-				teleportQueue.Enqueue( new TeleportData( e, position, rotation ) );
+				Log.Warning("Teleport: {0} has not {1} component", e, nameof(Transform) );
+				//AddEntityComponentInternal( e, new Transform(p,r) );
 			}
 		}
 

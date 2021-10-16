@@ -54,11 +54,11 @@ namespace IronStar
 		public int MaxInterval { get; set; } = 1;
 
 
-		public override ECS.Entity SpawnECS( ECS.IGameState gs, Vector3 p, Quaternion r )
+		public override ECS.Entity SpawnECS( ECS.IGameState gs )
 		{
 			Log.Warning("SpawnECS -- {0} -- (not implemented completely)", GetType().Name);
 			
-			var e = gs.Spawn( new FXComponent(FX,true), new ECS.Transform(p,r) );
+			var e = gs.Spawn( new FXComponent(FX,true), new ECS.Transform() );
 
 			return e;
 		}

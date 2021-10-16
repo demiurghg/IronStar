@@ -125,13 +125,6 @@ namespace IronStar.Editor
 
 			gameState	=	IronStar.CreateGameState( Game, Content, mapName, map, this );
 
-			//world.SimulateWorld( GameTime.MSec16 );
-			//world.PresentWorld( GameTime.MSec16, 1, null, null );
-
-			ResetWorld();
-
-			gameState.Update( GameTime.MSec16 );
-
 			RegisterCommands();
 
 			Game.Reloading += Game_Reloading;
@@ -284,10 +277,7 @@ namespace IronStar.Editor
 			gameState.KillAll();
 
 			//	spawn entities again
-			foreach ( var node in map.Nodes ) 
-			{
-				node.SpawnNodeECS(gameState);
-			}
+			map.ActivateGameState(gameState);
 
 			gameState.Update( GameTime.Zero );
 		}

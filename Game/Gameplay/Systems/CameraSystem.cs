@@ -99,12 +99,15 @@ namespace IronStar.Gameplay
 
 		public void Update( GameState gs, GameTime gameTime )
 		{
-			var	players	=	gs.QueryEntities(playerCameraAspect);
-
-			foreach ( var player in players)
+			if (Enabled)
 			{
-				UpdatePlayerCamera(gameTime, gs, player);
-				DrawPlayerCamera(gameTime, gs, player);
+				var	players	=	gs.QueryEntities(playerCameraAspect);
+
+				foreach ( var player in players)
+				{
+					UpdatePlayerCamera(gameTime, gs, player);
+					DrawPlayerCamera(gameTime, gs, player);
+				}
 			}
 		}
 

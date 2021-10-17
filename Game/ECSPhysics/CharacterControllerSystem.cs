@@ -23,6 +23,7 @@ using BEPUphysics.NarrowPhaseSystems.Pairs;
 using RigidTransform = BEPUutilities.RigidTransform;
 using IronStar.ECS;
 using IronStar.Gameplay;
+using BEPUutilities.Threading;
 
 namespace IronStar.ECSPhysics 
 {
@@ -30,7 +31,7 @@ namespace IronStar.ECSPhysics
 	{
 		readonly PhysicsCore physics;
 
-		public CharacterControllerSystem( PhysicsCore physics )
+		public CharacterControllerSystem( PhysicsCore physics, IParallelLooper looper ) : base(looper)
 		{
 			this.physics	=	physics;
 		}
@@ -128,6 +129,7 @@ namespace IronStar.ECSPhysics
 			var crouchingSpeed	=	cc.crouchingSpeed * velScale;
 			var proneSpeed		=	cc.proneSpeed * velScale;
 
+			#warning REMOVE THIS
 			physics.Invoke( ()=>
 			{
 				controller.StandingSpeed	=	standingSpeed	;

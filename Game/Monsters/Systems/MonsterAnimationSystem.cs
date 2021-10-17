@@ -15,6 +15,7 @@ using IronStar.SFX2;
 using IronStar.SFX;
 using IronStar.Animation;
 using Fusion.Engine.Graphics.Scenes;
+using BEPUutilities.Threading;
 
 namespace IronStar.Monsters.Systems
 {
@@ -25,7 +26,7 @@ namespace IronStar.Monsters.Systems
 		readonly PhysicsCore physics;
 
 
-		public MonsterAnimationSystem( Game game, FXPlayback fxPlayback, PhysicsCore physics )
+		public MonsterAnimationSystem( Game game, FXPlayback fxPlayback, PhysicsCore physics, IParallelLooper looper ) : base(looper)
 		{								
 			this.Game		=	game;
 			this.fxPlayback	=	fxPlayback;

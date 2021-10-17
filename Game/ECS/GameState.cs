@@ -17,6 +17,7 @@ using System.Threading;
 using Fusion.Core.Shell;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using BEPUutilities.Threading;
 
 namespace IronStar.ECS
 {
@@ -73,6 +74,10 @@ namespace IronStar.ECS
 
 		public TimeSpan TimeStep { get { return timeStep; } }
 
+		ParallelLooper	looper;
+
+		public IParallelLooper Looper { get { return looper; } }
+
 
 		/// <summary>
 		/// Game state constructor
@@ -83,6 +88,12 @@ namespace IronStar.ECS
 			ECSTypeManager.Scan();
 
 			mainThread		=	Thread.CurrentThread;
+
+			looper			=	new ParallelLooper();
+			looper.AddThread();
+			looper.AddThread();
+			looper.AddThread();
+			looper.AddThread();
 
 			this.game		=	game;
 			this.content	=	content;
@@ -133,6 +144,8 @@ namespace IronStar.ECS
 		{
 			if ( disposing )
 			{
+				SafeDispose( ref looper );
+
 				KillAll();
 				RefreshEntities();
 
@@ -513,7 +526,7 @@ namespace IronStar.ECS
 			if (entity==null) throw new ArgumentNullException("entity");
 			if (component==null) throw new ArgumentNullException("component");
 
-			CheckUpdateThread(nameof(AddEntityComponent));
+			//CheckUpdateThread(nameof(AddEntityComponent));
 			AddEntityComponentImmediate(entity, component);
 		}
 
@@ -527,7 +540,7 @@ namespace IronStar.ECS
 		{
 			if (entity==null) throw new ArgumentNullException("entity");
 			if (component==null) throw new ArgumentNullException("component");
-			CheckUpdateThread(nameof(RemoveEntityComponent));
+			//CheckUpdateThread(nameof(RemoveEntityComponent));
 
 			componentToRemove.Enqueue( new ComponentData( entity, component ) );
 		}
@@ -563,7 +576,7 @@ namespace IronStar.ECS
 		/// <returns>Component</returns>
 		public IComponent GetEntityComponent( Entity entity, Type componentType )
 		{
-			CheckUpdateThread(nameof(GetEntityComponent));
+			//CheckUpdateThread(nameof(GetEntityComponent));
 
 			return components.GetComponent( entity.ID, componentType );
 		}

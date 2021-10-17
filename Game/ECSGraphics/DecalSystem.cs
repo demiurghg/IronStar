@@ -9,6 +9,7 @@ using Fusion.Engine.Graphics;
 using RSSpotLight = Fusion.Engine.Graphics.SpotLight;
 using Fusion.Core.Shell;
 using Fusion.Core;
+using BEPUutilities.Threading;
 
 namespace IronStar.SFX2
 {
@@ -19,7 +20,7 @@ namespace IronStar.SFX2
 		readonly LightSet ls;
 
 		
-		public DecalSystem( RenderSystem rs )
+		public DecalSystem( RenderSystem rs, IParallelLooper looper ) : base(looper)
 		{
 			this.ls	=	rs.RenderWorld.LightSet;
 		}

@@ -9,6 +9,7 @@ using Fusion.Engine.Graphics;
 using RSOmniLight = Fusion.Engine.Graphics.OmniLight;
 using Fusion.Core.Shell;
 using Fusion.Core;
+using BEPUutilities.Threading;
 
 namespace IronStar.SFX2
 {
@@ -18,7 +19,7 @@ namespace IronStar.SFX2
 
 		readonly LightSet ls;
 	
-		public OmniLightSystem( RenderSystem rs )
+		public OmniLightSystem( RenderSystem rs, IParallelLooper looper ) : base(looper)
 		{
 			ls	=	rs.RenderWorld.LightSet;
 		}

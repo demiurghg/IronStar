@@ -12,6 +12,7 @@ using Fusion.Engine.Graphics.Scenes;
 using AffineTransform = BEPUutilities.AffineTransform;
 using BEPUMatrix = BEPUutilities.Matrix;
 using Fusion.Core.Content;
+using BEPUutilities.Threading;
 
 namespace IronStar.ECSPhysics
 {
@@ -28,7 +29,7 @@ namespace IronStar.ECSPhysics
 
 		readonly PhysicsCore physics;
 
-		public StaticCollisionSystem( PhysicsCore physics )
+		public StaticCollisionSystem( PhysicsCore physics ) : base(null)
 		{
 			this.physics	=	physics;
 		}

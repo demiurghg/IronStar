@@ -11,6 +11,7 @@ using IronStar.ECSPhysics;
 using Fusion.Core.Content;
 using Fusion.Engine.Graphics.Scenes;
 using IronStar.SFX2;
+using BEPUutilities.Threading;
 
 namespace IronStar.Editor.Systems
 {
@@ -21,7 +22,7 @@ namespace IronStar.Editor.Systems
 		readonly ContentManager content;
 
 
-		public EditorModelRenderSystem( MapEditor editor, DebugRender dr )
+		public EditorModelRenderSystem( MapEditor editor, DebugRender dr, IParallelLooper looper ) : base(looper)
 		{
 			this.dr			=	dr;
 			this.editor		=	editor;

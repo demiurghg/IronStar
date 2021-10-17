@@ -16,6 +16,7 @@ using Fusion.Engine.Graphics;
 using Fusion.Engine.Audio;
 using IronStar.ECS;
 using IronStar.Gameplay.Components;
+using BEPUutilities.Threading;
 
 namespace IronStar.SFX 
 {
@@ -38,7 +39,7 @@ namespace IronStar.SFX
 		float timeAccumulator = 0;
 
 
-		public FXPlayback ( Game game, ContentManager content )
+		public FXPlayback ( Game game, ContentManager content, IParallelLooper looper ) : base(looper)
 		{
 			this.content	=	content;
 			this.game		=	game;

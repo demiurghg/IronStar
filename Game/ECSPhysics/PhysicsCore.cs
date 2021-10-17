@@ -70,9 +70,9 @@ namespace IronStar.ECSPhysics
 		readonly ConcurrentQueue<DeferredImpulse>		impulseQueue		=	new ConcurrentQueue<DeferredImpulse>();
 		readonly ConcurrentQueue<Action>				actionQueue			=	new ConcurrentQueue<Action>();
 		
-		public PhysicsCore ()
+		public PhysicsCore ( IParallelLooper looper )
 		{
-			physSpace		=	new Space();
+			physSpace		=	new Space(looper);
 
 			touchEvents	=	new ConcurrentQueue<Tuple<Entity,Entity>>();
 

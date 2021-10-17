@@ -27,6 +27,7 @@ using BEPUphysics.CollisionRuleManagement;
 using BEPUEntity = BEPUphysics.Entities.Entity;
 using RigidTransform = BEPUutilities.RigidTransform;
 using IronStar.ECS;
+using BEPUutilities.Threading;
 
 namespace IronStar.ECSPhysics 
 {
@@ -34,7 +35,7 @@ namespace IronStar.ECSPhysics
 	{
 		readonly PhysicsCore physics;
 
-		public DynamicCollisionSystem( PhysicsCore physics )
+		public DynamicCollisionSystem( PhysicsCore physics, IParallelLooper looper ) : base(looper)
 		{
 			this.physics	=	physics;
 		}

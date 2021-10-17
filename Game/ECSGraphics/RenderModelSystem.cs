@@ -21,6 +21,7 @@ using KopiLua;
 using IronStar.ECS;
 using IronStar.Animation;
 using System.Collections.Concurrent;
+using BEPUutilities.Threading;
 
 namespace IronStar.SFX2 
 {
@@ -34,7 +35,9 @@ namespace IronStar.SFX2
 		readonly Aspect skinnedAspect = new Aspect().Include<RenderModelInstance,Transform,RenderModel,BoneComponent>();
 		readonly Aspect rigidAspect   = new Aspect().Include<RenderModelInstance,Transform,RenderModel>()
 													.Exclude<BoneComponent>();
-		public RenderModelSystem ( Game game )
+
+
+		public RenderModelSystem ( Game game, IParallelLooper looper ) : base(looper)
 		{
 			this.game	=	game;
 			this.rs		=	game.RenderSystem;

@@ -12,6 +12,7 @@ using Fusion;
 using Fusion.Core.Extensions;
 using IronStar.SFX;
 using BEPUphysics.BroadPhaseEntries.MobileCollidables;
+using BEPUutilities.Threading;
 
 namespace IronStar.Gameplay.Systems
 {
@@ -22,7 +23,7 @@ namespace IronStar.Gameplay.Systems
 		readonly WeaponSystem	weaponSystem;
 		float lastDeltaTime = 0;
 
-		public ProjectileSystem( GameState gs, PhysicsCore physics )
+		public ProjectileSystem( GameState gs, PhysicsCore physics, IParallelLooper looper ) : base(looper)
 		{
 			this.rand			=	new Random();
 			this.physics		=	physics;

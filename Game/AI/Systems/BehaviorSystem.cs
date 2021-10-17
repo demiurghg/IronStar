@@ -19,6 +19,7 @@ using IronStar.BTCore.Actions;
 using IronStar.BTCore.Decorators;
 using IronStar.AI.Actions;
 using IronStar.Gameplay;
+using BEPUutilities.Threading;
 
 namespace IronStar.AI
 {
@@ -29,7 +30,7 @@ namespace IronStar.AI
 
 		AITokenPool tokenPool = new AITokenPool(2, TimeSpan.FromMilliseconds(500) );
 
-		public BehaviorSystem(PhysicsCore physics)
+		public BehaviorSystem(PhysicsCore physics, IParallelLooper looper ) : base(looper)
 		{
 			this.physics	=	physics;
 		}

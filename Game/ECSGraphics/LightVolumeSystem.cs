@@ -9,6 +9,7 @@ using Fusion.Engine.Graphics;
 using RSLightVolume = Fusion.Engine.Graphics.LightVolume;
 using Fusion.Core.Shell;
 using Fusion.Core;
+using BEPUutilities.Threading;
 
 namespace IronStar.SFX2
 {
@@ -16,7 +17,7 @@ namespace IronStar.SFX2
 	{
 		readonly LightSet ls;
 	
-		public LightVolumeSystem( RenderSystem rs )
+		public LightVolumeSystem( RenderSystem rs, IParallelLooper looper ) : base(looper)
 		{
 			ls	=	rs.RenderWorld.LightSet;
 		}

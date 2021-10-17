@@ -9,6 +9,7 @@ using Fusion.Engine.Graphics;
 using RSLightProbe = Fusion.Engine.Graphics.LightProbe;
 using Fusion.Core.Shell;
 using Fusion.Core;
+using BEPUutilities.Threading;
 
 namespace IronStar.SFX2
 {
@@ -19,7 +20,7 @@ namespace IronStar.SFX2
 		readonly LightSet ls;
 
 		
-		public LightProbeSystem( RenderSystem rs )
+		public LightProbeSystem( RenderSystem rs, IParallelLooper looper ) : base(looper)
 		{
 			this.ls	=	rs.RenderWorld.LightSet;
 		}

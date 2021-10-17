@@ -13,6 +13,7 @@ using Fusion.Core.Extensions;
 using IronStar.AI;
 using System.Runtime.CompilerServices;
 using IronStar.SFX;
+using BEPUutilities.Threading;
 
 namespace IronStar.Gameplay.Systems
 {
@@ -30,6 +31,7 @@ namespace IronStar.Gameplay.Systems
 		public readonly PhysicsCore physics;
 		public readonly FXPlayback fxPlayback;
 		public readonly GameState gs;
+		readonly IParallelLooper looper;
 
 
 		Aspect weaponAspect			=	new Aspect().Include<WeaponComponent>();
@@ -39,8 +41,9 @@ namespace IronStar.Gameplay.Systems
 		GameTime actualGameTime;
 
 
-		public WeaponSystem( GameState gs, PhysicsCore physics, FXPlayback fxPlayback )
+		public WeaponSystem( GameState gs, PhysicsCore physics, FXPlayback fxPlayback, IParallelLooper looper )
 		{
+			this.looper		=	looper ?? new DefaultLooper();
 			this.gs			=	gs;
 			this.physics	=	physics;
 			this.fxPlayback	=	fxPlayback;
@@ -49,22 +52,16 @@ namespace IronStar.Gameplay.Systems
 
 		public void Update( GameState gs, GameTime gameTime )
 		{
-			actualGameTime = gameTime;
+			actualGameTime	=	gameTime;
 
-			int msecs = gameTime.Milliseconds;
-			for (int i=0; i<msecs; i++)
+			var entities	=	gs.QueryEntities( armedEntityAspect ).ToArray();
+			int msecs		=	gameTime.Milliseconds;
+
+			looper.ForLoop( 0, entities.Length, idx =>
 			{
-				UpdateInternal( gs, GameTime.MSec1 );
-			}
-		}
+				var entity	=	entities[idx];
+				var msec	=	GameTime.MSec1;
 
-		
-		void UpdateInternal( GameState gs, GameTime gameTime )
-		{
-			var entities = gs.QueryEntities( armedEntityAspect );
-
-			foreach ( var entity in entities )
-			{
 				var transform	=	entity.GetComponent<Transform>();
 				var inventory	=	entity.GetComponent<InventoryComponent>();
 				var userCmd		=	entity.GetComponent<UserCommandComponent>();
@@ -72,46 +69,54 @@ namespace IronStar.Gameplay.Systems
 				var health		=	entity.GetComponent<HealthComponent>();
 				var bob			=	entity.GetComponent<BobbingComponent>();
 
-
-				var isAlive		=	health==null ? true : health.Health>0;
-
-				var povTransform	=	GameUtil.ComputePovTransform( userCmd, transform, chctrl, bob );
-
-				if (inventory.HasPendingWeapon && inventory.ActiveWeapon==null)
+				for (int i=0; i<msecs; i++)
 				{
-					inventory.FinalizeWeaponSwitch();
+					UpdateArmedEntity( gs, entity, msec, transform, inventory, userCmd, chctrl, health, bob );
 				}
-
-				//	tell inventory to switch to another weapon :
-				SwitchWeapon( gs, userCmd, inventory );
-
-				if (!isAlive)
-				{
-					inventory.SwitchWeapon(null);
-					inventory.FinalizeWeaponSwitch();
-				}
-					
-				var weaponEntity	=	inventory.ActiveWeapon;
-
-				//	is active item weapon?
-				if (weaponAspect.Accept(weaponEntity) && isAlive)
-				{
-					var weapon	= weaponEntity.GetComponent<WeaponComponent>();
-					var attack	= userCmd.Action.HasFlag( UserAction.Attack );
-
-					var ammo	= GetAmmo( gs, inventory, weapon );
-
-					weapon.HudAmmo		=	ammo==null ? 0 : ammo.Count;
-					weapon.HudAmmoMax	=	200;
-
-					FadeSpread( gameTime, weapon );
-					AdvanceWeaponTimer( gameTime, weaponEntity );
-					UpdateWeaponFSM( gameTime, attack, povTransform, entity, inventory, weaponEntity );
-				}
-			}
+			});
 		}
 
 
+		void UpdateArmedEntity( GameState gs, Entity entity, GameTime gameTime, Transform transform, InventoryComponent inventory, UserCommandComponent userCmd, CharacterController chctrl, HealthComponent health, BobbingComponent bob )
+		{
+			var isAlive		=	health==null ? true : health.Health>0;
+
+			var povTransform	=	GameUtil.ComputePovTransform( userCmd, transform, chctrl, bob );
+
+			if (inventory.HasPendingWeapon && inventory.ActiveWeapon==null)
+			{
+				inventory.FinalizeWeaponSwitch();
+			}
+
+			//	tell inventory to switch to another weapon :
+			SwitchWeapon( gs, userCmd, inventory );
+
+			if (!isAlive)
+			{
+				inventory.SwitchWeapon(null);
+				inventory.FinalizeWeaponSwitch();
+			}
+					
+			var weaponEntity	=	inventory.ActiveWeapon;
+
+			//	is active item weapon?
+			if (weaponAspect.Accept(weaponEntity) && isAlive)
+			{
+				var weapon	= weaponEntity.GetComponent<WeaponComponent>();
+				var attack	= userCmd.Action.HasFlag( UserAction.Attack );
+
+				var ammo	= GetAmmo( gs, inventory, weapon );
+
+				weapon.HudAmmo		=	ammo==null ? 0 : ammo.Count;
+				weapon.HudAmmoMax	=	200;
+
+				FadeSpread( gameTime, weapon );
+				AdvanceWeaponTimer( gameTime, weaponEntity );
+				UpdateWeaponFSM( gameTime, attack, povTransform, entity, inventory, weaponEntity );
+			}
+		}
+
+		
 		bool SwitchWeapon( GameState gs, UserCommandComponent userCmd, InventoryComponent inventory )
 		{
 			if (userCmd.Weapon!=null)

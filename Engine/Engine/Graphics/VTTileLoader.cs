@@ -38,6 +38,8 @@ namespace Fusion.Engine.Graphics
 		bool	stopLoader = false;
 
 		VTTileCache	tileCache;
+
+		AutoResetEvent	tileRequestedEvent = new AutoResetEvent(false);
 		
 
 		/// <summary>

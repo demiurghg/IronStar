@@ -14,6 +14,10 @@ namespace IronStar.Gameplay.Systems
 {
 	public class InventorySystem : StatelessSystem<InventoryComponent>
 	{
+		public InventorySystem() : base(null)
+		{
+		}
+
 		public override void Add( GameState gs, Entity e )
 		{
 			base.Add( gs, e );

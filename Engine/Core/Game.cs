@@ -32,9 +32,10 @@ using Fusion.Engine.Frames;
 using System.ComponentModel;
 using Fusion.Build;
 using Fusion.Engine.Common;
+using BEPUutilities.Threading;
 
-namespace Fusion.Core {
-
+namespace Fusion.Core 
+{
 	/// <summary>
 	/// Provides basic graphics device initialization, game logic, and rendering code. 
 	/// </summary>
@@ -198,6 +199,9 @@ namespace Fusion.Core {
 
 		GameTime	gameTimeInternal;
 
+		IParallelLooper parallelLooper;
+		public IParallelLooper ParallelLooper { get { return parallelLooper; } }
+
 
 		/// <summary>
 		/// 
@@ -266,6 +270,23 @@ namespace Fusion.Core {
 		}
 
 
+		class DefaultLooper : IParallelLooper
+		{
+			public int ThreadCount
+			{
+				get { return 1; }
+			}
+
+			public void ForLoop( int startIndex, int endIndex, Action<int> loopBody )
+			{
+				for (int index = startIndex; index < endIndex; index++)
+				{
+					loopBody(index);
+				}
+			}
+		}
+
+
 		/// <summary>
 		/// Initializes a new instance of this class, which provides 
 		/// basic graphics device initialization, game logic, rendering code, and a game loop.
@@ -276,6 +297,15 @@ namespace Fusion.Core {
 			this.gameId		=	gameId;
 			this.mainThread	=	Thread.CurrentThread;
 			Enabled			=	true;
+
+			parallelLooper		=	new DefaultLooper();
+			/*parallelLooper		=	new ParallelLooper();
+			parallelLooper.AddThread();
+			parallelLooper.AddThread();
+			parallelLooper.AddThread();
+			parallelLooper.AddThread();
+			parallelLooper.AddThread();
+			parallelLooper.AddThread();	 */
 
 			AppDomain currentDomain = AppDomain.CurrentDomain;
 			currentDomain.UnhandledException += currentDomain_UnhandledException;
@@ -425,16 +455,20 @@ namespace Fusion.Core {
 		/// <param name="disposing"></param>
 		protected override void Dispose ( bool disposing )
 		{
-			if (!initialized) {
+			if (!initialized)
+			 {
 				return;
 			}
 
-			if (disposing) {
-
+			if (disposing) 
+			{
 				Log.Message("");
 				Log.Message("-------- Game Shutting Down --------");
 
-				for (int i=Components.Count-1; i>=0; i-- ) {
+				//SafeDispose( ref parallelLooper );
+
+				for (int i=Components.Count-1; i>=0; i-- ) 
+				{
 					Log.Message("Dispose : {0}", Components[i].GetType().Name );
 					(Components[i] as IDisposable)?.Dispose();
 				}

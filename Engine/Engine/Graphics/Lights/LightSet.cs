@@ -14,13 +14,13 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Collection of omni lights.
 		/// </summary>
-		public ICollection<OmniLight> OmniLights { get { return omniLights; } }
+		public IList<OmniLight> OmniLights { get { return omniLights; } }
 
 
 		/// <summary>
 		/// Collection of spot lights.
 		/// </summary>
-		public ICollection<SpotLight> SpotLights { get { return spotLights; } }
+		public IList<SpotLight> SpotLights { get { return spotLights; } }
 
 
 		/// <summary>
@@ -32,7 +32,7 @@ namespace Fusion.Engine.Graphics {
 		/// <summary>
 		/// Collection of environment lights.
 		/// </summary>
-		public ICollection<Decal> Decals { get { return decals;	} }
+		public IList<Decal> Decals { get { return decals;	} }
 
 
 		/// <summary>

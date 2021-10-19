@@ -38,8 +38,8 @@ namespace IronStar
 			var rs			=	game.RenderSystem;
 
 			var rw			=	game.RenderSystem.RenderWorld;
-			//var looper		=	gs.Looper;
-			var looper		=	new DefaultLooper();
+			var looper		=	game.ParallelLooper;
+			//var looper		=	new DefaultLooper();
 			
 			//	physics and FX systems are used by many other systems :
 			var physicsCore = new ECSPhysics.PhysicsCore(looper);
@@ -53,14 +53,14 @@ namespace IronStar
 			gs.AddSystem( new PlayerSpawnSystem() );
 
 			//	weapon system :
-			gs.AddSystem( new WeaponSystem(gs, physicsCore, fxPlayback, null) );
+			gs.AddSystem( new WeaponSystem(gs, physicsCore, fxPlayback, looper) );
 			gs.AddSystem( new ProjectileSystem(gs, physicsCore, null) );
 
 			//	physics simulation :
 			gs.AddSystem( physicsCore );
 			gs.AddSystem( new ECSPhysics.StaticCollisionSystem(physicsCore) );
-			gs.AddSystem( new ECSPhysics.DynamicCollisionSystem(physicsCore, null) );
-			gs.AddSystem( new ECSPhysics.CharacterControllerSystem(physicsCore, null) );
+			gs.AddSystem( new ECSPhysics.DynamicCollisionSystem(physicsCore, looper) );
+			gs.AddSystem( new ECSPhysics.CharacterControllerSystem(physicsCore, looper) );
 
 			//	attachment system :
 			gs.AddSystem( new AttachmentSystem() );
@@ -71,7 +71,7 @@ namespace IronStar
 			gs.AddSystem( new ExplosionSystem() );
 
 			//	AI :
-			gs.AddSystem( new PerceptionSystem(physicsCore) );
+			gs.AddSystem( new PerceptionSystem(physicsCore, looper) );
 			gs.AddSystem( new BehaviorSystem(physicsCore, null) );
 			gs.AddSystem( new NavigationSystem() );
 			gs.AddSystem( new MonsterKillSystem() );
@@ -86,14 +86,25 @@ namespace IronStar
 			gs.AddSystem( fxPlayback );
 
 			//	rendering :
-			gs.AddSystem( new SFX2.RenderModelSystem(game, null) );
-			gs.AddSystem( new SFX2.DecalSystem(game.RenderSystem,		null /*looper*/) );
-			gs.AddSystem( new SFX2.OmniLightSystem(game.RenderSystem,	null /*looper*/) );
-			gs.AddSystem( new SFX2.SpotLightSystem(game.RenderSystem,	null /*looper*/) );
-			gs.AddSystem( new SFX2.LightProbeSystem(game.RenderSystem,	null /*looper*/) );
-			gs.AddSystem( new SFX2.LightVolumeSystem(game.RenderSystem, null /*looper*/) );
-			// gs.AddSystem( new BillboardSystem(fxPlayback) );
+			gs.AddSystem( new SFX2.RenderModelSystem(game,				looper) );
+
+			#if true
+			gs.AddSystem( new SFX2.DecalSystem(game.RenderSystem,		looper) );
+			gs.AddSystem( new SFX2.OmniLightSystem(game.RenderSystem,	looper) );
+			gs.AddSystem( new SFX2.SpotLightSystem(game.RenderSystem,	looper) );
+			gs.AddSystem( new SFX2.LightProbeSystem(game.RenderSystem,	looper) );
+			gs.AddSystem( new SFX2.LightVolumeSystem(game.RenderSystem, looper) );
 			gs.AddSystem( new SFX2.LightingSystem() );
+			#else
+			gs.AddSystems(	
+							new SFX2.DecalSystem(game.RenderSystem,			null),
+							new SFX2.LightVolumeSystem(game.RenderSystem,	null),
+							new SFX2.OmniLightSystem(game.RenderSystem,		null),
+							new SFX2.SpotLightSystem(game.RenderSystem,		null),
+							new SFX2.LightProbeSystem(game.RenderSystem,	null),
+							new SFX2.LightingSystem()
+						);
+			#endif
 
 			//	ui
 			gs.AddSystem( new GameFXSystem(game) );

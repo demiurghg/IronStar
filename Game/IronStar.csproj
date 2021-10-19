@@ -160,6 +160,7 @@
     <Compile Include="ECS\Collections\EntityFactoryCollection.cs" />
     <Compile Include="ECS\BufferedList.cs" />
     <Compile Include="ECS\IGameState.cs" />
+    <Compile Include="ECS\ParallelWrapper.cs" />
     <Compile Include="ECS\SpawnData.cs" />
     <Compile Include="ECS\StatelessSystem.cs" />
     <Compile Include="ECS\ProcessingSystem.cs" />

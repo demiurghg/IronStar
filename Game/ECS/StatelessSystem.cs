@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BEPUutilities.Threading;
 using Fusion.Core;
 
 namespace IronStar.ECS
@@ -11,10 +12,12 @@ namespace IronStar.ECS
 	where T1: IComponent
 	{
 		private readonly Aspect aspect;
+		private readonly IParallelLooper looper;
 
-		public StatelessSystem()
+		public StatelessSystem(IParallelLooper looper)
 		{
-			aspect	=	GetAspect();
+			this.looper	=	looper ?? new DefaultLooper();
+			aspect		=	GetAspect();
 		}
 
 		public virtual Aspect GetAspect()
@@ -27,13 +30,14 @@ namespace IronStar.ECS
 
 		public virtual void Update( GameState gs, GameTime gameTime )
 		{
-			var entities = gs.QueryEntities(aspect);
+			var entities = gs.QueryEntities(aspect).ToArray();
 
-			foreach ( var e in entities )
+			looper.ForLoop(0, entities.Length, idx =>
 			{
+				var e	=	entities[idx];
 				var c1	=	e.GetComponent<T1>();
 				Process( e, gameTime, c1 );
-			}
+			});
 		}
 
 		protected abstract void Process( Entity entity, GameTime gameTime, T1 component1 );

@@ -74,11 +74,6 @@ namespace IronStar.ECS
 
 		public TimeSpan TimeStep { get { return timeStep; } }
 
-		ParallelLooper	looper;
-
-		public IParallelLooper Looper { get { return looper; } }
-
-
 		/// <summary>
 		/// Game state constructor
 		/// </summary>
@@ -88,12 +83,6 @@ namespace IronStar.ECS
 			ECSTypeManager.Scan();
 
 			mainThread		=	Thread.CurrentThread;
-
-			looper			=	new ParallelLooper();
-			looper.AddThread();
-			looper.AddThread();
-			looper.AddThread();
-			looper.AddThread();
 
 			this.game		=	game;
 			this.content	=	content;
@@ -144,8 +133,6 @@ namespace IronStar.ECS
 		{
 			if ( disposing )
 			{
-				SafeDispose( ref looper );
-
 				KillAll();
 				RefreshEntities();
 
@@ -585,14 +572,14 @@ namespace IronStar.ECS
 		 *	System stuff :
 		-----------------------------------------------------------------------------------------------*/
 
-		public void AddSystem ( ISystem system )
+		private void AddSystemInternal ( ISystem system, bool updatable)
 		{
 			lock (lockObj)
 			{
 				if (system==null) throw new ArgumentNullException("system");
 
 				services.AddService( system.GetType(), system );
-				systems.Add( system );
+				systems.Add( system, updatable );
 
 				if (system is IGameComponent)
 				{
@@ -601,6 +588,22 @@ namespace IronStar.ECS
 			}
 		}
 
+
+		public void AddSystem ( ISystem system )
+		{
+			AddSystemInternal( system, true );
+		}
+
+
+		public void AddSystems( params ISystem[] systems )
+		{
+			foreach ( var system in systems )
+			{
+				AddSystemInternal( system, false );
+			}
+
+			AddSystemInternal( new ParallelWrapper( this, systems ), true );
+		}
 
 		/*-----------------------------------------------------------------------------------------------
 		 *	Queries :

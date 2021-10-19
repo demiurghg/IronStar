@@ -181,6 +181,7 @@
     <Compile Include="Build\Processors\UbershaderProcessor.cs" />
     <Compile Include="Build\Processors\UbershaderProcessor.Parser.cs" />
     <Compile Include="Build\ToolException.cs" />
+    <Compile Include="Core\Extensions\ParallelExtensions.cs" />
     <Compile Include="Core\Mathematics\EulerAngles.cs" />
     <Compile Include="Core\Shell\Invoker.Echo.cs" />
     <Compile Include="Core\Shell\Invoker.Redo.cs" />

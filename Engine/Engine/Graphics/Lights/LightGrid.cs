@@ -192,7 +192,9 @@ namespace Fusion.Engine.Graphics
 		{
 			var vp = new Rectangle(0,0,1,1);
 
-			foreach ( var ol in lightSet.OmniLights ) {
+			Game.ParallelLooper.ForLoop( 0, lightSet.OmniLights.Count, idx => 
+			{
+				var ol = lightSet.OmniLights[idx];
 
 				Vector3 min, max;
 				ol.Visible	=	false;
@@ -217,7 +219,7 @@ namespace Fusion.Engine.Graphics
 
 					rs.Stats.OmniLightCount++;
 				}
-			}
+			});
 		}
 
 
@@ -234,8 +236,10 @@ namespace Fusion.Engine.Graphics
 
 			var cameraFrustum	=	new BoundingFrustum(view * proj);
 
-			foreach ( var sl in lightSet.SpotLights ) 
+			Game.ParallelLooper.ForLoop( 0, lightSet.SpotLights.Count, idx => 
 			{
+				var sl = lightSet.SpotLights[idx];
+
 				Vector3 min, max, minF, maxF, minS, maxS;
 				sl.IsVisible	=	false;
 
@@ -267,7 +271,7 @@ namespace Fusion.Engine.Graphics
 
 					rs.Stats.SpotLightCount++;
 				}
-			}
+			});
 		}
 				  
 
@@ -322,38 +326,38 @@ namespace Fusion.Engine.Graphics
 			var vp		=	new Rectangle(0,0,1,1);
 			var skip	= 	rs.SkipDecals;
 
-			foreach ( var dcl in lightSet.Decals ) 
+			Game.ParallelLooper.ForLoop( 0, lightSet.Decals.Count, idx => 
 			{
+				var dcl = lightSet.Decals[idx];
+
 				var distance	=	Vector3.Distance( dcl.DecalMatrix.TranslationVector, viewPos )+0.1f;
 
-				if (dcl.CharacteristicSize / distance < 0.005f)
+				if (dcl.CharacteristicSize / distance > 0.005f)
 				{
-					continue;
+					Vector3 min, max;
+					dcl.Visible	=	false;
+
+					if ( Extents.GetBasisExtent( view, proj, vp, dcl.DecalMatrix, out min, out max ) && !skip ) {
+
+						min.Z	=	GetGridSlice( min.Z );
+						max.Z	=	GetGridSlice( max.Z );
+
+						TestExtent( min, max, new Color(255,0,0,64) );
+
+						dcl.Visible		=	true;
+
+						dcl.MaxExtent.X	=	Math.Min( Width,  (int)Math.Ceiling( max.X * Width  ) );
+						dcl.MaxExtent.Y	=	Math.Min( Height, (int)Math.Ceiling( max.Y * Height ) );
+						dcl.MaxExtent.Z	=	Math.Min( Depth,  (int)Math.Ceiling( max.Z * Depth  ) );
+
+						dcl.MinExtent.X	=	Math.Max( 0, (int)Math.Floor( min.X * Width  ) );
+						dcl.MinExtent.Y	=	Math.Max( 0, (int)Math.Floor( min.Y * Height ) );
+						dcl.MinExtent.Z	=	Math.Max( 0, (int)Math.Floor( min.Z * Depth  ) );
+
+						rs.Stats.DecalCount++;
+					}
 				}
-
-				Vector3 min, max;
-				dcl.Visible	=	false;
-
-				if ( Extents.GetBasisExtent( view, proj, vp, dcl.DecalMatrix, out min, out max ) && !skip ) {
-
-					min.Z	=	GetGridSlice( min.Z );
-					max.Z	=	GetGridSlice( max.Z );
-
-					TestExtent( min, max, new Color(255,0,0,64) );
-
-					dcl.Visible		=	true;
-
-					dcl.MaxExtent.X	=	Math.Min( Width,  (int)Math.Ceiling( max.X * Width  ) );
-					dcl.MaxExtent.Y	=	Math.Min( Height, (int)Math.Ceiling( max.Y * Height ) );
-					dcl.MaxExtent.Z	=	Math.Min( Depth,  (int)Math.Ceiling( max.Z * Depth  ) );
-
-					dcl.MinExtent.X	=	Math.Max( 0, (int)Math.Floor( min.X * Width  ) );
-					dcl.MinExtent.Y	=	Math.Max( 0, (int)Math.Floor( min.Y * Height ) );
-					dcl.MinExtent.Z	=	Math.Max( 0, (int)Math.Floor( min.Z * Depth  ) );
-
-					rs.Stats.DecalCount++;
-				}
-			}
+			});
 		}
 
 
@@ -381,7 +385,9 @@ namespace Fusion.Engine.Graphics
 		{
 			var vp = new Rectangle(0,0,1,1);
 
-			foreach ( var lpb in lightSet.LightProbes ) {
+			Game.ParallelLooper.ForLoop( 0, lightSet.LightProbes.Count, idx => 
+			{
+				var lpb = lightSet.LightProbes[idx];
 
 				Vector3 min, max;
 				lpb.Visible	=	false;
@@ -429,7 +435,7 @@ namespace Fusion.Engine.Graphics
 					throw new InvalidOperationException("Bad light probe mode");
 				}
 
-			}
+			});
 		}
 
 

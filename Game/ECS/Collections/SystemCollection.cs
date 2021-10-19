@@ -20,12 +20,12 @@ namespace IronStar.ECS
 		}
 			
 
-		public void Add( ISystem system )
+		public void Add( ISystem system, bool updatable )
 		{
 			lock (lockObj)
 			{
 				var index = systemWrappers.Count;
-				systemWrappers.Add( new SystemWrapper( gs, system, index ) );
+				systemWrappers.Add( new SystemWrapper( gs, system, index, updatable ) );
 			}
 		}
 

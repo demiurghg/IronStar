@@ -21,6 +21,7 @@ using IronStar.AI.Actions;
 using IronStar.Gameplay;
 using IronStar.Gameplay.Components;
 using IronStar.Gameplay.Systems;
+using BEPUutilities.Threading;
 
 namespace IronStar.AI
 {
@@ -39,7 +40,7 @@ namespace IronStar.AI
 		}
 
 
-		public PerceptionSystem(PhysicsCore physics)
+		public PerceptionSystem(PhysicsCore physics, IParallelLooper looper) : base(looper)
 		{
 			this.physics	=	physics;
 		}

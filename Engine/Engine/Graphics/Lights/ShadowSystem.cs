@@ -328,12 +328,13 @@ namespace Fusion.Engine.Graphics
 		/// Updates shadow caster visibility for each light
 		/// </summary>
 		/// <param name="lights"></param>
-		void TrackShadowCastersVisibility( RenderWorld rw, IEnumerable<IShadowProvider> lights )
+		void TrackShadowCastersVisibility( RenderWorld rw, IList<IShadowProvider> lights )
 		{
 			if (rw.SceneBvhTree==null) return;
 
-			foreach ( var light in lights )
+			Game.ParallelLooper.ForLoop( 0, lights.Count, idx =>
 			{
+				var light	=	lights[idx];
 				var frustum	=	new BoundingFrustum( light.ViewMatrix * light.ProjectionMatrix );
 				var newList	=	rw.SceneBvhTree.Traverse( bbox => frustum.Contains( bbox ) );
 
@@ -353,7 +354,7 @@ namespace Fusion.Engine.Graphics
 				{
 					light.IsShadowDirty = true;
 				}
-			}
+			});
 
 			foreach ( var ri in rw.Instances )
 			{

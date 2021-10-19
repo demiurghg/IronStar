@@ -45,7 +45,7 @@ namespace Fusion {
 		}
 
 
-	#if false
+	#if true
 		public CVEvent (string eventName) 
 		{
 			if (series==null) 

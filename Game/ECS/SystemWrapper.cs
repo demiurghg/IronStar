@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using Fusion.Core;
+using Fusion;
 
 namespace IronStar.ECS
 {
@@ -38,7 +39,10 @@ namespace IronStar.ECS
 			stopwatch.Reset();
 			stopwatch.Start();
 
-			System.Update( gs, gameTime );
+			using ( new CVEvent( System.GetType().Name ) )
+			{
+				System.Update( gs, gameTime );
+			}
 
 			stopwatch.Stop();
 			profilingTime	=	stopwatch.Elapsed;

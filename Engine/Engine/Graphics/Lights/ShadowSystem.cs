@@ -332,32 +332,35 @@ namespace Fusion.Engine.Graphics
 		{
 			if (rw.SceneBvhTree==null) return;
 
-			foreach ( var light in lights )
+			using (new CVEvent(nameof(TrackShadowCastersVisibility)))
 			{
-				var frustum	=	new BoundingFrustum( light.ViewMatrix * light.ProjectionMatrix );
-				var newList	=	rw.SceneBvhTree.Traverse( bbox => frustum.Contains( bbox ) );
-
-				var added	=	newList.Except( light.ShadowCasters ).Any();
-				var removed	=	light.ShadowCasters.Except( newList ).Any();
-				var moved	=	newList.Any( ri => ri.IsShadowDirty );
-
-				light.ShadowCasters.Clear();
-				light.ShadowCasters.AddRange( newList );
-
-				if ( added || removed || moved )
+				foreach ( var light in lights )
 				{
-					light.IsShadowDirty = true;
+					var frustum	=	new BoundingFrustum( light.ViewMatrix * light.ProjectionMatrix );
+					var newList	=	rw.SceneBvhTree.Traverse( bbox => frustum.Contains( bbox ) );
+
+					var added	=	newList.Except( light.ShadowCasters ).Any();
+					var removed	=	light.ShadowCasters.Except( newList ).Any();
+					var moved	=	newList.Any( ri => ri.IsShadowDirty );
+
+					light.ShadowCasters.Clear();
+					light.ShadowCasters.AddRange( newList );
+
+					if ( added || removed || moved )
+					{
+						light.IsShadowDirty = true;
+					}
+
+					if (SkipShadowCasterTracking)
+					{
+						light.IsShadowDirty = true;
+					}
 				}
 
-				if (SkipShadowCasterTracking)
+				foreach ( var ri in rw.Instances )
 				{
-					light.IsShadowDirty = true;
+					ri.ClearShadowDirty();
 				}
-			}
-
-			foreach ( var ri in rw.Instances )
-			{
-				ri.ClearShadowDirty();
 			}
 		}
 

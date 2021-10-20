@@ -172,30 +172,33 @@ namespace IronStar.ECS
 		/// <param name="gameTime"></param>
 		public void Update( GameTime gameTime )
 		{
-			var maxTime = TimeSpan.FromMilliseconds(20);
-
-			stopwatch.Reset();
-			stopwatch.Start();
-
-			RefreshEntities();
-
-			foreach ( var system in systems )
+			using ( new CVEvent( "ECS Update" ) )
 			{
-				system.Update( this, gameTime );
-			}
+				var maxTime = TimeSpan.FromMilliseconds(20);
 
-			stopwatch.Stop();
-			if (stopwatch.Elapsed > maxTime)
-			{
-				Log.Warning("LOOP TIME {0} > DT {1}", stopwatch.Elapsed, maxTime);
+				stopwatch.Reset();
+				stopwatch.Start();
 
-				/*foreach ( var system in systems )
+				RefreshEntities();
+
+				foreach ( var system in systems )
 				{
-					if (system.ProfilingTime.Ticks > maxTime.Ticks / 10)
+					system.Update( this, gameTime );
+				}
+
+				stopwatch.Stop();
+				if (stopwatch.Elapsed > maxTime)
+				{
+					Log.Warning("LOOP TIME {0} > DT {1}", stopwatch.Elapsed, maxTime);
+
+					/*foreach ( var system in systems )
 					{
-						Log.Warning("   {0} : {1}", system.ProfilingTime, system.System.GetType().Name );
-					}
-				}*/
+						if (system.ProfilingTime.Ticks > maxTime.Ticks / 10)
+						{
+							Log.Warning("   {0} : {1}", system.ProfilingTime, system.System.GetType().Name );
+						}
+					}*/
+				}
 			}
 		}
 

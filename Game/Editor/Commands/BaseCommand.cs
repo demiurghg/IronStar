@@ -12,7 +12,7 @@ namespace IronStar.Editor.Commands
 	public abstract class BaseCommand
 	{
 		protected readonly MapEditor editor;
-		protected readonly GameState gs;
+		protected readonly IGameState gs;
 		protected readonly Map map;
 
 		private readonly MapNode[] storedSelection;

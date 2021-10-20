@@ -61,7 +61,7 @@ namespace IronStar.SFX2
 		/// <summary>
 		/// Creates instance of render model
 		/// </summary>
-		public RenderModelInstance ( GameState gs, RenderModel rm, Matrix tm, string fpvCameraNode = null )
+		public RenderModelInstance ( IGameState gs, RenderModel rm, Matrix tm, string fpvCameraNode = null )
 		{
 			this.fpvCameraNode	=	fpvCameraNode;
 			fpvEnabled			=	!string.IsNullOrEmpty(fpvCameraNode);

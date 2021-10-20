@@ -56,19 +56,19 @@ namespace IronStar.AI
 		}
 
 		
-		public void Add( GameState gs, Entity e )
+		public void Add( IGameState gs, Entity e )
 		{
 			navMeshDirty = true;
 		}
 
 		
-		public void Remove( GameState gs, Entity e )
+		public void Remove( IGameState gs, Entity e )
 		{
 			navMeshDirty = true;
 		}
 
 		
-		public void Update( GameState gs, GameTime gameTime )
+		public void Update( IGameState gs, GameTime gameTime )
 		{
 			if (navMeshDirty && !worker.IsBusy)
 			{										
@@ -104,7 +104,7 @@ namespace IronStar.AI
 		 *	Navmesh rendering
 		-----------------------------------------------------------------------------------------*/
 
-		public void DrawNavMesh( GameState gs, NavigationMesh mesh, DebugRender dr )
+		public void DrawNavMesh( IGameState gs, NavigationMesh mesh, DebugRender dr )
 		{
 			if (gs.Game.RenderSystem.SkipDebugRendering) 
 			{
@@ -164,7 +164,7 @@ namespace IronStar.AI
 
 		class BuildData
 		{
-			public GameState gs;
+			public IGameState gs;
 			public Vector3[] verts;
 			public int[] inds;
 			public bool[] walks;
@@ -210,7 +210,7 @@ namespace IronStar.AI
 		}
 
 
-		BuildData GetStaticGeometry ( GameState gs )
+		BuildData GetStaticGeometry ( IGameState gs )
 		{
 			var indices		=	new List<int>();
 			var vertices	=	new List<Vector3>();

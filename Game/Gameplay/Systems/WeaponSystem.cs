@@ -25,12 +25,12 @@ namespace IronStar.Gameplay.Systems
 
 		Random rand = new Random();
 
-		public void Add( GameState gs, Entity e ) {}
-		public void Remove( GameState gs, Entity e ) {}
+		public void Add( IGameState gs, Entity e ) {}
+		public void Remove( IGameState gs, Entity e ) {}
 		public Aspect GetAspect() { return Aspect.Empty; }
 		public readonly PhysicsCore physics;
 		public readonly FXPlayback fxPlayback;
-		public readonly GameState gs;
+		public readonly IGameState gs;
 
 
 		Aspect weaponAspect			=	new Aspect().Include<WeaponComponent>();
@@ -40,7 +40,7 @@ namespace IronStar.Gameplay.Systems
 		GameTime actualGameTime;
 
 
-		public WeaponSystem( GameState gs, PhysicsCore physics, FXPlayback fxPlayback )
+		public WeaponSystem( IGameState gs, PhysicsCore physics, FXPlayback fxPlayback )
 		{
 			this.gs			=	gs;
 			this.physics	=	physics;
@@ -48,7 +48,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		public void Update( GameState gs, GameTime gameTime )
+		public void Update( IGameState gs, GameTime gameTime )
 		{
 			actualGameTime	=	gameTime;
 
@@ -73,7 +73,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		void UpdateArmedEntity( GameState gs, Entity entity, GameTime gameTime, Transform transform, InventoryComponent inventory, UserCommandComponent userCmd, CharacterController chctrl, HealthComponent health, BobbingComponent bob )
+		void UpdateArmedEntity( IGameState gs, Entity entity, GameTime gameTime, Transform transform, InventoryComponent inventory, UserCommandComponent userCmd, CharacterController chctrl, HealthComponent health, BobbingComponent bob )
 		{
 			var isAlive		=	health==null ? true : health.Health>0;
 
@@ -113,7 +113,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 		
-		bool SwitchWeapon( GameState gs, UserCommandComponent userCmd, InventoryComponent inventory )
+		bool SwitchWeapon( IGameState gs, UserCommandComponent userCmd, InventoryComponent inventory )
 		{
 			if (userCmd.Weapon!=null)
 			{
@@ -264,7 +264,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		AmmoComponent GetAmmo( GameState gs, InventoryComponent inventory, WeaponComponent weapon )
+		AmmoComponent GetAmmo( IGameState gs, InventoryComponent inventory, WeaponComponent weapon )
 		{
 			AmmoComponent ammo;
 			NameComponent name;
@@ -275,7 +275,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		bool TryConsumeAmmo( GameState gs, InventoryComponent inventory, WeaponComponent weapon )
+		bool TryConsumeAmmo( IGameState gs, InventoryComponent inventory, WeaponComponent weapon )
 		{
 			if (inventory.Flags.HasFlag(InventoryFlags.InfiniteAmmo))
 			{

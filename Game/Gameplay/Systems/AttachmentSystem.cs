@@ -20,8 +20,8 @@ namespace IronStar.Gameplay.Systems
 			return Aspect.Empty;
 		}
 
-		public void Add( GameState gs, Entity e ) {}
-		public void Remove( GameState gs, Entity e ) {}
+		public void Add( IGameState gs, Entity e ) {}
+		public void Remove( IGameState gs, Entity e ) {}
 
 
 		public static bool Attach( Entity entityToAttach, Entity targetEntity )
@@ -61,7 +61,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 		
-		public void Update( GameState gs, GameTime gameTime )
+		public void Update( IGameState gs, GameTime gameTime )
 		{
 			foreach ( var entity in gs.QueryEntities(attachmentAspect) )
 			{

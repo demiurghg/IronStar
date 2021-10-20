@@ -45,7 +45,7 @@ namespace IronStar.AI
 		}
 
 
-		public override void Update( GameState gs, GameTime gameTime )
+		public override void Update( IGameState gs, GameTime gameTime )
 		{
 			player		=	gs.GetPlayer();
 			playerAlive	=	IsPlayerAlive( player );

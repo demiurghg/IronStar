@@ -20,8 +20,8 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		public void Add( GameState gs, Entity e ) {}
-		public void Remove( GameState gs, Entity e ) {}
+		public void Add( IGameState gs, Entity e ) {}
+		public void Remove( IGameState gs, Entity e ) {}
 
 
 		readonly Aspect playerAspect	= PlayerFactory.PlayerAspect;
@@ -36,14 +36,14 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		public void Update( GameState gs, GameTime gameTime )
+		public void Update( IGameState gs, GameTime gameTime )
 		{
 			PickupPowerups( gs, gameTime );
 			ApplyDamage( gs, gameTime );
 		}
 
 
-		void PickupPowerups( GameState gs, GameTime gameTime )
+		void PickupPowerups( IGameState gs, GameTime gameTime )
 		{
 			var powerupEntities	=	gs.QueryEntities( powerupAspect );
 			var playerEntity	=	gs.QueryEntities( playerAspect ).LastOrDefault();
@@ -74,7 +74,7 @@ namespace IronStar.Gameplay.Systems
 						playerHealth.Health	=	Math.Min( playerHealth.Health + powerup.Health, playerHealth.MaxHealth );
 						playerHealth.Armor	=	Math.Min( playerHealth.Armor  + powerup.Armor , playerHealth.MaxArmor );
 
-						gs.Kill( powerupEntity );
+						powerupEntity.Kill();
 						FXPlayback.SpawnFX( gs, pickup?.FXName, powerupEntity );
 					}
 				}
@@ -82,7 +82,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		void ApplyDamage( GameState gs, GameTime gameTime )
+		void ApplyDamage( IGameState gs, GameTime gameTime )
 		{
 			var entities = gs.QueryEntities(healthAspect);
 

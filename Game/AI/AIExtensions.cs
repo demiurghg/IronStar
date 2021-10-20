@@ -26,13 +26,13 @@ namespace IronStar.AI
 		}
 
 
-		public static Entity[] GetPlayers( this GameState gs )
+		public static Entity[] GetPlayers( this IGameState gs )
 		{
 			return gs.QueryEntities( PlayerFactory.PlayerAspect ).ToArray();
 		}
 
 
-		public static Entity GetPlayer( this GameState gs )
+		public static Entity GetPlayer( this IGameState gs )
 		{
 			return gs.QueryEntities( PlayerFactory.PlayerAspect ).LastOrDefault();
 		}

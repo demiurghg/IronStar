@@ -22,11 +22,11 @@ namespace IronStar.Gameplay
 		Aspect startPointAspect = new Aspect().Include<PlayerStartComponent,Transform>();
 
 		public Aspect GetAspect() { return Aspect.Empty; }
-		public void Add( GameState gs, Entity e ) {}
-		public void Remove( GameState gs, Entity e ) {}
+		public void Add( IGameState gs, Entity e ) {}
+		public void Remove( IGameState gs, Entity e ) {}
 
 
-		public void Update( GameState gs, GameTime gameTime )
+		public void Update( IGameState gs, GameTime gameTime )
 		{
 			var e	=	gs.QueryEntities(startPointAspect).RandomOrDefault(rand);
 

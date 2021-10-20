@@ -14,12 +14,12 @@ namespace IronStar.Gameplay.Systems
 {
 	public class InventorySystem : StatelessSystem<InventoryComponent>
 	{
-		public override void Add( GameState gs, Entity e )
+		public override void Add( IGameState gs, Entity e )
 		{
 			base.Add( gs, e );
 		}
 
-		public override void Remove( GameState gs, Entity e )
+		public override void Remove( IGameState gs, Entity e )
 		{
 			base.Remove( gs, e );
 
@@ -27,7 +27,7 @@ namespace IronStar.Gameplay.Systems
 
 			foreach ( var item in inventory )
 			{
-				gs.Kill( item );
+				item.Kill();
 			}
 		}
 

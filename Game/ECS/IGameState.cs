@@ -19,6 +19,8 @@ namespace IronStar.ECS
 
 		Entity Spawn(string classname);
 
+		Entity Spawn(string classname, Vector3 position, Quaternion rotation);
+
 		Entity Spawn(params IComponent[] components);
 
 		void KillAll();
@@ -29,6 +31,10 @@ namespace IronStar.ECS
 
 		void AddSystem( ISystem system );
 
+		Entity GetEntity(uint id);
+
 		TService GetService<TService>() where TService : class;
+
+		IEnumerable<Entity> QueryEntities( Aspect aspect );
 	}
 }

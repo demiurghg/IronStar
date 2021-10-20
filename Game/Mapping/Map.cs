@@ -94,7 +94,7 @@ namespace IronStar.Mapping
 		}
 
 
-		internal void ActivateGameState( GameState gs )
+		internal void ActivateGameState( IGameState gs )
 		{
 			var g = gs.Spawn( new ECSPhysics.GravityComponent(48) );
 

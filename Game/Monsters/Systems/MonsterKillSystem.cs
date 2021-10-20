@@ -17,10 +17,10 @@ namespace IronStar.Monsters.Systems
 	class MonsterKillSystem : ISystem
 	{
 		public Aspect GetAspect() { return Aspect.Empty; }
-		public void Add( GameState gs, Entity e ) {}
-		public void Remove( GameState gs, Entity e ) {}
+		public void Add( IGameState gs, Entity e ) {}
+		public void Remove( IGameState gs, Entity e ) {}
 
-		public void Update( GameState gs, GameTime gameTime )
+		public void Update( IGameState gs, GameTime gameTime )
 		{
 			var monsterAspect = new Aspect().Include<HealthComponent,UserCommandComponent>().Single<BehaviorComponent,PlayerComponent>();
 
@@ -35,7 +35,7 @@ namespace IronStar.Monsters.Systems
 				{
 					CreatGiblets( gs, monsterEntity.GetLocation(), Vector3.Up );	
 
-					gs.Kill( monsterEntity );
+					monsterEntity.Kill();
 				}
 
 				if (health.Health<=0)
@@ -46,7 +46,7 @@ namespace IronStar.Monsters.Systems
 		}
 
 
-		void CreatGiblets( GameState gs, Vector3 position, Vector3 direction )
+		void CreatGiblets( IGameState gs, Vector3 position, Vector3 direction )
 		{
 			var rand	=	MathUtil.Random;
 			var physics	=	gs.GetService<PhysicsCore>();

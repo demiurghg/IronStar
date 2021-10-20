@@ -22,7 +22,7 @@ namespace IronStar.SFX
 {
 	public partial class FXPlayback
 	{
-		public static ECS.Entity SpawnFX( GameState gs, string fxName, uint parentID, Vector3 origin, Vector3 velocity, Quaternion rotation )
+		public static ECS.Entity SpawnFX( IGameState gs, string fxName, uint parentID, Vector3 origin, Vector3 velocity, Quaternion rotation )
 		{
 			if (string.IsNullOrWhiteSpace(fxName))
 			{
@@ -39,7 +39,7 @@ namespace IronStar.SFX
 		}
 
 
-		public static ECS.Entity SpawnFX( GameState gs, string fxName, ECS.Entity originEntity )
+		public static ECS.Entity SpawnFX( IGameState gs, string fxName, ECS.Entity originEntity )
 		{
 			var transform	=	originEntity.GetComponent<Transform>();
 
@@ -55,7 +55,7 @@ namespace IronStar.SFX
 		}
 
 
-		public static ECS.Entity SpawnFX( GameState gs, string fxName, uint parentID, Vector3 origin, Vector3 velocity, Vector3 forward )
+		public static ECS.Entity SpawnFX( IGameState gs, string fxName, uint parentID, Vector3 origin, Vector3 velocity, Vector3 forward )
 		{
 			var r	=	Matrix.RotationAxis( forward, rand.NextFloat( 0,MathUtil.TwoPi ) );
 			var m	=	MathUtil.ComputeAimedBasis( forward );
@@ -64,19 +64,19 @@ namespace IronStar.SFX
 		}
 
 
-		public static ECS.Entity SpawnFX( GameState gs, string fxName, uint parentID, Vector3 origin, Vector3 forward )
+		public static ECS.Entity SpawnFX( IGameState gs, string fxName, uint parentID, Vector3 origin, Vector3 forward )
 		{
 			return SpawnFX( gs, fxName, parentID, origin, Vector3.Zero, forward );
 		}
 
 
-		public static ECS.Entity SpawnFX( GameState gs, string fxName, uint parentID, Vector3 origin )
+		public static ECS.Entity SpawnFX( IGameState gs, string fxName, uint parentID, Vector3 origin )
 		{
 			return SpawnFX( gs, fxName, parentID, origin, Vector3.Zero, Quaternion.Identity );
 		}
 
 
-		public static ECS.Entity AttachFX( GameState gs, Entity target, string fxName, uint parentID, Vector3 origin, Vector3 forward )
+		public static ECS.Entity AttachFX( IGameState gs, Entity target, string fxName, uint parentID, Vector3 origin, Vector3 forward )
 		{
 			var e = SpawnFX( gs, fxName, parentID, origin, Vector3.Zero, forward );
 

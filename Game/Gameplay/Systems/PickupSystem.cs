@@ -15,8 +15,8 @@ namespace IronStar.Gameplay.Systems
 {
 	public class PickupSystem : ISystem
 	{
-		public void Add( GameState gs, Entity e )  {}
-		public void Remove( GameState gs, Entity e ) {}
+		public void Add( IGameState gs, Entity e )  {}
+		public void Remove( IGameState gs, Entity e ) {}
 		public Aspect GetAspect() { return Aspect.Empty; }
 
 		readonly Aspect itemAspect		=	new Aspect().Include<PickupComponent,TouchDetector,Transform>().Single<WeaponComponent,AmmoComponent>();
@@ -31,7 +31,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		public void Update( GameState gs, GameTime gameTime )
+		public void Update( IGameState gs, GameTime gameTime )
 		{
 			var pickupEntities = gs.QueryEntities( itemAspect );
 
@@ -50,7 +50,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		bool PickItemUp( GameState gs, Entity recipient, Entity pickupItem )
+		bool PickItemUp( IGameState gs, Entity recipient, Entity pickupItem )
 		{
 			var inventory	=	recipient.GetComponent<InventoryComponent>();
 			var pickup		=	pickupItem.GetComponent<PickupComponent>();
@@ -73,7 +73,7 @@ namespace IronStar.Gameplay.Systems
 
 
 
-		bool TryPickAsWeapon( GameState gs, InventoryComponent inventory, Entity weaponEntity )
+		bool TryPickAsWeapon( IGameState gs, InventoryComponent inventory, Entity weaponEntity )
 		{
 			if ( weaponAspect.Accept( weaponEntity ) )
 			{
@@ -90,7 +90,7 @@ namespace IronStar.Gameplay.Systems
 				else 
 				{
 					inventory.SwitchWeapon( existingWeaponEntity );
-					gs.Kill( weaponEntity );
+					weaponEntity.Kill();
 				}
 
 				var ammoEntity = gs.Spawn( weapon.AmmoClass );
@@ -110,7 +110,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		bool TryPickAsAmmo( GameState gs, InventoryComponent inventory, Entity ammoEntity, bool forcePick = false )
+		bool TryPickAsAmmo( IGameState gs, InventoryComponent inventory, Entity ammoEntity, bool forcePick = false )
 		{
 			if ( ammoAspect.Accept( ammoEntity ) )
 			{
@@ -127,7 +127,7 @@ namespace IronStar.Gameplay.Systems
 					if ( existingAmmo.Count < existingAmmo.Capacity || forcePick )
 					{
 						existingAmmo.Count = MathUtil.Clamp( existingAmmo.Count + ammo.Count, 0, existingAmmo.Capacity );
-						gs.Kill( ammoEntity );
+						ammoEntity.Kill();
 						return true;
 					}
 					else

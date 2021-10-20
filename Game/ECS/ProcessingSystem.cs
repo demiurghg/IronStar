@@ -43,7 +43,7 @@ namespace IronStar.ECS
 			return new Aspect().Include<T1>();
 		}
 
-		public void Add( GameState gs, Entity e )
+		public void Add( IGameState gs, Entity e )
 		{
 			lock (lockObj)
 			{
@@ -53,7 +53,7 @@ namespace IronStar.ECS
 			}
 		}
 
-		public void Remove( GameState gs, Entity e )
+		public void Remove( IGameState gs, Entity e )
 		{
 			lock (lockObj)
 			{
@@ -71,7 +71,7 @@ namespace IronStar.ECS
 			return entities;
 		}
 
-		protected void ForEach( GameState gs, GameTime gameTime, Action<Entity,GameTime,TResource,T1> action )
+		protected void ForEach( IGameState gs, GameTime gameTime, Action<Entity,GameTime,TResource,T1> action )
 		{
 			lock (lockObj)
 			{
@@ -90,7 +90,7 @@ namespace IronStar.ECS
 			}
 		}
 
-		public virtual void Update( GameState gs, GameTime gameTime )
+		public virtual void Update( IGameState gs, GameTime gameTime )
 		{
 			ForEach( gs, gameTime, Process );
 		}
@@ -119,7 +119,7 @@ namespace IronStar.ECS
 			return new Aspect().Include<T1,T2>();
 		}
 
-		public void Add( GameState gs, Entity e )
+		public void Add( IGameState gs, Entity e )
 		{
 			lock (lockObj)
 			{
@@ -130,7 +130,7 @@ namespace IronStar.ECS
 			}
 		}
 
-		public void Remove( GameState gs, Entity e )
+		public void Remove( IGameState gs, Entity e )
 		{
 			lock (lockObj)
 			{
@@ -148,7 +148,7 @@ namespace IronStar.ECS
 			return entities;
 		}
 
-		protected void ForEach( GameState gs, GameTime gameTime, Action<Entity,GameTime,TResource,T1,T2> action )
+		protected void ForEach( IGameState gs, GameTime gameTime, Action<Entity,GameTime,TResource,T1,T2> action )
 		{
 			lock (lockObj)
 			{
@@ -168,7 +168,7 @@ namespace IronStar.ECS
 			}
 		}
 
-		public virtual void Update( GameState gs, GameTime gameTime )
+		public virtual void Update( IGameState gs, GameTime gameTime )
 		{
 			ForEach( gs, gameTime, Process );
 		}
@@ -198,7 +198,7 @@ namespace IronStar.ECS
 			return new Aspect().Include<T1,T2,T3>();
 		}
 
-		public void Add( GameState gs, Entity e )
+		public void Add( IGameState gs, Entity e )
 		{
 			lock (lockObj)
 			{
@@ -210,7 +210,7 @@ namespace IronStar.ECS
 			}
 		}
 
-		public void Remove( GameState gs, Entity e )
+		public void Remove( IGameState gs, Entity e )
 		{
 			lock (lockObj)
 			{
@@ -228,7 +228,7 @@ namespace IronStar.ECS
 			return entities;
 		}
 
-		protected void ForEach( GameState gs, GameTime gameTime, Action<Entity,GameTime,TResource,T1,T2,T3> action )
+		protected void ForEach( IGameState gs, GameTime gameTime, Action<Entity,GameTime,TResource,T1,T2,T3> action )
 		{
 			lock (lockObj)
 			{
@@ -249,7 +249,7 @@ namespace IronStar.ECS
 			}
 		}
 
-		public virtual void Update( GameState gs, GameTime gameTime )
+		public virtual void Update( IGameState gs, GameTime gameTime )
 		{
 			ForEach( gs, gameTime, Process );
 		}
@@ -280,7 +280,7 @@ namespace IronStar.ECS
 			return new Aspect().Include<T1,T2,T3,T4>();
 		}
 
-		public void Add( GameState gs, Entity e )
+		public void Add( IGameState gs, Entity e )
 		{
 			lock (lockObj)
 			{
@@ -293,7 +293,7 @@ namespace IronStar.ECS
 			}
 		}
 
-		public void Remove( GameState gs, Entity e )
+		public void Remove( IGameState gs, Entity e )
 		{
 			lock (lockObj)
 			{
@@ -311,7 +311,7 @@ namespace IronStar.ECS
 			return entities;
 		}
 
-		protected void ForEach( GameState gs, GameTime gameTime, Action<Entity,GameTime,TResource,T1,T2,T3,T4> action )
+		protected void ForEach( IGameState gs, GameTime gameTime, Action<Entity,GameTime,TResource,T1,T2,T3,T4> action )
 		{
 			lock (lockObj)
 			{
@@ -334,7 +334,7 @@ namespace IronStar.ECS
 		}
 
 
-		public virtual void Update( GameState gs, GameTime gameTime )
+		public virtual void Update( IGameState gs, GameTime gameTime )
 		{
 			ForEach( gs, gameTime, Process );
 		}

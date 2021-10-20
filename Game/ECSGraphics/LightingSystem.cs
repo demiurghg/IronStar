@@ -33,11 +33,11 @@ namespace IronStar.SFX2
 		}
 
 
-		public void Add( GameState gs, Entity e ) {}
-		public void Remove( GameState gs, Entity e ) {}
+		public void Add( IGameState gs, Entity e ) {}
+		public void Remove( IGameState gs, Entity e ) {}
 
 
-		public void Update( GameState gs, GameTime gameTime )
+		public void Update( IGameState gs, GameTime gameTime )
 		{
 			var rs	=	gs.GetService<RenderSystem>();
 			rs.RenderWorld.LightSet.DirectLight.Direction	=	-rs.Sky.GetSunDirection();

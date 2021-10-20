@@ -138,7 +138,7 @@ namespace IronStar.Gameplay.Components
 		/// <param name="predicate">Preicate</param>
 		/// <param name="component">Output component</param>
 		/// <returns>True if item found, false otherwice</returns>
-		public Entity FindItem<TComponent>( GameState gs, Func<TComponent,bool> predicate, out TComponent component )	where TComponent: IComponent
+		public Entity FindItem<TComponent>( IGameState gs, Func<TComponent,bool> predicate, out TComponent component )	where TComponent: IComponent
 		{
 			var aspect = new Aspect().Include<TComponent>();
 			component = default(TComponent);
@@ -171,7 +171,7 @@ namespace IronStar.Gameplay.Components
 		/// <param name="component1"></param>
 		/// <param name="component2"></param>
 		/// <returns></returns>
-		public Entity FindItem<TComponent1,TComponent2>( GameState gs, Func<TComponent1,TComponent2,bool> predicate, 
+		public Entity FindItem<TComponent1,TComponent2>( IGameState gs, Func<TComponent1,TComponent2,bool> predicate, 
 			out TComponent1 component1, 
 			out TComponent2 component2 )
 			where TComponent1: IComponent 
@@ -202,7 +202,7 @@ namespace IronStar.Gameplay.Components
 		}
 
 
-		public Entity FindItem<TComponent>( GameState gs, Func<TComponent,bool> predicate )
+		public Entity FindItem<TComponent>( IGameState gs, Func<TComponent,bool> predicate )
 			where TComponent: IComponent 
 		{
 			TComponent c;
@@ -210,7 +210,7 @@ namespace IronStar.Gameplay.Components
 		}
 
 
-		public Entity FindItem<TComponent1,TComponent2>( GameState gs, Func<TComponent1,TComponent2,bool> predicate )
+		public Entity FindItem<TComponent1,TComponent2>( IGameState gs, Func<TComponent1,TComponent2,bool> predicate )
 			where TComponent1: IComponent 
 			where TComponent2: IComponent
 		{
@@ -226,7 +226,7 @@ namespace IronStar.Gameplay.Components
 		/// <param name="gs">Gamestate</param>
 		/// <param name="itemAspect">Entity aspect</param>
 		/// <returns>First occurance of the item, that meets given aspect. Null otherwice.</returns>
-		public Entity FindItem ( GameState gs, Aspect itemAspect )
+		public Entity FindItem ( IGameState gs, Aspect itemAspect )
 		{
 			foreach ( var e in items )
 			{
@@ -240,14 +240,14 @@ namespace IronStar.Gameplay.Components
 		}
 
 
-		public bool ContainsItem<TComponent>( GameState gs, Func<TComponent,bool> predicate ) where TComponent: IComponent
+		public bool ContainsItem<TComponent>( IGameState gs, Func<TComponent,bool> predicate ) where TComponent: IComponent
 		{
 			TComponent c;
 			return FindItem(gs, predicate, out c)!=null;
 		}
 
 
-		public bool ContainsItem<TComponent1,TComponent2>( GameState gs, Func<TComponent1,TComponent2,bool> predicate ) 
+		public bool ContainsItem<TComponent1,TComponent2>( IGameState gs, Func<TComponent1,TComponent2,bool> predicate ) 
 			where TComponent1: IComponent 
 			where TComponent2: IComponent
 		{
@@ -255,7 +255,7 @@ namespace IronStar.Gameplay.Components
 		}
 
 
-		public bool ContainsItem( GameState gs, Aspect itemAspect )
+		public bool ContainsItem( IGameState gs, Aspect itemAspect )
 		{
 			return FindItem(gs, itemAspect) != null;
 		}

@@ -26,12 +26,12 @@ namespace IronStar.UI.HUD
 			Game.RenderSystem.DofFilter.Enabled = false;
 		}
 
-		public void Add( GameState gs, Entity e ) {}
-		public void Remove( GameState gs, Entity e ) {}
+		public void Add( IGameState gs, Entity e ) {}
+		public void Remove( IGameState gs, Entity e ) {}
 		public Aspect GetAspect() { return Aspect.Empty; }
 
 		
-		public void Update( GameState gs, GameTime gameTime )
+		public void Update( IGameState gs, GameTime gameTime )
 		{
 			var player	=	gs.QueryEntities(PlayerFactory.PlayerAspect).LastOrDefault();
 
@@ -42,7 +42,7 @@ namespace IronStar.UI.HUD
 		}
 
 
-		void UpdateDamageEffect( GameState gs, GameTime gameTime, Entity player )
+		void UpdateDamageEffect( IGameState gs, GameTime gameTime, Entity player )
 		{
 			var health	=	player?.GetComponent<HealthComponent>();
 			var gameFx	=	Game.RenderSystem.GameFX;

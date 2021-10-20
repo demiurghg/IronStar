@@ -62,8 +62,8 @@ namespace IronStar.SFX
 		}
 
 
-		public void Add( GameState gs, ECS.Entity e ) {}
-		public void Remove( GameState gs, ECS.Entity e ) {}
+		public void Add( IGameState gs, ECS.Entity e ) {}
+		public void Remove( IGameState gs, ECS.Entity e ) {}
 
 
 		/// <summary>
@@ -237,7 +237,7 @@ namespace IronStar.SFX
 			fxInstance?.Kill();
 		}
 
-		public override void Update( GameState gs, GameTime gameTime )
+		public override void Update( IGameState gs, GameTime gameTime )
 		{
 			base.Update( gs, gameTime );
 

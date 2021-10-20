@@ -124,7 +124,7 @@ namespace IronStar.AI
 
 
 		
-		public override void Update( GameState gs, GameTime gameTime )
+		public override void Update( IGameState gs, GameTime gameTime )
 		{
 			base.Update( gs, gameTime );
 
@@ -150,7 +150,7 @@ namespace IronStar.AI
 
 
 
-		void DebugDrawTokens( GameState gs )
+		void DebugDrawTokens( IGameState gs )
 		{
 			var dr	=	gs.GetService<RenderSystem>().RenderWorld.Debug;
 

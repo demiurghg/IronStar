@@ -86,8 +86,8 @@ namespace IronStar.Gameplay
 		}
 
 
-		public void Add( GameState gs, Entity e ) {}
-		public void Remove( GameState gs, Entity e ) {}
+		public void Add( IGameState gs, Entity e ) {}
+		public void Remove( IGameState gs, Entity e ) {}
 
 		Aspect playerCameraAspect = new Aspect().Include<PlayerComponent,Transform>()
 												.Include<UserCommandComponent,CharacterController>();
@@ -97,7 +97,7 @@ namespace IronStar.Gameplay
 		 *	Update & Draw :
 		-----------------------------------------------------------------------------------------*/
 
-		public void Update( GameState gs, GameTime gameTime )
+		public void Update( IGameState gs, GameTime gameTime )
 		{
 			if (Enabled)
 			{
@@ -116,7 +116,7 @@ namespace IronStar.Gameplay
 		 *	Animation stuff :
 		-----------------------------------------------------------------------------------------*/
 
-		void UpdatePlayerCamera( GameTime gameTime, GameState gs, Entity e )
+		void UpdatePlayerCamera( GameTime gameTime, IGameState gs, Entity e )
 		{
 			var t		=	e.GetComponent<Transform>();
 			var v		=	t.LinearVelocity;
@@ -138,7 +138,7 @@ namespace IronStar.Gameplay
 		}
 
 
-		void DrawPlayerCamera( GameTime gameTime, GameState gs, Entity e )
+		void DrawPlayerCamera( GameTime gameTime, IGameState gs, Entity e )
 		{
 			var t		=	e.GetComponent<Transform>();
 			var v		=	t.LinearVelocity;

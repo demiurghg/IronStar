@@ -82,7 +82,7 @@ namespace IronStar.Mapping
 		}
 
 
-		public override BoundingBox GetBoundingBox( GameState gs )
+		public override BoundingBox GetBoundingBox( IGameState gs )
 		{
 			// #TODO #MAP -- Need more smart bounding box for map models!
 			return new BoundingBox( 8, 8, 8 );

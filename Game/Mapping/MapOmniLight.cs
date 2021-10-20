@@ -73,7 +73,7 @@ namespace IronStar.Mapping
 		}
 
 
-		public override BoundingBox GetBoundingBox( GameState gs )
+		public override BoundingBox GetBoundingBox( IGameState gs )
 		{
 			float sz = OuterRadius / (float)Math.Sqrt(3);
 			return new BoundingBox( sz, sz, sz );

@@ -56,8 +56,8 @@ namespace IronStar.Editor
 
 		public Map Map { get { return map; } }
 
-		ECS.GameState	gameState;
-		public ECS.GameState GameState { get { return gameState; } }
+		ECS.IGameState	gameState;
+		public ECS.IGameState GameState { get { return gameState; } }
 		/*GameWorld world;
 
 		public GameWorld World { get { return world; } }*/

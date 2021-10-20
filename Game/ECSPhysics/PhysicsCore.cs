@@ -116,11 +116,11 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		public void Add( GameState gs, Entity e ) {}
-		public void Remove( GameState gs, Entity e ) {}
+		public void Add( IGameState gs, Entity e ) {}
+		public void Remove( IGameState gs, Entity e ) {}
 
 
-		public void Update( GameState gs, GameTime gameTime )
+		public void Update( IGameState gs, GameTime gameTime )
 		{
 			UpdateGravity(gs);
 
@@ -190,7 +190,7 @@ namespace IronStar.ECSPhysics
 		 *	
 		-----------------------------------------------------------------------------------------------*/
 		
-		void UpdateGravity( GameState gs )
+		void UpdateGravity( IGameState gs )
 		{
 			var gravityAspect			=	new Aspect().Include<GravityComponent>();
 			var gravityEntity			=	gs.QueryEntities(gravityAspect).FirstOrDefault();
@@ -207,7 +207,7 @@ namespace IronStar.ECSPhysics
 
 
 
-		void UpdateSimulation ( GameState gs, float elapsedTime )
+		void UpdateSimulation ( IGameState gs, float elapsedTime )
 		{
 			Space.TimeStepSettings.TimeStepDuration				=	elapsedTime;
 			Space.TimeStepSettings.MaximumTimeStepsPerFrame		=	1;
@@ -234,7 +234,7 @@ namespace IronStar.ECSPhysics
 		}
 
 
-		void UpdateTouchEvents( GameState gs )
+		void UpdateTouchEvents( IGameState gs )
 		{
 			var touchAspect = new Aspect().Include<TouchDetector>();
 

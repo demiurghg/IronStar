@@ -24,7 +24,7 @@ namespace IronStar.Gameplay
 		public UserCommand LastCommand { get { return userCommand; } }
 
 
-		public void Add( GameState gs, Entity e ) 
+		public void Add( IGameState gs, Entity e ) 
 		{
 			var transform	=	e.GetComponent<Transform>();
 			userCommand		=	UserCommand.FromTransform( transform );
@@ -32,12 +32,12 @@ namespace IronStar.Gameplay
 		}
 		
 		
-		public void Remove( GameState gs, Entity e ) 
+		public void Remove( IGameState gs, Entity e ) 
 		{ 
 		}
 
 
-		public void Update( GameState gs, GameTime gameTime )
+		public void Update( IGameState gs, GameTime gameTime )
 		{
 			var playerInput	=	gs.Game.GetService<PlayerInput>();
 			var players		=	gs.QueryEntities(playerAspect);

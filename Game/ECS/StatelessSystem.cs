@@ -22,10 +22,10 @@ namespace IronStar.ECS
 			return new Aspect().Include<T1>();
 		}
 
-		public virtual void Add( GameState gs, Entity e ) {}
-		public virtual void Remove( GameState gs, Entity e ) {}
+		public virtual void Add( IGameState gs, Entity e ) {}
+		public virtual void Remove( IGameState gs, Entity e ) {}
 
-		public virtual void Update( GameState gs, GameTime gameTime )
+		public virtual void Update( IGameState gs, GameTime gameTime )
 		{
 			var entities = gs.QueryEntities(aspect);
 
@@ -56,10 +56,10 @@ namespace IronStar.ECS
 			return new Aspect().Include<T1,T2>();
 		}
 
-		public virtual void Add( GameState gs, Entity e ) {}
-		public virtual void Remove( GameState gs, Entity e ) {}
+		public virtual void Add( IGameState gs, Entity e ) {}
+		public virtual void Remove( IGameState gs, Entity e ) {}
 
-		public virtual void Update( GameState gs, GameTime gameTime )
+		public virtual void Update( IGameState gs, GameTime gameTime )
 		{
 			var entities = gs.QueryEntities(aspect);
 
@@ -92,10 +92,10 @@ namespace IronStar.ECS
 			return new Aspect().Include<T1,T2,T3>();
 		}
 
-		public virtual void Add( GameState gs, Entity e ) {}
-		public virtual void Remove( GameState gs, Entity e ) {}
+		public virtual void Add( IGameState gs, Entity e ) {}
+		public virtual void Remove( IGameState gs, Entity e ) {}
 
-		protected void ForEach( GameState gs, GameTime gameTime, Action<Entity,GameTime,T1,T2,T3> action )
+		protected void ForEach( IGameState gs, GameTime gameTime, Action<Entity,GameTime,T1,T2,T3> action )
 		{
 			var entities = gs.QueryEntities(aspect);
 
@@ -108,7 +108,7 @@ namespace IronStar.ECS
 			}
 		}
 
-		public virtual void Update( GameState gs, GameTime gameTime )
+		public virtual void Update( IGameState gs, GameTime gameTime )
 		{
 			ForEach( gs, gameTime, Process );
 		}
@@ -135,10 +135,10 @@ namespace IronStar.ECS
 			return new Aspect().Include<T1,T2,T3,T4>();
 		}
 
-		public virtual void Add( GameState gs, Entity e ) {}
-		public virtual void Remove( GameState gs, Entity e ) {}
+		public virtual void Add( IGameState gs, Entity e ) {}
+		public virtual void Remove( IGameState gs, Entity e ) {}
 
-		public virtual void Update( GameState gs, GameTime gameTime )
+		public virtual void Update( IGameState gs, GameTime gameTime )
 		{
 			var entities = gs.QueryEntities(aspect);
 

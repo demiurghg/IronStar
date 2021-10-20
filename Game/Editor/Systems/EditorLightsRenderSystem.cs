@@ -35,11 +35,11 @@ namespace IronStar.Editor.Systems
 		}
 
 		
-		public void Add( GameState gs, Entity e ) {}
-		public void Remove( GameState gs, Entity e ) {}
+		public void Add( IGameState gs, Entity e ) {}
+		public void Remove( IGameState gs, Entity e ) {}
 
 		
-		public void Update( GameState gs, GameTime gameTime )
+		public void Update( IGameState gs, GameTime gameTime )
 		{
 			if (gs.Game.RenderSystem.SkipDebugRendering) 
 			{

@@ -187,7 +187,7 @@ namespace IronStar.Mapping
 		}
 
 		
-		public virtual BoundingBox GetBoundingBox( GameState gs ) 
+		public virtual BoundingBox GetBoundingBox( IGameState gs ) 
 		{
 			return new BoundingBox( 2, 2, 2 ); 
 		}

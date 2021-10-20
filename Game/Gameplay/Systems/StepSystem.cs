@@ -25,14 +25,14 @@ namespace IronStar.Gameplay.Systems
 		const float STEP_VELOCITY_THRESHOLD = 0.1f;
 		const float ACCELERATION_FILTER		= 10.0f;
 
-		public void Add( GameState gs, Entity e ) {}
-		public void Remove( GameState gs, Entity e ) {}
+		public void Add( IGameState gs, Entity e ) {}
+		public void Remove( IGameState gs, Entity e ) {}
 		public Aspect GetAspect() { return Aspect.Empty; }
 
 		Aspect stepAspect = Aspect.Empty.Include<StepComponent,CharacterController,Transform>();
 
 
-		public void Update( GameState gs, GameTime gameTime )
+		public void Update( IGameState gs, GameTime gameTime )
 		{
 			var stepEntities = gs.QueryEntities( stepAspect );
 

@@ -34,8 +34,8 @@ namespace IronStar.Gameplay.Systems
 		const string CAMERA_NODE	=	"camera1"		;
 
 
-		public void Add( GameState gs, Entity e ) {}
-		public void Remove( GameState gs, Entity e ) {}
+		public void Add( IGameState gs, Entity e ) {}
+		public void Remove( IGameState gs, Entity e ) {}
 		public Aspect GetAspect() { return Aspect.Empty; }
 
 		readonly Aspect playerAspect	=	new Aspect().Include<PlayerComponent,CharacterController,StepComponent>()
@@ -66,7 +66,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		public void Update( GameState gs, GameTime gameTime )
+		public void Update( IGameState gs, GameTime gameTime )
 		{
 			var rs = gs.GetService<RenderSystem>();
 			var rw = rs.RenderWorld;
@@ -95,7 +95,7 @@ namespace IronStar.Gameplay.Systems
 		}
 
 
-		void ChangeWeaponModel( GameState gs, RenderModel model )
+		void ChangeWeaponModel( IGameState gs, RenderModel model )
 		{
 			var rs = gs.GetService<RenderSystem>();
 			var rw = rs.RenderWorld;

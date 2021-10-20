@@ -32,11 +32,9 @@ namespace IronStar.ECS
 		private readonly Dictionary<uint,TResource> resources = new Dictionary<uint, TResource>();
 		private readonly Aspect aspect;
 		private readonly object lockObj = new object();
-		private readonly IParallelLooper looper;
 
-		public ProcessingSystem(IParallelLooper looper)
+		public ProcessingSystem()
 		{
-			this.looper	=	looper ?? new DefaultLooper();
 			aspect		=	GetAspect();
 		}
 
@@ -77,12 +75,10 @@ namespace IronStar.ECS
 		{
 			lock (lockObj)
 			{
-				var entities = OrderEntities( gs.QueryEntities(aspect) ).ToArray();
+				var entities = OrderEntities( gs.QueryEntities(aspect) );
 
-				looper.ForLoop( 0, entities.Length, idx => 
+				foreach ( var e in entities )
 				{
-					var e	=	entities[idx];
-
 					var c1	=	e.GetComponent<T1>();
 					var rc	=	default(TResource);
 
@@ -90,7 +86,7 @@ namespace IronStar.ECS
 					{
 						action( e, gameTime, rc, c1 );
 					}
-				});
+				}
 			}
 		}
 
@@ -112,11 +108,9 @@ namespace IronStar.ECS
 		private readonly Dictionary<uint,TResource> resources = new Dictionary<uint, TResource>();
 		private readonly Aspect aspect;
 		private readonly object lockObj = new object();
-		private readonly IParallelLooper looper;
 
-		public ProcessingSystem(IParallelLooper looper)
+		public ProcessingSystem()
 		{
-			this.looper	=	looper ?? new DefaultLooper();
 			aspect		=	GetAspect();
 		}
 
@@ -158,12 +152,10 @@ namespace IronStar.ECS
 		{
 			lock (lockObj)
 			{
-				var entities = OrderEntities( gs.QueryEntities(aspect) ).ToArray();
+				var entities = OrderEntities( gs.QueryEntities(aspect) );
 
-				looper.ForLoop( 0, entities.Length, idx => 
+				foreach ( var e in entities )
 				{
-					var e	=	entities[idx];
-
 					var c1	=	e.GetComponent<T1>();
 					var c2	=	e.GetComponent<T2>();
 					var rc	=	default(TResource);
@@ -172,7 +164,7 @@ namespace IronStar.ECS
 					{
 						action( e, gameTime, rc, c1,c2 );
 					}
-				});
+				}
 			}
 		}
 
@@ -195,11 +187,9 @@ namespace IronStar.ECS
 		private readonly Dictionary<uint,TResource> resources = new Dictionary<uint, TResource>();
 		private readonly Aspect aspect;
 		private readonly object lockObj = new object();
-		private readonly IParallelLooper looper;
 
-		public ProcessingSystem(IParallelLooper looper)
+		public ProcessingSystem()
 		{
-			this.looper	=	looper ?? new DefaultLooper();
 			aspect		=	GetAspect();
 		}
 
@@ -242,12 +232,10 @@ namespace IronStar.ECS
 		{
 			lock (lockObj)
 			{
-				var entities = OrderEntities( gs.QueryEntities(aspect) ).ToArray();
+				var entities = OrderEntities( gs.QueryEntities(aspect) );
 
-				looper.ForLoop( 0, entities.Length, idx => 
+				foreach ( var e in entities )
 				{
-					var e	=	entities[idx];
-
 					var c1	=	e.GetComponent<T1>();
 					var c2	=	e.GetComponent<T2>();
 					var c3	=	e.GetComponent<T3>();
@@ -257,7 +245,7 @@ namespace IronStar.ECS
 					{
 						action( e, gameTime, rc, c1,c2,c3 );
 					}
-				});
+				}
 			}
 		}
 
@@ -281,11 +269,9 @@ namespace IronStar.ECS
 		private readonly Dictionary<uint,TResource> resources = new Dictionary<uint, TResource>();
 		private readonly Aspect aspect;
 		private readonly object lockObj = new object();
-		private readonly IParallelLooper looper;
 
-		public ProcessingSystem( IParallelLooper looper )
+		public ProcessingSystem()
 		{
-			this.looper	=	looper ?? new DefaultLooper();
 			aspect		=	GetAspect();
 		}
 
@@ -329,12 +315,10 @@ namespace IronStar.ECS
 		{
 			lock (lockObj)
 			{
-				var entities = OrderEntities( gs.QueryEntities(aspect) ).ToArray();
+				var entities = OrderEntities( gs.QueryEntities(aspect) );
 
-				looper.ForLoop( 0, entities.Length, idx => 
+				foreach ( var e in entities )
 				{
-					var e	=	entities[idx];
-
 					var c1	=	e.GetComponent<T1>();
 					var c2	=	e.GetComponent<T2>();
 					var c3	=	e.GetComponent<T3>();
@@ -345,7 +329,7 @@ namespace IronStar.ECS
 					{
 						action( e, gameTime, rc, c1,c2,c3,c4 );
 					}
-				});
+				}
 			}
 		}
 

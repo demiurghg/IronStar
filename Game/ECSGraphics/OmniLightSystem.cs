@@ -19,7 +19,7 @@ namespace IronStar.SFX2
 
 		readonly LightSet ls;
 	
-		public OmniLightSystem( RenderSystem rs, IParallelLooper looper ) : base(looper)
+		public OmniLightSystem( RenderSystem rs )
 		{
 			ls	=	rs.RenderWorld.LightSet;
 		}

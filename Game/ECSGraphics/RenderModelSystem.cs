@@ -37,7 +37,7 @@ namespace IronStar.SFX2
 													.Exclude<BoneComponent>();
 
 
-		public RenderModelSystem ( Game game, IParallelLooper looper ) : base(looper)
+		public RenderModelSystem ( Game game )
 		{
 			this.game	=	game;
 			this.rs		=	game.RenderSystem;

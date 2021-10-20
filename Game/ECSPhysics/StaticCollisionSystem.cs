@@ -29,7 +29,7 @@ namespace IronStar.ECSPhysics
 
 		readonly PhysicsCore physics;
 
-		public StaticCollisionSystem( PhysicsCore physics ) : base(null)
+		public StaticCollisionSystem( PhysicsCore physics )
 		{
 			this.physics	=	physics;
 		}

@@ -20,7 +20,7 @@ namespace IronStar.SFX2
 		readonly LightSet ls;
 
 		
-		public DecalSystem( RenderSystem rs, IParallelLooper looper ) : base(looper)
+		public DecalSystem( RenderSystem rs )
 		{
 			this.ls	=	rs.RenderWorld.LightSet;
 		}

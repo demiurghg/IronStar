@@ -43,7 +43,7 @@ namespace IronStar
 			
 			//	physics and FX systems are used by many other systems :
 			var physicsCore = new ECSPhysics.PhysicsCore(looper);
-			var fxPlayback	= new SFX.FXPlayback(game, content, null);
+			var fxPlayback	= new SFX.FXPlayback(game, content );
 
 			gs.Services.AddService( content );
 			gs.Services.AddService( game.RenderSystem );
@@ -53,14 +53,14 @@ namespace IronStar
 			gs.AddSystem( new PlayerSpawnSystem() );
 
 			//	weapon system :
-			gs.AddSystem( new WeaponSystem(gs, physicsCore, fxPlayback, null) );
-			gs.AddSystem( new ProjectileSystem(gs, physicsCore, null) );
+			gs.AddSystem( new WeaponSystem(gs, physicsCore, fxPlayback ) );
+			gs.AddSystem( new ProjectileSystem(gs, physicsCore ) );
 
 			//	physics simulation :
 			gs.AddSystem( physicsCore );
 			gs.AddSystem( new ECSPhysics.StaticCollisionSystem(physicsCore) );
-			gs.AddSystem( new ECSPhysics.DynamicCollisionSystem(physicsCore, null) );
-			gs.AddSystem( new ECSPhysics.CharacterControllerSystem(physicsCore, null) );
+			gs.AddSystem( new ECSPhysics.DynamicCollisionSystem(physicsCore ) );
+			gs.AddSystem( new ECSPhysics.CharacterControllerSystem(physicsCore ) );
 
 			//	attachment system :
 			gs.AddSystem( new AttachmentSystem() );
@@ -72,7 +72,7 @@ namespace IronStar
 
 			//	AI :
 			gs.AddSystem( new PerceptionSystem(physicsCore) );
-			gs.AddSystem( new BehaviorSystem(physicsCore, null) );
+			gs.AddSystem( new BehaviorSystem(physicsCore ) );
 			gs.AddSystem( new NavigationSystem() );
 			gs.AddSystem( new MonsterKillSystem() );
 
@@ -81,18 +81,17 @@ namespace IronStar
 			gs.AddSystem( new Gameplay.CameraSystem(fxPlayback) );
 			gs.AddSystem( new StepSystem() );
 			gs.AddSystem( new FPVWeaponSystem(game) );
-			gs.AddSystem( new MonsterAnimationSystem(game,fxPlayback,physicsCore, looper) );
+			gs.AddSystem( new MonsterAnimationSystem(game,fxPlayback,physicsCore) );
 
 			gs.AddSystem( fxPlayback );
 
 			//	rendering :
-			gs.AddSystem( new SFX2.RenderModelSystem(game, null) );
-			gs.AddSystem( new SFX2.DecalSystem(game.RenderSystem,		null /*looper*/) );
-			gs.AddSystem( new SFX2.OmniLightSystem(game.RenderSystem,	null /*looper*/) );
-			gs.AddSystem( new SFX2.SpotLightSystem(game.RenderSystem,	null /*looper*/) );
-			gs.AddSystem( new SFX2.LightProbeSystem(game.RenderSystem,	null /*looper*/) );
-			gs.AddSystem( new SFX2.LightVolumeSystem(game.RenderSystem, null /*looper*/) );
-			// gs.AddSystem( new BillboardSystem(fxPlayback) );
+			gs.AddSystem( new SFX2.RenderModelSystem(game) );
+			gs.AddSystem( new SFX2.DecalSystem(game.RenderSystem		) );
+			gs.AddSystem( new SFX2.OmniLightSystem(game.RenderSystem	) );
+			gs.AddSystem( new SFX2.SpotLightSystem(game.RenderSystem	) );
+			gs.AddSystem( new SFX2.LightProbeSystem(game.RenderSystem	) );
+			gs.AddSystem( new SFX2.LightVolumeSystem(game.RenderSystem	) );
 			gs.AddSystem( new SFX2.LightingSystem() );
 
 			//	ui
@@ -107,7 +106,7 @@ namespace IronStar
 				gs.AddSystem( new EditorEntityRenderSystem( editor, rs.RenderWorld.Debug ) );
 				gs.AddSystem( new EditorLightRenderSystem( editor, rs.RenderWorld.Debug ) );
 				gs.AddSystem( new EditorPhysicsRenderSystem( editor, rs.RenderWorld.Debug ) );
-				gs.AddSystem( new EditorModelRenderSystem( editor, rs.RenderWorld.Debug, looper ) );
+				gs.AddSystem( new EditorModelRenderSystem( editor, rs.RenderWorld.Debug ) );
 				gs.AddSystem( new EditorCharacterRenderSystem( editor, rs.RenderWorld.Debug ) );  //*/
 			}
 

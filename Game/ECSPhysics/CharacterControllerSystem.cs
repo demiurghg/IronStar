@@ -31,7 +31,7 @@ namespace IronStar.ECSPhysics
 	{
 		readonly PhysicsCore physics;
 
-		public CharacterControllerSystem( PhysicsCore physics, IParallelLooper looper ) : base(looper)
+		public CharacterControllerSystem( PhysicsCore physics )
 		{
 			this.physics	=	physics;
 		}

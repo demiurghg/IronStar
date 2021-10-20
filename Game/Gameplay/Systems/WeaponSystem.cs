@@ -31,7 +31,6 @@ namespace IronStar.Gameplay.Systems
 		public readonly PhysicsCore physics;
 		public readonly FXPlayback fxPlayback;
 		public readonly GameState gs;
-		readonly IParallelLooper looper;
 
 
 		Aspect weaponAspect			=	new Aspect().Include<WeaponComponent>();
@@ -41,9 +40,8 @@ namespace IronStar.Gameplay.Systems
 		GameTime actualGameTime;
 
 
-		public WeaponSystem( GameState gs, PhysicsCore physics, FXPlayback fxPlayback, IParallelLooper looper )
+		public WeaponSystem( GameState gs, PhysicsCore physics, FXPlayback fxPlayback )
 		{
-			this.looper		=	looper ?? new DefaultLooper();
 			this.gs			=	gs;
 			this.physics	=	physics;
 			this.fxPlayback	=	fxPlayback;
@@ -54,14 +52,12 @@ namespace IronStar.Gameplay.Systems
 		{
 			actualGameTime	=	gameTime;
 
-			var entities	=	gs.QueryEntities( armedEntityAspect ).ToArray();
+			var entities	=	gs.QueryEntities( armedEntityAspect );
 			int msecs		=	gameTime.Milliseconds;
+			var msec		=	GameTime.MSec1;
 
-			looper.ForLoop( 0, entities.Length, idx =>
+			foreach ( var entity in entities )
 			{
-				var entity	=	entities[idx];
-				var msec	=	GameTime.MSec1;
-
 				var transform	=	entity.GetComponent<Transform>();
 				var inventory	=	entity.GetComponent<InventoryComponent>();
 				var userCmd		=	entity.GetComponent<UserCommandComponent>();
@@ -73,7 +69,7 @@ namespace IronStar.Gameplay.Systems
 				{
 					UpdateArmedEntity( gs, entity, msec, transform, inventory, userCmd, chctrl, health, bob );
 				}
-			});
+			}
 		}
 
 

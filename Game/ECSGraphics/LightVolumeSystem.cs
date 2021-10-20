@@ -17,7 +17,7 @@ namespace IronStar.SFX2
 	{
 		readonly LightSet ls;
 	
-		public LightVolumeSystem( RenderSystem rs, IParallelLooper looper ) : base(looper)
+		public LightVolumeSystem( RenderSystem rs )
 		{
 			ls	=	rs.RenderWorld.LightSet;
 		}

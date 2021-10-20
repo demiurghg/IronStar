@@ -20,7 +20,7 @@ namespace IronStar.SFX2
 		readonly LightSet ls;
 
 		
-		public LightProbeSystem( RenderSystem rs, IParallelLooper looper ) : base(looper)
+		public LightProbeSystem( RenderSystem rs )
 		{
 			this.ls	=	rs.RenderWorld.LightSet;
 		}

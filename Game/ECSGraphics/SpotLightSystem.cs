@@ -20,7 +20,7 @@ namespace IronStar.SFX2
 		readonly LightSet ls;
 
 		
-		public SpotLightSystem( RenderSystem rs, IParallelLooper looper ) : base(looper)
+		public SpotLightSystem( RenderSystem rs )
 		{
 			this.ls	=	rs.RenderWorld.LightSet;
 		}

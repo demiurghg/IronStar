@@ -30,7 +30,7 @@ namespace IronStar.AI
 
 		AITokenPool tokenPool = new AITokenPool(2, TimeSpan.FromMilliseconds(500) );
 
-		public BehaviorSystem(PhysicsCore physics, IParallelLooper looper ) : base(looper)
+		public BehaviorSystem(PhysicsCore physics )
 		{
 			this.physics	=	physics;
 		}

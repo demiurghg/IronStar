@@ -26,7 +26,7 @@ namespace IronStar.Monsters.Systems
 		readonly PhysicsCore physics;
 
 
-		public MonsterAnimationSystem( Game game, FXPlayback fxPlayback, PhysicsCore physics, IParallelLooper looper ) : base(looper)
+		public MonsterAnimationSystem( Game game, FXPlayback fxPlayback, PhysicsCore physics )
 		{								
 			this.Game		=	game;
 			this.fxPlayback	=	fxPlayback;

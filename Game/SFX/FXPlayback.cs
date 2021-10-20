@@ -39,7 +39,7 @@ namespace IronStar.SFX
 		float timeAccumulator = 0;
 
 
-		public FXPlayback ( Game game, ContentManager content, IParallelLooper looper ) : base(looper)
+		public FXPlayback ( Game game, ContentManager content )
 		{
 			this.content	=	content;
 			this.game		=	game;

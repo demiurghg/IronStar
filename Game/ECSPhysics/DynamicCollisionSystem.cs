@@ -35,7 +35,7 @@ namespace IronStar.ECSPhysics
 	{
 		readonly PhysicsCore physics;
 
-		public DynamicCollisionSystem( PhysicsCore physics, IParallelLooper looper ) : base(looper)
+		public DynamicCollisionSystem( PhysicsCore physics )
 		{
 			this.physics	=	physics;
 		}

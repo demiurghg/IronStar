@@ -22,7 +22,7 @@ namespace IronStar.Editor.Systems
 		readonly ContentManager content;
 
 
-		public EditorModelRenderSystem( MapEditor editor, DebugRender dr, IParallelLooper looper ) : base(looper)
+		public EditorModelRenderSystem( MapEditor editor, DebugRender dr )
 		{
 			this.dr			=	dr;
 			this.editor		=	editor;

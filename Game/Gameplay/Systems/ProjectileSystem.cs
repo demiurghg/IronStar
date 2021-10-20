@@ -23,7 +23,7 @@ namespace IronStar.Gameplay.Systems
 		readonly WeaponSystem	weaponSystem;
 		float lastDeltaTime = 0;
 
-		public ProjectileSystem( GameState gs, PhysicsCore physics, IParallelLooper looper ) : base(looper)
+		public ProjectileSystem( GameState gs, PhysicsCore physics )
 		{
 			this.rand			=	new Random();
 			this.physics		=	physics;

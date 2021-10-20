@@ -34,7 +34,7 @@ namespace IronStar.ECSFactories
 			this.model	=	model;
 		}
 
-		public override void Construct( Entity e, GameState gs )
+		public override void Construct( Entity e, IGameState gs )
 		{
 			e.AddComponent( new RenderModel( model, Matrix.Scaling( scale ), Color.White, 5, RMFlags.None ) );
 			e.AddComponent( new DynamicBox( width, height, depth, mass ) );
@@ -50,7 +50,7 @@ namespace IronStar.ECSFactories
 		public BoxExplosiveFactory():
 		base( 3, 2.25f, 2.25f, 5, 3, "scenes\\boxes\\box_low.fbx" ) {}
 
-		public override void Construct( Entity e, GameState gs )
+		public override void Construct( Entity e, IGameState gs )
 		{
 			float timeout = MathUtil.Random.NextFloat(0.1f, 1.7f);
 
@@ -69,7 +69,7 @@ namespace IronStar.ECSFactories
 		public GibletFactory():
 		base( 1, 1, 1, 0.3f, 2, "scenes\\boxes\\box_low.fbx" ) {}
 
-		public override void Construct( Entity e, GameState gs )
+		public override void Construct( Entity e, IGameState gs )
 		{
 			base.Construct( e, gs );
 

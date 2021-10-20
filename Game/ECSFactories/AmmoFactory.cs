@@ -29,7 +29,7 @@ namespace IronStar.ECSFactories
 			ammoName		=	name;
 		}
 
-		public override void Construct( Entity e, GameState gs )
+		public override void Construct( Entity e, IGameState gs )
 		{
 			e.AddComponent( new PickupComponent("pickupAmmo") );
 			e.AddComponent( new TouchDetector() );

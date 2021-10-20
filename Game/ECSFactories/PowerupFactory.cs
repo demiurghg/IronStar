@@ -29,7 +29,7 @@ namespace IronStar.ECSFactories
 			pickupFx	=	fx;
 		}
 
-		public override void Construct( Entity e, GameState gs )
+		public override void Construct( Entity e, IGameState gs )
 		{
 			e.AddComponent( new PickupComponent( pickupFx ) );
 			e.AddComponent( new PowerupComponent( health, armor ) );

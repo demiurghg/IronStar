@@ -31,6 +31,13 @@ namespace IronStar.ECS
 			public readonly Quaternion Rotation;
 		}
 
+		struct SpawnData
+		{
+			public SpawnData( Entity e, IFactory f ) { Entity = e; Factory = f; }
+			public readonly Entity Entity;
+			public readonly IFactory Factory;
+		}
+
 		struct ComponentData
 		{
 			public ComponentData ( Entity e, IComponent c ) { Entity = e; Component = c; }
@@ -54,6 +61,7 @@ namespace IronStar.ECS
 		readonly ComponentCollection		components;
 
 		readonly ConcurrentQueue<Entity>		spawnQueue2;
+		readonly ConcurrentQueue<SpawnData>		spawnQueue3;
 		readonly ConcurrentQueue<Entity>		killQueue;
 		readonly ConcurrentQueue<ComponentData>	componentToRemove;
 		readonly ConcurrentQueue<ComponentData>	componentToAdd;
@@ -104,6 +112,7 @@ namespace IronStar.ECS
 			components	=	new ComponentCollection();
 
 			spawnQueue2			=	new ConcurrentQueue<Entity>();
+			spawnQueue3			=	new ConcurrentQueue<SpawnData>();
 			componentToRemove	=	new ConcurrentQueue<ComponentData>();
 			componentToAdd		=	new ConcurrentQueue<ComponentData>();
 			killQueue			=	new ConcurrentQueue<Entity>();
@@ -331,6 +340,7 @@ namespace IronStar.ECS
 			Entity e;
 			Action a;
 			ComponentData cd;
+			SpawnData sd;
 
 			while (invokeQueue.TryDequeue(out a))
 			{
@@ -341,6 +351,13 @@ namespace IronStar.ECS
 			{
 				entities.Add( e );
 				Refresh( e );
+			}
+
+			while (spawnQueue3.TryDequeue(out sd))
+			{
+				entities.Add( sd.Entity );
+				sd.Factory.Construct( sd.Entity, this );
+				Refresh(e);
 			}
 
 			while (componentToRemove.TryDequeue(out cd))
@@ -407,6 +424,15 @@ namespace IronStar.ECS
 		/*-----------------------------------------------------------------------------------------------
 		 *	Entity stuff :
 		-----------------------------------------------------------------------------------------------*/
+
+		public Entity Spawn(IFactory factory)
+		{
+			var entity = new Entity( this, IdGenerator.Next() );
+
+			spawnQueue3.Enqueue( new SpawnData(entity, factory) );
+
+			return entity;
+		}
 
 		public Entity Spawn()
 		{

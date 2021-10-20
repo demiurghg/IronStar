@@ -22,7 +22,7 @@ namespace IronStar.ECSFactories
 
 		public static readonly float GlowIntensity			=	7;
 
-		public override void Construct( Entity e, GameState gs )
+		public override void Construct( Entity e, IGameState gs )
 		{
 			e.AddComponent( new PickupComponent("pickupWeapon") );
 			e.AddComponent( new TouchDetector() );
@@ -34,7 +34,7 @@ namespace IronStar.ECSFactories
 	[EntityFactory("WEAPON_MACHINEGUN")]
 	public class WeaponMachinegunFactory : WeaponFactory
 	{
-		public override void Construct( Entity e, GameState gs )
+		public override void Construct( Entity e, IGameState gs )
 		{
 			base.Construct( e, gs );
 
@@ -49,7 +49,7 @@ namespace IronStar.ECSFactories
 	[EntityFactory("WEAPON_MACHINEGUN2")]
 	public class WeaponMachinegun2Factory : WeaponFactory
 	{
-		public override void Construct( Entity e, GameState gs )
+		public override void Construct( Entity e, IGameState gs )
 		{
 			base.Construct( e, gs );
 
@@ -64,7 +64,7 @@ namespace IronStar.ECSFactories
 	[EntityFactory("WEAPON_SHOTGUN")]
 	public class WeaponShotgunFactory : WeaponFactory
 	{
-		public override void Construct( Entity e, GameState gs )
+		public override void Construct( Entity e, IGameState gs )
 		{
 			base.Construct( e, gs );
 
@@ -79,7 +79,7 @@ namespace IronStar.ECSFactories
 	[EntityFactory("WEAPON_PLASMAGUN")]
 	public class WeaponPlasmagunFactory : WeaponFactory
 	{
-		public override void Construct( Entity e, GameState gs )
+		public override void Construct( Entity e, IGameState gs )
 		{
 			base.Construct( e, gs );
 
@@ -94,7 +94,7 @@ namespace IronStar.ECSFactories
 	[EntityFactory("WEAPON_ROCKETLAUNCHER")]
 	public class WeaponRocketLauncherFactory : WeaponFactory
 	{
-		public override void Construct( Entity e, GameState gs )
+		public override void Construct( Entity e, IGameState gs )
 		{
 			base.Construct( e, gs );
 
@@ -109,7 +109,7 @@ namespace IronStar.ECSFactories
 	[EntityFactory("WEAPON_RAILGUN")]
 	public class WeaponRailgunFactory : WeaponFactory
 	{
-		public override void Construct( Entity e, GameState gs )
+		public override void Construct( Entity e, IGameState gs )
 		{
 			base.Construct( e, gs );
 

@@ -149,7 +149,7 @@ namespace IronStar.Gameplay
 			var camera	=	e.GetComponent<CameraComponent>();
 			var bob		=	e.GetComponent<BobbingComponent>();
 
-			var	rs	=	gs.GetService<RenderSystem>();
+			var	rs	=	gs.Game.GetService<RenderSystem>();
 			var rw	=	rs.RenderWorld;
 			var sw	=	gs.Game.SoundSystem;
 			var vp	=	gs.Game.RenderSystem.DisplayBounds;

@@ -10,6 +10,7 @@ using IronStar.ECSPhysics;
 using IronStar.Gameplay.Components;
 using IronStar.SFX2;
 using IronStar.Animation;
+using Fusion.Core.Extensions;
 
 namespace IronStar.Gameplay.Systems
 {
@@ -68,7 +69,7 @@ namespace IronStar.Gameplay.Systems
 
 		public void Update( IGameState gs, GameTime gameTime )
 		{
-			var rs = gs.GetService<RenderSystem>();
+			var rs = gs.Game.GetService<RenderSystem>();
 			var rw = rs.RenderWorld;
 
 			var playerEntity	=	gs.QueryEntities(playerAspect).LastOrDefault();
@@ -97,7 +98,7 @@ namespace IronStar.Gameplay.Systems
 
 		void ChangeWeaponModel( IGameState gs, RenderModel model )
 		{
-			var rs = gs.GetService<RenderSystem>();
+			var rs = gs.Game.GetService<RenderSystem>();
 			var rw = rs.RenderWorld;
 			var fx = gs.GetService<SFX.FXPlayback>();
 

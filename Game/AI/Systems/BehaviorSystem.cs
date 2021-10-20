@@ -152,7 +152,7 @@ namespace IronStar.AI
 
 		void DebugDrawTokens( IGameState gs )
 		{
-			var dr	=	gs.GetService<RenderSystem>().RenderWorld.Debug;
+			var dr	=	gs.Game.GetService<RenderSystem>().RenderWorld.Debug;
 
 			foreach ( var token in tokenPool )
 			{

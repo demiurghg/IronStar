@@ -77,7 +77,7 @@ namespace IronStar.AI
 				navMeshDirty = false;
 			}
 
-			DrawNavMesh( gs, navMesh, gs.GetService<RenderSystem>().RenderWorld.Debug );
+			DrawNavMesh( gs, navMesh, gs.Game.GetService<RenderSystem>().RenderWorld.Debug );
 		}
 
 		/*-----------------------------------------------------------------------------------------

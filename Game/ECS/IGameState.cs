@@ -15,21 +15,26 @@ namespace IronStar.ECS
 
 		ContentManager Content { get; }
 
-		Entity Spawn();
+		//Entity Spawn();
+		Entity Spawn(IFactory factory);
 
+		[Obsolete]
 		Entity Spawn(string classname);
 
+		[Obsolete]
 		Entity Spawn(string classname, Vector3 position, Quaternion rotation);
 
+		[Obsolete]
 		Entity Spawn(params IComponent[] components);
 
 		void KillAll();
 
+		[Obsolete]
 		void Teleport( Entity e, Vector3 position, Quaternion rotation );
 
 		void Update ( GameTime gameTime );
 
-		void AddSystem( ISystem system );
+		//void AddSystem( ISystem system );
 
 		Entity GetEntity(uint id);
 

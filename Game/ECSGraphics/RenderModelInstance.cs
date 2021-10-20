@@ -18,6 +18,7 @@ using Fusion.Engine.Audio;
 using KopiLua;
 using Fusion.Scripting;
 using IronStar.ECS;
+using Fusion.Core.Extensions;
 
 namespace IronStar.SFX2 
 {
@@ -67,7 +68,7 @@ namespace IronStar.SFX2
 			fpvEnabled			=	!string.IsNullOrEmpty(fpvCameraNode);
 
 			var content		=	gs.GetService<ContentManager>();
-			rs				=	gs.GetService<RenderSystem>();
+			rs				=	gs.Game.GetService<RenderSystem>();
 
 			scene		=	string.IsNullOrWhiteSpace(rm.scenePath) ? Scene.Empty : content.Load( rm.scenePath, Scene.Empty );
 			

@@ -17,7 +17,7 @@ namespace IronStar.ECSFactories
 	[EntityFactory("MONSTER_MARINE")]
 	public class MonsterMarineFactory : EntityFactory
 	{
-		void GiveWeapon(GameState gs, InventoryComponent inventory, string weaponName)
+		void GiveWeapon(IGameState gs, InventoryComponent inventory, string weaponName)
 		{
 			var weapon		=	gs.Spawn(weaponName);
 
@@ -27,7 +27,7 @@ namespace IronStar.ECSFactories
 			inventory.SwitchWeapon( weapon );
 		}
 
-		public override void Construct( Entity e, GameState gs )
+		public override void Construct( Entity e, IGameState gs )
 		{
 			//	rotate character's model to face along forward vector :
 			var transform	=	Matrix.RotationY( MathUtil.Pi ) * Matrix.Scaling(0.1f);

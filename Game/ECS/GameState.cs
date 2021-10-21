@@ -357,7 +357,7 @@ namespace IronStar.ECS
 			{
 				entities.Add( sd.Entity );
 				sd.Factory.Construct( sd.Entity, this );
-				Refresh(e);
+				Refresh( sd.Entity );
 			}
 
 			while (componentToRemove.TryDequeue(out cd))

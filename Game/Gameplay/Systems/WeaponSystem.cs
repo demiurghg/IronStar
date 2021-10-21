@@ -392,7 +392,7 @@ namespace IronStar.Gameplay.Systems
 				var beamVelocity =	hitLocation - ray.Position;
 				var basis		=	MathUtil.ComputeAimedBasis( ray.Direction );
 
-				SFX.FXPlayback.SpawnFX(	gs, weapon.BeamTrailFX, 0, beamOrigin, beamVelocity, Quaternion.RotationMatrix(basis) );
+				SFX.FXPlayback.SpawnFX(	gs, weapon.BeamTrailFX, beamOrigin, beamVelocity, Quaternion.RotationMatrix(basis) );
 			}
 		}
 
@@ -507,14 +507,14 @@ namespace IronStar.Gameplay.Systems
 				{
 					var material	=	MaterialComponent.GetMaterial( target );
 					var hitFx		=	GetHitFXName( fx, material ); 
-					SFX.FXPlayback.AttachFX( gs, target, hitFx, 0, location, normal );
+					SFX.FXPlayback.AttachFX( gs, target, hitFx, location, normal );
 				}
 			}
 			else
 			{
 				if (fx!=null)
 				{
-					FXPlayback.SpawnFX( gs, fx, 0, location, normal );
+					FXPlayback.SpawnFX( gs, fx, location, normal );
 				}
 			}
 		}
@@ -531,7 +531,7 @@ namespace IronStar.Gameplay.Systems
 
 			if (fx!=null)
 			{
-				FXPlayback.SpawnFX( gs, fx, 0, location, normal );
+				FXPlayback.SpawnFX( gs, fx, location, normal );
 			}
 		}
 

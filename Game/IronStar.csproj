@@ -205,7 +205,6 @@
     <Compile Include="Entities\FuncFX.cs" />
     <Compile Include="Entities\Precacher.cs" />
     <Compile Include="Entities\ProxyFactory.cs" />
-    <Compile Include="Entities\RigidBodyFactory.cs" />
     <Compile Include="Entities\StartPoint.cs" />
     <Compile Include="Gameplay\Components\AttachmentComponent.cs" />
     <Compile Include="Gameplay\Components\CameraComponent.cs" />

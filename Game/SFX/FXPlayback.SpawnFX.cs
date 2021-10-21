@@ -17,12 +17,44 @@ using Fusion.Engine.Audio;
 using IronStar.ECS;
 using IronStar.Gameplay.Systems;
 using IronStar.ECSPhysics;
+using IronStar.Gameplay.Components;
 
 namespace IronStar.SFX 
 {
 	public partial class FXPlayback
 	{
-		public static ECS.Entity SpawnFX( IGameState gs, string fxName, uint parentID, Vector3 origin, Vector3 velocity, Quaternion rotation )
+		class FXEntityFactory : IFactory
+		{
+			readonly string fxName;
+			readonly Vector3 origin;
+			readonly Vector3 velocity;
+			readonly Quaternion rotation;
+			readonly Entity target;
+
+			public FXEntityFactory( string fxName, Vector3 origin, Vector3 velocity, Quaternion rotation, Entity target = null )
+			{
+				this.fxName		=	fxName;
+				this.origin		=	origin;
+				this.velocity	=	velocity;
+				this.rotation	=	rotation;
+				this.target		=	target;
+			}
+
+			public void Construct( Entity entity, IGameState gs )
+			{
+				entity.AddComponent( new Transform( origin, rotation, velocity ) );
+				entity.AddComponent( new FXComponent( fxName, false ) );
+
+				if (target!=null)
+				{
+					entity.AddComponent( new AttachmentComponent( target.ID ) );
+				}
+			}
+		}
+
+
+		//	#TODO #REFACTOR -- fix mess with parameters order
+		public static ECS.Entity SpawnFX( IGameState gs, string fxName, Vector3 origin, Vector3 velocity, Quaternion rotation, Entity target = null )
 		{
 			if (string.IsNullOrWhiteSpace(fxName))
 			{
@@ -30,12 +62,9 @@ namespace IronStar.SFX
 				return null;
 			}
 
-			var fx = gs.Spawn();
+			var factory = new FXEntityFactory( fxName, origin, velocity, rotation, target );
 
-			fx.AddComponent( new Transform(origin, rotation, velocity) );
-			fx.AddComponent( new FXComponent( fxName, false ) );
-
-			return fx;
+			return gs.Spawn( factory );
 		}
 
 
@@ -45,7 +74,7 @@ namespace IronStar.SFX
 
 			if (transform!=null)
 			{
-				return SpawnFX( gs, fxName, 0, transform.Position, Vector3.Zero, transform.Rotation );
+				return SpawnFX( gs, fxName, transform.Position, Vector3.Zero, transform.Rotation );
 			}
 			else
 			{
@@ -55,40 +84,30 @@ namespace IronStar.SFX
 		}
 
 
-		public static ECS.Entity SpawnFX( IGameState gs, string fxName, uint parentID, Vector3 origin, Vector3 velocity, Vector3 forward )
+		public static ECS.Entity SpawnFX( IGameState gs, string fxName, Vector3 origin, Vector3 velocity, Vector3 forward, Entity target = null )
 		{
 			var r	=	Matrix.RotationAxis( forward, rand.NextFloat( 0,MathUtil.TwoPi ) );
 			var m	=	MathUtil.ComputeAimedBasis( forward );
 			
-			return SpawnFX( gs, fxName, parentID, origin, velocity, Quaternion.RotationMatrix(m*r) );
+			return SpawnFX( gs, fxName, origin, velocity, Quaternion.RotationMatrix(m*r), target );
 		}
 
 
-		public static ECS.Entity SpawnFX( IGameState gs, string fxName, uint parentID, Vector3 origin, Vector3 forward )
+		public static ECS.Entity SpawnFX( IGameState gs, string fxName, Vector3 origin, Vector3 forward )
 		{
-			return SpawnFX( gs, fxName, parentID, origin, Vector3.Zero, forward );
+			return SpawnFX( gs, fxName, origin, Vector3.Zero, forward );
 		}
 
 
-		public static ECS.Entity SpawnFX( IGameState gs, string fxName, uint parentID, Vector3 origin )
+		public static ECS.Entity SpawnFX( IGameState gs, string fxName, Vector3 origin )
 		{
-			return SpawnFX( gs, fxName, parentID, origin, Vector3.Zero, Quaternion.Identity );
+			return SpawnFX( gs, fxName, origin, Vector3.Zero, Quaternion.Identity );
 		}
 
 
-		public static ECS.Entity AttachFX( IGameState gs, Entity target, string fxName, uint parentID, Vector3 origin, Vector3 forward )
+		public static ECS.Entity AttachFX( IGameState gs, Entity target, string fxName, Vector3 origin, Vector3 forward )
 		{
-			var e = SpawnFX( gs, fxName, parentID, origin, Vector3.Zero, forward );
-
-			if (target!=null)
-			{
-				if (target.GetComponent<StaticCollisionComponent>()==null)
-				{
-					AttachmentSystem.Attach( e, target );
-				}
-			}
-
-			return e;
+			return SpawnFX( gs, fxName, origin, Vector3.Zero, forward, target );
 		}
 	}
 }

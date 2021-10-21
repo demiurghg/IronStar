@@ -17,48 +17,35 @@ namespace IronStar.Gameplay.Systems
 
 		public Aspect GetAspect()
 		{
-			return Aspect.Empty;
+			return attachmentAspect;
 		}
 
-		public void Add( IGameState gs, Entity e ) {}
-		public void Remove( IGameState gs, Entity e ) {}
-
-
-		public static bool Attach( Entity entityToAttach, Entity targetEntity )
-		{	
-			if (targetEntity==null)
-			{
-				Log.Warning("Target entity to attach to is null");
-				return false;
-			}
-
-			if (entityToAttach==null)
-			{
-				Log.Warning("Attaching entity is null");
-				return false;
-			}
+		public void Add( IGameState gs, Entity entityToAttach ) 
+		{
+			var attachment		=	entityToAttach.GetComponent<AttachmentComponent>();
+			var targetEntity	=	gs.GetEntity( attachment.TargetID );
 
 			var attachTransform	=	entityToAttach?.GetComponent<Transform>();
 			var targetTransform	=	targetEntity?.GetComponent<Transform>();
 
 			if (attachTransform==null) 
 			{
-				Log.Warning("Attaching entity {0} has no transform", entityToAttach.ToString() );
-				return false;
+				Log.Warning("Attaching entity {0} has no transform", entityToAttach?.ToString() );
+				return;
 			}
 
 			if (targetTransform==null) 
 			{
-				Log.Warning("Target entity {0} has no transform", targetEntity.ToString() );
-				return false;
+				Log.Warning("Target entity {0} has no transform", targetEntity?.ToString() );
+				return;
 			}
 
-			var localTransform	=	attachTransform.TransformMatrix * Matrix.Invert( targetTransform.TransformMatrix );
-
-			entityToAttach.AddComponent( new AttachmentComponent( targetEntity.ID, localTransform ) ); 
-
-			return true;
+			var localTransform			=	attachTransform.TransformMatrix * Matrix.Invert( targetTransform.TransformMatrix );
+			attachment.LocalTransform	=	localTransform;
 		}
+
+
+		public void Remove( IGameState gs, Entity e ) {}
 
 		
 		public void Update( IGameState gs, GameTime gameTime )

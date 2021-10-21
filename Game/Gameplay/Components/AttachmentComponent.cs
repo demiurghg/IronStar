@@ -18,10 +18,9 @@ namespace IronStar.Gameplay.Components
 		{
 		}
 
-		public AttachmentComponent( uint targetId, Matrix transform )
+		public AttachmentComponent( uint targetId )
 		{
 			TargetID		=	targetId;
-			LocalTransform	=	transform;
 		}
 	}
 }

@@ -15,8 +15,9 @@ using IronStar.ECS;
 using IronStar.SFX2;
 using Fusion.Widgets.Advanced;
 
-namespace IronStar.Mapping {
-	public class MapDecal : MapNode 
+namespace IronStar.Mapping 
+{
+	public class MapDecal : MapNode, IEntityFactory
 	{
 		[AECategory("Decal Image")]
 		[AEAtlasImage(@"decals/decals")]
@@ -117,8 +118,15 @@ namespace IronStar.Mapping {
 
 		public override void SpawnNodeECS( IGameState gs )
 		{
-			ecsEntity		=	gs.Spawn( new Transform( Translation, Rotation, 1 ), CreateDecal() );
+			ecsEntity		=	gs.Spawn( this );
 			ecsEntity.Tag	=	this;
+		}
+
+
+		public void Construct( Entity entity, IGameState gs )
+		{
+			entity.AddComponent( new Transform( Translation, Rotation, 1 ) );
+			entity.AddComponent( CreateDecal() );
 		}
 
 

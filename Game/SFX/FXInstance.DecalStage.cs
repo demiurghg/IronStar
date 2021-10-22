@@ -17,15 +17,15 @@ using Fusion.Engine.Graphics;
 using Fusion.Engine.Audio;
 
 
-namespace IronStar.SFX {
-
+namespace IronStar.SFX 
+{
 	/// <summary>
 	/// 
 	/// </summary>
-	public partial class FXInstance {
-
-		public class DecalStage : Stage {
-
+	public partial class FXInstance 
+	{
+		public class DecalStage : Stage 
+		{
 			static Random rand = new Random();
 
 			Decal	decalSurface = null;

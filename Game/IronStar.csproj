@@ -159,7 +159,7 @@
     <Compile Include="ECS\ECSTypeManager.cs" />
     <Compile Include="ECS\Collections\EntityFactoryCollection.cs" />
     <Compile Include="ECS\BufferedList.cs" />
-    <Compile Include="ECS\IFactory.cs" />
+    <Compile Include="ECS\IEntityFactory.cs" />
     <Compile Include="ECS\IGameState.cs" />
     <Compile Include="ECS\SpawnData.cs" />
     <Compile Include="ECS\StatelessSystem.cs" />

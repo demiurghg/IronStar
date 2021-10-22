@@ -7,7 +7,7 @@ using Fusion.Core.Mathematics;
 
 namespace IronStar.ECS
 {
-	public abstract class EntityFactory : IFactory
+	public abstract class EntityFactory : IEntityFactory
 	{
 		public abstract void Construct( Entity e, IGameState gs );
 	}

@@ -23,6 +23,7 @@ namespace IronStar.ECS
 {
 	public sealed partial class GameState : DisposableBase, IGameState
 	{
+		[Obsolete]
 		struct TeleportData
 		{
 			public TeleportData( Entity e, Vector3 t, Quaternion r ) { Entity = e; Translation = t; Rotation = r; }
@@ -33,9 +34,9 @@ namespace IronStar.ECS
 
 		struct SpawnData
 		{
-			public SpawnData( Entity e, IFactory f ) { Entity = e; Factory = f; }
+			public SpawnData( Entity e, IEntityFactory f ) { Entity = e; Factory = f; }
 			public readonly Entity Entity;
-			public readonly IFactory Factory;
+			public readonly IEntityFactory Factory;
 		}
 
 		struct ComponentData
@@ -425,7 +426,7 @@ namespace IronStar.ECS
 		 *	Entity stuff :
 		-----------------------------------------------------------------------------------------------*/
 
-		public Entity Spawn(IFactory factory)
+		public Entity Spawn(IEntityFactory factory)
 		{
 			var entity = new Entity( this, IdGenerator.Next() );
 

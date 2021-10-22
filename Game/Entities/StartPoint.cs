@@ -14,6 +14,7 @@ using Fusion.Engine.Client;
 using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
 using System.ComponentModel;
+using IronStar.ECS;
 
 namespace IronStar {
 
@@ -27,7 +28,7 @@ namespace IronStar {
 
 		public StartPointType StartPointType { get; set; }
 
-		public override ECS.Entity SpawnECS( ECS.IGameState gs )
+		public override ECS.Entity SpawnECS( IGameState gs )
 		{
 			var e = gs.Spawn( new Gameplay.PlayerStartComponent(), new ECS.Transform() );
 			return e;

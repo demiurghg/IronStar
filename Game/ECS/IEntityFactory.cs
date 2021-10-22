@@ -9,7 +9,7 @@ namespace IronStar.ECS
 	/// <summary>
 	/// Contains all required data for deferred entity creation.
 	/// </summary>
-	public interface IFactory
+	public interface IEntityFactory
 	{
 		void Construct( Entity entity, IGameState gs );
 	}

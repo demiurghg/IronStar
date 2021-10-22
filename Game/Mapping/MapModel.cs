@@ -35,7 +35,7 @@ namespace IronStar.Mapping
 	}
 
 
-	public class MapModel : MapNode 
+	public class MapModel : MapNode, IEntityFactory 
 	{
 		static readonly Scene EmptyScene = Scene.CreateEmptyScene();
 
@@ -109,9 +109,8 @@ namespace IronStar.Mapping
 		}
 
 
-		public override void SpawnNodeECS( IGameState gs )
+		public void Construct( Entity entity, IGameState gs )
 		{
-			//	create render model component :
 			var t		=	new Transform( Translation, Rotation, Scale );
 			var scc		=	new StaticCollisionComponent() { Walkable = Walkable, Collidable = Collidable };
 			var rm		=	new SFX2.RenderModel( ScenePath, Matrix.Identity, Color.White, 1, SFX2.RMFlags.None );
@@ -121,8 +120,16 @@ namespace IronStar.Mapping
 
 			var lmSize	=	UseLightVolume ? 0 : (int)LightMapSize;
 			rm.SetupLightmap( lmSize, lmSize, Name );
-			
-			ecsEntity		=	gs.Spawn( rm, t, scc);
+
+			entity.AddComponent( t );
+			entity.AddComponent( scc );
+			entity.AddComponent( rm );			
+		}
+
+
+		public override void SpawnNodeECS( IGameState gs )
+		{
+			ecsEntity		=	gs.Spawn( this );
 			ecsEntity.Tag	=	this;
 		}
 

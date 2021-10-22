@@ -8,6 +8,7 @@ using Fusion.Core.Mathematics;
 using Fusion.Engine.Common;
 using Fusion.Core.Extensions;
 using IronStar.SFX;
+using IronStar.ECS;
 using System.ComponentModel;
 using Fusion.Core.Shell;
 using Fusion.Core;
@@ -54,11 +55,11 @@ namespace IronStar
 		public int MaxInterval { get; set; } = 1;
 
 
-		public override ECS.Entity SpawnECS( ECS.IGameState gs )
+		public override ECS.Entity SpawnECS( IGameState gs )
 		{
-			Log.Warning("SpawnECS -- {0} -- (not implemented completely)", GetType().Name);
-			
-			var e = gs.Spawn( new FXComponent(FX,true), new ECS.Transform() );
+			#warning TODO: only persistent FX are supported
+			//	#TODO #FX -- only persistent FX are supported
+			var e = gs.Spawn( new FXComponent(FX,true), new ECS.Transform( new Vector3(100,0,0), Quaternion.Identity ) );
 
 			return e;
 		}

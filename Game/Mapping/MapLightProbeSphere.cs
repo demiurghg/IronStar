@@ -17,7 +17,7 @@ using Fusion.Widgets.Advanced;
 
 namespace IronStar.Mapping {
 
-	public class MapLightProbeSphere : MapNode {
+	public class MapLightProbeSphere : MapNode, IEntityFactory {
 
 		[Category("Light probe")]
 		[AESlider(0,256,8,0.25f)]
@@ -46,8 +46,7 @@ namespace IronStar.Mapping {
 		}
 
 
-
-		public override void SpawnNodeECS( IGameState gs )
+		public void Construct( Entity entity, IGameState gs )
 		{
 			var transform		=	new Transform( Translation, Rotation );
 
@@ -55,7 +54,14 @@ namespace IronStar.Mapping {
 			light.Radius		=	Radius;
 			light.Transition	=	Transition;
 
-			ecsEntity			=	gs.Spawn( transform, light );
+			entity.AddComponent( transform );
+			entity.AddComponent( light );
+		}
+
+
+		public override void SpawnNodeECS( IGameState gs )
+		{
+			ecsEntity			=	gs.Spawn( this );
 			ecsEntity.Tag		=	this;
 		}
 

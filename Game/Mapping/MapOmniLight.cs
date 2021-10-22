@@ -17,7 +17,7 @@ using Fusion.Widgets.Advanced;
 
 namespace IronStar.Mapping 
 {
-	public class MapOmniLight : MapNode 
+	public class MapOmniLight : MapNode, IEntityFactory 
 	{
 		[AECategory("Omni-light")]
 		[AESlider(0, 100, 1, 0.125f)]
@@ -54,8 +54,15 @@ namespace IronStar.Mapping
 
 		public override void SpawnNodeECS( IGameState gs )
 		{
-			ecsEntity		=	gs.Spawn( new Transform( Translation, Rotation, 1 ), CreateOmniLight() );
+			ecsEntity		=	gs.Spawn( this );
 			ecsEntity.Tag	=	this;
+		}
+
+
+		public void Construct( Entity entity, IGameState gs )
+		{
+			entity.AddComponent( new Transform( Translation, Rotation, 1 ) );
+			entity.AddComponent( CreateOmniLight() );
 		}
 
 

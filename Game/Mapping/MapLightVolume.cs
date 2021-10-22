@@ -17,7 +17,7 @@ using Fusion.Widgets.Advanced;
 
 namespace IronStar.Mapping 
 {
-	public class MapLightVolume : MapNode 
+	public class MapLightVolume : MapNode, IEntityFactory 
 	{
 		[AECategory("Light Volume")]
 		[AESlider(4, 256, 4, 1)]
@@ -68,14 +68,7 @@ namespace IronStar.Mapping
 		}
 
 
-		public override void SpawnNodeECS( IGameState gs )
-		{
-			ecsEntity		=	gs.Spawn( new Transform( Translation, Rotation, 1 ), CreateLightVolume() );
-			ecsEntity.Tag	=	this;
-		}
-
-
-		SFX2.LightVolume CreateLightVolume()
+		SFX2.LightVolume CreateLightVolumeComponent()
 		{
 			var light = new SFX2.LightVolume();
 
@@ -88,6 +81,20 @@ namespace IronStar.Mapping
 			light.Depth			=	Depth;
 
 			return light;
+		}
+
+
+		public void Construct( Entity entity, IGameState gs )
+		{
+			entity.AddComponent( new Transform( Translation, Rotation, 1 ) );
+			entity.AddComponent( CreateLightVolumeComponent() );
+		}
+
+
+		public override void SpawnNodeECS( IGameState gs )
+		{
+			ecsEntity		=	gs.Spawn( this );
+			ecsEntity.Tag	=	this;
 		}
 
 

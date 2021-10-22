@@ -17,7 +17,7 @@ using Fusion.Widgets.Advanced;
 
 namespace IronStar.Mapping {
 
-	public class MapSpotLight : MapNode {
+	public class MapSpotLight : MapNode, IEntityFactory {
 
 
 		[AECategory("Light Color")]
@@ -111,8 +111,15 @@ namespace IronStar.Mapping {
 
 		public override void SpawnNodeECS( IGameState gs )
 		{
-			ecsEntity		=	gs.Spawn( new Transform( Translation, Rotation, 1 ), CreateSpotLight() );
+			ecsEntity		=	gs.Spawn( this );
 			ecsEntity.Tag	=	this;
+		}
+
+
+		public void Construct( Entity entity, IGameState gs )
+		{
+			entity.AddComponent( new Transform( Translation, Rotation, 1 ) );
+			entity.AddComponent( CreateSpotLight() );
 		}
 
 

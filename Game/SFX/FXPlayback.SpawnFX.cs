@@ -23,7 +23,7 @@ namespace IronStar.SFX
 {
 	public partial class FXPlayback
 	{
-		class FXEntityFactory : IFactory
+		class FXEntityFactory : IEntityFactory
 		{
 			readonly string fxName;
 			readonly Vector3 origin;
@@ -47,7 +47,10 @@ namespace IronStar.SFX
 
 				if (target!=null)
 				{
-					entity.AddComponent( new AttachmentComponent( target.ID ) );
+					if (target.GetComponent<StaticCollisionComponent>()==null)
+					{
+						entity.AddComponent( new AttachmentComponent( target.ID ) );
+					}
 				}
 			}
 		}
@@ -86,7 +89,7 @@ namespace IronStar.SFX
 
 		public static ECS.Entity SpawnFX( IGameState gs, string fxName, Vector3 origin, Vector3 velocity, Vector3 forward, Entity target = null )
 		{
-			var r	=	Matrix.RotationAxis( forward, rand.NextFloat( 0,MathUtil.TwoPi ) );
+			var r	=	Matrix.RotationAxis( forward, rand.NextFloat( 0, MathUtil.TwoPi ) );
 			var m	=	MathUtil.ComputeAimedBasis( forward );
 			
 			return SpawnFX( gs, fxName, origin, velocity, Quaternion.RotationMatrix(m*r), target );

@@ -293,7 +293,7 @@ namespace Fusion.Core.Shell {
 				} 
 				catch ( InvokerException e )
 				{
-					Log.Error( e.Message );
+					Log.Error( e );
 				}
 			}
 		}
@@ -458,11 +458,12 @@ namespace Fusion.Core.Shell {
 					} 
 					catch ( Exception e ) 
 					{
-						while (e!=null)
+						Log.Error(e);
+						/*while (e!=null)
 						{
 							Log.Error(e.Message);
 							e = e.InnerException;
-						}
+						} */
 					}
 				}
 			}

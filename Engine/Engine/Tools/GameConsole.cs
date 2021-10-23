@@ -17,7 +17,6 @@ using Fusion.Engine.Graphics;
 using Fusion.Core.Shell;
 using System.IO;
 using Fusion.Engine.Frames;
-using NLog;
 
 namespace Fusion.Engine.Tools {
 	
@@ -333,12 +332,12 @@ namespace Fusion.Engine.Tools {
 				var level	= line.Item1;
 				var text	= line.Item2;
 
-				if ( level==LogLevel.Info	) color =  MessageColor;
-				if ( level==LogLevel.Error	) color =  ErrorColor;  
-				if ( level==LogLevel.Warn	) color =  WarningColor;
-				if ( level==LogLevel.Debug	) color =  DebugColor;  
-				if ( level==LogLevel.Trace	) color =  TraceColor;
-				if ( level==LogLevel.Fatal	) color =  ErrorColor;
+				if ( level==LogSeverity.Info	) color =  MessageColor;
+				if ( level==LogSeverity.Error	) color =  ErrorColor;  
+				if ( level==LogSeverity.Warning	) color =  WarningColor;
+				if ( level==LogSeverity.Debug	) color =  DebugColor;  
+				if ( level==LogSeverity.Trace	) color =  TraceColor;
+				if ( level==LogSeverity.Fatal	) color =  ErrorColor;
 				
 				DrawString( consoleLayer, charWidth/2, vp.Height/2 - (count+2) * charHeight, text, color );
 

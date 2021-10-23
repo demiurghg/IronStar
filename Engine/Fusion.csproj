@@ -74,10 +74,6 @@
       <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.7.11\lib\net45\NLog.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="SharpDX, Version=3.1.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpDX.3.1.1\lib\net45\SharpDX.dll</HintPath>
@@ -181,12 +177,15 @@
     <Compile Include="Build\Processors\UbershaderProcessor.cs" />
     <Compile Include="Build\Processors\UbershaderProcessor.Parser.cs" />
     <Compile Include="Build\ToolException.cs" />
+    <Compile Include="Core\Logging\ColoredConsoleTarget.cs" />
+    <Compile Include="Core\Logging\ILogOutput.cs" />
+    <Compile Include="Core\Logging\LogSeverity.cs" />
+    <Compile Include="Core\Logging\MemoryLogTarget.cs" />
     <Compile Include="Core\Mathematics\EulerAngles.cs" />
     <Compile Include="Core\Shell\Invoker.Echo.cs" />
     <Compile Include="Core\Shell\Invoker.Redo.cs" />
     <Compile Include="Core\Shell\Invoker.Undo.cs" />
     <Compile Include="Core\Shell\IUndoable.cs" />
-    <Compile Include="Core\Utils\ConcurrentMemoryTarget.cs" />
     <Compile Include="Drivers\Graphics\GraphicsStats.cs" />
     <Compile Include="Drivers\Graphics\RenderDoc\CaptureOptions.cs" />
     <Compile Include="Drivers\Graphics\RenderDoc\InputButton.cs" />
@@ -759,7 +758,7 @@
     <Compile Include="Core\Input\InputDevice.cs" />
     <Compile Include="Core\Input\Keys.cs" />
     <Compile Include="Core\Extensions\LinqExtensions.cs" />
-    <Compile Include="Core\Utils\Log.cs" />
+    <Compile Include="Core\Logging\Log.cs" />
     <Compile Include="Core\Extensions\Misc.cs" />
     <Compile Include="Core\Utils\Pix.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

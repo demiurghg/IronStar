@@ -47,15 +47,6 @@ namespace IronStar
 					.Select( name => content.PrecacheSafe<FXFactory>(@"fx\"+name) )
 					.ToArray();
 
-
-			//content	.EnumerateAssets("models")
-			//		.Select( name => content.PrecacheSafe<ModelFactory>(@"models\"+name) )
-			//		.ToArray();
-
-			content	.EnumerateAssets("entities")
-					.Select( name => content.PrecacheSafe<EntityFactoryContent>(@"entities\"+name) )
-					.ToArray();
-
 			content.PrecacheSafe<TextureAtlas>(@"sprites\particles");
 			content.PrecacheSafe<TextureAtlas>(@"spots\spots");
 			content.PrecacheSafe<VirtualTexture>("*megatexture");

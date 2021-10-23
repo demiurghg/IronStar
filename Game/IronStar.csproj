@@ -201,11 +201,7 @@
     <Compile Include="Editor\Systems\EditorModelRenderSystem.cs" />
     <Compile Include="Editor\Systems\EditorPhysicsRenderSystem.cs" />
     <Compile Include="Editor\Systems\EditorLightsRenderSystem.cs" />
-    <Compile Include="Entities\EntityFactoryContent.cs" />
-    <Compile Include="Entities\FuncFX.cs" />
     <Compile Include="Entities\Precacher.cs" />
-    <Compile Include="Entities\ProxyFactory.cs" />
-    <Compile Include="Entities\StartPoint.cs" />
     <Compile Include="Gameplay\Components\AttachmentComponent.cs" />
     <Compile Include="Gameplay\Components\CameraComponent.cs" />
     <Compile Include="Gameplay\Components\ExplosiveComponent.cs" />

@@ -24,9 +24,6 @@ namespace IronStar.ECS
 		[Obsolete]
 		Entity Spawn(string classname, Vector3 position, Quaternion rotation);
 
-		//[Obsolete]
-		//Entity Spawn(params IComponent[] components);
-
 		void KillAll();
 
 		[Obsolete]
@@ -41,9 +38,6 @@ namespace IronStar.ECS
 		TService GetService<TService>() where TService : class;
 
 		IEnumerable<Entity> QueryEntities( Aspect aspect );
-
-		[Obsolete]
-		EntityFactory GetFactoryByName( string classname );
 	}
 
 

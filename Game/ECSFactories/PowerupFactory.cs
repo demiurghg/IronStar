@@ -31,14 +31,14 @@ namespace IronStar.ECSFactories
 
 		public override void Construct( Entity e, IGameState gs )
 		{
+			base.Construct( e, gs );
+
 			e.AddComponent( new PickupComponent( pickupFx ) );
 			e.AddComponent( new PowerupComponent( health, armor ) );
 			e.AddComponent( new TouchDetector() );
 			e.AddComponent( new RenderModel( modelName, Matrix.Scaling( modelScale ), Color.White, 5, RMFlags.None ) );
 
 			e.AddComponent( new DynamicBox( 1.2f, 1.2f, 3.0f, 5.0f ) { Group = CollisionGroup.PickupGroup } );
-
-			e.AddComponent( new Transform() );
 		}
 	}
 

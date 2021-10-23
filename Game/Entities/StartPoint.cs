@@ -15,17 +15,19 @@ using Fusion.Engine.Server;
 using Fusion.Engine.Graphics;
 using System.ComponentModel;
 using IronStar.ECS;
+using IronStar.ECSFactories;
 
-namespace IronStar {
-
-	public enum StartPointType {
+namespace IronStar 
+{
+	public enum StartPointType 
+	{
 		SinglePlayer,
 		IntermissionCamera,
 	}
 
 
-	public class StartPointFactory : EntityFactoryContent {
-
+	public class StartPointFactory : EntityFactoryContent 
+	{
 		public StartPointType StartPointType { get; set; }
 
 		public override ECS.Entity SpawnECS( IGameState gs )
@@ -45,6 +47,11 @@ namespace IronStar {
 			dr.DrawRing( p0, 1.00f, color, 16 );
 			dr.DrawRing( p1, 1.00f, color, 16 );
 			dr.DrawLine( p0, pf, color, color, 5, 1 );
+		}
+
+		public override EntityFactory GenerateEntityFactory( IGameState gs )
+		{
+			return new PlayerFactory();
 		}
 	}
 }

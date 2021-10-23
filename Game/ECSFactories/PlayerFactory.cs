@@ -16,10 +16,22 @@ namespace IronStar.ECSFactories
 	[EntityFactory("PLAYER")]
 	public class PlayerFactory : EntityFactory
 	{
+		public PlayerFactory()
+		{
+		}
+
+		public PlayerFactory( Vector3 p, Quaternion r )
+		{
+			Position	=	p;
+			Rotation	=	r;
+		}
+
 		public static readonly Aspect PlayerAspect = new Aspect().Include<PlayerComponent,Transform>();
 
 		public override void Construct( Entity e, IGameState gs )
 		{
+			base.Construct( e, gs );
+
 			//	rotate character's model to face along forward vector :
 			var transform	=	Matrix.RotationY( MathUtil.Pi ) * Matrix.Scaling(0.1f);
 
@@ -31,7 +43,6 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new HealthComponent(100,0) );
 			e.AddComponent( new CharacterController(6,4,1.5f, 24,8, 20, 10, 2.2f) );
 			e.AddComponent( new UserCommandComponent() );
-			e.AddComponent( new Transform() );
 			e.AddComponent( new StepComponent() );
 			e.AddComponent( new CameraComponent() );
 			e.AddComponent( new MaterialComponent(MaterialType.Flesh) );

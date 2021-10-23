@@ -72,6 +72,9 @@ namespace IronStar
 			}
 		}
 
-
+		public override EntityFactory GenerateEntityFactory( IGameState gs )
+		{
+			return gs.GetFactoryByName( classname );
+		}
 	}
 }

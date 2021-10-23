@@ -290,8 +290,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "22",
-          "$type": "IronStar.StartPointFactory, IronStar",
-          "StartPointType": "singlePlayer"
+          "$type": "IronStar.ECSFactories.PlayerFactory, IronStar",
+          "Position": "68, 0, 32",
+          "Rotation": "0, 0, 0, 1",
+          "Scaling": 1.0
         },
         "Name": "MapEntity0",
         "Visible": true,
@@ -309,8 +311,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "24",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "WEAPON_MACHINEGUN"
+          "$type": "IronStar.ECSFactories.WeaponMachinegunFactory, IronStar",
+          "Position": "67.37461, 0.257247955, 26.3149986",
+          "Rotation": "0.04790786, -0.0481217653, -0.7053254, 0.7056239",
+          "Scaling": 1.0
         },
         "Name": "MapEntity1",
         "Visible": true,
@@ -328,8 +332,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "26",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "AMMO_BULLETS"
+          "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
+          "Position": "72, 3, 24",
+          "Rotation": "0, -0.1305262, 0, 0.9914449",
+          "Scaling": 1.0
         },
         "Name": "MapEntity5",
         "Visible": true,
@@ -347,8 +353,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "28",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "BOXEXPLOSIVE"
+          "$type": "IronStar.ECSFactories.BoxExplosiveFactory, IronStar",
+          "Position": "76.9472, 9.999945, -23.0011845",
+          "Rotation": "-6.84106E-08, -0.130477265, -1.09807004E-07, 0.991451263",
+          "Scaling": 1.0
         },
         "Name": "MapEntity6",
         "Visible": true,
@@ -590,8 +598,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "40",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "BOXEXPLOSIVE"
+          "$type": "IronStar.ECSFactories.BoxExplosiveFactory, IronStar",
+          "Position": "80, 10, -2.06005049",
+          "Rotation": "-0.4622278, 0.3302915, -0.190694213, 0.8005551",
+          "Scaling": 1.0
         },
         "Name": "MapEntity7",
         "Visible": true,
@@ -609,8 +619,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "42",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "BOXEXPLOSIVE"
+          "$type": "IronStar.ECSFactories.BoxExplosiveFactory, IronStar",
+          "Position": "58.94856, 9.999946, -3.99881887",
+          "Rotation": "6.25067344E-07, -0.1304783, 2.494977E-07, 0.991451144",
+          "Scaling": 1.0
         },
         "Name": "MapEntity8",
         "Visible": true,
@@ -628,8 +640,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "44",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "BOXEXPLOSIVE"
+          "$type": "IronStar.ECSFactories.BoxExplosiveFactory, IronStar",
+          "Position": "58.94854, 9.999946, -23.9988441",
+          "Rotation": "1.796455E-07, -0.130476952, 1.45293541E-07, 0.9914513",
+          "Scaling": 1.0
         },
         "Name": "MapEntity9",
         "Visible": true,

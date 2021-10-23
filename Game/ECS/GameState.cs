@@ -445,6 +445,12 @@ namespace IronStar.ECS
 		}
 
 
+		[Obsolete]
+		public EntityFactory GetFactoryByName( string classname )
+		{
+			return factories[ classname ];
+		}
+
 		public Entity Spawn( string classname )
 		{
 			EntityFactory factory;

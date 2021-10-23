@@ -31,6 +31,8 @@ namespace IronStar.ECSFactories
 
 		public override void Construct( Entity e, IGameState gs )
 		{
+			base.Construct( e, gs );
+
 			e.AddComponent( new PickupComponent("pickupAmmo") );
 			e.AddComponent( new TouchDetector() );
 			e.AddComponent( new RenderModel( modelName, Matrix.Scaling( modelScale ), Color.White, 5, RMFlags.None ) );
@@ -38,8 +40,6 @@ namespace IronStar.ECSFactories
 			e.AddComponent( new DynamicBox( 0.66f, 0.72f, 0.66f, 3.0f ) { Group = CollisionGroup.PickupGroup } );
 			e.AddComponent( new AmmoComponent(ammoCount, ammoCapacity) );
 			e.AddComponent( new NameComponent(ammoName) );
-
-			e.AddComponent( new Transform() );
 		}
 	}
 

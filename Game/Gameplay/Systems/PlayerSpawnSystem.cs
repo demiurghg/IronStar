@@ -9,6 +9,7 @@ using IronStar.ECS;
 using Fusion;
 using IronStar.Gameplay.Components;
 using IronStar.ECSPhysics;
+using IronStar.ECSFactories;
 
 namespace IronStar.Gameplay
 {
@@ -41,14 +42,13 @@ namespace IronStar.Gameplay
 			}
 
 			var t	=	e.GetComponent<Transform>();
-			var r	=	t.Rotation;
 			var ps	=	e.GetComponent<PlayerStartComponent>();
 
 			if (!ps.PlayerSpawned)
 			{
 				ps.PlayerSpawned = true;
 
-				var player = gs.Spawn("PLAYER", t.Position, t.Rotation);
+				var player = gs.Spawn(new PlayerFactory(t.Position, t.Rotation));
 			}
 		}
 	}

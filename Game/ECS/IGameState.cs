@@ -41,7 +41,11 @@ namespace IronStar.ECS
 		TService GetService<TService>() where TService : class;
 
 		IEnumerable<Entity> QueryEntities( Aspect aspect );
+
+		[Obsolete]
+		EntityFactory GetFactoryByName( string classname );
 	}
+
 
 
 	public static class IGameStateExtensions

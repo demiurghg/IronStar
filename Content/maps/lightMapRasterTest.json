@@ -50,8 +50,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "6",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "BOXEXPLOSIVE"
+          "$type": "IronStar.ECSFactories.BoxExplosiveFactory, IronStar",
+          "Position": "66.97905, 0.112718247, -7.18953133",
+          "Rotation": "0.9729062, 3.95891533E-07, 0.231200263, -4.24305284E-07",
+          "Scaling": 1.0
         },
         "Name": "ff1dd341-29fe-4548-9e9b-096ecd689ec1",
         "Visible": true,
@@ -227,8 +229,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "15",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "BOXEXPLOSIVE"
+          "$type": "IronStar.ECSFactories.BoxExplosiveFactory, IronStar",
+          "Position": "67.30306, 0.112722665, -2.36470962",
+          "Rotation": "-1.14236873E-05, 0.378130436, -5.368763E-07, -0.925752342",
+          "Scaling": 1.0
         },
         "Name": "ff1dd341-29fe-4548-9e9b-096ecd689ec2",
         "Visible": true,

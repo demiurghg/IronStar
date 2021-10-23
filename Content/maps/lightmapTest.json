@@ -50,8 +50,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "6",
-          "$type": "IronStar.StartPointFactory, IronStar",
-          "StartPointType": "singlePlayer"
+          "$type": "IronStar.ECSFactories.PlayerFactory, IronStar",
+          "Position": "-167.022385, 2.2136302, 168.490814",
+          "Rotation": "0, 0, 0, 1",
+          "Scaling": 1.0
         },
         "Name": "d0287a3b-71c0-40a3-abed-c06822ad35f5",
         "Visible": true,
@@ -195,8 +197,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "14",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "AMMO_BULLETS"
+          "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
+          "Position": "-168.51152, 0.346312553, 117.313751",
+          "Rotation": "1.526045E-05, -0.0007221169, 4.398758E-05, 0.999999762",
+          "Scaling": 1.0
         },
         "Name": "098e5f61-2d7e-42c6-8e17-7bca584ea071",
         "Visible": true,
@@ -214,8 +218,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "16",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "AMMO_BULLETS"
+          "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
+          "Position": "-169.452728, 0.346312135, 117.314018",
+          "Rotation": "2.85983333E-05, -0.00143539382, 4.71435742E-05, 0.999999",
+          "Scaling": 1.0
         },
         "Name": "28ebdd35-d584-4f9c-bd17-fa132e189967",
         "Visible": true,
@@ -233,8 +239,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "18",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "AMMO_BULLETS"
+          "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
+          "Position": "-170.513153, 0.346425146, 117.3095",
+          "Rotation": "-2.81227276E-05, -0.0009260403, 7.37287555E-05, 0.9999996",
+          "Scaling": 1.0
         },
         "Name": "90f42fa2-f36a-4740-9d63-6e001aabe189",
         "Visible": true,
@@ -252,8 +260,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "20",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "AMMO_BULLETS"
+          "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
+          "Position": "-171.352356, 0.3463093, 117.3127",
+          "Rotation": "1.61839489E-06, 7.31243563E-05, 1.23024608E-06, 1",
+          "Scaling": 1.0
         },
         "Name": "6c728cf4-c51c-44bd-8221-5a45bfba7eba",
         "Visible": true,
@@ -271,8 +281,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "22",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "AMMO_BULLETS"
+          "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
+          "Position": "-168.515686, 1.05212247, 117.313934",
+          "Rotation": "1.64144185E-05, -0.00154747663, 6.543028E-05, 0.9999988",
+          "Scaling": 1.0
         },
         "Name": "47181f4e-f860-46eb-8425-877b42e6be9d",
         "Visible": true,
@@ -290,8 +302,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "24",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "AMMO_CELLS"
+          "$type": "IronStar.ECSFactories.AmmoPlasmagunFactory, IronStar",
+          "Position": "-169.000809, 0.344483435, 115.355049",
+          "Rotation": "1.82953954E-08, 0.0144875739, -0.003120301, 0.999890149",
+          "Scaling": 1.0
         },
         "Name": "6900aadd-f42a-4286-a5d6-3e54709d7a64",
         "Visible": true,
@@ -309,8 +323,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "26",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "AMMO_BULLETS"
+          "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
+          "Position": "-170.524857, 1.05218458, 117.310722",
+          "Rotation": "-0.000154180874, -0.004076519, 0.000194865657, 0.9999917",
+          "Scaling": 1.0
         },
         "Name": "e2558a51-603d-40f2-9a80-adc1ccec368b",
         "Visible": true,
@@ -328,8 +344,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "28",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "AMMO_BULLETS"
+          "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
+          "Position": "-171.352249, 1.05211973, 117.31266",
+          "Rotation": "1.24122948E-06, 3.79273333E-05, 4.27681982E-07, 1",
+          "Scaling": 1.0
         },
         "Name": "a944662a-96c1-4843-8029-fc50a5f5a788",
         "Visible": true,
@@ -347,8 +365,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "30",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "WEAPON_RAILGUN"
+          "$type": "IronStar.ECSFactories.WeaponRailgunFactory, IronStar",
+          "Position": "-173.413483, 0.436001956, 120.109093",
+          "Rotation": "0, 0, 0, 1",
+          "Scaling": 1.0
         },
         "Name": "d341e142-7ab9-4bcf-9f90-868aa22ebaa8",
         "Visible": true,
@@ -366,8 +386,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "32",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "WEAPON_MACHINEGUN"
+          "$type": "IronStar.ECSFactories.WeaponMachinegunFactory, IronStar",
+          "Position": "-170.068634, 0.5878017, 120.10408",
+          "Rotation": "2.01367657E-05, 0.000116834126, -0.000117263524, 1",
+          "Scaling": 1.0
         },
         "Name": "e44fda1c-24d9-48ef-bfc0-47612e6761d8",
         "Visible": true,
@@ -385,8 +407,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "34",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "WEAPON_SHOTGUN"
+          "$type": "IronStar.ECSFactories.WeaponShotgunFactory, IronStar",
+          "Position": "-167.812759, 0.5877198, 120.112732",
+          "Rotation": "1.49292073E-05, 0.000125288032, 0.000179784431, 1",
+          "Scaling": 1.0
         },
         "Name": "608b70da-4079-463e-bf0f-3bc4a2923556",
         "Visible": true,
@@ -404,8 +428,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "36",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "WEAPON_ROCKETLAUNCHER"
+          "$type": "IronStar.ECSFactories.WeaponRocketLauncherFactory, IronStar",
+          "Position": "-166.491135, 0.4874189, 120.112785",
+          "Rotation": "-4.721535E-09, 1.11099425E-05, -9.145684E-07, 1",
+          "Scaling": 1.0
         },
         "Name": "8d6113ee-9c24-4504-af11-f74ac15c3a06",
         "Visible": true,
@@ -423,8 +449,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "38",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "WEAPON_MACHINEGUN2"
+          "$type": "IronStar.ECSFactories.WeaponMachinegun2Factory, IronStar",
+          "Position": "-164.586716, 0.487421781, 120.109772",
+          "Rotation": "4.121854E-07, 0.000108895605, -1.022226E-06, 1",
+          "Scaling": 1.0
         },
         "Name": "f129d362-0dee-4e69-b8bd-33ee5a4ede45",
         "Visible": true,
@@ -461,8 +489,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "41",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "49.913475, 0, 104.335152",
+          "Rotation": "0, -0.5, 0, 0.8660254",
+          "Scaling": 1.0
         },
         "Name": "ce60499d-063b-46c2-846c-d1a708b81553",
         "Visible": true,
@@ -480,8 +510,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "43",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "60.9883728, 0, 84.8771744",
+          "Rotation": "0, -0.6087614, 0, 0.7933533",
+          "Scaling": 1.0
         },
         "Name": "8eb36da4-7c5d-4893-bcb5-1bd851a7e1ab",
         "Visible": true,
@@ -499,8 +531,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "45",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "73.10551, 0, 107.471748",
+          "Rotation": "0, -0.923879564, 0, -0.3826834",
+          "Scaling": 1.0
         },
         "Name": "96a6aee8-7837-4627-900d-c5a68f4543d2",
         "Visible": true,
@@ -518,8 +552,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "47",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "80.59734, 0, 67.17596",
+          "Rotation": "0, -0.923879564, 0, -0.3826834",
+          "Scaling": 1.0
         },
         "Name": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de45",
         "Visible": true,
@@ -537,8 +573,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "49",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-16, 0, -22",
+          "Rotation": "0, -0.6087614, 0, 0.7933533",
+          "Scaling": 1.0
         },
         "Name": "af4ab926-28e7-4317-be76-52b5fc5c2e0b",
         "Visible": true,
@@ -556,8 +594,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "51",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-22.5379944, 0, -39.84649",
+          "Rotation": "0, -0.923879564, 0, -0.3826834",
+          "Scaling": 1.0
         },
         "Name": "92756088-3312-454d-ad39-719921b9510a",
         "Visible": true,
@@ -575,8 +615,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "53",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-42.146965, 0, -38.9151764",
+          "Rotation": "0, -0.6087614, 0, 0.7933533",
+          "Scaling": 1.0
         },
         "Name": "5fa4d057-9df7-4751-8fbb-b2fbe1b6c176",
         "Visible": true,
@@ -594,8 +636,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "55",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-42, 0, -56",
+          "Rotation": "0, -0.6087614, 0, 0.7933533",
+          "Scaling": 1.0
         },
         "Name": "aeae6c43-c466-4d2f-bea0-f06d4c3591af",
         "Visible": true,
@@ -613,8 +657,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "57",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-42.146965, 0, -74.1047",
+          "Rotation": "0, -0.6087614, 0, 0.7933533",
+          "Scaling": 1.0
         },
         "Name": "328f1bb3-2f41-4095-bfdd-1dd72c1cab81",
         "Visible": true,
@@ -632,8 +678,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "59",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-22.6518478, 0, -74.1047",
+          "Rotation": "0, -0.6087614, 0, 0.7933533",
+          "Scaling": 1.0
         },
         "Name": "90f84561-d109-4cf5-99bd-74d485575725",
         "Visible": true,
@@ -651,8 +699,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "61",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-22, 0, -56",
+          "Rotation": "0, -0.6087614, 0, 0.7933533",
+          "Scaling": 1.0
         },
         "Name": "91a50b39-6fa2-4d4c-b075-8bd8434888d0",
         "Visible": true,
@@ -670,8 +720,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "63",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-22.6518478, 0, -36.26701",
+          "Rotation": "0, -0.6087614, 0, 0.7933533",
+          "Scaling": 1.0
         },
         "Name": "62da475b-e066-4172-81ae-f9924b70852f",
         "Visible": true,
@@ -689,8 +741,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "65",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "WEAPON_PLASMAGUN"
+          "$type": "IronStar.ECSFactories.WeaponPlasmagunFactory, IronStar",
+          "Position": "-162.71843, 0.487421781, 120.109772",
+          "Rotation": "4.121854E-07, 0.000108895605, -1.022226E-06, 1",
+          "Scaling": 1.0
         },
         "Name": "83c7ecdd-195f-47ac-bad1-34ece24ce65f",
         "Visible": true,
@@ -708,8 +762,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "67",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "AMMO_CELLS"
+          "$type": "IronStar.ECSFactories.AmmoPlasmagunFactory, IronStar",
+          "Position": "-167.430313, 0.3444608, 115.341881",
+          "Rotation": "0.000171793523, 0.00206272956, -5.850379E-05, 0.999997854",
+          "Scaling": 1.0
         },
         "Name": "0edb288a-ebff-4813-96c9-85c71055c740",
         "Visible": true,
@@ -727,8 +783,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "69",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "AMMO_CELLS"
+          "$type": "IronStar.ECSFactories.AmmoPlasmagunFactory, IronStar",
+          "Position": "-167.432846, 1.046081, 115.345406",
+          "Rotation": "0.000409718166, 0.0009108251, -0.0001783839, 0.9999995",
+          "Scaling": 1.0
         },
         "Name": "8bd7f42a-9893-433c-9184-eb67a75091fa",
         "Visible": true,
@@ -746,8 +804,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "71",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "AMMO_CELLS"
+          "$type": "IronStar.ECSFactories.AmmoPlasmagunFactory, IronStar",
+          "Position": "-168.835938, 1.045408, 115.349556",
+          "Rotation": "-7.52864435E-06, 0.0153889591, -0.006337676, 0.9998615",
+          "Scaling": 1.0
         },
         "Name": "a9cb2365-8158-47db-a9ea-776192e2ae0c",
         "Visible": true,
@@ -765,8 +825,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "73",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "AMMO_CELLS"
+          "$type": "IronStar.ECSFactories.AmmoPlasmagunFactory, IronStar",
+          "Position": "-168.8281, 3.71680474, 115.310135",
+          "Rotation": "3.984984E-05, -0.00191543926, 6.606397E-05, 0.999998152",
+          "Scaling": 1.0
         },
         "Name": "774e3bfe-b607-43fd-8e49-4b3660f41260",
         "Visible": true,
@@ -784,8 +846,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "75",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "AMMO_CELLS"
+          "$type": "IronStar.ECSFactories.AmmoPlasmagunFactory, IronStar",
+          "Position": "-167.385452, 3.71680474, 115.310135",
+          "Rotation": "3.984984E-05, -0.00191543926, 6.606397E-05, 0.999998152",
+          "Scaling": 1.0
         },
         "Name": "7406e362-024a-4ce3-8728-6185ed6c83c8",
         "Visible": true,
@@ -874,8 +938,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "80",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-58, 0, 68",
+          "Rotation": "0, -0.923879564, 0, -0.3826834",
+          "Scaling": 1.0
         },
         "Name": "60df3389-b014-48f2-8370-59308f2335cd",
         "Visible": true,
@@ -1466,8 +1532,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "114",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "53.5973434, 0, 251.175964",
+          "Rotation": "0, 0.9238796, 0, 0.382683367",
+          "Scaling": 1.0
         },
         "Name": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de46",
         "Visible": true,
@@ -1485,8 +1553,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "116",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-69.146965, 0, 109.8953",
+          "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "Scaling": 0.99999994
         },
         "Name": "328f1bb3-2f41-4095-bfdd-1dd72c1cab82",
         "Visible": true,
@@ -1504,8 +1574,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "118",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-49, 0, 128",
+          "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "Scaling": 0.99999994
         },
         "Name": "91a50b39-6fa2-4d4c-b075-8bd8434888d1",
         "Visible": true,
@@ -1538,8 +1610,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "121",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "129.597351, 0, 251.175964",
+          "Rotation": "0, 0.9238796, 0, 0.382683337",
+          "Scaling": 1.00000012
         },
         "Name": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de47",
         "Visible": true,
@@ -1557,8 +1631,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "123",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "6.853035, 0, 109.8953",
+          "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "Scaling": 0.99999994
         },
         "Name": "328f1bb3-2f41-4095-bfdd-1dd72c1cab83",
         "Visible": true,
@@ -1576,8 +1652,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "125",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "27, 0, 128",
+          "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "Scaling": 0.99999994
         },
         "Name": "91a50b39-6fa2-4d4c-b075-8bd8434888d2",
         "Visible": true,
@@ -1610,8 +1688,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "128",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "89.59735, 0, 227.175964",
+          "Rotation": "0, 0.9238796, 0, 0.382683337",
+          "Scaling": 1.00000012
         },
         "Name": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de48",
         "Visible": true,
@@ -1629,8 +1709,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "130",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-33.146965, 0, 85.8953",
+          "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "Scaling": 0.99999994
         },
         "Name": "328f1bb3-2f41-4095-bfdd-1dd72c1cab84",
         "Visible": true,
@@ -1648,8 +1730,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "132",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-13, 0, 104",
+          "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "Scaling": 0.99999994
         },
         "Name": "91a50b39-6fa2-4d4c-b075-8bd8434888d3",
         "Visible": true,
@@ -1682,8 +1766,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "135",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-18.4026489, 0, 251.175964",
+          "Rotation": "0, 0.9238796, 0, 0.382683337",
+          "Scaling": 1.00000012
         },
         "Name": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de49",
         "Visible": true,
@@ -1701,8 +1787,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "137",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-141.146973, 0, 109.8953",
+          "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "Scaling": 0.99999994
         },
         "Name": "328f1bb3-2f41-4095-bfdd-1dd72c1cab85",
         "Visible": true,
@@ -1720,8 +1808,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "139",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-121, 0, 128",
+          "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "Scaling": 0.99999994
         },
         "Name": "91a50b39-6fa2-4d4c-b075-8bd8434888d4",
         "Visible": true,
@@ -1754,8 +1844,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "142",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-90.40265, 0, 255.175964",
+          "Rotation": "0, 0.9238796, 0, 0.382683337",
+          "Scaling": 1.00000012
         },
         "Name": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de50",
         "Visible": true,
@@ -1773,8 +1865,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "144",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-213.146973, 0, 113.8953",
+          "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "Scaling": 0.99999994
         },
         "Name": "328f1bb3-2f41-4095-bfdd-1dd72c1cab86",
         "Visible": true,
@@ -1792,8 +1886,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "146",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-193, 0, 132",
+          "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "Scaling": 0.99999994
         },
         "Name": "91a50b39-6fa2-4d4c-b075-8bd8434888d5",
         "Visible": true,
@@ -1826,8 +1922,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "149",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-90.40265, 0, 219.175964",
+          "Rotation": "0, 0.9238796, 0, 0.382683337",
+          "Scaling": 1.00000012
         },
         "Name": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de51",
         "Visible": true,
@@ -1845,8 +1943,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "151",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-213.146973, 0, 77.8953",
+          "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "Scaling": 0.99999994
         },
         "Name": "328f1bb3-2f41-4095-bfdd-1dd72c1cab87",
         "Visible": true,
@@ -1864,8 +1964,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "153",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-193, 0, 96",
+          "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "Scaling": 0.99999994
         },
         "Name": "91a50b39-6fa2-4d4c-b075-8bd8434888d6",
         "Visible": true,
@@ -1898,8 +2000,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "156",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-58.40265, 0, 235.175964",
+          "Rotation": "0, 0.9238796, 0, 0.382683337",
+          "Scaling": 1.00000012
         },
         "Name": "b9782f15-dfd4-40f1-9b3f-1a47c6a3de52",
         "Visible": true,
@@ -1917,8 +2021,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "158",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-181.146973, 0, 93.8953",
+          "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "Scaling": 0.99999994
         },
         "Name": "328f1bb3-2f41-4095-bfdd-1dd72c1cab88",
         "Visible": true,
@@ -1936,8 +2042,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "160",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "MONSTER_MARINE"
+          "$type": "IronStar.ECSFactories.MonsterMarineFactory, IronStar",
+          "Position": "-161, 0, 112",
+          "Rotation": "0, -0.6087614, 0, 0.7933534",
+          "Scaling": 0.99999994
         },
         "Name": "91a50b39-6fa2-4d4c-b075-8bd8434888d7",
         "Visible": true,

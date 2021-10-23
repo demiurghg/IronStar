@@ -50,8 +50,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "6",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "AMMO_BULLETS"
+          "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
+          "Position": "-0.0515829846, 0.2883403, 90.48273",
+          "Rotation": "0.7049652, -0.0543515757, 0.0542918555, 0.705069065",
+          "Scaling": 1.0
         },
         "Name": "MapEntity0",
         "Visible": true,
@@ -414,8 +416,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "30",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "AMMO_BULLETS"
+          "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
+          "Position": "64, 0.2883403, 90.48273",
+          "Rotation": "0.7049652, -0.05435158, 0.05429186, 0.705069065",
+          "Scaling": 1.0
         },
         "Name": "MapEntity1",
         "Visible": true,
@@ -433,8 +437,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "32",
-          "$type": "IronStar.ProxyFactory, IronStar",
-          "Classname": "AMMO_BULLETS"
+          "$type": "IronStar.ECSFactories.AmmoMachinegunFactory, IronStar",
+          "Position": "84, 0.2883403, 90.48273",
+          "Rotation": "0.7049652, -0.05435158, 0.05429186, 0.705069065",
+          "Scaling": 1.0
         },
         "Name": "MapEntity2",
         "Visible": true,
@@ -920,23 +926,24 @@
         "TargetName": null,
         "Factory": {
           "$id": "52",
-          "$type": "IronStar.FuncFXFactory, IronStar",
-          "FX": "fire",
-          "FXMode": "persistent",
-          "Once": false,
-          "Start": false,
-          "MinInterval": 1,
-          "MaxInterval": 1
+          "$type": "IronStar.SFX.FXEntityFactory, IronStar",
+          "Velocity": "0, 0, 0",
+          "Target": null,
+          "FXName": "fire",
+          "Looped": true,
+          "Position": "16, 0, -88",
+          "Rotation": "0, 0, 0, 1",
+          "Scaling": 1.0
         },
         "Name": "MapEntity3",
         "Visible": true,
         "Frozen": false,
-        "Translation": "16, 0, -92",
+        "Translation": "16, 0, -88",
         "Scaling": "1, 1, 1",
         "Rotation": "0, 0, 0, 1",
         "TranslateX": 16.0,
         "TranslateY": 0.0,
-        "TranslateZ": -92.0
+        "TranslateZ": -88.0
       },
       {
         "$id": "53",
@@ -944,13 +951,14 @@
         "TargetName": null,
         "Factory": {
           "$id": "54",
-          "$type": "IronStar.FuncFXFactory, IronStar",
-          "FX": "bulletHit_flesh",
-          "FXMode": "persistent",
-          "Once": false,
-          "Start": false,
-          "MinInterval": 1,
-          "MaxInterval": 1
+          "$type": "IronStar.SFX.FXEntityFactory, IronStar",
+          "Velocity": "0, 0, 0",
+          "Target": null,
+          "FXName": "bulletHit_flesh",
+          "Looped": false,
+          "Position": "40, 4, -68",
+          "Rotation": "0, 0, 0, 1",
+          "Scaling": 1.0
         },
         "Name": "MapEntity4",
         "Visible": true,
@@ -1050,13 +1058,14 @@
         "TargetName": null,
         "Factory": {
           "$id": "60",
-          "$type": "IronStar.FuncFXFactory, IronStar",
-          "FX": "fireCrashSite",
-          "FXMode": "persistent",
-          "Once": false,
-          "Start": false,
-          "MinInterval": 1,
-          "MaxInterval": 1
+          "$type": "IronStar.SFX.FXEntityFactory, IronStar",
+          "Velocity": "0, 0, 0",
+          "Target": null,
+          "FXName": "fireCrashSite",
+          "Looped": true,
+          "Position": "-68, 0, -84",
+          "Rotation": "0, 0, 0, 1",
+          "Scaling": 1.0
         },
         "Name": "MapEntity5",
         "Visible": true,
@@ -1074,8 +1083,10 @@
         "TargetName": null,
         "Factory": {
           "$id": "62",
-          "$type": "IronStar.StartPointFactory, IronStar",
-          "StartPointType": "singlePlayer"
+          "$type": "IronStar.ECSFactories.PlayerFactory, IronStar",
+          "Position": "-32, 0, 76",
+          "Rotation": "0, 0, 0, 1",
+          "Scaling": 1.0
         },
         "Name": "MapEntity6",
         "Visible": true,
@@ -1190,13 +1201,14 @@
         "TargetName": null,
         "Factory": {
           "$id": "69",
-          "$type": "IronStar.FuncFXFactory, IronStar",
-          "FX": "bloodTrail",
-          "FXMode": "persistent",
-          "Once": false,
-          "Start": false,
-          "MinInterval": 1,
-          "MaxInterval": 1
+          "$type": "IronStar.SFX.FXEntityFactory, IronStar",
+          "Velocity": "0, 0, 0",
+          "Target": null,
+          "FXName": "bloodTrail",
+          "Looped": false,
+          "Position": "44, 4, -68",
+          "Rotation": "0, 0, 0, 1",
+          "Scaling": 1.0
         },
         "Name": "MapEntity7",
         "Visible": true,
@@ -1214,13 +1226,14 @@
         "TargetName": null,
         "Factory": {
           "$id": "71",
-          "$type": "IronStar.FuncFXFactory, IronStar",
-          "FX": "rocketExplosion",
-          "FXMode": "persistent",
-          "Once": false,
-          "Start": false,
-          "MinInterval": 1,
-          "MaxInterval": 1
+          "$type": "IronStar.SFX.FXEntityFactory, IronStar",
+          "Velocity": "0, 0, 0",
+          "Target": null,
+          "FXName": "rocketExplosion",
+          "Looped": false,
+          "Position": "112, 4, -35",
+          "Rotation": "0, 0, 0, 1",
+          "Scaling": 1.0
         },
         "Name": "MapEntity8",
         "Visible": true,

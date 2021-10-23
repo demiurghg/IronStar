@@ -20,7 +20,7 @@ using IronStar.ECS;
 
 namespace IronStar.Mapping 
 {
-	public partial class Map : IPrecachable 
+	public partial class Map : IPrecachable, IEntityFactory 
 	{
 		/// <summary>
 		/// 
@@ -96,12 +96,17 @@ namespace IronStar.Mapping
 
 		internal void ActivateGameState( IGameState gs )
 		{
-			var g = gs.Spawn( new ECSPhysics.GravityComponent(48) );
+			var g = gs.Spawn( this );
 
 			foreach ( var node in Nodes )
 			{
 				node?.SpawnNodeECS( gs );
 			}
+		}
+
+		public void Construct( Entity entity, IGameState gs )
+		{
+			entity.AddComponent( new ECSPhysics.GravityComponent(48) );
 		}
 	}
 

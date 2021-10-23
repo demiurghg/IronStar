@@ -16,7 +16,7 @@ using IronStar.ECS;
 
 namespace IronStar.Mapping 
 {
-	public class MapEntity : MapNode 
+	public class MapEntity : MapNode, IEntityFactory 
 	{
 
 		/// <summary>
@@ -32,7 +32,7 @@ namespace IronStar.Mapping
 		[Browsable(false)]
 		[AEExpandable]
 		[AECategory("Factory")]
-		public EntityFactoryContent Factory { get; set; }
+		public EntityFactory Factory { get; set; }
 
 		/// <summary>
 		/// 
@@ -43,22 +43,39 @@ namespace IronStar.Mapping
 
 
 
+		public void Construct( Entity entity, IGameState gs )
+		{
+			( (IEntityFactory)Factory ).Construct( entity, gs );
+		}
+
+
 		public override void SpawnNodeECS( ECS.IGameState gs )
 		{
-			ecsEntity		=	Factory.SpawnECS(gs);
-			ecsEntity.Tag	=	this;
+			//	OLD STUFF :
+			/*ecsEntity			=	Factory.SpawnECS(gs);
+			ecsEntity.Tag		=	this;
 
 			if (ecsEntity!=null)
 			{
 				gs.Teleport( ecsEntity, Translation, Rotation );
 			}
+
+			Factory2	=	(EntityFactory)Factory.GenerateEntityFactory( gs ).Clone();*/
+			
+			//	NEW STUFF :
+			Factory.Position	=	this.Translation;
+			Factory.Rotation	=	this.Rotation;
+			Factory.Scaling	=	this.Scaling.X;
+
+			ecsEntity		=	gs.Spawn( this );
+			ecsEntity.Tag	=	this;
 		}
 
 
 		public override MapNode DuplicateNode()
 		{
-			var newNode = (MapEntity)base.DuplicateNode();
-			newNode.Factory		= Factory.Duplicate();
+			var newNode		=	(MapEntity)base.DuplicateNode();
+			newNode.Factory	=	(EntityFactory)Factory.Clone();
 			return newNode;
 		}
 

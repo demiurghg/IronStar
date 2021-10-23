@@ -17,12 +17,15 @@ using System.ComponentModel;
 using System.Xml.Serialization;
 using IronStar.Editor;
 using Fusion.Core.Shell;
+using IronStar.ECS;
 
 namespace IronStar {
 
 	public abstract class EntityFactoryContent : JsonContent 
 	{
 		public abstract ECS.Entity SpawnECS( ECS.IGameState gs );
+
+		public abstract EntityFactory GenerateEntityFactory( ECS.IGameState gs );
 
 		/// <summary>
 		/// Draws entity in editor

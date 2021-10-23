@@ -23,39 +23,6 @@ namespace IronStar.SFX
 {
 	public partial class FXPlayback
 	{
-		class FXEntityFactory : IEntityFactory
-		{
-			readonly string fxName;
-			readonly Vector3 origin;
-			readonly Vector3 velocity;
-			readonly Quaternion rotation;
-			readonly Entity target;
-
-			public FXEntityFactory( string fxName, Vector3 origin, Vector3 velocity, Quaternion rotation, Entity target = null )
-			{
-				this.fxName		=	fxName;
-				this.origin		=	origin;
-				this.velocity	=	velocity;
-				this.rotation	=	rotation;
-				this.target		=	target;
-			}
-
-			public void Construct( Entity entity, IGameState gs )
-			{
-				entity.AddComponent( new Transform( origin, rotation, velocity ) );
-				entity.AddComponent( new FXComponent( fxName, false ) );
-
-				if (target!=null)
-				{
-					if (target.GetComponent<StaticCollisionComponent>()==null)
-					{
-						entity.AddComponent( new AttachmentComponent( target.ID ) );
-					}
-				}
-			}
-		}
-
-
 		//	#TODO #REFACTOR -- fix mess with parameters order
 		public static ECS.Entity SpawnFX( IGameState gs, string fxName, Vector3 origin, Vector3 velocity, Quaternion rotation, Entity target = null )
 		{

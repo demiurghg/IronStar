@@ -31,6 +31,7 @@ using Fusion.Widgets.Advanced;
 using IronStar.Editor.Commands;
 using Fusion.Widgets.Binding;
 using IronStar.Gameplay.DataAssets;
+using IronStar.ECS;
 
 namespace IronStar.Editor 
 {
@@ -350,8 +351,9 @@ namespace IronStar.Editor
 		{
 			var palette = new Palette( workspace.Frames, "Create Node", 0,0, 150,450 );
 
-			var entityTypes	=	Misc.GetAllSubclassesOf( typeof(EntityFactoryContent), false );
+			var entityTypes	=	Misc.GetAllSubclassesOf( typeof(EntityFactory), false );
 
+			// #TODO #EDITOR #UI -- gather nodes using reflection
 			palette.AddButton( "Static Model"			,	() => CreateNodeUI( new MapModel			() ) );
 			palette.AddButton( "Prefab		"			,	() => CreateNodeUI( new MapPrefab			() ) );
 			palette.AddButton( "Decal"					,	() => CreateNodeUI( new MapDecal			() ) );
@@ -360,7 +362,7 @@ namespace IronStar.Editor
 			palette.AddButton( "Omni Light"				,	() => CreateNodeUI( new MapOmniLight		() ) );
 			palette.AddButton( "Spot Light"				,	() => CreateNodeUI( new MapSpotLight		() ) );
 			palette.AddButton( "Light Volume"			,	() => CreateNodeUI( new MapLightVolume		() ) );
-			palette.AddButton( "Billboard"				,	() => CreateNodeUI( new MapBillboard		() ) );
+			//palette.AddButton( "Billboard"				,	() => CreateNodeUI( new MapBillboard		() ) );
 			//palette.AddButton( "Sound"					,	() => CreateNodeUI( new MapSound			() ) );
 			//palette.AddButton( "Reverb Zone"			,	() => CreateNodeUI( new MapReverb			() ) );
 
@@ -372,7 +374,7 @@ namespace IronStar.Editor
 
 				Action action = () => { 
 					var mapEntity = new MapEntity();
-					mapEntity.Factory = (EntityFactoryContent)Activator.CreateInstance(ent);
+					mapEntity.Factory = (EntityFactory)Activator.CreateInstance(ent);
 					CreateNodeUI( mapEntity ); 
 				};
 

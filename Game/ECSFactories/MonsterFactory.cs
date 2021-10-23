@@ -29,6 +29,8 @@ namespace IronStar.ECSFactories
 
 		public override void Construct( Entity e, IGameState gs )
 		{
+			base.Construct( e, gs );
+
 			//	rotate character's model to face along forward vector :
 			var transform	=	Matrix.RotationY( MathUtil.Pi ) * Matrix.Scaling(0.1f);
 
@@ -38,7 +40,6 @@ namespace IronStar.ECSFactories
 
 			e.AddComponent( new CharacterController(6,4,2, 24,9, 20, 10, 2.2f) );
 			e.AddComponent( new UserCommandComponent() );
-			e.AddComponent( new Transform() );
 			e.AddComponent( new StepComponent() );
 			e.AddComponent( new HealthComponent(50,25) );
 			e.AddComponent( new MaterialComponent(MaterialType.Flesh) );

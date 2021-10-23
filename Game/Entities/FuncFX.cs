@@ -63,5 +63,10 @@ namespace IronStar
 
 			return e;
 		}
+
+		public override EntityFactory GenerateEntityFactory( IGameState gs )
+		{
+			return new FXEntityFactory(FX, Vector3.Zero, Vector3.Zero, Quaternion.Identity);
+		}
 	}
 }

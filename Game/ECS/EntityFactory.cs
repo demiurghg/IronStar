@@ -4,12 +4,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Fusion.Core.Mathematics;
+using Fusion.Widgets.Advanced;
 
 namespace IronStar.ECS
 {
-	public abstract class EntityFactory : IEntityFactory
+	public class EntityFactory : IEntityFactory, ICloneable
 	{
-		public abstract void Construct( Entity e, IGameState gs );
+		[AEIgnore]
+		public Vector3 Position { get; set; } = Vector3.Zero;
+
+		[AEIgnore]
+		public Quaternion Rotation { get; set; } = Quaternion.Identity;
+
+		[AEIgnore]
+		public float Scaling { get; set; } = 1;
+
+		public object Clone()
+		{
+			return MemberwiseClone();
+		}
+
+		public virtual void Construct( Entity e, IGameState gs )
+		{
+			e.AddComponent( new Transform( Position, Rotation, Scaling ) );
+		}
 	}
 
 

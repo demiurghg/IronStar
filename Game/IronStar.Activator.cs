@@ -38,6 +38,8 @@ namespace IronStar
 			var rs			=	game.RenderSystem;
 
 			var rw			=	game.RenderSystem.RenderWorld;
+
+			gs.Paused		=	(editor!=null);
 			
 			//	physics and FX systems are used by many other systems :
 			var physicsCore = new ECSPhysics.PhysicsCore();

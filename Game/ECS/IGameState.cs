@@ -11,6 +11,8 @@ namespace IronStar.ECS
 {
 	public interface IGameState	: IDisposable
 	{
+		bool Paused { get; set; }
+
 		Game Game { get; }
 
 		ContentManager Content { get; }

@@ -44,6 +44,8 @@ namespace IronStar.SinglePlayer {
 
 					context.GameState	=	IronStar.CreateGameState( context.Game, context.Content, context.MapName );
 				}
+
+				this.context.GameState.Paused = false;
 			}
 
 

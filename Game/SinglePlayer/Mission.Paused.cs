@@ -27,6 +27,7 @@ namespace IronStar.SinglePlayer {
 			public Paused ( MissionContext context )
 			{
 				this.context = context;
+				this.context.GameState.Paused = true;
 			}
 
 

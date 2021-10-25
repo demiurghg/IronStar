@@ -76,7 +76,7 @@ namespace IronStar.Editor
 			selection.Changed += Selection_Changed;
 
 			this.rs			=	Game.RenderSystem;
-			Content         =   new ContentManager( Game );
+			Content			=	new ContentManager( Game );
 			camera			=	new EditorCamera( this );
 
 			SetupWorkspace();
@@ -337,18 +337,9 @@ namespace IronStar.Editor
 
 		public bool EnableSimulation 
 		{ 
-			get 
-			{ 
-				return enableSimulation; 
-			}
-			set 
-			{ 
-				enableSimulation = value;
-				gameState.GetService<PhysicsCore>().Enabled = enableSimulation;
-				gameState.GetService<BehaviorSystem>().Enabled = enableSimulation;
-			}
+			get { return !gameState.Paused; }
+			set { gameState.Paused = !value; }
 		}
-		bool enableSimulation;
 
 
 		/*-----------------------------------------------------------------------------------------

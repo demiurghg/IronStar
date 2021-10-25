@@ -37,6 +37,8 @@ namespace IronStar.ECS
 			public readonly IComponent Component;
 		}
 
+		public bool Paused { get; set; } = false;
+
 		public const int MaxSystems			=	BitSet.MaxBits;
 		public const int MaxComponentTypes	=	BitSet.MaxBits;
 

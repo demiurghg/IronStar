@@ -39,8 +39,6 @@ namespace IronStar.ECSPhysics
 
 		Stopwatch stopwatch;
 
-		public bool Enabled { get; set; } = true;
-
 		const int MaxPhysObjects = 16384;
 		RigidTransform[] transforms = new RigidTransform[MaxPhysObjects];
 
@@ -124,7 +122,7 @@ namespace IronStar.ECSPhysics
 		{
 			UpdateGravity(gs);
 
-			if (Enabled)
+			if (!gs.Paused)
 			{
 				UpdateSimulation( gs, gameTime.ElapsedSec );
 
@@ -227,10 +225,7 @@ namespace IronStar.ECSPhysics
 			ApplyDeferredImpulses();
 
 			//	run simulation :
-			if (Enabled)
-			{
-				Space.Update(elapsedTime);
-			}
+			Space.Update(elapsedTime);
 		}
 
 

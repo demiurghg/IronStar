@@ -25,7 +25,6 @@ namespace IronStar.AI
 {
 	class BehaviorSystem : ProcessingSystem<BTNode,BehaviorComponent>
 	{
-		public bool Enabled = true;
 		readonly PhysicsCore physics;
 
 		AITokenPool tokenPool = new AITokenPool(2, TimeSpan.FromMilliseconds(500) );
@@ -142,7 +141,9 @@ namespace IronStar.AI
 
 		protected override void Process( Entity entity, GameTime gameTime, BTNode behaviorTree, BehaviorComponent behavior )
 		{
-			if (Enabled && !IronStar.IsNoTarget)
+			var gs = entity.gs;
+
+			if (!gs.Paused && !IronStar.IsNoTarget)
 			{
 				behaviorTree.Tick( gameTime, entity, false );
 			}

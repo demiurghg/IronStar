@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Fusion;
 using IronStar.ECS;
+using IronStar.Gameplay.Weaponry;
 
 namespace IronStar.Gameplay.Components
 {
@@ -18,6 +19,19 @@ namespace IronStar.Gameplay.Components
 
 	public class InventoryComponent : Component, IEnumerable<Entity>
 	{
+		public WeaponState	WeaponState		=	WeaponState.Idle;
+		public bool 		RequestAttack	=	false;
+		public int			WeaponTimer		=	0;
+		public int			ShotCounter		=	0;
+
+		public WeaponType	CurrentWeapon	=	WeaponType.None;
+		public WeaponType	PendingWeapon	=	WeaponType.None;
+
+		public readonly short[] Ammo		=	new short[ (int)AmmoType.Max ];
+		public readonly short[] Weapons		=	new short[ (int)WeaponType.Max ];
+		
+
+
 		public InventoryFlags Flags { get { return flags; } }
 		InventoryFlags flags;
 

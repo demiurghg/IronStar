@@ -18,7 +18,7 @@ namespace IronStar.ECS
 		ContentManager Content { get; }
 
 		//Entity Spawn();
-		Entity Spawn(IEntityFactory factory);
+		Entity Spawn(IFactory factory);
 
 		[Obsolete]
 		Entity Spawn(string classname);
@@ -28,44 +28,12 @@ namespace IronStar.ECS
 
 		void KillAll();
 
-		[Obsolete]
-		void Teleport( Entity e, Vector3 position, Quaternion rotation );
-
 		void Update ( GameTime gameTime );
-
-		//void AddSystem( ISystem system );
 
 		Entity GetEntity(uint id);
 
 		TService GetService<TService>() where TService : class;
 
 		IEnumerable<Entity> QueryEntities( Aspect aspect );
-	}
-
-
-
-	public static class IGameStateExtensions
-	{
-		class CompoundFactory : IEntityFactory
-		{
-			readonly IComponent[] components;
-			public CompoundFactory( IComponent[] components )
-			{
-				this.components	=	components;
-			}
-
-			public void Construct( Entity entity, IGameState gs )
-			{
-				foreach ( var c in components )
-				{
-					entity.AddComponent( c );
-				}
-			}
-		}
-
-		public static Entity Spawn( this IGameState gs, params IComponent[] components )
-		{
-			return gs.Spawn( new CompoundFactory(components) );
-		}
 	}
 }
